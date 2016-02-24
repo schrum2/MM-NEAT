@@ -1,0 +1,1 @@
+java -jar dist/MONE.jar multiple:5 base:fbr trials:5 maxGens:500 mu:100 io:true netio:true mating:false fs:true task:edu.utexas.cs.nn.tasks.breve2D.Breve2DTask breveDynamics:edu.utexas.cs.nn.breve2D.dynamics.FrontBackRamming breveEnemy:edu.utexas.cs.nn.breve2D.agent.FrontBackRammingEnemy cleanOldNetworks:true log:FBR-Control saveTo:Control

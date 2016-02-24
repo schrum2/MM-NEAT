@@ -1,0 +1,3 @@
+cd ..
+cd ..
+java -jar dist/MONE.jar runNumber:0 base:mspacman trials:3 maxGens:300 mu:100 io:true netio:true mating:true task:edu.utexas.cs.nn.tasks.mspacman.MsPacManTask cleanOldNetworks:true log:MsPacMan-Multiobjective saveTo:Multiobjective pacManLevelTimeLimit:8000 escapeNodeDepth:0 pacmanInputOutputMediator:edu.utexas.cs.nn.tasks.mspacman.sensors.mediators.FullTaskMediator numActiveGhosts:4 absolute:false prox:false diff:false sim:true cluster:true nearestDir:true nearestDis:true farthestDis:true specific:false specialPowerPill:false ghostTimes:false lairDis:false veryClose:true escapeToPowerPills:true
