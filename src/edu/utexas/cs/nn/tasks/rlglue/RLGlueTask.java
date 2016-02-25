@@ -187,7 +187,8 @@ public final class RLGlueTask<T extends Network> extends NoisyLonerTask<T> imple
     }
 
     public String[] outputLabels() {
-        int numDiscreteActions = agent.TSO.getNumDiscreteActionDims();
+    	// Schrum: Not clear why TSO was null
+        int numDiscreteActions = MMNEAT.networkOutputs; //agent.TSO.getNumDiscreteActionDims();
         String[] labels = new String[numDiscreteActions];
         for (int i = 0; i < numDiscreteActions; i++) {
             labels[i] = "Action " + i;
