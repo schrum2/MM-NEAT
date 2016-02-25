@@ -715,6 +715,14 @@ public class MMNEAT {
     }
 
     public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
+    	if(args.length == 0) {
+    		System.out.println("First command line parameter must be one of the following:");
+    		System.out.println("\tmultiple:n\twhere n is the number of experiments to run in sequence");
+    		System.out.println("\trunNumber:n\twhere n is the specific experiment number to assign");
+    		System.out.println("\tprocess:n\twhere n is the number of experiments to do data processing on");
+    		System.out.println("\tlineage:n\twhere n is the experiment number to do lineage browsing on");
+    		System.exit(0);
+    	}
         long start = System.currentTimeMillis();
         //Executor.main(args);
         StringTokenizer st = new StringTokenizer(args[0], ":");
