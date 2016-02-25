@@ -1,0 +1,19 @@
+[Below is the copyright for the included Ms. Pac-Man code]
+
+You may use this code for any non-commercial purposes. This copyright file must always
+be included with the code. Feel free to modify the code but deviations from the original 
+should be clearly documented. Please note: this software comes with absolutely no warranty. 
+You are using this software at your own risk and we cannot take any responsibilities for 
+potential losses caused by the use of this software. 
+
+This code is an implementation of "Ms Pac-Man" for the "Ms Pac-Man vs Ghosts Competition".
+This competition is organised by Philipp Rohlfshagen, David Robles and Simon Lucas of the University 
+of Essex.
+
+The code is written by Philipp Rohlfshagen based on earlier implementations of the game by Simon Lucas 
+and David Robles. We would like to thanks all those who help us to improve the code: many participants 
+have been active on the forum. Some have volunteered for beta testing, including Daryl Tose (Memetix) 
+whose help has been tremendous.
+
+Competition website: www.pacman-vs-ghosts.net
+Competition organisers: Philipp Rohlfshagen, David Robles and Simon Lucas (University of Essex)

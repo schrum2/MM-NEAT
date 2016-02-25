@@ -1,0 +1,186 @@
+
+=========== GETTING STARTED ===========
+
+This code requires Java to run, and it is recommended 
+that a modern IDE is used as well (the code was developed 
+in NetBeans IDE 7.4: https://netbeans.org/). The main
+class of the project is edu.utexas.cs.nn.mmneat.MMNEAT.java,
+and once the project is compiled in NetBeans, there will be
+a file called MM-NEAT.jar in the "dist" directory. The code 
+can be launched by running java with the jar file and
+appropriate command-line arguments. The general form is:
+
+java -jar dist/MM-NEAT.jar runNumber:<int> randomSeed:<int> base:<experiment directory> maxGens:<int> mu:<int> io:true netio:true task:<java class> log:<experiment string>-<evaluation method string> saveTo:<evaluation method directory>
+
+Here is a brief description of each of these key parameters.
+
+runNumber:	An identifying number for the experimental run. Used in directory names and filenames.
+randomSeed:	Should generally be the same as runNumber. Specifies seed for random number generator.
+base:		Directory that will be created to store data from all experiments to be compared.
+maxGens:	Number of generations before evolution stops (alternate stop conditions can be defined).
+mu:		Population size.
+task:		Java class that implements the Task interface.
+log:		Prefix that will be used in all filenames. Recommended format above.
+saveTo:		Sub-directory within the base directory where data will be saved.
+
+Other parameters may need to be set as well, depending on the 
+type of the experiment, and whether you are ok with the default
+values. All default values are listed in
+edu.utexas.cs.nn.parameters.Parameters.java.
+
+Examples of appropriate parameters to launch experiments with
+are in the many Experiment files described next.
+
+=========== EXPERIMENT FILES ===========
+
+There are several batch files that start with the prefix Experiment.
+Each of these corresponds to an experiment from Jacob Schrum's
+2014 dissertation, which is available at:
+
+http://nn.cs.utexas.edu/?schrum:phd2014
+
+Some of these results were also reported in a GECCO paper that same year:
+
+http://nn.cs.utexas.edu/?schrum:gecco2014
+
+Each Experiment file can be run simply by double-clicking it in windows
+(simply treating the file as a bash script in Linux should also work).
+Launching any one file simply executes a single run of a particular
+experimental condition. To recreate the results from the dissertation,
+multiple runs of each type are required, which can be done by incrementing
+the runNumber and randomSeed parameters in the Experiment files.
+
+After running any of these experiments, you will likely want to look at the 
+results. Each experiment outputs several files with the suffix "plot" that
+can be loaded in gnuplot. Gnuplot is an open-source tool for plotting
+scientific data, and can be downloaded at: http://www.gnuplot.info/
+
+Gnuplot only lets you analyze the numeric data. In order to see the evolved
+behavior, and to see how modular networks use their multiple modules, there
+are several batch files to analyze the results of completed experiments.
+
+=========== POST EVALUATION FILES ===========
+
+Each batch file that starts with "post" can be used to analyze the results
+of a completed experiment. Each of these batch files requires command-line
+arguments in order to function properly. The specific usage of each file is
+shown in comments at the top of each file. Here is a list of what each file
+is used for:
+
+postBestEval.bat		Evaluate champion Ms. Pac-Man net (non-visual) with original settings and save results to eval report in run directory.
+postBestFourMazeEval.bat	Evaluate champion Ms. Pac-Man net (non-visual) with FourMaze settings and save results to eval report in run directory.
+postBestFourMazeRecord.bat	Watch and record single eval of champion Ms. Pac-Man net with FourMaze settings.
+postBestFourMazeWatch.bat	Watch champion Ms. Pac-Man net behavior with FourMaze settings.
+postBestMPMvsGEval.bat		Evaluate champion Ms. Pac-Man net (non-visual) with MPMvsG settings and save results to eval report in run directory.
+postBestMPMvsGRecord.bat	Watch and record single eval of champion Ms. Pac-Man net with MPMvsG settings.
+postBestMPMvsGWatch.bat		Watch champion Ms. Pac-Man net behavior with MPMvsG settings.
+postBestObjectiveEval.bat	Evaluate (non-visual) behavior of best nets in each objective with original settings.
+postBestObjectiveWatch.bat	Watch behavior of best nets in each objective with original settings.
+postBestWatch.bat		Watch champion Ms. Pac-Man net behavior with original settings.
+postParetoFrontWatch.bat	Watch behavior of all members of Pareto front using original evaluation settings. Works for domains besides Ms. Pac-Man.
+postReplay.bat			Replay any Ms. Pac-Man recording saved by one of the record batch files.
+
+Eval reports are stored in the directory with all other data from the original 
+experiment. For example, the Experiment-OneLifeConflict-MMD.bat file stores
+data in onelifeconflict/MMD0, and the eval report created in this directory
+would start OneLifeConflict-MMD0_Eval. Be carefule with eval files: Running a
+batch file that creates an eval report will overwrite any existing eval report,
+unless you manually change the name of any pre-existing files.
+
+Watching, evaluating, or recording champion performance with original settings
+means that the setting will be the same as in the original experiment that created
+the champion. FourMaze and MPMvsG rules are specific rule sets that have been used
+in the literature before. These rule sets are explained in both the dissertation
+and GECCO paper referenced above.
+
+As you watch a network's behavior, you will also see several other windows. One 
+contains the evolved neural network used by the agent. Four narrow windows contain 
+the sensor readings corresponding to each direction that Ms. Pac-Man checks when 
+moving. Direction 0 is UP, 1 is RIGHT, 2 is DOWN, and 3 is LEFT. These windows also
+show the outputs of each network for each direction checked (directions with a wall
+simply have no readings). If the network has preference neurons, then the comparative
+output of each preference neuron will also be displayed. Additionally, Ms. Pac-Man 
+will leave trails of a difference color for each module she uses.
+
+=========== OTHER DOMAINS ===========
+
+This code was primarily developed to evolve Ms. Pac-Man agents, but other domains
+are also integrated with the code. These domains are less well developed, but may be
+of interest to you.
+
+First, the code is integrated with RL-Glue, which is a system for evaluating
+Reinforcement Learning algorithms available here:
+
+http://glue.rl-community.org
+
+You don't need to download any additional files for RL-Glue to work, but the webpage
+may provide assistance in understanding how it works. The java code actually launches
+the included RL-Glue executable and communicates with it via sockets. RL-Glue domains
+need to be tweaked slightly to work with MM-NEAT, but a few are already functioning:
+PuddleWorld, CartPole, MountainCar, and Tetris. The visualization for MountainCar does
+not work, but visualization for the other domains can be viewed if "watch:true" is
+included in the command line. Post visualizations with some of the batch files above
+also work (postParetoFrontWatch.bat and postBestObjective*). Very little effort has 
+been put into designing appropriate state-action mappings for these domains, so the 
+performance level in some of them is not very high. You can give these domains a test 
+run by executing any of the batch files that start with the prefix Example-RL: 
+
+Example-RL-CartPole.bat
+Example-RL-MountainCar.bat
+Example-RL-PuddleWorld.bat
+Example-RL-Tetris.bat
+
+If you improve the code integration with RL-Glue (getting MountainCar visualization 
+to work for example), or get some good results in a tough domain like Tetris, please 
+let me know at schrum2@cs.utexas.edu.
+
+Another domain included with this code is a 2D reimplementation of the BREVE Monsters
+domain, in which many of the methods used in MM-NEAT (Module Mutation, TUG) were first
+tested. The original BREVE Monsters can be downloaded at:
+
+http://nn.cs.utexas.edu/?brevemonsters
+
+The BREVE 2D domain in MM-NEAT is not identical to BREVE Monsters, but it is similar in 
+many ways. The specific domains implemented are Front-Back Ramming (FBR),
+Predator/Prey (PP), and Fight or Flight (FoF). Some work is still needed to bring this
+code up to the level of the original BREVE Monsters experiments, but you are free to play
+with it. Some know issues: monitoring the inputs to the networks causes strange color
+clashes, likely because each monster has its own network and is trying to write data to
+the same window simultaneously; the sensors don't all work the same as they do in BREVE;
+the camera does not follow the agents, so sometimes all the action happens out of sight;
+FoF features a ramming orb instead of a bat as in the original BREVE implementation;
+and for some reason the dynamics of the FoF don't allow baiting behavior to emerge. Still,
+the code is a useful starting point. The following files should give an idea of how to
+launch such runs:
+
+Example-BREVE-FBR-Multitask.bat
+Example-BREVE-FoF-Control.bat
+Example-BREVE-PP-MMR.bat
+
+The current implementation of these domains produces some different results from those
+in the original BREVE Monsters domain. If you manage to produce any interesting results
+with this code, or fix any of the issues mentioned above, please let me know by emailing
+me at schrum2@cs.utexas.edu
+
+=========== MAKING YOUR OWN DOMAINS ===========
+
+All of the pre-existing domains should provide useful examples of how to integrate a new
+domain either of your own design, or made by someone else. Here are some general hints
+on how to do this.
+
+1) Make your domain implement the Task interface. Specifically, you may want to extend one
+   of the classes in the edu.utexas.cs.nn.tasks package that already implements the Task
+   interface. LonerTask is appropriate for any task where only a single genotype is evaluated
+   at a time. However, if the domain has noisy evaluations, then NoisyLonerTask is more
+   appropriate.
+2) You may need to set up additional parameters related to your domain in 
+   edu.utexas.cs.nn.parameters.Parameters.java.
+3) You will need to edit edu.utexas.cs.nn.mmneat.MMNEAT.java so that when the game task
+   matches your new task, it prepares evolution to run your domain (for example, by 
+   instantiating classes or setting up parameters unique to your domain).
+
+If you integrate any interesting domains into MM-NEAT, I would love to hear about it
+by email at schrum2@cs.utexas.edu. Feel free to contact me for help with integrating
+your domains as well. 
+
+
