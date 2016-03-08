@@ -16,7 +16,7 @@ public class Organism<T> {
         this.genotype = genotype;
     }
 
-    // Getter
+    // Get
     public Genotype<T> getGenotype() {
         return genotype;
     }
