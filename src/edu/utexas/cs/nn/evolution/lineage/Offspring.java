@@ -14,6 +14,7 @@ import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.scores.Score;
 import edu.utexas.cs.nn.tasks.LonerTask;
+
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -25,14 +26,24 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Scanner;
+
 import wox.serial.Easy;
 
 /**
+ * This complicated, clunky file is used to browse the
+ * lineage of an evolved population. Networks possessed
+ * by individuals can be viewed, and the genotype can
+ * be evaluated on the spot. Fitness data is also displayed.
  *
  * @author Jacob Schrum
  */
 public class Offspring {
 
+	/**
+	 * Fills the screen with separate windows of information.
+	 * 
+	 * @author Jacob Schrum
+	 */
     public static class NetworkBrowser extends KeyAdapter {
 
         private int position;
@@ -139,6 +150,10 @@ public class Offspring {
             }
         }
 
+        /**
+         * Main window detects key presses and responds to them.
+         * All navigation options are handled here.
+         */
         @Override
         public void keyPressed(KeyEvent e) {
             int key = e.getKeyCode();
@@ -166,10 +181,12 @@ public class Offspring {
                 System.out.println("A: Show most recent common ancestor of current generation");
                 System.out.println("T: Goto top performer of current objective in current generation");
                 System.out.println("B: Show scores of ancestry backwards through generations");
+                System.out.println("V: Toggle viewing of preference neuron preferences during evaluation");
                 System.out.println(">: Advance through biggest fitness jump between gens");
                 System.out.println("<: Reverse through biggest fitness jump between gens");
             }
 
+            // Show scores of ancestry backwards through generations
             if (key == KeyEvent.VK_B) {
                 Offspring o = lineage.get(position);
                 if (o == null) {
@@ -179,30 +196,39 @@ public class Offspring {
                 }
             }
 
+            // Run evaluation
             if (key == KeyEvent.VK_E) {
                 final Offspring o = lineage.get(position);
                 if (o != null && o.xmlNetwork != null) {
+                	// Launch a new thread in which to evaluate the genotype
                     new Thread() {
                         @Override
                         public void run() {
+                        	// Evaluation currently only supports TWEANNs and MLPs
                             if (MMNEAT.genotype instanceof TWEANNGenotype) {
                                 if (viewModePreference && TWEANN.preferenceNeuronPanel == null && TWEANN.preferenceNeuron()) {
                                     TWEANN.preferenceNeuronPanel = new DrawingPanel(Plot.BROWSE_DIM, Plot.BROWSE_DIM, "Preference Neuron Activation");
                                     TWEANN.preferenceNeuronPanel.setLocation(Plot.BROWSE_DIM + Plot.EDGE, Plot.BROWSE_DIM + Plot.TOP);
                                 }
                                 o.drawTWEANN(panel, showInnovationNumbers); // Designates this as the active drawing panel
-                                Score<TWEANN> s = ((LonerTask<TWEANN>) MMNEAT.task).evaluate((TWEANNGenotype) g);
+                                // Evaluate mechanism is limited to Loner Tasks
+                                @SuppressWarnings("unchecked")
+								Score<TWEANN> s = ((LonerTask<TWEANN>) MMNEAT.task).evaluate((TWEANNGenotype) g);
                                 int[] modeUsage = ((TWEANNGenotype) s.individual).modeUsage;
                                 o.modeUsage = modeUsage;
                                 System.out.println("Score: " + s);
                                 System.out.println("Mode Usage: " + Arrays.toString(modeUsage));
                             } else if (MMNEAT.genotype instanceof MLPGenotype) {
                                 //o.drawTWEANN(panel, showInnovationNumbers); // Designates this as the active drawing panel
-                                Score<MLP> s = ((LonerTask<MLP>) MMNEAT.task).evaluate((MLPGenotype) g);
+                                @SuppressWarnings("unchecked")
+                                // Evaluate mechanism is limited to Loner Tasks
+								Score<MLP> s = ((LonerTask<MLP>) MMNEAT.task).evaluate((MLPGenotype) g);
                                 //int[] modeUsage = ((TWEANNGenotype) s.individual).modeUsage;
                                 //o.modeUsage = modeUsage;
                                 System.out.println("Score: " + s);
                                 //System.out.println("Mode Usage: " + Arrays.toString(modeUsage));
+                            } else {
+                            	System.out.println("Evaluation only available for TWEANNs and MLPs");
                             }
                         }
                     }.start();
@@ -211,6 +237,7 @@ public class Offspring {
                 }
             }
 
+            // Show most recent common ancestor of current generation
             if (key == KeyEvent.VK_A) {
                 Offspring a = mostRecentCommonAncestor(viewingGen);
                 if (a == null) {
@@ -220,7 +247,10 @@ public class Offspring {
                     System.out.println("Ancestor of gen " + viewingGen + " is " + position + " in gen " + a.generation);
                     redraw = true;
                 }
-            } else if (key == KeyEvent.VK_T) {
+            } 
+
+            // Goto top performer of current objective in current generation
+            if (key == KeyEvent.VK_T) {
                 Offspring b = bestOfGeneration(viewingGen, objectiveOfInterest);
                 if (b == null) {
                     System.out.println("Could not calculate best in objective " + objectiveOfInterest + " for gen " + viewingGen);
@@ -231,6 +261,7 @@ public class Offspring {
                 }
             }
 
+            // Save picture of network
             if (key == KeyEvent.VK_S) {
                 Offspring o = lineage.get(position);
                 if (o != null && o.xmlNetwork != null) {
@@ -242,44 +273,57 @@ public class Offspring {
                 }
             }
 
+            // Show/hide innovation numbers
             if (key == KeyEvent.VK_I) {
                 showInnovationNumbers = !showInnovationNumbers;
                 System.out.println((showInnovationNumbers ? "Show" : "Hide") + " innovation numbers");
                 redraw = true;
-            } else if (key == KeyEvent.VK_N) {
+            } 
+
+            // Show/hide numerical scores on score plot
+            if (key == KeyEvent.VK_N) {
                 showScores = !showScores;
                 System.out.println((showScores ? "Show" : "Hide") + " scores numbers");
                 redraw = true;
-            } else if (key == KeyEvent.VK_D) {
+            } 
+
+            // Show/hide id numbers on score plot
+            if (key == KeyEvent.VK_D) {
                 showIds = !showIds;
                 System.out.println((showIds ? "Show" : "Hide") + " id numbers");
                 redraw = true;
             }
 
+            // Go to next generation
             if (key == KeyEvent.VK_UP) {
-                // Go to next generation
                 changeGeneration(true);
                 redraw = true;
-            } else if (key == KeyEvent.VK_DOWN) {
-                // Go to previous generation
+            } 
+
+            // Go to previous generation
+            if (key == KeyEvent.VK_DOWN) {
                 changeGeneration(false);
                 redraw = true;
             }
 
+            // Next network in lineage
             if (key == KeyEvent.VK_RIGHT) {
-                // Next network in lineage
                 advancePosition();
                 redraw = true;
-            } else if (key == KeyEvent.VK_LEFT) {
-                // previous network in lineage
+            } 
+
+            // previous network in lineage
+            if (key == KeyEvent.VK_LEFT) {
                 decreasePosition();
                 redraw = true;
             }
 
+            // Toggle viewing of module preferences for preference neuron approaches
             if (key == KeyEvent.VK_V) {
                 viewModePreference = !viewModePreference;
             }
 
+            // Make jump point be the biggest fitness jump in ancestry of current position
             if (key == KeyEvent.VK_J) {
                 if (lineage.get(position) == null) {
                     System.out.println("Cannot calculate jump to null");
@@ -288,7 +332,10 @@ public class Offspring {
                     lastJumpPoint = findBiggestFitnessJump(objectiveOfInterest, position);
                     System.out.println(lastJumpPoint);
                 }
-            } else if (key == KeyEvent.VK_P) {
+            } 
+            
+            // Jump to parent for current jump point
+            if (key == KeyEvent.VK_P) {
                 if (lastJumpPoint == null) {
                     System.out.println("Calculate a valid jump point first");
                 } else {
@@ -297,7 +344,10 @@ public class Offspring {
                     System.out.println("Goto parent side of jump point");
                     redraw = true;
                 }
-            } else if (key == KeyEvent.VK_C) {
+            } 
+            
+            // Jump to child for current jump point
+            if (key == KeyEvent.VK_C) {
                 if (lastJumpPoint == null) {
                     System.out.println("Calculate a valid jump point first");
                 } else {
@@ -306,14 +356,17 @@ public class Offspring {
                     System.out.println("Goto child side of jump point");
                     redraw = true;
                 }
-            } else if (key == KeyEvent.VK_L) {
+            } 
+
+            // Go to the previous/last network
+            if (key == KeyEvent.VK_L) {
                 changePosition(previousPosition);
                 System.out.println("Goto previous network");
                 redraw = true;
             }
 
+            // Goto parent 1 (mother)
             if (key == KeyEvent.VK_M) {
-                // Goto parent 1 (mother)
                 Offspring o = lineage.get(position);
                 if (o == null) {
                     System.out.println("null has no parents");
@@ -322,8 +375,10 @@ public class Offspring {
                     changePosition((int) o.parentId1);
                     redraw = true;
                 }
-            } else if (key == KeyEvent.VK_F) {
-                // Goto parent 2 (father)
+            } 
+
+            // Goto parent 2 (father)
+            if (key == KeyEvent.VK_F) {
                 Offspring o = lineage.get(position);
                 if (o == null) {
                     System.out.println("null has no parents");
@@ -334,11 +389,15 @@ public class Offspring {
                 }
             }
 
-            if (key == KeyEvent.VK_PERIOD) {
+            // Proceed to next fitness jump
+            if (key == KeyEvent.VK_PERIOD) { // The > key
                 System.out.println("Proceed to next fitness jump");
                 changeBigJump(true);
                 redraw = true;
-            } else if (key == KeyEvent.VK_COMMA) {
+            } 
+
+            // Proceed to previous fitness jump
+            if (key == KeyEvent.VK_COMMA) { // The < key
                 System.out.println("Proceed to previous fitness jump");
                 changeBigJump(false);
                 redraw = true;
@@ -670,18 +729,21 @@ public class Offspring {
                     System.out.println("Format error");
                     System.exit(1);
                 }
+                pattern.close();
             }
         }
+        s.close();
         return generation;
     }
 
     public static void addMutationInformation(String filename) throws FileNotFoundException {
         Scanner s = new Scanner(new File(filename));
-        int generation = 0;
+        @SuppressWarnings("unused")
+		int generation = 0;
         while (s.hasNextLine()) {
             String next = s.nextLine();
             if (next.startsWith("--")) {
-                generation++;
+                generation++; // What is this used for?
             } else {
                 Scanner pattern = new Scanner(next);
                 long offspringId = pattern.nextLong();
@@ -692,8 +754,10 @@ public class Offspring {
                     addMutation(offspringId, mutation);
                 }
                 //System.out.println();
+                pattern.close();
             }
         }
+        s.close();
     }
 
     private static void addGoals(File tugLog, int numGenerations) throws FileNotFoundException {
@@ -711,7 +775,9 @@ public class Offspring {
                 line.nextDouble(); // Drop rwa
                 tugGoals[i][gen] = line.nextDouble();
             }
+            line.close();
         }
+        file.close();
     }
 
     public static void addAllScores(String filePrefix, String infix, int numGenerations, boolean associateNetworks, String networkPrefix) throws FileNotFoundException {
@@ -735,6 +801,7 @@ public class Offspring {
                     scores.add(x);
                     scoreIndex++;
                 }
+                line.close();
 
                 if (bestScores == null) {
                     bestScores = new double[maxes.size()][numGenerations];
@@ -756,6 +823,7 @@ public class Offspring {
                     addNetwork(offspringId, networkPrefix, i, withinGen);
                 }
             }
+            s.close();
         }
     }
 
@@ -1046,7 +1114,8 @@ public class Offspring {
         return g;
     }
 
-    public static Genotype<? extends Network> getGenotype(String xml) {
+    @SuppressWarnings("unchecked")
+	public static Genotype<? extends Network> getGenotype(String xml) {
         return (Genotype<? extends Network>) Easy.load(xml);
     }
 

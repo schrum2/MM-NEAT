@@ -15,6 +15,7 @@ import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.random.RandomNumbers;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -149,7 +150,8 @@ public class TWEANNCrossover extends Crossover<TWEANN> {
      * @return ArrayList containing both lists of offspring Genes (with no
      * nulls)
      */
-    public <G extends Gene> ArrayList<ArrayList<G>> cross(ArrayList<G> left, ArrayList<G> right) {
+    @SuppressWarnings("unchecked")
+	public <G extends Gene> ArrayList<ArrayList<G>> cross(ArrayList<G> left, ArrayList<G> right) {
         assert (left.size() == right.size()) : "Can't cross lists of different size!\n"
                 + left.size() + ":" + left + "\n"
                 + right.size() + ":" + right;

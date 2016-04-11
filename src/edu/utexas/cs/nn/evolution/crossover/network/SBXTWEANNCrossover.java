@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.utexas.cs.nn.evolution.crossover.network;
 
 import edu.utexas.cs.nn.evolution.crossover.real.SBX;
@@ -9,9 +5,19 @@ import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype.Gene;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype.LinkGene;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.util.datastructures.Pair;
+
 import java.util.ArrayList;
 
 /**
+ * Performs standard TWEANN crossover, but uses a special
+ * crossover mechanism to cross the weights of links that
+ * align during crossover.
+ * 
+ * Specifically, the real-valued weight links that align
+ * are crossed using SBX, which is Simulated Binary Crossover,
+ * a mechanism for crossing real numbers that supposedly
+ * preserves some of the benefits from standard binary crossover
+ * of bit strings that represent integer values.
  *
  * @author Jacob Schrum
  */
@@ -34,7 +40,8 @@ public class SBXTWEANNCrossover extends TWEANNCrossover {
     /*
      * If crossing links, uses SBX to determine new weight values
      */
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     public <G extends Gene> void crossIndex(G leftGene, G rightGene, ArrayList<G> crossedLeft, ArrayList<G> crossedRight) {
         if (leftGene instanceof LinkGene) {
             LinkGene left = (LinkGene) leftGene;

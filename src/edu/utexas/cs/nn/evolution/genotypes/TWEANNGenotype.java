@@ -15,18 +15,25 @@ import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
 import edu.utexas.cs.nn.util.random.RandomGenerator;
 import edu.utexas.cs.nn.util.random.RandomNumbers;
 import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
+
 import java.util.*;
 
 /**
+ * Genotype for a Topology and Weight Evolving Neural Network.
+ * Standard genotype used by NEAT.
  *
  * @author Jacob Schrum
  */
 public class TWEANNGenotype implements Genotype<TWEANN> {
 
+	/**
+	 * Common features of both node and link genes
+	 * @author Jacob Schrum
+	 */
     public abstract class Gene {
 
-        public long innovation;
-        public boolean frozen;
+        public long innovation; // unique number for each gene
+        public boolean frozen; // frozen genes cannot be changed by mutation
 
         public Gene(long innovation, boolean frozen) {
             this.innovation = innovation;
@@ -52,6 +59,10 @@ public class TWEANNGenotype implements Genotype<TWEANN> {
         }
     }
 
+    /**
+     * Single neuron in a neural network
+     * @author Jacob Schrum
+     */
     public class NodeGene extends Gene {
 
         public int ntype;
@@ -106,6 +117,10 @@ public class TWEANNGenotype implements Genotype<TWEANN> {
         }
     }
 
+    /**
+     * Single link between neurons in a neural network
+     * @author Jacob Schrum
+     */
     public class LinkGene extends Gene {
 
         public long sourceInnovation;
@@ -127,7 +142,7 @@ public class TWEANNGenotype implements Genotype<TWEANN> {
             this(sourceInnovation, targetInnovation, weight, innovation, recurrent, false);
         }
 
-        /*
+        /**
          * New link gene, which is active by default
          *
          * @param sourceInnovation = innovation of node of origin @param
@@ -140,7 +155,7 @@ public class TWEANNGenotype implements Genotype<TWEANN> {
             this(sourceInnovation, targetInnovation, weight, innovation, true, recurrent, frozen);
         }
 
-        /*
+        /**
          * New link gene in which it needs to be specified whether or not it is
          * active
          *
@@ -952,7 +967,8 @@ public class TWEANNGenotype implements Genotype<TWEANN> {
         return indexOfGeneInnovation(innovation, nodes);
     }
 
-    private int indexOfLinkInnovation(long innovation) {
+    @SuppressWarnings("unused")
+	private int indexOfLinkInnovation(long innovation) {
         return indexOfGeneInnovation(innovation, links);
     }
 
@@ -966,7 +982,8 @@ public class TWEANNGenotype implements Genotype<TWEANN> {
         return -1;
     }
 
-    public Genotype<TWEANN> crossover(Genotype<TWEANN> g) {
+    @SuppressWarnings("unchecked")
+	public Genotype<TWEANN> crossover(Genotype<TWEANN> g) {
         return MMNEAT.crossoverOperator.crossover(this, g);
     }
     

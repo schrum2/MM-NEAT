@@ -6,17 +6,21 @@ import edu.utexas.cs.nn.util.random.RandomNumbers;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
+
 import java.util.ArrayList;
 
 /**
- *
+ * Genotype that is a fixed-length sequence of real numbers,
+ * all of which are confined to specified ranges unique to
+ * each position in the genotype.
+ * 
  * @author Jacob Schrum
  */
 public class BoundedRealValuedGenotype extends RealValuedGenotype {
 
-    double[] lower;
-    double[] upper;
-    boolean polynomialMutation;
+    double[] lower; // Lowest allowable value for each gene position
+    double[] upper; // Highest allowable value for each gene position
+    boolean polynomialMutation; // Whether or not polynomial mutation should be used
 
     public BoundedRealValuedGenotype() {
         // May need to change this if other tasks start using the real-coded genotype
@@ -29,6 +33,7 @@ public class BoundedRealValuedGenotype extends RealValuedGenotype {
 
     private BoundedRealValuedGenotype(double[] genes, double[] lower, double[] upper) {
         super(genes);
+        // Specialized mutation operator slightly more complicated than simple perturbation
         polynomialMutation = Parameters.parameters.booleanParameter("polynomialMutation");
 
         this.lower = lower;
@@ -40,7 +45,8 @@ public class BoundedRealValuedGenotype extends RealValuedGenotype {
         this(ArrayUtil.doubleArrayFromList(genes), lower, upper);
     }
 
-    private BoundedRealValuedGenotype(RealValuedGenotype genotype, double[] lower, double[] upper) {
+    @SuppressWarnings("unused")
+	private BoundedRealValuedGenotype(RealValuedGenotype genotype, double[] lower, double[] upper) {
         this(genotype.genes, lower, upper);
     }
 
@@ -63,15 +69,18 @@ public class BoundedRealValuedGenotype extends RealValuedGenotype {
 
     @Override
     public void mutate() {
-        if (polynomialMutation) {
+        if (polynomialMutation) { // Specialized mutation operator slightly more complicated than simple perturbation
             new PolynomialMutation().mutate(this);
-        } else {
+        } else { // Default
             new PerturbMutation(getRange()).mutate(this);
         }
 
         bound();
     }
 
+    /**
+     * Push gene values that are out of bounds back to the particular bound they crossed.
+     */
     public final void bound() {
         for (int i = 0; i < genes.size(); i++) {
             double x = genes.get(i);

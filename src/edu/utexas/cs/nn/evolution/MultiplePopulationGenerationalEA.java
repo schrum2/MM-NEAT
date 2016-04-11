@@ -1,10 +1,7 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.utexas.cs.nn.evolution;
 
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
+
 import java.util.ArrayList;
 
 /**
@@ -15,13 +12,16 @@ import java.util.ArrayList;
  * like ArrayList with the specific type of Genotype undefined, so that each one
  * can be different.
  *
- * @author He_Deceives
+ * @author Jacob Schrum
  */
 public interface MultiplePopulationGenerationalEA extends GenerationalEA {
 
-    public ArrayList<ArrayList<Genotype>> initialPopulations(ArrayList<Genotype> examples);
+    @SuppressWarnings("rawtypes")
+	public ArrayList<ArrayList<Genotype>> initialPopulations(ArrayList<Genotype> examples);
 
-    public ArrayList<ArrayList<Genotype>> getNextGeneration(ArrayList<ArrayList<Genotype>> populations);
+    @SuppressWarnings("rawtypes")
+	public ArrayList<ArrayList<Genotype>> getNextGeneration(ArrayList<ArrayList<Genotype>> populations);
 
-    public void close(ArrayList<ArrayList<Genotype>> populations);
+    @SuppressWarnings("rawtypes")
+	public void close(ArrayList<ArrayList<Genotype>> populations);
 }

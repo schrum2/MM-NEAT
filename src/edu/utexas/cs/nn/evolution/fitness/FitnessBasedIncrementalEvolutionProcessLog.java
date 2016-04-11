@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.utexas.cs.nn.evolution.fitness;
 
 import edu.utexas.cs.nn.log.StatisticsLog;
@@ -14,7 +10,7 @@ import java.util.Scanner;
 
 /**
  *
- * @author Jacob
+ * @author Jacob Schrum
  */
 public class FitnessBasedIncrementalEvolutionProcessLog extends StatisticsLog<Double> {
 
@@ -28,6 +24,7 @@ public class FitnessBasedIncrementalEvolutionProcessLog extends StatisticsLog<Do
             double goal = s.nextDouble();
             double rwa = s.nextDouble();
             process.loadState(performance, goal, rwa);
+            s.close();
         }
         // Cannot use the default plot file setup because there are extra things to plot
         File plotFile = new File(directory + prefix + "_log.plot");

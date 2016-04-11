@@ -2,9 +2,14 @@ package edu.utexas.cs.nn.evolution.genotypes;
 
 import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
 import edu.utexas.cs.nn.evolution.crossover.ArrayCrossover;
+
 import java.util.ArrayList;
 
 /**
+ * Genotype can represent a string of values of an arbitrary type.
+ * The name indicates that the types should be numeric, though the
+ * code does not actually impose any kind of restriction that would
+ * force the individual genes to be numbers.
  *
  * @author Jacob Schrum
  */
@@ -13,7 +18,8 @@ public abstract class NumericArrayGenotype<T> implements Genotype<ArrayList<T>> 
     ArrayList<T> genes;
     private long id = EvolutionaryHistory.nextGenotypeId();
 
-    public NumericArrayGenotype(ArrayList<T> genes) {
+    @SuppressWarnings("unchecked")
+	public NumericArrayGenotype(ArrayList<T> genes) {
         this.genes = (ArrayList<T>) genes.clone();
     }
 

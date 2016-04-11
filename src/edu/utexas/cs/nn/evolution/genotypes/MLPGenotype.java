@@ -4,17 +4,20 @@ import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.networks.MLP;
 import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.util.random.RandomNumbers;
 
 /**
+ * Represents a Multi-Layer Perceptron as two
+ * 2D arrays of link weights. MLP has standard
+ * layout of a single hidden layer between input
+ * and output layers.
  *
  * @author Jacob Schrum
  */
 public class MLPGenotype implements Genotype<MLP> {
 
     private long id = EvolutionaryHistory.nextGenotypeId();
-    public double[][] firstConnectionLayer;
-    public double[][] secondConnectionLayer;
+    public double[][] firstConnectionLayer; // weight from each input to each hidden node
+    public double[][] secondConnectionLayer; // weight from each hidden node to each output node
 
     public MLPGenotype() {
         this(MMNEAT.networkInputs, Parameters.parameters.integerParameter("hiddenMLPNeurons"), MMNEAT.networkOutputs);
@@ -54,7 +57,8 @@ public class MLPGenotype implements Genotype<MLP> {
         }
     }
 
-    public Genotype<MLP> crossover(Genotype<MLP> g) {
+    @SuppressWarnings("unchecked")
+	public Genotype<MLP> crossover(Genotype<MLP> g) {
         return MMNEAT.crossoverOperator.crossover(this, g);
     }
 

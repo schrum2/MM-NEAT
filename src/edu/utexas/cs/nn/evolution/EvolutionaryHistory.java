@@ -12,11 +12,13 @@ import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.util.file.FileUtilities;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+
 import wox.serial.Easy;
 
 /**
@@ -44,7 +46,8 @@ public class EvolutionaryHistory {
      * @param xml File path of xml genotype file
      * @return the decoded genotype instance
      */
-    public static <T extends Network> Genotype<T> getSubnetwork(String xml) {
+    @SuppressWarnings("unchecked")
+	public static <T extends Network> Genotype<T> getSubnetwork(String xml) {
         if (xml.isEmpty()) {
             // Return a dummy genotype to be ignored later
             return null;
@@ -64,18 +67,32 @@ public class EvolutionaryHistory {
 //        maxModesOfAnyNetwork = Math.max(maxModesOfAnyNetwork, modes);
 //    }
 
+    /**
+     * Sets up tracker for previously used innovation numbers.
+     */
     public static void initInnovationHistory() {
         setInnovation(Parameters.parameters.longParameter("lastInnovation"));
     }
 
+    /**
+     * Sets up tracker for previously used genotype IDs.
+     */
     public static void initGenotypeIds() {
         setHighestGenotypeId(Parameters.parameters.longParameter("lastGenotypeId") - 1);
     }
 
+    /**
+     * Assign new innovation number tracker
+     * @param innovation Should be the larger than all previously used innovation numbers
+     */
     public static void setInnovation(long innovation) {
         largestUnusedInnovationNumber = innovation;
     }
 
+    /**
+     * Assign new genotype ID tracker
+     * @param id Should be the larger than all previously used genotype IDs
+     */
     public static void setHighestGenotypeId(long id) {
         largestUnusedGenotypeId = id;
     }
@@ -102,6 +119,14 @@ public class EvolutionaryHistory {
     public static MONELog mutationLog = null;
     public static MONELog lineageLog = null;
 
+    /**
+     * Checks for a pre-existing file that is a genotype archetype for all genotypes
+     * in the population. This file assures that crossover aligns genotypes correctly
+     * when the genotypes being crossed have nodes that are not present in the other parent.
+     * 
+     * @param populationIndex Unused: Supposed to allow for multiple coevolved populations.
+     * @return
+     */
     public static boolean archetypeFileExists(int populationIndex) {
         String file = FileUtilities.getSaveDirectory() + "/" + "archetype";
         return (new File(file)).exists();
@@ -118,7 +143,8 @@ public class EvolutionaryHistory {
         initArchetype(populationIndex, file);
     }
 
-    public static void initArchetype(int populationIndex, String loadedArchetype) {
+    @SuppressWarnings("unchecked")
+	public static void initArchetype(int populationIndex, String loadedArchetype) {
         int size = MMNEAT.genotypeExamples == null ? 1 : MMNEAT.genotypeExamples.size();
         if (archetypes == null) {
             archetypes = new ArrayList[size];

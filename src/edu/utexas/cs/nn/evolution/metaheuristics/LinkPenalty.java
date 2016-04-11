@@ -6,6 +6,7 @@ import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.scores.Score;
 
 /**
+ * Having excessive links per network module is penalized.
  *
  * @author Jacob Schrum
  */

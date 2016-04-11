@@ -2,7 +2,6 @@ package edu.utexas.cs.nn.breve2D;
 
 import edu.utexas.cs.nn.breve2D.agent.*;
 import edu.utexas.cs.nn.breve2D.dynamics.Breve2DDynamics;
-import edu.utexas.cs.nn.breve2D.dynamics.FrontBackRamming;
 import edu.utexas.cs.nn.breve2D.dynamics.InterleavedFightOrFlight;
 import edu.utexas.cs.nn.parameters.Parameters;
 
@@ -59,7 +58,7 @@ public class Breve2DExec {
      * nature of the game means that performance can vary from game to game.
      * Running many games and looking at the average score (and standard
      * deviation/error) helps to get a better idea of how well the controller is
-     * likely to do in the competition.
+     * likely to do.
      */
     public Breve2DGame runExperiment(Breve2DDynamics dynamics, AgentController playerController, AgentController[] monsterControllers) {
 
@@ -99,7 +98,7 @@ public class Breve2DExec {
     }
 
     /*
-     * Run game with time limit. This is how it will be done in the competition.
+     * Run game with time limit.
      * Can be played with and without visual display of game states.
      */
     public Breve2DGame runGameTimed(Breve2DDynamics dynamics, AgentController playerController, AgentController[] monsterControllers, boolean visual) {
@@ -176,11 +175,11 @@ public class Breve2DExec {
 
         return game;
     }
+    
     /*
      * Wraps the controller in a thread for the timed execution. This class then
      * updates the directions for Exec to parse to the game.
      */
-
     private final class Agent extends Thread {
 
         private AgentController agent;
