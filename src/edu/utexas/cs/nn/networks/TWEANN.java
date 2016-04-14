@@ -12,6 +12,7 @@ import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.util.CombinatoricUtilities;
 import edu.utexas.cs.nn.util.random.RandomNumbers;
 import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
+
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
@@ -21,11 +22,23 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
+ * My version of a Topology and Weight Evolving Neural Network.
+ * Nodes are stored in a linear order that must obey the following constraints:
+ * 1) All input nodes are at the far left
+ * 2) All output nodes are at the far right
+ * 3) Feedforward links only go from left to right
+ * 4) Links from right to left are always recurrent
+ * 
+ * This is a bit more restrictive than the standard NEAT networks.
+ * The benefit of it is that signals can propogate from input to output
+ * in a single activation, unlike standard NEAT networks that only have
+ * activations travel one link at a time.
  *
  * @author Jacob Schrum
  */
 public class TWEANN implements Network {
 
+	// Variables used for watching the behavior of an active network in a graphical display
     public static int NETWORK_VIEW_DIM = 500;
     public static final int NODE_DIM = 6;
     public static final int DISPLAY_BORDER = 25;
@@ -35,6 +48,7 @@ public class TWEANN implements Network {
     public static DrawingPanel preferenceNeuronPanel = null;
     public static ArrayList<Double>[] preferenceActivationHistory = null;
 
+    // subclass for a synaptic link between nodes
     public class Link {
 
         public final Node target;
@@ -72,23 +86,29 @@ public class TWEANN implements Network {
         }
     }
 
+    // subclass for a single neuron
     public class Node {
 
+    	// TODO: Generalize handling of activation functions to make CPPNs possible 
         public static final int FTYPE_SIGMOID = 0;
         public static final int FTYPE_TANH = 1;
         public static final int FTYPE_ID = 2;
         public static final int FTYPE_FULLAPPROX = 3;
         public static final int FTYPE_APPROX = 4;
+        // Three types of neurons
         public static final int NTYPE_INPUT = 0;
         public static final int NTYPE_HIDDEN = 1;
         public static final int NTYPE_OUTPUT = 2;
+        // Networks never change after being created (only the genotypes evolve)
         public final int ntype;
         public final int ftype;
         public final long innovation;
         public final boolean frozen;
+        // Outgoing links
         public List<Link> outputs;
         protected double sum;
         protected double activation;
+        // Used when displaying the network graphically
         public int displayX = 0;
         public int displayY = 0;
 
@@ -115,6 +135,11 @@ public class TWEANN implements Network {
             return result;
         }
 
+        /**
+         * For textual display of network
+         * @param ntype One of the specified neuron types
+         * @return String label for type of neuron
+         */
         private String ntypeName(int ntype) {
             switch (ntype) {
                 case NTYPE_INPUT:
@@ -124,10 +149,14 @@ public class TWEANN implements Network {
                 case NTYPE_OUTPUT:
                     return "Output";
             }
+            // Should never reach
+            System.out.println(ntype + " is not a valid type of neuron");
+            System.exit(1);
             return "ERROR";
         }
 
         private String ftypeName(int ftype) {
+        	// TODO: Add Gaussian, sin, and absolute value
             switch (ftype) {
                 case FTYPE_SIGMOID:
                     return "Sigmoid";
@@ -140,6 +169,9 @@ public class TWEANN implements Network {
                 case FTYPE_APPROX:
                     return "SigmoidApprox";
             }
+            // Should never reach
+            System.out.println(ftype + " is not a valid type of activation function");
+            System.exit(1);
             return "ERROR";
         }
 
@@ -149,7 +181,6 @@ public class TWEANN implements Network {
          * @param ftype = type of activation function
          * @param ntype = type of node: input, hidden, output
          * @param innovation = unique innovation number for node
-         * @param ntype
          */
         public Node(int ftype, int ntype, long innovation) {
             this(ftype, ntype, innovation, false);
@@ -195,6 +226,7 @@ public class TWEANN implements Network {
         }
 
         private void activate() {
+        	// TODO: Add Gaussian, sin, and absolute value
             switch (ftype) {
                 case FTYPE_SIGMOID:
                     activation = ActivationFunctions.sigmoid(sum);
@@ -224,12 +256,14 @@ public class TWEANN implements Network {
             }
         }
 
-        /*
+        /**
          * Creates connection from this Node to target Node via a new Link.
-         * @param target Node to link to @param weight synaptic weight of link
-         * between nodes @param innovation Innovation number of new Link @param
-         * recurrent whether or not link is recurrent @param frozen whether or
-         * not link can be changed
+         * 
+         * @param target Node to link to 
+         * @param weight synaptic weight of link between nodes 
+         * @param innovation Innovation number of new Link 
+         * @param recurrent whether or not link is recurrent 
+         * @param frozen whether or not link can be changed
          */
         protected void connect(Node target, double weight, long innovation, boolean recurrent, boolean frozen) {
             Link l = new Link(target, weight, innovation, recurrent, frozen);
@@ -252,6 +286,7 @@ public class TWEANN implements Network {
             return false;
         }
     }
+    
     private long id = -1;
     private int numIn;
     private int numOut;
@@ -272,6 +307,10 @@ public class TWEANN implements Network {
     public final int archetypeIndex;
     public final int outputStart;
 
+    /**
+     * Whether or not networks being used can/do have preference neurons
+     * @return true if preference neurons should be included
+     */
     public static boolean preferenceNeuron() {
         if (CommonConstants.ensembleModeMutation) {
             return false;
@@ -398,9 +437,11 @@ public class TWEANN implements Network {
         allViable();
     }
 
-    /*
+    /**
      * Create TWEANN based on TWEANNGenotype, which can encode an arbitrary
-     * network
+     * network.
+     * 
+     * @param g The genotype
      */
     public TWEANN(TWEANNGenotype g) {
         this.archetypeIndex = g.archetypeIndex;
@@ -486,6 +527,8 @@ public class TWEANN implements Network {
         allViable();
     }
 
+    // Getters
+    
     public int numInputs() {
         return numIn;
     }
@@ -659,7 +702,8 @@ public class TWEANN implements Network {
         return outputs;
     }
 
-    public void flush() {
+    @SuppressWarnings("unchecked")
+	public void flush() {
         //System.out.println("Flush: " + id);
         for (Node n : nodes) {
             n.flush();

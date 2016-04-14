@@ -79,6 +79,7 @@ public class MONELog {
                                     System.out.println("Line: " + line);
                                     System.exit(1);
                                 }
+                                temp.close();
                             }
                             oldData.add(line);
                         } catch (NoSuchElementException nse) {
@@ -90,8 +91,9 @@ public class MONELog {
                             System.exit(1);
                         }
                     }
+                    
                 }
-
+                oldFile.close();
                 if (oldData.size() > 0) {
                     lastLoadedEntry = oldData.get(oldData.size() - 1);
                 }

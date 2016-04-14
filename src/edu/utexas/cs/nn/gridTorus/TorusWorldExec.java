@@ -62,7 +62,7 @@ public class TorusWorldExec {
 
     boolean hold = false;
     /*
-     * Run game with time limit. This is how it will be done in the competition.
+     * Run game with time limit.
      * Can be played with and without visual display of game states.
      */
     public TorusPredPreyGame runGameTimed(TorusPredPreyController[] predControllers, TorusPredPreyController[] preyControllers, boolean visual) {
@@ -137,7 +137,6 @@ public class TorusWorldExec {
      * Wraps the controller in a thread for the timed execution. This class then
      * updates the directions for Exec to parse to the game.
      */
-
     private final class Agent extends Thread {
 
         private TorusAgent agent;

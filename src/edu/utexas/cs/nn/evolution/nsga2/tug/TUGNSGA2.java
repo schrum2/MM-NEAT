@@ -333,12 +333,18 @@ public class TUGNSGA2<T> extends NSGA2<T> {
      * Provides a chance for changes to be made to the population based on the
      * state of TUG.
      *
-     * @param parents
-     * @return
+     * @param parents Parent population of genotypes
+     * @return child population of genotypes
      */
     @Override
     public ArrayList<Genotype<T>> getNextGeneration(ArrayList<Genotype<T>> parents) {
         ArrayList<Genotype<T>> nextGen = super.getNextGeneration(parents);
+        // This feature isn't used much. The purpose was to see if explicitly
+        // associating a module with each objective would help. It didn't really,
+        // but if it had helped, then this code would have frozen modules for
+        // deactivated objectives to make sure performance was maintained even
+        // though the objective was switched off.
+        //
         // Freeze modes whose objectives are deactivated. 
         if (CommonConstants.tugObjectiveModeLinkage) {
             assert nextGen.get(0) instanceof TWEANNGenotype : "TUG Objective/Mode linkage only makes sense with TWEANNs";

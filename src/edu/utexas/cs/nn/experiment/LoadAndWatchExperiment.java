@@ -6,10 +6,15 @@ import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.SinglePopulationTask;
 import edu.utexas.cs.nn.util.PopulationUtil;
+
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 /**
+ * Load members of the last saved generation from an evolution
+ * experiment and evaluate each member. Optionally, the population
+ * can be filtered down to the Pareto front before evaluation, which
+ * is the most sensible option.
  *
  * @author Jacob Schrum
  */
@@ -18,8 +23,13 @@ public final class LoadAndWatchExperiment<T> implements Experiment {
     protected ArrayList<Genotype<T>> population;
     protected SinglePopulationTask<T> task;
 
-    public void init() {
+    /**
+     * Load last saved population, and potentially filter it down to just the Pareto front.
+     */
+    @SuppressWarnings("unchecked")
+	public void init() {
         String lastSavedDir = Parameters.parameters.stringParameter("lastSavedDirectory");
+        // Currently does not work with co-evolution. Other experiments handle these cases
         this.task = (SinglePopulationTask<T>) MMNEAT.task;
         if (lastSavedDir == null || lastSavedDir.equals("")) {
             System.out.println("Nothing to load");
@@ -40,12 +50,15 @@ public final class LoadAndWatchExperiment<T> implements Experiment {
         }
     }
 
+    /**
+     * Evaluate all members still in population
+     */
     public void run() {
         System.out.println("Looking at results for " + task);
         task.evaluateAll(population);
     }
 
-    /*
+    /**
      * Never called
      */
     public boolean shouldStop() {

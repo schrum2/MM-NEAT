@@ -22,17 +22,25 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 /**
+ * Evolve a single population of genotypes one generation at a time.
  *
  * @author Jacob Schrum
  */
 public abstract class SinglePopulationGenerationalEAExperiment<T> implements Experiment {
 
+	// Current population
     protected ArrayList<Genotype<T>> population;
+    // Evolutionary Algorithm to use
     protected SinglePopulationGenerationalEA<T> ea;
+    // Where to save results
     public String saveDirectory;
+    // Whether to save log data
     protected boolean writeOutput;
+    // Whether each generation should be deleted once evolution has moved on to the next
     protected boolean deleteOld;
+    // Whether initial population was loaded from disk
     private boolean loaded = false;
+    // Whether file saving should occur in a parellel thread
     private boolean parallel;
 
     public SinglePopulationGenerationalEAExperiment() {
@@ -80,6 +88,14 @@ public abstract class SinglePopulationGenerationalEAExperiment<T> implements Exp
             }
         }
 
+        /**
+         * The purpose behind this setting is to initialize a new population using a
+         * previously evolved population. Pairs of networks in the original population
+         * are combined to make single networks with two modules each, one corresponding
+         * to the first network, the other to the second.
+         * 
+         * I don't completely remember what the point of this really was, or if it worked.
+         */
         if (Parameters.parameters.booleanParameter("initCrossCombine")) {
             Genotype<T> g = population.get(0);
             assert g instanceof TWEANNGenotype : "Cannot init Combining Crossover on genotype other than TWEANNGenotype";
@@ -123,8 +139,13 @@ public abstract class SinglePopulationGenerationalEAExperiment<T> implements Exp
             }
         }
 
+        /**
+         * Start with a previously evolved population of multitask networks and
+         * add preference neurons for each module so that the multitask networks become
+         * preference neuron networks, and can customize how they use their modules.
+         */
         if (Parameters.parameters.booleanParameter("initAddPreferenceNeurons")) {
-            assert population.get(0) instanceof TWEANNGenotype : "Cannot init MMD on genotype other than TWEANNGenotype";
+            assert population.get(0) instanceof TWEANNGenotype : "Cannot initAddPreferenceNeurons on genotype other than TWEANNGenotype";
             if (((TWEANNGenotype) population.get(0)).standardMultitask) {
                 System.out.println("Adding preference neurons to this population");
                 for (Genotype<T> t : population) {
@@ -175,7 +196,7 @@ public abstract class SinglePopulationGenerationalEAExperiment<T> implements Exp
             int gen = ea.currentGeneration();
             if (population.get(0) instanceof TWEANNGenotype) {
                 ArrayList<TWEANNGenotype> tweannPopulation = new ArrayList<TWEANNGenotype>(population.size());
-                for (Genotype g : population) {
+                for (Genotype<T> g : population) {
                     tweannPopulation.add((TWEANNGenotype) g);
                 }
                 EvolutionaryHistory.cleanArchetype(0, tweannPopulation, gen);
@@ -207,9 +228,9 @@ public abstract class SinglePopulationGenerationalEAExperiment<T> implements Exp
      *
      * @param <T> phenotype of genotype
      * @param prefix subdir in saveDirectory to save files (usually gen40 or
-     * something similar)
+     *               something similar)
      * @param saveDirectory directory where files are saved
-     * @param population vector of genotypes to save
+     * @param population list of genotypes to save
      * @param parallel whether or not the save is executed with parallel threads
      */
     public static <T> void save(String prefix, String saveDirectory, ArrayList<Genotype<T>> population, boolean parallel) {

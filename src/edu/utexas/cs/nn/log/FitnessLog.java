@@ -5,6 +5,7 @@ import edu.utexas.cs.nn.graphics.Plot;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.scores.Score;
+
 import java.awt.Color;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -13,11 +14,13 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 
 /**
- *
+ * Log specifically used for logging fitness information
+ * or other generational score information associated with
+ * individual genotypes.
  *
  * @author Jacob Schrum
  */
-public class FitnessLog<T> extends StatisticsLog< Score<T>> {
+public class FitnessLog<T> extends StatisticsLog<Score<T>> {
 
     private static int fitnessPanels = 0;
     DrawingPanel[] panels = null;
@@ -48,7 +51,7 @@ public class FitnessLog<T> extends StatisticsLog< Score<T>> {
             }
 
             for (int i = 0; i < scores.size(); i++) {
-                Score s = scores.get(i);
+                Score<T> s = scores.get(i);
                 // Actual fitness scores
                 gen.print(i + "\t");
                 gen.print(s.individual.getId() + "\t");
@@ -76,10 +79,16 @@ public class FitnessLog<T> extends StatisticsLog< Score<T>> {
         }
     }
 
+    /**
+     * Given the whole population, log several summary statistics.
+     * 
+     * @param scores Population of scores from this generation
+     * @param generation Particular generation being logged
+     */
     private void logStats(ArrayList<Score<T>> scores, int generation) {
         double[][] nextStage = new double[scores.size()][];
         for (int i = 0; i < scores.size(); i++) {
-            Score s = scores.get(i);
+            Score<T> s = scores.get(i);
             double[] combined = new double[s.scores.length + s.otherStats.length];
             System.arraycopy(s.scores, 0, combined, 0, s.scores.length);
             System.arraycopy(s.otherStats, 0, combined, s.scores.length, s.otherStats.length);

@@ -8,7 +8,7 @@ import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
 import java.util.ArrayList;
 
 /**
- *
+ * Log for details about an evolving population of TWEANNs
  *
  * @author Jacob Schrum
  */

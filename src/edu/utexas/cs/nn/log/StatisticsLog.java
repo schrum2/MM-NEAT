@@ -9,8 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
- * General logging class. Needs to be generalized more.
- *
+ * Logging class for summary statistics about a group of scores.
  *
  * @author Jacob Schrum
  */

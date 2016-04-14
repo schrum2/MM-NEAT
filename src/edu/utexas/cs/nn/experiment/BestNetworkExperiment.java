@@ -9,21 +9,31 @@ import edu.utexas.cs.nn.util.random.RandomNumbers;
 import wox.serial.Easy;
 
 /**
- * Load saved results from coevolution experiment and evaluate every possible
- * team combination to get their scores.
+ * This really only works for Ms. Pac-Man (rename it?).
+ * 
+ * The evolved Ms. Pac-Man network with the best game score
+ * from an evolutionary run is loaded and evaluated.
+ * This experiment is distinct in that it loads the highest
+ * scoring agent, even if evolution was based on other objectives,
+ * like pill and ghost score.
  *
  * @author Jacob Schrum
  */
 public class BestNetworkExperiment implements Experiment {
 
-    private Genotype net;
+	// Will probably always be a TWEANNGenotype, but it doesn't need to be
+    @SuppressWarnings("rawtypes")
+	private Genotype net;
 
-    public void init() {
+    @SuppressWarnings("rawtypes")
+	public void init() {
         String dir = FileUtilities.getSaveDirectory() + "/bestPacMan";
         net = (Genotype) Easy.load(dir + "/bestPacMan.xml");
     }
 
-    public void run() {
+    // Will always be running the Ms. Pac-Man experiment
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public void run() {
         RandomNumbers.reset();
         Score s = ((LonerTask) MMNEAT.task).evaluateOne(net);
         System.out.println(s);
