@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.utexas.cs.nn.evolution.nsga2.tug;
 
 import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
@@ -16,6 +12,10 @@ import java.util.ArrayList;
 import java.util.Random;
 
 /**
+ * I think this was a test class used to troubleshoot TUG.
+ * The idea was to run some rounds of selection with NSGA2
+ * both with and without TUG to track exactly what the 
+ * differences were in which individuals were selected.
  *
  * @author Jacob Schrum
  */

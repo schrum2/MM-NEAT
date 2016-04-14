@@ -24,7 +24,8 @@ public class LinkPenalty implements Metaheuristic {
         this.modeAvg = Parameters.parameters.booleanParameter("penalizeLinksPerMode");
     }
 
-    public void augmentScore(Score s) {
+    @SuppressWarnings("rawtypes")
+	public void augmentScore(Score s) {
         s.extraScore(getScore((TWEANNGenotype) s.individual));
     }
 

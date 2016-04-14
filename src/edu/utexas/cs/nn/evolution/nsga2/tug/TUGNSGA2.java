@@ -17,11 +17,18 @@ import edu.utexas.cs.nn.util.PopulationUtil;
 import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
 import edu.utexas.cs.nn.util.stats.Statistic;
 import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
- *
+ * Implementation of an idea from my dissertation: http://nn.cs.utexas.edu/?schrum:phd2014
+ * Although, the idea first appeared in GECCO 2010: http://nn.cs.utexas.edu/?schrum:gecco10
+ * Basically, NSGA2 is used, but objectives are switched on and off based on how well
+ * the population is doing in those objectives. The purpose is to temporarily
+ * turn off objectives the population is already doing well in so evolution can
+ * focus on objectives that the population is doing poorly in.
+ * 
  * @author Jacob Schrum
  */
 public class TUGNSGA2<T> extends NSGA2<T> {
@@ -120,7 +127,7 @@ public class TUGNSGA2<T> extends NSGA2<T> {
     }
 
     /**
-     * Reset just one RWA
+     * Reset just one Recency Weighted Average
      *
      * @param i index of objective
      */
@@ -140,8 +147,9 @@ public class TUGNSGA2<T> extends NSGA2<T> {
         initialClimb[i] = true;
     }
 
-    public NSGA2Score[] getTUGScores(ArrayList<Score<T>> scores) {
-        NSGA2Score[] result = new NSGA2Score[scores.size()];
+    public NSGA2Score<T>[] getTUGScores(ArrayList<Score<T>> scores) {
+        @SuppressWarnings("unchecked")
+		NSGA2Score<T>[] result = new NSGA2Score[scores.size()];
         //System.out.println("TUG Conversion:");
         if (generation > Parameters.parameters.integerParameter("endTUGGeneration")
                 || generation < Parameters.parameters.integerParameter("startTUGGeneration")) { // No more TUG
@@ -486,6 +494,7 @@ public class TUGNSGA2<T> extends NSGA2<T> {
     }
 
     // Some unit tests
+    // Should turn into proper JUnit Tests
     public static void main(String[] args) {
         Parameters.initializeParameterCollections(new String[]{"io:false", "tugKeepsParetoFront:false"});
         MMNEAT.loadClasses();

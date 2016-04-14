@@ -1,17 +1,16 @@
 package edu.utexas.cs.nn.evolution.mutation.tweann;
 
+import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
 import edu.utexas.cs.nn.evolution.crossover.network.TWEANNCrossover;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
 import edu.utexas.cs.nn.graphics.DrawingPanel;
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.util.random.RandomNumbers;
-import java.util.Arrays;
 
 /**
+ * Mutation that deletes a single link from a TWEANN
  *
  * @author Jacob Schrum
  */
@@ -25,6 +24,11 @@ public class DeleteLinkMutation extends TWEANNMutation {
         ((TWEANNGenotype) genotype).deleteLinkMutation();
     }
     
+    /**
+     * Runs a test procedure to verify correct functioning of the mutation.
+     * This should be made into a proper JUnit Test
+     * @param args
+     */
     public static void main(String[] args) {
         Parameters.initializeParameterCollections(new String[]{"io:false","netio:false","recurrency:false","mmdRate:0.1","deleteLinkRate:0.3"});
         //MONE.loadClasses();

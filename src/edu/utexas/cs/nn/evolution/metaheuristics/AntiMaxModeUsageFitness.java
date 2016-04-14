@@ -1,13 +1,11 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.utexas.cs.nn.evolution.metaheuristics;
 
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
 import edu.utexas.cs.nn.scores.Score;
 
 /**
+ * Punish overuse of a single module.
+ * Doesn't seem to work very well.
  *
  * @author Jacob Schrum
  */
@@ -16,7 +14,8 @@ public class AntiMaxModeUsageFitness implements Metaheuristic {
     public AntiMaxModeUsageFitness() {
     }
 
-    public void augmentScore(Score s) {
+    @SuppressWarnings("rawtypes")
+	public void augmentScore(Score s) {
         s.extraScore(getScore((TWEANNGenotype) s.individual));
     }
 

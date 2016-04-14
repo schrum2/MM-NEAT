@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.utexas.cs.nn.evolution.metaheuristics;
 
 import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
@@ -18,7 +14,8 @@ public class WastedModeUsageFitness implements Metaheuristic {
     }
 
     // On the verge of completely removing this fitness function as an option
-    public void augmentScore(Score s) {
+    @SuppressWarnings("rawtypes")
+	public void augmentScore(Score s) {
         throw new UnsupportedOperationException("Not supported: disabled");
 //        s.extraScore(-((TWEANNGenotype) s.individual).wastedModeUsage(EvolutionaryHistory.maxModesOfAnyNetwork));
     }

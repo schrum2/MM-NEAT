@@ -17,6 +17,7 @@ import edu.utexas.cs.nn.util.PopulationUtil;
 import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.random.RandomNumbers;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -148,7 +149,8 @@ public class NSGA2<T> extends MuPlusLambda<T> {
     }
     
     public static <T> NSGA2Score<T>[] staticNSGA2Scores(ArrayList<Score<T>> scores) {
-        NSGA2Score<T>[] scoresArray = new NSGA2Score[scores.size()];
+        @SuppressWarnings("unchecked")
+		NSGA2Score<T>[] scoresArray = new NSGA2Score[scores.size()];
         for (int i = 0; i < scores.size(); i++) {
             scoresArray[i] = new NSGA2Score<T>(scores.get(i));
         }
@@ -177,7 +179,8 @@ public class NSGA2<T> extends MuPlusLambda<T> {
                     numAdded++;
                 }
             } else {
-                NSGA2Score<T>[] lastFront = front.toArray(new NSGA2Score[front.size()]);
+                @SuppressWarnings("unchecked")
+				NSGA2Score<T>[] lastFront = front.toArray(new NSGA2Score[front.size()]);
                 Arrays.sort(lastFront, new CrowdingDistanceComparator());
                 int index = lastFront.length - 1;
                 while (numAdded < numParents) {
@@ -190,7 +193,14 @@ public class NSGA2<T> extends MuPlusLambda<T> {
         return newParents;
     }
     
-    private static void assignCrowdingDistance(NSGA2Score[] scores) {
+    /**
+     * Given the whole population of scores (after evaluation),
+     * assign crowding distances to each individual.
+     * 
+     * @param scores Each instance is a set of multiple scores for a member of the
+     *               population that was just evaluated.
+     */
+	private static <T> void assignCrowdingDistance(NSGA2Score<T>[] scores) {
         // reset distances
         for (int i = 0; i < scores.length; i++) {
             scores[i].setCrowdingDistance(0);
@@ -218,6 +228,16 @@ public class NSGA2<T> extends MuPlusLambda<T> {
         }
     }
     
+	/**
+	 * Sort the evaluated population into Pareto fronts according to their
+	 * objective scores.
+	 * 
+	 * @param scores Each instance is a set of multiple scores for a member of the
+     *               population that was just evaluated.
+	 * @return List of lists in which each sublist is one Pareto front. Each member 
+	 *         of the original scores array will be in exactly one of the sublists
+	 *         that is returned. Earlier sublists dominate subsequent sublists.
+	 */
     private static <T> ArrayList<ArrayList<NSGA2Score<T>>> fastNonDominatedSort(NSGA2Score<T>[] scores) {
         
         for (int i = 0; i < scores.length; i++) {
@@ -273,14 +293,29 @@ public class NSGA2<T> extends MuPlusLambda<T> {
         return frontSet;
     }
     
+    /**
+     * Return just the Pareto front for a given population of scores.
+     * @param scores Multiobjective scores for evaluated individuals.
+     * @return All non-dominated individuals in population: The Pareto front
+     */
     public static <T> ArrayList<NSGA2Score<T>> getParetoFront(NSGA2Score<T>[] scores) {
         return fastNonDominatedSort(scores).get(0);
     }
     
+    /**
+     * Why is this needed in addition to fastNonDominatedSort? Not sure.
+     * @param scores See fastNonDominatedSort
+     * @return See fastNonDominatedSort
+     */
     public static <T> ArrayList<ArrayList<NSGA2Score<T>>> getParetoLayers(NSGA2Score<T>[] scores) {
         return fastNonDominatedSort(scores);
     }
     
+    /**
+     * Some tests to make sure non-dominated sorting works correctly.
+     * This should be transformed into proper JUnit Tests.
+     * @param args
+     */
     public static void main(String[] args) {
         args = new String[]{"runNumber:0", "trials:1", "mu:5", "io:false", "netio:false", "mating:true", "task:edu.utexas.cs.nn.tasks.mspacman.MsPacManTask", "ea:edu.utexas.cs.nn.evolution.nsga2.NSGA2", "pacmanInputOutputMediator:edu.utexas.cs.nn.tasks.mspacman.sensors.mediators.FullTaskMediator"};
         Parameters.initializeParameterCollections(args);

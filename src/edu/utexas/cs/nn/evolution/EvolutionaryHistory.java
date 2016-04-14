@@ -36,9 +36,12 @@ public class EvolutionaryHistory {
     public static int[] archetypeOut = null;
 
     /**
-     * Commonly used/shared networks (hierarchical architectures)
+     * Commonly used/shared networks (hierarchical architectures).
+     * Raw types are allowed for greater flexibility 
+     * (different types of phenotypes may be generated)
      */
-    public static HashMap<String, Genotype> loadedNetworks = new HashMap<String, Genotype>();
+    @SuppressWarnings("rawtypes")
+	public static HashMap<String, Genotype> loadedNetworks = new HashMap<String, Genotype>();
 
     /**
      * Assure that each repeatedly used subnetwork is only loaded once
@@ -407,7 +410,20 @@ public class EvolutionaryHistory {
         return archetypes[populationIndex] == null ? 0 : archetypes[populationIndex].size();
     }
 
-    public static void frozenPreferenceVsPolicyStatusUpdate(ArrayList<? extends Genotype> population, int generation) {
+    /**
+     * This complicated method isn't really used. The point was to allow evolving
+     * network genotypes with preference neurons to alternate between stages where
+     * the policy was evolving and stages where the preference neuron behavior was
+     * evolving.
+     * 
+     * The code only runs with TWEANNGenotypes (instanceof), but gets called with Genotypes of
+     * all sorts, which is why the type is raw.
+     * 
+     * @param population A population of TWEANNGenotypes
+     * @param generation
+     */
+    @SuppressWarnings("rawtypes")
+	public static void frozenPreferenceVsPolicyStatusUpdate(ArrayList<? extends Genotype> population, int generation) {
         if ((population.get(0) instanceof TWEANNGenotype)
                 && Parameters.parameters.booleanParameter("alternatePreferenceAndPolicy")
                 && (generation % Parameters.parameters.integerParameter("freezeMeltAlternateFrequency")) == 0) {

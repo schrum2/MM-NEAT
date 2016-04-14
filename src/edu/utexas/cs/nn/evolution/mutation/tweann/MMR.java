@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.utexas.cs.nn.evolution.mutation.tweann;
 
 import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
@@ -16,7 +12,10 @@ import edu.utexas.cs.nn.util.random.RandomNumbers;
 import java.util.Arrays;
 
 /**
- *
+ * Module Mutation Random: Creates a new module
+ * with random incoming link weights from random
+ * sources in the network.
+ * 
  * @author Jacob Schrum
  */
 public class MMR extends ModuleMutation {
@@ -34,7 +33,11 @@ public class MMR extends ModuleMutation {
         }
         cullForBestWeight(genotype, subs);
     }
-    
+
+    /**
+     * Test to make sure MM(R) works. Should be made into proper JUnit Test.
+     * @param args
+     */
     public static void main(String[] args) {
         Parameters.initializeParameterCollections(new String[]{"io:false","recurrency:false","mmdRate:0.1"});
         MMNEAT.loadClasses();

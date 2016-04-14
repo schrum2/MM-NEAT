@@ -7,22 +7,26 @@ import edu.utexas.cs.nn.evolution.nsga2.bd.vectors.BehaviorVector;
 import edu.utexas.cs.nn.util.ClassCreation;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.scores.Score;
+
 import java.util.ArrayList;
 
 /**
- *
+ * NSGA2 with a behavioral diversity objective added.
+ * 
  * @author Jacob Schrum
  */
 public class BDNSGA2<T> extends NSGA2<T> {
 
     public BDLog<Double> bdLog;
-    public BehaviorCharacterization characterization;
+    @SuppressWarnings("rawtypes") // Will work the same regardless of genotype
+	public BehaviorCharacterization characterization;
     private ArrayList<Score<T>> archive = null;
     private ArrayList<BehaviorVector> archiveBehaviors;
     private int maxArchiveSize;
     private int indexToAdd;
 
-    public BDNSGA2() {
+    @SuppressWarnings("rawtypes")
+	public BDNSGA2() {
         try {
             characterization = (BehaviorCharacterization) ClassCreation.createObject("behaviorCharacterization");
             if (writeOutput) {
@@ -38,7 +42,13 @@ public class BDNSGA2<T> extends NSGA2<T> {
         }
     }
 
-    public ArrayList<BehaviorVector> getBehaviorVectors(ArrayList<Score<T>> population) {
+    /**
+     * Get the behavior vectors corresponding to each member of the population
+     * @param population Population of scores: Genotypes have already been evaluated.
+     * @return List of one behavior vector per population member
+     */
+    @SuppressWarnings("unchecked")
+	public ArrayList<BehaviorVector> getBehaviorVectors(ArrayList<Score<T>> population) {
         ArrayList<BehaviorVector> behaviorVectors = new ArrayList<BehaviorVector>(population.size());
         for (int i = 0; i < population.size(); i++) {
             behaviorVectors.add(characterization.getBehaviorVector(population.get(i)));
@@ -53,10 +63,15 @@ public class BDNSGA2<T> extends NSGA2<T> {
         return behaviorVectors;
     }
 
-    /*
+    /**
      * Given the behavior vectors of the entire population, return the diversity
      * of the one individual specified by individualIndex, which is the distance
      * from individualIndex to its nearest neighbor in behavior space.
+     * 
+     * @param behaviorVectors List of behavior vectors
+     * @param individualIndex index of individual in the list to compare to the others
+     * @param compareArchive Whether or not to also compare the individual to behaviors in the archive.
+     * @return Resulting score, which is behavioral distance from other individuals.
      */
     public double diversityScore(ArrayList<BehaviorVector> behaviorVectors, int individualIndex, boolean compareArchive) {
         double diversityScore = Double.MAX_VALUE;
@@ -78,9 +93,13 @@ public class BDNSGA2<T> extends NSGA2<T> {
         return diversityScore;
     }
 
-    /*
+    /**
      * Given the behavior vectors of all members of the population, calculate
      * each member's diversity score.
+     * 
+     * @param behaviorVectors Behavior vectors of all population members
+     * @param compareArchive Whether or not to compare behaviors against archive of past behaviors
+     * @return List of behavior scores for each individual in population.
      */
     public ArrayList<Double> allDiversityScores(ArrayList<BehaviorVector> behaviorVectors, boolean compareArchive) {
         ArrayList<Double> result = new ArrayList<Double>(behaviorVectors.size());
@@ -103,6 +122,10 @@ public class BDNSGA2<T> extends NSGA2<T> {
         return result;
     }
 
+    /**
+     * Adds behavioral scores to each individual before they are subjected to NSGA2 selection.
+     * Also adds some individuals to behavior archive, if it is being used.
+     */
     @Override
     public ArrayList<Score<T>> prepareSourcePopulation(ArrayList<Score<T>> parentScores, ArrayList<Score<T>> childrenScores) {
         ArrayList<Score<T>> population = super.prepareSourcePopulation(parentScores, childrenScores);

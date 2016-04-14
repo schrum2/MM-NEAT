@@ -12,7 +12,8 @@ import edu.utexas.cs.nn.scores.Score;
  */
 public interface Metaheuristic {
 
-    public void augmentScore(Score s);
+    @SuppressWarnings("rawtypes")
+	public void augmentScore(Score s);
 
     public double minScore();
 

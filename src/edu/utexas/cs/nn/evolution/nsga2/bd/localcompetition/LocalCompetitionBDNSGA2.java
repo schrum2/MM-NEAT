@@ -9,6 +9,11 @@ import edu.utexas.cs.nn.util.ClassCreation;
 import java.util.ArrayList;
 
 /**
+ * This class is based on some ideas from Joel Lehman's
+ * dissertation: http://joellehman.com/
+ * The idea is to put members of the population into niches
+ * based on their behavior, and only have them compete locally
+ * against similar individuals.
  *
  * @author Jacob Schrum
  */
@@ -31,12 +36,6 @@ public class LocalCompetitionBDNSGA2<T> extends BDNSGA2<T> {
         }
     }
 
-    /**
-     *
-     * @param parentScores
-     * @param childrenScores
-     * @return
-     */
     @Override
     public ArrayList<Score<T>> prepareSourcePopulation(ArrayList<Score<T>> parentScores, ArrayList<Score<T>> childrenScores) {
         // BDNSGA2 addes diversity scores as a final objective to each score

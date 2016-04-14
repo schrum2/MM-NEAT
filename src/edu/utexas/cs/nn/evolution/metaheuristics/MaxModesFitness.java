@@ -11,7 +11,8 @@ import edu.utexas.cs.nn.scores.Score;
  */
 public class MaxModesFitness implements Metaheuristic {
 
-    public void augmentScore(Score s) {
+    @SuppressWarnings("rawtypes")
+	public void augmentScore(Score s) {
         s.extraScore(((TWEANNGenotype) s.individual).numModes);
     }
 
