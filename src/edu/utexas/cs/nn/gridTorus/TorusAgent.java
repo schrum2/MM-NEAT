@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 
 package edu.utexas.cs.nn.gridTorus;
 
@@ -11,7 +7,8 @@ import edu.utexas.cs.nn.util.util2D.Tuple2D;
 import java.awt.Color;
 
 /**
- *
+ * Generic agent in a torus grid world.
+ * 
  * @author Jacob Schrum modified by Alex Rollins
  */
 public class TorusAgent implements ILocated2D {

@@ -98,14 +98,15 @@ public class TorusWorld {
     public int[] randomUnoccupiedCell(TorusAgent[] agents) {
         int[] candidate = null;
         boolean found = false;
-        while (!found) {
-            candidate = randomCell();
+        while (!found) { // Keep generating cells until an empty one is found
+            candidate = randomCell(); // Check a random cell
             found = true;
+            // See if any agents are in that cell
             for (int i = 0; found && i < agents.length; i++) {
                 if (agents[i] != null
                         && candidate[0] == agents[i].getX()
                         && candidate[1] == agents[i].getY()) {
-                    found = false;
+                    found = false; // If an agent was in the cell, then try again
                 }
             }
         }
