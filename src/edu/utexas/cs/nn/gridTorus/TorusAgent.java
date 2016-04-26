@@ -12,7 +12,7 @@ import java.awt.Color;
 
 /**
  *
- * @author Jacob Schrum
+ * @author Jacob Schrum modified by Alex Rollins
  */
 public class TorusAgent implements ILocated2D {
 
@@ -21,6 +21,13 @@ public class TorusAgent implements ILocated2D {
     private int y;
     private final int type;
 
+    /**
+     * Constructor to create the agent
+     * @param world a grid world
+     * @param startX the starting x-coordinate for the agent's location
+     * @param startY the starting y-coordinate for the agent's location
+     * @param type integer defining the agent type for coloring
+     */
     public TorusAgent(TorusWorld world, int startX, int startY, int type) {
         this.world = world;
         this.x = startX;
