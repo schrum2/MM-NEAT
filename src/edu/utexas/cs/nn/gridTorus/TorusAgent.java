@@ -56,11 +56,20 @@ public class TorusAgent implements ILocated2D {
         return y;
     }
 
+    /**
+     * Move the agent by dx and dy amount
+     * @param dx amount to move the agent in the x direction
+     * @param dy amount to move the agent in the y direction
+     */
     public void move(int dx, int dy) {
         x = world.boundX(x + dx);
         y = world.boundY(y + dy);
     }
     
+    /**
+     * get the color of this agent
+     * @return the color of this type of agent
+     */
     public Color getColor(){
         return CombinatoricUtilities.colorFromInt(type);
     }
@@ -107,6 +116,11 @@ public class TorusAgent implements ILocated2D {
         return closest;
     }  
     
+    /**
+     * Find the distance from this agent to all other agents
+     * @param others array of the other agents
+     * @return array with the distance from this agent to each agent
+     */
     public double[] distances(TorusAgent[] others){
         double[] ds = new double[others.length];
         for(int i = 0; i < others.length; i++) {
