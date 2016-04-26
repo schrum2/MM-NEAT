@@ -1,8 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package edu.utexas.cs.nn.gridTorus.controllers;
 
 import edu.utexas.cs.nn.gridTorus.TorusAgent;
@@ -19,7 +14,7 @@ import edu.utexas.cs.nn.util.random.RandomNumbers;
 public class RandomController extends TorusPredPreyController {
 
 	/**
-	 * This method facalitates the use of a seeded random number generator to produce pseudorandom 
+	 * This method facilitates the use of a seeded random number generator to produce pseudorandom 
 	 * movements in both the predators and prey
 	 */
     @Override
