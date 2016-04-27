@@ -9,7 +9,7 @@ import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
 
 /**
- *
+ * Description of some key game components such as converging and prey being eaten
  * @author Jacob Schrum
  */
 public class TorusPredPreyGame {
@@ -25,6 +25,13 @@ public class TorusPredPreyGame {
     private int time;
     private int timeLimit;
 
+    /**
+     * Constructor for the game board
+     * @param xDim dimensions for the x axis
+     * @param yDim dimensions for the y axis
+     * @param numPred number of predators
+     * @param numPrey number of prey
+     */
     public TorusPredPreyGame(int xDim, int yDim, int numPred, int numPrey){
         gameOver = false;
         time = 0;
@@ -61,6 +68,11 @@ public class TorusPredPreyGame {
         return preys;
     }
     
+    /**
+     * converges all predators and prey towards the other
+     * @param predMoves a grid of the possible predator moves
+     * @param preyMoves a grid of the possible prey moves
+     */
     public void advance(int[][] predMoves, int[][] preyMoves) {
         moveAll(predMoves, preds);
         moveAll(preyMoves, preys);
@@ -74,6 +86,11 @@ public class TorusPredPreyGame {
         return time;
     }
     
+    /**
+     * moves all the agents along the x and y coordinates
+     * @param moves a grid of all possible moves for an agent
+     * @param agents the array of all the agents
+     */
     private static void moveAll(int[][] moves, TorusAgent[] agents) {
         assert moves.length == agents.length : "Moves and Agents don't match up: " + moves.length +" != "+ agents.length;
         for(int i = 0; i < agents.length; i++) {
@@ -83,9 +100,15 @@ public class TorusPredPreyGame {
         }
     }
     
+    /**
+     * If any predator and prey are in the same location, the prey is eaten
+     * @param preds list of predators
+     * @param preys list of the prey
+     */
     private static void eat(TorusAgent[] preds, TorusAgent[] preys) {
         for(int i = 0; i < preys.length; i++) {
             if(preys[i] != null && preys[i].isCoLocated(preds)){ // Prey is eaten
+            	//The prey at this location is currently being digested, so is now null
                 preys[i] = null;
             }
         }
