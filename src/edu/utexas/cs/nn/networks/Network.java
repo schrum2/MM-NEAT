@@ -1,6 +1,7 @@
 package edu.utexas.cs.nn.networks;
 
 /**
+ * Interface for neural network controllers.
  *
  * @author Jacob Schrum
  */
@@ -8,30 +9,34 @@ public interface Network {
     
     /**
      * Number of nodes in input layer
-     **/
+     * @return number of inputs
+     */
     public int numInputs();
 
     /**
      * Number of nodes in output layer (includes nodes from all modes and preference neurons)
-     **/
+     * @return number of outputs
+     */
     public int numOutputs();
     
     /**
      * Returns the number of output signals that represent a network action,
      * e.g. after a single mode has been chosen to represent the network.
-     **/
+     * @return number of outputs needed to define an action.
+     */
     public int effectiveNumOutputs();
     
     /**
      * Returns the resulting outputs for the given inputs, after mode arbitration is done
+     * pre: inputs.length == numInputs()
      * @param inputs Array of sensor inputs
-     * @return Array of network outputs
+     * @return Array of network outputs (length == effectiveNumOutputs())
      **/
     public double[] process(double[] inputs);
     
     /**
      * Clear any internal state
-     **/
+     */
     public void flush();
     
     /**
@@ -55,14 +60,14 @@ public interface Network {
     
     /**
      * Output of a specific mode after the previous processing
-     * @param mode
-     * @return 
+     * @param mode Mode/module to query
+     * @return output from that mode/module (length == effectiveNumOutputs())
      */
     public double[] modeOutput(int mode);
     
     /**
      * Number of modes the network has
-     * @return 
+     * @return number of modes/modules
      */
     public int numModes();
 }
