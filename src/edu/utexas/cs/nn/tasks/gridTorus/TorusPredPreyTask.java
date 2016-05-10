@@ -25,33 +25,33 @@ public class TorusPredPreyTask<T extends Network> extends NoisyLonerTask<T> impl
     private TorusWorldExec exec;
 
     public TorusPredPreyTask() {
-        super();
-        int numPredators = Parameters.parameters.integerParameter("torusPredators");
-        npcs = new TorusPredPreyController[numPredators];
+        super(); //Super from TUGTask and Network task? -Gab
+        int numPredators = Parameters.parameters.integerParameter("torusPredators"); //So the assigned number of predators is gathered here... -Gab
+        npcs = new TorusPredPreyController[numPredators]; //...and then used here to created predators as "npcs" -Gab
         for(int i = 0; i < numPredators; i++) {
-            npcs[i] = new AggressivePredatorController();
+            npcs[i] = new AggressivePredatorController(); //They are all set to aggressive, for loop makes much more sense to me now -Gab
         }
-        MMNEAT.registerFitnessFunction("Time Alive");
+        MMNEAT.registerFitnessFunction("Time Alive"); //What are other fitness functions that could be used here? -Gab
     }
 
     @Override
     public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {
-        NNTorusPredPreyAgent<T> agent = new NNTorusPredPreyAgent<T>(individual);
-        brain = agent.getController();
-        exec = new TorusWorldExec();
-        TorusPredPreyGame game;
-        if (CommonConstants.watch) {
-            game = exec.runGameTimed(npcs, new TorusPredPreyController[]{brain}, true);
+        NNTorusPredPreyAgent<T> agent = new NNTorusPredPreyAgent<T>(individual); //This is the prey agent then? -Gab
+        brain = agent.getController(); //The prey utilizes a brain while the predators are npcs -Gab
+        exec = new TorusWorldExec(); //Exec as in execution? -Gab
+        TorusPredPreyGame game; //Just for initializing? -Gab
+        if (CommonConstants.watch) { //What is CommonConstants watching for? Winning? Losing? -Gab
+            game = exec.runGameTimed(npcs, new TorusPredPreyController[]{brain}, true); //What does adding true change? -Gab
         } else {
             game = exec.runExperiment(npcs, new TorusPredPreyController[]{brain});
         }
-        double[] oneTrialFitness = new double[]{game.getTime()};
+        double[] oneTrialFitness = new double[]{game.getTime()}; 
         double[] otherStats = new double[0];
-        return new Pair<double[], double[]>(oneTrialFitness, otherStats);
+        return new Pair<double[], double[]>(oneTrialFitness, otherStats); //The time taken and other stats will help to find out the actual fitness score? -Gab
     }
 
-    public int numObjectives() {
-        return minScores().length;
+    public int numObjectives() { //Whose objectives? -Gab
+        return minScores().length; 
     }
 
     /**
@@ -59,20 +59,20 @@ public class TorusPredPreyTask<T extends Network> extends NoisyLonerTask<T> impl
      *
      * @return
      */
-    public double[] startingGoals() {
+    public double[] startingGoals() { //Again, whose goals? -Gab
         return minScores();
     }
 
     @Override
-    public double[] minScores() {
+    public double[] minScores() { //Empty to start, who utilizes this? Both prey and predators? Are they specific to each side or each agent? -Gab
         return new double[]{0};
     }
 
-    public String[] sensorLabels() {
+    public String[] sensorLabels() { //What are the sensor labels used for in the experiment? -Gab
         return NNTorusPredPreyController.sensorLabels(npcs.length);
     }
 
-    public String[] outputLabels() {
+    public String[] outputLabels() { //These are just for output or for the prey/predators to read too? -Gab
         return new String[]{"UP", "RIGHT", "DOWN", "LEFT"};
     }
 
