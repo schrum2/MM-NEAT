@@ -67,3 +67,5 @@ $RECYCLE.BIN/
 /cartpole
 /torus
 /onelifeconflict/
+*.zds
+vizdoom/bin/vizdoom-He_Deceives.ini
