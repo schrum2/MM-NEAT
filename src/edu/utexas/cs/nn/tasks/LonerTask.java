@@ -51,11 +51,20 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
         private Genotype<T> genotype;
         private LonerTask<T> task;
 
+        /**
+         * a constructor for creating an evaluation thread
+         * @param task
+         * @param g
+         */
         public EvaluationThread(LonerTask<T> task, Genotype<T> g) {
             this.genotype = g;
             this.task = task;
         }
 
+        /**
+         * Possibly creates a graphical representation of this task and finds the fitness score for the genotype
+         * @returns score the fitness score of the agent of this task based on evaluation
+         */
         public Score<T> call() {
             DrawingPanel panel = null;
             DrawingPanel[] subPanels = null;
@@ -88,8 +97,10 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
                 MMNEAT.evalReport = new EvalLog("Eval-Net" + genotype.getId());
             }
             long before = System.currentTimeMillis();
+            //finds the score based on evaluation of the task's genotype
             Score<T> score = task.evaluate(genotype);
             long after = System.currentTimeMillis();
+            //if there is an evalReport, save it 
             if (MMNEAT.evalReport != null) {
                 if (CommonConstants.recordPacman) {
                     // Copy the eval report
@@ -111,6 +122,7 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
             for (Metaheuristic m : MMNEAT.metaheuristics) {
                 m.augmentScore(score);
             }
+            //print fitness score and genotype information then dispose the panel, releasing system resources
             if (panel != null) {
                 System.out.println("Mode Usage: " + Arrays.toString(((TWEANNGenotype) score.individual).modeUsage));
                 System.out.println("Fitness: " + score.toString());
@@ -128,15 +140,28 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
     private boolean parallel;
     private int threads;
 
+    /**
+     * constructor for a LonerTask based upon command line specified evaluation and thread parameters
+     */
     public LonerTask() {
         this.parallel = Parameters.parameters.booleanParameter("parallelEvaluations");
         this.threads = Parameters.parameters.integerParameter("threads");
     }
 
+    /**
+     * a method to evaluate one genotype
+     * @param genotype to evaluate
+     * @return the fitness score of the genotype
+     */
     public Score<T> evaluateOne(Genotype<T> genotype) {
         return new EvaluationThread(this, genotype).call();
     }
 
+    /**
+     * evaluate all of the genotypes in the population
+     * @param population the population
+     * @return scores a list of the fitness scores of the population
+     */
     public ArrayList<Score<T>> evaluateAll(ArrayList<Genotype<T>> population) {
         ArrayList<Score<T>> scores = new ArrayList<Score<T>>(population.size());
 
