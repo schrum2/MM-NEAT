@@ -104,6 +104,7 @@ public class TorusWorldExec {
 
 		TorusWorldView gv = null;
 
+		//if visual is requested then the worldView class is activated, providing a visual window of the evaluation
 		if (visual) {
 			gv = new TorusWorldView(game).showGame();
 		}

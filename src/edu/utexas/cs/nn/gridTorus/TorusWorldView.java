@@ -5,6 +5,10 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 
 @SuppressWarnings("serial")
+/**
+ * a class that provides the visual components of an evaluation 
+ *
+ */
 public final class TorusWorldView extends JComponent {
 
     public static final int CELL_SIZE = 7;
@@ -14,6 +18,10 @@ public final class TorusWorldView extends JComponent {
     private Image offscreen;
     private final TorusPredPreyGame game;
 
+    /**
+     * a constructor that creates an instance of this game for this object (TorusWorldView)
+     * @param game a given instance of the PredPrey game
+     */
     public TorusWorldView(TorusPredPreyGame game) {
         this.game = game;
     }
@@ -22,6 +30,11 @@ public final class TorusWorldView extends JComponent {
     ////// Visual aids for debugging ///////
     ////////////////////////////////////////
     @Override
+    /**
+     * create the visual as a compilation of the grid, agents, and actions
+     * uses various utility methods to accomplish each specific visual component
+     * @param g graphics specifications
+     */
     public void paintComponent(Graphics g) {
         if (offscreen == null) {
             offscreen = createImage(this.getPreferredSize().width, this.getPreferredSize().height);
@@ -58,6 +71,9 @@ public final class TorusWorldView extends JComponent {
         return BUFFER + ((game.getWorld().height() - y) * CELL_SIZE);
     }
 
+    /**
+     * provides the information for the visualization of the agents and places them on the grid
+     */
     private void drawAgents() {
         TorusAgent[][] agents = game.getAgents();
         for (int i = 0; i < agents.length; i++) {
@@ -72,6 +88,9 @@ public final class TorusWorldView extends JComponent {
         }
     }
 
+    /**
+     * draws the grid according to information such as the x & y dimensions 
+     */
     private void drawGrid() {
         bufferGraphics.setColor(Color.BLACK);
         int width = game.getWorld().width() + 1;
@@ -90,6 +109,9 @@ public final class TorusWorldView extends JComponent {
         }
     }
 
+    /**
+     * add some additional information in the background of the visualization
+     */
     private void drawInfo() {
         int x = 1;
         int y = y(-2);
@@ -98,10 +120,17 @@ public final class TorusWorldView extends JComponent {
     }
     
     @Override
+    /**
+     * readjusts the dimension to be of a size more easily used for the application because of cell sizes and dimensions
+     */
     public Dimension getPreferredSize() {
         return new Dimension((2 * BUFFER) + (game.getWorld().width() * CELL_SIZE), (2 * BUFFER) + (game.getWorld().height() * CELL_SIZE));
     }
 
+    /**
+     * show a current view of the game (this frame, as in a single frame in a movie)
+     * @return this TorusWorldView visual instance of the game
+     */
     public TorusWorldView showGame() {
         this.frame = new GameFrame(this);
 
@@ -114,10 +143,19 @@ public final class TorusWorldView extends JComponent {
         return this;
     }
 
+    /**
+     * get the current frame
+     * @return frame
+     */
     public GameFrame getFrame() {
         return frame;
     }
 
+    /**
+     * creates a game frame as an extension of the java JFrame, which details that it is invisible at first
+     * with the specified title and graphics configuration
+     * it is made visible and not resizable
+     */
     public class GameFrame extends JFrame {
 
         public GameFrame(JComponent comp) {
