@@ -1,6 +1,7 @@
 package edu.utexas.cs.nn.scores;
 
 /**
+ *Interface that provides a constructor for a pair of better objects
  *
  * @author Jacob Schrum
  */
