@@ -418,7 +418,7 @@ public class TWEANNCrossover extends Crossover<TWEANN> {
      * Testing
      */
     public static void main(String[] args) {
-        Parameters.initializeParameterCollections(new String[]{"io:false", "connectToInputs:false", "crossExcessRate:1.0", "task:edu.utexas.cs.nn.tasks.breve2D.Breve2DTask"});
+        Parameters.initializeParameterCollections(new String[]{"io:false", "connectToInputs:false", "crossExcessRate:1.0"});
         MMNEAT.loadClasses();
         TWEANNGenotype m = new TWEANNGenotype(MMNEAT.networkInputs, MMNEAT.networkOutputs, true, 1, 1, 0);
         m.linkMutation();
