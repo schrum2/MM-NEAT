@@ -210,6 +210,16 @@ public class RandomNumbers {
     }
     
     /**
+     * Takes in an array list and selects a random index. Originally implemented for function list.
+     * @param list of <T>
+     * @return random T of <T>
+     */
+    public static <T> T randomElement(ArrayList<T> list){
+    	int index = randomGenerator.nextInt(list.size());
+    	return list.get(index);
+    }
+    
+    /**
      * For testing
      * @param args 
      */

@@ -2,6 +2,9 @@ package edu.utexas.cs.nn.networks;
 
 import java.util.ArrayList;
 
+import edu.utexas.cs.nn.parameters.Parameters;
+import edu.utexas.cs.nn.util.random.RandomNumbers;
+
 /**
  *
  * @author Jacob Schrum
@@ -9,7 +12,11 @@ import java.util.ArrayList;
  */
 public class ActivationFunctions {
 	
+	/**
+	 * Initialize the array list for all ftypes
+	 */
 	public static final ArrayList<Integer> ftypes = new ArrayList<>(8);
+	
 	/**
 	 * Initialize the ftypes to be available for the CPPN/TWEANN
 	 */
@@ -23,10 +30,43 @@ public class ActivationFunctions {
     public static final int FTYPE_ABSVAL = 7;
     
     /**
-     * TODO: Static list of functions, and a method to pick one randomly for ftype
-     * 
+     * Initializes the set of ftypes by checking boolean parameters for included functions
      */
+    public static void functionSet(){
+    	if(Parameters.parameters.booleanParameter("includeSigmoidFunction")){
+    		ftypes.add(FTYPE_SIGMOID);
+    	}
+    	if(Parameters.parameters.booleanParameter("includeTanhFunction")){
+    		ftypes.add(FTYPE_TANH);
+    	}
+    	if(Parameters.parameters.booleanParameter("includeIdFuntion")){
+    		ftypes.add(FTYPE_ID);
+    	}
+    	if(Parameters.parameters.booleanParameter("includeFullApproxFunction")){
+    		ftypes.add(FTYPE_FULLAPPROX);
+    	}
+    	if(Parameters.parameters.booleanParameter("includeApproxFunction")){
+    		ftypes.add(FTYPE_APPROX);
+    	}
+    	if(Parameters.parameters.booleanParameter("includeGaussFunction")){
+    		ftypes.add(FTYPE_GAUSS);
+    	}
+    	if(Parameters.parameters.booleanParameter("includeSineFunction")){
+    		ftypes.add(FTYPE_SINE);
+    	}
+    	if(Parameters.parameters.booleanParameter("includeAbsValFunction")){
+    		ftypes.add(FTYPE_ABSVAL);
+    	}
+    }
     
+    /**
+     * Takes in the list of all ftypes and randomly selects a function. (For CPPN)
+     * @param ArrayList of ftypes
+     * @return random listed integer for ftype
+     */
+    public static int randomFunction(){
+    	return RandomNumbers.randomElement(ftypes);
+    }
    
 	// For use in sigmoid, it is convenient to bound the inputs to the exp function
 	public static final double SAFE_EXP_BOUND = 7;

@@ -216,6 +216,15 @@ public class Parameters {
         longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
         //Boolean parameters
         booleanOptions.add("removePillsNearPowerPills", false, "Pills in a c-path with power pills are absent");
+        booleanOptions.add("allowMultipleFunctions", true, "Turning this one will allow you to change TWEANN to CPPN by allowing multiple activation functions");
+        booleanOptions.add("includeSigmoidFunction", false, "Fuction for sigmoid. If true, add to the function set");
+        booleanOptions.add("includeTanhFunction", false, "Fuction for tanh. If true, add to the function set");
+        booleanOptions.add("includeIdFuntion", false, "Just the sum. If true, add to the function set");
+        booleanOptions.add("includeFullApproxFunction", false, "Fuction for full quick sigmoid. If true, add to the function set");
+        booleanOptions.add("includeApproxFunction", false, "Fuction for quick sigmoid. If true, add to the function set");
+        booleanOptions.add("includeGaussFunction", false, "Fuction for gaussian. If true, add to the function set");
+        booleanOptions.add("includeSineFunction", false, "Fuction for sine. If true, add to the function set");
+        booleanOptions.add("includeAbsValFunction", false, "Fuction for absolute value. If true, add to the function set");        
         booleanOptions.add("logGhostLocOnPowerPill", false, "Log ghost locations corresponding to each eaten power pill");
         booleanOptions.add("breveDamageOnly", false, "Breve domains only care about damage objectives");
         booleanOptions.add("getRemainingPills", false, "CEC 2011 rule that Ms. Pac-Man gets the pills in the level when time runs out");
