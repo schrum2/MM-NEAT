@@ -24,11 +24,11 @@ public class AggressivePredatorController extends TorusPredPreyController {
      */
     public int[] getAction(TorusAgent me, TorusWorld world, TorusAgent[] preds, TorusAgent[] prey) {
         TorusAgent target = me.closestAgent(prey);
-        double[] moveDistances = new double[actions.length];
-        for(int i = 0; i < actions.length; i++) {
-            moveDistances[i] = target.distance(me.getPosition().add(new Tuple2D(actions[i][0], actions[i][1])));
+        double[] moveDistances = new double[PREDATOR_ACTIONS.length];
+        for(int i = 0; i < PREDATOR_ACTIONS.length; i++) {
+            moveDistances[i] = target.distance(me.getPosition().add(new Tuple2D(PREDATOR_ACTIONS[i][0], PREDATOR_ACTIONS[i][1])));
         }
-        return actions[StatisticsUtilities.argmin(moveDistances)];
+        return PREDATOR_ACTIONS[StatisticsUtilities.argmin(moveDistances)];
     }
 
 }

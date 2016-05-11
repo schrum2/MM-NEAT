@@ -24,13 +24,16 @@ public class NNTorusPredPreyController extends TorusPredPreyController {
      * Initializes the network to be used.
      */
 	private final Network nn;
-    
+	//true if this agent is a predator
+    private final boolean isPredator;
 	/**
 	 * Takes in network and connects it to the controller
 	 * @param nn
+	 * @param isPredator
 	 */
-    public NNTorusPredPreyController(Network nn){ 
+    public NNTorusPredPreyController(Network nn, boolean isPredator){ 
         this.nn = nn;
+        this.isPredator = isPredator;
     }
     
     /**
@@ -43,7 +46,7 @@ public class NNTorusPredPreyController extends TorusPredPreyController {
         double[] inputs = inputs(me,world,preds,prey);
         double[] outputs = nn.process(inputs);
         // Assume one output for each direction
-        return actions[StatisticsUtilities.argmax(outputs)];
+        return isPredator ? PREDATOR_ACTIONS[StatisticsUtilities.argmax(outputs)] : PREY_ACTIONS[StatisticsUtilities.argmax(outputs)];
     }
 
     /**

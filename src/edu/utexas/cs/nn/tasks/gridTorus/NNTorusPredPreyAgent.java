@@ -17,16 +17,16 @@ public class NNTorusPredPreyAgent<T extends Network> extends Organism<T> {
 	/**
 	 * Initialize brain/controller
 	 */
-    public NNTorusPredPreyController controller; 
+    public NNTorusPredPreyController controller;
 
     /**
      * Uses the genotype to finish the set up of the brain/controller. It accesses the network to do this.
      * @param genotype
      */
-    public NNTorusPredPreyAgent(Genotype<T> genotype) {
-        super(genotype); 
+    public NNTorusPredPreyAgent(Genotype<T> genotype, boolean isPredator) {
+    	super(genotype);
         Network net = (Network) this.getGenotype().getPhenotype();
-        controller = new NNTorusPredPreyController(net); 
+        controller = new NNTorusPredPreyController(net, isPredator); 
     }
 
     /**

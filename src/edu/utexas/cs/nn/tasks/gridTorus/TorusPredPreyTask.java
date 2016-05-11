@@ -46,12 +46,13 @@ public class TorusPredPreyTask<T extends Network> extends NoisyLonerTask<T> impl
 
     /**
      * Used to evaluated the fitness score of the brain agent genotype. Additionally, initializes the game to do this.
+     * one prey is evolved while predators are static
      * @param genotype and num (evaluation being performed)
      * @return pair of fitness and states from evaluation
      */
     @Override
     public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {
-        NNTorusPredPreyAgent<T> agent = new NNTorusPredPreyAgent<T>(individual); 
+        NNTorusPredPreyAgent<T> agent = new NNTorusPredPreyAgent<T>(individual, false); 
         brain = agent.getController(); 
         exec = new TorusWorldExec(); 
         TorusPredPreyGame game; 
@@ -98,7 +99,12 @@ public class TorusPredPreyTask<T extends Network> extends NoisyLonerTask<T> impl
      * Accesses the outputs that will be used by an agent, i.e. the movement directions.
      */
     public String[] outputLabels() { 
-        return new String[]{"UP", "RIGHT", "DOWN", "LEFT"};
+    	//this class only evolves the prey, so only the prey actions (whether do nothing action is enabled for prey or not)
+    	//matter, and the predator do nothing action option does not
+        //return new String[]{"UP", "RIGHT", "DOWN", "LEFT"};
+    	return Parameters.parameters.booleanParameter("allowDoNothingActionForPreys") ?
+    			new String[]{"UP", "RIGHT", "DOWN", "LEFT", "NOTHING"} :
+    			new String[]{"UP", "RIGHT", "DOWN", "LEFT"};
     }
 
     /**

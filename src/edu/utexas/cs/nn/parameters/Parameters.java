@@ -215,8 +215,10 @@ public class Parameters {
         longOptions.add("lastInnovation", 0l, "Highest innovation number used so far");
         longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
         //Boolean parameters
+        booleanOptions.add("allowDoNothingActionForPredators", false, "If turned on, the predators will have the option to do nothing as their action");
+        booleanOptions.add("allowDoNothingActionForPreys", false, "If turned on, the preys will have the option to do nothing as their action");
         booleanOptions.add("removePillsNearPowerPills", false, "Pills in a c-path with power pills are absent");
-        booleanOptions.add("allowMultipleFunctions", true, "Turning this one will allow you to change TWEANN to CPPN by allowing multiple activation functions");
+        booleanOptions.add("allowMultipleFunctions", true, "Turning this on will allow you to change TWEANN to CPPN by allowing multiple activation functions");
         booleanOptions.add("includeSigmoidFunction", false, "Fuction for sigmoid. If true, add to the function set");
         booleanOptions.add("includeTanhFunction", false, "Fuction for tanh. If true, add to the function set");
         booleanOptions.add("includeIdFuntion", false, "Just the sum. If true, add to the function set");

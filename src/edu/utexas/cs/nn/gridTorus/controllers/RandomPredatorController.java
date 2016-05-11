@@ -6,20 +6,20 @@ import edu.utexas.cs.nn.util.random.RandomNumbers;
 
 /**
  *
- * @author Jacob Schrum
+ * @author Rollinsa
  * 
  * This is an agent controller nearly identical to the others in this class.
- * This class simply puts random number outputs into the predator and prey's movements
+ * This class simply puts random number outputs into the predator's movements
  */
-public class RandomController extends TorusPredPreyController {
+public class RandomPredatorController extends TorusPredPreyController {
 
 	/**
 	 * This method facilitates the use of a seeded random number generator to produce pseudorandom 
-	 * movements in both the predators and prey
+	 * movements in the predators
 	 */
     @Override
     public int[] getAction(TorusAgent me, TorusWorld world, TorusAgent[] preds, TorusAgent[] prey) {
-        return actions[RandomNumbers.randomGenerator.nextInt(actions.length)];
+        return PREDATOR_ACTIONS[RandomNumbers.randomGenerator.nextInt(PREDATOR_ACTIONS.length)];
     }
 
 }

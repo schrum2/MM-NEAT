@@ -4,6 +4,7 @@ package edu.utexas.cs.nn.gridTorus.controllers;
 import edu.utexas.cs.nn.gridTorus.TorusAgent;
 import edu.utexas.cs.nn.gridTorus.TorusPredPreyGame;
 import edu.utexas.cs.nn.gridTorus.TorusWorld;
+import edu.utexas.cs.nn.parameters.Parameters;
 
 /**
  *
@@ -16,7 +17,14 @@ import edu.utexas.cs.nn.gridTorus.TorusWorld;
 public abstract class TorusPredPreyController {
 
 	// Movement offsets for each available action: UP, RIGHT, DOWN, LEFT
-    public static int[][] actions = {{0,1}, {1,0}, {0,-1}, {-1,0}};
+    public static final int[][] PREDATOR_ACTIONS = 
+    		Parameters.parameters.booleanParameter("allowDoNothingActionForPredators") ? 
+    				new int[][]{{0,1}, {1,0}, {0,-1}, {-1,0}, {0,0}} : 
+    				new int[][]{{0,1}, {1,0}, {0,-1}, {-1,0}};
+    public static final int[][] PREY_ACTIONS = 
+    		Parameters.parameters.booleanParameter("allowDoNothingActionForPreys") ? 
+    				new int[][]{{0,1}, {1,0}, {0,-1}, {-1,0}, {0,0}} : 
+    				new int[][]{{0,1}, {1,0}, {0,-1}, {-1,0}};
     
     /**
      * 
