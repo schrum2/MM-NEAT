@@ -32,6 +32,10 @@ public class TorusAgent implements ILocated2D {
         this.type = type;
     }
     
+    /**
+     * get position of the agent
+     * returns the tuple, the x and y coordinates
+     */
     public Tuple2D getPosition() {
         return new Tuple2D(x,y);
     }
@@ -45,10 +49,15 @@ public class TorusAgent implements ILocated2D {
         return world.shortestXDistance(x, (int) other.getX()) + world.shortestYDistance(y, (int) other.getY());
     }
 
+    /**
+     * return the position of the agent on the x-axis of the grid world
+     */
     public double getX() {
         return x;
     }
-
+    /**
+     * return the position of the agent on the y-axis of the grid world
+     */
     public double getY() {
         return y;
     }
@@ -126,10 +135,22 @@ public class TorusAgent implements ILocated2D {
         return ds;
     }
 
+    /**
+     * Shortest x offset from this agent to the given agent, where a negative value
+     * means left, and a positive value means right.
+     *
+     * @param torusAgent the given agent to compare to
+     * @return offset from this agent to the given agent
+     */
     public double shortestXOffset(TorusAgent torusAgent) {
         return world.shortestXOffset(x, torusAgent.x);
     }
-
+    /**
+     * Shortest y offset from this agent to the given agent
+     *
+     * @param torusAgent the given agent to compare to
+     * @return offset from this agent to the given agent
+     */
     public double shortestYOffset(TorusAgent torusAgent) {
         return world.shortestYOffset(y, torusAgent.y);
     }

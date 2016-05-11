@@ -51,19 +51,28 @@ public class TorusPredPreyGame {
             preys[i] = new TorusAgent(world, pos[0], pos[1], AGENT_TYPE_PREY);
         }
     }
-    
+    /**
+     * @return world the grid world of this current game
+     */
     public TorusWorld getWorld(){
         return world;
     }
-    
+    /**
+     * returns a double array with an array of the predators
+     * followed by an array of the preys
+     */
     public TorusAgent[][] getAgents(){
         return new TorusAgent[][]{preds,preys};
     }
-
+    /**
+     * @return the array of predators
+     */
     public TorusAgent[] getPredators(){
         return preds;
     }
-    
+    /**
+     * @return the array of preys
+     */
     public TorusAgent[] getPrey(){
         return preys;
     }
@@ -81,7 +90,9 @@ public class TorusPredPreyGame {
         gameOver = ArrayUtil.countOccurrences(null, preys) == preys.length ||
                 time >= timeLimit;
     }
-    
+    /**
+     * @return the current time of the game 
+     */
     public int getTime(){
         return time;
     }
@@ -113,7 +124,9 @@ public class TorusPredPreyGame {
             }
         }
     }
-
+    /**
+     * @return gameOver a boolean indicating if the game has ended or not (true if ended)
+     */
     boolean gameOver() {
         return gameOver;
     }
