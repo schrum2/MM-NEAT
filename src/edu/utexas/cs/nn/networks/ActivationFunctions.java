@@ -2,6 +2,7 @@ package edu.utexas.cs.nn.networks;
 
 import java.util.ArrayList;
 
+import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.util.random.RandomNumbers;
 
@@ -67,6 +68,19 @@ public class ActivationFunctions {
     public static int randomFunction(){
     	return RandomNumbers.randomElement(ftypes);
     }
+    
+    /**
+     * Determines whether or not to use TWEANN (the fixed parameter ftype) or CPPN (random function out of function list)
+     * @return function for either TWEANN or CPPN
+     */
+    public static int newNodeFunction(){
+    	if(Parameters.parameters.booleanParameter("allowMultipleFunctions")){ // for CPPN
+    		return randomFunction();
+    	}else{
+    		return CommonConstants.ftype; // for TWEANN
+    	}
+    }
+    
    
 	// For use in sigmoid, it is convenient to bound the inputs to the exp function
 	public static final double SAFE_EXP_BOUND = 7;

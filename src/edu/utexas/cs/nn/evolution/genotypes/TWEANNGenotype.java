@@ -335,7 +335,7 @@ public class TWEANNGenotype implements Genotype<TWEANN> {
      * @param archetypeIndex = which archetype to reference for crossover
      */
     public TWEANNGenotype(int numIn, int numOut, int archetypeIndex) {
-        this(numIn, numOut, CommonConstants.fs, CommonConstants.ftype, CommonConstants.multitaskModes, archetypeIndex);
+        this(numIn, numOut, CommonConstants.fs, ActivationFunctions.newNodeFunction(), CommonConstants.multitaskModes, archetypeIndex);
     }
 
     /**
@@ -472,7 +472,7 @@ public class TWEANNGenotype implements Genotype<TWEANN> {
         int linksAdded = 0;
         int neuronsToAdd = neuronsPerMode + (TWEANN.preferenceNeuron() ? 1 : 0);
         for (int i = 0; i < neuronsToAdd; i++) {
-            addRandomFullyConnectedOutputNode(CommonConstants.ftype);
+            addRandomFullyConnectedOutputNode(ActivationFunctions.newNodeFunction());
             linksAdded += numIn;
         }
         numModes++;
@@ -511,7 +511,7 @@ public class TWEANNGenotype implements Genotype<TWEANN> {
             System.exit(1);
         }
 
-        int ftype = CommonConstants.mmpActivationId ? ActivationFunctions.FTYPE_ID : CommonConstants.ftype;
+        int ftype = CommonConstants.mmpActivationId ? ActivationFunctions.FTYPE_ID : ActivationFunctions.newNodeFunction();
         int numLinksActuallyAdded = 0; // Add up since duplicate links won't be added
         //int neuronsToAdd = neuronsPerMode + (TWEANN.preferenceNeuron() ? 1 : 0);
         for (int i = 0; i < neuronsPerMode; i++) {
@@ -855,7 +855,7 @@ public class TWEANNGenotype implements Genotype<TWEANN> {
     }
 
     public void spliceMutation() {
-        spliceMutation(CommonConstants.ftype);
+        spliceMutation(ActivationFunctions.newNodeFunction());
     }
 
     private void spliceMutation(int ftype) {
@@ -1131,7 +1131,7 @@ public class TWEANNGenotype implements Genotype<TWEANN> {
             linkInnovations[j] = EvolutionaryHistory.nextInnovation();
             weights[j] = RandomNumbers.fullSmallRand();
         }
-        addOutputNode(CommonConstants.ftype, sourceInnovations, weights, linkInnovations);
+        addOutputNode(ActivationFunctions.newNodeFunction(), sourceInnovations, weights, linkInnovations);
     }
 
     /**
@@ -1158,7 +1158,7 @@ public class TWEANNGenotype implements Genotype<TWEANN> {
             newNodeInnovation = -(numIn + numOut) - 1;
             //System.out.println("Pref node at end: " + desiredPreferenceLoc + " w/innovation " + newNodeInnovation);
             // Create the output node
-            NodeGene ng = new NodeGene(CommonConstants.ftype, TWEANN.Node.NTYPE_OUTPUT, newNodeInnovation);
+            NodeGene ng = new NodeGene(ActivationFunctions.newNodeFunction(), TWEANN.Node.NTYPE_OUTPUT, newNodeInnovation);
             nodes.add(ng);
             EvolutionaryHistory.archetypeAdd(archetypeIndex, ng.clone(), "insert end preference");
         } else {
@@ -1166,7 +1166,7 @@ public class TWEANNGenotype implements Genotype<TWEANN> {
             // Get the innovation num of node currently in that position
             newNodeInnovation = current.innovation;
             //System.out.println("Node at " + desiredPreferenceLoc + " w/innovation " + newNodeInnovation + " being replaced");
-            NodeGene newPref = new NodeGene(CommonConstants.ftype, TWEANN.Node.NTYPE_OUTPUT, newNodeInnovation);
+            NodeGene newPref = new NodeGene(ActivationFunctions.newNodeFunction(), TWEANN.Node.NTYPE_OUTPUT, newNodeInnovation);
             // Put preference neuron after mode and before next mode
             nodes.add(desiredPreferenceLoc, newPref);
 
@@ -1221,7 +1221,7 @@ public class TWEANNGenotype implements Genotype<TWEANN> {
         // Slots are already reserved for future output nodes
         long newNodeInnovation = -(numIn + numOut) - 1;
         // Create the output node
-        NodeGene ng = new NodeGene(CommonConstants.ftype, TWEANN.Node.NTYPE_OUTPUT, newNodeInnovation);
+        NodeGene ng = new NodeGene(ActivationFunctions.newNodeFunction(), TWEANN.Node.NTYPE_OUTPUT, newNodeInnovation);
         // Copy all links from old node
         for (NodeGene p : nodes) {
             LinkGene lg = getLinkBetween(p.innovation, n.innovation);

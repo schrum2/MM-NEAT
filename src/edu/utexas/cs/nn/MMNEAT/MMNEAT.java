@@ -20,6 +20,7 @@ import edu.utexas.cs.nn.graphics.DrawingPanel;
 import edu.utexas.cs.nn.log.EvalLog;
 import edu.utexas.cs.nn.log.MONELog;
 import edu.utexas.cs.nn.log.PerformanceLog;
+import edu.utexas.cs.nn.networks.ActivationFunctions;
 import edu.utexas.cs.nn.networks.NetworkTask;
 import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.parameters.CommonConstants;
@@ -284,9 +285,9 @@ public class MMNEAT {
 
         genotypeExamples = new ArrayList<Genotype>(2);
         // Multitask
-        genotypeExamples.add(new TWEANNGenotype(pacmanInputOutputMediator.numIn(), modesToTrack, CommonConstants.fs, CommonConstants.ftype, modesToTrack, 0));
+        genotypeExamples.add(new TWEANNGenotype(pacmanInputOutputMediator.numIn(), modesToTrack, CommonConstants.fs, ActivationFunctions.newNodeFunction(), modesToTrack, 0));
         // Pref Net
-        genotypeExamples.add(new TWEANNGenotype(pacmanInputOutputMediator.numIn(), modesToTrack, CommonConstants.fs, CommonConstants.ftype, 1, 1));
+        genotypeExamples.add(new TWEANNGenotype(pacmanInputOutputMediator.numIn(), modesToTrack, CommonConstants.fs, ActivationFunctions.newNodeFunction(), 1, 1));
 
         prepareCoevolutionArchetypes();
     }
