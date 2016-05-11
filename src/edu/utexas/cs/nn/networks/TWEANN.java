@@ -90,14 +90,6 @@ public class TWEANN implements Network {
     public class Node {
 
     	// TODO: Generalize handling of activation functions to make CPPNs possible 
-        public static final int FTYPE_SIGMOID = 0;
-        public static final int FTYPE_TANH = 1;
-        public static final int FTYPE_ID = 2;
-        public static final int FTYPE_FULLAPPROX = 3;
-        public static final int FTYPE_APPROX = 4;
-        public static final int FTYPE_GAUSS = 5; 
-        public static final int FTYPE_SINE = 6;
-        public static final int FTYPE_ABSVAL = 7;
         
         // Three types of neurons
         public static final int NTYPE_INPUT = 0;
@@ -161,21 +153,21 @@ public class TWEANN implements Network {
 
         private String ftypeName(int ftype) {
             switch (ftype) {
-                case FTYPE_SIGMOID:
+                case ActivationFunctions.FTYPE_SIGMOID:
                     return "Sigmoid";
-                case FTYPE_TANH:
+                case ActivationFunctions.FTYPE_TANH:
                     return "TanH";
-                case FTYPE_ID:
+                case ActivationFunctions.FTYPE_ID:
                     return "ID";
-                case FTYPE_FULLAPPROX:
+                case ActivationFunctions.FTYPE_FULLAPPROX:
                     return "FullApprox";
-                case FTYPE_APPROX:
+                case ActivationFunctions.FTYPE_APPROX:
                     return "SigmoidApprox";
-                case FTYPE_GAUSS:
+                case ActivationFunctions.FTYPE_GAUSS:
                 	return "Gaussian";
-                case FTYPE_SINE:
+                case ActivationFunctions.FTYPE_SINE:
                 	return "Sine";
-                case FTYPE_ABSVAL:
+                case ActivationFunctions.FTYPE_ABSVAL:
                 	return "AbsoluteValue";
                 				
             }
@@ -237,28 +229,28 @@ public class TWEANN implements Network {
 
         private void activate() {
             switch (ftype) {
-                case FTYPE_SIGMOID:
+                case ActivationFunctions.FTYPE_SIGMOID:
                     activation = ActivationFunctions.sigmoid(sum);
                     break;
-                case FTYPE_TANH:
+                case ActivationFunctions.FTYPE_TANH:
                     activation = ActivationFunctions.tanh(sum);
                     break;
-                case FTYPE_ID:
+                case ActivationFunctions.FTYPE_ID:
                     activation = sum;
                     break;
-                case FTYPE_APPROX:
+                case ActivationFunctions.FTYPE_APPROX:
                     activation = ActivationFunctions.quickSigmoid(sum);
                     break;
-                case FTYPE_FULLAPPROX:
+                case ActivationFunctions.FTYPE_FULLAPPROX:
                     activation = ActivationFunctions.fullQuickSigmoid(sum);
                     break;
-                case FTYPE_GAUSS:
-                	activation = ActivationFunctions.gaussianOverload(sum);
+                case ActivationFunctions.FTYPE_GAUSS:
+                	activation = ActivationFunctions.gaussian(sum);
                 	break;
-                case FTYPE_SINE:
+                case ActivationFunctions.FTYPE_SINE:
                 	activation = ActivationFunctions.sine(sum);
                 	break;
-                case FTYPE_ABSVAL:
+                case ActivationFunctions.FTYPE_ABSVAL:
                 	activation = ActivationFunctions.absVal(sum);
                 	break;
             }

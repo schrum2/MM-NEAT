@@ -1,12 +1,33 @@
 package edu.utexas.cs.nn.networks;
 
+import java.util.ArrayList;
+
 /**
  *
  * @author Jacob Schrum
  * Edits by Gabby Gonzalez
  */
 public class ActivationFunctions {
-
+	
+	public static final ArrayList<Integer> ftypes = new ArrayList<>(8);
+	/**
+	 * Initialize the ftypes to be available for the CPPN/TWEANN
+	 */
+	public static final int FTYPE_SIGMOID = 0;
+    public static final int FTYPE_TANH = 1;
+    public static final int FTYPE_ID = 2;
+    public static final int FTYPE_FULLAPPROX = 3;
+    public static final int FTYPE_APPROX = 4;
+    public static final int FTYPE_GAUSS = 5; 
+    public static final int FTYPE_SINE = 6;
+    public static final int FTYPE_ABSVAL = 7;
+    
+    /**
+     * TODO: Static list of functions, and a method to pick one randomly for ftype
+     * 
+     */
+    
+   
 	// For use in sigmoid, it is convenient to bound the inputs to the exp function
 	public static final double SAFE_EXP_BOUND = 7;
 	
@@ -117,10 +138,8 @@ public class ActivationFunctions {
      * @param x Function parameter
      * @return value of gaussian(x)
      */
-    public static double gaussianOverload(double x){
-    	double second = Math.exp(-0.5 * ((x - 0)/1) * ((x - 0)/1));
-    	double first = (1 / (1 * Math.sqrt(2 * Math.PI)));
-		return first * second;
+    public static double gaussian(double x){
+    	return gaussian(x, 1, 0);
     }
     
     /**

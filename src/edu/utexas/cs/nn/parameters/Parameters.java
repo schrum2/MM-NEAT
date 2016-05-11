@@ -8,6 +8,7 @@ import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
 import edu.utexas.cs.nn.evolution.nsga2.NSGA2;
 import edu.utexas.cs.nn.evolution.nsga2.bd.characterizations.DomainSpecificCharacterization;
 import edu.utexas.cs.nn.experiment.LimitedSinglePopulationGenerationalEAExperiment;
+import edu.utexas.cs.nn.networks.ActivationFunctions;
 import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.tasks.mspacman.data.JunctionNodes;
 import edu.utexas.cs.nn.tasks.mspacman.multitask.GhostsThenPillsModeSelector;
@@ -155,7 +156,7 @@ public class Parameters {
         integerOptions.add("bdArchiveSize", 0, "Maximum allowable size of archive for BD");
         integerOptions.add("initialPopulationSeed", -1, "Random seed used to determine the initial population");
         integerOptions.add("randomSeed", -1, "Random seed used to control algorithmic randomness (not domain randomness)");
-        integerOptions.add("ftype", TWEANN.Node.FTYPE_TANH, "Integer designation of default activation function for networks");
+        integerOptions.add("ftype", ActivationFunctions.FTYPE_TANH, "Integer designation of default activation function for networks");
         integerOptions.add("maxGens", 500, "Maximum generations allowed for a LimitedGenerationalEAExperiment");
         integerOptions.add("mu", 50, "Size of parent population in mu +/, lambda scheme");
         integerOptions.add("lambda", 50, "Size of child population in mu +/, lambda scheme");

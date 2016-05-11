@@ -7,6 +7,7 @@ import edu.utexas.cs.nn.evolution.nsga2.bd.characterizations.GeneralNetworkChara
 import edu.utexas.cs.nn.evolution.nsga2.bd.localcompetition.TWEANNModesNicheDefinition;
 import edu.utexas.cs.nn.graphics.DrawingPanel;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
+import edu.utexas.cs.nn.networks.ActivationFunctions;
 import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
@@ -500,7 +501,7 @@ public class TWEANNGenotype implements Genotype<TWEANN> {
             System.exit(1);
         }
 
-        int ftype = CommonConstants.mmpActivationId ? TWEANN.Node.FTYPE_ID : CommonConstants.ftype;
+        int ftype = CommonConstants.mmpActivationId ? ActivationFunctions.FTYPE_ID : CommonConstants.ftype;
         int numLinksActuallyAdded = 0; // Add up since duplicate links won't be added
         //int neuronsToAdd = neuronsPerMode + (TWEANN.preferenceNeuron() ? 1 : 0);
         for (int i = 0; i < neuronsPerMode; i++) {
