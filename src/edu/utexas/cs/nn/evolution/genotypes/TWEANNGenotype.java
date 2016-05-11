@@ -1557,7 +1557,7 @@ public class TWEANNGenotype implements Genotype<TWEANN> {
      * A main method with some informal tests
      */
     public static void main(String[] args) {
-        Parameters.initializeParameterCollections(new String[]{"io:false", "recurrency:false", "mmdRate:0.1"});
+        Parameters.initializeParameterCollections(new String[]{"io:false", "recurrency:false", "mmdRate:0.1", "task:edu.utexas.cs.nn.tasks.breve2D.Breve2DTask"});
         //CommonConstants.freezeBeforeModeMutation = true;
         MMNEAT.loadClasses();
         TWEANNGenotype tg1 = new TWEANNGenotype(5, 2, 0);
