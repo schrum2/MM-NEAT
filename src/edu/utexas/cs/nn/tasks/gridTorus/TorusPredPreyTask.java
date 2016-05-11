@@ -1,5 +1,8 @@
 package edu.utexas.cs.nn.tasks.gridTorus;
 
+/**
+ * Imports needed parts to initialize the task.
+ */
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.evolution.nsga2.tug.TUGTask;
 import edu.utexas.cs.nn.gridTorus.TorusPredPreyGame;
@@ -16,66 +19,91 @@ import edu.utexas.cs.nn.util.datastructures.Pair;
 
 /**
  *
- * @author Jacob Schrum
+ * @author Jacob Schrum, Gabby Gonzalez
+ * The following class sets up tasks for learning agents and NPCs.
  */
 public class TorusPredPreyTask<T extends Network> extends NoisyLonerTask<T> implements TUGTask, NetworkTask {
-
+	    /**
+	     * Initializes the controllers and world to be used.
+	     */
     private TorusPredPreyController brain;
-    private TorusPredPreyController[] npcs;
+    private TorusPredPreyController[] staticAgents;
     private TorusWorldExec exec;
 
+    /**
+     * Extends NoisyLonerTask to make a generalized task for evolving a brain with static enemies.
+     * Enemies are created with the parameter being torusPredators and initially all aggressive.
+     */
     public TorusPredPreyTask() {
-        super(); //Super from TUGTask and Network task? -Gab
-        int numPredators = Parameters.parameters.integerParameter("torusPredators"); //So the assigned number of predators is gathered here... -Gab
-        npcs = new TorusPredPreyController[numPredators]; //...and then used here to created predators as "npcs" -Gab
+        super(); 
+        int numPredators = Parameters.parameters.integerParameter("torusPredators"); 
+        staticAgents = new TorusPredPreyController[numPredators];
         for(int i = 0; i < numPredators; i++) {
-            npcs[i] = new AggressivePredatorController(); //They are all set to aggressive, for loop makes much more sense to me now -Gab
+            staticAgents[i] = new AggressivePredatorController(); 
         }
-        MMNEAT.registerFitnessFunction("Time Alive"); //What are other fitness functions that could be used here? -Gab
+        MMNEAT.registerFitnessFunction("Time Alive"); 
     }
 
+    /**
+     * Used to evaluated the fitness score of the brain agent genotype. Additionally, initializes the game to do this.
+     * @param genotype and num (evaluation being performed)
+     * @return pair of fitness and states from evaluation
+     */
     @Override
     public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {
-        NNTorusPredPreyAgent<T> agent = new NNTorusPredPreyAgent<T>(individual); //This is the prey agent then? -Gab
-        brain = agent.getController(); //The prey utilizes a brain while the predators are npcs -Gab
-        exec = new TorusWorldExec(); //Exec as in execution? -Gab
-        TorusPredPreyGame game; //Just for initializing? -Gab
-        if (CommonConstants.watch) { //What is CommonConstants watching for? Winning? Losing? -Gab
-            game = exec.runGameTimed(npcs, new TorusPredPreyController[]{brain}, true); //What does adding true change? -Gab
+        NNTorusPredPreyAgent<T> agent = new NNTorusPredPreyAgent<T>(individual); 
+        brain = agent.getController(); 
+        exec = new TorusWorldExec(); 
+        TorusPredPreyGame game; 
+        if (CommonConstants.watch) { 
+            game = exec.runGameTimed(staticAgents, new TorusPredPreyController[]{brain}, true); 
         } else {
-            game = exec.runExperiment(npcs, new TorusPredPreyController[]{brain});
+            game = exec.runExperiment(staticAgents, new TorusPredPreyController[]{brain});
         }
         double[] oneTrialFitness = new double[]{game.getTime()}; 
         double[] otherStats = new double[0];
-        return new Pair<double[], double[]>(oneTrialFitness, otherStats); //The time taken and other stats will help to find out the actual fitness score? -Gab
+        return new Pair<double[], double[]>(oneTrialFitness, otherStats); 
     }
 
-    public int numObjectives() { //Whose objectives? -Gab
+    /**
+     * Returns the current number of objectives for the agent that initialized minScores, i.e. brain agent.
+     */
+    public int numObjectives() { 
         return minScores().length; 
     }
 
     /**
-     * All zeroes, since objectives are positive
-     *
-     * @return
+     * Goals set to zeroes, since objectives are positive
      */
-    public double[] startingGoals() { //Again, whose goals? -Gab
+    public double[] startingGoals() {
         return minScores();
     }
 
+    /**
+     * Initialize the array minScores for the brain agent.
+     */
     @Override
-    public double[] minScores() { //Empty to start, who utilizes this? Both prey and predators? Are they specific to each side or each agent? -Gab
+    public double[] minScores() { 
         return new double[]{0};
     }
 
-    public String[] sensorLabels() { //What are the sensor labels used for in the experiment? -Gab
-        return NNTorusPredPreyController.sensorLabels(npcs.length);
+    /**
+     * Accesses the labels for the sensors used in network visualization.
+     */
+    public String[] sensorLabels() { 
+        return NNTorusPredPreyController.sensorLabels(staticAgents.length);
     }
 
-    public String[] outputLabels() { //These are just for output or for the prey/predators to read too? -Gab
+    /**
+     * Accesses the outputs that will be used by an agent, i.e. the movement directions.
+     */
+    public String[] outputLabels() { 
         return new String[]{"UP", "RIGHT", "DOWN", "LEFT"};
     }
 
+    /**
+     * Accesses the time stamps for the current game being executed, use for evaluation purposes.
+     */
     public double getTimeStamp() {
         return exec.game.getTime();
     }
