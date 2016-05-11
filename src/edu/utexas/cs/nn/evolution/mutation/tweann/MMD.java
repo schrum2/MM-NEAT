@@ -7,8 +7,7 @@ package edu.utexas.cs.nn.evolution.mutation.tweann;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
 
 /**
- *Simple class that allows one to duplicate a genotype and add it
- *to a mode.
+ *Simple class that allows one to duplicate a module that is identical to the previous one.
  *
  * @author Jacob Schrum
  */
@@ -22,10 +21,10 @@ public class MMD extends ModuleMutation {
     }
     
     /**
-     * Adds a duplicate genotype to mode
+     * Adds a module identical to the previous genotype
      * 
      * @param genotype: the genotype of the TWEANN to be added
-     * to the mode
+     * to the new module
      */
     @Override
     public void addMode(TWEANNGenotype genotype) {
