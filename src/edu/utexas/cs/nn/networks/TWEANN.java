@@ -30,7 +30,7 @@ import java.util.List;
  * 4) Links from right to left are always recurrent
  * 
  * This is a bit more restrictive than the standard NEAT networks.
- * The benefit of it is that signals can propogate from input to output
+ * The benefit of it is that signals can propagate from input to output
  * in a single activation, unlike standard NEAT networks that only have
  * activations travel one link at a time.
  *

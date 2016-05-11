@@ -1,5 +1,6 @@
 package edu.utexas.cs.nn.evolution.crossover.network;
 
+import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
 import edu.utexas.cs.nn.evolution.crossover.Crossover;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
@@ -417,8 +418,9 @@ public class TWEANNCrossover extends Crossover<TWEANN> {
      * Testing
      */
     public static void main(String[] args) {
-        Parameters.initializeParameterCollections(new String[]{"io:false", "connectToInputs:false", "crossExcessGenes:true"});
-        TWEANNGenotype m = new TWEANNGenotype(5, 3, true, 1, 1, 0);
+        Parameters.initializeParameterCollections(new String[]{"io:false", "connectToInputs:false", "crossExcessRate:1.0", "task:edu.utexas.cs.nn.tasks.breve2D.Breve2DTask"});
+        MMNEAT.loadClasses();
+        TWEANNGenotype m = new TWEANNGenotype(MMNEAT.networkInputs, MMNEAT.networkOutputs, true, 1, 1, 0);
         m.linkMutation();
         m.linkMutation();
         m.spliceMutation();
@@ -436,7 +438,6 @@ public class TWEANNCrossover extends Crossover<TWEANN> {
         m.spliceMutation();
         m.linkMutation();
         m.linkMutation();
-        //TWEANNGenotype f = new TWEANNGenotype(5,3,true,1,1);
         f.linkMutation();
         f.linkMutation();
         f.spliceMutation();

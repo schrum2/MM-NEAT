@@ -487,10 +487,6 @@ public class MMNEAT {
     }
 
     public static void loadClasses() {
-        loadClasses(true);
-    }
-
-    public static void loadClasses(boolean playing) {
         try {
             setupSaveDirectory();
 
@@ -743,7 +739,7 @@ public class MMNEAT {
             int runs = Integer.parseInt(value);
             args[0] = "runNumber:0";
             Parameters.initializeParameterCollections(args);    // file should exist
-            loadClasses(false);
+            loadClasses();
             calculateHVs(runs);
         } else if (args[0].startsWith("lineage:")) {
             System.out.println("Lineage browser");
@@ -770,7 +766,7 @@ public class MMNEAT {
             int runs = Integer.parseInt(value);
             args[0] = "runNumber:0";
             Parameters.initializeParameterCollections(args);    // file should exist
-            loadClasses(false);
+            loadClasses();
             process(runs);
         } else {
             evolutionaryRun(args);
