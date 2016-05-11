@@ -95,6 +95,10 @@ public class TWEANN implements Network {
         public static final int FTYPE_ID = 2;
         public static final int FTYPE_FULLAPPROX = 3;
         public static final int FTYPE_APPROX = 4;
+        public static final int FTYPE_GAUSS = 5; 
+        public static final int FTYPE_SINE = 6;
+        public static final int FTYPE_ABSVAL = 7;
+        
         // Three types of neurons
         public static final int NTYPE_INPUT = 0;
         public static final int NTYPE_HIDDEN = 1;
@@ -156,7 +160,6 @@ public class TWEANN implements Network {
         }
 
         private String ftypeName(int ftype) {
-        	// TODO: Add Gaussian, sin, and absolute value
             switch (ftype) {
                 case FTYPE_SIGMOID:
                     return "Sigmoid";
@@ -168,6 +171,13 @@ public class TWEANN implements Network {
                     return "FullApprox";
                 case FTYPE_APPROX:
                     return "SigmoidApprox";
+                case FTYPE_GAUSS:
+                	return "Gaussian";
+                case FTYPE_SINE:
+                	return "Sine";
+                case FTYPE_ABSVAL:
+                	return "AbsoluteValue";
+                				
             }
             // Should never reach
             System.out.println(ftype + " is not a valid type of activation function");
@@ -226,7 +236,6 @@ public class TWEANN implements Network {
         }
 
         private void activate() {
-        	// TODO: Add Gaussian, sin, and absolute value
             switch (ftype) {
                 case FTYPE_SIGMOID:
                     activation = ActivationFunctions.sigmoid(sum);
@@ -243,6 +252,15 @@ public class TWEANN implements Network {
                 case FTYPE_FULLAPPROX:
                     activation = ActivationFunctions.fullQuickSigmoid(sum);
                     break;
+                case FTYPE_GAUSS:
+                	activation = ActivationFunctions.gaussianOverload(sum);
+                	break;
+                case FTYPE_SINE:
+                	activation = ActivationFunctions.sine(sum);
+                	break;
+                case FTYPE_ABSVAL:
+                	activation = ActivationFunctions.absVal(sum);
+                	break;
             }
         }
 
