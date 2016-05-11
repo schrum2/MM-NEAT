@@ -595,6 +595,8 @@ public class MMNEAT {
                 System.out.println("Setup Match Data Task");
                 MatchDataTask t = (MatchDataTask) task;
                 setNNInputParameters(t.numInputs(), t.numOutputs());
+            } else {//this else statement should only happen for JUnit testing cases
+            	setNNInputParameters(5, 3);
             }
             setupMetaHeuristics();
             // An EA is always needed. Currently only GenerationalEA classes are supported
