@@ -28,6 +28,10 @@ public abstract class NoisyLonerTask<T> extends LonerTask<T> {
     public Statistic stat;
     public final boolean printFitness;
 
+    /**
+     * constructor for a noisy loner task. Assigns fitness according to specifications
+     * provided in the parameters of the command line
+     */
     public NoisyLonerTask() {
         this.printFitness = Parameters.parameters.booleanParameter("printFitness");
         try {
@@ -123,6 +127,7 @@ public abstract class NoisyLonerTask<T> extends LonerTask<T> {
             System.out.println("Individual: " + individual.getId());
             System.out.println("\t" + scoreSummary(objectiveScores, otherScores, fitness, other));
         }
+        //save information about various pacman variables/values in the eval report
         if (MMNEAT.evalReport != null) {
             MMNEAT.evalReport.log(scoreSummary(objectiveScores, otherScores, fitness, other));
 
@@ -150,11 +155,21 @@ public abstract class NoisyLonerTask<T> extends LonerTask<T> {
             }
         }
         cleanup();
+        //creates the score based off of the multiple objective score
         Score<T> s = new MultiObjectiveScore<T>(individual, fitness, getBehaviorVector(), other);
+        //set the average time
         s.averageEvalTime = averageEvalTime;
         return s;
     }
 
+    /**
+     * obtain a summary of the fitness and other scores
+     * @param objectiveScores
+     * @param otherScores
+     * @param fitness
+     * @param other
+     * @return the summary in a string
+     */
     public String scoreSummary(double[][] objectiveScores, double[][] otherScores, double[] fitness, double[] other) {
         String nl = System.getProperty("line.separator");
         String result = "";

@@ -62,12 +62,12 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
         }
 
         /**
-         * Possibly creates a graphical representation of this task and finds the fitness score for the genotype
+         * Creates a graphical representation of this task if requested and finds the fitness score for the genotype
          * @returns score the fitness score of the agent of this task based on evaluation
          */
         public Score<T> call() {
             DrawingPanel panel = null;
-            DrawingPanel[] subPanels = null;
+            //DrawingPanel[] subPanels = null;
             if (genotype instanceof TWEANNGenotype) {
                 if (CommonConstants.showNetworks) {
                     panel = new DrawingPanel(TWEANN.NETWORK_VIEW_DIM, TWEANN.NETWORK_VIEW_DIM, "Evolving Network");
@@ -127,12 +127,12 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
                 System.out.println("Mode Usage: " + Arrays.toString(((TWEANNGenotype) score.individual).modeUsage));
                 System.out.println("Fitness: " + score.toString());
                 panel.dispose();
-                if (subPanels != null) {
-                    for (int i = 0; i < subPanels.length; i++) {
-                        subPanels[i].dispose();
-                    }
-                    subPanels = null;
-                }
+//                if (subPanels != null) {
+//                    for (int i = 0; i < subPanels.length; i++) {
+//                        subPanels[i].dispose();
+//                    }
+//                    subPanels = null;
+//                }
             }
             return score;
         }
@@ -163,18 +163,20 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
      * @return scores a list of the fitness scores of the population
      */
     public ArrayList<Score<T>> evaluateAll(ArrayList<Genotype<T>> population) {
+    	//a list of the fitness scores of the population
         ArrayList<Score<T>> scores = new ArrayList<Score<T>>(population.size());
 
         ExecutorService poolExecutor = null;
         ArrayList<Future<Score<T>>> futures = null;
         ArrayList<EvaluationThread<T>> calls = new ArrayList<EvaluationThread<T>>(population.size());
 
+        //get each genotype for the population and add an EvaluationThread for it to the calls list
         for (int i = 0; i < population.size(); i++) {
             Genotype<T> genotype = population.get(i);
             EvaluationThread<T> callable = new EvaluationThread<T>(this, genotype);
             calls.add(callable);
         }
-
+        
         if (parallel) {
             poolExecutor = Executors.newFixedThreadPool(threads);
             futures = new ArrayList<Future<Score<T>>>(population.size());
@@ -189,6 +191,7 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
         Genotype[] bestGenotypes = new Genotype[bestObjectives.length];
         Score<T>[] bestScores = new Score[bestObjectives.length];
 
+        //some pac man variables that only apply if pac man is being used to save the best pac man later
         int maxPacManScore = 0;
         Genotype bestPacMan = null;
         Score<T> bestScoreSet = null;
@@ -253,7 +256,7 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
             } else {
                 dir.mkdir();
             }
-
+            //save all of the best objectives
             for (int j = 0; j < bestObjectives.length; j++) {
                 Easy.save(bestGenotypes[j], bestDir + "/bestIn" + j + ".xml");
                 FileUtilities.simpleFileWrite(bestDir + "/score" + j + ".txt", bestScores[j].toString());
@@ -267,7 +270,7 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
         /**
          * If using UCB to decide who to give extra evals to, then by this point
          * every member of the population will have been evaluated (preferably
-         * once). From here on, intelligent decision need to be made about who
+         * once). From here on, intelligent decisions need to be made about who
          * to evaluate again.
          */
         if (CommonConstants.ucb1Evaluation) {
@@ -321,7 +324,11 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
 
         return scores;
     }
-
+    /**
+     * defines the evaluate method to be implemented elsewhere
+     * @param individual whose genotype will be evaluated
+     * @return the fitness score of the individual
+     */
     public abstract Score<T> evaluate(Genotype<T> individual);
 
     /*
