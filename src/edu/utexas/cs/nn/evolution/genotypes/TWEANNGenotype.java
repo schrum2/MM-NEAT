@@ -335,7 +335,7 @@ public class TWEANNGenotype implements Genotype<TWEANN> {
      * @param archetypeIndex = which archetype to reference for crossover
      */
     public TWEANNGenotype(int numIn, int numOut, int archetypeIndex) {
-        this(numIn, numOut, CommonConstants.fs, ActivationFunctions.newNodeFunction(), CommonConstants.multitaskModes, archetypeIndex);
+        this(numIn, numOut, CommonConstants.fs, CommonConstants.ftype, CommonConstants.multitaskModes, archetypeIndex);
     }
 
     /**
@@ -1557,7 +1557,7 @@ public class TWEANNGenotype implements Genotype<TWEANN> {
      * A main method with some informal tests
      */
     public static void main(String[] args) {
-        Parameters.initializeParameterCollections(new String[]{"io:false", "recurrency:false", "mmdRate:0.1", "task:edu.utexas.cs.nn.tasks.breve2D.Breve2DTask"});
+        Parameters.initializeParameterCollections(new String[]{"io:false", "allowMultipleFunctions:true", "recurrency:false", "mmdRate:0.1", "task:edu.utexas.cs.nn.tasks.breve2D.Breve2DTask"});
         //CommonConstants.freezeBeforeModeMutation = true;
         MMNEAT.loadClasses();
         TWEANNGenotype tg1 = new TWEANNGenotype(5, 2, 0);
@@ -1572,6 +1572,9 @@ public class TWEANNGenotype implements Genotype<TWEANN> {
             tg2.mutate();
         }
 
+        System.out.println(tg1);
+        System.out.println(new TWEANN(tg1));
+        
         double[] inputs = RandomNumbers.randomArray(tg1.numIn);
 
         //tg1.freezeInfluences(tg1.nodes.get(tg1.nodes.size()-2).innovation);

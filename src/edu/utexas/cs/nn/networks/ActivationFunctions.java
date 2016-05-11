@@ -33,7 +33,7 @@ public class ActivationFunctions {
     /**
      * Initializes the set of ftypes by checking boolean parameters for included functions
      */
-    public static void functionSet(){
+    public static void initFunctionSet(){
     	if(Parameters.parameters.booleanParameter("includeSigmoidFunction")){
     		ftypes.add(FTYPE_SIGMOID);
     	}
