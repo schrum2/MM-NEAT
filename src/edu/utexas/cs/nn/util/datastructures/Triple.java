@@ -1,11 +1,7 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.utexas.cs.nn.util.datastructures;
 
 /**
- * Tuple of objects
+ * 3-Tuple of objects
  *
  * @author Jacob Schrum
  */
@@ -15,10 +11,10 @@ public class Triple<X, Y, Z> {
     public Y t2;
     public Z t3;
 
-    public Triple(X originalReturn, Y originalModify, Z next) {
-        this.t1 = originalReturn;
-        this.t2 = originalModify;
-        this.t3 = next;
+    public Triple(X pos1, Y pos2, Z pos3) {
+        this.t1 = pos1;
+        this.t2 = pos2;
+        this.t3 = pos3;
     }
 
     @Override

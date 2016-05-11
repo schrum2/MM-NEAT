@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.utexas.cs.nn.util.datastructures;
 
 /**
@@ -14,16 +10,30 @@ public class Pair<X, Y> {
     public X t1;
     public Y t2;
 
-    public Pair(X originalReturn, Y originalModify) {
-        this.t1 = originalReturn;
-        this.t2 = originalModify;
+    /**
+     * Tuple of items
+     * @param pos1 First item
+     * @param pos2 Second item
+     */
+    public Pair(X pos1, Y pos2) {
+        this.t1 = pos1;
+        this.t2 = pos2;
     }
 
+    /**
+     * Print tuple in parentheses
+     * @return String representation
+     */
     @Override
     public String toString() {
         return "(" + t1.toString() + "," + t2.toString() + ")";
     }
 
+    /**
+     * Pairs are equal if both positions in tuple are equal.
+     * @param other A different pair
+     * @return Whether pairs are equal
+     */
     @Override
     public boolean equals(Object other) {
         if (other instanceof Pair) {
@@ -33,6 +43,10 @@ public class Pair<X, Y> {
         return false;
     }
 
+    /**
+     * Auto-generated hash code for Pairs
+     * @return 
+     */
     @Override
     public int hashCode() {
         int hash = 7;
