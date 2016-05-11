@@ -1534,6 +1534,9 @@ public class TWEANNGenotype implements Genotype<TWEANN> {
         return id == other.id;
     }
 
+    /**
+     * A main method with some informal tests
+     */
     public static void main(String[] args) {
         Parameters.initializeParameterCollections(new String[]{"io:false", "recurrency:false", "mmdRate:0.1"});
         //CommonConstants.freezeBeforeModeMutation = true;
