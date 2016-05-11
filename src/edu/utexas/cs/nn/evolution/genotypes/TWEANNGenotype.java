@@ -105,15 +105,19 @@ public class TWEANNGenotype implements Genotype<TWEANN> {
             NodeGene other = (NodeGene) o;
             return innovation == other.innovation;
         }
-
+		/**
+		 * Clones given node
+		 */
         @Override
         public NodeGene clone() {
             return new NodeGene(ftype, ntype, innovation, frozen);
         }
-
+        /**
+         * prints out a string of node's data
+         */
         @Override
         public String toString() {
-            return "(inno=" + this.innovation + ",ftype=" + this.ftype + ",ntype=" + this.ntype + ",frozen=" + this.frozen + ")"; //  + (origin.isEmpty() ? "" : ",origin=" + origin)
+            return "(inno=" + this.innovation + ",ftype=" + this.ftype + ",ntype=" + this.ntype + ",frozen=" + this.frozen + ")";
         }
     }
 
@@ -174,12 +178,18 @@ public class TWEANNGenotype implements Genotype<TWEANN> {
             this.active = active;
             this.recurrent = recurrent;
         }
-
+        
+        /**
+         * Clones given link gene
+         */
         @Override
         public LinkGene clone() {
             return new LinkGene(sourceInnovation, targetInnovation, weight, innovation, active, recurrent, frozen);
         }
 
+        /**
+         * Prints link gene data to console
+         */
         @Override
         public String toString() {
             return "(inno=" + this.innovation + ",source=" + this.sourceInnovation + ",target=" + this.targetInnovation + ",weight=" + this.weight + ",active=" + this.active + ",recurrent=" + this.recurrent + ",frozen=" + this.frozen + ")";
@@ -218,7 +228,7 @@ public class TWEANNGenotype implements Genotype<TWEANN> {
         this(copy.nodes, copy.links, copy.neuronsPerMode, copy.standardMultitask, copy.hierarchicalMultitask, copy.archetypeIndex);
     }
 
-    /*
+    /**
      * Construct new genotype from component node and link lists, along with
      * important parameters
      */
@@ -725,11 +735,19 @@ public class TWEANNGenotype implements Genotype<TWEANN> {
         }
         return null;
     }
-
+/**
+ * default method that links mutations.
+ * overrides by getting a random link and random weight.
+ */
     public void linkMutation() {
         linkMutation(getRandomLinkSourceNodeInnovationNumber(), RandomNumbers.fullSmallRand());
     }
-
+/**
+ * adds a new mutated link to TWEANN genotype after source link.
+ * 
+ * @param source: the starting link
+ * @param weight: the weight of the added link
+ */
     public void linkMutation(long source, double weight) {
         long target = getRandomAlterableConnectedNodeInnovationNumber(source, CommonConstants.connectToInputs);
         long link = EvolutionaryHistory.nextInnovation();
