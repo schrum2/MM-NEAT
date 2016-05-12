@@ -66,7 +66,9 @@ public class TWEANNCrossoverTest {
 		 assertTrue(m.numIn == DEFAULT_NUMIN);
 		 assertTrue(m.numOut == DEFAULT_NUMOUT );
 		 
-		 //assertTrue() ask how to get this to run in a static main method
+//		 assertTrue(TWEANNGenotype.sameStructure(originalF, f));
+//		 assertFalse(TWEANNGenotype.sameStructure(originalM, m));
+//		 assertFalse(TWEANNGenotype.sameStructure(f, o));
 		 ArrayList<NodeGene> mGenotype = m.nodes;//creates long arrays to facilitate utilization a helper method
 		 long[] mInno = new long[mGenotype.size()];
 		 for(int i = 0; i < mGenotype.size(); i++) {
