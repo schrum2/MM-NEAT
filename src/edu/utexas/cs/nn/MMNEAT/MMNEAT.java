@@ -29,6 +29,7 @@ import edu.utexas.cs.nn.tasks.MultiplePopulationTask;
 import edu.utexas.cs.nn.tasks.Task;
 import edu.utexas.cs.nn.tasks.breve2D.Breve2DTask;
 import edu.utexas.cs.nn.tasks.breve2D.NNBreve2DMonster;
+import edu.utexas.cs.nn.tasks.gridTorus.TorusEvolvedPredatorsVsStaticPreyTask;
 import edu.utexas.cs.nn.tasks.gridTorus.TorusEvolvedPreyVsStaticPredatorsTask;
 import edu.utexas.cs.nn.tasks.motests.FunctionOptimization;
 import edu.utexas.cs.nn.tasks.motests.testfunctions.FunctionOptimizationSet;
@@ -586,11 +587,11 @@ public class MMNEAT {
                 System.out.println("Setup Breve 2D Task");
                 Breve2DDynamics dynamics = (Breve2DDynamics) ClassCreation.createObject("breveDynamics");
                 setNNInputParameters(dynamics.numInputSensors(), NNBreve2DMonster.NUM_OUTPUTS);
-            } else if (task instanceof TorusEvolvedPreyVsStaticPredatorsTask) {
+            } else if (task instanceof TorusEvolvedPreyVsStaticPredatorsTask || task instanceof TorusEvolvedPredatorsVsStaticPreyTask) {
                 System.out.println("Setup Torus Predator/Prey Task");
                 NetworkTask t = (NetworkTask) task;
                 setNNInputParameters(t.sensorLabels().length, t.outputLabels().length);
-            } else if (task instanceof UT2004Task) {
+            }else if (task instanceof UT2004Task) {
                 System.out.println("Setup UT2004 Task");
                 UT2004Task utTask = (UT2004Task) task;
                 setNNInputParameters(utTask.sensorModel.numberOfSensors(), utTask.outputModel.numberOfOutputs());
