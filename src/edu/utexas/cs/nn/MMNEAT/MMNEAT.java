@@ -659,7 +659,7 @@ public class MMNEAT {
         }
     }
 
-    private static void clearClasses() {
+    public static void clearClasses() {
         rlGlueEnvironment = null;
         task = null;
         fos = null;
