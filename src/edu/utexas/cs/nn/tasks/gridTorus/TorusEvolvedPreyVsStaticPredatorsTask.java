@@ -22,7 +22,7 @@ import edu.utexas.cs.nn.util.datastructures.Pair;
  * @author Jacob Schrum, Gabby Gonzalez
  * The following class sets up tasks for learning agents and NPCs.
  */
-public class TorusPredPreyTask<T extends Network> extends NoisyLonerTask<T> implements TUGTask, NetworkTask {
+public class TorusEvolvedPreyVsStaticPredatorsTask<T extends Network> extends NoisyLonerTask<T> implements TUGTask, NetworkTask {
 	    /**
 	     * Initializes the controllers and world to be used.
 	     */
@@ -34,7 +34,7 @@ public class TorusPredPreyTask<T extends Network> extends NoisyLonerTask<T> impl
      * Extends NoisyLonerTask to make a generalized task for evolving a brain with static enemies.
      * Enemies are created with the parameter being torusPredators and initially all aggressive.
      */
-    public TorusPredPreyTask() {
+    public TorusEvolvedPreyVsStaticPredatorsTask() {
         super(); 
         int numPredators = Parameters.parameters.integerParameter("torusPredators"); 
         staticAgents = new TorusPredPreyController[numPredators];
