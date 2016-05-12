@@ -1515,7 +1515,12 @@ public class TWEANNGenotype implements Genotype<TWEANN> {
     }
 
     public static void sortLinkGenes(ArrayList<LinkGene> temp) {
-        Collections.sort(temp, (LinkGene o1, LinkGene o2) -> (int) Math.signum(o1.innovation - o2.innovation));
+    	Collections.sort(temp, new Comparator<LinkGene>() {
+
+            public int compare(LinkGene o1, LinkGene o2) {
+                return (int) Math.signum(o1.innovation - o2.innovation);
+            }
+        });
     }
 
     public long biggestInnovation() {
