@@ -14,6 +14,7 @@ public class Distance2DComparator implements Comparator<ILocated2D> {
         this.reference = reference;
     }
 
+    @Override
     public int compare(ILocated2D o1, ILocated2D o2) {
         if (reference == null || (o1 == null && o2 == null)) {
             return 0;

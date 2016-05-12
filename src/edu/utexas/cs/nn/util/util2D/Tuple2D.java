@@ -3,23 +3,42 @@ package edu.utexas.cs.nn.util.util2D;
 import java.awt.geom.Point2D;
 
 /**
- *
+ * (x,y) coordinates for object in 2D plane.
+ * 
  * @author Jacob Schrum
  */
 public class Tuple2D extends Point2D.Double implements ILocated2D {
 
+    /**
+     * Construct using x,y coordinates
+     * @param x x-coordinate
+     * @param y y-coordinate
+     */
     public Tuple2D(double x, double y) {
         super(x, y);
     }
 
+    /**
+     * Is the location at the origin?
+     * @return Whether both coordinates are 0
+     */
     public boolean isZero() {
         return (x == 0 && y == 0);
     }
 
+    /**
+     * Euclidean distance of (x,y) coordinate from the origin,
+     * a.k.a. length of vector.
+     * @return length of vector to (x,y)
+     */
     public double length() {
         return Math.sqrt((x * x) + (y * y));
     }
 
+    /**
+     * Parallel vector with length/magnitude of 1.
+     * @return Corresponding unit vector.
+     */
     public Tuple2D normalize() {
         double len = length();
         return new Tuple2D(x / len, y / len);
