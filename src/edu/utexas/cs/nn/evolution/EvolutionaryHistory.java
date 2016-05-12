@@ -29,28 +29,33 @@ public class EvolutionaryHistory {
 
     public static int maxModes;
     public static int minModes;
-    
+
     public static long largestUnusedInnovationNumber = 0;
     public static long largestUnusedGenotypeId = 0;
     public static ArrayList<NodeGene>[] archetypes = null;
     public static int[] archetypeOut = null;
 
+    public static TWEANNLog tweannLog = null;
+    public static MONELog mutationLog = null;
+    public static MONELog lineageLog = null;
+
     /**
-     * Commonly used/shared networks (hierarchical architectures).
-     * Raw types are allowed for greater flexibility 
-     * (different types of phenotypes may be generated)
+     * Commonly used/shared networks (hierarchical architectures). Raw types are
+     * allowed for greater flexibility (different types of phenotypes may be
+     * generated)
      */
     @SuppressWarnings("rawtypes")
-	public static HashMap<String, Genotype> loadedNetworks = new HashMap<String, Genotype>();
+    public static HashMap<String, Genotype> loadedNetworks = new HashMap<String, Genotype>();
 
     /**
      * Assure that each repeatedly used subnetwork is only loaded once
      *
+     * @param <T> Phenotype that the genotype encodes
      * @param xml File path of xml genotype file
      * @return the decoded genotype instance
      */
     @SuppressWarnings("unchecked")
-	public static <T extends Network> Genotype<T> getSubnetwork(String xml) {
+    public static <T extends Network> Genotype<T> getSubnetwork(String xml) {
         if (xml.isEmpty()) {
             // Return a dummy genotype to be ignored later
             return null;
@@ -61,14 +66,6 @@ public class EvolutionaryHistory {
         }
         return loadedNetworks.get(xml).copy();
     }
-
-    /*
-     * Remains high even when modes are deleted
-     */
-    // Doesn't account for multiple archetypes, and doesn't update after archetype cleaning
-//    public static void netHasModes(int modes) {
-//        maxModesOfAnyNetwork = Math.max(maxModesOfAnyNetwork, modes);
-//    }
 
     /**
      * Sets up tracker for previously used innovation numbers.
@@ -86,7 +83,9 @@ public class EvolutionaryHistory {
 
     /**
      * Assign new innovation number tracker
-     * @param innovation Should be the larger than all previously used innovation numbers
+     *
+     * @param innovation Should be the larger than all previously used
+     * innovation numbers
      */
     public static void setInnovation(long innovation) {
         largestUnusedInnovationNumber = innovation;
@@ -94,6 +93,7 @@ public class EvolutionaryHistory {
 
     /**
      * Assign new genotype ID tracker
+     *
      * @param id Should be the larger than all previously used genotype IDs
      */
     public static void setHighestGenotypeId(long id) {
@@ -118,15 +118,13 @@ public class EvolutionaryHistory {
         Parameters.parameters.setLong("lastGenotypeId", largestUnusedGenotypeId);
         return result;
     }
-    public static TWEANNLog tweannLog = null;
-    public static MONELog mutationLog = null;
-    public static MONELog lineageLog = null;
 
     /**
-     * Checks for a pre-existing file that is a genotype archetype for all genotypes
-     * in the population. This file assures that crossover aligns genotypes correctly
-     * when the genotypes being crossed have nodes that are not present in the other parent.
-     * 
+     * Checks for a pre-existing file that is a genotype archetype for all
+     * genotypes in the population. This file assures that crossover aligns
+     * genotypes correctly when the genotypes being crossed have nodes that are
+     * not present in the other parent.
+     *
      * @param populationIndex Unused: Supposed to allow for multiple coevolved populations.
      * @return
      */
@@ -139,15 +137,15 @@ public class EvolutionaryHistory {
         String base = Parameters.parameters.stringParameter("base");
         String xml = Parameters.parameters.stringParameter("archetype");
         String file = xml + populationIndex + ".xml";
-        if (base.equals("") ||
-            !(new File(file).exists())) {
+        if (base.equals("")
+                || !(new File(file).exists())) {
             file = null;
         }
         initArchetype(populationIndex, file);
     }
 
     @SuppressWarnings("unchecked")
-	public static void initArchetype(int populationIndex, String loadedArchetype) {
+    public static void initArchetype(int populationIndex, String loadedArchetype) {
         int size = MMNEAT.genotypeExamples == null ? 1 : MMNEAT.genotypeExamples.size();
         if (archetypes == null) {
             archetypes = new ArrayList[size];
@@ -194,7 +192,6 @@ public class EvolutionaryHistory {
     }
 
     public static void saveArchetype(int populationIndex) {
-        //new NullPointerException().printStackTrace();
         if (archetypes != null && archetypes[populationIndex] != null && CommonConstants.netio) {
             System.out.println("Saving archetype");
             String file = FileUtilities.getSaveDirectory() + "/" + "archetype";
@@ -249,9 +246,6 @@ public class EvolutionaryHistory {
                     return i;
                 }
             }
-//            System.out.println("Could not find innovation number: " + sourceInnovation);
-//            System.out.println("In archetype " + populationIndex + ": " + archetypes[populationIndex]);
-//            System.exit(1);
         }
         return -1;
     }
@@ -260,6 +254,7 @@ public class EvolutionaryHistory {
      * Removes from the archetype nodes all nodes that are not part of some
      * network in the population
      *
+     * @param populationIndex Archetype index of population
      * @param population population of TWEANNGenotypes
      * @param generation generation, used to tell if an archetype cleaning is
      * needed
@@ -319,15 +314,12 @@ public class EvolutionaryHistory {
             }
         }
     }
-    //private static int order = 1;
 
     public static void archetypeAdd(int populationIndex, NodeGene node, String origin) {
         // Make sure that the archetype exists, and does not already contain the innovation number
         if (archetypes != null && archetypes[populationIndex] != null && indexOfArchetypeInnovation(populationIndex, node.innovation) == -1) {
-            //node.origin = origin + " (" + (order++) + ")";
-            //System.out.println("Archetype " + populationIndex + " Add End: " + node.innovation);
             archetypes[populationIndex].add(node);
-            if(node.ntype == TWEANN.Node.NTYPE_OUTPUT) {
+            if (node.ntype == TWEANN.Node.NTYPE_OUTPUT) {
                 archetypeOut[populationIndex]++;
             }
         }
@@ -341,25 +333,27 @@ public class EvolutionaryHistory {
 
             if (combineCopy) {
                 NodeGene previous = archetypes[populationIndex].get(pos - 1);
-                if (previous.ntype == TWEANN.Node.NTYPE_INPUT) {
-                    int firstCombined = indexOfFirstArchetypeNodeFromCombiningCrossover(populationIndex, TWEANN.Node.NTYPE_HIDDEN);
-                    if (firstCombined == -1) { // no combining crossover yet
-                        archetypeAddFromCombiningCrossover(populationIndex, node, archetypes[populationIndex].size() - archetypeOut[populationIndex], "combine splice (FIRST)");
-                    } else {
-                        archetypeAddFromCombiningCrossover(populationIndex, node, firstCombined, "combine splice (before others)");
-                    }
-                } else if (previous.ntype == TWEANN.Node.NTYPE_HIDDEN) {
-                    long previousInnovation = previous.innovation;
-                    if (CombiningTWEANNCrossover.oldToNew.containsKey(previousInnovation)) {
-                        long newPreviousInnovation = CombiningTWEANNCrossover.oldToNew.get(previousInnovation);
-                        int indexNewPrevious = indexOfArchetypeInnovation(populationIndex, newPreviousInnovation);
-                        // Add new node directly after, in anticipation of future combining crossover
-                        archetypeAddFromCombiningCrossover(populationIndex, node, indexNewPrevious + 1, "combine splice (hidden)");
-                    }
-                    // otherwise do nothing, since node is only being spliced in multitask networks
-                } else {
-                    System.out.println("Error! " + previous + "," + pos + "," + archetypes[populationIndex]);
-                    System.exit(1);
+                switch (previous.ntype) {
+                    case TWEANN.Node.NTYPE_INPUT:
+                        int firstCombined = indexOfFirstArchetypeNodeFromCombiningCrossover(populationIndex, TWEANN.Node.NTYPE_HIDDEN);
+                        if (firstCombined == -1) { // no combining crossover yet
+                            archetypeAddFromCombiningCrossover(populationIndex, node, archetypes[populationIndex].size() - archetypeOut[populationIndex], "combine splice (FIRST)");
+                        } else {
+                            archetypeAddFromCombiningCrossover(populationIndex, node, firstCombined, "combine splice (before others)");
+                        }   break;
+                    case TWEANN.Node.NTYPE_HIDDEN:
+                        long previousInnovation = previous.innovation;
+                        if (CombiningTWEANNCrossover.oldToNew.containsKey(previousInnovation)) {
+                            long newPreviousInnovation = CombiningTWEANNCrossover.oldToNew.get(previousInnovation);
+                            int indexNewPrevious = indexOfArchetypeInnovation(populationIndex, newPreviousInnovation);
+                            // Add new node directly after, in anticipation of future combining crossover
+                            archetypeAddFromCombiningCrossover(populationIndex, node, indexNewPrevious + 1, "combine splice (hidden)");
+                        }
+                        // otherwise do nothing, since node is only being spliced in multitask networks
+                        break;
+                    default:
+                        System.out.println("Error! " + previous + "," + pos + "," + archetypes[populationIndex]);
+                        System.exit(1);
                 }
             }
         }
@@ -411,19 +405,19 @@ public class EvolutionaryHistory {
     }
 
     /**
-     * This complicated method isn't really used. The point was to allow evolving
-     * network genotypes with preference neurons to alternate between stages where
-     * the policy was evolving and stages where the preference neuron behavior was
-     * evolving.
-     * 
-     * The code only runs with TWEANNGenotypes (instanceof), but gets called with Genotypes of
-     * all sorts, which is why the type is raw.
-     * 
+     * This complicated method isn't really used. The point was to allow
+     * evolving network genotypes with preference neurons to alternate between
+     * stages where the policy was evolving and stages where the preference
+     * neuron behavior was evolving.
+     *
+     * The code only runs with TWEANNGenotypes (instanceof), but gets called
+     * with Genotypes of all sorts, which is why the type is raw.
+     *
      * @param population A population of TWEANNGenotypes
      * @param generation
      */
     @SuppressWarnings("rawtypes")
-	public static void frozenPreferenceVsPolicyStatusUpdate(ArrayList<? extends Genotype> population, int generation) {
+    public static void frozenPreferenceVsPolicyStatusUpdate(ArrayList<? extends Genotype> population, int generation) {
         if ((population.get(0) instanceof TWEANNGenotype)
                 && Parameters.parameters.booleanParameter("alternatePreferenceAndPolicy")
                 && (generation % Parameters.parameters.integerParameter("freezeMeltAlternateFrequency")) == 0) {
@@ -440,7 +434,7 @@ public class EvolutionaryHistory {
      * ordered in archetype, i.e. inputs, then hidden, then output
      *
      * @param populationIndex
-     * @return
+     * @return Whether archetype is ordered.
      */
     private static boolean orderedArchetype(int populationIndex) {
         int sectionType = TWEANN.Node.NTYPE_INPUT;

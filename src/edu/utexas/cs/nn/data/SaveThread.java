@@ -7,6 +7,7 @@ import wox.serial.Easy;
  * Save file in a thread, so that the file system operations can be distributed.
  *
  * @author Jacob Schrum
+ * @param <T> The class being saved
  */
 public class SaveThread<T> implements Callable<Boolean> {
 
@@ -18,6 +19,7 @@ public class SaveThread<T> implements Callable<Boolean> {
         this.filename = filename;
     }
 
+    @Override
     public Boolean call() {
         try {
             Easy.save(object, filename);
