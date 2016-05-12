@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.utexas.cs.nn.util.file;
 
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
@@ -17,7 +13,8 @@ import java.util.Scanner;
 import wox.serial.Easy;
 
 /**
- *
+ * Various static methods associated with files.
+ * 
  * @author Jacob Schrum
  */
 public class FileUtilities {
@@ -57,17 +54,13 @@ public class FileUtilities {
      * @param contents
      */
     public static void simpleFileWrite(String filename, String contents) {
-        PrintStream stream = null;
-        try {
-            stream = new PrintStream(new FileOutputStream(new File(filename)));
+        try (PrintStream stream = new PrintStream(new FileOutputStream(new File(filename)))) {
             stream.println(contents);
             stream.close();
         } catch (FileNotFoundException ex) {
             System.out.println("Could not write '" + contents + "' to '" + filename + "'");
             ex.printStackTrace();
             System.exit(1);
-        } finally {
-            stream.close();
         }
     }
 
@@ -76,6 +69,7 @@ public class FileUtilities {
      *
      * @param f file to read
      * @return String of file contents
+     * @throws java.io.FileNotFoundException
      */
     public static String simpleReadFile(File f) throws FileNotFoundException {
         Scanner s = new Scanner(f);
@@ -87,7 +81,7 @@ public class FileUtilities {
 
     /**
      * Draws a given TWEANN genotype directly from xml file
-     * @param filename 
+     * @param filename xml file containing TWEANN
      */
     public static void drawTWEANN(String filename) {
         TWEANNGenotype genotype = (TWEANNGenotype) Easy.load(filename);

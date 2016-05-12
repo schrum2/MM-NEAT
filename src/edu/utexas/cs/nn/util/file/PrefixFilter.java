@@ -1,14 +1,12 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.utexas.cs.nn.util.file;
 
 import java.io.File;
 import java.io.FilenameFilter;
 
 /**
- *
+ * A filter object that accepts filenames
+ * beginning with a particular string prefix.
+ * 
  * @author Jacob
  */
 public class PrefixFilter implements FilenameFilter {
