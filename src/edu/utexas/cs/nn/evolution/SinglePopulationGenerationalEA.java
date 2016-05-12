@@ -1,15 +1,14 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.utexas.cs.nn.evolution;
 
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import java.util.ArrayList;
 
 /**
- *
- * @author He_Deceives
+ * Interface for basic Evolutionary Algorithm that evolves
+ * a single population (no coevolution) one generation at a time.
+ * 
+ * @author Jacob Schrum
+ * @param <T> Phenotype of evolved organisms
  */
 public interface SinglePopulationGenerationalEA<T> extends GenerationalEA {
 
