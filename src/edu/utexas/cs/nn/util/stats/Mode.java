@@ -1,15 +1,14 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.utexas.cs.nn.util.stats;
 
 /**
- *
+ * Compute statistical mode (most common element)
+ * of an array of doubles.
+ * 
  * @author Jacob Schrum
  */
 public class Mode implements Statistic {
 
+    @Override
     public double stat(double[] xs) {
         return StatisticsUtilities.mode(xs);
     }

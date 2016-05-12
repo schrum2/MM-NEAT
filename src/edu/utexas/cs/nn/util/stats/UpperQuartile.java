@@ -1,11 +1,10 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.utexas.cs.nn.util.stats;
 
 /**
- *
+ * Computes upper quartile value, also known as
+ * 75th percentile. This is a simple extension of
+ * the Percentile class.
+ * 
  * @author Jacob Schrum
  */
 public class UpperQuartile extends Percentile {
