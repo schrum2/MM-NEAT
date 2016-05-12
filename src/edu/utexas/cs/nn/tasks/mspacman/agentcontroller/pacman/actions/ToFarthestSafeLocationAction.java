@@ -85,7 +85,7 @@ public class ToFarthestSafeLocationAction implements MsPacManAction {
     public double compareDistance(int currentDir, int destination, Triple<Integer, Integer, Integer> directionDistanceNumPowerPillsTriple, GameFacade gf) {
         double result = //directionDistanceNumPowerPillsTriple.t2  // distance traveled
                 gf.getEuclideanDistance(gf.getPacmanCurrentNodeIndex(), destination)
-                + (directionDistanceNumPowerPillsTriple.t1 == currentDir && !ArrayUtil.member(destination, gf.getActivePowerPillsIndices()) ? 50 : 0) // paths in same direction are more favorable
+                + (directionDistanceNumPowerPillsTriple.t1 == currentDir && !ArrayUtil.memberInt(destination, gf.getActivePowerPillsIndices()) ? 50 : 0) // paths in same direction are more favorable
                 + directionDistanceNumPowerPillsTriple.t3 * 200; // paths that consume fewer power pills are more favorable
         return result;
     }

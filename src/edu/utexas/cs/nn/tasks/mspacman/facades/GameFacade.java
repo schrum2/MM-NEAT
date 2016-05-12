@@ -397,7 +397,7 @@ public class GameFacade {
     }
 
     public boolean isPowerPillIndex(int index) {
-        return ArrayUtil.member(index, newG.getActivePowerPillsIndices());
+        return ArrayUtil.memberInt(index, newG.getActivePowerPillsIndices());
     }
 
     public boolean isJunction(int current) {
@@ -787,7 +787,7 @@ public class GameFacade {
         int[] neighbors = this.neighbors(current);
         assert neighbors[pacmanDir] != -1 : "Pacman dir is a wall: " + pacmanDir + "; " + Arrays.toString(neighbors);
         int[] ghostPath = getGhostPath(ghostIndex, current);
-        return ArrayUtil.member(neighbors[pacmanDir], ghostPath);
+        return ArrayUtil.memberInt(neighbors[pacmanDir], ghostPath);
     }
 
     /**
@@ -1311,7 +1311,7 @@ public class GameFacade {
         }
         for (int i = 1; i < path.length; i++) {
             //System.out.println(path.length +":" + i);
-            if (!ArrayUtil.member(path[i], neighbors(path[i - 1]))) {
+            if (!ArrayUtil.memberInt(path[i], neighbors(path[i - 1]))) {
                 return false;
             }
         }
@@ -1409,7 +1409,7 @@ public class GameFacade {
             } else if (getGhostLairTime(i) > 0) {
                 // Ghost may pop out when pacman passes
                 int ghostStart = getGhostInitialNodeIndex();
-                if (ArrayUtil.member(ghostStart, path)) {
+                if (ArrayUtil.memberInt(ghostStart, path)) {
                     pacManDistance = getShortestPathDistance(getPacmanCurrentNodeIndex(), ghostStart);
                     int lairTime = getGhostLairTime(i);
                     closestThreatDistance = Math.min(closestThreatDistance, lairTime);

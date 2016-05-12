@@ -62,7 +62,7 @@ public class VariableDirectionOneStepSafeBlock extends VariableDirectionBlock {
         }
         int[] neighbors = gf.neighbors(current);
         int[] safePointBuffers = new int[neighbors.length];
-        int[] safeTargets = ArrayUtil.combineArrays(gf.getJunctionIndices(), gf.getActivePowerPillsIndices());
+        int[] safeTargets = ArrayUtil.combineIntArrays(gf.getJunctionIndices(), gf.getActivePowerPillsIndices());
         for (int i = 0; i < safePointBuffers.length; i++) {
             if (neighbors[i] != -1) {
                 Pair<Integer, int[]> pair = gf.getTargetInDir(current, safeTargets, i);

@@ -29,7 +29,7 @@ public class VariableDirectionPillsBeforeJunctionBlock extends VariableDirection
         int pillCount = 0;
         int[] activePills = gf.getActivePillsIndices();
         for (int i = 0; i < pair.t2.length; i++) {
-            if (ArrayUtil.member(pair.t2[i], activePills)) {
+            if (ArrayUtil.memberInt(pair.t2[i], activePills)) {
                 pillCount++;
             }
         }

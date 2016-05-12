@@ -78,7 +78,7 @@ public class ArrayUtil {
      */
     public static boolean containsAny(int[] members, int[] set) {
         for (int i = 0; i < members.length; i++) {
-            if (member(members[i], set)) {
+            if (memberInt(members[i], set)) {
                 return true;
             }
         }
@@ -86,13 +86,13 @@ public class ArrayUtil {
     }
 
     /**
-     * Returns true if x is in the array set
+     * Returns true if int x is in the array set
      *
      * @param x element to look for
      * @param set set to look in
      * @return true if x in set
      */
-    public static boolean member(int x, int[] set) {
+    public static boolean memberInt(int x, int[] set) {
         for (int j = 0; j < set.length; j++) {
             if (x == set[j]) {
                 return true;
@@ -102,6 +102,22 @@ public class ArrayUtil {
     }
 
     /**
+     * Returns true if long x is in the array set
+     *
+     * @param x element to look for
+     * @param set set to look in
+     * @return true if x in set
+     */
+    public static boolean memberLong(long x, long[] set) {
+        for (int j = 0; j < set.length; j++) {
+            if (x == set[j]) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    /**
      * Combine two int arrays into one array starting with the elements of the
      * first array and ending with the elements of the second array
      *
@@ -109,13 +125,28 @@ public class ArrayUtil {
      * @param b ending elements
      * @return combined array
      */
-    public static int[] combineArrays(int[] a, int[] b) {
+    public static int[] combineIntArrays(int[] a, int[] b) {
         int[] result = new int[a.length + b.length];
         System.arraycopy(a, 0, result, 0, a.length);
         System.arraycopy(b, 0, result, a.length, b.length);
         return result;
     }
-
+    
+    /**
+     * Combine two long arrays into one array starting with the elements of the
+     * first array and ending with the elements of the second array
+     *
+     * @param a starting elements
+     * @param b ending elements
+     * @return combined array
+     */
+    public static long[] combineLongArrays(long[] a, long[] b) {
+        long[] result = new long[a.length + b.length];
+        System.arraycopy(a, 0, result, 0, a.length);
+        System.arraycopy(b, 0, result, a.length, b.length);
+        return result;
+    }
+    
     /**
      * Count number of occurrences of the given value in the array
      *
@@ -233,7 +264,7 @@ public class ArrayUtil {
      */
     public static boolean subset(int[] lhs, int[] rhs) {
         for (int i = 0; i < lhs.length; i++) {
-            if (!member(lhs[i], rhs)) {
+            if (!memberInt(lhs[i], rhs)) {
                 return false;
             }
         }

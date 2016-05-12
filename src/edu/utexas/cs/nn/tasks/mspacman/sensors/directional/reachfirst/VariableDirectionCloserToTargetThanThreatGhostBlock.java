@@ -133,7 +133,7 @@ public abstract class VariableDirectionCloserToTargetThanThreatGhostBlock extend
         assert target == path[path.length - 1] : "Path doesn't lead to target: " + Arrays.toString(path) + ":" + target;
         final int currentPacmanNode = gf.getPacmanCurrentNodeIndex();
         int[] neighbors = gf.neighbors(currentPacmanNode);
-        assert ArrayUtil.member(path[0], neighbors) : "Path does not actually start where pacman is! " + currentPacmanNode + ":" + Arrays.toString(path);
+        assert ArrayUtil.memberInt(path[0], neighbors) : "Path does not actually start where pacman is! " + currentPacmanNode + ":" + Arrays.toString(path);
         assert ghostsToCheck.length <= gf.getNumActiveGhosts() : "Looking at more ghosts than exist";
         // Special: If last pill will be eaten, then set target sooner
         int[] activePills = gf.getActivePillsIndices();
@@ -164,9 +164,9 @@ public abstract class VariableDirectionCloserToTargetThanThreatGhostBlock extend
                 }
                 // Special case: if ghost is moving away from pacman to the target,
                 // then the ghost will reach it first, but it is still safe to go there.
-                if (gf.isJunction(ghostLocation) || !(ArrayUtil.subset(ghostPath, path) && ArrayUtil.member(ghostLocation, path))) {
+                if (gf.isJunction(ghostLocation) || !(ArrayUtil.subset(ghostPath, path) && ArrayUtil.memberInt(ghostLocation, path))) {
                     // If the ghost and pacman paths collide head-on, then path is unsafe
-                    if (ArrayUtil.member(ghostLocation, path) && gf.ghostApproachingPacman(ghostsToCheck[i])) {
+                    if (ArrayUtil.memberInt(ghostLocation, path) && gf.ghostApproachingPacman(ghostsToCheck[i])) {
 //                        if (CommonConstants.watch) {
 //                            gf.addLines(Color.MAGENTA, ghostLocation, target);
 //                        }
@@ -189,12 +189,12 @@ public abstract class VariableDirectionCloserToTargetThanThreatGhostBlock extend
                 int ghostLocation = gf.getGhostCurrentNodeIndex(ghostsToCheck[i]);
                 // Special case: if ghost is moving away from pacman to the target,
                 // then the ghost may reach it first, but it is still safe to go there.
-                if (gf.isJunction(ghostLocation) || !(ArrayUtil.subset(ghostPath, path) && ArrayUtil.member(ghostLocation, path))) {
+                if (gf.isJunction(ghostLocation) || !(ArrayUtil.subset(ghostPath, path) && ArrayUtil.memberInt(ghostLocation, path))) {
                     // If the ghost and pacman paths collide head-on, then we need
                     // to determine whether or not the ghost will be edible or a threat
                     // at the time
                     int edibleTime = gf.getGhostEdibleTime(ghostsToCheck[i]);
-                    if (ArrayUtil.member(ghostLocation, path) && gf.ghostApproachingPacman(ghostsToCheck[i])) {
+                    if (ArrayUtil.memberInt(ghostLocation, path) && gf.ghostApproachingPacman(ghostsToCheck[i])) {
                         int distanceBetweenPacManAndGhost = (int) gf.getShortestPathDistance(ghostLocation, currentPacmanNode);
                         int timeUntilCollision = Constants.GHOST_SPEED_REDUCTION * ((distanceBetweenPacManAndGhost - Constants.EAT_DISTANCE) / (Constants.GHOST_SPEED_REDUCTION + 1));
                         if (timeUntilCollision >= edibleTime) {
