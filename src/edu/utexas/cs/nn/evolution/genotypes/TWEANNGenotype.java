@@ -105,7 +105,6 @@ public class TWEANNGenotype implements Genotype<TWEANN> {
          * @return
          */
         @Override
-        @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
         public boolean equals(Object o) {
             NodeGene other = (NodeGene) o; // instanceof check is skipped for efficiency
             return innovation == other.innovation;
@@ -287,9 +286,11 @@ public class TWEANNGenotype implements Genotype<TWEANN> {
         this.modeUsage = new int[numModes];
         //System.out.println("fresh modeUsage from constructor");
 
-        // In a new network, each Multitask mode has one network module.
-        // This is really only needed if hierarchicalMultitask is true.
-        // This information will be incorrect if the network was created by crossover.
+        /**
+         *In a new network, each Multitask mode has one network module.
+         *This is really only needed if hierarchicalMultitask is true.
+         *This information will be incorrect if the network was created by crossover.
+         */
         modeAssociations = new int[numModes];
         for (int i = 0; i < numModes; i++) {
             modeAssociations[i] = i;
@@ -439,6 +440,9 @@ public class TWEANNGenotype implements Genotype<TWEANN> {
         }
     }
 
+    /**
+     * Mutates the existing weights, links, and nodes of a TWEANN
+     */
     @Override
     public void mutate() {
         //System.out.println("Mutate:" + this.id);
@@ -578,12 +582,18 @@ public class TWEANNGenotype implements Genotype<TWEANN> {
         return links.remove(index);
     }
 
+    /**
+     * Deletes a random module. Doesn't care if the network becomes disconnected
+     */
     public void deleteRandomModeMutation() {
         if (numModes > 1) {
             deleteMode(RandomNumbers.randomGenerator.nextInt(numModes));
         }
     }
 
+    /**
+     * Deletes least-used mutated module
+     */
     public void deleteLeastUsedModeMutation() {
         if (numModes > 1) {
             deleteMode(StatisticsUtilities.argmin(modeUsage));
@@ -870,10 +880,18 @@ public class TWEANNGenotype implements Genotype<TWEANN> {
         }
     }
 
+    /**
+     * Splices a mutation
+     */
     public void spliceMutation() {
         spliceMutation(ActivationFunctions.newNodeFunction());
     }
 
+    /**
+     * splices a mutation according to activation function 
+     * 
+     * @param ftype activation function of genotype
+     */
     private void spliceMutation(int ftype) {
         LinkGene lg = randomAlterableLink();
         long source = lg.sourceInnovation;
@@ -920,7 +938,7 @@ public class TWEANNGenotype implements Genotype<TWEANN> {
         links.add(fromNew);
     }
 
-    /*
+    /**
      * Modifies archetype
      *
      * Should always be called for archetype as well
@@ -935,7 +953,11 @@ public class TWEANNGenotype implements Genotype<TWEANN> {
             links.add(toNew);
         }
     }
-
+/**
+ * Weakens all modes in the specified portion of the Genotype
+ * 
+ * @param portion location in genotype of portion ti be weakened
+ */
     public void weakenAllModes(double portion) {
         for (int i = 0; i < numModes; i++) {
             weakenModePreference(i, portion);
@@ -1014,8 +1036,11 @@ public class TWEANNGenotype implements Genotype<TWEANN> {
         System.out.println("innovation " + innovation + " not found in net " + this.getId());
         return -1;
     }
-
-    @Override
+/**
+ * allows for a static method to call the crossover function for the TWEANN 
+ */
+    @SuppressWarnings("unchecked")
+	@Override
     public Genotype<TWEANN> crossover(Genotype<TWEANN> g) {
         return MMNEAT.crossoverOperator.crossover(this, g);
     }
@@ -1046,7 +1071,7 @@ public class TWEANNGenotype implements Genotype<TWEANN> {
     @Override
     public TWEANN getPhenotype() {
         TWEANN result = new TWEANN(this);
-        // This is the point where old parent mode usage us finally erased
+        // This is the point where old parent mode usage is finally erased
         this.modeUsage = result.modeUsage;
         return result;
     }
@@ -1080,7 +1105,7 @@ public class TWEANNGenotype implements Genotype<TWEANN> {
     public Genotype<TWEANN> newInstance() {
         TWEANNGenotype result;
         if (MMNEAT.ea instanceof MultiplePopulationGenerationalEA) {
-            // Networks from different sub-populations could have differeing numbers of inputs and outputs
+            // Networks from different sub-populations could have differing numbers of inputs and outputs
             result = new TWEANNGenotype(this.numIn, this.numOut, this.archetypeIndex);
         } else {
             result = new TWEANNGenotype(MMNEAT.networkInputs, MMNEAT.networkOutputs, this.archetypeIndex);
@@ -1089,12 +1114,77 @@ public class TWEANNGenotype implements Genotype<TWEANN> {
         return result;
     }
 
+    /**
+     * 
+     * @param m first TWEANNGenotype to be compared
+     * @param o second TWEANNGenotype to be compared
+     * @return true if structure is same, false if not
+     */
+    public static boolean sameStructure(TWEANNGenotype m, TWEANNGenotype o) {
+    	ArrayList<TWEANNGenotype.NodeGene> mGeno = m.nodes;
+    	ArrayList<TWEANNGenotype.NodeGene> oGeno = o.nodes;
+    	ArrayList<TWEANNGenotype.LinkGene> FakemLink = m.links;
+    	ArrayList<TWEANNGenotype.LinkGene> FakeoLink = o.links;
+    	ArrayList<TWEANNGenotype.LinkGene> mLink = new ArrayList<>();
+    	ArrayList<TWEANNGenotype.LinkGene> oLink = new ArrayList<>();
+    	for(int i = 0; i < FakemLink.size(); i++) {
+    		if(FakemLink.get(i).active) {
+    			mLink.add(FakemLink.get(i));
+    		}
+    	}
+    	for(int i = 0; i < FakeoLink.size(); i++) {
+    		if(FakeoLink.get(i).active) {
+    			oLink.add(FakeoLink.get(i));
+    		}
+    	}
+    	
+    	
+    	System.out.println("-------------------");
+    	System.out.println("m and oGene size: " +mGeno.size() + " " + oGeno.size());
+    	
+    	System.out.println("m and oLink size: " + mLink.size() + " " + oLink.size());
+    	System.out.println("mLink: " + Arrays.toString(mLink.toArray()));
+
+    	System.out.println("oLink: " + Arrays.toString(oLink.toArray()));
+    	if(mGeno.size() == oGeno.size() && mLink.size() == oLink.size()) {
+    		int nodeSize = mGeno.size();
+    		int linkSize = mLink.size();
+    		
+    		long[] mlink = new long[linkSize];
+    		for(int i = 0; i < linkSize; i++) {
+        		mlink[i] = mLink.get(i).innovation;
+        	}
+    		long[] olink = new long[linkSize];
+    		for(int i = 0; i < linkSize; i++) {
+        		olink[i] = oLink.get(i).innovation;
+        	}
+//    		for(int i = 0; i < linkSize; i++) {
+//    			if(ArrayUtil.member(mlink[i], olink)) continue;
+//    			else return false;
+//    		}
+    		if(ArrayUtil.setEquality(olink, mlink));
+    		else return false;
+    		for(int i = 0; i < nodeSize; i++ ) {
+    			if(mGeno.get(i).innovation == oGeno.get(i).innovation) continue;
+    			else return false;
+    			
+    		}
+    		
+    		return true;
+    	}
+    	return false;
+    }
     @Override
     public String toString() {
         String result = id + " (modes:" + numModes + ")" + "\n" + this.nodes + "\n" + this.links;
         return result;
     }
 
+    /**
+     * Checks to see if the inputs still match after being used
+     * 
+     * @return true if source innovation matches the used input, false if it doesn't 
+     */
     public boolean[] inputUsageProfile() {
         boolean[] result = new boolean[numIn];
         for (int i = 0; i < numIn; i++) {
@@ -1109,6 +1199,9 @@ public class TWEANNGenotype implements Genotype<TWEANN> {
         return result;
     }
 
+    /**
+     * randomly duplicates a mode in the network
+     */
     public void modeDuplication() {
         int mode = RandomNumbers.randomGenerator.nextInt(this.numModes);
         duplicateMode(mode);
@@ -1138,6 +1231,13 @@ public class TWEANNGenotype implements Genotype<TWEANN> {
         //EvolutionaryHistory.netHasModes(numModes);
     }
 
+    /**
+     * Modifies archetype!
+     * 
+     * Adds a new preference neuron randomly in network
+     * 
+     * @param numInputs: number of inputs from network in which to randomly place neuron
+     */
     public void addRandomPreferenceNeuron(int numInputs) {
         // Randomize the preference neuron
         double[] weights = new double[numInputs];
@@ -1325,6 +1425,12 @@ public class TWEANNGenotype implements Genotype<TWEANN> {
         freezeInfluences(nodeInnovation, otherOutputs);
     }
 
+    /**
+     * Freezes all innovation nodes that have not yet been visited
+     * 
+     * @param nodeInnovation the innovation number to be frozen
+     * @param visited a hash set of innovation numbers that have been visited
+     */
     private void freezeInfluences(long nodeInnovation, HashSet<Long> visited) {
         int nodesIndex = indexOfNodeInnovation(nodeInnovation);
         assert nodesIndex != -1 : "Node to freeze (" + nodeInnovation + ") not in nodes list";
@@ -1504,26 +1610,38 @@ public class TWEANNGenotype implements Genotype<TWEANN> {
                 }
             }
         }
+        /**
+         *Return the compatibility number using compatibility formula
+         *Note that mut_diff_total/num_matching gives the AVERAGE
+         *difference between mutation_nums for any two matching Genes
+         *in the Genome.
+         *Look at disjointedness and excess in the absolute (ignoring size)
+         */
 
-        // Return the compatibility number using compatibility formula
-        // Note that mut_diff_total/num_matching gives the AVERAGE
-        // difference between mutation_nums for any two matching Genes
-        // in the Genome.
-        // Look at disjointedness and excess in the absolute (ignoring size)
         return ((num_disjoint / max_genome_size) + (num_excess / max_genome_size)
                 + 0.4 * (mut_diff_total / num_matching));
     }
 
-    public static void sortLinkGenes(ArrayList<LinkGene> temp) {
-    	Collections.sort(temp, new Comparator<LinkGene>() {
+    /**
+     * Sorts links by using a comparator declared in method
+     * 
+     * @param linkedGene ArrayList of link genes to be sorted 
+     */
+    public static void sortLinkGenes(ArrayList<LinkGene> linkedGene) {
+    	Collections.sort(linkedGene, new Comparator<LinkGene>() {
 
-            public int compare(LinkGene o1, LinkGene o2) {
+            public int compare(LinkGene o1, LinkGene o2) {//anonymous class
                 return (int) Math.signum(o1.innovation - o2.innovation);
             }
         });
     }
 
-    public long biggestInnovation() {
+    /**
+     * finds the biggest innovation number in a TWEANN genotype
+     * 
+     * @return long corresponding to biggest innovation number
+     */
+	public long biggestInnovation() {
         long max = 0;
         for (NodeGene ng : nodes) {
             if (ng.innovation > max) {
@@ -1547,7 +1665,11 @@ public class TWEANNGenotype implements Genotype<TWEANN> {
         return nodes.size() - numOut;
     }
 
-    @Override
+   /**
+    * Equals method that compares memory addresses of two TWEANNGenotypes
+    * 
+    * @return returns true if same TWEANNGenotype, false if not
+    */
     public boolean equals(Object o) {
         if (o == null || !(o instanceof TWEANNGenotype)) {
             return false;
@@ -1559,68 +1681,5 @@ public class TWEANNGenotype implements Genotype<TWEANN> {
     /**
      * A main method with some informal tests
      */
-    public static void main(String[] args) {
-        Parameters.initializeParameterCollections(new String[]{"io:false", "allowMultipleFunctions:true", "recurrency:false", "mmdRate:0.1", "task:edu.utexas.cs.nn.tasks.breve2D.Breve2DTask"});
-        //CommonConstants.freezeBeforeModeMutation = true;
-        MMNEAT.loadClasses();
-        TWEANNGenotype tg1 = new TWEANNGenotype(5, 2, 0);
-        MMNEAT.genotype = tg1.copy();
-        EvolutionaryHistory.initArchetype(0);
-        TWEANNGenotype tg2 = new TWEANNGenotype(5, 2, 0);
-
-        final int MUTATIONS1 = 10;
-
-        for (int i = 0; i < MUTATIONS1; i++) {
-            tg1.mutate();
-            tg2.mutate();
-        }
-
-        System.out.println(tg1);
-        System.out.println(new TWEANN(tg1));
-
-        double[] inputs = RandomNumbers.randomArray(tg1.numIn);
-
-        //tg1.freezeInfluences(tg1.nodes.get(tg1.nodes.size()-2).innovation);
-        DrawingPanel p1 = new DrawingPanel(TWEANN.NETWORK_VIEW_DIM, TWEANN.NETWORK_VIEW_DIM, "Net 1");
-        DrawingPanel p2 = new DrawingPanel(TWEANN.NETWORK_VIEW_DIM, TWEANN.NETWORK_VIEW_DIM, "Net 2");
-        p2.setLocation(TWEANN.NETWORK_VIEW_DIM + 10, 0);
-        tg1.getPhenotype().draw(p1, true);
-        tg2.getPhenotype().draw(p2, true);
-
-        new MMR().mutate(tg1);
-        tg1.freezePreferenceNeurons();
-        System.out.println("Frozen Pref:" + Arrays.toString(tg1.getPhenotype().process(inputs)));
-
-        DrawingPanel p3 = new DrawingPanel(TWEANN.NETWORK_VIEW_DIM, TWEANN.NETWORK_VIEW_DIM, "Net 1 MMD");
-        p3.setLocation(0, TWEANN.NETWORK_VIEW_DIM + 10);
-        tg1.getPhenotype().draw(p3, true);
-
-        new MMR().mutate(tg2);
-        tg2.freezePolicyNeurons();
-        System.out.println("Frozen Policy:" + Arrays.toString(tg2.getPhenotype().process(inputs)));
-
-        DrawingPanel p4 = new DrawingPanel(TWEANN.NETWORK_VIEW_DIM, TWEANN.NETWORK_VIEW_DIM, "Net 2 MMD");
-        p4.setLocation(TWEANN.NETWORK_VIEW_DIM + 10, TWEANN.NETWORK_VIEW_DIM + 10);
-        tg2.getPhenotype().draw(p4, true);
-
-        //TWEANNCrossover cross = new TWEANNCrossover();
-        //TWEANNGenotype new2 = (TWEANNGenotype) cross.crossover(tg1, tg2);
-        for (int i = 0; i < MUTATIONS1; i++) {
-            tg1.mutate();
-            tg2.mutate();
-        }
-
-        System.out.println("Post Mutate Frozen Pref:" + Arrays.toString(tg1.getPhenotype().process(inputs)));
-        System.out.println("Post Mutate Frozen Policy:" + Arrays.toString(tg2.getPhenotype().process(inputs)));
-
-        DrawingPanel p5 = new DrawingPanel(TWEANN.NETWORK_VIEW_DIM, TWEANN.NETWORK_VIEW_DIM, "Cross Result 1");
-        p5.setLocation(2 * (TWEANN.NETWORK_VIEW_DIM + 10), 0);
-        tg1.getPhenotype().draw(p5, true);
-
-        DrawingPanel p6 = new DrawingPanel(TWEANN.NETWORK_VIEW_DIM, TWEANN.NETWORK_VIEW_DIM, "Cross Result 2");
-        p6.setLocation(2 * (TWEANN.NETWORK_VIEW_DIM + 10), TWEANN.NETWORK_VIEW_DIM + 10);
-        //new2.getPhenotype().draw(p6, true);
-        tg2.getPhenotype().draw(p6, true);
-
-    }
+   
 }
