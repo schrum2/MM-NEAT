@@ -1,16 +1,14 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package edu.utexas.cs.nn.util.random;
 
 /**
- *
+ * Random number generator to create Gaussian
+ * distributed values.
+ * 
  * @author Jacob Schrum
  */
 public class GaussianGenerator implements RandomGenerator {
 
+    @Override
     public double randomOutput() {
         return RandomNumbers.randomGenerator.nextGaussian();
     }

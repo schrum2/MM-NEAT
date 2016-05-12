@@ -1,12 +1,7 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package edu.utexas.cs.nn.util.random;
 
 /**
- *
+ * Interface for distributing a source of random values.
  * @author Jacob Schrum
  */
 public interface RandomGenerator {
