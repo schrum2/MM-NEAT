@@ -255,7 +255,7 @@ public class ArrayUtil {
     }
 
     /**
-     * Returns true if every member of lhs is also in rhs, i.e. lhs is a subset
+     * Returns true if every member of int lhs is also in rhs, i.e. lhs is a subset
      * of rhs
      *
      * @param lhs potential subset
@@ -270,7 +270,33 @@ public class ArrayUtil {
         }
         return true;
     }
+    
+    /**
+     * Returns true if every member of long lhs is also in rhs, i.e. lhs is a subset
+     * of rhs
+     *
+     * @param lhs potential subset
+     * @param rhs potential superset
+     * @return whether lhs is subset of rhs
+     */
+    public static boolean subset(long[] lhs, long[] rhs) {
+        for (int i = 0; i < lhs.length; i++) {
+            if (!member(lhs[i], rhs)) {
+                return false;
+            }
+        }
+        return true;
+    }
 
+    /**
+     * 
+     * @param l
+     * @param s
+     * @return
+     */
+    public static boolean setEquality(long[] l, long[] s) {
+    	return subset(l, s) && subset(s, l);
+    }
     /**
      * Returns true if the n values in xs starting at position i equal the n
      * values in ys starting at position j.
@@ -473,6 +499,7 @@ public class ArrayUtil {
         return result;
     }
 
+  
     /**
      * Returns sub-array of
      * <code>array</code> from

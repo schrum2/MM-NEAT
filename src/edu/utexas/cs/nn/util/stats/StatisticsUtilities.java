@@ -270,7 +270,13 @@ public class StatisticsUtilities {
         }
         return max;
     }
-
+    public static long maximum(long[] l) {
+    	long temp = l[0];
+    	for(int i = 0; i < l.length; i++) {
+    		if(l[i] > temp) temp = l[i];
+    	}
+    	return temp;
+    }
     public static double minimum(double[] xs) {
         double min = xs[0];
         for (int i = 1; i < xs.length; i++) {
