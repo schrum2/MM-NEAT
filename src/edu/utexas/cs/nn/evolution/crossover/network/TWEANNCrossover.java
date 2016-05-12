@@ -1,6 +1,5 @@
 package edu.utexas.cs.nn.evolution.crossover.network;
 
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
 import edu.utexas.cs.nn.evolution.crossover.Crossover;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
@@ -10,7 +9,6 @@ import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype.LinkGene;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype.NodeGene;
 import edu.utexas.cs.nn.evolution.mutation.tweann.MeltThenFreezePolicyMutation;
 import edu.utexas.cs.nn.evolution.mutation.tweann.MeltThenFreezePreferenceMutation;
-import edu.utexas.cs.nn.graphics.DrawingPanel;
 import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
@@ -21,18 +19,31 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
+ *This class crosses over two TWEANN networks with a command line parameter
+ *that controls how much crossover occurs
  *
  * @author Jacob Schrum
  */
 public class TWEANNCrossover extends Crossover<TWEANN> {
 
-    private final double includeExcessRate;
+    private final double includeExcessRate;//this is the rate at which disjoint/excess nodes are included in children of crossover
     private boolean includeExcess = false;
 
+    /**
+     * Default constructor for a TWEANN crossover. Calls on another
+     * constructor with a command line parameter that controls when
+     * to include excess/disjoint genes between genotypes.
+     */
     public TWEANNCrossover() {
         this(Parameters.parameters.doubleParameter("crossExcessRate"));
     }
 
+    /**
+     * Constructor for a TWEANN crossover.
+     * 
+     * @param includeExcessRate command line parameter that controls
+     * when to include excess/disjoing genes between genotypes.
+     */
     public TWEANNCrossover(double includeExcessRate) {
         this.includeExcessRate = includeExcessRate;
     }
@@ -55,12 +66,10 @@ public class TWEANNCrossover extends Crossover<TWEANN> {
         TWEANNGenotype tg = (TWEANNGenotype) toReturn;
         TWEANNGenotype tm = (TWEANNGenotype) toModify;
 
-        assert (tg.numIn == tm.numIn && tg.neuronsPerMode == tm.neuronsPerMode);
-
         // Align and cross nodes. Nodes are aligned to archetype
         ArrayList<ArrayList<NodeGene>> alignedNodes = new ArrayList<ArrayList<NodeGene>>(2);
         try {
-            alignedNodes.add(alignNodesToArchetype(tm.nodes, tg.archetypeIndex));
+            alignedNodes.add(alignNodesToArchetype(tm.nodes, tg.archetypeIndex));//makes sure to add and adjust nodes so archetypes of both parents match
         } catch(IllegalArgumentException e){
             System.out.println("Outputs: " + tm.numOut);
             System.out.println("Modes: " + tm.numModes);
@@ -69,7 +78,7 @@ public class TWEANNCrossover extends Crossover<TWEANN> {
             System.exit(1);
         }
         try {
-            alignedNodes.add(alignNodesToArchetype(tg.nodes, tg.archetypeIndex));
+            alignedNodes.add(alignNodesToArchetype(tg.nodes, tg.archetypeIndex));//makes sure to check the number of nodes match the archetype of the network
         } catch(IllegalArgumentException e){
             System.out.println("Outputs: " + tg.numOut);
             System.out.println("Modes: " + tg.numModes);
@@ -77,12 +86,12 @@ public class TWEANNCrossover extends Crossover<TWEANN> {
             e.printStackTrace();
             System.exit(1);
         }
-        ArrayList<ArrayList<NodeGene>> crossedNodes = cross(alignedNodes.get(0), alignedNodes.get(1));
+        ArrayList<ArrayList<NodeGene>> crossedNodes = cross(alignedNodes.get(0), alignedNodes.get(1));//crosses nodes
         // Align and cross links. Links are aligned based on innovation order
-        ArrayList<ArrayList<LinkGene>> alignedLinks = alignLinkGenes(((TWEANNGenotype) toModify).links, tg.links);
-        ArrayList<ArrayList<LinkGene>> crossedLinks = cross(alignedLinks.get(0), alignedLinks.get(1));
+        ArrayList<ArrayList<LinkGene>> alignedLinks = alignLinkGenes(((TWEANNGenotype) toModify).links, tg.links);//aligns links to faciliate crossover
+        ArrayList<ArrayList<LinkGene>> crossedLinks = cross(alignedLinks.get(0), alignedLinks.get(1));//crosses links
 
-        //int originalOut = tm.numOut;
+      
         // Assign new lists
         int[] originalAssociations = Arrays.copyOf(tm.modeAssociations, tm.modeAssociations.length);
         tm.nodes = crossedNodes.get(0);
@@ -92,16 +101,6 @@ public class TWEANNCrossover extends Crossover<TWEANN> {
             tm.crossModeAssociations(originalAssociations, tg.modeAssociations);
         }
 
-//        if (originalOut != tm.numOut) {
-//            System.out.println("Modify " + tm.getId() + " changed num of outputs from " + originalOut + " to " + tm.numOut);
-//            for (NodeGene n : crossedNodes.get(0)) {
-//                if (n.ntype == TWEANN.Node.NTYPE_OUTPUT) {
-//                    System.out.print(n.innovation + ":");
-//                }
-//            }
-//            System.out.println();
-//        }
-
         TWEANNGenotype result = new TWEANNGenotype(crossedNodes.get(1), crossedLinks.get(1), tg.neuronsPerMode, tg.standardMultitask, tg.hierarchicalMultitask, tg.archetypeIndex);
         // This usage doesn't exactly correspond to the new net, but is close
         result.modeUsage = Arrays.copyOf(tg.modeUsage, tg.modeUsage.length);
@@ -110,11 +109,11 @@ public class TWEANNCrossover extends Crossover<TWEANN> {
             result.crossModeAssociations(tg.modeAssociations, originalAssociations);
         }
         
-        if (CommonConstants.meltAfterCrossover) {
+        if (CommonConstants.meltAfterCrossover) {//checks command line parameters to see if true and performs said task
             tm.meltNetwork();
             result.meltNetwork();
         } else {
-            if (!tm.existsAlterableLink()) {
+            if (!tm.existsAlterableLink()) {//makes sure offspring are alterable so they too can be mutated
                 if (Parameters.parameters.booleanParameter("prefFreezeUnalterable")) {
                     new MeltThenFreezePreferenceMutation().mutate(tm);
                 } else if (Parameters.parameters.booleanParameter("policyFreezeUnalterable")) {
@@ -125,7 +124,7 @@ public class TWEANNCrossover extends Crossover<TWEANN> {
                 }
             }
 
-            if (!result.existsAlterableLink()) {
+            if (!result.existsAlterableLink()) {//makes sure offspring are alterable so they too can be mutated
                 if (Parameters.parameters.booleanParameter("prefFreezeUnalterable")) {
                     new MeltThenFreezePreferenceMutation().mutate(result);
                 } else if (Parameters.parameters.booleanParameter("policyFreezeUnalterable")) {
@@ -151,13 +150,13 @@ public class TWEANNCrossover extends Crossover<TWEANN> {
      * @return ArrayList containing both lists of offspring Genes (with no
      * nulls)
      */
-    @SuppressWarnings("unchecked")
+	@SuppressWarnings("unchecked")
 	public <G extends Gene> ArrayList<ArrayList<G>> cross(ArrayList<G> left, ArrayList<G> right) {
         assert (left.size() == right.size()) : "Can't cross lists of different size!\n"
                 + left.size() + ":" + left + "\n"
                 + right.size() + ":" + right;
 
-        //System.out.println("Cross");
+      
         ArrayList<G> crossedLeft = new ArrayList<G>(left.size());
         ArrayList<G> crossedRight = new ArrayList<G>(right.size());
 
@@ -169,16 +168,16 @@ public class TWEANNCrossover extends Crossover<TWEANN> {
                 assert (leftGene.innovation == rightGene.innovation) : "Misalignment!\n" + left + "\n" + right;
                 crossIndex((G) leftGene.copy(), (G) rightGene.copy(), crossedLeft, crossedRight);
             } else {
-                if (leftGene != null) {
+                if (leftGene != null) {//crosses left gene
                     crossedLeft.add((G) leftGene.copy());
-                    if (includeExcess) {
+                    if (includeExcess) {//either keeps or discards excess/disjoint left genes here
                         crossedRight.add((G) leftGene.copy());
                     }
                 }
 
-                if (rightGene != null) {
+                if (rightGene != null) {//crosses right gene
                     crossedRight.add((G) rightGene.copy());
-                    if (includeExcess) {
+                    if (includeExcess) {//either keeps or discards excess/disjoint right genes here
                         crossedLeft.add((G) rightGene.copy());
                     }
                 }
@@ -235,7 +234,7 @@ public class TWEANNCrossover extends Crossover<TWEANN> {
                 //System.out.println("Same innovation: " + leftInnovation);
                 aligned.add(list.get(listPos++));
                 archetypePos++;
-            } else {
+            } else {//checks if misaligned
                 Integer pos = containsInnovationAt(archetype, leftInnovation);
                 if (pos == null) {
                     System.out.println("archetypeIndex: " + archetypeIndex);
@@ -260,13 +259,19 @@ public class TWEANNCrossover extends Crossover<TWEANN> {
             }
         }
 
-        while (archetypePos < archetype.size()) {
+        while (archetypePos < archetype.size()) {//adds nulls to fill out archetype so both matches
             aligned.add(null);
             archetypePos++;
         }
         return aligned;
     }
 
+    /**
+     * Method for printing nodes in columns to visually determine if they are aligned
+     * 
+     * @param list array list of genes to be printed
+     * @param archetypeIndex index of the archetype that corresponds with the correct generation from the evolutionary history
+     */
     public static void printNodeAlignmentColumns(ArrayList<NodeGene> list, int archetypeIndex) {
         ArrayList<NodeGene> archetype = EvolutionaryHistory.archetypes[archetypeIndex];
         // Deal with matching and disjoint genes
@@ -412,65 +417,5 @@ public class TWEANNCrossover extends Crossover<TWEANN> {
                 }
             }
         }
-    }
-
-    /*
-     * Testing
-     */
-    public static void main(String[] args) {
-        Parameters.initializeParameterCollections(new String[]{"io:false", "connectToInputs:false", "crossExcessRate:1.0"});
-        MMNEAT.loadClasses();
-        TWEANNGenotype m = new TWEANNGenotype(MMNEAT.networkInputs, MMNEAT.networkOutputs, true, 1, 1, 0);
-        m.linkMutation();
-        m.linkMutation();
-        m.spliceMutation();
-        m.spliceMutation();
-        m.linkMutation();
-        m.linkMutation();
-        m.linkMutation();
-        m.linkMutation();
-        m.linkMutation();
-        m.linkMutation();
-        m.linkMutation();
-        m.linkMutation();
-        TWEANNGenotype f = (TWEANNGenotype) m.copy();
-        m.spliceMutation();
-        m.spliceMutation();
-        m.linkMutation();
-        m.linkMutation();
-        f.linkMutation();
-        f.linkMutation();
-        f.spliceMutation();
-        f.spliceMutation();
-        f.linkMutation();
-        f.linkMutation();
-        f.weightMutation();
-        f.weightMutation();
-        f.weightMutation();
-        f.weightMutation();
-        f.weightMutation();
-
-        int dim = 300;
-        DrawingPanel mPanel = new DrawingPanel(dim, dim, "Parent 1");
-        m.getPhenotype().draw(mPanel, true, true);
-
-        DrawingPanel fPanel = new DrawingPanel(dim, dim, "Parent 2");
-        f.getPhenotype().draw(fPanel, true, true);
-        fPanel.setLocation(dim, 0);
-
-        DrawingPanel comboPanel = new DrawingPanel(dim, dim, "Combo");
-        comboPanel.setLocation(dim * 2, dim / 2);
-        m.getPhenotype().draw(comboPanel, true, true);
-        f.getPhenotype().draw(comboPanel, true, true);
-
-        TWEANNGenotype o = (TWEANNGenotype) m.crossover(f);
-
-        DrawingPanel ofPanel = new DrawingPanel(dim, dim, "Offspring 1");
-        m.getPhenotype().draw(ofPanel, true, true);
-        ofPanel.setLocation(0, dim + 50);
-
-        DrawingPanel omPanel = new DrawingPanel(dim, dim, "Offspring 2");
-        o.getPhenotype().draw(omPanel, true, true);
-        omPanel.setLocation(dim, dim + 50);
     }
 }
