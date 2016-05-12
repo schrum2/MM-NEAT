@@ -60,7 +60,9 @@ public class TorusWorldExec {
 			}
 			int[][] preyActions = new int[preyControllers.length][2];
 			for (int i = 0; i < preyControllers.length; i++) {
-				preyActions[i] = preyControllers[i].getAction(game.getPrey()[i], game);
+				//if this prey is null (because it was eaten), don't call getAction for it
+				if(game.getPrey()[i] != null)
+					preyActions[i] = preyControllers[i].getAction(game.getPrey()[i], game);
 			}
 			game.advance(predActions, preyActions);
 		}
@@ -137,7 +139,9 @@ public class TorusWorldExec {
 			//specifies the preys actions
 			int[][] preyGameActions = new int[preyControllers.length][2];
 			for (int i = 0; i < preyControllers.length; i++) {
-				preyGameActions[i] = preyControllers[i].getAction(game.getPrey()[i], game);
+				//if this prey is null (because it was eaten), don't call getAction for it
+				if(game.getPrey()[i] != null)
+					preyGameActions[i] = preyControllers[i].getAction(game.getPrey()[i], game);
 			}
 			//update the game according to the actions of the predators and the preys
 			game.advance(predGameActions, preyGameActions);

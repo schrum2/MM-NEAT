@@ -196,6 +196,7 @@ public class Parameters {
         integerOptions.add("keeperCampLimit", 0, "Number of camps allowed to persist across generations");
         integerOptions.add("torusTimeLimit", 1000, "Time limit in torus worlds");
         integerOptions.add("torusPredators", 4, "Number of torus predators");
+        integerOptions.add("torusPreys", 1, "Number of torus preys");
         integerOptions.add("proxGhostsToSense", 4, "Number of ghosts sorted by proximity to sense in pacman");
         integerOptions.add("freezeMeltAlternateFrequency", 25, "Generations between freezing/melting pref/policy neurons");
         integerOptions.add("genOfLastTUGGoalIncrease", 0, "Generation when last TUG goal increase occurred");

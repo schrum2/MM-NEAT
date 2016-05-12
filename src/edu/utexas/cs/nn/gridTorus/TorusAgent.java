@@ -46,6 +46,11 @@ public class TorusAgent implements ILocated2D {
      * @return 
      */
     public double distance(ILocated2D other) {
+    	if(other == null){
+    		//this agent (other) got eaten and no longer exists so is null and is no longer there
+    		//set to be infinite distance away so that every other agent is always closer
+    		return Double.POSITIVE_INFINITY;
+    	}
         return world.shortestXDistance(x, (int) other.getX()) + world.shortestYDistance(y, (int) other.getY());
     }
 
