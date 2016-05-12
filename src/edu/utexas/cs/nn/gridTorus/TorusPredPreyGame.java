@@ -97,6 +97,10 @@ public class TorusPredPreyGame {
         return time;
     }
     
+    public int getTimeLimit(){
+    	return timeLimit;
+    }
+    
     /**
      * moves all the agents along the x and y coordinates
      * @param moves a grid of all possible moves for an agent
