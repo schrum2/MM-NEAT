@@ -15,7 +15,7 @@ import org.rlcommunity.rlglue.codec.types.Observation;
 
 /**
  *
- * @author Jacob Schrum
+ * @author Jacob Schrum, Gabby Gonzalez
  */
 public class BertsekasTsitsiklisTetrisExtractor implements FeatureExtractor {
 
@@ -23,10 +23,19 @@ public class BertsekasTsitsiklisTetrisExtractor implements FeatureExtractor {
     protected final int worldHeight;
     ArrayList<TetrisPiece> possibleBlocks = new ArrayList<TetrisPiece>(7);
 
+    /**
+     * Calls for the width and height to initialize
+     */
     public BertsekasTsitsiklisTetrisExtractor() {
         this(TetrisState.worldWidth, TetrisState.worldHeight);
     }
 
+    /**
+     * Initializes the extractor with the given world height and width
+     * Also adds all possible block shapes to the array list PossibleBlocks
+     * @param width
+     * @param height
+     */
     public BertsekasTsitsiklisTetrisExtractor(int width, int height) {
         this.worldWidth = width;
         this.worldHeight = height;
@@ -41,7 +50,7 @@ public class BertsekasTsitsiklisTetrisExtractor implements FeatureExtractor {
     }
 
     /**
-     * Calculate the learn array position from (x,y) components based on
+     * Calculate the linear array position from (x,y) components based on
      * worldWidth. Package level access so we can use it in tests.
      *
      * @param x
@@ -53,21 +62,33 @@ public class BertsekasTsitsiklisTetrisExtractor implements FeatureExtractor {
         return returnValue;
     }
 
+    /**
+     * Calculates the total number of features. 
+     * Equation is set up in such a way to allow for an array of inputs to take in certain inputs.
+     */
     public int numFeatures() {
-        return worldWidth + (worldWidth - 1) + 3;
+        return worldWidth // column heights 
+        		+ (worldWidth - 1) // column differences 
+        		+ 3; // MaxHeight, Holes, Bias
     }
 
+    /**
+     * Extract focuses on finding the holes in the current world state. A hole being a non occupied space beneath an occupied space.
+     * @param observation o
+     * @return array of
+     */
     public double[] extract(Observation o) {
-        double[] inputs = new double[numFeatures()];
+        double[] inputs = new double[numFeatures()]; // numFeatures gives us "worldWidth + (worldWidth - 1) + 3"
 
-        int[] worldState = new int[worldWidth * worldHeight];
+        int[] worldState = new int[worldWidth * worldHeight]; // creates the linear array version of the game world
         System.arraycopy(o.intArray, 0, worldState, 0, worldWidth * worldHeight);
         double[] blockIndicator = new double[possibleBlocks.size()];
-        for (int i = 0; i < possibleBlocks.size(); i++) {
-            blockIndicator[i] = o.intArray[worldState.length + i];
+        for (int i = 0; i < possibleBlocks.size(); i++) { // for each possible block, add whether or not it is falling to the blockIndicator array
+            blockIndicator[i] = o.intArray[worldState.length + i]; // this sets the block indicator spots as either 0 or 1 according to which block is currently falling (1)
         }
-        blotMobilePiece(worldState, StatisticsUtilities.argmax(blockIndicator), o.intArray[o.intArray.length - 5], o.intArray[o.intArray.length - 4], o.intArray[o.intArray.length - 3]);
-
+        blotMobilePiece(worldState, StatisticsUtilities.argmax(blockIndicator), o.intArray[o.intArray.length - 5], o.intArray[o.intArray.length - 4], o.intArray[o.intArray.length - 3]); 
+        //The magic numbers here at the end help us find the blockX, blockY, and blockRotation respectively
+        
         int in = 0;
 
         double holes = 0;
@@ -128,6 +149,14 @@ public class BertsekasTsitsiklisTetrisExtractor implements FeatureExtractor {
         return holes;
     }
 
+    /**
+     * This method removes the current falling block from the world state in order to gather information on features based solely on the placed blocks, not the currently falling one.
+     * @param worldState
+     * @param blockId
+     * @param blockX
+     * @param blockY
+     * @param blockRotation
+     */
     protected void blotMobilePiece(int[] worldState, int blockId, int blockX, int blockY, int blockRotation) {
         int[][] mobilePiece = this.possibleBlocks.get(blockId).getShape(blockRotation);
         for (int x = 0; x < mobilePiece.length; x++) {

@@ -19,6 +19,9 @@ import org.rlcommunity.environments.tetris.TetrisState;
  */
 public final class TetrisViewer {
 
+	/**
+	 * Initializes elements used
+	 */
     public static TetrisViewer current = null;
     public static final int HEIGHT = 500;
     public static final int WIDTH = 300;
@@ -28,6 +31,9 @@ public final class TetrisViewer {
     public static final int WATCH_DELAY = 100; //1000;
     public DrawingPanel panel;
 
+    /**
+     * The Tetris Viewer starts by creating the panel that will hold the graphics
+     */
     public TetrisViewer() {
         panel = new DrawingPanel(WIDTH, HEIGHT, TITLE);
         panel.setLocation(TWEANN.NETWORK_VIEW_DIM, 0);
@@ -35,6 +41,11 @@ public final class TetrisViewer {
         current = this;
     }
 
+    /**
+     * Using the state of the Tetris game, update the graphics
+     * This holds the information about the block shapes and colors as well
+     * @param ts Tetris State
+     */
     public void update(TetrisState ts) {
         Graphics2D g = panel.getGraphics();
         //System.out.println("Update Tetris");
