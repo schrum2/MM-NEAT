@@ -30,6 +30,7 @@ public class EvolutionaryHistory {
     public static int maxModes;
     public static int minModes;
 
+    //keeps track of which id to use next
     public static long largestUnusedInnovationNumber = 0;
     public static long largestUnusedGenotypeId = 0;
     public static ArrayList<NodeGene>[] archetypes = null;
