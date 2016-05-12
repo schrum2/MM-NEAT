@@ -20,6 +20,8 @@ package org.rlcommunity.environments.tetris;
 
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.tasks.rlglue.tetris.TetrisViewer;
+import edu.utexas.cs.nn.util.random.RandomNumbers;
+
 import java.util.Random;
 import java.util.Vector;
 import org.rlcommunity.rlglue.codec.types.Observation;
@@ -27,19 +29,19 @@ import org.rlcommunity.rlglue.codec.types.Observation;
 public class TetrisState {
     /*Action values*/
 
-    static final int LEFT = 0; /*Action value for a move left*/
+    public static final int LEFT = 0; /*Action value for a move left*/
 
-    static final int RIGHT = 1; /*Action value for a move right*/
+    public static final int RIGHT = 1; /*Action value for a move right*/
 
-    static final int CW = 2; /*Action value for a clockwise rotation*/
+    public static final int CW = 2; /*Action value for a clockwise rotation*/
 
-    static final int CCW = 3; /*Action value for a counter clockwise rotation*/
+    public static final int CCW = 3; /*Action value for a counter clockwise rotation*/
 
-    static final int NONE = 4; /*The no-action Action*/
+    public static final int NONE = 4; /*The no-action Action*/
 
-    static final int FALL = 5; /* fall down */
+    public static final int FALL = 5; /* fall down */
 
-    private Random randomGenerator = new Random();
+    private Random randomGenerator = RandomNumbers.randomGenerator;
     public boolean blockMobile = true;
     public int currentBlockId;/*which block we're using in the block table*/
 
@@ -234,7 +236,7 @@ public class TetrisState {
      * @param y
      * @return
      */
-    int calculateLinearArrayPosition(int x, int y) {
+    public int calculateLinearArrayPosition(int x, int y) {
         int returnValue = y * worldWidth + x;
         assert returnValue >= 0 : " " + y + " * " + worldWidth + " + " + x + " was less than 0.";
         return returnValue;
