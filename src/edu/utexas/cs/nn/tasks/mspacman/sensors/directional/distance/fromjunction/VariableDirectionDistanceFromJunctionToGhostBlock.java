@@ -28,7 +28,7 @@ public class VariableDirectionDistanceFromJunctionToGhostBlock extends VariableD
     }
 
     public int[] getTargets(GameFacade gf) {
-        return (threat && edible ? ArrayUtil.combineIntArrays(gf.getThreatGhostLocations(), gf.getEdibleGhostLocations())
+        return (threat && edible ? ArrayUtil.combineArrays(gf.getThreatGhostLocations(), gf.getEdibleGhostLocations())
                 : (threat ? gf.getThreatGhostLocations() : gf.getEdibleGhostLocations()));
     }
 }

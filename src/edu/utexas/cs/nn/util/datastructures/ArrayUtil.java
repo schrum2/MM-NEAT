@@ -78,7 +78,7 @@ public class ArrayUtil {
      */
     public static boolean containsAny(int[] members, int[] set) {
         for (int i = 0; i < members.length; i++) {
-            if (memberInt(members[i], set)) {
+            if (member(members[i], set)) {
                 return true;
             }
         }
@@ -92,7 +92,7 @@ public class ArrayUtil {
      * @param set set to look in
      * @return true if x in set
      */
-    public static boolean memberInt(int x, int[] set) {
+    public static boolean member(int x, int[] set) {
         for (int j = 0; j < set.length; j++) {
             if (x == set[j]) {
                 return true;
@@ -108,7 +108,7 @@ public class ArrayUtil {
      * @param set set to look in
      * @return true if x in set
      */
-    public static boolean memberLong(long x, long[] set) {
+    public static boolean member(long x, long[] set) {
         for (int j = 0; j < set.length; j++) {
             if (x == set[j]) {
                 return true;
@@ -125,7 +125,7 @@ public class ArrayUtil {
      * @param b ending elements
      * @return combined array
      */
-    public static int[] combineIntArrays(int[] a, int[] b) {
+    public static int[] combineArrays(int[] a, int[] b) {
         int[] result = new int[a.length + b.length];
         System.arraycopy(a, 0, result, 0, a.length);
         System.arraycopy(b, 0, result, a.length, b.length);
@@ -140,7 +140,7 @@ public class ArrayUtil {
      * @param b ending elements
      * @return combined array
      */
-    public static long[] combineLongArrays(long[] a, long[] b) {
+    public static long[] combineArrays(long[] a, long[] b) {
         long[] result = new long[a.length + b.length];
         System.arraycopy(a, 0, result, 0, a.length);
         System.arraycopy(b, 0, result, a.length, b.length);
@@ -264,7 +264,7 @@ public class ArrayUtil {
      */
     public static boolean subset(int[] lhs, int[] rhs) {
         for (int i = 0; i < lhs.length; i++) {
-            if (!memberInt(lhs[i], rhs)) {
+            if (!member(lhs[i], rhs)) {
                 return false;
             }
         }

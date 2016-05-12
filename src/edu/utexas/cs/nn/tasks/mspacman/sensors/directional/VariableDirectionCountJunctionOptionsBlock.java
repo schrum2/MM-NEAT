@@ -42,7 +42,7 @@ public class VariableDirectionCountJunctionOptionsBlock extends VariableDirectio
                 // Closest directional junction, from the closest junction (depth 2)
                 Pair<Integer, int[]> closestD2 = gf.getTargetInDir(closest.t1, junctions, i);
                 if (current != closestD2.t1 // Don't start from junction and then return to it
-                        && !ArrayUtil.memberInt(current, closestD2.t2) // In fact, don't reverse direction either
+                        && !ArrayUtil.member(current, closestD2.t2) // In fact, don't reverse direction either
                         && VariableDirectionCloserToTargetThanThreatGhostBlock.canReachClosestTargetSafelyInDirection(gf, new int[]{closestD2.t1}, dir, ghostsToCheck)) {
 //                    if (CommonConstants.watch) {
 //                        gf.addLines(Color.CYAN, current, closestD2.t1);

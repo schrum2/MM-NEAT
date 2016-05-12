@@ -78,7 +78,7 @@ public abstract class NodeCollection {
         if (!gs.ghostReversal()) {
             int closestJunction = gs.getClosestNodeIndexFromNodeIndex(current, junctions);
             for (int i = 0; i < savedNodes.length; i++) {
-                if (savedNodes[i] == -1 && closestJunction != lastNodeVisited && ArrayUtil.memberInt(lastNodeVisited, junctions)) {
+                if (savedNodes[i] == -1 && closestJunction != lastNodeVisited && ArrayUtil.member(lastNodeVisited, junctions)) {
                     savedNodes[i] = lastNodeVisited;
                     lastNodeVisited = -1;
                 } else if (savedNodes[i] == this.lastNodeVisited) {
