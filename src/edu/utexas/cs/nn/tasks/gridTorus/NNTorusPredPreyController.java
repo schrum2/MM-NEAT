@@ -55,24 +55,25 @@ public class NNTorusPredPreyController extends TorusPredPreyController {
      * @return
      */
     public double[] inputs(TorusAgent me, TorusWorld world, TorusAgent[] preds, TorusAgent[] prey) { 
-        double[] inputs = new double[preds.length * 2];
-        for(int i = 0; i < preds.length; i++) {
-            inputs[(2*i)] = me.shortestXOffset(preds[i]) / (1.0*world.width());
-            inputs[(2*i)+1] = me.shortestYOffset(preds[i]) / (1.0*world.height()); 
+        int numAgentsSensed = isPredator ? prey.length : preds.length;
+        double[] inputs = new double[numAgentsSensed * 2];
+        for(int i = 0; i < numAgentsSensed; i++) {
+            inputs[(2*i)] = me.shortestXOffset(isPredator ? prey[i] : preds[i]) / (1.0*world.width());
+            inputs[(2*i)+1] = me.shortestYOffset(isPredator ? prey[i] : preds[i]) / (1.0*world.height()); 
         }
         return inputs;
     }
 
     /**
      * Sets up the sensor labels for sensors to be used in network visualization.
-     * @param numPreds
+     * @param numAgents
      * @return
      */
-    public static String[] sensorLabels(int numPreds) { 
-        String[] result = new String[numPreds * 2];
-        for(int i = 0; i < numPreds; i++) {
-            result[(2*i)] = "X Offset to Pred " + i;
-            result[(2*i)+1] = "Y Offset to Pred " + i; 
+    public static String[] sensorLabels(int numAgents, String type) { 
+        String[] result = new String[numAgents * 2];
+        for(int i = 0; i < numAgents; i++) {
+            result[(2*i)] = "X Offset to " + type + " " + i;
+            result[(2*i)+1] = "Y Offset to " + type + " " + i; 
         }
         return result;
     }
