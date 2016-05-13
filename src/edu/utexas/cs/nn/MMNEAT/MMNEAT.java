@@ -25,6 +25,7 @@ import edu.utexas.cs.nn.networks.NetworkTask;
 import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
+import edu.utexas.cs.nn.scores.Score;
 import edu.utexas.cs.nn.tasks.MultiplePopulationTask;
 import edu.utexas.cs.nn.tasks.Task;
 import edu.utexas.cs.nn.tasks.breve2D.Breve2DTask;
@@ -647,7 +648,7 @@ public class MMNEAT {
             experiment = (Experiment) ClassCreation.createObject("experiment");
             experiment.init();
             if (!loadFrom && Parameters.parameters.booleanParameter("io")) {
-                if (!coevolution) {
+                if (Parameters.parameters.booleanParameter("logPerformance") && !coevolution) {
                     performanceLog = new PerformanceLog("Performance");
                 }
                 EvolutionaryHistory.initLineageAndMutationLogs();
@@ -853,17 +854,14 @@ public class MMNEAT {
             lowerInputBounds[i] = -1.0;
             upperInputBounds[i] = 1.0;
         }
-
-        // Turns out I may not actually use an arbitrator for ensemble mode mutation,
-        // because the weighted average mode aggregation in TWEANNs is already very simular
-//        if(Parameters.parameters.booleanParameter("ensembleModeMutation")){
-//            try {
-//                ensembleArbitrator = (EnsembleArbitrator) ClassCreation.createObject("ensembleArbitrator");
-//            } catch (NoSuchMethodException ex) {
-//                System.out.println("Could not get ensemble arbitrator");
-//                ex.printStackTrace();
-//                System.exit(1);
-//            }
-//        }
     }
+
+    /**
+     * Write information to the performance log, if it is being used
+     * @param combined Combined population of scores/genotypes
+     * @param generation Current generation information is being logged for
+     */
+	public static <T> void logPerformanceInformation(ArrayList<Score<T>> combined, int generation) {
+		if(performanceLog != null) performanceLog.log(combined, generation);
+	}
 }
