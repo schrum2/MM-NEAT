@@ -7,7 +7,7 @@ import java.util.ArrayList;
  *
  * @author Jacob Schrum
  */
-public class BDLog<T extends Double> extends StatisticsLog<T> {
+public class BDLog extends StatisticsLog<Double> {
 
     public static ArrayList<String> getLabels() {
         ArrayList<String> result = new ArrayList<String>(1);
@@ -20,7 +20,7 @@ public class BDLog<T extends Double> extends StatisticsLog<T> {
     }
 
     @Override
-    public void log(ArrayList<T> scores, int generation) {
+    public void log(ArrayList<Double> scores, int generation) {
         double[][] arrayScores = new double[scores.size()][1];
         for (int i = 0; i < arrayScores.length; i++) {
             arrayScores[i][0] = scores.get(i);

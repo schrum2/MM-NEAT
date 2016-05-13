@@ -23,9 +23,10 @@ public class LocalCompetitionBDNSGA2<T> extends BDNSGA2<T> {
     private NicheDefinition<T> nicheDefinition;
 
     // Track number of niches and sizes
-    public LocalCompetitionBDNSGA2() {
+    @SuppressWarnings("unchecked")
+	public LocalCompetitionBDNSGA2() {
         try {
-            nicheDefinition = (NicheDefinition) ClassCreation.createObject("nicheDefinition");
+            nicheDefinition = (NicheDefinition<T>) ClassCreation.createObject("nicheDefinition");
         } catch (NoSuchMethodException ex) {
             System.out.println("Don't know how to define niche");
             ex.printStackTrace();
@@ -53,7 +54,7 @@ public class LocalCompetitionBDNSGA2<T> extends BDNSGA2<T> {
         for (int i = 0; i < originalPopulation.size(); i++) {
             Score<T> s = originalPopulation.get(i);
             // Start new score with just BD
-            MultiObjectiveScore<T> mos = new MultiObjectiveScore(s.individual, new double[]{s.scores[s.scores.length - 1]}, null, null);
+            MultiObjectiveScore<T> mos = new MultiObjectiveScore<T>(s.individual, new double[]{s.scores[s.scores.length - 1]}, null, null);
             localCompetitonPopulation.add(mos);
             // Drop BD from old score
             s.dropLastScore();

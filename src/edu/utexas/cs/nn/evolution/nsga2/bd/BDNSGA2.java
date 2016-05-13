@@ -17,7 +17,7 @@ import java.util.ArrayList;
  */
 public class BDNSGA2<T> extends NSGA2<T> {
 
-    public BDLog<Double> bdLog;
+    public BDLog bdLog;
     @SuppressWarnings("rawtypes") // Will work the same regardless of genotype
 	public BehaviorCharacterization characterization;
     private ArrayList<Score<T>> archive = null;
@@ -30,7 +30,7 @@ public class BDNSGA2<T> extends NSGA2<T> {
         try {
             characterization = (BehaviorCharacterization) ClassCreation.createObject("behaviorCharacterization");
             if (writeOutput) {
-                bdLog = new BDLog<Double>("BD");
+                bdLog = new BDLog("BD");
             }
         } catch (NoSuchMethodException ex) {
             System.out.println("Behavior characterization does not exist");
