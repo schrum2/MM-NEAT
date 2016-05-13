@@ -289,10 +289,13 @@ public class ArrayUtil {
     }
 
     /**
+     * Determines whether or not the two sets have equal values, but not necessarily
+     * in order. Does so by determining with a call to another helper method to 
+     * compute whether the set is equal.
      * 
-     * @param l
-     * @param s
-     * @return
+     * @param l: The first array to be compared
+     * @param s: The second array to be compared
+     * @return: whether or not the sets are equal
      */
     public static boolean setEquality(long[] l, long[] s) {
     	return subset(l, s) && subset(s, l);
