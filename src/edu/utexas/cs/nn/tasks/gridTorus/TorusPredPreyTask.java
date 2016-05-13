@@ -15,11 +15,25 @@ import edu.utexas.cs.nn.util.datastructures.Pair;
 /**
  *
  * @author Rollinsa
+ * A parent class which defines the Predator Prey task which evolves either the predator or the prey
+ * (specified by the user which to evolve) while the other is kept static. The user also specifies the number
+ * of preys and predators to be included, as well as their available actions. Runs the game so that predators attempt to 
+ * eat (get to the same location) the prey as soon as possible while prey attempt to survive as long as possible
  */
 public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTask<T> implements TUGTask, NetworkTask {
 
+	/**
+	 * The getter method that returns the list of controllers for the predators
+	 * @param individual the genotype that will be given to all predator agents (homogeneous team)
+	 * @return list of controllers for predators
+	 */
     public abstract TorusPredPreyController[] getPredAgents(Genotype<T> individual);
 
+	/**
+	 * The getter method that returns the list of controllers for the preys
+	 * @param individual the genotype that will be given to all prey agents (homogeneous team)
+	 * @return list of controllers for prey
+	 */
     public abstract TorusPredPreyController[] getPreyAgents(Genotype<T> individual);
 
     //boolean to indicate which agent is to be evolved
@@ -28,7 +42,8 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
     private TorusWorldExec exec;
 
     /**
-     *
+     * constructor for a PredPrey Task where either the predators are evolved while prey are kept
+     * static or prey are evolved while predators are kept static 
      * @param preyEvolve if true prey are being evolved; if false predators are
      * being evolved
      */
@@ -38,6 +53,13 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
     }
 
     @Override
+    /**
+     * A method that evaluates a single genotype
+     * Provides fitness for that genotype based on the game time as well as other scores 
+     * @param individual genotype being evaluated
+     * @param num number of current evaluation
+     * @return A Pair of double arrays containing the fitness and other scores 
+     */
     public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {
         TorusPredPreyController[] predAgents = getPredAgents(individual);
         TorusPredPreyController[] preyAgents = getPreyAgents(individual);
@@ -59,32 +81,48 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
         double[] otherStats = new double[0];
         return new Pair<double[], double[]>(oneTrialFitness, otherStats);
     }
-
+    /**
+     * @return the number of minimum scores for this genotype of this task
+     */
     public int numObjectives() {
         return minScores().length;
     }
-
+    /**
+     * @return the starting goals of this genotype in an array
+     */
     public double[] startingGoals() {
         return minScores();
     }
 
     @Override
+    /**
+     * @return the minimum possible scores (worst scores) for this genotype
+     * if it is a prey then the min score is 0 and if it's a predator min score is the total time limit
+     */
     public double[] minScores() {
         return new double[]{preyEvolve ? 0 : Parameters.parameters.integerParameter("torusTimeLimit")};
     }
-    //for agent evolving
 
+    /**
+     * For agent evolving
+     * @return agent's sensory labels in a string array (will have labels for all its enemies)
+     */
     public String[] sensorLabels() {
-        //if it is the predator who will evolve, get number of prey agents
+        //if it is the predator who will evolve, get its sensor labels of the preys
         if (!preyEvolve) {
             return NNTorusPredPreyController.sensorLabels(Parameters.parameters.integerParameter("torusPreys"), "Prey");
-        } //it is the prey who is evolving, so get number of predator agents
+        } //it is the prey who is evolving, get its sensor labels of the predators
         else {
             return NNTorusPredPreyController.sensorLabels(Parameters.parameters.integerParameter("torusPredators"), "Pred");
         }
     }
-    //for evolving agent
 
+    /**
+     * For evolving agent
+     * Defines the genotype's possible actions (whether it can do nothing or not) based on what the
+     * user indicated in a command line parameter (the default does not include the do nothing action)
+     * @return agent's output labels in a string array 
+     */
     public String[] outputLabels() {
         //if it is the predator evolving
         if (!preyEvolve) {

@@ -68,9 +68,9 @@ public abstract class NoisyLonerTask<T> extends LonerTask<T> {
     }
 
     /**
-     * All actions performed in a single evaluation of an agent
+     * All actions performed in a single evaluation of a genotype
      *
-     * @param individual genotype of agent to be evaluated
+     * @param individual genotype to be evaluated
      * @param num which evaluation is currently being performed
      * @return Combination of fitness scores (multiobjective possible), and
      * other scores (for tracking non-fitness data)

@@ -15,12 +15,12 @@ import edu.utexas.cs.nn.networks.Network;
 public class NNTorusPredPreyAgent<T extends Network> extends Organism<T> {
 	
 	/**
-	 * Initialize brain/controller
+	 * Initialize controller
 	 */
     public NNTorusPredPreyController controller;
 
     /**
-     * Uses the genotype to finish the set up of the brain/controller. It accesses the network to do this.
+     * Uses the genotype to finish the set up of the controller. It accesses the network to do this.
      * @param genotype
      */
     public NNTorusPredPreyAgent(Genotype<T> genotype, boolean isPredator) {
@@ -30,7 +30,7 @@ public class NNTorusPredPreyAgent<T extends Network> extends Organism<T> {
     }
 
     /**
-     * Getter function to access the brain/controller of the PredPreyAgent
+     * Getter function to access the controller of the PredPreyAgent
      * @return controller
      */
     public NNTorusPredPreyController getController() {

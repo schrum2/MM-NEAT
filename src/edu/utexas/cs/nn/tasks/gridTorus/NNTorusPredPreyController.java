@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 
 package edu.utexas.cs.nn.tasks.gridTorus;
 
@@ -52,7 +48,7 @@ public class NNTorusPredPreyController extends TorusPredPreyController {
     /**
      * Calculates inputs for the neural network in order to figure what action to take in getAction.
      * @param all agents (me, world, preds, prey)
-     * @return
+     * @return inputs for the network
      */
     public double[] inputs(TorusAgent me, TorusWorld world, TorusAgent[] preds, TorusAgent[] prey) { 
         int numAgentsSensed = isPredator ? prey.length : preds.length;
@@ -67,7 +63,7 @@ public class NNTorusPredPreyController extends TorusPredPreyController {
     /**
      * Sets up the sensor labels for sensors to be used in network visualization.
      * @param numAgents
-     * @return
+     * @return sensor labels for this genotype
      */
     public static String[] sensorLabels(int numAgents, String type) { 
         String[] result = new String[numAgents * 2];
