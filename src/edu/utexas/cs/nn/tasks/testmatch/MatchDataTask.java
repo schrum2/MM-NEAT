@@ -28,6 +28,8 @@ import java.util.Random;
  * @author Jacob Schrum
  */
 public abstract class MatchDataTask<T extends Network> extends LonerTask<T> implements NetworkTask {
+	
+	public static boolean pauseForEachCase = true;
 	/**
 	 * create a matchDataTask object with default values for the fitness
 	 */
@@ -63,7 +65,7 @@ public abstract class MatchDataTask<T extends Network> extends LonerTask<T> impl
 			}
 			//add all of the pairs of desired and actual outputs to compare
 			samples.add(neuronResults);
-			if(CommonConstants.watch) {
+			if(CommonConstants.watch && pauseForEachCase) {
 				MiscUtil.waitForReadStringAndEnterKeyPress();
 			}
 		}

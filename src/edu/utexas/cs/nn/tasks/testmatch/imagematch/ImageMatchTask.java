@@ -2,15 +2,23 @@ package edu.utexas.cs.nn.tasks.testmatch.imagematch;
 
 
 import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.image.*;
 import java.io.*;
 import java.util.ArrayList;
 
 import javax.imageio.*;
+import javax.swing.JFrame;
 
+import edu.utexas.cs.nn.evolution.genotypes.Genotype;
+import edu.utexas.cs.nn.graphics.DrawingPanel;
 import edu.utexas.cs.nn.networks.Network;
+import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
+import edu.utexas.cs.nn.scores.Score;
 import edu.utexas.cs.nn.tasks.testmatch.MatchDataTask;
+import edu.utexas.cs.nn.util.MiscUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 
 /**
@@ -21,6 +29,7 @@ import edu.utexas.cs.nn.util.datastructures.Pair;
 public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 
 	public static final String IMAGE_MATCH_PATH = "data\\imagematch";
+	private static final int IMAGE_PLACEMENT = 200;
 	
 	//this variable needed to scale RGB values to a 0-1 range
 	private final double MAX_COLOR_INTENSITY = 255.0;
@@ -32,6 +41,7 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 	 */
 	public ImageMatchTask() {
 		this(Parameters.parameters.stringParameter("matchImageFile"));
+		MatchDataTask.pauseForEachCase = false;
 	}
 	/**
 	 * Constructor for ImageMatchTask
@@ -45,6 +55,44 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 		}
 		imageHeight = img.getHeight();
 		imageWidth = img.getWidth();
+	}
+	
+	public Score<T> evaluate(Genotype<T> individual) {
+		if(CommonConstants.watch) {
+			System.out.println("where you go");
+			int rIndex = 0;
+			int gIndex = 1;
+			int bIndex = 2;
+			Network n = individual.getPhenotype();
+			
+			BufferedImage child = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_RGB);
+			
+			for(int x = 0; x < imageWidth; x++) {
+				for(int y = 0; y < imageHeight; y++) {
+					double[] rgb = n.process(new double[]{x, y});
+					Color childColor = new Color((float) rgb[rIndex], (float) rgb[gIndex], (float) rgb[bIndex]);
+					child.setRGB(x, y, childColor.getRGB());
+				}
+			}
+		
+			
+			DrawingPanel parentPanel = new DrawingPanel(imageWidth, imageHeight, "target");
+			DrawingPanel childPanel = new DrawingPanel(imageWidth, imageHeight, "output");
+			childPanel.setLocation(imageWidth + IMAGE_PLACEMENT, 0);
+			Graphics2D parentGraphics = parentPanel.getGraphics();
+			Graphics2D childGraphics = childPanel.getGraphics();
+			
+			parentGraphics.drawRenderedImage(img, null);
+			childGraphics.drawRenderedImage(child, null);
+			
+			
+			
+			MiscUtil.waitForReadStringAndEnterKeyPress(); // Waits for enter press
+			
+			parentPanel.dispose();
+			childPanel.dispose();
+		}
+		return super.evaluate(individual);
 	}
 	
 	/**
