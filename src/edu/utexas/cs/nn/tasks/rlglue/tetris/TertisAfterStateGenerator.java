@@ -5,6 +5,8 @@
  */
 package edu.utexas.cs.nn.tasks.rlglue.tetris;
 import java.util.ArrayList;
+import java.util.HashSet;
+
 import org.rlcommunity.environments.tetris.TetrisState;
 
 import edu.utexas.cs.nn.util.MiscUtil;
@@ -17,11 +19,11 @@ public class TertisAfterStateGenerator {
 	 * @param ts
 	 * @return arraylist of pairs (evaluated after-states and arraylist of actions)
 	 */
-	public static ArrayList<Pair<TetrisState, ArrayList<Integer>>> evaluateAfterStates(TetrisState ts){ 
+	public static HashSet<Pair<TetrisState, ArrayList<Integer>>> evaluateAfterStates(TetrisState ts){ 
 	// Take in the current falling piece and figure out number or possible orientations (use TetrisPiece for this)
 		int possibleOrientations = 4; //sorry for the magic number <3 -Gab TODO:
 				
-		ArrayList<Pair<TetrisState, ArrayList<Integer>>> evaluated = new ArrayList<Pair<TetrisState, ArrayList<Integer>>>(possibleOrientations*TetrisState.worldWidth); //only ever as big as # of orientations times the width
+		HashSet<Pair<TetrisState, ArrayList<Integer>>> evaluated = new HashSet<Pair<TetrisState, ArrayList<Integer>>>(); //only ever as big as # of orientations times the width
 		
 		for(int i = 0; i < possibleOrientations; i++){ // Try each orientation
 			for(int j = -5; j < TetrisState.worldWidth; j++){ // Try each position across the width, also sorry for magic number, the -5 is to cover all our bases TODO:
@@ -48,12 +50,14 @@ public class TertisAfterStateGenerator {
 					}
 				}
 				
-				while(copy.blockMobile){ // While the block as not yet hit something (uses "onSomething" from TetrisState)
+				if(copy.blockMobile){ // While the block as not yet hit something (uses "onSomething" from TetrisState)
+					copy.take_action(TetrisState.FALL); //move down all the way
 					copy.update(); // Update until it has reached the bottom
 					actionList.add(TetrisState.FALL); //add action to actionList
 				}
 				
-				copy.spawn_block(); // Spawn a new block to clear the last piece and show just the board (extractor can blot this piece out for us)
+				//copy.spawn_block(); // Spawn a new block to clear the last piece and show just the board (extractor can blot this piece out for us)
+				copy.currentY = 0;
 				copy.update(); // Update this
 				
 				evaluated.add(new Pair<TetrisState, ArrayList<Integer>>(copy, actionList)); // Adds the finished state and actions pair to the final arraylist				
@@ -120,9 +124,11 @@ public class TertisAfterStateGenerator {
 		testView.update(testState);
 		
 		MiscUtil.waitForReadStringAndEnterKeyPress();
-		ArrayList<Pair<TetrisState, ArrayList<Integer>>> holder = evaluateAfterStates(testState);
+		HashSet<Pair<TetrisState, ArrayList<Integer>>> holder = evaluateAfterStates(testState);
 		for(Pair<TetrisState, ArrayList<Integer>> p: holder){
 			testView.update(p.t1);
+			//System.out.println("Y is " + p.t1.currentY + ", X is " + p.t1.currentX + ", and rotation is " + p.t1.currentRotation);
+			//System.out.println(p.t2);
 			MiscUtil.waitForReadStringAndEnterKeyPress();			
 		}
 	}

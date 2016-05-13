@@ -20,8 +20,10 @@ package org.rlcommunity.environments.tetris;
 
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.tasks.rlglue.tetris.TetrisViewer;
+import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.random.RandomNumbers;
 
+import java.util.Arrays;
 import java.util.Random;
 import java.util.Vector;
 import org.rlcommunity.rlglue.codec.types.Observation;
@@ -98,7 +100,7 @@ public class TetrisState {
     }
 
     public Observation get_observation() {
-        //eget observation with only the state space
+        //get observation with only the state space
         try {
             int[] worldObservation = new int[worldState.length];
 
@@ -158,7 +160,6 @@ public class TetrisState {
                         System.exit(1);
                     }
                     game_world[linearIndex] = currentBlockId + 1;
-                    System.out.println((currentX + x) + "," + (currentY + y) + " now occupied");
                 }
             }
         }
@@ -575,4 +576,55 @@ public class TetrisState {
         }
 
     }
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		//result = prime * result + (blockMobile ? 1231 : 1237);
+		//result = prime * result + currentBlockId;
+		//result = prime * result + currentRotation;
+		//result = prime * result + currentX;
+		//result = prime * result + currentY;
+		//result = prime * result + (is_game_over ? 1231 : 1237);
+		//result = prime * result + score;
+		result = prime * result + Arrays.hashCode(worldState);
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		TetrisState other = (TetrisState) obj;
+		//if (blockMobile != other.blockMobile)
+		//	return false;
+		//if (currentBlockId != other.currentBlockId)
+		//	return false;
+		//if (currentRotation != other.currentRotation)
+		//	return false;
+		//if (currentX != other.currentX)
+		//	return false;
+		//if (currentY != other.currentY)
+		//	return false;
+		//if (is_game_over != other.is_game_over)
+		//	return false;
+		//if (score != other.score)
+		//	return false;
+		if (!Arrays.equals(worldState, other.worldState))
+			return false;
+		return true;
+	}
+    
+   
 }

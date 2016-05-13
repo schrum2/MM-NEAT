@@ -15,42 +15,72 @@ import rlVizLib.messaging.agent.AgentMessages;
 
 /**
  *
- * @author Jacob Schrum
+ * @author Jacob Schrum, Gabby Gonzalez
  */
 public class RLGlueAgent<T extends Network> extends Organism<T> implements AgentInterface {
 
-    TaskSpec TSO = null;
+    protected TaskSpec TSO = null;
     public T policy;
 
+    /**
+     * The RLGlueAgent is an organism that uses the AgentInterface, according to the given number of objectives.
+     * (Number of objectives depends on the game and TLGlueTask, Puddle World is 2, Tetris is 1)
+     * @param numObjectives
+     */
     public RLGlueAgent(int numObjectives) {
         super(null);
     }
 
+    /**
+     * This "replace" is used to test genotypes in the task methods
+     */
     @Override
     public void replaceGenotype(Genotype<T> newGenotype) {
         super.replaceGenotype(newGenotype);
         policy = newGenotype.getPhenotype();
     }
 
+    /**
+     * Policy is taken in earlier and changed by Phenotype
+     * @param inputs
+     * @return outputs from network
+     */
     public double[] consultPolicy(double[] inputs) {
         return policy.process(inputs);
     }
 
+    /**
+     * Sets the null TSO to a new taskSpec
+     */
     public void agent_init(String taskSpec) {
         TSO = new TaskSpec(taskSpec);
     }
 
+    /**
+     * Getter for the starting action of the observation
+     */
     public Action agent_start(Observation o) {
         return getAction(o);
     }
 
+    /**
+     * Getter for the "next" action of the observation
+     */
     public Action agent_step(double d, Observation o) {
         return getAction(o);
     }
 
+    /**
+     * Does nothing currently
+     */
     public void agent_end(double d) {
     }
 
+    /**
+     * Give an observation, get the action the agent should take
+     * @param o
+     * @return
+     */
     private Action getAction(Observation o) {
         Action action = new Action(TSO.getNumDiscreteActionDims(), TSO.getNumContinuousActionDims());
 
@@ -63,10 +93,16 @@ public class RLGlueAgent<T extends Network> extends Organism<T> implements Agent
         return action;
     }
 
+    /**
+     * Cleans the policy of the agent
+     */
     public void agent_cleanup() {
         policy.flush();
     }
 
+    /**
+     * Takes in a message and responds accordingly with another message
+     */
     public String agent_message(String theMessage) {
         AgentMessages theMessageObject;
         try {
