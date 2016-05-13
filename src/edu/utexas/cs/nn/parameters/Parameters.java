@@ -218,6 +218,7 @@ public class Parameters {
         //Boolean parameters
         booleanOptions.add("logMutationAndLineage", false, "Whether or not to log information about the mutations and lineage");
         booleanOptions.add("logPerformance", false, "Whether or not to log performance information in a performance log");
+        booleanOptions.add("torusSenseTeammates", false, "If turned on, predators can sense other predators and preys can sense other preys");
         booleanOptions.add("allowDoNothingActionForPredators", false, "If turned on, the predators will have the option to do nothing as their action");
         booleanOptions.add("allowDoNothingActionForPreys", false, "If turned on, the preys will have the option to do nothing as their action");
         booleanOptions.add("removePillsNearPowerPills", false, "Pills in a c-path with power pills are absent");

@@ -15,7 +15,7 @@ import edu.utexas.cs.nn.util.util2D.Tuple2D;
  * Fearful means the prey moves away from each predator in order of how close each predator is
  * 
  */
-public class FearfulPreyController extends TorusPredPreyController {
+public class FleeAllPreyController extends TorusPredPreyController {
     /** 
      * The getAction method takes in the controlled agent, the world and predators and prey as arrays.
      * The prey moves away from all the predators in a sequence depending on how close each predator is.

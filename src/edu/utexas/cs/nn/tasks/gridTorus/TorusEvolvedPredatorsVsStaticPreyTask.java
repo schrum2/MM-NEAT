@@ -1,7 +1,7 @@
 package edu.utexas.cs.nn.tasks.gridTorus;
 
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.gridTorus.controllers.FearfulPreyController;
+import edu.utexas.cs.nn.gridTorus.controllers.FleeAllPreyController;
 import edu.utexas.cs.nn.gridTorus.controllers.TorusPredPreyController;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.networks.Network;
@@ -56,7 +56,7 @@ public class TorusEvolvedPredatorsVsStaticPreyTask<T extends Network> extends To
 		int numPrey = Parameters.parameters.integerParameter("torusPreys"); 
 		TorusPredPreyController[] staticAgents = new TorusPredPreyController[numPrey];
 		for(int i = 0; i < numPrey; i++) {
-			staticAgents[i] = new FearfulPreyController(); 
+			staticAgents[i] = new FleeAllPreyController(); 
 		}
 		return staticAgents;
 	}

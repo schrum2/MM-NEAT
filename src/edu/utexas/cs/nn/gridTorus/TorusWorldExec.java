@@ -3,7 +3,7 @@ package edu.utexas.cs.nn.gridTorus;
 import java.util.Arrays;
 
 import edu.utexas.cs.nn.gridTorus.controllers.AggressivePredatorController;
-import edu.utexas.cs.nn.gridTorus.controllers.FearfulPreyController;
+import edu.utexas.cs.nn.gridTorus.controllers.FleeAllPreyController;
 import edu.utexas.cs.nn.gridTorus.controllers.TorusPredPreyController;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.util.MiscUtil;
@@ -29,7 +29,7 @@ public class TorusWorldExec {
 		TorusPredPreyController[] prey = new TorusPredPreyController[1];
 		for (int i = 0; i < prey.length; i++) {
 			//prey[i] = new RandomController();
-			prey[i] = new FearfulPreyController();
+			prey[i] = new FleeAllPreyController();
 		}
 		//run one timed visual evaluation (visual set to true)
 		exec.runGameTimed(preds, prey, true);
