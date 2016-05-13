@@ -69,5 +69,7 @@ $RECYCLE.BIN/
 /onelifeconflict/
 /tetris/
 /fof/
+/match/
+/multiplelivesconflict/
 *.zds
 vizdoom/bin/vizdoom-He_Deceives.ini
