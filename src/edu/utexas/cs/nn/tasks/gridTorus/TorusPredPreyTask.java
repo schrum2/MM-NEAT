@@ -18,84 +18,91 @@ import edu.utexas.cs.nn.util.datastructures.Pair;
  */
 public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTask<T> implements TUGTask, NetworkTask {
 
-	public abstract TorusPredPreyController[] getPredAgents(Genotype<T> individual);
+    public abstract TorusPredPreyController[] getPredAgents(Genotype<T> individual);
 
-	public abstract TorusPredPreyController[] getPreyAgents(Genotype<T> individual);
+    public abstract TorusPredPreyController[] getPreyAgents(Genotype<T> individual);
 
-	//boolean to indicate which agent is to be evolved
-	private boolean preyEvolve;
-	
-	private TorusWorldExec exec;
+    //boolean to indicate which agent is to be evolved
+    private boolean preyEvolve;
 
-	/**
-	 * 
-	 * @param preyEvolve if true prey are being evolved; if false predators are being evolved
-	 */
-	public TorusPredPreyTask(boolean preyEvolve) {
-		super(); 
-		this.preyEvolve = preyEvolve;
-	}
+    private TorusWorldExec exec;
 
-	@Override
-	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {
-		TorusPredPreyController[] predAgents = getPredAgents(individual);
-		TorusPredPreyController[] preyAgents = getPreyAgents(individual);
-		exec = new TorusWorldExec(); 
-		TorusPredPreyGame game; 
-		if (CommonConstants.watch) { 
-			game = exec.runGameTimed(predAgents, preyAgents, true); 
-		} else {
-			game = exec.runExperiment(predAgents, preyAgents);
-		}
-		double[] oneTrialFitness;
-		//fitness for the prey
-		if(preyEvolve)
-			oneTrialFitness = new double[]{game.getTime()}; 
-		//fitness for the predators
-		else
-			oneTrialFitness = new double[]{-game.getTime()}; 
-		double[] otherStats = new double[0];
-		return new Pair<double[], double[]>(oneTrialFitness, otherStats); 
-	}
+    /**
+     *
+     * @param preyEvolve if true prey are being evolved; if false predators are
+     * being evolved
+     */
+    public TorusPredPreyTask(boolean preyEvolve) {
+        super();
+        this.preyEvolve = preyEvolve;
+    }
 
-	public int numObjectives() { 
-		return minScores().length; 
-	}
+    @Override
+    public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {
+        TorusPredPreyController[] predAgents = getPredAgents(individual);
+        TorusPredPreyController[] preyAgents = getPreyAgents(individual);
+        exec = new TorusWorldExec();
+        TorusPredPreyGame game;
+        if (CommonConstants.watch) {
+            game = exec.runGameTimed(predAgents, preyAgents, true);
+        } else {
+            game = exec.runExperiment(predAgents, preyAgents);
+        }
+        double[] oneTrialFitness;
+        //fitness for the prey
+        if (preyEvolve) {
+            oneTrialFitness = new double[]{game.getTime()};
+        } //fitness for the predators
+        else {
+            oneTrialFitness = new double[]{-game.getTime()};
+        }
+        double[] otherStats = new double[0];
+        return new Pair<double[], double[]>(oneTrialFitness, otherStats);
+    }
 
-	public double[] startingGoals() {
-		return minScores();
-	}
+    public int numObjectives() {
+        return minScores().length;
+    }
 
-	@Override
-	public double[] minScores() { 
-		return new double[]{preyEvolve ? 0 : Parameters.parameters.integerParameter("torusTimeLimit")};
-	}
-	//for agent not evolving
-	public String[] sensorLabels() { 
-		//if it is the predator who will evolve, get number of prey agents
-		if(!preyEvolve)
-			return NNTorusPredPreyController.sensorLabels(Parameters.parameters.integerParameter("torusPreys"));
-		//it is the prey who is evolving, so get number of predator agents
-		return NNTorusPredPreyController.sensorLabels(Parameters.parameters.integerParameter("torusPredators"));
-	}
-	//for evolving agent
-	public String[] outputLabels() { 
-		//if it is the predator evolving
-		if(!preyEvolve)
-			return Parameters.parameters.booleanParameter("allowDoNothingActionForPredators") ?
-					new String[]{"UP", "RIGHT", "DOWN", "LEFT", "NOTHING"} :
-					new String[]{"UP", "RIGHT", "DOWN", "LEFT"};
-		//the prey is evolving
-		return Parameters.parameters.booleanParameter("allowDoNothingActionForPreys") ?
-				new String[]{"UP", "RIGHT", "DOWN", "LEFT", "NOTHING"} :
-				new String[]{"UP", "RIGHT", "DOWN", "LEFT"};
-	}
+    public double[] startingGoals() {
+        return minScores();
+    }
 
-	/**
-	 * Accesses the time stamps for the current game being executed, use for evaluation purposes.
-	 */
-	public double getTimeStamp() {
-		return exec.game.getTime();
-	}
+    @Override
+    public double[] minScores() {
+        return new double[]{preyEvolve ? 0 : Parameters.parameters.integerParameter("torusTimeLimit")};
+    }
+    //for agent evolving
+
+    public String[] sensorLabels() {
+        //if it is the predator who will evolve, get number of prey agents
+        if (!preyEvolve) {
+            return NNTorusPredPreyController.sensorLabels(Parameters.parameters.integerParameter("torusPreys"), "Prey");
+        } //it is the prey who is evolving, so get number of predator agents
+        else {
+            return NNTorusPredPreyController.sensorLabels(Parameters.parameters.integerParameter("torusPredators"), "Pred");
+        }
+    }
+    //for evolving agent
+
+    public String[] outputLabels() {
+        //if it is the predator evolving
+        if (!preyEvolve) {
+            return Parameters.parameters.booleanParameter("allowDoNothingActionForPredators")
+                    ? new String[]{"UP", "RIGHT", "DOWN", "LEFT", "NOTHING"}
+                    : new String[]{"UP", "RIGHT", "DOWN", "LEFT"};
+        }
+        //the prey is evolving
+        return Parameters.parameters.booleanParameter("allowDoNothingActionForPreys")
+                ? new String[]{"UP", "RIGHT", "DOWN", "LEFT", "NOTHING"}
+                : new String[]{"UP", "RIGHT", "DOWN", "LEFT"};
+    }
+
+    /**
+     * Accesses the time stamps for the current game being executed, use for
+     * evaluation purposes.
+     */
+    public double getTimeStamp() {
+        return exec.game.getTime();
+    }
 }
-
