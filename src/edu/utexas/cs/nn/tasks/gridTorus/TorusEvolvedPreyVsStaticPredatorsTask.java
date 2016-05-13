@@ -10,7 +10,7 @@ import edu.utexas.cs.nn.parameters.Parameters;
 
 /**
  *
- * @author Rollinsa
+ * @author Alex Rollins, Jacob Schrum
  * The following class sets up tasks for learning agents and NPCs.
  * This class is for a task where the prey are evolved while the predators are kept static
  */

@@ -9,7 +9,7 @@ import edu.utexas.cs.nn.networks.Network;
 
 /**
  * 
- * @author Jacob Schrum, Gabby Gonzalez
+ * @author Jacob Schrum, Gabby Gonzalez, Alex Rollins
  * The following class sets up the PredPreyAgent to utilize Organism and Network and initializes the brain and controller.
  */
 public class NNTorusPredPreyAgent<T extends Network> extends Organism<T> {

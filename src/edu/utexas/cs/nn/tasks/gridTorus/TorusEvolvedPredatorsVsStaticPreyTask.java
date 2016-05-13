@@ -9,7 +9,7 @@ import edu.utexas.cs.nn.parameters.Parameters;
 
 /**
  *
- * @author Rollinsa
+ * @author Alex Rollins, Jacob Schrum
  * The following class sets up tasks for learning agents and NPCs.
  * This class is for a task where the predators are evolved while the prey are kept static
  */
@@ -46,7 +46,7 @@ public class TorusEvolvedPredatorsVsStaticPreyTask<T extends Network> extends To
 	@Override
 	/**
 	 * A method that gives a list of controllers for the static agents (prey)
-	 * The prey are all given the simple, non-evolving "FearfulPreyController" 
+	 * The prey are all given a simple, non-evolving "FleeAllPreyController" 
 	 * The user also indicates in a command line parameter how many prey there will be (default of 1)
 	 * @return staticAgents a list of controllers for the static agents for this class,
 	 * which is the prey (static meaning the agent type that is chosen by the user to not evolve)

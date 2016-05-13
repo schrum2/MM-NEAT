@@ -13,7 +13,7 @@ import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
 
 /**
  *
- * @author Jacob Schrum, Gabby Gonzalez
+ * @author Jacob Schrum, Gabby Gonzalez, Alex Rollins
  * The following class extends the normal TorusPredPreyController to allow for a neural network.
  */
 public class NNTorusPredPreyController extends TorusPredPreyController {
@@ -87,37 +87,29 @@ public class NNTorusPredPreyController extends TorusPredPreyController {
 		//if options to sense teammates is turned on, include the allies in the inputs (after enemies)
 		if(Parameters.parameters.booleanParameter("torusSenseTeammates")){
 			int numAgentsSensed = prey.length + preds.length;
+			
+			//get the list of offsets from this agent to both the preys and the predators
+			double[] preyInputs = getPreyOffsets(me, world, prey);
+			double[] predInputs = getPredatorOffsets(me, world, preds);
+			
 			double[] inputs = new double[numAgentsSensed * 2];
 			//if this is a predator
 			if(isPredator){
-				for(int i = 0; i < prey.length; i++) {
-					inputs[(2*i)] = me.shortestXOffset(prey[i]) / (1.0*world.width());
-					inputs[(2*i)+1] = me.shortestYOffset(prey[i]) / (1.0*world.height()); 
-				}
-				for(int i = 0; i < preds.length; i++) {
-					inputs[(2*i) + prey.length] = me.shortestXOffset(preds[i]) / (1.0*world.width());
-					inputs[(2*i)+1 + prey.length] = me.shortestYOffset(preds[i]) / (1.0*world.height()); 
-				}
+				//put prey array into overall inputs array followed by predators array
+				System.arraycopy(preyInputs, 0, inputs, 0, preyInputs.length);
+				System.arraycopy(predInputs, 0, inputs, preyInputs.length, predInputs.length);
 			}else{ //this is a prey
-				for(int i = 0; i < preds.length; i++) {
-					inputs[(2*i) + prey.length] = me.shortestXOffset(preds[i]) / (1.0*world.width());
-					inputs[(2*i)+1 + prey.length] = me.shortestYOffset(preds[i]) / (1.0*world.height()); 
-				}
-				for(int i = 0; i < prey.length; i++) {
-					inputs[(2*i)] = me.shortestXOffset(prey[i]) / (1.0*world.width());
-					inputs[(2*i)+1] = me.shortestYOffset(prey[i]) / (1.0*world.height()); 
-				}
+				//put predators array into overall inputs array followed by prey array
+				System.arraycopy(predInputs, 0, inputs, 0, predInputs.length);
+				System.arraycopy(preyInputs, 0, inputs, predInputs.length, preyInputs.length);
 			}
 			return inputs;
 		}else{ //the option to sense teammates is turned off, so just sense enemies
-			int numAgentsSensed = isPredator ? prey.length : preds.length;
-			double[] inputs = new double[numAgentsSensed * 2];
-			for(int i = 0; i < numAgentsSensed; i++) {
-				inputs[(2*i)] = me.shortestXOffset(isPredator ? prey[i] : preds[i]) / (1.0*world.width());
-				inputs[(2*i)+1] = me.shortestYOffset(isPredator ? prey[i] : preds[i]) / (1.0*world.height()); 
-			}
-
-			return inputs;
+			//if this is a predator return senses to preys
+			if(isPredator)
+				return getPreyOffsets(me, world, prey); 
+			//this is a prey, return senses to predators
+			return getPredatorOffsets(me, world, preds);
 		}
 	}
 

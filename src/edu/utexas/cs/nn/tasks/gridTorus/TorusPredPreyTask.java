@@ -14,7 +14,7 @@ import edu.utexas.cs.nn.util.datastructures.Pair;
 
 /**
  *
- * @author Rollinsa
+ * @author Alex Rollins, Jacob Schrum
  * A parent class which defines the Predator Prey task which evolves either the predator or the prey
  * (specified by the user which to evolve) while the other is kept static. The user also specifies the number
  * of preys and predators to be included, as well as their available actions. Runs the game so that predators attempt to 
@@ -116,12 +116,9 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 			//if the ability to sense teammates has been turned on, include sensors to the agents of this agent's
 			//own type in addition to sensors to the enemies
 			if(Parameters.parameters.booleanParameter("torusSenseTeammates")){
-				for(int i = 0; i < preySensors.length; i++){
-					sensors[i] = preySensors[i];
-				}
-				for(int i = 0; i < predSensors.length; i++){
-					sensors[i+preySensors.length] = predSensors[i];
-				}
+				//put the prey sensors into the sensors array followed by the predator sensors
+				System.arraycopy(preySensors, 0, sensors, 0, preySensors.length);
+				System.arraycopy(predSensors, 0, sensors, preySensors.length, predSensors.length);
 				return sensors;
 			}else{
 				return preySensors;
@@ -131,12 +128,9 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 			//if the ability to sense teammates has been turned on, include sensors to the agents of this agent's
 			//own type in addition to sensors to the enemies
 			if(Parameters.parameters.booleanParameter("torusSenseTeammates")){
-				for(int i = 0; i < predSensors.length; i++){
-					sensors[i] = predSensors[i];
-				}
-				for(int i = 0; i < preySensors.length; i++){
-					sensors[i+predSensors.length] = preySensors[i];
-				}
+				//put the predator sensors into the sensors array followed by the prey sensors
+				System.arraycopy(predSensors, 0, sensors, 0, predSensors.length);
+				System.arraycopy(preySensors, 0, sensors, predSensors.length, preySensors.length);
 				return sensors;
 			}else{
 				return predSensors;
