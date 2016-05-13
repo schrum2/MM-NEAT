@@ -1115,18 +1115,25 @@ public class TWEANNGenotype implements Genotype<TWEANN> {
     }
 
     /**
+     * Compares two genotypes to see if the same, but not necessarily the same reference.
+     * Gene nodes must have the same innovation number in the same order and must have
+     * the same link innovation numbers but not necessarily in the same order.
      * 
      * @param m first TWEANNGenotype to be compared
      * @param o second TWEANNGenotype to be compared
      * @return true if structure is same, false if not
      */
     public static boolean sameStructure(TWEANNGenotype m, TWEANNGenotype o) {
+    	
+    	//array lists of genotypes 
     	ArrayList<TWEANNGenotype.NodeGene> mGeno = m.nodes;
     	ArrayList<TWEANNGenotype.NodeGene> oGeno = o.nodes;
     	ArrayList<TWEANNGenotype.LinkGene> FakemLink = m.links;
     	ArrayList<TWEANNGenotype.LinkGene> FakeoLink = o.links;
     	ArrayList<TWEANNGenotype.LinkGene> mLink = new ArrayList<>();
     	ArrayList<TWEANNGenotype.LinkGene> oLink = new ArrayList<>();
+    	
+    	//makes sure the only nodes included from link genotypes are those that are active
     	for(int i = 0; i < FakemLink.size(); i++) {
     		if(FakemLink.get(i).active) {
     			mLink.add(FakemLink.get(i));
@@ -1138,18 +1145,10 @@ public class TWEANNGenotype implements Genotype<TWEANN> {
     		}
     	}
     	
-    	
-    	System.out.println("-------------------");
-    	System.out.println("m and oGene size: " +mGeno.size() + " " + oGeno.size());
-    	
-    	System.out.println("m and oLink size: " + mLink.size() + " " + oLink.size());
-    	System.out.println("mLink: " + Arrays.toString(mLink.toArray()));
-
-    	System.out.println("oLink: " + Arrays.toString(oLink.toArray()));
     	if(mGeno.size() == oGeno.size() && mLink.size() == oLink.size()) {
     		int nodeSize = mGeno.size();
     		int linkSize = mLink.size();
-    		
+    		//gets the innovation numbers of the links as a long array
     		long[] mlink = new long[linkSize];
     		for(int i = 0; i < linkSize; i++) {
         		mlink[i] = mLink.get(i).innovation;
@@ -1158,12 +1157,11 @@ public class TWEANNGenotype implements Genotype<TWEANN> {
     		for(int i = 0; i < linkSize; i++) {
         		olink[i] = oLink.get(i).innovation;
         	}
-//    		for(int i = 0; i < linkSize; i++) {
-//    			if(ArrayUtil.member(mlink[i], olink)) continue;
-//    			else return false;
-//    		}
+    		//checks that link node innovation numbers are the same, but not
+    		//necessarily in order
     		if(ArrayUtil.setEquality(olink, mlink));
     		else return false;
+    		//checks that gene node innovations are the same and are in the  right order
     		for(int i = 0; i < nodeSize; i++ ) {
     			if(mGeno.get(i).innovation == oGeno.get(i).innovation) continue;
     			else return false;
@@ -1174,6 +1172,9 @@ public class TWEANNGenotype implements Genotype<TWEANN> {
     	}
     	return false;
     }
+    /**
+     * A generic toString method
+     */
     @Override
     public String toString() {
         String result = id + " (modes:" + numModes + ")" + "\n" + this.nodes + "\n" + this.links;
