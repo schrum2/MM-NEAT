@@ -651,7 +651,9 @@ public class MMNEAT {
                 if (Parameters.parameters.booleanParameter("logPerformance") && !coevolution) {
                     performanceLog = new PerformanceLog("Performance");
                 }
-                EvolutionaryHistory.initLineageAndMutationLogs();
+                if(Parameters.parameters.booleanParameter("logMutationAndLineage")) {
+                	EvolutionaryHistory.initLineageAndMutationLogs();
+                }
             }
         } catch (Exception ex) {
             System.out.println("Exception: " + ex);
