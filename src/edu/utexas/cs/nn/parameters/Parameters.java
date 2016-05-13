@@ -97,12 +97,12 @@ public class Parameters {
     }
 
     public Parameters(String[] args) {
+    	booleanOptions = new ParameterCollection<Boolean>();
+        classOptions = new ParameterCollection<Class>();
+        doubleOptions = new ParameterCollection<Double>();
         integerOptions = new ParameterCollection<Integer>();
         longOptions = new ParameterCollection<Long>();
-        booleanOptions = new ParameterCollection<Boolean>();
-        doubleOptions = new ParameterCollection<Double>();
         stringOptions = new ParameterCollection<String>();
-        classOptions = new ParameterCollection<Class>();
 
         fillDefaults();
         parseArgs(args, true);
