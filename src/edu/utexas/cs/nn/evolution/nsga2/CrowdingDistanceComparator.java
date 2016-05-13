@@ -8,9 +8,9 @@ import java.util.Comparator;
  *
  * @author Jacob Schrum
  */
-public class CrowdingDistanceComparator implements Comparator<NSGA2Score> {
+public class CrowdingDistanceComparator<T> implements Comparator<NSGA2Score<T>> {
 
-    public int compare(NSGA2Score o1, NSGA2Score o2) {
+    public int compare(NSGA2Score<T> o1, NSGA2Score<T> o2) {
         return (int) Math.signum(o1.getCrowdingDistance() - o2.getCrowdingDistance());
     }
 }

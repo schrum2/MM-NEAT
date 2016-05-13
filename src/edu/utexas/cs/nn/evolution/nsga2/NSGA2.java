@@ -34,7 +34,8 @@ public class NSGA2<T> extends MuPlusLambda<T> {
         this(Parameters.parameters.booleanParameter("io"));
     }
     
-    public NSGA2(boolean io) {
+    @SuppressWarnings("unchecked")
+	public NSGA2(boolean io) {
         this((SinglePopulationTask<T>) MMNEAT.task, Parameters.parameters.integerParameter("mu"), io);
     }
     
@@ -50,23 +51,24 @@ public class NSGA2<T> extends MuPlusLambda<T> {
         return generateNSGA2Children(numChildren, scoresArray, currentGeneration(), mating, crossoverRate);
     }
     
-    public static <T> ArrayList<Genotype<T>> generateNSGA2Children(int numChildren, NSGA2Score<T>[] scoresArray, int generation, boolean mating, double crossoverRate) {
+    @SuppressWarnings("unchecked")
+	public static <T> ArrayList<Genotype<T>> generateNSGA2Children(int numChildren, NSGA2Score<T>[] scoresArray, int generation, boolean mating, double crossoverRate) {
         assignCrowdingDistance(scoresArray);
         fastNonDominatedSort(scoresArray);
         
         ArrayList<Genotype<T>> offspring = new ArrayList<Genotype<T>>(numChildren);
-        Better<NSGA2Score> judge;
+        Better<NSGA2Score<T>> judge;
         if (generation == 0) {
-            judge = new Domination();
+            judge = new Domination<T>();
         } else {
-            judge = new ParentComparator();
+            judge = new ParentComparator<T>();
         }
         
         for (int i = 0; i < numChildren; i++) {
             int e1 = RandomNumbers.randomGenerator.nextInt(scoresArray.length);
             int e2 = RandomNumbers.randomGenerator.nextInt(scoresArray.length);
             
-            NSGA2Score better = judge.better(scoresArray[e1], scoresArray[e2]);
+            NSGA2Score<T> better = judge.better(scoresArray[e1], scoresArray[e2]);
             Genotype<T> source = better.individual;
             long parentId1 = source.getId();
             long parentId2 = -1;
@@ -74,9 +76,8 @@ public class NSGA2<T> extends MuPlusLambda<T> {
 
             // This restriction on mutation and crossover only makes sense when using
             // pacman coevolution with a fitness/population for each individual level
-            if (!CommonConstants.requireFitnessDifferenceForChange
-                    || better.scores[0] > 0) { // If neither net has reached a given level, the scores of 0 will prevent evolution
-//                System.out.println("Progressing with mutation on: " + better);
+            if (!CommonConstants.requireFitnessDifferenceForChange || better.scores[0] > 0) { 
+            	// If neither net has reached a given level, the scores of 0 will prevent evolution
 
                 if (mating && RandomNumbers.randomGenerator.nextDouble() < crossoverRate) {
                     e1 = RandomNumbers.randomGenerator.nextInt(scoresArray.length);
@@ -96,7 +97,7 @@ public class NSGA2<T> extends MuPlusLambda<T> {
                             //System.out.println(i + ":Litter Crossover");
                             Genotype<T> candidate2 = candidate1.crossover(other);
                             // Evaluate and add to litter
-                            Pair<double[], double[]> score = ((NoisyLonerTask<T>) MMNEAT.task).oneEval(candidate1, 0);
+							Pair<double[], double[]> score = ((NoisyLonerTask<T>) MMNEAT.task).oneEval(candidate1, 0);
                             MultiObjectiveScore<T> s = new MultiObjectiveScore<T>(candidate1, score.t1, null, score.t2);
                             litter.add(s);
                             
@@ -130,9 +131,6 @@ public class NSGA2<T> extends MuPlusLambda<T> {
                 
                 e.mutate();
             }
-//            else {
-//                System.out.println("No mutation on " + better);
-//            }
 
             offspring.add(e);
             if (parentId2 == -1) {
@@ -181,7 +179,7 @@ public class NSGA2<T> extends MuPlusLambda<T> {
             } else {
                 @SuppressWarnings("unchecked")
 				NSGA2Score<T>[] lastFront = front.toArray(new NSGA2Score[front.size()]);
-                Arrays.sort(lastFront, new CrowdingDistanceComparator());
+                Arrays.sort(lastFront, new CrowdingDistanceComparator<T>());
                 int index = lastFront.length - 1;
                 while (numAdded < numParents) {
                     newParents.add(lastFront[index--].individual);
@@ -210,7 +208,7 @@ public class NSGA2<T> extends MuPlusLambda<T> {
         
         for (int j = 0; j < numObjectives; j++) {
             if (scores[0].useObjective(j)) {
-                Arrays.sort(scores, new ObjectiveComparator(j));
+                Arrays.sort(scores, new ObjectiveComparator<T>(j));
                 
                 scores[0].setCrowdingDistance(Float.POSITIVE_INFINITY);
                 scores[scores.length - 1].setCrowdingDistance(Float.POSITIVE_INFINITY);
@@ -283,12 +281,6 @@ public class NSGA2<T> extends MuPlusLambda<T> {
             
             currentFront++;
         }
-
-//        System.out.print("Front sizes:");
-//        for(int i = 0; i < frontSet.size(); i++){
-//            System.out.print(frontSet.get(i).size() + " ");
-//        }
-//        System.out.println();
 
         return frontSet;
     }

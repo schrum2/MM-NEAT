@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.utexas.cs.nn.evolution.nsga2;
 
 import edu.utexas.cs.nn.evolution.genotypes.BoundedIntegerValuedGenotype;

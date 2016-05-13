@@ -8,9 +8,9 @@ import edu.utexas.cs.nn.scores.Better;
  *
  * @author Jacob Schrum
  */
-public class Domination implements Better<NSGA2Score> {
+public class Domination<T> implements Better<NSGA2Score<T>> {
 
-    public NSGA2Score better(NSGA2Score e1, NSGA2Score e2) {
+    public NSGA2Score<T> better(NSGA2Score<T> e1, NSGA2Score<T> e2) {
         return e1.isBetter(e2) ? e1 : e2;
     }
 }
