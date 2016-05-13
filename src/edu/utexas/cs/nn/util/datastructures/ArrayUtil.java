@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.utexas.cs.nn.util.datastructures;
 
 import java.util.ArrayList;
@@ -289,15 +285,6 @@ public class ArrayUtil {
     }
 
     /**
-     * 
-     * @param l
-     * @param s
-     * @return
-     */
-    public static boolean setEquality(long[] l, long[] s) {
-    	return subset(l, s) && subset(s, l);
-    }
-    /**
      * Returns true if the n values in xs starting at position i equal the n
      * values in ys starting at position j.
      *
@@ -518,6 +505,18 @@ public class ArrayUtil {
         return result;
     }
 
+    /**
+     * Determines if two arrays of longs representing sets
+     * are equal by seeing if each is a subset of the other.
+     * 
+     * @param lhs set 1
+     * @param rhs set 2
+     * @return Whether the sets are equal in contents (not necessarily order)
+     */
+    public static boolean setEquality(long[] lhs, long[] rhs) {
+    	return subset(lhs, rhs) && subset(rhs, lhs);
+    }
+    
     public static <T> boolean setEquality(ArrayList<T> lhs, ArrayList<T> rhs) {
         for (T l : lhs) {
             if (!rhs.contains(l)) {
