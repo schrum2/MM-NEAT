@@ -158,6 +158,7 @@ public class TetrisState {
                         System.exit(1);
                     }
                     game_world[linearIndex] = currentBlockId + 1;
+                    System.out.println((currentX + x) + "," + (currentY + y) + " now occupied");
                 }
             }
         }

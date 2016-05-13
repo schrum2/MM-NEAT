@@ -24,7 +24,7 @@ public class TertisAfterStateGenerator {
 		ArrayList<Pair<TetrisState, ArrayList<Integer>>> evaluated = new ArrayList<Pair<TetrisState, ArrayList<Integer>>>(possibleOrientations*TetrisState.worldWidth); //only ever as big as # of orientations times the width
 		
 		for(int i = 0; i < possibleOrientations; i++){ // Try each orientation
-			for(int j = -5; j < TetrisState.worldWidth; j++){ // Try each position across the width
+			for(int j = -5; j < TetrisState.worldWidth; j++){ // Try each position across the width, also sorry for magic number, the -5 is to cover all our bases TODO:
 				TetrisState copy = new TetrisState(ts);				
 				ArrayList<Integer> actionList = new ArrayList<Integer>(); // Logs the actions to reach the desired "falling" spot on the bottom
 								
@@ -48,12 +48,13 @@ public class TertisAfterStateGenerator {
 					}
 				}
 				
-				while(copy.blockMobile){ // Wile the block as not yet hit something (uses "onSomething" from TetrisState)
-					copy.take_action(TetrisState.FALL);
+				while(copy.blockMobile){ // While the block as not yet hit something (uses "onSomething" from TetrisState)
 					copy.update(); // Update until it has reached the bottom
 					actionList.add(TetrisState.FALL); //add action to actionList
 				}
-				copy.update();
+				
+				copy.spawn_block(); // Spawn a new block to clear the last piece and show just the board (extractor can blot this piece out for us)
+				copy.update(); // Update this
 				
 				evaluated.add(new Pair<TetrisState, ArrayList<Integer>>(copy, actionList)); // Adds the finished state and actions pair to the final arraylist				
 			}
@@ -61,12 +62,15 @@ public class TertisAfterStateGenerator {
 		return evaluated;
 	}
 	
+	/**
+	 * This is a testing environment for this after state evaluator, using two different worldStates to check the long piece
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		
 		TetrisViewer testView = new TetrisViewer(); //make a TetrisViewer
 		TetrisState testState = new TetrisState();//make a tetris state
 
-		
 		//create the test space for 1
 		/*
 		testState.worldState[178] = 1;
@@ -95,7 +99,24 @@ public class TertisAfterStateGenerator {
 		testState.worldState[197] = 1;
 		testState.worldState[198] = 1;
 		testState.worldState[199] = 1;
-		
+		//Create simple test space
+		/*
+		testState.worldState[190] = 1;
+		testState.worldState[191] = 1;
+		testState.worldState[192] = 1;
+		testState.worldState[193] = 1;
+		testState.worldState[194] = 1;
+		testState.worldState[195] = 1;
+		testState.worldState[196] = 1;
+		testState.worldState[197] = 1;
+		testState.worldState[198] = 1;
+		testState.worldState[184] = 1;
+		testState.worldState[185] = 1;
+		testState.worldState[186] = 1;
+		testState.worldState[187] = 1;
+		testState.worldState[188] = 1;
+		testState.worldState[189] = 1;
+		*/
 		testView.update(testState);
 		
 		MiscUtil.waitForReadStringAndEnterKeyPress();
