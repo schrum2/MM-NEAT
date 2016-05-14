@@ -37,9 +37,9 @@ import org.rlcommunity.rlglue.codec.util.EnvironmentLoader;
 
 public final class RLGlueTask<T extends Network> extends NoisyLonerTask<T> implements NetworkTask {
 
-	/**
-	 * Initialize the elements to be used here
-	 */
+    /**
+     * Initialize the elements to be used here
+     */
     protected static Process rlglue = null;
     protected static AgentLoader agentLoader = null;
     protected static EnvironmentLoader environmentLoader = null;
@@ -54,16 +54,18 @@ public final class RLGlueTask<T extends Network> extends NoisyLonerTask<T> imple
     private ArrayList<Double> behaviorVector;
 
     /**
-     * Initializer for the RLGlueTask, it called the MMNEAT.rlGlueEnvironmentthat it needs as a parameter
+     * Initializer for the RLGlueTask, it called the
+     * MMNEAT.rlGlueEnvironmentthat it needs as a parameter
      */
     public RLGlueTask() {
         this(MMNEAT.rlGlueEnvironment);
     }
 
     /**
-     * Initializes the RLGlueTask with MMNEAT.rlGlueEnvironment environment
-     * Sets up both puddleworld and tetris(?)
-     * Not sure what is being set up here specifically, but I'm assuming it's a way to launch the actual game
+     * Initializes the RLGlueTask with MMNEAT.rlGlueEnvironment environment. 
+     * Puddleworld and Tetris have special-case options for using multiple
+     * objectives that are set up here.
+     *
      * @param environment
      */
     public RLGlueTask(RLGlueEnvironment environment) {
@@ -78,7 +80,7 @@ public final class RLGlueTask<T extends Network> extends NoisyLonerTask<T> imple
             MMNEAT.registerFitnessFunction("Puddle Penalty");
         }
         if (moTetris) {
-            MMNEAT.registerFitnessFunction("Time Steps");
+            MMNEAT.registerFitnessFunction("Time Steps"); // Staying alive is good
         }
         MMNEAT.registerFitnessFunction("RL Return");
 
@@ -97,7 +99,7 @@ public final class RLGlueTask<T extends Network> extends NoisyLonerTask<T> imple
              * RL-Glue runs the Agent, Environment and Experiment separately
              * so this class needs to launch the Agent and Environment as well
              */
-            agent = new RLGlueAgent<T>(this.numObjectives());
+            agent = new RLGlueAgent<T>(this.numObjectives()); // TODO: Generalize to allow TetrisAfterStateAgent
             launchAgent(agent);
             launchEnvironment(environment);
         }
@@ -118,11 +120,12 @@ public final class RLGlueTask<T extends Network> extends NoisyLonerTask<T> imple
     @Override
     public void cleanup() {
         RLGlue.RL_cleanup();
-        //rlglue.destroy();
+        //rlglue.destroy(); // Not needed?
     }
-    
+
     /**
      * Getter for behavior vector (array list)
+     * @return Behavior characterization
      */
     @Override
     public ArrayList<Double> getBehaviorVector() {
@@ -131,6 +134,7 @@ public final class RLGlueTask<T extends Network> extends NoisyLonerTask<T> imple
 
     /**
      * Specific to PuddleWorld? Returns the number of other scores
+     * @return Only Puddle World has an "other" score. Rest have none (0)
      */
     @Override
     public int numOtherScores() {
@@ -138,8 +142,10 @@ public final class RLGlueTask<T extends Network> extends NoisyLonerTask<T> imple
     }
 
     /**
-     * Used for testing a genotype and is added to an agent and runs in order to test it.
-     * @Return Pair of doubles arrays
+     * Used for testing a genotype and is added to an agent and runs in order to
+     * test it.
+     *
+     * @Return Pair of doubles arrays: fitness scores followed by "other" scores
      */
     @Override
     public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {
@@ -174,6 +180,7 @@ public final class RLGlueTask<T extends Network> extends NoisyLonerTask<T> imple
         System.out.println("Launch RL Glue");
         Runtime rt = Runtime.getRuntime();
         try {
+            // Launch an executable program
             rlglue = rt.exec("RL-Glue/rl_glue.exe");
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -184,66 +191,78 @@ public final class RLGlueTask<T extends Network> extends NoisyLonerTask<T> imple
 
     /**
      * Launches the agent used in the scenario
-     * @param agent
+     *
+     * @param agent An agent for RL Glue tasks
      */
     public void launchAgent(final AgentInterface agent) {
         new Thread(
                 new Runnable() {
-                    public void run() {
-                        agentLoader = new AgentLoader(agent);
-                        agentLoader.run();
-                        System.out.println("Agent done running");
-                    }
-                }).start();
+            @Override
+            public void run() {
+                agentLoader = new AgentLoader(agent);
+                agentLoader.run();
+                System.out.println("Agent done running");
+            }
+        }).start();
     }
 
     /**
      * Launches the environment using threads
-     * @param environment
+     *
+     * @param environment an RLGlueEnvironment environment
      */
     public void launchEnvironment(final RLGlueEnvironment environment) {
         new Thread(
                 new Runnable() {
-                    public void run() {
-                        environmentLoader = new EnvironmentLoader(environment);
-                        environmentLoader.run();
-                        System.out.println("Environment done running");
-                    }
-                }).start();
+            @Override
+            public void run() {
+                environmentLoader = new EnvironmentLoader(environment);
+                environmentLoader.run();
+                System.out.println("Environment done running");
+            }
+        }).start();
     }
 
     /**
      * Returns the number of objectives
+     * @return number of objectives
      */
+    @Override
     public int numObjectives() {
+        // There are special cases, but the default fitness is the total summed reward
         return (moPuddleWorld || moTetris) ? 2 : 1;
     }
 
     /**
-     * Supposedly a getter for the time stamp, but returns number of steps
-     * Used by TWEANN.java for gnuplot(??)
+     * Supposedly a getter for the time stamp, but returns number of steps Used
+     * by TWEANN.java
+     * @return Supposed to be how much time has passed in episode
      */
+    @Override
     public double getTimeStamp() {
         // Need to fix this a bit
         return rlNumSteps[0];
     }
 
     /**
-     * Brings in the labels for features (sensors?)
+     * Brings in the labels for features, which are the NN inputs.
+     * @return array of sensor input labels
      */
+    @Override
     public String[] sensorLabels() {
         return MMNEAT.rlGlueExtractor.featureLabels();
     }
 
     /**
-     * Creates string array of labels
+     * Creates string array of labels for network output neurons
+     * @return String of labels
      */
+    @Override
     public String[] outputLabels() {
-    	// Schrum: Not clear why TSO was null
-        int numDiscreteActions = MMNEAT.networkOutputs; //agent.TSO.getNumDiscreteActionDims();
+        int numDiscreteActions = MMNEAT.networkOutputs;
         String[] labels = new String[numDiscreteActions];
         for (int i = 0; i < numDiscreteActions; i++) {
-            labels[i] = "Action " + i;
+            labels[i] = "Action " + i; // There is a distinct label for each action
         }
         return labels;
     }
