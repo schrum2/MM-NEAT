@@ -21,47 +21,55 @@ import java.util.ArrayList;
  */
 public abstract class TWEANNMutation extends Mutation<TWEANN> {
 
-	// Every mutation has its own rate of occurrence
+    // Every mutation has its own rate of occurrence
     protected double rate;
 
     /**
      * Constructor retrieves the appropriate rate from the parameters.
+     *
      * @param rateName Parameter label for this mutation rate.
      */
     public TWEANNMutation(String rateName) {
         this(Parameters.parameters.doubleParameter(rateName));
     }
 
+    /**
+     * Constructor is provided with actual mutation rate.
+     * 
+     * @param rate Rate of mutation: between 0 and 1
+     */
     public TWEANNMutation(double rate) {
+        assert 0 <= rate && rate <= 1 : "Mutation rate out of range: " + rate;
         this.rate = rate;
     }
 
     /**
-     * Only perform the mutation if a random double is less than the mutation rate.
+     * Only perform the mutation if a random double is less than the mutation
+     * rate.
+     * @return Whether to perform mutation
      */
+    @Override
     public boolean perform() {
         return (RandomNumbers.randomGenerator.nextDouble() < rate);
     }
 
     /**
-     * This method generally isn't used. It is based on some ideas from
-     * Paul McQuesten (http://nn.cs.utexas.edu/?paulmcquesten), but isn't
-     * fully explored here. The idea is that new structural mutations add
-     * new links. It may be good to have a new link, but this will only
-     * be clear if the weights are set correctly. Therefore, after the new
-     * structure is introduced, the algorithm immediately evaluates
-     * the organism with several different weight options for the new links.
-     * The best resulting weights for the brand new links are kept.
-     * 
+     * This method generally isn't used. It is based on some ideas from Paul
+     * McQuesten (http://nn.cs.utexas.edu/?paulmcquesten), but isn't fully
+     * explored here. The idea is that new structural mutations add new links.
+     * It may be good to have a new link, but this will only be clear if the
+     * weights are set correctly. Therefore, after the new structure is
+     * introduced, the algorithm immediately evaluates the organism with several
+     * different weight options for the new links. The best resulting weights
+     * for the brand new links are kept.
+     *
      * @param genotype Genotype that was just mutated
-     * @param subs array of index offsets in the link weight list.
-     *             New link genes are always added to the end of the
-     *             link list, so by going backward from the end of the
-     *             list, the new links can be found. The subs array has
-     *             an entry for each newly added link. The value is the
-     *             number of steps backward from the end of the link list
-     *             to go in order to find the index of the link which was
-     *             newly added.
+     * @param subs array of index offsets in the link weight list. New link
+     * genes are always added to the end of the link list, so by going backward
+     * from the end of the list, the new links can be found. The subs array has
+     * an entry for each newly added link. The value is the number of steps
+     * backward from the end of the link list to go in order to find the index
+     * of the link which was newly added.
      */
     public void cullForBestWeight(TWEANNGenotype genotype, int[] subs) {
         if ((CommonConstants.exploreWeightsOfNewStructure && subs.length == 1)
@@ -69,7 +77,7 @@ public abstract class TWEANNMutation extends Mutation<TWEANN> {
             //System.out.println("Exploring "+ subs.length +" weights after " + this.getClass().getSimpleName());
             ArrayList<LinkGene> links = genotype.links;
             @SuppressWarnings("unchecked") // Not sure that this should only apply to noisy tasks
-			NoisyLonerTask<TWEANN> task = ((NoisyLonerTask<TWEANN>) MMNEAT.task);
+            NoisyLonerTask<TWEANN> task = ((NoisyLonerTask<TWEANN>) MMNEAT.task);
             // Get the links added by mutation (sub depends on the mutation used)
             double[] bestWeights = new double[subs.length];
             for (int i = 0; i < subs.length; i++) {

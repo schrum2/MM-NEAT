@@ -13,12 +13,18 @@ public class Organism<T> {
     // Store a genotype that produces a phenotype T
     protected Genotype<T> genotype;
 
-    // Constructor
+    /**
+     * Put genotype in Organism
+     * @param genotype generates organism
+     */
     public Organism(Genotype<T> genotype) {
         this.genotype = genotype;
     }
 
-    // Get
+    /**
+     * Genotype that generated organism
+     * @return the genotype
+     */
     public Genotype<T> getGenotype() {
         return genotype;
     }

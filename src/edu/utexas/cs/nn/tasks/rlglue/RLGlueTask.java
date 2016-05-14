@@ -145,7 +145,7 @@ public final class RLGlueTask<T extends Network> extends NoisyLonerTask<T> imple
      * Used for testing a genotype and is added to an agent and runs in order to
      * test it.
      *
-     * @Return Pair of doubles arrays: fitness scores followed by "other" scores
+     * @return Pair of doubles arrays: fitness scores followed by "other" scores
      */
     @Override
     public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {

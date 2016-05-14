@@ -3,16 +3,26 @@ package edu.utexas.cs.nn.evolution.mutation;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 
 /**
- *
- * @author He_Deceives
+ * Performs a single mutation operation on a genotype.
+ * 
+ * @author Jacob Schrum
+ * @param <T> Phenotype of genotype being mutated
  */
 public abstract class Mutation<T> {
 
     public StringBuilder infoTracking = null;
 
+    /**
+     * Mutates the genotype if the perform() test passes. The
+     * perform() test is generally probabilistic.
+     * 
+     * @param genotype will potentially be mutated
+     * @param infoTracking Accumulates a String of information about mutation for logs
+     * @return Whether the mutation actually occurred
+     */
     public boolean go(Genotype<T> genotype, StringBuilder infoTracking) {
         this.infoTracking = infoTracking;
-        if (perform()) {
+        if (perform()) { // Generally probabilistic
             mutate(genotype);
             infoTracking.append(this.getClass().getSimpleName());
             infoTracking.append(" ");
@@ -24,12 +34,13 @@ public abstract class Mutation<T> {
     /**
      * Returns true if mutation should be performed, false otherwise
      *
-     * @return
+     * @return Whether to mutate
      */
     public abstract boolean perform();
 
     /**
-     * Modifies the genotype
+     * Modifies the genotype.
+     * Called if perform() test passes.
      *
      * @param genotype to modify
      */

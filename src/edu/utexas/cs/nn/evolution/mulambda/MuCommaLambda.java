@@ -3,8 +3,12 @@ package edu.utexas.cs.nn.evolution.mulambda;
 import edu.utexas.cs.nn.tasks.SinglePopulationTask;
 
 /**
- *
+ * The (mu,lambda) selection strategy.
+ * Parents generate children, and the next parent population
+ * comes exclusively from those children.
+ * 
  * @author Jacob Schrum
+ * @param <T> Type of phenotype evolved
  */
 public abstract class MuCommaLambda<T> extends MuLambda<T> {
 
