@@ -233,7 +233,9 @@ public class Parameters {
         booleanOptions.add("includeApproxFunction", false, "Fuction for quick sigmoid. If true, add to the function set");
         booleanOptions.add("includeGaussFunction", true, "Fuction for gaussian. If true, add to the function set");
         booleanOptions.add("includeSineFunction", true, "Fuction for sine. If true, add to the function set");
-        booleanOptions.add("includeAbsValFunction", true, "Fuction for absolute value. If true, add to the function set");        
+        booleanOptions.add("includeSawtoothFunction", false, "Fuction for sawtooth. If true, add to the function set");
+        booleanOptions.add("includeAbsValFunction", true, "Fuction for absolute value. If true, add to the function set");
+        booleanOptions.add("includeHalfLinearPiecewiseFunction", false, "Function for half linear picewise. If true, add to the function set");
         booleanOptions.add("logGhostLocOnPowerPill", false, "Log ghost locations corresponding to each eaten power pill");
         booleanOptions.add("breveDamageOnly", false, "Breve domains only care about damage objectives");
         booleanOptions.add("getRemainingPills", false, "CEC 2011 rule that Ms. Pac-Man gets the pills in the level when time runs out");

@@ -153,6 +153,10 @@ public class TWEANN implements Network {
 
         private String ftypeName(int ftype) {
             switch (ftype) {
+            case ActivationFunctions.FTYPE_SAWTOOTH:
+                return "sawtooth";
+            case ActivationFunctions.FTYPE_HLPIECEWISE:
+                return "halfLinear";
                 case ActivationFunctions.FTYPE_SIGMOID:
                     return "Sigmoid";
                 case ActivationFunctions.FTYPE_TANH:
@@ -229,6 +233,12 @@ public class TWEANN implements Network {
 
         private void activate() {
             switch (ftype) {
+            case ActivationFunctions.FTYPE_SAWTOOTH:
+                activation = ActivationFunctions.sawtooth(sum);
+                break;
+            case ActivationFunctions.FTYPE_HLPIECEWISE:
+                activation = ActivationFunctions.halfLinear(sum);
+                break;
                 case ActivationFunctions.FTYPE_SIGMOID:
                     activation = ActivationFunctions.sigmoid(sum);
                     break;

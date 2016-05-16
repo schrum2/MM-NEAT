@@ -16,8 +16,12 @@ public class ActivationFunctions {
 	/**
 	 * Initialize the array list for all ftypes
 	 */
-	public static final ArrayList<Integer> ftypes = new ArrayList<>(8);
+	public static final ArrayList<Integer> ftypes = new ArrayList<>(10);
 	
+	 
+	// For use in sigmoid, it is convenient to bound the inputs to the exp function
+	public static final double SAFE_EXP_BOUND = 7;
+		
 	/**
 	 * Initialize the ftypes to be available for the CPPN/TWEANN
 	 */
@@ -29,6 +33,8 @@ public class ActivationFunctions {
     public static final int FTYPE_GAUSS = 5; 
     public static final int FTYPE_SINE = 6;
     public static final int FTYPE_ABSVAL = 7;
+    public static final int FTYPE_HLPIECEWISE = 8;
+    public static final int FTYPE_SAWTOOTH = 9;
     
     /**
      * Initializes the set of ftypes by checking boolean parameters for included functions
@@ -58,6 +64,12 @@ public class ActivationFunctions {
     	if(Parameters.parameters.booleanParameter("includeAbsValFunction")){
     		ftypes.add(FTYPE_ABSVAL);
     	}
+    	if(Parameters.parameters.booleanParameter("includeHalfLinearPiecewiseFunction")) {
+    		ftypes.add(FTYPE_HLPIECEWISE);
+    	}
+    	if(Parameters.parameters.booleanParameter("includeSawtoothFunction")) {
+    		ftypes.add(FTYPE_SAWTOOTH);
+    	}
     }
     
     /**
@@ -81,10 +93,7 @@ public class ActivationFunctions {
     	}
     }
     
-   
-	// For use in sigmoid, it is convenient to bound the inputs to the exp function
-	public static final double SAFE_EXP_BOUND = 7;
-	
+  
 	/**
 	 * Will behave the same as Math.exp within specified bound
 	 * @param x Function parameter
@@ -175,7 +184,14 @@ public class ActivationFunctions {
     public static double fullLinear(double x) {
         return Math.max(-1, Math.min(1, x));
     }
-    
+    /**
+     * Linear function that returns x within the bounds of 0 < x < 1
+     * @param x Function parameter
+     * @return linear x within 0 and 1
+     */
+    public static double halfLinear(double x) {
+    	return Math.max(0, Math.min(1, x));
+    }
     /**
      * Gaussian function for x, sigma, and mu. Does not utilize safe exp at the moment, can be changed.
      * @param x, sigma, mu Function parameters
@@ -205,6 +221,15 @@ public class ActivationFunctions {
     	return Math.sin(x);
     }
     
+    /**
+     * Sawtooth function for x. mimics sine but in piecewise way.
+     * Uses Math.floor().
+     * @param x Function parameter
+     * @return value of sawtooth(x)
+     */
+    public static double sawtooth(double x) {
+    	return x - Math.floor(x);
+    }
     /**
      * Absolute value function for x. Uses Math.abs();
      * @param x Function parameter
