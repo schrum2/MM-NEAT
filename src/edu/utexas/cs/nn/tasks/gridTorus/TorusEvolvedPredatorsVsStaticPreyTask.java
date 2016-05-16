@@ -1,11 +1,11 @@
 package edu.utexas.cs.nn.tasks.gridTorus;
 
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.gridTorus.controllers.PreyFleeAllPredatorsController;
 import edu.utexas.cs.nn.gridTorus.controllers.TorusPredPreyController;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.parameters.Parameters;
+import edu.utexas.cs.nn.util.ClassCreation;
 
 /**
  *
@@ -14,6 +14,8 @@ import edu.utexas.cs.nn.parameters.Parameters;
  * This class is for a task where the predators are evolved while the prey are kept static
  */
 public class TorusEvolvedPredatorsVsStaticPreyTask<T extends Network> extends TorusPredPreyTask<T> {
+
+	private TorusPredPreyController[] staticAgents = null;
 
 	/**
 	 * constructor for a task where the predators are evolved while the prey are kept static
@@ -46,17 +48,25 @@ public class TorusEvolvedPredatorsVsStaticPreyTask<T extends Network> extends To
 	@Override
 	/**
 	 * A method that gives a list of controllers for the static agents (prey)
-	 * The prey are all given a simple, non-evolving "FleeAllPreyController" 
+	 * The prey are all given a simple, non-evolving controller (specified by user)
 	 * The user also indicates in a command line parameter how many prey there will be (default of 1)
 	 * @return staticAgents a list of controllers for the static agents for this class,
 	 * which is the prey (static meaning the agent type that is chosen by the user to not evolve)
 	 * @param individual the genotype that will be given to all prey agents (homogeneous team)
 	 */
 	public TorusPredPreyController[] getPreyAgents(Genotype<T> individual) {
-		int numPrey = Parameters.parameters.integerParameter("torusPreys"); 
-		TorusPredPreyController[] staticAgents = new TorusPredPreyController[numPrey];
-		for(int i = 0; i < numPrey; i++) {
-			staticAgents[i] = new PreyFleeAllPredatorsController(); 
+		if(staticAgents == null) {
+			int numPrey = Parameters.parameters.integerParameter("torusPreys"); 
+			staticAgents = new TorusPredPreyController[numPrey];
+			for(int i = 0; i < numPrey; i++) {
+				try {
+					staticAgents[i] = (TorusPredPreyController) ClassCreation.createObject("staticPreyController");
+				} catch (NoSuchMethodException e) {
+					e.printStackTrace();
+					System.out.println("Could not load static prey");
+					System.exit(1);
+				} 
+			}
 		}
 		return staticAgents;
 	}
