@@ -9,6 +9,7 @@ import org.junit.Test;
 import org.rlcommunity.environments.tetris.TetrisState;
 
 import edu.utexas.cs.nn.networks.ActivationFunctions;
+import edu.utexas.cs.nn.util.MiscUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 
 public class TetrisAfterStateGeneratorTests {
@@ -20,7 +21,7 @@ public class TetrisAfterStateGeneratorTests {
 	 */
 	
 	@Test
-	public void test_afterstate_occurance() { // This checks if all afterstates are present in the returned hash
+	public void test_afterstate_occurance() { // This checks if all afterstates are present in the returned hash and This part tests that the actions of the action list do give you the given state
 		TetrisState testState = new TetrisState(); // makes a Tetris state to test with
 		//simple example used
 		testState.worldState[190] = 1;
@@ -267,7 +268,7 @@ public class TetrisAfterStateGeneratorTests {
 		assertTrue(justStates.contains(resultH7));
 		
 		
-		//This part tests that teh actions of the action list do give you the given state
+		//This part tests that the actions of the action list do give you the given state
 		for(Pair<TetrisState, ArrayList<Integer>> j : holder){
 			TetrisState copyState = new TetrisState(testState); 
 			ArrayList<Integer> actionList = j.t2;
@@ -280,4 +281,62 @@ public class TetrisAfterStateGeneratorTests {
 		}
 		
 	}
+	
+	@Test
+	public void different_starting_blocks_positions(){ // This tests for the starting X and Y of each piece
+		TetrisViewer testView = new TetrisViewer(); //make a TetrisViewer
+		TetrisState testState = new TetrisState(); // makes a Tetris state to test with
+		testView.update(testState);
+		System.out.println("For Piece " + testState.currentBlockId + ", x = " + testState.currentX + ", y = " + testState.currentY + ", and the rotation is " + testState.currentRotation);
+		MiscUtil.waitForReadStringAndEnterKeyPress(); 
+		testState.currentBlockId = 1;
+		testView.update(testState);
+		System.out.println("For Piece " + testState.currentBlockId + ", x = " + testState.currentX + ", y = " + testState.currentY + ", and the rotation is " + testState.currentRotation);
+		MiscUtil.waitForReadStringAndEnterKeyPress(); 
+		testState.currentBlockId = 2;
+		testView.update(testState);
+		System.out.println("For Piece " + testState.currentBlockId + ", x = " + testState.currentX + ", y = " + testState.currentY + ", and the rotation is " + testState.currentRotation);
+		MiscUtil.waitForReadStringAndEnterKeyPress(); 
+		testState.currentBlockId = 3;
+		testView.update(testState);
+		System.out.println("For Piece " + testState.currentBlockId + ", x = " + testState.currentX + ", y = " + testState.currentY + ", and the rotation is " + testState.currentRotation);
+		MiscUtil.waitForReadStringAndEnterKeyPress(); 
+		testState.currentBlockId = 4;
+		testView.update(testState);
+		System.out.println("For Piece " + testState.currentBlockId + ", x = " + testState.currentX + ", y = " + testState.currentY + ", and the rotation is " + testState.currentRotation);
+		MiscUtil.waitForReadStringAndEnterKeyPress(); 
+		testState.currentBlockId = 5;
+		testView.update(testState);
+		System.out.println("For Piece " + testState.currentBlockId + ", x = " + testState.currentX + ", y = " + testState.currentY + ", and the rotation is " + testState.currentRotation);
+		MiscUtil.waitForReadStringAndEnterKeyPress(); 
+		testState.currentBlockId = 6;
+		testView.update(testState);
+		System.out.println("For Piece " + testState.currentBlockId + ", x = " + testState.currentX + ", y = " + testState.currentY + ", and the rotation is " + testState.currentRotation);
+		MiscUtil.waitForReadStringAndEnterKeyPress(); 
+		
+		testState.spawn_block();
+		testView.update(testState);
+		System.out.println("For Piece " + testState.currentBlockId + ", x = " + testState.currentX + ", y = " + testState.currentY + ", and the rotation is " + testState.currentRotation);
+		MiscUtil.waitForReadStringAndEnterKeyPress(); 
+		testState.spawn_block();
+		testView.update(testState);
+		System.out.println("For Piece " + testState.currentBlockId + ", x = " + testState.currentX + ", y = " + testState.currentY + ", and the rotation is " + testState.currentRotation);
+		MiscUtil.waitForReadStringAndEnterKeyPress(); 
+		testState.spawn_block();
+		testView.update(testState);
+		System.out.println("For Piece " + testState.currentBlockId + ", x = " + testState.currentX + ", y = " + testState.currentY + ", and the rotation is " + testState.currentRotation);
+		MiscUtil.waitForReadStringAndEnterKeyPress(); 
+	}
+	
+	@Test
+	public void not_at_spawn(){ // This tests for available afterstates given that actions have been taken previously
+		TetrisState testState = new TetrisState(); // makes a Tetris state to test with
+	}
+
+	@Test
+	public void test_rotate_against_wall() { // This tests what a piece will do when it must rotate in a place it cannot
+		
+	}
+	
+	
 }
