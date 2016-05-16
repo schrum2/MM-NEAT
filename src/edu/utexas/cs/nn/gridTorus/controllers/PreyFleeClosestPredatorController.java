@@ -12,7 +12,7 @@ import edu.utexas.cs.nn.util.util2D.Tuple2D;
  * 
  * This is an agent controller nearly identical to the others in this package.
  * This class controls a fearful prey in a torus world.
- * Fearful means the prey moves away from each predator in order of how close each predator is
+ * Fearful means the prey moves away from the closest predator
  * 
  */
 public class PreyFleeClosestPredatorController extends TorusPredPreyController {

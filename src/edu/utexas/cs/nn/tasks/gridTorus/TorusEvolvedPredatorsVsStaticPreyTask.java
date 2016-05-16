@@ -1,7 +1,6 @@
 package edu.utexas.cs.nn.tasks.gridTorus;
 
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.gridTorus.controllers.PreyFleeClosestPredatorController;
 import edu.utexas.cs.nn.gridTorus.controllers.TorusPredPreyController;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.networks.Network;
@@ -49,7 +48,7 @@ public class TorusEvolvedPredatorsVsStaticPreyTask<T extends Network> extends To
 	@Override
 	/**
 	 * A method that gives a list of controllers for the static agents (prey)
-	 * The prey are all given a simple, non-evolving "FleeClosestPreyController" 
+	 * The prey are all given a simple, non-evolving controller (specified by user)
 	 * The user also indicates in a command line parameter how many prey there will be (default of 1)
 	 * @return staticAgents a list of controllers for the static agents for this class,
 	 * which is the prey (static meaning the agent type that is chosen by the user to not evolve)
