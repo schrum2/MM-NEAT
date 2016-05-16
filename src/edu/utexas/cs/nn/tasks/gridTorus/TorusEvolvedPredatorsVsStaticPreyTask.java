@@ -2,9 +2,9 @@ package edu.utexas.cs.nn.tasks.gridTorus;
 
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.gridTorus.controllers.TorusPredPreyController;
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.parameters.Parameters;
+import edu.utexas.cs.nn.tasks.gridTorus.objectives.PredatorMinimizeGameTime;
 import edu.utexas.cs.nn.util.ClassCreation;
 
 /**
@@ -23,8 +23,8 @@ public class TorusEvolvedPredatorsVsStaticPreyTask<T extends Network> extends To
 	 */
 	public TorusEvolvedPredatorsVsStaticPreyTask() {
 		super(false); 
-
-		MMNEAT.registerFitnessFunction("Time Alive"); 
+		if(Parameters.parameters.booleanParameter("PredatorMinimizeTotalTime"))
+			addObjective(new PredatorMinimizeGameTime<T>(), objectives);
 	}
 
 	@Override

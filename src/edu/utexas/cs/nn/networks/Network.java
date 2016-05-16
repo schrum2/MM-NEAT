@@ -70,4 +70,11 @@ public interface Network {
      * @return number of modes/modules
      */
     public int numModes();
+    
+    /**
+     * Get record of how many times each module was used
+     * @return array where each position is the number of
+     * 			times that module was used.
+     */
+    public int[] getModeUsage();
 }

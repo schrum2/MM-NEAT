@@ -1,6 +1,12 @@
 package edu.utexas.cs.nn.tasks.gridTorus;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import edu.utexas.cs.nn.MMNEAT.MMNEAT;
+import edu.utexas.cs.nn.evolution.Organism;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
+import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
 import edu.utexas.cs.nn.evolution.nsga2.tug.TUGTask;
 import edu.utexas.cs.nn.gridTorus.TorusPredPreyGame;
 import edu.utexas.cs.nn.gridTorus.TorusWorldExec;
@@ -10,6 +16,8 @@ import edu.utexas.cs.nn.networks.NetworkTask;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.NoisyLonerTask;
+import edu.utexas.cs.nn.tasks.gridTorus.objectives.GridTorusObjective;
+import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 
 /**
@@ -39,6 +47,9 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 	//boolean to indicate which agent is to be evolved
 	private boolean preyEvolve;
 
+	//list of fitness scores
+	protected ArrayList<GridTorusObjective<T>> objectives = new ArrayList<GridTorusObjective<T>>();
+
 	private TorusWorldExec exec;
 
 	/**
@@ -50,6 +61,17 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 	public TorusPredPreyTask(boolean preyEvolve) {
 		super();
 		this.preyEvolve = preyEvolve;
+	}
+
+	/**
+	 * for adding fitness scores (turned on by command line parameters)
+	 * @param o objective/fitness score
+	 * @param list of fitness scores
+	 * @param affectsSelection
+	 */
+	public final void addObjective(GridTorusObjective<T> o, ArrayList<GridTorusObjective<T>> list) {
+		list.add(o);
+		MMNEAT.registerFitnessFunction(o.getClass().getSimpleName()); 
 	}
 
 	@Override
@@ -70,22 +92,43 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 		} else {
 			game = exec.runExperiment(predAgents, preyAgents);
 		}
-		double[] oneTrialFitness;
-		//fitness for the prey
-		if (preyEvolve) {
-			oneTrialFitness = new double[]{game.getTime()};
-		} //fitness for the predators
-		else {
-			oneTrialFitness = new double[]{-game.getTime()};
+		double[] fitnesses = new double[objectives.size()];
+
+		// Comment needed
+		int[] overallAgentModeUsage = null;
+		if(preyEvolve) {
+			int numModes = ((NNTorusPredPreyController) preyAgents[0]).nn.numModes();
+			overallAgentModeUsage = new int[numModes];  
+			for(int i = 0; i < preyAgents.length; i++) {
+				int[] thisAgentModeUsage = ((NNTorusPredPreyController) preyAgents[i]).nn.getModeUsage();
+				overallAgentModeUsage = ArrayUtil.zipAdd(overallAgentModeUsage, thisAgentModeUsage);
+			}
+		} else {
+			int numModes = ((NNTorusPredPreyController) predAgents[0]).nn.numModes();
+			overallAgentModeUsage = new int[numModes];  
+			for(int i = 0; i < predAgents.length; i++) {
+				int[] thisAgentModeUsage = ((NNTorusPredPreyController) predAgents[i]).nn.getModeUsage();
+				overallAgentModeUsage = ArrayUtil.zipAdd(overallAgentModeUsage, thisAgentModeUsage);
+			}
 		}
+				
+		// Comment needed
+		Organism<T> organism = new NNTorusPredPreyAgent<T>(individual, !preyEvolve);
+		for (int j = 0; j < objectives.size(); j++) {
+			fitnesses[j] = objectives.get(j).score(game, organism);
+		}
+		
+		// Comment needed
+		((TWEANNGenotype) individual).modeUsage = overallAgentModeUsage;
+
 		double[] otherStats = new double[0];
-		return new Pair<double[], double[]>(oneTrialFitness, otherStats);
+		return new Pair<double[], double[]>(fitnesses, otherStats);
 	}
 	/**
 	 * @return the number of minimum scores for this genotype of this task
 	 */
 	public int numObjectives() {
-		return minScores().length;
+		return objectives.size();
 	}
 	/**
 	 * @return the starting goals of this genotype in an array
@@ -100,7 +143,11 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 	 * if it is a prey then the min score is 0 and if it's a predator min score is the total time limit
 	 */
 	public double[] minScores() {
-		return new double[]{preyEvolve ? 0 : Parameters.parameters.integerParameter("torusTimeLimit")};
+		double[] result = new double[numObjectives()];
+		for (int i = 0; i < result.length; i++) {
+			result[i] = objectives.get(i).minScore();
+		}
+		return result;
 	}
 
 	/**

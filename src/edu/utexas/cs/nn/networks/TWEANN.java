@@ -548,6 +548,10 @@ public class TWEANN implements Network {
     }
 
     // Getters
+    	@Override
+	public int[] getModeUsage() {
+		return modeUsage;
+	}
     
     public int numInputs() {
         return numIn;

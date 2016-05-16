@@ -33,7 +33,6 @@ public class SpreadOutAggressivePredatorController extends TorusPredPreyControll
             for(int i = 0; i < predatorActions().length; i++) {
                 double distance = preds[j].distance(me.getPosition().add(new Tuple2D(predatorActions()[i][0], predatorActions()[i][1])));
                 //Emphasizes that predators also stay away from one another. Weighted to be less than chasing prey
-                //maybe change weighting to be (1/(preds.length * 2)) * distance
                 moveDistances[i] -= (.5) * distance;
             }
         }

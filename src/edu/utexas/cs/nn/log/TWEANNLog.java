@@ -6,6 +6,7 @@ import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.networks.NetworkTask;
 import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Log for details about an evolving population of TWEANNs
@@ -63,6 +64,9 @@ public class TWEANNLog extends StatisticsLog<TWEANNGenotype> {
             nextStage[i][5] = tg.maxModeUsage();
             nextStage[i][6] = tg.minModeUsage();
             double[] modeUsageDistribution = StatisticsUtilities.distribution(tg.modeUsage);
+            System.out.println(Arrays.toString(tg.modeUsage));
+            System.out.println(Arrays.toString(modeUsageDistribution));
+            
             nextStage[i][7] = modeUsageDistribution[0];
             nextStage[i][8] = modeUsageDistribution.length > 1 ? modeUsageDistribution[1] : 0;
             nextStage[i][9] = modeUsageDistribution.length > 2 ? modeUsageDistribution[2] : 0;

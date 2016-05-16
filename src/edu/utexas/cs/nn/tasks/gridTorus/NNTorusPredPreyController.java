@@ -20,7 +20,7 @@ public class NNTorusPredPreyController extends TorusPredPreyController {
 	/**
 	 * Initializes the network to be used.
 	 */
-	private final Network nn;
+	public final Network nn;
 	//true if this agent is a predator
 	private final boolean isPredator;
 	/**

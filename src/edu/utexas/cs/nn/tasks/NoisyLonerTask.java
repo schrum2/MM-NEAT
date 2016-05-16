@@ -1,6 +1,7 @@
 package edu.utexas.cs.nn.tasks;
 
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
+import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
@@ -99,6 +100,9 @@ public abstract class NoisyLonerTask<T> extends LonerTask<T> {
             Pair<double[], double[]> result = oneEval(individual, i);
             if (printFitness) {
                 System.out.println(Arrays.toString(result.t1) + Arrays.toString(result.t2));
+                if(individual instanceof TWEANNGenotype) {
+                	System.out.println("Module Usage: " + Arrays.toString(((TWEANNGenotype) individual).modeUsage));
+                }
             }
             long after = System.currentTimeMillis();
             evalTimeSum += (after - before);

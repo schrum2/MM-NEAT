@@ -416,6 +416,23 @@ public class ArrayUtil {
         }
         return result;
     }
+    
+    /**
+     * Given two equal length int arrays, create a new array whose elements
+     * are the pair-wise sums of of the corresponding elements in a and b.
+     *
+     * @param a array of int
+     * @param b array of int
+     * @return array a[i]+b[i] for all i
+     */
+    public static int[] zipAdd(int[] a, int[] b) {
+        assert (a.length == b.length);
+        int[] result = new int[a.length];
+        for (int i = 0; i < a.length; i++) {
+            result[i] = a[i] + b[i];
+        }
+        return result;
+    }
 
     /**
      * Given two equal length double arrays, create a new array whose elements

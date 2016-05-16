@@ -312,4 +312,10 @@ public class MLP implements Network {
     public int numModes() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+
+	@Override
+	public int[] getModeUsage() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
