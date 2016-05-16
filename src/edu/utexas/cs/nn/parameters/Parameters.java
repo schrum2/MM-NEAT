@@ -8,6 +8,7 @@ import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
 import edu.utexas.cs.nn.evolution.nsga2.NSGA2;
 import edu.utexas.cs.nn.evolution.nsga2.bd.characterizations.DomainSpecificCharacterization;
 import edu.utexas.cs.nn.experiment.LimitedSinglePopulationGenerationalEAExperiment;
+import edu.utexas.cs.nn.gridTorus.controllers.PreyFleeClosestPredatorController;
 import edu.utexas.cs.nn.networks.ActivationFunctions;
 import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.tasks.mspacman.data.JunctionNodes;
@@ -504,6 +505,7 @@ public class Parameters {
         stringOptions.add("branchRoot", "", "Evolve from some other run as starting point, based off of this parameter file");
         stringOptions.add("replayNetwork", "", "Network displayed while replaying pacman eval");
         //Class options
+        classOptions.add("staticPreyController", PreyFleeClosestPredatorController.class, "This parameter specified the prey controller that predators evolve against");
         classOptions.add("weightPerturber", GaussianGenerator.class, "Random generator used to perturb mutated weights");
         classOptions.add("tugPerformanceStat", Average.class, "The stat used by TUG to calculate the performance of the population");
         classOptions.add("tugGoalTargetStat", Max.class, "The stat used by TUG to determine what value objective goals should work towards reaching");

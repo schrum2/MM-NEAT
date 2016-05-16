@@ -22,14 +22,14 @@ public class PreyFleeAllPredatorsController extends TorusPredPreyController {
      */
     @Override
     public int[] getAction(TorusAgent me, TorusWorld world, TorusAgent[] preds, TorusAgent[] prey) {
-        double[] moveDistances = new double[PREY_ACTIONS.length];
+        double[] moveDistances = new double[preyActions().length];
         for(int j = 0; j < preds.length; j++) {
-            for(int i = 0; i < PREY_ACTIONS.length; i++) {
-                double distance = preds[j].distance(me.getPosition().add(new Tuple2D(PREY_ACTIONS[i][0], PREY_ACTIONS[i][1])));
+            for(int i = 0; i < preyActions().length; i++) {
+                double distance = preds[j].distance(me.getPosition().add(new Tuple2D(preyActions()[i][0], preyActions()[i][1])));
                 moveDistances[i] += distance;
             }
         }
-        return PREY_ACTIONS[StatisticsUtilities.argmax(moveDistances)];
+        return preyActions()[StatisticsUtilities.argmax(moveDistances)];
     }
 
 }

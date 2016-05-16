@@ -19,7 +19,7 @@ public class RandomPredatorController extends TorusPredPreyController {
 	 */
     @Override
     public int[] getAction(TorusAgent me, TorusWorld world, TorusAgent[] preds, TorusAgent[] prey) {
-        return PREDATOR_ACTIONS[RandomNumbers.randomGenerator.nextInt(PREDATOR_ACTIONS.length)];
+        return predatorActions()[RandomNumbers.randomGenerator.nextInt(predatorActions().length)];
     }
 
 }
