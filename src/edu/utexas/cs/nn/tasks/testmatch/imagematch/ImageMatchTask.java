@@ -71,7 +71,7 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 			Network n = individual.getPhenotype();
 			double[] hsb = null;
 			BufferedImage child = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_RGB);
-			
+
 			for(int x = 0; x < imageWidth; x++) {
 				for(int y = 0; y < imageHeight; y++) {
 					double[] input = {x,y,0,1};
@@ -83,7 +83,7 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 					child.setRGB(x, y, childColor.getRGB());
 				}
 			}
-			
+
 
 			DrawingPanel parentPanel = new DrawingPanel(imageWidth, imageHeight, "target");
 			DrawingPanel childPanel = new DrawingPanel(imageWidth, imageHeight, "output");
@@ -125,7 +125,7 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 
 	@Override
 	public int numInputs() {
-		return 2;
+		return 4;
 	}
 
 	@Override
@@ -153,40 +153,22 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 
 	public static void main(String[] args) {
 
-		willAddLater();	
+		randomCPPNimage();	
 
 	}
 
-	public static void unitTests() {
-		final int SIZE = 500;
-		double[] leftTopCorner = {0,0};
-		scale(leftTopCorner, SIZE, SIZE);
-		double[] leftBottomCorner = {0, SIZE};
-		scale(leftBottomCorner, SIZE, SIZE);
-		double[] rightTopCorner = {SIZE, 0};
-		scale(rightTopCorner, SIZE, SIZE);
-		double [] rightBottomCorner = {SIZE, SIZE};
-		scale(rightBottomCorner, SIZE, SIZE);
-		double[] center = {SIZE/2, SIZE/2};
-		scale(center, SIZE, SIZE);
-		System.out.println("leftTopCorner: {0,0} scaled to: " + Arrays.toString(leftTopCorner));
-		System.out.println("leftTopCorner: {0,500} scaled to: " + Arrays.toString(leftBottomCorner));
-		System.out.println("leftTopCorner: {500,0} scaled to: " + Arrays.toString(rightTopCorner));
-		System.out.println("leftTopCorner: {500,500} scaled to: " + Arrays.toString(rightBottomCorner));
-		System.out.println("leftTopCorner: {250,250} scaled to: " + Arrays.toString(center));
-	}
 
 
-	public static void willAddLater() {
+	public static void randomCPPNimage() {
 
 		MMNEAT.clearClasses();
 		EvolutionaryHistory.setInnovation(0);
 		EvolutionaryHistory.setHighestGenotypeId(0);
-		Parameters.initializeParameterCollections(new String[]{"io:false", "netio:false", "allowMultipleFunctions:true", "recurrency:false", "includeHalfLinearPiecewiseFunction:true"});
+		Parameters.initializeParameterCollections(new String[]{"io:false", "netio:false", "allowMultipleFunctions:true", "recurrency:false", "includeHalfLinearPiecewiseFunction:true", "includeSawtoothFunction:true"});
 		MMNEAT.loadClasses();
 
 		final int NUM_MUTATIONS = 200;
-		final int SIZE = 500;
+		final int SIZE = 1000;
 		int hIndex = 0;
 		int sIndex = 1;
 		int bIndex = 2;
@@ -197,7 +179,6 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 			toDraw.mutate();
 		}
 		TWEANN n = toDraw.getPhenotype();
-		//			
 		BufferedImage child = new BufferedImage(SIZE, SIZE, color);
 		double[] hsb = null;
 		for(int x = 0; x < SIZE ; x++) {
@@ -207,47 +188,27 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 				ILocated2D distance = new Tuple2D(input[0], input[1]);
 				input[2] = distance.distance(new Tuple2D(0,0)) * Math.sqrt(2);
 				hsb = n.process(input);
-				//System.out.println("original inputs: " + Arrays.toString(copy) + " scaled to: " + Arrays.toString(input) + " output ->" + Arrays.toString(rgb));
-				//double[] rgb2 = n.process(new double[] {15, 15});
-				//System.out.println(Arrays.toString(rgb));
-				//				for(int i = 0; i < rgb.length; i++) {
-				//					if(rgb[i] > 1){
-				//						rgb[i] = 1;
-				//					} else if(rgb[i] < 0) {
-				//						rgb[i] = 0;
-				//					}
-				//				}
 				if(hsb[hIndex] < 0 || hsb[hIndex] > 1|| hsb[sIndex] < 0 || hsb[sIndex] > 1 || hsb[bIndex] < 0 ||hsb[bIndex] > 1){
 					System.out.println("failed check");
-					break; }
-				else{
-
-					//System.out.println("scaled values: " + Arrays.toString(input));
+					break;
+				}else{
 					Color childColor = Color.getHSBColor((float) hsb[hIndex], (float) Math.max(0,Math.min(hsb[sIndex],1)), (float) Math.abs(hsb[bIndex]));
-					//Color childColor2 = new Color((float) Math.abs((rgb2[rIndex])), (float) Math.abs((rgb2[gIndex])), (float) Math.abs((rgb2[bIndex])));
 					child.setRGB(x, y, childColor.getRGB());
 				}
-				//System.out.println("------------------------------------------------");
-				//			System.out.println("original values: " + Arrays.toString(copy));
-				//			System.out.println("RGB values;" + Arrays.toString(rgb));;
-				//			System.out.println("------------------------------------------------");	
-				//child.setRGB(x, y, childColor2.getRGB());
-
-
 			}
 		}
 		System.out.println(Arrays.toString(hsb));
 		System.out.println(n.toString());
-		
+
 		DrawingPanel network = new DrawingPanel(SIZE, SIZE, "network");
-		
 		n.draw(network);
-		//		System.out.println(n);
 		DrawingPanel childPanel = new DrawingPanel(SIZE, SIZE, "output");
 		Graphics2D childGraphics = childPanel.getGraphics();
 		childGraphics.drawRenderedImage(child, null);
+
 		Scanner scan = new Scanner(System.in);
-		if(scan.next().equals("save")) {
+		System.out.println("would you like to save this image? y/n");
+		if(scan.next().equals("y")) {
 			System.out.println("enter filename");
 			String filename = scan.next();
 			childPanel.save(filename + ".bmp");
@@ -257,37 +218,7 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 			}
 		}
 		scan.close();
-		//		MiscUtil.waitForReadStringAndEnterKeyPress(); // Waits for enter press
 	}
 
-	
-	public static void interesting(int SIZE, TWEANN n, BufferedImage child) {
-		int rIndex = 0;
-		int gIndex = 1;
-		int bIndex = 2;
-		for(int x = 0; x < SIZE /2; x++) {
-			for(int y = 0; y < SIZE/2; y++) {
-				double[] rgb = n.process(new double[]{66, 89});
-				//System.out.println(Arrays.toString(rgb));
-				Color childColor = new Color((float) Math.abs((rgb[rIndex])), (float) Math.abs((rgb[gIndex])), (float) Math.abs((rgb[bIndex])));
-				child.setRGB(x, y, childColor.getRGB());
-			}
-			//				for(int i = 0; i < NUM_MUTATIONS; i++) {	
-			//					toDraw.mutate();
-			//					}
-			for(int j = SIZE/2; j < SIZE; j++) {
-				for(int k = SIZE/2; k < SIZE; k++) {
-					double[] rgb = n.process(new double[]{66, 89});
-					//System.out.println(Arrays.toString(rgb));
-					Color childColor = new Color((float) Math.abs((rgb[rIndex])), (float) Math.abs((rgb[gIndex])), (float) Math.abs((rgb[bIndex])));
-					child.setRGB(j, k, childColor.getRGB());
-				}
-			}
-
-
-
-
-
-		}
-	}
 }
+
