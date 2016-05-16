@@ -16,7 +16,7 @@ public class ActivationFunctions {
 	/**
 	 * Initialize the array list for all ftypes
 	 */
-	public static final ArrayList<Integer> ftypes = new ArrayList<>(9);
+	public static final ArrayList<Integer> ftypes = new ArrayList<>(10);
 	
 	 
 	// For use in sigmoid, it is convenient to bound the inputs to the exp function
@@ -34,6 +34,7 @@ public class ActivationFunctions {
     public static final int FTYPE_SINE = 6;
     public static final int FTYPE_ABSVAL = 7;
     public static final int FTYPE_HLPIECEWISE = 8;
+    public static final int FTYPE_SAWTOOTH = 9;
     
     /**
      * Initializes the set of ftypes by checking boolean parameters for included functions
@@ -65,6 +66,9 @@ public class ActivationFunctions {
     	}
     	if(Parameters.parameters.booleanParameter("includeHalfLinearPiecewiseFunction")) {
     		ftypes.add(FTYPE_HLPIECEWISE);
+    	}
+    	if(Parameters.parameters.booleanParameter("includeSawtoothFunction")) {
+    		ftypes.add(FTYPE_SAWTOOTH);
     	}
     }
     
@@ -217,6 +221,15 @@ public class ActivationFunctions {
     	return Math.sin(x);
     }
     
+    /**
+     * Sawtooth function for x. mimics sine but in piecewise way.
+     * Uses Math.floor().
+     * @param x Function parameter
+     * @return value of sawtooth(x)
+     */
+    public static double sawtooth(double x) {
+    	return x - Math.floor(x);
+    }
     /**
      * Absolute value function for x. Uses Math.abs();
      * @param x Function parameter
