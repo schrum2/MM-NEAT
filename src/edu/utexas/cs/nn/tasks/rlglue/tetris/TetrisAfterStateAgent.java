@@ -20,6 +20,9 @@ public class TetrisAfterStateAgent<T extends Network> extends RLGlueAgent<T>{
 	}
     
     public Action getAction(Observation o) {
+    	//TODO: I think there's an issue with converting Observations to TetrisStates, because there is missing information we cannot get from the obsservation
+    	//We need to find a way around this or a way to fix this.
+    	
     	//convert Observation to TetrisState
     	TetrisState tempState = new TetrisState();
     	tempState.currentX = o.intArray[o.intArray.length - 5]; // adds the Observation's X to tempState
