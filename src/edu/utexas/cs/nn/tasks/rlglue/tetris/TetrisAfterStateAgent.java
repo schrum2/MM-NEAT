@@ -15,11 +15,11 @@ import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
 
 public class TetrisAfterStateAgent<T extends Network> extends RLGlueAgent<T>{
 
-	public TetrisAfterStateAgent(int numObjectives) {
-		super(numObjectives);
+	public TetrisAfterStateAgent() {
+		super();
 	}
     
-    private Action getAction(Observation o) {
+    public Action getAction(Observation o) {
     	//convert Observation to TetrisState
     	TetrisState tempState = new TetrisState();
     	tempState.currentX = o.intArray[o.intArray.length - 5]; // adds the Observation's X to tempState

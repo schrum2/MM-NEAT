@@ -22,15 +22,10 @@ public class RLGlueAgent<T extends Network> extends Organism<T> implements Agent
     protected TaskSpec TSO = null;
     public T policy;
 
-    /**
-     * The RLGlueAgent is an organism that uses the AgentInterface, according to the given number of objectives.
-     * (Number of objectives depends on the game and TLGlueTask, Puddle World is 2, Tetris is 1)
-     * @param numObjectives
-     */
-    public RLGlueAgent(int numObjectives) {
-        super(null);
+    public RLGlueAgent(){
+    	super(null);
     }
-
+    
     /**
      * This "replace" is used to test genotypes in the task methods
      */
@@ -81,7 +76,7 @@ public class RLGlueAgent<T extends Network> extends Organism<T> implements Agent
      * @param o
      * @return
      */
-    private Action getAction(Observation o) {
+    public Action getAction(Observation o) {
         Action action = new Action(TSO.getNumDiscreteActionDims(), TSO.getNumContinuousActionDims());
 
         double[] inputs = MMNEAT.rlGlueExtractor.extract(o);

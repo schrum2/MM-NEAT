@@ -24,6 +24,7 @@ import edu.utexas.cs.nn.networks.NetworkTask;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.NoisyLonerTask;
+import edu.utexas.cs.nn.util.ClassCreation;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -99,7 +100,13 @@ public final class RLGlueTask<T extends Network> extends NoisyLonerTask<T> imple
              * RL-Glue runs the Agent, Environment and Experiment separately
              * so this class needs to launch the Agent and Environment as well
              */
-            agent = new RLGlueAgent<T>(this.numObjectives()); // TODO: Generalize to allow TetrisAfterStateAgent
+            try {
+				agent = (RLGlueAgent) ClassCreation.createObject("rlGlueAgent");
+			} catch (NoSuchMethodException e) {
+				e.printStackTrace();
+				System.out.println("Could not launch RLGlue agent");
+				System.exit(1);
+			}
             launchAgent(agent);
             launchEnvironment(environment);
         }

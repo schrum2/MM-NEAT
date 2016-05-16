@@ -14,6 +14,7 @@ import edu.utexas.cs.nn.tasks.mspacman.data.JunctionNodes;
 import edu.utexas.cs.nn.tasks.mspacman.multitask.GhostsThenPillsModeSelector;
 import edu.utexas.cs.nn.tasks.mspacman.objectives.fitnessassignment.GhostsPillsMap;
 import edu.utexas.cs.nn.tasks.mspacman.sensors.mediators.FullTaskMediator;
+import edu.utexas.cs.nn.tasks.rlglue.RLGlueAgent;
 import edu.utexas.cs.nn.tasks.rlglue.featureextractors.StateVariableExtractor;
 import edu.utexas.cs.nn.tasks.ut2004.actuators.OpponentRelativeMovementOutputModel;
 import edu.utexas.cs.nn.tasks.ut2004.sensors.OpponentRelativeSensorModel;
@@ -532,6 +533,7 @@ public class Parameters {
         classOptions.add("ea", NSGA2.class, "A subclass for the evolutionary algorithm to run");
         classOptions.add("rlGlueEnvironment", null, "Environment/domain for an RL-Glue problem");
         classOptions.add("rlGlueExtractor", StateVariableExtractor.class, "Feature extractor to get input features from RL-Glue observations");
+        classOptions.add("rlGlueAgent", RLGlueAgent.class, "Agent used in RLGlue tasks");
         classOptions.add("task", null, "A subclass defining the task to solve");
         classOptions.add("genotype", TWEANNGenotype.class, "A subclass defining the genotype to evolve with");
         classOptions.add("fos", null, "Function Optimization Set to use for simple tests");
