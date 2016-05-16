@@ -496,7 +496,7 @@ public class EvolutionaryHistory {
     /**
      * Return index of first output node in archetype
      *
-     * @param archetypeIndex
+     * @param archetypeIndex index of archetype in question
      * 
      * @return index of first output node in archetype
      */
