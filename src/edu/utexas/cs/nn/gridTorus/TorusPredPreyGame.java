@@ -21,6 +21,9 @@ public class TorusPredPreyGame {
     private final TorusAgent[] preds;
     private final TorusAgent[] preys;
     
+    //array which stores the time that each prey dies (for fitness function)
+    private int[] deathTimes;
+    
     private boolean gameOver;
     private int time;
     private int timeLimit;
@@ -36,6 +39,13 @@ public class TorusPredPreyGame {
         gameOver = false;
         time = 0;
         timeLimit = Parameters.parameters.integerParameter("torusTimeLimit");
+        
+        //initialize the death times of the prey(s) to be the max game time, assuming
+        //they will live the whole time, then this is updated if they die and at what time they die
+        deathTimes = new int[numPrey];
+        for(int i = 0; i < numPrey; i++){
+        	deathTimes[i] = timeLimit;
+        }
         
         world = new TorusWorld(xDim, yDim);
         preds = new TorusAgent[numPred];
@@ -102,6 +112,16 @@ public class TorusPredPreyGame {
     }
     
     /**
+     * 
+     * @param prey integer of prey in the array of preys
+     * @return the death time of the prey
+     * if the prey didn't die, returns the total game time
+     */
+    public int getDeathTime(int prey){
+    	return deathTimes[prey];
+    }
+    
+    /**
      * moves all the agents along the x and y coordinates
      * @param moves a grid of all possible moves for an agent
      * @param agents the array of all the agents
@@ -120,11 +140,13 @@ public class TorusPredPreyGame {
      * @param preds list of predators
      * @param preys list of the prey
      */
-    private static void eat(TorusAgent[] preds, TorusAgent[] preys) {
+    private void eat(TorusAgent[] preds, TorusAgent[] preys) {
         for(int i = 0; i < preys.length; i++) {
             if(preys[i] != null && preys[i].isCoLocated(preds)){ // Prey is eaten
             	//The prey at this location is currently being digested, so is now null
                 preys[i] = null;
+                //set the deathTime of this prey
+                deathTimes[i] = time;
             }
         }
     }

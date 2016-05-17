@@ -4,7 +4,7 @@ import edu.utexas.cs.nn.evolution.Organism;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.parameters.Parameters;
 
-public class PredatorMinimizeGameTime<T extends Network> extends GridTorusObjective<T> {
+public class PredatorMinimizeGameTimeObjective<T extends Network> extends GridTorusObjective<T> {
 
 	@Override
 	/**
