@@ -74,8 +74,8 @@ public abstract class SinglePopulationGenerationalEAExperiment<T> implements Exp
             assert multitaskModes == 2 || startingModes == 2 : "Either the multitask modes or the starting modes has to equal 2";
             for (Genotype<T> t : population) {
                 TWEANNGenotype tg = (TWEANNGenotype) t;
-                if (tg.numModes == 1) { // Designed to move from one mode each to two modes each
-                    tg.modeDuplication();
+                if (tg.numModules == 1) { // Designed to move from one mode each to two modes each
+                    tg.moduleDuplication();
                     if (multitaskModes == 2) {
                         tg.standardMultitask = true;
                     }
@@ -99,7 +99,7 @@ public abstract class SinglePopulationGenerationalEAExperiment<T> implements Exp
         if (Parameters.parameters.booleanParameter("initCrossCombine")) {
             Genotype<T> g = population.get(0);
             assert g instanceof TWEANNGenotype : "Cannot init Combining Crossover on genotype other than TWEANNGenotype";
-            if (((TWEANNGenotype) g).numModes == 1) {
+            if (((TWEANNGenotype) g).numModules == 1) {
                 Collections.shuffle(population, RandomNumbers.randomGenerator);
                 CombiningTWEANNCrossover combCross = new CombiningTWEANNCrossover();
                 assert population.size() % 2 == 0 : "Need even number of individuals to properly pair off entire population";
@@ -153,7 +153,7 @@ public abstract class SinglePopulationGenerationalEAExperiment<T> implements Exp
 //                    DrawingPanel p1 = new DrawingPanel(TWEANN.NETWORK_VIEW_DIM, TWEANN.NETWORK_VIEW_DIM, "Before");
 //                    tg.getPhenotype().draw(p1, true);
                     System.out.println("Adding preference neurons to network " + tg.getId());
-                    int modes = tg.numModes;
+                    int modes = tg.numModules;
                     for (int i = modes - 1; i >= 0; i--) {
                         //System.out.println("\tPreference for mode " + i);
                         tg.insertPreferenceNeuron(i);

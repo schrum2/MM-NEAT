@@ -153,6 +153,7 @@ public class Offspring {
         /**
          * Main window detects key presses and responds to them.
          * All navigation options are handled here.
+         * @param e Event for the key pressed
          */
         @Override
         public void keyPressed(KeyEvent e) {
@@ -214,10 +215,10 @@ public class Offspring {
                                 // Evaluate mechanism is limited to Loner Tasks
                                 @SuppressWarnings("unchecked")
 								Score<TWEANN> s = ((LonerTask<TWEANN>) MMNEAT.task).evaluate((TWEANNGenotype) g);
-                                int[] modeUsage = ((TWEANNGenotype) s.individual).modeUsage;
-                                o.modeUsage = modeUsage;
+                                int[] moduleUsage = ((TWEANNGenotype) s.individual).getModuleUsage();
+                                o.modeUsage = moduleUsage;
                                 System.out.println("Score: " + s);
-                                System.out.println("Mode Usage: " + Arrays.toString(modeUsage));
+                                System.out.println("Module Usage: " + Arrays.toString(moduleUsage));
                             } else if (MMNEAT.genotype instanceof MLPGenotype) {
                                 //o.drawTWEANN(panel, showInnovationNumbers); // Designates this as the active drawing panel
                                 @SuppressWarnings("unchecked")

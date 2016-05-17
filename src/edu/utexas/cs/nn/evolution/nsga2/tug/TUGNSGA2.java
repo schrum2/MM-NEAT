@@ -348,7 +348,7 @@ public class TUGNSGA2<T> extends NSGA2<T> {
         // Freeze modes whose objectives are deactivated. 
         if (CommonConstants.tugObjectiveModeLinkage) {
             assert nextGen.get(0) instanceof TWEANNGenotype : "TUG Objective/Mode linkage only makes sense with TWEANNs";
-            assert ((TWEANNGenotype) nextGen.get(0)).numModes == useObjective.length : "TUG Objective/Mode linkage requires number of modes and objectives to match";
+            assert ((TWEANNGenotype) nextGen.get(0)).numModules == useObjective.length : "TUG Objective/Mode linkage requires number of modes and objectives to match";
             boolean melted = false;
             // If objectives are reactivated,
             // then the networks need to be frozen before modes for inactive (if any) 
@@ -373,13 +373,13 @@ public class TUGNSGA2<T> extends NSGA2<T> {
                             // Even though nextGen has been altered since evaluation,
                             // the modeUsage is saved and corresponds to how the parents
                             // used their modes.
-                            int[] modeUsage = ((TWEANNGenotype) tg).modeUsage;
+                            int[] moduleUsage = ((TWEANNGenotype) tg).getModuleUsage();
                             // Mode with next highest usage
-                            target = StatisticsUtilities.argmax(modeUsage, modesFrozen);
+                            target = StatisticsUtilities.argmax(moduleUsage, modesFrozen);
                         } else {
                             target = i;
                         }
-                        ((TWEANNGenotype) tg).freezeMode(target);
+                        ((TWEANNGenotype) tg).freezeModule(target);
                     }
                     System.out.println("Freezing mode " + (CommonConstants.tugObjectiveUsageLinkage ? modesFrozen + " most used" : i));
                     modesFrozen++;

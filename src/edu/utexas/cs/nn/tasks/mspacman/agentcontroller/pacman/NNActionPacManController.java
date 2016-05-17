@@ -39,7 +39,7 @@ public class NNActionPacManController extends NNPacManController {
     public int getDirection(GameFacade gs) {
         double[] actionPreferences = getActionPreferences(gs);
 
-        if (CommonConstants.watch && (nn instanceof TWEANN) && ((TWEANN) nn).numModes() > 1) {
+        if (CommonConstants.watch && (nn instanceof TWEANN) && ((TWEANN) nn).numModules() > 1) {
             // Need to have a better indicator of current mode
             gs.addPoints(CombinatoricUtilities.colorFromInt(((TWEANN) nn).chosenMode), new int[]{gs.getPacmanCurrentNodeIndex()});
         }

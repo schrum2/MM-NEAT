@@ -15,7 +15,7 @@ import java.util.ArrayList;
  *
  * @author Jacob Schrum
  */
-public class TWEANNModesNicheDefinition extends NicheDefinition<TWEANN> {
+public class TWEANNModulesNicheDefinition extends NicheDefinition<TWEANN> {
 
     /**
      * If the best score in some objective is possessed by a network with
@@ -87,12 +87,12 @@ public class TWEANNModesNicheDefinition extends NicheDefinition<TWEANN> {
 
     @Override
     public ArrayList<Score<TWEANN>> getNiche(Score<TWEANN> individual) {
-        int numModes = ((TWEANNGenotype) individual.individual).numModes;
+        int numModes = ((TWEANNGenotype) individual.individual).numModules;
         ArrayList<Score<TWEANN>> niche;
         if (!niches.containsKey(numModes)) {
             niche = new ArrayList<Score<TWEANN>>(originalPopulation.size());
             for (Score<TWEANN> s : originalPopulation) {
-                if (numModes == ((TWEANNGenotype) s.individual).numModes) {
+                if (numModes == ((TWEANNGenotype) s.individual).numModules) {
                     niche.add(s);
                 }
             }

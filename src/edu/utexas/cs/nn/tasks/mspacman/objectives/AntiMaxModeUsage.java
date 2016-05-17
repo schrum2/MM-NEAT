@@ -6,7 +6,7 @@ package edu.utexas.cs.nn.tasks.mspacman.objectives;
 
 import edu.utexas.cs.nn.evolution.Organism;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
-import edu.utexas.cs.nn.evolution.metaheuristics.AntiMaxModeUsageFitness;
+import edu.utexas.cs.nn.evolution.metaheuristics.AntiMaxModuleUsageFitness;
 import edu.utexas.cs.nn.networks.Network;
 
 /**
@@ -15,10 +15,10 @@ import edu.utexas.cs.nn.networks.Network;
  */
 public class AntiMaxModeUsage<T extends Network> extends MsPacManObjective<T> {
 
-    private final AntiMaxModeUsageFitness meta;
+    private final AntiMaxModuleUsageFitness meta;
 
     public AntiMaxModeUsage() {
-        this.meta = new AntiMaxModeUsageFitness();
+        this.meta = new AntiMaxModuleUsageFitness();
     }
 
     @Override

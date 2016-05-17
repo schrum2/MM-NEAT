@@ -108,7 +108,7 @@ public class CombiningTWEANNCrossover extends TWEANNCrossover {
 //        System.out.println("---------------------------------------------------------");
 //        System.out.println("Crossover between " + tToModify.getId() + " (out "+ tToModify.numOut+") and " + tToReturn.getId() + " (out " + tToReturn.numOut + ")");
 
-        if (tToModify.numModes > 1 || tToReturn.numModes > 1) {
+        if (tToModify.numModules > 1 || tToReturn.numModules > 1) {
             // Can only combine single mode networks. Else, do regular crossover
             //System.out.println("Regular crossover between " + toModify.getId() + " (out "+ tToModify.numOut+") and " + toReturn.getId() + " (out " + tToReturn.numOut + ")");
             //System.out.println("Initial modes: " + ((TWEANNGenotype)toModify).numModes + " and " + ((TWEANNGenotype)toReturn).numModes);
@@ -117,7 +117,7 @@ public class CombiningTWEANNCrossover extends TWEANNCrossover {
 //            if(tgResult.multitask){
 //                System.out.println("tgResuilt was multitask before");
 //            }
-            tgResult.standardMultitask = multitask && tgResult.numModes > 1;
+            tgResult.standardMultitask = multitask && tgResult.numModules > 1;
 //            if(tgResult.multitask){
 //                System.out.println("tgResuilt is still multitask");
 //            } else {
@@ -127,7 +127,7 @@ public class CombiningTWEANNCrossover extends TWEANNCrossover {
 //            if (tToModify.multitask) {
 //                System.out.println("toModify was multitask");
 //            }
-            tToModify.standardMultitask = multitask && tToModify.numModes > 1;
+            tToModify.standardMultitask = multitask && tToModify.numModules > 1;
 //            if (tToModify.multitask) {
 //                System.out.println("toModify is still multitask");
 //            } else {
@@ -140,15 +140,15 @@ public class CombiningTWEANNCrossover extends TWEANNCrossover {
         }
 
         // Preference neurons are missing, and need to be added
-        if (tToModify.numOut == tToModify.neuronsPerMode && TWEANN.preferenceNeuron()) {
+        if (tToModify.numOut == tToModify.neuronsPerModule && TWEANN.preferenceNeuron()) {
             tToModify.addRandomPreferenceNeuron(1);
             tToReturn.addRandomPreferenceNeuron(1);
-            assert tToModify.numOut == tToModify.neuronsPerMode + 1 : "Did not add a preference neuron to tToModify";
-            assert tToReturn.numOut == tToReturn.neuronsPerMode + 1 : "Did not add a preference neuron to tToReturn";
+            assert tToModify.numOut == tToModify.neuronsPerModule + 1 : "Did not add a preference neuron to tToModify";
+            assert tToReturn.numOut == tToReturn.neuronsPerModule + 1 : "Did not add a preference neuron to tToReturn";
         }
 
         assert (tToModify.numOut == tToReturn.numOut) : "Networks to combine have different number of outputs";
-        int neuronsPerMode = tToModify.neuronsPerMode;
+        int neuronsPerMode = tToModify.neuronsPerModule;
         assert (tToModify.numIn == tToReturn.numIn || splitInputs) : "Networks to combine have different number of inputs";
         ArrayList<TWEANNGenotype.NodeGene> combinedNodes = new ArrayList<TWEANNGenotype.NodeGene>(tToModify.nodes.size() + tToReturn.nodes.size());
 
@@ -236,7 +236,7 @@ public class CombiningTWEANNCrossover extends TWEANNCrossover {
             net1Outputs++;
         }
         //System.out.println("\t\tnet1Outputs:"+net1Outputs+"\t\t");
-        assert net1Outputs == tToModify.neuronsPerMode + (TWEANN.preferenceNeuron() ? 1 : 0) : "Number of outputs added is wrong";
+        assert net1Outputs == tToModify.neuronsPerModule + (TWEANN.preferenceNeuron() ? 1 : 0) : "Number of outputs added is wrong";
         // Outputs from second network have innovation numbers changed
         for (int i = returnFirstOutput; i < returnNodes; i++) {
             NodeGene nodeGene = tToReturn.nodes.get(i).clone();
@@ -278,7 +278,7 @@ public class CombiningTWEANNCrossover extends TWEANNCrossover {
         tToModify.nodes = combinedNodes;
         tToModify.links = combinedLinks;
         tToModify.standardMultitask = multitask;
-        tToModify.calculateNumModes();
+        tToModify.calculateNumModules();
 
         ArrayList<TWEANNGenotype.NodeGene> combinedNodesCopy = new ArrayList<TWEANNGenotype.NodeGene>(combinedNodes.size());
         for (int i = 0; i < combinedNodes.size(); i++) {
@@ -290,7 +290,7 @@ public class CombiningTWEANNCrossover extends TWEANNCrossover {
         }
         // The TWEANN returned is the same as the one modified
         TWEANNGenotype combinedCopy = new TWEANNGenotype(combinedNodesCopy, combinedLinksCopy, neuronsPerMode, multitask, false, 0);
-        combinedCopy.calculateNumModes();
+        combinedCopy.calculateNumModules();
         //System.out.println("Combining Crossover done: mod " + tToModify.getId() + " and copy " + combinedCopy.getId());
         return combinedCopy;
     }
@@ -318,7 +318,7 @@ public class CombiningTWEANNCrossover extends TWEANNCrossover {
 //                }
             }
         }
-        tweannGenotype.calculateNumModes();
+        tweannGenotype.calculateNumModules();
         return anyRemoved;
     }
 

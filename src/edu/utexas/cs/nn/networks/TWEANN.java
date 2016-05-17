@@ -318,9 +318,9 @@ public class TWEANN implements Network {
     // Only used with Hierarchical Multitask Networks
     private boolean[] viableModes;
     // HMT associates each module with a multitask mode
-    public int[] modeAssociations;
+    public int[] moduleAssociations;
     public ArrayList<Node> nodes;
-    public int[] modeUsage;
+    public int[] moduleUsage;
     private double[] preferenceFatigue;
     public int chosenMode = 0;
     public boolean canDraw = true;
@@ -370,7 +370,7 @@ public class TWEANN implements Network {
     public TWEANN(int numIn, int numOut, boolean featureSelective, int ftype, int numModes, int archetypeIndex) {
         this.archetypeIndex = archetypeIndex;
         this.numIn = numIn;
-        this.modeUsage = new int[numModes];
+        this.moduleUsage = new int[numModes];
         this.preferenceFatigue = new double[numModes];
         this.hierarchicalMultitask = CommonConstants.hierarchicalMultitask;
 
@@ -448,10 +448,10 @@ public class TWEANN implements Network {
 
         // In a new network, each Multitask mode has one network module.
         // This is really only needed if hierarchicalMultitask is true.
-        modeAssociations = new int[this.numModes];
+        moduleAssociations = new int[this.numModes];
         for (int i = 0; i < this.numModes; i++) {
             // Modulus splits modules up evenly among modes
-            modeAssociations[i] = i % startingPrefModes;
+            moduleAssociations[i] = i % startingPrefModes;
             //System.out.println(Arrays.toString(modeAssociations));
         }
         allViable();
@@ -499,17 +499,17 @@ public class TWEANN implements Network {
 
         this.numIn = countIn;
         this.numOut = countOut;
-        this.numModes = g.numModes;
-        this.neuronsPerMode = g.neuronsPerMode;
+        this.numModes = g.numModules;
+        this.neuronsPerMode = g.neuronsPerModule;
         this.standardMultitask = g.standardMultitask;
         this.hierarchicalMultitask = g.hierarchicalMultitask;
-        if(g.modeAssociations != null) { // This is a backwards compatibility issue:
+        if(g.moduleAssociations != null) { // This is a backwards compatibility issue:
             // This array was added for the Hierarchical Multitask networks
-            this.modeAssociations = Arrays.copyOf(g.modeAssociations, numModes);
+            this.moduleAssociations = Arrays.copyOf(g.moduleAssociations, numModes);
         } else { // In older networks, simply associate each module with its own mode
-            modeAssociations = new int[this.numModes];
+            moduleAssociations = new int[this.numModes];
             for (int i = 0; i < this.numModes; i++) {
-                modeAssociations[i] = i;
+                moduleAssociations[i] = i;
             }
         }
         // Is true if net has one mode
@@ -526,7 +526,7 @@ public class TWEANN implements Network {
                 "multitask:" + standardMultitask + "\n"
                 + "Wrong number of outputs (" + numOut + ") for the number of modes (" + numModes + ")";
 
-        this.modeUsage = new int[numModes];
+        this.moduleUsage = new int[numModes];
         this.preferenceFatigue = new double[numModes];
 
         for (LinkGene lg : g.links) {
@@ -550,7 +550,7 @@ public class TWEANN implements Network {
     // Getters
     	@Override
 	public int[] getModeUsage() {
-		return modeUsage;
+		return moduleUsage;
 	}
     
     public int numInputs() {
@@ -565,7 +565,7 @@ public class TWEANN implements Network {
         return this.neuronsPerMode;
     }
 
-    public int numModes() {
+    public int numModules() {
         return numModes;
     }
 
@@ -594,9 +594,9 @@ public class TWEANN implements Network {
     public void chooseMode(int mode) {
         presetMode = mode;
         if (hierarchicalMultitask) {
-            for (int i = 0; i < modeAssociations.length; i++) {
+            for (int i = 0; i < moduleAssociations.length; i++) {
                 // Set each mode as viable or not, if it is associated with the mode choice
-                viableModes[i] = modeAssociations[i] == mode;
+                viableModes[i] = moduleAssociations[i] == mode;
             }
         }
     }
@@ -669,7 +669,7 @@ public class TWEANN implements Network {
 
             // determine winner
             chosenMode = CommonConstants.softmaxModeSelection ? StatisticsUtilities.softmax(preferences, CommonConstants.softmaxTemperature) : StatisticsUtilities.argmax(preferences);
-            this.modeUsage[chosenMode]++;
+            this.moduleUsage[chosenMode]++;
 
             // add new fatigue
             preferenceFatigue[chosenMode] += CommonConstants.preferenceNeuronFatigueUnit;
@@ -692,7 +692,7 @@ public class TWEANN implements Network {
                 outputs[i] /= numModes;
             }
         } else {
-            outputs = modeOutput(chosenMode);
+            outputs = moduleOutput(chosenMode);
         }
 
         //System.out.println("final outputs: " + Arrays.toString(outputs));
@@ -716,7 +716,7 @@ public class TWEANN implements Network {
      * @param mode mode outputs to access
      * @return outputs of specific mode
      */
-    public double[] modeOutput(int mode) {
+    public double[] moduleOutput(int mode) {
         int selectedModeStart = outputStart + (mode * (neuronsPerMode + (standardMultitask ? 0 : 1)));
         double[] outputs = new double[neuronsPerMode];
         for (int i = 0; i < neuronsPerMode; i++) {
@@ -1089,10 +1089,10 @@ public class TWEANN implements Network {
             }
         }
 
-        for (int i = 0; i < modeAssociations.length; i++) {
+        for (int i = 0; i < moduleAssociations.length; i++) {
             g.setColor(CombinatoricUtilities.colorFromInt(i + 1));
             g.fillRect(100 + (i * 2 * NODE_DIM), 2, 2 * NODE_DIM, 2 * NODE_DIM);
-            g.setColor(CombinatoricUtilities.colorFromInt(modeAssociations[i] + 1));
+            g.setColor(CombinatoricUtilities.colorFromInt(moduleAssociations[i] + 1));
             g.fillRect(100 + (i * 2 * NODE_DIM), 2 + 2 * NODE_DIM, 2 * NODE_DIM, 2 * NODE_DIM);
         }
     }

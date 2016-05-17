@@ -39,6 +39,6 @@ public class LinkPenalty implements Metaheuristic {
     }
 
     public double getScore(TWEANNGenotype g) {
-        return -(g.links.size() / (1.0 * (modeAvg ? g.numModes : 1)));
+        return -(g.links.size() / (1.0 * (modeAvg ? g.numModules : 1)));
     }
 }

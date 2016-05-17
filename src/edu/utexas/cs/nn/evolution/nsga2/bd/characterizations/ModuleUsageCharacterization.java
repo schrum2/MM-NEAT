@@ -9,13 +9,16 @@ import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
 /**
  *
  * @author Jacob Schrum
+ * @param <TWEANN>
  */
-public class ModeUsageCharacterization<TWEANN> implements BehaviorCharacterization<TWEANN> {
+public class ModuleUsageCharacterization<TWEANN> implements BehaviorCharacterization<TWEANN> {
 
+    @Override
     public BehaviorVector getBehaviorVector(Score<TWEANN> score) {
-        return new RealBehaviorVector(StatisticsUtilities.distribution(((TWEANNGenotype) score.individual).modeUsage));
+        return new RealBehaviorVector(StatisticsUtilities.distribution(((TWEANNGenotype) score.individual).getModuleUsage()));
     }
 
+    @Override
     public void prepare() {
     }
 }

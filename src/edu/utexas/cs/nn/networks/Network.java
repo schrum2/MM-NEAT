@@ -63,13 +63,13 @@ public interface Network {
      * @param mode Mode/module to query
      * @return output from that mode/module (length == effectiveNumOutputs())
      */
-    public double[] modeOutput(int mode);
+    public double[] moduleOutput(int mode);
     
     /**
      * Number of modes the network has
      * @return number of modes/modules
      */
-    public int numModes();
+    public int numModules();
     
     /**
      * Get record of how many times each module was used

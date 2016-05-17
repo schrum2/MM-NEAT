@@ -1,12 +1,11 @@
 package edu.utexas.cs.nn.tasks.gridTorus;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.Organism;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
+import edu.utexas.cs.nn.evolution.genotypes.NetworkGenotype;
 import edu.utexas.cs.nn.evolution.nsga2.tug.TUGTask;
 import edu.utexas.cs.nn.gridTorus.TorusPredPreyGame;
 import edu.utexas.cs.nn.gridTorus.TorusWorldExec;
@@ -97,14 +96,14 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 		// Comment needed
 		int[] overallAgentModeUsage = null;
 		if(preyEvolve) {
-			int numModes = ((NNTorusPredPreyController) preyAgents[0]).nn.numModes();
+			int numModes = ((NNTorusPredPreyController) preyAgents[0]).nn.numModules();
 			overallAgentModeUsage = new int[numModes];  
 			for(int i = 0; i < preyAgents.length; i++) {
 				int[] thisAgentModeUsage = ((NNTorusPredPreyController) preyAgents[i]).nn.getModeUsage();
 				overallAgentModeUsage = ArrayUtil.zipAdd(overallAgentModeUsage, thisAgentModeUsage);
 			}
 		} else {
-			int numModes = ((NNTorusPredPreyController) predAgents[0]).nn.numModes();
+			int numModes = ((NNTorusPredPreyController) predAgents[0]).nn.numModules();
 			overallAgentModeUsage = new int[numModes];  
 			for(int i = 0; i < predAgents.length; i++) {
 				int[] thisAgentModeUsage = ((NNTorusPredPreyController) predAgents[i]).nn.getModeUsage();
@@ -119,7 +118,7 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 		}
 		
 		// Comment needed
-		((TWEANNGenotype) individual).modeUsage = overallAgentModeUsage;
+		((NetworkGenotype<T>) individual).setModuleUsage(overallAgentModeUsage);
 
 		double[] otherStats = new double[0];
 		return new Pair<double[], double[]>(fitnesses, otherStats);

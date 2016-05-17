@@ -177,7 +177,7 @@ public abstract class MuLambda<T> implements SinglePopulationGenerationalEA<T> {
         ArrayList<Double> modeCountsOfWorst = new ArrayList<Double>();
         for (Score<T> g : parentScores) {
             double score = g.otherStats[0]; // Game score should always be first "other" stat
-            int modes = ((TWEANNGenotype) g.individual).numModes;
+            int modes = ((TWEANNGenotype) g.individual).numModules;
             if (modes <= MAX_MODE_OF_LOG_INTEREST) {
                 modeBests[modes - 1] = Math.max(modeBests[modes - 1], score);
             } else {
@@ -358,8 +358,8 @@ public abstract class MuLambda<T> implements SinglePopulationGenerationalEA<T> {
             if (parentScores.get(0).individual instanceof TWEANNGenotype) {
                 for (Score<T> g : parentScores) {
                     TWEANNGenotype tg = (TWEANNGenotype) g.individual;
-                    EvolutionaryHistory.maxModes = Math.max(tg.numModes, EvolutionaryHistory.maxModes);
-                    EvolutionaryHistory.minModes = Math.min(tg.numModes, EvolutionaryHistory.minModes);
+                    EvolutionaryHistory.maxModes = Math.max(tg.numModules, EvolutionaryHistory.maxModes);
+                    EvolutionaryHistory.minModes = Math.min(tg.numModules, EvolutionaryHistory.minModes);
                 }
             }
         }

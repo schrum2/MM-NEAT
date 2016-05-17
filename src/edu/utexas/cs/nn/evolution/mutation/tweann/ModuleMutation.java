@@ -20,7 +20,7 @@ public abstract class ModuleMutation extends TWEANNMutation {
     public void mutate(Genotype<TWEANN> genotype) {
         if (CommonConstants.weakenBeforeModeMutation) {
             // 0.5 is weakening proportion ... make param
-            ((TWEANNGenotype) genotype).weakenAllModes(Parameters.parameters.doubleParameter("weakenPortion"));
+            ((TWEANNGenotype) genotype).weakenAllModules(Parameters.parameters.doubleParameter("weakenPortion"));
             if(infoTracking != null) {
                 infoTracking.append("WEAKEN ");
             }
@@ -32,18 +32,18 @@ public abstract class ModuleMutation extends TWEANNMutation {
                 infoTracking.append("FREEZE ");
             }
         }
-        addMode((TWEANNGenotype) genotype);
+        addModule((TWEANNGenotype) genotype);
         // This code only matters for hierarchical multitask networks.
         if(CommonConstants.hierarchicalMultitask) {
-            int originalModules = ((TWEANNGenotype) genotype).modeAssociations.length;
+            int originalModules = ((TWEANNGenotype) genotype).moduleAssociations.length;
             int[] newModeAssociations = new int[originalModules + 1]; // One module added
-            System.arraycopy(((TWEANNGenotype) genotype).modeAssociations, 0, newModeAssociations, 0, originalModules); // Copy over old module associations
-            int hierarchicalModes = CommonConstants.multitaskModes;
+            System.arraycopy(((TWEANNGenotype) genotype).moduleAssociations, 0, newModeAssociations, 0, originalModules); // Copy over old module associations
+            int hierarchicalModes = CommonConstants.multitaskModules;
             newModeAssociations[originalModules] = RandomNumbers.randomGenerator.nextInt(hierarchicalModes); // Assign to random multitask mode
-            ((TWEANNGenotype) genotype).modeAssociations = newModeAssociations;
+            ((TWEANNGenotype) genotype).moduleAssociations = newModeAssociations;
             infoTracking.append("Assoc: ").append(Arrays.toString(newModeAssociations)).append(" ");
         }
     }
 
-    abstract public void addMode(TWEANNGenotype genotype);
+    abstract public void addModule(TWEANNGenotype genotype);
 }

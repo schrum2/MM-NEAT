@@ -78,7 +78,7 @@ public class CommonConstants {
     public static int maxCampTrials;
     public static int maxModes;
     public static int maxTrials;
-    public static int multitaskModes;
+    public static int multitaskModules;
     public static int numActiveGhosts;
     public static int pacManLevelTimeLimit;
     public static int pacmanStartingPowerPillIndex = -1; // Not a commandline param yet
@@ -170,7 +170,7 @@ public class CommonConstants {
         maxCampTrials = Parameters.parameters.integerParameter("maxCampTrials");
         maxModes = Parameters.parameters.integerParameter("maxModes");
         maxTrials = Parameters.parameters.integerParameter("maxTrials");
-        multitaskModes = Parameters.parameters.integerParameter("multitaskModes");
+        multitaskModules = Parameters.parameters.integerParameter("multitaskModes");
         numActiveGhosts = Parameters.parameters.integerParameter("numActiveGhosts");
         pacManLevelTimeLimit = Parameters.parameters.integerParameter("pacManLevelTimeLimit");
         stopMode = Parameters.parameters.integerParameter("stopMode");

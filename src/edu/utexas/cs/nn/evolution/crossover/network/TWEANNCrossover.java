@@ -72,8 +72,8 @@ public class TWEANNCrossover extends Crossover<TWEANN> {
             alignedNodes.add(alignNodesToArchetype(tm.nodes, tg.archetypeIndex));//makes sure to add and adjust nodes so archetypes of both parents match
         } catch(IllegalArgumentException e){
             System.out.println("Outputs: " + tm.numOut);
-            System.out.println("Modes: " + tm.numModes);
-            System.out.println("Neurons Per Mode: " + tm.neuronsPerMode);
+            System.out.println("Modes: " + tm.numModules);
+            System.out.println("Neurons Per Mode: " + tm.neuronsPerModule);
             e.printStackTrace();
             System.exit(1);
         }
@@ -81,8 +81,8 @@ public class TWEANNCrossover extends Crossover<TWEANN> {
             alignedNodes.add(alignNodesToArchetype(tg.nodes, tg.archetypeIndex));//makes sure to check the number of nodes match the archetype of the network
         } catch(IllegalArgumentException e){
             System.out.println("Outputs: " + tg.numOut);
-            System.out.println("Modes: " + tg.numModes);
-            System.out.println("Neurons Per Mode: " + tg.neuronsPerMode);
+            System.out.println("Modes: " + tg.numModules);
+            System.out.println("Neurons Per Mode: " + tg.neuronsPerModule);
             e.printStackTrace();
             System.exit(1);
         }
@@ -93,20 +93,20 @@ public class TWEANNCrossover extends Crossover<TWEANN> {
 
       
         // Assign new lists
-        int[] originalAssociations = Arrays.copyOf(tm.modeAssociations, tm.modeAssociations.length);
+        int[] originalAssociations = Arrays.copyOf(tm.moduleAssociations, tm.moduleAssociations.length);
         tm.nodes = crossedNodes.get(0);
         tm.links = crossedLinks.get(0);
-        tm.calculateNumModes(); // Needed because excess crossover can result in unknown number of modes
+        tm.calculateNumModules(); // Needed because excess crossover can result in unknown number of modes
         if(CommonConstants.hierarchicalMultitask) {
-            tm.crossModeAssociations(originalAssociations, tg.modeAssociations);
+            tm.crossModuleAssociations(originalAssociations, tg.moduleAssociations);
         }
 
-        TWEANNGenotype result = new TWEANNGenotype(crossedNodes.get(1), crossedLinks.get(1), tg.neuronsPerMode, tg.standardMultitask, tg.hierarchicalMultitask, tg.archetypeIndex);
+        TWEANNGenotype result = new TWEANNGenotype(crossedNodes.get(1), crossedLinks.get(1), tg.neuronsPerModule, tg.standardMultitask, tg.hierarchicalMultitask, tg.archetypeIndex);
         // This usage doesn't exactly correspond to the new net, but is close
-        result.modeUsage = Arrays.copyOf(tg.modeUsage, tg.modeUsage.length);
-        result.calculateNumModes(); // Needed because excess crossover can result in unknown number of modes
+        result.setModuleUsage(Arrays.copyOf(tg.getModuleUsage(), tg.getModuleUsage().length));
+        result.calculateNumModules(); // Needed because excess crossover can result in unknown number of modes
         if(CommonConstants.hierarchicalMultitask) {
-            result.crossModeAssociations(tg.modeAssociations, originalAssociations);
+            result.crossModuleAssociations(tg.moduleAssociations, originalAssociations);
         }
         
         if (CommonConstants.meltAfterCrossover) {//checks command line parameters to see if true and performs said task

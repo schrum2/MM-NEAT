@@ -2,9 +2,9 @@ package edu.utexas.cs.nn.tasks.mspacman;
 
 import edu.utexas.cs.nn.evolution.Organism;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
 import edu.utexas.cs.nn.evolution.nsga2.tug.TUGTask;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
+import edu.utexas.cs.nn.evolution.genotypes.NetworkGenotype;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.networks.NetworkTask;
 import edu.utexas.cs.nn.parameters.CommonConstants;
@@ -395,9 +395,9 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T> implement
         // Side-effects to "game"
         agentEval(mspacman, num);
         if (mspacman.newP instanceof MultinetworkMsPacManController
-                && individual instanceof TWEANNGenotype) {
+                && individual instanceof NetworkGenotype) {
             // Track subnet selections as if they were modes
-            ((TWEANNGenotype) individual).modeUsage = ((MultinetworkMsPacManController) mspacman.newP).fullUsage;
+            ((NetworkGenotype<T>) individual).setModuleUsage(((MultinetworkMsPacManController) mspacman.newP).fullUsage);
         }
 
         double[] fitnesses = new double[this.numObjectives()];

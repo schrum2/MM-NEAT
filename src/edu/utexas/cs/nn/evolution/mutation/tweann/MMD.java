@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.utexas.cs.nn.evolution.mutation.tweann;
 
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
@@ -27,8 +23,8 @@ public class MMD extends ModuleMutation {
      * to the new module
      */
     @Override
-    public void addMode(TWEANNGenotype genotype) {
-        genotype.modeDuplication();
+    public void addModule(TWEANNGenotype genotype) {
+        genotype.moduleDuplication();
     }
 
 	

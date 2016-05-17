@@ -9,9 +9,9 @@ import edu.utexas.cs.nn.scores.Score;
  *
  * @author Jacob Schrum
  */
-public class AntiMaxModeUsageFitness implements Metaheuristic {
+public class AntiMaxModuleUsageFitness implements Metaheuristic {
 
-    public AntiMaxModeUsageFitness() {
+    public AntiMaxModuleUsageFitness() {
     }
 
     @SuppressWarnings("rawtypes")
@@ -28,6 +28,6 @@ public class AntiMaxModeUsageFitness implements Metaheuristic {
     }
 
     public double getScore(TWEANNGenotype g) {
-        return -g.maxModeUsage();
+        return -g.maxModuleUsage();
     }
 }

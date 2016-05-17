@@ -1,6 +1,6 @@
 package edu.utexas.cs.nn.evolution.metaheuristics;
 
-import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
+import edu.utexas.cs.nn.evolution.genotypes.NetworkGenotype;
 import edu.utexas.cs.nn.scores.Score;
 
 /**
@@ -9,17 +9,20 @@ import edu.utexas.cs.nn.scores.Score;
  *
  * @author Jacob Schrum
  */
-public class MaxModesFitness implements Metaheuristic {
+public class MaxModulesFitness implements Metaheuristic {
 
     @SuppressWarnings("rawtypes")
-	public void augmentScore(Score s) {
-        s.extraScore(((TWEANNGenotype) s.individual).numModes);
+    @Override
+    public void augmentScore(Score s) {
+        s.extraScore(((NetworkGenotype) s.individual).numModules());
     }
 
+    @Override
     public double minScore() {
         return 1;
     }
 
+    @Override
     public double startingTUGGoal() {
         return minScore();
     }

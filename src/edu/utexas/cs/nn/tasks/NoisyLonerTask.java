@@ -30,8 +30,8 @@ public abstract class NoisyLonerTask<T> extends LonerTask<T> {
     public final boolean printFitness;
 
     /**
-     * constructor for a noisy loner task. Assigns fitness according to specifications
-     * provided in the parameters of the command line
+     * constructor for a noisy loner task. Assigns fitness according to
+     * specifications provided in the parameters of the command line
      */
     public NoisyLonerTask() {
         this.printFitness = Parameters.parameters.booleanParameter("printFitness");
@@ -100,8 +100,8 @@ public abstract class NoisyLonerTask<T> extends LonerTask<T> {
             Pair<double[], double[]> result = oneEval(individual, i);
             if (printFitness) {
                 System.out.println(Arrays.toString(result.t1) + Arrays.toString(result.t2));
-                if(individual instanceof TWEANNGenotype) {
-                	System.out.println("Module Usage: " + Arrays.toString(((TWEANNGenotype) individual).modeUsage));
+                if (individual instanceof TWEANNGenotype) {
+                    System.out.println("Module Usage: " + Arrays.toString(((TWEANNGenotype) individual).getModuleUsage()));
                 }
             }
             long after = System.currentTimeMillis();
@@ -145,7 +145,7 @@ public abstract class NoisyLonerTask<T> extends LonerTask<T> {
                         + Arrays.toString(StatisticsUtilities.distribution(NNCheckEachDirectionPacManController.totalChosenDirectionJunctionThreatModeUsageCounts)));
                 MMNEAT.evalReport.log("Total Mode Usage Across Evals");
                 MMNEAT.evalReport.log("\tMode Usage For Chosen Direction Networks: " + Arrays.toString(NNCheckEachDirectionPacManController.totalChosenDirectionModeUsageCounts) + ":" + Arrays.toString(StatisticsUtilities.distribution(NNCheckEachDirectionPacManController.totalChosenDirectionModeUsageCounts)));
-                NNCheckEachDirectionPacManController.totalChosenDirectionModeUsageCounts = null;                
+                NNCheckEachDirectionPacManController.totalChosenDirectionModeUsageCounts = null;
                 MMNEAT.evalReport.log("\tMode Usage At Junctions For Chosen Direction Networks: " + Arrays.toString(NNCheckEachDirectionPacManController.totalChosenDirectionJunctionModeUsageCounts) + ":" + Arrays.toString(StatisticsUtilities.distribution(NNCheckEachDirectionPacManController.totalChosenDirectionJunctionModeUsageCounts)));
                 NNCheckEachDirectionPacManController.totalChosenDirectionJunctionModeUsageCounts = null;
                 MMNEAT.evalReport.log("\tEdible Mode Usage For Chosen Direction Networks: " + Arrays.toString(NNCheckEachDirectionPacManController.totalChosenDirectionEdibleModeUsageCounts) + ":" + Arrays.toString(StatisticsUtilities.distribution(NNCheckEachDirectionPacManController.totalChosenDirectionEdibleModeUsageCounts)));
@@ -168,6 +168,7 @@ public abstract class NoisyLonerTask<T> extends LonerTask<T> {
 
     /**
      * obtain a summary of the fitness and other scores
+     *
      * @param objectiveScores
      * @param otherScores
      * @param fitness

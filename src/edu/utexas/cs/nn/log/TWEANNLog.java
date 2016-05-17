@@ -60,11 +60,11 @@ public class TWEANNLog extends StatisticsLog<TWEANNGenotype> {
             nextStage[i][1] = tg.numLinks(false);
             nextStage[i][2] = tg.numLinks(true);
             nextStage[i][3] = tg.nodes.size();
-            nextStage[i][4] = tg.numModes;
-            nextStage[i][5] = tg.maxModeUsage();
-            nextStage[i][6] = tg.minModeUsage();
-            double[] modeUsageDistribution = StatisticsUtilities.distribution(tg.modeUsage);
-            System.out.println(Arrays.toString(tg.modeUsage));
+            nextStage[i][4] = tg.numModules;
+            nextStage[i][5] = tg.maxModuleUsage();
+            nextStage[i][6] = tg.minModuleUsage();
+            double[] modeUsageDistribution = StatisticsUtilities.distribution(tg.getModuleUsage());
+            System.out.println(Arrays.toString(tg.getModuleUsage()));
             System.out.println(Arrays.toString(modeUsageDistribution));
             
             nextStage[i][7] = modeUsageDistribution[0];

@@ -124,7 +124,7 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
             }
             //print fitness score and genotype information then dispose the panel, releasing system resources
             if (panel != null) {
-                System.out.println("Mode Usage: " + Arrays.toString(((TWEANNGenotype) score.individual).modeUsage));
+                System.out.println("Module Usage: " + Arrays.toString(((TWEANNGenotype) score.individual).getModuleUsage()));
                 System.out.println("Fitness: " + score.toString());
                 panel.dispose();
 //                if (subPanels != null) {
@@ -137,8 +137,8 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
             return score;
         }
     }
-    private boolean parallel;
-    private int threads;
+    private final boolean parallel;
+    private final int threads;
 
     /**
      * constructor for a LonerTask based upon command line specified evaluation and thread parameters

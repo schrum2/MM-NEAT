@@ -300,7 +300,7 @@ public class MLP implements Network {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public double[] modeOutput(int mode) {
+    public double[] moduleOutput(int mode) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -309,7 +309,7 @@ public class MLP implements Network {
         return -1;
     }
 
-    public int numModes() {
+    public int numModules() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

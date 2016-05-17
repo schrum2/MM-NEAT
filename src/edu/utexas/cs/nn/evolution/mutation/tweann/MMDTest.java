@@ -58,17 +58,17 @@ public class MMDTest {
 	@Test
 	public void test_modeDuplication() {
 		//test 1
-		tg1.modeDuplication();
+		tg1.moduleDuplication();
 		TWEANN t1 = tg1.getPhenotype();
 		// This loop confirms that the new mode is a duplicate of the previous
 		for(int i = 0; i < SIZE; i++) {
 			double[] in = RandomNumbers.randomArray(t1.numInputs());
 			t1.process(in);
-			Assert.assertArrayEquals(t1.modeOutput(0),t1.modeOutput(1), i);
+			Assert.assertArrayEquals(t1.moduleOutput(0),t1.moduleOutput(1), i);
 		}
 
 		//test 2
-		tg2.modeDuplication();
+		tg2.moduleDuplication();
 		TWEANNCrossover cross = new TWEANNCrossover();
 		TWEANNGenotype new2 = (TWEANNGenotype) cross.crossover(tg1, tg2);
 		TWEANN t2 = new2.getPhenotype();
@@ -76,7 +76,7 @@ public class MMDTest {
 		for(int i = 0; i < SIZE; i++) {
 			double[] in = RandomNumbers.randomArray(t2.numInputs());
 			t2.process(in);
-			assertFalse(t2.modeOutput(0).equals(t2.modeOutput(1)));
+			assertFalse(t2.moduleOutput(0).equals(t2.moduleOutput(1)));
 		}
 	
 		//test 3
@@ -84,7 +84,7 @@ public class MMDTest {
 		for(int i = 0; i < 20; i++) {
 			double[] in = RandomNumbers.randomArray(t3.numInputs());
 			t3.process(in);
-			assertFalse(t3.modeOutput(0).equals(t3.modeOutput(1)));
+			assertFalse(t3.moduleOutput(0).equals(t3.moduleOutput(1)));
 		}
 	}
 

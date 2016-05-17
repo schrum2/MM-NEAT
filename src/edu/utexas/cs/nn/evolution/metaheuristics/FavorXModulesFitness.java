@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.utexas.cs.nn.evolution.metaheuristics;
 
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
@@ -11,16 +7,16 @@ import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
  *
  * @author Jacob Schrum
  */
-public class FavorXModesFitness extends AntiMaxModeUsageFitness {
+public class FavorXModulesFitness extends AntiMaxModuleUsageFitness {
 
     private final int preferredNumModes;
 
-    public FavorXModesFitness(int target) {
+    public FavorXModulesFitness(int target) {
         this.preferredNumModes = target;
     }
 
     @Override
     public double getScore(TWEANNGenotype g) {
-        return -Math.abs(g.maxModeUsage() - (1.0 / preferredNumModes));
+        return -Math.abs(g.maxModuleUsage() - (1.0 / preferredNumModes));
     }
 }

@@ -59,7 +59,7 @@ public class TWEANNCrossoverTest {
         
 		TWEANNGenotype  originalM =(TWEANNGenotype) m.copy();
 		TWEANNGenotype  originalF =(TWEANNGenotype) f.copy();
-		assertTrue(m.numIn == f.numIn && m.neuronsPerMode == f.neuronsPerMode);
+		assertTrue(m.numIn == f.numIn && m.neuronsPerModule == f.neuronsPerModule);
 		 TWEANNGenotype o = (TWEANNGenotype) m.crossover(f);
 		 assertTrue(o.numIn == DEFAULT_NUMIN);
 		 assertTrue(o.numOut == DEFAULT_NUMOUT ); 
@@ -124,7 +124,7 @@ public class TWEANNCrossoverTest {
         
         TWEANNGenotype  originalM =(TWEANNGenotype) m.copy();//copies both parents before crossover
 		TWEANNGenotype  originalF =(TWEANNGenotype) f.copy();
-		assertTrue(m.numIn == f.numIn && m.neuronsPerMode == f.neuronsPerMode);
+		assertTrue(m.numIn == f.numIn && m.neuronsPerModule == f.neuronsPerModule);
 		 TWEANNGenotype o = (TWEANNGenotype) m.crossover(f);
 		 assertTrue(o.numIn == DEFAULT_NUMIN);
 		 assertTrue(o.numOut == DEFAULT_NUMOUT ); 

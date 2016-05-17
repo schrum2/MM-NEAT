@@ -68,18 +68,18 @@ public class NNCheckEachDirectionPacManController extends NNDirectionalPacManCon
         directionalNetworks = new Network[GameFacade.NUM_DIRS];
         for (int i = 0; i < GameFacade.NUM_DIRS; i++) {
             directionalNetworks[i] = g.getPhenotype(); // Each is a different copy
-            edibleModeUsageCounts[i] = new int[directionalNetworks[i].numModes()];
-            edibleJunctionModeUsageCounts[i] = new int[directionalNetworks[i].numModes()];
-            threatModeUsageCounts[i] = new int[directionalNetworks[i].numModes()];
-            threatJunctionModeUsageCounts[i] = new int[directionalNetworks[i].numModes()];
-            junctionModeUsageCounts[i] = new int[directionalNetworks[i].numModes()];
+            edibleModeUsageCounts[i] = new int[directionalNetworks[i].numModules()];
+            edibleJunctionModeUsageCounts[i] = new int[directionalNetworks[i].numModules()];
+            threatModeUsageCounts[i] = new int[directionalNetworks[i].numModules()];
+            threatJunctionModeUsageCounts[i] = new int[directionalNetworks[i].numModules()];
+            junctionModeUsageCounts[i] = new int[directionalNetworks[i].numModules()];
         }
-        chosenDirectionModeUsageCounts = new int[directionalNetworks[0].numModes()];
-        chosenJunctionDirectionModeUsageCounts = new int[directionalNetworks[0].numModes()];
-        chosenDirectionEdibleModeUsageCounts = new int[directionalNetworks[0].numModes()];
-        chosenDirectionJunctionEdibleModeUsageCounts = new int[directionalNetworks[0].numModes()];
-        chosenDirectionThreatModeUsageCounts = new int[directionalNetworks[0].numModes()];
-        chosenDirectionJunctionThreatModeUsageCounts = new int[directionalNetworks[0].numModes()];
+        chosenDirectionModeUsageCounts = new int[directionalNetworks[0].numModules()];
+        chosenJunctionDirectionModeUsageCounts = new int[directionalNetworks[0].numModules()];
+        chosenDirectionEdibleModeUsageCounts = new int[directionalNetworks[0].numModules()];
+        chosenDirectionJunctionEdibleModeUsageCounts = new int[directionalNetworks[0].numModules()];
+        chosenDirectionThreatModeUsageCounts = new int[directionalNetworks[0].numModules()];
+        chosenDirectionJunctionThreatModeUsageCounts = new int[directionalNetworks[0].numModules()];
         if (MMNEAT.ensembleArbitrator == null) {
             multitask = directionalNetworks[0].isMultitask();
             ensemble = false;
@@ -104,7 +104,7 @@ public class NNCheckEachDirectionPacManController extends NNDirectionalPacManCon
         }
         if(Parameters.parameters.booleanParameter("modePheremone")) {
             System.out.println("Set up scent path for modes");
-            ScentPath.resetAll(directionalNetworks[0].numModes());
+            ScentPath.resetAll(directionalNetworks[0].numModules());
             this.scentMode = Parameters.parameters.integerParameter("scentMode");
             if(CommonConstants.recordPacman){
                 try {
@@ -165,7 +165,7 @@ public class NNCheckEachDirectionPacManController extends NNDirectionalPacManCon
                 if (ensemble) {
                     for (int j = 0; j < fullPreferences.length; j++) {
                         // Get preference from each mode (each consists of only one index: 0)
-                        fullPreferences[j][i] = this.directionalNetworks[i].modeOutput(j)[0];
+                        fullPreferences[j][i] = this.directionalNetworks[i].moduleOutput(j)[0];
                     }
                 }
             } else {
@@ -277,7 +277,7 @@ public class NNCheckEachDirectionPacManController extends NNDirectionalPacManCon
     public void logEvaluationDetails() {
         MMNEAT.evalReport.log("Network Info");
         MMNEAT.evalReport.log("\tNum Nodes: " + ((TWEANN) directionalNetworks[0]).nodes.size());
-        MMNEAT.evalReport.log("\tNum Modes: " + ((TWEANN) directionalNetworks[0]).numModes());
+        MMNEAT.evalReport.log("\tNum Modes: " + ((TWEANN) directionalNetworks[0]).numModules());
         MMNEAT.evalReport.log("\tNum Outputs: " + ((TWEANN) directionalNetworks[0]).numOutputs());
         MMNEAT.evalReport.log("\tNeurons Per Mode: " + ((TWEANN) directionalNetworks[0]).neuronsPerMode());
         MMNEAT.evalReport.log("\tTime Steps: " + totalUsage);
@@ -289,7 +289,7 @@ public class NNCheckEachDirectionPacManController extends NNDirectionalPacManCon
         MMNEAT.evalReport.log("\tThreat Mode Usage At Junctions For Chosen Direction Networks: " + Arrays.toString(chosenDirectionJunctionThreatModeUsageCounts) + ":" + Arrays.toString(StatisticsUtilities.distribution(chosenDirectionJunctionThreatModeUsageCounts)));
         for (int i = 0; i < directionalNetworks.length; i++) {
             MMNEAT.evalReport.log("\t" + GameFacade.indexToMove(i) + " Network:");
-            MMNEAT.evalReport.log("\t\tMode Usage: " + Arrays.toString(((TWEANN) directionalNetworks[i]).modeUsage) + ":" + Arrays.toString(StatisticsUtilities.distribution(((TWEANN) directionalNetworks[i]).modeUsage)));
+            MMNEAT.evalReport.log("\t\tMode Usage: " + Arrays.toString(((TWEANN) directionalNetworks[i]).moduleUsage) + ":" + Arrays.toString(StatisticsUtilities.distribution(((TWEANN) directionalNetworks[i]).moduleUsage)));
             MMNEAT.evalReport.log("\t\tEdible Mode Usage: " + Arrays.toString(edibleModeUsageCounts[i]) + ":" + Arrays.toString(StatisticsUtilities.distribution(edibleModeUsageCounts[i])));
             MMNEAT.evalReport.log("\t\tThreat Mode Usage: " + Arrays.toString(threatModeUsageCounts[i]) + ":" + Arrays.toString(StatisticsUtilities.distribution(threatModeUsageCounts[i])));
             MMNEAT.evalReport.log("\t\tJunction Mode Usage: " + Arrays.toString(junctionModeUsageCounts[i]) + ":" + Arrays.toString(StatisticsUtilities.distribution(junctionModeUsageCounts[i])));
@@ -300,7 +300,7 @@ public class NNCheckEachDirectionPacManController extends NNDirectionalPacManCon
         }
         MMNEAT.evalReport.log("");
 
-        int modes = directionalNetworks[0].numModes();
+        int modes = directionalNetworks[0].numModules();
         if (totalChosenDirectionModeUsageCounts == null) {
             totalChosenDirectionModeUsageCounts = new int[modes];
             totalChosenDirectionJunctionModeUsageCounts = new int[modes];

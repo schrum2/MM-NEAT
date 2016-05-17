@@ -30,20 +30,20 @@ public class HierarchicalTWEANNGenotype extends TWEANNGenotype {
 
     @Override
     public Genotype<TWEANN> copy() {
-        int[] temp = modeUsage;
+        int[] temp = moduleUsage;
         TWEANNGenotype tg = (TWEANNGenotype) super.copy();
         HierarchicalTWEANNGenotype result = new HierarchicalTWEANNGenotype(tg, this.subNetIds);
-        result.modeUsage = new int[modeUsage.length];
+        result.moduleUsage = new int[moduleUsage.length];
         // Mode usage is erased by getPhenotype(), so it is restored here
-        modeUsage = temp;
-        System.arraycopy(this.modeUsage, 0, result.modeUsage, 0, modeUsage.length);
+        moduleUsage = temp;
+        System.arraycopy(this.moduleUsage, 0, result.moduleUsage, 0, moduleUsage.length);
         return result;
     }
 
     @Override
     public TWEANN getPhenotype() {
         HierarchicalTWEANN result = new HierarchicalTWEANN(this);
-        this.modeUsage = result.modeUsage;
+        this.moduleUsage = result.moduleUsage;
         return result;
     }
 
@@ -59,7 +59,7 @@ public class HierarchicalTWEANNGenotype extends TWEANNGenotype {
 
         // Combine the separate components
         HierarchicalTWEANNGenotype result = new HierarchicalTWEANNGenotype(tgOther, bigOther);
-        result.calculateNumModes();
+        result.calculateNumModules();
 
         return result;
     }
@@ -67,7 +67,7 @@ public class HierarchicalTWEANNGenotype extends TWEANNGenotype {
     @Override
     public Genotype<TWEANN> newInstance() {
         HierarchicalTWEANNGenotype result = new HierarchicalTWEANNGenotype((TWEANNGenotype) super.newInstance(), (BoundedIntegerValuedGenotype) subNetIds.newInstance());
-        result.modeUsage = new int[result.numModes];
+        result.moduleUsage = new int[result.numModules];
         return result;
     }
 
