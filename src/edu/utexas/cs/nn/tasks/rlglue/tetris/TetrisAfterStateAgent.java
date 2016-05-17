@@ -51,12 +51,9 @@ public class TetrisAfterStateAgent<T extends Network> extends RLGlueAgent<T>{
     		//	outputs = constultPolicy(features) REMEMBER outputs is an array of 1
     		double[] inputs = MMNEAT.rlGlueExtractor.extract(i.t1.get_observation()); // TODO: Remove this? -Gab
             
-    		for(int j = 0; j < inputs.length - 2; j++) {
-    			inputs[j] /= o.intArray[o.intArray.length - 2]; // second part gives us the height of board
-    		}
-    		inputs[inputs.length - 2] /= tempState.worldState.length;
+    		double[] inputsScaled = scaleInputs(inputs);
     		
-    		outputs = this.consultPolicy(inputs); //TODO: check and fix this too -Gab
+    		outputs = this.consultPolicy(inputsScaled); //TODO: check and fix this too -Gab
 
     		//	array(list?).add(outputs[0], first action*) 
             Pair<Double, Integer> tempPair = new Pair<Double, Integer>(outputs[0], i.t2.get(0));
@@ -75,4 +72,16 @@ public class TetrisAfterStateAgent<T extends Network> extends RLGlueAgent<T>{
     	action.intArray[0]= outputPairs.get(index).t2;
     	return action;
     }
+
+   
+	public static double[] scaleInputs(double[] inputs) {
+		double[] next = new double[inputs.length];
+		for(int i = 0; i < 20; i++) { // scales down the height values (10), height differences (9), and max height (1)
+			next[i] = inputs[1] / 20.0; 
+		}
+		next[inputs.length - 2] = next[inputs.length - 2] / 200.0; // scales down the number of holes in relation to the whole of the board
+		return next; // bias is 1, so not scaling
+	}
+    
+    
 }
