@@ -88,6 +88,7 @@ public class BertsekasTsitsiklisTetrisExtractor implements FeatureExtractor {
         }
         blotMobilePiece(worldState, StatisticsUtilities.argmax(blockIndicator), o.intArray[o.intArray.length - 5], o.intArray[o.intArray.length - 4], o.intArray[o.intArray.length - 3]); 
         //The magic numbers here at the end help us find the blockX, blockY, and blockRotation respectively
+        //Note: why didn't they just put the blotMobilePiece call in the for loop? blockIndicator isn't used anywhere else? I might change that later haha -Gab
         
         int in = 0;
 
