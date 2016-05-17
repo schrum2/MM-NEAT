@@ -1,6 +1,7 @@
 
 package edu.utexas.cs.nn.tasks.gridTorus;
 
+import edu.utexas.cs.nn.graphics.DrawingPanel;
 /**
  * Imports needed parts to initialize the Controller, as in Torus agent and world, the controller, network, and statistic utilities.
  */
@@ -8,6 +9,7 @@ import edu.utexas.cs.nn.gridTorus.TorusAgent;
 import edu.utexas.cs.nn.gridTorus.TorusWorld;
 import edu.utexas.cs.nn.gridTorus.controllers.TorusPredPreyController;
 import edu.utexas.cs.nn.networks.Network;
+import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
 
@@ -17,6 +19,9 @@ import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
  * The following class extends the normal TorusPredPreyController to allow for a neural network.
  */
 public class NNTorusPredPreyController extends TorusPredPreyController {
+	
+	public DrawingPanel networkInputs = null;
+	
 	/**
 	 * Initializes the network to be used.
 	 */
@@ -41,6 +46,9 @@ public class NNTorusPredPreyController extends TorusPredPreyController {
 	@Override
 	public int[] getAction(TorusAgent me, TorusWorld world, TorusAgent[] preds, TorusAgent[] prey) { 
 		double[] inputs = inputs(me,world,preds,prey);
+		if(networkInputs != null) {
+			TWEANN.inputPanel = networkInputs;
+		}
 		double[] outputs = nn.process(inputs);
 		// Assume one output for each direction
 		return isPredator ? predatorActions()[StatisticsUtilities.argmax(outputs)] : preyActions()[StatisticsUtilities.argmax(outputs)];

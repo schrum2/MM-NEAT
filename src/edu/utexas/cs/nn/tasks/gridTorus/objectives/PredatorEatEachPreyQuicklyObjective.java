@@ -1,7 +1,6 @@
 package edu.utexas.cs.nn.tasks.gridTorus.objectives;
 
 import edu.utexas.cs.nn.evolution.Organism;
-import edu.utexas.cs.nn.gridTorus.TorusAgent;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.parameters.Parameters;
 

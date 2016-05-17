@@ -139,6 +139,14 @@ public class TorusAgent implements ILocated2D {
 		}
 		return ds;
 	}
+	/**
+	 * Find the distance from this agent to all prey
+	 * @param prey array of prey agents
+	 * @return array with the distance from this agent to each prey
+	 */
+	public double[] distancesToPrey(TorusAgent[] prey){
+		return null;
+	}
 
 	/**
 	 * Shortest x offset from this agent to the given agent, where a negative value

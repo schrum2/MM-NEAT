@@ -7,11 +7,13 @@ import edu.utexas.cs.nn.evolution.Organism;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.evolution.genotypes.NetworkGenotype;
 import edu.utexas.cs.nn.evolution.nsga2.tug.TUGTask;
+import edu.utexas.cs.nn.graphics.DrawingPanel;
 import edu.utexas.cs.nn.gridTorus.TorusPredPreyGame;
 import edu.utexas.cs.nn.gridTorus.TorusWorldExec;
 import edu.utexas.cs.nn.gridTorus.controllers.TorusPredPreyController;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.networks.NetworkTask;
+import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.NoisyLonerTask;
@@ -60,7 +62,12 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 	public TorusPredPreyTask(boolean preyEvolve) {
 		super();
 		this.preyEvolve = preyEvolve;
+		if (CommonConstants.monitorInputs && TWEANN.inputPanel != null) {
+			TWEANN.inputPanel.dispose();
+		}
 	}
+
+
 
 	/**
 	 * for adding fitness scores (turned on by command line parameters)
@@ -92,6 +99,17 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 			game = exec.runExperiment(predAgents, preyAgents);
 		}
 		double[] fitnesses = new double[objectives.size()];
+
+		//dispose of all panels inside of agents/controllers
+		if (CommonConstants.monitorInputs) {
+			DrawingPanel[] panels = new DrawingPanel[(preyEvolve ? preyAgents.length : predAgents.length)];
+			// Dispose of existing panels
+			if(panels != null){
+				for (int i = 0; i < (preyEvolve ? preyAgents.length : predAgents.length); i++) {
+					panels[i].dispose();
+				}
+			}
+		}
 
 		//---------Need to save module usage because it will be lost---------
 		//store the list of the agents being evolved
