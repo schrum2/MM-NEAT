@@ -279,11 +279,11 @@ public class MMNEAT {
 
     private static void setupCooperativeCoevolutionCheckEachMultitaskPreferenceNetForMsPacman() throws NoSuchMethodException {
         pacmanInputOutputMediator = (MsPacManControllerInputOutputMediator) ClassCreation.createObject("pacmanInputOutputMediator");
-        MMNEAT.modesToTrack = CommonConstants.multitaskModes;
+        MMNEAT.modesToTrack = CommonConstants.multitaskModules;
         // Setup the preference net settings
-        CommonConstants.multitaskModes = 1; // Needed before set NN params
+        CommonConstants.multitaskModules = 1; // Needed before set NN params
         setNNInputParameters(pacmanInputOutputMediator.numIn(), MMNEAT.modesToTrack);
-        CommonConstants.multitaskModes = MMNEAT.modesToTrack; // Restore value
+        CommonConstants.multitaskModules = MMNEAT.modesToTrack; // Restore value
 
         genotypeExamples = new ArrayList<Genotype>(2);
         // Multitask
@@ -348,12 +348,12 @@ public class MMNEAT {
         }
         if (Parameters.parameters.booleanParameter("antiMaxModeUsage")) {
             System.out.println("Penalize Max Mode Usage");
-            metaheuristics.add(new AntiMaxModeUsageFitness());
+            metaheuristics.add(new AntiMaxModuleUsageFitness());
         }
         if (Parameters.parameters.integerParameter("numModesToPrefer") > 0) {
             int target = Parameters.parameters.integerParameter("numModesToPrefer");
             System.out.println("Prefer even usage of " + target + " modes");
-            metaheuristics.add(new FavorXModesFitness(target));
+            metaheuristics.add(new FavorXModulesFitness(target));
         }
         if (Parameters.parameters.booleanParameter("penalizeLinks")) {
             System.out.println("Penalize Links");
@@ -361,7 +361,7 @@ public class MMNEAT {
         }
         if (Parameters.parameters.booleanParameter("maximizeModes")) {
             System.out.println("Maximize Modes");
-            metaheuristics.add(new MaxModesFitness());
+            metaheuristics.add(new MaxModulesFitness());
         }
     }
 
@@ -512,7 +512,7 @@ public class MMNEAT {
             if (taskHasSubnetworks()) {
                 modesToTrack = Parameters.parameters.integerParameter("numCoevolutionSubpops");
             } else {
-                int multitaskModes = CommonConstants.multitaskModes;
+                int multitaskModes = CommonConstants.multitaskModules;
                 if (!CommonConstants.hierarchicalMultitask && multitaskModes > 1) {
                     modesToTrack = multitaskModes;
                 }
@@ -545,7 +545,7 @@ public class MMNEAT {
                         MMNEAT.sharedMultitaskNetwork.getPhenotype().draw(panel);
                     }
                     // One preference neuron per multitask mode
-                    setNNInputParameters(pacmanInputOutputMediator.numIn(), MMNEAT.sharedMultitaskNetwork.numModes);
+                    setNNInputParameters(pacmanInputOutputMediator.numIn(), MMNEAT.sharedMultitaskNetwork.numModules);
                 } else if (preferenceNet != null && !preferenceNet.isEmpty()) {
                     MMNEAT.sharedPreferenceNetwork = (TWEANNGenotype) Easy.load(preferenceNet);
                     if (CommonConstants.showNetworks) {
@@ -563,7 +563,7 @@ public class MMNEAT {
                     setNNInputParameters(pacmanInputOutputMediator.numIn(), pacmanInputOutputMediator.numOut());
                 }
                 setupMsPacmanParameters();
-                if (CommonConstants.multitaskModes > 1) {
+                if (CommonConstants.multitaskModules > 1) {
                     pacmanMultitaskScheme = (MsPacManModeSelector) ClassCreation.createObject("pacmanMultitaskScheme");
                 }
             } else if (task instanceof CooperativeMsPacManTask) {
@@ -613,7 +613,7 @@ public class MMNEAT {
             String seedGenotype = Parameters.parameters.stringParameter("seedGenotype");
             if (task instanceof MsPacManTask
                     && Parameters.parameters.booleanParameter("pacmanMultitaskSeed")
-                    && CommonConstants.multitaskModes == 2) {
+                    && CommonConstants.multitaskModules == 2) {
                 System.out.println("Seed genotype is combo of networks");
 
                 String ghostDir = Parameters.parameters.stringParameter("ghostEatingSubnetworkDir");
@@ -843,7 +843,7 @@ public class MMNEAT {
     private static void setNNInputParameters(int numIn, int numOut) throws NoSuchMethodException {
         networkInputs = numIn;
         networkOutputs = numOut;
-        int multitaskModes = CommonConstants.multitaskModes;
+        int multitaskModes = CommonConstants.multitaskModules;
         if(CommonConstants.hierarchicalMultitask){
             multitaskModes = 1; // Initialize the network like a preference neuron net instead
         }
