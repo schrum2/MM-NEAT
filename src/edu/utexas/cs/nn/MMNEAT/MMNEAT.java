@@ -431,7 +431,7 @@ public class MMNEAT {
 
     private static void setupTWEANNGenotypeDataTracking(boolean coevolution) {
         if (genotype instanceof TWEANNGenotype) {
-            if (Parameters.parameters.booleanParameter("io")) {
+            if (Parameters.parameters.booleanParameter("io") && Parameters.parameters.booleanParameter("logTWEANNData")) {
                 System.out.println("Init TWEANN Log");
                 EvolutionaryHistory.initTWEANNLog();
             }
