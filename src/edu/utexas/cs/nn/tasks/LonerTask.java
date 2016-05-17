@@ -46,7 +46,7 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
      *
      * @param <T> the phenotype of the agent to be evaluated
      */
-    public class EvaluationThread<T> implements Callable<Score<T>> {
+    public class EvaluationThread implements Callable<Score<T>> {
 
         private Genotype<T> genotype;
         private LonerTask<T> task;
@@ -168,12 +168,12 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
 
         ExecutorService poolExecutor = null;
         ArrayList<Future<Score<T>>> futures = null;
-        ArrayList<EvaluationThread<T>> calls = new ArrayList<EvaluationThread<T>>(population.size());
+        ArrayList<EvaluationThread> calls = new ArrayList<EvaluationThread>(population.size());
 
         //get each genotype for the population and add an EvaluationThread for it to the calls list
         for (int i = 0; i < population.size(); i++) {
             Genotype<T> genotype = population.get(i);
-            EvaluationThread<T> callable = new EvaluationThread<T>(this, genotype);
+            EvaluationThread callable = new EvaluationThread(this, genotype);
             calls.add(callable);
         }
         
@@ -188,17 +188,17 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
 
         // General tracking of best in each objective
         double[] bestObjectives = minScores();
-        Genotype[] bestGenotypes = new Genotype[bestObjectives.length];
+        Genotype<T>[] bestGenotypes = new Genotype[bestObjectives.length];
         Score<T>[] bestScores = new Score[bestObjectives.length];
 
         //some pac man variables that only apply if pac man is being used to save the best pac man later
         int maxPacManScore = 0;
-        Genotype bestPacMan = null;
+        Genotype<T> bestPacMan = null;
         Score<T> bestScoreSet = null;
         boolean trackBestPacManScore = CommonConstants.netio
                 && this instanceof MsPacManTask
                 && MMNEAT.ea instanceof MuLambda
-                && ((MuLambda) MMNEAT.ea).evaluatingParents;
+                && ((MuLambda<T>) MMNEAT.ea).evaluatingParents;
         for (int i = 0; i < population.size(); i++) {
             try {
                 Score<T> s = parallel ? futures.get(i).get() : calls.get(i).call();
@@ -279,24 +279,18 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
             // be at the end of the list
             int index = 0;
             double max = 0;
-            for (Score s : scores) {
+            for (Score<T> s : scores) {
                 max = Math.max(max, s.scores[index]);
             }
             UCB1Comparator ucb1 = new UCB1Comparator(index, scores.size(), max);
             Collections.sort(scores, ucb1);
             int last = scores.size() - 1;
-
-//            System.out.println("--SORTED-----------------------------------");
-//            for (int i = 0; i < scores.size(); i++) {
-//                System.out.println(ucb1.ucb1(scores.get(i)) + "::" + scores.get(i));
-//            }
-//            System.out.println("--UCB--------------------------------------");
-            // Perform the budgetted number of evals
+            // Perform the budgeted number of evals
             for (int i = 0; i < evaluationBudget; i++) {
                 // Highest UCB is always at end, so evaluate it
                 Score<T> oldScore = scores.get(last);
                 //System.out.print(ucb1.ucb1(oldScore) + "::" + oldScore + "->");
-                EvaluationThread<T> callable = new EvaluationThread<T>(this, oldScore.individual);
+                EvaluationThread callable = new EvaluationThread(this, oldScore.individual);
                 Score<T> newScore = oldScore.incrementalAverage(callable.call());
                 // After eval, insert the individual into the correct slot in sorted list
                 ucb1.increaseTotal();
@@ -305,21 +299,7 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
 
                 scores.set(last, newScore);
                 Collections.sort(scores, ucb1);
-
-//                System.out.println("--SORTED-----------------------------------");
-//                for (int j = 0; j < scores.size(); j++) {
-//                    System.out.println(ucb1.ucb1(scores.get(j)) + "::" + scores.get(j));
-//                }
-//                System.out.println("--UCB--------------------------------------");
-//                int pos = last - 1;
-//                //while(scores.get(pos) > newScore && pos >= 0){
-//                while(pos >= 0 && ucb1.compare(scores.get(pos), newScore) > 0){
-//                    pos--;
-//                }
-//                scores.remove(last);
-//                scores.add(pos+1, newScore);
             }
-//            System.out.println("--END--------------------------------------");
         }
 
         return scores;
