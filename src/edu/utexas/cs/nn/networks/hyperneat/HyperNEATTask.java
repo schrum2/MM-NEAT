@@ -1,5 +1,7 @@
 package edu.utexas.cs.nn.networks.hyperneat;
 
+import java.util.List;
+
 import edu.utexas.cs.nn.networks.NetworkTask;
 
 /**
@@ -16,7 +18,7 @@ public interface HyperNEATTask extends NetworkTask {
 
 	// Method that returns a list of information about
 	// the substrate layers contained in the network
-	//public List<????> getSubstrateInformation();
+	public List<Substrate> getSubstrateInformation();
 	//Substrate defined as one layer and ^^ method returns a list of the different
 	//substrates in the whole network
 	
