@@ -8,18 +8,11 @@ import java.util.HashSet;
 import org.junit.Test;
 import org.rlcommunity.environments.tetris.TetrisState;
 
-import edu.utexas.cs.nn.networks.ActivationFunctions;
 import edu.utexas.cs.nn.util.MiscUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 
 public class TetrisAfterStateGeneratorTests {
-	/*
-	 * We need the following tests:
-	 * 1. simple test that a row is deleted in the first given afterstate
-	 * 2. simple test that checks the first two afterstates, and gets no row deleted then row deleted
-	 * 3. test for one of the earlier examples to check the actions from the given actionlist (method not yest created)
-	 */
-	
+
 	@Test
 	public void test_afterstate_occurance() { // This checks if all afterstates are present in the returned hash and This part tests that the actions of the action list do give you the given state
 		TetrisState testState = new TetrisState(); // makes a Tetris state to test with
@@ -282,10 +275,14 @@ public class TetrisAfterStateGeneratorTests {
 		
 	}
 	
+	//Not really a formal test, but still useful -Gab
 	@Test
 	public void different_starting_blocks_positions(){ // This tests for the starting X and Y of each piece
-		TetrisViewer testView = new TetrisViewer(); //make a TetrisViewer
-		TetrisState testState = new TetrisState(); // makes a Tetris state to test with
+		//TetrisViewer testView = new TetrisViewer(); //make a TetrisViewer
+		//TetrisState testState = new TetrisState(); // makes a Tetris state to test with
+		
+		//these are testing each shape in the testing environment
+		/*
 		testView.update(testState);
 		System.out.println("For Piece " + testState.currentBlockId + ", x = " + testState.currentX + ", y = " + testState.currentY + ", and the rotation is " + testState.currentRotation);
 		MiscUtil.waitForReadStringAndEnterKeyPress(); 
@@ -313,7 +310,10 @@ public class TetrisAfterStateGeneratorTests {
 		testView.update(testState);
 		System.out.println("For Piece " + testState.currentBlockId + ", x = " + testState.currentX + ", y = " + testState.currentY + ", and the rotation is " + testState.currentRotation);
 		MiscUtil.waitForReadStringAndEnterKeyPress(); 
+		*/
 		
+		//These are for random spawns
+		/*
 		testState.spawn_block();
 		testView.update(testState);
 		System.out.println("For Piece " + testState.currentBlockId + ", x = " + testState.currentX + ", y = " + testState.currentY + ", and the rotation is " + testState.currentRotation);
@@ -326,17 +326,141 @@ public class TetrisAfterStateGeneratorTests {
 		testView.update(testState);
 		System.out.println("For Piece " + testState.currentBlockId + ", x = " + testState.currentX + ", y = " + testState.currentY + ", and the rotation is " + testState.currentRotation);
 		MiscUtil.waitForReadStringAndEnterKeyPress(); 
+		testState.spawn_block();
+		testView.update(testState);
+		System.out.println("For Piece " + testState.currentBlockId + ", x = " + testState.currentX + ", y = " + testState.currentY + ", and the rotation is " + testState.currentRotation);
+		MiscUtil.waitForReadStringAndEnterKeyPress(); 
+		testState.spawn_block();
+		testView.update(testState);
+		System.out.println("For Piece " + testState.currentBlockId + ", x = " + testState.currentX + ", y = " + testState.currentY + ", and the rotation is " + testState.currentRotation);
+		MiscUtil.waitForReadStringAndEnterKeyPress(); 
+		testState.spawn_block();
+		testView.update(testState);
+		System.out.println("For Piece " + testState.currentBlockId + ", x = " + testState.currentX + ", y = " + testState.currentY + ", and the rotation is " + testState.currentRotation);
+		MiscUtil.waitForReadStringAndEnterKeyPress(); 
+		*/
+		
+		//this was to test the orientations
+		/*
+		testState.currentBlockId = 6;
+		testView.update(testState);
+		System.out.println("x = " + testState.currentX + ", y = " + testState.currentY + ", r = " + testState.currentRotation);
+		MiscUtil.waitForReadStringAndEnterKeyPress(); 
+		testState.currentRotation++;
+		testView.update(testState);
+		System.out.println("x = " + testState.currentX + ", y = " + testState.currentY + ", r = " + testState.currentRotation);
+		MiscUtil.waitForReadStringAndEnterKeyPress(); 
+		testState.currentRotation++;
+		testView.update(testState);
+		System.out.println("x = " + testState.currentX + ", y = " + testState.currentY + ", r = " + testState.currentRotation);
+		MiscUtil.waitForReadStringAndEnterKeyPress(); 
+		testState.currentRotation++;
+		testView.update(testState);
+		System.out.println("x = " + testState.currentX + ", y = " + testState.currentY + ", r = " + testState.currentRotation);
+		MiscUtil.waitForReadStringAndEnterKeyPress(); 
+		*/
+		
 	}
 	
 	@Test
-	public void not_at_spawn(){ // This tests for available afterstates given that actions have been taken previously
+	public void afterstates_at_spawn() { // This tests that we get all available afterstates
+		TetrisViewer testView = new TetrisViewer(); //make a TetrisViewer
 		TetrisState testState = new TetrisState(); // makes a Tetris state to test with
+		
+		//this is testing for the amount of afterstates we get with just teh first block
+		//we should get either 17 or 34, anything inbetween is ok(?) but anything below 17 poses an issue with our code
+		testState.currentBlockId = 4; //simulating piece 4 at spawn point
+		testState.currentX = 3;
+		testState.currentY = -1;
+		HashSet<Pair<TetrisState, ArrayList<Integer>>> holder = TertisAfterStateGenerator.evaluateAfterStates(testState);
+		HashSet<TetrisState> justStates = new HashSet<TetrisState>();
+		//System.out.println("holder size is " + holder.size());
+		//assertTrue(holder.size() > 17 && holder.size() < 34);
+		for(Pair<TetrisState, ArrayList<Integer>> i : holder){ // transfers only the tetris states to the hash set
+			justStates.add(i.t1);
+		}
+		System.out.println("set size is " + justStates.size());
+		assertTrue(justStates.size() == 17);
+		
+		
+		//testView.update(testState);
+		//System.out.println("x = " + testState.currentX + ", y = " + testState.currentY + ", r = " + testState.currentRotation);
+		//MiscUtil.waitForReadStringAndEnterKeyPress(); 
+		
+	}
+	
+	@Test
+	public void afterstates_after_action() { // This tests that we get all available afterstates when we've previous taken actions
+		TetrisViewer testView = new TetrisViewer(); //make a TetrisViewer
+		TetrisState testState = new TetrisState(); // makes a Tetris state to test with
+		
+		//This should test that we get 17 afterstates having taken other actions
+		testState.currentBlockId = 4; //simulating piece 4 at spawn point
+		testState.currentX = 3 + 2; // right by 2
+		testState.currentY = -1 + 5; //down by 5
+		testState.currentRotation = 3; // third rotation
+		HashSet<Pair<TetrisState, ArrayList<Integer>>> holder = TertisAfterStateGenerator.evaluateAfterStates(testState);
+		HashSet<TetrisState> justStates = new HashSet<TetrisState>();
+		//System.out.println("holder size is " + holder.size());
+		//assertTrue(holder.size() > 17 && holder.size() < 34);
+		
+		for(Pair<TetrisState, ArrayList<Integer>> i : holder){ // transfers only the tetris states to the hash set
+			justStates.add(i.t1);
+		}
+		assertTrue(justStates.size() == 17);
+		System.out.println("state size should be " + justStates.size());
+	
+		testState.currentBlockId = 4; //simulating piece 4 at spawn point
+		testState.currentX = 3 + 4; // right by 2
+		testState.currentY = -1 + 8; //down by 5
+		testState.currentRotation = 3; // third rotation
+		HashSet<Pair<TetrisState, ArrayList<Integer>>> holder2 = TertisAfterStateGenerator.evaluateAfterStates(testState);
+		HashSet<TetrisState> justStates2 = new HashSet<TetrisState>();
+		//assertTrue(holder.size() > 17 && holder2.size() < 34);
+		System.out.println("holder size is " + holder2.size());
+		for(Pair<TetrisState, ArrayList<Integer>> i : holder2){ // transfers only the tetris states to the hash set
+			justStates2.add(i.t1);
+		}
+		System.out.println("state size should be " + justStates2.size());
+		assertTrue(justStates2.size() == 17);
+		
+	}
+	
+	@Test
+	public void afterstates_with_blocked_wall() { // This tests that we get all available afterstates when a wall if blocked off
+		TetrisViewer testView = new TetrisViewer(); //make a TetrisViewer
+		TetrisState testState = new TetrisState(); // makes a Tetris state to test with
+		testState.currentBlockId = 4; //simulating piece 4 at spawn point
+		testState.currentX = 3;
+		testState.currentY = -1;
+		testState.worldState[20] = 1;
+		testState.worldState[30] = 1;
+		testState.worldState[40] = 1;
+		testState.worldState[50] = 1;
+		testState.worldState[60] = 1;
+		testState.worldState[70] = 1;
+		testState.worldState[80] = 1;
+		testState.worldState[90] = 1;
+		testState.worldState[100] = 1;
+		testState.worldState[110] = 1;
+		testState.worldState[120] = 1;
+		testState.worldState[130] = 1;
+		testState.worldState[140] = 1;
+		testState.worldState[150] = 1;
+		testState.worldState[160] = 1;
+		testState.worldState[170] = 1;
+		testState.worldState[180] = 1;
+		testState.worldState[190] = 1;
+		
+		HashSet<Pair<TetrisState, ArrayList<Integer>>> holder = TertisAfterStateGenerator.evaluateAfterStates(testState);
+		HashSet<TetrisState> justStates = new HashSet<TetrisState>();
+		System.out.println("holder size is " + holder.size());
+		assertTrue(holder.size() == 34);
+		for(Pair<TetrisState, ArrayList<Integer>> i : holder){ // transfers only the tetris states to the hash set
+			justStates.add(i.t1);
+		}
+		System.out.println("set size is " + justStates.size());
+		assertTrue(justStates.size() == 15);
 	}
 
-	@Test
-	public void test_rotate_against_wall() { // This tests what a piece will do when it must rotate in a place it cannot
-		
-	}
-	
-	
 }

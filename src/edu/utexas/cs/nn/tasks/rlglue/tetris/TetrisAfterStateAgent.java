@@ -28,6 +28,11 @@ public class TetrisAfterStateAgent<T extends Network> extends RLGlueAgent<T>{
     	tempState.currentX = o.intArray[o.intArray.length - 5]; // adds the Observation's X to tempState
     	tempState.currentY = o.intArray[o.intArray.length - 4]; // adds the Observation's Y to tempState
     	tempState.currentRotation = o.intArray[o.intArray.length - 3]; // adds the Observation's rotation to tempState
+    	for(int p = 0; p < 7; p++){ // sorry for the magic number here -Gab
+    		if(o.intArray[tempState.worldState.length + p] == 1){ // this checks for the current block Id
+    			tempState.currentBlockId = p;
+    		}
+    	}
     	
     	for (int i = 0; i < tempState.worldState.length; i++) { // replaces tempState's worldState with the Observation's worldState
     		tempState.worldState[i] = o.intArray[i];
@@ -45,7 +50,13 @@ public class TetrisAfterStateAgent<T extends Network> extends RLGlueAgent<T>{
     		
     		//	outputs = constultPolicy(features) REMEMBER outputs is an array of 1
     		double[] inputs = MMNEAT.rlGlueExtractor.extract(i.t1.get_observation()); // TODO: Remove this? -Gab
-            outputs = this.consultPolicy(inputs); //TODO: check and fix this too -Gab
+            
+    		for(int j = 0; j < inputs.length - 2; j++) {
+    			inputs[j] /= o.intArray[o.intArray.length - 2]; // second part gives us the height of board
+    		}
+    		inputs[inputs.length - 2] /= tempState.worldState.length;
+    		
+    		outputs = this.consultPolicy(inputs); //TODO: check and fix this too -Gab
 
     		//	array(list?).add(outputs[0], first action*) 
             Pair<Double, Integer> tempPair = new Pair<Double, Integer>(outputs[0], i.t2.get(0));
@@ -63,6 +74,5 @@ public class TetrisAfterStateAgent<T extends Network> extends RLGlueAgent<T>{
     	Action action = new Action(TSO.getNumDiscreteActionDims(), TSO.getNumContinuousActionDims());
     	action.intArray[0]= outputPairs.get(index).t2;
     	return action;
-    	//we JUST finsihed thsi, go voer again, -Gab from the past
     }
 }
