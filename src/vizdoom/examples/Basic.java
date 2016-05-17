@@ -1,4 +1,5 @@
 package vizdoom.examples;
+
 import vizdoom.*;
 
 import java.util.*;
@@ -6,9 +7,9 @@ import java.lang.*;
 
 public class Basic {
 
-    public static void main (String[] args) {
+    public static void main(String[] args) {
         SpecifyDLL.specifyDLLPath();
-        
+
         System.out.println("\n\nBASIC EXAMPLE\n");
 
         // Create DoomGame instance. It will run the game and communicate with you.
@@ -54,7 +55,6 @@ public class Basic {
 
         // Makes episodes start after 10 tics (~after raising the weapon)
         //game.setEpisodeStartTime(10);
-
         // Makes the window appear (turned on by default)
         game.setWindowVisible(true);
 
@@ -71,9 +71,9 @@ public class Basic {
         // MOVE_LEFT, MOVE_RIGHT, ATTACK
         // more combinations are naturally possible but only 3 are included for transparency when watching.
         List<int[]> actions = new ArrayList<int[]>();
-        actions.add(new int[] {1, 0, 1});
-        actions.add(new int[] {0, 1, 1});
-        actions.add(new int[] {0, 0, 1});
+        actions.add(new int[]{1, 0, 1});
+        actions.add(new int[]{0, 1, 1});
+        actions.add(new int[]{0, 0, 1});
 
         Random ran = new Random();
 
@@ -82,32 +82,31 @@ public class Basic {
 
         for (int i = 0; i < episodes; ++i) {
 
-        System.out.println("Episode #" + (i + 1));
+            System.out.println("Episode #" + (i + 1));
 
-        // Starts a new episode. It is not needed right after init() but it doesn't cost much and the loop is nicer.
-        game.newEpisode();
+            // Starts a new episode. It is not needed right after init() but it doesn't cost much and the loop is nicer.
+            game.newEpisode();
 
-        while (!game.isEpisodeFinished()) {
+            while (!game.isEpisodeFinished()) {
 
-            // Get the state
-            GameState s = game.getState();
+                // Get the state
+                GameState s = game.getState();
 
-            // Make random action and get reward
-            double r = game.makeAction(actions.get(ran.nextInt(3)));
+                // Make random action and get reward
+                double r = game.makeAction(actions.get(ran.nextInt(3)));
 
-            // You can also get last reward by using this function
-            // double r = game.getLastReward();
+                // You can also get last reward by using this function
+                // double r = game.getLastReward();
+                System.out.println("State #" + s.number);
+                System.out.println("Game variables: " + s.gameVariables[0]);
+                System.out.println("Action reward: " + r);
+                System.out.println("=====================");
 
-            System.out.println("State #" + s.number);
-            System.out.println("Game variables: " + s.gameVariables[0]);
-            System.out.println("Action reward: " + r);
-            System.out.println("=====================");
+            }
 
-        }
-
-        System.out.println("Episode finished.");
-        System.out.println("Total reward: " + game.getTotalReward());
-        System.out.println("************************");
+            System.out.println("Episode finished.");
+            System.out.println("Total reward: " + game.getTotalReward());
+            System.out.println("************************");
 
         }
 
