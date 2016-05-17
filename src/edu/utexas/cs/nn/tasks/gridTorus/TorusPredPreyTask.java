@@ -110,7 +110,7 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 				overallAgentModeUsage = ArrayUtil.zipAdd(overallAgentModeUsage, thisAgentModeUsage);
 			}
 		}
-				
+		//testing git from my laptop
 		// Comment needed
 		Organism<T> organism = new NNTorusPredPreyAgent<T>(individual, !preyEvolve);
 		for (int j = 0; j < objectives.size(); j++) {
