@@ -20,43 +20,59 @@ public class TertisAfterStateGenerator {
 	 * @return arraylist of pairs (evaluated after-states and arraylist of actions)
 	 */
 	public static HashSet<Pair<TetrisState, ArrayList<Integer>>> evaluateAfterStates(TetrisState ts){ 
+		//System.out.println("[Entered evaluateAfterStates]");
+		
 	// Take in the current falling piece and figure out number or possible orientations (use TetrisPiece for this)
 		int possibleOrientations = 4; //sorry for the magic number <3 -Gab TODO:
-				
+		//System.out.println("Block is " + ts.currentBlockId);
 		HashSet<Pair<TetrisState, ArrayList<Integer>>> evaluated = new HashSet<Pair<TetrisState, ArrayList<Integer>>>(); //only ever as big as # of orientations times the width
 		
 		for(int i = 0; i < possibleOrientations; i++){ // Try each orientation
-			for(int j = -5; j < TetrisState.worldWidth; j++){ // Try each position across the width, also sorry for magic number, the -5 is to cover all our bases TODO:
+			System.out.println("[Entered Orientation Loop #" + i + "]");
+			for(int j = -2; j < TetrisState.worldWidth; j++){ // Try each position across the width, also sorry for magic number, the -5 is to cover all our bases TODO:
+				System.out.println("[Entered Position Loop #" + j + "]");
 				TetrisState copy = new TetrisState(ts);				
 				ArrayList<Integer> actionList = new ArrayList<Integer>(); // Logs the actions to reach the desired "falling" spot on the bottom
-								
-				while(copy.currentRotation != i){ // Rotate piece until it reach the desired orientation, and update/add accordingly
-					copy.take_action(TetrisState.CW);
-					copy.update();
-					actionList.add(TetrisState.CW); //add action to actionList
-				}
 				
-				int lastX = -100; // also sorry for this magic number TODO:
-				while(copy.currentX != j && copy.currentX != lastX){ // Move the piece to the left or right until it is in the desired spot
-					lastX = copy.currentX;
-					if(copy.currentX > j){ // The desired spot is to the left of the current placement
-						copy.take_action(TetrisState.LEFT); //move left
-						copy.update(); //update
-						actionList.add(TetrisState.LEFT); //add action to actionList
-					}else{ //(copy.currentX < j) The desired spot is to the right of the current placement
-						copy.take_action(TetrisState.RIGHT); //move right
-						copy.update(); //update
-						actionList.add(TetrisState.RIGHT); //add action to actionList
+				System.out.println("[Going to take actions for i = " + i + " and j = " + j + "]");
+				while(copy.blockMobile){ // while we can move 
+					if(copy.currentRotation != i){ // do we need to rotate?
+						int tempRotation = copy.currentRotation;
+						copy.take_action(TetrisState.CW);
+						if(copy.currentRotation != tempRotation){ // can we rotate?
+							copy.update();
+							actionList.add(TetrisState.CW); // add action to actionList
+						}
+					}
+					if(copy.currentX > j){ // do we need to move left?
+						int tempX = copy.currentX;
+						copy.take_action(TetrisState.LEFT);
+						if(copy.currentX != tempX){ // can we move left?
+							copy.update();
+							actionList.add(TetrisState.LEFT); // add action to actionList
+						}else{ // move back
+							copy.take_action(TetrisState.RIGHT); // move right
+							copy.update(); // update
+							actionList.add(TetrisState.RIGHT); // add action to actionList
+						}
+					}
+					else if(copy.currentX < j){ // do we need to move right?
+						int tempX = copy.currentX;
+						copy.take_action(TetrisState.RIGHT);
+						if(copy.currentX != tempX){ // can we move right?
+							copy.update();
+							actionList.add(TetrisState.RIGHT); // add action to actionList
+						}else{ // move back
+							copy.take_action(TetrisState.LEFT); // move left
+							copy.update(); // update
+							actionList.add(TetrisState.LEFT); // add action to actionList
+						}
+					}else{
+						copy.take_action(TetrisState.FALL); // move down all the way
+						copy.update(); // Update until it has reached the bottom
+						actionList.add(TetrisState.FALL); // add action to actionList
 					}
 				}
-				
-				if(copy.blockMobile){ // While the block as not yet hit something (uses "onSomething" from TetrisState)
-					copy.take_action(TetrisState.FALL); //move down all the way
-					copy.update(); // Update until it has reached the bottom
-					actionList.add(TetrisState.FALL); //add action to actionList
-				}
-				
-				//copy.spawn_block(); // Spawn a new block to clear the last piece and show just the board (extractor can blot this piece out for us)
 				copy.currentY = 0;
 				copy.update(); // Update this
 				
@@ -65,6 +81,8 @@ public class TertisAfterStateGenerator {
 		}
 		return evaluated;
 	}
+	
+	
 	
 	/**
 	 * This is a testing environment for this after state evaluator, using two different worldStates to check the long piece
