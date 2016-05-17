@@ -48,21 +48,51 @@ public class BertsekasTsitsiklisTetrisExtractorTests {
 		testView.update(testState);
 		MiscUtil.waitForReadStringAndEnterKeyPress();
 		
-		Observation o = testState.get_observation();
-		System.out.println("Observation created");
+		Observation o = testState.get_observation();		
+		double[] inputs = BTTE.extract(o); 
+		
+		double[] expected = new double[]{2, 3, 3, 1, 1, 3, 4, 4, 4, 4, 1, 0, 2, 0, 2, 1, 0, 0, 0, 4, 9, 1};
+		for(int i = 0; i < inputs.length ; i++){
+			assertEquals(inputs[i], expected[i], 0.0);
+		}
+		//System.out.println(Arrays.toString(inputs));
+	}
+	
+	@Test
+	public void array_outputs_blind() { // same as above test, but with a sample that was less evaluated beforehand
+		TetrisViewer testView = new TetrisViewer(); //make a TetrisViewer
+		TetrisState testState = new TetrisState(); // makes a Tetris state to test with
+		BertsekasTsitsiklisTetrisExtractor BTTE = new BertsekasTsitsiklisTetrisExtractor();
+		//line piece
+		testState.worldState[165] = 1;
+		testState.worldState[175] = 1;
+		testState.worldState[185] = 1;
+		testState.worldState[195] = 1;
+		//J piece 
+		testState.worldState[180] = 1;
+		testState.worldState[181] = 1;
+		testState.worldState[182] = 1;
+		testState.worldState[192] = 1;
+		//tri piece 1
+		testState.worldState[199] = 1;
+		testState.worldState[189] = 1;
+		testState.worldState[179] = 1;
+		testState.worldState[188] = 1;
+		//tri piece 2
+		testState.worldState[167] = 1;
+		testState.worldState[177] = 1;
+		testState.worldState[187] = 1;
+		testState.worldState[178] = 1;
+		testView.update(testState);
 		MiscUtil.waitForReadStringAndEnterKeyPress();
 		
+		Observation o = testState.get_observation();		
 		double[] inputs = BTTE.extract(o); 
-		int first_length = inputs.length - (testState.worldWidth - 1) - 3;
-		int second_length = inputs.length - 3;
-		for(int i = 0; i < first_length ; i++){
-			
+		
+		double[] expected = new double[]{2, 2, 2, 0, 0, 4, 0, 4, 3, 3, 0, 0, 2, 0, 4, 4, 4, 1, 0, 4, 4, 1};
+		for(int i = 0; i < inputs.length ; i++){
+			assertEquals(inputs[i], expected[i], 0.0);
 		}
-		for(int i = first_length; i < first_length ; i++){
-			
-		}
-		System.out.println(Arrays.toString(inputs));
-		MiscUtil.waitForReadStringAndEnterKeyPress();
-
+		//System.out.println(Arrays.toString(inputs));
 	}
 }
