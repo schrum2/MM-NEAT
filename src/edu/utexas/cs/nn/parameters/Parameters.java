@@ -11,7 +11,6 @@ import edu.utexas.cs.nn.experiment.LimitedSinglePopulationGenerationalEAExperime
 import edu.utexas.cs.nn.gridTorus.controllers.AggressivePredatorController;
 import edu.utexas.cs.nn.gridTorus.controllers.PreyFleeClosestPredatorController;
 import edu.utexas.cs.nn.networks.ActivationFunctions;
-import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.tasks.mspacman.data.JunctionNodes;
 import edu.utexas.cs.nn.tasks.mspacman.multitask.GhostsThenPillsModeSelector;
 import edu.utexas.cs.nn.tasks.mspacman.objectives.fitnessassignment.GhostsPillsMap;
@@ -36,7 +35,8 @@ import pacman.controllers.examples.StarterPacMan;
 import pacman.game.Constants;
 
 /**
- *
+ * Used for processing and containing command line parameters.
+ * 
  * @author Jacob Schrum
  */
 public class Parameters {
@@ -49,6 +49,11 @@ public class Parameters {
     public ParameterCollection<String> stringOptions;
     public ParameterCollection<Class> classOptions;
 
+    /**
+     * Initialize the static Parameters instance using command line
+     * parameters.
+     * @param args String array from command line 
+     */
     public static void initializeParameterCollections(String[] args) {
         String logFile = getLogFilename(args);
         parameters = new Parameters(args);
@@ -74,6 +79,12 @@ public class Parameters {
         CommonConstants.load();
     }
 
+    /**
+     * Load file name filled with parameters and use contents
+     * to fille all parameter collections in the standard
+     * static Parameters instance
+     * @param parameterFile file to load from
+     */
     public static void initializeParameterCollections(String parameterFile) {
         if (parameters == null) {
             parameters = new Parameters(new String[0]);
@@ -83,6 +94,11 @@ public class Parameters {
         CommonConstants.load();
     }
 
+    /**
+     * Load file name filled with parameters and use contents
+     * to fille all parameter collections.
+     * @param filename File name to load parameters from
+     */
     public void loadParameters(String filename) {
         try {
             Scanner file = new Scanner(new File(filename));
@@ -99,6 +115,10 @@ public class Parameters {
         }
     }
 
+    /**
+     * Initialize parameter collections of each needed type
+     * @param args  Original String array of command line arguments
+     */
     public Parameters(String[] args) {
     	booleanOptions = new ParameterCollection<Boolean>();
         classOptions = new ParameterCollection<Class>();
@@ -111,6 +131,10 @@ public class Parameters {
         parseArgs(args, true);
     }
 
+    /**
+     * Save parameters to the path and filename specified
+     * by the "base", "saveTo", "log", and "runNumber" parameters
+     */
     public void saveParameters() {
         String path = stringParameter("base") + "/" + stringParameter("saveTo") + integerParameter("runNumber");
         File dir = new File(path);
@@ -122,22 +146,28 @@ public class Parameters {
         this.saveParameters(path + "/" + name);
     }
 
+    /**
+     * Save parameters to specified filename
+     * @param filename Name of file to save parameters in
+     */
     public void saveParameters(String filename) {
-        try {
-            PrintStream stream = new PrintStream(new FileOutputStream(filename));
+        // PrintStream will be cleaned up as part of the try
+        try (PrintStream stream = new PrintStream(new FileOutputStream(filename))) {
             integerOptions.writeLabels(stream);
             longOptions.writeLabels(stream);
             booleanOptions.writeLabels(stream);
             doubleOptions.writeLabels(stream);
             stringOptions.writeLabels(stream);
             classOptions.writeLabels(stream);
-            stream.close();
         } catch (FileNotFoundException ex) {
             System.out.println("Could not save parameters");
             System.exit(1);
         }
     }
 
+    /**
+     * Define all parameter labels, default values, and help text
+     */
     public final void fillDefaults() {
         //Integer parameters
         integerOptions.add("junctionsToSense", 1, "Number of junctions to which distance should be sensed");
@@ -548,30 +578,65 @@ public class Parameters {
         classOptions.add("directionalSafetyFunction", null, "Function that decides if CheckEach agent bothers to consider a direction");
     }
 
+    /**
+     * Get boolean parameter with given label
+     * @param label Parameter label
+     * @return corresponding boolean parameter label
+     */
     public boolean booleanParameter(String label) {
         return booleanOptions.get(label);
     }
 
+    /**
+     * Get int parameter with given label
+     * @param label Parameter label
+     * @return corresponding int parameter label
+     */
     public int integerParameter(String label) {
         return integerOptions.get(label);
     }
 
+    /**
+     * Get long parameter with given label
+     * @param label Parameter label
+     * @return corresponding long parameter label
+     */
     public long longParameter(String label) {
         return longOptions.get(label);
     }
 
+    /**
+     * Get double parameter with given label
+     * @param label Parameter label
+     * @return corresponding double parameter label
+     */
     public double doubleParameter(String label) {
         return doubleOptions.get(label);
     }
 
+    /**
+     * Get String parameter with given label
+     * @param label Parameter label
+     * @return corresponding String parameter label
+     */
     public String stringParameter(String label) {
         return stringOptions.get(label);
     }
 
+    /**
+     * Get Class parameter with given label
+     * @param label Parameter label
+     * @return corresponding Class parameter value
+     */
     public Class classParameter(String label) {
         return classOptions.get(label);
     }
 
+    /**
+     * Parse all command line parameters of each type
+     * @param args The original String parameters
+     * @param terminateOnUnrecognized Whether to exit program on invalid parameter
+     */
     private void parseArgs(String[] args, boolean terminateOnUnrecognized) {
         if (args.length > 0 && args[0].equals("help")) {
             System.out.println("Paremeter help:");
@@ -580,9 +645,9 @@ public class Parameters {
         StringTokenizer st;
         String entity = "";
         String value = "";
-        for (int i = 0; i < args.length; i++) {
+        for (String arg : args) {
             try {
-                st = new StringTokenizer(args[i], ":");
+                st = new StringTokenizer(arg, ":");
                 entity = st.nextToken();
                 if (st.hasMoreTokens()) {
                     value = st.nextToken();
@@ -590,10 +655,9 @@ public class Parameters {
                     value = "";
                 }
             } catch (Exception e) {
-                System.out.println("Problem parsing \"" + args[i] + "\"");
+                System.out.println("Problem parsing \"" + arg + "\"");
                 usage(1);
             }
-
             if (integerOptions.hasLabel(entity)) {
                 integerOptions.change(entity, Integer.parseInt(value));
                 System.out.println("Integer value \"" + entity + "\" set to \"" + value + "\"");
@@ -635,12 +699,12 @@ public class Parameters {
         StringTokenizer st;
         String entity = "";
         String value = "";
-        for (int i = 0; i < args.length; i++) {
+        for (String arg : args) {
             try {
-                st = new StringTokenizer(args[i], ":");
+                st = new StringTokenizer(arg, ":");
                 entity = st.nextToken();
                 value = st.nextToken();
-            } catch (Exception e) {
+            }catch (Exception e) {
                 e.printStackTrace();
                 System.out.println("Problem parsing parameter tokens");
                 System.exit(1);
