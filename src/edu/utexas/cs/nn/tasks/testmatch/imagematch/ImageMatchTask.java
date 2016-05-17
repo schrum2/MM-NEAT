@@ -188,7 +188,7 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 				ILocated2D distance = new Tuple2D(input[0], input[1]);
 				input[2] = distance.distance(new Tuple2D(0,0)) * Math.sqrt(2);
 				hsb = n.process(input);
-				if(hsb[hIndex] < 0 || hsb[hIndex] > 1|| hsb[sIndex] < 0 || hsb[sIndex] > 1 || hsb[bIndex] < 0 ||hsb[bIndex] > 1){
+				if(hsb[hIndex] < 0 && hsb[hIndex] > 1|| hsb[sIndex] < 0 && hsb[sIndex] > 1 || hsb[bIndex] < 0 && hsb[bIndex] > 1){
 					System.out.println("failed check");
 					break;
 				}else{
