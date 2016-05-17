@@ -93,31 +93,28 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 		}
 		double[] fitnesses = new double[objectives.size()];
 
-		// Comment needed
-		int[] overallAgentModeUsage = null;
-		if(preyEvolve) {
-			int numModes = ((NNTorusPredPreyController) preyAgents[0]).nn.numModules();
-			overallAgentModeUsage = new int[numModes];  
-			for(int i = 0; i < preyAgents.length; i++) {
-				int[] thisAgentModeUsage = ((NNTorusPredPreyController) preyAgents[i]).nn.getModeUsage();
-				overallAgentModeUsage = ArrayUtil.zipAdd(overallAgentModeUsage, thisAgentModeUsage);
-			}
-		} else {
-			int numModes = ((NNTorusPredPreyController) predAgents[0]).nn.numModules();
-			overallAgentModeUsage = new int[numModes];  
-			for(int i = 0; i < predAgents.length; i++) {
-				int[] thisAgentModeUsage = ((NNTorusPredPreyController) predAgents[i]).nn.getModeUsage();
-				overallAgentModeUsage = ArrayUtil.zipAdd(overallAgentModeUsage, thisAgentModeUsage);
-			}
+		//---------Need to save module usage because it will be lost---------
+		//store the list of the agents being evolved
+		TorusPredPreyController[] evolvedAgents = preyEvolve ? preyAgents : predAgents;
+		//gets the controller of the evolved agent(s), gets its network, and stores the number of modules for that network
+		int numModes = ((NNTorusPredPreyController) evolvedAgents[0]).nn.numModules();
+		//this will store the number of times each module is used by each agent 
+		int[] overallAgentModeUsage = new int[numModes];  
+		for(TorusPredPreyController agent : evolvedAgents){
+			//get the list of all modules used by this agent and store how many times that module is used in that spot in the array
+			int[] thisAgentModeUsage = ((NNTorusPredPreyController) agent).nn.getModeUsage();
+			//combine this agent's module usage with the module usage of all agents
+			overallAgentModeUsage = ArrayUtil.zipAdd(overallAgentModeUsage, thisAgentModeUsage);
 		}
-		//testing git from my laptop
-		// Comment needed
+
+		//Fitness function requires an organism, so make this genotype into an organism
+		//this erases information stored about module usage, so was saved in order to be reset after the creation of this organism
 		Organism<T> organism = new NNTorusPredPreyAgent<T>(individual, !preyEvolve);
 		for (int j = 0; j < objectives.size(); j++) {
 			fitnesses[j] = objectives.get(j).score(game, organism);
 		}
-		
-		// Comment needed
+
+		//The above code erased module usage, so this sets the module usage back to what it was 
 		((NetworkGenotype<T>) individual).setModuleUsage(overallAgentModeUsage);
 
 		double[] otherStats = new double[0];

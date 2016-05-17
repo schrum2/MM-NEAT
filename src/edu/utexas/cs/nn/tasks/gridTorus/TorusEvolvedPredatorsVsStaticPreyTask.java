@@ -20,6 +20,7 @@ public class TorusEvolvedPredatorsVsStaticPreyTask<T extends Network> extends To
 	/**
 	 * constructor for a task where the predators are evolved while the prey are kept static
 	 * sends false to the parent constructor, indicating that the predator is the agent evolving
+	 * Includes all of the fitness scores that the user wants from the command line parameters
 	 */
 	public TorusEvolvedPredatorsVsStaticPreyTask() {
 		super(false); 
