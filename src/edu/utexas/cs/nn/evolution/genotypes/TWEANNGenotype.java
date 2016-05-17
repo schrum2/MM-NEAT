@@ -493,11 +493,13 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
             chance++;
         } while (CommonConstants.mutationChancePerMode && chance < this.numModules);
         if (CommonConstants.polynomialWeightMutation) {
-            new PolynomialWeightMutation().go(this, sb);
+        	new PolynomialWeightMutation().go(this, sb);
         } else if (CommonConstants.perLinkMutateRate > 0) {
-            new AllWeightMutation().go(this, sb);
-        } else {
-            new WeightPurturbationMutation().go(this, sb);
+        	new AllWeightMutation().go(this, sb);
+        } else if(Parameters.parameters.booleanOptions.get("allowMultipleFunctions")) {
+        	new ActivationFunctionMutation().go(this, sb);
+        }else {
+        	new WeightPurturbationMutation().go(this, sb);
         }
 
         EvolutionaryHistory.logMutationData(sb.toString());
