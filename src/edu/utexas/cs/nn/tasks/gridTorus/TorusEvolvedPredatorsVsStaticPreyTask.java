@@ -4,7 +4,8 @@ import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.gridTorus.controllers.TorusPredPreyController;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.tasks.gridTorus.objectives.PredatorMinimizeGameTime;
+import edu.utexas.cs.nn.tasks.gridTorus.objectives.PredatorEatEachPreyQuicklyObjective;
+import edu.utexas.cs.nn.tasks.gridTorus.objectives.PredatorMinimizeGameTimeObjective;
 import edu.utexas.cs.nn.util.ClassCreation;
 
 /**
@@ -20,11 +21,14 @@ public class TorusEvolvedPredatorsVsStaticPreyTask<T extends Network> extends To
 	/**
 	 * constructor for a task where the predators are evolved while the prey are kept static
 	 * sends false to the parent constructor, indicating that the predator is the agent evolving
+	 * Includes all of the fitness scores that the user wants from the command line parameters
 	 */
 	public TorusEvolvedPredatorsVsStaticPreyTask() {
 		super(false); 
 		if(Parameters.parameters.booleanParameter("PredatorMinimizeTotalTime"))
-			addObjective(new PredatorMinimizeGameTime<T>(), objectives);
+			addObjective(new PredatorMinimizeGameTimeObjective<T>(), objectives);
+		if(Parameters.parameters.booleanParameter("PredsEatEachPreyQuickly"))
+			addObjective(new PredatorEatEachPreyQuicklyObjective<T>(), objectives);
 	}
 
 	@Override

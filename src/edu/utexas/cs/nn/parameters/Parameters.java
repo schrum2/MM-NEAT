@@ -251,7 +251,8 @@ public class Parameters {
         //Boolean parameters
         booleanOptions.add("logMutationAndLineage", false, "Whether or not to log information about the mutations and lineage");
         booleanOptions.add("logPerformance", false, "Whether or not to log performance information in a performance log");
-        booleanOptions.add("PredatorMinimizeTotalTime", true, "Turn on to encourage predators to minimize the total game time as a fitness function");
+        booleanOptions.add("PredsEatEachPreyQuickly", true, "Turn on to encourage predators to eat prey as quickly as possible");
+        booleanOptions.add("PredatorMinimizeTotalTime", false, "Turn on to encourage predators to minimize the total game time as a fitness function");
         booleanOptions.add("PreyMaximizeTotalTime", true, "Turn on to encourage prey to maximize the total game time as a fitness function");
         booleanOptions.add("torusSenseTeammates", false, "If turned on, predators can sense other predators and preys can sense other preys");
         booleanOptions.add("allowDoNothingActionForPredators", false, "If turned on, the predators will have the option to do nothing as their action");

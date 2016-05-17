@@ -1,13 +1,16 @@
 package edu.utexas.cs.nn.tasks.vizdoom;
 
+import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.networks.NetworkTask;
+import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.tasks.NoisyLonerTask;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.random.RandomNumbers;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import vizdoom.Button;
 import vizdoom.DoomGame;
@@ -23,22 +26,27 @@ import vizdoom.SpecifyDLL;
  * @author Jacob Schrum
  * @param <T> Phenotype being evolved
  */
-public class VizDoomTask<T extends Network> extends NoisyLonerTask<T> implements NetworkTask {
+public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T> implements NetworkTask {
 
     public static String SCENARIO_WAD = "basic.wad";
     public static String DOOM_MAP = "map01";
+    public static int DOOM_EPISODE_LENGTH = 200;
 
     public DoomGame game;
     public List<int[]> actions;
-
+    public List<String> actionLabels;
+    
     public VizDoomTask() {
         // These should not be here ... put in an init call?
         game = doomInit();
-        actions = setDoomActions();
+        actionLabels = new ArrayList<String>();
+        actions = new ArrayList<int[]>(); 
+        setDoomActions();
         setDoomStateVariables();
         setDoomMiscSettings();
         // Initialize the game. Further configuration won't take any effect from now on.
         game.init();
+        MMNEAT.registerFitnessFunction("DoomReward");
     }
 
     public DoomGame doomInit() {
@@ -70,31 +78,18 @@ public class VizDoomTask<T extends Network> extends NoisyLonerTask<T> implements
         return game;
     }
 
-    public List<int[]> setDoomActions() {
-        // Adds buttons that will be allowed.
-        game.addAvailableButton(Button.MOVE_LEFT);
-        game.addAvailableButton(Button.MOVE_RIGHT);
-        game.addAvailableButton(Button.ATTACK);
-
-        // Define some actions. Each list entry corresponds to declared buttons:
-        // MOVE_LEFT, MOVE_RIGHT, ATTACK
-        // more combinations are naturally possible but only 3 are included for transparency when watching.
-        List<int[]> actions = new ArrayList<int[]>();
-        actions.add(new int[]{1, 0, 1});
-        actions.add(new int[]{0, 1, 1});
-        actions.add(new int[]{0, 0, 1});
-
-        return actions;
+    public final void addAction(int[] buttonPresses, String label) {
+    	actionLabels.add(label);
+    	actions.add(buttonPresses);
     }
+    
+    public abstract void setDoomActions();
 
-    public void setDoomStateVariables() {
-        // Adds game variables that will be included in state.
-        game.addAvailableGameVariable(GameVariable.AMMO2);
-    }
+    public abstract void setDoomStateVariables();
 
     public void setDoomMiscSettings() {
         // Causes episodes to finish after 200 tics (actions)
-        game.setEpisodeTimeout(200);
+        game.setEpisodeTimeout(DOOM_EPISODE_LENGTH);
 
         // Makes episodes start after 10 tics (~after raising the weapon)
         //game.setEpisodeStartTime(10);
@@ -108,7 +103,8 @@ public class VizDoomTask<T extends Network> extends NoisyLonerTask<T> implements
 
     @Override
     public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {
-        game.newEpisode();
+    	// Need to remove rewards from previous episodes I think
+    	game.newEpisode();
         while (!game.isEpisodeFinished()) {
             // Get the state
             GameState s = game.getState();
@@ -118,7 +114,7 @@ public class VizDoomTask<T extends Network> extends NoisyLonerTask<T> implements
             // You can also get last reward by using this function
             // double r = game.getLastReward();
             System.out.println("State #" + s.number);
-            System.out.println("Game variables: " + s.gameVariables[0]);
+            System.out.println("Game variables: " + Arrays.toString(s.gameVariables));
             System.out.println("Action reward: " + r);
             System.out.println("=====================");
 
@@ -126,6 +122,10 @@ public class VizDoomTask<T extends Network> extends NoisyLonerTask<T> implements
         return new Pair<double[], double[]>(new double[]{game.getTotalReward()}, new double[]{});
     }
 
+    public void cleanup() {
+    	game.close();
+    }
+    
     @Override
     public int numObjectives() {
         return 1;
@@ -143,8 +143,8 @@ public class VizDoomTask<T extends Network> extends NoisyLonerTask<T> implements
 
     @Override
     public String[] outputLabels() {
-        // Derive from actions
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        // Derive from actionLabels
+        return actionLabels.toArray(new String[actionLabels.size()]);
     }
 
 }
