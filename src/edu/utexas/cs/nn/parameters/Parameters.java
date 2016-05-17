@@ -249,6 +249,7 @@ public class Parameters {
         longOptions.add("lastInnovation", 0l, "Highest innovation number used so far");
         longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
         //Boolean parameters
+        booleanOptions.add("logTWEANNData", false, "Whether or not to log TWEANN data");
         booleanOptions.add("logMutationAndLineage", false, "Whether or not to log information about the mutations and lineage");
         booleanOptions.add("logPerformance", false, "Whether or not to log performance information in a performance log");
         booleanOptions.add("PredsEatEachPreyQuickly", true, "Turn on to encourage predators to eat prey as quickly as possible");
