@@ -218,7 +218,7 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 		MMNEAT.loadClasses();
 
 		final int NUM_MUTATIONS = 200;
-		final int SIZE = 1000;
+		final int SIZE = 500;
 		int hIndex = 0;
 		int sIndex = 1;
 		int bIndex = 2;
