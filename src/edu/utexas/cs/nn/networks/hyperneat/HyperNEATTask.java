@@ -1,4 +1,6 @@
-package edu.utexas.cs.nn.networks;
+package edu.utexas.cs.nn.networks.hyperneat;
+
+import edu.utexas.cs.nn.networks.NetworkTask;
 
 /**
  * A task that HyperNEAT can be applied to.
@@ -15,6 +17,8 @@ public interface HyperNEATTask extends NetworkTask {
 	// Method that returns a list of information about
 	// the substrate layers contained in the network
 	//public List<????> getSubstrateInformation();
+	//Substrate defined as one layer and ^^ method returns a list of the different
+	//substrates in the whole network
 	
 	//
 }
