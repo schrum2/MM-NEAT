@@ -20,7 +20,7 @@ public class MMP extends ModuleMutation {
 
     @Override
     public void addModule(TWEANNGenotype genotype) {
-        genotype.modeMutation(false, 1);
+        genotype.moduleMutation(false, 1);
     }
 
     public static void main(String[] args) {

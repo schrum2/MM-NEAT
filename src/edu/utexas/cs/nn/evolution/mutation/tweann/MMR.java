@@ -24,7 +24,7 @@ public class MMR extends ModuleMutation {
 
     @Override
     public void addModule(TWEANNGenotype genotype) {
-        int linksAdded = genotype.modeMutation(true, CommonConstants.fs ? CommonConstants.fsLinksPerOut : genotype.numIn);
+        int linksAdded = genotype.moduleMutation(true, CommonConstants.fs ? CommonConstants.fsLinksPerOut : genotype.numIn);
         int[] subs = new int[linksAdded];
         for (int i = 0; i < linksAdded; i++) {
             subs[i] = i + 1;

@@ -294,7 +294,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
         //System.out.println("fresh modeUsage from constructor");
 
         /**
-         * In a new network, each Multitask mode has one network module. This is
+         * In a new network, each Multitask module has one network module. This is
          * really only needed if hierarchicalMultitask is true. This information
          * will be incorrect if the network was created by crossover.
          */
@@ -548,7 +548,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
      * return the number of links actually added
      * @return Number of new links created to connect to new module
      */
-    public int modeMutation(boolean randomSources, int numLinks) {
+    public int moduleMutation(boolean randomSources, int numLinks) {
         assert !(!randomSources && numLinks > 1) : "MM(P) can only add one link per module!";
 
         int ftype = CommonConstants.mmpActivationId ? ActivationFunctions.FTYPE_ID : ActivationFunctions.newNodeFunction();
