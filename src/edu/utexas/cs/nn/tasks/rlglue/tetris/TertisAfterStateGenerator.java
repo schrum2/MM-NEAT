@@ -6,6 +6,8 @@
 package edu.utexas.cs.nn.tasks.rlglue.tetris;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.rlcommunity.environments.tetris.TetrisState;
 
@@ -19,20 +21,20 @@ public class TertisAfterStateGenerator {
 	 * @param ts
 	 * @return arraylist of pairs (evaluated after-states and arraylist of actions)
 	 */
-	public static HashSet<Pair<TetrisState, ArrayList<Integer>>> evaluateAfterStates(TetrisState ts){ 
+	public static HashSet<TetrisStateActionPair> generateAfterStates(TetrisState ts){ 
 		//System.out.println("[Entered evaluateAfterStates]");
 		
 	// Take in the current falling piece and figure out number or possible orientations (use TetrisPiece for this)
 		int possibleOrientations = TetrisState.TETRIS_STATE_NUMBER_POSSIBLE_BLOCKS_ORIENTATIONS; 
 		//System.out.println("Block is " + ts.currentBlockId);
-		HashSet<Pair<TetrisState, ArrayList<Integer>>> evaluated = new HashSet<Pair<TetrisState, ArrayList<Integer>>>(); //only ever as big as # of orientations times the width
+		HashSet<TetrisStateActionPair> evaluated = new HashSet<TetrisStateActionPair>(); //only ever as big as # of orientations times the width
 		
 		for(int i = 0; i < possibleOrientations; i++){ // Try each orientation
 			//System.out.println("[Entered Orientation Loop #" + i + "]");
 			for(int j = -2; j < TetrisState.worldWidth; j++){ // Try each position across the width, and the -2 is still a magic number, but this is a general idea *fix later -Gab
 				//System.out.println("[Entered Position Loop #" + j + "]");
 				TetrisState copy = new TetrisState(ts);				
-				ArrayList<Integer> actionList = new ArrayList<Integer>(); // Logs the actions to reach the desired "falling" spot on the bottom
+				List<Integer> actionList = new LinkedList<Integer>(); // Logs the actions to reach the desired "falling" spot on the bottom
 				
 				//System.out.println("[Going to take actions for i = " + i + " and j = " + j + "]");
 				while(copy.blockMobile){ // while we can move 
@@ -76,7 +78,7 @@ public class TertisAfterStateGenerator {
 				copy.currentY = 0;
 				copy.update(); // Update this
 				
-				evaluated.add(new Pair<TetrisState, ArrayList<Integer>>(copy, actionList)); // Adds the finished state and actions pair to the final arraylist				
+				evaluated.add(new TetrisStateActionPair(copy, actionList)); // Adds the finished state and actions pair to the final arraylist				
 			}
 		}
 		return evaluated;
@@ -142,8 +144,8 @@ public class TertisAfterStateGenerator {
 		testView.update(testState);
 		
 		MiscUtil.waitForReadStringAndEnterKeyPress();
-		HashSet<Pair<TetrisState, ArrayList<Integer>>> holder = evaluateAfterStates(testState);
-		for(Pair<TetrisState, ArrayList<Integer>> p: holder){
+		HashSet<TetrisStateActionPair> holder = generateAfterStates(testState);
+		for(Pair<TetrisState, List<Integer>> p: holder){
 			testView.update(p.t1);
 			//System.out.println("Y is " + p.t1.currentY + ", X is " + p.t1.currentX + ", and rotation is " + p.t1.currentRotation);
 			//System.out.println(p.t2);
