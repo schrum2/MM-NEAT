@@ -45,6 +45,7 @@ import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.VariableDirectionBloc
 import edu.utexas.cs.nn.tasks.mspacman.sensors.ghosts.GhostControllerInputOutputMediator;
 import edu.utexas.cs.nn.tasks.mspacman.sensors.ghosts.mediators.GhostsCheckEachDirectionMediator;
 import edu.utexas.cs.nn.tasks.rlglue.RLGlueEnvironment;
+import edu.utexas.cs.nn.tasks.rlglue.RLGlueTask;
 import edu.utexas.cs.nn.tasks.rlglue.featureextractors.FeatureExtractor;
 import edu.utexas.cs.nn.tasks.testmatch.MatchDataTask;
 import edu.utexas.cs.nn.tasks.ut2004.UT2004Task;
@@ -143,7 +144,6 @@ public class MMNEAT {
             System.out.println("Define RL-Glue Task Spec");
             tso = rlGlueEnvironment.makeTaskSpec();
             rlGlueExtractor = (FeatureExtractor) ClassCreation.createObject("rlGlueExtractor");
-            setNNInputParameters(rlGlueExtractor.numFeatures(), tso.getDiscreteActionRange(0).getMax() - tso.getDiscreteActionRange(0).getMin() + 1);
         }
     }
 
@@ -594,6 +594,9 @@ public class MMNEAT {
                 } else if (task instanceof CooperativeCheckEachMultitaskSelectorMsPacManTask) {
                     setupCooperativeCoevolutionCheckEachMultitaskPreferenceNetForMsPacman();
                 }
+            } else if (task instanceof RLGlueTask) { 
+            	RLGlueTask rlTask = (RLGlueTask) task;
+                setNNInputParameters(rlGlueExtractor.numFeatures(), rlTask.agent.getNumberOutputs());
             } else if (task instanceof Breve2DTask) {
                 System.out.println("Setup Breve 2D Task");
                 Breve2DDynamics dynamics = (Breve2DDynamics) ClassCreation.createObject("breveDynamics");
@@ -610,8 +613,14 @@ public class MMNEAT {
                 System.out.println("Setup Match Data Task");
                 MatchDataTask t = (MatchDataTask) task;
                 setNNInputParameters(t.numInputs(), t.numOutputs());
-            } else {//this else statement should only happen for JUnit testing cases
+            } else if(task == null) {
+            	//this else statement should only happen for JUnit testing cases.
+            	//Some default network setup is needed.
             	setNNInputParameters(5, 3);
+            } else {
+            	System.out.println("A valid task must be specified!");
+            	System.out.println(task);
+            	System.exit(1);
             }
             setupMetaHeuristics();
             // An EA is always needed. Currently only GenerationalEA classes are supported

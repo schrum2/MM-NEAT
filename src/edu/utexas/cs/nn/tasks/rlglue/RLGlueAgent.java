@@ -26,6 +26,10 @@ public class RLGlueAgent<T extends Network> extends Organism<T> implements Agent
     	super(null);
     }
     
+    public int getNumberOutputs() {
+    	return TSO.getDiscreteActionRange(0).getMax() - TSO.getDiscreteActionRange(0).getMin() + 1;
+    }
+    
     /**
      * This "replace" is used to test genotypes in the task methods
      */

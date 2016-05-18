@@ -53,11 +53,11 @@ public class TetrisAfterStateAgent<T extends Network> extends RLGlueAgent<T>{
     	for(Pair<TetrisState, ArrayList<Integer>> i : tetrisStateHolder){
     		
     		//	outputs = constultPolicy(features) REMEMBER outputs is an array of 1
-    		double[] inputs = MMNEAT.rlGlueExtractor.extract(i.t1.get_observation()); // TODO: Remove this? -Gab
+    		double[] inputs = MMNEAT.rlGlueExtractor.extract(i.t1.get_observation()); 
             
     		double[] inputsScaled = scaleInputs(inputs);
     		
-    		outputs = this.consultPolicy(inputsScaled); //TODO: check and fix this too -Gab
+    		outputs = this.consultPolicy(inputsScaled); 
 
     		//	array(list?).add(outputs[0], first action*) 
             Pair<Double, Integer> tempPair = new Pair<Double, Integer>(outputs[0], i.t2.get(0));
@@ -77,6 +77,9 @@ public class TetrisAfterStateAgent<T extends Network> extends RLGlueAgent<T>{
     	return action;
     }
 
+    public int getNumberOutputs() {
+    	return 1; // Utility of evaluated state
+    }
    
 	public static double[] scaleInputs(double[] inputs) {
 		double[] next = new double[inputs.length];

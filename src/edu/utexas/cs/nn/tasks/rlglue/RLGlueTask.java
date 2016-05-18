@@ -45,7 +45,7 @@ public final class RLGlueTask<T extends Network> extends NoisyLonerTask<T> imple
     protected static AgentLoader agentLoader = null;
     protected static EnvironmentLoader environmentLoader = null;
     protected static RLGlueEnvironment environment;
-    protected static RLGlueAgent agent;
+    public static RLGlueAgent agent;
     protected int[] rlNumSteps;
     protected double[] rlReturn;
     //cutoff
