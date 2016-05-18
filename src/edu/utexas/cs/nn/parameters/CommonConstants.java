@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.utexas.cs.nn.parameters;
 
 /**
@@ -89,6 +85,7 @@ public class CommonConstants {
     // double
     public static double campPercentOfTrials;
     public static double distanceForNewMode;
+    public static double netChangeActivationRate;
     public static double preferenceNeuronDecay;
     public static double preferenceNeuronFatigueUnit;
     public static double percentDeathCampsToSave;
@@ -181,6 +178,7 @@ public class CommonConstants {
         // double 
         campPercentOfTrials = Parameters.parameters.doubleParameter("campPercentOfTrials");
         distanceForNewMode = Parameters.parameters.doubleParameter("distanceForNewMode");
+        netChangeActivationRate = Parameters.parameters.doubleParameter("netChangeActivationRate");
         preferenceNeuronDecay = Parameters.parameters.doubleParameter("preferenceNeuronDecay");
         preferenceNeuronFatigueUnit = Parameters.parameters.doubleParameter("preferenceNeuronFatigueUnit");
         percentDeathCampsToSave = Parameters.parameters.doubleParameter("percentDeathCampsToSave");

@@ -9,6 +9,7 @@ import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.networks.ActivationFunctions;
 import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.parameters.CommonConstants;
+import static edu.utexas.cs.nn.parameters.CommonConstants.netChangeActivationRate;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.util.CartesianGeometricUtilities;
 import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
@@ -392,8 +393,8 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
      * num tasks. For module mutation, # of policy neurons per module)
      * @param featureSelective = whether initial network is sparsely connected
      * @param ftype = activation function to use on neurons
-     * @param numModules = number of MULTITASK modules (does not apply for multiple
-     * modules with preference neurons)
+     * @param numModules = number of MULTITASK modules (does not apply for
+     * multiple modules with preference neurons)
      * @param archetypeIndex = which archetype to reference for crossover
      */
     public TWEANNGenotype(int numIn, int numOut, boolean featureSelective, int ftype, int numModules, int archetypeIndex) {
@@ -422,8 +423,8 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
     }
 
     /**
-     * Given two modules in the network, use the GeneralNetworkCharacterization to
-     * determine the distance between their behaviors.
+     * Given two modules in the network, use the GeneralNetworkCharacterization
+     * to determine the distance between their behaviors.
      *
      * @param m1 module index 1
      * @param m2 module index 2
@@ -465,7 +466,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
         new DeleteLinkMutation().go(this, sb);
         new DeleteModeMutation().go(this, sb);
         // Forms of mode mutation
-        if ( this.numModules < CommonConstants.maxModes
+        if (this.numModules < CommonConstants.maxModes
                 // Make sure modes are somewhat evenly used
                 && (CommonConstants.ensembleModeMutation
                 || moduleUsage.length != numModules// possible if mode usage is actually selector's subnet usage
@@ -493,13 +494,13 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
             chance++;
         } while (CommonConstants.mutationChancePerMode && chance < this.numModules);
         if (CommonConstants.polynomialWeightMutation) {
-        	new PolynomialWeightMutation().go(this, sb);
+            new PolynomialWeightMutation().go(this, sb);
         } else if (CommonConstants.perLinkMutateRate > 0) {
-        	new AllWeightMutation().go(this, sb);
-        } else if(Parameters.parameters.booleanOptions.get("allowMultipleFunctions")) {
-        	new ActivationFunctionMutation().go(this, sb);
-        }else {
-        	new WeightPurturbationMutation().go(this, sb);
+            new AllWeightMutation().go(this, sb);
+        } else if (CommonConstants.netChangeActivationRate > 0) {
+            new ActivationFunctionMutation().go(this, sb);
+        } else {
+            new WeightPurturbationMutation().go(this, sb);
         }
 
         EvolutionaryHistory.logMutationData(sb.toString());
@@ -762,7 +763,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
     public void setModuleUsage(int[] usage) {
         moduleUsage = usage;
     }
-    
+
     @Override
     public int[] getModuleUsage() {
         return moduleUsage;
@@ -1046,7 +1047,9 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
     }
 
     /**
-     * Return the index of a given innovation number within the list of node genes
+     * Return the index of a given innovation number within the list of node
+     * genes
+     *
      * @param innovation Innovation number to search for
      * @return Index in list where gene is located
      */
@@ -1055,7 +1058,9 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
     }
 
     /**
-     * Return the index of a given innovation number within the list of link genes
+     * Return the index of a given innovation number within the list of link
+     * genes
+     *
      * @param innovation Innovation number to search for
      * @return Index in list where gene is located
      */
@@ -1087,7 +1092,8 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
      * really work properly, but it should serve as a good starting point.
      *
      * @param first module associations of the network this one is replacing.
-     * @param second module associations of the network this one was crossed with.
+     * @param second module associations of the network this one was crossed
+     * with.
      */
     public void crossModuleAssociations(int[] first, int[] second) {
         moduleAssociations = new int[numModules];
@@ -1211,7 +1217,9 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 
     /**
      * A generic toString method
-     * @return String with ID, number of modules, and list of node and link genes
+     *
+     * @return String with ID, number of modules, and list of node and link
+     * genes
      */
     @Override
     public String toString() {
@@ -1504,7 +1512,8 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 
     /**
      * Freeze whole network so components cannot be altered by mutation. Should
-     * only be used before adding a new module. The new module will be alterable.
+     * only be used before adding a new module. The new module will be
+     * alterable.
      */
     public void freezeNetwork() {
         for (NodeGene ng : nodes) {
