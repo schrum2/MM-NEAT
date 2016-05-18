@@ -42,7 +42,8 @@ public class NewLinkMutationTest {
 	public void testLinkMutation() {
 		tg2 =(TWEANNGenotype) tg1.copy();
 		double weight = 0.5;
-		tg1.spliceNode(0, tg1.biggestInnovation()+ 1, tg1.biggestInnovation()+ 1, tg1.nodes.get(0).innovation, weight, weight, tg1.links.get(tg1.links.size()), tg1.links.get(tg1.links.size()));
+		System.out.print(tg1.nodes.size());
+		tg1.spliceNode(0, tg1.biggestInnovation()+ 1, tg1.biggestInnovation()+ 1, tg1.nodes.get(0).innovation, weight, weight, tg1.links.get(tg1.links.size()-1).innovation, tg1.links.get(tg1.links.size()-1).innovation);
 		
 //		System.out.println(tg1.toString());
 //		System.out.println(tg2.toString());
