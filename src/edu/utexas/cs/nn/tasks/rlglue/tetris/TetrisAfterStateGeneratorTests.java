@@ -284,31 +284,31 @@ public class TetrisAfterStateGeneratorTests {
 		//these are testing each shape in the testing environment
 		/*
 		testView.update(testState);
-		System.out.println("For Piece " + testState.currentBlockId + ", x = " + testState.currentX + ", y = " + testState.currentY + ", and the rotation is " + testState.currentRotation);
+		//System.out.println("For Piece " + testState.currentBlockId + ", x = " + testState.currentX + ", y = " + testState.currentY + ", and the rotation is " + testState.currentRotation);
 		MiscUtil.waitForReadStringAndEnterKeyPress(); 
 		testState.currentBlockId = 1;
 		testView.update(testState);
-		System.out.println("For Piece " + testState.currentBlockId + ", x = " + testState.currentX + ", y = " + testState.currentY + ", and the rotation is " + testState.currentRotation);
+		//System.out.println("For Piece " + testState.currentBlockId + ", x = " + testState.currentX + ", y = " + testState.currentY + ", and the rotation is " + testState.currentRotation);
 		MiscUtil.waitForReadStringAndEnterKeyPress(); 
 		testState.currentBlockId = 2;
 		testView.update(testState);
-		System.out.println("For Piece " + testState.currentBlockId + ", x = " + testState.currentX + ", y = " + testState.currentY + ", and the rotation is " + testState.currentRotation);
+		//System.out.println("For Piece " + testState.currentBlockId + ", x = " + testState.currentX + ", y = " + testState.currentY + ", and the rotation is " + testState.currentRotation);
 		MiscUtil.waitForReadStringAndEnterKeyPress(); 
 		testState.currentBlockId = 3;
 		testView.update(testState);
-		System.out.println("For Piece " + testState.currentBlockId + ", x = " + testState.currentX + ", y = " + testState.currentY + ", and the rotation is " + testState.currentRotation);
+		//System.out.println("For Piece " + testState.currentBlockId + ", x = " + testState.currentX + ", y = " + testState.currentY + ", and the rotation is " + testState.currentRotation);
 		MiscUtil.waitForReadStringAndEnterKeyPress(); 
 		testState.currentBlockId = 4;
 		testView.update(testState);
-		System.out.println("For Piece " + testState.currentBlockId + ", x = " + testState.currentX + ", y = " + testState.currentY + ", and the rotation is " + testState.currentRotation);
+		//System.out.println("For Piece " + testState.currentBlockId + ", x = " + testState.currentX + ", y = " + testState.currentY + ", and the rotation is " + testState.currentRotation);
 		MiscUtil.waitForReadStringAndEnterKeyPress(); 
 		testState.currentBlockId = 5;
 		testView.update(testState);
-		System.out.println("For Piece " + testState.currentBlockId + ", x = " + testState.currentX + ", y = " + testState.currentY + ", and the rotation is " + testState.currentRotation);
+		//System.out.println("For Piece " + testState.currentBlockId + ", x = " + testState.currentX + ", y = " + testState.currentY + ", and the rotation is " + testState.currentRotation);
 		MiscUtil.waitForReadStringAndEnterKeyPress(); 
 		testState.currentBlockId = 6;
 		testView.update(testState);
-		System.out.println("For Piece " + testState.currentBlockId + ", x = " + testState.currentX + ", y = " + testState.currentY + ", and the rotation is " + testState.currentRotation);
+		//System.out.println("For Piece " + testState.currentBlockId + ", x = " + testState.currentX + ", y = " + testState.currentY + ", and the rotation is " + testState.currentRotation);
 		MiscUtil.waitForReadStringAndEnterKeyPress(); 
 		*/
 		
@@ -316,27 +316,27 @@ public class TetrisAfterStateGeneratorTests {
 		/*
 		testState.spawn_block();
 		testView.update(testState);
-		System.out.println("For Piece " + testState.currentBlockId + ", x = " + testState.currentX + ", y = " + testState.currentY + ", and the rotation is " + testState.currentRotation);
+		//System.out.println("For Piece " + testState.currentBlockId + ", x = " + testState.currentX + ", y = " + testState.currentY + ", and the rotation is " + testState.currentRotation);
 		MiscUtil.waitForReadStringAndEnterKeyPress(); 
 		testState.spawn_block();
 		testView.update(testState);
-		System.out.println("For Piece " + testState.currentBlockId + ", x = " + testState.currentX + ", y = " + testState.currentY + ", and the rotation is " + testState.currentRotation);
+		//System.out.println("For Piece " + testState.currentBlockId + ", x = " + testState.currentX + ", y = " + testState.currentY + ", and the rotation is " + testState.currentRotation);
 		MiscUtil.waitForReadStringAndEnterKeyPress(); 
 		testState.spawn_block();
 		testView.update(testState);
-		System.out.println("For Piece " + testState.currentBlockId + ", x = " + testState.currentX + ", y = " + testState.currentY + ", and the rotation is " + testState.currentRotation);
+		//System.out.println("For Piece " + testState.currentBlockId + ", x = " + testState.currentX + ", y = " + testState.currentY + ", and the rotation is " + testState.currentRotation);
 		MiscUtil.waitForReadStringAndEnterKeyPress(); 
 		testState.spawn_block();
 		testView.update(testState);
-		System.out.println("For Piece " + testState.currentBlockId + ", x = " + testState.currentX + ", y = " + testState.currentY + ", and the rotation is " + testState.currentRotation);
+		//System.out.println("For Piece " + testState.currentBlockId + ", x = " + testState.currentX + ", y = " + testState.currentY + ", and the rotation is " + testState.currentRotation);
 		MiscUtil.waitForReadStringAndEnterKeyPress(); 
 		testState.spawn_block();
 		testView.update(testState);
-		System.out.println("For Piece " + testState.currentBlockId + ", x = " + testState.currentX + ", y = " + testState.currentY + ", and the rotation is " + testState.currentRotation);
+		//System.out.println("For Piece " + testState.currentBlockId + ", x = " + testState.currentX + ", y = " + testState.currentY + ", and the rotation is " + testState.currentRotation);
 		MiscUtil.waitForReadStringAndEnterKeyPress(); 
 		testState.spawn_block();
 		testView.update(testState);
-		System.out.println("For Piece " + testState.currentBlockId + ", x = " + testState.currentX + ", y = " + testState.currentY + ", and the rotation is " + testState.currentRotation);
+		//System.out.println("For Piece " + testState.currentBlockId + ", x = " + testState.currentX + ", y = " + testState.currentY + ", and the rotation is " + testState.currentRotation);
 		MiscUtil.waitForReadStringAndEnterKeyPress(); 
 		*/
 		
@@ -344,19 +344,19 @@ public class TetrisAfterStateGeneratorTests {
 		/*
 		testState.currentBlockId = 6;
 		testView.update(testState);
-		System.out.println("x = " + testState.currentX + ", y = " + testState.currentY + ", r = " + testState.currentRotation);
+		//System.out.println("x = " + testState.currentX + ", y = " + testState.currentY + ", r = " + testState.currentRotation);
 		MiscUtil.waitForReadStringAndEnterKeyPress(); 
 		testState.currentRotation++;
 		testView.update(testState);
-		System.out.println("x = " + testState.currentX + ", y = " + testState.currentY + ", r = " + testState.currentRotation);
+		//System.out.println("x = " + testState.currentX + ", y = " + testState.currentY + ", r = " + testState.currentRotation);
 		MiscUtil.waitForReadStringAndEnterKeyPress(); 
 		testState.currentRotation++;
 		testView.update(testState);
-		System.out.println("x = " + testState.currentX + ", y = " + testState.currentY + ", r = " + testState.currentRotation);
+		//System.out.println("x = " + testState.currentX + ", y = " + testState.currentY + ", r = " + testState.currentRotation);
 		MiscUtil.waitForReadStringAndEnterKeyPress(); 
 		testState.currentRotation++;
 		testView.update(testState);
-		System.out.println("x = " + testState.currentX + ", y = " + testState.currentY + ", r = " + testState.currentRotation);
+		//System.out.println("x = " + testState.currentX + ", y = " + testState.currentY + ", r = " + testState.currentRotation);
 		MiscUtil.waitForReadStringAndEnterKeyPress(); 
 		*/
 		
@@ -374,17 +374,17 @@ public class TetrisAfterStateGeneratorTests {
 		testState.currentY = -1;
 		HashSet<Pair<TetrisState, ArrayList<Integer>>> holder = TertisAfterStateGenerator.evaluateAfterStates(testState);
 		HashSet<TetrisState> justStates = new HashSet<TetrisState>();
-		//System.out.println("holder size is " + holder.size());
+		////System.out.println("holder size is " + holder.size());
 		//assertTrue(holder.size() > 17 && holder.size() < 34);
 		for(Pair<TetrisState, ArrayList<Integer>> i : holder){ // transfers only the tetris states to the hash set
 			justStates.add(i.t1);
 		}
-		System.out.println("set size is " + justStates.size());
+		//System.out.println("set size is " + justStates.size());
 		assertTrue(justStates.size() == 17);
 		
 		
 		//testView.update(testState);
-		//System.out.println("x = " + testState.currentX + ", y = " + testState.currentY + ", r = " + testState.currentRotation);
+		////System.out.println("x = " + testState.currentX + ", y = " + testState.currentY + ", r = " + testState.currentRotation);
 		//MiscUtil.waitForReadStringAndEnterKeyPress(); 
 		
 	}
@@ -401,14 +401,14 @@ public class TetrisAfterStateGeneratorTests {
 		testState.currentRotation = 3; // third rotation
 		HashSet<Pair<TetrisState, ArrayList<Integer>>> holder = TertisAfterStateGenerator.evaluateAfterStates(testState);
 		HashSet<TetrisState> justStates = new HashSet<TetrisState>();
-		//System.out.println("holder size is " + holder.size());
+		////System.out.println("holder size is " + holder.size());
 		//assertTrue(holder.size() > 17 && holder.size() < 34);
 		
 		for(Pair<TetrisState, ArrayList<Integer>> i : holder){ // transfers only the tetris states to the hash set
 			justStates.add(i.t1);
 		}
 		assertTrue(justStates.size() == 17);
-		System.out.println("state size should be " + justStates.size());
+		//System.out.println("state size should be " + justStates.size());
 	
 		testState.currentBlockId = 4; //simulating piece 4 at spawn point
 		testState.currentX = 3 + 4; // right by 2
@@ -417,11 +417,11 @@ public class TetrisAfterStateGeneratorTests {
 		HashSet<Pair<TetrisState, ArrayList<Integer>>> holder2 = TertisAfterStateGenerator.evaluateAfterStates(testState);
 		HashSet<TetrisState> justStates2 = new HashSet<TetrisState>();
 		//assertTrue(holder.size() > 17 && holder2.size() < 34);
-		System.out.println("holder size is " + holder2.size());
+		//System.out.println("holder size is " + holder2.size());
 		for(Pair<TetrisState, ArrayList<Integer>> i : holder2){ // transfers only the tetris states to the hash set
 			justStates2.add(i.t1);
 		}
-		System.out.println("state size should be " + justStates2.size());
+		//System.out.println("state size should be " + justStates2.size());
 		assertTrue(justStates2.size() == 17);
 		
 	}
@@ -454,12 +454,12 @@ public class TetrisAfterStateGeneratorTests {
 		
 		HashSet<Pair<TetrisState, ArrayList<Integer>>> holder = TertisAfterStateGenerator.evaluateAfterStates(testState);
 		HashSet<TetrisState> justStates = new HashSet<TetrisState>();
-		System.out.println("holder size is " + holder.size());
+		//System.out.println("holder size is " + holder.size());
 		assertTrue(holder.size() == 34);
 		for(Pair<TetrisState, ArrayList<Integer>> i : holder){ // transfers only the tetris states to the hash set
 			justStates.add(i.t1);
 		}
-		System.out.println("set size is " + justStates.size());
+		//System.out.println("set size is " + justStates.size());
 		assertTrue(justStates.size() == 15);
 	}
 

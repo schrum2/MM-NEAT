@@ -28,13 +28,13 @@ public class TertisAfterStateGenerator {
 		HashSet<Pair<TetrisState, ArrayList<Integer>>> evaluated = new HashSet<Pair<TetrisState, ArrayList<Integer>>>(); //only ever as big as # of orientations times the width
 		
 		for(int i = 0; i < possibleOrientations; i++){ // Try each orientation
-			System.out.println("[Entered Orientation Loop #" + i + "]");
+			//System.out.println("[Entered Orientation Loop #" + i + "]");
 			for(int j = -2; j < TetrisState.worldWidth; j++){ // Try each position across the width, also sorry for magic number, the -5 is to cover all our bases TODO:
-				System.out.println("[Entered Position Loop #" + j + "]");
+				//System.out.println("[Entered Position Loop #" + j + "]");
 				TetrisState copy = new TetrisState(ts);				
 				ArrayList<Integer> actionList = new ArrayList<Integer>(); // Logs the actions to reach the desired "falling" spot on the bottom
 				
-				System.out.println("[Going to take actions for i = " + i + " and j = " + j + "]");
+				//System.out.println("[Going to take actions for i = " + i + " and j = " + j + "]");
 				while(copy.blockMobile){ // while we can move 
 					if(copy.currentRotation != i){ // do we need to rotate?
 						int tempRotation = copy.currentRotation;
