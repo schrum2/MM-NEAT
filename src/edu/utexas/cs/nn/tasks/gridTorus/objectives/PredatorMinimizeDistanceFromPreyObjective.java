@@ -26,6 +26,9 @@ public class PredatorMinimizeDistanceFromPreyObjective<T extends Network> extend
 		TorusAgent[] preds = game.getPredators();
 		TorusAgent[] prey = game.getPrey();
 		//this double array holds the distances to each prey for each pred
+		
+		
+		//TODO:move all of this into a static method that will be called from RRMpred
 		double[][] distances = new double[preds.length][prey.length];
 		//this array holds the sum of distances to all prey for each predator
 		double[] sumOfDists = new double[preds.length];
@@ -43,6 +46,10 @@ public class PredatorMinimizeDistanceFromPreyObjective<T extends Network> extend
 		//get the sum of the sum of distances for each predator to each prey
 		//want this to be as low as possible to minimize distance to prey for each pred
 		double overallDistScore = StatisticsUtilities.sum(sumOfDists);
+		//in RRMpred, this will be divided by product of numPreds numPrey and maxDist
+		//so overallDistScore / (numPreds * numPrey * maxDist)
+		
+		
 
 		//max score is zero
 		return -overallDistScore;

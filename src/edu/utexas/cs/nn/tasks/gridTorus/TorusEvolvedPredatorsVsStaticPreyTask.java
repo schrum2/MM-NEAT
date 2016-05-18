@@ -12,6 +12,7 @@ import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.gridTorus.objectives.PredatorEatEachPreyQuicklyObjective;
 import edu.utexas.cs.nn.tasks.gridTorus.objectives.PredatorMinimizeDistanceFromPreyObjective;
 import edu.utexas.cs.nn.tasks.gridTorus.objectives.PredatorMinimizeGameTimeObjective;
+import edu.utexas.cs.nn.tasks.gridTorus.objectives.PredatorRawalRajagopalanMiikkulainenObjective;
 import edu.utexas.cs.nn.util.ClassCreation;
 
 /**
@@ -37,6 +38,8 @@ public class TorusEvolvedPredatorsVsStaticPreyTask<T extends Network> extends To
 			addObjective(new PredatorEatEachPreyQuicklyObjective<T>(), objectives);
 		if(Parameters.parameters.booleanParameter("predatorMinimizeDistance"))
 			addObjective(new PredatorMinimizeDistanceFromPreyObjective<T>(), objectives);
+		if(Parameters.parameters.booleanParameter("predatorRRM"))
+			addObjective(new PredatorRawalRajagopalanMiikkulainenObjective<T>(), objectives);
 	}
 
 	@Override

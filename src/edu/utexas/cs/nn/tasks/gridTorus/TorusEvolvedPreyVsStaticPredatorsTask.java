@@ -11,6 +11,7 @@ import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.gridTorus.objectives.PreyMaximizeGameTimeObjective;
+import edu.utexas.cs.nn.tasks.gridTorus.objectives.PreyRawalRajagopalanMiikkulainenObjective;
 import edu.utexas.cs.nn.util.ClassCreation;
 
 /**
@@ -32,6 +33,8 @@ public class TorusEvolvedPreyVsStaticPredatorsTask<T extends Network> extends To
 		super(true); 
 		if(Parameters.parameters.booleanParameter("PreyMaximizeTotalTime"))
 			addObjective(new PreyMaximizeGameTimeObjective<T>(), objectives);
+		if(Parameters.parameters.booleanParameter("preyRRM"))
+			addObjective(new PreyRawalRajagopalanMiikkulainenObjective<T>(), objectives);
 	}
 
 	@Override

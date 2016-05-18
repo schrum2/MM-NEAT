@@ -4,6 +4,12 @@ import edu.utexas.cs.nn.evolution.Organism;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.parameters.Parameters;
 
+/**
+ * 
+ * @author rollinsa
+ * reward the predators for each prey that gets eaten
+ * heavily encourages that the prey are eaten as quickly as possible
+ */
 public class PredatorEatEachPreyQuicklyObjective<T extends Network> extends GridTorusObjective<T> {
 
 	@Override
@@ -20,7 +26,7 @@ public class PredatorEatEachPreyQuicklyObjective<T extends Network> extends Grid
 		}
 		return score;
 	}
-	
+
 	@Override
 	/**
 	 * worst possible score for a predator is the full game time 
