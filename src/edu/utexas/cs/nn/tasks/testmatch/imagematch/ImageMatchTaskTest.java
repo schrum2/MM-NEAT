@@ -69,7 +69,7 @@ public class ImageMatchTaskTest {
 		assertEquals(pair.get(pair.size()-1).t1[X_COORDINATE_INDEX], ImageMatchTask.scale(0, imageHeight), .001);
 		assertEquals(pair.get(pair.size()-1).t1[Y_COORDINATE_INDEX], ImageMatchTask.scale(0, imageHeight), .001);
 		assertEquals(pair.get(pair.size()-1).t1[BIAS_IND], BIAS, .001);
-		assertEquals(pair.get(pair.size() -1).t2.length, test.numOutputs(), .001);
+		assertEquals(pair.get(pair.size()-1).t2.length, test.numOutputs(), .001);
 	}
 	
 	/**
@@ -88,26 +88,21 @@ public class ImageMatchTaskTest {
 	 */
 	@Test
 	public void test_Scale() {
-		double[] leftTopCorner = {0,0};
-		ImageMatchTask.scale(leftTopCorner, imageWidth, imageHeight);
-		double[] leftBottomCorner = {0, imageHeight};
-		ImageMatchTask.scale(leftBottomCorner, imageWidth, imageHeight);
-		double[] rightTopCorner = {imageWidth, 0};
-		ImageMatchTask.scale(rightTopCorner, imageWidth, imageHeight);
-		double [] rightBottomCorner = {imageWidth, imageHeight};
-		ImageMatchTask.scale(rightBottomCorner, imageWidth, imageHeight);
-		double[] center = {imageWidth/2.0, imageHeight/2.0};
-		ImageMatchTask.scale(center, imageWidth, imageHeight);
-		assertEquals(leftTopCorner[X_COORDINATE_INDEX], -1, .01); 
-		assertEquals(leftTopCorner[Y_COORDINATE_INDEX], -1, .01);
-		assertEquals(leftBottomCorner[X_COORDINATE_INDEX], -1, .01);
-		assertEquals(leftBottomCorner[Y_COORDINATE_INDEX], 1, .01);
-		assertEquals(rightTopCorner[X_COORDINATE_INDEX], 1, .01); 
-		assertEquals(rightTopCorner[Y_COORDINATE_INDEX], -1, .01);
-		assertEquals(rightBottomCorner[X_COORDINATE_INDEX], 1, .01);
-		assertEquals(rightBottomCorner[Y_COORDINATE_INDEX], 1, .01);
-		assertEquals(center[X_COORDINATE_INDEX], 0, .01); 
-		assertEquals(center[Y_COORDINATE_INDEX], 0, .001);
+		Tuple2D leftTopCorner = ImageMatchTask.scale(new Tuple2D(0,0), imageWidth, imageHeight);
+		Tuple2D leftBottomCorner = ImageMatchTask.scale(new Tuple2D(0,imageHeight), imageWidth, imageHeight);
+		Tuple2D rightTopCorner = ImageMatchTask.scale(new Tuple2D(imageWidth, 0), imageWidth, imageHeight);
+		Tuple2D rightBottomCorner = ImageMatchTask.scale(new Tuple2D(imageWidth, imageHeight), imageWidth, imageHeight);
+		Tuple2D center = ImageMatchTask.scale(new Tuple2D(imageWidth/2.0, imageHeight/2.0), imageWidth, imageHeight);
+		assertEquals(leftTopCorner.x, -1, .01); 
+		assertEquals(leftTopCorner.y, -1, .01);
+		assertEquals(leftBottomCorner.x, -1, .01);
+		assertEquals(leftBottomCorner.y, 1, .01);
+		assertEquals(rightTopCorner.x, 1, .01); 
+		assertEquals(rightTopCorner.y, -1, .01);
+		assertEquals(rightBottomCorner.x, 1, .01);
+		assertEquals(rightBottomCorner.y, 1, .01);
+		assertEquals(center.x, 0, .01); 
+		assertEquals(center.y, 0, .001);
 
 	}
 }
