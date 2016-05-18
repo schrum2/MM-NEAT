@@ -35,25 +35,36 @@ public class MMPTest {
 
 	@Test
 	public void test_moduleMutation() {
-		
-		//test 1. Tests if moduleMutation method changes number of modules
 		tg2 = (TWEANNGenotype) tg1.copy();
-		int numLinksTryingToAdd = 1;
-		int numLinksAdded = tg1.moduleMutation(false, numLinksTryingToAdd);
-		assertTrue(tg1.numModules != tg2.numModules);
-		assertFalse(numLinksAdded == numLinksTryingToAdd);
-		new MMP().mutate(tg2);
-		assertFalse(TWEANNGenotype.sameStructure(tg2, tg1));
+		new MMP().mutate(tg1);
+		assertTrue(tg1.numModules > 1);
+		//tg1.
+		
+		
+		
+		
+		
+		
+		
+		
+//		//test 1. Tests if moduleMutation method changes number of modules
+//		tg2 = (TWEANNGenotype) tg1.copy();
+//		int numLinksTryingToAdd = 1;
+//		int numLinksAdded = tg1.moduleMutation(false, numLinksTryingToAdd);
+//		assertTrue(tg1.numModules != tg2.numModules);
+//		assertFalse(numLinksAdded == numLinksTryingToAdd);
+//		new MMP().mutate(tg2);
+//		assertFalse(TWEANNGenotype.sameStructure(tg2, tg1));
+//
+//
+//		//test 2
+//		mutate(tg1);
+//		mutate(tg2);
+//		TWEANNCrossover cross = new TWEANNCrossover();
+//		TWEANNGenotype new2 = (TWEANNGenotype) cross.crossover(tg1, tg2);
+//		assertFalse(TWEANNGenotype.sameStructure(tg1, new2));
 
-
-		//test 2
-		mutate(tg1);
-		mutate(tg2);
-		TWEANNCrossover cross = new TWEANNCrossover();
-		TWEANNGenotype new2 = (TWEANNGenotype) cross.crossover(tg1, tg2);
-		assertFalse(TWEANNGenotype.sameStructure(tg1, new2));
-
-		// More todo
+		
 	}
 
 }
