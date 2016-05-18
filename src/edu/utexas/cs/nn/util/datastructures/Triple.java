@@ -39,4 +39,9 @@ public class Triple<X, Y, Z> {
         hash = 71 * hash + (this.t3 != null ? this.t3.hashCode() : 0);
         return hash;
     }
+
+	public Triple<X,Y,Z> clone() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
