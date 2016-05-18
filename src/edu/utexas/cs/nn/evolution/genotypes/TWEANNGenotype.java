@@ -464,6 +464,9 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
         // Delete
         new DeleteLinkMutation().go(this, sb);
         new DeleteModeMutation().go(this, sb);
+        if (CommonConstants.allowMultipleFunctions) { // Can turn a TWEANN into a CPPN
+            new ActivationFunctionMutation().go(this, sb);
+        }
         // Forms of mode mutation
         if (this.numModules < CommonConstants.maxModes
                 // Make sure modes are somewhat evenly used
@@ -492,12 +495,11 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
             new NewLinkMutation().go(this, sb);
             chance++;
         } while (CommonConstants.mutationChancePerMode && chance < this.numModules);
+        
         if (CommonConstants.polynomialWeightMutation) {
             new PolynomialWeightMutation().go(this, sb);
         } else if (CommonConstants.perLinkMutateRate > 0) {
             new AllWeightMutation().go(this, sb);
-        } else if (CommonConstants.netChangeActivationRate > 0) {
-            new ActivationFunctionMutation().go(this, sb);
         } else {
             new WeightPurturbationMutation().go(this, sb);
         }

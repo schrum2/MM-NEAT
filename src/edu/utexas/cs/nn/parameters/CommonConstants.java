@@ -11,6 +11,7 @@ package edu.utexas.cs.nn.parameters;
 public class CommonConstants {
 
     // boolean
+    public static boolean allowMultipleFunctions;
     public static boolean allowRandomGhostReversals;
     public static boolean checkEachAbsoluteDistanceGhostSort;
     public static boolean checkEachFlushWalls;
@@ -103,6 +104,7 @@ public class CommonConstants {
      */
     public static void load() {
         // boolean
+        allowMultipleFunctions = Parameters.parameters.booleanParameter("allowMultipleFunctions");
         allowRandomGhostReversals = Parameters.parameters.booleanParameter("allowRandomGhostReversals");
         checkEachAbsoluteDistanceGhostSort = Parameters.parameters.booleanParameter("checkEachAbsoluteDistanceGhostSort");
         checkEachFlushWalls = Parameters.parameters.booleanParameter("checkEachFlushWalls");
