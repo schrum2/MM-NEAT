@@ -5,6 +5,8 @@
 package edu.utexas.cs.nn.tasks.rlglue.featureextractors.tetris;
 
 import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
+
+import org.rlcommunity.environments.tetris.TetrisState;
 import org.rlcommunity.rlglue.codec.types.Observation;
 
 /**
@@ -30,9 +32,9 @@ public class ModelFreeTetrisExtractor extends BertsekasTsitsiklisTetrisExtractor
         }
 
         int blockId = StatisticsUtilities.argmax(blockIndicator);
-        int blockX = o.intArray[o.intArray.length - 5];
-        int blockY = o.intArray[o.intArray.length - 4];
-        int blockRotation = o.intArray[o.intArray.length - 3];
+        int blockX = o.intArray[TetrisState.TETRIS_STATE_CURRENT_X_INDEX];
+        int blockY = o.intArray[TetrisState.TETRIS_STATE_CURRENT_Y_INDEX];
+        int blockRotation = o.intArray[TetrisState.TETRIS_STATE_CURRENT_ROTATION_INDEX];
         blotMobilePiece(worldState, blockId, blockX, blockY, blockRotation);
 
         double[] added = new double[5];

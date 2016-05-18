@@ -23,13 +23,13 @@ public class TertisAfterStateGenerator {
 		//System.out.println("[Entered evaluateAfterStates]");
 		
 	// Take in the current falling piece and figure out number or possible orientations (use TetrisPiece for this)
-		int possibleOrientations = 4; //sorry for the magic number <3 -Gab TODO:
+		int possibleOrientations = TetrisState.TETRIS_STATE_NUMBER_POSSIBLE_BLOCKS_ORIENTATIONS; 
 		//System.out.println("Block is " + ts.currentBlockId);
 		HashSet<Pair<TetrisState, ArrayList<Integer>>> evaluated = new HashSet<Pair<TetrisState, ArrayList<Integer>>>(); //only ever as big as # of orientations times the width
 		
 		for(int i = 0; i < possibleOrientations; i++){ // Try each orientation
 			//System.out.println("[Entered Orientation Loop #" + i + "]");
-			for(int j = -2; j < TetrisState.worldWidth; j++){ // Try each position across the width, also sorry for magic number, the -5 is to cover all our bases TODO:
+			for(int j = -2; j < TetrisState.worldWidth; j++){ // Try each position across the width, and the -2 is still a magic number, but this is a general idea *fix later -Gab
 				//System.out.println("[Entered Position Loop #" + j + "]");
 				TetrisState copy = new TetrisState(ts);				
 				ArrayList<Integer> actionList = new ArrayList<Integer>(); // Logs the actions to reach the desired "falling" spot on the bottom
