@@ -9,6 +9,7 @@ import org.rlcommunity.rlglue.codec.types.Observation;
 
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.networks.Network;
+import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.tasks.rlglue.RLGlueAgent;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
@@ -25,10 +26,10 @@ public class TetrisAfterStateAgent<T extends Network> extends RLGlueAgent<T>{
     	
     	//convert Observation to TetrisState
     	TetrisState tempState = new TetrisState();
-    	tempState.currentX = o.intArray[o.intArray.length - 5]; // adds the Observation's X to tempState
-    	tempState.currentY = o.intArray[o.intArray.length - 4]; // adds the Observation's Y to tempState
-    	tempState.currentRotation = o.intArray[o.intArray.length - 3]; // adds the Observation's rotation to tempState
-    	for(int p = 0; p < 7; p++){ // sorry for the magic number here -Gab
+    	tempState.currentX = o.intArray[TetrisState.TETRIS_STATE_CURRENT_X_INDEX]; // adds the Observation's X to tempState
+    	tempState.currentY = o.intArray[TetrisState.TETRIS_STATE_CURRENT_Y_INDEX]; // adds the Observation's Y to tempState
+    	tempState.currentRotation = o.intArray[TetrisState.TETRIS_STATE_CURRENT_ROTATION_INDEX]; // adds the Observation's rotation to tempState
+    	for(int p = 0; p < TetrisState.TETRIS_STATE_NUMBER_POSSIBLE_BLOCKS; p++){
     		if(o.intArray[tempState.worldState.length + p] == 1){ // this checks for the current block Id
     			tempState.currentBlockId = p;
     		}
@@ -38,8 +39,11 @@ public class TetrisAfterStateAgent<T extends Network> extends RLGlueAgent<T>{
     		tempState.worldState[i] = o.intArray[i];
         }
 
+    	boolean currentWatch = CommonConstants.watch;
+    	CommonConstants.watch = false;
       	//make a Set of evalAfterStates(testState)
     	HashSet<Pair<TetrisState, ArrayList<Integer>>> tetrisStateHolder = TertisAfterStateGenerator.evaluateAfterStates(tempState);
+    	CommonConstants.watch = currentWatch;
     	
     	ArrayList<Pair<Double, Integer>> outputPairs = new ArrayList<Pair<Double, Integer>>(); //arraylist to hold the actions and outputs for later
     	
@@ -76,11 +80,13 @@ public class TetrisAfterStateAgent<T extends Network> extends RLGlueAgent<T>{
    
 	public static double[] scaleInputs(double[] inputs) {
 		double[] next = new double[inputs.length];
-		for(int i = 0; i < 20; i++) { // scales down the height values (10), height differences (9), and max height (1)
-			next[i] = inputs[1] / 20.0; 
+		int height_features = TetrisState.worldWidth + (TetrisState.worldWidth - 1) + 1; // height values (10), height differences (9), and max height (1)
+		for(int i = 0; i < height_features; i++) { 
+			next[i] = inputs[i] / TetrisState.worldHeight; 
 		}
-		next[inputs.length - 2] = next[inputs.length - 2] / 200.0; // scales down the number of holes in relation to the whole of the board
-		return next; // bias is 1, so not scaling
+		next[inputs.length - 2] = inputs[inputs.length - 2] / TetrisState.TETRIS_STATE_NUMBER_WORLD_GRID_BLOCKS; // scales down the number of holes in relation to the whole of the board
+		next[next.length - 1] = 1.0; // bias is 1, so not scaling
+		return next; 
 	}
     
     

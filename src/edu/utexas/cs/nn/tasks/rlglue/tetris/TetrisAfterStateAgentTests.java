@@ -50,8 +50,8 @@ public class TetrisAfterStateAgentTests {
 		
 		double[] expected = new double[]{0.1, 0.15, 0.15, 0.05, 0.05, 0.15, 0.2, 0.2, 0.2, 0.2, 0.05, 0, 0.1, 0, 0.1, 0.05, 0, 0, 0, 0.2, 0.045, 1};
 		for(int i = 0; i < inputsScaled.length ; i++){
-			System.out.println("When the input is " + inputs[i] + ", scaled is " + inputsScaled[i] + " and expected is " + expected[i]);
-			//assertEquals(inputsScaled[i], expected[i], 0.0);
+			//System.out.println("When the input is " + inputs[i] + ", scaled is " + inputsScaled[i] + " and expected is " + expected[i]);
+			assertEquals(inputsScaled[i], expected[i], 0.0);
 		}
 		//System.out.println(Arrays.toString(inputs));
 	}

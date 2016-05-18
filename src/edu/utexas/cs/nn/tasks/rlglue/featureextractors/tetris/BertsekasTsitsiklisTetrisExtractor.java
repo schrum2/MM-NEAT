@@ -21,6 +21,11 @@ public class BertsekasTsitsiklisTetrisExtractor implements FeatureExtractor {
 
     protected final int worldWidth;
     protected final int worldHeight;
+
+//    public final int NUM_COLUMN_FEATURES;
+//    public final int NUM_DIFF_FEATURES;
+//    public final int NUM_TOTAL_FEATURES;
+    
     ArrayList<TetrisPiece> possibleBlocks = new ArrayList<TetrisPiece>(7);
 
     /**
@@ -39,6 +44,10 @@ public class BertsekasTsitsiklisTetrisExtractor implements FeatureExtractor {
     public BertsekasTsitsiklisTetrisExtractor(int width, int height) {
         this.worldWidth = width;
         this.worldHeight = height;
+//        this.NUM_COLUMN_FEATURES = width;
+//        this.NUM_DIFF_FEATURES = width - 1;
+//        this.NUM_TOTAL_FEATURES = NUM_COLUMN_FEATURES + NUM_DIFF_FEATURES + 3;
+        
 
         possibleBlocks.add(TetrisPiece.makeLine());
         possibleBlocks.add(TetrisPiece.makeSquare());
@@ -86,9 +95,8 @@ public class BertsekasTsitsiklisTetrisExtractor implements FeatureExtractor {
         for (int i = 0; i < possibleBlocks.size(); i++) { // for each possible block, add whether or not it is falling to the blockIndicator array
             blockIndicator[i] = o.intArray[worldState.length + i]; // this sets the block indicator spots as either 0 or 1 according to which block is currently falling (1)
         }
-        blotMobilePiece(worldState, StatisticsUtilities.argmax(blockIndicator), o.intArray[o.intArray.length - 5], o.intArray[o.intArray.length - 4], o.intArray[o.intArray.length - 3]); 
-        //The magic numbers here at the end help us find the blockX, blockY, and blockRotation respectively
-        //Note: why didn't they just put the blotMobilePiece call in the for loop? blockIndicator isn't used anywhere else? I might change that later haha -Gab
+        blotMobilePiece(worldState, StatisticsUtilities.argmax(blockIndicator), o.intArray[TetrisState.TETRIS_STATE_CURRENT_X_INDEX], o.intArray[TetrisState.TETRIS_STATE_CURRENT_Y_INDEX], o.intArray[TetrisState.TETRIS_STATE_CURRENT_ROTATION_INDEX]); 
+        
         
         int in = 0;
 

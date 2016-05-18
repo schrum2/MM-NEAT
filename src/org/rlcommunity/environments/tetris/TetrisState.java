@@ -32,17 +32,21 @@ public class TetrisState {
     /*Action values*/
 
     public static final int LEFT = 0; /*Action value for a move left*/
-
     public static final int RIGHT = 1; /*Action value for a move right*/
-
     public static final int CW = 2; /*Action value for a clockwise rotation*/
-
     public static final int CCW = 3; /*Action value for a counter clockwise rotation*/
-
     public static final int NONE = 4; /*The no-action Action*/
-
     public static final int FALL = 5; /* fall down */
 
+    public static final int TETRIS_STATE_NUMBER_WORLD_GRID_BLOCKS = 200;
+    public static final int TETRIS_STATE_NUMBER_POSSIBLE_BLOCKS = 7;
+    public static final int TETRIS_STATE_CURRENT_X_INDEX = TETRIS_STATE_NUMBER_WORLD_GRID_BLOCKS + TETRIS_STATE_NUMBER_POSSIBLE_BLOCKS;
+    public static final int TETRIS_STATE_CURRENT_Y_INDEX = TETRIS_STATE_CURRENT_X_INDEX + 1;
+    public static final int TETRIS_STATE_CURRENT_ROTATION_INDEX = TETRIS_STATE_CURRENT_Y_INDEX + 1;
+    public static final int TETRIS_STATE_CURRENT_HEIGHT_INDEX = TETRIS_STATE_CURRENT_ROTATION_INDEX + 1;
+    public static final int TETRIS_STATE_CURRENT_WIDTH_INDEX = TETRIS_STATE_CURRENT_HEIGHT_INDEX + 1;
+    public static final int TETRIS_STATE_NUMBER_OF_DISCRETE_FEATURES = TETRIS_STATE_NUMBER_WORLD_GRID_BLOCKS + TETRIS_STATE_NUMBER_POSSIBLE_BLOCKS + 5;
+    
     private Random randomGenerator = RandomNumbers.randomGenerator;
     public boolean blockMobile = true;
     public int currentBlockId;/*which block we're using in the block table*/
@@ -76,10 +80,10 @@ public class TetrisState {
 
         if (CommonConstants.watch) {
             if (TetrisViewer.current == null) {
-                System.out.println("New TetrisViewer");
+                //System.out.println("New TetrisViewer");
                 viewer = new TetrisViewer();
             } else {
-                System.out.println("Same TetrisViewer");
+                //System.out.println("Same TetrisViewer");
                 viewer = TetrisViewer.current;
             }
         }
@@ -109,7 +113,7 @@ public class TetrisState {
             }
 
             writeCurrentBlock(worldObservation);
-            Observation o = new Observation(worldObservation.length + possibleBlocks.size() + 3 + 2, 0);
+            Observation o = new Observation(TETRIS_STATE_NUMBER_OF_DISCRETE_FEATURES, 0);
             for (int i = 0; i < worldObservation.length; i++) {
                 if (worldObservation[i] == 0) {
                     o.intArray[i] = 0;
@@ -123,14 +127,11 @@ public class TetrisState {
             //Set the bit vector value for which block is currently following
             o.intArray[worldObservation.length + currentBlockId] = 1;
 
-            // 1/10/12: Added by Jacob Schrum to make feature extraction easier
-            o.intArray[o.intArray.length - 5] = this.currentX; // Falling piece x
-            o.intArray[o.intArray.length - 4] = this.currentY; // Falling piece y
-            o.intArray[o.intArray.length - 3] = this.currentRotation; // Falling piece rotation
-            // End of info added by Jacob Schrum
-
-            o.intArray[o.intArray.length - 2] = getHeight();
-            o.intArray[o.intArray.length - 1] = getWidth();
+            o.intArray[TETRIS_STATE_CURRENT_X_INDEX] = this.currentX; // Falling piece x
+            o.intArray[TETRIS_STATE_CURRENT_Y_INDEX] = this.currentY; // Falling piece y
+            o.intArray[TETRIS_STATE_CURRENT_ROTATION_INDEX] = this.currentRotation; // Falling piece rotation
+            o.intArray[TETRIS_STATE_CURRENT_HEIGHT_INDEX] = getHeight();
+            o.intArray[TETRIS_STATE_CURRENT_WIDTH_INDEX] = getWidth();
             return o;
 
         } catch (ArrayIndexOutOfBoundsException e) {
