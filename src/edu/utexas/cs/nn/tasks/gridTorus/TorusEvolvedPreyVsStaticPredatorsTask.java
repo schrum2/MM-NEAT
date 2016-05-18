@@ -2,8 +2,13 @@
 package edu.utexas.cs.nn.tasks.gridTorus;
 
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
+import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
+import edu.utexas.cs.nn.evolution.lineage.Offspring;
+import edu.utexas.cs.nn.graphics.DrawingPanel;
+import edu.utexas.cs.nn.graphics.Plot;
 import edu.utexas.cs.nn.gridTorus.controllers.TorusPredPreyController;
 import edu.utexas.cs.nn.networks.Network;
+import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.gridTorus.objectives.PreyMaximizeGameTimeObjective;
 import edu.utexas.cs.nn.util.ClassCreation;
@@ -69,6 +74,14 @@ public class TorusEvolvedPreyVsStaticPredatorsTask<T extends Network> extends To
 		for(int i = 0; i < numPrey; i++){
 			//false to indicate that this is not a predator, but a prey
 			evolvedAgents[i] = new NNTorusPredPreyAgent<T>(individual, false).getController(); 
+			// if requested, adds visual panels for each of the evolved agents showing its inputs
+			// (offsets to other agents), outputs (possible directional movements), and game time
+			if(CommonConstants.monitorInputs) {
+				DrawingPanel panel = new DrawingPanel(Plot.BROWSE_DIM, (int) (Plot.BROWSE_DIM * 3.5), "Prey " + i);
+				((NNTorusPredPreyController) evolvedAgents[i]).networkInputs = panel;
+				panel.setLocation(i * (Plot.BROWSE_DIM + 10), 0);
+				Offspring.fillInputs(panel, (TWEANNGenotype) individual);
+			}	
 		}
 		return evolvedAgents;
 	}
