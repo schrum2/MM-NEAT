@@ -28,7 +28,6 @@ public class TWEANNGenotypeTest {
 	public void setup() {
 		MMNEAT.clearClasses();
 		EvolutionaryHistory.setInnovation(0);
-		//EvolutionaryHistory.initArchetype(0);
 		EvolutionaryHistory.setHighestGenotypeId(0);
 	}
 
