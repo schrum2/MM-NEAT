@@ -10,16 +10,25 @@ import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.util.random.RandomNumbers;
 
 /**
+ * Provides a random activation function for mutation in TWEANN class
  * 
  * @author gillespl
  *
  */
 public class ActivationFunctionMutation extends TWEANNMutation {
 
+	
+	/**
+	 * Constructor
+	 */
 	public ActivationFunctionMutation() {
-            super("netChangeActivationRate");
+            super("netChangeActivationRate");//command line parameter that controls rate of mutation
+            //using activation functions
         }
-        
+      
+	/**
+	 * Mutates TWEANNGenotype using activation functions
+	 */
 	@Override
 	public void mutate(Genotype<TWEANN> genotype) {
 		TWEANNGenotype g = (TWEANNGenotype) genotype;
