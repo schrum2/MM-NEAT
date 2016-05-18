@@ -3,6 +3,7 @@ package edu.utexas.cs.nn.networks.hyperneat;
 import java.util.List;
 
 import edu.utexas.cs.nn.networks.NetworkTask;
+import edu.utexas.cs.nn.util.datastructures.Pair;
 
 /**
  * A task that HyperNEAT can be applied to.
@@ -22,5 +23,5 @@ public interface HyperNEATTask extends NetworkTask {
 	//Substrate defined as one layer and ^^ method returns a list of the different
 	//substrates in the whole network
 	
-	//
+	public List<Pair<String,String>> getSubstrateConnectivity();
 }
