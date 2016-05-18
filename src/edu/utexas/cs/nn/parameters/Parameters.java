@@ -496,6 +496,7 @@ public class Parameters {
         doubleOptions.add("netPerturbRate", 0.8, "Mutation rate for network weight perturbation");
         doubleOptions.add("perLinkMutateRate", 0.05, "Per link chance of weight perturbation");
         doubleOptions.add("netLinkRate", 0.4, "Mutation rate for creation of new network synapses");
+        doubleOptions.add("netChangeActivationRate", 0.0, "Mutation rate for changing a neuron's activation function");
         doubleOptions.add("netSpliceRate", 0.2, "Mutation rate for splicing of new network nodes");
         doubleOptions.add("realMutateRate", 0.3, "Mutation rate for modifying indexes in real-valued string");
         doubleOptions.add("crossoverRate", 0.5, "Rate of crossover if mating is used");

@@ -7,7 +7,6 @@ import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype.NodeGene;
 import edu.utexas.cs.nn.networks.ActivationFunctions;
 import edu.utexas.cs.nn.networks.TWEANN;
-import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.util.random.RandomNumbers;
 
 /**
@@ -17,16 +16,10 @@ import edu.utexas.cs.nn.util.random.RandomNumbers;
  */
 public class ActivationFunctionMutation extends TWEANNMutation {
 
-	private double mutationRate = 0.0;
-	
 	public ActivationFunctionMutation() {
-		this(CommonConstants.perLinkMutateRate);
-	}
-	public ActivationFunctionMutation(double rate) {
-		super(rate);
-		mutationRate = rate;
-	}
-
+            super("netChangeActivationRate");
+        }
+        
 	@Override
 	public void mutate(Genotype<TWEANN> genotype) {
 		TWEANNGenotype g = (TWEANNGenotype) genotype;
