@@ -227,6 +227,8 @@ public class Parameters {
         integerOptions.add("recentPastMemLength", -1, "Length of queue of past pacman states");
         integerOptions.add("trialIncreaseFrequency", 1, "If increasing trials, do so every time this many generations pass");
         integerOptions.add("keeperCampLimit", 0, "Number of camps allowed to persist across generations");
+        integerOptions.add("torusXDimensions", 100, "The dimension of the X-Axis, or the width, for the grid world");
+        integerOptions.add("torusYDimensions", 100, "The dimension of the Y-Axis, or the height, for the grid world");
         integerOptions.add("torusTimeLimit", 1000, "Time limit in torus worlds");
         integerOptions.add("torusPredators", 4, "Number of torus predators");
         integerOptions.add("torusPreys", 1, "Number of torus preys");
@@ -252,6 +254,7 @@ public class Parameters {
         booleanOptions.add("logTWEANNData", false, "Whether or not to log TWEANN data");
         booleanOptions.add("logMutationAndLineage", false, "Whether or not to log information about the mutations and lineage");
         booleanOptions.add("logPerformance", false, "Whether or not to log performance information in a performance log");
+        booleanOptions.add("predatorMinimizeDistance", false, "Turn on to encourage predators to be as close to the prey as possible by the end of the game");
         booleanOptions.add("PredsEatEachPreyQuickly", true, "Turn on to encourage predators to eat prey as quickly as possible");
         booleanOptions.add("PredatorMinimizeTotalTime", false, "Turn on to encourage predators to minimize the total game time as a fitness function");
         booleanOptions.add("PreyMaximizeTotalTime", true, "Turn on to encourage prey to maximize the total game time as a fitness function");

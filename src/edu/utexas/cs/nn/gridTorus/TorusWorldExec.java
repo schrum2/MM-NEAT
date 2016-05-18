@@ -38,7 +38,7 @@ public class TorusWorldExec {
 
 	//create an instance of the game
 	public TorusPredPreyGame game;
-	
+
 	/**
 	 * For running multiple games without visuals. This is useful to get a good
 	 * idea of how well a controller plays against a chosen opponent: the random
@@ -51,7 +51,8 @@ public class TorusWorldExec {
 	 * @return the TorusPredPreyGame object that is an instance of the PredPrey game
 	 */
 	public TorusPredPreyGame runExperiment(TorusPredPreyController[] predControllers, TorusPredPreyController[] preyControllers) {
-		game = new TorusPredPreyGame(100,100,predControllers.length, preyControllers.length);
+		game = new TorusPredPreyGame(Parameters.parameters.integerParameter("torusXDimensions"),Parameters.parameters.integerParameter("torusYDimensions")
+				,predControllers.length, preyControllers.length);
 
 		while (!game.gameOver()) {
 			int[][] predActions = new int[predControllers.length][2];
@@ -88,7 +89,8 @@ public class TorusWorldExec {
 	 * @return the TorusPredPreyGame object that is an instance of the PredPrey game
 	 */
 	public TorusPredPreyGame runGameTimed(TorusPredPreyController[] predControllers, TorusPredPreyController[] preyControllers, boolean visual) {
-		game = new TorusPredPreyGame(100,100,predControllers.length, preyControllers.length);
+		game = new TorusPredPreyGame(Parameters.parameters.integerParameter("torusXDimensions"),Parameters.parameters.integerParameter("torusYDimensions")
+				,predControllers.length, preyControllers.length);
 
 
 		//the threads in this code are overly complicated and unnecessary in this case
@@ -169,7 +171,7 @@ public class TorusWorldExec {
 
 		return game;
 	}
-	
+
 	//unnecessary agent threads commented out
 	/*
 	 * Wraps the controller in a thread for the timed execution. This class then

@@ -100,20 +100,18 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 		}
 		double[] fitnesses = new double[objectives.size()];
 
-		//dispose of all panels inside of agents/controllers
-		if (CommonConstants.monitorInputs) {
-			DrawingPanel[] panels = new DrawingPanel[(preyEvolve ? preyAgents.length : predAgents.length)];
-			// Dispose of existing panels
-			if(panels != null){
-				for (int i = 0; i < (preyEvolve ? preyAgents.length : predAgents.length); i++) {
-					panels[i].dispose();
-				}
-			}
-		}
-
 		//---------Need to save module usage because it will be lost---------
 		//store the list of the agents being evolved
 		TorusPredPreyController[] evolvedAgents = preyEvolve ? preyAgents : predAgents;
+
+		//dispose of all panels inside of agents/controllers
+		if (CommonConstants.monitorInputs) {
+			// Dispose of existing panels
+			for (int i = 0; i < evolvedAgents.length; i++) {
+				((NNTorusPredPreyController) (evolvedAgents)[i]).networkInputs.dispose();
+			}
+		}
+
 		//gets the controller of the evolved agent(s), gets its network, and stores the number of modules for that network
 		int numModes = ((NNTorusPredPreyController) evolvedAgents[0]).nn.numModules();
 		//this will store the number of times each module is used by each agent 
