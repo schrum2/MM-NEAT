@@ -44,7 +44,10 @@ public class MMDTest {
 		tg2 = new TWEANNGenotype(MMNEAT.networkInputs, MMNEAT.networkOutputs, 0);
 		MMNEAT.genotype = tg1.copy();
 		EvolutionaryHistory.initArchetype(0);
-		
+		mutate(tg1, tg2);
+	}
+	
+	public void mutate(TWEANNGenotype tg1, TWEANNGenotype tg2) {
 		for (int i = 0; i < MUTATIONS1; i++) {
 			tg1.mutate();
 			tg2.mutate();

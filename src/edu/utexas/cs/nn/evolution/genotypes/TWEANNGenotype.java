@@ -897,7 +897,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
      * @param weights = weights of new newNode
      * @param linkInnovations = linkInnovations number of new newNode
      */
-    private void addLink(long sourceInnovation, long targetInnovation, double weight, long innovation) {
+    public void addLink(long sourceInnovation, long targetInnovation, double weight, long innovation) {
         if (getLinkBetween(sourceInnovation, targetInnovation) == null) {
             int target = indexOfNodeInnovation(targetInnovation);
             int source = indexOfNodeInnovation(sourceInnovation);
@@ -949,7 +949,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
      * @param fromLinkInnovation = new linkInnovations number for newNode
      * between new node and sourceInnovation
      */
-    private void spliceNode(int ftype, long newNodeInnovation, long sourceInnovation, long targetInnovation, double weight1, double weight2, long toLinkInnovation, long fromLinkInnovation) {
+    public void spliceNode(int ftype, long newNodeInnovation, long sourceInnovation, long targetInnovation, double weight1, double weight2, long toLinkInnovation, long fromLinkInnovation) {
         NodeGene ng = new NodeGene(ftype, TWEANN.Node.NTYPE_HIDDEN, newNodeInnovation);
         LinkGene lg = getLinkBetween(sourceInnovation, targetInnovation);
         lg.active = CommonConstants.minimizeSpliceImpact;
