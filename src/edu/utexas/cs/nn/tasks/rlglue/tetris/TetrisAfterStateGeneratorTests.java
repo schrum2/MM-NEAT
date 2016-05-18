@@ -2,7 +2,7 @@ package edu.utexas.cs.nn.tasks.rlglue.tetris;
 
 import static org.junit.Assert.*;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.HashSet;
 
 import org.junit.Test;
@@ -23,7 +23,7 @@ public class TetrisAfterStateGeneratorTests {
 		testState.worldState[197] = 1;
 		testState.worldState[198] = 1;
 		testState.worldState[199] = 1;
-		HashSet<Pair<TetrisState, ArrayList<Integer>>> holder = TertisAfterStateGenerator.evaluateAfterStates(testState);
+		HashSet<TetrisStateActionPair> holder = TertisAfterStateGenerator.generateAfterStates(testState);
 		HashSet<TetrisState> justStates = new HashSet<TetrisState>();
 		
 		//WOO BOY GET READY FOR A LOT OF TESTING CODE NONSENSE -Gab
@@ -238,7 +238,7 @@ public class TetrisAfterStateGeneratorTests {
 		resultH7.worldState[188] = 1;
 		resultH7.worldState[189] = 1;
 				
-		for(Pair<TetrisState, ArrayList<Integer>> i : holder){ // transfers only the tetris states to the hash set
+		for(TetrisStateActionPair i : holder){ // transfers only the tetris states to the hash set
 			justStates.add(i.t1);
 		}
 		
@@ -262,9 +262,9 @@ public class TetrisAfterStateGeneratorTests {
 		
 		
 		//This part tests that the actions of the action list do give you the given state
-		for(Pair<TetrisState, ArrayList<Integer>> j : holder){
+		for(TetrisStateActionPair j : holder){
 			TetrisState copyState = new TetrisState(testState); 
-			ArrayList<Integer> actionList = j.t2;
+			List<Integer> actionList = j.t2;
 			//actions
 			for(int p = 0; p < actionList.size(); p++){
 				copyState.take_action(actionList.get(p)); //move left
@@ -372,11 +372,11 @@ public class TetrisAfterStateGeneratorTests {
 		testState.currentBlockId = 4; //simulating piece 4 at spawn point
 		testState.currentX = 3;
 		testState.currentY = -1;
-		HashSet<Pair<TetrisState, ArrayList<Integer>>> holder = TertisAfterStateGenerator.evaluateAfterStates(testState);
+		HashSet<TetrisStateActionPair> holder = TertisAfterStateGenerator.generateAfterStates(testState);
 		HashSet<TetrisState> justStates = new HashSet<TetrisState>();
 		////System.out.println("holder size is " + holder.size());
 		//assertTrue(holder.size() > 17 && holder.size() < 34);
-		for(Pair<TetrisState, ArrayList<Integer>> i : holder){ // transfers only the tetris states to the hash set
+		for(TetrisStateActionPair i : holder){ // transfers only the tetris states to the hash set
 			justStates.add(i.t1);
 		}
 		//System.out.println("set size is " + justStates.size());
@@ -399,12 +399,12 @@ public class TetrisAfterStateGeneratorTests {
 		testState.currentX = 3 + 2; // right by 2
 		testState.currentY = -1 + 5; //down by 5
 		testState.currentRotation = 3; // third rotation
-		HashSet<Pair<TetrisState, ArrayList<Integer>>> holder = TertisAfterStateGenerator.evaluateAfterStates(testState);
+		HashSet<TetrisStateActionPair> holder = TertisAfterStateGenerator.generateAfterStates(testState);
 		HashSet<TetrisState> justStates = new HashSet<TetrisState>();
 		////System.out.println("holder size is " + holder.size());
 		//assertTrue(holder.size() > 17 && holder.size() < 34);
 		
-		for(Pair<TetrisState, ArrayList<Integer>> i : holder){ // transfers only the tetris states to the hash set
+		for(TetrisStateActionPair i : holder){ // transfers only the tetris states to the hash set
 			justStates.add(i.t1);
 		}
 		assertTrue(justStates.size() == 17);
@@ -414,11 +414,11 @@ public class TetrisAfterStateGeneratorTests {
 		testState.currentX = 3 + 4; // right by 2
 		testState.currentY = -1 + 8; //down by 5
 		testState.currentRotation = 3; // third rotation
-		HashSet<Pair<TetrisState, ArrayList<Integer>>> holder2 = TertisAfterStateGenerator.evaluateAfterStates(testState);
+		HashSet<TetrisStateActionPair> holder2 = TertisAfterStateGenerator.generateAfterStates(testState);
 		HashSet<TetrisState> justStates2 = new HashSet<TetrisState>();
 		//assertTrue(holder.size() > 17 && holder2.size() < 34);
 		//System.out.println("holder size is " + holder2.size());
-		for(Pair<TetrisState, ArrayList<Integer>> i : holder2){ // transfers only the tetris states to the hash set
+		for(TetrisStateActionPair i : holder2){ // transfers only the tetris states to the hash set
 			justStates2.add(i.t1);
 		}
 		//System.out.println("state size should be " + justStates2.size());
@@ -452,11 +452,11 @@ public class TetrisAfterStateGeneratorTests {
 		testState.worldState[180] = 1;
 		testState.worldState[190] = 1;
 		
-		HashSet<Pair<TetrisState, ArrayList<Integer>>> holder = TertisAfterStateGenerator.evaluateAfterStates(testState);
+		HashSet<TetrisStateActionPair> holder = TertisAfterStateGenerator.generateAfterStates(testState);
 		HashSet<TetrisState> justStates = new HashSet<TetrisState>();
 		//System.out.println("holder size is " + holder.size());
 		assertTrue(holder.size() == 34);
-		for(Pair<TetrisState, ArrayList<Integer>> i : holder){ // transfers only the tetris states to the hash set
+		for(TetrisStateActionPair i : holder){ // transfers only the tetris states to the hash set
 			justStates.add(i.t1);
 		}
 		//System.out.println("set size is " + justStates.size());
