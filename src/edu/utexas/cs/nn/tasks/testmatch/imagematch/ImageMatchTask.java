@@ -92,17 +92,30 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
         return super.evaluate(individual);//if watch=false
     }
 
+    /**
+     * Allows image and network to be saved as a bmp if user chooses to do so
+     *  
+     * @param panel the drawing panel containing the image to be saved
+     */
     public static void considerSavingImage(DrawingPanel panel) {
         Scanner scan = new Scanner(System.in);//Scanner allows picture and network to be saved as bmp
         System.out.println("Save image? y/n");
         if (scan.next().equals("y")) {
             System.out.println("enter filename");
             String filename = scan.next();
-            panel.save(filename + ".bmp");
+            panel.save(filename + ".bmp");//allows user to choose a unique name for file and to not worry about adding '.bmp'
         }
         scan.close();
     }
 
+    /**
+     * Draws the image created by the CPPN to a BufferedImage
+     * 
+     * @param n the network used to process the imag
+     * @param imageWidth width of image
+     * @param imageHeight height of image 
+     * @return buffered image containing image drawn by network
+     */
     public static BufferedImage imageFromCPPN(Network n, int imageWidth, int imageHeight) {
         BufferedImage image = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_RGB);
         for (int x = 0; x < imageWidth; x++) {//scans across whole image
@@ -116,16 +129,47 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
         return image;
     }
 
+    /**
+     * Gets HSB outputs from the CPPN in question
+     * 
+     * @param n the CPPN
+     * @param x  x-coordinate of pixel
+     * @param y  y-coordinate of pixel
+     * @param imageWidth width of image
+     * @param imageHeight height of image
+     * 
+     * @return double containing the HSB values
+     */
     public static double[] getHSBFromCPPN(Network n, int x, int y, int imageWidth, int imageHeight) {
         double[] input = getCPPNInputs(x, y, imageWidth, imageHeight);
         return n.process(input);
     }
 
+    /**
+     * Gets scaled inputs to send to CPPN
+     * 
+     * @param x x-coordinate of pixel
+     * @param y y-coordinate of pixel
+     * @param imageWidth width of image
+     * @param imageHeight height of image
+     * 
+     * @return array containing inputs for CPPN
+     */
     public static double[] getCPPNInputs(int x, int y, int imageWidth, int imageHeight) {
         ILocated2D scaled = scale(new Tuple2D(x, y), imageWidth, imageHeight);
         return new double[]{scaled.getX(), scaled.getY(), scaled.distance(new Tuple2D(0, 0)) * SQRT2, BIAS};
     }
 
+    /**
+     * method for drawing an image onto a drawing panel
+     * 
+     * @param image image to draw
+     * @param label name of image
+     * @param imageWidth width of image
+     * @param imageHeight height of image
+     *
+     * @return the drawing panel with the image
+     */
     public static DrawingPanel drawImage(BufferedImage image, String label, int imageWidth, int imageHeight) {
         DrawingPanel parentPanel = new DrawingPanel(imageWidth, imageHeight, label);
         Graphics2D parentGraphics = parentPanel.getGraphics();
@@ -133,6 +177,14 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
         return parentPanel;
     }
 
+    /**
+     * public method for drawing an image onto a drawing panel
+     * 
+     * @param image image to draw
+     * @param label label name of image
+     * 
+     * @return drawing panel with image
+     */
     public DrawingPanel drawImage(BufferedImage image, String label) {
         return drawImage(image, label, imageWidth, imageHeight);
     }
@@ -206,6 +258,7 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
      * @param toScale (x,y) coordinates as a tuple
      * @param imageWidth width of image
      * @param imageHeight height of image
+     * 
      * @return new tuple with scaled coordinates
      */
     public static Tuple2D scale(Tuple2D toScale, int imageWidth, int imageHeight) {
