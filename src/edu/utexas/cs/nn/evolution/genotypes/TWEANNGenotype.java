@@ -9,7 +9,6 @@ import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.networks.ActivationFunctions;
 import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.parameters.CommonConstants;
-import static edu.utexas.cs.nn.parameters.CommonConstants.netChangeActivationRate;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.util.CartesianGeometricUtilities;
 import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
