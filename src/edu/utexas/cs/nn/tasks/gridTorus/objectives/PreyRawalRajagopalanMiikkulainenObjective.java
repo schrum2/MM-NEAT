@@ -44,7 +44,7 @@ public class PreyRawalRajagopalanMiikkulainenObjective <T extends Network> exten
 		double fewPreyCaughtScore = (ALL_PREY_SCORE - (ALL_PREY_SCORE*(numCaught / prey.length)));
 		//when all prey have died
 		if(numCaught == prey.length)
-			return (fewPreyCaughtScore * game.getTime()) / game.getTimeLimit();
+			return (fewPreyCaughtScore * (((double)game.getTime())) / ((double)game.getTimeLimit()));
 		//when some prey have died
 		return fewPreyCaughtScore;
 	}
