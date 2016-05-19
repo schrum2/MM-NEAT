@@ -118,7 +118,7 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 		int[] overallAgentModeUsage = new int[numModes];  
 		for(TorusPredPreyController agent : evolvedAgents){
 			//get the list of all modules used by this agent and store how many times that module is used in that spot in the array
-			int[] thisAgentModeUsage = ((NNTorusPredPreyController) agent).nn.getModeUsage();
+			int[] thisAgentModeUsage = ((NNTorusPredPreyController) agent).nn.getModuleUsage();
 			//combine this agent's module usage with the module usage of all agents
 			overallAgentModeUsage = ArrayUtil.zipAdd(overallAgentModeUsage, thisAgentModeUsage);
 		}

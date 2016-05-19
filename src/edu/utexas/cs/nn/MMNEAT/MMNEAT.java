@@ -491,16 +491,6 @@ public class MMNEAT {
     }
 
     public static void loadClasses() {
-    	// This is a bad fix to a problem that shouldn't exist.
-    	// The new version of Java imposes restrictive requirements on Comparators.
-    	// Specifically, there is a requirement that all Comparators be transitive.
-    	// For some reason, the ObjectiveComparator is violating this contract, but
-    	// the code looks fine to me. Maybe I'll fix it eventually, but this fix below
-    	// will use the legacy version of merge sort instead which silently ignores
-    	// contract violations during sorting.
-    	Properties props = System.getProperties();
-    	props.setProperty("java.util.Arrays.useLegacyMergeSort", "true");
-    	
         try {
         	ActivationFunctions.initFunctionSet();
             setupSaveDirectory();

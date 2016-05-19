@@ -76,5 +76,5 @@ public interface Network {
      * @return array where each position is the number of
      * 			times that module was used.
      */
-    public int[] getModeUsage();
+    public int[] getModuleUsage();
 }

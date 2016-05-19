@@ -22,23 +22,23 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * My version of a Topology and Weight Evolving Neural Network.
- * Nodes are stored in a linear order that must obey the following constraints:
- * 1) All input nodes are at the far left
- * 2) All output nodes are at the far right
- * 3) Feedforward links only go from left to right
+ * My version of a Topology and Weight Evolving Neural Network. Nodes are stored
+ * in a linear order that must obey the following constraints: 
+ * 1) All input nodes are at the far left 
+ * 2) All output nodes are at the far right 
+ * 3) Feedforward links only go from left to right 
  * 4) Links from right to left are always recurrent
- * 
- * This is a bit more restrictive than the standard NEAT networks.
- * The benefit of it is that signals can propagate from input to output
- * in a single activation, unlike standard NEAT networks that only have
- * activations travel one link at a time.
+ *
+ * This is a bit more restrictive than the standard NEAT networks. The benefit
+ * of it is that signals can propagate from input to output in a single
+ * activation, unlike standard NEAT networks that only have activations travel
+ * one link at a time.
  *
  * @author Jacob Schrum
  */
 public class TWEANN implements Network {
 
-	// Variables used for watching the behavior of an active network in a graphical display
+    // Variables used for watching the behavior of an active network in a graphical display
     public static int NETWORK_VIEW_DIM = 500;
     public static final int NODE_DIM = 6;
     public static final int DISPLAY_BORDER = 25;
@@ -82,15 +82,19 @@ public class TWEANN implements Network {
         }
 
         protected void transmit(double signal) {
+            assert !Double.isNaN(target.sum) : "target.sum is NaN before transmit";
+            assert !Double.isNaN(signal) : "signal is NaN before transmit";
+            assert !Double.isNaN(weight) : "weight is NaN before transmit";
+            assert !Double.isNaN(signal * weight) : "signal * weight is NaN before transmit: " +signal+"*"+weight;
             target.sum += (signal * weight);
+            assert !Double.isNaN(target.sum) : "target.sum is NaN after transmit: " +signal+"*"+weight;
         }
     }
 
     // subclass for a single neuron
     public class Node {
 
-    	// TODO: Generalize handling of activation functions to make CPPNs possible 
-        
+        // TODO: Generalize handling of activation functions to make CPPNs possible 
         // Three types of neurons
         public static final int NTYPE_INPUT = 0;
         public static final int NTYPE_HIDDEN = 1;
@@ -133,6 +137,7 @@ public class TWEANN implements Network {
 
         /**
          * For textual display of network
+         *
          * @param ntype One of the specified neuron types
          * @return String label for type of neuron
          */
@@ -153,10 +158,10 @@ public class TWEANN implements Network {
 
         private String ftypeName(int ftype) {
             switch (ftype) {
-            case ActivationFunctions.FTYPE_SAWTOOTH:
-                return "sawtooth";
-            case ActivationFunctions.FTYPE_HLPIECEWISE:
-                return "halfLinear";
+                case ActivationFunctions.FTYPE_SAWTOOTH:
+                    return "sawtooth";
+                case ActivationFunctions.FTYPE_HLPIECEWISE:
+                    return "halfLinear";
                 case ActivationFunctions.FTYPE_SIGMOID:
                     return "Sigmoid";
                 case ActivationFunctions.FTYPE_TANH:
@@ -168,12 +173,12 @@ public class TWEANN implements Network {
                 case ActivationFunctions.FTYPE_APPROX:
                     return "SigmoidApprox";
                 case ActivationFunctions.FTYPE_GAUSS:
-                	return "Gaussian";
+                    return "Gaussian";
                 case ActivationFunctions.FTYPE_SINE:
-                	return "Sine";
+                    return "Sine";
                 case ActivationFunctions.FTYPE_ABSVAL:
-                	return "AbsoluteValue";
-                				
+                    return "AbsoluteValue";
+
             }
             // Should never reach
             System.out.println(ftype + " is not a valid type of activation function");
@@ -215,7 +220,10 @@ public class TWEANN implements Network {
          * @param input = sensor input
          */
         protected void load(double input) {
+            assert !Double.isNaN(sum) : "sum is NaN before load";
+            assert !Double.isNaN(input) : "input is NaN in load";
             sum += input;
+            assert !Double.isNaN(sum) : "sum is NaN after loading " + input;
         }
 
         public double output() {
@@ -233,36 +241,56 @@ public class TWEANN implements Network {
 
         private void activate() {
             switch (ftype) {
-            case ActivationFunctions.FTYPE_SAWTOOTH:
-                activation = ActivationFunctions.sawtooth(sum);
-                break;
-            case ActivationFunctions.FTYPE_HLPIECEWISE:
-                activation = ActivationFunctions.halfLinear(sum);
-                break;
+                case ActivationFunctions.FTYPE_SAWTOOTH:
+                    activation = ActivationFunctions.sawtooth(sum);
+                    assert !Double.isNaN(activation) : "sawtooth returns NaN on " + sum;
+                    assert !Double.isInfinite(activation) : "sawtooth is infinite on " + sum + " from " + activation;
+                    break;
+                case ActivationFunctions.FTYPE_HLPIECEWISE:
+                    activation = ActivationFunctions.halfLinear(sum);
+                    assert !Double.isNaN(activation) : "halfLinear returns NaN on " + sum;
+                    assert !Double.isInfinite(activation) : "halfLinear is infinite on " + sum + " from " + activation;
+                    break;
                 case ActivationFunctions.FTYPE_SIGMOID:
                     activation = ActivationFunctions.sigmoid(sum);
+                    assert !Double.isNaN(activation) : "sigmoid returns NaN on " + sum;
+                    assert !Double.isInfinite(activation) : "sigmoid is infinite on " + sum + " from " + activation;
                     break;
                 case ActivationFunctions.FTYPE_TANH:
                     activation = ActivationFunctions.tanh(sum);
+                    assert !Double.isNaN(activation) : "tanh returns NaN on " + sum;
+                    assert !Double.isInfinite(activation) : "tanh is infinite on " + sum + " from " + activation;
                     break;
                 case ActivationFunctions.FTYPE_ID:
                     activation = sum;
+                    assert !Double.isNaN(activation) : "ID returns NaN on " + sum;
+                    assert !Double.isInfinite(activation) : "ID is infinite on " + sum + " from " + activation;
                     break;
                 case ActivationFunctions.FTYPE_APPROX:
                     activation = ActivationFunctions.quickSigmoid(sum);
+                    assert !Double.isNaN(activation) : "quickSigmoid returns NaN on " + sum;
+                    assert !Double.isInfinite(activation) : "quickSigmoid is infinite on " + sum + " from " + activation;
                     break;
                 case ActivationFunctions.FTYPE_FULLAPPROX:
                     activation = ActivationFunctions.fullQuickSigmoid(sum);
+                    assert !Double.isNaN(activation) : "fullQuickSigmoid returns NaN on " + sum;
+                    assert !Double.isInfinite(activation) : "fullQuickSigmoid is infinite on " + sum + " from " + activation;
                     break;
                 case ActivationFunctions.FTYPE_GAUSS:
-                	activation = ActivationFunctions.gaussian(sum);
-                	break;
+                    activation = ActivationFunctions.gaussian(sum);
+                    assert !Double.isNaN(activation) : "gaussian returns NaN on " + sum;
+                    assert !Double.isInfinite(activation) : "gaussian is infinite on " + sum + " from " + activation;
+                    break;
                 case ActivationFunctions.FTYPE_SINE:
-                	activation = ActivationFunctions.sine(sum);
-                	break;
+                    activation = ActivationFunctions.sine(sum);
+                    assert !Double.isNaN(activation) : "sine returns NaN on " + sum;
+                    assert !Double.isInfinite(activation) : "sine is infinite on " + sum + " from " + activation;
+                    break;
                 case ActivationFunctions.FTYPE_ABSVAL:
-                	activation = ActivationFunctions.absVal(sum);
-                	break;
+                    activation = ActivationFunctions.absVal(sum);
+                    assert !Double.isNaN(activation) : "absVal returns NaN on " + sum;
+                    assert !Double.isInfinite(activation) : "absVal is infinite on " + sum + " from " + activation;
+                    break;
             }
         }
 
@@ -278,11 +306,11 @@ public class TWEANN implements Network {
 
         /**
          * Creates connection from this Node to target Node via a new Link.
-         * 
-         * @param target Node to link to 
-         * @param weight synaptic weight of link between nodes 
-         * @param innovation Innovation number of new Link 
-         * @param recurrent whether or not link is recurrent 
+         *
+         * @param target Node to link to
+         * @param weight synaptic weight of link between nodes
+         * @param innovation Innovation number of new Link
+         * @param recurrent whether or not link is recurrent
          * @param frozen whether or not link can be changed
          */
         protected void connect(Node target, double weight, long innovation, boolean recurrent, boolean frozen) {
@@ -306,7 +334,7 @@ public class TWEANN implements Network {
             return false;
         }
     }
-    
+
     private long id = -1;
     private int numIn;
     private int numOut;
@@ -329,6 +357,7 @@ public class TWEANN implements Network {
 
     /**
      * Whether or not networks being used can/do have preference neurons
+     *
      * @return true if preference neurons should be included
      */
     public static boolean preferenceNeuron() {
@@ -460,7 +489,7 @@ public class TWEANN implements Network {
     /**
      * Create TWEANN based on TWEANNGenotype, which can encode an arbitrary
      * network.
-     * 
+     *
      * @param g The genotype
      */
     public TWEANN(TWEANNGenotype g) {
@@ -503,7 +532,7 @@ public class TWEANN implements Network {
         this.neuronsPerMode = g.neuronsPerModule;
         this.standardMultitask = g.standardMultitask;
         this.hierarchicalMultitask = g.hierarchicalMultitask;
-        if(g.moduleAssociations != null) { // This is a backwards compatibility issue:
+        if (g.moduleAssociations != null) { // This is a backwards compatibility issue:
             // This array was added for the Hierarchical Multitask networks
             this.moduleAssociations = Arrays.copyOf(g.moduleAssociations, numModes);
         } else { // In older networks, simply associate each module with its own mode
@@ -548,11 +577,11 @@ public class TWEANN implements Network {
     }
 
     // Getters
-    	@Override
-	public int[] getModeUsage() {
-		return moduleUsage;
-	}
-    
+    @Override
+    public int[] getModuleUsage() {
+        return moduleUsage;
+    }
+
     public int numInputs() {
         return numIn;
     }
@@ -727,7 +756,7 @@ public class TWEANN implements Network {
     }
 
     @SuppressWarnings("unchecked")
-	public void flush() {
+    public void flush() {
         //System.out.println("Flush: " + id);
         for (Node n : nodes) {
             n.flush();

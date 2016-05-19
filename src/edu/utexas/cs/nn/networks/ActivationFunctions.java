@@ -255,11 +255,14 @@ public class ActivationFunctions {
 
     /**
      * Absolute value function for x. Uses Math.abs();
+     * 
+     * Also clamps result to range [0,1] after use of absolute value because
+     * of problems with values rising to infinity.
      *
      * @param x Function parameter
-     * @return value of abs(x)
+     * @return value of abs(x) clamped to [0,1]
      */
     public static double absVal(double x) {
-        return Math.abs(x);
+        return halfLinear(Math.abs(x));
     }
 }

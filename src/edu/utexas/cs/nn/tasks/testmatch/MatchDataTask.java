@@ -14,18 +14,16 @@ import edu.utexas.cs.nn.scores.Score;
 import edu.utexas.cs.nn.tasks.LonerTask;
 import edu.utexas.cs.nn.util.MiscUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
-import edu.utexas.cs.nn.util.random.RandomNumbers;
 import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Random;
 
 /**
  * This class takes input and output pairs that a network needs to evolve to match
  * returns a fitness value based on the Mean Squared Error 
  * (how far the actual outputs are from the desired outputs)
  * @author Jacob Schrum
+ * @param <T> Phenotype being evolved, which must be a network
  */
 public abstract class MatchDataTask<T extends Network> extends LonerTask<T> implements NetworkTask {
 	
@@ -61,6 +59,8 @@ public abstract class MatchDataTask<T extends Network> extends LonerTask<T> impl
 			ArrayList<Pair<Double,Double>> neuronResults = new ArrayList<Pair<Double,Double>>(n.numOutputs());
 			for(int i = 0; i < desiredOutputs.length; i++){
 				//add all of the pairs of desired and actual outputs to compare
+                                assert !Double.isNaN(desiredOutputs[i]) : "desiredOutputs["+i+"] is NaN!";
+                                assert !Double.isNaN(actualOutputs[i]) : "actualOutputs["+i+"] is NaN!";
 				neuronResults.add(new Pair<Double,Double>(desiredOutputs[i], actualOutputs[i]));
 			}
 			//add all of the pairs of desired and actual outputs to compare
@@ -71,6 +71,7 @@ public abstract class MatchDataTask<T extends Network> extends LonerTask<T> impl
 		}
 		//find the average amount/occurrence of error between each desired and actual output pairs put into the samples
 		double averageError = StatisticsUtilities.averageSquaredErrorEnergy(samples);
+                assert !Double.isNaN(averageError) : "averageError is NaN!";
 		return new Score<T>(individual, new double[]{-averageError}, null); // minimize error, so score is negative error
 	}
 

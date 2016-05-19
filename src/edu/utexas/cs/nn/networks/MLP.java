@@ -314,7 +314,7 @@ public class MLP implements Network {
     }
 
 	@Override
-	public int[] getModeUsage() {
+	public int[] getModuleUsage() {
 		// TODO Auto-generated method stub
 		return null;
 	}

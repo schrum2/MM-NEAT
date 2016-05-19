@@ -288,7 +288,9 @@ public class StatisticsUtilities {
     public static double average(double[] xs) {
         double avg = 0;
         for (int i = 0; i < xs.length; i++) {
+            assert !Double.isNaN(xs[i]) : "xs["+i+"] is NaN!";
             avg += (xs[i] - avg) / (i + 1);
+            assert !Double.isNaN(avg) : "avg is NaN!";
         }
         return avg;
     }
@@ -362,11 +364,14 @@ public class StatisticsUtilities {
      * @return instantaneous error
      */
     public static double instantaneousErrorEnergy(double desired, double output) {
+        assert !Double.isNaN(output) : "output was NaN!";
+        assert !Double.isNaN(desired) : "desired was NaN!";
         double e = desired - output;
         if(CommonConstants.watch){
             System.out.println("Error: " + e);
         }
         //return Math.abs(e);
+        assert !Double.isNaN(e) : "Error was NaN!";
         return (e*e)/2.0;
     }
     
@@ -381,6 +386,7 @@ public class StatisticsUtilities {
         double sum = 0;
         for(Pair<Double,Double> p : pairs) {
             sum += instantaneousErrorEnergy(p.t1, p.t2);
+            assert !Double.isNaN(sum) : "sum was NaN!";
         }
         return sum;
     }
@@ -396,6 +402,7 @@ public class StatisticsUtilities {
         for(int i = 0; i < totalErrors.length; i++) {
             ArrayList<Pair<Double,Double>> pairs = samples.get(i);
             totalErrors[i] = instantaneousTotalErrorEnergy(pairs);
+            assert !Double.isNaN(totalErrors[i]) : "totalErrors["+i+"] is NaN!";
         }
         return average(totalErrors);
     }
