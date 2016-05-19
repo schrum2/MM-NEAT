@@ -281,7 +281,7 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
      * @param args
      */
     public static void main(String[] args) {
-        //randomCPPNimage(true);
+        randomCPPNimage(true);
         for(int i = 0; i < 4; i++) {
             for(int j = 0; j < 3; j++) {
                 randomCPPNimage(false, i*300, j*300);
@@ -307,7 +307,7 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
         MMNEAT.clearClasses();
         EvolutionaryHistory.setInnovation(0);
         EvolutionaryHistory.setHighestGenotypeId(0);
-        Parameters.initializeParameterCollections(new String[]{"io:false", "netio:false", "randomSeed:0", "allowMultipleFunctions:true", "netChangeActivationRate:0.4", "recurrency:false", "includeHalfLinearPiecewiseFunction:true", "includeSawtoothFunction:true"});
+        Parameters.initializeParameterCollections(new String[]{"io:false", "netio:false", "allowMultipleFunctions:true", "netChangeActivationRate:0.4", "recurrency:false", "includeHalfLinearPiecewiseFunction:true", "includeSawtoothFunction:true"});
         MMNEAT.loadClasses();
 
         final int NUM_MUTATIONS = 200;
@@ -328,6 +328,7 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
         if (offerToSave) {
             DrawingPanel network = new DrawingPanel(SIZE, SIZE, "network");
             n.draw(network);
+            network.setLocation(300, 0);
             Scanner scan = new Scanner(System.in);
             System.out.println("would you like to save this image? y/n");
             if (scan.next().equals("y")) {
