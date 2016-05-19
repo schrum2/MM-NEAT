@@ -84,8 +84,10 @@ public class CommonConstants {
     public static int trialIncreaseFrequency;
     public static int trials;
     // double
+    
     public static double campPercentOfTrials;
     public static double distanceForNewMode;
+    public static double linkExpressionThreshold;
     public static double netChangeActivationRate;
     public static double preferenceNeuronDecay;
     public static double preferenceNeuronFatigueUnit;
@@ -180,6 +182,7 @@ public class CommonConstants {
         // double 
         campPercentOfTrials = Parameters.parameters.doubleParameter("campPercentOfTrials");
         distanceForNewMode = Parameters.parameters.doubleParameter("distanceForNewMode");
+        linkExpressionThreshold = Parameters.parameters.doubleParameter("linkExpressionThreshold");
         netChangeActivationRate = Parameters.parameters.doubleParameter("netChangeActivationRate");
         preferenceNeuronDecay = Parameters.parameters.doubleParameter("preferenceNeuronDecay");
         preferenceNeuronFatigueUnit = Parameters.parameters.doubleParameter("preferenceNeuronFatigueUnit");

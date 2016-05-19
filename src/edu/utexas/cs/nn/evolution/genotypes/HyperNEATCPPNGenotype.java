@@ -115,6 +115,8 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 
     /**
      * a method for looping through all nodes of two substrates to be linked
+     * Link is only created if cppn output reaches a certain threshold that is 
+     * dictated via command line parameter.
      *
      * @param cppn used to evolve link weight
      * @param outputIndex index from cppn outputs to be used as weight in
@@ -143,12 +145,14 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
                             scaledTargetCoordinates.getY(),
                             BIAS}; // inputs to CPPN
                         double[] outputs = cppn.process(inputs);
+                        if(Math.abs(outputs[outputIndex]) > CommonConstants.linkExpressionThreshold) {
                         newLinks.add(new LinkGene(
                                 getInnovationID(X1, Y1, s1Index, subs),
                                 getInnovationID(X2, Y2, s2Index, subs),
-                                outputs[outputIndex],
+                                calculateWeight(outputs[outputIndex]),
                                 innovationID++,
                                 false));
+                        } 
                     }
                 }
             }
@@ -174,5 +178,11 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
         }
         innovationIDAccumulator += (subs.get(sIndex).size.t1 * y) + x;
         return innovationIDAccumulator;
+    }
+    
+    protected double calculateWeight(double w) {
+    	if(w >  CommonConstants.linkExpressionThreshold) {
+    		return w -  CommonConstants.linkExpressionThreshold;
+    	} else return w +  CommonConstants.linkExpressionThreshold;
     }
 }

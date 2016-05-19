@@ -451,6 +451,7 @@ public class Parameters {
         booleanOptions.add("replayPacman", false, "Replay pacman game from save file");
         booleanOptions.add("hierarchicalMultitask", false, "Each multitask mode can consist of multiple preference neuron modules");
         //Double parameters
+        doubleOptions.add("linkExpressionThreshold", 0.2 , "Threshold for hyperNEAT output to result in an expressed link");
         doubleOptions.add("tugGoalIncrement0", 0.0, "Set amount to increase goal 0 by when using TUG");
         doubleOptions.add("tugGoalIncrement1", 0.0, "Set amount to increase goal 1 by when using TUG");
         doubleOptions.add("tugGoalIncrement2", 0.0, "Set amount to increase goal 2 by when using TUG");
