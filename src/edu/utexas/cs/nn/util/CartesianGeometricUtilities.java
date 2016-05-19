@@ -12,7 +12,8 @@ public class CartesianGeometricUtilities {
 
     /**
      * Scales X-Y coordinates to where origin is at center of plane, not top
-     * left corner. Also scales to range [-1,1] in each dimension.
+     * left corner. Also scales to range [-1,1] in each dimension. Remember that upper value 
+     * should be n-1 if not yet 0-based
      *
      * @param toScale (x,y) coordinates as a tuple
      * @param width width
