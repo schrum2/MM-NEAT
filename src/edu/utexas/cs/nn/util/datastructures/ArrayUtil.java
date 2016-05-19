@@ -114,6 +114,19 @@ public class ArrayUtil {
     }
     
     /**
+     * Returns true if double x is in the array set 
+     * 
+     * @param x element to look for
+     * @param set set to look in
+     * @return true if x in set
+     */
+    public static boolean member(double x, double[] set) {
+    	for(int j = 0; j < set.length; j++) {
+    		if(x == set[j]) return true;
+    	}
+    	return false;
+    }
+    /**
      * Combine two int arrays into one array starting with the elements of the
      * first array and ending with the elements of the second array
      *
