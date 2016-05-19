@@ -3,7 +3,6 @@ package edu.utexas.cs.nn.tasks.gridTorus.objectives;
 import edu.utexas.cs.nn.evolution.Organism;
 import edu.utexas.cs.nn.gridTorus.TorusAgent;
 import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.parameters.Parameters;
 
 /**
  * 
@@ -48,19 +47,6 @@ public class PreyRawalRajagopalanMiikkulainenObjective <T extends Network> exten
 			return (fewPreyCaughtScore * game.getTime()) / game.getTimeLimit();
 		//when some prey have died
 		return fewPreyCaughtScore;
-	}
-
-	@Override
-	/**
-	 * worst possible score for the prey is when all prey have died, so this is 
-	 * 12.5p / M ------ if all prey caught
-	 * p = number of time steps with at least one prey alive
-	 * M = maximum possible number of time steps
-	 * 
-	 * For the worst case, prey would have all died instantly, meaning p was 0 and total score is 0
-	 */
-	public double minScore(){
-		return 0;
 	}
 
 }

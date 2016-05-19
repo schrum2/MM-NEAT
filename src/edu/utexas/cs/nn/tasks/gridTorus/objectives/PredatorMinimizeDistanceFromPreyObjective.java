@@ -16,19 +16,17 @@ import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
  */
 public class PredatorMinimizeDistanceFromPreyObjective<T extends Network> extends GridTorusObjective<T> {
 
-	@Override
 	/**
-	 * reward the predators for being as close to the prey as possible at the end
-	 * if the prey are dead then distance from that prey is counted as zero (meaning that the
-	 * predators are also inherently encouraged to eat the prey)
+	 * Finds the sum of the sum of the distances from each predator to each prey. 
+	 * In other words, for each predator, get the distances to each prey in a list (array). Then, add up these distances 
+	 * so that there is a list (array) of sums of distances for each predator. Then add up these sums of distances for
+	 * each predator to have one total sum.
+	 * @param preds
+	 * @param prey
+	 * @return the sum of all distances
 	 */
-	public double fitness(Organism<T> individual) {
-		TorusAgent[] preds = game.getPredators();
-		TorusAgent[] prey = game.getPrey();
+	public static double sumOfPredToPreyDistances(TorusAgent[] preds, TorusAgent[] prey){
 		//this double array holds the distances to each prey for each pred
-		
-		
-		//TODO:move all of this into a static method that will be called from RRMpred
 		double[][] distances = new double[preds.length][prey.length];
 		//this array holds the sum of distances to all prey for each predator
 		double[] sumOfDists = new double[preds.length];
@@ -44,15 +42,22 @@ public class PredatorMinimizeDistanceFromPreyObjective<T extends Network> extend
 			}
 		}
 		//get the sum of the sum of distances for each predator to each prey
+		return StatisticsUtilities.sum(sumOfDists);
+	}
+	
+	
+	
+	@Override
+	/**
+	 * reward the predators for being as close to the prey as possible at the end
+	 * if the prey are dead then distance from that prey is counted as zero (meaning that the
+	 * predators are also inherently encouraged to eat the prey)
+	 */
+	public double fitness(Organism<T> individual) {
+		TorusAgent[] preds = game.getPredators();
+		TorusAgent[] prey = game.getPrey();
 		//want this to be as low as possible to minimize distance to prey for each pred
-		double overallDistScore = StatisticsUtilities.sum(sumOfDists);
-		//in RRMpred, this will be divided by product of numPreds numPrey and maxDist
-		//so overallDistScore / (numPreds * numPrey * maxDist)
-		
-		
-
-		//max score is zero
-		return -overallDistScore;
+		return -sumOfPredToPreyDistances(preds,prey);
 	}
 
 	@Override
@@ -72,9 +77,7 @@ public class PredatorMinimizeDistanceFromPreyObjective<T extends Network> extend
 			sumOfDists[i] = maxDist * numPrey;
 		}
 		//get the sum of the sum of distances for each predator to each prey
-		double overallDistScore = StatisticsUtilities.sum(sumOfDists);
-
-		//min score, sum of max distances from all prey for each pred
-		return -overallDistScore;
+		//min score, sum of max distances to all prey from each pred
+		return -StatisticsUtilities.sum(sumOfDists);
 	}
 }
