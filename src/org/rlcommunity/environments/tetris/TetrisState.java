@@ -47,6 +47,7 @@ public class TetrisState {
     public static final int TETRIS_STATE_CURRENT_HEIGHT_INDEX = TETRIS_STATE_CURRENT_ROTATION_INDEX + 1;
     public static final int TETRIS_STATE_CURRENT_WIDTH_INDEX = TETRIS_STATE_CURRENT_HEIGHT_INDEX + 1;
     public static final int TETRIS_STATE_NUMBER_OF_DISCRETE_FEATURES = TETRIS_STATE_NUMBER_WORLD_GRID_BLOCKS + TETRIS_STATE_NUMBER_POSSIBLE_BLOCKS + 5;
+    public static final int[] BLOCK_ROTATIONS = {2, 1, 4, 2, 2, 4, 4};
     
     private Random randomGenerator = RandomNumbers.randomGenerator;
     public boolean blockMobile = true;
@@ -78,7 +79,7 @@ public class TetrisState {
         possibleBlocks.add(TetrisPiece.makeZShape());
         possibleBlocks.add(TetrisPiece.makeLShape());
         possibleBlocks.add(TetrisPiece.makeJShape());
-
+        
         if (CommonConstants.watch) {
             if (TetrisViewer.current == null) {
                 //System.out.println("New TetrisViewer");
@@ -173,7 +174,7 @@ public class TetrisState {
     }
 
     /* This code applies the action, but doesn't do the default fall of 1 square */
-    public void take_action(int theAction) {
+    public boolean take_action(int theAction) {
 
         if (theAction > 5 || theAction < 0) {
             System.err.println("Invalid action selected in Tetrlais: " + theAction);
@@ -220,6 +221,7 @@ public class TetrisState {
             default:
                 break;
         }
+        boolean canMove = false;
         //Check if the resulting position is legal. If so, accept it.
         //Otherwise, don't change anything
         if (inBounds(nextX, nextY, nextRotation)) {
@@ -227,8 +229,10 @@ public class TetrisState {
                 currentRotation = nextRotation;
                 currentX = nextX;
                 currentY = nextY;
+                canMove = true;
             }
         }
+        return canMove;
 
     }
 
@@ -579,6 +583,25 @@ public class TetrisState {
 
     }
 
+    public String toString() {
+    	int[][] thePiece = possibleBlocks.get(currentBlockId).getShape(this.currentRotation);
+    	String result = "";
+        for (int y = 0; y < worldHeight; y++) {
+            for (int x = 0; x < worldWidth; x++) {
+            	//if(currentY <= y && y < currentY + thePiece[0].length) System.out.println("y " + y);
+            	//if(currentX <= x && x < currentX + thePiece.length) System.out.println("x " + x);
+            	if( (currentY <= y && y < currentY + thePiece[0].length) && (currentX <= x && x < currentX + thePiece.length) ){
+            		result += (int) Math.max(2*thePiece[x - currentX][y - currentY], (worldState[y * worldWidth + x]));
+            	} else {
+            		result += (worldState[y * worldWidth + x]);
+            	}
+            }
+            result += ("\n");
+        }
+        result += ("-------------");
+        return result;
+    }    
+    
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
@@ -586,13 +609,13 @@ public class TetrisState {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		//result = prime * result + (blockMobile ? 1231 : 1237);
-		//result = prime * result + currentBlockId;
-		//result = prime * result + currentRotation;
-		//result = prime * result + currentX;
-		//result = prime * result + currentY;
-		//result = prime * result + (is_game_over ? 1231 : 1237);
-		//result = prime * result + score;
+		result = prime * result + (blockMobile ? 1231 : 1237);
+		result = prime * result + currentBlockId;
+		result = prime * result + currentRotation;
+		result = prime * result + currentX;
+		result = prime * result + currentY;
+		result = prime * result + (is_game_over ? 1231 : 1237);
+		result = prime * result + score;
 		result = prime * result + Arrays.hashCode(worldState);
 		return result;
 	}
@@ -609,20 +632,20 @@ public class TetrisState {
 		if (getClass() != obj.getClass())
 			return false;
 		TetrisState other = (TetrisState) obj;
-		//if (blockMobile != other.blockMobile)
-		//	return false;
-		//if (currentBlockId != other.currentBlockId)
-		//	return false;
-		//if (currentRotation != other.currentRotation)
-		//	return false;
-		//if (currentX != other.currentX)
-		//	return false;
-		//if (currentY != other.currentY)
-		//	return false;
-		//if (is_game_over != other.is_game_over)
-		//	return false;
-		//if (score != other.score)
-		//	return false;
+		if (blockMobile != other.blockMobile)
+			return false;
+		if (currentBlockId != other.currentBlockId)
+			return false;
+		if (currentRotation != other.currentRotation)
+			return false;
+		if (currentX != other.currentX)
+			return false;
+		if (currentY != other.currentY)
+			return false;
+		if (is_game_over != other.is_game_over)
+			return false;
+		if (score != other.score)
+			return false;
 		if (!Arrays.equals(worldState, other.worldState))
 			return false;
 		return true;
