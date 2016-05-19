@@ -51,6 +51,8 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
         ArrayList<NodeGene> newNodes = createSubstrateNodes(subs);
 
         // Will map substrate names to index in subs List
+       
+        //needs to be switched
         HashMap<String, Integer> substrateIndexMapping = new HashMap<String, Integer>();
         for (int i = 0; i < subs.size(); i++) {
             substrateIndexMapping.put(subs.get(i).getName(), i);

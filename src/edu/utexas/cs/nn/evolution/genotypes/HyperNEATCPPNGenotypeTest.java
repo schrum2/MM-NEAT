@@ -15,8 +15,11 @@ import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype.NodeGene;
 import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.networks.hyperneat.Substrate;
 import edu.utexas.cs.nn.parameters.Parameters;
+import edu.utexas.cs.nn.util.CartesianGeometricUtilities;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.datastructures.Triple;
+import edu.utexas.cs.nn.util.util2D.ILocated2D;
+import edu.utexas.cs.nn.util.util2D.Tuple2D;
 
 /**
  * JUnit test for most basic case of a hyperNEATCPPNGenotype
@@ -28,7 +31,7 @@ public class HyperNEATCPPNGenotypeTest {
 
 	//hardcoded indices of substrate from list
 	public static int sub1Index = 0;
-	public static int sub2Index = 0;
+	public static int sub2Index = 1;
 	
 	HyperNEATCPPNGenotype hcppn;
 	TWEANN cppn;
@@ -85,13 +88,13 @@ public class HyperNEATCPPNGenotypeTest {
 		assertEquals(subs.get(sub1Index).size.t1*subs.get(sub1Index).size.t2*subs.get(sub2Index).size.t1*subs.get(sub2Index).size.t2, newLinks.size());
 		//belongs in cartesian geometric utilities testing class
 		
-		//ILocated2D scaledSourceCoordinates = CartesianGeometricUtilities.centerAndScale(new Tuple2D(0, 0), subs.get(sub1Index).size.t1, subs.get(sub1Index).size.t2);
-		//Tuple2D size = new Tuple2D(subs.get(sub2Index).size.t1, subs.get(sub2Index).size.t2);
-		//ILocated2D scaledTargetCoordinates = CartesianGeometricUtilities.centerAndScale(size, subs.get(sub2Index).size.t1, subs.get(sub2Index).size.t2);
-		//assertEquals(scaledSourceCoordinates.getY(), -1, .001);
-		//assertEquals(scaledSourceCoordinates.getX(), -1, .001);
-		//assertEquals(scaledTargetCoordinates.getX(), 1, .01);
-		//assertEquals(scaledTargetCoordinates.getY(), 1, .01);
+		ILocated2D scaledSourceCoordinates = CartesianGeometricUtilities.centerAndScale(new Tuple2D(0, 0), subs.get(sub1Index).size.t1, subs.get(sub1Index).size.t2);
+		Tuple2D size = new Tuple2D(subs.get(sub2Index).size.t1-1, subs.get(sub2Index).size.t2-1);
+		ILocated2D scaledTargetCoordinates = CartesianGeometricUtilities.centerAndScale(size, subs.get(sub2Index).size.t1, subs.get(sub2Index).size.t2);
+		assertEquals(scaledSourceCoordinates.getY(), -1, .001);
+		assertEquals(scaledSourceCoordinates.getX(), -1, .001);
+		assertEquals(scaledTargetCoordinates.getX(), 1, .01);
+		assertEquals(scaledTargetCoordinates.getY(), 1, .01);
 		
 		assertEquals(newLinks.get(sub1Index).sourceInnovation, hcppn.getInnovationID(0, 0, sub1Index, subs));
 		assertEquals(newLinks.get(sub1Index).sourceInnovation, hcppn.getInnovationID(0, 0, endingIndex, subs));
@@ -99,7 +102,7 @@ public class HyperNEATCPPNGenotypeTest {
 	
 	@Test
 	public void testHashMapping() {
-		assertTrue(sIMap.get(sub1Index).equals(subs.get(sub1Index).getName()));
+		assertTrue(sIMap.get(subs.get(sub1Index).getName()).equals(sub1Index));
 	}
 	
 	/**
@@ -107,12 +110,9 @@ public class HyperNEATCPPNGenotypeTest {
 	 */
 	@Test
 	public void testGetInnovationID() {
-		int endingIndex = connections.size()-1;
 		int indexOfTest = 0;
 		ArrayList<LinkGene> newLinks = new ArrayList<LinkGene>();
 		newLinks = hcppn.loopThroughLinks(cppn, indexOfTest, subs.get(sub1Index), subs.get(sub2Index), sub1Index, sub2Index, subs);
-		int Xcoord = subs.get(1).size.t1;//know that this is last node in node gene list
-		int Ycoord = subs.get(1).size.t2;
 		assertEquals(newLinks.get(sub1Index).innovation, hcppn.getInnovationID(sub1Index, sub1Index, sub1Index, subs));
 	}
 }
