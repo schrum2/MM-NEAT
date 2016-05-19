@@ -19,6 +19,7 @@ import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.scores.Score;
 import edu.utexas.cs.nn.tasks.testmatch.MatchDataTask;
+import edu.utexas.cs.nn.util.CartesianGeometricUtilities;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.random.RandomNumbers;
 import edu.utexas.cs.nn.util.random.ResumableRandom;
@@ -181,7 +182,7 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
      * @return array containing inputs for CPPN
      */
     public static double[] getCPPNInputs(int x, int y, int imageWidth, int imageHeight) {
-        ILocated2D scaled = scale(new Tuple2D(x, y), imageWidth, imageHeight);
+        ILocated2D scaled = CartesianGeometricUtilities.centerAndScale(new Tuple2D(x, y), imageWidth, imageHeight);
         return new double[]{scaled.getX(), scaled.getY(), scaled.distance(new Tuple2D(0, 0)) * SQRT2, BIAS};
     }
 
@@ -274,36 +275,6 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
             }
         }
         return pairs;
-    }
-
-    /**
-     * Scales X-Y coordinates to where origin is at center of picture, not top
-     * left corner. Also scales to range [-1,1] in each dimension.
-     *
-     * @param toScale (x,y) coordinates as a tuple
-     * @param imageWidth width of image
-     * @param imageHeight height of image
-     *
-     * @return new tuple with scaled coordinates
-     */
-    public static Tuple2D scale(Tuple2D toScale, int imageWidth, int imageHeight) {
-        double newX = scale(toScale.x, imageWidth);
-        double newY = scale(toScale.y, imageHeight);
-        return new Tuple2D(newX, newY);
-    }
-
-    /**
-     * Scales either x or y coordinate to where origin is at center of picture,
-     * not top left corner
-     *
-     * @param toScale coordinate to be scaled
-     * @param imageSize either imageHeight or imageWidth, depending on whether
-     * toScale is x or y coordinate
-     *
-     * @return scaled coordinate
-     */
-    public static double scale(double toScale, int imageSize) {
-        return ((toScale / (imageSize - 1)) * 2) - 1;
     }
 
     /**

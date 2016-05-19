@@ -9,6 +9,7 @@ import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
 import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.parameters.Parameters;
+import edu.utexas.cs.nn.util.CartesianGeometricUtilities;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.util2D.ILocated2D;
 import edu.utexas.cs.nn.util.util2D.Tuple2D;
@@ -66,8 +67,8 @@ public class ImageMatchTaskTest {
 	public void test_getTrainingPairs() {
 		ArrayList<Pair<double[], double[]>> pair = test.getTrainingPairs();
 		System.out.print(Arrays.toString(pair.get(pair.size()-1).t1));
-		assertEquals(pair.get(pair.size()-1).t1[X_COORDINATE_INDEX], ImageMatchTask.scale(imageWidth - 1, imageWidth), .001);
-		assertEquals(pair.get(pair.size()-1).t1[Y_COORDINATE_INDEX], ImageMatchTask.scale(imageHeight - 1, imageHeight), .001);
+		assertEquals(pair.get(pair.size()-1).t1[X_COORDINATE_INDEX], CartesianGeometricUtilities.centerAndScale(imageWidth - 1, imageWidth), .001);
+		assertEquals(pair.get(pair.size()-1).t1[Y_COORDINATE_INDEX], CartesianGeometricUtilities.centerAndScale(imageHeight - 1, imageHeight), .001);
 		assertEquals(pair.get(pair.size()-1).t1[BIAS_IND], BIAS, .001);
 		assertEquals(pair.get(pair.size()-1).t2.length, test.numOutputs(), .001);
 	}
@@ -88,11 +89,11 @@ public class ImageMatchTaskTest {
 	 */
 	@Test
 	public void test_Scale() {
-		Tuple2D leftTopCorner = ImageMatchTask.scale(new Tuple2D(0,0), imageWidth, imageHeight);
-		Tuple2D leftBottomCorner = ImageMatchTask.scale(new Tuple2D(0,imageHeight-1), imageWidth, imageHeight);
-		Tuple2D rightTopCorner = ImageMatchTask.scale(new Tuple2D(imageWidth-1, 0), imageWidth, imageHeight);
-		Tuple2D rightBottomCorner = ImageMatchTask.scale(new Tuple2D(imageWidth-1, imageHeight-1), imageWidth, imageHeight);
-		Tuple2D center = ImageMatchTask.scale(new Tuple2D((imageWidth-1)/2.0, (imageHeight-1)/2.0), imageWidth, imageHeight);
+		Tuple2D leftTopCorner = CartesianGeometricUtilities.centerAndScale(new Tuple2D(0,0), imageWidth, imageHeight);
+		Tuple2D leftBottomCorner = CartesianGeometricUtilities.centerAndScale(new Tuple2D(0,imageHeight-1), imageWidth, imageHeight);
+		Tuple2D rightTopCorner = CartesianGeometricUtilities.centerAndScale(new Tuple2D(imageWidth-1, 0), imageWidth, imageHeight);
+		Tuple2D rightBottomCorner = CartesianGeometricUtilities.centerAndScale(new Tuple2D(imageWidth-1, imageHeight-1), imageWidth, imageHeight);
+		Tuple2D center = CartesianGeometricUtilities.centerAndScale(new Tuple2D((imageWidth-1)/2.0, (imageHeight-1)/2.0), imageWidth, imageHeight);
 		assertEquals(leftTopCorner.x, -1, .01); 
 		assertEquals(leftTopCorner.y, -1, .01);
 		assertEquals(leftBottomCorner.x, -1, .01);

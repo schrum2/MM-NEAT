@@ -10,6 +10,36 @@ import java.util.ArrayList;
  */
 public class CartesianGeometricUtilities {
 
+    /**
+     * Scales X-Y coordinates to where origin is at center of plane, not top
+     * left corner. Also scales to range [-1,1] in each dimension.
+     *
+     * @param toScale (x,y) coordinates as a tuple
+     * @param width width
+     * @param height height
+     *
+     * @return new tuple with scaled coordinates
+     */
+    public static Tuple2D centerAndScale(Tuple2D toScale, int width, int height) {
+        double newX = centerAndScale(toScale.x, width);
+        double newY = centerAndScale(toScale.y, height);
+        return new Tuple2D(newX, newY);
+    }    
+    
+    /**
+     * Scales either x or y coordinate to where origin is at center of plane,
+     * not top left corner
+     *
+     * @param toScale coordinate to be scaled
+     * @param maxDimension either height or width, depending on whether
+     * toScale is x or y coordinate
+     *
+     * @return scaled coordinate
+     */
+    public static double centerAndScale(double toScale, int maxDimension) {
+        return ((toScale / (maxDimension - 1)) * 2) - 1;
+    }    
+    
     public static double shortestDistanceToLineSegment(ILocated2D p1, ILocated2D l1, ILocated2D l2) {
         return shortestDistanceToLineSegment(p1.getX(), p1.getY(), l1.getX(), l2.getX(), l1.getY(), l2.getY());
     }
