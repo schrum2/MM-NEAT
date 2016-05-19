@@ -17,11 +17,20 @@ import edu.utexas.cs.nn.util.datastructures.Pair;
  */
 public interface HyperNEATTask extends NetworkTask {
 
-	// Method that returns a list of information about
-	// the substrate layers contained in the network
+        /**
+         * Method that returns a list of information about
+         * the substrate layers contained in the network.
+         * @return List of Substrates in order from inputs to hidden to output layers
+         */
 	public List<Substrate> getSubstrateInformation();
-	//Substrate defined as one layer and ^^ method returns a list of the different
-	//substrates in the whole network
-	
+
+        /**
+         * Each Substrate has a unique String name, and this method returns
+         * a list of String pairs indicating which Substrates are connected:
+         * The Substrate from the first in the pair has links leading into the
+         * neurons in the Substrate second in the pair.
+         * @return Last of String pairs where all Strings are names of Substrates
+         * for the domain.
+         */
 	public List<Pair<String,String>> getSubstrateConnectivity();
 }
