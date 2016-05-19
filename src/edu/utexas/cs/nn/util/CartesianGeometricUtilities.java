@@ -41,10 +41,30 @@ public class CartesianGeometricUtilities {
         return ((toScale / (maxDimension - 1)) * 2) - 1;
     }    
     
+    /**
+     * Calculates the shortest distance from a point to a segment
+     * 
+     * @param p1 point to calculate distance from
+     * @param l1 one end of segment
+     * @param l2 other end of segment
+     * 
+     * @return shortest distance from segment to point
+     */
     public static double shortestDistanceToLineSegment(ILocated2D p1, ILocated2D l1, ILocated2D l2) {
         return shortestDistanceToLineSegment(p1.getX(), p1.getY(), l1.getX(), l2.getX(), l1.getY(), l2.getY());
     }
 
+    /**
+     * Calculates the shortest distance from a point to a segment
+     * 
+     * @param x
+     * @param y
+     * @param x1
+     * @param x2
+     * @param y1
+     * @param y2
+     * @return
+     */
     public static double shortestDistanceToLineSegment(double x, double y, double x1, double x2, double y1, double y2) {
         double A = x - x1;
         double B = y - y1;
@@ -72,6 +92,14 @@ public class CartesianGeometricUtilities {
         return (new Tuple2D(x, y).distance(other));
     }
 
+    /**
+     * calculates euclidian distance in a generalized vector space
+     * 
+     * @param x1 the first point in space 
+     * @param x2 the second point in space
+     * 
+     * @return distance between x1 and x2
+     */
     public static double euclideanDistance(ArrayList<Double> x1, ArrayList<Double> x2) {
         double sum = 0;
         for (int i = 0; i < x1.size(); i++) {
@@ -80,6 +108,14 @@ public class CartesianGeometricUtilities {
         return Math.sqrt(sum);
     }
 
+    /**
+     * calculates the cartesian coordiantes from polar inputs
+     * 
+     * @param r radius
+     * @param theta angle from X-axis to radius
+     * 
+     * @return double array containing x/y coordinates
+     */
     public static double[] polarToCartesian(double r, double theta) {
         double x = r * Math.cos(theta);
         double y = r * Math.sin(theta);
@@ -116,10 +152,22 @@ public class CartesianGeometricUtilities {
         return signedAngleDifference(sourceRads, angleToTarget);
     }
 
+    /**
+     * 
+     * @param v1
+     * @param v2
+     * @return
+     */
     public static double signedAngleDifference(ILocated2D v1, ILocated2D v2) {
         return signedAngleDifference(v1.getPosition().angle(), v2.getPosition().angle());
     }
 
+    /**
+     * 
+     * @param rad1
+     * @param rad2
+     * @return
+     */
     public static double signedAngleDifference(double rad1, double rad2) {
         double angleDifference = rad1 - rad2;
         if (angleDifference > Math.PI) {
@@ -130,17 +178,38 @@ public class CartesianGeometricUtilities {
         return -angleDifference;
     }
 
+    /**
+     * 
+     * @param sourceRadians
+     * @param source
+     * @param target
+     * @param allowance
+     * @return
+     */
     public static boolean sourceHeadingTowardsTarget(double sourceRadians, ILocated2D source, ILocated2D target, double allowance) {
         double angle = signedAngleFromSourceHeadingToTarget(source, target, sourceRadians);
         //System.out.println(source + "->" + sourceRadians + ":" + target + "=" + angle + " vs " + allowance);
         return Math.abs(angle) < allowance;
     }
 
+    /**
+     * 
+     * @param source
+     * @param sourceRadians
+     * @param other
+     * @param right
+     * @return
+     */
     public static boolean onSideOf(ILocated2D source, double sourceRadians, ILocated2D other, boolean right) {
         double angle = signedAngleFromSourceHeadingToTarget(source, other, sourceRadians);
         return (right && (angle > 0)) || (!right && (angle < 0));
     }
 
+    /**
+     * 
+     * @param rads
+     * @return
+     */
     public static double restrictRadians(double rads) {
         while (rads >= 2 * Math.PI) {
             rads -= 2 * Math.PI;
