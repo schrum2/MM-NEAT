@@ -12,6 +12,7 @@ import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
 import edu.utexas.cs.nn.graphics.DrawingPanel;
+import edu.utexas.cs.nn.networks.ActivationFunctions;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.parameters.CommonConstants;
@@ -19,6 +20,8 @@ import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.scores.Score;
 import edu.utexas.cs.nn.tasks.testmatch.MatchDataTask;
 import edu.utexas.cs.nn.util.datastructures.Pair;
+import edu.utexas.cs.nn.util.random.RandomNumbers;
+import edu.utexas.cs.nn.util.random.ResumableRandom;
 import edu.utexas.cs.nn.util.util2D.ILocated2D;
 import edu.utexas.cs.nn.util.util2D.Tuple2D;
 
@@ -94,7 +97,7 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 
     /**
      * Allows image and network to be saved as a bmp if user chooses to do so
-     *  
+     *
      * @param panel the drawing panel containing the image to be saved
      */
     public static void considerSavingImage(DrawingPanel panel) {
@@ -110,49 +113,71 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 
     /**
      * Draws the image created by the CPPN to a BufferedImage
-     * 
+     *
      * @param n the network used to process the imag
      * @param imageWidth width of image
-     * @param imageHeight height of image 
+     * @param imageHeight height of image
      * @return buffered image containing image drawn by network
      */
     public static BufferedImage imageFromCPPN(Network n, int imageWidth, int imageHeight) {
         BufferedImage image = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_RGB);
         for (int x = 0; x < imageWidth; x++) {//scans across whole image
             for (int y = 0; y < imageHeight; y++) {
-                double[] hsb = getHSBFromCPPN(n, x, y, imageWidth, imageHeight);
+                float[] hsb = getHSBFromCPPN(n, x, y, imageWidth, imageHeight);
                 //network outputs computed on hsb, not rgb scale because creates better images
-                Color childColor = Color.getHSBColor((float) hsb[HUE_INDEX], (float) Math.max(0, Math.min(hsb[SATURATION_INDEX], 1)), (float) Math.abs(hsb[BRIGHTNESS_INDEX]));
+                Color childColor = Color.getHSBColor(hsb[HUE_INDEX], hsb[SATURATION_INDEX], hsb[BRIGHTNESS_INDEX]);
                 image.setRGB(x, y, childColor.getRGB());//set back to RGB to draw picture to JFrame
             }
         }
         return image;
     }
-
+    
     /**
-     * Gets HSB outputs from the CPPN in question
+     * Given the direct HSB values from the CPPN (a double array),
+     * convert to a float array (required by Color methods) and do
+     * range restriction on certain values.
      * 
-     * @param n the CPPN
-     * @param x  x-coordinate of pixel
-     * @param y  y-coordinate of pixel
-     * @param imageWidth width of image
-     * @param imageHeight height of image
+     * These range restrictions were stolen from Picbreeder code 
+     * on GitHub (though not the original code), but 2 in 13 randomly
+     * mutated networks still produce boring black screens.
+     * Is there a way to fix this?
      * 
-     * @return double containing the HSB values
+     * @param hsb array of HSB color information from CPPN
+     * @return scaled HSB information in float array
      */
-    public static double[] getHSBFromCPPN(Network n, int x, int y, int imageWidth, int imageHeight) {
-        double[] input = getCPPNInputs(x, y, imageWidth, imageHeight);
-        return n.process(input);
+    public static float[] rangeRestrictHSB(double[] hsb) {
+        return new float[]{
+            (float) hsb[HUE_INDEX], 
+            //(float) hsb[SATURATION_INDEX], 
+            (float) ActivationFunctions.halfLinear(hsb[SATURATION_INDEX]), 
+            //(float) hsb[BRIGHTNESS_INDEX]};
+            (float) Math.abs(hsb[BRIGHTNESS_INDEX])};
     }
 
     /**
-     * Gets scaled inputs to send to CPPN
-     * 
+     * Gets HSB outputs from the CPPN in question
+     *
+     * @param n the CPPN
      * @param x x-coordinate of pixel
      * @param y y-coordinate of pixel
      * @param imageWidth width of image
      * @param imageHeight height of image
-     * 
+     *
+     * @return double containing the HSB values
+     */
+    public static float[] getHSBFromCPPN(Network n, int x, int y, int imageWidth, int imageHeight) {
+        double[] input = getCPPNInputs(x, y, imageWidth, imageHeight);
+        return rangeRestrictHSB(n.process(input));
+    }
+
+    /**
+     * Gets scaled inputs to send to CPPN
+     *
+     * @param x x-coordinate of pixel
+     * @param y y-coordinate of pixel
+     * @param imageWidth width of image
+     * @param imageHeight height of image
+     *
      * @return array containing inputs for CPPN
      */
     public static double[] getCPPNInputs(int x, int y, int imageWidth, int imageHeight) {
@@ -162,7 +187,7 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 
     /**
      * method for drawing an image onto a drawing panel
-     * 
+     *
      * @param image image to draw
      * @param label name of image
      * @param imageWidth width of image
@@ -179,10 +204,10 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 
     /**
      * public method for drawing an image onto a drawing panel
-     * 
+     *
      * @param image image to draw
      * @param label label name of image
-     * 
+     *
      * @return drawing panel with image
      */
     public DrawingPanel drawImage(BufferedImage image, String label) {
@@ -258,7 +283,7 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
      * @param toScale (x,y) coordinates as a tuple
      * @param imageWidth width of image
      * @param imageHeight height of image
-     * 
+     *
      * @return new tuple with scaled coordinates
      */
     public static Tuple2D scale(Tuple2D toScale, int imageWidth, int imageHeight) {
@@ -283,26 +308,41 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 
     /**
      * main method used to create a random CPPN image.
+     *
      * @param args
      */
     public static void main(String[] args) {
-        randomCPPNimage();
+        //randomCPPNimage(true);
+        for(int i = 0; i < 4; i++) {
+            for(int j = 0; j < 3; j++) {
+                randomCPPNimage(false, i*300, j*300);
+            }
+        }
+    }
+
+    public static DrawingPanel randomCPPNimage(boolean offerToSave) {
+        return randomCPPNimage(offerToSave, 0, 0);
     }
 
     /**
      * Creates a random image of given size and numMutations and puts it in
      * JFrame with option to save image and network as a bmp
+     *
+     * @param offerToSave Whether to pause and ask to save image
+     * @param x x-coordinate to place image window
+     * @param y y-coordinate to place image window
+     * @return panel on which image was drawn
      */
-    public static void randomCPPNimage() {
+    public static DrawingPanel randomCPPNimage(boolean offerToSave, int x, int y) {
 
         MMNEAT.clearClasses();
         EvolutionaryHistory.setInnovation(0);
         EvolutionaryHistory.setHighestGenotypeId(0);
-        Parameters.initializeParameterCollections(new String[]{"io:false", "netio:false", "allowMultipleFunctions:true", "netChangeActivationRate:0.4", "recurrency:false", "includeHalfLinearPiecewiseFunction:true", "includeSawtoothFunction:true"});
+        Parameters.initializeParameterCollections(new String[]{"io:false", "netio:false", "randomSeed:0", "allowMultipleFunctions:true", "netChangeActivationRate:0.4", "recurrency:false", "includeHalfLinearPiecewiseFunction:true", "includeSawtoothFunction:true"});
         MMNEAT.loadClasses();
 
         final int NUM_MUTATIONS = 200;
-        final int SIZE = 500;
+        final int SIZE = 300;
 
         TWEANNGenotype toDraw = new TWEANNGenotype(4, 3, false, 0, 1, 0);
         for (int i = 0; i < NUM_MUTATIONS; i++) {
@@ -313,25 +353,29 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 
         System.out.println(n.toString());
 
-        DrawingPanel network = new DrawingPanel(SIZE, SIZE, "network");
-        n.draw(network);
         DrawingPanel childPanel = drawImage(child, "output", SIZE, SIZE);
+        childPanel.setLocation(x, y);
 
-        Scanner scan = new Scanner(System.in);
-        System.out.println("would you like to save this image? y/n");
-        if (scan.next().equals("y")) {
-            System.out.println("enter filename");
-            String filename = scan.next();
-            childPanel.save(filename + ".bmp");
-            System.out.println("save network? y/n");
+        if (offerToSave) {
+            DrawingPanel network = new DrawingPanel(SIZE, SIZE, "network");
+            n.draw(network);
+            Scanner scan = new Scanner(System.in);
+            System.out.println("would you like to save this image? y/n");
             if (scan.next().equals("y")) {
-                network.save(filename + "network.bmp");
+                System.out.println("enter filename");
+                String filename = scan.next();
+                childPanel.save(filename + ".bmp");
+                System.out.println("save network? y/n");
+                if (scan.next().equals("y")) {
+                    network.save(filename + "network.bmp");
+                }
             }
+            scan.close();
+            network.dispose();
+            childPanel.dispose();
+            System.exit(0);
         }
-        scan.close();
-        network.dispose();
-        childPanel.dispose();
-        System.exit(0);
+        return childPanel;
     }
 
 }
