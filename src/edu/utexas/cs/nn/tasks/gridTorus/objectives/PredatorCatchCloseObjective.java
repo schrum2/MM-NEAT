@@ -8,29 +8,14 @@ import edu.utexas.cs.nn.parameters.Parameters;
 /**
  * 
  * @author rollinsa
- * The predator fitness function appearing in Constructing Competitive and Cooperative Agent Behavior Using Coevolution
- * By Aditya Rawal, Padmini Rajagopalan, and Risto Miikkulainen
- * http://nn.cs.utexas.edu/?rawal:cig10
  * 
- * Predator fitness score:
- * 25 ------ if both prey caught
- * (20c / n) + (2c) + (20d / n) ------ otherwise
- * c = number of prey caught
- * n = total number of prey
- * d = normalized sum of distances from the predator to each prey at the end of the simulation
- * 
- * Encourages catching all prey with an emphasis on being as close as possible in distance to catching those that weren't caught
+ * Encourages catching all prey with a very high score for doing so
+ * if the prey aren't all caught, this fitness function will emphasize that as many prey are caught
+ * as possible, and if none are caught then it minimizes distance to the prey
  */
-public class PredatorRawalRajagopalanMiikkulainenObjective <T extends Network> extends GridTorusObjective<T>{
+public class PredatorCatchCloseObjective <T extends Network> extends GridTorusObjective<T>{
 
 	public static final double NO_PREY_SCORE = 25;
-
-	public PredatorRawalRajagopalanMiikkulainenObjective() {
-		//because of the equation for the fitness function given by the RRM paper, there must be two prey
-		if(Parameters.parameters.integerParameter("torusPreys") != 2){
-			throw new IllegalArgumentException("The number of prey must be two for this fitness function");
-		}
-	}
 	
 	@Override
 	/**
@@ -66,12 +51,14 @@ public class PredatorRawalRajagopalanMiikkulainenObjective <T extends Network> e
 		
 		//make d essentially its inverse so that less distance is encouraged
 		d = 1 - d;
+		double normalizedCaught = (numCaught/numPrey);
 		
-		double WEIGHT = (NO_PREY_SCORE * (4.0/5));
-		//now we have d = d, n = numPrey, c = numCaught
-		//------ (20c / n) + (2c) + (20d / n) ------ (generalized for variable number of prey/preds)
-		//For general equation (not requirement of 2 prey) would be: Score = %PreyCaught + MinimizedDistance
-		return ((WEIGHT * numCaught) / numPrey) + (2 * numCaught) + ((WEIGHT * d) / numPrey);
+		//divided by three because there are two factors in the equation (%caught and distance) and the %caught is multiplied
+		//by two so that it is weighted twice as much as the distance to the prey and this whole score 
+		//needs to be less than the maximum score, NO_PREY_SCORE, which is given when all prey are caught
+		double WEIGHT = (NO_PREY_SCORE/3.0); 
+		
+		return d*WEIGHT + 2*normalizedCaught*WEIGHT;	
 	}
 
 }

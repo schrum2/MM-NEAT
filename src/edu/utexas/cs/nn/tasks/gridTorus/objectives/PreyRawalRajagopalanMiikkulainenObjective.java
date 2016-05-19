@@ -41,12 +41,12 @@ public class PreyRawalRajagopalanMiikkulainenObjective <T extends Network> exten
 		//when no prey have died. Best possible score
 		if(numCaught == 0)
 			return ALL_PREY_SCORE;
-		double fewPreyCaughtScore = (ALL_PREY_SCORE - (ALL_PREY_SCORE*(numCaught / prey.length)));
+		double eachPreyCaughtScore = (ALL_PREY_SCORE*(1.0 / prey.length));
 		//when all prey have died
 		if(numCaught == prey.length)
-			return (fewPreyCaughtScore * (((double)game.getTime())) / ((double)game.getTimeLimit()));
+			return eachPreyCaughtScore * (((double)game.getTime()) / ((double)game.getTimeLimit()));
 		//when some prey have died
-		return fewPreyCaughtScore;
+		return (prey.length - numCaught)*eachPreyCaughtScore;
 	}
 
 }
