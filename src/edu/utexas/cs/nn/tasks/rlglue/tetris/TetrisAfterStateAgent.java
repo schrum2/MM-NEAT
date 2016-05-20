@@ -1,6 +1,7 @@
 package edu.utexas.cs.nn.tasks.rlglue.tetris;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -15,6 +16,7 @@ import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.tasks.rlglue.RLGlueAgent;
+import edu.utexas.cs.nn.util.MiscUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
 
@@ -46,6 +48,11 @@ public class TetrisAfterStateAgent<T extends Network> extends RLGlueAgent<T>{
         return result;
     }    
 	
+	/**
+	 * Given an observation, it returns the action to be taken
+	 * @param o Observation
+	 * @return action Action
+	 */
 	public Action getAction(Observation o) {
 		
 		//System.out.println(tetrisObservationToString(o));
@@ -76,8 +83,15 @@ public class TetrisAfterStateAgent<T extends Network> extends RLGlueAgent<T>{
 
 				double[] inputsScaled = scaleInputs(inputs);
 
+				policy.flush(); // remove recurrent activation
 				outputs = this.consultPolicy(inputsScaled); 
 
+//				System.out.println("NN utility: "+outputs[0]);
+//				System.out.println("Non-scaled inputs: "+Arrays.toString(inputs));
+//				System.out.println("Scaled inputs: "+Arrays.toString(inputsScaled));
+//				System.out.println(i.t1.toString(false));
+//				MiscUtil.waitForReadStringAndEnterKeyPress();
+				
 				//	array(list?).add(outputs[0], first action*) 
 				Pair<Double, List<Integer>> tempPair = new Pair<Double, List<Integer>>(outputs[0], i.t2);
 				outputPairs.add(tempPair);

@@ -148,6 +148,10 @@ public class TetrisState {
         }
     }
 
+    public void writeCurrentBlock() {
+    	writeCurrentBlock(this.worldState);
+    }
+    
     public void writeCurrentBlock(int[] game_world) {
         int[][] thisPiece = possibleBlocks.get(currentBlockId).getShape(currentRotation);
 
@@ -597,7 +601,7 @@ public class TetrisState {
             	if(showFallingPiece && (currentY <= y && y < currentY + thePiece[0].length) && (currentX <= x && x < currentX + thePiece.length) ){
             		result += (int) Math.max(2*thePiece[x - currentX][y - currentY], (worldState[y * worldWidth + x]));
             	} else {
-            		result += (worldState[y * worldWidth + x]);
+            		result += (worldState[y * worldWidth + x]) > 0 ? 1 : 0;
             	}
             }
             result += ("\n");
