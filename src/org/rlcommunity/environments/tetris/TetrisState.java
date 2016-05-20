@@ -175,7 +175,7 @@ public class TetrisState {
 
     /* This code applies the action, but doesn't do the default fall of 1 square */
     public boolean take_action(int theAction) {
-
+    	//System.out.println(toString(false));
         if (theAction > 5 || theAction < 0) {
             System.err.println("Invalid action selected in Tetrlais: " + theAction);
             //Random >=0 < 6
@@ -232,6 +232,7 @@ public class TetrisState {
                 canMove = true;
             }
         }
+
         return canMove;
 
     }
@@ -542,7 +543,6 @@ public class TetrisState {
      *
      */
     public void printState() {
-        int index = 0;
         for (int i = 0; i < worldHeight - 1; i++) {
             for (int j = 0; j < worldWidth; j++) {
                 System.out.print(worldState[i * worldWidth + j]);
@@ -584,13 +584,17 @@ public class TetrisState {
     }
 
     public String toString() {
+    	return toString(true);
+    }    
+    
+    public String toString(boolean showFallingPiece) {
     	int[][] thePiece = possibleBlocks.get(currentBlockId).getShape(this.currentRotation);
     	String result = "";
         for (int y = 0; y < worldHeight; y++) {
             for (int x = 0; x < worldWidth; x++) {
             	//if(currentY <= y && y < currentY + thePiece[0].length) System.out.println("y " + y);
             	//if(currentX <= x && x < currentX + thePiece.length) System.out.println("x " + x);
-            	if( (currentY <= y && y < currentY + thePiece[0].length) && (currentX <= x && x < currentX + thePiece.length) ){
+            	if(showFallingPiece && (currentY <= y && y < currentY + thePiece[0].length) && (currentX <= x && x < currentX + thePiece.length) ){
             		result += (int) Math.max(2*thePiece[x - currentX][y - currentY], (worldState[y * worldWidth + x]));
             	} else {
             		result += (worldState[y * worldWidth + x]);

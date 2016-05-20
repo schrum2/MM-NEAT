@@ -53,12 +53,12 @@ public class PredatorCatchCloseObjective <T extends Network> extends GridTorusOb
 		d = 1 - d;
 		double normalizedCaught = (numCaught/numPrey);
 		
-		//divided by three because there are two factors in the equation (%caught and distance) and the %caught is multiplied
-		//by two so that it is weighted twice as much as the distance to the prey and this whole score 
 		//needs to be less than the maximum score, NO_PREY_SCORE, which is given when all prey are caught
-		double WEIGHT = (NO_PREY_SCORE/3.0); 
+		double WEIGHT = (NO_PREY_SCORE/(numPrey+1.0)); 
 		
-		return d*WEIGHT + 2*normalizedCaught*WEIGHT;	
+		//distance score is weighted to be less than catching each prey, but the distance score still helps the predators 
+		//get close to the prey if they haven't learned to catch any prey yet
+		return d*WEIGHT + (numPrey)*normalizedCaught*WEIGHT;	
 	}
 
 }

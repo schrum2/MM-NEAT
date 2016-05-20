@@ -47,7 +47,8 @@ public class Parameters {
     public ParameterCollection<Boolean> booleanOptions;
     public ParameterCollection<Double> doubleOptions;
     public ParameterCollection<String> stringOptions;
-    public ParameterCollection<Class> classOptions;
+    @SuppressWarnings("rawtypes") // Class can be any type, hence <T> details inappropriate
+	public ParameterCollection<Class> classOptions;
 
     /**
      * Initialize the static Parameters instance using command line
@@ -109,6 +110,7 @@ public class Parameters {
             }
             String[] sArgs = new String[args.size()];
             parseArgs(args.toArray(sArgs), false);
+            file.close();
         } catch (FileNotFoundException ex) {
             System.out.println("Could not read parameter file");
             System.exit(1);
@@ -119,7 +121,8 @@ public class Parameters {
      * Initialize parameter collections of each needed type
      * @param args  Original String array of command line arguments
      */
-    public Parameters(String[] args) {
+    @SuppressWarnings("rawtypes")
+	public Parameters(String[] args) {
     	booleanOptions = new ParameterCollection<Boolean>();
         classOptions = new ParameterCollection<Class>();
         doubleOptions = new ParameterCollection<Double>();
@@ -254,19 +257,24 @@ public class Parameters {
         longOptions.add("lastInnovation", 0l, "Highest innovation number used so far");
         longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
         //Boolean parameters
+<<<<<<< HEAD
         booleanOptions.add("saveAllChampions", false, "saves all champions of each generation"); 
 		booleanOptions.add("watchLastBest", false, "shows best result from last generation");
+=======
+        booleanOptions.add("logChildScores", false, "For Mu/Lambda approaches that generate separate parent/child populations, indicates whether to log child info");
+>>>>>>> origin/master
         booleanOptions.add("overrideImageSize", true, "resets image size to default");
         booleanOptions.add("logTWEANNData", false, "Whether or not to log TWEANN data");
         booleanOptions.add("logMutationAndLineage", false, "Whether or not to log information about the mutations and lineage");
         booleanOptions.add("logPerformance", false, "Whether or not to log performance information in a performance log");
-        booleanOptions.add("predatorCatchClose", false, "Turn on to activate the prey fitness function from the Rawal and Rajagopalan paper");
+        booleanOptions.add("predatorCatchClose", false, "Turn on to encourage catching a higher percentage of the prey and getting close to the prey");
+        booleanOptions.add("predatorCatch", false, "Turn on to activate the predator fitness function which encourages catching high percentages of prey");
         booleanOptions.add("preyRRM", false, "Turn on to activate the prey fitness function from the Rawal and Rajagopalan paper");
         booleanOptions.add("predatorRRM", false, "Turn on to activate the predator fitness function from the Rawal and Rajagopalan paper");
         booleanOptions.add("predatorMinimizeDistance", false, "Turn on to encourage predators to be as close to the prey as possible by the end of the game");
-        booleanOptions.add("PredsEatEachPreyQuickly", false, "Turn on to encourage predators to eat prey as quickly as possible");
-        booleanOptions.add("PredatorMinimizeTotalTime", true, "Turn on to encourage predators to minimize the total game time as a fitness function");
-        booleanOptions.add("PreyMaximizeTotalTime", true, "Turn on to encourage prey to maximize the total game time as a fitness function");
+        booleanOptions.add("predatorsEatQuick", false, "Turn on to encourage predators to eat prey as quickly as possible");
+        booleanOptions.add("predatorMinimizeTotalTime", true, "Turn on to encourage predators to minimize the total game time as a fitness function");
+        booleanOptions.add("preyMaximizeTotalTime", true, "Turn on to encourage prey to maximize the total game time as a fitness function");
         booleanOptions.add("torusSenseTeammates", false, "If turned on, predators can sense other predators and preys can sense other preys");
         booleanOptions.add("allowDoNothingActionForPredators", false, "If turned on, the predators will have the option to do nothing as their action");
         booleanOptions.add("allowDoNothingActionForPreys", false, "If turned on, the preys will have the option to do nothing as their action");
@@ -644,7 +652,8 @@ public class Parameters {
      * @param label Parameter label
      * @return corresponding Class parameter value
      */
-    public Class classParameter(String label) {
+    @SuppressWarnings("rawtypes") // Class needs to be raw because any type can be returned
+	public Class classParameter(String label) {
         return classOptions.get(label);
     }
 

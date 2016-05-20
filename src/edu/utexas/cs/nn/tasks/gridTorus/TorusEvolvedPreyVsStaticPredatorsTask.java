@@ -31,7 +31,7 @@ public class TorusEvolvedPreyVsStaticPredatorsTask<T extends Network> extends To
 	 */
 	public TorusEvolvedPreyVsStaticPredatorsTask() {
 		super(true); 
-		if(Parameters.parameters.booleanParameter("PreyMaximizeTotalTime"))
+		if(Parameters.parameters.booleanParameter("preyMaximizeTotalTime"))
 			addObjective(new PreyMaximizeGameTimeObjective<T>(), objectives);
 		if(Parameters.parameters.booleanParameter("preyRRM"))
 			addObjective(new PreyRawalRajagopalanMiikkulainenObjective<T>(), objectives);

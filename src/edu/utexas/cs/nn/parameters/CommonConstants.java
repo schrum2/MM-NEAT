@@ -29,6 +29,7 @@ public class CommonConstants {
     public static boolean hierarchicalMultitask;
     public static boolean imprisonedWhileEdible;
     public static boolean infiniteEdibleTime;
+    public static boolean logChildScores;
     public static boolean meltAfterCrossover;
     public static boolean minimalSubnetExecution;
     public static boolean minimizeSpliceImpact;
@@ -124,6 +125,7 @@ public class CommonConstants {
         hierarchicalMultitask = Parameters.parameters.booleanParameter("hierarchicalMultitask");
         imprisonedWhileEdible = Parameters.parameters.booleanParameter("imprisonedWhileEdible");
         infiniteEdibleTime = Parameters.parameters.booleanParameter("infiniteEdibleTime");
+        logChildScores = Parameters.parameters.booleanParameter("logChildScores");
         meltAfterCrossover = Parameters.parameters.booleanParameter("meltAfterCrossover");
         minimalSubnetExecution = Parameters.parameters.booleanParameter("minimalSubnetExecution");
         minimizeSpliceImpact = Parameters.parameters.booleanParameter("minimizeSpliceImpact");
