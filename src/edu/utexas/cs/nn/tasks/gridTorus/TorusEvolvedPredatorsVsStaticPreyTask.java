@@ -34,9 +34,9 @@ public class TorusEvolvedPredatorsVsStaticPreyTask<T extends Network> extends To
 	 */
 	public TorusEvolvedPredatorsVsStaticPreyTask() {
 		super(false); 
-		if(Parameters.parameters.booleanParameter("PredatorMinimizeTotalTime"))
+		if(Parameters.parameters.booleanParameter("predatorMinimizeTotalTime"))
 			addObjective(new PredatorMinimizeGameTimeObjective<T>(), objectives);
-		if(Parameters.parameters.booleanParameter("PredsEatEachPreyQuickly"))
+		if(Parameters.parameters.booleanParameter("predatorsEatQuick"))
 			addObjective(new PredatorEatEachPreyQuicklyObjective<T>(), objectives);
 		if(Parameters.parameters.booleanParameter("predatorMinimizeDistance"))
 			addObjective(new PredatorMinimizeDistanceFromPreyObjective<T>(), objectives);

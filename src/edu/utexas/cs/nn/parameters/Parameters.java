@@ -267,9 +267,9 @@ public class Parameters {
         booleanOptions.add("preyRRM", false, "Turn on to activate the prey fitness function from the Rawal and Rajagopalan paper");
         booleanOptions.add("predatorRRM", false, "Turn on to activate the predator fitness function from the Rawal and Rajagopalan paper");
         booleanOptions.add("predatorMinimizeDistance", false, "Turn on to encourage predators to be as close to the prey as possible by the end of the game");
-        booleanOptions.add("PredsEatEachPreyQuickly", false, "Turn on to encourage predators to eat prey as quickly as possible");
-        booleanOptions.add("PredatorMinimizeTotalTime", true, "Turn on to encourage predators to minimize the total game time as a fitness function");
-        booleanOptions.add("PreyMaximizeTotalTime", true, "Turn on to encourage prey to maximize the total game time as a fitness function");
+        booleanOptions.add("predatorsEatQuick", false, "Turn on to encourage predators to eat prey as quickly as possible");
+        booleanOptions.add("predatorMinimizeTotalTime", true, "Turn on to encourage predators to minimize the total game time as a fitness function");
+        booleanOptions.add("preyMaximizeTotalTime", true, "Turn on to encourage prey to maximize the total game time as a fitness function");
         booleanOptions.add("torusSenseTeammates", false, "If turned on, predators can sense other predators and preys can sense other preys");
         booleanOptions.add("allowDoNothingActionForPredators", false, "If turned on, the predators will have the option to do nothing as their action");
         booleanOptions.add("allowDoNothingActionForPreys", false, "If turned on, the preys will have the option to do nothing as their action");
