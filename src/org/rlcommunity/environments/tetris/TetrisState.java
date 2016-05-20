@@ -68,7 +68,7 @@ public class TetrisState {
     public int[] worldState;/*what the world looks like without the current block*/
 
     //	/*Hold all the possible bricks that can fall*/
-    Vector<TetrisPiece> possibleBlocks = new Vector<TetrisPiece>();
+    public Vector<TetrisPiece> possibleBlocks = new Vector<TetrisPiece>();
     private TetrisViewer viewer = null;
 
     public TetrisState() {

@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Vector;
 
+import org.rlcommunity.environments.tetris.TetrisPiece;
 import org.rlcommunity.environments.tetris.TetrisState;
 import org.rlcommunity.rlglue.codec.types.Action;
 import org.rlcommunity.rlglue.codec.types.Observation;
@@ -19,6 +21,7 @@ import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
 public class TetrisAfterStateAgent<T extends Network> extends RLGlueAgent<T>{
 
 	public List<Integer> currentActionList;
+	public Observation lastObs;
 
 	public TetrisAfterStateAgent() {
 		super();
@@ -44,31 +47,20 @@ public class TetrisAfterStateAgent<T extends Network> extends RLGlueAgent<T>{
     }    
 	
 	public Action getAction(Observation o) {
-		//TODO: I think there's an issue with converting Observations to TetrisStates, because there is missing information we cannot get from the obsservation
-		//We need to find a way around this or a way to fix this.
-
+		
 		//System.out.println(tetrisObservationToString(o));
 		
+		lastObs = o; //saves the current observation for later
+				
 		if(currentActionList.isEmpty()){ // if we don't already have a list of actions to follow
 
-			//convert Observation to TetrisState
-			TetrisState tempState = new TetrisState();
-			tempState.currentX = o.intArray[TetrisState.TETRIS_STATE_CURRENT_X_INDEX]; // adds the Observation's X to tempState
-			tempState.currentY = o.intArray[TetrisState.TETRIS_STATE_CURRENT_Y_INDEX]; // adds the Observation's Y to tempState
-			tempState.currentRotation = o.intArray[TetrisState.TETRIS_STATE_CURRENT_ROTATION_INDEX]; // adds the Observation's rotation to tempState
-			for(int p = 0; p < TetrisState.TETRIS_STATE_NUMBER_POSSIBLE_BLOCKS; p++){
-				if(o.intArray[tempState.worldState.length + p] == 1){ // this checks for the current block Id
-					tempState.currentBlockId = p;
-				}
-			}
+			//call obs to ts
+			TetrisState tempState = observationToTetrisState(o);
 
-			for (int i = 0; i < tempState.worldState.length; i++) { // replaces tempState's worldState with the Observation's worldState
-				tempState.worldState[i] = o.intArray[i];
-			}
-
+	
 			boolean currentWatch = CommonConstants.watch;
 			CommonConstants.watch = false;
-			//make a Set of evalAfterStates(testState)
+
 			HashSet<TetrisStateActionPair> tetrisStateHolder = TertisAfterStateGenerator.generateAfterStates(tempState);
 			CommonConstants.watch = currentWatch;
 
@@ -111,10 +103,62 @@ public class TetrisAfterStateAgent<T extends Network> extends RLGlueAgent<T>{
 		return action;
 	}
 
+	/**
+	 * This method takes over the job of converting an observation to a TetrisState
+	 * @param o Observation
+	 * @return ts TetrisState
+	 */
+	private TetrisState observationToTetrisState(Observation o) {
+		TetrisState ts = new TetrisState();
+		ts.currentX = o.intArray[TetrisState.TETRIS_STATE_CURRENT_X_INDEX]; // adds the Observation's X to tempState
+		ts.currentY = o.intArray[TetrisState.TETRIS_STATE_CURRENT_Y_INDEX]; // adds the Observation's Y to tempState
+		ts.currentRotation = o.intArray[TetrisState.TETRIS_STATE_CURRENT_ROTATION_INDEX]; // adds the Observation's rotation to tempState
+		for(int p = 0; p < TetrisState.TETRIS_STATE_NUMBER_POSSIBLE_BLOCKS; p++){
+			if(o.intArray[ts.worldState.length + p] == 1){ // this checks for the current block Id
+				ts.currentBlockId = p;
+			}
+		}
+		for (int i = 0; i < ts.worldState.length; i++) { // replaces the new TetrisState's worldState with the Observation's worldState
+			ts.worldState[i] = o.intArray[i];
+		}
+		blotMobilePiece(ts); // blots out the mobile piece on the board
+		return ts;
+	}
+
+	/**
+	 * Returns a 1 for the number of outputs needed (action)
+	 */
 	public int getNumberOutputs() {
 		return 1; // Utility of evaluated state
 	}
 
+	/**
+	 * Takes in block information to erase the mobile piece from the observation tetris state, so that no collisions occur
+	 * @param ts TetrisState
+	 */
+	public static void blotMobilePiece(TetrisState ts) {
+		Vector<TetrisPiece> possibleBlocks = ts.possibleBlocks;
+		int[][] mobilePiece = possibleBlocks.get(ts.currentBlockId).getShape(ts.currentRotation);
+		for (int x = 0; x < mobilePiece.length; x++) {
+            for (int y = 0; y < mobilePiece[x].length; y++) {
+            	if (mobilePiece[x][y] != 0) {
+            		int linearIndex = (ts.currentY + y) * ts.worldWidth + (ts.currentX + x);
+            		if (linearIndex < 0) {
+                        System.err.printf("Bogus linear index %d for %d + %d, %d + %d\n", linearIndex, ts.currentX, x, ts.currentY, y);
+                        Thread.dumpStack();
+                        System.exit(1);
+                    }
+                    ts.worldState[linearIndex] = 0;
+            	}
+            }
+        }
+	}
+	
+	/**
+	 * Takes in the current inputs and scales them appropriately for the BertsekasTsitsiklis Feature Extractor
+	 * @param inputs
+	 * @return scaled inputs
+	 */
 	public static double[] scaleInputs(double[] inputs) {
 		double[] next = new double[inputs.length];
 		int height_features = TetrisState.worldWidth + (TetrisState.worldWidth - 1) + 1; // height values (10), height differences (9), and max height (1)
@@ -126,5 +170,19 @@ public class TetrisAfterStateAgent<T extends Network> extends RLGlueAgent<T>{
 		return next; 
 	}
 
-
+	/**
+	 * This method takes in the last observation and returns the number of blocks left in the game over screen
+	 * This is used for a feature of the state
+	 * @return blockCount, number of blocks on the screen upon game over
+	 */
+	public int getNumberOfBlocksInLastState() {
+		int blockCount = 0;
+		int worldLength = TetrisState.worldHeight * TetrisState.worldWidth;
+		for (int i = 0; i < worldLength; i++) { // replaces tempState's worldState with the Observation's worldState
+			if(lastObs.intArray[i] > 0){
+				blockCount++;
+			}
+		}
+		return blockCount;
+	}
 }
