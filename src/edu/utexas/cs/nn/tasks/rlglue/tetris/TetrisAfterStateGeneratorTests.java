@@ -308,14 +308,12 @@ public class TetrisAfterStateGeneratorTests {
 		HashSet<TetrisStateActionPair> holder = TertisAfterStateGenerator.generateAfterStates(testState);
 		HashSet<TetrisState> justStates = new HashSet<TetrisState>();
 		System.out.println("holder size is " + holder.size());
-		//System.out.println(holder);
-		//assertTrue(holder.size() > 17 && holder.size() < 34);
+		assertTrue(holder.size() >= 17 && holder.size() < 34);
 		for(TetrisStateActionPair i : holder){ // transfers only the tetris states to the hash set
 			justStates.add(i.t1);
 		}
 		System.out.println("set size is " + justStates.size());
-		//System.out.println(justStates);
-		//assertTrue(justStates.size() == 17);
+		assertTrue(justStates.size() == 17);
 		
 		
 		//testView.update(testState);
@@ -351,12 +349,12 @@ public class TetrisAfterStateGeneratorTests {
 		testState.currentRotation = 3; // third rotation
 		HashSet<TetrisStateActionPair> holder2 = TertisAfterStateGenerator.generateAfterStates(testState);
 		HashSet<TetrisState> justStates2 = new HashSet<TetrisState>();
-		//assertTrue(holder.size() > 17 && holder2.size() < 34);
-		//System.out.println("holder size is " + holder2.size());
+		assertTrue(holder.size() >= 17 && holder2.size() < 34);
+		System.out.println("holder size is " + holder2.size());
 		for(TetrisStateActionPair i : holder2){ // transfers only the tetris states to the hash set
 			justStates2.add(i.t1);
 		}
-		//System.out.println("state size should be " + justStates2.size());
+		System.out.println("state size should be " + justStates2.size());
 		assertTrue(justStates2.size() == 17);
 		
 	}
@@ -386,15 +384,13 @@ public class TetrisAfterStateGeneratorTests {
 		testState.worldState[170] = 1;
 		testState.worldState[180] = 1;
 		testState.worldState[190] = 1;
-		
+				
 		HashSet<TetrisStateActionPair> holder = TertisAfterStateGenerator.generateAfterStates(testState);
 		HashSet<TetrisState> justStates = new HashSet<TetrisState>();
-		//System.out.println("holder size is " + holder.size());
-		assertTrue(holder.size() == 34);
 		for(TetrisStateActionPair i : holder){ // transfers only the tetris states to the hash set
 			justStates.add(i.t1);
 		}
-		//System.out.println("set size is " + justStates.size());
+		System.out.println("set size is " + justStates.size());
 		assertTrue(justStates.size() == 15);
 	}
 
