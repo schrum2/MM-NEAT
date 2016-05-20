@@ -262,7 +262,8 @@ public class Parameters {
         booleanOptions.add("logTWEANNData", false, "Whether or not to log TWEANN data");
         booleanOptions.add("logMutationAndLineage", false, "Whether or not to log information about the mutations and lineage");
         booleanOptions.add("logPerformance", false, "Whether or not to log performance information in a performance log");
-        booleanOptions.add("predatorCatchClose", false, "Turn on to activate the prey fitness function from the Rawal and Rajagopalan paper");
+        booleanOptions.add("predatorCatchClose", false, "Turn on to encourage catching a higher percentage of the prey and getting close to the prey");
+        booleanOptions.add("predatorCatch", false, "Turn on to activate the predator fitness function which encourages catching high percentages of prey");
         booleanOptions.add("preyRRM", false, "Turn on to activate the prey fitness function from the Rawal and Rajagopalan paper");
         booleanOptions.add("predatorRRM", false, "Turn on to activate the predator fitness function from the Rawal and Rajagopalan paper");
         booleanOptions.add("predatorMinimizeDistance", false, "Turn on to encourage predators to be as close to the prey as possible by the end of the game");

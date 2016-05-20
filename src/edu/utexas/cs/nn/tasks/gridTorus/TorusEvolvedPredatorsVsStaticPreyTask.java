@@ -10,6 +10,7 @@ import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.gridTorus.objectives.PredatorCatchCloseObjective;
+import edu.utexas.cs.nn.tasks.gridTorus.objectives.PredatorCatchObjective;
 import edu.utexas.cs.nn.tasks.gridTorus.objectives.PredatorEatEachPreyQuicklyObjective;
 import edu.utexas.cs.nn.tasks.gridTorus.objectives.PredatorMinimizeDistanceFromPreyObjective;
 import edu.utexas.cs.nn.tasks.gridTorus.objectives.PredatorMinimizeGameTimeObjective;
@@ -43,6 +44,8 @@ public class TorusEvolvedPredatorsVsStaticPreyTask<T extends Network> extends To
 			addObjective(new PredatorRawalRajagopalanMiikkulainenObjective<T>(), objectives);
 		if(Parameters.parameters.booleanParameter("predatorCatchClose"))
 			addObjective(new PredatorCatchCloseObjective<T>(), objectives);
+		if(Parameters.parameters.booleanParameter("predatorCatch"))
+			addObjective(new PredatorCatchObjective<T>(), objectives);
 	}
 
 	@Override
