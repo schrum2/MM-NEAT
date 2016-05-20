@@ -25,10 +25,30 @@ public class TetrisAfterStateAgent<T extends Network> extends RLGlueAgent<T>{
 		currentActionList = new LinkedList<Integer>();
 	}
 
+	/**
+	 * Troubleshooting method used to look at a Tetris observation
+	 * before converting it to a Tetris state.
+	 * @param o RL Glue Observation containing Tetris information
+	 * @return String output describing Tetris world
+	 */
+	public static String tetrisObservationToString(Observation o) {
+    	String result = "";
+        for (int y = 0; y < TetrisState.worldHeight; y++) {
+            for (int x = 0; x < TetrisState.worldWidth; x++) {
+            	result += (o.intArray[y * TetrisState.worldWidth + x]);
+            }
+            result += ("\n");
+        }
+        result += ("-------------");
+        return result;
+    }    
+	
 	public Action getAction(Observation o) {
 		//TODO: I think there's an issue with converting Observations to TetrisStates, because there is missing information we cannot get from the obsservation
 		//We need to find a way around this or a way to fix this.
 
+		//System.out.println(tetrisObservationToString(o));
+		
 		if(currentActionList.isEmpty()){ // if we don't already have a list of actions to follow
 
 			//convert Observation to TetrisState
