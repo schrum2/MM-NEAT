@@ -7,7 +7,6 @@ import edu.utexas.cs.nn.evolution.Organism;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.evolution.genotypes.NetworkGenotype;
 import edu.utexas.cs.nn.evolution.nsga2.tug.TUGTask;
-import edu.utexas.cs.nn.graphics.DrawingPanel;
 import edu.utexas.cs.nn.gridTorus.TorusPredPreyGame;
 import edu.utexas.cs.nn.gridTorus.TorusWorldExec;
 import edu.utexas.cs.nn.gridTorus.controllers.TorusPredPreyController;
