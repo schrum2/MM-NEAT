@@ -5,6 +5,7 @@ import edu.utexas.cs.nn.util.util2D.Tuple2D;
 import java.util.ArrayList;
 
 /**
+ *Utility functions for cartesian geometry calculations
  *
  * @author Jacob Schrum
  */
@@ -153,20 +154,23 @@ public class CartesianGeometricUtilities {
     }
 
     /**
+     * returns the difference between two moving agents and the correct sign
      * 
-     * @param v1
-     * @param v2
-     * @return
+     * @param v1 agent 1
+     * @param v2 agent 2
+     * 
+     * @return the difference in angles
      */
     public static double signedAngleDifference(ILocated2D v1, ILocated2D v2) {
         return signedAngleDifference(v1.getPosition().angle(), v2.getPosition().angle());
     }
 
     /**
+     * returns the difference between two angles and the correct sign
      * 
-     * @param rad1
-     * @param rad2
-     * @return
+     * @param rad1 first angle
+     * @param rad2 second angle
+     * @return difference between rad1 and rad2 w/ correct signage
      */
     public static double signedAngleDifference(double rad1, double rad2) {
         double angleDifference = rad1 - rad2;
@@ -179,12 +183,14 @@ public class CartesianGeometricUtilities {
     }
 
     /**
+     * returns whether or not the source is heading towards the target
      * 
-     * @param sourceRadians
-     * @param source
-     * @param target
-     * @param allowance
-     * @return
+     * @param sourceRadians pie slice of source's sensors
+     * @param source location of source
+     * @param target location of target
+     * @param allowance error allowance
+     * 
+     * @return whether or not source is heading towards target
      */
     public static boolean sourceHeadingTowardsTarget(double sourceRadians, ILocated2D source, ILocated2D target, double allowance) {
         double angle = signedAngleFromSourceHeadingToTarget(source, target, sourceRadians);
@@ -193,12 +199,14 @@ public class CartesianGeometricUtilities {
     }
 
     /**
+     * returns true if both agents are on the same side
      * 
-     * @param source
-     * @param sourceRadians
-     * @param other
-     * @param right
-     * @return
+     * @param source location of source agent
+     * @param sourceRadians 
+     * @param other location of other agent
+     * @param right true if agent is on right side
+     * 
+     * @return whether or not both agents are on the same side
      */
     public static boolean onSideOf(ILocated2D source, double sourceRadians, ILocated2D other, boolean right) {
         double angle = signedAngleFromSourceHeadingToTarget(source, other, sourceRadians);
@@ -206,9 +214,11 @@ public class CartesianGeometricUtilities {
     }
 
     /**
+     * restricts radians to the unit circle radian dimensions
      * 
-     * @param rads
-     * @return
+     * @param rads radians to check
+     * 
+     * @return radian within unit circle bounds
      */
     public static double restrictRadians(double rads) {
         while (rads >= 2 * Math.PI) {
