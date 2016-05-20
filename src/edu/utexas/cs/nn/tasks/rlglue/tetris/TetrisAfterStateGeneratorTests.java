@@ -23,10 +23,13 @@ public class TetrisAfterStateGeneratorTests {
 		testState.worldState[197] = 1;
 		testState.worldState[198] = 1;
 		testState.worldState[199] = 1;
+		testState.currentX = 3;
+		testState.currentY = -2;
+		testState.currentRotation = 0;
+		System.out.println(testState);
+		MiscUtil.waitForReadStringAndEnterKeyPress();
 		HashSet<TetrisStateActionPair> holder = TertisAfterStateGenerator.generateAfterStates(testState);
 		HashSet<TetrisState> justStates = new HashSet<TetrisState>();
-//		System.out.println("1 ============================================");
-//		MiscUtil.waitForReadStringAndEnterKeyPress();
 		
 		//WOO BOY GET READY FOR A LOT OF TESTING CODE NONSENSE -Gab
 		TetrisState resultV1 = new TetrisState(testState); //Vertical 1	
@@ -208,6 +211,18 @@ public class TetrisAfterStateGeneratorTests {
 		
 	}
 	
+	public void starting_position_issue(){ // this test is for an issue we run into that won't allow the tri piece to make any initial moves (take_action)
+		TetrisState testState = new TetrisState(); // makes a Tetris state to test with
+		testState.currentBlockId = 2;
+		testState.currentX = 3;
+		testState.currentY = -1;
+		testState.currentRotation = 0;
+		System.out.println(testState);
+		MiscUtil.waitForReadStringAndEnterKeyPress();
+		HashSet<TetrisStateActionPair> holder = TertisAfterStateGenerator.generateAfterStates(testState);
+		HashSet<TetrisState> justStates = new HashSet<TetrisState>();
+	}
+	
 	//Not really a formal test, but still useful -Gab
 	@Test
 	public void different_starting_blocks_positions(){ // This tests for the starting X and Y of each piece
@@ -307,12 +322,12 @@ public class TetrisAfterStateGeneratorTests {
 		testState.currentY = -1;
 		HashSet<TetrisStateActionPair> holder = TertisAfterStateGenerator.generateAfterStates(testState);
 		HashSet<TetrisState> justStates = new HashSet<TetrisState>();
-		System.out.println("holder size is " + holder.size());
+		//System.out.println("holder size is " + holder.size());
 		assertTrue(holder.size() >= 17 && holder.size() < 34);
 		for(TetrisStateActionPair i : holder){ // transfers only the tetris states to the hash set
 			justStates.add(i.t1);
 		}
-		System.out.println("set size is " + justStates.size());
+		//System.out.println("set size is " + justStates.size());
 		assertTrue(justStates.size() == 17);
 		
 		
@@ -350,11 +365,11 @@ public class TetrisAfterStateGeneratorTests {
 		HashSet<TetrisStateActionPair> holder2 = TertisAfterStateGenerator.generateAfterStates(testState);
 		HashSet<TetrisState> justStates2 = new HashSet<TetrisState>();
 		assertTrue(holder.size() >= 17 && holder2.size() < 34);
-		System.out.println("holder size is " + holder2.size());
+		//System.out.println("holder size is " + holder2.size());
 		for(TetrisStateActionPair i : holder2){ // transfers only the tetris states to the hash set
 			justStates2.add(i.t1);
 		}
-		System.out.println("state size should be " + justStates2.size());
+		//System.out.println("state size should be " + justStates2.size());
 		assertTrue(justStates2.size() == 17);
 		
 	}
@@ -390,7 +405,7 @@ public class TetrisAfterStateGeneratorTests {
 		for(TetrisStateActionPair i : holder){ // transfers only the tetris states to the hash set
 			justStates.add(i.t1);
 		}
-		System.out.println("set size is " + justStates.size());
+		//System.out.println("set size is " + justStates.size());
 		assertTrue(justStates.size() == 15);
 	}
 
