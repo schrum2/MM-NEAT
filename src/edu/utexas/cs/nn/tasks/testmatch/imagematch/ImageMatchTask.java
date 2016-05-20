@@ -289,11 +289,12 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		testImageConsistency();
+		draw8RandomImages();
+		//testImageConsistency();
 	}
 
 	public static void draw8RandomImages() {
-		randomCPPNimage(true, 100);
+		randomCPPNimage(true, 400);
 		for(int i = 0; i < 4; i++) {
 			for(int j = 0; j < 3; j++) {
 				randomCPPNimage(false, i*300, j*300, 100);
@@ -323,7 +324,7 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 		MMNEAT.clearClasses();
 		EvolutionaryHistory.setInnovation(0);
 		EvolutionaryHistory.setHighestGenotypeId(0);
-		Parameters.initializeParameterCollections(new String[]{"io:false", "netio:false", "randomSeed:1", "allowMultipleFunctions:true", "netChangeActivationRate:0.4", "recurrency:false"});
+		Parameters.initializeParameterCollections(new String[]{"io:false", "netio:false", "allowMultipleFunctions:true", "netChangeActivationRate:0.4", "recurrency:false"});
 		MMNEAT.loadClasses();
 
 		final int NUM_MUTATIONS = 200;
