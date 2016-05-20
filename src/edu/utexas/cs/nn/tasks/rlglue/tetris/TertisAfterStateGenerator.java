@@ -21,7 +21,7 @@ public class TertisAfterStateGenerator {
 	 * @return arraylist of pairs (evaluated after-states and arraylist of actions)
 	 */
 	public static HashSet<TetrisStateActionPair> generateAfterStates(TetrisState ts){ 
-		int[] actOrder = {4, 0, 1, 2, 3}; // Replace with actual action constants (magic numbers!)
+		int[] actOrder = {TetrisState.NONE, TetrisState.LEFT, TetrisState.RIGHT, TetrisState.CW, TetrisState.CCW}; // Replace with actual action constants (magic numbers!)
 		HashSet<TetrisStateActionPair> evaluated = new HashSet<TetrisStateActionPair>(); //only ever as big as # of orientations times the width
 		HashSet<TetrisState> seen = new HashSet<TetrisState>();
 		Queue<TetrisStateActionPair> fringe = new LinkedList<TetrisStateActionPair>();
