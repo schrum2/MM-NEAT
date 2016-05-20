@@ -95,7 +95,7 @@ public class BertsekasTsitsiklisTetrisExtractor implements FeatureExtractor {
         for (int i = 0; i < possibleBlocks.size(); i++) { // for each possible block, add whether or not it is falling to the blockIndicator array
             blockIndicator[i] = o.intArray[worldState.length + i]; // this sets the block indicator spots as either 0 or 1 according to which block is currently falling (1)
         }
-        blotMobilePiece(worldState, StatisticsUtilities.argmax(blockIndicator), o.intArray[TetrisState.TETRIS_STATE_CURRENT_X_INDEX], o.intArray[TetrisState.TETRIS_STATE_CURRENT_Y_INDEX], o.intArray[TetrisState.TETRIS_STATE_CURRENT_ROTATION_INDEX]); 
+        //blotMobilePiece(worldState, StatisticsUtilities.argmax(blockIndicator), o.intArray[TetrisState.TETRIS_STATE_CURRENT_X_INDEX], o.intArray[TetrisState.TETRIS_STATE_CURRENT_Y_INDEX], o.intArray[TetrisState.TETRIS_STATE_CURRENT_ROTATION_INDEX]); 
         
         
         int in = 0;

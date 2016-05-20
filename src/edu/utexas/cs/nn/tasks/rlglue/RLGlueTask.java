@@ -24,6 +24,7 @@ import edu.utexas.cs.nn.networks.NetworkTask;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.NoisyLonerTask;
+import edu.utexas.cs.nn.tasks.rlglue.tetris.TetrisAfterStateAgent;
 import edu.utexas.cs.nn.util.ClassCreation;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import java.io.IOException;
@@ -82,6 +83,7 @@ public final class RLGlueTask<T extends Network> extends NoisyLonerTask<T> imple
         }
         if (moTetris) {
             MMNEAT.registerFitnessFunction("Time Steps"); // Staying alive is good
+            MMNEAT.registerFitnessFunction("Blocks on Screen"); // On game over, more blocks left is better
         }
         MMNEAT.registerFitnessFunction("RL Return");
 
@@ -173,7 +175,9 @@ public final class RLGlueTask<T extends Network> extends NoisyLonerTask<T> imple
         }
         // Special case for MO Tetris
         if (moTetris) {
-            Pair<double[], double[]> p = new Pair<double[], double[]>(new double[]{rlNumSteps[num], rlReturn[num]}, new double[0]);
+        	TetrisAfterStateAgent<T> tasa = (TetrisAfterStateAgent<T>) agent;
+        	int numberOfBlocksInState = tasa.getNumberOfBlocksInLastState();
+            Pair<double[], double[]> p = new Pair<double[], double[]>(new double[]{rlNumSteps[num], numberOfBlocksInState, rlReturn[num]}, new double[0]);
             return p;
         }
 
@@ -237,7 +241,9 @@ public final class RLGlueTask<T extends Network> extends NoisyLonerTask<T> imple
     @Override
     public int numObjectives() {
         // There are special cases, but the default fitness is the total summed reward
-        return (moPuddleWorld || moTetris) ? 2 : 1;
+        if(moPuddleWorld) return 2;
+        if(moTetris) return 3;
+        else return 1;
     }
 
     /**
