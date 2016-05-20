@@ -187,24 +187,24 @@ public class PopulationUtil {
             System.exit(1);
         } else {
             for (int i = 0; i < children.length; i++) {
-                String file = directory + "/" + children[i];
-                System.out.print("Load File: \"" + file + "\"");
-                Object loaded = Easy.load(file);
-
-                Genotype<T> individual;
-                if (loaded instanceof Genotype) {
-                    individual = (Genotype<T>) loaded;
-                    System.out.println(", ID = " + individual.getId());
-                } else {
-                    // Fail
-                    return null;
-                }
+            	String file = directory + "/" + children[i];
+            	Genotype<T> individual = extractGenotype(file);
                 population.add(individual);
             }
         }
         return population;
     }
 
+    public static <T> Genotype<T> extractGenotype(String file) { 
+         System.out.print("Load File: \"" + file + "\"");
+         Object loaded = Easy.load(file);
+         Genotype<T> individual = null;
+         if (loaded instanceof Genotype) {
+             individual = (Genotype<T>) loaded;
+             System.out.println(", ID = " + individual.getId());
+         } 
+         return individual;
+    }
     /**
      * Loads score information from the score file pertaining to a single
      * generation. Only works for score files saved by single-population

@@ -7,6 +7,7 @@ package edu.utexas.cs.nn.util;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Scanner;
 
 /**
  *
@@ -14,6 +15,8 @@ import java.io.InputStreamReader;
  */
 public class MiscUtil {
 
+	public static final Scanner CONSOLE = new Scanner(System.in);
+		
     public static double scaleAndInvert(double x, double max) {
         return scale(max - x, max);
     }

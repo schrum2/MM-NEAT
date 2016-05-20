@@ -254,6 +254,8 @@ public class Parameters {
         longOptions.add("lastInnovation", 0l, "Highest innovation number used so far");
         longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
         //Boolean parameters
+        booleanOptions.add("saveAllChampions", false, "saves all champions of each generation"); 
+		booleanOptions.add("watchLastBest", false, "shows best result from last generation");
         booleanOptions.add("overrideImageSize", true, "resets image size to default");
         booleanOptions.add("logTWEANNData", false, "Whether or not to log TWEANN data");
         booleanOptions.add("logMutationAndLineage", false, "Whether or not to log information about the mutations and lineage");
