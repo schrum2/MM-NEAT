@@ -96,7 +96,7 @@ public class Parameters {
 
     /**
      * Load file name filled with parameters and use contents
-     * to fille all parameter collections.
+     * to fill all parameter collections.
      * @param filename File name to load parameters from
      */
     public void loadParameters(String filename) {
@@ -170,6 +170,9 @@ public class Parameters {
      */
     public final void fillDefaults() {
         //Integer parameters
+    	integerOptions.add("imageHeight", 100, "height of image");
+    	integerOptions.add("imageWidth", 100, "width of image");
+    	integerOptions.add("defaultImageMatchSize", 100, "default size of all CPPN-created images");
         integerOptions.add("junctionsToSense", 1, "Number of junctions to which distance should be sensed");
         integerOptions.add("crowdedGhostDistance", 30, "Distance at which ghosts are considered to be crowding each other");
         integerOptions.add("closeGhostDistance", 35, "Distance at which threat ghosts are considered too close for safety");
@@ -251,6 +254,7 @@ public class Parameters {
         longOptions.add("lastInnovation", 0l, "Highest innovation number used so far");
         longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
         //Boolean parameters
+        booleanOptions.add("overrideImageSize", true, "resets image size to default");
         booleanOptions.add("logTWEANNData", false, "Whether or not to log TWEANN data");
         booleanOptions.add("logMutationAndLineage", false, "Whether or not to log information about the mutations and lineage");
         booleanOptions.add("logPerformance", false, "Whether or not to log performance information in a performance log");

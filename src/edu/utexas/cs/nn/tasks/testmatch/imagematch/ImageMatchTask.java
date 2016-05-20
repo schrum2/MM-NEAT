@@ -78,19 +78,21 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
     public Score<T> evaluate(Genotype<T> individual) {
         if (CommonConstants.watch) {
             Network n = individual.getPhenotype();
-            BufferedImage child = imageFromCPPN(n, imageWidth, imageHeight);
-
+            BufferedImage child;
+            if(Parameters.parameters.booleanParameter("overrideImageSize")) {
+            int imageSize = Parameters.parameters.integerParameter("defaultImageMatchSize");	
+            	child = imageFromCPPN(n, imageSize, imageSize);
+            } else {
+            	child = imageFromCPPN(n, Parameters.parameters.integerParameter("imageWidth"), Parameters.parameters.integerParameter("imageHeight"));
+            }
             //draws picture and network to JFrame
             DrawingPanel parentPanel = drawImage(img, "target");
             DrawingPanel childPanel = drawImage(child, "output");
-            childPanel.setLocation(imageWidth + IMAGE_PLACEMENT, 0);
-
+            childPanel.setLocation(img.getWidth() + IMAGE_PLACEMENT, 0);
             considerSavingImage(childPanel);
-            //MiscUtil.waitForReadStringAndEnterKeyPress();
-
             parentPanel.dispose();
             childPanel.dispose();
-        }
+            }
         return super.evaluate(individual);//if watch=false
     }
 
@@ -166,6 +168,7 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
      */
     public static float[] getHSBFromCPPN(Network n, int x, int y, int imageWidth, int imageHeight) {
         double[] input = getCPPNInputs(x, y, imageWidth, imageHeight);
+        n.flush();
         return rangeRestrictHSB(n.process(input));
     }
 
@@ -281,18 +284,26 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
      * @param args
      */
     public static void main(String[] args) {
-        randomCPPNimage(true);
+    	testImageConsistency();
+    }
+    
+    	public static void draw8RandomImages() {
+        randomCPPNimage(true, 100);
         for(int i = 0; i < 4; i++) {
             for(int j = 0; j < 3; j++) {
-                randomCPPNimage(false, i*300, j*300);
+                randomCPPNimage(false, i*300, j*300, 100);
             }
         }
     }
 
-    public static DrawingPanel randomCPPNimage(boolean offerToSave) {
-        return randomCPPNimage(offerToSave, 0, 0);
+    public static DrawingPanel randomCPPNimage(boolean offerToSave, int size) {
+        return randomCPPNimage(offerToSave, 0, 0, size);
     }
 
+    public static void testImageConsistency() {
+    	randomCPPNimage(false, 100);
+    	randomCPPNimage(false, 100, 100, 500);
+    }
     /**
      * Creates a random image of given size and numMutations and puts it in
      * JFrame with option to save image and network as a bmp
@@ -302,31 +313,30 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
      * @param y y-coordinate to place image window
      * @return panel on which image was drawn
      */
-    public static DrawingPanel randomCPPNimage(boolean offerToSave, int x, int y) {
+    public static DrawingPanel randomCPPNimage(boolean offerToSave, int x, int y, int size) {
 
         MMNEAT.clearClasses();
         EvolutionaryHistory.setInnovation(0);
         EvolutionaryHistory.setHighestGenotypeId(0);
-        Parameters.initializeParameterCollections(new String[]{"io:false", "netio:false", "allowMultipleFunctions:true", "netChangeActivationRate:0.4", "recurrency:false", "includeHalfLinearPiecewiseFunction:true", "includeSawtoothFunction:true"});
+        Parameters.initializeParameterCollections(new String[]{"io:false", "netio:false", "randomSeed:1", "allowMultipleFunctions:true", "netChangeActivationRate:0.4", "recurrency:false"});
         MMNEAT.loadClasses();
 
         final int NUM_MUTATIONS = 200;
-        final int SIZE = 300;
 
         TWEANNGenotype toDraw = new TWEANNGenotype(4, 3, false, 0, 1, 0);
         for (int i = 0; i < NUM_MUTATIONS; i++) {
             toDraw.mutate();
         }
         TWEANN n = toDraw.getPhenotype();
-        BufferedImage child = imageFromCPPN(n, SIZE, SIZE);
+        BufferedImage child = imageFromCPPN(n, size, size);
 
         System.out.println(n.toString());
 
-        DrawingPanel childPanel = drawImage(child, "output", SIZE, SIZE);
+        DrawingPanel childPanel = drawImage(child, "output", size, size);
         childPanel.setLocation(x, y);
 
         if (offerToSave) {
-            DrawingPanel network = new DrawingPanel(SIZE, SIZE, "network");
+            DrawingPanel network = new DrawingPanel(size, size, "network");
             n.draw(network);
             network.setLocation(300, 0);
             Scanner scan = new Scanner(System.in);
