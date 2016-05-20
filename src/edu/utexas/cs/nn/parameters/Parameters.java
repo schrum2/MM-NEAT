@@ -47,7 +47,8 @@ public class Parameters {
     public ParameterCollection<Boolean> booleanOptions;
     public ParameterCollection<Double> doubleOptions;
     public ParameterCollection<String> stringOptions;
-    public ParameterCollection<Class> classOptions;
+    @SuppressWarnings("rawtypes") // Class can be any type, hence <T> details inappropriate
+	public ParameterCollection<Class> classOptions;
 
     /**
      * Initialize the static Parameters instance using command line
@@ -109,6 +110,7 @@ public class Parameters {
             }
             String[] sArgs = new String[args.size()];
             parseArgs(args.toArray(sArgs), false);
+            file.close();
         } catch (FileNotFoundException ex) {
             System.out.println("Could not read parameter file");
             System.exit(1);
@@ -119,7 +121,8 @@ public class Parameters {
      * Initialize parameter collections of each needed type
      * @param args  Original String array of command line arguments
      */
-    public Parameters(String[] args) {
+    @SuppressWarnings("rawtypes")
+	public Parameters(String[] args) {
     	booleanOptions = new ParameterCollection<Boolean>();
         classOptions = new ParameterCollection<Class>();
         doubleOptions = new ParameterCollection<Double>();
@@ -254,6 +257,7 @@ public class Parameters {
         longOptions.add("lastInnovation", 0l, "Highest innovation number used so far");
         longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
         //Boolean parameters
+        booleanOptions.add("logChildScores", false, "For Mu/Lambda approaches that generate separate parent/child populations, indicates whether to log child info");
         booleanOptions.add("overrideImageSize", true, "resets image size to default");
         booleanOptions.add("logTWEANNData", false, "Whether or not to log TWEANN data");
         booleanOptions.add("logMutationAndLineage", false, "Whether or not to log information about the mutations and lineage");
@@ -642,7 +646,8 @@ public class Parameters {
      * @param label Parameter label
      * @return corresponding Class parameter value
      */
-    public Class classParameter(String label) {
+    @SuppressWarnings("rawtypes") // Class needs to be raw because any type can be returned
+	public Class classParameter(String label) {
         return classOptions.get(label);
     }
 

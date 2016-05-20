@@ -68,7 +68,9 @@ public abstract class MuLambda<T> implements SinglePopulationGenerationalEA<T> {
 
         if (writeOutput && io) {
             parentLog = new FitnessLog<T>("parents");
-            childLog = new FitnessLog<T>("child");
+            if(CommonConstants.logChildScores) {
+            	childLog = new FitnessLog<T>("child");
+            }
             if (task instanceof MsPacManTask
                     && (MMNEAT.modesToTrack > 1
                     || TWEANN.preferenceNeuron()
@@ -242,7 +244,7 @@ public abstract class MuLambda<T> implements SinglePopulationGenerationalEA<T> {
         // Evaluate the children
         ArrayList<Score<T>> childrenScores = task.evaluateAll(children);
         // Log child information to file
-        if (writeOutput) {
+        if (writeOutput && CommonConstants.logChildScores) {
             childLog.log(childrenScores, generation);
         }
         return childrenScores;
@@ -393,10 +395,12 @@ public abstract class MuLambda<T> implements SinglePopulationGenerationalEA<T> {
         ArrayList<Score<T>> parentScores = task.evaluateAll(population);
         logParentInfo(parentScores);
         if (writeOutput) {
-            this.parentLog.close();
-            this.childLog.close();
+            parentLog.close();
+            if(childLog != null) {
+            	childLog.close();
+            }
             if (modeLog != null) {
-                this.modeLog.close();
+                modeLog.close();
             }
         }
     }
