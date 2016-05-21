@@ -34,6 +34,7 @@ import wox.serial.Easy;
  * other members of the population.
  *
  * @author Jacob Schrum
+ * @param <T> Phenotype of evolved agent
  */
 public abstract class LonerTask<T> implements SinglePopulationTask<T> {
 
@@ -44,12 +45,11 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
      * their evaluation. This thread class enables parallel evaluation, and
      * returns the results of evaluation.
      *
-     * @param <T> the phenotype of the agent to be evaluated
      */
     public class EvaluationThread implements Callable<Score<T>> {
 
-        private Genotype<T> genotype;
-        private LonerTask<T> task;
+        private final Genotype<T> genotype;
+        private final LonerTask<T> task;
 
         /**
          * a constructor for creating an evaluation thread
@@ -63,8 +63,9 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
 
         /**
          * Creates a graphical representation of this task if requested and finds the fitness score for the genotype
-         * @returns score the fitness score of the agent of this task based on evaluation
+         * @return score the fitness score of the agent of this task based on evaluation
          */
+        @Override
         public Score<T> call() {
             DrawingPanel panel = null;
             //DrawingPanel[] subPanels = null;
@@ -162,6 +163,7 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
      * @param population the population
      * @return scores a list of the fitness scores of the population
      */
+    @Override
     public ArrayList<Score<T>> evaluateAll(ArrayList<Genotype<T>> population) {
     	//a list of the fitness scores of the population
         ArrayList<Score<T>> scores = new ArrayList<Score<T>>(population.size());
@@ -222,10 +224,7 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
                 }
 
                 scores.add(s);
-            } catch (InterruptedException ex) {
-                ex.printStackTrace();
-                System.exit(1);
-            } catch (ExecutionException ex) {
+            } catch (InterruptedException | ExecutionException ex) {
                 ex.printStackTrace();
                 System.exit(1);
             }
@@ -313,14 +312,18 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
      */
     public abstract Score<T> evaluate(Genotype<T> individual);
 
-    /*
+    /**
      * Default objective mins of 0.
      */
+    @Override
     public double[] minScores() {
         return new double[this.numObjectives()];
     }
 
-    // Stats to track besides fitness
+    /**
+     * Number of scores other than objectives that are tracked
+     * @return default of 0 can be overridden
+     */
     public int numOtherScores() {
         return 0;
     }
