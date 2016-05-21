@@ -9,13 +9,10 @@ import edu.utexas.cs.nn.util.datastructures.Pair;
  * A task that HyperNEAT can be applied to.
  * Need to get substrate defining info from the domain.
  * 
- * The sensor and output labels from NetworkTask correspond 
- * to the inputs and outputs of the CPPN, not the phenotype.
- * 
  * @author schrum2
  *
  */
-public interface HyperNEATTask extends NetworkTask {
+public interface HyperNEATTask {
 
         /**
          * Method that returns a list of information about
@@ -33,4 +30,5 @@ public interface HyperNEATTask extends NetworkTask {
          * for the domain.
          */
 	public List<Pair<String,String>> getSubstrateConnectivity();
+        
 }
