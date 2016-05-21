@@ -5,7 +5,7 @@ import edu.utexas.cs.nn.util.util2D.Tuple2D;
 import java.util.ArrayList;
 
 /**
- *Utility functions for cartesian geometry calculations
+ *Utility functions for Cartesian geometry calculations
  *
  * @author Jacob Schrum
  */
@@ -56,15 +56,17 @@ public class CartesianGeometricUtilities {
     }
 
     /**
-     * Calculates the shortest distance from a point to a segment
+     * Calculates the shortest distance from a point to a line segment.
+     * In other words, the length of a segment that is perpendicular to
+     * the line segment, and goes through the point.
      * 
-     * @param x
-     * @param y
-     * @param x1
-     * @param x2
-     * @param y1
-     * @param y2
-     * @return
+     * @param x x-coordinate of point
+     * @param y y-coordinate of point
+     * @param x1 First x-coordinate of line
+     * @param x2 First y-coordinate of line
+     * @param y1 Second x-coordinate of line
+     * @param y2 Second y-coordinate of line
+     * @return length of normal line to point
      */
     public static double shortestDistanceToLineSegment(double x, double y, double x1, double x2, double y1, double y2) {
         double A = x - x1;
@@ -110,7 +112,7 @@ public class CartesianGeometricUtilities {
     }
 
     /**
-     * calculates the cartesian coordiantes from polar inputs
+     * calculates the Cartesian coordinates from polar inputs
      * 
      * @param r radius
      * @param theta angle from X-axis to radius
@@ -122,11 +124,6 @@ public class CartesianGeometricUtilities {
         double y = r * Math.sin(theta);
         return new double[]{x, y};
     }
-
-    // Leftover from PTSP
-//    public static double signedAngleFromSourceHeadingToTarget(Vector2d source, Vector2d target, Vector2d dir) {
-//        return signedAngleFromSourceHeadingToTarget(new Tuple2D(source.x, source.y), new Tuple2D(target.x, target.y), restrictRadians(dir.theta()));
-//    }
 
     /**
      * Assuming that something at source is aimed towards the position at
@@ -154,10 +151,13 @@ public class CartesianGeometricUtilities {
     }
 
     /**
-     * returns the difference between two moving agents and the correct sign
+     * returns the difference between the angle measurements 
+     * of two 2D vectors with a sign corresponding to whether the
+     * second vector is clockwise or counter-clockwise from the
+     * first (closest distance)
      * 
-     * @param v1 agent 1
-     * @param v2 agent 2
+     * @param v1 vector 1
+     * @param v2 vector 2
      * 
      * @return the difference in angles
      */
@@ -170,7 +170,7 @@ public class CartesianGeometricUtilities {
      * 
      * @param rad1 first angle
      * @param rad2 second angle
-     * @return difference between rad1 and rad2 w/ correct signage
+     * @return difference between rad1 and rad2 w/ correct sign
      */
     public static double signedAngleDifference(double rad1, double rad2) {
         double angleDifference = rad1 - rad2;
@@ -194,19 +194,20 @@ public class CartesianGeometricUtilities {
      */
     public static boolean sourceHeadingTowardsTarget(double sourceRadians, ILocated2D source, ILocated2D target, double allowance) {
         double angle = signedAngleFromSourceHeadingToTarget(source, target, sourceRadians);
-        //System.out.println(source + "->" + sourceRadians + ":" + target + "=" + angle + " vs " + allowance);
         return Math.abs(angle) < allowance;
     }
 
     /**
-     * returns true if both agents are on the same side
+     * returns true if other agent is on the side of the source agent
+     * determined by the direction the source agent is looking and the
+     * value of the boolean right (true for right, false for left).
      * 
      * @param source location of source agent
-     * @param sourceRadians 
+     * @param sourceRadians direction source is facing
      * @param other location of other agent
-     * @param right true if agent is on right side
-     * 
-     * @return whether or not both agents are on the same side
+     * @param right if true, indicate whether the other agent is on the source's right.
+     *              else, indicate whether the other agent is on the source's left.
+     * @return whether or not other agent is on designated side of source.
      */
     public static boolean onSideOf(ILocated2D source, double sourceRadians, ILocated2D other, boolean right) {
         double angle = signedAngleFromSourceHeadingToTarget(source, other, sourceRadians);
