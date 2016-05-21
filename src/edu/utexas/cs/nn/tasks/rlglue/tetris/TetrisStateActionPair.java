@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.rlcommunity.environments.tetris.TetrisState;
 
-import edu.utexas.cs.nn.util.MiscUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 
 public class TetrisStateActionPair extends Pair<TetrisState, List<Integer>> {
@@ -22,53 +21,46 @@ public class TetrisStateActionPair extends Pair<TetrisState, List<Integer>> {
     }
 
     public TetrisStateActionPair(TetrisStateActionPair toCopy) {
-    	this(new TetrisState(toCopy.t1), new LinkedList<Integer>(toCopy.t2));
+        this(new TetrisState(toCopy.t1), new LinkedList<Integer>(toCopy.t2));
     }
-    
+
     public TetrisStateActionPair(TetrisState startState) {
-    	this(startState,  new LinkedList<Integer>());
+        this(startState, new LinkedList<Integer>());
     }
-    
+
     /**
      * Override for the equals method, made in such a way to ignore the second
      * half of each pair in comparisons
-     * @return Other Object that should be a TetrisStateActionPair
+     *
+     * @param obj Object that should be a TetrisStateActionPair
+     * @return whether obj and this object contain the same TetrisState
      */
     @Override
-	public boolean equals(Object obj) {
-    	if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		TetrisState other = ((TetrisStateActionPair) obj).t1;
-//		for(int i = 0; i < t1.worldState.length; i++) {
-//			if(t1.worldState[i] != other.worldState[i]) {
-//				System.out.println("bad! " + i);
-//				System.out.println(t1);
-//				MiscUtil.waitForReadStringAndEnterKeyPress();
-//				return false;
-//			}
-//		}
-		//System.out.println(t1.worldState.length + ":" + other.worldState.length);
-		if (!Arrays.equals(t1.worldState, other.worldState)) {
-//			System.out.println("Not equal, right?");
-			return false;
-		}
-		return true;
-	}
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        TetrisState other = ((TetrisStateActionPair) obj).t1;
+        return Arrays.equals(t1.worldState, other.worldState);
+    }
 
     /**
      * We only care about the end state and not the action sequence
+     *
      * @return Hash code that only depends on Tetris state
      */
     @Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + Arrays.hashCode(t1.worldState);
-		return result;
-	}
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + Arrays.hashCode(t1.worldState);
+        return result;
+    }
 
 }
