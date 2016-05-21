@@ -11,7 +11,7 @@ import java.util.Queue;
 
 import org.rlcommunity.environments.tetris.TetrisState;
 
-public class TertisAfterStateGenerator {
+public class TetrisAfterStateGenerator {
 
     /**
      * Takes in the current Tetris state and finds each of the possible after

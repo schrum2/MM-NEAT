@@ -74,7 +74,7 @@ public class TetrisAfterStateAgent<T extends Network> extends RLGlueAgent<T> {
             boolean currentWatch = CommonConstants.watch;
             CommonConstants.watch = false;
 
-            HashSet<TetrisStateActionPair> tetrisStateHolder = TertisAfterStateGenerator.generateAfterStates(tempState);
+            HashSet<TetrisStateActionPair> tetrisStateHolder = TetrisAfterStateGenerator.generateAfterStates(tempState);
             CommonConstants.watch = currentWatch;
 
             ArrayList<Pair<Double, List<Integer>>> outputPairs = new ArrayList<Pair<Double, List<Integer>>>(); //arraylist to hold the actions and outputs for later

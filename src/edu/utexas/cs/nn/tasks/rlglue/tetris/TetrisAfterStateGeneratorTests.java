@@ -28,7 +28,7 @@ public class TetrisAfterStateGeneratorTests {
 		testState.currentRotation = 0;
 		System.out.println(testState);
 		MiscUtil.waitForReadStringAndEnterKeyPress();
-		HashSet<TetrisStateActionPair> holder = TertisAfterStateGenerator.generateAfterStates(testState);
+		HashSet<TetrisStateActionPair> holder = TetrisAfterStateGenerator.generateAfterStates(testState);
 		HashSet<TetrisState> justStates = new HashSet<TetrisState>();
 		
 		//WOO BOY GET READY FOR A LOT OF TESTING CODE NONSENSE -Gab
@@ -219,7 +219,7 @@ public class TetrisAfterStateGeneratorTests {
 		testState.currentRotation = 0;
 		System.out.println(testState);
 		MiscUtil.waitForReadStringAndEnterKeyPress();
-		HashSet<TetrisStateActionPair> holder = TertisAfterStateGenerator.generateAfterStates(testState);
+		HashSet<TetrisStateActionPair> holder = TetrisAfterStateGenerator.generateAfterStates(testState);
 		HashSet<TetrisState> justStates = new HashSet<TetrisState>();
 	}
 	
@@ -320,7 +320,7 @@ public class TetrisAfterStateGeneratorTests {
 		testState.currentBlockId = 4; //simulating piece 4 at spawn point
 		testState.currentX = 3;
 		testState.currentY = -1;
-		HashSet<TetrisStateActionPair> holder = TertisAfterStateGenerator.generateAfterStates(testState);
+		HashSet<TetrisStateActionPair> holder = TetrisAfterStateGenerator.generateAfterStates(testState);
 		HashSet<TetrisState> justStates = new HashSet<TetrisState>();
 		//System.out.println("holder size is " + holder.size());
 		assertTrue(holder.size() >= 17 && holder.size() < 34);
@@ -347,7 +347,7 @@ public class TetrisAfterStateGeneratorTests {
 		testState.currentX = 3 + 2; // right by 2
 		testState.currentY = -1 + 5; //down by 5
 		testState.currentRotation = 3; // third rotation
-		HashSet<TetrisStateActionPair> holder = TertisAfterStateGenerator.generateAfterStates(testState);
+		HashSet<TetrisStateActionPair> holder = TetrisAfterStateGenerator.generateAfterStates(testState);
 		HashSet<TetrisState> justStates = new HashSet<TetrisState>();
 		////System.out.println("holder size is " + holder.size());
 		//assertTrue(holder.size() > 17 && holder.size() < 34);
@@ -362,7 +362,7 @@ public class TetrisAfterStateGeneratorTests {
 		testState.currentX = 3 + 4; // right by 2
 		testState.currentY = -1 + 8; //down by 5
 		testState.currentRotation = 3; // third rotation
-		HashSet<TetrisStateActionPair> holder2 = TertisAfterStateGenerator.generateAfterStates(testState);
+		HashSet<TetrisStateActionPair> holder2 = TetrisAfterStateGenerator.generateAfterStates(testState);
 		HashSet<TetrisState> justStates2 = new HashSet<TetrisState>();
 		assertTrue(holder.size() >= 17 && holder2.size() < 34);
 		//System.out.println("holder size is " + holder2.size());
@@ -400,7 +400,7 @@ public class TetrisAfterStateGeneratorTests {
 		testState.worldState[180] = 1;
 		testState.worldState[190] = 1;
 				
-		HashSet<TetrisStateActionPair> holder = TertisAfterStateGenerator.generateAfterStates(testState);
+		HashSet<TetrisStateActionPair> holder = TetrisAfterStateGenerator.generateAfterStates(testState);
 		HashSet<TetrisState> justStates = new HashSet<TetrisState>();
 		for(TetrisStateActionPair i : holder){ // transfers only the tetris states to the hash set
 			justStates.add(i.t1);
