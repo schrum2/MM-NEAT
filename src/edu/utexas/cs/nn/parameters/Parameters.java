@@ -36,7 +36,7 @@ import pacman.game.Constants;
 
 /**
  * Used for processing and containing command line parameters.
- * 
+ *
  * @author Jacob Schrum
  */
 public class Parameters {
@@ -48,12 +48,12 @@ public class Parameters {
     public ParameterCollection<Double> doubleOptions;
     public ParameterCollection<String> stringOptions;
     @SuppressWarnings("rawtypes") // Class can be any type, hence <T> details inappropriate
-	public ParameterCollection<Class> classOptions;
+    public ParameterCollection<Class> classOptions;
 
     /**
-     * Initialize the static Parameters instance using command line
-     * parameters.
-     * @param args String array from command line 
+     * Initialize the static Parameters instance using command line parameters.
+     *
+     * @param args String array from command line
      */
     public static void initializeParameterCollections(String[] args) {
         String logFile = getLogFilename(args);
@@ -81,9 +81,9 @@ public class Parameters {
     }
 
     /**
-     * Load file name filled with parameters and use contents
-     * to fille all parameter collections in the standard
-     * static Parameters instance
+     * Load file name filled with parameters and use contents to fille all
+     * parameter collections in the standard static Parameters instance
+     *
      * @param parameterFile file to load from
      */
     public static void initializeParameterCollections(String parameterFile) {
@@ -96,8 +96,9 @@ public class Parameters {
     }
 
     /**
-     * Load file name filled with parameters and use contents
-     * to fill all parameter collections.
+     * Load file name filled with parameters and use contents to fill all
+     * parameter collections.
+     *
      * @param filename File name to load parameters from
      */
     public void loadParameters(String filename) {
@@ -119,11 +120,12 @@ public class Parameters {
 
     /**
      * Initialize parameter collections of each needed type
-     * @param args  Original String array of command line arguments
+     *
+     * @param args Original String array of command line arguments
      */
     @SuppressWarnings("rawtypes")
-	public Parameters(String[] args) {
-    	booleanOptions = new ParameterCollection<Boolean>();
+    public Parameters(String[] args) {
+        booleanOptions = new ParameterCollection<Boolean>();
         classOptions = new ParameterCollection<Class>();
         doubleOptions = new ParameterCollection<Double>();
         integerOptions = new ParameterCollection<Integer>();
@@ -135,8 +137,8 @@ public class Parameters {
     }
 
     /**
-     * Save parameters to the path and filename specified
-     * by the "base", "saveTo", "log", and "runNumber" parameters
+     * Save parameters to the path and filename specified by the "base",
+     * "saveTo", "log", and "runNumber" parameters
      */
     public void saveParameters() {
         String path = stringParameter("base") + "/" + stringParameter("saveTo") + integerParameter("runNumber");
@@ -151,6 +153,7 @@ public class Parameters {
 
     /**
      * Save parameters to specified filename
+     *
      * @param filename Name of file to save parameters in
      */
     public void saveParameters(String filename) {
@@ -173,9 +176,8 @@ public class Parameters {
      */
     public final void fillDefaults() {
         //Integer parameters
-    	integerOptions.add("imageHeight", 100, "height of image");
-    	integerOptions.add("imageWidth", 100, "width of image");
-    	integerOptions.add("defaultImageMatchSize", 100, "default size of all CPPN-created images");
+        integerOptions.add("imageHeight", 100, "height of CPPN image (overrides height of image being matched if overrideImageSize is true)");
+        integerOptions.add("imageWidth", 100, "width of CPPN image (overrides width of image being matched if overrideImageSize is true)");
         integerOptions.add("junctionsToSense", 1, "Number of junctions to which distance should be sensed");
         integerOptions.add("crowdedGhostDistance", 30, "Distance at which ghosts are considered to be crowding each other");
         integerOptions.add("closeGhostDistance", 35, "Distance at which threat ghosts are considered too close for safety");
@@ -257,10 +259,10 @@ public class Parameters {
         longOptions.add("lastInnovation", 0l, "Highest innovation number used so far");
         longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
         //Boolean parameters
-        booleanOptions.add("saveAllChampions", false, "saves all champions of each generation"); 
-		booleanOptions.add("watchLastBest", false, "shows best result from last generation");
+        booleanOptions.add("saveAllChampions", false, "saves all champions of each generation");
+        booleanOptions.add("watchLastBest", false, "shows best result from last generation");
         booleanOptions.add("logChildScores", false, "For Mu/Lambda approaches that generate separate parent/child populations, indicates whether to log child info");
-        booleanOptions.add("overrideImageSize", true, "resets image size to default");
+        booleanOptions.add("overrideImageSize", false, "For image match task, draw CPPNs with different size than actual image size");
         booleanOptions.add("logTWEANNData", false, "Whether or not to log TWEANN data");
         booleanOptions.add("logMutationAndLineage", false, "Whether or not to log information about the mutations and lineage");
         booleanOptions.add("logPerformance", false, "Whether or not to log performance information in a performance log");
@@ -463,7 +465,7 @@ public class Parameters {
         booleanOptions.add("replayPacman", false, "Replay pacman game from save file");
         booleanOptions.add("hierarchicalMultitask", false, "Each multitask mode can consist of multiple preference neuron modules");
         //Double parameters
-        doubleOptions.add("linkExpressionThreshold", 0.2 , "Threshold for hyperNEAT output to result in an expressed link");
+        doubleOptions.add("linkExpressionThreshold", 0.2, "Threshold for hyperNEAT output to result in an expressed link");
         doubleOptions.add("tugGoalIncrement0", 0.0, "Set amount to increase goal 0 by when using TUG");
         doubleOptions.add("tugGoalIncrement1", 0.0, "Set amount to increase goal 1 by when using TUG");
         doubleOptions.add("tugGoalIncrement2", 0.0, "Set amount to increase goal 2 by when using TUG");
@@ -601,6 +603,7 @@ public class Parameters {
 
     /**
      * Get boolean parameter with given label
+     *
      * @param label Parameter label
      * @return corresponding boolean parameter label
      */
@@ -610,6 +613,7 @@ public class Parameters {
 
     /**
      * Get int parameter with given label
+     *
      * @param label Parameter label
      * @return corresponding int parameter label
      */
@@ -619,6 +623,7 @@ public class Parameters {
 
     /**
      * Get long parameter with given label
+     *
      * @param label Parameter label
      * @return corresponding long parameter label
      */
@@ -628,6 +633,7 @@ public class Parameters {
 
     /**
      * Get double parameter with given label
+     *
      * @param label Parameter label
      * @return corresponding double parameter label
      */
@@ -637,6 +643,7 @@ public class Parameters {
 
     /**
      * Get String parameter with given label
+     *
      * @param label Parameter label
      * @return corresponding String parameter label
      */
@@ -646,18 +653,21 @@ public class Parameters {
 
     /**
      * Get Class parameter with given label
+     *
      * @param label Parameter label
      * @return corresponding Class parameter value
      */
     @SuppressWarnings("rawtypes") // Class needs to be raw because any type can be returned
-	public Class classParameter(String label) {
+    public Class classParameter(String label) {
         return classOptions.get(label);
     }
 
     /**
      * Parse all command line parameters of each type
+     *
      * @param args The original String parameters
-     * @param terminateOnUnrecognized Whether to exit program on invalid parameter
+     * @param terminateOnUnrecognized Whether to exit program on invalid
+     * parameter
      */
     private void parseArgs(String[] args, boolean terminateOnUnrecognized) {
         if (args.length > 0 && args[0].equals("help")) {
@@ -726,7 +736,7 @@ public class Parameters {
                 st = new StringTokenizer(arg, ":");
                 entity = st.nextToken();
                 value = st.nextToken();
-            }catch (Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
                 System.out.println("Problem parsing parameter tokens");
                 System.exit(1);

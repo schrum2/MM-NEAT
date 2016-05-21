@@ -80,15 +80,16 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 		if (CommonConstants.watch) {
 			Network n = individual.getPhenotype();
 			BufferedImage child;
+                        int drawWidth = imageWidth;
+                        int drawHeight = imageHeight;
 			if(Parameters.parameters.booleanParameter("overrideImageSize")) {
-				int imageSize = Parameters.parameters.integerParameter("defaultImageMatchSize");	
-				child = imageFromCPPN(n, imageSize, imageSize);
-			} else {
-				child = imageFromCPPN(n, Parameters.parameters.integerParameter("imageWidth"), Parameters.parameters.integerParameter("imageHeight"));
-			}
+                            drawWidth = Parameters.parameters.integerParameter("imageWidth");
+                            drawHeight = Parameters.parameters.integerParameter("imageHeight");
+			} 
+			child = imageFromCPPN(n, drawWidth, drawHeight);
 			//draws picture and network to JFrame
 			DrawingPanel parentPanel = drawImage(img, "target");
-			DrawingPanel childPanel = drawImage(child, "output");
+			DrawingPanel childPanel = drawImage(child, "output", drawWidth, drawHeight);
 			childPanel.setLocation(img.getWidth() + IMAGE_PLACEMENT, 0);
 			considerSavingImage(childPanel);
 			parentPanel.dispose();
@@ -96,7 +97,7 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 		}
 		// Too many outputs to print to console. Don't want to watch.
 		boolean temp = CommonConstants.watch;
-		CommonConstants.watch = false;
+		CommonConstants.watch = false; // Prevent watching of console showing error energy
 		Score<T> result = super.evaluate(individual);//if watch=false
 		CommonConstants.watch = temp;
 		return result;
@@ -289,8 +290,14 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		draw8RandomImages();
-		//testImageConsistency();
+                MMNEAT.clearClasses();
+		EvolutionaryHistory.setInnovation(0);
+		EvolutionaryHistory.setHighestGenotypeId(0);
+		Parameters.initializeParameterCollections(new String[]{"io:false", "netio:false", "allowMultipleFunctions:true", "netChangeActivationRate:0.4", "recurrency:false"});
+		MMNEAT.loadClasses();
+            
+		//draw8RandomImages();
+		testImageConsistency();
 	}
 
 	public static void draw8RandomImages() {
@@ -307,9 +314,27 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 	}
 
 	public static void testImageConsistency() {
-		randomCPPNimage(false, 100);
-		randomCPPNimage(false, 100, 100, 500);
-	}
+                final int NUM_MUTATIONS = 200;
+
+		TWEANNGenotype toDraw = new TWEANNGenotype(4, 3, false, 0, 1, 0);
+		for (int i = 0; i < NUM_MUTATIONS; i++) {
+			toDraw.mutate();
+		}
+		TWEANN n = toDraw.getPhenotype();
+                int SMALL = 100;
+		BufferedImage small = imageFromCPPN(n, SMALL, SMALL);
+		DrawingPanel smallPanel = drawImage(small, "small", SMALL, SMALL);
+		
+                int MEDIUM = 300;
+		BufferedImage medium = imageFromCPPN(n, MEDIUM, MEDIUM);
+		DrawingPanel mediumPanel = drawImage(medium, "medium", MEDIUM, MEDIUM);
+                mediumPanel.setLocation(SMALL, 0);	
+
+                int LARGE = 600;
+		BufferedImage large = imageFromCPPN(n, LARGE, LARGE);
+		DrawingPanel largePanel = drawImage(large, "large", LARGE, LARGE);
+                largePanel.setLocation(SMALL + MEDIUM, 0);	
+        }
 	/**
 	 * Creates a random image of given size and numMutations and puts it in
 	 * JFrame with option to save image and network as a bmp
@@ -320,12 +345,6 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 	 * @return panel on which image was drawn
 	 */
 	public static DrawingPanel randomCPPNimage(boolean offerToSave, int x, int y, int size) {
-
-		MMNEAT.clearClasses();
-		EvolutionaryHistory.setInnovation(0);
-		EvolutionaryHistory.setHighestGenotypeId(0);
-		Parameters.initializeParameterCollections(new String[]{"io:false", "netio:false", "allowMultipleFunctions:true", "netChangeActivationRate:0.4", "recurrency:false"});
-		MMNEAT.loadClasses();
 
 		final int NUM_MUTATIONS = 200;
 
@@ -345,7 +364,7 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 			DrawingPanel network = new DrawingPanel(size, size, "network");
 			n.draw(network);
 			network.setLocation(300, 0);
-			Scanner scan = new Scanner(System.in);
+			Scanner scan = MiscUtil.CONSOLE;
 			System.out.println("would you like to save this image? y/n");
 			if (scan.next().equals("y")) {
 				System.out.println("enter filename");
@@ -356,7 +375,6 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 					network.save(filename + "network.bmp");
 				}
 			}
-			scan.close();
 			network.dispose();
 			childPanel.dispose();
 			System.exit(0);
