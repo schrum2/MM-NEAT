@@ -46,9 +46,4 @@ public class HyperNEATNNTorusPredPreyController extends NNTorusPredPreyControlle
 		double[] inputs = hnt.getSubstrateInputs(hnt.getSubstrateInformation());
 		return inputs;
 	}
-	
-	//TODO
-	public static String[] sensorLabels(int numAgents, String type) {
-		return null; // What to do?
-	}
 }
