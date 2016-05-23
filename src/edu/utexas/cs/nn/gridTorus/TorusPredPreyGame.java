@@ -23,7 +23,6 @@ public class TorusPredPreyGame {
     
     //array which stores the time that each prey dies (for fitness function)
     private int[] deathTimes;
-    
     private boolean gameOver;
     private int time;
     private int timeLimit;

@@ -9,6 +9,7 @@ import edu.utexas.cs.nn.evolution.Organism;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.evolution.genotypes.NetworkGenotype;
 import edu.utexas.cs.nn.evolution.nsga2.tug.TUGTask;
+import edu.utexas.cs.nn.gridTorus.TorusAgent;
 import edu.utexas.cs.nn.gridTorus.TorusPredPreyGame;
 import edu.utexas.cs.nn.gridTorus.TorusWorldExec;
 import edu.utexas.cs.nn.gridTorus.controllers.TorusPredPreyController;
@@ -23,11 +24,12 @@ import edu.utexas.cs.nn.tasks.NoisyLonerTask;
 import edu.utexas.cs.nn.tasks.gridTorus.objectives.GridTorusObjective;
 import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
+import edu.utexas.cs.nn.util.util2D.Tuple2D;
 import edu.utexas.cs.nn.util.datastructures.*;
 
 /**
  *
- * @author Alex Rollins, Jacob Schrum
+ * @author Alex Rollins, Jacob Schrum, Lauren Gillespie
  * A parent class which defines the Predator Prey task which evolves either the predator or the prey
  * (specified by the user which to evolve) while the other is kept static. The user also specifies the number
  * of preys and predators to be included, as well as their available actions. Runs the game so that predators attempt to 
@@ -227,52 +229,196 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 	public double getTimeStamp() {
 		return exec.game.getTime();
 	}
-	
+
+	/**
+	 * if run with hyperNEAT, gets substrate information for cppn to process
+	 * @return List<Substrate> list of all substrates in domain
+	 */
 	@Override
 	public List<Substrate> getSubstrateInformation() {
+
+		//these parameters are called repeatedly, therefore created local variables to improve efficiency
 		Integer torusWidth = Parameters.parameters.integerParameter("torusXDimensions");
 		Integer torusHeight = Parameters.parameters.integerParameter("torusYDimensions");
 		boolean senseTeammates = Parameters.parameters.booleanParameter("torusSenseTeammates");
-		int substrateWidth = 4;
-		int substrateHeight = 4;
+
+		//used for locating substrate in vector space
+		int substrateXCoord = 4;
+		int substrateYCoord = 4;
 		int outputSize = 3;
+
 		List<Substrate> subs = new LinkedList<Substrate>();
-		if(preyEvolve) {
-			if(senseTeammates) {
-				Substrate prey = new Substrate(new Pair<Integer, Integer>(torusWidth, torusHeight), Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(substrateWidth,0,0), "input_prey");
-				subs.add(prey);
-			}
+		if(preyEvolve) {//order of pred/prey substrate important, helps in sorting later on in get substrate inputs method
 			Substrate predator = new Substrate(new Pair<Integer, Integer>(torusWidth, torusHeight), Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, 0,0), "input_predator");
 			subs.add(predator);
+			if(senseTeammates) {
+				Substrate prey = new Substrate(new Pair<Integer, Integer>(torusWidth, torusHeight), Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(substrateXCoord,0,0), "input_prey");
+				subs.add(prey);
+			}	
 		} else {
+			Substrate prey = new Substrate(new Pair<Integer, Integer>(torusWidth, torusHeight), Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(substrateXCoord, 0,0), "input_prey");
+			subs.add(prey);
 			if(senseTeammates) {
 				Substrate predator = new Substrate(new Pair<Integer, Integer>(torusWidth, torusHeight), Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0,0,0), "input_predator");
 				subs.add(predator);
 			}
-			Substrate prey = new Substrate(new Pair<Integer, Integer>(torusWidth, torusHeight), Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(substrateWidth, 0,0), "input_prey");
-			subs.add(prey);
 		}
-		substrateWidth = substrateWidth/2;
-		if(!senseTeammates){
-			substrateWidth = 0;
+		substrateXCoord = substrateXCoord/2;//arranges substrate location so process and output are centered if two input substrates present
+		if(!senseTeammates){//else no need to recenter if only one input substrate
+			substrateXCoord = 0;
 		} 
-		Substrate processing = new Substrate(new Pair<Integer, Integer>(torusWidth, torusHeight), Substrate.PROCCESS_SUBSTRATE, new Triple<Integer, Integer, Integer>(substrateWidth, substrateHeight, 0), "process_1");
+		Substrate processing = new Substrate(new Pair<Integer, Integer>(torusWidth, torusHeight), Substrate.PROCCESS_SUBSTRATE, new Triple<Integer, Integer, Integer>(substrateXCoord, substrateYCoord, 0), "process_0");
 		subs.add(processing);
-		Substrate output = new Substrate(new Pair<Integer, Integer>(outputSize, outputSize), Substrate.OUTPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(substrateWidth, substrateHeight*2, 0), "output_1");
+		Substrate output = new Substrate(new Pair<Integer, Integer>(outputSize, outputSize), Substrate.OUTPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(substrateXCoord, substrateYCoord*2, 0), "output_0");
 		subs.add(output);
 		return subs;
 	}
 
+	/**
+	 * Returns a list of connections between substrates
+	 * @return List<Pair<String, String>> list of connections between substrates
+	 */
 	@Override
 	public List<Pair<String, String>> getSubstrateConnectivity() {
-		// TODO Auto-generated method stub
-		return null;
+		List<Pair<String, String>> connectivity = new LinkedList<Pair<String, String>>();
+		if(preyEvolve) {
+			if(Parameters.parameters.booleanParameter("torusSenseTeammates")) {
+				connectivity.add(new Pair<String, String>("input_prey", "process_0"));
+			}
+			connectivity.add(new Pair<String, String>("input_predator", "process_0"));
+		} else {
+			if(Parameters.parameters.booleanParameter("torusSenseTeammates")) {
+				connectivity.add(new Pair<String, String>("input_predator", "process_0"));
+			}
+			connectivity.add(new Pair<String, String>("input_prey", "process_0"));
+		}
+		connectivity.add(new Pair<String, String>("process_0", "output_0"));
+		return connectivity;
 	}
-	
+
+	/**
+	 * gets the inputs for the cppn. 1.0 corresponds to an agent at that location, 0.0 corresponds to no agent 
+	 * @return double[] double array containing all inputs to cppn from torus gridworld
+	 */
 	@Override
-	public double[] getSubstrateInputs(List<Substrate> inputSubstrates) {
-		// TODO Auto-generated method stub
+	public double[] getSubstrateInputs(List<Substrate> subs) {
+		List<Substrate> inputSubs = getInputSubstrates(subs);
+		int size = inputSize(inputSubs);
+		double[] inputs = new double[size];
+
+		TorusAgent[] preds = exec.game.getPredators();
+		List<Tuple2D> predsCoord = getCoordinates(preds);
+		Substrate sPreds = getSubstrate(inputSubs, "input_predator");
+		List<Integer> predsIndices = getIndices(predsCoord, sPreds.size.t1);
+
+		TorusAgent[] prey = exec.game.getPrey();
+		List<Tuple2D> preyCoord = getCoordinates(prey);
+		Substrate sPrey = getSubstrate(inputSubs, "input_prey");
+		List<Integer> preyIndices = getIndices(preyCoord, sPrey.size.t1);
+
+
+		for(int i = 0; i < inputs.length; i++) {
+			if(preyEvolve) {
+				preyIndices = this.scaleIndices(preyIndices, sPreds.size);
+				if(predsIndices.contains(i) || preyIndices.contains(i)) inputs[i] = 1.0;
+			} else {
+				predsIndices = this.scaleIndices(predsIndices, sPrey.size);
+				if(predsIndices.contains(i) || preyIndices.contains(i)) inputs[i] = 1.0;
+			}
+		}
+
+		return inputs;
+	}
+
+	/**
+	 * scales indices in order to match them up for input array
+	 * @param indices list of indices to be scaled
+	 * @param coords size of substrate preceding indices
+	 * @return indices scaled to include substrate coords
+	 */
+	private List<Integer> scaleIndices(List<Integer> indices, Pair<Integer, Integer> coords) {
+		List<Integer> scaledIndices = new LinkedList<Integer>();
+		int size = coords.t1*coords.t2;
+		for(int i = 0; i < indices.size(); i++) {
+			scaledIndices.add(indices.get(i) + size);
+		}
+		return scaledIndices;
+	}
+
+	/**
+	 * gets the substrate of given name from a list of substrate, returns null if none exists
+	 * @param subs list of substrates
+	 * @param name name of substrate to look for
+	 * @return given substrate
+	 */
+	private Substrate getSubstrate(List<Substrate> subs, String name) {
+		for(int i = 0; i < subs.size(); i++) {
+			if(subs.get(i).getName().equals(name)) return subs.get(i);
+		}
 		return null;
 	}
-	
+
+	/**
+	 * gets the indices of agents in a torusWorld from the coordinates of each agent
+	 * @param coords list containing coordinates of each agent
+	 * @param substrateWidth width of substrate agents are located in (for calculating the actual index)
+	 * @return list of indices
+	 */
+	private List<Integer> getIndices(List<Tuple2D> coords, int substrateWidth) {
+		List<Integer> indices = new LinkedList<Integer>();
+		for(int i = 0; i < coords.size(); i++) {
+			indices.add(indexFromCoordinates(coords.get(i).x, coords.get(i).y, substrateWidth));
+		}
+		return indices;
+	}
+
+	/**
+	 * gets coordinates of each agent from an array of agents
+	 * @param agents array of agents
+	 * @return coordinates of agents
+	 */
+	private List<Tuple2D> getCoordinates(TorusAgent[] agents) {
+		List<Tuple2D> coords = new LinkedList<Tuple2D>(); 
+		for(int i = 0; i < agents.length; i++) {
+			coords.add(agents[i].getPosition());
+		}
+		return coords;
+	}
+	/**
+	 * returns size of proper array.
+	 * guaranteed every substrate in list should be in input array
+	 * @param inputSubs list of input substrates
+	 * @return size of corresponding int input aray
+	 */
+	private int inputSize(List<Substrate> inputSubs) {
+		int size = 0;
+		for(int i = 0; i < inputSubs.size(); i++) {
+			size += inputSubs.get(i).size.t1* inputSubs.get(i).size.t2;
+		}
+		return size;
+	}
+
+	/**
+	 * gets the index of an agent from its coordinates
+	 * @param x x-coordinate of agent
+	 * @param y y-coordinate of agent
+	 * @param substrateWidth width of substrate agent is located in
+	 * @return index of substrate
+	 */
+	private Integer indexFromCoordinates(double x, double y, int substrateWidth) {
+		return (int) (substrateWidth*(y-1) + x);
+	}
+
+	/**
+	 * returns a list of ONLY input substrates
+	 * @param subs list of all substrates in domain
+	 * @return list of input substrates
+	 */
+	private List<Substrate> getInputSubstrates(List<Substrate> subs) {
+		List<Substrate> inputSubs = new LinkedList<Substrate>();
+		for(int i = 0; i < subs.size(); i++) {
+			if(subs.get(i).stype == 0) inputSubs.add(subs.get(i));
+		}
+		return inputSubs;
+	}
 }

@@ -25,13 +25,6 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
     public int innovationID = 0;//provides unique innovation numbers for links and genes
 
     /**
-     * Default constructor. Not yet finished
-     */
-    HyperNEATCPPNGenotype() {
-        super();
-    }
-
-    /**
      * Uses another CPPN to create a TWEANN controller for the domain. This
      * created TWEANN is unique only to the instance in which it is used. In a
      * sense, it's a one-and-done network, which explains the lax use of

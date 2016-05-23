@@ -23,6 +23,7 @@ import edu.utexas.cs.nn.log.PerformanceLog;
 import edu.utexas.cs.nn.networks.ActivationFunctions;
 import edu.utexas.cs.nn.networks.NetworkTask;
 import edu.utexas.cs.nn.networks.TWEANN;
+import edu.utexas.cs.nn.networks.hyperneat.HyperNEATTask;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.scores.Score;
@@ -593,8 +594,13 @@ public class MMNEAT {
                 setNNInputParameters(dynamics.numInputSensors(), NNBreve2DMonster.NUM_OUTPUTS);
             } else if (task instanceof TorusPredPreyTask) {
                 System.out.println("Setup Torus Predator/Prey Task");
-                NetworkTask t = (NetworkTask) task;
-                setNNInputParameters(t.sensorLabels().length, t.outputLabels().length);
+                if(task instanceof HyperNEATTask) {
+                	HyperNEATTask hnt = (HyperNEATTask) task;
+                	setNNInputParameters(HyperNEATTask.NUM_CPPN_INPUTS, hnt.getSubstrateConnectivity().size());
+                } else { // Standard Pred/Prey with human-specified sensors
+                	NetworkTask t = (NetworkTask) task;
+                	setNNInputParameters(t.sensorLabels().length, t.outputLabels().length);
+                }
             }else if (task instanceof UT2004Task) {
                 System.out.println("Setup UT2004 Task");
                 UT2004Task utTask = (UT2004Task) task;

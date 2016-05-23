@@ -1,8 +1,6 @@
 package edu.utexas.cs.nn.networks.hyperneat;
 
 import java.util.List;
-
-import edu.utexas.cs.nn.networks.NetworkTask;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 
 /**
@@ -14,6 +12,8 @@ import edu.utexas.cs.nn.util.datastructures.Pair;
  */
 public interface HyperNEATTask {
 
+	public static final int NUM_CPPN_INPUTS = 5;
+	
         /**
          * Method that returns a list of information about
          * the substrate layers contained in the network.
