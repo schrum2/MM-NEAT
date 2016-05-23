@@ -72,6 +72,8 @@ $RECYCLE.BIN/
 /pp/
 /match/
 /multiplelivesconflict/
+/imprisonconflict/
+/isolatedconflict/
 *.zds
 vizdoom/bin/vizdoom-He_Deceives.ini
 *.bmp
