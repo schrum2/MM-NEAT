@@ -324,7 +324,7 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
                 int SMALL = 100;
 		BufferedImage small = imageFromCPPN(n, SMALL, SMALL);
 		DrawingPanel smallPanel = drawImage(small, "small", SMALL, SMALL);
-		
+				smallPanel.setLocation(0,0);
                 int MEDIUM = 300;
 		BufferedImage medium = imageFromCPPN(n, MEDIUM, MEDIUM);
 		DrawingPanel mediumPanel = drawImage(medium, "medium", MEDIUM, MEDIUM);
