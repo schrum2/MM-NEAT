@@ -15,6 +15,7 @@ import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.tasks.rlglue.RLGlueAgent;
+import edu.utexas.cs.nn.util.MiscUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
 
@@ -70,6 +71,10 @@ public class TetrisAfterStateAgent<T extends Network> extends RLGlueAgent<T> {
 
             //call obs to ts
             TetrisState tempState = observationToTetrisState(o);
+        	
+//			System.out.println("Start state");
+//			System.out.println(tempState);
+//        	ArrayList<TetrisStateActionPair> forDebugging = new ArrayList<TetrisStateActionPair>();
 
             boolean currentWatch = CommonConstants.watch;
             CommonConstants.watch = false;
@@ -93,6 +98,7 @@ public class TetrisAfterStateAgent<T extends Network> extends RLGlueAgent<T> {
                 // Associate the policy's score for the after state with the list of actions leading to it
                 Pair<Double, List<Integer>> tempPair = new Pair<Double, List<Integer>>(outputs[0], i.t2);
                 outputPairs.add(tempPair);
+//                forDebugging.add(i);
             }
 
             double[] outputForArgmax = new double[outputPairs.size()];
@@ -102,9 +108,17 @@ public class TetrisAfterStateAgent<T extends Network> extends RLGlueAgent<T> {
 
             int index = StatisticsUtilities.argmax(outputForArgmax); //action = argmax(list)
 
+//            System.out.println("Chosen state");
+//            System.out.println("Score: " + outputPairs.get(index).t1);
+//            System.out.println(forDebugging.get(index).t1.toString(false));
+//            System.out.println("Actions1: " + forDebugging.get(index).t2);
+//            System.out.println("Actions2: " + outputPairs.get(index).t2);
+//            MiscUtil.waitForReadStringAndEnterKeyPress();
+            
             for (int k = 0; k < outputPairs.get(index).t2.size(); k++) {
                 currentActionList.add(outputPairs.get(index).t2.get(k)); //this should add the next action to the linked list in the proper order
             }
+            currentActionList.add(TetrisState.NONE); // Let the block settle and a new one spawns
         }
 
         Action action = new Action(TSO.getNumDiscreteActionDims(), TSO.getNumContinuousActionDims()); //moved this from before the action call, because both actions may need it -Gab
