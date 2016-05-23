@@ -3,6 +3,8 @@ package edu.utexas.cs.nn.tasks.rlglue.tetris;
 import static org.junit.Assert.*;
 
 import java.util.List;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 
 import org.junit.Test;
@@ -29,7 +31,7 @@ public class TetrisAfterStateGeneratorTests {
 		//System.out.println(testState);
 		//MiscUtil.waitForReadStringAndEnterKeyPress();
 		HashSet<TetrisStateActionPair> holder = TetrisAfterStateGenerator.generateAfterStates(testState);
-		
+
 		//WOO BOY GET READY FOR A LOT OF TESTING CODE NONSENSE -Gab
 		TetrisState resultV1 = new TetrisState(testState); //Vertical 1	
 		resultV1.worldState[150] = 1;
@@ -93,7 +95,7 @@ public class TetrisAfterStateGeneratorTests {
 		resultV7.currentX -= 0;
 		resultV7.currentY += 14;
 		resultV7.currentRotation += 1;
-		
+
 		TetrisState resultV8 = new TetrisState(testState); //Vertical 8
 		resultV8.worldState[157] = 1;
 		resultV8.worldState[167] = 1;
@@ -102,7 +104,7 @@ public class TetrisAfterStateGeneratorTests {
 		resultV8.currentX += 1;
 		resultV8.currentY += 14;
 		resultV8.currentRotation += 1;
-		
+
 		TetrisState resultV9 = new TetrisState(testState); //Vertical 9
 		resultV9.worldState[158] = 1;
 		resultV9.worldState[168] = 1;
@@ -120,7 +122,7 @@ public class TetrisAfterStateGeneratorTests {
 		resultV10.currentX += 3;
 		resultV10.currentY += 14;
 		resultV10.currentRotation += 1;
-		
+
 		TetrisState resultH1 = new TetrisState(testState); //Horizontal 1
 		resultH1.worldState[180] = 1;
 		resultH1.worldState[181] = 1;
@@ -164,7 +166,7 @@ public class TetrisAfterStateGeneratorTests {
 		resultH6.worldState[188] = 1;
 		resultH6.currentX += 1;
 		resultH6.currentY += 16;
-		
+
 		TetrisState resultH7 = new TetrisState(testState); //Horizontal 7
 		resultH7.worldState[186] = 1;
 		resultH7.worldState[187] = 1;
@@ -172,7 +174,7 @@ public class TetrisAfterStateGeneratorTests {
 		resultH7.worldState[189] = 1;
 		resultH7.currentX += 2;
 		resultH7.currentY += 16;
-				
+
 		assertTrue(holder.contains(new TetrisStateActionPair(resultV1, null)));
 		assertTrue(holder.contains(new TetrisStateActionPair(resultV2, null)));
 		assertTrue(holder.contains(new TetrisStateActionPair(resultV3, null)));
@@ -190,8 +192,8 @@ public class TetrisAfterStateGeneratorTests {
 		assertTrue(holder.contains(new TetrisStateActionPair(resultH5, null)));
 		assertTrue(holder.contains(new TetrisStateActionPair(resultH6, null)));
 		assertTrue(holder.contains(new TetrisStateActionPair(resultH7, null)));
-		
-		
+
+
 		//This part tests that the actions of the action list do give you the given state
 		for(TetrisStateActionPair j : holder){
 			TetrisState copyState = new TetrisState(testState); 
@@ -203,9 +205,9 @@ public class TetrisAfterStateGeneratorTests {
 			}
 			assertTrue(j.t1.equals(copyState));
 		}
-		
+
 	}
-	
+
 	public void starting_position_issue(){ // this test is for an issue we run into that won't allow the tri piece to make any initial moves (take_action)
 		TetrisState testState = new TetrisState(); // makes a Tetris state to test with
 		testState.currentBlockId = 2;
@@ -217,13 +219,13 @@ public class TetrisAfterStateGeneratorTests {
 		//HashSet<TetrisStateActionPair> holder = TetrisAfterStateGenerator.generateAfterStates(testState);
 		//HashSet<TetrisState> justStates = new HashSet<TetrisState>();
 	}
-	
+
 	//Not really a formal test, but still useful -Gab
 	@Test
 	public void different_starting_blocks_positions(){ // This tests for the starting X and Y of each piece
 		//TetrisViewer testView = new TetrisViewer(); //make a TetrisViewer
 		//TetrisState testState = new TetrisState(); // makes a Tetris state to test with
-		
+
 		//these are testing each shape in the testing environment
 		/*
 		testView.update(testState);
@@ -253,8 +255,8 @@ public class TetrisAfterStateGeneratorTests {
 		testView.update(testState);
 		//System.out.println("For Piece " + testState.currentBlockId + ", x = " + testState.currentX + ", y = " + testState.currentY + ", and the rotation is " + testState.currentRotation);
 		MiscUtil.waitForReadStringAndEnterKeyPress(); 
-		*/
-		
+		 */
+
 		//These are for random spawns
 		/*
 		testState.spawn_block();
@@ -281,8 +283,8 @@ public class TetrisAfterStateGeneratorTests {
 		testView.update(testState);
 		//System.out.println("For Piece " + testState.currentBlockId + ", x = " + testState.currentX + ", y = " + testState.currentY + ", and the rotation is " + testState.currentRotation);
 		MiscUtil.waitForReadStringAndEnterKeyPress(); 
-		*/
-		
+		 */
+
 		//this was to test the orientations
 		/*
 		testState.currentBlockId = 6;
@@ -301,15 +303,15 @@ public class TetrisAfterStateGeneratorTests {
 		testView.update(testState);
 		//System.out.println("x = " + testState.currentX + ", y = " + testState.currentY + ", r = " + testState.currentRotation);
 		MiscUtil.waitForReadStringAndEnterKeyPress(); 
-		*/
-		
+		 */
+
 	}
-	
+
 	@Test
 	public void afterstates_at_spawn() { // This tests that we get all available afterstates
 		//TetrisViewer testView = new TetrisViewer(); //make a TetrisViewer
 		TetrisState testState = new TetrisState(); // makes a Tetris state to test with
-		
+
 		//this is testing for the amount of afterstates we get with just teh first block
 		//we should get either 17 or 34, anything inbetween is ok(?) but anything below 17 poses an issue with our code
 		testState.currentBlockId = 4; //simulating piece 4 at spawn point
@@ -324,19 +326,19 @@ public class TetrisAfterStateGeneratorTests {
 		}
 		//System.out.println("set size is " + justStates.size());
 		assertTrue(justStates.size() == 17);
-		
-		
+
+
 		//testView.update(testState);
 		////System.out.println("x = " + testState.currentX + ", y = " + testState.currentY + ", r = " + testState.currentRotation);
 		//MiscUtil.waitForReadStringAndEnterKeyPress(); 
-		
+
 	}
-	
+
 	@Test
 	public void afterstates_after_action() { // This tests that we get all available afterstates when we've previous taken actions
 		//TetrisViewer testView = new TetrisViewer(); //make a TetrisViewer
 		TetrisState testState = new TetrisState(); // makes a Tetris state to test with
-		
+
 		//This should test that we get 17 afterstates having taken other actions
 		testState.currentBlockId = 4; //simulating piece 4 at spawn point
 		testState.currentX = 3 + 2; // right by 2
@@ -346,13 +348,13 @@ public class TetrisAfterStateGeneratorTests {
 		HashSet<TetrisState> justStates = new HashSet<TetrisState>();
 		////System.out.println("holder size is " + holder.size());
 		//assertTrue(holder.size() > 17 && holder.size() < 34);
-		
+
 		for(TetrisStateActionPair i : holder){ // transfers only the tetris states to the hash set
 			justStates.add(i.t1);
 		}
 		assertTrue(justStates.size() == 17);
 		//System.out.println("state size should be " + justStates.size());
-	
+
 		testState.currentBlockId = 4; //simulating piece 4 at spawn point
 		testState.currentX = 3 + 4; // right by 2
 		testState.currentY = -1 + 8; //down by 5
@@ -366,9 +368,9 @@ public class TetrisAfterStateGeneratorTests {
 		}
 		//System.out.println("state size should be " + justStates2.size());
 		assertTrue(justStates2.size() == 17);
-		
+
 	}
-	
+
 	@Test
 	public void afterstates_with_blocked_wall() { // This tests that we get all available afterstates when a wall if blocked off
 		//TetrisViewer testView = new TetrisViewer(); //make a TetrisViewer
@@ -394,7 +396,7 @@ public class TetrisAfterStateGeneratorTests {
 		testState.worldState[170] = 1;
 		testState.worldState[180] = 1;
 		testState.worldState[190] = 1;
-				
+
 		HashSet<TetrisStateActionPair> holder = TetrisAfterStateGenerator.generateAfterStates(testState);
 		HashSet<TetrisState> justStates = new HashSet<TetrisState>();
 		for(TetrisStateActionPair i : holder){ // transfers only the tetris states to the hash set
@@ -410,7 +412,7 @@ public class TetrisAfterStateGeneratorTests {
 		testState.currentBlockId = 5; //simulating piece 5 at spawn point
 		testState.currentX = 3;
 		testState.currentY = -2;
-		
+
 		testState.worldState[160] = 1;
 		testState.worldState[166] = 1;
 		testState.worldState[170] = 1;
@@ -427,10 +429,10 @@ public class TetrisAfterStateGeneratorTests {
 		testState.worldState[197] = 1;
 		testState.worldState[198] = 1;
 		testState.worldState[199] = 1;
-//		System.out.println("------ Start State -------");
-//		System.out.println(testState.toString(false));
-//		MiscUtil.waitForReadStringAndEnterKeyPress();
-		
+		//		System.out.println("------ Start State -------");
+		//		System.out.println(testState.toString(false));
+		//		MiscUtil.waitForReadStringAndEnterKeyPress();
+
 		TetrisState temp = new TetrisState(testState); // makes a Tetris state to test with
 		temp.worldState[172] = 6;
 		temp.worldState[182] = 6;
@@ -439,30 +441,30 @@ public class TetrisAfterStateGeneratorTests {
 		temp.currentX -= 3;
 		temp.currentY += 18;
 		temp.currentRotation = 3;
-		
-//		System.out.println("------ What we want -------");
-//		System.out.println(temp.toString(false));
-//		MiscUtil.waitForReadStringAndEnterKeyPress();
-		
+
+		//		System.out.println("------ What we want -------");
+		//		System.out.println(temp.toString(false));
+		//		MiscUtil.waitForReadStringAndEnterKeyPress();
+
 		HashSet<TetrisStateActionPair> holder = TetrisAfterStateGenerator.generateAfterStates(testState);
-//		for(TetrisStateActionPair i : holder){ // transfers only the tetris states to the hash set
-//			System.out.println(i.t1.toString(false));
-//			System.out.println(i.equals(new TetrisStateActionPair(temp, null)));
-//			MiscUtil.waitForReadStringAndEnterKeyPress();
-//		}
-		
+		//		for(TetrisStateActionPair i : holder){ // transfers only the tetris states to the hash set
+		//			System.out.println(i.t1.toString(false));
+		//			System.out.println(i.equals(new TetrisStateActionPair(temp, null)));
+		//			MiscUtil.waitForReadStringAndEnterKeyPress();
+		//		}
+
 		assertTrue(holder.contains(new TetrisStateActionPair(temp, null)));
-		
+
 	}
-	
-	//Not a conventional test, you will need to remove "TetrisState.FALL" from actOrder in TetrisAfterStateGenerator to see the differences -Gab
+
+
 	@Test
 	public void fall_in_action_list() { //this tests that the fall action will be used at all in situations where it will benefit the agent
 		TetrisState testState = new TetrisState(); // makes a Tetris state to test with
 		testState.currentBlockId = 1; //simulating piece 5 at spawn point
 		testState.currentX = 3;
 		testState.currentY = -2;
-		
+
 		testState.worldState[180] = 1;
 		testState.worldState[181] = 1;
 		testState.worldState[182] = 1;
@@ -481,15 +483,149 @@ public class TetrisAfterStateGeneratorTests {
 		testState.worldState[199] = 1;
 		//System.out.println(testState);
 		//MiscUtil.waitForReadStringAndEnterKeyPress();
-		
-//		HashSet<TetrisStateActionPair> holder = TetrisAfterStateGenerator.generateAfterStates(testState);
-//		for(TetrisStateActionPair i : holder){ // transfers only the tetris states to the hash set
-//			System.out.println(i.t1.toString(false));
-//			System.out.println("Only took " + i.t2.size() + " steps.");
-//			System.out.println("Actions: " + i.t2);
-//			MiscUtil.waitForReadStringAndEnterKeyPress();
-//		}
-		
-	}
 
+		HashSet<TetrisStateActionPair> holder = TetrisAfterStateGenerator.generateAfterStates(testState);
+		//		for(TetrisStateActionPair i : holder){ // transfers only the tetris states to the hash set
+		//			System.out.println(i.t1.toString(false));
+		//			System.out.println("Only took " + i.t2.size() + " steps.");
+		//			System.out.println("Actions: " + i.t2);
+		//			MiscUtil.waitForReadStringAndEnterKeyPress();
+		//		}
+
+		TetrisState pos1 = new TetrisState(testState); 
+		pos1.worldState[160] = 2;
+		pos1.worldState[161] = 2;
+		pos1.worldState[170] = 2;
+		pos1.worldState[171] = 2;
+		pos1.currentX -= 4;
+		pos1.currentY += 16;
+		assertTrue(holder.contains(new TetrisStateActionPair(pos1, null)));
+
+		TetrisState pos2 = new TetrisState(testState); 
+		pos2.worldState[162] = 2;
+		pos2.worldState[161] = 2;
+		pos2.worldState[172] = 2;
+		pos2.worldState[171] = 2;
+		pos2.currentX -= 3;
+		pos2.currentY += 16;
+		assertTrue(holder.contains(new TetrisStateActionPair(pos2, null)));
+
+		TetrisState pos3 = new TetrisState(testState); 
+		pos3.worldState[162] = 2;
+		pos3.worldState[163] = 2;
+		pos3.worldState[172] = 2;
+		pos3.worldState[173] = 2;
+		pos3.currentX -= 2;
+		pos3.currentY += 16;
+		assertTrue(holder.contains(new TetrisStateActionPair(pos3, null)));
+
+		TetrisState pos4 = new TetrisState(); 
+		pos4.currentX -= 1;
+		pos4.currentY += 18;
+		assertTrue(holder.contains(new TetrisStateActionPair(pos4, null)));
+
+		TetrisState pos5 = new TetrisState(testState); 
+		pos5.worldState[164] = 2;
+		pos5.worldState[165] = 2;
+		pos5.worldState[174] = 2;
+		pos5.worldState[175] = 2;
+		pos5.currentX += 0;
+		pos5.currentY += 16;
+		assertTrue(holder.contains(new TetrisStateActionPair(pos5, null)));
+
+		TetrisState pos6 = new TetrisState(testState); 
+		pos6.worldState[166] = 2;
+		pos6.worldState[165] = 2;
+		pos6.worldState[176] = 2;
+		pos6.worldState[175] = 2;
+		pos6.currentX += 1;
+		pos6.currentY += 16;
+		assertTrue(holder.contains(new TetrisStateActionPair(pos6, null)));
+
+		TetrisState pos7 = new TetrisState(testState); 
+		pos7.worldState[166] = 2;
+		pos7.worldState[167] = 2;
+		pos7.worldState[176] = 2;
+		pos7.worldState[177] = 2;
+		pos7.currentX += 2;
+		pos7.currentY += 16;
+		assertTrue(holder.contains(new TetrisStateActionPair(pos7, null)));
+
+		TetrisState pos8 = new TetrisState(testState); 
+		pos8.worldState[168] = 2;
+		pos8.worldState[167] = 2;
+		pos8.worldState[178] = 2;
+		pos8.worldState[177] = 2;
+		pos8.currentX += 3;
+		pos8.currentY += 16;
+		assertTrue(holder.contains(new TetrisStateActionPair(pos8, null)));
+
+		TetrisState pos9 = new TetrisState(testState); 
+		pos9.worldState[168] = 2;
+		pos9.worldState[169] = 2;
+		pos9.worldState[178] = 2;
+		pos9.worldState[179] = 2;
+		pos9.currentX += 4;
+		pos9.currentY += 16;
+		assertTrue(holder.contains(new TetrisStateActionPair(pos9, null)));
+
+		//test the sizes and contents of action lists
+		for(TetrisStateActionPair i : holder){
+			if(i.equals(new TetrisStateActionPair(pos1, null))){
+				assertEquals(i.t2.size(), 5);
+				System.out.println("Position 1 action list size is correct");
+				List<Integer> temp = new ArrayList<Integer>(Arrays.asList(0, 0, 0, 0, 5));
+				assertTrue(i.t2.equals(temp));
+				System.out.println("Position 1 action list actions are correct");
+			}else if(i.equals(new TetrisStateActionPair(pos2, null))){
+				assertEquals(i.t2.size(), 4);
+				System.out.println("Position 2 action list size is correct");
+				List<Integer> temp = new ArrayList<Integer>(Arrays.asList(0, 0, 0, 5));
+				assertTrue(i.t2.equals(temp));
+				System.out.println("Position 2 action list actions are correct");
+			}else if(i.equals(new TetrisStateActionPair(pos3, null))){
+				assertEquals(i.t2.size(), 3);
+				System.out.println("Position 3 action list size is correct");
+				List<Integer> temp = new ArrayList<Integer>(Arrays.asList(0, 0, 5));
+				assertTrue(i.t2.equals(temp));
+				System.out.println("Position 3 action list actions are correct");
+			}else if(i.equals(new TetrisStateActionPair(pos4, null))){
+				assertEquals(i.t2.size(), 2);
+				System.out.println("Position 4 action list size is correct");
+				List<Integer> temp = new ArrayList<Integer>(Arrays.asList(0, 5));
+				assertTrue(i.t2.equals(temp));
+				System.out.println("Position 4 action list actions are correct");
+			}else if(i.equals(new TetrisStateActionPair(pos5, null))){
+				assertEquals(i.t2.size(), 1);
+				System.out.println("Position 5 action list size is correct");
+				List<Integer> temp = new ArrayList<Integer>(Arrays.asList(5));
+				assertTrue(i.t2.equals(temp));
+				System.out.println("Position 5 action list actions are correct");
+			}else if(i.equals(new TetrisStateActionPair(pos6, null))){
+				assertEquals(i.t2.size(), 2);
+				System.out.println("Position 6 action list size is correct");
+				List<Integer> temp = new ArrayList<Integer>(Arrays.asList(1, 5));
+				assertTrue(i.t2.equals(temp));
+				System.out.println("Position 6 action list actions are correct");
+			}else if(i.equals(new TetrisStateActionPair(pos7, null))){
+				assertEquals(i.t2.size(), 3);
+				System.out.println("Position 7 action list size is correct");
+				List<Integer> temp = new ArrayList<Integer>(Arrays.asList(1, 1, 5));
+				assertTrue(i.t2.equals(temp));
+				System.out.println("Position 7 action list actions are correct");
+			}else if(i.equals(new TetrisStateActionPair(pos8, null))){
+				assertEquals(i.t2.size(), 4);
+				System.out.println("Position 8 action list size is correct");
+				List<Integer> temp = new ArrayList<Integer>(Arrays.asList(1, 1, 1, 5));
+				assertTrue(i.t2.equals(temp));
+				System.out.println("Position 8 action list actions are correct");
+			}else if(i.equals(new TetrisStateActionPair(pos9, null))){
+				assertEquals(i.t2.size(), 5);
+				System.out.println("Position 9 action list size is correct");
+				List<Integer> temp = new ArrayList<Integer>(Arrays.asList(1, 1, 1, 1, 5));
+				assertTrue(i.t2.equals(temp));
+				System.out.println("Position 9 action list actions are correct");
+			}
+		}
+	}
 }
