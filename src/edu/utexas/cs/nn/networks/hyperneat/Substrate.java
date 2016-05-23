@@ -11,6 +11,9 @@ import edu.utexas.cs.nn.util.datastructures.Triple;
  */
 public class Substrate {
 
+	public final static int INPUT_SUBSTRATE = 0;
+	public final static int PROCCESS_SUBSTRATE = 1;
+	public final static int OUTPUT_SUBSTRATE = 2;
     public final String name;//unique string identifier for substrate
     public final Pair<Integer, Integer> size;//encodes size of rectangular substrate (sticking with 2D for now)
     public final int stype;//encodes type of substrate

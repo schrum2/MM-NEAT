@@ -1,6 +1,8 @@
 package edu.utexas.cs.nn.tasks.gridTorus;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.Organism;
@@ -13,12 +15,15 @@ import edu.utexas.cs.nn.gridTorus.controllers.TorusPredPreyController;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.networks.NetworkTask;
 import edu.utexas.cs.nn.networks.TWEANN;
+import edu.utexas.cs.nn.networks.hyperneat.HyperNEATTask;
+import edu.utexas.cs.nn.networks.hyperneat.Substrate;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.NoisyLonerTask;
 import edu.utexas.cs.nn.tasks.gridTorus.objectives.GridTorusObjective;
 import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
+import edu.utexas.cs.nn.util.datastructures.*;
 
 /**
  *
@@ -28,7 +33,7 @@ import edu.utexas.cs.nn.util.datastructures.Pair;
  * of preys and predators to be included, as well as their available actions. Runs the game so that predators attempt to 
  * eat (get to the same location) the prey as soon as possible while prey attempt to survive as long as possible
  */
-public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTask<T> implements TUGTask, NetworkTask {
+public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTask<T> implements TUGTask, NetworkTask, HyperNEATTask {
 
 	/**
 	 * The getter method that returns the list of controllers for the predators
@@ -72,7 +77,7 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 	 * for adding fitness scores (turned on by command line parameters)
 	 * @param o objective/fitness score
 	 * @param list of fitness scores
-	 * @param affectsSelection
+	 * @param affectsSelection//???
 	 */
 	public final void addObjective(GridTorusObjective<T> o, ArrayList<GridTorusObjective<T>> list) {
 		list.add(o);
@@ -222,4 +227,52 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 	public double getTimeStamp() {
 		return exec.game.getTime();
 	}
+	
+	@Override
+	public List<Substrate> getSubstrateInformation() {
+		Integer torusWidth = Parameters.parameters.integerParameter("torusXDimensions");
+		Integer torusHeight = Parameters.parameters.integerParameter("torusYDimensions");
+		boolean senseTeammates = Parameters.parameters.booleanParameter("torusSenseTeammates");
+		int substrateWidth = 4;
+		int substrateHeight = 4;
+		int outputSize = 3;
+		List<Substrate> subs = new LinkedList<Substrate>();
+		if(preyEvolve) {
+			if(senseTeammates) {
+				Substrate prey = new Substrate(new Pair<Integer, Integer>(torusWidth, torusHeight), Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(substrateWidth,0,0), "input_prey");
+				subs.add(prey);
+			}
+			Substrate predator = new Substrate(new Pair<Integer, Integer>(torusWidth, torusHeight), Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, 0,0), "input_predator");
+			subs.add(predator);
+		} else {
+			if(senseTeammates) {
+				Substrate predator = new Substrate(new Pair<Integer, Integer>(torusWidth, torusHeight), Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0,0,0), "input_predator");
+				subs.add(predator);
+			}
+			Substrate prey = new Substrate(new Pair<Integer, Integer>(torusWidth, torusHeight), Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(substrateWidth, 0,0), "input_prey");
+			subs.add(prey);
+		}
+		substrateWidth = substrateWidth/2;
+		if(!senseTeammates){
+			substrateWidth = 0;
+		} 
+		Substrate processing = new Substrate(new Pair<Integer, Integer>(torusWidth, torusHeight), Substrate.PROCCESS_SUBSTRATE, new Triple<Integer, Integer, Integer>(substrateWidth, substrateHeight, 0), "process_1");
+		subs.add(processing);
+		Substrate output = new Substrate(new Pair<Integer, Integer>(outputSize, outputSize), Substrate.OUTPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(substrateWidth, substrateHeight*2, 0), "output_1");
+		subs.add(output);
+		return subs;
+	}
+
+	@Override
+	public List<Pair<String, String>> getSubstrateConnectivity() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public double[] getSubstrateInputs(List<Substrate> inputSubstrates) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 }
