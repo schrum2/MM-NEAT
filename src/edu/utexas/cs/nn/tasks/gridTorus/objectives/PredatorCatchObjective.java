@@ -11,8 +11,6 @@ import edu.utexas.cs.nn.networks.Network;
  * Find the score of the predator based on how many prey died
  */
 public class PredatorCatchObjective <T extends Network> extends GridTorusObjective<T>{
-
-	public static final double NO_PREY_SCORE = 25;
 	
 	@Override
 	/**
@@ -21,7 +19,6 @@ public class PredatorCatchObjective <T extends Network> extends GridTorusObjecti
 	public double fitness(Organism<T> individual) {
 		
 		TorusAgent[] prey = game.getPrey();
-		int numPrey = prey.length;
 		double numCaught = 0;
 		
 		//get number of caught prey
@@ -32,7 +29,7 @@ public class PredatorCatchObjective <T extends Network> extends GridTorusObjecti
 		}
 		
 		//return a score based on percentage of caught prey
-		return (((double)numCaught)/((double)numPrey)) * NO_PREY_SCORE;	
+		return numCaught;	
 	}
 
 }

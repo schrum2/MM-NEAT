@@ -18,8 +18,8 @@ public class TorusPredPreyGame {
     public static final int AGENT_TYPE_PREY = 1;
     
     private final TorusWorld world;
-    private final TorusAgent[] preds;
-    private final TorusAgent[] preys;
+    protected final TorusAgent[] preds;
+    protected final TorusAgent[] preys;
     
     //array which stores the time that each prey dies (for fitness function)
     private int[] deathTimes;

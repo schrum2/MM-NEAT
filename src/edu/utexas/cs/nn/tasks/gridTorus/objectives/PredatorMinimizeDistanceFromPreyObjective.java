@@ -29,11 +29,8 @@ public class PredatorMinimizeDistanceFromPreyObjective<T extends Network> extend
 		//this double array holds the distances to each prey for each pred
 		double[][] distances = new double[preds.length][prey.length];
 		//this array holds the sum of distances to all prey for each predator
+		//initialize all values in sumOfDists to zero (Java does by default)
 		double[] sumOfDists = new double[preds.length];
-		//initialize all values in sumOfDists to zero
-		for(int i = 0; i < preds.length; i++){
-			sumOfDists[i] = 0;
-		}
 		for(int i = 0; i < preds.length; i++){
 			distances[i] = preds[i].distances(prey);
 			for(int j = 0; j < prey.length; j++){
