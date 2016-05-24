@@ -90,7 +90,7 @@ public class TetrisAfterStateAgent<T extends Network> extends RLGlueAgent<T> {
                 // Basic features
                 double[] inputs = MMNEAT.rlGlueExtractor.extract(i.t1.get_observation());
                 // Scaled to range [0,1] for the neural network
-                double[] inputsScaled = scaleInputs(inputs);
+                double[] inputsScaled = MMNEAT.rlGlueExtractor.scaleInputs(inputs);
 
                 policy.flush(); // remove recurrent activation
                 //	outputs = constultPolicy(features) REMEMBER outputs is an array of 1
@@ -185,26 +185,6 @@ public class TetrisAfterStateAgent<T extends Network> extends RLGlueAgent<T> {
         }
     }
 
-    /**
-     * Takes raw features from BertsekasTsitsiklis Feature Extractor and scales
-     * them to range [0,1] for neural network input.
-     *
-     * TODO: This should be moved to BertsekasTsitsiklis Feature Extractor.
-     * That class should simply return the scaled versions of the features!
-     * 
-     * @param inputs
-     * @return scaled inputs
-     */
-    public static double[] scaleInputs(double[] inputs) {
-        double[] next = new double[inputs.length];
-        int height_features = TetrisState.worldWidth + (TetrisState.worldWidth - 1) + 1; // height values (10), height differences (9), and max height (1)
-        for (int i = 0; i < height_features; i++) {
-            next[i] = inputs[i] / TetrisState.worldHeight;
-        }
-        next[inputs.length - 2] = inputs[inputs.length - 2] / TetrisState.TETRIS_STATE_NUMBER_WORLD_GRID_BLOCKS; // scales down the number of holes in relation to the whole of the board
-        next[next.length - 1] = 1.0; // bias is 1, so not scaling
-        return next;
-    }
 
     /**
      * This method takes in the last observation and returns the number of
