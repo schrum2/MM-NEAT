@@ -41,6 +41,7 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 	private static final double BIAS = 1.0;//a common input used in neural networks
 	private static final double SQRT2 = Math.sqrt(2); //Used for scaling distance from center
 
+	private Network individual;
 	private BufferedImage img = null;
 	public int imageHeight, imageWidth;
 
@@ -100,6 +101,8 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 		CommonConstants.watch = false; // Prevent watching of console showing error energy
 		Score<T> result = super.evaluate(individual);//if watch=false
 		CommonConstants.watch = temp;
+		this.individual = individual.getPhenotype();
+		result.behaviorVector = getBehaviorVector();
 		return result;
 	}
 
@@ -174,7 +177,7 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 	 */
 	public static float[] getHSBFromCPPN(Network n, int x, int y, int imageWidth, int imageHeight) {
 		double[] input = getCPPNInputs(x, y, imageWidth, imageHeight);
-		n.flush();
+		((TWEANN) n).flush();
 		return rangeRestrictHSB(n.process(input));
 	}
 
@@ -283,7 +286,27 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 		}
 		return pairs;
 	}
-
+	
+	/**
+	 * 
+	 */
+	@Override
+	public ArrayList<Double> getBehaviorVector() {
+		ArrayList<Double> results = new ArrayList<Double>(img.getHeight()*img.getWidth());
+		BufferedImage child = imageFromCPPN(individual, img.getWidth(), img.getHeight());
+		for(int i = 0; i < img.getWidth(); i++) {
+			for(int j =0; j < img.getHeight(); j++) {
+				Color color = new Color(child.getRGB(i, j));
+				float[] hsb = new float[numOutputs()];
+				Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), hsb);
+				for(int k = 0; k < hsb.length; k++) {
+					results.add((double) hsb[k]); 
+				}
+			}
+		}
+		
+        return results;
+    } 
 	/**
 	 * main method used to create a random CPPN image.
 	 *
@@ -381,5 +404,4 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 		}
 		return childPanel;
 	}
-
 }
