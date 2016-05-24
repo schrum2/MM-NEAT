@@ -14,6 +14,7 @@ import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.scores.Score;
+import edu.utexas.cs.nn.tasks.gridTorus.TorusPredPreyTask;
 import edu.utexas.cs.nn.tasks.mspacman.MsPacManTask;
 import edu.utexas.cs.nn.util.file.FileUtilities;
 import java.io.File;
@@ -89,7 +90,9 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
                     TWEANN.preferenceNeuronPanel = new DrawingPanel(Plot.BROWSE_DIM, Plot.BROWSE_DIM, "Preference Neuron Activation");
                     TWEANN.preferenceNeuronPanel.setLocation(Plot.BROWSE_DIM + Plot.EDGE, Plot.BROWSE_DIM + Plot.TOP);
                 }
-                if (CommonConstants.monitorInputs) {
+                //this does not happen for TorusPredPreyTasks because the "Individual Info" panel is unnecessary, as panels for each
+                //evolved agents are already shown with monitorInputs with all of their sensors and information
+                if (CommonConstants.monitorInputs && !(MMNEAT.task instanceof TorusPredPreyTask)) {
                     Offspring.fillInputs((TWEANNGenotype) genotype);
                 }
             }
