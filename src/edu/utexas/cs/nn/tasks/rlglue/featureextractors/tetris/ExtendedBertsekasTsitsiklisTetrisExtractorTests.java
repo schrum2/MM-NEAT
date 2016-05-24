@@ -1,21 +1,21 @@
-package edu.utexas.cs.nn.tasks.rlglue.tetris;
+package edu.utexas.cs.nn.tasks.rlglue.featureextractors.tetris;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+
+import java.util.Arrays;
 
 import org.junit.Test;
 import org.rlcommunity.environments.tetris.TetrisState;
 import org.rlcommunity.rlglue.codec.types.Observation;
 
-import edu.utexas.cs.nn.tasks.rlglue.featureextractors.tetris.BertsekasTsitsiklisTetrisExtractor;
 import edu.utexas.cs.nn.util.MiscUtil;
 
-public class TetrisAfterStateAgentTests {
+public class ExtendedBertsekasTsitsiklisTetrisExtractorTests {
 	@Test
-	public void does_scale() {
-		//Test borrowed from BertsekasTsitsiklisTetrisExtractorTests THANKS ME, YOU'RE WELCOME ME -Gab
+	public void number_of_holes() {
 		//TetrisViewer testView = new TetrisViewer(); //make a TetrisViewer
 		TetrisState testState = new TetrisState(); // makes a Tetris state to test with
-		BertsekasTsitsiklisTetrisExtractor BTTE = new BertsekasTsitsiklisTetrisExtractor();
+		BertsekasTsitsiklisTetrisExtractor EBTTE = new ExtendedBertsekasTsitsiklisTetrisExtractor();
 		//line piece
 		testState.worldState[166] = 1;
 		testState.worldState[167] = 1;
@@ -47,11 +47,11 @@ public class TetrisAfterStateAgentTests {
 		//MiscUtil.waitForReadStringAndEnterKeyPress();
 		
 		Observation o = testState.get_observation();		
-		double[] inputs = BTTE.scaleInputs(BTTE.extract(o)); 
-		
-		double[] expected = new double[]{0.1, 0.15, 0.15, 0.05, 0.05, 0.15, 0.2, 0.2, 0.2, 0.2, 0.05, 0, 0.1, 0, 0.1, 0.05, 0, 0, 0, 0.2, 0.045, 1};
+		double[] inputs =  EBTTE.scaleInputs(EBTTE.extract(o)); 
+		//System.out.println(Arrays.toString(inputs));
+		double[] expected = EBTTE.scaleInputs(new double[]{2, 3, 3, 1, 1, 3, 4, 4, 4, 4, 1, 0, 2, 0, 2, 1, 0, 0, 0, 4, 9, 1, 1, 1, 0, 0, 0, 0, 2, 0, 2, 3});
+		//System.out.println(Arrays.toString(expected));
 		for(int i = 0; i < inputs.length ; i++){
-			//System.out.println("When the input is at " + i + ", scaled is " + inputs[i] + " and expected is " + expected[i]);
 			assertEquals(inputs[i], expected[i], 0.0);
 		}
 		//System.out.println(Arrays.toString(inputs));
