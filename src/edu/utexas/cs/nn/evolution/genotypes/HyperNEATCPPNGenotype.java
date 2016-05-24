@@ -23,13 +23,35 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 
     private static final double BIAS = 1.0;//Necessary for most CPPN networks
     public int innovationID = 0;//provides unique innovation numbers for links and genes
-    public int archetypeIndex = 0;
-    
-    //needs major work
-    public HyperNEATCPPNGenotype(ArrayList<LinkGene> links, ArrayList<NodeGene> genes) {
-    	super(genes, links, 1, false, false, 0);
-    }
+
     /**
+     * Default constructor
+     */
+    public HyperNEATCPPNGenotype(){
+    	super();
+    }
+    
+    /**
+     *Constructor for hyperNEATCPPNGenotype. Uses super constructor from TWEANNGenotype 
+     * @param links list of links between genes
+     * @param genes list of nodes in genotype
+     * @param outputNeurons number of output neurons
+     */
+    public HyperNEATCPPNGenotype(ArrayList<LinkGene> links, ArrayList<NodeGene> genes, int outputNeurons) {//TODO
+    	super(genes, links, outputNeurons, false, false, 0);
+    }
+    
+    /**
+     * Constructor for random hyperNEATCPPNGenotype. 
+     * @param networkInputs number of network inputs
+     * @param networkOutputs number of newtork outputs
+     * @param archetypeIndex index of genotype in archetype
+     */
+    public HyperNEATCPPNGenotype(int networkInputs, int networkOutputs, int archetypeIndex) {
+		super(networkInputs, networkOutputs, archetypeIndex); // Construct new CPPN with random weights
+	}
+
+	/**
      * Uses another CPPN to create a TWEANN controller for the domain. This
      * created TWEANN is unique only to the instance in which it is used. In a
      * sense, it's a one-and-done network, which explains the lax use of
@@ -58,28 +80,36 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
         ArrayList<LinkGene> newLinks = createNodeLinks(cppn, connections, subs, substrateIndexMapping);
         //the instantiation of the TWEANNgenotype in question 
 
+        int phenotypeOutputs = 0;
+        for(Substrate s: subs) {
+        	if(s.getStype() == Substrate.OUTPUT_SUBSTRATE) {
+        	phenotypeOutputs += s.size.t1 * s.size.t2;
+        	}
+        }
+        
         // Hard coded to have a single neural output module.
         // May need to fix this down the line.
         // An archetype index of -1 is used. Hopefully this won't cause problems,
         // since the archetype is only needed for mutations and crossover.
-        TWEANNGenotype tg = new TWEANNGenotype(newNodes, newLinks, 1, false, false, -1);
-
-        return tg.getPhenotype();
+        TWEANNGenotype tg = new TWEANNGenotype(newNodes, newLinks, phenotypeOutputs, false, false, -1);
+		return tg.getPhenotype();
     }
-    
+    /**
+     * Copies given genotype
+     */
     @Override
     public Genotype<TWEANN> copy() {
         int[] temp = moduleUsage; // Schrum: Not sure if keeping moduleUsage is appropriate
         ArrayList<LinkGene> links = new ArrayList<LinkGene>(this.links.size());
-        for(LinkGene lg : this.links) {
+        for(LinkGene lg : this.links) {//needed for a deep copy
         	links.add(new LinkGene(lg.sourceInnovation, lg.targetInnovation, lg.weight, lg.innovation, false));
         }
         
         ArrayList<NodeGene> genes = new ArrayList<NodeGene>(this.nodes.size());
-        for(NodeGene ng : this.nodes) {
+        for(NodeGene ng : this.nodes) {//needed for a deep copy
         	genes.add(new NodeGene(ng.ftype, ng.ntype, ng.innovation, false));
         }
-        HyperNEATCPPNGenotype result = new HyperNEATCPPNGenotype(links, genes);
+        HyperNEATCPPNGenotype result = new HyperNEATCPPNGenotype(links, genes, MMNEAT.networkOutputs);
 
      // Schrum: Not sure if keeping moduleUsage is appropriate
         moduleUsage = temp;
@@ -214,4 +244,15 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
             return originalOutput + CommonConstants.linkExpressionThreshold;
         }
     }
+    
+    /**
+     * Creates a new random instance of the hyperNEATCPPNGenotype
+     */
+    @Override
+    public Genotype<TWEANN> newInstance() {
+        HyperNEATCPPNGenotype result = new HyperNEATCPPNGenotype(MMNEAT.networkInputs, MMNEAT.networkOutputs, this.archetypeIndex);
+        result.moduleUsage = new int[result.numModules];
+        return result;
+    }
+
 }

@@ -38,9 +38,6 @@ public class HyperNEATNNTorusPredPreyController extends NNTorusPredPreyControlle
     public int[] getAction(TorusAgent me, TorusWorld world, TorusAgent[] preds, TorusAgent[] prey) {
         double[] inputs = inputs();
         double[] outputs = nn.process(inputs);
-        System.out.println("inputs length: " + inputs.length);
-        System.out.println("outputs length: " + outputs.length);
-        System.out.println( "nn num inputs: " + nn.numInputs() + " nn.numOutputs: " + nn.numOutputs());
         double[] modifiedOutputs = mapSubstrateOutputsToStandardOutputs(outputs);
         // Assume one output for each direction
         return isPredator ? predatorActions()[StatisticsUtilities.argmax(modifiedOutputs)] : preyActions()[StatisticsUtilities.argmax(modifiedOutputs)];
@@ -51,7 +48,6 @@ public class HyperNEATNNTorusPredPreyController extends NNTorusPredPreyControlle
         if (numOutputs == NUM_OUTPUTS_WITH_NO_ACTION) {
             modifiedOutputs[NOTHING_INDEX] = outputs[SUBSTRATE_NOTHING_INDEX];
         }
-        System.out.println(Arrays.toString(outputs));
         modifiedOutputs[TorusPredPreyController.UP_INDEX] = outputs[SUBSTRATE_UP_INDEX];
         modifiedOutputs[TorusPredPreyController.RIGHT_INDEX] = outputs[SUBSTRATE_RIGHT_INDEX];
         modifiedOutputs[TorusPredPreyController.DOWN_INDEX] = outputs[SUBSTRATE_DOWN_INDEX];
