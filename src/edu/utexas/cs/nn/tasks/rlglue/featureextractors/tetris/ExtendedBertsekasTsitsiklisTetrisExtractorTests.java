@@ -48,9 +48,11 @@ public class ExtendedBertsekasTsitsiklisTetrisExtractorTests {
 		
 		Observation o = testState.get_observation();		
 		double[] inputs =  EBTTE.scaleInputs(EBTTE.extract(o)); 
-		//System.out.println(Arrays.toString(inputs));
+		System.out.println(inputs.length);
+		System.out.println(Arrays.toString(inputs));
 		double[] expected = EBTTE.scaleInputs(new double[]{2, 3, 3, 1, 1, 3, 4, 4, 4, 4, 1, 0, 2, 0, 2, 1, 0, 0, 0, 4, 9, 1, 1, 1, 0, 0, 0, 0, 2, 0, 2, 3});
-		//System.out.println(Arrays.toString(expected));
+		System.out.println(expected.length);
+		System.out.println(Arrays.toString(expected));
 		for(int i = 0; i < inputs.length ; i++){
 			assertEquals(inputs[i], expected[i], 0.0);
 		}

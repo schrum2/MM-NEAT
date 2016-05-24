@@ -11,7 +11,7 @@ public class ExtendedBertsekasTsitsiklisTetrisExtractor extends BertsekasTsitsik
     
 	@Override
 	public int numFeatures() {
-		return super.numFeatures();
+		return super.numFeatures() + TetrisState.worldWidth;
 		// column heights + column differences + Max Height + total holes + bias + column holes
 	}
 	
@@ -46,10 +46,10 @@ public class ExtendedBertsekasTsitsiklisTetrisExtractor extends BertsekasTsitsik
 			blockIndicator[i] = o.intArray[worldState.length + i];
 		}
 
-		int blockId = StatisticsUtilities.argmax(blockIndicator);
-		int blockX = o.intArray[TetrisState.TETRIS_STATE_CURRENT_X_INDEX];
-		int blockY = o.intArray[TetrisState.TETRIS_STATE_CURRENT_Y_INDEX];
-		int blockRotation = o.intArray[TetrisState.TETRIS_STATE_CURRENT_ROTATION_INDEX];
+//		int blockId = StatisticsUtilities.argmax(blockIndicator);
+//		int blockX = o.intArray[TetrisState.TETRIS_STATE_CURRENT_X_INDEX];
+//		int blockY = o.intArray[TetrisState.TETRIS_STATE_CURRENT_Y_INDEX];
+//		int blockRotation = o.intArray[TetrisState.TETRIS_STATE_CURRENT_ROTATION_INDEX];
 		//blotMobilePiece(worldState, blockId, blockX, blockY, blockRotation);
 		//This needs to be commented here too! Causes problems with the afterstate. -Gab
 
@@ -59,9 +59,9 @@ public class ExtendedBertsekasTsitsiklisTetrisExtractor extends BertsekasTsitsik
             added[i] = columnHoles(i, worldState, (int) h);
         }
 
-		double[] combined = new double[base.length + added.length];
-		System.arraycopy(base, 0, combined, 0, base.length);
-		System.arraycopy(added, 0, combined, base.length, added.length);
+		double[] combined = new double[super.numFeatures() + added.length];
+		System.arraycopy(base, 0, combined, 0, super.numFeatures());
+		System.arraycopy(added, 0, combined, super.numFeatures(), added.length);
 
 		//System.out.println(Arrays.toString(combined));
 		return combined;

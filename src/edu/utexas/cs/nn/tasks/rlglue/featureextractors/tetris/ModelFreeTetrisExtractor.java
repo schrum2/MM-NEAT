@@ -54,9 +54,9 @@ public class ModelFreeTetrisExtractor extends BertsekasTsitsiklisTetrisExtractor
 			added[i] = pieceDistanceFromBlocks(worldState, blockId, blockX, blockY, blockRotation, i);
 		}
 
-		double[] combined = new double[base.length + added.length];
-		System.arraycopy(base, 0, combined, 0, base.length);
-		System.arraycopy(added, 0, combined, base.length, added.length);
+		double[] combined = new double[super.numFeatures() + added.length];
+		System.arraycopy(base, 0, combined, 0, super.numFeatures());
+		System.arraycopy(added, 0, combined, super.numFeatures(), added.length);
 
 		//System.out.println(Arrays.toString(combined));
         
