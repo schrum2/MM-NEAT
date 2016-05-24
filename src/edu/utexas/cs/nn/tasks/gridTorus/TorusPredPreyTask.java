@@ -22,6 +22,7 @@ import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.NoisyLonerTask;
 import edu.utexas.cs.nn.tasks.gridTorus.objectives.GridTorusObjective;
+import edu.utexas.cs.nn.tasks.gridTorus.sensors.TorusPredPreySensorBlock;
 import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.util2D.Tuple2D;
@@ -53,7 +54,9 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
      * @return list of controllers for predators
      */
     public abstract TorusPredPreyController[] getPredAgents(Genotype<T> individual);
-
+    // Remember which agents are evolved. Can be cast to NNTorusPreyPreyController later
+    private TorusPredPreyController[] evolved = null;
+    
     /**
      * The getter method that returns the list of controllers for the preys
      *
@@ -121,21 +124,21 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 
         //---------Need to save module usage because it will be lost---------
         //store the list of the agents being evolved
-        TorusPredPreyController[] evolvedAgents = preyEvolve ? preyAgents : predAgents;
+        evolved = preyEvolve ? preyAgents : predAgents;
 
         //dispose of all panels inside of agents/controllers
         if (CommonConstants.monitorInputs) {
             // Dispose of existing panels
-            for (int i = 0; i < evolvedAgents.length; i++) {
-                ((NNTorusPredPreyController) (evolvedAgents)[i]).networkInputs.dispose();
+            for (int i = 0; i < evolved.length; i++) {
+                ((NNTorusPredPreyController) (evolved)[i]).networkInputs.dispose();
             }
         }
 
         //gets the controller of the evolved agent(s), gets its network, and stores the number of modules for that network
-        int numModes = ((NNTorusPredPreyController) evolvedAgents[0]).nn.numModules();
+        int numModes = ((NNTorusPredPreyController) evolved[0]).nn.numModules();
         //this will store the number of times each module is used by each agent 
         int[] overallAgentModeUsage = new int[numModes];
-        for (TorusPredPreyController agent : evolvedAgents) {
+        for (TorusPredPreyController agent : evolved) {
             //get the list of all modules used by this agent and store how many times that module is used in that spot in the array
             int[] thisAgentModeUsage = ((NNTorusPredPreyController) agent).nn.getModuleUsage();
             //combine this agent's module usage with the module usage of all agents
@@ -192,35 +195,8 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
      * @return agent's sensory labels in a string array
      */
     @Override
-    public String[] sensorLabels() {
-        String[] sensors = new String[2 * (Parameters.parameters.integerParameter("torusPreys") + Parameters.parameters.integerParameter("torusPredators"))];
-        String[] predSensors = NNTorusPredPreyController.sensorLabels(Parameters.parameters.integerParameter("torusPredators"), "Pred");
-        String[] preySensors = NNTorusPredPreyController.sensorLabels(Parameters.parameters.integerParameter("torusPreys"), "Prey");
-        //if it is the predator who will evolve, get its sensor labels
-        if (!preyEvolve) {
-            //if the ability to sense teammates has been turned on, include sensors to the agents of this agent's
-            //own type in addition to sensors to the enemies
-            if (Parameters.parameters.booleanParameter("torusSenseTeammates")) {
-                //put the prey sensors into the sensors array followed by the predator sensors
-                System.arraycopy(preySensors, 0, sensors, 0, preySensors.length);
-                System.arraycopy(predSensors, 0, sensors, preySensors.length, predSensors.length);
-                return sensors;
-            } else {
-                return preySensors;
-            }
-        } else //if it is the prey who is evolving, get its sensor labels
-        //if the ability to sense teammates has been turned on, include sensors to the agents of this agent's
-        //own type in addition to sensors to the enemies
-        {
-            if (Parameters.parameters.booleanParameter("torusSenseTeammates")) {
-                //put the predator sensors into the sensors array followed by the prey sensors
-                System.arraycopy(predSensors, 0, sensors, 0, predSensors.length);
-                System.arraycopy(preySensors, 0, sensors, predSensors.length, preySensors.length);
-                return sensors;
-            } else {
-                return predSensors;
-            }
-        }
+    public String[] sensorLabels() {    	
+    	return ((NNTorusPredPreyController) (evolved[0])).sensorLabels();
     }
 
     /**

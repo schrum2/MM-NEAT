@@ -23,7 +23,8 @@ import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
 /**
- *
+ * A class which supports cooperative cooevolution. Contains many extensions of the MuLambda class, but with 
+ * some changes which will allow for a different genotype for each subPopulation
  * @author Jacob Schrum
  */
 public abstract class CooperativeCoevolutionMuLambda implements MultiplePopulationGenerationalEA {
@@ -35,14 +36,19 @@ public abstract class CooperativeCoevolutionMuLambda implements MultiplePopulati
     private final int mltype;
     private final MultiplePopulationTask task;
     protected final double crossoverRate;
-    protected FitnessLog[] parentLogs;
-    protected FitnessLog[] childLogs;
+	protected FitnessLog[] parentLogs;
+	protected FitnessLog[] childLogs;
     protected final boolean writeOutput;
     private HashMap<Long, ArrayList<Long>> recentOffspring = new HashMap<Long, ArrayList<Long>>();
     public int successfulOffspringSearches = 0;
     public int totalOffspringSearches = 0;
     public boolean evaluatingParents = false;
 
+    /**
+     * returns a random id number for the offspring of this parent 
+     * @param parentId of this parent (long)
+     * @return random id (Long)
+     */
     public Long getRandomOffspringId(long parentId) {
         totalOffspringSearches++;
         if (!recentOffspring.containsKey(parentId)) {
@@ -55,10 +61,21 @@ public abstract class CooperativeCoevolutionMuLambda implements MultiplePopulati
         }
     }
 
+    /**
+     * Initializes this MuLambda class according to various parameter values and types
+     */
     public CooperativeCoevolutionMuLambda() {
         this(MuLambda.MLTYPE_PLUS, Parameters.parameters.integerParameter("mu"), Parameters.parameters.integerParameter("mu"), (MultiplePopulationTask) MMNEAT.task, MMNEAT.genotypeExamples.size());
     }
 
+    /**
+     * create fitness logs depending on the population and number in population. Assigns class variables according to command line parameters
+     * @param mltype
+     * @param mu 
+     * @param lambda
+     * @param task
+     * @param numPopulations
+     */
     public CooperativeCoevolutionMuLambda(int mltype, int mu, int lambda, MultiplePopulationTask task, int numPopulations) {
         this.mltype = mltype;
         this.task = task;
@@ -83,6 +100,10 @@ public abstract class CooperativeCoevolutionMuLambda implements MultiplePopulati
         }
     }
 
+    /**
+     * If it is requested by the user, will log the parent info by creating text files with corresponding information
+     * @param parentScores the scores of the parent
+     */
     public void logParentInfo(ArrayList<ArrayList<Score>> parentScores) {
         if (writeOutput) {
             for (int i = 0; i < parentLogs.length; i++) {
@@ -100,6 +121,11 @@ public abstract class CooperativeCoevolutionMuLambda implements MultiplePopulati
         }
     }
 
+    /**
+     * Finds the initial populations
+     * @param examples, an arrayList of genotypes
+     * @return startingPopulations, an arrayList of arrayLists of genotypes
+     */
     public ArrayList<ArrayList<Genotype>> initialPopulations(ArrayList<Genotype> examples) {
         ArrayList<ArrayList<Genotype>> startingPopulations = new ArrayList<ArrayList<Genotype>>(examples.size() + 1);
         boolean seedCoevolutionPops = Parameters.parameters.booleanParameter("seedCoevolutionPops");
@@ -257,10 +283,16 @@ public abstract class CooperativeCoevolutionMuLambda implements MultiplePopulati
         }
     }
 
+    /**
+     * @return generation, the current generation as an integer
+     */
     public int currentGeneration() {
         return generation;
     }
 
+    /**
+     * @return task, the current task as a Task object
+     */
     public Task getTask() {
         return task;
     }
