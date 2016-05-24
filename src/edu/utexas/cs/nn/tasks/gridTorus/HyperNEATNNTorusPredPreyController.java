@@ -1,8 +1,11 @@
 package edu.utexas.cs.nn.tasks.gridTorus;
 
+import java.util.Arrays;
+
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.gridTorus.TorusAgent;
 import edu.utexas.cs.nn.gridTorus.TorusWorld;
+import edu.utexas.cs.nn.gridTorus.controllers.TorusPredPreyController;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.networks.hyperneat.HyperNEATTask;
 import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
@@ -45,10 +48,10 @@ public class HyperNEATNNTorusPredPreyController extends NNTorusPredPreyControlle
         if (numOutputs == NUM_OUTPUTS_WITH_NO_ACTION) {
             modifiedOutputs[NOTHING_INDEX] = outputs[SUBSTRATE_NOTHING_INDEX];
         }
-        modifiedOutputs[UP_INDEX] = outputs[SUBSTRATE_UP_INDEX];
-        modifiedOutputs[RIGHT_INDEX] = outputs[SUBSTRATE_RIGHT_INDEX];
-        modifiedOutputs[DOWN_INDEX] = outputs[SUBSTRATE_DOWN_INDEX];
-        modifiedOutputs[LEFT_INDEX] = outputs[SUBSTRATE_LEFT_INDEX];
+        modifiedOutputs[TorusPredPreyController.UP_INDEX] = outputs[SUBSTRATE_UP_INDEX];
+        modifiedOutputs[TorusPredPreyController.RIGHT_INDEX] = outputs[SUBSTRATE_RIGHT_INDEX];
+        modifiedOutputs[TorusPredPreyController.DOWN_INDEX] = outputs[SUBSTRATE_DOWN_INDEX];
+        modifiedOutputs[TorusPredPreyController.LEFT_INDEX] = outputs[SUBSTRATE_LEFT_INDEX];
         return modifiedOutputs;
     }
 

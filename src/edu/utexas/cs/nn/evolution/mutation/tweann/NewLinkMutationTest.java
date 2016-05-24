@@ -1,9 +1,6 @@
 package edu.utexas.cs.nn.evolution.mutation.tweann;
 
-import static org.junit.Assert.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -11,7 +8,6 @@ import org.junit.Test;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
-import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype.LinkGene;
 import edu.utexas.cs.nn.parameters.Parameters;
 
 public class NewLinkMutationTest {

@@ -54,4 +54,7 @@ public class Substrate {
     public Triple<Integer, Integer, Integer> getSubLocation() {
         return this.subLocation;
     }
+    public String toString(){
+    return "Substrate name: " + this.name + " size: " + this.size.toString() + " stype: " + this.getStype() + " getSubLocation: " + this.getSubLocation().toString();
+    }
 }

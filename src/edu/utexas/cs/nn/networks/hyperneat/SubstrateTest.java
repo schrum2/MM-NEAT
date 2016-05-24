@@ -18,6 +18,7 @@ public class SubstrateTest {
 		assertTrue(sub.getSize().t1*sub.getSize().t2 == 25);
 		assertTrue(sub.getStype() != 1 && sub.getStype() != 2);
 		assertTrue(sub.getSubLocation().equals(new Triple<Integer, Integer, Integer>(0,0,0)));
+		System.out.println(sub.toString());
 	}
 
 }
