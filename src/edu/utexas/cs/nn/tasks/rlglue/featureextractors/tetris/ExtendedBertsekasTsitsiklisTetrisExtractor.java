@@ -1,25 +1,20 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.utexas.cs.nn.tasks.rlglue.featureextractors.tetris;
 
-import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
+import java.util.Arrays;
 
 import org.rlcommunity.environments.tetris.TetrisState;
 import org.rlcommunity.rlglue.codec.types.Observation;
 
-/**
- *
- * @author Jacob Schrum
- */
-public class ModelFreeTetrisExtractor extends BertsekasTsitsiklisTetrisExtractor {
+import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
 
+public class ExtendedBertsekasTsitsiklisTetrisExtractor extends BertsekasTsitsiklisTetrisExtractor {
+    
 	@Override
 	public int numFeatures() {
-		return super.numFeatures() + 5; //may need to change the 5 here
+		return super.numFeatures();
+		// column heights + column differences + Max Height + total holes + bias + column holes
 	}
-
+	
 	@Override
 	public double[] scaleInputs(double[] inputs) {
 		double[] original = super.scaleInputs(inputs);
@@ -29,8 +24,17 @@ public class ModelFreeTetrisExtractor extends BertsekasTsitsiklisTetrisExtractor
 		}
 		return original;
 	}
-
 	
+	@Override
+	  public String[] featureLabels() {
+        String[] labels = super.featureLabels();
+        int originalFeatures = TetrisState.worldWidth + (TetrisState.worldWidth - 1) + 3; //Number of original features
+        for (int i = originalFeatures; i < labels.length; i++) {
+            labels[i] = "Column " + i + " Holes";
+        }
+        return labels;
+    }
+
 	@Override
 	public double[] extract(Observation o) {
 		double[] base = super.extract(o);
@@ -48,45 +52,18 @@ public class ModelFreeTetrisExtractor extends BertsekasTsitsiklisTetrisExtractor
 		int blockRotation = o.intArray[TetrisState.TETRIS_STATE_CURRENT_ROTATION_INDEX];
 		//blotMobilePiece(worldState, blockId, blockX, blockY, blockRotation);
 		//This needs to be commented here too! Causes problems with the afterstate. -Gab
-		
-		double[] added = new double[5];
-		for (int i = 0; i < added.length; i++) {
-			added[i] = pieceDistanceFromBlocks(worldState, blockId, blockX, blockY, blockRotation, i);
-		}
+
+		double[] added = new double[worldWidth];
+        for (int i = 0; i < added.length; i++) { // finds the number of holes for the current column and adds that to Added
+            double h = columnHeight(i, worldState);
+            added[i] = columnHoles(i, worldState, (int) h);
+        }
 
 		double[] combined = new double[base.length + added.length];
 		System.arraycopy(base, 0, combined, 0, base.length);
 		System.arraycopy(added, 0, combined, base.length, added.length);
 
 		//System.out.println(Arrays.toString(combined));
-        
 		return combined;
 	}
-
-	/*
-	 * worldState used needs to be after the floating piece is blotted out
-	 */
-	protected int pieceDistanceFromBlocks(int[] worldState, int blockId, int blockX, int blockY, int blockRotation, int pieceColumn) {
-		int[][] mobilePiece = this.possibleBlocks.get(blockId).getShape(blockRotation);
-		boolean hasBottom = false;
-		int bottom = 0;
-		for (int i = mobilePiece[pieceColumn].length - 1; i >= 0; i--) {
-			if (mobilePiece[pieceColumn][i] != 0) {
-				hasBottom = true;
-				bottom = i;
-				break;
-			}
-		}
-
-		if (!hasBottom) {
-			return this.worldHeight * 2;
-		}
-
-		int absoluteBottom = blockY + bottom;
-		int h = columnHeight(blockX + pieceColumn, worldState);
-
-		return (worldHeight - h) - absoluteBottom;
-	}
-
-
 }

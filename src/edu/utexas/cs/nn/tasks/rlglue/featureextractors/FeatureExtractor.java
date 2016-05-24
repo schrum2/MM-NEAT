@@ -17,4 +17,6 @@ public interface FeatureExtractor {
     public double[] extract(Observation o);
 
     public String[] featureLabels();
+    
+    public double[] scaleInputs(double[] inputs);
 }

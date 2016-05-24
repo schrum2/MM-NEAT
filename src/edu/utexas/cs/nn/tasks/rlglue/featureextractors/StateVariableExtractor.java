@@ -53,4 +53,10 @@ public class StateVariableExtractor implements FeatureExtractor {
         }
         return labels;
     }
+
+	@Override
+	public double[] scaleInputs(double[] inputs) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

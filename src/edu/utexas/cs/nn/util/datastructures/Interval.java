@@ -79,37 +79,4 @@ public class Interval<T extends Comparable<T>> extends Pair<T, T> {
         return (includeFirst ? "[" : "]") + t1 + "," + t2 + (includeLast ? "]" : "[");
     }
 
-    public static void main(String[] args) {
-        Interval<Integer> i = new Interval<Integer>(true, 5, 20, true);
-        System.out.println(i);
-        System.out.println(-10 + ":" + i.contains(-10));
-        System.out.println(5 + ":" + i.contains(5));
-        System.out.println(7 + ":" + i.contains(7));
-        System.out.println(20 + ":" + i.contains(20));
-        System.out.println(21 + ":" + i.contains(21));
-
-        i = new Interval<Integer>(false, 5, 20, true);
-        System.out.println(i);
-        System.out.println(-10 + ":" + i.contains(-10));
-        System.out.println(5 + ":" + i.contains(5));
-        System.out.println(7 + ":" + i.contains(7));
-        System.out.println(20 + ":" + i.contains(20));
-        System.out.println(21 + ":" + i.contains(21));
-
-        i = new Interval<Integer>(false, 5, 20, false);
-        System.out.println(i);
-        System.out.println(-10 + ":" + i.contains(-10));
-        System.out.println(5 + ":" + i.contains(5));
-        System.out.println(7 + ":" + i.contains(7));
-        System.out.println(20 + ":" + i.contains(20));
-        System.out.println(21 + ":" + i.contains(21));
-
-        i = new Interval<Integer>(true, 5, 20, false);
-        System.out.println(i);
-        System.out.println(-10 + ":" + i.contains(-10));
-        System.out.println(5 + ":" + i.contains(5));
-        System.out.println(7 + ":" + i.contains(7));
-        System.out.println(20 + ":" + i.contains(20));
-        System.out.println(21 + ":" + i.contains(21));
-    }
 }

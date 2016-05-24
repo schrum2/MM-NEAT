@@ -25,4 +25,10 @@ public class NonMarkovianCartPoleExtractor implements FeatureExtractor {
     public String[] featureLabels() {
         return new String[]{"Position", "Angle"};
     }
+
+	@Override
+	public double[] scaleInputs(double[] inputs) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

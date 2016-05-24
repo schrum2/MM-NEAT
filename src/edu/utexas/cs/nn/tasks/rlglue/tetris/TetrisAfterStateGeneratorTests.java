@@ -573,58 +573,58 @@ public class TetrisAfterStateGeneratorTests {
 		for(TetrisStateActionPair i : holder){
 			if(i.equals(new TetrisStateActionPair(pos1, null))){
 				assertEquals(i.t2.size(), 5);
-				System.out.println("Position 1 action list size is correct");
+				//System.out.println("Position 1 action list size is correct");
 				List<Integer> temp = new ArrayList<Integer>(Arrays.asList(0, 0, 0, 0, 5));
 				assertTrue(i.t2.equals(temp));
-				System.out.println("Position 1 action list actions are correct");
+				//System.out.println("Position 1 action list actions are correct");
 			}else if(i.equals(new TetrisStateActionPair(pos2, null))){
 				assertEquals(i.t2.size(), 4);
-				System.out.println("Position 2 action list size is correct");
+				//System.out.println("Position 2 action list size is correct");
 				List<Integer> temp = new ArrayList<Integer>(Arrays.asList(0, 0, 0, 5));
 				assertTrue(i.t2.equals(temp));
-				System.out.println("Position 2 action list actions are correct");
+				//System.out.println("Position 2 action list actions are correct");
 			}else if(i.equals(new TetrisStateActionPair(pos3, null))){
 				assertEquals(i.t2.size(), 3);
-				System.out.println("Position 3 action list size is correct");
+				//System.out.println("Position 3 action list size is correct");
 				List<Integer> temp = new ArrayList<Integer>(Arrays.asList(0, 0, 5));
 				assertTrue(i.t2.equals(temp));
-				System.out.println("Position 3 action list actions are correct");
+				//System.out.println("Position 3 action list actions are correct");
 			}else if(i.equals(new TetrisStateActionPair(pos4, null))){
 				assertEquals(i.t2.size(), 2);
-				System.out.println("Position 4 action list size is correct");
+				//System.out.println("Position 4 action list size is correct");
 				List<Integer> temp = new ArrayList<Integer>(Arrays.asList(0, 5));
 				assertTrue(i.t2.equals(temp));
-				System.out.println("Position 4 action list actions are correct");
+				//System.out.println("Position 4 action list actions are correct");
 			}else if(i.equals(new TetrisStateActionPair(pos5, null))){
 				assertEquals(i.t2.size(), 1);
-				System.out.println("Position 5 action list size is correct");
+				//System.out.println("Position 5 action list size is correct");
 				List<Integer> temp = new ArrayList<Integer>(Arrays.asList(5));
 				assertTrue(i.t2.equals(temp));
-				System.out.println("Position 5 action list actions are correct");
+				//System.out.println("Position 5 action list actions are correct");
 			}else if(i.equals(new TetrisStateActionPair(pos6, null))){
 				assertEquals(i.t2.size(), 2);
-				System.out.println("Position 6 action list size is correct");
+				//System.out.println("Position 6 action list size is correct");
 				List<Integer> temp = new ArrayList<Integer>(Arrays.asList(1, 5));
 				assertTrue(i.t2.equals(temp));
-				System.out.println("Position 6 action list actions are correct");
+				//System.out.println("Position 6 action list actions are correct");
 			}else if(i.equals(new TetrisStateActionPair(pos7, null))){
 				assertEquals(i.t2.size(), 3);
-				System.out.println("Position 7 action list size is correct");
+				//System.out.println("Position 7 action list size is correct");
 				List<Integer> temp = new ArrayList<Integer>(Arrays.asList(1, 1, 5));
 				assertTrue(i.t2.equals(temp));
-				System.out.println("Position 7 action list actions are correct");
+				//System.out.println("Position 7 action list actions are correct");
 			}else if(i.equals(new TetrisStateActionPair(pos8, null))){
 				assertEquals(i.t2.size(), 4);
-				System.out.println("Position 8 action list size is correct");
+				//System.out.println("Position 8 action list size is correct");
 				List<Integer> temp = new ArrayList<Integer>(Arrays.asList(1, 1, 1, 5));
 				assertTrue(i.t2.equals(temp));
-				System.out.println("Position 8 action list actions are correct");
+				//System.out.println("Position 8 action list actions are correct");
 			}else if(i.equals(new TetrisStateActionPair(pos9, null))){
 				assertEquals(i.t2.size(), 5);
-				System.out.println("Position 9 action list size is correct");
+				//System.out.println("Position 9 action list size is correct");
 				List<Integer> temp = new ArrayList<Integer>(Arrays.asList(1, 1, 1, 1, 5));
 				assertTrue(i.t2.equals(temp));
-				System.out.println("Position 9 action list actions are correct");
+				//System.out.println("Position 9 action list actions are correct");
 			}
 		}
 	}

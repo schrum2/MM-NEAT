@@ -96,7 +96,7 @@ public class BertsekasTsitsiklisTetrisExtractor implements FeatureExtractor {
             blockIndicator[i] = o.intArray[worldState.length + i]; // this sets the block indicator spots as either 0 or 1 according to which block is currently falling (1)
         }
         //blotMobilePiece(worldState, StatisticsUtilities.argmax(blockIndicator), o.intArray[TetrisState.TETRIS_STATE_CURRENT_X_INDEX], o.intArray[TetrisState.TETRIS_STATE_CURRENT_Y_INDEX], o.intArray[TetrisState.TETRIS_STATE_CURRENT_ROTATION_INDEX]); 
-        
+        //This is commented out because it messes up the scores of afterstates where the mobile piece is at the bottome and in the process of being written. -Gab
         
         int in = 0;
 
@@ -121,6 +121,8 @@ public class BertsekasTsitsiklisTetrisExtractor implements FeatureExtractor {
         inputs[in++] = holes;
         inputs[in++] = 1; //bias
 
+        // Scaled to range [0,1] for the neural network
+        
         return inputs;
     }
 
@@ -182,4 +184,22 @@ public class BertsekasTsitsiklisTetrisExtractor implements FeatureExtractor {
             }
         }
     }
+
+    /**
+     * Takes raw features and scales them to range [0,1] for neural network input.
+     *
+     * @param inputs
+     * @return scaled inputs
+     */
+	@Override
+	public double[] scaleInputs(double[] inputs) {
+		double[] next = new double[inputs.length];
+        int height_features = TetrisState.worldWidth + (TetrisState.worldWidth - 1) + 1; // height values (10), height differences (9), and max height (1)
+        for (int i = 0; i < height_features; i++) {
+            next[i] = inputs[i] / TetrisState.worldHeight;
+        }
+        next[height_features] = inputs[height_features] / TetrisState.TETRIS_STATE_NUMBER_WORLD_GRID_BLOCKS; // scales down the number of holes in relation to the whole of the board
+        next[height_features + 1] = 1.0; // bias is 1, so not scaling
+        return next;
+	}
 }
