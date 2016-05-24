@@ -12,6 +12,7 @@ import java.util.Arrays;
  * Logging class for summary statistics about a group of scores.
  *
  * @author Jacob Schrum
+ * @commented Lauren Gillespie
  */
 public abstract class StatisticsLog<T> extends MONELog {
 
@@ -20,19 +21,29 @@ public abstract class StatisticsLog<T> extends MONELog {
 	public double[] overallMins;
 	boolean draw = Parameters.parameters.booleanParameter("watchFitness");
 
+	/**
+	 * Constructor for a statistics log. Uses inherited MONELog
+	 * @param infix name of file
+	 * @param labels labels for plot files
+	 */
 	public StatisticsLog(String infix, ArrayList<String> labels) {
-		super(infix);
-		if (draw) {
+		super(infix);//super constructor
+		if (draw) {//used to facilitate drawing output to plot file
 			allMins = new ArrayList<ArrayList<Double>>();
 			allMaxes = new ArrayList<ArrayList<Double>>();
 			allAverages = new ArrayList<ArrayList<Double>>();
 		}
-		if (labels != null) {
+		if (labels != null) {//used to retrieve plot labels
 			makePlotFile(labels, false);
 			makePlotFile(labels, true);
 		}
 	}
-
+	
+	/**
+	 * Makes a plot file of all max, min and average from each generation
+	 * @param labels labels of plot file 
+	 * @param makePDF whether or not to also make a pdf
+	 */
 	public void makePlotFile(ArrayList<String> labels, boolean makePDF){
 		File plotFile = null;
 		if(!makePDF){
@@ -78,12 +89,17 @@ public abstract class StatisticsLog<T> extends MONELog {
 
 	}
 
+	/**
+	 * initializes arrayLists of max min and averages if they are to be saved
+	 * @param objectives
+	 */
 	public void initLongTermScores(int objectives) {
 		for (int i = 0; i < objectives; i++) {
 			allMins.add(new ArrayList<Double>());
 			allMaxes.add(new ArrayList<Double>());
 			allAverages.add(new ArrayList<Double>());
 		}
+		//creates arrays containing max range for values
 		overallMaxes = new double[objectives];
 		Arrays.fill(overallMaxes, -Double.MAX_VALUE);
 		overallMins = new double[objectives];
@@ -92,6 +108,11 @@ public abstract class StatisticsLog<T> extends MONELog {
 
 	public abstract void log(ArrayList<T> scores, int generation);
 
+	/**
+	 * logs average scores from each generation
+	 * @param scores 2D array containing scores from generation
+	 * @param generation generation in question
+	 */
 	public void logAverages(double[][] scores, int generation) {
 		int categories = scores[0].length;
 		if (draw && allMins.isEmpty()) {

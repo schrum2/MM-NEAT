@@ -14,6 +14,7 @@ import java.util.Scanner;
  * General logging class. Needs to be generalized more.
  *
  * @author Jacob Schrum
+ * @Commented Lauren Gillespie
  */
 public class MONELog {
 
@@ -22,21 +23,37 @@ public class MONELog {
     protected String prefix;
     public String lastLoadedEntry = null;
 
+    /**
+     * Default file log constructor
+     * @param infix name of log file
+     */
     public MONELog(String infix) {
         this(infix, false);
     }
 
+    /**
+     * Constructor for file log
+     * @param infix name of log file
+     * @param batches whether or not there are multiple batches of files
+     */
     public MONELog(String infix, boolean batches) {
         this(infix, batches, false);
     }
 
+    /**
+     * Constructor for file log. Sets up a new file that logs data from task.
+     *  Also saves old data if present
+     * @param infix name of log file
+     * @param batches whether or not there are multiple batches of files(??)
+     * @param unlimited whether or not there are limits on log(??)
+     */
     public MONELog(String infix, boolean batches, boolean unlimited) {
         if(Parameters.parameters.booleanParameter("logLock")){
             // Don't do any file reading
             return;
         }
         String experimentPrefix = Parameters.parameters.stringParameter("log") + Parameters.parameters.integerParameter("runNumber");
-        this.prefix = experimentPrefix + "_" + infix;
+        this.prefix = experimentPrefix + "_" + infix;//creates file prefix
 
         String saveTo = Parameters.parameters.stringParameter("saveTo");
         if (saveTo.isEmpty()) {
@@ -44,10 +61,10 @@ public class MONELog {
             System.out.println("infix: " + infix);
             System.exit(1);
         }
-        directory = FileUtilities.getSaveDirectory();
+        directory = FileUtilities.getSaveDirectory();//retrieves file directory
         File dir = new File(directory);
         if (!dir.exists()) {
-            dir.mkdir();
+            dir.mkdir();//makes a new directory
         }
         directory += (directory.equals("") ? "" : "/");
         File file = getFile();
@@ -55,18 +72,16 @@ public class MONELog {
             int expectedEntries = Parameters.parameters.integerParameter("lastSavedGeneration");
             ArrayList<String> oldData = new ArrayList<String>();
             if (file.exists()) {
-                //System.out.println(file.getName() + " exists");
                 Scanner oldFile = new Scanner(file);
-                if (batches) {
+                if (batches) {//only occurs if batches of runs want to be kept
                     int popSize = Parameters.parameters.integerParameter("mu");
                     expectedEntries *= (popSize + 1);
                     for (int i = 0; i < expectedEntries || (unlimited && oldFile.hasNextLine()); i++) {
                         oldData.add(oldFile.nextLine());
                     }
                 } else {
-                    //System.out.println("Expect " + expectedEntries + " entries");
                     for (int i = 0; i < expectedEntries || (unlimited && oldFile.hasNextLine()); i++) {
-                        try {
+                        try {//sticks all the old data in a new file called old data
                             String line = oldFile.nextLine();
                             if(!unlimited){ // Expect generation number to be listed
                                 Scanner temp = new Scanner(line);
@@ -102,7 +117,7 @@ public class MONELog {
             if (oldData.size() > 1) {
                 for (int i = 0; i < oldData.size(); i++) {
                     if (oldData.get(i) != null) {
-                        stream.println(oldData.get(i));
+                        stream.println(oldData.get(i));//prints old data
                     }
                 }
             }
@@ -112,14 +127,25 @@ public class MONELog {
         }
     }
 
+    /**
+     * logs given data to file log
+     * @param data
+     */
     public void log(String data) {
         stream.println(data);
     }
 
+    /**
+     * Closes printstream and therefore closes log
+     */
     public void close() {
         stream.close();
     }
 
+    /**
+     * returns the log file
+     * @return log file
+     */
     public File getFile() {
         return new File(directory + prefix + "_log.txt");
     }

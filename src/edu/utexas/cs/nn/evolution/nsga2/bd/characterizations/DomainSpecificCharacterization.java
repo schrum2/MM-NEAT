@@ -5,8 +5,9 @@ import edu.utexas.cs.nn.evolution.nsga2.bd.vectors.RealBehaviorVector;
 import edu.utexas.cs.nn.scores.Score;
 
 /**
- *
+ *creates domain-specific characterization behavior vectors
  * @author Jacob Schrum
+ * @commented Lauren Gillespie
  */
 public class DomainSpecificCharacterization<T> implements BehaviorCharacterization<T> {
 
@@ -21,6 +22,9 @@ public class DomainSpecificCharacterization<T> implements BehaviorCharacterizati
         return new RealBehaviorVector(score.behaviorVector);
     }
 
+    /**
+     * gets new random syllabus for testing
+     */
     public void prepare() {
     }
 }

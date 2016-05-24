@@ -11,9 +11,10 @@ import edu.utexas.cs.nn.scores.Score;
 import java.util.ArrayList;
 
 /**
- * NSGA2 with a behavioral diversity objective added.
+ * Non-sorting genetic algorithm 2 with a behavioral diversity objective added.
  * 
  * @author Jacob Schrum
+ * @commented Lauren Gillespie
  */
 public class BDNSGA2<T> extends NSGA2<T> {
 
@@ -25,20 +26,23 @@ public class BDNSGA2<T> extends NSGA2<T> {
     private int maxArchiveSize;
     private int indexToAdd;
 
+    /**
+     * Constructor for BD NSGA2 genetic algorithm
+     */
     @SuppressWarnings("rawtypes")
 	public BDNSGA2() {
-        try {
+        try {//creates a new class instantiation of behavior characterization
             characterization = (BehaviorCharacterization) ClassCreation.createObject("behaviorCharacterization");
-            if (writeOutput) {
+            if (writeOutput) {//only necessary if a log is to be kept
                 bdLog = new BDLog("BD");
             }
         } catch (NoSuchMethodException ex) {
             System.out.println("Behavior characterization does not exist");
             System.exit(1);
         }
-        maxArchiveSize = Parameters.parameters.integerParameter("bdArchiveSize");
+        maxArchiveSize = Parameters.parameters.integerParameter("bdArchiveSize");//used to cap size of archive
         if (maxArchiveSize > 0) {
-            archive = new ArrayList<Score<T>>(maxArchiveSize);
+            archive = new ArrayList<Score<T>>(maxArchiveSize);//archive keeps track of all scores from all pheno
         }
     }
 
@@ -50,7 +54,7 @@ public class BDNSGA2<T> extends NSGA2<T> {
     @SuppressWarnings("unchecked")
 	public ArrayList<BehaviorVector> getBehaviorVectors(ArrayList<Score<T>> population) {
         ArrayList<BehaviorVector> behaviorVectors = new ArrayList<BehaviorVector>(population.size());
-        for (int i = 0; i < population.size(); i++) {
+        for (int i = 0; i < population.size(); i++) {//one behavior vector per member of the population
             behaviorVectors.add(characterization.getBehaviorVector(population.get(i)));
         }
         if (maxArchiveSize > 0) { // Use an archive
@@ -77,7 +81,7 @@ public class BDNSGA2<T> extends NSGA2<T> {
         double diversityScore = Double.MAX_VALUE;
         BehaviorVector individualBehavior = behaviorVectors.get(individualIndex);
         for (int i = 0; i < behaviorVectors.size(); i++) {
-            if (i != individualIndex) {
+            if (i != individualIndex) {//finds the lowest diversity between all other population members for comparison
                 diversityScore = Math.min(diversityScore, behaviorVectors.get(i).distance(individualBehavior));
             }
         }
@@ -103,7 +107,7 @@ public class BDNSGA2<T> extends NSGA2<T> {
      */
     public ArrayList<Double> allDiversityScores(ArrayList<BehaviorVector> behaviorVectors, boolean compareArchive) {
         ArrayList<Double> result = new ArrayList<Double>(behaviorVectors.size());
-        double maxDiversity = -Double.MAX_VALUE;
+        double maxDiversity = -Double.MAX_VALUE;//more negative = more diverse
         int mostDiverseIndex = -1;
         for (int i = 0; i < behaviorVectors.size(); i++) {
             double score = diversityScore(behaviorVectors, i, compareArchive);
@@ -129,7 +133,7 @@ public class BDNSGA2<T> extends NSGA2<T> {
     @Override
     public ArrayList<Score<T>> prepareSourcePopulation(ArrayList<Score<T>> parentScores, ArrayList<Score<T>> childrenScores) {
         ArrayList<Score<T>> population = super.prepareSourcePopulation(parentScores, childrenScores);
-        characterization.prepare();
+        characterization.prepare();//gets a random syllabus
         ArrayList<BehaviorVector> behaviorVectors = getBehaviorVectors(population);
         ArrayList<Double> diversityScores = allDiversityScores(behaviorVectors, maxArchiveSize > 0);
 
@@ -160,6 +164,10 @@ public class BDNSGA2<T> extends NSGA2<T> {
         return population;
     }
 
+    /**
+     * Closes BDNSGA
+     * @param population population of genotypes
+     */
     @Override
     public void close(ArrayList<Genotype<T>> population) {
         super.close(population);
