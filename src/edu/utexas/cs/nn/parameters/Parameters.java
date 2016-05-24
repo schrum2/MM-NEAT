@@ -267,6 +267,7 @@ public class Parameters {
         booleanOptions.add("logTWEANNData", false, "Whether or not to log TWEANN data");
         booleanOptions.add("logMutationAndLineage", false, "Whether or not to log information about the mutations and lineage");
         booleanOptions.add("logPerformance", false, "Whether or not to log performance information in a performance log");
+        booleanOptions.add("torusSenseByProximity", false, "Causes agents' sensor inputs to be by proximity of the agent instead of simply each agent by indices");
         booleanOptions.add("predatorCatchClose", false, "Turn on to encourage catching a higher percentage of the prey and getting close to the prey");
         booleanOptions.add("predatorCatch", false, "Turn on to activate the predator fitness function which encourages catching high percentages of prey");
         booleanOptions.add("preyRRM", false, "Turn on to activate the prey fitness function from the Rawal and Rajagopalan paper");
@@ -436,6 +437,8 @@ public class Parameters {
         booleanOptions.add("relativePacmanDirections", true, "Ms. Pac-Man senses and actions for directions are relative to current direction");
         booleanOptions.add("moPuddleWorld", true, "Puddle World is multiobjective, and separates step score from puddle score");
         booleanOptions.add("moTetris", false, "Tetris is multiobjective, and separates time steps from lines cleared");
+        booleanOptions.add("tetrisTimeSteps", false, "For Tetris multiobjective, separates time steps from lines cleared");
+        booleanOptions.add("tetrisBlocksOnScreen", false, "For Tetris multiobjective, seperates number of blocks on screen from lines cleared");
         booleanOptions.add("mmpActivationId", false, "Lateral MMP links use id function as activation function");
         booleanOptions.add("exploreWeightsOfNewStructure", false, "Evaluate multiple weight possibilities immediately after structural mutation");
         booleanOptions.add("cullCrossovers", false, "Cull a litter of different crossover possibilities");

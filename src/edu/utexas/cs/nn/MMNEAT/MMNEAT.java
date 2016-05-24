@@ -31,7 +31,10 @@ import edu.utexas.cs.nn.tasks.MultiplePopulationTask;
 import edu.utexas.cs.nn.tasks.Task;
 import edu.utexas.cs.nn.tasks.breve2D.Breve2DTask;
 import edu.utexas.cs.nn.tasks.breve2D.NNBreve2DMonster;
+import edu.utexas.cs.nn.tasks.gridTorus.NNTorusPredPreyController;
+import edu.utexas.cs.nn.tasks.gridTorus.TorusEvolvedPredatorsVsStaticPreyTask;
 import edu.utexas.cs.nn.tasks.gridTorus.TorusPredPreyTask;
+import edu.utexas.cs.nn.tasks.gridTorus.sensors.TorusPredPreySensorBlock;
 import edu.utexas.cs.nn.tasks.motests.FunctionOptimization;
 import edu.utexas.cs.nn.tasks.motests.testfunctions.FunctionOptimizationSet;
 import edu.utexas.cs.nn.tasks.mspacman.*;
@@ -599,8 +602,9 @@ public class MMNEAT {
 					HyperNEATTask hnt = (HyperNEATTask) task;
 					setNNInputParameters(HyperNEATTask.NUM_CPPN_INPUTS, hnt.getSubstrateConnectivity().size());
 				} else { // Standard Pred/Prey with human-specified sensors
-					NetworkTask t = (NetworkTask) task;
-					setNNInputParameters(t.sensorLabels().length, t.outputLabels().length);
+					int numInputs = determineNumPredPreyInputs();                               
+					NetworkTask t = (NetworkTask) task; 
+					setNNInputParameters(numInputs, t.outputLabels().length); 
 				}
 			}else if (task instanceof UT2004Task) {
 				System.out.println("Setup UT2004 Task");
@@ -652,7 +656,6 @@ public class MMNEAT {
 				setNNInputParameters(pacmanInputOutputMediator.numIn(), pacmanInputOutputMediator.numOut());
 			} else if (seedGenotype.isEmpty()) {
 				genotype = (Genotype) ClassCreation.createObject("genotype");
-				System.out.println( "MMNEAT genotype name" + genotype.getClass().getSimpleName());
 			} else {
 				// Copy assures a fresh genotype id
 				System.out.println("Loading seed genotype: " + seedGenotype);
@@ -677,6 +680,18 @@ public class MMNEAT {
 			System.out.println("Exception: " + ex);
 			ex.printStackTrace();
 		}
+	}
+
+	/**
+	 * finds the number of inputs for the predPrey task, which is based on the type of agent that is
+	 * being evolved's sensor inputs defined in its controller
+	 * This has to be done to prevent a null pointer exception when first getting the sensor labels/number of sensors
+	 * @return numInputs
+	 */
+	private static int determineNumPredPreyInputs() {
+		boolean isPredator = task instanceof TorusEvolvedPredatorsVsStaticPreyTask;
+		NNTorusPredPreyController temp = new NNTorusPredPreyController(null, isPredator);
+		return temp.getNumInputs();
 	}
 
 	public static void clearClasses() {
@@ -881,6 +896,7 @@ public class MMNEAT {
 	 * @param combined Combined population of scores/genotypes
 	 * @param generation Current generation information is being logged for
 	 */
+
 	public static <T> void logPerformanceInformation(ArrayList<Score<T>> combined, int generation) {
 		if(performanceLog != null) performanceLog.log(combined, generation);
 	}
