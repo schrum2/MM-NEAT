@@ -14,6 +14,10 @@ public class TorusPreyByIndexSensorBlock implements TorusPredPreySensorBlock {
 	}
 	
 	@Override
+	/**
+	 * returns the sensor inputs to prey simply by their indices. The sensor inputs are the distances from 
+	 * this agent to all prey
+	 */
 	public double[] sensorValues(TorusAgent me, TorusWorld world, TorusAgent[] preds, TorusAgent[] prey) {
 		return NNTorusPredPreyController.getPreyOffsets(me, world, prey);
 	}

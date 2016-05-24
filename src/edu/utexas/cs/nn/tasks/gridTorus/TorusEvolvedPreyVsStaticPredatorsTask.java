@@ -73,19 +73,19 @@ public class TorusEvolvedPreyVsStaticPredatorsTask<T extends Network> extends To
 	 */
 	public TorusPredPreyController[] getPreyAgents(Genotype<T> individual) {
 		int numPrey = Parameters.parameters.integerParameter("torusPreys");
-		TorusPredPreyController[] evolvedAgents = new TorusPredPreyController[numPrey];    	
+		evolved = new TorusPredPreyController[numPrey];    	
 		for(int i = 0; i < numPrey; i++){
 			//false to indicate that this is not a predator, but a prey
-			evolvedAgents[i] = new NNTorusPredPreyAgent<T>(individual, false).getController(); 
+			evolved[i] = new NNTorusPredPreyAgent<T>(individual, false).getController(); 
 			// if requested, adds visual panels for each of the evolved agents showing its inputs
 			// (offsets to other agents), outputs (possible directional movements), and game time
 			if(CommonConstants.monitorInputs) {
 				DrawingPanel panel = new DrawingPanel(Plot.BROWSE_DIM, (int) (Plot.BROWSE_DIM * 3.5), "Prey " + i);
-				((NNTorusPredPreyController) evolvedAgents[i]).networkInputs = panel;
+				((NNTorusPredPreyController) evolved[i]).networkInputs = panel;
 				panel.setLocation(i * (Plot.BROWSE_DIM + 10), 0);
 				Offspring.fillInputs(panel, (TWEANNGenotype) individual);
 			}	
 		}
-		return evolvedAgents;
+		return evolved;
 	}
 }

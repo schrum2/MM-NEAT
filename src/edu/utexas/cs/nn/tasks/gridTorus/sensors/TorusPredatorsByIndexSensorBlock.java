@@ -15,7 +15,7 @@ public class TorusPredatorsByIndexSensorBlock implements TorusPredPreySensorBloc
 	
 	@Override
 	public double[] sensorValues(TorusAgent me, TorusWorld world, TorusAgent[] preds, TorusAgent[] prey) {
-		return NNTorusPredPreyController.getPredatorOffsets(me, world, prey);
+		return NNTorusPredPreyController.getPredatorOffsets(me, world, preds);
 	}
 
 	@Override

@@ -55,7 +55,7 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
      */
     public abstract TorusPredPreyController[] getPredAgents(Genotype<T> individual);
     // Remember which agents are evolved. Can be cast to NNTorusPreyPreyController later
-    private TorusPredPreyController[] evolved = null;
+    protected TorusPredPreyController[] evolved = null;
     
     /**
      * The getter method that returns the list of controllers for the preys
@@ -121,10 +121,6 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
             game = exec.runExperiment(predAgents, preyAgents);
         }
         double[] fitnesses = new double[objectives.size()];
-
-        //---------Need to save module usage because it will be lost---------
-        //store the list of the agents being evolved
-        evolved = preyEvolve ? preyAgents : predAgents;
 
         //dispose of all panels inside of agents/controllers
         if (CommonConstants.monitorInputs) {
