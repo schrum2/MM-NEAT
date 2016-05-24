@@ -31,13 +31,15 @@ public class HyperNEATNNTorusPredPreyController extends NNTorusPredPreyControlle
     public HyperNEATNNTorusPredPreyController(Network nn, boolean isPredator) {
         super(nn, isPredator);
         System.out.println("New HyperNEATNNTorusPredPreyController");
-        numOutputs = isPredator ? predatorActions().length-1 : preyActions().length-1;
+        numOutputs = isPredator ? predatorActions().length : preyActions().length;
     }
 
     @Override
     public int[] getAction(TorusAgent me, TorusWorld world, TorusAgent[] preds, TorusAgent[] prey) {
         double[] inputs = inputs();
         double[] outputs = nn.process(inputs);
+        System.out.println("inputs length: " + inputs.length);
+        System.out.println("outputs length: " + outputs.length);
         System.out.println( "nn num inputs: " + nn.numInputs() + " nn.numOutputs: " + nn.numOutputs());
         double[] modifiedOutputs = mapSubstrateOutputsToStandardOutputs(outputs);
         // Assume one output for each direction
