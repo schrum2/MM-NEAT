@@ -1,7 +1,6 @@
 package edu.utexas.cs.nn.evolution.metaheuristics;
 
-import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
-import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
+
 import edu.utexas.cs.nn.scores.Score;
 
 /**
