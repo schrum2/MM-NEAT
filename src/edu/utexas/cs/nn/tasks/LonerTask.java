@@ -327,4 +327,17 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
     public int numOtherScores() {
         return 0;
     }
+    
+
+    /**
+     * Return domain-specific behavior vector. Don't need to define if it won't
+     * be used, hence the default definition of null. A behavior vector is a
+     * collection of numbers that somehow characterizes the behavior of the
+     * agent in the domain.
+     *
+     * @return behavior vector
+     */
+    public ArrayList<Double> getBehaviorVector() {
+        return null;
+    }    
 }
