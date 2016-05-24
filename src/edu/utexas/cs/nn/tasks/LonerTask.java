@@ -66,7 +66,8 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
          * Creates a graphical representation of this task if requested and finds the fitness score for the genotype
          * @return score the fitness score of the agent of this task based on evaluation
          */
-        @Override
+        @SuppressWarnings("unchecked")
+		@Override
         public Score<T> call() {
             DrawingPanel panel = null;
             //DrawingPanel[] subPanels = null;
@@ -123,7 +124,7 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
             }
             score.totalEvalTime = (after - before);
             // May need a Reentrant lock on this, if it is still used
-            for (Metaheuristic m : MMNEAT.metaheuristics) {
+            for (Metaheuristic<T> m : MMNEAT.metaheuristics) {
                 m.augmentScore(score);
             }
             //print fitness score and genotype information then dispose the panel, releasing system resources
@@ -166,7 +167,8 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
      * @param population the population
      * @return scores a list of the fitness scores of the population
      */
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     public ArrayList<Score<T>> evaluateAll(ArrayList<Genotype<T>> population) {
     	//a list of the fitness scores of the population
         ArrayList<Score<T>> scores = new ArrayList<Score<T>>(population.size());
