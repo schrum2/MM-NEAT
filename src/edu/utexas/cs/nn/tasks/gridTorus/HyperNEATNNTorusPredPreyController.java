@@ -30,7 +30,6 @@ public class HyperNEATNNTorusPredPreyController extends NNTorusPredPreyControlle
 
     public HyperNEATNNTorusPredPreyController(Network nn, boolean isPredator) {
         super(nn, isPredator);
-        System.out.println("New HyperNEATNNTorusPredPreyController");
         numOutputs = isPredator ? predatorActions().length : preyActions().length;
     }
 
