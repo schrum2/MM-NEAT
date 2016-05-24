@@ -47,7 +47,6 @@ public class HyperNEATCPPNGenotypeTest {
 	public void setUp() throws Exception {
 		Parameters.initializeParameterCollections(new String[]{"io:false","netio:false", "recurrency:false","mmdRate:1.0"});
 		MMNEAT.loadClasses();
-		hcppn = new HyperNEATCPPNGenotype();
 		cppn = new TWEANN(new TWEANNGenotype());
 		subs = new LinkedList<Substrate>();
 		connections = new LinkedList<Pair<String, String>>();

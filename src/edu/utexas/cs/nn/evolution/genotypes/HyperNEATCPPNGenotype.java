@@ -23,7 +23,12 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 
     private static final double BIAS = 1.0;//Necessary for most CPPN networks
     public int innovationID = 0;//provides unique innovation numbers for links and genes
-
+    public int archetypeIndex = 0;
+    
+    //needs major work
+    public HyperNEATCPPNGenotype(ArrayList<LinkGene> links, ArrayList<NodeGene> genes) {
+    	super(genes, links, 1, false, false, 0);
+    }
     /**
      * Uses another CPPN to create a TWEANN controller for the domain. This
      * created TWEANN is unique only to the instance in which it is used. In a
@@ -60,6 +65,27 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
         TWEANNGenotype tg = new TWEANNGenotype(newNodes, newLinks, 1, false, false, -1);
 
         return tg.getPhenotype();
+    }
+    
+    @Override
+    public Genotype<TWEANN> copy() {
+        int[] temp = moduleUsage; // Schrum: Not sure if keeping moduleUsage is appropriate
+        ArrayList<LinkGene> links = new ArrayList<LinkGene>(this.links.size());
+        for(LinkGene lg : this.links) {
+        	links.add(new LinkGene(lg.sourceInnovation, lg.targetInnovation, lg.weight, lg.innovation, false));
+        }
+        
+        ArrayList<NodeGene> genes = new ArrayList<NodeGene>(this.nodes.size());
+        for(NodeGene ng : this.nodes) {
+        	genes.add(new NodeGene(ng.ftype, ng.ntype, ng.innovation, false));
+        }
+        HyperNEATCPPNGenotype result = new HyperNEATCPPNGenotype(links, genes);
+
+     // Schrum: Not sure if keeping moduleUsage is appropriate
+        moduleUsage = temp;
+        result.moduleUsage = new int[temp.length];
+        System.arraycopy(this.moduleUsage, 0, result.moduleUsage, 0, moduleUsage.length);
+        return result;
     }
 
     /**

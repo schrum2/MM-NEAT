@@ -1,8 +1,11 @@
 package edu.utexas.cs.nn.tasks.gridTorus;
 
+import java.util.Arrays;
+
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.gridTorus.TorusAgent;
 import edu.utexas.cs.nn.gridTorus.TorusWorld;
+import edu.utexas.cs.nn.gridTorus.controllers.TorusPredPreyController;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.networks.hyperneat.HyperNEATTask;
 import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
@@ -28,13 +31,14 @@ public class HyperNEATNNTorusPredPreyController extends NNTorusPredPreyControlle
     public HyperNEATNNTorusPredPreyController(Network nn, boolean isPredator) {
         super(nn, isPredator);
         System.out.println("New HyperNEATNNTorusPredPreyController");
-        numOutputs = isPredator ? predatorActions().length : preyActions().length;
+        numOutputs = isPredator ? predatorActions().length-1 : preyActions().length-1;
     }
 
     @Override
     public int[] getAction(TorusAgent me, TorusWorld world, TorusAgent[] preds, TorusAgent[] prey) {
         double[] inputs = inputs();
         double[] outputs = nn.process(inputs);
+        System.out.println( "nn num inputs: " + nn.numInputs() + " nn.numOutputs: " + nn.numOutputs());
         double[] modifiedOutputs = mapSubstrateOutputsToStandardOutputs(outputs);
         // Assume one output for each direction
         return isPredator ? predatorActions()[StatisticsUtilities.argmax(modifiedOutputs)] : preyActions()[StatisticsUtilities.argmax(modifiedOutputs)];
@@ -45,10 +49,11 @@ public class HyperNEATNNTorusPredPreyController extends NNTorusPredPreyControlle
         if (numOutputs == NUM_OUTPUTS_WITH_NO_ACTION) {
             modifiedOutputs[NOTHING_INDEX] = outputs[SUBSTRATE_NOTHING_INDEX];
         }
-        modifiedOutputs[UP_INDEX] = outputs[SUBSTRATE_UP_INDEX];
-        modifiedOutputs[RIGHT_INDEX] = outputs[SUBSTRATE_RIGHT_INDEX];
-        modifiedOutputs[DOWN_INDEX] = outputs[SUBSTRATE_DOWN_INDEX];
-        modifiedOutputs[LEFT_INDEX] = outputs[SUBSTRATE_LEFT_INDEX];
+        System.out.println(Arrays.toString(outputs));
+        modifiedOutputs[TorusPredPreyController.UP_INDEX] = outputs[SUBSTRATE_UP_INDEX];
+        modifiedOutputs[TorusPredPreyController.RIGHT_INDEX] = outputs[SUBSTRATE_RIGHT_INDEX];
+        modifiedOutputs[TorusPredPreyController.DOWN_INDEX] = outputs[SUBSTRATE_DOWN_INDEX];
+        modifiedOutputs[TorusPredPreyController.LEFT_INDEX] = outputs[SUBSTRATE_LEFT_INDEX];
         return modifiedOutputs;
     }
 
