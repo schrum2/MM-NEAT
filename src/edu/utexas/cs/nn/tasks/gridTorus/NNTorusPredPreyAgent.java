@@ -6,6 +6,7 @@ package edu.utexas.cs.nn.tasks.gridTorus;
 import edu.utexas.cs.nn.evolution.Organism;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.networks.Network;
+import edu.utexas.cs.nn.parameters.Parameters;
 
 /**
  * 
@@ -21,12 +22,15 @@ public class NNTorusPredPreyAgent<T extends Network> extends Organism<T> {
 
     /**
      * Uses the genotype to finish the set up of the controller. It accesses the network to do this.
-     * @param genotype
+     * @param genotype encodes agent phenotype controller
+     * @param isPredator true if this agent is a predator, false if it is a prey
      */
     public NNTorusPredPreyAgent(Genotype<T> genotype, boolean isPredator) {
     	super(genotype);
         Network net = (Network) this.getGenotype().getPhenotype();
-        controller = new NNTorusPredPreyController(net, isPredator); 
+        controller = Parameters.parameters.booleanParameter("hyperNEAT") ?
+                new HyperNEATNNTorusPredPreyController(net, isPredator) :
+                new NNTorusPredPreyController(net, isPredator); 
     }
 
     /**

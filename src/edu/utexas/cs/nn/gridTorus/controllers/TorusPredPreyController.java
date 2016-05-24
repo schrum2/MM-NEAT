@@ -16,6 +16,12 @@ import edu.utexas.cs.nn.parameters.Parameters;
  */
 public abstract class TorusPredPreyController {
 
+        public static final int UP_INDEX = 0;
+        public static final int RIGHT_INDEX = 1;
+        public static final int DOWN_INDEX = 2;
+        public static final int LEFT_INDEX = 3;
+        public static final int NOTHING_INDEX = 4;
+    
 	public TorusPredPreyController(){		
 	}
 
@@ -24,8 +30,7 @@ public abstract class TorusPredPreyController {
 	 * @return Movement offsets for each available action: UP, RIGHT, DOWN, LEFT, or possibly Nothing
 	 */
 	public static int[][] predatorActions(){ 
-		int[][]predAct;
-		predAct = Parameters.parameters.booleanParameter("allowDoNothingActionForPredators") ? 
+		int[][]predAct = Parameters.parameters.booleanParameter("allowDoNothingActionForPredators") ? 
 				new int[][]{{0,1}, {1,0}, {0,-1}, {-1,0}, {0,0}} : 
 				new int[][]{{0,1}, {1,0}, {0,-1}, {-1,0}};
 		return predAct;
@@ -35,8 +40,7 @@ public abstract class TorusPredPreyController {
 	 * @return Movement offsets for each available action: UP, RIGHT, DOWN, LEFT, or possibly Nothing
 	 */
 	public static int[][] preyActions(){
-		int[][]preyAct;
-		preyAct = Parameters.parameters.booleanParameter("allowDoNothingActionForPreys") ? 
+		int[][]preyAct = Parameters.parameters.booleanParameter("allowDoNothingActionForPreys") ? 
 				new int[][]{{0,1}, {1,0}, {0,-1}, {-1,0}, {0,0}} : 
 				new int[][]{{0,1}, {1,0}, {0,-1}, {-1,0}};
 		return preyAct;

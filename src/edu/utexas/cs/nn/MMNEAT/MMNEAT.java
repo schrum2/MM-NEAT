@@ -594,7 +594,8 @@ public class MMNEAT {
                 setNNInputParameters(dynamics.numInputSensors(), NNBreve2DMonster.NUM_OUTPUTS);
             } else if (task instanceof TorusPredPreyTask) {
                 System.out.println("Setup Torus Predator/Prey Task");
-                if(task instanceof HyperNEATTask) {
+                if(Parameters.parameters.booleanParameter("hyperNEAT")) {
+                        System.out.println("Using HyperNEAT");
                 	HyperNEATTask hnt = (HyperNEATTask) task;
                 	setNNInputParameters(HyperNEATTask.NUM_CPPN_INPUTS, hnt.getSubstrateConnectivity().size());
                 } else { // Standard Pred/Prey with human-specified sensors

@@ -5,45 +5,56 @@ import edu.utexas.cs.nn.gridTorus.TorusAgent;
 import edu.utexas.cs.nn.gridTorus.TorusWorld;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.networks.hyperneat.HyperNEATTask;
-import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
 
 /**
- * controller for pred/prey that uses hyperNEAT instead of regular NEAT
- * 
+ * Controller for pred/prey that uses hyperNEAT instead of standard inputs
+ *
  * @author gillespl
  *
  */
 public class HyperNEATNNTorusPredPreyController extends NNTorusPredPreyController {
 
-	public HyperNEATNNTorusPredPreyController(Network nn, boolean isPredator) {
-		super(nn, isPredator);
-	}
+    public static final int SUBSTRATE_UP_INDEX = 1;
+    public static final int SUBSTRATE_LEFT_INDEX = 3;
+    public static final int SUBSTRATE_NOTHING_INDEX = 4;
+    public static final int SUBSTRATE_RIGHT_INDEX = 5;
+    public static final int SUBSTRATE_DOWN_INDEX = 7;
 
-	public int[] getAction(TorusAgent me, TorusWorld world, TorusAgent[] preds, TorusAgent[] prey) {
-		double[] inputs = inputs();
-		double[] outputs = nn.process(inputs);
-		double[] modifiedOutputs = mapSubstrateOutputsToStandardOutputs(outputs);
-		// Assume one output for each direction
-		return isPredator ? predatorActions()[StatisticsUtilities.argmax(modifiedOutputs)] : preyActions()[StatisticsUtilities.argmax(modifiedOutputs)];
-	}
-	
-	public double[] mapSubstrateOutputsToStandardOutputs(double[] outputs) {
-		double[] modifiedOutputs;
-		if(Parameters.parameters.booleanParameter("allowDoNothingActionForPredators") || Parameters.parameters.booleanParameter("allowDoNothingActionForPreys")) {
-			modifiedOutputs = new double[5];
-			modifiedOutputs[4] = outputs[4];
-		} else modifiedOutputs =  new double[4];
-		modifiedOutputs[0] = outputs[1];
-		modifiedOutputs[1] = outputs[3];
-		modifiedOutputs[2] = outputs[5];
-		modifiedOutputs[3] = outputs[7];
-		return modifiedOutputs;
-	}
+    public static final int NUM_OUTPUTS_WITH_NO_ACTION = 5;
 
-	public double[] inputs() {
-		HyperNEATTask hnt = (HyperNEATTask) MMNEAT.task;
-		double[] inputs = hnt.getSubstrateInputs(hnt.getSubstrateInformation());
-		return inputs;
-	}
+    private final int numOutputs;
+
+    public HyperNEATNNTorusPredPreyController(Network nn, boolean isPredator) {
+        super(nn, isPredator);
+        System.out.println("New HyperNEATNNTorusPredPreyController");
+        numOutputs = isPredator ? predatorActions().length : preyActions().length;
+    }
+
+    @Override
+    public int[] getAction(TorusAgent me, TorusWorld world, TorusAgent[] preds, TorusAgent[] prey) {
+        double[] inputs = inputs();
+        double[] outputs = nn.process(inputs);
+        double[] modifiedOutputs = mapSubstrateOutputsToStandardOutputs(outputs);
+        // Assume one output for each direction
+        return isPredator ? predatorActions()[StatisticsUtilities.argmax(modifiedOutputs)] : preyActions()[StatisticsUtilities.argmax(modifiedOutputs)];
+    }
+
+    public double[] mapSubstrateOutputsToStandardOutputs(double[] outputs) {
+        double[] modifiedOutputs = new double[numOutputs];
+        if (numOutputs == NUM_OUTPUTS_WITH_NO_ACTION) {
+            modifiedOutputs[NOTHING_INDEX] = outputs[SUBSTRATE_NOTHING_INDEX];
+        }
+        modifiedOutputs[UP_INDEX] = outputs[SUBSTRATE_UP_INDEX];
+        modifiedOutputs[RIGHT_INDEX] = outputs[SUBSTRATE_RIGHT_INDEX];
+        modifiedOutputs[DOWN_INDEX] = outputs[SUBSTRATE_DOWN_INDEX];
+        modifiedOutputs[LEFT_INDEX] = outputs[SUBSTRATE_LEFT_INDEX];
+        return modifiedOutputs;
+    }
+
+    public double[] inputs() {
+        HyperNEATTask hnt = (HyperNEATTask) MMNEAT.task;
+        double[] inputs = hnt.getSubstrateInputs(hnt.getSubstrateInformation());
+        return inputs;
+    }
 }

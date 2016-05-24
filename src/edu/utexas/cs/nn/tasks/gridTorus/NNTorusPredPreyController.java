@@ -40,7 +40,10 @@ public class NNTorusPredPreyController extends TorusPredPreyController {
 
 	/**
 	 * Takes in all agents (me, world, preds, prey) to allow agent me to return best possible actions
-	 * @param all agents (me, world, preds, prey)
+	 * @param me this agent
+	 * @param world torus grid world
+	 * @param preds predator agents
+         * @param prey prey agents
 	 * @return actions array
 	 */
 	@Override
@@ -57,9 +60,9 @@ public class NNTorusPredPreyController extends TorusPredPreyController {
 	/**
 	 * gets the offsets from this agent to all prey agents 
 	 * @param me this agent
-	 * @param world
-	 * @param prey
-	 * @return the offsets to prey
+	 * @param world torus grid world
+         * @param prey prey agents	 
+         * @return the offsets to prey
 	 */
 	public double[] getPreyOffsets(TorusAgent me, TorusWorld world, TorusAgent[] prey){
 		double[] preyInputs = new double[prey.length*2];
@@ -73,8 +76,8 @@ public class NNTorusPredPreyController extends TorusPredPreyController {
 	/**
 	 * gets the offsets from this agent to all predator agents 
 	 * @param me this agent
-	 * @param world
-	 * @param preds
+	 * @param world torus grid world
+	 * @param preds predator agents
 	 * @return the offsets to predators
 	 */
 	public double[] getPredatorOffsets(TorusAgent me, TorusWorld world, TorusAgent[] preds){
@@ -88,7 +91,10 @@ public class NNTorusPredPreyController extends TorusPredPreyController {
 
 	/**
 	 * Calculates inputs for the neural network in order to figure what action to take in getAction.
-	 * @param all agents (me, world, preds, prey)
+	 * @param me this agent
+	 * @param world torus grid world
+	 * @param preds predator agents
+         * @param prey prey agents
 	 * @return inputs for the network
 	 */
 	public double[] inputs(TorusAgent me, TorusWorld world, TorusAgent[] preds, TorusAgent[] prey) { 
