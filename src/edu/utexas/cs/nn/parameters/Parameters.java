@@ -470,6 +470,7 @@ public class Parameters {
         booleanOptions.add("recordPacman", false, "Record pacman game to save file");
         booleanOptions.add("replayPacman", false, "Replay pacman game from save file");
         booleanOptions.add("hierarchicalMultitask", false, "Each multitask mode can consist of multiple preference neuron modules");
+        booleanOptions.add("trackCombiningCrossover", false, "Whether or not to track combining crossover information");
         //Double parameters
         doubleOptions.add("linkExpressionThreshold", 0.2, "Threshold for hyperNEAT output to result in an expressed link");
         doubleOptions.add("tugGoalIncrement0", 0.0, "Set amount to increase goal 0 by when using TUG");

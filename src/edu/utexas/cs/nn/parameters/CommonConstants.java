@@ -55,6 +55,7 @@ public class CommonConstants {
     public static boolean softmaxModeSelection;
     public static boolean softmaxSelection;
     public static boolean timedPacman;
+    public static boolean trackCombiningCrossover;
     public static boolean trialsMatchGenerations;
     public static boolean tugKeepsParetoFront;
     public static boolean tugObjectiveModeLinkage;
@@ -151,6 +152,7 @@ public class CommonConstants {
         softmaxModeSelection = Parameters.parameters.booleanParameter("softmaxModeSelection");
         softmaxSelection = Parameters.parameters.booleanParameter("softmaxSelection");
         timedPacman = Parameters.parameters.booleanParameter("timedPacman");
+        trackCombiningCrossover = Parameters.parameters.booleanParameter("trackCombiningCrossover");
         trialsMatchGenerations = Parameters.parameters.booleanParameter("trialsMatchGenerations");
         tugKeepsParetoFront = Parameters.parameters.booleanParameter("tugKeepsParetoFront");
         tugObjectiveModeLinkage = Parameters.parameters.booleanParameter("tugObjectiveModeLinkage");

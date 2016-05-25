@@ -9,6 +9,8 @@ import edu.utexas.cs.nn.graphics.DrawingPanel;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.parameters.Parameters;
+import edu.utexas.cs.nn.util.file.FileUtilities;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -32,6 +34,82 @@ public class CombiningTWEANNCrossover extends TWEANNCrossover {
      */
     public static HashMap<Long, Long> oldToNew = new HashMap<Long, Long>();
 
+    public static void saveCombiningCrossoverInformation() {
+    	// Could check CommonConstants.trackCombiningCrossover, but knowing that oldToNew is not empty should be enough
+    	if (!oldToNew.isEmpty()) {//means crossover has occurred before, and information was tracked
+            System.out.println("Saving Combining Crossover Mapping");
+            String file = FileUtilities.getSaveDirectory() + "/" + "combiningCrossoverMapping";//adds new crossover to crossover file
+            Parameters.parameters.setString("combiningCrossoverMapping", file);
+            file += ".txt";
+            CombiningTWEANNCrossover.saveOldToNew(file);//saves new crossover information
+        }
+    }
+    
+    public static void addToArchetypeForCombiningCrossover(int populationIndex, int pos, NodeGene node, boolean combineCopy, String origin) {
+    	NodeGene previous = EvolutionaryHistory.archetypes[populationIndex].get(pos - 1);
+        switch (previous.ntype) {
+            case TWEANN.Node.NTYPE_INPUT://checks if input node
+                int firstCombined = EvolutionaryHistory.indexOfFirstArchetypeNodeFromCombiningCrossover(populationIndex, TWEANN.Node.NTYPE_HIDDEN);
+                if (firstCombined == -1) { // no combining crossover yet
+                	EvolutionaryHistory.archetypeAddFromCombiningCrossover(populationIndex, node, EvolutionaryHistory.archetypes[populationIndex].size() - EvolutionaryHistory.archetypeOut[populationIndex], "combine splice (FIRST)");
+                } else {
+                	EvolutionaryHistory.archetypeAddFromCombiningCrossover(populationIndex, node, firstCombined, "combine splice (before others)");
+                }   break;
+            case TWEANN.Node.NTYPE_HIDDEN://checks if hidden node
+                long previousInnovation = previous.innovation;
+                if (CombiningTWEANNCrossover.oldToNew.containsKey(previousInnovation)) {
+                    long newPreviousInnovation = CombiningTWEANNCrossover.oldToNew.get(previousInnovation);
+                    int indexNewPrevious = EvolutionaryHistory.indexOfArchetypeInnovation(populationIndex, newPreviousInnovation);
+                    // Add new node directly after, in anticipation of future combining crossover
+                    EvolutionaryHistory.archetypeAddFromCombiningCrossover(populationIndex, node, indexNewPrevious + 1, "combine splice (hidden)");
+                }
+                // otherwise do nothing, since node is only being spliced in multitask networks
+                break;
+            default:
+                System.out.println("Error! " + previous + "," + pos + "," + EvolutionaryHistory.archetypes[populationIndex]);
+                System.exit(1);
+        }
+    }
+    
+    // Only needed if actually tracking combining crossover information
+    public static void complexArchetypeCleanup(int populationIndex, Iterator<NodeGene> itr, NodeGene currentGene) {
+    	// If combining crossover maps to this innovation, it can only be removed
+        // if the node that maps to it is also absent.
+        if (CombiningTWEANNCrossover.oldToNew.containsValue(currentGene.innovation)) {
+            Iterator<Long> onItr = CombiningTWEANNCrossover.oldToNew.keySet().iterator();
+            long source = -1;
+            while (onItr.hasNext()) {
+                long next = onItr.next();
+                if (CombiningTWEANNCrossover.oldToNew.get(next) == currentGene.innovation) {
+                    source = next;
+                    break; // should only be one such entry
+                }
+            }
+            assert (source != -1) :
+                    "How can source == -1 if the mapping contains the value?\n"
+                    + currentGene.innovation + "\n"
+                    + CombiningTWEANNCrossover.oldToNew;
+            // source is the old innovation that maps to the combined innovation.
+            // if source is still present, then what it maps to cannot be removed.
+            int indexOfSource = EvolutionaryHistory.indexOfArchetypeInnovation(populationIndex, source);
+            // But if indexOfSource is -1, means source is no longer present and
+            //then currentGene should be removed
+            if (indexOfSource == -1) {
+                itr.remove();
+                // Remove the mapping to source too
+                CombiningTWEANNCrossover.oldToNew.remove(source);
+            }
+            //removes key if value (innovation #) no longer present
+        } else if (CombiningTWEANNCrossover.oldToNew.containsKey(currentGene.innovation)) {
+            CombiningTWEANNCrossover.oldToNew.remove(currentGene.innovation);
+            itr.remove();
+        } else {
+            // In the simple case, just remove the inactive node
+            itr.remove();
+        }
+    }
+    
+    
     /**
      * Save contents of oldToNew to file
      *
