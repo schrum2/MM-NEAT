@@ -599,6 +599,7 @@ public class MMNEAT {
 				System.out.println("Setup Torus Predator/Prey Task");
 				if(Parameters.parameters.booleanParameter("hyperNEAT")) {
 					System.out.println("Using HyperNEAT");
+					hyperNEATOverrides();
 					HyperNEATTask hnt = (HyperNEATTask) task;
 					setNNInputParameters(HyperNEATTask.NUM_CPPN_INPUTS, hnt.getSubstrateConnectivity().size());
 				} else { // Standard Pred/Prey with human-specified sensors
@@ -680,6 +681,15 @@ public class MMNEAT {
 			System.out.println("Exception: " + ex);
 			ex.printStackTrace();
 		}
+	}
+
+	/**
+	 * Using HyperNEAT means certain parameters values need to be overridden
+	 */
+	private static void hyperNEATOverrides() {
+		// Cannot monitor inputs with HyperNEAT because the NetworkTask interface no longer applies
+		CommonConstants.monitorInputs = false;
+		Parameters.parameters.setBoolean("monitorInputs", false);
 	}
 
 	/**

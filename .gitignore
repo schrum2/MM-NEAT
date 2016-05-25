@@ -75,6 +75,8 @@ $RECYCLE.BIN/
 /multiplelivesconflict/
 /imprisonconflict/
 /isolatedconflict/
+/toruspred/
+/torusprey/
 *.zds
 vizdoom/bin/vizdoom-He_Deceives.ini
 *.bmp
