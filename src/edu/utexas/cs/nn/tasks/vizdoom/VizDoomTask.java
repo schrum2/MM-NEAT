@@ -109,6 +109,8 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T> i
             // Get the state
             GameState s = game.getState();
             // Make random action and get reward
+            // TODO: Change to get action from neural network encoded by "individual"
+            // TODO: Need to extract sensor readings ... decide what these are
             double r = game.makeAction(actions.get(RandomNumbers.randomGenerator.nextInt(3)));
 
             // You can also get last reward by using this function
