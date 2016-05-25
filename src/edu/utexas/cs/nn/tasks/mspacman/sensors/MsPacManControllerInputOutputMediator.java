@@ -8,7 +8,8 @@ import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
 import edu.utexas.cs.nn.util.ClassCreation;
 
 /**
- *
+ * This is the parent class of the controller sensor blocks.
+ * Defines the sensor blocks, inputs and their components
  * @author Jacob Schrum
  */
 public abstract class MsPacManControllerInputOutputMediator {
@@ -18,6 +19,9 @@ public abstract class MsPacManControllerInputOutputMediator {
     private final boolean evolveNetworkSelector;
     private final boolean externalPreferenceNeurons;
 
+    /**
+     * Constructor to set some global variables based on command line parameters
+     */
     public MsPacManControllerInputOutputMediator() {
         if (escapeNodes == null) {
             try {
@@ -32,19 +36,40 @@ public abstract class MsPacManControllerInputOutputMediator {
         evolveNetworkSelector = Parameters.parameters.booleanParameter("evolveNetworkSelector");
     }
 
+    /**
+     * update the nodes in the escapeNodes node collection to include the pacman node of the current game
+     * @param gs
+     */
     public void mediatorStateUpdate(GameFacade gs) {
         int current = gs.getPacmanCurrentNodeIndex();
         escapeNodes.updateNodes(gs, current);
     }
 
+    /**
+     * returns the inputs in a double array
+     * @param gs
+     * @param currentDir
+     * @return sensor inputs
+     */
     public abstract double[] getInputs(GameFacade gs, final int currentDir);
 
+    /**
+     * clears the node collection and resets its visited node reference 
+     */
     public void reset() {
         escapeNodes.reset();
     }
 
+    /**
+     * returns the labels in a string array
+     * @return sensor labels
+     */
     public abstract String[] sensorLabels();
 
+    /**
+     * returns the output labels in a string array
+     * @return output labels
+     */
     public String[] outputLabels() {
         if (evolveNetworkSelector) {
             return new String[]{"Ghost Network", "Pill Network"};
@@ -55,10 +80,18 @@ public abstract class MsPacManControllerInputOutputMediator {
         }
     }
 
+    /**
+     * returns number of outputs as an integer
+     * @return number of outputs
+     */
     public int numOut() {
         // 2 is for turn/thrust
         return evolveNetworkSelector ? MMNEAT.modesToTrack : GameFacade.NUM_DIRS + (externalPreferenceNeurons ? 1 : 0);
     }
 
+    /**
+     * returns number of inputs as an integer
+     * @return number of inputs
+     */
     public abstract int numIn();
 }

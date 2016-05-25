@@ -22,7 +22,6 @@ import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.NoisyLonerTask;
 import edu.utexas.cs.nn.tasks.gridTorus.objectives.GridTorusObjective;
-import edu.utexas.cs.nn.tasks.gridTorus.sensors.TorusPredPreySensorBlock;
 import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.util2D.Tuple2D;
