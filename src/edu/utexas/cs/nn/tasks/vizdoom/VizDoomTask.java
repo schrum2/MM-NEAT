@@ -1,27 +1,24 @@
 package edu.utexas.cs.nn.tasks.vizdoom;
 
+import java.awt.Color;
+import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.graphics.DrawingPanel;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.networks.NetworkTask;
-import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.tasks.NoisyLonerTask;
 import edu.utexas.cs.nn.tasks.testmatch.imagematch.ImageMatchTask;
 import edu.utexas.cs.nn.util.MiscUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
-import edu.utexas.cs.nn.util.random.RandomNumbers;
-import java.awt.Color;
-
-import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import vizdoom.Button;
+import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
 import vizdoom.DoomGame;
 import vizdoom.GameState;
-import vizdoom.GameVariable;
 import vizdoom.Mode;
 import vizdoom.ScreenFormat;
 import vizdoom.ScreenResolution;
@@ -115,6 +112,7 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T> i
     public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {
     	// Need to remove rewards from previous episodes I think
     	game.newEpisode();
+    	Network n = individual.getPhenotype();
         while (!game.isEpisodeFinished()) {
             // Get the state
             GameState s = game.getState();
@@ -123,14 +121,15 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T> i
             //System.out.println(Arrays.toString(s.imageBuffer));
             
             //drawGameStateRow(s, 160, 120, 61);
-            double[] temp = isolateRow(s, 160, 120, 61, RED_INDEX);
-            System.out.println(Arrays.toString(temp));
-            
+            double[] inputs = isolateRow(s, 160, 120, 61, RED_INDEX);
+            double[] outputs = n.process(inputs);
+                       
             // Make random action and get reward
             // TODO: Change to get action from neural network encoded by "individual"
             // TODO: Need to extract sensor readings ... decide what these are
-            double r = game.makeAction(actions.get(RandomNumbers.randomGenerator.nextInt(3)));
-
+            //double r = game.makeAction(actions.get(RandomNumbers.randomGenerator.nextInt(3)));
+            double r = game.makeAction(actions.get(StatisticsUtilities.argmax(outputs))); // This now takes the arg max ofthe action outputs
+            
             // You can also get last reward by using this function
             // double r = game.getLastReward();
             System.out.println("State #" + s.number);
@@ -150,6 +149,12 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T> i
     public int numObjectives() {
         return 1;
     }
+    
+    public int numActions() {
+        return actions.size();
+    }
+    
+    public abstract int numInputs();
 
     @Override
     public double getTimeStamp() {

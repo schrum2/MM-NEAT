@@ -53,6 +53,7 @@ import edu.utexas.cs.nn.tasks.rlglue.RLGlueTask;
 import edu.utexas.cs.nn.tasks.rlglue.featureextractors.FeatureExtractor;
 import edu.utexas.cs.nn.tasks.testmatch.MatchDataTask;
 import edu.utexas.cs.nn.tasks.ut2004.UT2004Task;
+import edu.utexas.cs.nn.tasks.vizdoom.VizDoomTask;
 import edu.utexas.cs.nn.util.ClassCreation;
 import edu.utexas.cs.nn.util.PopulationUtil;
 import edu.utexas.cs.nn.util.file.FileUtilities;
@@ -615,6 +616,10 @@ public class MMNEAT {
 				System.out.println("Setup Match Data Task");
 				MatchDataTask t = (MatchDataTask) task;
 				setNNInputParameters(t.numInputs(), t.numOutputs());
+			} else if(task instanceof VizDoomTask){
+				System.out.println("Set up VizDoom Task");
+				VizDoomTask t = (VizDoomTask) task;
+				setNNInputParameters(t.numInputs(), t.numActions());
 			} else if(task == null) {
 				//this else statement should only happen for JUnit testing cases.
 				//Some default network setup is needed.
