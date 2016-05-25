@@ -29,11 +29,14 @@ import edu.utexas.cs.nn.util.ClassCreation;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Map;
+
 import org.rlcommunity.environments.puddleworld.PuddleWorld;
 import org.rlcommunity.environments.puddleworld.PuddleWorldState;
 import org.rlcommunity.environments.tetris.Tetris;
 import org.rlcommunity.environments.tetris.TetrisState;
 import org.rlcommunity.rlglue.codec.AgentInterface;
+import org.rlcommunity.rlglue.codec.NetGlue;
 import org.rlcommunity.rlglue.codec.RLGlue;
 import org.rlcommunity.rlglue.codec.util.AgentLoader;
 import org.rlcommunity.rlglue.codec.util.EnvironmentLoader;
@@ -57,6 +60,8 @@ public final class RLGlueTask<T extends Network> extends NoisyLonerTask<T> imple
 	private final boolean tetrisTimeSteps;
 	private final boolean tetrisBlocksOnScreen;
 	private ArrayList<Double> behaviorVector;
+	public static final int DEFAULT_PORT = 4096;
+	public int rlGluePort;
 
 	/**
 	 * Initializer for the RLGlueTask, it called the
@@ -81,6 +86,7 @@ public final class RLGlueTask<T extends Network> extends NoisyLonerTask<T> imple
 		//moTetris = tetris && Parameters.parameters.booleanParameter("moTetris");
 		tetrisTimeSteps = tetris && Parameters.parameters.booleanParameter("tetrisTimeSteps");
 		tetrisBlocksOnScreen = tetris && Parameters.parameters.booleanParameter("tetrisBlocksOnScreen");
+		rlGluePort = Parameters.parameters.integerParameter("rlGluePort");
 
 		if (moPuddleWorld) {
 			MMNEAT.registerFitnessFunction("Time Penalty");
@@ -118,6 +124,7 @@ public final class RLGlueTask<T extends Network> extends NoisyLonerTask<T> imple
 			}
 			launchAgent(agent);
 			launchEnvironment(environment);
+			RLGlue.setGlue(new NetGlue("localhost", rlGluePort));
 		}
 	}
 
@@ -213,10 +220,16 @@ public final class RLGlueTask<T extends Network> extends NoisyLonerTask<T> imple
 	 */
 	public void launchRLGlue() {
 		System.out.println("Launch RL Glue");
-		Runtime rt = Runtime.getRuntime();
+		ProcessBuilder processBuilder = new ProcessBuilder("RL-Glue/rl_glue.exe"); // command, arg1, arg2
+		Map<String, String> env = processBuilder.environment();
+		env.put("RLGLUE_HOST", "localhost"); 
+		env.put("RLGLUE_PORT", "" + rlGluePort);
+		//Runtime rt = Runtime.getRuntime();
 		try {
 			// Launch an executable program
-			rlglue = rt.exec("RL-Glue/rl_glue.exe"); //, new String[]{"RLGLUE_PORT=4100"}
+			//rlglue = rt.exec("RL-Glue/rl_glue.exe"); //, new String[]{"RLGLUE_PORT=4100"}
+			rlglue = processBuilder.start();
+
 		} catch (IOException ex) {
 			ex.printStackTrace();
 			System.out.println("        Exception when launching rl_glue.exe!");
@@ -234,8 +247,8 @@ public final class RLGlueTask<T extends Network> extends NoisyLonerTask<T> imple
 				new Runnable() {
 					@Override
 					public void run() {
-						//agentLoader = new AgentLoader("localhost", "4100", agent);
-						agentLoader = new AgentLoader(agent);
+						agentLoader = new AgentLoader("localhost", "" + rlGluePort, agent);
+						//agentLoader = new AgentLoader(agent);
 						agentLoader.run();
 						System.out.println("Agent done running");
 					}
@@ -252,8 +265,8 @@ public final class RLGlueTask<T extends Network> extends NoisyLonerTask<T> imple
 				new Runnable() {
 					@Override
 					public void run() {
-						//environmentLoader = new EnvironmentLoader("localhost", "4100", environment);
-						environmentLoader = new EnvironmentLoader(environment);
+						environmentLoader = new EnvironmentLoader("localhost", "" + rlGluePort, environment);
+						//environmentLoader = new EnvironmentLoader(environment);
 						environmentLoader.run();
 						System.out.println("Environment done running");
 					}

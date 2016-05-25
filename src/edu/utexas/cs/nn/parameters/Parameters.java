@@ -16,6 +16,7 @@ import edu.utexas.cs.nn.tasks.mspacman.multitask.GhostsThenPillsModeSelector;
 import edu.utexas.cs.nn.tasks.mspacman.objectives.fitnessassignment.GhostsPillsMap;
 import edu.utexas.cs.nn.tasks.mspacman.sensors.mediators.FullTaskMediator;
 import edu.utexas.cs.nn.tasks.rlglue.RLGlueAgent;
+import edu.utexas.cs.nn.tasks.rlglue.RLGlueTask;
 import edu.utexas.cs.nn.tasks.rlglue.featureextractors.StateVariableExtractor;
 import edu.utexas.cs.nn.tasks.ut2004.actuators.OpponentRelativeMovementOutputModel;
 import edu.utexas.cs.nn.tasks.ut2004.sensors.OpponentRelativeSensorModel;
@@ -176,6 +177,7 @@ public class Parameters {
      */
     public final void fillDefaults() {
         //Integer parameters
+    	integerOptions.add("rlGluePort", RLGlueTask.DEFAULT_PORT, "The port number for the current instance of RLGlue");
         integerOptions.add("imageHeight", 100, "height of CPPN image (overrides height of image being matched if overrideImageSize is true)");
         integerOptions.add("imageWidth", 100, "width of CPPN image (overrides width of image being matched if overrideImageSize is true)");
         integerOptions.add("junctionsToSense", 1, "Number of junctions to which distance should be sensed");
