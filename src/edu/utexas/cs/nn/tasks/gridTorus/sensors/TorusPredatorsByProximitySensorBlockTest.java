@@ -13,6 +13,12 @@ import edu.utexas.cs.nn.gridTorus.TorusPredPreyGame;
 import edu.utexas.cs.nn.gridTorus.TorusWorld;
 import edu.utexas.cs.nn.parameters.Parameters;
 
+/**
+ * finds the sensor inputs for the predators by proximity. The inputs will be the X and Y
+ * offsets to each predator. The inputs will be in order of closest predators to most distance predators
+ * @author rollinsa
+ *
+ */
 public class TorusPredatorsByProximitySensorBlockTest {
 
 	@Before
