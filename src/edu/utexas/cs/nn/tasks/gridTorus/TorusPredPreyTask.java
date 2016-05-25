@@ -364,7 +364,9 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
     private List<Tuple2D> getCoordinates(TorusAgent[] agents) {
         List<Tuple2D> coords = new LinkedList<Tuple2D>();
         for (TorusAgent agent : agents) {
-            coords.add(agent.getPosition());
+        	if(agent != null) { // Prey are set to null after being eaten.
+        		coords.add(agent.getPosition());
+        	}
         }
         return coords;
     }
