@@ -225,17 +225,26 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
         return exec.game.getTime();
     }
 
+    // These values will be defined before they are needed
+    private static List<Substrate> substrateInformation = null;
+    private static int numSubstrateInputs = -1;
+    private static boolean substrateForPredators = false;
+    private static boolean substrateForPrey = false;
+    private static int secondSubstrateStartingIndex = -1;
+    
     /**
-     * if run with hyperNEAT, gets substrate information for cppn to process
+     * If run with hyperNEAT, gets substrate information for cppn to process.
+     * Save this information, because we only need to calculate it once.
      *
      * @return list of all substrates in domain
      */
     @Override
     public List<Substrate> getSubstrateInformation() {
 
+    	if(substrateInformation == null) {
         //these parameters are called repeatedly, therefore created local variables to improve efficiency
-        Integer torusWidth = Parameters.parameters.integerParameter("torusXDimensions");
-        Integer torusHeight = Parameters.parameters.integerParameter("torusYDimensions");
+        int torusWidth = Parameters.parameters.integerParameter("torusXDimensions");
+        int torusHeight = Parameters.parameters.integerParameter("torusYDimensions");
         boolean senseTeammates = Parameters.parameters.booleanParameter("torusSenseTeammates");
 
         //used for locating substrate in vector space: Spacing an placement is somewhat arbitray ... for display purposes
@@ -251,19 +260,35 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
         Substrate predator = new Substrate(substrateDimension, Substrate.INPUT_SUBSTRATE, preyEvolve ? firstInputLocation : secondInputLocation, "input_predator");
         Substrate prey = new Substrate(substrateDimension, Substrate.INPUT_SUBSTRATE, preyEvolve ? secondInputLocation : firstInputLocation, "input_prey");
                     
-        List<Substrate> subs = new LinkedList<Substrate>();
+        substrateInformation = new LinkedList<Substrate>();
         //order of pred/prey substrate important, helps in sorting later on in get substrate inputs method
         // Input layers
-        subs.add(preyEvolve ? predator : prey);
-        if(senseTeammates) subs.add(preyEvolve ? prey : predator);
-        // Processing layer
-        subs.add(new Substrate(substrateDimension, Substrate.PROCCESS_SUBSTRATE, processingLocation, "process_0"));
-        // Output layer
-        subs.add(new Substrate(outputSubstrateDimension, Substrate.OUTPUT_SUBSTRATE, outputLocation, "output_0"));
+        numSubstrateInputs = 0;
+        Substrate firstSubstrate = preyEvolve ? predator : prey;
+        numSubstrateInputs += firstSubstrate.size.t1 * firstSubstrate.size.t2;
+        secondSubstrateStartingIndex = numSubstrateInputs;
+        substrateInformation.add(firstSubstrate);
+        if(senseTeammates) {
+        	Substrate secondSubstrate = preyEvolve ? prey : predator;
+        	numSubstrateInputs += secondSubstrate.size.t1 * secondSubstrate.size.t2;
+        	substrateInformation.add(secondSubstrate);
+        }
         
-        return subs;
+        substrateForPredators = preyEvolve || senseTeammates;
+        substrateForPrey = !preyEvolve || senseTeammates;
+        
+        // Processing layer
+        substrateInformation.add(new Substrate(substrateDimension, Substrate.PROCCESS_SUBSTRATE, processingLocation, "process_0"));
+        // Output layer
+        substrateInformation.add(new Substrate(outputSubstrateDimension, Substrate.OUTPUT_SUBSTRATE, outputLocation, "output_0"));
+    	}
+        
+        return substrateInformation;
     }
 
+    
+    private List<Pair<String, String>> substrateConnectivity = null;
+    
     /**
      * Returns a list of connections between substrates
      *
@@ -271,12 +296,14 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
      */
     @Override
     public List<Pair<String, String>> getSubstrateConnectivity() {
-        List<Pair<String, String>> connectivity = new LinkedList<Pair<String, String>>();
-        connectivity.add(new Pair<String, String>(preyEvolve ? "input_predator" : "input_prey", "process_0"));
+    	if(substrateConnectivity == null){
+        substrateConnectivity = new LinkedList<Pair<String, String>>();
+        substrateConnectivity.add(new Pair<String, String>(preyEvolve ? "input_predator" : "input_prey", "process_0"));
         if(Parameters.parameters.booleanParameter("torusSenseTeammates")) 
-            connectivity.add(new Pair<String, String>(preyEvolve ? "input_prey" : "input_predator", "process_0"));            
-        connectivity.add(new Pair<String, String>("process_0", "output_0"));
-        return connectivity;
+        	substrateConnectivity.add(new Pair<String, String>(preyEvolve ? "input_prey" : "input_predator", "process_0"));            
+        substrateConnectivity.add(new Pair<String, String>("process_0", "output_0"));
+    	}
+        return substrateConnectivity;
     }
 
     /**
@@ -289,52 +316,29 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
      */
     @Override
     public double[] getSubstrateInputs(List<Substrate> subs) {
-        List<Substrate> inputSubs = getInputSubstrates(subs);
-        int size = inputSize(inputSubs);
-        double[] inputs = new double[size]; // defaults to 0.0
+        int torusWidth = this.exec.game.getWorld().width();
+        double[] inputs = new double[numSubstrateInputs]; // defaults to 0.0
 
+        if(substrateForPredators) {
         TorusAgent[] preds = exec.game.getPredators();
         List<Tuple2D> predsCoord = getCoordinates(preds);
-        Substrate sPreds = getSubstrate(inputSubs, "input_predator");
-        List<Integer> predsIndices = sPreds == null ? null : getIndices(predsCoord, sPreds.size.t1);
-
-        TorusAgent[] prey = exec.game.getPrey();
-        List<Tuple2D> preyCoord = getCoordinates(prey);
-        Substrate sPrey = getSubstrate(inputSubs, "input_prey");
-        List<Integer> preyIndices = sPrey == null ? null : getIndices(preyCoord, sPrey.size.t1);
-
-        List<Integer> firstList = preyEvolve ? predsIndices : preyIndices;
-        List<Integer> secondList = preyEvolve ? preyIndices : predsIndices;
-        
-        for(Integer index: firstList) {
+        List<Integer> predsIndices = getIndices(predsCoord, torusWidth);
+        for(Integer index: predsIndices) {
             inputs[index] = 1.0; // There is an agent at this position
         }
         
-        if(secondList != null) {
-            // Predator and prey substrates must both exist and be the same size, so either could be used.
-            int firstSize = sPreds.size.t1 * sPreds.size.t2;
-            for(Integer index: secondList) {
-                inputs[firstSize + index] = 1.0; // push past all indices of the first substrate
-            }
         }
+        
+        if(substrateForPrey) {
+        TorusAgent[] prey = exec.game.getPrey();
+        List<Tuple2D> preyCoord = getCoordinates(prey);
+        List<Integer> preyIndices = getIndices(preyCoord, torusWidth);
+        for(Integer index: preyIndices) {
+            inputs[secondSubstrateStartingIndex + index] = 1.0; // push past all indices of the first substrate
+        }
+        }
+        
         return inputs;
-    }
-
-    /**
-     * gets the substrate of given name from a list of substrate, returns null
-     * if none exists
-     *
-     * @param subs list of substrates
-     * @param name name of substrate to look for
-     * @return given substrate
-     */
-    private Substrate getSubstrate(List<Substrate> subs, String name) {
-        for (int i = 0; i < subs.size(); i++) {
-            if (subs.get(i).getName().equals(name)) {
-                return subs.get(i);
-            }
-        }
-        return null;
     }
 
     /**
@@ -371,21 +375,6 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
     }
 
     /**
-     * returns size of proper array. guaranteed every substrate in list should
-     * be in input array
-     *
-     * @param inputSubs list of input substrates
-     * @return size of corresponding int input aray
-     */
-    private int inputSize(List<Substrate> inputSubs) {
-        int size = 0;
-        for (int i = 0; i < inputSubs.size(); i++) {
-            size += inputSubs.get(i).size.t1 * inputSubs.get(i).size.t2;
-        }
-        return size;
-    }
-
-    /**
      * gets the index of an agent from its coordinates
      *
      * @param x x-coordinate of agent
@@ -395,21 +384,5 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
      */
     private int indexFromCoordinates(double x, double y, int substrateWidth) {
         return (int) ((substrateWidth * y) + x);
-    }
-
-    /**
-     * returns a list of ONLY input substrates
-     *
-     * @param subs list of all substrates in domain
-     * @return list of input substrates
-     */
-    private List<Substrate> getInputSubstrates(List<Substrate> subs) {
-        List<Substrate> inputSubs = new LinkedList<Substrate>();
-        for (int i = 0; i < subs.size(); i++) {
-            if (subs.get(i).stype == Substrate.INPUT_SUBSTRATE) {
-                inputSubs.add(subs.get(i));
-            }
-        }
-        return inputSubs;
     }
 }
