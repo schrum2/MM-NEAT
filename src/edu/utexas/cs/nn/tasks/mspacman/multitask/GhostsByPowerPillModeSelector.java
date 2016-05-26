@@ -4,8 +4,10 @@ import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.PowerPillAvoidanceBlock;
 import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
 
 /**
- * Has three modes: 0) Ghosts are edible 1) No edible ghosts, and near power
- * pill 2) No edible ghosts, and not near power pill
+ * A Mode selector which selects between 5 modes respectively based on: 
+ * 0) if there are many edible ghosts on the path (at least three) 1) if there are any edible ghosts
+ * 2) if there are only pills left (no power pills) 3) if pacMan is close to a power pill and the
+ * ghosts 4) if pacMan is far from the power pills
  *
  * @author Jacob Schrum
  */
@@ -17,6 +19,17 @@ public class GhostsByPowerPillModeSelector extends MsPacManModeSelector {
     public static final int EAT_POWER_PILL_THEN_GHOST = 3;
     public static final int FAR_FROM_POWER_PILLS = 4;
 
+    /**
+     * Selects the mode from 5 possible modes respectively (meaning that it prioritizes the modes in
+     * the following chronological order):
+     * 1) if there are many edible ghosts on the path (at least three) 
+     * 2) if there are any edible ghosts
+     * 0) if there are only pills left (no power pills) 
+     * 3) if pacMan is close to a power pill and the ghosts 
+     * 4) if pacMan is far from the power pills
+     *
+     * @return mode
+     */
     public int mode() {
         if (numberOfEdibleGhostsOnPath() >= 3) {
             return EAT_ALL_GHOSTS;
@@ -31,6 +44,10 @@ public class GhostsByPowerPillModeSelector extends MsPacManModeSelector {
         }
     }
 
+    /**
+     * determines if pacMan is close to a power pill and some ghosts
+     * @return true if close to both, false if not
+     */
     public boolean closeToPowerPillAndGhosts() {
         int[] powerPills = gs.getActivePowerPillsIndices();
         int current = gs.getPacmanCurrentNodeIndex();
@@ -45,6 +62,10 @@ public class GhostsByPowerPillModeSelector extends MsPacManModeSelector {
         return powerPillDistance < PowerPillAvoidanceBlock.CLOSE_DISTANCE && ghostDistance < 2 * PowerPillAvoidanceBlock.CLOSE_DISTANCE;
     }
 
+    /**
+     * finds the number of edible ghosts on pacMan's path
+     * @return int of number of edible ghosts on path
+     */
     public int numberOfEdibleGhostsOnPath() {
         int[] ghosts = gs.getEdibleGhostLocations();
         if (ghosts.length == 0) {
@@ -58,11 +79,24 @@ public class GhostsByPowerPillModeSelector extends MsPacManModeSelector {
         return intersection.length;
     }
 
+    /**
+     * There are 5 modes for this mode selector
+     * @return 5
+     */
     public int numModes() {
         return 5;
     }
 
     @Override
+    /**
+     * gets the associated fitness scores with this mode selector 
+     * @return an int array holding the score for the various modes in the following indices:
+     * 0: if there are only pill left (no power pills)
+     * 1: if there are many edible ghosts on the path (at least three) 
+     * 2: if there are any edible ghosts
+     * 3: if pacMan is close to a power pill and the ghosts 
+     * 4: if pacMan is far from the power pills
+     */
     public int[] associatedFitnessScores() {
         int[] result = new int[numModes()];
         result[ONLY_PILLS_LEFT] = PILL_SCORE;
