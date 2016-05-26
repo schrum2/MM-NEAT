@@ -1,7 +1,5 @@
 package edu.utexas.cs.nn.tasks.gridTorus;
 
-import java.util.Arrays;
-
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.gridTorus.TorusAgent;
 import edu.utexas.cs.nn.gridTorus.TorusWorld;

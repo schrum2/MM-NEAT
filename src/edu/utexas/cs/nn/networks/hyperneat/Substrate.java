@@ -6,7 +6,7 @@ import edu.utexas.cs.nn.util.datastructures.Triple;
 /**
  * Class that creates a substrate for hyperNEAT
  *
- * @author gillespl
+ * @author Lauren Gillespie
  *
  */
 public class Substrate {

@@ -1,11 +1,8 @@
 package edu.utexas.cs.nn.tasks.rlglue.featureextractors.tetris;
 
-import java.util.Arrays;
-
 import org.rlcommunity.environments.tetris.TetrisState;
 import org.rlcommunity.rlglue.codec.types.Observation;
 
-import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
 
 public class ExtendedBertsekasTsitsiklisTetrisExtractor extends BertsekasTsitsiklisTetrisExtractor {
     

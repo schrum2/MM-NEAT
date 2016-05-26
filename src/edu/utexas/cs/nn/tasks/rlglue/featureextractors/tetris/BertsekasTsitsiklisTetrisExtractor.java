@@ -7,7 +7,6 @@
 package edu.utexas.cs.nn.tasks.rlglue.featureextractors.tetris;
 
 import edu.utexas.cs.nn.tasks.rlglue.featureextractors.FeatureExtractor;
-import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
 import java.util.ArrayList;
 import org.rlcommunity.environments.tetris.TetrisPiece;
 import org.rlcommunity.environments.tetris.TetrisState;
