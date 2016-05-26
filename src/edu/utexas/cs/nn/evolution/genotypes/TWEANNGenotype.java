@@ -778,7 +778,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
      * @param targetInnovation = linkInnovations of sourceInnovation node
      * @return = null on failure, LinkGene otherwise
      */
-    private LinkGene getLinkBetween(long sourceInnovation, long targetInnovation) {
+    protected LinkGene getLinkBetween(long sourceInnovation, long targetInnovation) {
         for (LinkGene l : links) {
             if (l.sourceInnovation == sourceInnovation && l.targetInnovation == targetInnovation) {
                 return l;
@@ -950,7 +950,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
      * between new node and sourceInnovation
      */
     public void spliceNode(int ftype, long newNodeInnovation, long sourceInnovation, long targetInnovation, double weight1, double weight2, long toLinkInnovation, long fromLinkInnovation) {
-        NodeGene ng = new NodeGene(ftype, TWEANN.Node.NTYPE_HIDDEN, newNodeInnovation);
+    	NodeGene ng = new NodeGene(ftype, TWEANN.Node.NTYPE_HIDDEN, newNodeInnovation);
         LinkGene lg = getLinkBetween(sourceInnovation, targetInnovation);
         lg.active = CommonConstants.minimizeSpliceImpact;
         nodes.add(Math.min(outputStartIndex(), Math.max(numIn, indexOfNodeInnovation(sourceInnovation) + 1)), ng);
@@ -1065,7 +1065,8 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
      * @param innovation Innovation number to search for
      * @return Index in list where gene is located
      */
-    private int indexOfLinkInnovation(long innovation) {
+    @SuppressWarnings("unused")
+	private int indexOfLinkInnovation(long innovation) {
         return indexOfGeneInnovation(innovation, links);
     }
 

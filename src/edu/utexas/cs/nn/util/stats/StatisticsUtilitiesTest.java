@@ -38,53 +38,43 @@ public class StatisticsUtilitiesTest {
 	}
 
 	@Test
-	public void testArgmaxIntArray() {
-		fail("Not yet implemented");
+	public void testArgmaxIntArray() {//TODO
 	}
 
 	@Test
-	public void testArgmaxIntArrayInt() {
-		fail("Not yet implemented");
+	public void testArgmaxIntArrayInt() {//TODO
 	}
 
 	@Test
-	public void testArgminDoubleArray() {
-		fail("Not yet implemented");
+	public void testArgminDoubleArray() {//TODO
 	}
 
 	@Test
-	public void testArgminIntArray() {
-		fail("Not yet implemented");
+	public void testArgminIntArray() {//TODO
 	}
 
 	@Test
-	public void testSoftmax() {
-		fail("Not yet implemented");
+	public void testSoftmax() {//TODO
 	}
 
 	@Test
-	public void testProbabilistic() {
-		fail("Not yet implemented");
+	public void testProbabilistic() {//TODO
 	}
 
 	@Test
-	public void testDistributionDoubleArray() {
-		fail("Not yet implemented");
+	public void testDistributionDoubleArray() {//TODO
 	}
 
 	@Test
-	public void testDistributionIntArray() {
-		fail("Not yet implemented");
+	public void testDistributionIntArray() {//TODO
 	}
 
 	@Test
-	public void testModeDoubleArray() {
-		fail("Not yet implemented");
+	public void testModeDoubleArray() {//TODO
 	}
 
 	@Test
-	public void testModeDoubleArrayDouble() {
-		fail("Not yet implemented");
+	public void testModeDoubleArrayDouble() {//TODO
 	}
 
 	@Test
@@ -103,78 +93,63 @@ public class StatisticsUtilitiesTest {
 	}
 
 	@Test
-	public void testMaximumCollectionOfInteger() {
-		fail("Not yet implemented");
+	public void testMaximumCollectionOfInteger() {//TODO
 	}
 
 	@Test
-	public void testMaximumLongArray() {
-		fail("Not yet implemented");
+	public void testMaximumLongArray() {//TODO
 	}
 
 	@Test
-	public void testMinimum() {
-		fail("Not yet implemented");
+	public void testMinimum() {//TODO
 	}
 
 	@Test
-	public void testAverage() {
-		fail("Not yet implemented");
+	public void testAverage() {//TODO
 	}
 
 	@Test
-	public void testSumIntArray() {
-		fail("Not yet implemented");
+	public void testSumIntArray() {//TODO
 	}
 
 	@Test
-	public void testSumDoubleArray() {
-		fail("Not yet implemented");
+	public void testSumDoubleArray() {//TODO
 	}
 
 	@Test
-	public void testSumCollectionOfInteger() {
-		fail("Not yet implemented");
+	public void testSumCollectionOfInteger() {//TODO
 	}
 
 	@Test
-	public void testPopulationStandardDeviation() {
-		fail("Not yet implemented");
+	public void testPopulationStandardDeviation() {//TODO
 	}
 
 	@Test
-	public void testSampleStandardDeviation() {
-		fail("Not yet implemented");
+	public void testSampleStandardDeviation() {//TODO
 	}
 
 	@Test
-	public void testPopulationVariance() {
-		fail("Not yet implemented");
+	public void testPopulationVariance() {//TODO
 	}
 
 	@Test
-	public void testSampleVariance() {
-		fail("Not yet implemented");
+	public void testSampleVariance() {//TODO
 	}
 
 	@Test
-	public void testSumOfSquares() {
-		fail("Not yet implemented");
+	public void testSumOfSquares() {//TODO
 	}
 
 	@Test
-	public void testInstantaneousErrorEnergy() {
-		fail("Not yet implemented");
+	public void testInstantaneousErrorEnergy() {//TODO
 	}
 
 	@Test
-	public void testInstantaneousTotalErrorEnergy() {
-		fail("Not yet implemented");
+	public void testInstantaneousTotalErrorEnergy() {//TODO
 	}
 
 	@Test
-	public void testAverageSquaredErrorEnergy() {
-		fail("Not yet implemented");
+	public void testAverageSquaredErrorEnergy() {//TODO
 	}
 
 }

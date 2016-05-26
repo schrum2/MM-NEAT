@@ -42,7 +42,7 @@ public class ImageMatchTaskTest {
 		EvolutionaryHistory.setHighestGenotypeId(0);
 		Parameters.initializeParameterCollections(new String[]{"io:false", "netio:false", "allowMultipleFunctions:true", "recurrency:false", "includeHalfLinearPiecewiseFunction:true", "includeSawtoothFunction:true"});
 		MMNEAT.loadClasses();
-		test = new ImageMatchTask<TWEANN>("Tiny.png");
+		test = new ImageMatchTask<TWEANN>("TeenyTinyFrenchFlag.png");
 		imageHeight = test.imageHeight;
 		imageWidth = test.imageWidth;
 	}
@@ -56,8 +56,8 @@ public class ImageMatchTaskTest {
 		String[] sensorLabels = test.sensorLabels();
 		assertTrue(sensorLabels[0].equals("X-coordinate"));
 		assertTrue(outputLabels[0].equals("hue-value"));
-		assertTrue(test.numInputs() == 4);
-		assertTrue(test.numOutputs() == 3);
+		assertEquals(test.numInputs(), 4);
+		assertEquals(test.numOutputs(), 3);
 	}
 	
 	/**
