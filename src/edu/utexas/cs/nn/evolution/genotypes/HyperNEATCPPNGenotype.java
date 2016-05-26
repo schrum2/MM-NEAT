@@ -24,6 +24,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
     private static final double BIAS = 1.0;//Necessary for most CPPN networks
     public int innovationID = 0;//provides unique innovation numbers for links and genes
 
+    public static  ArrayList<NodeGene> newNodes = null;
     /**
      * Default constructor
      */
@@ -37,7 +38,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
      * @param genes list of nodes in genotype
      * @param outputNeurons number of output neurons
      */
-    public HyperNEATCPPNGenotype(ArrayList<LinkGene> links, ArrayList<NodeGene> genes, int outputNeurons) {//TODO
+    public HyperNEATCPPNGenotype(ArrayList<LinkGene> links, ArrayList<NodeGene> genes, int outputNeurons) {
     	super(genes, links, outputNeurons, false, false, 0);
     }
     
@@ -62,14 +63,16 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
     @Override
     public TWEANN getPhenotype() {
 
+    	long time = System.currentTimeMillis();
         TWEANN cppn = super.getPhenotype();//cppn used to create TWEANN network
         HyperNEATTask hnt = (HyperNEATTask) MMNEAT.task;//creates instance of task in question
         List<Substrate> subs = hnt.getSubstrateInformation();//used to extract substrate information from domian
         List<Pair<String, String>> connections = hnt.getSubstrateConnectivity();//used to extract substrate connectity from domain
 
         innovationID = 0;//reset here just in case TWEANN reused(should not happen though)
-        ArrayList<NodeGene> newNodes = createSubstrateNodes(subs);
-
+        if(newNodes == null) {
+        newNodes = createSubstrateNodes(subs);
+        }
         // Will map substrate names to index in subs List
         //needs to be switched
         HashMap<String, Integer> substrateIndexMapping = new HashMap<String, Integer>();
@@ -92,6 +95,8 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
         // An archetype index of -1 is used. Hopefully this won't cause problems,
         // since the archetype is only needed for mutations and crossover.
         TWEANNGenotype tg = new TWEANNGenotype(newNodes, newLinks, phenotypeOutputs, false, false, -1);
+        long time2 = System.currentTimeMillis();
+        System.out.println("cppn get phenotype time: " + (time2-time));
 		return tg.getPhenotype();
     }
     /**
