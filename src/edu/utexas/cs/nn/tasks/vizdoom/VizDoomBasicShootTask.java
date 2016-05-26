@@ -4,8 +4,10 @@ import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.networks.TWEANN;
+import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import vizdoom.Button;
+import vizdoom.GameState;
 import vizdoom.GameVariable;
 
 public class VizDoomBasicShootTask<T extends Network> extends VizDoomTask<T> {
@@ -31,24 +33,23 @@ public class VizDoomBasicShootTask<T extends Network> extends VizDoomTask<T> {
     
     
     public static void main(String[] args) {
-    	Parameters.initializeParameterCollections(new String[]{"watch:false","io:false","netio:false","task:edu.utexas.cs.nn.tasks.vizdoom.VizDoomBasicShootTask"});
+    	Parameters.initializeParameterCollections(new String[]{"watch:false","io:false","netio:false","task:edu.utexas.cs.nn.tasks.vizdoom.VizDoomBasicShootTask", "trials:3", "printFitness:true"});
     	MMNEAT.loadClasses();
     	VizDoomBasicShootTask<TWEANN> vd = new VizDoomBasicShootTask<TWEANN>();
     	TWEANNGenotype individual = new TWEANNGenotype();
+    	System.out.println(CommonConstants.trials);
     	System.out.println(vd.evaluate(individual));
-    	//System.out.println(vd.evaluate(individual));
-    	
-    	/*
-    	 * Current issue (5/25/2016)
-    	 * 		The VizDoom agent will run here and exported as well, but has a problem with 
-    	 * 		running more than once. Uncommenting the print statement above will recreate 
-    	 * 		the error. Our next move is to figure out why we are getting this error:
-    	 * 		"Exception in thread "main" vizdoom.ViZDoomIsNotRunningException: Controlled ViZDoom instance is not running or not ready."
-    	 */
+    	System.out.println(vd.evaluate(individual));
     }
 
 	@Override
 	public int numInputs() {
 		return game.getScreenWidth();
+	}
+
+	@Override
+	public double[] getInputs(GameState s) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

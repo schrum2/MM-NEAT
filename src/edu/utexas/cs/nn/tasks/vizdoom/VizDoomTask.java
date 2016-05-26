@@ -50,9 +50,13 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T> i
         setDoomActions();
         setDoomStateVariables();
         setDoomMiscSettings();
-        // Initialize the game. Further configuration won't take any effect from now on.
-        game.init();
         MMNEAT.registerFitnessFunction("DoomReward");
+    }
+    
+    @Override
+    public void prep() {
+    	// Initialize the game. Further configuration won't take any effect from now on.
+        game.init();        
     }
 
     public DoomGame doomInit() {
@@ -121,7 +125,7 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T> i
             //System.out.println(Arrays.toString(s.imageBuffer));
             
             //drawGameStateRow(s, 160, 120, 61);
-            double[] inputs = isolateRow(s, 160, 120, 61, RED_INDEX);
+            double[] inputs = isolateRow(s, 160, 120, 61, RED_INDEX); // magic numbers, they are the width, height, and row # (we need a proper way to find this needed row? ratio?)
             double[] outputs = n.process(inputs);
                        
             // Make random action and get reward
@@ -132,16 +136,18 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T> i
             
             // You can also get last reward by using this function
             // double r = game.getLastReward();
-            System.out.println("State #" + s.number);
-            System.out.println("Game variables: " + Arrays.toString(s.gameVariables));
-            System.out.println("Action reward: " + r);
-            System.out.println("=====================");
+//            System.out.println("State #" + s.number);
+//            System.out.println("Game variables: " + Arrays.toString(s.gameVariables));
+//            System.out.println("Action reward: " + r);
+//            System.out.println("=====================");
 
         }
         return new Pair<double[], double[]>(new double[]{game.getTotalReward()}, new double[]{});
     }
 
-    public void cleanup() {
+    public abstract double[] getInputs(GameState s);
+    
+    public void finalCleanup() {
     	game.close();
     }
     
