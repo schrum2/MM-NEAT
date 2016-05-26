@@ -77,6 +77,8 @@ $RECYCLE.BIN/
 /isolatedconflict/
 /toruspred/
 /torusprey/
+/mountaincar/
+/puddle/
 *.zds
 vizdoom/bin/vizdoom-He_Deceives.ini
 *.bmp
