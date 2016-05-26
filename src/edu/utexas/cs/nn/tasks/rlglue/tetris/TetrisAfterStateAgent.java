@@ -15,7 +15,6 @@ import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.tasks.rlglue.RLGlueAgent;
-import edu.utexas.cs.nn.util.MiscUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
 
@@ -136,7 +135,7 @@ public class TetrisAfterStateAgent<T extends Network> extends RLGlueAgent<T> {
      * @param o Observation
      * @return ts TetrisState
      */
-    private TetrisState observationToTetrisState(Observation o) {
+    public static TetrisState observationToTetrisState(Observation o) {
         TetrisState ts = new TetrisState();
         ts.currentX = o.intArray[TetrisState.TETRIS_STATE_CURRENT_X_INDEX]; // adds the Observation's X to tempState
         ts.currentY = o.intArray[TetrisState.TETRIS_STATE_CURRENT_Y_INDEX]; // adds the Observation's Y to tempState

@@ -41,7 +41,7 @@ import org.rlcommunity.rlglue.codec.RLGlue;
 import org.rlcommunity.rlglue.codec.util.AgentLoader;
 import org.rlcommunity.rlglue.codec.util.EnvironmentLoader;
 
-public final class RLGlueTask<T extends Network> extends NoisyLonerTask<T> implements NetworkTask {
+public class RLGlueTask<T extends Network> extends NoisyLonerTask<T> implements NetworkTask {
 
 	/**
 	 * Initialize the elements to be used here

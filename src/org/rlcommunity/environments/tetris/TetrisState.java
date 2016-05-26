@@ -20,7 +20,6 @@ package org.rlcommunity.environments.tetris;
 
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.tasks.rlglue.tetris.TetrisViewer;
-import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.random.RandomNumbers;
 
 import java.util.Arrays;
@@ -563,7 +562,8 @@ public class TetrisState {
     }
 
     /*End of Tetris Helper Functions*/
-    public TetrisState(TetrisState stateToCopy) {
+    @SuppressWarnings("static-access")
+	public TetrisState(TetrisState stateToCopy) {
         this.blockMobile = stateToCopy.blockMobile;
         this.currentBlockId = stateToCopy.currentBlockId;
         this.currentRotation = stateToCopy.currentRotation;
