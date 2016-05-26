@@ -8,7 +8,7 @@ import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
 import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
 
 /**
- *
+ * Describes a pacman controller based on direction 
  * @author Jacob Schrum
  */
 public abstract class NNDirectionalPacManController extends NNPacManController {
@@ -21,6 +21,11 @@ public abstract class NNDirectionalPacManController extends NNPacManController {
         externalPreferenceNeurons = Parameters.parameters.booleanParameter("externalPreferenceNeurons");
     }
 
+    /**
+     * finds the current direction
+     * @param gs, the gameFacade
+     * @return direction
+     */
     public int getDirection(GameFacade gs) {
         double[] dirPreferences = getDirectionPreferences(gs);
         System.arraycopy(dirPreferences, 0, previousPreferences, 0, GameFacade.NUM_DIRS);
@@ -32,6 +37,11 @@ public abstract class NNDirectionalPacManController extends NNPacManController {
         return direction;
     }
 
+    /**
+     * find the prefered direction
+     * @param dirPreferences
+     * @return the preferred direction based on designated preference parameters
+     */
     public int directionFromPreferences(double[] dirPreferences) {
         if (externalPreferenceNeurons) {
             dirPreferences = ArrayUtil.portion(dirPreferences, 0, dirPreferences.length - 2);
@@ -39,5 +49,10 @@ public abstract class NNDirectionalPacManController extends NNPacManController {
         return CommonConstants.probabilisticSelection ? StatisticsUtilities.probabilistic(dirPreferences) : (CommonConstants.softmaxSelection ? StatisticsUtilities.softmax(dirPreferences, CommonConstants.softmaxTemperature) : StatisticsUtilities.argmax(dirPreferences));
     }
 
+    /**
+     * Find the direction preferences
+     * @param gf, the gameFacade
+     * @return array of doubles of direction preferences
+     */
     public abstract double[] getDirectionPreferences(GameFacade gf);
 }
