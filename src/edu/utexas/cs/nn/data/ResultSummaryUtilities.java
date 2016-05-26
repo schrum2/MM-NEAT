@@ -17,6 +17,10 @@ import java.util.Scanner;
 import jmetal.qualityIndicator.Hypervolume;
 
 /**
+ * After several runs of an experiment have been executed, this class can be used
+ * to process all the data across runs and combine it into a useful summary form.
+ * These methods are launched by executing MM-NEAT with "process" as the first
+ * command line parameter.
  *
  * @author Jacob Schrum
  */
@@ -31,13 +35,16 @@ public class ResultSummaryUtilities {
         // TWEANN Info
         String loadFrom = Parameters.parameters.stringParameter("loadFrom");
         if ((loadFrom == null || loadFrom.equals("")) && !(MMNEAT.task instanceof MultiplePopulationTask)) {
+        	if(Parameters.parameters.booleanParameter("logTWEANNData")){
             System.out.println("TWEANN Info: " + outputDir + "/" + filePrefix + "AVG" + logSuffix);
             int inputNum = averageConditionResults(dirPrefix, filePrefix, "_TWEANNData_log.txt", runs, outputDir);
             plotInfoFile(filePrefix, "_TWEANNData_log", inputNum, outputDir, TWEANNLog.getLabels());
-
+        	}
+        	if(Parameters.parameters.booleanParameter("logPerformance")) {
             System.out.println("Performance Info: " + outputDir + "/" + filePrefix + "AVG" + logSuffix);
-            inputNum = averageConditionResults(dirPrefix, filePrefix, "_Performance_log.txt", runs, outputDir);
+            int inputNum = averageConditionResults(dirPrefix, filePrefix, "_Performance_log.txt", runs, outputDir);
             plotInfoFile(filePrefix, "_Performance_log", inputNum, outputDir, PerformanceLog.getLabels());
+        	}
         }
     }
     
