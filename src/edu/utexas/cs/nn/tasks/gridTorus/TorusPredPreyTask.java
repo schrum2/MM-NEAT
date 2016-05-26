@@ -110,6 +110,7 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 	 * @return A Pair of double arrays containing the fitness and other scores
 	 */
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {
+		
 		TorusPredPreyController[] predAgents = getPredAgents(individual);
 		TorusPredPreyController[] preyAgents = getPreyAgents(individual);
 		exec = new TorusWorldExec();
@@ -238,7 +239,6 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 	 */
 	@Override
 	public List<Substrate> getSubstrateInformation() {
-
 		if(substrateInformation == null) {
 			//these parameters are called repeatedly, therefore created local variables to improve efficiency
 			int torusWidth = Parameters.parameters.integerParameter("torusXDimensions");
@@ -280,7 +280,6 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 			// Output layer
 			substrateInformation.add(new Substrate(outputSubstrateDimension, Substrate.OUTPUT_SUBSTRATE, outputLocation, "output_0"));
 		}
-
 		return substrateInformation;
 	}
 
@@ -333,7 +332,6 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 				inputs[secondSubstrateStartingIndex + index] = 1.0; // push past all indices of the first substrate
 			}
 		}
-
 		return inputs;
 	}
 

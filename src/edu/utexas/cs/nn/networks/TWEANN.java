@@ -93,8 +93,7 @@ public class TWEANN implements Network {
 
     // subclass for a single neuron
     public class Node {
-
-        // TODO: Generalize handling of activation functions to make CPPNs possible 
+ 
         // Three types of neurons
         public static final int NTYPE_INPUT = 0;
         public static final int NTYPE_HIDDEN = 1;
@@ -560,16 +559,10 @@ public class TWEANN implements Network {
 
         for (LinkGene lg : g.links) {
             if (lg.active) {
-//                try {
                 Node source = getNode(lg.sourceInnovation);
                 Node target = getNode(lg.targetInnovation);
                 assert (target != null) : "No target: " + lg + "\nNet:" + g.getId();
                 source.connect(target, lg.weight, lg.innovation, lg.recurrent, lg.frozen);
-//                } catch (NullPointerException np) {
-//                    System.out.println("Null pointer when decoding links");
-//                    System.out.println(g);
-//                    System.exit(1);
-//                }
             }
         }
         outputStart = nodes.size() - numOut;
@@ -642,8 +635,6 @@ public class TWEANN implements Network {
      * @return network output (single mode)
      */
     public double[] process(double[] inputs) {
-        //System.out.println("Process " + id);
-
         assert (inputs.length == numIn) :
                 "Input mismatch! numIn = " + numIn + "\n"
                 + "inputs.length = " + inputs.length + "\n"
@@ -662,11 +653,9 @@ public class TWEANN implements Network {
         for (int i = 0; i < nodes.size(); i++) {
             nodes.get(i).activateAndTransmit();
         }
-
+       
         // All outputs
-//        for(int i = 0; i < numOut; i++){
-//            System.out.println(nodes.get(outputStart + i).output() + ",");
-//        }
+
         double[] preferences = new double[numModes];
         if (CommonConstants.ensembleModeMutation) {
             // Give all equal preference and then take average across modes
@@ -734,7 +723,6 @@ public class TWEANN implements Network {
                 refreshActivation(inputPanel, inputs, outputs, preferences, standardMultitask, preferenceFatigue);
             }
         }
-
         return outputs;
     }
 
