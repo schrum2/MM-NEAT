@@ -14,7 +14,6 @@ import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype.LinkGene;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype.NodeGene;
 import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.networks.hyperneat.Substrate;
-import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.util.CartesianGeometricUtilities;
 import edu.utexas.cs.nn.util.datastructures.Pair;
@@ -47,6 +46,7 @@ public class HyperNEATCPPNGenotypeTest {
 	public void setUp() throws Exception {
 		Parameters.initializeParameterCollections(new String[]{"io:false","netio:false", "recurrency:false","mmdRate:1.0"});
 		MMNEAT.loadClasses();
+		hcppn = new HyperNEATCPPNGenotype();
 		cppn = new TWEANN(new TWEANNGenotype());
 		subs = new LinkedList<Substrate>();
 		connections = new LinkedList<Pair<String, String>>();

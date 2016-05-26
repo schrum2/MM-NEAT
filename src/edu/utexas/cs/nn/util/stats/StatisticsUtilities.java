@@ -9,15 +9,18 @@ import java.util.Collection;
 import java.util.Comparator;
 
 /**
+ *Contains important utility functions for statistical purposes
  *
  * @author Jacob Schrum
  */
 public class StatisticsUtilities {
 
-    /*
-     * @param values array of input values @param p the percentile to compute
-     * @param begin the first (0-based) element to include in the computation
-     * @return the percentile value @throws IllegalArgumentException if the
+    /**
+     * 
+     * @param values array of input values
+     * @param p the percentile to compute
+     * @return the percentile value 
+     * @throws IllegalArgumentException if the
      * parameters are not valid or the input array is null
      */
     public static double percentile(final double[] values, final double p) {
@@ -178,7 +181,7 @@ public class StatisticsUtilities {
         return RandomNumbers.probabilisticSelection(dist);
     }
 
-    /*
+    /**
      * Values in raw must be non-negative
      */
     public static double[] distribution(double[] raw) {

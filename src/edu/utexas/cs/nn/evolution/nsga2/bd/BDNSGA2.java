@@ -93,7 +93,6 @@ public class BDNSGA2<T> extends NSGA2<T> {
                 }
             }
         }
-        System.out.println("Behavioral Diversity of " + individualIndex + " = " + diversityScore);
         return diversityScore;
     }
 
