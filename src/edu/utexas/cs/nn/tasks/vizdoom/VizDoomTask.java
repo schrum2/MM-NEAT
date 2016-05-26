@@ -44,21 +44,25 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T> i
     
     public VizDoomTask() {
         // These should not be here ... put in an init call?
-        game = doomInit();
+        doomInit();
         actionLabels = new ArrayList<String>();
         actions = new ArrayList<int[]>(); 
         setDoomActions();
         setDoomStateVariables();
         setDoomMiscSettings();
-        // Initialize the game. Further configuration won't take any effect from now on.
-        game.init();
         MMNEAT.registerFitnessFunction("DoomReward");
     }
+    
+    @Override
+    public void prep() {
+    	// Initialize the game. Further configuration won't take any effect from now on.
+        game.init();        
+    }
 
-    public DoomGame doomInit() {
+    public void doomInit() {
         SpecifyDLL.specifyDLLPath();
         // Create DoomGame instance. It will run the game and communicate with you.
-        DoomGame game = new DoomGame();
+        game = new DoomGame();
         // Sets path to vizdoom engine executive which will be spawned as a separate process.
         game.setViZDoomPath("vizdoom/bin/vizdoom_nosound");
         // Sets path to doom2 iwad resource file which contains the actual doom game-> Default is "./doom2.wad".
@@ -71,8 +75,7 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T> i
         // Set map to start (scenario .wad files can contain many maps).
         game.setDoomMap(DOOM_MAP);
         // Sets resolution. Default is 320X240
-        //game.setScreenResolution(ScreenResolution.RES_640X480);
-        game.setScreenResolution(ScreenResolution.RES_160X120);
+        setRestrictedScreenResolution(ScreenResolution.RES_200X150);
         // Sets the screen buffer format. Not used here but now you can change it. Defalut is CRCGCB.
         game.setScreenFormat(ScreenFormat.RGB24);
         // Sets other rendering options
@@ -81,11 +84,34 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T> i
         game.setRenderWeapon(true);
         game.setRenderDecals(false);
         game.setRenderParticles(false);
-
-        return game;
     }
 
-    public final void addAction(int[] buttonPresses, String label) {
+    /**
+     * We came across an issue with higher screen resolutions and using the drawGameState(), drawGameStateRow() and getRow() methods
+     * The higher the resolution, the better the chance the width and height are incorrect, thus making the calculations incorrect for inputs and display
+     * @param res ScreenResolution
+     */
+    private void setRestrictedScreenResolution(ScreenResolution res) {
+    	assert !res.equals(ScreenResolution.RES_800X600) : "800X600 is too high of a resolution!";
+    	assert !res.equals(ScreenResolution.RES_1024X768) : "1024X768 is too high of a resolution!";
+    	assert !res.equals(ScreenResolution.RES_1280X960) : "1280X960 is too high of a resolution!";
+    	assert !res.equals(ScreenResolution.RES_1400X1050) : "1400X1050 is too high of a resolution!";
+    	assert !res.equals(ScreenResolution.RES_1600X1200) : "1600X1200 is too high of a resolution!";
+    	assert !res.equals(ScreenResolution.RES_800X500) : "800X500 is too high of a resolution!";
+    	assert !res.equals(ScreenResolution.RES_1024X640) : "1024X640 is too high of a resolution!";
+    	assert !res.equals(ScreenResolution.RES_1280X800) : "1280X800 is too high of a resolution!";
+    	assert !res.equals(ScreenResolution.RES_1400X875) : "1400X875 is too high of a resolution!";
+    	assert !res.equals(ScreenResolution.RES_1600X1000) : "1600X1000 is too high of a resolution!";
+    	assert !res.equals(ScreenResolution.RES_800X450) : "800X450 is too high of a resolution!";
+    	assert !res.equals(ScreenResolution.RES_1024X576) : "1024X576 is too high of a resolution!";
+    	assert !res.equals(ScreenResolution.RES_1280X720) : "1280X720 is too high of a resolution!";
+    	assert !res.equals(ScreenResolution.RES_1400X787) : "1400X787 is too high of a resolution!";
+    	assert !res.equals(ScreenResolution.RES_1600X900) : "1600X900 is too high of a resolution!";
+    	assert !res.equals(ScreenResolution.RES_1920X1080) : "1920X1080 is too high of a resolution!";
+        game.setScreenResolution(res);
+	}
+
+	public final void addAction(int[] buttonPresses, String label) {
     	actionLabels.add(label);
     	actions.add(buttonPresses);
     }
@@ -116,32 +142,27 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T> i
         while (!game.isEpisodeFinished()) {
             // Get the state
             GameState s = game.getState();
-            //System.out.print("Image Buffer Length: ");
-            //System.out.println(s.imageBuffer.length);
-            //System.out.println(Arrays.toString(s.imageBuffer));
-            
-            //drawGameStateRow(s, 160, 120, 61);
-            double[] inputs = isolateRow(s, 160, 120, 61, RED_INDEX);
+
+            System.out.println(s.imageBuffer.length);
+            System.out.println(game.getScreenWidth());
+            System.out.println(game.getScreenHeight());
+            //drawGameState(s, game.getScreenWidth(), game.getScreenHeight());
+            drawGameStateRow(s, game.getScreenWidth(), game.getScreenHeight(), getRow());
+            double[] inputs = getInputs(s); 
             double[] outputs = n.process(inputs);
                        
-            // Make random action and get reward
-            // TODO: Change to get action from neural network encoded by "individual"
-            // TODO: Need to extract sensor readings ... decide what these are
             //double r = game.makeAction(actions.get(RandomNumbers.randomGenerator.nextInt(3)));
             double r = game.makeAction(actions.get(StatisticsUtilities.argmax(outputs))); // This now takes the arg max ofthe action outputs
             
             // You can also get last reward by using this function
             // double r = game.getLastReward();
-            System.out.println("State #" + s.number);
-            System.out.println("Game variables: " + Arrays.toString(s.gameVariables));
-            System.out.println("Action reward: " + r);
-            System.out.println("=====================");
-
         }
         return new Pair<double[], double[]>(new double[]{game.getTotalReward()}, new double[]{});
     }
 
-    public void cleanup() {
+    public abstract double[] getInputs(GameState s);
+    
+    public void finalCleanup() {
     	game.close();
     }
     
@@ -155,7 +176,9 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T> i
     }
     
     public abstract int numInputs();
-
+    
+    public abstract int getRow();
+    
     @Override
     public double getTimeStamp() {
         return game.getEpisodeTime(); // Confirm that this works
@@ -222,21 +245,5 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T> i
         }
         DrawingPanel dp = ImageMatchTask.drawImage(image, "Doom", width, height);
         MiscUtil.waitForReadStringAndEnterKeyPress();
-    }
-    
-    public static double[] isolateRow(GameState s, int width, int height, int row, int color){
-    	assert color == RED_INDEX || color == GREEN_INDEX || color == BLUE_INDEX : "color is not valid! " + color;
-    	double[] result = new double[width];
-    	int index = row * width * 3;
-		for(int y = 0; y < height; y++) {
-        	int bufferPos = 0;
-        	for(int x = 0; x < width; x++) {
-        		int c = index + bufferPos + color;
-                //int rgb = new Color(s.imageBuffer[c], s.imageBuffer[c], s.imageBuffer[c]).getRGB();
-                result[x] = (s.imageBuffer[c]) / 255.0;
-        		bufferPos += 3;
-        	}
-        }
-		return result;
     }
 }

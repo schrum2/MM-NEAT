@@ -24,4 +24,10 @@ public interface Task {
      * @return the time stamp for this task
      */
     public double getTimeStamp();
+    
+    /**
+     * Perform any final cleanup operations.
+     * Can be empty in most cases.
+     */
+    public void finalCleanup();
 }

@@ -1,6 +1,5 @@
 package edu.utexas.cs.nn.tasks.mspacman.multitask;
 
-import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
 import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
 import java.util.*;
@@ -8,6 +7,9 @@ import pacman.Executor;
 import pacman.game.Constants;
 
 /**
+ * A Mode selector which selects modes based on if the area based on the "scentMaps" is dangerous or safe. 
+ * An area (based on pacman's current location) is determined to be dangerous if pacman has died more in that
+ * area than the average area, and is safe otherwise
  * @author Jacob Schrum
  */
 public class DangerousAreaModeSelector extends MsPacManModeSelector {
@@ -17,12 +19,19 @@ public class DangerousAreaModeSelector extends MsPacManModeSelector {
     public static final int DANGEROUS = 0;
     public static final int SAFE = 1;
 
+    /**
+     * constructor which updates the scentMaps
+     */
     public DangerousAreaModeSelector() {
         super();
         scentMaps = new HashMap<Integer, HashMap<Integer, Integer>>();
         updateScentMaps();
     }
 
+    /**
+     * updates the scentMaps based on the deathCount of pacman. Also finds the mazeAverages for the death 
+     * counts of pacman in the areas of the scentMaps
+     */
     public static void updateScentMaps() {
         if (scentMaps != null) {
             scentMaps = Executor.deaths.deathCount();
@@ -43,7 +52,7 @@ public class DangerousAreaModeSelector extends MsPacManModeSelector {
      * Mode depends on the death count of pacman's current location, and whether
      * or not that count is above average for the level.
      *
-     * @return
+     * @return whether or not the area is dangerous or safe (0 is dangerous, 1 is safe)
      */
     public int mode() {
         int maze = gs.getMazeIndex();
@@ -72,11 +81,20 @@ public class DangerousAreaModeSelector extends MsPacManModeSelector {
         return SAFE;
     }
 
+    /**
+     * There are 2 modes for this mode selector
+     * @return 2
+     */
     public int numModes() {
         return 2;
     }
 
     @Override
+    /**
+     * gets the associated fitness scores with this mode selector based on the danger of this area
+     * @return an int array holding the score for if the area is dangerous in the first index and the score
+     * for if the area is safe in the second index
+     */
     public int[] associatedFitnessScores() {
         int[] result = new int[numModes()];
         result[DANGEROUS] = PILL_SCORE; // Should switch to time

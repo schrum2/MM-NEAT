@@ -345,4 +345,10 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
     public ArrayList<Double> getBehaviorVector() {
         return null;
     }    
+    
+    /**
+     * Default to empty
+     */
+    public void finalCleanup() {
+    }
 }
