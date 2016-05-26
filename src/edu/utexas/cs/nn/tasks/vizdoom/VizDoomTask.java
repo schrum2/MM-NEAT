@@ -1,21 +1,24 @@
 package edu.utexas.cs.nn.tasks.vizdoom;
 
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.networks.NetworkTask;
-import edu.utexas.cs.nn.networks.TWEANN;
-import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.tasks.NoisyLonerTask;
-import edu.utexas.cs.nn.util.datastructures.Pair;
-import edu.utexas.cs.nn.util.random.RandomNumbers;
+import java.awt.Color;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import vizdoom.Button;
+
+import edu.utexas.cs.nn.MMNEAT.MMNEAT;
+import edu.utexas.cs.nn.evolution.genotypes.Genotype;
+import edu.utexas.cs.nn.graphics.DrawingPanel;
+import edu.utexas.cs.nn.networks.Network;
+import edu.utexas.cs.nn.networks.NetworkTask;
+import edu.utexas.cs.nn.parameters.CommonConstants;
+import edu.utexas.cs.nn.tasks.NoisyLonerTask;
+import edu.utexas.cs.nn.tasks.testmatch.imagematch.ImageMatchTask;
+import edu.utexas.cs.nn.util.MiscUtil;
+import edu.utexas.cs.nn.util.datastructures.Pair;
+import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
 import vizdoom.DoomGame;
 import vizdoom.GameState;
-import vizdoom.GameVariable;
 import vizdoom.Mode;
 import vizdoom.ScreenFormat;
 import vizdoom.ScreenResolution;
@@ -31,6 +34,9 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T> i
     public static String SCENARIO_WAD = "basic.wad";
     public static String DOOM_MAP = "map01";
     public static int DOOM_EPISODE_LENGTH = 200;
+    public static final int RED_INDEX = 2;
+    public static final int GREEN_INDEX = 1;
+    public static final int BLUE_INDEX = 0;
 
     public DoomGame game;
     public List<int[]> actions;
@@ -65,7 +71,8 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T> i
         // Set map to start (scenario .wad files can contain many maps).
         game.setDoomMap(DOOM_MAP);
         // Sets resolution. Default is 320X240
-        game.setScreenResolution(ScreenResolution.RES_640X480);
+        //game.setScreenResolution(ScreenResolution.RES_640X480);
+        game.setScreenResolution(ScreenResolution.RES_160X120);
         // Sets the screen buffer format. Not used here but now you can change it. Defalut is CRCGCB.
         game.setScreenFormat(ScreenFormat.RGB24);
         // Sets other rendering options
@@ -105,12 +112,24 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T> i
     public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {
     	// Need to remove rewards from previous episodes I think
     	game.newEpisode();
+    	Network n = individual.getPhenotype();
         while (!game.isEpisodeFinished()) {
             // Get the state
             GameState s = game.getState();
+            //System.out.print("Image Buffer Length: ");
+            //System.out.println(s.imageBuffer.length);
+            //System.out.println(Arrays.toString(s.imageBuffer));
+            
+            //drawGameStateRow(s, 160, 120, 61);
+            double[] inputs = isolateRow(s, 160, 120, 61, RED_INDEX);
+            double[] outputs = n.process(inputs);
+                       
             // Make random action and get reward
-            double r = game.makeAction(actions.get(RandomNumbers.randomGenerator.nextInt(3)));
-
+            // TODO: Change to get action from neural network encoded by "individual"
+            // TODO: Need to extract sensor readings ... decide what these are
+            //double r = game.makeAction(actions.get(RandomNumbers.randomGenerator.nextInt(3)));
+            double r = game.makeAction(actions.get(StatisticsUtilities.argmax(outputs))); // This now takes the arg max ofthe action outputs
+            
             // You can also get last reward by using this function
             // double r = game.getLastReward();
             System.out.println("State #" + s.number);
@@ -130,6 +149,12 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T> i
     public int numObjectives() {
         return 1;
     }
+    
+    public int numActions() {
+        return actions.size();
+    }
+    
+    public abstract int numInputs();
 
     @Override
     public double getTimeStamp() {
@@ -147,4 +172,71 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T> i
         return actionLabels.toArray(new String[actionLabels.size()]);
     }
 
+    /**
+     * This method outputs the Gamestate according to the width and height given
+     * You may change which of the RGB values appear as well, currently set to all red values
+     * @param s
+     * @param width
+     * @param height
+     */
+    public static void drawGameState(GameState s, int width, int height) {
+    	BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        int bufferPos = 0;
+        for(int y = 0; y < height; y++) {
+        	for(int x = 0; x < width; x++) {              
+                int r = bufferPos + RED_INDEX;
+                int g = bufferPos + GREEN_INDEX;
+                int b = bufferPos + BLUE_INDEX;
+        		//int rgb = new Color(s.imageBuffer[r], s.imageBuffer[g], s.imageBuffer[b]).getRGB();
+                int rgb = new Color(s.imageBuffer[r], s.imageBuffer[r], s.imageBuffer[r]).getRGB();
+        		image.setRGB(x, y, rgb);
+        		bufferPos += 3;
+        	}
+        }
+        DrawingPanel dp = ImageMatchTask.drawImage(image, "Doom", width, height);
+        MiscUtil.waitForReadStringAndEnterKeyPress();
+    }
+    
+    /**
+     * This method outputs the given row stretched across the height
+     * You may change which of the RGB values appear as well, currently set to all red values
+     * @param s
+     * @param width
+     * @param height
+     * @param row
+     */
+    public static void drawGameStateRow(GameState s, int width, int height, int row) { // TODO: actually change this -Gab
+    	BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        int index = row * width * 3;
+        for(int y = 0; y < height; y++) {
+        	int bufferPos = 0;
+        	for(int x = 0; x < width; x++) {
+        		int r = index + bufferPos + RED_INDEX;
+                int g = index + bufferPos + GREEN_INDEX;
+                int b = index + bufferPos + BLUE_INDEX;
+        		//int rgb = new Color(s.imageBuffer[r], s.imageBuffer[g], s.imageBuffer[b]).getRGB();
+                int rgb = new Color(s.imageBuffer[r], s.imageBuffer[r], s.imageBuffer[r]).getRGB();
+        		image.setRGB(x, y, rgb);
+        		bufferPos += 3;
+        	}
+        }
+        DrawingPanel dp = ImageMatchTask.drawImage(image, "Doom", width, height);
+        MiscUtil.waitForReadStringAndEnterKeyPress();
+    }
+    
+    public static double[] isolateRow(GameState s, int width, int height, int row, int color){
+    	assert color == RED_INDEX || color == GREEN_INDEX || color == BLUE_INDEX : "color is not valid! " + color;
+    	double[] result = new double[width];
+    	int index = row * width * 3;
+		for(int y = 0; y < height; y++) {
+        	int bufferPos = 0;
+        	for(int x = 0; x < width; x++) {
+        		int c = index + bufferPos + color;
+                //int rgb = new Color(s.imageBuffer[c], s.imageBuffer[c], s.imageBuffer[c]).getRGB();
+                result[x] = (s.imageBuffer[c]) / 255.0;
+        		bufferPos += 3;
+        	}
+        }
+		return result;
+    }
 }

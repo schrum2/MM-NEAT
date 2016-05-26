@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.utexas.cs.nn.tasks.mspacman.sensors;
 
 import edu.utexas.cs.nn.parameters.CommonConstants;
@@ -10,6 +6,7 @@ import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.MsPacManSensorBlock;
 import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.VariableDirectionBlock;
 
 /**
+ * An extension of the BlockLoadedInputOutputMediator which allows for variations in direction
  * @author Jacob Schrum
  */
 public class VariableDirectionBlockLoadedInputOutputMediator extends BlockLoadedInputOutputMediator {
@@ -22,6 +19,10 @@ public class VariableDirectionBlockLoadedInputOutputMediator extends BlockLoaded
         Parameters.parameters.setBoolean("pacManSensorCaching", false);
     }
 
+    /**
+     * changes the sensor direction for each block in the sensor blocks arrayList
+     * @param dir
+     */
     public void setDirection(int dir) {
         for (MsPacManSensorBlock block : this.blocks) {
             if (block instanceof VariableDirectionBlock) {
@@ -31,11 +32,18 @@ public class VariableDirectionBlockLoadedInputOutputMediator extends BlockLoaded
     }
 
     @Override
+    /**
+     * @return a string array with the output labels
+     */
     public String[] outputLabels() {
         return new String[]{"Preference"};
     }
 
     @Override
+    /**
+     * @return the number of outputs, which is just 1 because it is just the preference
+     * for the currently checked direction
+     */
     public int numOut() {
         return 1; // Just the preference for the currently checked direction
     }

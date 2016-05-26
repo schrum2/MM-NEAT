@@ -14,6 +14,10 @@ import java.util.TreeSet;
  */
 public abstract class UnionInputOutputMediator extends BlockLoadedInputOutputMediator {
 
+	/**
+	 * Finds the union of the mediators given, not including any sensor block duplicates from any mediator
+	 * @param mediators given mediators to find the union of
+	 */
     public UnionInputOutputMediator(List<BlockLoadedInputOutputMediator> mediators) {
         super();
         Comparator<MsPacManSensorBlock> c = new Comparator<MsPacManSensorBlock>() {

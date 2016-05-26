@@ -5,6 +5,15 @@ import edu.utexas.cs.nn.gridTorus.TorusWorld;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.gridTorus.NNTorusPredPreyController;
 
+/**
+ * finds the sensor inputs for the predators by proximity. The inputs will be the X and Y
+ * offsets to each predator. The inputs will be in order of closest predators to most distance predators
+ * So, each input index can hold different agents at different times depending upon relative distance, whereas
+ * with the index sensors each index of the sensorValue array would have held the same agent per each index 
+ * constantly throughout the task
+ * @author rollinsa
+ *
+ */
 public class TorusPredatorsByProximitySensorBlock implements TorusPredPreySensorBlock {
 
 	private int numPredators;
@@ -14,6 +23,12 @@ public class TorusPredatorsByProximitySensorBlock implements TorusPredPreySensor
 	}
 
 	@Override
+	/**
+	 * @return the sensor inputs for the predators by proximity. The inputs will be the X and Y
+	 * offsets to each predator from this agent. Index 0 will hold the closest predator and the last 
+	 * index in the array will hold the furthest predator (array in ascending order by distance)
+	 * Distance here is defined as the sum of the absolute value of the X and Y offsets
+	 */
 	public double[] sensorValues(TorusAgent me, TorusWorld world, TorusAgent[] preds, TorusAgent[] prey) {
 		double[] proximityPreds = new double[2*numPredators];
 		double[] predOffsets =  NNTorusPredPreyController.getPredatorOffsets(me, world, preds);
@@ -45,11 +60,19 @@ public class TorusPredatorsByProximitySensorBlock implements TorusPredPreySensor
 	}
 
 	@Override
+	/**
+	 * @return the total number of sensors for the predators (X and Y offsets to each pred)
+	 */
 	public int numSensors() {
 		return numPredators * 2;
 	}
 
 	@Override
+	/**
+	 * Finds the sensor labels for this agent and returns them in an array of Strings
+	 * The sensor labels for this class will be the list of Predators being sensed by proximity
+	 * @return the sensorLabels for the predators by proximity
+	 */
 	public String[] sensorLabels() {
 		return NNTorusPredPreyController.sensorLabels(numPredators, "Closest Pred");
 	}

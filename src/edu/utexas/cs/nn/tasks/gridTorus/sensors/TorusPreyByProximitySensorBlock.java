@@ -5,6 +5,15 @@ import edu.utexas.cs.nn.gridTorus.TorusWorld;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.gridTorus.NNTorusPredPreyController;
 
+/**
+ * finds the sensor inputs for the prey by proximity. The inputs will be the X and Y
+ * offsets to each prey. The inputs will be in order of closest prey to most distance prey
+ * So, each input index can hold different agents at different times depending upon relative distance, whereas
+ * with the index sensors each index of the sensorValue array would have held the same agent per each index 
+ * constantly throughout the task
+ * @author rollinsa
+ *
+ */
 public class TorusPreyByProximitySensorBlock implements TorusPredPreySensorBlock {
 
 	private int numPrey;
@@ -14,6 +23,12 @@ public class TorusPreyByProximitySensorBlock implements TorusPredPreySensorBlock
 	}
 	
 	@Override
+	/**
+	 * @return the sensor inputs for the prey by proximity. The inputs will be the X and Y
+	 * offsets to each prey from this agent. Index 0 will hold the closest prey and the last 
+	 * index in the array will hold the furthest prey (array in ascending order by distance)
+	 * Distance here is defined as the sum of the absolute value of the X and Y offsets
+	 */
 	public double[] sensorValues(TorusAgent me, TorusWorld world, TorusAgent[] preds, TorusAgent[] prey) {
 		double[] proximityPrey = new double[2*numPrey];
 		double[] preyOffsets =  NNTorusPredPreyController.getPreyOffsets(me, world, prey);
@@ -45,11 +60,19 @@ public class TorusPreyByProximitySensorBlock implements TorusPredPreySensorBlock
 	}
 
 	@Override
+	/**
+	 * @return the total number of sensors for the prey (X and Y offsets to each prey)
+	 */
 	public int numSensors() {
 		return numPrey * 2;
 	}
 
 	@Override
+	/**
+	 * Finds the sensor labels for this agent and returns them in an array of Strings
+	 * The sensor labels for this class will be the list of prey being sensed by proximity
+	 * @return the sensorLabels for the prey by proximity
+	 */
 	public String[] sensorLabels() {
 		return NNTorusPredPreyController.sensorLabels(numPrey, "Closest Prey");
 	}

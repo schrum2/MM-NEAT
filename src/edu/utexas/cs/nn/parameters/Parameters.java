@@ -16,6 +16,7 @@ import edu.utexas.cs.nn.tasks.mspacman.multitask.GhostsThenPillsModeSelector;
 import edu.utexas.cs.nn.tasks.mspacman.objectives.fitnessassignment.GhostsPillsMap;
 import edu.utexas.cs.nn.tasks.mspacman.sensors.mediators.FullTaskMediator;
 import edu.utexas.cs.nn.tasks.rlglue.RLGlueAgent;
+import edu.utexas.cs.nn.tasks.rlglue.RLGlueTask;
 import edu.utexas.cs.nn.tasks.rlglue.featureextractors.StateVariableExtractor;
 import edu.utexas.cs.nn.tasks.ut2004.actuators.OpponentRelativeMovementOutputModel;
 import edu.utexas.cs.nn.tasks.ut2004.sensors.OpponentRelativeSensorModel;
@@ -176,6 +177,7 @@ public class Parameters {
      */
     public final void fillDefaults() {
         //Integer parameters
+    	integerOptions.add("rlGluePort", RLGlueTask.DEFAULT_PORT, "The port number for the current instance of RLGlue");
         integerOptions.add("imageHeight", 100, "height of CPPN image (overrides height of image being matched if overrideImageSize is true)");
         integerOptions.add("imageWidth", 100, "width of CPPN image (overrides width of image being matched if overrideImageSize is true)");
         integerOptions.add("junctionsToSense", 1, "Number of junctions to which distance should be sensed");
@@ -238,8 +240,8 @@ public class Parameters {
         integerOptions.add("torusXDimensions", 100, "The dimension of the X-Axis, or the width, for the grid world");
         integerOptions.add("torusYDimensions", 100, "The dimension of the Y-Axis, or the height, for the grid world");
         integerOptions.add("torusTimeLimit", 1000, "Time limit in torus worlds");
-        integerOptions.add("torusPredators", 4, "Number of torus predators");
-        integerOptions.add("torusPreys", 1, "Number of torus preys");
+        integerOptions.add("torusPredators", 3, "Number of torus predators");
+        integerOptions.add("torusPreys", 2, "Number of torus preys");
         integerOptions.add("proxGhostsToSense", 4, "Number of ghosts sorted by proximity to sense in pacman");
         integerOptions.add("freezeMeltAlternateFrequency", 25, "Generations between freezing/melting pref/policy neurons");
         integerOptions.add("genOfLastTUGGoalIncrease", 0, "Generation when last TUG goal increase occurred");
@@ -267,17 +269,20 @@ public class Parameters {
         booleanOptions.add("logTWEANNData", false, "Whether or not to log TWEANN data");
         booleanOptions.add("logMutationAndLineage", false, "Whether or not to log information about the mutations and lineage");
         booleanOptions.add("logPerformance", false, "Whether or not to log performance information in a performance log");
-        booleanOptions.add("torusSenseByProximity", false, "Causes agents' sensor inputs to be by proximity of the agent instead of simply each agent by indices");
-        booleanOptions.add("predatorCatchClose", false, "Turn on to encourage catching a higher percentage of the prey and getting close to the prey");
-        booleanOptions.add("predatorCatch", false, "Turn on to activate the predator fitness function which encourages catching high percentages of prey");
-        booleanOptions.add("preyRRM", false, "Turn on to activate the prey fitness function from the Rawal and Rajagopalan paper");
+        booleanOptions.add("torusSenseByProximity", true, "Causes agents' sensor inputs to be by proximity of the agent instead of simply each agent by indices");
+        booleanOptions.add("preyLongSurvivalTime", false, "Turn on to encourage each prey to maximize their survival time");
+        booleanOptions.add("preyMaximizeDistance", false, "Turn on to encourage prey to maximize their distance from the predators at the end of the game");
+        booleanOptions.add("preyMinimizeCaught", false, "Turn on to encourage prey to minimize how many of them are caught");
+        booleanOptions.add("predatorCatchClose", true, "Turn on to encourage catching a higher percentage of the prey and getting close to the prey");
+        booleanOptions.add("predatorCatch", false, "Turn on to activate the predator fitness function which encourages catching a high number of prey");
+        booleanOptions.add("preyRRM", true, "Turn on to activate the prey fitness function from the Rawal and Rajagopalan paper");
         booleanOptions.add("predatorRRM", false, "Turn on to activate the predator fitness function from the Rawal and Rajagopalan paper");
         booleanOptions.add("predatorMinimizeDistance", false, "Turn on to encourage predators to be as close to the prey as possible by the end of the game");
         booleanOptions.add("predatorsEatQuick", false, "Turn on to encourage predators to eat prey as quickly as possible");
-        booleanOptions.add("predatorMinimizeTotalTime", true, "Turn on to encourage predators to minimize the total game time as a fitness function");
-        booleanOptions.add("preyMaximizeTotalTime", true, "Turn on to encourage prey to maximize the total game time as a fitness function");
-        booleanOptions.add("torusSenseTeammates", false, "If turned on, predators can sense other predators and preys can sense other preys");
-        booleanOptions.add("allowDoNothingActionForPredators", false, "If turned on, the predators will have the option to do nothing as their action");
+        booleanOptions.add("predatorMinimizeTotalTime", false, "Turn on to encourage predators to minimize the total game time as a fitness function");
+        booleanOptions.add("preyMaximizeTotalTime", false, "Turn on to encourage prey to maximize the total game time as a fitness function");
+        booleanOptions.add("torusSenseTeammates", true, "If turned on, predators can sense other predators and preys can sense other preys");
+        booleanOptions.add("allowDoNothingActionForPredators", true, "If turned on, the predators will have the option to do nothing as their action");
         booleanOptions.add("allowDoNothingActionForPreys", false, "If turned on, the preys will have the option to do nothing as their action");
         booleanOptions.add("removePillsNearPowerPills", false, "Pills in a c-path with power pills are absent");
         booleanOptions.add("allowMultipleFunctions", false, "Turning this one will allow you to change TWEANN to CPPN by allowing multiple activation functions");
@@ -468,6 +473,7 @@ public class Parameters {
         booleanOptions.add("recordPacman", false, "Record pacman game to save file");
         booleanOptions.add("replayPacman", false, "Replay pacman game from save file");
         booleanOptions.add("hierarchicalMultitask", false, "Each multitask mode can consist of multiple preference neuron modules");
+        booleanOptions.add("trackCombiningCrossover", false, "Whether or not to track combining crossover information");
         //Double parameters
         doubleOptions.add("linkExpressionThreshold", 0.2, "Threshold for hyperNEAT output to result in an expressed link");
         doubleOptions.add("tugGoalIncrement0", 0.0, "Set amount to increase goal 0 by when using TUG");

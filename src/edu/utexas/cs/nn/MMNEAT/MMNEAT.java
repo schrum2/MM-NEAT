@@ -53,6 +53,7 @@ import edu.utexas.cs.nn.tasks.rlglue.RLGlueTask;
 import edu.utexas.cs.nn.tasks.rlglue.featureextractors.FeatureExtractor;
 import edu.utexas.cs.nn.tasks.testmatch.MatchDataTask;
 import edu.utexas.cs.nn.tasks.ut2004.UT2004Task;
+import edu.utexas.cs.nn.tasks.vizdoom.VizDoomTask;
 import edu.utexas.cs.nn.util.ClassCreation;
 import edu.utexas.cs.nn.util.PopulationUtil;
 import edu.utexas.cs.nn.util.file.FileUtilities;
@@ -599,6 +600,7 @@ public class MMNEAT {
 				System.out.println("Setup Torus Predator/Prey Task");
 				if(Parameters.parameters.booleanParameter("hyperNEAT")) {
 					System.out.println("Using HyperNEAT");
+					hyperNEATOverrides();
 					HyperNEATTask hnt = (HyperNEATTask) task;
 					setNNInputParameters(HyperNEATTask.NUM_CPPN_INPUTS, hnt.getSubstrateConnectivity().size());
 				} else { // Standard Pred/Prey with human-specified sensors
@@ -614,6 +616,10 @@ public class MMNEAT {
 				System.out.println("Setup Match Data Task");
 				MatchDataTask t = (MatchDataTask) task;
 				setNNInputParameters(t.numInputs(), t.numOutputs());
+			} else if(task instanceof VizDoomTask){
+				System.out.println("Set up VizDoom Task");
+				VizDoomTask t = (VizDoomTask) task;
+				setNNInputParameters(t.numInputs(), t.numActions());
 			} else if(task == null) {
 				//this else statement should only happen for JUnit testing cases.
 				//Some default network setup is needed.
@@ -683,6 +689,15 @@ public class MMNEAT {
 	}
 
 	/**
+	 * Using HyperNEAT means certain parameters values need to be overridden
+	 */
+	private static void hyperNEATOverrides() {
+		// Cannot monitor inputs with HyperNEAT because the NetworkTask interface no longer applies
+		CommonConstants.monitorInputs = false;
+		Parameters.parameters.setBoolean("monitorInputs", false);
+	}
+
+	/**
 	 * finds the number of inputs for the predPrey task, which is based on the type of agent that is
 	 * being evolved's sensor inputs defined in its controller
 	 * This has to be done to prevent a null pointer exception when first getting the sensor labels/number of sensors
@@ -726,7 +741,8 @@ public class MMNEAT {
 		try {
 			task = (Task) ClassCreation.createObject("task");
 		} catch (NoSuchMethodException ex) {
-			Logger.getLogger(MMNEAT.class.getName()).log(Level.SEVERE, null, ex);
+			System.out.println("Failed to instantiate task " + Parameters.parameters.classParameter("task"));
+			System.exit(1);
 		}
 		ResultSummaryUtilities.processExperiment(
 				Parameters.parameters.stringParameter("base") + "/" + Parameters.parameters.stringParameter("saveTo"),

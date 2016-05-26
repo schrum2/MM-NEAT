@@ -70,10 +70,13 @@ $RECYCLE.BIN/
 /tetris/
 /fof/
 /pp/
+/fbr/
 /match/
 /multiplelivesconflict/
 /imprisonconflict/
 /isolatedconflict/
+/toruspred/
+/torusprey/
 *.zds
 vizdoom/bin/vizdoom-He_Deceives.ini
 *.bmp
