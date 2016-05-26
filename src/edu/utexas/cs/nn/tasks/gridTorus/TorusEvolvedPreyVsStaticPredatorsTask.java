@@ -10,7 +10,10 @@ import edu.utexas.cs.nn.gridTorus.controllers.TorusPredPreyController;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
+import edu.utexas.cs.nn.tasks.gridTorus.objectives.PreyLongSurvivalTimeObjective;
+import edu.utexas.cs.nn.tasks.gridTorus.objectives.PreyMaximizeDistanceFromPredatorsObjective;
 import edu.utexas.cs.nn.tasks.gridTorus.objectives.PreyMaximizeGameTimeObjective;
+import edu.utexas.cs.nn.tasks.gridTorus.objectives.PreyMinimizeCaughtObjective;
 import edu.utexas.cs.nn.tasks.gridTorus.objectives.PreyRawalRajagopalanMiikkulainenObjective;
 import edu.utexas.cs.nn.util.ClassCreation;
 
@@ -35,6 +38,12 @@ public class TorusEvolvedPreyVsStaticPredatorsTask<T extends Network> extends To
 			addObjective(new PreyMaximizeGameTimeObjective<T>(), objectives);
 		if(Parameters.parameters.booleanParameter("preyRRM"))
 			addObjective(new PreyRawalRajagopalanMiikkulainenObjective<T>(), objectives);
+		if(Parameters.parameters.booleanParameter("preyLongSurvivalTime"))
+			addObjective(new PreyLongSurvivalTimeObjective<T>(), objectives);
+		if(Parameters.parameters.booleanParameter("preyMaximizeDistance"))
+			addObjective(new PreyMaximizeDistanceFromPredatorsObjective<T>(), objectives);
+		if(Parameters.parameters.booleanParameter("preyMinimizeCaught"))
+			addObjective(new PreyMinimizeCaughtObjective<T>(), objectives);
 	}
 
 	@Override
