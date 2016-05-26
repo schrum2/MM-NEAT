@@ -741,7 +741,8 @@ public class MMNEAT {
 		try {
 			task = (Task) ClassCreation.createObject("task");
 		} catch (NoSuchMethodException ex) {
-			Logger.getLogger(MMNEAT.class.getName()).log(Level.SEVERE, null, ex);
+			System.out.println("Failed to instantiate task " + Parameters.parameters.classParameter("task"));
+			System.exit(1);
 		}
 		ResultSummaryUtilities.processExperiment(
 				Parameters.parameters.stringParameter("base") + "/" + Parameters.parameters.stringParameter("saveTo"),
