@@ -14,7 +14,7 @@ import pacman.controllers.NewPacManController;
 import pacman.game.Game;
 
 /**
- *
+ * defines the evolved pac man controller
  * @author Jacob Schrum
  */
 public abstract class NNPacManController extends NewPacManController {
@@ -29,13 +29,21 @@ public abstract class NNPacManController extends NewPacManController {
     public static int timesTimeLimitReached = 0;
     public static int timesDied = 0;
 
-    // Called once a generation by Performance log
+    /**
+     *  Called once a generation by Performance log
+     *  resets the data for the times all levels are beaten, times the time limit is reached,
+     *  and times died
+     */
     public static void resetTimes() {
         timesAllLevelsBeaten = 0;
         timesTimeLimitReached = 0;
         timesDied = 0;
     }
 
+    /**
+     * constructs a pacman controller for the evolved pacman based on parameters
+     * @param n, network
+     */
     public NNPacManController(Network n) {
         nn = n;
         maxLevel = Parameters.parameters.integerParameter("pacmanMaxLevel");
@@ -50,10 +58,24 @@ public abstract class NNPacManController extends NewPacManController {
         }
     }
 
+    /**
+     * Finds the action to do based off of the game and the game's various current factors,
+     * such as the number of ghosts eaten, pacman's lives, direction, and location
+     * @param gs the gameFacade
+     * @param timeDue
+     * @return the action to take or a number indicating the end of the game
+     */
     public int getAction(final Game gs, long timeDue) {
         return getAction(new GameFacade(gs), timeDue);
     }
 
+    /**
+     * Finds the action to do based off of the game and the game's various current factors,
+     * such as the number of ghosts eaten, pacman's lives, direction, and location
+     * @param gs the gameFacade
+     * @param timeDue
+     * @return the action to take or a number indicating the end of the game
+     */
     public int getAction(GameFacade gs, long timeDue) {
         ScentPath.scents.visit(gs, gs.getPacmanCurrentNodeIndex());
         int curLevel = gs.getCurrentLevel();
@@ -101,6 +123,9 @@ public abstract class NNPacManController extends NewPacManController {
     }
 
     @Override
+    /**
+     * resets all of the controller's various variables and object values
+     */
     public void reset() {
         super.reset();
         nn.flush();
@@ -113,9 +138,17 @@ public abstract class NNPacManController extends NewPacManController {
         }
     }
 
+    /**
+     * find the direction that pacman is facing based off of various game data and return it
+     * @param gs the gameFacade
+     * @return direction
+     */
     public abstract int getDirection(GameFacade gs);
 
     @Override
+    /**
+     * log various details about the controller in the evalReport
+     */
     public void logEvaluationDetails() {
         MMNEAT.evalReport.log("Network Details:");
         MMNEAT.evalReport.log("\tNum Nodes: " + ((TWEANN) nn).nodes.size());

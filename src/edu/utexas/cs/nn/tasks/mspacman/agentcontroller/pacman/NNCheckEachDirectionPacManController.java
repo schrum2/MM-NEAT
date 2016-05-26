@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.utexas.cs.nn.tasks.mspacman.agentcontroller.pacman;
 
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
@@ -19,7 +15,6 @@ import edu.utexas.cs.nn.tasks.mspacman.data.ScentPath;
 import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
 import edu.utexas.cs.nn.tasks.mspacman.sensors.VariableDirectionBlockLoadedInputOutputMediator;
 import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.VariableDirectionBlock;
-import edu.utexas.cs.nn.util.CombinatoricUtilities;
 import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -29,7 +24,8 @@ import java.util.Arrays;
 import pacman.Executor;
 
 /**
- *
+ * An extension of a directionalPacManController which checks each direction and finds the
+ * preferred direction
  * @author Jacob Schrum
  */
 public class NNCheckEachDirectionPacManController extends NNDirectionalPacManController {
@@ -62,6 +58,11 @@ public class NNCheckEachDirectionPacManController extends NNDirectionalPacManCon
     private int scentMode = -1;
     private PrintStream modeFile = null;
 
+    /**
+     * creates the controller based on genotype, the variable direction block, and various parameters
+     * @param g, the genotype
+     * @param safe, the VariableDirectionBlock
+     */
     public NNCheckEachDirectionPacManController(Genotype<? extends Network> g, VariableDirectionBlock safe) {
         super(g.getPhenotype());
         this.safe = safe;
@@ -119,6 +120,11 @@ public class NNCheckEachDirectionPacManController extends NNDirectionalPacManCon
     }
 
     @Override
+    /**
+     * finds the direction preferences and returns them in an array of doubles
+     * @param gf, the gameFacade
+     * @return preferences, an array of doubles for direction preferences
+     */
     public double[] getDirectionPreferences(GameFacade gf) {
         totalUsage++;
         double[] preferences = new double[GameFacade.NUM_DIRS];
@@ -266,6 +272,9 @@ public class NNCheckEachDirectionPacManController extends NNDirectionalPacManCon
     }
 
     @Override
+    /**
+     * resets all of the controller's various directional networks
+     */
     public void reset() {
         super.reset();
         for (int i = 0; i < GameFacade.NUM_DIRS; i++) {
@@ -274,6 +283,9 @@ public class NNCheckEachDirectionPacManController extends NNDirectionalPacManCon
     }
 
     @Override
+    /**
+     * log various details about the controller in the evalReport
+     */
     public void logEvaluationDetails() {
         MMNEAT.evalReport.log("Network Info");
         MMNEAT.evalReport.log("\tNum Nodes: " + ((TWEANN) directionalNetworks[0]).nodes.size());

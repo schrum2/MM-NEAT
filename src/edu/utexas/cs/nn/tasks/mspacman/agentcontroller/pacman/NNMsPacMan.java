@@ -17,6 +17,10 @@ import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.combining.GhostEatingNetwo
 import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.combining.PillEatingNetworkBlock;
 import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.combining.SubNetworkBlock;
 
+/**
+ * Defines an evolved MsPacMan agent
+ * @author Jacob Schrum 
+ */
 public class NNMsPacMan<T extends Network> extends Organism<T> {
 
     public NNPacManController controller;
@@ -31,6 +35,10 @@ public class NNMsPacMan<T extends Network> extends Organism<T> {
         this.controller = controller;
     }
 
+    /**
+     * method which defines the controller based on parameters and classOptions and the mediators
+     * @param genotype
+     */
     public NNMsPacMan(Genotype<T> genotype) {
         super(genotype);
         Network net = (Network) this.getGenotype().getPhenotype();
@@ -90,6 +98,10 @@ public class NNMsPacMan<T extends Network> extends Organism<T> {
         }
     }
 
+    /**
+     * returns the controller for this evolved pacMan
+     * @return controller
+     */
     public NNPacManController getController() {
         return controller;
     }
