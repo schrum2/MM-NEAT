@@ -24,52 +24,79 @@ import java.util.Collections;
 
 /**
  * Implementation of Deb's NSGA2 multiobjective EA.
+ * @commented Lauren Gillespie
  */
 public class NSGA2<T> extends MuPlusLambda<T> {
     
-    protected boolean mating;
-    protected double crossoverRate;
+    protected boolean mating;//whether or not mating will occur
+    protected double crossoverRate;//rate at which phenotypes are crossed over
     
+    /**
+     * Default constructor
+     */
     public NSGA2() {
         this(Parameters.parameters.booleanParameter("io"));
     }
     
+    /**
+     * Constructor for NSGA2
+     * @param io whether or not to output files
+     */
     @SuppressWarnings("unchecked")
 	public NSGA2(boolean io) {
         this((SinglePopulationTask<T>) MMNEAT.task, Parameters.parameters.integerParameter("mu"), io);
     }
     
+    /**
+     * Constructor for NSGA2
+     * @param io whether or not to output files
+     * @param task task to be evolved
+     * @param mu Size of parent population
+     *
+     */
     public NSGA2(SinglePopulationTask<T> task, int mu, boolean io) {
         super(task, mu, mu, io);
         mating = Parameters.parameters.booleanParameter("mating");
         crossoverRate = Parameters.parameters.doubleParameter("crossoverRate");
     }
-    
+   /**
+    * Generates children genotypes based on NSGA2 evolution scheme and scores of parents
+    * @param numChildren number of children to be created in evolved population
+    * @param parentScores array list of parent scores
+    */
     @Override
     public ArrayList<Genotype<T>> generateChildren(int numChildren, ArrayList<Score<T>> parentScores) {
         NSGA2Score<T>[] scoresArray = getNSGA2Scores(parentScores);
         return generateNSGA2Children(numChildren, scoresArray, currentGeneration(), mating, crossoverRate);
     }
-    
+    /**
+     * 
+     * @param numChildren
+     * @param scoresArray
+     * @param generation
+     * @param mating
+     * @param crossoverRate
+     * @return
+     */
     @SuppressWarnings("unchecked")
 	public static <T> ArrayList<Genotype<T>> generateNSGA2Children(int numChildren, NSGA2Score<T>[] scoresArray, int generation, boolean mating, double crossoverRate) {
         assignCrowdingDistance(scoresArray);
         fastNonDominatedSort(scoresArray);
         
         ArrayList<Genotype<T>> offspring = new ArrayList<Genotype<T>>(numChildren);
-        Better<NSGA2Score<T>> judge;
-        if (generation == 0) {
+        Better<NSGA2Score<T>> judge;//two objects of which one is better(??)
+        if (generation == 0) {//first generation is a unique case that requires a different comparator
             judge = new Domination<T>();
-        } else {
+        } else {//else a comparator that uses parent data is used to critique for children population
             judge = new ParentComparator<T>();
         }
         
         for (int i = 0; i < numChildren; i++) {
             int e1 = RandomNumbers.randomGenerator.nextInt(scoresArray.length);
             int e2 = RandomNumbers.randomGenerator.nextInt(scoresArray.length);
-            
+            //determines which of the two randomly chosen scores is better
             NSGA2Score<T> better = judge.better(scoresArray[e1], scoresArray[e2]);
-            Genotype<T> source = better.individual;
+            Genotype<T> source = better.individual;//stores better genotype
             long parentId1 = source.getId();
             long parentId2 = -1;
             Genotype<T> e = source.copy();
@@ -77,8 +104,8 @@ public class NSGA2<T> extends MuPlusLambda<T> {
             // This restriction on mutation and crossover only makes sense when using
             // pacman coevolution with a fitness/population for each individual level
             if (!CommonConstants.requireFitnessDifferenceForChange || better.scores[0] > 0) { 
-            	// If neither net has reached a given level, the scores of 0 will prevent evolution
-
+            	 // If neither net has reached a given level, the scores of 0 will prevent evolution
+            	//mating only occurs if on and randomly
                 if (mating && RandomNumbers.randomGenerator.nextDouble() < crossoverRate) {
                     e1 = RandomNumbers.randomGenerator.nextInt(scoresArray.length);
                     e2 = RandomNumbers.randomGenerator.nextInt(scoresArray.length);
@@ -94,12 +121,11 @@ public class NSGA2<T> extends MuPlusLambda<T> {
                             // Try crossover
                             Genotype<T> candidate1 = e.copy(); // Will be a candidate once crossover modifies it
                             Genotype<T> other = otherSource.copy();
-                            //System.out.println(i + ":Litter Crossover");
-                            Genotype<T> candidate2 = candidate1.crossover(other);
+                            Genotype<T> candidate2 = candidate1.crossover(other);//crossover of candidate
                             // Evaluate and add to litter
 							Pair<double[], double[]> score = ((NoisyLonerTask<T>) MMNEAT.task).oneEval(candidate1, 0);
                             MultiObjectiveScore<T> s = new MultiObjectiveScore<T>(candidate1, score.t1, null, score.t2);
-                            litter.add(s);
+                            litter.add(s);//adds either candidate or cross over candidate
                             
                             if (litter.size() < CommonConstants.litterSize) {
                                 score = ((NoisyLonerTask<T>) MMNEAT.task).oneEval(candidate2, 0);
@@ -109,10 +135,10 @@ public class NSGA2<T> extends MuPlusLambda<T> {
                         }
                         // Cull litter
                         ArrayList<Genotype<T>> keepers = staticSelection(2, staticNSGA2Scores(litter));
-                        // Best two of litter
+                        // Best two of litter gets kept
                         e = keepers.get(0);
                         otherOffspring = keepers.get(1);
-                    } else {
+                    } else {//keeps all crossovers
                         Genotype<T> other = otherSource.copy();
                         otherOffspring = e.crossover(other);
                     }
@@ -129,7 +155,7 @@ public class NSGA2<T> extends MuPlusLambda<T> {
                     }
                 }
                 
-                e.mutate();
+                e.mutate();//randomly mutates copied source
             }
 
             offspring.add(e);
@@ -142,10 +168,21 @@ public class NSGA2<T> extends MuPlusLambda<T> {
         return offspring;
     }
     
+    /**
+     * gets the NSGA2 modified scores from raw scores
+     * @param scores list of scores
+     * @return modified scores
+     */
     public NSGA2Score<T>[] getNSGA2Scores(ArrayList<Score<T>> scores) {
         return staticNSGA2Scores(scores);
     }
     
+    /**
+     * static version of getNSGA2Scores
+     * converts array list form of scores to NSGA2Score array
+     * @param scores scores to convert
+     * @return array of NSGA2Scores
+     */
     public static <T> NSGA2Score<T>[] staticNSGA2Scores(ArrayList<Score<T>> scores) {
         @SuppressWarnings("unchecked")
 		NSGA2Score<T>[] scoresArray = new NSGA2Score[scores.size()];
@@ -155,14 +192,27 @@ public class NSGA2<T> extends MuPlusLambda<T> {
         return scoresArray;
     }
     
+    /**
+     * non-static version of selection method
+     * @param numParents number of parents to select from
+     * @param scores scores of parents
+     * @return list of selected genotypes
+     */
     @Override
     public ArrayList<Genotype<T>> selection(int numParents, ArrayList<Score<T>> scores) {
         return staticSelection(numParents, staticNSGA2Scores(scores));
     }
     
+    /**
+     * static version of selection method
+     * @param numParents number of parents to select from
+     * @param scoresArray array of scores from parents
+     * @return array list of selected genotypes
+     */
     public static <T> ArrayList<Genotype<T>> staticSelection(int numParents, NSGA2Score<T>[] scoresArray) {
         //NSGA2Score<T>[] scoresArray = staticNSGA2Scores(scores);
         assignCrowdingDistance(scoresArray);
+        //gets the pareto front of scores using a fast non-dominated sort
         ArrayList<ArrayList<NSGA2Score<T>>> fronts = fastNonDominatedSort(scoresArray);
         
         ArrayList<Genotype<T>> newParents = new ArrayList<Genotype<T>>(numParents);
@@ -171,7 +221,7 @@ public class NSGA2<T> extends MuPlusLambda<T> {
         
         while (numAdded < numParents) {
             ArrayList<NSGA2Score<T>> front = fronts.get(currentFront);
-            if (front.size() <= (numParents - numAdded)) {
+            if (front.size() <= (numParents - numAdded)) {//necessary if front is bigger than original number of parents
                 for (int i = 0; i < front.size(); i++) {
                     newParents.add(front.get(i).individual);
                     numAdded++;
@@ -308,7 +358,8 @@ public class NSGA2<T> extends MuPlusLambda<T> {
      * This should be transformed into proper JUnit Tests.
      * @param args
      */
-    public static void main(String[] args) {
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	public static void main(String[] args) {
         args = new String[]{"runNumber:0", "trials:1", "mu:5", "io:false", "netio:false", "mating:true", "task:edu.utexas.cs.nn.tasks.mspacman.MsPacManTask", "ea:edu.utexas.cs.nn.evolution.nsga2.NSGA2", "pacmanInputOutputMediator:edu.utexas.cs.nn.tasks.mspacman.sensors.mediators.FullTaskMediator"};
         Parameters.initializeParameterCollections(args);
         MMNEAT.loadClasses();
