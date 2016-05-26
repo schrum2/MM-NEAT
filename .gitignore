@@ -82,3 +82,5 @@ $RECYCLE.BIN/
 *.zds
 vizdoom/bin/vizdoom-He_Deceives.ini
 *.bmp
+*.txt
+*.xml
