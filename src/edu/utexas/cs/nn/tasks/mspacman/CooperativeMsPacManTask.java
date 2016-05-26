@@ -55,4 +55,7 @@ public abstract class CooperativeMsPacManTask<T extends Network> extends Coopera
     }
 
     public abstract int numberOfPopulations();
+    
+    public void finalCleanup() {
+    }
 }
