@@ -17,6 +17,10 @@ public class MiscUtil {
 
 	public static final Scanner CONSOLE = new Scanner(System.in);
 
+	public static double unitInvert(double x) {
+		return 1 - x;
+	}
+	
 	public static double scaleAndInvert(double x, double max) {
 		return scale(max - x, max);
 	}

@@ -35,7 +35,7 @@ public class TorusPredatorsByProximitySensorBlock implements TorusPredPreySensor
 	 */
 	public double[] sensorValues(TorusAgent me, TorusWorld world, TorusAgent[] preds, TorusAgent[] prey) {
 		double[] proximityPreds = new double[2 * numPredators];
-		double[] predOffsets = NNTorusPredPreyController.getPredatorOffsets(me, world, preds);
+		double[] predOffsets = NNTorusPredPreyController.getAgentOffsets(me, world, preds);
 
 		// holds sum of absolute values of X and Y offsets and the first index
 		// of the original offsets

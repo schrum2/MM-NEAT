@@ -26,7 +26,7 @@ public class TorusPreyByIndexSensorBlock implements TorusPredPreySensorBlock {
 	 *         inputs are the X and Y offsets from this agent to each prey
 	 */
 	public double[] sensorValues(TorusAgent me, TorusWorld world, TorusAgent[] preds, TorusAgent[] prey) {
-		return NNTorusPredPreyController.getPreyOffsets(me, world, prey);
+		return NNTorusPredPreyController.getAgentOffsets(me, world, prey);
 	}
 
 	@Override

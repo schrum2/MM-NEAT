@@ -26,7 +26,7 @@ public class TorusPredatorsByIndexSensorBlock implements TorusPredPreySensorBloc
 	 *         the X and Y offsets to each predator from this agent.
 	 */
 	public double[] sensorValues(TorusAgent me, TorusWorld world, TorusAgent[] preds, TorusAgent[] prey) {
-		return NNTorusPredPreyController.getPredatorOffsets(me, world, preds);
+		return NNTorusPredPreyController.getAgentOffsets(me, world, preds);
 	}
 
 	@Override

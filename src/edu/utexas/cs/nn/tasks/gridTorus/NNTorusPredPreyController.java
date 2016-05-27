@@ -16,6 +16,7 @@ import edu.utexas.cs.nn.tasks.gridTorus.sensors.TorusPredatorsByIndexSensorBlock
 import edu.utexas.cs.nn.tasks.gridTorus.sensors.TorusPredatorsByProximitySensorBlock;
 import edu.utexas.cs.nn.tasks.gridTorus.sensors.TorusPreyByIndexSensorBlock;
 import edu.utexas.cs.nn.tasks.gridTorus.sensors.TorusPreyByProximitySensorBlock;
+import edu.utexas.cs.nn.util.MiscUtil;
 import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
 
 /**
@@ -90,6 +91,11 @@ public class NNTorusPredPreyController extends TorusPredPreyController {
 	@Override
 	public int[] getAction(TorusAgent me, TorusWorld world, TorusAgent[] preds, TorusAgent[] prey) {
 		double[] inputs = inputs(me, world, preds, prey);
+		if(Parameters.parameters.booleanParameter("torusInvertSensorInputs"));{
+			for(int i = 0; i < inputs.length; i++){
+				inputs[i] = MiscUtil.unitInvert(inputs[i]);
+			}
+		}
 		if (networkInputs != null) {
 			TWEANN.inputPanel = networkInputs;
 		}
@@ -100,43 +106,23 @@ public class NNTorusPredPreyController extends TorusPredPreyController {
 	}
 
 	/**
-	 * gets the offsets from this agent to all prey agents
+	 * gets the offsets from this agent to all given agents
 	 * 
 	 * @param me
 	 *            this agent
 	 * @param world
 	 *            torus grid world
-	 * @param prey
-	 *            prey agents
-	 * @return the offsets to prey
+	 * @param agents
+	 *            other agents
+	 * @return the offsets to the other agents provided
 	 */
-	public static double[] getPreyOffsets(TorusAgent me, TorusWorld world, TorusAgent[] prey) {
-		double[] preyInputs = new double[prey.length * 2];
-		for (int i = 0; i < prey.length; i++) {
-			preyInputs[(2 * i)] = me.shortestXOffset(prey[i]) / (1.0 * world.width());
-			preyInputs[(2 * i) + 1] = me.shortestYOffset(prey[i]) / (1.0 * world.height());
+	public static double[] getAgentOffsets(TorusAgent me, TorusWorld world, TorusAgent[] agents) {
+		double[] agentInputs = new double[agents.length * 2];
+		for (int i = 0; i < agents.length; i++) {
+			agentInputs[(2 * i)] = me.shortestXOffset(agents[i]) / (1.0 * world.width());
+			agentInputs[(2 * i) + 1] = me.shortestYOffset(agents[i]) / (1.0 * world.height());
 		}
-		return preyInputs;
-	}
-
-	/**
-	 * gets the offsets from this agent to all predator agents
-	 * 
-	 * @param me
-	 *            this agent
-	 * @param world
-	 *            torus grid world
-	 * @param preds
-	 *            predator agents
-	 * @return the offsets to predators
-	 */
-	public static double[] getPredatorOffsets(TorusAgent me, TorusWorld world, TorusAgent[] preds) {
-		double[] predInputs = new double[preds.length * 2];
-		for (int i = 0; i < preds.length; i++) {
-			predInputs[(2 * i)] = me.shortestXOffset(preds[i]) / (1.0 * world.width());
-			predInputs[(2 * i) + 1] = me.shortestYOffset(preds[i]) / (1.0 * world.height());
-		}
-		return predInputs;
+		return agentInputs;
 	}
 
 	/**

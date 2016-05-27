@@ -303,6 +303,8 @@ public class Parameters {
 				"Whether or not to log information about the mutations and lineage");
 		booleanOptions.add("logPerformance", false,
 				"Whether or not to log performance information in a performance log");
+		booleanOptions.add("torusInvertSensorInputs", false,
+				"Causes agents' sensor inputs to be inverted in torusPredPreyTask");
 		booleanOptions.add("torusSenseByProximity", true,
 				"Causes agents' sensor inputs to be by proximity of the agent instead of simply each agent by indices");
 		booleanOptions.add("preyLongSurvivalTime", false,
