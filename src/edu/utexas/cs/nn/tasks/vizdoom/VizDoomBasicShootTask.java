@@ -12,6 +12,15 @@ import vizdoom.GameVariable;
 
 public class VizDoomBasicShootTask<T extends Network> extends VizDoomTask<T> {
 
+    // Save the inputRow once instead of recalculating it on every time step
+    private int inputRow;
+    
+    public VizDoomBasicShootTask() {
+        super();
+        // Replace magic number when getRow() method works
+        inputRow = 61; // getRow();
+    }
+    
     public void setDoomActions() {
         // Adds buttons that will be allowed.
         game.addAvailableButton(Button.MOVE_LEFT);
@@ -26,43 +35,35 @@ public class VizDoomBasicShootTask<T extends Network> extends VizDoomTask<T> {
         addAction(new int[]{0, 0, 1}, "Still and Shoot");
     }
 	
+    @Override
     public void setDoomStateVariables() {
         // Adds game variables that will be included in state.
         game.addAvailableGameVariable(GameVariable.AMMO2);
     }
     
-    
-    public static void main(String[] args) {
-    	Parameters.initializeParameterCollections(new String[]{"watch:false","io:false","netio:false","task:edu.utexas.cs.nn.tasks.vizdoom.VizDoomBasicShootTask", "trials:3", "printFitness:true"});
-    	MMNEAT.loadClasses();
-    	VizDoomBasicShootTask<TWEANN> vd = new VizDoomBasicShootTask<TWEANN>();
-    	TWEANNGenotype individual = new TWEANNGenotype();
-    	System.out.println(vd.evaluate(individual));
-    	System.out.println(vd.evaluate(individual));
-    	vd.finalCleanup();
-    }
-
 	@Override
 	public int numInputs() {
 		return game.getScreenWidth();
 	}
 
+        /**
+         * Inputs are from a single row in roughly the middle of the screen.
+         * The row should cross through the eye of the monster, creating
+         * a high contrast. Also, only the red color values are checked.
+         * @param s Game state
+         * @return scaled red color values from specified row
+         */
 	@Override
 	public double[] getInputs(GameState s) {
 		int width = game.getScreenWidth();
-		int height = game.getScreenHeight();
-		int row = 61; // MAGIC NUMBER, change when introducing ratio method in VizDoomTask
+		int row = inputRow; // Calculated in constructor
 		int color = RED_INDEX;
-    	double[] result = new double[width];
-    	int index = row * width * 3;
-		for(int y = 0; y < height; y++) {
-        	int bufferPos = 0;
+                double[] result = new double[width];
+                int index = row * width * 3; // 3 is for the three different color components: RGB
         	for(int x = 0; x < width; x++) {
-        		int c = index + bufferPos + color;
-                result[x] = (s.imageBuffer[c]) / 255.0;
-        		bufferPos += 3;
+        		int c = index + (3*x) + color;
+                        result[x] = (s.imageBuffer[c]) / 255.0;
         	}
-        }
 		return result;
 	}
 
@@ -110,4 +111,18 @@ public class VizDoomBasicShootTask<T extends Network> extends VizDoomTask<T> {
     	} 
 		return second;
 	}
+        
+        /**
+         * Test run in the domain
+         * @param args 
+         */
+    public static void main(String[] args) {
+    	Parameters.initializeParameterCollections(new String[]{"watch:false","io:false","netio:false","task:edu.utexas.cs.nn.tasks.vizdoom.VizDoomBasicShootTask", "trials:3", "printFitness:true"});
+    	MMNEAT.loadClasses();
+    	VizDoomBasicShootTask<TWEANN> vd = new VizDoomBasicShootTask<TWEANN>();
+    	TWEANNGenotype individual = new TWEANNGenotype();
+    	System.out.println(vd.evaluate(individual));
+    	System.out.println(vd.evaluate(individual));
+    	vd.finalCleanup();
+    }        
 }

@@ -45,6 +45,7 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T> i
     public DoomGame game;
     public List<int[]> actions;
     public List<String> actionLabels;
+    protected ScreenResolution designatedResolution;
     
     public VizDoomTask() {
         // These should not be here ... put in an init call?
@@ -112,6 +113,7 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T> i
     	assert !res.equals(ScreenResolution.RES_1400X787) : "1400X787 is too high of a resolution!";
     	assert !res.equals(ScreenResolution.RES_1600X900) : "1600X900 is too high of a resolution!";
     	assert !res.equals(ScreenResolution.RES_1920X1080) : "1920X1080 is too high of a resolution!";
+        designatedResolution = res;
         game.setScreenResolution(res);
 	}
 
@@ -208,6 +210,8 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T> i
     
     public abstract int numInputs();
     
+    // This method should not be in this class. Once it works properly, there will be no need
+    // to call drawGameStateRow above, so you should also remove this abstract method declaration
     public abstract int getRow();
     
     @Override
@@ -225,7 +229,7 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T> i
      * This method outputs the Gamestate according to the width and height given
      * You may change which of the RGB values appear as well, currently set to all red values.
      * 
-     * This is primarily a utility class for troubleshooting purposes.
+     * This is primarily a utility method for troubleshooting purposes.
      * @param s Game state
      * @param width screen width
      * @param height screen height
@@ -251,7 +255,8 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T> i
     /**
      * This method outputs the given row stretched across the height
      * You may change which of the RGB values appear as well, currently set to all red values.
-     * This is another utility class.
+     * 
+     * This is another utility method.
      * 
      * @param s
      * @param width
