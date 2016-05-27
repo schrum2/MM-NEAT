@@ -27,6 +27,7 @@ public class CommonConstants {
 	public static boolean freezeBeforeModeMutation;
 	public static boolean fs;
 	public static boolean hierarchicalMultitask;
+	public static boolean hyperNEAT;
 	public static boolean imprisonedWhileEdible;
 	public static boolean infiniteEdibleTime;
 	public static boolean logChildScores;
@@ -126,6 +127,7 @@ public class CommonConstants {
 		freezeBeforeModeMutation = Parameters.parameters.booleanParameter("freezeBeforeModeMutation");
 		fs = Parameters.parameters.booleanParameter("fs");
 		hierarchicalMultitask = Parameters.parameters.booleanParameter("hierarchicalMultitask");
+		hyperNEAT = Parameters.parameters.booleanParameter("hyperNEAT");
 		imprisonedWhileEdible = Parameters.parameters.booleanParameter("imprisonedWhileEdible");
 		infiniteEdibleTime = Parameters.parameters.booleanParameter("infiniteEdibleTime");
 		logChildScores = Parameters.parameters.booleanParameter("logChildScores");

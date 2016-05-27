@@ -122,7 +122,6 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 	 * @return A Pair of double arrays containing the fitness and other scores
 	 */
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {
-
 		TorusPredPreyController[] predAgents = getPredAgents(individual);
 		TorusPredPreyController[] preyAgents = getPreyAgents(individual);
 		exec = new TorusWorldExec();
@@ -359,12 +358,8 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 			List<Tuple2D> preyCoord = getCoordinates(prey);
 			List<Integer> preyIndices = getIndices(preyCoord, torusWidth);
 			for (Integer index : preyIndices) {
-				inputs[secondSubstrateStartingIndex + index] = 1.0; // push past
-																	// all
-																	// indices
-																	// of the
-																	// first
-																	// substrate
+				// push past all indices of the first substrate
+				inputs[secondSubstrateStartingIndex + index] = 1.0; 
 			}
 		}
 		return inputs;

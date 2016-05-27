@@ -184,38 +184,28 @@ public class Parameters {
 	public final void fillDefaults() {
 		// Integer parameters
 		integerOptions.add("rlGluePort", RLGlueTask.DEFAULT_PORT, "The port number for the current instance of RLGlue");
-		integerOptions.add("imageHeight", 100,
-				"height of CPPN image (overrides height of image being matched if overrideImageSize is true)");
-		integerOptions.add("imageWidth", 100,
-				"width of CPPN image (overrides width of image being matched if overrideImageSize is true)");
+		integerOptions.add("imageHeight", 100, "height of CPPN image (overrides height of image being matched if overrideImageSize is true)");
+		integerOptions.add("imageWidth", 100, "width of CPPN image (overrides width of image being matched if overrideImageSize is true)");
 		integerOptions.add("junctionsToSense", 1, "Number of junctions to which distance should be sensed");
-		integerOptions.add("crowdedGhostDistance", 30,
-				"Distance at which ghosts are considered to be crowding each other");
-		integerOptions.add("closeGhostDistance", 35,
-				"Distance at which threat ghosts are considered too close for safety");
+		integerOptions.add("crowdedGhostDistance", 30, "Distance at which ghosts are considered to be crowding each other");
+		integerOptions.add("closeGhostDistance", 35, "Distance at which threat ghosts are considered too close for safety");
 		integerOptions.add("maxCampTrials", -1, "Number of trials based on training camps");
 		integerOptions.add("edibleTime", Constants.EDIBLE_TIME, "Initial edible ghost time in Ms. Pac-Man");
 		integerOptions.add("minEdibleTime", Constants.EDIBLE_TIME, "What edible time is reduced to across generations");
-		integerOptions.add("maxEdibleTime", 3 * Constants.EDIBLE_TIME,
-				"What edible time starts at from the beginning of evolution");
-		integerOptions.add("consistentEdibleTimeGens", 50,
-				"Number of gens at end of evolution when edible time is settled");
-		integerOptions.add("multinetworkComboReached", 0,
-				"Tracks highest multinetwork combo reached so far to allow resuming after failure");
+		integerOptions.add("maxEdibleTime", 3 * Constants.EDIBLE_TIME, "What edible time starts at from the beginning of evolution");
+		integerOptions.add("consistentEdibleTimeGens", 50, "Number of gens at end of evolution when edible time is settled");
+		integerOptions.add("multinetworkComboReached", 0, "Tracks highest multinetwork combo reached so far to allow resuming after failure");
 		integerOptions.add("numActiveGhosts", 4, "Number of moving ghosts in pacman");
 		integerOptions.add("rawInputWindowSize", 5, "Raw input window size");
 		integerOptions.add("startingModes", 1, "Modes that a network starts with");
 		integerOptions.add("pacManLevelTimeLimit", 1000000, "Time steps per level until pacman dies");
 		integerOptions.add("edibleTaskTimeLimit", 2000, "Time steps per level for edible ghost only subtask");
 		integerOptions.add("maxModes", 1000, "Mode mutation cannot add more than this many modes");
-		integerOptions.add("numModesToPrefer", -1,
-				"If non-negative, then a fitness function rewards even usage of this many modes");
+		integerOptions.add("numModesToPrefer", -1, "If non-negative, then a fitness function rewards even usage of this many modes");
 		integerOptions.add("bdArchiveSize", 0, "Maximum allowable size of archive for BD");
 		integerOptions.add("initialPopulationSeed", -1, "Random seed used to determine the initial population");
-		integerOptions.add("randomSeed", -1,
-				"Random seed used to control algorithmic randomness (not domain randomness)");
-		integerOptions.add("ftype", ActivationFunctions.FTYPE_TANH,
-				"Integer designation of default activation function for networks");
+		integerOptions.add("randomSeed", -1, "Random seed used to control algorithmic randomness (not domain randomness)");
+		integerOptions.add("ftype", ActivationFunctions.FTYPE_TANH, "Integer designation of default activation function for networks");
 		integerOptions.add("maxGens", 500, "Maximum generations allowed for a LimitedGenerationalEAExperiment");
 		integerOptions.add("mu", 50, "Size of parent population in mu +/, lambda scheme");
 		integerOptions.add("lambda", 50, "Size of child population in mu +/, lambda scheme");
@@ -233,8 +223,7 @@ public class Parameters {
 		integerOptions.add("pacmanLives", 1, "Lives that a pacman agent starts with");
 		integerOptions.add("hiddenMLPNeurons", 10, "Number of hidden neurons for MLPs");
 		integerOptions.add("numMonsterRays", 5, "Number of ray trace sensors on each monster");
-		integerOptions.add("litterSize", 10,
-				"Number of offspring from a single source to evaluate for culling methods");
+		integerOptions.add("litterSize", 10, "Number of offspring from a single source to evaluate for culling methods");
 		integerOptions.add("cleanFrequency", 10, "How frequently the archetype needs to be cleaned out");
 		integerOptions.add("pacmanMaxLevel", 4, "Pacman level after which simulation ends");
 		integerOptions.add("justMaze", -1, "If 0 - 3, then Pac-Man only plays a specific maze over and over");
@@ -248,14 +237,11 @@ public class Parameters {
 		integerOptions.add("utNativeBotSkill", 3, "Skill (1-7) of native UT2004 bots to evaluate against");
 		integerOptions.add("utEvolvingBotSkill", 7, "Skill (1-7) of evolving UT2004 bot (affects accuracy)");
 		integerOptions.add("evaluationBudget", 0, "Number of extra evals that UCB1 has to work with");
-		integerOptions.add("maxTrials", Integer.MAX_VALUE,
-				"Max trials allowed by individual when using UCB1 or increasing trials");
+		integerOptions.add("maxTrials", Integer.MAX_VALUE, "Max trials allowed by individual when using UCB1 or increasing trials");
 		integerOptions.add("fsLinksPerOut", 1, "Initial links per output with feature selective nets");
-		integerOptions.add("numCoevolutionSubpops", 0,
-				"When evolving a selector, number of populations of subcontrollers to choose from");
+		integerOptions.add("numCoevolutionSubpops", 0, "When evolving a selector, number of populations of subcontrollers to choose from");
 		integerOptions.add("recentPastMemLength", -1, "Length of queue of past pacman states");
-		integerOptions.add("trialIncreaseFrequency", 1,
-				"If increasing trials, do so every time this many generations pass");
+		integerOptions.add("trialIncreaseFrequency", 1, "If increasing trials, do so every time this many generations pass");
 		integerOptions.add("keeperCampLimit", 0, "Number of camps allowed to persist across generations");
 		integerOptions.add("torusXDimensions", 100, "The dimension of the X-Axis, or the width, for the grid world");
 		integerOptions.add("torusYDimensions", 100, "The dimension of the Y-Axis, or the height, for the grid world");
@@ -263,27 +249,20 @@ public class Parameters {
 		integerOptions.add("torusPredators", 3, "Number of torus predators");
 		integerOptions.add("torusPreys", 2, "Number of torus preys");
 		integerOptions.add("proxGhostsToSense", 4, "Number of ghosts sorted by proximity to sense in pacman");
-		integerOptions.add("freezeMeltAlternateFrequency", 25,
-				"Generations between freezing/melting pref/policy neurons");
+		integerOptions.add("freezeMeltAlternateFrequency", 25, "Generations between freezing/melting pref/policy neurons");
 		integerOptions.add("genOfLastTUGGoalIncrease", 0, "Generation when last TUG goal increase occurred");
-		integerOptions.add("tugAdvancementTimeLimit", Integer.MAX_VALUE,
-				"How many gens new goals can remain unachieved before RWAs are reset");
+		integerOptions.add("tugAdvancementTimeLimit", Integer.MAX_VALUE, "How many gens new goals can remain unachieved before RWAs are reset");
 		integerOptions.add("disabledMode", -1, "If non-negative, then the designated mode can never be used");
 		integerOptions.add("endTUGGeneration", Integer.MAX_VALUE, "Generation at which TUG will stop being used");
 		integerOptions.add("startTUGGeneration", -1, "Generation at which TUG will start being used");
-		integerOptions.add("lairTime", Constants.COMMON_LAIR_TIME,
-				"How long ghosts are imprisoned in lair after being eaten");
-		integerOptions.add("minLairTime", Constants.COMMON_LAIR_TIME,
-				"What lair time is reduced to across generations");
-		integerOptions.add("maxLairTime", 3 * Constants.COMMON_LAIR_TIME,
-				"What lair time starts at from the beginning of evolution");
-		integerOptions.add("consistentLairTimeGens", 50,
-				"Number of gens at end of evolution when lair time is settled");
+		integerOptions.add("lairTime", Constants.COMMON_LAIR_TIME, "How long ghosts are imprisoned in lair after being eaten");
+		integerOptions.add("minLairTime", Constants.COMMON_LAIR_TIME, "What lair time is reduced to across generations");
+		integerOptions.add("maxLairTime", 3 * Constants.COMMON_LAIR_TIME, "What lair time starts at from the beginning of evolution");
+		integerOptions.add("consistentLairTimeGens", 50, "Number of gens at end of evolution when lair time is settled");
 		integerOptions.add("deltaCodingFrequency", 20, "How often to generate a delta coded population");
 		integerOptions.add("stopMode", -1, "Whenever this mode gets used, pause evaluation and wait for key press");
 		integerOptions.add("scentMode", -1, "Whenever this mode gets used, drop pheremone on scent path");
-		integerOptions.add("pacmanReplayDelay", Constants.DELAY,
-				"Milliseconds of pause between pacman time steps in replay mode");
+		integerOptions.add("pacmanReplayDelay", Constants.DELAY, "Milliseconds of pause between pacman time steps in replay mode");
 		// Long parameters
 		longOptions.add("lastInnovation", 0l, "Highest innovation number used so far");
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");

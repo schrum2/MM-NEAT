@@ -641,7 +641,7 @@ public class MMNEAT {
 				setNNInputParameters(dynamics.numInputSensors(), NNBreve2DMonster.NUM_OUTPUTS);
 			} else if (task instanceof TorusPredPreyTask) {
 				System.out.println("Setup Torus Predator/Prey Task");
-				if (Parameters.parameters.booleanParameter("hyperNEAT")) {
+				if (CommonConstants.hyperNEAT) {
 					System.out.println("Using HyperNEAT");
 					hyperNEATOverrides();
 					HyperNEATTask hnt = (HyperNEATTask) task;

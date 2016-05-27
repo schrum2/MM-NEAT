@@ -37,7 +37,8 @@ public class HyperNEATNNTorusPredPreyController extends NNTorusPredPreyControlle
 		double[] outputs = nn.process(inputs);
 		double[] modifiedOutputs = mapSubstrateOutputsToStandardOutputs(outputs);
 		// Assume one output for each direction
-		return isPredator ? predatorActions()[StatisticsUtilities.argmax(modifiedOutputs)]
+		return isPredator 
+				? predatorActions()[StatisticsUtilities.argmax(modifiedOutputs)]
 				: preyActions()[StatisticsUtilities.argmax(modifiedOutputs)];
 	}
 

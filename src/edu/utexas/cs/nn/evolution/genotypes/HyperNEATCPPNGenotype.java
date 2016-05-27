@@ -114,8 +114,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 	 */
 	@Override
 	public Genotype<TWEANN> copy() {
-		int[] temp = moduleUsage; // Schrum: Not sure if keeping moduleUsage is
-		// appropriate
+		int[] temp = moduleUsage; // Schrum: Not sure if keeping moduleUsage is appropriate
 		ArrayList<LinkGene> linksCopy = new ArrayList<LinkGene>(this.links.size());
 		for (LinkGene lg : this.links) {// needed for a deep copy
 			linksCopy.add(new LinkGene(lg.sourceInnovation, lg.targetInnovation, lg.weight, lg.innovation, false));
