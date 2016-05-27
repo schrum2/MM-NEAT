@@ -502,6 +502,15 @@ public class ArrayUtilTests {
 		a.add(1);
 		a.add(2);
 		a.add(3);
+		b.add(1);
+		b.add(2);
+		b.add(3);
+		c.add("yes");
+		c.add("no");
+		d.add("yes");
+		d.add("no");
+		e.add("yes");
+		e.add("maybe");
 		assertTrue(ArrayUtil.setEquality(a, b));
 		assertTrue(ArrayUtil.setEquality(c, d));
 		assertFalse(ArrayUtil.setEquality(c, e));
