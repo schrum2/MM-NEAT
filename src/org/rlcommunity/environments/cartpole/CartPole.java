@@ -75,7 +75,7 @@ public class CartPole extends RLGlueEnvironment implements HasAVisualizerInterfa
      */
 
     /*
-     * Watched by MONE
+     * Watched by MMNEAT if CommonConstants.watch is true
      */
     private CartPoleViewer viewer = null;
 
@@ -134,6 +134,7 @@ public class CartPole extends RLGlueEnvironment implements HasAVisualizerInterfa
     /*
      * RL GLUE METHODS
      */
+    @Override
     public String env_init() {
         x = 0.0f;
         x_dot = 0.0f;
@@ -143,6 +144,7 @@ public class CartPole extends RLGlueEnvironment implements HasAVisualizerInterfa
         return makeTaskSpec().getStringRepresentation();
     }
 
+    @Override
     public Observation env_start() {
         x = 0.0f;
         x_dot = 0.0f;
@@ -151,6 +153,7 @@ public class CartPole extends RLGlueEnvironment implements HasAVisualizerInterfa
         return makeObservation();
     }
 
+    @Override
     public Reward_observation_terminal env_step(Action action) {
         double xacc;
         double thetaacc;
@@ -206,6 +209,7 @@ public class CartPole extends RLGlueEnvironment implements HasAVisualizerInterfa
         }
     }
 
+    @Override
     public void env_cleanup() {
     }
 
@@ -288,10 +292,12 @@ public class CartPole extends RLGlueEnvironment implements HasAVisualizerInterfa
         return this.leftAngleBound;
     }
 
+    @Override
     public String getVisualizerClassName() {
         return "org.rlcommunity.environments.cartpole.visualizer.CartPoleVisualizer";
     }
 
+    @Override
     public URL getImageURL() {
         URL imageURL = CartPole.class.getResource("/images/cartpole.png");
         return imageURL;
@@ -352,22 +358,27 @@ public class CartPole extends RLGlueEnvironment implements HasAVisualizerInterfa
  */
 class DetailsProvider implements hasVersionDetails {
 
+    @Override
     public String getName() {
         return "Cart-Pole .9 Beta";
     }
 
+    @Override
     public String getShortName() {
         return "Cart-Pole";
     }
 
+    @Override
     public String getAuthors() {
         return "Brian Tanner from David Finton from Sutton and Anderson";
     }
 
+    @Override
     public String getInfoUrl() {
         return "http://library.rl-community.org/cartpole";
     }
 
+    @Override
     public String getDescription() {
         return "RL-Library Java Version of the classic Cart-Pole RL-Problem.";
     }

@@ -27,6 +27,7 @@ public class StateVariableExtractor implements FeatureExtractor {
         return tso.getNumContinuousObsDims() + tso.getNumDiscreteObsDims();
     }
 
+    @Override
     public double[] extract(Observation o) {
         double[] inputs = new double[o.intArray.length + o.doubleArray.length];
         for (int i = 0; i < o.intArray.length; i++) {
@@ -39,6 +40,7 @@ public class StateVariableExtractor implements FeatureExtractor {
         return inputs;
     }
 
+    @Override
     public String[] featureLabels() {
         int numDiscrete = tso.getNumDiscreteObsDims();
         int numContinuous = tso.getNumContinuousObsDims();
@@ -55,7 +57,6 @@ public class StateVariableExtractor implements FeatureExtractor {
 
 	@Override
 	public double[] scaleInputs(double[] inputs) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException("There is no sensible way to scale inputs in general. More details are needed");
 	}
 }

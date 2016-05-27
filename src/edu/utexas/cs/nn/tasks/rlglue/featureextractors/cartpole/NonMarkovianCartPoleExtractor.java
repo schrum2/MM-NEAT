@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.utexas.cs.nn.tasks.rlglue.featureextractors.cartpole;
 
 import edu.utexas.cs.nn.tasks.rlglue.featureextractors.FeatureExtractor;
@@ -13,15 +9,18 @@ import org.rlcommunity.rlglue.codec.types.Observation;
  */
 public class NonMarkovianCartPoleExtractor implements FeatureExtractor {
 
+    @Override
     public int numFeatures() {
         return 2;
     }
 
+    @Override
     public double[] extract(Observation o) {
         // Only use x and theta, and not the derivatives
         return new double[]{o.doubleArray[0], o.doubleArray[2]};
     }
 
+    @Override
     public String[] featureLabels() {
         return new String[]{"Position", "Angle"};
     }
