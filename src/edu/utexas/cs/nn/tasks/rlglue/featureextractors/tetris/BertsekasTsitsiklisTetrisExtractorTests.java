@@ -9,11 +9,12 @@ import org.rlcommunity.rlglue.codec.types.Observation;
 
 public class BertsekasTsitsiklisTetrisExtractorTests {
 
+	/**
+	 * Tests that the outputs given
+	 */
 	@Test
 	public void array_outputs() {
-		// TetrisViewer testView = new TetrisViewer(); //make a TetrisViewer
-		TetrisState testState = new TetrisState(); // makes a Tetris state to
-													// test with
+		TetrisState testState = new TetrisState();
 		BertsekasTsitsiklisTetrisExtractor BTTE = new BertsekasTsitsiklisTetrisExtractor();
 		// line piece
 		testState.worldState[166] = 1;
@@ -42,9 +43,6 @@ public class BertsekasTsitsiklisTetrisExtractorTests {
 		testState.worldState[185] = 1;
 		testState.worldState[175] = 1;
 		testState.worldState[186] = 1;
-		// System.out.println(testState);
-		// MiscUtil.waitForReadStringAndEnterKeyPress();
-
 		Observation o = testState.get_observation();
 		double[] inputs = BTTE.extract(o);
 
@@ -53,15 +51,14 @@ public class BertsekasTsitsiklisTetrisExtractorTests {
 		for (int i = 0; i < inputs.length; i++) {
 			assertEquals(inputs[i], expected[i], 0.0);
 		}
-		// System.out.println(Arrays.toString(inputs));
 	}
 
+	/**
+	 * Tests that the outputs given by the extractor are what is expected
+	 */
 	@Test
-	public void array_outputs_blind() { // same as above test, but with a sample
-										// that was less evaluated beforehand
-		// TetrisViewer testView = new TetrisViewer(); //make a TetrisViewer
-		TetrisState testState = new TetrisState(); // makes a Tetris state to
-													// test with
+	public void array_outputs_blind() { 
+		TetrisState testState = new TetrisState();
 		BertsekasTsitsiklisTetrisExtractor BTTE = new BertsekasTsitsiklisTetrisExtractor();
 		// line piece
 		testState.worldState[165] = 1;
@@ -86,8 +83,6 @@ public class BertsekasTsitsiklisTetrisExtractorTests {
 		testState.worldState[177] = 1;
 		testState.worldState[187] = 1;
 		testState.worldState[178] = 1;
-		// System.out.println(testState);
-		// MiscUtil.waitForReadStringAndEnterKeyPress();
 
 		Observation o = testState.get_observation();
 		double[] inputs = BTTE.scaleInputs(BTTE.extract(o));
@@ -97,6 +92,5 @@ public class BertsekasTsitsiklisTetrisExtractorTests {
 		for (int i = 0; i < inputs.length; i++) {
 			assertEquals(inputs[i], expected[i], 0.0);
 		}
-		// System.out.println(Arrays.toString(inputs));
 	}
 }

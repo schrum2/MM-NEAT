@@ -12,15 +12,13 @@ import org.rlcommunity.environments.tetris.TetrisState;
 
 public class TetrisAfterStateGeneratorTests {
 
+	/**
+	 * Tests that all afterstates are present in the returned hash and This part tests 
+	 * that the actions of the action list do give you the given state
+	 */
 	@Test
-	public void test_afterstate_occurance() { // This checks if all afterstates
-												// are present in the returned
-												// hash and This part tests that
-												// the actions of the action
-												// list do give you the given
-												// state
-		TetrisState testState = new TetrisState(); // makes a Tetris state to
-													// test with
+	public void test_afterstate_occurance() { 
+		TetrisState testState = new TetrisState(); 
 		// simple example used
 		testState.worldState[190] = 1;
 		testState.worldState[191] = 1;
@@ -209,26 +207,14 @@ public class TetrisAfterStateGeneratorTests {
 
 	}
 
-	public void starting_position_issue() { // this test is for an issue we run
-											// into that won't allow the tri
-											// piece to make any initial moves
-											// (take_action)
-		TetrisState testState = new TetrisState(); // makes a Tetris state to
-													// test with
-		testState.currentBlockId = 2;
-		testState.currentX = 3;
-		testState.currentY = -1;
-		testState.currentRotation = 0;
-	}
-
-	// Not a formal test, but still useful to determine block information -Gab
+	/**
+	 * Not a formal test. It is still useful to determine block information, 
+	 * so we will leave this commented here for now -Gab
+	 */
 	@Test
-	public void different_starting_blocks_positions() { // This tests for the
-														// starting X and Y of
-														// each piece
-		// TetrisViewer testView = new TetrisViewer(); //make a TetrisViewer
-		// TetrisState testState = new TetrisState(); // makes a Tetris state to
-		// test with
+	public void different_starting_blocks_positions() { 
+		// TetrisViewer testView = new TetrisViewer(); 
+		// TetrisState testState = new TetrisState(); 
 
 		// these are testing each shape in the testing environment
 		/*
@@ -325,40 +311,30 @@ public class TetrisAfterStateGeneratorTests {
 
 	}
 
+	/**
+	 * Tests that we get all the available afterstates given the mobile block is at spawn
+	 */
 	@Test
-	public void afterstates_at_spawn() { // This tests that we get all available
-											// afterstates
-		// TetrisViewer testView = new TetrisViewer(); //make a TetrisViewer
-		TetrisState testState = new TetrisState(); // makes a Tetris state to
-													// test with
-
-		// this is testing for the amount of afterstates we get with just teh
-		// first block
-		// we should get either 17 or 34, anything inbetween is ok(?) but
-		// anything below 17 poses an issue with our code
-		testState.currentBlockId = 4; // simulating piece 4 at spawn point
+	public void afterstates_at_spawn() {
+		TetrisState testState = new TetrisState(); 
+		testState.currentBlockId = 4; 
 		testState.currentX = 3;
 		testState.currentY = -1;
 		HashSet<TetrisStateActionPair> holder = TetrisAfterStateGenerator.generateAfterStates(testState);
 		HashSet<TetrisState> justStates = new HashSet<TetrisState>();
 		assertTrue(holder.size() >= 17 && holder.size() < 34);
-		for (TetrisStateActionPair i : holder) { // transfers only the tetris
-													// states to the hash set
+		for (TetrisStateActionPair i : holder) {
 			justStates.add(i.t1);
 		}
 		assertTrue(justStates.size() == 17);
 	}
 
+	/**
+	 * Tests that we get all the available afterstates given the mobile block has previously taken actions
+	 */
 	@Test
-	public void afterstates_after_action() { // This tests that we get all
-												// available afterstates when
-												// we've previous taken actions
-		// TetrisViewer testView = new TetrisViewer(); //make a TetrisViewer
-		TetrisState testState = new TetrisState(); // makes a Tetris state to
-													// test with
-
-		// This should test that we get 17 afterstates having taken other
-		// actions
+	public void afterstates_after_action() {
+		TetrisState testState = new TetrisState();
 		testState.currentBlockId = 4; // simulating piece 4 at spawn point
 		testState.currentX = 3 + 2; // right by 2
 		testState.currentY = -1 + 5; // down by 5
@@ -366,8 +342,7 @@ public class TetrisAfterStateGeneratorTests {
 		HashSet<TetrisStateActionPair> holder = TetrisAfterStateGenerator.generateAfterStates(testState);
 		HashSet<TetrisState> justStates = new HashSet<TetrisState>();
 
-		for (TetrisStateActionPair i : holder) { // transfers only the tetris
-													// states to the hash set
+		for (TetrisStateActionPair i : holder) { 
 			justStates.add(i.t1);
 		}
 		assertTrue(justStates.size() == 17);
@@ -379,22 +354,19 @@ public class TetrisAfterStateGeneratorTests {
 		HashSet<TetrisStateActionPair> holder2 = TetrisAfterStateGenerator.generateAfterStates(testState);
 		HashSet<TetrisState> justStates2 = new HashSet<TetrisState>();
 		assertTrue(holder.size() >= 17 && holder2.size() < 34);
-		for (TetrisStateActionPair i : holder2) { // transfers only the tetris
-													// states to the hash set
+		for (TetrisStateActionPair i : holder2) { 
 			justStates2.add(i.t1);
 		}
 		assertTrue(justStates2.size() == 17);
 
 	}
 
+	/**
+	 * Tests that we get all the available afterstates given a column is blocked off
+	 */
 	@Test
-	public void afterstates_with_blocked_wall() { // This tests that we get all
-													// available afterstates
-													// when a wall if blocked
-													// off
-		// TetrisViewer testView = new TetrisViewer(); //make a TetrisViewer
-		TetrisState testState = new TetrisState(); // makes a Tetris state to
-													// test with
+	public void afterstates_with_blocked_wall() { 
+		TetrisState testState = new TetrisState(); 
 		testState.currentBlockId = 4; // simulating piece 4 at spawn point
 		testState.currentX = 3;
 		testState.currentY = -1;
@@ -419,20 +391,18 @@ public class TetrisAfterStateGeneratorTests {
 
 		HashSet<TetrisStateActionPair> holder = TetrisAfterStateGenerator.generateAfterStates(testState);
 		HashSet<TetrisState> justStates = new HashSet<TetrisState>();
-		for (TetrisStateActionPair i : holder) { // transfers only the tetris
-													// states to the hash set
+		for (TetrisStateActionPair i : holder) { 
 			justStates.add(i.t1);
 		}
 		assertTrue(justStates.size() == 15);
 	}
 
+	/**
+	 * Tests that a mobile block will still try to fit under another block if that is deems the best afterstate
+	 */
 	@Test
-	public void fits_under_block() { // This test makes sure that the state of
-										// fitting underneath a block will
-										// appear (to accommodate for down
-										// action being included later)
-		TetrisState testState = new TetrisState(); // makes a Tetris state to
-													// test with
+	public void fits_under_block() { 
+		TetrisState testState = new TetrisState(); 
 		testState.currentBlockId = 5; // simulating piece 5 at spawn point
 		testState.currentX = 3;
 		testState.currentY = -2;
@@ -454,8 +424,7 @@ public class TetrisAfterStateGeneratorTests {
 		testState.worldState[198] = 1;
 		testState.worldState[199] = 1;
 
-		TetrisState temp = new TetrisState(testState); // makes a Tetris state
-														// to test with
+		TetrisState temp = new TetrisState(testState); 
 		temp.worldState[172] = 6;
 		temp.worldState[182] = 6;
 		temp.worldState[191] = 6;
@@ -465,17 +434,15 @@ public class TetrisAfterStateGeneratorTests {
 		temp.currentRotation = 3;
 
 		HashSet<TetrisStateActionPair> holder = TetrisAfterStateGenerator.generateAfterStates(testState);
-
 		assertTrue(holder.contains(new TetrisStateActionPair(temp, null)));
-
 	}
 
+	/**
+	 * Tests that the fall action will be used in situations that benefits the agent
+	 */
 	@Test
-	public void fall_in_action_list() { // this tests that the fall action will
-										// be used at all in situations where it
-										// will benefit the agent
-		TetrisState testState = new TetrisState(); // makes a Tetris state to
-													// test with
+	public void fall_in_action_list() { 
+		TetrisState testState = new TetrisState();
 		testState.currentBlockId = 1; // simulating piece 5 at spawn point
 		testState.currentX = 3;
 		testState.currentY = -2;

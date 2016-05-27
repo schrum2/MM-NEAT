@@ -3,7 +3,6 @@ package edu.utexas.cs.nn.util.datastructures;
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -11,31 +10,34 @@ import org.junit.Test;
 
 public class ArrayUtilTests {
 
+	/**
+	 * Tests that the given number of "1"s is returned in a double[]
+	 */
 	@Test
-	public void doubleOnes_test() { // tests that the given number of 1's is
-									// returned in the double[]
+	public void doubleOnes_test() {
 		int temp = 14;
 		double[] result = ArrayUtil.doubleOnes(temp);
 		double[] expected = { 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0 };
 		assertArrayEquals(result, expected, 0.0);
 	}
 
+	/**
+	 * Tests that the given number of "1"s is returned in a int[]
+	 */
 	@Test
-	public void intOnes_test() { // tests that the given number of 1's is
-									// returned in the int[]
+	public void intOnes_test() { 
 		int temp = 14;
 		int[] result = ArrayUtil.intOnes(temp);
 		int[] expected = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
 		assertArrayEquals(result, expected);
 	}
 
+	/**
+	 * Tests that the given array is of object type Double and not 
+	 * primitive type double
+	 */
 	@Test
-	public void primitiveDoubleArrayToDoubleArray_test() { // tests that the
-															// given array is of
-															// object type
-															// Double and not
-															// primitive type
-															// double
+	public void primitiveDoubleArrayToDoubleArray_test() { 
 		double[] test = { 14.0, 11.0, 8.0, 1.0, 2.0, 1.0, 8.0, 3.0, 23.0 };
 		Double[] result = ArrayUtil.primitiveDoubleArrayToDoubleArray(test);
 		assertTrue(test instanceof double[]);
@@ -45,10 +47,11 @@ public class ArrayUtilTests {
 		}
 	}
 
+	/**
+	 * Tests that an int[] is turned from a given ArrayList<Integer>
+	 */
 	@Test
-	public void intArrayFromArrayList_test() { // tests that an int[] is
-												// returned from a given
-												// ArrayList<Integer>
+	public void intArrayFromArrayList_test() { 
 		ArrayList<Integer> test = new ArrayList<Integer>();
 		test.add(12);
 		test.add(6);
@@ -63,10 +66,11 @@ public class ArrayUtilTests {
 		}
 	}
 
+	/**
+	 * Tests that an double[] is turned from a given ArrayList<Double>
+	 */
 	@Test
-	public void doubleArrayFromList_test() { // tests that an double[] is
-												// returned from a given
-												// ArrayList<Double>
+	public void doubleArrayFromList_test() { 
 		ArrayList<Double> test = new ArrayList<Double>();
 		test.add(12.0);
 		test.add(6.0);
@@ -81,9 +85,11 @@ public class ArrayUtilTests {
 		}
 	}
 
+	/**
+	 * Tests that the method correctly identifies members of a set
+	 */
 	@Test
-	public void containsAny_test() { // tests that containsAny correctly
-										// identifies members of a set
+	public void containsAny_test() { 
 		int[] members = { 1, 2, 3, 4, 5 };
 		int[] set1 = { 6, 7, 8, 9, 5 };
 		int[] set2 = { 0, 9, 7 };
@@ -94,9 +100,12 @@ public class ArrayUtilTests {
 		assertFalse(ArrayUtil.containsAny(members, set2));
 	}
 
+	/**
+	 * Tests that the method only returns true when int x is a member of 
+	 * the given set
+	 */
 	@Test
-	public void member_int_test() { // tests that member only returns true when
-									// int x is a member of the given set
+	public void member_int_test() {
 		int member = 5;
 		int[] set1 = { 6, 7, 8, 9, 5 };
 		int[] set2 = { 0, 9, 7 };
@@ -106,9 +115,12 @@ public class ArrayUtilTests {
 		assertFalse(ArrayUtil.member(member, set2));
 	}
 
+	/**
+	 * Tests that the method only returns true when long x is a member of 
+	 * the given set
+	 */
 	@Test
-	public void member_long_test() { // tests that member only returns true when
-										// long x is a member of the given set
+	public void member_long_test() { 
 		long member = 5;
 		long[] set1 = { 6, 7, 8, 9, 5 };
 		long[] set2 = { 0, 9, 7 };
@@ -118,10 +130,12 @@ public class ArrayUtilTests {
 		assertFalse(ArrayUtil.member(member, set2));
 	}
 
+	/**
+	 * Tests that the method only returns true when double x is a member 
+	 * of the given set
+	 */
 	@Test
-	public void member_double_test() { // tests that member only returns true
-										// when double x is a member of the
-										// given set
+	public void member_double_test() { 
 		double member = 5.0;
 		double[] set1 = { 6, 7, 8, 9, 5 };
 		double[] set2 = { 0, 9, 7 };
@@ -131,11 +145,12 @@ public class ArrayUtilTests {
 		assertFalse(ArrayUtil.member(member, set2));
 	}
 
+	/**
+	 * Tests that the method returns an array with the first array's 
+	 * elements followed by the second array's elements
+	 */
 	@Test
-	public void combineArrays_int_test() { // tests that combine arrays makes an
-											// array with the first array
-											// elements followed by the second
-											// array elements
+	public void combineArrays_int_test() { 
 		int[] first = { 1, 1, 1, 1, 1 };
 		int[] second = { 2, 2, 2, 2, 2 };
 		int[] third = { 3, 3, 3 };
@@ -153,11 +168,12 @@ public class ArrayUtilTests {
 		assertEquals(result2.length, first.length + third.length);
 	}
 
+	/**
+	 * Tests that the method returns an array with the first array's 
+	 * elements followed by the second array's elements
+	 */
 	@Test
-	public void combineArrays_long_test() { // tests that combine arrays makes
-											// an array with the first array
-											// elements followed by the second
-											// array elements
+	public void combineArrays_long_test() {
 		long[] first = { 1, 1, 1, 1, 1 };
 		long[] second = { 2, 2, 2, 2, 2 };
 		long[] third = { 3, 3, 3 };
@@ -175,14 +191,13 @@ public class ArrayUtilTests {
 		assertEquals(result2.length, first.length + third.length);
 	}
 
+	/**
+	 * Tests that the method correctly returns an int of the number 
+	 * of times the value (int) occures
+	 */
 	@Test
-	public void countOccurrences_int_array_test() { // tests that the method
-													// correctly returns an int
-													// of the number of times
-													// the value (int) occurs
-		int[] base = { 1, 6, 1, 7, 4, 3, 4, 6, 3, 4 }; // "1" is 2, "6" is 2,
-														// "7" is 1, "4" is 3,
-														// "3" is 2
+	public void countOccurrences_int_array_test() { 
+		int[] base = { 1, 6, 1, 7, 4, 3, 4, 6, 3, 4 }; 
 		assertEquals(ArrayUtil.countOccurrences(1, base), 2);
 		assertEquals(ArrayUtil.countOccurrences(3, base), 2);
 		assertEquals(ArrayUtil.countOccurrences(4, base), 3);
@@ -190,14 +205,13 @@ public class ArrayUtilTests {
 		assertEquals(ArrayUtil.countOccurrences(7, base), 1);
 	}
 
+	/**
+	 * Tests that the method correctly returns an int of the number 
+	 * of times the value (T) occures
+	 */
 	@Test
-	public void countOccurrences_arraylist_test() { // tests that the method
-													// correctly returns an int
-													// of the number of times
-													// the value (T) occurs
-		ArrayList<Integer> base = new ArrayList<Integer>(); // "1" is 2, "6" is
-															// 2, "7" is 1, "4"
-															// is 3, "3" is 2
+	public void countOccurrences_arraylist_test() { 
+		ArrayList<Integer> base = new ArrayList<Integer>(); 
 		base.add(1);
 		base.add(1);
 		base.add(4);
@@ -217,52 +231,59 @@ public class ArrayUtilTests {
 		assertEquals(ArrayUtil.countOccurrences("yeah", strings), 1);
 	}
 
+	/**
+	 * Tests that the method correctly identifies an arary of all
+	 * the same int
+	 */
 	@Test
-	public void allSame_test() { // tests that the allSame method correctly
-									// identifies an array of all the same int
+	public void allSame_test() { 
 		int[] base = { 1, 2, 1, 1, 1, 1, 1 };
 		assertFalse(ArrayUtil.allSame(base));
 		base[1] = 1;
 		assertTrue(ArrayUtil.allSame(base));
 	}
 
+	/**
+	 * Tests that the method correctly returns an int of the number 
+	 * of times the value (T) occurs
+	 */
 	@Test
-	public void countOccurrences_array_test() { // tests that the method
-												// correctly returns an int of
-												// the number of times the value
-												// (T) occurs
-		String[] base = { "yes", "yes", "no", "yes", "no", "yes" }; // "yes" is
-																	// 4, "no"
-																	// is 2,
-																	// "maybe"
-																	// is 0
+	public void countOccurrences_array_test() { 
+		String[] base = { "yes", "yes", "no", "yes", "no", "yes" };
 		assertEquals(ArrayUtil.countOccurrences("yes", base), 4);
 		assertEquals(ArrayUtil.countOccurrences("no", base), 2);
 		assertEquals(ArrayUtil.countOccurrences("maybe", base), 0);
 	}
 
+	/**
+	 * Tests that the filter returns an array of the correct size 
+	 * and of the right int values
+	 */
 	@Test
-	public void filter_test() { // tests that filter returns an array of the
-								// correct size and of the right int values
-		int[] base = { 1, 1, 4, 1, 1, 4, 1, 4, 1, 1, 1 }; // 8 "1"s and 3 "4"s
+	public void filter_test() { 
+		int[] base = { 1, 1, 4, 1, 1, 4, 1, 4, 1, 1, 1 }; 
 		assertEquals(ArrayUtil.filter(base, 4).length, 8);
 		assertTrue(ArrayUtil.allSame(ArrayUtil.filter(base, 4)));
 		assertEquals(ArrayUtil.filter(base, 1).length, 3);
 		assertTrue(ArrayUtil.allSame(ArrayUtil.filter(base, 1)));
 	}
 
+	/**
+	 * Tests that the correct position is actually being returned
+	 */
 	@Test
-	public void position_test() { // tests that the correct position is actually
-									// being returned
+	public void position_test() { 
 		int[] base = { 9, 9, 0, 9, 9, };
 		assertEquals(ArrayUtil.position(base, 9), 0);
 		assertEquals(ArrayUtil.position(base, 0), 2);
 	}
 
+	/**
+	 * Tests that the left hand side array is a subset of the
+	 * right hand side array (including spread out)
+	 */
 	@Test
-	public void subset_int_test() { // tests that the left hand side array is a
-									// subset of the right hand side array
-									// (including spread out)
+	public void subset_int_test() {
 		int[] base = { 2, 3, 4, 5, 6, 7, 8 };
 		int[] sub1 = { 2, 3, 4 };
 		int[] sub2 = { 2, 5, 8 };
@@ -272,10 +293,12 @@ public class ArrayUtilTests {
 		assertFalse(ArrayUtil.subset(notSub, base));
 	}
 
+	/**
+	 * Tests that the left hand side array is a subset of the
+	 * right hand side array (including spread out)
+	 */
 	@Test
-	public void subset_long_test() { // tests that the left hand side array is a
-										// subset of the right hand side array
-										// (including spread out)
+	public void subset_long_test() { 
 		long[] base = { 2, 3, 4, 5, 6, 7, 8 };
 		long[] sub1 = { 2, 3, 4 };
 		long[] sub2 = { 2, 5, 8 };
@@ -285,9 +308,11 @@ public class ArrayUtilTests {
 		assertFalse(ArrayUtil.subset(notSub, base));
 	}
 
+	/**
+	 * Tests that equal sequences are identified correctly
+	 */
 	@Test
-	public void equalSequences_test() { // tests that equal sequences are
-										// identified correctly
+	public void equalSequences_test() { 
 		double[] seq1 = { 1.0, 2.0, 3.0, 4.0, 5.0, 6.0 };
 		double[] seq2 = { 4.0, 5.0, 6.0 };
 		double[] seq3 = { 3.0, 4.0, 6.0, 7.0 };
@@ -297,10 +322,12 @@ public class ArrayUtilTests {
 		assertFalse(ArrayUtil.equalSequences(seq1, 0, seq2, 0, 3));
 	}
 
+	/**
+	 * Tests that the resulting Arraylist is of Integer and contains 
+	 * the given array elements
+	 */
 	@Test
-	public void intListFromArray_test() { // tests that the resulting Arraylist
-											// is of Integer and contains the
-											// given array elements
+	public void intListFromArray_test() { 
 		int[] base = { 2, 6, 3, 7, 3, 5, 1 };
 		assertTrue(ArrayUtil.intListFromArray(base) instanceof ArrayList<?>);
 		assertTrue(ArrayUtil.intListFromArray(base).get(0) instanceof Integer);
@@ -308,11 +335,12 @@ public class ArrayUtilTests {
 		assertEquals(result.get(0).intValue(), 2);
 	}
 
+	/**
+	 * Tests that the resulting Arraylist is of Double and contains 
+	 * the given array elements
+	 */
 	@Test
-	public void doubleVectorFromArray_test() { // tests that the resulting
-												// Arraylist is of Double and
-												// contains the given array
-												// elements
+	public void doubleVectorFromArray_test() { 
 		double[] base = { 2.0, 6.0, 3.0, 7.0, 3.0, 5.0, 1.0 };
 		assertTrue(ArrayUtil.doubleVectorFromArray(base) instanceof ArrayList<?>);
 		assertTrue(ArrayUtil.doubleVectorFromArray(base).get(0) instanceof Double);
@@ -320,9 +348,11 @@ public class ArrayUtilTests {
 		assertEquals(result.get(0).doubleValue(), 2.0, 0.0);
 	}
 
+	/**
+	 * Tests that the returned array is the correct column
+	 */
 	@Test
-	public void column_array_test() { // tests that the returned array is the
-										// correct column
+	public void column_array_test() {
 		double[][] matrix = new double[3][3];
 		matrix[0][0] = 0.0;
 		matrix[0][1] = 6.0;
@@ -340,9 +370,11 @@ public class ArrayUtilTests {
 		assertEquals(col[2], 3.0, 0.0);
 	}
 
+	/**
+	 * Tests that the returned array is the correct column
+	 */
 	@Test
-	public void column_arraylist_test() { // tests that the returned array is
-											// the correct column
+	public void column_arraylist_test() { 
 		ArrayList<ArrayList<Integer>> matrix = new ArrayList<ArrayList<Integer>>();
 		ArrayList<Integer> a = new ArrayList<Integer>();
 		ArrayList<Integer> b = new ArrayList<Integer>();
@@ -366,10 +398,11 @@ public class ArrayUtilTests {
 		assertEquals(result[2].intValue(), 7);
 	}
 
+	/**
+	 * Tests that the array returned contains only the values set to true
+	 */
 	@Test
-	public void keepTrueValues_int_test() { // tests that the array returned
-											// contains only the values set to
-											// true
+	public void keepTrueValues_int_test() { 
 		int[] base = { 0, 4, 6, 2, 9, 0, 2, 0 };
 		boolean[] keep = { false, true, true, true, true, false, true, false };
 		int[] result = ArrayUtil.keepTrueValues(base, keep);
@@ -379,10 +412,11 @@ public class ArrayUtilTests {
 		assertFalse(result[0] == 0);
 	}
 
+	/**
+	 * Tests that the array returned contains only the values set to true
+	 */
 	@Test
-	public void keepTrueValues_double_test() { // tests that the array returned
-												// contains only the values set
-												// to true
+	public void keepTrueValues_double_test() { 
 		double[] base = { 0.0, 4.2, 6.0, 2.3, 9.0, 0.0, 2.5, 0.0 };
 		boolean[] keep = { false, true, true, true, true, false, true, false };
 		double[] result = ArrayUtil.keepTrueValues(base, keep);
@@ -392,9 +426,11 @@ public class ArrayUtilTests {
 		assertFalse(result[0] == 0.0);
 	}
 
+	/**
+	 * Tests that the two arrays are correctly added together
+	 */
 	@Test
-	public void zipAdd_double_test() { // tests that the two arrays are
-										// correctly added together
+	public void zipAdd_double_test() { 
 		double[] a = { 1.0, 1.0, 1.0, 1.0, 1.0 };
 		double[] b = { 1.0, 2.0, 3.0, 4.0, 5.0 };
 		assertTrue(ArrayUtil.zipAdd(a, b) instanceof double[]);
@@ -406,9 +442,11 @@ public class ArrayUtilTests {
 		assertEquals(ArrayUtil.zipAdd(a, b)[4], 6.0, 0.0);
 	}
 
+	/**
+	 * Tests that the two arrays are correctly added together
+	 */
 	@Test
-	public void zipAdd_int_test() { // tests that the two arrays are correctly
-									// added together
+	public void zipAdd_int_test() { 
 		int[] a = { 1, 1, 1, 1, 1 };
 		int[] b = { 1, 2, 3, 4, 5 };
 		assertTrue(ArrayUtil.zipAdd(a, b) instanceof int[]);
@@ -420,9 +458,12 @@ public class ArrayUtilTests {
 		assertEquals(ArrayUtil.zipAdd(a, b)[4], 6);
 	}
 
+	/**
+	 * Tests that the resulting array only holds the pair-wise maxes 
+	 * of the given arrays
+	 */
 	@Test
-	public void zipMax_test() { // tests that the resulting array only holds the
-								// pair-wise maxes of the given arrays
+	public void zipMax_test() {
 		double[] a = { 5.0, 1.0, 5.0, 1.0, 6.0 };
 		double[] b = { 1.0, 2.0, 3.0, 4.0, 5.0 };
 		assertTrue(ArrayUtil.zipMax(a, b) instanceof double[]);
@@ -434,9 +475,11 @@ public class ArrayUtilTests {
 		assertEquals(ArrayUtil.zipMax(a, b)[4], 6.0, 0.0);
 	}
 
+	/**
+	 * Tests that the given array values are correctly scaled
+	 */
 	@Test
-	public void scale_test() { // tests that the array values are correctly
-								// scaled
+	public void scale_test() { 
 		double[] base = { 1.0, 2.0, 3.0, 4.0 };
 		assertEquals(ArrayUtil.scale(base, 2)[0], 2.0, 0.0);
 		assertEquals(ArrayUtil.scale(base, 2)[1], 4.0, 0.0);
@@ -445,10 +488,12 @@ public class ArrayUtilTests {
 		assertEquals(ArrayUtil.scale(base, 70)[0], 70.0, 0.0);
 	}
 
+	/**
+	 * Tests that the array returned only contained the 
+	 * intersection of the given arrays
+	 */
 	@Test
-	public void intersection_test() { // tests that the array returned only
-										// contains the intersection of the
-										// given arrays
+	public void intersection_test() { 
 		int[] a = { 1, 2, 3, 4, 5 };
 		int[] b = { 4, 5, 6, 7, 8 };
 		assertTrue(ArrayUtil.intersection(a, b) instanceof int[]);
@@ -457,8 +502,11 @@ public class ArrayUtilTests {
 		assertEquals(ArrayUtil.intersection(a, b)[1], 5);
 	}
 
+	/**
+	 * Tests that the resulting array is correct (and in order of set)
+	 */
 	@Test
-	public void integerSetToArray_test() { // tests that the resulting array
+	public void integerSetToArray_test() { 
 		Set<Integer> base = new HashSet<Integer>();
 		base.add(5);
 		base.add(2);
@@ -470,8 +518,11 @@ public class ArrayUtilTests {
 		assertEquals(ArrayUtil.integerSetToArray(base)[3], 5);
 	}
 
+	/**
+	 * Tests that the resulting portion is correct
+	 */
 	@Test
-	public void portion_test() { // tests that the resulting portion is correct
+	public void portion_test() { 
 		double[] base = { 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0 };
 		assertTrue(ArrayUtil.portion(base, 2, 4) instanceof double[]);
 		assertEquals(ArrayUtil.portion(base, 2, 4).length, 3);
@@ -479,10 +530,11 @@ public class ArrayUtilTests {
 		assertEquals(ArrayUtil.portion(base, 2, 4)[2], 5.0, 0.0);
 	}
 
+	/**
+	 * Tests that the method correctly determines what arrays are equal
+	 */
 	@Test
-	public void setEquality_long_test() { // tests that the equality function
-											// correctly determines what arrays
-											// are equals
+	public void setEquality_long_test() { 
 		long[] a = { 1, 2, 3, 4 };
 		long[] b = { 1, 2, 3, 4 };
 		long[] c = { 1, 2, 3 };
@@ -490,10 +542,11 @@ public class ArrayUtilTests {
 		assertFalse(ArrayUtil.setEquality(a, c));
 	}
 
+	/**
+	 * Tests that the method correctly determines what arrays are equal
+	 */
 	@Test
-	public void setEquality_arraylist_test() { // tests that the equality
-												// function correctly determines
-												// what arrays are equals
+	public void setEquality_arraylist_test() { 
 		ArrayList<Integer> a = new ArrayList<Integer>();
 		ArrayList<Integer> b = new ArrayList<Integer>();
 		ArrayList<String> c = new ArrayList<String>();

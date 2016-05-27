@@ -9,13 +9,13 @@ import org.rlcommunity.rlglue.codec.types.Observation;
 import edu.utexas.cs.nn.tasks.rlglue.featureextractors.tetris.BertsekasTsitsiklisTetrisExtractor;
 
 public class TetrisAfterStateAgentTests {
+	
+	/**
+	 * Tests that the outputs scale correctly
+	 */
 	@Test
 	public void does_scale() {
-		// Test borrowed from BertsekasTsitsiklisTetrisExtractorTests THANKS ME,
-		// YOU'RE WELCOME ME -Gab
-		// TetrisViewer testView = new TetrisViewer(); //make a TetrisViewer
-		TetrisState testState = new TetrisState(); // makes a Tetris state to
-													// test with
+		TetrisState testState = new TetrisState(); 
 		BertsekasTsitsiklisTetrisExtractor BTTE = new BertsekasTsitsiklisTetrisExtractor();
 		// line piece
 		testState.worldState[166] = 1;
@@ -44,19 +44,14 @@ public class TetrisAfterStateAgentTests {
 		testState.worldState[185] = 1;
 		testState.worldState[175] = 1;
 		testState.worldState[186] = 1;
-		// System.out.println(testState);
-		// MiscUtil.waitForReadStringAndEnterKeyPress();
-
+		
 		Observation o = testState.get_observation();
 		double[] inputs = BTTE.scaleInputs(BTTE.extract(o));
 
 		double[] expected = new double[] { 0.1, 0.15, 0.15, 0.05, 0.05, 0.15, 0.2, 0.2, 0.2, 0.2, 0.05, 0, 0.1, 0, 0.1,
 				0.05, 0, 0, 0, 0.2, 0.045, 1 };
 		for (int i = 0; i < inputs.length; i++) {
-			// System.out.println("When the input is at " + i + ", scaled is " +
-			// inputs[i] + " and expected is " + expected[i]);
 			assertEquals(inputs[i], expected[i], 0.0);
 		}
-		// System.out.println(Arrays.toString(inputs));
 	}
 }

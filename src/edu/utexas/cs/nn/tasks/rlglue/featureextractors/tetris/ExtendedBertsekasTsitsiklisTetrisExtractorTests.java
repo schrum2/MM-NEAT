@@ -9,11 +9,13 @@ import org.rlcommunity.environments.tetris.TetrisState;
 import org.rlcommunity.rlglue.codec.types.Observation;
 
 public class ExtendedBertsekasTsitsiklisTetrisExtractorTests {
+	
+	/**
+	 * Tests that the number of holes in a TetrisState is correctly identified
+	 */
 	@Test
 	public void number_of_holes() {
-		// TetrisViewer testView = new TetrisViewer(); //make a TetrisViewer
-		TetrisState testState = new TetrisState(); // makes a Tetris state to
-													// test with
+		TetrisState testState = new TetrisState(); 
 		BertsekasTsitsiklisTetrisExtractor EBTTE = new ExtendedBertsekasTsitsiklisTetrisExtractor();
 		// line piece
 		testState.worldState[166] = 1;
@@ -42,9 +44,7 @@ public class ExtendedBertsekasTsitsiklisTetrisExtractorTests {
 		testState.worldState[185] = 1;
 		testState.worldState[175] = 1;
 		testState.worldState[186] = 1;
-		// System.out.println(testState);
-		// MiscUtil.waitForReadStringAndEnterKeyPress();
-
+		
 		Observation o = testState.get_observation();
 		double[] inputs = EBTTE.scaleInputs(EBTTE.extract(o));
 		System.out.println(inputs.length);
@@ -56,6 +56,5 @@ public class ExtendedBertsekasTsitsiklisTetrisExtractorTests {
 		for (int i = 0; i < inputs.length; i++) {
 			assertEquals(inputs[i], expected[i], 0.0);
 		}
-		// System.out.println(Arrays.toString(inputs));
 	}
 }
