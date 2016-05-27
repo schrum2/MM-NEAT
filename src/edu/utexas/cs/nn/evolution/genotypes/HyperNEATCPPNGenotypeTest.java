@@ -42,9 +42,8 @@ public class HyperNEATCPPNGenotypeTest {
 	/**
 	 * Sets up test environment
 	 */
-	@Before
-	public void setUp() throws Exception {
-		Parameters.initializeParameterCollections(new String[]{"io:false","netio:false", "recurrency:false","mmdRate:1.0"});
+	public void setUp(String speedUp) {
+		Parameters.initializeParameterCollections(new String[]{"io:false","netio:false", "recurrency:false","mmdRate:1.0", "speedUpHyperNEAT:" + speedUp});
 		MMNEAT.loadClasses();
 		hcppn = new HyperNEATCPPNGenotype();
 		cppn = new TWEANN(new TWEANNGenotype());
@@ -58,17 +57,40 @@ public class HyperNEATCPPNGenotypeTest {
 	            sIMap.put(subs.get(i).getName(), i);
 	        }
 	}
+	
+	public void tearDown() {
+		hcppn = null;
+		cppn = null;
+		subs = null;
+		connections = null;
+		sIMap = null;
+		MMNEAT.clearClasses();
+	}
 
 	/**
 	 * Tests creation of list of nodes in substrates. Order of substrates is not imortant as long as mapping is accurate
 	 */
 	@Test
-	public void testCreateSubstrateNodes() {
+	public void testCreateSubstrateNodesSlow() {
+		setUp("false");
 		ArrayList<NodeGene> nodes = hcppn.createSubstrateNodes(subs);
 		assertEquals(nodes.size(), subs.get(sub1Index).getSize().t1*subs.get(sub1Index).getSize().t2 + subs.get(sub2Index).getSize().t1*subs.get(sub2Index).getSize().t2);
 		assertEquals(hcppn.innovationID, nodes.size());
+		tearDown();
 	}
 	
+	@Test
+	public void testCreateSubstrateNodesFast() {
+		setUp("true");
+		assertTrue(hcppn.newNodes == null);
+		cppn = hcppn.getPhenotype();
+		ArrayList<TWEANN.Node> test = cppn.nodes;
+		cppn = hcppn.getPhenotype();
+		ArrayList<TWEANN.Node> test2 = cppn.nodes;
+		cppn = hcppn.getPhenotype();
+		ArrayList<TWEANN.Node> test3 = cppn.nodes;
+		
+	}
 //	/**
 //	 * Tests creation of list of links. Utilizes other methods tested below
 //	 * Only a viable test when command line parameter for test for expression threshold is off.
