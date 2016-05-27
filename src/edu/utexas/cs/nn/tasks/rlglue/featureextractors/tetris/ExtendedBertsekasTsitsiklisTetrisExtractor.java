@@ -15,10 +15,7 @@ public class ExtendedBertsekasTsitsiklisTetrisExtractor extends BertsekasTsitsik
 	@Override
 	public double[] scaleInputs(double[] inputs) {
 		double[] original = super.scaleInputs(inputs);
-		int originalFeatures = TetrisState.worldWidth + (TetrisState.worldWidth - 1) + 3; // Number
-																							// of
-																							// original
-																							// features
+		int originalFeatures = TetrisState.worldWidth + (TetrisState.worldWidth - 1) + 3;
 		for (int i = originalFeatures; i < inputs.length; i++) {
 			original[i] = inputs[i] / TetrisState.worldHeight;
 		}
@@ -28,10 +25,7 @@ public class ExtendedBertsekasTsitsiklisTetrisExtractor extends BertsekasTsitsik
 	@Override
 	public String[] featureLabels() {
 		String[] labels = super.featureLabels();
-		int originalFeatures = TetrisState.worldWidth + (TetrisState.worldWidth - 1) + 3; // Number
-																							// of
-																							// original
-																							// features
+		int originalFeatures = TetrisState.worldWidth + (TetrisState.worldWidth - 1) + 3; 
 		for (int i = originalFeatures; i < labels.length; i++) {
 			labels[i] = "Column " + i + " Holes";
 		}

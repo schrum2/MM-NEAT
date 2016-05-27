@@ -21,10 +21,6 @@ public class BertsekasTsitsiklisTetrisExtractor implements FeatureExtractor {
 	protected final int worldWidth;
 	protected final int worldHeight;
 
-	// public final int NUM_COLUMN_FEATURES;
-	// public final int NUM_DIFF_FEATURES;
-	// public final int NUM_TOTAL_FEATURES;
-
 	ArrayList<TetrisPiece> possibleBlocks = new ArrayList<TetrisPiece>(7);
 
 	/**
@@ -44,10 +40,6 @@ public class BertsekasTsitsiklisTetrisExtractor implements FeatureExtractor {
 	public BertsekasTsitsiklisTetrisExtractor(int width, int height) {
 		this.worldWidth = width;
 		this.worldHeight = height;
-		// this.NUM_COLUMN_FEATURES = width;
-		// this.NUM_DIFF_FEATURES = width - 1;
-		// this.NUM_TOTAL_FEATURES = NUM_COLUMN_FEATURES + NUM_DIFF_FEATURES +
-		// 3;
 
 		possibleBlocks.add(TetrisPiece.makeLine());
 		possibleBlocks.add(TetrisPiece.makeSquare());
@@ -94,31 +86,16 @@ public class BertsekasTsitsiklisTetrisExtractor implements FeatureExtractor {
 														// "worldWidth +
 														// (worldWidth - 1) + 3"
 
-		int[] worldState = new int[worldWidth * worldHeight]; // creates the
-																// linear array
-																// version of
-																// the game
-																// world
+		// creates the linear array version of the game world
+		int[] worldState = new int[worldWidth * worldHeight]; 
+		
 		System.arraycopy(o.intArray, 0, worldState, 0, worldWidth * worldHeight);
 		double[] blockIndicator = new double[possibleBlocks.size()];
-		for (int i = 0; i < possibleBlocks.size(); i++) { // for each possible
-															// block, add
-															// whether or not it
-															// is falling to the
-															// blockIndicator
-															// array
-			blockIndicator[i] = o.intArray[worldState.length + i]; // this sets
-																	// the block
-																	// indicator
-																	// spots as
-																	// either 0
-																	// or 1
-																	// according
-																	// to which
-																	// block is
-																	// currently
-																	// falling
-																	// (1)
+		
+		// for each possible block, add whether or not it is falling to the blockIndicator array
+		for (int i = 0; i < possibleBlocks.size(); i++) { 
+			// this sets the block indicator spots as either 0 or 1 according to which block is currently falling (1)
+			blockIndicator[i] = o.intArray[worldState.length + i]; 
 		}
 		// blotMobilePiece(worldState,
 		// StatisticsUtilities.argmax(blockIndicator),
@@ -126,7 +103,7 @@ public class BertsekasTsitsiklisTetrisExtractor implements FeatureExtractor {
 		// o.intArray[TetrisState.TETRIS_STATE_CURRENT_Y_INDEX],
 		// o.intArray[TetrisState.TETRIS_STATE_CURRENT_ROTATION_INDEX]);
 		// This is commented out because it messes up the scores of afterstates
-		// where the mobile piece is at the bottome and in the process of being
+		// where the mobile piece is at the bottom and in the process of being
 		// written. -Gab
 
 		int in = 0;
@@ -230,33 +207,13 @@ public class BertsekasTsitsiklisTetrisExtractor implements FeatureExtractor {
 	@Override
 	public double[] scaleInputs(double[] inputs) {
 		double[] next = new double[inputs.length];
-		int height_features = TetrisState.worldWidth + (TetrisState.worldWidth - 1) + 1; // height
-																							// values
-																							// (10),
-																							// height
-																							// differences
-																							// (9),
-																							// and
-																							// max
-																							// height
-																							// (1)
+		// height values (10), height differences (9), and max height (1)
+		int height_features = TetrisState.worldWidth + (TetrisState.worldWidth - 1) + 1; 
 		for (int i = 0; i < height_features; i++) {
 			next[i] = inputs[i] / TetrisState.worldHeight;
 		}
-		next[height_features] = inputs[height_features] / TetrisState.TETRIS_STATE_NUMBER_WORLD_GRID_BLOCKS; // scales
-																												// down
-																												// the
-																												// number
-																												// of
-																												// holes
-																												// in
-																												// relation
-																												// to
-																												// the
-																												// whole
-																												// of
-																												// the
-																												// board
+		// scales down the number of holes in relation to the whole of the board
+		next[height_features] = inputs[height_features] / TetrisState.TETRIS_STATE_NUMBER_WORLD_GRID_BLOCKS; 
 		next[height_features + 1] = 1.0; // bias is 1, so not scaling
 		return next;
 	}

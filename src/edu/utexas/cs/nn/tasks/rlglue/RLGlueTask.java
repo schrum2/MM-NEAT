@@ -198,26 +198,16 @@ public class RLGlueTask<T extends Network> extends NoisyLonerTask<T>implements N
 		}
 		// Special case for MO Tetris
 		if (tetrisBlocksOnScreen || tetrisTimeSteps) {
-
+			Tetris game = (Tetris) environment; 
 			double[] fitness = null;
 			if (tetrisBlocksOnScreen) {
 				TetrisAfterStateAgent<T> tasa = (TetrisAfterStateAgent<T>) agent;
-
 				int numberOfBlocksInState;
-				if (rlNumSteps[num] == maxStepsPerEpisode) { // Checks if the we
-																// have reached
-																// the last step
-																// allowed
-					numberOfBlocksInState = TetrisState.worldHeight * TetrisState.worldWidth; // Sets
-																								// to
-																								// max
-																								// to
-																								// reward
-																								// not
-																								// losing
-																								// for
-																								// this
-																								// long
+				// Checks if the we have reached the last step allowed
+				if (rlNumSteps[num] == maxStepsPerEpisode) { 
+					// Sets to max to reward not losing for this long
+					numberOfBlocksInState = TetrisState.worldHeight * TetrisState.worldWidth; 
+					
 				} else {
 					numberOfBlocksInState = tasa.getNumberOfBlocksInLastState();
 				}
@@ -229,7 +219,7 @@ public class RLGlueTask<T extends Network> extends NoisyLonerTask<T>implements N
 			} else { // timeSteps only
 				fitness = new double[] { rlNumSteps[num], rlReturn[num] };
 			}
-			Pair<double[], double[]> p = new Pair<double[], double[]>(fitness, new double[0]);
+			Pair<double[], double[]> p = new Pair<double[], double[]>(fitness, game.getNumberOfRows());
 			return p;
 		}
 

@@ -130,39 +130,14 @@ public class TetrisAfterStateAgent<T extends Network> extends RLGlueAgent<T> {
 			// MiscUtil.waitForReadStringAndEnterKeyPress();
 
 			for (int k = 0; k < outputPairs.get(index).t2.size(); k++) {
-				currentActionList.add(outputPairs.get(index).t2.get(k)); // this
-																			// should
-																			// add
-																			// the
-																			// next
-																			// action
-																			// to
-																			// the
-																			// linked
-																			// list
-																			// in
-																			// the
-																			// proper
-																			// order
+				currentActionList.add(outputPairs.get(index).t2.get(k)); 
+				// this should add the next action to the linked list in the proper order
 			}
 			currentActionList.add(TetrisState.NONE); // Let the block settle and
 														// a new one spawns
 		}
 
-		Action action = new Action(MMNEAT.tso.getNumDiscreteActionDims(), MMNEAT.tso.getNumContinuousActionDims()); // moved
-																													// this
-																													// from
-																													// before
-																													// the
-																													// action
-																													// call,
-																													// because
-																													// both
-																													// actions
-																													// may
-																													// need
-																													// it
-																													// -Gab
+		Action action = new Action(MMNEAT.tso.getNumDiscreteActionDims(), MMNEAT.tso.getNumContinuousActionDims()); 
 		// Current action is next one in list
 		action.intArray[0] = currentActionList.get(0);
 		currentActionList.remove(0);
@@ -180,24 +155,12 @@ public class TetrisAfterStateAgent<T extends Network> extends RLGlueAgent<T> {
 	 */
 	public static TetrisState observationToTetrisState(Observation o) {
 		TetrisState ts = new TetrisState();
-		ts.currentX = o.intArray[TetrisState.TETRIS_STATE_CURRENT_X_INDEX]; // adds
-																			// the
-																			// Observation's
-																			// X
-																			// to
-																			// tempState
-		ts.currentY = o.intArray[TetrisState.TETRIS_STATE_CURRENT_Y_INDEX]; // adds
-																			// the
-																			// Observation's
-																			// Y
-																			// to
-																			// tempState
-		ts.currentRotation = o.intArray[TetrisState.TETRIS_STATE_CURRENT_ROTATION_INDEX]; // adds
-																							// the
-																							// Observation's
-																							// rotation
-																							// to
-																							// tempState
+		ts.currentX = o.intArray[TetrisState.TETRIS_STATE_CURRENT_X_INDEX]; 
+		// adds the Observation's X to tempState
+		ts.currentY = o.intArray[TetrisState.TETRIS_STATE_CURRENT_Y_INDEX]; 
+		// adds the Observation's Y to tempState
+		ts.currentRotation = o.intArray[TetrisState.TETRIS_STATE_CURRENT_ROTATION_INDEX]; 
+		// adds the Observation's rotation to tempState
 		for (int p = 0; p < TetrisState.TETRIS_STATE_NUMBER_POSSIBLE_BLOCKS; p++) {
 			if (o.intArray[ts.worldState.length + p] == 1) { // this checks for
 																// the current

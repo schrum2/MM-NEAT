@@ -51,6 +51,10 @@ public class Tetris extends RLGlueEnvironment implements HasAVisualizerInterface
 	private int currentScore = 0;
 	protected TetrisState gameState = null;
 	static final int terminalScore = 0;
+	public int rowsOf1 = 0;
+	public int rowsOf2 = 0;
+	public int rowsOf3 = 0;
+	public int rowsOf4 = 0;	
 
 	/**
 	 * This Tetris method calls getDefaultParameters so it can initialize with
@@ -79,13 +83,8 @@ public class Tetris extends RLGlueEnvironment implements HasAVisualizerInterface
 	 */
 	public static ParameterHolder getDefaultParameters() {
 		ParameterHolder p = new ParameterHolder();
-		rlVizLib.utilities.UtilityShop.setVersionDetails(p, new DetailsProvider()); // no
-																					// doc
-																					// to
-																					// check
-																					// what
-																					// this
-																					// does?
+		rlVizLib.utilities.UtilityShop.setVersionDetails(p, new DetailsProvider()); 
+		// no doc to check what this does?
 		return p;
 	}
 
@@ -117,6 +116,11 @@ public class Tetris extends RLGlueEnvironment implements HasAVisualizerInterface
 		gameState.spawn_block();
 		gameState.blockMobile = true;
 		currentScore = 0;
+		rowsOf1 = 0;
+		rowsOf2 = 0;
+		rowsOf3 = 0;
+		rowsOf4 = 0;	
+
 
 		Observation o = gameState.get_observation();
 		return o;
@@ -167,7 +171,17 @@ public class Tetris extends RLGlueEnvironment implements HasAVisualizerInterface
 		if (!gameState.gameOver()) {
 			ro.terminal = 0;
 			ro.r = gameState.get_score() - currentScore;
+			if(ro.r == 1){
+				rowsOf1++;
+			} else if(ro.r == 2){
+				rowsOf2++;
+			} else if(ro.r == 4){
+				rowsOf3++;
+			} else if(ro.r == 8){
+				rowsOf4++;
+			}
 			currentScore = gameState.get_score();
+			
 		} else {
 			ro.r = Tetris.terminalScore;
 			currentScore = 0;
@@ -176,6 +190,12 @@ public class Tetris extends RLGlueEnvironment implements HasAVisualizerInterface
 		return ro;
 	}
 
+	public double[] getNumberOfRows(){
+		double[] rows = {rowsOf1, rowsOf2, rowsOf3, rowsOf4};
+		return rows;
+	}
+	
+	
 	/**
 	 * Cleans the environment
 	 */

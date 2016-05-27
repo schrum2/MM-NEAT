@@ -564,7 +564,7 @@ public class TetrisState {
 	public int get_score() {
 		return score;
 	}
-
+	
 	public int getWidth() {
 		return worldWidth;
 	}
