@@ -562,7 +562,6 @@ public class TetrisState {
     }
 
     /*End of Tetris Helper Functions*/
-    @SuppressWarnings("static-access")
 	public TetrisState(TetrisState stateToCopy) {
         this.blockMobile = stateToCopy.blockMobile;
         this.currentBlockId = stateToCopy.currentBlockId;
@@ -571,9 +570,7 @@ public class TetrisState {
         this.currentY = stateToCopy.currentY;
         this.score = stateToCopy.score;
         this.is_game_over = stateToCopy.is_game_over;
-        this.worldWidth = stateToCopy.worldWidth;
-        this.worldHeight = stateToCopy.worldHeight;
-
+        
         this.worldState = new int[stateToCopy.worldState.length];
         for (int i = 0; i < this.worldState.length; i++) {
             this.worldState[i] = stateToCopy.worldState[i];
@@ -587,6 +584,7 @@ public class TetrisState {
 
     }
 
+    @Override
     public String toString() {
     	return toString(true);
     }    
