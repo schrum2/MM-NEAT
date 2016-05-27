@@ -641,16 +641,9 @@ public class MMNEAT {
 				setNNInputParameters(dynamics.numInputSensors(), NNBreve2DMonster.NUM_OUTPUTS);
 			} else if (task instanceof TorusPredPreyTask) {
 				System.out.println("Setup Torus Predator/Prey Task");
-				if (CommonConstants.hyperNEAT) {
-					System.out.println("Using HyperNEAT");
-					hyperNEATOverrides();
-					HyperNEATTask hnt = (HyperNEATTask) task;
-					setNNInputParameters(HyperNEATTask.NUM_CPPN_INPUTS, hnt.getSubstrateConnectivity().size());
-				} else { // Standard Pred/Prey with human-specified sensors
-					int numInputs = determineNumPredPreyInputs();
-					NetworkTask t = (NetworkTask) task;
-					setNNInputParameters(numInputs, t.outputLabels().length);
-				}
+				int numInputs = determineNumPredPreyInputs();
+				NetworkTask t = (NetworkTask) task;
+				setNNInputParameters(numInputs, t.outputLabels().length);
 			} else if (task instanceof UT2004Task) {
 				System.out.println("Setup UT2004 Task");
 				UT2004Task utTask = (UT2004Task) task;
@@ -664,8 +657,7 @@ public class MMNEAT {
 				VizDoomTask t = (VizDoomTask) task;
 				setNNInputParameters(t.numInputs(), t.numActions());
 			} else if (task == null) {
-				// this else statement should only happen for JUnit testing
-				// cases.
+				// this else statement should only happen for JUnit testing cases.
 				// Some default network setup is needed.
 				setNNInputParameters(5, 3);
 			} else {
@@ -673,6 +665,13 @@ public class MMNEAT {
 				System.out.println(task);
 				System.exit(1);
 			}
+			
+			// Changes network input setting to HyperNEAT settings
+			if (CommonConstants.hyperNEAT) {
+				System.out.println("Using HyperNEAT");
+				hyperNEATOverrides();
+			}
+			
 			setupMetaHeuristics();
 			// An EA is always needed. Currently only GenerationalEA classes are
 			// supported
@@ -737,12 +736,15 @@ public class MMNEAT {
 
 	/**
 	 * Using HyperNEAT means certain parameters values need to be overridden
+	 * @throws NoSuchMethodException 
 	 */
-	private static void hyperNEATOverrides() {
+	private static void hyperNEATOverrides() throws NoSuchMethodException {
 		// Cannot monitor inputs with HyperNEAT because the NetworkTask
 		// interface no longer applies
 		CommonConstants.monitorInputs = false;
 		Parameters.parameters.setBoolean("monitorInputs", false);
+		HyperNEATTask hnt = (HyperNEATTask) task;
+		setNNInputParameters(HyperNEATTask.NUM_CPPN_INPUTS, hnt.getSubstrateConnectivity().size());
 	}
 
 	/**

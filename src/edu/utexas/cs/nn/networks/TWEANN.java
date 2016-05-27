@@ -10,6 +10,7 @@ import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.util.CombinatoricUtilities;
+import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
 import edu.utexas.cs.nn.util.random.RandomNumbers;
 import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
 
@@ -678,6 +679,7 @@ public class TWEANN implements Network {
 
 		// Load inputs
 		for (int i = 0; i < numIn; i++) {
+			assert !Double.isNaN(inputs[i]) : "Input " + i + " is NaN!" + Arrays.toString(inputs);
 			nodes.get(i).load(inputs[i]);
 		}
 

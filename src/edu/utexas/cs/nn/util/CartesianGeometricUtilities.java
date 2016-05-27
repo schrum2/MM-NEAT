@@ -28,6 +28,8 @@ public class CartesianGeometricUtilities {
 	public static Tuple2D centerAndScale(Tuple2D toScale, int width, int height) {
 		double newX = centerAndScale(toScale.x, width);
 		double newY = centerAndScale(toScale.y, height);
+		assert !Double.isNaN(newX) : "newX is NaN! width="+width+", height="+height+", toScale="+toScale;
+		assert !Double.isNaN(newY) : "newY is NaN! width="+width+", height="+height+", toScale="+toScale;
 		return new Tuple2D(newX, newY);
 	}
 
@@ -44,6 +46,10 @@ public class CartesianGeometricUtilities {
 	 * @return scaled coordinate
 	 */
 	public static double centerAndScale(double toScale, int maxDimension) {
+		if(maxDimension == 1) {
+			assert toScale == 0 : "If the dimension is 1, then you can only scale 0";
+			return 0;
+		}
 		return ((toScale / (maxDimension - 1)) * 2) - 1;
 	}
 
