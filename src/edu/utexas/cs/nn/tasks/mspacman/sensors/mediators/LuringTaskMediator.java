@@ -12,7 +12,7 @@ package edu.utexas.cs.nn.tasks.mspacman.sensors.mediators;
  */
 public class LuringTaskMediator extends GhostTaskMediator {
 
-    public LuringTaskMediator() {
-        super(false);
-    }
+	public LuringTaskMediator() {
+		super(false);
+	}
 }

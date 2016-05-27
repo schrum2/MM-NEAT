@@ -11,27 +11,27 @@ import java.util.ArrayList;
  */
 public class RealValuedGenotype extends NumericArrayGenotype<Double> {
 
-    public RealValuedGenotype(ArrayList<Double> genes) {
-        super(genes);
-    }
+	public RealValuedGenotype(ArrayList<Double> genes) {
+		super(genes);
+	}
 
-    public RealValuedGenotype(double[] genes) {
-        super(ArrayUtil.primitiveDoubleArrayToDoubleArray(genes));
-    }
+	public RealValuedGenotype(double[] genes) {
+		super(ArrayUtil.primitiveDoubleArrayToDoubleArray(genes));
+	}
 
-    public RealValuedGenotype(int size) {
-        this(RandomNumbers.randomArray(size));
-    }
+	public RealValuedGenotype(int size) {
+		this(RandomNumbers.randomArray(size));
+	}
 
-    public Genotype<ArrayList<Double>> copy() {
-        return new RealValuedGenotype(genes);
-    }
+	public Genotype<ArrayList<Double>> copy() {
+		return new RealValuedGenotype(genes);
+	}
 
-    public Genotype<ArrayList<Double>> newInstance() {
-        return new RealValuedGenotype(genes.size());
-    }
+	public Genotype<ArrayList<Double>> newInstance() {
+		return new RealValuedGenotype(genes.size());
+	}
 
-    public void mutate() {
-        new PerturbMutation(genes.size()).mutate(this);
-    }
+	public void mutate() {
+		new PerturbMutation(genes.size()).mutate(this);
+	}
 }

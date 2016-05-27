@@ -15,7 +15,7 @@ import edu.utexas.cs.nn.networks.Network;
  */
 public class ProperlyEatenPowerPillScore<T extends Network> extends MsPacManObjective<T> {
 
-    public double fitness(Organism<T> individual) {
-        return g.getProperlyEatenPowerPills();
-    }
+	public double fitness(Organism<T> individual) {
+		return g.getProperlyEatenPowerPills();
+	}
 }

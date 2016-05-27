@@ -14,12 +14,12 @@ import edu.utexas.cs.nn.networks.TWEANN;
  */
 public class MeltThenFreezePreferenceMutation extends TWEANNMutation {
 
-    public MeltThenFreezePreferenceMutation() {
-        super("freezePreferenceRate");
-    }
+	public MeltThenFreezePreferenceMutation() {
+		super("freezePreferenceRate");
+	}
 
-    public void mutate(Genotype<TWEANN> genotype) {
-        ((TWEANNGenotype) genotype).meltNetwork();
-        ((TWEANNGenotype) genotype).freezePreferenceNeurons();
-    }
+	public void mutate(Genotype<TWEANN> genotype) {
+		((TWEANNGenotype) genotype).meltNetwork();
+		((TWEANNGenotype) genotype).freezePreferenceNeurons();
+	}
 }

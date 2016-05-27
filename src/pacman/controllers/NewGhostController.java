@@ -13,7 +13,7 @@ import pacman.game.Constants;
  */
 public abstract class NewGhostController extends Controller<EnumMap<Constants.GHOST, Constants.MOVE>> {
 
-    public void reset() {
-        super.threadRevive();
-    }
+	public void reset() {
+		super.threadRevive();
+	}
 }

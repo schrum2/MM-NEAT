@@ -13,16 +13,17 @@ import edu.utexas.cs.nn.networks.Network;
 /**
  *
  * @author Jacob Schrum
- * @param <T> type of phenotype
+ * @param <T>
+ *            type of phenotype
  */
 public class SharedNNGhosts<T extends Network> extends Organism<T> {
 
-    public SharedNNGhostsController controller;
-    
-    public SharedNNGhosts(Genotype<T> genotype) {
-        super(genotype);
-        Network net = (Network) this.getGenotype().getPhenotype();
-        this.controller = new SharedNNCheckEachDirectionGhostsController(net);
-    }
+	public SharedNNGhostsController controller;
+
+	public SharedNNGhosts(Genotype<T> genotype) {
+		super(genotype);
+		Network net = (Network) this.getGenotype().getPhenotype();
+		this.controller = new SharedNNCheckEachDirectionGhostsController(net);
+	}
 
 }

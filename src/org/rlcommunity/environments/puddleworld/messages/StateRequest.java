@@ -29,29 +29,25 @@ import rlVizLib.messaging.environment.EnvironmentMessages;
 
 public class StateRequest extends EnvironmentMessages {
 
-    public StateRequest(GenericMessage theMessageObject) {
-        super(theMessageObject);
-    }
+	public StateRequest(GenericMessage theMessageObject) {
+		super(theMessageObject);
+	}
 
-    public static StateResponse Execute() {
-        String theRequest = AbstractMessage.makeMessage(
-                MessageUser.kEnv.id(),
-                MessageUser.kBenchmark.id(),
-                EnvMessageType.kEnvCustom.id(),
-                MessageValueType.kString.id(),
-                "GETPWSTATE");
+	public static StateResponse Execute() {
+		String theRequest = AbstractMessage.makeMessage(MessageUser.kEnv.id(), MessageUser.kBenchmark.id(),
+				EnvMessageType.kEnvCustom.id(), MessageValueType.kString.id(), "GETPWSTATE");
 
-        String responseMessage = RLGlue.RL_env_message(theRequest);
+		String responseMessage = RLGlue.RL_env_message(theRequest);
 
-        StateResponse theResponse;
-        try {
-            theResponse = new StateResponse(responseMessage);
-        } catch (NotAnRLVizMessageException e) {
-            System.err.println("In ".getClass().getName() + ", the response was not RL-Viz compatible");
-            theResponse = null;
-        }
+		StateResponse theResponse;
+		try {
+			theResponse = new StateResponse(responseMessage);
+		} catch (NotAnRLVizMessageException e) {
+			System.err.println("In ".getClass().getName() + ", the response was not RL-Viz compatible");
+			theResponse = null;
+		}
 
-        return theResponse;
+		return theResponse;
 
-    }
+	}
 }

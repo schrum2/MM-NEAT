@@ -11,19 +11,19 @@ import edu.utexas.cs.nn.scores.Score;
  */
 public class MaxModulesFitness implements Metaheuristic {
 
-    @SuppressWarnings("rawtypes")
-    @Override
-    public void augmentScore(Score s) {
-        s.extraScore(((NetworkGenotype) s.individual).numModules());
-    }
+	@SuppressWarnings("rawtypes")
+	@Override
+	public void augmentScore(Score s) {
+		s.extraScore(((NetworkGenotype) s.individual).numModules());
+	}
 
-    @Override
-    public double minScore() {
-        return 1;
-    }
+	@Override
+	public double minScore() {
+		return 1;
+	}
 
-    @Override
-    public double startingTUGGoal() {
-        return minScore();
-    }
+	@Override
+	public double startingTUGGoal() {
+		return minScore();
+	}
 }

@@ -8,13 +8,13 @@ import java.awt.event.KeyEvent;
  */
 public class KeyBoardInput extends KeyAdapter {
 
-    private int key;
+	private int key;
 
-    public int getKey() {
-        return key;
-    }
+	public int getKey() {
+		return key;
+	}
 
-    public void keyPressed(KeyEvent e) {
-        key = e.getKeyCode();
-    }
+	public void keyPressed(KeyEvent e) {
+		key = e.getKeyCode();
+	}
 }

@@ -14,7 +14,7 @@ import pacman.game.Constants;
  */
 public class EdibleTimeParameter<T extends Network> extends MsPacManObjective<T> {
 
-    public double fitness(Organism<T> individual) {
-        return Constants.EDIBLE_TIME;
-    }
+	public double fitness(Organism<T> individual) {
+		return Constants.EDIBLE_TIME;
+	}
 }

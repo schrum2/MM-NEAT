@@ -8,13 +8,13 @@ import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
  */
 public class AtePowerPillBlock extends BooleanSensorBlock {
 
-    @Override
-    public String senseLabel() {
-        return "Just Ate Power Pill";
-    }
+	@Override
+	public String senseLabel() {
+		return "Just Ate Power Pill";
+	}
 
-    @Override
-    public boolean predicate(GameFacade gf, int lastDirection) {
-        return gf.justAtePowerPill();
-    }
+	@Override
+	public boolean predicate(GameFacade gf, int lastDirection) {
+		return gf.justAtePowerPill();
+	}
 }

@@ -11,9 +11,9 @@ import edu.utexas.cs.nn.util.PopulationUtil;
 import edu.utexas.cs.nn.util.file.FileUtilities;
 
 /**
- * General evolution experiments are meant to save the
- * best genome in each objective to a directory bestObjectives.
- * This experiment loads those genomes and evaluates them.
+ * General evolution experiments are meant to save the best genome in each
+ * objective to a directory bestObjectives. This experiment loads those genomes
+ * and evaluates them.
  *
  * @author Jacob Schrum
  */
@@ -25,9 +25,10 @@ public class ObjectiveBestNetworksExperiment<T> implements Experiment {
 	 * Load best performer in each objective (previously saved)
 	 */
 	public void init() {
-		if(Parameters.parameters.booleanParameter("watchLastBest")) {
+		if (Parameters.parameters.booleanParameter("watchLastBest")) {
 			// TODO: Generalize for more than one objective
-			String dir = FileUtilities.getSaveDirectory() + "/bestObjectives/gen" + Parameters.parameters.integerParameter("lastSavedGeneration") + "_bestIn0.xml";
+			String dir = FileUtilities.getSaveDirectory() + "/bestObjectives/gen"
+					+ Parameters.parameters.integerParameter("lastSavedGeneration") + "_bestIn0.xml";
 			genotypes = new ArrayList<Genotype<T>>();
 			genotypes.add((Genotype<T>) PopulationUtil.extractGenotype(dir));
 		} else {
@@ -37,12 +38,11 @@ public class ObjectiveBestNetworksExperiment<T> implements Experiment {
 	}
 
 	/**
-	 * Evaluate each individual.
-	 * Only works for Loner Tasks
+	 * Evaluate each individual. Only works for Loner Tasks
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void run() {
-		for(int i = 0; i < genotypes.size(); i++) {
+		for (int i = 0; i < genotypes.size(); i++) {
 			System.out.println("Best in Objective " + i + ": " + genotypes.get(i).getId());
 			Score s = ((LonerTask) MMNEAT.task).evaluateOne(genotypes.get(i));
 			System.out.println(s);

@@ -29,35 +29,45 @@ import edu.utexas.cs.nn.util.util2D.Tuple2D;
  */
 public class HyperNEATCPPNGenotypeTest {
 
-	//hardcoded indices of substrate from list
+	// hardcoded indices of substrate from list
 	public static int sub1Index = 0;
 	public static int sub2Index = 1;
-	
+
 	HyperNEATCPPNGenotype hcppn;
 	TWEANN cppn;
 	LinkedList<Substrate> subs;
 	LinkedList<Pair<String, String>> connections;
 	HashMap<String, Integer> sIMap;
-	
+
 	/**
 	 * Sets up test environment
 	 */
 	public void setUp(String speedUp) {
-		Parameters.initializeParameterCollections(new String[]{"io:false","netio:false", "recurrency:false","mmdRate:1.0", "speedUpHyperNEAT:" + speedUp});
+		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "recurrency:false",
+				"mmdRate:1.0", "speedUpHyperNEAT:" + speedUp });
 		MMNEAT.loadClasses();
 		hcppn = new HyperNEATCPPNGenotype();
 		cppn = new TWEANN(new TWEANNGenotype());
 		subs = new LinkedList<Substrate>();
 		connections = new LinkedList<Pair<String, String>>();
-		subs.add(new Substrate(new Pair<Integer, Integer>(5,5), 0, new Triple<Integer, Integer, Integer>(0,0,0), "I_0"));//only 2 substrates in this test
-		subs.add(new Substrate(new Pair<Integer, Integer>(5,5), 0, new Triple<Integer, Integer, Integer>(1,0,0), "I_1"));//both input substrates
-		connections.add(new Pair<String, String>(subs.get(0).getName(), subs.get(1).getName()));//only one connection, between the two substrates
-		sIMap = new HashMap<String, Integer>();//links connection list index to substrate 
-	        for (int i = 0; i < subs.size(); i++) {
-	            sIMap.put(subs.get(i).getName(), i);
-	        }
+		subs.add(new Substrate(new Pair<Integer, Integer>(5, 5), 0, new Triple<Integer, Integer, Integer>(0, 0, 0),
+				"I_0"));// only 2 substrates in this test
+		subs.add(new Substrate(new Pair<Integer, Integer>(5, 5), 0, new Triple<Integer, Integer, Integer>(1, 0, 0),
+				"I_1"));// both input substrates
+		connections.add(new Pair<String, String>(subs.get(0).getName(), subs.get(1).getName()));// only
+																								// one
+																								// connection,
+																								// between
+																								// the
+																								// two
+																								// substrates
+		sIMap = new HashMap<String, Integer>();// links connection list index to
+												// substrate
+		for (int i = 0; i < subs.size(); i++) {
+			sIMap.put(subs.get(i).getName(), i);
+		}
 	}
-	
+
 	public void tearDown() {
 		hcppn = null;
 		cppn = null;
@@ -68,17 +78,19 @@ public class HyperNEATCPPNGenotypeTest {
 	}
 
 	/**
-	 * Tests creation of list of nodes in substrates. Order of substrates is not imortant as long as mapping is accurate
+	 * Tests creation of list of nodes in substrates. Order of substrates is not
+	 * imortant as long as mapping is accurate
 	 */
 	@Test
 	public void testCreateSubstrateNodesSlow() {
 		setUp("false");
 		ArrayList<NodeGene> nodes = hcppn.createSubstrateNodes(subs);
-		assertEquals(nodes.size(), subs.get(sub1Index).getSize().t1*subs.get(sub1Index).getSize().t2 + subs.get(sub2Index).getSize().t1*subs.get(sub2Index).getSize().t2);
+		assertEquals(nodes.size(), subs.get(sub1Index).getSize().t1 * subs.get(sub1Index).getSize().t2
+				+ subs.get(sub2Index).getSize().t1 * subs.get(sub2Index).getSize().t2);
 		assertEquals(hcppn.innovationID, nodes.size());
 		tearDown();
 	}
-	
+
 	@Test
 	public void testCreateSubstrateNodesFast() {
 		setUp("true");
@@ -89,50 +101,60 @@ public class HyperNEATCPPNGenotypeTest {
 		ArrayList<TWEANN.Node> test2 = cppn.nodes;
 		cppn = hcppn.getPhenotype();
 		ArrayList<TWEANN.Node> test3 = cppn.nodes;
-		
+
 	}
-//	/**
-//	 * Tests creation of list of links. Utilizes other methods tested below
-//	 * Only a viable test when command line parameter for test for expression threshold is off.
-//	 * Otherwise, all other functions of createNodeLinks method checked in other tests
-//	 */
-//	 *@Test
-//	 *public void testCreateNodeLinks() {
-//	 *	ArrayList<LinkGene> links = hcppn.createNodeLinks(cppn, connections, subs, sIMap);
-//	 *	int sizeLinks = subs.get(sub1Index).size.t1*subs.get(sub2Index).size.t2 * subs.get(sub2Index).size.t1*subs.get(sub2Index).size.t2; 
-//	 *	assertEquals(sizeLinks, links.size());
-//	 *}
-//	 */
+	// /**
+	// * Tests creation of list of links. Utilizes other methods tested below
+	// * Only a viable test when command line parameter for test for expression
+	// threshold is off.
+	// * Otherwise, all other functions of createNodeLinks method checked in
+	// other tests
+	// */
+	// *@Test
+	// *public void testCreateNodeLinks() {
+	// * ArrayList<LinkGene> links = hcppn.createNodeLinks(cppn, connections,
+	// subs, sIMap);
+	// * int sizeLinks = subs.get(sub1Index).size.t1*subs.get(sub2Index).size.t2
+	// * subs.get(sub2Index).size.t1*subs.get(sub2Index).size.t2;
+	// * assertEquals(sizeLinks, links.size());
+	// *}
+	// */
 
 	/**
-	 * Tests looping through the two substrates to be connected and setting those connections
+	 * Tests looping through the two substrates to be connected and setting
+	 * those connections
 	 */
 	@Test
 	public void testLoopThroughLinks() {
-		int endingIndex = connections.size()-1;
+		int endingIndex = connections.size() - 1;
 		int indexOfTest = 0;
 		ArrayList<LinkGene> newLinks = new ArrayList<LinkGene>();
-		newLinks = hcppn.loopThroughLinks(cppn, indexOfTest, subs.get(sub1Index), subs.get(sub2Index), sub1Index, sub2Index, subs);
-		//below check only necessary when parameter for including link is not on
-		//assertEquals(subs.get(sub1Index).size.t1*subs.get(sub1Index).size.t2*subs.get(sub2Index).size.t1*subs.get(sub2Index).size.t2, newLinks.size());
-		
-		ILocated2D scaledSourceCoordinates = CartesianGeometricUtilities.centerAndScale(new Tuple2D(0, 0), subs.get(sub1Index).size.t1, subs.get(sub1Index).size.t2);
-		Tuple2D size = new Tuple2D(subs.get(sub2Index).size.t1-1, subs.get(sub2Index).size.t2-1);
-		ILocated2D scaledTargetCoordinates = CartesianGeometricUtilities.centerAndScale(size, subs.get(sub2Index).size.t1, subs.get(sub2Index).size.t2);
+		newLinks = hcppn.loopThroughLinks(cppn, indexOfTest, subs.get(sub1Index), subs.get(sub2Index), sub1Index,
+				sub2Index, subs);
+		// below check only necessary when parameter for including link is not
+		// on
+		// assertEquals(subs.get(sub1Index).size.t1*subs.get(sub1Index).size.t2*subs.get(sub2Index).size.t1*subs.get(sub2Index).size.t2,
+		// newLinks.size());
+
+		ILocated2D scaledSourceCoordinates = CartesianGeometricUtilities.centerAndScale(new Tuple2D(0, 0),
+				subs.get(sub1Index).size.t1, subs.get(sub1Index).size.t2);
+		Tuple2D size = new Tuple2D(subs.get(sub2Index).size.t1 - 1, subs.get(sub2Index).size.t2 - 1);
+		ILocated2D scaledTargetCoordinates = CartesianGeometricUtilities.centerAndScale(size,
+				subs.get(sub2Index).size.t1, subs.get(sub2Index).size.t2);
 		assertEquals(scaledSourceCoordinates.getY(), -1, .001);
 		assertEquals(scaledSourceCoordinates.getX(), -1, .001);
 		assertEquals(scaledTargetCoordinates.getX(), 1, .01);
 		assertEquals(scaledTargetCoordinates.getY(), 1, .01);
-		
+
 		assertEquals(newLinks.get(sub1Index).sourceInnovation, hcppn.getInnovationID(0, 0, sub1Index, subs));
 		assertEquals(newLinks.get(sub1Index).sourceInnovation, hcppn.getInnovationID(0, 0, endingIndex, subs));
 	}
-	
+
 	@Test
 	public void testHashMapping() {
 		assertTrue(sIMap.get(subs.get(sub1Index).getName()).equals(sub1Index));
 	}
-	
+
 	/**
 	 * Test function to get innovation ID of a node
 	 */
@@ -140,10 +162,11 @@ public class HyperNEATCPPNGenotypeTest {
 	public void testGetInnovationID() {
 		int indexOfTest = 0;
 		ArrayList<LinkGene> newLinks = new ArrayList<LinkGene>();
-		newLinks = hcppn.loopThroughLinks(cppn, indexOfTest, subs.get(sub1Index), subs.get(sub2Index), sub1Index, sub2Index, subs);
+		newLinks = hcppn.loopThroughLinks(cppn, indexOfTest, subs.get(sub1Index), subs.get(sub2Index), sub1Index,
+				sub2Index, subs);
 		assertEquals(newLinks.get(sub1Index).innovation, hcppn.getInnovationID(sub1Index, sub1Index, sub1Index, subs));
 	}
-	
+
 	/**
 	 * tests link expression calculation works
 	 */

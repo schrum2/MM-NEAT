@@ -7,18 +7,18 @@ import pacman.game.Constants.MOVE;
  */
 public final class PacMan {
 
-    public int currentNodeIndex, numberOfLivesRemaining;
-    public MOVE lastMoveMade;
-    public boolean hasReceivedExtraLife;
+	public int currentNodeIndex, numberOfLivesRemaining;
+	public MOVE lastMoveMade;
+	public boolean hasReceivedExtraLife;
 
-    public PacMan(int currentNodeIndex, MOVE lastMoveMade, int numberOfLivesRemaining, boolean hasReceivedExtraLife) {
-        this.currentNodeIndex = currentNodeIndex;
-        this.lastMoveMade = lastMoveMade;
-        this.numberOfLivesRemaining = numberOfLivesRemaining;
-        this.hasReceivedExtraLife = hasReceivedExtraLife;
-    }
+	public PacMan(int currentNodeIndex, MOVE lastMoveMade, int numberOfLivesRemaining, boolean hasReceivedExtraLife) {
+		this.currentNodeIndex = currentNodeIndex;
+		this.lastMoveMade = lastMoveMade;
+		this.numberOfLivesRemaining = numberOfLivesRemaining;
+		this.hasReceivedExtraLife = hasReceivedExtraLife;
+	}
 
-    public PacMan copy() {
-        return new PacMan(currentNodeIndex, lastMoveMade, numberOfLivesRemaining, hasReceivedExtraLife);
-    }
+	public PacMan copy() {
+		return new PacMan(currentNodeIndex, lastMoveMade, numberOfLivesRemaining, hasReceivedExtraLife);
+	}
 }

@@ -13,13 +13,13 @@ import pacman.game.Game;
  */
 public class MyGhosts extends Controller<EnumMap<GHOST, MOVE>> {
 
-    private EnumMap<GHOST, MOVE> myMoves = new EnumMap<GHOST, MOVE>(GHOST.class);
+	private EnumMap<GHOST, MOVE> myMoves = new EnumMap<GHOST, MOVE>(GHOST.class);
 
-    public EnumMap<GHOST, MOVE> getMove(Game game, long timeDue) {
-        myMoves.clear();
+	public EnumMap<GHOST, MOVE> getMove(Game game, long timeDue) {
+		myMoves.clear();
 
-        //Place your game logic here to play the game as the ghosts
+		// Place your game logic here to play the game as the ghosts
 
-        return myMoves;
-    }
+		return myMoves;
+	}
 }

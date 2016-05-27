@@ -29,29 +29,25 @@ import rlVizLib.messaging.environment.EnvironmentMessages;
 
 public class MCStateRequest extends EnvironmentMessages {
 
-    public MCStateRequest(GenericMessage theMessageObject) {
-        super(theMessageObject);
-    }
+	public MCStateRequest(GenericMessage theMessageObject) {
+		super(theMessageObject);
+	}
 
-    public static MCStateResponse Execute() {
-        String theRequest = AbstractMessage.makeMessage(
-                MessageUser.kEnv.id(),
-                MessageUser.kBenchmark.id(),
-                EnvMessageType.kEnvCustom.id(),
-                MessageValueType.kString.id(),
-                "GETMCSTATE");
+	public static MCStateResponse Execute() {
+		String theRequest = AbstractMessage.makeMessage(MessageUser.kEnv.id(), MessageUser.kBenchmark.id(),
+				EnvMessageType.kEnvCustom.id(), MessageValueType.kString.id(), "GETMCSTATE");
 
-        String responseMessage = RLGlue.RL_env_message(theRequest);
+		String responseMessage = RLGlue.RL_env_message(theRequest);
 
-        MCStateResponse theResponse;
-        try {
-            theResponse = new MCStateResponse(responseMessage);
-        } catch (NotAnRLVizMessageException e) {
-            System.err.println("In MCStateRequest, the response was not RL-Viz compatible");
-            theResponse = null;
-        }
+		MCStateResponse theResponse;
+		try {
+			theResponse = new MCStateResponse(responseMessage);
+		} catch (NotAnRLVizMessageException e) {
+			System.err.println("In MCStateRequest, the response was not RL-Viz compatible");
+			theResponse = null;
+		}
 
-        return theResponse;
+		return theResponse;
 
-    }
+	}
 }

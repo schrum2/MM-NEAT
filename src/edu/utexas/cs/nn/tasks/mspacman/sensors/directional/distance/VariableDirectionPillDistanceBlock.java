@@ -12,17 +12,17 @@ import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
  */
 public class VariableDirectionPillDistanceBlock extends VariableDirectionDistanceBlock {
 
-    public VariableDirectionPillDistanceBlock(int dir) {
-        super(dir);
-    }
+	public VariableDirectionPillDistanceBlock(int dir) {
+		super(dir);
+	}
 
-    @Override
-    public String getType() {
-        return "Pill";
-    }
+	@Override
+	public String getType() {
+		return "Pill";
+	}
 
-    @Override
-    public int[] getTargets(GameFacade gf) {
-        return gf.getActivePillsIndices();
-    }
+	@Override
+	public int[] getTargets(GameFacade gf) {
+		return gf.getActivePillsIndices();
+	}
 }

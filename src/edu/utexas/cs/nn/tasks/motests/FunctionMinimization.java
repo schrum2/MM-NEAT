@@ -9,11 +9,11 @@ import edu.utexas.cs.nn.tasks.motests.testfunctions.FunctionOptimizationSet;
  */
 public class FunctionMinimization extends FunctionOptimization {
 
-    public FunctionMinimization() {
-        this(MMNEAT.fos);
-    }
+	public FunctionMinimization() {
+		this(MMNEAT.fos);
+	}
 
-    public FunctionMinimization(FunctionOptimizationSet fos) {
-        super(fos, -1);
-    }
+	public FunctionMinimization(FunctionOptimizationSet fos) {
+		super(fos, -1);
+	}
 }

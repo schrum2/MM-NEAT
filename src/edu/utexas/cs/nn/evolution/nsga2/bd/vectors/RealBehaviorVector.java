@@ -13,39 +13,39 @@ import java.util.ArrayList;
  */
 public class RealBehaviorVector implements BehaviorVector {
 
-    private final ArrayList<Double> v;
+	private final ArrayList<Double> v;
 
-    public RealBehaviorVector(ArrayList<Double> v) {
-        this.v = v;
-    }
+	public RealBehaviorVector(ArrayList<Double> v) {
+		this.v = v;
+	}
 
-    public RealBehaviorVector(int[] i) {
-        this.v = new ArrayList<Double>(i.length);
-        for (int j = 0; j < i.length; j++) {
-            v.add(new Double(i[j]));
-        }
-    }
+	public RealBehaviorVector(int[] i) {
+		this.v = new ArrayList<Double>(i.length);
+		for (int j = 0; j < i.length; j++) {
+			v.add(new Double(i[j]));
+		}
+	}
 
-    public RealBehaviorVector(double[] d) {
-        this.v = new ArrayList<Double>(d.length);
-        for (int j = 0; j < d.length; j++) {
-            v.add(new Double(d[j]));
-        }
-    }
+	public RealBehaviorVector(double[] d) {
+		this.v = new ArrayList<Double>(d.length);
+		for (int j = 0; j < d.length; j++) {
+			v.add(new Double(d[j]));
+		}
+	}
 
-    public double distance(BehaviorVector rhs) {
-        ArrayList<Double> shorter = v;
-        ArrayList<Double> longer = ((RealBehaviorVector) rhs).v;
-        if (shorter.size() != longer.size()) {
-            if (shorter.size() > longer.size()) {
-                shorter = longer;
-                longer = v;
-            }
+	public double distance(BehaviorVector rhs) {
+		ArrayList<Double> shorter = v;
+		ArrayList<Double> longer = ((RealBehaviorVector) rhs).v;
+		if (shorter.size() != longer.size()) {
+			if (shorter.size() > longer.size()) {
+				shorter = longer;
+				longer = v;
+			}
 
-            for (int i = shorter.size(); i < longer.size(); i++) {
-                shorter.add(0.0);
-            }
-        }
-        return CartesianGeometricUtilities.euclideanDistance(shorter, longer);
-    }
+			for (int i = shorter.size(); i < longer.size(); i++) {
+				shorter.add(0.0);
+			}
+		}
+		return CartesianGeometricUtilities.euclideanDistance(shorter, longer);
+	}
 }

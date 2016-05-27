@@ -31,73 +31,79 @@ import edu.utexas.cs.nn.tasks.mspacman.sensors.ghosts.VariableDirectionGhostBloc
  */
 public class GhostsCheckEachDirectionMediator extends VariableDirectionGhostBlockLoadedInputOutputMediator {
 
-    public GhostsCheckEachDirectionMediator() {
-        int numJunctionsToSense = Parameters.parameters.integerParameter("junctionsToSense");
-        boolean infiniteEdibleTime = Parameters.parameters.booleanParameter("infiniteEdibleTime");
-        boolean imprisonedWhileEdible = Parameters.parameters.booleanParameter("imprisonedWhileEdible");
-        // Split ghost sensors: edible and threat
-        boolean split = Parameters.parameters.booleanParameter("specificGhostEdibleThreatSplit");
+	public GhostsCheckEachDirectionMediator() {
+		int numJunctionsToSense = Parameters.parameters.integerParameter("junctionsToSense");
+		boolean infiniteEdibleTime = Parameters.parameters.booleanParameter("infiniteEdibleTime");
+		boolean imprisonedWhileEdible = Parameters.parameters.booleanParameter("imprisonedWhileEdible");
+		// Split ghost sensors: edible and threat
+		boolean split = Parameters.parameters.booleanParameter("specificGhostEdibleThreatSplit");
 
-        blocks.add(new GhostBiasBlock());
-        blocks.add(new GhostEdibleBlock());
-        // Distances
-        blocks.add(new GhostVariableDirectionPillDistanceBlock(0));
-        blocks.add(new GhostVariableDirectionPowerPillDistanceBlock(0));
-        for (int i = 0; i < numJunctionsToSense; i++) {
-            blocks.add(new GhostVariableDirectionJunctionDistanceBlock(i));
-        }
-        // Sense pacman
-        blocks.add(new GhostVariableDirectionMsPacManDistanceBlock());
+		blocks.add(new GhostBiasBlock());
+		blocks.add(new GhostEdibleBlock());
+		// Distances
+		blocks.add(new GhostVariableDirectionPillDistanceBlock(0));
+		blocks.add(new GhostVariableDirectionPowerPillDistanceBlock(0));
+		for (int i = 0; i < numJunctionsToSense; i++) {
+			blocks.add(new GhostVariableDirectionJunctionDistanceBlock(i));
+		}
+		// Sense pacman
+		blocks.add(new GhostVariableDirectionMsPacManDistanceBlock());
 
-        // Other Ghosts By Distance (don't sense self)
-        for (int i = 0; i < CommonConstants.numActiveGhosts - 1; i++) {
-            blocks.add(new GhostVariableDirectionSortedGhostDistanceBlock(i));
-            blocks.add(new GhostVariableDirectionSortedGhostIncomingBlock(i));
-            blocks.add(new GhostVariableDirectionSortedGhostTrappedBlock(i));
-            if (!imprisonedWhileEdible) {
-                blocks.add(new GhostVariableDirectionSortedGhostEdibleBlock(i));
-            }
-        }
-        
-        // How to split sensors with ghosts?
-//        if (split) {
-//            for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
-//                // Threat prox
-//                blocks.add(new VariableDirectionSortedGhostDistanceBlock(-1, i, false, false));
-//                // Edible prox
-//                blocks.add(new VariableDirectionSortedGhostDistanceBlock(-1, i, true, false));
-//                if (incoming) {
-//                    // Threat incoming
-//                    blocks.add(new VariableDirectionSortedGhostIncomingBlock(i, false, false));
-//                    // Edible incoming
-//                    blocks.add(new VariableDirectionSortedGhostIncomingBlock(i, true, false));
-//                }
-//                if (Parameters.parameters.booleanParameter("trapped")) {
-//                    // Threat trapped
-//                    blocks.add(new VariableDirectionSortedGhostTrappedBlock(i, false, false));
-//                    // Edible trapped
-//                    blocks.add(new VariableDirectionSortedGhostTrappedBlock(i, true, false));
-//                }
-//            }
-//        }
-//        // Look ahead
-//        blocks.add(new VariableDirectionKStepPillCountBlock());
-//        blocks.add(new VariableDirectionKStepJunctionCountBlock());
-        // Counts
-        blocks.add(new GhostReuseMsPacManSensorBlock(new PowerPillsRemainingBlock(true, false)));
-        blocks.add(new GhostReuseMsPacManSensorBlock(new PillsRemainingBlock(true, false)));
-        // For limited edible time
-        if (!infiniteEdibleTime) {
-            blocks.add(new GhostReuseMsPacManSensorBlock(new CountEdibleGhostsBlock(true, false)));
-            blocks.add(new GhostReuseMsPacManSensorBlock(new EdibleTimesBlock()));
-        }
-        // Other
-        blocks.add(new GhostReuseMsPacManSensorBlock(new AnyEdibleGhostBlock()));
-        blocks.add(new GhostReuseMsPacManSensorBlock(new AllThreatsPresentBlock()));
-        blocks.add(new GhostReuseMsPacManSensorBlock(new IsCloseToPowerPill()));
-        // High level
-//        if (Parameters.parameters.booleanParameter("highLevel")) {
-//            blocks.add(new VariableDirectionCountJunctionOptionsBlock());
-//        }
-    }
+		// Other Ghosts By Distance (don't sense self)
+		for (int i = 0; i < CommonConstants.numActiveGhosts - 1; i++) {
+			blocks.add(new GhostVariableDirectionSortedGhostDistanceBlock(i));
+			blocks.add(new GhostVariableDirectionSortedGhostIncomingBlock(i));
+			blocks.add(new GhostVariableDirectionSortedGhostTrappedBlock(i));
+			if (!imprisonedWhileEdible) {
+				blocks.add(new GhostVariableDirectionSortedGhostEdibleBlock(i));
+			}
+		}
+
+		// How to split sensors with ghosts?
+		// if (split) {
+		// for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
+		// // Threat prox
+		// blocks.add(new VariableDirectionSortedGhostDistanceBlock(-1, i,
+		// false, false));
+		// // Edible prox
+		// blocks.add(new VariableDirectionSortedGhostDistanceBlock(-1, i, true,
+		// false));
+		// if (incoming) {
+		// // Threat incoming
+		// blocks.add(new VariableDirectionSortedGhostIncomingBlock(i, false,
+		// false));
+		// // Edible incoming
+		// blocks.add(new VariableDirectionSortedGhostIncomingBlock(i, true,
+		// false));
+		// }
+		// if (Parameters.parameters.booleanParameter("trapped")) {
+		// // Threat trapped
+		// blocks.add(new VariableDirectionSortedGhostTrappedBlock(i, false,
+		// false));
+		// // Edible trapped
+		// blocks.add(new VariableDirectionSortedGhostTrappedBlock(i, true,
+		// false));
+		// }
+		// }
+		// }
+		// // Look ahead
+		// blocks.add(new VariableDirectionKStepPillCountBlock());
+		// blocks.add(new VariableDirectionKStepJunctionCountBlock());
+		// Counts
+		blocks.add(new GhostReuseMsPacManSensorBlock(new PowerPillsRemainingBlock(true, false)));
+		blocks.add(new GhostReuseMsPacManSensorBlock(new PillsRemainingBlock(true, false)));
+		// For limited edible time
+		if (!infiniteEdibleTime) {
+			blocks.add(new GhostReuseMsPacManSensorBlock(new CountEdibleGhostsBlock(true, false)));
+			blocks.add(new GhostReuseMsPacManSensorBlock(new EdibleTimesBlock()));
+		}
+		// Other
+		blocks.add(new GhostReuseMsPacManSensorBlock(new AnyEdibleGhostBlock()));
+		blocks.add(new GhostReuseMsPacManSensorBlock(new AllThreatsPresentBlock()));
+		blocks.add(new GhostReuseMsPacManSensorBlock(new IsCloseToPowerPill()));
+		// High level
+		// if (Parameters.parameters.booleanParameter("highLevel")) {
+		// blocks.add(new VariableDirectionCountJunctionOptionsBlock());
+		// }
+	}
 }

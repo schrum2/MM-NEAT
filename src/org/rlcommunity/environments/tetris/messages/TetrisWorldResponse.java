@@ -29,54 +29,52 @@ import rlVizLib.messaging.environment.EnvMessageType;
 
 public class TetrisWorldResponse extends AbstractResponse {
 
-    private int world_width = 0;
-    private int world_height = 0;
+	private int world_width = 0;
+	private int world_height = 0;
 
-    public TetrisWorldResponse(int width, int height) {
-        this.world_width = width;
-        this.world_height = height;
-    }
+	public TetrisWorldResponse(int width, int height) {
+		this.world_width = width;
+		this.world_height = height;
+	}
 
-    public TetrisWorldResponse(String responseMessage) throws NotAnRLVizMessageException {
+	public TetrisWorldResponse(String responseMessage) throws NotAnRLVizMessageException {
 
-        GenericMessage theGenericResponse;
-        theGenericResponse = new GenericMessage(responseMessage);
+		GenericMessage theGenericResponse;
+		theGenericResponse = new GenericMessage(responseMessage);
 
+		String thePayLoadString = theGenericResponse.getPayLoad();
 
-        String thePayLoadString = theGenericResponse.getPayLoad();
+		StringTokenizer stateTokenizer = new StringTokenizer(thePayLoadString, ":");
+		this.world_width = Integer.parseInt(stateTokenizer.nextToken());
+		this.world_height = Integer.parseInt(stateTokenizer.nextToken());
+	}
 
-        StringTokenizer stateTokenizer = new StringTokenizer(thePayLoadString, ":");
-        this.world_width = Integer.parseInt(stateTokenizer.nextToken());
-        this.world_height = Integer.parseInt(stateTokenizer.nextToken());
-    }
+	@Override
+	public String makeStringResponse() {
 
-    @Override
-    public String makeStringResponse() {
+		StringBuffer theResponseBuffer = new StringBuffer();
+		theResponseBuffer.append("TO=");
+		theResponseBuffer.append(MessageUser.kBenchmark.id());
+		theResponseBuffer.append(" FROM=");
+		theResponseBuffer.append(MessageUser.kEnv.id());
+		theResponseBuffer.append(" CMD=");
+		theResponseBuffer.append(EnvMessageType.kEnvResponse.id());
+		theResponseBuffer.append(" VALTYPE=");
+		theResponseBuffer.append(MessageValueType.kStringList.id());
+		theResponseBuffer.append(" VALS=");
 
-        StringBuffer theResponseBuffer = new StringBuffer();
-        theResponseBuffer.append("TO=");
-        theResponseBuffer.append(MessageUser.kBenchmark.id());
-        theResponseBuffer.append(" FROM=");
-        theResponseBuffer.append(MessageUser.kEnv.id());
-        theResponseBuffer.append(" CMD=");
-        theResponseBuffer.append(EnvMessageType.kEnvResponse.id());
-        theResponseBuffer.append(" VALTYPE=");
-        theResponseBuffer.append(MessageValueType.kStringList.id());
-        theResponseBuffer.append(" VALS=");
+		theResponseBuffer.append(this.world_width);
+		theResponseBuffer.append(":");
+		theResponseBuffer.append(this.world_height);
 
-        theResponseBuffer.append(this.world_width);
-        theResponseBuffer.append(":");
-        theResponseBuffer.append(this.world_height);
+		return theResponseBuffer.toString();
+	}
 
+	public int getWidth() {
+		return this.world_width;
+	}
 
-        return theResponseBuffer.toString();
-    }
-
-    public int getWidth() {
-        return this.world_width;
-    }
-
-    public int getHeight() {
-        return this.world_height;
-    }
+	public int getHeight() {
+		return this.world_height;
+	}
 }

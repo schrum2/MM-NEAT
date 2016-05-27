@@ -13,7 +13,7 @@ import edu.utexas.cs.nn.networks.Network;
  */
 public class AvoidDeadSpaceScore<T extends Network> extends MsPacManObjective<T> {
 
-    public double fitness(Organism<T> individual) {
-        return -((g.getTimeInDeadSpace() * 1.0) / g.getTotalTime());
-    }
+	public double fitness(Organism<T> individual) {
+		return -((g.getTimeInDeadSpace() * 1.0) / g.getTotalTime());
+	}
 }

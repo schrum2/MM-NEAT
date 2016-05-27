@@ -15,28 +15,28 @@ import edu.utexas.cs.nn.util.util2D.Tuple2D;
  */
 public class FrontBackRammingEnemy implements AgentController {
 
-    private final EscapingPlayer escape;
-    private final RushingPlayer rush;
+	private final EscapingPlayer escape;
+	private final RushingPlayer rush;
 
-    public FrontBackRammingEnemy() {
-        this.escape = new EscapingPlayer();
-        this.rush = new RushingPlayer();
-    }
+	public FrontBackRammingEnemy() {
+		this.escape = new EscapingPlayer();
+		this.rush = new RushingPlayer();
+	}
 
-    public Breve2DAction getAction(Breve2DGame game) {
-        Agent player = game.getPlayer();
-        Agent nearestMonter = game.nearestMonsterToPosition(player);
-        Tuple2D ramOffset = ((RammingDynamics) game.dynamics).getRamOffset();
-        Tuple2D ramPosition = nearestMonter.getPosition().add(ramOffset.rotate(nearestMonter.getHeading()));
-        if (player.distance(ramPosition) < player.distance(nearestMonter)) {
-            return this.escape.getAction(game);
-        } else {
-            return this.rush.getAction(game);
-        }
-    }
+	public Breve2DAction getAction(Breve2DGame game) {
+		Agent player = game.getPlayer();
+		Agent nearestMonter = game.nearestMonsterToPosition(player);
+		Tuple2D ramOffset = ((RammingDynamics) game.dynamics).getRamOffset();
+		Tuple2D ramPosition = nearestMonter.getPosition().add(ramOffset.rotate(nearestMonter.getHeading()));
+		if (player.distance(ramPosition) < player.distance(nearestMonter)) {
+			return this.escape.getAction(game);
+		} else {
+			return this.rush.getAction(game);
+		}
+	}
 
-    public void reset() {
-        escape.reset();
-        rush.reset();
-    }
+	public void reset() {
+		escape.reset();
+		rush.reset();
+	}
 }

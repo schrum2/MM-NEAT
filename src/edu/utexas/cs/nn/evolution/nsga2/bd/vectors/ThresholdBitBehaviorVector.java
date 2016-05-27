@@ -13,15 +13,15 @@ import java.util.ArrayList;
  */
 public class ThresholdBitBehaviorVector extends BitBehaviorVector {
 
-    public ThresholdBitBehaviorVector(ArrayList<Double> xs) {
-        super(thresholdAll(xs));
-    }
+	public ThresholdBitBehaviorVector(ArrayList<Double> xs) {
+		super(thresholdAll(xs));
+	}
 
-    public static BitSet thresholdAll(ArrayList<Double> xs) {
-        BitSet bs = new BitSet(xs.size());
-        for (int i = 0; i < xs.size(); i++) {
-            bs.set(i, xs.get(i) > 0);
-        }
-        return bs;
-    }
+	public static BitSet thresholdAll(ArrayList<Double> xs) {
+		BitSet bs = new BitSet(xs.size());
+		for (int i = 0; i < xs.size(); i++) {
+			bs.set(i, xs.get(i) > 0);
+		}
+		return bs;
+	}
 }

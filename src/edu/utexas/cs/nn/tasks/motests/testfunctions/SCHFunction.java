@@ -10,23 +10,23 @@ import java.util.ArrayList;
  */
 public class SCHFunction implements FitnessFunction<ArrayList<Double>> {
 
-    private boolean second;
+	private boolean second;
 
-    public SCHFunction(boolean second) {
-        this.second = second;
-    }
+	public SCHFunction(boolean second) {
+		this.second = second;
+	}
 
-    public double fitness(Organism<ArrayList<Double>> individual) {
-        ArrayList<Double> values = individual.getGenotype().getPhenotype();
-        double x = values.get(0);
-        return second ? f2(x) : f1(x);
-    }
+	public double fitness(Organism<ArrayList<Double>> individual) {
+		ArrayList<Double> values = individual.getGenotype().getPhenotype();
+		double x = values.get(0);
+		return second ? f2(x) : f1(x);
+	}
 
-    public double f1(double x) {
-        return x * x;
-    }
+	public double f1(double x) {
+		return x * x;
+	}
 
-    public double f2(double x) {
-        return (x - 2) * (x - 2);
-    }
+	public double f2(double x) {
+		return (x - 2) * (x - 2);
+	}
 }

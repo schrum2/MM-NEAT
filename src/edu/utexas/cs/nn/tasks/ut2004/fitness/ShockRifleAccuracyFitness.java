@@ -13,7 +13,7 @@ import edu.utexas.cs.nn.networks.Network;
  */
 public class ShockRifleAccuracyFitness<T extends Network> extends WeaponAccuracyFitness<T> {
 
-    public ShockRifleAccuracyFitness() {
-        super(ItemType.SHOCK_RIFLE);
-    }
+	public ShockRifleAccuracyFitness() {
+		super(ItemType.SHOCK_RIFLE);
+	}
 }

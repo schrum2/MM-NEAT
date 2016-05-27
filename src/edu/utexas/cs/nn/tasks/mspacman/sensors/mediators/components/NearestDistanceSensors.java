@@ -13,18 +13,18 @@ import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.distance.NearestThreatGhos
  */
 public class NearestDistanceSensors extends BlockLoadedInputOutputMediator {
 
-    public NearestDistanceSensors(boolean sensePills, boolean senseEdibleGhosts, boolean sensePowerPIlls) {
-        super();
-        //blocks.add(new NearestJunctionDistanceBlock());
-        blocks.add(new NearestThreatGhostDistanceBlock());
-        if (sensePills) {
-            blocks.add(new NearestPillDistanceBlock());
-        }
-        if (senseEdibleGhosts) {
-            blocks.add(new NearestEdibleGhostDistanceBlock());
-        }
-        if (sensePowerPIlls) {
-            blocks.add(new NearestPowerPillDistanceBlock());
-        }
-    }
+	public NearestDistanceSensors(boolean sensePills, boolean senseEdibleGhosts, boolean sensePowerPIlls) {
+		super();
+		// blocks.add(new NearestJunctionDistanceBlock());
+		blocks.add(new NearestThreatGhostDistanceBlock());
+		if (sensePills) {
+			blocks.add(new NearestPillDistanceBlock());
+		}
+		if (senseEdibleGhosts) {
+			blocks.add(new NearestEdibleGhostDistanceBlock());
+		}
+		if (sensePowerPIlls) {
+			blocks.add(new NearestPowerPillDistanceBlock());
+		}
+	}
 }

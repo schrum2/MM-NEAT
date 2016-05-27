@@ -10,7 +10,7 @@ import java.util.ArrayList;
  */
 public abstract class RLGlueEnvironment extends EnvironmentBase {
 
-    public abstract TaskSpec makeTaskSpec();
+	public abstract TaskSpec makeTaskSpec();
 
-    public abstract ArrayList<Double> getBehaviorVector();
+	public abstract ArrayList<Double> getBehaviorVector();
 }

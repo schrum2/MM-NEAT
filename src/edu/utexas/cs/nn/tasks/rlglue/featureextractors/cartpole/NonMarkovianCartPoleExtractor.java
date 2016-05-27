@@ -9,21 +9,21 @@ import org.rlcommunity.rlglue.codec.types.Observation;
  */
 public class NonMarkovianCartPoleExtractor implements FeatureExtractor {
 
-    @Override
-    public int numFeatures() {
-        return 2;
-    }
+	@Override
+	public int numFeatures() {
+		return 2;
+	}
 
-    @Override
-    public double[] extract(Observation o) {
-        // Only use x and theta, and not the derivatives
-        return new double[]{o.doubleArray[0], o.doubleArray[2]};
-    }
+	@Override
+	public double[] extract(Observation o) {
+		// Only use x and theta, and not the derivatives
+		return new double[] { o.doubleArray[0], o.doubleArray[2] };
+	}
 
-    @Override
-    public String[] featureLabels() {
-        return new String[]{"Position", "Angle"};
-    }
+	@Override
+	public String[] featureLabels() {
+		return new String[] { "Position", "Angle" };
+	}
 
 	@Override
 	public double[] scaleInputs(double[] inputs) {

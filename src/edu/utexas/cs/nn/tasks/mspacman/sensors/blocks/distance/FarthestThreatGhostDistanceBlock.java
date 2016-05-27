@@ -13,14 +13,14 @@ import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
  */
 public class FarthestThreatGhostDistanceBlock extends FarthestDistanceBlock {
 
-    @Override
-    public int[] getTargets(GameFacade gf) {
-        int[] temp = gf.getThreatGhostLocations();
-        return temp.length == CommonConstants.numActiveGhosts ? temp : new int[0];
-    }
+	@Override
+	public int[] getTargets(GameFacade gf) {
+		int[] temp = gf.getThreatGhostLocations();
+		return temp.length == CommonConstants.numActiveGhosts ? temp : new int[0];
+	}
 
-    @Override
-    public String getType() {
-        return "Threat Ghost";
-    }
+	@Override
+	public String getType() {
+		return "Threat Ghost";
+	}
 }

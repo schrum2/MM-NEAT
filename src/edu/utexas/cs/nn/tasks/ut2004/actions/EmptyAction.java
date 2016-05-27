@@ -12,27 +12,27 @@ import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004BotModuleController;
  */
 public class EmptyAction implements BotAction {
 
-    private final String extra;
-    private final boolean stopShooting;
+	private final String extra;
+	private final boolean stopShooting;
 
-    public EmptyAction() {
-        this("");
-    }
+	public EmptyAction() {
+		this("");
+	}
 
-    public EmptyAction(String extra) {
-        this(extra, true);
-    }
+	public EmptyAction(String extra) {
+		this(extra, true);
+	}
 
-    public EmptyAction(String extra, boolean stopShooting) {
-        this.extra = extra;
-        this.stopShooting = stopShooting;
-    }
+	public EmptyAction(String extra, boolean stopShooting) {
+		this.extra = extra;
+		this.stopShooting = stopShooting;
+	}
 
-    public String execute(UT2004BotModuleController bot) {
-        // Doing "Nothing" means not shooting anymore
-        if (stopShooting) {
-            bot.getShoot().stopShooting();
-        }
-        return "[Nothing]" + extra;
-    }
+	public String execute(UT2004BotModuleController bot) {
+		// Doing "Nothing" means not shooting anymore
+		if (stopShooting) {
+			bot.getShoot().stopShooting();
+		}
+		return "[Nothing]" + extra;
+	}
 }

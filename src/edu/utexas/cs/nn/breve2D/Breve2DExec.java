@@ -6,217 +6,237 @@ import edu.utexas.cs.nn.breve2D.dynamics.InterleavedFightOrFlight;
 import edu.utexas.cs.nn.parameters.Parameters;
 
 public class Breve2DExec {
-    //Several options are listed - simply remove comments to use the option you want
+	// Several options are listed - simply remove comments to use the option you
+	// want
 
-    public static void main(String[] args) {
-        Parameters.initializeParameterCollections(new String[]{"watch:true","breve2DTimeLimit:200"});
-        Breve2DExec exec = new Breve2DExec();
+	public static void main(String[] args) {
+		Parameters.initializeParameterCollections(new String[] { "watch:true", "breve2DTimeLimit:200" });
+		Breve2DExec exec = new Breve2DExec();
 
-        //exec.runGameTimed(new HumanPlayer(), new AgentController[]{new RushingMonster(0), new RushingMonster(1), new RushingMonster(2), new RushingMonster(3), new RushingMonster(4), new RushingMonster(5), new RushingMonster(6), new RushingMonster(7)}, true);
-        //exec.runGameTimed(new HumanPlayer(), new AgentController[]{new RushingMonster(0), new RushingMonster(1), new RushingMonster(2), new RushingMonster(3)}, true);
-        AgentController[] monsters = new AgentController[4];
-        for (int i = 0; i < monsters.length; i++) {
-            //monsters[i] = new RushingMonster(i);
-            //monsters[i] = new AttractRepelMonster(i, true);
-            monsters[i] = new EscapingMonster(i);
-            //monsters[i] = new StationaryAgent();
-        }
-        
-        //Breve2DDynamics dyn = new FrontBackRamming();
-        Breve2DDynamics dyn = new InterleavedFightOrFlight();
-        //AgentController agent = new FrontBackRammingEnemy();
-        AgentController agent = new PredatorPreyEnemy();
-        
-        //exec.runGameTimed(new PlayerPreyMonsterPredator(), new HumanPlayer(), monsters, true);
-        //exec.runGameTimed(new PlayerPredatorMonsterPrey(), new RushingPlayer(), monsters, true);
-        //exec.runGameTimed(new PlayerPredatorMonsterPrey(monsters.length, 600), new HumanPlayer(), monsters, true);
-        //exec.runGameTimed(new RammingPlayer(), new RushingPlayer(), monsters, true);
-        //exec.runGameTimed(new PlayerPredatorMonsterPrey(monsters.length, 600), new RushingPlayer(), monsters, true);
-        //exec.runGameTimed(new PredatorPrey(), new HumanPlayer(), monsters, true);
-        //exec.runGameTimed(new PlayerPredatorMonsterPrey(monsters.length, 600), new RushingPlayer(), monsters, true);
-        //exec.runGameTimed(new PlayerPreyMonsterPredator(), new EscapingPlayer(), monsters, true);
-        exec.runGameTimed(dyn, agent, monsters, true);
-        //dyn.advanceTask();
-        //exec.runGameTimed(dyn, agent, monsters, true);
+		// exec.runGameTimed(new HumanPlayer(), new AgentController[]{new
+		// RushingMonster(0), new RushingMonster(1), new RushingMonster(2), new
+		// RushingMonster(3), new RushingMonster(4), new RushingMonster(5), new
+		// RushingMonster(6), new RushingMonster(7)}, true);
+		// exec.runGameTimed(new HumanPlayer(), new AgentController[]{new
+		// RushingMonster(0), new RushingMonster(1), new RushingMonster(2), new
+		// RushingMonster(3)}, true);
+		AgentController[] monsters = new AgentController[4];
+		for (int i = 0; i < monsters.length; i++) {
+			// monsters[i] = new RushingMonster(i);
+			// monsters[i] = new AttractRepelMonster(i, true);
+			monsters[i] = new EscapingMonster(i);
+			// monsters[i] = new StationaryAgent();
+		}
 
-        //this allows you to record a game and replay it later. This could be very useful when
-        //running many games in non-visual mode - one can then pick out those that appear irregular
-        //and replay them in visual mode to see what is happening.
-//		exec.runGameTimedAndRecorded(new Human(),new AttractRepelGhosts(false),true,"human-v-Legacy2.txt");
-//		exec.replayGame("human-v-Legacy2.txt");		
-    }
+		// Breve2DDynamics dyn = new FrontBackRamming();
+		Breve2DDynamics dyn = new InterleavedFightOrFlight();
+		// AgentController agent = new FrontBackRammingEnemy();
+		AgentController agent = new PredatorPreyEnemy();
 
-    private static class ActionStorage {
+		// exec.runGameTimed(new PlayerPreyMonsterPredator(), new HumanPlayer(),
+		// monsters, true);
+		// exec.runGameTimed(new PlayerPredatorMonsterPrey(), new
+		// RushingPlayer(), monsters, true);
+		// exec.runGameTimed(new PlayerPredatorMonsterPrey(monsters.length,
+		// 600), new HumanPlayer(), monsters, true);
+		// exec.runGameTimed(new RammingPlayer(), new RushingPlayer(), monsters,
+		// true);
+		// exec.runGameTimed(new PlayerPredatorMonsterPrey(monsters.length,
+		// 600), new RushingPlayer(), monsters, true);
+		// exec.runGameTimed(new PredatorPrey(), new HumanPlayer(), monsters,
+		// true);
+		// exec.runGameTimed(new PlayerPredatorMonsterPrey(monsters.length,
+		// 600), new RushingPlayer(), monsters, true);
+		// exec.runGameTimed(new PlayerPreyMonsterPredator(), new
+		// EscapingPlayer(), monsters, true);
+		exec.runGameTimed(dyn, agent, monsters, true);
+		// dyn.advanceTask();
+		// exec.runGameTimed(dyn, agent, monsters, true);
 
-        public Breve2DAction action = new Breve2DAction(0, 0);
-    }
-    public Breve2DGame game;
+		// this allows you to record a game and replay it later. This could be
+		// very useful when
+		// running many games in non-visual mode - one can then pick out those
+		// that appear irregular
+		// and replay them in visual mode to see what is happening.
+		// exec.runGameTimedAndRecorded(new Human(),new
+		// AttractRepelGhosts(false),true,"human-v-Legacy2.txt");
+		// exec.replayGame("human-v-Legacy2.txt");
+	}
 
-    /*
-     * For running multiple games without visuals. This is useful to get a good
-     * idea of how well a controller plays against a chosen opponent: the random
-     * nature of the game means that performance can vary from game to game.
-     * Running many games and looking at the average score (and standard
-     * deviation/error) helps to get a better idea of how well the controller is
-     * likely to do.
-     */
-    public Breve2DGame runExperiment(Breve2DDynamics dynamics, AgentController playerController, AgentController[] monsterControllers) {
+	private static class ActionStorage {
 
-        game = new Breve2DGame(monsterControllers.length, dynamics);
-        game.init();
+		public Breve2DAction action = new Breve2DAction(0, 0);
+	}
 
-        while (!game.gameOver()) {
-            // For interleaved task games
-            if (dynamics.midGameTaskSwitch(game.getTime())) {
-                dynamics.advanceTask();
-                if (playerController instanceof MultitaskPlayer) {
-                    ((MultitaskPlayer) playerController).advanceTask();
-                }
+	public Breve2DGame game;
 
-            }
+	/*
+	 * For running multiple games without visuals. This is useful to get a good
+	 * idea of how well a controller plays against a chosen opponent: the random
+	 * nature of the game means that performance can vary from game to game.
+	 * Running many games and looking at the average score (and standard
+	 * deviation/error) helps to get a better idea of how well the controller is
+	 * likely to do.
+	 */
+	public Breve2DGame runExperiment(Breve2DDynamics dynamics, AgentController playerController,
+			AgentController[] monsterControllers) {
 
-            if (game.resetAll) {
-                for (int i = 0; i < monsterControllers.length; i++) {
-                    monsterControllers[i].reset();
-                }
-                playerController.reset();
-                game.resetAll = false;
-            }
+		game = new Breve2DGame(monsterControllers.length, dynamics);
+		game.init();
 
-            Breve2DAction[] monsterActionArray = new Breve2DAction[monsterControllers.length];
-            for (int i = 0; i < monsterControllers.length; i++) {
-                if (!game.monsterDead(i)) {
-                    monsterActionArray[i] = monsterControllers[i].getAction(game);
-                } else {
-                    monsterActionArray[i] = new Breve2DAction(0, 0);
-                }
-            }
-            game.advanceGame(playerController.getAction(game), monsterActionArray);
-        }
+		while (!game.gameOver()) {
+			// For interleaved task games
+			if (dynamics.midGameTaskSwitch(game.getTime())) {
+				dynamics.advanceTask();
+				if (playerController instanceof MultitaskPlayer) {
+					((MultitaskPlayer) playerController).advanceTask();
+				}
 
-        return game;
-    }
+			}
 
-    /*
-     * Run game with time limit.
-     * Can be played with and without visual display of game states.
-     */
-    public Breve2DGame runGameTimed(Breve2DDynamics dynamics, AgentController playerController, AgentController[] monsterControllers, boolean visual) {
-        game = new Breve2DGame(monsterControllers.length, dynamics);
-        game.init();
+			if (game.resetAll) {
+				for (int i = 0; i < monsterControllers.length; i++) {
+					monsterControllers[i].reset();
+				}
+				playerController.reset();
+				game.resetAll = false;
+			}
 
-        ActionStorage playerAction = new ActionStorage();
-        Agent player = new Agent(playerController, playerAction);
-        ActionStorage[] monsterActions = new ActionStorage[monsterControllers.length];
-        Agent[] monsters = new Agent[monsterControllers.length];
-        for (int i = 0; i < monsterControllers.length; i++) {
-            monsterActions[i] = new ActionStorage();
-            monsters[i] = new Agent(monsterControllers[i], monsterActions[i]);
-        }
+			Breve2DAction[] monsterActionArray = new Breve2DAction[monsterControllers.length];
+			for (int i = 0; i < monsterControllers.length; i++) {
+				if (!game.monsterDead(i)) {
+					monsterActionArray[i] = monsterControllers[i].getAction(game);
+				} else {
+					monsterActionArray[i] = new Breve2DAction(0, 0);
+				}
+			}
+			game.advanceGame(playerController.getAction(game), monsterActionArray);
+		}
 
-        Breve2DGameView gv = null;
+		return game;
+	}
 
-        if (visual) {
-            gv = new Breve2DGameView(game).showGame();
+	/*
+	 * Run game with time limit. Can be played with and without visual display
+	 * of game states.
+	 */
+	public Breve2DGame runGameTimed(Breve2DDynamics dynamics, AgentController playerController,
+			AgentController[] monsterControllers, boolean visual) {
+		game = new Breve2DGame(monsterControllers.length, dynamics);
+		game.init();
 
-            if (playerController instanceof HumanPlayer) {
-                gv.getFrame().addKeyListener((HumanPlayer) playerController);
-            }
-        }
+		ActionStorage playerAction = new ActionStorage();
+		Agent player = new Agent(playerController, playerAction);
+		ActionStorage[] monsterActions = new ActionStorage[monsterControllers.length];
+		Agent[] monsters = new Agent[monsterControllers.length];
+		for (int i = 0; i < monsterControllers.length; i++) {
+			monsterActions[i] = new ActionStorage();
+			monsters[i] = new Agent(monsterControllers[i], monsterActions[i]);
+		}
 
-        while (!game.gameOver()) {
-            // For interleaved task games
-            if (dynamics.midGameTaskSwitch(game.getTime())) {
-                dynamics.advanceTask();
-                if (playerController instanceof MultitaskPlayer) {
-                    ((MultitaskPlayer) playerController).advanceTask();
-                }
-            }
+		Breve2DGameView gv = null;
 
-            if (game.resetAll) {
-                for (int i = 0; i < monsterControllers.length; i++) {
-                    monsterControllers[i].reset();
-                }
-                playerController.reset();
-                game.resetAll = false;
-            }
+		if (visual) {
+			gv = new Breve2DGameView(game).showGame();
 
-            player.alert();
-            for (int i = 0; i < monsterControllers.length; i++) {
-                monsters[i].alert();
-            }
+			if (playerController instanceof HumanPlayer) {
+				gv.getFrame().addKeyListener((HumanPlayer) playerController);
+			}
+		}
 
-            try {
-                Thread.sleep(40);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+		while (!game.gameOver()) {
+			// For interleaved task games
+			if (dynamics.midGameTaskSwitch(game.getTime())) {
+				dynamics.advanceTask();
+				if (playerController instanceof MultitaskPlayer) {
+					((MultitaskPlayer) playerController).advanceTask();
+				}
+			}
 
-            Breve2DAction[] monsterActionArray = new Breve2DAction[monsterControllers.length];
-            for (int i = 0; i < monsterControllers.length; i++) {
-                monsterActionArray[i] = monsterActions[i].action;
-            }
+			if (game.resetAll) {
+				for (int i = 0; i < monsterControllers.length; i++) {
+					monsterControllers[i].reset();
+				}
+				playerController.reset();
+				game.resetAll = false;
+			}
 
-            game.advanceGame(playerAction.action, monsterActionArray);
+			player.alert();
+			for (int i = 0; i < monsterControllers.length; i++) {
+				monsters[i].alert();
+			}
 
-            if (visual) {
-                gv.repaint();
-            }
-        }
+			try {
+				Thread.sleep(40);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 
-        player.kill();
-        for (int i = 0; i < monsterControllers.length; i++) {
-            monsters[i].kill();
-        }
+			Breve2DAction[] monsterActionArray = new Breve2DAction[monsterControllers.length];
+			for (int i = 0; i < monsterControllers.length; i++) {
+				monsterActionArray[i] = monsterActions[i].action;
+			}
 
-        if (visual) {
-            gv.getFrame().dispose();
-        }
+			game.advanceGame(playerAction.action, monsterActionArray);
 
-        return game;
-    }
-    
-    /*
-     * Wraps the controller in a thread for the timed execution. This class then
-     * updates the directions for Exec to parse to the game.
-     */
-    private final class Agent extends Thread {
+			if (visual) {
+				gv.repaint();
+			}
+		}
 
-        private AgentController agent;
-        private boolean alive;
-        private final ActionStorage store;
+		player.kill();
+		for (int i = 0; i < monsterControllers.length; i++) {
+			monsters[i].kill();
+		}
 
-        public Agent(AgentController agent, ActionStorage store) {
-            this.agent = agent;
-            this.store = store;
-            alive = true;
-            start();
-        }
+		if (visual) {
+			gv.getFrame().dispose();
+		}
 
-        public synchronized void kill() {
-            alive = false;
-            notify();
-        }
+		return game;
+	}
 
-        public synchronized void alert() {
-            notify();
-        }
+	/*
+	 * Wraps the controller in a thread for the timed execution. This class then
+	 * updates the directions for Exec to parse to the game.
+	 */
+	private final class Agent extends Thread {
 
-        @Override
-        public synchronized void run() {
-            while (alive) {
-                try {
-                    synchronized (this) {
-                        wait();
-                    }
+		private AgentController agent;
+		private boolean alive;
+		private final ActionStorage store;
 
-                    if (!game.gameOver()) {
-                        store.action = agent.getAction(game);
-                    }
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
+		public Agent(AgentController agent, ActionStorage store) {
+			this.agent = agent;
+			this.store = store;
+			alive = true;
+			start();
+		}
+
+		public synchronized void kill() {
+			alive = false;
+			notify();
+		}
+
+		public synchronized void alert() {
+			notify();
+		}
+
+		@Override
+		public synchronized void run() {
+			while (alive) {
+				try {
+					synchronized (this) {
+						wait();
+					}
+
+					if (!game.gameOver()) {
+						store.action = agent.getAction(game);
+					}
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
 }

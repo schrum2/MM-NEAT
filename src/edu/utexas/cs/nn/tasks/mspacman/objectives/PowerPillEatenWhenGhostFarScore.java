@@ -15,7 +15,7 @@ import edu.utexas.cs.nn.networks.Network;
  */
 public class PowerPillEatenWhenGhostFarScore<T extends Network> extends MsPacManObjective<T> {
 
-    public double fitness(Organism<T> individual) {
-        return -g.getPowerPillsEatenWhenGhostFar();
-    }
+	public double fitness(Organism<T> individual) {
+		return -g.getPowerPillsEatenWhenGhostFar();
+	}
 }

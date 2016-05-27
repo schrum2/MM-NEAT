@@ -13,9 +13,9 @@ import cz.cuni.amis.pogamut.ut2004.communication.messages.ItemType;
  */
 public interface UT2004WeaponManager {
 
-    public void prepareWeaponPreferences(UT2004BotModuleController bot);
+	public void prepareWeaponPreferences(UT2004BotModuleController bot);
 
-    public ItemType chooseWeapon(UT2004BotModuleController bot);
+	public ItemType chooseWeapon(UT2004BotModuleController bot);
 
-    public UT2004WeaponManager copy();
+	public UT2004WeaponManager copy();
 }

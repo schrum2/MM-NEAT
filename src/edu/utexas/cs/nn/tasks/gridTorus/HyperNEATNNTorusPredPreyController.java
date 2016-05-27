@@ -16,45 +16,46 @@ import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
  */
 public class HyperNEATNNTorusPredPreyController extends NNTorusPredPreyController {
 
-    public static final int SUBSTRATE_UP_INDEX = 1;
-    public static final int SUBSTRATE_LEFT_INDEX = 3;
-    public static final int SUBSTRATE_NOTHING_INDEX = 4;
-    public static final int SUBSTRATE_RIGHT_INDEX = 5;
-    public static final int SUBSTRATE_DOWN_INDEX = 7;
+	public static final int SUBSTRATE_UP_INDEX = 1;
+	public static final int SUBSTRATE_LEFT_INDEX = 3;
+	public static final int SUBSTRATE_NOTHING_INDEX = 4;
+	public static final int SUBSTRATE_RIGHT_INDEX = 5;
+	public static final int SUBSTRATE_DOWN_INDEX = 7;
 
-    public static final int NUM_OUTPUTS_WITH_NO_ACTION = 5;
+	public static final int NUM_OUTPUTS_WITH_NO_ACTION = 5;
 
-    private final int numOutputs;
+	private final int numOutputs;
 
-    public HyperNEATNNTorusPredPreyController(Network nn, boolean isPredator) {
-        super(nn, isPredator);
-        numOutputs = isPredator ? predatorActions().length : preyActions().length;
-    }
+	public HyperNEATNNTorusPredPreyController(Network nn, boolean isPredator) {
+		super(nn, isPredator);
+		numOutputs = isPredator ? predatorActions().length : preyActions().length;
+	}
 
-    @Override
-    public int[] getAction(TorusAgent me, TorusWorld world, TorusAgent[] preds, TorusAgent[] prey) {
-        double[] inputs = inputs();
-        double[] outputs = nn.process(inputs);
-        double[] modifiedOutputs = mapSubstrateOutputsToStandardOutputs(outputs);
-        // Assume one output for each direction
-        return isPredator ? predatorActions()[StatisticsUtilities.argmax(modifiedOutputs)] : preyActions()[StatisticsUtilities.argmax(modifiedOutputs)];
-    }
+	@Override
+	public int[] getAction(TorusAgent me, TorusWorld world, TorusAgent[] preds, TorusAgent[] prey) {
+		double[] inputs = inputs();
+		double[] outputs = nn.process(inputs);
+		double[] modifiedOutputs = mapSubstrateOutputsToStandardOutputs(outputs);
+		// Assume one output for each direction
+		return isPredator ? predatorActions()[StatisticsUtilities.argmax(modifiedOutputs)]
+				: preyActions()[StatisticsUtilities.argmax(modifiedOutputs)];
+	}
 
-    public double[] mapSubstrateOutputsToStandardOutputs(double[] outputs) {
-        double[] modifiedOutputs = new double[numOutputs];
-        if (numOutputs == NUM_OUTPUTS_WITH_NO_ACTION) {
-            modifiedOutputs[NOTHING_INDEX] = outputs[SUBSTRATE_NOTHING_INDEX];
-        }
-        modifiedOutputs[TorusPredPreyController.UP_INDEX] = outputs[SUBSTRATE_UP_INDEX];
-        modifiedOutputs[TorusPredPreyController.RIGHT_INDEX] = outputs[SUBSTRATE_RIGHT_INDEX];
-        modifiedOutputs[TorusPredPreyController.DOWN_INDEX] = outputs[SUBSTRATE_DOWN_INDEX];
-        modifiedOutputs[TorusPredPreyController.LEFT_INDEX] = outputs[SUBSTRATE_LEFT_INDEX];
-        return modifiedOutputs;
-    }
+	public double[] mapSubstrateOutputsToStandardOutputs(double[] outputs) {
+		double[] modifiedOutputs = new double[numOutputs];
+		if (numOutputs == NUM_OUTPUTS_WITH_NO_ACTION) {
+			modifiedOutputs[NOTHING_INDEX] = outputs[SUBSTRATE_NOTHING_INDEX];
+		}
+		modifiedOutputs[TorusPredPreyController.UP_INDEX] = outputs[SUBSTRATE_UP_INDEX];
+		modifiedOutputs[TorusPredPreyController.RIGHT_INDEX] = outputs[SUBSTRATE_RIGHT_INDEX];
+		modifiedOutputs[TorusPredPreyController.DOWN_INDEX] = outputs[SUBSTRATE_DOWN_INDEX];
+		modifiedOutputs[TorusPredPreyController.LEFT_INDEX] = outputs[SUBSTRATE_LEFT_INDEX];
+		return modifiedOutputs;
+	}
 
-    public double[] inputs() {
-        HyperNEATTask hnt = (HyperNEATTask) MMNEAT.task;
-        double[] inputs = hnt.getSubstrateInputs(hnt.getSubstrateInformation());
-        return inputs;
-    }
+	public double[] inputs() {
+		HyperNEATTask hnt = (HyperNEATTask) MMNEAT.task;
+		double[] inputs = hnt.getSubstrateInputs(hnt.getSubstrateInformation());
+		return inputs;
+	}
 }

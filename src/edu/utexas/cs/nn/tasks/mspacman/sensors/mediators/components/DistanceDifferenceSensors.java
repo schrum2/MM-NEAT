@@ -12,16 +12,16 @@ import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.distancedifference.PowerPi
  */
 public class DistanceDifferenceSensors extends BlockLoadedInputOutputMediator {
 
-    public DistanceDifferenceSensors(boolean sensePills, boolean senseEdibleGhosts, boolean sensePowerPills) {
-        super();
-        if (sensePills) {
-            blocks.add(new PillDistanceDifferenceBlock());
-        }
-        if (senseEdibleGhosts) {
-            blocks.add(new EdibleGhostDistanceDifferenceBlock());
-        }
-        if (sensePowerPills) {
-            blocks.add(new PowerPillDistanceDifferenceBlock());
-        }
-    }
+	public DistanceDifferenceSensors(boolean sensePills, boolean senseEdibleGhosts, boolean sensePowerPills) {
+		super();
+		if (sensePills) {
+			blocks.add(new PillDistanceDifferenceBlock());
+		}
+		if (senseEdibleGhosts) {
+			blocks.add(new EdibleGhostDistanceDifferenceBlock());
+		}
+		if (sensePowerPills) {
+			blocks.add(new PowerPillDistanceDifferenceBlock());
+		}
+	}
 }

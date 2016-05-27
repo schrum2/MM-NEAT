@@ -16,13 +16,14 @@ import java.util.List;
  */
 public class NearestHealthBlock extends NearestItemBlock {
 
-    @Override
-    public String itemLabel() {
-        return "Health";
-    }
+	@Override
+	public String itemLabel() {
+		return "Health";
+	}
 
-    @Override
-    protected List<Item> possibleItems(UT2004BotModuleController bot) {
-        return MyCollections.getFiltered(bot.getItems().getSpawnedItems(ItemType.Category.HEALTH).values(), recentlyVisitedItems);
-    }
+	@Override
+	protected List<Item> possibleItems(UT2004BotModuleController bot) {
+		return MyCollections.getFiltered(bot.getItems().getSpawnedItems(ItemType.Category.HEALTH).values(),
+				recentlyVisitedItems);
+	}
 }

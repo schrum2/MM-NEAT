@@ -12,17 +12,17 @@ import pacman.game.Constants;
  */
 public class NextEdibleTimeBlock extends MsPacManSensorBlock {
 
-    public int incorporateSensors(double[] inputs, int in, GameFacade gf, int lastDirection) {
-        inputs[in++] = gf.getNextEdibleTime() * 1.0 / Constants.EDIBLE_TIME;
-        return in;
-    }
+	public int incorporateSensors(double[] inputs, int in, GameFacade gf, int lastDirection) {
+		inputs[in++] = gf.getNextEdibleTime() * 1.0 / Constants.EDIBLE_TIME;
+		return in;
+	}
 
-    public int incorporateLabels(String[] labels, int in) {
-        labels[in++] = "Next Edible Time";
-        return in;
-    }
+	public int incorporateLabels(String[] labels, int in) {
+		labels[in++] = "Next Edible Time";
+		return in;
+	}
 
-    public int numberAdded() {
-        return 1;
-    }
+	public int numberAdded() {
+		return 1;
+	}
 }

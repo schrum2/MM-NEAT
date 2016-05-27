@@ -15,11 +15,11 @@ import java.util.ArrayList;
  */
 public interface MultiplePopulationTask extends Task {
 
-    public ArrayList<ArrayList<Score>> evaluateAllPopulations(ArrayList<ArrayList<Genotype>> populations);
+	public ArrayList<ArrayList<Score>> evaluateAllPopulations(ArrayList<ArrayList<Genotype>> populations);
 
-    public int numberOfPopulations();
+	public int numberOfPopulations();
 
-    public int[] objectivesPerPopulation();
+	public int[] objectivesPerPopulation();
 
-    public int[] otherStatsPerPopulation();
+	public int[] otherStatsPerPopulation();
 }

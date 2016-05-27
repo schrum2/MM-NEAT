@@ -41,7 +41,7 @@ import org.rlcommunity.rlglue.codec.RLGlue;
 import org.rlcommunity.rlglue.codec.util.AgentLoader;
 import org.rlcommunity.rlglue.codec.util.EnvironmentLoader;
 
-public class RLGlueTask<T extends Network> extends NoisyLonerTask<T> implements NetworkTask {
+public class RLGlueTask<T extends Network> extends NoisyLonerTask<T>implements NetworkTask {
 
 	/**
 	 * Initialize the elements to be used here
@@ -53,10 +53,10 @@ public class RLGlueTask<T extends Network> extends NoisyLonerTask<T> implements 
 	public static RLGlueAgent agent;
 	protected int[] rlNumSteps;
 	protected double[] rlReturn;
-	//cutoff
+	// cutoff
 	protected int maxStepsPerEpisode;
 	private final boolean moPuddleWorld;
-	//private final boolean moTetris;
+	// private final boolean moTetris;
 	private final boolean tetrisTimeSteps;
 	private final boolean tetrisBlocksOnScreen;
 	private ArrayList<Double> behaviorVector;
@@ -72,7 +72,7 @@ public class RLGlueTask<T extends Network> extends NoisyLonerTask<T> implements 
 	}
 
 	/**
-	 * Initializes the RLGlueTask with MMNEAT.rlGlueEnvironment environment. 
+	 * Initializes the RLGlueTask with MMNEAT.rlGlueEnvironment environment.
 	 * Puddleworld and Tetris have special-case options for using multiple
 	 * objectives that are set up here.
 	 *
@@ -83,7 +83,8 @@ public class RLGlueTask<T extends Network> extends NoisyLonerTask<T> implements 
 		boolean puddleWorld = (MMNEAT.rlGlueEnvironment instanceof PuddleWorld);
 		moPuddleWorld = puddleWorld && Parameters.parameters.booleanParameter("moPuddleWorld");
 		boolean tetris = (MMNEAT.rlGlueEnvironment instanceof Tetris);
-		//moTetris = tetris && Parameters.parameters.booleanParameter("moTetris");
+		// moTetris = tetris &&
+		// Parameters.parameters.booleanParameter("moTetris");
 		tetrisTimeSteps = tetris && Parameters.parameters.booleanParameter("tetrisTimeSteps");
 		tetrisBlocksOnScreen = tetris && Parameters.parameters.booleanParameter("tetrisBlocksOnScreen");
 		rlGluePort = Parameters.parameters.integerParameter("rlGluePort");
@@ -93,10 +94,14 @@ public class RLGlueTask<T extends Network> extends NoisyLonerTask<T> implements 
 			MMNEAT.registerFitnessFunction("Puddle Penalty");
 		}
 		if (tetrisTimeSteps) {
-			MMNEAT.registerFitnessFunction("Time Steps"); // Staying alive is good
+			MMNEAT.registerFitnessFunction("Time Steps"); // Staying alive is
+															// good
 		}
 		if (tetrisBlocksOnScreen) {
-			MMNEAT.registerFitnessFunction("Blocks on Screen"); // On game over, more blocks left is better
+			MMNEAT.registerFitnessFunction("Blocks on Screen"); // On game over,
+																// more blocks
+																// left is
+																// better
 		}
 		MMNEAT.registerFitnessFunction("RL Return");
 
@@ -106,14 +111,14 @@ public class RLGlueTask<T extends Network> extends NoisyLonerTask<T> implements 
 		RLGlueTask.environment = environment;
 
 		/*
-		 * Need to launch RL-Glue, the program that interfaces
-		 * the separate components.
+		 * Need to launch RL-Glue, the program that interfaces the separate
+		 * components.
 		 */
 		if (environment != null && rlglue == null) {
 			launchRLGlue();
 			/*
-			 * RL-Glue runs the Agent, Environment and Experiment separately
-			 * so this class needs to launch the Agent and Environment as well
+			 * RL-Glue runs the Agent, Environment and Experiment separately so
+			 * this class needs to launch the Agent and Environment as well
 			 */
 			try {
 				agent = (RLGlueAgent) ClassCreation.createObject("rlGlueAgent");
@@ -143,11 +148,12 @@ public class RLGlueTask<T extends Network> extends NoisyLonerTask<T> implements 
 	@Override
 	public void cleanup() {
 		RLGlue.RL_cleanup();
-		//rlglue.destroy(); // Not needed?
+		// rlglue.destroy(); // Not needed?
 	}
 
 	/**
 	 * Getter for behavior vector (array list)
+	 * 
 	 * @return Behavior characterization
 	 */
 	@Override
@@ -157,6 +163,7 @@ public class RLGlueTask<T extends Network> extends NoisyLonerTask<T> implements 
 
 	/**
 	 * Specific to PuddleWorld? Returns the number of other scores
+	 * 
 	 * @return Only Puddle World has an "other" score. Rest have none (0)
 	 */
 	@Override
@@ -180,9 +187,11 @@ public class RLGlueTask<T extends Network> extends NoisyLonerTask<T> implements 
 		rlReturn[num] = RLGlue.RL_return();
 		behaviorVector.addAll(environment.getBehaviorVector());
 
-		//Special case for MO Puddle World
+		// Special case for MO Puddle World
 		if (moPuddleWorld) {
-			Pair<double[], double[]> p = new Pair<double[], double[]>(new double[]{PuddleWorldState.finalStepScore, PuddleWorldState.finalPuddleScore}, new double[]{rlReturn[num]});
+			Pair<double[], double[]> p = new Pair<double[], double[]>(
+					new double[] { PuddleWorldState.finalStepScore, PuddleWorldState.finalPuddleScore },
+					new double[] { rlReturn[num] });
 			PuddleWorldState.finalStepScore = 0;
 			PuddleWorldState.finalPuddleScore = 0;
 			return p;
@@ -191,28 +200,40 @@ public class RLGlueTask<T extends Network> extends NoisyLonerTask<T> implements 
 		if (tetrisBlocksOnScreen || tetrisTimeSteps) {
 
 			double[] fitness = null;
-			if(tetrisBlocksOnScreen) {
+			if (tetrisBlocksOnScreen) {
 				TetrisAfterStateAgent<T> tasa = (TetrisAfterStateAgent<T>) agent;
 
 				int numberOfBlocksInState;
-				if(rlNumSteps[num] == maxStepsPerEpisode){ //Checks if the we have reached the last step allowed
-					numberOfBlocksInState = TetrisState.worldHeight * TetrisState.worldWidth; //Sets to max to reward not losing for this long
-				}else{
+				if (rlNumSteps[num] == maxStepsPerEpisode) { // Checks if the we
+																// have reached
+																// the last step
+																// allowed
+					numberOfBlocksInState = TetrisState.worldHeight * TetrisState.worldWidth; // Sets
+																								// to
+																								// max
+																								// to
+																								// reward
+																								// not
+																								// losing
+																								// for
+																								// this
+																								// long
+				} else {
 					numberOfBlocksInState = tasa.getNumberOfBlocksInLastState();
 				}
-				if(tetrisBlocksOnScreen && tetrisTimeSteps) {
-					fitness = new double[]{rlNumSteps[num], numberOfBlocksInState, rlReturn[num]};
-				} else if(tetrisBlocksOnScreen) {
-					fitness = new double[]{rlNumSteps[num], numberOfBlocksInState, rlReturn[num]};
+				if (tetrisBlocksOnScreen && tetrisTimeSteps) {
+					fitness = new double[] { rlNumSteps[num], numberOfBlocksInState, rlReturn[num] };
+				} else if (tetrisBlocksOnScreen) {
+					fitness = new double[] { rlNumSteps[num], numberOfBlocksInState, rlReturn[num] };
 				}
 			} else { // timeSteps only
-				fitness = new double[]{rlNumSteps[num], rlReturn[num]};
+				fitness = new double[] { rlNumSteps[num], rlReturn[num] };
 			}
 			Pair<double[], double[]> p = new Pair<double[], double[]>(fitness, new double[0]);
 			return p;
 		}
 
-		return new Pair<double[], double[]>(new double[]{rlReturn[num]}, new double[0]);
+		return new Pair<double[], double[]>(new double[] { rlReturn[num] }, new double[0]);
 	}
 
 	/**
@@ -220,14 +241,17 @@ public class RLGlueTask<T extends Network> extends NoisyLonerTask<T> implements 
 	 */
 	public void launchRLGlue() {
 		System.out.println("Launch RL Glue");
-		ProcessBuilder processBuilder = new ProcessBuilder("RL-Glue/rl_glue.exe"); // command, arg1, arg2
+		ProcessBuilder processBuilder = new ProcessBuilder("RL-Glue/rl_glue.exe"); // command,
+																					// arg1,
+																					// arg2
 		Map<String, String> env = processBuilder.environment();
-		env.put("RLGLUE_HOST", "localhost"); 
+		env.put("RLGLUE_HOST", "localhost");
 		env.put("RLGLUE_PORT", "" + rlGluePort);
-		//Runtime rt = Runtime.getRuntime();
+		// Runtime rt = Runtime.getRuntime();
 		try {
 			// Launch an executable program
-			//rlglue = rt.exec("RL-Glue/rl_glue.exe"); //, new String[]{"RLGLUE_PORT=4100"}
+			// rlglue = rt.exec("RL-Glue/rl_glue.exe"); //, new
+			// String[]{"RLGLUE_PORT=4100"}
 			rlglue = processBuilder.start();
 
 		} catch (IOException ex) {
@@ -240,55 +264,62 @@ public class RLGlueTask<T extends Network> extends NoisyLonerTask<T> implements 
 	/**
 	 * Launches the agent used in the scenario
 	 *
-	 * @param agent An agent for RL Glue tasks
+	 * @param agent
+	 *            An agent for RL Glue tasks
 	 */
 	public void launchAgent(final AgentInterface agent) {
-		new Thread(
-				new Runnable() {
-					@Override
-					public void run() {
-						agentLoader = new AgentLoader("localhost", "" + rlGluePort, agent);
-						//agentLoader = new AgentLoader(agent);
-						agentLoader.run();
-						System.out.println("Agent done running");
-					}
-				}).start();
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				agentLoader = new AgentLoader("localhost", "" + rlGluePort, agent);
+				// agentLoader = new AgentLoader(agent);
+				agentLoader.run();
+				System.out.println("Agent done running");
+			}
+		}).start();
 	}
 
 	/**
 	 * Launches the environment using threads
 	 *
-	 * @param environment an RLGlueEnvironment environment
+	 * @param environment
+	 *            an RLGlueEnvironment environment
 	 */
 	public void launchEnvironment(final RLGlueEnvironment environment) {
-		new Thread(
-				new Runnable() {
-					@Override
-					public void run() {
-						environmentLoader = new EnvironmentLoader("localhost", "" + rlGluePort, environment);
-						//environmentLoader = new EnvironmentLoader(environment);
-						environmentLoader.run();
-						System.out.println("Environment done running");
-					}
-				}).start();
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				environmentLoader = new EnvironmentLoader("localhost", "" + rlGluePort, environment);
+				// environmentLoader = new EnvironmentLoader(environment);
+				environmentLoader.run();
+				System.out.println("Environment done running");
+			}
+		}).start();
 	}
 
 	/**
 	 * Returns the number of objectives
+	 * 
 	 * @return number of objectives
 	 */
 	@Override
 	public int numObjectives() {
-		// There are special cases, but the default fitness is the total summed reward
-		if(moPuddleWorld) return 2;
-		if(tetrisTimeSteps && tetrisBlocksOnScreen) return 3; // Tetris: both fitnesses used
-		if(tetrisTimeSteps || tetrisBlocksOnScreen) return 2; // Tetris: only one is used
-		else return 1; // Tetris: neither are used
+		// There are special cases, but the default fitness is the total summed
+		// reward
+		if (moPuddleWorld)
+			return 2;
+		if (tetrisTimeSteps && tetrisBlocksOnScreen)
+			return 3; // Tetris: both fitnesses used
+		if (tetrisTimeSteps || tetrisBlocksOnScreen)
+			return 2; // Tetris: only one is used
+		else
+			return 1; // Tetris: neither are used
 	}
 
 	/**
 	 * Supposedly a getter for the time stamp, but returns number of steps Used
 	 * by TWEANN.java
+	 * 
 	 * @return Supposed to be how much time has passed in episode
 	 */
 	@Override
@@ -299,6 +330,7 @@ public class RLGlueTask<T extends Network> extends NoisyLonerTask<T> implements 
 
 	/**
 	 * Brings in the labels for features, which are the NN inputs.
+	 * 
 	 * @return array of sensor input labels
 	 */
 	@Override
@@ -308,6 +340,7 @@ public class RLGlueTask<T extends Network> extends NoisyLonerTask<T> implements 
 
 	/**
 	 * Creates string array of labels for network output neurons
+	 * 
 	 * @return String of labels
 	 */
 	@Override
@@ -315,7 +348,8 @@ public class RLGlueTask<T extends Network> extends NoisyLonerTask<T> implements 
 		int numDiscreteActions = MMNEAT.networkOutputs;
 		String[] labels = new String[numDiscreteActions];
 		for (int i = 0; i < numDiscreteActions; i++) {
-			labels[i] = "Action " + i; // There is a distinct label for each action
+			labels[i] = "Action " + i; // There is a distinct label for each
+										// action
 		}
 		return labels;
 	}

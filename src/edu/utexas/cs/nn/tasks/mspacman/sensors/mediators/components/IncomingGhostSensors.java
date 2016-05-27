@@ -13,11 +13,11 @@ import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.IncomingGhostSensorBlock;
  */
 public class IncomingGhostSensors extends BlockLoadedInputOutputMediator {
 
-    public IncomingGhostSensors(boolean senseEdibleGhosts) {
-        super();
-        blocks.add(new IncomingGhostSensorBlock(true));
-        if (senseEdibleGhosts) {
-            blocks.add(new IncomingGhostSensorBlock(false));
-        }
-    }
+	public IncomingGhostSensors(boolean senseEdibleGhosts) {
+		super();
+		blocks.add(new IncomingGhostSensorBlock(true));
+		if (senseEdibleGhosts) {
+			blocks.add(new IncomingGhostSensorBlock(false));
+		}
+	}
 }

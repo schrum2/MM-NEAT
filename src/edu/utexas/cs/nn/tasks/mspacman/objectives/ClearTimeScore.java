@@ -12,18 +12,17 @@ import edu.utexas.cs.nn.parameters.CommonConstants;
  */
 public class ClearTimeScore<T extends Network> extends MsPacManObjective<T> {
 
-    /**
-     * Level time seems more appropriate here, but it resets before the fitness
-     * can be checked, so total time is used instead, which makes sense as long
-     * as this fitness function is only used in single level evaluation
-     * (maxLevel = 1)
-     *
-     * @param individual
-     * @return
-     */
-    public double fitness(Organism<T> individual) {
-        return g.getPacmanNumberOfLivesRemaining() > 0
-                ? -g.getTotalTime() // -g.getCurrentLevelTime()
-                : -CommonConstants.pacManLevelTimeLimit;
-    }
+	/**
+	 * Level time seems more appropriate here, but it resets before the fitness
+	 * can be checked, so total time is used instead, which makes sense as long
+	 * as this fitness function is only used in single level evaluation
+	 * (maxLevel = 1)
+	 *
+	 * @param individual
+	 * @return
+	 */
+	public double fitness(Organism<T> individual) {
+		return g.getPacmanNumberOfLivesRemaining() > 0 ? -g.getTotalTime() // -g.getCurrentLevelTime()
+				: -CommonConstants.pacManLevelTimeLimit;
+	}
 }

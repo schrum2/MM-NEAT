@@ -13,17 +13,17 @@ import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.nearestfarthest.NearestPow
  */
 public class NearestDirectionSensors extends BlockLoadedInputOutputMediator {
 
-    public NearestDirectionSensors(boolean sensePills, boolean senseEdibleGhosts, boolean sensePowerPills) {
-        super();
-        blocks.add(new NearestFarthestThreatGhostBlock(true));
-        if (sensePills) {
-            blocks.add(new NearestPillBlock());
-        }
-        if (senseEdibleGhosts) {
-            blocks.add(new NearestFarthestEdibleGhostBlock(true));
-        }
-        if (sensePowerPills) {
-            blocks.add(new NearestPowerPillBlock());
-        }
-    }
+	public NearestDirectionSensors(boolean sensePills, boolean senseEdibleGhosts, boolean sensePowerPills) {
+		super();
+		blocks.add(new NearestFarthestThreatGhostBlock(true));
+		if (sensePills) {
+			blocks.add(new NearestPillBlock());
+		}
+		if (senseEdibleGhosts) {
+			blocks.add(new NearestFarthestEdibleGhostBlock(true));
+		}
+		if (sensePowerPills) {
+			blocks.add(new NearestPowerPillBlock());
+		}
+	}
 }

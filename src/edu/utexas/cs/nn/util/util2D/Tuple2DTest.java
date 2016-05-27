@@ -7,17 +7,18 @@ import org.junit.Test;
 public class Tuple2DTest {
 
 	public static final double ERROR = .0001;
+
 	@Test
 	public void testTuple2D() {
 		Tuple2D test = new Tuple2D(1, 2);
 		assertEquals(test.x, 1, ERROR);
-		assertEquals(test.y,  2, ERROR);
+		assertEquals(test.y, 2, ERROR);
 	}
 
 	@Test
 	public void testIsZero() {
 		Tuple2D test = new Tuple2D(1, 2);
-		Tuple2D otherTest = new Tuple2D(0,0);
+		Tuple2D otherTest = new Tuple2D(0, 0);
 		assertFalse(test.isZero());
 		assertTrue(otherTest.isZero());
 	}
@@ -31,8 +32,8 @@ public class Tuple2DTest {
 	@Test
 	public void testNormalize() {
 		Tuple2D test = new Tuple2D(3, 4);
-		double testX = 3.0/5;
-		double testY = 4.0/5;
+		double testX = 3.0 / 5;
+		double testY = 4.0 / 5;
 		test = test.normalize();
 		assertEquals(testX, test.x, ERROR);
 		assertEquals(testY, test.y, ERROR);
@@ -40,14 +41,14 @@ public class Tuple2DTest {
 
 	@Test
 	public void testAngle() {
-		Tuple2D test = new Tuple2D(1,1);
-		assertEquals(test.angle(), Math.PI/4, ERROR);
+		Tuple2D test = new Tuple2D(1, 1);
+		assertEquals(test.angle(), Math.PI / 4, ERROR);
 	}
 
 	@Test
 	public void testMidpoint() {
-		Tuple2D test = new Tuple2D(1,1);
-		Tuple2D zero = new Tuple2D(0,0);
+		Tuple2D test = new Tuple2D(1, 1);
+		Tuple2D zero = new Tuple2D(0, 0);
 		test = test.midpoint(zero);
 		Tuple2D otherTest = new Tuple2D(.5, .5);
 		assertEquals(test.x, otherTest.x, ERROR);
@@ -58,7 +59,7 @@ public class Tuple2DTest {
 	@Test
 	public void testAdd() {
 		Tuple2D test = new Tuple2D(2, 2);
-		Tuple2D something = new Tuple2D(1,1);
+		Tuple2D something = new Tuple2D(1, 1);
 		test.add(something);
 		Tuple2D otherTest = new Tuple2D(2, 2);
 		assertEquals(test.x, otherTest.x, ERROR);
@@ -102,18 +103,19 @@ public class Tuple2DTest {
 		Tuple2D otherTest = new Tuple2D(1, 1);
 		assertTrue(test.equals(otherTest));
 	}
+
 	@Test
 	public void testRotate() {
 		Tuple2D test = new Tuple2D(1, 0);
 		Tuple2D otherTest = new Tuple2D(1, 0);
-		test.rotate(Math.PI/2);
+		test.rotate(Math.PI / 2);
 		assertEquals(test, otherTest);
 	}
 
 	@Test
 	public void testDistanceILocated2D() {
 		Tuple2D test = new Tuple2D(1, 1);
-		ILocated2D otherTest = new Tuple2D(0,0);
+		ILocated2D otherTest = new Tuple2D(0, 0);
 		assertEquals(test.distance(otherTest), Math.sqrt(2), ERROR);
 	}
 
@@ -127,11 +129,11 @@ public class Tuple2DTest {
 
 	@Test
 	public void testAngleBetweenTargets() {
-		Tuple2D test = new Tuple2D(0,0);
-		Tuple2D a = new Tuple2D(1,1);
-		Tuple2D b = new Tuple2D(1,0);
+		Tuple2D test = new Tuple2D(0, 0);
+		Tuple2D a = new Tuple2D(1, 1);
+		Tuple2D b = new Tuple2D(1, 0);
 		double angle = test.angleBetweenTargets(a, b);
-		assertEquals(angle, Math.PI/4, ERROR);
+		assertEquals(angle, Math.PI / 4, ERROR);
 	}
 
 }

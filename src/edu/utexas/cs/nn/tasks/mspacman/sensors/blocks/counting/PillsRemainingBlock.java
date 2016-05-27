@@ -12,22 +12,22 @@ import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
  */
 public class PillsRemainingBlock extends TargetPortionRemainingBlock {
 
-    public PillsRemainingBlock(boolean portion, boolean inverse) {
-        super(portion, inverse);
-    }
+	public PillsRemainingBlock(boolean portion, boolean inverse) {
+		super(portion, inverse);
+	}
 
-    @Override
-    public int getTargetMax(GameFacade gf) {
-        return gf.getNumberOfPills();
-    }
+	@Override
+	public int getTargetMax(GameFacade gf) {
+		return gf.getNumberOfPills();
+	}
 
-    @Override
-    public int getTargetCurrent(GameFacade gf) {
-        return gf.getActivePillsIndices().length;
-    }
+	@Override
+	public int getTargetCurrent(GameFacade gf) {
+		return gf.getActivePillsIndices().length;
+	}
 
-    @Override
-    public String getTargetType() {
-        return "Pill";
-    }
+	@Override
+	public String getTargetType() {
+		return "Pill";
+	}
 }

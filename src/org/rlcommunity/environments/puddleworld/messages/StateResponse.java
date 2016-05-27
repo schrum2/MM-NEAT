@@ -35,57 +35,57 @@ import rlVizLib.messaging.environment.EnvMessageType;
 
 public class StateResponse extends AbstractResponse {
 
-    Point2D Position = new Point2D.Double();
+	Point2D Position = new Point2D.Double();
 
-    public StateResponse(String responseMessage) throws NotAnRLVizMessageException {
-        try {
-            GenericMessage theGenericResponse = new GenericMessage(responseMessage);
-            String thePayLoadString = theGenericResponse.getPayLoad();
-            DataInputStream in = BinaryPayload.getInputStreamFromPayload(thePayLoadString);
-            double x = in.readDouble();
-            double y = in.readDouble();
-            Position = new Point2D.Double(x, y);
-        } catch (Exception ex) {
-            Logger.getLogger(StateResponse.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
+	public StateResponse(String responseMessage) throws NotAnRLVizMessageException {
+		try {
+			GenericMessage theGenericResponse = new GenericMessage(responseMessage);
+			String thePayLoadString = theGenericResponse.getPayLoad();
+			DataInputStream in = BinaryPayload.getInputStreamFromPayload(thePayLoadString);
+			double x = in.readDouble();
+			double y = in.readDouble();
+			Position = new Point2D.Double(x, y);
+		} catch (Exception ex) {
+			Logger.getLogger(StateResponse.class.getName()).log(Level.SEVERE, null, ex);
+		}
+	}
 
-    public StateResponse(Point2D agentPosition) {
-        this.Position.setLocation(agentPosition);
-    }
+	public StateResponse(Point2D agentPosition) {
+		this.Position.setLocation(agentPosition);
+	}
 
-    @Override
-    public String toString() {
-        String theResponse = "StateResponse: not implemented ";
-        return theResponse;
-    }
+	@Override
+	public String toString() {
+		String theResponse = "StateResponse: not implemented ";
+		return theResponse;
+	}
 
-    @Override
-    public String makeStringResponse() {
-        StringBuffer theResponseBuffer = new StringBuffer();
-        theResponseBuffer.append("TO=");
-        theResponseBuffer.append(MessageUser.kBenchmark.id());
-        theResponseBuffer.append(" FROM=");
-        theResponseBuffer.append(MessageUser.kEnv.id());
-        theResponseBuffer.append(" CMD=");
-        theResponseBuffer.append(EnvMessageType.kEnvResponse.id());
-        theResponseBuffer.append(" VALTYPE=");
-        theResponseBuffer.append(MessageValueType.kStringList.id());
-        theResponseBuffer.append(" VALS=");
+	@Override
+	public String makeStringResponse() {
+		StringBuffer theResponseBuffer = new StringBuffer();
+		theResponseBuffer.append("TO=");
+		theResponseBuffer.append(MessageUser.kBenchmark.id());
+		theResponseBuffer.append(" FROM=");
+		theResponseBuffer.append(MessageUser.kEnv.id());
+		theResponseBuffer.append(" CMD=");
+		theResponseBuffer.append(EnvMessageType.kEnvResponse.id());
+		theResponseBuffer.append(" VALTYPE=");
+		theResponseBuffer.append(MessageValueType.kStringList.id());
+		theResponseBuffer.append(" VALS=");
 
-        BinaryPayload theStatePayload = new BinaryPayload();
-        DataOutputStream theOutputStream = theStatePayload.getOutputStream();
-        try {
-            theOutputStream.writeDouble(Position.getX());
-            theOutputStream.writeDouble(Position.getY());
-        } catch (IOException ex) {
-            Logger.getLogger(StateResponse.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        theResponseBuffer.append(theStatePayload.getAsEncodedString());
-        return theResponseBuffer.toString();
-    }
+		BinaryPayload theStatePayload = new BinaryPayload();
+		DataOutputStream theOutputStream = theStatePayload.getOutputStream();
+		try {
+			theOutputStream.writeDouble(Position.getX());
+			theOutputStream.writeDouble(Position.getY());
+		} catch (IOException ex) {
+			Logger.getLogger(StateResponse.class.getName()).log(Level.SEVERE, null, ex);
+		}
+		theResponseBuffer.append(theStatePayload.getAsEncodedString());
+		return theResponseBuffer.toString();
+	}
 
-    public Point2D getPosition() {
-        return Position;
-    }
+	public Point2D getPosition() {
+		return Position;
+	}
 };

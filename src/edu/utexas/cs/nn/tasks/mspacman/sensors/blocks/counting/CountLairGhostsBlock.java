@@ -9,22 +9,22 @@ import pacman.game.Constants;
  */
 public class CountLairGhostsBlock extends TargetPortionRemainingBlock {
 
-    public CountLairGhostsBlock(boolean portion, boolean inverse) {
-        super(portion, inverse);
-    }
+	public CountLairGhostsBlock(boolean portion, boolean inverse) {
+		super(portion, inverse);
+	}
 
-    @Override
-    public int getTargetMax(GameFacade gf) {
-        return Constants.NUM_GHOSTS;
-    }
+	@Override
+	public int getTargetMax(GameFacade gf) {
+		return Constants.NUM_GHOSTS;
+	}
 
-    @Override
-    public int getTargetCurrent(GameFacade gf) {
-        return gf.getNumberOfLairGhosts();
-    }
+	@Override
+	public int getTargetCurrent(GameFacade gf) {
+		return gf.getNumberOfLairGhosts();
+	}
 
-    @Override
-    public String getTargetType() {
-        return "Lair Ghost";
-    }
+	@Override
+	public String getTargetType() {
+		return "Lair Ghost";
+	}
 }

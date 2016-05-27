@@ -12,18 +12,18 @@ import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
  */
 public class DirectionalPillsStaticLookAheadBlock extends DirectionalStaticLookAheadBlock {
 
-    @Override
-    public String targetType() {
-        return "Pills";
-    }
+	@Override
+	public String targetType() {
+		return "Pills";
+	}
 
-    @Override
-    public int[] getTargets(GameFacade gf) {
-        return gf.getActivePillsIndices();
-    }
+	@Override
+	public int[] getTargets(GameFacade gf) {
+		return gf.getActivePillsIndices();
+	}
 
-    @Override
-    public double maxCount(GameFacade gf) {
-        return gf.getNumActivePills();
-    }
+	@Override
+	public double maxCount(GameFacade gf) {
+		return gf.getNumActivePills();
+	}
 }

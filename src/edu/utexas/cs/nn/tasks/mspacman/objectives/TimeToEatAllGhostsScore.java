@@ -13,7 +13,7 @@ import edu.utexas.cs.nn.networks.Network;
  */
 public class TimeToEatAllGhostsScore<T extends Network> extends MsPacManObjective<T> {
 
-    public double fitness(Organism<T> individual) {
-        return -g.averageTimeToEatAllGhostsAfterPowerPill();
-    }
+	public double fitness(Organism<T> individual) {
+		return -g.averageTimeToEatAllGhostsAfterPowerPill();
+	}
 }

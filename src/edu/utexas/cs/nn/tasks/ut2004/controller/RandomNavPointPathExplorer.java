@@ -14,16 +14,19 @@ import cz.cuni.amis.utils.collections.MyCollections;
  */
 public class RandomNavPointPathExplorer extends SequentialPathExplorer {
 
-    @Override
-    public NavPoint getNextNavPoint(UT2004BotModuleController bot) {
-        // choose one feasible navpoint (== not belonging to tabooNavPoints) randomly
-        NavPoint chosen = MyCollections.getRandomFiltered(bot.getWorldView().getAll(NavPoint.class).values(), tabooNavPoints);
+	@Override
+	public NavPoint getNextNavPoint(UT2004BotModuleController bot) {
+		// choose one feasible navpoint (== not belonging to tabooNavPoints)
+		// randomly
+		NavPoint chosen = MyCollections.getRandomFiltered(bot.getWorldView().getAll(NavPoint.class).values(),
+				tabooNavPoints);
 
-        if (chosen != null) {
-            return chosen;
-        }
+		if (chosen != null) {
+			return chosen;
+		}
 
-        // ok, all navpoints have been visited probably, try to pick one at random
-        return MyCollections.getRandom(bot.getWorldView().getAll(NavPoint.class).values());
-    }
+		// ok, all navpoints have been visited probably, try to pick one at
+		// random
+		return MyCollections.getRandom(bot.getWorldView().getAll(NavPoint.class).values());
+	}
 }

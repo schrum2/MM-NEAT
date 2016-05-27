@@ -10,19 +10,21 @@ import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
  */
 public class PerturbMutation extends RealMutation {
 
-    final double[] magnitude;
+	final double[] magnitude;
 
-    public PerturbMutation(double[] magnitude) {
-        this.magnitude = magnitude;
-    }
+	public PerturbMutation(double[] magnitude) {
+		this.magnitude = magnitude;
+	}
 
-    public PerturbMutation(int size) {
-        this(ArrayUtil.doubleOnes(size));
-    }
+	public PerturbMutation(int size) {
+		this(ArrayUtil.doubleOnes(size));
+	}
 
-    @Override
-    public void mutateIndex(RealValuedGenotype genotype, int i) {
-        //genotype.getPhenotype().set(i, genotype.getPhenotype().get(i) + (magnitude[i] * RandomNumbers.fullSmallRand()));
-        genotype.getPhenotype().set(i, genotype.getPhenotype().get(i) + (magnitude[i] * MMNEAT.weightPerturber.randomOutput()));
-    }
+	@Override
+	public void mutateIndex(RealValuedGenotype genotype, int i) {
+		// genotype.getPhenotype().set(i, genotype.getPhenotype().get(i) +
+		// (magnitude[i] * RandomNumbers.fullSmallRand()));
+		genotype.getPhenotype().set(i,
+				genotype.getPhenotype().get(i) + (magnitude[i] * MMNEAT.weightPerturber.randomOutput()));
+	}
 }

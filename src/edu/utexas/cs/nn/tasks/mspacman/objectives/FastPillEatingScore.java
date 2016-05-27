@@ -9,7 +9,7 @@ import edu.utexas.cs.nn.networks.Network;
  */
 public class FastPillEatingScore<T extends Network> extends MsPacManObjective<T> {
 
-    public double fitness(Organism<T> individual) {
-        return g.getTimePillReward();
-    }
+	public double fitness(Organism<T> individual) {
+		return g.getTimePillReward();
+	}
 }

@@ -17,34 +17,39 @@ import edu.utexas.cs.nn.util.ClassCreation;
  */
 public class MultinetworkSelectorNetworkMsPacManController extends MultinetworkSelectorMsPacManController<TWEANN> {
 
-    public MultinetworkSelectorNetworkMsPacManController(TWEANN nn) throws NoSuchMethodException {
-        this(nn, new Genotype[]{
-                    EvolutionaryHistory.getSubnetwork(Parameters.parameters.stringParameter("ghostEatingSubnetwork")),
-                    EvolutionaryHistory.getSubnetwork(Parameters.parameters.stringParameter("pillEatingSubnetwork"))});
-    }
+	public MultinetworkSelectorNetworkMsPacManController(TWEANN nn) throws NoSuchMethodException {
+		this(nn, new Genotype[] {
+				EvolutionaryHistory.getSubnetwork(Parameters.parameters.stringParameter("ghostEatingSubnetwork")),
+				EvolutionaryHistory.getSubnetwork(Parameters.parameters.stringParameter("pillEatingSubnetwork")) });
+	}
 
-    public MultinetworkSelectorNetworkMsPacManController(TWEANN nn, Genotype[] genotypes) throws NoSuchMethodException {
-        super(genotypes,
-                MMNEAT.coevolutionMediators != null ? // For backwards compatibility 
-                MMNEAT.coevolutionMediators
-                : new MsPacManControllerInputOutputMediator[]{(MsPacManControllerInputOutputMediator) ClassCreation.createObject("pacManMediatorClass1"), (MsPacManControllerInputOutputMediator) ClassCreation.createObject("pacManMediatorClass2")},
-                new NetworkModeSelector<TWEANN>(nn));
-        for (Network n : networks) {
-            ((TWEANN) n).canDraw = false;
-        }
-    }
+	public MultinetworkSelectorNetworkMsPacManController(TWEANN nn, Genotype[] genotypes) throws NoSuchMethodException {
+		super(genotypes,
+				MMNEAT.coevolutionMediators != null ? // For backwards
+														// compatibility
+						MMNEAT.coevolutionMediators
+						: new MsPacManControllerInputOutputMediator[] {
+								(MsPacManControllerInputOutputMediator) ClassCreation
+										.createObject("pacManMediatorClass1"),
+								(MsPacManControllerInputOutputMediator) ClassCreation
+										.createObject("pacManMediatorClass2") },
+				new NetworkModeSelector<TWEANN>(nn));
+		for (Network n : networks) {
+			((TWEANN) n).canDraw = false;
+		}
+	}
 
-    @Override
-    public int getAction(GameFacade game, long timeDue) {
-        // Done to keep mediator updated
-        MMNEAT.pacmanInputOutputMediator.mediatorStateUpdate(game);
-        int action = super.getAction(game, timeDue);
-        return action;
-    }
+	@Override
+	public int getAction(GameFacade game, long timeDue) {
+		// Done to keep mediator updated
+		MMNEAT.pacmanInputOutputMediator.mediatorStateUpdate(game);
+		int action = super.getAction(game, timeDue);
+		return action;
+	}
 
-    @Override
-    public void reset() {
-        super.reset();
-        this.ms.reset();
-    }
+	@Override
+	public void reset() {
+		super.reset();
+		this.ms.reset();
+	}
 }

@@ -20,21 +20,21 @@ import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.specific.VariableDire
  */
 public class TvsECheckEachDirectionMediator extends VariableDirectionBlockLoadedInputOutputMediator {
 
-    public TvsECheckEachDirectionMediator() {
-        int irrelevantStartingDirection = -1;
+	public TvsECheckEachDirectionMediator() {
+		int irrelevantStartingDirection = -1;
 
-        blocks.add(new BiasBlock());
-        // Distances
-        blocks.add(new VariableDirectionJunctionDistanceBlock(irrelevantStartingDirection));
-        // Specific Ghosts
-        for(int i = 0; i < CommonConstants.numActiveGhosts; i++) {
-            blocks.add(new VariableDirectionSpecificGhostDistanceBlock(irrelevantStartingDirection, i));
-            blocks.add(new VariableDirectionSpecificGhostIncomingBlock(i));
-            //blocks.add(new SpecificGhostIsEdibleBlock(i));
-        }
-        // Look ahead
-        blocks.add(new VariableDirectionDistanceFromJunctionToGhostBlock(irrelevantStartingDirection, true, true));
-        blocks.add(new AnyEdibleGhostBlock());
-        blocks.add(new VariableDirectionKStepJunctionCountBlock(irrelevantStartingDirection));
-    }
+		blocks.add(new BiasBlock());
+		// Distances
+		blocks.add(new VariableDirectionJunctionDistanceBlock(irrelevantStartingDirection));
+		// Specific Ghosts
+		for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
+			blocks.add(new VariableDirectionSpecificGhostDistanceBlock(irrelevantStartingDirection, i));
+			blocks.add(new VariableDirectionSpecificGhostIncomingBlock(i));
+			// blocks.add(new SpecificGhostIsEdibleBlock(i));
+		}
+		// Look ahead
+		blocks.add(new VariableDirectionDistanceFromJunctionToGhostBlock(irrelevantStartingDirection, true, true));
+		blocks.add(new AnyEdibleGhostBlock());
+		blocks.add(new VariableDirectionKStepJunctionCountBlock(irrelevantStartingDirection));
+	}
 }

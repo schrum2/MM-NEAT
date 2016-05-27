@@ -29,85 +29,85 @@ import rlVizLib.messaging.environment.EnvMessageType;
 
 public class MCStateResponse extends AbstractResponse {
 
-    double position;
-    double velocity;
-    double height;
-    double theSlope;
-    int theAction;
+	double position;
+	double velocity;
+	double height;
+	double theSlope;
+	int theAction;
 
-    public MCStateResponse(int action, double position, double velocity, double height, double slope) {
-        this.position = position;
-        this.velocity = velocity;
-        this.height = height;
-        this.theAction = action;
-        this.theSlope = slope;
+	public MCStateResponse(int action, double position, double velocity, double height, double slope) {
+		this.position = position;
+		this.velocity = velocity;
+		this.height = height;
+		this.theAction = action;
+		this.theSlope = slope;
 
-    }
+	}
 
-    public MCStateResponse(String responseMessage) throws NotAnRLVizMessageException {
+	public MCStateResponse(String responseMessage) throws NotAnRLVizMessageException {
 
-        GenericMessage theGenericResponse = new GenericMessage(responseMessage);
+		GenericMessage theGenericResponse = new GenericMessage(responseMessage);
 
-        String thePayLoadString = theGenericResponse.getPayLoad();
+		String thePayLoadString = theGenericResponse.getPayLoad();
 
-        StringTokenizer stateTokenizer = new StringTokenizer(thePayLoadString, ":");
+		StringTokenizer stateTokenizer = new StringTokenizer(thePayLoadString, ":");
 
-        theAction = Integer.parseInt(stateTokenizer.nextToken());
-        position = Double.parseDouble(stateTokenizer.nextToken());
-        velocity = Double.parseDouble(stateTokenizer.nextToken());
-        height = Double.parseDouble(stateTokenizer.nextToken());
-        theSlope = Double.parseDouble(stateTokenizer.nextToken());
-    }
+		theAction = Integer.parseInt(stateTokenizer.nextToken());
+		position = Double.parseDouble(stateTokenizer.nextToken());
+		velocity = Double.parseDouble(stateTokenizer.nextToken());
+		height = Double.parseDouble(stateTokenizer.nextToken());
+		theSlope = Double.parseDouble(stateTokenizer.nextToken());
+	}
 
-    @Override
-    public String toString() {
-        String theResponse = "MCStateResponse: not implemented ";
-        return theResponse;
-    }
+	@Override
+	public String toString() {
+		String theResponse = "MCStateResponse: not implemented ";
+		return theResponse;
+	}
 
-    @Override
-    public String makeStringResponse() {
-        StringBuffer theResponseBuffer = new StringBuffer();
-        theResponseBuffer.append("TO=");
-        theResponseBuffer.append(MessageUser.kBenchmark.id());
-        theResponseBuffer.append(" FROM=");
-        theResponseBuffer.append(MessageUser.kEnv.id());
-        theResponseBuffer.append(" CMD=");
-        theResponseBuffer.append(EnvMessageType.kEnvResponse.id());
-        theResponseBuffer.append(" VALTYPE=");
-        theResponseBuffer.append(MessageValueType.kStringList.id());
-        theResponseBuffer.append(" VALS=");
+	@Override
+	public String makeStringResponse() {
+		StringBuffer theResponseBuffer = new StringBuffer();
+		theResponseBuffer.append("TO=");
+		theResponseBuffer.append(MessageUser.kBenchmark.id());
+		theResponseBuffer.append(" FROM=");
+		theResponseBuffer.append(MessageUser.kEnv.id());
+		theResponseBuffer.append(" CMD=");
+		theResponseBuffer.append(EnvMessageType.kEnvResponse.id());
+		theResponseBuffer.append(" VALTYPE=");
+		theResponseBuffer.append(MessageValueType.kStringList.id());
+		theResponseBuffer.append(" VALS=");
 
-        theResponseBuffer.append(theAction);
-        theResponseBuffer.append(":");
-        theResponseBuffer.append(position);
-        theResponseBuffer.append(":");
-        theResponseBuffer.append(velocity);
-        theResponseBuffer.append(":");
-        theResponseBuffer.append(height);
-        theResponseBuffer.append(":");
-        theResponseBuffer.append(theSlope);
+		theResponseBuffer.append(theAction);
+		theResponseBuffer.append(":");
+		theResponseBuffer.append(position);
+		theResponseBuffer.append(":");
+		theResponseBuffer.append(velocity);
+		theResponseBuffer.append(":");
+		theResponseBuffer.append(height);
+		theResponseBuffer.append(":");
+		theResponseBuffer.append(theSlope);
 
-        return theResponseBuffer.toString();
-    }
+		return theResponseBuffer.toString();
+	}
 
-    public double getPosition() {
-        return position;
-    }
+	public double getPosition() {
+		return position;
+	}
 
-    public double getVelocity() {
-        return velocity;
-    }
+	public double getVelocity() {
+		return velocity;
+	}
 
-    public double getHeight() {
-        return height;
-    }
+	public double getHeight() {
+		return height;
+	}
 
-    public int getAction() {
-        return theAction;
-    }
+	public int getAction() {
+		return theAction;
+	}
 
-    public double getSlope() {
-        return theSlope;
-    }
+	public double getSlope() {
+		return theSlope;
+	}
 };

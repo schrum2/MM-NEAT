@@ -10,41 +10,42 @@ import java.util.concurrent.*;
  */
 public class BotKiller implements Callable<Boolean> {
 
-    public static void killBot(IUT2004Bot bot) {
-        ExecutorService pond = null;
-        try {
-            pond = Executors.newFixedThreadPool(1);
-            Future<Boolean> future = pond.submit(new BotKiller(bot));
-            Boolean result = future.get();
-        } catch (InterruptedException ex) {
-            System.out.println("Bot kill interrupted");
-        } catch (ExecutionException ex) {
-            System.out.println("ExecutionException in bot kill");
-        } finally {
-            if (pond != null) {
-                pond.shutdown();
-            }
-        }
-    }
-    private final IUT2004Bot b;
+	public static void killBot(IUT2004Bot bot) {
+		ExecutorService pond = null;
+		try {
+			pond = Executors.newFixedThreadPool(1);
+			Future<Boolean> future = pond.submit(new BotKiller(bot));
+			Boolean result = future.get();
+		} catch (InterruptedException ex) {
+			System.out.println("Bot kill interrupted");
+		} catch (ExecutionException ex) {
+			System.out.println("ExecutionException in bot kill");
+		} finally {
+			if (pond != null) {
+				pond.shutdown();
+			}
+		}
+	}
 
-    public BotKiller(IUT2004Bot b) {
-        this.b = b;
-    }
+	private final IUT2004Bot b;
 
-    @Override
-    public Boolean call() {
-        Thread.currentThread().setName("BotKiller-" + b.getName());
-        //System.out.println(b.getName() + ": Killing " + b);
-        try {
-            b.getAct().act(new DisconnectBot());
-            //b.bot.kill();
-            b.stop();
-        } catch (Exception e) {
-            System.out.println("Exception on kill: " + e);
-            e.printStackTrace();
-        }
-        //System.out.println(b.getName() + ": Done killing " + b);
-        return true;
-    }
+	public BotKiller(IUT2004Bot b) {
+		this.b = b;
+	}
+
+	@Override
+	public Boolean call() {
+		Thread.currentThread().setName("BotKiller-" + b.getName());
+		// System.out.println(b.getName() + ": Killing " + b);
+		try {
+			b.getAct().act(new DisconnectBot());
+			// b.bot.kill();
+			b.stop();
+		} catch (Exception e) {
+			System.out.println("Exception on kill: " + e);
+			e.printStackTrace();
+		}
+		// System.out.println(b.getName() + ": Done killing " + b);
+		return true;
+	}
 }

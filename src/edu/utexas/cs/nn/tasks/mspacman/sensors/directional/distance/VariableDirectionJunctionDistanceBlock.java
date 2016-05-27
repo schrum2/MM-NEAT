@@ -12,21 +12,21 @@ import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
  */
 public class VariableDirectionJunctionDistanceBlock extends VariableDirectionDistanceBlock {
 
-    public VariableDirectionJunctionDistanceBlock(int dir) {
-        this(dir,0);
-    }
-    
-    public VariableDirectionJunctionDistanceBlock(int dir, int exclude) {
-        super(dir,exclude);
-    }
+	public VariableDirectionJunctionDistanceBlock(int dir) {
+		this(dir, 0);
+	}
 
-    @Override
-    public String getType() {
-        return "Junction";
-    }
+	public VariableDirectionJunctionDistanceBlock(int dir, int exclude) {
+		super(dir, exclude);
+	}
 
-    @Override
-    public int[] getTargets(GameFacade gf) {
-        return gf.getJunctionIndices();
-    }
+	@Override
+	public String getType() {
+		return "Junction";
+	}
+
+	@Override
+	public int[] getTargets(GameFacade gf) {
+		return gf.getJunctionIndices();
+	}
 }

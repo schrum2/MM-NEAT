@@ -21,10 +21,10 @@ public class PreparingToChaseModeSelector extends MsPacManModeSelector {
 	}
 
 	/**
-	 * A Mode selector which selects between 3 modes based on the following:
-	 * 0) Ghosts are edible 
-	 * 1) No edible ghosts, and near power pill 
-	 * 2) No edible ghosts, and not near power pill
+	 * A Mode selector which selects between 3 modes based on the following: 0)
+	 * Ghosts are edible 1) No edible ghosts, and near power pill 2) No edible
+	 * ghosts, and not near power pill
+	 * 
 	 * @return mode
 	 */
 	public int mode() {
@@ -46,21 +46,25 @@ public class PreparingToChaseModeSelector extends MsPacManModeSelector {
 		return distance < tooCloseDistance ? CLOSE_TO_POWER_PILL : FAR_FROM_POWER_PILL;
 	}
 
-    /**
-     * There are 3 modes for this mode selector
-     * @return 3
-     */
+	/**
+	 * There are 3 modes for this mode selector
+	 * 
+	 * @return 3
+	 */
 	public int numModes() {
 		return 3;
 	}
 
 	@Override
-    /**
-     * gets the associated fitness scores with this mode selector 
-     * @return an int array holding the score for if some ghosts are edible in the first index and the score
-     * for if there are no edible ghosts, and near power pill in the second index and the score for 
-     * if there are no edible ghosts, and not near power pill in the third index
-     */
+	/**
+	 * gets the associated fitness scores with this mode selector
+	 * 
+	 * @return an int array holding the score for if some ghosts are edible in
+	 *         the first index and the score for if there are no edible ghosts,
+	 *         and near power pill in the second index and the score for if
+	 *         there are no edible ghosts, and not near power pill in the third
+	 *         index
+	 */
 	public int[] associatedFitnessScores() {
 		int[] result = new int[numModes()];
 		result[SOME_EDIBLE] = GHOST_SCORE;

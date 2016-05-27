@@ -8,22 +8,22 @@ import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
  */
 public class CountEdibleGhostsBlock extends TargetPortionRemainingBlock {
 
-    public CountEdibleGhostsBlock(boolean portion, boolean inverse) {
-        super(portion, inverse);
-    }
+	public CountEdibleGhostsBlock(boolean portion, boolean inverse) {
+		super(portion, inverse);
+	}
 
-    @Override
-    public int getTargetMax(GameFacade gf) {
-        return gf.getNumActiveGhosts();
-    }
+	@Override
+	public int getTargetMax(GameFacade gf) {
+		return gf.getNumActiveGhosts();
+	}
 
-    @Override
-    public int getTargetCurrent(GameFacade gf) {
-        return gf.getNumberOfEdibleGhosts();
-    }
+	@Override
+	public int getTargetCurrent(GameFacade gf) {
+		return gf.getNumberOfEdibleGhosts();
+	}
 
-    @Override
-    public String getTargetType() {
-        return "Edible Ghost";
-    }
+	@Override
+	public String getTargetType() {
+		return "Edible Ghost";
+	}
 }

@@ -12,18 +12,18 @@ import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
  */
 public class DirectionalEdibleGhostsStaticLookAheadBlock extends DirectionalStaticLookAheadBlock {
 
-    @Override
-    public String targetType() {
-        return "Edible Ghosts";
-    }
+	@Override
+	public String targetType() {
+		return "Edible Ghosts";
+	}
 
-    @Override
-    public int[] getTargets(GameFacade gf) {
-        return gf.getEdibleGhostLocations();
-    }
+	@Override
+	public int[] getTargets(GameFacade gf) {
+		return gf.getEdibleGhostLocations();
+	}
 
-    @Override
-    public double maxCount(GameFacade gf) {
-        return gf.getNumActiveGhosts();
-    }
+	@Override
+	public double maxCount(GameFacade gf) {
+		return gf.getNumActiveGhosts();
+	}
 }

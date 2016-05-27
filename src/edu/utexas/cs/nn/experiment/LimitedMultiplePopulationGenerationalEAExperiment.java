@@ -14,18 +14,18 @@ import edu.utexas.cs.nn.MMNEAT.MMNEAT;
  */
 public class LimitedMultiplePopulationGenerationalEAExperiment extends MultiplePopulationGenerationalEAExperiment {
 
-    private int maxGenerations;
+	private int maxGenerations;
 
-    public LimitedMultiplePopulationGenerationalEAExperiment() {
-        this((MultiplePopulationGenerationalEA) MMNEAT.ea, Parameters.parameters.integerParameter("maxGens"));
-    }
+	public LimitedMultiplePopulationGenerationalEAExperiment() {
+		this((MultiplePopulationGenerationalEA) MMNEAT.ea, Parameters.parameters.integerParameter("maxGens"));
+	}
 
-    public LimitedMultiplePopulationGenerationalEAExperiment(MultiplePopulationGenerationalEA ea, int maxGenerations) {
-        super(ea);
-        this.maxGenerations = maxGenerations;
-    }
+	public LimitedMultiplePopulationGenerationalEAExperiment(MultiplePopulationGenerationalEA ea, int maxGenerations) {
+		super(ea);
+		this.maxGenerations = maxGenerations;
+	}
 
-    public boolean shouldStop() {
-        return ea.currentGeneration() >= this.maxGenerations;
-    }
+	public boolean shouldStop() {
+		return ea.currentGeneration() >= this.maxGenerations;
+	}
 }

@@ -24,34 +24,35 @@ import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.specific.VariableDire
 
 /**
  * Intended for use in GhostsVsPills Multitask
+ * 
  * @author Jacob Schrum
  */
 public class GvsPCheckEachDirectionMediator extends VariableDirectionBlockLoadedInputOutputMediator {
 
-    public GvsPCheckEachDirectionMediator() {
-        int direction = -1;
+	public GvsPCheckEachDirectionMediator() {
+		int direction = -1;
 
-        blocks.add(new BiasBlock());
-        // Distances
-        blocks.add(new VariableDirectionPillDistanceBlock(direction));
-        blocks.add(new VariableDirectionPowerPillDistanceBlock(direction));
-        blocks.add(new VariableDirectionJunctionDistanceBlock(direction));
-        // Specific Ghosts
-        for(int i = 0; i < CommonConstants.numActiveGhosts; i++) {
-            blocks.add(new VariableDirectionSpecificGhostDistanceBlock(direction, i));
-            blocks.add(new VariableDirectionSpecificGhostIncomingBlock(i));
-            blocks.add(new SpecificGhostEdibleTimeBlock(i));
-            blocks.add(new SpecificGhostLairTimeBlock(i));
-        }
-        // Look ahead
-        blocks.add(new VariableDirectionKStepPillCountBlock(direction));
-        blocks.add(new VariableDirectionKStepJunctionCountBlock(direction));
-        blocks.add(new VariableDirectionCountAllPillsInKStepsBlock(direction));
-        // Obstacle
-        blocks.add(new VariableDirectionPowerPillBlocksJunctionBlock());
-        // Other
-        blocks.add(new PillsRemainingBlock(true, false));
-        blocks.add(new PowerPillsRemainingBlock(true, false));
-        blocks.add(new VariableDirectionDistanceFromJunctionToGhostBlock(direction, true, true));
-    }
+		blocks.add(new BiasBlock());
+		// Distances
+		blocks.add(new VariableDirectionPillDistanceBlock(direction));
+		blocks.add(new VariableDirectionPowerPillDistanceBlock(direction));
+		blocks.add(new VariableDirectionJunctionDistanceBlock(direction));
+		// Specific Ghosts
+		for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
+			blocks.add(new VariableDirectionSpecificGhostDistanceBlock(direction, i));
+			blocks.add(new VariableDirectionSpecificGhostIncomingBlock(i));
+			blocks.add(new SpecificGhostEdibleTimeBlock(i));
+			blocks.add(new SpecificGhostLairTimeBlock(i));
+		}
+		// Look ahead
+		blocks.add(new VariableDirectionKStepPillCountBlock(direction));
+		blocks.add(new VariableDirectionKStepJunctionCountBlock(direction));
+		blocks.add(new VariableDirectionCountAllPillsInKStepsBlock(direction));
+		// Obstacle
+		blocks.add(new VariableDirectionPowerPillBlocksJunctionBlock());
+		// Other
+		blocks.add(new PillsRemainingBlock(true, false));
+		blocks.add(new PowerPillsRemainingBlock(true, false));
+		blocks.add(new VariableDirectionDistanceFromJunctionToGhostBlock(direction, true, true));
+	}
 }

@@ -9,13 +9,14 @@ import edu.utexas.cs.nn.tasks.mspacman.sensors.MsPacManControllerInputOutputMedi
  *
  * @author Jacob Schrum
  */
-public class CooperativeMultitaskSchemeMsPacManTask<T extends Network> extends CooperativeNonHierarchicalMultiNetMsPacManTask<T> {
+public class CooperativeMultitaskSchemeMsPacManTask<T extends Network>
+		extends CooperativeNonHierarchicalMultiNetMsPacManTask<T> {
 
-    public CooperativeMultitaskSchemeMsPacManTask() {
-        this(null);
-    }
+	public CooperativeMultitaskSchemeMsPacManTask() {
+		this(null);
+	}
 
-    public CooperativeMultitaskSchemeMsPacManTask(MsPacManControllerInputOutputMediator[] mediators) {
-        super(-1, false, "pacmanMultitaskScheme", mediators);
-    }
+	public CooperativeMultitaskSchemeMsPacManTask(MsPacManControllerInputOutputMediator[] mediators) {
+		super(-1, false, "pacmanMultitaskScheme", mediators);
+	}
 }

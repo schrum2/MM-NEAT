@@ -10,9 +10,10 @@ import edu.utexas.cs.nn.util.stats.Max;
  *
  * @author Jacob Schrum
  */
-public class VariableDirectionMaxDistanceFromPowerPillToThreatGhostBlock extends VariableDirectionDistanceFromPowerPillToThreatGhostBlock {
-    
-    public VariableDirectionMaxDistanceFromPowerPillToThreatGhostBlock(int dir) {
-        super(dir, new Max());
-    }
+public class VariableDirectionMaxDistanceFromPowerPillToThreatGhostBlock
+		extends VariableDirectionDistanceFromPowerPillToThreatGhostBlock {
+
+	public VariableDirectionMaxDistanceFromPowerPillToThreatGhostBlock(int dir) {
+		super(dir, new Max());
+	}
 }

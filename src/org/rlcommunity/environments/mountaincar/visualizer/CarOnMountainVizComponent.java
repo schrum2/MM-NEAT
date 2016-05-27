@@ -34,81 +34,79 @@ import rlVizLib.visualization.VizComponentChangeListener;
 
 public class CarOnMountainVizComponent implements SelfUpdatingVizComponent, Observer {
 
-    private MountainCarVisualizer mcv = null;
-    private boolean showAction = true;
-    private VizComponentChangeListener theChangeListener;
-    private Image carImageNeutral = null;
-    private Image carImageLeft = null;
-    private Image carImageRight = null;
+	private MountainCarVisualizer mcv = null;
+	private boolean showAction = true;
+	private VizComponentChangeListener theChangeListener;
+	private Image carImageNeutral = null;
+	private Image carImageLeft = null;
+	private Image carImageRight = null;
 
-    public CarOnMountainVizComponent(MountainCarVisualizer mc) {
-        this.mcv = mc;
-        mc.getTheGlueState().addObserver(this);
-        URL carImageNeutralURL = CarOnMountainVizComponent.class.getResource("/images/auto.png");
-        URL carImageLeftURL = CarOnMountainVizComponent.class.getResource("/images/auto_left.png");
-        URL carImageRightURL = CarOnMountainVizComponent.class.getResource("/images/auto_right.png");
-        try {
-            carImageNeutral = ImageIO.read(carImageNeutralURL);
-            carImageNeutral = carImageNeutral.getScaledInstance(50, 50, Image.SCALE_SMOOTH);
-            carImageLeft = ImageIO.read(carImageLeftURL);
-            carImageLeft = carImageLeft.getScaledInstance(50, 50, Image.SCALE_SMOOTH);
-            carImageRight = ImageIO.read(carImageRightURL);
-            carImageRight = carImageRight.getScaledInstance(50, 50, Image.SCALE_SMOOTH);
-        } catch (IOException ex) {
-            System.err.println("ERROR: Problem getting car image.");
-        }
+	public CarOnMountainVizComponent(MountainCarVisualizer mc) {
+		this.mcv = mc;
+		mc.getTheGlueState().addObserver(this);
+		URL carImageNeutralURL = CarOnMountainVizComponent.class.getResource("/images/auto.png");
+		URL carImageLeftURL = CarOnMountainVizComponent.class.getResource("/images/auto_left.png");
+		URL carImageRightURL = CarOnMountainVizComponent.class.getResource("/images/auto_right.png");
+		try {
+			carImageNeutral = ImageIO.read(carImageNeutralURL);
+			carImageNeutral = carImageNeutral.getScaledInstance(50, 50, Image.SCALE_SMOOTH);
+			carImageLeft = ImageIO.read(carImageLeftURL);
+			carImageLeft = carImageLeft.getScaledInstance(50, 50, Image.SCALE_SMOOTH);
+			carImageRight = ImageIO.read(carImageRightURL);
+			carImageRight = carImageRight.getScaledInstance(50, 50, Image.SCALE_SMOOTH);
+		} catch (IOException ex) {
+			System.err.println("ERROR: Problem getting car image.");
+		}
 
-    }
+	}
 
-    public void render(Graphics2D g) {
-        g.setColor(Color.RED);
-        AffineTransform saveAT = g.getTransform();
-        g.scale(.005, .005);
+	public void render(Graphics2D g) {
+		g.setColor(Color.RED);
+		AffineTransform saveAT = g.getTransform();
+		g.scale(.005, .005);
 
-        //to bring things back into the window
-        double minPosition = mcv.getMinValueForDim(0);
-        double maxPosition = mcv.getMaxValueForDim(0);
+		// to bring things back into the window
+		double minPosition = mcv.getMinValueForDim(0);
+		double maxPosition = mcv.getMaxValueForDim(0);
 
-        int lastAction = mcv.getLastAction();
+		int lastAction = mcv.getLastAction();
 
-        double transX = UtilityShop.normalizeValue(this.mcv.getCurrentStateInDimension(0), minPosition, maxPosition);
+		double transX = UtilityShop.normalizeValue(this.mcv.getCurrentStateInDimension(0), minPosition, maxPosition);
 
-        //need to get he actual height ranges
-        double transY = UtilityShop.normalizeValue(
-                this.mcv.getHeight(),
-                mcv.getMinHeight(),
-                mcv.getMaxHeight());
-        transY = (1.0 - transY - .05);
+		// need to get he actual height ranges
+		double transY = UtilityShop.normalizeValue(this.mcv.getHeight(), mcv.getMinHeight(), mcv.getMaxHeight());
+		transY = (1.0 - transY - .05);
 
-        transX *= 200.0d;
-        transY *= 200.0d;
+		transX *= 200.0d;
+		transY *= 200.0d;
 
+		double theta = -mcv.getSlope() * 1.25;
 
-        double theta = -mcv.getSlope() * 1.25;
+		Image whichImageToDraw = carImageNeutral;
+		if (lastAction == 0) {
+			whichImageToDraw = carImageLeft;
+		}
+		if (lastAction == 2) {
+			whichImageToDraw = carImageRight;
+		}
+		AffineTransform theTransform = AffineTransform.getTranslateInstance(
+				transX - whichImageToDraw.getWidth(null) / 2.0d, transY - whichImageToDraw.getHeight(null) / 2.0d);
+		theTransform.concatenate(AffineTransform.getRotateInstance(theta, whichImageToDraw.getWidth(null) / 2,
+				whichImageToDraw.getHeight(null) / 2));
+		g.drawImage(whichImageToDraw, theTransform, null);
 
-        Image whichImageToDraw = carImageNeutral;
-        if (lastAction == 0) {
-            whichImageToDraw = carImageLeft;
-        }
-        if (lastAction == 2) {
-            whichImageToDraw = carImageRight;
-        }
-        AffineTransform theTransform = AffineTransform.getTranslateInstance(transX - whichImageToDraw.getWidth(null) / 2.0d, transY - whichImageToDraw.getHeight(null) / 2.0d);
-        theTransform.concatenate(AffineTransform.getRotateInstance(theta, whichImageToDraw.getWidth(null) / 2, whichImageToDraw.getHeight(null) / 2));
-        g.drawImage(whichImageToDraw, theTransform, null);
+		g.setTransform(saveAT);
 
-        g.setTransform(saveAT);
+	}
 
-    }
+	public void setVizComponentChangeListener(VizComponentChangeListener theChangeListener) {
+		this.theChangeListener = theChangeListener;
+	}
 
-    public void setVizComponentChangeListener(VizComponentChangeListener theChangeListener) {
-        this.theChangeListener = theChangeListener;
-    }
-
-    public void update(Observable o, Object arg) {
-        if (theChangeListener != null) {
-            theChangeListener.vizComponentChanged(this);
-            mcv.updateAgentState(true);
-        }
-    }
+	public void update(Observable o, Object arg) {
+		if (theChangeListener != null) {
+			theChangeListener.vizComponentChanged(this);
+			mcv.updateAgentState(true);
+		}
+	}
 }

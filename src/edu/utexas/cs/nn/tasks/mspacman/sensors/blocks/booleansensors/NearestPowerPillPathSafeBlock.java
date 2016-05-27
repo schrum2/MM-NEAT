@@ -13,17 +13,17 @@ import edu.utexas.cs.nn.tasks.mspacman.facades.GhostControllerFacade;
  */
 public class NearestPowerPillPathSafeBlock extends PathSafeBlock {
 
-    public NearestPowerPillPathSafeBlock(GhostControllerFacade ghostModel) {
-        super(ghostModel);
-    }
+	public NearestPowerPillPathSafeBlock(GhostControllerFacade ghostModel) {
+		super(ghostModel);
+	}
 
-    @Override
-    public String targetLabel() {
-        return "Nearest Power Pill";
-    }
+	@Override
+	public String targetLabel() {
+		return "Nearest Power Pill";
+	}
 
-    @Override
-    public int getTarget(GameFacade gf, int lastDirection) {
-        return gf.getClosestNodeIndexFromNodeIndex(gf.getPacmanCurrentNodeIndex(), gf.getActivePowerPillsIndices());
-    }
+	@Override
+	public int getTarget(GameFacade gf, int lastDirection) {
+		return gf.getClosestNodeIndexFromNodeIndex(gf.getPacmanCurrentNodeIndex(), gf.getActivePowerPillsIndices());
+	}
 }

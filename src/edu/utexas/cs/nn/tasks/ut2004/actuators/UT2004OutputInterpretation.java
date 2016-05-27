@@ -13,11 +13,11 @@ import edu.utexas.cs.nn.tasks.ut2004.actions.BotAction;
  */
 public interface UT2004OutputInterpretation {
 
-    public String[] outputLabels();
+	public String[] outputLabels();
 
-    public BotAction interpretOutputs(UT2004BotModuleController bot, double[] outputs);
+	public BotAction interpretOutputs(UT2004BotModuleController bot, double[] outputs);
 
-    public int numberOfOutputs();
+	public int numberOfOutputs();
 
-    public UT2004OutputInterpretation copy();
+	public UT2004OutputInterpretation copy();
 }

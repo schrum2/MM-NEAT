@@ -13,13 +13,13 @@ import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.counting.CountThreatGhosts
  */
 public class GhostPresenceSensors extends BlockLoadedInputOutputMediator {
 
-    public GhostPresenceSensors(boolean canEatGhosts) {
-        super();
-        blocks.add(new CountThreatGhostsBlock(true, false));
-        if (canEatGhosts) {
-            blocks.add(new CountEdibleGhostsBlock(true, false));
-            blocks.add(new AllThreatsPresentBlock());
-            blocks.add(new AnyEdibleGhostBlock());
-        }
-    }
+	public GhostPresenceSensors(boolean canEatGhosts) {
+		super();
+		blocks.add(new CountThreatGhostsBlock(true, false));
+		if (canEatGhosts) {
+			blocks.add(new CountEdibleGhostsBlock(true, false));
+			blocks.add(new AllThreatsPresentBlock());
+			blocks.add(new AnyEdibleGhostBlock());
+		}
+	}
 }

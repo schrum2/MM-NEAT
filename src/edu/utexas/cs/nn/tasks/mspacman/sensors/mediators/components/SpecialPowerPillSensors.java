@@ -12,9 +12,9 @@ import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.approaching.ApproachingPow
  */
 public class SpecialPowerPillSensors extends BlockLoadedInputOutputMediator {
 
-    public SpecialPowerPillSensors() {
-        super();
-        blocks.add(new ApproachingPowerPillBlock());
-        blocks.add(new PowerPillAvoidanceBlock());
-    }
+	public SpecialPowerPillSensors() {
+		super();
+		blocks.add(new ApproachingPowerPillBlock());
+		blocks.add(new PowerPillAvoidanceBlock());
+	}
 }

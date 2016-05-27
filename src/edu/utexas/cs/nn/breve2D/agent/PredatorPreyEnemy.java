@@ -10,7 +10,7 @@ package edu.utexas.cs.nn.breve2D.agent;
  */
 public class PredatorPreyEnemy extends MultitaskPlayer {
 
-    public PredatorPreyEnemy() {
-        super(new AgentController[]{new RushingPlayer(), new EscapingPlayer()});
-    }
+	public PredatorPreyEnemy() {
+		super(new AgentController[] { new RushingPlayer(), new EscapingPlayer() });
+	}
 }

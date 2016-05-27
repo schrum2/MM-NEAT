@@ -11,7 +11,7 @@ import pacman.game.Game;
  */
 public class PathCacheSize<T extends Network> extends MsPacManObjective<T> {
 
-    public double fitness(Organism<T> individual) {
-        return Game.amountCachedPathData();
-    }
+	public double fitness(Organism<T> individual) {
+		return Game.amountCachedPathData();
+	}
 }

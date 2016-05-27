@@ -30,39 +30,33 @@ import rlVizLib.messaging.environment.EnvMessageType;
 
 public class MCGoalResponse extends AbstractResponse {
 
-    double goalPosition;
+	double goalPosition;
 
-    public MCGoalResponse(double goal) {
-        this.goalPosition = goal;
-    }
+	public MCGoalResponse(double goal) {
+		this.goalPosition = goal;
+	}
 
-    public MCGoalResponse(String responseMessage) throws NotAnRLVizMessageException {
-        GenericMessage theGenericResponse = new GenericMessage(responseMessage);
-        String thePayLoadString = theGenericResponse.getPayLoad();
-        StringTokenizer stateTokenizer = new StringTokenizer(thePayLoadString, ":");
-        goalPosition = Double.parseDouble(stateTokenizer.nextToken());
-    }
+	public MCGoalResponse(String responseMessage) throws NotAnRLVizMessageException {
+		GenericMessage theGenericResponse = new GenericMessage(responseMessage);
+		String thePayLoadString = theGenericResponse.getPayLoad();
+		StringTokenizer stateTokenizer = new StringTokenizer(thePayLoadString, ":");
+		goalPosition = Double.parseDouble(stateTokenizer.nextToken());
+	}
 
-    public double getGoalPosition() {
-        return this.goalPosition;
-    }
+	public double getGoalPosition() {
+		return this.goalPosition;
+	}
 
-    @Override
-    public String makeStringResponse() {
-        StringBuffer goalBuffer = new StringBuffer();
+	@Override
+	public String makeStringResponse() {
+		StringBuffer goalBuffer = new StringBuffer();
 
-        goalBuffer.append(goalPosition);
-        goalBuffer.append(":");
+		goalBuffer.append(goalPosition);
+		goalBuffer.append(":");
 
+		String theResponse = AbstractMessage.makeMessage(MessageUser.kBenchmark.id(), MessageUser.kEnv.id(),
+				EnvMessageType.kEnvResponse.id(), MessageValueType.kStringList.id(), goalBuffer.toString());
 
-        String theResponse = AbstractMessage.makeMessage(
-                MessageUser.kBenchmark.id(),
-                MessageUser.kEnv.id(),
-                EnvMessageType.kEnvResponse.id(),
-                MessageValueType.kStringList.id(),
-                goalBuffer.toString());
-
-
-        return theResponse;
-    }
+		return theResponse;
+	}
 }

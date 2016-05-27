@@ -15,18 +15,18 @@ import edu.utexas.cs.nn.networks.Network;
  */
 public class AntiMaxModeUsage<T extends Network> extends MsPacManObjective<T> {
 
-    private final AntiMaxModuleUsageFitness meta;
+	private final AntiMaxModuleUsageFitness meta;
 
-    public AntiMaxModeUsage() {
-        this.meta = new AntiMaxModuleUsageFitness();
-    }
+	public AntiMaxModeUsage() {
+		this.meta = new AntiMaxModuleUsageFitness();
+	}
 
-    @Override
-    public double minScore() {
-        return meta.minScore();
-    }
+	@Override
+	public double minScore() {
+		return meta.minScore();
+	}
 
-    public double fitness(Organism<T> individual) {
-        return meta.getScore((TWEANNGenotype) individual.getGenotype());
-    }
+	public double fitness(Organism<T> individual) {
+		return meta.getScore((TWEANNGenotype) individual.getGenotype());
+	}
 }

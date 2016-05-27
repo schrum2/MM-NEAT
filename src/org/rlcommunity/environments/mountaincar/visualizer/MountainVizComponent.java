@@ -33,100 +33,96 @@ import rlVizLib.visualization.VizComponentChangeListener;
 
 public class MountainVizComponent implements SelfUpdatingVizComponent, Observer {
 
-    private MountainCarVisualizer theVizualizer = null;
-    private Vector<Double> theHeights = null;
-    private double theGoalPosition = 0.0d;
-    private double theGoalHeight = 0.0d;
-    private VizComponentChangeListener theChangeListener;
-    boolean everDrawn = false;
+	private MountainCarVisualizer theVizualizer = null;
+	private Vector<Double> theHeights = null;
+	private double theGoalPosition = 0.0d;
+	private double theGoalHeight = 0.0d;
+	private VizComponentChangeListener theChangeListener;
+	boolean everDrawn = false;
 
-    public MountainVizComponent(MountainCarVisualizer theVizualizer) {
-        this.theVizualizer = theVizualizer;
-        theVizualizer.getTheGlueState().addObserver(this);
-    }
+	public MountainVizComponent(MountainCarVisualizer theVizualizer) {
+		this.theVizualizer = theVizualizer;
+		theVizualizer.getTheGlueState().addObserver(this);
+	}
 
-    public void render(Graphics2D g) {
-        if (!everDrawn) {
-            theGoalPosition = theVizualizer.getGoalPosition();
-            Vector<Double> tempVec = new Vector<Double>();
-            tempVec.add(theGoalPosition);
+	public void render(Graphics2D g) {
+		if (!everDrawn) {
+			theGoalPosition = theVizualizer.getGoalPosition();
+			Vector<Double> tempVec = new Vector<Double>();
+			tempVec.add(theGoalPosition);
 
-            Vector<Double> returnVector = theVizualizer.getHeightsForPositions(tempVec);
-            theGoalHeight = returnVector.get(0);
-            everDrawn = true;
+			Vector<Double> returnVector = theVizualizer.getHeightsForPositions(tempVec);
+			theGoalHeight = returnVector.get(0);
+			everDrawn = true;
 
-        }
+		}
 
-        AffineTransform theScaleTransform = new AffineTransform();
+		AffineTransform theScaleTransform = new AffineTransform();
 
-        //Draw a rectangle
-        g.setColor(Color.WHITE);
-        g.fillRect(0, 0, 1, 1);
+		// Draw a rectangle
+		g.setColor(Color.WHITE);
+		g.fillRect(0, 0, 1, 1);
 
-        double scaleFactor = 1000.0d;
-        theScaleTransform.scale(1.0d / scaleFactor, 1.0d / scaleFactor);
-        AffineTransform origTransform = g.getTransform();
+		double scaleFactor = 1000.0d;
+		theScaleTransform.scale(1.0d / scaleFactor, 1.0d / scaleFactor);
+		AffineTransform origTransform = g.getTransform();
 
-        AffineTransform x = g.getTransform();
-        x.concatenate(theScaleTransform);
-        g.setTransform(x);
+		AffineTransform x = g.getTransform();
+		x.concatenate(theScaleTransform);
+		g.setTransform(x);
 
+		theHeights = theVizualizer.getSampleHeights();
 
-        theHeights = theVizualizer.getSampleHeights();
+		double sizeEachComponent = 1.0 / (double) theHeights.size();
 
-        double sizeEachComponent = 1.0 / (double) theHeights.size();
+		g.setColor(Color.BLACK);
 
+		double lastX = 0.0d;
+		double lastY = 1.0 - UtilityShop.normalizeValue(theHeights.get(0), theVizualizer.getMinHeight(),
+				theVizualizer.getMaxHeight());
+		for (int i = 1; i < theHeights.size(); i++) {
+			double thisX = lastX + sizeEachComponent;
+			double thisY = 1.0 - UtilityShop.normalizeValue(theHeights.get(i), theVizualizer.getMinHeight(),
+					theVizualizer.getMaxHeight());
 
-        g.setColor(Color.BLACK);
+			Line2D thisLine = new Line2D.Double(scaleFactor * lastX, scaleFactor * lastY, scaleFactor * thisX,
+					scaleFactor * thisY);
 
-        double lastX = 0.0d;
-        double lastY = 1.0 - UtilityShop.normalizeValue(theHeights.get(0), theVizualizer.getMinHeight(), theVizualizer.getMaxHeight());
-        for (int i = 1; i < theHeights.size(); i++) {
-            double thisX = lastX + sizeEachComponent;
-            double thisY = 1.0 - UtilityShop.normalizeValue(theHeights.get(i), theVizualizer.getMinHeight(), theVizualizer.getMaxHeight());
+			lastX = thisX;
+			lastY = thisY;
 
-            Line2D thisLine = new Line2D.Double(scaleFactor * lastX, scaleFactor * lastY, scaleFactor * thisX, scaleFactor * thisY);
+			g.draw(thisLine);
+		}
 
-            lastX = thisX;
-            lastY = thisY;
+		g.setTransform(origTransform);
 
-            g.draw(thisLine);
-        }
+		g.setColor(Color.GREEN);
 
+		// to bring things back into the window
+		double minPosition = theVizualizer.getMinValueForDim(0);
+		double maxPosition = theVizualizer.getMaxValueForDim(0);
 
+		double transX = UtilityShop.normalizeValue(theGoalPosition, minPosition, maxPosition);
+		// need to get he actual height ranges
+		double transY = UtilityShop.normalizeValue(theGoalHeight, theVizualizer.getMinHeight(),
+				theVizualizer.getMaxHeight());
+		transY = (1.0 - transY);
 
+		double rectWidth = .05 / 4;
+		double rectHeight = 0.1;
+		Rectangle2D fillRect = new Rectangle2D.Double(transX - rectWidth / 2.0d, transY - rectHeight / 2.0d, rectWidth,
+				rectHeight);
+		g.fill(fillRect);
+	}
 
-        g.setTransform(origTransform);
+	public void setVizComponentChangeListener(VizComponentChangeListener theChangeListener) {
+		this.theChangeListener = theChangeListener;
+	}
 
-        g.setColor(Color.GREEN);
+	public void update(Observable o, Object arg) {
+		if (!everDrawn) {
+			theChangeListener.vizComponentChanged(this);
+		}
 
-        //to bring things back into the window
-        double minPosition = theVizualizer.getMinValueForDim(0);
-        double maxPosition = theVizualizer.getMaxValueForDim(0);
-
-
-        double transX = UtilityShop.normalizeValue(theGoalPosition, minPosition, maxPosition);
-        //need to get he actual height ranges
-        double transY = UtilityShop.normalizeValue(
-                theGoalHeight,
-                theVizualizer.getMinHeight(),
-                theVizualizer.getMaxHeight());
-        transY = (1.0 - transY);
-
-        double rectWidth = .05 / 4;
-        double rectHeight = 0.1;
-        Rectangle2D fillRect = new Rectangle2D.Double(transX - rectWidth / 2.0d, transY - rectHeight / 2.0d, rectWidth, rectHeight);
-        g.fill(fillRect);
-    }
-
-    public void setVizComponentChangeListener(VizComponentChangeListener theChangeListener) {
-        this.theChangeListener = theChangeListener;
-    }
-
-    public void update(Observable o, Object arg) {
-        if (!everDrawn) {
-            theChangeListener.vizComponentChanged(this);
-        }
-
-    }
+	}
 }

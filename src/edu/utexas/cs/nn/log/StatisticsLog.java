@@ -23,39 +23,44 @@ public abstract class StatisticsLog<T> extends MONELog {
 
 	/**
 	 * Constructor for a statistics log. Uses inherited MONELog
-	 * @param infix name of file
-	 * @param labels labels for plot files
+	 * 
+	 * @param infix
+	 *            name of file
+	 * @param labels
+	 *            labels for plot files
 	 */
 	public StatisticsLog(String infix, ArrayList<String> labels) {
-		super(infix);//super constructor
-		if (draw) {//used to facilitate drawing output to plot file
+		super(infix);// super constructor
+		if (draw) {// used to facilitate drawing output to plot file
 			allMins = new ArrayList<ArrayList<Double>>();
 			allMaxes = new ArrayList<ArrayList<Double>>();
 			allAverages = new ArrayList<ArrayList<Double>>();
 		}
-		if (labels != null) {//used to retrieve plot labels
+		if (labels != null) {// used to retrieve plot labels
 			makePlotFile(labels, false);
 			makePlotFile(labels, true);
 		}
 	}
-	
+
 	/**
 	 * Makes a plot file of all max, min and average from each generation
-	 * @param labels labels of plot file 
-	 * @param makePDF whether or not to also make a pdf
+	 * 
+	 * @param labels
+	 *            labels of plot file
+	 * @param makePDF
+	 *            whether or not to also make a pdf
 	 */
-	public void makePlotFile(ArrayList<String> labels, boolean makePDF){
+	public void makePlotFile(ArrayList<String> labels, boolean makePDF) {
 		File plotFile = null;
-		if(!makePDF){
+		if (!makePDF) {
 			plotFile = new File(directory + prefix + "_log.plot");
-		}
-		else{
+		} else {
 			plotFile = new File(directory + prefix + "_logPDF.plot");
 		}
 		if (!plotFile.exists()) {
 			try {
 				PrintStream plotStream = new PrintStream(new FileOutputStream(plotFile));
-				if(makePDF){
+				if (makePDF) {
 					plotStream.println("set terminal pdf color");
 				}
 				plotStream.println("set style data lines");
@@ -64,7 +69,7 @@ public abstract class StatisticsLog<T> extends MONELog {
 
 				for (int i = 0; i < labels.size(); i++) {
 					int start = 2 + (i * 4);
-					if(makePDF){
+					if (makePDF) {
 						plotStream.println("set output \"" + prefix + "-" + labels.get(i) + ".pdf\"");
 					}
 					plotStream.println("set title \"" + prefix + " " + labels.get(i) + "\"");
@@ -73,7 +78,7 @@ public abstract class StatisticsLog<T> extends MONELog {
 					plotStream.println("\"" + prefix + "_log.txt" + "\" u 1:" + (start + 1) + " t \"AVG\", \\");
 					plotStream.println("\"" + prefix + "_log.txt" + "\" u 1:" + (start + 2) + " t \"MAX\"");
 					plotStream.println();
-					if(!makePDF){
+					if (!makePDF) {
 						plotStream.println("pause -1");
 						plotStream.println();
 					}
@@ -86,11 +91,11 @@ public abstract class StatisticsLog<T> extends MONELog {
 			}
 		}
 
-
 	}
 
 	/**
 	 * initializes arrayLists of max min and averages if they are to be saved
+	 * 
 	 * @param objectives
 	 */
 	public void initLongTermScores(int objectives) {
@@ -99,7 +104,7 @@ public abstract class StatisticsLog<T> extends MONELog {
 			allMaxes.add(new ArrayList<Double>());
 			allAverages.add(new ArrayList<Double>());
 		}
-		//creates arrays containing max range for values
+		// creates arrays containing max range for values
 		overallMaxes = new double[objectives];
 		Arrays.fill(overallMaxes, -Double.MAX_VALUE);
 		overallMins = new double[objectives];
@@ -110,8 +115,11 @@ public abstract class StatisticsLog<T> extends MONELog {
 
 	/**
 	 * logs average scores from each generation
-	 * @param scores 2D array containing scores from generation
-	 * @param generation generation in question
+	 * 
+	 * @param scores
+	 *            2D array containing scores from generation
+	 * @param generation
+	 *            generation in question
 	 */
 	public void logAverages(double[][] scores, int generation) {
 		int categories = scores[0].length;

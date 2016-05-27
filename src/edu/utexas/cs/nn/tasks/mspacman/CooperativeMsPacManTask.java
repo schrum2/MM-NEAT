@@ -19,43 +19,42 @@ import java.util.ArrayList;
  *
  * @author Jacob Schrum
  */
-public abstract class CooperativeMsPacManTask<T extends Network> extends CooperativeTask implements NetworkTask, SinglePopulationTask<T>, TUGTask {
+public abstract class CooperativeMsPacManTask<T extends Network> extends CooperativeTask
+		implements NetworkTask, SinglePopulationTask<T>, TUGTask {
 
-    public MsPacManTask<T> task;
+	public MsPacManTask<T> task;
 
-    public ArrayList<Score<T>> evaluateAll(ArrayList<Genotype<T>> population) {
-        throw new UnsupportedOperationException(
-                "This method should not actually be called when using coevolution. "
-                + "It is merely here to satisfy type requirements and allow the code "
-                + "to compile");
-    }
+	public ArrayList<Score<T>> evaluateAll(ArrayList<Genotype<T>> population) {
+		throw new UnsupportedOperationException("This method should not actually be called when using coevolution. "
+				+ "It is merely here to satisfy type requirements and allow the code " + "to compile");
+	}
 
-    public double[] startingGoals() {
-        return task.startingGoals();
-    }
+	public double[] startingGoals() {
+		return task.startingGoals();
+	}
 
-    public CooperativeMsPacManTask() {
-        task = new MsPacManTask<T>();
-    }
+	public CooperativeMsPacManTask() {
+		task = new MsPacManTask<T>();
+	}
 
-    public int numObjectives() {
-        return task.numObjectives();
-    }
+	public int numObjectives() {
+		return task.numObjectives();
+	}
 
-    public double getTimeStamp() {
-        return task.getTimeStamp();
-    }
+	public double getTimeStamp() {
+		return task.getTimeStamp();
+	}
 
-    public String[] sensorLabels() {
-        return task.sensorLabels();
-    }
+	public String[] sensorLabels() {
+		return task.sensorLabels();
+	}
 
-    public String[] outputLabels() {
-        return task.outputLabels();
-    }
+	public String[] outputLabels() {
+		return task.outputLabels();
+	}
 
-    public abstract int numberOfPopulations();
-    
-    public void finalCleanup() {
-    }
+	public abstract int numberOfPopulations();
+
+	public void finalCleanup() {
+	}
 }

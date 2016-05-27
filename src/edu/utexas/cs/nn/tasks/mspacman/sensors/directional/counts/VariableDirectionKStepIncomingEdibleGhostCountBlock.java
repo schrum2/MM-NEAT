@@ -11,28 +11,29 @@ import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
  * @author Jacob Schrum
  */
 public class VariableDirectionKStepIncomingEdibleGhostCountBlock extends VariableDirectionKStepCountBlock {
-    private final boolean[] includeGhosts;
+	private final boolean[] includeGhosts;
 
-    public VariableDirectionKStepIncomingEdibleGhostCountBlock(int dir, boolean max) {
-        this(dir, new boolean[]{true,true,true,true}, max);
-    }    
-    public VariableDirectionKStepIncomingEdibleGhostCountBlock(int dir, boolean[] include, boolean max) {
-        super(dir, max);
-        this.includeGhosts = include;
-    }
+	public VariableDirectionKStepIncomingEdibleGhostCountBlock(int dir, boolean max) {
+		this(dir, new boolean[] { true, true, true, true }, max);
+	}
 
-    @Override
-    public int[] getCountTargets(GameFacade gf) {
-        return gf.getIncomingEdibleGhostLocations(dir, includeGhosts);
-    }
+	public VariableDirectionKStepIncomingEdibleGhostCountBlock(int dir, boolean[] include, boolean max) {
+		super(dir, max);
+		this.includeGhosts = include;
+	}
 
-    @Override
-    public String getType() {
-        return "Approaching Edible Ghost";
-    }
+	@Override
+	public int[] getCountTargets(GameFacade gf) {
+		return gf.getIncomingEdibleGhostLocations(dir, includeGhosts);
+	}
 
-    @Override
-    public int maxCount(GameFacade gf) {
-        return gf.getNumActiveGhosts();
-    }
+	@Override
+	public String getType() {
+		return "Approaching Edible Ghost";
+	}
+
+	@Override
+	public int maxCount(GameFacade gf) {
+		return gf.getNumActiveGhosts();
+	}
 }

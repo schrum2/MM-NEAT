@@ -14,7 +14,7 @@ import pacman.game.Constants;
  */
 public class LairTimeParameter<T extends Network> extends MsPacManObjective<T> {
 
-    public double fitness(Organism<T> individual) {
-        return Constants.COMMON_LAIR_TIME;
-    }
+	public double fitness(Organism<T> individual) {
+		return Constants.COMMON_LAIR_TIME;
+	}
 }

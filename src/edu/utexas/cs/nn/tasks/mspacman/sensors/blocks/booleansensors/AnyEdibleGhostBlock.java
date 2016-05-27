@@ -12,13 +12,13 @@ import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
  */
 public class AnyEdibleGhostBlock extends BooleanSensorBlock {
 
-    @Override
-    public String senseLabel() {
-        return "Some Ghost Edible";
-    }
+	@Override
+	public String senseLabel() {
+		return "Some Ghost Edible";
+	}
 
-    @Override
-    public boolean predicate(GameFacade gf, int lastDirection) {
-        return gf.anyIsEdible();
-    }
+	@Override
+	public boolean predicate(GameFacade gf, int lastDirection) {
+		return gf.anyIsEdible();
+	}
 }

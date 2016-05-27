@@ -12,22 +12,22 @@ import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
  */
 public class VariableDirectionLastDirectionBlock extends VariableDirectionBlock {
 
-    public VariableDirectionLastDirectionBlock(int dir) {
-        super(dir);
-    }
+	public VariableDirectionLastDirectionBlock(int dir) {
+		super(dir);
+	}
 
-    @Override
-    public double wallValue() {
-        return 0;
-    }
+	@Override
+	public double wallValue() {
+		return 0;
+	}
 
-    @Override
-    public double getValue(GameFacade gf) {
-        return dir == gf.getPacmanLastMoveMade() ? 1 : 0;
-    }
+	@Override
+	public double getValue(GameFacade gf) {
+		return dir == gf.getPacmanLastMoveMade() ? 1 : 0;
+	}
 
-    @Override
-    public String getLabel() {
-        return "Last Direction?";
-    }
+	@Override
+	public String getLabel() {
+		return "Last Direction?";
+	}
 }

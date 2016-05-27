@@ -14,7 +14,7 @@ import edu.utexas.cs.nn.util.random.RandomNumbers;
  */
 public class RandomScore<T extends Network> extends MsPacManObjective<T> {
 
-    public double fitness(Organism<T> individual) {
-        return RandomNumbers.randomGenerator.nextDouble();
-    }
+	public double fitness(Organism<T> individual) {
+		return RandomNumbers.randomGenerator.nextDouble();
+	}
 }

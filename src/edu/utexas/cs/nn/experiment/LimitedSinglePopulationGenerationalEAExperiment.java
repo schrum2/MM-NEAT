@@ -11,18 +11,21 @@ import edu.utexas.cs.nn.MMNEAT.MMNEAT;
  */
 public class LimitedSinglePopulationGenerationalEAExperiment<T> extends SinglePopulationGenerationalEAExperiment<T> {
 
-    private int maxGenerations;
+	private int maxGenerations;
 
-    public LimitedSinglePopulationGenerationalEAExperiment() {
-        this((SinglePopulationGenerationalEA<T>) MMNEAT.ea, MMNEAT.genotype, Parameters.parameters.integerParameter("maxGens"), Parameters.parameters.stringParameter("lastSavedDirectory"));
-    }
+	public LimitedSinglePopulationGenerationalEAExperiment() {
+		this((SinglePopulationGenerationalEA<T>) MMNEAT.ea, MMNEAT.genotype,
+				Parameters.parameters.integerParameter("maxGens"),
+				Parameters.parameters.stringParameter("lastSavedDirectory"));
+	}
 
-    public LimitedSinglePopulationGenerationalEAExperiment(SinglePopulationGenerationalEA<T> ea, Genotype<T> example, int maxGenerations, String lastSavedDir) {
-        super(ea, example, lastSavedDir);
-        this.maxGenerations = maxGenerations;
-    }
+	public LimitedSinglePopulationGenerationalEAExperiment(SinglePopulationGenerationalEA<T> ea, Genotype<T> example,
+			int maxGenerations, String lastSavedDir) {
+		super(ea, example, lastSavedDir);
+		this.maxGenerations = maxGenerations;
+	}
 
-    public boolean shouldStop() {
-        return ea.currentGeneration() >= this.maxGenerations;
-    }
+	public boolean shouldStop() {
+		return ea.currentGeneration() >= this.maxGenerations;
+	}
 }

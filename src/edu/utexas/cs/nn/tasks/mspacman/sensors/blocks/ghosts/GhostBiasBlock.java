@@ -14,21 +14,21 @@ import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
  */
 public class GhostBiasBlock extends GhostSensorBlock {
 
-    @Override
-    public int incorporateSensors(double[] inputs, int in, GameFacade gf, int ghostIndex) {
-        inputs[in++] = 1.0;
-        return in;
-    }
+	@Override
+	public int incorporateSensors(double[] inputs, int in, GameFacade gf, int ghostIndex) {
+		inputs[in++] = 1.0;
+		return in;
+	}
 
-    @Override
-    public int incorporateLabels(String[] labels, int in) {
-        labels[in++] = "Bias";
-        return in;
-    }
+	@Override
+	public int incorporateLabels(String[] labels, int in) {
+		labels[in++] = "Bias";
+		return in;
+	}
 
-    @Override
-    public int numberAdded() {
-        return 1;
-    }
+	@Override
+	public int numberAdded() {
+		return 1;
+	}
 
 }

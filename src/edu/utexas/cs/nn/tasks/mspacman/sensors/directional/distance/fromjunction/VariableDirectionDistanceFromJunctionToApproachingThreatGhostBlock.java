@@ -10,17 +10,18 @@ import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
  *
  * @author Jacob Schrum
  */
-public class VariableDirectionDistanceFromJunctionToApproachingThreatGhostBlock extends VariableDirectionDistanceFromJunctionBlock {
+public class VariableDirectionDistanceFromJunctionToApproachingThreatGhostBlock
+		extends VariableDirectionDistanceFromJunctionBlock {
 
-    public VariableDirectionDistanceFromJunctionToApproachingThreatGhostBlock(int dir) {
-        super(dir);
-    }
+	public VariableDirectionDistanceFromJunctionToApproachingThreatGhostBlock(int dir) {
+		super(dir);
+	}
 
-    public String getType() {
-        return "Approaching Threat Ghost";
-    }
+	public String getType() {
+		return "Approaching Threat Ghost";
+	}
 
-    public int[] getTargets(GameFacade gf) {
-        return gf.getApproachingThreatGhostLocations();
-    }
+	public int[] getTargets(GameFacade gf) {
+		return gf.getApproachingThreatGhostLocations();
+	}
 }

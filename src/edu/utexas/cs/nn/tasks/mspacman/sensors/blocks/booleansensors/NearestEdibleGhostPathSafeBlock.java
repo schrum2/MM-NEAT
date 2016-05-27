@@ -9,17 +9,17 @@ import edu.utexas.cs.nn.tasks.mspacman.facades.GhostControllerFacade;
  */
 public class NearestEdibleGhostPathSafeBlock extends PathSafeBlock {
 
-    public NearestEdibleGhostPathSafeBlock(GhostControllerFacade ghostModel) {
-        super(ghostModel);
-    }
+	public NearestEdibleGhostPathSafeBlock(GhostControllerFacade ghostModel) {
+		super(ghostModel);
+	}
 
-    @Override
-    public String targetLabel() {
-        return "Nearest Edible Ghost";
-    }
+	@Override
+	public String targetLabel() {
+		return "Nearest Edible Ghost";
+	}
 
-    @Override
-    public int getTarget(GameFacade gf, int lastDirection) {
-        return gf.getClosestNodeIndexFromNodeIndex(gf.getPacmanCurrentNodeIndex(), gf.getEdibleGhostLocations());
-    }
+	@Override
+	public int getTarget(GameFacade gf, int lastDirection) {
+		return gf.getClosestNodeIndexFromNodeIndex(gf.getPacmanCurrentNodeIndex(), gf.getEdibleGhostLocations());
+	}
 }

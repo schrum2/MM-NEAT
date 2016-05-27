@@ -16,15 +16,15 @@ import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.distance.VariableDire
  */
 public class ImpoverishedGhostTaskMediator extends BlockLoadedInputOutputMediator {
 
-    public ImpoverishedGhostTaskMediator() {
-        blocks.add(new BiasBlock());
-        for(int i = 0; i < CommonConstants.numActiveGhosts; i++) {
-            blocks.add(new SpecificGhostXOffsetBlock(i));
-            blocks.add(new SpecificGhostYOffsetBlock(i));
-//            blocks.add(new SpecificGhostEdibleTimeBlock(i));
-//            blocks.add(new SpecificGhostLairTimeBlock(i));
-            blocks.add(new SpecificGhostIsEdibleBlock(i));
-        }
-        blocks.add(new WallDistanceBlock());
-    }
+	public ImpoverishedGhostTaskMediator() {
+		blocks.add(new BiasBlock());
+		for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
+			blocks.add(new SpecificGhostXOffsetBlock(i));
+			blocks.add(new SpecificGhostYOffsetBlock(i));
+			// blocks.add(new SpecificGhostEdibleTimeBlock(i));
+			// blocks.add(new SpecificGhostLairTimeBlock(i));
+			blocks.add(new SpecificGhostIsEdibleBlock(i));
+		}
+		blocks.add(new WallDistanceBlock());
+	}
 }

@@ -9,10 +9,11 @@ import edu.utexas.cs.nn.util.random.CauchyGenerator;
 
 /**
  * Perturbs ALL weights (100%) according to Cauchy distribution
+ * 
  * @author Jacob Schrum
  */
 public class CauchyDeltaCodeMutation extends AllWeightMutation {
-    public CauchyDeltaCodeMutation(){
-        super(new CauchyGenerator(), 1.0);
-    }
+	public CauchyDeltaCodeMutation() {
+		super(new CauchyGenerator(), 1.0);
+	}
 }

@@ -12,28 +12,28 @@ import edu.utexas.cs.nn.breve2D.Breve2DGame;
  */
 public class MultitaskPlayer implements AgentController {
 
-    protected final AgentController[] players;
-    protected int task;
+	protected final AgentController[] players;
+	protected int task;
 
-    public MultitaskPlayer(AgentController[] players) {
-        this.players = players;
-        this.task = 0;
-    }
+	public MultitaskPlayer(AgentController[] players) {
+		this.players = players;
+		this.task = 0;
+	}
 
-    public int numTasks() {
-        return players.length;
-    }
+	public int numTasks() {
+		return players.length;
+	}
 
-    public void advanceTask() {
-        task++;
-        task %= numTasks();
-    }
+	public void advanceTask() {
+		task++;
+		task %= numTasks();
+	}
 
-    public Breve2DAction getAction(Breve2DGame game) {
-        return players[task].getAction(game);
-    }
+	public Breve2DAction getAction(Breve2DGame game) {
+		return players[task].getAction(game);
+	}
 
-    public void reset() {
-        players[task].reset();
-    }
+	public void reset() {
+		players[task].reset();
+	}
 }

@@ -11,14 +11,14 @@ import edu.utexas.cs.nn.tasks.ut2004.bots.GameDataCollector;
  */
 public abstract class UT2004FitnessFunction<T extends Network> implements FitnessFunction<T> {
 
-    GameDataCollector game;
+	GameDataCollector game;
 
-    public double score(GameDataCollector g, Organism<T> o) {
-        this.game = g;
-        return fitness(o);
-    }
+	public double score(GameDataCollector g, Organism<T> o) {
+		this.game = g;
+		return fitness(o);
+	}
 
-    public double minScore() {
-        return 0;
-    }
+	public double minScore() {
+		return 0;
+	}
 }

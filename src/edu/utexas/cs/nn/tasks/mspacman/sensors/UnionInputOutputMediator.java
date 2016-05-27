@@ -15,23 +15,27 @@ import java.util.TreeSet;
 public abstract class UnionInputOutputMediator extends BlockLoadedInputOutputMediator {
 
 	/**
-	 * Finds the union of the mediators given, not including any sensor block duplicates from any mediator
-	 * @param mediators given mediators to find the union of
+	 * Finds the union of the mediators given, not including any sensor block
+	 * duplicates from any mediator
+	 * 
+	 * @param mediators
+	 *            given mediators to find the union of
 	 */
-    public UnionInputOutputMediator(List<BlockLoadedInputOutputMediator> mediators) {
-        super();
-        Comparator<MsPacManSensorBlock> c = new Comparator<MsPacManSensorBlock>() {
-            public int compare(MsPacManSensorBlock o1, MsPacManSensorBlock o2) {
-                return (o1.getClass().getName() + o1.hashCode()).compareTo(o2.getClass().getName() + o2.hashCode());
-            }
-        };
-        TreeSet<MsPacManSensorBlock> union = new TreeSet<MsPacManSensorBlock>(c);
-        for (BlockLoadedInputOutputMediator m : mediators) {
-            union.addAll(m.blocks);
-        }
-        this.blocks.addAll(union);
-//        for(int i = 0; i < blocks.size(); i++){
-//            System.out.println(i +":" + blocks.get(i).getClass().getSimpleName());
-//        }
-    }
+	public UnionInputOutputMediator(List<BlockLoadedInputOutputMediator> mediators) {
+		super();
+		Comparator<MsPacManSensorBlock> c = new Comparator<MsPacManSensorBlock>() {
+			public int compare(MsPacManSensorBlock o1, MsPacManSensorBlock o2) {
+				return (o1.getClass().getName() + o1.hashCode()).compareTo(o2.getClass().getName() + o2.hashCode());
+			}
+		};
+		TreeSet<MsPacManSensorBlock> union = new TreeSet<MsPacManSensorBlock>(c);
+		for (BlockLoadedInputOutputMediator m : mediators) {
+			union.addAll(m.blocks);
+		}
+		this.blocks.addAll(union);
+		// for(int i = 0; i < blocks.size(); i++){
+		// System.out.println(i +":" +
+		// blocks.get(i).getClass().getSimpleName());
+		// }
+	}
 }

@@ -43,63 +43,59 @@ import rlVizLib.visualization.VizComponentChangeListener;
 
 public class PuddleMapComponent implements SelfUpdatingVizComponent, Observer {
 
-    private final PuddleWorldVisualizer theVisualizer;
-    private VizComponentChangeListener theChangeListener;
-    private final Vector<Puddle> thePuddles = PuddleGen.makePuddles();
+	private final PuddleWorldVisualizer theVisualizer;
+	private VizComponentChangeListener theChangeListener;
+	private final Vector<Puddle> thePuddles = PuddleGen.makePuddles();
 
-    public PuddleMapComponent(PuddleWorldVisualizer theVisualizer) {
-        this.theVisualizer = theVisualizer;
-        theVisualizer.getTheGlueState().addObserver(this);
-    }
+	public PuddleMapComponent(PuddleWorldVisualizer theVisualizer) {
+		this.theVisualizer = theVisualizer;
+		theVisualizer.getTheGlueState().addObserver(this);
+	}
 
-    public void render(Graphics2D g) {
+	public void render(Graphics2D g) {
 
+		// AffineTransform theScaleTransform = new AffineTransform();
+		// theScaleTransform.scale(4.0d, 4.0d);
+		// AffineTransform xtransform = g.getTransform();
+		// xtransform.concatenate(theScaleTransform);
+		// g.setTransform(xtransform);
 
+		double increment = .0025d;
+		for (double x = 0.0d; x <= 1.0d; x += increment) {
+			for (double y = 0.0d; y <= 1.0d; y += increment) {
+				Point2D thisPoint = new Point2D.Double(x + increment / 2.0d, y + increment / 2.0d);
+				float thisPenalty = 0.0f;
+				for (Puddle puddle : thePuddles) {
+					thisPenalty += puddle.getReward(thisPoint);
+				}
+				// If we are in penalty region, draw the puddle
+				if (thisPenalty < 0.0d) {
+					// empirically have determined maxpenalty = -80
+					float scaledPenalty = thisPenalty / (-80.0f);
+					// Going to sqrt the penalty to bias it towards 1
+					scaledPenalty = (float) Math.sqrt(scaledPenalty);
+					// Now we have a number in 0/1
+					Color scaledColor = new Color(scaledPenalty, 1.0f, 1.0f, .75f);
+					g.setColor(scaledColor);
+					Rectangle2D thisRect = new Rectangle2D.Double(x, y, increment, increment);
+					g.fill(thisRect);
+				}
 
-//        AffineTransform theScaleTransform = new AffineTransform();
-//        theScaleTransform.scale(4.0d, 4.0d);
-//        AffineTransform xtransform = g.getTransform();
-//        xtransform.concatenate(theScaleTransform);
-//        g.setTransform(xtransform);
+			}
+		}
 
-        double increment = .0025d;
-        for (double x = 0.0d; x <= 1.0d; x += increment) {
-            for (double y = 0.0d; y <= 1.0d; y += increment) {
-                Point2D thisPoint = new Point2D.Double(x + increment / 2.0d, y + increment / 2.0d);
-                float thisPenalty = 0.0f;
-                for (Puddle puddle : thePuddles) {
-                    thisPenalty += puddle.getReward(thisPoint);
-                }
-                //If we are in penalty region, draw the puddle
-                if (thisPenalty < 0.0d) {
-                    //empirically have determined maxpenalty = -80
-                    float scaledPenalty = thisPenalty / (-80.0f);
-                    //Going to sqrt the penalty to bias it towards 1
-                    scaledPenalty = (float) Math.sqrt(scaledPenalty);
-                    //Now we have a number in 0/1
-                    Color scaledColor = new Color(scaledPenalty, 1.0f, 1.0f, .75f);
-                    g.setColor(scaledColor);
-                    Rectangle2D thisRect = new Rectangle2D.Double(x, y, increment, increment);
-                    g.fill(thisRect);
-                }
+	}
 
+	public void setVizComponentChangeListener(VizComponentChangeListener theChangeListener) {
+		this.theChangeListener = theChangeListener;
+	}
 
+	boolean everDrawn = false;
 
-
-            }
-        }
-
-    }
-
-    public void setVizComponentChangeListener(VizComponentChangeListener theChangeListener) {
-        this.theChangeListener = theChangeListener;
-    }
-    boolean everDrawn = false;
-
-    public void update(Observable o, Object arg) {
-        if (!everDrawn) {
-            theChangeListener.vizComponentChanged(this);
-            everDrawn = true;
-        }
-    }
+	public void update(Observable o, Object arg) {
+		if (!everDrawn) {
+			theChangeListener.vizComponentChanged(this);
+			everDrawn = true;
+		}
+	}
 }

@@ -14,11 +14,8 @@ import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.reachfirst.VariableDi
  */
 public class Depth1JunctionPowerPillSafetyBlock extends VariableDirectionMaxBlock {
 
-    public Depth1JunctionPowerPillSafetyBlock() {
-        super(-1,
-                new VariableDirectionBlock[]{
-                    new VariableDirectionCloserToJunctionThanThreatGhostBlock(-1),
-                    new VariableDirectionCloserToPowerPillThanThreatGhostBlock(-1)
-                });
-    }
+	public Depth1JunctionPowerPillSafetyBlock() {
+		super(-1, new VariableDirectionBlock[] { new VariableDirectionCloserToJunctionThanThreatGhostBlock(-1),
+				new VariableDirectionCloserToPowerPillThanThreatGhostBlock(-1) });
+	}
 }

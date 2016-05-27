@@ -15,19 +15,21 @@ import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.nearestfarthest.NearestPow
  */
 public class NonGhostSensors extends BlockLoadedInputOutputMediator {
 
-    public NonGhostSensors() {
-        super();
-        boolean ignorePillScore = Parameters.parameters.booleanParameter("ignorePillScore");
-        boolean noPowerPills = Parameters.parameters.booleanParameter("noPowerPills");
+	public NonGhostSensors() {
+		super();
+		boolean ignorePillScore = Parameters.parameters.booleanParameter("ignorePillScore");
+		boolean noPowerPills = Parameters.parameters.booleanParameter("noPowerPills");
 
-        blocks.add(new EscapeNodeDistanceDifferenceBlock(escapeNodes, false, false, Parameters.parameters.integerParameter("escapeNodeDepth"), !ignorePillScore, !noPowerPills, !noPowerPills));
-        if (!noPowerPills) {
-            blocks.add(new NearestPowerPillBlock());
-            blocks.add(new NearestPowerPillDistanceBlock());
-        }
-        if (!ignorePillScore) {
-            blocks.add(new NearestPillBlock());
-            blocks.add(new NearestPillDistanceBlock());
-        }
-    }
+		blocks.add(new EscapeNodeDistanceDifferenceBlock(escapeNodes, false, false,
+				Parameters.parameters.integerParameter("escapeNodeDepth"), !ignorePillScore, !noPowerPills,
+				!noPowerPills));
+		if (!noPowerPills) {
+			blocks.add(new NearestPowerPillBlock());
+			blocks.add(new NearestPowerPillDistanceBlock());
+		}
+		if (!ignorePillScore) {
+			blocks.add(new NearestPillBlock());
+			blocks.add(new NearestPillDistanceBlock());
+		}
+	}
 }

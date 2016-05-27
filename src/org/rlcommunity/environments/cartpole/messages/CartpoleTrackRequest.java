@@ -11,26 +11,22 @@ import rlVizLib.messaging.environment.EnvironmentMessages;
 
 public class CartpoleTrackRequest extends EnvironmentMessages {
 
-    public CartpoleTrackRequest(GenericMessage theMessageObject) {
-        super(theMessageObject);
-    }
+	public CartpoleTrackRequest(GenericMessage theMessageObject) {
+		super(theMessageObject);
+	}
 
-    public static CartpoleTrackResponse Execute() {
-        String theRequest = AbstractMessage.makeMessage(
-                MessageUser.kEnv.id(),
-                MessageUser.kBenchmark.id(),
-                EnvMessageType.kEnvCustom.id(),
-                MessageValueType.kString.id(),
-                "GETCARTPOLETRACK");
+	public static CartpoleTrackResponse Execute() {
+		String theRequest = AbstractMessage.makeMessage(MessageUser.kEnv.id(), MessageUser.kBenchmark.id(),
+				EnvMessageType.kEnvCustom.id(), MessageValueType.kString.id(), "GETCARTPOLETRACK");
 
-        String responseMessage = RLGlue.RL_env_message(theRequest);
-        CartpoleTrackResponse theResponse;
-        try {
-            theResponse = new CartpoleTrackResponse(responseMessage);
-        } catch (NotAnRLVizMessageException ex) {
-            System.out.println("Not a valid RL Viz Message in Cartpole Track Request" + ex);
-            return null;
-        }
-        return theResponse;
-    }
+		String responseMessage = RLGlue.RL_env_message(theRequest);
+		CartpoleTrackResponse theResponse;
+		try {
+			theResponse = new CartpoleTrackResponse(responseMessage);
+		} catch (NotAnRLVizMessageException ex) {
+			System.out.println("Not a valid RL Viz Message in Cartpole Track Request" + ex);
+			return null;
+		}
+		return theResponse;
+	}
 }

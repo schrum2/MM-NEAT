@@ -20,32 +20,32 @@ import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.time.LairTimesBlock;
  */
 public class AfterStateFeatureInputOutputMediator extends BlockLoadedInputOutputMediator {
 
-    public AfterStateFeatureInputOutputMediator() {
-        super();
-        blocks.add(new BiasBlock());
-        blocks.add(new HittingWallBlock());
-        //blocks.add(new NearestEscapeNodeDistanceBlock(escapeNodes));
-        blocks.add(new NearestEscapeNodeThreatDistanceDifferencesBlock(escapeNodes, 5));
-        blocks.add(new SpecificGhostDistancesBlock(true, false));
-        blocks.add(new SpecificGhostDistancesBlock(false, true));
-        blocks.add(new NearestEdibleGhostDistanceBlock());
-        blocks.add(new NearestThreatGhostDistanceBlock());
-        blocks.add(new NearestPillDistanceBlock());
-        blocks.add(new NearestPowerPillDistanceBlock());
-        blocks.add(new PillsRemainingBlock(true, true));
-        blocks.add(new PowerPillsRemainingBlock(true, true));
-        blocks.add(new LairRelativeCoordinatesBlock());
-        blocks.add(new LairTimesBlock(new boolean[]{false,false,false,true}));
-        blocks.add(new EdibleTimesBlock(new boolean[]{false,false,false,true}));
-    }
+	public AfterStateFeatureInputOutputMediator() {
+		super();
+		blocks.add(new BiasBlock());
+		blocks.add(new HittingWallBlock());
+		// blocks.add(new NearestEscapeNodeDistanceBlock(escapeNodes));
+		blocks.add(new NearestEscapeNodeThreatDistanceDifferencesBlock(escapeNodes, 5));
+		blocks.add(new SpecificGhostDistancesBlock(true, false));
+		blocks.add(new SpecificGhostDistancesBlock(false, true));
+		blocks.add(new NearestEdibleGhostDistanceBlock());
+		blocks.add(new NearestThreatGhostDistanceBlock());
+		blocks.add(new NearestPillDistanceBlock());
+		blocks.add(new NearestPowerPillDistanceBlock());
+		blocks.add(new PillsRemainingBlock(true, true));
+		blocks.add(new PowerPillsRemainingBlock(true, true));
+		blocks.add(new LairRelativeCoordinatesBlock());
+		blocks.add(new LairTimesBlock(new boolean[] { false, false, false, true }));
+		blocks.add(new EdibleTimesBlock(new boolean[] { false, false, false, true }));
+	}
 
-    @Override
-    public String[] outputLabels() {
-        return new String[]{"Preference"};
-    }
+	@Override
+	public String[] outputLabels() {
+		return new String[] { "Preference" };
+	}
 
-    @Override
-    public int numOut() {
-        return 1;
-    }
+	@Override
+	public int numOut() {
+		return 1;
+	}
 }

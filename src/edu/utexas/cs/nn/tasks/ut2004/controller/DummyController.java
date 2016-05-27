@@ -15,13 +15,13 @@ import edu.utexas.cs.nn.tasks.ut2004.actions.EmptyAction;
  */
 public class DummyController implements BotController {
 
-    public BotAction control(UT2004BotModuleController bot) {
-        return new EmptyAction();
-    }
+	public BotAction control(UT2004BotModuleController bot) {
+		return new EmptyAction();
+	}
 
-    public void initialize(UT2004BotModuleController bot) {
-    }
+	public void initialize(UT2004BotModuleController bot) {
+	}
 
-    public void reset(UT2004BotModuleController bot) {
-    }
+	public void reset(UT2004BotModuleController bot) {
+	}
 }

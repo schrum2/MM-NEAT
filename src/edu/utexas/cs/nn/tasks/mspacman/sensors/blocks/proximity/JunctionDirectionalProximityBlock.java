@@ -12,13 +12,13 @@ import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
  */
 public class JunctionDirectionalProximityBlock extends DirectionalProximityBlock {
 
-    @Override
-    public int[] getTargets(GameFacade gf) {
-        return gf.getJunctionIndices();
-    }
+	@Override
+	public int[] getTargets(GameFacade gf) {
+		return gf.getJunctionIndices();
+	}
 
-    @Override
-    public String targetType() {
-        return "Junction";
-    }
+	@Override
+	public String targetType() {
+		return "Junction";
+	}
 }

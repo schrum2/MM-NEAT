@@ -14,39 +14,40 @@ import java.util.ArrayList;
  */
 public class SimpleBlueprintGenotype extends NumericArrayGenotype<Long> {
 
-    /**
-     * Only used to create example genotype. The array will contain no useful
-     * data, but the newInstance method will make useful instances for the
-     * actual population.
-     */
-    public SimpleBlueprintGenotype(int size) {
-        super(new Long[size]);
-    }
+	/**
+	 * Only used to create example genotype. The array will contain no useful
+	 * data, but the newInstance method will make useful instances for the
+	 * actual population.
+	 */
+	public SimpleBlueprintGenotype(int size) {
+		super(new Long[size]);
+	}
 
-    public SimpleBlueprintGenotype(ArrayList<Long> genes) {
-        super(genes);
-    }
+	public SimpleBlueprintGenotype(ArrayList<Long> genes) {
+		super(genes);
+	}
 
-    @Override
-    public Genotype<ArrayList<Long>> crossover(Genotype<ArrayList<Long>> g) {
-        return new ArrayCrossover<Long>().crossover(this, g);
-    }
+	@Override
+	public Genotype<ArrayList<Long>> crossover(Genotype<ArrayList<Long>> g) {
+		return new ArrayCrossover<Long>().crossover(this, g);
+	}
 
-    @Override
-    public void mutate() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(this.getId());
-        sb.append(" ");
-        new BlueprintRandomMutation().go(this, sb);
-        new BlueprintChildrenMutation().go(this, sb);
-        EvolutionaryHistory.logMutationData(sb.toString());
-    }
+	@Override
+	public void mutate() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(this.getId());
+		sb.append(" ");
+		new BlueprintRandomMutation().go(this, sb);
+		new BlueprintChildrenMutation().go(this, sb);
+		EvolutionaryHistory.logMutationData(sb.toString());
+	}
 
-    public Genotype<ArrayList<Long>> copy() {
-        return new SimpleBlueprintGenotype(genes);
-    }
+	public Genotype<ArrayList<Long>> copy() {
+		return new SimpleBlueprintGenotype(genes);
+	}
 
-    public Genotype<ArrayList<Long>> newInstance() {
-        return new SimpleBlueprintGenotype(((MultiplePopulationGenerationalEAExperiment) MMNEAT.experiment).randomBlueprint());
-    }
+	public Genotype<ArrayList<Long>> newInstance() {
+		return new SimpleBlueprintGenotype(
+				((MultiplePopulationGenerationalEAExperiment) MMNEAT.experiment).randomBlueprint());
+	}
 }

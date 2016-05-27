@@ -11,21 +11,21 @@ import edu.utexas.cs.nn.networks.ModeSelector;
  */
 public class BreveModeSelector implements ModeSelector {
 
-    private final Breve2DDynamics dynamics;
+	private final Breve2DDynamics dynamics;
 
-    public BreveModeSelector(Breve2DDynamics dynamics) {
-        this.dynamics = dynamics;
-    }
+	public BreveModeSelector(Breve2DDynamics dynamics) {
+		this.dynamics = dynamics;
+	}
 
-    public int mode() {
-        return dynamics.task;
-    }
+	public int mode() {
+		return dynamics.task;
+	}
 
-    public int numModes() {
-        return dynamics.numTasks();
-    }
+	public int numModes() {
+		return dynamics.numTasks();
+	}
 
-    public void reset() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+	public void reset() {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
 }

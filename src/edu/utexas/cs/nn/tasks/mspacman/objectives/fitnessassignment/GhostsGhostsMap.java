@@ -10,7 +10,7 @@ package edu.utexas.cs.nn.tasks.mspacman.objectives.fitnessassignment;
  */
 public class GhostsGhostsMap implements FitnessToModeMap {
 
-    public int[] associatedFitnessScores() {
-        return new int[]{GHOST_SCORE, GHOST_SCORE};
-    }
+	public int[] associatedFitnessScores() {
+		return new int[] { GHOST_SCORE, GHOST_SCORE };
+	}
 }

@@ -37,182 +37,185 @@ import org.rlcommunity.rlglue.codec.types.Observation;
  */
 public class PuddleWorldState {
 
-    public static double finalPuddleScore = 0;
-    public static double finalStepScore = 0;
+	public static double finalPuddleScore = 0;
+	public static double finalStepScore = 0;
 
-    static Point2D getDefaultPosition() {
-        return new Point2D.Double(.1d, .1d);
-    }
-    private Point2D agentPosition = new Point2D.Double(.1d, .1d);
-    private final Vector<Puddle> thePuddles = PuddleGen.makePuddles();
-    public final Rectangle2D worldRect = new Rectangle2D.Double(0, 0, 1, 1);
-    final public Point2D defaultInitPosition = new Point2D.Double(.2d, .5d);
-    final private double goalSize = .05d;
-    public final Rectangle2D goalRect = new Rectangle2D.Double(worldRect.getMaxX() - goalSize, worldRect.getMaxY() - goalSize, goalSize, goalSize);
-    final private double agentSpeed = .05;
-    final public double rewardPerStep = -1.0d;
-    final public double rewardAtGoal = 0.0d;
-    private Random randomGenerator;
-    //These are configurable
-    private boolean randomStarts = false;
-    private double transitionNoise = 0.0d;
-    private int lastAction = 0;
-    private PuddleWorldViewer viewer = null;
+	static Point2D getDefaultPosition() {
+		return new Point2D.Double(.1d, .1d);
+	}
 
-    public PuddleWorldState(boolean randomStartStates, double transitionNoise, long randomSeed) {
-        System.out.println("New Puddle World State");
-        if (CommonConstants.watch) {
-            if (PuddleWorldViewer.current == null) {
-                System.out.println("New PuddleWorldViewer");
-                viewer = new PuddleWorldViewer();
-                viewer.drawGoal(goalRect);
-                viewer.drawPuddles(thePuddles);
-            } else {
-                System.out.println("Same PuddleWorldViewer");
-                PuddleWorldViewer.current.reset(true);
-                viewer = PuddleWorldViewer.current;
-            }
-        }
+	private Point2D agentPosition = new Point2D.Double(.1d, .1d);
+	private final Vector<Puddle> thePuddles = PuddleGen.makePuddles();
+	public final Rectangle2D worldRect = new Rectangle2D.Double(0, 0, 1, 1);
+	final public Point2D defaultInitPosition = new Point2D.Double(.2d, .5d);
+	final private double goalSize = .05d;
+	public final Rectangle2D goalRect = new Rectangle2D.Double(worldRect.getMaxX() - goalSize,
+			worldRect.getMaxY() - goalSize, goalSize, goalSize);
+	final private double agentSpeed = .05;
+	final public double rewardPerStep = -1.0d;
+	final public double rewardAtGoal = 0.0d;
+	private Random randomGenerator;
+	// These are configurable
+	private boolean randomStarts = false;
+	private double transitionNoise = 0.0d;
+	private int lastAction = 0;
+	private PuddleWorldViewer viewer = null;
 
-        this.randomStarts = randomStartStates;
-        this.transitionNoise = transitionNoise;
+	public PuddleWorldState(boolean randomStartStates, double transitionNoise, long randomSeed) {
+		System.out.println("New Puddle World State");
+		if (CommonConstants.watch) {
+			if (PuddleWorldViewer.current == null) {
+				System.out.println("New PuddleWorldViewer");
+				viewer = new PuddleWorldViewer();
+				viewer.drawGoal(goalRect);
+				viewer.drawPuddles(thePuddles);
+			} else {
+				System.out.println("Same PuddleWorldViewer");
+				PuddleWorldViewer.current.reset(true);
+				viewer = PuddleWorldViewer.current;
+			}
+		}
 
-        if (randomSeed == 0) {
-            this.randomGenerator = new Random();
-        } else {
-            this.randomGenerator = new Random(randomSeed);
-        }
+		this.randomStarts = randomStartStates;
+		this.transitionNoise = transitionNoise;
 
-        //Throw away the first few because they first bits are not that random.
-        randomGenerator.nextDouble();
-        randomGenerator.nextDouble();
-        reset();
-    }
+		if (randomSeed == 0) {
+			this.randomGenerator = new Random();
+		} else {
+			this.randomGenerator = new Random(randomSeed);
+		}
 
-    public void addPuddle(Puddle newPuddle) {
-        thePuddles.add(newPuddle);
-    }
+		// Throw away the first few because they first bits are not that random.
+		randomGenerator.nextDouble();
+		randomGenerator.nextDouble();
+		reset();
+	}
 
-    public void clearPuddles() {
-        thePuddles.clear();
-    }
+	public void addPuddle(Puddle newPuddle) {
+		thePuddles.add(newPuddle);
+	}
 
-    /**
-     * Returns an unmodifiable list of the puddles.
-     *
-     * @return
-     */
-    public List<Puddle> getPuddles() {
-        return Collections.unmodifiableList(thePuddles);
-    }
+	public void clearPuddles() {
+		thePuddles.clear();
+	}
 
-    public Point2D getPosition() {
-        return agentPosition;
-    }
+	/**
+	 * Returns an unmodifiable list of the puddles.
+	 *
+	 * @return
+	 */
+	public List<Puddle> getPuddles() {
+		return Collections.unmodifiableList(thePuddles);
+	}
 
-    /**
-     * Calculate the reward
-     *
-     * @return
-     */
-    public double getReward() {
-        //System.out.println(agentPosition + ":Rewards:" + finalPuddleScore + "," + finalStepScore);
-        double puddleReward = getPuddleReward();
-        finalPuddleScore += puddleReward;
+	public Point2D getPosition() {
+		return agentPosition;
+	}
 
-        if (inGoalRegion()) {
-            finalStepScore += rewardAtGoal;
-            return puddleReward + rewardAtGoal;
-        } else {
-            finalStepScore += rewardPerStep;
-            return puddleReward + rewardPerStep;
-        }
-    }
+	/**
+	 * Calculate the reward
+	 *
+	 * @return
+	 */
+	public double getReward() {
+		// System.out.println(agentPosition + ":Rewards:" + finalPuddleScore +
+		// "," + finalStepScore);
+		double puddleReward = getPuddleReward();
+		finalPuddleScore += puddleReward;
 
-    private double getPuddleReward() {
-        double totalPuddleReward = 0;
-        for (Puddle puddle : thePuddles) {
-            totalPuddleReward += puddle.getReward(agentPosition);
-        }
-        return totalPuddleReward;
-    }
+		if (inGoalRegion()) {
+			finalStepScore += rewardAtGoal;
+			return puddleReward + rewardAtGoal;
+		} else {
+			finalStepScore += rewardPerStep;
+			return puddleReward + rewardPerStep;
+		}
+	}
 
-    /**
-     * IS the agent past the goal marker?
-     *
-     * @return
-     */
-    public boolean inGoalRegion() {
-        return goalRect.contains(agentPosition);
-    }
+	private double getPuddleReward() {
+		double totalPuddleReward = 0;
+		for (Puddle puddle : thePuddles) {
+			totalPuddleReward += puddle.getReward(agentPosition);
+		}
+		return totalPuddleReward;
+	}
 
-    protected void reset() {
-        if (Parameters.parameters.booleanParameter("deterministic")) {
-            this.randomGenerator = new Random(1);
-        }
-        if (CommonConstants.watch) {
-            viewer.reset();
-            viewer.drawGoal(goalRect);
-            viewer.drawPuddles(thePuddles);
-        }
+	/**
+	 * IS the agent past the goal marker?
+	 *
+	 * @return
+	 */
+	public boolean inGoalRegion() {
+		return goalRect.contains(agentPosition);
+	}
 
-        agentPosition.setLocation(defaultInitPosition);
-        if (randomStarts) {
-            do {
-                double randStartX = .95d * randomGenerator.nextDouble();
-                double randStartY = .95d * randomGenerator.nextDouble();
-                agentPosition.setLocation(randStartX, randStartY);
-            } while (inGoalRegion());
-        }
-        //System.out.println(" RESET! " + agentPosition);
-    }
+	protected void reset() {
+		if (Parameters.parameters.booleanParameter("deterministic")) {
+			this.randomGenerator = new Random(1);
+		}
+		if (CommonConstants.watch) {
+			viewer.reset();
+			viewer.drawGoal(goalRect);
+			viewer.drawPuddles(thePuddles);
+		}
 
-    void update(int a) {
-        lastAction = a;
+		agentPosition.setLocation(defaultInitPosition);
+		if (randomStarts) {
+			do {
+				double randStartX = .95d * randomGenerator.nextDouble();
+				double randStartY = .95d * randomGenerator.nextDouble();
+				agentPosition.setLocation(randStartX, randStartY);
+			} while (inGoalRegion());
+		}
+		// System.out.println(" RESET! " + agentPosition);
+	}
 
-        double nextX = agentPosition.getX();
-        double nextY = agentPosition.getY();
+	void update(int a) {
+		lastAction = a;
 
-        if (a == 0) {
-            nextX += agentSpeed;
-        }
-        if (a == 1) {
-            nextX -= agentSpeed;
-        }
-        if (a == 2) {
-            nextY += agentSpeed;
-        }
-        if (a == 3) {
-            nextY -= agentSpeed;
-        }
+		double nextX = agentPosition.getX();
+		double nextY = agentPosition.getY();
 
-        double XNoise = randomGenerator.nextGaussian() * transitionNoise * agentSpeed;
-        double YNoise = randomGenerator.nextGaussian() * transitionNoise * agentSpeed;
+		if (a == 0) {
+			nextX += agentSpeed;
+		}
+		if (a == 1) {
+			nextX -= agentSpeed;
+		}
+		if (a == 2) {
+			nextY += agentSpeed;
+		}
+		if (a == 3) {
+			nextY -= agentSpeed;
+		}
 
-        nextX += XNoise;
-        nextY += YNoise;
+		double XNoise = randomGenerator.nextGaussian() * transitionNoise * agentSpeed;
+		double YNoise = randomGenerator.nextGaussian() * transitionNoise * agentSpeed;
 
-        nextX = Math.min(nextX, worldRect.getMaxX());
-        nextX = Math.max(nextX, worldRect.getMinX());
-        nextY = Math.min(nextY, worldRect.getMaxY());
-        nextY = Math.max(nextY, worldRect.getMinY());
+		nextX += XNoise;
+		nextY += YNoise;
 
-        agentPosition.setLocation(nextX, nextY);
-        if (CommonConstants.watch) {
-            viewer.visit(agentPosition);
-        }
-    }
+		nextX = Math.min(nextX, worldRect.getMaxX());
+		nextX = Math.max(nextX, worldRect.getMinX());
+		nextY = Math.min(nextY, worldRect.getMaxY());
+		nextY = Math.max(nextY, worldRect.getMinY());
 
-    public int getLastAction() {
-        return lastAction;
-    }
+		agentPosition.setLocation(nextX, nextY);
+		if (CommonConstants.watch) {
+			viewer.visit(agentPosition);
+		}
+	}
 
-    Observation makeObservation() {
-        Observation currentObs = new Observation(0, 2);
-        currentObs.doubleArray[0] = getPosition().getX();
-        currentObs.doubleArray[1] = getPosition().getY();
+	public int getLastAction() {
+		return lastAction;
+	}
 
-        return currentObs;
+	Observation makeObservation() {
+		Observation currentObs = new Observation(0, 2);
+		currentObs.doubleArray[0] = getPosition().getX();
+		currentObs.doubleArray[1] = getPosition().getY();
 
-    }
+		return currentObs;
+
+	}
 }

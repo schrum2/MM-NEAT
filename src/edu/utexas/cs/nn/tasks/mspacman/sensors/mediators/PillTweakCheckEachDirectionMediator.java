@@ -19,20 +19,20 @@ import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.distance.ghosts.incom
  */
 public class PillTweakCheckEachDirectionMediator extends VariableDirectionBlockLoadedInputOutputMediator {
 
-    public PillTweakCheckEachDirectionMediator() {
-        int direction = -1;
-        blocks.add(new BiasBlock());
-        // Distances
-        blocks.add(new VariableDirectionPillDistanceBlock(direction));
-        blocks.add(new VariableDirectionThreatGhostDistanceBlock(direction));
-        blocks.add(new VariableDirectionIncomingThreatGhostDistanceBlock(direction));
-        blocks.add(new VariableDirectionKStepPillCountBlock(direction));
-        blocks.add(new VariableDirectionKStepThreatGhostCountBlock(direction, true));
-        blocks.add(new VariableDirectionKStepThreatGhostCountBlock(direction, false));
-        blocks.add(new VariableDirectionKStepJunctionCountBlock(direction));
-        blocks.add(new VariableDirectionCountJunctionOptionsBlock());
-        blocks.add(new VariableDirectionCountAllPillsInKStepsBlock(direction));
-        blocks.add(new VariableDirectionPillsBeforeJunctionBlock(direction));
+	public PillTweakCheckEachDirectionMediator() {
+		int direction = -1;
+		blocks.add(new BiasBlock());
+		// Distances
+		blocks.add(new VariableDirectionPillDistanceBlock(direction));
+		blocks.add(new VariableDirectionThreatGhostDistanceBlock(direction));
+		blocks.add(new VariableDirectionIncomingThreatGhostDistanceBlock(direction));
+		blocks.add(new VariableDirectionKStepPillCountBlock(direction));
+		blocks.add(new VariableDirectionKStepThreatGhostCountBlock(direction, true));
+		blocks.add(new VariableDirectionKStepThreatGhostCountBlock(direction, false));
+		blocks.add(new VariableDirectionKStepJunctionCountBlock(direction));
+		blocks.add(new VariableDirectionCountJunctionOptionsBlock());
+		blocks.add(new VariableDirectionCountAllPillsInKStepsBlock(direction));
+		blocks.add(new VariableDirectionPillsBeforeJunctionBlock(direction));
 
-    }
+	}
 }

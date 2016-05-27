@@ -12,14 +12,14 @@ import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.counting.PowerPillsRemaini
  */
 public class PillCountingSensors extends BlockLoadedInputOutputMediator {
 
-    public PillCountingSensors(boolean pillsPresent, boolean canEatGhosts) {
-        super();
-        if (pillsPresent) {
-            blocks.add(new PillsRemainingBlock(true, false));
-        }
-        if (canEatGhosts) {
-            blocks.add(new PowerPillsRemainingBlock(true, false));
-            blocks.add(new PowerPillsClearedBlock()); // redundant?
-        }
-    }
+	public PillCountingSensors(boolean pillsPresent, boolean canEatGhosts) {
+		super();
+		if (pillsPresent) {
+			blocks.add(new PillsRemainingBlock(true, false));
+		}
+		if (canEatGhosts) {
+			blocks.add(new PowerPillsRemainingBlock(true, false));
+			blocks.add(new PowerPillsClearedBlock()); // redundant?
+		}
+	}
 }

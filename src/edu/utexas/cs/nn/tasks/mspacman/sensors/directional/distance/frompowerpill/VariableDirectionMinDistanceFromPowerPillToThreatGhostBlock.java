@@ -10,9 +10,10 @@ import edu.utexas.cs.nn.util.stats.Min;
  *
  * @author Jacob Schrum
  */
-public class VariableDirectionMinDistanceFromPowerPillToThreatGhostBlock extends VariableDirectionDistanceFromPowerPillToThreatGhostBlock {
-    
-    public VariableDirectionMinDistanceFromPowerPillToThreatGhostBlock(int dir) {
-        super(dir, new Min());
-    }
+public class VariableDirectionMinDistanceFromPowerPillToThreatGhostBlock
+		extends VariableDirectionDistanceFromPowerPillToThreatGhostBlock {
+
+	public VariableDirectionMinDistanceFromPowerPillToThreatGhostBlock(int dir) {
+		super(dir, new Min());
+	}
 }

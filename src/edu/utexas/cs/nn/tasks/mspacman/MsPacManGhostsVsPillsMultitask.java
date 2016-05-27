@@ -11,17 +11,17 @@ import edu.utexas.cs.nn.networks.Network;
  */
 public class MsPacManGhostsVsPillsMultitask<T extends Network> extends MsPacManIsolatedMultitask<T> {
 
-    public void task1Prep(){
-        // Do an eval in the Ghost Only version
-        noPills = true;
-        endAfterGhostEatingChances = false;
-        noPowerPills = false;
-    }
-    
-    public void task2Prep() {
-        // Now do an eval in the Pill Only version
-        noPills = false;
-        endAfterGhostEatingChances = false;
-        noPowerPills = true;
-    }
+	public void task1Prep() {
+		// Do an eval in the Ghost Only version
+		noPills = true;
+		endAfterGhostEatingChances = false;
+		noPowerPills = false;
+	}
+
+	public void task2Prep() {
+		// Now do an eval in the Pill Only version
+		noPills = false;
+		endAfterGhostEatingChances = false;
+		noPowerPills = true;
+	}
 }

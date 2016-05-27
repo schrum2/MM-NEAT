@@ -14,21 +14,22 @@ import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.MsPacManSensorBlock;
  */
 public class TimeLeftBlock extends MsPacManSensorBlock {
 
-    @Override
-    public int incorporateSensors(double[] inputs, int in, GameFacade gf, int lastDirection) {
-        int levelTime = gf.getCurrentLevelTime();
-        inputs[in++] = (CommonConstants.pacManLevelTimeLimit - levelTime) / (CommonConstants.pacManLevelTimeLimit * 1.0);
-        return in;
-    }
+	@Override
+	public int incorporateSensors(double[] inputs, int in, GameFacade gf, int lastDirection) {
+		int levelTime = gf.getCurrentLevelTime();
+		inputs[in++] = (CommonConstants.pacManLevelTimeLimit - levelTime)
+				/ (CommonConstants.pacManLevelTimeLimit * 1.0);
+		return in;
+	}
 
-    @Override
-    public int incorporateLabels(String[] labels, int startPoint) {
-        labels[startPoint++] = "Time Remaining";
-        return startPoint;
-    }
+	@Override
+	public int incorporateLabels(String[] labels, int startPoint) {
+		labels[startPoint++] = "Time Remaining";
+		return startPoint;
+	}
 
-    @Override
-    public int numberAdded() {
-        return 1;
-    }
+	@Override
+	public int numberAdded() {
+		return 1;
+	}
 }

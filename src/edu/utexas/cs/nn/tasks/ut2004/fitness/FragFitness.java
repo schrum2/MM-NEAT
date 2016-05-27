@@ -13,7 +13,7 @@ import edu.utexas.cs.nn.networks.Network;
  */
 public class FragFitness<T extends Network> extends UT2004FitnessFunction<T> {
 
-    public double fitness(Organism<T> individual) {
-        return game.getFrags();
-    }
+	public double fitness(Organism<T> individual) {
+		return game.getFrags();
+	}
 }

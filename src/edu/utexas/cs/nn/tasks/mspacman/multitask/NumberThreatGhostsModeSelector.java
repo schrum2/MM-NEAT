@@ -3,10 +3,9 @@ package edu.utexas.cs.nn.tasks.mspacman.multitask;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 
 /**
- * A Mode selector which selects between 3 modes based on the following:
- * 0) Some ghosts are edible
- * 1) Some ghosts are threats
- * 2) All ghosts are threats
+ * A Mode selector which selects between 3 modes based on the following: 0) Some
+ * ghosts are edible 1) Some ghosts are threats 2) All ghosts are threats
+ * 
  * @author Jacob Schrum
  */
 public class NumberThreatGhostsModeSelector extends MsPacManModeSelector {
@@ -19,35 +18,39 @@ public class NumberThreatGhostsModeSelector extends MsPacManModeSelector {
 	}
 
 	/**
-	 * A Mode selector which selects between 3 modes based on the following:
-	 * 0) Some ghosts are edible
-	 * 1) Some ghosts are threats
-	 * 2) All ghosts are threats
+	 * A Mode selector which selects between 3 modes based on the following: 0)
+	 * Some ghosts are edible 1) Some ghosts are threats 2) All ghosts are
+	 * threats
+	 * 
 	 * @return mode
 	 */
-        @Override
+	@Override
 	public int mode() {
-		if(gs.anyIsEdible()) return SOME_EDIBLE_GHOSTS;
+		if (gs.anyIsEdible())
+			return SOME_EDIBLE_GHOSTS;
 		int[] threats = gs.getThreatGhostLocations();
 		return threats.length == CommonConstants.numActiveGhosts ? ALL_THREAT_GHOSTS : SOME_THREAT_GHOSTS;
 	}
 
-    /**
-     * There are 3 modes for this mode selector
-     * @return 3
-     */
-        @Override
+	/**
+	 * There are 3 modes for this mode selector
+	 * 
+	 * @return 3
+	 */
+	@Override
 	public int numModes() {
 		return 3;
 	}
 
 	@Override
-    /**
-     * gets the associated fitness scores with this mode selector 
-     * @return an int array holding the score for if some of the ghosts are edible in the first index and the score
-     * for if some of the ghosts are threats in the second index and the score for if all of the ghosts are threats
-     * in the third index
-     */
+	/**
+	 * gets the associated fitness scores with this mode selector
+	 * 
+	 * @return an int array holding the score for if some of the ghosts are
+	 *         edible in the first index and the score for if some of the ghosts
+	 *         are threats in the second index and the score for if all of the
+	 *         ghosts are threats in the third index
+	 */
 	public int[] associatedFitnessScores() {
 		int[] result = new int[numModes()];
 		result[SOME_EDIBLE_GHOSTS] = GHOST_SCORE;

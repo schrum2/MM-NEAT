@@ -12,17 +12,17 @@ import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
  */
 public class VariableDirectionFarthestIncomingThreatGhostDistanceBlock extends VariableDirectionFarthestDistanceBlock {
 
-    public VariableDirectionFarthestIncomingThreatGhostDistanceBlock(int dir) {
-        super(dir);
-    }
+	public VariableDirectionFarthestIncomingThreatGhostDistanceBlock(int dir) {
+		super(dir);
+	}
 
-    @Override
-    public String getType() {
-        return "Incoming Threat Ghost";
-    }
+	@Override
+	public String getType() {
+		return "Incoming Threat Ghost";
+	}
 
-    @Override
-    public int[] getTargets(GameFacade gf) {
-        return gf.getIncomingThreatGhostLocations(dir);
-    }
+	@Override
+	public int[] getTargets(GameFacade gf) {
+		return gf.getIncomingThreatGhostLocations(dir);
+	}
 }

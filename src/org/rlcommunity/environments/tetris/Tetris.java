@@ -48,267 +48,294 @@ public class Tetris extends RLGlueEnvironment implements HasAVisualizerInterface
 	/**
 	 * Initialize the scores to 0 and game state to null
 	 */
-    private int currentScore = 0;
-    protected TetrisState gameState = null;
-    static final int terminalScore = 0;
+	private int currentScore = 0;
+	protected TetrisState gameState = null;
+	static final int terminalScore = 0;
 
-    /**
-     * This Tetris method calls getDefaultParameters so it can initialize with them
-     */
-    public Tetris() {
-        this(getDefaultParameters());
-    }
-    /**
-     * This Tetris method calls super, so that it can get the default parameters and use them. It then starts the game state.
-     * @param ParameterHolder p
-     */
-    public Tetris(ParameterHolder p) {
-        super();
-        gameState = new TetrisState();
-    }
+	/**
+	 * This Tetris method calls getDefaultParameters so it can initialize with
+	 * them
+	 */
+	public Tetris() {
+		this(getDefaultParameters());
+	}
 
-    /**
-     * Tetris doesn't really have any parameters
-     *
-     * @return
-     */
-    public static ParameterHolder getDefaultParameters() {
-        ParameterHolder p = new ParameterHolder();
-        rlVizLib.utilities.UtilityShop.setVersionDetails(p, new DetailsProvider()); // no doc to check what this does?
-        return p;
-    }
+	/**
+	 * This Tetris method calls super, so that it can get the default parameters
+	 * and use them. It then starts the game state.
+	 * 
+	 * @param ParameterHolder
+	 *            p
+	 */
+	public Tetris(ParameterHolder p) {
+		super();
+		gameState = new TetrisState();
+	}
 
-    /**
-     * Using the parameters, this method get the task spec payload for the current game world.
-     * @param p
-     * @return
-     */
-    public static TaskSpecPayload getTaskSpecPayload(ParameterHolder p) {
-        Tetris theWorld = new Tetris(p);
-        String taskSpec = theWorld.makeTaskSpec().getStringRepresentation();
-        return new TaskSpecPayload(taskSpec, false, ""); 
-    }
+	/**
+	 * Tetris doesn't really have any parameters
+	 *
+	 * @return
+	 */
+	public static ParameterHolder getDefaultParameters() {
+		ParameterHolder p = new ParameterHolder();
+		rlVizLib.utilities.UtilityShop.setVersionDetails(p, new DetailsProvider()); // no
+																					// doc
+																					// to
+																					// check
+																					// what
+																					// this
+																					// does?
+		return p;
+	}
 
-    /*Base RL-Glue Functions*/
-    public String env_init() {
-        return makeTaskSpec().getStringRepresentation();
-    }
+	/**
+	 * Using the parameters, this method get the task spec payload for the
+	 * current game world.
+	 * 
+	 * @param p
+	 * @return
+	 */
+	public static TaskSpecPayload getTaskSpecPayload(ParameterHolder p) {
+		Tetris theWorld = new Tetris(p);
+		String taskSpec = theWorld.makeTaskSpec().getStringRepresentation();
+		return new TaskSpecPayload(taskSpec, false, "");
+	}
 
-    /**
-     * Starts the game environment (or just game state?)
-     * @return Observation of game state
-     */
-    public Observation env_start() {
-        gameState.reset();
-        gameState.spawn_block();
-        gameState.blockMobile = true;
-        currentScore = 0;
+	/* Base RL-Glue Functions */
+	public String env_init() {
+		return makeTaskSpec().getStringRepresentation();
+	}
 
-        Observation o = gameState.get_observation(); 
-        return o;
-    }
+	/**
+	 * Starts the game environment (or just game state?)
+	 * 
+	 * @return Observation of game state
+	 */
+	public Observation env_start() {
+		gameState.reset();
+		gameState.spawn_block();
+		gameState.blockMobile = true;
+		currentScore = 0;
 
-    /**
-     * Environment step that checks for moves that won't work and gives the appropriate errors.
-     * Then, checks for a moving block, continues to the next movement or adds the next block.
-     * It also connects reward with the game state, checking for game overs and the current score
-     */
-    public Reward_observation_terminal env_step(Action actionObject) {
-        int theAction = 0;
-        try {
-            theAction = actionObject.intArray[0];
-        } catch (ArrayIndexOutOfBoundsException e) {
-            System.err.println("Error: Action was expected to have 1 dimension but got ArrayIndexOutOfBoundsException when trying to get element 0:" + e);
-            System.err.println("Error: Choosing action 0");
-            theAction = 0;
-        }
+		Observation o = gameState.get_observation();
+		return o;
+	}
 
-        //Defined in TetrisState, 0 represents the first available action, 5 represents that last available actions
-        if (theAction > 5 || theAction < 0) {
-            System.err.println("Invalid action selected in Tetrlais: " + theAction);
-            theAction = gameState.getRandom().nextInt(5);
-        }
-        
-        //If the block is still mobile, then take the next action and update, otherwise spawn in a new block
-        if (gameState.blockMobile) {
-            gameState.take_action(theAction);
-            gameState.update();
-        } else {
-            gameState.spawn_block();
-        }
+	/**
+	 * Environment step that checks for moves that won't work and gives the
+	 * appropriate errors. Then, checks for a moving block, continues to the
+	 * next movement or adds the next block. It also connects reward with the
+	 * game state, checking for game overs and the current score
+	 */
+	public Reward_observation_terminal env_step(Action actionObject) {
+		int theAction = 0;
+		try {
+			theAction = actionObject.intArray[0];
+		} catch (ArrayIndexOutOfBoundsException e) {
+			System.err.println(
+					"Error: Action was expected to have 1 dimension but got ArrayIndexOutOfBoundsException when trying to get element 0:"
+							+ e);
+			System.err.println("Error: Choosing action 0");
+			theAction = 0;
+		}
 
-        Reward_observation_terminal ro = new Reward_observation_terminal();
+		// Defined in TetrisState, 0 represents the first available action, 5
+		// represents that last available actions
+		if (theAction > 5 || theAction < 0) {
+			System.err.println("Invalid action selected in Tetrlais: " + theAction);
+			theAction = gameState.getRandom().nextInt(5);
+		}
 
-        ro.terminal = 1;
-        ro.o = gameState.get_observation();
+		// If the block is still mobile, then take the next action and update,
+		// otherwise spawn in a new block
+		if (gameState.blockMobile) {
+			gameState.take_action(theAction);
+			gameState.update();
+		} else {
+			gameState.spawn_block();
+		}
 
-        //1 represents "last state" and 0 means "keep playing"
-        //If game is not over, reward is new score - current score
-        //otherwise, reward is zero
-        if (!gameState.gameOver()) {
-            ro.terminal = 0;
-            ro.r = gameState.get_score() - currentScore;
-            currentScore = gameState.get_score();
-        } else {
-            ro.r = Tetris.terminalScore;
-            currentScore = 0;
-        }
+		Reward_observation_terminal ro = new Reward_observation_terminal();
 
-        return ro;
-    }
+		ro.terminal = 1;
+		ro.o = gameState.get_observation();
 
-    /**
-     * Cleans the environment
-     */
-    public void env_cleanup() {
-    }
+		// 1 represents "last state" and 0 means "keep playing"
+		// If game is not over, reward is new score - current score
+		// otherwise, reward is zero
+		if (!gameState.gameOver()) {
+			ro.terminal = 0;
+			ro.r = gameState.get_score() - currentScore;
+			currentScore = gameState.get_score();
+		} else {
+			ro.r = Tetris.terminalScore;
+			currentScore = 0;
+		}
 
-    /**
-     * This method returns a string of a message responding to a given string parameter
-     * @param theMessage
-     */
-    public String env_message(String theMessage) {
-        EnvironmentMessages theMessageObject;
-        try {
-            theMessageObject = EnvironmentMessageParser.parseMessage(theMessage);
-        } catch (Exception e) {
-            System.err.println("Someone sent Tetris a message that wasn't RL-Viz compatible");
-            return "I only respond to RL-Viz messages!";
-        }
+		return ro;
+	}
 
+	/**
+	 * Cleans the environment
+	 */
+	public void env_cleanup() {
+	}
 
-        if (theMessageObject.canHandleAutomatically(this)) {
-            return theMessageObject.handleAutomatically(this);
-        }
+	/**
+	 * This method returns a string of a message responding to a given string
+	 * parameter
+	 * 
+	 * @param theMessage
+	 */
+	public String env_message(String theMessage) {
+		EnvironmentMessages theMessageObject;
+		try {
+			theMessageObject = EnvironmentMessageParser.parseMessage(theMessage);
+		} catch (Exception e) {
+			System.err.println("Someone sent Tetris a message that wasn't RL-Viz compatible");
+			return "I only respond to RL-Viz messages!";
+		}
 
-        if (theMessageObject.getTheMessageType() == rlVizLib.messaging.environment.EnvMessageType.kEnvCustom.id()) {
+		if (theMessageObject.canHandleAutomatically(this)) {
+			return theMessageObject.handleAutomatically(this);
+		}
 
-            String theCustomType = theMessageObject.getPayLoad();
+		if (theMessageObject.getTheMessageType() == rlVizLib.messaging.environment.EnvMessageType.kEnvCustom.id()) {
 
-            if (theCustomType.equals("GETTETRLAISSTATE")) {
-                //It is a request for the state
-                TetrisStateResponse theResponseObject = new TetrisStateResponse(currentScore, gameState.getWidth(), gameState.getHeight(), gameState.getNumberedStateSnapShot(), gameState.getCurrentPiece());
-                return theResponseObject.makeStringResponse();
-            }
-            System.out.println("We need some code written in Env Message for Tetrlais.. unknown custom message type received");
-            Thread.dumpStack();
+			String theCustomType = theMessageObject.getPayLoad();
 
-            return null;
-        }
+			if (theCustomType.equals("GETTETRLAISSTATE")) {
+				// It is a request for the state
+				TetrisStateResponse theResponseObject = new TetrisStateResponse(currentScore, gameState.getWidth(),
+						gameState.getHeight(), gameState.getNumberedStateSnapShot(), gameState.getCurrentPiece());
+				return theResponseObject.makeStringResponse();
+			}
+			System.out.println(
+					"We need some code written in Env Message for Tetrlais.. unknown custom message type received");
+			Thread.dumpStack();
 
-        System.out.println("We need some code written in Env Message for  Tetrlais!");
-        Thread.dumpStack();
+			return null;
+		}
 
-        return null;
-    }
+		System.out.println("We need some code written in Env Message for  Tetrlais!");
+		Thread.dumpStack();
 
-    /*End of Base RL-Glue Functions */
-    /*RL-Viz Methods*/
-    //Note: RL-Viz is also incomplete according to the Google Archive, it is used to communicated between languages on top of RL-Glue
-    /**
-     * Getter for the observation of the current game state
-     */
-    @Override
-    protected Observation makeObservation() {
-        return gameState.get_observation();
-    }
+		return null;
+	}
 
-    /**
-     * Getter for the name of the visualizer class
-     */
-    public String getVisualizerClassName() {
-        return TetrisVisualizer.class.getName();
-    }
+	/* End of Base RL-Glue Functions */
+	/* RL-Viz Methods */
+	// Note: RL-Viz is also incomplete according to the Google Archive, it is
+	// used to communicated between languages on top of RL-Glue
+	/**
+	 * Getter for the observation of the current game state
+	 */
+	@Override
+	protected Observation makeObservation() {
+		return gameState.get_observation();
+	}
 
-    /**
-     * Question: What I assume is this is how the blocks get created, from this image? -Gab
-     */
-    public URL getImageURL() {
-        URL imageURL = Tetris.class.getResource("/images/tetris/tetris.png");
-        return imageURL;
-    }
+	/**
+	 * Getter for the name of the visualizer class
+	 */
+	public String getVisualizerClassName() {
+		return TetrisVisualizer.class.getName();
+	}
 
-    /**
-     * Method returns a taskspec that reflects the current game state
-     * 
-     */
-    public TaskSpec makeTaskSpec() {
-        int boardSize = gameState.getHeight() * gameState.getWidth();
-        int numPieces = gameState.possibleBlocks.size();
+	/**
+	 * Question: What I assume is this is how the blocks get created, from this
+	 * image? -Gab
+	 */
+	public URL getImageURL() {
+		URL imageURL = Tetris.class.getResource("/images/tetris/tetris.png");
+		return imageURL;
+	}
 
-        TaskSpecVRLGLUE3 theTaskSpecObject = new TaskSpecVRLGLUE3();
-        theTaskSpecObject.setEpisodic();
-        theTaskSpecObject.setDiscountFactor(1.0d);
-        //First add the binary variables for the board
-        theTaskSpecObject.addDiscreteObservation(new IntRange(0, 1, boardSize));
-        //Now the binary features to tell what piece is falling
-        theTaskSpecObject.addDiscreteObservation(new IntRange(0, 1, numPieces));
-        //Now the actual board size in the observation. The reason this was here is/was because
-        //there was no way to add meta-data to the task spec before.
-        //First height
-        theTaskSpecObject.addDiscreteObservation(new IntRange(gameState.getHeight(), gameState.getHeight()));
-        //Then width
-        theTaskSpecObject.addDiscreteObservation(new IntRange(gameState.getWidth(), gameState.getWidth()));
+	/**
+	 * Method returns a taskspec that reflects the current game state
+	 * 
+	 */
+	public TaskSpec makeTaskSpec() {
+		int boardSize = gameState.getHeight() * gameState.getWidth();
+		int numPieces = gameState.possibleBlocks.size();
 
-        theTaskSpecObject.addDiscreteAction(new IntRange(0, 5));
-        //This is actually a lie... the rewards aren't in that range.
-        theTaskSpecObject.setRewardRange(new DoubleRange(0, 8.0d));
+		TaskSpecVRLGLUE3 theTaskSpecObject = new TaskSpecVRLGLUE3();
+		theTaskSpecObject.setEpisodic();
+		theTaskSpecObject.setDiscountFactor(1.0d);
+		// First add the binary variables for the board
+		theTaskSpecObject.addDiscreteObservation(new IntRange(0, 1, boardSize));
+		// Now the binary features to tell what piece is falling
+		theTaskSpecObject.addDiscreteObservation(new IntRange(0, 1, numPieces));
+		// Now the actual board size in the observation. The reason this was
+		// here is/was because
+		// there was no way to add meta-data to the task spec before.
+		// First height
+		theTaskSpecObject.addDiscreteObservation(new IntRange(gameState.getHeight(), gameState.getHeight()));
+		// Then width
+		theTaskSpecObject.addDiscreteObservation(new IntRange(gameState.getWidth(), gameState.getWidth()));
 
-        //This is a better way to tell the rows and cols
-        theTaskSpecObject.setExtra("EnvName:Tetris HEIGHT:" + gameState.getHeight() + " WIDTH:" + gameState.getWidth() + " Revision: " + this.getClass().getPackage().getImplementationVersion());
+		theTaskSpecObject.addDiscreteAction(new IntRange(0, 5));
+		// This is actually a lie... the rewards aren't in that range.
+		theTaskSpecObject.setRewardRange(new DoubleRange(0, 8.0d));
 
-        String taskSpecString = theTaskSpecObject.toTaskSpec();
+		// This is a better way to tell the rows and cols
+		theTaskSpecObject.setExtra("EnvName:Tetris HEIGHT:" + gameState.getHeight() + " WIDTH:" + gameState.getWidth()
+				+ " Revision: " + this.getClass().getPackage().getImplementationVersion());
 
-        TaskSpec.checkTaskSpec(taskSpecString);
-        //return taskSpecString;
-        TaskSpec.checkTaskSpec(taskSpecString);
+		String taskSpecString = theTaskSpecObject.toTaskSpec();
 
-        return new TaskSpec(theTaskSpecObject);
-    }
+		TaskSpec.checkTaskSpec(taskSpecString);
+		// return taskSpecString;
+		TaskSpec.checkTaskSpec(taskSpecString);
 
-    public static void main(String[] args) {
-        EnvironmentLoader L = new EnvironmentLoader(new Tetris());
-        L.run();
-    }
+		return new TaskSpec(theTaskSpecObject);
+	}
 
-    /**
-     * Array list, or vector, to hold the current world state.s
-     */
-    @Override
-    public ArrayList<Double> getBehaviorVector() {
-        ArrayList<Double> result = new ArrayList<Double>(gameState.worldState.length);
-        TetrisState state = gameState;
-        for (Integer b : state.worldState) {
-            result.add(b * 1.0);
-        }
-        return result;
-    }
+	public static void main(String[] args) {
+		EnvironmentLoader L = new EnvironmentLoader(new Tetris());
+		L.run();
+	}
+
+	/**
+	 * Array list, or vector, to hold the current world state.s
+	 */
+	@Override
+	public ArrayList<Double> getBehaviorVector() {
+		ArrayList<Double> result = new ArrayList<Double>(gameState.worldState.length);
+		TetrisState state = gameState;
+		for (Integer b : state.worldState) {
+			result.add(b * 1.0);
+		}
+		return result;
+	}
 }
 
 /**
  * Details about the authors and the sources
+ * 
  * @author gonzale9
  *
  */
 class DetailsProvider implements hasVersionDetails {
 
-    public String getName() {
-        return "Tetris 1.1";
-    }
+	public String getName() {
+		return "Tetris 1.1";
+	}
 
-    public String getShortName() {
-        return "Tetris";
-    }
+	public String getShortName() {
+		return "Tetris";
+	}
 
-    public String getAuthors() {
-        return "Brian Tanner, Leah Hackman, Matt Radkie, Andrew Butcher";
-    }
+	public String getAuthors() {
+		return "Brian Tanner, Leah Hackman, Matt Radkie, Andrew Butcher";
+	}
 
-    public String getInfoUrl() {
-        return "http://library.rl-community.org/tetris";
-    }
+	public String getInfoUrl() {
+		return "http://library.rl-community.org/tetris";
+	}
 
-    public String getDescription() {
-        return "Tetris problem from the reinforcement learning library.";
-    }
+	public String getDescription() {
+		return "Tetris problem from the reinforcement learning library.";
+	}
 }

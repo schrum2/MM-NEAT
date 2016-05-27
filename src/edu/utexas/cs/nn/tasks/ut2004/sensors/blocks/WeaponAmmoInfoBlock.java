@@ -19,42 +19,42 @@ import cz.cuni.amis.pogamut.ut2004.communication.translator.itemdescriptor.Weapo
  */
 public class WeaponAmmoInfoBlock implements UT2004SensorBlock {
 
-    public void prepareBlock(UT2004BotModuleController bot) {
-    }
+	public void prepareBlock(UT2004BotModuleController bot) {
+	}
 
-    public int incorporateSensors(UT2004BotModuleController bot, int in, double[] inputs) {
-        Weaponry weaponry = bot.getWeaponry();
-        Weapon w = weaponry.getCurrentWeapon();
-        WeaponDescriptor wd = w.getDescriptor();
+	public int incorporateSensors(UT2004BotModuleController bot, int in, double[] inputs) {
+		Weaponry weaponry = bot.getWeaponry();
+		Weapon w = weaponry.getCurrentWeapon();
+		WeaponDescriptor wd = w.getDescriptor();
 
-        // Primary ammo
-        //inputs[in++] = wd.getPriAmmoClipSize();
-        inputs[in++] = wd.getPriAmmoPerFire();
-        inputs[in++] = (wd.getPriMaxAmount() * 1.0) / w.getPrimaryAmmo();
+		// Primary ammo
+		// inputs[in++] = wd.getPriAmmoClipSize();
+		inputs[in++] = wd.getPriAmmoPerFire();
+		inputs[in++] = (wd.getPriMaxAmount() * 1.0) / w.getPrimaryAmmo();
 
-        // Secondary ammo (not different for most weapons)
-        //inputs[in++] = wd.getSecAmmoClipSize();
-        inputs[in++] = wd.getSecAmmoPerFire();
-        inputs[in++] = (wd.getSecMaxAmount() * 1.0) / w.getSecondaryAmmo();
+		// Secondary ammo (not different for most weapons)
+		// inputs[in++] = wd.getSecAmmoClipSize();
+		inputs[in++] = wd.getSecAmmoPerFire();
+		inputs[in++] = (wd.getSecMaxAmount() * 1.0) / w.getSecondaryAmmo();
 
-        return in;
-    }
+		return in;
+	}
 
-    public int incorporateLabels(int in, String[] labels) {
-        // Primary ammo
-        //labels[in++] = "Primary Ammo Clip Size";
-        labels[in++] = "Primary Ammo Per Shot";
-        labels[in++] = "Portion Primary Ammo Left";
+	public int incorporateLabels(int in, String[] labels) {
+		// Primary ammo
+		// labels[in++] = "Primary Ammo Clip Size";
+		labels[in++] = "Primary Ammo Per Shot";
+		labels[in++] = "Portion Primary Ammo Left";
 
-        // Secondary ammo (not different for most weapons)
-        //labels[in++] = "Secondary Ammo Clip Size";
-        labels[in++] = "Secondary Ammo Per Shot";
-        labels[in++] = "Portion Secondary Ammo Left";
+		// Secondary ammo (not different for most weapons)
+		// labels[in++] = "Secondary Ammo Clip Size";
+		labels[in++] = "Secondary Ammo Per Shot";
+		labels[in++] = "Portion Secondary Ammo Left";
 
-        return in;
-    }
+		return in;
+	}
 
-    public int numberOfSensors() {
-        return 2 * 2;
-    }
+	public int numberOfSensors() {
+		return 2 * 2;
+	}
 }

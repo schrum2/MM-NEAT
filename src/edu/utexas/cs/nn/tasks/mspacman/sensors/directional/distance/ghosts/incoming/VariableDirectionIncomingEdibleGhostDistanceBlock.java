@@ -13,17 +13,17 @@ import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.distance.VariableDire
  */
 public class VariableDirectionIncomingEdibleGhostDistanceBlock extends VariableDirectionDistanceBlock {
 
-    public VariableDirectionIncomingEdibleGhostDistanceBlock(int dir) {
-        super(dir);
-    }
+	public VariableDirectionIncomingEdibleGhostDistanceBlock(int dir) {
+		super(dir);
+	}
 
-    @Override
-    public String getType() {
-        return "Incoming Edible Ghost";
-    }
+	@Override
+	public String getType() {
+		return "Incoming Edible Ghost";
+	}
 
-    @Override
-    public int[] getTargets(GameFacade gf) {
-        return gf.getIncomingEdibleGhostLocations(dir);
-    }
+	@Override
+	public int[] getTargets(GameFacade gf) {
+		return gf.getIncomingEdibleGhostLocations(dir);
+	}
 }

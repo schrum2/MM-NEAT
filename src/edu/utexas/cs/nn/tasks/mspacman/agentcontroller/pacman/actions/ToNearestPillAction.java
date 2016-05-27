@@ -12,8 +12,8 @@ import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
  */
 public class ToNearestPillAction extends ToNearestItemAction {
 
-    @Override
-    public int[] getTargets(GameFacade gf) {
-        return gf.getActivePillsIndices();
-    }
+	@Override
+	public int[] getTargets(GameFacade gf) {
+		return gf.getActivePillsIndices();
+	}
 }

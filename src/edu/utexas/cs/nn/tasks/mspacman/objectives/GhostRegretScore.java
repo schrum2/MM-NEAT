@@ -13,7 +13,7 @@ import edu.utexas.cs.nn.networks.Network;
  */
 public class GhostRegretScore<T extends Network> extends MsPacManObjective<T> {
 
-    public double fitness(Organism<T> individual) {
-        return -g.getGhostRegret();
-    }
+	public double fitness(Organism<T> individual) {
+		return -g.getGhostRegret();
+	}
 }

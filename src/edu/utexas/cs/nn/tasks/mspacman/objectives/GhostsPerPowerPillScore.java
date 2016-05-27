@@ -12,13 +12,13 @@ import edu.utexas.cs.nn.networks.Network;
  * @author Jacob Schrum
  */
 public class GhostsPerPowerPillScore<T extends Network> extends MsPacManObjective<T> {
-    private final boolean punishUneatenPowerPills;
+	private final boolean punishUneatenPowerPills;
 
-    public GhostsPerPowerPillScore(boolean punishUneatenPowerPills){
-        this.punishUneatenPowerPills = punishUneatenPowerPills;
-    }
-    
-    public double fitness(Organism<T> individual) {
-        return g.averageGhostsEatenPerPowerPill(punishUneatenPowerPills);
-    }
+	public GhostsPerPowerPillScore(boolean punishUneatenPowerPills) {
+		this.punishUneatenPowerPills = punishUneatenPowerPills;
+	}
+
+	public double fitness(Organism<T> individual) {
+		return g.averageGhostsEatenPerPowerPill(punishUneatenPowerPills);
+	}
 }

@@ -12,22 +12,24 @@ import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
  */
 public class VariableDirectionKStepJunctionCountBlock extends VariableDirectionKStepCountBlock {
 
-    public VariableDirectionKStepJunctionCountBlock(int dir) {
-        super(dir);
-    }
+	public VariableDirectionKStepJunctionCountBlock(int dir) {
+		super(dir);
+	}
 
-    @Override
-    public int[] getCountTargets(GameFacade gf) {
-        return gf.getJunctionIndices();
-    }
+	@Override
+	public int[] getCountTargets(GameFacade gf) {
+		return gf.getJunctionIndices();
+	}
 
-    @Override
-    public String getType() {
-        return "Junction";
-    }
+	@Override
+	public String getType() {
+		return "Junction";
+	}
 
-    @Override
-    public int maxCount(GameFacade gf) {
-        return (int) Math.ceil(stepCount / 7.0); // Empirically based on most tightly packed junctions areas
-    }
+	@Override
+	public int maxCount(GameFacade gf) {
+		return (int) Math.ceil(stepCount / 7.0); // Empirically based on most
+													// tightly packed junctions
+													// areas
+	}
 }

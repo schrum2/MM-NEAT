@@ -16,17 +16,17 @@ import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.booleansensors.veryclose.I
  */
 public class VeryCloseSensors extends BlockLoadedInputOutputMediator {
 
-    public VeryCloseSensors(boolean sensePills, boolean senseEdibleGhosts, boolean sensePowerPills) {
-        super();
-        blocks.add(new IsCloseToThreatGhost());
-        if (sensePills) {
-            blocks.add(new IsCloseToPill());
-        }
-        if (senseEdibleGhosts) {
-            blocks.add(new IsCloseToEdibleGhost());
-        }
-        if (sensePowerPills) {
-            blocks.add(new IsCloseToPowerPill());
-        }
-    }
+	public VeryCloseSensors(boolean sensePills, boolean senseEdibleGhosts, boolean sensePowerPills) {
+		super();
+		blocks.add(new IsCloseToThreatGhost());
+		if (sensePills) {
+			blocks.add(new IsCloseToPill());
+		}
+		if (senseEdibleGhosts) {
+			blocks.add(new IsCloseToEdibleGhost());
+		}
+		if (sensePowerPills) {
+			blocks.add(new IsCloseToPowerPill());
+		}
+	}
 }

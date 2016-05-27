@@ -8,7 +8,7 @@ import edu.utexas.cs.nn.breve2D.Breve2DGame;
  */
 public interface AgentController {
 
-    public Breve2DAction getAction(Breve2DGame game);
+	public Breve2DAction getAction(Breve2DGame game);
 
-    public void reset();
+	public void reset();
 }

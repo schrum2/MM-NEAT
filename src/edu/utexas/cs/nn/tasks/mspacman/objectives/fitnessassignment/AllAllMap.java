@@ -10,7 +10,7 @@ package edu.utexas.cs.nn.tasks.mspacman.objectives.fitnessassignment;
  */
 public class AllAllMap implements FitnessToModeMap {
 
-    public int[] associatedFitnessScores() {
-        return new int[]{NO_PREFERENCE, NO_PREFERENCE};
-    }
+	public int[] associatedFitnessScores() {
+		return new int[] { NO_PREFERENCE, NO_PREFERENCE };
+	}
 }

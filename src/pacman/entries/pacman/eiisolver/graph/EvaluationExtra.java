@@ -8,10 +8,10 @@ package pacman.entries.pacman.eiisolver.graph;
  */
 public interface EvaluationExtra {
 
-    /**
-     *
-     * @param p
-     * @return
-     */
-    public void evaluateExtra(PlyInfo p);
+	/**
+	 *
+	 * @param p
+	 * @return
+	 */
+	public void evaluateExtra(PlyInfo p);
 }

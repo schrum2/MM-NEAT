@@ -12,13 +12,13 @@ import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
  */
 public class PacManLairDistanceBlock extends LairDistanceBlock {
 
-    @Override
-    public String sourceLabel() {
-        return "Pac-Man";
-    }
+	@Override
+	public String sourceLabel() {
+		return "Pac-Man";
+	}
 
-    @Override
-    public int getTarget(GameFacade gf) {
-        return gf.getPacmanCurrentNodeIndex();
-    }
+	@Override
+	public int getTarget(GameFacade gf) {
+		return gf.getPacmanCurrentNodeIndex();
+	}
 }

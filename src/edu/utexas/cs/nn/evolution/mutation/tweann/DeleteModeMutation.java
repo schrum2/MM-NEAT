@@ -15,15 +15,15 @@ import edu.utexas.cs.nn.parameters.CommonConstants;
  */
 public class DeleteModeMutation extends TWEANNMutation {
 
-    public DeleteModeMutation() {
-        super("deleteModeRate");
-    }
+	public DeleteModeMutation() {
+		super("deleteModeRate");
+	}
 
-    public void mutate(Genotype<TWEANN> genotype) {
-        if (CommonConstants.deleteLeastUsed) {
-            ((TWEANNGenotype) genotype).deleteLeastUsedModeMutation();
-        } else {
-            ((TWEANNGenotype) genotype).deleteRandomModeMutation();
-        }
-    }
+	public void mutate(Genotype<TWEANN> genotype) {
+		if (CommonConstants.deleteLeastUsed) {
+			((TWEANNGenotype) genotype).deleteLeastUsedModeMutation();
+		} else {
+			((TWEANNGenotype) genotype).deleteRandomModeMutation();
+		}
+	}
 }

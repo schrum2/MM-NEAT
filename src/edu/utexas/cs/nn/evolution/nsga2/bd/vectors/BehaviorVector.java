@@ -6,5 +6,5 @@ package edu.utexas.cs.nn.evolution.nsga2.bd.vectors;
  */
 public interface BehaviorVector {
 
-    public double distance(BehaviorVector rhs);
+	public double distance(BehaviorVector rhs);
 }

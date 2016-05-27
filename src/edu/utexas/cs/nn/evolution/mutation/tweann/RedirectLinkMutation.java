@@ -13,12 +13,12 @@ import edu.utexas.cs.nn.networks.TWEANN;
  */
 public class RedirectLinkMutation extends TWEANNMutation {
 
-    public RedirectLinkMutation() {
-        super("redirectLinkRate");
-    }
+	public RedirectLinkMutation() {
+		super("redirectLinkRate");
+	}
 
-    public void mutate(Genotype<TWEANN> genotype) {
-        LinkGene lg = ((TWEANNGenotype) genotype).deleteLinkMutation();
-        ((TWEANNGenotype) genotype).linkMutation(lg.sourceInnovation, lg.weight);
-    }
+	public void mutate(Genotype<TWEANN> genotype) {
+		LinkGene lg = ((TWEANNGenotype) genotype).deleteLinkMutation();
+		((TWEANNGenotype) genotype).linkMutation(lg.sourceInnovation, lg.weight);
+	}
 }

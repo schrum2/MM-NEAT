@@ -13,19 +13,19 @@ import java.util.Arrays;
  */
 public class GeneralAllMap implements FitnessToModeMap {
 
-    private final int members;
+	private final int members;
 
-    public GeneralAllMap() {
-        this(Parameters.parameters.integerParameter("numCoevolutionSubpops"));
-    }
+	public GeneralAllMap() {
+		this(Parameters.parameters.integerParameter("numCoevolutionSubpops"));
+	}
 
-    public GeneralAllMap(int members) {
-        this.members = members;
-    }
+	public GeneralAllMap(int members) {
+		this.members = members;
+	}
 
-    public int[] associatedFitnessScores() {
-        int[] result = new int[members];
-        Arrays.fill(result, NO_PREFERENCE);
-        return result;
-    }
+	public int[] associatedFitnessScores() {
+		int[] result = new int[members];
+		Arrays.fill(result, NO_PREFERENCE);
+		return result;
+	}
 }

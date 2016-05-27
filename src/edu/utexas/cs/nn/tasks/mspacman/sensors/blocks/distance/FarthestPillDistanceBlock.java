@@ -8,13 +8,13 @@ import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
  */
 public class FarthestPillDistanceBlock extends FarthestDistanceBlock {
 
-    @Override
-    public int[] getTargets(GameFacade gf) {
-        return gf.getActivePillsIndices();
-    }
+	@Override
+	public int[] getTargets(GameFacade gf) {
+		return gf.getActivePillsIndices();
+	}
 
-    @Override
-    public String getType() {
-        return "Pill";
-    }
+	@Override
+	public String getType() {
+		return "Pill";
+	}
 }

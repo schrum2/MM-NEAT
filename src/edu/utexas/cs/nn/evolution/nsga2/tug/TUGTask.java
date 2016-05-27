@@ -7,5 +7,5 @@ package edu.utexas.cs.nn.evolution.nsga2.tug;
  */
 public interface TUGTask {
 
-    public double[] startingGoals();
+	public double[] startingGoals();
 }

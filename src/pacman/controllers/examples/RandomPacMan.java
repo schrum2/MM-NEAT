@@ -9,12 +9,14 @@ import pacman.game.Game;
  */
 public final class RandomPacMan extends Controller<MOVE> {
 
-    private MOVE[] allMoves = MOVE.values();
+	private MOVE[] allMoves = MOVE.values();
 
-    /* (non-Javadoc)
-     * @see pacman.controllers.Controller#getMove(pacman.game.Game, long)
-     */
-    public MOVE getMove(Game game, long timeDue) {
-        return allMoves[game.rnd.nextInt(allMoves.length)];
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see pacman.controllers.Controller#getMove(pacman.game.Game, long)
+	 */
+	public MOVE getMove(Game game, long timeDue) {
+		return allMoves[game.rnd.nextInt(allMoves.length)];
+	}
 }

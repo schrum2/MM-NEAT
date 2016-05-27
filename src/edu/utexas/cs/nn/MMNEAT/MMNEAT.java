@@ -161,7 +161,7 @@ public class MMNEAT {
 	}
 
 	public static void setupMsPacmanParameters() {
-		if(Parameters.parameters.booleanParameter("logGhostLocOnPowerPill")){
+		if (Parameters.parameters.booleanParameter("logGhostLocOnPowerPill")) {
 			ghostLocationsOnPowerPillEaten = new MONELog("PowerPillToGhostLocationMapping");
 		}
 
@@ -228,16 +228,21 @@ public class MMNEAT {
 		boolean includeInputs = Parameters.parameters.booleanParameter("subsumptionIncludesInputs");
 		int outputsPerMonitor = GameFacade.NUM_DIRS;
 		boolean ghostMonitorsSensePills = Parameters.parameters.booleanParameter("ghostMonitorsSensePills");
-		// Use the specified mesiator, but add the required ghost monitor blocks to it later
-		int ghostMonitorInputs = (ghostMonitorsSensePills ? new OneGhostAndPillsMonitorInputOutputMediator(0) : new OneGhostMonitorInputOutputMediator(0)).numIn();
-		pacmanInputOutputMediator = (MsPacManControllerInputOutputMediator) ClassCreation.createObject("pacmanInputOutputMediator");
-		int numInputs = pacmanInputOutputMediator.numIn() + (CommonConstants.numActiveGhosts * (includeInputs ? outputsPerMonitor + ghostMonitorInputs : outputsPerMonitor));
+		// Use the specified mesiator, but add the required ghost monitor blocks
+		// to it later
+		int ghostMonitorInputs = (ghostMonitorsSensePills ? new OneGhostAndPillsMonitorInputOutputMediator(0)
+				: new OneGhostMonitorInputOutputMediator(0)).numIn();
+		pacmanInputOutputMediator = (MsPacManControllerInputOutputMediator) ClassCreation
+				.createObject("pacmanInputOutputMediator");
+		int numInputs = pacmanInputOutputMediator.numIn() + (CommonConstants.numActiveGhosts
+				* (includeInputs ? outputsPerMonitor + ghostMonitorInputs : outputsPerMonitor));
 		setNNInputParameters(numInputs, GameFacade.NUM_DIRS);
 
 		genotypeExamples = new ArrayList<Genotype>(CommonConstants.numActiveGhosts + 1);
 		genotypeExamples.add(new TWEANNGenotype(numInputs, GameFacade.NUM_DIRS, 0));
 
-		ArrayList<Genotype<TWEANN>> ghostMonitorExamples = new ArrayList<Genotype<TWEANN>>(CommonConstants.numActiveGhosts);
+		ArrayList<Genotype<TWEANN>> ghostMonitorExamples = new ArrayList<Genotype<TWEANN>>(
+				CommonConstants.numActiveGhosts);
 		for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
 			TWEANNGenotype tg = new TWEANNGenotype(ghostMonitorInputs, outputsPerMonitor, (i + 1));
 			genotypeExamples.add(tg);
@@ -246,7 +251,8 @@ public class MMNEAT {
 		prepareCoevolutionArchetypes();
 		// Needed so that sensor and output labels can be retrieved
 		for (int i = 0; i < ghostMonitorExamples.size(); i++) {
-			((BlockLoadedInputOutputMediator) pacmanInputOutputMediator).blocks.add(new GhostMonitorNetworkBlock((TWEANNGenotype) ghostMonitorExamples.get(i), includeInputs, i));
+			((BlockLoadedInputOutputMediator) pacmanInputOutputMediator).blocks
+					.add(new GhostMonitorNetworkBlock((TWEANNGenotype) ghostMonitorExamples.get(i), includeInputs, i));
 		}
 	}
 
@@ -264,14 +270,21 @@ public class MMNEAT {
 	}
 
 	private static void setupCooperativeCoevolutionSelectorForMsPacman() throws NoSuchMethodException {
-		pacmanInputOutputMediator = (MsPacManControllerInputOutputMediator) ClassCreation.createObject("pacmanInputOutputMediator");
+		pacmanInputOutputMediator = (MsPacManControllerInputOutputMediator) ClassCreation
+				.createObject("pacmanInputOutputMediator");
 		setNNInputParameters(pacmanInputOutputMediator.numIn(), pacmanInputOutputMediator.numOut());
 
-		genotypeExamples = new ArrayList<Genotype>(modesToTrack + 2); // subcontrollers and selector and possibly blueprints
+		genotypeExamples = new ArrayList<Genotype>(modesToTrack + 2); // subcontrollers
+																		// and
+																		// selector
+																		// and
+																		// possibly
+																		// blueprints
 		genotypeExamples.add(new TWEANNGenotype(pacmanInputOutputMediator.numIn(), modesToTrack, 0));
 		coevolutionMediators = new MsPacManControllerInputOutputMediator[modesToTrack];
 		for (int i = 1; i <= modesToTrack; i++) {
-			coevolutionMediators[i - 1] = (MsPacManControllerInputOutputMediator) ClassCreation.createObject("pacManMediatorClass" + i);
+			coevolutionMediators[i - 1] = (MsPacManControllerInputOutputMediator) ClassCreation
+					.createObject("pacManMediatorClass" + i);
 			genotypeExamples.add(new TWEANNGenotype(coevolutionMediators[i - 1].numIn(), GameFacade.NUM_DIRS, i));
 		}
 
@@ -279,12 +292,16 @@ public class MMNEAT {
 		// Now the blueprints come in
 		if (task instanceof CooperativeBlueprintSubtaskMsPacManTask) {
 			blueprints = true;
-			genotypeExamples.add(new SimpleBlueprintGenotype(modesToTrack + 1)); // subcontrollers and selector
+			genotypeExamples.add(new SimpleBlueprintGenotype(modesToTrack + 1)); // subcontrollers
+																					// and
+																					// selector
 		}
 	}
 
-	private static void setupCooperativeCoevolutionCheckEachMultitaskPreferenceNetForMsPacman() throws NoSuchMethodException {
-		pacmanInputOutputMediator = (MsPacManControllerInputOutputMediator) ClassCreation.createObject("pacmanInputOutputMediator");
+	private static void setupCooperativeCoevolutionCheckEachMultitaskPreferenceNetForMsPacman()
+			throws NoSuchMethodException {
+		pacmanInputOutputMediator = (MsPacManControllerInputOutputMediator) ClassCreation
+				.createObject("pacmanInputOutputMediator");
 		MMNEAT.modesToTrack = CommonConstants.multitaskModules;
 		// Setup the preference net settings
 		CommonConstants.multitaskModules = 1; // Needed before set NN params
@@ -293,9 +310,11 @@ public class MMNEAT {
 
 		genotypeExamples = new ArrayList<Genotype>(2);
 		// Multitask
-		genotypeExamples.add(new TWEANNGenotype(pacmanInputOutputMediator.numIn(), modesToTrack, CommonConstants.fs, ActivationFunctions.newNodeFunction(), modesToTrack, 0));
+		genotypeExamples.add(new TWEANNGenotype(pacmanInputOutputMediator.numIn(), modesToTrack, CommonConstants.fs,
+				ActivationFunctions.newNodeFunction(), modesToTrack, 0));
 		// Pref Net
-		genotypeExamples.add(new TWEANNGenotype(pacmanInputOutputMediator.numIn(), modesToTrack, CommonConstants.fs, ActivationFunctions.newNodeFunction(), 1, 1));
+		genotypeExamples.add(new TWEANNGenotype(pacmanInputOutputMediator.numIn(), modesToTrack, CommonConstants.fs,
+				ActivationFunctions.newNodeFunction(), 1, 1));
 
 		prepareCoevolutionArchetypes();
 	}
@@ -303,12 +322,15 @@ public class MMNEAT {
 	private static void setupCooperativeCoevolutionCombinerForMsPacman() throws NoSuchMethodException {
 		boolean includeInputs = Parameters.parameters.booleanParameter("subsumptionIncludesInputs");
 		int outputsPerSubnet = GameFacade.NUM_DIRS;
-		// Use the specified mesiator, but add required subnet blocks to it later
-		pacmanInputOutputMediator = (MsPacManControllerInputOutputMediator) ClassCreation.createObject("pacmanInputOutputMediator");
+		// Use the specified mesiator, but add required subnet blocks to it
+		// later
+		pacmanInputOutputMediator = (MsPacManControllerInputOutputMediator) ClassCreation
+				.createObject("pacmanInputOutputMediator");
 		coevolutionMediators = new MsPacManControllerInputOutputMediator[modesToTrack];
 		int numInputs = pacmanInputOutputMediator.numIn();
 		for (int i = 1; i <= modesToTrack; i++) {
-			coevolutionMediators[i - 1] = (MsPacManControllerInputOutputMediator) ClassCreation.createObject("pacManMediatorClass" + i);
+			coevolutionMediators[i - 1] = (MsPacManControllerInputOutputMediator) ClassCreation
+					.createObject("pacManMediatorClass" + i);
 			numInputs += outputsPerSubnet + (includeInputs ? coevolutionMediators[i - 1].numIn() : 0);
 		}
 		setNNInputParameters(numInputs, GameFacade.NUM_DIRS);
@@ -322,13 +344,17 @@ public class MMNEAT {
 		prepareCoevolutionArchetypes();
 		// Needed so that sensor and output labels can be retrieved
 		for (int i = 0; i < coevolutionMediators.length; i++) {
-			TWEANNGenotype tg = (TWEANNGenotype) genotypeExamples.get(i + 1); // skip combiner
-			((BlockLoadedInputOutputMediator) pacmanInputOutputMediator).blocks.add(new SubNetworkBlock(tg.getPhenotype(), coevolutionMediators[i], coevolutionMediators[i].getClass().getSimpleName() + "[" + i + "]", includeInputs));
+			TWEANNGenotype tg = (TWEANNGenotype) genotypeExamples.get(i + 1); // skip
+																				// combiner
+			((BlockLoadedInputOutputMediator) pacmanInputOutputMediator).blocks
+					.add(new SubNetworkBlock(tg.getPhenotype(), coevolutionMediators[i],
+							coevolutionMediators[i].getClass().getSimpleName() + "[" + i + "]", includeInputs));
 		}
 	}
 
 	private static void setupCooperativeCoevolutionNonHierarchicalForMsPacman() throws NoSuchMethodException {
-		pacmanInputOutputMediator = (MsPacManControllerInputOutputMediator) ClassCreation.createObject("pacmanInputOutputMediator");
+		pacmanInputOutputMediator = (MsPacManControllerInputOutputMediator) ClassCreation
+				.createObject("pacmanInputOutputMediator");
 		setNNInputParameters(pacmanInputOutputMediator.numIn(), pacmanInputOutputMediator.numOut());
 
 		CooperativeNonHierarchicalMultiNetMsPacManTask theTask = (CooperativeNonHierarchicalMultiNetMsPacManTask) task;
@@ -337,7 +363,8 @@ public class MMNEAT {
 		boolean specializeMediators = !Parameters.parameters.booleanParameter("defaultMediator");
 		for (int i = 1; i <= pops; i++) {
 			if (specializeMediators) {
-				theTask.inputMediators[i - 1] = (MsPacManControllerInputOutputMediator) ClassCreation.createObject("pacManMediatorClass" + i);
+				theTask.inputMediators[i - 1] = (MsPacManControllerInputOutputMediator) ClassCreation
+						.createObject("pacManMediatorClass" + i);
 			}
 			genotypeExamples.add(new TWEANNGenotype(theTask.inputMediators[i - 1].numIn(), GameFacade.NUM_DIRS, i - 1));
 		}
@@ -345,7 +372,8 @@ public class MMNEAT {
 	}
 
 	private static void setupMetaHeuristics() {
-		// Metaheuristics are objectives that are not associated with the domain/task
+		// Metaheuristics are objectives that are not associated with the
+		// domain/task
 		System.out.println("Use meta-heuristics?");
 		metaheuristics = new ArrayList<Metaheuristic>();
 		if (Parameters.parameters.booleanParameter("penalizeModeWaste")) {
@@ -374,13 +402,19 @@ public class MMNEAT {
 	private static void setupMultitaskSeedPopulationForMsPacman(String ghostDir, String pillDir) {
 		// A combined archetype is needed
 		CombiningTWEANNCrossover cross = new CombiningTWEANNCrossover(true, true);
-		ArrayList<TWEANNGenotype.NodeGene> ghostArchetype = (ArrayList<TWEANNGenotype.NodeGene>) Easy.load(Parameters.parameters.stringParameter("ghostArchetype"));
-		ArrayList<TWEANNGenotype.NodeGene> pillArchetype = (ArrayList<TWEANNGenotype.NodeGene>) Easy.load(Parameters.parameters.stringParameter("pillArchetype"));
-		TWEANNGenotype ghostArchetypeNet = new TWEANNGenotype(ghostArchetype, new ArrayList<TWEANNGenotype.LinkGene>(), GameFacade.NUM_DIRS, false, false, -1);
-		TWEANNGenotype pillArchetypeNet = new TWEANNGenotype(pillArchetype, new ArrayList<TWEANNGenotype.LinkGene>(), GameFacade.NUM_DIRS, false, false, -1);
-		EvolutionaryHistory.archetypes[0] = ((TWEANNGenotype) cross.crossover(ghostArchetypeNet, pillArchetypeNet)).nodes;
+		ArrayList<TWEANNGenotype.NodeGene> ghostArchetype = (ArrayList<TWEANNGenotype.NodeGene>) Easy
+				.load(Parameters.parameters.stringParameter("ghostArchetype"));
+		ArrayList<TWEANNGenotype.NodeGene> pillArchetype = (ArrayList<TWEANNGenotype.NodeGene>) Easy
+				.load(Parameters.parameters.stringParameter("pillArchetype"));
+		TWEANNGenotype ghostArchetypeNet = new TWEANNGenotype(ghostArchetype, new ArrayList<TWEANNGenotype.LinkGene>(),
+				GameFacade.NUM_DIRS, false, false, -1);
+		TWEANNGenotype pillArchetypeNet = new TWEANNGenotype(pillArchetype, new ArrayList<TWEANNGenotype.LinkGene>(),
+				GameFacade.NUM_DIRS, false, false, -1);
+		EvolutionaryHistory.archetypes[0] = ((TWEANNGenotype) cross.crossover(ghostArchetypeNet,
+				pillArchetypeNet)).nodes;
 
-		// Load component populations, create multitask network combinations, and save them all to an initial population dir
+		// Load component populations, create multitask network combinations,
+		// and save them all to an initial population dir
 		int mu = Parameters.parameters.integerParameter("mu");
 		int layers = 1;
 		while (layers * layers < mu) {
@@ -421,14 +455,17 @@ public class MMNEAT {
 				ghostPos++;
 			}
 		}
-		// Save the population so it will be loaded naturally, as if a resume is being performed
+		// Save the population so it will be loaded naturally, as if a resume is
+		// being performed
 		String saveDirectory = FileUtilities.getSaveDirectory();
 		SinglePopulationGenerationalEAExperiment.save("initial", saveDirectory, combinedPopulation, false);
 	}
 
 	private static void setupSingleMultitaskSeedForMsPacman() {
-		Genotype<TWEANN> ghostEating = EvolutionaryHistory.getSubnetwork(Parameters.parameters.stringParameter("ghostEatingSubnetwork"));
-		Genotype<TWEANN> pillEating = EvolutionaryHistory.getSubnetwork(Parameters.parameters.stringParameter("pillEatingSubnetwork"));
+		Genotype<TWEANN> ghostEating = EvolutionaryHistory
+				.getSubnetwork(Parameters.parameters.stringParameter("ghostEatingSubnetwork"));
+		Genotype<TWEANN> pillEating = EvolutionaryHistory
+				.getSubnetwork(Parameters.parameters.stringParameter("pillEatingSubnetwork"));
 		CombiningTWEANNCrossover cross = new CombiningTWEANNCrossover(true, true);
 		// Copy assures a fresh genotype id
 		genotype = cross.crossover(ghostEating, pillEating).copy();
@@ -437,7 +474,8 @@ public class MMNEAT {
 
 	private static void setupTWEANNGenotypeDataTracking(boolean coevolution) {
 		if (genotype instanceof TWEANNGenotype) {
-			if (Parameters.parameters.booleanParameter("io") && Parameters.parameters.booleanParameter("logTWEANNData")) {
+			if (Parameters.parameters.booleanParameter("io")
+					&& Parameters.parameters.booleanParameter("logTWEANNData")) {
 				System.out.println("Init TWEANN Log");
 				EvolutionaryHistory.initTWEANNLog();
 			}
@@ -536,18 +574,22 @@ public class MMNEAT {
 			if (task instanceof MsPacManTask) {
 				setupGenotypePoolsForMsPacman();
 				System.out.println("Setup Ms. Pac-Man Task");
-				pacmanInputOutputMediator = (MsPacManControllerInputOutputMediator) ClassCreation.createObject("pacmanInputOutputMediator");
+				pacmanInputOutputMediator = (MsPacManControllerInputOutputMediator) ClassCreation
+						.createObject("pacmanInputOutputMediator");
 				if (MMNEAT.pacmanInputOutputMediator instanceof VariableDirectionBlockLoadedInputOutputMediator) {
-					directionalSafetyFunction = (VariableDirectionBlock) ClassCreation.createObject("directionalSafetyFunction");
+					directionalSafetyFunction = (VariableDirectionBlock) ClassCreation
+							.createObject("directionalSafetyFunction");
 					ensembleArbitrator = (MsPacManEnsembleArbitrator) ClassCreation.createObject("ensembleArbitrator");
 				}
 				String preferenceNet = Parameters.parameters.stringParameter("fixedPreferenceNetwork");
 				String multitaskNet = Parameters.parameters.stringParameter("fixedMultitaskPolicy");
 				if (multitaskNet != null && !multitaskNet.isEmpty()) {
-					// Preference networks are being evolved to pick outputs of fixed multitask network
+					// Preference networks are being evolved to pick outputs of
+					// fixed multitask network
 					MMNEAT.sharedMultitaskNetwork = (TWEANNGenotype) Easy.load(multitaskNet);
 					if (CommonConstants.showNetworks) {
-						DrawingPanel panel = new DrawingPanel(TWEANN.NETWORK_VIEW_DIM, TWEANN.NETWORK_VIEW_DIM, "Fixed Multitask Network");
+						DrawingPanel panel = new DrawingPanel(TWEANN.NETWORK_VIEW_DIM, TWEANN.NETWORK_VIEW_DIM,
+								"Fixed Multitask Network");
 						MMNEAT.sharedMultitaskNetwork.getPhenotype().draw(panel);
 					}
 					// One preference neuron per multitask mode
@@ -555,12 +597,13 @@ public class MMNEAT {
 				} else if (preferenceNet != null && !preferenceNet.isEmpty()) {
 					MMNEAT.sharedPreferenceNetwork = (TWEANNGenotype) Easy.load(preferenceNet);
 					if (CommonConstants.showNetworks) {
-						DrawingPanel panel = new DrawingPanel(TWEANN.NETWORK_VIEW_DIM, TWEANN.NETWORK_VIEW_DIM, "Fixed Preference Network");
+						DrawingPanel panel = new DrawingPanel(TWEANN.NETWORK_VIEW_DIM, TWEANN.NETWORK_VIEW_DIM,
+								"Fixed Preference Network");
 						MMNEAT.sharedPreferenceNetwork.getPhenotype().draw(panel);
 					}
 					// One preference neuron per multitask mode
 					setNNInputParameters(pacmanInputOutputMediator.numIn(), MMNEAT.sharedPreferenceNetwork.numOut);
-				} else if(Parameters.parameters.booleanParameter("evolveGhosts")) {
+				} else if (Parameters.parameters.booleanParameter("evolveGhosts")) {
 					System.out.println("Evolving the Ghosts!");
 					ghostsInputOutputMediator = new GhostsCheckEachDirectionMediator();
 					setNNInputParameters(ghostsInputOutputMediator.numIn(), ghostsInputOutputMediator.numOut());
@@ -589,7 +632,7 @@ public class MMNEAT {
 				} else if (task instanceof CooperativeCheckEachMultitaskSelectorMsPacManTask) {
 					setupCooperativeCoevolutionCheckEachMultitaskPreferenceNetForMsPacman();
 				}
-			} else if (task instanceof RLGlueTask) { 
+			} else if (task instanceof RLGlueTask) {
 				RLGlueTask rlTask = (RLGlueTask) task;
 				setNNInputParameters(rlGlueExtractor.numFeatures(), rlTask.agent.getNumberOutputs());
 			} else if (task instanceof Breve2DTask) {
@@ -598,31 +641,32 @@ public class MMNEAT {
 				setNNInputParameters(dynamics.numInputSensors(), NNBreve2DMonster.NUM_OUTPUTS);
 			} else if (task instanceof TorusPredPreyTask) {
 				System.out.println("Setup Torus Predator/Prey Task");
-				if(Parameters.parameters.booleanParameter("hyperNEAT")) {
+				if (Parameters.parameters.booleanParameter("hyperNEAT")) {
 					System.out.println("Using HyperNEAT");
 					hyperNEATOverrides();
 					HyperNEATTask hnt = (HyperNEATTask) task;
 					setNNInputParameters(HyperNEATTask.NUM_CPPN_INPUTS, hnt.getSubstrateConnectivity().size());
 				} else { // Standard Pred/Prey with human-specified sensors
-					int numInputs = determineNumPredPreyInputs();                               
-					NetworkTask t = (NetworkTask) task; 
-					setNNInputParameters(numInputs, t.outputLabels().length); 
+					int numInputs = determineNumPredPreyInputs();
+					NetworkTask t = (NetworkTask) task;
+					setNNInputParameters(numInputs, t.outputLabels().length);
 				}
-			}else if (task instanceof UT2004Task) {
+			} else if (task instanceof UT2004Task) {
 				System.out.println("Setup UT2004 Task");
 				UT2004Task utTask = (UT2004Task) task;
 				setNNInputParameters(utTask.sensorModel.numberOfSensors(), utTask.outputModel.numberOfOutputs());
-			} else if(task instanceof MatchDataTask) {
+			} else if (task instanceof MatchDataTask) {
 				System.out.println("Setup Match Data Task");
 				MatchDataTask t = (MatchDataTask) task;
 				setNNInputParameters(t.numInputs(), t.numOutputs());
-			} else if(task instanceof VizDoomTask){
+			} else if (task instanceof VizDoomTask) {
 				System.out.println("Set up VizDoom Task");
 				VizDoomTask t = (VizDoomTask) task;
 				setNNInputParameters(t.numInputs(), t.numActions());
-			} else if(task == null) {
-				//this else statement should only happen for JUnit testing cases.
-				//Some default network setup is needed.
+			} else if (task == null) {
+				// this else statement should only happen for JUnit testing
+				// cases.
+				// Some default network setup is needed.
 				setNNInputParameters(5, 3);
 			} else {
 				System.out.println("A valid task must be specified!");
@@ -630,7 +674,8 @@ public class MMNEAT {
 				System.exit(1);
 			}
 			setupMetaHeuristics();
-			// An EA is always needed. Currently only GenerationalEA classes are supported
+			// An EA is always needed. Currently only GenerationalEA classes are
+			// supported
 			if (!loadFrom) {
 				System.out.println("Create EA");
 				ea = (GenerationalEA) ClassCreation.createObject("ea");
@@ -638,8 +683,7 @@ public class MMNEAT {
 			// A Genotype to evolve with is always needed
 			System.out.println("Example genotype");
 			String seedGenotype = Parameters.parameters.stringParameter("seedGenotype");
-			if (task instanceof MsPacManTask
-					&& Parameters.parameters.booleanParameter("pacmanMultitaskSeed")
+			if (task instanceof MsPacManTask && Parameters.parameters.booleanParameter("pacmanMultitaskSeed")
 					&& CommonConstants.multitaskModules == 2) {
 				System.out.println("Seed genotype is combo of networks");
 
@@ -656,9 +700,12 @@ public class MMNEAT {
 
 				// Revise settings to accommodate multitask seed
 				System.out.println("Revising network info based on multitask seed");
-				MsPacManControllerInputOutputMediator ghostMediator = (MsPacManControllerInputOutputMediator) ClassCreation.createObject("pacManMediatorClass1");
-				MsPacManControllerInputOutputMediator pillMediator = (MsPacManControllerInputOutputMediator) ClassCreation.createObject("pacManMediatorClass2");
-				pacmanInputOutputMediator = new MultipleInputOutputMediator(new MsPacManControllerInputOutputMediator[]{ghostMediator, pillMediator});
+				MsPacManControllerInputOutputMediator ghostMediator = (MsPacManControllerInputOutputMediator) ClassCreation
+						.createObject("pacManMediatorClass1");
+				MsPacManControllerInputOutputMediator pillMediator = (MsPacManControllerInputOutputMediator) ClassCreation
+						.createObject("pacManMediatorClass2");
+				pacmanInputOutputMediator = new MultipleInputOutputMediator(
+						new MsPacManControllerInputOutputMediator[] { ghostMediator, pillMediator });
 				setNNInputParameters(pacmanInputOutputMediator.numIn(), pacmanInputOutputMediator.numOut());
 			} else if (seedGenotype.isEmpty()) {
 				genotype = (Genotype) ClassCreation.createObject("genotype");
@@ -666,7 +713,7 @@ public class MMNEAT {
 				// Copy assures a fresh genotype id
 				System.out.println("Loading seed genotype: " + seedGenotype);
 				genotype = ((Genotype) Easy.load(seedGenotype)).copy();
-				//System.out.println(genotype);
+				// System.out.println(genotype);
 				seedExample = true;
 			}
 			setupTWEANNGenotypeDataTracking(coevolution);
@@ -678,7 +725,7 @@ public class MMNEAT {
 				if (Parameters.parameters.booleanParameter("logPerformance") && !coevolution) {
 					performanceLog = new PerformanceLog("Performance");
 				}
-				if(Parameters.parameters.booleanParameter("logMutationAndLineage")) {
+				if (Parameters.parameters.booleanParameter("logMutationAndLineage")) {
 					EvolutionaryHistory.initLineageAndMutationLogs();
 				}
 			}
@@ -692,15 +739,18 @@ public class MMNEAT {
 	 * Using HyperNEAT means certain parameters values need to be overridden
 	 */
 	private static void hyperNEATOverrides() {
-		// Cannot monitor inputs with HyperNEAT because the NetworkTask interface no longer applies
+		// Cannot monitor inputs with HyperNEAT because the NetworkTask
+		// interface no longer applies
 		CommonConstants.monitorInputs = false;
 		Parameters.parameters.setBoolean("monitorInputs", false);
 	}
 
 	/**
-	 * finds the number of inputs for the predPrey task, which is based on the type of agent that is
-	 * being evolved's sensor inputs defined in its controller
-	 * This has to be done to prevent a null pointer exception when first getting the sensor labels/number of sensors
+	 * finds the number of inputs for the predPrey task, which is based on the
+	 * type of agent that is being evolved's sensor inputs defined in its
+	 * controller This has to be done to prevent a null pointer exception when
+	 * first getting the sensor labels/number of sensors
+	 * 
 	 * @return numInputs
 	 */
 	private static int determineNumPredPreyInputs() {
@@ -746,8 +796,7 @@ public class MMNEAT {
 		}
 		ResultSummaryUtilities.processExperiment(
 				Parameters.parameters.stringParameter("base") + "/" + Parameters.parameters.stringParameter("saveTo"),
-				Parameters.parameters.stringParameter("log"), runs,
-				Parameters.parameters.integerParameter("maxGens"),
+				Parameters.parameters.stringParameter("log"), runs, Parameters.parameters.integerParameter("maxGens"),
 				"_" + (task instanceof MultiplePopulationTask ? "pop0" : "") + "parents_log.txt",
 				"_" + (task instanceof MultiplePopulationTask ? "pop0" : "") + "parents_gen",
 				Parameters.parameters.stringParameter("base"));
@@ -763,12 +812,11 @@ public class MMNEAT {
 				Parameters.parameters.stringParameter("base") + "/" + Parameters.parameters.stringParameter("saveTo"),
 				runs, Parameters.parameters.stringParameter("log"),
 				"_" + (task instanceof MultiplePopulationTask ? "pop0" : "") + "parents_gen",
-				Parameters.parameters.integerParameter("maxGens"),
-				Parameters.parameters.stringParameter("base"));
+				Parameters.parameters.integerParameter("maxGens"), Parameters.parameters.stringParameter("base"));
 	}
 
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
-		if(args.length == 0) {
+		if (args.length == 0) {
 			System.out.println("First command line parameter must be one of the following:");
 			System.out.println("\tmultiple:n\twhere n is the number of experiments to run in sequence");
 			System.out.println("\trunNumber:n\twhere n is the specific experiment number to assign");
@@ -777,7 +825,7 @@ public class MMNEAT {
 			System.exit(0);
 		}
 		long start = System.currentTimeMillis();
-		//Executor.main(args);
+		// Executor.main(args);
 		StringTokenizer st = new StringTokenizer(args[0], ":");
 		if (args[0].startsWith("multiple:")) {
 			st.nextToken(); // "multiple"
@@ -795,7 +843,8 @@ public class MMNEAT {
 
 			int runs = Integer.parseInt(value);
 			args[0] = "runNumber:0";
-			Parameters.initializeParameterCollections(args);    // file should exist
+			Parameters.initializeParameterCollections(args); // file should
+																// exist
 			loadClasses();
 			calculateHVs(runs);
 		} else if (args[0].startsWith("lineage:")) {
@@ -805,7 +854,8 @@ public class MMNEAT {
 
 			int run = Integer.parseInt(value);
 			args[0] = "runNumber:" + run;
-			Parameters.initializeParameterCollections(args);    // file should exist
+			Parameters.initializeParameterCollections(args); // file should
+																// exist
 			System.out.println("Params loaded");
 			String saveTo = Parameters.parameters.stringParameter("saveTo");
 			String loadFrom = Parameters.parameters.stringParameter("loadFrom");
@@ -814,7 +864,8 @@ public class MMNEAT {
 				loadFrom = saveTo;
 				includeChildren = true;
 			}
-			Offspring.fillInLineage(Parameters.parameters.stringParameter("base"), saveTo, run, Parameters.parameters.stringParameter("log"), loadFrom, includeChildren);
+			Offspring.fillInLineage(Parameters.parameters.stringParameter("base"), saveTo, run,
+					Parameters.parameters.stringParameter("log"), loadFrom, includeChildren);
 			Offspring.browse();
 		} else if (args[0].startsWith("process:")) {
 			st.nextToken(); // "process"
@@ -822,7 +873,8 @@ public class MMNEAT {
 
 			int runs = Integer.parseInt(value);
 			args[0] = "runNumber:0";
-			Parameters.initializeParameterCollections(args);    // file should exist
+			Parameters.initializeParameterCollections(args); // file should
+																// exist
 			loadClasses();
 			process(runs);
 		} else {
@@ -837,8 +889,8 @@ public class MMNEAT {
 	private static void evolutionaryRun(String[] args) {
 		// Commandline
 		MMNEAT mone = new MMNEAT(args);
-		if(CommonConstants.replayPacman){
-			if(CommonConstants.showNetworks){
+		if (CommonConstants.replayPacman) {
+			if (CommonConstants.showNetworks) {
 				String replayNetwork = Parameters.parameters.stringParameter("replayNetwork");
 				FileUtilities.drawTWEANN(replayNetwork);
 			}
@@ -848,7 +900,8 @@ public class MMNEAT {
 		}
 		String branchRoot = Parameters.parameters.stringParameter("branchRoot");
 		String lastSavedDirectory = Parameters.parameters.stringParameter("lastSavedDirectory");
-		if (branchRoot != null && !branchRoot.isEmpty() && (lastSavedDirectory == null || lastSavedDirectory.isEmpty())) {
+		if (branchRoot != null && !branchRoot.isEmpty()
+				&& (lastSavedDirectory == null || lastSavedDirectory.isEmpty())) {
 			// This run is a branch off of another run.
 			Parameters rootParameters = new Parameters(new String[0]);
 			System.out.println("Loading root parameters from " + branchRoot);
@@ -886,15 +939,19 @@ public class MMNEAT {
 
 	/**
 	 * Signals that neural networks will be used, and sets them up
-	 * @param numIn Number of task inputs to network
-	 * @param numOut Number of task outputs to network (not counting extra modes)
+	 * 
+	 * @param numIn
+	 *            Number of task inputs to network
+	 * @param numOut
+	 *            Number of task outputs to network (not counting extra modes)
 	 */
 	private static void setNNInputParameters(int numIn, int numOut) throws NoSuchMethodException {
 		networkInputs = numIn;
 		networkOutputs = numOut;
 		int multitaskModes = CommonConstants.multitaskModules;
-		if(CommonConstants.hierarchicalMultitask){
-			multitaskModes = 1; // Initialize the network like a preference neuron net instead
+		if (CommonConstants.hierarchicalMultitask) {
+			multitaskModes = 1; // Initialize the network like a preference
+								// neuron net instead
 		}
 		networkOutputs *= multitaskModes;
 		System.out.println("Networks will have " + networkInputs + " inputs and " + networkOutputs + " outputs.");
@@ -909,11 +966,15 @@ public class MMNEAT {
 
 	/**
 	 * Write information to the performance log, if it is being used
-	 * @param combined Combined population of scores/genotypes
-	 * @param generation Current generation information is being logged for
+	 * 
+	 * @param combined
+	 *            Combined population of scores/genotypes
+	 * @param generation
+	 *            Current generation information is being logged for
 	 */
 
 	public static <T> void logPerformanceInformation(ArrayList<Score<T>> combined, int generation) {
-		if(performanceLog != null) performanceLog.log(combined, generation);
+		if (performanceLog != null)
+			performanceLog.log(combined, generation);
 	}
 }

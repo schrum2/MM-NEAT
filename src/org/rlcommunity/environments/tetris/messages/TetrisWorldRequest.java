@@ -29,28 +29,24 @@ import rlVizLib.messaging.environment.EnvironmentMessages;
 
 public class TetrisWorldRequest extends EnvironmentMessages {
 
-    public TetrisWorldRequest(GenericMessage theMessageObject) {
-        super(theMessageObject);
-    }
+	public TetrisWorldRequest(GenericMessage theMessageObject) {
+		super(theMessageObject);
+	}
 
-    public synchronized static TetrisWorldResponse Execute() {
-        String theRequest = AbstractMessage.makeMessage(
-                MessageUser.kEnv.id(),
-                MessageUser.kBenchmark.id(),
-                EnvMessageType.kEnvCustom.id(),
-                MessageValueType.kString.id(),
-                "GETTETRLAISWORLD");
+	public synchronized static TetrisWorldResponse Execute() {
+		String theRequest = AbstractMessage.makeMessage(MessageUser.kEnv.id(), MessageUser.kBenchmark.id(),
+				EnvMessageType.kEnvCustom.id(), MessageValueType.kString.id(), "GETTETRLAISWORLD");
 
-        String responseMessage = RLGlue.RL_env_message(theRequest);
+		String responseMessage = RLGlue.RL_env_message(theRequest);
 
-        TetrisWorldResponse theResponse;
-        try {
-            theResponse = new TetrisWorldResponse(responseMessage);
-        } catch (NotAnRLVizMessageException ex) {
-            System.out.println("Not a valid RL Viz Message in Tetrlais World Response" + ex);
-            return null;
-        }
+		TetrisWorldResponse theResponse;
+		try {
+			theResponse = new TetrisWorldResponse(responseMessage);
+		} catch (NotAnRLVizMessageException ex) {
+			System.out.println("Not a valid RL Viz Message in Tetrlais World Response" + ex);
+			return null;
+		}
 
-        return theResponse;
-    }
+		return theResponse;
+	}
 }

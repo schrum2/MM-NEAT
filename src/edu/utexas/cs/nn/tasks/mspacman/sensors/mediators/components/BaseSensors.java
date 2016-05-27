@@ -14,12 +14,12 @@ import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.booleansensors.HittingWall
  */
 public class BaseSensors extends BlockLoadedInputOutputMediator {
 
-    public BaseSensors() {
-        super();
-        blocks.add(new BiasBlock());
-        blocks.add(new GhostReversalBlock());
-        if (!CommonConstants.eliminateImpossibleDirections) {
-            blocks.add(new HittingWallBlock());
-        }
-    }
+	public BaseSensors() {
+		super();
+		blocks.add(new BiasBlock());
+		blocks.add(new GhostReversalBlock());
+		if (!CommonConstants.eliminateImpossibleDirections) {
+			blocks.add(new HittingWallBlock());
+		}
+	}
 }

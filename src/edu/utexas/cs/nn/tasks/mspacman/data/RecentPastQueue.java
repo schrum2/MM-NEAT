@@ -17,43 +17,43 @@ import pacman.game.Game;
  */
 public class RecentPastQueue {
 
-    private Queue<Game> recentStates;
-    private int maxQueueLength;
+	private Queue<Game> recentStates;
+	private int maxQueueLength;
 
-    public RecentPastQueue(int memLength) {
-        maxQueueLength = memLength;
-        recentStates = new LinkedList<Game>();
-    }
+	public RecentPastQueue(int memLength) {
+		maxQueueLength = memLength;
+		recentStates = new LinkedList<Game>();
+	}
 
-    /**
-     * Tell the queue which Game state was just experienced
-     *
-     * @param g
-     */
-    public void giveCurrentState(Game g) {
-        if (recentStates.size() > maxQueueLength) {
-            recentStates.poll();
-        }
-        recentStates.offer(g.copy());
-    }
-    
-    public boolean memoryFull(){
-        return recentStates.size() >= maxQueueLength;
-    }
+	/**
+	 * Tell the queue which Game state was just experienced
+	 *
+	 * @param g
+	 */
+	public void giveCurrentState(Game g) {
+		if (recentStates.size() > maxQueueLength) {
+			recentStates.poll();
+		}
+		recentStates.offer(g.copy());
+	}
 
-    /**
-     * Return the Game stored at the beginning of the memory.
-     *
-     * @return
-     */
-    public Game beginningOfMemory() {
-        return recentStates.peek();
-    }
+	public boolean memoryFull() {
+		return recentStates.size() >= maxQueueLength;
+	}
 
-    /**
-     * Empty out the queue to start a new Game
-     */
-    public void empty() {
-        recentStates.clear();
-    }
+	/**
+	 * Return the Game stored at the beginning of the memory.
+	 *
+	 * @return
+	 */
+	public Game beginningOfMemory() {
+		return recentStates.peek();
+	}
+
+	/**
+	 * Empty out the queue to start a new Game
+	 */
+	public void empty() {
+		recentStates.clear();
+	}
 }

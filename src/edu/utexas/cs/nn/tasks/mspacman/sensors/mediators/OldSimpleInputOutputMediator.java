@@ -20,12 +20,13 @@ import edu.utexas.cs.nn.tasks.mspacman.sensors.mediators.components.BaseSensors;
  */
 public class OldSimpleInputOutputMediator extends BaseSensors {
 
-    public OldSimpleInputOutputMediator() {
-        super();
-        blocks.add(new EscapeNodeDistanceDifferenceBlock(escapeNodes, false, false, Parameters.parameters.integerParameter("escapeNodeDepth"), true, true, true));
-        blocks.add(new NearestPillBlock());
-        blocks.add(new NearestPowerPillBlock());
-        blocks.add(new NearestFarthestEdibleGhostBlock(true));
-        blocks.add(new CountThreatGhostsBlock(true, true));
-    }
+	public OldSimpleInputOutputMediator() {
+		super();
+		blocks.add(new EscapeNodeDistanceDifferenceBlock(escapeNodes, false, false,
+				Parameters.parameters.integerParameter("escapeNodeDepth"), true, true, true));
+		blocks.add(new NearestPillBlock());
+		blocks.add(new NearestPowerPillBlock());
+		blocks.add(new NearestFarthestEdibleGhostBlock(true));
+		blocks.add(new CountThreatGhostsBlock(true, true));
+	}
 }

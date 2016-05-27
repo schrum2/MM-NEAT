@@ -8,11 +8,11 @@ import edu.utexas.cs.nn.evolution.fitness.FitnessFunction;
  */
 public class ZDT6 extends ZDT {
 
-    public ZDT6() {
-        super(10);
-    }
+	public ZDT6() {
+		super(10);
+	}
 
-    public FitnessFunction[] getFitnessFunctions() {
-        return new FitnessFunction[]{new ZDT6Function(false), new ZDT6Function(true)};
-    }
+	public FitnessFunction[] getFitnessFunctions() {
+		return new FitnessFunction[] { new ZDT6Function(false), new ZDT6Function(true) };
+	}
 }

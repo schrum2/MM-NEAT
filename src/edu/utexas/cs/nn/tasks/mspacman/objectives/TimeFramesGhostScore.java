@@ -9,12 +9,12 @@ import java.util.List;
  */
 public class TimeFramesGhostScore<T extends Network> extends TimeFramesScore<T> {
 
-    public TimeFramesGhostScore(int mode) {
-        super(mode);
-    }
+	public TimeFramesGhostScore(int mode) {
+		super(mode);
+	}
 
-    @Override
-    public List<Integer> eatTimes() {
-        return g.getGhostEatTimes();
-    }
+	@Override
+	public List<Integer> eatTimes() {
+		return g.getGhostEatTimes();
+	}
 }

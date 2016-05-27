@@ -16,11 +16,11 @@ import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.distance.lair.SpecificThre
  */
 public class LairDistanceSensors extends BlockLoadedInputOutputMediator {
 
-    public LairDistanceSensors() {
-        super();
-        blocks.add(new PacManLairDistanceBlock());
-        for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
-            blocks.add(new SpecificThreatGhostLairDistanceBlock(i));
-        }
-    }
+	public LairDistanceSensors() {
+		super();
+		blocks.add(new PacManLairDistanceBlock());
+		for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
+			blocks.add(new SpecificThreatGhostLairDistanceBlock(i));
+		}
+	}
 }

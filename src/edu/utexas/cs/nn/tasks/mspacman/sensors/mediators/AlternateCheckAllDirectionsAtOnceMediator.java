@@ -14,47 +14,48 @@ import edu.utexas.cs.nn.tasks.mspacman.sensors.MsPacManControllerInputOutputMedi
  * @author Jacob Schrum
  */
 public class AlternateCheckAllDirectionsAtOnceMediator extends MsPacManControllerInputOutputMediator {
-    private final AlternateCheckEachDirectionMediator[] mediators;
+	private final AlternateCheckEachDirectionMediator[] mediators;
 
-    public AlternateCheckAllDirectionsAtOnceMediator() {
-        super();
-        mediators = new AlternateCheckEachDirectionMediator[GameFacade.NUM_DIRS];
-        for(int i = 0; i < GameFacade.NUM_DIRS; i++) {
-            mediators[i] = new AlternateCheckEachDirectionMediator(i);
-        }
-    }
+	public AlternateCheckAllDirectionsAtOnceMediator() {
+		super();
+		mediators = new AlternateCheckEachDirectionMediator[GameFacade.NUM_DIRS];
+		for (int i = 0; i < GameFacade.NUM_DIRS; i++) {
+			mediators[i] = new AlternateCheckEachDirectionMediator(i);
+		}
+	}
 
-    @Override
-    public double[] getInputs(GameFacade gs, int currentDir) {
-        // May need to change the absolute directions that the sensor blocks look at
-        // to match the relative directions
-        if (CommonConstants.relativePacmanDirections) {
-            for (int i = 0; i < GameFacade.NUM_DIRS; i++) {
-                mediators[i].setDirection((currentDir + i) % GameFacade.NUM_DIRS);
-            }
-        }
+	@Override
+	public double[] getInputs(GameFacade gs, int currentDir) {
+		// May need to change the absolute directions that the sensor blocks
+		// look at
+		// to match the relative directions
+		if (CommonConstants.relativePacmanDirections) {
+			for (int i = 0; i < GameFacade.NUM_DIRS; i++) {
+				mediators[i].setDirection((currentDir + i) % GameFacade.NUM_DIRS);
+			}
+		}
 
-        double[] inputs = new double[this.numIn()];
-        for(int i = 0; i < GameFacade.NUM_DIRS; i++){
-            double[] partialInputs = mediators[i].getInputs(gs, currentDir);
-            System.arraycopy(partialInputs, 0, inputs, i*partialInputs.length, partialInputs.length);
-        }
-        
-        return inputs;
-    }
+		double[] inputs = new double[this.numIn()];
+		for (int i = 0; i < GameFacade.NUM_DIRS; i++) {
+			double[] partialInputs = mediators[i].getInputs(gs, currentDir);
+			System.arraycopy(partialInputs, 0, inputs, i * partialInputs.length, partialInputs.length);
+		}
 
-    @Override
-    public String[] sensorLabels() {
-        String[] labels = new String[this.numIn()];
-        for(int i = 0; i < GameFacade.NUM_DIRS; i++){
-            String[] partialInputs = mediators[i].sensorLabels();
-            System.arraycopy(partialInputs, 0, labels, i*partialInputs.length, partialInputs.length);
-        }
-        return labels;
-    }
+		return inputs;
+	}
 
-    @Override
-    public int numIn() {
-        return mediators.length * mediators[0].numIn();
-    }
+	@Override
+	public String[] sensorLabels() {
+		String[] labels = new String[this.numIn()];
+		for (int i = 0; i < GameFacade.NUM_DIRS; i++) {
+			String[] partialInputs = mediators[i].sensorLabels();
+			System.arraycopy(partialInputs, 0, labels, i * partialInputs.length, partialInputs.length);
+		}
+		return labels;
+	}
+
+	@Override
+	public int numIn() {
+		return mediators.length * mediators[0].numIn();
+	}
 }

@@ -12,13 +12,13 @@ import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
  */
 public class PowerPillsClearedBlock extends BooleanSensorBlock {
 
-    @Override
-    public String senseLabel() {
-        return "Power Pills Cleared";
-    }
+	@Override
+	public String senseLabel() {
+		return "Power Pills Cleared";
+	}
 
-    @Override
-    public boolean predicate(GameFacade gf, int lastDirection) {
-        return gf.getNumActivePowerPills() == 0;
-    }
+	@Override
+	public boolean predicate(GameFacade gf, int lastDirection) {
+		return gf.getNumActivePowerPills() == 0;
+	}
 }

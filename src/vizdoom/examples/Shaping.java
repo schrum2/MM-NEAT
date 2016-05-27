@@ -1,4 +1,5 @@
 package vizdoom.examples;
+
 import vizdoom.*;
 
 import java.util.*;
@@ -6,80 +7,89 @@ import java.lang.*;
 
 public class Shaping {
 
-    public static void main (String[] args) {
-        SpecifyDLL.specifyDLLPath();        
+	public static void main(String[] args) {
+		SpecifyDLL.specifyDLLPath();
 
-        System.out.println("\n\nSHAPING EXAMPLE\n");
+		System.out.println("\n\nSHAPING EXAMPLE\n");
 
+		// Create DoomGame instance. It will run the game and communicate with
+		// you.
+		DoomGame game = new DoomGame();
 
-        // Create DoomGame instance. It will run the game and communicate with you.
-        DoomGame game = new DoomGame();
+		// Health gathering scenario has scripted shaping reward.
+		game.loadConfig("vizdoom/examples/config/health_gathering.cfg");
+		game.setViZDoomPath("vizdoom/bin/vizdoom");
 
-        // Health gathering scenario has scripted shaping reward.
-        game.loadConfig("vizdoom/examples/config/health_gathering.cfg");
-        game.setViZDoomPath("vizdoom/bin/vizdoom");
+		// Sets path to doom2 iwad resource file which contains the actual doom
+		// game-> Default is "./doom2.wad".
+		game.setDoomGamePath("vizdoom/scenarios/freedoom2.wad");
+		// game.setDoomGamePath("vizdoom/scenarios/doom2.wad"); // Not provided
+		// with environment due to licences.
 
-        // Sets path to doom2 iwad resource file which contains the actual doom game-> Default is "./doom2.wad".
-        game.setDoomGamePath("vizdoom/scenarios/freedoom2.wad");
-        //game.setDoomGamePath("vizdoom/scenarios/doom2.wad");   // Not provided with environment due to licences.
+		// Sets resolution. Default is 320X240
+		game.setScreenResolution(ScreenResolution.RES_320X240);
 
+		// Initialize the game. Further configuration won't take any effect from
+		// now on.
+		game.init();
 
+		List<int[]> actions = new ArrayList<int[]>();
+		actions.add(new int[] { 1, 0, 1 });
+		actions.add(new int[] { 0, 1, 1 });
+		actions.add(new int[] { 0, 0, 1 });
 
-        // Sets resolution. Default is 320X240
-        game.setScreenResolution(ScreenResolution.RES_320X240);
+		Random ran = new Random();
 
-        // Initialize the game. Further configuration won't take any effect from now on.
-        game.init();
+		// Run this many episodes
+		int episodes = 10;
 
-        List<int[]> actions = new ArrayList<int[]>();
-        actions.add(new int[] {1, 0, 1});
-        actions.add(new int[] {0, 1, 1});
-        actions.add(new int[] {0, 0, 1});
+		// Use this to remember last shaping reward value.
+		double lastTotalShapingReward = 0;
+		for (int i = 0; i < episodes; ++i) {
 
-        Random ran = new Random();
+			System.out.println("Episode #" + (i + 1));
 
-        // Run this many episodes
-        int episodes = 10;
+			// Starts a new episode. It is not needed right after init() but it
+			// doesn't cost much and the loop is nicer.
+			game.newEpisode();
 
-        // Use this to remember last shaping reward value.
-        double lastTotalShapingReward = 0;
-        for (int i = 0; i < episodes; ++i) {
+			while (!game.isEpisodeFinished()) {
 
-            System.out.println("Episode #" + (i + 1));
+				// Get the state
+				GameState s = game.getState();
 
-            // Starts a new episode. It is not needed right after init() but it doesn't cost much and the loop is nicer.
-            game.newEpisode();
+				// Make random action and get reward
+				double r = game.makeAction(actions.get(ran.nextInt(3)));
 
-            while (!game.isEpisodeFinished()) {
+				// Retrieve the shaping reward
+				int _ssr = game.getGameVariable(GameVariable.USER1); // Get
+																		// value
+																		// of
+																		// scripted
+																		// variable
+				double ssr = game.DoomFixedToDouble(_ssr); // If value is in
+															// DoomFixed format
+															// project it to
+															// double
+				double sr = ssr - lastTotalShapingReward;
+				lastTotalShapingReward = ssr;
 
-                // Get the state
-                GameState s = game.getState();
+				System.out.println("State #" + s.number);
+				System.out.println("Health: " + s.gameVariables[0]);
+				System.out.println("Action reward: " + r);
+				System.out.println("Action shaping reward: " + sr);
+				System.out.println("=====================");
 
-                // Make random action and get reward
-                double r = game.makeAction(actions.get(ran.nextInt(3)));
+			}
 
+			System.out.println("Episode finished.");
+			System.out.println("Total reward: " + game.getTotalReward());
+			System.out.println("************************");
 
-                // Retrieve the shaping reward
-                int _ssr = game.getGameVariable(GameVariable.USER1);    // Get value of scripted variable
-                double ssr = game.DoomFixedToDouble(_ssr);              // If value is in DoomFixed format project it to double
-                double sr = ssr - lastTotalShapingReward;
-                lastTotalShapingReward = ssr;
+		}
 
-                System.out.println("State #" + s.number);
-                System.out.println("Health: " + s.gameVariables[0]);
-                System.out.println("Action reward: " + r);
-                System.out.println("Action shaping reward: " + sr);
-                System.out.println("=====================");
-
-            }
-
-        System.out.println( "Episode finished.");
-        System.out.println("Total reward: " + game.getTotalReward());
-        System.out.println ("************************");
-
-        }
-
-        // It will be done automatically in destructor but after close You can init it again with different settings.
-        game.close();
-    }
+		// It will be done automatically in destructor but after close You can
+		// init it again with different settings.
+		game.close();
+	}
 }

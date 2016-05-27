@@ -13,8 +13,8 @@ import edu.utexas.cs.nn.tasks.ut2004.controller.RandomItemPathExplorer;
  */
 public class ItemExplorationBehaviorModule extends RandomItemPathExplorer implements BehaviorModule {
 
-    public boolean trigger(UT2004BotModuleController bot) {
-        // Bottom level behavior
-        return true;
-    }
+	public boolean trigger(UT2004BotModuleController bot) {
+		// Bottom level behavior
+		return true;
+	}
 }

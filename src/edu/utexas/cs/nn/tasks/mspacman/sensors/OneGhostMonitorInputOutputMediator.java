@@ -12,15 +12,17 @@ import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.booleansensors.BiasBlock;
  */
 public class OneGhostMonitorInputOutputMediator extends BlockLoadedInputOutputMediator {
 
-    // Should only be used by ClassCreation
-    public OneGhostMonitorInputOutputMediator() {
-        this(0);
-    }
+	// Should only be used by ClassCreation
+	public OneGhostMonitorInputOutputMediator() {
+		this(0);
+	}
 
-    public OneGhostMonitorInputOutputMediator(int ghostIndex) {
-        super();
-        boolean specificGhostEdibleThreatSplit = Parameters.parameters.booleanParameter("specificGhostEdibleThreatSplit");
-        blocks.add(new BiasBlock());
-        blocks.add(specificGhostEdibleThreatSplit ? new SplitSpecificGhostBlock(ghostIndex) : new SpecificGhostBlock(ghostIndex));
-    }
+	public OneGhostMonitorInputOutputMediator(int ghostIndex) {
+		super();
+		boolean specificGhostEdibleThreatSplit = Parameters.parameters
+				.booleanParameter("specificGhostEdibleThreatSplit");
+		blocks.add(new BiasBlock());
+		blocks.add(specificGhostEdibleThreatSplit ? new SplitSpecificGhostBlock(ghostIndex)
+				: new SpecificGhostBlock(ghostIndex));
+	}
 }

@@ -7,8 +7,8 @@ package edu.utexas.cs.nn.util.stats;
  */
 public class Average implements Statistic {
 
-    @Override
-    public double stat(double[] xs) {
-        return StatisticsUtilities.average(xs);
-    }
+	@Override
+	public double stat(double[] xs) {
+		return StatisticsUtilities.average(xs);
+	}
 }

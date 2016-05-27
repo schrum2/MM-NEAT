@@ -12,21 +12,22 @@ import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
  */
 public class EdibleGhostDistanceDifferenceBlock extends PacManVsThreatDistanceDifferencesBlock {
 
-    public EdibleGhostDistanceDifferenceBlock() {
-        this(false, false, 0, false, false);
-    }
+	public EdibleGhostDistanceDifferenceBlock() {
+		this(false, false, 0, false, false);
+	}
 
-    public EdibleGhostDistanceDifferenceBlock(boolean ghostDistances, boolean pacmanDistances, int simulationDepth, boolean futurePillsEaten, boolean futurePowerPillsEaten) {
-        super(ghostDistances, pacmanDistances, simulationDepth, futurePillsEaten, true, futurePowerPillsEaten);
-    }
+	public EdibleGhostDistanceDifferenceBlock(boolean ghostDistances, boolean pacmanDistances, int simulationDepth,
+			boolean futurePillsEaten, boolean futurePowerPillsEaten) {
+		super(ghostDistances, pacmanDistances, simulationDepth, futurePillsEaten, true, futurePowerPillsEaten);
+	}
 
-    @Override
-    public int[] getTargets(GameFacade gf) {
-        return gf.getEdibleGhostLocations();
-    }
+	@Override
+	public int[] getTargets(GameFacade gf) {
+		return gf.getEdibleGhostLocations();
+	}
 
-    @Override
-    public String typeOfTarget() {
-        return "Edible Ghost";
-    }
+	@Override
+	public String typeOfTarget() {
+		return "Edible Ghost";
+	}
 }

@@ -14,12 +14,12 @@ import edu.utexas.cs.nn.networks.TWEANN;
  */
 public class SpliceNeuronMutation extends TWEANNMutation {
 
-    public SpliceNeuronMutation() {
-        super("netSpliceRate");
-    }
+	public SpliceNeuronMutation() {
+		super("netSpliceRate");
+	}
 
-    public void mutate(Genotype<TWEANN> genotype) {
-        ((TWEANNGenotype) genotype).spliceMutation();
-        cullForBestWeight((TWEANNGenotype) genotype, new int[]{2});
-    }
+	public void mutate(Genotype<TWEANN> genotype) {
+		((TWEANNGenotype) genotype).spliceMutation();
+		cullForBestWeight((TWEANNGenotype) genotype, new int[] { 2 });
+	}
 }

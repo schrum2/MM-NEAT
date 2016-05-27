@@ -13,7 +13,7 @@ import edu.utexas.cs.nn.networks.Network;
  */
 public class ScoreFitness<T extends Network> extends UT2004FitnessFunction<T> {
 
-    public double fitness(Organism<T> individual) {
-        return game.getScore();
-    }
+	public double fitness(Organism<T> individual) {
+		return game.getScore();
+	}
 }

@@ -9,29 +9,29 @@ import java.util.ArrayList;
  */
 public class ActionBlockLoadedInputOutputMediator extends BlockLoadedInputOutputMediator {
 
-    public ArrayList<MsPacManAction> actions;
+	public ArrayList<MsPacManAction> actions;
 
-    public ActionBlockLoadedInputOutputMediator() {
-        super();
-        actions = new ArrayList<MsPacManAction>();
-    }
+	public ActionBlockLoadedInputOutputMediator() {
+		super();
+		actions = new ArrayList<MsPacManAction>();
+	}
 
-    @Override
-    public String[] outputLabels() {
-        String[] labels = new String[actions.size()];
-        for (int i = 0; i < labels.length; i++) {
-            labels[i] = actions.get(i).getClass().getSimpleName();
-        }
-        return labels;
-    }
+	@Override
+	public String[] outputLabels() {
+		String[] labels = new String[actions.size()];
+		for (int i = 0; i < labels.length; i++) {
+			labels[i] = actions.get(i).getClass().getSimpleName();
+		}
+		return labels;
+	}
 
-    /**
-     * One output corresponding to the selection of each action
-     *
-     * @return
-     */
-    @Override
-    public int numOut() {
-        return actions.size();
-    }
+	/**
+	 * One output corresponding to the selection of each action
+	 *
+	 * @return
+	 */
+	@Override
+	public int numOut() {
+		return actions.size();
+	}
 }

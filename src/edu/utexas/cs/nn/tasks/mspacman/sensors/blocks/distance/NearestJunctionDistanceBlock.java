@@ -8,13 +8,13 @@ import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
  */
 public class NearestJunctionDistanceBlock extends NearestDistanceBlock {
 
-    @Override
-    public int[] getTargets(GameFacade gf) {
-        return gf.getJunctionIndices();
-    }
+	@Override
+	public int[] getTargets(GameFacade gf) {
+		return gf.getJunctionIndices();
+	}
 
-    @Override
-    public String getType() {
-        return "Junction";
-    }
+	@Override
+	public String getType() {
+		return "Junction";
+	}
 }

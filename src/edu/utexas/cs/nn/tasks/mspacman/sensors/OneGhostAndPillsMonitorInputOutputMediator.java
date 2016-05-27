@@ -17,20 +17,20 @@ import java.util.List;
  */
 public class OneGhostAndPillsMonitorInputOutputMediator extends UnionInputOutputMediator {
 
-    // Should only be used by ClassCreation
-    public OneGhostAndPillsMonitorInputOutputMediator() {
-        this(0);
-        Parameters.parameters.setBoolean("ghostMonitorsSensePills", true);
-    }
+	// Should only be used by ClassCreation
+	public OneGhostAndPillsMonitorInputOutputMediator() {
+		this(0);
+		Parameters.parameters.setBoolean("ghostMonitorsSensePills", true);
+	}
 
-    public OneGhostAndPillsMonitorInputOutputMediator(int ghostIndex) {
-        super(getMediators(ghostIndex));
-    }
+	public OneGhostAndPillsMonitorInputOutputMediator(int ghostIndex) {
+		super(getMediators(ghostIndex));
+	}
 
-    public static List<BlockLoadedInputOutputMediator> getMediators(int ghostIndex) {
-        ArrayList<BlockLoadedInputOutputMediator> mediators = new ArrayList<BlockLoadedInputOutputMediator>(2);
-        mediators.add(new OneGhostMonitorInputOutputMediator(ghostIndex));
-        mediators.add(new NonGhostSensors());
-        return mediators;
-    }
+	public static List<BlockLoadedInputOutputMediator> getMediators(int ghostIndex) {
+		ArrayList<BlockLoadedInputOutputMediator> mediators = new ArrayList<BlockLoadedInputOutputMediator>(2);
+		mediators.add(new OneGhostMonitorInputOutputMediator(ghostIndex));
+		mediators.add(new NonGhostSensors());
+		return mediators;
+	}
 }

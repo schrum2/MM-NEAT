@@ -12,18 +12,18 @@ import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
  */
 public class VariableDirectionPowerPillBeforeJunctionBlock extends VariableDirectionPowerPillBeforeTargetBlock {
 
-    public VariableDirectionPowerPillBeforeJunctionBlock(int dir) {
-        super(dir);
-    }
+	public VariableDirectionPowerPillBeforeJunctionBlock(int dir) {
+		super(dir);
+	}
 
-    @Override
-    public int[] getTargets(GameFacade gf) {
-        return gf.getJunctionIndices();
-    }
+	@Override
+	public int[] getTargets(GameFacade gf) {
+		return gf.getJunctionIndices();
+	}
 
-    @Override
-    public String getTargetType() {
-        return "Junction";
-    }
+	@Override
+	public String getTargetType() {
+		return "Junction";
+	}
 
 }

@@ -12,31 +12,31 @@ import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
  */
 public class VariableDirectionPowerPillBlocksEdibleGhostBlock extends VariableDirectionItemBlocksTargetBlock {
 
-    public VariableDirectionPowerPillBlocksEdibleGhostBlock(int dir) {
-        super(0, dir);
-    }
+	public VariableDirectionPowerPillBlocksEdibleGhostBlock(int dir) {
+		super(0, dir);
+	}
 
-    public VariableDirectionPowerPillBlocksEdibleGhostBlock() {
-        this(-1);
-    }
+	public VariableDirectionPowerPillBlocksEdibleGhostBlock() {
+		this(-1);
+	}
 
-    @Override
-    public int[] getObstacles(GameFacade gf) {
-        return gf.getActivePowerPillsIndices();
-    }
+	@Override
+	public int[] getObstacles(GameFacade gf) {
+		return gf.getActivePowerPillsIndices();
+	}
 
-    @Override
-    public int[] getTargets(GameFacade gf) {
-        return gf.getEdibleGhostLocations();
-    }
+	@Override
+	public int[] getTargets(GameFacade gf) {
+		return gf.getEdibleGhostLocations();
+	}
 
-    @Override
-    public String getObstacleType() {
-        return "Power Pill";
-    }
+	@Override
+	public String getObstacleType() {
+		return "Power Pill";
+	}
 
-    @Override
-    public String getTargetType() {
-        return "Edible Ghost";
-    }
+	@Override
+	public String getTargetType() {
+		return "Edible Ghost";
+	}
 }

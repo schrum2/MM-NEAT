@@ -9,15 +9,16 @@ import edu.utexas.cs.nn.util.ClassCreation;
 /**
  * @author Jacob Schrum
  */
-public class CooperativeGhostMonitorEnsembleMsPacManTask<T extends Network> extends CooperativeNonHierarchicalMultiNetMsPacManTask<T> {
+public class CooperativeGhostMonitorEnsembleMsPacManTask<T extends Network>
+		extends CooperativeNonHierarchicalMultiNetMsPacManTask<T> {
 
-    public CooperativeGhostMonitorEnsembleMsPacManTask() {
-        super(CommonConstants.numActiveGhosts, true, "pacmanFitnessModeMap", true, null);
-        try {
-            MMNEAT.ensembleArbitrator = (MsPacManEnsembleArbitrator) ClassCreation.createObject("ensembleArbitrator");
-        } catch (NoSuchMethodException ex) {
-            System.out.println("Could not create ensemble arbitrator");
-            System.exit(1);
-        }
-    }
+	public CooperativeGhostMonitorEnsembleMsPacManTask() {
+		super(CommonConstants.numActiveGhosts, true, "pacmanFitnessModeMap", true, null);
+		try {
+			MMNEAT.ensembleArbitrator = (MsPacManEnsembleArbitrator) ClassCreation.createObject("ensembleArbitrator");
+		} catch (NoSuchMethodException ex) {
+			System.out.println("Could not create ensemble arbitrator");
+			System.exit(1);
+		}
+	}
 }

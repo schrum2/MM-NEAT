@@ -13,17 +13,17 @@ import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.distance.FarthestThreatGho
  */
 public class FarthestDistanceSensors extends BlockLoadedInputOutputMediator {
 
-    public FarthestDistanceSensors(boolean sensePills, boolean senseEdibleGhosts, boolean sensePowerPills) {
-        super();
-        blocks.add(new FarthestThreatGhostDistanceBlock());
-        if (sensePills) {
-            blocks.add(new FarthestPillDistanceBlock());
-        }
-        if (senseEdibleGhosts) {
-            blocks.add(new FarthestEdibleGhostDistanceBlock());
-        }
-        if (sensePowerPills) {
-            blocks.add(new FarthestPowerPillDistanceBlock());
-        }
-    }
+	public FarthestDistanceSensors(boolean sensePills, boolean senseEdibleGhosts, boolean sensePowerPills) {
+		super();
+		blocks.add(new FarthestThreatGhostDistanceBlock());
+		if (sensePills) {
+			blocks.add(new FarthestPillDistanceBlock());
+		}
+		if (senseEdibleGhosts) {
+			blocks.add(new FarthestEdibleGhostDistanceBlock());
+		}
+		if (sensePowerPills) {
+			blocks.add(new FarthestPowerPillDistanceBlock());
+		}
+	}
 }

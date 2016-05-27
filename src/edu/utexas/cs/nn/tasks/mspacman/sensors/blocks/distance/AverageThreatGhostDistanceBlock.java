@@ -14,17 +14,17 @@ import java.util.Arrays;
  */
 public class AverageThreatGhostDistanceBlock extends AverageDistanceBlock {
 
-    @Override
-    public int[] getTargets(GameFacade gf) {
-        int[] presentThreats = gf.getThreatGhostLocations();
-        int[] totalThreats = new int[CommonConstants.numActiveGhosts];
-        Arrays.fill(totalThreats, -1);
-        System.arraycopy(presentThreats, 0, totalThreats, 0, presentThreats.length);
-        return totalThreats;
-    }
+	@Override
+	public int[] getTargets(GameFacade gf) {
+		int[] presentThreats = gf.getThreatGhostLocations();
+		int[] totalThreats = new int[CommonConstants.numActiveGhosts];
+		Arrays.fill(totalThreats, -1);
+		System.arraycopy(presentThreats, 0, totalThreats, 0, presentThreats.length);
+		return totalThreats;
+	}
 
-    @Override
-    public String getType() {
-        return "Threat Ghost";
-    }
+	@Override
+	public String getType() {
+		return "Threat Ghost";
+	}
 }

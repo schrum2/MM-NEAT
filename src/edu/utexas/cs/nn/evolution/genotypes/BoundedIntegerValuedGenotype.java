@@ -11,27 +11,27 @@ import java.util.ArrayList;
  */
 public class BoundedIntegerValuedGenotype extends NumericArrayGenotype<Integer> {
 
-    public BoundedIntegerValuedGenotype(int size) {
-        super(RandomNumbers.randomIntArray(size, MMNEAT.discreteCeilings));
-    }
+	public BoundedIntegerValuedGenotype(int size) {
+		super(RandomNumbers.randomIntArray(size, MMNEAT.discreteCeilings));
+	}
 
-    public BoundedIntegerValuedGenotype(ArrayList<Integer> genes) {
-        super(genes);
-    }
+	public BoundedIntegerValuedGenotype(ArrayList<Integer> genes) {
+		super(genes);
+	}
 
-    public Genotype<ArrayList<Integer>> copy() {
-        return new BoundedIntegerValuedGenotype(genes);
-    }
+	public Genotype<ArrayList<Integer>> copy() {
+		return new BoundedIntegerValuedGenotype(genes);
+	}
 
-    public void setValue(int pos, int value) {
-        genes.set(pos, value);
-    }
+	public void setValue(int pos, int value) {
+		genes.set(pos, value);
+	}
 
-    public Genotype<ArrayList<Integer>> newInstance() {
-        return new BoundedIntegerValuedGenotype(genes.size());
-    }
+	public Genotype<ArrayList<Integer>> newInstance() {
+		return new BoundedIntegerValuedGenotype(genes.size());
+	}
 
-    public void mutate() {
-        new ReplaceMutation().mutate(this);
-    }
+	public void mutate() {
+		new ReplaceMutation().mutate(this);
+	}
 }

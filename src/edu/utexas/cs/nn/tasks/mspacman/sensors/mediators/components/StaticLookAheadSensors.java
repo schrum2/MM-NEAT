@@ -16,17 +16,17 @@ import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.lookahead.DirectionalThrea
  */
 public class StaticLookAheadSensors extends BlockLoadedInputOutputMediator {
 
-    public StaticLookAheadSensors(boolean sensePills, boolean senseEdibleGhosts, boolean sensePowerPills) {
-        super();
-        blocks.add(new DirectionalThreatGhostsStaticLookAheadBlock());
-        if (sensePills) {
-            blocks.add(new DirectionalPillsStaticLookAheadBlock());
-        }
-        if (senseEdibleGhosts) {
-            blocks.add(new DirectionalEdibleGhostsStaticLookAheadBlock());
-        }
-        if (sensePowerPills) {
-            blocks.add(new DirectionalPowerPillsStaticLookAheadBlock());
-        }
-    }
+	public StaticLookAheadSensors(boolean sensePills, boolean senseEdibleGhosts, boolean sensePowerPills) {
+		super();
+		blocks.add(new DirectionalThreatGhostsStaticLookAheadBlock());
+		if (sensePills) {
+			blocks.add(new DirectionalPillsStaticLookAheadBlock());
+		}
+		if (senseEdibleGhosts) {
+			blocks.add(new DirectionalEdibleGhostsStaticLookAheadBlock());
+		}
+		if (sensePowerPills) {
+			blocks.add(new DirectionalPowerPillsStaticLookAheadBlock());
+		}
+	}
 }

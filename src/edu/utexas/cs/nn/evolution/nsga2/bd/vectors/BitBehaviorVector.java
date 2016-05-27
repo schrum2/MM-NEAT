@@ -12,19 +12,19 @@ import java.util.BitSet;
  */
 public class BitBehaviorVector implements BehaviorVector {
 
-    private final BitSet bs;
+	private final BitSet bs;
 
-    public BitBehaviorVector(BitSet bs) {
-        this.bs = bs;
-    }
+	public BitBehaviorVector(BitSet bs) {
+		this.bs = bs;
+	}
 
-    /*
-     * Hamming distance
-     */
-    public double distance(BehaviorVector rhs) {
-        // Clone so the xor operation doesn't change the original set
-        BitSet other = (BitSet) ((BitBehaviorVector) rhs).bs.clone();
-        other.xor(bs);
-        return other.cardinality();
-    }
+	/*
+	 * Hamming distance
+	 */
+	public double distance(BehaviorVector rhs) {
+		// Clone so the xor operation doesn't change the original set
+		BitSet other = (BitSet) ((BitBehaviorVector) rhs).bs.clone();
+		other.xor(bs);
+		return other.cardinality();
+	}
 }

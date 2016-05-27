@@ -14,18 +14,18 @@ import edu.utexas.cs.nn.networks.Network;
  */
 public class WeaponAccuracyFitness<T extends Network> extends UT2004FitnessFunction<T> {
 
-    private final ItemType weapon;
+	private final ItemType weapon;
 
-    public WeaponAccuracyFitness(ItemType weapon) {
-        this.weapon = weapon;
-    }
+	public WeaponAccuracyFitness(ItemType weapon) {
+		this.weapon = weapon;
+	}
 
-    public double fitness(Organism<T> individual) {
-        double ammoUsed = game.ammoUsed(weapon);
-        if (ammoUsed == 0) {
-            return 0;
-        } else {
-            return (1.0 * game.getWeaponDamage(weapon)) / ammoUsed;
-        }
-    }
+	public double fitness(Organism<T> individual) {
+		double ammoUsed = game.ammoUsed(weapon);
+		if (ammoUsed == 0) {
+			return 0;
+		} else {
+			return (1.0 * game.getWeaponDamage(weapon)) / ammoUsed;
+		}
+	}
 }

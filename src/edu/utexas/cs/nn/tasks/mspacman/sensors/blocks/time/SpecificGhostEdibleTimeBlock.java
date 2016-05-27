@@ -14,40 +14,40 @@ import pacman.game.Constants;
  */
 public class SpecificGhostEdibleTimeBlock extends MsPacManSensorBlock {
 
-    private final int ghostIndex;
+	private final int ghostIndex;
 
-    public SpecificGhostEdibleTimeBlock(int ghostIndex) {
-        this.ghostIndex = ghostIndex;
-    }
+	public SpecificGhostEdibleTimeBlock(int ghostIndex) {
+		this.ghostIndex = ghostIndex;
+	}
 
-    public int incorporateSensors(double[] inputs, int in, GameFacade gf, int lastDirection) {
-        inputs[in++] = gf.getGhostEdibleTime(ghostIndex) / (Constants.EDIBLE_TIME * 1.0);
-        return in;
-    }
+	public int incorporateSensors(double[] inputs, int in, GameFacade gf, int lastDirection) {
+		inputs[in++] = gf.getGhostEdibleTime(ghostIndex) / (Constants.EDIBLE_TIME * 1.0);
+		return in;
+	}
 
-    public int incorporateLabels(String[] labels, int in) {
-        labels[in++] = "Ghost " + ghostIndex + " Edible Time";
-        return in;
-    }
+	public int incorporateLabels(String[] labels, int in) {
+		labels[in++] = "Ghost " + ghostIndex + " Edible Time";
+		return in;
+	}
 
-    public int numberAdded() {
-        return 1;
-    }
+	public int numberAdded() {
+		return 1;
+	}
 
-    @Override
-    public boolean equals(MsPacManSensorBlock o) {
-        if (o != null && o.getClass() == this.getClass()) {
-            SpecificGhostEdibleTimeBlock other = (SpecificGhostEdibleTimeBlock) o;
-            return this.ghostIndex == other.ghostIndex;
-        }
-        return false;
-    }
+	@Override
+	public boolean equals(MsPacManSensorBlock o) {
+		if (o != null && o.getClass() == this.getClass()) {
+			SpecificGhostEdibleTimeBlock other = (SpecificGhostEdibleTimeBlock) o;
+			return this.ghostIndex == other.ghostIndex;
+		}
+		return false;
+	}
 
-    @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = 37 * hash + this.ghostIndex;
-        hash = 37 * hash + super.hashCode();
-        return hash;
-    }
+	@Override
+	public int hashCode() {
+		int hash = 7;
+		hash = 37 * hash + this.ghostIndex;
+		hash = 37 * hash + super.hashCode();
+		return hash;
+	}
 }

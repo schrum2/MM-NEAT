@@ -21,19 +21,21 @@ import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.nearestfarthest.NearestPow
  */
 public class GhostTaskSensors extends BlockLoadedInputOutputMediator {
 
-    public GhostTaskSensors() {
-        super();
-        boolean specificGhostEdibleThreatSplit = Parameters.parameters.booleanParameter("specificGhostEdibleThreatSplit");
-        for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
-            blocks.add(specificGhostEdibleThreatSplit ? new SplitSpecificGhostBlock(i) : new SpecificGhostBlock(i));
-        }
+	public GhostTaskSensors() {
+		super();
+		boolean specificGhostEdibleThreatSplit = Parameters.parameters
+				.booleanParameter("specificGhostEdibleThreatSplit");
+		for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
+			blocks.add(specificGhostEdibleThreatSplit ? new SplitSpecificGhostBlock(i) : new SpecificGhostBlock(i));
+		}
 
-        blocks.add(new EscapeNodeDistanceDifferenceBlock(escapeNodes, false, false, Parameters.parameters.integerParameter("escapeNodeDepth"), false, true, true));
-        blocks.add(new NearestPowerPillBlock());
-        blocks.add(new NearestPowerPillDistanceBlock());
-        if (CommonConstants.numActiveGhosts > 1) {
-            blocks.add(new NearestThreatGhostDistanceBlock());
-            blocks.add(new FarthestThreatGhostDistanceBlock());
-        }
-    }
+		blocks.add(new EscapeNodeDistanceDifferenceBlock(escapeNodes, false, false,
+				Parameters.parameters.integerParameter("escapeNodeDepth"), false, true, true));
+		blocks.add(new NearestPowerPillBlock());
+		blocks.add(new NearestPowerPillDistanceBlock());
+		if (CommonConstants.numActiveGhosts > 1) {
+			blocks.add(new NearestThreatGhostDistanceBlock());
+			blocks.add(new FarthestThreatGhostDistanceBlock());
+		}
+	}
 }

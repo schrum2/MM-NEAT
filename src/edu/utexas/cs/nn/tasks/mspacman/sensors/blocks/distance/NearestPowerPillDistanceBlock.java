@@ -12,13 +12,13 @@ import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
  */
 public class NearestPowerPillDistanceBlock extends NearestDistanceBlock {
 
-    @Override
-    public int[] getTargets(GameFacade gf) {
-        return gf.getActivePowerPillsIndices();
-    }
+	@Override
+	public int[] getTargets(GameFacade gf) {
+		return gf.getActivePowerPillsIndices();
+	}
 
-    @Override
-    public String getType() {
-        return "Power Pill";
-    }
+	@Override
+	public String getType() {
+		return "Power Pill";
+	}
 }

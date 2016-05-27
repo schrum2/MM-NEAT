@@ -12,13 +12,13 @@ import edu.utexas.cs.nn.parameters.Parameters;
  */
 public class GhostsPillsMap implements FitnessToModeMap {
 
-    private final boolean levelObjective;
+	private final boolean levelObjective;
 
-    public GhostsPillsMap() {
-        levelObjective = Parameters.parameters.booleanParameter("levelObjective");
-    }
+	public GhostsPillsMap() {
+		levelObjective = Parameters.parameters.booleanParameter("levelObjective");
+	}
 
-    public int[] associatedFitnessScores() {
-        return new int[]{levelObjective ? GHOST_AND_LEVEL_COMBO : GHOST_SCORE, PILL_SCORE};
-    }
+	public int[] associatedFitnessScores() {
+		return new int[] { levelObjective ? GHOST_AND_LEVEL_COMBO : GHOST_SCORE, PILL_SCORE };
+	}
 }

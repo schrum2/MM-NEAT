@@ -24,29 +24,29 @@ import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.specific.VariableDire
  */
 public class DumbCheckEachDirectionMediator extends VariableDirectionBlockLoadedInputOutputMediator {
 
-    public DumbCheckEachDirectionMediator() {
-        int irrelevantStartingDirection = -1;
+	public DumbCheckEachDirectionMediator() {
+		int irrelevantStartingDirection = -1;
 
-        blocks.add(new BiasBlock());
-        // Distances
-        blocks.add(new VariableDirectionPillDistanceBlock(irrelevantStartingDirection));
-        blocks.add(new VariableDirectionPowerPillDistanceBlock(irrelevantStartingDirection));
-        blocks.add(new VariableDirectionJunctionDistanceBlock(irrelevantStartingDirection));
-        // Specific Ghosts
-        for(int i = 0; i < CommonConstants.numActiveGhosts; i++) {
-            blocks.add(new VariableDirectionSpecificGhostDistanceBlock(irrelevantStartingDirection, i));
-            blocks.add(new VariableDirectionSpecificGhostIncomingBlock(i));
-            blocks.add(new SpecificGhostEdibleTimeBlock(i));
-            blocks.add(new SpecificGhostLairTimeBlock(i));
-            blocks.add(new SpecificGhostLairDistanceBlock(i));
-        }
-        // Look ahead
-        blocks.add(new VariableDirectionKStepPillCountBlock(irrelevantStartingDirection));
-        blocks.add(new VariableDirectionKStepPowerPillCountBlock(irrelevantStartingDirection));
-        blocks.add(new VariableDirectionKStepJunctionCountBlock(irrelevantStartingDirection));
-        // Misc
-        blocks.add(new VariableDirectionPillsBeforeJunctionBlock(irrelevantStartingDirection));
-        blocks.add(new PillsRemainingBlock(true, false));
-        blocks.add(new PowerPillsRemainingBlock(true, false));
-    }
+		blocks.add(new BiasBlock());
+		// Distances
+		blocks.add(new VariableDirectionPillDistanceBlock(irrelevantStartingDirection));
+		blocks.add(new VariableDirectionPowerPillDistanceBlock(irrelevantStartingDirection));
+		blocks.add(new VariableDirectionJunctionDistanceBlock(irrelevantStartingDirection));
+		// Specific Ghosts
+		for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
+			blocks.add(new VariableDirectionSpecificGhostDistanceBlock(irrelevantStartingDirection, i));
+			blocks.add(new VariableDirectionSpecificGhostIncomingBlock(i));
+			blocks.add(new SpecificGhostEdibleTimeBlock(i));
+			blocks.add(new SpecificGhostLairTimeBlock(i));
+			blocks.add(new SpecificGhostLairDistanceBlock(i));
+		}
+		// Look ahead
+		blocks.add(new VariableDirectionKStepPillCountBlock(irrelevantStartingDirection));
+		blocks.add(new VariableDirectionKStepPowerPillCountBlock(irrelevantStartingDirection));
+		blocks.add(new VariableDirectionKStepJunctionCountBlock(irrelevantStartingDirection));
+		// Misc
+		blocks.add(new VariableDirectionPillsBeforeJunctionBlock(irrelevantStartingDirection));
+		blocks.add(new PillsRemainingBlock(true, false));
+		blocks.add(new PowerPillsRemainingBlock(true, false));
+	}
 }

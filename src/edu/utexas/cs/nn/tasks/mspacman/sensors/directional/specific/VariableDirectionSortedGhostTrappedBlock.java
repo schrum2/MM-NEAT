@@ -18,40 +18,40 @@ import java.util.Collections;
  */
 public class VariableDirectionSortedGhostTrappedBlock extends VariableDirectionBlock {
 
-    private final int order;
-    private final boolean edibleClose;
-    private final boolean proximityOnly;
+	private final int order;
+	private final boolean edibleClose;
+	private final boolean proximityOnly;
 
-    public VariableDirectionSortedGhostTrappedBlock(int order) {
-        this(order, true, true);
-    }
+	public VariableDirectionSortedGhostTrappedBlock(int order) {
+		this(order, true, true);
+	}
 
-    public VariableDirectionSortedGhostTrappedBlock(int order, boolean edibleClose, boolean proximityOnly) {
-        super(-1);
-        this.order = order;
-        this.edibleClose = edibleClose;
-        this.proximityOnly = proximityOnly;
-    }
+	public VariableDirectionSortedGhostTrappedBlock(int order, boolean edibleClose, boolean proximityOnly) {
+		super(-1);
+		this.order = order;
+		this.edibleClose = edibleClose;
+		this.proximityOnly = proximityOnly;
+	}
 
-    @Override
-    public double wallValue() {
-        return 0;
-    }
+	@Override
+	public double wallValue() {
+		return 0;
+	}
 
-    @Override
-    public double getValue(GameFacade gf) {
-        ArrayList<Integer> ghosts = gf.getGhostIndices(edibleClose, proximityOnly);
-        if (order >= ghosts.size()) {
-            return 0; // Not incoming if in lair
-        }
-        Collections.sort(ghosts, CommonConstants.checkEachAbsoluteDistanceGhostSort
-                ? new GhostComparator(gf, edibleClose, proximityOnly)
-                : new DirectionalGhostComparator(gf, edibleClose, proximityOnly, dir));
-        return gf.isGhostTrapped(dir, ghosts.get(order)) ? 1 : 0;
-    }
+	@Override
+	public double getValue(GameFacade gf) {
+		ArrayList<Integer> ghosts = gf.getGhostIndices(edibleClose, proximityOnly);
+		if (order >= ghosts.size()) {
+			return 0; // Not incoming if in lair
+		}
+		Collections.sort(ghosts,
+				CommonConstants.checkEachAbsoluteDistanceGhostSort ? new GhostComparator(gf, edibleClose, proximityOnly)
+						: new DirectionalGhostComparator(gf, edibleClose, proximityOnly, dir));
+		return gf.isGhostTrapped(dir, ghosts.get(order)) ? 1 : 0;
+	}
 
-    @Override
-    public String getLabel() {
-        return order + " Closest Ghost Trapped";
-    }
+	@Override
+	public String getLabel() {
+		return order + " Closest Ghost Trapped";
+	}
 }

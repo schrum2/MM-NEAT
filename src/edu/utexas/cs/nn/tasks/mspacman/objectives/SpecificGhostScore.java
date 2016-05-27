@@ -13,13 +13,13 @@ import edu.utexas.cs.nn.networks.Network;
  */
 public class SpecificGhostScore<T extends Network> extends MsPacManObjective<T> {
 
-    private final int ghostIndex;
+	private final int ghostIndex;
 
-    public SpecificGhostScore(int ghostIndex) {
-        this.ghostIndex = ghostIndex;
-    }
+	public SpecificGhostScore(int ghostIndex) {
+		this.ghostIndex = ghostIndex;
+	}
 
-    public double fitness(Organism<T> individual) {
-        return g.getSpecificGhostEatenCount(ghostIndex);
-    }
+	public double fitness(Organism<T> individual) {
+		return g.getSpecificGhostEatenCount(ghostIndex);
+	}
 }

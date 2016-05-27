@@ -13,7 +13,7 @@ import edu.utexas.cs.nn.util.stats.Average;
  */
 public abstract class AverageDistanceBlock extends StatDistanceBlock {
 
-    public AverageDistanceBlock() {
-        super(new Average(), GameFacade.MAX_DISTANCE);
-    }
+	public AverageDistanceBlock() {
+		super(new Average(), GameFacade.MAX_DISTANCE);
+	}
 }

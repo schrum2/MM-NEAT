@@ -12,13 +12,13 @@ import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
  */
 public class NearestThreatGhostDistanceBlock extends NearestDistanceBlock {
 
-    @Override
-    public int[] getTargets(GameFacade gf) {
-        return gf.getThreatGhostLocations();
-    }
+	@Override
+	public int[] getTargets(GameFacade gf) {
+		return gf.getThreatGhostLocations();
+	}
 
-    @Override
-    public String getType() {
-        return "Threat Ghost";
-    }
+	@Override
+	public String getType() {
+		return "Threat Ghost";
+	}
 }

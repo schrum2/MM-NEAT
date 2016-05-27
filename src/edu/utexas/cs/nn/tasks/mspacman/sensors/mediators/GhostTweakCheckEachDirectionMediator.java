@@ -29,38 +29,46 @@ import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.distance.ghosts.incom
  */
 public class GhostTweakCheckEachDirectionMediator extends VariableDirectionBlockLoadedInputOutputMediator {
 
-    public GhostTweakCheckEachDirectionMediator() {
-        int direction = -1;
-        blocks.add(new BiasBlock());
-        // Distances
-        blocks.add(new VariableDirectionPowerPillDistanceBlock(direction));
-        blocks.add(new VariableDirectionEdibleGhostDistanceBlock(direction));
-        blocks.add(new VariableDirectionThreatGhostDistanceBlock(direction));
-        blocks.add(new VariableDirectionIncomingEdibleGhostDistanceBlock(direction));
-        blocks.add(new VariableDirectionIncomingThreatGhostDistanceBlock(direction));
-        blocks.add(new VariableDirectionJunctionDistanceBlock(direction));
-        // Count
-        blocks.add(new VariableDirectionKStepEdibleGhostCountBlock(direction, true));
-        blocks.add(new VariableDirectionKStepThreatGhostCountBlock(direction, true));
-        blocks.add(new VariableDirectionKStepJunctionCountBlock(direction));
-        // From Power Pill
-        blocks.add(new VariableDirectionMaxDistanceFromPowerPillToThreatGhostBlock(direction));
-        blocks.add(new VariableDirectionMinDistanceFromPowerPillToThreatGhostBlock(direction));
-        blocks.add(new VariableDirectionAverageDistanceFromPowerPillToThreatGhostBlock(direction));
-        
-        //blocks.add(new VariableDirectionCountJunctionOptionsBlock());
-        
-        // Obstructions
-        blocks.add(new VariableDirectionThreatGhostBlocksJunctionBlock());
-        blocks.add(new VariableDirectionPowerPillBlocksThreatGhostBlock());
-        blocks.add(new VariableDirectionPowerPillBlocksEdibleGhostBlock());
-        blocks.add(new VariableDirectionPowerPillBlocksJunctionBlock());
-        blocks.add(new CountLairGhostsBlock(true, false));
-        
-//        int randomGhostIndex = 3;
-//        blocks.add(new VariableDirectionSpecificEdibleGhostDistanceBlock(direction, randomGhostIndex));
-//        blocks.add(new VariableDirectionSpecificThreatGhostDistanceBlock(direction, randomGhostIndex));
-//        blocks.add(new VariableDirectionSpecificIncomingEdibleGhostDistanceBlock(direction, randomGhostIndex));
-//        blocks.add(new VariableDirectionSpecificIncomingThreatGhostDistanceBlock(direction, randomGhostIndex));
-    }
+	public GhostTweakCheckEachDirectionMediator() {
+		int direction = -1;
+		blocks.add(new BiasBlock());
+		// Distances
+		blocks.add(new VariableDirectionPowerPillDistanceBlock(direction));
+		blocks.add(new VariableDirectionEdibleGhostDistanceBlock(direction));
+		blocks.add(new VariableDirectionThreatGhostDistanceBlock(direction));
+		blocks.add(new VariableDirectionIncomingEdibleGhostDistanceBlock(direction));
+		blocks.add(new VariableDirectionIncomingThreatGhostDistanceBlock(direction));
+		blocks.add(new VariableDirectionJunctionDistanceBlock(direction));
+		// Count
+		blocks.add(new VariableDirectionKStepEdibleGhostCountBlock(direction, true));
+		blocks.add(new VariableDirectionKStepThreatGhostCountBlock(direction, true));
+		blocks.add(new VariableDirectionKStepJunctionCountBlock(direction));
+		// From Power Pill
+		blocks.add(new VariableDirectionMaxDistanceFromPowerPillToThreatGhostBlock(direction));
+		blocks.add(new VariableDirectionMinDistanceFromPowerPillToThreatGhostBlock(direction));
+		blocks.add(new VariableDirectionAverageDistanceFromPowerPillToThreatGhostBlock(direction));
+
+		// blocks.add(new VariableDirectionCountJunctionOptionsBlock());
+
+		// Obstructions
+		blocks.add(new VariableDirectionThreatGhostBlocksJunctionBlock());
+		blocks.add(new VariableDirectionPowerPillBlocksThreatGhostBlock());
+		blocks.add(new VariableDirectionPowerPillBlocksEdibleGhostBlock());
+		blocks.add(new VariableDirectionPowerPillBlocksJunctionBlock());
+		blocks.add(new CountLairGhostsBlock(true, false));
+
+		// int randomGhostIndex = 3;
+		// blocks.add(new
+		// VariableDirectionSpecificEdibleGhostDistanceBlock(direction,
+		// randomGhostIndex));
+		// blocks.add(new
+		// VariableDirectionSpecificThreatGhostDistanceBlock(direction,
+		// randomGhostIndex));
+		// blocks.add(new
+		// VariableDirectionSpecificIncomingEdibleGhostDistanceBlock(direction,
+		// randomGhostIndex));
+		// blocks.add(new
+		// VariableDirectionSpecificIncomingThreatGhostDistanceBlock(direction,
+		// randomGhostIndex));
+	}
 }

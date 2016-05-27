@@ -10,23 +10,23 @@ package edu.utexas.cs.nn.tasks;
  */
 public interface BlueprintTask {
 
-    public int getNumberBlueprintParentReferences();
+	public int getNumberBlueprintParentReferences();
 
-    public int getTotalBlueprintReferences();
+	public int getTotalBlueprintReferences();
 
-    public int getPreviousTotalBlueprintReferences();
+	public int getPreviousTotalBlueprintReferences();
 
-    /**
-     * parent population *
-     */
-    public int getPreviousNumberUnevaluatedReferences();
+	/**
+	 * parent population *
+	 */
+	public int getPreviousNumberUnevaluatedReferences();
 
-    /**
-     * child population *
-     */
-    public int getNumberUnevaluatedReferences();
+	/**
+	 * child population *
+	 */
+	public int getNumberUnevaluatedReferences();
 
-    public int getNumberFullParentBlueprints();
+	public int getNumberFullParentBlueprints();
 
-    public int getNumberFullChildBlueprints();
+	public int getNumberFullChildBlueprints();
 }

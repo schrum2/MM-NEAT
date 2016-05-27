@@ -13,11 +13,11 @@ import java.util.ArrayList;
  */
 public abstract class NicheDefinition<T> {
 
-    ArrayList<Score<T>> originalPopulation;
+	ArrayList<Score<T>> originalPopulation;
 
-    public void loadPopulation(ArrayList<Score<T>> originalPopulation) {
-        this.originalPopulation = originalPopulation;
-    }
+	public void loadPopulation(ArrayList<Score<T>> originalPopulation) {
+		this.originalPopulation = originalPopulation;
+	}
 
-    public abstract ArrayList<Score<T>> getNiche(Score<T> individual);
+	public abstract ArrayList<Score<T>> getNiche(Score<T> individual);
 }

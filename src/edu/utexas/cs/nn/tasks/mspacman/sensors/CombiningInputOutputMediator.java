@@ -9,15 +9,15 @@ import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.combining.PillEatingNetwor
  */
 public class CombiningInputOutputMediator extends BlockLoadedInputOutputMediator {
 
-    public CombiningInputOutputMediator() {
-        super();
-        try {
-            blocks.add(new GhostEatingNetworkBlock());
-            blocks.add(new PillEatingNetworkBlock());
-        } catch (NoSuchMethodException ex) {
-            System.out.println("Sub mediator classes not loading properly");
-            ex.printStackTrace();
-            System.exit(1);
-        }
-    }
+	public CombiningInputOutputMediator() {
+		super();
+		try {
+			blocks.add(new GhostEatingNetworkBlock());
+			blocks.add(new PillEatingNetworkBlock());
+		} catch (NoSuchMethodException ex) {
+			System.out.println("Sub mediator classes not loading properly");
+			ex.printStackTrace();
+			System.exit(1);
+		}
+	}
 }

@@ -29,49 +29,51 @@ import rlVizLib.visualization.VizComponentChangeListener;
 
 public class TetrisScoreComponent implements SelfUpdatingVizComponent, Observer {
 
-    private TetrisVisualizer tetVis = null;
-    int lastScore = 0;
+	private TetrisVisualizer tetVis = null;
+	int lastScore = 0;
 
-    public TetrisScoreComponent(TetrisVisualizer ev) {
-        this.tetVis = ev;
-        ev.getGlueState().addObserver(this);
-        lastScore = -1;
-    }
+	public TetrisScoreComponent(TetrisVisualizer ev) {
+		this.tetVis = ev;
+		ev.getGlueState().addObserver(this);
+		lastScore = -1;
+	}
 
-    public void render(Graphics2D g) {
-        tetVis.updateAgentState(false);
-        //This is some hacky stuff, someone better than me should clean it up
-        Font f = new Font("Verdana", 0, 8);
-        g.setFont(f);
-        //SET COLOR
-        g.setColor(Color.BLACK);
-        //DRAW STRING
-        AffineTransform saveAT = g.getTransform();
-        g.scale(.01, .01);
-        g.drawString("Lines: " + tetVis.getScore(), 0.0f, 10.0f);
-        g.drawString("E/S/T: " + tetVis.getEpisodeNumber() + "/" + tetVis.getTimeStep() + "/" + tetVis.getTotalSteps(), 0.0f, 20.0f);
-        g.drawString("CurrentPiece: " + tetVis.getCurrentPiece(), 0.0f, 30.0f);
-        g.setTransform(saveAT);
-    }
-    /**
-     * This is the object (a renderObject) that should be told when this
-     * component needs to be drawn again.
-     */
-    private VizComponentChangeListener theChangeListener;
+	public void render(Graphics2D g) {
+		tetVis.updateAgentState(false);
+		// This is some hacky stuff, someone better than me should clean it up
+		Font f = new Font("Verdana", 0, 8);
+		g.setFont(f);
+		// SET COLOR
+		g.setColor(Color.BLACK);
+		// DRAW STRING
+		AffineTransform saveAT = g.getTransform();
+		g.scale(.01, .01);
+		g.drawString("Lines: " + tetVis.getScore(), 0.0f, 10.0f);
+		g.drawString("E/S/T: " + tetVis.getEpisodeNumber() + "/" + tetVis.getTimeStep() + "/" + tetVis.getTotalSteps(),
+				0.0f, 20.0f);
+		g.drawString("CurrentPiece: " + tetVis.getCurrentPiece(), 0.0f, 30.0f);
+		g.setTransform(saveAT);
+	}
 
-    public void setVizComponentChangeListener(VizComponentChangeListener theChangeListener) {
-        this.theChangeListener = theChangeListener;
-    }
+	/**
+	 * This is the object (a renderObject) that should be told when this
+	 * component needs to be drawn again.
+	 */
+	private VizComponentChangeListener theChangeListener;
 
-    /**
-     * This will be called when TinyGlue steps.
-     *
-     * @param o
-     * @param arg
-     */
-    public void update(Observable o, Object arg) {
-        if (theChangeListener != null) {
-            theChangeListener.vizComponentChanged(this);
-        }
-    }
+	public void setVizComponentChangeListener(VizComponentChangeListener theChangeListener) {
+		this.theChangeListener = theChangeListener;
+	}
+
+	/**
+	 * This will be called when TinyGlue steps.
+	 *
+	 * @param o
+	 * @param arg
+	 */
+	public void update(Observable o, Object arg) {
+		if (theChangeListener != null) {
+			theChangeListener.vizComponentChanged(this);
+		}
+	}
 }

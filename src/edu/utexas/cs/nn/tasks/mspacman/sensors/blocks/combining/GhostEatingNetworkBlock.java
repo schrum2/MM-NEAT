@@ -24,62 +24,68 @@ import edu.utexas.cs.nn.util.ClassCreation;
  */
 public class GhostEatingNetworkBlock<T extends Network> extends SubNetworkBlock<T> {
 
-    public static final int GHOST_POOL = 0;
+	public static final int GHOST_POOL = 0;
 
-    public GhostEatingNetworkBlock() throws NoSuchMethodException {
-        this(Parameters.parameters.stringParameter("ghostEatingSubnetwork"), Parameters.parameters.booleanParameter("subsumptionIncludesInputs"));
-    }
+	public GhostEatingNetworkBlock() throws NoSuchMethodException {
+		this(Parameters.parameters.stringParameter("ghostEatingSubnetwork"),
+				Parameters.parameters.booleanParameter("subsumptionIncludesInputs"));
+	}
 
-    /*
-     * Gets subnetwork from saved xml file
-     */
-    public GhostEatingNetworkBlock(String xml, boolean includeInputs) throws NoSuchMethodException {
-        this(EvolutionaryHistory.getSubnetwork(xml), includeInputs);
-    }
+	/*
+	 * Gets subnetwork from saved xml file
+	 */
+	public GhostEatingNetworkBlock(String xml, boolean includeInputs) throws NoSuchMethodException {
+		this(EvolutionaryHistory.getSubnetwork(xml), includeInputs);
+	}
 
-    /**
-     * First network in appropriate pool can be temporarily allowed as a dummy
-     * value to be replaced later
-     *
-     * @param g genotype with network
-     * @param includeInputs whether or not the input block will include the
-     * inputs to the subnet
-     */
-    public GhostEatingNetworkBlock(Genotype<Network> g, boolean includeInputs) throws NoSuchMethodException {
-        this(g == null ? (Network) GenotypePool.getMember(GHOST_POOL, 0).getPhenotype() : g.getPhenotype(), includeInputs);
-    }
+	/**
+	 * First network in appropriate pool can be temporarily allowed as a dummy
+	 * value to be replaced later
+	 *
+	 * @param g
+	 *            genotype with network
+	 * @param includeInputs
+	 *            whether or not the input block will include the inputs to the
+	 *            subnet
+	 */
+	public GhostEatingNetworkBlock(Genotype<Network> g, boolean includeInputs) throws NoSuchMethodException {
+		this(g == null ? (Network) GenotypePool.getMember(GHOST_POOL, 0).getPhenotype() : g.getPhenotype(),
+				includeInputs);
+	}
 
-    public GhostEatingNetworkBlock(Network n, boolean includeInputs) throws NoSuchMethodException {
-        super(n, (MsPacManControllerInputOutputMediator) ClassCreation.createObject("pacManMediatorClass1"), "Ghost Eater", includeInputs);
-    }
+	public GhostEatingNetworkBlock(Network n, boolean includeInputs) throws NoSuchMethodException {
+		super(n, (MsPacManControllerInputOutputMediator) ClassCreation.createObject("pacManMediatorClass1"),
+				"Ghost Eater", includeInputs);
+	}
 
-    /**
-     * For unit testing
-     *
-     * @param args
-     */
-    public static void main(String[] args) throws NoSuchMethodException {
-        Parameters.initializeParameterCollections(new String[]{"showNetworks:true", "watch:true", "task:edu.utexas.cs.nn.tasks.mspacman.MsPacManTask"});
-        MMNEAT.loadClasses();
-        MsPacManTask task = new MsPacManTask(true);
+	/**
+	 * For unit testing
+	 *
+	 * @param args
+	 */
+	public static void main(String[] args) throws NoSuchMethodException {
+		Parameters.initializeParameterCollections(new String[] { "showNetworks:true", "watch:true",
+				"task:edu.utexas.cs.nn.tasks.mspacman.MsPacManTask" });
+		MMNEAT.loadClasses();
+		MsPacManTask task = new MsPacManTask(true);
 
-        MsPacManControllerInputOutputMediator ghostMediator = new GhostTaskMediator();
-        MMNEAT.pacmanInputOutputMediator = ghostMediator;
-        TWEANN ghostNet = new TWEANN(ghostMediator.numIn(), ghostMediator.numOut(), false, 0, 1, -1);
-        TWEANNGenotype ghostGenotype = new TWEANNGenotype(ghostNet);
-        for (int i = 0; i < 25; i++) {
-            ghostGenotype.mutate();
-        }
-        System.out.println("Ghost Only ---------------------------------------");
-        task.evaluate(ghostGenotype);
+		MsPacManControllerInputOutputMediator ghostMediator = new GhostTaskMediator();
+		MMNEAT.pacmanInputOutputMediator = ghostMediator;
+		TWEANN ghostNet = new TWEANN(ghostMediator.numIn(), ghostMediator.numOut(), false, 0, 1, -1);
+		TWEANNGenotype ghostGenotype = new TWEANNGenotype(ghostNet);
+		for (int i = 0; i < 25; i++) {
+			ghostGenotype.mutate();
+		}
+		System.out.println("Ghost Only ---------------------------------------");
+		task.evaluate(ghostGenotype);
 
-        BlockLoadedInputOutputMediator subsumptionMediator = new BlockLoadedInputOutputMediator();
-        subsumptionMediator.blocks.add(new GhostEatingNetworkBlock(ghostGenotype.getPhenotype(), false));
-        MMNEAT.pacmanInputOutputMediator = subsumptionMediator;
-        TWEANN subsumptionNet = new TWEANN(subsumptionMediator.numIn(), subsumptionMediator.numOut(), false, 0, 1, -1);
-        TWEANNGenotype subsumptionGenotype = new TWEANNGenotype(subsumptionNet);
+		BlockLoadedInputOutputMediator subsumptionMediator = new BlockLoadedInputOutputMediator();
+		subsumptionMediator.blocks.add(new GhostEatingNetworkBlock(ghostGenotype.getPhenotype(), false));
+		MMNEAT.pacmanInputOutputMediator = subsumptionMediator;
+		TWEANN subsumptionNet = new TWEANN(subsumptionMediator.numIn(), subsumptionMediator.numOut(), false, 0, 1, -1);
+		TWEANNGenotype subsumptionGenotype = new TWEANNGenotype(subsumptionNet);
 
-        System.out.println("Subsumption --------------------------------------");
-        task.evaluate(subsumptionGenotype);
-    }
+		System.out.println("Subsumption --------------------------------------");
+		task.evaluate(subsumptionGenotype);
+	}
 }

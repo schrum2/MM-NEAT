@@ -13,9 +13,9 @@ import edu.utexas.cs.nn.parameters.Parameters;
  */
 public class SpecificGhostsMap implements FitnessToModeMap {
 
-    public int[] associatedFitnessScores() {
-        int[] result = new int[CommonConstants.numActiveGhosts];
-        System.arraycopy(SPECIFIC_GHOSTS, 0, result, 0, CommonConstants.numActiveGhosts);
-        return result;
-    }
+	public int[] associatedFitnessScores() {
+		int[] result = new int[CommonConstants.numActiveGhosts];
+		System.arraycopy(SPECIFIC_GHOSTS, 0, result, 0, CommonConstants.numActiveGhosts);
+		return result;
+	}
 }

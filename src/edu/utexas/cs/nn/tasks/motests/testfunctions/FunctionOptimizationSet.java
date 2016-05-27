@@ -8,13 +8,13 @@ import edu.utexas.cs.nn.evolution.fitness.FitnessFunction;
  */
 public interface FunctionOptimizationSet {
 
-    public double[] getLowerBounds();
+	public double[] getLowerBounds();
 
-    public double[] getUpperBounds();
+	public double[] getUpperBounds();
 
-    public FitnessFunction[] getFitnessFunctions();
+	public FitnessFunction[] getFitnessFunctions();
 
-    public double[] frontDecisionValuesBoundsOfFirst();
+	public double[] frontDecisionValuesBoundsOfFirst();
 
-    public double[] frontDecisionValuesInTermsOfFirst(double x1);
+	public double[] frontDecisionValuesInTermsOfFirst(double x1);
 }

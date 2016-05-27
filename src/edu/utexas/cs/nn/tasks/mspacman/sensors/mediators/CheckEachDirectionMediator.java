@@ -20,23 +20,23 @@ import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.distance.ghosts.Varia
  */
 public class CheckEachDirectionMediator extends VariableDirectionBlockLoadedInputOutputMediator {
 
-    public CheckEachDirectionMediator() {
-        int irrelevantStartingDirection = -1;
-        blocks.add(new BiasBlock());
-        // Distances
-        blocks.add(new VariableDirectionPillDistanceBlock(irrelevantStartingDirection));
-        blocks.add(new VariableDirectionPowerPillDistanceBlock(irrelevantStartingDirection));
-        blocks.add(new VariableDirectionEdibleGhostDistanceBlock(irrelevantStartingDirection));
-        blocks.add(new VariableDirectionThreatGhostDistanceBlock(irrelevantStartingDirection));
-        blocks.add(new VariableDirectionJunctionDistanceBlock(irrelevantStartingDirection));
-        // Obstructions
-        blocks.add(new VariableDirectionThreatGhostBlocksJunctionBlock());
-        blocks.add(new VariableDirectionPowerPillBlocksThreatGhostBlock());
-        // Look ahead
-        blocks.add(new VariableDirectionKStepPillCountBlock(irrelevantStartingDirection));
-        blocks.add(new VariableDirectionKStepPowerPillCountBlock(irrelevantStartingDirection));
-        blocks.add(new VariableDirectionKStepEdibleGhostCountBlock(irrelevantStartingDirection, true));
-        blocks.add(new VariableDirectionKStepThreatGhostCountBlock(irrelevantStartingDirection));
-        blocks.add(new VariableDirectionKStepJunctionCountBlock(irrelevantStartingDirection));
-    }
+	public CheckEachDirectionMediator() {
+		int irrelevantStartingDirection = -1;
+		blocks.add(new BiasBlock());
+		// Distances
+		blocks.add(new VariableDirectionPillDistanceBlock(irrelevantStartingDirection));
+		blocks.add(new VariableDirectionPowerPillDistanceBlock(irrelevantStartingDirection));
+		blocks.add(new VariableDirectionEdibleGhostDistanceBlock(irrelevantStartingDirection));
+		blocks.add(new VariableDirectionThreatGhostDistanceBlock(irrelevantStartingDirection));
+		blocks.add(new VariableDirectionJunctionDistanceBlock(irrelevantStartingDirection));
+		// Obstructions
+		blocks.add(new VariableDirectionThreatGhostBlocksJunctionBlock());
+		blocks.add(new VariableDirectionPowerPillBlocksThreatGhostBlock());
+		// Look ahead
+		blocks.add(new VariableDirectionKStepPillCountBlock(irrelevantStartingDirection));
+		blocks.add(new VariableDirectionKStepPowerPillCountBlock(irrelevantStartingDirection));
+		blocks.add(new VariableDirectionKStepEdibleGhostCountBlock(irrelevantStartingDirection, true));
+		blocks.add(new VariableDirectionKStepThreatGhostCountBlock(irrelevantStartingDirection));
+		blocks.add(new VariableDirectionKStepJunctionCountBlock(irrelevantStartingDirection));
+	}
 }

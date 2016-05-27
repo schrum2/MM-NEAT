@@ -12,22 +12,22 @@ import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
  */
 public class DirectionalThreatGhostsStaticLookAheadBlock extends DirectionalStaticLookAheadBlock {
 
-    public DirectionalThreatGhostsStaticLookAheadBlock(){
-        super(false); // min threats along a route
-    }
-    
-    @Override
-    public String targetType() {
-        return "Threat Ghosts";
-    }
+	public DirectionalThreatGhostsStaticLookAheadBlock() {
+		super(false); // min threats along a route
+	}
 
-    @Override
-    public int[] getTargets(GameFacade gf) {
-        return gf.getThreatGhostLocations();
-    }
+	@Override
+	public String targetType() {
+		return "Threat Ghosts";
+	}
 
-    @Override
-    public double maxCount(GameFacade gf) {
-        return gf.getNumActiveGhosts();
-    }
+	@Override
+	public int[] getTargets(GameFacade gf) {
+		return gf.getThreatGhostLocations();
+	}
+
+	@Override
+	public double maxCount(GameFacade gf) {
+		return gf.getNumActiveGhosts();
+	}
 }

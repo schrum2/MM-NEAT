@@ -13,29 +13,29 @@ import java.util.Arrays;
  */
 public class VariableDirectionKStepEdibleGhostCountBlock extends VariableDirectionKStepCountBlock {
 
-    private final boolean[] includeGhosts;
+	private final boolean[] includeGhosts;
 
-    public VariableDirectionKStepEdibleGhostCountBlock(int dir, boolean max) {
-        this(dir, new boolean[]{true, true, true, true}, max);
-    }
+	public VariableDirectionKStepEdibleGhostCountBlock(int dir, boolean max) {
+		this(dir, new boolean[] { true, true, true, true }, max);
+	}
 
-    public VariableDirectionKStepEdibleGhostCountBlock(int dir, boolean[] include, boolean max) {
-        super(dir, max);
-        this.includeGhosts = include;
-    }
+	public VariableDirectionKStepEdibleGhostCountBlock(int dir, boolean[] include, boolean max) {
+		super(dir, max);
+		this.includeGhosts = include;
+	}
 
-    @Override
-    public int[] getCountTargets(GameFacade gf) {
-        return gf.getEdibleGhostLocations(includeGhosts);
-    }
+	@Override
+	public int[] getCountTargets(GameFacade gf) {
+		return gf.getEdibleGhostLocations(includeGhosts);
+	}
 
-    @Override
-    public String getType() {
-        return "Edible Ghosts " + Arrays.toString(includeGhosts);
-    }
+	@Override
+	public String getType() {
+		return "Edible Ghosts " + Arrays.toString(includeGhosts);
+	}
 
-    @Override
-    public int maxCount(GameFacade gf) {
-        return gf.getNumActiveGhosts();
-    }
+	@Override
+	public int maxCount(GameFacade gf) {
+		return gf.getNumActiveGhosts();
+	}
 }

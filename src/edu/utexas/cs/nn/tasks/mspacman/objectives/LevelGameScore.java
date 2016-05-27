@@ -13,13 +13,13 @@ import edu.utexas.cs.nn.networks.Network;
  */
 public class LevelGameScore<T extends Network> extends MsPacManObjective<T> {
 
-    private final int level;
+	private final int level;
 
-    public LevelGameScore(int level) {
-        this.level = level;
-    }
+	public LevelGameScore(int level) {
+		this.level = level;
+	}
 
-    public double fitness(Organism<T> individual) {
-        return g.getScore(level);
-    }
+	public double fitness(Organism<T> individual) {
+		return g.getScore(level);
+	}
 }

@@ -7,29 +7,29 @@ import edu.utexas.cs.nn.networks.Network;
 /**
  * 
  * @author rollinsa
- * 	
- * Find the score of the predator based on how many prey died
+ * 
+ *         Find the score of the predator based on how many prey died
  */
-public class PredatorCatchObjective <T extends Network> extends GridTorusObjective<T>{
-	
+public class PredatorCatchObjective<T extends Network> extends GridTorusObjective<T> {
+
 	@Override
 	/**
 	 * Find the score of the predator based on how many prey died
 	 */
 	public double fitness(Organism<T> individual) {
-		
+
 		TorusAgent[] prey = game.getPrey();
 		double numCaught = 0;
-		
-		//get number of caught prey
-		for(TorusAgent p : prey){
-			if(p == null){
+
+		// get number of caught prey
+		for (TorusAgent p : prey) {
+			if (p == null) {
 				numCaught++;
 			}
 		}
-		
-		//return a score based on percentage of caught prey
-		return numCaught;	
+
+		// return a score based on percentage of caught prey
+		return numCaught;
 	}
 
 }

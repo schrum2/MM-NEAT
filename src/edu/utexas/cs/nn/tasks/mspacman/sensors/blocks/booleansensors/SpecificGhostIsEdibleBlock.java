@@ -13,40 +13,40 @@ import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.MsPacManSensorBlock;
  */
 public class SpecificGhostIsEdibleBlock extends MsPacManSensorBlock {
 
-    private final int ghostIndex;
+	private final int ghostIndex;
 
-    public SpecificGhostIsEdibleBlock(int ghostIndex) {
-        this.ghostIndex = ghostIndex;
-    }
+	public SpecificGhostIsEdibleBlock(int ghostIndex) {
+		this.ghostIndex = ghostIndex;
+	}
 
-    public int incorporateSensors(double[] inputs, int in, GameFacade gf, int lastDirection) {
-        inputs[in++] = gf.isGhostEdible(ghostIndex) ? 1 : 0;
-        return in;
-    }
+	public int incorporateSensors(double[] inputs, int in, GameFacade gf, int lastDirection) {
+		inputs[in++] = gf.isGhostEdible(ghostIndex) ? 1 : 0;
+		return in;
+	}
 
-    public int incorporateLabels(String[] labels, int in) {
-        labels[in++] = "Ghost " + ghostIndex + " Is Edible";
-        return in;
-    }
+	public int incorporateLabels(String[] labels, int in) {
+		labels[in++] = "Ghost " + ghostIndex + " Is Edible";
+		return in;
+	}
 
-    public int numberAdded() {
-        return 1;
-    }
+	public int numberAdded() {
+		return 1;
+	}
 
-    @Override
-    public boolean equals(MsPacManSensorBlock o) {
-        if (o != null && o.getClass() == this.getClass()) {
-            SpecificGhostIsEdibleBlock other = (SpecificGhostIsEdibleBlock) o;
-            return this.ghostIndex == other.ghostIndex;
-        }
-        return false;
-    }
+	@Override
+	public boolean equals(MsPacManSensorBlock o) {
+		if (o != null && o.getClass() == this.getClass()) {
+			SpecificGhostIsEdibleBlock other = (SpecificGhostIsEdibleBlock) o;
+			return this.ghostIndex == other.ghostIndex;
+		}
+		return false;
+	}
 
-    @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = 37 * hash + this.ghostIndex;
-        hash = 37 * hash + super.hashCode();
-        return hash;
-    }
+	@Override
+	public int hashCode() {
+		int hash = 7;
+		hash = 37 * hash + this.ghostIndex;
+		hash = 37 * hash + super.hashCode();
+		return hash;
+	}
 }

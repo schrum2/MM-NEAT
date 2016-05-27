@@ -14,18 +14,18 @@ import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
  */
 public class GhostVariableDirectionMsPacManDistanceBlock extends GhostVariableDirectionDistanceBlock {
 
-    public GhostVariableDirectionMsPacManDistanceBlock(){
-        super(0);
-    }
-    
-    @Override
-    public String getType() {
-        return "Ms. Pac-Man";
-    }
+	public GhostVariableDirectionMsPacManDistanceBlock() {
+		super(0);
+	}
 
-    @Override
-    public int[] getTargets(GameFacade gf, int ghostIndex) {
-        return new int[]{gf.getPacmanCurrentNodeIndex()};
-    }
+	@Override
+	public String getType() {
+		return "Ms. Pac-Man";
+	}
+
+	@Override
+	public int[] getTargets(GameFacade gf, int ghostIndex) {
+		return new int[] { gf.getPacmanCurrentNodeIndex() };
+	}
 
 }

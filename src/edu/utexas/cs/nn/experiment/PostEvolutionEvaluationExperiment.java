@@ -13,40 +13,43 @@ import java.io.File;
  */
 public class PostEvolutionEvaluationExperiment<T> extends SinglePopulationGenerationalEAExperiment<T> {
 
-    String exactLoadDir;
-    String loadDirectory;
+	String exactLoadDir;
+	String loadDirectory;
 
-    @Override
-    public void init() {
-        int lastSavedGen = Parameters.parameters.integerParameter("lastSavedGeneration");
-        this.ea = new ReplayEA<T>((SinglePopulationTask<T>) MMNEAT.task, lastSavedGen);
-        saveDirectory = FileUtilities.getSaveDirectory();
-        loadDirectory = Parameters.parameters.stringParameter("base") + "/" + Parameters.parameters.stringParameter("loadFrom") + Parameters.parameters.integerParameter("runNumber");
-        if (lastSavedGen == 0) {
-            exactLoadDir = loadDirectory + "/initial";
-        } else {
-            exactLoadDir = loadDirectory + "/gen" + lastSavedGen;
-        }
-    }
+	@Override
+	public void init() {
+		int lastSavedGen = Parameters.parameters.integerParameter("lastSavedGeneration");
+		this.ea = new ReplayEA<T>((SinglePopulationTask<T>) MMNEAT.task, lastSavedGen);
+		saveDirectory = FileUtilities.getSaveDirectory();
+		loadDirectory = Parameters.parameters.stringParameter("base") + "/"
+				+ Parameters.parameters.stringParameter("loadFrom")
+				+ Parameters.parameters.integerParameter("runNumber");
+		if (lastSavedGen == 0) {
+			exactLoadDir = loadDirectory + "/initial";
+		} else {
+			exactLoadDir = loadDirectory + "/gen" + lastSavedGen;
+		}
+	}
 
-    @Override
-    public void run() {
-        while (!shouldStop()) {
-            this.load(exactLoadDir);
-            // Just evaluate/log without worrying about what is returned. Next gen will be loaded from file
-            ea.getNextGeneration(population);
-            int gen = ea.currentGeneration();
-            Parameters.parameters.setInteger("lastSavedGeneration", gen);
-            Parameters.parameters.saveParameters();
-            // Now load next generation
-            exactLoadDir = loadDirectory + "/gen" + gen;
-        }
-        ea.close(population);
-        System.out.println("Finished evolving");
-    }
+	@Override
+	public void run() {
+		while (!shouldStop()) {
+			this.load(exactLoadDir);
+			// Just evaluate/log without worrying about what is returned. Next
+			// gen will be loaded from file
+			ea.getNextGeneration(population);
+			int gen = ea.currentGeneration();
+			Parameters.parameters.setInteger("lastSavedGeneration", gen);
+			Parameters.parameters.saveParameters();
+			// Now load next generation
+			exactLoadDir = loadDirectory + "/gen" + gen;
+		}
+		ea.close(population);
+		System.out.println("Finished evolving");
+	}
 
-    public boolean shouldStop() {
-        System.out.println(exactLoadDir + " exists?");
-        return !(new File(exactLoadDir).exists());
-    }
+	public boolean shouldStop() {
+		System.out.println(exactLoadDir + " exists?");
+		return !(new File(exactLoadDir).exists());
+	}
 }

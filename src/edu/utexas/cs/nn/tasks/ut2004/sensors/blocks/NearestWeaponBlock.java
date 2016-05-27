@@ -16,13 +16,14 @@ import java.util.List;
  */
 public class NearestWeaponBlock extends NearestItemBlock {
 
-    @Override
-    public String itemLabel() {
-        return "Weapon";
-    }
+	@Override
+	public String itemLabel() {
+		return "Weapon";
+	}
 
-    @Override
-    protected List<Item> possibleItems(UT2004BotModuleController bot) {
-        return MyCollections.getFiltered(bot.getItems().getSpawnedItems(ItemType.Category.WEAPON).values(), recentlyVisitedItems);
-    }
+	@Override
+	protected List<Item> possibleItems(UT2004BotModuleController bot) {
+		return MyCollections.getFiltered(bot.getItems().getSpawnedItems(ItemType.Category.WEAPON).values(),
+				recentlyVisitedItems);
+	}
 }

@@ -20,41 +20,41 @@ import edu.utexas.cs.nn.util.stats.Statistic;
  */
 public class VariableDirectionOtherDirectionsStatisticBlock extends VariableDirectionBlock {
 
-    private final VariableDirectionBlock sensor;
-    private final Statistic stat;
+	private final VariableDirectionBlock sensor;
+	private final Statistic stat;
 
-    public VariableDirectionOtherDirectionsStatisticBlock(VariableDirectionBlock sensor, Statistic stat) {
-        this(sensor, stat, -1);
-    }
+	public VariableDirectionOtherDirectionsStatisticBlock(VariableDirectionBlock sensor, Statistic stat) {
+		this(sensor, stat, -1);
+	}
 
-    public VariableDirectionOtherDirectionsStatisticBlock(VariableDirectionBlock sensor, Statistic stat, int dir) {
-        super(dir);
-        this.sensor = sensor;
-        this.stat = stat;
-    }
+	public VariableDirectionOtherDirectionsStatisticBlock(VariableDirectionBlock sensor, Statistic stat, int dir) {
+		super(dir);
+		this.sensor = sensor;
+		this.stat = stat;
+	}
 
-    @Override
-    public double wallValue() {
-        return sensor.wallValue();
-    }
+	@Override
+	public double wallValue() {
+		return sensor.wallValue();
+	}
 
-    @Override
-    public double getValue(GameFacade gf) {
-        int[] neighbors = gf.neighbors(gf.getPacmanCurrentNodeIndex());
-        int wallCount = ArrayUtil.countOccurrences(-1, neighbors);
-        double[] xs = new double[(neighbors.length - wallCount) - 1];
-        int xIndex = 0;
-        for (int i = 0; i < neighbors.length; i++) {
-            if (neighbors[i] != -1 && i != dir) {
-                sensor.setDirection(i);
-                xs[xIndex++] = sensor.getValue(gf);
-            }
-        }
-        return stat.stat(xs);
-    }
+	@Override
+	public double getValue(GameFacade gf) {
+		int[] neighbors = gf.neighbors(gf.getPacmanCurrentNodeIndex());
+		int wallCount = ArrayUtil.countOccurrences(-1, neighbors);
+		double[] xs = new double[(neighbors.length - wallCount) - 1];
+		int xIndex = 0;
+		for (int i = 0; i < neighbors.length; i++) {
+			if (neighbors[i] != -1 && i != dir) {
+				sensor.setDirection(i);
+				xs[xIndex++] = sensor.getValue(gf);
+			}
+		}
+		return stat.stat(xs);
+	}
 
-    @Override
-    public String getLabel() {
-        return stat.getClass().getSimpleName() + " " + sensor.getLabel() + " In Other Dirs";
-    }
+	@Override
+	public String getLabel() {
+		return stat.getClass().getSimpleName() + " " + sensor.getLabel() + " In Other Dirs";
+	}
 }

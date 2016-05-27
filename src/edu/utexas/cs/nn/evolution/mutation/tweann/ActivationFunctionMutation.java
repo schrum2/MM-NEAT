@@ -17,15 +17,15 @@ import edu.utexas.cs.nn.util.random.RandomNumbers;
  */
 public class ActivationFunctionMutation extends TWEANNMutation {
 
-	
 	/**
 	 * Constructor
 	 */
 	public ActivationFunctionMutation() {
-            super("netChangeActivationRate");//command line parameter that controls rate of mutation
-            //using activation functions
-        }
-      
+		super("netChangeActivationRate");// command line parameter that controls
+											// rate of mutation
+		// using activation functions
+	}
+
 	/**
 	 * Mutates TWEANNGenotype using activation functions
 	 */

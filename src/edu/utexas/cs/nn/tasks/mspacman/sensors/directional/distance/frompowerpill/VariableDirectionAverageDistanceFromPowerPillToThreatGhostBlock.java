@@ -10,9 +10,10 @@ import edu.utexas.cs.nn.util.stats.Average;
  *
  * @author Jacob Schrum
  */
-public class VariableDirectionAverageDistanceFromPowerPillToThreatGhostBlock extends VariableDirectionDistanceFromPowerPillToThreatGhostBlock {
-    
-    public VariableDirectionAverageDistanceFromPowerPillToThreatGhostBlock(int dir) {
-        super(dir, new Average());
-    }
+public class VariableDirectionAverageDistanceFromPowerPillToThreatGhostBlock
+		extends VariableDirectionDistanceFromPowerPillToThreatGhostBlock {
+
+	public VariableDirectionAverageDistanceFromPowerPillToThreatGhostBlock(int dir) {
+		super(dir, new Average());
+	}
 }

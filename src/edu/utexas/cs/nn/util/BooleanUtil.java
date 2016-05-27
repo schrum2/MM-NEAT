@@ -10,26 +10,27 @@ package edu.utexas.cs.nn.util;
  */
 public class BooleanUtil {
 
-    /**
-     * Return true of all members of array are true
-     * @param bs
-     * @return 
-     */
-    public static boolean any(boolean[] bs) {
-        for (int i = 0; i < bs.length; i++) {
-            if (bs[i]) {
-                return true;
-            }
-        }
-        return false;
-    }
+	/**
+	 * Return true of all members of array are true
+	 * 
+	 * @param bs
+	 * @return
+	 */
+	public static boolean any(boolean[] bs) {
+		for (int i = 0; i < bs.length; i++) {
+			if (bs[i]) {
+				return true;
+			}
+		}
+		return false;
+	}
 
-    public static boolean all(boolean[] bs) {
-        for (int i = 0; i < bs.length; i++) {
-            if (!bs[i]) {
-                return false;
-            }
-        }
-        return true;
-    }
+	public static boolean all(boolean[] bs) {
+		for (int i = 0; i < bs.length; i++) {
+			if (!bs[i]) {
+				return false;
+			}
+		}
+		return true;
+	}
 }

@@ -9,14 +9,14 @@ import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
  */
 public class FavorXModulesFitness extends AntiMaxModuleUsageFitness {
 
-    private final int preferredNumModes;
+	private final int preferredNumModes;
 
-    public FavorXModulesFitness(int target) {
-        this.preferredNumModes = target;
-    }
+	public FavorXModulesFitness(int target) {
+		this.preferredNumModes = target;
+	}
 
-    @Override
-    public double getScore(TWEANNGenotype g) {
-        return -Math.abs(g.maxModuleUsage() - (1.0 / preferredNumModes));
-    }
+	@Override
+	public double getScore(TWEANNGenotype g) {
+		return -Math.abs(g.maxModuleUsage() - (1.0 / preferredNumModes));
+	}
 }

@@ -11,9 +11,9 @@ import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.time.TimeSinceLastGhostRev
  */
 public class MazeTimeSensors extends BlockLoadedInputOutputMediator {
 
-    public MazeTimeSensors() {
-        super();
-        blocks.add(new TimeLeftBlock());
-        blocks.add(new TimeSinceLastGhostReversalBlock());
-    }
+	public MazeTimeSensors() {
+		super();
+		blocks.add(new TimeLeftBlock());
+		blocks.add(new TimeSinceLastGhostReversalBlock());
+	}
 }

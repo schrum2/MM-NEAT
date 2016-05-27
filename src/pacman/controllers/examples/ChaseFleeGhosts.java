@@ -12,61 +12,65 @@ import pacman.game.Game;
  */
 public class ChaseFleeGhosts extends NewGhostController {
 
-    @Override
-    public void reset() {
-        super.reset();
-        myMoves = new EnumMap<GHOST, MOVE>(GHOST.class);
-        moves = MOVE.values();
-    }
-    EnumMap<GHOST, MOVE> myMoves = new EnumMap<GHOST, MOVE>(GHOST.class);
-    MOVE[] moves = MOVE.values();
+	@Override
+	public void reset() {
+		super.reset();
+		myMoves = new EnumMap<GHOST, MOVE>(GHOST.class);
+		moves = MOVE.values();
+	}
 
-    /*
-     * (non-Javadoc) @see
-     * pacman.controllers.Controller#getMove(pacman.game.Game, long)
-     */
-    public EnumMap<GHOST, MOVE> getMove(Game game, long timeDue) {
-        myMoves.clear();
+	EnumMap<GHOST, MOVE> myMoves = new EnumMap<GHOST, MOVE>(GHOST.class);
+	MOVE[] moves = MOVE.values();
 
-        int targetNode = game.getPacmanCurrentNodeIndex();
+	/*
+	 * (non-Javadoc) @see
+	 * pacman.controllers.Controller#getMove(pacman.game.Game, long)
+	 */
+	public EnumMap<GHOST, MOVE> getMove(Game game, long timeDue) {
+		myMoves.clear();
 
-        if (game.doesGhostRequireAction(GHOST.BLINKY)) {
-            if (game.isGhostEdible(GHOST.BLINKY)) {
-                flee(myMoves, GHOST.BLINKY, game);
-            } else {
-                myMoves.put(GHOST.BLINKY,
-                        game.getApproximateNextMoveTowardsTarget(game.getGhostCurrentNodeIndex(GHOST.BLINKY), targetNode, game.getGhostLastMoveMade(GHOST.BLINKY), DM.PATH));
-            }
-        }
+		int targetNode = game.getPacmanCurrentNodeIndex();
 
-        if (game.doesGhostRequireAction(GHOST.INKY)) {
-            if (game.isGhostEdible(GHOST.INKY)) {
-                flee(myMoves, GHOST.INKY, game);
-            } else {
-                myMoves.put(GHOST.INKY,
-                        game.getApproximateNextMoveTowardsTarget(game.getGhostCurrentNodeIndex(GHOST.INKY), targetNode, game.getGhostLastMoveMade(GHOST.INKY), DM.MANHATTAN));
-            }
-        }
+		if (game.doesGhostRequireAction(GHOST.BLINKY)) {
+			if (game.isGhostEdible(GHOST.BLINKY)) {
+				flee(myMoves, GHOST.BLINKY, game);
+			} else {
+				myMoves.put(GHOST.BLINKY,
+						game.getApproximateNextMoveTowardsTarget(game.getGhostCurrentNodeIndex(GHOST.BLINKY),
+								targetNode, game.getGhostLastMoveMade(GHOST.BLINKY), DM.PATH));
+			}
+		}
 
-        if (game.doesGhostRequireAction(GHOST.PINKY)) {
-            if (game.isGhostEdible(GHOST.PINKY)) {
-                flee(myMoves, GHOST.PINKY, game);
-            } else {
-                myMoves.put(GHOST.PINKY,
-                        game.getApproximateNextMoveTowardsTarget(game.getGhostCurrentNodeIndex(GHOST.PINKY), targetNode, game.getGhostLastMoveMade(GHOST.PINKY), DM.EUCLID));
-            }
-        }
+		if (game.doesGhostRequireAction(GHOST.INKY)) {
+			if (game.isGhostEdible(GHOST.INKY)) {
+				flee(myMoves, GHOST.INKY, game);
+			} else {
+				myMoves.put(GHOST.INKY,
+						game.getApproximateNextMoveTowardsTarget(game.getGhostCurrentNodeIndex(GHOST.INKY), targetNode,
+								game.getGhostLastMoveMade(GHOST.INKY), DM.MANHATTAN));
+			}
+		}
 
-        if (game.doesGhostRequireAction(GHOST.SUE)) {
-            myMoves.put(GHOST.SUE, moves[game.rnd.nextInt(moves.length)]);
-        }
+		if (game.doesGhostRequireAction(GHOST.PINKY)) {
+			if (game.isGhostEdible(GHOST.PINKY)) {
+				flee(myMoves, GHOST.PINKY, game);
+			} else {
+				myMoves.put(GHOST.PINKY,
+						game.getApproximateNextMoveTowardsTarget(game.getGhostCurrentNodeIndex(GHOST.PINKY), targetNode,
+								game.getGhostLastMoveMade(GHOST.PINKY), DM.EUCLID));
+			}
+		}
 
-        return myMoves;
-    }
+		if (game.doesGhostRequireAction(GHOST.SUE)) {
+			myMoves.put(GHOST.SUE, moves[game.rnd.nextInt(moves.length)]);
+		}
 
-    private void flee(EnumMap<GHOST, MOVE> myMoves, GHOST ghost, Game game) {
-        myMoves.put(ghost, game.getApproximateNextMoveAwayFromTarget(game.getGhostCurrentNodeIndex(ghost),
-                game.getPacmanCurrentNodeIndex(), game.getGhostLastMoveMade(ghost), DM.PATH));
+		return myMoves;
+	}
 
-    }
+	private void flee(EnumMap<GHOST, MOVE> myMoves, GHOST ghost, Game game) {
+		myMoves.put(ghost, game.getApproximateNextMoveAwayFromTarget(game.getGhostCurrentNodeIndex(ghost),
+				game.getPacmanCurrentNodeIndex(), game.getGhostLastMoveMade(ghost), DM.PATH));
+
+	}
 }

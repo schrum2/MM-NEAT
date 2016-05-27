@@ -12,13 +12,13 @@ import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
  */
 public class ApproachingPowerPillBlock extends ApproachingLocationBlock {
 
-    @Override
-    public int[] getTargets(GameFacade gf) {
-        return gf.getActivePowerPillsIndices();
-    }
+	@Override
+	public int[] getTargets(GameFacade gf) {
+		return gf.getActivePowerPillsIndices();
+	}
 
-    @Override
-    public String typeOfTarget() {
-        return "Power Pill";
-    }
+	@Override
+	public String typeOfTarget() {
+		return "Power Pill";
+	}
 }

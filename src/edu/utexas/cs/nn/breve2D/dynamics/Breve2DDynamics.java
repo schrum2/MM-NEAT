@@ -9,87 +9,86 @@ import edu.utexas.cs.nn.breve2D.agent.Breve2DAction;
  */
 public abstract class Breve2DDynamics {
 
-    public int task = 0;
+	public int task = 0;
 
-    /**
-     * For multitask domains and interleaved tasks.
-     * Might be just one eval for multiple interleaved tasks.
-     */
-    public int numTasks() {
-        return 1;
-    }
-    
-    /**
-     * Two interleaved tasks are in one isolated task.
-     * Isolated tasks influences number of task evals
-     * per agent eval. 
-     */
-    public int numIsolatedTasks() {
-        return numTasks();
-    }
+	/**
+	 * For multitask domains and interleaved tasks. Might be just one eval for
+	 * multiple interleaved tasks.
+	 */
+	public int numTasks() {
+		return 1;
+	}
 
-    public void advanceTask() {
-        task++;
-        task %= numTasks();
-    }
-    
-    public boolean midGameTaskSwitch(int timeStep) {
-        return false;
-    }
+	/**
+	 * Two interleaved tasks are in one isolated task. Isolated tasks influences
+	 * number of task evals per agent eval.
+	 */
+	public int numIsolatedTasks() {
+		return numTasks();
+	}
 
-    public abstract void reset();
+	public void advanceTask() {
+		task++;
+		task %= numTasks();
+	}
 
-    public abstract int numInputSensors();
+	public boolean midGameTaskSwitch(int timeStep) {
+		return false;
+	}
 
-    /*
-     * May change in multitask domains
-     */
-    public boolean playerRespondsToMonster() {
-        return false;
-    }
+	public abstract void reset();
 
-    /*
-     * Should never change within a domain
-     */
-    public boolean sensePlayerResponseToMonster() {
-        return false;
-    }
+	public abstract int numInputSensors();
 
-    public Breve2DAction playerInitialResponseToMonster(Agent player, Agent monster, int time) {
-        return null;
-    }
+	/*
+	 * May change in multitask domains
+	 */
+	public boolean playerRespondsToMonster() {
+		return false;
+	}
 
-    public Breve2DAction playerContinuedResponseToMonster(Agent player, Agent monster, int time) {
-        return null;
-    }
+	/*
+	 * Should never change within a domain
+	 */
+	public boolean sensePlayerResponseToMonster() {
+		return false;
+	}
 
-    /*
-     * May change in multitask domains
-     */
-    public boolean monsterRespondsToPlayer() {
-        return false;
-    }
+	public Breve2DAction playerInitialResponseToMonster(Agent player, Agent monster, int time) {
+		return null;
+	}
 
-    /*
-     * Should never change within a domain
-     */
-    public boolean senseMonsterResponseToPlayer() {
-        return false;
-    }
+	public Breve2DAction playerContinuedResponseToMonster(Agent player, Agent monster, int time) {
+		return null;
+	}
 
-    public Breve2DAction monsterInitialResponseToPlayer(Agent player, Agent monster, int time) {
-        return null;
-    }
+	/*
+	 * May change in multitask domains
+	 */
+	public boolean monsterRespondsToPlayer() {
+		return false;
+	}
 
-    public Breve2DAction monsterContinuedResponseToPlayer(Agent player, Agent monster, int time) {
-        return null;
-    }
+	/*
+	 * Should never change within a domain
+	 */
+	public boolean senseMonsterResponseToPlayer() {
+		return false;
+	}
 
-    public abstract double[] fitnessScores();
+	public Breve2DAction monsterInitialResponseToPlayer(Agent player, Agent monster, int time) {
+		return null;
+	}
 
-    public abstract int numFitnessFunctions();
+	public Breve2DAction monsterContinuedResponseToPlayer(Agent player, Agent monster, int time) {
+		return null;
+	}
 
-    public abstract void registerFitnessFunctions();
+	public abstract double[] fitnessScores();
 
-    public abstract double[] minScores();
+	public abstract int numFitnessFunctions();
+
+	public abstract void registerFitnessFunctions();
+
+	public abstract double[] minScores();
 }

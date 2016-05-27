@@ -7,7 +7,7 @@ import edu.utexas.cs.nn.networks.Network;
  * 
  * @author rollinsa
  *
- * maximize the total game time
+ *         maximize the total game time
  */
 public class PreyMaximizeGameTimeObjective<T extends Network> extends GridTorusObjective<T> {
 

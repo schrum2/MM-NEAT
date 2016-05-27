@@ -13,19 +13,19 @@ import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
  */
 public class EscapeNodeDirectionalProximity extends DirectionalProximityBlock {
 
-    private final EscapeNodes escapeNodes;
+	private final EscapeNodes escapeNodes;
 
-    public EscapeNodeDirectionalProximity(EscapeNodes escapeNodes) {
-        this.escapeNodes = escapeNodes;
-    }
+	public EscapeNodeDirectionalProximity(EscapeNodes escapeNodes) {
+		this.escapeNodes = escapeNodes;
+	}
 
-    @Override
-    public int[] getTargets(GameFacade gf) {
-        return escapeNodes.getNodes();
-    }
+	@Override
+	public int[] getTargets(GameFacade gf) {
+		return escapeNodes.getNodes();
+	}
 
-    @Override
-    public String targetType() {
-        return "Escape Node";
-    }
+	@Override
+	public String targetType() {
+		return "Escape Node";
+	}
 }

@@ -16,17 +16,18 @@ import edu.utexas.cs.nn.tasks.ut2004.weapons.UT2004WeaponManager;
  *
  * @author Jacob Schrum
  */
-public class BattleNetworkBehaviorModule<T extends Network> extends NetworkController<T> implements BehaviorModule {
+public class BattleNetworkBehaviorModule<T extends Network> extends NetworkController<T>implements BehaviorModule {
 
-    public BattleNetworkBehaviorModule(NetworkController<T> nc) {
-        this(nc.getGenotype(), nc.sensorModel, nc.outputModel, nc.weaponManager);
-    }
+	public BattleNetworkBehaviorModule(NetworkController<T> nc) {
+		this(nc.getGenotype(), nc.sensorModel, nc.outputModel, nc.weaponManager);
+	}
 
-    public BattleNetworkBehaviorModule(Genotype<T> g, UT2004SensorModel sensorModel, UT2004OutputInterpretation outputModel, UT2004WeaponManager weaponManager) {
-        super(g, sensorModel, outputModel, weaponManager);
-    }
+	public BattleNetworkBehaviorModule(Genotype<T> g, UT2004SensorModel sensorModel,
+			UT2004OutputInterpretation outputModel, UT2004WeaponManager weaponManager) {
+		super(g, sensorModel, outputModel, weaponManager);
+	}
 
-    public boolean trigger(UT2004BotModuleController bot) {
-        return bot.getPlayers().canSeeEnemies() && bot.getWeaponry().hasLoadedRangedWeapon();
-    }
+	public boolean trigger(UT2004BotModuleController bot) {
+		return bot.getPlayers().canSeeEnemies() && bot.getWeaponry().hasLoadedRangedWeapon();
+	}
 }

@@ -15,21 +15,21 @@ import java.util.ArrayList;
  */
 public class ThreatGhostDirectionalProximityBlock extends DirectionalProximityBlock {
 
-    @Override
-    public int[] getTargets(GameFacade gf) {
-        ArrayList<Integer> ghostPositions = new ArrayList<Integer>(CommonConstants.numActiveGhosts);
-        for (int i = 0; i < gf.getNumActiveGhosts(); i++) {
-            if (gf.isGhostThreat(i)) {
-                ghostPositions.add(gf.getGhostCurrentNodeIndex(i));
-            } else if (!gf.isGhostEdible(i) && gf.getGhostLairTime(i) < GameFacade.DANGEROUS_TIME) {
-                ghostPositions.add(gf.getGhostInitialNodeIndex());
-            }
-        }
-        return ArrayUtil.intArrayFromArrayList(ghostPositions);
-    }
+	@Override
+	public int[] getTargets(GameFacade gf) {
+		ArrayList<Integer> ghostPositions = new ArrayList<Integer>(CommonConstants.numActiveGhosts);
+		for (int i = 0; i < gf.getNumActiveGhosts(); i++) {
+			if (gf.isGhostThreat(i)) {
+				ghostPositions.add(gf.getGhostCurrentNodeIndex(i));
+			} else if (!gf.isGhostEdible(i) && gf.getGhostLairTime(i) < GameFacade.DANGEROUS_TIME) {
+				ghostPositions.add(gf.getGhostInitialNodeIndex());
+			}
+		}
+		return ArrayUtil.intArrayFromArrayList(ghostPositions);
+	}
 
-    @Override
-    public String targetType() {
-        return "Threat Ghost";
-    }
+	@Override
+	public String targetType() {
+		return "Threat Ghost";
+	}
 }

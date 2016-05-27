@@ -12,19 +12,19 @@ import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
  */
 public class IsCloseToThreatGhost extends IsCloseBlock {
 
-    private static final int CLOSE_GHOST_DISTANCE = 10;
+	private static final int CLOSE_GHOST_DISTANCE = 10;
 
-    public IsCloseToThreatGhost() {
-        super(CLOSE_GHOST_DISTANCE);
-    }
+	public IsCloseToThreatGhost() {
+		super(CLOSE_GHOST_DISTANCE);
+	}
 
-    @Override
-    public int[] getTargets(GameFacade gf) {
-        return gf.getThreatGhostLocations();
-    }
+	@Override
+	public int[] getTargets(GameFacade gf) {
+		return gf.getThreatGhostLocations();
+	}
 
-    @Override
-    public String getType() {
-        return "Threat Ghost";
-    }
+	@Override
+	public String getType() {
+		return "Threat Ghost";
+	}
 }

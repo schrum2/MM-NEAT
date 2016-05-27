@@ -16,35 +16,35 @@ import java.util.ArrayList;
  */
 public class BehaviorListController implements BotController {
 
-    public ArrayList<BehaviorModule> behaviors;
+	public ArrayList<BehaviorModule> behaviors;
 
-    public BehaviorListController() {
-        this.behaviors = new ArrayList<BehaviorModule>();
-    }
+	public BehaviorListController() {
+		this.behaviors = new ArrayList<BehaviorModule>();
+	}
 
-    public BehaviorListController(ArrayList<BehaviorModule> behaviors) {
-        this.behaviors = behaviors;
-    }
+	public BehaviorListController(ArrayList<BehaviorModule> behaviors) {
+		this.behaviors = behaviors;
+	}
 
-    public BotAction control(UT2004BotModuleController bot) {
-        for (int i = 0; i < behaviors.size(); i++) {
-            BehaviorModule mod = behaviors.get(i);
-            if (mod.trigger(bot)) {
-                return mod.control(bot);
-            }
-        }
-        return new EmptyAction();
-    }
+	public BotAction control(UT2004BotModuleController bot) {
+		for (int i = 0; i < behaviors.size(); i++) {
+			BehaviorModule mod = behaviors.get(i);
+			if (mod.trigger(bot)) {
+				return mod.control(bot);
+			}
+		}
+		return new EmptyAction();
+	}
 
-    public void initialize(UT2004BotModuleController bot) {
-        for (int i = 0; i < behaviors.size(); i++) {
-            behaviors.get(i).initialize(bot);
-        }
-    }
+	public void initialize(UT2004BotModuleController bot) {
+		for (int i = 0; i < behaviors.size(); i++) {
+			behaviors.get(i).initialize(bot);
+		}
+	}
 
-    public void reset(UT2004BotModuleController bot) {
-        for (int i = 0; i < behaviors.size(); i++) {
-            behaviors.get(i).reset(bot);
-        }
-    }
+	public void reset(UT2004BotModuleController bot) {
+		for (int i = 0; i < behaviors.size(); i++) {
+			behaviors.get(i).reset(bot);
+		}
+	}
 }

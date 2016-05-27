@@ -8,17 +8,17 @@ import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
  */
 public class NearestPillBlock extends NearestFarthestIndexBlock {
 
-    public NearestPillBlock() {
-        super();
-    }
+	public NearestPillBlock() {
+		super();
+	}
 
-    @Override
-    public int[] getTargets(GameFacade gf) {
-        return gf.getActivePillsIndices();
-    }
+	@Override
+	public int[] getTargets(GameFacade gf) {
+		return gf.getActivePillsIndices();
+	}
 
-    @Override
-    public String typeOfTarget() {
-        return "Pill";
-    }
+	@Override
+	public String typeOfTarget() {
+		return "Pill";
+	}
 }

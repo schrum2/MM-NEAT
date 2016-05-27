@@ -12,24 +12,24 @@ import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.distance.VariableDire
  * @author Jacob Schrum
  */
 public class VariableDirectionSpecificApproachingThreatGhostDistanceBlock extends VariableDirectionDistanceBlock {
-    private final int ghostIndex;
+	private final int ghostIndex;
 
-    public VariableDirectionSpecificApproachingThreatGhostDistanceBlock(int dir, int ghostIndex) {
-        super(dir);
-        this.ghostIndex = ghostIndex;
-    }
+	public VariableDirectionSpecificApproachingThreatGhostDistanceBlock(int dir, int ghostIndex) {
+		super(dir);
+		this.ghostIndex = ghostIndex;
+	}
 
-    @Override
-    public String getType() {
-        return "Approaching Threat Ghost " + ghostIndex;
-    }
+	@Override
+	public String getType() {
+		return "Approaching Threat Ghost " + ghostIndex;
+	}
 
-    @Override
-    public int[] getTargets(GameFacade gf) {
-        if(gf.isGhostThreat(ghostIndex) && gf.ghostApproachingPacman(ghostIndex)){
-            return new int[]{gf.getGhostCurrentNodeIndex(ghostIndex)};
-        } else {
-            return new int[0];
-        }
-    }
+	@Override
+	public int[] getTargets(GameFacade gf) {
+		if (gf.isGhostThreat(ghostIndex) && gf.ghostApproachingPacman(ghostIndex)) {
+			return new int[] { gf.getGhostCurrentNodeIndex(ghostIndex) };
+		} else {
+			return new int[0];
+		}
+	}
 }

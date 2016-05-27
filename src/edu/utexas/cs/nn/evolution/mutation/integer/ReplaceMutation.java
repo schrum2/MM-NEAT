@@ -15,30 +15,30 @@ import java.util.ArrayList;
  */
 public class ReplaceMutation extends Mutation<ArrayList<Integer>> {
 
-    protected final double rate;
+	protected final double rate;
 
-    public ReplaceMutation() {
-        this.rate = Parameters.parameters.doubleParameter("intReplaceRate");
-    }
+	public ReplaceMutation() {
+		this.rate = Parameters.parameters.doubleParameter("intReplaceRate");
+	}
 
-    /*
-     * Each index is checked to see if mutation should be performed
-     */
-    @Override
-    public boolean perform() {
-        return RandomNumbers.randomGenerator.nextDouble() <= rate;
-    }
+	/*
+	 * Each index is checked to see if mutation should be performed
+	 */
+	@Override
+	public boolean perform() {
+		return RandomNumbers.randomGenerator.nextDouble() <= rate;
+	}
 
-    @Override
-    public void mutate(Genotype<ArrayList<Integer>> genotype) {
-        for (int i = 0; i < genotype.getPhenotype().size(); i++) {
-            if (perform()) {
-                mutateIndex((BoundedIntegerValuedGenotype) genotype, i);
-            }
-        }
-    }
+	@Override
+	public void mutate(Genotype<ArrayList<Integer>> genotype) {
+		for (int i = 0; i < genotype.getPhenotype().size(); i++) {
+			if (perform()) {
+				mutateIndex((BoundedIntegerValuedGenotype) genotype, i);
+			}
+		}
+	}
 
-    public void mutateIndex(BoundedIntegerValuedGenotype genotype, int i) {
-        genotype.getPhenotype().set(i, RandomNumbers.randomGenerator.nextInt(MMNEAT.discreteCeilings[i]));
-    }
+	public void mutateIndex(BoundedIntegerValuedGenotype genotype, int i) {
+		genotype.getPhenotype().set(i, RandomNumbers.randomGenerator.nextInt(MMNEAT.discreteCeilings[i]));
+	}
 }

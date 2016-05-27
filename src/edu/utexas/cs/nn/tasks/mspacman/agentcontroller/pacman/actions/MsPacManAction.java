@@ -9,5 +9,5 @@ import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
  */
 public interface MsPacManAction {
 
-    public int getMoveAction(GameFacade gf);
+	public int getMoveAction(GameFacade gf);
 }

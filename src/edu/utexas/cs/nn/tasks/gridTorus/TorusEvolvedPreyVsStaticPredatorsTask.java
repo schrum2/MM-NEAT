@@ -19,54 +19,60 @@ import edu.utexas.cs.nn.util.ClassCreation;
 
 /**
  *
- * @author Alex Rollins, Jacob Schrum
- * The following class sets up tasks for learning agents and NPCs.
- * This class is for a task where the prey are evolved while the predators are kept static
+ * @author Alex Rollins, Jacob Schrum The following class sets up tasks for
+ *         learning agents and NPCs. This class is for a task where the prey are
+ *         evolved while the predators are kept static
  */
 public class TorusEvolvedPreyVsStaticPredatorsTask<T extends Network> extends TorusPredPreyTask<T> {
 
 	private TorusPredPreyController[] staticAgents = null;
 
 	/**
-	 * constructor for a task where the prey are evolved while the predators are kept static
-	 * sends true to the parent constructor, indicating that the prey is the agent evolving
-	 * Includes all of the fitness scores that the user wants from the command line parameters
+	 * constructor for a task where the prey are evolved while the predators are
+	 * kept static sends true to the parent constructor, indicating that the
+	 * prey is the agent evolving Includes all of the fitness scores that the
+	 * user wants from the command line parameters
 	 */
 	public TorusEvolvedPreyVsStaticPredatorsTask() {
-		super(true); 
-		if(Parameters.parameters.booleanParameter("preyMaximizeTotalTime"))
+		super(true);
+		if (Parameters.parameters.booleanParameter("preyMaximizeTotalTime"))
 			addObjective(new PreyMaximizeGameTimeObjective<T>(), objectives);
-		if(Parameters.parameters.booleanParameter("preyRRM"))
+		if (Parameters.parameters.booleanParameter("preyRRM"))
 			addObjective(new PreyRawalRajagopalanMiikkulainenObjective<T>(), objectives);
-		if(Parameters.parameters.booleanParameter("preyLongSurvivalTime"))
+		if (Parameters.parameters.booleanParameter("preyLongSurvivalTime"))
 			addObjective(new PreyLongSurvivalTimeObjective<T>(), objectives);
-		if(Parameters.parameters.booleanParameter("preyMaximizeDistance"))
+		if (Parameters.parameters.booleanParameter("preyMaximizeDistance"))
 			addObjective(new PreyMaximizeDistanceFromPredatorsObjective<T>(), objectives);
-		if(Parameters.parameters.booleanParameter("preyMinimizeCaught"))
+		if (Parameters.parameters.booleanParameter("preyMinimizeCaught"))
 			addObjective(new PreyMinimizeCaughtObjective<T>(), objectives);
 	}
 
 	@Override
 	/**
-	 * A method that gives a list of controllers for the static agents (predators)
-	 * The predators are all given the simple, non-evolving controller (specified by user)
-	 * The user also indicates in a command line parameter how many predators there will be (default of 4)
-	 * @return staticAgents a list of controllers for the static agents for this class,
-	 * which is the predators (static meaning the agent type that is chosen by the user to not evolve)
-	 * @param individual the genotype that will be given to all predator agents (homogeneous team)
+	 * A method that gives a list of controllers for the static agents
+	 * (predators) The predators are all given the simple, non-evolving
+	 * controller (specified by user) The user also indicates in a command line
+	 * parameter how many predators there will be (default of 4)
+	 * 
+	 * @return staticAgents a list of controllers for the static agents for this
+	 *         class, which is the predators (static meaning the agent type that
+	 *         is chosen by the user to not evolve)
+	 * @param individual
+	 *            the genotype that will be given to all predator agents
+	 *            (homogeneous team)
 	 */
 	public TorusPredPreyController[] getPredAgents(Genotype<T> individual) {
-		if(staticAgents == null){
-			int numPredators = Parameters.parameters.integerParameter("torusPredators"); 
+		if (staticAgents == null) {
+			int numPredators = Parameters.parameters.integerParameter("torusPredators");
 			staticAgents = new TorusPredPreyController[numPredators];
-			for(int i = 0; i < numPredators; i++) {
+			for (int i = 0; i < numPredators; i++) {
 				try {
 					staticAgents[i] = (TorusPredPreyController) ClassCreation.createObject("staticPredatorController");
 				} catch (NoSuchMethodException e) {
 					e.printStackTrace();
 					System.out.println("Could not load static prey");
 					System.exit(1);
-				} 
+				}
 			}
 		}
 		return staticAgents;
@@ -75,25 +81,32 @@ public class TorusEvolvedPreyVsStaticPredatorsTask<T extends Network> extends To
 	@Override
 	/**
 	 * A method that gives a list of controllers for the evolving agents (prey)
-	 * The prey are all defined as a new agent of the given genotype with an evolved controller 
-	 * The user also indicates in a command line parameter how many prey there will be (default of 1)
-	 * @return evolvedAgents a list of controllers for the evolved agents for this class, which is the prey 
-	 * @param individual the genotype that will be given to all prey agents (homogeneous team)
+	 * The prey are all defined as a new agent of the given genotype with an
+	 * evolved controller The user also indicates in a command line parameter
+	 * how many prey there will be (default of 1)
+	 * 
+	 * @return evolvedAgents a list of controllers for the evolved agents for
+	 *         this class, which is the prey
+	 * @param individual
+	 *            the genotype that will be given to all prey agents
+	 *            (homogeneous team)
 	 */
 	public TorusPredPreyController[] getPreyAgents(Genotype<T> individual) {
 		int numPrey = Parameters.parameters.integerParameter("torusPreys");
-		evolved = new TorusPredPreyController[numPrey];    	
-		for(int i = 0; i < numPrey; i++){
-			//false to indicate that this is not a predator, but a prey
-			evolved[i] = new NNTorusPredPreyAgent<T>(individual, false).getController(); 
-			// if requested, adds visual panels for each of the evolved agents showing its inputs
-			// (offsets to other agents), outputs (possible directional movements), and game time
-			if(CommonConstants.monitorInputs) {
+		evolved = new TorusPredPreyController[numPrey];
+		for (int i = 0; i < numPrey; i++) {
+			// false to indicate that this is not a predator, but a prey
+			evolved[i] = new NNTorusPredPreyAgent<T>(individual, false).getController();
+			// if requested, adds visual panels for each of the evolved agents
+			// showing its inputs
+			// (offsets to other agents), outputs (possible directional
+			// movements), and game time
+			if (CommonConstants.monitorInputs) {
 				DrawingPanel panel = new DrawingPanel(Plot.BROWSE_DIM, (int) (Plot.BROWSE_DIM * 3.5), "Prey " + i);
 				((NNTorusPredPreyController) evolved[i]).networkInputs = panel;
 				panel.setLocation(i * (Plot.BROWSE_DIM + 10), 0);
 				Offspring.fillInputs(panel, (TWEANNGenotype) individual);
-			}	
+			}
 		}
 		return evolved;
 	}

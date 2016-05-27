@@ -14,27 +14,27 @@ import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.MsPacManSensorBlock;
  */
 public abstract class BooleanSensorBlock extends MsPacManSensorBlock {
 
-    private final int absence;
+	private final int absence;
 
-    public BooleanSensorBlock() {
-        this.absence = Parameters.parameters.booleanParameter("absenceNegative") ? -1 : 0;
-    }
+	public BooleanSensorBlock() {
+		this.absence = Parameters.parameters.booleanParameter("absenceNegative") ? -1 : 0;
+	}
 
-    public int incorporateSensors(double[] inputs, int startPoint, GameFacade gf, int lastDirection) {
-        inputs[startPoint++] = predicate(gf, lastDirection) ? 1 : absence;
-        return startPoint;
-    }
+	public int incorporateSensors(double[] inputs, int startPoint, GameFacade gf, int lastDirection) {
+		inputs[startPoint++] = predicate(gf, lastDirection) ? 1 : absence;
+		return startPoint;
+	}
 
-    public int incorporateLabels(String[] labels, int startPoint) {
-        labels[startPoint++] = senseLabel();
-        return startPoint;
-    }
+	public int incorporateLabels(String[] labels, int startPoint) {
+		labels[startPoint++] = senseLabel();
+		return startPoint;
+	}
 
-    public int numberAdded() {
-        return 1;
-    }
+	public int numberAdded() {
+		return 1;
+	}
 
-    public abstract String senseLabel();
+	public abstract String senseLabel();
 
-    public abstract boolean predicate(GameFacade gf, int lastDirection);
+	public abstract boolean predicate(GameFacade gf, int lastDirection);
 }

@@ -14,14 +14,18 @@ import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.NavPoin
  */
 public class NavigateToLocationAction implements BotAction {
 
-    private final ILocated target;
+	private final ILocated target;
 
-    public NavigateToLocationAction(ILocated target) {
-        this.target = target;
-    }
+	public NavigateToLocationAction(ILocated target) {
+		this.target = target;
+	}
 
-    public String execute(UT2004BotModuleController bot) {
-        bot.getNavigation().navigate(target);
-        return "[Goto " + target.getLocation() + "]" + (target instanceof NavPoint ? "[" + ((NavPoint) target).getId().getStringId() + "]" + (((NavPoint) target).isInvSpot() ? ((NavPoint) target).getItemClass().getName() : "") : "");
-    }
+	public String execute(UT2004BotModuleController bot) {
+		bot.getNavigation().navigate(target);
+		return "[Goto " + target.getLocation() + "]"
+				+ (target instanceof NavPoint
+						? "[" + ((NavPoint) target).getId().getStringId() + "]"
+								+ (((NavPoint) target).isInvSpot() ? ((NavPoint) target).getItemClass().getName() : "")
+						: "");
+	}
 }

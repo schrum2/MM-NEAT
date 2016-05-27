@@ -18,20 +18,23 @@ import pacman.game.Constants;
  */
 public abstract class SharedNNDirectionalGhostsController extends SharedNNGhostsController {
 
-    public SharedNNDirectionalGhostsController(Network n){
-        super(n);
-    }
-    
-    @Override
-    public int getDirection(GameFacade gf, Constants.GHOST ghost) {
-        double[] dirPreferences = getDirectionPreferences(gf, GameFacade.ghostToIndex(ghost));
-        int direction = directionFromPreferences(dirPreferences);
-        return direction;
-    }
+	public SharedNNDirectionalGhostsController(Network n) {
+		super(n);
+	}
 
-    public int directionFromPreferences(double[] dirPreferences) {
-        return CommonConstants.probabilisticSelection ? StatisticsUtilities.probabilistic(dirPreferences) : (CommonConstants.softmaxSelection ? StatisticsUtilities.softmax(dirPreferences, CommonConstants.softmaxTemperature) : StatisticsUtilities.argmax(dirPreferences));
-    }
+	@Override
+	public int getDirection(GameFacade gf, Constants.GHOST ghost) {
+		double[] dirPreferences = getDirectionPreferences(gf, GameFacade.ghostToIndex(ghost));
+		int direction = directionFromPreferences(dirPreferences);
+		return direction;
+	}
 
-    public abstract double[] getDirectionPreferences(GameFacade gf, int ghostIndex);
+	public int directionFromPreferences(double[] dirPreferences) {
+		return CommonConstants.probabilisticSelection ? StatisticsUtilities.probabilistic(dirPreferences)
+				: (CommonConstants.softmaxSelection
+						? StatisticsUtilities.softmax(dirPreferences, CommonConstants.softmaxTemperature)
+						: StatisticsUtilities.argmax(dirPreferences));
+	}
+
+	public abstract double[] getDirectionPreferences(GameFacade gf, int ghostIndex);
 }
