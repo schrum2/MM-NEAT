@@ -50,19 +50,12 @@ public class HyperNEATCPPNGenotypeTest {
 		cppn = new TWEANN(new TWEANNGenotype());
 		subs = new LinkedList<Substrate>();
 		connections = new LinkedList<Pair<String, String>>();
-		subs.add(new Substrate(new Pair<Integer, Integer>(5, 5), 0, new Triple<Integer, Integer, Integer>(0, 0, 0),
-				"I_0"));// only 2 substrates in this test
-		subs.add(new Substrate(new Pair<Integer, Integer>(5, 5), 0, new Triple<Integer, Integer, Integer>(1, 0, 0),
-				"I_1"));// both input substrates
-		connections.add(new Pair<String, String>(subs.get(0).getName(), subs.get(1).getName()));// only
-																								// one
-																								// connection,
-																								// between
-																								// the
-																								// two
-																								// substrates
-		sIMap = new HashMap<String, Integer>();// links connection list index to
-												// substrate
+		subs.add(new Substrate(new Pair<Integer, Integer>(5, 5), 0, new Triple<Integer, Integer, Integer>(0, 0, 0),"I_0"));// only 2 substrates in this test
+		subs.add(new Substrate(new Pair<Integer, Integer>(5, 5), 0, new Triple<Integer, Integer, Integer>(1, 0, 0),"I_1"));// both input substrates
+		// only one connection, between the two substrates
+		connections.add(new Pair<String, String>(subs.get(0).getName(), subs.get(1).getName()));
+		// links connection list index to substrate
+		sIMap = new HashMap<String, Integer>();
 		for (int i = 0; i < subs.size(); i++) {
 			sIMap.put(subs.get(i).getName(), i);
 		}
@@ -94,13 +87,16 @@ public class HyperNEATCPPNGenotypeTest {
 	@Test
 	public void testCreateSubstrateNodesFast() {
 		setUp("true");
-		assertTrue(hcppn.newNodes == null);
-		cppn = hcppn.getPhenotype();
-		ArrayList<TWEANN.Node> test = cppn.nodes;
-		cppn = hcppn.getPhenotype();
-		ArrayList<TWEANN.Node> test2 = cppn.nodes;
-		cppn = hcppn.getPhenotype();
-		ArrayList<TWEANN.Node> test3 = cppn.nodes;
+		assertTrue(HyperNEATCPPNGenotype.cachedPhenotypeNodes == null);
+//		cppn = hcppn.getPhenotype();
+//		ArrayList<TWEANN.Node> test = cppn.nodes;
+//		cppn = hcppn.getPhenotype();
+//		ArrayList<TWEANN.Node> test2 = cppn.nodes;
+//		cppn = hcppn.getPhenotype();
+//		ArrayList<TWEANN.Node> test3 = cppn.nodes;
+		
+		// Schrum: I'm guessing this test is incomplete. I had to change the null check above because of other changes I made to
+		// your code. I also commented out the rest. Just wanted to point this out.
 
 	}
 	// /**
@@ -129,8 +125,7 @@ public class HyperNEATCPPNGenotypeTest {
 		int endingIndex = connections.size() - 1;
 		int indexOfTest = 0;
 		ArrayList<LinkGene> newLinks = new ArrayList<LinkGene>();
-		newLinks = hcppn.loopThroughLinks(cppn, indexOfTest, subs.get(sub1Index), subs.get(sub2Index), sub1Index,
-				sub2Index, subs);
+		hcppn.loopThroughLinks(newLinks, cppn, indexOfTest, subs.get(sub1Index), subs.get(sub2Index), sub1Index, sub2Index, subs);
 		// below check only necessary when parameter for including link is not
 		// on
 		// assertEquals(subs.get(sub1Index).size.t1*subs.get(sub1Index).size.t2*subs.get(sub2Index).size.t1*subs.get(sub2Index).size.t2,
@@ -162,8 +157,7 @@ public class HyperNEATCPPNGenotypeTest {
 	public void testGetInnovationID() {
 		int indexOfTest = 0;
 		ArrayList<LinkGene> newLinks = new ArrayList<LinkGene>();
-		newLinks = hcppn.loopThroughLinks(cppn, indexOfTest, subs.get(sub1Index), subs.get(sub2Index), sub1Index,
-				sub2Index, subs);
+		hcppn.loopThroughLinks(newLinks, cppn, indexOfTest, subs.get(sub1Index), subs.get(sub2Index), sub1Index, sub2Index, subs);
 		assertEquals(newLinks.get(sub1Index).innovation, hcppn.getInnovationID(sub1Index, sub1Index, sub1Index, subs));
 	}
 

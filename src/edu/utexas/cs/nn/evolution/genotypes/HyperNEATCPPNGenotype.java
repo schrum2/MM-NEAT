@@ -22,10 +22,13 @@ import edu.utexas.cs.nn.util.util2D.Tuple2D;
 public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 
 	private static final double BIAS = 1.0;// Necessary for most CPPN networks
-	protected ArrayList<NodeGene> newNodes = null;
-	protected ArrayList<LinkGene> newLinks = null;
-	public int innovationID = 0;// provides unique innovation numbers for links
-								// and genes
+	public int innovationID = 0;// provides unique innovation numbers for links and genes
+
+	// This data is static so it can be cached
+	protected static ArrayList<NodeGene> cachedPhenotypeNodes = null;
+	protected static ArrayList<LinkGene> cachedPhenotypeLinks = null;
+	protected static HashMap<String, Integer> cachedSubstrateIndexMapping = null;
+	protected static int cachedPhenotypeOutputs = 0;
 
 	/**
 	 * Default constructor
@@ -60,10 +63,8 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 	 *            index of genotype in archetype
 	 */
 	public HyperNEATCPPNGenotype(int networkInputs, int networkOutputs, int archetypeIndex) {
-		super(networkInputs, networkOutputs, archetypeIndex); // Construct new
-																// CPPN with
-																// random
-																// weights
+		// Construct new CPPN with random weights
+		super(networkInputs, networkOutputs, archetypeIndex); 
 	}
 
 	/**
@@ -76,58 +77,58 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 	 */
 	@Override
 	public TWEANN getPhenotype() {
-		TWEANN cppn = super.getPhenotype();// cppn used to create TWEANN network
-		HyperNEATTask hnt = (HyperNEATTask) MMNEAT.task;// creates instance of
-														// task in question
-		List<Substrate> subs = hnt.getSubstrateInformation();// used to extract
-																// substrate
-																// information
-																// from domian
-		List<Pair<String, String>> connections = hnt.getSubstrateConnectivity();// used
-																				// to
-																				// extract
-																				// substrate
-																				// connectity
-																				// from
-																				// domain
+		TWEANN cppn = super.getPhenotype();// CPPN used to create TWEANN network
+		HyperNEATTask hnt = (HyperNEATTask) MMNEAT.task;// Cast task to HyperNEATTask
+		List<Substrate> subs = hnt.getSubstrateInformation();// extract substrate information from domain
+		List<Pair<String, String>> connections = hnt.getSubstrateConnectivity();// extract substrate connectivity from domain
 		ArrayList<NodeGene> newNodes = null;
 		ArrayList<LinkGene> newLinks = null;
-		innovationID = 0;// reset here just in case TWEANN reused(should not
-							// happen though)
-		// Will map substrate names to index in subs List
-		// needs to be switched
-		HashMap<String, Integer> substrateIndexMapping = new HashMap<String, Integer>();
-		for (int i = 0; i < subs.size(); i++) {
-			substrateIndexMapping.put(subs.get(i).getName(), i);
-		}
-		// loop through connections and add links, based on contents of subs
-
-		if (CommonConstants.speedUpHyperNEAT) {
-			if (this.newLinks == null && newNodes == null) {
-				newNodes = createSubstrateNodes(subs);
-				newLinks = createNodeLinks(cppn, connections, subs, substrateIndexMapping);
-			} else {
-				createNodeLinks(cppn, connections, subs, substrateIndexMapping);
+		innovationID = 0;// reset each time a phenotype is generated
+		int phenotypeOutputs = 0;
+		
+		if (!CommonConstants.speedUpHyperNEAT || cachedPhenotypeLinks == null || cachedPhenotypeNodes == null || cachedSubstrateIndexMapping == null) {
+			newNodes = createSubstrateNodes(subs);
+			// Will map substrate names to index in subs List
+			// needs to be switched
+			HashMap<String, Integer> substrateIndexMapping = new HashMap<String, Integer>();
+			for (int i = 0; i < subs.size(); i++) {
+				substrateIndexMapping.put(subs.get(i).getName(), i);
+			}
+			// loop through connections and add links, based on contents of subs
+			newLinks = createNodeLinks(cppn, connections, subs, substrateIndexMapping);
+		
+			// Figure out number of output neurons
+			for (Substrate s : subs) {
+				if (s.getStype() == Substrate.OUTPUT_SUBSTRATE) {
+					phenotypeOutputs += s.size.t1 * s.size.t2;
+				}
+			}
+			
+			// Cache values so they don't need to be re-computed for each genotype
+			if(CommonConstants.speedUpHyperNEAT) {
+				cachedSubstrateIndexMapping = substrateIndexMapping;
+				cachedPhenotypeNodes = newNodes;
+				cachedPhenotypeLinks = newLinks;
+				cachedPhenotypeOutputs = phenotypeOutputs;
 			}
 		} else {
-			newNodes = createSubstrateNodes(subs);
-			newLinks = createNodeLinks(cppn, connections, subs, substrateIndexMapping);
+			// However, link weights do need to be recalculated for each genotype.
+			// This will modify the static cached links, so no return is needed.
+			createNodeLinks(cppn, connections, subs, cachedSubstrateIndexMapping);
 		}
+		
+		
 		// the instantiation of the TWEANNgenotype in question
-		int phenotypeOutputs = 0;
-		for (Substrate s : subs) {
-			if (s.getStype() == Substrate.OUTPUT_SUBSTRATE) {
-				phenotypeOutputs += s.size.t1 * s.size.t2;
-			}
-		}
-
+		
 		// Hard coded to have a single neural output module.
 		// May need to fix this down the line.
 		// An archetype index of -1 is used. Hopefully this won't cause
-		// problems,
-		// since the archetype is only needed for mutations and crossover.
-		TWEANNGenotype tg = new TWEANNGenotype(CommonConstants.speedUpHyperNEAT ? this.newNodes : newNodes,
-				CommonConstants.speedUpHyperNEAT ? this.newLinks : newLinks, phenotypeOutputs, false, false, -1);
+		// problems, since the archetype is only needed for mutations and crossover.
+		TWEANNGenotype tg = new TWEANNGenotype(
+				CommonConstants.speedUpHyperNEAT ? cachedPhenotypeNodes : newNodes,
+				CommonConstants.speedUpHyperNEAT ? cachedPhenotypeLinks : newLinks, 
+				CommonConstants.speedUpHyperNEAT ? cachedPhenotypeOutputs : phenotypeOutputs, 
+				false, false, -1);
 		return tg.getPhenotype();
 	}
 
@@ -167,15 +168,11 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 	 */
 	public ArrayList<NodeGene> createSubstrateNodes(List<Substrate> subs) {
 		ArrayList<NodeGene> newNodes = new ArrayList<NodeGene>();
-		for (int i = 0; i < subs.size(); i++) {// loops through substrate list
-			for (int x = 0; x < subs.get(i).size.t1; x++) {// loops through x
-															// values of
-															// substrate
-				for (int y = 0; y < subs.get(i).size.t2; y++) {// loops through
-																// y values of
-																// substrate
-					// Substrate types and Neuron types match and use same
-					// values
+		// loops through substrate list
+		for (int i = 0; i < subs.size(); i++) {
+			for (int x = 0; x < subs.get(i).size.t1; x++) {
+				for (int y = 0; y < subs.get(i).size.t2; y++) {
+					// Substrate types and Neuron types match and use same values
 					newNodes.add(new NodeGene(CommonConstants.ftype, subs.get(i).getStype(), innovationID++));
 				}
 			}
@@ -199,27 +196,26 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 	 *
 	 * @return array list containing all the links between substrates
 	 */
-	public ArrayList<LinkGene> createNodeLinks(TWEANN cppn, List<Pair<String, String>> connections,
-			List<Substrate> subs, HashMap<String, Integer> sIMap) {
+	public ArrayList<LinkGene> createNodeLinks(TWEANN cppn, List<Pair<String, String>> connections, List<Substrate> subs, HashMap<String, Integer> sIMap) {
 		ArrayList<LinkGene> result = new ArrayList<LinkGene>();
 		for (int i = 0; i < connections.size(); i++) {
 			int sourceSubstrateIndex = sIMap.get(connections.get(i).t1);
 			int targetSubstrateIndex = sIMap.get(connections.get(i).t2);
 			Substrate sourceSubstrate = subs.get(sourceSubstrateIndex);
 			Substrate targetSubstrate = subs.get(targetSubstrateIndex);
-			result.addAll(loopThroughLinks(cppn, i, sourceSubstrate, targetSubstrate, sourceSubstrateIndex,
-					targetSubstrateIndex, subs));// adds links from between two
-													// substrates to whole list
-													// of links
+			// adds links from between two substrates to whole list of links
+			loopThroughLinks(result, cppn, i, sourceSubstrate, targetSubstrate, sourceSubstrateIndex, targetSubstrateIndex, subs);
 		}
 		return result;
 	}
 
 	/**
 	 * a method for looping through all nodes of two substrates to be linked
-	 * Link is only created if cppn output reaches a certain threshold that is
+	 * Link is only created if CPPN output reaches a certain threshold that is
 	 * dictated via command line parameter.
 	 *
+	 * @param linksSoFar
+	 * 			  All aded links are accumulated in this list
 	 * @param cppn
 	 *            used to evolve link weight
 	 * @param outputIndex
@@ -237,50 +233,41 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 	 *
 	 * @return array list containing the genes linked between the two substrates
 	 */
-	public ArrayList<LinkGene> loopThroughLinks(TWEANN cppn, int outputIndex, Substrate s1, Substrate s2, int s1Index,
-			int s2Index, List<Substrate> subs) {
-		boolean speedUp = CommonConstants.speedUpHyperNEAT;
-		ArrayList<LinkGene> links = null;
-		for (int X1 = 0; X1 < s1.size.t1; X1++) {// searches through width of
-													// first substrate
-			for (int Y1 = 0; Y1 < s1.size.t2; Y1++) {// searches through height
-														// of first substrate
-				for (int X2 = 0; X2 < s2.size.t1; X2++) {// searches through
-															// width of second
-															// substrate
-					for (int Y2 = 0; Y2 < s2.size.t2; Y2++) {// searches through
-																// height of
-																// second
-																// substrate
+	public void loopThroughLinks(ArrayList<LinkGene> linksSoFar, TWEANN cppn, int outputIndex, Substrate s1, Substrate s2, int s1Index, int s2Index, List<Substrate> subs) {
+		// searches through width of first substrate
+		for (int X1 = 0; X1 < s1.size.t1; X1++) {
+			// searches through height of first substrate
+			for (int Y1 = 0; Y1 < s1.size.t2; Y1++) {
+				// searches through width of second substrate
+				for (int X2 = 0; X2 < s2.size.t1; X2++) {
+					// searches through height of second substrate
+					for (int Y2 = 0; Y2 < s2.size.t2; Y2++) {
 						// CPPN inputs need to be centered and scaled
-						ILocated2D scaledSourceCoordinates = CartesianGeometricUtilities
-								.centerAndScale(new Tuple2D(X1, Y1), s1.size.t1, s1.size.t2);
-						ILocated2D scaledTargetCoordinates = CartesianGeometricUtilities
-								.centerAndScale(new Tuple2D(X2, Y2), s2.size.t1, s2.size.t2);
-						double[] inputs = { scaledSourceCoordinates.getX(), scaledSourceCoordinates.getY(),
-								scaledTargetCoordinates.getX(), scaledTargetCoordinates.getY(), BIAS }; // inputs
-																										// to
-																										// CPPN
+						ILocated2D scaledSourceCoordinates = CartesianGeometricUtilities.centerAndScale(new Tuple2D(X1, Y1), s1.size.t1, s1.size.t2);
+						ILocated2D scaledTargetCoordinates = CartesianGeometricUtilities.centerAndScale(new Tuple2D(X2, Y2), s2.size.t1, s2.size.t2);
+						// inputs to CPPN
+						double[] inputs = { scaledSourceCoordinates.getX(), scaledSourceCoordinates.getY(), scaledTargetCoordinates.getX(), scaledTargetCoordinates.getY(), BIAS }; 
 						double[] outputs = cppn.process(inputs);
-						if (!speedUp) {
-							links = new ArrayList<LinkGene>();
-							if (Math.abs(outputs[outputIndex]) > CommonConstants.linkExpressionThreshold) {
-								links.add(new LinkGene(getInnovationID(X1, Y1, s1Index, subs),
-										getInnovationID(X2, Y2, s2Index, subs), calculateWeight(outputs[outputIndex]),
+						boolean expressLink = Math.abs(outputs[outputIndex]) > CommonConstants.linkExpressionThreshold;
+						if (!CommonConstants.speedUpHyperNEAT || cachedPhenotypeLinks == null) { // Create the link genes from scratch
+							if (expressLink) {
+								linksSoFar.add(new LinkGene(
+										getInnovationID(X1, Y1, s1Index, subs), 
+										getInnovationID(X2, Y2, s2Index, subs), 
+										calculateWeight(outputs[outputIndex]),
 										innovationID++, false));
-							} else { // added this feature so all link genes
-										// instantiated
-								// weight is 0 if out of range though, which
-								// acts like there
-								// is no link there.
-								links.add(new LinkGene(getInnovationID(X1, Y1, s1Index, subs),
-										getInnovationID(X2, Y2, s2Index, subs), 0.0, innovationID++, false));
+							} else if(CommonConstants.speedUpHyperNEAT) { // Add link with weight 0 (may be replaced in future phenotype
+								linksSoFar.add(new LinkGene(
+										getInnovationID(X1, Y1, s1Index, subs), 
+										getInnovationID(X2, Y2, s2Index, subs), 
+										0.0, innovationID++, false));
 							}
-						} else {
-							if (Math.abs(outputs[outputIndex]) > CommonConstants.linkExpressionThreshold) {
-								this.newLinks.get(X1 * Y1 + X2 * Y2).weight = calculateWeight(outputs[outputIndex]);
+						} else { // Change weights within existing link genes
+							int linkIndex = linkGeneIndex(X1, Y1, X2, Y2, s1.size.t2, s2.size.t1, s2.size.t2);
+							if (expressLink) {
+								cachedPhenotypeLinks.get(linkIndex).weight = calculateWeight(outputs[outputIndex]);
 							} else {
-								this.newLinks.get(X1 * Y1 + X2 * Y2).weight = 0.0;
+								cachedPhenotypeLinks.get(linkIndex).weight = 0.0;
 							}
 						}
 
@@ -288,7 +275,22 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 				}
 			}
 		}
-		return links;
+	}
+	
+	/**
+	 * Given the substrate coordinates and sizes that a particular link is supposed to connect,
+	 * determine the index it should be located at in the cached link gene list.
+	 * @param X1 x coordinate in first substrate
+	 * @param Y1 y coordinate in first substrate
+	 * @param X2 x coordinate in second substrate
+	 * @param Y2 y coordinate in second substrate
+	 * @param height1 height (y dimension) of first substrate
+	 * @param width2 width (x dimension) of second substrate
+	 * @param height2 height (y dimension) of second substrate
+	 * @return index in cachedPhenotypeLinks of link gene
+	 */
+	public static int linkGeneIndex(int X1, int Y1, int X2, int Y2, int height1, int width2, int height2) {
+		return X1*height1*height2*width2 + Y1*height2*width2 + X2*height2 + Y2;
 	}
 
 	/**
@@ -325,9 +327,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 	 * @return Scaled synaptic weight
 	 */
 	protected double calculateWeight(double originalOutput) {
-		assert(Math
-				.abs(originalOutput) > CommonConstants.linkExpressionThreshold) : "This link should not be expressed: "
-						+ originalOutput;
+		assert(Math.abs(originalOutput) > CommonConstants.linkExpressionThreshold) : "This link should not be expressed: " + originalOutput;
 		if (originalOutput > CommonConstants.linkExpressionThreshold) {
 			return originalOutput - CommonConstants.linkExpressionThreshold;
 		} else {
@@ -340,8 +340,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 	 */
 	@Override
 	public Genotype<TWEANN> newInstance() {
-		HyperNEATCPPNGenotype result = new HyperNEATCPPNGenotype(MMNEAT.networkInputs, MMNEAT.networkOutputs,
-				this.archetypeIndex);
+		HyperNEATCPPNGenotype result = new HyperNEATCPPNGenotype(MMNEAT.networkInputs, MMNEAT.networkOutputs, this.archetypeIndex);
 		result.moduleUsage = new int[result.numModules];
 		return result;
 	}
