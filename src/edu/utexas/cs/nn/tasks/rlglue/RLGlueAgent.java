@@ -14,8 +14,12 @@ import rlVizLib.messaging.agent.AgentMessageParser;
 import rlVizLib.messaging.agent.AgentMessages;
 
 /**
- *
+ * Standard RL-Glue agent. Most RL-Glue domains are so
+ * standardized that this generic agent will work with any of them.
+ * However, more specialized agents can extend/override this class
+ * 
  * @author Jacob Schrum, Gabby Gonzalez
+ * @param <T> Type of phenotype
  */
 public class RLGlueAgent<T extends Network> extends Organism<T> implements AgentInterface {
 
@@ -27,6 +31,10 @@ public class RLGlueAgent<T extends Network> extends Organism<T> implements Agent
     }
     
     public int getNumberOutputs() {
+        if(TSO == null) {
+            // Hopefully, this TaskSpec is the same one the agent would receive from RLGlue
+            TSO = MMNEAT.rlGlueEnvironment.makeTaskSpec();
+        }
     	return TSO.getDiscreteActionRange(0).getMax() - TSO.getDiscreteActionRange(0).getMin() + 1;
     }
     
