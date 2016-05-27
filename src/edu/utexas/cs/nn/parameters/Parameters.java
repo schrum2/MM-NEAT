@@ -288,114 +288,70 @@ public class Parameters {
 		longOptions.add("lastInnovation", 0l, "Highest innovation number used so far");
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
 		// Boolean parameters
-		booleanOptions.add("speedUpHyperNEAT", true,
-				"reuses existing archetype of TWEANN controllers to save time for evaluation");
-		booleanOptions.add("hyperNEAT", false,
-				"Use the HyperNEAT version of the task (requires HyperNEATCPPNGenotype)");
+		booleanOptions.add("hyperNEAT", false, "Use the HyperNEAT version of the task (requires HyperNEATCPPNGenotype)");
 		booleanOptions.add("saveAllChampions", false, "saves all champions of each generation");
 		booleanOptions.add("watchLastBest", false, "shows best result from last generation");
-		booleanOptions.add("logChildScores", false,
-				"For Mu/Lambda approaches that generate separate parent/child populations, indicates whether to log child info");
-		booleanOptions.add("overrideImageSize", false,
-				"For image match task, draw CPPNs with different size than actual image size");
+		booleanOptions.add("logChildScores", false, "For Mu/Lambda approaches that generate separate parent/child populations, indicates whether to log child info");
+		booleanOptions.add("overrideImageSize", false, "For image match task, draw CPPNs with different size than actual image size");
 		booleanOptions.add("logTWEANNData", false, "Whether or not to log TWEANN data");
-		booleanOptions.add("logMutationAndLineage", false,
-				"Whether or not to log information about the mutations and lineage");
-		booleanOptions.add("logPerformance", false,
-				"Whether or not to log performance information in a performance log");
-		booleanOptions.add("torusInvertSensorInputs", false,
-				"Causes agents' sensor inputs to be inverted in torusPredPreyTask");
-		booleanOptions.add("torusSenseByProximity", true,
-				"Causes agents' sensor inputs to be by proximity of the agent instead of simply each agent by indices");
-		booleanOptions.add("preyLongSurvivalTime", false,
-				"Turn on to encourage each prey to maximize their survival time");
-		booleanOptions.add("preyMaximizeDistance", false,
-				"Turn on to encourage prey to maximize their distance from the predators at the end of the game");
-		booleanOptions.add("preyMinimizeCaught", false,
-				"Turn on to encourage prey to minimize how many of them are caught");
-		booleanOptions.add("predatorCatchCloseQuick", false,
-				"Turn on to encourage catching a higher number of the prey quickly and getting close to the prey");
-		booleanOptions.add("predatorCatchClose", true,
-				"Turn on to encourage catching a higher number of the prey and getting close to the prey");
-		booleanOptions.add("predatorCatch", false,
-				"Turn on to activate the predator fitness function which encourages catching a high number of prey");
-		booleanOptions.add("preyRRM", true,
-				"Turn on to activate the prey fitness function from the Rawal and Rajagopalan paper");
-		booleanOptions.add("predatorRRM", false,
-				"Turn on to activate the predator fitness function from the Rawal and Rajagopalan paper");
-		booleanOptions.add("predatorMinimizeDistance", false,
-				"Turn on to encourage predators to be as close to the prey as possible by the end of the game");
-		booleanOptions.add("predatorsEatQuick", false,
-				"Turn on to encourage predators to eat prey as quickly as possible");
-		booleanOptions.add("predatorMinimizeTotalTime", false,
-				"Turn on to encourage predators to minimize the total game time as a fitness function");
-		booleanOptions.add("preyMaximizeTotalTime", false,
-				"Turn on to encourage prey to maximize the total game time as a fitness function");
-		booleanOptions.add("torusSenseTeammates", true,
-				"If turned on, predators can sense other predators and preys can sense other preys");
-		booleanOptions.add("allowDoNothingActionForPredators", true,
-				"If turned on, the predators will have the option to do nothing as their action");
-		booleanOptions.add("allowDoNothingActionForPreys", false,
-				"If turned on, the preys will have the option to do nothing as their action");
+		booleanOptions.add("logMutationAndLineage", false, "Whether or not to log information about the mutations and lineage");
+		booleanOptions.add("logPerformance", false, "Whether or not to log performance information in a performance log");
+		booleanOptions.add("torusInvertSensorInputs", false, "Causes agents' sensor inputs to be inverted in torusPredPreyTask");
+		booleanOptions.add("torusSenseByProximity", true, "Causes agents' sensor inputs to be by proximity of the agent instead of simply each agent by indices");
+		booleanOptions.add("preyLongSurvivalTime", false, "Turn on to encourage each prey to maximize their survival time");
+		booleanOptions.add("preyMaximizeDistance", false, "Turn on to encourage prey to maximize their distance from the predators at the end of the game");
+		booleanOptions.add("preyMinimizeCaught", false, "Turn on to encourage prey to minimize how many of them are caught");
+		booleanOptions.add("predatorCatchCloseQuick", false, "Turn on to encourage catching a higher number of the prey quickly and getting close to the prey");
+		booleanOptions.add("predatorCatchClose", true, "Turn on to encourage catching a higher number of the prey and getting close to the prey");
+		booleanOptions.add("predatorCatch", false, "Turn on to activate the predator fitness function which encourages catching a high number of prey");
+		booleanOptions.add("preyRRM", true, "Turn on to activate the prey fitness function from the Rawal and Rajagopalan paper");
+		booleanOptions.add("predatorRRM", false, "Turn on to activate the predator fitness function from the Rawal and Rajagopalan paper");
+		booleanOptions.add("predatorMinimizeDistance", false, "Turn on to encourage predators to be as close to the prey as possible by the end of the game");
+		booleanOptions.add("predatorsEatQuick", false, "Turn on to encourage predators to eat prey as quickly as possible");
+		booleanOptions.add("predatorMinimizeTotalTime", false, "Turn on to encourage predators to minimize the total game time as a fitness function");
+		booleanOptions.add("preyMaximizeTotalTime", false, "Turn on to encourage prey to maximize the total game time as a fitness function");
+		booleanOptions.add("torusSenseTeammates", true, "If turned on, predators can sense other predators and preys can sense other preys");
+		booleanOptions.add("allowDoNothingActionForPredators", true, "If turned on, the predators will have the option to do nothing as their action");
+		booleanOptions.add("allowDoNothingActionForPreys", false, "If turned on, the preys will have the option to do nothing as their action");
 		booleanOptions.add("removePillsNearPowerPills", false, "Pills in a c-path with power pills are absent");
-		booleanOptions.add("allowMultipleFunctions", false,
-				"Turning this one will allow you to change TWEANN to CPPN by allowing multiple activation functions");
+		booleanOptions.add("allowMultipleFunctions", false, "Turning this one will allow you to change TWEANN to CPPN by allowing multiple activation functions");
 		booleanOptions.add("includeSigmoidFunction", true, "Fuction for sigmoid. If true, add to the function set");
 		booleanOptions.add("includeTanhFunction", false, "Fuction for tanh. If true, add to the function set");
 		booleanOptions.add("includeIdFuntion", false, "Just the sum. If true, add to the function set");
-		booleanOptions.add("includeFullApproxFunction", false,
-				"Fuction for full quick sigmoid. If true, add to the function set");
-		booleanOptions.add("includeApproxFunction", false,
-				"Fuction for quick sigmoid. If true, add to the function set");
+		booleanOptions.add("includeFullApproxFunction", false, "Fuction for full quick sigmoid. If true, add to the function set");
+		booleanOptions.add("includeApproxFunction", false, "Fuction for quick sigmoid. If true, add to the function set");
 		booleanOptions.add("includeGaussFunction", true, "Fuction for gaussian. If true, add to the function set");
 		booleanOptions.add("includeSineFunction", true, "Fuction for sine. If true, add to the function set");
 		booleanOptions.add("includeSawtoothFunction", true, "Fuction for sawtooth. If true, add to the function set");
-		booleanOptions.add("includeAbsValFunction", true,
-				"Fuction for absolute value. If true, add to the function set");
-		booleanOptions.add("includeHalfLinearPiecewiseFunction", true,
-				"Function for half linear picewise. If true, add to the function set");
-		booleanOptions.add("logGhostLocOnPowerPill", false,
-				"Log ghost locations corresponding to each eaten power pill");
+		booleanOptions.add("includeAbsValFunction", true, "Fuction for absolute value. If true, add to the function set");
+		booleanOptions.add("includeHalfLinearPiecewiseFunction", true, "Function for half linear picewise. If true, add to the function set");
+		booleanOptions.add("logGhostLocOnPowerPill", false, "Log ghost locations corresponding to each eaten power pill");
 		booleanOptions.add("breveDamageOnly", false, "Breve domains only care about damage objectives");
-		booleanOptions.add("getRemainingPills", false,
-				"CEC 2011 rule that Ms. Pac-Man gets the pills in the level when time runs out");
+		booleanOptions.add("getRemainingPills", false, "CEC 2011 rule that Ms. Pac-Man gets the pills in the level when time runs out");
 		booleanOptions.add("evolveGhosts", false, "Evolve ghosts instead of pacman");
 		booleanOptions.add("timedPacman", false, "Pacman moves have time limit, even in non-visual mode");
 		booleanOptions.add("modePheremone", false, "Drop pheremone according to mode used");
 		booleanOptions.add("incrementallyDecreasingEdibleTime", false, "Edible time decreases as generations pass");
 		booleanOptions.add("incrementallyDecreasingLairTime", false, "Lair time decreases as generations pass");
-		booleanOptions.add("onlyModeMutationWhenModesSame", false,
-				"Only allow mode mutation if whole population has same number of modes");
-		booleanOptions.add("tugGoalsIncreaseWhenThrashing", false,
-				"Slightly increase TUG goals when there is evidence of thrashing");
-		booleanOptions.add("stopTUGGoalDropAfterAchievement", false,
-				"Initially dropping TUG goals stop dropping after first achievement (must be initially set high)");
-		booleanOptions.add("tugGoalDropPossible", true,
-				"Option that gest disabled by stopTUGGoalDropAfterAchievement so behavior is consistent on save and resume");
-		booleanOptions.add("checkEachAbsoluteDistanceGhostSort", false,
-				"Sort ghost sensors by their shortest path distance rather than directional path distance");
-		booleanOptions.add("constantTUGGoalIncrements", false,
-				"Goals increase for set specific amounts in each objective");
+		booleanOptions.add("onlyModeMutationWhenModesSame", false, "Only allow mode mutation if whole population has same number of modes");
+		booleanOptions.add("tugGoalsIncreaseWhenThrashing", false, "Slightly increase TUG goals when there is evidence of thrashing");
+		booleanOptions.add("stopTUGGoalDropAfterAchievement", false, "Initially dropping TUG goals stop dropping after first achievement (must be initially set high)");
+		booleanOptions.add("tugGoalDropPossible", true, "Option that gest disabled by stopTUGGoalDropAfterAchievement so behavior is consistent on save and resume");
+		booleanOptions.add("checkEachAbsoluteDistanceGhostSort", false, "Sort ghost sensors by their shortest path distance rather than directional path distance");
+		booleanOptions.add("constantTUGGoalIncrements", false, "Goals increase for set specific amounts in each objective");
 		booleanOptions.add("setInitialTUGGoals", false, "Initial TUG goals for each objective are set by hand");
-		booleanOptions.add("tugObjectiveModeLinkage", false,
-				"In TUG, modes and objectives are linked so that deactivated objectives have their modes frozen");
-		booleanOptions.add("tugObjectiveUsageLinkage", false,
-				"In TUG, when modes and objectives are linked, linkage depends on mode usage");
+		booleanOptions.add("tugObjectiveModeLinkage", false, "In TUG, modes and objectives are linked so that deactivated objectives have their modes frozen");
+		booleanOptions.add("tugObjectiveUsageLinkage", false, "In TUG, when modes and objectives are linked, linkage depends on mode usage");
 		booleanOptions.add("scalePillsByGen", false, "Number of pills scales with generation");
 		booleanOptions.add("evalReport", false, "Write file of details for each eval");
 		booleanOptions.add("initCrossCombine", false, "Use combining crossover on starting population");
-		booleanOptions.add("policyFreezeUnalterable", false,
-				"If a network is unalterable after crossover, then just freeze the policy");
-		booleanOptions.add("prefFreezeUnalterable", false,
-				"If a network is unalterable after crossover, then just freeze the preferences");
-		booleanOptions.add("alternatePreferenceAndPolicy", false,
-				"Alternately freeze and melt preference and policy neurons of multimodal networks");
+		booleanOptions.add("policyFreezeUnalterable", false, "If a network is unalterable after crossover, then just freeze the policy");
+		booleanOptions.add("prefFreezeUnalterable", false, "If a network is unalterable after crossover, then just freeze the preferences");
+		booleanOptions.add("alternatePreferenceAndPolicy", false, "Alternately freeze and melt preference and policy neurons of multimodal networks");
 		booleanOptions.add("meltAfterCrossover", false, "Melt frozen genes after crossover");
-		booleanOptions.add("initAddPreferenceNeurons", false,
-				"Add preference neurons for each mode of initial (loaded) population");
+		booleanOptions.add("initAddPreferenceNeurons", false, "Add preference neurons for each mode of initial (loaded) population");
 		booleanOptions.add("highLevel", true, "Use high-level sensors in mediators");
-		booleanOptions.add("dieOnImproperPowerPillEating", false,
-				"Pacman dies if power pill is eaten when less than 4 threat ghosts are present");
+		booleanOptions.add("dieOnImproperPowerPillEating", false, "Pacman dies if power pill is eaten when less than 4 threat ghosts are present");
 		booleanOptions.add("logLock", false, "Don't mess with log files at all");
 		booleanOptions.add("rawTimeScore", false, "Encourage pacman to maximize time");
 		booleanOptions.add("simultaneousLairExit", false, "Ghosts all exit lair at same time");
@@ -403,10 +359,8 @@ public class Parameters {
 		booleanOptions.add("exitLairEdible", false, "Ghosts are edible when exiting lair");
 		booleanOptions.add("timeToEatAllFitness", false, "Fitness based on time to eat all ghosts after power pill");
 		booleanOptions.add("infiniteEdibleTime", false, "Ghosts remain edible until eaten");
-		booleanOptions.add("avgGhostsPerPowerPill", false,
-				"Ghost score used is the average eaten per power pill eaten");
-		booleanOptions.add("otherDirSensors", false,
-				"Check-Each mediators include sensors that tell the current dir about other dirs");
+		booleanOptions.add("avgGhostsPerPowerPill", false, "Ghost score used is the average eaten per power pill eaten");
+		booleanOptions.add("otherDirSensors", false, "Check-Each mediators include sensors that tell the current dir about other dirs");
 		booleanOptions.add("pacManLureFitness", false, "Pacman evolved using luring fitness");
 		booleanOptions.add("personalScent", false, "Pacman senses own scent");
 		booleanOptions.add("initMMD", false, "Perform MMD on whole pop at start of run");
