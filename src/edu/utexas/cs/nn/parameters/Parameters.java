@@ -261,6 +261,7 @@ public class Parameters {
         longOptions.add("lastInnovation", 0l, "Highest innovation number used so far");
         longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
         //Boolean parameters
+        booleanOptions.add("speedUpHyperNEAT", true, "reuses existing archetype of TWEANN controllers to save time for evaluation");
         booleanOptions.add("hyperNEAT", false, "Use the HyperNEAT version of the task (requires HyperNEATCPPNGenotype)");
         booleanOptions.add("saveAllChampions", false, "saves all champions of each generation");
         booleanOptions.add("watchLastBest", false, "shows best result from last generation");
