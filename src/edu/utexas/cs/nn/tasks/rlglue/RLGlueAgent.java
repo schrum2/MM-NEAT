@@ -6,7 +6,6 @@ import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
 import org.rlcommunity.rlglue.codec.AgentInterface;
-import org.rlcommunity.rlglue.codec.taskspec.TaskSpec;
 import org.rlcommunity.rlglue.codec.types.Action;
 import org.rlcommunity.rlglue.codec.types.Observation;
 import rlVizLib.messaging.NotAnRLVizMessageException;
@@ -23,7 +22,6 @@ import rlVizLib.messaging.agent.AgentMessages;
  */
 public class RLGlueAgent<T extends Network> extends Organism<T> implements AgentInterface {
 
-    protected TaskSpec TSO = null;
     public T policy;
 
     public RLGlueAgent(){
@@ -31,11 +29,7 @@ public class RLGlueAgent<T extends Network> extends Organism<T> implements Agent
     }
     
     public int getNumberOutputs() {
-        if(TSO == null) {
-            // Hopefully, this TaskSpec is the same one the agent would receive from RLGlue
-            TSO = MMNEAT.rlGlueEnvironment.makeTaskSpec();
-        }
-    	return TSO.getDiscreteActionRange(0).getMax() - TSO.getDiscreteActionRange(0).getMin() + 1;
+        return MMNEAT.tso.getDiscreteActionRange(0).getMax() - MMNEAT.tso.getDiscreteActionRange(0).getMin() + 1;
     }
     
     /**
@@ -57,29 +51,39 @@ public class RLGlueAgent<T extends Network> extends Organism<T> implements Agent
     }
 
     /**
-     * Sets the null TSO to a new taskSpec
+     * Not really needed because TaskSpec is already extracted in MMNEAT
+     * @param taskSpec String description of task sent from RL Glue
      */
+    @Override
     public void agent_init(String taskSpec) {
-        TSO = new TaskSpec(taskSpec);
     }
 
     /**
      * Getter for the starting action of the observation
+     * @param o generic observation
+     * @return Action to take given the observation
      */
+    @Override
     public Action agent_start(Observation o) {
         return getAction(o);
     }
 
     /**
      * Getter for the "next" action of the observation
+     * @param d Immediate reward?
+     * @param o Observation of state
+     * @return action to take in the state
      */
+    @Override
     public Action agent_step(double d, Observation o) {
         return getAction(o);
     }
 
     /**
      * Does nothing currently
+     * @param d Final reward?
      */
+    @Override
     public void agent_end(double d) {
     }
 
@@ -89,7 +93,7 @@ public class RLGlueAgent<T extends Network> extends Organism<T> implements Agent
      * @return
      */
     public Action getAction(Observation o) {
-        Action action = new Action(TSO.getNumDiscreteActionDims(), TSO.getNumContinuousActionDims());
+        Action action = new Action(MMNEAT.tso.getNumDiscreteActionDims(), MMNEAT.tso.getNumContinuousActionDims());
 
         double[] inputs = MMNEAT.rlGlueExtractor.extract(o);
         double[] outputs = this.consultPolicy(inputs);
@@ -103,13 +107,17 @@ public class RLGlueAgent<T extends Network> extends Organism<T> implements Agent
     /**
      * Cleans the policy of the agent
      */
+    @Override
     public void agent_cleanup() {
-        policy.flush();
+        policy.flush(); // resets recurrent activations
     }
 
     /**
      * Takes in a message and responds accordingly with another message
+     * @param theMessage
+     * @return 
      */
+    @Override
     public String agent_message(String theMessage) {
         AgentMessages theMessageObject;
         try {

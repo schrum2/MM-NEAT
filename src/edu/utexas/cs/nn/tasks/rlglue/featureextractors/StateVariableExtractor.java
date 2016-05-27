@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.utexas.cs.nn.tasks.rlglue.featureextractors;
 
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
@@ -9,7 +5,9 @@ import org.rlcommunity.rlglue.codec.taskspec.TaskSpec;
 import org.rlcommunity.rlglue.codec.types.Observation;
 
 /**
- *
+ * Simple default feature extractor for RL-Glue that uses the
+ * raw state variables.
+ * 
  * @author Jacob Schrum
  */
 public class StateVariableExtractor implements FeatureExtractor {
@@ -24,6 +22,7 @@ public class StateVariableExtractor implements FeatureExtractor {
         this.tso = tso;
     }
 
+    @Override
     public int numFeatures() {
         return tso.getNumContinuousObsDims() + tso.getNumDiscreteObsDims();
     }

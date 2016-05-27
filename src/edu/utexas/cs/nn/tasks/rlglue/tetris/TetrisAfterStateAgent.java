@@ -120,7 +120,7 @@ public class TetrisAfterStateAgent<T extends Network> extends RLGlueAgent<T> {
             currentActionList.add(TetrisState.NONE); // Let the block settle and a new one spawns
         }
 
-        Action action = new Action(TSO.getNumDiscreteActionDims(), TSO.getNumContinuousActionDims()); //moved this from before the action call, because both actions may need it -Gab
+        Action action = new Action(MMNEAT.tso.getNumDiscreteActionDims(), MMNEAT.tso.getNumContinuousActionDims()); //moved this from before the action call, because both actions may need it -Gab
         // Current action is next one in list
         action.intArray[0] = currentActionList.get(0);
         currentActionList.remove(0);
