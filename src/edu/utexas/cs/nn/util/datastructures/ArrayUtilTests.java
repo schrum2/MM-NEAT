@@ -4,6 +4,8 @@ import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.junit.Test;
 
@@ -258,7 +260,183 @@ public class ArrayUtilTests {
 	}
 	
 	@Test
-	public void _test(){
-		
+	public void doubleVectorFromArray_test(){ // tests that the resulting Arraylist is of Double and contains the given array elements
+		double[] base = {2.0, 6.0, 3.0, 7.0, 3.0, 5.0, 1.0};
+		assertTrue(ArrayUtil.doubleVectorFromArray(base) instanceof ArrayList<?>);
+		assertTrue(ArrayUtil.doubleVectorFromArray(base).get(0) instanceof Double);
+		ArrayList<Double> result = ArrayUtil.doubleVectorFromArray(base);
+		assertEquals(result.get(0).doubleValue(), 2.0, 0.0);
 	}
+	
+	@Test
+	public void column_array_test(){ // tests that the returned array is the correct column
+		double[][] matrix = new double[3][3];
+		matrix[0][0] = 0.0;
+		matrix[0][1] = 6.0;
+		matrix[0][2] = 1.0;
+		matrix[1][0] = 2.0;
+		matrix[1][1] = 6.0;
+		matrix[1][2] = 2.0;
+		matrix[2][0] = 4.0;
+		matrix[2][1] = 6.0;
+		matrix[2][2] = 3.0;
+		double[] col = ArrayUtil.column(matrix, 2);
+		assertTrue(col instanceof double[]);
+		assertEquals(col[0], 1.0, 0.0);
+		assertEquals(col[1], 2.0, 0.0);
+		assertEquals(col[2], 3.0, 0.0);
+	}
+
+	@Test
+	public void column_arraylist_test(){ // tests that the returned array is the correct column
+		ArrayList<ArrayList<Integer>> matrix = new ArrayList<ArrayList<Integer>>();
+		ArrayList<Integer> a = new ArrayList<Integer>();
+		ArrayList<Integer> b = new ArrayList<Integer>();
+		ArrayList<Integer> c = new ArrayList<Integer>();
+		a.add(5);
+		a.add(9);
+		a.add(8);
+		b.add(1);
+		b.add(3);
+		b.add(2);
+		c.add(7);
+		c.add(7);
+		c.add(7);
+		matrix.add(a);
+		matrix.add(b);
+		matrix.add(c);
+		Integer[] result = new Integer[3];
+		ArrayUtil.column(matrix, 0, result);
+		assertEquals(result[0].intValue(), 5);
+		assertEquals(result[1].intValue(), 1);
+		assertEquals(result[2].intValue(), 7);
+	}
+	
+	@Test
+	public void keepTrueValues_int_test(){ // tests that the array returned contains only the values set to true
+		int[] base = {0, 4, 6, 2, 9, 0, 2, 0};
+		boolean[] keep = {false, true, true, true, true, false, true, false};
+		int[] result = ArrayUtil.keepTrueValues(base, keep);
+		assertEquals(result.length, 5);
+		assertEquals(result[0], 4);
+		assertEquals(result[3], 9);
+		assertFalse(result[0] == 0);
+	}
+	
+	@Test
+	public void keepTrueValues_double_test(){ // tests that the array returned contains only the values set to true
+		double[] base = {0.0, 4.2, 6.0, 2.3, 9.0, 0.0, 2.5, 0.0};
+		boolean[] keep = {false, true, true, true, true, false, true, false};
+		double[] result = ArrayUtil.keepTrueValues(base, keep);
+		assertEquals(result.length, 5);
+		assertEquals(result[0], 4.2, 0.0);
+		assertEquals(result[3], 9.0, 0.0);
+		assertFalse(result[0] == 0.0);
+	}
+	
+	@Test
+	public void zipAdd_double_test(){ // tests that the two arrays are correctly added together
+		double[] a = {1.0, 1.0, 1.0, 1.0, 1.0};
+		double[] b = {1.0, 2.0, 3.0, 4.0, 5.0};
+		assertTrue(ArrayUtil.zipAdd(a, b) instanceof double[]);
+		assertEquals(ArrayUtil.zipAdd(a, b).length, 5);
+		assertEquals(ArrayUtil.zipAdd(a, b)[0], 2.0, 0.0);
+		assertEquals(ArrayUtil.zipAdd(a, b)[1], 3.0, 0.0);
+		assertEquals(ArrayUtil.zipAdd(a, b)[2], 4.0, 0.0);
+		assertEquals(ArrayUtil.zipAdd(a, b)[3], 5.0, 0.0);
+		assertEquals(ArrayUtil.zipAdd(a, b)[4], 6.0, 0.0);
+	}
+	
+	@Test
+	public void zipAdd_int_test(){ // tests that the two arrays are correctly added together
+		int[] a = {1, 1, 1, 1, 1};
+		int[] b = {1, 2, 3, 4, 5};
+		assertTrue(ArrayUtil.zipAdd(a, b) instanceof int[]);
+		assertEquals(ArrayUtil.zipAdd(a, b).length, 5);
+		assertEquals(ArrayUtil.zipAdd(a, b)[0], 2);
+		assertEquals(ArrayUtil.zipAdd(a, b)[1], 3);
+		assertEquals(ArrayUtil.zipAdd(a, b)[2], 4);
+		assertEquals(ArrayUtil.zipAdd(a, b)[3], 5);
+		assertEquals(ArrayUtil.zipAdd(a, b)[4], 6);
+	}
+	
+	@Test
+	public void zipMax_test(){ // tests that the resulting array only holds the pair-wise maxes of the given arrays
+		double[] a = {5.0, 1.0, 5.0, 1.0, 6.0};
+		double[] b = {1.0, 2.0, 3.0, 4.0, 5.0};
+		assertTrue(ArrayUtil.zipMax(a, b) instanceof double[]);
+		assertEquals(ArrayUtil.zipMax(a, b).length, 5);
+		assertEquals(ArrayUtil.zipMax(a, b)[0], 5.0, 0.0);
+		assertEquals(ArrayUtil.zipMax(a, b)[1], 2.0, 0.0);
+		assertEquals(ArrayUtil.zipMax(a, b)[2], 5.0, 0.0);
+		assertEquals(ArrayUtil.zipMax(a, b)[3], 4.0, 0.0);
+		assertEquals(ArrayUtil.zipMax(a, b)[4], 6.0, 0.0);
+	}
+	
+	@Test
+	public void scale_test(){ // tests that the array values are correctly scaled
+		double[] base = {1.0, 2.0, 3.0, 4.0};
+		assertEquals(ArrayUtil.scale(base, 2)[0], 2.0, 0.0);
+		assertEquals(ArrayUtil.scale(base, 2)[1], 4.0, 0.0);
+		assertEquals(ArrayUtil.scale(base, 2)[2], 6.0, 0.0);
+		assertEquals(ArrayUtil.scale(base, 2)[3], 8.0, 0.0);
+		assertEquals(ArrayUtil.scale(base, 70)[0], 70.0, 0.0);
+	}
+	
+	@Test
+	public void intersection_test(){ // tests that the array returned only contains the intersection of the given arrays
+		int[] a = {1, 2, 3, 4, 5};
+		int[] b = {4, 5, 6, 7, 8};
+		assertTrue(ArrayUtil.intersection(a, b) instanceof int[]);
+		assertEquals(ArrayUtil.intersection(a, b).length, 2);
+		assertEquals(ArrayUtil.intersection(a, b)[0], 4);
+		assertEquals(ArrayUtil.intersection(a, b)[1], 5);
+	}
+	
+	@Test
+	public void integerSetToArray_test(){ // tests that the resulting array
+		Set<Integer> base = new HashSet<Integer>();
+		base.add(5);
+		base.add(2);
+		base.add(1);
+		base.add(4);
+		assertTrue(ArrayUtil.integerSetToArray(base) instanceof int[]);
+		assertEquals(ArrayUtil.integerSetToArray(base).length, 4);
+		assertEquals(ArrayUtil.integerSetToArray(base)[0], 1);
+		assertEquals(ArrayUtil.integerSetToArray(base)[3], 5);
+	}
+	
+	@Test
+	public void portion_test(){ // tests that the resulting portion is correct
+		double[] base = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0};
+		assertTrue(ArrayUtil.portion(base, 2, 4) instanceof double[]);
+		assertEquals(ArrayUtil.portion(base, 2, 4).length, 3);
+		assertEquals(ArrayUtil.portion(base, 2, 4)[0], 3.0, 0.0);
+		assertEquals(ArrayUtil.portion(base, 2, 4)[2], 5.0, 0.0);
+	}
+	
+	@Test
+	public void setEquality_long_test(){ // tests that the equality function correctly determines what arrays are equals
+		long[] a = {1, 2, 3, 4};
+		long[] b = {1, 2, 3, 4};
+		long[] c = {1, 2, 3};
+		assertTrue(ArrayUtil.setEquality(a, b));
+		assertFalse(ArrayUtil.setEquality(a, c));
+	}
+	
+	@Test
+	public void setEquality_arraylist_test(){ // tests that the equality function correctly determines what arrays are equals
+		ArrayList<Integer> a = new ArrayList<Integer>();
+		ArrayList<Integer> b = new ArrayList<Integer>();
+		ArrayList<String> c = new ArrayList<String>();
+		ArrayList<String> d = new ArrayList<String>();
+		ArrayList<String> e = new ArrayList<String>();
+		a.add(1);
+		a.add(2);
+		a.add(3);
+		assertTrue(ArrayUtil.setEquality(a, b));
+		assertTrue(ArrayUtil.setEquality(c, d));
+		assertFalse(ArrayUtil.setEquality(c, e));
+	}
+	
 }
