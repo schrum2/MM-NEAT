@@ -5,33 +5,33 @@ import edu.utexas.cs.nn.breve2D.dynamics.Breve2DDynamics;
 import edu.utexas.cs.nn.breve2D.dynamics.InterleavedFightOrFlight;
 import edu.utexas.cs.nn.parameters.Parameters;
 
+/**
+ * A class which runs an instance of the Breve2D domain
+ */
 public class Breve2DExec {
 	// Several options are listed - simply remove comments to use the option you
 	// want
 
+	/**
+	 * main method for running an instance of the Breve2DExec domain
+	 */
 	public static void main(String[] args) {
-		Parameters.initializeParameterCollections(new String[] { "watch:true", "breve2DTimeLimit:200" });
+		Parameters.initializeParameterCollections(new String[] { "watch:true", "breve2DTimeLimit:500" });
 		Breve2DExec exec = new Breve2DExec();
-
-		// exec.runGameTimed(new HumanPlayer(), new AgentController[]{new
-		// RushingMonster(0), new RushingMonster(1), new RushingMonster(2), new
-		// RushingMonster(3), new RushingMonster(4), new RushingMonster(5), new
-		// RushingMonster(6), new RushingMonster(7)}, true);
-		// exec.runGameTimed(new HumanPlayer(), new AgentController[]{new
-		// RushingMonster(0), new RushingMonster(1), new RushingMonster(2), new
-		// RushingMonster(3)}, true);
+		
 		AgentController[] monsters = new AgentController[4];
 		for (int i = 0; i < monsters.length; i++) {
-			// monsters[i] = new RushingMonster(i);
+			monsters[i] = new RushingMonster(i);
 			// monsters[i] = new AttractRepelMonster(i, true);
-			monsters[i] = new EscapingMonster(i);
+			// monsters[i] = new EscapingMonster(i);
 			// monsters[i] = new StationaryAgent();
 		}
 
 		// Breve2DDynamics dyn = new FrontBackRamming();
 		Breve2DDynamics dyn = new InterleavedFightOrFlight();
 		// AgentController agent = new FrontBackRammingEnemy();
-		AgentController agent = new PredatorPreyEnemy();
+		// AgentController agent = new PredatorPreyEnemy();
+		AgentController agent = new HumanPlayer();
 
 		// exec.runGameTimed(new PlayerPreyMonsterPredator(), new HumanPlayer(),
 		// monsters, true);
@@ -45,8 +45,6 @@ public class Breve2DExec {
 		// 600), new RushingPlayer(), monsters, true);
 		// exec.runGameTimed(new PredatorPrey(), new HumanPlayer(), monsters,
 		// true);
-		// exec.runGameTimed(new PlayerPredatorMonsterPrey(monsters.length,
-		// 600), new RushingPlayer(), monsters, true);
 		// exec.runGameTimed(new PlayerPreyMonsterPredator(), new
 		// EscapingPlayer(), monsters, true);
 		exec.runGameTimed(dyn, agent, monsters, true);
@@ -63,6 +61,10 @@ public class Breve2DExec {
 		// exec.replayGame("human-v-Legacy2.txt");
 	}
 
+	/**
+	 * stores a Breve2DAction as a class
+	 *
+	 */
 	private static class ActionStorage {
 
 		public Breve2DAction action = new Breve2DAction(0, 0);
@@ -70,13 +72,17 @@ public class Breve2DExec {
 
 	public Breve2DGame game;
 
-	/*
+	/**
 	 * For running multiple games without visuals. This is useful to get a good
 	 * idea of how well a controller plays against a chosen opponent: the random
 	 * nature of the game means that performance can vary from game to game.
 	 * Running many games and looking at the average score (and standard
 	 * deviation/error) helps to get a better idea of how well the controller is
 	 * likely to do.
+	 * 
+	 * @param playerController, an AgentController
+	 * @param dynamics, Breve2DDynamics
+	 * @return game, the Breve2D game instance
 	 */
 	public Breve2DGame runExperiment(Breve2DDynamics dynamics, AgentController playerController,
 			AgentController[] monsterControllers) {
@@ -116,7 +122,7 @@ public class Breve2DExec {
 		return game;
 	}
 
-	/*
+	/**
 	 * Run game with time limit. Can be played with and without visual display
 	 * of game states.
 	 */
@@ -196,7 +202,7 @@ public class Breve2DExec {
 		return game;
 	}
 
-	/*
+	/**
 	 * Wraps the controller in a thread for the timed execution. This class then
 	 * updates the directions for Exec to parse to the game.
 	 */
