@@ -515,5 +515,76 @@ public class ArrayUtilTests {
 		assertTrue(ArrayUtil.setEquality(c, d));
 		assertFalse(ArrayUtil.setEquality(c, e));
 	}
+	
+	/**
+	 * Tests that the returned ArrayList contains the correct members from 
+	 * the left hand side array list
+	 */
+	@Test
+	public void setDifference_arraylist_test() {
+		ArrayList<Integer> a = new ArrayList<Integer>();
+		ArrayList<Integer> b = new ArrayList<Integer>();
+		a.add(1);
+		a.add(2);
+		a.add(3);
+		a.add(4);
+		b.add(3);
+		b.add(2);
+		assertTrue(ArrayUtil.setDifference(a, b) instanceof ArrayList<?>);
+		assertEquals(ArrayUtil.setDifference(a, b).size(), 2);
+		assertEquals(ArrayUtil.setDifference(a, b).get(0).intValue(), 1);
+		assertEquals(ArrayUtil.setDifference(a, b).get(1).intValue(), 4);
+	}
+	
+	/**
+	 * Tests that the returned array contains the correct members from 
+	 * the left hand side array 
+	 */
+	@Test
+	public void setDifference_array_test() {
+		int[] a = {1, 2, 3, 4};
+		int[] b = {3, 2};
+		assertTrue(ArrayUtil.setDifference(a, b) instanceof int[]);
+		assertEquals(ArrayUtil.setDifference(a, b).length, 2);
+		assertEquals(ArrayUtil.setDifference(a, b)[0], 1);
+		assertEquals(ArrayUtil.setDifference(a, b)[1], 4);
+	}
+	
+	/**
+	 * Tests that the returned array contains the correct members from 
+	 * the left hand side array compared with an arraylist
+	 */
+	@Test
+	public void setDifference_array_and_arraylist_test() {
+		int[] a = {1, 2, 3, 4};
+		ArrayList<Integer> b = new ArrayList<Integer>();
+		b.add(3);
+		b.add(2);
+		assertTrue(ArrayUtil.setDifference(a, b) instanceof int[]);
+		assertEquals(ArrayUtil.setDifference(a, b).length, 2);
+		assertEquals(ArrayUtil.setDifference(a, b)[0], 1);
+		assertEquals(ArrayUtil.setDifference(a, b)[1], 4);
+	}
+	
+	/**
+	 * Tests that the given response is either the given item or null
+	 */
+	@Test
+	public void firstInstance_test() {
+		String[] base = {"no","yes"};
+		assertEquals(ArrayUtil.firstInstance(base, "yes"), "yes");
+		assertNull(ArrayUtil.firstInstance(base, "maybe"));
+		assertNotNull(ArrayUtil.firstInstance(base, "no"));
+	}
+	
+	/**
+	 * Tests that the correct number of unique entries is returned
+	 */
+	@Test
+	public void setCardinality_test() {
+		int[] base = {1, 2, 3, 4, 3, 6, 2, 4, 5, 4, 3, 4, 4, 4};
+		assertEquals(ArrayUtil.setCardinality(base), 6);
+	}
+
 
 }
