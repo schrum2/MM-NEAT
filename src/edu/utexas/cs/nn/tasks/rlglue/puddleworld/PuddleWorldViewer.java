@@ -12,7 +12,6 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
 import java.util.Vector;
 import org.rlcommunity.environments.puddleworld.Puddle;
 
@@ -34,6 +33,9 @@ public final class PuddleWorldViewer {
 	public int lastY;
 	private final boolean erase;
 
+	/**
+	 * Sets up the viewer for PuddleWorld
+	 */
 	public PuddleWorldViewer() {
 		erase = Parameters.parameters.booleanParameter("erasePWTrails");
 		panel = new DrawingPanel(WIDTH, HEIGHT, TITLE);
@@ -42,10 +44,19 @@ public final class PuddleWorldViewer {
 		current = this;
 	}
 
+	/**
+	 * Resets the graphics for the view given first is false
+	 */
 	public void reset() {
 		reset(false);
 	}
 
+	/**
+	 * Resets the graphics for the view given first or erase is true
+	 * If both are false, only the lastX and lastY are reset
+	 * 
+	 * @param first boolean
+	 */
 	public void reset(boolean first) {
 		lastX = -1;
 		lastY = -1;
@@ -59,10 +70,20 @@ public final class PuddleWorldViewer {
 		}
 	}
 
+	/**
+	 * Given a Point2D, p, call visit with those coordinates 
+	 * and update the points accordingly
+	 * @param p
+	 */
 	public void visit(Point2D p) {
 		visit(p.getX(), p.getY());
 	}
 
+	/**
+	 * Given an x and y, update the points accordingly
+	 * @param x
+	 * @param y
+	 */
 	public void visit(double x, double y) {
 		Graphics2D g = panel.getGraphics();
 		// Update previous point
@@ -84,23 +105,55 @@ public final class PuddleWorldViewer {
 		g.fillOval(lastX, lastY, DOT_SIZE, DOT_SIZE);
 	}
 
+	/**
+	 * Finds the x placement on the map given an x 
+	 * If dot is true, the dot size is taken into account
+	 * 
+	 * @param x
+	 * @param dot
+	 * @return map position for x
+	 */
 	private static int mapX(double x, boolean dot) {
 		return (int) (BUFFER + (x * (WIDTH - (2 * BUFFER))) - (dot ? DOT_SIZE / 2 : 0));
 	}
 
+	/**
+	 * Finds the y placement on the map given an y 
+	 * If dot is true, the dot size is taken into account
+	 * 
+	 * @param y
+	 * @param dot
+	 * @return
+	 */
 	private static int mapY(double y, boolean dot) {
 		double actualH = (HEIGHT - (2 * BUFFER));
 		return (int) (BUFFER + (actualH - (y * actualH)) - (dot ? DOT_SIZE / 2 : 0));
 	}
 
+	/**
+	 * Scales x given a scalar double, w
+	 * 
+	 * @param w
+	 * @return scaled x
+	 */
 	private int scaleX(double w) {
 		return (int) (w * (WIDTH - (2 * BUFFER)));
 	}
 
+	/**
+	 * Scales y given a scalar double, h
+	 * 
+	 * @param h
+	 * @return scaled y
+	 */
 	private int scaleY(double h) {
 		return (int) (h * (HEIGHT - (2 * BUFFER)));
 	}
 
+	/**
+	 * Draws the given goal rectangle on the map
+	 * @param goalRect
+	 */
 	public void drawGoal(Rectangle2D goalRect) {
 		Graphics2D g = panel.getGraphics();
 		g.setColor(Color.GREEN);
@@ -111,7 +164,12 @@ public final class PuddleWorldViewer {
 		g.drawRect(x, y - h, w, h);
 	}
 
-	// Stolen from the render method of the original visualizer
+	/**
+	 * Draws the puddles on the map from a given vector
+	 * (Stolen from the render method of the original visualizer)
+	 * 
+	 * @param thePuddles
+	 */
 	public void drawPuddles(Vector<Puddle> thePuddles) {
 		Graphics2D g = panel.getGraphics();
 		double increment = .0025d;

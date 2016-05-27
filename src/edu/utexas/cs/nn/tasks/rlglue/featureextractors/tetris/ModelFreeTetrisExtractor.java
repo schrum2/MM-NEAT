@@ -15,24 +15,36 @@ import org.rlcommunity.rlglue.codec.types.Observation;
  */
 public class ModelFreeTetrisExtractor extends BertsekasTsitsiklisTetrisExtractor {
 
+	/**
+	 * Returns the number of features for this extractor
+	 */
 	@Override
 	public int numFeatures() {
 		return super.numFeatures() + 5; // may need to change the 5 here
 	}
 
+	/**
+	 * Scales the given inputs to fit the range [0 to 1]
+	 * @param inputs double[]
+	 * @return scaled inputs double[]
+	 */
 	@Override
 	public double[] scaleInputs(double[] inputs) {
 		double[] original = super.scaleInputs(inputs);
-		int originalFeatures = TetrisState.worldWidth + (TetrisState.worldWidth - 1) + 3; // Number
-																							// of
-																							// original
-																							// features
+		int originalFeatures = TetrisState.worldWidth + (TetrisState.worldWidth - 1) + 3; 
 		for (int i = originalFeatures; i < inputs.length; i++) {
 			original[i] = inputs[i] / TetrisState.worldHeight;
 		}
 		return original;
 	}
 
+	/**
+	 * Extract extends from BertsekasTsitsiklisTetrisExtractor and adds 
+	 * piece distances from the written blocks below
+	 * 
+	 * @param o Observation 
+	 * @return array of inputs
+	 */
 	@Override
 	public double[] extract(Observation o) {
 		double[] base = super.extract(o);
@@ -48,9 +60,6 @@ public class ModelFreeTetrisExtractor extends BertsekasTsitsiklisTetrisExtractor
 		int blockX = o.intArray[TetrisState.TETRIS_STATE_CURRENT_X_INDEX];
 		int blockY = o.intArray[TetrisState.TETRIS_STATE_CURRENT_Y_INDEX];
 		int blockRotation = o.intArray[TetrisState.TETRIS_STATE_CURRENT_ROTATION_INDEX];
-		// blotMobilePiece(worldState, blockId, blockX, blockY, blockRotation);
-		// This needs to be commented here too! Causes problems with the
-		// afterstate. -Gab
 
 		double[] added = new double[5];
 		for (int i = 0; i < added.length; i++) {
@@ -60,14 +69,21 @@ public class ModelFreeTetrisExtractor extends BertsekasTsitsiklisTetrisExtractor
 		double[] combined = new double[super.numFeatures() + added.length];
 		System.arraycopy(base, 0, combined, 0, super.numFeatures());
 		System.arraycopy(added, 0, combined, super.numFeatures(), added.length);
-
-		// System.out.println(Arrays.toString(combined));
-
+	
 		return combined;
 	}
-
-	/*
-	 * worldState used needs to be after the floating piece is blotted out
+	
+	/**
+	 * The current worldState needs to blot out the floating piece so it
+	 * does not interfere with scoring
+	 * 
+	 * @param worldState
+	 * @param blockId
+	 * @param blockX
+	 * @param blockY
+	 * @param blockRotation
+	 * @param pieceColumn
+	 * @return
 	 */
 	protected int pieceDistanceFromBlocks(int[] worldState, int blockId, int blockX, int blockY, int blockRotation,
 			int pieceColumn) {

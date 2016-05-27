@@ -2,16 +2,10 @@ package edu.utexas.cs.nn.tasks.rlglue.featureextractors.tetris;
 
 import static org.junit.Assert.*;
 
-import java.util.Arrays;
-
 import org.junit.Test;
 
 import org.rlcommunity.environments.tetris.TetrisState;
 import org.rlcommunity.rlglue.codec.types.Observation;
-
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.tasks.rlglue.tetris.TetrisViewer;
-import edu.utexas.cs.nn.util.MiscUtil;
 
 public class BertsekasTsitsiklisTetrisExtractorTests {
 

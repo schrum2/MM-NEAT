@@ -83,8 +83,6 @@ public class RLGlueTask<T extends Network> extends NoisyLonerTask<T>implements N
 		boolean puddleWorld = (MMNEAT.rlGlueEnvironment instanceof PuddleWorld);
 		moPuddleWorld = puddleWorld && Parameters.parameters.booleanParameter("moPuddleWorld");
 		boolean tetris = (MMNEAT.rlGlueEnvironment instanceof Tetris);
-		// moTetris = tetris &&
-		// Parameters.parameters.booleanParameter("moTetris");
 		tetrisTimeSteps = tetris && Parameters.parameters.booleanParameter("tetrisTimeSteps");
 		tetrisBlocksOnScreen = tetris && Parameters.parameters.booleanParameter("tetrisBlocksOnScreen");
 		rlGluePort = Parameters.parameters.integerParameter("rlGluePort");
@@ -93,17 +91,21 @@ public class RLGlueTask<T extends Network> extends NoisyLonerTask<T>implements N
 			MMNEAT.registerFitnessFunction("Time Penalty");
 			MMNEAT.registerFitnessFunction("Puddle Penalty");
 		}
-		if (tetrisTimeSteps) {
-			MMNEAT.registerFitnessFunction("Time Steps"); // Staying alive is
-															// good
+		if (tetrisTimeSteps) { // Staying alive is good
+			MMNEAT.registerFitnessFunction("Time Steps");
 		}
-		if (tetrisBlocksOnScreen) {
-			MMNEAT.registerFitnessFunction("Blocks on Screen"); // On game over,
-																// more blocks
-																// left is
-																// better
+		if (tetrisBlocksOnScreen) { // On game over, more blocks left is better
+			MMNEAT.registerFitnessFunction("Blocks on Screen"); 
 		}
 		MMNEAT.registerFitnessFunction("RL Return");
+		
+		// Now register the other scores for Tetris
+		if(tetrisTimeSteps || tetrisBlocksOnScreen) {
+			MMNEAT.registerFitnessFunction("Rows of 1", null, false);
+			MMNEAT.registerFitnessFunction("Rows of 2", null, false);
+			MMNEAT.registerFitnessFunction("Rows of 3", null, false);
+			MMNEAT.registerFitnessFunction("Rows of 4", null, false);
+		}
 
 		rlNumSteps = new int[CommonConstants.trials];
 		rlReturn = new double[CommonConstants.trials];
@@ -168,7 +170,7 @@ public class RLGlueTask<T extends Network> extends NoisyLonerTask<T>implements N
 	 */
 	@Override
 	public int numOtherScores() {
-		return moPuddleWorld ? 1 : 0;
+		return moPuddleWorld ? 1 : (tetrisBlocksOnScreen || tetrisTimeSteps ? 4 : 0);
 	}
 
 	/**
@@ -231,19 +233,15 @@ public class RLGlueTask<T extends Network> extends NoisyLonerTask<T>implements N
 	 */
 	public void launchRLGlue() {
 		System.out.println("Launch RL Glue");
-		ProcessBuilder processBuilder = new ProcessBuilder("RL-Glue/rl_glue.exe"); // command,
-																					// arg1,
-																					// arg2
+		ProcessBuilder processBuilder = new ProcessBuilder("RL-Glue/rl_glue.exe"); 
 		Map<String, String> env = processBuilder.environment();
 		env.put("RLGLUE_HOST", "localhost");
 		env.put("RLGLUE_PORT", "" + rlGluePort);
 		// Runtime rt = Runtime.getRuntime();
 		try {
 			// Launch an executable program
-			// rlglue = rt.exec("RL-Glue/rl_glue.exe"); //, new
-			// String[]{"RLGLUE_PORT=4100"}
+			// rlglue = rt.exec("RL-Glue/rl_glue.exe"); 
 			rlglue = processBuilder.start();
-
 		} catch (IOException ex) {
 			ex.printStackTrace();
 			System.out.println("        Exception when launching rl_glue.exe!");

@@ -7,7 +7,6 @@ package edu.utexas.cs.nn.tasks.rlglue.cartpole;
 import edu.utexas.cs.nn.graphics.DrawingPanel;
 import edu.utexas.cs.nn.networks.TWEANN;
 import java.awt.*;
-import java.awt.geom.AffineTransform;
 import rlVizLib.utilities.UtilityShop;
 
 /**
@@ -23,6 +22,9 @@ public class CartPoleViewer {
 	public DrawingPanel panel;
 	private double poleLength = .3d; // 30% of the screen long
 
+	/**
+	 * Sets up the viewer for CartPole
+	 */
 	public CartPoleViewer() {
 		panel = new DrawingPanel(WIDTH, HEIGHT, TITLE);
 		panel.setLocation(TWEANN.NETWORK_VIEW_DIM, 0);
@@ -30,6 +32,9 @@ public class CartPoleViewer {
 		current = this;
 	}
 
+	/**
+	 * Resets the graphics for the view
+	 */
 	public void reset() {
 		Graphics2D g = panel.getGraphics();
 		g.setColor(Color.WHITE);
@@ -109,6 +114,11 @@ public class CartPoleViewer {
 		// g.setTransform(saveAT);
 	}
 
+	/**
+	 * Draws the cart wheels for the view
+	 * @param g
+	 * @param carRect
+	 */
 	private void drawWheels(Graphics2D g, Rectangle carRect) {
 		g.setColor(Color.red);
 

@@ -7,7 +7,6 @@ import org.rlcommunity.environments.tetris.TetrisState;
 import org.rlcommunity.rlglue.codec.types.Observation;
 
 import edu.utexas.cs.nn.tasks.rlglue.featureextractors.tetris.BertsekasTsitsiklisTetrisExtractor;
-import edu.utexas.cs.nn.util.MiscUtil;
 
 public class TetrisAfterStateAgentTests {
 	@Test

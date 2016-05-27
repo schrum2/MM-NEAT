@@ -29,6 +29,10 @@ public class RLGlueAgent<T extends Network> extends Organism<T>implements AgentI
 		super(null);
 	}
 
+	/**
+	 * Returns the number of outputs for a given agent
+	 * @return action range max - action range min + 1
+	 */
 	public int getNumberOutputs() {
 		return MMNEAT.tso.getDiscreteActionRange(0).getMax() - MMNEAT.tso.getDiscreteActionRange(0).getMin() + 1;
 	}

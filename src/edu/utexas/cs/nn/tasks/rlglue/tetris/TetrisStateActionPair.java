@@ -13,19 +13,25 @@ public class TetrisStateActionPair extends Pair<TetrisState, List<Integer>> {
 	/**
 	 * Initializes the StateAction pair
 	 *
-	 * @param pos1
-	 *            Tetris state that sequence of actions results in
-	 * @param pos2
-	 *            List of actions that results in Tetris state
+	 * @param pos1 Tetris end state
+	 * @param pos2 List of actions to get there
 	 */
 	public TetrisStateActionPair(TetrisState pos1, List<Integer> pos2) {
 		super(pos1, pos2);
 	}
 
+	/**
+	 * Creates a new StateAction pair given there's one to copy
+	 * @param toCopy
+	 */
 	public TetrisStateActionPair(TetrisStateActionPair toCopy) {
 		this(new TetrisState(toCopy.t1), new LinkedList<Integer>(toCopy.t2));
 	}
 
+	/**
+	 * Creates a new StateAction pair given a TetrisState
+	 * @param startState
+	 */
 	public TetrisStateActionPair(TetrisState startState) {
 		this(startState, new LinkedList<Integer>());
 	}

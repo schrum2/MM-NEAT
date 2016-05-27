@@ -5,13 +5,20 @@ import org.rlcommunity.rlglue.codec.types.Observation;
 
 public class ExtendedBertsekasTsitsiklisTetrisExtractor extends BertsekasTsitsiklisTetrisExtractor {
 
+	/**
+	 * Returns the number of features for this extractor
+	 */
 	@Override
 	public int numFeatures() {
 		return super.numFeatures() + TetrisState.worldWidth;
-		// column heights + column differences + Max Height + total holes + bias
-		// + column holes
+		// column heights + column diffs + Max Height + total holes + bias + column holes
 	}
 
+	/**
+	 * Scales the given inputs to fit the range [0 to 1]
+	 * @param inputs double[]
+	 * @return scaled inputs double[]
+	 */
 	@Override
 	public double[] scaleInputs(double[] inputs) {
 		double[] original = super.scaleInputs(inputs);
@@ -22,6 +29,9 @@ public class ExtendedBertsekasTsitsiklisTetrisExtractor extends BertsekasTsitsik
 		return original;
 	}
 
+	/**
+	 * Returns the feature labels for the given extractor
+	 */
 	@Override
 	public String[] featureLabels() {
 		String[] labels = super.featureLabels();
@@ -32,6 +42,13 @@ public class ExtendedBertsekasTsitsiklisTetrisExtractor extends BertsekasTsitsik
 		return labels;
 	}
 
+	/**
+	 * Extract extends from BertsekasTsitsiklisTetrisExtractor and adds 
+	 * the number of holes per column
+	 * 
+	 * @param o Observation 
+	 * @return array of inputs
+	 */
 	@Override
 	public double[] extract(Observation o) {
 		double[] base = super.extract(o);
@@ -42,15 +59,6 @@ public class ExtendedBertsekasTsitsiklisTetrisExtractor extends BertsekasTsitsik
 		for (int i = 0; i < possibleBlocks.size(); i++) {
 			blockIndicator[i] = o.intArray[worldState.length + i];
 		}
-
-		// int blockId = StatisticsUtilities.argmax(blockIndicator);
-		// int blockX = o.intArray[TetrisState.TETRIS_STATE_CURRENT_X_INDEX];
-		// int blockY = o.intArray[TetrisState.TETRIS_STATE_CURRENT_Y_INDEX];
-		// int blockRotation =
-		// o.intArray[TetrisState.TETRIS_STATE_CURRENT_ROTATION_INDEX];
-		// blotMobilePiece(worldState, blockId, blockX, blockY, blockRotation);
-		// This needs to be commented here too! Causes problems with the
-		// afterstate. -Gab
 
 		double[] added = new double[worldWidth];
 		for (int i = 0; i < added.length; i++) { // finds the number of holes

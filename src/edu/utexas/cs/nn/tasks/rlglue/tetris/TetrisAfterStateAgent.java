@@ -84,16 +84,9 @@ public class TetrisAfterStateAgent<T extends Network> extends RLGlueAgent<T> {
 
 			HashSet<TetrisStateActionPair> tetrisStateHolder = TetrisAfterStateGenerator.generateAfterStates(tempState);
 			CommonConstants.watch = currentWatch;
-
-			ArrayList<Pair<Double, List<Integer>>> outputPairs = new ArrayList<Pair<Double, List<Integer>>>(); // arraylist
-																												// to
-																												// hold
-																												// the
-																												// actions
-																												// and
-																												// outputs
-																												// for
-																												// later
+			
+			// arraylist to hold the actions and outputs for later
+			ArrayList<Pair<Double, List<Integer>>> outputPairs = new ArrayList<Pair<Double, List<Integer>>>(); 
 
 			double[] outputs;
 			// for(pairs in the set){
@@ -122,13 +115,6 @@ public class TetrisAfterStateAgent<T extends Network> extends RLGlueAgent<T> {
 			int index = StatisticsUtilities.argmax(outputForArgmax); // action =
 																		// argmax(list)
 
-			// System.out.println("Chosen state");
-			// System.out.println("Score: " + outputPairs.get(index).t1);
-			// System.out.println(forDebugging.get(index).t1.toString(false));
-			// System.out.println("Actions1: " + forDebugging.get(index).t2);
-			// System.out.println("Actions2: " + outputPairs.get(index).t2);
-			// MiscUtil.waitForReadStringAndEnterKeyPress();
-
 			for (int k = 0; k < outputPairs.get(index).t2.size(); k++) {
 				currentActionList.add(outputPairs.get(index).t2.get(k)); 
 				// this should add the next action to the linked list in the proper order
@@ -149,22 +135,21 @@ public class TetrisAfterStateAgent<T extends Network> extends RLGlueAgent<T> {
 	 * This method takes over the job of converting an observation to a
 	 * TetrisState
 	 *
-	 * @param o
-	 *            Observation
+	 * @param o Observation
 	 * @return ts TetrisState
 	 */
 	public static TetrisState observationToTetrisState(Observation o) {
-		TetrisState ts = new TetrisState();
-		ts.currentX = o.intArray[TetrisState.TETRIS_STATE_CURRENT_X_INDEX]; 
+		TetrisState ts = new TetrisState();		
 		// adds the Observation's X to tempState
-		ts.currentY = o.intArray[TetrisState.TETRIS_STATE_CURRENT_Y_INDEX]; 
+		ts.currentX = o.intArray[TetrisState.TETRIS_STATE_CURRENT_X_INDEX]; 
 		// adds the Observation's Y to tempState
-		ts.currentRotation = o.intArray[TetrisState.TETRIS_STATE_CURRENT_ROTATION_INDEX]; 
+		ts.currentY = o.intArray[TetrisState.TETRIS_STATE_CURRENT_Y_INDEX]; 
 		// adds the Observation's rotation to tempState
-		for (int p = 0; p < TetrisState.TETRIS_STATE_NUMBER_POSSIBLE_BLOCKS; p++) {
-			if (o.intArray[ts.worldState.length + p] == 1) { // this checks for
-																// the current
-																// block Id
+		ts.currentRotation = o.intArray[TetrisState.TETRIS_STATE_CURRENT_ROTATION_INDEX]; 
+		
+		for (int p = 0; p < TetrisState.TETRIS_STATE_NUMBER_POSSIBLE_BLOCKS; p++) { 
+			// this checks for the current block Id
+			if (o.intArray[ts.worldState.length + p] == 1) {
 				ts.currentBlockId = p;
 			}
 		}

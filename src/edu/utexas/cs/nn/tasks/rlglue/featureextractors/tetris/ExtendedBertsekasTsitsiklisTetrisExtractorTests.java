@@ -8,8 +8,6 @@ import org.junit.Test;
 import org.rlcommunity.environments.tetris.TetrisState;
 import org.rlcommunity.rlglue.codec.types.Observation;
 
-import edu.utexas.cs.nn.util.MiscUtil;
-
 public class ExtendedBertsekasTsitsiklisTetrisExtractorTests {
 	@Test
 	public void number_of_holes() {

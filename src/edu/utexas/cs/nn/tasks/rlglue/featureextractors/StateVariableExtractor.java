@@ -14,19 +14,33 @@ public class StateVariableExtractor implements FeatureExtractor {
 
 	private final TaskSpec tso;
 
+	/**
+	 * Sets the current StateVariableExtractor
+	 */
 	public StateVariableExtractor() {
 		this(MMNEAT.tso);
 	}
 
+	/**
+	 * Sets the current StateVariableExtractor
+	 */
 	public StateVariableExtractor(TaskSpec tso) {
 		this.tso = tso;
 	}
 
+	/**
+	 * Returns the number of features for the extractor
+	 */
 	@Override
 	public int numFeatures() {
 		return tso.getNumContinuousObsDims() + tso.getNumDiscreteObsDims();
 	}
 
+	/**
+	 * Extracts feature information from the observation give
+	 * @param o Observation
+	 * @return double[] array of inputs
+	 */
 	@Override
 	public double[] extract(Observation o) {
 		double[] inputs = new double[o.intArray.length + o.doubleArray.length];
@@ -40,6 +54,9 @@ public class StateVariableExtractor implements FeatureExtractor {
 		return inputs;
 	}
 
+	/**
+	 * Returns the feature labels for a given task spec
+	 */
 	@Override
 	public String[] featureLabels() {
 		int numDiscrete = tso.getNumDiscreteObsDims();
@@ -55,6 +72,10 @@ public class StateVariableExtractor implements FeatureExtractor {
 		return labels;
 	}
 
+	/**
+	 * Scales the given inputs, but this won't be needed for this extractor.
+	 * @param double[] inputs
+	 */
 	@Override
 	public double[] scaleInputs(double[] inputs) {
 		throw new UnsupportedOperationException(

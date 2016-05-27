@@ -77,14 +77,12 @@ public class BertsekasTsitsiklisTetrisExtractor implements FeatureExtractor {
 	 * Extract focuses on finding the holes in the current world state. A hole
 	 * being a non occupied space beneath an occupied space.
 	 * 
-	 * @param observation
-	 *            o
-	 * @return array of
+	 * @param o Observation 
+	 * @return array of inputs
 	 */
 	public double[] extract(Observation o) {
-		double[] inputs = new double[numFeatures()]; // numFeatures gives us
-														// "worldWidth +
-														// (worldWidth - 1) + 3"
+		// numFeatures gives us "worldWidth + (worldWidth - 1) + 3"
+		double[] inputs = new double[numFeatures()]; 
 
 		// creates the linear array version of the game world
 		int[] worldState = new int[worldWidth * worldHeight]; 
@@ -97,17 +95,8 @@ public class BertsekasTsitsiklisTetrisExtractor implements FeatureExtractor {
 			// this sets the block indicator spots as either 0 or 1 according to which block is currently falling (1)
 			blockIndicator[i] = o.intArray[worldState.length + i]; 
 		}
-		// blotMobilePiece(worldState,
-		// StatisticsUtilities.argmax(blockIndicator),
-		// o.intArray[TetrisState.TETRIS_STATE_CURRENT_X_INDEX],
-		// o.intArray[TetrisState.TETRIS_STATE_CURRENT_Y_INDEX],
-		// o.intArray[TetrisState.TETRIS_STATE_CURRENT_ROTATION_INDEX]);
-		// This is commented out because it messes up the scores of afterstates
-		// where the mobile piece is at the bottom and in the process of being
-		// written. -Gab
 
 		int in = 0;
-
 		double holes = 0;
 		int firstHeightIndex = in;
 		double maxHeight = 0;
@@ -117,23 +106,20 @@ public class BertsekasTsitsiklisTetrisExtractor implements FeatureExtractor {
 			maxHeight = Math.max(h, maxHeight);
 			inputs[in++] = h;
 		}
-
 		for (int i = 0; i < worldWidth - 1; i++) {
 			inputs[in++] = Math.abs(inputs[firstHeightIndex + i] - inputs[firstHeightIndex + i + 1]);
 		}
 
 		inputs[in++] = maxHeight;
-
-		// Should heights then be normalized wrt worldHeight?
-
 		inputs[in++] = holes;
 		inputs[in++] = 1; // bias
-
-		// Scaled to range [0,1] for the neural network
 
 		return inputs;
 	}
 
+	/**
+	 * Returns an array of feature labels given the current extractor
+	 */
 	public String[] featureLabels() {
 		String[] labels = new String[numFeatures()];
 		int in = 0;
@@ -150,6 +136,12 @@ public class BertsekasTsitsiklisTetrisExtractor implements FeatureExtractor {
 		return labels;
 	}
 
+	/**
+	 * Finds the height of a column based on the current row and worldstate
+	 * @param x
+	 * @param intArray
+	 * @return world height
+	 */
 	protected int columnHeight(int x, int[] intArray) {
 		int y = 0;
 		while (y < worldHeight && intArray[calculateLinearArrayPosition(x, y)] == 0) {
@@ -158,6 +150,13 @@ public class BertsekasTsitsiklisTetrisExtractor implements FeatureExtractor {
 		return worldHeight - y;
 	}
 
+	/**
+	 * Finds the number of holes in a given column for the worldstate
+	 * @param x
+	 * @param intArray
+	 * @param height
+	 * @return holes in a given column
+	 */
 	protected int columnHoles(int x, int[] intArray, int height) {
 		int holes = 0;
 		for (int y = worldHeight - height; y < worldHeight; y++) {

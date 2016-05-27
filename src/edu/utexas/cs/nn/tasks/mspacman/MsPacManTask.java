@@ -387,13 +387,11 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 		}
 	}
 
-	public final void addObjective(MsPacManObjective o, ArrayList<MsPacManObjective<T>> list,
-			boolean affectsSelection) {
+	public final void addObjective(MsPacManObjective o, ArrayList<MsPacManObjective<T>> list, boolean affectsSelection) {
 		addObjective(o, list, null, affectsSelection);
 	}
 
-	public final void addObjective(MsPacManObjective o, ArrayList<MsPacManObjective<T>> list, Statistic override,
-			boolean affectsSelection) {
+	public final void addObjective(MsPacManObjective o, ArrayList<MsPacManObjective<T>> list, Statistic override, boolean affectsSelection) {
 		list.add(o);
 		MMNEAT.registerFitnessFunction(o.getClass().getSimpleName(), override, affectsSelection);
 	}
