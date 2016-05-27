@@ -42,9 +42,9 @@ public class HyperNEATCPPNGenotypeTest {
 	/**
 	 * Sets up test environment
 	 */
-	public void setUp(String speedUp) {
+	public void setUp() {
 		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "recurrency:false",
-				"mmdRate:1.0", "speedUpHyperNEAT:" + speedUp });
+				"mmdRate:1.0" });
 		MMNEAT.loadClasses();
 		hcppn = new HyperNEATCPPNGenotype();
 		cppn = new TWEANN(new TWEANNGenotype());
@@ -76,7 +76,6 @@ public class HyperNEATCPPNGenotypeTest {
 	 */
 	@Test
 	public void testCreateSubstrateNodesSlow() {
-		setUp("false");
 		ArrayList<NodeGene> nodes = hcppn.createSubstrateNodes(subs);
 		assertEquals(nodes.size(), subs.get(sub1Index).getSize().t1 * subs.get(sub1Index).getSize().t2
 				+ subs.get(sub2Index).getSize().t1 * subs.get(sub2Index).getSize().t2);
@@ -84,21 +83,7 @@ public class HyperNEATCPPNGenotypeTest {
 		tearDown();
 	}
 
-	@Test
-	public void testCreateSubstrateNodesFast() {
-		setUp("true");
-		assertTrue(HyperNEATCPPNGenotype.cachedPhenotypeNodes == null);
-//		cppn = hcppn.getPhenotype();
-//		ArrayList<TWEANN.Node> test = cppn.nodes;
-//		cppn = hcppn.getPhenotype();
-//		ArrayList<TWEANN.Node> test2 = cppn.nodes;
-//		cppn = hcppn.getPhenotype();
-//		ArrayList<TWEANN.Node> test3 = cppn.nodes;
-		
-		// Schrum: I'm guessing this test is incomplete. I had to change the null check above because of other changes I made to
-		// your code. I also commented out the rest. Just wanted to point this out.
-
-	}
+	// Schrum: Should this be removed now?
 	// /**
 	// * Tests creation of list of links. Utilizes other methods tested below
 	// * Only a viable test when command line parameter for test for expression

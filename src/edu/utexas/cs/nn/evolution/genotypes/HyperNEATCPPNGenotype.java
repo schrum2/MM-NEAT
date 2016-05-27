@@ -24,12 +24,6 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 	private static final double BIAS = 1.0;// Necessary for most CPPN networks
 	public int innovationID = 0;// provides unique innovation numbers for links and genes
 
-	// This data is static so it can be cached
-	protected static ArrayList<NodeGene> cachedPhenotypeNodes = null;
-	protected static ArrayList<LinkGene> cachedPhenotypeLinks = null;
-	protected static HashMap<String, Integer> cachedSubstrateIndexMapping = null;
-	protected static int cachedPhenotypeOutputs = 0;
-
 	/**
 	 * Default constructor
 	 */
@@ -85,50 +79,31 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 		ArrayList<LinkGene> newLinks = null;
 		innovationID = 0;// reset each time a phenotype is generated
 		int phenotypeOutputs = 0;
-		
-		if (!CommonConstants.speedUpHyperNEAT || cachedPhenotypeLinks == null || cachedPhenotypeNodes == null || cachedSubstrateIndexMapping == null) {
-			newNodes = createSubstrateNodes(subs);
-			// Will map substrate names to index in subs List
-			// needs to be switched
-			HashMap<String, Integer> substrateIndexMapping = new HashMap<String, Integer>();
-			for (int i = 0; i < subs.size(); i++) {
-				substrateIndexMapping.put(subs.get(i).getName(), i);
-			}
-			// loop through connections and add links, based on contents of subs
-			newLinks = createNodeLinks(cppn, connections, subs, substrateIndexMapping);
-		
-			// Figure out number of output neurons
-			for (Substrate s : subs) {
-				if (s.getStype() == Substrate.OUTPUT_SUBSTRATE) {
-					phenotypeOutputs += s.size.t1 * s.size.t2;
-				}
-			}
-			
-			// Cache values so they don't need to be re-computed for each genotype
-			if(CommonConstants.speedUpHyperNEAT) {
-				cachedSubstrateIndexMapping = substrateIndexMapping;
-				cachedPhenotypeNodes = newNodes;
-				cachedPhenotypeLinks = newLinks;
-				cachedPhenotypeOutputs = phenotypeOutputs;
-			}
-		} else {
-			// However, link weights do need to be recalculated for each genotype.
-			// This will modify the static cached links, so no return is needed.
-			createNodeLinks(cppn, connections, subs, cachedSubstrateIndexMapping);
+
+		newNodes = createSubstrateNodes(subs);
+		// Will map substrate names to index in subs List
+		// needs to be switched
+		HashMap<String, Integer> substrateIndexMapping = new HashMap<String, Integer>();
+		for (int i = 0; i < subs.size(); i++) {
+			substrateIndexMapping.put(subs.get(i).getName(), i);
 		}
-		
-		
+		// loop through connections and add links, based on contents of subs
+		newLinks = createNodeLinks(cppn, connections, subs, substrateIndexMapping);
+
+		// Figure out number of output neurons
+		for (Substrate s : subs) {
+			if (s.getStype() == Substrate.OUTPUT_SUBSTRATE) {
+				phenotypeOutputs += s.size.t1 * s.size.t2;
+			}
+		}		
+
 		// the instantiation of the TWEANNgenotype in question
-		
+
 		// Hard coded to have a single neural output module.
 		// May need to fix this down the line.
 		// An archetype index of -1 is used. Hopefully this won't cause
 		// problems, since the archetype is only needed for mutations and crossover.
-		TWEANNGenotype tg = new TWEANNGenotype(
-				CommonConstants.speedUpHyperNEAT ? cachedPhenotypeNodes : newNodes,
-				CommonConstants.speedUpHyperNEAT ? cachedPhenotypeLinks : newLinks, 
-				CommonConstants.speedUpHyperNEAT ? cachedPhenotypeOutputs : phenotypeOutputs, 
-				false, false, -1);
+		TWEANNGenotype tg = new TWEANNGenotype(newNodes,newLinks, phenotypeOutputs, false, false, -1);
 		return tg.getPhenotype();
 	}
 
@@ -140,7 +115,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 	@Override
 	public Genotype<TWEANN> copy() {
 		int[] temp = moduleUsage; // Schrum: Not sure if keeping moduleUsage is
-									// appropriate
+		// appropriate
 		ArrayList<LinkGene> linksCopy = new ArrayList<LinkGene>(this.links.size());
 		for (LinkGene lg : this.links) {// needed for a deep copy
 			linksCopy.add(new LinkGene(lg.sourceInnovation, lg.targetInnovation, lg.weight, lg.innovation, false));
@@ -249,34 +224,20 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 						double[] inputs = { scaledSourceCoordinates.getX(), scaledSourceCoordinates.getY(), scaledTargetCoordinates.getX(), scaledTargetCoordinates.getY(), BIAS }; 
 						double[] outputs = cppn.process(inputs);
 						boolean expressLink = Math.abs(outputs[outputIndex]) > CommonConstants.linkExpressionThreshold;
-						if (!CommonConstants.speedUpHyperNEAT || cachedPhenotypeLinks == null) { // Create the link genes from scratch
-							if (expressLink) {
-								linksSoFar.add(new LinkGene(
-										getInnovationID(X1, Y1, s1Index, subs), 
-										getInnovationID(X2, Y2, s2Index, subs), 
-										calculateWeight(outputs[outputIndex]),
-										innovationID++, false));
-							} else if(CommonConstants.speedUpHyperNEAT) { // Add link with weight 0 (may be replaced in future phenotype
-								linksSoFar.add(new LinkGene(
-										getInnovationID(X1, Y1, s1Index, subs), 
-										getInnovationID(X2, Y2, s2Index, subs), 
-										0.0, innovationID++, false));
-							}
-						} else { // Change weights within existing link genes
-							int linkIndex = linkGeneIndex(X1, Y1, X2, Y2, s1.size.t2, s2.size.t1, s2.size.t2);
-							if (expressLink) {
-								cachedPhenotypeLinks.get(linkIndex).weight = calculateWeight(outputs[outputIndex]);
-							} else {
-								cachedPhenotypeLinks.get(linkIndex).weight = 0.0;
-							}
-						}
+						if (expressLink) {
+							linksSoFar.add(new LinkGene(
+									getInnovationID(X1, Y1, s1Index, subs), 
+									getInnovationID(X2, Y2, s2Index, subs), 
+									calculateWeight(outputs[outputIndex]),
+									innovationID++, false));
+						} 
 
 					}
 				}
 			}
 		}
 	}
-	
+
 	/**
 	 * Given the substrate coordinates and sizes that a particular link is supposed to connect,
 	 * determine the index it should be located at in the cached link gene list.
@@ -289,9 +250,12 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 	 * @param height2 height (y dimension) of second substrate
 	 * @return index in cachedPhenotypeLinks of link gene
 	 */
-	public static int linkGeneIndex(int X1, int Y1, int X2, int Y2, int height1, int width2, int height2) {
-		return X1*height1*height2*width2 + Y1*height2*width2 + X2*height2 + Y2;
-	}
+	// This method was only used in a failed attempt to speed up HyperNEAT by caching link gene information,
+	// and replacing the weights when needed. This method helped figure out which weight to replace, but only
+	// works if normally unexpressed links actually are expressed, but with a weight of 0.0
+	//	public static int linkGeneIndex(int X1, int Y1, int X2, int Y2, int height1, int width2, int height2) {
+	//		return X1*height1*height2*width2 + Y1*height2*width2 + X2*height2 + Y2;
+	//	}
 
 	/**
 	 * returns the innovation id of the node in question
