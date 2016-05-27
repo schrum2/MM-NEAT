@@ -11,9 +11,10 @@ import edu.utexas.cs.nn.parameters.Parameters;
  * 
  * Encourages catching all prey with a very high score for doing so
  * if the prey aren't all caught, this fitness function will emphasize that as many prey are caught
- * as possible, and if not all are caught then it minimizes distance to the prey
+ * as possible, and if not all are caught then it minimizes distance to the prey, and if some prey
+ * are caught but not all, quickness is encouraged (in addition to the distance still)
  */
-public class PredatorCatchCloseObjective <T extends Network> extends GridTorusObjective<T>{
+public class PredatorCatchCloseQuickObjective <T extends Network> extends GridTorusObjective<T>{
 
 	public static final double NO_PREY_SCORE = 10;
 	
@@ -52,12 +53,21 @@ public class PredatorCatchCloseObjective <T extends Network> extends GridTorusOb
 		//make d essentially its inverse so that less distance is encouraged
 		d = 1 - d;
 		
+		//find the speed that the prey that were caught were caught (if not caught, just returns total time for that prey)
+		double sumOfDeathTimes = 0;
+		for(int i = 0; i < numPrey; i++){
+			sumOfDeathTimes += game.getDeathTime(i);
+		}
+		double speed = sumOfDeathTimes / (numPrey*game.getTimeLimit());
+		//make speed essentially its inverse so that less survival time is encouraged
+		speed = 1 - speed;
+		
 		//needs to be less than the maximum score, NO_PREY_SCORE, which is given when all prey are caught
-		double WEIGHT = (NO_PREY_SCORE/(numPrey+1.0)); 
+		double WEIGHT = (NO_PREY_SCORE/(numPrey+2.0)); 
 		
 		//distance score is weighted to be less than catching each prey, but the distance score still helps the predators 
 		//get close to the prey if they haven't learned to catch any prey yet
-		return d*WEIGHT + numCaught*WEIGHT;	
+		return d*WEIGHT + speed*WEIGHT + numCaught*WEIGHT;	
 	}
 
 }
