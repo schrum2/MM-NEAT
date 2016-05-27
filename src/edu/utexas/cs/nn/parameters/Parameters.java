@@ -311,8 +311,10 @@ public class Parameters {
 				"Turn on to encourage prey to maximize their distance from the predators at the end of the game");
 		booleanOptions.add("preyMinimizeCaught", false,
 				"Turn on to encourage prey to minimize how many of them are caught");
+		booleanOptions.add("predatorCatchCloseQuick", false,
+				"Turn on to encourage catching a higher number of the prey quickly and getting close to the prey");
 		booleanOptions.add("predatorCatchClose", true,
-				"Turn on to encourage catching a higher percentage of the prey and getting close to the prey");
+				"Turn on to encourage catching a higher number of the prey and getting close to the prey");
 		booleanOptions.add("predatorCatch", false,
 				"Turn on to activate the predator fitness function which encourages catching a high number of prey");
 		booleanOptions.add("preyRRM", true,

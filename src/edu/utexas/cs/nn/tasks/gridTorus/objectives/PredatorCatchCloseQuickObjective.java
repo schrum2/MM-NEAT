@@ -69,12 +69,13 @@ public class PredatorCatchCloseQuickObjective<T extends Network> extends GridTor
 
 		// needs to be less than the maximum score, NO_PREY_SCORE, which is
 		// given when all prey are caught
-		double WEIGHT = (NO_PREY_SCORE / (numPrey + 2.0));
+		double WEIGHT = (NO_PREY_SCORE / (numPrey + 1.0));
 
 		// distance score is weighted to be less than catching each prey, but
 		// the distance score still helps the predators
 		// get close to the prey if they haven't learned to catch any prey yet
-		return d * WEIGHT + speed * WEIGHT + numCaught * WEIGHT;
+		// catching no prey will never be more points than catching one prey
+		return ((d * (WEIGHT/2.0)) + (speed * (WEIGHT/2.0))) + (numCaught * WEIGHT);
 	}
 
 }
