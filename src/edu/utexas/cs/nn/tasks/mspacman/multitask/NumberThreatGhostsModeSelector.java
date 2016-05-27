@@ -25,6 +25,7 @@ public class NumberThreatGhostsModeSelector extends MsPacManModeSelector {
 	 * 2) All ghosts are threats
 	 * @return mode
 	 */
+        @Override
 	public int mode() {
 		if(gs.anyIsEdible()) return SOME_EDIBLE_GHOSTS;
 		int[] threats = gs.getThreatGhostLocations();
@@ -35,6 +36,7 @@ public class NumberThreatGhostsModeSelector extends MsPacManModeSelector {
      * There are 3 modes for this mode selector
      * @return 3
      */
+        @Override
 	public int numModes() {
 		return 3;
 	}

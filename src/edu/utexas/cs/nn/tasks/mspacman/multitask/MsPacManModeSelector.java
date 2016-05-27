@@ -24,6 +24,7 @@ public abstract class MsPacManModeSelector implements ModeSelector, FitnessToMod
      * clears whatever components of the game/controller/mode are involved.
      * Empty by default, so must define whatever will be cleared/reset
      */
+    @Override
     public void reset() {
         // Default is nothing
     }
