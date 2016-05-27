@@ -175,25 +175,19 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 			GameState s = game.getState();
 
 			// Trouble shooting code
-			System.out.println(s.imageBuffer.length);
-			System.out.println(game.getScreenWidth());
-			System.out.println(game.getScreenHeight());
+			//System.out.println(s.imageBuffer.length);
+			//System.out.println(game.getScreenWidth());
+			//System.out.println(game.getScreenHeight());
 			// drawGameState(s, game.getScreenWidth(), game.getScreenHeight());
-			drawGameStateRow(s, game.getScreenWidth(), game.getScreenHeight(), getRow());
+			//drawGameStateRow(s, game.getScreenWidth(), game.getScreenHeight(), getRow());
 			double[] inputs = getInputs(s);
 			double[] outputs = n.process(inputs);
 
 			// double r =
 			// game.makeAction(actions.get(RandomNumbers.randomGenerator.nextInt(3)));
-			double r = game.makeAction(actions.get(StatisticsUtilities.argmax(outputs))); // This
-																							// now
-																							// takes
-																							// the
-																							// arg
-																							// max
-																							// ofthe
-																							// action
-																							// outputs
+			double r = game.makeAction(actions.get(StatisticsUtilities.argmax(outputs))); 
+			// This now takes the arg max of the action outputs
+
 
 			// You can also get last reward by using this function
 			// double r = game.getLastReward();
@@ -240,12 +234,6 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 	}
 
 	public abstract int numInputs();
-
-	// This method should not be in this class. Once it works properly, there
-	// will be no need
-	// to call drawGameStateRow above, so you should also remove this abstract
-	// method declaration
-	public abstract int getRow();
 
 	@Override
 	public double getTimeStamp() {
@@ -303,11 +291,7 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 	 * @param height
 	 * @param row
 	 */
-	public static void drawGameStateRow(GameState s, int width, int height, int row) { // TODO:
-																						// actually
-																						// change
-																						// this
-																						// -Gab
+	public static void drawGameStateRow(GameState s, int width, int height, int row) { 
 		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		int index = row * width * 3;
 		for (int y = 0; y < height; y++) {

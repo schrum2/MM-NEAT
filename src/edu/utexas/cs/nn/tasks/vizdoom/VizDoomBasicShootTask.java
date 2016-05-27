@@ -18,7 +18,7 @@ public class VizDoomBasicShootTask<T extends Network> extends VizDoomTask<T> {
 	public VizDoomBasicShootTask() {
 		super();
 		// Replace magic number when getRow() method works
-		inputRow = 61; // getRow();
+		inputRow = getRow(); 
 	}
 
 	public void setDoomActions() {
@@ -88,40 +88,24 @@ public class VizDoomBasicShootTask<T extends Network> extends VizDoomTask<T> {
 	 * Resolution ratios. The calculations are hard coded, but tested and gave
 	 * reliable rows when displayed.
 	 */
-	@Override
 	public int getRow() {
 		float first;
 		int second = 0;
-		if (game.getScreenWidth() / 4 == game.getScreenHeight() / 3) { // ratio
-																		// is
-																		// 4:3
-			System.out.println("Ratio is 4:3");
+		if (game.getScreenWidth() / 4 == game.getScreenHeight() / 3) { 
+			// ratio is 4:3
 			first = (float) (game.getScreenWidth() * 0.3825);
-			System.out.println(first);
 			second = Math.round(first);
-			System.out.println(second);
-		} else if (game.getScreenWidth() / 16 == game.getScreenHeight() / 10) { // ratio
-																				// is
-																				// 16:10
-			System.out.println("Ratio is 16:10");
-			first = (float) (game.getScreenWidth() * 0.32); // CHANGE THIS
-			System.out.println(first);
+		} else if (game.getScreenWidth() / 16 == game.getScreenHeight() / 10) { 
+			// ratio is 16:10
+			first = (float) (game.getScreenWidth() * 0.32); 
 			second = Math.round(first);
-			System.out.println(second);
-		} else if (game.getScreenWidth() / 16 == game.getScreenHeight() / 9) { // ratio
-																				// is
-																				// 16:9
-			System.out.println("Ratio is 16:9");
-			first = (float) (game.getScreenWidth() * 0.29); // CHANGE THIS
-			System.out.println(first);
+		} else if (game.getScreenWidth() / 16 == game.getScreenHeight() / 9) { 
+			// ratio is 16:9
+			first = (float) (game.getScreenWidth() * 0.29); 
 			second = Math.round(first);
-			System.out.println(second);
 		} else { // ratio is 5:4
-			System.out.println("Ratio is 5:4");
-			first = (float) (game.getScreenWidth() * 0.41); // CHANGE THIS
-			System.out.println(first);
+			first = (float) (game.getScreenWidth() * 0.41); 
 			second = Math.round(first);
-			System.out.println(second);
 		}
 		return second;
 	}
