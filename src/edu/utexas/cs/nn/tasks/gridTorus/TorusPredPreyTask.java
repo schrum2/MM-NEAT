@@ -122,6 +122,7 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 	 * @return A Pair of double arrays containing the fitness and other scores
 	 */
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {
+		//long time = System.currentTimeMillis(); // For timing
 		TorusPredPreyController[] predAgents = getPredAgents(individual);
 		TorusPredPreyController[] preyAgents = getPreyAgents(individual);
 		exec = new TorusWorldExec();
@@ -169,6 +170,7 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 		((NetworkGenotype<T>) individual).setModuleUsage(overallAgentModeUsage);
 
 		double[] otherStats = new double[0];
+		//System.out.println("oneEval: " + (System.currentTimeMillis() - time));
 		return new Pair<double[], double[]>(fitnesses, otherStats);
 	}
 

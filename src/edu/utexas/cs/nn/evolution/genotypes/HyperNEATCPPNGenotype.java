@@ -71,6 +71,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 	 */
 	@Override
 	public TWEANN getPhenotype() {
+		//long time = System.currentTimeMillis(); // for timing
 		TWEANN cppn = super.getPhenotype();// CPPN used to create TWEANN network
 		HyperNEATTask hnt = (HyperNEATTask) MMNEAT.task;// Cast task to HyperNEATTask
 		List<Substrate> subs = hnt.getSubstrateInformation();// extract substrate information from domain
@@ -104,6 +105,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 		// An archetype index of -1 is used. Hopefully this won't cause
 		// problems, since the archetype is only needed for mutations and crossover.
 		TWEANNGenotype tg = new TWEANNGenotype(newNodes,newLinks, phenotypeOutputs, false, false, -1);
+		//System.out.println("phenotype: " + (System.currentTimeMillis() - time)); // for timing
 		return tg.getPhenotype();
 	}
 
