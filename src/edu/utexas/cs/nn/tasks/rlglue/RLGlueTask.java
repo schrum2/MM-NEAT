@@ -336,8 +336,7 @@ public class RLGlueTask<T extends Network> extends NoisyLonerTask<T>implements N
 		int numDiscreteActions = MMNEAT.networkOutputs;
 		String[] labels = new String[numDiscreteActions];
 		for (int i = 0; i < numDiscreteActions; i++) {
-			labels[i] = "Action " + i; // There is a distinct label for each
-										// action
+			labels[i] = "Action " + i; // There is a distinct label for each action
 		}
 		return labels;
 	}

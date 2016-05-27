@@ -231,7 +231,7 @@ public class TWEANN implements Network {
 		 * An input is added to the sum in case it holds recurrent activation
 		 *
 		 * @param input
-		 *            = sensor input
+		 *            sensor input
 		 */
 		protected void load(double input) {
 			assert!Double.isNaN(sum) : "sum is NaN before load";
