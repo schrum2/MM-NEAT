@@ -1,7 +1,6 @@
 package edu.utexas.cs.nn.evolution.nsga2;
 
 import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
-import edu.utexas.cs.nn.evolution.genotypes.BoundedIntegerValuedGenotype;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.evolution.mulambda.MuPlusLambda;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
@@ -13,17 +12,15 @@ import edu.utexas.cs.nn.scores.ObjectiveComparator;
 import edu.utexas.cs.nn.scores.Score;
 import edu.utexas.cs.nn.tasks.NoisyLonerTask;
 import edu.utexas.cs.nn.tasks.SinglePopulationTask;
-import edu.utexas.cs.nn.util.PopulationUtil;
-import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.random.RandomNumbers;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 
 /**
  * Implementation of Deb's NSGA2 multiobjective EA.
+ * NSGA2 stands for non-sorting genetic algorithm 2
  * @commented Lauren Gillespie
  */
 public class NSGA2<T> extends MuPlusLambda<T> {
@@ -70,13 +67,13 @@ public class NSGA2<T> extends MuPlusLambda<T> {
         return generateNSGA2Children(numChildren, scoresArray, currentGeneration(), mating, crossoverRate);
     }
     /**
-     * 
+     * Generates a list of offspring genotypes created through NSGA2 sort of parent genotypes
      * @param numChildren
      * @param scoresArray
      * @param generation
      * @param mating
      * @param crossoverRate
-     * @return
+     * @return list of offspring genotypes from sort
      */
     @SuppressWarnings("unchecked")
 	public static <T> ArrayList<Genotype<T>> generateNSGA2Children(int numChildren, NSGA2Score<T>[] scoresArray, int generation, boolean mating, double crossoverRate) {
@@ -210,7 +207,6 @@ public class NSGA2<T> extends MuPlusLambda<T> {
      * @return array list of selected genotypes
      */
     public static <T> ArrayList<Genotype<T>> staticSelection(int numParents, NSGA2Score<T>[] scoresArray) {
-        //NSGA2Score<T>[] scoresArray = staticNSGA2Scores(scores);
         assignCrowdingDistance(scoresArray);
         //gets the pareto front of scores using a fast non-dominated sort
         ArrayList<ArrayList<NSGA2Score<T>>> fronts = fastNonDominatedSort(scoresArray);
@@ -244,16 +240,14 @@ public class NSGA2<T> extends MuPlusLambda<T> {
     /**
      * Given the whole population of scores (after evaluation),
      * assign crowding distances to each individual.
-     * 
      * @param scores Each instance is a set of multiple scores for a member of the
-     *               population that was just evaluated.
+     * population that was just evaluated.
      */
 	private static <T> void assignCrowdingDistance(NSGA2Score<T>[] scores) {
         // reset distances
         for (int i = 0; i < scores.length; i++) {
             scores[i].setCrowdingDistance(0);
         }
-        
         int numObjectives = scores[0].numObjectives();
         
         for (int j = 0; j < numObjectives; j++) {
@@ -279,12 +273,11 @@ public class NSGA2<T> extends MuPlusLambda<T> {
 	/**
 	 * Sort the evaluated population into Pareto fronts according to their
 	 * objective scores.
-	 * 
 	 * @param scores Each instance is a set of multiple scores for a member of the
-     *               population that was just evaluated.
+     * population that was just evaluated.
 	 * @return List of lists in which each sublist is one Pareto front. Each member 
-	 *         of the original scores array will be in exactly one of the sublists
-	 *         that is returned. Earlier sublists dominate subsequent sublists.
+	 *of the original scores array will be in exactly one of the sublists
+	 *that is returned. Earlier sublists dominate subsequent sublists.
 	 */
     private static <T> ArrayList<ArrayList<NSGA2Score<T>>> fastNonDominatedSort(NSGA2Score<T>[] scores) {
         
@@ -298,7 +291,7 @@ public class NSGA2<T> extends MuPlusLambda<T> {
             for (int j = 0; j < scores.length; j++) {
                 if (i != j) {
                     NSGA2Score<T> q = scores[j];
-                    if (p.isBetter(q)) {
+                    if (p.isBetter(q)) {//here is where actual sorting occurs
                         p.addDominatedIndividual(q);
                         q.increaseNumDominators();
                     }
@@ -309,7 +302,7 @@ public class NSGA2<T> extends MuPlusLambda<T> {
         int numAssigned = 0;
         int currentFront = 0;
         ArrayList<ArrayList<NSGA2Score<T>>> frontSet = new ArrayList<ArrayList<NSGA2Score<T>>>(scores.length);
-        
+        //adds an array list of front members to an array list of fronts
         while (numAssigned < scores.length) {
             // Although this sizing scheme will waste space, it will assure that no resize is ever needed
             frontSet.add(new ArrayList<NSGA2Score<T>>(scores.length - numAssigned));
@@ -319,7 +312,6 @@ public class NSGA2<T> extends MuPlusLambda<T> {
                     frontSet.get(currentFront).add(scores[i]);
                     scores[i].assign(currentFront);
                     numAssigned++;
-                    //System.out.println("Front " + currentFront + ": " + scores[i]);
                 }
             }
             
@@ -341,68 +333,16 @@ public class NSGA2<T> extends MuPlusLambda<T> {
      * @return All non-dominated individuals in population: The Pareto front
      */
     public static <T> ArrayList<NSGA2Score<T>> getParetoFront(NSGA2Score<T>[] scores) {
-        return fastNonDominatedSort(scores).get(0);
+        return fastNonDominatedSort(scores).get(0);//gets first member from return array b/c that corresponds with first front
     }
     
     /**
      * Why is this needed in addition to fastNonDominatedSort? Not sure.
+     * Basically a public way to access fastNonDominatedSort
      * @param scores See fastNonDominatedSort
      * @return See fastNonDominatedSort
      */
     public static <T> ArrayList<ArrayList<NSGA2Score<T>>> getParetoLayers(NSGA2Score<T>[] scores) {
         return fastNonDominatedSort(scores);
-    }
-    
-    /**
-     * Some tests to make sure non-dominated sorting works correctly.
-     * This should be transformed into proper JUnit Tests.
-     * @param args
-     */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-	public static void main(String[] args) {
-        args = new String[]{"runNumber:0", "trials:1", "mu:5", "io:false", "netio:false", "mating:true", "task:edu.utexas.cs.nn.tasks.mspacman.MsPacManTask", "ea:edu.utexas.cs.nn.evolution.nsga2.NSGA2", "pacmanInputOutputMediator:edu.utexas.cs.nn.tasks.mspacman.sensors.mediators.FullTaskMediator"};
-        Parameters.initializeParameterCollections(args);
-        MMNEAT.loadClasses();
-        
-        NSGA2 ea = (NSGA2) MMNEAT.ea;
-        ArrayList<Score> scores = new ArrayList<Score>();
-        // layer 0
-        ArrayList<Long> layer0 = new ArrayList<Long>();
-        scores.add(new Score(new BoundedIntegerValuedGenotype(ArrayUtil.intListFromArray(new int[]{1, 5})), new double[]{1, 5}, null));
-        layer0.add(scores.get(0).individual.getId());
-        scores.add(new Score(new BoundedIntegerValuedGenotype(ArrayUtil.intListFromArray(new int[]{4, 4})), new double[]{4, 4}, null));
-        layer0.add(scores.get(1).individual.getId());
-        scores.add(new Score(new BoundedIntegerValuedGenotype(ArrayUtil.intListFromArray(new int[]{5, 1})), new double[]{5, 1}, null));
-        layer0.add(scores.get(2).individual.getId());
-        // layer 1
-        ArrayList<Long> layer1 = new ArrayList<Long>();
-        scores.add(new Score(new BoundedIntegerValuedGenotype(ArrayUtil.intListFromArray(new int[]{1, 4})), new double[]{1, 4}, null));
-        layer1.add(scores.get(3).individual.getId());
-        scores.add(new Score(new BoundedIntegerValuedGenotype(ArrayUtil.intListFromArray(new int[]{3, 3})), new double[]{3, 3}, null));
-        layer1.add(scores.get(4).individual.getId());
-        scores.add(new Score(new BoundedIntegerValuedGenotype(ArrayUtil.intListFromArray(new int[]{4, 1})), new double[]{4, 1}, null));
-        layer1.add(scores.get(5).individual.getId());
-        // layer 2
-        ArrayList<Long> layer2 = new ArrayList<Long>();
-        scores.add(new Score(new BoundedIntegerValuedGenotype(ArrayUtil.intListFromArray(new int[]{1, 3})), new double[]{1, 3}, null));
-        layer2.add(scores.get(6).individual.getId());
-        scores.add(new Score(new BoundedIntegerValuedGenotype(ArrayUtil.intListFromArray(new int[]{2, 2})), new double[]{2, 2}, null));
-        layer2.add(scores.get(7).individual.getId());
-        scores.add(new Score(new BoundedIntegerValuedGenotype(ArrayUtil.intListFromArray(new int[]{3, 1})), new double[]{3, 1}, null));
-        layer2.add(scores.get(8).individual.getId());
-        // layer 3
-        ArrayList<Long> layer3 = new ArrayList<Long>();
-        scores.add(new Score(new BoundedIntegerValuedGenotype(ArrayUtil.intListFromArray(new int[]{1, 1})), new double[]{1, 1}, null));
-        layer3.add(scores.get(9).individual.getId());
-        
-        Collections.shuffle(scores, RandomNumbers.randomGenerator);
-        ArrayList<Genotype> result0 = ea.selection(3, scores);
-        System.out.println(ArrayUtil.setEquality(PopulationUtil.getGenotypeIds(PopulationUtil.addListGenotypeType(result0)), layer0) ? "PASSED 0" : "FAILED 0 " + layer0 + " AND " + result0);
-        ArrayList<Genotype> result1 = ea.selection(6, scores);
-        layer1.addAll(layer0);
-        System.out.println(ArrayUtil.setEquality(PopulationUtil.getGenotypeIds(PopulationUtil.addListGenotypeType(result1)), layer1) ? "PASSED 1" : "FAILED 1 " + layer1 + " AND " + result1);
-        ArrayList<Genotype> result2 = ea.selection(9, scores);
-        layer2.addAll(layer1);
-        System.out.println(ArrayUtil.setEquality(PopulationUtil.getGenotypeIds(PopulationUtil.addListGenotypeType(result2)), layer2) ? "PASSED 2" : "FAILED 2 " + layer2 + " AND " + result2);
     }
 }
