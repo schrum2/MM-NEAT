@@ -66,6 +66,15 @@ public class VizDoomBasicShootTask<T extends Network> extends VizDoomTask<T> {
 		return result;
 	}
 
+        /**
+         * For this particular task, the labels should match the row inputs (coordinates)
+         * @return 
+         */
+    @Override
+    public String[] sensorLabels() {
+        throw new UnsupportedOperationException("Not supported yet."); 
+    }
+        
 	/**
 	 * This method takes the given game information to send back the appropriate row number to get the inputs from.
 	 * This is done based on Screen Resolution ratios. The calculations are hard coded, but tested and gave reliable rows when displayed.

@@ -3,7 +3,6 @@ package edu.utexas.cs.nn.tasks.vizdoom;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
@@ -31,9 +30,14 @@ import vizdoom.SpecifyDLL;
  */
 public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T> implements NetworkTask {
 
+    // All of these constants should probably become command line 
+    // parameters once we fully figure out the task
     public static String SCENARIO_WAD = "basic.wad";
+    public static String GAME_WAD = "freedoom2.wad";
     public static String DOOM_MAP = "map01";
     public static int DOOM_EPISODE_LENGTH = 200;
+    
+    // For each pixel in the image buffer, the colors are sorted in this order
     public static final int RED_INDEX = 2;
     public static final int GREEN_INDEX = 1;
     public static final int BLUE_INDEX = 0;
@@ -66,7 +70,7 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T> i
         // Sets path to vizdoom engine executive which will be spawned as a separate process.
         game.setViZDoomPath("vizdoom/bin/vizdoom_nosound");
         // Sets path to doom2 iwad resource file which contains the actual doom game-> Default is "./doom2.wad".
-        game.setDoomGamePath("vizdoom/scenarios/freedoom2.wad");
+        game.setDoomGamePath("vizdoom/scenarios/" + GAME_WAD);
         //game.setDoomGamePath("vizdoom/scenarios/doom2.wad");   // Not provided with environment due to licences.
 
         // Sets path to additional resources iwad file which is basically your scenario iwad.
@@ -111,7 +115,12 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T> i
         game.setScreenResolution(res);
 	}
 
-	public final void addAction(int[] buttonPresses, String label) {
+    /**
+     * Add new action to the list of possible actions the Doom agent can perform
+     * @param buttonPresses The combination of buttons being pressed
+     * @param label display label for the action
+     */
+    public final void addAction(int[] buttonPresses, String label) {
     	actionLabels.add(label);
     	actions.add(buttonPresses);
     }
@@ -125,11 +134,12 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T> i
         game.setEpisodeTimeout(DOOM_EPISODE_LENGTH);
 
         // Makes episodes start after 10 tics (~after raising the weapon)
-        //game.setEpisodeStartTime(10);
+        game.setEpisodeStartTime(10);
         // Makes the window appear (turned on by default)
+        // TODO: This doesn't work! Can we fix it, or do the VizDoom designers need to fix it?
         game.setWindowVisible(CommonConstants.watch);
         // Turns on the sound. (turned off by default)
-        game.setSoundEnabled(false);
+        // game.setSoundEnabled(false); // This seems to be controlled by the game we run, not this setting
         // Sets ViZDoom mode (PLAYER, ASYNC_PLAYER, SPECTATOR, ASYNC_SPECTATOR, PLAYER mode is default)
         game.setMode(Mode.PLAYER);
     }
@@ -143,6 +153,7 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T> i
             // Get the state
             GameState s = game.getState();
 
+            // Trouble shooting code
             System.out.println(s.imageBuffer.length);
             System.out.println(game.getScreenWidth());
             System.out.println(game.getScreenHeight());
@@ -160,17 +171,37 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T> i
         return new Pair<double[], double[]>(new double[]{game.getTotalReward()}, new double[]{});
     }
 
+    /**
+     * Given the game state, return an array of doubles that the learning
+     * agent will use to make a decision.
+     * @param s Class containing all information about the game state
+     * @return Array of sensor values/features
+     */
     public abstract double[] getInputs(GameState s);
     
+    /**
+     * Is run at the conclusion of all evolution.
+     * Terminates the DoomGame instance.
+     */
     public void finalCleanup() {
     	game.close();
     }
     
+    /**
+     * Just the reward. Will probably override this at some point
+     * @return Number of objectives
+     */
     @Override
     public int numObjectives() {
         return 1;
     }
     
+    /**
+     * Number of available actions.
+     * Generally matches the number of
+     * policy outputs.
+     * @return Number of actions
+     */
     public int numActions() {
         return actions.size();
     }
@@ -185,11 +216,6 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T> i
     }
 
     @Override
-    public String[] sensorLabels() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
     public String[] outputLabels() {
         // Derive from actionLabels
         return actionLabels.toArray(new String[actionLabels.size()]);
@@ -197,10 +223,12 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T> i
 
     /**
      * This method outputs the Gamestate according to the width and height given
-     * You may change which of the RGB values appear as well, currently set to all red values
-     * @param s
-     * @param width
-     * @param height
+     * You may change which of the RGB values appear as well, currently set to all red values.
+     * 
+     * This is primarily a utility class for troubleshooting purposes.
+     * @param s Game state
+     * @param width screen width
+     * @param height screen height
      */
     public static void drawGameState(GameState s, int width, int height) {
     	BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
@@ -222,7 +250,9 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T> i
     
     /**
      * This method outputs the given row stretched across the height
-     * You may change which of the RGB values appear as well, currently set to all red values
+     * You may change which of the RGB values appear as well, currently set to all red values.
+     * This is another utility class.
+     * 
      * @param s
      * @param width
      * @param height
