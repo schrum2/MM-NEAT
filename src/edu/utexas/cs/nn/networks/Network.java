@@ -66,7 +66,7 @@ public interface Network {
 	 * 
 	 * @return last used mode
 	 */
-	public int lastMode();
+	public int lastModule();
 
 	/**
 	 * Output of a specific mode after the previous processing

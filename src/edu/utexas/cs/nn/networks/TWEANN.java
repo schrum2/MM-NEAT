@@ -10,7 +10,6 @@ import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.util.CombinatoricUtilities;
-import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
 import edu.utexas.cs.nn.util.random.RandomNumbers;
 import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
 
@@ -371,7 +370,7 @@ public class TWEANN implements Network {
 	public ArrayList<Node> nodes;
 	public int[] moduleUsage;
 	private double[] preferenceFatigue;
-	public int chosenMode = 0;
+	public int chosenModule = 0;
 	public boolean canDraw = true;
 	public final int archetypeIndex;
 	public final int outputStart;
@@ -609,18 +608,22 @@ public class TWEANN implements Network {
 		return moduleUsage;
 	}
 
+        @Override
 	public int numInputs() {
 		return numIn;
 	}
 
+        @Override
 	public int numOutputs() {
 		return numOut;
 	}
 
+        @Override
 	public int effectiveNumOutputs() {
 		return this.neuronsPerMode;
 	}
 
+        @Override
 	public int numModules() {
 		return numModes;
 	}
@@ -629,6 +632,7 @@ public class TWEANN implements Network {
 		return neuronsPerMode;
 	}
 
+        @Override
 	public boolean isMultitask() {
 		return standardMultitask || hierarchicalMultitask;
 	}
@@ -648,6 +652,7 @@ public class TWEANN implements Network {
 	 * @param mode
 	 *            to use
 	 */
+        @Override
 	public void chooseMode(int mode) {
 		presetMode = mode;
 		if (hierarchicalMultitask) {
@@ -659,8 +664,9 @@ public class TWEANN implements Network {
 		}
 	}
 
-	public int lastMode() {
-		return chosenMode;
+        @Override
+	public int lastModule() {
+		return chosenModule;
 	}
 
 	/**
@@ -669,8 +675,9 @@ public class TWEANN implements Network {
 	 *
 	 * @param inputs
 	 *            sensor readings for the network
-	 * @return network output (single mode)
+	 * @return network output (single module)
 	 */
+        @Override
 	public double[] process(double[] inputs) {
 		assert(inputs.length == numIn) : "Input mismatch! numIn = " + numIn + "\n" + "inputs.length = " + inputs.length
 				+ "\n" + Arrays.toString(inputs);
@@ -721,16 +728,16 @@ public class TWEANN implements Network {
 			}
 
 			// determine winner
-			chosenMode = CommonConstants.softmaxModeSelection
+			chosenModule = CommonConstants.softmaxModeSelection
 					? StatisticsUtilities.softmax(preferences, CommonConstants.softmaxTemperature)
 					: StatisticsUtilities.argmax(preferences);
-			this.moduleUsage[chosenMode]++;
+			this.moduleUsage[chosenModule]++;
 
 			// add new fatigue
-			preferenceFatigue[chosenMode] += CommonConstants.preferenceNeuronFatigueUnit;
+			preferenceFatigue[chosenModule] += CommonConstants.preferenceNeuronFatigueUnit;
 			// decay fatigue
 			for (int i = 0; i < preferenceFatigue.length; i++) {
-				if (i != chosenMode) { // don't decay chosen mode
+				if (i != chosenModule) { // don't decay chosen mode
 					preferenceFatigue[i] *= CommonConstants.preferenceNeuronDecay;
 				}
 			}
@@ -748,7 +755,7 @@ public class TWEANN implements Network {
 				outputs[i] /= numModes;
 			}
 		} else {
-			outputs = moduleOutput(chosenMode);
+			outputs = moduleOutput(chosenModule);
 		}
 
 		// System.out.println("final outputs: " + Arrays.toString(outputs));
@@ -772,6 +779,7 @@ public class TWEANN implements Network {
 	 *            mode outputs to access
 	 * @return outputs of specific mode
 	 */
+        @Override
 	public double[] moduleOutput(int mode) {
 		int selectedModeStart = outputStart + (mode * (neuronsPerMode + (standardMultitask ? 0 : 1)));
 		double[] outputs = new double[neuronsPerMode];
@@ -937,6 +945,7 @@ public class TWEANN implements Network {
 
 	transient private ArrayList<ArrayList<Node>> layers = null;
 
+        @SuppressWarnings("empty-statement")
 	public void draw(DrawingPanel panel, boolean showInnovationNumbers, boolean showWeights) {
 		TWEANN.panel = panel;
 		if (layers == null) { // Only construct the layers once
@@ -950,8 +959,9 @@ public class TWEANN implements Network {
 				} else {
 					System.out.println("Impossible network configuration: Wrong number of inputs");
 					System.out.println(this);
-					while (true)
-						;
+					// Freezes the construction process so user  
+                                        // can look at the broken network
+                                        while (true); 
 					// System.exit(1);
 				}
 			}
@@ -967,8 +977,9 @@ public class TWEANN implements Network {
 					System.out.println("Impossible network configuration: Wrong number of hidden nodes");
 					System.out.println("h = " + h + "/" + nodes.size() + ", hiddenNode.ntype = " + hiddenNode.ntype);
 					System.out.println(this);
-					while (true)
-						;
+					// Freezes the construction process so user  
+                                        // can look at the broken network
+                                        while (true);
 					// System.exit(1);
 				}
 			}
@@ -1000,9 +1011,11 @@ public class TWEANN implements Network {
 					hiddenLayers.add(nextHiddenLayer);
 					hiddenLayer++;
 				}
+                                // It is assumed that no network should be this big,
+                                // but this might not be true if HyperNEAT networks are drawn.
 				if (loop > 10000) {
 					System.out.println("Can't escape loop in network draw!");
-					break;
+					break; // Why break instead of throwing an exception?
 				}
 			}
 
@@ -1018,8 +1031,9 @@ public class TWEANN implements Network {
 				} else {
 					System.out.println("Impossible network configuration: Wrong number of outputs");
 					System.out.println(this);
-					while (true)
-						;
+					// Freezes the construction process so user  
+                                        // can look at the broken network
+                                        while (true);
 					// System.exit(1);
 				}
 			}
@@ -1034,6 +1048,7 @@ public class TWEANN implements Network {
 		// g.fillRect(0, 0, panel.getFrame().getWidth(),
 		// panel.getFrame().getHeight());
 
+                // What are these magic numbers?
 		int height = panel.getFrame().getHeight() - 46;
 		int width = panel.getFrame().getWidth() - 6;
 
@@ -1048,16 +1063,12 @@ public class TWEANN implements Network {
 				display.displayX = x;
 				display.displayY = y;
 				g.setColor(Color.white);
-				g.fillRect(x, y, 2 * NODE_DIM, 2 * NODE_DIM); // erase previous
-																// activation
+				g.fillRect(x, y, 2 * NODE_DIM, 2 * NODE_DIM); // erase previous activation
 				if (display.ntype == Node.NTYPE_OUTPUT) {
-					g.fillRect(x, 0, 2 * NODE_DIM, 2 * NODE_DIM); // erase mode
-																	// indicator
-					if (n / (neuronsPerMode + (standardMultitask ? 0.0 : 1.0)) == chosenMode) {
-						g.setColor(CombinatoricUtilities.colorFromInt(chosenMode));
-						g.fillRect(x, 0, 2 * NODE_DIM, 2 * NODE_DIM); // erase
-																		// mode
-																		// indicator
+					g.fillRect(x, 0, 2 * NODE_DIM, 2 * NODE_DIM); // erase mode indicator
+					if (n / (neuronsPerMode + (standardMultitask ? 0.0 : 1.0)) == chosenModule) {
+						g.setColor(CombinatoricUtilities.colorFromInt(chosenModule));
+						g.fillRect(x, 0, 2 * NODE_DIM, 2 * NODE_DIM); // erase mode indicator
 					}
 					if (standardMultitask || CommonConstants.ensembleModeMutation
 							|| n % (neuronsPerMode + 1) == neuronsPerMode) {
@@ -1077,8 +1088,7 @@ public class TWEANN implements Network {
 				if (display.frozen) {
 					Color component = g.getColor();
 					g.setColor(Color.CYAN);
-					g.fillRect(x - 2, y - 2, (int) ((1 + activation) * NODE_DIM) + 4,
-							(int) ((1 + activation) * NODE_DIM) + 4);
+					g.fillRect(x - 2, y - 2, (int) ((1 + activation) * NODE_DIM) + 4, (int) ((1 + activation) * NODE_DIM) + 4);
 					g.setColor(component);
 				}
 				g.fillRect(x, y, (int) ((1 + activation) * NODE_DIM), (int) ((1 + activation) * NODE_DIM));
@@ -1160,6 +1170,7 @@ public class TWEANN implements Network {
 		}
 
 		for (int i = 0; i < moduleAssociations.length; i++) {
+                        // More magic numbers
 			g.setColor(CombinatoricUtilities.colorFromInt(i + 1));
 			g.fillRect(100 + (i * 2 * NODE_DIM), 2, 2 * NODE_DIM, 2 * NODE_DIM);
 			g.setColor(CombinatoricUtilities.colorFromInt(moduleAssociations[i] + 1));

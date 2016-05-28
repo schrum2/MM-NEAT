@@ -44,7 +44,7 @@ public class NNActionPacManController extends NNPacManController {
 
 		if (CommonConstants.watch && (nn instanceof TWEANN) && ((TWEANN) nn).numModules() > 1) {
 			// Need to have a better indicator of current mode
-			gs.addPoints(CombinatoricUtilities.colorFromInt(((TWEANN) nn).chosenMode),
+			gs.addPoints(CombinatoricUtilities.colorFromInt(((TWEANN) nn).chosenModule),
 					new int[] { gs.getPacmanCurrentNodeIndex() });
 		}
 

@@ -193,7 +193,7 @@ public class NNCheckEachDirectionPacManController extends NNDirectionalPacManCon
 				usageCounts[i]++;
 				double[] outputs = this.directionalNetworks[i].process(inputs);
 				// Much of mode usage tracking for eval reports
-				int lastMode = directionalNetworks[i].lastMode();
+				int lastMode = directionalNetworks[i].lastModule();
 				if (gf.anyIsEdible()) {
 					edibleModeUsageCounts[i][lastMode]++;
 				} else {
@@ -273,7 +273,7 @@ public class NNCheckEachDirectionPacManController extends NNDirectionalPacManCon
 			// System.out.println("to " + Arrays.toString(preferences));
 		}
 
-		int chosenMode = directionalNetworks[directionFromPreferences(preferences)].lastMode();
+		int chosenMode = directionalNetworks[directionFromPreferences(preferences)].lastModule();
 		chosenDirectionModeUsageCounts[chosenMode]++;
 		// System.out.println("Chose Mode: " + chosenMode);
 

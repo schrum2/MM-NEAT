@@ -311,7 +311,7 @@ public class MLP implements Network {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
-	public int lastMode() {
+	public int lastModule() {
 		// Does nothing until I develope multitask for MLPs
 		return -1;
 	}
