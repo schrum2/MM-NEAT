@@ -791,6 +791,7 @@ public class TWEANN implements Network {
 	}
 
 	@SuppressWarnings("unchecked")
+        @Override
 	public void flush() {
 		// System.out.println("Flush: " + id);
 		for (Node n : nodes) {
@@ -817,11 +818,7 @@ public class TWEANN implements Network {
 				break;
 			}
 		}
-		// if(targetNode == null){
-		// System.out.println("No node with innovation " + targetInnovation + "
-		// existed");
-		// System.exit(1);
-		// }
+                assert targetNode != null : "No node with innovation " + targetInnovation + " existed";
 		return targetNode;
 	}
 
