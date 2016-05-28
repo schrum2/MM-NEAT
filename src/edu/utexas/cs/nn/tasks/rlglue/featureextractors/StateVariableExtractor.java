@@ -23,6 +23,7 @@ public class StateVariableExtractor implements FeatureExtractor {
 
 	/**
 	 * Sets the current StateVariableExtractor
+         * @param tso Task specification
 	 */
 	public StateVariableExtractor(TaskSpec tso) {
 		this.tso = tso;
@@ -47,10 +48,7 @@ public class StateVariableExtractor implements FeatureExtractor {
 		for (int i = 0; i < o.intArray.length; i++) {
 			inputs[i] = o.intArray[i];
 		}
-		for (int i = 0; i < o.doubleArray.length; i++) {
-			inputs[o.intArray.length + i] = o.doubleArray[i];
-		}
-
+                System.arraycopy(o.doubleArray, 0, inputs, o.intArray.length, o.doubleArray.length);
 		return inputs;
 	}
 
@@ -74,11 +72,9 @@ public class StateVariableExtractor implements FeatureExtractor {
 
 	/**
 	 * Scales the given inputs, but this won't be needed for this extractor.
-	 * @param double[] inputs
 	 */
 	@Override
 	public double[] scaleInputs(double[] inputs) {
-		throw new UnsupportedOperationException(
-				"There is no sensible way to scale inputs in general. More details are needed");
+		throw new UnsupportedOperationException("There is no sensible way to scale inputs in general. More details are needed");
 	}
 }
