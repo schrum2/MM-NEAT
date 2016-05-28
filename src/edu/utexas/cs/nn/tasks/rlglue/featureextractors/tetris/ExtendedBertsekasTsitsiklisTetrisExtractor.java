@@ -7,6 +7,7 @@ public class ExtendedBertsekasTsitsiklisTetrisExtractor extends BertsekasTsitsik
 
 	/**
 	 * Returns the number of features for this extractor
+         * @return features from parent class plus extra hole features
 	 */
 	@Override
 	public int numFeatures() {
@@ -31,13 +32,14 @@ public class ExtendedBertsekasTsitsiklisTetrisExtractor extends BertsekasTsitsik
 
 	/**
 	 * Returns the feature labels for the given extractor
+         * @return original labels plus labels for new hole features
 	 */
 	@Override
 	public String[] featureLabels() {
 		String[] labels = super.featureLabels();
 		int originalFeatures = TetrisState.worldWidth + (TetrisState.worldWidth - 1) + 3; 
 		for (int i = originalFeatures; i < labels.length; i++) {
-			labels[i] = "Column " + i + " Holes";
+			labels[i] = "Column " + (i - originalFeatures) + " Holes";
 		}
 		return labels;
 	}
@@ -52,18 +54,11 @@ public class ExtendedBertsekasTsitsiklisTetrisExtractor extends BertsekasTsitsik
 	@Override
 	public double[] extract(Observation o) {
 		double[] base = super.extract(o);
-
 		int[] worldState = new int[worldWidth * worldHeight];
 		System.arraycopy(o.intArray, 0, worldState, 0, worldWidth * worldHeight);
-		double[] blockIndicator = new double[possibleBlocks.size()];
-		for (int i = 0; i < possibleBlocks.size(); i++) {
-			blockIndicator[i] = o.intArray[worldState.length + i];
-		}
-
 		double[] added = new double[worldWidth];
-		for (int i = 0; i < added.length; i++) { // finds the number of holes
-													// for the current column
-													// and adds that to Added
+                // finds the number of holes for the current column and adds that to added
+		for (int i = 0; i < added.length; i++) { 
 			double h = columnHeight(i, worldState);
 			added[i] = columnHoles(i, worldState, (int) h);
 		}
@@ -72,7 +67,6 @@ public class ExtendedBertsekasTsitsiklisTetrisExtractor extends BertsekasTsitsik
 		System.arraycopy(base, 0, combined, 0, super.numFeatures());
 		System.arraycopy(added, 0, combined, super.numFeatures(), added.length);
 
-		// System.out.println(Arrays.toString(combined));
 		return combined;
 	}
 }

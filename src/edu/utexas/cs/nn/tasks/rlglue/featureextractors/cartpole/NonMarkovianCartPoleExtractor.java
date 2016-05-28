@@ -4,13 +4,14 @@ import edu.utexas.cs.nn.tasks.rlglue.featureextractors.FeatureExtractor;
 import org.rlcommunity.rlglue.codec.types.Observation;
 
 /**
- *
+ * Extractor for learning pole balancing without the derivative information
+ * 
  * @author Jacob Schrum
  */
 public class NonMarkovianCartPoleExtractor implements FeatureExtractor {
 
 	/**
-	 * Returns the number of featuers for this extractor
+	 * Cart position and pole angle (no derivatives)
 	 */
 	@Override
 	public int numFeatures() {
@@ -37,7 +38,7 @@ public class NonMarkovianCartPoleExtractor implements FeatureExtractor {
 
 	/**
 	 * Scales the given inputs, not implemented here.
-	 * @param double[] inputs
+         * Actually still need to implement this.
 	 */
 	@Override
 	public double[] scaleInputs(double[] inputs) {

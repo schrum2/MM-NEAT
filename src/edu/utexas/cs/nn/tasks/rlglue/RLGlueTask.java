@@ -292,8 +292,7 @@ public class RLGlueTask<T extends Network> extends NoisyLonerTask<T>implements N
 	 */
 	@Override
 	public int numObjectives() {
-		// There are special cases, but the default fitness is the total summed
-		// reward
+		// There are special cases, but the default fitness is the total summed reward
 		if (moPuddleWorld)
 			return 2;
 		if (tetrisTimeSteps && tetrisBlocksOnScreen)
@@ -301,7 +300,7 @@ public class RLGlueTask<T extends Network> extends NoisyLonerTask<T>implements N
 		if (tetrisTimeSteps || tetrisBlocksOnScreen)
 			return 2; // Tetris: only one is used
 		else
-			return 1; // Tetris: neither are used
+			return 1; // default: just the RL Return
 	}
 
 	/**

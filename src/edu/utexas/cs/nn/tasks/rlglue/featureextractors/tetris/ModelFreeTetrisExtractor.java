@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.utexas.cs.nn.tasks.rlglue.featureextractors.tetris;
 
 import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
@@ -10,13 +6,16 @@ import org.rlcommunity.environments.tetris.TetrisState;
 import org.rlcommunity.rlglue.codec.types.Observation;
 
 /**
- *
+ * This feature extractor was supposes to help learn Tetris without doing
+ * the after-state calculations, but it doesn't work very well.
+ * 
  * @author Jacob Schrum
  */
 public class ModelFreeTetrisExtractor extends BertsekasTsitsiklisTetrisExtractor {
 
 	/**
 	 * Returns the number of features for this extractor
+         * @return features from parent, plus 5 more about the falling block
 	 */
 	@Override
 	public int numFeatures() {
@@ -85,8 +84,7 @@ public class ModelFreeTetrisExtractor extends BertsekasTsitsiklisTetrisExtractor
 	 * @param pieceColumn
 	 * @return
 	 */
-	protected int pieceDistanceFromBlocks(int[] worldState, int blockId, int blockX, int blockY, int blockRotation,
-			int pieceColumn) {
+	protected int pieceDistanceFromBlocks(int[] worldState, int blockId, int blockX, int blockY, int blockRotation, int pieceColumn) {
 		int[][] mobilePiece = this.possibleBlocks.get(blockId).getShape(blockRotation);
 		boolean hasBottom = false;
 		int bottom = 0;

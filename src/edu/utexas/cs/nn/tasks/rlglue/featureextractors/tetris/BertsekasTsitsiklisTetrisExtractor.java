@@ -1,9 +1,3 @@
-/*
- * Feature extraction based on Bertsekas and Tsitsiklis.
- * Doesn't really suit my needs, because it depends on afterstate
- * representation. Need to either modify my RL-Glue usage
- * to handle after states, or come up with better features
- */
 package edu.utexas.cs.nn.tasks.rlglue.featureextractors.tetris;
 
 import edu.utexas.cs.nn.tasks.rlglue.featureextractors.FeatureExtractor;
@@ -12,8 +6,9 @@ import org.rlcommunity.environments.tetris.TetrisPiece;
 import org.rlcommunity.environments.tetris.TetrisState;
 import org.rlcommunity.rlglue.codec.types.Observation;
 
-/**
- *
+/*
+ * Feature extraction based on Bertsekas and Tsitsiklis.
+ * Depends on afterstates.
  * @author Jacob Schrum, Gabby Gonzalez
  */
 public class BertsekasTsitsiklisTetrisExtractor implements FeatureExtractor {
@@ -67,10 +62,11 @@ public class BertsekasTsitsiklisTetrisExtractor implements FeatureExtractor {
 	 * Calculates the total number of features. Equation is set up in such a way
 	 * to allow for an array of inputs to take in certain inputs.
 	 */
+        @Override
 	public int numFeatures() {
 		return worldWidth // column heights
-				+ (worldWidth - 1) // column differences
-				+ 3; // MaxHeight, Holes, Bias
+		     + (worldWidth - 1) // column differences
+		     + 3; // MaxHeight, Holes, Bias
 	}
 
 	/**
@@ -80,21 +76,14 @@ public class BertsekasTsitsiklisTetrisExtractor implements FeatureExtractor {
 	 * @param o Observation 
 	 * @return array of inputs
 	 */
+        @Override
 	public double[] extract(Observation o) {
 		// numFeatures gives us "worldWidth + (worldWidth - 1) + 3"
 		double[] inputs = new double[numFeatures()]; 
 
 		// creates the linear array version of the game world
 		int[] worldState = new int[worldWidth * worldHeight]; 
-		
 		System.arraycopy(o.intArray, 0, worldState, 0, worldWidth * worldHeight);
-		double[] blockIndicator = new double[possibleBlocks.size()];
-		
-		// for each possible block, add whether or not it is falling to the blockIndicator array
-		for (int i = 0; i < possibleBlocks.size(); i++) { 
-			// this sets the block indicator spots as either 0 or 1 according to which block is currently falling (1)
-			blockIndicator[i] = o.intArray[worldState.length + i]; 
-		}
 
 		int in = 0;
 		double holes = 0;
@@ -120,6 +109,7 @@ public class BertsekasTsitsiklisTetrisExtractor implements FeatureExtractor {
 	/**
 	 * Returns an array of feature labels given the current extractor
 	 */
+        @Override
 	public String[] featureLabels() {
 		String[] labels = new String[numFeatures()];
 		int in = 0;

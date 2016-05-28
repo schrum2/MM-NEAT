@@ -20,7 +20,7 @@ public class CartPoleViewer {
 	public static final int WIDTH = 500;
 	public static final String TITLE = "CartPole";
 	public DrawingPanel panel;
-	private double poleLength = .3d; // 30% of the screen long
+	private final double poleLength = .3d; // 30% of the screen long
 
 	/**
 	 * Sets up the viewer for CartPole
@@ -63,7 +63,14 @@ public class CartPoleViewer {
 	/**
 	 * Modified from CartPoleCartComponent
 	 *
-	 * @param g
+         * @param leftCartBound left bound where position is illegal
+         * @param rightCartBound right bound where position is illegal
+         * @param leftAngleBound left angle bound where angle is illegal
+         * @param rightAngleBound right angle bound where angle is illegal
+         * @param x current position on x-axis
+         * @param x_dot derivative of the position on x-axis
+         * @param theta current angle of pole
+         * @param theta_dot derivative of angle of pole
 	 */
 	public void renderCart(double leftCartBound, double rightCartBound, double leftAngleBound, double rightAngleBound,
 			double x, double x_dot, double theta, double theta_dot) {
