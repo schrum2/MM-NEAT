@@ -207,7 +207,6 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 	 * @param subs
 	 *            list of substrates
 	 *
-	 * @return array list containing the genes linked between the two substrates
 	 */
 	public void loopThroughLinks(ArrayList<LinkGene> linksSoFar, TWEANN cppn, int outputIndex, Substrate s1, Substrate s2, int s1Index, int s2Index, List<Substrate> subs) {
 		// searches through width of first substrate
