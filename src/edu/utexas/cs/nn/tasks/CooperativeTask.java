@@ -25,7 +25,7 @@ import wox.serial.Easy;
  * Task involving multiple individuals combined into a single team or organism
  * that is evaluated.
  *
- * @author He_Deceives
+ * @author Jacob Schrum
  */
 public abstract class CooperativeTask implements MultiplePopulationTask {
 
@@ -52,7 +52,7 @@ public abstract class CooperativeTask implements MultiplePopulationTask {
 		if (Parameters.parameters.booleanParameter("io") && Parameters.parameters.booleanParameter("teamLog")) {
 			this.teamLog = new MONELog("Teams", true);
 		}
-		TWEANN.NETWORK_VIEW_DIM = 800 / 5;
+		TWEANN.NETWORK_VIEW_DIM = 800 / 5; // Why these magic numbers? Why not 160?
 		this.bestTeamScore = Parameters.parameters.booleanParameter("bestTeamScore");
 	}
 
@@ -68,6 +68,7 @@ public abstract class CooperativeTask implements MultiplePopulationTask {
 	 *            different populations of genotypes, each the same size
 	 * @return score for each member of each population
 	 */
+        @Override
 	public ArrayList<ArrayList<Score>> evaluateAllPopulations(ArrayList<ArrayList<Genotype>> populations) {
 		int pops = populations.size();
 		int popSize = populations.get(0).size();
@@ -109,8 +110,7 @@ public abstract class CooperativeTask implements MultiplePopulationTask {
 	 *            how to join the population members into teams to evaluate
 	 * @return score for each individual of each population
 	 */
-	public ArrayList<ArrayList<Score>> evaluateAllPopulations(ArrayList<ArrayList<Genotype>> populations,
-			List<ArrayList<Integer>> teamOrder) {
+	public ArrayList<ArrayList<Score>> evaluateAllPopulations(ArrayList<ArrayList<Genotype>> populations, List<ArrayList<Integer>> teamOrder) {
 		int pops = populations.size();
 		int popSize = populations.get(0).size();
 
@@ -118,12 +118,14 @@ public abstract class CooperativeTask implements MultiplePopulationTask {
 		Score[][] rawScores = new Score[pops][popSize];
 		// Evaluate all
 		int totalEvals = teamOrder.get(0).size();
-		int maxPacManScore = 0;
 		Score bestScoreSet = null;
-		Genotype[] bestPacManTeam = null;
+		// Ignore these variables if not evolving Ms Pac-Man
+                int maxPacManScore = 0; 
+		Genotype[] bestPacManTeam = null; 
 		boolean trackBestPacManScore = this instanceof CooperativeMsPacManTask
 				&& MMNEAT.ea instanceof CooperativeCoevolutionMuLambda
 				&& ((CooperativeCoevolutionMuLambda) MMNEAT.ea).evaluatingParents;
+                
 		for (int i = 0; i < totalEvals; i++) {
 			// Create team
 			Genotype[] team = getTeam(populations, teamOrder, i);
@@ -134,9 +136,8 @@ public abstract class CooperativeTask implements MultiplePopulationTask {
 			// Track the best ms pacman team in each generation
 			if (trackBestPacManScore) {
 				Score firstScoreSet = scores.get(0);
-				int gameScore = (int) firstScoreSet.otherStats[0]; // Game Score
-																	// is always
-																	// first
+                                // Game Score is always first: 0 is the Game Score index (fix magic number?)
+				int gameScore = (int) firstScoreSet.otherStats[0]; 
 				if (gameScore >= maxPacManScore) {
 					bestPacManTeam = team;
 					maxPacManScore = gameScore;
@@ -153,7 +154,8 @@ public abstract class CooperativeTask implements MultiplePopulationTask {
 			// Save best pacman team
 			String teamDir = FileUtilities.getSaveDirectory() + "/bestTeam";
 			File bestDir = new File(teamDir);
-			// Delete old contents/team
+			// Delete old contents/team 
+                        // TODO: Modify this so that the best team from each generation is saved if desired
 			if (bestDir.exists()) {
 				FileUtilities.deleteDirectoryContents(bestDir);
 			} else {
@@ -182,12 +184,13 @@ public abstract class CooperativeTask implements MultiplePopulationTask {
 	/*
 	 * Default objective mins of 0.
 	 */
+        @Override
 	public double[] minScores() {
 		return new double[this.numObjectives()];
 	}
 
 	/**
-	 * Get the indexth team to evaluate according to the joinOrder.
+	 * Get the index-th team to evaluate according to the joinOrder.
 	 *
 	 * @param populations
 	 *            all subpops
@@ -197,8 +200,7 @@ public abstract class CooperativeTask implements MultiplePopulationTask {
 	 *            in joinOrder
 	 * @return team to evaluate
 	 */
-	protected Genotype[] getTeam(ArrayList<ArrayList<Genotype>> populations, List<ArrayList<Integer>> joinOrder,
-			int index) {
+	protected Genotype[] getTeam(ArrayList<ArrayList<Genotype>> populations, List<ArrayList<Integer>> joinOrder, int index) {
 		int pops = populations.size();
 		Genotype[] team = new Genotype[pops];
 		for (int p = 0; p < pops; p++) {
@@ -260,8 +262,7 @@ public abstract class CooperativeTask implements MultiplePopulationTask {
 			panels = new DrawingPanel[team.length];
 			for (int p = 0; p < team.length; p++) {
 				if (team[p] instanceof TWEANNGenotype) {
-					panels[p] = new DrawingPanel(TWEANN.NETWORK_VIEW_DIM, TWEANN.NETWORK_VIEW_DIM,
-							"Evolving Network " + p);
+					panels[p] = new DrawingPanel(TWEANN.NETWORK_VIEW_DIM, TWEANN.NETWORK_VIEW_DIM, "Evolved Network " + p);
 					panels[p].setLocation(LonerTask.NETWORK_WINDOW_OFFSET, p * (TWEANN.NETWORK_VIEW_DIM + 20));
 					((TWEANNGenotype) team[p]).getPhenotype().draw(panels[p]);
 				}
@@ -289,8 +290,7 @@ public abstract class CooperativeTask implements MultiplePopulationTask {
 	 * @return ArrayList with data from rawScores, but nulls are now zero, and
 	 *         each Score has the appropriate Genotype.
 	 */
-	protected ArrayList<ArrayList<Score>> wrapUpScores(Score[][] rawScores, ArrayList<ArrayList<Genotype>> populations,
-			List<ArrayList<Integer>> teamOrder) {
+	protected ArrayList<ArrayList<Score>> wrapUpScores(Score[][] rawScores, ArrayList<ArrayList<Genotype>> populations, List<ArrayList<Integer>> teamOrder) {
 		// Tracking data that matters when using blueprints
 		previousUnevaluatedIndividuals = unevaluatedIndividuals;
 		unevaluatedIndividuals = 0;
@@ -309,11 +309,10 @@ public abstract class CooperativeTask implements MultiplePopulationTask {
 						new double[otherStatsPerPopulation()[p]], 0) : rawScores[p][i];
 				double[] allScores = score.scores;
 				double[] allOtherStats = score.otherStats;
-				popScores.add(new Score(populations.get(p).get(i), // The
-																	// genotype
+				popScores.add(new Score(
+                                                populations.get(p).get(i), // The genotype
 						allScores, // average of raw scores from each team eval
-						null, // Ignore Behavioral Diversity implementation for
-								// now
+						null, // Ignore Behavioral Diversity implementation for now
 						allOtherStats, // average of other stats
 						score.evals)); // number of evals
 			}
@@ -325,10 +324,11 @@ public abstract class CooperativeTask implements MultiplePopulationTask {
 	/**
 	 * Scores for each team member are the max across evals, because team
 	 * members should only be rated based on the best team they contribute to
-	 * ... no punishment for being roped into a crappy team.
+	 * ... no punishment for being roped into a crappy team, unless the
+         * bestTeamScore option is false.
 	 *
 	 * @param rawScores
-	 *            accumulated max scores from evals so far
+	 *            accumulated scores from evals so far
 	 * @param teamOrder
 	 *            order of evaluation
 	 * @param order
@@ -336,13 +336,13 @@ public abstract class CooperativeTask implements MultiplePopulationTask {
 	 * @param scores
 	 *            new scores to be added to rawScores
 	 */
-	protected void addScores(Score[][] rawScores, List<ArrayList<Integer>> teamOrder, int order,
-			ArrayList<Score> scores) {
+	protected void addScores(Score[][] rawScores, List<ArrayList<Integer>> teamOrder, int order, ArrayList<Score> scores) {
 		for (int p = 0; p < scores.size(); p++) {
 			int orderIndex = teamOrder.get(p).get(order);
 			Score score = scores.get(p);
-			rawScores[p][orderIndex] = (bestTeamScore ? score.maxScores(rawScores[p][orderIndex])
-					: score.incrementalAverage(rawScores[p][orderIndex]));
+			rawScores[p][orderIndex] = (bestTeamScore 
+                                ? score.maxScores(rawScores[p][orderIndex])
+				: score.incrementalAverage(rawScores[p][orderIndex]));
 		}
 	}
 }

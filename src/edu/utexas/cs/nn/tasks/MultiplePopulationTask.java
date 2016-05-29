@@ -11,7 +11,7 @@ import java.util.ArrayList;
  * number of populations is unknown, they either all have to have the same type,
  * or not have a designated type at all.
  *
- * @author He_Deceives
+ * @author Jacob Schrum
  */
 public interface MultiplePopulationTask extends Task {
 
