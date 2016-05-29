@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.utexas.cs.nn.tasks.ut2004;
 
 import cz.cuni.amis.pogamut.base3d.worldview.object.Location;
@@ -36,7 +32,7 @@ public class Util {
 	 *            the current rotation of the source
 	 * @param targetLocation
 	 *            the location of your target
-	 * @return the angle (in the horizontal plane) beween -PI and PI the the bot
+	 * @return the angle (in the horizontal plane) between -PI and PI the the bot
 	 *         should turn to face the target (positive if the target is left
 	 *         from the agent, negative if the target is right from the agent)
 	 */
@@ -116,7 +112,7 @@ public class Util {
 	}
 
 	/**
-	 * @param rotationInRad
+	 * @param rotationInUTUnits
 	 *            in UTUnits (0..65535) pitch, yaw, roll (same order as sent by
 	 *            GameBots)
 	 * @return

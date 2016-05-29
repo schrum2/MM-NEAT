@@ -1,0 +1,3 @@
+cd ..
+cd ..
+java -jar dist/MM-NEATv2.jar runNumber:%1 randomSeed:%1 base:ut2004 trials:3 maxGens:100 mu:50 io:true netio:true mating:true task:edu.utexas.cs.nn.tasks.ut2004.UT2004ShockRifleVsGBBotsDeathMatchTask cleanOldNetworks:true fs:false log:UT2004-Dummy saveTo:Dummy utMap:DM-TrainingDay utNumOpponents:1 utEvalMinutes:3 utGameBotsOpponent:edu.utexas.cs.nn.tasks.ut2004.controller.DummyController utDrive:D utPath:ut\game

@@ -33,11 +33,11 @@ import java.util.Arrays;
 /**
  *
  * @author Jacob Schrum
+ * @param <T> evolved phenotype
  */
 public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>implements NetworkTask {
 
-	public static final boolean BOTPRIZE = false; // Whether the botprize mod
-													// should be used
+	public static final boolean BOTPRIZE = false; // Whether the botprize mod should be used
 	public UT2004SensorModel sensorModel;
 	public UT2004OutputInterpretation outputModel;
 	public UT2004WeaponManager weaponManager;
@@ -67,27 +67,27 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 		}
 	}
 
+        @Override
 	public String[] sensorLabels() {
 		return sensorModel.sensorLabels();
 	}
 
+        @Override
 	public String[] outputLabels() {
 		return outputModel.outputLabels();
 	}
 
-	public final void addObjective(UT2004FitnessFunction o, ArrayList<UT2004FitnessFunction<T>> list,
-			boolean affectsSelection) {
+	public final void addObjective(UT2004FitnessFunction o, ArrayList<UT2004FitnessFunction<T>> list,boolean affectsSelection) {
 		addObjective(o, list, null, affectsSelection);
 	}
 
-	public final void addObjective(UT2004FitnessFunction o, ArrayList<UT2004FitnessFunction<T>> list,
-			Statistic override, boolean affectsSelection) {
+	public final void addObjective(UT2004FitnessFunction o, ArrayList<UT2004FitnessFunction<T>> list, Statistic override, boolean affectsSelection) {
 		list.add(o);
 		MMNEAT.registerFitnessFunction(o.getClass().getSimpleName(), override, affectsSelection);
 	}
 
 	@Override
-	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {
+	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {            
 		int botPort = ServerUtil.getAvailablePort();
 		int controlPort = ServerUtil.getAvailablePort();
 		int observePort = ServerUtil.getAvailablePort();
@@ -107,8 +107,7 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 		config.setOptions(botprizeMod
 				+ "?fraglimit=0?GoalScore=0?DoUplink=False?UplinkToGamespy=False?SendStats=False?bAllowPrivateChat=False?bAllowTaunts=False?bEnableVoiceChat=False?bAllowLocalBroadcast=False?BotServerPort="
 				+ botPort + "?ControlServerPort=" + controlPort + "?ObservingServerPort=" + observePort);
-		config.setUnrealHome(Parameters.parameters.stringParameter("utDrive") + ":\\"
-				+ Parameters.parameters.stringParameter("utPath"));
+		config.setUnrealHome(Parameters.parameters.stringParameter("utDrive") + ":\\" + Parameters.parameters.stringParameter("utPath"));
 
 		MyUCCWrapper ucc = null;
 		Pair<double[], double[]> result = null;
@@ -119,8 +118,9 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 				ucc = new MyUCCWrapper(config);
 				IUT2004Server server = ucc.getUTServer();
 				System.out.println(botPort + ": Confirming empty server");
-				while (server.getAgents().size() > 0 || server.getNativeAgents().size() > 0
-						|| server.getPlayers().size() > 0) {
+				while (server.getAgents().size() > 0 
+                                        || server.getNativeAgents().size() > 0
+					|| server.getPlayers().size() > 0) {
 					System.out.println(botPort + ": NOT EMPTY! RESET!");
 					ServerUtil.destroyServer(ucc, true);
 
@@ -135,8 +135,7 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 						server.connectNativeBot("Bot" + i, "Type" + i, nativeBotSkills[i]);
 					}
 					// Evaluate genotype
-					NetworkController organism = new NetworkController<T>(individual, sensorModel.copy(),
-							outputModel.copy(), weaponManager.copy());
+					NetworkController organism = new NetworkController<T>(individual, sensorModel.copy(), outputModel.copy(), weaponManager.copy());
 					ArrayList<BehaviorModule> behaviors = new ArrayList<BehaviorModule>(2);
 					behaviors.add(new BattleNetworkBehaviorModule<T>(organism));
 					behaviors.add(new ItemExplorationBehaviorModule());
@@ -145,13 +144,11 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 					BotController[] allBots = new BotController[this.opponents.length + 1];
 					allBots[0] = controller;
 					System.arraycopy(opponents, 0, allBots, 1, opponents.length);
-					GameDataCollector[] collectors = ControllerBot.launchBot(server, "EvolvingBot" + gamePort, allBots,
+					GameDataCollector[] collectors = ControllerBot.launchBot(
+                                                        server, "EvolvingBot" + gamePort, allBots,
 							evalMinutes * 60, desiredSkill, "localhost", botPort);
-					GameDataCollector stats = collectors[0]; // For now, assume
-																// we always
-																// want just the
-																// first
-																// collector
+                                        // For now, assume we always want just the first collector
+					GameDataCollector stats = collectors[0]; 
 
 					// System.out.println("Eval over");
 					// Transfer stats data to result
@@ -176,11 +173,13 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 		return result;
 	}
 
+        @Override
 	public double getTimeStamp() {
 		// Can the game time be retrieved?
-		return 0;
+		return 0; // Not correct
 	}
 
+        @Override
 	public int numObjectives() {
 		return fitness.size();
 	}

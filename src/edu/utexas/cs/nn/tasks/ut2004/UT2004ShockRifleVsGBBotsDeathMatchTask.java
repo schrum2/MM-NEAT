@@ -9,6 +9,7 @@ import edu.utexas.cs.nn.util.ClassCreation;
 /**
  *
  * @author Jacob Schrum
+ * @param <T> Evolved phenotype
  */
 public class UT2004ShockRifleVsGBBotsDeathMatchTask<T extends Network> extends UT2004Task<T> {
 

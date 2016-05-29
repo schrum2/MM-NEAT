@@ -11,6 +11,7 @@ import edu.utexas.cs.nn.tasks.ut2004.fitness.*;
 /**
  *
  * @author Jacob Schrum
+ * @param <T> evolved phenotype
  */
 public class UT2004OneVsNativeBotsDeathMatchTask<T extends Network> extends UT2004Task<T> {
 
@@ -43,7 +44,7 @@ public class UT2004OneVsNativeBotsDeathMatchTask<T extends Network> extends UT20
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		Parameters.initializeParameterCollections(new String[] { "utDrive:F", "trials:2", "io:false",
+		Parameters.initializeParameterCollections(new String[] { "utDrive:D", "trials:2", "io:false", "netio:false", 
 				"task:edu.utexas.cs.nn.tasks.ut2004.UT2004OneVsNativeBotsDeathMatchTask" });
 		MMNEAT.loadClasses();
 		UT2004Task utTask = (UT2004Task) MMNEAT.task;
