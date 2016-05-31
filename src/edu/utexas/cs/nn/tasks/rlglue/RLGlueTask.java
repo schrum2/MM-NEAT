@@ -55,10 +55,6 @@ public class RLGlueTask<T extends Network> extends NoisyLonerTask<T>implements N
 	protected double[] rlReturn;
 	// cutoff
 	protected int maxStepsPerEpisode;
-	private final boolean moPuddleWorld;
-	// private final boolean moTetris;
-	private final boolean tetrisTimeSteps;
-	private final boolean tetrisBlocksOnScreen;
 	private ArrayList<Double> behaviorVector;
 	public static final int DEFAULT_PORT = 4096;
 	public int rlGluePort;
@@ -80,32 +76,7 @@ public class RLGlueTask<T extends Network> extends NoisyLonerTask<T>implements N
 	 */
 	public RLGlueTask(RLGlueEnvironment environment) {
 		super();
-		boolean puddleWorld = (MMNEAT.rlGlueEnvironment instanceof PuddleWorld);
-		moPuddleWorld = puddleWorld && Parameters.parameters.booleanParameter("moPuddleWorld");
-		boolean tetris = (MMNEAT.rlGlueEnvironment instanceof Tetris);
-		tetrisTimeSteps = tetris && Parameters.parameters.booleanParameter("tetrisTimeSteps");
-		tetrisBlocksOnScreen = tetris && Parameters.parameters.booleanParameter("tetrisBlocksOnScreen");
 		rlGluePort = Parameters.parameters.integerParameter("rlGluePort");
-
-		if (moPuddleWorld) {
-			MMNEAT.registerFitnessFunction("Time Penalty");
-			MMNEAT.registerFitnessFunction("Puddle Penalty");
-		}
-		if (tetrisTimeSteps) { // Staying alive is good
-			MMNEAT.registerFitnessFunction("Time Steps");
-		}
-		if (tetrisBlocksOnScreen) { // On game over, more blocks left is better
-			MMNEAT.registerFitnessFunction("Blocks on Screen"); 
-		}
-		MMNEAT.registerFitnessFunction("RL Return");
-		
-		// Now register the other scores for Tetris
-		if(tetrisTimeSteps || tetrisBlocksOnScreen) {
-			MMNEAT.registerFitnessFunction("Rows of 1", null, false);
-			MMNEAT.registerFitnessFunction("Rows of 2", null, false);
-			MMNEAT.registerFitnessFunction("Rows of 3", null, false);
-			MMNEAT.registerFitnessFunction("Rows of 4", null, false);
-		}
 
 		rlNumSteps = new int[CommonConstants.trials];
 		rlReturn = new double[CommonConstants.trials];
@@ -170,7 +141,7 @@ public class RLGlueTask<T extends Network> extends NoisyLonerTask<T>implements N
 	 */
 	@Override
 	public int numOtherScores() {
-		return moPuddleWorld ? 1 : (tetrisBlocksOnScreen || tetrisTimeSteps ? 4 : 0);
+		return 0;
 	}
 
 	/**
@@ -189,45 +160,18 @@ public class RLGlueTask<T extends Network> extends NoisyLonerTask<T>implements N
 		rlReturn[num] = RLGlue.RL_return();
 		behaviorVector.addAll(environment.getBehaviorVector());
 
-		// Special case for MO Puddle World
-		if (moPuddleWorld) {
-			Pair<double[], double[]> p = new Pair<double[], double[]>(
-					new double[] { PuddleWorldState.finalStepScore, PuddleWorldState.finalPuddleScore },
-					new double[] { rlReturn[num] });
-			PuddleWorldState.finalStepScore = 0;
-			PuddleWorldState.finalPuddleScore = 0;
-			return p;
-		}
-		// Special case for MO Tetris
-		if (tetrisBlocksOnScreen || tetrisTimeSteps) {
-			Tetris game = (Tetris) environment; 
-			double[] fitness = null;
-			if (tetrisBlocksOnScreen) {
-				TetrisAfterStateAgent<T> tasa = (TetrisAfterStateAgent<T>) agent;
-				int numberOfBlocksInState;
-				// Checks if the we have reached the last step allowed
-				if (rlNumSteps[num] == maxStepsPerEpisode) { 
-					// Sets to max to reward not losing for this long
-					numberOfBlocksInState = TetrisState.worldHeight * TetrisState.worldWidth; 
-					
-				} else {
-					numberOfBlocksInState = tasa.getNumberOfBlocksInLastState();
-				}
-				if (tetrisBlocksOnScreen && tetrisTimeSteps) {
-					fitness = new double[] { rlNumSteps[num], numberOfBlocksInState, rlReturn[num] };
-				} else if (tetrisBlocksOnScreen) {
-					fitness = new double[] { rlNumSteps[num], numberOfBlocksInState, rlReturn[num] };
-				}
-			} else { // timeSteps only
-				fitness = new double[] { rlNumSteps[num], rlReturn[num] };
-			}
-			Pair<double[], double[]> p = new Pair<double[], double[]>(fitness, game.getNumberOfRows());
-			return p;
-		}
-
-		return new Pair<double[], double[]>(new double[] { rlReturn[num] }, new double[0]);
+		return episodeResult(num);
 	}
 
+	/**
+	 * Return fitness results for single episode
+	 * @param num episode/eval number
+	 * @return fitness and other scores for episode
+	 */
+	public Pair<double[], double[]> episodeResult(int num){
+		return new Pair<double[], double[]>(new double[] { rlReturn[num] }, new double[0]);
+	}
+	
 	/**
 	 * Actual launch of the RL glue program
 	 */
@@ -291,16 +235,7 @@ public class RLGlueTask<T extends Network> extends NoisyLonerTask<T>implements N
 	 * @return number of objectives
 	 */
 	@Override
-	public int numObjectives() {
-		// There are special cases, but the default fitness is the total summed reward
-		if (moPuddleWorld)
-			return 2;
-		if (tetrisTimeSteps && tetrisBlocksOnScreen)
-			return 3; // Tetris: both fitnesses used
-		if (tetrisTimeSteps || tetrisBlocksOnScreen)
-			return 2; // Tetris: only one is used
-		else
-			return 1; // default: just the RL Return
+	public int numObjectives(){			return 1; // default: just the RL Return
 	}
 
 	/**

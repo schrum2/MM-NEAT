@@ -12,7 +12,7 @@ import edu.utexas.cs.nn.tasks.rlglue.RLGlueTask;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.datastructures.Triple;
 
-public class HyperNEATTetrisTask<T extends Network> extends RLGlueTask<T> implements HyperNEATTask {
+public class HyperNEATTetrisTask<T extends Network> extends TetrisTask<T> implements HyperNEATTask {
 
 	// These values will be defined before they are needed
 	public static final int HYPERNEAT_OUTPUT_SUBSTRATE_DIMENSION = 1;
