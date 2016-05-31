@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 /**
  *
- * @author He_Deceives
+ * @author Jacob Schrum
  */
 public interface SinglePopulationTask<T> extends Task {
 	/**

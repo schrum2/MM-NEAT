@@ -13,6 +13,7 @@ import edu.utexas.cs.nn.networks.NetworkTask;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.tasks.NoisyLonerTask;
 import edu.utexas.cs.nn.tasks.testmatch.imagematch.ImageMatchTask;
+import edu.utexas.cs.nn.util.GraphicsUtil;
 import edu.utexas.cs.nn.util.MiscUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
@@ -286,7 +287,7 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 				bufferPos += 3;
 			}
 		}
-		DrawingPanel dp = ImageMatchTask.drawImage(image, "Doom", width, height);
+		DrawingPanel dp = GraphicsUtil.drawImage(image, "Doom", width, height);
 		MiscUtil.waitForReadStringAndEnterKeyPress();
 	}
 
@@ -318,7 +319,7 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 				bufferPos += 3;
 			}
 		}
-		DrawingPanel dp = ImageMatchTask.drawImage(image, "Doom", width, height);
+		DrawingPanel dp = GraphicsUtil.drawImage(image, "Doom", width, height);
 		MiscUtil.waitForReadStringAndEnterKeyPress();
 	}
 }
