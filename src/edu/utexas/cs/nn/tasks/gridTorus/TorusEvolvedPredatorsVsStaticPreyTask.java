@@ -84,22 +84,7 @@ public class TorusEvolvedPredatorsVsStaticPreyTask<T extends Network> extends To
 	 *            (homogeneous team)
 	 */
 	public TorusPredPreyController[] getPredAgents(Genotype<T> individual) {
-		int numPredators = Parameters.parameters.integerParameter("torusPredators");
-		evolved = new TorusPredPreyController[numPredators];
-		for (int i = 0; i < numPredators; i++) {
-			// true to indicate that this is a predator
-			evolved[i] = new NNTorusPredPreyAgent<T>(individual, true).getController();
-			// if requested, adds visual panels for each of the evolved agents
-			// showing its inputs
-			// (offsets to other agents), outputs (possible directional
-			// movements), and game time
-			if (CommonConstants.monitorInputs) {
-				DrawingPanel panel = new DrawingPanel(Plot.BROWSE_DIM, (int) (Plot.BROWSE_DIM * 3.5), "Predator " + i);
-				((NNTorusPredPreyController) evolved[i]).networkInputs = panel;
-				panel.setLocation(i * (Plot.BROWSE_DIM + 10), 0);
-				Offspring.fillInputs(panel, (TWEANNGenotype) individual);
-			}
-		}
+		evolved = getEvolvedControllers(individual, true);
 		return evolved;
 	}
 
@@ -120,15 +105,13 @@ public class TorusEvolvedPredatorsVsStaticPreyTask<T extends Network> extends To
 	public TorusPredPreyController[] getPreyAgents(Genotype<T> individual) {
 		if (staticAgents == null) {
 			int numPrey = Parameters.parameters.integerParameter("torusPreys");
-			staticAgents = new TorusPredPreyController[numPrey];
-			for (int i = 0; i < numPrey; i++) {
-				try {
-					staticAgents[i] = (TorusPredPreyController) ClassCreation.createObject("staticPreyController");
-				} catch (NoSuchMethodException e) {
-					e.printStackTrace();
-					System.out.println("Could not load static prey");
-					System.exit(1);
-				}
+			try {
+				Class c = Parameters.parameters.classParameter("staticPreyController");
+				staticAgents = getStaticControllers(c,numPrey);
+			} catch (NoSuchMethodException e) {
+				e.printStackTrace();
+				System.out.println("Could not load static prey");
+				System.exit(1);
 			}
 		}
 		return staticAgents;

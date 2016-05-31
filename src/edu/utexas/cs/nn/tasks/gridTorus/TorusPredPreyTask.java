@@ -9,7 +9,11 @@ import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.Organism;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.evolution.genotypes.NetworkGenotype;
+import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
+import edu.utexas.cs.nn.evolution.lineage.Offspring;
 import edu.utexas.cs.nn.evolution.nsga2.tug.TUGTask;
+import edu.utexas.cs.nn.graphics.DrawingPanel;
+import edu.utexas.cs.nn.graphics.Plot;
 import edu.utexas.cs.nn.gridTorus.TorusAgent;
 import edu.utexas.cs.nn.gridTorus.TorusPredPreyGame;
 import edu.utexas.cs.nn.gridTorus.TorusWorldExec;
@@ -26,6 +30,7 @@ import edu.utexas.cs.nn.tasks.gridTorus.objectives.GridTorusObjective;
 import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.util2D.Tuple2D;
+import edu.utexas.cs.nn.util.ClassCreation;
 import edu.utexas.cs.nn.util.datastructures.*;
 
 /**
@@ -42,7 +47,7 @@ import edu.utexas.cs.nn.util.datastructures.*;
  *            Network phenotype being evolved
  */
 public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTask<T>
-		implements TUGTask, NetworkTask, HyperNEATTask {
+implements TUGTask, NetworkTask, HyperNEATTask {
 
 	public static final String[] ALL_ACTIONS = new String[] { "UP", "RIGHT", "DOWN", "LEFT", "NOTHING" };
 	public static final String[] MOVEMENT_ACTIONS = new String[] { "UP", "RIGHT", "DOWN", "LEFT" };
@@ -103,7 +108,7 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 	public final void addObjective(GridTorusObjective<T> o, ArrayList<GridTorusObjective<T>> list) {
 		addObjective(o,list,true);
 	}
-	
+
 	/**
 	 * for adding fitness scores (turned on by command line parameters)
 	 *
@@ -142,7 +147,7 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 		} else {
 			game = exec.runExperiment(predAgents, preyAgents);
 		}
-		
+
 		double[] fitnesses = new double[objectives.size()];
 		double[] otherStats = new double[otherScores.size()];
 
@@ -183,7 +188,7 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 		// The above code erased module usage, so this sets the module usage
 		// back to what it was
 		((NetworkGenotype<T>) individual).setModuleUsage(overallAgentModeUsage);
-		
+
 		//System.out.println("oneEval: " + (System.currentTimeMillis() - time));
 		return new Pair<double[], double[]>(fitnesses, otherStats);
 	}
@@ -202,7 +207,7 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 	public int numOtherScores() {
 		return otherScores.size();
 	}
-	
+
 	/**
 	 * @return the starting goals of this genotype in an array
 	 */
@@ -261,6 +266,49 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 	@Override
 	public double getTimeStamp() {
 		return exec.game.getTime();
+	}
+
+	/**
+	 * make n copies of the designated static controller
+	 * @param c, class of the static controller
+	 * @param n, number of controllers
+	 * @throws NoSuchMethodException 
+	 */
+	public static <T extends TorusPredPreyController> TorusPredPreyController[] getStaticControllers(Class<T> c, int n) throws NoSuchMethodException{
+		TorusPredPreyController[] staticAgents = new TorusPredPreyController[n];
+		for (int i = 0; i < n; i++) {
+			staticAgents[i] = (TorusPredPreyController) ClassCreation.createObject(c);
+		}
+		return staticAgents;		
+	}
+	
+	public static <T extends Network> TorusPredPreyController[] getEvolvedControllers(Genotype<T> g, boolean isPred){
+		//copy g into an array
+		int num = Parameters.parameters.integerParameter(isPred ? "torusPredators" : "torusPreys");
+		Genotype<T>[] agents = new Genotype[num];
+		for(int i = 0; i < num; i++) {
+			agents[i] = g.copy();
+		}
+		return getEvolvedControllers(agents, isPred);
+	}
+	
+	public static <T extends Network> TorusPredPreyController[] getEvolvedControllers(Genotype<T>[] genotypes, boolean isPred){
+		TorusPredPreyController[] controllers = new TorusPredPreyController[genotypes.length];
+		for (int i = 0; i < controllers.length; i++) {
+			// true to indicate that this is a predator
+			controllers[i] = new NNTorusPredPreyAgent<T>(genotypes[i], (isPred ? true : false)).getController();
+			// if requested, adds visual panels for each of the evolved agents
+			// showing its inputs
+			// (offsets to other agents), outputs (possible directional
+			// movements), and game time
+			if (CommonConstants.monitorInputs) {
+				DrawingPanel panel = new DrawingPanel(Plot.BROWSE_DIM, (int) (Plot.BROWSE_DIM * 3.5), (isPred ? "Predator " + i : "Prey " + i));
+				((NNTorusPredPreyController) controllers[i]).networkInputs = panel;
+				panel.setLocation(i * (Plot.BROWSE_DIM + 10), 0);
+				Offspring.fillInputs(panel, genotypes[i]);
+			}
+		}
+		return controllers;
 	}
 
 	// These values will be defined before they are needed
@@ -344,10 +392,10 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 		if (substrateConnectivity == null) {
 			substrateConnectivity = new LinkedList<Pair<String, String>>();
 			substrateConnectivity
-					.add(new Pair<String, String>(preyEvolve ? "input_predator" : "input_prey", "process_0"));
+			.add(new Pair<String, String>(preyEvolve ? "input_predator" : "input_prey", "process_0"));
 			if (Parameters.parameters.booleanParameter("torusSenseTeammates"))
 				substrateConnectivity
-						.add(new Pair<String, String>(preyEvolve ? "input_prey" : "input_predator", "process_0"));
+				.add(new Pair<String, String>(preyEvolve ? "input_prey" : "input_predator", "process_0"));
 			substrateConnectivity.add(new Pair<String, String>("process_0", "output_0"));
 		}
 		return substrateConnectivity;

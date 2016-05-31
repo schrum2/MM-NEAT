@@ -73,15 +73,13 @@ public class TorusEvolvedPreyVsStaticPredatorsTask<T extends Network> extends To
 	public TorusPredPreyController[] getPredAgents(Genotype<T> individual) {
 		if (staticAgents == null) {
 			int numPredators = Parameters.parameters.integerParameter("torusPredators");
-			staticAgents = new TorusPredPreyController[numPredators];
-			for (int i = 0; i < numPredators; i++) {
-				try {
-					staticAgents[i] = (TorusPredPreyController) ClassCreation.createObject("staticPredatorController");
-				} catch (NoSuchMethodException e) {
-					e.printStackTrace();
-					System.out.println("Could not load static prey");
-					System.exit(1);
-				}
+			try {
+				Class c = Parameters.parameters.classParameter("staticPredatorController");
+				staticAgents = getStaticControllers(c,numPredators);
+			} catch (NoSuchMethodException e) {
+				e.printStackTrace();
+				System.out.println("Could not load static predator");
+				System.exit(1);
 			}
 		}
 		return staticAgents;
@@ -101,22 +99,7 @@ public class TorusEvolvedPreyVsStaticPredatorsTask<T extends Network> extends To
 	 *            (homogeneous team)
 	 */
 	public TorusPredPreyController[] getPreyAgents(Genotype<T> individual) {
-		int numPrey = Parameters.parameters.integerParameter("torusPreys");
-		evolved = new TorusPredPreyController[numPrey];
-		for (int i = 0; i < numPrey; i++) {
-			// false to indicate that this is not a predator, but a prey
-			evolved[i] = new NNTorusPredPreyAgent<T>(individual, false).getController();
-			// if requested, adds visual panels for each of the evolved agents
-			// showing its inputs
-			// (offsets to other agents), outputs (possible directional
-			// movements), and game time
-			if (CommonConstants.monitorInputs) {
-				DrawingPanel panel = new DrawingPanel(Plot.BROWSE_DIM, (int) (Plot.BROWSE_DIM * 3.5), "Prey " + i);
-				((NNTorusPredPreyController) evolved[i]).networkInputs = panel;
-				panel.setLocation(i * (Plot.BROWSE_DIM + 10), 0);
-				Offspring.fillInputs(panel, (TWEANNGenotype) individual);
-			}
-		}
-		return evolved;
+		evolved = getEvolvedControllers(individual, false);
+		return evolved; 
 	}
 }
