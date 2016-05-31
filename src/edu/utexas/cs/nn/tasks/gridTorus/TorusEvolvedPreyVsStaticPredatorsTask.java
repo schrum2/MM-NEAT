@@ -45,6 +45,15 @@ public class TorusEvolvedPreyVsStaticPredatorsTask<T extends Network> extends To
 			addObjective(new PreyMaximizeDistanceFromPredatorsObjective<T>(), objectives);
 		if (Parameters.parameters.booleanParameter("preyMinimizeCaught"))
 			addObjective(new PreyMinimizeCaughtObjective<T>(), objectives);
+
+		//add other scores to be able to show each fitness score even if it's not effecting evolution
+		addObjective(new PreyMaximizeGameTimeObjective<T>(), otherScores, false);
+		addObjective(new PreyRawalRajagopalanMiikkulainenObjective<T>(), otherScores, false);
+		addObjective(new PreyLongSurvivalTimeObjective<T>(), otherScores, false);
+		addObjective(new PreyMaximizeDistanceFromPredatorsObjective<T>(), otherScores, false);
+		addObjective(new PreyMinimizeCaughtObjective<T>(), otherScores, false);
+		
+		
 	}
 
 	@Override

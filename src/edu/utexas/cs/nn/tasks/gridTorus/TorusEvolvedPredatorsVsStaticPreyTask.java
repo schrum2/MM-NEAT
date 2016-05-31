@@ -56,13 +56,17 @@ public class TorusEvolvedPredatorsVsStaticPreyTask<T extends Network> extends To
 			for(int i = 0; i < Parameters.parameters.integerParameter("torusPreys"); i++)
 				addObjective(new PredatorMinimizeDistanceFromIndividualPreyObjective<T>(i), objectives);
 
-		//		addObjective(new PredatorMinimizeGameTimeObjective<T>(), objectives, false);
-		//		addObjective(new PredatorEatEachPreyQuicklyObjective<T>(), objectives, false);
-		//		addObjective(new PredatorMinimizeDistanceFromPreyObjective<T>(), objectives, false);
-		//		addObjective(new PredatorRawalRajagopalanMiikkulainenObjective<T>(), objectives, false);
-		//		addObjective(new PredatorCatchCloseObjective<T>(), objectives, false);
-		//		addObjective(new PredatorCatchObjective<T>(), objectives, false);
-		//		addObjective(new PredatorCatchCloseQuickObjective<T>(), objectives, false);
+		//add other scores to be able to show each fitness score even if it's not effecting evolution
+		addObjective(new PredatorMinimizeGameTimeObjective<T>(), otherScores, false);
+		addObjective(new PredatorEatEachPreyQuicklyObjective<T>(), otherScores, false);
+		addObjective(new PredatorMinimizeDistanceFromPreyObjective<T>(), otherScores, false);
+		if(Parameters.parameters.integerParameter("torusPreys") == 2)
+			addObjective(new PredatorRawalRajagopalanMiikkulainenObjective<T>(), otherScores, false);
+		addObjective(new PredatorCatchCloseObjective<T>(), otherScores, false);
+		addObjective(new PredatorCatchObjective<T>(), otherScores, false);
+		addObjective(new PredatorCatchCloseQuickObjective<T>(), otherScores, false);
+		for(int i = 0; i < Parameters.parameters.integerParameter("torusPreys"); i++)
+			addObjective(new PredatorMinimizeDistanceFromIndividualPreyObjective<T>(i), otherScores, false);
 
 	}
 

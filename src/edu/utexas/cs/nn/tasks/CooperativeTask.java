@@ -305,12 +305,11 @@ public abstract class CooperativeTask implements MultiplePopulationTask {
 				if (rawScores[p][i] == null) {
 					unevaluatedIndividuals++;
 				}
-				Score score = rawScores[p][i] == null ? new Score(null, new double[objectivesPerPopulation()[p]], null,
-						new double[otherStatsPerPopulation()[p]], 0) : rawScores[p][i];
+				Score score = rawScores[p][i] == null ? new Score(null, new double[objectivesPerPopulation()[p]], null, new double[otherStatsPerPopulation()[p]], 0) : rawScores[p][i];
 				double[] allScores = score.scores;
 				double[] allOtherStats = score.otherStats;
 				popScores.add(new Score(
-                                                populations.get(p).get(i), // The genotype
+						populations.get(p).get(i), // The genotype
 						allScores, // average of raw scores from each team eval
 						null, // Ignore Behavioral Diversity implementation for now
 						allOtherStats, // average of other stats

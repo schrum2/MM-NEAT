@@ -1,6 +1,7 @@
 package edu.utexas.cs.nn.tasks.gridTorus;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -77,6 +78,8 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 
 	// list of fitness scores
 	protected ArrayList<GridTorusObjective<T>> objectives = new ArrayList<GridTorusObjective<T>>();
+	// list of other scores, which don't effect evolution
+	protected ArrayList<GridTorusObjective<T>> otherScores = new ArrayList<GridTorusObjective<T>>();
 
 	private TorusWorldExec exec;
 
@@ -108,6 +111,9 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 	 *            objective/fitness score
 	 * @param list
 	 *            of fitness scores
+	 * @param affectsSelection  
+	 *            true if objective score
+	 *            false if other score
 	 */
 	public final void addObjective(GridTorusObjective<T> o, ArrayList<GridTorusObjective<T>> list, boolean affectsSelection) {
 		list.add(o);
@@ -136,7 +142,9 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 		} else {
 			game = exec.runExperiment(predAgents, preyAgents);
 		}
+		
 		double[] fitnesses = new double[objectives.size()];
+		double[] otherStats = new double[otherScores.size()];
 
 		// dispose of all panels inside of agents/controllers
 		if (CommonConstants.monitorInputs) {
@@ -165,27 +173,36 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 		// this erases information stored about module usage, so was saved in
 		// order to be reset after the creation of this organism
 		Organism<T> organism = new NNTorusPredPreyAgent<T>(individual, !preyEvolve);
-		for (int j = 0; j < objectives.size(); j++) {
-			fitnesses[j] = objectives.get(j).score(game, organism);
+		for (int i = 0; i < objectives.size(); i++) {
+			fitnesses[i] = objectives.get(i).score(game, organism);
+		}
+		for (int i = 0; i < otherScores.size(); i++) {
+			otherStats[i] = otherScores.get(i).score(game,organism);		
 		}
 
 		// The above code erased module usage, so this sets the module usage
 		// back to what it was
 		((NetworkGenotype<T>) individual).setModuleUsage(overallAgentModeUsage);
-
-		double[] otherStats = new double[0];
+		
 		//System.out.println("oneEval: " + (System.currentTimeMillis() - time));
 		return new Pair<double[], double[]>(fitnesses, otherStats);
 	}
 
 	/**
-	 * @return the number of minimum scores for this genotype of this task
+	 * @return the number of fitness scores for this genotype
 	 */
 	@Override
 	public int numObjectives() {
 		return objectives.size();
 	}
-
+	@Override
+	/**
+	 * @return the number of other scores for this genotype
+	 */
+	public int numOtherScores() {
+		return otherScores.size();
+	}
+	
 	/**
 	 * @return the starting goals of this genotype in an array
 	 */
@@ -195,9 +212,7 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 	}
 
 	/**
-	 * @return the minimum possible scores (worst scores) for this genotype if
-	 *         it is a prey then the min score is 0 and if it's a predator min
-	 *         score is the total time limit
+	 * @return the minimum possible scores (worst scores) for this genotype
 	 */
 	@Override
 	public double[] minScores() {
