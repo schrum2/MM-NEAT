@@ -5,7 +5,11 @@ import cz.cuni.amis.pogamut.base3d.worldview.object.Rotation;
 import javax.vecmath.Vector3d;
 
 /**
- *
+ * These are all util methods for UT2004, but I think some
+ * if not all of them should be moved to other, more general
+ * util classes. Most seem geometric. Some may even duplicate 
+ * existing methods.
+ * 
  * @author Jacob Schrum
  */
 public class Util {
@@ -51,21 +55,18 @@ public class Util {
 		return (r == null ? null : new Vector3d(r.pitch, r.yaw, r.roll));
 	}
 
+        // Pretty complicated. I can't remember where the math for this came from.
 	public static Vector3d rotateYawPitchRoll(Vector3d a, double yawRad, double pitchRad, double rollRad) {
-
 		return new Vector3d(
-				(Math.cos(pitchRad) * Math.cos(yawRad)) * a.getX()
-						+ (Math.sin(rollRad) * Math.sin(pitchRad) * Math.cos(yawRad)
-								- Math.cos(rollRad) * Math.sin(yawRad)) * a.getY()
-				+ (Math.cos(rollRad) * Math.sin(pitchRad) * Math.cos(yawRad) + Math.sin(rollRad) * Math.sin(yawRad))
-						* a.getZ(),
-				(Math.cos(pitchRad) * Math.sin(yawRad)) * a.getX()
-						+ (Math.sin(rollRad) * Math.sin(pitchRad) * Math.sin(yawRad)
-								+ Math.cos(rollRad) * Math.cos(yawRad)) * a.getY()
-						+ (Math.cos(rollRad) * Math.sin(pitchRad) * Math.sin(yawRad)
-								- Math.sin(rollRad) * Math.cos(yawRad)) * a.getZ(),
-				(-Math.sin(pitchRad)) * a.getX() + (Math.cos(pitchRad) * Math.sin(rollRad)) * a.getY()
-						+ (Math.cos(pitchRad) * Math.cos(rollRad)) * a.getZ());
+				  (Math.cos(pitchRad) * Math.cos(yawRad))  * a.getX() 
+				+ (Math.sin(rollRad)  * Math.sin(pitchRad) * Math.cos(yawRad) - Math.cos(rollRad) * Math.sin(yawRad)) * a.getY()
+				+ (Math.cos(rollRad)  * Math.sin(pitchRad) * Math.cos(yawRad) + Math.sin(rollRad) * Math.sin(yawRad)) * a.getZ(),
+				  (Math.cos(pitchRad) * Math.sin(yawRad))  * a.getX()
+				+ (Math.sin(rollRad)  * Math.sin(pitchRad) * Math.sin(yawRad) + Math.cos(rollRad) * Math.cos(yawRad)) * a.getY()
+				+ (Math.cos(rollRad)  * Math.sin(pitchRad) * Math.sin(yawRad) - Math.sin(rollRad) * Math.cos(yawRad)) * a.getZ(),
+				  (-Math.sin(pitchRad)) * a.getX() 
+                                + (Math.cos(pitchRad)   * Math.sin(rollRad)) * a.getY() 
+                                + (Math.cos(pitchRad)   * Math.cos(rollRad)) * a.getZ());
 	}
 
 	/**
@@ -74,8 +75,7 @@ public class Util {
 	 * @return
 	 */
 	public static Vector3d rotationAsVector(Vector3d rotationInRad) {
-		return rotateYawPitchRoll(new Vector3d(1, 0, 0), rotationInRad.getY(), rotationInRad.getX(),
-				rotationInRad.getX());
+		return rotateYawPitchRoll(new Vector3d(1, 0, 0), rotationInRad.getY(), rotationInRad.getX(), rotationInRad.getX());
 	}
 
 	/**
@@ -122,6 +122,7 @@ public class Util {
 				utAngleToRad(rotationInUTUnits.getX()), utAngleToRad(rotationInUTUnits.getZ()));
 	}
 
+        // Remove the magic number
 	public static double utAngleToRad(double angle) {
 		return angle / 65536 * 2 * Math.PI;
 	}
