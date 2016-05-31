@@ -3,6 +3,9 @@ package vizdoom.examples;
 import vizdoom.*;
 
 import java.util.*;
+
+import edu.utexas.cs.nn.util.MiscUtil;
+
 import java.lang.*;
 
 public class Basic {
@@ -72,6 +75,9 @@ public class Basic {
 		// PLAYER mode is default)
 		game.setMode(Mode.PLAYER);
 
+		// Sets the living reward as -1 to punish staying alive long
+		game.setLivingReward(-1);
+		
 		// Initialize the game. Further configuration won't take any effect from
 		// now on.
 		game.init();
@@ -105,13 +111,16 @@ public class Basic {
 
 				// Make random action and get reward
 				double r = game.makeAction(actions.get(ran.nextInt(3)));
-
+				double otherR = game.getLastReward();
 				// You can also get last reward by using this function
 				// double r = game.getLastReward();
 				System.out.println("State #" + s.number);
 				System.out.println("Game variables: " + s.gameVariables[0]);
 				System.out.println("Action reward: " + r);
+				System.out.println("Last reward: " + otherR);
 				System.out.println("=====================");
+				
+				MiscUtil.waitForReadStringAndEnterKeyPress();
 
 			}
 

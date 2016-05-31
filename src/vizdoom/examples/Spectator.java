@@ -3,11 +3,14 @@ package vizdoom.examples;
 import vizdoom.*;
 
 import java.util.*;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
 import java.lang.*;
 
 public class Spectator {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws FileNotFoundException {
 		SpecifyDLL.specifyDLLPath();
 
 		DoomGame game = new DoomGame();
@@ -43,7 +46,11 @@ public class Spectator {
 		game.setMode(Mode.SPECTATOR);
 		game.init();
 
-		int episodes = 10;
+//		PrintStream out = new PrintStream(new FileOutputStream("output.txt"));
+//		System.setOut(out);
+		
+		
+		int episodes = 3;
 		for (int i = 0; i < episodes; i++) {
 
 			System.out.println("Episode #" + (i + 1));

@@ -37,6 +37,11 @@ public class VizDoomBasicShootTask<T extends Network> extends VizDoomTask<T> {
 	}
 
 	@Override
+	public void setRewards() {
+		game.setLivingReward(-1);
+	}
+	
+	@Override
 	public void setDoomStateVariables() {
 		// Adds game variables that will be included in state.
 		game.addAvailableGameVariable(GameVariable.AMMO2);

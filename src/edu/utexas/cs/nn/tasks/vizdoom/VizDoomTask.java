@@ -152,7 +152,8 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 		game.setEpisodeTimeout(DOOM_EPISODE_LENGTH);
 
 		// Makes episodes start after 10 tics (~after raising the weapon)
-		game.setEpisodeStartTime(10);
+		// Doesn't work? Actually setting the end time?
+		// game.setEpisodeStartTime(10);
 		// Makes the window appear (turned on by default)
 		// TODO: This doesn't work! Can we fix it, or do the VizDoom designers
 		// need to fix it?
@@ -170,6 +171,7 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 		// Need to remove rewards from previous episodes I think
 		game.newEpisode();
 		Network n = individual.getPhenotype();
+		//int inc = 0;
 		while (!game.isEpisodeFinished()) {
 			// Get the state
 			GameState s = game.getState();
@@ -191,7 +193,11 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 
 			// You can also get last reward by using this function
 			// double r = game.getLastReward();
+			//System.out.println(game.getLastReward());
+			//inc++;
 		}
+		//System.out.println(inc);
+		
 		return new Pair<double[], double[]>(new double[] { game.getTotalReward() }, new double[] {});
 	}
 
@@ -205,6 +211,11 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 	 */
 	public abstract double[] getInputs(GameState s);
 
+	/**
+	 * Sets all the rewards for the given game and agent
+	 */
+	public abstract void setRewards();
+	
 	/**
 	 * Is run at the conclusion of all evolution. Terminates the DoomGame
 	 * instance.
