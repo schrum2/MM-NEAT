@@ -4,6 +4,7 @@ import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype.LinkGene;
 import edu.utexas.cs.nn.evolution.lineage.Offspring;
+import edu.utexas.cs.nn.evolution.mutation.tweann.MMR;
 import edu.utexas.cs.nn.graphics.DrawingPanel;
 import edu.utexas.cs.nn.graphics.Plot;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
@@ -940,166 +941,40 @@ public class TWEANN implements Network {
 		g.drawString("Time Stamp: " + MMNEAT.task.getTimeStamp(), Plot.OFFSET, y);
 	}
 
+	//used in drawing class. Transient to avoid unnecessary saving to xml files
 	transient private ArrayList<ArrayList<Node>> layers = null;
 
-        @SuppressWarnings("empty-statement")
-	public void draw(DrawingPanel panel, boolean showInnovationNumbers, boolean showWeights) {
-		TWEANN.panel = panel;
-		if (layers == null) { // Only construct the layers once
+	/**
+	 * Draws the network as a drawing panel to screen. Useful for troubleshooting 
+	 * networks
+	 * 
+	 * @param panel drawingPanel to be used to draw network
+	 * @param showInnovationNumbers shows innovation #s of node
+	 * @param showWeights shows weights of links 
+	 */
+	public void draw(DrawingPanel panel, boolean showInnovationNumbers, boolean showWeights) {//TODO
+		
+		TWEANN.panel = panel;//instantiates private instance of panel inside of TWEANN object
+		
+		if (layers == null) { // Only construct the layers array once
 			layers = new ArrayList<ArrayList<Node>>();
 
-			ArrayList<Node> inputs = new ArrayList<Node>(numIn);
-			for (int i = 0; i < numIn; i++) {
-				Node inNode = nodes.get(i);
-				if (inNode.ntype == Node.NTYPE_INPUT) {
-					inputs.add(inNode);
-				} else {
-					System.out.println("Impossible network configuration: Wrong number of inputs");
-					System.out.println(this);
-					// Freezes the construction process so user  
-                                        // can look at the broken network
-                                        while (true); 
-					// System.exit(1);
-				}
-			}
-
-			layers.add(inputs);
-
-			ArrayList<Node> hidden = new ArrayList<Node>(nodes.size() - numIn - numOut);
-			for (int h = numIn; h < (nodes.size() - numOut); h++) {
-				Node hiddenNode = nodes.get(h);
-				if (hiddenNode.ntype == Node.NTYPE_HIDDEN) {
-					hidden.add(hiddenNode);
-				} else {
-					System.out.println("Impossible network configuration: Wrong number of hidden nodes");
-					System.out.println("h = " + h + "/" + nodes.size() + ", hiddenNode.ntype = " + hiddenNode.ntype);
-					System.out.println(this);
-					// Freezes the construction process so user  
-                                        // can look at the broken network
-                                        while (true);
-					// System.exit(1);
-				}
-			}
-
-			ArrayList<ArrayList<Node>> hiddenLayers = new ArrayList<ArrayList<Node>>();
-			hiddenLayers.add(hidden);
-			int hiddenLayer = 0;
-			int loop = 0;
-			while (true) {
-				loop++;
-				ArrayList<Node> currentHiddenLayer = hiddenLayers.get(hiddenLayer);
-				ArrayList<Node> nextHiddenLayer = new ArrayList<Node>();
-				for (int c = 0; c < currentHiddenLayer.size(); c++) {
-					int transitionIndex = currentHiddenLayer.size();
-					for (int n = c + 1; n < currentHiddenLayer.size(); n++) {
-						if (currentHiddenLayer.get(c).isConnectedTo(currentHiddenLayer.get(n).innovation)) {
-							transitionIndex = n;
-							break;
-						}
-					}
-					int moving = currentHiddenLayer.size() - transitionIndex;
-					for (int t = 0; t < moving; t++) {
-						nextHiddenLayer.add(currentHiddenLayer.remove(transitionIndex));
-					}
-				}
-				if (nextHiddenLayer.isEmpty()) {
-					break;
-				} else {
-					hiddenLayers.add(nextHiddenLayer);
-					hiddenLayer++;
-				}
-                                // It is assumed that no network should be this big,
-                                // but this might not be true if HyperNEAT networks are drawn.
-				if (loop > 10000) {
-					System.out.println("Can't escape loop in network draw!");
-					break; // Why break instead of throwing an exception?
-				}
-			}
-
+			//manually loads nodes from TWEANN into layers
+			layers.add(getNodesToDraw(0, numIn, Node.NTYPE_INPUT));
+			ArrayList<Node> hidden = getNodesToDraw(numIn, nodes.size()- numOut, Node.NTYPE_HIDDEN);
+			ArrayList<ArrayList<Node>> hiddenLayers = sortHiddenLayers(hidden);
 			for (int i = 0; i < hiddenLayers.size(); i++) {
 				layers.add(hiddenLayers.get(i));
 			}
-
-			ArrayList<Node> outputs = new ArrayList<Node>(numOut);
-			for (int o = (nodes.size() - numOut); o < nodes.size(); o++) {
-				Node outNode = nodes.get(o);
-				if (outNode.ntype == Node.NTYPE_OUTPUT) {
-					outputs.add(outNode);
-				} else {
-					System.out.println("Impossible network configuration: Wrong number of outputs");
-					System.out.println(this);
-					// Freezes the construction process so user  
-                                        // can look at the broken network
-                                        while (true);
-					// System.exit(1);
-				}
-			}
-
-			layers.add(outputs);
+			layers.add(getNodesToDraw(nodes.size() - numOut, nodes.size(), Node.NTYPE_OUTPUT));
 		}
 
-		Graphics2D g = panel.getGraphics();
-		g.setColor(Color.BLACK);
-		g.drawString("" + id, 5, 10);
-		// g.setColor(Color.white);
-		// g.fillRect(0, 0, panel.getFrame().getWidth(),
-		// panel.getFrame().getHeight());
+		//this part actually draws network
+		Graphics2D g =prepPanel(panel, Color.BLACK);
 
-                // What are these magic numbers?
-		int height = panel.getFrame().getHeight() - 46;
-		int width = panel.getFrame().getWidth() - 6;
-
-		for (int l = 0; l < layers.size(); l++) {
-			ArrayList<Node> layer = layers.get(l);
-			double verticalSpacing = ((height - (2.0 * DISPLAY_BORDER)) / (layers.size() - 1.0));
-			for (int n = 0; n < layer.size(); n++) {
-				double horizontalSpacing = ((width - (2.0 * DISPLAY_BORDER)) / layer.size());
-				int x = (int) (DISPLAY_BORDER + (n * horizontalSpacing) + (horizontalSpacing / 2.0));
-				int y = (int) ((height - DISPLAY_BORDER) - (l * verticalSpacing));
-				Node display = layer.get(n);
-				display.displayX = x;
-				display.displayY = y;
-				g.setColor(Color.white);
-				g.fillRect(x, y, 2 * NODE_DIM, 2 * NODE_DIM); // erase previous activation
-				if (display.ntype == Node.NTYPE_OUTPUT) {
-					g.fillRect(x, 0, 2 * NODE_DIM, 2 * NODE_DIM); // erase mode indicator
-					if (n / (neuronsPerMode + (standardMultitask ? 0.0 : 1.0)) == chosenModule) {
-						g.setColor(CombinatoricUtilities.colorFromInt(chosenModule));
-						g.fillRect(x, 0, 2 * NODE_DIM, 2 * NODE_DIM); // erase mode indicator
-					}
-					if (standardMultitask || CommonConstants.ensembleModeMutation
-							|| n % (neuronsPerMode + 1) == neuronsPerMode) {
-						g.setColor(Color.GRAY);
-					} else {
-						g.setColor(Color.ORANGE);
-					}
-				} else if (display.ntype == Node.NTYPE_HIDDEN) {
-					g.setColor(Color.RED);
-				} else {
-					g.setColor(Color.BLACK);
-					g.drawString(n + "", x, y + 15);
-					g.setColor(Color.BLUE);
-				}
-				double activation = display.activation;
-				// g.drawString(""+activation, x, y);
-				if (display.frozen) {
-					Color component = g.getColor();
-					g.setColor(Color.CYAN);
-					g.fillRect(x - 2, y - 2, (int) ((1 + activation) * NODE_DIM) + 4, (int) ((1 + activation) * NODE_DIM) + 4);
-					g.setColor(component);
-				}
-				g.fillRect(x, y, (int) ((1 + activation) * NODE_DIM), (int) ((1 + activation) * NODE_DIM));
-				if (showInnovationNumbers) {
-					AffineTransform t = g.getTransform();
-					g.setColor(Color.BLACK);
-					int sign = display.ntype == Node.NTYPE_INPUT ? -1 : 1;
-					g.rotate(sign * Math.PI / 4.0, x, y);
-					g.drawString("" + display.innovation, x + NODE_DIM + (NODE_DIM / 2),
-							y + (NODE_DIM / 2) + (sign * NODE_DIM));
-					g.setTransform(t);
-				}
-			}
-		}
+		
+		//puts nodes onto drawingPanel
+		placeAllNodes(g, showInnovationNumbers);
 
 		for (int l = 0; l < layers.size(); l++) {
 			ArrayList<Node> layer = layers.get(l);
@@ -1167,7 +1042,7 @@ public class TWEANN implements Network {
 		}
 
 		for (int i = 0; i < moduleAssociations.length; i++) {
-                        // More magic numbers
+			// More magic numbers
 			g.setColor(CombinatoricUtilities.colorFromInt(i + 1));
 			g.fillRect(100 + (i * 2 * NODE_DIM), 2, 2 * NODE_DIM, 2 * NODE_DIM);
 			g.setColor(CombinatoricUtilities.colorFromInt(moduleAssociations[i] + 1));
@@ -1201,4 +1076,220 @@ public class TWEANN implements Network {
 			}
 		}
 	}
+	protected ArrayList<Node> getNodesToDraw(int start, int end, int ntype) {
+		ArrayList<Node> result = new ArrayList<Node>(end-start);
+		for (int i = start; i < end; i++) {
+			Node inNode = nodes.get(i);
+			if (inNode.ntype == ntype) {
+				result.add(inNode);
+			} else {//should never occur unless a fatal flaw has occurred in node structure
+				//only present for testing purposes
+				System.out.println("Impossible network configuration: Wrong number of inputs");
+				System.out.println(this);
+				// Freezes the construction process so user can look at the broken network
+				while (true); 
+				// System.exit(1);
+			}
+		}
+		return result;
+	}
+	
+	protected ArrayList<ArrayList<Node>> sortHiddenLayers(ArrayList<Node> hidden) {
+		ArrayList<ArrayList<Node>> hiddenLayers = new ArrayList<ArrayList<Node>>();
+		hiddenLayers.add(hidden);
+		int hiddenLayer = 0;
+		int loop = 0;
+		while (true) {//true b/c check of nodes performed above
+			loop++;
+			ArrayList<Node> currentHiddenLayer = hiddenLayers.get(hiddenLayer);
+			ArrayList<Node> nextHiddenLayer = new ArrayList<Node>();
+			for (int c = 0; c < currentHiddenLayer.size(); c++) {
+				int transitionIndex = currentHiddenLayer.size();
+				for (int n = c + 1; n < currentHiddenLayer.size(); n++) {
+					if (currentHiddenLayer.get(c).isConnectedTo(currentHiddenLayer.get(n).innovation)) {
+						transitionIndex = n;
+						break;
+					}
+				}
+				int moving = currentHiddenLayer.size() - transitionIndex;
+				for (int t = 0; t < moving; t++) {
+					nextHiddenLayer.add(currentHiddenLayer.remove(transitionIndex));
+				}
+			}
+			if (nextHiddenLayer.isEmpty()) {
+				break;
+			} else {
+				hiddenLayers.add(nextHiddenLayer);
+				hiddenLayer++;
+			}
+			// It is assumed that no network should be this big,
+			// but this might not be true if HyperNEAT networks are drawn.
+			if (loop > 10000) {
+				System.out.println("Can't escape loop in network draw!");
+				throw new IllegalArgumentException("HyperNEAT created a network with too many connections!");
+			}
+		}
+
+		return hiddenLayers;
+	}
+	
+	private Graphics2D prepPanel(DrawingPanel panel, Color c) {
+		Graphics2D g = panel.getGraphics();
+		g.setColor(c);
+		g.drawString("Network ID: " + id, 5, 10);//network id. #s 5 & 10 set this in top left corner of panel
+		return g;
+	}
+	private void drawBorder(Graphics2D g, Color c, int x, int y, double activation, int thickness) { 
+		Color component = g.getColor();
+		g.setColor(c);
+		g.fillRect(x - thickness, y - thickness, (int) ((1 + activation) * NODE_DIM) + thickness*2, (int) ((1 + activation) * NODE_DIM) + thickness*2);
+		g.setColor(component);
+	}
+	
+	private void drawInnovationNumbers(Graphics2D g, Node display, int x, int y) {
+		AffineTransform t = g.getTransform();
+		g.setColor(Color.BLACK);
+		int sign = display.ntype == Node.NTYPE_INPUT ? -1 : 1;
+		g.rotate(sign * Math.PI / 4.0, x, y);
+		g.drawString("" + display.innovation, x + NODE_DIM + (NODE_DIM / 2),
+				y + (NODE_DIM / 2) + (sign * NODE_DIM));
+		g.setTransform(t);
+	}
+	
+	protected void placeAllNodes(Graphics2D g, boolean showInnovationNumbers) {
+		int height = panel.getFrame().getHeight() - 46;//46 is padding for panel
+		int width = panel.getFrame().getWidth() - 6;//6 is padding for panel
+		for (int l = 0; l < layers.size(); l++) {
+			ArrayList<Node> layer = layers.get(l);
+			double verticalSpacing = ((height - (2.0 * DISPLAY_BORDER)) / (layers.size() - 1.0));
+			for (int n = 0; n < layer.size(); n++) {
+				drawAllNodes(g, verticalSpacing, width, height, layer, n, l, showInnovationNumbers);
+			}
+		}
+	}
+	
+	private void drawAllNodes(Graphics2D g, double verticalSpacing, int width, int height, ArrayList<Node> layer, int n, int l, boolean showInnovationNumbers) {
+		double horizontalSpacing = ((width - (2.0 * DISPLAY_BORDER)) / layer.size());
+		int x = (int) (DISPLAY_BORDER + (n * horizontalSpacing) + (horizontalSpacing / 2.0));
+		int y = (int) ((height - DISPLAY_BORDER) - (l * verticalSpacing));
+		Node display = layer.get(n);
+		display.displayX = x;
+		display.displayY = y;
+		g.setColor(Color.white);
+		g.fillRect(x, y, 2 * NODE_DIM, 2 * NODE_DIM); // erase previous activation
+		if (display.ntype == Node.NTYPE_OUTPUT) {
+			g.fillRect(x, 0, 2 * NODE_DIM, 2 * NODE_DIM); // erase mode indicator
+			if (n / (neuronsPerMode + (standardMultitask ? 0.0 : 1.0)) == chosenModule) {
+				g.setColor(CombinatoricUtilities.colorFromInt(chosenModule));
+				g.fillRect(x, 0, 2 * NODE_DIM, 2 * NODE_DIM); // erase mode indicator
+			}
+			if (standardMultitask || CommonConstants.ensembleModeMutation
+					|| n % (neuronsPerMode + 1) == neuronsPerMode) {
+				g.setColor(Color.GRAY);
+			} else {
+				g.setColor(Color.ORANGE);
+			}
+		} else if (display.ntype == Node.NTYPE_HIDDEN) {
+			g.setColor(Color.RED);
+		} else {
+			g.setColor(Color.BLACK);
+			g.drawString(n + "", x, y + 15);
+			g.setColor(Color.BLUE);
+		}
+		double activation = display.activation;
+		if (display.frozen) {
+			drawBorder(g, Color.CYAN, x, y, activation, 2);
+		} else if(Parameters.parameters.booleanParameter("allowMultipleFunctions")) {
+			drawBorder(g, CombinatoricUtilities.colorFromInt(display.ftype), x, y, activation, 2);
+		} else if(Parameters.parameters.booleanParameter("allowMultipleFunctions") && display.frozen) {
+			drawBorder(g, Color.CYAN, x, y, activation, 4);
+			drawBorder(g, CombinatoricUtilities.colorFromInt(display.ftype), x, y, activation, 4);
+		}
+		g.fillRect(x, y, (int) ((1 + activation) * NODE_DIM), (int) ((1 + activation) * NODE_DIM));
+		if (showInnovationNumbers) {
+			drawInnovationNumbers(g, display, x, y);
+		}
+	}
+	protected void placeAllLinks(Graphics2D g) {
+		for (int l = 0; l < layers.size(); l++) {
+			ArrayList<Node> layer = layers.get(l);
+			for (int n = 0; n < layer.size(); n++) {
+				Node display = layer.get(n);
+				for (Link disLink : display.outputs) {
+					Node target = disLink.target;
+				}
+			}
+		}
+	}
+	
+//	private void addAllLinks)() {
+//		
+//	}
+//				
+	public static void main(String[] args) {
+        Parameters.initializeParameterCollections(new String[]{"io:false", "allowMultipleFunctions:true", "recurrency:false", "mmdRate:0.1", "task:edu.utexas.cs.nn.tasks.breve2D.Breve2DTask"});
+        //CommonConstants.freezeBeforeModeMutation = true;
+        MMNEAT.loadClasses();
+        TWEANNGenotype tg1 = new TWEANNGenotype(5, 2, 0);
+        MMNEAT.genotype = tg1.copy();
+        EvolutionaryHistory.initArchetype(0);
+        TWEANNGenotype tg2 = new TWEANNGenotype(5, 2, 0);
+
+        final int MUTATIONS1 = 10;
+
+        for (int i = 0; i < MUTATIONS1; i++) {
+            tg1.mutate();
+            tg1.addRandomPreferenceNeuron(tg1.getPhenotype().numIn);
+            tg2.mutate();
+            tg2.addRandomPreferenceNeuron(tg2.getPhenotype().numIn);
+        }
+
+        System.out.println(tg1);
+        System.out.println(new TWEANN(tg1));
+
+        double[] inputs = RandomNumbers.randomArray(tg1.numIn);
+
+        //tg1.freezeInfluences(tg1.nodes.get(tg1.nodes.size()-2).innovation);
+        DrawingPanel p1 = new DrawingPanel(TWEANN.NETWORK_VIEW_DIM, TWEANN.NETWORK_VIEW_DIM, "Net 1");
+        DrawingPanel p2 = new DrawingPanel(TWEANN.NETWORK_VIEW_DIM, TWEANN.NETWORK_VIEW_DIM, "Net 2");
+        p2.setLocation(TWEANN.NETWORK_VIEW_DIM + 10, 0);
+        tg1.getPhenotype().draw(p1, true);
+        tg2.getPhenotype().draw(p2, true);
+
+        new MMR().mutate(tg1);
+        tg1.freezePreferenceNeurons();
+        System.out.println("Frozen Pref:" + Arrays.toString(tg1.getPhenotype().process(inputs)));
+
+        DrawingPanel p3 = new DrawingPanel(TWEANN.NETWORK_VIEW_DIM, TWEANN.NETWORK_VIEW_DIM, "Net 1 MMD");
+        p3.setLocation(0, TWEANN.NETWORK_VIEW_DIM + 10);
+        tg1.getPhenotype().draw(p3, true);
+
+        new MMR().mutate(tg2);
+        tg2.freezePolicyNeurons();
+        System.out.println("Frozen Policy:" + Arrays.toString(tg2.getPhenotype().process(inputs)));
+
+        DrawingPanel p4 = new DrawingPanel(TWEANN.NETWORK_VIEW_DIM, TWEANN.NETWORK_VIEW_DIM, "Net 2 MMD");
+        p4.setLocation(TWEANN.NETWORK_VIEW_DIM + 10, TWEANN.NETWORK_VIEW_DIM + 10);
+        tg2.getPhenotype().draw(p4, true);
+
+        //TWEANNCrossover cross = new TWEANNCrossover();
+        //TWEANNGenotype new2 = (TWEANNGenotype) cross.crossover(tg1, tg2);
+        for (int i = 0; i < MUTATIONS1; i++) {
+        	tg1.mutate();
+            tg2.mutate();
+        }
+
+        System.out.println("Post Mutate Frozen Pref:" + Arrays.toString(tg1.getPhenotype().process(inputs)));
+        System.out.println("Post Mutate Frozen Policy:" + Arrays.toString(tg2.getPhenotype().process(inputs)));
+
+        DrawingPanel p5 = new DrawingPanel(TWEANN.NETWORK_VIEW_DIM, TWEANN.NETWORK_VIEW_DIM, "Cross Result 1");
+        p5.setLocation(2 * (TWEANN.NETWORK_VIEW_DIM + 10), 0);
+        tg1.getPhenotype().draw(p5, true);
+
+        DrawingPanel p6 = new DrawingPanel(TWEANN.NETWORK_VIEW_DIM, TWEANN.NETWORK_VIEW_DIM, "Cross Result 2");
+        p6.setLocation(2 * (TWEANN.NETWORK_VIEW_DIM + 10), TWEANN.NETWORK_VIEW_DIM + 10);
+        //new2.getPhenotype().draw(p6, true);
+        tg2.getPhenotype().draw(p6, true);
+
+    }
 }
