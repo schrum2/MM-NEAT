@@ -84,7 +84,11 @@ public class VizDoomBasicShootTask<T extends Network> extends VizDoomTask<T> {
 	 */
 	@Override
 	public String[] sensorLabels() {
-		throw new UnsupportedOperationException("Not supported yet.");
+		String[] labels = new String[game.getScreenWidth()];
+		for(int i = 0; i < labels.length ; i++){
+			labels[i] = "Column " + i;
+		}
+		return labels;
 	}
 
 	/**
