@@ -80,6 +80,7 @@ public class CombinatoricUtilities {
 	 * @param combos
 	 *            accumulates complete combinations
 	 */
+	@SuppressWarnings("unchecked")
 	public static void getAllCombinations(final ArrayList<Integer> lengths, int idx, ArrayList<Integer> soFar,
 			ArrayList<ArrayList<Integer>> combos) {
 		if (idx == lengths.size()) {
