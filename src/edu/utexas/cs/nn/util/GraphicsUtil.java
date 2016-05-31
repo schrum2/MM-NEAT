@@ -16,10 +16,9 @@ public class GraphicsUtil {
 	private static final int HUE_INDEX = 0;
 	private static final int SATURATION_INDEX = 1;
 	private static final int BRIGHTNESS_INDEX = 2;
-	private static final double BIAS = 1.0;// a common input used in neural
-	// networks
-private static final double SQRT2 = Math.sqrt(2); // Used for scaling
-				// distance from center
+	private static final double BIAS = 1.0;// a common input used in neural networks
+        private static final double SQRT2 = Math.sqrt(2); // Used for scaling distance from center
+        
 	/**
 	 * Draws the image created by the CPPN to a BufferedImage
 	 *
@@ -39,9 +38,8 @@ private static final double SQRT2 = Math.sqrt(2); // Used for scaling
 				// network outputs computed on hsb, not rgb scale because
 				// creates better images
 				Color childColor = Color.getHSBColor(hsb[HUE_INDEX], hsb[SATURATION_INDEX], hsb[BRIGHTNESS_INDEX]);
-				image.setRGB(x, y, childColor.getRGB());// set back to RGB to
-														// draw picture to
-														// JFrame
+                                // set back to RGB to draw picture to JFrame
+				image.setRGB(x, y, childColor.getRGB());
 			}
 		}
 		return image;

@@ -5,8 +5,13 @@ import edu.utexas.cs.nn.scores.Score;
 import java.util.ArrayList;
 
 /**
- *
+ * A task for evolving a single population. The evaluateAll
+ * method takes the entire population. This flexibility
+ * allows population members to interact with each other
+ * possibly.
+ * 
  * @author Jacob Schrum
+ * @param <T> phenotype possessed by members of population
  */
 public interface SinglePopulationTask<T> extends Task {
 	/**

@@ -92,8 +92,7 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 		}
 		// Too many outputs to print to console. Don't want to watch.
 		boolean temp = CommonConstants.watch;
-		CommonConstants.watch = false; // Prevent watching of console showing
-										// error energy
+		CommonConstants.watch = false; // Prevent watching of console showing error energy
 		Score<T> result = super.evaluate(individual);// if watch=false
 		CommonConstants.watch = temp;
 		this.individual = individual.getPhenotype();
@@ -112,15 +111,11 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 		if (input.equals("y")) {
 			System.out.println("enter filename");
 			String filename = MiscUtil.CONSOLE.next();
-			panel.save(filename + ".bmp");// allows user to choose a unique name
-											// for file and to not worry about
-											// adding '.bmp'
+                        // allows user to choose a unique name for 
+                        // file and to not worry about adding '.bmp'
+			panel.save(filename + ".bmp");
 		}
 	}
-
-
-
-	
 
 	/**
 	 * Returns labels for input
@@ -213,8 +208,7 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 		MMNEAT.clearClasses();
 		EvolutionaryHistory.setInnovation(0);
 		EvolutionaryHistory.setHighestGenotypeId(0);
-		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false",
-				"allowMultipleFunctions:true", "netChangeActivationRate:0.4", "recurrency:false" });
+		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "allowMultipleFunctions:true", "netChangeActivationRate:0.4", "recurrency:false" });
 		MMNEAT.loadClasses();
 
 		// draw8RandomImages();
@@ -249,9 +243,9 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 		int MEDIUM = 300;
 		BufferedImage medium = GraphicsUtil.imageFromCPPN(n, MEDIUM, MEDIUM);
 		DrawingPanel mediumPanel = GraphicsUtil.drawImage(medium, "medium", MEDIUM, MEDIUM);
-		mediumPanel.setLocation(SMALL, 100);
+		mediumPanel.setLocation(SMALL, 0);
 
-		int LARGE = 300;
+		int LARGE = 600;
 		BufferedImage large = GraphicsUtil.imageFromCPPN(n, LARGE, LARGE);
 		DrawingPanel largePanel = GraphicsUtil.drawImage(large, "large", LARGE, LARGE);
 		largePanel.setLocation(SMALL + MEDIUM, 0);
