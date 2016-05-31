@@ -97,6 +97,10 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 		}
 	}
 
+	public final void addObjective(GridTorusObjective<T> o, ArrayList<GridTorusObjective<T>> list) {
+		addObjective(o,list,true);
+	}
+	
 	/**
 	 * for adding fitness scores (turned on by command line parameters)
 	 *
@@ -105,9 +109,9 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 	 * @param list
 	 *            of fitness scores
 	 */
-	public final void addObjective(GridTorusObjective<T> o, ArrayList<GridTorusObjective<T>> list) {
+	public final void addObjective(GridTorusObjective<T> o, ArrayList<GridTorusObjective<T>> list, boolean affectsSelection) {
 		list.add(o);
-		MMNEAT.registerFitnessFunction(o.getClass().getSimpleName());
+		MMNEAT.registerFitnessFunction(o.getClass().getSimpleName(),affectsSelection);
 	}
 
 	@Override

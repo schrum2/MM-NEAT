@@ -104,7 +104,9 @@ public class TorusWorld {
 	public static int shortestDistance(int p1, int p2, int max) {
 		int plainDis = Math.abs(p2 - p1);
 		int wrapDis = max - plainDis;
-		return Math.min(plainDis, wrapDis);
+		int result = Math.min(plainDis, wrapDis);
+		assert result >= 0 : "Distances should only be non-negative! " + result;
+		return result;
 	}
 
 	/**

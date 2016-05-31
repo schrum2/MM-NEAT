@@ -13,6 +13,7 @@ import edu.utexas.cs.nn.tasks.gridTorus.objectives.PredatorCatchCloseObjective;
 import edu.utexas.cs.nn.tasks.gridTorus.objectives.PredatorCatchCloseQuickObjective;
 import edu.utexas.cs.nn.tasks.gridTorus.objectives.PredatorCatchObjective;
 import edu.utexas.cs.nn.tasks.gridTorus.objectives.PredatorEatEachPreyQuicklyObjective;
+import edu.utexas.cs.nn.tasks.gridTorus.objectives.PredatorMinimizeDistanceFromIndividualPreyObjective;
 import edu.utexas.cs.nn.tasks.gridTorus.objectives.PredatorMinimizeDistanceFromPreyObjective;
 import edu.utexas.cs.nn.tasks.gridTorus.objectives.PredatorMinimizeGameTimeObjective;
 import edu.utexas.cs.nn.tasks.gridTorus.objectives.PredatorRawalRajagopalanMiikkulainenObjective;
@@ -50,6 +51,19 @@ public class TorusEvolvedPredatorsVsStaticPreyTask<T extends Network> extends To
 			addObjective(new PredatorCatchObjective<T>(), objectives);
 		if (Parameters.parameters.booleanParameter("predatorCatchCloseQuick"))
 			addObjective(new PredatorCatchCloseQuickObjective<T>(), objectives);
+		if (Parameters.parameters.booleanParameter("predatorMinimizeIndividualDistance"))
+			//get separate distance fitness functions for each prey and add them as objectives
+			for(int i = 0; i < Parameters.parameters.integerParameter("torusPreys"); i++)
+				addObjective(new PredatorMinimizeDistanceFromIndividualPreyObjective<T>(i), objectives);
+
+		//		addObjective(new PredatorMinimizeGameTimeObjective<T>(), objectives, false);
+		//		addObjective(new PredatorEatEachPreyQuicklyObjective<T>(), objectives, false);
+		//		addObjective(new PredatorMinimizeDistanceFromPreyObjective<T>(), objectives, false);
+		//		addObjective(new PredatorRawalRajagopalanMiikkulainenObjective<T>(), objectives, false);
+		//		addObjective(new PredatorCatchCloseObjective<T>(), objectives, false);
+		//		addObjective(new PredatorCatchObjective<T>(), objectives, false);
+		//		addObjective(new PredatorCatchCloseQuickObjective<T>(), objectives, false);
+
 	}
 
 	@Override
