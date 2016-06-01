@@ -183,6 +183,7 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
                         // This now takes the arg max of the action outputs
                         double r = game.makeAction(actions.get(StatisticsUtilities.argmax(outputs))); 
 			// This r seems worthless ... does it give any information?
+                        MiscUtil.waitForReadStringAndEnterKeyPress();
 		}
                 // TODO: Make this reward calculation more general, allow for multiple objectives
 		return new Pair<double[], double[]>(new double[] { game.getTotalReward() }, new double[] {});
