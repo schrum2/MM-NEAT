@@ -28,18 +28,18 @@ import edu.utexas.cs.nn.util.GraphicsUtil;
  * @param <T>
  */
 public class PicbreederTask<T extends Network> implements SinglePopulationTask<T>, ActionListener {
-	
+
 	private final int NUM_ROWS;
 	private final int NUM_COLUMNS;
 	private final int PIC_SIZE;
-	
-	
+
+
 	private JFrame frame;
 	private ArrayList<JPanel> panels;
 	private ArrayList<JButton> buttons;
 	private ArrayList<Score<T>> scores;
-	
-	
+	private ArrayList<Boolean> chosen;
+
 	public PicbreederTask(int rows, int columns, int size) {
 		NUM_ROWS = rows;
 		NUM_COLUMNS = columns;
@@ -47,13 +47,14 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		frame = new JFrame("Picbreeder");
 		panels = new ArrayList<JPanel>(NUM_ROWS);
 		buttons = new ArrayList<JButton>((NUM_ROWS - 1) * NUM_COLUMNS);
+		chosen = new ArrayList<Boolean>();
 		frame.setSize(PIC_SIZE * NUM_COLUMNS, PIC_SIZE * (NUM_ROWS));
 		frame.setLocation(300, 100);//magic #s 100 correspond to relocating frame to middle of screen
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLayout(new GridLayout(NUM_ROWS + 1, 0));
 		frame.setVisible(true);
 		frame.setBackground(Color.RED);
-		
+
 		JPanel top = new JPanel();
 		JLabel label = new JLabel("Picture Evolver");
 		label.setFont(new Font("Serif", Font.BOLD, 48));
@@ -66,7 +67,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		evolveButton.setLocation((int)(frame.getWidth() * (3.0/4)), (int) top.getAlignmentY());
 		top.add(evolveButton);
 		panels.add(top);
-		
+
 		for(int i = 1; i <= NUM_ROWS; i++) {
 			JPanel row = new JPanel();
 			row.setSize(frame.getWidth(), PIC_SIZE);
@@ -80,14 +81,15 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		}
 	}
 
-	
+
 	private JButton getImageButton(BufferedImage image, String s) {
 		JButton button = new JButton(new ImageIcon(image));
+		button.setSize(image.getWidth() + 2, image.getHeight() + 2);
 		button.setName(s);
 		return button;
 	}
 
-	
+
 	private JButton getImageButton(Genotype<T> genotype, String s) {
 		BufferedImage image = GraphicsUtil.imageFromCPPN(genotype.getPhenotype(), PIC_SIZE, PIC_SIZE); 
 		return getImageButton(image, s);
@@ -139,10 +141,12 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 				image.addActionListener(this);
 				panels.get(i).add(image);
 				buttons.add(image);
+				chosen.add(false);
+				assert (buttons.size() == chosen.size());
 			}
 		}
-		
-		
+
+
 		//need key listener to wait
 		System.out.println("another sanity check");
 		//need to add action listeners
@@ -161,34 +165,56 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 			//need to add code here that mutates chosen individuals and updates jpanel
 			System.out.println("congratulations you pressed the evolve button");
 		} else {
-		scores.get(scoreIndex).replaceScores(evaluate());
+			scores.get(scoreIndex).replaceScores(evaluate());
+			int buttonIndex = buttons.indexOf(event.getSource());
+			if(chosen.get(buttonIndex)) {
+				chosen.set(buttonIndex, false);
+				buttons.get(buttonIndex).setBorder(BorderFactory.createLineBorder(Color.lightGray));
+				scores.get(scoreIndex).replaceScores(new double[]{0});
+			} else {
+				chosen.set(buttonIndex, true);
+				buttons.get(buttonIndex).setBorder(BorderFactory.createLineBorder(Color.YELLOW));
+			}
 		}
 		s.close();
 	}
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static void main(String[] args) {
 		System.out.println("test is running");
-		
+
 		MMNEAT.clearClasses();
 		EvolutionaryHistory.setInnovation(0);
 		EvolutionaryHistory.setHighestGenotypeId(0);
 		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "allowMultipleFunctions:true", "netChangeActivationRate:0.4", "recurrency:false" });
 		MMNEAT.loadClasses();
-		
+
 		PicbreederTask test = new PicbreederTask(4, 3, 250);
 
 		ArrayList<Genotype> genotypes = new ArrayList<Genotype>();
 		for(int i = 0; i < 12; i++) {
-		final int NUM_MUTATIONS = 200;
-		TWEANNGenotype tg1 = new TWEANNGenotype(4, 3, false, 0, 1, 0);
-		for (int j = 0; j < NUM_MUTATIONS; j++) {
-			tg1.mutate();
-		}
-		genotypes.add(tg1);
+			final int NUM_MUTATIONS = 200;
+			TWEANNGenotype tg1 = new TWEANNGenotype(4, 3, false, 0, 1, 0);
+			for (int j = 0; j < NUM_MUTATIONS; j++) {
+				tg1.mutate();
+			}
+			genotypes.add(tg1);
 		}
 		test.evaluateAll(genotypes); // replace with a test population
 	}
 
-	
+
 }
