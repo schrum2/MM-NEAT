@@ -62,15 +62,8 @@ public class Shaping {
 				double r = game.makeAction(actions.get(ran.nextInt(3)));
 
 				// Retrieve the shaping reward
-				int _ssr = game.getGameVariable(GameVariable.USER1); // Get
-																		// value
-																		// of
-																		// scripted
-																		// variable
-				double ssr = game.DoomFixedToDouble(_ssr); // If value is in
-															// DoomFixed format
-															// project it to
-															// double
+				int _ssr = game.getGameVariable(GameVariable.USER1); // Get value of scripted variable
+				double ssr = game.DoomFixedToDouble(_ssr); // If value is in DoomFixed format project it to double
 				double sr = ssr - lastTotalShapingReward;
 				lastTotalShapingReward = ssr;
 
