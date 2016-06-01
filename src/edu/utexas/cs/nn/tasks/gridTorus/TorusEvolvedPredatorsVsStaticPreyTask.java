@@ -1,13 +1,8 @@
 package edu.utexas.cs.nn.tasks.gridTorus;
 
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
-import edu.utexas.cs.nn.evolution.lineage.Offspring;
-import edu.utexas.cs.nn.graphics.DrawingPanel;
-import edu.utexas.cs.nn.graphics.Plot;
 import edu.utexas.cs.nn.gridTorus.controllers.TorusPredPreyController;
 import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.gridTorus.objectives.PredatorCatchCloseObjective;
 import edu.utexas.cs.nn.tasks.gridTorus.objectives.PredatorCatchCloseQuickObjective;
@@ -17,13 +12,14 @@ import edu.utexas.cs.nn.tasks.gridTorus.objectives.PredatorMinimizeDistanceFromI
 import edu.utexas.cs.nn.tasks.gridTorus.objectives.PredatorMinimizeDistanceFromPreyObjective;
 import edu.utexas.cs.nn.tasks.gridTorus.objectives.PredatorMinimizeGameTimeObjective;
 import edu.utexas.cs.nn.tasks.gridTorus.objectives.PredatorRawalRajagopalanMiikkulainenObjective;
-import edu.utexas.cs.nn.util.ClassCreation;
 
 /**
- *
- * @author Alex Rollins, Jacob Schrum The following class sets up tasks for
- *         learning agents and NPCs. This class is for a task where the
- *         predators are evolved while the prey are kept static
+ * The following class sets up tasks for
+ * learning agents and NPCs. This class is for a task where the
+ * predators are evolved while the prey are kept static
+ * 
+ * @author Alex Rollins, Jacob Schrum 
+ * @param <T> evolved phenotype
  */
 public class TorusEvolvedPredatorsVsStaticPreyTask<T extends Network> extends TorusPredPreyTask<T> {
 
@@ -70,7 +66,6 @@ public class TorusEvolvedPredatorsVsStaticPreyTask<T extends Network> extends To
 
 	}
 
-	@Override
 	/**
 	 * A method that gives a list of controllers for the evolving agents
 	 * (predators) The predators are all defined as a new agent of the given
@@ -83,8 +78,10 @@ public class TorusEvolvedPredatorsVsStaticPreyTask<T extends Network> extends To
 	 *            the genotype that will be given to all predator agents
 	 *            (homogeneous team)
 	 */
+	@Override
 	public TorusPredPreyController[] getPredAgents(Genotype<T> individual) {
-		evolved = getEvolvedControllers(individual, true);
+                evolved = new TorusPredPreyController[Parameters.parameters.integerParameter("torusPredators")];
+		getEvolvedControllers(evolved, individual, true);
 		return evolved;
 	}
 

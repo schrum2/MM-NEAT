@@ -1,7 +1,6 @@
 package edu.utexas.cs.nn.tasks.gridTorus;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -9,7 +8,6 @@ import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.Organism;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.evolution.genotypes.NetworkGenotype;
-import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
 import edu.utexas.cs.nn.evolution.lineage.Offspring;
 import edu.utexas.cs.nn.evolution.nsga2.tug.TUGTask;
 import edu.utexas.cs.nn.graphics.DrawingPanel;
@@ -46,8 +44,7 @@ import edu.utexas.cs.nn.util.datastructures.*;
  * @param <T>
  *            Network phenotype being evolved
  */
-public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTask<T>
-implements TUGTask, NetworkTask, HyperNEATTask {
+public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTask<T> implements TUGTask, NetworkTask, HyperNEATTask {
 
 	public static final String[] ALL_ACTIONS = new String[] { "UP", "RIGHT", "DOWN", "LEFT", "NOTHING" };
 	public static final String[] MOVEMENT_ACTIONS = new String[] { "UP", "RIGHT", "DOWN", "LEFT" };
@@ -168,13 +165,11 @@ implements TUGTask, NetworkTask, HyperNEATTask {
 			// get the list of all modules used by this agent and store how many
 			// times that module is used in that spot in the array
 			int[] thisAgentModeUsage = ((NNTorusPredPreyController) agent).nn.getModuleUsage();
-			// combine this agent's module usage with the module usage of all
-			// agents
+			// combine this agent's module usage with the module usage of all agents
 			overallAgentModeUsage = ArrayUtil.zipAdd(overallAgentModeUsage, thisAgentModeUsage);
 		}
 
-		// Fitness function requires an organism, so make this genotype into an
-		// organism
+		// Fitness function requires an organism, so make this genotype into an organism
 		// this erases information stored about module usage, so was saved in
 		// order to be reset after the creation of this organism
 		Organism<T> organism = new NNTorusPredPreyAgent<T>(individual, !preyEvolve);
@@ -200,10 +195,11 @@ implements TUGTask, NetworkTask, HyperNEATTask {
 	public int numObjectives() {
 		return objectives.size();
 	}
-	@Override
-	/**
+
+        /**
 	 * @return the number of other scores for this genotype
 	 */
+	@Override
 	public int numOtherScores() {
 		return otherScores.size();
 	}
@@ -249,11 +245,9 @@ implements TUGTask, NetworkTask, HyperNEATTask {
 	public String[] outputLabels() {
 		// if it is the predator evolving
 		if (!preyEvolve) {
-			return Parameters.parameters.booleanParameter("allowDoNothingActionForPredators") ? ALL_ACTIONS
-					: MOVEMENT_ACTIONS;
+			return Parameters.parameters.booleanParameter("allowDoNothingActionForPredators") ? ALL_ACTIONS : MOVEMENT_ACTIONS;
 		} else {// the prey is evolving
-			return Parameters.parameters.booleanParameter("allowDoNothingActionForPreys") ? ALL_ACTIONS
-					: MOVEMENT_ACTIONS;
+			return Parameters.parameters.booleanParameter("allowDoNothingActionForPreys") ? ALL_ACTIONS : MOVEMENT_ACTIONS;
 		}
 	}
 
@@ -270,45 +264,58 @@ implements TUGTask, NetworkTask, HyperNEATTask {
 
 	/**
 	 * make n copies of the designated static controller
+         * @param <T> Some kind of TorusPredPreyController
 	 * @param c, class of the static controller
-	 * @param n, number of controllers
-	 * @throws NoSuchMethodException 
+	 * @param num, number of controllers
+         * @return Array of TorusPredPreyControllers
+	 * @throws NoSuchMethodException if there is a problem with the class for the controller
 	 */
-	public static <T extends TorusPredPreyController> TorusPredPreyController[] getStaticControllers(Class<T> c, int n) throws NoSuchMethodException{
-		TorusPredPreyController[] staticAgents = new TorusPredPreyController[n];
-		for (int i = 0; i < n; i++) {
+	public static <T extends TorusPredPreyController> TorusPredPreyController[] getStaticControllers(Class<T> c, int num) throws NoSuchMethodException{
+		TorusPredPreyController[] staticAgents = new TorusPredPreyController[num];
+		for (int i = 0; i < num; i++) {
 			staticAgents[i] = (TorusPredPreyController) ClassCreation.createObject(c);
 		}
 		return staticAgents;		
 	}
 	
-	public static <T extends Network> TorusPredPreyController[] getEvolvedControllers(Genotype<T> g, boolean isPred){
+        /**
+         * TODO
+         * 
+         * @param <T>
+         * @param container An array that will be filled with the newly created controllers
+         * @param g
+         * @param isPred 
+         */
+	public static <T extends Network> void getEvolvedControllers(TorusPredPreyController[] container, Genotype<T> g, boolean isPred){
 		//copy g into an array
-		int num = Parameters.parameters.integerParameter(isPred ? "torusPredators" : "torusPreys");
-		Genotype<T>[] agents = new Genotype[num];
-		for(int i = 0; i < num; i++) {
+		Genotype<T>[] agents = new Genotype[container.length];
+		for(int i = 0; i < agents.length; i++) {
 			agents[i] = g.copy();
 		}
-		return getEvolvedControllers(agents, isPred);
+		getEvolvedControllers(container, agents, isPred);
 	}
 	
-	public static <T extends Network> TorusPredPreyController[] getEvolvedControllers(Genotype<T>[] genotypes, boolean isPred){
-		TorusPredPreyController[] controllers = new TorusPredPreyController[genotypes.length];
-		for (int i = 0; i < controllers.length; i++) {
+        /**
+         * TODO
+         * 
+         * @param <T>
+         * @param container An array that will be filled with the newly created controllers
+         * @param genotypes
+         * @param isPred 
+         */
+	public static <T extends Network> void getEvolvedControllers(TorusPredPreyController[] container, Genotype<T>[] genotypes, boolean isPred){
+		for (int i = 0; i < container.length; i++) {
 			// true to indicate that this is a predator
-			controllers[i] = new NNTorusPredPreyAgent<T>(genotypes[i], (isPred ? true : false)).getController();
-			// if requested, adds visual panels for each of the evolved agents
-			// showing its inputs
-			// (offsets to other agents), outputs (possible directional
-			// movements), and game time
+			container[i] = new NNTorusPredPreyAgent<T>(genotypes[i], isPred).getController();
+			// if requested, adds visual panels for each of the evolved agents showing its inputs
+			// (offsets to other agents), outputs (possible directional movements), and game time
 			if (CommonConstants.monitorInputs) {
 				DrawingPanel panel = new DrawingPanel(Plot.BROWSE_DIM, (int) (Plot.BROWSE_DIM * 3.5), (isPred ? "Predator " + i : "Prey " + i));
-				((NNTorusPredPreyController) controllers[i]).networkInputs = panel;
+				((NNTorusPredPreyController) container[i]).networkInputs = panel;
 				panel.setLocation(i * (Plot.BROWSE_DIM + 10), 0);
 				Offspring.fillInputs(panel, genotypes[i]);
 			}
 		}
-		return controllers;
 	}
 
 	// These values will be defined before they are needed
@@ -337,20 +344,15 @@ implements TUGTask, NetworkTask, HyperNEATTask {
 			// is somewhat arbitray ... for display purposes
 			Triple<Integer, Integer, Integer> firstInputLocation = new Triple<Integer, Integer, Integer>(0, 0, 0);
 			Triple<Integer, Integer, Integer> secondInputLocation = new Triple<Integer, Integer, Integer>(4, 0, 0);
-			Triple<Integer, Integer, Integer> processingLocation = new Triple<Integer, Integer, Integer>(
-					senseTeammates ? 2 : 0, 4, 0);
-			Triple<Integer, Integer, Integer> outputLocation = new Triple<Integer, Integer, Integer>(
-					senseTeammates ? 2 : 0, 8, 0);
+			Triple<Integer, Integer, Integer> processingLocation = new Triple<Integer, Integer, Integer>(senseTeammates ? 2 : 0, 4, 0);
+			Triple<Integer, Integer, Integer> outputLocation = new Triple<Integer, Integer, Integer>(senseTeammates ? 2 : 0, 8, 0);
 			// Used for input and processing layers
 			Pair<Integer, Integer> substrateDimension = new Pair<Integer, Integer>(torusWidth, torusHeight);
-			Pair<Integer, Integer> outputSubstrateDimension = new Pair<Integer, Integer>(
-					HYPERNEAT_OUTPUT_SUBSTRATE_DIMENSION, HYPERNEAT_OUTPUT_SUBSTRATE_DIMENSION);
+			Pair<Integer, Integer> outputSubstrateDimension = new Pair<Integer, Integer>(HYPERNEAT_OUTPUT_SUBSTRATE_DIMENSION, HYPERNEAT_OUTPUT_SUBSTRATE_DIMENSION);
 			// Ordering of input substrate names
 
-			Substrate predator = new Substrate(substrateDimension, Substrate.INPUT_SUBSTRATE,
-					preyEvolve ? firstInputLocation : secondInputLocation, "input_predator");
-			Substrate prey = new Substrate(substrateDimension, Substrate.INPUT_SUBSTRATE,
-					preyEvolve ? secondInputLocation : firstInputLocation, "input_prey");
+			Substrate predator = new Substrate(substrateDimension, Substrate.INPUT_SUBSTRATE, preyEvolve ? firstInputLocation : secondInputLocation, "input_predator");
+			Substrate prey = new Substrate(substrateDimension, Substrate.INPUT_SUBSTRATE, preyEvolve ? secondInputLocation : firstInputLocation, "input_prey");
 
 			substrateInformation = new LinkedList<Substrate>();
 			// order of pred/prey substrate important, helps in sorting later on
@@ -371,11 +373,9 @@ implements TUGTask, NetworkTask, HyperNEATTask {
 			substrateForPrey = !preyEvolve || senseTeammates;
 
 			// Processing layer
-			substrateInformation.add(
-					new Substrate(substrateDimension, Substrate.PROCCESS_SUBSTRATE, processingLocation, "process_0"));
+			substrateInformation.add(new Substrate(substrateDimension, Substrate.PROCCESS_SUBSTRATE, processingLocation, "process_0"));
 			// Output layer
-			substrateInformation.add(
-					new Substrate(outputSubstrateDimension, Substrate.OUTPUT_SUBSTRATE, outputLocation, "output_0"));
+			substrateInformation.add(new Substrate(outputSubstrateDimension, Substrate.OUTPUT_SUBSTRATE, outputLocation, "output_0"));
 		}
 		return substrateInformation;
 	}
@@ -391,11 +391,9 @@ implements TUGTask, NetworkTask, HyperNEATTask {
 	public List<Pair<String, String>> getSubstrateConnectivity() {
 		if (substrateConnectivity == null) {
 			substrateConnectivity = new LinkedList<Pair<String, String>>();
-			substrateConnectivity
-			.add(new Pair<String, String>(preyEvolve ? "input_predator" : "input_prey", "process_0"));
+			substrateConnectivity.add(new Pair<String, String>(preyEvolve ? "input_predator" : "input_prey", "process_0"));
 			if (Parameters.parameters.booleanParameter("torusSenseTeammates"))
-				substrateConnectivity
-				.add(new Pair<String, String>(preyEvolve ? "input_prey" : "input_predator", "process_0"));
+				substrateConnectivity.add(new Pair<String, String>(preyEvolve ? "input_prey" : "input_predator", "process_0"));
 			substrateConnectivity.add(new Pair<String, String>("process_0", "output_0"));
 		}
 		return substrateConnectivity;

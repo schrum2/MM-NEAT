@@ -20,14 +20,15 @@ import edu.utexas.cs.nn.util.MiscUtil;
 import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
 
 /**
- *
- * @author Jacob Schrum, Gabby Gonzalez, Alex Rollins The following class
- *         extends the normal TorusPredPreyController to allow for a neural
- *         network.
+ * The following class
+ * extends the normal TorusPredPreyController to allow for a neural
+ * network.
+ * 
+ * @author Jacob Schrum, Gabby Gonzalez, Alex Rollins 
  */
 public class NNTorusPredPreyController extends TorusPredPreyController {
 
-	private TorusPredPreySensorBlock[] sensorBlocks;
+	private final TorusPredPreySensorBlock[] sensorBlocks;
 	private int numInputs;
 
 	public DrawingPanel networkInputs = null;
@@ -53,14 +54,12 @@ public class NNTorusPredPreyController extends TorusPredPreyController {
 
 		if (Parameters.parameters.booleanParameter("torusSenseTeammates")) {
 			sensorBlocks = new TorusPredPreySensorBlock[] {
-					(byProximity ? new TorusPreyByProximitySensorBlock() : new TorusPreyByIndexSensorBlock()),
-					(byProximity ? new TorusPredatorsByProximitySensorBlock()
-							: new TorusPredatorsByIndexSensorBlock()) };
+					(byProximity ? new TorusPreyByProximitySensorBlock()      : new TorusPreyByIndexSensorBlock()),
+					(byProximity ? new TorusPredatorsByProximitySensorBlock() : new TorusPredatorsByIndexSensorBlock()) };
 		} else {
 			sensorBlocks = new TorusPredPreySensorBlock[] { isPredator
-					? (byProximity ? new TorusPreyByProximitySensorBlock() : new TorusPreyByIndexSensorBlock())
-					: (byProximity ? new TorusPredatorsByProximitySensorBlock()
-							: new TorusPredatorsByIndexSensorBlock()) };
+					? (byProximity ? new TorusPreyByProximitySensorBlock()      : new TorusPreyByIndexSensorBlock())
+					: (byProximity ? new TorusPredatorsByProximitySensorBlock() : new TorusPredatorsByIndexSensorBlock()) };
 		}
 
 		numInputs = 0;

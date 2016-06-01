@@ -2,26 +2,22 @@
 package edu.utexas.cs.nn.tasks.gridTorus;
 
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
-import edu.utexas.cs.nn.evolution.lineage.Offspring;
-import edu.utexas.cs.nn.graphics.DrawingPanel;
-import edu.utexas.cs.nn.graphics.Plot;
 import edu.utexas.cs.nn.gridTorus.controllers.TorusPredPreyController;
 import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.gridTorus.objectives.PreyLongSurvivalTimeObjective;
 import edu.utexas.cs.nn.tasks.gridTorus.objectives.PreyMaximizeDistanceFromPredatorsObjective;
 import edu.utexas.cs.nn.tasks.gridTorus.objectives.PreyMaximizeGameTimeObjective;
 import edu.utexas.cs.nn.tasks.gridTorus.objectives.PreyMinimizeCaughtObjective;
 import edu.utexas.cs.nn.tasks.gridTorus.objectives.PreyRawalRajagopalanMiikkulainenObjective;
-import edu.utexas.cs.nn.util.ClassCreation;
 
 /**
- *
- * @author Alex Rollins, Jacob Schrum The following class sets up tasks for
- *         learning agents and NPCs. This class is for a task where the prey are
- *         evolved while the predators are kept static
+ * The following class sets up tasks for
+ * learning agents and NPCs. This class is for a task where the prey are
+ * evolved while the predators are kept static
+ * 
+ * @author Alex Rollins, Jacob Schrum 
+ * @param <T> evolved phenotype
  */
 public class TorusEvolvedPreyVsStaticPredatorsTask<T extends Network> extends TorusPredPreyTask<T> {
 
@@ -99,7 +95,8 @@ public class TorusEvolvedPreyVsStaticPredatorsTask<T extends Network> extends To
 	 *            (homogeneous team)
 	 */
 	public TorusPredPreyController[] getPreyAgents(Genotype<T> individual) {
-		evolved = getEvolvedControllers(individual, false);
+                evolved = new TorusPredPreyController[Parameters.parameters.integerParameter("torusPreys")];
+		getEvolvedControllers(evolved, individual, false);
 		return evolved; 
 	}
 }
