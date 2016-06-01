@@ -11,6 +11,7 @@ import edu.utexas.cs.nn.graphics.DrawingPanel;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.networks.NetworkTask;
 import edu.utexas.cs.nn.parameters.CommonConstants;
+import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.NoisyLonerTask;
 import edu.utexas.cs.nn.util.GraphicsUtil;
 import edu.utexas.cs.nn.util.MiscUtil;
@@ -35,10 +36,10 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 
 	// All of these constants should probably become command line
 	// parameters once we fully figure out the task
-	public static String SCENARIO_WAD = "basic.wad";
-	public static String GAME_WAD = "freedoom2.wad";
-	public static String DOOM_MAP = "map01";
-	public static int DOOM_EPISODE_LENGTH = 200;
+	//public static String SCENARIO_WAD = "basic.wad";
+	//public static String GAME_WAD = "freedoom2.wad";
+	//public static String DOOM_MAP = "map01";
+	//public static int DOOM_EPISODE_LENGTH = 200;
 
 	// For each pixel in the image buffer, the colors are sorted in this order
 	public static final int RED_INDEX = 2;
@@ -81,15 +82,15 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 		game.setViZDoomPath("vizdoom/bin/vizdoom");
 		// Sets path to doom2 iwad resource file which 
                 // contains the actual doom game
-		game.setDoomGamePath("vizdoom/scenarios/" + GAME_WAD);
+		game.setDoomGamePath("vizdoom/scenarios/" + Parameters.parameters.stringParameter("gameWad"));
 		
 		// Sets path to additional resources iwad file which is basically your
 		// scenario iwad.
 		// If not specified default doom2 maps will be used and it's pretty much
 		// useles... unless you want to play doom.
-		game.setDoomScenarioPath("vizdoom/scenarios/" + SCENARIO_WAD);
+		game.setDoomScenarioPath("vizdoom/scenarios/" + Parameters.parameters.stringParameter("scenarioWad"));
 		// Set map to start (scenario .wad files can contain many maps).
-		game.setDoomMap(DOOM_MAP);
+		game.setDoomMap(Parameters.parameters.stringParameter("doomMap"));
 		// Sets resolution. Default is 320X240
                 // TODO: Should be be able to set this from the command line somehow?
 		setRestrictedScreenResolution(ScreenResolution.RES_200X150);
@@ -152,7 +153,7 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 
 	public void setDoomMiscSettings() {
 		// Causes episodes to finish after designated tics (actions)
-		game.setEpisodeTimeout(DOOM_EPISODE_LENGTH);
+		game.setEpisodeTimeout(Parameters.parameters.integerParameter("doomEpisodeLength"));
 
 		// TODO: This doesn't work! Can we fix it, or do the VizDoom designers need to fix it?
 		game.setWindowVisible(CommonConstants.watch);
