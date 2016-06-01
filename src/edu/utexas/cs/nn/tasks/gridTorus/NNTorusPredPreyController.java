@@ -90,9 +90,12 @@ public class NNTorusPredPreyController extends TorusPredPreyController {
 	@Override
 	public int[] getAction(TorusAgent me, TorusWorld world, TorusAgent[] preds, TorusAgent[] prey) {
 		double[] inputs = inputs(me, world, preds, prey);
-		if(Parameters.parameters.booleanParameter("torusInvertSensorInputs"));{
+
+		if(Parameters.parameters.booleanParameter("torusInvertSensorInputs")){
 			for(int i = 0; i < inputs.length; i++){
+				assert -1 <= inputs[i] && inputs[i] <= 1 : "Input not in proper range: inputs["+i+"] = " + inputs[i]; 
 				inputs[i] = MiscUtil.unitInvert(inputs[i]);
+				assert -1 <= inputs[i] && inputs[i] <= 1 : "Inverted input not in proper range: inputs["+i+"] = " + inputs[i]; 
 			}
 		}
 		if (networkInputs != null) {

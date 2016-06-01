@@ -48,8 +48,8 @@ public class TorusEvolvedPreyVsStaticPredatorsTask<T extends Network> extends To
 		addObjective(new PreyLongSurvivalTimeObjective<T>(), otherScores, false);
 		addObjective(new PreyMaximizeDistanceFromPredatorsObjective<T>(), otherScores, false);
 		addObjective(new PreyMinimizeCaughtObjective<T>(), otherScores, false);
-		
-		
+
+
 	}
 
 	@Override
@@ -67,17 +67,9 @@ public class TorusEvolvedPreyVsStaticPredatorsTask<T extends Network> extends To
 	 *            (homogeneous team)
 	 */
 	public TorusPredPreyController[] getPredAgents(Genotype<T> individual) {
-		if (staticAgents == null) {
-			int numPredators = Parameters.parameters.integerParameter("torusPredators");
-			try {
-				Class c = Parameters.parameters.classParameter("staticPredatorController");
-				staticAgents = getStaticControllers(c,numPredators);
-			} catch (NoSuchMethodException e) {
-				e.printStackTrace();
-				System.out.println("Could not load static predator");
-				System.exit(1);
-			}
-		}
+		if (staticAgents == null)
+			staticAgents = getStaticControllers(true,Parameters.parameters.integerParameter("torusPredators"));
+
 		return staticAgents;
 	}
 
@@ -95,7 +87,7 @@ public class TorusEvolvedPreyVsStaticPredatorsTask<T extends Network> extends To
 	 *            (homogeneous team)
 	 */
 	public TorusPredPreyController[] getPreyAgents(Genotype<T> individual) {
-                evolved = new TorusPredPreyController[Parameters.parameters.integerParameter("torusPreys")];
+		evolved = new TorusPredPreyController[Parameters.parameters.integerParameter("torusPreys")];
 		getEvolvedControllers(evolved, individual, false);
 		return evolved; 
 	}

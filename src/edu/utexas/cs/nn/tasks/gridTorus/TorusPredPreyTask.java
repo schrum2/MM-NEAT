@@ -196,7 +196,7 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 		return objectives.size();
 	}
 
-        /**
+	/**
 	 * @return the number of other scores for this genotype
 	 */
 	@Override
@@ -264,28 +264,33 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 
 	/**
 	 * make n copies of the designated static controller
-         * @param <T> Some kind of TorusPredPreyController
-	 * @param c, class of the static controller
+	 * @param <T> Some kind of TorusPredPreyController
+	 * @param isPred, true if predator, false if prey
 	 * @param num, number of controllers
-         * @return Array of TorusPredPreyControllers
-	 * @throws NoSuchMethodException if there is a problem with the class for the controller
+	 * @return Array of TorusPredPreyControllers
 	 */
-	public static <T extends TorusPredPreyController> TorusPredPreyController[] getStaticControllers(Class<T> c, int num) throws NoSuchMethodException{
+	public static <T extends TorusPredPreyController> TorusPredPreyController[] getStaticControllers(boolean isPred, int num) {
 		TorusPredPreyController[] staticAgents = new TorusPredPreyController[num];
-		for (int i = 0; i < num; i++) {
-			staticAgents[i] = (TorusPredPreyController) ClassCreation.createObject(c);
+		try {
+			for (int i = 0; i < num; i++) {
+				staticAgents[i] = (TorusPredPreyController) ClassCreation.createObject(isPred ? "staticPredatorController" : "staticPreyController");
+			}
+		} catch (NoSuchMethodException e) {
+			e.printStackTrace();
+			System.out.println("Could not load static agents");
+			System.exit(1);
 		}
 		return staticAgents;		
 	}
-	
-        /**
-         * TODO
-         * 
-         * @param <T>
-         * @param container An array that will be filled with the newly created controllers
-         * @param g
-         * @param isPred 
-         */
+
+	/**
+	 * retrieve the evolved controllers for the evolved agents
+	 * 
+	 * @param <T>
+	 * @param container An array that will be filled with the newly created controllers
+	 * @param g, the genotype
+	 * @param isPred, true if predator, false if prey
+	 */
 	public static <T extends Network> void getEvolvedControllers(TorusPredPreyController[] container, Genotype<T> g, boolean isPred){
 		//copy g into an array
 		Genotype<T>[] agents = new Genotype[container.length];
@@ -294,15 +299,15 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 		}
 		getEvolvedControllers(container, agents, isPred);
 	}
-	
-        /**
-         * TODO
-         * 
-         * @param <T>
-         * @param container An array that will be filled with the newly created controllers
-         * @param genotypes
-         * @param isPred 
-         */
+
+	/**
+	 * retrieve the evolved controllers for each of the evolved agents
+	 * 
+	 * @param <T>
+	 * @param container An array that will be filled with the newly created controllers
+	 * @param g, the genotypes
+	 * @param isPred, true if predator, false if prey
+	 */
 	public static <T extends Network> void getEvolvedControllers(TorusPredPreyController[] container, Genotype<T>[] genotypes, boolean isPred){
 		for (int i = 0; i < container.length; i++) {
 			// true to indicate that this is a predator
