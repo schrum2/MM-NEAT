@@ -44,6 +44,7 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 	public static final int RED_INDEX = 2;
 	public static final int GREEN_INDEX = 1;
 	public static final int BLUE_INDEX = 0;
+        public static final double MAX_COLOR = 255;
 
 	public DoomGame game;
 	public List<int[]> actions;
@@ -244,7 +245,27 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 		return actionLabels.toArray(new String[actionLabels.size()]);
 	}
 
-	/**
+        /**
+         * Get scaled intensity values for a specific color from a specific
+         * row of the image of the current game state.
+         * 
+         * @param s game state
+         * @param row row on screen
+         * @param colorIndex RED_INDEX, GREEN_INDEX, or BLUE_INDEX
+         * @return scaled intensity values in specified color for specified row
+         */
+        public double[] colorFromRow(GameState s, int row, int colorIndex) {
+                int width = game.getScreenWidth();
+		double[] result = new double[width];
+		int index = row * width * 3; // 3 is for the three different color components: RGB
+		for (int x = 0; x < width; x++) {
+			int c = index + (3 * x) + colorIndex;
+			result[x] = (s.imageBuffer[c]) / MAX_COLOR;
+		}
+		return result;
+        }
+
+        /**
 	 * This method outputs the Gamestate according to the width and height given
 	 * You may change which of the RGB values appear as well, currently set to
 	 * all red values.

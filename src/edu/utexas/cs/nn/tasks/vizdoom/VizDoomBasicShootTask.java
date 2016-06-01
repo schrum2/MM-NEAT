@@ -62,18 +62,9 @@ public class VizDoomBasicShootTask<T extends Network> extends VizDoomTask<T> {
 	 */
 	@Override
 	public double[] getInputs(GameState s) {
-		int width = game.getScreenWidth();
-		int row = inputRow; // Calculated in constructor
-		int color = RED_INDEX;
-		double[] result = new double[width];
-		int index = row * width * 3; // 3 is for the three different color components: RGB
-		for (int x = 0; x < width; x++) {
-			int c = index + (3 * x) + color;
-			result[x] = (s.imageBuffer[c]) / 255.0;
-		}
-		return result;
+		return colorFromRow(s, inputRow, RED_INDEX);
 	}
-
+        
 	/**
 	 * For this particular task, the labels should match the row inputs
 	 * (coordinates)
