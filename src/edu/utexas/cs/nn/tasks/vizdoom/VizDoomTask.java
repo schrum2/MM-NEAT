@@ -45,7 +45,7 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 	public static final int RED_INDEX = 2;
 	public static final int GREEN_INDEX = 1;
 	public static final int BLUE_INDEX = 0;
-        public static final double MAX_COLOR = 255;
+	public static final double MAX_COLOR = 255;
 
 	public DoomGame game;
 	public List<int[]> actions;
@@ -59,7 +59,7 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 		actions = new ArrayList<int[]>();
 		setDoomActions();
 		setDoomStateVariables();
-                setRewards();
+		setRewards();
 		setDoomMiscSettings();
 		MMNEAT.registerFitnessFunction("DoomReward");
 	}
@@ -67,23 +67,23 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 	@Override
 	public void prep() {
 		// Initialize the game. Further configuration won't 
-                // take any effect from now on.
+		// take any effect from now on.
 		game.init();
 	}
 
 	public void doomInit() {
-                // My trick for loading the vizdoom.dll library
+		// My trick for loading the vizdoom.dll library
 		SpecifyDLL.specifyDLLPath();
 		// Create DoomGame instance. 
-                // It will run the game and communicate with you.
+		// It will run the game and communicate with you.
 		game = new DoomGame();
 		// Sets path to vizdoom engine executive which will be spawned as a
 		// separate process. Use the version without sound.
 		game.setViZDoomPath("vizdoom/bin/vizdoom");
 		// Sets path to doom2 iwad resource file which 
-                // contains the actual doom game
+		// contains the actual doom game
 		game.setDoomGamePath("vizdoom/scenarios/" + Parameters.parameters.stringParameter("gameWad"));
-		
+
 		// Sets path to additional resources iwad file which is basically your
 		// scenario iwad.
 		// If not specified default doom2 maps will be used and it's pretty much
@@ -92,7 +92,7 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 		// Set map to start (scenario .wad files can contain many maps).
 		game.setDoomMap(Parameters.parameters.stringParameter("doomMap"));
 		// Sets resolution. Default is 320X240
-                // TODO: Should be be able to set this from the command line somehow?
+		// TODO: Should be be able to set this from the command line somehow?
 		setRestrictedScreenResolution(ScreenResolution.RES_200X150);
 		// Sets the screen buffer format. 
 		game.setScreenFormat(ScreenFormat.RGB24);
@@ -178,14 +178,14 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 			// drawGameState(s, game.getScreenWidth(), game.getScreenHeight());
 			//drawGameStateRow(s, game.getScreenWidth(), game.getScreenHeight(), getRow());
 
-                        double[] inputs = getInputs(s);
+			double[] inputs = getInputs(s);
 			double[] outputs = n.process(inputs);
-                        // This now takes the arg max of the action outputs
-                        double r = game.makeAction(actions.get(StatisticsUtilities.argmax(outputs))); 
+			// This now takes the arg max of the action outputs
+			double r = game.makeAction(actions.get(StatisticsUtilities.argmax(outputs))); 
 			// This r seems worthless ... does it give any information?
-                        MiscUtil.waitForReadStringAndEnterKeyPress();
+			// MiscUtil.waitForReadStringAndEnterKeyPress();
 		}
-                // TODO: Make this reward calculation more general, allow for multiple objectives
+		// TODO: Make this reward calculation more general, allow for multiple objectives
 		return new Pair<double[], double[]>(new double[] { game.getTotalReward() }, new double[] {});
 	}
 
@@ -203,12 +203,12 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 	 * Sets all the rewards for the given game and agent
 	 */
 	public abstract void setRewards(); // TODO: Should be able to generalize this to set up multiple objectives
-	
+
 	/**
 	 * Is run at the conclusion of all evolution. Terminates the DoomGame
 	 * instance.
 	 */
-        @Override
+	@Override
 	public void finalCleanup() {
 		game.close();
 	}
@@ -220,7 +220,7 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 	 */
 	@Override
 	public int numObjectives() {
-                // TODO: Generalize to allow for multiple objectives
+		// TODO: Generalize to allow for multiple objectives
 		return 1;
 	}
 
@@ -247,17 +247,17 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 		return actionLabels.toArray(new String[actionLabels.size()]);
 	}
 
-        /**
-         * Get scaled intensity values for a specific color from a specific
-         * row of the image of the current game state.
-         * 
-         * @param s game state
-         * @param row row on screen
-         * @param colorIndex RED_INDEX, GREEN_INDEX, or BLUE_INDEX
-         * @return scaled intensity values in specified color for specified row
-         */
-        public double[] colorFromRow(GameState s, int row, int colorIndex) {
-                int width = game.getScreenWidth();
+	/**
+	 * Get scaled intensity values for a specific color from a specific
+	 * row of the image of the current game state.
+	 * 
+	 * @param s game state
+	 * @param row row on screen
+	 * @param colorIndex RED_INDEX, GREEN_INDEX, or BLUE_INDEX
+	 * @return scaled intensity values in specified color for specified row
+	 */
+	public double[] colorFromRow(GameState s, int row, int colorIndex) {
+		int width = game.getScreenWidth();
 		double[] result = new double[width];
 		int index = row * width * 3; // 3 is for the three different color components: RGB
 		for (int x = 0; x < width; x++) {
@@ -265,9 +265,9 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 			result[x] = (s.imageBuffer[c]) / MAX_COLOR;
 		}
 		return result;
-        }
+	}
 
-        /**
+	/**
 	 * This method outputs the Gamestate according to the width and height given
 	 * You may change which of the RGB values appear as well, currently set to
 	 * all red values.
@@ -289,10 +289,10 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 				int r = bufferPos + RED_INDEX;
 				int g = bufferPos + GREEN_INDEX;
 				int b = bufferPos + BLUE_INDEX;
-                                // Actual screen
+				// Actual screen
 				int rgb = new Color(s.imageBuffer[r], s.imageBuffer[g], s.imageBuffer[b]).getRGB();
 				// Just red intensity
-                                // int rgb = new Color(s.imageBuffer[r], s.imageBuffer[r], s.imageBuffer[r]).getRGB();
+				// int rgb = new Color(s.imageBuffer[r], s.imageBuffer[r], s.imageBuffer[r]).getRGB();
 				image.setRGB(x, y, rgb);
 				bufferPos += 3;
 			}
