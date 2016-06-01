@@ -2,13 +2,19 @@ package edu.utexas.cs.nn.tasks.picbreeder;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import javax.swing.*;
+
+import edu.utexas.cs.nn.MMNEAT.MMNEAT;
+import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
+import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
 import edu.utexas.cs.nn.networks.Network;
+import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.scores.Score;
 import edu.utexas.cs.nn.tasks.SinglePopulationTask;
 import edu.utexas.cs.nn.util.GraphicsUtil;
@@ -16,43 +22,74 @@ import edu.utexas.cs.nn.util.MiscUtil;
 
 public class PicbreederTask<T extends Network> implements SinglePopulationTask<T>, ActionListener {
 
-	private static final int NUM_ROWS = 4;
-	private static final int NUM_COLUMNS = 3;
-	private static final int PIC_SIZE = 250;
-	private static final int BORDER = 5;
-	private JFrame frame;
-        private JPanel panel;
+	private static final int LABEL_INDEX = 0;
 	
-	public PicbreederTask() {//TODO
+	private  final int NUM_ROWS;
+	private final int NUM_COLUMNS;
+	private final int PIC_SIZE;
+	
+	
+	private JFrame frame;
+	private ArrayList<JPanel> panels;
+	private ArrayList<JButton> buttons;
+	private ArrayList<Boolean> keepScore;
+	private ArrayList<Score<T>> scores;
+	
+	
+	public PicbreederTask(int rows, int columns, int size) {//TODO
+		NUM_ROWS = rows + 1;
+		NUM_COLUMNS = columns;
+		PIC_SIZE = size;
 		frame = new JFrame("Picbreeder");
-		panel = new JPanel();
-		//magic #s 4 & 5 correspond to padding edges
-		frame.setSize(PIC_SIZE * NUM_ROWS + BORDER * 5, (int) (PIC_SIZE * NUM_COLUMNS + BORDER * 4 + PIC_SIZE * (2.0/3.0)));
+		panels = new ArrayList<JPanel>(NUM_ROWS);
+		keepScore = new ArrayList<Boolean>((NUM_ROWS - 1) * NUM_COLUMNS);
+		buttons = new ArrayList<JButton>((NUM_ROWS - 1) * NUM_COLUMNS);
+		frame.setSize(PIC_SIZE * NUM_COLUMNS, PIC_SIZE * (NUM_ROWS));
 		frame.setLocation(300, 100);//magic #s 100 correspond to relocating frame to middle of screen
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setVisible(true);
-        JLabel label = new JLabel("Picture Evolver");
-        label.setFont(new Font("Serif", Font.BOLD, 48));
-        label.setForeground(Color.DARK_GRAY);
-        panel.add(label);
-        frame.add(panel);
-        label.setLocation(frame.getWidth()/2, 5);//5 is magic # to set just below menu
-        
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setLayout(new GridLayout(NUM_ROWS, 0));
+		frame.setVisible(true);
+		frame.setBackground(Color.RED);
+		
+		
+		for(int i = 0; i < NUM_ROWS; i++) {
+			panels.add(new JPanel());
+		}
+		
+		
+		for(int i = 0; i < NUM_ROWS; i++) {
+			if(i == LABEL_INDEX){
+				panels.get(i).setSize(frame.getWidth(), PIC_SIZE);
+				frame.add(panels.get(i));
+			}
+			panels.get(i).setSize(frame.getWidth(), PIC_SIZE);
+			panels.get(i).setLayout(new GridLayout(1, NUM_COLUMNS));
+			frame.add(panels.get(i));
+		}
+		
+		JLabel label = new JLabel("Picture Evolver");
+		label.setFont(new Font("Serif", Font.BOLD, 48));
+		label.setForeground(Color.DARK_GRAY);
+		panels.get(LABEL_INDEX).add(label);
+		label.setLocation((int) frame.getAlignmentX() + 10, 5);//5 is magic # to set just below menu
 
-        
-        
+		
 	}
 
-        private JButton getImageButton(BufferedImage image) {
-                JButton button = new JButton(new ImageIcon(image));
+	/*
+	 * shouldnt actually be used in the final code. For testing purposes
+	 */
+	private JButton getImageButton(BufferedImage image) {
+		JButton button = new JButton(new ImageIcon(image));
 		return button;
-        }
-        
+	}
+
+	
 	private JButton getImageButton(Genotype<T> genotype) {
 		BufferedImage image = GraphicsUtil.imageFromCPPN(genotype.getPhenotype(), PIC_SIZE, PIC_SIZE); 
 		return getImageButton(image);
 	}
-        
+
 	public double evaluate(boolean action) {
 		if(action) return 1.0;
 		else return 0.0;
@@ -77,71 +114,74 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	}
 
 	/**
-	 * Not a necessary method
+	 * 	 * this method also makes no sense in 
+	 * scope of this task
 	 */
 	@Override
 	public void finalCleanup() {
 	}
 
 	@Override
-    public ArrayList<Score<T>> evaluateAll(ArrayList<Genotype<T>> population) {
-        // TODO Auto-generated method stub
+	public ArrayList<Score<T>> evaluateAll(ArrayList<Genotype<T>> population) {// TODO
 
-        // Most of what is below needs to be changes somehow
-        BufferedImage blackStart = GraphicsUtil.solidColorImage(Color.BLACK, PIC_SIZE, PIC_SIZE);
-
-        JButton image1 = getImageButton(blackStart);
-        panel.add(image1);
-        image1.setLocation(BORDER, (int) (NUM_ROWS * 2.0 / 3.0 + BORDER));
-        JButton image2 = getImageButton(blackStart);
-        panel.add(image2);
-        image2.setLocation(BORDER * 2 + PIC_SIZE, (int) (NUM_ROWS * 2.0 / 3.0 + BORDER));
-        JButton image3 = getImageButton(blackStart);
-        panel.add(image3);
-        image3.setLocation(BORDER * 3 + PIC_SIZE * 2, (int) (NUM_ROWS * 2.0 / 3.0 + BORDER));
-        JButton image4 = getImageButton(blackStart);
-        panel.add(image4);
-        image4.setLocation(BORDER * 4 + PIC_SIZE * 3, (int) (NUM_ROWS * 2.0 / 3.0 + BORDER));
-        JButton image5 = getImageButton(blackStart);
-        panel.add(image5);
-        image5.setLocation(BORDER, (int) (NUM_ROWS * 2.0 / 3.0) + BORDER * 2 + PIC_SIZE);
-        JButton image6 = getImageButton(blackStart);
-        panel.add(image6);
-        image6.setLocation(BORDER * 2 + PIC_SIZE, (int) (NUM_ROWS * 2.0 / 3.0 + BORDER * 2 + PIC_SIZE));
-        JButton image7 = getImageButton(blackStart);
-        panel.add(image7);
-        image7.setLocation(BORDER * 3 + PIC_SIZE * 2, (int) (NUM_ROWS * 2.0 / 3.0 + BORDER * 2 + PIC_SIZE));
-        JButton image8 = getImageButton(blackStart);
-        panel.add(image8);
-        image8.setLocation(BORDER * 4 + PIC_SIZE * 3, (int) (NUM_ROWS * 2.0 / 3.0 + BORDER * 2 + PIC_SIZE));
-        JButton image9 = getImageButton(blackStart);
-        panel.add(image9);
-        image9.setLocation(BORDER, (int) (NUM_ROWS * 2.0 / 3.0 + BORDER * 3 + PIC_SIZE * 2));
-        JButton image10 = getImageButton(blackStart);
-        panel.add(image10);
-        image10.setLocation(BORDER * 2 + PIC_SIZE, (int) (NUM_ROWS * 2.0 / 3.0 + BORDER * 3 + PIC_SIZE * 2));
-        JButton image11 = getImageButton(blackStart);
-        panel.add(image11);
-        image11.setLocation(BORDER * 3 + PIC_SIZE * 2, (int) (NUM_ROWS * 2.0 / 3.0 + BORDER * 3 + PIC_SIZE * 2));
-        JButton image12 = getImageButton(blackStart);
-        panel.add(image12);
-        image12.setLocation(BORDER * 4 + PIC_SIZE * 3, (int) (NUM_ROWS * 2.0 / 3.0 + BORDER * 3 + PIC_SIZE * 2));
-
-        return null; // change
-    }
-
-	
-	public static void main(String[] args) {
-		System.out.println("test is running");
-		PicbreederTask test = new PicbreederTask();
-                test.evaluateAll(null); // replace with a test population
-                
-                MiscUtil.waitForReadStringAndEnterKeyPress();
+		System.out.println("Sanity check");
+		
+		scores = new ArrayList<Score<T>>();
+//		if(population.size() != (NUM_ROWS - 1) * NUM_COLUMNS) {
+//			throw new IllegalArgumentException("number of genotypes doesn't match size of population!");
+//		}
+		// Most of what is below needs to be changes somehow
+		int x = 0;
+		for(int i = LABEL_INDEX + 1; i < panels.size(); i++) {
+			for(int j = 0; j < NUM_COLUMNS; j++) {
+				JButton image = getImageButton(population.get(j));
+				image.addActionListener(this);
+				panels.get(j).add(image);
+				buttons.add(image);
+				//keepScore.set(x++, false);
+				break;
+			}
+			break;
+		}
+		
+		
+		//need key listener to wait
+		System.out.println("another sanity check");
+		//need to add action listeners
+		//use actions from mouse to determine score
+		return scores; // change
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent arg0) {
-		// TODO Auto-generated method stub
-		
+	public void actionPerformed(ActionEvent event) {// TODO 
+		//keepScore.set(buttons.indexOf(event.getSource()), true);
+		System.out.println("You pressed a button!");
 	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public static void main(String[] args) {
+		System.out.println("test is running");
+		
+		MMNEAT.clearClasses();
+		EvolutionaryHistory.setInnovation(0);
+		EvolutionaryHistory.setHighestGenotypeId(0);
+		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "allowMultipleFunctions:true", "netChangeActivationRate:0.4", "recurrency:false" });
+		MMNEAT.loadClasses();
+		
+		PicbreederTask test = new PicbreederTask(3, 4, 250);
+
+
+		final int NUM_MUTATIONS = 200;
+
+		TWEANNGenotype tg1 = new TWEANNGenotype(4, 3, false, 0, 1, 0);
+		for (int i = 0; i < NUM_MUTATIONS; i++) {
+			tg1.mutate();
+		}
+		ArrayList<Genotype> genotypes = new ArrayList<Genotype>();
+		genotypes.add(tg1);
+		test.evaluateAll(genotypes); // replace with a test population
+		MiscUtil.waitForReadStringAndEnterKeyPress();
+	}
+
+	
 }
