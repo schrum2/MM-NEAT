@@ -234,4 +234,12 @@ public class Score<T> {
 		result.evals = this.evals + other.evals;
 		return result;
 	}
+	
+	/**
+	 * replaces old scores with new scores
+	 * @param newScores
+	 */
+	public void replaceScores(double[] newScores){
+		scores = newScores;
+	}
 }

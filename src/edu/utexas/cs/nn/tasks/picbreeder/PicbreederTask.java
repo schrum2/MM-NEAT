@@ -7,6 +7,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Scanner;
+
 import javax.swing.*;
 
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
@@ -18,13 +20,16 @@ import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.scores.Score;
 import edu.utexas.cs.nn.tasks.SinglePopulationTask;
 import edu.utexas.cs.nn.util.GraphicsUtil;
-import edu.utexas.cs.nn.util.MiscUtil;
 
+/**
+ * 
+ * @author gillespl
+ *
+ * @param <T>
+ */
 public class PicbreederTask<T extends Network> implements SinglePopulationTask<T>, ActionListener {
-
-	private static final int LABEL_INDEX = 0;
 	
-	private  final int NUM_ROWS;
+	private final int NUM_ROWS;
 	private final int NUM_COLUMNS;
 	private final int PIC_SIZE;
 	
@@ -32,67 +37,64 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	private JFrame frame;
 	private ArrayList<JPanel> panels;
 	private ArrayList<JButton> buttons;
-	private ArrayList<Boolean> keepScore;
 	private ArrayList<Score<T>> scores;
 	
 	
-	public PicbreederTask(int rows, int columns, int size) {//TODO
-		NUM_ROWS = rows + 1;
+	public PicbreederTask(int rows, int columns, int size) {
+		NUM_ROWS = rows;
 		NUM_COLUMNS = columns;
 		PIC_SIZE = size;
 		frame = new JFrame("Picbreeder");
 		panels = new ArrayList<JPanel>(NUM_ROWS);
-		keepScore = new ArrayList<Boolean>((NUM_ROWS - 1) * NUM_COLUMNS);
 		buttons = new ArrayList<JButton>((NUM_ROWS - 1) * NUM_COLUMNS);
 		frame.setSize(PIC_SIZE * NUM_COLUMNS, PIC_SIZE * (NUM_ROWS));
 		frame.setLocation(300, 100);//magic #s 100 correspond to relocating frame to middle of screen
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setLayout(new GridLayout(NUM_ROWS, 0));
+		frame.setLayout(new GridLayout(NUM_ROWS + 1, 0));
 		frame.setVisible(true);
 		frame.setBackground(Color.RED);
 		
-		
-		for(int i = 0; i < NUM_ROWS; i++) {
-			panels.add(new JPanel());
-		}
-		
-		
-		for(int i = 0; i < NUM_ROWS; i++) {
-			if(i == LABEL_INDEX){
-				panels.get(i).setSize(frame.getWidth(), PIC_SIZE);
-				frame.add(panels.get(i));
-			}
-			panels.get(i).setSize(frame.getWidth(), PIC_SIZE);
-			panels.get(i).setLayout(new GridLayout(1, NUM_COLUMNS));
-			frame.add(panels.get(i));
-		}
-		
+		JPanel top = new JPanel();
 		JLabel label = new JLabel("Picture Evolver");
 		label.setFont(new Font("Serif", Font.BOLD, 48));
 		label.setForeground(Color.DARK_GRAY);
-		panels.get(LABEL_INDEX).add(label);
-		label.setLocation((int) frame.getAlignmentX() + 10, 5);//5 is magic # to set just below menu
-
+		top.add(label);
+		label.setLocation((int) frame.getAlignmentX(), 5);//5 is magic # to set just below menu
+		JButton evolveButton = new JButton(new ImageIcon("data\\picbreeder\\arrow.png"));
+		evolveButton.setName("" + -1);
+		evolveButton.addActionListener(this);
+		evolveButton.setLocation((int)(frame.getWidth() * (3.0/4)), (int) top.getAlignmentY());
+		top.add(evolveButton);
+		panels.add(top);
 		
+		for(int i = 1; i <= NUM_ROWS; i++) {
+			JPanel row = new JPanel();
+			row.setSize(frame.getWidth(), PIC_SIZE);
+			row.setSize(frame.getWidth(), PIC_SIZE);
+			row.setLayout(new GridLayout(1, NUM_COLUMNS));
+			panels.add(row);
+		}
+
+		for(JPanel panel: panels) {
+			frame.add(panel);
+		}
 	}
 
-	/*
-	 * shouldnt actually be used in the final code. For testing purposes
-	 */
-	private JButton getImageButton(BufferedImage image) {
+	
+	private JButton getImageButton(BufferedImage image, String s) {
 		JButton button = new JButton(new ImageIcon(image));
+		button.setName(s);
 		return button;
 	}
 
 	
-	private JButton getImageButton(Genotype<T> genotype) {
+	private JButton getImageButton(Genotype<T> genotype, String s) {
 		BufferedImage image = GraphicsUtil.imageFromCPPN(genotype.getPhenotype(), PIC_SIZE, PIC_SIZE); 
-		return getImageButton(image);
+		return getImageButton(image, s);
 	}
 
-	public double evaluate(boolean action) {
-		if(action) return 1.0;
-		else return 0.0;
+	public double[] evaluate() {
+		return new double[]{1.0};
 	}
 	@Override
 	public int numObjectives() {
@@ -122,26 +124,22 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	}
 
 	@Override
-	public ArrayList<Score<T>> evaluateAll(ArrayList<Genotype<T>> population) {// TODO
+	public ArrayList<Score<T>> evaluateAll(ArrayList<Genotype<T>> population) {
 
-		System.out.println("Sanity check");
-		
 		scores = new ArrayList<Score<T>>();
-//		if(population.size() != (NUM_ROWS - 1) * NUM_COLUMNS) {
-//			throw new IllegalArgumentException("number of genotypes doesn't match size of population!");
-//		}
-		// Most of what is below needs to be changes somehow
+		if(population.size() != NUM_ROWS * NUM_COLUMNS) {
+			throw new IllegalArgumentException("number of genotypes doesn't match size of population!");
+		}
 		int x = 0;
-		for(int i = LABEL_INDEX + 1; i < panels.size(); i++) {
+		for(int i = 1; i < panels.size(); i++) {
 			for(int j = 0; j < NUM_COLUMNS; j++) {
-				JButton image = getImageButton(population.get(j));
+				scores.add(new Score<T>(population.get(x), new double[]{0}, null));
+				JButton image = getImageButton(population.get(x), "" + x);
+				x++;
 				image.addActionListener(this);
-				panels.get(j).add(image);
+				panels.get(i).add(image);
 				buttons.add(image);
-				//keepScore.set(x++, false);
-				break;
 			}
-			break;
 		}
 		
 		
@@ -149,13 +147,23 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		System.out.println("another sanity check");
 		//need to add action listeners
 		//use actions from mouse to determine score
+		//MiscUtil.waitForReadStringAndEnterKeyPress();
 		return scores; // change
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent event) {// TODO 
-		//keepScore.set(buttons.indexOf(event.getSource()), true);
-		System.out.println("You pressed a button!");
+	public void actionPerformed(ActionEvent event) {
+		Scanner s = new Scanner(event.toString());
+		s.next();
+		s.next();
+		int scoreIndex = s.nextInt();
+		if(scoreIndex == -1) {// TODO 
+			//need to add code here that mutates chosen individuals and updates jpanel
+			System.out.println("congratulations you pressed the evolve button");
+		} else {
+		scores.get(scoreIndex).replaceScores(evaluate());
+		}
+		s.close();
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -168,19 +176,18 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "allowMultipleFunctions:true", "netChangeActivationRate:0.4", "recurrency:false" });
 		MMNEAT.loadClasses();
 		
-		PicbreederTask test = new PicbreederTask(3, 4, 250);
+		PicbreederTask test = new PicbreederTask(4, 3, 250);
 
-
+		ArrayList<Genotype> genotypes = new ArrayList<Genotype>();
+		for(int i = 0; i < 12; i++) {
 		final int NUM_MUTATIONS = 200;
-
 		TWEANNGenotype tg1 = new TWEANNGenotype(4, 3, false, 0, 1, 0);
-		for (int i = 0; i < NUM_MUTATIONS; i++) {
+		for (int j = 0; j < NUM_MUTATIONS; j++) {
 			tg1.mutate();
 		}
-		ArrayList<Genotype> genotypes = new ArrayList<Genotype>();
 		genotypes.add(tg1);
+		}
 		test.evaluateAll(genotypes); // replace with a test population
-		MiscUtil.waitForReadStringAndEnterKeyPress();
 	}
 
 	
