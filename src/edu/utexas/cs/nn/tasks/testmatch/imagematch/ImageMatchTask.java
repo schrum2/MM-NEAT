@@ -180,6 +180,7 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 
 	/**
 	 * gets behavior vector for behavioral diversity algorithm
+         * @return The H, S, and B values for each pixel in the image
 	 */
 	@Override
 	public ArrayList<Double> getBehaviorVector() {

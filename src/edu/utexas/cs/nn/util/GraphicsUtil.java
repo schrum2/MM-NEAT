@@ -7,7 +7,6 @@ import java.awt.image.BufferedImage;
 import edu.utexas.cs.nn.graphics.DrawingPanel;
 import edu.utexas.cs.nn.networks.ActivationFunctions;
 import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.util.util2D.ILocated2D;
 import edu.utexas.cs.nn.util.util2D.Tuple2D;
 
@@ -62,7 +61,8 @@ public class GraphicsUtil {
 	 */
 	public static float[] getHSBFromCPPN(Network n, int x, int y, int imageWidth, int imageHeight) {
 		double[] input = getCPPNInputs(x, y, imageWidth, imageHeight);
-		((TWEANN) n).flush();
+                 // Eliminate recurrent activation for consistent images at all resolutions
+		n.flush();
 		return rangeRestrictHSB(n.process(input));
 	}
 	/**
@@ -128,4 +128,21 @@ public class GraphicsUtil {
 		return parentPanel;
 	}
 
+        /**
+         * Creates an image of the specified size and height consisting entirely
+         * of a designated solid color.
+         * @param c Color throughout image
+         * @param width width of image in pixels
+         * @param height height of image in pixels
+         * @return BufferedImage in solid color
+         */
+        public static BufferedImage solidColorImage(Color c, int width, int height) {
+            BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+		for (int x = 0; x < width; x++) {// scans across whole image
+			for (int y = 0; y < height; y++) {
+				image.setRGB(x, y, c.getRGB());
+			}
+		}
+                return image;
+        }
 }
