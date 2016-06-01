@@ -21,7 +21,7 @@ public class Basic {
 
 		// Sets path to vizdoom engine executive which will be spawned as a
 		// separate process. Default is "./vizdoom".
-		game.setViZDoomPath("vizdoom/bin/vizdoom_nosound");
+		game.setViZDoomPath("vizdoom/bin/vizdoom");
 
 		// Sets path to doom2 iwad resource file which contains the actual doom
 		// game-> Default is "./doom2.wad".

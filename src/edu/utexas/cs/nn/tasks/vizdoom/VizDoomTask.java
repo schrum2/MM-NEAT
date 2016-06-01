@@ -78,7 +78,7 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 		game = new DoomGame();
 		// Sets path to vizdoom engine executive which will be spawned as a
 		// separate process. Use the version without sound.
-		game.setViZDoomPath("vizdoom/bin/vizdoom_nosound");
+		game.setViZDoomPath("vizdoom/bin/vizdoom");
 		// Sets path to doom2 iwad resource file which 
                 // contains the actual doom game
 		game.setDoomGamePath("vizdoom/scenarios/" + GAME_WAD);

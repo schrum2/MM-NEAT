@@ -35,7 +35,7 @@ public class Spectator {
 		game.setDoomGamePath("vizdoom/scenarios/freedoom2.wad");
 
 		// game.setDoomGamePath("vizdoom/scenarios/doom2.wad");
-		game.setViZDoomPath("vizdoom/bin/vizdoom_nosound");
+		game.setViZDoomPath("vizdoom/bin/vizdoom");
 
 		// Adds mouse support:
 		game.addAvailableButton(Button.TURN_LEFT_RIGHT_DELTA);
