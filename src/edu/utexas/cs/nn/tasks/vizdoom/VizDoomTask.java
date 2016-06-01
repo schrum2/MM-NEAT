@@ -12,7 +12,6 @@ import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.networks.NetworkTask;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.tasks.NoisyLonerTask;
-import edu.utexas.cs.nn.tasks.testmatch.imagematch.ImageMatchTask;
 import edu.utexas.cs.nn.util.GraphicsUtil;
 import edu.utexas.cs.nn.util.MiscUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
@@ -26,6 +25,8 @@ import vizdoom.SpecifyDLL;
 
 /**
  *
+ * Parent class for all VizDoom domains
+ * 
  * @author Jacob Schrum
  * @param <T>
  *            Phenotype being evolved
@@ -56,31 +57,31 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 		actions = new ArrayList<int[]>();
 		setDoomActions();
 		setDoomStateVariables();
+                setRewards();
 		setDoomMiscSettings();
 		MMNEAT.registerFitnessFunction("DoomReward");
 	}
 
 	@Override
 	public void prep() {
-		// Initialize the game. Further configuration won't take any effect from
-		// now on.
+		// Initialize the game. Further configuration won't 
+                // take any effect from now on.
 		game.init();
 	}
 
 	public void doomInit() {
+                // My trick for loading the vizdoom.dll library
 		SpecifyDLL.specifyDLLPath();
-		// Create DoomGame instance. It will run the game and communicate with
-		// you.
+		// Create DoomGame instance. 
+                // It will run the game and communicate with you.
 		game = new DoomGame();
 		// Sets path to vizdoom engine executive which will be spawned as a
-		// separate process.
+		// separate process. Use the version without sound.
 		game.setViZDoomPath("vizdoom/bin/vizdoom_nosound");
-		// Sets path to doom2 iwad resource file which contains the actual doom
-		// game-> Default is "./doom2.wad".
+		// Sets path to doom2 iwad resource file which 
+                // contains the actual doom game
 		game.setDoomGamePath("vizdoom/scenarios/" + GAME_WAD);
-		// game.setDoomGamePath("vizdoom/scenarios/doom2.wad"); // Not provided
-		// with environment due to licences.
-
+		
 		// Sets path to additional resources iwad file which is basically your
 		// scenario iwad.
 		// If not specified default doom2 maps will be used and it's pretty much
@@ -89,9 +90,9 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 		// Set map to start (scenario .wad files can contain many maps).
 		game.setDoomMap(DOOM_MAP);
 		// Sets resolution. Default is 320X240
+                // TODO: Should be be able to set this from the command line somehow?
 		setRestrictedScreenResolution(ScreenResolution.RES_200X150);
-		// Sets the screen buffer format. Not used here but now you can change
-		// it. Defalut is CRCGCB.
+		// Sets the screen buffer format. 
 		game.setScreenFormat(ScreenFormat.RGB24);
 		// Sets other rendering options
 		game.setRenderHud(false);
@@ -149,30 +150,21 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 	public abstract void setDoomStateVariables();
 
 	public void setDoomMiscSettings() {
-		// Causes episodes to finish after 200 tics (actions)
+		// Causes episodes to finish after designated tics (actions)
 		game.setEpisodeTimeout(DOOM_EPISODE_LENGTH);
 
-		// Makes episodes start after 10 tics (~after raising the weapon)
-		// Doesn't work? Actually setting the end time?
-		// game.setEpisodeStartTime(10);
-		// Makes the window appear (turned on by default)
-		// TODO: This doesn't work! Can we fix it, or do the VizDoom designers
-		// need to fix it?
+		// TODO: This doesn't work! Can we fix it, or do the VizDoom designers need to fix it?
 		game.setWindowVisible(CommonConstants.watch);
-		// Turns on the sound. (turned off by default)
-		// game.setSoundEnabled(false); // This seems to be controlled by the
-		// game we run, not this setting
 		// Sets ViZDoom mode (PLAYER, ASYNC_PLAYER, SPECTATOR, ASYNC_SPECTATOR,
-		// PLAYER mode is default)
+		// PLAYER mode is default). Not really sure what the distinctions are
 		game.setMode(Mode.PLAYER);
 	}
 
 	@Override
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {
-		// Need to remove rewards from previous episodes I think
+		// Start new trial from scratch
 		game.newEpisode();
 		Network n = individual.getPhenotype();
-		//int inc = 0;
 		while (!game.isEpisodeFinished()) {
 			// Get the state
 			GameState s = game.getState();
@@ -183,22 +175,14 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 			//System.out.println(game.getScreenHeight());
 			// drawGameState(s, game.getScreenWidth(), game.getScreenHeight());
 			//drawGameStateRow(s, game.getScreenWidth(), game.getScreenHeight(), getRow());
-			double[] inputs = getInputs(s);
+
+                        double[] inputs = getInputs(s);
 			double[] outputs = n.process(inputs);
-
-			// double r =
-			// game.makeAction(actions.get(RandomNumbers.randomGenerator.nextInt(3)));
-			double r = game.makeAction(actions.get(StatisticsUtilities.argmax(outputs))); 
-			// This now takes the arg max of the action outputs
-
-
-			// You can also get last reward by using this function
-			// double r = game.getLastReward();
-			//System.out.println(game.getLastReward());
-			//inc++;
+                        // This now takes the arg max of the action outputs
+                        double r = game.makeAction(actions.get(StatisticsUtilities.argmax(outputs))); 
+			// This r seems worthless ... does it give any information?
 		}
-		//System.out.println(inc);
-		
+                // TODO: Make this reward calculation more general, allow for multiple objectives
 		return new Pair<double[], double[]>(new double[] { game.getTotalReward() }, new double[] {});
 	}
 
@@ -215,12 +199,13 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 	/**
 	 * Sets all the rewards for the given game and agent
 	 */
-	public abstract void setRewards();
+	public abstract void setRewards(); // TODO: Should be able to generalize this to set up multiple objectives
 	
 	/**
 	 * Is run at the conclusion of all evolution. Terminates the DoomGame
 	 * instance.
 	 */
+        @Override
 	public void finalCleanup() {
 		game.close();
 	}
@@ -232,6 +217,7 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 	 */
 	@Override
 	public int numObjectives() {
+                // TODO: Generalize to allow for multiple objectives
 		return 1;
 	}
 
@@ -280,9 +266,10 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 				int r = bufferPos + RED_INDEX;
 				int g = bufferPos + GREEN_INDEX;
 				int b = bufferPos + BLUE_INDEX;
-				// int rgb = new Color(s.imageBuffer[r], s.imageBuffer[g],
-				// s.imageBuffer[b]).getRGB();
-				int rgb = new Color(s.imageBuffer[r], s.imageBuffer[r], s.imageBuffer[r]).getRGB();
+                                // Actual screen
+				int rgb = new Color(s.imageBuffer[r], s.imageBuffer[g], s.imageBuffer[b]).getRGB();
+				// Just red intensity
+                                // int rgb = new Color(s.imageBuffer[r], s.imageBuffer[r], s.imageBuffer[r]).getRGB();
 				image.setRGB(x, y, rgb);
 				bufferPos += 3;
 			}
@@ -312,8 +299,7 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 				int r = index + bufferPos + RED_INDEX;
 				int g = index + bufferPos + GREEN_INDEX;
 				int b = index + bufferPos + BLUE_INDEX;
-				// int rgb = new Color(s.imageBuffer[r], s.imageBuffer[g],
-				// s.imageBuffer[b]).getRGB();
+				// int rgb = new Color(s.imageBuffer[r], s.imageBuffer[g],s.imageBuffer[b]).getRGB();
 				int rgb = new Color(s.imageBuffer[r], s.imageBuffer[r], s.imageBuffer[r]).getRGB();
 				image.setRGB(x, y, rgb);
 				bufferPos += 3;

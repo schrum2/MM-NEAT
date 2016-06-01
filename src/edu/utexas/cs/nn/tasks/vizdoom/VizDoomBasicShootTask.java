@@ -4,7 +4,6 @@ import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.networks.TWEANN;
-import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import vizdoom.Button;
 import vizdoom.GameState;
@@ -13,14 +12,14 @@ import vizdoom.GameVariable;
 public class VizDoomBasicShootTask<T extends Network> extends VizDoomTask<T> {
 
 	// Save the inputRow once instead of recalculating it on every time step
-	private int inputRow;
+	private final int inputRow;
 
 	public VizDoomBasicShootTask() {
 		super();
-		// Replace magic number when getRow() method works
 		inputRow = getRow(); 
 	}
 
+        @Override
 	public void setDoomActions() {
 		// Adds buttons that will be allowed.
 		game.addAvailableButton(Button.MOVE_LEFT);
@@ -67,8 +66,7 @@ public class VizDoomBasicShootTask<T extends Network> extends VizDoomTask<T> {
 		int row = inputRow; // Calculated in constructor
 		int color = RED_INDEX;
 		double[] result = new double[width];
-		int index = row * width * 3; // 3 is for the three different color
-										// components: RGB
+		int index = row * width * 3; // 3 is for the three different color components: RGB
 		for (int x = 0; x < width; x++) {
 			int c = index + (3 * x) + color;
 			result[x] = (s.imageBuffer[c]) / 255.0;
@@ -96,10 +94,11 @@ public class VizDoomBasicShootTask<T extends Network> extends VizDoomTask<T> {
 	 * row number to get the inputs from. This is done based on Screen
 	 * Resolution ratios. The calculations are hard coded, but tested and gave
 	 * reliable rows when displayed.
+         * @return Row of screen to use as sensor input
 	 */
-	public int getRow() {
+	public final int getRow() {
 		float first;
-		int second = 0;
+		int second;
 		if (game.getScreenWidth() / 4 == game.getScreenHeight() / 3) { 
 			// ratio is 4:3
 			first = (float) (game.getScreenWidth() * 0.3825);
