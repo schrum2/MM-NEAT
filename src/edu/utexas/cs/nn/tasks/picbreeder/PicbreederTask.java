@@ -16,6 +16,7 @@ import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
 import edu.utexas.cs.nn.networks.Network;
+import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.scores.Score;
 import edu.utexas.cs.nn.tasks.SinglePopulationTask;
@@ -39,6 +40,8 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	private ArrayList<JButton> buttons;
 	private ArrayList<Score<T>> scores;
 	private ArrayList<Boolean> chosen;
+	
+	private boolean waitingForUser = false;
 
 	public PicbreederTask(int rows, int columns, int size) {
 		NUM_ROWS = rows;
@@ -78,13 +81,18 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 
 		for(JPanel panel: panels) {
 			frame.add(panel);
+			for(int j = 0; j < NUM_COLUMNS; j++) {
+				JButton image = getImageButton(GraphicsUtil.solidColorImage(Color.BLACK, PIC_SIZE, PIC_SIZE), "dummy");
+				panel.add(image);
+				buttons.add(image);
+				chosen.add(false);
+			}
 		}
 	}
 
 
 	private JButton getImageButton(BufferedImage image, String s) {
 		JButton button = new JButton(new ImageIcon(image));
-		button.setSize(image.getWidth() + 2, image.getHeight() + 2);
 		button.setName(s);
 		return button;
 	}
@@ -126,8 +134,8 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	}
 
 	@Override
-	public ArrayList<Score<T>> evaluateAll(ArrayList<Genotype<T>> population) {
-
+	public ArrayList<Score<T>> evaluateAll(ArrayList<Genotype<T>> population) {//TODO paint icon method is being a butt
+		waitingForUser = true;
 		scores = new ArrayList<Score<T>>();
 		if(population.size() != NUM_ROWS * NUM_COLUMNS) {
 			throw new IllegalArgumentException("number of genotypes doesn't match size of population!");
@@ -136,23 +144,24 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		for(int i = 1; i < panels.size(); i++) {
 			for(int j = 0; j < NUM_COLUMNS; j++) {
 				scores.add(new Score<T>(population.get(x), new double[]{0}, null));
-				JButton image = getImageButton(population.get(x), "" + x);
-				x++;
-				image.addActionListener(this);
-				panels.get(i).add(image);
-				buttons.add(image);
+				buttons.get(x).getIcon().paintIcon(buttons.get(x), getImageButton(population.get(x), ""+ x).getGraphics(), PIC_SIZE, PIC_SIZE);
+				buttons.get(x).addActionListener(this);
+				panels.get(i).add(buttons.get(x));
+				buttons.add(buttons.get(x++));
 				chosen.add(false);
-				assert (buttons.size() == chosen.size());
 			}
 		}
-
-
-		//need key listener to wait
-		System.out.println("another sanity check");
-		//need to add action listeners
-		//use actions from mouse to determine score
-		//MiscUtil.waitForReadStringAndEnterKeyPress();
-		return scores; // change
+		
+		while(waitingForUser){
+			try {
+				Thread.sleep(50);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		return scores;
 	}
 
 	@Override
@@ -164,7 +173,13 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		if(scoreIndex == -1) {// TODO 
 			//need to add code here that mutates chosen individuals and updates jpanel
 			System.out.println("congratulations you pressed the evolve button");
+			waitingForUser = false;
 		} else {
+			if(scores.size() != buttons.size()) {
+				s.close();
+				throw new IllegalArgumentException("size mismatch! score array is " + scores.size()
+				+ " in length and buttons array is " + buttons.size() + " long");
+			}
 			scores.get(scoreIndex).replaceScores(evaluate());
 			int buttonIndex = buttons.indexOf(event.getSource());
 			if(chosen.get(buttonIndex)) {
@@ -213,7 +228,21 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 			}
 			genotypes.add(tg1);
 		}
-		test.evaluateAll(genotypes); // replace with a test population
+		ArrayList<Score<TWEANN>> gen0 = test.evaluateAll(genotypes); // replace with a test population
+		System.out.println(gen0);
+		
+		genotypes = new ArrayList<Genotype>();
+		for(int i = 0; i < 12; i++) {
+			final int NUM_MUTATIONS = 200;
+			TWEANNGenotype tg1 = new TWEANNGenotype(4, 3, false, 0, 1, 0);
+			for (int j = 0; j < NUM_MUTATIONS; j++) {
+				tg1.mutate();
+			}
+			genotypes.add(tg1);
+		}
+		
+		ArrayList<Score<TWEANN>> gen1 = test.evaluateAll(genotypes); // replace with a test population
+		System.out.println(gen1);
 	}
 
 
