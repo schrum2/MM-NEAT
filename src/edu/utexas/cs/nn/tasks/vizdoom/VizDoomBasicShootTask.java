@@ -33,6 +33,10 @@ public class VizDoomBasicShootTask<T extends Network> extends VizDoomTask<T> {
 		addAction(new int[] { 1, 0, 1 }, "Left and Shoot");
 		addAction(new int[] { 0, 1, 1 }, "Right and Shoot");
 		addAction(new int[] { 0, 0, 1 }, "Still and Shoot");
+		// Other actions added as of 6/1/2016 by Gabby Gonzalez
+		addAction(new int[] { 1, 0, 0 }, "Left");
+		addAction(new int[] { 0, 1, 0 }, "Right");
+		addAction(new int[] { 0, 0, 0 }, "Still");
 	}
 
 	@Override
