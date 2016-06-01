@@ -29,6 +29,16 @@ public class Shaping {
 		// Sets resolution. Default is 320X240
 		game.setScreenResolution(ScreenResolution.RES_320X240);
 
+		// Schrum: why was this missing?
+		game.setDoomScenarioPath("vizdoom/scenarios/health_gathering.wad");
+		// Also missing
+		game.addAvailableButton(Button.TURN_LEFT);
+		game.addAvailableButton(Button.TURN_RIGHT);
+		game.addAvailableButton(Button.MOVE_FORWARD);
+		// Also missing
+		game.setDoomMap("map01");
+		game.setSeed(1234);
+
 		// Initialize the game. Further configuration won't take any effect from
 		// now on.
 		game.init();
@@ -54,12 +64,13 @@ public class Shaping {
 			game.newEpisode();
 
 			while (!game.isEpisodeFinished()) {
-
+				System.out.println("action");
 				// Get the state
 				GameState s = game.getState();
 
 				// Make random action and get reward
 				double r = game.makeAction(actions.get(ran.nextInt(3)));
+				//double r = game.makeAction(actions.get(2));
 
 				// Retrieve the shaping reward
 				int _ssr = game.getGameVariable(GameVariable.USER1); // Get value of scripted variable
