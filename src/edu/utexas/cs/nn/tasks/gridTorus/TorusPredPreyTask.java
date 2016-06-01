@@ -63,7 +63,7 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 
 	// Remember which agents are evolved. Can be cast to
 	// NNTorusPreyPreyController later
-	protected TorusPredPreyController[] evolved = null;
+	public TorusPredPreyController[] evolved = null;
 
 	/**
 	 * The getter method that returns the list of controllers for the preys
@@ -76,12 +76,12 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 	public abstract TorusPredPreyController[] getPreyAgents(Genotype<T> individual);
 
 	// boolean to indicate which agent is to be evolved
-	private final boolean preyEvolve;
+	public final boolean preyEvolve;
 
 	// list of fitness scores
-	protected ArrayList<GridTorusObjective<T>> objectives = new ArrayList<GridTorusObjective<T>>();
+	public ArrayList<GridTorusObjective<T>> objectives = new ArrayList<GridTorusObjective<T>>();
 	// list of other scores, which don't effect evolution
-	protected ArrayList<GridTorusObjective<T>> otherScores = new ArrayList<GridTorusObjective<T>>();
+	public ArrayList<GridTorusObjective<T>> otherScores = new ArrayList<GridTorusObjective<T>>();
 
 	private TorusWorldExec exec;
 
@@ -137,25 +137,9 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 		//long time = System.currentTimeMillis(); // For timing
 		TorusPredPreyController[] predAgents = getPredAgents(individual);
 		TorusPredPreyController[] preyAgents = getPreyAgents(individual);
-		exec = new TorusWorldExec();
-		TorusPredPreyGame game;
-		if (CommonConstants.watch) {
-			game = exec.runGameTimed(predAgents, preyAgents, true);
-		} else {
-			game = exec.runExperiment(predAgents, preyAgents);
-		}
-
-		double[] fitnesses = new double[objectives.size()];
-		double[] otherStats = new double[otherScores.size()];
-
-		// dispose of all panels inside of agents/controllers
-		if (CommonConstants.monitorInputs) {
-			// Dispose of existing panels
-			for (int i = 0; i < evolved.length; i++) {
-				((NNTorusPredPreyController) (evolved)[i]).networkInputs.dispose();
-			}
-		}
-
+		
+		TorusPredPreyGame game = runEval(predAgents, preyAgents);
+		
 		// gets the controller of the evolved agent(s), gets its network, and
 		// stores the number of modules for that network
 		int numModes = ((NNTorusPredPreyController) evolved[0]).nn.numModules();
@@ -168,6 +152,9 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 			// combine this agent's module usage with the module usage of all agents
 			overallAgentModeUsage = ArrayUtil.zipAdd(overallAgentModeUsage, thisAgentModeUsage);
 		}
+
+		double[] fitnesses = new double[objectives.size()];
+		double[] otherStats = new double[otherScores.size()];
 
 		// Fitness function requires an organism, so make this genotype into an organism
 		// this erases information stored about module usage, so was saved in
@@ -186,6 +173,26 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 
 		//System.out.println("oneEval: " + (System.currentTimeMillis() - time));
 		return new Pair<double[], double[]>(fitnesses, otherStats);
+	}
+
+	public TorusPredPreyGame runEval(TorusPredPreyController[] predAgents, TorusPredPreyController[] preyAgents) {
+		exec = new TorusWorldExec();
+		TorusPredPreyGame game;
+		if (CommonConstants.watch) {
+			game = exec.runGameTimed(predAgents, preyAgents, true);
+		} else {
+			game = exec.runExperiment(predAgents, preyAgents);
+		}
+
+		// dispose of all panels inside of agents/controllers
+		if (CommonConstants.monitorInputs) {
+			// Dispose of existing panels
+			for (int i = 0; i < evolved.length; i++) {
+				((NNTorusPredPreyController) (evolved)[i]).networkInputs.dispose();
+			}
+		}
+		
+		return game;
 	}
 
 	/**
