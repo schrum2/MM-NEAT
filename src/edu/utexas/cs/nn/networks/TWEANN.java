@@ -680,10 +680,8 @@ public class TWEANN implements Network {
 	 */
         @Override
 	public double[] process(double[] inputs) {
-		assert(inputs.length == numIn) : "Input mismatch! numIn = " + numIn + "\n" + "inputs.length = " + inputs.length
-				+ "\n" + Arrays.toString(inputs);
-		assert(numIn <= nodes.size()) : "Input mismatch! numIn = " + numIn + "\n" + "nodes.size() = " + nodes.size()
-				+ "\n" + nodes;
+		assert(inputs.length == numIn) : "Input mismatch! numIn = " + numIn + "\n" + "inputs.length = " + inputs.length + "\n" + Arrays.toString(inputs);
+		assert(numIn <= nodes.size()) : "Input mismatch! numIn = " + numIn + "\n" + "nodes.size() = " + nodes.size() + "\n" + nodes;
 
 		// Load inputs
 		for (int i = 0; i < numIn; i++) {
@@ -720,8 +718,8 @@ public class TWEANN implements Network {
 			}
 
 			if (CommonConstants.disabledMode >= 0) {
-				preferences[CommonConstants.disabledMode] = -2; // Can never be
-																// selected
+                                // Can never be selected
+				preferences[CommonConstants.disabledMode] = -2; 
 			}
 
 			if (canDraw && preferenceNeuronPanel != null && numModes > 1 && !standardMultitask) {
@@ -749,8 +747,7 @@ public class TWEANN implements Network {
 			// Calculate weighted average across all modes
 			for (int i = 0; i < outputs.length; i++) {
 				for (int j = 0; j < numModes; j++) {
-					int modeStart = outputStart
-							+ (j * (neuronsPerMode + (CommonConstants.ensembleModeMutation ? 0 : 1)));
+					int modeStart = outputStart + (j * (neuronsPerMode + (CommonConstants.ensembleModeMutation ? 0 : 1)));
 					outputs[i] += preferences[j] * nodes.get(modeStart + i).output();
 				}
 				outputs[i] /= numModes;
@@ -854,17 +851,14 @@ public class TWEANN implements Network {
 		}
 	}
 
-	private static void refreshActivation(DrawingPanel inputPanel, double[] inputs, double[] outputs,
-			double[] preferences, boolean multitask, double[] preferenceFatigue) {
-		NetworkTask task = (NetworkTask) MMNEAT.task; // ClassCreation.createObject("task");
+	private static void refreshActivation(DrawingPanel inputPanel, double[] inputs, double[] outputs, double[] preferences, boolean multitask, double[] preferenceFatigue) {
+		NetworkTask task = (NetworkTask) MMNEAT.task;
 		String[] labels = task.sensorLabels();
-		assert labels.length == inputs.length : "Need correspondence between inputs and labels: "
-				+ Arrays.toString(labels) + Arrays.toString(inputs);
+		assert labels.length == inputs.length : "Need correspondence between inputs and labels: " + Arrays.toString(labels) + Arrays.toString(inputs);
 
 		Graphics2D g = inputPanel.getGraphics();
 		g.setColor(Color.white);
-		g.fillRect(0, (int) (Offspring.inputOffset * Plot.OFFSET) - (Plot.OFFSET / 2), inputPanel.getFrame().getWidth(),
-				((inputs.length + outputs.length + preferences.length + 2 + 3) / 2) * Plot.OFFSET);
+		g.fillRect(0, (int) (Offspring.inputOffset * Plot.OFFSET) - (Plot.OFFSET / 2), inputPanel.getFrame().getWidth(), ((inputs.length + outputs.length + preferences.length + 2 + 3) / 2) * Plot.OFFSET);
 		g.setFont(g.getFont().deriveFont(1));
 		int i;
 		for (i = 0; i < inputs.length; i++) {

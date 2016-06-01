@@ -6,14 +6,17 @@ import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 /**
- *
+ * Several helper methods concerned with counting or
+ * creating different possible structures. Lots of
+ * discrete math.
+ * 
  * @author Jacob Schrum
  */
 public class CombinatoricUtilities {
 
 	/**
-	 * Return all permutations where the possible picks are 0 through (choices -
-	 * 1). Each sub-ArrayList in the returned ArrayList is a single permutation
+	 * Return all permutations where the possible picks are 0 through 
+         * (choices - 1). Each sub-ArrayList in the returned ArrayList is a single permutation
 	 *
 	 * @param choices
 	 *            number of things to choose from
@@ -23,9 +26,8 @@ public class CombinatoricUtilities {
 		ArrayList<ArrayList<Integer>> result = new ArrayList<ArrayList<Integer>>();
 		int[] a = new int[choices], p = new int[choices];
 		int i, j, tmp; // Upper Index i; Lower Index j
-
-		for (i = 0; i < choices; i++) { // initialize arrays; a[N] can be any
-										// type
+                // initialize arrays; a[N] can be any type
+		for (i = 0; i < choices; i++) { 
 			a[i] = i; // a[i] value is not revealed and can be arbitrary
 		}
 		result.add(ArrayUtil.intListFromArray(a));
@@ -81,8 +83,7 @@ public class CombinatoricUtilities {
 	 *            accumulates complete combinations
 	 */
 	@SuppressWarnings("unchecked")
-	public static void getAllCombinations(final ArrayList<Integer> lengths, int idx, ArrayList<Integer> soFar,
-			ArrayList<ArrayList<Integer>> combos) {
+	public static void getAllCombinations(final ArrayList<Integer> lengths, int idx, ArrayList<Integer> soFar, ArrayList<ArrayList<Integer>> combos) {
 		if (idx == lengths.size()) {
 			// System.out.println(soFar);
 			combos.add((ArrayList<Integer>) soFar.clone());
@@ -140,16 +141,5 @@ public class CombinatoricUtilities {
 		}
 		Color result = new Color(baseColor[0], baseColor[1], baseColor[2]);
 		return result;
-	}
-
-	public static void main(String[] args) {
-		// ArrayList<Integer> l = new ArrayList<Integer>(3);
-		// l.add(100);
-		// l.add(100);
-		// l.add(100);
-		// System.out.println(getAllCombinations(l).size());
-		ArrayList<ArrayList<Integer>> result = getAllPermutations(3);
-		System.out.println(result);
-		System.out.println(result.size());
 	}
 }
