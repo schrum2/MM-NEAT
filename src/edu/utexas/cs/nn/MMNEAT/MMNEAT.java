@@ -640,6 +640,7 @@ public class MMNEAT {
 				setNNInputParameters(numInputs, t.outputLabels().length);
 			} else if (task instanceof CooperativeTorusPredPreyTask) {
 				System.out.println("Setup Cooperative Torus Predator/Prey Task");
+				coevolution = true;
 				int numInputs = determineNumPredPreyInputs();
 				NetworkTask t = (NetworkTask) task;
 				setNNInputParameters(numInputs, t.outputLabels().length);
