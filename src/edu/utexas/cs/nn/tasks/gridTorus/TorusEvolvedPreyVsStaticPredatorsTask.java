@@ -10,6 +10,8 @@ import edu.utexas.cs.nn.tasks.gridTorus.objectives.PreyMaximizeDistanceFromPreda
 import edu.utexas.cs.nn.tasks.gridTorus.objectives.PreyMaximizeGameTimeObjective;
 import edu.utexas.cs.nn.tasks.gridTorus.objectives.PreyMinimizeCaughtObjective;
 import edu.utexas.cs.nn.tasks.gridTorus.objectives.PreyRawalRajagopalanMiikkulainenObjective;
+import edu.utexas.cs.nn.tasks.gridTorus.objectives.cooperative.IndividualPreyMaximizeDistanceFromIndividualPredatorObjective;
+import edu.utexas.cs.nn.tasks.gridTorus.objectives.cooperative.IndividualPreyMaximizeDistanceFromPredatorsObjective;
 
 /**
  * The following class sets up tasks for
@@ -41,6 +43,21 @@ public class TorusEvolvedPreyVsStaticPredatorsTask<T extends Network> extends To
 			addObjective(new PreyMaximizeDistanceFromPredatorsObjective<T>(), objectives);
 		if (Parameters.parameters.booleanParameter("preyMinimizeCaught"))
 			addObjective(new PreyMinimizeCaughtObjective<T>(), objectives);
+		if (Parameters.parameters.booleanParameter("indivPreyMaxDist")){
+			//get separate distance fitness functions for each prey and add them as objectives
+			for(int i = 0; i < Parameters.parameters.integerParameter("torusPreys"); i++){
+				addObjective(new IndividualPreyMaximizeDistanceFromPredatorsObjective<T>(i), objectives);
+			}
+		}
+		if (Parameters.parameters.booleanParameter("indivPreyMaxDistIndivPred")){
+			//get separate distance fitness functions for each prey to each predator individually and add them all as objectives
+			for(int i = 0; i < Parameters.parameters.integerParameter("torusPreys"); i++){
+				for(int j = 0; j < Parameters.parameters.integerParameter("torusPredators"); j++){
+					addObjective(new IndividualPreyMaximizeDistanceFromIndividualPredatorObjective<T>(j,i), objectives);
+				}
+			}
+		}
+		
 
 		//add other scores to be able to show each fitness score even if it's not effecting evolution
 		addObjective(new PreyMaximizeGameTimeObjective<T>(), otherScores, false);
@@ -48,6 +65,14 @@ public class TorusEvolvedPreyVsStaticPredatorsTask<T extends Network> extends To
 		addObjective(new PreyLongSurvivalTimeObjective<T>(), otherScores, false);
 		addObjective(new PreyMaximizeDistanceFromPredatorsObjective<T>(), otherScores, false);
 		addObjective(new PreyMinimizeCaughtObjective<T>(), otherScores, false);
+		for(int i = 0; i < Parameters.parameters.integerParameter("torusPreys"); i++){
+			addObjective(new IndividualPreyMaximizeDistanceFromPredatorsObjective<T>(i), otherScores, false);
+		}
+		for(int i = 0; i < Parameters.parameters.integerParameter("torusPreys"); i++){
+			for(int j = 0; j < Parameters.parameters.integerParameter("torusPredators"); j++){
+				addObjective(new IndividualPreyMaximizeDistanceFromIndividualPredatorObjective<T>(j,i), otherScores, false);
+			}
+		}
 
 
 	}
