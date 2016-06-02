@@ -276,13 +276,8 @@ public class MMNEAT {
 		pacmanInputOutputMediator = (MsPacManControllerInputOutputMediator) ClassCreation
 				.createObject("pacmanInputOutputMediator");
 		setNNInputParameters(pacmanInputOutputMediator.numIn(), pacmanInputOutputMediator.numOut());
-
-		genotypeExamples = new ArrayList<Genotype>(modesToTrack + 2); // subcontrollers
-																		// and
-																		// selector
-																		// and
-																		// possibly
-																		// blueprints
+		// subcontrollers and selector and possibly blueprints
+		genotypeExamples = new ArrayList<Genotype>(modesToTrack + 2); 
 		genotypeExamples.add(new TWEANNGenotype(pacmanInputOutputMediator.numIn(), modesToTrack, 0));
 		coevolutionMediators = new MsPacManControllerInputOutputMediator[modesToTrack];
 		for (int i = 1; i <= modesToTrack; i++) {
@@ -301,10 +296,8 @@ public class MMNEAT {
 		}
 	}
 
-	private static void setupCooperativeCoevolutionCheckEachMultitaskPreferenceNetForMsPacman()
-			throws NoSuchMethodException {
-		pacmanInputOutputMediator = (MsPacManControllerInputOutputMediator) ClassCreation
-				.createObject("pacmanInputOutputMediator");
+	private static void setupCooperativeCoevolutionCheckEachMultitaskPreferenceNetForMsPacman() throws NoSuchMethodException {
+		pacmanInputOutputMediator = (MsPacManControllerInputOutputMediator) ClassCreation.createObject("pacmanInputOutputMediator");
 		MMNEAT.modesToTrack = CommonConstants.multitaskModules;
 		// Setup the preference net settings
 		CommonConstants.multitaskModules = 1; // Needed before set NN params
@@ -313,11 +306,9 @@ public class MMNEAT {
 
 		genotypeExamples = new ArrayList<Genotype>(2);
 		// Multitask
-		genotypeExamples.add(new TWEANNGenotype(pacmanInputOutputMediator.numIn(), modesToTrack, CommonConstants.fs,
-				ActivationFunctions.newNodeFunction(), modesToTrack, 0));
+		genotypeExamples.add(new TWEANNGenotype(pacmanInputOutputMediator.numIn(), modesToTrack, CommonConstants.fs, ActivationFunctions.newNodeFunction(), modesToTrack, 0));
 		// Pref Net
-		genotypeExamples.add(new TWEANNGenotype(pacmanInputOutputMediator.numIn(), modesToTrack, CommonConstants.fs,
-				ActivationFunctions.newNodeFunction(), 1, 1));
+		genotypeExamples.add(new TWEANNGenotype(pacmanInputOutputMediator.numIn(), modesToTrack, CommonConstants.fs, ActivationFunctions.newNodeFunction(), 1, 1));
 
 		prepareCoevolutionArchetypes();
 	}
@@ -649,15 +640,20 @@ public class MMNEAT {
 				setNNInputParameters(numInputs, t.outputLabels().length);
 			} else if (task instanceof CooperativeTorusPredPreyTask) {
 				System.out.println("Setup Cooperative Torus Predator/Prey Task");
-				//are specifications of specific cooperative tasks necessary?
-				if (task instanceof CooperativePredatorsVsStaticPrey){
-					//setupPredatorCooperativeCoevolution();
-				} else if(task instanceof CooperativePreyVsStaticPredators){
-					//setupPreyCooperativeCoevolution();
-				}
 				int numInputs = determineNumPredPreyInputs();
 				NetworkTask t = (NetworkTask) task;
 				setNNInputParameters(numInputs, t.outputLabels().length);
+				// Setup genotype early
+				genotype = (Genotype) ClassCreation.createObject("genotype");
+				int numAgents = (task instanceof CooperativePredatorsVsStaticPrey) ? Parameters.parameters.integerParameter("torusPredators") : Parameters.parameters.integerParameter("torusPreys");
+				genotypeExamples = new ArrayList<Genotype>(numAgents);
+				for(int i = 0; i < numAgents; i++) {
+					if(genotype instanceof TWEANNGenotype) {
+						((TWEANNGenotype) genotype).archetypeIndex = i;
+					}
+					genotypeExamples.add(genotype.newInstance());
+				}
+				prepareCoevolutionArchetypes();
 			} else if (task instanceof UT2004Task) {
 				System.out.println("Setup UT2004 Task");
 				UT2004Task utTask = (UT2004Task) task;
