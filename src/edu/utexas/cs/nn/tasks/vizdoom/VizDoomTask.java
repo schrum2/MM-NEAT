@@ -34,13 +34,6 @@ import vizdoom.SpecifyDLL;
  */
 public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>implements NetworkTask {
 
-	// All of these constants should probably become command line
-	// parameters once we fully figure out the task
-	//public static String SCENARIO_WAD = "basic.wad";
-	//public static String GAME_WAD = "freedoom2.wad";
-	//public static String DOOM_MAP = "map01";
-	//public static int DOOM_EPISODE_LENGTH = 200;
-
 	// For each pixel in the image buffer, the colors are sorted in this order
 	public static final int RED_INDEX = 2;
 	public static final int GREEN_INDEX = 1;
@@ -88,8 +81,10 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 		// scenario iwad.
 		// If not specified default doom2 maps will be used and it's pretty much
 		// useles... unless you want to play doom.
+                // TODO: Completely remove this and the associated parameter. Move this to each specific child class
 		game.setDoomScenarioPath("vizdoom/scenarios/" + Parameters.parameters.stringParameter("scenarioWad"));
 		// Set map to start (scenario .wad files can contain many maps).
+                // TODO: Completely remove this and the associated parameter. Move this to each specific child class
 		game.setDoomMap(Parameters.parameters.stringParameter("doomMap"));
 		// Sets resolution. Default is 320X240
 		// TODO: Should be be able to set this from the command line somehow?
@@ -155,7 +150,6 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 		// Causes episodes to finish after designated tics (actions)
 		game.setEpisodeTimeout(Parameters.parameters.integerParameter("doomEpisodeLength"));
 
-		// TODO: This doesn't work! Can we fix it, or do the VizDoom designers need to fix it?
 		game.setWindowVisible(CommonConstants.watch);
 		// Sets ViZDoom mode (PLAYER, ASYNC_PLAYER, SPECTATOR, ASYNC_SPECTATOR,
 		// PLAYER mode is default). Not really sure what the distinctions are
