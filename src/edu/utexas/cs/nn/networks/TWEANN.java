@@ -567,11 +567,11 @@ public class TWEANN implements Network {
 		this.standardMultitask = g.standardMultitask;
 		this.hierarchicalMultitask = g.hierarchicalMultitask;
 		if (g.moduleAssociations != null) { // This is a backwards compatibility
-											// issue:
+			// issue:
 			// This array was added for the Hierarchical Multitask networks
 			this.moduleAssociations = Arrays.copyOf(g.moduleAssociations, numModes);
 		} else { // In older networks, simply associate each module with its own
-					// mode
+			// mode
 			moduleAssociations = new int[this.numModes];
 			for (int i = 0; i < this.numModes; i++) {
 				moduleAssociations[i] = i;
@@ -579,14 +579,14 @@ public class TWEANN implements Network {
 		}
 		// Is true if net has one mode
 		assert(numModes != 1 || numOut <= neuronsPerMode + 1) : "Too many outputs for one mode" + "\n" + "g.getId():"
-				+ g.getId() + "\n" + "g.archetypeIndex:" + g.archetypeIndex + "\n" + "g.numIn:" + g.numIn + "\n"
-				+ "g.numOut:" + g.numOut + "\n" + "g.nodes.size():" + g.nodes.size() + "\n"
-				+ "EvolutionaryHistory.archetypeOut:" + Arrays.toString(EvolutionaryHistory.archetypeOut);
+		+ g.getId() + "\n" + "g.archetypeIndex:" + g.archetypeIndex + "\n" + "g.numIn:" + g.numIn + "\n"
+		+ "g.numOut:" + g.numOut + "\n" + "g.nodes.size():" + g.nodes.size() + "\n"
+		+ "EvolutionaryHistory.archetypeOut:" + Arrays.toString(EvolutionaryHistory.archetypeOut);
 		// Is true if net has more than one mode
 		assert(numModes == 1
 				|| numOut == (neuronsPerMode + (standardMultitask || CommonConstants.ensembleModeMutation ? 0 : 1))
-						* numModes) : "multitask:" + standardMultitask + "\n" + "Wrong number of outputs (" + numOut
-								+ ") for the number of modes (" + numModes + ")";
+				* numModes) : "multitask:" + standardMultitask + "\n" + "Wrong number of outputs (" + numOut
+		+ ") for the number of modes (" + numModes + ")";
 
 		this.moduleUsage = new int[numModes];
 		this.preferenceFatigue = new double[numModes];
@@ -609,22 +609,22 @@ public class TWEANN implements Network {
 		return moduleUsage;
 	}
 
-        @Override
+	@Override
 	public int numInputs() {
 		return numIn;
 	}
 
-        @Override
+	@Override
 	public int numOutputs() {
 		return numOut;
 	}
 
-        @Override
+	@Override
 	public int effectiveNumOutputs() {
 		return this.neuronsPerMode;
 	}
 
-        @Override
+	@Override
 	public int numModules() {
 		return numModes;
 	}
@@ -633,7 +633,7 @@ public class TWEANN implements Network {
 		return neuronsPerMode;
 	}
 
-        @Override
+	@Override
 	public boolean isMultitask() {
 		return standardMultitask || hierarchicalMultitask;
 	}
@@ -653,7 +653,7 @@ public class TWEANN implements Network {
 	 * @param mode
 	 *            to use
 	 */
-        @Override
+	@Override
 	public void chooseMode(int mode) {
 		presetMode = mode;
 		if (hierarchicalMultitask) {
@@ -665,7 +665,7 @@ public class TWEANN implements Network {
 		}
 	}
 
-        @Override
+	@Override
 	public int lastModule() {
 		return chosenModule;
 	}
@@ -678,7 +678,7 @@ public class TWEANN implements Network {
 	 *            sensor readings for the network
 	 * @return network output (single module)
 	 */
-        @Override
+	@Override
 	public double[] process(double[] inputs) {
 		assert(inputs.length == numIn) : "Input mismatch! numIn = " + numIn + "\n" + "inputs.length = " + inputs.length + "\n" + Arrays.toString(inputs);
 		assert(numIn <= nodes.size()) : "Input mismatch! numIn = " + numIn + "\n" + "nodes.size() = " + nodes.size() + "\n" + nodes;
@@ -718,7 +718,7 @@ public class TWEANN implements Network {
 			}
 
 			if (CommonConstants.disabledMode >= 0) {
-                                // Can never be selected
+				// Can never be selected
 				preferences[CommonConstants.disabledMode] = -2; 
 			}
 
@@ -729,17 +729,17 @@ public class TWEANN implements Network {
 			// determine winner
 			chosenModule = CommonConstants.softmaxModeSelection
 					? StatisticsUtilities.softmax(preferences, CommonConstants.softmaxTemperature)
-					: StatisticsUtilities.argmax(preferences);
-			this.moduleUsage[chosenModule]++;
+							: StatisticsUtilities.argmax(preferences);
+					this.moduleUsage[chosenModule]++;
 
-			// add new fatigue
-			preferenceFatigue[chosenModule] += CommonConstants.preferenceNeuronFatigueUnit;
-			// decay fatigue
-			for (int i = 0; i < preferenceFatigue.length; i++) {
-				if (i != chosenModule) { // don't decay chosen mode
-					preferenceFatigue[i] *= CommonConstants.preferenceNeuronDecay;
-				}
-			}
+					// add new fatigue
+					preferenceFatigue[chosenModule] += CommonConstants.preferenceNeuronFatigueUnit;
+					// decay fatigue
+					for (int i = 0; i < preferenceFatigue.length; i++) {
+						if (i != chosenModule) { // don't decay chosen mode
+							preferenceFatigue[i] *= CommonConstants.preferenceNeuronDecay;
+						}
+					}
 		}
 
 		double[] outputs = new double[neuronsPerMode];
@@ -777,7 +777,7 @@ public class TWEANN implements Network {
 	 *            mode outputs to access
 	 * @return outputs of specific mode
 	 */
-        @Override
+	@Override
 	public double[] moduleOutput(int mode) {
 		int selectedModeStart = outputStart + (mode * (neuronsPerMode + (standardMultitask ? 0 : 1)));
 		double[] outputs = new double[neuronsPerMode];
@@ -789,7 +789,7 @@ public class TWEANN implements Network {
 	}
 
 	@SuppressWarnings("unchecked")
-        @Override
+	@Override
 	public void flush() {
 		// System.out.println("Flush: " + id);
 		for (Node n : nodes) {
@@ -816,7 +816,7 @@ public class TWEANN implements Network {
 				break;
 			}
 		}
-                assert targetNode != null : "No node with innovation " + targetInnovation + " existed";
+		assert targetNode != null : "No node with innovation " + targetInnovation + " existed";
 		return targetNode;
 	}
 
@@ -947,104 +947,79 @@ public class TWEANN implements Network {
 	 * @param showWeights shows weights of links 
 	 */
 	public void draw(DrawingPanel panel, boolean showInnovationNumbers, boolean showWeights) {//TODO
-		
+
 		TWEANN.panel = panel;//instantiates private instance of panel inside of TWEANN object
+
+		if (layers == null) createLayers();
 		
-		if (layers == null) { // Only construct the layers array once
-			layers = new ArrayList<ArrayList<Node>>();
-
-			//manually loads nodes from TWEANN into layers
-			layers.add(getNodesToDraw(0, numIn, Node.NTYPE_INPUT));
-			ArrayList<Node> hidden = getNodesToDraw(numIn, nodes.size()- numOut, Node.NTYPE_HIDDEN);
-			ArrayList<ArrayList<Node>> hiddenLayers = sortHiddenLayers(hidden);
-			for (int i = 0; i < hiddenLayers.size(); i++) {
-				layers.add(hiddenLayers.get(i));
-			}
-			layers.add(getNodesToDraw(nodes.size() - numOut, nodes.size(), Node.NTYPE_OUTPUT));
-		}
-
-		//this part actually draws network
-		Graphics2D g =prepPanel(panel, Color.BLACK);
-
-		
-		//puts nodes onto drawingPanel
-		placeAllNodes(g, showInnovationNumbers);
-
-		for (int l = 0; l < layers.size(); l++) {
-			ArrayList<Node> layer = layers.get(l);
-			for (int n = 0; n < layer.size(); n++) {
-				Node display = layer.get(n);
+		Graphics2D g =prepPanel(panel, Color.BLACK);//this part actually draws network
+		placeAllNodes(g, showInnovationNumbers);//puts nodes onto drawingPanel
+		for(ArrayList<Node> layer : layers) {
+			for(Node display : layer) {
 				for (Link disLink : display.outputs) {
 					Node target = disLink.target;
-					if (target == null) {
-						System.out.println("Null link target?");
-						System.out.println("id:" + this.id);
-						System.out.println("numIn:" + this.numIn);
-						System.out.println("numOut:" + this.numOut);
-						System.out.println("neuronsPerMode:" + this.neuronsPerMode);
-						System.out.println("numModes:" + this.numModes);
-						System.out.println("multitask:" + this.standardMultitask);
-						System.out.println("nodes.size():" + nodes.size());
-						for (Node node : nodes) {
-							System.out.println(node == null ? "null" : node.innovation + ":" + node.ntype);
-						}
-						System.out.println("Done");
-					}
-					if (showInnovationNumbers) {
-						int x = (display.displayX + target.displayX) / 2;
-						int y = (display.displayY + target.displayY) / 2;
-						g.setColor(Color.MAGENTA);
-						g.drawString("" + disLink.innovation, x, y);
-						if (showWeights) {
-							g.setColor(Color.DARK_GRAY);
-							double weight = Math.ceil(disLink.weight * 100) / 100;
-							g.drawString("" + weight, x, y + 10);
-						}
-					}
-					boolean recurrent = disLink.recurrent;
-					boolean frozen = disLink.frozen;
-					if (display.displayY == target.displayY) {
-						int mult = recurrent ? -1 : 1;
-						if (frozen) {
-							g.setColor(Color.CYAN);
-						} else if (!recurrent) {
-							g.setColor(Color.BLACK);
-						} else {
-							g.setColor(Color.GREEN);
-						}
-						drawLink(g, disLink.weight, display.displayX + (NODE_DIM / 2),
-								display.displayY + (NODE_DIM / 2),
-								display.displayX + (NODE_DIM / 2) + (mult * LINK_CURVE_OFFSET),
-								display.displayY + (NODE_DIM / 2) - (mult * LINK_CURVE_OFFSET));
-						drawLink(g, disLink.weight, display.displayX + (NODE_DIM / 2) + (mult * LINK_CURVE_OFFSET),
-								display.displayY + (NODE_DIM / 2) - (mult * LINK_CURVE_OFFSET),
-								target.displayX + (NODE_DIM / 2), target.displayY + (NODE_DIM / 2));
-					} else {
-						if (frozen) {
-							g.setColor(Color.CYAN);
-						} else if (recurrent) {
-							g.setColor(Color.GREEN);
-						} else { // if (display.displayY > target.displayY) {
-							g.setColor(Color.BLACK);
-						}
-						drawLink(g, disLink.weight, display.displayX + (NODE_DIM / 2),
-								display.displayY + (NODE_DIM / 2), target.displayX + (NODE_DIM / 2),
-								target.displayY + (NODE_DIM / 2));
-					}
+					checkLinkTarget(target);
+					if (showInnovationNumbers)drawInnovationNumbers(g, display, target, disLink, showWeights);
+					setLinkColor(g, disLink.recurrent, disLink.frozen);
+					drawAllLinks(g, display, target, disLink, disLink.recurrent ? -1 : 1);
 				}
 			}
 		}
+			addModuleAssociations(g, moduleAssociations);
+		}
 
+
+	private void createLayers() {
+		layers = new ArrayList<ArrayList<Node>>();
+		layers.add(getNodesToDraw(0, numIn, Node.NTYPE_INPUT));//manually loads nodes from TWEANN into layers
+		ArrayList<Node> hidden = getNodesToDraw(numIn, nodes.size()- numOut, Node.NTYPE_HIDDEN);
+		ArrayList<ArrayList<Node>> hiddenLayers = sortHiddenLayers(hidden);
+		for (int i = 0; i < hiddenLayers.size(); i++) {
+			layers.add(hiddenLayers.get(i));
+		}
+		layers.add(getNodesToDraw(nodes.size() - numOut, nodes.size(), Node.NTYPE_OUTPUT));
+	}
+	
+	private Graphics2D prepPanel(DrawingPanel panel, Color c) {
+		Graphics2D g = panel.getGraphics();
+		g.setColor(c);
+		g.drawString("Network ID: " + id, 5, 10);//network id. #s 5 & 10 set this in top left corner of panel
+		return g;
+	}
+	
+	private void addModuleAssociations(Graphics2D g, int[] moduleAssociations){
 		for (int i = 0; i < moduleAssociations.length; i++) {
-			// More magic numbers
-			g.setColor(CombinatoricUtilities.colorFromInt(i + 1));
-			g.fillRect(100 + (i * 2 * NODE_DIM), 2, 2 * NODE_DIM, 2 * NODE_DIM);
-			g.setColor(CombinatoricUtilities.colorFromInt(moduleAssociations[i] + 1));
-			g.fillRect(100 + (i * 2 * NODE_DIM), 2 + 2 * NODE_DIM, 2 * NODE_DIM, 2 * NODE_DIM);
+		g.setColor(CombinatoricUtilities.colorFromInt(i + 1));
+		g.fillRect(100 + (i * 2 * NODE_DIM), 2, 2 * NODE_DIM, 2 * NODE_DIM);
+		g.setColor(CombinatoricUtilities.colorFromInt(moduleAssociations[i] + 1));
+		g.fillRect(100 + (i * 2 * NODE_DIM), 2 + 2 * NODE_DIM, 2 * NODE_DIM, 2 * NODE_DIM);
 		}
 	}
-
-	private static void drawLink(Graphics2D g, double weight, int x1, int y1, int x2, int y2) {
+	private void setLinkColor(Graphics2D g, boolean frozen, boolean recurrent) {
+		if (frozen) {
+			g.setColor(Color.CYAN);
+		} else if (!recurrent) {
+			g.setColor(Color.BLACK);
+		} else {
+			g.setColor(Color.GREEN);
+		}
+	}
+	private void drawAllLinks(Graphics2D g, Node display, Node target, Link disLink, int mult) {
+		if (display.displayY == target.displayY) {
+			drawLink(g, disLink.weight, display.displayX + (NODE_DIM / 2),
+					display.displayY + (NODE_DIM / 2),
+					display.displayX + (NODE_DIM / 2) + (mult * LINK_CURVE_OFFSET),
+					display.displayY + (NODE_DIM / 2) - (mult * LINK_CURVE_OFFSET));
+			drawLink(g, disLink.weight, display.displayX + (NODE_DIM / 2) + (mult * LINK_CURVE_OFFSET),
+					display.displayY + (NODE_DIM / 2) - (mult * LINK_CURVE_OFFSET),
+					target.displayX + (NODE_DIM / 2), target.displayY + (NODE_DIM / 2));
+		} else {
+			drawLink(g, disLink.weight, display.displayX + (NODE_DIM / 2),
+					display.displayY + (NODE_DIM / 2), target.displayX + (NODE_DIM / 2),
+					target.displayY + (NODE_DIM / 2));
+		}
+	}
+	private void drawLink(Graphics2D g, double weight, int x1, int y1, int x2, int y2) {
 		final int MAX_LINES = NODE_DIM;
 		int lines = Math.max(1, (int) (Math.abs(ActivationFunctions.tanh(weight)) * MAX_LINES));
 		int xOffset = lines / 2;
@@ -1070,24 +1045,36 @@ public class TWEANN implements Network {
 			}
 		}
 	}
+
+	private void checkLinkTarget(Node target) { 
+		if (target == null) {
+			System.out.println("Null link target?");
+			System.out.println("id:" + this.id);
+			System.out.println("numIn:" + this.numIn);
+			System.out.println("numOut:" + this.numOut);
+			System.out.println("neuronsPerMode:" + this.neuronsPerMode);
+			System.out.println("numModes:" + this.numModes);
+			System.out.println("multitask:" + this.standardMultitask);
+			System.out.println("nodes.size():" + nodes.size());
+			for (Node node : nodes) {
+				System.out.println(node == null ? "null" : node.innovation + ":" + node.ntype);
+			}
+			System.out.println("Done");
+		}
+	}
 	protected ArrayList<Node> getNodesToDraw(int start, int end, int ntype) {
 		ArrayList<Node> result = new ArrayList<Node>(end-start);
 		for (int i = start; i < end; i++) {
 			Node inNode = nodes.get(i);
 			if (inNode.ntype == ntype) {
 				result.add(inNode);
-			} else {//should never occur unless a fatal flaw has occurred in node structure
-				//only present for testing purposes
-				System.out.println("Impossible network configuration: Wrong number of inputs");
-				System.out.println(this);
-				// Freezes the construction process so user can look at the broken network
-				while (true); 
-				// System.exit(1);
+			} else {
+				throw new IllegalArgumentException("node " + inNode.innovation + "did not copy properly!");
 			}
 		}
 		return result;
 	}
-	
+
 	protected ArrayList<ArrayList<Node>> sortHiddenLayers(ArrayList<Node> hidden) {
 		ArrayList<ArrayList<Node>> hiddenLayers = new ArrayList<ArrayList<Node>>();
 		hiddenLayers.add(hidden);
@@ -1126,20 +1113,25 @@ public class TWEANN implements Network {
 
 		return hiddenLayers;
 	}
+
 	
-	private Graphics2D prepPanel(DrawingPanel panel, Color c) {
-		Graphics2D g = panel.getGraphics();
-		g.setColor(c);
-		g.drawString("Network ID: " + id, 5, 10);//network id. #s 5 & 10 set this in top left corner of panel
-		return g;
-	}
 	private void drawBorder(Graphics2D g, Color c, int x, int y, double activation, int thickness) { 
 		Color component = g.getColor();
 		g.setColor(c);
 		g.fillRect(x - thickness, y - thickness, (int) ((1 + activation) * NODE_DIM) + thickness*2, (int) ((1 + activation) * NODE_DIM) + thickness*2);
 		g.setColor(component);
 	}
-	
+	private void drawInnovationNumbers(Graphics2D g, Node display, Node target, Link disLink, boolean showWeights) {
+		int x = (display.displayX + target.displayX) / 2;
+		int y = (display.displayY + target.displayY) / 2;
+		g.setColor(Color.MAGENTA);
+		g.drawString("" + disLink.innovation, x, y);
+		if (showWeights) {
+			g.setColor(Color.DARK_GRAY);
+			double weight = Math.ceil(disLink.weight * 100) / 100;
+			g.drawString("" + weight, x, y + 10);
+		}
+	}
 	private void drawInnovationNumbers(Graphics2D g, Node display, int x, int y) {
 		AffineTransform t = g.getTransform();
 		g.setColor(Color.BLACK);
@@ -1149,7 +1141,7 @@ public class TWEANN implements Network {
 				y + (NODE_DIM / 2) + (sign * NODE_DIM));
 		g.setTransform(t);
 	}
-	
+
 	protected void placeAllNodes(Graphics2D g, boolean showInnovationNumbers) {
 		int height = panel.getFrame().getHeight() - 46;//46 is padding for panel
 		int width = panel.getFrame().getWidth() - 6;//6 is padding for panel
@@ -1161,7 +1153,7 @@ public class TWEANN implements Network {
 			}
 		}
 	}
-	
+
 	private void drawAllNodes(Graphics2D g, double verticalSpacing, int width, int height, ArrayList<Node> layer, int n, int l, boolean showInnovationNumbers) {
 		double horizontalSpacing = ((width - (2.0 * DISPLAY_BORDER)) / layer.size());
 		int x = (int) (DISPLAY_BORDER + (n * horizontalSpacing) + (horizontalSpacing / 2.0));
@@ -1215,75 +1207,108 @@ public class TWEANN implements Network {
 			}
 		}
 	}
+
 	
-//	private void addAllLinks)() {
-//		
-//	}
-//				
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	//	private void addAllLinks)() {
+	//		
+	//	}
+	//				
 	public static void main(String[] args) {
-        Parameters.initializeParameterCollections(new String[]{"io:false", "allowMultipleFunctions:true", "recurrency:false", "mmdRate:0.1", "task:edu.utexas.cs.nn.tasks.breve2D.Breve2DTask"});
-        //CommonConstants.freezeBeforeModeMutation = true;
-        MMNEAT.loadClasses();
-        TWEANNGenotype tg1 = new TWEANNGenotype(5, 2, 0);
-        MMNEAT.genotype = tg1.copy();
-        EvolutionaryHistory.initArchetype(0);
-        TWEANNGenotype tg2 = new TWEANNGenotype(5, 2, 0);
+		Parameters.initializeParameterCollections(new String[]{"io:false", "allowMultipleFunctions:true", "recurrency:false", "mmdRate:0.1", "task:edu.utexas.cs.nn.tasks.breve2D.Breve2DTask"});
+		//CommonConstants.freezeBeforeModeMutation = true;
+		MMNEAT.loadClasses();
+		TWEANNGenotype tg1 = new TWEANNGenotype(5, 2, 0);
+		MMNEAT.genotype = tg1.copy();
+		EvolutionaryHistory.initArchetype(0);
+		TWEANNGenotype tg2 = new TWEANNGenotype(5, 2, 0);
 
-        final int MUTATIONS1 = 10;
+		final int MUTATIONS1 = 10;
 
-        for (int i = 0; i < MUTATIONS1; i++) {
-            tg1.mutate();
-            tg1.addRandomPreferenceNeuron(tg1.getPhenotype().numIn);
-            tg2.mutate();
-            tg2.addRandomPreferenceNeuron(tg2.getPhenotype().numIn);
-        }
+		for (int i = 0; i < MUTATIONS1; i++) {
+			tg1.mutate();
+			tg1.addRandomPreferenceNeuron(tg1.getPhenotype().numIn);
+			tg2.mutate();
+			tg2.addRandomPreferenceNeuron(tg2.getPhenotype().numIn);
+		}
 
-        System.out.println(tg1);
-        System.out.println(new TWEANN(tg1));
+		System.out.println(tg1);
+		System.out.println(new TWEANN(tg1));
 
-        double[] inputs = RandomNumbers.randomArray(tg1.numIn);
+		double[] inputs = RandomNumbers.randomArray(tg1.numIn);
 
-        //tg1.freezeInfluences(tg1.nodes.get(tg1.nodes.size()-2).innovation);
-        DrawingPanel p1 = new DrawingPanel(TWEANN.NETWORK_VIEW_DIM, TWEANN.NETWORK_VIEW_DIM, "Net 1");
-        DrawingPanel p2 = new DrawingPanel(TWEANN.NETWORK_VIEW_DIM, TWEANN.NETWORK_VIEW_DIM, "Net 2");
-        p2.setLocation(TWEANN.NETWORK_VIEW_DIM + 10, 0);
-        tg1.getPhenotype().draw(p1, true);
-        tg2.getPhenotype().draw(p2, true);
+		//tg1.freezeInfluences(tg1.nodes.get(tg1.nodes.size()-2).innovation);
+		DrawingPanel p1 = new DrawingPanel(TWEANN.NETWORK_VIEW_DIM, TWEANN.NETWORK_VIEW_DIM, "Net 1");
+		DrawingPanel p2 = new DrawingPanel(TWEANN.NETWORK_VIEW_DIM, TWEANN.NETWORK_VIEW_DIM, "Net 2");
+		p2.setLocation(TWEANN.NETWORK_VIEW_DIM + 10, 0);
+		tg1.getPhenotype().draw(p1, true);
+		tg2.getPhenotype().draw(p2, true);
 
-        new MMR().mutate(tg1);
-        tg1.freezePreferenceNeurons();
-        System.out.println("Frozen Pref:" + Arrays.toString(tg1.getPhenotype().process(inputs)));
+		new MMR().mutate(tg1);
+		tg1.freezePreferenceNeurons();
+		System.out.println("Frozen Pref:" + Arrays.toString(tg1.getPhenotype().process(inputs)));
 
-        DrawingPanel p3 = new DrawingPanel(TWEANN.NETWORK_VIEW_DIM, TWEANN.NETWORK_VIEW_DIM, "Net 1 MMD");
-        p3.setLocation(0, TWEANN.NETWORK_VIEW_DIM + 10);
-        tg1.getPhenotype().draw(p3, true);
+		DrawingPanel p3 = new DrawingPanel(TWEANN.NETWORK_VIEW_DIM, TWEANN.NETWORK_VIEW_DIM, "Net 1 MMD");
+		p3.setLocation(0, TWEANN.NETWORK_VIEW_DIM + 10);
+		tg1.getPhenotype().draw(p3, true);
 
-        new MMR().mutate(tg2);
-        tg2.freezePolicyNeurons();
-        System.out.println("Frozen Policy:" + Arrays.toString(tg2.getPhenotype().process(inputs)));
+		new MMR().mutate(tg2);
+		tg2.freezePolicyNeurons();
+		System.out.println("Frozen Policy:" + Arrays.toString(tg2.getPhenotype().process(inputs)));
 
-        DrawingPanel p4 = new DrawingPanel(TWEANN.NETWORK_VIEW_DIM, TWEANN.NETWORK_VIEW_DIM, "Net 2 MMD");
-        p4.setLocation(TWEANN.NETWORK_VIEW_DIM + 10, TWEANN.NETWORK_VIEW_DIM + 10);
-        tg2.getPhenotype().draw(p4, true);
+		DrawingPanel p4 = new DrawingPanel(TWEANN.NETWORK_VIEW_DIM, TWEANN.NETWORK_VIEW_DIM, "Net 2 MMD");
+		p4.setLocation(TWEANN.NETWORK_VIEW_DIM + 10, TWEANN.NETWORK_VIEW_DIM + 10);
+		tg2.getPhenotype().draw(p4, true);
 
-        //TWEANNCrossover cross = new TWEANNCrossover();
-        //TWEANNGenotype new2 = (TWEANNGenotype) cross.crossover(tg1, tg2);
-        for (int i = 0; i < MUTATIONS1; i++) {
-        	tg1.mutate();
-            tg2.mutate();
-        }
+		//TWEANNCrossover cross = new TWEANNCrossover();
+		//TWEANNGenotype new2 = (TWEANNGenotype) cross.crossover(tg1, tg2);
+		for (int i = 0; i < MUTATIONS1; i++) {
+			tg1.mutate();
+			tg2.mutate();
+		}
 
-        System.out.println("Post Mutate Frozen Pref:" + Arrays.toString(tg1.getPhenotype().process(inputs)));
-        System.out.println("Post Mutate Frozen Policy:" + Arrays.toString(tg2.getPhenotype().process(inputs)));
+		System.out.println("Post Mutate Frozen Pref:" + Arrays.toString(tg1.getPhenotype().process(inputs)));
+		System.out.println("Post Mutate Frozen Policy:" + Arrays.toString(tg2.getPhenotype().process(inputs)));
 
-        DrawingPanel p5 = new DrawingPanel(TWEANN.NETWORK_VIEW_DIM, TWEANN.NETWORK_VIEW_DIM, "Cross Result 1");
-        p5.setLocation(2 * (TWEANN.NETWORK_VIEW_DIM + 10), 0);
-        tg1.getPhenotype().draw(p5, true);
+		DrawingPanel p5 = new DrawingPanel(TWEANN.NETWORK_VIEW_DIM, TWEANN.NETWORK_VIEW_DIM, "Cross Result 1");
+		p5.setLocation(2 * (TWEANN.NETWORK_VIEW_DIM + 10), 0);
+		tg1.getPhenotype().draw(p5, true);
 
-        DrawingPanel p6 = new DrawingPanel(TWEANN.NETWORK_VIEW_DIM, TWEANN.NETWORK_VIEW_DIM, "Cross Result 2");
-        p6.setLocation(2 * (TWEANN.NETWORK_VIEW_DIM + 10), TWEANN.NETWORK_VIEW_DIM + 10);
-        //new2.getPhenotype().draw(p6, true);
-        tg2.getPhenotype().draw(p6, true);
+		DrawingPanel p6 = new DrawingPanel(TWEANN.NETWORK_VIEW_DIM, TWEANN.NETWORK_VIEW_DIM, "Cross Result 2");
+		p6.setLocation(2 * (TWEANN.NETWORK_VIEW_DIM + 10), TWEANN.NETWORK_VIEW_DIM + 10);
+		//new2.getPhenotype().draw(p6, true);
+		tg2.getPhenotype().draw(p6, true);
 
-    }
+	}
 }
