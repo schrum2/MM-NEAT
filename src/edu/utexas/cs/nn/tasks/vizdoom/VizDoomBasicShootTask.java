@@ -13,10 +13,14 @@ public class VizDoomBasicShootTask<T extends Network> extends VizDoomTask<T> {
 
 	// Save the inputRow once instead of recalculating it on every time step
 	private final int inputRow;
+	
 
 	public VizDoomBasicShootTask() {
 		super();
 		inputRow = getRow(); 
+		game.setDoomScenarioPath("vizdoom/scenarios/" + "basic.wad");
+		game.setDoomMap("map01");
+		
 	}
 
         @Override

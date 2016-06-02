@@ -81,12 +81,7 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 		// scenario iwad.
 		// If not specified default doom2 maps will be used and it's pretty much
 		// useles... unless you want to play doom.
-                // TODO: Completely remove this and the associated parameter. Move this to each specific child class
-		game.setDoomScenarioPath("vizdoom/scenarios/" + Parameters.parameters.stringParameter("scenarioWad"));
-		// Set map to start (scenario .wad files can contain many maps).
-                // TODO: Completely remove this and the associated parameter. Move this to each specific child class
-		game.setDoomMap(Parameters.parameters.stringParameter("doomMap"));
-		// Sets resolution. Default is 320X240
+        // Sets resolution. Default is 320X240
 		// TODO: Should be be able to set this from the command line somehow?
 		setRestrictedScreenResolution(ScreenResolution.RES_200X150);
 		// Sets the screen buffer format. 
@@ -175,8 +170,11 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 			double[] inputs = getInputs(s);
 			double[] outputs = n.process(inputs);
 			// This now takes the arg max of the action outputs
-			double r = game.makeAction(actions.get(StatisticsUtilities.argmax(outputs))); 
+			//double r = game.makeAction(actions.get(StatisticsUtilities.argmax(outputs))); 
+			game.makeAction(actions.get(StatisticsUtilities.argmax(outputs))); 
 			// This r seems worthless ... does it give any information?
+			// My hunch is that it picks the action, but I don't think we have to do anything with it? Make action returns a double for some reason.
+			// I'll take out the r for now -Gab
 			// MiscUtil.waitForReadStringAndEnterKeyPress();
 		}
 		// TODO: Make this reward calculation more general, allow for multiple objectives

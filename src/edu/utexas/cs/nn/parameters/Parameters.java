@@ -545,9 +545,7 @@ public class Parameters {
 		doubleOptions.add("crossExcessRate", 0.0, "Portion of TWEANN crossovers that include excess/disjoint genes");
 		doubleOptions.add("explorePreference", 0.5, "High for more exploration vs. low for more exploitation when using UCB1");
 		// String parameters
-		stringOptions.add("doomMap", "map01", "The map for the current VizDoom game");
 		stringOptions.add("gameWad", "freedoom2.wad", "The wad file name for the current VizDoom game");
-		stringOptions.add("scenarioWad", "basic.wad", "The wad file name for the current scenario in the VizDoom game");
 		stringOptions.add("matchImageFile", "", "path of the image for image match task");
 		stringOptions.add("mazePowerPillGhostMapping", "", "File with saved locations of ghosts when particular power pills are eaten");
 		stringOptions.add("pacmanSaveFile", "", "Filename to save a pacman game recording to");

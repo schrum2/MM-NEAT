@@ -16,8 +16,11 @@ public class VizDoomDefendCenterTask<T extends Network> extends VizDoomTask<T> {
 	
 	public VizDoomDefendCenterTask() {
 		super();
+		game.setDoomMap("map04");
 		game.loadConfig("vizdoom/examples/config/defend_the_center.cfg");
 		inputRow = getRow(); 
+		game.setDoomScenarioPath("vizdoom/scenarios/" + "defend_the_center.wad");
+		
 	}
 	
 	private int getRow() {
@@ -95,7 +98,7 @@ public class VizDoomDefendCenterTask<T extends Network> extends VizDoomTask<T> {
 
 	public static void main(String[] args) {
 		Parameters.initializeParameterCollections(new String[] { "watch:true", "io:false", "netio:false", "doomEpisodeLength:2100",
-				"task:edu.utexas.cs.nn.tasks.vizdoom.VizDoomBasicShootTask", "trials:3", "printFitness:true", "scenarioWad:defend_the_center.wad" });
+				"task:edu.utexas.cs.nn.tasks.vizdoom.VizDoomBasicShootTask", "trials:3", "printFitness:true"});
 		MMNEAT.loadClasses();
 		VizDoomBasicShootTask<TWEANN> vd = new VizDoomBasicShootTask<TWEANN>();
 		TWEANNGenotype individual = new TWEANNGenotype();

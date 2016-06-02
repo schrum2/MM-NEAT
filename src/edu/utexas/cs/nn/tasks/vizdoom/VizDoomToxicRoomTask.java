@@ -18,6 +18,8 @@ public class VizDoomToxicRoomTask<T extends Network> extends VizDoomTask<T> {
 		super();
 		game.loadConfig("vizdoom/examples/config/health_gathering.cfg");
 		inputRow = getRow(); 
+		game.setDoomScenarioPath("vizdoom/scenarios/" + "health_gathering.wad");
+		game.setDoomMap("map01");
 	}
 
 	//borrowed from VizDoomBasicShootTask, may change or be removed
@@ -90,7 +92,7 @@ public class VizDoomToxicRoomTask<T extends Network> extends VizDoomTask<T> {
 	
 	public static void main(String[] args) {
 		Parameters.initializeParameterCollections(new String[] { "watch:true", "io:false", "netio:false",
-				"task:edu.utexas.cs.nn.tasks.vizdoom.VizDoomToxicRoomTask", "trials:3", "printFitness:true", "scenarioWad:health_gathering.wad" });
+				"task:edu.utexas.cs.nn.tasks.vizdoom.VizDoomToxicRoomTask", "trials:3", "printFitness:true"});
 		MMNEAT.loadClasses();
 		VizDoomToxicRoomTask<TWEANN> vd = new VizDoomToxicRoomTask<TWEANN>();
 		TWEANNGenotype individual = new TWEANNGenotype();
