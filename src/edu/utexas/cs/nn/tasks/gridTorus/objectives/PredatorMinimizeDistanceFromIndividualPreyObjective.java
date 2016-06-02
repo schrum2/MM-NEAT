@@ -22,7 +22,7 @@ public class PredatorMinimizeDistanceFromIndividualPreyObjective<T extends Netwo
 	private int preyIndex = -1;
 
 	/**
-	 * Creates the objective for the fitness for the given prey 
+	 * Creates the objective for the fitness for the predators against the given prey 
 	 * @param i index of the prey
 	 */
 	public PredatorMinimizeDistanceFromIndividualPreyObjective(int i){
@@ -58,6 +58,6 @@ public class PredatorMinimizeDistanceFromIndividualPreyObjective<T extends Netwo
 		// because the world wraps around
 		double maxDist = height / 2 + width / 2;
 		// min score, max distance from each predator to the prey
-		return maxDist*Parameters.parameters.integerParameter("torusPredators");
+		return -(maxDist*Parameters.parameters.integerParameter("torusPredators"));
 	}
 }

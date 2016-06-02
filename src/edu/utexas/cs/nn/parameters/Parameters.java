@@ -274,6 +274,10 @@ public class Parameters {
 		booleanOptions.add("logTWEANNData", false, "Whether or not to log TWEANN data");
 		booleanOptions.add("logMutationAndLineage", false, "Whether or not to log information about the mutations and lineage");
 		booleanOptions.add("logPerformance", false, "Whether or not to log performance information in a performance log");
+		booleanOptions.add("indivPredMinDistIndivPrey", false, "Turn on to encourage the individual predator to be as close to the individual prey as possible by the end of the game");
+		booleanOptions.add("indivPredMinDist", false, "Turn on to encourage the individual predator to be as close to the prey as possible by the end of the game");
+		booleanOptions.add("indivPreyMaxDistIndivPred", false, "Turn on to encourage the individual prey to be as far from the individual predator as possible by the end of the game");
+		booleanOptions.add("indivPreyMaxDist", false, "Turn on to encourage the individual prey to be as far from the predators as possible by the end of the game");
 		booleanOptions.add("torusInvertSensorInputs", false, "Causes agents' sensor inputs to be inverted in torusPredPreyTask");
 		booleanOptions.add("torusSenseByProximity", true, "Causes agents' sensor inputs to be by proximity of the agent instead of simply each agent by indices");
 		booleanOptions.add("preyLongSurvivalTime", false, "Turn on to encourage each prey to maximize their survival time");
