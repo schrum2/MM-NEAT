@@ -34,6 +34,9 @@ import edu.utexas.cs.nn.tasks.breve2D.NNBreve2DMonster;
 import edu.utexas.cs.nn.tasks.gridTorus.NNTorusPredPreyController;
 import edu.utexas.cs.nn.tasks.gridTorus.TorusEvolvedPredatorsVsStaticPreyTask;
 import edu.utexas.cs.nn.tasks.gridTorus.TorusPredPreyTask;
+import edu.utexas.cs.nn.tasks.gridTorus.cooperative.CooperativePredatorsVsStaticPrey;
+import edu.utexas.cs.nn.tasks.gridTorus.cooperative.CooperativePreyVsStaticPredators;
+import edu.utexas.cs.nn.tasks.gridTorus.cooperative.CooperativeTorusPredPreyTask;
 import edu.utexas.cs.nn.tasks.gridTorus.sensors.TorusPredPreySensorBlock;
 import edu.utexas.cs.nn.tasks.motests.FunctionOptimization;
 import edu.utexas.cs.nn.tasks.motests.testfunctions.FunctionOptimizationSet;
@@ -228,7 +231,7 @@ public class MMNEAT {
 		boolean includeInputs = Parameters.parameters.booleanParameter("subsumptionIncludesInputs");
 		int outputsPerMonitor = GameFacade.NUM_DIRS;
 		boolean ghostMonitorsSensePills = Parameters.parameters.booleanParameter("ghostMonitorsSensePills");
-		// Use the specified mesiator, but add the required ghost monitor blocks
+		// Use the specified mediator, but add the required ghost monitor blocks
 		// to it later
 		int ghostMonitorInputs = (ghostMonitorsSensePills ? new OneGhostAndPillsMonitorInputOutputMediator(0)
 				: new OneGhostMonitorInputOutputMediator(0)).numIn();
@@ -644,6 +647,17 @@ public class MMNEAT {
 				int numInputs = determineNumPredPreyInputs();
 				NetworkTask t = (NetworkTask) task;
 				setNNInputParameters(numInputs, t.outputLabels().length);
+			} else if (task instanceof CooperativeTorusPredPreyTask) {
+				System.out.println("Setup Cooperative Torus Predator/Prey Task");
+				//are specifications of specific cooperative tasks necessary?
+				if (task instanceof CooperativePredatorsVsStaticPrey){
+					//setupPredatorCooperativeCoevolution();
+				} else if(task instanceof CooperativePreyVsStaticPredators){
+					//setupPreyCooperativeCoevolution();
+				}
+				int numInputs = determineNumPredPreyInputs();
+				NetworkTask t = (NetworkTask) task;
+				setNNInputParameters(numInputs, t.outputLabels().length);
 			} else if (task instanceof UT2004Task) {
 				System.out.println("Setup UT2004 Task");
 				UT2004Task utTask = (UT2004Task) task;
@@ -665,13 +679,13 @@ public class MMNEAT {
 				System.out.println(task);
 				System.exit(1);
 			}
-			
+
 			// Changes network input setting to HyperNEAT settings
 			if (CommonConstants.hyperNEAT) {
 				System.out.println("Using HyperNEAT");
 				hyperNEATOverrides();
 			}
-			
+
 			setupMetaHeuristics();
 			// An EA is always needed. Currently only GenerationalEA classes are
 			// supported
@@ -846,7 +860,7 @@ public class MMNEAT {
 			int runs = Integer.parseInt(value);
 			args[0] = "runNumber:0";
 			Parameters.initializeParameterCollections(args); // file should
-																// exist
+			// exist
 			loadClasses();
 			calculateHVs(runs);
 		} else if (args[0].startsWith("lineage:")) {
@@ -857,7 +871,7 @@ public class MMNEAT {
 			int run = Integer.parseInt(value);
 			args[0] = "runNumber:" + run;
 			Parameters.initializeParameterCollections(args); // file should
-																// exist
+			// exist
 			System.out.println("Params loaded");
 			String saveTo = Parameters.parameters.stringParameter("saveTo");
 			String loadFrom = Parameters.parameters.stringParameter("loadFrom");
@@ -876,7 +890,7 @@ public class MMNEAT {
 			int runs = Integer.parseInt(value);
 			args[0] = "runNumber:0";
 			Parameters.initializeParameterCollections(args); // file should
-																// exist
+			// exist
 			loadClasses();
 			process(runs);
 		} else {
@@ -953,7 +967,7 @@ public class MMNEAT {
 		int multitaskModes = CommonConstants.multitaskModules;
 		if (CommonConstants.hierarchicalMultitask) {
 			multitaskModes = 1; // Initialize the network like a preference
-								// neuron net instead
+			// neuron net instead
 		}
 		networkOutputs *= multitaskModes;
 		System.out.println("Networks will have " + networkInputs + " inputs and " + networkOutputs + " outputs.");
