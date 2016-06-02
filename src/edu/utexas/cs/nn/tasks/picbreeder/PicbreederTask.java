@@ -162,7 +162,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		}
 		/**
 		 * is the evaluation and creation of a new generation supposed to occur here or in main method?????????
-		 * 
+		 * now I'm 99% sure this is not right
 		 * 
 		 */
 		//add code for evaluation of current generation
