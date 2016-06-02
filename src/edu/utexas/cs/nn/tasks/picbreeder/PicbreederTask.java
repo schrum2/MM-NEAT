@@ -41,7 +41,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	private ArrayList<JButton> buttons;
 	private ArrayList<Score<T>> scores;
 	private ArrayList<Boolean> chosen;
-	
+
 	private boolean waitingForUser = false;
 
 	public PicbreederTask(int rows, int columns, int size) {
@@ -87,8 +87,6 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 				panels.get(i).add(image);
 				buttons.add(image);
 				chosen.add(false);
-				System.out.println("original size of buttons: " + buttons.size());
-				System.out.println("original size of chosen: " + chosen.size());
 			}
 		}
 	}
@@ -129,7 +127,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	}
 
 	/**
-	 * 	 * this method also makes no sense in 
+	 * this method also makes no sense in 
 	 * scope of this task
 	 */
 	@Override
@@ -152,23 +150,16 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 				buttons.get(x).setIcon(img);
 				buttons.get(x).addActionListener(this);
 				panels.get(i).add(buttons.get(x));
-				buttons.add(buttons.get(x++));
-				chosen.add(false);
 			}
 		}
-		System.out.println("size of panels array: " + panels.size());
-		System.out.println("size of boolean array: " + chosen.size());
-		System.out.println("size of button array: " + buttons.size());
-		System.out.println("scores: " + scores);
 		while(waitingForUser){
 			try {
 				Thread.sleep(50);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
-		
+
 		return scores;
 	}
 
@@ -236,7 +227,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		}
 		ArrayList<Score<TWEANN>> gen0 = test.evaluateAll(genotypes); // replace with a test population
 		System.out.println(gen0);
-		
+
 		genotypes = new ArrayList<Genotype>();
 		for(int i = 0; i < 12; i++) {
 			final int NUM_MUTATIONS = 200;
@@ -250,7 +241,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		System.out.println(gen1);
 	}
 
-	
+
 	@SuppressWarnings("rawtypes")
 	public static void testButtonReset(PicbreederTask test) {
 		System.out.println("test is running");
@@ -277,7 +268,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 			holder.validate();
 			holder.repaint();
 		}
-		
+
 	}
 
 }
