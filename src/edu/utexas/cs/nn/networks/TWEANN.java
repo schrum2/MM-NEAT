@@ -124,10 +124,7 @@ public class TWEANN implements Network {
 					return l.recurrent;
 				}
 			}
-			// Should never reach
-			System.out.println("The targetInnovation (" + targetInnovation + ") was not found in " + outputs);
-			System.exit(1);
-			return false;
+			throw new IllegalArgumentException("The targetInnovation (" + targetInnovation + ") was not found in " + outputs);
 		}
 
 		@Override
@@ -946,29 +943,18 @@ public class TWEANN implements Network {
 	 * @param showInnovationNumbers shows innovation #s of node
 	 * @param showWeights shows weights of links 
 	 */
-	public void draw(DrawingPanel panel, boolean showInnovationNumbers, boolean showWeights) {//TODO
-
+	public void draw(DrawingPanel panel, boolean showInnovationNumbers, boolean showWeights) {
 		TWEANN.panel = panel;//instantiates private instance of panel inside of TWEANN object
-
 		if (layers == null) createLayers();
-		
 		Graphics2D g =prepPanel(panel, Color.BLACK);//this part actually draws network
-		placeAllNodes(g, showInnovationNumbers);//puts nodes onto drawingPanel
-		for(ArrayList<Node> layer : layers) {
-			for(Node display : layer) {
-				for (Link disLink : display.outputs) {
-					Node target = disLink.target;
-					checkLinkTarget(target);
-					if (showInnovationNumbers)drawInnovationNumbers(g, display, target, disLink, showWeights);
-					setLinkColor(g, disLink.recurrent, disLink.frozen);
-					drawAllLinks(g, display, target, disLink, disLink.recurrent ? -1 : 1);
-				}
-			}
-		}
-			addModuleAssociations(g, moduleAssociations);
-		}
+		drawAllNodes(g, showInnovationNumbers);//puts nodes onto drawingPanel
+		drawAllLinks(g, showInnovationNumbers, showWeights);
+		addModuleAssociations(g, moduleAssociations);
+	}
 
-
+	/**
+	 * Creates layers of network in order of input, hidden, output
+	 */
 	private void createLayers() {
 		layers = new ArrayList<ArrayList<Node>>();
 		layers.add(getNodesToDraw(0, numIn, Node.NTYPE_INPUT));//manually loads nodes from TWEANN into layers
@@ -979,22 +965,42 @@ public class TWEANN implements Network {
 		}
 		layers.add(getNodesToDraw(nodes.size() - numOut, nodes.size(), Node.NTYPE_OUTPUT));
 	}
-	
+
+	/**
+	 * gets the graphics from the drawing panel 
+	 * 
+	 * @param panel drawingPanel
+	 * @param c color of links
+	 * @return graphics object from drawingPanel
+	 */
 	private Graphics2D prepPanel(DrawingPanel panel, Color c) {
 		Graphics2D g = panel.getGraphics();
 		g.setColor(c);
 		g.drawString("Network ID: " + id, 5, 10);//network id. #s 5 & 10 set this in top left corner of panel
 		return g;
 	}
-	
+
+	/**
+	 *sizes the module rectangle based upon its share of usage
+	 *in the network 
+	 * @param g graphics object
+	 * @param moduleAssociations values of associations with module
+	 */
 	private void addModuleAssociations(Graphics2D g, int[] moduleAssociations){
 		for (int i = 0; i < moduleAssociations.length; i++) {
-		g.setColor(CombinatoricUtilities.colorFromInt(i + 1));
-		g.fillRect(100 + (i * 2 * NODE_DIM), 2, 2 * NODE_DIM, 2 * NODE_DIM);
-		g.setColor(CombinatoricUtilities.colorFromInt(moduleAssociations[i] + 1));
-		g.fillRect(100 + (i * 2 * NODE_DIM), 2 + 2 * NODE_DIM, 2 * NODE_DIM, 2 * NODE_DIM);
+			g.setColor(CombinatoricUtilities.colorFromInt(i + 1));
+			g.fillRect(100 + (i * 2 * NODE_DIM), 2, 2 * NODE_DIM, 2 * NODE_DIM);
+			g.setColor(CombinatoricUtilities.colorFromInt(moduleAssociations[i] + 1));
+			g.fillRect(100 + (i * 2 * NODE_DIM), 2 + 2 * NODE_DIM, 2 * NODE_DIM, 2 * NODE_DIM);
 		}
 	}
+
+	/**
+	 * Sets link color depending on nature of neuron
+	 * @param g graphics object
+	 * @param frozen if link is frozen
+	 * @param recurrent if link is recurrent
+	 */
 	private void setLinkColor(Graphics2D g, boolean frozen, boolean recurrent) {
 		if (frozen) {
 			g.setColor(Color.CYAN);
@@ -1004,7 +1010,29 @@ public class TWEANN implements Network {
 			g.setColor(Color.GREEN);
 		}
 	}
-	private void drawAllLinks(Graphics2D g, Node display, Node target, Link disLink, int mult) {
+	public void drawAllLinks(Graphics2D g, boolean showInnovationNumbers, boolean showWeights) {
+		for(ArrayList<Node> layer : layers) {
+			for(Node display : layer) {
+				for (Link disLink : display.outputs) {
+					Node target = disLink.target;
+					checkLinkTarget(target);
+					if (showInnovationNumbers)drawLinkInnovationNumbersAndWeights(g, display, target, disLink, showWeights);
+					setLinkColor(g, disLink.recurrent, disLink.frozen);
+					drawLink(g, display, target, disLink, disLink.recurrent ? -1 : 1);
+				}
+			}
+		}
+	}
+	/**
+	 * draws link between two nodes
+	 * 
+	 * @param g graphics object
+	 * @param display source node of link
+	 * @param target target node of link
+	 * @param disLink the link
+	 * @param mult whether or not link is recurrent
+	 */
+	private void drawLink(Graphics2D g, Node display, Node target, Link disLink, int mult) {
 		if (display.displayY == target.displayY) {
 			drawLink(g, disLink.weight, display.displayX + (NODE_DIM / 2),
 					display.displayY + (NODE_DIM / 2),
@@ -1019,6 +1047,16 @@ public class TWEANN implements Network {
 					target.displayY + (NODE_DIM / 2));
 		}
 	}
+
+	/**
+	 * draws link between two nodes
+	 * @param g graphics object
+	 * @param weight weight of link
+	 * @param x1 x-coord of source node
+	 * @param y1 y-coord of source node
+	 * @param x2 x-coord of target node
+	 * @param y2 y-coord of target node
+	 */
 	private void drawLink(Graphics2D g, double weight, int x1, int y1, int x2, int y2) {
 		final int MAX_LINES = NODE_DIM;
 		int lines = Math.max(1, (int) (Math.abs(ActivationFunctions.tanh(weight)) * MAX_LINES));
@@ -1046,6 +1084,10 @@ public class TWEANN implements Network {
 		}
 	}
 
+	/**
+	 * checks to make sure link target node exists
+	 * @param target target node of link
+	 */
 	private void checkLinkTarget(Node target) { 
 		if (target == null) {
 			System.out.println("Null link target?");
@@ -1062,6 +1104,14 @@ public class TWEANN implements Network {
 			System.out.println("Done");
 		}
 	}
+
+	/**
+	 * hard copies nodes of TWEANN to draw network
+	 * @param start starting index of node array
+	 * @param end ending index of node array
+	 * @param ntype node type
+	 * @return array list of ntype of node
+	 */
 	protected ArrayList<Node> getNodesToDraw(int start, int end, int ntype) {
 		ArrayList<Node> result = new ArrayList<Node>(end-start);
 		for (int i = start; i < end; i++) {
@@ -1069,13 +1119,19 @@ public class TWEANN implements Network {
 			if (inNode.ntype == ntype) {
 				result.add(inNode);
 			} else {
-				throw new IllegalArgumentException("node " + inNode.innovation + "did not copy properly!");
+				throw new IllegalArgumentException("node array is out of order!");
 			}
 		}
 		return result;
 	}
 
-	protected ArrayList<ArrayList<Node>> sortHiddenLayers(ArrayList<Node> hidden) {
+	/**
+	 * sorts hidden layers of nodes
+	 * 
+	 * @param hidden array list of all hidden nodes
+	 * @return array list containing each separate layer
+	 */
+	protected ArrayList<ArrayList<Node>> sortHiddenLayers(ArrayList<Node> hidden) {//TODO still needs some cleaning up I feel
 		ArrayList<ArrayList<Node>> hiddenLayers = new ArrayList<ArrayList<Node>>();
 		hiddenLayers.add(hidden);
 		int hiddenLayer = 0;
@@ -1114,14 +1170,31 @@ public class TWEANN implements Network {
 		return hiddenLayers;
 	}
 
-	
+	/**
+	 * draws a border around the given node corresponding to activation #
+	 * @param g graphics object
+	 * @param c color of border
+	 * @param x x-coord of node 
+	 * @param y y-coord of node
+	 * @param activation activation # of function used
+	 * @param thickness thickness of border
+	 */
 	private void drawBorder(Graphics2D g, Color c, int x, int y, double activation, int thickness) { 
 		Color component = g.getColor();
 		g.setColor(c);
 		g.fillRect(x - thickness, y - thickness, (int) ((1 + activation) * NODE_DIM) + thickness*2, (int) ((1 + activation) * NODE_DIM) + thickness*2);
 		g.setColor(component);
 	}
-	private void drawInnovationNumbers(Graphics2D g, Node display, Node target, Link disLink, boolean showWeights) {
+
+	/**
+	 * Draws innovation numbers and weights
+	 * @param g graphics object
+	 * @param display source node
+	 * @param target target node
+	 * @param disLink link in question
+	 * @param showWeights whether or not to show weights
+	 */
+	private void drawLinkInnovationNumbersAndWeights(Graphics2D g, Node display, Node target, Link disLink, boolean showWeights) {
 		int x = (display.displayX + target.displayX) / 2;
 		int y = (display.displayY + target.displayY) / 2;
 		g.setColor(Color.MAGENTA);
@@ -1132,7 +1205,15 @@ public class TWEANN implements Network {
 			g.drawString("" + weight, x, y + 10);
 		}
 	}
-	private void drawInnovationNumbers(Graphics2D g, Node display, int x, int y) {
+
+	/**
+	 * draws node innovation numbers
+	 * @param g graphics object
+	 * @param display node
+	 * @param x x-coord of node
+	 * @param y y-coord of node
+	 */
+	private void drawNodeInnovationNumbers(Graphics2D g, Node display, int x, int y) {
 		AffineTransform t = g.getTransform();
 		g.setColor(Color.BLACK);
 		int sign = display.ntype == Node.NTYPE_INPUT ? -1 : 1;
@@ -1142,19 +1223,35 @@ public class TWEANN implements Network {
 		g.setTransform(t);
 	}
 
-	protected void placeAllNodes(Graphics2D g, boolean showInnovationNumbers) {
+	/**
+	 * places all nodes on graphics
+	 * @param g graphics object
+	 * @param showInnovationNumbers whether or not to show innovation numbers
+	 */
+	protected void drawAllNodes(Graphics2D g, boolean showInnovationNumbers) {
 		int height = panel.getFrame().getHeight() - 46;//46 is padding for panel
 		int width = panel.getFrame().getWidth() - 6;//6 is padding for panel
 		for (int l = 0; l < layers.size(); l++) {
 			ArrayList<Node> layer = layers.get(l);
 			double verticalSpacing = ((height - (2.0 * DISPLAY_BORDER)) / (layers.size() - 1.0));
 			for (int n = 0; n < layer.size(); n++) {
-				drawAllNodes(g, verticalSpacing, width, height, layer, n, l, showInnovationNumbers);
+				drawNode(g, verticalSpacing, width, height, layer, n, l, showInnovationNumbers);
 			}
 		}
 	}
 
-	private void drawAllNodes(Graphics2D g, double verticalSpacing, int width, int height, ArrayList<Node> layer, int n, int l, boolean showInnovationNumbers) {
+	/**
+	 * Draws node
+	 * @param g graphics object
+	 * @param verticalSpacing spacing of node
+	 * @param width width of node
+	 * @param height height of node
+	 * @param layer layer of nodes to write from 
+	 * @param n number of node
+	 * @param l  number of node layer
+	 * @param showInnovationNumbers whether to show innovation numbers
+	 */
+	private void drawNode(Graphics2D g, double verticalSpacing, int width, int height, ArrayList<Node> layer, int n, int l, boolean showInnovationNumbers) {
 		double horizontalSpacing = ((width - (2.0 * DISPLAY_BORDER)) / layer.size());
 		int x = (int) (DISPLAY_BORDER + (n * horizontalSpacing) + (horizontalSpacing / 2.0));
 		int y = (int) ((height - DISPLAY_BORDER) - (l * verticalSpacing));
@@ -1163,88 +1260,98 @@ public class TWEANN implements Network {
 		display.displayY = y;
 		g.setColor(Color.white);
 		g.fillRect(x, y, 2 * NODE_DIM, 2 * NODE_DIM); // erase previous activation
-		if (display.ntype == Node.NTYPE_OUTPUT) {
-			g.fillRect(x, 0, 2 * NODE_DIM, 2 * NODE_DIM); // erase mode indicator
-			if (n / (neuronsPerMode + (standardMultitask ? 0.0 : 1.0)) == chosenModule) {
-				g.setColor(CombinatoricUtilities.colorFromInt(chosenModule));
-				g.fillRect(x, 0, 2 * NODE_DIM, 2 * NODE_DIM); // erase mode indicator
-			}
-			if (standardMultitask || CommonConstants.ensembleModeMutation
-					|| n % (neuronsPerMode + 1) == neuronsPerMode) {
-				g.setColor(Color.GRAY);
-			} else {
-				g.setColor(Color.ORANGE);
-			}
-		} else if (display.ntype == Node.NTYPE_HIDDEN) {
-			g.setColor(Color.RED);
-		} else {
-			g.setColor(Color.BLACK);
-			g.drawString(n + "", x, y + 15);
-			g.setColor(Color.BLUE);
-		}
 		double activation = display.activation;
-		if (display.frozen) {
-			drawBorder(g, Color.CYAN, x, y, activation, 2);
-		} else if(Parameters.parameters.booleanParameter("allowMultipleFunctions")) {
-			drawBorder(g, CombinatoricUtilities.colorFromInt(display.ftype), x, y, activation, 2);
-		} else if(Parameters.parameters.booleanParameter("allowMultipleFunctions") && display.frozen) {
-			drawBorder(g, Color.CYAN, x, y, activation, 4);
-			drawBorder(g, CombinatoricUtilities.colorFromInt(display.ftype), x, y, activation, 4);
+		eraseModeIndicator(g, x, y, Color.white);
+		if (display.ntype == Node.NTYPE_OUTPUT) {
+			drawOutputNode(g, n, x, y, activation);
+		} else if (display.ntype == Node.NTYPE_HIDDEN) {
+			drawHiddenNode(g, x, y, activation);
+		} else {
+			drawInputNode(g, n, x, y, activation);
+		}
+		checkNode(g, display);
+		if (showInnovationNumbers) drawNodeInnovationNumbers(g, display, x, y);
+	}
+
+	/**
+	 * draws output nodes
+	 * @param g graphics object
+	 * @param n number of node
+	 * @param x x-coord of node
+	 * @param y y-coord of node
+	 * @param activation activation number of node
+	 */
+	private void drawOutputNode(Graphics2D g, int n, int x, int y, double activation) {
+		if (n / (neuronsPerMode + (standardMultitask ? 0.0 : 1.0)) == chosenModule) {
+			eraseModeIndicator(g, x, 0, CombinatoricUtilities.colorFromInt(chosenModule));
+		}
+		if (standardMultitask || CommonConstants.ensembleModeMutation
+				|| n % (neuronsPerMode + 1) == neuronsPerMode) {
+			g.setColor(Color.GRAY);//gray means multitask and multimodule is on
+		} else {
+			g.setColor(Color.ORANGE);//orange means standard single module and task
 		}
 		g.fillRect(x, y, (int) ((1 + activation) * NODE_DIM), (int) ((1 + activation) * NODE_DIM));
-		if (showInnovationNumbers) {
-			drawInnovationNumbers(g, display, x, y);
-		}
 	}
-	protected void placeAllLinks(Graphics2D g) {
-		for (int l = 0; l < layers.size(); l++) {
-			ArrayList<Node> layer = layers.get(l);
-			for (int n = 0; n < layer.size(); n++) {
-				Node display = layer.get(n);
-				for (Link disLink : display.outputs) {
-					Node target = disLink.target;
-				}
-			}
+
+	/**
+	 * draws hidden nodes
+	 * @param g graphics object
+	 * @param x x-coord of node
+	 * @param y y-coord of node
+	 * @param activation activation of node
+	 */
+	private void drawHiddenNode(Graphics2D g, int x, int y, double activation){
+		g.setColor(Color.RED);
+		g.fillRect(x, y, (int) ((1 + activation) * NODE_DIM), (int) ((1 + activation) * NODE_DIM));
+	}
+	
+	/**
+	 * draws input nodes
+	 * @param g graphics object
+	 * @param n number of node
+	 * @param x x-coord of node
+	 * @param y y-coord of node
+	 * @param activation activation of node
+	 */
+	private void drawInputNode(Graphics2D g, int n, int x, int y, double activation) {
+		g.setColor(Color.BLACK);
+		g.drawString(n + "", x, y + 15);
+		g.setColor(Color.BLUE);
+		g.fillRect(x, y, (int) ((1 + activation) * NODE_DIM), (int) ((1 + activation) * NODE_DIM));
+	}
+	
+	/**
+	 * adds border to node if frozen and corresponding to activation function
+	 * @param g graphic object
+	 * @param display node in question
+	 */
+	private void checkNode(Graphics2D g, Node display)	 {
+		double activation = display.activation;
+		if (display.frozen) {
+			drawBorder(g, Color.CYAN, display.displayX, display.displayY, activation, 2);
+		} else if(Parameters.parameters.booleanParameter("allowMultipleFunctions")) {
+			drawBorder(g, CombinatoricUtilities.colorFromInt(display.ftype), display.displayX, display.displayY, activation, 2);
+		} else if(Parameters.parameters.booleanParameter("allowMultipleFunctions") && display.frozen) {
+			drawBorder(g, Color.CYAN, display.displayX, display.displayY, activation, 4);
+			drawBorder(g, CombinatoricUtilities.colorFromInt(display.ftype), display.displayX, display.displayY, activation, 4);
 		}
 	}
 
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	//	private void addAllLinks)() {
-	//		
-	//	}
-	//				
+	/**
+	 * erases mode indicator
+	 * @param g graphic object
+	 * @param x x-coord of mode
+	 * @param y y-coord of mode
+	 * @param c color to erase mode with
+	 */
+	private void eraseModeIndicator(Graphics2D g, int x, int y, Color c) {
+		g.setColor(c);
+		g.fillRect(x, y, 2 * NODE_DIM, 2 * NODE_DIM);
+	}
+
+
+			
 	public static void main(String[] args) {
 		Parameters.initializeParameterCollections(new String[]{"io:false", "allowMultipleFunctions:true", "recurrency:false", "mmdRate:0.1", "task:edu.utexas.cs.nn.tasks.breve2D.Breve2DTask"});
 		//CommonConstants.freezeBeforeModeMutation = true;
