@@ -16,6 +16,7 @@ import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
+import edu.utexas.cs.nn.evolution.nsga2.NSGA2;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.parameters.Parameters;
@@ -100,6 +101,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	}
 
 
+	@SuppressWarnings("unused")
 	private JButton getImageButton(Genotype<T> genotype, String s) {
 		BufferedImage image = GraphicsUtil.imageFromCPPN(genotype.getPhenotype(), PIC_SIZE, PIC_SIZE); 
 		return getImageButton(image, s);
@@ -158,7 +160,18 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 				e.printStackTrace();
 			}
 		}
-
+		/**
+		 * is the evaluation and creation of a new generation supposed to occur here or in main method?????????
+		 * 
+		 * 
+		 */
+		//add code for evaluation of current generation
+		NSGA2<T> ea = new NSGA2<T>(this, scores.size(), false);
+		ArrayList<Genotype<T>> evaluatedPopulation = ea.generateChildren(NUM_COLUMNS * NUM_ROWS, scores);
+		for(int i = 0; i < evaluatedPopulation.size(); i++) {
+			scores.set(i, new Score<T>(evaluatedPopulation.get(i), new double[]{2}, null));
+			chosen.set(i, false);
+		}
 		return scores;
 	}
 
@@ -168,11 +181,10 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		s.next();
 		s.next();
 		int scoreIndex = s.nextInt();
-		if(scoreIndex == -1) {// TODO 
-			//need to add code here that mutates chosen individuals and updates jpanel
+		if(scoreIndex == -1) {
 			System.out.println("congratulations you pressed the evolve button");
-			System.out.println(scores);	
-			
+			System.out.println("scores: " + scores);	
+			System.out.println("boolean values: " + chosen);
 			waitingForUser = false;
 		} else {
 			if(scores.size() != buttons.size()) {
@@ -180,7 +192,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 				throw new IllegalArgumentException("size mismatch! score array is " + scores.size()
 				+ " in length and buttons array is " + buttons.size() + " long");
 			}
-			scores.get(scoreIndex).replaceScores(evaluate());
+			scores.get(scoreIndex).replaceScores(new double[]{1.0});
 			int buttonIndex = buttons.indexOf(event.getSource());
 			if(chosen.get(buttonIndex)) {
 				chosen.set(buttonIndex, false);
@@ -207,7 +219,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 
 
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings({ "rawtypes"})
 	public static void main(String[] args) {
 		MMNEAT.clearClasses();
 		EvolutionaryHistory.setInnovation(0);
@@ -255,20 +267,14 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 			}
 			genotypes.add(tg1);
 		}
+		while(true) {
 		ArrayList<Score<TWEANN>> gen0 = test.evaluateAll(genotypes); // replace with a test population
+		System.out.println("is this what I'm looking for?");
 		System.out.println(gen0);
-
-//		genotypes = new ArrayList<Genotype>();
-//		for(int i = 0; i < 16; i++) {
-//			final int NUM_MUTATIONS = 200;
-//			TWEANNGenotype tg1 = new TWEANNGenotype(4, 3, false, 0, 1, 0);
-//			for (int j = 0; j < NUM_MUTATIONS; j++) {
-//				tg1.mutate();
-//			}
-//			genotypes.add(tg1);
-//		}
-//		ArrayList<Score<TWEANN>> gen1 = test.evaluateAll(genotypes); // replace with a test population
-//		System.out.println(gen1);
+		for(int i = 0; i < gen0.size(); i++) {
+			genotypes.set(i, gen0.get(i).individual);
+		}
+		}
 	}
 
 
