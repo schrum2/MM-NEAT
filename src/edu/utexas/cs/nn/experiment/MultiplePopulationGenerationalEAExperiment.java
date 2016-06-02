@@ -6,7 +6,6 @@ import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.evolution.genotypes.SimpleBlueprintGenotype;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
 import edu.utexas.cs.nn.evolution.mulambda.CooperativeCoevolutionMuLambda;
-import edu.utexas.cs.nn.evolution.mulambda.MuLambda;
 import edu.utexas.cs.nn.log.PlotLog;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.parameters.Parameters;
@@ -86,6 +85,7 @@ public abstract class MultiplePopulationGenerationalEAExperiment implements Expe
 		this.ea = ea;
 	}
 
+        @Override
 	public void init() {
 		String lastSavedDir = Parameters.parameters.stringParameter("lastSavedDirectory");
 		boolean io = Parameters.parameters.booleanParameter("io");
@@ -110,7 +110,7 @@ public abstract class MultiplePopulationGenerationalEAExperiment implements Expe
 				this.populations = ea.initialPopulations(examples);
 				int mu = ((CooperativeCoevolutionMuLambda) ea).mu[examples.size()];
 				// Initialize blueprint population, using other populations
-				this.populations.add(MuLambda.initialPopulation(last, mu));
+				this.populations.add(PopulationUtil.initialPopulation(last, mu));
 				// Put blueprint example back
 				examples.add(last);
 				assert(examples.size() == populations.size());
@@ -131,6 +131,7 @@ public abstract class MultiplePopulationGenerationalEAExperiment implements Expe
 		System.out.println("GenerationalEAExperiment: writeOutput = " + writeOutput);
 	}
 
+        @Override
 	public void run() {
 		System.out.println("Evolving with " + ea + " to solve " + ea.getTask());
 		if (writeOutput && !loaded) {

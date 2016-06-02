@@ -142,6 +142,7 @@ public abstract class CooperativeCoevolutionMuLambda implements MultiplePopulati
 	 *            an arrayList of genotypes
 	 * @return startingPopulations, an arrayList of arrayLists of genotypes
 	 */
+        @Override
 	public ArrayList<ArrayList<Genotype>> initialPopulations(ArrayList<Genotype> examples) {
 		ArrayList<ArrayList<Genotype>> startingPopulations = new ArrayList<ArrayList<Genotype>>(examples.size() + 1);
 		boolean seedCoevolutionPops = Parameters.parameters.booleanParameter("seedCoevolutionPops");
@@ -167,7 +168,7 @@ public abstract class CooperativeCoevolutionMuLambda implements MultiplePopulati
 				startingPopulations.add(pop);
 			} else {
 				System.out.println("Fresh subpop " + i);
-				startingPopulations.add(MuLambda.initialPopulation(examples.get(i), mu[i]));
+				startingPopulations.add(PopulationUtil.initialPopulation(examples.get(i), mu[i]));
 			}
 		}
 		return startingPopulations;
@@ -184,10 +185,11 @@ public abstract class CooperativeCoevolutionMuLambda implements MultiplePopulati
 	 *            vector of subpopulations
 	 * @return vector of all the genotypes to keep after a generation
 	 */
+        @Override
 	public ArrayList<ArrayList<Genotype>> getNextGeneration(ArrayList<ArrayList<Genotype>> populations) {
 		evaluatingParents = true;
 		long start = System.currentTimeMillis();
-		System.out.println("Eval parents: "); // + start);
+		System.out.println("Eval parents: "); 
 		ArrayList<ArrayList<Score>> parentScores = task.evaluateAllPopulations(populations);
 		long end = System.currentTimeMillis();
 		System.out.println("Done parents: " + TimeUnit.MILLISECONDS.toMinutes(end - start) + " minutes");
@@ -195,7 +197,7 @@ public abstract class CooperativeCoevolutionMuLambda implements MultiplePopulati
 
 		evaluatingParents = false;
 		start = System.currentTimeMillis();
-		System.out.println("Eval children: "); // + start);
+		System.out.println("Eval children: "); 
 		ArrayList<ArrayList<Score>> childrenScores = processChildren(parentScores);
 		end = System.currentTimeMillis();
 		System.out.println("Done children: " + TimeUnit.MILLISECONDS.toMinutes(end - start) + " minutes");
@@ -206,8 +208,7 @@ public abstract class CooperativeCoevolutionMuLambda implements MultiplePopulati
 
 		ArrayList<ArrayList<Genotype>> finalKeepers = new ArrayList<ArrayList<Genotype>>(parentScores.size());
 		for (int i = 0; i < parentScores.size(); i++) {
-			ArrayList<Score> sourcePopulation = prepareSourcePopulation(i, parentScores.get(i), childrenScores.get(i),
-					mltype);
+			ArrayList<Score> sourcePopulation = prepareSourcePopulation(i, parentScores.get(i), childrenScores.get(i), mltype);
 			ArrayList<Genotype> selectedPopulation = selection(i, mu[i], sourcePopulation);
 			finalKeepers.add(selectedPopulation);
 		}
@@ -225,6 +226,7 @@ public abstract class CooperativeCoevolutionMuLambda implements MultiplePopulati
 	 * the possibility of each subpopulation having a different type of
 	 * Genotype.
 	 *
+         * @param popIndex
 	 * @param parentScores
 	 *            parent scores
 	 * @param childrenScores
@@ -233,8 +235,7 @@ public abstract class CooperativeCoevolutionMuLambda implements MultiplePopulati
 	 *            type of selection (+ vs ,)
 	 * @return population to select from for next generation.
 	 */
-	public ArrayList<Score> prepareSourcePopulation(int popIndex, ArrayList<Score> parentScores,
-			ArrayList<Score> childrenScores, int mltype) {
+	public ArrayList<Score> prepareSourcePopulation(int popIndex, ArrayList<Score> parentScores, ArrayList<Score> childrenScores, int mltype) {
 		ArrayList<Score> population = null;
 		switch (mltype) {
 		case MuLambda.MLTYPE_PLUS:

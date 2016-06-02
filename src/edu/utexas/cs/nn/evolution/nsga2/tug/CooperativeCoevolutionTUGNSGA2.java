@@ -42,8 +42,7 @@ public class CooperativeCoevolutionTUGNSGA2 extends CooperativeCoevolutionNSGA2 
 	}
 
 	@Override
-	public ArrayList<Score> prepareSourcePopulation(int popIndex, ArrayList<Score> parentScores,
-			ArrayList<Score> childrenScores, int mltype) {
+	public ArrayList<Score> prepareSourcePopulation(int popIndex, ArrayList<Score> parentScores, ArrayList<Score> childrenScores, int mltype) {
 		if (popIndex == 0) {
 			// TUG log management
 			double[][] stats = tug.performanceAndGoalTargets(parentScores);

@@ -1,5 +1,6 @@
 package edu.utexas.cs.nn.util;
 
+import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.data.SaveThread;
 import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
@@ -22,21 +23,51 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Scanner;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import wox.serial.Easy;
 
 /**
- *
+ * Several utility classes dealing with the creation
+ * and management of populations.
+ * 
  * @author Jacob Schrum
  */
 public class PopulationUtil {
 
 	/**
+	 * Generate initial parent population
+	 * 
+	 * @param <T>
+	 *            Type of phenotype evolved
+	 * @param example
+	 *            example genotype used to derive initial population
+	 * @param size
+	 *            Population size
+	 * @return List of genotypes for initial population
+	 */
+	public static <T> ArrayList<Genotype<T>> initialPopulation(Genotype<T> example, int size) {
+		ArrayList<Genotype<T>> parents = new ArrayList<Genotype<T>>(size);
+		if (MMNEAT.seedExample) { // Seed whole population with particular starting genotype
+			for (int i = 0; i < size; i++) {
+				// Exact copies of seed network
+				parents.add(example.copy());
+			}
+		} else { // Random population
+			for (int i = 0; i < size; i++) {
+				parents.add(example.newInstance());
+			}
+		}
+		return parents;
+	}    
+    
+	/**
 	 * Given a whole population of scores, get the Pareto front and use them as
 	 * exemplars to create a delta-coded population.
 	 * 
+         * @param <T> phenotype
 	 * @param populationScores
 	 *            population with scores
 	 * @return new soft restart population
@@ -51,6 +82,7 @@ public class PopulationUtil {
 	 * Take some example genotypes (e.g. a Pareto front) and create a whole
 	 * population based off of them by delta coding their network weights.
 	 * 
+         * @param <T> phenotype
 	 * @param size
 	 *            of population to be
 	 * @param exemplars
@@ -161,8 +193,7 @@ public class PopulationUtil {
 	 * @param layers
 	 *            How many layers to keep
 	 */
-	public static <T> void pruneDownToTopParetoLayers(ArrayList<Genotype<T>> population, NSGA2Score<T>[] scores,
-			int layers) {
+	public static <T> void pruneDownToTopParetoLayers(ArrayList<Genotype<T>> population, NSGA2Score<T>[] scores, int layers) {
 		ArrayList<ArrayList<NSGA2Score<T>>> fronts = NSGA2.getParetoLayers(scores);
 		// Reduce population to only contain top Pareto layers
 		Iterator<Genotype<T>> itr = population.iterator();
@@ -279,8 +310,7 @@ public class PopulationUtil {
 	 * dummy individuals to return.
 	 *
 	 * @param <T>
-	 *            phenotype: irrelevant since anonymous dummy individuals are
-	 *            used
+	 *            phenotype: irrelevant since anonymous dummy individuals are used
 	 * @param filename
 	 *            file to load scores from
 	 * @return array of scores
@@ -293,7 +323,7 @@ public class PopulationUtil {
 		int i = 0;
 		while (s.hasNextLine()) {
 			Scanner line = new Scanner(s.nextLine());
-			int withinGen = line.nextInt();
+			//int withinGen = line.nextInt();
 			long offspringId = line.nextLong();
 			ArrayList<Double> scores = new ArrayList<Double>();
 			while (line.hasNext()) {
@@ -317,7 +347,7 @@ public class PopulationUtil {
 	 * Used when creating a score instance where only the score matters. Score
 	 * instances normally contain a copy of the genotype as well, but when
 	 * loading scores from a file, the genotype would take an extra effort to
-	 * load. All that really mattes is the genotype id, so that the score can be
+	 * load. All that really matters is the genotype id, so that the score can be
 	 * associated with the right genotype, even though that genotype is
 	 * contained within this particular score instance. This method creates an
 	 * instance of an anonymous Genotype that only stores a genotype id. Any
@@ -333,34 +363,39 @@ public class PopulationUtil {
 	public static <T> Genotype<T> anonymousIdIndividual(final long offspringId) {
 		return new Genotype<T>() {
 
+                        @Override
 			public Genotype<T> copy() {
-				throw new UnsupportedOperationException("Not supported yet.");
+				throw new UnsupportedOperationException("Not supported in dummy genotype.");
 			}
 
+                        @Override
 			public void mutate() {
-				throw new UnsupportedOperationException("Not supported yet.");
+				throw new UnsupportedOperationException("Not supported in dummy genotype.");
 			}
 
+                        @Override
 			public Genotype<T> crossover(Genotype<T> g) {
-				throw new UnsupportedOperationException("Not supported yet.");
+				throw new UnsupportedOperationException("Not supported in dummy genotype.");
 			}
 
+                        @Override
 			public T getPhenotype() {
-				throw new UnsupportedOperationException("Not supported yet.");
+				throw new UnsupportedOperationException("Not supported in dummy genotype.");
 			}
 
+                        @Override
 			public Genotype<T> newInstance() {
-				throw new UnsupportedOperationException("Not supported yet.");
+				throw new UnsupportedOperationException("Not supported in dummy genotype.");
 			}
 
+                        @Override
 			public long getId() {
 				return offspringId;
 			}
 		};
 	}
 
-	public static void saveAllSubPops(String prefix, String saveDirectory, ArrayList<ArrayList<Genotype>> populations,
-			boolean parallel) {
+	public static void saveAllSubPops(String prefix, String saveDirectory, ArrayList<ArrayList<Genotype>> populations, boolean parallel) {
 		String fullSaveDir = saveDirectory + "/" + prefix;
 		new File(fullSaveDir).mkdir();
 		Parameters.parameters.setString("lastSavedDirectory", fullSaveDir);
@@ -373,10 +408,8 @@ public class PopulationUtil {
 		}
 	}
 
-	public static <T> void saveSubpop(int num, String prefix, String saveDirectory, ArrayList<Genotype<T>> population,
-			boolean parallel) {
-		String experimentPrefix = Parameters.parameters.stringParameter("log")
-				+ Parameters.parameters.integerParameter("runNumber");
+	public static <T> void saveSubpop(int num, String prefix, String saveDirectory, ArrayList<Genotype<T>> population, boolean parallel) {
+		String experimentPrefix = Parameters.parameters.stringParameter("log") + Parameters.parameters.integerParameter("runNumber");
 		String fullSaveDir = saveDirectory + "/" + prefix + "/" + num;
 		prefix = experimentPrefix + "_" + prefix + "_" + num + "_";
 
@@ -411,7 +444,7 @@ public class PopulationUtil {
 					System.out.println("Failure saving " + population.get(i));
 					System.exit(1);
 				}
-			} catch (Exception ex) {
+			} catch (InterruptedException | ExecutionException ex) {
 				ex.printStackTrace();
 				System.out.println("Failure saving " + population.get(i));
 				System.exit(1);
@@ -431,7 +464,7 @@ public class PopulationUtil {
 	 * number of populations subdirectories to look for.
 	 *
 	 * Each subdir should contain a collection of xml files that can be loaded
-	 * as Genotypes<T> instances. Also, each subdir should have the same number
+	 * as Genotypes instances. Also, each subdir should have the same number
 	 * of xml files to create equal sized subpops.
 	 *
 	 * @param directory
@@ -451,7 +484,6 @@ public class PopulationUtil {
 			/**
 			 * The only way for Java to compile this is to switch the generic
 			 * Objects over to being completely unknown types.
-			 *
 			 */
 			populations.add(removeListGenotypeType(pop));
 		}
@@ -459,12 +491,12 @@ public class PopulationUtil {
 	}
 
 	/**
-	 * Given an ArrayList of Genotypes<T> instances, remove the T type and
+	 * Given an ArrayList of Genotypes instances, remove the T type and
 	 * return the resulting list.
 	 *
-	 * @param <T>
-	 * @param genotypes
-	 * @return
+	 * @param <T> phenotype
+	 * @param genotypes list of genotypes encoding T phenotypes
+	 * @return genotype with the T type stripped away
 	 */
 	public static <T> ArrayList<Genotype> removeListGenotypeType(ArrayList<Genotype<T>> genotypes) {
 		ArrayList<Genotype> ungenericPop = new ArrayList<Genotype>(genotypes.size());
@@ -478,9 +510,9 @@ public class PopulationUtil {
 	 * Puts back type T information for all genotypes in an array list. For this
 	 * to be valid, all genotypes must be of the same type
 	 *
-	 * @param <T>
-	 * @param genotypes
-	 * @return
+	 * @param <T> phenotype
+	 * @param genotypes list of genotypes with unspecified phenotype
+	 * @return genotype with phenotype T explicitly specified
 	 */
 	public static <T> ArrayList<Genotype<T>> addListGenotypeType(ArrayList<Genotype> genotypes) {
 		ArrayList<Genotype<T>> genericPop = new ArrayList<Genotype<T>>(genotypes.size());
@@ -493,9 +525,9 @@ public class PopulationUtil {
 	/**
 	 * Add generic type T to list of Scores
 	 *
-	 * @param <T>
-	 * @param scores
-	 * @return
+	 * @param <T> phenotype
+	 * @param scores list of scores for unspecified phenotype
+	 * @return score list with phenotype made explicit
 	 */
 	public static <T> ArrayList<Score<T>> addListScoreType(ArrayList<Score> scores) {
 		ArrayList<Score<T>> genericPop = new ArrayList<Score<T>>(scores.size());
@@ -536,6 +568,7 @@ public class PopulationUtil {
 	 * Take two populations and find out, by reference to id numbers, which
 	 * members are in one but not the other.
 	 *
+         * @param <T> phenotype
 	 * @param lhs
 	 *            pop 1
 	 * @param rhs
@@ -543,8 +576,7 @@ public class PopulationUtil {
 	 * @return The first member of the pair contains individuals in lhs but not
 	 *         in rhs, while the second is members of rhs that are not in lhs
 	 */
-	public static <T> Pair<ArrayList<Genotype<T>>, ArrayList<Genotype<T>>> populationDifferences(
-			ArrayList<Genotype<T>> lhs, ArrayList<Genotype<T>> rhs) {
+	public static <T> Pair<ArrayList<Genotype<T>>, ArrayList<Genotype<T>>> populationDifferences(ArrayList<Genotype<T>> lhs, ArrayList<Genotype<T>> rhs) {
 		ArrayList<Genotype<T>> leftDiffRight = ArrayUtil.setDifference(lhs, rhs);
 		ArrayList<Genotype<T>> rightDiffLeft = ArrayUtil.setDifference(rhs, lhs);
 		return new Pair<ArrayList<Genotype<T>>, ArrayList<Genotype<T>>>(leftDiffRight, rightDiffLeft);
@@ -555,7 +587,7 @@ public class PopulationUtil {
 	 * designated id
 	 *
 	 * @param <T>
-	 *            type of genotypes
+	 *            type of phenotype
 	 * @param id
 	 *            id of genotype
 	 * @param staticScores

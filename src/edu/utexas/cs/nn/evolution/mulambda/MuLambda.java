@@ -125,34 +125,7 @@ public abstract class MuLambda<T> implements SinglePopulationGenerationalEA<T> {
 	 */
 	@Override
 	public ArrayList<Genotype<T>> initialPopulation(Genotype<T> example) {
-		return initialPopulation(example, mu);
-	}
-
-	/**
-	 * Generate initial parent population
-	 * 
-	 * @param <T>
-	 *            Type of phenotype evolved
-	 * @param example
-	 *            example genotype used to derive initial population
-	 * @param mu
-	 *            Population size
-	 * @return List of genotypes for initial population
-	 */
-	public static <T> ArrayList<Genotype<T>> initialPopulation(Genotype<T> example, int mu) {
-		ArrayList<Genotype<T>> parents = new ArrayList<Genotype<T>>(mu);
-		if (MMNEAT.seedExample) { // Seed whole population with particular
-									// starting genotype
-			for (int i = 0; i < mu; i++) {
-				// Exact copies of seed network
-				parents.add(example.copy());
-			}
-		} else { // Random population
-			for (int i = 0; i < mu; i++) {
-				parents.add(example.newInstance());
-			}
-		}
-		return parents;
+		return PopulationUtil.initialPopulation(example, mu);
 	}
 
 	/**
@@ -348,12 +321,10 @@ public abstract class MuLambda<T> implements SinglePopulationGenerationalEA<T> {
 	 * @return List of combined scores to perform selection on for next
 	 *         generation
 	 */
-	public static <T> ArrayList<Score<T>> prepareSourcePopulation(ArrayList<Score<T>> parentScores,
-			ArrayList<Score<T>> childrenScores, int mltype) {
+	public static <T> ArrayList<Score<T>> prepareSourcePopulation(ArrayList<Score<T>> parentScores, ArrayList<Score<T>> childrenScores, int mltype) {
 		ArrayList<Score<T>> population = null;
 		switch (mltype) {
-		case MLTYPE_PLUS: // select the best from the combined parent and child
-							// population
+		case MLTYPE_PLUS: // select the best from the combined parent and child population
 			population = parentScores;
 			population.addAll(childrenScores);
 			break;
@@ -378,7 +349,7 @@ public abstract class MuLambda<T> implements SinglePopulationGenerationalEA<T> {
 	public ArrayList<Genotype<T>> getNextGeneration(ArrayList<Genotype<T>> parents) {
 		evaluatingParents = true;
 		long start = System.currentTimeMillis();
-		System.out.println("Eval parents: ");// + start);
+		System.out.println("Eval parents: ");
 		ArrayList<Score<T>> parentScores = task.evaluateAll(parents);
 		long end = System.currentTimeMillis();
 		System.out.println("Done parents: " + TimeUnit.MILLISECONDS.toMinutes(end - start) + " minutes");
