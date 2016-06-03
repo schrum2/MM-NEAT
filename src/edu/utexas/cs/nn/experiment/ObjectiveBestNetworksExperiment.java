@@ -55,6 +55,9 @@ public class ObjectiveBestNetworksExperiment<T> implements Experiment {
                 ((LonerTask) MMNEAT.task).finalCleanup(); // domain cleanup if necessary
 	}
 
+	/**
+	 * method not used
+	 */
         @Override
 	public boolean shouldStop() {
 		// Will never be called
