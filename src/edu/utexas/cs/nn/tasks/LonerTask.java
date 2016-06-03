@@ -243,10 +243,9 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
 				// Best in each objective
 				for (int j = 0; j < bestObjectives.length; j++) {
 					double objectiveScore = s.scores[j];
-                                        // i == 0 saves first member of the population as
-                                        // the tentative best until a better individual is found
+                    // i == 0 saves first member of the population as the tentative best until a better individual is found
 					if (i == 0 || objectiveScore >= bestObjectives[j]) {
-                                                // update best individual in objective j
+                        // update best individual in objective j
 						bestGenotypes[j] = s.individual;
 						bestObjectives[j] = objectiveScore;
 						bestScores[j] = s;

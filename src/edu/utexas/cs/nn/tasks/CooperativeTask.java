@@ -11,6 +11,8 @@ import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.scores.Score;
+import edu.utexas.cs.nn.tasks.LonerTask.EvaluationThread;
+import edu.utexas.cs.nn.tasks.gridTorus.cooperative.CooperativeTorusPredPreyTask;
 import edu.utexas.cs.nn.tasks.mspacman.CooperativeMsPacManTask;
 import edu.utexas.cs.nn.util.file.FileUtilities;
 import edu.utexas.cs.nn.util.random.RandomNumbers;
@@ -68,7 +70,7 @@ public abstract class CooperativeTask implements MultiplePopulationTask {
 	 *            different populations of genotypes, each the same size
 	 * @return score for each member of each population
 	 */
-        @Override
+	@Override
 	public ArrayList<ArrayList<Score>> evaluateAllPopulations(ArrayList<ArrayList<Genotype>> populations) {
 		int pops = populations.size();
 		int popSize = populations.get(0).size();
@@ -93,6 +95,8 @@ public abstract class CooperativeTask implements MultiplePopulationTask {
 
 		return evaluateAllPopulations(populations, joinOrder);
 	}
+
+
 
 	/**
 	 * Performs all cooperative evaluations on the collection of populations
@@ -120,12 +124,14 @@ public abstract class CooperativeTask implements MultiplePopulationTask {
 		int totalEvals = teamOrder.get(0).size();
 		Score bestScoreSet = null;
 		// Ignore these variables if not evolving Ms Pac-Man
-                int maxPacManScore = 0; 
+		int maxPacManScore = 0; 
 		Genotype[] bestPacManTeam = null; 
 		boolean trackBestPacManScore = this instanceof CooperativeMsPacManTask
 				&& MMNEAT.ea instanceof CooperativeCoevolutionMuLambda
 				&& ((CooperativeCoevolutionMuLambda) MMNEAT.ea).evaluatingParents;
-                
+
+		//saveBestForEachPopulation(populations);
+
 		for (int i = 0; i < totalEvals; i++) {
 			// Create team
 			Genotype[] team = getTeam(populations, teamOrder, i);
@@ -136,7 +142,7 @@ public abstract class CooperativeTask implements MultiplePopulationTask {
 			// Track the best ms pacman team in each generation
 			if (trackBestPacManScore) {
 				Score firstScoreSet = scores.get(0);
-                                // Game Score is always first: 0 is the Game Score index (fix magic number?)
+				// Game Score is always first: 0 is the Game Score index (fix magic number?)
 				int gameScore = (int) firstScoreSet.otherStats[0]; 
 				if (gameScore >= maxPacManScore) {
 					bestPacManTeam = team;
@@ -150,12 +156,13 @@ public abstract class CooperativeTask implements MultiplePopulationTask {
 			// Distribute scores appropriately
 			addScores(rawScores, teamOrder, i, scores);
 		}
+
 		if (bestPacManTeam != null) {
 			// Save best pacman team
 			String teamDir = FileUtilities.getSaveDirectory() + "/bestTeam";
 			File bestDir = new File(teamDir);
 			// Delete old contents/team 
-                        // TODO: Modify this so that the best team from each generation is saved if desired
+			// TODO: Modify this so that the best team from each generation is saved if desired
 			if (bestDir.exists()) {
 				FileUtilities.deleteDirectoryContents(bestDir);
 			} else {
@@ -181,10 +188,77 @@ public abstract class CooperativeTask implements MultiplePopulationTask {
 	 */
 	public abstract ArrayList<Score> evaluate(Genotype[] team);
 
+	/**
+	 * save the best individual for each objective in each population
+	 * Also, saves the best individual in each objective to an xml file
+	 * @param populations
+	 */
+	private void saveBestForEachPopulation(ArrayList<ArrayList<Genotype>> populations){
+		/*
+		
+		//each population will be the same size
+		int numEachPop = populations.get(0).size();
+
+		//go through each population
+		for(int i = 0; i < populations.size(); i ++){
+
+			// General tracking of best in each objective in each population
+			double[] bestObjectives =  ((Task) populations.get(i)).minScores();
+			Genotype[] bestGenotypes = new Genotype[bestObjectives.length];
+			Score[] bestScores = new Score[bestObjectives.length]; 
+
+			// Best in each objective in this population
+			// Go through this population
+			for (int j = 0; j < numEachPop; j++) {
+				
+				//get the Score of the current agent/genotype in this population
+				Score s = (((Task)(Parameters.parameters.classParameter("task"))).evaluate(populations.get(i).toArray())).get(j);
+				if(Parameters.parameters.classParameter("task") instanceof CooperativeTorusPredPreyTask)
+					Score s = CooperativeTorusPredPreyTask.evaluate((Genotype[])populations.get(i).toArray()).get(j);
+				
+				//go through each objective for this population
+				for (int k = 0; k < bestObjectives.length; k++) {
+					//get the score of each objective for this agent
+					double objectiveScore = s.scores[k];
+					// j == 0 saves first member of the population as the tentative best until a better individual is found
+					if (j == 0 || objectiveScore >= bestObjectives[k]) {
+						// update best individual in objective j
+						bestGenotypes[k] = s.individual;
+						bestObjectives[k] = objectiveScore;
+						bestScores[k] = s;
+					}
+				}
+			}
+
+			//save the best in each objective for this population (will happen for each population)
+			if (CommonConstants.netio) {
+				int currentGen = MMNEAT.ea.currentGeneration();
+				String filePrefix = "gen" + currentGen + "_";
+				// Save best in each objective
+				String bestDir = FileUtilities.getSaveDirectory() + "/pop" + i +"_bestObjectives";
+				File dir = new File(bestDir);
+				// Delete old contents/team
+				if (dir.exists() && !Parameters.parameters.booleanParameter("saveAllChampions")) {
+					FileUtilities.deleteDirectoryContents(dir);
+				} else {
+					dir.mkdir();
+				}
+				// save all of the best objectives
+				for (int j = 0; j < bestObjectives.length; j++) {
+					Easy.save(bestGenotypes[j], bestDir + "/" + filePrefix + "bestIn" + j + ".xml");
+					FileUtilities.simpleFileWrite(bestDir + "/" + filePrefix + "score" + j + ".txt",
+							bestScores[j].toString());
+				}
+			}
+		}
+		
+		*/
+	}
+
 	/*
 	 * Default objective mins of 0.
 	 */
-        @Override
+	@Override
 	public double[] minScores() {
 		return new double[this.numObjectives()];
 	}
@@ -324,7 +398,7 @@ public abstract class CooperativeTask implements MultiplePopulationTask {
 	 * Scores for each team member are the max across evals, because team
 	 * members should only be rated based on the best team they contribute to
 	 * ... no punishment for being roped into a crappy team, unless the
-         * bestTeamScore option is false.
+	 * bestTeamScore option is false.
 	 *
 	 * @param rawScores
 	 *            accumulated scores from evals so far
@@ -340,8 +414,8 @@ public abstract class CooperativeTask implements MultiplePopulationTask {
 			int orderIndex = teamOrder.get(p).get(order);
 			Score score = scores.get(p);
 			rawScores[p][orderIndex] = (bestTeamScore 
-                                ? score.maxScores(rawScores[p][orderIndex])
-				: score.incrementalAverage(rawScores[p][orderIndex]));
+					? score.maxScores(rawScores[p][orderIndex])
+							: score.incrementalAverage(rawScores[p][orderIndex]));
 		}
 	}
 }
