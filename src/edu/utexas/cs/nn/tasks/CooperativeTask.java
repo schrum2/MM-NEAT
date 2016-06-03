@@ -1,27 +1,26 @@
 package edu.utexas.cs.nn.tasks;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import wox.serial.Easy;
+import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
 import edu.utexas.cs.nn.evolution.lineage.Offspring;
 import edu.utexas.cs.nn.evolution.mulambda.CooperativeCoevolutionMuLambda;
 import edu.utexas.cs.nn.graphics.DrawingPanel;
 import edu.utexas.cs.nn.log.MONELog;
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.scores.Score;
-import edu.utexas.cs.nn.tasks.LonerTask.EvaluationThread;
-import edu.utexas.cs.nn.tasks.gridTorus.cooperative.CooperativeTorusPredPreyTask;
 import edu.utexas.cs.nn.tasks.mspacman.CooperativeMsPacManTask;
 import edu.utexas.cs.nn.util.file.FileUtilities;
 import edu.utexas.cs.nn.util.random.RandomNumbers;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import wox.serial.Easy;
 
 /**
  * Task involving multiple individuals combined into a single team or organism
@@ -70,6 +69,7 @@ public abstract class CooperativeTask implements MultiplePopulationTask {
 	 *            different populations of genotypes, each the same size
 	 * @return score for each member of each population
 	 */
+	@SuppressWarnings("rawtypes") // because populations can be mixed
 	@Override
 	public ArrayList<ArrayList<Score>> evaluateAllPopulations(ArrayList<ArrayList<Genotype>> populations) {
 		int pops = populations.size();
@@ -114,6 +114,7 @@ public abstract class CooperativeTask implements MultiplePopulationTask {
 	 *            how to join the population members into teams to evaluate
 	 * @return score for each individual of each population
 	 */
+	@SuppressWarnings("rawtypes") // because population types may be mixed
 	public ArrayList<ArrayList<Score>> evaluateAllPopulations(ArrayList<ArrayList<Genotype>> populations, List<ArrayList<Integer>> teamOrder) {
 		int pops = populations.size();
 		int popSize = populations.get(0).size();
@@ -186,6 +187,7 @@ public abstract class CooperativeTask implements MultiplePopulationTask {
 	 *            vector of the genotypes of the teammates
 	 * @return vector of scores to assign to each teammate
 	 */
+	@SuppressWarnings("rawtypes")  // because each population can have a different type
 	public abstract ArrayList<Score> evaluate(Genotype[] team);
 
 	/**
@@ -274,6 +276,7 @@ public abstract class CooperativeTask implements MultiplePopulationTask {
 	 *            in joinOrder
 	 * @return team to evaluate
 	 */
+	@SuppressWarnings("rawtypes")  // because each population can have a different type
 	protected Genotype[] getTeam(ArrayList<ArrayList<Genotype>> populations, List<ArrayList<Integer>> joinOrder, int index) {
 		int pops = populations.size();
 		Genotype[] team = new Genotype[pops];
@@ -292,6 +295,7 @@ public abstract class CooperativeTask implements MultiplePopulationTask {
 	 * @param scores
 	 *            scores of evaluated team
 	 */
+	@SuppressWarnings("rawtypes")  // because each population can have a different type
 	protected void trackingAndLogging(Genotype[] team, ArrayList<Score> scores) {
 		// Team tracking
 		long[] ids = new long[team.length];
@@ -330,6 +334,7 @@ public abstract class CooperativeTask implements MultiplePopulationTask {
 	 *            Genotypes of currently evaluated team
 	 * @return drawing panels showing the drawn networks
 	 */
+	@SuppressWarnings("rawtypes")
 	public static DrawingPanel[] drawNetworks(Genotype[] team) {
 		DrawingPanel[] panels = null;
 		if (CommonConstants.showNetworks) {
@@ -364,6 +369,7 @@ public abstract class CooperativeTask implements MultiplePopulationTask {
 	 * @return ArrayList with data from rawScores, but nulls are now zero, and
 	 *         each Score has the appropriate Genotype.
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" }) // because each population can have a different type
 	protected ArrayList<ArrayList<Score>> wrapUpScores(Score[][] rawScores, ArrayList<ArrayList<Genotype>> populations, List<ArrayList<Integer>> teamOrder) {
 		// Tracking data that matters when using blueprints
 		previousUnevaluatedIndividuals = unevaluatedIndividuals;
@@ -409,13 +415,12 @@ public abstract class CooperativeTask implements MultiplePopulationTask {
 	 * @param scores
 	 *            new scores to be added to rawScores
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" }) // because each population can have a different type
 	protected void addScores(Score[][] rawScores, List<ArrayList<Integer>> teamOrder, int order, ArrayList<Score> scores) {
 		for (int p = 0; p < scores.size(); p++) {
 			int orderIndex = teamOrder.get(p).get(order);
 			Score score = scores.get(p);
-			rawScores[p][orderIndex] = (bestTeamScore 
-					? score.maxScores(rawScores[p][orderIndex])
-							: score.incrementalAverage(rawScores[p][orderIndex]));
+			rawScores[p][orderIndex] = (bestTeamScore ? score.maxScores(rawScores[p][orderIndex]) : score.incrementalAverage(rawScores[p][orderIndex]));
 		}
 	}
 }
