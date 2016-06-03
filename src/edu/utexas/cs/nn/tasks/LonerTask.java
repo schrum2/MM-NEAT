@@ -225,15 +225,15 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
 		int maxPacManScore = 0;
 		Genotype<T> bestPacMan = null;
 		Score<T> bestScoreSet = null;
-		boolean trackBestPacManScore = CommonConstants.netio && this instanceof MsPacManTask
+		boolean trackBestPacManScore = 
+                                   CommonConstants.netio && this instanceof MsPacManTask
 				&& MMNEAT.ea instanceof MuLambda && ((MuLambda<T>) MMNEAT.ea).evaluatingParents;
 		for (int i = 0; i < population.size(); i++) {
 			try {
 				Score<T> s = parallel ? futures.get(i).get() : calls.get(i).call();
 				// Specific to Ms Pac-Man
 				if (trackBestPacManScore) {
-					int gameScore = (int) s.otherStats[0]; // Game Score is
-															// always first
+					int gameScore = (int) s.otherStats[0]; // Game Score is always first
 					if (gameScore >= maxPacManScore) {
 						bestPacMan = s.individual;
 						maxPacManScore = gameScore;
@@ -243,7 +243,10 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
 				// Best in each objective
 				for (int j = 0; j < bestObjectives.length; j++) {
 					double objectiveScore = s.scores[j];
+                                        // i == 0 saves first member of the population as
+                                        // the tentative best until a better individual is found
 					if (i == 0 || objectiveScore >= bestObjectives[j]) {
+                                                // update best individual in objective j
 						bestGenotypes[j] = s.individual;
 						bestObjectives[j] = objectiveScore;
 						bestScores[j] = s;
