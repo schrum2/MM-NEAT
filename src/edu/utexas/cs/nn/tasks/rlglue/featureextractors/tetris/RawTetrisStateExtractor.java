@@ -31,12 +31,16 @@ public class RawTetrisStateExtractor implements FeatureExtractor {
          */
 	@Override
 	public double[] extract(Observation o) {
-		System.out.print("absenceNegative is working? ");
-		System.out.println(Parameters.parameters.booleanParameter("absenceNegative"));
+		boolean negative = Parameters.parameters.booleanParameter("absenceNegative");
 		TetrisState state = TetrisAfterStateAgent.observationToTetrisState(o);
 		double[] result = new double[state.worldState.length];
 		for (int i = 0; i < result.length; i++) {
-			result[i] = Math.signum(state.worldState[i]);
+			if(Math.signum(state.worldState[i]) == 0){
+				int temp = negative ? -1 : 0;
+				result[i] = temp;
+			} else {
+				result[i] = Math.signum(state.worldState[i]);
+			}
 		}
 		return result;
 	}
