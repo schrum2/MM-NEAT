@@ -16,6 +16,7 @@ import java.util.ArrayList;
  * Pareto front before evaluation, which is the most sensible option.
  *
  * @author Jacob Schrum
+ * @param <T> phenotype
  */
 public final class LoadAndWatchExperiment<T> implements Experiment {
 
@@ -27,10 +28,10 @@ public final class LoadAndWatchExperiment<T> implements Experiment {
 	 * Pareto front.
 	 */
 	@SuppressWarnings("unchecked")
+        @Override
 	public void init() {
 		String lastSavedDir = Parameters.parameters.stringParameter("lastSavedDirectory");
-		// Currently does not work with co-evolution. Other experiments handle
-		// these cases
+		// Currently does not work with co-evolution. Other experiments handle these cases
 		this.task = (SinglePopulationTask<T>) MMNEAT.task;
 		if (lastSavedDir == null || lastSavedDir.equals("")) {
 			System.out.println("Nothing to load");
@@ -54,6 +55,7 @@ public final class LoadAndWatchExperiment<T> implements Experiment {
 	/**
 	 * Evaluate all members still in population
 	 */
+        @Override
 	public void run() {
 		System.out.println("Looking at results for " + task);
 		task.evaluateAll(population);
@@ -62,6 +64,7 @@ public final class LoadAndWatchExperiment<T> implements Experiment {
 	/**
 	 * Never called
 	 */
+        @Override
 	public boolean shouldStop() {
 		return true;
 	}

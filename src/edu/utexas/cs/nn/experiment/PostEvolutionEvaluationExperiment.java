@@ -8,8 +8,11 @@ import edu.utexas.cs.nn.util.file.FileUtilities;
 import java.io.File;
 
 /**
- *
+ * Load and evaluate all members of the final population
+ * of a single population experiment.
+ * 
  * @author Jacob Schrum
+ * @param <T> phenotype
  */
 public class PostEvolutionEvaluationExperiment<T> extends SinglePopulationGenerationalEAExperiment<T> {
 
@@ -48,6 +51,7 @@ public class PostEvolutionEvaluationExperiment<T> extends SinglePopulationGenera
 		System.out.println("Finished evolving");
 	}
 
+        @Override
 	public boolean shouldStop() {
 		System.out.println(exactLoadDir + " exists?");
 		return !(new File(exactLoadDir).exists());

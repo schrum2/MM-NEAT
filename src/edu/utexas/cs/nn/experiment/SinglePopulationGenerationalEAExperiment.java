@@ -4,19 +4,16 @@ import edu.utexas.cs.nn.data.SaveThread;
 import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
 import edu.utexas.cs.nn.evolution.SinglePopulationGenerationalEA;
 import edu.utexas.cs.nn.evolution.crossover.network.CombiningTWEANNCrossover;
-import edu.utexas.cs.nn.evolution.crossover.network.TWEANNCrossover;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
-import edu.utexas.cs.nn.graphics.DrawingPanel;
-import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.util.MiscUtil;
 import edu.utexas.cs.nn.util.PopulationUtil;
 import edu.utexas.cs.nn.util.file.FileUtilities;
 import edu.utexas.cs.nn.util.random.RandomNumbers;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -25,6 +22,7 @@ import java.util.concurrent.Future;
  * Evolve a single population of genotypes one generation at a time.
  *
  * @author Jacob Schrum
+ * @param <T> phenotype
  */
 public abstract class SinglePopulationGenerationalEAExperiment<T> implements Experiment {
 
@@ -36,8 +34,7 @@ public abstract class SinglePopulationGenerationalEAExperiment<T> implements Exp
 	public String saveDirectory;
 	// Whether to save log data
 	protected boolean writeOutput;
-	// Whether each generation should be deleted once evolution has moved on to
-	// the next
+	// Whether each generation should be deleted once evolution has moved on to the next
 	protected boolean deleteOld;
 	// Whether initial population was loaded from disk
 	private boolean loaded = false;
@@ -69,18 +66,14 @@ public abstract class SinglePopulationGenerationalEAExperiment<T> implements Exp
 		}
 		// Immediate changes that can be made to the initial population
 		if (Parameters.parameters.booleanParameter("initMMD")) {
-			// Perform MMD on each member, but maintain common innovation
-			// numbers
-			assert population
-					.get(0) instanceof TWEANNGenotype : "Cannot init MMD on genotype other than TWEANNGenotype";
+			// Perform MMD on each member, but maintain common innovation numbers
+			assert population.get(0) instanceof TWEANNGenotype : "Cannot init MMD on genotype other than TWEANNGenotype";
 			int multitaskModes = Parameters.parameters.integerParameter("multitaskModes");
 			int startingModes = Parameters.parameters.integerParameter("startingModes");
-			assert multitaskModes == 2
-					|| startingModes == 2 : "Either the multitask modes or the starting modes has to equal 2";
+			assert multitaskModes == 2 || startingModes == 2 : "Either the multitask modes or the starting modes has to equal 2";
 			for (Genotype<T> t : population) {
 				TWEANNGenotype tg = (TWEANNGenotype) t;
-				if (tg.numModules == 1) { // Designed to move from one mode each
-											// to two modes each
+				if (tg.numModules == 1) { // Designed to move from one mode each to two modes each
 					tg.moduleDuplication();
 					if (multitaskModes == 2) {
 						tg.standardMultitask = true;
@@ -165,8 +158,7 @@ public abstract class SinglePopulationGenerationalEAExperiment<T> implements Exp
 		 * their modules.
 		 */
 		if (Parameters.parameters.booleanParameter("initAddPreferenceNeurons")) {
-			assert population.get(
-					0) instanceof TWEANNGenotype : "Cannot initAddPreferenceNeurons on genotype other than TWEANNGenotype";
+			assert population.get(0) instanceof TWEANNGenotype : "Cannot initAddPreferenceNeurons on genotype other than TWEANNGenotype";
 			if (((TWEANNGenotype) population.get(0)).standardMultitask) {
 				System.out.println("Adding preference neurons to this population");
 				for (Genotype<T> t : population) {
@@ -178,7 +170,6 @@ public abstract class SinglePopulationGenerationalEAExperiment<T> implements Exp
 					System.out.println("Adding preference neurons to network " + tg.getId());
 					int modes = tg.numModules;
 					for (int i = modes - 1; i >= 0; i--) {
-						// System.out.println("\tPreference for mode " + i);
 						tg.insertPreferenceNeuron(i);
 					}
 					tg.standardMultitask = false;
@@ -204,10 +195,12 @@ public abstract class SinglePopulationGenerationalEAExperiment<T> implements Exp
 		System.out.println("GenerationalEAExperiment: writeOutput = " + writeOutput);
 	}
 
+        @Override
 	public void init() {
 		// All work already done in constructor. Move here?
 	}
 
+        @Override
 	public void run() {
 		System.out.println("Evolving with " + ea + " to solve " + ea.getTask());
 		if (writeOutput && !loaded) {
@@ -239,7 +232,6 @@ public abstract class SinglePopulationGenerationalEAExperiment<T> implements Exp
 					}
 				}
 			}
-			// ((TweakMediator) MONE.pacmanInputOutputMediator).finish();
 		}
 		ea.close(population);
 		System.out.println("Finished evolving");
@@ -264,10 +256,8 @@ public abstract class SinglePopulationGenerationalEAExperiment<T> implements Exp
 	 * @param parallel
 	 *            whether or not the save is executed with parallel threads
 	 */
-	public static <T> void save(String prefix, String saveDirectory, ArrayList<Genotype<T>> population,
-			boolean parallel) {
-		String experimentPrefix = Parameters.parameters.stringParameter("log")
-				+ Parameters.parameters.integerParameter("runNumber");
+	public static <T> void save(String prefix, String saveDirectory, ArrayList<Genotype<T>> population, boolean parallel) {
+		String experimentPrefix = Parameters.parameters.stringParameter("log") + Parameters.parameters.integerParameter("runNumber");
 		String fullSaveDir = saveDirectory + "/" + prefix;
 		prefix = experimentPrefix + "_" + prefix + "_";
 
@@ -304,7 +294,7 @@ public abstract class SinglePopulationGenerationalEAExperiment<T> implements Exp
 					System.out.println("Failure saving " + population.get(i));
 					System.exit(1);
 				}
-			} catch (Exception ex) {
+			} catch (InterruptedException | ExecutionException ex) {
 				ex.printStackTrace();
 				System.out.println("Failure saving " + population.get(i));
 				System.exit(1);

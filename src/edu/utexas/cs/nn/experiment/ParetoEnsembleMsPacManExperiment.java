@@ -22,6 +22,7 @@ import java.util.ArrayList;
  * an ensemble
  *
  * @author Jacob Schrum
+ * @param <T> phenotype
  */
 public final class ParetoEnsembleMsPacManExperiment<T extends Network> implements Experiment {
 
@@ -54,16 +55,17 @@ public final class ParetoEnsembleMsPacManExperiment<T extends Network> implement
 
 		this.inputMediators = new MsPacManControllerInputOutputMediator[front.size()];
 		for (int i = 0; i < inputMediators.length; i++) {
-			inputMediators[i] = (MsPacManControllerInputOutputMediator) ClassCreation
-					.createObject("pacmanInputOutputMediator");
+			inputMediators[i] = (MsPacManControllerInputOutputMediator) ClassCreation.createObject("pacmanInputOutputMediator");
 		}
 		MMNEAT.setupMsPacmanParameters();
 	}
 
+        @Override
 	public void init() {
 		// All work already done in constructor ... should move that here?
 	}
 
+        @Override
 	public void run() {
 
 		CooperativeEnsembleMsPacManTask pmTask = new CooperativeEnsembleMsPacManTask(front.size());
@@ -84,6 +86,7 @@ public final class ParetoEnsembleMsPacManExperiment<T extends Network> implement
 	/*
 	 * Never called
 	 */
+        @Override
 	public boolean shouldStop() {
 		return true;
 	}

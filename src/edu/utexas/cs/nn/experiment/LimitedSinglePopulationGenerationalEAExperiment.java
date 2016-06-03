@@ -6,8 +6,11 @@ import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 
 /**
- *
+ * A generational experiment that stops when a specific number of generations
+ * is exceeded.
+ * 
  * @author Jacob Schrum
+ * @param <T> phenotype
  */
 public class LimitedSinglePopulationGenerationalEAExperiment<T> extends SinglePopulationGenerationalEAExperiment<T> {
 
@@ -19,12 +22,12 @@ public class LimitedSinglePopulationGenerationalEAExperiment<T> extends SinglePo
 				Parameters.parameters.stringParameter("lastSavedDirectory"));
 	}
 
-	public LimitedSinglePopulationGenerationalEAExperiment(SinglePopulationGenerationalEA<T> ea, Genotype<T> example,
-			int maxGenerations, String lastSavedDir) {
+	public LimitedSinglePopulationGenerationalEAExperiment(SinglePopulationGenerationalEA<T> ea, Genotype<T> example, int maxGenerations, String lastSavedDir) {
 		super(ea, example, lastSavedDir);
 		this.maxGenerations = maxGenerations;
 	}
 
+        @Override
 	public boolean shouldStop() {
 		return ea.currentGeneration() >= this.maxGenerations;
 	}

@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.utexas.cs.nn.experiment;
 
 import edu.utexas.cs.nn.evolution.MultiplePopulationGenerationalEA;
@@ -9,7 +5,8 @@ import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 
 /**
- *
+ * A multi-population experiment that stops when a certain number of generations is exceeded.
+ * 
  * @author Jacob Schrum
  */
 public class LimitedMultiplePopulationGenerationalEAExperiment extends MultiplePopulationGenerationalEAExperiment {
@@ -25,6 +22,7 @@ public class LimitedMultiplePopulationGenerationalEAExperiment extends MultipleP
 		this.maxGenerations = maxGenerations;
 	}
 
+        @Override
 	public boolean shouldStop() {
 		return ea.currentGeneration() >= this.maxGenerations;
 	}

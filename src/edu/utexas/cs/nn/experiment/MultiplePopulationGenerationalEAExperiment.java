@@ -183,8 +183,7 @@ public abstract class MultiplePopulationGenerationalEAExperiment implements Expe
 				logValues.add((double) bpt.getNumberBlueprintParentReferences());
 				logValues.add((bpt.getNumberBlueprintParentReferences() * 1.0) / bpt.getTotalBlueprintReferences());
 				logValues.add((double) bpt.getPreviousNumberUnevaluatedReferences());
-				logValues.add((bpt.getPreviousNumberUnevaluatedReferences() * 1.0)
-						/ bpt.getPreviousTotalBlueprintReferences());
+				logValues.add((bpt.getPreviousNumberUnevaluatedReferences() * 1.0) / bpt.getPreviousTotalBlueprintReferences());
 				logValues.add((double) bpt.getNumberUnevaluatedReferences());
 				logValues.add((bpt.getNumberUnevaluatedReferences() * 1.0) / bpt.getTotalBlueprintReferences());
 				logValues.add((double) coopEA.successfulOffspringSearches);
@@ -199,8 +198,7 @@ public abstract class MultiplePopulationGenerationalEAExperiment implements Expe
 			for (int i = 0; i < populations.size(); i++) {
 				ArrayList<Genotype> pop = populations.get(i);
 				if (pop.get(0) instanceof TWEANNGenotype) {
-					// Have to copy each item individually because of Java's
-					// Generics
+					// Have to copy each item individually because of Java's Generics
 					ArrayList<TWEANNGenotype> tweannPopulation = new ArrayList<TWEANNGenotype>(pop.size());
 					for (Genotype p : pop) {
 						tweannPopulation.add((TWEANNGenotype) p);
