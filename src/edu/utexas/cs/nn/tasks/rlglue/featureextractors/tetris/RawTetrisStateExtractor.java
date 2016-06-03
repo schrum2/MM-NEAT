@@ -3,6 +3,7 @@ package edu.utexas.cs.nn.tasks.rlglue.featureextractors.tetris;
 import org.rlcommunity.environments.tetris.TetrisState;
 import org.rlcommunity.rlglue.codec.types.Observation;
 
+import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.rlglue.featureextractors.FeatureExtractor;
 import edu.utexas.cs.nn.tasks.rlglue.tetris.TetrisAfterStateAgent;
 
@@ -30,6 +31,8 @@ public class RawTetrisStateExtractor implements FeatureExtractor {
          */
 	@Override
 	public double[] extract(Observation o) {
+		System.out.print("absenceNegative is working? ");
+		System.out.println(Parameters.parameters.booleanParameter("absenceNegative"));
 		TetrisState state = TetrisAfterStateAgent.observationToTetrisState(o);
 		double[] result = new double[state.worldState.length];
 		for (int i = 0; i < result.length; i++) {

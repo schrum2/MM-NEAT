@@ -50,6 +50,13 @@ public class ImageMatchTaskTest {
 		imageWidth = test.imageWidth;
 	}
 
+	
+	@Test
+	public void sanityCheck() {
+		System.out.println("--------------------------------------------------------------------");
+		System.out.print("image match task sanity check for absenceNegative parameter: ");
+		System.out.println(Parameters.parameters.booleanParameter("absenceNegative"));
+	}
 	/**
 	 * Tests the getter functions of ImageMatchTask
 	 */

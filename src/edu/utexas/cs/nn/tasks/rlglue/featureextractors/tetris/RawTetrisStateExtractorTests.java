@@ -2,12 +2,40 @@ package edu.utexas.cs.nn.tasks.rlglue.featureextractors.tetris;
 
 import static org.junit.Assert.*;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.rlcommunity.environments.tetris.TetrisState;
 import org.rlcommunity.rlglue.codec.types.Observation;
 
+import edu.utexas.cs.nn.MMNEAT.MMNEAT;
+import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
+import edu.utexas.cs.nn.parameters.Parameters;
+
 public class RawTetrisStateExtractorTests {
 
+	/**
+	 * Instantiates ImageMatchTask
+	 * 
+	 * @throws Exception
+	 */
+	@Before
+	public void setUp() throws Exception {
+		MMNEAT.clearClasses();
+		EvolutionaryHistory.setInnovation(0);
+		EvolutionaryHistory.setHighestGenotypeId(0);
+		Parameters.initializeParameterCollections(
+				new String[] { "io:false", "netio:false", "allowMultipleFunctions:true", "recurrency:false",
+						"includeHalfLinearPiecewiseFunction:true", "includeSawtoothFunction:true", "absenceNegative:true" });
+		MMNEAT.loadClasses();
+	}
+
+	@Test
+	public void sanityTest2() {
+	System.out.println("--------------------------------------------------------------------");
+	System.out.print("raw tetris state extractor sanity check for absenceNegative parameter: ");
+	System.out.println(Parameters.parameters.booleanParameter("absenceNegative"));
+	}
+	
 	/**
 	 * Tests that the correct number of features is returned for a given world state
 	 */
