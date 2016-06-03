@@ -51,6 +51,7 @@ import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.combining.SubNetworkBlock;
 import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.VariableDirectionBlock;
 import edu.utexas.cs.nn.tasks.mspacman.sensors.ghosts.GhostControllerInputOutputMediator;
 import edu.utexas.cs.nn.tasks.mspacman.sensors.ghosts.mediators.GhostsCheckEachDirectionMediator;
+import edu.utexas.cs.nn.tasks.picbreeder.PicbreederTask;
 import edu.utexas.cs.nn.tasks.rlglue.RLGlueEnvironment;
 import edu.utexas.cs.nn.tasks.rlglue.RLGlueTask;
 import edu.utexas.cs.nn.tasks.rlglue.featureextractors.FeatureExtractor;
@@ -667,6 +668,9 @@ public class MMNEAT {
 				System.out.println("Set up VizDoom Task");
 				VizDoomTask t = (VizDoomTask) task;
 				setNNInputParameters(t.numInputs(), t.numActions());
+			} else if(task instanceof PicbreederTask) {
+				System.out.println("set up Picbreeder Task");
+				setNNInputParameters(PicbreederTask.CPPN_NUM_INPUTS, PicbreederTask.CPPN_NUM_OUTPUTS);
 			} else if (task == null) {
 				// this else statement should only happen for JUnit testing cases.
 				// Some default network setup is needed.
