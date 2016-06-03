@@ -16,42 +16,19 @@ public class VizDoomToxicRoomTask<T extends Network> extends VizDoomTask<T> {
 	
 	public VizDoomToxicRoomTask() {
 		super();
+		inputRow = getRow(game.getScreenWidth(), game.getScreenHeight()); 
+	}
+
+        @Override
+        public void taskSpecificInit() {
 		game.loadConfig("vizdoom/examples/config/health_gathering.cfg");
-		inputRow = getRow(); 
-		game.setDoomScenarioPath("vizdoom/scenarios/" + "health_gathering.wad");
+		game.setDoomScenarioPath("vizdoom/scenarios/health_gathering.wad");
 		game.setDoomMap("map01");
-	}
-
-	//borrowed from VizDoomBasicShootTask, may change or be removed
-	private int getRow() {
-		float first;
-		int second;
-		if (game.getScreenWidth() / 4 == game.getScreenHeight() / 3) { 
-			// ratio is 4:3
-			first = (float) (game.getScreenWidth() * 0.3825);
-			second = Math.round(first);
-		} else if (game.getScreenWidth() / 16 == game.getScreenHeight() / 10) { 
-			// ratio is 16:10
-			first = (float) (game.getScreenWidth() * 0.32); 
-			second = Math.round(first);
-		} else if (game.getScreenWidth() / 16 == game.getScreenHeight() / 9) { 
-			// ratio is 16:9
-			first = (float) (game.getScreenWidth() * 0.29); 
-			second = Math.round(first);
-		} else { // ratio is 5:4
-			first = (float) (game.getScreenWidth() * 0.41); 
-			second = Math.round(first);
-		}
-		return second;
-	}
-
+        }
+        
 	@Override
 	public String[] sensorLabels() {
-		String[] labels = new String[game.getScreenWidth()];
-		for(int i = 0; i < labels.length ; i++){
-			labels[i] = "Column " + i;
-		}
-		return labels;
+		return rowSensorLabels(game.getScreenWidth());
 	}
 
 	@Override

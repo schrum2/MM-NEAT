@@ -13,16 +13,20 @@ public class VizDoomBasicShootTask<T extends Network> extends VizDoomTask<T> {
 
 	// Save the inputRow once instead of recalculating it on every time step
 	private final int inputRow;
-	
 
 	public VizDoomBasicShootTask() {
 		super();
-		inputRow = getRow(); 
-		game.setDoomScenarioPath("vizdoom/scenarios/" + "basic.wad");
-		game.setDoomMap("map01");
-		
-	}
+		inputRow = getRow(game.getScreenWidth(), game.getScreenHeight()); 
+        }
 
+
+        @Override
+        public void taskSpecificInit() {
+                game.loadConfig("vizdoom/examples/config/basic.cfg");
+		game.setDoomScenarioPath("vizdoom/scenarios/basic.wad");
+		game.setDoomMap("map01");
+	}
+        
         @Override
 	public void setDoomActions() {
 		// Adds buttons that will be allowed.
@@ -81,40 +85,7 @@ public class VizDoomBasicShootTask<T extends Network> extends VizDoomTask<T> {
 	 */
 	@Override
 	public String[] sensorLabels() {
-		String[] labels = new String[game.getScreenWidth()];
-		for(int i = 0; i < labels.length ; i++){
-			labels[i] = "Column " + i;
-		}
-		return labels;
-	}
-
-	/**
-	 * This method takes the given game information to send back the appropriate
-	 * row number to get the inputs from. This is done based on Screen
-	 * Resolution ratios. The calculations are hard coded, but tested and gave
-	 * reliable rows when displayed.
-         * @return Row of screen to use as sensor input
-	 */
-	public final int getRow() {
-		float first;
-		int second;
-		if (game.getScreenWidth() / 4 == game.getScreenHeight() / 3) { 
-			// ratio is 4:3
-			first = (float) (game.getScreenWidth() * 0.3825);
-			second = Math.round(first);
-		} else if (game.getScreenWidth() / 16 == game.getScreenHeight() / 10) { 
-			// ratio is 16:10
-			first = (float) (game.getScreenWidth() * 0.32); 
-			second = Math.round(first);
-		} else if (game.getScreenWidth() / 16 == game.getScreenHeight() / 9) { 
-			// ratio is 16:9
-			first = (float) (game.getScreenWidth() * 0.29); 
-			second = Math.round(first);
-		} else { // ratio is 5:4
-			first = (float) (game.getScreenWidth() * 0.41); 
-			second = Math.round(first);
-		}
-		return second;
+		return rowSensorLabels(game.getScreenWidth());
 	}
 
 	/**

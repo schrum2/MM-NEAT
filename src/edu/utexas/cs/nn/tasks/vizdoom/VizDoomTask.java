@@ -48,6 +48,8 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 	public VizDoomTask() {
 		// These should not be here ... put in an init call?
 		doomInit();
+                taskSpecificInit();
+                setRendering();
 		actionLabels = new ArrayList<String>();
 		actions = new ArrayList<int[]>();
 		setDoomActions();
@@ -64,7 +66,9 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 		game.init();
 	}
 
-	public void doomInit() {
+        public abstract void taskSpecificInit();
+        
+	public final void doomInit() {
 		// My trick for loading the vizdoom.dll library
 		SpecifyDLL.specifyDLLPath();
 		// Create DoomGame instance. 
@@ -76,14 +80,11 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 		// Sets path to doom2 iwad resource file which 
 		// contains the actual doom game
 		game.setDoomGamePath("vizdoom/scenarios/" + Parameters.parameters.stringParameter("gameWad"));
+	}
 
-		// Sets path to additional resources iwad file which is basically your
-		// scenario iwad.
-		// If not specified default doom2 maps will be used and it's pretty much
-		// useles... unless you want to play doom.
-        // Sets resolution. Default is 320X240
+        public final void setRendering() {
 		// TODO: Should be be able to set this from the command line somehow?
-		setRestrictedScreenResolution(ScreenResolution.RES_200X150);
+		setRestrictedScreenResolution(ScreenResolution.RES_200X150); // smallest possible
 		// Sets the screen buffer format. 
 		game.setScreenFormat(ScreenFormat.RGB24);
 		// Sets other rendering options
@@ -92,8 +93,8 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 		game.setRenderWeapon(true);
 		game.setRenderDecals(false);
 		game.setRenderParticles(false);
-	}
-
+        }
+        
 	/**
 	 * We came across an issue with higher screen resolutions and using the
 	 * drawGameState(), drawGameStateRow() and getRow() methods The higher the
@@ -141,7 +142,7 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 
 	public abstract void setDoomStateVariables();
 
-	public void setDoomMiscSettings() {
+	public final void setDoomMiscSettings() {
 		// Causes episodes to finish after designated tics (actions)
 		game.setEpisodeTimeout(Parameters.parameters.integerParameter("doomEpisodeLength"));
 
@@ -259,6 +260,43 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 		return result;
 	}
 
+        public static String[] rowSensorLabels(int width) {
+		String[] labels = new String[width];
+		for(int i = 0; i < labels.length ; i++){
+			labels[i] = "Column " + i;
+		}
+		return labels;
+	}
+        
+        /**
+	 * This method takes the given game information to send back the appropriate
+	 * row number to get the inputs from. This is done based on Screen
+	 * Resolution ratios. The calculations are hard coded, but tested and gave
+	 * reliable rows when displayed.
+         * @return Row of screen to use as sensor input
+	 */
+        public static int getRow(int width, int height) {
+		float first;
+		int second;
+		if (width / 4 == height / 3) { 
+			// ratio is 4:3
+			first = (float) (width * 0.3825);
+			second = Math.round(first);
+		} else if (width / 16 == height / 10) { 
+			// ratio is 16:10
+			first = (float) (width * 0.32); 
+			second = Math.round(first);
+		} else if (width / 16 == height / 9) { 
+			// ratio is 16:9
+			first = (float) (width * 0.29); 
+			second = Math.round(first);
+		} else { // ratio is 5:4
+			first = (float) (width * 0.41); 
+			second = Math.round(first);
+		}
+		return second;
+	}
+        
 	/**
 	 * This method outputs the Gamestate according to the width and height given
 	 * You may change which of the RGB values appear as well, currently set to
