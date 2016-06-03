@@ -199,8 +199,7 @@ public class Score<T> {
 
 	// Prints the contents of the agent's data to the console.
 	public String toString() {
-		return (individual == null ? "NULL" : individual.getId()) + ":N=" + evals + ":" + Arrays.toString(scores)
-				+ (otherStats.length > 0 ? Arrays.toString(otherStats) : "");
+		return (individual == null ? "NULL" : individual.getId()) + ":N=" + evals + ":" + Arrays.toString(scores) + (otherStats != null && otherStats.length > 0 ? Arrays.toString(otherStats) : "");
 	}
 
 	// allows behaviorVector to be printed and then set to a new behavoirVector

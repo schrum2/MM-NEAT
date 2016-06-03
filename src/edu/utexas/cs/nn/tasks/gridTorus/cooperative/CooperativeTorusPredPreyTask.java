@@ -84,6 +84,8 @@ implements TUGTask, NetworkTask {
 	 * @return sensor labels in an array of strings
 	 */
 	public String[] sensorLabels() {
+		//TODO: Can't just use the lonerTask version of this method, it crashes
+		//array of evolved agents is not defined
 		return task.sensorLabels();
 	}
 

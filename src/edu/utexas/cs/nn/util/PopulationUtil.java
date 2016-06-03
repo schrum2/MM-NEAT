@@ -194,7 +194,7 @@ public class PopulationUtil {
 	 *            How many layers to keep
 	 */
 	public static <T> void pruneDownToTopParetoLayers(ArrayList<Genotype<T>> population, NSGA2Score<T>[] scores, int layers) {
-		ArrayList<ArrayList<NSGA2Score<T>>> fronts = NSGA2.getParetoLayers(scores);
+		ArrayList<ArrayList<NSGA2Score<T>>> fronts = NSGA2.getParetoLayers(scores);		
 		// Reduce population to only contain top Pareto layers
 		Iterator<Genotype<T>> itr = population.iterator();
 		System.out.println("Reducing to top " + layers + " Pareto layers");

@@ -36,6 +36,7 @@ public class AllCooperativeCoevolutionTeamsExperiment implements Experiment {
 				for (int i = 0; i < populations.size(); i++) {
 					ArrayList<Genotype<Object>> tempPopulation = PopulationUtil.addListGenotypeType(populations.get(i));
 					scores = PopulationUtil.loadSubPopScores(gen, i);
+					// TODO: This method is removing ALL individuals in the temp population. This should not happen. What is the problem?
 					PopulationUtil.pruneDownToTopParetoLayers(tempPopulation, scores, topLayers);
 					populations.set(i, PopulationUtil.removeListGenotypeType(tempPopulation));
 				}
