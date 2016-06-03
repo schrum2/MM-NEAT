@@ -98,8 +98,7 @@ public class NSGA2<T> extends MuPlusLambda<T> {
 
 		ArrayList<Genotype<T>> offspring = new ArrayList<Genotype<T>>(numChildren);
 		Better<NSGA2Score<T>> judge;// two objects of which one is better(??)
-		if (generation == 0) {// first generation is a unique case that requires
-								// a different comparator
+		if (generation == 0) {// first generation is a unique case that requires a different comparator
 			judge = new Domination<T>();
 		} else {// else a comparator that uses parent data is used to critique
 				// for children population
@@ -117,13 +116,11 @@ public class NSGA2<T> extends MuPlusLambda<T> {
 			Genotype<T> e = source.copy();
 
 			// This restriction on mutation and crossover only makes sense when
-			// using
-			// pacman coevolution with a fitness/population for each individual
-			// level
+			// using pacman coevolution with a fitness/population for each 
+			// individual level
 			if (!CommonConstants.requireFitnessDifferenceForChange || better.scores[0] > 0) {
 				// If neither net has reached a given level, the scores of 0
-				// will prevent evolution
-				// mating only occurs if on and randomly
+				// will prevent evolution mating only occurs if on and randomly
 				if (mating && RandomNumbers.randomGenerator.nextDouble() < crossoverRate) {
 					e1 = RandomNumbers.randomGenerator.nextInt(scoresArray.length);
 					e2 = RandomNumbers.randomGenerator.nextInt(scoresArray.length);
@@ -137,15 +134,10 @@ public class NSGA2<T> extends MuPlusLambda<T> {
 						// Fill litter
 						while (litter.size() < CommonConstants.litterSize) {
 							// Try crossover
-							Genotype<T> candidate1 = e.copy(); // Will be a
-																// candidate
-																// once
-																// crossover
-																// modifies it
+							// Will be a candidate once crossover modifies it
+							Genotype<T> candidate1 = e.copy(); 
 							Genotype<T> other = otherSource.copy();
-							Genotype<T> candidate2 = candidate1.crossover(other);// crossover
-																					// of
-																					// candidate
+							Genotype<T> candidate2 = candidate1.crossover(other);// crossover  of  candidate
 							// Evaluate and add to litter
 							Pair<double[], double[]> score = ((NoisyLonerTask<T>) MMNEAT.task).oneEval(candidate1, 0);
 							MultiObjectiveScore<T> s = new MultiObjectiveScore<T>(candidate1, score.t1, null, score.t2);
@@ -176,8 +168,7 @@ public class NSGA2<T> extends MuPlusLambda<T> {
 					if (i < numChildren) {
 						otherOffspring.mutate();
 						offspring.add(otherOffspring);
-						EvolutionaryHistory
-								.logLineageData(parentId1 + " X " + parentId2 + " -> " + otherOffspring.getId());
+						EvolutionaryHistory.logLineageData(parentId1 + " X " + parentId2 + " -> " + otherOffspring.getId());
 					}
 				}
 

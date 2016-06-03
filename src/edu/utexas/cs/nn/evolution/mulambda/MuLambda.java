@@ -272,17 +272,13 @@ public abstract class MuLambda<T> implements SinglePopulationGenerationalEA<T> {
 		generation++;
 		EvolutionaryHistory.frozenPreferenceVsPolicyStatusUpdate(newParents, generation);
 		CommonConstants.trialsByGenerationUpdate(generation);
-		if (Parameters.parameters.booleanParameter("scalePillsByGen")) { // For
-																			// pacman
-			Parameters.parameters.setDouble("preEatenPillPercentage",
-					1.0 - ((generation * 1.0) / Parameters.parameters.integerParameter("maxGens")));
+		if (Parameters.parameters.booleanParameter("scalePillsByGen")) { // For pacman
+			Parameters.parameters.setDouble("preEatenPillPercentage", 1.0 - ((generation * 1.0) / Parameters.parameters.integerParameter("maxGens")));
 		}
-		if (Parameters.parameters.booleanParameter("incrementallyDecreasingEdibleTime")) { // For
-																							// pacman
+		if (Parameters.parameters.booleanParameter("incrementallyDecreasingEdibleTime")) { // For pacman
 			MMNEAT.setEdibleTimeBasedOnGeneration(generation);
 		}
-		if (Parameters.parameters.booleanParameter("incrementallyDecreasingLairTime")) { // For
-																							// pacman
+		if (Parameters.parameters.booleanParameter("incrementallyDecreasingLairTime")) { // For pacman
 			MMNEAT.setLairTimeBasedOnGeneration(generation);
 		}
 		VariableDirectionKStepDeathScentBlock.updateScentMaps(); // For pacman
