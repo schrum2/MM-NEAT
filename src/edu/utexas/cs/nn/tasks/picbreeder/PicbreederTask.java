@@ -17,6 +17,7 @@ import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
 import edu.utexas.cs.nn.evolution.nsga2.NSGA2;
+import edu.utexas.cs.nn.graphics.DrawingPanel;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.parameters.Parameters;
@@ -44,8 +45,9 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	private ArrayList<Score<T>> scores;
 	private ArrayList<Boolean> chosen;
 
-	private boolean waitingForUser = false;
-
+	private boolean waitingForUser;
+	private int saveIndex;
+	
 	public PicbreederTask(int rows, int columns, int size) {
 		NUM_ROWS = rows;
 		NUM_COLUMNS = columns;
@@ -54,6 +56,8 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		panels = new ArrayList<JPanel>();
 		buttons = new ArrayList<JButton>();
 		chosen = new ArrayList<Boolean>();
+		waitingForUser = false;
+		saveIndex = 0;
 		frame.setSize(PIC_SIZE * NUM_COLUMNS, PIC_SIZE * (NUM_ROWS));
 		frame.setLocation(300, 100);//magic #s 100 correspond to relocating frame to middle of screen
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -62,18 +66,19 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		frame.setBackground(Color.RED);
 
 		JPanel top = new JPanel();
+		JButton saveButton = new JButton(new ImageIcon("data\\picbreeder\\save.png"));
+		saveButton.setName("" + -2);
+		saveButton.addActionListener(this);
+		top.add(saveButton);
 		JLabel label = new JLabel("Picture Evolver");
 		label.setFont(new Font("Serif", Font.BOLD, 48));
 		label.setForeground(Color.DARK_GRAY);
 		top.add(label);
-		label.setLocation((int) frame.getAlignmentX(), 5);//5 is magic # to set just below menu
 		JButton evolveButton = new JButton(new ImageIcon("data\\picbreeder\\arrow.png"));
 		evolveButton.setName("" + -1);
 		evolveButton.addActionListener(this);
-		evolveButton.setLocation((int)(frame.getWidth() * (3.0/4)), (int) top.getAlignmentY());
 		top.add(evolveButton);
 		panels.add(top);
-
 		for(int i = 1; i <= NUM_ROWS; i++) {
 			JPanel row = new JPanel();
 			row.setSize(frame.getWidth(), PIC_SIZE);
@@ -181,7 +186,20 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		s.next();
 		s.next();
 		int scoreIndex = s.nextInt();
-		if(scoreIndex == -1) {
+		if(scoreIndex ==  -2 && chosen.contains(true)) { 
+			int x = 0;
+			for(int i = 0; i < chosen.size(); i++) {
+				boolean choose = chosen.get(i);
+				if(choose) {
+					BufferedImage toSave = (BufferedImage) ((ImageIcon) buttons.get(i).getIcon()).getImage();
+					DrawingPanel p = GraphicsUtil.drawImage(toSave, "image" + saveIndex, toSave.getWidth(), toSave.getHeight());
+					p.setLocation(x, 0);
+					x += toSave.getWidth();
+					p.save("image" + saveIndex + ".bmp");
+					System.out.println("image number " + saveIndex++ + " was saved successfully");
+				}
+			}
+		} else if(scoreIndex == -1 && chosen.contains(true)) {
 			System.out.println("congratulations you pressed the evolve button");
 			System.out.println("scores: " + scores);	
 			System.out.println("boolean values: " + chosen);

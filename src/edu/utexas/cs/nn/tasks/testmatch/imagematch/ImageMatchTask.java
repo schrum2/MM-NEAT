@@ -213,7 +213,8 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 		MMNEAT.loadClasses();
 
 		// draw8RandomImages();
-		testImageConsistency();
+		//testImageConsistency();
+		randomCPPNimage(true, 200, 200, 200);
 	}
 
 	public static void draw8RandomImages() {
