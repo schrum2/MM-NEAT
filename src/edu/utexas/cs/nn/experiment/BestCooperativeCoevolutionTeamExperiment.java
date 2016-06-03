@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import wox.serial.Easy;
 
 /**
+ * Actually only works for coevolved Ms. Pac-Man experiments. Rename?
+ * 
  * Load saved results from coevolution experiment and evaluate every possible
  * team combination to get their scores.
  *
@@ -20,6 +22,7 @@ public class BestCooperativeCoevolutionTeamExperiment implements Experiment {
 	private CooperativeTask task;
 	private Genotype[] team;
 
+        @Override
 	public void init() {
 		task = (CooperativeTask) MMNEAT.task;
 		int numMembers = task.numberOfPopulations();
@@ -30,15 +33,17 @@ public class BestCooperativeCoevolutionTeamExperiment implements Experiment {
 		}
 	}
 
+        @Override
 	public void run() {
-		DrawingPanel[] panels = task.drawNetworks(team);
+		DrawingPanel[] panels = CooperativeTask.drawNetworks(team);
 		ArrayList<Score> result = task.evaluate(team);
-		task.disposePanels(panels);
+		CooperativeTask.disposePanels(panels);
 		for (Score s : result) {
 			System.out.println(s);
 		}
 	}
 
+        @Override
 	public boolean shouldStop() {
 		// Will never be called
 		return true;
