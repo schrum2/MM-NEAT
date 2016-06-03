@@ -2,6 +2,7 @@ package edu.utexas.cs.nn.evolution.selectiveBreeding;
 
 import java.util.ArrayList;
 
+import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.SinglePopulationGenerationalEA;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.parameters.Parameters;
@@ -26,6 +27,13 @@ public class SelectiveBreedingEA<T> implements SinglePopulationGenerationalEA<T>
 	private boolean mating;
 	private double crossoverRate;
 	
+	/**
+	 * default Constructor
+	 */
+	@SuppressWarnings("unchecked")
+	public SelectiveBreedingEA() { 
+		this((SinglePopulationTask<T>) MMNEAT.task, Parameters.parameters.integerParameter("mu"));
+	}
 	/**
 	 * Constructor
 	 * @param task given task

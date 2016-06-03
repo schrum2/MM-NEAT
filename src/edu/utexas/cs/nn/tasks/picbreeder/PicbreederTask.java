@@ -43,6 +43,8 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	private static final int EVOLVE_BUTTON_INDEX = -1;
 	private static final int SAVE_BUTTON_INDEX = -2;
 	private static final int RESET_BUTTON_INDEX = -3;
+	private static final int CLOSE_BUTTON_INDEX	= -4;
+	private static final int BORDER_THICKNESS = 4;
 	//Private final variables
 	private final int NUM_ROWS;
 	private final int NUM_COLUMNS;
@@ -99,22 +101,26 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		JButton resetButton = new JButton(new ImageIcon("data\\picbreeder\\reset.png"));
 		JButton saveButton = new JButton(new ImageIcon("data\\picbreeder\\save.png"));
 		JButton evolveButton = new JButton(new ImageIcon("data\\picbreeder\\arrow.png"));
+		JButton closeButton = new JButton(new ImageIcon("data\\picbreeder\\quit.png"));
 		JLabel label = new JLabel("Picture Evolver");
 		//set graphic names
 		evolveButton.setName("" + -1);
 		saveButton.setName("" + -2);
 		resetButton.setName("" + -3);
+		closeButton.setName("" + -4);
 		label.setFont(new Font("Serif", Font.BOLD, 48));
 		label.setForeground(Color.DARK_GRAY);
 		//add action listeners
 		resetButton.addActionListener(this);
 		saveButton.addActionListener(this);
 		evolveButton.addActionListener(this);
+		closeButton.addActionListener(this);
 		//add graphics to title panel
 		top.add(resetButton);
 		top.add(saveButton);
 		top.add(label);
 		top.add(evolveButton);
+		top.add(closeButton);
 		panels.add(top);
 		
 		//adds button panels
@@ -206,7 +212,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 			ImageIcon img = new ImageIcon(GraphicsUtil.imageFromCPPN(tg1.getPhenotype(), PIC_SIZE, PIC_SIZE));
 			buttons.get(i).setIcon(img);
 			chosen[i] =  false;
-			buttons.get(i).setBorder(BorderFactory.createLineBorder(Color.lightGray));
+			buttons.get(i).setBorder(BorderFactory.createLineBorder(Color.lightGray, BORDER_THICKNESS));
 		}
 	}
 	
@@ -228,7 +234,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 			buttons.get(x).setName("" + x);
 			buttons.get(x).setIcon(img);
 			chosen[x] = false;
-			buttons.get(x).setBorder(BorderFactory.createLineBorder(Color.lightGray));
+			buttons.get(x).setBorder(BorderFactory.createLineBorder(Color.lightGray, BORDER_THICKNESS));
 		}
 		while(waitingForUser){
 			try {
@@ -252,7 +258,9 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		s.next();
 		s.next();
 		int scoreIndex = s.nextInt();
-		if(scoreIndex == RESET_BUTTON_INDEX) {//If reset button clicked
+		if(scoreIndex == CLOSE_BUTTON_INDEX) {
+			System.exit(1);
+		} else if(scoreIndex == RESET_BUTTON_INDEX) {//If reset button clicked
 			newRandomImages();
 		} else if(scoreIndex == SAVE_BUTTON_INDEX && BooleanUtil.any(chosen)) { //If save button clicked
 			int x = 0;
@@ -277,28 +285,16 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 				"size mismatch! score array is " + scores.size() + " in length and buttons array is " + buttons.size() + " long";
 			if(chosen[scoreIndex]) {//if image has already been clicked, reset
 				chosen[scoreIndex] = false;
-				buttons.get(scoreIndex).setBorder(BorderFactory.createLineBorder(Color.lightGray));
+				buttons.get(scoreIndex).setBorder(BorderFactory.createLineBorder(Color.lightGray, BORDER_THICKNESS));
 				scores.get(scoreIndex).replaceScores(new double[]{0});
 			} else {//if image has not been clicked, set it
 				chosen[scoreIndex] = true;
-				buttons.get(scoreIndex).setBorder(BorderFactory.createLineBorder(Color.YELLOW));
+				buttons.get(scoreIndex).setBorder(BorderFactory.createLineBorder(Color.BLUE, BORDER_THICKNESS));
 				scores.get(scoreIndex).replaceScores(new double[]{1.0});
 			}
 		}
 		s.close();
 	}
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 	@SuppressWarnings({ "rawtypes"})
