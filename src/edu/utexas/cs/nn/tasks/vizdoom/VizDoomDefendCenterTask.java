@@ -13,19 +13,19 @@ public class VizDoomDefendCenterTask<T extends Network> extends VizDoomTask<T> {
 
 	// Save the inputRow once instead of recalculating it on every time step
 	private final int inputRow;
-	
+
 	public VizDoomDefendCenterTask() {
 		super();
 		inputRow = getRow(game.getScreenWidth(), game.getScreenHeight()); 
 	}
-	
-        @Override
-        public void taskSpecificInit() {
-        	game.loadConfig("vizdoom/examples/config/defend_the_center.cfg");
+
+	@Override
+	public void taskSpecificInit() {
+		game.loadConfig("vizdoom/examples/config/defend_the_center.cfg");
 		game.setDoomScenarioPath("vizdoom/scenarios/defend_the_center.wad");
-                game.setDoomMap("map01");
+		game.setDoomMap("map01");
 	}
-        
+
 	@Override
 	public String[] sensorLabels() {
 		return rowSensorLabels(game.getScreenWidth());

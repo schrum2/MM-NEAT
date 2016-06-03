@@ -48,8 +48,8 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 	public VizDoomTask() {
 		// These should not be here ... put in an init call?
 		doomInit();
-                taskSpecificInit();
-                setRendering();
+		taskSpecificInit();
+		setRendering();
 		actionLabels = new ArrayList<String>();
 		actions = new ArrayList<int[]>();
 		setDoomActions();
@@ -66,8 +66,8 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 		game.init();
 	}
 
-        public abstract void taskSpecificInit();
-        
+	public abstract void taskSpecificInit();
+
 	public final void doomInit() {
 		// My trick for loading the vizdoom.dll library
 		SpecifyDLL.specifyDLLPath();
@@ -82,7 +82,7 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 		game.setDoomGamePath("vizdoom/scenarios/" + Parameters.parameters.stringParameter("gameWad"));
 	}
 
-        public final void setRendering() {
+	public final void setRendering() {
 		// TODO: Should be be able to set this from the command line somehow?
 		setRestrictedScreenResolution(ScreenResolution.RES_200X150); // smallest possible
 		// Sets the screen buffer format. 
@@ -93,8 +93,8 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 		game.setRenderWeapon(true);
 		game.setRenderDecals(false);
 		game.setRenderParticles(false);
-        }
-        
+	}
+
 	/**
 	 * We came across an issue with higher screen resolutions and using the
 	 * drawGameState(), drawGameStateRow() and getRow() methods The higher the
@@ -260,22 +260,22 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 		return result;
 	}
 
-        public static String[] rowSensorLabels(int width) {
+	public static String[] rowSensorLabels(int width) {
 		String[] labels = new String[width];
 		for(int i = 0; i < labels.length ; i++){
 			labels[i] = "Column " + i;
 		}
 		return labels;
 	}
-        
-        /**
+
+	/**
 	 * This method takes the given game information to send back the appropriate
 	 * row number to get the inputs from. This is done based on Screen
 	 * Resolution ratios. The calculations are hard coded, but tested and gave
 	 * reliable rows when displayed.
-         * @return Row of screen to use as sensor input
+	 * @return Row of screen to use as sensor input
 	 */
-        public static int getRow(int width, int height) {
+	public static int getRow(int width, int height) {
 		float first;
 		int second;
 		if (width / 4 == height / 3) { 
@@ -296,7 +296,7 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 		}
 		return second;
 	}
-        
+
 	/**
 	 * This method outputs the Gamestate according to the width and height given
 	 * You may change which of the RGB values appear as well, currently set to
