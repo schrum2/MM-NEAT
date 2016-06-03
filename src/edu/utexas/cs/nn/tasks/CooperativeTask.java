@@ -132,9 +132,16 @@ public abstract class CooperativeTask implements MultiplePopulationTask {
 				&& ((CooperativeCoevolutionMuLambda) MMNEAT.ea).evaluatingParents;
 
 		// General tracking of best in each objective in each population
-		double[][] bestObjectives =  null;
-		Genotype[][] bestGenotypes = null;
-		Score[][] bestScores = null;
+		double[][] bestObjectives =  new double[pops][];
+		Genotype[][] bestGenotypes = new Genotype[pops][];
+		Score[][] bestScores = new Score[pops][];
+
+		// Go through each population
+		for(int j = 0; j < pops; j ++){
+			bestObjectives[j] = new double[objectivesPerPopulation().length];
+			bestGenotypes[j] = new Genotype[bestObjectives.length];
+			bestScores[j] = new Score[bestObjectives.length]; 
+		}
 
 		for (int i = 0; i < totalEvals; i++) {
 			// Create team
@@ -160,33 +167,28 @@ public abstract class CooperativeTask implements MultiplePopulationTask {
 			// Distribute scores appropriately
 			addScores(rawScores, teamOrder, i, scores);
 
-			// Go through each population
-			for(int j = 0; j < pops; j ++){
-				bestObjectives[j] = ((Task) populations.get(j)).minScores();
-				bestGenotypes[j] = new Genotype[bestObjectives.length];
-				bestScores[j] = new Score[bestObjectives.length]; 
-				// Best in each objective in this population
-				// Go through this population
-				for (int k = 0; k < popSize; k++) {
-					//go through each objective for this population for this agent
-					for (int l = 0; l < bestObjectives[j].length; l++) {
-						//get the score of each objective for this agent
-						double objectiveScore = scores.get(j).scores[l];
-						// j == 0 saves first member of the population as the tentative best until a better individual is found
-						if (k == 0 || objectiveScore >= bestObjectives[j][l]) {
-							// update best individual in objective j
-							bestGenotypes[j][l] = scores.get(j).individual;
-							bestObjectives[j][l] = objectiveScore;
-							bestScores[j][l] = scores.get(j);
-						}
+			// Best in each objective in this population
+			// Go through this population
+			for (int k = 0; k < pops; k++) {
+				//go through each objective for this population for this agent
+				for (int l = 0; l < bestObjectives[k].length; l++) {
+					//get the score of each objective for this agent
+					double objectiveScore = scores.get(k).scores[l];
+					// j == 0 saves first member of the population as the tentative best until a better individual is found
+					if (i == 0 || objectiveScore >= bestObjectives[k][l]) {
+						// update best individual in objective j
+						bestGenotypes[k][l] = scores.get(k).individual;
+						bestObjectives[k][l] = objectiveScore;
+						bestScores[k][l] = scores.get(k);
 					}
 				}
 			}
 		}
-		// Go through each population (for saving best objectives and genotypes of each population)
-		for(int i = 0; i < pops; i++){
-			//save the best in each objective for this population (will happen for each population)
-			if (CommonConstants.netio) {
+
+		if (CommonConstants.netio) {
+			// Go through each population (for saving best objectives and genotypes of each population)
+			for(int i = 0; i < pops; i++){
+				//save the best in each objective for this population (will happen for each population)
 				int currentGen = MMNEAT.ea.currentGeneration();
 				String filePrefix = "gen" + currentGen + "_";
 				// Save best in each objective
@@ -201,8 +203,7 @@ public abstract class CooperativeTask implements MultiplePopulationTask {
 				// save all of the best objectives for this population
 				for (int j = 0; j < bestObjectives[i].length; j++) {
 					Easy.save(bestGenotypes[i][j], bestDir + "/" + filePrefix + "bestIn" + j + ".xml");
-					FileUtilities.simpleFileWrite(bestDir + "/" + filePrefix + "score" + j + ".txt",
-							bestScores[i][j].toString());
+					FileUtilities.simpleFileWrite(bestDir + "/" + filePrefix + "score" + j + ".txt", bestScores[i][j].toString());
 				}
 			}
 		}
@@ -239,12 +240,9 @@ public abstract class CooperativeTask implements MultiplePopulationTask {
 	@SuppressWarnings("rawtypes")  // because each population can have a different type
 	public abstract ArrayList<Score> evaluate(Genotype[] team);
 
-	/*
-	 * Default objective mins of 0.
-	 */
 	@Override
 	public double[] minScores() {
-		return new double[this.numObjectives()];
+		throw new UnsupportedOperationException("Does not make sense in the context of a cooperative task with multiple populations");
 	}
 
 	/**
