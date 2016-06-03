@@ -66,6 +66,10 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		frame.setBackground(Color.RED);
 
 		JPanel top = new JPanel();
+		JButton resetButton = new JButton(new ImageIcon("data\\picbreeder\\reset.png"));
+		resetButton.setName("" + -3);
+		resetButton.addActionListener(this);
+		top.add(resetButton);
 		JButton saveButton = new JButton(new ImageIcon("data\\picbreeder\\save.png"));
 		saveButton.setName("" + -2);
 		saveButton.addActionListener(this);
@@ -142,6 +146,19 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	public void finalCleanup() {
 	}
 
+	public void newRandomImages() {
+		final int NUM_MUTATIONS = 200;
+		for(int i = 0; i < buttons.size(); i++) {
+		TWEANNGenotype tg1 = new TWEANNGenotype(4, 3, false, 0, 1, 0);
+		for(int j = 0; j < NUM_MUTATIONS; j++) {
+			tg1.mutate();
+		}
+		ImageIcon img = new ImageIcon(GraphicsUtil.imageFromCPPN(tg1.getPhenotype(), PIC_SIZE, PIC_SIZE));
+		buttons.get(i).setIcon(img);
+		chosen.set(i, false);
+		buttons.get(i).setBorder(BorderFactory.createLineBorder(Color.lightGray));
+		}
+	}
 	@Override
 	public ArrayList<Score<T>> evaluateAll(ArrayList<Genotype<T>> population) {//TODO 
 		waitingForUser = true;
@@ -186,7 +203,9 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		s.next();
 		s.next();
 		int scoreIndex = s.nextInt();
-		if(scoreIndex ==  -2 && chosen.contains(true)) { 
+		if(scoreIndex == - 3) {
+			newRandomImages();
+		} else if(scoreIndex ==  -2 && chosen.contains(true)) { 
 			int x = 0;
 			for(int i = 0; i < chosen.size(); i++) {
 				boolean choose = chosen.get(i);
@@ -204,7 +223,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 			System.out.println("scores: " + scores);	
 			System.out.println("boolean values: " + chosen);
 			waitingForUser = false;
-		} else {
+		} else if(scoreIndex > 0) {
 			if(scores.size() != buttons.size()) {
 				s.close();
 				throw new IllegalArgumentException("size mismatch! score array is " + scores.size()
