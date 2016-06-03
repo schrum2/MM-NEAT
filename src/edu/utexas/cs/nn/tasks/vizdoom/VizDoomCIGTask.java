@@ -9,20 +9,20 @@ import vizdoom.Button;
 import vizdoom.GameState;
 import vizdoom.GameVariable;
 
-public class VizDoomDefendCenterTask<T extends Network> extends VizDoomTask<T> {
+public class VizDoomCIGTask<T extends Network> extends VizDoomTask<T> {
 
 	// Save the inputRow once instead of recalculating it on every time step
 	private final int inputRow;
 
-	public VizDoomDefendCenterTask() {
+	public VizDoomCIGTask() {
 		super();
 		inputRow = getRow(game.getScreenWidth(), game.getScreenHeight()); 
 	}
 
 	@Override
 	public void taskSpecificInit() {
-		game.loadConfig("vizdoom/examples/config/defend_the_center.cfg");
-		game.setDoomScenarioPath("vizdoom/scenarios/defend_the_center.wad");
+		game.loadConfig("vizdoom/examples/config/cig.cfg");
+		game.setDoomScenarioPath("vizdoom/scenarios/cig.wad");
 		game.setDoomMap("map01");
 	}
 
@@ -36,14 +36,29 @@ public class VizDoomDefendCenterTask<T extends Network> extends VizDoomTask<T> {
 		game.addAvailableButton(Button.TURN_LEFT);
 		game.addAvailableButton(Button.TURN_RIGHT);
 		game.addAvailableButton(Button.ATTACK);
-		addAction(new int[] { 1, 0, 0 }, "Turn left");
-		addAction(new int[] { 0, 1, 0 }, "Turn right");
-		addAction(new int[] { 0, 0, 1 }, "Stand still and shoot");
+		
+		game.addAvailableButton(Button.MOVE_RIGHT);
+		game.addAvailableButton(Button.MOVE_LEFT);
+		
+		game.addAvailableButton(Button.MOVE_FORWARD);
+		game.addAvailableButton(Button.MOVE_BACKWARD);
+		game.addAvailableButton(Button.TURN_LEFT_RIGHT_DELTA);
+		game.addAvailableButton(Button.LOOK_UP_DOWN_DELTA);
+		
+		addAction(new int[] { 1, 0, 0, 0, 0, 0, 0, 0, 0 }, "Turn left");
+		addAction(new int[] { 0, 1, 0, 0, 0, 0, 0, 0, 0 }, "Turn right");
+		addAction(new int[] { 0, 0, 1, 0, 0, 0, 0, 0, 0 }, "Attack");
+		addAction(new int[] { 0, 0, 0, 1, 0, 0, 0, 0, 0 }, "Move right");
+		addAction(new int[] { 0, 0, 0, 0, 1, 0, 0, 0, 0 }, "Move left");
+		addAction(new int[] { 0, 0, 0, 0, 0, 1, 0, 0, 0 }, "Move forward");
+		addAction(new int[] { 0, 0, 0, 0, 0, 0, 1, 0, 0 }, "Move backward");
+		addAction(new int[] { 0, 0, 0, 0, 0, 0, 0, 1, 0 }, "Turn left/right delta");
+		addAction(new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 1 }, "Look up/down delta");
+		
 	}
 
 	@Override
 	public void setDoomStateVariables() {
-		game.addAvailableGameVariable(GameVariable.AMMO2);
 		game.addAvailableGameVariable(GameVariable.HEALTH);
 	}
 
@@ -54,9 +69,6 @@ public class VizDoomDefendCenterTask<T extends Network> extends VizDoomTask<T> {
 
 	@Override
 	public void setRewards() {
-		//We need -1 for missed shots, +1 for hits, -1 for dying	
-		game.setDeathPenalty(1);
-		//we don't want a living penalty since the penalty for dying is there, we want to stay alive until the timeout
 	}
 
 	@Override
@@ -65,10 +77,10 @@ public class VizDoomDefendCenterTask<T extends Network> extends VizDoomTask<T> {
 	}
 
 	public static void main(String[] args) {
-		Parameters.initializeParameterCollections(new String[] { "watch:false", "io:false", "netio:false", "doomEpisodeLength:2100",
-				"task:edu.utexas.cs.nn.tasks.vizdoom.VizDoomDefendCenterTask", "trials:8", "printFitness:true"});
+		Parameters.initializeParameterCollections(new String[] { "watch:true", "io:false", "netio:false", "doomEpisodeLength:25200",
+				"task:edu.utexas.cs.nn.tasks.vizdoom.VizDoomCIGTask", "trials:8", "printFitness:true"});
 		MMNEAT.loadClasses();
-		VizDoomDefendCenterTask<TWEANN> vd = new VizDoomDefendCenterTask<TWEANN>();
+		VizDoomCIGTask<TWEANN> vd = new VizDoomCIGTask<TWEANN>();
 		TWEANNGenotype individual = new TWEANNGenotype();
 		System.out.println(vd.evaluate(individual));
 		System.out.println(vd.evaluate(individual));

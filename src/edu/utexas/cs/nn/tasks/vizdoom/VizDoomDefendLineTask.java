@@ -9,20 +9,20 @@ import vizdoom.Button;
 import vizdoom.GameState;
 import vizdoom.GameVariable;
 
-public class VizDoomDefendCenterTask<T extends Network> extends VizDoomTask<T> {
+public class VizDoomDefendLineTask<T extends Network> extends VizDoomTask<T> {
 
 	// Save the inputRow once instead of recalculating it on every time step
 	private final int inputRow;
 
-	public VizDoomDefendCenterTask() {
+	public VizDoomDefendLineTask() {
 		super();
 		inputRow = getRow(game.getScreenWidth(), game.getScreenHeight()); 
 	}
 
 	@Override
 	public void taskSpecificInit() {
-		game.loadConfig("vizdoom/examples/config/defend_the_center.cfg");
-		game.setDoomScenarioPath("vizdoom/scenarios/defend_the_center.wad");
+		game.loadConfig("vizdoom/examples/config/defend_the_line.cfg");
+		game.setDoomScenarioPath("vizdoom/scenarios/defend_the_line.wad");
 		game.setDoomMap("map01");
 	}
 
@@ -54,9 +54,7 @@ public class VizDoomDefendCenterTask<T extends Network> extends VizDoomTask<T> {
 
 	@Override
 	public void setRewards() {
-		//We need -1 for missed shots, +1 for hits, -1 for dying	
 		game.setDeathPenalty(1);
-		//we don't want a living penalty since the penalty for dying is there, we want to stay alive until the timeout
 	}
 
 	@Override
@@ -66,9 +64,9 @@ public class VizDoomDefendCenterTask<T extends Network> extends VizDoomTask<T> {
 
 	public static void main(String[] args) {
 		Parameters.initializeParameterCollections(new String[] { "watch:false", "io:false", "netio:false", "doomEpisodeLength:2100",
-				"task:edu.utexas.cs.nn.tasks.vizdoom.VizDoomDefendCenterTask", "trials:8", "printFitness:true"});
+				"task:edu.utexas.cs.nn.tasks.vizdoom.VizDoomDefendLineTask", "trials:8", "printFitness:true"});
 		MMNEAT.loadClasses();
-		VizDoomDefendCenterTask<TWEANN> vd = new VizDoomDefendCenterTask<TWEANN>();
+		VizDoomDefendLineTask<TWEANN> vd = new VizDoomDefendLineTask<TWEANN>();
 		TWEANNGenotype individual = new TWEANNGenotype();
 		System.out.println(vd.evaluate(individual));
 		System.out.println(vd.evaluate(individual));
