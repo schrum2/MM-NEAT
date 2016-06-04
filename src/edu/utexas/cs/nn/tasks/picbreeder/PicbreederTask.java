@@ -218,7 +218,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	
 	/**
 	 * evaluates all genotypes in a population
-	 * @param genotypes of starting population
+	 * @param population of starting population
 	 * @return score of each member of population
 	 */
 	@Override
@@ -258,6 +258,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		s.next();
 		s.next();
 		int scoreIndex = s.nextInt();
+		s.close();
 		if(scoreIndex == CLOSE_BUTTON_INDEX) {
 			System.exit(1);
 		} else if(scoreIndex == RESET_BUTTON_INDEX) {//If reset button clicked
@@ -293,7 +294,6 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 				scores.get(scoreIndex).replaceScores(new double[]{1.0});
 			}
 		}
-		s.close();
 	}
 
 

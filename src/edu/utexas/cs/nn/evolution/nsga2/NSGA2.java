@@ -22,6 +22,7 @@ import java.util.Arrays;
  * Implementation of Deb's NSGA2 multiobjective EA. NSGA2 stands for non-sorting
  * genetic algorithm 2
  * 
+ * @param <T> phenotype
  * @commented Lauren Gillespie
  */
 public class NSGA2<T> extends MuPlusLambda<T> {
@@ -72,6 +73,7 @@ public class NSGA2<T> extends MuPlusLambda<T> {
 	 *            number of children to be created in evolved population
 	 * @param parentScores
 	 *            array list of parent scores
+         * @return child genotypes
 	 */
 	@Override
 	public ArrayList<Genotype<T>> generateChildren(int numChildren, ArrayList<Score<T>> parentScores) {
@@ -83,6 +85,7 @@ public class NSGA2<T> extends MuPlusLambda<T> {
 	 * Generates a list of offspring genotypes created through NSGA2 sort of
 	 * parent genotypes
 	 * 
+         * @param <T> phenotype
 	 * @param numChildren
 	 * @param scoresArray
 	 * @param generation
@@ -200,6 +203,7 @@ public class NSGA2<T> extends MuPlusLambda<T> {
 	 * static version of getNSGA2Scores converts array list form of scores to
 	 * NSGA2Score array
 	 * 
+         * @param <T> phenotype
 	 * @param scores
 	 *            scores to convert
 	 * @return array of NSGA2Scores
@@ -230,6 +234,7 @@ public class NSGA2<T> extends MuPlusLambda<T> {
 	/**
 	 * static version of selection method
 	 * 
+         * @param <T> phenotype
 	 * @param numParents
 	 *            number of parents to select from
 	 * @param scoresArray
@@ -247,10 +252,8 @@ public class NSGA2<T> extends MuPlusLambda<T> {
 
 		while (numAdded < numParents) {
 			ArrayList<NSGA2Score<T>> front = fronts.get(currentFront);
-			if (front.size() <= (numParents - numAdded)) {// necessary if front
-															// is bigger than
-															// original number
-															// of parents
+                        // necessary if front is bigger than original number of parents
+			if (front.size() <= (numParents - numAdded)) {
 				for (int i = 0; i < front.size(); i++) {
 					newParents.add(front.get(i).individual);
 					numAdded++;
@@ -371,21 +374,21 @@ public class NSGA2<T> extends MuPlusLambda<T> {
 	/**
 	 * Return just the Pareto front for a given population of scores.
 	 * 
+         * @param <T> phenotype
 	 * @param scores
 	 *            Multiobjective scores for evaluated individuals.
 	 * @return All non-dominated individuals in population: The Pareto front
 	 */
 	public static <T> ArrayList<NSGA2Score<T>> getParetoFront(NSGA2Score<T>[] scores) {
-		return fastNonDominatedSort(scores).get(0);// gets first member from
-													// return array b/c that
-													// corresponds with first
-													// front
+                // gets first member from return array b/c that corresponds with first front
+		return fastNonDominatedSort(scores).get(0);
 	}
 
 	/**
 	 * Why is this needed in addition to fastNonDominatedSort? Not sure.
 	 * Basically a public way to access fastNonDominatedSort
 	 * 
+         * @param <T> phenotype
 	 * @param scores
 	 *            See fastNonDominatedSort
 	 * @return See fastNonDominatedSort
