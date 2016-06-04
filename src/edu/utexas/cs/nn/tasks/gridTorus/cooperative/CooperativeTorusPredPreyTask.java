@@ -20,10 +20,10 @@ import edu.utexas.cs.nn.tasks.gridTorus.TorusPredPreyTask;
  * group of static predators. Each agent of the team is evolved individually, with
  * its own genotype (a team of evolving populations).
  * @author rollinsa
+ * @param <T> phenotype of all evolving populations
  *
  */
-public abstract class CooperativeTorusPredPreyTask <T extends Network> extends CooperativeTask
-implements TUGTask, NetworkTask {
+public abstract class CooperativeTorusPredPreyTask<T extends Network> extends CooperativeTask implements NetworkTask {
 
 	public TorusPredPreyTask<T> task;
 
@@ -44,31 +44,27 @@ implements TUGTask, NetworkTask {
 	/**
 	 * an int designating the number of populations to be evolved
 	 */
+        @Override
 	public abstract int numberOfPopulations();
 
 	/**
 	 * an integer array holding the fitness objectives for each population
 	 */
+        @Override
 	public abstract int[] objectivesPerPopulation();
 
 	/**
 	 * an integer array holding the other scores for each population (fitness scores
 	 * that are not actually being used in the evaluation and evolution of the agent(s))
 	 */
+        @Override
 	public abstract int[] otherStatsPerPopulation();
-
-	/**
-	 * gets and returns the number of objectives for the task
-	 * @return number of objectives 
-	 */
-	public int numObjectives() {
-		return task.numObjectives();
-	}
 
 	/**
 	 * gets and returns the time stamp of this task
 	 * @return time stamp as a double
 	 */
+        @Override
 	public double getTimeStamp() {
 		return task.getTimeStamp();
 	}
@@ -76,6 +72,7 @@ implements TUGTask, NetworkTask {
 	/**
 	 * nothing needs to be done here
 	 */
+        @Override
 	public void finalCleanup() {
 	}
 
@@ -83,6 +80,7 @@ implements TUGTask, NetworkTask {
 	 * gets and returns the sensor labels for this task
 	 * @return sensor labels in an array of strings
 	 */
+        @Override
 	public String[] sensorLabels() {
 		//TODO: Can't just use the lonerTask version of this method, it crashes
 		//array of evolved agents is not defined
@@ -93,16 +91,9 @@ implements TUGTask, NetworkTask {
 	 * gets and returns the output labels for this task
 	 * @return output labels in an array of strings
 	 */
+        @Override
 	public String[] outputLabels() {
 		return task.outputLabels();
-	}
-
-	/**
-	 * gets the starting goals of the task
-	 * @return starting goals in an array of doubles
-	 */
-	public double[] startingGoals() {
-		return task.startingGoals();
 	}
 
 	@Override

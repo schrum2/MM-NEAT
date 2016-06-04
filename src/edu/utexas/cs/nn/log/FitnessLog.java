@@ -18,6 +18,7 @@ import java.util.ArrayList;
  * score information associated with individual genotypes.
  *
  * @author Jacob Schrum
+ * @param <T> phenotype being evolved
  */
 public class FitnessLog<T> extends StatisticsLog<Score<T>> {
 
@@ -37,6 +38,7 @@ public class FitnessLog<T> extends StatisticsLog<Score<T>> {
 		}
 	}
 
+        @Override
 	public void log(ArrayList<Score<T>> scores, int generation) {
 		this.logScores(scores, generation);
 		this.logStats(scores, generation);
@@ -44,12 +46,10 @@ public class FitnessLog<T> extends StatisticsLog<Score<T>> {
 
 	private void logScores(ArrayList<Score<T>> scores, int generation) {
 		try {
-			PrintStream gen = new PrintStream(
-					new FileOutputStream(new File(directory + prefix + "_gen" + generation + ".txt")));
+			PrintStream gen = new PrintStream(new FileOutputStream(new File(directory + prefix + "_gen" + generation + ".txt")));
 			PrintStream extra = null;
 			if (scores.get(0).otherStats.length > 0) {
-				extra = new PrintStream(
-						new FileOutputStream(new File(directory + prefix + "_other_scores_gen" + generation + ".txt")));
+				extra = new PrintStream(new FileOutputStream(new File(directory + prefix + "_other_scores_gen" + generation + ".txt")));
 			}
 
 			for (int i = 0; i < scores.size(); i++) {
@@ -61,8 +61,7 @@ public class FitnessLog<T> extends StatisticsLog<Score<T>> {
 					gen.print(s.scores[j] + "\t");
 				}
 				gen.println();
-				// Scores for other things worth tracking, but not part of
-				// fitness
+				// Scores for other things worth tracking, but not part of fitness
 				if (s.otherStats.length > 0) {
 					extra.print(i + "\t");
 					extra.print(s.individual.getId() + "\t");

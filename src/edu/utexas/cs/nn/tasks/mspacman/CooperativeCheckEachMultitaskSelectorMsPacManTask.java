@@ -12,6 +12,7 @@ import java.util.ArrayList;
  * as far as sensor setup.
  *
  * @author Jacob Schrum
+ * @param <T> phenotypes
  */
 public class CooperativeCheckEachMultitaskSelectorMsPacManTask<T extends Network> extends CooperativeMsPacManTask<T> {
 

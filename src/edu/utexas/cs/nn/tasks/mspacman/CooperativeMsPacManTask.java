@@ -20,14 +20,15 @@ import java.util.ArrayList;
  * @author Jacob Schrum
  * @param <T> phenotype
  */
-public abstract class CooperativeMsPacManTask<T extends Network> extends CooperativeTask
-		implements NetworkTask, SinglePopulationTask<T>, TUGTask {
+public abstract class CooperativeMsPacManTask<T extends Network> extends CooperativeTask implements NetworkTask, SinglePopulationTask<T>, TUGTask {
 
 	public MsPacManTask<T> task;
 
 	public ArrayList<Score<T>> evaluateAll(ArrayList<Genotype<T>> population) {
-		throw new UnsupportedOperationException("This method should not actually be called when using coevolution. "
-				+ "It is merely here to satisfy type requirements and allow the code " + "to compile");
+		throw new UnsupportedOperationException(
+                                  "This method should not actually be called when using coevolution. "
+				+ "It is merely here to satisfy type requirements and allow the code " 
+                                + "to compile");
 	}
 
 	public double[] startingGoals() {

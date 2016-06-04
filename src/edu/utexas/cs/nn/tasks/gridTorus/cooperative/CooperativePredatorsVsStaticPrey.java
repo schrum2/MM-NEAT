@@ -11,6 +11,7 @@ import edu.utexas.cs.nn.tasks.gridTorus.TorusPredPreyTask;
  * Defines a cooperative evolved team of predators where each individual predator
  * has its own genotype and is evolved individually, all against static prey
  * @author rollinsa
+ * @param <T> phenotype of each population
  *
  */
 public class CooperativePredatorsVsStaticPrey<T extends Network> extends CooperativeTorusPredPreyTask<T> {

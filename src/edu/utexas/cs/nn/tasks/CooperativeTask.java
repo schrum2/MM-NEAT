@@ -240,11 +240,6 @@ public abstract class CooperativeTask implements MultiplePopulationTask {
 	@SuppressWarnings("rawtypes")  // because each population can have a different type
 	public abstract ArrayList<Score> evaluate(Genotype[] team);
 
-	@Override
-	public double[] minScores() {
-		throw new UnsupportedOperationException("Does not make sense in the context of a cooperative task with multiple populations");
-	}
-
 	/**
 	 * Get the index-th team to evaluate according to the joinOrder.
 	 *
@@ -403,4 +398,28 @@ public abstract class CooperativeTask implements MultiplePopulationTask {
 			rawScores[p][orderIndex] = (bestTeamScore ? score.maxScores(rawScores[p][orderIndex]) : score.incrementalAverage(rawScores[p][orderIndex]));
 		}
 	}
+        
+        /**
+	 * This is required by the Task interface, but is replaced by
+         * objectivesPerPopulation() for tasks with multiple populations.
+	 */
+        @Override
+	public int numObjectives() {
+                // I would like to make this final, but some cooperative Ms Pac-Man tasks actually use
+                // this method because they are both cooperative AND implement the SinglePopulationTask
+                // interface, which is pretty weird, but makes sense given how the "teams" are constructed.
+		throw new UnsupportedOperationException("Each population has its own number of objectives");
+	}
+
+        /**
+         * Does not make sense for the same reason. Each population has
+         * several min scores.
+         * This is why it cannot be overridden again.
+         */
+	@Override
+	public final double[] minScores() {
+		throw new UnsupportedOperationException("Does not make sense in the context of a cooperative task with multiple populations");
+	}
+
+
 }
