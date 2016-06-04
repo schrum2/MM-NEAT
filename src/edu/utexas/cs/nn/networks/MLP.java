@@ -6,23 +6,29 @@ import edu.utexas.cs.nn.util.random.RandomNumbers;
 import java.util.Arrays;
 
 /**
- *
+ * Standard Multi-Layer Perceptron with
+ * one hidden layer between inputs and outputs.
+ * 
  * @author Jacob Schrum
  */
 public class MLP implements Network {
 
+        @Override
 	public int numInputs() {
 		return firstConnectionLayer.length;
 	}
 
+        @Override
 	public int numOutputs() {
 		return secondConnectionLayer[0].length;
 	}
 
+        @Override
 	public double[] process(double[] inputs) {
 		return propagate(inputs);
 	}
 
+        @Override
 	public void flush() {
 		// Matters for SRN
 		clear(inputs);
@@ -30,13 +36,16 @@ public class MLP implements Network {
 		clear(outputs);
 	}
 
+        @Override
 	public boolean isMultitask() {
 		// Leave like this until I bother developing multitask MLPs
 		return false;
 	}
 
+        @Override
 	public void chooseMode(int mode) {
 		// Does nothing until I bother developing multitask MLPs
+                throw new UnsupportedOperationException("Multimodal MLPs not supported yet");
 	}
 
 	/*
@@ -88,14 +97,12 @@ public class MLP implements Network {
 			}
 			System.arraycopy(inputIn, 0, this.inputs, 0, inputIn.length);
 		}
-		if (inputIn.length < inputs.length) {
-			System.out.println(
-					"NOTE: only " + inputIn.length + " inputs out of " + inputs.length + " are used in the network");
-			System.out.println("inputIn:" + inputIn.length + ",inputs" + inputs.length);
-			System.out.println("inputIn:" + Arrays.toString(inputIn));
-			System.out.println("inputs:" + Arrays.toString(inputs));
-			System.exit(1);
-		}
+		assert (inputIn.length == inputs.length) : 
+			("NOTE: only " + inputIn.length + " inputs out of " + inputs.length + " are used in the network") + "\n" +
+			("inputIn:" + inputIn.length + ",inputs" + inputs.length) + "\n" +
+			("inputIn:" + Arrays.toString(inputIn)) + "\n" +
+			("inputs:" + Arrays.toString(inputs));
+		
 		clear(hiddenNeurons);
 		clear(outputs);
 		propagateOneStep(inputs, hiddenNeurons, firstConnectionLayer);
@@ -167,38 +174,31 @@ public class MLP implements Network {
 
 	public void println() {
 
-		System.out.print(
-				"\n\n----------------------------------------------------" + "-----------------------------------\n");
+		System.out.print("\n\n----------------------------------------------------" + "-----------------------------------\n");
 		for (int i = 0; i < firstConnectionLayer.length; i++) {
-
 			System.out.print("|");
 
 			for (int j = 0; j < firstConnectionLayer[i].length; j++) {
 				System.out.print(" " + firstConnectionLayer[i][j]);
 			}
-
 			System.out.print(" |\n");
 		}
 
-		System.out.print(
-				"----------------------------------------------------" + "-----------------------------------\n");
+		System.out.print("----------------------------------------------------" + "-----------------------------------\n");
 
 		for (int i = 0; i < secondConnectionLayer.length; i++) {
 
 			System.out.print("|");
 
 			for (int j = 0; j < secondConnectionLayer[i].length; j++) {
-
 				System.out.print(" " + secondConnectionLayer[i][j]);
-
 			}
 
 			System.out.print(" |\n");
 
 		}
 
-		System.out.print(
-				"----------------------------------------------------" + "-----------------------------------\n");
+		System.out.print("----------------------------------------------------" + "-----------------------------------\n");
 	}
 
 	private double dtanh(double num) {
@@ -303,19 +303,23 @@ public class MLP implements Network {
 		return "MLP:" + firstConnectionLayer.length + "/" + secondConnectionLayer.length + "/" + outputs.length;
 	}
 
+        @Override
 	public int effectiveNumOutputs() {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
+        @Override
 	public double[] moduleOutput(int mode) {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
+        @Override
 	public int lastModule() {
 		// Does nothing until I develope multitask for MLPs
 		return -1;
 	}
 
+        @Override
 	public int numModules() {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}
