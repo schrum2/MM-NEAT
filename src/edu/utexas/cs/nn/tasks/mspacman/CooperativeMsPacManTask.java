@@ -18,6 +18,7 @@ import java.util.ArrayList;
  * inheritance pattern.
  *
  * @author Jacob Schrum
+ * @param <T> phenotype
  */
 public abstract class CooperativeMsPacManTask<T extends Network> extends CooperativeTask
 		implements NetworkTask, SinglePopulationTask<T>, TUGTask {

@@ -13,6 +13,7 @@ import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.scores.Score;
 import edu.utexas.cs.nn.tasks.SinglePopulationTask;
 import edu.utexas.cs.nn.tasks.Task;
+import edu.utexas.cs.nn.tasks.mspacman.CooperativeMsPacManTask;
 import edu.utexas.cs.nn.tasks.mspacman.MsPacManTask;
 import edu.utexas.cs.nn.tasks.mspacman.multitask.DangerousAreaModeSelector;
 import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.scent.VariableDirectionKStepDeathScentBlock;
@@ -48,7 +49,8 @@ public abstract class MuLambda<T> implements SinglePopulationGenerationalEA<T> {
 	protected boolean writeOutput;
 	private final int MAX_MODE_OF_LOG_INTEREST = 5;
 	public boolean evaluatingParents = false;
-
+        public boolean msPacMan;
+        
 	/**
 	 * Initialize evolutionary algorithm.
 	 * 
@@ -70,7 +72,8 @@ public abstract class MuLambda<T> implements SinglePopulationGenerationalEA<T> {
 		this.lambda = lambda;
 		this.generation = Parameters.parameters.integerParameter("lastSavedGeneration");
 		writeOutput = Parameters.parameters.booleanParameter("io");
-
+                msPacMan = task instanceof MsPacManTask || task instanceof CooperativeMsPacManTask;
+                
 		if (writeOutput && io) {
 			parentLog = new FitnessLog<T>("parents");
 			if (CommonConstants.logChildScores) {
@@ -263,8 +266,7 @@ public abstract class MuLambda<T> implements SinglePopulationGenerationalEA<T> {
 	 *            Child scores (contains genotypes as well)
 	 * @return New parent population
 	 */
-	public ArrayList<Genotype<T>> selectAndAdvance(ArrayList<Score<T>> parentScores,
-			ArrayList<Score<T>> childrenScores) {
+	public ArrayList<Genotype<T>> selectAndAdvance(ArrayList<Score<T>> parentScores, ArrayList<Score<T>> childrenScores) {
 		ArrayList<Score<T>> population = prepareSourcePopulation(parentScores, childrenScores);
 		ArrayList<Genotype<T>> newParents = selection(mu, population);
 		EvolutionaryHistory.logMutationData("---Gen " + generation + " Over-----------------");
@@ -272,17 +274,19 @@ public abstract class MuLambda<T> implements SinglePopulationGenerationalEA<T> {
 		generation++;
 		EvolutionaryHistory.frozenPreferenceVsPolicyStatusUpdate(newParents, generation);
 		CommonConstants.trialsByGenerationUpdate(generation);
-		if (Parameters.parameters.booleanParameter("scalePillsByGen")) { // For pacman
-			Parameters.parameters.setDouble("preEatenPillPercentage", 1.0 - ((generation * 1.0) / Parameters.parameters.integerParameter("maxGens")));
-		}
-		if (Parameters.parameters.booleanParameter("incrementallyDecreasingEdibleTime")) { // For pacman
-			MMNEAT.setEdibleTimeBasedOnGeneration(generation);
-		}
-		if (Parameters.parameters.booleanParameter("incrementallyDecreasingLairTime")) { // For pacman
-			MMNEAT.setLairTimeBasedOnGeneration(generation);
-		}
-		VariableDirectionKStepDeathScentBlock.updateScentMaps(); // For pacman
-		DangerousAreaModeSelector.updateScentMaps(); // For pacman
+                if(msPacMan) { // Pacman-specific updates
+                    if (Parameters.parameters.booleanParameter("scalePillsByGen")) { // For pacman
+                            Parameters.parameters.setDouble("preEatenPillPercentage", 1.0 - ((generation * 1.0) / Parameters.parameters.integerParameter("maxGens")));
+                    }
+                    if (Parameters.parameters.booleanParameter("incrementallyDecreasingEdibleTime")) { // For pacman
+                            MMNEAT.setEdibleTimeBasedOnGeneration(generation);
+                    }
+                    if (Parameters.parameters.booleanParameter("incrementallyDecreasingLairTime")) { // For pacman
+                            MMNEAT.setLairTimeBasedOnGeneration(generation);
+                    }
+                    VariableDirectionKStepDeathScentBlock.updateScentMaps(); // For pacman
+                    DangerousAreaModeSelector.updateScentMaps(); // For pacman
+                }
 		return newParents;
 	}
 
@@ -298,8 +302,7 @@ public abstract class MuLambda<T> implements SinglePopulationGenerationalEA<T> {
 	 * @return One combined list of scores of only individuals being selected
 	 *         from
 	 */
-	public ArrayList<Score<T>> prepareSourcePopulation(ArrayList<Score<T>> parentScores,
-			ArrayList<Score<T>> childrenScores) {
+	public ArrayList<Score<T>> prepareSourcePopulation(ArrayList<Score<T>> parentScores, ArrayList<Score<T>> childrenScores) {
 		return prepareSourcePopulation(parentScores, childrenScores, mltype);
 	}
 

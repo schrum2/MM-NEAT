@@ -97,10 +97,8 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
 					// }
 					// }
 				}
-				if (CommonConstants.viewModePreference && TWEANN.preferenceNeuronPanel == null
-						&& TWEANN.preferenceNeuron()) {
-					TWEANN.preferenceNeuronPanel = new DrawingPanel(Plot.BROWSE_DIM, Plot.BROWSE_DIM,
-							"Preference Neuron Activation");
+				if (CommonConstants.viewModePreference && TWEANN.preferenceNeuronPanel == null && TWEANN.preferenceNeuron()) {
+					TWEANN.preferenceNeuronPanel = new DrawingPanel(Plot.BROWSE_DIM, Plot.BROWSE_DIM, "Preference Neuron Activation");
 					TWEANN.preferenceNeuronPanel.setLocation(Plot.BROWSE_DIM + Plot.EDGE, Plot.BROWSE_DIM + Plot.TOP);
 				}
 				// this does not happen for TorusPredPreyTasks because the
@@ -143,8 +141,7 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
 			// print fitness score and genotype information then dispose the
 			// panel, releasing system resources
 			if (panel != null) {
-				System.out.println(
-						"Module Usage: " + Arrays.toString(((TWEANNGenotype) score.individual).getModuleUsage()));
+				System.out.println("Module Usage: " + Arrays.toString(((TWEANNGenotype) score.individual).getModuleUsage()));
 				System.out.println("Fitness: " + score.toString());
 				panel.dispose();
 				// if (subPanels != null) {
@@ -251,7 +248,6 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
 						bestScores[j] = s;
 					}
 				}
-
 				scores.add(s);
 			} catch (InterruptedException | ExecutionException ex) {
 				ex.printStackTrace();
@@ -290,8 +286,7 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
 			// save all of the best objectives
 			for (int j = 0; j < bestObjectives.length; j++) {
 				Easy.save(bestGenotypes[j], bestDir + "/" + filePrefix + "bestIn" + j + ".xml");
-				FileUtilities.simpleFileWrite(bestDir + "/" + filePrefix + "score" + j + ".txt",
-						bestScores[j].toString());
+				FileUtilities.simpleFileWrite(bestDir + "/" + filePrefix + "score" + j + ".txt", bestScores[j].toString());
 			}
 		}
 

@@ -81,8 +81,7 @@ public class SelectiveBreedingEA<T> implements SinglePopulationGenerationalEA<T>
 	 */
 	@Override
 	public ArrayList<Genotype<T>> initialPopulation(Genotype<T> example) {
-		ArrayList<Genotype<T>> initPop = PopulationUtil.initialPopulation(example, parentPop);
-		return initPop;
+		return PopulationUtil.initialPopulation(example, parentPop);
 	}
 
 	/**
