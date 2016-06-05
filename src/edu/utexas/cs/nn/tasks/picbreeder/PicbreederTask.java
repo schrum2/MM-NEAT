@@ -205,17 +205,16 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	}
 
 	private void save(int i, int x, JButton button) {
-		JTextField saveName = new JTextField("image " + x, 30);
-		saveName.addActionListener(this);
-		button.add(saveName);
-		MiscUtil.waitForReadStringAndEnterKeyPress();
+//		JTextField saveName = new JTextField("image " + x, 30);
+//		saveName.addActionListener(this);
+//		button.add(saveName);
+//		MiscUtil.waitForReadStringAndEnterKeyPress();
 		BufferedImage toSave = (BufferedImage) ((ImageIcon) button.getIcon()).getImage();
-		DrawingPanel p = GraphicsUtil.drawImage(toSave, saveName.getText(), toSave.getWidth(), toSave.getHeight());
-		panels.get(TOP_PANEL_INDEX);
+		DrawingPanel p = GraphicsUtil.drawImage(toSave, "" + i, toSave.getWidth(), toSave.getHeight());
+		//panels.get(TOP_PANEL_INDEX);
 		p.setLocation(x, 0);
-		x += toSave.getWidth();
-		p.save(saveName.getText() + ".bmp");
-		System.out.println("image number " + saveIndex++ + " was saved successfully");
+		p.save("image " + i + ".bmp");
+		System.out.println("image number " + i++ + " was saved successfully");
 	}
 	/**
 	 * evaluates all genotypes in a population
@@ -270,6 +269,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 				boolean choose = chosen[i];
 				if(choose) {//loops through and any image  clicked automatically saved
 					save(i ,x, buttons.get(i));
+					x += buttons.get(i).getWidth();
 				}
 			}
 		} else if(scoreIndex == EVOLVE_BUTTON_INDEX && BooleanUtil.any(chosen)) {//If evolve button clicked
