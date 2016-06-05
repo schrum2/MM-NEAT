@@ -38,7 +38,8 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	//Global static final variables
 	public static final int CPPN_NUM_INPUTS	= 4;
 	public static final int CPPN_NUM_OUTPUTS = 3;
-	
+	public static final int NUM_COLUMNS	= 4;
+
 	private static final int IMAGE_BUTTON_INDEX = 0;
 	private static final int EVOLVE_BUTTON_INDEX = -1;
 	private static final int SAVE_BUTTON_INDEX = -2;
@@ -47,15 +48,15 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	private static final int BORDER_THICKNESS = 4;
 	//Private final variables
 	private final int NUM_ROWS;
-	private final int NUM_COLUMNS;
 	private final int PIC_SIZE;
+	private final int NUM_BUTTONS;
 
 	//Private graphic objects
 	private JFrame frame;
 	private ArrayList<JPanel> panels;
 	private ArrayList<JButton> buttons;
 	private ArrayList<Score<T>> scores;
-	
+
 	//private helper variables
 	private boolean waitingForUser;
 	private boolean[] chosen;
@@ -65,9 +66,9 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	 * Default constructor
 	 */
 	public PicbreederTask() {
-		this(Parameters.parameters.integerParameter("numColumns"), Parameters.parameters.integerParameter("numRows"), Parameters.parameters.integerParameter("imageSize"));
+		this(NUM_COLUMNS, MiscUtil.multiplicationFactor(NUM_COLUMNS, Parameters.parameters.integerParameter("mu")), Parameters.parameters.integerParameter("imageSize"));
 	}
-	
+
 	/**
 	 * Constructor
 	 * @param rows number of rows of images
@@ -75,12 +76,13 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	 * @param size size of each image
 	 */
 	public PicbreederTask(int rows, int columns, int size) {
-		
+
+		Parameters.parameters.setInteger("mu", Parameters.parameters.integerParameter("mu") * NUM_COLUMNS);
 		//Global variable instantiations
 		NUM_ROWS = rows;
-		NUM_COLUMNS = columns;
 		PIC_SIZE = size;
-		chosen = new boolean[rows * columns];
+		NUM_BUTTONS	= Parameters.parameters.integerParameter("mu");
+		chosen = new boolean[NUM_BUTTONS];
 		waitingForUser = false;
 		saveIndex = 0;
 		//Graphics instantiations
@@ -93,9 +95,9 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLayout(new GridLayout(NUM_ROWS + 1, 0));// the + 1 includes room for the title panel
 		frame.setVisible(true);
-		
+
 		//sets up title graphics
-		
+
 		//instantiate graphics
 		JPanel top = new JPanel();
 		JButton resetButton = new JButton(new ImageIcon("data\\picbreeder\\reset.png"));
@@ -122,7 +124,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		top.add(evolveButton);
 		top.add(closeButton);
 		panels.add(top);
-		
+
 		//adds button panels
 		for(int i = 1; i <= NUM_ROWS; i++) {
 			JPanel row = new JPanel();
@@ -136,10 +138,12 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		for(JPanel panel: panels) frame.add(panel);
 		for(int i = 1; i <= NUM_ROWS; i++) {
 			for(int j = 0; j < NUM_COLUMNS; j++) {
-				JButton image = getImageButton(GraphicsUtil.solidColorImage(Color.BLACK, PIC_SIZE, PIC_SIZE), "dummy");
-				panels.get(i).add(image);
-				buttons.add(image);
-				buttons.get(x++).addActionListener(this);
+				if(x < NUM_BUTTONS) {
+					JButton image = getImageButton(GraphicsUtil.solidColorImage(Color.BLACK, PIC_SIZE, PIC_SIZE), "dummy");
+					panels.get(i).add(image);
+					buttons.add(image);
+					buttons.get(x++).addActionListener(this);
+				}
 			}
 		}
 	}
@@ -163,7 +167,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	public double[] evaluate() {
 		return new double[]{1.0};
 	}
-	
+
 	/**
 	 * Number of objectives for task
 	 * @return number of objectives
@@ -199,23 +203,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	public void finalCleanup() {
 	}
 
-	/**
-	 * DIS METHOD IS A MESS
-	 */
-	public void newRandomImages() {
-		final int NUM_MUTATIONS = 20;
-		for(int i = 0; i < buttons.size(); i++) {
-			TWEANNGenotype tg1 = new TWEANNGenotype(CPPN_NUM_INPUTS, CPPN_NUM_OUTPUTS, false, 0, 1, 0);
-			for(int j = 0; j < NUM_MUTATIONS; j++) {
-				tg1.mutate();
-			}
-			ImageIcon img = new ImageIcon(GraphicsUtil.imageFromCPPN(tg1.getPhenotype(), PIC_SIZE, PIC_SIZE));
-			buttons.get(i).setIcon(img);
-			chosen[i] =  false;
-			buttons.get(i).setBorder(BorderFactory.createLineBorder(Color.lightGray, BORDER_THICKNESS));
-		}
-	}
-	
+
 	/**
 	 * evaluates all genotypes in a population
 	 * @param population of starting population
@@ -225,7 +213,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	public ArrayList<Score<T>> evaluateAll(ArrayList<Genotype<T>> population) {//TODO 
 		waitingForUser = true;
 		scores = new ArrayList<Score<T>>();
-		if(population.size() != NUM_ROWS * NUM_COLUMNS) {
+		if(population.size() != NUM_BUTTONS) {
 			throw new IllegalArgumentException("number of genotypes doesn't match size of population! Size of genotypes: " + population.size());
 		}
 		for(int x = 0; x < buttons.size(); x++) {
@@ -262,7 +250,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		if(scoreIndex == CLOSE_BUTTON_INDEX) {
 			System.exit(1);
 		} else if(scoreIndex == RESET_BUTTON_INDEX) {//If reset button clicked
-			newRandomImages();
+			//not sure what to do here
 		} else if(scoreIndex == SAVE_BUTTON_INDEX && BooleanUtil.any(chosen)) { //If save button clicked
 			int x = 0;
 			for(int i = 0; i < chosen.length; i++) {

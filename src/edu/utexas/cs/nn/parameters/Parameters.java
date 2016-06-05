@@ -182,8 +182,6 @@ public class Parameters {
 	public final void fillDefaults() {
 		// Integer parameters
 		integerOptions.add("imageSize", 250, "Size of image for Picbreeder");
-		integerOptions.add("numColumns", 4, "Number of columns for Picbreeder");
-		integerOptions.add("numRows", 4, "Number of rows for Picbreeder");
 		integerOptions.add("doomEpisodeLength", 200, "The length of the current game's episodes");
 		integerOptions.add("rlGluePort", RLGlueTask.DEFAULT_PORT, "The port number for the current instance of RLGlue");
 		integerOptions.add("imageHeight", 100, "height of CPPN image (overrides height of image being matched if overrideImageSize is true)");
