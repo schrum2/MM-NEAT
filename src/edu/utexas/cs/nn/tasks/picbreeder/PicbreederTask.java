@@ -3,6 +3,8 @@ package edu.utexas.cs.nn.tasks.picbreeder;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -46,6 +48,9 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	private static final int SAVE_BUTTON_INDEX = -2;
 	private static final int RESET_BUTTON_INDEX = -3;
 	private static final int CLOSE_BUTTON_INDEX	= -4;
+	private static final int LINEAGE_BUTTON_INDEX = -5;
+	private static final int NETWORK_BUTTON_INDEX = -6;
+	private static final int UNDO_BUTTON_INDEX = -7;
 	private static final int BORDER_THICKNESS = 4;
 	private static final int TOP_PANEL_INDEX = 0;
 	//Private final variables
@@ -60,6 +65,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	private ArrayList<Score<T>> scores;
 
 	//private helper variables
+	private boolean showNetwork;
 	private boolean waitingForUser;
 	private boolean[] chosen;
 	private int saveIndex;
@@ -85,6 +91,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		PIC_SIZE = size;
 		NUM_BUTTONS	= Parameters.parameters.integerParameter("mu");
 		chosen = new boolean[NUM_BUTTONS];
+		showNetwork = false;
 		waitingForUser = false;
 		saveIndex = 0;
 		//Graphics instantiations
@@ -106,24 +113,39 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		JButton saveButton = new JButton(new ImageIcon("data\\picbreeder\\save.png"));
 		JButton evolveButton = new JButton(new ImageIcon("data\\picbreeder\\arrow.png"));
 		JButton closeButton = new JButton(new ImageIcon("data\\picbreeder\\quit.png"));
-		JLabel label = new JLabel("Picture Evolver");
+		JButton lineageButton = new JButton(new ImageIcon("data\\picbreeder\\lineage.png"));
+		JButton networkButton = new JButton(new ImageIcon("data\\picbreeder\\network.png"));
+		JButton undoButton = new JButton( new ImageIcon("data\\picbreeder\\undo.png"));
+		//JLabel label = new JLabel("Picture Evolver");
+		
 		//set graphic names
-		evolveButton.setName("" + -1);
-		saveButton.setName("" + -2);
-		resetButton.setName("" + -3);
-		closeButton.setName("" + -4);
-		label.setFont(new Font("Serif", Font.BOLD, 48));
-		label.setForeground(Color.DARK_GRAY);
+		evolveButton.setName("" + EVOLVE_BUTTON_INDEX);
+		saveButton.setName("" + SAVE_BUTTON_INDEX);
+		resetButton.setName("" + RESET_BUTTON_INDEX);
+		closeButton.setName("" + CLOSE_BUTTON_INDEX);
+		lineageButton.setName("" + LINEAGE_BUTTON_INDEX);
+		networkButton.setName("" + NETWORK_BUTTON_INDEX);
+		undoButton.setName("" + UNDO_BUTTON_INDEX);
+		
+		//label.setFont(new Font("Serif", Font.BOLD, 48));
+		//label.setForeground(Color.DARK_GRAY);
+		
 		//add action listeners
 		resetButton.addActionListener(this);
 		saveButton.addActionListener(this);
 		evolveButton.addActionListener(this);
 		closeButton.addActionListener(this);
+		lineageButton.addActionListener(this);
+		networkButton.addActionListener(this);
+		undoButton.addActionListener(this);
+		
 		//add graphics to title panel
+		top.add(lineageButton);
+		top.add(networkButton);
 		top.add(resetButton);
-		top.add(saveButton);
-		top.add(label);
 		top.add(evolveButton);
+		top.add(saveButton);
+		top.add(undoButton);
 		top.add(closeButton);
 		panels.add(top);
 
@@ -205,6 +227,12 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	public void finalCleanup() {
 	}
 
+	private void resetButton(BufferedImage gmi, int buttonIndex){ 
+		ImageIcon img = new ImageIcon(gmi);
+		buttons.get(buttonIndex).setName("" + buttonIndex);
+		buttons.get(buttonIndex).setIcon(img);
+		chosen[buttonIndex] = false;
+	}
 	private void save(int i, int x, JButton button) {
 //		JTextField saveName = new JTextField("image " + x, 30);
 //		saveName.addActionListener(this);
@@ -216,6 +244,14 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		p.setLocation(x, 0);
 		p.save("image " + i + ".bmp");
 		System.out.println("image number " + i++ + " was saved successfully");
+	}
+	
+	private BufferedImage getNetwork(Genotype<T> tg) {
+		T pheno = tg.getPhenotype();
+		DrawingPanel network = new DrawingPanel(PIC_SIZE, PIC_SIZE, "network");
+		((TWEANN) pheno).draw(network);
+		return network.image;
+		
 	}
 	/**
 	 * evaluates all genotypes in a population
@@ -231,10 +267,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		}
 		for(int x = 0; x < buttons.size(); x++) {
 			scores.add(new Score<T>(population.get(x), new double[]{0}, null));
-			ImageIcon img = new ImageIcon(GraphicsUtil.imageFromCPPN((Network)population.get(x).getPhenotype(), PIC_SIZE, PIC_SIZE));
-			buttons.get(x).setName("" + x);
-			buttons.get(x).setIcon(img);
-			chosen[x] = false;
+			resetButton(GraphicsUtil.imageFromCPPN((Network)population.get(x).getPhenotype(), PIC_SIZE, PIC_SIZE), x);
 			buttons.get(x).setBorder(BorderFactory.createLineBorder(Color.lightGray, BORDER_THICKNESS));
 		}
 		while(waitingForUser){
@@ -273,7 +306,24 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 					x += buttons.get(i).getWidth();
 				}
 			}
-		} else if(scoreIndex == EVOLVE_BUTTON_INDEX && BooleanUtil.any(chosen)) {//If evolve button clicked
+		} else if(scoreIndex == LINEAGE_BUTTON_INDEX) {
+			
+		} else if(scoreIndex == NETWORK_BUTTON_INDEX) {
+			if(showNetwork) {
+				showNetwork = false;
+				int x = scores.indexOf(event.getSource());
+				resetButton(GraphicsUtil.imageFromCPPN((Network)scores.get(x).individual.getPhenotype(), PIC_SIZE, PIC_SIZE), x);
+			} else {
+				for(int i = 0; i < buttons.size(); i++) {
+					showNetwork = true;
+					BufferedImage network = getNetwork(scores.get(i).individual);
+					resetButton(network, i);
+				}
+				
+			}
+		} else if(scoreIndex == UNDO_BUTTON_INDEX) {
+			
+		}else if(scoreIndex == EVOLVE_BUTTON_INDEX && BooleanUtil.any(chosen)) {//If evolve button clicked
 			System.out.println("congratulations you pressed the evolve button");
 			System.out.println("scores: " + scores);	
 			System.out.println("boolean values: " + Arrays.toString(chosen));
