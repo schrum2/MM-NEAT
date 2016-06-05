@@ -46,6 +46,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	private static final int RESET_BUTTON_INDEX = -3;
 	private static final int CLOSE_BUTTON_INDEX	= -4;
 	private static final int BORDER_THICKNESS = 4;
+	private static final int TOP_PANEL_INDEX = 0;
 	//Private final variables
 	private final int NUM_ROWS;
 	private final int PIC_SIZE;
@@ -203,7 +204,19 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	public void finalCleanup() {
 	}
 
-
+	private void save(int i, int x, JButton button) {
+		JTextField saveName = new JTextField("image " + x, 30);
+		saveName.addActionListener(this);
+		button.add(saveName);
+		MiscUtil.waitForReadStringAndEnterKeyPress();
+		BufferedImage toSave = (BufferedImage) ((ImageIcon) button.getIcon()).getImage();
+		DrawingPanel p = GraphicsUtil.drawImage(toSave, saveName.getText(), toSave.getWidth(), toSave.getHeight());
+		panels.get(TOP_PANEL_INDEX);
+		p.setLocation(x, 0);
+		x += toSave.getWidth();
+		p.save(saveName.getText() + ".bmp");
+		System.out.println("image number " + saveIndex++ + " was saved successfully");
+	}
 	/**
 	 * evaluates all genotypes in a population
 	 * @param population of starting population
@@ -214,7 +227,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		waitingForUser = true;
 		scores = new ArrayList<Score<T>>();
 		if(population.size() != NUM_BUTTONS) {
-			throw new IllegalArgumentException("number of genotypes doesn't match size of population! Size of genotypes: " + population.size());
+			throw new IllegalArgumentException("number of genotypes doesn't match size of population! Size of genotypes: " + population.size() + " Num buttons: " + NUM_BUTTONS);
 		}
 		for(int x = 0; x < buttons.size(); x++) {
 			scores.add(new Score<T>(population.get(x), new double[]{0}, null));
@@ -256,12 +269,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 			for(int i = 0; i < chosen.length; i++) {
 				boolean choose = chosen[i];
 				if(choose) {//loops through and any image  clicked automatically saved
-					BufferedImage toSave = (BufferedImage) ((ImageIcon) buttons.get(i).getIcon()).getImage();
-					DrawingPanel p = GraphicsUtil.drawImage(toSave, "image" + saveIndex, toSave.getWidth(), toSave.getHeight());
-					p.setLocation(x, 0);
-					x += toSave.getWidth();
-					p.save("image" + saveIndex + ".bmp");
-					System.out.println("image number " + saveIndex++ + " was saved successfully");
+					save(i ,x, buttons.get(i));
 				}
 			}
 		} else if(scoreIndex == EVOLVE_BUTTON_INDEX && BooleanUtil.any(chosen)) {//If evolve button clicked
