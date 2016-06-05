@@ -3,8 +3,12 @@ package edu.utexas.cs.nn.evolution.selectiveBreeding;
 import java.util.ArrayList;
 
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
+import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
 import edu.utexas.cs.nn.evolution.SinglePopulationGenerationalEA;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
+import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
+import edu.utexas.cs.nn.log.FitnessLog;
+import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.scores.Score;
 import edu.utexas.cs.nn.tasks.SinglePopulationTask;
@@ -27,6 +31,7 @@ public class SelectiveBreedingEA<T> implements SinglePopulationGenerationalEA<T>
 	private boolean mating;
 	private double crossoverRate;
 	
+	protected FitnessLog<T> keeperLog;
 	/**
 	 * default Constructor
 	 */
@@ -45,6 +50,9 @@ public class SelectiveBreedingEA<T> implements SinglePopulationGenerationalEA<T>
 		this.task = task;
 		this.parentPop = parentPop;
 		this.generation = Parameters.parameters.integerParameter("lastSavedGeneration");
+		if (Parameters.parameters.booleanParameter("io")) {
+			keeperLog = new FitnessLog<T>("keepers");
+		}
 	}
 	
 	/**
@@ -84,6 +92,17 @@ public class SelectiveBreedingEA<T> implements SinglePopulationGenerationalEA<T>
 		return PopulationUtil.initialPopulation(example, parentPop);
 	}
 
+	protected void logInfo(ArrayList<Score<T>> scores) {
+		keeperLog.log(scores, generation);
+		Genotype example = scores.get(0).individual;
+		if (example instanceof TWEANNGenotype) {
+			ArrayList<TWEANNGenotype> tweanns = new ArrayList<TWEANNGenotype>(scores.size());
+			for (Score<T> g : scores) {
+				tweanns.add((TWEANNGenotype) g.individual);
+			}
+			EvolutionaryHistory.logTWEANNData(tweanns, generation);
+		}
+	}
 	/**
 	 * gets next generation of genotypes
 	 * @param population parent genotypes
@@ -116,16 +135,25 @@ public class SelectiveBreedingEA<T> implements SinglePopulationGenerationalEA<T>
 				children.add(g1);
 			}
 		}
-		
+		logInfo(scores);
+		if(CommonConstants.netio) {
+			PopulationUtil.saveCurrentGen(scores);
+		}
+		EvolutionaryHistory.logMutationData("---Gen " + generation + " Over-----------------");
+		EvolutionaryHistory.logLineageData("---Gen " + generation + " Over-----------------");
+		generation++;
 		return children;
 	}
 
 	/**
-	 * Not needed yet
+	 * 
 	 * @param population
 	 */
 	@Override
 	public void close(ArrayList<Genotype<T>> population) {
+		if(Parameters.parameters.booleanParameter("writeOutput") && keeperLog != null) {
+			keeperLog.close();
+		}
 	}
 
 }

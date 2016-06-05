@@ -19,6 +19,7 @@ import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
 import edu.utexas.cs.nn.graphics.DrawingPanel;
 import edu.utexas.cs.nn.networks.Network;
+import edu.utexas.cs.nn.networks.NetworkTask;
 import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.scores.Score;
@@ -33,7 +34,7 @@ import edu.utexas.cs.nn.util.MiscUtil;
  *
  * @param <T>
  */
-public class PicbreederTask<T extends Network> implements SinglePopulationTask<T>, ActionListener {
+public class PicbreederTask<T extends Network> implements SinglePopulationTask<T>, ActionListener, NetworkTask {
 
 	//Global static final variables
 	public static final int CPPN_NUM_INPUTS	= 4;
@@ -390,6 +391,26 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 			holder.repaint();
 
 		}
+	}
+
+
+	/**
+	 * Returns labels for input
+	 *
+	 * @return List of CPPN outputs
+	 */
+	@Override
+	public String[] sensorLabels() {
+		return new String[] { "X-coordinate", "Y-coordinate", "distance from center", "bias" };
+	}
+	/**
+	 * Returns labels for output
+	 *
+	 * @return list of CPPN outputs
+	 */
+	@Override
+	public String[] outputLabels() {
+		return new String[] { "hue-value", "saturation-value", "brightness-value" };
 	}
 
 }

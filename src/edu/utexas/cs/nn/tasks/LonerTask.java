@@ -16,6 +16,7 @@ import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.scores.Score;
 import edu.utexas.cs.nn.tasks.gridTorus.TorusPredPreyTask;
 import edu.utexas.cs.nn.tasks.mspacman.MsPacManTask;
+import edu.utexas.cs.nn.util.PopulationUtil;
 import edu.utexas.cs.nn.util.file.FileUtilities;
 import java.io.File;
 import java.io.IOException;
@@ -272,22 +273,7 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
 		}
 
 		if (CommonConstants.netio) {
-			int currentGen = MMNEAT.ea.currentGeneration();
-			String filePrefix = "gen" + currentGen + "_";
-			// Save best in each objective
-			String bestDir = FileUtilities.getSaveDirectory() + "/bestObjectives";
-			File dir = new File(bestDir);
-			// Delete old contents/team
-			if (dir.exists() && !Parameters.parameters.booleanParameter("saveAllChampions")) {
-				FileUtilities.deleteDirectoryContents(dir);
-			} else {
-				dir.mkdir();
-			}
-			// save all of the best objectives
-			for (int j = 0; j < bestObjectives.length; j++) {
-				Easy.save(bestGenotypes[j], bestDir + "/" + filePrefix + "bestIn" + j + ".xml");
-				FileUtilities.simpleFileWrite(bestDir + "/" + filePrefix + "score" + j + ".txt", bestScores[j].toString());
-			}
+			PopulationUtil.saveCurrentGen(bestObjectives, bestGenotypes, bestScores);
 		}
 
 		if (parallel) {

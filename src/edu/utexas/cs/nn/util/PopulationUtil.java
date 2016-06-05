@@ -14,6 +14,7 @@ import edu.utexas.cs.nn.scores.Better;
 import edu.utexas.cs.nn.scores.Score;
 import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
+import edu.utexas.cs.nn.util.file.FileUtilities;
 import edu.utexas.cs.nn.util.file.XMLFilter;
 import edu.utexas.cs.nn.util.random.RandomNumbers;
 import java.io.File;
@@ -37,6 +38,42 @@ import wox.serial.Easy;
  */
 public class PopulationUtil {
 
+	public static <T> void saveCurrentGen(ArrayList<Score<T>> bestScores) {
+		int currentGen = MMNEAT.ea.currentGeneration();
+		String filePrefix = "gen" + currentGen + "_";
+		// Save best in each objective
+		String bestDir = FileUtilities.getSaveDirectory() + "/bestObjectives";
+		File dir = new File(bestDir);
+		// Delete old contents/team
+		if (dir.exists() && !Parameters.parameters.booleanParameter("saveAllChampions")) {
+			FileUtilities.deleteDirectoryContents(dir);
+		} else {
+			dir.mkdir();
+		}
+		// save all of the best objectives
+		for (int j = 0; j < bestScores.size(); j++) {
+			Easy.save(bestScores.get(j), bestDir + "/" + filePrefix + "keptGenotypesIn" + j + ".xml");
+			FileUtilities.simpleFileWrite(bestDir + "/" + filePrefix + "genotypes" + j + ".txt", bestScores.get(j).individual.toString());
+		}
+	}
+	public static <T> void saveCurrentGen(double[] bestObjectives, Genotype<T>[] bestGenotypes, Score<T>[] bestScores) {
+		int currentGen = MMNEAT.ea.currentGeneration();
+		String filePrefix = "gen" + currentGen + "_";
+		// Save best in each objective
+		String bestDir = FileUtilities.getSaveDirectory() + "/bestObjectives";
+		File dir = new File(bestDir);
+		// Delete old contents/team
+		if (dir.exists() && !Parameters.parameters.booleanParameter("saveAllChampions")) {
+			FileUtilities.deleteDirectoryContents(dir);
+		} else {
+			dir.mkdir();
+		}
+		// save all of the best objectives
+		for (int j = 0; j < bestObjectives.length; j++) {
+			Easy.save(bestGenotypes[j], bestDir + "/" + filePrefix + "bestIn" + j + ".xml");
+			FileUtilities.simpleFileWrite(bestDir + "/" + filePrefix + "score" + j + ".txt", bestScores[j].toString());
+		}
+	}
 	/**
 	 * Generate initial parent population
 	 * 

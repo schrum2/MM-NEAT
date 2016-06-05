@@ -87,3 +87,5 @@ vizdoom/bin/vizdoom-He_Deceives.ini
 *.txt
 *.xml
 vizdoom.ini
+*.pdf
+*.plot

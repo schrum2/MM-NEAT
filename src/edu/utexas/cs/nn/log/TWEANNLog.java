@@ -21,7 +21,7 @@ public class TWEANNLog extends StatisticsLog<TWEANNGenotype> {
 	private static final int ARCHETYPE_INDEX = 0;
 
 	public static ArrayList<String> getLabels() {
-		String[] sensors = ((NetworkTask) MMNEAT.task).sensorLabels();
+		String[] sensors = ( (NetworkTask) MMNEAT.task).sensorLabels();
 		ArrayList<String> result = new ArrayList<String>(8 + sensors.length);
 
 		result.add("Number of Links");
