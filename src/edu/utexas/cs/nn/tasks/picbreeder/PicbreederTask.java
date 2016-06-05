@@ -117,7 +117,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		JButton networkButton = new JButton(new ImageIcon("data\\picbreeder\\network.png"));
 		JButton undoButton = new JButton( new ImageIcon("data\\picbreeder\\undo.png"));
 		//JLabel label = new JLabel("Picture Evolver");
-		
+
 		//set graphic names
 		evolveButton.setName("" + EVOLVE_BUTTON_INDEX);
 		saveButton.setName("" + SAVE_BUTTON_INDEX);
@@ -126,10 +126,10 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		lineageButton.setName("" + LINEAGE_BUTTON_INDEX);
 		networkButton.setName("" + NETWORK_BUTTON_INDEX);
 		undoButton.setName("" + UNDO_BUTTON_INDEX);
-		
+
 		//label.setFont(new Font("Serif", Font.BOLD, 48));
 		//label.setForeground(Color.DARK_GRAY);
-		
+
 		//add action listeners
 		resetButton.addActionListener(this);
 		saveButton.addActionListener(this);
@@ -138,7 +138,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		lineageButton.addActionListener(this);
 		networkButton.addActionListener(this);
 		undoButton.addActionListener(this);
-		
+
 		//add graphics to title panel
 		top.add(lineageButton);
 		top.add(networkButton);
@@ -227,31 +227,49 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	public void finalCleanup() {
 	}
 
+	/**
+	 * 
+	 * @param gmi
+	 * @param buttonIndex
+	 */
 	private void resetButton(BufferedImage gmi, int buttonIndex){ 
 		ImageIcon img = new ImageIcon(gmi);
 		buttons.get(buttonIndex).setName("" + buttonIndex);
 		buttons.get(buttonIndex).setIcon(img);
 		chosen[buttonIndex] = false;
 	}
+
+	/**
+	 * 
+	 * @param i
+	 * @param x
+	 * @param button
+	 */
 	private void save(int i, int x, JButton button) {
-//		JTextField saveName = new JTextField("image " + x, 30);
-//		saveName.addActionListener(this);
-//		button.add(saveName);
-//		MiscUtil.waitForReadStringAndEnterKeyPress();
+		//		JTextField saveName = new JTextField("image " + x, 30);
+		//		saveName.addActionListener(this);
+		//		button.add(saveName);
+		//		MiscUtil.waitForReadStringAndEnterKeyPress();
 		BufferedImage toSave = (BufferedImage) ((ImageIcon) button.getIcon()).getImage();
 		DrawingPanel p = GraphicsUtil.drawImage(toSave, "" + i, toSave.getWidth(), toSave.getHeight());
 		//panels.get(TOP_PANEL_INDEX);
 		p.setLocation(x, 0);
-		p.save("image " + i + ".bmp");
-		System.out.println("image number " + i++ + " was saved successfully");
+		p.save((showNetwork ? "network" : "image") + i + ".bmp");
+		System.out.println((showNetwork ? "network number " : "image number ") + i++ + " was saved successfully");
 	}
-	
+
+	/**
+	 * 
+	 * @param tg
+	 * @return
+	 */
 	private BufferedImage getNetwork(Genotype<T> tg) {
 		T pheno = tg.getPhenotype();
 		DrawingPanel network = new DrawingPanel(PIC_SIZE, PIC_SIZE, "network");
 		((TWEANN) pheno).draw(network);
+		network.setVisibility(false);
 		return network.image;
-		
+
 	}
 	/**
 	 * evaluates all genotypes in a population
@@ -264,10 +282,10 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		scores = new ArrayList<Score<T>>();
 		if(population.size() != NUM_BUTTONS) {
 			throw new IllegalArgumentException("number of genotypes doesn't match size of population! Size of genotypes: " + population.size() + " Num buttons: " + NUM_BUTTONS);
-		}
+		}	
 		for(int x = 0; x < buttons.size(); x++) {
 			scores.add(new Score<T>(population.get(x), new double[]{0}, null));
-			resetButton(GraphicsUtil.imageFromCPPN((Network)population.get(x).getPhenotype(), PIC_SIZE, PIC_SIZE), x);
+			resetButton(showNetwork ? getNetwork(population.get(x)) : GraphicsUtil.imageFromCPPN((Network)population.get(x).getPhenotype(), PIC_SIZE, PIC_SIZE), x);
 			buttons.get(x).setBorder(BorderFactory.createLineBorder(Color.lightGray, BORDER_THICKNESS));
 		}
 		while(waitingForUser){
@@ -307,27 +325,29 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 				}
 			}
 		} else if(scoreIndex == LINEAGE_BUTTON_INDEX) {
-			
+
 		} else if(scoreIndex == NETWORK_BUTTON_INDEX) {
 			if(showNetwork) {
 				showNetwork = false;
-				int x = scores.indexOf(event.getSource());
-				resetButton(GraphicsUtil.imageFromCPPN((Network)scores.get(x).individual.getPhenotype(), PIC_SIZE, PIC_SIZE), x);
+				for(int i = 0; i < scores.size(); i++) {
+					resetButton(GraphicsUtil.imageFromCPPN((Network)scores.get(i).individual.getPhenotype(), PIC_SIZE, PIC_SIZE), i);
+				}
 			} else {
+				showNetwork = true;
 				for(int i = 0; i < buttons.size(); i++) {
-					showNetwork = true;
 					BufferedImage network = getNetwork(scores.get(i).individual);
 					resetButton(network, i);
 				}
-				
+
 			}
 		} else if(scoreIndex == UNDO_BUTTON_INDEX) {
-			
+
 		}else if(scoreIndex == EVOLVE_BUTTON_INDEX && BooleanUtil.any(chosen)) {//If evolve button clicked
 			System.out.println("congratulations you pressed the evolve button");
 			System.out.println("scores: " + scores);	
 			System.out.println("boolean values: " + Arrays.toString(chosen));
 			waitingForUser = false;//tells evaluateAll method to finish
+
 		} else if(scoreIndex >= IMAGE_BUTTON_INDEX) {//If an image button clicked
 			assert (scores.size() == buttons.size()) : 
 				"size mismatch! score array is " + scores.size() + " in length and buttons array is " + buttons.size() + " long";

@@ -113,7 +113,10 @@ public class DrawingPanel implements ActionListener {
 			System.exit(0);
 		}
 	}
-
+	//sets visibility of network
+	public void setVisibility(boolean b) {
+		frame.setVisible(b);
+	}
 	// obtain the Graphics object to draw on the panel
 	public Graphics2D getGraphics() {
 		return this.g2;
