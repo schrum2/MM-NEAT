@@ -40,12 +40,4 @@ public class MiscUtil {
 		}
 		return null;
 	}
-	
-	public static int multiplicationFactor(int base, int entries) {
-		int x = 1;
-		while(x*base < entries) {
-			x++;
-		}
-		return x;
-	}
 }
