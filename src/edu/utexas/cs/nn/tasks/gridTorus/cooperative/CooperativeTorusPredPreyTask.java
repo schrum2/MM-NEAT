@@ -9,10 +9,17 @@ import edu.utexas.cs.nn.gridTorus.TorusPredPreyGame;
 import edu.utexas.cs.nn.gridTorus.controllers.TorusPredPreyController;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.networks.NetworkTask;
+import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.scores.Score;
 import edu.utexas.cs.nn.tasks.CooperativeTask;
 import edu.utexas.cs.nn.tasks.gridTorus.NNTorusPredPreyAgent;
+import edu.utexas.cs.nn.tasks.gridTorus.NNTorusPredPreyController;
 import edu.utexas.cs.nn.tasks.gridTorus.TorusPredPreyTask;
+import edu.utexas.cs.nn.tasks.gridTorus.sensors.TorusPredPreySensorBlock;
+import edu.utexas.cs.nn.tasks.gridTorus.sensors.TorusPredatorsByIndexSensorBlock;
+import edu.utexas.cs.nn.tasks.gridTorus.sensors.TorusPredatorsByProximitySensorBlock;
+import edu.utexas.cs.nn.tasks.gridTorus.sensors.TorusPreyByIndexSensorBlock;
+import edu.utexas.cs.nn.tasks.gridTorus.sensors.TorusPreyByProximitySensorBlock;
 
 /**
  * Defines a cooperative torusPredPreyTask for either a group of predators being
@@ -44,27 +51,27 @@ public abstract class CooperativeTorusPredPreyTask<T extends Network> extends Co
 	/**
 	 * an int designating the number of populations to be evolved
 	 */
-        @Override
+	@Override
 	public abstract int numberOfPopulations();
 
 	/**
 	 * an integer array holding the fitness objectives for each population
 	 */
-        @Override
+	@Override
 	public abstract int[] objectivesPerPopulation();
 
 	/**
 	 * an integer array holding the other scores for each population (fitness scores
 	 * that are not actually being used in the evaluation and evolution of the agent(s))
 	 */
-        @Override
+	@Override
 	public abstract int[] otherStatsPerPopulation();
 
 	/**
 	 * gets and returns the time stamp of this task
 	 * @return time stamp as a double
 	 */
-        @Override
+	@Override
 	public double getTimeStamp() {
 		return task.getTimeStamp();
 	}
@@ -72,7 +79,7 @@ public abstract class CooperativeTorusPredPreyTask<T extends Network> extends Co
 	/**
 	 * nothing needs to be done here
 	 */
-        @Override
+	@Override
 	public void finalCleanup() {
 	}
 
@@ -80,18 +87,37 @@ public abstract class CooperativeTorusPredPreyTask<T extends Network> extends Co
 	 * gets and returns the sensor labels for this task
 	 * @return sensor labels in an array of strings
 	 */
-        @Override
+	@Override
 	public String[] sensorLabels() {
-		//TODO: Can't just use the lonerTask version of this method, it crashes
+		//Can't just use the lonerTask version of this method, it crashes
 		//array of evolved agents is not defined
-		return task.sensorLabels();
+
+
+		return task.preyEvolve ? (new NNTorusPredPreyController(null,false)).sensorLabels()
+				: (new NNTorusPredPreyController(null,true)).sensorLabels();
+
+		//So defining the sensorLabels here instead
+		//		int numInputs = 0;
+		//		int numPreds = Parameters.parameters.integerParameter("torusPredators");
+		//		int numPrey = Parameters.parameters.integerParameter("torusPreys");
+		//		
+		//		String[] labels = null;
+		//		if (Parameters.parameters.booleanParameter("torusSenseTeammates")) {
+		//			numInputs = numPreds + numPrey;
+		//		} else {
+		//			numInputs = task.preyEvolve ? numPreds : numPrey;
+		//		}
+		//
+		//		get the actual labels, such as (numPredators, "Pred"), depending on parameters and task
+		//		labels =
+		//		return labels;
 	}
 
 	/**
 	 * gets and returns the output labels for this task
 	 * @return output labels in an array of strings
 	 */
-        @Override
+	@Override
 	public String[] outputLabels() {
 		return task.outputLabels();
 	}
