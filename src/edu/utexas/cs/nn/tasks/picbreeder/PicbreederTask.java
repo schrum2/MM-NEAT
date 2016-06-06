@@ -144,6 +144,35 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		panels.add(top);
 
 		//adds button panels
+		addButtonPanels();
+		
+		//adds panels to frame
+		for(JPanel panel: panels) frame.add(panel);
+		
+		//adds buttons to button panels
+		int x = 0;//used to keep track of index of button panel
+		addButtonsToPanel(x++);
+	}
+
+	private void addButtonsToPanel(int x) {
+		for(int i = 1; i <= NUM_ROWS; i++) {
+			for(int j = 0; j < NUM_COLUMNS; j++) {
+				if(x < NUM_BUTTONS) {
+					JButton image = getImageButton(GraphicsUtil.solidColorImage(Color.BLACK, PIC_SIZE, PIC_SIZE), "x");
+					image.setName("" + x);
+					image.addActionListener(this);
+					panels.get(i).add(image);
+					buttons.add(image);
+					
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Adds all necessary button panels 
+	 */
+	private void addButtonPanels() { 
 		for(int i = 1; i <= NUM_ROWS; i++) {
 			JPanel row = new JPanel();
 			row.setSize(frame.getWidth(), PIC_SIZE);
@@ -151,21 +180,8 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 			row.setLayout(new GridLayout(1, NUM_COLUMNS));
 			panels.add(row);
 		}
-		//adds buttons to button panels
-		int x = 0;//used to keep track of index of button panel
-		for(JPanel panel: panels) frame.add(panel);
-		for(int i = 1; i <= NUM_ROWS; i++) {
-			for(int j = 0; j < NUM_COLUMNS; j++) {
-				if(x < NUM_BUTTONS) {
-					JButton image = getImageButton(GraphicsUtil.solidColorImage(Color.BLACK, PIC_SIZE, PIC_SIZE), "dummy");
-					panels.get(i).add(image);
-					buttons.add(image);
-					buttons.get(x++).addActionListener(this);
-				}
-			}
-		}
 	}
-
+	
 	/**
 	 * Gets JButton from given image
 	 * @param image image to put on button
@@ -268,7 +284,6 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		chooser.setFileFilter(filter);
 		int returnVal = chooser.showOpenDialog(frame);
 		if(returnVal == JFileChooser.APPROVE_OPTION) {//if the user decides to save the image
-			System.out.println("you need to copy this: " + chooser.getCurrentDirectory());
 			System.out.println("You chose to call the image: " + chooser.getSelectedFile().getName());
 			p.save(chooser.getCurrentDirectory() + "\\" + chooser.getSelectedFile().getName() + (showNetwork ? "network" : "image") + ".bmp");
 			System.out.println("image " + chooser.getSelectedFile().getName() + " was saved successfully");
@@ -284,7 +299,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	 * @param individual genotype used to replace button image
 	 * @param x index of button in question
 	 */
-	public void resetButton(Genotype<T> individual, int x) { 
+	private void resetButton(Genotype<T> individual, int x) { 
 		scores.add(new Score<T>(individual, new double[]{0}, null));
 		setButtonImage(showNetwork ? getNetwork(individual) : GraphicsUtil.imageFromCPPN((Network)individual.getPhenotype(), PIC_SIZE, PIC_SIZE), x);
 		chosen[x] = false;
@@ -334,7 +349,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	 * sets all relevant features if button at index is pressed  
 	 * @param scoreIndex index in arrays
 	 */
-	public void buttonPressed(int scoreIndex) {
+	private void buttonPressed(int scoreIndex) {
 		if(chosen[scoreIndex]) {//if image has already been clicked, reset
 			chosen[scoreIndex] = false;
 			buttons.get(scoreIndex).setBorder(BorderFactory.createLineBorder(Color.lightGray, BORDER_THICKNESS));
@@ -350,11 +365,8 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	 * Resets to a new random population
 	 */
 	@SuppressWarnings("unchecked")
-	public void reset() { 
-		System.out.println("before score size: " + scores.size());
+	private void reset() { 
 		ArrayList<Genotype<T>> newPop = ((SinglePopulationGenerationalEA<T>) MMNEAT.ea).initialPopulation(scores.get(0).individual);
-		System.out.println("mu: " + Parameters.parameters.integerParameter("mu"));
-		System.out.println("after score(newPop) size: " + newPop.size());
 		scores = new ArrayList<Score<T>>();
 		for(int i = 0; i < newPop.size(); i++) {
 		resetButton(newPop.get(i), i);
@@ -365,7 +377,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	/**
 	 * Saves all currently clicked images
 	 */
-	public void saveAll() { 
+	private void saveAll() { 
 		for(int i = 0; i < chosen.length; i++) {
 			boolean choose = chosen[i];
 			if(choose) {//loops through and any image  clicked automatically saved
@@ -374,7 +386,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		}
 	}
 	
-	public void setNetwork() { 
+	private void setNetwork() { 
 		if(showNetwork) {
 			showNetwork = false;
 			for(int i = 0; i < scores.size(); i++) {
