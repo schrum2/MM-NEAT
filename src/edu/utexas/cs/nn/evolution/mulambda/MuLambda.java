@@ -72,8 +72,8 @@ public abstract class MuLambda<T> implements SinglePopulationGenerationalEA<T> {
 		this.lambda = lambda;
 		this.generation = Parameters.parameters.integerParameter("lastSavedGeneration");
 		writeOutput = Parameters.parameters.booleanParameter("io");
-                msPacMan = task instanceof MsPacManTask || task instanceof CooperativeMsPacManTask;
-                
+		msPacMan = task instanceof MsPacManTask || task instanceof CooperativeMsPacManTask;
+
 		if (writeOutput && io) {
 			parentLog = new FitnessLog<T>("parents");
 			if (CommonConstants.logChildScores) {

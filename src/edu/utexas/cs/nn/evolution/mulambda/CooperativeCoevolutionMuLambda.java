@@ -86,8 +86,7 @@ public abstract class CooperativeCoevolutionMuLambda implements MultiplePopulati
 	 * @param task
 	 * @param numPopulations
 	 */
-	public CooperativeCoevolutionMuLambda(int mltype, int mu, int lambda, MultiplePopulationTask task,
-			int numPopulations) {
+	public CooperativeCoevolutionMuLambda(int mltype, int mu, int lambda, MultiplePopulationTask task, int numPopulations) {
 		this.mltype = mltype;
 		this.task = task;
 		this.mu = new int[numPopulations];
@@ -168,7 +167,8 @@ public abstract class CooperativeCoevolutionMuLambda implements MultiplePopulati
 				startingPopulations.add(pop);
 			} else {
 				System.out.println("Fresh subpop " + i);
-				startingPopulations.add(PopulationUtil.initialPopulation(examples.get(i), mu[i]));
+				ArrayList<Genotype> temp = PopulationUtil.removeListGenotypeType(PopulationUtil.initialPopulation(examples.get(i), mu[i]));
+				startingPopulations.add(temp);
 			}
 		}
 		return startingPopulations;

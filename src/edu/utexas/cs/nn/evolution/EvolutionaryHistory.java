@@ -197,17 +197,10 @@ public class EvolutionaryHistory {
 		} // this if statement happens if the current experiment hasn't yet been
 			// run or is a resume
 		if (loadedArchetype == null || loadedArchetype.equals("") || !(new File(loadedArchetype).exists())) {
-			TWEANNGenotype tg = (TWEANNGenotype) (MMNEAT.genotypeExamples == null ? MMNEAT.genotype.copy()
-					: MMNEAT.genotypeExamples.get(populationIndex).copy());// ternary
-																			// operator
-																			// allows
-																			// for
-																			// coevolution
-																			// to
-																			// be
-																			// implemented
-			archetypes[populationIndex] = tg.nodes;// saves the genotype of the
-													// current generation
+			// ternary operator allows for coevolution to be implemented
+			TWEANNGenotype tg = (TWEANNGenotype) (MMNEAT.genotypeExamples == null ? MMNEAT.genotype.copy() : MMNEAT.genotypeExamples.get(populationIndex).copy());
+			// saves the genotype of the current generation
+			archetypes[populationIndex] = tg.nodes;
 			saveArchetype(populationIndex);
 		} else {
 			// this else statement runs in a next run with a new seed
@@ -216,25 +209,19 @@ public class EvolutionaryHistory {
 			System.out.println("Loading archetype: " + loadedArchetype);
 			archetypes[populationIndex] = (ArrayList<NodeGene>) Easy.load(loadedArchetype);
 			String combiningCrossoverFile = Parameters.parameters.stringParameter("combiningCrossoverMapping");
-			if (!combiningCrossoverFile.isEmpty()) {// implement for multimodal
-													// behavior. Allows for
-													// combining of two
-				// separate subpopulations to create a multimodal network
+			// implement for multimodal behavior. Allows for combining of two separate subpopulations to create a multimodal network
+			if (!combiningCrossoverFile.isEmpty()) {
 				combiningCrossoverFile += ".txt";
 				System.out.println("Loading combining crossover file: " + combiningCrossoverFile);
 				CombiningTWEANNCrossover.loadOldToNew(combiningCrossoverFile);
 			}
-			long highestInnovation = -1;// finds largest innovation number in
-										// network to check
-										// largestUnusedInnovationNumber is set
-										// right
+			// finds largest innovation number in network to check largestUnusedInnovationNumber is set right
+			long highestInnovation = -1;
 			for (NodeGene ng : archetypes[populationIndex]) {
 				highestInnovation = Math.max(highestInnovation, ng.innovation);
 			}
-			if (highestInnovation > largestUnusedInnovationNumber) {// checks to
-																	// make sure
-																	// largestUnusedInnovationNumber
-																	// is set
+			// checks to make sure largestUnusedInnovationNumber is set
+			if (highestInnovation > largestUnusedInnovationNumber) {
 				// to the highest innovation number
 				setInnovation(highestInnovation + 1);
 			}
@@ -277,14 +264,8 @@ public class EvolutionaryHistory {
 			System.out.println("Done saving " + file);
 			// Could make more explicit using
 			// CommonConstants.trackCombiningCrossover
-			CombiningTWEANNCrossover.saveCombiningCrossoverInformation(); // Only
-																			// happens
-																			// is
-																			// there
-																			// is
-																			// information
-																			// to
-																			// save
+			// Only happens if there is information to save
+			CombiningTWEANNCrossover.saveCombiningCrossoverInformation(); 
 		}
 	}
 

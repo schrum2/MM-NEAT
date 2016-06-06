@@ -110,8 +110,7 @@ public class PopulationUtil {
 	 * @return new soft restart population
 	 */
 	public static <T> ArrayList<Genotype<T>> getBestAndDeltaCode(ArrayList<Score<T>> populationScores) {
-		ArrayList<Genotype<T>> front = NSGA2.staticSelection(populationScores.size(),
-				NSGA2.staticNSGA2Scores(populationScores));
+		ArrayList<Genotype<T>> front = NSGA2.staticSelection(populationScores.size(), NSGA2.staticNSGA2Scores(populationScores));
 		return deltaCodePopulation(populationScores.size(), front);
 	}
 
@@ -156,8 +155,7 @@ public class PopulationUtil {
 	 *            crossover rate if mating
 	 * @return population of children
 	 */
-	public static ArrayList<Genotype> childrenFromTournamentSelection(int numChildren, ArrayList<Score> parentScores,
-			Better<Score> judge, boolean mating, double crossoverRate) {
+	public static ArrayList<Genotype> childrenFromTournamentSelection(int numChildren, ArrayList<Score> parentScores, Better<Score> judge, boolean mating, double crossoverRate) {
 		ArrayList<Genotype> offspring = new ArrayList<Genotype>(numChildren);
 
 		for (int i = 0; i < numChildren; i++) {

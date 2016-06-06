@@ -3,6 +3,8 @@ package edu.utexas.cs.nn.evolution.lineage;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.evolution.genotypes.MLPGenotype;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
+import edu.utexas.cs.nn.evolution.mulambda.MuLambda;
+import edu.utexas.cs.nn.evolution.selectiveBreeding.SelectiveBreedingEA;
 import edu.utexas.cs.nn.graphics.DrawingPanel;
 import edu.utexas.cs.nn.graphics.Plot;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
@@ -218,13 +220,8 @@ public class Offspring {
 									TWEANN.preferenceNeuronPanel.setLocation(Plot.BROWSE_DIM + Plot.EDGE,
 											Plot.BROWSE_DIM + Plot.TOP);
 								}
-								o.drawTWEANN(panel, showInnovationNumbers); // Designates
-																			// this
-																			// as
-																			// the
-																			// active
-																			// drawing
-																			// panel
+								// Designates this as the active drawing panel
+								o.drawTWEANN(panel, showInnovationNumbers); 
 								// Evaluate mechanism is limited to Loner Tasks
 								@SuppressWarnings("unchecked")
 								Score<TWEANN> s = ((LonerTask<TWEANN>) MMNEAT.task).evaluate((TWEANNGenotype) g);
@@ -233,18 +230,10 @@ public class Offspring {
 								System.out.println("Score: " + s);
 								System.out.println("Module Usage: " + Arrays.toString(moduleUsage));
 							} else if (MMNEAT.genotype instanceof MLPGenotype) {
-								// o.drawTWEANN(panel, showInnovationNumbers);
-								// // Designates this as the active drawing
-								// panel
-								@SuppressWarnings("unchecked")
 								// Evaluate mechanism is limited to Loner Tasks
+								@SuppressWarnings("unchecked")
 								Score<MLP> s = ((LonerTask<MLP>) MMNEAT.task).evaluate((MLPGenotype) g);
-								// int[] modeUsage = ((TWEANNGenotype)
-								// s.individual).modeUsage;
-								// o.modeUsage = modeUsage;
 								System.out.println("Score: " + s);
-								// System.out.println("Mode Usage: " +
-								// Arrays.toString(modeUsage));
 							} else {
 								System.out.println("Evaluation only available for TWEANNs and MLPs");
 							}
@@ -801,8 +790,7 @@ public class Offspring {
 		file.close();
 	}
 
-	public static void addAllScores(String filePrefix, String infix, int numGenerations, boolean associateNetworks,
-			String networkPrefix) throws FileNotFoundException {
+	public static void addAllScores(String filePrefix, String infix, int numGenerations, boolean associateNetworks, String networkPrefix) throws FileNotFoundException {
 		for (int i = 0; i < numGenerations; i++) {
 			String filename = filePrefix + infix + i + ".txt";
 			Scanner s = new Scanner(new File(filename));
@@ -850,8 +838,7 @@ public class Offspring {
 		}
 	}
 
-	public static void fillInLineage(String base, String saveTo, int run, String log, String loadFrom,
-			boolean includeChildren) throws FileNotFoundException {
+	public static void fillInLineage(String base, String saveTo, int run, String log, String loadFrom, boolean includeChildren) throws FileNotFoundException {
 		Parameters.parameters.setBoolean("erasePWTrails", false);
 		Parameters.parameters.setBoolean("watch", true);
 		CommonConstants.watch = true;
@@ -867,12 +854,14 @@ public class Offspring {
 		System.out.println("---Lineage Loaded (" + numGenerations + " generations)-----------");
 		addMutationInformation(originalPrefix + "Mutations_log.txt");
 		System.out.println("---Mutation Information Added-----------");
-		if (includeChildren) {
-			addAllScores(prefix, "child_gen", numGenerations, false, originalPrefix);
-			System.out.println("---Child Scores Added-----------");
+		if(MMNEAT.ea instanceof MuLambda) {
+			if (includeChildren) {
+				addAllScores(prefix, "child_gen", numGenerations, false, originalPrefix);
+				System.out.println("---Child Scores Added-----------");
+			}
+			addAllScores(prefix, "parents_gen", numGenerations, true, originalPrefix);
+			System.out.println("---Parent Scores Added-----------");
 		}
-		addAllScores(prefix, "parents_gen", numGenerations, true, originalPrefix);
-		System.out.println("---Parent Scores Added-----------");
 		// Add TUG Goals?
 		File tugLog = new File(prefix + "TUG_log.txt");
 		if (tugLog.exists()) {
@@ -1067,22 +1056,25 @@ public class Offspring {
 
 	public static ArrayList<JumpPoint> jumpsInBest(int objective) {
 		ArrayList<JumpPoint> jumps = new ArrayList<JumpPoint>();
-		int generations = lastGeneration() + 1;
-		Offspring previousBest = bestOfGeneration(0, objective);
-		double previousScore = mins.get(objective);
-		if (previousBest != null) {
-			previousScore = previousBest.scores.get(previousBest.correspondingGenerations.indexOf(0)).get(objective);
-		}
-		for (int i = 1; i < generations; i++) {
-			Offspring currentBest = bestOfGeneration(i, objective);
-			if (currentBest != null) {
-				double currentScore = currentBest.scores.get(currentBest.correspondingGenerations.indexOf(i))
-						.get(objective);
-				double diff = currentScore - previousScore;
-				JumpPoint jump = new JumpPoint(objective, diff, currentBest, i, previousBest.offspringId);
-				jumps.add(jump);
-				previousBest = currentBest;
-				previousScore = currentScore;
+		// Selective breeding does not produce interesting scores
+		if(!(MMNEAT.ea instanceof SelectiveBreedingEA)) {
+			int generations = lastGeneration() + 1;
+			Offspring previousBest = bestOfGeneration(0, objective);
+			double previousScore = mins.get(objective);
+			if (previousBest != null) {
+				previousScore = previousBest.scores.get(previousBest.correspondingGenerations.indexOf(0)).get(objective);
+			}
+			for (int i = 1; i < generations; i++) {
+				Offspring currentBest = bestOfGeneration(i, objective);
+				if (currentBest != null) {
+					double currentScore = currentBest.scores.get(currentBest.correspondingGenerations.indexOf(i))
+							.get(objective);
+					double diff = currentScore - previousScore;
+					JumpPoint jump = new JumpPoint(objective, diff, currentBest, i, previousBest.offspringId);
+					jumps.add(jump);
+					previousBest = currentBest;
+					previousScore = currentScore;
+				}
 			}
 		}
 		return jumps;
@@ -1156,8 +1148,7 @@ public class Offspring {
 			g.setColor(Color.red);
 			int x = Plot.OFFSET;
 			int y = Plot.OFFSET + (2 * i * Plot.OFFSET);
-			g.fillRect(x, y, (int) (((scores.get(i) - mins.get(i)) / (maxes.get(i) - mins.get(i)))
-					* (Plot.BROWSE_DIM - (2 * Plot.OFFSET))), Plot.OFFSET);
+			g.fillRect(x, y, (int) (((scores.get(i) - mins.get(i)) / (maxes.get(i) - mins.get(i))) * (Plot.BROWSE_DIM - (2 * Plot.OFFSET))), Plot.OFFSET);
 			g.setColor(Color.black);
 			g.drawString("" + mins.get(i), 0, y);
 			g.drawString("" + maxes.get(i), Plot.BROWSE_DIM - (Plot.OFFSET + Plot.OFFSET / 2), y);
@@ -1180,18 +1171,15 @@ public class Offspring {
 		Graphics g = scores.getGraphics();
 		g.setColor(Color.black);
 		g.drawLine(Plot.OFFSET, Plot.OFFSET, Plot.OFFSET, Plot.BROWSE_DIM - Plot.OFFSET);
-		g.drawLine(Plot.OFFSET, Plot.BROWSE_DIM - Plot.OFFSET, Plot.BROWSE_DIM - Plot.OFFSET,
-				Plot.BROWSE_DIM - Plot.OFFSET);
+		g.drawLine(Plot.OFFSET, Plot.BROWSE_DIM - Plot.OFFSET, Plot.BROWSE_DIM - Plot.OFFSET, Plot.BROWSE_DIM - Plot.OFFSET);
 
 		if (tugGoals != null) {
 			double goal1 = tugGoals[obj1][viewingGen];
 			double goal2 = tugGoals[obj2][viewingGen];
 
 			g.setColor(Color.gray);
-			g.drawLine(Plot.OFFSET + scale(goal1, obj1), Plot.OFFSET, Plot.OFFSET + scale(goal1, obj1),
-					Plot.BROWSE_DIM - Plot.OFFSET);
-			g.drawLine(Plot.OFFSET, Plot.OFFSET + invert(goal2, obj2), Plot.BROWSE_DIM - Plot.OFFSET,
-					Plot.OFFSET + invert(goal2, obj2));
+			g.drawLine(Plot.OFFSET + scale(goal1, obj1), Plot.OFFSET, Plot.OFFSET + scale(goal1, obj1), Plot.BROWSE_DIM - Plot.OFFSET);
+			g.drawLine(Plot.OFFSET, Plot.OFFSET + invert(goal2, obj2), Plot.BROWSE_DIM - Plot.OFFSET, Plot.OFFSET + invert(goal2, obj2));
 		}
 
 		g.setColor(Color.black);
