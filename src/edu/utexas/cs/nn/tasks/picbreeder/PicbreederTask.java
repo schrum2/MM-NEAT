@@ -7,7 +7,6 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Scanner;
 
 import javax.swing.*;
@@ -27,8 +26,9 @@ import edu.utexas.cs.nn.util.BooleanUtil;
 import edu.utexas.cs.nn.util.GraphicsUtil;
 
 /**
+ * Implementation of picbreeder that uses Java Swing components for graphical interface
  * 
- * @author gillespl
+ * @author Lauren Gillespie
  *
  * @param <T>
  */
@@ -39,6 +39,8 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	public static final int CPPN_NUM_OUTPUTS = 3;
 	public static final int NUM_COLUMNS	= 4;
 
+	//private static final Variables
+	//includes indices of buttons for action listener
 	private static final int IMAGE_BUTTON_INDEX = 0;
 	private static final int EVOLVE_BUTTON_INDEX = -1;
 	private static final int SAVE_BUTTON_INDEX = -2;
@@ -48,6 +50,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	private static final int NETWORK_BUTTON_INDEX = -6;
 	private static final int UNDO_BUTTON_INDEX = -7;
 	private static final int BORDER_THICKNESS = 4;
+	
 	//Private final variables
 	private final int NUM_ROWS;
 	private final int PIC_SIZE;
@@ -65,10 +68,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	private boolean[] chosen;
 	
 	/**
-	 * Constructor
-	 * @param rows number of rows of images
-	 * @param columns number of columns of images
-	 * @param size size of each image
+	 * Default Constructor
 	 */
 	public PicbreederTask() {
 		
@@ -108,7 +108,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		JButton networkButton = new JButton(new ImageIcon("data\\picbreeder\\network.png"));
 		JButton undoButton = new JButton( new ImageIcon("data\\picbreeder\\undo.png"));
 
-		//set graphic names
+		//set graphic names and toolTip titles
 		evolveButton.setName("" + EVOLVE_BUTTON_INDEX);
 		evolveButton.setToolTipText("Evolve button");
 		saveButton.setName("" + SAVE_BUTTON_INDEX);
@@ -124,7 +124,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		undoButton.setName("" + UNDO_BUTTON_INDEX);
 		undoButton.setToolTipText("Undo button");
 
-		//add action listeners
+		//add action listeners to buttons
 		resetButton.addActionListener(this);
 		saveButton.addActionListener(this);
 		evolveButton.addActionListener(this);
@@ -220,13 +220,33 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	@Override
 	public void finalCleanup() {
 	}
-
+	
 	/**
-	 * 
-	 * @param gmi
-	 * @param buttonIndex
+	 * Returns labels for input
+	 *
+	 * @return List of CPPN outputs
 	 */
-	private void resetButton(BufferedImage gmi, int buttonIndex){ 
+	@Override
+	public String[] sensorLabels() {
+		return new String[] { "X-coordinate", "Y-coordinate", "distance from center", "bias" };
+	}
+	
+	/**
+	 * Returns labels for output
+	 *
+	 * @return list of CPPN outputs
+	 */
+	@Override
+	public String[] outputLabels() {
+		return new String[] { "hue-value", "saturation-value", "brightness-value" };
+	}
+	
+	/**
+	 * Resets image on button
+	 * @param gmi replacing image
+ 	 * @param buttonIndex index of button 
+	 */
+	private void setButtonImage(BufferedImage gmi, int buttonIndex){ 
 		ImageIcon img = new ImageIcon(gmi);
 		buttons.get(buttonIndex).setName("" + buttonIndex);
 		buttons.get(buttonIndex).setIcon(img);
@@ -234,41 +254,46 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	}
 
 	/**
-	 * 
-	 * @param i
-	 * @param x
-	 * @param button
+	 * Saves image from button utilizing drawingPanel save functionality
+	 * @param i index of button
+	 * @param button button
 	 */
 	private void save(int i, JButton button) {
 		BufferedImage toSave = (BufferedImage) ((ImageIcon) button.getIcon()).getImage();
 		DrawingPanel p = GraphicsUtil.drawImage(toSave, "" + i, toSave.getWidth(), toSave.getHeight());
-		JFileChooser chooser = new JFileChooser();
+		JFileChooser chooser = new JFileChooser();//used to get save name 
 		chooser.setApproveButtonText("Save");
 		chooser.setCurrentDirectory(new File("\\" + "Users" + "\\" + "gillespl" + "\\" + "SCOPE" + "\\" + "MM-NEATv2" + "\\" + "evolvedPicbreederImages"));
 		FileNameExtensionFilter filter = new FileNameExtensionFilter("BMP Images", "bmp");
 		chooser.setFileFilter(filter);
 		int returnVal = chooser.showOpenDialog(frame);
-		if(returnVal == JFileChooser.APPROVE_OPTION) {
+		if(returnVal == JFileChooser.APPROVE_OPTION) {//if the user decides to save the image
 			System.out.println("you need to copy this: " + chooser.getCurrentDirectory());
 			System.out.println("You chose to call the image: " + chooser.getSelectedFile().getName());
 			p.save(chooser.getCurrentDirectory() + "\\" + chooser.getSelectedFile().getName() + (showNetwork ? "network" : "image") + ".bmp");
 			System.out.println("image " + chooser.getSelectedFile().getName() + " was saved successfully");
 			p.setVisibility(false);
-		} else { 
+		} else { //else image dumped
 			p.setVisibility(false);
 			System.out.println("image not saved");
 		}
 	}
 
-	public void resetAll(ArrayList<Genotype<T>> population, int x) { 
-		scores.add(new Score<T>(population.get(x), new double[]{0}, null));
-		resetButton(showNetwork ? getNetwork(population.get(x)) : GraphicsUtil.imageFromCPPN((Network)population.get(x).getPhenotype(), PIC_SIZE, PIC_SIZE), x);
+	/**
+	 * used to reset image on button using given genotype
+	 * @param individual genotype used to replace button image
+	 * @param x index of button in question
+	 */
+	public void resetButton(Genotype<T> individual, int x) { 
+		scores.add(new Score<T>(individual, new double[]{0}, null));
+		setButtonImage(showNetwork ? getNetwork(individual) : GraphicsUtil.imageFromCPPN((Network)individual.getPhenotype(), PIC_SIZE, PIC_SIZE), x);
 		chosen[x] = false;
 		buttons.get(x).setBorder(BorderFactory.createLineBorder(Color.lightGray, BORDER_THICKNESS));
 	}
+	
 	/**
-	 * 
-	 * @param tg
+	 * Used to get the image of a network using a drawing panel
+	 * @param tg genotype of network
 	 * @return
 	 */
 	private BufferedImage getNetwork(Genotype<T> tg) {
@@ -279,6 +304,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		return network.image;
 
 	}
+	
 	/**
 	 * evaluates all genotypes in a population
 	 * @param population of starting population
@@ -292,10 +318,10 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 			throw new IllegalArgumentException("number of genotypes doesn't match size of population! Size of genotypes: " + population.size() + " Num buttons: " + NUM_BUTTONS);
 		}	
 		for(int x = 0; x < buttons.size(); x++) {
-			resetAll(population, x);
+			resetButton(population.get(x), x);
 		}
 		while(waitingForUser){
-			try {
+			try {//waits for user to click buttons before evaluating
 				Thread.sleep(50);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
@@ -304,7 +330,11 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		return scores;
 	}
 
-	public void reset(int scoreIndex) {
+	/**
+	 * sets all relevant features if button at index is pressed  
+	 * @param scoreIndex index in arrays
+	 */
+	public void buttonPressed(int scoreIndex) {
 		if(chosen[scoreIndex]) {//if image has already been clicked, reset
 			chosen[scoreIndex] = false;
 			buttons.get(scoreIndex).setBorder(BorderFactory.createLineBorder(Color.lightGray, BORDER_THICKNESS));
@@ -315,12 +345,55 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 			scores.get(scoreIndex).replaceScores(new double[]{1.0});
 		}
 	}
+	
+	/**
+	 * Resets to a new random population
+	 */
+	@SuppressWarnings("unchecked")
+	public void reset() { 
+		System.out.println("before score size: " + scores.size());
+		ArrayList<Genotype<T>> newPop = ((SinglePopulationGenerationalEA<T>) MMNEAT.ea).initialPopulation(scores.get(0).individual);
+		System.out.println("mu: " + Parameters.parameters.integerParameter("mu"));
+		System.out.println("after score(newPop) size: " + newPop.size());
+		scores = new ArrayList<Score<T>>();
+		for(int i = 0; i < newPop.size(); i++) {
+		resetButton(newPop.get(i), i);
+		}
+		//need to reset the ea log??
+	}
+	
+	/**
+	 * Saves all currently clicked images
+	 */
+	public void saveAll() { 
+		for(int i = 0; i < chosen.length; i++) {
+			boolean choose = chosen[i];
+			if(choose) {//loops through and any image  clicked automatically saved
+				save(i , buttons.get(i));
+			}
+		}
+	}
+	
+	public void setNetwork() { 
+		if(showNetwork) {
+			showNetwork = false;
+			for(int i = 0; i < scores.size(); i++) {
+				setButtonImage(GraphicsUtil.imageFromCPPN((Network)scores.get(i).individual.getPhenotype(), PIC_SIZE, PIC_SIZE), i);
+			}
+		} else {
+			showNetwork = true;
+			for(int i = 0; i < buttons.size(); i++) {
+				BufferedImage network = getNetwork(scores.get(i).individual);
+				setButtonImage(network, i);
+			}
+		}
+	}
 	/**
 	 * Contains actions to be performed based
 	 * on specific events
 	 * @param event that occurred
 	 */
-	@SuppressWarnings("unchecked")
+	
 	@Override
 	public void actionPerformed(ActionEvent event) {
 		//open scanner to read which button was pressed
@@ -329,75 +402,34 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		s.next();
 		int scoreIndex = s.nextInt();
 		s.close();
-		if(scoreIndex == CLOSE_BUTTON_INDEX) {
+		if(scoreIndex == CLOSE_BUTTON_INDEX) {//If close button clicked
 			System.exit(1);
 		} else if(scoreIndex == RESET_BUTTON_INDEX) {//If reset button clicked
-			System.out.println("before score size: " + scores.size());
-			ArrayList<Genotype<T>> newPop = ((SinglePopulationGenerationalEA<T>) MMNEAT.ea).initialPopulation(scores.get(0).individual);
-			System.out.println("mu: " + Parameters.parameters.integerParameter("mu"));
-			System.out.println("after score(newPop) size: " + newPop.size());
-			scores = new ArrayList<Score<T>>();
-			for(int i = 0; i < newPop.size(); i++) {
-			resetAll(newPop, i);
-			}
-			//need to reset the ea log??
+			reset();
 		} else if(scoreIndex == SAVE_BUTTON_INDEX && BooleanUtil.any(chosen)) { //If save button clicked
-			for(int i = 0; i < chosen.length; i++) {
-				boolean choose = chosen[i];
-				if(choose) {//loops through and any image  clicked automatically saved
-					save(i , buttons.get(i));
-				}
-			}
-		} else if(scoreIndex == LINEAGE_BUTTON_INDEX) {
-
-		} else if(scoreIndex == NETWORK_BUTTON_INDEX) {
-			if(showNetwork) {
-				showNetwork = false;
-				for(int i = 0; i < scores.size(); i++) {
-					resetButton(GraphicsUtil.imageFromCPPN((Network)scores.get(i).individual.getPhenotype(), PIC_SIZE, PIC_SIZE), i);
-				}
-			} else {
-				showNetwork = true;
-				for(int i = 0; i < buttons.size(); i++) {
-					BufferedImage network = getNetwork(scores.get(i).individual);
-					resetButton(network, i);
-				}
-
-			}
-		} else if(scoreIndex == UNDO_BUTTON_INDEX) {
-
+			saveAll();
+		} else if(scoreIndex == LINEAGE_BUTTON_INDEX) {//If lineage button clicked
+			setLineage();
+		} else if(scoreIndex == NETWORK_BUTTON_INDEX) {//If network button clicked
+			setNetwork();
+		} else if(scoreIndex == UNDO_BUTTON_INDEX) {//If undo button clicked
+			setUndo();
 		}else if(scoreIndex == EVOLVE_BUTTON_INDEX && BooleanUtil.any(chosen)) {//If evolve button clicked
-			System.out.println("congratulations you pressed the evolve button");
-			System.out.println("scores: " + scores);	
-			System.out.println("boolean values: " + Arrays.toString(chosen));
 			waitingForUser = false;//tells evaluateAll method to finish
-
 		} else if(scoreIndex >= IMAGE_BUTTON_INDEX) {//If an image button clicked
 			assert (scores.size() == buttons.size()) : 
 				"size mismatch! score array is " + scores.size() + " in length and buttons array is " + buttons.size() + " long";
-			reset(scoreIndex);
+			buttonPressed(scoreIndex);
 		}
 	}
 
-
-	/**
-	 * Returns labels for input
-	 *
-	 * @return List of CPPN outputs
-	 */
-	@Override
-	public String[] sensorLabels() {
-		return new String[] { "X-coordinate", "Y-coordinate", "distance from center", "bias" };
-	}
-	/**
-	 * Returns labels for output
-	 *
-	 * @return list of CPPN outputs
-	 */
-	@Override
-	public String[] outputLabels() {
-		return new String[] { "hue-value", "saturation-value", "brightness-value" };
+	private void setLineage() {
+		// TODO Auto-generated method stub
+		
 	}
 
-
+	private void setUndo() {
+		// TODO Auto-generated method stub
+		
+	}
 }
