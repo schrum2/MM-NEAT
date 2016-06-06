@@ -100,11 +100,10 @@ public class NSGA2<T> extends MuPlusLambda<T> {
 		fastNonDominatedSort(scoresArray);
 
 		ArrayList<Genotype<T>> offspring = new ArrayList<Genotype<T>>(numChildren);
-		Better<NSGA2Score<T>> judge;// two objects of which one is better(??)
+		Better<NSGA2Score<T>> judge;// will hold the comparator that is used
 		if (generation == 0) {// first generation is a unique case that requires a different comparator
 			judge = new Domination<T>();
-		} else {// else a comparator that uses parent data is used to critique
-				// for children population
+		} else {// else a comparator that uses parent data is used to critique for children population
 			judge = new ParentComparator<T>();
 		}
 
@@ -144,8 +143,7 @@ public class NSGA2<T> extends MuPlusLambda<T> {
 							// Evaluate and add to litter
 							Pair<double[], double[]> score = ((NoisyLonerTask<T>) MMNEAT.task).oneEval(candidate1, 0);
 							MultiObjectiveScore<T> s = new MultiObjectiveScore<T>(candidate1, score.t1, null, score.t2);
-							litter.add(s);// adds either candidate or cross over
-											// candidate
+							litter.add(s);// adds either candidate or cross over candidate
 
 							if (litter.size() < CommonConstants.litterSize) {
 								score = ((NoisyLonerTask<T>) MMNEAT.task).oneEval(candidate2, 0);
