@@ -2,18 +2,17 @@ package edu.utexas.cs.nn.tasks.picbreeder;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
@@ -52,7 +51,6 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	private static final int NETWORK_BUTTON_INDEX = -6;
 	private static final int UNDO_BUTTON_INDEX = -7;
 	private static final int BORDER_THICKNESS = 4;
-	private static final int TOP_PANEL_INDEX = 0;
 	//Private final variables
 	private final int NUM_ROWS;
 	private final int PIC_SIZE;
@@ -68,7 +66,6 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	private boolean showNetwork;
 	private boolean waitingForUser;
 	private boolean[] chosen;
-	private int saveIndex;
 
 	/**
 	 * Default constructor
@@ -93,7 +90,6 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		chosen = new boolean[NUM_BUTTONS];
 		showNetwork = false;
 		waitingForUser = false;
-		saveIndex = 0;
 		//Graphics instantiations
 		frame = new JFrame("Picbreeder");
 		panels = new ArrayList<JPanel>();
@@ -236,7 +232,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		ImageIcon img = new ImageIcon(gmi);
 		buttons.get(buttonIndex).setName("" + buttonIndex);
 		buttons.get(buttonIndex).setIcon(img);
-		chosen[buttonIndex] = false;
+
 	}
 
 	/**
@@ -245,17 +241,25 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	 * @param x
 	 * @param button
 	 */
-	private void save(int i, int x, JButton button) {
-		//		JTextField saveName = new JTextField("image " + x, 30);
-		//		saveName.addActionListener(this);
-		//		button.add(saveName);
-		//		MiscUtil.waitForReadStringAndEnterKeyPress();
+	private void save(int i, JButton button) {
 		BufferedImage toSave = (BufferedImage) ((ImageIcon) button.getIcon()).getImage();
 		DrawingPanel p = GraphicsUtil.drawImage(toSave, "" + i, toSave.getWidth(), toSave.getHeight());
-		//panels.get(TOP_PANEL_INDEX);
-		p.setLocation(x, 0);
-		p.save((showNetwork ? "network" : "image") + i + ".bmp");
-		System.out.println((showNetwork ? "network number " : "image number ") + i++ + " was saved successfully");
+		JFileChooser chooser = new JFileChooser();
+		chooser.setApproveButtonText("Save");
+		chooser.setCurrentDirectory(new File("\\" + "Users" + "\\" + "gillespl" + "\\" + "SCOPE" + "\\" + "MM-NEATv2" + "\\" + "evolvedPicbreederImages"));
+		FileNameExtensionFilter filter = new FileNameExtensionFilter("BMP Images", "bmp");
+		chooser.setFileFilter(filter);
+		int returnVal = chooser.showOpenDialog(frame);
+		if(returnVal == JFileChooser.APPROVE_OPTION) {
+			System.out.println("you need to copy this: " + chooser.getCurrentDirectory());
+			System.out.println("You chose to call the image: " + chooser.getSelectedFile().getName());
+			p.save(chooser.getCurrentDirectory() + "\\" + chooser.getSelectedFile().getName() + (showNetwork ? "network" : "image") + ".bmp");
+			System.out.println("image " + chooser.getSelectedFile().getName() + " was saved successfully");
+			p.setVisibility(false);
+		} else { 
+			p.setVisibility(false);
+			System.out.println("image not saved");
+		}
 	}
 
 	/**
@@ -265,7 +269,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	 */
 	private BufferedImage getNetwork(Genotype<T> tg) {
 		T pheno = tg.getPhenotype();
-		DrawingPanel network = new DrawingPanel(PIC_SIZE, PIC_SIZE, "network");
+		DrawingPanel network = new DrawingPanel(PIC_SIZE, PIC_SIZE - 75, "network");
 		((TWEANN) pheno).draw(network);
 		network.setVisibility(false);
 		return network.image;
@@ -277,7 +281,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	 * @return score of each member of population
 	 */
 	@Override
-	public ArrayList<Score<T>> evaluateAll(ArrayList<Genotype<T>> population) {//TODO 
+	public ArrayList<Score<T>> evaluateAll(ArrayList<Genotype<T>> population) {
 		waitingForUser = true;
 		scores = new ArrayList<Score<T>>();
 		if(population.size() != NUM_BUTTONS) {
@@ -286,6 +290,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		for(int x = 0; x < buttons.size(); x++) {
 			scores.add(new Score<T>(population.get(x), new double[]{0}, null));
 			resetButton(showNetwork ? getNetwork(population.get(x)) : GraphicsUtil.imageFromCPPN((Network)population.get(x).getPhenotype(), PIC_SIZE, PIC_SIZE), x);
+			chosen[x] = false;
 			buttons.get(x).setBorder(BorderFactory.createLineBorder(Color.lightGray, BORDER_THICKNESS));
 		}
 		while(waitingForUser){
@@ -298,6 +303,17 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		return scores;
 	}
 
+	public void reset(int scoreIndex) {
+		if(chosen[scoreIndex]) {//if image has already been clicked, reset
+			chosen[scoreIndex] = false;
+			buttons.get(scoreIndex).setBorder(BorderFactory.createLineBorder(Color.lightGray, BORDER_THICKNESS));
+			scores.get(scoreIndex).replaceScores(new double[]{0});
+		} else {//if image has not been clicked, set it
+			chosen[scoreIndex] = true;
+			buttons.get(scoreIndex).setBorder(BorderFactory.createLineBorder(Color.BLUE, BORDER_THICKNESS));
+			scores.get(scoreIndex).replaceScores(new double[]{1.0});
+		}
+	}
 	/**
 	 * Contains actions to be performed based
 	 * on specific events
@@ -316,12 +332,10 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		} else if(scoreIndex == RESET_BUTTON_INDEX) {//If reset button clicked
 			//not sure what to do here
 		} else if(scoreIndex == SAVE_BUTTON_INDEX && BooleanUtil.any(chosen)) { //If save button clicked
-			int x = 0;
 			for(int i = 0; i < chosen.length; i++) {
 				boolean choose = chosen[i];
 				if(choose) {//loops through and any image  clicked automatically saved
-					save(i ,x, buttons.get(i));
-					x += buttons.get(i).getWidth();
+					save(i , buttons.get(i));
 				}
 			}
 		} else if(scoreIndex == LINEAGE_BUTTON_INDEX) {
@@ -351,15 +365,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		} else if(scoreIndex >= IMAGE_BUTTON_INDEX) {//If an image button clicked
 			assert (scores.size() == buttons.size()) : 
 				"size mismatch! score array is " + scores.size() + " in length and buttons array is " + buttons.size() + " long";
-			if(chosen[scoreIndex]) {//if image has already been clicked, reset
-				chosen[scoreIndex] = false;
-				buttons.get(scoreIndex).setBorder(BorderFactory.createLineBorder(Color.lightGray, BORDER_THICKNESS));
-				scores.get(scoreIndex).replaceScores(new double[]{0});
-			} else {//if image has not been clicked, set it
-				chosen[scoreIndex] = true;
-				buttons.get(scoreIndex).setBorder(BorderFactory.createLineBorder(Color.BLUE, BORDER_THICKNESS));
-				scores.get(scoreIndex).replaceScores(new double[]{1.0});
-			}
+			reset(scoreIndex);
 		}
 	}
 
