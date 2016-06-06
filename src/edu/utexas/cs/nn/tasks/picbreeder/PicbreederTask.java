@@ -1,7 +1,6 @@
 package edu.utexas.cs.nn.tasks.picbreeder;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -15,9 +14,8 @@ import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
+import edu.utexas.cs.nn.evolution.SinglePopulationGenerationalEA;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
 import edu.utexas.cs.nn.graphics.DrawingPanel;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.networks.NetworkTask;
@@ -27,7 +25,6 @@ import edu.utexas.cs.nn.scores.Score;
 import edu.utexas.cs.nn.tasks.SinglePopulationTask;
 import edu.utexas.cs.nn.util.BooleanUtil;
 import edu.utexas.cs.nn.util.GraphicsUtil;
-import edu.utexas.cs.nn.util.MiscUtil;
 
 /**
  * 
@@ -71,7 +68,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	 * Default constructor
 	 */
 	public PicbreederTask() {
-		this(NUM_COLUMNS, MiscUtil.multiplicationFactor(NUM_COLUMNS, Parameters.parameters.integerParameter("mu")), Parameters.parameters.integerParameter("imageSize"));
+		this(NUM_COLUMNS, Parameters.parameters.integerParameter("mu"), Parameters.parameters.integerParameter("imageSize"));
 	}
 
 	/**
@@ -81,12 +78,19 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	 * @param size size of each image
 	 */
 	public PicbreederTask(int rows, int columns, int size) {
-
-		Parameters.parameters.setInteger("mu", Parameters.parameters.integerParameter("mu") * NUM_COLUMNS);
+		
+		//sets mu to a divisible number
+		if(Parameters.parameters.integerParameter("mu") % PicbreederTask.NUM_COLUMNS != 0) { 
+			Parameters.parameters.setInteger("mu", PicbreederTask.NUM_COLUMNS * ((Parameters.parameters.integerParameter("mu") / PicbreederTask.NUM_COLUMNS) + 1));
+			System.out.println("Changing population size to: " + Parameters.parameters.integerParameter("mu"));
+		}
+		
 		//Global variable instantiations
 		NUM_ROWS = rows;
 		PIC_SIZE = size;
 		NUM_BUTTONS	= Parameters.parameters.integerParameter("mu");
+		System.out.println("-----------------");
+		System.out.println(Parameters.parameters.integerParameter("mu"));
 		chosen = new boolean[NUM_BUTTONS];
 		showNetwork = false;
 		waitingForUser = false;
@@ -174,7 +178,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	 * @param s title of button
 	 * @return JButton
 	 */
-	private JButton getImageButton(BufferedImage image, String s) {
+	protected JButton getImageButton(BufferedImage image, String s) {
 		JButton button = new JButton(new ImageIcon(image));
 		button.setName(s);
 		return button;
@@ -262,6 +266,12 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		}
 	}
 
+	public void resetAll(ArrayList<Genotype<T>> population, int x) { 
+		scores.add(new Score<T>(population.get(x), new double[]{0}, null));
+		resetButton(showNetwork ? getNetwork(population.get(x)) : GraphicsUtil.imageFromCPPN((Network)population.get(x).getPhenotype(), PIC_SIZE, PIC_SIZE), x);
+		chosen[x] = false;
+		buttons.get(x).setBorder(BorderFactory.createLineBorder(Color.lightGray, BORDER_THICKNESS));
+	}
 	/**
 	 * 
 	 * @param tg
@@ -288,10 +298,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 			throw new IllegalArgumentException("number of genotypes doesn't match size of population! Size of genotypes: " + population.size() + " Num buttons: " + NUM_BUTTONS);
 		}	
 		for(int x = 0; x < buttons.size(); x++) {
-			scores.add(new Score<T>(population.get(x), new double[]{0}, null));
-			resetButton(showNetwork ? getNetwork(population.get(x)) : GraphicsUtil.imageFromCPPN((Network)population.get(x).getPhenotype(), PIC_SIZE, PIC_SIZE), x);
-			chosen[x] = false;
-			buttons.get(x).setBorder(BorderFactory.createLineBorder(Color.lightGray, BORDER_THICKNESS));
+			resetAll(population, x);
 		}
 		while(waitingForUser){
 			try {
@@ -319,6 +326,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	 * on specific events
 	 * @param event that occurred
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public void actionPerformed(ActionEvent event) {
 		//open scanner to read which button was pressed
@@ -330,7 +338,15 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		if(scoreIndex == CLOSE_BUTTON_INDEX) {
 			System.exit(1);
 		} else if(scoreIndex == RESET_BUTTON_INDEX) {//If reset button clicked
-			//not sure what to do here
+			System.out.println("before score size: " + scores.size());
+			ArrayList<Genotype<T>> newPop = ((SinglePopulationGenerationalEA<T>) MMNEAT.ea).initialPopulation(scores.get(0).individual);
+			System.out.println("mu: " + Parameters.parameters.integerParameter("mu"));
+			System.out.println("after score(newPop) size: " + newPop.size());
+			scores = new ArrayList<Score<T>>();
+			for(int i = 0; i < newPop.size(); i++) {
+			resetAll(newPop, i);
+			}
+			//need to reset the ea log??
 		} else if(scoreIndex == SAVE_BUTTON_INDEX && BooleanUtil.any(chosen)) { //If save button clicked
 			for(int i = 0; i < chosen.length; i++) {
 				boolean choose = chosen[i];
@@ -370,106 +386,6 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	}
 
 
-	@SuppressWarnings({ "rawtypes"})
-	public static void main(String[] args) {
-		MMNEAT.clearClasses();
-		EvolutionaryHistory.setInnovation(0);
-		EvolutionaryHistory.setHighestGenotypeId(0);
-		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "allowMultipleFunctions:true", "netChangeActivationRate:0.4", "recurrency:false" });
-		MMNEAT.loadClasses();
-
-		PicbreederTask test = new PicbreederTask(4, 4, 250);//also good for testInABottle
-		//PicbreederTask test = new PicbreederTask(0, 0, 0);//test for button reset
-		//testInABottle(test);
-		moreBullshitTests(test);
-	}
-
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static void testInABottle(PicbreederTask test) {
-
-		ArrayList<Genotype> genotypes = new ArrayList<Genotype>();
-		for(int i = 0; i < 16; i++) {
-			final int NUM_MUTATIONS = 200;
-			TWEANNGenotype tg1 = new TWEANNGenotype(4, 3, false, 0, 1, 0);
-			for (int j = 0; j < NUM_MUTATIONS; j++) {
-				tg1.mutate();
-			}
-			genotypes.add(tg1);
-		}
-		test.scores = new ArrayList<Score>();
-		for(int i = 0; i < test.buttons.size(); i++) {
-			test.scores.add(new Score(genotypes.get(i), new double[]{0}, null));
-			ImageIcon img = new ImageIcon(GraphicsUtil.imageFromCPPN((Network) genotypes.get(i).getPhenotype(), 250, 250));
-			((Component) test.buttons.get(i)).setName("" + i);
-			((AbstractButton) test.buttons.get(i)).setIcon(img);
-			((AbstractButton) test.buttons.get(i)).addActionListener(test);
-		}
-
-	}
-
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static void moreBullshitTests(PicbreederTask test) { 
-		ArrayList<Genotype> genotypes = new ArrayList<Genotype>();
-		for(int i = 0; i < 16; i++) {
-			final int NUM_MUTATIONS = 200;
-			TWEANNGenotype tg1 = new TWEANNGenotype(4, 3, false, 0, 1, 0);
-			for (int j = 0; j < NUM_MUTATIONS; j++) {
-				tg1.mutate();
-			}
-			genotypes.add(tg1);
-		}
-		while(true) {
-			ArrayList<Score<TWEANN>> gen0 = test.evaluateAll(genotypes); // replace with a test population
-			System.out.println("is this what I'm looking for?");
-			System.out.println(gen0);
-			for(int i = 0; i < gen0.size(); i++) {
-				genotypes.set(i, gen0.get(i).individual);
-			}
-		}
-	}
-
-
-	@SuppressWarnings("rawtypes")
-	public static void testButtonReset(PicbreederTask test) {
-		System.out.println("test is running");
-		JFrame holder  = new JFrame();
-		holder.setSize(500, 500);
-		holder.setVisible(true);
-		JPanel graphics = new JPanel();
-		graphics.setSize(500, 500);
-		graphics.setLayout(new GridLayout(3, 3));
-		holder.add(graphics);
-		ArrayList<JButton> buttons = new ArrayList<JButton>();
-		for(int i = 0; i < 9; i++) {
-			JButton image = test.getImageButton(GraphicsUtil.solidColorImage(Color.BLACK, 100, 100), "dummy");
-			buttons.add(image);
-			graphics.add(image);
-		}
-		MiscUtil.waitForReadStringAndEnterKeyPress();
-		System.out.print("continue");
-		for(int i = 0; i < 5 ; i++){
-			ImageIcon img = new ImageIcon(GraphicsUtil.solidColorImage(Color.PINK, 100, 100), "");
-			buttons.get(i).setIcon(img);
-			graphics.repaint();
-			holder.invalidate();
-			holder.validate();
-			holder.repaint();
-		}
-		MiscUtil.waitForReadStringAndEnterKeyPress();
-		System.out.print("continue");
-
-		for(int i = 5; i < 9; i++) {
-			ImageIcon img = new ImageIcon(GraphicsUtil.solidColorImage(Color.GREEN, 100, 100), "");
-			buttons.get(i).setIcon(img);
-			graphics.repaint();
-			holder.invalidate();
-			holder.validate();
-			holder.repaint();
-
-		}
-	}
-
-
 	/**
 	 * Returns labels for input
 	 *
@@ -488,5 +404,6 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	public String[] outputLabels() {
 		return new String[] { "hue-value", "saturation-value", "brightness-value" };
 	}
+
 
 }
