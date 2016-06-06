@@ -34,11 +34,11 @@ public class PicbreederTaskTest {
 		fail("This test is a mess, ignore");
 	}
 static ArrayList<JButton> buttons = new ArrayList<JButton>();
+@SuppressWarnings("rawtypes")
 static ArrayList<Score> scores = new ArrayList<Score>();
 	@SuppressWarnings("rawtypes")
 	static
-	PicbreederTask test = new PicbreederTask(4, 4, 250);//also good for testInABottle
-	@SuppressWarnings({ "rawtypes"})
+	PicbreederTask test = new PicbreederTask();//also good for testInABottle\
 	public static void main(String[] args) {
 		MMNEAT.clearClasses();
 		EvolutionaryHistory.setInnovation(0);

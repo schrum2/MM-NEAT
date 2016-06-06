@@ -63,21 +63,14 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	private boolean showNetwork;
 	private boolean waitingForUser;
 	private boolean[] chosen;
-
-	/**
-	 * Default constructor
-	 */
-	public PicbreederTask() {
-		this(NUM_COLUMNS, Parameters.parameters.integerParameter("mu"), Parameters.parameters.integerParameter("imageSize"));
-	}
-
+	
 	/**
 	 * Constructor
 	 * @param rows number of rows of images
 	 * @param columns number of columns of images
 	 * @param size size of each image
 	 */
-	public PicbreederTask(int rows, int columns, int size) {
+	public PicbreederTask() {
 		
 		//sets mu to a divisible number
 		if(Parameters.parameters.integerParameter("mu") % PicbreederTask.NUM_COLUMNS != 0) { 
@@ -86,26 +79,24 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		}
 		
 		//Global variable instantiations
-		NUM_ROWS = rows;
-		PIC_SIZE = size;
 		NUM_BUTTONS	= Parameters.parameters.integerParameter("mu");
-		System.out.println("-----------------");
-		System.out.println(Parameters.parameters.integerParameter("mu"));
+		NUM_ROWS = NUM_BUTTONS / NUM_COLUMNS;
+		PIC_SIZE = Parameters.parameters.integerParameter("imageSize");
 		chosen = new boolean[NUM_BUTTONS];
 		showNetwork = false;
 		waitingForUser = false;
+		
 		//Graphics instantiations
 		frame = new JFrame("Picbreeder");
 		panels = new ArrayList<JPanel>();
 		buttons = new ArrayList<JButton>();
+		
 		//sets up JFrame
-		frame.setSize(PIC_SIZE * NUM_COLUMNS, PIC_SIZE * (NUM_ROWS));
+		frame.setSize(PIC_SIZE * NUM_COLUMNS, PIC_SIZE * NUM_ROWS);
 		frame.setLocation(300, 100);//magic #s 100 correspond to relocating frame to middle of screen
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLayout(new GridLayout(NUM_ROWS + 1, 0));// the + 1 includes room for the title panel
 		frame.setVisible(true);
-
-		//sets up title graphics
 
 		//instantiate graphics
 		JPanel top = new JPanel();
@@ -116,19 +107,22 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		JButton lineageButton = new JButton(new ImageIcon("data\\picbreeder\\lineage.png"));
 		JButton networkButton = new JButton(new ImageIcon("data\\picbreeder\\network.png"));
 		JButton undoButton = new JButton( new ImageIcon("data\\picbreeder\\undo.png"));
-		//JLabel label = new JLabel("Picture Evolver");
 
 		//set graphic names
 		evolveButton.setName("" + EVOLVE_BUTTON_INDEX);
+		evolveButton.setToolTipText("Evolve button");
 		saveButton.setName("" + SAVE_BUTTON_INDEX);
+		saveButton.setToolTipText("Save button");
 		resetButton.setName("" + RESET_BUTTON_INDEX);
+		resetButton.setToolTipText("Reset button");
 		closeButton.setName("" + CLOSE_BUTTON_INDEX);
+		closeButton.setToolTipText("Close button");
 		lineageButton.setName("" + LINEAGE_BUTTON_INDEX);
+		lineageButton.setToolTipText("Lineage button");
 		networkButton.setName("" + NETWORK_BUTTON_INDEX);
+		networkButton.setToolTipText("Network button");
 		undoButton.setName("" + UNDO_BUTTON_INDEX);
-
-		//label.setFont(new Font("Serif", Font.BOLD, 48));
-		//label.setForeground(Color.DARK_GRAY);
+		undoButton.setToolTipText("Undo button");
 
 		//add action listeners
 		resetButton.addActionListener(this);
