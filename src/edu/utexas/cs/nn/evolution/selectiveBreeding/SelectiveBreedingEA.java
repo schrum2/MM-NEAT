@@ -30,8 +30,8 @@ public class SelectiveBreedingEA<T> implements SinglePopulationGenerationalEA<T>
 	private int generation;
 	private boolean mating;
 	private double crossoverRate;
-	
-	protected FitnessLog<T> keeperLog;
+
+	//protected FitnessLog<T> keeperLog;
 	/**
 	 * default Constructor
 	 */
@@ -50,11 +50,11 @@ public class SelectiveBreedingEA<T> implements SinglePopulationGenerationalEA<T>
 		this.task = task;
 		this.parentPop = parentPop;
 		this.generation = Parameters.parameters.integerParameter("lastSavedGeneration");
-		if (Parameters.parameters.booleanParameter("io")) {
-			keeperLog = new FitnessLog<T>("keepers");
-		}
+		//		if (Parameters.parameters.booleanParameter("io")) {
+		//			keeperLog = new FitnessLog<T>("keepers");
+		//		}
 	}
-	
+
 	/**
 	 * gets current generation number
 	 * @return current generation
@@ -93,7 +93,7 @@ public class SelectiveBreedingEA<T> implements SinglePopulationGenerationalEA<T>
 	}
 
 	protected void logInfo(ArrayList<Score<T>> scores) {
-		keeperLog.log(scores, generation);
+		//keeperLog.log(scores, generation);
 		Genotype<T> example = scores.get(0).individual;
 		if (example instanceof TWEANNGenotype) {
 			ArrayList<TWEANNGenotype> tweanns = new ArrayList<TWEANNGenotype>(scores.size());
@@ -122,17 +122,28 @@ public class SelectiveBreedingEA<T> implements SinglePopulationGenerationalEA<T>
 			children.add(score.individual);
 		}
 		for(int i = scores.size(); i < size; i++) {
+			long parentId1 = -1;
+			long parentId2 = -1;
+
 			Genotype<T> g1 = scores.get(RandomNumbers.randomGenerator.nextInt(scores.size())).individual.copy();
+			parentId1 = g1.getId();
 			if (mating && RandomNumbers.randomGenerator.nextDouble() < crossoverRate) {
 				Genotype<T> g2 = scores.get(RandomNumbers.randomGenerator.nextInt(scores.size())).individual.copy();
+				parentId2 = g2.getId();
 				Genotype<T> offspring1 = g1.crossover(g2);
 				offspring1.mutate();
 				children.add(offspring1);
 				i++;
+				EvolutionaryHistory.logLineageData(parentId1 + " X " + parentId2 + " -> " + offspring1.getId());
 			}
 			if(i < size) {
 				g1.mutate();
 				children.add(g1);
+			if (parentId2 == -1) {
+				EvolutionaryHistory.logLineageData(parentId1 + " -> " + g1.getId());
+			} else {
+				EvolutionaryHistory.logLineageData(parentId1 + " X " + parentId2 + " -> " + g1.getId());
+			}
 			}
 		}
 		logInfo(scores);
@@ -151,9 +162,9 @@ public class SelectiveBreedingEA<T> implements SinglePopulationGenerationalEA<T>
 	 */
 	@Override
 	public void close(ArrayList<Genotype<T>> population) {
-		if(Parameters.parameters.booleanParameter("writeOutput") && keeperLog != null) {
-			keeperLog.close();
-		}
+		//		if(Parameters.parameters.booleanParameter("writeOutput") && keeperLog != null) {
+		//			keeperLog.close();
+		//		}
 	}
 
 }
