@@ -1,7 +1,9 @@
 package edu.utexas.cs.nn.tasks.picbreeder;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
@@ -10,14 +12,19 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.evolution.GenerationalEA;
 import edu.utexas.cs.nn.evolution.SinglePopulationGenerationalEA;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.evolution.lineage.Offspring;
+import edu.utexas.cs.nn.evolution.selectiveBreeding.SelectiveBreedingEA;
 import edu.utexas.cs.nn.graphics.DrawingPanel;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.networks.NetworkTask;
@@ -28,6 +35,7 @@ import edu.utexas.cs.nn.tasks.SinglePopulationTask;
 import edu.utexas.cs.nn.util.BooleanUtil;
 import edu.utexas.cs.nn.util.GraphicsUtil;
 import edu.utexas.cs.nn.util.PopulationUtil;
+import edu.utexas.cs.nn.util.file.FileUtilities;
 
 /**
  * Implementation of picbreeder that uses Java Swing components for graphical interface
@@ -56,9 +64,9 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	private static final int BORDER_THICKNESS = 4;
 	
 	//Private final variables
-	private final int NUM_ROWS;
-	private final int PIC_SIZE;
-	private final int NUM_BUTTONS;
+	private static int NUM_ROWS;
+	private static int PIC_SIZE;
+	private static int NUM_BUTTONS;
 
 	//Private graphic objects
 	private JFrame frame;
@@ -70,6 +78,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	private boolean showNetwork;
 	private boolean waitingForUser;
 	private boolean[] chosen;
+	//private boolean completeReset = false;
 	
 	/**
 	 * Default Constructor
@@ -143,8 +152,8 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 
 		//add graphics to title panel
 		top.add(lineageButton);
-		top.add(networkButton);
 		top.add(resetButton);
+		top.add(networkButton);
 		top.add(evolveButton);
 		top.add(saveButton);
 		top.add(undoButton);
@@ -349,6 +358,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
+			//if(completeReset) return null;
 		}
 		return scores;
 	}
@@ -377,9 +387,26 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		ArrayList<Genotype<T>> newPop = ((SinglePopulationGenerationalEA<T>) MMNEAT.ea).initialPopulation(scores.get(0).individual);
 		scores = new ArrayList<Score<T>>();
 		for(int i = 0; i < newPop.size(); i++) {
-		resetButton(newPop.get(i), i);
+			resetButton(newPop.get(i), i);
 		}
-		//need to reset the ea log??
+		// Attempted to completely clear all old log info, but realy complicated
+//		String base = Parameters.parameters.stringParameter("base");
+//		int runNumber = Parameters.parameters.integerParameter("runNumber");
+//		String saveTo = Parameters.parameters.stringParameter("saveTo");
+//		String prefix = base + "/" + saveTo + runNumber;
+//		// Null pointer issue?
+//		((SinglePopulationGenerationalEA<T>) MMNEAT.ea).close(null);
+//		MMNEAT.closeLogs(); // close logs
+//		// delete all records
+//		FileUtilities.deleteDirectoryContents(new File(prefix));
+//		// Reset some parameters to defaults
+//		Parameters.parameters.setInteger("lastSavedGeneration", 0);
+//		Parameters.parameters.setLong("lastInnovation", 0l);
+//		Parameters.parameters.setLong("lastGenotypeId", 0l);
+//		Parameters.parameters.setString("lastSavedDirectory", "");
+//		
+//		completeReset  = true;
+//		MMNEAT.mmneat.run();		
 	}
 	
 	/**
@@ -423,7 +450,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		int scoreIndex = s.nextInt();
 		s.close();
 		if(scoreIndex == CLOSE_BUTTON_INDEX) {//If close button clicked
-			System.exit(1);
+			System.exit(0);
 		} else if(scoreIndex == RESET_BUTTON_INDEX) {//If reset button clicked
 			reset();
 		} else if(scoreIndex == SAVE_BUTTON_INDEX && BooleanUtil.any(chosen)) { //If save button clicked
@@ -433,12 +460,8 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		} else if(scoreIndex == NETWORK_BUTTON_INDEX) {//If network button clicked
 			setNetwork();
 		} else if(scoreIndex == UNDO_BUTTON_INDEX) {//If undo button clicked
-			try {
-				setUndo();
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			// Not implemented yet
+			setUndo();
 		}else if(scoreIndex == EVOLVE_BUTTON_INDEX && BooleanUtil.any(chosen)) {//If evolve button clicked
 			waitingForUser = false;//tells evaluateAll method to finish
 		} else if(scoreIndex >= IMAGE_BUTTON_INDEX) {//If an image button clicked
@@ -447,18 +470,84 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 			buttonPressed(scoreIndex);
 		}
 	}
-
-	private void setLineage() {
-		// TODO Auto-generated method stub
-		
+	private static double getScreenSize(boolean width) { 
+		return width ? Toolkit.getDefaultToolkit().getScreenSize().getWidth() - PIC_SIZE : Toolkit.getDefaultToolkit().getScreenSize().getHeight() / 2;
 	}
 
-	private void setUndo() throws FileNotFoundException {
-		Offspring offspring = new Offspring(PopulationUtil.loadID(), PopulationUtil.loadLineage());
-		GenerationalEA ea = MMNEAT.ea;
-		//int prevGen = offspring.generation - 1;
-		//offspring.getGenotype(xml);
-		System.out.println("offspring to string prints out: " + "offspring.toString()");
-		
+	private static void drawsLineage(Offspring o, long id) { 
+		double x = getScreenSize(true);
+		double y = getScreenSize(false);
+		if(o.parentId1 > -1) {
+			System.out.println("Parent 1 of " + id);
+			drawLineage(o.parentId1, (int) (x -(PIC_SIZE / 2)), (int) (y - (PIC_SIZE / 2)));
+		}
+		if(o.parentId2 > -1) {
+			System.out.println("Parent 2 of " + id);
+			drawLineage(o.parentId2, (int) (x -(PIC_SIZE / 2)), (int) (y - (PIC_SIZE / 2)));
+		}	
+	}
+	@SuppressWarnings("rawtypes")
+	private void setLineage() {
+		String base = Parameters.parameters.stringParameter("base");
+		String log =  Parameters.parameters.stringParameter("log");
+		int runNumber = Parameters.parameters.integerParameter("runNumber");
+		String saveTo = Parameters.parameters.stringParameter("saveTo");
+		//String loadFrom = Parameters.parameters.stringParameter("loadFrom");
+		String prefix = base + "/" + saveTo + runNumber + "/" + log + runNumber + "_";
+		String originalPrefix = base + "/" + saveTo + runNumber + "/" + log + runNumber + "_";
+
+		try {
+			//Offspring.fillInLineage(base, saveTo, runNumber, log, saveTo, false);
+			Offspring.lineage = new ArrayList<Offspring>();
+			PopulationUtil.loadLineage();
+			System.out.println("Lineage loaded from file");
+			// Also adds networks
+			Offspring.addAllScores(prefix, "parents_gen", ((SinglePopulationGenerationalEA) MMNEAT.ea).currentGeneration(), true, originalPrefix);
+			
+			for(int i = 0; i < chosen.length; i++) {
+				boolean choose = chosen[i];
+				if(choose) {//loops through and any image  clicked automatically saved
+					System.out.println("Button " + i + " chosen");
+					Score<T> s = scores.get(i);
+					Genotype<T> network = s.individual;
+					long id = network.getId();
+					System.out.println("Look for ID: " + id);
+					for(Offspring o : SelectiveBreedingEA.offspring) {
+						System.out.println("Compare with ID: " + o.offspringId);
+						if(o.offspringId == id) {
+							drawsLineage(o, id);						
+						}
+					}
+				}
+			}
+		} catch (FileNotFoundException e) {
+			System.out.println("Lineage browser failed");
+			e.printStackTrace();
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static <T extends Network> void drawLineage(long id, int x, int y) {
+		Offspring o = Offspring.lineage.get((int) id);
+		if(o != null) {
+			System.out.println("Draw " + id + ": " + o.xmlNetwork);
+			Genotype<T> g = (Genotype<T>) Offspring.getGenotype(o.xmlNetwork);
+			BufferedImage bi = GraphicsUtil.imageFromCPPN(g.getPhenotype(), PIC_SIZE, PIC_SIZE);
+			DrawingPanel p = GraphicsUtil.drawImage(bi, "Genotype " + id, PIC_SIZE, PIC_SIZE);
+			p.setLocation(x, y);
+			drawsLineage(o, id);
+		}
+	}
+	
+	// NOT COMPLETE
+//	@SuppressWarnings("unchecked")
+	private void setUndo() {
+//		int lastGen = Parameters.parameters.integerParameter("lastSavedGeneration");
+//		System.out.println("before decrementing generation: " + lastGen);
+//		Parameters.parameters.setInteger("lastSavedGeneration", lastGen--);
+//		System.out.println("after decrementing generation: " + Parameters.parameters.integerParameter("lastSavedGeneration"));
+//		System.out.println("offspring to string prints out: " + "offspring.toString()");
+//
+		System.out.println("This button is not yet implemented");
 	}
 }
