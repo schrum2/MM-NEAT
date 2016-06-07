@@ -362,18 +362,8 @@ public class EvolutionaryHistory {
 	 *            cleaning is needed
 	 */
 	public static void cleanArchetype(int populationIndex, ArrayList<TWEANNGenotype> population, int generation) {
-		int freq = Parameters.parameters.integerParameter("cleanFrequency");// command
-																			// line
-																			// parameter
-																			// that
-																			// tells
-																			// how
-																			// often
-																			// archetype
-																			// needs
-																			// to
-																			// be
-																			// cleaned
+		// command line parameter that tells how often archetype needs to be cleaned
+		int freq = Parameters.parameters.integerParameter("cleanFrequency");
 		if (archetypes[populationIndex] != null && generation % freq == 0) {
 			System.out.println("Cleaning archetype");
 			HashSet<Long> activeNodeInnovations = new HashSet<Long>();
