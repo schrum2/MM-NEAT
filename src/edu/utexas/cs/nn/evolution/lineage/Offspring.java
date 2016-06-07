@@ -16,18 +16,23 @@ import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.scores.Score;
 import edu.utexas.cs.nn.tasks.LonerTask;
+import edu.utexas.cs.nn.tasks.picbreeder.PicbreederTask;
+import edu.utexas.cs.nn.util.GraphicsUtil;
 
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import wox.serial.Easy;
 
@@ -62,7 +67,7 @@ public class Offspring {
 		private final DrawingPanel leftInfo;
 		private final DrawingPanel info;
 		private final DrawingPanel rightInfo;
-		public int objectiveOfInterest;
+                public int objectiveOfInterest;
 		public int secondObjectiveOfInterest;
 		private JumpPoint lastJumpPoint;
 		private boolean showInnovationNumbers;
@@ -210,25 +215,30 @@ public class Offspring {
 					new Thread() {
 						@Override
 						public void run() {
-							// Evaluation currently only supports TWEANNs and
-							// MLPs
+							// Evaluation currently only supports TWEANNs and MLPs
 							if (MMNEAT.genotype instanceof TWEANNGenotype) {
-								if (viewModePreference && TWEANN.preferenceNeuronPanel == null
-										&& TWEANN.preferenceNeuron()) {
-									TWEANN.preferenceNeuronPanel = new DrawingPanel(Plot.BROWSE_DIM, Plot.BROWSE_DIM,
-											"Preference Neuron Activation");
-									TWEANN.preferenceNeuronPanel.setLocation(Plot.BROWSE_DIM + Plot.EDGE,
-											Plot.BROWSE_DIM + Plot.TOP);
+								if (viewModePreference && TWEANN.preferenceNeuronPanel == null && TWEANN.preferenceNeuron()) {
+									TWEANN.preferenceNeuronPanel = new DrawingPanel(Plot.BROWSE_DIM, Plot.BROWSE_DIM, "Preference Neuron Activation");
+									TWEANN.preferenceNeuronPanel.setLocation(Plot.BROWSE_DIM + Plot.EDGE, Plot.BROWSE_DIM + Plot.TOP);
 								}
 								// Designates this as the active drawing panel
 								o.drawTWEANN(panel, showInnovationNumbers); 
-								// Evaluate mechanism is limited to Loner Tasks
-								@SuppressWarnings("unchecked")
-								Score<TWEANN> s = ((LonerTask<TWEANN>) MMNEAT.task).evaluate((TWEANNGenotype) g);
-								int[] moduleUsage = ((TWEANNGenotype) s.individual).getModuleUsage();
-								o.modeUsage = moduleUsage;
-								System.out.println("Score: " + s);
-								System.out.println("Module Usage: " + Arrays.toString(moduleUsage));
+                                                                if(MMNEAT.task instanceof PicbreederTask) {
+                                                                    System.out.println("Draw CPPN image");
+                                                                    int imageSize = 300;
+                                                                    BufferedImage bi = GraphicsUtil.imageFromCPPN((Network) g.getPhenotype(), imageSize, imageSize);
+                                                                    DrawingPanel cppnImage = GraphicsUtil.drawImage(bi, "CPPN Image", imageSize, imageSize);
+                                                                    cppnImage.setLocation(Plot.BROWSE_DIM * 3, Plot.BROWSE_DIM);
+                                                                    System.out.println("Done drawing image");
+                                                                } else {
+                                                                    // Evaluate mechanism is mostly limited to Loner Tasks
+                                                                    @SuppressWarnings("unchecked")
+                                                                    Score<TWEANN> s = ((LonerTask<TWEANN>) MMNEAT.task).evaluate((TWEANNGenotype) g);
+                                                                    int[] moduleUsage = ((TWEANNGenotype) s.individual).getModuleUsage();
+                                                                    o.modeUsage = moduleUsage;
+                                                                    System.out.println("Score: " + s);
+                                                                    System.out.println("Module Usage: " + Arrays.toString(moduleUsage));
+                                                                }
 							} else if (MMNEAT.genotype instanceof MLPGenotype) {
 								// Evaluate mechanism is limited to Loner Tasks
 								@SuppressWarnings("unchecked")
@@ -854,14 +864,14 @@ public class Offspring {
 		System.out.println("---Lineage Loaded (" + numGenerations + " generations)-----------");
 		addMutationInformation(originalPrefix + "Mutations_log.txt");
 		System.out.println("---Mutation Information Added-----------");
-		if(MMNEAT.ea instanceof MuLambda) {
+		if(MMNEAT.ea instanceof MuLambda) { // Only MuLambda scheme has separate child pop
 			if (includeChildren) {
 				addAllScores(prefix, "child_gen", numGenerations, false, originalPrefix);
 				System.out.println("---Child Scores Added-----------");
 			}
-			addAllScores(prefix, "parents_gen", numGenerations, true, originalPrefix);
-			System.out.println("---Parent Scores Added-----------");
 		}
+		addAllScores(prefix, "parents_gen", numGenerations, true, originalPrefix);
+		System.out.println("---Parent Scores Added-----------");
 		// Add TUG Goals?
 		File tugLog = new File(prefix + "TUG_log.txt");
 		if (tugLog.exists()) {
@@ -1259,28 +1269,28 @@ public class Offspring {
 		int top = Plot.TOP;
 		DrawingPanel left = new DrawingPanel(browseDim, browseDim, "Parent 1");
 		DrawingPanel leftFitness = new DrawingPanel(browseDim, fitnessHeight, "Parent 1 Fitness");
-		leftFitness.setLocation(0, height);
+                leftFitness.setLocation(0, height);
 		DrawingPanel leftFront = new DrawingPanel(browseDim, browseDim, "Objective scores");
-		leftFront.setLocation(0, height + fitnessHeight + top);
+                leftFront.setLocation(0, height + fitnessHeight + top);
 		DrawingPanel leftInfo = new DrawingPanel(browseDim, browseDim, "Parent 1 Info");
 		leftInfo.setLocation(0, height + fitnessHeight + top + height);
 
 		DrawingPanel panel = new DrawingPanel(browseDim, browseDim, "Loaded Network");
 		panel.setLocation(browseDim + edge, 0);
 		DrawingPanel fitness = new DrawingPanel(browseDim, fitnessHeight, "Fitness");
-		fitness.setLocation(browseDim + edge, height);
+                fitness.setLocation(browseDim + edge, height);
 		DrawingPanel front = new DrawingPanel(browseDim, browseDim, "Objective scores");
-		front.setLocation(browseDim + edge, height + fitnessHeight + top);
-		DrawingPanel info = new DrawingPanel(browseDim, (int) (browseDim * 3.5), "Individual Info");
+                front.setLocation(browseDim + edge, height + fitnessHeight + top);
+                DrawingPanel info = new DrawingPanel(browseDim, (int) (browseDim * 3.5), "Individual Info");
 		info.setLocation(browseDim + edge, height + fitnessHeight + top + height);
 
 		DrawingPanel right = new DrawingPanel(browseDim, browseDim, "Parent 2");
 		right.setLocation(2 * (edge + browseDim), 0);
 		DrawingPanel rightFitness = new DrawingPanel(browseDim, fitnessHeight, "Parent 2 Fitness");
-		rightFitness.setLocation(2 * (edge + browseDim), height);
+                rightFitness.setLocation(2 * (edge + browseDim), height);
 		DrawingPanel rightFront = new DrawingPanel(browseDim, browseDim, "Objective scores");
-		rightFront.setLocation(2 * (edge + browseDim), height + fitnessHeight + top);
-		DrawingPanel rightInfo = new DrawingPanel(browseDim, browseDim, "Parent 2 Info");
+                rightFront.setLocation(2 * (edge + browseDim), height + fitnessHeight + top);
+                DrawingPanel rightInfo = new DrawingPanel(browseDim, browseDim, "Parent 2 Info");
 		rightInfo.setLocation(2 * (edge + browseDim), height + fitnessHeight + top + height);
 
 		DrawingPanel[] bests = new DrawingPanel[maxes.size()];
@@ -1291,8 +1301,14 @@ public class Offspring {
 
 		panel.getFrame().addKeyListener(new NetworkBrowser(panel, left, right, fitness, leftFitness, rightFitness,
 				front, leftFront, rightFront, bests, leftInfo, info, rightInfo));
-		while (true)
-			;
+
+                while (true){ // Keep console open 
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(Offspring.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
 	}
 
 	private static void guardedDraw(long offspringId, DrawingPanel panel, boolean showInnovationNumbers,

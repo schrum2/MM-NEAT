@@ -42,7 +42,11 @@ public class MONELog {
 	 *            whether or not there are multiple batches of files
 	 */
 	public MONELog(String infix, boolean batches) {
-		this(infix, batches, false);
+		this(infix, batches, false, false);
+	}
+        
+        public MONELog(String infix, boolean batches, boolean unlimited) {
+		this(infix, batches, unlimited, false);
 	}
 
 	/**
@@ -52,11 +56,15 @@ public class MONELog {
 	 * @param infix
 	 *            name of log file
 	 * @param batches
-	 *            whether or not there are multiple batches of files(??)
+	 *            whether or not each generation contains a batch of lines
 	 * @param unlimited
-	 *            whether or not there are limits on log(??)
+	 *            true if there may be an excessive number of entries
+         * @param restricted
+         *            true if there may be an unusually small number of entries per generation
 	 */
-	public MONELog(String infix, boolean batches, boolean unlimited) {
+	public MONELog(String infix, boolean batches, boolean unlimited, boolean restricted) {
+                if(unlimited) System.out.println(infix + " allows unlimited logging");
+                if(restricted) System.out.println(infix + " restricted logging");
 		if (Parameters.parameters.booleanParameter("logLock")) {
 			// Don't do any file reading
 			return;
@@ -86,16 +94,18 @@ public class MONELog {
 				if (batches) {// only occurs if batches of runs want to be kept
 					int popSize = Parameters.parameters.integerParameter("mu");
 					expectedEntries *= (popSize + 1);
-					for (int i = 0; i < expectedEntries || (unlimited && oldFile.hasNextLine()); i++) {
+					for (int i = 0; 
+                                                (!restricted || oldFile.hasNextLine()) && // may be fewer log lines than expected
+                                                (i < expectedEntries || // expectd number of entries
+                                                (unlimited && oldFile.hasNextLine())); // more than expected
+                                                 i++) {
 						oldData.add(oldFile.nextLine());
 					}
 				} else {
 					for (int i = 0; i < expectedEntries || (unlimited && oldFile.hasNextLine()); i++) {
-						try {// sticks all the old data in a new file called old
-								// data
+						try {// sticks all the old data in a new file called old data
 							String line = oldFile.nextLine();
-							if (!unlimited) { // Expect generation number to be
-												// listed
+							if (!unlimited) { // Expect generation number to be listed
 								Scanner temp = new Scanner(line);
 								int gen = temp.nextInt();
 								if (i != gen) {

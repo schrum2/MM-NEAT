@@ -7,6 +7,7 @@ import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype.NodeGene;
 import edu.utexas.cs.nn.log.MONELog;
 import edu.utexas.cs.nn.log.TWEANNLog;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
+import edu.utexas.cs.nn.evolution.selectiveBreeding.SelectiveBreedingEA;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.parameters.CommonConstants;
@@ -273,8 +274,9 @@ public class EvolutionaryHistory {
 	 * Initializes the mutation and lineage logs of an archetype
 	 */
 	public static void initLineageAndMutationLogs() {
-		mutationLog = new MONELog("Mutations", true);
-		lineageLog = new MONELog("Lineage", true);
+                // Seective breeding allows for an unusual number of log lines per generation
+		mutationLog = new MONELog("Mutations", true, false, MMNEAT.ea instanceof SelectiveBreedingEA);
+		lineageLog = new MONELog("Lineage", true, false, MMNEAT.ea instanceof SelectiveBreedingEA);
 	}
 
 	/**

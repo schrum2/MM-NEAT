@@ -70,8 +70,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	/**
 	 * Default Constructor
 	 */
-	public PicbreederTask() {
-		
+	public PicbreederTask() {		
 		//sets mu to a divisible number
 		if(Parameters.parameters.integerParameter("mu") % PicbreederTask.NUM_COLUMNS != 0) { 
 			Parameters.parameters.setInteger("mu", PicbreederTask.NUM_COLUMNS * ((Parameters.parameters.integerParameter("mu") / PicbreederTask.NUM_COLUMNS) + 1));
@@ -86,7 +85,12 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		showNetwork = false;
 		waitingForUser = false;
 		
-		//Graphics instantiations
+                if(MMNEAT.browseLineage) {
+                    // Do not setup the JFrame if browsing the lineage
+                    return;
+                }            
+
+                //Graphics instantiations
 		frame = new JFrame("Picbreeder");
 		panels = new ArrayList<JPanel>();
 		buttons = new ArrayList<JButton>();

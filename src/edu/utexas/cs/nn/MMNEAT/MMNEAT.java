@@ -35,9 +35,7 @@ import edu.utexas.cs.nn.tasks.gridTorus.NNTorusPredPreyController;
 import edu.utexas.cs.nn.tasks.gridTorus.TorusEvolvedPredatorsVsStaticPreyTask;
 import edu.utexas.cs.nn.tasks.gridTorus.TorusPredPreyTask;
 import edu.utexas.cs.nn.tasks.gridTorus.cooperative.CooperativePredatorsVsStaticPrey;
-import edu.utexas.cs.nn.tasks.gridTorus.cooperative.CooperativePreyVsStaticPredators;
 import edu.utexas.cs.nn.tasks.gridTorus.cooperative.CooperativeTorusPredPreyTask;
-import edu.utexas.cs.nn.tasks.gridTorus.sensors.TorusPredPreySensorBlock;
 import edu.utexas.cs.nn.tasks.motests.FunctionOptimization;
 import edu.utexas.cs.nn.tasks.motests.testfunctions.FunctionOptimizationSet;
 import edu.utexas.cs.nn.tasks.mspacman.*;
@@ -67,8 +65,6 @@ import edu.utexas.cs.nn.util.stats.Statistic;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -117,6 +113,7 @@ public class MMNEAT {
 	public static EvalLog evalReport = null;
 	public static RandomGenerator weightPerturber = null;
 	public static MONELog ghostLocationsOnPowerPillEaten = null;
+        public static boolean browseLineage = false;
 
 	public static ArrayList<String> fitnessPlusMetaheuristics() {
 		ArrayList<String> result = (ArrayList<String>) fitnessFunctions.clone();
@@ -860,19 +857,18 @@ public class MMNEAT {
 
 			int runs = Integer.parseInt(value);
 			args[0] = "runNumber:0";
-			Parameters.initializeParameterCollections(args); // file should
-			// exist
+			Parameters.initializeParameterCollections(args); // file should exist
 			loadClasses();
 			calculateHVs(runs);
 		} else if (args[0].startsWith("lineage:")) {
 			System.out.println("Lineage browser");
+                        browseLineage = true;
 			st.nextToken(); // "lineage"
 			String value = st.nextToken();
 
 			int run = Integer.parseInt(value);
 			args[0] = "runNumber:" + run;
-			Parameters.initializeParameterCollections(args); // file should
-			// exist
+			Parameters.initializeParameterCollections(args); // file should exist
 			System.out.println("Params loaded");
 			String saveTo = Parameters.parameters.stringParameter("saveTo");
 			String loadFrom = Parameters.parameters.stringParameter("loadFrom");
@@ -890,8 +886,7 @@ public class MMNEAT {
 
 			int runs = Integer.parseInt(value);
 			args[0] = "runNumber:0";
-			Parameters.initializeParameterCollections(args); // file should
-			// exist
+			Parameters.initializeParameterCollections(args); // file should exist
 			loadClasses();
 			process(runs);
 		} else {
@@ -905,7 +900,7 @@ public class MMNEAT {
 
 	private static void evolutionaryRun(String[] args) {
 		// Commandline
-		MMNEAT mone = new MMNEAT(args);
+		MMNEAT mmneat = new MMNEAT(args);
 		if (CommonConstants.replayPacman) {
 			if (CommonConstants.showNetworks) {
 				String replayNetwork = Parameters.parameters.stringParameter("replayNetwork");
@@ -931,7 +926,7 @@ public class MMNEAT {
 		}
 		RandomNumbers.reset();
 
-		mone.run();
+		mmneat.run();
 
 		closeLogs();
 	}

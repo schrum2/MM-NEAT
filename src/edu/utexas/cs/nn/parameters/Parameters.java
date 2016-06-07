@@ -687,8 +687,8 @@ public class Parameters {
 	 *            Parameter label
 	 * @return corresponding Class parameter value
 	 */
-	@SuppressWarnings("rawtypes") // Class needs to be raw because any type can
-									// be returned
+        // Class needs to be raw because any type can be returned
+	@SuppressWarnings("rawtypes") 
 	public Class classParameter(String label) {
 		return classOptions.get(label);
 	}
@@ -864,5 +864,14 @@ public class Parameters {
          */
 	public void setString(String label, String value) {
 		this.stringOptions.change(label, value);
+	}
+
+        /**
+         * Set Class option value
+         * @param label label for Class parameter
+         * @param value new value
+         */
+	public void setClass(String label, Class value) {
+		this.classOptions.change(label, value);
 	}
 }
