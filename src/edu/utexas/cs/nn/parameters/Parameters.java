@@ -429,7 +429,6 @@ public class Parameters {
 		booleanOptions.add("polynomialWeightMutation", false, "Network weights mutated with polynomial mutation");
 		booleanOptions.add("tugKeepsParetoFront", false, "TUG favors the Pareto front before switching off objectives");
 		booleanOptions.add("pacmanLevelClearingFitness", false, "Fitness favors finishing levels quickly in Ms. Pac-Man");
-		booleanOptions.add("penalizeModeWaste", false, "Negative fitness when usage across modes is uneven");
 		booleanOptions.add("antiMaxModeUsage", false, "Negative fitness for highest percent mode usage, to encourage multiple mode use");
 		booleanOptions.add("softmaxSelection", false, "Discrete action selection accomplished using softmax");
 		booleanOptions.add("probabilisticSelection", false, "Discrete action selection probabilistic without using softmax");

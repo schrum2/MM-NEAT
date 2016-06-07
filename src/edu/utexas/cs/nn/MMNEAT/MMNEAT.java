@@ -368,10 +368,6 @@ public class MMNEAT {
 		// domain/task
 		System.out.println("Use meta-heuristics?");
 		metaheuristics = new ArrayList<Metaheuristic>();
-		if (Parameters.parameters.booleanParameter("penalizeModeWaste")) {
-			System.out.println("Penalize Mode Waste");
-			metaheuristics.add(new WastedModeUsageFitness());
-		}
 		if (Parameters.parameters.booleanParameter("antiMaxModeUsage")) {
 			System.out.println("Penalize Max Mode Usage");
 			metaheuristics.add(new AntiMaxModuleUsageFitness());

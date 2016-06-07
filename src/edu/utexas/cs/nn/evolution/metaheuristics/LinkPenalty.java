@@ -2,6 +2,7 @@ package edu.utexas.cs.nn.evolution.metaheuristics;
 
 import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
+import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.scores.Score;
 
@@ -10,7 +11,7 @@ import edu.utexas.cs.nn.scores.Score;
  *
  * @author Jacob Schrum
  */
-public class LinkPenalty implements Metaheuristic {
+public class LinkPenalty implements Metaheuristic<TWEANN> {
 
 	private final int populationIndex;
 	private final boolean modeAvg;
@@ -24,8 +25,7 @@ public class LinkPenalty implements Metaheuristic {
 		this.modeAvg = Parameters.parameters.booleanParameter("penalizeLinksPerMode");
 	}
 
-	@SuppressWarnings("rawtypes")
-	public void augmentScore(Score s) {
+	public void augmentScore(Score<TWEANN> s) {
 		s.extraScore(getScore((TWEANNGenotype) s.individual));
 	}
 

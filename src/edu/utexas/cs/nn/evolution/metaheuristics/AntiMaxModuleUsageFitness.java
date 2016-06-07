@@ -1,6 +1,7 @@
 package edu.utexas.cs.nn.evolution.metaheuristics;
 
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
+import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.scores.Score;
 
 /**
@@ -8,13 +9,12 @@ import edu.utexas.cs.nn.scores.Score;
  *
  * @author Jacob Schrum
  */
-public class AntiMaxModuleUsageFitness implements Metaheuristic {
+public class AntiMaxModuleUsageFitness implements Metaheuristic<TWEANN> {
 
 	public AntiMaxModuleUsageFitness() {
 	}
 
-	@SuppressWarnings("rawtypes")
-	public void augmentScore(Score s) {
+	public void augmentScore(Score<TWEANN> s) {
 		s.extraScore(getScore((TWEANNGenotype) s.individual));
 	}
 
