@@ -862,7 +862,7 @@ public class MMNEAT {
 			calculateHVs(runs);
 		} else if (args[0].startsWith("lineage:")) {
 			System.out.println("Lineage browser");
-                        browseLineage = true;
+			browseLineage = true;
 			st.nextToken(); // "lineage"
 			String value = st.nextToken();
 

@@ -42,18 +42,23 @@ import wox.serial.Easy;
  * can be evaluated on the spot. Fitness data is also displayed.
  *
  * @author Jacob Schrum
+ * @commented Lauren Gillespie
  */
 public class Offspring {
 
 	/**
+	 * Actual graphics object that displays offspring information
 	 * Fills the screen with separate windows of information.
 	 * 
 	 * @author Jacob Schrum
 	 */
 	public static class NetworkBrowser extends KeyAdapter {
 
-		private int position;
-		private int previousPosition;
+		//public variables
+		public int objectiveOfInterest;
+		public int secondObjectiveOfInterest;
+
+		//private final global variables
 		private final DrawingPanel panel;
 		private final DrawingPanel left;
 		private final DrawingPanel leftFitness;
@@ -67,18 +72,37 @@ public class Offspring {
 		private final DrawingPanel leftInfo;
 		private final DrawingPanel info;
 		private final DrawingPanel rightInfo;
-                public int objectiveOfInterest;
-		public int secondObjectiveOfInterest;
-		private JumpPoint lastJumpPoint;
+
+		//private global variables
 		private boolean showInnovationNumbers;
 		private boolean showScores;
 		private boolean showIds;
-		private int viewingGen;
-		private ArrayList<JumpPoint> jumpInBest;
-		private int jumpIndex;
-		private Genotype<? extends Network> g;
 		private boolean viewModePreference = false;
+		private int jumpIndex;
+		private int position;
+		private int previousPosition;
+		private int viewingGen;
+		private ArrayList<edu.utexas.cs.nn.evolution.lineage.JumpPoint> jumpInBest;
+		private Genotype<? extends Network> g;
+		private edu.utexas.cs.nn.evolution.lineage.JumpPoint lastJumpPoint;
 
+		/**
+		 * NetworkBrowser constructor
+		 * 
+		 * @param panel current individuual to be evaluated
+		 * @param left mother panel
+		 * @param right father panel
+		 * @param fitness drawing panel that contains fitness
+		 * @param leftFitness fitness of mother
+		 * @param rightFitness fitness of father
+		 * @param front front panel
+		 * @param leftFront left panel
+		 * @param rightFront right panel
+		 * @param bests best offspring panel array
+		 * @param leftInfo info on mother 
+		 * @param info info on individual
+		 * @param rightInfo info on father
+		 */
 		private NetworkBrowser(DrawingPanel panel, DrawingPanel left, DrawingPanel right, DrawingPanel fitness,
 				DrawingPanel leftFitness, DrawingPanel rightFitness, DrawingPanel front, DrawingPanel leftFront,
 				DrawingPanel rightFront, DrawingPanel[] bests, DrawingPanel leftInfo, DrawingPanel info,
@@ -109,25 +133,13 @@ public class Offspring {
 			this.rightInfo = rightInfo;
 		}
 
+		/**
+		 * Draws the initial panels and information
+		 */
 		public void draw() {
 			Offspring o = lineage.get(position);
 			System.out.println(position);
-			left.clear();
-			leftFitness.clear();
-			leftFront.clear();
-			panel.clear();
-			front.clear();
-			right.clear();
-			rightFitness.clear();
-			rightFront.clear();
-			fitness.clear();
-			leftInfo.clear();
-			info.clear();
-			rightInfo.clear();
-			for (int i = 0; i < bests.length; i++) {
-				bests[i].clear();
-			}
-
+			clear();
 			if (o == null) {
 				System.out.println("null");
 			} else {
@@ -135,12 +147,12 @@ public class Offspring {
 				for (int i = 0; i < bests.length; i++) {
 					plotBestsWorsts(bests[i], viewingGen, i, o.scores, 0);
 				}
-				// System.out.println(o);
 				if (MMNEAT.genotype instanceof TWEANNGenotype) {
 					g = o.drawTWEANN(panel, showInnovationNumbers);
 				} else if (o.xmlNetwork != null) {
 					g = getGenotype(o.xmlNetwork);
 				}
+				//draws relevant info to panels
 				System.out.println(g);
 				fillInfo(o, info, g);
 				System.out.println("Finished fill");
@@ -159,11 +171,33 @@ public class Offspring {
 		}
 
 		/**
+		 * Clears drawing panels
+		 * Shouldn't theoretically
+		 * be necessary but still included
+		 */
+		public void clear() { 
+			left.clear();
+			leftFitness.clear();
+			leftFront.clear();
+			panel.clear();
+			front.clear();
+			right.clear();
+			rightFitness.clear();
+			rightFront.clear();
+			fitness.clear();
+			leftInfo.clear();
+			info.clear();
+			rightInfo.clear();
+			for (int i = 0; i < bests.length; i++) {
+				bests[i].clear();
+			}
+		}
+
+		/**
 		 * Main window detects key presses and responds to them. All navigation
 		 * options are handled here.
 		 * 
-		 * @param e
-		 *            Event for the key pressed
+		 * @param e Event for the key pressed
 		 */
 		@Override
 		public void keyPressed(KeyEvent e) {
@@ -223,22 +257,22 @@ public class Offspring {
 								}
 								// Designates this as the active drawing panel
 								o.drawTWEANN(panel, showInnovationNumbers); 
-                                                                if(MMNEAT.task instanceof PicbreederTask) {
-                                                                    System.out.println("Draw CPPN image");
-                                                                    int imageSize = 300;
-                                                                    BufferedImage bi = GraphicsUtil.imageFromCPPN((Network) g.getPhenotype(), imageSize, imageSize);
-                                                                    DrawingPanel cppnImage = GraphicsUtil.drawImage(bi, "CPPN Image", imageSize, imageSize);
-                                                                    cppnImage.setLocation(Plot.BROWSE_DIM * 3, Plot.BROWSE_DIM);
-                                                                    System.out.println("Done drawing image");
-                                                                } else {
-                                                                    // Evaluate mechanism is mostly limited to Loner Tasks
-                                                                    @SuppressWarnings("unchecked")
-                                                                    Score<TWEANN> s = ((LonerTask<TWEANN>) MMNEAT.task).evaluate((TWEANNGenotype) g);
-                                                                    int[] moduleUsage = ((TWEANNGenotype) s.individual).getModuleUsage();
-                                                                    o.modeUsage = moduleUsage;
-                                                                    System.out.println("Score: " + s);
-                                                                    System.out.println("Module Usage: " + Arrays.toString(moduleUsage));
-                                                                }
+								if(MMNEAT.task instanceof PicbreederTask) {
+									System.out.println("Draw CPPN image");
+									int imageSize = 300;
+									BufferedImage bi = GraphicsUtil.imageFromCPPN((Network) g.getPhenotype(), imageSize, imageSize);
+									DrawingPanel cppnImage = GraphicsUtil.drawImage(bi, "CPPN Image", imageSize, imageSize);
+									cppnImage.setLocation(Plot.BROWSE_DIM * 3, Plot.BROWSE_DIM);
+									System.out.println("Done drawing image");
+								} else {
+									// Evaluate mechanism is mostly limited to Loner Tasks
+									@SuppressWarnings("unchecked")
+									Score<TWEANN> s = ((LonerTask<TWEANN>) MMNEAT.task).evaluate((TWEANNGenotype) g);
+									int[] moduleUsage = ((TWEANNGenotype) s.individual).getModuleUsage();
+									o.modeUsage = moduleUsage;
+									System.out.println("Score: " + s);
+									System.out.println("Module Usage: " + Arrays.toString(moduleUsage));
+								}
 							} else if (MMNEAT.genotype instanceof MLPGenotype) {
 								// Evaluate mechanism is limited to Loner Tasks
 								@SuppressWarnings("unchecked")
@@ -266,7 +300,7 @@ public class Offspring {
 				}
 			}
 
-			// Goto top performer of current objective in current generation
+			// Go to top performer of current objective in current generation
 			if (key == KeyEvent.VK_T) {
 				Offspring b = bestOfGeneration(viewingGen, objectiveOfInterest);
 				if (b == null) {
@@ -520,87 +554,16 @@ public class Offspring {
 		}
 	}
 
-	public static class JumpPoint {
+	/**
+	 * 
+	 * 
+	 * Actual Offspring class begins here
+	 * 
+	 * 
+	 * 
+	 */
 
-		int objective;
-		double jump;
-		Offspring individual;
-		int generation;
-		long comparisonId;
-
-		public JumpPoint(int objective, double jump, Offspring individual, int generation, boolean firstParent) {
-			this(objective, jump, individual, generation, firstParent ? individual.parentId1 : individual.parentId2);
-		}
-
-		public JumpPoint(int objective, double jump, Offspring individual, int generation, long comparisonId) {
-			this.objective = objective;
-			this.jump = jump;
-			this.individual = individual;
-			this.generation = generation;
-			this.comparisonId = comparisonId;
-		}
-
-		@Override
-		public String toString() {
-			String result = "Obj. " + objective + " is " + jump + " higher in " + individual.offspringId + " than in "
-					+ comparisonId + " at Gen. " + generation;
-			return result;
-		}
-
-		@Override
-		public boolean equals(Object o) {
-			if (o instanceof JumpPoint) {
-				JumpPoint jp = (JumpPoint) o;
-				return jp.objective == objective && jp.individual.offspringId == individual.offspringId
-						&& jp.generation == generation && jp.comparisonId == comparisonId;
-			}
-			return false;
-		}
-
-		@Override
-		public int hashCode() {
-			int hash = 7;
-			hash = 79 * hash + this.objective;
-			hash = 79 * hash + (this.individual != null ? this.individual.hashCode() : 0);
-			hash = 79 * hash + this.generation;
-			hash = 79 * hash + (int) (this.comparisonId ^ (this.comparisonId >>> 32));
-			return hash;
-		}
-	}
-
-	public static class MutationBranch {
-
-		Offspring o;
-		MutationBranch parent1;
-		MutationBranch parent2;
-
-		public MutationBranch(Offspring o, MutationBranch parent1) {
-			this(o, parent1, null);
-		}
-
-		public MutationBranch(Offspring o, MutationBranch parent1, MutationBranch parent2) {
-			this.o = o;
-			this.parent1 = parent1;
-			this.parent2 = parent2;
-		}
-
-		@Override
-		public String toString() {
-			String result = "";
-			if (parent1 != null) {
-				result += "(" + parent1 + ") ";
-			}
-			if (parent2 != null) {
-				result += "X (" + parent2 + ") ";
-			}
-			if (parent1 != null) {
-				result += "-> ";
-			}
-			result += o.offspringId + ":" + o.mutations.toString();
-			return result;
-		}
-	}
-
+	//public static variables
 	public static ArrayList<Offspring> lineage = new ArrayList<Offspring>();
 	public static ArrayList<Double> maxes = new ArrayList<Double>();
 	public static ArrayList<Double> mins = new ArrayList<Double>();
@@ -608,6 +571,8 @@ public class Offspring {
 	public static double[][] worstScores = null;
 	public static double[][] tugGoals = null;
 	public static int numObjectives = 0;
+
+	//public global variables
 	public long offspringId;
 	public long parentId1;
 	public long parentId2;
@@ -618,14 +583,32 @@ public class Offspring {
 	public ArrayList<String> mutations = new ArrayList<String>();
 	public int[] modeUsage = null; // must run eval first
 
+	/**
+	 * Default constructor 
+	 * @param offspringId ID of offspring 
+	 * @param generation gen #
+	 */
 	public Offspring(long offspringId, int generation) {
 		this(offspringId, -1, -1, generation);
 	}
 
+	/**
+	 * Constructor 
+	 * @param offspringId ID of offspring
+	 * @param parentId1 ID of first parent 
+	 * @param generation gen #
+	 */
 	public Offspring(long offspringId, long parentId1, int generation) {
 		this(offspringId, parentId1, -1, generation);
 	}
 
+	/**
+	 * Constructor 
+	 * @param offspringId ID of offspring
+	 * @param parentId1 ID of first parent 
+	 * @param parentId2 ID of second parent
+	 * @param generation gen #
+	 */
 	public Offspring(long offspringId, long parentId1, long parentId2, int generation) {
 		this.offspringId = offspringId;
 		this.parentId1 = parentId1;
@@ -633,6 +616,9 @@ public class Offspring {
 		this.generation = generation;
 	}
 
+	/**
+	 * Equals method, overridden 
+	 */
 	@Override
 	public boolean equals(Object o) {
 		if (o instanceof Offspring) {
@@ -643,6 +629,9 @@ public class Offspring {
 		return false;
 	}
 
+	/**
+	 * Returns a relevant hashCode for offspring object
+	 */
 	@Override
 	public int hashCode() {
 		int hash = 7;
@@ -654,6 +643,9 @@ public class Offspring {
 		return hash;
 	}
 
+	/**
+	 * returns offspring as a string
+	 */
 	@Override
 	public String toString() {
 		String result = "";
@@ -673,19 +665,39 @@ public class Offspring {
 		return result;
 	}
 
+	/**
+	 * Adds name of mutated offspring
+	 * @param name name of offspring
+	 */
 	public void addMutation(String name) {
 		mutations.add(name);
 	}
 
+	/**
+	 * Adds name of mutated offspring
+	 * @param offspringId ID of offspring
+	 * @param name name of offspring 
+	 */
 	public static void addMutation(long offspringId, String name) {
 		lineage.get((int) offspringId).addMutation(name);
 	}
 
+	/**
+	 * Adds scores from offspring lineage
+	 * @param s scores
+	 * @param generation gen #
+	 */
 	public void addScores(ArrayList<Double> s, int generation) {
 		scores.add(s);
 		correspondingGenerations.add(generation);
 	}
 
+	/**
+	 * Adds scores from offspring lineage
+	 * @param offspringId ID of offspring
+	 * @param s scores
+	 * @param generation gen #
+	 */
 	public static void addScores(long offspringId, ArrayList<Double> s, int generation) {
 
 		Offspring o = lineage.get((int) offspringId);
@@ -697,15 +709,24 @@ public class Offspring {
 		o.addScores(s, generation);
 	}
 
+	/**
+	 * Adds network to display panels
+	 * @param offspringId ID of network to add
+	 * @param filePrefix prefix of xml file where network info is stored
+	 * @param gen gen # 
+	 * @param withinGen what gen of offspring network located in  
+	 */
 	public static void addNetwork(long offspringId, String filePrefix, int gen, int withinGen) {
 		Offspring o = lineage.get((int) offspringId);
 		int slash = filePrefix.lastIndexOf("/");
 		String subdir = gen == 0 ? "initial" : "gen" + gen;
-		o.xmlNetwork = filePrefix.substring(0, slash) + "/" + subdir + "/" + filePrefix.substring(slash + 1) + subdir
-				+ "_" + withinGen + ".xml";
-		// System.out.println(offspringId + ":" + o.xmlNetwork);
+		o.xmlNetwork = filePrefix.substring(0, slash) + "/" + subdir + "/" + filePrefix.substring(slash + 1) + subdir + "_" + withinGen + ".xml";
 	}
 
+	/**
+	 * Adds offspring if individual has any
+	 * @param o individual in question
+	 */
 	public static void addOffspring(Offspring o) {
 		while (lineage.size() <= o.offspringId) {
 			lineage.add(null); // <-- SMEG: I think this is problematic
@@ -721,28 +742,30 @@ public class Offspring {
 		lineage.set(index, o);
 	}
 
+	/**
+	 * Load offspring's lineage
+	 * @param filename name of file
+	 * @return generation # offspring created(?)
+	 * @throws FileNotFoundException if lineage file cannot be found 
+	 */
 	public static int loadLineage(String filename) throws FileNotFoundException {
 		Scanner s = new Scanner(new File(filename));
 		int generation = 0;
 		while (s.hasNextLine()) {
 			String next = s.nextLine();
-			// System.out.println(next);
 			if (next.startsWith("--")) {
 				generation++;
 			} else {
 				Scanner pattern = new Scanner(next);
 				long parentId1 = pattern.nextLong();
-				// System.out.print(parentId1 + " ");
 				long parentId2 = -1;
 				String symbol = pattern.next();
 				if (symbol.equals("X")) {
 					parentId2 = pattern.nextLong();
-					// System.out.print("X " + parentId2 + " ");
 					symbol = pattern.next();
 				}
 				if (symbol.equals("->")) {
 					long offspringId = pattern.nextLong();
-					// System.out.println("-> " + offspringId + " ");
 					addOffspring(new Offspring(offspringId, parentId1, parentId2, generation));
 				} else {
 					System.out.println("WTF: " + symbol);
@@ -756,6 +779,11 @@ public class Offspring {
 		return generation;
 	}
 
+	/**
+	 * Adds information about mutations done to offspring 
+	 * @param filename name of file where mutation information stored
+	 * @throws FileNotFoundException if mutation file cannot be found 
+	 */
 	public static void addMutationInformation(String filename) throws FileNotFoundException {
 		Scanner s = new Scanner(new File(filename));
 		@SuppressWarnings("unused")
@@ -780,6 +808,12 @@ public class Offspring {
 		s.close();
 	}
 
+	/**
+	 * Adds goals if TUG implemented 
+	 * @param tugLog log of TUG info
+	 * @param numGenerations numGenerations passed 
+	 * @throws FileNotFoundException if tugLog cannot be found
+	 */
 	private static void addGoals(File tugLog, int numGenerations) throws FileNotFoundException {
 		tugGoals = new double[maxes.size()][numGenerations];
 		Scanner file = new Scanner(tugLog);
@@ -800,6 +834,15 @@ public class Offspring {
 		file.close();
 	}
 
+	/**
+	 * Add all scores from offspring 
+	 * @param filePrefix prefix of file where score stored
+	 * @param infix more information needed for file finding
+	 * @param numGenerations number of generations passed
+	 * @param associateNetworks whether or not to add parent netwosk as well
+	 * @param networkPrefix prefix to add network under
+	 * @throws FileNotFoundException if score file cannot be found
+	 */
 	public static void addAllScores(String filePrefix, String infix, int numGenerations, boolean associateNetworks, String networkPrefix) throws FileNotFoundException {
 		for (int i = 0; i < numGenerations; i++) {
 			String filename = filePrefix + infix + i + ".txt";
@@ -839,8 +882,6 @@ public class Offspring {
 
 				addScores(offspringId, scores, i);
 				if (associateNetworks) {
-					// System.out.println(filename + ":" + offspringId + ":" +
-					// filePrefix + ":" + i + ":" + withinGen);
 					addNetwork(offspringId, networkPrefix, i, withinGen);
 				}
 			}
@@ -848,6 +889,16 @@ public class Offspring {
 		}
 	}
 
+	/**
+	 * 
+	 * @param base
+	 * @param saveTo
+	 * @param run
+	 * @param log
+	 * @param loadFrom
+	 * @param includeChildren
+	 * @throws FileNotFoundException
+	 */
 	public static void fillInLineage(String base, String saveTo, int run, String log, String loadFrom, boolean includeChildren) throws FileNotFoundException {
 		Parameters.parameters.setBoolean("erasePWTrails", false);
 		Parameters.parameters.setBoolean("watch", true);
@@ -878,11 +929,15 @@ public class Offspring {
 			addGoals(tugLog, numGenerations);
 			System.out.println("---TUG Goals Added-----------");
 		}
-		// for (int i = 0; i < lineage.size(); i++) {
-		// System.out.println(lineage.get(i));
-		// }
 	}
 
+	/**
+	 * 
+	 * @param generation
+	 * @param parentId
+	 * @param offspringId
+	 * @return
+	 */
 	public static ArrayList<Double> fitnessDifference(int generation, long parentId, long offspringId) {
 		Offspring parent = lineage.get((int) parentId);
 		Offspring child = lineage.get((int) offspringId);
@@ -904,10 +959,21 @@ public class Offspring {
 		return differences;
 	}
 
+	/**
+	 * 
+	 * @param offspringId
+	 * @return
+	 */
 	public static MutationBranch completeMutationHistory(long offspringId) {
 		return completeMutationHistory(offspringId, new HashMap<Long, MutationBranch>());
 	}
 
+	/**
+	 * 
+	 * @param offspringId
+	 * @param visited
+	 * @return
+	 */
 	public static MutationBranch completeMutationHistory(long offspringId, HashMap<Long, MutationBranch> visited) {
 		// System.out.println("completeMutationHistory("+offspringId+")");
 		if (offspringId == -1) {
@@ -926,7 +992,13 @@ public class Offspring {
 		return branch;
 	}
 
-	public static JumpPoint findBiggestFitnessJump(int objective, long endpointId) {
+	/**
+	 * 
+	 * @param objective
+	 * @param endpointId
+	 * @return
+	 */
+	public static edu.utexas.cs.nn.evolution.lineage.JumpPoint findBiggestFitnessJump(int objective, long endpointId) {
 		HashMap<Long, MutationBranch> map = new HashMap<Long, MutationBranch>();
 		completeMutationHistory(endpointId, map);
 		double jump = 0;
@@ -957,20 +1029,29 @@ public class Offspring {
 				}
 			}
 		}
-		return new JumpPoint(objective, jump, individual, whenGen, firstParent);
+		return new edu.utexas.cs.nn.evolution.lineage.JumpPoint(objective, jump, individual, whenGen, firstParent);
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public static int lastGeneration() {
 		return lineage.get(lineage.size() - 1).generation;
 	}
 
-	public static ArrayList<JumpPoint> biggestJumpsToReachFinalPopulation(int objectives) {
-		ArrayList<JumpPoint> jumps = new ArrayList<JumpPoint>();
+	/**
+	 * 
+	 * @param objectives
+	 * @return
+	 */
+	public static ArrayList<edu.utexas.cs.nn.evolution.lineage.JumpPoint> biggestJumpsToReachFinalPopulation(int objectives) {
+		ArrayList<edu.utexas.cs.nn.evolution.lineage.JumpPoint> jumps = new ArrayList<edu.utexas.cs.nn.evolution.lineage.JumpPoint>();
 		ArrayList<Offspring> os = offspringOfGeneration(lastGeneration());
 		for (int i = 0; i < os.size(); i++) {
 			for (int j = 0; j < objectives; j++) {
 				Offspring o = os.get(i);
-				JumpPoint jump = findBiggestFitnessJump(j, o.offspringId);
+				edu.utexas.cs.nn.evolution.lineage.JumpPoint jump = findBiggestFitnessJump(j, o.offspringId);
 				if (!jumps.contains(jump)) {
 					jumps.add(jump);
 				}
@@ -979,6 +1060,11 @@ public class Offspring {
 		return jumps;
 	}
 
+	/**
+	 * 
+	 * @param offspringId
+	 * @return
+	 */
 	public static HashMap<Long, Offspring> allAncestors(long offspringId) {
 		HashMap<Long, MutationBranch> map = new HashMap<Long, MutationBranch>();
 		completeMutationHistory(offspringId, map);
@@ -989,6 +1075,12 @@ public class Offspring {
 		return ancestors;
 	}
 
+	/**
+	 * 
+	 * @param offspringId1
+	 * @param offspringId2
+	 * @return
+	 */
 	public static Offspring mostRecentCommonAncestor(long offspringId1, long offspringId2) {
 		HashMap<Long, Offspring> a1 = allAncestors(offspringId1);
 		HashMap<Long, Offspring> a2 = allAncestors(offspringId2);
@@ -1025,11 +1117,21 @@ public class Offspring {
 		return common;
 	}
 
+	/**
+	 * 
+	 * @param generation
+	 * @return
+	 */
 	public static Offspring mostRecentCommonAncestor(int generation) {
 		ArrayList<Offspring> os = offspringOfGeneration(generation);
 		return mostRecentCommonAncestor(os);
 	}
 
+	/**
+	 * 
+	 * @param generation
+	 * @return
+	 */
 	public static ArrayList<Offspring> offspringOfGeneration(int generation) {
 		ArrayList<Offspring> os = new ArrayList<Offspring>();
 		for (int i = 0; i < lineage.size(); i++) {
@@ -1041,6 +1143,12 @@ public class Offspring {
 		return os;
 	}
 
+	/**
+	 * 
+	 * @param generation
+	 * @param objective
+	 * @return
+	 */
 	public static Offspring bestOfGeneration(int generation, int objective) {
 		ArrayList<Offspring> os = offspringOfGeneration(generation);
 		Offspring best = null;
@@ -1064,8 +1172,13 @@ public class Offspring {
 		return best;
 	}
 
-	public static ArrayList<JumpPoint> jumpsInBest(int objective) {
-		ArrayList<JumpPoint> jumps = new ArrayList<JumpPoint>();
+	/**
+	 * 
+	 * @param objective
+	 * @return
+	 */
+	public static ArrayList<edu.utexas.cs.nn.evolution.lineage.JumpPoint> jumpsInBest(int objective) {
+		ArrayList<edu.utexas.cs.nn.evolution.lineage.JumpPoint> jumps = new ArrayList<edu.utexas.cs.nn.evolution.lineage.JumpPoint>();
 		// Selective breeding does not produce interesting scores
 		if(!(MMNEAT.ea instanceof SelectiveBreedingEA)) {
 			int generations = lastGeneration() + 1;
@@ -1080,7 +1193,7 @@ public class Offspring {
 					double currentScore = currentBest.scores.get(currentBest.correspondingGenerations.indexOf(i))
 							.get(objective);
 					double diff = currentScore - previousScore;
-					JumpPoint jump = new JumpPoint(objective, diff, currentBest, i, previousBest.offspringId);
+					edu.utexas.cs.nn.evolution.lineage.JumpPoint jump = new edu.utexas.cs.nn.evolution.lineage.JumpPoint(objective, diff, currentBest, i, previousBest.offspringId);
 					jumps.add(jump);
 					previousBest = currentBest;
 					previousScore = currentScore;
@@ -1090,11 +1203,16 @@ public class Offspring {
 		return jumps;
 	}
 
-	public static JumpPoint biggestJumpInBest(int objective) {
-		ArrayList<JumpPoint> jumps = jumpsInBest(objective);
-		JumpPoint best = null;
+	/**
+	 * 
+	 * @param objective
+	 * @return
+	 */
+	public static edu.utexas.cs.nn.evolution.lineage.JumpPoint biggestJumpInBest(int objective) {
+		ArrayList<edu.utexas.cs.nn.evolution.lineage.JumpPoint> jumps = jumpsInBest(objective);
+		edu.utexas.cs.nn.evolution.lineage.JumpPoint best = null;
 		double biggest = -Double.MAX_VALUE;
-		for (JumpPoint j : jumps) {
+		for (edu.utexas.cs.nn.evolution.lineage.JumpPoint j : jumps) {
 			if (j.jump > biggest) {
 				best = j;
 				biggest = j.jump;
@@ -1103,6 +1221,12 @@ public class Offspring {
 		return best;
 	}
 
+	/**
+	 * 
+	 * @param generation
+	 * @param objective
+	 * @return
+	 */
 	public static int numberOfImprovedOffspring(int generation, int objective) {
 		Offspring o = bestOfGeneration(generation - 1, objective);
 		double oldBest = o.scores.get(o.correspondingGenerations.indexOf(generation - 1)).get(objective);
@@ -1117,6 +1241,11 @@ public class Offspring {
 		return count;
 	}
 
+	/**
+	 * 
+	 * @param objective
+	 * @return
+	 */
 	public static ArrayList<Integer> numberOfImprovedOffspringByGeneration(int objective) {
 		int lastGen = lastGeneration();
 		ArrayList<Integer> result = new ArrayList<Integer>();
@@ -1126,6 +1255,12 @@ public class Offspring {
 		return result;
 	}
 
+	/**
+	 * 
+	 * @param panel
+	 * @param showInnovationNumbers
+	 * @return
+	 */
 	public TWEANNGenotype drawTWEANN(DrawingPanel panel, boolean showInnovationNumbers) {
 		System.out.println(xmlNetwork);
 		System.out.println(this);
@@ -1141,17 +1276,34 @@ public class Offspring {
 		return g;
 	}
 
+	/**
+	 * 
+	 * @param xml
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
 	public static Genotype<? extends Network> getGenotype(String xml) {
 		return (Genotype<? extends Network>) Easy.load(xml);
 	}
 
+	/**
+	 * 
+	 * @param panel
+	 * @param xml
+	 * @param showInnovationNumbers
+	 * @return
+	 */
 	public static TWEANNGenotype viewTWEANN(DrawingPanel panel, String xml, boolean showInnovationNumbers) {
 		TWEANNGenotype g = (TWEANNGenotype) getGenotype(xml);
 		g.getPhenotype().draw(panel, showInnovationNumbers);
 		return g;
 	}
 
+	/**
+	 * 
+	 * @param panel
+	 * @param scores
+	 */
 	public static void displayFitness(DrawingPanel panel, ArrayList<Double> scores) {
 		Graphics g = panel.getGraphics();
 		for (int i = 0; i < scores.size(); i++) {
@@ -1166,6 +1318,16 @@ public class Offspring {
 		}
 	}
 
+	/**
+	 * 
+	 * @param scores
+	 * @param viewingGen
+	 * @param label
+	 * @param id
+	 * @param currentId
+	 * @param obj1
+	 * @param obj2
+	 */
 	public static void displayScores(DrawingPanel scores, int viewingGen, boolean label, boolean id, long currentId,
 			int obj1, int obj2) {
 		int browseDim = Plot.BROWSE_DIM;
@@ -1251,14 +1413,29 @@ public class Offspring {
 		}
 	}
 
+	/**
+	 * 
+	 * @param x
+	 * @param index
+	 * @return
+	 */
 	private static int scale(double x, int index) {
 		return Plot.scale(x, maxes.get(index) - mins.get(index), mins.get(index));
 	}
 
+	/**
+	 * 
+	 * @param y
+	 * @param index
+	 * @return
+	 */
 	private static int invert(double y, int index) {
 		return (Plot.BROWSE_DIM - (2 * Plot.OFFSET)) - scale(y, index);
 	}
 
+	/**
+	 * 
+	 */
 	public static void browse() {
 		System.out.println("Browse");
 		int fitnessHeight = (maxes.size() + 3) * Plot.OFFSET;
@@ -1269,28 +1446,28 @@ public class Offspring {
 		int top = Plot.TOP;
 		DrawingPanel left = new DrawingPanel(browseDim, browseDim, "Parent 1");
 		DrawingPanel leftFitness = new DrawingPanel(browseDim, fitnessHeight, "Parent 1 Fitness");
-                leftFitness.setLocation(0, height);
+		leftFitness.setLocation(0, height);
 		DrawingPanel leftFront = new DrawingPanel(browseDim, browseDim, "Objective scores");
-                leftFront.setLocation(0, height + fitnessHeight + top);
+		leftFront.setLocation(0, height + fitnessHeight + top);
 		DrawingPanel leftInfo = new DrawingPanel(browseDim, browseDim, "Parent 1 Info");
 		leftInfo.setLocation(0, height + fitnessHeight + top + height);
 
 		DrawingPanel panel = new DrawingPanel(browseDim, browseDim, "Loaded Network");
 		panel.setLocation(browseDim + edge, 0);
 		DrawingPanel fitness = new DrawingPanel(browseDim, fitnessHeight, "Fitness");
-                fitness.setLocation(browseDim + edge, height);
+		fitness.setLocation(browseDim + edge, height);
 		DrawingPanel front = new DrawingPanel(browseDim, browseDim, "Objective scores");
-                front.setLocation(browseDim + edge, height + fitnessHeight + top);
-                DrawingPanel info = new DrawingPanel(browseDim, (int) (browseDim * 3.5), "Individual Info");
+		front.setLocation(browseDim + edge, height + fitnessHeight + top);
+		DrawingPanel info = new DrawingPanel(browseDim, (int) (browseDim * 3.5), "Individual Info");
 		info.setLocation(browseDim + edge, height + fitnessHeight + top + height);
 
 		DrawingPanel right = new DrawingPanel(browseDim, browseDim, "Parent 2");
 		right.setLocation(2 * (edge + browseDim), 0);
 		DrawingPanel rightFitness = new DrawingPanel(browseDim, fitnessHeight, "Parent 2 Fitness");
-                rightFitness.setLocation(2 * (edge + browseDim), height);
+		rightFitness.setLocation(2 * (edge + browseDim), height);
 		DrawingPanel rightFront = new DrawingPanel(browseDim, browseDim, "Objective scores");
-                rightFront.setLocation(2 * (edge + browseDim), height + fitnessHeight + top);
-                DrawingPanel rightInfo = new DrawingPanel(browseDim, browseDim, "Parent 2 Info");
+		rightFront.setLocation(2 * (edge + browseDim), height + fitnessHeight + top);
+		DrawingPanel rightInfo = new DrawingPanel(browseDim, browseDim, "Parent 2 Info");
 		rightInfo.setLocation(2 * (edge + browseDim), height + fitnessHeight + top + height);
 
 		DrawingPanel[] bests = new DrawingPanel[maxes.size()];
@@ -1302,16 +1479,29 @@ public class Offspring {
 		panel.getFrame().addKeyListener(new NetworkBrowser(panel, left, right, fitness, leftFitness, rightFitness,
 				front, leftFront, rightFront, bests, leftInfo, info, rightInfo));
 
-                while (true){ // Keep console open 
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException ex) {
-                        Logger.getLogger(Offspring.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
+		while (true){ // Keep console open 
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException ex) {
+				Logger.getLogger(Offspring.class.getName()).log(Level.SEVERE, null, ex);
+			}
+		}
 	}
 
-	private static void guardedDraw(long offspringId, DrawingPanel panel, boolean showInnovationNumbers,
+	/**
+	 * 
+	 * @param offspringId
+	 * @param panel
+	 * @param showInnovationNumbers
+	 * @param fitness
+	 * @param front
+	 * @param showScores
+	 * @param showIds
+	 * @param info
+	 * @param obj1
+	 * @param obj2
+	 */
+	public static void guardedDraw(long offspringId, DrawingPanel panel, boolean showInnovationNumbers,
 			DrawingPanel fitness, DrawingPanel front, boolean showScores, boolean showIds, DrawingPanel info, int obj1,
 			int obj2) {
 		if (offspringId != -1) {
@@ -1327,10 +1517,21 @@ public class Offspring {
 		}
 	}
 
+	/**
+	 * 
+	 * @param o
+	 * @param info
+	 */
 	public static void fillInfo(Offspring o, DrawingPanel info) {
 		fillInfo(o, info, null);
 	}
 
+	/**
+	 * 
+	 * @param o
+	 * @param info
+	 * @param ng
+	 */
 	public static void fillInfo(Offspring o, DrawingPanel info, Genotype<? extends Network> ng) {
 		int offset = Plot.OFFSET;
 
@@ -1348,6 +1549,10 @@ public class Offspring {
 		fillInputs(info, ng, 9);
 	}
 
+	/**
+	 * 
+	 * @param ng
+	 */
 	public static void fillInputs(Genotype<? extends Network> ng) {
 		DrawingPanel info;
 		if (TWEANN.inputPanel == null) {
@@ -1359,12 +1564,23 @@ public class Offspring {
 		fillInputs(info, ng);
 	}
 
+	/**
+	 * 
+	 * @param info
+	 * @param ng
+	 */
 	public static void fillInputs(DrawingPanel info, Genotype<? extends Network> ng) {
 		fillInputs(info, ng, 1);
 	}
-
+	//
 	public static int inputOffset = 9;
 
+	/**
+	 * 
+	 * @param info
+	 * @param ng
+	 * @param startY
+	 */
 	public static void fillInputs(DrawingPanel info, Genotype<? extends Network> ng, int startY) {
 		int offset = Plot.OFFSET;
 		inputOffset = startY;
@@ -1403,7 +1619,15 @@ public class Offspring {
 		}
 	}
 
-	private static void plotBestsWorsts(DrawingPanel panel, int gen, int objective, ArrayList<ArrayList<Double>> scores,
+	/**
+	 * 
+	 * @param panel
+	 * @param gen
+	 * @param objective
+	 * @param scores
+	 * @param focus
+	 */
+	public static void plotBestsWorsts(DrawingPanel panel, int gen, int objective, ArrayList<ArrayList<Double>> scores,
 			int focus) {
 		int offset = Plot.OFFSET;
 		int browseDim = Plot.BROWSE_DIM;
@@ -1450,6 +1674,11 @@ public class Offspring {
 		}
 	}
 
+	/**
+	 * 
+	 * @param offspring
+	 * @param bests
+	 */
 	public static void plotLineageScores(Offspring offspring, DrawingPanel[] bests) {
 		for (int i = 0; i < maxes.size(); i++) {
 			Offspring o = offspring;
@@ -1486,6 +1715,15 @@ public class Offspring {
 		}
 	}
 
+	/**
+	 * 
+	 * @param offspringScore
+	 * @param g1
+	 * @param bestScore
+	 * @param g2
+	 * @param drawingPanel
+	 * @param objective
+	 */
 	private static void drawScoreSegment(double offspringScore, int g1, double bestScore, int g2,
 			DrawingPanel drawingPanel, int objective) {
 		int offset = Plot.OFFSET;
