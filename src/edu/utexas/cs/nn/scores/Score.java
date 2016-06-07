@@ -13,17 +13,20 @@ import java.util.Arrays;
  * @author Jacob Schrum
  */
 public class Score<T> {
-
-	public int evals;// number of evals performed on this agent's score
-	public double[] scores;// array of different scores agent acquired in
-							// successive runs
-	public double[] otherStats;// array of other stats from domain pertinent to
-								// score
-	public double totalEvalTime = -1;// not sure what this is
-	public double averageEvalTime = -1;// not sure what this is
-	public Genotype<T> individual;// the genotype of the individual in question
-	public ArrayList<Double> behaviorVector;// the behavior actions available to
-											// the individual
+	// number of evals performed to determine this agent's score
+	public int evals;
+	// Array of scores in each objective
+	public double[] scores;
+	// array of other stats from domain pertinent to performance
+	public double[] otherStats;
+	// Measure of time the genotype was evaluated for across all evals
+	public double totalEvalTime = -1;
+	// Average time genotype was evaluated for per eval
+	public double averageEvalTime = -1;
+	// the genotype of the individual in question
+	public Genotype<T> individual;
+	// A behavior characterization optionally used with Behavioral Diversity
+	public ArrayList<Double> behaviorVector;
 
 	/**
 	 * Default constructor for Score object.
@@ -72,8 +75,7 @@ public class Score<T> {
 	 *            number of evaluations of the score to be performed.
 	 */
 
-	public Score(Genotype<T> individual, double[] scores, ArrayList<Double> behaviorVector, double[] otherStats,
-			int evals) {
+	public Score(Genotype<T> individual, double[] scores, ArrayList<Double> behaviorVector, double[] otherStats, int evals) {
 		this.evals = evals;
 		this.individual = individual;
 		this.scores = scores;
@@ -99,8 +101,7 @@ public class Score<T> {
 		assert(this.scores.length == other.scores.length);
 		assert(this.otherStats.length == other.otherStats.length);
 
-		Score<T> result = new Score<T>(individual, ArrayUtil.zipAdd(scores, other.scores), behaviorVector,
-				ArrayUtil.zipAdd(otherStats, other.otherStats));
+		Score<T> result = new Score<T>(individual, ArrayUtil.zipAdd(scores, other.scores), behaviorVector, ArrayUtil.zipAdd(otherStats, other.otherStats));
 		result.evals = this.evals + other.evals;
 		return result;
 	}
@@ -117,8 +118,7 @@ public class Score<T> {
 	 * @return: returns the score after dividing it
 	 */
 	public Score<T> divide(double x) {
-		Score<T> result = new Score<T>(individual, ArrayUtil.scale(scores, 1.0 / x), behaviorVector,
-				ArrayUtil.scale(otherStats, 1.0 / x));
+		Score<T> result = new Score<T>(individual, ArrayUtil.scale(scores, 1.0 / x), behaviorVector, ArrayUtil.scale(otherStats, 1.0 / x));
 		return result;
 	}
 
@@ -142,10 +142,8 @@ public class Score<T> {
 		double[] otherWeightedScores = ArrayUtil.scale(other.scores, (other.evals * 1.0) / (this.evals + other.evals));
 		double[] scoresAvg = ArrayUtil.zipAdd(thisWeightedScores, otherWeightedScores);
 
-		double[] thisWeightedOtherStats = ArrayUtil.scale(this.otherStats,
-				(this.evals * 1.0) / (this.evals + other.evals));
-		double[] otherWeightedOtherStats = ArrayUtil.scale(other.otherStats,
-				(other.evals * 1.0) / (this.evals + other.evals));
+		double[] thisWeightedOtherStats = ArrayUtil.scale(this.otherStats, (this.evals * 1.0) / (this.evals + other.evals));
+		double[] otherWeightedOtherStats = ArrayUtil.scale(other.otherStats, (other.evals * 1.0) / (this.evals + other.evals));
 		double[] otherStatsAvg = ArrayUtil.zipAdd(thisWeightedOtherStats, otherWeightedOtherStats);
 
 		Score<T> result = new Score<T>(individual, scoresAvg, behaviorVector, otherStatsAvg);
@@ -155,8 +153,7 @@ public class Score<T> {
 
 	// Copies the score.
 	public Score<T> copy() {
-		return new Score<T>(individual, Arrays.copyOf(scores, scores.length), behaviorVector,
-				Arrays.copyOf(otherStats, otherStats.length));
+		return new Score<T>(individual, Arrays.copyOf(scores, scores.length), behaviorVector, Arrays.copyOf(otherStats, otherStats.length));
 	}
 
 	// Getter method for number of previous scores calculated for agent.
@@ -228,8 +225,7 @@ public class Score<T> {
 		assert(this.scores.length == other.scores.length);
 		assert(this.otherStats.length == other.otherStats.length);
 
-		Score<T> result = new Score<T>(individual, ArrayUtil.zipMax(this.scores, other.scores), behaviorVector,
-				ArrayUtil.zipMax(this.otherStats, other.otherStats));
+		Score<T> result = new Score<T>(individual, ArrayUtil.zipMax(this.scores, other.scores), behaviorVector, ArrayUtil.zipMax(this.otherStats, other.otherStats));
 		result.evals = this.evals + other.evals;
 		return result;
 	}
