@@ -303,7 +303,7 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 		String[] labels = new String[width*height];
 		for (int y = 0; y < height; y++) {
 			for (int x = 0; x < width; x++) {
-				labels[x+y] = "Position " + x + ", " + y;
+				labels[x+(y*width)] = "Position " + x + ", " + y;
 			}
 		}
 		return labels;
