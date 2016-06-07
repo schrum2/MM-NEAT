@@ -5,6 +5,7 @@ import edu.utexas.cs.nn.data.SaveThread;
 import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
+import edu.utexas.cs.nn.evolution.lineage.Offspring;
 import edu.utexas.cs.nn.evolution.mutation.tweann.CauchyDeltaCodeMutation;
 import edu.utexas.cs.nn.evolution.nsga2.NSGA2;
 import edu.utexas.cs.nn.evolution.nsga2.NSGA2Score;
@@ -38,6 +39,96 @@ import wox.serial.Easy;
  */
 public class PopulationUtil {
 
+	public static int loadLineage() throws FileNotFoundException {
+		String base = Parameters.parameters.stringParameter("base");
+		String log =  Parameters.parameters.stringParameter("log");
+		int runNumber = Parameters.parameters.integerParameter("runNumber");//this one is being a butt. Isn't being set in the batch file and so can't be found from parameters
+		String saveTo = Parameters.parameters.stringParameter("saveTo");
+		//String loadFrom = Parameters.parameters.stringParameter("loadFrom");
+		String prefix = base + "/" + saveTo + runNumber + "/" + log + runNumber + "_";
+		String originalPrefix = base + "/" + saveTo + runNumber + "/" + log + runNumber + "_";
+		System.out.println("Prefix: " + prefix);
+		return loadLineage(originalPrefix + "Lineage_log.txt");
+	}
+	/**
+	 * Load offspring's lineage
+	 * @param filename name of lineage log file
+	 * @return generation # generations logged in file
+	 * @throws FileNotFoundException if lineage file cannot be found 
+	 */
+	public static int loadLineage(String filename) throws FileNotFoundException {
+		Scanner s = new Scanner(new File(filename));
+		int generation = 0;
+		while (s.hasNextLine()) {
+			String next = s.nextLine();
+			if (next.startsWith("--")) {
+				generation++;
+			} else {
+				Scanner pattern = new Scanner(next);
+				long parentId1 = pattern.nextLong();
+				long parentId2 = -1;
+				String symbol = pattern.next();
+				if (symbol.equals("X")) {
+					parentId2 = pattern.nextLong();
+					symbol = pattern.next();
+				}
+				if (symbol.equals("->")) {
+					long offspringId = pattern.nextLong();
+					Offspring.addOffspring(new Offspring(offspringId, parentId1, parentId2, generation));
+				} else {
+					System.out.println("WTF: " + symbol);
+					System.out.println("Format error");
+					System.exit(1);
+				}
+				pattern.close();
+			}
+		}
+		s.close();
+		return generation;
+	}
+	
+	public static long loadID() throws FileNotFoundException { 
+		String base = Parameters.parameters.stringParameter("base");
+		String log =  Parameters.parameters.stringParameter("log");
+		int runNumber = Parameters.parameters.integerParameter("runNumber");//this one is being a butt. Isn't being set in the batch file and so can't be found from parameters
+		String saveTo = Parameters.parameters.stringParameter("saveTo");
+		//String loadFrom = Parameters.parameters.stringParameter("loadFrom");
+		String prefix = base + "/" + saveTo + runNumber + "/" + log + runNumber + "_";
+		String originalPrefix = base + "/" + saveTo + runNumber + "/" + log + runNumber + "_";
+		System.out.println("Prefix: " + prefix);
+		return loadID(originalPrefix + "Lineage_log.txt");
+	}
+	public static long loadID(String filename) throws FileNotFoundException {
+		Scanner s = new Scanner(new File(filename));
+		int generation = 0;
+		long offspringId = -1;
+		while (s.hasNextLine()) {
+			String next = s.nextLine();
+			if (next.startsWith("--")) {
+				generation++;
+			} else {
+				Scanner pattern = new Scanner(next);
+				long parentId1 = pattern.nextLong();
+				long parentId2 = -1;
+				String symbol = pattern.next();
+				if (symbol.equals("X")) {
+					parentId2 = pattern.nextLong();
+					symbol = pattern.next();
+				}
+				if (symbol.equals("->")) {
+					offspringId = pattern.nextLong();
+					Offspring.addOffspring(new Offspring(offspringId, parentId1, parentId2, generation));
+				} else {
+					System.out.println("WTF: " + symbol);
+					System.out.println("Format error");
+					System.exit(1);
+				}
+				pattern.close();
+			}
+		}
+		s.close();
+		return offspringId;
+	}
 	public static <T> void saveCurrentGen(ArrayList<Score<T>> bestScores) {
 		int currentGen = MMNEAT.ea.currentGeneration();
 		String filePrefix = "gen" + currentGen + "_";

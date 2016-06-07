@@ -18,6 +18,7 @@ import edu.utexas.cs.nn.scores.Score;
 import edu.utexas.cs.nn.tasks.LonerTask;
 import edu.utexas.cs.nn.tasks.picbreeder.PicbreederTask;
 import edu.utexas.cs.nn.util.GraphicsUtil;
+import edu.utexas.cs.nn.util.PopulationUtil;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -742,42 +743,7 @@ public class Offspring {
 		lineage.set(index, o);
 	}
 
-	/**
-	 * Load offspring's lineage
-	 * @param filename name of file
-	 * @return generation # offspring created(?)
-	 * @throws FileNotFoundException if lineage file cannot be found 
-	 */
-	public static int loadLineage(String filename) throws FileNotFoundException {
-		Scanner s = new Scanner(new File(filename));
-		int generation = 0;
-		while (s.hasNextLine()) {
-			String next = s.nextLine();
-			if (next.startsWith("--")) {
-				generation++;
-			} else {
-				Scanner pattern = new Scanner(next);
-				long parentId1 = pattern.nextLong();
-				long parentId2 = -1;
-				String symbol = pattern.next();
-				if (symbol.equals("X")) {
-					parentId2 = pattern.nextLong();
-					symbol = pattern.next();
-				}
-				if (symbol.equals("->")) {
-					long offspringId = pattern.nextLong();
-					addOffspring(new Offspring(offspringId, parentId1, parentId2, generation));
-				} else {
-					System.out.println("WTF: " + symbol);
-					System.out.println("Format error");
-					System.exit(1);
-				}
-				pattern.close();
-			}
-		}
-		s.close();
-		return generation;
-	}
+
 
 	/**
 	 * Adds information about mutations done to offspring 
@@ -898,6 +864,8 @@ public class Offspring {
 	 * @param loadFrom
 	 * @param includeChildren
 	 * @throws FileNotFoundException
+	 * 
+		fillInLineage("asexual", "DetDLMMR", 2, "Asexual-DetDLMMR", "DetDLMMR", true);
 	 */
 	public static void fillInLineage(String base, String saveTo, int run, String log, String loadFrom, boolean includeChildren) throws FileNotFoundException {
 		Parameters.parameters.setBoolean("erasePWTrails", false);
@@ -911,7 +879,7 @@ public class Offspring {
 		String originalPrefix = base + "/" + loadFrom + run + "/" + log.replace(saveTo, loadFrom) + run + "_";
 		System.out.println("Prefix: " + prefix);
 		// Parameters.initializeParameterCollections(prefix + "parameters.txt");
-		int numGenerations = loadLineage(originalPrefix + "Lineage_log.txt");
+		int numGenerations = PopulationUtil.loadLineage();
 		System.out.println("---Lineage Loaded (" + numGenerations + " generations)-----------");
 		addMutationInformation(originalPrefix + "Mutations_log.txt");
 		System.out.println("---Mutation Information Added-----------");

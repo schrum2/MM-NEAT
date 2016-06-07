@@ -57,6 +57,7 @@ import edu.utexas.cs.nn.tasks.testmatch.MatchDataTask;
 import edu.utexas.cs.nn.tasks.ut2004.UT2004Task;
 import edu.utexas.cs.nn.tasks.vizdoom.VizDoomTask;
 import edu.utexas.cs.nn.util.ClassCreation;
+import edu.utexas.cs.nn.util.MiscUtil;
 import edu.utexas.cs.nn.util.PopulationUtil;
 import edu.utexas.cs.nn.util.file.FileUtilities;
 import edu.utexas.cs.nn.util.random.RandomGenerator;
@@ -864,7 +865,7 @@ public class MMNEAT {
 
 			int run = Integer.parseInt(value);
 			args[0] = "runNumber:" + run;
-			Parameters.initializeParameterCollections(args); // file should exist
+			Parameters.initializeParameterCollections(args); // file should exist			
 			System.out.println("Params loaded");
 			String saveTo = Parameters.parameters.stringParameter("saveTo");
 			String loadFrom = Parameters.parameters.stringParameter("loadFrom");
