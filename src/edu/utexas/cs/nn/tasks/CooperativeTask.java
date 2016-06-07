@@ -13,7 +13,7 @@ import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
 import edu.utexas.cs.nn.evolution.lineage.Offspring;
 import edu.utexas.cs.nn.evolution.mulambda.CooperativeCoevolutionMuLambda;
 import edu.utexas.cs.nn.graphics.DrawingPanel;
-import edu.utexas.cs.nn.log.MONELog;
+import edu.utexas.cs.nn.log.MMNEATLog;
 import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
@@ -45,13 +45,13 @@ public abstract class CooperativeTask implements MultiplePopulationTask {
 	 * so that it doesn't have to be recreated each time, merely reshuffled.
 	 */
 	private ArrayList<ArrayList<Integer>> joinOrder = null;
-	public MONELog teamLog;
+	public MMNEATLog teamLog;
 	private final boolean bestTeamScore;
 
 	public CooperativeTask() {
 		this.teams = Parameters.parameters.integerParameter("teams");
 		if (Parameters.parameters.booleanParameter("io") && Parameters.parameters.booleanParameter("teamLog")) {
-			this.teamLog = new MONELog("Teams", true);
+			this.teamLog = new MMNEATLog("Teams", true);
 		}
 		TWEANN.NETWORK_VIEW_DIM = 800 / 5; // Why these magic numbers? Why not 160?
 		this.bestTeamScore = Parameters.parameters.booleanParameter("bestTeamScore");

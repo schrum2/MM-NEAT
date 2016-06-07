@@ -14,7 +14,7 @@ import java.util.Arrays;
  * @author Jacob Schrum
  * @commented Lauren Gillespie
  */
-public abstract class StatisticsLog<T> extends MONELog {
+public abstract class StatisticsLog<T> extends MMNEATLog {
 
 	public ArrayList<ArrayList<Double>> allMins, allMaxes, allAverages;
 	public double[] overallMaxes;
@@ -22,7 +22,7 @@ public abstract class StatisticsLog<T> extends MONELog {
 	boolean draw = Parameters.parameters.booleanParameter("watchFitness");
 
 	/**
-	 * Constructor for a statistics log. Uses inherited MONELog
+	 * Constructor for a statistics log. Uses inherited MMNEATLog
 	 * 
 	 * @param infix
 	 *            name of file

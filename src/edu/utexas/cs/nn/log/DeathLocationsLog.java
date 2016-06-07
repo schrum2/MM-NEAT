@@ -16,7 +16,7 @@ import java.util.Scanner;
  *
  * @author Jacob
  */
-public class DeathLocationsLog extends MONELog {
+public class DeathLocationsLog extends MMNEATLog {
 
 	private HashMap<Integer, HashMap<Integer, ArrayList<Integer>>> intensities = null;
 	private HashMap<Integer, ArrayList<Integer>> sortedKeys = null;

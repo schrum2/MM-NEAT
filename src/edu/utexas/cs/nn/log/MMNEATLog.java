@@ -16,7 +16,7 @@ import java.util.Scanner;
  * @author Jacob Schrum
  * @Commented Lauren Gillespie
  */
-public class MONELog {
+public class MMNEATLog {
 
 	protected PrintStream stream;
 	protected String directory;
@@ -29,7 +29,7 @@ public class MONELog {
 	 * @param infix
 	 *            name of log file
 	 */
-	public MONELog(String infix) {
+	public MMNEATLog(String infix) {
 		this(infix, false);
 	}
 
@@ -41,11 +41,11 @@ public class MONELog {
 	 * @param batches
 	 *            whether or not there are multiple batches of files
 	 */
-	public MONELog(String infix, boolean batches) {
+	public MMNEATLog(String infix, boolean batches) {
 		this(infix, batches, false, false);
 	}
         
-        public MONELog(String infix, boolean batches, boolean unlimited) {
+        public MMNEATLog(String infix, boolean batches, boolean unlimited) {
 		this(infix, batches, unlimited, false);
 	}
 
@@ -62,7 +62,7 @@ public class MONELog {
          * @param restricted
          *            true if there may be an unusually small number of entries per generation
 	 */
-	public MONELog(String infix, boolean batches, boolean unlimited, boolean restricted) {
+	public MMNEATLog(String infix, boolean batches, boolean unlimited, boolean restricted) {
                 if(unlimited) System.out.println(infix + " allows unlimited logging");
                 if(restricted) System.out.println(infix + " restricted logging");
 		if (Parameters.parameters.booleanParameter("logLock")) {

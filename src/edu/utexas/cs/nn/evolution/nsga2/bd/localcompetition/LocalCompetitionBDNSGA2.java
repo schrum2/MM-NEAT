@@ -2,7 +2,7 @@ package edu.utexas.cs.nn.evolution.nsga2.bd.localcompetition;
 
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.evolution.nsga2.bd.BDNSGA2;
-import edu.utexas.cs.nn.log.MONELog;
+import edu.utexas.cs.nn.log.MMNEATLog;
 import edu.utexas.cs.nn.scores.MultiObjectiveScore;
 import edu.utexas.cs.nn.scores.Score;
 import edu.utexas.cs.nn.util.ClassCreation;
@@ -18,7 +18,7 @@ import java.util.ArrayList;
  */
 public class LocalCompetitionBDNSGA2<T> extends BDNSGA2<T> {
 
-	private MONELog nicheLog;
+	private MMNEATLog nicheLog;
 	private NicheDefinition<T> nicheDefinition;
 
 	// Track number of niches and sizes
@@ -32,7 +32,7 @@ public class LocalCompetitionBDNSGA2<T> extends BDNSGA2<T> {
 			System.exit(1);
 		}
 		if (writeOutput) {
-			nicheLog = new MONELog("Niches");
+			nicheLog = new MMNEATLog("Niches");
 		}
 	}
 

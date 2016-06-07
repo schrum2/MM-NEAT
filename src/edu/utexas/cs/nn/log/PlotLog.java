@@ -10,7 +10,7 @@ import java.util.ArrayList;
  *
  * @author Jacob Schrum
  */
-public class PlotLog extends MONELog {
+public class PlotLog extends MMNEATLog {
 
 	public PlotLog(String name, ArrayList<String> labels) {
 		super(name);

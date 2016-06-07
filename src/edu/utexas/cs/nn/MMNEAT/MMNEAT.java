@@ -18,7 +18,7 @@ import edu.utexas.cs.nn.experiment.Experiment;
 import edu.utexas.cs.nn.experiment.SinglePopulationGenerationalEAExperiment;
 import edu.utexas.cs.nn.graphics.DrawingPanel;
 import edu.utexas.cs.nn.log.EvalLog;
-import edu.utexas.cs.nn.log.MONELog;
+import edu.utexas.cs.nn.log.MMNEATLog;
 import edu.utexas.cs.nn.log.PerformanceLog;
 import edu.utexas.cs.nn.networks.ActivationFunctions;
 import edu.utexas.cs.nn.networks.NetworkTask;
@@ -112,7 +112,7 @@ public class MMNEAT {
 	public static TWEANNGenotype sharedPreferenceNetwork = null;
 	public static EvalLog evalReport = null;
 	public static RandomGenerator weightPerturber = null;
-	public static MONELog ghostLocationsOnPowerPillEaten = null;
+	public static MMNEATLog ghostLocationsOnPowerPillEaten = null;
         public static boolean browseLineage = false;
 
 	public static ArrayList<String> fitnessPlusMetaheuristics() {
@@ -163,7 +163,7 @@ public class MMNEAT {
 
 	public static void setupMsPacmanParameters() {
 		if (Parameters.parameters.booleanParameter("logGhostLocOnPowerPill")) {
-			ghostLocationsOnPowerPillEaten = new MONELog("PowerPillToGhostLocationMapping");
+			ghostLocationsOnPowerPillEaten = new MMNEATLog("PowerPillToGhostLocationMapping");
 		}
 
 		Constants.NUM_LIVES = Parameters.parameters.integerParameter("pacmanLives");

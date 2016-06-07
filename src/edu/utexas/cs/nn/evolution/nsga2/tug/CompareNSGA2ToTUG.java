@@ -3,7 +3,7 @@ package edu.utexas.cs.nn.evolution.nsga2.tug;
 import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.evolution.nsga2.NSGA2Score;
-import edu.utexas.cs.nn.log.MONELog;
+import edu.utexas.cs.nn.log.MMNEATLog;
 import edu.utexas.cs.nn.scores.Score;
 import edu.utexas.cs.nn.util.PopulationUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
@@ -21,11 +21,11 @@ import java.util.Random;
 public class CompareNSGA2ToTUG<T> extends TUGNSGA2<T> {
 
 	public static final boolean GHOSTS_ONLY = true;
-	MONELog compareLog;
+	MMNEATLog compareLog;
 
 	public CompareNSGA2ToTUG() {
 		super();
-		compareLog = new MONELog("CompareNSGA2ToTUG", true);
+		compareLog = new MMNEATLog("CompareNSGA2ToTUG", true);
 	}
 
 	@Override

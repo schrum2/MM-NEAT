@@ -4,7 +4,7 @@ import edu.utexas.cs.nn.evolution.crossover.network.CombiningTWEANNCrossover;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype.NodeGene;
-import edu.utexas.cs.nn.log.MONELog;
+import edu.utexas.cs.nn.log.MMNEATLog;
 import edu.utexas.cs.nn.log.TWEANNLog;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.selectiveBreeding.SelectiveBreedingEA;
@@ -44,8 +44,8 @@ public class EvolutionaryHistory {
 	public static int[] archetypeOut = null;
 	// logs that keep track of history of genotype
 	public static TWEANNLog tweannLog = null;
-	public static MONELog mutationLog = null;
-	public static MONELog lineageLog = null;
+	public static MMNEATLog mutationLog = null;
+	public static MMNEATLog lineageLog = null;
 
 	/**
 	 * Commonly used/shared networks (hierarchical architectures). Raw types are
@@ -275,8 +275,8 @@ public class EvolutionaryHistory {
 	 */
 	public static void initLineageAndMutationLogs() {
                 // Seective breeding allows for an unusual number of log lines per generation
-		mutationLog = new MONELog("Mutations", true, false, MMNEAT.ea instanceof SelectiveBreedingEA);
-		lineageLog = new MONELog("Lineage", true, false, MMNEAT.ea instanceof SelectiveBreedingEA);
+		mutationLog = new MMNEATLog("Mutations", true, false, MMNEAT.ea instanceof SelectiveBreedingEA);
+		lineageLog = new MMNEATLog("Lineage", true, false, MMNEAT.ea instanceof SelectiveBreedingEA);
 	}
 
 	/**

@@ -1,7 +1,7 @@
 package pacman;
 
 import edu.utexas.cs.nn.log.DeathLocationsLog;
-import edu.utexas.cs.nn.log.MONELog;
+import edu.utexas.cs.nn.log.MMNEATLog;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.mspacman.agentcontroller.pacman.StaticPacManController;
 import edu.utexas.cs.nn.tasks.mspacman.data.ScentPath;
@@ -36,8 +36,8 @@ import pacman.game.GameView;
 public class Executor {
 
 	public static boolean logOutput;
-	public static MONELog watch;
-	public static MONELog noWatch;
+	public static MMNEATLog watch;
+	public static MMNEATLog noWatch;
 	public static DeathLocationsLog deaths = null;
 
 	public Executor() {
@@ -48,8 +48,8 @@ public class Executor {
 			deaths = new DeathLocationsLog();
 		}
 		if (!saveTo.isEmpty() && logOutput && watch == null && noWatch == null) {
-			watch = new MONELog("EvalPacMan-WatchScores");
-			noWatch = new MONELog("EvalPacMan-NoWatchScores");
+			watch = new MMNEATLog("EvalPacMan-WatchScores");
+			noWatch = new MMNEATLog("EvalPacMan-NoWatchScores");
 		}
 	}
 
