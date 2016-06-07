@@ -42,12 +42,10 @@ public class PopulationUtil {
 	public static int loadLineage() throws FileNotFoundException {
 		String base = Parameters.parameters.stringParameter("base");
 		String log =  Parameters.parameters.stringParameter("log");
-		int runNumber = Parameters.parameters.integerParameter("runNumber");//this one is being a butt. Isn't being set in the batch file and so can't be found from parameters
+		int runNumber = Parameters.parameters.integerParameter("runNumber");
 		String saveTo = Parameters.parameters.stringParameter("saveTo");
 		//String loadFrom = Parameters.parameters.stringParameter("loadFrom");
-		String prefix = base + "/" + saveTo + runNumber + "/" + log + runNumber + "_";
 		String originalPrefix = base + "/" + saveTo + runNumber + "/" + log + runNumber + "_";
-		System.out.println("Prefix: " + prefix);
 		return loadLineage(originalPrefix + "Lineage_log.txt");
 	}
 	/**
@@ -57,6 +55,7 @@ public class PopulationUtil {
 	 * @throws FileNotFoundException if lineage file cannot be found 
 	 */
 	public static int loadLineage(String filename) throws FileNotFoundException {
+		System.out.println("Load lineage from: " + filename);
 		Scanner s = new Scanner(new File(filename));
 		int generation = 0;
 		while (s.hasNextLine()) {

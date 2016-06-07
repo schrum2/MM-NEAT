@@ -83,9 +83,9 @@ public class Offspring {
 		private int position;
 		private int previousPosition;
 		private int viewingGen;
-		private ArrayList<edu.utexas.cs.nn.evolution.lineage.JumpPoint> jumpInBest;
+		private ArrayList<JumpPoint> jumpInBest;
 		private Genotype<? extends Network> g;
-		private edu.utexas.cs.nn.evolution.lineage.JumpPoint lastJumpPoint;
+		private JumpPoint lastJumpPoint;
 
 		/**
 		 * NetworkBrowser constructor
@@ -715,7 +715,7 @@ public class Offspring {
 	 * @param offspringId ID of network to add
 	 * @param filePrefix prefix of xml file where network info is stored
 	 * @param gen gen # 
-	 * @param withinGen what gen of offspring network located in  
+	 * @param withinGen population slot within that generation
 	 */
 	public static void addNetwork(long offspringId, String filePrefix, int gen, int withinGen) {
 		Offspring o = lineage.get((int) offspringId);
@@ -730,16 +730,16 @@ public class Offspring {
 	 */
 	public static void addOffspring(Offspring o) {
 		while (lineage.size() <= o.offspringId) {
-			lineage.add(null); // <-- SMEG: I think this is problematic
+			lineage.add(null); // problematic?
 		}
 		int index = (int) o.offspringId;
-//		if (lineage.get(index) != null) {
-//			System.out.println("Already filled!");
-//			System.out.println("Index " + index);
-//			System.out.println("Contains: " + lineage.get(index));
-//			System.out.println("Replace : " + o);
-//			System.exit(1);
-//		}
+		if (lineage.get(index) != null) {
+			System.out.println("Already filled!");
+			System.out.println("Index " + index);
+			System.out.println("Contains: " + lineage.get(index));
+			System.out.println("Replace : " + o);
+			System.exit(1);
+		}
 		lineage.set(index, o);
 	}
 

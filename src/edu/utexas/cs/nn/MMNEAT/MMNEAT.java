@@ -114,7 +114,9 @@ public class MMNEAT {
 	public static EvalLog evalReport = null;
 	public static RandomGenerator weightPerturber = null;
 	public static MMNEATLog ghostLocationsOnPowerPillEaten = null;
-        public static boolean browseLineage = false;
+	public static boolean browseLineage = false;
+
+	public static MMNEAT mmneat;
 
 	public static ArrayList<String> fitnessPlusMetaheuristics() {
 		ArrayList<String> result = (ArrayList<String>) fitnessFunctions.clone();
@@ -897,7 +899,7 @@ public class MMNEAT {
 
 	private static void evolutionaryRun(String[] args) {
 		// Commandline
-		MMNEAT mmneat = new MMNEAT(args);
+		mmneat = new MMNEAT(args);
 		if (CommonConstants.replayPacman) {
 			if (CommonConstants.showNetworks) {
 				String replayNetwork = Parameters.parameters.stringParameter("replayNetwork");
@@ -928,7 +930,7 @@ public class MMNEAT {
 		closeLogs();
 	}
 
-	private static void closeLogs() {
+	public static void closeLogs() {
 		if (performanceLog != null) {
 			performanceLog.close();
 		}

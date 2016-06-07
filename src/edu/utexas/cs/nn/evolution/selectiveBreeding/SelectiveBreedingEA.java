@@ -7,6 +7,7 @@ import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
 import edu.utexas.cs.nn.evolution.SinglePopulationGenerationalEA;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
+import edu.utexas.cs.nn.evolution.lineage.Offspring;
 import edu.utexas.cs.nn.log.FitnessLog;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
@@ -32,6 +33,8 @@ public class SelectiveBreedingEA<T> implements SinglePopulationGenerationalEA<T>
 	private double crossoverRate;
 
 	protected FitnessLog<T> keeperLog;
+	
+	public static ArrayList<Offspring> offspring;
 	/**
 	 * default Constructor
 	 */
@@ -110,9 +113,12 @@ public class SelectiveBreedingEA<T> implements SinglePopulationGenerationalEA<T>
 	 */
 	@Override
 	public ArrayList<Genotype<T>> getNextGeneration(ArrayList<Genotype<T>> population) {
+		
 		int size = population.size();
 		ArrayList<Genotype<T>> children = new ArrayList<Genotype<T>>();
 		ArrayList<Score<T>> scores = task.evaluateAll(population);
+
+		offspring = new ArrayList<Offspring>();
 		for(int i = scores.size() - 1; i >= 0 ; i--) {
 			if(scores.get(i).scores[0] < 1.0) {//not sure if able to assume only one score in array
 				scores.remove(i); 
@@ -125,27 +131,30 @@ public class SelectiveBreedingEA<T> implements SinglePopulationGenerationalEA<T>
 			long parentId1 = -1;
 			long parentId2 = -1;
 
-                        Genotype<T> parent1 = scores.get(RandomNumbers.randomGenerator.nextInt(scores.size())).individual;
+			Genotype<T> parent1 = scores.get(RandomNumbers.randomGenerator.nextInt(scores.size())).individual;
 			parentId1 = parent1.getId();
 			Genotype<T> g1 = parent1.copy();
 			if (mating && RandomNumbers.randomGenerator.nextDouble() < crossoverRate) {
-                                Genotype<T> parent2 = scores.get(RandomNumbers.randomGenerator.nextInt(scores.size())).individual;
-                                parentId2 = parent2.getId();
-                                Genotype<T> g2 = parent2.copy();
+				Genotype<T> parent2 = scores.get(RandomNumbers.randomGenerator.nextInt(scores.size())).individual;
+				parentId2 = parent2.getId();
+				Genotype<T> g2 = parent2.copy();
 				Genotype<T> offspring1 = g1.crossover(g2);
 				offspring1.mutate();
 				children.add(offspring1);
 				i++;
 				EvolutionaryHistory.logLineageData(parentId1 + " X " + parentId2 + " -> " + offspring1.getId());
+				offspring.add(new Offspring(offspring1.getId(), parentId1, parentId2, generation));
 			}
 			if(i < size) {
 				g1.mutate();
 				children.add(g1);
-                                if (parentId2 == -1) {
-                                        EvolutionaryHistory.logLineageData(parentId1 + " -> " + g1.getId());
-                                } else {
-                                        EvolutionaryHistory.logLineageData(parentId1 + " X " + parentId2 + " -> " + g1.getId());
-                                }
+				if (parentId2 == -1) {
+					EvolutionaryHistory.logLineageData(parentId1 + " -> " + g1.getId());
+					offspring.add(new Offspring(g1.getId(), parentId1, generation));
+				} else {
+					EvolutionaryHistory.logLineageData(parentId1 + " X " + parentId2 + " -> " + g1.getId());
+					offspring.add(new Offspring(g1.getId(), parentId1, parentId2, generation));
+				}
 			}
 		}
 		logInfo(scores);
