@@ -733,13 +733,13 @@ public class Offspring {
 			lineage.add(null); // <-- SMEG: I think this is problematic
 		}
 		int index = (int) o.offspringId;
-		if (lineage.get(index) != null) {
-			System.out.println("Already filled!");
-			System.out.println("Index " + index);
-			System.out.println("Contains: " + lineage.get(index));
-			System.out.println("Replace : " + o);
-			System.exit(1);
-		}
+//		if (lineage.get(index) != null) {
+//			System.out.println("Already filled!");
+//			System.out.println("Index " + index);
+//			System.out.println("Contains: " + lineage.get(index));
+//			System.out.println("Replace : " + o);
+//			System.exit(1);
+//		}
 		lineage.set(index, o);
 	}
 

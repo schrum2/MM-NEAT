@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -13,8 +14,10 @@ import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
+import edu.utexas.cs.nn.evolution.GenerationalEA;
 import edu.utexas.cs.nn.evolution.SinglePopulationGenerationalEA;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
+import edu.utexas.cs.nn.evolution.lineage.Offspring;
 import edu.utexas.cs.nn.graphics.DrawingPanel;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.networks.NetworkTask;
@@ -24,6 +27,7 @@ import edu.utexas.cs.nn.scores.Score;
 import edu.utexas.cs.nn.tasks.SinglePopulationTask;
 import edu.utexas.cs.nn.util.BooleanUtil;
 import edu.utexas.cs.nn.util.GraphicsUtil;
+import edu.utexas.cs.nn.util.PopulationUtil;
 
 /**
  * Implementation of picbreeder that uses Java Swing components for graphical interface
@@ -429,7 +433,12 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		} else if(scoreIndex == NETWORK_BUTTON_INDEX) {//If network button clicked
 			setNetwork();
 		} else if(scoreIndex == UNDO_BUTTON_INDEX) {//If undo button clicked
-			setUndo();
+			try {
+				setUndo();
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}else if(scoreIndex == EVOLVE_BUTTON_INDEX && BooleanUtil.any(chosen)) {//If evolve button clicked
 			waitingForUser = false;//tells evaluateAll method to finish
 		} else if(scoreIndex >= IMAGE_BUTTON_INDEX) {//If an image button clicked
@@ -444,8 +453,12 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		
 	}
 
-	private void setUndo() {
-		// TODO Auto-generated method stub
+	private void setUndo() throws FileNotFoundException {
+		Offspring offspring = new Offspring(PopulationUtil.loadID(), PopulationUtil.loadLineage());
+		GenerationalEA ea = MMNEAT.ea;
+		//int prevGen = offspring.generation - 1;
+		//offspring.getGenotype(xml);
+		System.out.println("offspring to string prints out: " + "offspring.toString()");
 		
 	}
 }
