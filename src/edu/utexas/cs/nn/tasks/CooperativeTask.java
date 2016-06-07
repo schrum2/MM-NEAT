@@ -138,9 +138,9 @@ public abstract class CooperativeTask implements MultiplePopulationTask {
 
 		// Go through each population
 		for(int j = 0; j < pops; j ++){
-			bestObjectives[j] = new double[objectivesPerPopulation().length];
-			bestGenotypes[j] = new Genotype[bestObjectives.length];
-			bestScores[j] = new Score[bestObjectives.length]; 
+			bestObjectives[j] = new double[objectivesPerPopulation()[j]];
+			bestGenotypes[j] = new Genotype[bestObjectives[j].length];
+			bestScores[j] = new Score[bestObjectives[j].length]; 
 		}
 
 		for (int i = 0; i < totalEvals; i++) {
@@ -192,7 +192,7 @@ public abstract class CooperativeTask implements MultiplePopulationTask {
 				int currentGen = MMNEAT.ea.currentGeneration();
 				String filePrefix = "gen" + currentGen + "_";
 				// Save best in each objective
-				String bestDir = FileUtilities.getSaveDirectory() + "/pop" + i +"_bestObjectives";
+				String bestDir = FileUtilities.getSaveDirectory() + "/pop" + i + "_bestObjectives";
 				File dir = new File(bestDir);
 				// Delete old contents/team
 				if (dir.exists() && !Parameters.parameters.booleanParameter("saveAllChampions")) {

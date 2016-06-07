@@ -38,15 +38,15 @@ public class ObjectiveBestTeamsExperiment<T> implements Experiment {
 				//go for the number of objectives for this population
 				for(int j = 0; j < ((CooperativeTask) MMNEAT.task).objectivesPerPopulation()[i]; j++) {
 					int lastGen = Parameters.parameters.integerParameter("lastSavedGeneration");
-					String file = FileUtilities.getSaveDirectory() + "/bestObjectives/gen" + lastGen + "_bestIn"+j+".xml";
+					String file = FileUtilities.getSaveDirectory() + "/pop" + i + "_bestObjectives/gen" + lastGen + "_bestIn"+j+".xml";
 					genotypes.get(i).add((Genotype<T>) PopulationUtil.extractGenotype(file));
 				}
 			}
 		}else {
-			String dir = FileUtilities.getSaveDirectory() + "/bestObjectives";
-			//for(int i = 0; i < ((CooperativeTask) MMNEAT.task).numberOfPopulations(); i++)
-				//TODO: what here? instead of: genotypes = PopulationUtil.load(dir);
-				//genotypes.get(i) = PopulationUtil.load(dir);
+			for(int i = 0; i < ((CooperativeTask) MMNEAT.task).numberOfPopulations(); i++){
+				String dir = FileUtilities.getSaveDirectory() + "/pop" + i + "_bestObjectives";
+				genotypes.add(PopulationUtil.load(dir));
+			}
 		}
 	}
 

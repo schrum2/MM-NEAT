@@ -271,6 +271,7 @@ public class Parameters {
 		booleanOptions.add("hyperNEAT", false, "Use the HyperNEAT version of the task (requires HyperNEATCPPNGenotype)");
 		booleanOptions.add("saveAllChampions", false, "saves all champions of each generation");
 		booleanOptions.add("watchLastBest", false, "shows best result from last generation");
+		booleanOptions.add("watchLastBestOfTeams", false, "shows best result from each population from last generation (coevolution)");
 		booleanOptions.add("logChildScores", false, "For Mu/Lambda approaches that generate separate parent/child populations, indicates whether to log child info");
 		booleanOptions.add("overrideImageSize", false, "For image match task, draw CPPNs with different size than actual image size");
 		booleanOptions.add("logTWEANNData", false, "Whether or not to log TWEANN data");

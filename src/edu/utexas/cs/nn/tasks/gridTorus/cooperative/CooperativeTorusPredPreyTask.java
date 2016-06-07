@@ -91,26 +91,13 @@ public abstract class CooperativeTorusPredPreyTask<T extends Network> extends Co
 	public String[] sensorLabels() {
 		//Can't just use the lonerTask version of this method, it crashes
 		//array of evolved agents is not defined
-
+		
+		//This works because preyEvolve is a parameter from the child classes in
+		//the regular, lonerTask version 
+		//(one of these child classes become the task for this cooperative task too)
 
 		return task.preyEvolve ? (new NNTorusPredPreyController(null,false)).sensorLabels()
 				: (new NNTorusPredPreyController(null,true)).sensorLabels();
-
-		//So defining the sensorLabels here instead
-		//		int numInputs = 0;
-		//		int numPreds = Parameters.parameters.integerParameter("torusPredators");
-		//		int numPrey = Parameters.parameters.integerParameter("torusPreys");
-		//		
-		//		String[] labels = null;
-		//		if (Parameters.parameters.booleanParameter("torusSenseTeammates")) {
-		//			numInputs = numPreds + numPrey;
-		//		} else {
-		//			numInputs = task.preyEvolve ? numPreds : numPrey;
-		//		}
-		//
-		//		get the actual labels, such as (numPredators, "Pred"), depending on parameters and task
-		//		labels =
-		//		return labels;
 	}
 
 	/**
