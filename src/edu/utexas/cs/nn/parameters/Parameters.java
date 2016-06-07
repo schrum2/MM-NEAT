@@ -267,6 +267,7 @@ public class Parameters {
 		longOptions.add("lastInnovation", 0l, "Highest innovation number used so far");
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
 		// Boolean parameters
+		booleanOptions.add("doomFullScreenInput", false, "Detemines if we should use all of the screen inputs or just the given row");
 		booleanOptions.add("hyperNEAT", false, "Use the HyperNEAT version of the task (requires HyperNEATCPPNGenotype)");
 		booleanOptions.add("saveAllChampions", false, "saves all champions of each generation");
 		booleanOptions.add("watchLastBest", false, "shows best result from last generation");
@@ -354,6 +355,7 @@ public class Parameters {
 		booleanOptions.add("randomArgMaxTieBreak", true, "Whenever multiple options have same value in argmax, pick random choice");
 		booleanOptions.add("reachabilityReportsBuffers", false, "Reachability sensors give a sense of how safe a location is rather than just saying safe or not safe");
 		booleanOptions.add("stepByStepPacMan", false, "Pacman time step only advances when Enter is pressed");
+		booleanOptions.add("stepByStepVizDoom", false, "VizDoom time step only advances when Enter is pressed");
 		booleanOptions.add("logDeathLocations", false, "Write to file every location where a pacman death occurs");
 		booleanOptions.add("pacManSensorCaching", true, "Allows multiple networks to use same sensors without recalculating");
 		booleanOptions.add("ghostRegretFitness", false, "Include negative fitness for ghosts that pacman fails to eat");
