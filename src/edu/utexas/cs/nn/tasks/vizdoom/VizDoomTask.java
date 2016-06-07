@@ -176,7 +176,13 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 			// This r seems worthless ... does it give any information?
 			// My hunch is that it picks the action, but I don't think we have to do anything with it? Make action returns a double for some reason.
 			// I'll take out the r for now -Gab
-			// MiscUtil.waitForReadStringAndEnterKeyPress();
+			if(Parameters.parameters.booleanParameter("stepByStepVizDoom")){
+				 MiscUtil.waitForReadStringAndEnterKeyPress();	
+			}
+		}
+		if(CommonConstants.watch){
+			System.out.print("Press enter to continue");
+			MiscUtil.waitForReadStringAndEnterKeyPress();
 		}
 		// TODO: Make this reward calculation more general, allow for multiple objectives
 		return new Pair<double[], double[]>(new double[] { game.getTotalReward() }, new double[] {});
@@ -268,6 +274,43 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 		return labels;
 	}
 
+	
+	/**
+	 * Get scaled intensity values for a specific color from the entire
+	 * image of the current game state.
+	 * 
+	 * @param s game state
+	 * @param row row on screen
+	 * @param colorIndex RED_INDEX, GREEN_INDEX, or BLUE_INDEX
+	 * @return scaled intensity values in specified color for specified row
+	 */
+	public double[] colorFromScreen(GameState s, int colorIndex) {
+		int width = game.getScreenWidth();
+		int height = game.getScreenHeight();
+		double[] result = new double[width*height];		
+		int bufferPos = 0;
+		for (int y = 0; y < height; y++) {
+			for (int x = 0; x < width; x++) {
+				int c = bufferPos + colorIndex;
+				result[x] = (s.imageBuffer[c]) / MAX_COLOR;
+				bufferPos += 3;
+			}
+		}
+		return result;
+	}
+
+	public static String[] screenSensorLabels(int width, int height) {
+		String[] labels = new String[width*height];
+		for (int y = 0; y < height; y++) {
+			for (int x = 0; x < width; x++) {
+				labels[x+y] = "Position " + x + ", " + y;
+			}
+		}
+		return labels;
+	}
+	
+	
+	
 	/**
 	 * This method takes the given game information to send back the appropriate
 	 * row number to get the inputs from. This is done based on Screen

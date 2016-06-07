@@ -16,13 +16,16 @@ public class VizDoomBasicShootTask<T extends Network> extends VizDoomTask<T> {
 
 	public VizDoomBasicShootTask() {
 		super();
-		inputRow = getRow(game.getScreenWidth(), game.getScreenHeight()); 
+		if(!Parameters.parameters.booleanParameter("doomFullScreenInput")){
+			inputRow = getRow(game.getScreenWidth(), game.getScreenHeight());
+		} else {
+			inputRow = -1; // this is for a check 
         }
-
+	}
 
         @Override
         public void taskSpecificInit() {
-                game.loadConfig("vizdoom/examples/config/basic.cfg");
+        game.loadConfig("vizdoom/examples/config/basic.cfg");
 		game.setDoomScenarioPath("vizdoom/scenarios/basic.wad");
 		game.setDoomMap("map01");
 	}
@@ -60,6 +63,9 @@ public class VizDoomBasicShootTask<T extends Network> extends VizDoomTask<T> {
 
 	@Override
 	public int numInputs() {
+		if(Parameters.parameters.booleanParameter("doomFullScreenInput") && inputRow == -1){
+			return (game.getScreenHeight() * game.getScreenWidth());
+		}
 		return game.getScreenWidth();
 	}
 
@@ -74,6 +80,9 @@ public class VizDoomBasicShootTask<T extends Network> extends VizDoomTask<T> {
 	 */
 	@Override
 	public double[] getInputs(GameState s) {
+		if(Parameters.parameters.booleanParameter("doomFullScreenInput") && inputRow == -1){
+			return colorFromScreen(s, RED_INDEX);
+		}
 		return colorFromRow(s, inputRow, RED_INDEX);
 	}
         
@@ -85,6 +94,9 @@ public class VizDoomBasicShootTask<T extends Network> extends VizDoomTask<T> {
 	 */
 	@Override
 	public String[] sensorLabels() {
+		if(Parameters.parameters.booleanParameter("doomFullScreenInput") && inputRow == -1){
+			return screenSensorLabels(game.getScreenWidth(), game.getScreenHeight());
+		}
 		return rowSensorLabels(game.getScreenWidth());
 	}
 
@@ -95,7 +107,7 @@ public class VizDoomBasicShootTask<T extends Network> extends VizDoomTask<T> {
 	 */
 	public static void main(String[] args) {
 		Parameters.initializeParameterCollections(new String[] { "watch:false", "io:false", "netio:false",
-				"task:edu.utexas.cs.nn.tasks.vizdoom.VizDoomBasicShootTask", "trials:3", "printFitness:true" });
+				"task:edu.utexas.cs.nn.tasks.vizdoom.VizDoomBasicShootTask", "trials:3", "printFitness:true", "doomFullScreenInput:true" });
 		MMNEAT.loadClasses();
 		VizDoomBasicShootTask<TWEANN> vd = new VizDoomBasicShootTask<TWEANN>();
 		TWEANNGenotype individual = new TWEANNGenotype();

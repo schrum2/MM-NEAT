@@ -16,7 +16,11 @@ public class VizDoomDeathMatchTask<T extends Network> extends VizDoomTask<T> {
 
 	public VizDoomDeathMatchTask() {
 		super();
-		inputRow = getRow(game.getScreenWidth(), game.getScreenHeight()); 
+		if(!Parameters.parameters.booleanParameter("doomFullScreenInput")){
+			inputRow = getRow(game.getScreenWidth(), game.getScreenHeight());
+		} else {
+			inputRow = -1; // this is for a check 
+        }
 	}
 
 	@Override
@@ -28,6 +32,9 @@ public class VizDoomDeathMatchTask<T extends Network> extends VizDoomTask<T> {
 
 	@Override
 	public String[] sensorLabels() {
+		if(Parameters.parameters.booleanParameter("doomFullScreenInput") && inputRow == -1){
+			return screenSensorLabels(game.getScreenWidth(), game.getScreenHeight());
+		}
 		return rowSensorLabels(game.getScreenWidth());
 	}
 
@@ -76,6 +83,9 @@ public class VizDoomDeathMatchTask<T extends Network> extends VizDoomTask<T> {
 
 	@Override
 	public double[] getInputs(GameState s) {
+		if(Parameters.parameters.booleanParameter("doomFullScreenInput") && inputRow == -1){
+			return colorFromScreen(s, RED_INDEX);
+		}
 		return colorFromRow(s, inputRow, RED_INDEX);
 	}
 
@@ -85,6 +95,9 @@ public class VizDoomDeathMatchTask<T extends Network> extends VizDoomTask<T> {
 
 	@Override
 	public int numInputs() {
+		if(Parameters.parameters.booleanParameter("doomFullScreenInput") && inputRow == -1){
+			return (game.getScreenHeight() * game.getScreenWidth());
+		}
 		return game.getScreenWidth();
 	}
 
