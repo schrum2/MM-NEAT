@@ -26,6 +26,7 @@ public abstract class MultiplePopulationGenerationalEAExperiment implements Expe
 	/**
 	 * evolving subpopulations *
 	 */
+	@SuppressWarnings("rawtypes") // Each population can be a different type
 	protected ArrayList<ArrayList<Genotype>> populations = null;
 	/**
 	 * Evolutionary Algorithms supporting multiple populations *
@@ -85,7 +86,8 @@ public abstract class MultiplePopulationGenerationalEAExperiment implements Expe
 		this.ea = ea;
 	}
 
-        @Override
+	@SuppressWarnings({ "rawtypes", "unchecked" }) // Raw types needed to allow more flexibility
+	@Override
 	public void init() {
 		String lastSavedDir = Parameters.parameters.stringParameter("lastSavedDirectory");
 		boolean io = Parameters.parameters.booleanParameter("io");
@@ -131,7 +133,8 @@ public abstract class MultiplePopulationGenerationalEAExperiment implements Expe
 		System.out.println("GenerationalEAExperiment: writeOutput = " + writeOutput);
 	}
 
-        @Override
+	@SuppressWarnings("rawtypes") // each population can be a different type
+	@Override
 	public void run() {
 		System.out.println("Evolving with " + ea + " to solve " + ea.getTask());
 		if (writeOutput && !loaded) {
@@ -270,6 +273,7 @@ public abstract class MultiplePopulationGenerationalEAExperiment implements Expe
 	 *            index in populations
 	 * @return id of random genotype in that subpop
 	 */
+	@SuppressWarnings("rawtypes") // Each population can be a different type
 	public long randomIdFromSubpop(int subpop) {
 		ArrayList<Genotype> pop = populations.get(subpop);
 		return pop.get(RandomNumbers.randomGenerator.nextInt(pop.size())).getId();

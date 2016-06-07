@@ -1,6 +1,7 @@
 package edu.utexas.cs.nn.evolution.metaheuristics;
 
 import edu.utexas.cs.nn.evolution.genotypes.NetworkGenotype;
+import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.scores.Score;
 
 /**
@@ -9,11 +10,11 @@ import edu.utexas.cs.nn.scores.Score;
  *
  * @author Jacob Schrum
  */
-public class MaxModulesFitness implements Metaheuristic {
+public class MaxModulesFitness<T extends Network> implements Metaheuristic<T> {
 
 	@SuppressWarnings("rawtypes")
 	@Override
-	public void augmentScore(Score s) {
+	public void augmentScore(Score<T> s) {
 		s.extraScore(((NetworkGenotype) s.individual).numModules());
 	}
 

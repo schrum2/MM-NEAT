@@ -50,4 +50,8 @@ public abstract class NumericArrayGenotype<T> implements Genotype<ArrayList<T>> 
 	public long getId() {
 		return id;
 	}
+	
+	public ArrayList<T> getGenes() {
+		return genes;
+	}
 }
