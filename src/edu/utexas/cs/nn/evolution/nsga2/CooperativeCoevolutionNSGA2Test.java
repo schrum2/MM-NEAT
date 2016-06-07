@@ -5,11 +5,14 @@ import static org.junit.Assert.*;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
+import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
 import edu.utexas.cs.nn.evolution.genotypes.BoundedIntegerValuedGenotype;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
+import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.scores.Score;
 import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
@@ -17,9 +20,10 @@ import edu.utexas.cs.nn.util.random.RandomNumbers;
 
 public class CooperativeCoevolutionNSGA2Test {
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	@Test
-	public void test() {
+	@Before
+	public void setUp() throws Exception {
+		Parameters.parameters = null;
+		MMNEAT.clearClasses();
 		String[] args = new String[] { "runNumber:0", "trials:1", "teams:3", "mu:5", "io:false", "netio:false", "mating:true",
 				"task:edu.utexas.cs.nn.tasks.mspacman.CooperativeSubtaskSelectorMsPacManTask",
 				"experiment:edu.utexas.cs.nn.experiment.LimitedMultiplePopulationGenerationalEAExperiment",
@@ -31,9 +35,16 @@ public class CooperativeCoevolutionNSGA2Test {
 				"pacManMediatorClass2:edu.utexas.cs.nn.tasks.mspacman.sensors.mediators.PillTaskMediator" };
 		Parameters.initializeParameterCollections(args);
 		MMNEAT.loadClasses();
-
-		CooperativeCoevolutionNSGA2 ea = (CooperativeCoevolutionNSGA2) MMNEAT.ea;
+	}	
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@Test
+	public void test() {
+		CooperativeCoevolutionNSGA2 ea = new CooperativeCoevolutionNSGA2();
 		
+		assertNotNull(ea);
+		
+		@SuppressWarnings("unused")
 		ArrayList<Integer> s0, s1, s2, s3, s4, s5, s6, s7, s8, s9;
 		
 		ArrayList<Score> scores = new ArrayList<Score>();
