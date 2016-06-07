@@ -95,12 +95,33 @@ public class RandomNumbersTests {
 	
 	@Test
 	public void randomIntArray_test() {
-		
+		int[] ceilings = {1, 3, 6, 9, 12};
+		int size = 5;
+		Integer[] result = RandomNumbers.randomIntArray(size, ceilings);
+		assertEquals(result[0], (Integer)0);
+		assertTrue(result[1] < 3);
+		assertTrue(result[2] < 6);
+		assertTrue(result[3] < 9);
+		assertTrue(result[4] < 12);
+		assertEquals(result.length, size);
+		size = 1;
+		Integer[] result2 = RandomNumbers.randomIntArray(size, ceilings);
+		assertEquals(result2[0], (Integer)0);
+		assertEquals(result2.length, size);
 	}
 	
 	@Test
 	public void probabilisticSelection_test() {
-		
+		double[] probs1 = {1.0, 0.0, 0.0};
+		double[] probs2 = {0.0, 1.0, 0.0};
+		double[] probs1or2 = {0.5, 0.5, 0.0};
+		int shouldBe1 = RandomNumbers.probabilisticSelection(probs1);
+		assertEquals(shouldBe1, 0);
+		int shouldBe2 = RandomNumbers.probabilisticSelection(probs2);
+		assertEquals(shouldBe2, 1);
+		int shouldNotBe3 = RandomNumbers.probabilisticSelection(probs1or2);
+		assertTrue(shouldNotBe3 == 0 || shouldNotBe3 == 1);
+		assertFalse(shouldNotBe3 == 2);
 	}
 	
 	@Test
