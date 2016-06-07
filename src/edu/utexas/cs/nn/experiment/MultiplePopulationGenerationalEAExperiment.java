@@ -110,7 +110,7 @@ public abstract class MultiplePopulationGenerationalEAExperiment implements Expe
 				this.populations = ea.initialPopulations(examples);
 				int mu = ((CooperativeCoevolutionMuLambda) ea).mu[examples.size()];
 				// Initialize blueprint population, using other populations
-				this.populations.add(PopulationUtil.initialPopulation(last, mu));
+				this.populations.add(PopulationUtil.removeListGenotypeType(PopulationUtil.initialPopulation(last, mu)));
 				// Put blueprint example back
 				examples.add(last);
 				assert(examples.size() == populations.size());
