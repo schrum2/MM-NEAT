@@ -12,15 +12,10 @@ import vizdoom.GameVariable;
 public class VizDoomBasicShootTask<T extends Network> extends VizDoomTask<T> {
 
 	// Save the inputRow once instead of recalculating it on every time step
-	private final int inputRow;
+
 
 	public VizDoomBasicShootTask() {
 		super();
-		if(!Parameters.parameters.booleanParameter("doomFullScreenInput")){
-			inputRow = getRow(game.getScreenWidth(), game.getScreenHeight());
-		} else {
-			inputRow = -1; // this is for a check 
-        }
 	}
 
         @Override
@@ -41,13 +36,9 @@ public class VizDoomBasicShootTask<T extends Network> extends VizDoomTask<T> {
 		// MOVE_LEFT, MOVE_RIGHT, ATTACK
 		// more combinations are naturally possible but only 3 are included for
 		// transparency when watching.
-		//addAction(new int[] { 1, 0, 1 }, "Left and Shoot");
-		//addAction(new int[] { 0, 1, 1 }, "Right and Shoot");
 		addAction(new int[] { 0, 0, 1 }, "Still and Shoot");
-		// Other actions added as of 6/1/2016 by Gabby Gonzalez
 		addAction(new int[] { 1, 0, 0 }, "Left");
 		addAction(new int[] { 0, 1, 0 }, "Right");
-		//addAction(new int[] { 0, 0, 0 }, "Still");
 	}
 
 	@Override
@@ -63,10 +54,10 @@ public class VizDoomBasicShootTask<T extends Network> extends VizDoomTask<T> {
 
 	@Override
 	public int numInputs() {
-		if(Parameters.parameters.booleanParameter("doomFullScreenInput") && inputRow == -1){
-			return (game.getScreenHeight() * game.getScreenWidth());
+		if(Parameters.parameters.integerParameter("doomInputColorVal") == 3){
+			return (Parameters.parameters.integerParameter("doomInputWidth") * Parameters.parameters.integerParameter("doomInputHeight") * 3);
 		}
-		return game.getScreenWidth();
+		return (Parameters.parameters.integerParameter("doomInputWidth") * Parameters.parameters.integerParameter("doomInputHeight"));
 	}
 
 	/**
@@ -80,10 +71,11 @@ public class VizDoomBasicShootTask<T extends Network> extends VizDoomTask<T> {
 	 */
 	@Override
 	public double[] getInputs(GameState s) {
-		if(Parameters.parameters.booleanParameter("doomFullScreenInput") && inputRow == -1){
-			return colorFromScreen(s, RED_INDEX);
-		}
-		return colorFromRow(s, inputRow, RED_INDEX);
+		return getInputs(s, Parameters.parameters.integerParameter("doomInputStartX"), 
+				Parameters.parameters.integerParameter("doomInputStartY"), 
+				Parameters.parameters.integerParameter("doomInputWidth"), 
+				Parameters.parameters.integerParameter("doomInputHeight"), 
+				Parameters.parameters.integerParameter("doomInputColorVal"));
 	}
         
 	/**
@@ -94,10 +86,11 @@ public class VizDoomBasicShootTask<T extends Network> extends VizDoomTask<T> {
 	 */
 	@Override
 	public String[] sensorLabels() {
-		if(Parameters.parameters.booleanParameter("doomFullScreenInput") && inputRow == -1){
-			return screenSensorLabels(game.getScreenWidth(), game.getScreenHeight());
-		}
-		return rowSensorLabels(game.getScreenWidth());
+		return getSensorLabels(Parameters.parameters.integerParameter("doomInputStartX"), 
+				Parameters.parameters.integerParameter("doomInputStartY"), 
+				Parameters.parameters.integerParameter("doomInputWidth"), 
+				Parameters.parameters.integerParameter("doomInputHeight"), 
+				Parameters.parameters.integerParameter("doomInputColorVal"));
 	}
 
 	/**
@@ -106,8 +99,8 @@ public class VizDoomBasicShootTask<T extends Network> extends VizDoomTask<T> {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		Parameters.initializeParameterCollections(new String[] { "watch:false", "io:false", "netio:false",
-				"task:edu.utexas.cs.nn.tasks.vizdoom.VizDoomBasicShootTask", "trials:3", "printFitness:true", "doomFullScreenInput:true" });
+		Parameters.initializeParameterCollections(new String[] { "watch:true", "io:false", "netio:false",
+				"task:edu.utexas.cs.nn.tasks.vizdoom.VizDoomBasicShootTask", "trials:1", "printFitness:true", "doomFullScreenInput:false", "doomInputWidth:50", "doomInputHeight:2", "doomInputStartX:50", "doomInputStartY:50","doomInputColorVal:2" });
 		MMNEAT.loadClasses();
 		VizDoomBasicShootTask<TWEANN> vd = new VizDoomBasicShootTask<TWEANN>();
 		TWEANNGenotype individual = new TWEANNGenotype();

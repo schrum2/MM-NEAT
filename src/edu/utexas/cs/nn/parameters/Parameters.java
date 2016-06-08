@@ -181,6 +181,11 @@ public class Parameters {
 	 */
 	public final void fillDefaults() {
 		// Integer parameters
+		integerOptions.add("doomInputColorVal", 2, "The number value for the color we want to use for inputs, default is red (2)");
+		integerOptions.add("doomInputStartX", 0, "The starting x coordinate for a VizDoom input section");
+		integerOptions.add("doomInputStartY", 0, "The starting y coordinate for a VizDoom input section");
+		integerOptions.add("doomInputHeight", 150, "The height for a VizDoom input section");
+		integerOptions.add("doomInputWidth", 200, "The width for a VizDoom input section");
 		integerOptions.add("imageSize", 250, "Size of image for Picbreeder");
 		integerOptions.add("doomEpisodeLength", 200, "The length of the current game's episodes");
 		integerOptions.add("rlGluePort", RLGlueTask.DEFAULT_PORT, "The port number for the current instance of RLGlue");

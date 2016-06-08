@@ -180,10 +180,11 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 				 MiscUtil.waitForReadStringAndEnterKeyPress();	
 			}
 		}
-		if(CommonConstants.watch){
-			System.out.print("Press enter to continue");
-			MiscUtil.waitForReadStringAndEnterKeyPress();
-		}
+		//if(CommonConstants.watch){
+		//	System.out.print("Press enter to continue");
+		//	MiscUtil.waitForReadStringAndEnterKeyPress();
+		//}
+		
 		// TODO: Make this reward calculation more general, allow for multiple objectives
 		return new Pair<double[], double[]>(new double[] { game.getTotalReward() }, new double[] {});
 	}
@@ -247,100 +248,6 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 	}
 
 	/**
-	 * Get scaled intensity values for a specific color from a specific
-	 * row of the image of the current game state.
-	 * 
-	 * @param s game state
-	 * @param row row on screen
-	 * @param colorIndex RED_INDEX, GREEN_INDEX, or BLUE_INDEX
-	 * @return scaled intensity values in specified color for specified row
-	 */
-	public double[] colorFromRow(GameState s, int row, int colorIndex) {
-		int width = game.getScreenWidth();
-		double[] result = new double[width];
-		int index = row * width * 3; // 3 is for the three different color components: RGB
-		for (int x = 0; x < width; x++) {
-			int c = index + (3 * x) + colorIndex;
-			result[x] = (s.imageBuffer[c]) / MAX_COLOR;
-		}
-		return result;
-	}
-
-	public static String[] rowSensorLabels(int width) {
-		String[] labels = new String[width];
-		for(int i = 0; i < labels.length ; i++){
-			labels[i] = "Column " + i;
-		}
-		return labels;
-	}
-
-	
-	/**
-	 * Get scaled intensity values for a specific color from the entire
-	 * image of the current game state.
-	 * 
-	 * @param s game state
-	 * @param row row on screen
-	 * @param colorIndex RED_INDEX, GREEN_INDEX, or BLUE_INDEX
-	 * @return scaled intensity values in specified color for specified row
-	 */
-	public double[] colorFromScreen(GameState s, int colorIndex) {
-		int width = game.getScreenWidth();
-		int height = game.getScreenHeight();
-		double[] result = new double[width*height];		
-		int bufferPos = 0;
-		for (int y = 0; y < height; y++) {
-			for (int x = 0; x < width; x++) {
-				int c = bufferPos + colorIndex;
-				result[x] = (s.imageBuffer[c]) / MAX_COLOR;
-				bufferPos += 3;
-			}
-		}
-		return result;
-	}
-
-	public static String[] screenSensorLabels(int width, int height) {
-		String[] labels = new String[width*height];
-		for (int y = 0; y < height; y++) {
-			for (int x = 0; x < width; x++) {
-				labels[x+(y*width)] = "Position " + x + ", " + y;
-			}
-		}
-		return labels;
-	}
-	
-	
-	
-	/**
-	 * This method takes the given game information to send back the appropriate
-	 * row number to get the inputs from. This is done based on Screen
-	 * Resolution ratios. The calculations are hard coded, but tested and gave
-	 * reliable rows when displayed.
-	 * @return Row of screen to use as sensor input
-	 */
-	public static int getRow(int width, int height) {
-		float first;
-		int second;
-		if (width / 4 == height / 3) { 
-			// ratio is 4:3
-			first = (float) (width * 0.3825);
-			second = Math.round(first);
-		} else if (width / 16 == height / 10) { 
-			// ratio is 16:10
-			first = (float) (width * 0.32); 
-			second = Math.round(first);
-		} else if (width / 16 == height / 9) { 
-			// ratio is 16:9
-			first = (float) (width * 0.29); 
-			second = Math.round(first);
-		} else { // ratio is 5:4
-			first = (float) (width * 0.41); 
-			second = Math.round(first);
-		}
-		return second;
-	}
-
-	/**
 	 * This method outputs the Gamestate according to the width and height given
 	 * You may change which of the RGB values appear as well, currently set to
 	 * all red values.
@@ -375,33 +282,68 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 	}
 
 	/**
-	 * This method outputs the given row stretched across the height You may
-	 * change which of the RGB values appear as well, currently set to all red
-	 * values.
 	 * 
-	 * This is another utility method.
-	 * 
-	 * @param s
-	 * @param width
-	 * @param height
-	 * @param row
+	 * @param x, the starting x position
+	 * @param y, the starting y position
+	 * @param width, for the selected area
+	 * @param height, for the selected area
+	 * @param color, 0 -> blue, 1 -> green, 2 -> red, 3 -> all, any other number will default to red*
+	 * @return inputs int array
 	 */
-	public static void drawGameStateRow(GameState s, int width, int height, int row) { 
-		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-		int index = row * width * 3;
-		for (int y = 0; y < height; y++) {
-			int bufferPos = 0;
-			for (int x = 0; x < width; x++) {
-				int r = index + bufferPos + RED_INDEX;
-				int g = index + bufferPos + GREEN_INDEX;
-				int b = index + bufferPos + BLUE_INDEX;
-				// int rgb = new Color(s.imageBuffer[r], s.imageBuffer[g],s.imageBuffer[b]).getRGB();
-				int rgb = new Color(s.imageBuffer[r], s.imageBuffer[r], s.imageBuffer[r]).getRGB();
-				image.setRGB(x, y, rgb);
-				bufferPos += 3;
+	public double[] getInputs(GameState s, int x, int y, int width, int height, int color){
+		System.out.println("Made it to getInputs");
+		int pos = 0;
+		int size = 1; // for use of all or 1 color
+		int cStart = color;
+		int cEnd = color;
+		if(color < BLUE_INDEX || color > RED_INDEX + 1){
+			color = RED_INDEX; // set to red if not specified correctly
+		}
+		if(color == 3){ // if we are using all colors
+			size = 3;
+			cStart = BLUE_INDEX;
+			cEnd = RED_INDEX;
+		}
+		System.out.println("Color is " + color);
+		System.out.println("X is " + x + " and Y is " + y);
+		System.out.println("Width is " + width + " and Height is " + height);
+		
+		double[] inputs = new double[width * height * size];
+		System.out.println("So the input array size is " + inputs.length);
+		
+		for(int i = y; i < y + height; i++){
+			for(int j = x; j < x + width; j++){
+				for(int c = cStart; c <= cEnd; c++){
+					int index = c + (3 * ((i * game.getScreenWidth()) + j));
+					System.out.print("Adding Buffer[" + index + "](" + s.imageBuffer[index] + ") to Inputs[" + pos + "]");
+					inputs[pos++] = ((s.imageBuffer[c + (3 * ((i * game.getScreenWidth()) + j))]) / MAX_COLOR); 
+					System.out.println(" for coordinate [" + j + ", " + i + "] for color " + (c == RED_INDEX ? "Red" : (c == GREEN_INDEX ? "Green" : "Blue")));
+				}
 			}
 		}
-		DrawingPanel dp = GraphicsUtil.drawImage(image, "Doom", width, height);
-		MiscUtil.waitForReadStringAndEnterKeyPress();
+		
+		return inputs;
 	}
+	
+	public static String[] getSensorLabels(int x, int y, int width, int height, int color) {
+		int size = 1;
+		int cStart = 0;
+		int cEnd = 0;
+		int pos = 0;
+		if(color == 3){
+			size = 3;
+			cEnd = 2;
+		}
+		String[] labels = new String[width * height * size];
+		for (int i = y; i < height; i++) {
+			for (int j = x; j < width; j++) {
+				for(int c = cStart; c <= cEnd; c++){
+					labels[pos + j + (i*width) + c] = "Position " + j + ", " + i + (c == RED_INDEX ? " Red" : (c == GREEN_INDEX ? " Green" : " Blue"));
+					pos++;
+				}
+			}
+		}
+		return labels;
+	}
+	
 }
