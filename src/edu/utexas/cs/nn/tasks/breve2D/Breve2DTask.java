@@ -15,7 +15,8 @@ import edu.utexas.cs.nn.util.ClassCreation;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 
 /**
- *
+ * Defines the Breve 2D Task by creating the controllers and dynamics, evaluating the
+ * genotype of the evolved agent, and defining other task specific details such as numObjectives
  * @author Jacob Schrum
  */
 public class Breve2DTask<T extends Network> extends NoisyLonerTask<T>implements TUGTask, NetworkTask {
@@ -25,10 +26,19 @@ public class Breve2DTask<T extends Network> extends NoisyLonerTask<T>implements 
 	private Breve2DDynamics dynamics;
 	private Breve2DExec exec;
 
+	/**
+	 * Constructs a Breve2DTask by sending the deterministic parameter to the other constructor
+	 */
 	public Breve2DTask() {
 		this(Parameters.parameters.booleanParameter("deterministic"));
 	}
 
+	/**
+	 * Constructs a Breve2DTask by calling the super class (NoisyLonerTask) constructor, 
+	 * defining the enemy and the dynamics of the domain, setting the number of monsters, 
+	 * and finding the fitness scores according to the dynamics given.
+	 * @param det, deterministic command line parameter
+	 */
 	public Breve2DTask(boolean det) {
 		super();
 		try {
@@ -43,6 +53,14 @@ public class Breve2DTask<T extends Network> extends NoisyLonerTask<T>implements 
 	}
 
 	@Override
+	/**
+	 * 
+	 * Provides an evaluation for a single genotype. 
+	 * 
+	 * @param individual, the genotype
+	 * @param num, which evaluation is currently being performed
+	 * @return a Pair of the fitness scores and the otherStats as arrays of doubles
+	 */
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {
 		AgentController[] monsters = new AgentController[numMonsters];
 		for (int i = 0; i < monsters.length; i++) {
@@ -71,6 +89,10 @@ public class Breve2DTask<T extends Network> extends NoisyLonerTask<T>implements 
 		return new Pair<double[], double[]>(oneTrialFitness, otherStats);
 	}
 
+	/**
+	 * gets the number of objectives
+	 * @return the number of objectives as an int
+	 */
 	public int numObjectives() {
 		return minScores().length;
 	}
@@ -78,25 +100,41 @@ public class Breve2DTask<T extends Network> extends NoisyLonerTask<T>implements 
 	/**
 	 * All zeroes, since objectives are positive
 	 *
-	 * @return
+	 * @return the starting goals in an array of doubles
 	 */
 	public double[] startingGoals() {
 		return dynamics.minScores();
 	}
 
 	@Override
+	/**
+	 * gets the min scores
+	 * @return the min scores as an array of doubles
+	 */
 	public double[] minScores() {
 		return dynamics.minScores();
 	}
 
+	/**
+	 * gets the sensor labels
+	 * @return the sensor labels as an array of strings
+	 */
 	public String[] sensorLabels() {
 		return NNBreve2DMonster.sensorLabels(dynamics, numMonsters);
 	}
 
+	/**
+	 * gets the output labels 
+	 * @return the output labels as an array of strings
+	 */
 	public String[] outputLabels() {
 		return new String[] { "Turn", "Thrust" };
 	}
 
+	/**
+	 * gets the current game time, returning zero if the game hasn't started yet
+	 * @return the current game time (time stamp) as a double
+	 */
 	public double getTimeStamp() {
 		if (exec == null || exec.game == null) {
 			return 0;
