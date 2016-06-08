@@ -8,11 +8,13 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Scanner;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -59,6 +61,13 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	private static final int LINEAGE_BUTTON_INDEX = -5;
 	private static final int NETWORK_BUTTON_INDEX = -6;
 	private static final int UNDO_BUTTON_INDEX = -7;
+	private static final int SIGMOID_CHECKBOX_INDEX = -8;
+	private static final int GAUSSIAN_CHECKBOX_INDEX = -9;
+	private static final int SINE_CHECKBOX_INDEX = -10;
+	private static final int SAWTOOTH_CHECKBOX_INDEX = -11;
+	private static final int ABSVAL_CHECKBOX_INDEX = -12;
+	private static final int HALF_LINEAR_CHECKBOX_INDEX = -13;
+
 	private static final int BORDER_THICKNESS = 4;
 	
 	//Private final variables
@@ -77,6 +86,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	private boolean showNetwork;
 	private boolean waitingForUser;
 	private boolean[] chosen;
+	private boolean[] activation;
 	
 	/**
 	 * Default Constructor
@@ -96,7 +106,8 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		showLineage = false;
 		showNetwork = false;
 		waitingForUser = false;
-		
+		activation = new boolean[Math.abs(HALF_LINEAR_CHECKBOX_INDEX) + 1];
+		Arrays.fill(activation, true);
                 if(MMNEAT.browseLineage) {
                     // Do not setup the JFrame if browsing the lineage
                     return;
@@ -115,7 +126,10 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		frame.setVisible(true);
 
 		//instantiate graphics
+		JPanel topper = new JPanel();
+		//topper.setLayout(new GridLayout(2, 0));
 		JPanel top = new JPanel();
+		JPanel bottom = new JPanel();
 		JButton resetButton = new JButton(new ImageIcon("data\\picbreeder\\reset.png"));
 		JButton saveButton = new JButton(new ImageIcon("data\\picbreeder\\save.png"));
 		JButton evolveButton = new JButton(new ImageIcon("data\\picbreeder\\arrow.png"));
@@ -124,6 +138,13 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		JButton networkButton = new JButton(new ImageIcon("data\\picbreeder\\network.png"));
 		JButton undoButton = new JButton( new ImageIcon("data\\picbreeder\\undo.png"));
 
+		JCheckBox sigmoid = new JCheckBox("sigmoid_function", true);
+		JCheckBox gaussian = new JCheckBox("gaussian_function", true);
+		JCheckBox sine = new JCheckBox("sine_function", true);
+		JCheckBox sawtooth = new JCheckBox("sawtooth_function", true);
+		JCheckBox absVal = new JCheckBox("absolute_value_function", true);
+		JCheckBox halfLinear = new JCheckBox("half_linear_function", true);
+		
 		//set graphic names and toolTip titles
 		evolveButton.setName("" + EVOLVE_BUTTON_INDEX);
 		evolveButton.setToolTipText("Evolve button");
@@ -139,7 +160,18 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		networkButton.setToolTipText("Network button");
 		undoButton.setName("" + UNDO_BUTTON_INDEX);
 		undoButton.setToolTipText("Undo button");
+		sigmoid.setName("" + SIGMOID_CHECKBOX_INDEX);
 
+		absVal.setName("" + ABSVAL_CHECKBOX_INDEX);
+
+		gaussian.setName("" + GAUSSIAN_CHECKBOX_INDEX);
+
+		sine.setName("" + SINE_CHECKBOX_INDEX);
+
+		sawtooth.setName("" + SAWTOOTH_CHECKBOX_INDEX);
+
+		halfLinear.setName("" + HALF_LINEAR_CHECKBOX_INDEX);
+System.out.println("half linear checkbox: " + halfLinear.toString());
 		//add action listeners to buttons
 		resetButton.addActionListener(this);
 		saveButton.addActionListener(this);
@@ -148,6 +180,13 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		lineageButton.addActionListener(this);
 		networkButton.addActionListener(this);
 		undoButton.addActionListener(this);
+		sigmoid.addActionListener(this);
+		gaussian.addActionListener(this);
+		sine.addActionListener(this);
+		sawtooth.addActionListener(this);
+		absVal.addActionListener(this);
+		halfLinear.addActionListener(this);
+		
 
 		//add graphics to title panel
 		top.add(lineageButton);
@@ -157,7 +196,15 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		top.add(saveButton);
 		top.add(undoButton);
 		top.add(closeButton);
-		panels.add(top);
+		topper.add(top);
+		bottom.add(halfLinear);
+		bottom.add(absVal);
+		bottom.add(sawtooth);
+		bottom.add(sine);
+		bottom.add(gaussian);
+		bottom.add(sigmoid);
+		topper.add(bottom);
+		panels.add(topper);
 
 		//adds button panels
 		addButtonPanels();
@@ -433,6 +480,16 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 			}
 		}
 	}
+	
+	private void setCheckBox(boolean act, int index, String title) { 
+		if(act) { 
+			activation[Math.abs(index)] = false;
+			Parameters.parameters.setBoolean(title, false);
+		} else {
+			activation[Math.abs(index)] = true;
+			Parameters.parameters.setBoolean(title, true);
+		}
+	}
 	/**
 	 * Contains actions to be performed based
 	 * on specific events
@@ -447,7 +504,25 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		s.next();
 		int scoreIndex = s.nextInt();
 		s.close();
-		if(scoreIndex == CLOSE_BUTTON_INDEX) {//If close button clicked
+		if(scoreIndex == SIGMOID_CHECKBOX_INDEX) {
+			setCheckBox(activation[Math.abs(SIGMOID_CHECKBOX_INDEX)], SIGMOID_CHECKBOX_INDEX, "includeSigmoidFunction");
+			System.out.println("param sigmoid now set to: " + Parameters.parameters.booleanParameter("includeSigmoidFunction"));
+		} else if(scoreIndex ==GAUSSIAN_CHECKBOX_INDEX) {
+			setCheckBox(activation[Math.abs(GAUSSIAN_CHECKBOX_INDEX)], GAUSSIAN_CHECKBOX_INDEX, "includeGaussFunction");
+			System.out.println("param Gauss now set to: " + Parameters.parameters.booleanParameter("includeGaussFunction"));
+		} else if(scoreIndex == SINE_CHECKBOX_INDEX) {
+			setCheckBox(activation[Math.abs(SINE_CHECKBOX_INDEX)], SINE_CHECKBOX_INDEX, "includeSineFunction");
+			System.out.println("param Sine now set to: " + Parameters.parameters.booleanParameter("includeSineFunction"));
+		}else if(scoreIndex == SAWTOOTH_CHECKBOX_INDEX) {
+			setCheckBox(activation[Math.abs(SAWTOOTH_CHECKBOX_INDEX)], SAWTOOTH_CHECKBOX_INDEX, "includeSawtoothFunction");
+			System.out.println("param sawtooth now set to: " + Parameters.parameters.booleanParameter("includeSawtoothFunction"));
+		}else if(scoreIndex == ABSVAL_CHECKBOX_INDEX) {
+			setCheckBox(activation[Math.abs(ABSVAL_CHECKBOX_INDEX)], ABSVAL_CHECKBOX_INDEX, "includeAbsValFunction");
+			System.out.println("param abs val now set to: " + Parameters.parameters.booleanParameter("includeAbsValFunction"));
+		}else if(scoreIndex == HALF_LINEAR_CHECKBOX_INDEX) {
+			setCheckBox(activation[Math.abs(HALF_LINEAR_CHECKBOX_INDEX)], HALF_LINEAR_CHECKBOX_INDEX, "includeHalfLinearPiecewiseFunction");
+			System.out.println("param half linear now set to: " + Parameters.parameters.booleanParameter("includeHalfLinearPiecewiseFunction"));
+		}else if(scoreIndex == CLOSE_BUTTON_INDEX) {//If close button clicked
 			System.exit(0);
 		} else if(scoreIndex == RESET_BUTTON_INDEX) {//If reset button clicked
 			reset();
@@ -539,7 +614,6 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	public static <T extends Network> void drawLineage(long id, long childId, int x, int y) {
                 Offspring o = Offspring.lineage.get((int) id);
 		if(o != null && !drawnOffspring.contains(id)) { // Don't draw if already drawn
-			//System.out.println("Draw " + id + ": " + o.xmlNetwork);
 			Genotype<T> g = (Genotype<T>) Offspring.getGenotype(o.xmlNetwork);
 			BufferedImage bi = GraphicsUtil.imageFromCPPN(g.getPhenotype(), PIC_SIZE/2, PIC_SIZE/2);
 			DrawingPanel p = GraphicsUtil.drawImage(bi, id + " -> " + childId, PIC_SIZE/2, PIC_SIZE/2);
@@ -547,7 +621,6 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 			drawLineage(o, id, x + PIC_SIZE/2, y);
 			dPanels.add(p);
 		}
-		System.out.println("Dpanels has " + dPanels.size() + " panels in it");
                 drawnOffspring.add(id); // don't draw again
 	}
 	
