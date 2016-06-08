@@ -102,10 +102,14 @@ public abstract class CooperativeCoevolutionMuLambda implements MultiplePopulati
 
 		if (writeOutput) {
 			parentLogs = new FitnessLog[numPopulations];
-			childLogs = new FitnessLog[numPopulations];
+			if (CommonConstants.logChildScores) {
+				childLogs = new FitnessLog[numPopulations];
+			}
 			for (int i = 0; i < numPopulations; i++) {
 				parentLogs[i] = new FitnessLog("pop" + i + "parents");
-				childLogs[i] = new FitnessLog("pop" + i + "children");
+				if (CommonConstants.logChildScores) {
+					childLogs[i] = new FitnessLog("pop" + i + "children");
+				}
 			}
 		}
 	}
@@ -141,7 +145,7 @@ public abstract class CooperativeCoevolutionMuLambda implements MultiplePopulati
 	 *            an arrayList of genotypes
 	 * @return startingPopulations, an arrayList of arrayLists of genotypes
 	 */
-        @Override
+	@Override
 	public ArrayList<ArrayList<Genotype>> initialPopulations(ArrayList<Genotype> examples) {
 		ArrayList<ArrayList<Genotype>> startingPopulations = new ArrayList<ArrayList<Genotype>>(examples.size() + 1);
 		boolean seedCoevolutionPops = Parameters.parameters.booleanParameter("seedCoevolutionPops");
@@ -185,7 +189,7 @@ public abstract class CooperativeCoevolutionMuLambda implements MultiplePopulati
 	 *            vector of subpopulations
 	 * @return vector of all the genotypes to keep after a generation
 	 */
-        @Override
+	@Override
 	public ArrayList<ArrayList<Genotype>> getNextGeneration(ArrayList<ArrayList<Genotype>> populations) {
 		evaluatingParents = true;
 		long start = System.currentTimeMillis();
@@ -226,7 +230,7 @@ public abstract class CooperativeCoevolutionMuLambda implements MultiplePopulati
 	 * the possibility of each subpopulation having a different type of
 	 * Genotype.
 	 *
-         * @param popIndex
+	 * @param popIndex
 	 * @param parentScores
 	 *            parent scores
 	 * @param childrenScores
@@ -267,9 +271,11 @@ public abstract class CooperativeCoevolutionMuLambda implements MultiplePopulati
 		}
 
 		ArrayList<ArrayList<Score>> childrenScores = task.evaluateAllPopulations(children);
-		// Log child scores
-		for (int i = 0; i < childLogs.length; i++) {
-			childLogs[i].log(childrenScores.get(i), generation);
+		if (CommonConstants.logChildScores) {
+			// Log child scores
+			for (int i = 0; i < childLogs.length; i++) {
+				childLogs[i].log(childrenScores.get(i), generation);
+			}
 		}
 		return childrenScores;
 	}
@@ -302,7 +308,9 @@ public abstract class CooperativeCoevolutionMuLambda implements MultiplePopulati
 		if (writeOutput) {
 			for (int i = 0; i < parentLogs.length; i++) {
 				this.parentLogs[i].close();
-				this.childLogs[i].close();
+				if (CommonConstants.logChildScores) {
+					this.childLogs[i].close();
+				}
 			}
 			if (((CooperativeTask) task).teamLog != null) {
 				((CooperativeTask) task).teamLog.close();

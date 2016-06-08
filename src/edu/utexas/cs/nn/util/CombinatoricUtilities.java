@@ -16,7 +16,7 @@ public class CombinatoricUtilities {
 
 	/**
 	 * Return all permutations where the possible picks are 0 through 
-         * (choices - 1). Each sub-ArrayList in the returned ArrayList is a single permutation
+     * (choices - 1). Each sub-ArrayList in the returned ArrayList is a single permutation
 	 *
 	 * @param choices
 	 *            number of things to choose from
@@ -25,8 +25,8 @@ public class CombinatoricUtilities {
 	public static ArrayList<ArrayList<Integer>> getAllPermutations(int choices) {
 		ArrayList<ArrayList<Integer>> result = new ArrayList<ArrayList<Integer>>();
 		int[] a = new int[choices], p = new int[choices];
-		int i, j, tmp; // Upper Index i; Lower Index j
-                // initialize arrays; a[N] can be any type
+		// Upper Index i; Lower Index j initialize arrays; a[N] can be any type
+		int i, j, tmp; 
 		for (i = 0; i < choices; i++) { 
 			a[i] = i; // a[i] value is not revealed and can be arbitrary
 		}
@@ -141,5 +141,13 @@ public class CombinatoricUtilities {
 		}
 		Color result = new Color(baseColor[0], baseColor[1], baseColor[2]);
 		return result;
+	}
+	
+	public static void main(String[] args) {
+		ArrayList<Integer> lens = new ArrayList<Integer>();
+		lens.add(4);
+		lens.add(5);
+		lens.add(6);
+		System.out.println(getAllCombinations(lens));
 	}
 }

@@ -123,11 +123,9 @@ public abstract class NoisyLonerTask<T> extends LonerTask<T> {
 			System.out.println("Individual: " + individual.getId());
 			System.out.println("\t" + scoreSummary(objectiveScores, otherScores, fitness, other));
 		}
-		// save information about various pacman variables/values in the eval
-		// report
 		if (MMNEAT.evalReport != null) {
 			MMNEAT.evalReport.log(scoreSummary(objectiveScores, otherScores, fitness, other));
-
+			// save information about various pacman variables/values in the eval report
 			if (NNCheckEachDirectionPacManController.totalChosenDirectionModeUsageCounts != null) {
 				MMNEAT.evalReport.log("Usage: "
 						+ Arrays.toString(StatisticsUtilities
@@ -197,7 +195,7 @@ public abstract class NoisyLonerTask<T> extends LonerTask<T> {
 	 * @param other
 	 * @return the summary in a string
 	 */
-	public String scoreSummary(double[][] objectiveScores, double[][] otherScores, double[] fitness, double[] other) {
+	public static String scoreSummary(double[][] objectiveScores, double[][] otherScores, double[] fitness, double[] other) {
 		String nl = System.getProperty("line.separator");
 		String result = "";
 		result += "Fitness scores:" + nl;

@@ -89,9 +89,9 @@ public class CooperativePredatorsVsStaticPrey<T extends Network> extends Coopera
 	 * @return pred agents
 	 */
 	public TorusPredPreyController[] getPredAgents(Genotype<T>[] team) {
-		TorusPredPreyController[] evolved = new TorusPredPreyController[Parameters.parameters.integerParameter("torusPredators")];
-		TorusPredPreyTask.getEvolvedControllers(evolved, team, true);
-		return evolved; 
+		task.evolved = new TorusPredPreyController[Parameters.parameters.integerParameter("torusPredators")];
+		TorusPredPreyTask.getEvolvedControllers(task.evolved, team, true);
+		return task.evolved; 
 	}
 
 }

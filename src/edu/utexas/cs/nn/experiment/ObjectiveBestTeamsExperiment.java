@@ -1,14 +1,23 @@
 package edu.utexas.cs.nn.experiment;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
+import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
+import edu.utexas.cs.nn.graphics.DrawingPanel;
+import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.scores.Score;
 import edu.utexas.cs.nn.tasks.CooperativeTask;
+import edu.utexas.cs.nn.tasks.NoisyLonerTask;
+import edu.utexas.cs.nn.util.ClassCreation;
+import edu.utexas.cs.nn.util.CombinatoricUtilities;
 import edu.utexas.cs.nn.util.PopulationUtil;
+import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
 import edu.utexas.cs.nn.util.file.FileUtilities;
+import edu.utexas.cs.nn.util.stats.Statistic;
 
 /**
  * General evolution experiments are meant to save the best genomes in each
@@ -30,8 +39,8 @@ public class ObjectiveBestTeamsExperiment<T> implements Experiment {
 	 */
 	@Override
 	public void init() {
+		genotypes = new ArrayList<ArrayList<Genotype<T>>>();
 		if (Parameters.parameters.booleanParameter("watchLastBestOfTeams")) {
-			genotypes = new ArrayList<ArrayList<Genotype<T>>>();
 			//loop through each population
 			for(int i = 0; i < ((CooperativeTask) MMNEAT.task).numberOfPopulations(); i++){
 				genotypes.add(new ArrayList<Genotype<T>>());
@@ -54,18 +63,80 @@ public class ObjectiveBestTeamsExperiment<T> implements Experiment {
 	 * Evaluate each individual. 
 	 * Hard coded to work only for CooperativeTasks
 	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings({ "rawtypes" })
 	@Override
 	public void run() {
-		for (int i = 0; i < genotypes.size(); i++) {
-			for(int j = 0; j < genotypes.get(i).size(); j++){
-				System.out.println("Best in Objective " + i + ": " + (genotypes.get(i).get(j).getId()));
-				ArrayList<Score> s = ((CooperativeTask) MMNEAT.task).evaluate((Genotype[]) genotypes.get(i).toArray());
-				//go through each individual in the team and print their score
-				for(int k = 0; k < s.size(); k++)
-					System.out.println(s);
-			}
+
+		// This seems inappropriate here. Strictly speaking, Cooperative Tasks
+		// don't need to be noisy, but most probably are in practice. This works
+		// here for now, but may need to relocate later.
+		Statistic stat = null;
+		try {
+			stat = (Statistic) ClassCreation.createObject("noisyTaskStat");
+		} catch (NoSuchMethodException ex) {
+			ex.printStackTrace();
+			System.exit(1);
 		}
+
+		int[] numObjectives = ((CooperativeTask) MMNEAT.task).objectivesPerPopulation();
+		int[] numOtherScores = ((CooperativeTask) MMNEAT.task).otherStatsPerPopulation();
+		int numPopulations = ((CooperativeTask) MMNEAT.task).numberOfPopulations();
+
+		ArrayList<Integer> lengths = new ArrayList<Integer>();
+		lengths = ArrayUtil.intListFromArray(numObjectives);
+		ArrayList<ArrayList<Integer>> combos = CombinatoricUtilities.getAllCombinations(lengths);
+
+		//loop through each possible combination of fitness objectives from each population,
+		//making a team of agents from each population with each of those possible fitness objectives
+		for(ArrayList<Integer>combo : combos){
+
+			Genotype[] team = new Genotype[numPopulations];
+			for(int i = 0; i < team.length; i++){
+				team[i] = genotypes.get(i).get(combo.get(i));
+			}
+
+			double[][] objectiveScores = new double[CommonConstants.trials][numObjectives[0]];
+			double[][] otherScores = new double[CommonConstants.trials][numOtherScores[0]];
+
+			for(int t = 0; t < CommonConstants.trials; t++){
+				DrawingPanel[] networks = null;
+				if(CommonConstants.showNetworks)
+					networks = CooperativeTask.drawNetworks(team);
+				ArrayList<Score> s = ((CooperativeTask) MMNEAT.task).evaluate(team);
+				if(networks != null)
+					CooperativeTask.disposePanels(networks);
+
+				if (Parameters.parameters.booleanParameter("printFitness")) {
+					System.out.println(Arrays.toString(s.get(0).scores) + Arrays.toString(s.get(0).otherStats));
+					if (s.get(0).individual instanceof TWEANNGenotype) {
+						System.out.println("Module Usage: " + Arrays.toString(((TWEANNGenotype) s.get(0).individual).getModuleUsage()));
+					}
+				}
+				objectiveScores[t] = s.get(0).scores; // fitness scores
+				otherScores[t] = s.get(0).otherStats; // other scores
+			}
+
+			//print scoreSummary
+			double[] fitness = new double[numObjectives[0]];
+			for (int i = 0; i < fitness.length; i++) {
+				fitness[i] = stat.stat(ArrayUtil.column(objectiveScores, i));
+			}
+			double[] other = new double[numOtherScores[0]];
+			for (int i = 0; i < other.length; i++) {
+				other[i] = stat.stat(ArrayUtil.column(otherScores, i));
+			}
+			if (Parameters.parameters.booleanParameter("printFitness")) {
+				System.out.print("Team: ");
+				//Loop through team and print out genotype IDs
+				for(Genotype g : team){
+					System.out.print("["+g.getId()+"]");
+				}
+				System.out.println();
+				System.out.println("\t" + NoisyLonerTask.scoreSummary(objectiveScores, otherScores, fitness, other));
+			}
+
+		}
+
 		((CooperativeTask) MMNEAT.task).finalCleanup(); // domain cleanup if necessary
 	}
 

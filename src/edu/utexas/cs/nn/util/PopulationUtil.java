@@ -727,4 +727,13 @@ public class PopulationUtil {
 		}
 		return null;
 	}
+	
+	public static <T> Genotype[] genotypeArrayFromArrayList(ArrayList<Genotype<T>> arrayList) {
+		Genotype[] genos = new Genotype[arrayList.size()];
+		for (int i = 0; i < genos.length; i++) {
+			genos[i] = arrayList.get(i);
+		}
+		return genos;
+	}
+	
 }

@@ -18,6 +18,7 @@ import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.scores.Score;
+import edu.utexas.cs.nn.tasks.gridTorus.cooperative.CooperativeTorusPredPreyTask;
 import edu.utexas.cs.nn.tasks.mspacman.CooperativeMsPacManTask;
 import edu.utexas.cs.nn.util.file.FileUtilities;
 import edu.utexas.cs.nn.util.random.RandomNumbers;
@@ -322,7 +323,7 @@ public abstract class CooperativeTask implements MultiplePopulationTask {
 				}
 			}
 		}
-		if (CommonConstants.monitorInputs) {
+		if (CommonConstants.monitorInputs && !(MMNEAT.task instanceof CooperativeTorusPredPreyTask)) {
 			Offspring.fillInputs((TWEANNGenotype) team[0]);
 		}
 		return panels;
