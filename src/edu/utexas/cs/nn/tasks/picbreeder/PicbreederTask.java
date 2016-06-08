@@ -73,6 +73,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	private ArrayList<Score<T>> scores;
 
 	//private helper variables
+	private boolean showLineage;
 	private boolean showNetwork;
 	private boolean waitingForUser;
 	private boolean[] chosen;
@@ -92,6 +93,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		NUM_ROWS = NUM_BUTTONS / NUM_COLUMNS;
 		PIC_SIZE = Parameters.parameters.integerParameter("imageSize");
 		chosen = new boolean[NUM_BUTTONS];
+		showLineage = false;
 		showNetwork = false;
 		waitingForUser = false;
 		
@@ -468,6 +470,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	}
 
         private static HashSet<Long> drawnOffspring = null;
+        private static ArrayList<DrawingPanel> dPanels = null;
         
 	private static void drawLineage(Offspring o, long id, int x, int y) { 
 		if(o.parentId1 > -1) {
@@ -477,8 +480,20 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 			drawLineage(o.parentId2, id, x, y + PIC_SIZE/4);
 		}	
 	}
+	private static void resetLineageDrawer() { 
+		if(dPanels != null) {
+		for(int i = 0; i < dPanels.size(); i++) {
+			dPanels.get(i).setVisibility(false);
+		}
+		}
+		dPanels = null;
+		drawnOffspring = null;
+	}
 	@SuppressWarnings("rawtypes")
 	private void setLineage() {
+		if(!showLineage) {
+			showLineage = true;
+			resetLineageDrawer();
 		String base = Parameters.parameters.stringParameter("base");
 		String log =  Parameters.parameters.stringParameter("log");
 		int runNumber = Parameters.parameters.integerParameter("runNumber");
@@ -487,8 +502,10 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		String originalPrefix = base + "/" + saveTo + runNumber + "/" + log + runNumber + "_";
 
                 drawnOffspring = new HashSet<Long>();
+                dPanels = new ArrayList<DrawingPanel>();
+                
 		try {
-			//Offspring.fillInLineage(base, saveTo, runNumber, log, saveTo, false);
+			Offspring.reset();
 			Offspring.lineage = new ArrayList<Offspring>();
 			PopulationUtil.loadLineage();
 			System.out.println("Lineage loaded from file");
@@ -512,6 +529,10 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 			System.out.println("Lineage browser failed");
 			e.printStackTrace();
 		}
+		} else {
+			resetLineageDrawer();
+			showLineage = false;
+		}
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -524,7 +545,9 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 			DrawingPanel p = GraphicsUtil.drawImage(bi, id + " -> " + childId, PIC_SIZE/2, PIC_SIZE/2);
 			p.setLocation(x, y);
 			drawLineage(o, id, x + PIC_SIZE/2, y);
+			dPanels.add(p);
 		}
+		System.out.println("Dpanels has " + dPanels.size() + " panels in it");
                 drawnOffspring.add(id); // don't draw again
 	}
 	

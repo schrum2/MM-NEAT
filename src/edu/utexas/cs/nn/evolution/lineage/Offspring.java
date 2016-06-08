@@ -585,6 +585,18 @@ public class Offspring {
 	public int[] modeUsage = null; // must run eval first
 
 	/**
+	 * resets all the necessary objects so class can be called multiple times 
+	 */
+	public static void  reset() { 
+		lineage = new ArrayList<Offspring>();
+		maxes = new ArrayList<Double>();
+		mins = new ArrayList<Double>();
+		bestScores = null;
+		worstScores = null;
+		tugGoals = null;
+		numObjectives = 0;
+	}
+	/**
 	 * Default constructor 
 	 * @param offspringId ID of offspring 
 	 * @param generation gen #
