@@ -181,6 +181,7 @@ public class Parameters {
 	 */
 	public final void fillDefaults() {
 		// Integer parameters
+		integerOptions.add("doomInputPixelSmudge", 1, "Determines the amount of pixels to 'smudge' together for inputs");
 		integerOptions.add("doomInputColorVal", 2, "The number value for the color we want to use for inputs, default is red (2)");
 		integerOptions.add("doomInputStartX", 0, "The starting x coordinate for a VizDoom input section");
 		integerOptions.add("doomInputStartY", 0, "The starting y coordinate for a VizDoom input section");

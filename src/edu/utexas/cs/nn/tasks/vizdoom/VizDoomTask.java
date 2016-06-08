@@ -38,6 +38,7 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 	public static final int RED_INDEX = 2;
 	public static final int GREEN_INDEX = 1;
 	public static final int BLUE_INDEX = 0;
+	public static final int NUM_COLORS = 3;
 	public static final double MAX_COLOR = 255;
 
 	public DoomGame game;
@@ -282,7 +283,10 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 	}
 
 	/**
+	 * According to the given [x, y] and width by height, this method pulls
+	 * the entries from the image buffer to be inputs
 	 * 
+	 * @param s, GameState to pull from
 	 * @param x, the starting x position
 	 * @param y, the starting y position
 	 * @param width, for the selected area
@@ -291,41 +295,66 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 	 * @return inputs int array
 	 */
 	public double[] getInputs(GameState s, int x, int y, int width, int height, int color){
-		System.out.println("Made it to getInputs");
-		int pos = 0;
-		int size = 1; // for use of all or 1 color
-		int cStart = color;
-		int cEnd = color;
+		//System.out.println("Made it to getInputs");
+		//System.out.println("X is " + x + " and Y is " + y);
+		//System.out.println("Width is " + width + " and Height is " + height);
 		if(color < BLUE_INDEX || color > RED_INDEX + 1){
 			color = RED_INDEX; // set to red if not specified correctly
 		}
-		if(color == 3){ // if we are using all colors
-			size = 3;
-			cStart = BLUE_INDEX;
-			cEnd = RED_INDEX;
+		if(color == NUM_COLORS){ // if we are using all colors
+			double[] inputs = new double[width*height*NUM_COLORS];
+			for(int i = 0; i < NUM_COLORS; i++){
+				double[] singleColor = colorInputs(s, x, y, width, height, i, game.getScreenWidth());
+				System.arraycopy(singleColor, 0, inputs, i * singleColor.length, singleColor.length);
+			}
+			return inputs;
+		} else {
+			return colorInputs(s, x, y, width, height, color, game.getScreenWidth());
 		}
-		System.out.println("Color is " + color);
-		System.out.println("X is " + x + " and Y is " + y);
-		System.out.println("Width is " + width + " and Height is " + height);
-		
-		double[] inputs = new double[width * height * size];
-		System.out.println("So the input array size is " + inputs.length);
-		
+	}
+	
+	/**
+	 * Helper method for getInputs(), returns double[] linear array of 
+	 * screen section for a specified color
+	 * 
+	 * @param s, GameState to pull from
+	 * @param x, the starting x position
+	 * @param y, the starting y position
+	 * @param width, for the selected area
+	 * @param height, for the selected area
+	 * @param color, 0 -> blue, 1 -> green, 2 -> red, 3 -> all, any other number will default to red*
+	 * @param screenWidth, the width of the full screen
+	 * @return double[] inputs for 1 color
+	 */
+	public static double[] colorInputs(GameState s, int x, int y, int width, int height, int color, int screenWidth){
+		//System.out.println("Color is " + color);
+		double[] inputs = new double[width * height];
+		//System.out.println("So the input array size is " + inputs.length);
+		int pos = 0;
 		for(int i = y; i < y + height; i++){
 			for(int j = x; j < x + width; j++){
-				for(int c = cStart; c <= cEnd; c++){
-					int index = c + (3 * ((i * game.getScreenWidth()) + j));
-					System.out.print("Adding Buffer[" + index + "](" + s.imageBuffer[index] + ") to Inputs[" + pos + "]");
-					inputs[pos++] = ((s.imageBuffer[c + (3 * ((i * game.getScreenWidth()) + j))]) / MAX_COLOR); 
-					System.out.println(" for coordinate [" + j + ", " + i + "] for color " + (c == RED_INDEX ? "Red" : (c == GREEN_INDEX ? "Green" : "Blue")));
-				}
+				//System.out.print("Adding Buffer[" + (color + (NUM_COLORS * ((i * screenWidth) + j))) + "](" + s.imageBuffer[color + (NUM_COLORS * ((i * screenWidth) + j))] + ") to Inputs[" + pos + "]");
+				inputs[pos++] = ((s.imageBuffer[color + (NUM_COLORS * ((i * screenWidth) + j))]) / MAX_COLOR); 
+				//System.out.println(" for coordinate [" + j + ", " + i + "] for color " + (color == RED_INDEX ? "Red" : (color == GREEN_INDEX ? "Green" : "Blue")));
 			}
 		}
-		
 		return inputs;
 	}
 	
+	
+	/**
+	 * Gives the labels for the inputs according to the information 
+	 * used to get those inputs (getInputs())
+	 * 
+	 * @param x, the starting x position
+	 * @param y, the starting y position
+	 * @param width, for the selected area
+	 * @param height, for the selected area
+	 * @param color, 0 -> blue, 1 -> green, 2 -> red, 3 -> all, any other number will default to red*
+	 * @return String[] of labels for inputs
+	 */
 	public static String[] getSensorLabels(int x, int y, int width, int height, int color) {
+		//TODO: double check this
 		int size = 1;
 		int cStart = 0;
 		int cEnd = 0;
@@ -344,6 +373,26 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 			}
 		}
 		return labels;
+	}
+	
+	public static double[] smudgeInputs(double[] inputs, int width, int height, int color, int smudge){
+		int reducedWidth = width / smudge;
+		int reducedHeight = height / smudge;
+		int colorCheck = (color == NUM_COLORS? 3 : 1);
+		double[] smudgedInputs = new double[reducedWidth*reducedHeight*colorCheck];
+		int pos = 0;
+		for(int i = 0; i < reducedHeight; i++){
+			for(int j = 0; j < reducedWidth; j++){
+				double sum = 0;
+				for(int y = 0; y < smudge; y++){
+					for(int x = 0; x < smudge; x++){
+						sum += inputs[(((i * smudge) + y) * width) + ((j * smudge) + x)];
+					}
+				}
+				smudgedInputs[pos++] = (sum / (smudge * smudge));
+			}
+		}
+		return smudgedInputs;
 	}
 	
 }
