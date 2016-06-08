@@ -1,9 +1,7 @@
 package edu.utexas.cs.nn.tasks.picbreeder;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
@@ -35,7 +33,7 @@ import edu.utexas.cs.nn.tasks.SinglePopulationTask;
 import edu.utexas.cs.nn.util.BooleanUtil;
 import edu.utexas.cs.nn.util.GraphicsUtil;
 import edu.utexas.cs.nn.util.PopulationUtil;
-import edu.utexas.cs.nn.util.file.FileUtilities;
+import java.util.HashSet;
 
 /**
  * Implementation of picbreeder that uses Java Swing components for graphical interface
@@ -78,7 +76,6 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	private boolean showNetwork;
 	private boolean waitingForUser;
 	private boolean[] chosen;
-	//private boolean completeReset = false;
 	
 	/**
 	 * Default Constructor
@@ -358,7 +355,6 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			//if(completeReset) return null;
 		}
 		return scores;
 	}
@@ -470,20 +466,15 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 			buttonPressed(scoreIndex);
 		}
 	}
-	private static double getScreenSize(boolean width) { 
-		return width ? Toolkit.getDefaultToolkit().getScreenSize().getWidth() - PIC_SIZE : Toolkit.getDefaultToolkit().getScreenSize().getHeight() / 2;
-	}
 
-	private static void drawsLineage(Offspring o, long id) { 
-		double x = getScreenSize(true);
-		double y = getScreenSize(false);
+        private static HashSet<Long> drawnOffspring = null;
+        
+	private static void drawLineage(Offspring o, long id, int x, int y) { 
 		if(o.parentId1 > -1) {
-			System.out.println("Parent 1 of " + id);
-			drawLineage(o.parentId1, (int) (x -(PIC_SIZE / 2)), (int) (y - (PIC_SIZE / 2)));
+			drawLineage(o.parentId1, id, x, y - PIC_SIZE/4);
 		}
 		if(o.parentId2 > -1) {
-			System.out.println("Parent 2 of " + id);
-			drawLineage(o.parentId2, (int) (x -(PIC_SIZE / 2)), (int) (y - (PIC_SIZE / 2)));
+			drawLineage(o.parentId2, id, x, y + PIC_SIZE/4);
 		}	
 	}
 	@SuppressWarnings("rawtypes")
@@ -492,10 +483,10 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		String log =  Parameters.parameters.stringParameter("log");
 		int runNumber = Parameters.parameters.integerParameter("runNumber");
 		String saveTo = Parameters.parameters.stringParameter("saveTo");
-		//String loadFrom = Parameters.parameters.stringParameter("loadFrom");
 		String prefix = base + "/" + saveTo + runNumber + "/" + log + runNumber + "_";
 		String originalPrefix = base + "/" + saveTo + runNumber + "/" + log + runNumber + "_";
 
+                drawnOffspring = new HashSet<Long>();
 		try {
 			//Offspring.fillInLineage(base, saveTo, runNumber, log, saveTo, false);
 			Offspring.lineage = new ArrayList<Offspring>();
@@ -507,15 +498,12 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 			for(int i = 0; i < chosen.length; i++) {
 				boolean choose = chosen[i];
 				if(choose) {//loops through and any image  clicked automatically saved
-					System.out.println("Button " + i + " chosen");
 					Score<T> s = scores.get(i);
 					Genotype<T> network = s.individual;
 					long id = network.getId();
-					System.out.println("Look for ID: " + id);
 					for(Offspring o : SelectiveBreedingEA.offspring) {
-						System.out.println("Compare with ID: " + o.offspringId);
 						if(o.offspringId == id) {
-							drawsLineage(o, id);						
+							drawLineage(o, id, 0, 500);						
 						}
 					}
 				}
@@ -527,16 +515,17 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static <T extends Network> void drawLineage(long id, int x, int y) {
-		Offspring o = Offspring.lineage.get((int) id);
-		if(o != null) {
-			System.out.println("Draw " + id + ": " + o.xmlNetwork);
+	public static <T extends Network> void drawLineage(long id, long childId, int x, int y) {
+                Offspring o = Offspring.lineage.get((int) id);
+		if(o != null && !drawnOffspring.contains(id)) { // Don't draw if already drawn
+			//System.out.println("Draw " + id + ": " + o.xmlNetwork);
 			Genotype<T> g = (Genotype<T>) Offspring.getGenotype(o.xmlNetwork);
-			BufferedImage bi = GraphicsUtil.imageFromCPPN(g.getPhenotype(), PIC_SIZE, PIC_SIZE);
-			DrawingPanel p = GraphicsUtil.drawImage(bi, "Genotype " + id, PIC_SIZE, PIC_SIZE);
+			BufferedImage bi = GraphicsUtil.imageFromCPPN(g.getPhenotype(), PIC_SIZE/2, PIC_SIZE/2);
+			DrawingPanel p = GraphicsUtil.drawImage(bi, id + " -> " + childId, PIC_SIZE/2, PIC_SIZE/2);
 			p.setLocation(x, y);
-			drawsLineage(o, id);
+			drawLineage(o, id, x + PIC_SIZE/2, y);
 		}
+                drawnOffspring.add(id); // don't draw again
 	}
 	
 	// NOT COMPLETE
