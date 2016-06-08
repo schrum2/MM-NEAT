@@ -4,6 +4,7 @@ import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.mspacman.agentcontroller.pacman.actions.*;
 import edu.utexas.cs.nn.tasks.mspacman.facades.GhostControllerFacade;
 import edu.utexas.cs.nn.tasks.mspacman.sensors.ActionBlockLoadedInputOutputMediator;
+import edu.utexas.cs.nn.tasks.mspacman.sensors.MsPacManControllerInputOutputMediator;
 import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.booleansensors.AtePowerPillBlock;
 import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.cluster.GhostClusterBlock;
 import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.booleansensors.GhostReversalBlock;
@@ -53,8 +54,7 @@ public class DirectionalToActionInputOutputMediator extends ActionBlockLoadedInp
 		// Actions
 		actions.add(new FromNearestPowerPillAction());
 		actions.add(new FromNearestThreatAction());
-		actions.add(new ToFarthestSafeLocationAction(Parameters.parameters.integerParameter("escapeNodeDepth"),
-				this.escapeNodes, ghostModel));
+		actions.add(new ToFarthestSafeLocationAction(Parameters.parameters.integerParameter("escapeNodeDepth"), MsPacManControllerInputOutputMediator.escapeNodes, ghostModel));
 		actions.add(new ToNearestEdibleGhostAction());
 		actions.add(new ToNearestPillAction());
 		actions.add(new ToNearestPowerPillAction());

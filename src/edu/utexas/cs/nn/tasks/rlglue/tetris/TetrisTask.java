@@ -4,7 +4,6 @@ import org.rlcommunity.environments.tetris.Tetris;
 import org.rlcommunity.environments.tetris.TetrisState;
 
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.rlglue.RLGlueTask;
@@ -47,6 +46,7 @@ public class TetrisTask<T extends Network> extends RLGlueTask<T> {
 		Tetris game = (Tetris) environment; 
 		if (tetrisBlocksOnScreen || tetrisTimeSteps) {
 			if (tetrisBlocksOnScreen) {
+				@SuppressWarnings("unchecked")
 				TetrisAfterStateAgent<T> tasa = (TetrisAfterStateAgent<T>) agent;
 				int numberOfBlocksInState;
 				// Checks if the we have reached the last step allowed

@@ -3,7 +3,6 @@ package edu.utexas.cs.nn.tasks.mspacman.sensors.mediators.components;
 import edu.utexas.cs.nn.tasks.mspacman.sensors.BlockLoadedInputOutputMediator;
 import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.time.EdibleTimesBlock;
 import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.time.LairTimesBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.time.NextEdibleTimeBlock;
 
 /**
  * Nearest distance to objects of interest

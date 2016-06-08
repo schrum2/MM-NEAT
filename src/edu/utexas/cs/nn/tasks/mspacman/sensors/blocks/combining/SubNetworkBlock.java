@@ -40,6 +40,7 @@ public class SubNetworkBlock<T extends Network> extends MsPacManSensorBlock {
 		this.includeInputs = includeInputs;
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public boolean equals(MsPacManSensorBlock o) {
 		if (o != null && o.getClass() == this.getClass()) {

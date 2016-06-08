@@ -1,7 +1,6 @@
 package edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.cluster;
 
 import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
 import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.MsPacManSensorBlock;
 

@@ -10,6 +10,7 @@ import java.lang.reflect.InvocationTargetException;
  */
 public class ClassCreation {
 
+	@SuppressWarnings("rawtypes") // Any type is possible, so it must be raw
 	public static Object createObject(String label) throws NoSuchMethodException {
 		Class className = Parameters.parameters.classParameter(label);
 		if (className == null) {
@@ -18,15 +19,18 @@ public class ClassCreation {
 		return createObject(className);
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" }) // Any type is possible, so it must be raw
 	public static Object createObject(Class className) throws NoSuchMethodException {
 		Constructor classConstructor = className.getConstructor();
 		return ClassCreation.createObject(classConstructor);
 	}
 
+	@SuppressWarnings("rawtypes") // Any type is possible, so it must be raw
 	public static Object createObject(Constructor constructor) {
 		return createObject(constructor, new Object[0]);
 	}
 
+	@SuppressWarnings("rawtypes") // Any type is possible, so it must be raw
 	public static Object createObject(Constructor constructor, Object[] arguments) {
 
 		System.out.println("Constructor: " + constructor.toString());

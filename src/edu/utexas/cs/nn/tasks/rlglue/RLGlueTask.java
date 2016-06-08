@@ -1,6 +1,4 @@
-package edu.utexas.cs.nn.tasks.rlglue;
-
-/*
+/**
  Copyright 2007 Brian Tanner
  brian@tannerpages.com
  http://brian.tannerpages.com
@@ -17,29 +15,27 @@ package edu.utexas.cs.nn.tasks.rlglue;
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.networks.NetworkTask;
-import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.tasks.NoisyLonerTask;
-import edu.utexas.cs.nn.tasks.rlglue.tetris.TetrisAfterStateAgent;
-import edu.utexas.cs.nn.util.ClassCreation;
-import edu.utexas.cs.nn.util.datastructures.Pair;
+package edu.utexas.cs.nn.tasks.rlglue;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
 
-import org.rlcommunity.environments.puddleworld.PuddleWorld;
-import org.rlcommunity.environments.puddleworld.PuddleWorldState;
-import org.rlcommunity.environments.tetris.Tetris;
-import org.rlcommunity.environments.tetris.TetrisState;
 import org.rlcommunity.rlglue.codec.AgentInterface;
 import org.rlcommunity.rlglue.codec.NetGlue;
 import org.rlcommunity.rlglue.codec.RLGlue;
 import org.rlcommunity.rlglue.codec.util.AgentLoader;
 import org.rlcommunity.rlglue.codec.util.EnvironmentLoader;
+
+import edu.utexas.cs.nn.MMNEAT.MMNEAT;
+import edu.utexas.cs.nn.evolution.genotypes.Genotype;
+import edu.utexas.cs.nn.networks.Network;
+import edu.utexas.cs.nn.networks.NetworkTask;
+import edu.utexas.cs.nn.parameters.CommonConstants;
+import edu.utexas.cs.nn.parameters.Parameters;
+import edu.utexas.cs.nn.tasks.NoisyLonerTask;
+import edu.utexas.cs.nn.util.ClassCreation;
+import edu.utexas.cs.nn.util.datastructures.Pair;
 
 public class RLGlueTask<T extends Network> extends NoisyLonerTask<T>implements NetworkTask {
 
@@ -50,6 +46,7 @@ public class RLGlueTask<T extends Network> extends NoisyLonerTask<T>implements N
 	protected static AgentLoader agentLoader = null;
 	protected static EnvironmentLoader environmentLoader = null;
 	protected static RLGlueEnvironment environment;
+	@SuppressWarnings("rawtypes") // Needs static access, and type T isn't known yet
 	public static RLGlueAgent agent;
 	protected int[] rlNumSteps;
 	protected double[] rlReturn;
@@ -74,6 +71,7 @@ public class RLGlueTask<T extends Network> extends NoisyLonerTask<T>implements N
 	 *
 	 * @param environment
 	 */
+	@SuppressWarnings("unchecked")
 	public RLGlueTask(RLGlueEnvironment environment) {
 		super();
 		rlGluePort = Parameters.parameters.integerParameter("rlGluePort");
@@ -94,7 +92,7 @@ public class RLGlueTask<T extends Network> extends NoisyLonerTask<T>implements N
 			 * this class needs to launch the Agent and Environment as well
 			 */
 			try {
-				agent = (RLGlueAgent) ClassCreation.createObject("rlGlueAgent");
+				agent = (RLGlueAgent<T>) ClassCreation.createObject("rlGlueAgent");
 			} catch (NoSuchMethodException e) {
 				e.printStackTrace();
 				System.out.println("Could not launch RLGlue agent");
@@ -150,6 +148,7 @@ public class RLGlueTask<T extends Network> extends NoisyLonerTask<T>implements N
 	 *
 	 * @return Pair of doubles arrays: fitness scores followed by "other" scores
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {
 		agent.replaceGenotype(individual);

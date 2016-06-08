@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.utexas.cs.nn.tasks.mspacman.sensors.mediators;
 
 import edu.utexas.cs.nn.parameters.CommonConstants;
@@ -16,8 +12,6 @@ import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.counting.PillsRemainingBlo
 import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.counting.PowerPillsRemainingBlock;
 import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.time.EdibleTimesBlock;
 import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.VariableDirectionCountJunctionOptionsBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.blocking.VariableDirectionGhostBlocksJunctionBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.blocking.VariableDirectionPowerPillBlocksJunctionBlock;
 import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.counts.VariableDirectionKStepJunctionCountBlock;
 import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.counts.VariableDirectionKStepPillCountBlock;
 import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.distance.VariableDirectionJunctionDistanceBlock;
@@ -123,17 +117,13 @@ public class IICheckEachDirectionMediator extends VariableDirectionBlockLoadedIn
 		blocks.add(new IsCloseToPowerPill());
 		// High level
 		// blocks.add(new
-		// VariableDirectionDistanceFromJunctionToGhostBlock(direction, true,
-		// true));
-		// blocks.add(new
-		// VariableDirectionCountAllPillsInKStepsBlock(direction));
+		// VariableDirectionDistanceFromJunctionToGhostBlock(direction, true, true));
+		// blocks.add(new VariableDirectionCountAllPillsInKStepsBlock(direction));
 		if (Parameters.parameters.booleanParameter("highLevel")) {
 			blocks.add(new VariableDirectionCountJunctionOptionsBlock());
 			// These sensors don't seem to help
-			// blocks.add(new
-			// VariableDirectionPowerPillBlocksJunctionBlock(direction));
-			// blocks.add(new
-			// VariableDirectionGhostBlocksJunctionBlock(direction));
+			// blocks.add(new VariableDirectionPowerPillBlocksJunctionBlock(direction));
+			// blocks.add(new VariableDirectionGhostBlocksJunctionBlock(direction));
 		}
 		// blocks.add(new VariableDirectionOneStepSafeBlock());
 	}

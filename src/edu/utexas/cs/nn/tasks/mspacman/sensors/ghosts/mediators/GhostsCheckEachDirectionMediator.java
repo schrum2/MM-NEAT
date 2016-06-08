@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.utexas.cs.nn.tasks.mspacman.sensors.ghosts.mediators;
 
 import edu.utexas.cs.nn.parameters.CommonConstants;
@@ -36,7 +32,7 @@ public class GhostsCheckEachDirectionMediator extends VariableDirectionGhostBloc
 		boolean infiniteEdibleTime = Parameters.parameters.booleanParameter("infiniteEdibleTime");
 		boolean imprisonedWhileEdible = Parameters.parameters.booleanParameter("imprisonedWhileEdible");
 		// Split ghost sensors: edible and threat
-		boolean split = Parameters.parameters.booleanParameter("specificGhostEdibleThreatSplit");
+		//boolean split = Parameters.parameters.booleanParameter("specificGhostEdibleThreatSplit");
 
 		blocks.add(new GhostBiasBlock());
 		blocks.add(new GhostEdibleBlock());

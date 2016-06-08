@@ -1,12 +1,12 @@
 package edu.utexas.cs.nn.tasks.mspacman.sensors.blocks;
 
+import java.util.Arrays;
+
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.tasks.mspacman.ghosts.GhostComparator;
 import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
+import edu.utexas.cs.nn.tasks.mspacman.ghosts.GhostComparator;
 import edu.utexas.cs.nn.util.CombinatoricUtilities;
-import java.util.Arrays;
-import pacman.game.Constants;
 
 /**
  *

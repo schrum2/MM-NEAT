@@ -1,13 +1,13 @@
 package edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.cluster;
 
-import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.tasks.mspacman.ghosts.GhostComparator;
-import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.MsPacManSensorBlock;
-import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
 import java.awt.Color;
 import java.util.Arrays;
-import pacman.game.Constants;
+
+import edu.utexas.cs.nn.parameters.CommonConstants;
+import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
+import edu.utexas.cs.nn.tasks.mspacman.ghosts.GhostComparator;
+import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.MsPacManSensorBlock;
+import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
 
 /**
  *

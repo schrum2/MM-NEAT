@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.combining;
 
 import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
@@ -60,18 +56,19 @@ public class GhostEatingNetworkBlock<T extends Network> extends SubNetworkBlock<
 
 	/**
 	 * For unit testing
+	 * 
+	 * Though I'm having trouble remembering what this actually does.
 	 *
 	 * @param args
 	 */
 	public static void main(String[] args) throws NoSuchMethodException {
-		Parameters.initializeParameterCollections(new String[] { "showNetworks:true", "watch:true",
-				"task:edu.utexas.cs.nn.tasks.mspacman.MsPacManTask" });
+		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "showNetworks:true", "watch:true", "task:edu.utexas.cs.nn.tasks.mspacman.MsPacManTask" });
 		MMNEAT.loadClasses();
 		MsPacManTask task = new MsPacManTask(true);
 
 		MsPacManControllerInputOutputMediator ghostMediator = new GhostTaskMediator();
 		MMNEAT.pacmanInputOutputMediator = ghostMediator;
-		TWEANN ghostNet = new TWEANN(ghostMediator.numIn(), ghostMediator.numOut(), false, 0, 1, -1);
+		TWEANN ghostNet = new TWEANN(ghostMediator.numIn(), ghostMediator.numOut(), false, 0, 1, 0);
 		TWEANNGenotype ghostGenotype = new TWEANNGenotype(ghostNet);
 		for (int i = 0; i < 25; i++) {
 			ghostGenotype.mutate();

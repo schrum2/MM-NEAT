@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.distancedifference;
 
 import edu.utexas.cs.nn.parameters.CommonConstants;
@@ -30,6 +26,7 @@ public class NearestEscapeNodeThreatDistanceDifferencesBlock extends MsPacManSen
 	public int incorporateSensors(final double[] inputs, int in, final GameFacade gf, final int currentDir) {
 		final int current = gf.getPacmanCurrentNodeIndex();
 		int[] locs = escapeNodes.getNodes();
+		@SuppressWarnings("unchecked")
 		Pair<Integer, Double>[] locationDistancePairs = new Pair[locs.length];
 		for (int i = 0; i < locs.length; i++) {
 			locationDistancePairs[i] = new Pair<Integer, Double>(locs[i], gf.getShortestPathDistance(current, locs[i]));

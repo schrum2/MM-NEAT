@@ -1,17 +1,14 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.utexas.cs.nn.tasks.rlglue.tetris;
+
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import org.rlcommunity.environments.tetris.TetrisState;
 
 import edu.utexas.cs.nn.graphics.DrawingPanel;
 import edu.utexas.cs.nn.networks.TWEANN;
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.geom.Rectangle2D;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.rlcommunity.environments.tetris.TetrisState;
 
 /**
  *
@@ -53,7 +50,7 @@ public final class TetrisViewer {
 		Graphics2D g = panel.getGraphics();
 		// System.out.println("Update Tetris");
 
-		Rectangle2D agentRect;
+		//Rectangle2D agentRect;
 		int numCols = ts.getWidth();
 		int numRows = ts.getHeight();
 		int[] tempWorld = new int[ts.worldState.length];
@@ -110,12 +107,12 @@ public final class TetrisViewer {
 					// System.out.println("Empty block: " + x +","+ y +","+ w
 					// +","+ h);
 					g.setColor(Color.WHITE);
-					agentRect = new Rectangle2D.Double(x, y, w, h);
-					if (true) { // tetVis.printGrid()) {
-						g.fill3DRect(x, y, w, h, true);
-					} else {
-						g.fill(agentRect);
-					}
+					//agentRect = new Rectangle2D.Double(x, y, w, h);
+					//if (true) { // tetVis.printGrid()) {
+					g.fill3DRect(x, y, w, h, true);
+					//} else { // for troubleshooting
+					//	g.fill(agentRect);
+					//}
 				}
 			}
 		}
