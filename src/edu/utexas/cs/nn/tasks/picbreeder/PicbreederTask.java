@@ -80,6 +80,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	private ArrayList<JPanel> panels;
 	private ArrayList<JButton> buttons;
 	private ArrayList<Score<T>> scores;
+	private ArrayList<Score<T>> previousScores;
 
 	//private helper variables
 	private boolean showLineage;
@@ -536,6 +537,8 @@ System.out.println("half linear checkbox: " + halfLinear.toString());
 			// Not implemented yet
 			setUndo();
 		}else if(scoreIndex == EVOLVE_BUTTON_INDEX && BooleanUtil.any(chosen)) {//If evolve button clicked
+			previousScores = new ArrayList<Score<T>>();
+			previousScores.addAll(scores);
 			waitingForUser = false;//tells evaluateAll method to finish
 		} else if(scoreIndex >= IMAGE_BUTTON_INDEX) {//If an image button clicked
 			assert (scores.size() == buttons.size()) : 
@@ -627,12 +630,22 @@ System.out.println("half linear checkbox: " + halfLinear.toString());
 	// NOT COMPLETE
 //	@SuppressWarnings("unchecked")
 	private void setUndo() {
+		scores = new ArrayList<Score<T>>();
+		for(int i = 0; i < previousScores.size(); i++) {
+			scores.add(previousScores.get(i));
+		}
+		//scores.addAll(previousScores);
+		//assert scores.size() == previousScores.size() && buttons.size()	== scores.size(): "either scores and button arrays don't match or scores and previous scores don't match";
+		for(int i = 0; i < scores.size(); i++) {
+			System.out.println("score size " + scores.size() + " previousScores size " + previousScores.size() + " buttons size " + buttons.size() + " i " + i);
+			resetButton(scores.get(i).individual, i);
+		}
 //		int lastGen = Parameters.parameters.integerParameter("lastSavedGeneration");
 //		System.out.println("before decrementing generation: " + lastGen);
 //		Parameters.parameters.setInteger("lastSavedGeneration", lastGen--);
 //		System.out.println("after decrementing generation: " + Parameters.parameters.integerParameter("lastSavedGeneration"));
 //		System.out.println("offspring to string prints out: " + "offspring.toString()");
 //
-		System.out.println("This button is not yet implemented");
+//		System.out.println("This button is not yet implemented");
 	}
 }
