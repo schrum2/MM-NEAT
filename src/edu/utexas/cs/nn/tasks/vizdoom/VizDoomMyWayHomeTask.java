@@ -11,16 +11,8 @@ import vizdoom.GameVariable;
 
 public class VizDoomMyWayHomeTask<T extends Network> extends VizDoomTask<T> {
 
-	// Save the inputRow once instead of recalculating it on every time step
-	private final int inputRow;
-
 	public VizDoomMyWayHomeTask() {
 		super();
-		if(!Parameters.parameters.booleanParameter("doomFullScreenInput")){
-			inputRow = getRow(game.getScreenWidth(), game.getScreenHeight());
-		} else {
-			inputRow = -1; // this is for a check 
-        }
 	}
 
 	@Override
@@ -32,10 +24,11 @@ public class VizDoomMyWayHomeTask<T extends Network> extends VizDoomTask<T> {
 
 	@Override
 	public String[] sensorLabels() {
-		if(Parameters.parameters.booleanParameter("doomFullScreenInput") && inputRow == -1){
-			return screenSensorLabels(game.getScreenWidth(), game.getScreenHeight());
-		}
-		return rowSensorLabels(game.getScreenWidth());
+		return getSensorLabels(Parameters.parameters.integerParameter("doomInputStartX"), 
+				Parameters.parameters.integerParameter("doomInputStartY"), 
+				Parameters.parameters.integerParameter("doomInputWidth"), 
+				Parameters.parameters.integerParameter("doomInputHeight"), 
+				Parameters.parameters.integerParameter("doomInputColorVal"));
 	}
 
 	@Override
@@ -60,10 +53,11 @@ public class VizDoomMyWayHomeTask<T extends Network> extends VizDoomTask<T> {
 
 	@Override
 	public double[] getInputs(GameState s) {
-		if(Parameters.parameters.booleanParameter("doomFullScreenInput") && inputRow == -1){
-			return colorFromScreen(s, RED_INDEX);
-		}
-		return colorFromRow(s, inputRow, RED_INDEX);
+		return getInputs(s, Parameters.parameters.integerParameter("doomInputStartX"), 
+				Parameters.parameters.integerParameter("doomInputStartY"), 
+				Parameters.parameters.integerParameter("doomInputWidth"), 
+				Parameters.parameters.integerParameter("doomInputHeight"), 
+				Parameters.parameters.integerParameter("doomInputColorVal"));
 	}
 
 	@Override
@@ -74,12 +68,12 @@ public class VizDoomMyWayHomeTask<T extends Network> extends VizDoomTask<T> {
 
 	@Override
 	public int numInputs() {
-		if(Parameters.parameters.booleanParameter("doomFullScreenInput") && inputRow == -1){
-			return (game.getScreenHeight() * game.getScreenWidth());
+		if(Parameters.parameters.integerParameter("doomInputColorVal") == 3){
+			return (Parameters.parameters.integerParameter("doomInputWidth") * Parameters.parameters.integerParameter("doomInputHeight") * 3);
 		}
-		return game.getScreenWidth();
+		return (Parameters.parameters.integerParameter("doomInputWidth") * Parameters.parameters.integerParameter("doomInputHeight"));
 	}
-
+	
 	public static void main(String[] args) {
 		Parameters.initializeParameterCollections(new String[] { "watch:false", "io:false", "netio:false", "doomEpisodeLength:2100",
 				"task:edu.utexas.cs.nn.tasks.vizdoom.VizDoomMyWayHomeTask", "trials:8", "printFitness:true"});

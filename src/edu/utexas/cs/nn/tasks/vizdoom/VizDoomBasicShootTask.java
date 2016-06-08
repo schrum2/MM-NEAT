@@ -11,15 +11,12 @@ import vizdoom.GameVariable;
 
 public class VizDoomBasicShootTask<T extends Network> extends VizDoomTask<T> {
 
-	// Save the inputRow once instead of recalculating it on every time step
-
-
 	public VizDoomBasicShootTask() {
 		super();
 	}
 
-        @Override
-        public void taskSpecificInit() {
+    @Override
+    public void taskSpecificInit() {
         game.loadConfig("vizdoom/examples/config/basic.cfg");
 		game.setDoomScenarioPath("vizdoom/scenarios/basic.wad");
 		game.setDoomMap("map01");

@@ -11,12 +11,8 @@ import vizdoom.GameVariable;
 
 public class VizDoomCIGTask<T extends Network> extends VizDoomTask<T> {
 
-	// Save the inputRow once instead of recalculating it on every time step
-	private final int inputRow;
-
 	public VizDoomCIGTask() {
 		super();
-		inputRow = getRow(game.getScreenWidth(), game.getScreenHeight()); 
 	}
 
 	@Override
@@ -28,7 +24,11 @@ public class VizDoomCIGTask<T extends Network> extends VizDoomTask<T> {
 
 	@Override
 	public String[] sensorLabels() {
-		return rowSensorLabels(game.getScreenWidth());
+		return getSensorLabels(Parameters.parameters.integerParameter("doomInputStartX"), 
+				Parameters.parameters.integerParameter("doomInputStartY"), 
+				Parameters.parameters.integerParameter("doomInputWidth"), 
+				Parameters.parameters.integerParameter("doomInputHeight"), 
+				Parameters.parameters.integerParameter("doomInputColorVal"));
 	}
 
 	@Override
@@ -64,7 +64,11 @@ public class VizDoomCIGTask<T extends Network> extends VizDoomTask<T> {
 
 	@Override
 	public double[] getInputs(GameState s) {
-		return colorFromRow(s, inputRow, RED_INDEX);
+		return getInputs(s, Parameters.parameters.integerParameter("doomInputStartX"), 
+				Parameters.parameters.integerParameter("doomInputStartY"), 
+				Parameters.parameters.integerParameter("doomInputWidth"), 
+				Parameters.parameters.integerParameter("doomInputHeight"), 
+				Parameters.parameters.integerParameter("doomInputColorVal"));
 	}
 
 	@Override
@@ -73,7 +77,10 @@ public class VizDoomCIGTask<T extends Network> extends VizDoomTask<T> {
 
 	@Override
 	public int numInputs() {
-		return game.getScreenWidth();
+		if(Parameters.parameters.integerParameter("doomInputColorVal") == 3){
+			return (Parameters.parameters.integerParameter("doomInputWidth") * Parameters.parameters.integerParameter("doomInputHeight") * 3);
+		}
+		return (Parameters.parameters.integerParameter("doomInputWidth") * Parameters.parameters.integerParameter("doomInputHeight"));
 	}
 
 	public static void main(String[] args) {
