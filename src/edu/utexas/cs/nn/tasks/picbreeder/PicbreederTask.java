@@ -9,8 +9,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Scanner;
-
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -74,7 +74,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	private static final int FULLAPPROX_CHECKBOX_INDEX = -16;
 	private static final int APPROX_CHECKBOX_INDEX = -17;
 	private static final int BORDER_THICKNESS = 4;
-	
+
 	//Private final variables
 	private static int NUM_ROWS;
 	private static int PIC_SIZE;
@@ -93,7 +93,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	private boolean waitingForUser;
 	private boolean[] chosen;
 	private boolean[] activation;
-	
+
 	/**
 	 * Default Constructor
 	 */
@@ -103,7 +103,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 			Parameters.parameters.setInteger("mu", PicbreederTask.NUM_COLUMNS * ((Parameters.parameters.integerParameter("mu") / PicbreederTask.NUM_COLUMNS) + 1));
 			System.out.println("Changing population size to: " + Parameters.parameters.integerParameter("mu"));
 		}
-		
+
 		//Global variable instantiations
 		NUM_BUTTONS	= Parameters.parameters.integerParameter("mu");
 		NUM_ROWS = NUM_BUTTONS / NUM_COLUMNS;
@@ -114,16 +114,16 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		waitingForUser = false;
 		activation = new boolean[Math.abs(APPROX_CHECKBOX_INDEX ) + 1];//magic number is number of activation functions
 		Arrays.fill(activation, true);
-                if(MMNEAT.browseLineage) {
-                    // Do not setup the JFrame if browsing the lineage
-                    return;
-                }            
+		if(MMNEAT.browseLineage) {
+			// Do not setup the JFrame if browsing the lineage
+			return;
+		}            
 
-                //Graphics instantiations
+		//Graphics instantiations
 		frame = new JFrame("Picbreeder");
 		panels = new ArrayList<JPanel>();
 		buttons = new ArrayList<JButton>();
-		
+
 		//sets up JFrame
 		frame.setSize(PIC_SIZE * NUM_COLUMNS, PIC_SIZE * NUM_ROWS);
 		frame.setLocation(300, 100);//magic #s 100 correspond to relocating frame to middle of screen
@@ -158,7 +158,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		JCheckBox sawtooth = new JCheckBox("sawtooth", true);
 		JCheckBox absVal = new JCheckBox("absolute_value", true);
 		JCheckBox halfLinear = new JCheckBox("half_linear", true);
-		
+
 		//set graphic names and toolTip titles
 		evolveButton.setName("" + EVOLVE_BUTTON_INDEX);
 		evolveButton.setToolTipText("Evolve button");
@@ -184,7 +184,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		approx.setName("" + APPROX_CHECKBOX_INDEX);
 		sawtooth.setName("" + SAWTOOTH_CHECKBOX_INDEX);
 		halfLinear.setName("" + HALF_LINEAR_CHECKBOX_INDEX);
-		
+
 		//add action listeners to buttons
 		resetButton.addActionListener(this);
 		saveButton.addActionListener(this);
@@ -204,6 +204,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		fullApprox.addActionListener(this);
 		approx.addActionListener(this);
 
+		//set checkbox colors to match activation function color
 		sigmoid.setForeground(CombinatoricUtilities.colorFromInt(ActivationFunctions.FTYPE_SIGMOID));
 		absVal.setForeground(CombinatoricUtilities.colorFromInt(ActivationFunctions.FTYPE_ABSVAL));
 		approx.setForeground(CombinatoricUtilities.colorFromInt(ActivationFunctions.FTYPE_APPROX));
@@ -214,7 +215,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		sawtooth.setForeground(CombinatoricUtilities.colorFromInt(ActivationFunctions.FTYPE_SAWTOOTH));
 		sine.setForeground(CombinatoricUtilities.colorFromInt(ActivationFunctions.FTYPE_SINE));
 		tanh.setForeground(CombinatoricUtilities.colorFromInt(ActivationFunctions.FTYPE_TANH));
-		
+
 		//add graphics to title panel
 		top.add(lineageButton);
 		top.add(resetButton);
@@ -239,15 +240,19 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 
 		//adds button panels
 		addButtonPanels();
-		
+
 		//adds panels to frame
 		for(JPanel panel: panels) frame.add(panel);
-		
+
 		//adds buttons to button panels
 		int x = 0;//used to keep track of index of button panel
 		addButtonsToPanel(x++);
 	}
 
+	/**
+	 * adds buttons to a JPanel
+	 * @param x size of button array
+	 */
 	private void addButtonsToPanel(int x) {
 		for(int i = 1; i <= NUM_ROWS; i++) {
 			for(int j = 0; j < NUM_COLUMNS; j++) {
@@ -257,12 +262,12 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 					image.addActionListener(this);
 					panels.get(i).add(image);
 					buttons.add(image);
-					
+
 				}
 			}
 		}
 	}
-	
+
 	/**
 	 * Adds all necessary button panels 
 	 */
@@ -275,7 +280,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 			panels.add(row);
 		}
 	}
-	
+
 	/**
 	 * Gets JButton from given image
 	 * @param image image to put on button
@@ -330,7 +335,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	@Override
 	public void finalCleanup() {
 	}
-	
+
 	/**
 	 * Returns labels for input
 	 *
@@ -340,7 +345,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	public String[] sensorLabels() {
 		return new String[] { "X-coordinate", "Y-coordinate", "distance from center", "bias" };
 	}
-	
+
 	/**
 	 * Returns labels for output
 	 *
@@ -350,11 +355,11 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	public String[] outputLabels() {
 		return new String[] { "hue-value", "saturation-value", "brightness-value" };
 	}
-	
+
 	/**
 	 * Resets image on button
 	 * @param gmi replacing image
- 	 * @param buttonIndex index of button 
+	 * @param buttonIndex index of button 
 	 */
 	private void setButtonImage(BufferedImage gmi, int buttonIndex){ 
 		ImageIcon img = new ImageIcon(gmi);
@@ -373,7 +378,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		DrawingPanel p = GraphicsUtil.drawImage(toSave, "" + i, toSave.getWidth(), toSave.getHeight());
 		JFileChooser chooser = new JFileChooser();//used to get save name 
 		chooser.setApproveButtonText("Save");
-		chooser.setCurrentDirectory(new File("\\" + "Users" + "\\" + "gillespl" + "\\" + "SCOPE" + "\\" + "MM-NEATv2" + "\\" + "evolvedPicbreederImages"));
+		chooser.setCurrentDirectory(new File("\\" + "Users" + "\\" + "gillespl" + "\\" + "SCOPE" + "\\" + "MM-NEATv2" + "\\" + "PicbreederImages"));
 		FileNameExtensionFilter filter = new FileNameExtensionFilter("BMP Images", "bmp");
 		chooser.setFileFilter(filter);
 		int returnVal = chooser.showOpenDialog(frame);
@@ -399,7 +404,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		chosen[x] = false;
 		buttons.get(x).setBorder(BorderFactory.createLineBorder(Color.lightGray, BORDER_THICKNESS));
 	}
-	
+
 	/**
 	 * Used to get the image of a network using a drawing panel
 	 * @param tg genotype of network
@@ -413,7 +418,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		return network.image;
 
 	}
-	
+
 	/**
 	 * evaluates all genotypes in a population
 	 * @param population of starting population
@@ -454,7 +459,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 			scores.get(scoreIndex).replaceScores(new double[]{1.0});
 		}
 	}
-	
+
 	/**
 	 * Resets to a new random population
 	 */
@@ -466,25 +471,25 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 			resetButton(newPop.get(i), i);
 		}
 		// Attempted to completely clear all old log info, but realy complicated
-//		String base = Parameters.parameters.stringParameter("base");
-//		int runNumber = Parameters.parameters.integerParameter("runNumber");
-//		String saveTo = Parameters.parameters.stringParameter("saveTo");
-//		String prefix = base + "/" + saveTo + runNumber;
-//		// Null pointer issue?
-//		((SinglePopulationGenerationalEA<T>) MMNEAT.ea).close(null);
-//		MMNEAT.closeLogs(); // close logs
-//		// delete all records
-//		FileUtilities.deleteDirectoryContents(new File(prefix));
-//		// Reset some parameters to defaults
-//		Parameters.parameters.setInteger("lastSavedGeneration", 0);
-//		Parameters.parameters.setLong("lastInnovation", 0l);
-//		Parameters.parameters.setLong("lastGenotypeId", 0l);
-//		Parameters.parameters.setString("lastSavedDirectory", "");
-//		
-//		completeReset  = true;
-//		MMNEAT.mmneat.run();		
+		//		String base = Parameters.parameters.stringParameter("base");
+		//		int runNumber = Parameters.parameters.integerParameter("runNumber");
+		//		String saveTo = Parameters.parameters.stringParameter("saveTo");
+		//		String prefix = base + "/" + saveTo + runNumber;
+		//		// Null pointer issue?
+		//		((SinglePopulationGenerationalEA<T>) MMNEAT.ea).close(null);
+		//		MMNEAT.closeLogs(); // close logs
+		//		// delete all records
+		//		FileUtilities.deleteDirectoryContents(new File(prefix));
+		//		// Reset some parameters to defaults
+		//		Parameters.parameters.setInteger("lastSavedGeneration", 0);
+		//		Parameters.parameters.setLong("lastInnovation", 0l);
+		//		Parameters.parameters.setLong("lastGenotypeId", 0l);
+		//		Parameters.parameters.setString("lastSavedDirectory", "");
+		//		
+		//		completeReset  = true;
+		//		MMNEAT.mmneat.run();		
 	}
-	
+
 	/**
 	 * Saves all currently clicked images
 	 */
@@ -496,14 +501,18 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 			}
 		}
 	}
-	
+
+	/**
+	 * Shows network on button if network button pressed
+	 * replaces images on buttons otherwise
+	 */
 	private void setNetwork() { 
-		if(showNetwork) {
+		if(showNetwork) {//puts images back on buttons
 			showNetwork = false;
 			for(int i = 0; i < scores.size(); i++) {
 				setButtonImage(GraphicsUtil.imageFromCPPN((Network)scores.get(i).individual.getPhenotype(), PIC_SIZE, PIC_SIZE), i);
 			}
-		} else {
+		} else {//puts networks on buttons
 			showNetwork = true;
 			for(int i = 0; i < buttons.size(); i++) {
 				BufferedImage network = getNetwork(scores.get(i).individual);
@@ -511,7 +520,14 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 			}
 		}
 	}
-	
+
+	/**
+	 * Sets the activation functions as true or false based on whether or
+	 * not they were pressed
+	 * @param act whether or not function is active
+	 * @param index index of function in boolean array
+	 * @param title title of function in parameters set
+	 */
 	private void setCheckBox(boolean act, int index, String title) { 
 		if(act) { 
 			activation[Math.abs(index)] = false;
@@ -520,14 +536,14 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 			activation[Math.abs(index)] = true;
 			Parameters.parameters.setBoolean(title, true);
 		}
-                ActivationFunctions.resetFunctionSet();
+		ActivationFunctions.resetFunctionSet();
 	}
+
 	/**
 	 * Contains actions to be performed based
 	 * on specific events
 	 * @param event that occurred
 	 */
-	
 	@Override
 	public void actionPerformed(ActionEvent event) {
 		//open scanner to read which button was pressed
@@ -589,89 +605,126 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 			buttonPressed(scoreIndex);
 		}
 	}
+	//used for lineage and undo button
+	private static HashSet<Long> drawnOffspring = null;
+	private static HashMap<Integer, Integer> savedLineage = null;
+	private static ArrayList<DrawingPanel> dPanels = null;
 
-        private static HashSet<Long> drawnOffspring = null;
-        private static ArrayList<DrawingPanel> dPanels = null;
-        
-	private static void drawLineage(Offspring o, long id, int x, int y) { 
-		if(o.parentId1 > -1) {
-			drawLineage(o.parentId1, id, x, y - PIC_SIZE/4);
-		}
-		if(o.parentId2 > -1) {
-			drawLineage(o.parentId2, id, x, y + PIC_SIZE/4);
-		}	
-	}
+	/**
+	 * resets lineage drawer if button pressed multiple
+	 * times
+	 */
 	private static void resetLineageDrawer() { 
 		if(dPanels != null) {
-		for(int i = 0; i < dPanels.size(); i++) {
-			dPanels.get(i).setVisibility(false);
-		}
+			for(int i = 0; i < dPanels.size(); i++) {
+				dPanels.get(i).setVisibility(false);
+			}
 		}
 		dPanels = null;
 		drawnOffspring = null;
 	}
+
+
+	/**
+	 * gets lineage from offspring object
+	 */
 	@SuppressWarnings("rawtypes")
 	private void setLineage() {
 		if(!showLineage) {
 			showLineage = true;
 			resetLineageDrawer();
-		String base = Parameters.parameters.stringParameter("base");
-		String log =  Parameters.parameters.stringParameter("log");
-		int runNumber = Parameters.parameters.integerParameter("runNumber");
-		String saveTo = Parameters.parameters.stringParameter("saveTo");
-		String prefix = base + "/" + saveTo + runNumber + "/" + log + runNumber + "_";
-		String originalPrefix = base + "/" + saveTo + runNumber + "/" + log + runNumber + "_";
+			String base = Parameters.parameters.stringParameter("base");
+			String log =  Parameters.parameters.stringParameter("log");
+			int runNumber = Parameters.parameters.integerParameter("runNumber");
+			String saveTo = Parameters.parameters.stringParameter("saveTo");
+			String prefix = base + "/" + saveTo + runNumber + "/" + log + runNumber + "_";
+			String originalPrefix = base + "/" + saveTo + runNumber + "/" + log + runNumber + "_";
 
-                drawnOffspring = new HashSet<Long>();
-                dPanels = new ArrayList<DrawingPanel>();
-                
-		try {
-			Offspring.reset();
-			Offspring.lineage = new ArrayList<Offspring>();
-			PopulationUtil.loadLineage();
-			System.out.println("Lineage loaded from file");
-			// Also adds networks
-			Offspring.addAllScores(prefix, "parents_gen", ((SinglePopulationGenerationalEA) MMNEAT.ea).currentGeneration(), true, originalPrefix);
-			
-			for(int i = 0; i < chosen.length; i++) {
-				boolean choose = chosen[i];
-				if(choose) {//loops through and any image  clicked automatically saved
-					Score<T> s = scores.get(i);
-					Genotype<T> network = s.individual;
-					long id = network.getId();
-					for(Offspring o : SelectiveBreedingEA.offspring) {
-						if(o.offspringId == id) {
-							drawLineage(o, id, 0, 500);						
+			drawnOffspring = new HashSet<Long>();
+			savedLineage = new HashMap<Integer, Integer>();
+			dPanels = new ArrayList<DrawingPanel>();
+
+			try {
+				Offspring.reset();
+				Offspring.lineage = new ArrayList<Offspring>();
+				PopulationUtil.loadLineage();
+				System.out.println("Lineage loaded from file");
+				// Also adds networks
+				Offspring.addAllScores(prefix, "parents_gen", ((SinglePopulationGenerationalEA) MMNEAT.ea).currentGeneration(), true, originalPrefix);
+				System.out.println("Scores added");
+				for(int i = 0; i < chosen.length; i++) {
+					boolean choose = chosen[i];
+					if(choose) {//loops through and any image  clicked automatically saved
+						Score<T> s = scores.get(i);
+						Genotype<T> network = s.individual;
+						long id = network.getId();
+						for(Offspring o : SelectiveBreedingEA.offspring) {
+							if(o.offspringId == id) {
+								drawLineage(o, id, 0, 500);						
+							}
 						}
+//						for(DrawingPanel panel : dPanels) {
+//							panel.save(panel.getFrame().getTitle());
+//						}
 					}
 				}
+			} catch (FileNotFoundException e) {
+				System.out.println("Lineage browser failed");
+				e.printStackTrace();
 			}
-		} catch (FileNotFoundException e) {
-			System.out.println("Lineage browser failed");
-			e.printStackTrace();
-		}
 		} else {
 			resetLineageDrawer();
 			showLineage = false;
 		}
 	}
-	
+
+	/**
+	 * Draws lineage of image recursively
+	 * @param o offspring object (used to retrieve lineage)
+	 * @param id id of image
+	 * @param x x-coord of image
+	 * @param y y-coord of image
+	 */
+	private static void drawLineage(Offspring o, long id, int x, int y) { 
+		int depth = 0;
+		if(o.parentId1 > -1) {
+			drawLineage(o.parentId1, id, x, y - PIC_SIZE/4, depth ++ );
+		}
+		if(o.parentId2 > -1) {
+			drawLineage(o.parentId2, id, x, y + PIC_SIZE/4, depth ++);
+		}	
+	}
+
+	/**
+	 * draws lineage of an image
+	 * @param id id of image
+	 * @param childId id of child image
+	 * @param x x-coord
+	 * @param y y-coord
+	 */
 	@SuppressWarnings("unchecked")
-	public static <T extends Network> void drawLineage(long id, long childId, int x, int y) {
-                Offspring o = Offspring.lineage.get((int) id);
+	public static <T extends Network> void drawLineage(long id, long childId, int x, int y, int depth) {
+		Offspring o = Offspring.lineage.get((int) id);
 		if(o != null && !drawnOffspring.contains(id)) { // Don't draw if already drawn
 			Genotype<T> g = (Genotype<T>) Offspring.getGenotype(o.xmlNetwork);
 			BufferedImage bi = GraphicsUtil.imageFromCPPN(g.getPhenotype(), PIC_SIZE/2, PIC_SIZE/2);
 			DrawingPanel p = GraphicsUtil.drawImage(bi, id + " -> " + childId, PIC_SIZE/2, PIC_SIZE/2);
 			p.setLocation(x, y);
+			savedLineage.put(depth, savedLineage.get(depth) == null ? 0 : savedLineage.get(depth) + 1);
 			drawLineage(o, id, x + PIC_SIZE/2, y);
+			p.setTitle(id + "ancestor" + depth + savedLineage.get(depth));
+			p.save(p.getFrame().getTitle());
 			dPanels.add(p);
 		}
-                drawnOffspring.add(id); // don't draw again
+		drawnOffspring.add(id); // don't draw again
 	}
-	
-	// NOT COMPLETE
-//	@SuppressWarnings("unchecked")
+
+	/**
+	 * undoes previous evolution call
+	 *
+	 * NOT COMPLETE
+	 *@SuppressWarnings("unchecked")
+	 */
 	private void setUndo() {
 		scores = new ArrayList<Score<T>>();
 		for(int i = 0; i < previousScores.size(); i++) {
@@ -683,12 +736,12 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 			System.out.println("score size " + scores.size() + " previousScores size " + previousScores.size() + " buttons size " + buttons.size() + " i " + i);
 			resetButton(scores.get(i).individual, i);
 		}
-//		int lastGen = Parameters.parameters.integerParameter("lastSavedGeneration");
-//		System.out.println("before decrementing generation: " + lastGen);
-//		Parameters.parameters.setInteger("lastSavedGeneration", lastGen--);
-//		System.out.println("after decrementing generation: " + Parameters.parameters.integerParameter("lastSavedGeneration"));
-//		System.out.println("offspring to string prints out: " + "offspring.toString()");
-//
-//		System.out.println("This button is not yet implemented");
+		//		int lastGen = Parameters.parameters.integerParameter("lastSavedGeneration");
+		//		System.out.println("before decrementing generation: " + lastGen);
+		//		Parameters.parameters.setInteger("lastSavedGeneration", lastGen--);
+		//		System.out.println("after decrementing generation: " + Parameters.parameters.integerParameter("lastSavedGeneration"));
+		//		System.out.println("offspring to string prints out: " + "offspring.toString()");
+		//
+		//		System.out.println("This button is not yet implemented");
 	}
 }
