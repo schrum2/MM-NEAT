@@ -28,9 +28,9 @@ import edu.utexas.cs.nn.util.stats.Statistic;
  * @author rollinsa
  * @param <T> Type of evolved phenotype
  */
-public class ObjectiveBestTeamsExperiment<T> implements Experiment {
+public class ObjectiveBestTeamsExperiment implements Experiment {
 
-	private ArrayList<ArrayList<Genotype<T>>> genotypes;
+	private ArrayList<ArrayList<Genotype>> genotypes;
 
 	/**
 	 * Load best performer in each objective (previously saved),
@@ -39,22 +39,22 @@ public class ObjectiveBestTeamsExperiment<T> implements Experiment {
 	 */
 	@Override
 	public void init() {
-		genotypes = new ArrayList<ArrayList<Genotype<T>>>();
+		genotypes = new ArrayList<ArrayList<Genotype>>();
 		if (Parameters.parameters.booleanParameter("watchLastBestOfTeams")) {
 			//loop through each population
 			for(int i = 0; i < ((CooperativeTask) MMNEAT.task).numberOfPopulations(); i++){
-				genotypes.add(new ArrayList<Genotype<T>>());
+				genotypes.add(new ArrayList<Genotype>());
 				//go for the number of objectives for this population
 				for(int j = 0; j < ((CooperativeTask) MMNEAT.task).objectivesPerPopulation()[i]; j++) {
 					int lastGen = Parameters.parameters.integerParameter("lastSavedGeneration");
 					String file = FileUtilities.getSaveDirectory() + "/pop" + i + "_bestObjectives/gen" + lastGen + "_bestIn"+j+".xml";
-					genotypes.get(i).add((Genotype<T>) PopulationUtil.extractGenotype(file));
+					genotypes.get(i).add((Genotype) PopulationUtil.extractGenotype(file));
 				}
 			}
 		}else {
 			for(int i = 0; i < ((CooperativeTask) MMNEAT.task).numberOfPopulations(); i++){
 				String dir = FileUtilities.getSaveDirectory() + "/pop" + i + "_bestObjectives";
-				genotypes.add(PopulationUtil.load(dir));
+				genotypes.add(PopulationUtil.removeListGenotypeType(PopulationUtil.load(dir)));
 			}
 		}
 	}
