@@ -296,7 +296,7 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 	 * @return inputs int array
 	 */
 	public double[] getInputs(GameState s, int x, int y, int width, int height, int color){
-		System.out.println("Getting inputs for [" + x + ", " + y + "] where width is " + width + " and height is " + height);
+		//System.out.println("Getting inputs for [" + x + ", " + y + "] where width is " + width + " and height is " + height);
 		if(color < BLUE_INDEX || color > RED_INDEX + 1){
 			color = RED_INDEX; // set to red if not specified correctly
 		}
@@ -327,13 +327,13 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 	 */
 	public static double[] colorInputs(GameState s, int x, int y, int width, int height, int color, int screenWidth){
 		double[] inputs = new double[width * height];
-		System.out.println("Input array size is " + inputs.length + " and color is " + (color == RED_INDEX? "Red": (color == GREEN_INDEX? "Green" : "Blue")));
+		//System.out.println("Input array size is " + inputs.length + " and color is " + (color == RED_INDEX? "Red": (color == GREEN_INDEX? "Green" : "Blue")));
 		int pos = 0;
 		for(int i = y; i < y + height; i++){
 			for(int j = x; j < x + width; j++){
-				System.out.print("Adding Buffer[" + (color + (NUM_COLORS * ((i * screenWidth) + j))) + "](" + s.imageBuffer[color + (NUM_COLORS * ((i * screenWidth) + j))] + ") to Inputs[" + pos + "]");
+				//System.out.print("Adding Buffer[" + (color + (NUM_COLORS * ((i * screenWidth) + j))) + "](" + ((s.imageBuffer[color + (NUM_COLORS * ((i * screenWidth) + j))]) / MAX_COLOR) + ") to Inputs[" + pos + "]");
 				inputs[pos++] = ((s.imageBuffer[color + (NUM_COLORS * ((i * screenWidth) + j))]) / MAX_COLOR); 
-				System.out.println(" for coordinate [" + j + ", " + i + "] for color " + (color == RED_INDEX ? "Red" : (color == GREEN_INDEX ? "Green" : "Blue")));
+				//System.out.println(" for coordinate [" + j + ", " + i + "] for color " + (color == RED_INDEX ? "Red" : (color == GREEN_INDEX ? "Green" : "Blue")));
 			}
 		}
 		return inputs;
@@ -374,7 +374,7 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 	}
 	
 	public static double[] smudgeInputs(double[] inputs, int width, int height, int color, int smudge){
-		System.out.println("Smudging inputs at a rate of " + smudge + " where width: " + width + " and height: " + height);
+		//System.out.println("Smudging inputs at a rate of " + smudge + " where width: " + width + " and height: " + height);
 		int reducedWidth = width / smudge;
 		int reducedHeight = height / smudge;
 		
@@ -392,22 +392,22 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 	}
 	
 	public static double[] smudgeColor(double[] inputs, int width, int reducedWidth, int reducedHeight, int color, int smudge){
-		System.out.println("Smudging for color " + (color == RED_INDEX? "Red": (color == GREEN_INDEX? "Green" : "Blue")) + " at a reduced width: " + reducedWidth + " and height: " + reducedHeight);
+		//System.out.println("Smudging for color " + (color == RED_INDEX? "Red": (color == GREEN_INDEX? "Green" : "Blue")) + " at a reduced width: " + reducedWidth + " and height: " + reducedHeight);
 		double[] smudgedInputs = new double[reducedWidth*reducedHeight];
 		int pos = 0;
 		for(int i = 0; i < reducedHeight; i++){
 			for(int j = 0; j < reducedWidth; j++){
 				double sum = 0;
-				System.out.print("Sum added ");
+				//System.out.print("Sum: ");
 				for(int y = 0; y < smudge; y++){
 					for(int x = 0; x < smudge; x++){
 						sum += inputs[(((i * smudge) + y) * width) + ((j * smudge) + x)];
-						System.out.print("inputs[" + ((((i * smudge) + y) * width) + ((j * smudge) + x)) + "] at coordinate [" + ((j * smudge) + x) + ", "+ ((i * smudge) + y) + "], ");
+						//System.out.print("[" + ((j * smudge) + x) + ", "+ ((i * smudge) + y) + "], ");
 					}
 				}
-				System.out.println("to SmudgedInputs[" + pos + "]");
+				//System.out.println("to SmudgedInputs[" + pos + "]");
 				smudgedInputs[pos++] = (sum / (smudge * smudge));
-				System.out.println(" for new coordinate [" + j + ", " + i + "]");
+				//System.out.println(" for new coordinate [" + j + ", " + i + "] = " + (smudgedInputs[pos-1]));
 
 			}
 		}
