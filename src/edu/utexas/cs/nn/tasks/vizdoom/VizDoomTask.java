@@ -352,21 +352,16 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 	 * @return String[] of labels for inputs
 	 */
 	public static String[] getSensorLabels(int x, int y, int width, int height, int color) {
-		//TODO: double check this
-		int size = 1;
-		int cStart = 0;
-		int cEnd = 0;
-		int pos = 0;
-		if(color == 3){
-			size = 3;
-			cEnd = 2;
-		}
+		int cStart = 0; // always start loop with 0
+		int cEnd = (color == NUM_COLORS? NUM_COLORS : 1); // if color is 3, set the end as total number of colors, otherwise just 1 
+		int colorIndex = (color == NUM_COLORS? BLUE_INDEX : color); // set index of starting color, or only color
+		int size = (color == NUM_COLORS? NUM_COLORS : 1); // if color is 3, set to use all colors in finished array, otherwise just 1
+		
 		String[] labels = new String[width * height * size];
-		for (int i = y; i < height; i++) {
-			for (int j = x; j < width; j++) {
-				for(int c = cStart; c <= cEnd; c++){
-					labels[pos + j + (i*width) + c] = "Position " + j + ", " + i + (c == RED_INDEX ? " Red" : (c == GREEN_INDEX ? " Green" : " Blue"));
-					pos++;
+		for(int c = cStart; c < cEnd; c++){ // loops either 3 times or once
+			for (int i = y; i < height; i++) {
+				for (int j = x; j < width; j++) {
+					labels[j + (i*width) + (c*width*height)] = "Position " + j + ", " + i + " at " + (colorIndex == RED_INDEX ? "Red" : (colorIndex == GREEN_INDEX ? "Green" : "Blue"));
 				}
 			}
 		}

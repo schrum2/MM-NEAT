@@ -26,8 +26,8 @@ public class VizDoomDefendLineTask<T extends Network> extends VizDoomTask<T> {
 	public String[] sensorLabels() {
 		return getSensorLabels(Parameters.parameters.integerParameter("doomInputStartX"), 
 				Parameters.parameters.integerParameter("doomInputStartY"), 
-				Parameters.parameters.integerParameter("doomInputWidth"), 
-				Parameters.parameters.integerParameter("doomInputHeight"), 
+				(Parameters.parameters.integerParameter("doomInputWidth") / Parameters.parameters.integerParameter("doomInputPixelSmudge")), 
+				(Parameters.parameters.integerParameter("doomInputHeight") / Parameters.parameters.integerParameter("doomInputPixelSmudge")), 
 				Parameters.parameters.integerParameter("doomInputColorVal"));
 	}
 
@@ -49,11 +49,19 @@ public class VizDoomDefendLineTask<T extends Network> extends VizDoomTask<T> {
 
 	@Override
 	public double[] getInputs(GameState s) {
-		return getInputs(s, Parameters.parameters.integerParameter("doomInputStartX"), 
+		double[] inputs = getInputs(s, Parameters.parameters.integerParameter("doomInputStartX"), 
 				Parameters.parameters.integerParameter("doomInputStartY"), 
 				Parameters.parameters.integerParameter("doomInputWidth"), 
 				Parameters.parameters.integerParameter("doomInputHeight"), 
 				Parameters.parameters.integerParameter("doomInputColorVal"));
+		if(Parameters.parameters.integerParameter("doomInputPixelSmudge") > 1){
+			return smudgeInputs(inputs, Parameters.parameters.integerParameter("doomInputWidth"), 
+					Parameters.parameters.integerParameter("doomInputHeight"), 
+					Parameters.parameters.integerParameter("doomInputColorVal"), 
+					Parameters.parameters.integerParameter("doomInputPixelSmudge"));
+		}else{
+			return inputs;
+		}
 	}
 
 	@Override
@@ -63,10 +71,14 @@ public class VizDoomDefendLineTask<T extends Network> extends VizDoomTask<T> {
 
 	@Override
 	public int numInputs() {
+		int smudge = Parameters.parameters.integerParameter("doomInputPixelSmudge");
+		int width = Parameters.parameters.integerParameter("doomInputWidth") / smudge;
+		int height = Parameters.parameters.integerParameter("doomInputHeight") / smudge;
+		
 		if(Parameters.parameters.integerParameter("doomInputColorVal") == 3){
-			return (Parameters.parameters.integerParameter("doomInputWidth") * Parameters.parameters.integerParameter("doomInputHeight") * 3);
+			return (width * height * 3);
 		}
-		return (Parameters.parameters.integerParameter("doomInputWidth") * Parameters.parameters.integerParameter("doomInputHeight"));
+		return (width * height);
 	}
 
 
