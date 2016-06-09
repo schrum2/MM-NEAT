@@ -30,10 +30,10 @@ public class ActivationFunctions {
 	public static final int FTYPE_FULLAPPROX = 3;
 	public static final int FTYPE_APPROX = 4;
 	public static final int FTYPE_GAUSS = 5;
-	public static final int FTYPE_SINE = 6;
-	public static final int FTYPE_ABSVAL = 7;
-	public static final int FTYPE_HLPIECEWISE = 8;
-	public static final int FTYPE_SAWTOOTH = 9;
+	public static final int FTYPE_SINE = 12;
+	public static final int FTYPE_ABSVAL = 13;
+	public static final int FTYPE_HLPIECEWISE = 15;
+	public static final int FTYPE_SAWTOOTH = 16;
 
 	/**
 	 * Initializes the set of ftypes by checking boolean parameters for included
