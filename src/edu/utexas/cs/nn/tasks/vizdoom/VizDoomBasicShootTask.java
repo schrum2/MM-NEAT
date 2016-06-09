@@ -97,8 +97,8 @@ public class VizDoomBasicShootTask<T extends Network> extends VizDoomTask<T> {
 	public String[] sensorLabels() {
 		return getSensorLabels(Parameters.parameters.integerParameter("doomInputStartX"), 
 				Parameters.parameters.integerParameter("doomInputStartY"), 
-				Parameters.parameters.integerParameter("doomInputWidth"), 
-				Parameters.parameters.integerParameter("doomInputHeight"), 
+				(Parameters.parameters.integerParameter("doomInputWidth") / Parameters.parameters.integerParameter("doomInputPixelSmudge")), 
+				(Parameters.parameters.integerParameter("doomInputHeight") / Parameters.parameters.integerParameter("doomInputPixelSmudge")), 
 				Parameters.parameters.integerParameter("doomInputColorVal"));
 	}
 
