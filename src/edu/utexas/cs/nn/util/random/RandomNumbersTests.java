@@ -2,11 +2,13 @@ package edu.utexas.cs.nn.util.random;
 
 import static org.junit.Assert.*;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 import org.junit.Test;
 
 import edu.utexas.cs.nn.parameters.Parameters;
+import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
 
 public class RandomNumbersTests {
 
@@ -126,31 +128,38 @@ public class RandomNumbersTests {
 	
 	@Test
 	public void randomDistinct_test() {
-		
+		int[] result = RandomNumbers.randomDistinct(4, 4); //(0, 1, 2, 3)
+		assertEquals(result.length, 4);
+		assertEquals(ArrayUtil.countOccurrences(0, result), 1);
+		assertEquals(ArrayUtil.countOccurrences(1, result), 1);
+		assertEquals(ArrayUtil.countOccurrences(2, result), 1);
+		assertEquals(ArrayUtil.countOccurrences(3, result), 1);
 	}
 	
 	@Test
 	public void randomSign_test() {
-		
+		for(int i = 0; i < 50; i++){
+			assertEquals(Math.abs(RandomNumbers.randomSign()), 1, 0.0);
+		}
 	}
 	
 	@Test
 	public void randomXofY_test() {
-		
-	}
-	
-	@Test
-	public void randomCauchyValue_test() {
-		
-	}
-	
-	@Test
-	public void randomCauchyValue_wtrange_test() {
-		
+		int[] result = RandomNumbers.randomXofY(4, 4); //(0, 1, 2, 3)
+		assertEquals(result.length, 4);
+		assertEquals(ArrayUtil.countOccurrences(0, result), 1);
+		assertEquals(ArrayUtil.countOccurrences(1, result), 1);
+		assertEquals(ArrayUtil.countOccurrences(2, result), 1);
+		assertEquals(ArrayUtil.countOccurrences(3, result), 1);
 	}
 	
 	@Test
 	public void randomElement_test() {
-		
+		ArrayList<String> strings = new ArrayList<String>(2);
+		strings.add("Yes");
+		strings.add("No");
+		String result = RandomNumbers.randomElement(strings);
+		assertTrue(result.equals("Yes") || result.equals("No"));
+		assertFalse(result.equals("Maybe"));
 	}
 }

@@ -136,12 +136,15 @@ public class RandomNumbers {
 	 * Of the integers in [0,ceiling) pick num of them and return in an array
 	 *
 	 * @param num
-	 *            number of distinct random values to get
+	 *            number of distinct random values to get 
 	 * @param ceiling
 	 *            possible values are integers less than ceiling
 	 * @return array of num chosen values
 	 */
 	public static int[] randomDistinct(int num, int ceiling) {
+		assert ceiling > 0 : "There must be some numbers to choose from";
+		assert num <= ceiling : "Can't choose more numbers than are available";
+		
 		ArrayList<Integer> all = new ArrayList<Integer>(ceiling);
 		for (int i = 0; i < ceiling; i++) {
 			all.add(i);
