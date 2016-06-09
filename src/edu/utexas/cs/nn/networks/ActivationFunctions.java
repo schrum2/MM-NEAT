@@ -15,7 +15,7 @@ public class ActivationFunctions {
 	/**
 	 * Initialize the array list for all ftypes
 	 */
-	public static final ArrayList<Integer> AVAILABLE_ACTIVATION_FUNCTIONS = new ArrayList<>(10);
+	public static ArrayList<Integer> availableActivationFunctions = new ArrayList<>(10);
 
 	// For use in sigmoid, it is convenient to bound the inputs to the exp
 	// function
@@ -39,36 +39,37 @@ public class ActivationFunctions {
 	 * Initializes the set of ftypes by checking boolean parameters for included
 	 * functions
 	 */
-	public static void initFunctionSet() {
+	public static void resetFunctionSet() {
+                availableActivationFunctions = new ArrayList<>(10);
 		if (Parameters.parameters.booleanParameter("includeSigmoidFunction")) {
-			AVAILABLE_ACTIVATION_FUNCTIONS.add(FTYPE_SIGMOID);
+			availableActivationFunctions.add(FTYPE_SIGMOID);
 		}
 		if (Parameters.parameters.booleanParameter("includeTanhFunction")) {
-			AVAILABLE_ACTIVATION_FUNCTIONS.add(FTYPE_TANH);
+			availableActivationFunctions.add(FTYPE_TANH);
 		}
 		if (Parameters.parameters.booleanParameter("includeIdFuntion")) {
-			AVAILABLE_ACTIVATION_FUNCTIONS.add(FTYPE_ID);
+			availableActivationFunctions.add(FTYPE_ID);
 		}
 		if (Parameters.parameters.booleanParameter("includeFullApproxFunction")) {
-			AVAILABLE_ACTIVATION_FUNCTIONS.add(FTYPE_FULLAPPROX);
+			availableActivationFunctions.add(FTYPE_FULLAPPROX);
 		}
 		if (Parameters.parameters.booleanParameter("includeApproxFunction")) {
-			AVAILABLE_ACTIVATION_FUNCTIONS.add(FTYPE_APPROX);
+			availableActivationFunctions.add(FTYPE_APPROX);
 		}
 		if (Parameters.parameters.booleanParameter("includeGaussFunction")) {
-			AVAILABLE_ACTIVATION_FUNCTIONS.add(FTYPE_GAUSS);
+			availableActivationFunctions.add(FTYPE_GAUSS);
 		}
 		if (Parameters.parameters.booleanParameter("includeSineFunction")) {
-			AVAILABLE_ACTIVATION_FUNCTIONS.add(FTYPE_SINE);
+			availableActivationFunctions.add(FTYPE_SINE);
 		}
 		if (Parameters.parameters.booleanParameter("includeAbsValFunction")) {
-			AVAILABLE_ACTIVATION_FUNCTIONS.add(FTYPE_ABSVAL);
+			availableActivationFunctions.add(FTYPE_ABSVAL);
 		}
 		if (Parameters.parameters.booleanParameter("includeHalfLinearPiecewiseFunction")) {
-			AVAILABLE_ACTIVATION_FUNCTIONS.add(FTYPE_HLPIECEWISE);
+			availableActivationFunctions.add(FTYPE_HLPIECEWISE);
 		}
 		if (Parameters.parameters.booleanParameter("includeSawtoothFunction")) {
-			AVAILABLE_ACTIVATION_FUNCTIONS.add(FTYPE_SAWTOOTH);
+			availableActivationFunctions.add(FTYPE_SAWTOOTH);
 		}
 	}
 
@@ -79,7 +80,7 @@ public class ActivationFunctions {
 	 * @return random listed integer for ftype
 	 */
 	public static int randomFunction() {
-		return RandomNumbers.randomElement(AVAILABLE_ACTIVATION_FUNCTIONS);
+		return RandomNumbers.randomElement(availableActivationFunctions);
 	}
 
 	/**

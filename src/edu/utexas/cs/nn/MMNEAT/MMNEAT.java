@@ -526,7 +526,7 @@ public class MMNEAT {
 
 	public static void loadClasses() {
 		try {
-			ActivationFunctions.initFunctionSet();
+			ActivationFunctions.resetFunctionSet();
 			setupSaveDirectory();
 
 			fitnessFunctions = new ArrayList<String>();

@@ -26,6 +26,7 @@ import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.evolution.lineage.Offspring;
 import edu.utexas.cs.nn.evolution.selectiveBreeding.SelectiveBreedingEA;
 import edu.utexas.cs.nn.graphics.DrawingPanel;
+import edu.utexas.cs.nn.networks.ActivationFunctions;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.networks.NetworkTask;
 import edu.utexas.cs.nn.networks.TWEANN;
@@ -490,6 +491,7 @@ System.out.println("half linear checkbox: " + halfLinear.toString());
 			activation[Math.abs(index)] = true;
 			Parameters.parameters.setBoolean(title, true);
 		}
+                ActivationFunctions.resetFunctionSet();
 	}
 	/**
 	 * Contains actions to be performed based
