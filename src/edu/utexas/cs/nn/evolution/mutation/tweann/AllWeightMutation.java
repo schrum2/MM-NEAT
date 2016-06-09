@@ -26,6 +26,7 @@ public class AllWeightMutation extends TWEANNMutation {
 	 * Default Constructor
 	 */
 	public AllWeightMutation() {
+		//common constant, "Per link chance of weight perturbation"
 		this(MMNEAT.weightPerturber, CommonConstants.perLinkMutateRate);
 	}
 
