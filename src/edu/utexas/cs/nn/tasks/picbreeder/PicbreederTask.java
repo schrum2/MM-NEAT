@@ -34,6 +34,7 @@ import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.scores.Score;
 import edu.utexas.cs.nn.tasks.SinglePopulationTask;
 import edu.utexas.cs.nn.util.BooleanUtil;
+import edu.utexas.cs.nn.util.CombinatoricUtilities;
 import edu.utexas.cs.nn.util.GraphicsUtil;
 import edu.utexas.cs.nn.util.PopulationUtil;
 import java.util.HashSet;
@@ -68,7 +69,10 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	private static final int SAWTOOTH_CHECKBOX_INDEX = -11;
 	private static final int ABSVAL_CHECKBOX_INDEX = -12;
 	private static final int HALF_LINEAR_CHECKBOX_INDEX = -13;
-
+	private static final int TANH_CHECKBOX_INDEX = -14;
+	private static final int ID_CHECKBOX_INDEX = -15;
+	private static final int FULLAPPROX_CHECKBOX_INDEX = -16;
+	private static final int APPROX_CHECKBOX_INDEX = -17;
 	private static final int BORDER_THICKNESS = 4;
 	
 	//Private final variables
@@ -108,7 +112,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		showLineage = false;
 		showNetwork = false;
 		waitingForUser = false;
-		activation = new boolean[Math.abs(HALF_LINEAR_CHECKBOX_INDEX) + 1];
+		activation = new boolean[Math.abs(APPROX_CHECKBOX_INDEX ) + 1];//magic number is number of activation functions
 		Arrays.fill(activation, true);
                 if(MMNEAT.browseLineage) {
                     // Do not setup the JFrame if browsing the lineage
@@ -140,12 +144,20 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		JButton networkButton = new JButton(new ImageIcon("data\\picbreeder\\network.png"));
 		JButton undoButton = new JButton( new ImageIcon("data\\picbreeder\\undo.png"));
 
-		JCheckBox sigmoid = new JCheckBox("sigmoid_function", true);
-		JCheckBox gaussian = new JCheckBox("gaussian_function", true);
-		JCheckBox sine = new JCheckBox("sine_function", true);
-		JCheckBox sawtooth = new JCheckBox("sawtooth_function", true);
-		JCheckBox absVal = new JCheckBox("absolute_value_function", true);
-		JCheckBox halfLinear = new JCheckBox("half_linear_function", true);
+		JCheckBox sigmoid = new JCheckBox("sigmoid", true);
+		JCheckBox tanh = new JCheckBox("tanh", false);
+		activation[Math.abs(TANH_CHECKBOX_INDEX)] = false;
+		JCheckBox id = new JCheckBox("ID", false);
+		activation[Math.abs(ID_CHECKBOX_INDEX)] = false;
+		JCheckBox fullApprox = new JCheckBox("full_approximate", false);
+		activation[Math.abs(FULLAPPROX_CHECKBOX_INDEX)] = false;
+		JCheckBox approx = new JCheckBox("approximate", false);
+		activation[Math.abs(APPROX_CHECKBOX_INDEX)] = false;
+		JCheckBox gaussian = new JCheckBox("gaussian", true);
+		JCheckBox sine = new JCheckBox("sine", true);
+		JCheckBox sawtooth = new JCheckBox("sawtooth", true);
+		JCheckBox absVal = new JCheckBox("absolute_value", true);
+		JCheckBox halfLinear = new JCheckBox("half_linear", true);
 		
 		//set graphic names and toolTip titles
 		evolveButton.setName("" + EVOLVE_BUTTON_INDEX);
@@ -163,17 +175,16 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		undoButton.setName("" + UNDO_BUTTON_INDEX);
 		undoButton.setToolTipText("Undo button");
 		sigmoid.setName("" + SIGMOID_CHECKBOX_INDEX);
-
+		tanh.setName("" + TANH_CHECKBOX_INDEX);
 		absVal.setName("" + ABSVAL_CHECKBOX_INDEX);
-
+		id.setName("" + ID_CHECKBOX_INDEX);
 		gaussian.setName("" + GAUSSIAN_CHECKBOX_INDEX);
-
+		fullApprox.setName("" + FULLAPPROX_CHECKBOX_INDEX);
 		sine.setName("" + SINE_CHECKBOX_INDEX);
-
+		approx.setName("" + APPROX_CHECKBOX_INDEX);
 		sawtooth.setName("" + SAWTOOTH_CHECKBOX_INDEX);
-
 		halfLinear.setName("" + HALF_LINEAR_CHECKBOX_INDEX);
-System.out.println("half linear checkbox: " + halfLinear.toString());
+		
 		//add action listeners to buttons
 		resetButton.addActionListener(this);
 		saveButton.addActionListener(this);
@@ -188,8 +199,22 @@ System.out.println("half linear checkbox: " + halfLinear.toString());
 		sawtooth.addActionListener(this);
 		absVal.addActionListener(this);
 		halfLinear.addActionListener(this);
-		
+		tanh.addActionListener(this);
+		id.addActionListener(this);
+		fullApprox.addActionListener(this);
+		approx.addActionListener(this);
 
+		sigmoid.setForeground(CombinatoricUtilities.colorFromInt(ActivationFunctions.FTYPE_SIGMOID));
+		absVal.setForeground(CombinatoricUtilities.colorFromInt(ActivationFunctions.FTYPE_ABSVAL));
+		approx.setForeground(CombinatoricUtilities.colorFromInt(ActivationFunctions.FTYPE_APPROX));
+		fullApprox.setForeground(CombinatoricUtilities.colorFromInt(ActivationFunctions.FTYPE_FULLAPPROX));
+		gaussian.setForeground(CombinatoricUtilities.colorFromInt(ActivationFunctions.FTYPE_GAUSS));
+		halfLinear.setForeground(CombinatoricUtilities.colorFromInt(ActivationFunctions.FTYPE_HLPIECEWISE));
+		id.setForeground(CombinatoricUtilities.colorFromInt(ActivationFunctions.FTYPE_ID));
+		sawtooth.setForeground(CombinatoricUtilities.colorFromInt(ActivationFunctions.FTYPE_SAWTOOTH));
+		sine.setForeground(CombinatoricUtilities.colorFromInt(ActivationFunctions.FTYPE_SINE));
+		tanh.setForeground(CombinatoricUtilities.colorFromInt(ActivationFunctions.FTYPE_TANH));
+		
 		//add graphics to title panel
 		top.add(lineageButton);
 		top.add(resetButton);
@@ -205,6 +230,10 @@ System.out.println("half linear checkbox: " + halfLinear.toString());
 		bottom.add(sine);
 		bottom.add(gaussian);
 		bottom.add(sigmoid);
+		bottom.add(tanh);
+		bottom.add(id);
+		bottom.add(fullApprox);
+		bottom.add(approx);
 		topper.add(bottom);
 		panels.add(topper);
 
@@ -525,7 +554,19 @@ System.out.println("half linear checkbox: " + halfLinear.toString());
 		}else if(scoreIndex == HALF_LINEAR_CHECKBOX_INDEX) {
 			setCheckBox(activation[Math.abs(HALF_LINEAR_CHECKBOX_INDEX)], HALF_LINEAR_CHECKBOX_INDEX, "includeHalfLinearPiecewiseFunction");
 			System.out.println("param half linear now set to: " + Parameters.parameters.booleanParameter("includeHalfLinearPiecewiseFunction"));
-		}else if(scoreIndex == CLOSE_BUTTON_INDEX) {//If close button clicked
+		}else if(scoreIndex == TANH_CHECKBOX_INDEX) {
+			setCheckBox(activation[Math.abs(TANH_CHECKBOX_INDEX)], TANH_CHECKBOX_INDEX, "includeTanhFunction");
+			System.out.println("param tanh now set to: " + Parameters.parameters.booleanParameter("includeTanhFunction"));
+		} else if(scoreIndex == ID_CHECKBOX_INDEX) { 
+			setCheckBox(activation[Math.abs(ID_CHECKBOX_INDEX)], ID_CHECKBOX_INDEX, "includeIdFuntion");
+			System.out.println("param ID now set to: " + Parameters.parameters.booleanParameter("includeIdFuntion"));
+		} else if(scoreIndex == FULLAPPROX_CHECKBOX_INDEX) {
+			setCheckBox(activation[Math.abs(FULLAPPROX_CHECKBOX_INDEX)], FULLAPPROX_CHECKBOX_INDEX, "includeFullApproxFunction");
+			System.out.println("param activation now set to: " + Parameters.parameters.booleanParameter("includeFullApproxFunction"));
+		} else if(scoreIndex == APPROX_CHECKBOX_INDEX) {
+			setCheckBox(activation[Math.abs(APPROX_CHECKBOX_INDEX)], APPROX_CHECKBOX_INDEX, "includeApproxFunction");
+			System.out.println("param approximate now set to: " + Parameters.parameters.booleanParameter("includeApproxFunction"));
+		} else if(scoreIndex == CLOSE_BUTTON_INDEX) {//If close button clicked
 			System.exit(0);
 		} else if(scoreIndex == RESET_BUTTON_INDEX) {//If reset button clicked
 			reset();

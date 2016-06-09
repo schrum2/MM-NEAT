@@ -1,5 +1,6 @@
 package edu.utexas.cs.nn.util;
 
+import edu.utexas.cs.nn.graphics.DrawingPanel;
 import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
 import java.awt.Color;
 import java.util.ArrayList;
@@ -149,5 +150,37 @@ public class CombinatoricUtilities {
 		lens.add(5);
 		lens.add(6);
 		System.out.println(getAllCombinations(lens));
+		DrawingPanel panel1 = new DrawingPanel(100, 100, "function 1");
+		DrawingPanel panel2 = new DrawingPanel(100, 100, "function 2");
+		DrawingPanel panel3 = new DrawingPanel(100, 100, "function 3");
+		DrawingPanel panel4 = new DrawingPanel(100, 100, "function 4");
+		DrawingPanel panel5 = new DrawingPanel(100, 100, "function 5");
+		DrawingPanel panel6 = new DrawingPanel(100, 100, "function 6");
+		DrawingPanel panel7 = new DrawingPanel(100, 100, "function 7");
+		DrawingPanel panel8 = new DrawingPanel(100, 100, "function 8");
+		DrawingPanel panel9 = new DrawingPanel(100, 100, "function 9");
+		DrawingPanel panel10 = new DrawingPanel(100, 100, "function 10");
+
+		panel1.setBackground(colorFromInt(1));
+		panel2.setBackground(colorFromInt(2));
+		panel3.setBackground(colorFromInt(3));
+		panel4.setBackground(colorFromInt(4));
+		panel5.setBackground(colorFromInt(5));
+		panel6.setBackground(colorFromInt(15));
+		panel7.setBackground(colorFromInt(16));
+		panel8.setBackground(colorFromInt(12));
+		panel9.setBackground(colorFromInt(13));
+		panel10.setBackground(colorFromInt(0));
+		
+		panel1.setLocation(0, 0);
+		panel2.setLocation(100, 0);
+		panel3.setLocation(200, 0);
+		panel4.setLocation(300, 0);
+		panel5.setLocation(400, 0);
+		panel6.setLocation(500, 0);
+		panel7.setLocation(0, 100);
+		panel8.setLocation(100, 100);
+		panel9.setLocation(200, 100);
+		panel10.setLocation(300, 100);
 	}
 }
