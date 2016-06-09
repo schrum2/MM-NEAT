@@ -33,17 +33,22 @@ are in the many Experiment files described next.
 
 =========== EXPERIMENT FILES ===========
 
-There are several batch files that start with the prefix Experiment.
+There are several batch files in the sub-directory "batch".
+Of particular interest are the batch files batch/MsPacMan/.
 Each of these corresponds to an experiment from Jacob Schrum's
-2014 dissertation, which is available at:
+publications, including his 2014 dissertation, which is available at:
 
 http://nn.cs.utexas.edu/?schrum:phd2014
 
-Some of these results were also reported in a GECCO paper that same year:
+These results, and results from additional experiments were
+published in several follow-up publications:
 
 http://nn.cs.utexas.edu/?schrum:gecco2014
+http://nn.cs.utexas.edu/?schrum:gecco2015
+http://nn.cs.utexas.edu/?schrum:tciaig16
+http://nn.cs.utexas.edu/?schrum:ecj16
 
-Each Experiment file can be run simply by double-clicking it in windows
+The Ms Pac-Man batch files can be run simply by double-clicking them in windows
 (simply treating the file as a bash script in Linux should also work).
 Launching any one file simply executes a single run of a particular
 experimental condition. To recreate the results from the dissertation,
@@ -64,8 +69,9 @@ are several batch files to analyze the results of completed experiments.
 Each batch file that starts with "post" can be used to analyze the results
 of a completed experiment. Each of these batch files requires command-line
 arguments in order to function properly. The specific usage of each file is
-shown in comments at the top of each file. Here is a list of what each file
-is used for:
+shown in comments at the top of each file. Post-evaluation files that only
+apply to Ms. Pac-Man are in the MsPacMan sub-directory, but others are in 
+the root MM-NEAT directory. Here is a list of what each file is used for:
 
 postBestEval.bat		Evaluate champion Ms. Pac-Man net (non-visual) with original settings and save results to eval report in run directory.
 postBestFourMazeEval.bat	Evaluate champion Ms. Pac-Man net (non-visual) with FourMaze settings and save results to eval report in run directory.
@@ -81,7 +87,7 @@ postParetoFrontWatch.bat	Watch behavior of all members of Pareto front using ori
 postReplay.bat			Replay any Ms. Pac-Man recording saved by one of the record batch files.
 
 Eval reports are stored in the directory with all other data from the original 
-experiment. For example, the Experiment-OneLifeConflict-MMD.bat file stores
+experiment. For example, the MsPacMan-OneLifeConflict-MMD.bat file stores
 data in onelifeconflict/MMD0, and the eval report created in this directory
 would start OneLifeConflict-MMD0_Eval. Be carefule with eval files: Running a
 batch file that creates an eval report will overwrite any existing eval report,
@@ -91,7 +97,7 @@ Watching, evaluating, or recording champion performance with original settings
 means that the setting will be the same as in the original experiment that created
 the champion. FourMaze and MPMvsG rules are specific rule sets that have been used
 in the literature before. These rule sets are explained in both the dissertation
-and GECCO paper referenced above.
+and GECCO 2014 paper referenced above.
 
 As you watch a network's behavior, you will also see several other windows. One 
 contains the evolved neural network used by the agent. Four narrow windows contain 
@@ -105,8 +111,8 @@ will leave trails of a difference color for each module she uses.
 =========== OTHER DOMAINS ===========
 
 This code was primarily developed to evolve Ms. Pac-Man agents, but other domains
-are also integrated with the code. These domains are less well developed, but may be
-of interest to you.
+are also integrated with the code. Not all domains are fully developed, but much work
+has been done since the original work in Ms. Pac-Man.
 
 First, the code is integrated with RL-Glue, which is a system for evaluating
 Reinforcement Learning algorithms available here:
@@ -120,19 +126,15 @@ need to be tweaked slightly to work with MM-NEAT, but a few are already function
 PuddleWorld, CartPole, MountainCar, and Tetris. The visualization for MountainCar does
 not work, but visualization for the other domains can be viewed if "watch:true" is
 included in the command line. Post visualizations with some of the batch files above
-also work (postParetoFrontWatch.bat and postBestObjective*). Very little effort has 
-been put into designing appropriate state-action mappings for these domains, so the 
-performance level in some of them is not very high. You can give these domains a test 
-run by executing any of the batch files that start with the prefix Example-RL: 
+also work (postParetoFrontWatch.bat and postBestObjective*). Most of these domains
+have not received much attention, but Tetris is an exception. The batch files in
+batch/RLGlue will launch RL-Glue experiments, but not that these batch files require
+an additional command-line parameter to specify the run number. For example:
 
-Example-RL-CartPole.bat
-Example-RL-MountainCar.bat
-Example-RL-PuddleWorld.bat
-Example-RL-Tetris.bat
+RLGlue-Tetris-moExtendedBT.bat 0
 
-If you improve the code integration with RL-Glue (getting MountainCar visualization 
-to work for example), or get some good results in a tough domain like Tetris, please 
-let me know at schrum2@cs.utexas.edu.
+If you achieve any interesting results, I would be happy to hear from 
+you at schrum2@southwestern.edu.
 
 Another domain included with this code is a 2D reimplementation of the BREVE Monsters
 domain, in which many of the methods used in MM-NEAT (Module Mutation, TUG) were first
@@ -150,17 +152,20 @@ the same window simultaneously; the sensors don't all work the same as they do i
 the camera does not follow the agents, so sometimes all the action happens out of sight;
 FoF features a ramming orb instead of a bat as in the original BREVE implementation;
 and for some reason the dynamics of the FoF don't allow baiting behavior to emerge. Still,
-the code is a useful starting point. The following files should give an idea of how to
-launch such runs:
-
-Example-BREVE-FBR-Multitask.bat
-Example-BREVE-FoF-Control.bat
-Example-BREVE-PP-MMR.bat
+the code is a useful starting point. Some batch files to get you started are in batch/Breve2D/.
 
 The current implementation of these domains produces some different results from those
 in the original BREVE Monsters domain. If you manage to produce any interesting results
 with this code, or fix any of the issues mentioned above, please let me know by emailing
-me at schrum2@cs.utexas.edu
+me at schrum2@southwestern.edu
+
+===UPDATE! June 2016=======
+
+Even more domains have been added.
+
+batch/Picbreeder        A reimplementation of Picbreeder: http://picbreeder.org/
+batch/PredPrey          A toroidal Predator/Prey grid world
+batch/VizDoom           First-Person Shooter Doom: http://vizdoom.cs.put.edu.pl/ (very early in development)
 
 =========== MAKING YOUR OWN DOMAINS ===========
 
@@ -180,7 +185,7 @@ on how to do this.
    instantiating classes or setting up parameters unique to your domain).
 
 If you integrate any interesting domains into MM-NEAT, I would love to hear about it
-by email at schrum2@cs.utexas.edu. Feel free to contact me for help with integrating
+by email at schrum2@southwestern.edu. Feel free to contact me for help with integrating
 your domains as well. 
 
 
