@@ -11,8 +11,6 @@ import edu.utexas.cs.nn.util.random.RandomNumbers;
 
 /**
  * Provides a random activation function for mutation in TWEANN class
- * 
- * @author gillespl
  *
  */
 public class ActivationFunctionMutation extends TWEANNMutation {
@@ -21,7 +19,7 @@ public class ActivationFunctionMutation extends TWEANNMutation {
 	 * Constructor
 	 */
 	public ActivationFunctionMutation() {
-                // command line parameter that controls rate of mutation using activation functions
+		// command line parameter that controls rate of mutation using activation functions
 		super("netChangeActivationRate");
 	}
 

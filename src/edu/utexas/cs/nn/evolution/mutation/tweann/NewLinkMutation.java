@@ -11,9 +11,12 @@ import edu.utexas.cs.nn.networks.TWEANN;
  */
 public class NewLinkMutation extends TWEANNMutation {
 
+	/**
+	 * Default constructor
+	 */
 	public NewLinkMutation() {
-		super("netLinkRate");// command line parameter, "Mutation rate for
-								// creation of new network synapses"
+		// command line parameter, "Mutation rate for creation of new network synapses"
+		super("netLinkRate");
 	}
 
 	/**
@@ -26,10 +29,7 @@ public class NewLinkMutation extends TWEANNMutation {
 	@Override
 	public void mutate(Genotype<TWEANN> genotype) {
 		((TWEANNGenotype) genotype).linkMutation();
-		cullForBestWeight((TWEANNGenotype) genotype, new int[] { 1 });// culls
-																		// for
-																		// the
-																		// best
-		// weight from random link addition
+		cullForBestWeight((TWEANNGenotype) genotype, new int[] { 1 });
+		//culls for the best weight from random link addition
 	}
 }

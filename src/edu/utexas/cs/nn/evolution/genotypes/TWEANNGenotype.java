@@ -527,40 +527,26 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 		// Delete
 		new DeleteLinkMutation().go(this, sb);
 		new DeleteModeMutation().go(this, sb);
-		if (CommonConstants.allowMultipleFunctions) { // Can turn a TWEANN into
-														// a CPPN
+		if (CommonConstants.allowMultipleFunctions) { // Can turn a TWEANN into a CPPN
 			new ActivationFunctionMutation().go(this, sb);
 		}
 		// Forms of mode mutation
 		if (this.numModules < CommonConstants.maxModes
 				// Make sure modes are somewhat evenly used
-				&& (CommonConstants.ensembleModeMutation || moduleUsage.length != numModules// possible
-																							// if
-																							// mode
-																							// usage
-																							// is
-																							// actually
-																							// selector's
-																							// subnet
-																							// usage
+				&& (CommonConstants.ensembleModeMutation ||
+						// possible if mode usage is actually selector's subnet usage
+						moduleUsage.length != numModules
 						|| CommonConstants.minimalSubnetExecution
 						|| minModuleUsage() >= (1.0 / (CommonConstants.usageForNewMode * numModules)))
-				&& // Only allow mode mutation when number of modes is same for
-					// all
-				(!CommonConstants.onlyModeMutationWhenModesSame
+				 // Only allow mode mutation when number of modes is same for all
+				&& (!CommonConstants.onlyModeMutationWhenModesSame
 						|| EvolutionaryHistory.minModes == EvolutionaryHistory.maxModes)
 				&& // Make sure modes are different
-				(CommonConstants.distanceForNewMode == -1 || CommonConstants.distanceForNewMode < lastModulesDistance())
+				(CommonConstants.distanceForNewMode == -1 
+				|| CommonConstants.distanceForNewMode < lastModulesDistance())
 				&& // If using niche restriction
-				(!CommonConstants.nicheRestrictionOnModeMutation || // Only
-																	// allow new
-																	// modes if
-																	// niche
-																	// with more
-																	// or equal
-																	// modes is
-																	// doing
-																	// well
+				(!CommonConstants.nicheRestrictionOnModeMutation ||
+						 // Only allow new modes if niche with more or equal modes is doing well
 						this.numModules <= TWEANNModulesNicheDefinition.bestHighModeNiche())) {
 			// System.out.println("In Mode Mutation Block");
 			new MMP().go(this, sb);

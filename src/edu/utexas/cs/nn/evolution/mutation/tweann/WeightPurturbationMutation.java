@@ -14,10 +14,18 @@ import edu.utexas.cs.nn.networks.TWEANN;
  */
 public class WeightPurturbationMutation extends TWEANNMutation {
 
+	/**
+	 * Default constructor
+	 */
 	public WeightPurturbationMutation() {
+		//command line parameter, "Mutation rate for network weight perturbation"
 		super("netPerturbRate");
 	}
 
+	/**
+	 * mutates genotype by mutating perturbed weights
+	 * @param gentoype TWEANNGenotype to be mutated
+	 */
 	public void mutate(Genotype<TWEANN> genotype) {
 		((TWEANNGenotype) genotype).weightMutation();
 	}

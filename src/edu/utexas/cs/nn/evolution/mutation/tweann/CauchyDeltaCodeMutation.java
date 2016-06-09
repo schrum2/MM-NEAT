@@ -13,6 +13,9 @@ import edu.utexas.cs.nn.util.random.CauchyGenerator;
  * @author Jacob Schrum
  */
 public class CauchyDeltaCodeMutation extends AllWeightMutation {
+	/**
+	 * Default constructor
+	 */
 	public CauchyDeltaCodeMutation() {
 		super(new CauchyGenerator(), 1.0);
 	}

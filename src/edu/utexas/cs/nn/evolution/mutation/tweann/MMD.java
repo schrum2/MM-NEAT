@@ -3,6 +3,7 @@ package edu.utexas.cs.nn.evolution.mutation.tweann;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
 
 /**
+ * Module Mutation Duplication
  * Simple class that allows one to duplicate a module that is identical to the
  * previous one.
  *
@@ -14,6 +15,7 @@ public class MMD extends ModuleMutation {
 	 * Constructor (inherited from TWEANN mutation)
 	 */
 	public MMD() {
+		//command line parameter, "Mutation rate for adding a new network mode (MM(D) for duplication)"
 		super("mmdRate");
 	}
 
