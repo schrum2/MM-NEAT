@@ -663,9 +663,6 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 								drawLineage(o, id, 0, 500);						
 							}
 						}
-//						for(DrawingPanel panel : dPanels) {
-//							panel.save(panel.getFrame().getTitle());
-//						}
 					}
 				}
 			} catch (FileNotFoundException e) {
@@ -728,13 +725,8 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	private void setUndo() {
 		scores = new ArrayList<Score<T>>();
 		for(int i = 0; i < previousScores.size(); i++) {
-			scores.add(previousScores.get(i));
-		}
-		//scores.addAll(previousScores);
-		//assert scores.size() == previousScores.size() && buttons.size()	== scores.size(): "either scores and button arrays don't match or scores and previous scores don't match";
-		for(int i = 0; i < scores.size(); i++) {
 			System.out.println("score size " + scores.size() + " previousScores size " + previousScores.size() + " buttons size " + buttons.size() + " i " + i);
-			resetButton(scores.get(i).individual, i);
+			resetButton(previousScores.get(i).individual, i);
 		}
 		//		int lastGen = Parameters.parameters.integerParameter("lastSavedGeneration");
 		//		System.out.println("before decrementing generation: " + lastGen);
