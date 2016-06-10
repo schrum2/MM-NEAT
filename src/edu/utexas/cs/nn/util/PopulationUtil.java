@@ -146,7 +146,7 @@ public class PopulationUtil {
 			FileUtilities.simpleFileWrite(bestDir + "/" + filePrefix + "genotypes" + j + ".txt", bestScores.get(j).individual.toString());
 		}
 	}
-	public static <T> void saveCurrentGen(double[] bestObjectives, Genotype<T>[] bestGenotypes, Score<T>[] bestScores) {
+	public static <T> void saveBestOfCurrentGen(double[] bestObjectives, Genotype<T>[] bestGenotypes, Score<T>[] bestScores) {
 		int currentGen = MMNEAT.ea.currentGeneration();
 		String filePrefix = "gen" + currentGen + "_";
 		// Save best in each objective
