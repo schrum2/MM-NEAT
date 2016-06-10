@@ -85,7 +85,7 @@ public class DrawingPanel implements ActionListener {
 				if (DUMP_IMAGE) {
 					DrawingPanel.this.save(TARGET_IMAGE_FILE_NAME);
 				}
-				frame.setVisible(false);
+				dispose();
 			}
 		});
 		this.frame.getContentPane().add(panel);
@@ -177,7 +177,6 @@ public class DrawingPanel implements ActionListener {
 	public JFrame getFrame() {
 		return frame;
 	}
-
 	public void setTitle(String title) {
 		getFrame().setTitle(title);
 	}
