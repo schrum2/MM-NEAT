@@ -19,21 +19,24 @@ import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.util.MiscUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.datastructures.Triple;
-
+/**
+ * JUnit testing class for hyperNEATutil class
+ * @author Lauren Gillespie
+ *
+ */
 public class HyperNEATUtilTest {
 
 	Substrate sub;
 	ArrayList<Node> nodes;
+
 	@Before
 	public void setUp() throws Exception {
 
-		Parameters.initializeParameterCollections(
-				new String[] { "io:false", "netio:false", "allowMultipleFunctions:true"});
+		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "allowMultipleFunctions:true"});
 		MMNEAT.loadClasses();
 		TWEANNGenotype tg = new TWEANNGenotype();
 		TWEANN whyDoINeedYouBitch = new TWEANN(tg);
-		sub = new Substrate(new Pair<Integer, Integer>(5, 5), 0, new Triple<Integer, Integer, Integer>(0, 0, 0),
-				"I_0");
+		sub = new Substrate(new Pair<Integer, Integer>(5, 5), 0, new Triple<Integer, Integer, Integer>(0, 0, 0), "I_0");
 		nodes = new ArrayList<Node>();
 		long l = 0;
 		for(int i = 0; i < sub.size.t1 * sub.size.t2; i ++) {
@@ -48,11 +51,12 @@ public class HyperNEATUtilTest {
 		MMNEAT.clearClasses();
 	}
 
+	/**
+	 * Visual test of drawSubstrate method
+	 */
 	@Test
-	public void testDrawSubstrate() {
-			DrawingPanel dp = HyperNEATUtil.drawSubstrate(sub, nodes, Color.magenta);
-			MiscUtil.waitForReadStringAndEnterKeyPress();
-			HyperNEATUtil.drawSubstrate(dp, sub, nodes, Color.yellow);
-			MiscUtil.waitForReadStringAndEnterKeyPress();
-		}
+	public void testDrawSubstrateVisual() {
+		DrawingPanel dp = HyperNEATUtil.drawSubstrate(sub, nodes, Color.magenta);
+		HyperNEATUtil.drawSubstrate(dp, sub, nodes, Color.yellow);
+	}
 }
