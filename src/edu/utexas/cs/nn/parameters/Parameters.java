@@ -273,6 +273,7 @@ public class Parameters {
 		longOptions.add("lastInnovation", 0l, "Highest innovation number used so far");
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
 		// Boolean parameters
+		booleanOptions.add("changeCoordinateFrame", false, "Allows for coordinate of input substrate space to be changed. Default is -1 to 1 in all dimensions");
 		booleanOptions.add("monitorSubstrates", false, "Allows us to visualizen the features (raw inputs) of a HyperNEAT agent");
 		booleanOptions.add("doomFullScreenInput", false, "Detemines if we should use all of the screen inputs or just the given row");
 		booleanOptions.add("hyperNEAT", false, "Use the HyperNEAT version of the task (requires HyperNEATCPPNGenotype)");
