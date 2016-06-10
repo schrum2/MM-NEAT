@@ -30,6 +30,18 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 	public HyperNEATCPPNGenotype() {
 		super();
 	}
+	
+	/**
+	 * Used by TWEANNCrossover
+	 * 
+	 * @param nodes new node genes
+	 * @param links new link genes
+	 * @param neuronsPerModule effectively the number of output neurons
+	 * @param archetypeIndex archetype to use
+	 */
+	public HyperNEATCPPNGenotype(ArrayList<NodeGene> nodes, ArrayList<LinkGene> links, int neuronsPerModule, int archetypeIndex) {
+		super(nodes, links, neuronsPerModule, false, false, archetypeIndex);
+	}	
 
 	/**
 	 * Constructor for hyperNEATCPPNGenotype. Uses super constructor from

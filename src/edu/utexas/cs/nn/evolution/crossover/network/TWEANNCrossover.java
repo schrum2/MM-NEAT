@@ -1,8 +1,10 @@
 package edu.utexas.cs.nn.evolution.crossover.network;
 
+import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
 import edu.utexas.cs.nn.evolution.crossover.Crossover;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
+import edu.utexas.cs.nn.evolution.genotypes.HyperNEATCPPNGenotype;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype.Gene;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype.LinkGene;
@@ -90,7 +92,7 @@ public class TWEANNCrossover extends Crossover<TWEANN> {
 			System.exit(1);
 		}// crosses nodes
 		ArrayList<ArrayList<NodeGene>> crossedNodes = cross(alignedNodes.get(0), alignedNodes.get(1));
-		 // Align and cross links. Links are aligned based on innovation order
+		// Align and cross links. Links are aligned based on innovation order
 		// aligns links to faciliate crossover
 		ArrayList<ArrayList<LinkGene>> alignedLinks = alignLinkGenes(((TWEANNGenotype) toModify).links, tg.links);
 		ArrayList<ArrayList<LinkGene>> crossedLinks = cross(alignedLinks.get(0), alignedLinks.get(1));// crosses links
@@ -104,8 +106,10 @@ public class TWEANNCrossover extends Crossover<TWEANN> {
 			tm.crossModuleAssociations(originalAssociations, tg.moduleAssociations);
 		}
 
-		TWEANNGenotype result = new TWEANNGenotype(crossedNodes.get(1), crossedLinks.get(1), tg.neuronsPerModule,
-				tg.standardMultitask, tg.hierarchicalMultitask, tg.archetypeIndex);
+		// HyperNEAT CPPNs need to maintain their genotype class
+		TWEANNGenotype result = (MMNEAT.genotype instanceof HyperNEATCPPNGenotype) ? 
+					new HyperNEATCPPNGenotype(crossedNodes.get(1), crossedLinks.get(1), tg.neuronsPerModule, tg.archetypeIndex) : 
+					new TWEANNGenotype(crossedNodes.get(1), crossedLinks.get(1), tg.neuronsPerModule, tg.standardMultitask, tg.hierarchicalMultitask, tg.archetypeIndex);
 		// This usage doesn't exactly correspond to the new net, but is close
 		result.setModuleUsage(Arrays.copyOf(tg.getModuleUsage(), tg.getModuleUsage().length));
 		result.calculateNumModules(); // Needed because excess crossover can result in unknown number of modes
@@ -140,6 +144,8 @@ public class TWEANNCrossover extends Crossover<TWEANN> {
 			}
 		}
 
+		assert MMNEAT.genotype.getClass().isInstance(result) : "Crossover should not change the genotype class!";
+		
 		return result;
 	}
 
@@ -159,8 +165,7 @@ public class TWEANNCrossover extends Crossover<TWEANN> {
 	 */
 	@SuppressWarnings("unchecked")
 	public <G extends Gene> ArrayList<ArrayList<G>> cross(ArrayList<G> left, ArrayList<G> right) {
-		assert(left.size() == right.size()) : "Can't cross lists of different size!\n" + left.size() + ":" + left + "\n"
-				+ right.size() + ":" + right;
+		assert(left.size() == right.size()) : "Can't cross lists of different size!\n" + left.size() + ":" + left + "\n" + right.size() + ":" + right;
 
 		ArrayList<G> crossedLeft = new ArrayList<G>(left.size());
 		ArrayList<G> crossedRight = new ArrayList<G>(right.size());
@@ -175,16 +180,16 @@ public class TWEANNCrossover extends Crossover<TWEANN> {
 			} else {
 				if (leftGene != null) {// crosses left gene
 					crossedLeft.add((G) leftGene.copy());
-					if (includeExcess) {// either keeps or discards
-										// excess/disjoint left genes here
+					// either keeps or discards excess/disjoint left genes here
+					if (includeExcess) {
 						crossedRight.add((G) leftGene.copy());
 					}
 				}
 
 				if (rightGene != null) {// crosses right gene
 					crossedRight.add((G) rightGene.copy());
-					if (includeExcess) {// either keeps or discards
-										// excess/disjoint right genes here
+					// either keeps or discards excess/disjoint right genes here
+					if (includeExcess) {
 						crossedLeft.add((G) rightGene.copy());
 					}
 				}
@@ -212,8 +217,7 @@ public class TWEANNCrossover extends Crossover<TWEANN> {
 	 * @param crossedRight
 	 *            partially finished list of genes for offspring 2
 	 */
-	public <G extends Gene> void crossIndex(G leftGene, G rightGene, ArrayList<G> crossedLeft,
-			ArrayList<G> crossedRight) {
+	public <G extends Gene> void crossIndex(G leftGene, G rightGene, ArrayList<G> crossedLeft, ArrayList<G> crossedRight) {
 		boolean swap = RandomNumbers.randomGenerator.nextBoolean();
 		if (swap) {
 			Pair<G, G> p = swap(leftGene, rightGene);
@@ -273,8 +277,8 @@ public class TWEANNCrossover extends Crossover<TWEANN> {
 			}
 		}
 
-		while (archetypePos < archetype.size()) {// adds nulls to fill out
-													// archetype so both matches
+		// adds nulls to fill out archetype so both matches
+		while (archetypePos < archetype.size()) {
 			aligned.add(null);
 			archetypePos++;
 		}
