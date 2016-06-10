@@ -85,7 +85,7 @@ public class DrawingPanel implements ActionListener {
 				if (DUMP_IMAGE) {
 					DrawingPanel.this.save(TARGET_IMAGE_FILE_NAME);
 				}
-				System.exit(0);
+				frame.setVisible(false);
 			}
 		});
 		this.frame.getContentPane().add(panel);
