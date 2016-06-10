@@ -364,6 +364,7 @@ public class Parameters {
 		booleanOptions.add("reachabilityReportsBuffers", false, "Reachability sensors give a sense of how safe a location is rather than just saying safe or not safe");
 		booleanOptions.add("stepByStepPacMan", false, "Pacman time step only advances when Enter is pressed");
 		booleanOptions.add("stepByStepVizDoom", false, "VizDoom time step only advances when Enter is pressed");
+		booleanOptions.add("stepByStepTetris", false, "Tetris time step only advances when Enter is pressed");
 		booleanOptions.add("logDeathLocations", false, "Write to file every location where a pacman death occurs");
 		booleanOptions.add("pacManSensorCaching", true, "Allows multiple networks to use same sensors without recalculating");
 		booleanOptions.add("ghostRegretFitness", false, "Include negative fitness for ghosts that pacman fails to eat");

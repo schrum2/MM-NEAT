@@ -14,7 +14,9 @@ import org.rlcommunity.rlglue.codec.types.Observation;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.parameters.CommonConstants;
+import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.rlglue.RLGlueAgent;
+import edu.utexas.cs.nn.util.MiscUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
 
@@ -100,6 +102,10 @@ public class TetrisAfterStateAgent<T extends Network> extends RLGlueAgent<T> {
 				// outputs = constultPolicy(features) REMEMBER outputs is an
 				// array of 1
 				outputs = this.consultPolicy(inputsScaled);
+				if(Parameters.parameters.booleanParameter("stepByStepTetris")){
+					System.out.print("Press enter to continue");
+					MiscUtil.waitForReadStringAndEnterKeyPress();
+				}
 				// Associate the policy's score for the after state with the
 				// list of actions leading to it
 				Pair<Double, List<Integer>> tempPair = new Pair<Double, List<Integer>>(outputs[0], i.t2);
