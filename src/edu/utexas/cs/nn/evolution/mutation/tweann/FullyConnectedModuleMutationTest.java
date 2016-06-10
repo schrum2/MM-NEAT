@@ -32,6 +32,7 @@ public class FullyConnectedModuleMutationTest {
 	tg1.moduleDuplication();
 	tg1.moduleDuplication();
 	}
+	
 	@Test
 	public void test() {
 		fail("Not yet implemented");
