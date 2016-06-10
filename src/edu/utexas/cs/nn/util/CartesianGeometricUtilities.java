@@ -53,6 +53,10 @@ public class CartesianGeometricUtilities {
 		return ((toScale / (maxDimension - 1)) * 2) - 1;
 	}
 
+	public static double bottomCenterAndScale() { 
+		
+		return 0;
+	}
 	/**
 	 * Calculates the shortest distance from a point to a segment
 	 * 
