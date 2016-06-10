@@ -755,6 +755,8 @@ public class TWEANN implements Network {
 
 		// System.out.println("final outputs: " + Arrays.toString(outputs));
 		if (canDraw) {
+			// TODO: If hyperNEAT and monitorSubstrates, then call method for animating substrate
+			
 			if (panel != null && Parameters.parameters.booleanParameter("animateNetwork")) {
 				draw(panel);
 			}
