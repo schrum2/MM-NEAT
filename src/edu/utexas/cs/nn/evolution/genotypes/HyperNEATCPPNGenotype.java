@@ -230,9 +230,9 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 					// searches through height of second substrate
 					for (int Y2 = 0; Y2 < s2.size.t2; Y2++) {
 						// CPPN inputs need to be centered and scaled
-						ILocated2D scaledSourceCoordinates = CartesianGeometricUtilities.centerAndScale(new Tuple2D(X1, Y1), s1.size.t1, s1.size.t2);
-						ILocated2D scaledTargetCoordinates = CartesianGeometricUtilities.centerAndScale(new Tuple2D(X2, Y2), s2.size.t1, s2.size.t2);
-						// inputs to CPPN
+						ILocated2D scaledSourceCoordinates = MMNEAT.substrateMapping.transformCoordinates(new Tuple2D(X1, Y1), s1.size.t1, s1.size.t2);
+						ILocated2D scaledTargetCoordinates = MMNEAT.substrateMapping.transformCoordinates(new Tuple2D(X2, Y2), s2.size.t1, s2.size.t2);
+						// inputs to CPPN 
 						double[] inputs = { scaledSourceCoordinates.getX(), scaledSourceCoordinates.getY(), scaledTargetCoordinates.getX(), scaledTargetCoordinates.getY(), BIAS }; 
 						double[] outputs = cppn.process(inputs);
 						boolean expressLink = Math.abs(outputs[outputIndex]) > CommonConstants.linkExpressionThreshold;

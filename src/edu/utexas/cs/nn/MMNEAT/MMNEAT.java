@@ -24,6 +24,7 @@ import edu.utexas.cs.nn.networks.ActivationFunctions;
 import edu.utexas.cs.nn.networks.NetworkTask;
 import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.networks.hyperneat.HyperNEATTask;
+import edu.utexas.cs.nn.networks.hyperneat.SubstrateCoordinateMapping;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.scores.Score;
@@ -115,9 +116,10 @@ public class MMNEAT {
 	public static RandomGenerator weightPerturber = null;
 	public static MMNEATLog ghostLocationsOnPowerPillEaten = null;
 	public static boolean browseLineage = false;
-
+	public static SubstrateCoordinateMapping substrateMapping = null;
+	
 	public static MMNEAT mmneat;
-
+	
 	public static ArrayList<String> fitnessPlusMetaheuristics() {
 		ArrayList<String> result = (ArrayList<String>) fitnessFunctions.clone();
 		ArrayList<String> meta = new ArrayList<String>();
@@ -754,6 +756,10 @@ public class MMNEAT {
 		// interface no longer applies
 		CommonConstants.monitorInputs = false;
 		Parameters.parameters.setBoolean("monitorInputs", false);
+		
+		substrateMapping = (SubstrateCoordinateMapping) ClassCreation.createObject("substrateMapping");
+		
+		
 		HyperNEATTask hnt = (HyperNEATTask) task;
 		setNNInputParameters(HyperNEATTask.NUM_CPPN_INPUTS, hnt.getSubstrateConnectivity().size());
 	}

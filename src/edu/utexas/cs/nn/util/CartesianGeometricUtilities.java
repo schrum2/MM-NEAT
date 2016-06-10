@@ -53,10 +53,22 @@ public class CartesianGeometricUtilities {
 		return ((toScale / (maxDimension - 1)) * 2) - 1;
 	}
 
-	public static double bottomCenterAndScale() { 
-		
-		return 0;
+	public static Tuple2D bottomCenterAndScale(Tuple2D toScale, int width, int height) { 
+		double newX = centerAndScale(toScale.x, width);
+		double newY = bottomScale(toScale.y, height);
+		assert !Double.isNaN(newX) : "newX is NaN! width="+width+", height="+height+", toScale="+toScale;
+		assert !Double.isNaN(newY) : "newY is NaN! width="+width+", height="+height+", toScale="+toScale;
+		return new Tuple2D(newX, newY);
 	}
+	
+	public static double bottomScale(double toScale, int maxDimension) {
+		if(maxDimension == 1) {
+			assert toScale == 0 : "If the dimension is 1, then you can only scale 0";
+			return 0;
+		}
+		return (toScale / (maxDimension - 1));
+	}
+	
 	/**
 	 * Calculates the shortest distance from a point to a segment
 	 * 

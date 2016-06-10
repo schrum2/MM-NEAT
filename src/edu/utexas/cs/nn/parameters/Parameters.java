@@ -1,5 +1,13 @@
 package edu.utexas.cs.nn.parameters;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.Scanner;
+import java.util.StringTokenizer;
+
 import edu.utexas.cs.nn.breve2D.Breve2DGame;
 import edu.utexas.cs.nn.breve2D.agent.RushingPlayer;
 import edu.utexas.cs.nn.breve2D.dynamics.PlayerPredatorMonsterPrey;
@@ -11,6 +19,7 @@ import edu.utexas.cs.nn.experiment.LimitedSinglePopulationGenerationalEAExperime
 import edu.utexas.cs.nn.gridTorus.controllers.AggressivePredatorController;
 import edu.utexas.cs.nn.gridTorus.controllers.PreyFleeClosestPredatorController;
 import edu.utexas.cs.nn.networks.ActivationFunctions;
+import edu.utexas.cs.nn.networks.hyperneat.CenteredSubstrateMapping;
 import edu.utexas.cs.nn.tasks.mspacman.data.JunctionNodes;
 import edu.utexas.cs.nn.tasks.mspacman.multitask.GhostsThenPillsModeSelector;
 import edu.utexas.cs.nn.tasks.mspacman.objectives.fitnessassignment.GhostsPillsMap;
@@ -24,13 +33,6 @@ import edu.utexas.cs.nn.tasks.ut2004.weapons.SimpleWeaponManager;
 import edu.utexas.cs.nn.util.random.GaussianGenerator;
 import edu.utexas.cs.nn.util.stats.Average;
 import edu.utexas.cs.nn.util.stats.Max;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.Scanner;
-import java.util.StringTokenizer;
 import pacman.controllers.examples.Legacy;
 import pacman.controllers.examples.StarterPacMan;
 import pacman.game.Constants;
@@ -599,6 +601,7 @@ public class Parameters {
 		stringOptions.add("branchRoot", "", "Evolve from some other run as starting point, based off of this parameter file");
 		stringOptions.add("replayNetwork", "", "Network displayed while replaying pacman eval");
 		// Class options
+		classOptions.add("substrateMapping", CenteredSubstrateMapping.class, "Determines the type of subtrate coordinate mapping we want to use");
 		classOptions.add("staticPreyController", PreyFleeClosestPredatorController.class, "This parameter specifies the prey controller that predators evolve against");
 		classOptions.add("staticPredatorController", AggressivePredatorController.class, "This parameter specifies the predator controller that prey evolve against");
 		classOptions.add("weightPerturber", GaussianGenerator.class, "Random generator used to perturb mutated weights");
