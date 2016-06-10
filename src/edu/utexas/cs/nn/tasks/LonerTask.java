@@ -273,7 +273,7 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
 		}
 
 		if (CommonConstants.netio) {
-			PopulationUtil.saveCurrentGen(bestObjectives, bestGenotypes, bestScores);
+			PopulationUtil.saveBestOfCurrentGen(bestObjectives, bestGenotypes, bestScores);
 		}
 
 		if (parallel) {
