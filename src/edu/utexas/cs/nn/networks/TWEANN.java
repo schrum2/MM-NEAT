@@ -241,6 +241,14 @@ public class TWEANN implements Network {
 		public double output() {
 			return activation;
 		}
+		
+		/**
+		 * Should only be used for testing purposes
+		 * @param a new activation
+		 */
+		public void artificiallySetActivation(double a) {
+			activation = a;
+		}
 
 		/**
 		 * Used when network enters new environment and should no longer

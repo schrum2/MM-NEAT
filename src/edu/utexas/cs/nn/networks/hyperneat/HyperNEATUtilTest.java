@@ -19,6 +19,7 @@ import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.util.MiscUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.datastructures.Triple;
+import edu.utexas.cs.nn.util.random.RandomNumbers;
 /**
  * JUnit testing class for hyperNEATutil class
  * @author Lauren Gillespie
@@ -40,7 +41,9 @@ public class HyperNEATUtilTest {
 		nodes = new ArrayList<Node>();
 		long l = 0;
 		for(int i = 0; i < sub.size.t1 * sub.size.t2; i ++) {
-			nodes.add(whyDoINeedYouBitch.new Node(ActivationFunctions.randomFunction(), Node.NTYPE_INPUT, l++))	;
+			Node n = whyDoINeedYouBitch.new Node(ActivationFunctions.randomFunction(), Node.NTYPE_INPUT, l++);
+			n.artificiallySetActivation(RandomNumbers.fullSmallRand());
+			nodes.add(n);
 		}
 	}
 
@@ -56,7 +59,12 @@ public class HyperNEATUtilTest {
 	 */
 	@Test
 	public void testDrawSubstrateVisual() {
-		DrawingPanel dp = HyperNEATUtil.drawSubstrate(sub, nodes, Color.magenta);
-		HyperNEATUtil.drawSubstrate(dp, sub, nodes, Color.yellow);
+		DrawingPanel dp = HyperNEATUtil.drawSubstrate(sub, nodes, 0);
+		MiscUtil.waitForReadStringAndEnterKeyPress();
+		for(Node n : nodes) {
+			n.artificiallySetActivation(RandomNumbers.fullSmallRand());
+		}
+		HyperNEATUtil.drawSubstrate(dp, sub, nodes, 0);
+		MiscUtil.waitForReadStringAndEnterKeyPress();
 	}
 }
