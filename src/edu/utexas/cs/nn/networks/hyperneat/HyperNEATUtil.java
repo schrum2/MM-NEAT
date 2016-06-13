@@ -30,7 +30,7 @@ public class HyperNEATUtil {
 	//size of grid in substrate drawing. Can be changed/turned into a param if need be
 	public final static int SUBS_GRID_SIZE = 30;
 
-	public static DrawingPanel[] substratePanels = null;
+	private static DrawingPanel[] substratePanels = null;
 
 	private static HyperNEATTask hyperNEATTask;
 
@@ -38,7 +38,7 @@ public class HyperNEATUtil {
 	
 	// Schrum: This method isn't tested yet, but it should create all of the substrates
 	// and update them based on neuron activations.
-	public static void drawSubstrates(ArrayList<Node> nodes) {
+	public static DrawingPanel[] drawSubstrates(ArrayList<Node> nodes) {
 		if(substratePanels == null) {
 			hyperNEATTask = (HyperNEATTask) MMNEAT.task;
 			substrates = hyperNEATTask.getSubstrateInformation();
@@ -57,6 +57,7 @@ public class HyperNEATUtil {
 				nodeIndexStart += s.size.t1 * s.size.t2;
 			}
 		}
+		return substratePanels;
 	}
 	
 	/**

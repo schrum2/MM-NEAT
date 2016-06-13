@@ -7,6 +7,8 @@ import edu.utexas.cs.nn.evolution.lineage.Offspring;
 import edu.utexas.cs.nn.evolution.mutation.tweann.MMR;
 import edu.utexas.cs.nn.graphics.DrawingPanel;
 import edu.utexas.cs.nn.graphics.Plot;
+import edu.utexas.cs.nn.networks.TWEANN.Node;
+import edu.utexas.cs.nn.networks.hyperneat.HyperNEATUtil;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
@@ -47,6 +49,7 @@ public class TWEANN implements Network {
 	public static DrawingPanel panel = null;
 	public static DrawingPanel inputPanel = null;
 	public static DrawingPanel preferenceNeuronPanel = null;
+	public static DrawingPanel[] subsPanel = null;
 	public static ArrayList<Double>[] preferenceActivationHistory = null;
 
 	// subclass for a synaptic link between nodes
@@ -765,7 +768,9 @@ public class TWEANN implements Network {
 		// System.out.println("final outputs: " + Arrays.toString(outputs));
 		if (canDraw) {
 			// TODO: If hyperNEAT and monitorSubstrates, then call method for animating substrate
-			
+			if(Parameters.parameters.booleanParameter("hyperNEAT") && Parameters.parameters.booleanParameter("monitorSubstrate")) {
+				animateSubstrate();
+			}
 			if (panel != null && Parameters.parameters.booleanParameter("animateNetwork")) {
 				draw(panel);
 			}
@@ -857,6 +862,17 @@ public class TWEANN implements Network {
 			Plot.linePlot(preferenceNeuronPanel, -1, 1, preferenceActivationHistory[i],
 					CombinatoricUtilities.colorFromInt(i));
 		}
+	}
+
+	/**
+	 * Creates and updates visuals of substrates used by h-neat tetris task 
+	 */
+	public void animateSubstrate() {
+			ArrayList<Node> nodes = new ArrayList<Node>();
+			for(int i = 0; i < this.nodes.size(); i++) {
+			nodes.set(i, this.nodes.get(i));	
+			}
+			subsPanel = HyperNEATUtil.drawSubstrates(nodes);
 	}
 
 	private static void refreshActivation(DrawingPanel inputPanel, double[] inputs, double[] outputs, double[] preferences, boolean multitask, double[] preferenceFatigue) {
@@ -1142,7 +1158,7 @@ public class TWEANN implements Network {
 	 * @param hidden array list of all hidden nodes
 	 * @return array list containing each separate layer
 	 */
-	protected ArrayList<ArrayList<Node>> sortHiddenLayers(ArrayList<Node> hidden) {//TODO still needs some cleaning up I feel
+	protected ArrayList<ArrayList<Node>> sortHiddenLayers(ArrayList<Node> hidden) {
 		ArrayList<ArrayList<Node>> hiddenLayers = new ArrayList<ArrayList<Node>>();
 		hiddenLayers.add(hidden);
 		int hiddenLayer = 0;
