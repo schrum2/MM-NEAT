@@ -1,6 +1,7 @@
 package edu.utexas.cs.nn.networks;
 
 import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
+import edu.utexas.cs.nn.evolution.genotypes.HyperNEATCPPNGenotype;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype.LinkGene;
 import edu.utexas.cs.nn.evolution.lineage.Offspring;
@@ -431,7 +432,7 @@ public class TWEANN implements Network {
 	 *            = archetype to align with for crossover
 	 */
 	public TWEANN(int numIn, int numOut, boolean featureSelective, int ftype, int numModes, int archetypeIndex) {
-		NETWORK_VIEW_DIM = (Parameters.parameters.booleanParameter("hyperNEAT")) ? 500 : 1000;
+		NETWORK_VIEW_DIM = (Parameters.parameters.booleanParameter("hyperNEAT")) ? 1000 : 500;
 		this.archetypeIndex = archetypeIndex;
 		this.numIn = numIn;
 		this.moduleUsage = new int[numModes];
@@ -533,6 +534,7 @@ public class TWEANN implements Network {
 	 *            The genotype
 	 */
 	public TWEANN(TWEANNGenotype g) {
+		NETWORK_VIEW_DIM = (Parameters.parameters.booleanParameter("hyperNEAT")) ? 1000 : 500;
 		this.archetypeIndex = g.archetypeIndex;
 		this.id = g.getId();
 		this.nodes = new ArrayList<Node>(g.nodes.size());
@@ -762,11 +764,8 @@ public class TWEANN implements Network {
 		} else {
 			outputs = moduleOutput(chosenModule);
 		}
-
-		// System.out.println("final outputs: " + Arrays.toString(outputs));
 		if (canDraw) {
-			// TODO: If hyperNEAT and monitorSubstrates, then call method for animating substrate
-			if(Parameters.parameters.booleanParameter("hyperNEAT") && Parameters.parameters.booleanParameter("monitorSubstrate")) {
+			if(!HyperNEATCPPNGenotype.constructingNetwork && Parameters.parameters.booleanParameter("hyperNEAT") && Parameters.parameters.booleanParameter("monitorSubstrates")) {
 				animateSubstrate();
 			}
 			if (panel != null && Parameters.parameters.booleanParameter("animateNetwork")) {
@@ -866,10 +865,6 @@ public class TWEANN implements Network {
 	 * Creates and updates visuals of substrates used by h-neat tetris task 
 	 */
 	public void animateSubstrate() {
-			ArrayList<Node> nodes = new ArrayList<Node>();
-			for(int i = 0; i < this.nodes.size(); i++) {
-			nodes.set(i, this.nodes.get(i));	
-			}
 			subsPanel = HyperNEATUtil.drawSubstrates(nodes);
 	}
 

@@ -91,7 +91,7 @@ public class HyperNEATUtil {
 		for(int i = 0; i < s.size.t1; i ++) {
 			for(int j = 0; j < s.size.t2; j++) {
 				drawCoord(dp, s.size, nodes, nodeIndexStart);
-				//drawGrid(dp, s.size);
+				drawGrid(dp, s.size);
 			}
 		}
 		return dp;
@@ -122,10 +122,8 @@ public class HyperNEATUtil {
 	 * @param c color of square
 	 */
 	private static void drawCoord(DrawingPanel p, Pair<Integer, Integer> size, ArrayList<Node> nodes, int nodeIndex) { 
-		System.out.println("Start: " + nodeIndex);
 		for(int i = 0; i < size.t1; i++) {
 			for(int j = 0; j < size.t2; j++) {
-				System.out.println(i + ":" + j + ":" + nodeIndex + ":" + nodes.size());
 				double activation = nodes.get(nodeIndex++).output();
 				Color c = new Color(activation > 0 ? (int)(activation*255) : 0, 0, activation < 0 ? (int)(-activation*255) : 0);
 				p.getGraphics().setColor(c);

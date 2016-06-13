@@ -20,9 +20,10 @@ import edu.utexas.cs.nn.util.util2D.Tuple2D;
  */
 public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 
+	public static boolean constructingNetwork = false;
 	private static final double BIAS = 1.0;// Necessary for most CPPN networks
 	public int innovationID = 0;// provides unique innovation numbers for links and genes
-
+	
 	/**
 	 * Default constructor
 	 */
@@ -82,6 +83,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 	 */
 	@Override
 	public TWEANN getPhenotype() {
+		constructingNetwork = true; // prevent displaying of substrates
 		//long time = System.currentTimeMillis(); // for timing
 		TWEANN cppn = super.getPhenotype();// CPPN used to create TWEANN network
 		HyperNEATTask hnt = (HyperNEATTask) MMNEAT.task;// Cast task to HyperNEATTask
@@ -117,6 +119,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 		// problems, since the archetype is only needed for mutations and crossover.
 		TWEANNGenotype tg = new TWEANNGenotype(newNodes,newLinks, phenotypeOutputs, false, false, -1);
 		//System.out.println("phenotype: " + (System.currentTimeMillis() - time)); // for timing
+		constructingNetwork = false;
 		return tg.getPhenotype();
 	}
 
