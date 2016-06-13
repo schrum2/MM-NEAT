@@ -4,10 +4,8 @@ import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype.LinkGene;
 import edu.utexas.cs.nn.evolution.lineage.Offspring;
-import edu.utexas.cs.nn.evolution.mutation.tweann.MMR;
 import edu.utexas.cs.nn.graphics.DrawingPanel;
 import edu.utexas.cs.nn.graphics.Plot;
-import edu.utexas.cs.nn.networks.TWEANN.Node;
 import edu.utexas.cs.nn.networks.hyperneat.HyperNEATUtil;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.parameters.CommonConstants;
@@ -49,7 +47,7 @@ public class TWEANN implements Network {
 	public static DrawingPanel panel = null;
 	public static DrawingPanel inputPanel = null;
 	public static DrawingPanel preferenceNeuronPanel = null;
-	public static DrawingPanel[] subsPanel = null;
+	public static List<DrawingPanel> subsPanel = null;
 	public static ArrayList<Double>[] preferenceActivationHistory = null;
 
 	// subclass for a synaptic link between nodes

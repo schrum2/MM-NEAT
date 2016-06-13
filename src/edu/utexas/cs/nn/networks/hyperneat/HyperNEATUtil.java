@@ -7,6 +7,7 @@ import java.util.List;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.graphics.DrawingPanel;
 import edu.utexas.cs.nn.networks.TWEANN.Node;
+import edu.utexas.cs.nn.util.MiscUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 
 
@@ -30,7 +31,7 @@ public class HyperNEATUtil {
 	//size of grid in substrate drawing. Can be changed/turned into a param if need be
 	public final static int SUBS_GRID_SIZE = 30;
 
-	private static DrawingPanel[] substratePanels = null;
+	private static List<DrawingPanel> substratePanels = null;
 
 	private static HyperNEATTask hyperNEATTask;
 
@@ -38,22 +39,23 @@ public class HyperNEATUtil {
 	
 	// Schrum: This method isn't tested yet, but it should create all of the substrates
 	// and update them based on neuron activations.
-	public static DrawingPanel[] drawSubstrates(ArrayList<Node> nodes) {
+	public static List<DrawingPanel> drawSubstrates(ArrayList<Node> nodes) {
 		if(substratePanels == null) {
 			hyperNEATTask = (HyperNEATTask) MMNEAT.task;
 			substrates = hyperNEATTask.getSubstrateInformation();
-			substratePanels = new DrawingPanel[substrates.size()];
+			System.out.println(substrates.toString());
+			substratePanels = new ArrayList<DrawingPanel>();
 			int nodeIndexStart = 0;
 			for(int i = 0; i < substrates.size(); i++) {
 				Substrate s = substrates.get(i);
-				substratePanels[i] = drawSubstrate(s, nodes, nodeIndexStart);
+				substratePanels.add(drawSubstrate(s, nodes, nodeIndexStart));
 				nodeIndexStart += s.size.t1 * s.size.t2;
 			}
 		} else {
 			int nodeIndexStart = 0;
 			for(int i = 0; i < substrates.size(); i++) {
 				Substrate s = substrates.get(i);
-				drawSubstrate(substratePanels[i], s, nodes, nodeIndexStart);
+				drawSubstrate(substratePanels.get(i), s, nodes, nodeIndexStart);
 				nodeIndexStart += s.size.t1 * s.size.t2;
 			}
 		}
@@ -117,6 +119,7 @@ public class HyperNEATUtil {
 	private static void drawCoord(DrawingPanel p, Pair<Integer, Integer> size, ArrayList<Node> nodes, int nodeIndex) { 
 		for(int i = 0; i < size.t1; i++) {
 			for(int j = 0; j < size.t2; j++) {
+				//System.out.println("i swear " + nodes.toString());
 				double activation = nodes.get(nodeIndex++).output();
 				Color c = new Color(activation > 0 ? (int)(activation*255) : 0, 0, activation < 0 ? (int)(-activation*255) : 0);
 				p.getGraphics().setColor(c);

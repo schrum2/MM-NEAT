@@ -1,8 +1,5 @@
 package edu.utexas.cs.nn.networks.hyperneat;
 
-import static org.junit.Assert.*;
-
-import java.awt.Color;
 import java.util.ArrayList;
 
 import org.junit.After;
@@ -16,10 +13,6 @@ import edu.utexas.cs.nn.networks.ActivationFunctions;
 import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.networks.TWEANN.Node;
 import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.tasks.Task;
-import edu.utexas.cs.nn.tasks.gridTorus.TorusPredPreyTask;
-import edu.utexas.cs.nn.tasks.rlglue.tetris.TetrisTask;
-import edu.utexas.cs.nn.tasks.testmatch.imagematch.ImageMatchTask;
 import edu.utexas.cs.nn.util.MiscUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.datastructures.Triple;
@@ -34,13 +27,16 @@ public class HyperNEATUtilTest {
 	Substrate[] subs;
 	ArrayList<Node> nodes;
 	TWEANN  t1;
-	@SuppressWarnings("rawtypes")
-	//HyperNEATTask htask = (HyperNEATTask) new TetrisTask();
+	HyperNEATTask htask;
 	@Before
 	public void setUp() throws Exception {
 
-		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "allowMultipleFunctions:true", "task:edu.utexas.cs.nn.tasks.rlglue.tetris.HyperNEATTetrisTask"});
+		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "recurrency:false",
+				"rlGlueEnvironment:org.rlcommunity.environments.tetris.Tetris",
+				"task:edu.utexas.cs.nn.tasks.rlglue.tetris.HyperNEATTetrisTask", "rlGlueAgent:edu.utexas.cs.nn.tasks.rlglue.tetris.TetrisAfterStateAgent",
+				"rlGlueExtractor:edu.utexas.cs.nn.tasks.rlglue.featureextractors.tetris.RawTetrisStateExtractor", "hyperNEAT:true" });
 		MMNEAT.loadClasses();
+		htask = (HyperNEATTask) MMNEAT.task;
 		//MMNEAT.task = (Task) htask;
 		TWEANNGenotype tg1 = new TWEANNGenotype();
 		t1 = new TWEANN(tg1);
@@ -78,7 +74,7 @@ public class HyperNEATUtilTest {
 	@Test
 	public void testDrawSubstrateVisual() {
 		DrawingPanel dp = HyperNEATUtil.drawSubstrate(subs[0], nodes, 0);
-		MiscUtil.waitForReadStringAndEnterKeyPress();
+		//MiscUtil.waitForReadStringAndEnterKeyPress();
 		for(Node n : nodes) {
 			n.artificiallySetActivation(RandomNumbers.fullSmallRand());
 		}
