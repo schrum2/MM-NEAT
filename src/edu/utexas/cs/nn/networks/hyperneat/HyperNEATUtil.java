@@ -46,10 +46,13 @@ public class HyperNEATUtil {
 			System.out.println(substrates.toString());
 			substratePanels = new ArrayList<DrawingPanel>();
 			int nodeIndexStart = 0;
+			int substratePlacing = 0;
 			for(int i = 0; i < substrates.size(); i++) {
 				Substrate s = substrates.get(i);
 				substratePanels.add(drawSubstrate(s, nodes, nodeIndexStart));
+				substratePanels.get(i).setLocation(substratePlacing, 0);
 				nodeIndexStart += s.size.t1 * s.size.t2;
+				substratePlacing += substratePanels.get(i).getFrame().getWidth();
 			}
 		} else {
 			int nodeIndexStart = 0;
@@ -88,7 +91,7 @@ public class HyperNEATUtil {
 		for(int i = 0; i < s.size.t1; i ++) {
 			for(int j = 0; j < s.size.t2; j++) {
 				drawCoord(dp, s.size, nodes, nodeIndexStart);
-				drawGrid(dp, s.size);
+				//drawGrid(dp, s.size);
 			}
 		}
 		return dp;
@@ -96,9 +99,11 @@ public class HyperNEATUtil {
 	
 	/**
 	 * Draws grid around squares so they are more easily distinguishable
+	 * 'Not used currently b/c slows down computation time
 	 * @param p drawingPanel
 	 * @param size size of substrate
 	 */
+	@SuppressWarnings("unused")
 	private static void drawGrid(DrawingPanel p, Pair<Integer, Integer> size) {
 		// Loop through columns and rows to draw black lines
 		p.getGraphics().setBackground(Color.white);
@@ -117,9 +122,10 @@ public class HyperNEATUtil {
 	 * @param c color of square
 	 */
 	private static void drawCoord(DrawingPanel p, Pair<Integer, Integer> size, ArrayList<Node> nodes, int nodeIndex) { 
+		System.out.println("Start: " + nodeIndex);
 		for(int i = 0; i < size.t1; i++) {
 			for(int j = 0; j < size.t2; j++) {
-				//System.out.println("i swear " + nodes.toString());
+				System.out.println(i + ":" + j + ":" + nodeIndex + ":" + nodes.size());
 				double activation = nodes.get(nodeIndex++).output();
 				Color c = new Color(activation > 0 ? (int)(activation*255) : 0, 0, activation < 0 ? (int)(-activation*255) : 0);
 				p.getGraphics().setColor(c);
