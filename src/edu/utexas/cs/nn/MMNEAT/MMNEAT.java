@@ -166,6 +166,7 @@ public class MMNEAT {
 		}
 	}
 
+        // TODO: Move to a class more specifically associated with Pac-Man
 	public static void setupMsPacmanParameters() {
 		if (Parameters.parameters.booleanParameter("logGhostLocOnPowerPill")) {
 			ghostLocationsOnPowerPillEaten = new MMNEATLog("PowerPillToGhostLocationMapping");
@@ -182,6 +183,7 @@ public class MMNEAT {
 		}
 	}
 
+        // TODO: Move to a class more specifically associated with Pac-Man
 	public static void setLairTimeBasedOnGeneration(int generation) {
 		double maxGens = Parameters.parameters.integerParameter("maxGens");
 		int consistentLairTimeGens = Parameters.parameters.integerParameter("consistentLairTimeGens");
@@ -199,6 +201,7 @@ public class MMNEAT {
 		System.out.println("LAIR TIME: " + Constants.COMMON_LAIR_TIME);
 	}
 
+        // TODO: Move to a class more specifically associated with Pac-Man
 	public static void setEdibleTimeBasedOnGeneration(int generation) {
 		double maxGens = Parameters.parameters.integerParameter("maxGens");
 		int consistentEdibleTimeGens = Parameters.parameters.integerParameter("consistentEdibleTimeGens");
@@ -502,6 +505,11 @@ public class MMNEAT {
 				|| CooperativeSubtaskCombinerMsPacManTask.class.equals(Parameters.parameters.classParameter("task"));
 	}
 
+        /**
+         * Constructor takes the command like parameters
+         * to initialize the systems parameter values.
+         * @param args directly from command line
+         */
 	public MMNEAT(String[] args) {
 		Parameters.initializeParameterCollections(args);
 	}
@@ -510,14 +518,35 @@ public class MMNEAT {
 		Parameters.initializeParameterCollections(parameterFile);
 	}
 
+        /**
+         * For plotting purposes. Let simulation know that a given fitness function
+         * will be tracked.
+         * @param name Name of fitness function in plot files
+         */
 	public static void registerFitnessFunction(String name) {
 		registerFitnessFunction(name, null, true);
 	}
 
+        /**
+         * Like above, but indicating that the "fitness" function does not affect 
+         * selection means that it is simply an other score that is being tracked
+         * in the logs.
+         * @param name Name of score
+         * @param affectsSelection Whether or not score is actually used for selection
+         */
 	public static void registerFitnessFunction(String name, boolean affectsSelection) {
 		registerFitnessFunction(name, null, affectsSelection);
 	}
 
+        /**
+         * As above, but it is now possible to indicate how the score is statistically
+         * summarized when noisy evaluations occur. The default is to average scores
+         * across evaluations, but if an overriding statistic is used, then this will
+         * also be mentioned in the log.
+         * @param name Name of score column
+         * @param override Statistic applied across evaluations (null is default/average)
+         * @param affectsSelection whether it affects selection
+         */
 	public static void registerFitnessFunction(String name, Statistic override, boolean affectsSelection) {
 		if (affectsSelection) {
 			actualFitnessFunctions++;
@@ -526,6 +555,15 @@ public class MMNEAT {
 		aggregationOverrides.add(override);
 	}
 
+        /**
+         * Load important classes from class parameters.
+         * Other important experiment setup also occurs.
+         * Perhaps the most important classes that always
+         * need to be loaded at the task, the experiment, 
+         * and the ea. These get stored in public static 
+         * variables of this class so they are easily accessible
+         * from all parts of the code.
+         */
 	public static void loadClasses() {
 		try {
 			ActivationFunctions.resetFunctionSet();
@@ -686,8 +724,7 @@ public class MMNEAT {
 			}
 
 			setupMetaHeuristics();
-			// An EA is always needed. Currently only GenerationalEA classes are
-			// supported
+			// An EA is always needed. Currently only GenerationalEA classes are supported
 			if (!loadFrom) {
 				System.out.println("Create EA");
 				ea = (GenerationalEA) ClassCreation.createObject("ea");
