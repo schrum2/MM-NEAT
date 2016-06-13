@@ -167,18 +167,6 @@ public class MMNEAT {
 		}
 	}
 
-	public static void setupMsPacmanParameters() {
-		MsPacManInitialization.setupMsPacmanParameters();
-	}
-
-	private static void setupGenotypePoolsForMsPacman() {
-		MsPacManInitialization.setupGenotypePoolsForMsPacman();
-	}
-
-	private static void setupCooperativeCoevolutionGhostMonitorsForMsPacman() throws NoSuchMethodException { 
-		MsPacManInitialization.setupCooperativeCoevolutionGhostMonitorsForMsPacman();
-	}
-
 	/**
 	 * Assumes the subnets are always in SubNetworkBlocks at the end of a
 	 * BlockLoadedInputOutputMediator, so the nets to replace are found based on
@@ -190,22 +178,6 @@ public class MMNEAT {
 		for (int i = 0; i < subnets.size(); i++) {
 			((SubNetworkBlock) blockMediator.blocks.get(numBlocks - subnets.size() + i)).changeNetwork(subnets.get(i));
 		}
-	}
-
-	private static void setupCooperativeCoevolutionSelectorForMsPacman() throws NoSuchMethodException {
-		MsPacManInitialization.setupCooperativeCoevolutionSelectorForMsPacman();
-	}
-
-	private static void setupCooperativeCoevolutionCheckEachMultitaskPreferenceNetForMsPacman() throws NoSuchMethodException {
-		MsPacManInitialization.setupCooperativeCoevolutionCheckEachMultitaskPreferenceNetForMsPacman();
-	}
-
-	private static void setupCooperativeCoevolutionCombinerForMsPacman() throws NoSuchMethodException {
-		MsPacManInitialization.setupCooperativeCoevolutionCombinerForMsPacman();
-	}
-
-	private static void setupCooperativeCoevolutionNonHierarchicalForMsPacman() throws NoSuchMethodException {
-		MsPacManInitialization.setupCooperativeCoevolutionNonHierarchicalForMsPacman();
 	}
 
 	private static void setupMetaHeuristics() {
@@ -230,14 +202,6 @@ public class MMNEAT {
 			System.out.println("Maximize Modes");
 			metaheuristics.add(new MaxModulesFitness());
 		}
-	}
-
-	private static void setupMultitaskSeedPopulationForMsPacman(String ghostDir, String pillDir) {
-		MsPacManInitialization.setupMultitaskSeedPopulationForMsPacman(ghostDir, pillDir);
-	}
-
-	private static void setupSingleMultitaskSeedForMsPacman() {
-		MsPacManInitialization.setupSingleMultitaskSeedForMsPacman();
 	}
 
 	private static void setupTWEANNGenotypeDataTracking(boolean coevolution) {
@@ -375,7 +339,7 @@ public class MMNEAT {
 			}
 
 			if (task instanceof MsPacManTask) {
-				setupGenotypePoolsForMsPacman();
+				MsPacManInitialization.setupGenotypePoolsForMsPacman();
 				System.out.println("Setup Ms. Pac-Man Task");
 				pacmanInputOutputMediator = (MsPacManControllerInputOutputMediator) ClassCreation
 						.createObject("pacmanInputOutputMediator");
@@ -414,7 +378,7 @@ public class MMNEAT {
 					// Regular Check-Each-Direction networks
 					setNNInputParameters(pacmanInputOutputMediator.numIn(), pacmanInputOutputMediator.numOut());
 				}
-				setupMsPacmanParameters();
+				MsPacManInitialization.setupMsPacmanParameters();
 				if (CommonConstants.multitaskModules > 1) {
 					pacmanMultitaskScheme = (MsPacManModeSelector) ClassCreation.createObject("pacmanMultitaskScheme");
 				}
@@ -423,17 +387,17 @@ public class MMNEAT {
 				coevolution = true;
 				// Is this next line redundant
 				EvolutionaryHistory.initInnovationHistory();
-				setupMsPacmanParameters();
+				MsPacManInitialization.setupMsPacmanParameters();
 				if (task instanceof CooperativeGhostMonitorNetworksMsPacManTask) {
-					setupCooperativeCoevolutionGhostMonitorsForMsPacman();
+					MsPacManInitialization.setupCooperativeCoevolutionGhostMonitorsForMsPacman();
 				} else if (task instanceof CooperativeSubtaskSelectorMsPacManTask) {
-					setupCooperativeCoevolutionSelectorForMsPacman();
+					MsPacManInitialization.setupCooperativeCoevolutionSelectorForMsPacman();
 				} else if (task instanceof CooperativeSubtaskCombinerMsPacManTask) {
-					setupCooperativeCoevolutionCombinerForMsPacman();
+					MsPacManInitialization.setupCooperativeCoevolutionCombinerForMsPacman();
 				} else if (task instanceof CooperativeNonHierarchicalMultiNetMsPacManTask) {
-					setupCooperativeCoevolutionNonHierarchicalForMsPacman();
+					MsPacManInitialization.setupCooperativeCoevolutionNonHierarchicalForMsPacman();
 				} else if (task instanceof CooperativeCheckEachMultitaskSelectorMsPacManTask) {
-					setupCooperativeCoevolutionCheckEachMultitaskPreferenceNetForMsPacman();
+					MsPacManInitialization.setupCooperativeCoevolutionCheckEachMultitaskPreferenceNetForMsPacman();
 				}
 			} else if (task instanceof RLGlueTask) {
 				RLGlueTask rlTask = (RLGlueTask) task;
@@ -513,9 +477,9 @@ public class MMNEAT {
 				String lastSavedDirectory = Parameters.parameters.stringParameter("lastSavedDirectory");
 				if (lastSavedDirectory.isEmpty()) {
 					if (!ghostDir.isEmpty() && !pillDir.isEmpty()) {
-						setupMultitaskSeedPopulationForMsPacman(ghostDir, pillDir);
+						MsPacManInitialization.setupMultitaskSeedPopulationForMsPacman(ghostDir, pillDir);
 					} else {
-						setupSingleMultitaskSeedForMsPacman();
+						MsPacManInitialization.setupSingleMultitaskSeedForMsPacman();
 					}
 				}
 

@@ -10,6 +10,7 @@ import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.scores.Score;
 import edu.utexas.cs.nn.tasks.CooperativeTask;
 import edu.utexas.cs.nn.tasks.mspacman.CooperativeMultitaskSchemeMsPacManTask;
+import edu.utexas.cs.nn.tasks.mspacman.init.MsPacManInitialization;
 import edu.utexas.cs.nn.tasks.mspacman.multitask.MsPacManModeSelector;
 import edu.utexas.cs.nn.tasks.mspacman.sensors.MsPacManControllerInputOutputMediator;
 import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.VariableDirectionBlock;
@@ -101,7 +102,7 @@ public final class MultinetworkMsPacManExperiment<T extends Network> implements 
 				}
 			}
 		}
-		MMNEAT.setupMsPacmanParameters();
+		MsPacManInitialization.setupMsPacmanParameters();
 	}
 
 	public void init() {

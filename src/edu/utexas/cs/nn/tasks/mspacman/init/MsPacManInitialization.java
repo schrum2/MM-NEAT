@@ -296,7 +296,4 @@ public class MsPacManInitialization {
 		MMNEAT.genotype = cross.crossover(ghostEating, pillEating).copy();
 		MMNEAT.seedExample = true;
 	}
-	
-	
-	
 }

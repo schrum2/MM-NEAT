@@ -9,6 +9,7 @@ import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.scores.Score;
 import edu.utexas.cs.nn.tasks.mspacman.CooperativeEnsembleMsPacManTask;
 import edu.utexas.cs.nn.tasks.mspacman.agentcontroller.pacman.EnsembleMsPacManController;
+import edu.utexas.cs.nn.tasks.mspacman.init.MsPacManInitialization;
 import edu.utexas.cs.nn.tasks.mspacman.multitask.MsPacManModeSelector;
 import edu.utexas.cs.nn.tasks.mspacman.sensors.MsPacManControllerInputOutputMediator;
 import edu.utexas.cs.nn.util.ClassCreation;
@@ -57,7 +58,7 @@ public final class ParetoEnsembleMsPacManExperiment<T extends Network> implement
 		for (int i = 0; i < inputMediators.length; i++) {
 			inputMediators[i] = (MsPacManControllerInputOutputMediator) ClassCreation.createObject("pacmanInputOutputMediator");
 		}
-		MMNEAT.setupMsPacmanParameters();
+		MsPacManInitialization.setupMsPacmanParameters();
 	}
 
         @Override
