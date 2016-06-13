@@ -137,6 +137,7 @@ public abstract class MuLambda<T> implements SinglePopulationGenerationalEA<T> {
 	 * @param parentScores
 	 *            Score details of all parents after evaluation
 	 */
+	@SuppressWarnings("rawtypes")
 	public void logParentInfo(ArrayList<Score<T>> parentScores) {
 		if (writeOutput) {
 			parentLog.log(parentScores, generation);

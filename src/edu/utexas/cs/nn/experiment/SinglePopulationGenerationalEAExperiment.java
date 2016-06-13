@@ -45,6 +45,7 @@ public abstract class SinglePopulationGenerationalEAExperiment<T> implements Exp
 		// Dummy constructor used by Post Evolution Evaluation Experiment
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public SinglePopulationGenerationalEAExperiment(SinglePopulationGenerationalEA<T> ea, Genotype<T> example,
 			String lastSavedDir) {
 		parallel = Parameters.parameters.booleanParameter("parallelSave");

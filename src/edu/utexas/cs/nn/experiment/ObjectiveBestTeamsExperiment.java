@@ -30,6 +30,7 @@ import edu.utexas.cs.nn.util.stats.Statistic;
  */
 public class ObjectiveBestTeamsExperiment implements Experiment {
 
+	@SuppressWarnings("rawtypes")
 	private ArrayList<ArrayList<Genotype>> genotypes;
 
 	/**
@@ -37,6 +38,7 @@ public class ObjectiveBestTeamsExperiment implements Experiment {
 	 * or load entire past lineage
 	 * This is hard coded to work only for Coevolution CooperativeTasks
 	 */
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void init() {
 		genotypes = new ArrayList<ArrayList<Genotype>>();

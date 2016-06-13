@@ -9,10 +9,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
 import edu.utexas.cs.nn.evolution.genotypes.BoundedIntegerValuedGenotype;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.scores.Score;
 import edu.utexas.cs.nn.util.datastructures.ArrayUtil;

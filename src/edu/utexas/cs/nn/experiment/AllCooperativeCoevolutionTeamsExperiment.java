@@ -16,13 +16,16 @@ import java.util.List;
  * team combination to get their scores.
  *
  * @author Jacob Schrum
+ * @param <T>
  */
 public class AllCooperativeCoevolutionTeamsExperiment implements Experiment {
 
+	@SuppressWarnings("rawtypes")
 	private ArrayList<ArrayList<Genotype>> populations;
 	private CooperativeTask task;
 
-        @Override
+        @SuppressWarnings({ "rawtypes", "unchecked" })
+		@Override
 	public void init() {
 		task = (CooperativeTask) MMNEAT.task;
 		String lastSavedDir = Parameters.parameters.stringParameter("lastSavedDirectory");
@@ -47,7 +50,8 @@ public class AllCooperativeCoevolutionTeamsExperiment implements Experiment {
 		}
 	}
 
-        @Override
+        @SuppressWarnings("rawtypes")
+		@Override
 	public void run() {
 		ArrayList<Integer> lengths = new ArrayList<Integer>(populations.size());
 		for (ArrayList<Genotype> pop : populations) {

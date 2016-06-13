@@ -65,7 +65,8 @@ public final class ParetoEnsembleMsPacManExperiment<T extends Network> implement
 		// All work already done in constructor ... should move that here?
 	}
 
-        @Override
+        @SuppressWarnings({ "unchecked", "rawtypes" })
+		@Override
 	public void run() {
 
 		CooperativeEnsembleMsPacManTask pmTask = new CooperativeEnsembleMsPacManTask(front.size());

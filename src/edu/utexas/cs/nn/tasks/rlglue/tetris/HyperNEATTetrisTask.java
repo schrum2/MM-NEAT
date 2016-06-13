@@ -1,22 +1,12 @@
 package edu.utexas.cs.nn.tasks.rlglue.tetris;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-
-import org.junit.Test;
 import org.rlcommunity.environments.tetris.TetrisState;
-
-import edu.utexas.cs.nn.graphics.DrawingPanel;
 import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.networks.TWEANN.Node;
 import edu.utexas.cs.nn.networks.hyperneat.HyperNEATTask;
-import edu.utexas.cs.nn.networks.hyperneat.HyperNEATUtil;
 import edu.utexas.cs.nn.networks.hyperneat.Substrate;
 import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.util.MiscUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.datastructures.Triple;
 

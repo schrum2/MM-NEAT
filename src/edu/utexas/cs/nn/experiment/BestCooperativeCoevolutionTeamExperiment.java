@@ -20,9 +20,11 @@ import wox.serial.Easy;
 public class BestCooperativeCoevolutionTeamExperiment implements Experiment {
 
 	private CooperativeTask task;
+	@SuppressWarnings("rawtypes")
 	private Genotype[] team;
 
-        @Override
+        @SuppressWarnings("rawtypes")
+		@Override
 	public void init() {
 		task = (CooperativeTask) MMNEAT.task;
 		int numMembers = task.numberOfPopulations();
@@ -33,7 +35,8 @@ public class BestCooperativeCoevolutionTeamExperiment implements Experiment {
 		}
 	}
 
-        @Override
+        @SuppressWarnings("rawtypes")
+		@Override
 	public void run() {
 		DrawingPanel[] panels = CooperativeTask.drawNetworks(team);
 		ArrayList<Score> result = task.evaluate(team);

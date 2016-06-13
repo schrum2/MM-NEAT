@@ -16,6 +16,7 @@ public class LimitedSinglePopulationGenerationalEAExperiment<T> extends SinglePo
 
 	private int maxGenerations;
 
+	@SuppressWarnings("unchecked")
 	public LimitedSinglePopulationGenerationalEAExperiment() {
 		this((SinglePopulationGenerationalEA<T>) MMNEAT.ea, MMNEAT.genotype,
 				Parameters.parameters.integerParameter("maxGens"),

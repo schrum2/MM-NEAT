@@ -38,7 +38,9 @@ public abstract class CooperativeCoevolutionMuLambda implements MultiplePopulati
 	private final int mltype;
 	private final MultiplePopulationTask task;
 	protected final double crossoverRate;
+	@SuppressWarnings("rawtypes")
 	protected FitnessLog[] parentLogs;
+	@SuppressWarnings("rawtypes")
 	protected FitnessLog[] childLogs;
 	protected final boolean writeOutput;
 	private HashMap<Long, ArrayList<Long>> recentOffspring = new HashMap<Long, ArrayList<Long>>();
@@ -86,6 +88,7 @@ public abstract class CooperativeCoevolutionMuLambda implements MultiplePopulati
 	 * @param task
 	 * @param numPopulations
 	 */
+	@SuppressWarnings("rawtypes")
 	public CooperativeCoevolutionMuLambda(int mltype, int mu, int lambda, MultiplePopulationTask task, int numPopulations) {
 		this.mltype = mltype;
 		this.task = task;
@@ -121,6 +124,7 @@ public abstract class CooperativeCoevolutionMuLambda implements MultiplePopulati
 	 * @param parentScores
 	 *            the scores of the parent
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void logParentInfo(ArrayList<ArrayList<Score>> parentScores) {
 		if (writeOutput) {
 			for (int i = 0; i < parentLogs.length; i++) {
@@ -145,6 +149,7 @@ public abstract class CooperativeCoevolutionMuLambda implements MultiplePopulati
 	 *            an arrayList of genotypes
 	 * @return startingPopulations, an arrayList of arrayLists of genotypes
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public ArrayList<ArrayList<Genotype>> initialPopulations(ArrayList<Genotype> examples) {
 		ArrayList<ArrayList<Genotype>> startingPopulations = new ArrayList<ArrayList<Genotype>>(examples.size() + 1);
@@ -189,6 +194,7 @@ public abstract class CooperativeCoevolutionMuLambda implements MultiplePopulati
 	 *            vector of subpopulations
 	 * @return vector of all the genotypes to keep after a generation
 	 */
+	@SuppressWarnings("rawtypes")
 	@Override
 	public ArrayList<ArrayList<Genotype>> getNextGeneration(ArrayList<ArrayList<Genotype>> populations) {
 		evaluatingParents = true;
@@ -239,6 +245,7 @@ public abstract class CooperativeCoevolutionMuLambda implements MultiplePopulati
 	 *            type of selection (+ vs ,)
 	 * @return population to select from for next generation.
 	 */
+	@SuppressWarnings("rawtypes")
 	public ArrayList<Score> prepareSourcePopulation(int popIndex, ArrayList<Score> parentScores, ArrayList<Score> childrenScores, int mltype) {
 		ArrayList<Score> population = null;
 		switch (mltype) {
@@ -261,6 +268,7 @@ public abstract class CooperativeCoevolutionMuLambda implements MultiplePopulati
 	 *            scores for all parent sub-populations
 	 * @return scores for all child sub-populations
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public ArrayList<ArrayList<Score>> processChildren(ArrayList<ArrayList<Score>> parentScores) {
 		ArrayList<ArrayList<Genotype>> children = new ArrayList<ArrayList<Genotype>>(parentScores.size());
 		recentOffspring = new HashMap<Long, ArrayList<Long>>();
@@ -291,6 +299,7 @@ public abstract class CooperativeCoevolutionMuLambda implements MultiplePopulati
 	 *            scores from one parent sub-population
 	 * @return genotypes of new child population
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public ArrayList<Genotype> generateChildren(int numChildren, ArrayList<Score> parentScores) {
 		NSGA2Score[] scoresArray = NSGA2.staticNSGA2Scores(PopulationUtil.addListScoreType(parentScores));
 		return PopulationUtil.removeListGenotypeType(
@@ -302,6 +311,7 @@ public abstract class CooperativeCoevolutionMuLambda implements MultiplePopulati
 	 *
 	 * @param populations
 	 */
+	@SuppressWarnings("rawtypes")
 	public void close(ArrayList<ArrayList<Genotype>> populations) {
 		ArrayList<ArrayList<Score>> parentScores = task.evaluateAllPopulations(populations);
 		logParentInfo(parentScores);
@@ -342,6 +352,7 @@ public abstract class CooperativeCoevolutionMuLambda implements MultiplePopulati
 	 *            sub-population to select from
 	 * @return sub-population for next generation
 	 */
+	@SuppressWarnings("rawtypes")
 	public abstract ArrayList<Genotype> selection(int popIndex, int toKeep, ArrayList<Score> sourcePopulation);
 
 	/**

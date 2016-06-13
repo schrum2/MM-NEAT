@@ -22,8 +22,6 @@ import edu.utexas.cs.nn.util.random.RandomNumbers;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import wox.serial.Easy;
 
 /**
@@ -55,6 +53,7 @@ public final class MultinetworkMsPacManExperiment<T extends Network> implements 
 						(MsPacManControllerInputOutputMediator) ClassCreation.createObject("pacManMediatorClass4") });
 	}
 
+	@SuppressWarnings("unchecked")
 	public MultinetworkMsPacManExperiment(MsPacManModeSelector ms, String[] populationDirs, String[] scoreFiles,
 			MsPacManControllerInputOutputMediator[] tempMediators) {
 		this.ms = ms;
@@ -109,6 +108,7 @@ public final class MultinetworkMsPacManExperiment<T extends Network> implements 
 		// All work already done in constructor ... should move that here?
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void run() {
 		try {
 			MMNEAT.directionalSafetyFunction = (VariableDirectionBlock) ClassCreation

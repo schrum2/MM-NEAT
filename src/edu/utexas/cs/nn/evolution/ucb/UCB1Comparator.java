@@ -11,7 +11,7 @@ import java.util.Comparator;
  *
  * @author Jacob Schrum
  */
-public class UCB1Comparator implements Comparator<Score> {
+public class UCB1Comparator <T> implements Comparator<Score<T>> {
 
 	private final int index;
 	private int numTotalLeverPulls;
@@ -34,14 +34,14 @@ public class UCB1Comparator implements Comparator<Score> {
 		numTotalLeverPulls++;
 	}
 
-	public int compare(Score o1, Score o2) {
+	public int compare(Score<T> o1, Score<T> o2) {
 		double o1ucb1Score = ucb1(o1);
 		double o2ucb1Score = ucb1(o2);
 		double diff = o1ucb1Score - o2ucb1Score;
 		return (int) Math.signum(diff);
 	}
 
-	public double ucb1(Score s) {
+	public double ucb1(Score<T> s) {
 		return s.evals >= CommonConstants.maxTrials ? -1
 				: (s.scores[index] / maxReward)
 						+ explorePreference * Math.sqrt((2 * Math.log(numTotalLeverPulls)) / s.evals);

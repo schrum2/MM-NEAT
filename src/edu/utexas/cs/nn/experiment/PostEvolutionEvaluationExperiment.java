@@ -19,6 +19,7 @@ public class PostEvolutionEvaluationExperiment<T> extends SinglePopulationGenera
 	String exactLoadDir;
 	String loadDirectory;
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void init() {
 		int lastSavedGen = Parameters.parameters.integerParameter("lastSavedGeneration");

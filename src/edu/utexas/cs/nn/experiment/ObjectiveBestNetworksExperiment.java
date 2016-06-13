@@ -26,7 +26,8 @@ public class ObjectiveBestNetworksExperiment<T> implements Experiment {
 	 * Load best performer in each objective (previously saved),
          * or load entire past lineage
 	 */
-        @Override
+        @SuppressWarnings("unchecked")
+		@Override
 	public void init() {
 		if (Parameters.parameters.booleanParameter("watchLastBest")) {
                         genotypes = new ArrayList<Genotype<T>>();

@@ -14,7 +14,7 @@ import java.util.Scanner;
  */
 public class FitnessBasedIncrementalEvolutionProcessLog extends StatisticsLog<Double> {
 
-	public FitnessBasedIncrementalEvolutionProcessLog(String _prefix, FitnessBasedIncrementalEvolutionProcess process) {
+	public FitnessBasedIncrementalEvolutionProcessLog(String _prefix, FitnessBasedIncrementalEvolutionProcess<?> process) {
 		super(_prefix, null);
 		// Restore state from log
 		if (lastLoadedEntry != null) {
