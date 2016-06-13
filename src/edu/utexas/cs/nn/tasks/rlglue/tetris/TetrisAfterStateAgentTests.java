@@ -173,28 +173,18 @@ public class TetrisAfterStateAgentTests {
 		Action b = afterStateAgent.getAction(o);
 		assertEquals(afterStateAgent.currentActionList.size(), 3);
 		assertEquals(b.getInt(0), TetrisState.RIGHT); // 1
-		testState = afterStateAgent.observationToTetrisState(o);
-		System.out.println("x: " + testState.currentX);
-		System.out.println("y: " + testState.currentY);
 		
 		Action c = afterStateAgent.getAction(o);
 		assertEquals(afterStateAgent.currentActionList.size(), 2);
 		assertEquals(c.getInt(0), TetrisState.CW); // 2
-		testState = afterStateAgent.observationToTetrisState(o);
-		System.out.println("x: " + testState.currentX);
-		System.out.println("y: " + testState.currentY);
 		
 		Action d = afterStateAgent.getAction(o);
 		assertEquals(afterStateAgent.currentActionList.size(), 1);
 		assertEquals(d.getInt(0), TetrisState.FALL); // 5
-		System.out.println("x: " + testState.currentX);
-		System.out.println("y: " + testState.currentY);
 		
 		Action e = afterStateAgent.getAction(o);
 		assertEquals(afterStateAgent.currentActionList.size(), 0);
 		assertEquals(e.getInt(0), TetrisState.NONE); // 4
-		System.out.println("x: " + testState.currentX);
-		System.out.println("y: " + testState.currentY);
 		
 	}
 }
