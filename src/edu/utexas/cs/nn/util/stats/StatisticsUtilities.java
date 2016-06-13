@@ -441,21 +441,47 @@ public class StatisticsUtilities {
 		return average(totalErrors);
 	}
 
-	public static void main(String[] args) {
-		System.out.println("--Testing argmax---------------------");
-		System.out.println("Plain Max: " + argmax(new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }));
-		System.out.println("0th Max  : " + argmax(new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }, 0));
-		System.out.println("1st Max  : " + argmax(new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }, 1));
-		System.out.println("2nd Max  : " + argmax(new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }, 2));
-		System.out.println("3rd Max  : " + argmax(new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }, 3));
-		System.out.println("4th Max  : " + argmax(new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }, 4));
-		System.out.println("5th Max  : " + argmax(new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }, 5));
-		System.out.println("9th Max  : " + argmax(new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }, 9));
-		System.out.println("--Testing Mode-----------------------");
-		System.out.println(mode(new double[] { 1, 1, 1, 2, 2, 2, 3, 4, 5, 6, 7, 8, 8, 8, 8, 8, 8, 9 }) + " = 8");
-		System.out.println(mode(new double[] { 1, 1, 1 }) + " = 1");
-		System.out.println(mode(new double[] { 2, 1, 2, 1, 2, 1 }) + " = 2");
-		System.out.println(mode(new double[] { 2, 3, 1, 3, 2, 3, 1, 3, 2, 3, 1, 3 }) + " = 3");
-		System.out.println(mode(new double[] { 20, 20.2, 1.0, 1.05, 1.05, 2, 4.5 }) + " = 1.05");
-	}
+    /**
+     * For a given number of experimental runs (N), return the critical t-value
+     * that would need to be surpassed in a two-tailed t-test for p=0.05
+     * 
+     * TODO: Make p be an additional parameter
+     * TODO: Generalize for more values of N
+     * 
+     * @param runs N, the number of runs, which is the sample size
+     * @return critical t-value for two-tailed t-test
+     */
+    public static double tValue(int runs) {
+                if(runs == 1) throw new IllegalArgumentException("A t-value with 0 degrees of freedom cannot be computed");
+                else if(runs == 2) return 12.706;//df= 1, p=0.05, two-tailed
+                else if(runs == 3) return 4.303;// df=2, p=0.05, two-tailed
+                else if(runs == 4) return 3.182;// df=3, p=0.05, two-tailed
+                else if(runs == 5) return 2.776;// df=4, p=0.05, two-tailed
+                else if(runs == 6) return 2.571;// df=5, p=0.05, two-tailed
+                else if(runs == 7) return 2.447;// df=6, p=0.05, two-tailed
+                else if(runs == 8) return 2.365;// df=7, p=0.05, two-tailed
+                else if(runs == 9) return 2.306;// df=8, p=0.05, two-tailed
+                else if(runs == 10) return 2.262;// df=9, p=0.05, two-tailed
+                else if(runs == 11) return 2.228;// df=10, p=0.05, two-tailed
+                else if(runs == 12) return 2.201;// df=11, p=0.05, two-tailed
+                else if(runs == 13) return 2.179;// df=12, p=0.05, two-tailed
+                else if(runs == 14) return 2.160;// df=13, p=0.05, two-tailed
+                else if(runs == 15) return 2.145;// df=14, p=0.05, two-tailed
+                else if(runs == 16) return 2.131;// df=15, p=0.05, two-tailed
+                else if(runs == 17) return 2.120;// df=16, p=0.05, two-tailed
+                else if(runs == 18) return 2.110;// df=17, p=0.05, two-tailed
+                else if(runs == 19) return 2.101;// df=18, p=0.05, two-tailed
+                else if(runs == 20) return 2.093;// df=19, p=0.05, two-tailed
+                else if(runs == 21) return 2.086;// df=20, p=0.05, two-tailed
+                else if(runs == 22) return 2.080;// df=21, p=0.05, two-tailed
+                else if(runs == 23) return 2.074;// df=22, p=0.05, two-tailed
+                else if(runs == 24) return 2.069;// df=23, p=0.05, two-tailed
+                else if(runs == 25) return 2.064;// df=24, p=0.05, two-tailed
+                else if(runs == 26) return 2.060;// df=25, p=0.05, two-tailed
+                else if(runs == 27) return 2.056;// df=26, p=0.05, two-tailed
+                else if(runs == 28) return 2.052;// df=27, p=0.05, two-tailed
+                else if(runs == 29) return 2.048;// df=28, p=0.05, two-tailed
+                else if(runs == 30) return 2.045;// df=29, p=0.05, two-tailed
+                else throw new UnsupportedOperationException("Still need to expand tValue method to support different values of N: " + runs);
+    }
 }

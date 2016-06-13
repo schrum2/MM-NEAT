@@ -8,6 +8,8 @@ import edu.utexas.cs.nn.tasks.MultiplePopulationTask;
 import edu.utexas.cs.nn.tasks.Task;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.stats.Statistic;
+import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -33,7 +35,7 @@ public class ResultSummaryUtilities {
 		// Average objective scores
 		System.out.println("Average scores: " + outputDir + "/" + filePrefix + "AVG" + logSuffix);
 		int num = averageConditionResults(dirPrefix, filePrefix, logSuffix, runs, outputDir);
-		plotAverageFitnessesFile(filePrefix, genFileMiddle + "Scores", logSuffix, num, runs, outputDir, tValue(runs));
+		plotAverageFitnessesFile(filePrefix, genFileMiddle + "Scores", logSuffix, num, runs, outputDir, StatisticsUtilities.tValue(runs));
 		// TWEANN Info
 		String loadFrom = Parameters.parameters.stringParameter("loadFrom");
 		if ((loadFrom == null || loadFrom.equals("")) && !(MMNEAT.task instanceof MultiplePopulationTask)) {
@@ -320,22 +322,4 @@ public class ResultSummaryUtilities {
 		}
 		out.close();
 	}
-
-    /**
-     * For a given number of experimental runs (N), return the critical t-value
-     * that would need to be surpassed in a two-tailed t-test for p=0.05
-     * 
-     * TODO: Make p be an additional parameter
-     * TODO: Generalize for more values of N
-     * 
-     * @param runs N, the number of runs, which is the sample size
-     * @return critical t-value for two-tailed t-test
-     */
-    public static double tValue(int runs) {
-                if(runs == 1) throw new IllegalArgumentException("A t-value with 0 degrees of freedom cannot be computed");
-                else if(runs == 30) return 2.045; // df=29, p=0.05, two-tailed
-                else if(runs == 20) return 2.093; // df=19, p=0.05, two-tailed
-                else if(runs == 10) return 2.262; // df=9, p=0.05, two-tailed
-                else throw new UnsupportedOperationException("Still need to expand tValue method to support different values of N: " + runs);
-    }
 }
