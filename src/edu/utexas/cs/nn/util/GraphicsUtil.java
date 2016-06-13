@@ -22,7 +22,7 @@ public class GraphicsUtil {
 	 * Draws the image created by the CPPN to a BufferedImage
 	 *
 	 * @param n
-	 *            the network used to process the imag
+	 *            the network used to process the image
 	 * @param imageWidth
 	 *            width of image
 	 * @param imageHeight

@@ -4,6 +4,10 @@ package edu.utexas.cs.nn.util.datastructures;
  * Tuple of objects
  *
  * @author Jacob Schrum
+ * @param <W> Type 1
+ * @param <X> Type 2
+ * @param <Y> Type 3
+ * @param <Z> Type 4
  */
 public class Quad<W, X, Y, Z> {
 

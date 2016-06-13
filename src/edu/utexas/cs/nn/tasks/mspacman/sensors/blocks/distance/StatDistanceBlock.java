@@ -37,6 +37,7 @@ public abstract class StatDistanceBlock extends MsPacManSensorBlock {
 		return hash;
 	}
 
+        @Override
 	public int incorporateSensors(double[] inputs, int in, GameFacade gf, int lastDirection) {
 		int current = gf.getPacmanCurrentNodeIndex();
 		int[] targets = getTargets(gf);
@@ -63,6 +64,7 @@ public abstract class StatDistanceBlock extends MsPacManSensorBlock {
 
 	public abstract int[] getTargets(GameFacade gf);
 
+        @Override
 	public int incorporateLabels(String[] labels, int in) {
 		labels[in++] = stat.getClass().getSimpleName() + " " + getType() + " Distance";
 		return in;
@@ -70,6 +72,7 @@ public abstract class StatDistanceBlock extends MsPacManSensorBlock {
 
 	public abstract String getType();
 
+        @Override
 	public int numberAdded() {
 		return 1;
 	}

@@ -4,6 +4,8 @@ package edu.utexas.cs.nn.util.datastructures;
  * Tuple of objects
  *
  * @author Jacob Schrum
+ * @param <X> Type 1
+ * @param <Y> Type 2
  */
 public class Pair<X, Y> {
 

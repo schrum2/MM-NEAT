@@ -14,6 +14,7 @@ import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
  */
 public abstract class FarthestDistanceBlock extends MsPacManSensorBlock {
 
+        @Override
 	public int incorporateSensors(double[] inputs, int in, GameFacade gf, int lastDirection) {
 		int current = gf.getPacmanCurrentNodeIndex();
 		int[] targets = getTargets(gf);
@@ -31,6 +32,7 @@ public abstract class FarthestDistanceBlock extends MsPacManSensorBlock {
 
 	public abstract int[] getTargets(GameFacade gf);
 
+        @Override
 	public int incorporateLabels(String[] labels, int in) {
 		labels[in++] = "Farthest " + getType() + " Distance";
 		return in;
@@ -38,6 +40,7 @@ public abstract class FarthestDistanceBlock extends MsPacManSensorBlock {
 
 	public abstract String getType();
 
+        @Override
 	public int numberAdded() {
 		return 1;
 	}

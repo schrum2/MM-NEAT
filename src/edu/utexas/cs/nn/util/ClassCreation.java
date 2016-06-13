@@ -38,21 +38,8 @@ public class ClassCreation {
 
 		try {
 			object = constructor.newInstance(arguments);
-			// System.out.println("Object: " + object.toString());
 			return object;
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-			System.out.println(e);
-			System.exit(1);
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-			System.out.println(e);
-			System.exit(1);
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-			System.out.println(e);
-			System.exit(1);
-		} catch (InvocationTargetException e) {
+		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			e.printStackTrace();
 			System.out.println(e);
 			System.exit(1);

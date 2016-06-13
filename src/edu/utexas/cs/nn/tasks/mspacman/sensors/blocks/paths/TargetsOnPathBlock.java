@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.paths;
 
 import edu.utexas.cs.nn.parameters.CommonConstants;
@@ -22,6 +18,7 @@ public abstract class TargetsOnPathBlock extends MsPacManSensorBlock {
 		this.absence = Parameters.parameters.booleanParameter("absenceNegative") ? -1 : 0;
 	}
 
+        @Override
 	public int incorporateSensors(double[] inputs, int in, GameFacade gf, int lastDirection) {
 		final int referenceDir = CommonConstants.relativePacmanDirections ? lastDirection : 0;
 		final int current = gf.getPacmanCurrentNodeIndex();
@@ -54,6 +51,7 @@ public abstract class TargetsOnPathBlock extends MsPacManSensorBlock {
 
 	public abstract String targetTypeLabel();
 
+        @Override
 	public int incorporateLabels(String[] labels, int in) {
 		String first = CommonConstants.relativePacmanDirections ? "Ahead" : "Up";
 		String last = CommonConstants.relativePacmanDirections ? "Behind" : "Down";
@@ -66,6 +64,7 @@ public abstract class TargetsOnPathBlock extends MsPacManSensorBlock {
 		return in;
 	}
 
+        @Override
 	public int numberAdded() {
 		return GameFacade.NUM_DIRS;
 	}

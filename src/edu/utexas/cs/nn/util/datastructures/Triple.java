@@ -4,6 +4,9 @@ package edu.utexas.cs.nn.util.datastructures;
  * 3-Tuple of objects
  *
  * @author Jacob Schrum
+ * @param <X> Type 1
+ * @param <Y> Type 2
+ * @param <Z> Type 3
  */
 public class Triple<X, Y, Z> {
 

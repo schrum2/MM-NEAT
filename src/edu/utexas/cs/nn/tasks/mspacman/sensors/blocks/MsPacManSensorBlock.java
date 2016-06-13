@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.utexas.cs.nn.tasks.mspacman.sensors.blocks;
 
 import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
@@ -32,7 +28,7 @@ public abstract class MsPacManSensorBlock {
 	 *            = the actual last direction pacman was moving in
 	 * @return position of next index in inputs to add a sensor reading
 	 */
-	public abstract int incorporateSensors(double[] inputs, int in, GameFacade gf, int lastDirection);
+	public abstract int incorporateSensors(double[] inputs, int startPoint, GameFacade gf, int lastDirection);
 
 	/**
 	 * Performs the same action as incorporateSensors, but stores the result

@@ -660,7 +660,8 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 						long id = network.getId();
 						for(Offspring o : SelectiveBreedingEA.offspring) {
 							if(o.offspringId == id) {
-								drawLineage(o, id, 0, 500);						
+                                                                // Magic number here: 600 is start y-coord for drawing lineage
+								drawLineage(o, id, 0, 600);						
 							}
 						}
 					}
@@ -685,19 +686,22 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	private static void drawLineage(Offspring o, long id, int x, int y) { 
 		int depth = 0;
 		if(o.parentId1 > -1) {
-			drawLineage(o.parentId1, id, x, y - PIC_SIZE/4, depth ++ );
+			drawLineage(o.parentId1, id, x, y - PIC_SIZE/4, depth++);
 		}
 		if(o.parentId2 > -1) {
-			drawLineage(o.parentId2, id, x, y + PIC_SIZE/4, depth ++);
+			drawLineage(o.parentId2, id, x, y + PIC_SIZE/4, depth++);
 		}	
 	}
 
 	/**
 	 * draws lineage of an image
+         * @param <T> phenotype of network
 	 * @param id id of image
 	 * @param childId id of child image
 	 * @param x x-coord
 	 * @param y y-coord
+         * @param depth depth of the recursive call and this the
+         *              distance in generations from the child.
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T extends Network> void drawLineage(long id, long childId, int x, int y, int depth) {
