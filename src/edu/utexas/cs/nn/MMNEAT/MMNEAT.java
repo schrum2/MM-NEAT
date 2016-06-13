@@ -43,6 +43,7 @@ import edu.utexas.cs.nn.tasks.mspacman.*;
 import edu.utexas.cs.nn.tasks.mspacman.ensemble.MsPacManEnsembleArbitrator;
 import edu.utexas.cs.nn.tasks.mspacman.facades.ExecutorFacade;
 import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
+import edu.utexas.cs.nn.tasks.mspacman.init.MsPacManInitialization;
 import edu.utexas.cs.nn.tasks.mspacman.multitask.MsPacManModeSelector;
 import edu.utexas.cs.nn.tasks.mspacman.sensors.*;
 import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.combining.GhostMonitorNetworkBlock;
@@ -166,103 +167,16 @@ public class MMNEAT {
 		}
 	}
 
-        // TODO: Move to a class more specifically associated with Pac-Man
 	public static void setupMsPacmanParameters() {
-		if (Parameters.parameters.booleanParameter("logGhostLocOnPowerPill")) {
-			ghostLocationsOnPowerPillEaten = new MMNEATLog("PowerPillToGhostLocationMapping");
-		}
-
-		Constants.NUM_LIVES = Parameters.parameters.integerParameter("pacmanLives");
-		Constants.EDIBLE_TIME = Parameters.parameters.integerParameter("edibleTime");
-		if (Parameters.parameters.booleanParameter("incrementallyDecreasingEdibleTime")) {
-			MMNEAT.setEdibleTimeBasedOnGeneration(Parameters.parameters.integerParameter("lastSavedGeneration"));
-		}
-		Constants.COMMON_LAIR_TIME = Parameters.parameters.integerParameter("lairTime");
-		if (Parameters.parameters.booleanParameter("incrementallyDecreasingLairTime")) {
-			MMNEAT.setLairTimeBasedOnGeneration(Parameters.parameters.integerParameter("lastSavedGeneration"));
-		}
-	}
-
-        // TODO: Move to a class more specifically associated with Pac-Man
-	public static void setLairTimeBasedOnGeneration(int generation) {
-		double maxGens = Parameters.parameters.integerParameter("maxGens");
-		int consistentLairTimeGens = Parameters.parameters.integerParameter("consistentLairTimeGens");
-		int minLairTime = Parameters.parameters.integerParameter("minLairTime");
-		if ((maxGens - generation) > consistentLairTimeGens) {
-			int maxLairTime = Parameters.parameters.integerParameter("maxLairTime");
-			int lairRange = maxLairTime - minLairTime;
-			double scale = generation / (maxGens - consistentLairTimeGens);
-			int lairTimeProgress = (int) Math.floor(scale * lairRange);
-			Constants.COMMON_LAIR_TIME = maxLairTime - lairTimeProgress;
-		} else {
-			Constants.COMMON_LAIR_TIME = minLairTime;
-		}
-		Parameters.parameters.setInteger("lairTime", Constants.COMMON_LAIR_TIME);
-		System.out.println("LAIR TIME: " + Constants.COMMON_LAIR_TIME);
-	}
-
-        // TODO: Move to a class more specifically associated with Pac-Man
-	public static void setEdibleTimeBasedOnGeneration(int generation) {
-		double maxGens = Parameters.parameters.integerParameter("maxGens");
-		int consistentEdibleTimeGens = Parameters.parameters.integerParameter("consistentEdibleTimeGens");
-		int minEdibleTime = Parameters.parameters.integerParameter("minEdibleTime");
-		if ((maxGens - generation) > consistentEdibleTimeGens) {
-			int maxEdibleTime = Parameters.parameters.integerParameter("maxEdibleTime");
-			int edibleRange = maxEdibleTime - minEdibleTime;
-			double scale = generation / (maxGens - consistentEdibleTimeGens);
-			int edibleTimeProgress = (int) Math.floor(scale * edibleRange);
-			Constants.EDIBLE_TIME = maxEdibleTime - edibleTimeProgress;
-		} else {
-			Constants.EDIBLE_TIME = minEdibleTime;
-		}
-		Parameters.parameters.setInteger("edibleTime", Constants.EDIBLE_TIME);
-		System.out.println("EDIBLE TIME: " + Constants.EDIBLE_TIME);
+		MsPacManInitialization.setupMsPacmanParameters();
 	}
 
 	private static void setupGenotypePoolsForMsPacman() {
-		// Use genotype pools
-		if (Parameters.parameters.classParameter("genotype").equals(HierarchicalTWEANNGenotype.class)) {
-			System.out.println("Ghost eating pool");
-			GenotypePool.addPool(Parameters.parameters.stringParameter("ghostEatingSubnetworkDir"));
-			System.out.println("Pill eating pool");
-			GenotypePool.addPool(Parameters.parameters.stringParameter("pillEatingSubnetworkDir"));
-
-			discreteCeilings = new int[2];
-			discreteCeilings[0] = GenotypePool.poolSize(0);
-			discreteCeilings[1] = GenotypePool.poolSize(1);
-		}
+		MsPacManInitialization.setupGenotypePoolsForMsPacman();
 	}
 
-	private static void setupCooperativeCoevolutionGhostMonitorsForMsPacman() throws NoSuchMethodException {
-		boolean includeInputs = Parameters.parameters.booleanParameter("subsumptionIncludesInputs");
-		int outputsPerMonitor = GameFacade.NUM_DIRS;
-		boolean ghostMonitorsSensePills = Parameters.parameters.booleanParameter("ghostMonitorsSensePills");
-		// Use the specified mediator, but add the required ghost monitor blocks
-		// to it later
-		int ghostMonitorInputs = (ghostMonitorsSensePills ? new OneGhostAndPillsMonitorInputOutputMediator(0)
-				: new OneGhostMonitorInputOutputMediator(0)).numIn();
-		pacmanInputOutputMediator = (MsPacManControllerInputOutputMediator) ClassCreation
-				.createObject("pacmanInputOutputMediator");
-		int numInputs = pacmanInputOutputMediator.numIn() + (CommonConstants.numActiveGhosts
-				* (includeInputs ? outputsPerMonitor + ghostMonitorInputs : outputsPerMonitor));
-		setNNInputParameters(numInputs, GameFacade.NUM_DIRS);
-
-		genotypeExamples = new ArrayList<Genotype>(CommonConstants.numActiveGhosts + 1);
-		genotypeExamples.add(new TWEANNGenotype(numInputs, GameFacade.NUM_DIRS, 0));
-
-		ArrayList<Genotype<TWEANN>> ghostMonitorExamples = new ArrayList<Genotype<TWEANN>>(
-				CommonConstants.numActiveGhosts);
-		for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
-			TWEANNGenotype tg = new TWEANNGenotype(ghostMonitorInputs, outputsPerMonitor, (i + 1));
-			genotypeExamples.add(tg);
-			ghostMonitorExamples.add(tg);
-		}
-		prepareCoevolutionArchetypes();
-		// Needed so that sensor and output labels can be retrieved
-		for (int i = 0; i < ghostMonitorExamples.size(); i++) {
-			((BlockLoadedInputOutputMediator) pacmanInputOutputMediator).blocks
-					.add(new GhostMonitorNetworkBlock((TWEANNGenotype) ghostMonitorExamples.get(i), includeInputs, i));
-		}
+	private static void setupCooperativeCoevolutionGhostMonitorsForMsPacman() throws NoSuchMethodException { 
+		MsPacManInitialization.setupCooperativeCoevolutionGhostMonitorsForMsPacman();
 	}
 
 	/**
@@ -279,96 +193,19 @@ public class MMNEAT {
 	}
 
 	private static void setupCooperativeCoevolutionSelectorForMsPacman() throws NoSuchMethodException {
-		pacmanInputOutputMediator = (MsPacManControllerInputOutputMediator) ClassCreation
-				.createObject("pacmanInputOutputMediator");
-		setNNInputParameters(pacmanInputOutputMediator.numIn(), pacmanInputOutputMediator.numOut());
-		// subcontrollers and selector and possibly blueprints
-		genotypeExamples = new ArrayList<Genotype>(modesToTrack + 2); 
-		genotypeExamples.add(new TWEANNGenotype(pacmanInputOutputMediator.numIn(), modesToTrack, 0));
-		coevolutionMediators = new MsPacManControllerInputOutputMediator[modesToTrack];
-		for (int i = 1; i <= modesToTrack; i++) {
-			coevolutionMediators[i - 1] = (MsPacManControllerInputOutputMediator) ClassCreation
-					.createObject("pacManMediatorClass" + i);
-			genotypeExamples.add(new TWEANNGenotype(coevolutionMediators[i - 1].numIn(), GameFacade.NUM_DIRS, i));
-		}
-
-		prepareCoevolutionArchetypes();
-		// Now the blueprints come in
-		if (task instanceof CooperativeBlueprintSubtaskMsPacManTask) {
-			blueprints = true;
-			genotypeExamples.add(new SimpleBlueprintGenotype(modesToTrack + 1)); // subcontrollers
-																					// and
-																					// selector
-		}
+		MsPacManInitialization.setupCooperativeCoevolutionSelectorForMsPacman();
 	}
 
 	private static void setupCooperativeCoevolutionCheckEachMultitaskPreferenceNetForMsPacman() throws NoSuchMethodException {
-		pacmanInputOutputMediator = (MsPacManControllerInputOutputMediator) ClassCreation.createObject("pacmanInputOutputMediator");
-		MMNEAT.modesToTrack = CommonConstants.multitaskModules;
-		// Setup the preference net settings
-		CommonConstants.multitaskModules = 1; // Needed before set NN params
-		setNNInputParameters(pacmanInputOutputMediator.numIn(), MMNEAT.modesToTrack);
-		CommonConstants.multitaskModules = MMNEAT.modesToTrack; // Restore value
-
-		genotypeExamples = new ArrayList<Genotype>(2);
-		// Multitask
-		genotypeExamples.add(new TWEANNGenotype(pacmanInputOutputMediator.numIn(), modesToTrack, CommonConstants.fs, ActivationFunctions.newNodeFunction(), modesToTrack, 0));
-		// Pref Net
-		genotypeExamples.add(new TWEANNGenotype(pacmanInputOutputMediator.numIn(), modesToTrack, CommonConstants.fs, ActivationFunctions.newNodeFunction(), 1, 1));
-
-		prepareCoevolutionArchetypes();
+		MsPacManInitialization.setupCooperativeCoevolutionCheckEachMultitaskPreferenceNetForMsPacman();
 	}
 
 	private static void setupCooperativeCoevolutionCombinerForMsPacman() throws NoSuchMethodException {
-		boolean includeInputs = Parameters.parameters.booleanParameter("subsumptionIncludesInputs");
-		int outputsPerSubnet = GameFacade.NUM_DIRS;
-		// Use the specified mesiator, but add required subnet blocks to it
-		// later
-		pacmanInputOutputMediator = (MsPacManControllerInputOutputMediator) ClassCreation
-				.createObject("pacmanInputOutputMediator");
-		coevolutionMediators = new MsPacManControllerInputOutputMediator[modesToTrack];
-		int numInputs = pacmanInputOutputMediator.numIn();
-		for (int i = 1; i <= modesToTrack; i++) {
-			coevolutionMediators[i - 1] = (MsPacManControllerInputOutputMediator) ClassCreation
-					.createObject("pacManMediatorClass" + i);
-			numInputs += outputsPerSubnet + (includeInputs ? coevolutionMediators[i - 1].numIn() : 0);
-		}
-		setNNInputParameters(numInputs, GameFacade.NUM_DIRS);
-
-		genotypeExamples = new ArrayList<Genotype>(modesToTrack + 1);
-		genotypeExamples.add(new TWEANNGenotype(numInputs, GameFacade.NUM_DIRS, 0));
-		for (int i = 0; i < modesToTrack; i++) {
-			TWEANNGenotype tg = new TWEANNGenotype(coevolutionMediators[i].numIn(), outputsPerSubnet, (i + 1));
-			genotypeExamples.add(tg);
-		}
-		prepareCoevolutionArchetypes();
-		// Needed so that sensor and output labels can be retrieved
-		for (int i = 0; i < coevolutionMediators.length; i++) {
-			TWEANNGenotype tg = (TWEANNGenotype) genotypeExamples.get(i + 1); // skip
-																				// combiner
-			((BlockLoadedInputOutputMediator) pacmanInputOutputMediator).blocks
-					.add(new SubNetworkBlock(tg.getPhenotype(), coevolutionMediators[i],
-							coevolutionMediators[i].getClass().getSimpleName() + "[" + i + "]", includeInputs));
-		}
+		MsPacManInitialization.setupCooperativeCoevolutionCombinerForMsPacman();
 	}
 
 	private static void setupCooperativeCoevolutionNonHierarchicalForMsPacman() throws NoSuchMethodException {
-		pacmanInputOutputMediator = (MsPacManControllerInputOutputMediator) ClassCreation
-				.createObject("pacmanInputOutputMediator");
-		setNNInputParameters(pacmanInputOutputMediator.numIn(), pacmanInputOutputMediator.numOut());
-
-		CooperativeNonHierarchicalMultiNetMsPacManTask theTask = (CooperativeNonHierarchicalMultiNetMsPacManTask) task;
-		int pops = theTask.numberOfPopulations();
-		genotypeExamples = new ArrayList<Genotype>(pops);
-		boolean specializeMediators = !Parameters.parameters.booleanParameter("defaultMediator");
-		for (int i = 1; i <= pops; i++) {
-			if (specializeMediators) {
-				theTask.inputMediators[i - 1] = (MsPacManControllerInputOutputMediator) ClassCreation
-						.createObject("pacManMediatorClass" + i);
-			}
-			genotypeExamples.add(new TWEANNGenotype(theTask.inputMediators[i - 1].numIn(), GameFacade.NUM_DIRS, i - 1));
-		}
-		prepareCoevolutionArchetypes();
+		MsPacManInitialization.setupCooperativeCoevolutionNonHierarchicalForMsPacman();
 	}
 
 	private static void setupMetaHeuristics() {
@@ -396,76 +233,11 @@ public class MMNEAT {
 	}
 
 	private static void setupMultitaskSeedPopulationForMsPacman(String ghostDir, String pillDir) {
-		// A combined archetype is needed
-		CombiningTWEANNCrossover cross = new CombiningTWEANNCrossover(true, true);
-		ArrayList<TWEANNGenotype.NodeGene> ghostArchetype = (ArrayList<TWEANNGenotype.NodeGene>) Easy
-				.load(Parameters.parameters.stringParameter("ghostArchetype"));
-		ArrayList<TWEANNGenotype.NodeGene> pillArchetype = (ArrayList<TWEANNGenotype.NodeGene>) Easy
-				.load(Parameters.parameters.stringParameter("pillArchetype"));
-		TWEANNGenotype ghostArchetypeNet = new TWEANNGenotype(ghostArchetype, new ArrayList<TWEANNGenotype.LinkGene>(),
-				GameFacade.NUM_DIRS, false, false, -1);
-		TWEANNGenotype pillArchetypeNet = new TWEANNGenotype(pillArchetype, new ArrayList<TWEANNGenotype.LinkGene>(),
-				GameFacade.NUM_DIRS, false, false, -1);
-		EvolutionaryHistory.archetypes[0] = ((TWEANNGenotype) cross.crossover(ghostArchetypeNet,
-				pillArchetypeNet)).nodes;
-
-		// Load component populations, create multitask network combinations,
-		// and save them all to an initial population dir
-		int mu = Parameters.parameters.integerParameter("mu");
-		int layers = 1;
-		while (layers * layers < mu) {
-			layers++;
-		}
-		ArrayList<Genotype<TWEANN>> ghostPop = PopulationUtil.load(ghostDir);
-		ArrayList<Genotype<TWEANN>> pillPop = PopulationUtil.load(pillDir);
-
-		String ghostScoreFile = Parameters.parameters.stringParameter("multinetworkScores1");
-		String pillScoreFile = Parameters.parameters.stringParameter("multinetworkScores2");
-
-		NSGA2Score<TWEANN>[] ghostScores = null;
-		NSGA2Score<TWEANN>[] pillScores = null;
-		try {
-			ghostScores = PopulationUtil.loadScores(ghostScoreFile);
-			pillScores = PopulationUtil.loadScores(pillScoreFile);
-		} catch (FileNotFoundException ex) {
-			ex.printStackTrace();
-			System.exit(1);
-		}
-		// Reduce to the top performers of each population
-		PopulationUtil.pruneDownToTopParetoLayers(ghostPop, ghostScores, layers);
-		PopulationUtil.pruneDownToTopParetoLayers(pillPop, pillScores, layers);
-
-		// Now create a population of combined multitask networks
-		ArrayList<Genotype<TWEANN>> combinedPopulation = new ArrayList<Genotype<TWEANN>>(mu);
-		int ghostPos = 0;
-		int pillPos = 0;
-		for (int i = 0; i < mu; i++) {
-			Genotype<TWEANN> ghostEating = ghostPop.get(ghostPos).copy();
-			Genotype<TWEANN> pillEating = pillPop.get(pillPos).copy();
-			Genotype<TWEANN> combination = cross.crossover(ghostEating, pillEating);
-			combinedPopulation.add(combination);
-			// Pick next pair of networks to combine
-			pillPos++;
-			if (pillPos >= pillPop.size()) {
-				pillPos = 0;
-				ghostPos++;
-			}
-		}
-		// Save the population so it will be loaded naturally, as if a resume is
-		// being performed
-		String saveDirectory = FileUtilities.getSaveDirectory();
-		SinglePopulationGenerationalEAExperiment.save("initial", saveDirectory, combinedPopulation, false);
+		MsPacManInitialization.setupMultitaskSeedPopulationForMsPacman(ghostDir, pillDir);
 	}
 
 	private static void setupSingleMultitaskSeedForMsPacman() {
-		Genotype<TWEANN> ghostEating = EvolutionaryHistory
-				.getSubnetwork(Parameters.parameters.stringParameter("ghostEatingSubnetwork"));
-		Genotype<TWEANN> pillEating = EvolutionaryHistory
-				.getSubnetwork(Parameters.parameters.stringParameter("pillEatingSubnetwork"));
-		CombiningTWEANNCrossover cross = new CombiningTWEANNCrossover(true, true);
-		// Copy assures a fresh genotype id
-		genotype = cross.crossover(ghostEating, pillEating).copy();
-		seedExample = true;
+		MsPacManInitialization.setupSingleMultitaskSeedForMsPacman();
 	}
 
 	private static void setupTWEANNGenotypeDataTracking(boolean coevolution) {
@@ -486,7 +258,7 @@ public class MMNEAT {
 		}
 	}
 
-	private static void prepareCoevolutionArchetypes() {
+	public static void prepareCoevolutionArchetypes() {
 		for (int i = 0; i < genotypeExamples.size(); i++) {
 			String archetypeFile = Parameters.parameters.stringParameter("seedArchetype" + (i + 1));
 			if (!EvolutionaryHistory.archetypeFileExists(i) && archetypeFile != null && !archetypeFile.isEmpty()) {
@@ -999,7 +771,7 @@ public class MMNEAT {
 	 * @param numOut
 	 *            Number of task outputs to network (not counting extra modes)
 	 */
-	private static void setNNInputParameters(int numIn, int numOut) throws NoSuchMethodException {
+	public static void setNNInputParameters(int numIn, int numOut) throws NoSuchMethodException {
 		networkInputs = numIn;
 		networkOutputs = numOut;
 		int multitaskModes = CommonConstants.multitaskModules;

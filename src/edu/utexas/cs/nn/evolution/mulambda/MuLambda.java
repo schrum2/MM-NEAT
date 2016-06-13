@@ -15,6 +15,7 @@ import edu.utexas.cs.nn.tasks.SinglePopulationTask;
 import edu.utexas.cs.nn.tasks.Task;
 import edu.utexas.cs.nn.tasks.mspacman.CooperativeMsPacManTask;
 import edu.utexas.cs.nn.tasks.mspacman.MsPacManTask;
+import edu.utexas.cs.nn.tasks.mspacman.init.MsPacManInitialization;
 import edu.utexas.cs.nn.tasks.mspacman.multitask.DangerousAreaModeSelector;
 import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.scent.VariableDirectionKStepDeathScentBlock;
 import edu.utexas.cs.nn.util.PopulationUtil;
@@ -280,10 +281,10 @@ public abstract class MuLambda<T> implements SinglePopulationGenerationalEA<T> {
                             Parameters.parameters.setDouble("preEatenPillPercentage", 1.0 - ((generation * 1.0) / Parameters.parameters.integerParameter("maxGens")));
                     }
                     if (Parameters.parameters.booleanParameter("incrementallyDecreasingEdibleTime")) { // For pacman
-                            MMNEAT.setEdibleTimeBasedOnGeneration(generation);
+                            MsPacManInitialization.setEdibleTimeBasedOnGeneration(generation);
                     }
                     if (Parameters.parameters.booleanParameter("incrementallyDecreasingLairTime")) { // For pacman
-                            MMNEAT.setLairTimeBasedOnGeneration(generation);
+                    		MsPacManInitialization.setLairTimeBasedOnGeneration(generation);
                     }
                     VariableDirectionKStepDeathScentBlock.updateScentMaps(); // For pacman
                     DangerousAreaModeSelector.updateScentMaps(); // For pacman
