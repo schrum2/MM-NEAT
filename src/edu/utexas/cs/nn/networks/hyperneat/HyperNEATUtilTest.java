@@ -16,6 +16,10 @@ import edu.utexas.cs.nn.networks.ActivationFunctions;
 import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.networks.TWEANN.Node;
 import edu.utexas.cs.nn.parameters.Parameters;
+import edu.utexas.cs.nn.tasks.Task;
+import edu.utexas.cs.nn.tasks.gridTorus.TorusPredPreyTask;
+import edu.utexas.cs.nn.tasks.rlglue.tetris.TetrisTask;
+import edu.utexas.cs.nn.tasks.testmatch.imagematch.ImageMatchTask;
 import edu.utexas.cs.nn.util.MiscUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.datastructures.Triple;
@@ -27,29 +31,43 @@ import edu.utexas.cs.nn.util.random.RandomNumbers;
  */
 public class HyperNEATUtilTest {
 
-	Substrate sub;
+	Substrate[] subs;
 	ArrayList<Node> nodes;
-
+	TWEANN  t1;
+	@SuppressWarnings("rawtypes")
+	//HyperNEATTask htask = (HyperNEATTask) new TetrisTask();
 	@Before
 	public void setUp() throws Exception {
 
-		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "allowMultipleFunctions:true"});
+		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "allowMultipleFunctions:true", "task:edu.utexas.cs.nn.tasks.rlglue.tetris.HyperNEATTetrisTask"});
 		MMNEAT.loadClasses();
-		TWEANNGenotype tg = new TWEANNGenotype();
-		TWEANN whyDoINeedYouBitch = new TWEANN(tg);
-		sub = new Substrate(new Pair<Integer, Integer>(5, 5), 0, new Triple<Integer, Integer, Integer>(0, 0, 0), "I_0");
+		//MMNEAT.task = (Task) htask;
+		TWEANNGenotype tg1 = new TWEANNGenotype();
+		t1 = new TWEANN(tg1);
+		subs = new Substrate[3];
+		Substrate sub1 = new Substrate(new Pair<Integer, Integer>(5, 5), 0, new Triple<Integer, Integer, Integer>(0, 0, 0), "I_0");
+		subs[0] = sub1;
 		nodes = new ArrayList<Node>();
-		long l = 0;
+		Substrate sub2 = new Substrate(new Pair<Integer, Integer>(5, 5), 1, new Triple<Integer, Integer, Integer>(0, 1, 0), "H_0");
+		subs[1] = sub2;
+		Substrate sub3 = new Substrate(new Pair<Integer, Integer>(2, 2), 2, new Triple<Integer, Integer, Integer>(0, 2, 0), "O_0");
+		subs[2] = sub3;
+		long l = addNodes(subs[0], Node.NTYPE_INPUT, 0);
+		l = addNodes(subs[1], Node.NTYPE_HIDDEN, l);
+		l = addNodes(subs[2], Node.NTYPE_OUTPUT, l);
+	}
+ 
+	public long addNodes(Substrate sub, int ntype, long l) {
 		for(int i = 0; i < sub.size.t1 * sub.size.t2; i ++) {
-			Node n = whyDoINeedYouBitch.new Node(ActivationFunctions.randomFunction(), Node.NTYPE_INPUT, l++);
+			Node n = t1.new Node(ActivationFunctions.FTYPE_SIGMOID, ntype, l++);
 			n.artificiallySetActivation(RandomNumbers.fullSmallRand());
 			nodes.add(n);
 		}
+		return l;
 	}
-
 	@After
 	public void tearDown() throws Exception {
-		sub = null;
+		subs = null;
 		nodes = null;
 		MMNEAT.clearClasses();
 	}
@@ -59,12 +77,19 @@ public class HyperNEATUtilTest {
 	 */
 	@Test
 	public void testDrawSubstrateVisual() {
-		DrawingPanel dp = HyperNEATUtil.drawSubstrate(sub, nodes, 0);
+		DrawingPanel dp = HyperNEATUtil.drawSubstrate(subs[0], nodes, 0);
 		MiscUtil.waitForReadStringAndEnterKeyPress();
 		for(Node n : nodes) {
 			n.artificiallySetActivation(RandomNumbers.fullSmallRand());
 		}
-		HyperNEATUtil.drawSubstrate(dp, sub, nodes, 0);
+		HyperNEATUtil.drawSubstrate(dp, subs[0], nodes, 0);
+		MiscUtil.waitForReadStringAndEnterKeyPress();
+	}
+	
+	@Test
+	public void testDrawSubstratesVisual() { 
+		HyperNEATUtil.drawSubstrates(nodes);
+
 		MiscUtil.waitForReadStringAndEnterKeyPress();
 	}
 }
