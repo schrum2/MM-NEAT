@@ -40,7 +40,7 @@ public class TWEANN implements Network {
 
 	// Variables used for watching the behavior of an active network in a
 	// graphical display
-	public static int NETWORK_VIEW_DIM = 500;
+	public static int NETWORK_VIEW_DIM;
 	public static final int NODE_DIM = 6;
 	public static final int DISPLAY_BORDER = 25;
 	public static final int LINK_CURVE_OFFSET = 7;
@@ -362,8 +362,8 @@ public class TWEANN implements Network {
 	}
 
 	private long id = -1;
-	private int numIn;
-	private int numOut;
+	protected int numIn;
+	protected int numOut;
 	private int numModes;
 	private int neuronsPerMode;
 	private boolean standardMultitask;
@@ -430,6 +430,7 @@ public class TWEANN implements Network {
 	 *            = archetype to align with for crossover
 	 */
 	public TWEANN(int numIn, int numOut, boolean featureSelective, int ftype, int numModes, int archetypeIndex) {
+		NETWORK_VIEW_DIM = (Parameters.parameters.booleanParameter("hyperNEAT")) ? 500 : 1000;
 		this.archetypeIndex = archetypeIndex;
 		this.numIn = numIn;
 		this.moduleUsage = new int[numModes];
@@ -1358,74 +1359,5 @@ public class TWEANN implements Network {
 	private void eraseModeIndicator(Graphics2D g, int x, int y, Color c) {
 		g.setColor(c);
 		g.fillRect(x, y, 2 * NODE_DIM, 2 * NODE_DIM);
-	}
-
-
-			
-	public static void main(String[] args) {
-		Parameters.initializeParameterCollections(new String[]{"io:false", "allowMultipleFunctions:true", "recurrency:false", "mmdRate:0.1", "task:edu.utexas.cs.nn.tasks.breve2D.Breve2DTask"});
-		//CommonConstants.freezeBeforeModeMutation = true;
-		MMNEAT.loadClasses();
-		TWEANNGenotype tg1 = new TWEANNGenotype(5, 2, 0);
-		MMNEAT.genotype = tg1.copy();
-		EvolutionaryHistory.initArchetype(0);
-		TWEANNGenotype tg2 = new TWEANNGenotype(5, 2, 0);
-
-		final int MUTATIONS1 = 10;
-
-		for (int i = 0; i < MUTATIONS1; i++) {
-			tg1.mutate();
-			tg1.addRandomPreferenceNeuron(tg1.getPhenotype().numIn);
-			tg2.mutate();
-			tg2.addRandomPreferenceNeuron(tg2.getPhenotype().numIn);
-		}
-
-		System.out.println(tg1);
-		System.out.println(new TWEANN(tg1));
-
-		double[] inputs = RandomNumbers.randomArray(tg1.numIn);
-
-		//tg1.freezeInfluences(tg1.nodes.get(tg1.nodes.size()-2).innovation);
-		DrawingPanel p1 = new DrawingPanel(TWEANN.NETWORK_VIEW_DIM, TWEANN.NETWORK_VIEW_DIM, "Net 1");
-		DrawingPanel p2 = new DrawingPanel(TWEANN.NETWORK_VIEW_DIM, TWEANN.NETWORK_VIEW_DIM, "Net 2");
-		p2.setLocation(TWEANN.NETWORK_VIEW_DIM + 10, 0);
-		tg1.getPhenotype().draw(p1, true);
-		tg2.getPhenotype().draw(p2, true);
-
-		new MMR().mutate(tg1);
-		tg1.freezePreferenceNeurons();
-		System.out.println("Frozen Pref:" + Arrays.toString(tg1.getPhenotype().process(inputs)));
-
-		DrawingPanel p3 = new DrawingPanel(TWEANN.NETWORK_VIEW_DIM, TWEANN.NETWORK_VIEW_DIM, "Net 1 MMD");
-		p3.setLocation(0, TWEANN.NETWORK_VIEW_DIM + 10);
-		tg1.getPhenotype().draw(p3, true);
-
-		new MMR().mutate(tg2);
-		tg2.freezePolicyNeurons();
-		System.out.println("Frozen Policy:" + Arrays.toString(tg2.getPhenotype().process(inputs)));
-
-		DrawingPanel p4 = new DrawingPanel(TWEANN.NETWORK_VIEW_DIM, TWEANN.NETWORK_VIEW_DIM, "Net 2 MMD");
-		p4.setLocation(TWEANN.NETWORK_VIEW_DIM + 10, TWEANN.NETWORK_VIEW_DIM + 10);
-		tg2.getPhenotype().draw(p4, true);
-
-		//TWEANNCrossover cross = new TWEANNCrossover();
-		//TWEANNGenotype new2 = (TWEANNGenotype) cross.crossover(tg1, tg2);
-		for (int i = 0; i < MUTATIONS1; i++) {
-			tg1.mutate();
-			tg2.mutate();
-		}
-
-		System.out.println("Post Mutate Frozen Pref:" + Arrays.toString(tg1.getPhenotype().process(inputs)));
-		System.out.println("Post Mutate Frozen Policy:" + Arrays.toString(tg2.getPhenotype().process(inputs)));
-
-		DrawingPanel p5 = new DrawingPanel(TWEANN.NETWORK_VIEW_DIM, TWEANN.NETWORK_VIEW_DIM, "Cross Result 1");
-		p5.setLocation(2 * (TWEANN.NETWORK_VIEW_DIM + 10), 0);
-		tg1.getPhenotype().draw(p5, true);
-
-		DrawingPanel p6 = new DrawingPanel(TWEANN.NETWORK_VIEW_DIM, TWEANN.NETWORK_VIEW_DIM, "Cross Result 2");
-		p6.setLocation(2 * (TWEANN.NETWORK_VIEW_DIM + 10), TWEANN.NETWORK_VIEW_DIM + 10);
-		//new2.getPhenotype().draw(p6, true);
-		tg2.getPhenotype().draw(p6, true);
-
 	}
 }

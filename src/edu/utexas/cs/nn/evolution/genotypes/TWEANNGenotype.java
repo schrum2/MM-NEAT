@@ -40,7 +40,6 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 			this.innovation = innovation;
 			this.frozen = frozen;
 		}
-
 		public void freeze() {
 			frozen = true;
 		}
