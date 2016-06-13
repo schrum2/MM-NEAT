@@ -156,35 +156,50 @@ public class TetrisAfterStateAgentTests {
 		testState.worldState[185] = 1;
 		testState.worldState[175] = 1;
 		testState.worldState[186] = 1;
-		//piece at spawn
 		
-		System.out.println("x: " + testState.currentX);
-		System.out.println("y: " + testState.currentY);
+		int oldX = testState.currentX;
+		int oldY = testState.currentY;
 		Observation o = testState.get_observation();
 		assertTrue(afterStateAgent.currentActionList.isEmpty());
 		Action a = afterStateAgent.getAction(o);
+		
 		assertFalse(afterStateAgent.currentActionList.isEmpty());
 		assertEquals(afterStateAgent.currentActionList.size(), 4);
 		assertEquals(a.getInt(0), TetrisState.RIGHT); // 1
-		testState = afterStateAgent.observationToTetrisState(o);
-		System.out.println("x: " + testState.currentX);
-		System.out.println("y: " + testState.currentY);
+		testState.take_action(a.getInt(0));
+		assertEquals(testState.currentX, oldX + 1);
+		assertEquals(testState.currentY, oldY);
+		oldX = testState.currentX;
 		
 		Action b = afterStateAgent.getAction(o);
 		assertEquals(afterStateAgent.currentActionList.size(), 3);
 		assertEquals(b.getInt(0), TetrisState.RIGHT); // 1
+		testState.take_action(b.getInt(0));
+		assertEquals(testState.currentX, oldX + 1);
+		assertEquals(testState.currentY, oldY);
+		oldX = testState.currentX;
 		
 		Action c = afterStateAgent.getAction(o);
 		assertEquals(afterStateAgent.currentActionList.size(), 2);
 		assertEquals(c.getInt(0), TetrisState.CW); // 2
+		testState.take_action(c.getInt(0));
+		assertEquals(testState.currentX, oldX);
+		assertEquals(testState.currentY, oldY);
 		
 		Action d = afterStateAgent.getAction(o);
 		assertEquals(afterStateAgent.currentActionList.size(), 1);
 		assertEquals(d.getInt(0), TetrisState.FALL); // 5
+		testState.take_action(d.getInt(0));
+		assertEquals(testState.currentX, oldX);
+		assertEquals(testState.currentY, oldY + 11); // needs to fall all the way
+		oldY = testState.currentY;
 		
 		Action e = afterStateAgent.getAction(o);
 		assertEquals(afterStateAgent.currentActionList.size(), 0);
 		assertEquals(e.getInt(0), TetrisState.NONE); // 4
+		testState.take_action(e.getInt(0));
+		assertEquals(testState.currentX, oldX);
+		assertEquals(testState.currentY, oldY);
 		
 	}
 }
