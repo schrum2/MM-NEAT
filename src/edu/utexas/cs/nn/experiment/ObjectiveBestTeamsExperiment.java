@@ -42,21 +42,31 @@ public class ObjectiveBestTeamsExperiment implements Experiment {
 	@Override
 	public void init() {
 		genotypes = new ArrayList<ArrayList<Genotype>>();
-		if (Parameters.parameters.booleanParameter("watchLastBestOfTeams")) {
-			//loop through each population
+		//this is for the batch file which specifies the team being evaluated. Must specify same number of team members as number of populations
+		if(!(Parameters.parameters.stringParameter("coevolvedNet1").isEmpty())){
 			for(int i = 0; i < ((CooperativeTask) MMNEAT.task).numberOfPopulations(); i++){
 				genotypes.add(new ArrayList<Genotype>());
-				//go for the number of objectives for this population
-				for(int j = 0; j < ((CooperativeTask) MMNEAT.task).objectivesPerPopulation()[i]; j++) {
-					int lastGen = Parameters.parameters.integerParameter("lastSavedGeneration");
-					String file = FileUtilities.getSaveDirectory() + "/pop" + i + "_bestObjectives/gen" + lastGen + "_bestIn"+j+".xml";
-					genotypes.get(i).add((Genotype) PopulationUtil.extractGenotype(file));
-				}
+				String file = FileUtilities.getSaveDirectory() + "/pop" + i + "_bestObjectives/" + Parameters.parameters.stringParameter("coevolvedNet" + (i+1));
+				genotypes.get(i).add((Genotype) PopulationUtil.extractGenotype(file));
 			}
-		}else {
-			for(int i = 0; i < ((CooperativeTask) MMNEAT.task).numberOfPopulations(); i++){
-				String dir = FileUtilities.getSaveDirectory() + "/pop" + i + "_bestObjectives";
-				genotypes.add(PopulationUtil.removeListGenotypeType(PopulationUtil.load(dir)));
+		}else{
+
+			if (Parameters.parameters.booleanParameter("watchLastBestOfTeams")) {
+				//loop through each population
+				for(int i = 0; i < ((CooperativeTask) MMNEAT.task).numberOfPopulations(); i++){
+					genotypes.add(new ArrayList<Genotype>());
+					//go for the number of objectives for this population
+					for(int j = 0; j < ((CooperativeTask) MMNEAT.task).objectivesPerPopulation()[i]; j++) {
+						int lastGen = Parameters.parameters.integerParameter("lastSavedGeneration");
+						String file = FileUtilities.getSaveDirectory() + "/pop" + i + "_bestObjectives/gen" + lastGen + "_bestIn"+j+".xml";
+						genotypes.get(i).add((Genotype) PopulationUtil.extractGenotype(file));
+					}
+				}
+			}else {
+				for(int i = 0; i < ((CooperativeTask) MMNEAT.task).numberOfPopulations(); i++){
+					String dir = FileUtilities.getSaveDirectory() + "/pop" + i + "_bestObjectives";
+					genotypes.add(PopulationUtil.removeListGenotypeType(PopulationUtil.load(dir)));
+				}
 			}
 		}
 	}
@@ -85,13 +95,18 @@ public class ObjectiveBestTeamsExperiment implements Experiment {
 		int numPopulations = ((CooperativeTask) MMNEAT.task).numberOfPopulations();
 
 		ArrayList<Integer> lengths = new ArrayList<Integer>();
-		lengths = ArrayUtil.intListFromArray(numObjectives);
+		if(Parameters.parameters.stringParameter("coevolvedNet1").isEmpty()){
+			lengths = ArrayUtil.intListFromArray(numObjectives);		
+		} else {
+			for(int i = 0; i < genotypes.size(); i++) {
+				lengths.add(1); // only one option per population
+			}
+		}
 		ArrayList<ArrayList<Integer>> combos = CombinatoricUtilities.getAllCombinations(lengths);
 
 		//loop through each possible combination of fitness objectives from each population,
 		//making a team of agents from each population with each of those possible fitness objectives
 		for(ArrayList<Integer>combo : combos){
-
 			Genotype[] team = new Genotype[numPopulations];
 			for(int i = 0; i < team.length; i++){
 				team[i] = genotypes.get(i).get(combo.get(i));
