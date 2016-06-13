@@ -33,7 +33,7 @@ public class ResultSummaryUtilities {
 		// Average objective scores
 		System.out.println("Average scores: " + outputDir + "/" + filePrefix + "AVG" + logSuffix);
 		int num = averageConditionResults(dirPrefix, filePrefix, logSuffix, runs, outputDir);
-		plotAverageFitnessesFile(filePrefix, genFileMiddle + "Scores", logSuffix, num, outputDir);
+		plotAverageFitnessesFile(filePrefix, genFileMiddle + "Scores", logSuffix, num, runs, outputDir, tValue(runs));
 		// TWEANN Info
 		String loadFrom = Parameters.parameters.stringParameter("loadFrom");
 		if ((loadFrom == null || loadFrom.equals("")) && !(MMNEAT.task instanceof MultiplePopulationTask)) {
@@ -71,9 +71,6 @@ public class ResultSummaryUtilities {
 		String file = filePrefix + "AVG" + middle + ".txt";
 
 		for (int i = 1; i < num; i += 4) {
-			// if(i > 5){
-			// out.println("set yrange [0:1]");
-			// }
 			out.println("set title \"Average " + labels.get(((i - 1) / 4)) + " for " + condition + " by Generation\"");
 			out.println("plot \\");
 			out.println("\"" + file + "\" u 1:" + ((2 * i) + 1) + " t \"MIN\", \\");
@@ -96,17 +93,30 @@ public class ResultSummaryUtilities {
 		return num;
 	}
 
-	/*
-	 * Return number of entities
+	/**
+	 * Given several files with columns of data in the same format,
+         * write one output file whose columns contain the corresponding averages
+         * of those values across the input files, and their sample variances.
+         * 
+         * 
+         * @param files Array of individual input file names
+         * @param output File name of new output file
+         * @return Number of columns in original input file (each should have same number)
+         * @throws java.io.FileNotFoundException if any of the files are not found
+         * 
 	 */
 	public static int averageFileColumns(String[] files, String output) throws FileNotFoundException {
 		int result = 0;
 		Scanner[] fs = new Scanner[files.length];
+                // Create Scanner for each input file
 		for (int i = 0; i < fs.length; i++) {
 			fs[i] = new Scanner(new File(files[i]));
 		}
+                // Output file has a PrintStream
 		PrintStream out = new PrintStream(new FileOutputStream(output));
-		while (fs[0].hasNextLine()) {
+                // Assumes all input files have same number of rows as first
+                while (fs[0].hasNextLine()) {
+                        // Each scanner will hold one line from one of the files
 			Scanner[] lines = new Scanner[fs.length];
 			for (int i = 0; i < fs.length; i++) {
 				String line = fs[i].nextLine();
@@ -115,15 +125,19 @@ public class ResultSummaryUtilities {
 
 			String lineOut = "";
 			result = 0;
+                        // Assume all input files have same number of columns as first
 			while (lines[0].hasNext()) {
 				double average = 0;
 				double ss = 0;
 				for (int i = 0; i < lines.length; i++) {
 					double x = lines[i].nextDouble();
 					double oldAverage = average;
+                                        // incremental average update
 					average += ((x - average) / (i + 1.0));
+                                        // incremental sum of squares update
 					ss += ((x - average) * (x - oldAverage));
 				}
+                                // sample variance = s^2 = SS/(N-1)
 				lineOut += average + "\t" + (ss / (lines.length - 1.0)) + "\t";
 				result++;
 			}
@@ -197,27 +211,28 @@ public class ResultSummaryUtilities {
 			}
 		}
 
-		int noNondominatedPoints = qualityIndicator.filterNondominatedSet(solutions, solutions.length,
-				solutions[0].length);
-				// System.out.println("noNondominatedPoints:"+noNondominatedPoints+":"+solutions.length);
-				// for(int i = 0; i <= noNondominatedPoints; i++) {
-				// System.out.println("\t" + Arrays.toString(solutions[i]));
-				// }
-
+		int noNondominatedPoints = qualityIndicator.filterNondominatedSet(solutions, solutions.length, solutions[0].length);
 		// Obtain hypervolume
 		double value = qualityIndicator.calculateHypervolume(solutions, solutions.length, solutions[0].length);
 		// return value;
 		return new Pair<Double, Integer>(value, noNondominatedPoints);
 	}
 
+        /**
+         * Remove a given column from a 2D array of data.
+         * 
+         * TODO: Should this be moved to an existing Util class?
+         * 
+         * @param data 2D array of doubles
+         * @param col index of column to remove from data
+         * @return modified data array
+         */
 	public static double[][] dropColumn(double[][] data, int col) {
 		double[][] result = new double[data.length][data[0].length - 1];
 		for (int i = 0; i < data.length; i++) {
 			int k = 0;
 			for (int j = 0; j < data[0].length; j++) {
-				if (j == col) {
-					continue;
-				} else {
+				if (j != col) { // column to skip
 					result[i][k++] = data[i][j];
 				}
 			}
@@ -273,12 +288,14 @@ public class ResultSummaryUtilities {
 	}
 
 	private static void plotAverageFitnessesFile(String filePrefix, String middle, String fileSuffix, int num,
-			String outputDir) throws FileNotFoundException {
+			int runs, String outputDir, double t) throws FileNotFoundException {
 		String plotFile = outputDir + "/" + filePrefix + "AVG" + middle + ".plot";
 		PrintStream out = new PrintStream(new FileOutputStream(plotFile));
 		String condition = Parameters.parameters.stringParameter("saveTo");
 		out.println("set style data lines");
 		out.println("set key left");
+                // For confidence intervals
+                out.println("set style fill transparent solid 0.2 noborder");
 
 		String file = filePrefix + "AVG" + fileSuffix;
 		for (int i = 1; i < num; i += 4) {
@@ -287,13 +304,38 @@ public class ResultSummaryUtilities {
 					+ (stat == null ? "" : "[" + stat.getClass().getSimpleName() + "]");
 			out.println("set title \"Average '" + fitnessFunctionName + "' for " + condition + " by Generation\"");
 			out.println("plot \\");
-			out.println("\"" + file + "\" u 1:" + ((2 * i) + 1) + " t \"MIN\", \\");
-			out.println("\"" + file + "\" u 1:" + ((2 * i) + 3) + " t \"AVG\", \\");
-			out.println("\"" + file + "\" u 1:" + ((2 * i) + 5) + " t \"MAX\"");
+			out.println("\"" + file + "\" u 1:" + ((2 * i) + 1) + " t \"MIN\" lt 1 lw 2, \\");
+                        
+                        int avg = ((2 * i) + 3);
+                        // Note: Might need gnuplot's "every" command to space out plot frequency
+			out.println("\"" + file + "\" u 1:" + avg + " notitle lt 2 lw 2, \\");
+                        // Calculates standard error (SE) from variance (s^2): SE = sqrt(s^2 / N)
+			out.println("\"" + file + "\" u 1:($"+ avg +" - "+t+"*sqrt($"+ (avg + 1) +"/"+runs+")):($"+ avg +" + "+t+"*sqrt($"+ (avg + 1) +"/"+runs+")) notitle with filledcurves lt 2 lw 2, \\");
+			out.println("\"" + file + "\" u 1:"+avg+":"+avg+":"+avg+" t \"AVG\" with errorbars lt 2 lw 2, \\");                        
+                        
+			out.println("\"" + file + "\" u 1:" + ((2 * i) + 5) + " t \"MAX\" lt 3 lw 2");
 			out.println("");
 			out.println("pause -1");
 			out.println("");
 		}
 		out.close();
 	}
+
+    /**
+     * For a given number of experimental runs (N), return the critical t-value
+     * that would need to be surpassed in a two-tailed t-test for p=0.05
+     * 
+     * TODO: Make p be an additional parameter
+     * TODO: Generalize for more values of N
+     * 
+     * @param runs N, the number of runs, which is the sample size
+     * @return critical t-value for two-tailed t-test
+     */
+    public static double tValue(int runs) {
+                if(runs == 1) throw new IllegalArgumentException("A t-value with 0 degrees of freedom cannot be computed");
+                else if(runs == 30) return 2.045; // df=29, p=0.05, two-tailed
+                else if(runs == 20) return 2.093; // df=19, p=0.05, two-tailed
+                else if(runs == 10) return 2.262; // df=9, p=0.05, two-tailed
+                else throw new UnsupportedOperationException("Still need to expand tValue method to support different values of N: " + runs);
+    }
 }
