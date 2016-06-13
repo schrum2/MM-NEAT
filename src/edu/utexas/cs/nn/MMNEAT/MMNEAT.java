@@ -55,6 +55,7 @@ import edu.utexas.cs.nn.tasks.picbreeder.PicbreederTask;
 import edu.utexas.cs.nn.tasks.rlglue.RLGlueEnvironment;
 import edu.utexas.cs.nn.tasks.rlglue.RLGlueTask;
 import edu.utexas.cs.nn.tasks.rlglue.featureextractors.FeatureExtractor;
+import edu.utexas.cs.nn.tasks.rlglue.init.RLGlueInitialization;
 import edu.utexas.cs.nn.tasks.testmatch.MatchDataTask;
 import edu.utexas.cs.nn.tasks.ut2004.UT2004Task;
 import edu.utexas.cs.nn.tasks.vizdoom.VizDoomTask;
@@ -148,17 +149,7 @@ public class MMNEAT {
 			crossoverOperator = (Crossover) ClassCreation.createObject("crossover");
 		}
 	}
-
-	private static void setupRLGlue() throws NoSuchMethodException {
-		// RL-Glue environment, if RL-Glue is being used
-		rlGlueEnvironment = (RLGlueEnvironment) ClassCreation.createObject("rlGlueEnvironment");
-		if (rlGlueEnvironment != null) {
-			System.out.println("Define RL-Glue Task Spec");
-			tso = rlGlueEnvironment.makeTaskSpec();
-			rlGlueExtractor = (FeatureExtractor) ClassCreation.createObject("rlGlueExtractor");
-		}
-	}
-
+	
 	private static void setupFunctionOptimization() throws NoSuchMethodException {
 		// Function minimization benchmarks, if they are used
 		fos = (FunctionOptimizationSet) ClassCreation.createObject("fos");
@@ -241,48 +232,54 @@ public class MMNEAT {
 				|| CooperativeSubtaskCombinerMsPacManTask.class.equals(Parameters.parameters.classParameter("task"));
 	}
 
-        /**
-         * Constructor takes the command like parameters
-         * to initialize the systems parameter values.
-         * @param args directly from command line
-         */
+    /**
+     * Constructor takes the command line parameters
+     * to initialize the systems parameter values.
+     * @param args directly from command line
+     */
 	public MMNEAT(String[] args) {
 		Parameters.initializeParameterCollections(args);
 	}
 
+	/**
+	 * Constructor that takes a parameter file
+	 * string to initialize the systems
+	 * parameter values.
+	 * @param parameterFile
+	 */
 	public MMNEAT(String parameterFile) {
 		Parameters.initializeParameterCollections(parameterFile);
 	}
 
-        /**
-         * For plotting purposes. Let simulation know that a given fitness function
-         * will be tracked.
-         * @param name Name of fitness function in plot files
-         */
+    /**
+     * For plotting purposes. Let simulation know that a given fitness function
+     * will be tracked.
+     * @param name Name of fitness function in plot files
+     */
 	public static void registerFitnessFunction(String name) {
 		registerFitnessFunction(name, null, true);
 	}
 
-        /**
-         * Like above, but indicating that the "fitness" function does not affect 
-         * selection means that it is simply an other score that is being tracked
-         * in the logs.
-         * @param name Name of score
-         * @param affectsSelection Whether or not score is actually used for selection
-         */
+    /**
+     * Like above, but indicating that the "fitness" function does not affect 
+     * selection means that it is simply an other score that is being tracked
+     * in the logs.
+     * @param name Name of score
+     * @param affectsSelection Whether or not score is actually used for selection
+     */
 	public static void registerFitnessFunction(String name, boolean affectsSelection) {
 		registerFitnessFunction(name, null, affectsSelection);
 	}
 
-        /**
-         * As above, but it is now possible to indicate how the score is statistically
-         * summarized when noisy evaluations occur. The default is to average scores
-         * across evaluations, but if an overriding statistic is used, then this will
-         * also be mentioned in the log.
-         * @param name Name of score column
-         * @param override Statistic applied across evaluations (null is default/average)
-         * @param affectsSelection whether it affects selection
-         */
+    /**
+     * As above, but it is now possible to indicate how the score is statistically
+     * summarized when noisy evaluations occur. The default is to average scores
+     * across evaluations, but if an overriding statistic is used, then this will
+     * also be mentioned in the log.
+     * @param name Name of score column
+     * @param override Statistic applied across evaluations (null is default/average)
+     * @param affectsSelection whether it affects selection
+     */
 	public static void registerFitnessFunction(String name, Statistic override, boolean affectsSelection) {
 		if (affectsSelection) {
 			actualFitnessFunctions++;
@@ -291,15 +288,15 @@ public class MMNEAT {
 		aggregationOverrides.add(override);
 	}
 
-        /**
-         * Load important classes from class parameters.
-         * Other important experiment setup also occurs.
-         * Perhaps the most important classes that always
-         * need to be loaded at the task, the experiment, 
-         * and the ea. These get stored in public static 
-         * variables of this class so they are easily accessible
-         * from all parts of the code.
-         */
+    /**
+     * Load important classes from class parameters.
+     * Other important experiment setup also occurs.
+     * Perhaps the most important classes that always
+     * need to be loaded at the task, the experiment, 
+     * and the ea. These get stored in public static 
+     * variables of this class so they are easily accessible
+     * from all parts of the code.
+     */
 	public static void loadClasses() {
 		try {
 			ActivationFunctions.resetFunctionSet();
@@ -314,7 +311,7 @@ public class MMNEAT {
 			weightPerturber = (RandomGenerator) ClassCreation.createObject("weightPerturber");
 
 			setupCrossover();
-			setupRLGlue();
+			RLGlueInitialization.setupRLGlue();
 			setupFunctionOptimization();
 
 			// A task is always required
@@ -538,7 +535,7 @@ public class MMNEAT {
 	}
 
 	/**
-	 * finds the number of inputs for the predPrey task, which is based on the
+	 * Finds the number of inputs for the predPrey task, which is based on the
 	 * type of agent that is being evolved's sensor inputs defined in its
 	 * controller This has to be done to prevent a null pointer exception when
 	 * first getting the sensor labels/number of sensors
@@ -551,6 +548,9 @@ public class MMNEAT {
 		return temp.getNumInputs();
 	}
 
+	/**
+	 * Resets the classes used in MMNEAT and and sets them to null.
+	 */
 	public static void clearClasses() {
 		rlGlueEnvironment = null;
 		task = null;
@@ -566,6 +566,9 @@ public class MMNEAT {
 		Executor.close();
 	}
 
+	/**
+	 * Initializes and runs the experiment given the loaded classes.
+	 */
 	public void run() {
 		System.out.println("Run:");
 		clearClasses();
@@ -579,6 +582,12 @@ public class MMNEAT {
 		System.out.println("Experiment finished");
 	}
 
+	/**
+	 * Processes the task experiment for a given number of runs.
+	 * @param runs
+	 * @throws FileNotFoundException
+	 * @throws NoSuchMethodException
+	 */
 	public static void process(int runs) throws FileNotFoundException, NoSuchMethodException {
 		try {
 			task = (Task) ClassCreation.createObject("task");
@@ -594,6 +603,11 @@ public class MMNEAT {
 				Parameters.parameters.stringParameter("base"));
 	}
 
+	/**
+	 * Processes the hypervolume(HV) for a given number of runs.
+	 * @param runs
+	 * @throws FileNotFoundException
+	 */
 	public static void calculateHVs(int runs) throws FileNotFoundException {
 		try {
 			task = (Task) ClassCreation.createObject("task");
@@ -709,6 +723,9 @@ public class MMNEAT {
 		closeLogs();
 	}
 
+	/**
+	 * Checks for logs that aren't null, closes them and sets them to null.
+	 */
 	public static void closeLogs() {
 		if (performanceLog != null) {
 			performanceLog.close();
