@@ -137,10 +137,10 @@ public abstract class CooperativeTorusPredPreyTask<T extends Network> extends Co
 			// order to be reset after the creation of this organism
 			Organism<T> organism = new NNTorusPredPreyAgent<T>(team[i], !task.preyEvolve);
 			for (int j = 0; j < fitnesses.length; j++) {
-				fitnesses[j] = task.objectives.get(j).score(game, organism);
+				fitnesses[j] = task.objectives.get(i).get(j).score(game, organism);
 			}
 			for (int j = 0; j < otherStats.length; j++) {
-				otherStats[j] = task.otherScores.get(j).score(game,organism);		
+				otherStats[j] = task.otherScores.get(i).get(j).score(game,organism);		
 			}
 			scores.add(new Score(team[i], fitnesses, null, otherStats));
 		}

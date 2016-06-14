@@ -93,6 +93,11 @@ public class MMNEAT {
 	public static ArrayList<Metaheuristic> metaheuristics;
 	public static ArrayList<String> fitnessFunctions;
 	public static ArrayList<Statistic> aggregationOverrides;
+
+	//TODO: implement this list of coevolution fitness functions for each population in the same 
+	//way that it works with non-coevolution.
+	public static ArrayList<ArrayList<String>> coevolutionFitnessFunctions;
+	
 	public static TaskSpec tso;
 	public static FeatureExtractor rlGlueExtractor;
 	public static boolean blueprints = false;

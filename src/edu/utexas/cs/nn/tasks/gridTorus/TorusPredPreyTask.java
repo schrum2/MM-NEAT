@@ -25,6 +25,23 @@ import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.NoisyLonerTask;
 import edu.utexas.cs.nn.tasks.gridTorus.objectives.GridTorusObjective;
+import edu.utexas.cs.nn.tasks.gridTorus.objectives.PredatorCatchCloseObjective;
+import edu.utexas.cs.nn.tasks.gridTorus.objectives.PredatorCatchCloseQuickObjective;
+import edu.utexas.cs.nn.tasks.gridTorus.objectives.PredatorCatchObjective;
+import edu.utexas.cs.nn.tasks.gridTorus.objectives.PredatorEatEachPreyQuicklyObjective;
+import edu.utexas.cs.nn.tasks.gridTorus.objectives.PredatorMinimizeDistanceFromIndividualPreyObjective;
+import edu.utexas.cs.nn.tasks.gridTorus.objectives.PredatorMinimizeDistanceFromPreyObjective;
+import edu.utexas.cs.nn.tasks.gridTorus.objectives.PredatorMinimizeGameTimeObjective;
+import edu.utexas.cs.nn.tasks.gridTorus.objectives.PredatorRawalRajagopalanMiikkulainenObjective;
+import edu.utexas.cs.nn.tasks.gridTorus.objectives.PreyLongSurvivalTimeObjective;
+import edu.utexas.cs.nn.tasks.gridTorus.objectives.PreyMaximizeDistanceFromPredatorsObjective;
+import edu.utexas.cs.nn.tasks.gridTorus.objectives.PreyMaximizeGameTimeObjective;
+import edu.utexas.cs.nn.tasks.gridTorus.objectives.PreyMinimizeCaughtObjective;
+import edu.utexas.cs.nn.tasks.gridTorus.objectives.PreyRawalRajagopalanMiikkulainenObjective;
+import edu.utexas.cs.nn.tasks.gridTorus.objectives.cooperative.IndividualPredatorMinimizeDistanceFromIndividualPreyObjective;
+import edu.utexas.cs.nn.tasks.gridTorus.objectives.cooperative.IndividualPredatorMinimizeDistanceFromPreyObjective;
+import edu.utexas.cs.nn.tasks.gridTorus.objectives.cooperative.IndividualPreyMaximizeDistanceFromIndividualPredatorObjective;
+import edu.utexas.cs.nn.tasks.gridTorus.objectives.cooperative.IndividualPreyMaximizeDistanceFromPredatorsObjective;
 import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.util2D.Tuple2D;
@@ -79,9 +96,9 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 	public final boolean preyEvolve;
 
 	// list of fitness scores
-	public ArrayList<GridTorusObjective<T>> objectives = new ArrayList<GridTorusObjective<T>>();
+	public ArrayList<ArrayList<GridTorusObjective<T>>> objectives = new ArrayList<ArrayList<GridTorusObjective<T>>>();
 	// list of other scores, which don't effect evolution
-	public ArrayList<GridTorusObjective<T>> otherScores = new ArrayList<GridTorusObjective<T>>();
+	public ArrayList<ArrayList<GridTorusObjective<T>>> otherScores = new ArrayList<ArrayList<GridTorusObjective<T>>>();
 
 	private TorusWorldExec exec;
 
@@ -102,8 +119,8 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 		}
 	}
 
-	public final void addObjective(GridTorusObjective<T> o, ArrayList<GridTorusObjective<T>> list) {
-		addObjective(o,list,true);
+	public final void addObjective(GridTorusObjective<T> o, ArrayList<ArrayList<GridTorusObjective<T>>> list, int pop) {
+		addObjective(o,list,true, pop);
 	}
 
 	/**
@@ -117,8 +134,8 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 	 *            true if objective score
 	 *            false if other score
 	 */
-	public final void addObjective(GridTorusObjective<T> o, ArrayList<GridTorusObjective<T>> list, boolean affectsSelection) {
-		list.add(o);
+	public final void addObjective(GridTorusObjective<T> o, ArrayList<ArrayList<GridTorusObjective<T>>> list, boolean affectsSelection, int pop) {
+		list.get(pop).add(o);
 		MMNEAT.registerFitnessFunction(o.getClass().getSimpleName(),affectsSelection);
 	}
 
@@ -137,9 +154,9 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 		//long time = System.currentTimeMillis(); // For timing
 		TorusPredPreyController[] predAgents = getPredAgents(individual);
 		TorusPredPreyController[] preyAgents = getPreyAgents(individual);
-		
+
 		TorusPredPreyGame game = runEval(predAgents, preyAgents);
-		
+
 		// gets the controller of the evolved agent(s), gets its network, and
 		// stores the number of modules for that network
 		int numModes = ((NNTorusPredPreyController) evolved[0]).nn.numModules();
@@ -153,18 +170,18 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 			overallAgentModeUsage = ArrayUtil.zipAdd(overallAgentModeUsage, thisAgentModeUsage);
 		}
 
-		double[] fitnesses = new double[objectives.size()];
-		double[] otherStats = new double[otherScores.size()];
+		double[] fitnesses = new double[objectives.get(0).size()];
+		double[] otherStats = new double[otherScores.get(0).size()];
 
 		// Fitness function requires an organism, so make this genotype into an organism
 		// this erases information stored about module usage, so was saved in
 		// order to be reset after the creation of this organism
 		Organism<T> organism = new NNTorusPredPreyAgent<T>(individual, !preyEvolve);
-		for (int i = 0; i < objectives.size(); i++) {
-			fitnesses[i] = objectives.get(i).score(game, organism);
+		for (int i = 0; i < objectives.get(0).size(); i++) {
+			fitnesses[i] = objectives.get(0).get(i).score(game, organism);
 		}
-		for (int i = 0; i < otherScores.size(); i++) {
-			otherStats[i] = otherScores.get(i).score(game,organism);		
+		for (int i = 0; i < otherScores.get(0).size(); i++) {
+			otherStats[i] = otherScores.get(0).get(i).score(game,organism);		
 		}
 
 		// The above code erased module usage, so this sets the module usage
@@ -191,7 +208,7 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 				((NNTorusPredPreyController) (evolved)[i]).networkInputs.dispose();
 			}
 		}
-		
+
 		return game;
 	}
 
@@ -200,7 +217,7 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 	 */
 	@Override
 	public int numObjectives() {
-		return objectives.size();
+		return objectives.get(0).size();
 	}
 
 	/**
@@ -208,7 +225,7 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 	 */
 	@Override
 	public int numOtherScores() {
-		return otherScores.size();
+		return otherScores.get(0).size();
 	}
 
 	/**
@@ -226,7 +243,7 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 	public double[] minScores() {
 		double[] result = new double[numObjectives()];
 		for (int i = 0; i < result.length; i++) {
-			result[i] = objectives.get(i).minScore();
+			result[i] = objectives.get(0).get(i).minScore();
 		}
 		return result;
 	}
@@ -326,6 +343,124 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 				((NNTorusPredPreyController) container[i]).networkInputs = panel;
 				panel.setLocation(i * (Plot.BROWSE_DIM + 10), 0);
 				Offspring.fillInputs(panel, genotypes[i]);
+			}
+		}
+	}
+
+	/**
+	 * Converts the addAllObjectives method to be used for non-coevolution, just giving 
+	 * the a single list/population which is then copied into every member of the team
+	 */
+	public void addAllObjectives(){
+		addAllObjectives(0);
+	}	
+	/**
+	 * A method which adds all of the fitness objectives and other scores for 
+	 * the evolving agent to the lists of objectives and other scores
+	 * so that they can be included in the evolution
+	 */
+	public void addAllObjectives(int pop){
+		objectives.add(new ArrayList<GridTorusObjective<T>>());
+		otherScores.add(new ArrayList<GridTorusObjective<T>>());
+		
+		if(!preyEvolve){
+			//Predator fitness scores
+			if (Parameters.parameters.booleanParameter("predatorMinimizeTotalTime"))
+				addObjective(new PredatorMinimizeGameTimeObjective<T>(), objectives, pop);
+			if (Parameters.parameters.booleanParameter("predatorsEatQuick"))
+				addObjective(new PredatorEatEachPreyQuicklyObjective<T>(), objectives, pop);
+			if (Parameters.parameters.booleanParameter("predatorMinimizeDistance"))
+				addObjective(new PredatorMinimizeDistanceFromPreyObjective<T>(), objectives, pop);
+			if (Parameters.parameters.booleanParameter("predatorRRM"))
+				addObjective(new PredatorRawalRajagopalanMiikkulainenObjective<T>(), objectives, pop);
+			if (Parameters.parameters.booleanParameter("predatorCatchClose"))
+				addObjective(new PredatorCatchCloseObjective<T>(), objectives, pop);
+			if (Parameters.parameters.booleanParameter("predatorCatch"))
+				addObjective(new PredatorCatchObjective<T>(), objectives, pop);
+			if (Parameters.parameters.booleanParameter("predatorCatchCloseQuick"))
+				addObjective(new PredatorCatchCloseQuickObjective<T>(), objectives, pop);
+			if (Parameters.parameters.booleanParameter("predatorMinimizeIndividualDistance")){
+				//get separate distance fitness functions for each prey and add them as objectives
+				for(int i = 0; i < Parameters.parameters.integerParameter("torusPreys"); i++){
+					addObjective(new PredatorMinimizeDistanceFromIndividualPreyObjective<T>(i), objectives, pop);
+				}
+			}
+			if (Parameters.parameters.booleanParameter("indivPredMinDist")){
+				//get separate distance fitness functions for each predator and add them as objectives
+				for(int i = 0; i < Parameters.parameters.integerParameter("torusPredators"); i++){
+					addObjective(new IndividualPredatorMinimizeDistanceFromPreyObjective<T>(i), objectives, pop);
+				}
+			}
+			if (Parameters.parameters.booleanParameter("indivPredMinDistIndivPrey")){
+				//get separate distance fitness functions for each predator to each prey individually and add them all as objectives
+				for(int i = 0; i < Parameters.parameters.integerParameter("torusPredators"); i++){
+					for(int j = 0; j < Parameters.parameters.integerParameter("torusPreys"); j++){
+						addObjective(new IndividualPredatorMinimizeDistanceFromIndividualPreyObjective<T>(i,j), objectives, pop);
+					}
+				}
+			}
+			//add other scores to be able to show each fitness score even if it's not effecting evolution
+			//Predator other scores
+			addObjective(new PredatorCatchObjective<T>(), otherScores, false, pop);
+			addObjective(new PredatorMinimizeGameTimeObjective<T>(), otherScores, false, pop);
+			addObjective(new PredatorEatEachPreyQuicklyObjective<T>(), otherScores, false, pop);
+			addObjective(new PredatorMinimizeDistanceFromPreyObjective<T>(), otherScores, false, pop);
+			if(Parameters.parameters.integerParameter("torusPreys") == 2)
+				addObjective(new PredatorRawalRajagopalanMiikkulainenObjective<T>(), otherScores, false, pop);
+			addObjective(new PredatorCatchCloseObjective<T>(), otherScores, false, pop);
+			addObjective(new PredatorCatchCloseQuickObjective<T>(), otherScores, false, pop);
+			for(int i = 0; i < Parameters.parameters.integerParameter("torusPreys"); i++){
+				addObjective(new PredatorMinimizeDistanceFromIndividualPreyObjective<T>(i), otherScores, false, pop);
+			}
+			for(int i = 0; i < Parameters.parameters.integerParameter("torusPredators"); i++){
+				addObjective(new IndividualPredatorMinimizeDistanceFromPreyObjective<T>(i), otherScores, false, pop);
+			}
+			for(int i = 0; i < Parameters.parameters.integerParameter("torusPredators"); i++){
+				for(int j = 0; j < Parameters.parameters.integerParameter("torusPreys"); j++){
+					addObjective(new IndividualPredatorMinimizeDistanceFromIndividualPreyObjective<T>(i,j), otherScores, false, pop);
+				}
+			}
+		}
+		if(preyEvolve){
+			//Prey fitness scores
+			if (Parameters.parameters.booleanParameter("preyMaximizeTotalTime"))
+				addObjective(new PreyMaximizeGameTimeObjective<T>(), objectives, pop);
+			if (Parameters.parameters.booleanParameter("preyRRM"))
+				addObjective(new PreyRawalRajagopalanMiikkulainenObjective<T>(), objectives, pop);
+			if (Parameters.parameters.booleanParameter("preyLongSurvivalTime"))
+				addObjective(new PreyLongSurvivalTimeObjective<T>(), objectives, pop);
+			if (Parameters.parameters.booleanParameter("preyMaximizeDistance"))
+				addObjective(new PreyMaximizeDistanceFromPredatorsObjective<T>(), objectives, pop);
+			if (Parameters.parameters.booleanParameter("preyMinimizeCaught"))
+				addObjective(new PreyMinimizeCaughtObjective<T>(), objectives, pop);
+			if (Parameters.parameters.booleanParameter("indivPreyMaxDist")){
+				//get separate distance fitness functions for each prey and add them as objectives
+				for(int i = 0; i < Parameters.parameters.integerParameter("torusPreys"); i++){
+					addObjective(new IndividualPreyMaximizeDistanceFromPredatorsObjective<T>(i), objectives, pop);
+				}
+			}
+			if (Parameters.parameters.booleanParameter("indivPreyMaxDistIndivPred")){
+				//get separate distance fitness functions for each prey to each predator individually and add them all as objectives
+				for(int i = 0; i < Parameters.parameters.integerParameter("torusPreys"); i++){
+					for(int j = 0; j < Parameters.parameters.integerParameter("torusPredators"); j++){
+						addObjective(new IndividualPreyMaximizeDistanceFromIndividualPredatorObjective<T>(j,i), objectives, pop);
+					}
+				}
+			}
+			//add other scores to be able to show each fitness score even if it's not effecting evolution
+			//Prey other scores
+			addObjective(new PreyMaximizeGameTimeObjective<T>(), otherScores, false, pop);
+			addObjective(new PreyRawalRajagopalanMiikkulainenObjective<T>(), otherScores, false, pop);
+			addObjective(new PreyLongSurvivalTimeObjective<T>(), otherScores, false, pop);
+			addObjective(new PreyMaximizeDistanceFromPredatorsObjective<T>(), otherScores, false, pop);
+			addObjective(new PreyMinimizeCaughtObjective<T>(), otherScores, false, pop);
+			for(int i = 0; i < Parameters.parameters.integerParameter("torusPreys"); i++){
+				addObjective(new IndividualPreyMaximizeDistanceFromPredatorsObjective<T>(i), otherScores, false, pop);
+			}
+			for(int i = 0; i < Parameters.parameters.integerParameter("torusPreys"); i++){
+				for(int j = 0; j < Parameters.parameters.integerParameter("torusPredators"); j++){
+					addObjective(new IndividualPreyMaximizeDistanceFromIndividualPredatorObjective<T>(j,i), otherScores, false, pop);
+				}
 			}
 		}
 	}
