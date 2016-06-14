@@ -306,16 +306,30 @@ public class ResultSummaryUtilities {
 					+ (stat == null ? "" : "[" + stat.getClass().getSimpleName() + "]");
 			out.println("set title \"Average '" + fitnessFunctionName + "' for " + condition + " by Generation\"");
 			out.println("plot \\");
-			out.println("\"" + file + "\" u 1:" + ((2 * i) + 1) + " t \"MIN\" lt 1 lw 2, \\");
-                        
-                        int avg = ((2 * i) + 3);
-                        // Note: Might need gnuplot's "every" command to space out plot frequency
+
+			int min = ((2 * i) + 1);
+			// Note: Might need gnuplot's "every" command to space out plot frequency
+			out.println("\"" + file + "\" u 1:" + min + " notitle lt 1 lw 2, \\");
+			// Calculates standard error (SE) from variance (s^2): SE = sqrt(s^2 / N)
+			out.println("\"" + file + "\" u 1:($"+ min +" - "+t+"*sqrt($"+ (min + 1) +"/"+runs+")):($"+ min +" + "+t+"*sqrt($"+ (min + 1) +"/"+runs+")) notitle with filledcurves lt 1 lw 2, \\");
+			out.println("\"" + file + "\" u 1:"+min+":"+min+":"+min+" t \"MIN\" with errorbars lt 1 lw 2, \\");                        
+						
+			int avg = ((2 * i) + 3);
+			// Note: Might need gnuplot's "every" command to space out plot frequency
 			out.println("\"" + file + "\" u 1:" + avg + " notitle lt 2 lw 2, \\");
-                        // Calculates standard error (SE) from variance (s^2): SE = sqrt(s^2 / N)
+			// Calculates standard error (SE) from variance (s^2): SE = sqrt(s^2 / N)
 			out.println("\"" + file + "\" u 1:($"+ avg +" - "+t+"*sqrt($"+ (avg + 1) +"/"+runs+")):($"+ avg +" + "+t+"*sqrt($"+ (avg + 1) +"/"+runs+")) notitle with filledcurves lt 2 lw 2, \\");
 			out.println("\"" + file + "\" u 1:"+avg+":"+avg+":"+avg+" t \"AVG\" with errorbars lt 2 lw 2, \\");                        
-                        
-			out.println("\"" + file + "\" u 1:" + ((2 * i) + 5) + " t \"MAX\" lt 3 lw 2");
+
+			int max = ((2 * i) + 5);
+			// Note: Might need gnuplot's "every" command to space out plot frequency
+			out.println("\"" + file + "\" u 1:" + max + " notitle lt 3 lw 2, \\");
+			// Calculates standard error (SE) from variance (s^2): SE = sqrt(s^2 / N)
+			out.println("\"" + file + "\" u 1:($"+ max +" - "+t+"*sqrt($"+ (max + 1) +"/"+runs+")):($"+ max +" + "+t+"*sqrt($"+ (max + 1) +"/"+runs+")) notitle with filledcurves lt 3 lw 2, \\");
+			out.println("\"" + file + "\" u 1:"+max+":"+max+":"+max+" t \"MAX\" with errorbars lt 3 lw 2");                        
+			
+			
+			
 			out.println("");
 			out.println("pause -1");
 			out.println("");
