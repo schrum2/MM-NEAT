@@ -25,12 +25,6 @@ public class HyperNEATTetrisTask<T extends Network> extends TetrisTask<T> implem
 			substrateInformation = new LinkedList<Substrate>();
 			int worldWidth = TetrisState.worldWidth;
 			int worldHeight = TetrisState.worldHeight;
-
-			if(Parameters.parameters.booleanParameter("changeCoordinateFrame")) {
-				//TODO
-			} else {
-				
-			}
 			Triple<Integer, Integer, Integer> inSubCoord = new Triple<Integer, Integer, Integer>(0, 0, 0);
 			Triple<Integer, Integer, Integer> processSubCoord = new Triple<Integer, Integer, Integer>(0,SUBSTRATE_COORDINATES, 0);
 			Triple<Integer, Integer, Integer> outSubCoord = new Triple<Integer, Integer, Integer>(0,SUBSTRATE_COORDINATES * 2, 0);

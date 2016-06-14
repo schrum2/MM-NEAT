@@ -45,7 +45,6 @@ public class RawTetrisStateExtractor implements FeatureExtractor {
 				result[i] = Math.signum(state.worldState[i]);
 			}
 		}
-		System.out.println("results from extractor: " + Arrays.toString(result));
 		return result;
 	}
 
