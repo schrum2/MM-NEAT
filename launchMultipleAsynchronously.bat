@@ -1,6 +1,6 @@
 REM Usage  : launchMultipleAsynchronously.bat <batch subdir> <batch file> <starting run> <ending run> <batch subdir> <batch file> <starting run> <ending run>
-REM example: launchMultipleAsynchronously.bat RLGlue RLGlue-CartPole.bat 0 2
-REM example: launchMultipleAsynchronously.bat RLGlue RLGlue-CartPole.bat 0 2 PredPrey TorusPredPrey-TorusPred-CoOpMultiCCQ.bat 1 3
+REM example: launchMultipleAsynchronously.bat RLGlue RLGlue-Tetris-ExtendedBT.bat 0 2
+REM example: launchMultipleAsynchronously.bat RLGlue RLGlue-Tetris-ExtendedBT.bat 0 2 PredPrey TorusPredPrey-TorusPred-CoOpMultiCCQ.bat 1 3
 REM example: launchMultipleAsynchronously.bat PredPrey TorusPredPrey-TorusPred-CoOpMultiCCQ.bat 0 2 PredPrey TorusPredPrey-TorusPred-CoOpMultiCCQ.bat 4 5
 setlocal enabledelayedexpansion
 set argCount=0
