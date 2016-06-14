@@ -100,6 +100,7 @@ public class HyperNEATUtilTest {
 		DrawingPanel dp = HyperNEATUtil.drawSubstrate(subs[0], nodes, 0);
 		DrawingPanel pp = HyperNEATUtil.drawSubstrate(dp, subs[0], nodes, 0);
 		pp.setLocation(0, dp.getFrame().getHeight());
+	//	MiscUtil.waitForReadStringAndEnterKeyPress();
 	}
 	/**
 	 * Tests draw substrates method

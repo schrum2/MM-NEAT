@@ -10,16 +10,6 @@ import edu.utexas.cs.nn.networks.TWEANN.Node;
 import edu.utexas.cs.nn.util.MiscUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 
-
-
-//need a method that takes an array list of nodes from tweann
-//uses mMNEAT.task and casts it to hyperNeattask so it can get out specific substrate info about task
-//then, creates a drawing panel for each substrate task uses
-//fills in activations into rectangles of said substrate drawing panels using activation function from
-//corresponding node in array list
-//draw grid on substrate
-//every time refreshed, draw new rectangles on top of old rectangles
-//need a variable that scales rectangles down just a bit so it doesn't erase grid
 /**
  * Util class containing methods used by hyperNEAT and its tasks
  * 
@@ -37,8 +27,6 @@ public class HyperNEATUtil {
 
 	private static List<Substrate> substrates;
 	
-	// Schrum: This method isn't tested yet, but it should create all of the substrates
-	// and update them based on neuron activations.
 	public static List<DrawingPanel> drawSubstrates(ArrayList<Node> nodes) {
 		if(substratePanels == null) {
 			hyperNEATTask = (HyperNEATTask) MMNEAT.task;
@@ -88,12 +76,8 @@ public class HyperNEATUtil {
 	 */
 	// Call inside of TWEANN.process at end
 	public static DrawingPanel drawSubstrate(DrawingPanel dp, Substrate s, ArrayList<Node> nodes, int nodeIndexStart) { 
-		for(int i = 0; i < s.size.t1; i ++) {
-			for(int j = 0; j < s.size.t2; j++) {
 				drawCoord(dp, s.size, nodes, nodeIndexStart);
 				drawGrid(dp, s.size);
-			}
-		}
 		return dp;
 	}
 	
@@ -103,7 +87,6 @@ public class HyperNEATUtil {
 	 * @param p drawingPanel
 	 * @param size size of substrate
 	 */
-	@SuppressWarnings("unused")
 	private static void drawGrid(DrawingPanel p, Pair<Integer, Integer> size) {
 		// Loop through columns and rows to draw black lines
 		p.getGraphics().setBackground(Color.white);
@@ -122,8 +105,8 @@ public class HyperNEATUtil {
 	 * @param c color of square
 	 */
 	private static void drawCoord(DrawingPanel p, Pair<Integer, Integer> size, ArrayList<Node> nodes, int nodeIndex) { 
-		for(int i = 0; i < size.t1; i++) {
-			for(int j = 0; j < size.t2; j++) {
+		for(int j = 0; j < size.t2; j++) {
+			for(int i = 0; i < size.t1; i++) {
 				double activation = nodes.get(nodeIndex++).output();
 				Color c = new Color(activation > 0 ? (int)(activation*255) : 0, 0, activation < 0 ? (int)(-activation*255) : 0);
 				p.getGraphics().setColor(c);

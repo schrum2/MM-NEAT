@@ -1,5 +1,7 @@
 package edu.utexas.cs.nn.tasks.rlglue.featureextractors.tetris;
 
+import java.util.Arrays;
+
 import org.rlcommunity.environments.tetris.TetrisState;
 import org.rlcommunity.rlglue.codec.types.Observation;
 
@@ -33,6 +35,7 @@ public class RawTetrisStateExtractor implements FeatureExtractor {
 	public double[] extract(Observation o) {
 		boolean negative = Parameters.parameters.booleanParameter("absenceNegative");
 		TetrisState state = TetrisAfterStateAgent.observationToTetrisState(o);
+		state.writeCurrentBlock();
 		double[] result = new double[state.worldState.length];
 		for (int i = 0; i < result.length; i++) {
 			if(Math.signum(state.worldState[i]) == 0){
@@ -42,6 +45,7 @@ public class RawTetrisStateExtractor implements FeatureExtractor {
 				result[i] = Math.signum(state.worldState[i]);
 			}
 		}
+		System.out.println("results from extractor: " + Arrays.toString(result));
 		return result;
 	}
 

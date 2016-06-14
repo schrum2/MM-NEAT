@@ -27,7 +27,7 @@ public class HyperNEATTetrisTask<T extends Network> extends TetrisTask<T> implem
 			int worldHeight = TetrisState.worldHeight;
 
 			if(Parameters.parameters.booleanParameter("changeCoordinateFrame")) {
-				
+				//TODO
 			} else {
 				
 			}
