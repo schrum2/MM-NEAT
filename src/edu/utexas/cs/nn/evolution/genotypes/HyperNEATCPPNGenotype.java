@@ -21,7 +21,7 @@ import edu.utexas.cs.nn.util.util2D.Tuple2D;
 public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 
 	public static boolean constructingNetwork = false;
-	private static final double BIAS = 1.0;// Necessary for most CPPN networks
+	public static final double BIAS = 1.0;// Necessary for most CPPN networks
 	public int innovationID = 0;// provides unique innovation numbers for links and genes
 	
 	/**

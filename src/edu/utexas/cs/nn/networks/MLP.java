@@ -488,7 +488,6 @@ public class MLP implements Network {
 	 * not supported yet
 	 */
 	public int[] getModuleUsage() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 }
