@@ -20,6 +20,9 @@ import javax.imageio.*;
 import javax.swing.*;
 import javax.swing.event.*;
 
+import edu.utexas.cs.nn.MMNEAT.MMNEAT;
+import edu.utexas.cs.nn.tasks.picbreeder.PicbreederTask;
+
 public class DrawingPanel implements ActionListener {
 
 	public static final int DELAY = 100; // delay between repaints in millis
@@ -84,8 +87,13 @@ public class DrawingPanel implements ActionListener {
 				if (DUMP_IMAGE) {
 					DrawingPanel.this.save(TARGET_IMAGE_FILE_NAME);
 				}
-				dispose();
-			}
+					if(MMNEAT.task instanceof PicbreederTask) {
+						dispose();
+					} else { 
+						System.exit(0);
+					}
+
+				}
 		});
 		this.frame.getContentPane().add(panel);
 		this.frame.getContentPane().add(statusBar, "South");
@@ -103,7 +111,7 @@ public class DrawingPanel implements ActionListener {
 	}
 
 	// used for an internal timer that keeps repainting
-        @Override
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		this.panel.repaint();
 		if (DUMP_IMAGE && System.currentTimeMillis() > createTime + 4 * DELAY) {
