@@ -89,7 +89,9 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 		HyperNEATTask hnt = (HyperNEATTask) MMNEAT.task;// Cast task to HyperNEATTask
 		List<Substrate> subs = hnt.getSubstrateInformation();// extract substrate information from domain
 		List<Pair<String, String>> connections = hnt.getSubstrateConnectivity();// extract substrate connectivity from domain
+                @SuppressWarnings("UnusedAssignment")
 		ArrayList<NodeGene> newNodes = null;
+                @SuppressWarnings("UnusedAssignment")
 		ArrayList<LinkGene> newLinks = null;
 		innovationID = 0;// reset each time a phenotype is generated
 		int phenotypeOutputs = 0;

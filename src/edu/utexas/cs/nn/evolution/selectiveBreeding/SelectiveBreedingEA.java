@@ -128,6 +128,7 @@ public class SelectiveBreedingEA<T> implements SinglePopulationGenerationalEA<T>
 			children.add(score.individual);
 		}
 		for(int i = scores.size(); i < size; i++) {
+                        @SuppressWarnings("UnusedAssignment")
 			long parentId1 = -1;
 			long parentId2 = -1;
 

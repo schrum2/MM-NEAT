@@ -10,13 +10,14 @@ import java.util.Comparator;
  * Confidence Bound, and therefore deserves further evaluations.
  *
  * @author Jacob Schrum
+ * @param <T> phenotype
  */
-public class UCB1Comparator <T> implements Comparator<Score<T>> {
+public class UCB1Comparator<T> implements Comparator<Score<T>> {
 
 	private final int index;
 	private int numTotalLeverPulls;
 	private double maxReward;
-	private double explorePreference;
+	private final double explorePreference;
 
 	public UCB1Comparator(int index, int numTotalLeverPulls, double maxReward) {
 		this.index = index;
@@ -34,6 +35,7 @@ public class UCB1Comparator <T> implements Comparator<Score<T>> {
 		numTotalLeverPulls++;
 	}
 
+        @Override
 	public int compare(Score<T> o1, Score<T> o2) {
 		double o1ucb1Score = ucb1(o1);
 		double o2ucb1Score = ucb1(o2);

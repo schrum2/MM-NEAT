@@ -26,13 +26,12 @@ public class DrawingPanel implements ActionListener {
 	private static final String DUMP_IMAGE_PROPERTY_NAME = "drawingpanel.save";
 	private static String TARGET_IMAGE_FILE_NAME = null;
 	private static final boolean PRETTY = true; // true to anti-alias
-	private static boolean DUMP_IMAGE = true; // true to write DrawingPanel to
-												// file
-	private int width, height; // dimensions of window frame
-	private JFrame frame; // overall window frame
-	private JPanel panel; // overall drawing surface
+	private static boolean DUMP_IMAGE = true; // true to write DrawingPanel to file
+	private final int width, height; // dimensions of window frame
+	private final JFrame frame; // overall window frame
+	private final JPanel panel; // overall drawing surface
 	public BufferedImage image; // remembers drawing commands
-	private Graphics2D g2; // graphics context for painting
+	private final Graphics2D g2; // graphics context for painting
 	private JLabel statusBar; // status bar showing mouse position
 	private long createTime;
 
@@ -104,6 +103,7 @@ public class DrawingPanel implements ActionListener {
 	}
 
 	// used for an internal timer that keeps repainting
+        @Override
 	public void actionPerformed(ActionEvent e) {
 		this.panel.repaint();
 		if (DUMP_IMAGE && System.currentTimeMillis() > createTime + 4 * DELAY) {
