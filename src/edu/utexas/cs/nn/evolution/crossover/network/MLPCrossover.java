@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.utexas.cs.nn.evolution.crossover.network;
 
 import edu.utexas.cs.nn.evolution.crossover.ArrayCrossover;
@@ -13,18 +9,26 @@ import edu.utexas.cs.nn.networks.MLP;
 import java.util.ArrayList;
 
 /**
- *
+ *Crosses over two MLP networks
  * @author Jacob Schrum
  */
 public class MLPCrossover extends Crossover<MLP> {
 
 	private final ArrayCrossover<Double> vc;
 
+	/**
+	 * Default Constructor
+	 */
 	public MLPCrossover() {
 		vc = new ArrayCrossover<Double>();
 	}
 
 	@Override
+	/**
+	 * crosses over two MLP genotypes
+	 * @param toModify genotype that is modified
+	 * @param toReturn genotype that is returned
+	 */
 	public Genotype<MLP> crossover(Genotype<MLP> toModify, Genotype<MLP> toReturn) {
 		// Get MLP weights
 		double[][] modFirst = toModify.getPhenotype().firstConnectionLayer;
@@ -32,11 +36,13 @@ public class MLPCrossover extends Crossover<MLP> {
 		double[][] retFirst = toReturn.getPhenotype().firstConnectionLayer;
 		double[][] retSecond = toReturn.getPhenotype().secondConnectionLayer;
 
+		//Gets num nodes of network
 		int inputs = modFirst.length;
 		int hidden = modFirst[0].length;
 		int outputs = modSecond[0].length;
 
 		// System.out.println("In:"+inputs+",Hidden:"+hidden+",Out:"+outputs);
+		//Idk what these arrays are for
 		ArrayList<Double> mod = new ArrayList<Double>(inputs * hidden);
 		ArrayList<Double> ret = new ArrayList<Double>(inputs * hidden);
 
@@ -47,7 +53,6 @@ public class MLPCrossover extends Crossover<MLP> {
 				ret.add(retFirst[i][j]);
 			}
 		}
-
 		for (int i = 0; i < hidden; i++) {
 			for (int j = 0; j < outputs; j++) {
 				mod.add(modSecond[i][j]);
