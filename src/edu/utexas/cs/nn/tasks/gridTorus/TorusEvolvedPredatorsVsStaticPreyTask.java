@@ -4,16 +4,6 @@ import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.gridTorus.controllers.TorusPredPreyController;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.tasks.gridTorus.objectives.PredatorCatchCloseObjective;
-import edu.utexas.cs.nn.tasks.gridTorus.objectives.PredatorCatchCloseQuickObjective;
-import edu.utexas.cs.nn.tasks.gridTorus.objectives.PredatorCatchObjective;
-import edu.utexas.cs.nn.tasks.gridTorus.objectives.PredatorEatEachPreyQuicklyObjective;
-import edu.utexas.cs.nn.tasks.gridTorus.objectives.PredatorMinimizeDistanceFromIndividualPreyObjective;
-import edu.utexas.cs.nn.tasks.gridTorus.objectives.PredatorMinimizeDistanceFromPreyObjective;
-import edu.utexas.cs.nn.tasks.gridTorus.objectives.PredatorMinimizeGameTimeObjective;
-import edu.utexas.cs.nn.tasks.gridTorus.objectives.PredatorRawalRajagopalanMiikkulainenObjective;
-import edu.utexas.cs.nn.tasks.gridTorus.objectives.cooperative.IndividualPredatorMinimizeDistanceFromIndividualPreyObjective;
-import edu.utexas.cs.nn.tasks.gridTorus.objectives.cooperative.IndividualPredatorMinimizeDistanceFromPreyObjective;
 
 /**
  * The following class sets up tasks for
