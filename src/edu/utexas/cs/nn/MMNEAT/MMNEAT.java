@@ -5,17 +5,11 @@ import edu.utexas.cs.nn.data.ResultSummaryUtilities;
 import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
 import edu.utexas.cs.nn.evolution.GenerationalEA;
 import edu.utexas.cs.nn.evolution.crossover.Crossover;
-import edu.utexas.cs.nn.evolution.crossover.network.CombiningTWEANNCrossover;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.evolution.genotypes.HierarchicalTWEANNGenotype;
-import edu.utexas.cs.nn.evolution.genotypes.SimpleBlueprintGenotype;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
-import edu.utexas.cs.nn.evolution.genotypes.pool.GenotypePool;
 import edu.utexas.cs.nn.evolution.lineage.Offspring;
 import edu.utexas.cs.nn.evolution.metaheuristics.*;
-import edu.utexas.cs.nn.evolution.nsga2.NSGA2Score;
 import edu.utexas.cs.nn.experiment.Experiment;
-import edu.utexas.cs.nn.experiment.SinglePopulationGenerationalEAExperiment;
 import edu.utexas.cs.nn.graphics.DrawingPanel;
 import edu.utexas.cs.nn.log.EvalLog;
 import edu.utexas.cs.nn.log.MMNEATLog;
@@ -42,11 +36,9 @@ import edu.utexas.cs.nn.tasks.motests.testfunctions.FunctionOptimizationSet;
 import edu.utexas.cs.nn.tasks.mspacman.*;
 import edu.utexas.cs.nn.tasks.mspacman.ensemble.MsPacManEnsembleArbitrator;
 import edu.utexas.cs.nn.tasks.mspacman.facades.ExecutorFacade;
-import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
 import edu.utexas.cs.nn.tasks.mspacman.init.MsPacManInitialization;
 import edu.utexas.cs.nn.tasks.mspacman.multitask.MsPacManModeSelector;
 import edu.utexas.cs.nn.tasks.mspacman.sensors.*;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.combining.GhostMonitorNetworkBlock;
 import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.combining.SubNetworkBlock;
 import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.VariableDirectionBlock;
 import edu.utexas.cs.nn.tasks.mspacman.sensors.ghosts.GhostControllerInputOutputMediator;
@@ -60,8 +52,6 @@ import edu.utexas.cs.nn.tasks.testmatch.MatchDataTask;
 import edu.utexas.cs.nn.tasks.ut2004.UT2004Task;
 import edu.utexas.cs.nn.tasks.vizdoom.VizDoomTask;
 import edu.utexas.cs.nn.util.ClassCreation;
-import edu.utexas.cs.nn.util.MiscUtil;
-import edu.utexas.cs.nn.util.PopulationUtil;
 import edu.utexas.cs.nn.util.file.FileUtilities;
 import edu.utexas.cs.nn.util.random.RandomGenerator;
 import edu.utexas.cs.nn.util.random.RandomNumbers;
@@ -74,11 +64,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.rlcommunity.rlglue.codec.taskspec.TaskSpec;
 import pacman.Executor;
-import pacman.game.Constants;
 import wox.serial.Easy;
 
 /**
- *
+ * Modular Multiobjective Neuro-Evolution of Augmenting Topologies.
+ * 
+ * Main class that launches experiments.
+ * 
  * @author Jacob Schrum
  */
 public class MMNEAT {
@@ -158,19 +150,6 @@ public class MMNEAT {
 		}
 	}
 
-	/**
-	 * Assumes the subnets are always in SubNetworkBlocks at the end of a
-	 * BlockLoadedInputOutputMediator, so the nets to replace are found based on
-	 * the length of the input subnets.
-	 */
-	public static <T> void replaceSubnets(ArrayList<Genotype<T>> subnets) {
-		BlockLoadedInputOutputMediator blockMediator = ((BlockLoadedInputOutputMediator) pacmanInputOutputMediator);
-		int numBlocks = blockMediator.blocks.size();
-		for (int i = 0; i < subnets.size(); i++) {
-			((SubNetworkBlock) blockMediator.blocks.get(numBlocks - subnets.size() + i)).changeNetwork(subnets.get(i));
-		}
-	}
-
 	private static void setupMetaHeuristics() {
 		// Metaheuristics are objectives that are not associated with the
 		// domain/task
@@ -227,6 +206,11 @@ public class MMNEAT {
 		}
 	}
 
+        /**
+         * Currently, this check only applies to Ms Pac-Man tasks, but could
+         * be used for other coevolution experiments in the future.
+         * @return Whether task involves agents cooperating with subnetworks
+         */
 	public static boolean taskHasSubnetworks() {
 		return CooperativeSubtaskSelectorMsPacManTask.class.equals(Parameters.parameters.classParameter("task"))
 				|| CooperativeSubtaskCombinerMsPacManTask.class.equals(Parameters.parameters.classParameter("task"));
@@ -338,11 +322,9 @@ public class MMNEAT {
 			if (task instanceof MsPacManTask) {
 				MsPacManInitialization.setupGenotypePoolsForMsPacman();
 				System.out.println("Setup Ms. Pac-Man Task");
-				pacmanInputOutputMediator = (MsPacManControllerInputOutputMediator) ClassCreation
-						.createObject("pacmanInputOutputMediator");
+				pacmanInputOutputMediator = (MsPacManControllerInputOutputMediator) ClassCreation.createObject("pacmanInputOutputMediator");
 				if (MMNEAT.pacmanInputOutputMediator instanceof VariableDirectionBlockLoadedInputOutputMediator) {
-					directionalSafetyFunction = (VariableDirectionBlock) ClassCreation
-							.createObject("directionalSafetyFunction");
+					directionalSafetyFunction = (VariableDirectionBlock) ClassCreation.createObject("directionalSafetyFunction");
 					ensembleArbitrator = (MsPacManEnsembleArbitrator) ClassCreation.createObject("ensembleArbitrator");
 				}
 				String preferenceNet = Parameters.parameters.stringParameter("fixedPreferenceNetwork");
@@ -352,8 +334,7 @@ public class MMNEAT {
 					// fixed multitask network
 					MMNEAT.sharedMultitaskNetwork = (TWEANNGenotype) Easy.load(multitaskNet);
 					if (CommonConstants.showNetworks) {
-						DrawingPanel panel = new DrawingPanel(TWEANN.NETWORK_VIEW_DIM, TWEANN.NETWORK_VIEW_DIM,
-								"Fixed Multitask Network");
+						DrawingPanel panel = new DrawingPanel(TWEANN.NETWORK_VIEW_DIM, TWEANN.NETWORK_VIEW_DIM, "Fixed Multitask Network");
 						MMNEAT.sharedMultitaskNetwork.getPhenotype().draw(panel);
 					}
 					// One preference neuron per multitask mode
@@ -361,8 +342,7 @@ public class MMNEAT {
 				} else if (preferenceNet != null && !preferenceNet.isEmpty()) {
 					MMNEAT.sharedPreferenceNetwork = (TWEANNGenotype) Easy.load(preferenceNet);
 					if (CommonConstants.showNetworks) {
-						DrawingPanel panel = new DrawingPanel(TWEANN.NETWORK_VIEW_DIM, TWEANN.NETWORK_VIEW_DIM,
-								"Fixed Preference Network");
+						DrawingPanel panel = new DrawingPanel(TWEANN.NETWORK_VIEW_DIM, TWEANN.NETWORK_VIEW_DIM, "Fixed Preference Network");
 						MMNEAT.sharedPreferenceNetwork.getPhenotype().draw(panel);
 					}
 					// One preference neuron per multitask mode
@@ -397,8 +377,7 @@ public class MMNEAT {
 					MsPacManInitialization.setupCooperativeCoevolutionCheckEachMultitaskPreferenceNetForMsPacman();
 				}
 			} else if (task instanceof RLGlueTask) {
-				RLGlueTask rlTask = (RLGlueTask) task;
-				setNNInputParameters(rlGlueExtractor.numFeatures(), rlTask.agent.getNumberOutputs());
+				setNNInputParameters(rlGlueExtractor.numFeatures(), RLGlueTask.agent.getNumberOutputs());
 			} else if (task instanceof Breve2DTask) {
 				System.out.println("Setup Breve 2D Task");
 				Breve2DDynamics dynamics = (Breve2DDynamics) ClassCreation.createObject("breveDynamics");
@@ -443,6 +422,7 @@ public class MMNEAT {
 			} else if (task == null) {
 				// this else statement should only happen for JUnit testing cases.
 				// Some default network setup is needed.
+                                System.out.println("No task defined! It is assumed that this is part of a JUnit test.");
 				setNNInputParameters(5, 3);
 			} else {
 				System.out.println("A valid task must be specified!");
@@ -482,12 +462,9 @@ public class MMNEAT {
 
 				// Revise settings to accommodate multitask seed
 				System.out.println("Revising network info based on multitask seed");
-				MsPacManControllerInputOutputMediator ghostMediator = (MsPacManControllerInputOutputMediator) ClassCreation
-						.createObject("pacManMediatorClass1");
-				MsPacManControllerInputOutputMediator pillMediator = (MsPacManControllerInputOutputMediator) ClassCreation
-						.createObject("pacManMediatorClass2");
-				pacmanInputOutputMediator = new MultipleInputOutputMediator(
-						new MsPacManControllerInputOutputMediator[] { ghostMediator, pillMediator });
+				MsPacManControllerInputOutputMediator ghostMediator = (MsPacManControllerInputOutputMediator) ClassCreation.createObject("pacManMediatorClass1");
+				MsPacManControllerInputOutputMediator pillMediator = (MsPacManControllerInputOutputMediator) ClassCreation.createObject("pacManMediatorClass2");
+				pacmanInputOutputMediator = new MultipleInputOutputMediator(new MsPacManControllerInputOutputMediator[] { ghostMediator, pillMediator });
 				setNNInputParameters(pacmanInputOutputMediator.numIn(), pacmanInputOutputMediator.numOut());
 			} else if (seedGenotype.isEmpty()) {
 				genotype = (Genotype) ClassCreation.createObject("genotype");
@@ -752,7 +729,7 @@ public class MMNEAT {
 	 * @param numOut
 	 *            Number of task outputs to network (not counting extra modes)
 	 */
-	public static void setNNInputParameters(int numIn, int numOut) throws NoSuchMethodException {
+	public static void setNNInputParameters(int numIn, int numOut) {
 		networkInputs = numIn;
 		networkOutputs = numOut;
 		int multitaskModes = CommonConstants.multitaskModules;
@@ -774,6 +751,7 @@ public class MMNEAT {
 	/**
 	 * Write information to the performance log, if it is being used
 	 * 
+         * @param <T> phenotype
 	 * @param combined
 	 *            Combined population of scores/genotypes
 	 * @param generation

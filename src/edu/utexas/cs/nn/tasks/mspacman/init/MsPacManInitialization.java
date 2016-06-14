@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
+import static edu.utexas.cs.nn.MMNEAT.MMNEAT.pacmanInputOutputMediator;
 import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
 import edu.utexas.cs.nn.evolution.crossover.network.CombiningTWEANNCrossover;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
@@ -98,7 +99,23 @@ public class MsPacManInitialization {
 			MMNEAT.discreteCeilings[1] = GenotypePool.poolSize(1);
 		}
 	}
-	
+
+
+	/**
+	 * Assumes the subnets are always in SubNetworkBlocks at the end of a
+	 * BlockLoadedInputOutputMediator, so the nets to replace are found based on
+	 * the length of the input subnets.
+         * @param <T> phenotype
+         * @param subnets change the subnetworks in the
+	 */
+	public static <T> void replaceSubnets(ArrayList<Genotype<T>> subnets) {
+		BlockLoadedInputOutputMediator blockMediator = ((BlockLoadedInputOutputMediator) pacmanInputOutputMediator);
+		int numBlocks = blockMediator.blocks.size();
+		for (int i = 0; i < subnets.size(); i++) {
+			((SubNetworkBlock) blockMediator.blocks.get(numBlocks - subnets.size() + i)).changeNetwork(subnets.get(i));
+		}
+	}
+        
 	public static void setupCooperativeCoevolutionGhostMonitorsForMsPacman() throws NoSuchMethodException { 
 		boolean includeInputs = Parameters.parameters.booleanParameter("subsumptionIncludesInputs");
 		int outputsPerMonitor = GameFacade.NUM_DIRS;
@@ -251,7 +268,9 @@ public class MsPacManInitialization {
 		String ghostScoreFile = Parameters.parameters.stringParameter("multinetworkScores1");
 		String pillScoreFile = Parameters.parameters.stringParameter("multinetworkScores2");
 
+                @SuppressWarnings("UnusedAssignment")
 		NSGA2Score<TWEANN>[] ghostScores = null;
+                @SuppressWarnings("UnusedAssignment")
 		NSGA2Score<TWEANN>[] pillScores = null;
 		try {
 			ghostScores = PopulationUtil.loadScores(ghostScoreFile);

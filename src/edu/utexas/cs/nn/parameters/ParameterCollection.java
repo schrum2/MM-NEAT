@@ -11,12 +11,13 @@ import java.util.HashMap;
  * Parameter Collections.
  *
  * @author Jacob Schrum
+ * @param <T> Type of parameters
  */
 public class ParameterCollection<T> {
-
-	private HashMap<String, T> options; // Contains actual parameter values
-	private HashMap<String, String> descriptions; // A helpful description for
-													// each parameter
+        // Contains actual parameter values
+	private final HashMap<String, T> options; 
+        // A helpful description for each parameter
+	private final HashMap<String, String> descriptions; 
 
 	/**
 	 * Construct new parameter collection with empty HashMaps.

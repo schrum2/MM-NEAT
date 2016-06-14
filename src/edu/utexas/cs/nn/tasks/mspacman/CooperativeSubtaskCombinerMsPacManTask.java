@@ -4,6 +4,7 @@ import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.scores.Score;
+import edu.utexas.cs.nn.tasks.mspacman.init.MsPacManInitialization;
 import edu.utexas.cs.nn.tasks.mspacman.objectives.fitnessassignment.FitnessToModeMap;
 import edu.utexas.cs.nn.util.ClassCreation;
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
  * actions.
  *
  * @author Jacob Schrum
+ * @param <T> phenotype of component agents
  */
 public class CooperativeSubtaskCombinerMsPacManTask<T extends Network> extends CooperativeMsPacManTask<T> {
 
@@ -40,7 +42,7 @@ public class CooperativeSubtaskCombinerMsPacManTask<T extends Network> extends C
 		for (int i = 1; i < team.length; i++) { // skips first net, the combiner
 			subnets.add(team[i]);
 		}
-		MMNEAT.replaceSubnets(subnets);
+		MsPacManInitialization.replaceSubnets(subnets);
 		// Evaluate
 		Score<T> taskScores = task.evaluate(topLevelNetwork);
 		// Redistribute scores to each genotype
@@ -62,6 +64,7 @@ public class CooperativeSubtaskCombinerMsPacManTask<T extends Network> extends C
 	 *
 	 * @return
 	 */
+        @Override
 	public int numberOfPopulations() {
 		return MMNEAT.modesToTrack + 1;
 	}
@@ -73,6 +76,7 @@ public class CooperativeSubtaskCombinerMsPacManTask<T extends Network> extends C
 	 *
 	 * @return
 	 */
+        @Override
 	public int[] objectivesPerPopulation() {
 		int[] result = new int[numberOfPopulations()];
 		result[0] = task.objectives.size();
@@ -82,6 +86,7 @@ public class CooperativeSubtaskCombinerMsPacManTask<T extends Network> extends C
 		return result;
 	}
 
+        @Override
 	public int[] otherStatsPerPopulation() {
 		int[] result = new int[numberOfPopulations()];
 		result[0] = task.otherScores.size();

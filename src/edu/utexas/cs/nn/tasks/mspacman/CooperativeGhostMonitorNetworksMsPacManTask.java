@@ -1,16 +1,17 @@
 package edu.utexas.cs.nn.tasks.mspacman;
 
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.scores.Score;
+import edu.utexas.cs.nn.tasks.mspacman.init.MsPacManInitialization;
 import edu.utexas.cs.nn.tasks.mspacman.objectives.SpecificGhostScore;
 import java.util.ArrayList;
 
 /**
  *
  * @author Jacob Schrum
+ * @param <T> phenotype
  */
 public class CooperativeGhostMonitorNetworksMsPacManTask<T extends Network> extends CooperativeMsPacManTask<T> {
 
@@ -30,7 +31,7 @@ public class CooperativeGhostMonitorNetworksMsPacManTask<T extends Network> exte
 		for (int i = 1; i < team.length; i++) {
 			subnets.add(team[i]);
 		}
-		MMNEAT.replaceSubnets(subnets);
+		MsPacManInitialization.replaceSubnets(subnets);
 		// Evaluate
 		Score<T> taskScores = task.evaluate(topLevelNetwork);
 		// Redistribute scores to each genotype
@@ -55,10 +56,12 @@ public class CooperativeGhostMonitorNetworksMsPacManTask<T extends Network> exte
 	 *
 	 * @return
 	 */
+        @Override
 	public int numberOfPopulations() {
 		return CommonConstants.numActiveGhosts + 1;
 	}
 
+        @Override
 	public int[] objectivesPerPopulation() {
 		int[] result = new int[numberOfPopulations()];
 		result[0] = task.objectives.size();
@@ -68,6 +71,7 @@ public class CooperativeGhostMonitorNetworksMsPacManTask<T extends Network> exte
 		return result;
 	}
 
+        @Override
 	public int[] otherStatsPerPopulation() {
 		int[] result = new int[numberOfPopulations()];
 		result[0] = task.otherScores.size();

@@ -174,7 +174,7 @@ public class RLGlueTask<T extends Network> extends NoisyLonerTask<T>implements N
 	/**
 	 * Actual launch of the RL glue program
 	 */
-	public void launchRLGlue() {
+	public final void launchRLGlue() {
 		System.out.println("Launch RL Glue");
 		ProcessBuilder processBuilder = new ProcessBuilder("RL-Glue/rl_glue.exe"); 
 		Map<String, String> env = processBuilder.environment();
@@ -198,7 +198,7 @@ public class RLGlueTask<T extends Network> extends NoisyLonerTask<T>implements N
 	 * @param agent
 	 *            An agent for RL Glue tasks
 	 */
-	public void launchAgent(final AgentInterface agent) {
+	public final void launchAgent(final AgentInterface agent) {
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -216,7 +216,7 @@ public class RLGlueTask<T extends Network> extends NoisyLonerTask<T>implements N
 	 * @param environment
 	 *            an RLGlueEnvironment environment
 	 */
-	public void launchEnvironment(final RLGlueEnvironment environment) {
+	public final void launchEnvironment(final RLGlueEnvironment environment) {
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -234,7 +234,8 @@ public class RLGlueTask<T extends Network> extends NoisyLonerTask<T>implements N
 	 * @return number of objectives
 	 */
 	@Override
-	public int numObjectives(){			return 1; // default: just the RL Return
+	public int numObjectives(){
+			return 1; // default: just the RL Return
 	}
 
 	/**
