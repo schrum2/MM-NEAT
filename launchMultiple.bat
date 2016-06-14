@@ -1,7 +1,7 @@
 REM Usage  : launchMultiple.bat <batch subdir> <batch file> <starting run> <ending run> <batch subdir> <batch file> <starting run> <ending run>
-REM example: launchMultiple.bat RLGlue RLGlue-CartPole.bat 0 2
-REM example: launchMultiple.bat RLGlue RLGlue-CartPole.bat 0 2 PredPrey TorusPredPrey-TorusPred-CoOpMultiCCQ.bat 1 7
-REM example: launchMultiple.bat PredPrey TorusPredPrey-TorusPred-CoOpMultiCCQ.bat 0 9 PredPrey TorusPredPrey-TorusPred-CoOpMultiCCQ.bat 10 19
+REM example: launchMultiple.bat RLGlue RLGlue-Tetris-ExtendedBT.bat 0 2
+REM example: launchMultiple.bat RLGlue RLGlue-Tetris-ExtendedBT.bat 0 2 PredPrey TorusPredPrey-TorusPred-CoOpMultiCCQ.bat 1 7
+REM example: launchMultiple.bat PredPrey TorusPredPrey-TorusPred-CoOpMultiCCQ.bat 0 4 PredPrey TorusPredPrey-TorusPred-CoOpMultiCCQ.bat 5 9
 set argCount=0
 for %%x in (%*) do set /A argCount+=1
   cd batch
