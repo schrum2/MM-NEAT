@@ -95,6 +95,10 @@ public class TUGNSGA2<T> extends NSGA2<T> {
 		}
 	}
 
+	/**
+	 * Loads important state variables associated with TUG
+	 * @param rwas recency-weighted averages that chase the real performance
+	 */
 	public void loadTugState(boolean[] usage, double[] rwas, double[] loadedGoals, double[] deltas, boolean[] climb) {
 		this.useObjective = usage;
 		this.recencyWeightedAverages = rwas;
@@ -152,11 +156,8 @@ public class TUGNSGA2<T> extends NSGA2<T> {
 	public NSGA2Score<T>[] getTUGScores(ArrayList<Score<T>> scores) {
 		@SuppressWarnings("unchecked")
 		NSGA2Score<T>[] result = new NSGA2Score[scores.size()];
-		// System.out.println("TUG Conversion:");
 		if (generation > Parameters.parameters.integerParameter("endTUGGeneration")
-				|| generation < Parameters.parameters.integerParameter("startTUGGeneration")) { // No
-																								// more
-																								// TUG
+				|| generation < Parameters.parameters.integerParameter("startTUGGeneration")) { 
 			// Using plain NSGA2 instead of TUG
 			boolean[] all = new boolean[useObjective.length];
 			Arrays.fill(all, true);
@@ -166,7 +167,6 @@ public class TUGNSGA2<T> extends NSGA2<T> {
 		} else {
 			for (int i = 0; i < scores.size(); i++) {
 				result[i] = new TUGNSGA2Score<T>(scores.get(i), useObjective);
-				// System.out.println(result[i]);
 			}
 		}
 		return result;
@@ -188,19 +188,6 @@ public class TUGNSGA2<T> extends NSGA2<T> {
 		int objectives = scores.get(0).scores.length;
 		double[][] scoresArray = new double[objectives][scores.size()];
 		double[][] stats = new double[2][objectives];
-
-		// Old specific calculation of average and max.
-		// Replaced by general stat calculations below
-		// for (int i = 0; i < objectives; i++) {
-		// stats[1][i] = -Double.MAX_VALUE;
-		// }
-		// for (int i = 0; i < scores.size(); i++) {
-		// double[] values = scores.get(i).scores;
-		// for (int j = 0; j < objectives; j++) {
-		// stats[0][j] += (values[j] - stats[0][j]) / (i + 1);
-		// stats[1][j] = Math.max(stats[1][j], values[j]);
-		// }
-		// }
 
 		// Put all scores in arrays
 		for (int i = 0; i < scores.size(); i++) {
@@ -348,25 +335,21 @@ public class TUGNSGA2<T> extends NSGA2<T> {
 		ArrayList<Genotype<T>> nextGen = super.getNextGeneration(parents);
 		// This feature isn't used much. The purpose was to see if explicitly
 		// associating a module with each objective would help. It didn't
-		// really,
-		// but if it had helped, then this code would have frozen modules for
+		// really, but if it had helped, then this code would have frozen modules for
 		// deactivated objectives to make sure performance was maintained even
 		// though the objective was switched off.
-		//
+
 		// Freeze modes whose objectives are deactivated.
 		if (CommonConstants.tugObjectiveModeLinkage) {
-			assert nextGen
-					.get(0) instanceof TWEANNGenotype : "TUG Objective/Mode linkage only makes sense with TWEANNs";
-			assert((TWEANNGenotype) nextGen.get(
-					0)).numModules == useObjective.length : "TUG Objective/Mode linkage requires number of modes and objectives to match";
+			assert nextGen.get(0) instanceof TWEANNGenotype : "TUG Objective/Mode linkage only makes sense with TWEANNs";
+			assert((TWEANNGenotype) nextGen.get(0)).numModules == useObjective.length : "TUG Objective/Mode linkage requires number of modes and objectives to match";
 			boolean melted = false;
 			// If objectives are reactivated,
 			// then the networks need to be frozen before modes for inactive (if
-			// any)
-			// objectives are re-frozen.
+			// any) objectives are re-frozen.
 			if (BooleanUtil.any(justActivated)
 					|| (CommonConstants.tugObjectiveUsageLinkage && BooleanUtil.any(justDeactivated))) {
-				for (Genotype tg : nextGen) {
+				for (Genotype<T> tg : nextGen) {
 					((TWEANNGenotype) tg).meltNetwork();
 				}
 				melted = true;
@@ -378,14 +361,12 @@ public class TUGNSGA2<T> extends NSGA2<T> {
 				// Previously frozen modes will remain frozen, unless a
 				// melt changed that
 				if (justDeactivated[i] || (melted && !useObjective[i])) {
-					for (Genotype tg : nextGen) {
+					for (Genotype<T> tg : nextGen) {
 						int target;
 						if (CommonConstants.tugObjectiveUsageLinkage) {
 							// Even though nextGen has been altered since
-							// evaluation,
-							// the modeUsage is saved and corresponds to how the
-							// parents
-							// used their modes.
+							// evaluation, the modeUsage is saved and corresponds 
+							// to how the parents used their modes.
 							int[] moduleUsage = ((TWEANNGenotype) tg).getModuleUsage();
 							// Mode with next highest usage
 							target = StatisticsUtilities.argmax(moduleUsage, modesFrozen);
@@ -394,8 +375,7 @@ public class TUGNSGA2<T> extends NSGA2<T> {
 						}
 						((TWEANNGenotype) tg).freezeModule(target);
 					}
-					System.out.println("Freezing mode "
-							+ (CommonConstants.tugObjectiveUsageLinkage ? modesFrozen + " most used" : i));
+					System.out.println("Freezing mode " + (CommonConstants.tugObjectiveUsageLinkage ? modesFrozen + " most used" : i));
 					modesFrozen++;
 				}
 			}
