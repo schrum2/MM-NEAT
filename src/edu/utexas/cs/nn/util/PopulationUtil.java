@@ -10,6 +10,7 @@ import edu.utexas.cs.nn.evolution.mutation.tweann.CauchyDeltaCodeMutation;
 import edu.utexas.cs.nn.evolution.nsga2.NSGA2;
 import edu.utexas.cs.nn.evolution.nsga2.NSGA2Score;
 import edu.utexas.cs.nn.networks.TWEANN;
+import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.scores.Better;
 import edu.utexas.cs.nn.scores.Score;
@@ -215,6 +216,7 @@ public class PopulationUtil {
 	 *            starting point of new population
 	 * @return the new population
 	 */
+	@SuppressWarnings("unchecked")
 	public static <T> ArrayList<Genotype<T>> deltaCodePopulation(int size, ArrayList<Genotype<T>> exemplars) {
 		CauchyDeltaCodeMutation cauchy = new CauchyDeltaCodeMutation();
 		ArrayList<Genotype<T>> newPop = new ArrayList<Genotype<T>>(size);
@@ -245,6 +247,7 @@ public class PopulationUtil {
 	 *            crossover rate if mating
 	 * @return population of children
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static ArrayList<Genotype> childrenFromTournamentSelection(int numChildren, ArrayList<Score> parentScores, Better<Score> judge, boolean mating, double crossoverRate) {
 		ArrayList<Genotype> offspring = new ArrayList<Genotype>(numChildren);
 
@@ -306,6 +309,24 @@ public class PopulationUtil {
 		pruneDownToTopParetoLayers(population, scores, 1);
 	}
 
+	/**
+	 * Used for standard HyperNEAT link expression. If a link is to be
+	 * expressed, then values beyond a threshold slide back to 0 so that weights
+	 * with a small magnitude are possible.
+	 *
+	 * @param originalOutput
+	 *            original CPPN output
+	 * @return Scaled synaptic weight
+	 */
+	public static double calculateWeight(double originalOutput) {
+		assert(Math.abs(originalOutput) > CommonConstants.linkExpressionThreshold) : "This link should not be expressed: " + originalOutput;
+		if (originalOutput > CommonConstants.linkExpressionThreshold) {
+			return originalOutput - CommonConstants.linkExpressionThreshold;
+		} else {
+			return originalOutput + CommonConstants.linkExpressionThreshold;
+		}
+	}
+	
 	/**
 	 * Modifies population so it contains only top Pareto layers
 	 *
@@ -373,6 +394,7 @@ public class PopulationUtil {
 		return population;
 	}
 
+	@SuppressWarnings("unchecked")
 	public static <T> Genotype<T> extractGenotype(String file) {
 		System.out.print("Load File: \"" + file + "\"");
 		Object loaded = Easy.load(file);
@@ -419,6 +441,7 @@ public class PopulationUtil {
 	 * @return scores of subpop in designated generation
 	 * @throws FileNotFoundException
 	 */
+	@SuppressWarnings("rawtypes")
 	public static NSGA2Score[] loadSubPopScores(int generation, int pop) throws FileNotFoundException {
 		String base = Parameters.parameters.stringParameter("base");
 		String saveTo = Parameters.parameters.stringParameter("saveTo");
@@ -442,6 +465,7 @@ public class PopulationUtil {
 	 * @throws FileNotFoundException
 	 *             if filename does not exist
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static <T> NSGA2Score<T>[] loadScores(String filename) throws FileNotFoundException {
 		Scanner s = new Scanner(new File(filename));
 		NSGA2Score<T>[] populationScores = new NSGA2Score[Parameters.parameters.integerParameter("mu")];
@@ -464,7 +488,9 @@ public class PopulationUtil {
 			Genotype<T> anonymous = anonymousIdIndividual(offspringId);
 			populationScores[i++] = new NSGA2Score(anonymous, scoreArray, null, null);
 			assert populationScores[i - 1] != null : "Null Score! " + i;
+			line.close();
 		}
+		s.close();
 		return populationScores;
 	}
 
@@ -520,6 +546,7 @@ public class PopulationUtil {
 		};
 	}
 
+	@SuppressWarnings("rawtypes")
 	public static void saveAllSubPops(String prefix, String saveDirectory, ArrayList<ArrayList<Genotype>> populations, boolean parallel) {
 		String fullSaveDir = saveDirectory + "/" + prefix;
 		new File(fullSaveDir).mkdir();
@@ -599,6 +626,7 @@ public class PopulationUtil {
 	 * @return vector of loaded subpopulations, each stored in a vector of
 	 *         genotypes
 	 */
+	@SuppressWarnings("rawtypes")
 	public static ArrayList<ArrayList<Genotype>> loadSubPops(String directory, int numPops) {
 		System.out.println("Load multiple populations");
 		ArrayList<ArrayList<Genotype>> populations = new ArrayList<ArrayList<Genotype>>(numPops);
@@ -623,6 +651,7 @@ public class PopulationUtil {
 	 * @param genotypes list of genotypes encoding T phenotypes
 	 * @return genotype with the T type stripped away
 	 */
+	@SuppressWarnings("rawtypes")
 	public static <T> ArrayList<Genotype> removeListGenotypeType(ArrayList<Genotype<T>> genotypes) {
 		ArrayList<Genotype> ungenericPop = new ArrayList<Genotype>(genotypes.size());
 		for (Genotype g : genotypes) {
@@ -639,6 +668,7 @@ public class PopulationUtil {
 	 * @param genotypes list of genotypes with unspecified phenotype
 	 * @return genotype with phenotype T explicitly specified
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static <T> ArrayList<Genotype<T>> addListGenotypeType(ArrayList<Genotype> genotypes) {
 		ArrayList<Genotype<T>> genericPop = new ArrayList<Genotype<T>>(genotypes.size());
 		for (Genotype g : genotypes) {
@@ -654,6 +684,7 @@ public class PopulationUtil {
 	 * @param scores list of scores for unspecified phenotype
 	 * @return score list with phenotype made explicit
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static <T> ArrayList<Score<T>> addListScoreType(ArrayList<Score> scores) {
 		ArrayList<Score<T>> genericPop = new ArrayList<Score<T>>(scores.size());
 		for (Score g : scores) {
@@ -672,6 +703,7 @@ public class PopulationUtil {
 	 *            genotype id that might be in subpopulation
 	 * @return index of genotype with id, or -1
 	 */
+	@SuppressWarnings("rawtypes")
 	public static int indexOfGenotypeWithId(ArrayList<Genotype> subpopulation, long id) {
 		for (int q = 0; q < subpopulation.size(); q++) {
 			if (subpopulation.get(q).getId() == id) {
@@ -681,6 +713,7 @@ public class PopulationUtil {
 		return -1;
 	}
 
+	@SuppressWarnings("rawtypes")
 	public static <T> ArrayList<Long> getGenotypeIds(ArrayList<Genotype<T>> genotypes) {
 		ArrayList<Long> result = new ArrayList<Long>();
 		for (Genotype g : genotypes) {
@@ -728,6 +761,7 @@ public class PopulationUtil {
 		return null;
 	}
 	
+	@SuppressWarnings("rawtypes")
 	public static <T> Genotype[] genotypeArrayFromArrayList(ArrayList<Genotype<T>> arrayList) {
 		Genotype[] genos = new Genotype[arrayList.size()];
 		for (int i = 0; i < genos.length; i++) {
