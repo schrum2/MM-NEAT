@@ -4,22 +4,15 @@ import java.util.ArrayList;
 
 import edu.utexas.cs.nn.evolution.Organism;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.evolution.nsga2.tug.TUGTask;
 import edu.utexas.cs.nn.gridTorus.TorusPredPreyGame;
 import edu.utexas.cs.nn.gridTorus.controllers.TorusPredPreyController;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.networks.NetworkTask;
-import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.scores.Score;
 import edu.utexas.cs.nn.tasks.CooperativeTask;
 import edu.utexas.cs.nn.tasks.gridTorus.NNTorusPredPreyAgent;
 import edu.utexas.cs.nn.tasks.gridTorus.NNTorusPredPreyController;
 import edu.utexas.cs.nn.tasks.gridTorus.TorusPredPreyTask;
-import edu.utexas.cs.nn.tasks.gridTorus.sensors.TorusPredPreySensorBlock;
-import edu.utexas.cs.nn.tasks.gridTorus.sensors.TorusPredatorsByIndexSensorBlock;
-import edu.utexas.cs.nn.tasks.gridTorus.sensors.TorusPredatorsByProximitySensorBlock;
-import edu.utexas.cs.nn.tasks.gridTorus.sensors.TorusPreyByIndexSensorBlock;
-import edu.utexas.cs.nn.tasks.gridTorus.sensors.TorusPreyByProximitySensorBlock;
 
 /**
  * Defines a cooperative torusPredPreyTask for either a group of predators being
@@ -118,7 +111,8 @@ public abstract class CooperativeTorusPredPreyTask<T extends Network> extends Co
 	 * @return list of scores, behaviors, and genotype for each member of the team
 	 */
 	public ArrayList<Score> evaluate(Genotype[] team) {
-
+		//		System.out.println("in cooperative class: objectives size: " + task.objectives.size());
+		//		System.out.println("in cooperative class: otherScores size: " + task.otherScores.size());
 		ArrayList<Score> scores = new ArrayList<Score>();
 
 		TorusPredPreyController[] predAgents = getPredAgents(team);
@@ -137,14 +131,12 @@ public abstract class CooperativeTorusPredPreyTask<T extends Network> extends Co
 			// order to be reset after the creation of this organism
 			Organism<T> organism = new NNTorusPredPreyAgent<T>(team[i], !task.preyEvolve);
 			for (int j = 0; j < fitnesses.length; j++) {
-				//TODO: this should be task.objectives.get(i).get(j).score(game, organism);
-				//but there is an error on the .get(i) because right now there is only one list being added to
-				//the objectives double list and that list is being copied to all members of the team
-				fitnesses[j] = task.objectives.get(0).get(j).score(game, organism);
+				//System.out.println("first population objectives size: " + task.objectives.get(i).size());
+				fitnesses[j] = task.objectives.get(i).get(j).score(game, organism);
 			}
 			for (int j = 0; j < otherStats.length; j++) {
-				//TODO: same as above with otherScores
-				otherStats[j] = task.otherScores.get(0).get(j).score(game,organism);		
+				//System.out.println("first population otherScores size: " + task.otherScores.get(i).size());
+				otherStats[j] = task.otherScores.get(i).get(j).score(game,organism);
 			}
 			scores.add(new Score(team[i], fitnesses, null, otherStats));
 		}
@@ -172,7 +164,7 @@ public abstract class CooperativeTorusPredPreyTask<T extends Network> extends Co
 	 */
 	public final double[] minScores() {
 		//TODO: this is potentially problematic, as it is not generalized to all populations
-		
+
 		double[] mins = new double[objectivesPerPopulation()[0]];
 		for(int i = 0; i < objectivesPerPopulation()[0]; i++){
 			mins[i] = task.objectives.get(0).get(i).minScore();

@@ -45,9 +45,10 @@ public class CooperativePredatorsVsStaticPrey<T extends Network> extends Coopera
 	public int[] otherStatsPerPopulation() {
 		int scores = task.numOtherScores();
 		int[] result = new int[Parameters.parameters.integerParameter("torusPredators")];
-		for(int i = 0; i < result.length; i++) {
-			result[i] = scores;
-		}
+//		for(int i = 0; i < result.length; i++) {
+//			result[i] = scores;
+//		}
+		result[0] = scores;
 		return result;
 	}
 
@@ -68,6 +69,12 @@ public class CooperativePredatorsVsStaticPrey<T extends Network> extends Coopera
 	public TorusPredPreyTask<T> getLonerTaskInstance() {
 		if(task == null) {
 			task = new TorusEvolvedPredatorsVsStaticPreyTask<T>();
+//			System.out.println("Before" + " Objectives size: " + task.objectives.size() + " NumPop: " + numberOfPopulations());
+			while(task.objectives.size() < numberOfPopulations()) {
+//				System.out.println("Objectives size: " + task.objectives.size() + " NumPop: " + numberOfPopulations());
+				task.addAllObjectives(task.objectives.size());
+			}
+//			System.out.println("After" + " Objectives size: " + task.objectives.size() + " NumPop: " + numberOfPopulations());
 		}
 		return task;
 	}
