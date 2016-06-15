@@ -360,9 +360,20 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 	 * so that they can be included in the evolution
 	 */
 	public void addAllObjectives(int pop){
+//		if(pop == 0){
+//			System.out.println("Objectives size: " + objectives.size() + " otherScores size: " + otherScores.size());
+//			for(int i = 0; i < (preyEvolve ? Parameters.parameters.integerParameter("torusPreys") : Parameters.parameters.integerParameter("torusPredators")) ; i++){
+//				objectives.add(new ArrayList<GridTorusObjective<T>>());
+//				otherScores.add(new ArrayList<GridTorusObjective<T>>());
+//			}
+//		}
+
 		objectives.add(new ArrayList<GridTorusObjective<T>>());
 		otherScores.add(new ArrayList<GridTorusObjective<T>>());
 
+//		System.out.println("In loner class: Objectives size: " + objectives.size() + " otherScores size: " + otherScores.size());
+//		System.out.println("PreyBeingEvolved: " + preyEvolve);
+//		System.out.println("Population: " + pop);
 		if(!preyEvolve){ 
 			//Predator fitness scores
 			if (Parameters.parameters.booleanParameter("predatorMinimizeTotalTime"))

@@ -95,7 +95,8 @@ public class MMNEAT {
 	public static ArrayList<Statistic> aggregationOverrides;
 
 	//TODO: implement this list of coevolution fitness functions for each population in the same 
-	//way that it works with non-coevolution.
+	//way that it works with non-coevolution. Make the fitness functions list a double arrayList
+	//and have it work for non-coevolution by just filling the first list index of the double arrayList
 	public static ArrayList<ArrayList<String>> coevolutionFitnessFunctions;
 	
 	public static TaskSpec tso;

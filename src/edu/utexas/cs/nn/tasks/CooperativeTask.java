@@ -418,7 +418,7 @@ public abstract class CooperativeTask implements MultiplePopulationTask {
          * This is why it cannot be overridden again.
          */
 	@Override
-	public final double[] minScores() {
+	public double[] minScores() {
 		throw new UnsupportedOperationException("Does not make sense in the context of a cooperative task with multiple populations");
 	}
 

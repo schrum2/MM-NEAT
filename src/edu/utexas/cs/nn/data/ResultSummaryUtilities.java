@@ -4,8 +4,11 @@ import edu.utexas.cs.nn.log.PerformanceLog;
 import edu.utexas.cs.nn.log.TWEANNLog;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.parameters.Parameters;
+import edu.utexas.cs.nn.tasks.CooperativeTask;
+import edu.utexas.cs.nn.tasks.LonerTask;
 import edu.utexas.cs.nn.tasks.MultiplePopulationTask;
 import edu.utexas.cs.nn.tasks.Task;
+import edu.utexas.cs.nn.tasks.mspacman.CooperativeMsPacManTask;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.stats.Statistic;
 import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
@@ -67,7 +70,7 @@ public class ResultSummaryUtilities {
 		plotInfoFile(filePrefix, middle, num, outputDir, labels, false);
 		plotInfoFile(filePrefix, middle, num, outputDir, labels, true);
 	}
-	
+
 	private static void plotInfoFile(String filePrefix, String middle, int num, String outputDir,
 			ArrayList<String> labels, boolean makePDF) throws FileNotFoundException, NoSuchMethodException {
 		String plotFile = "";
@@ -218,14 +221,28 @@ public class ResultSummaryUtilities {
 		// Then drop id numbers
 		solutions = dropColumn(step1, 0);
 		Task task = MMNEAT.task;
-		int numObjectives = task.numObjectives();
+		int numObjectives = -1;
+		if(task instanceof LonerTask || task instanceof CooperativeMsPacManTask) {
+			numObjectives = task.numObjectives();
+		} else if(task instanceof CooperativeTask) {
+			//TODO: eventually should be generalized across all populations
+			numObjectives = ((CooperativeTask) task).objectivesPerPopulation()[0];
+		}
 		while (solutions[0].length > numObjectives) {
 			// Remove extra meta-heuristic objectives
 			solutions = dropColumn(solutions, solutions[0].length - 1);
 		}
 
 		// Adjust for possibly negative min scores
-		double[] mins = MMNEAT.task.minScores();
+		double[] mins = null;
+		if(task instanceof LonerTask || task instanceof CooperativeMsPacManTask) {
+			mins = MMNEAT.task.minScores();
+		} else if(task instanceof CooperativeTask){
+			//TODO: this is unclean and potentially problematic because minScores does not really make sense
+			//with coevolution, and just the first population's objectives' minScores are returned from
+			//the cooperativeTorusPredPreyTask minScore override.
+			mins = ((CooperativeTask) task).minScores();
+		}
 		for (int i = 0; i < solutions.length; i++) {
 			for (int j = 0; j < solutions[0].length; j++) {
 				solutions[i][j] -= mins[j];
@@ -265,7 +282,7 @@ public class ResultSummaryUtilities {
 		plotHypervolumesFile(filePrefix, fileSuffix, runs, outputDir, false);
 		plotHypervolumesFile(filePrefix, fileSuffix, runs, outputDir, true);
 	}
-	
+
 	private static void plotHypervolumesFile(String filePrefix, String fileSuffix, int runs, String outputDir, boolean makePDF)
 			throws FileNotFoundException {
 		String plotFile = "";
@@ -353,7 +370,7 @@ public class ResultSummaryUtilities {
 		plotAverageFitnessesFile(filePrefix, middle, fileSuffix, num, runs, outputDir, t, false);
 		plotAverageFitnessesFile(filePrefix, middle, fileSuffix, num, runs, outputDir, t, true);
 	}
-	
+
 	private static void plotAverageFitnessesFile(String filePrefix, String middle, String fileSuffix, int num,
 			int runs, String outputDir, double t, boolean makePDF) throws FileNotFoundException {
 		String plotFile = "";
@@ -389,7 +406,7 @@ public class ResultSummaryUtilities {
 			// Calculates standard error (SE) from variance (s^2): SE = sqrt(s^2 / N)
 			out.println("\"" + file + "\" u 1:($"+ min +" - "+t+"*sqrt($"+ (min + 1) +"/"+runs+")):($"+ min +" + "+t+"*sqrt($"+ (min + 1) +"/"+runs+")) notitle with filledcurves lt 1 lw 2, \\");
 			out.println("\"" + file + "\" u 1:"+min+":"+min+":"+min+" t \"MIN\" with errorbars lt 1 lw 2, \\");                        
-						
+
 			int avg = ((2 * i) + 3);
 			// Note: Might need gnuplot's "every" command to space out plot frequency
 			out.println("\"" + file + "\" u 1:" + avg + " notitle lt 2 lw 2, \\");
@@ -403,7 +420,7 @@ public class ResultSummaryUtilities {
 			// Calculates standard error (SE) from variance (s^2): SE = sqrt(s^2 / N)
 			out.println("\"" + file + "\" u 1:($"+ max +" - "+t+"*sqrt($"+ (max + 1) +"/"+runs+")):($"+ max +" + "+t+"*sqrt($"+ (max + 1) +"/"+runs+")) notitle with filledcurves lt 3 lw 2, \\");
 			out.println("\"" + file + "\" u 1:"+max+":"+max+":"+max+" t \"MAX\" with errorbars lt 3 lw 2");                        	
-					
+
 			out.println("");
 			if (!makePDF) {
 				out.println("pause -1");
