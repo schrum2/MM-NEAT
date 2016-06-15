@@ -18,6 +18,9 @@ import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JSlider;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
@@ -46,12 +49,13 @@ import java.util.HashSet;
  *
  * @param <T>
  */
-public class PicbreederTask<T extends Network> implements SinglePopulationTask<T>, ActionListener, NetworkTask {
+public class PicbreederTask<T extends Network> implements SinglePopulationTask<T>, ActionListener, ChangeListener, NetworkTask {
 
 	//Global static final variables
 	public static final int CPPN_NUM_INPUTS	= 4;
 	public static final int CPPN_NUM_OUTPUTS = 3;
 	public static final int NUM_COLUMNS	= 4;
+	public static final int MPG_DEFAULT = 1;
 
 	//private static final Variables
 	//includes indices of buttons for action listener
@@ -74,6 +78,8 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	private static final int FULLAPPROX_CHECKBOX_INDEX = -16;
 	private static final int APPROX_CHECKBOX_INDEX = -17;
 	private static final int BORDER_THICKNESS = 4;
+	private static final int MPG_MIN = 0;
+	private static final int MPG_MAX = 10;
 
 	//Private final variables
 	private static int NUM_ROWS;
@@ -131,9 +137,8 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		frame.setLayout(new GridLayout(NUM_ROWS + 1, 0));// the + 1 includes room for the title panel
 		frame.setVisible(true);
 
-		//instantiate graphics
+		//instantiates helper buttons
 		JPanel topper = new JPanel();
-		//topper.setLayout(new GridLayout(2, 0));
 		JPanel top = new JPanel();
 		JPanel bottom = new JPanel();
 		JButton resetButton = new JButton(new ImageIcon("data\\picbreeder\\reset.png"));
@@ -144,6 +149,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		JButton networkButton = new JButton(new ImageIcon("data\\picbreeder\\network.png"));
 		JButton undoButton = new JButton( new ImageIcon("data\\picbreeder\\undo.png"));
 
+		//instantiates activation function checkboxes
 		JCheckBox sigmoid = new JCheckBox("sigmoid", true);
 		JCheckBox tanh = new JCheckBox("tanh", false);
 		activation[Math.abs(TANH_CHECKBOX_INDEX)] = false;
@@ -158,6 +164,9 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		JCheckBox sawtooth = new JCheckBox("sawtooth", true);
 		JCheckBox absVal = new JCheckBox("absolute_value", true);
 		JCheckBox halfLinear = new JCheckBox("half_linear", true);
+
+		//adds slider for mutation rate change
+		JSlider mutationsPerGeneration = new JSlider(JSlider.HORIZONTAL, MPG_MIN, MPG_MAX, MPG_DEFAULT);
 
 		//set graphic names and toolTip titles
 		evolveButton.setName("" + EVOLVE_BUTTON_INDEX);
@@ -184,7 +193,9 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		approx.setName("" + APPROX_CHECKBOX_INDEX);
 		sawtooth.setName("" + SAWTOOTH_CHECKBOX_INDEX);
 		halfLinear.setName("" + HALF_LINEAR_CHECKBOX_INDEX);
-
+		mutationsPerGeneration.setMinorTickSpacing(1);
+		mutationsPerGeneration.setPaintTicks(true);
+		mutationsPerGeneration.setPaintLabels(true);
 		//add action listeners to buttons
 		resetButton.addActionListener(this);
 		saveButton.addActionListener(this);
@@ -203,6 +214,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		id.addActionListener(this);
 		fullApprox.addActionListener(this);
 		approx.addActionListener(this);
+		mutationsPerGeneration.addChangeListener(this);
 
 		//set checkbox colors to match activation function color
 		sigmoid.setForeground(CombinatoricUtilities.colorFromInt(ActivationFunctions.FTYPE_SIGMOID));
@@ -235,6 +247,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		bottom.add(id);
 		bottom.add(fullApprox);
 		bottom.add(approx);
+		bottom.add(mutationsPerGeneration);
 		topper.add(bottom);
 		panels.add(topper);
 
@@ -660,7 +673,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 						long id = network.getId();
 						for(Offspring o : SelectiveBreedingEA.offspring) {
 							if(o.offspringId == id) {
-                                                                // Magic number here: 600 is start y-coord for drawing lineage
+								// Magic number here: 600 is start y-coord for drawing lineage
 								drawLineage(o, id, 0, 600);						
 							}
 						}
@@ -695,13 +708,13 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 
 	/**
 	 * draws lineage of an image
-         * @param <T> phenotype of network
+	 * @param <T> phenotype of network
 	 * @param id id of image
 	 * @param childId id of child image
 	 * @param x x-coord
 	 * @param y y-coord
-         * @param depth depth of the recursive call and this the
-         *              distance in generations from the child.
+	 * @param depth depth of the recursive call and this the
+	 *              distance in generations from the child.
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T extends Network> void drawLineage(long id, long childId, int x, int y, int depth) {
@@ -722,9 +735,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 
 	/**
 	 * undoes previous evolution call
-	 *
 	 * NOT COMPLETE
-	 *@SuppressWarnings("unchecked")
 	 */
 	private void setUndo() {
 		scores = new ArrayList<Score<T>>();
@@ -732,12 +743,19 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 			System.out.println("score size " + scores.size() + " previousScores size " + previousScores.size() + " buttons size " + buttons.size() + " i " + i);
 			resetButton(previousScores.get(i).individual, i);
 		}
-		//		int lastGen = Parameters.parameters.integerParameter("lastSavedGeneration");
+//		int lastGen = Parameters.parameters.integerParameter("lastSavedGeneration");
 		//		System.out.println("before decrementing generation: " + lastGen);
 		//		Parameters.parameters.setInteger("lastSavedGeneration", lastGen--);
 		//		System.out.println("after decrementing generation: " + Parameters.parameters.integerParameter("lastSavedGeneration"));
 		//		System.out.println("offspring to string prints out: " + "offspring.toString()");
 		//
-		//		System.out.println("This button is not yet implemented");
+		//		System.out.println("This button is not yet implemented")
+	}
+
+	@Override
+	public void stateChanged(ChangeEvent e) {
+		JSlider source = (JSlider)e.getSource();
+		SelectiveBreedingEA.MUTATION_RATE = source.getValue();
+
 	}
 }

@@ -14,6 +14,7 @@ import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.scores.Score;
 import edu.utexas.cs.nn.tasks.SinglePopulationTask;
 import edu.utexas.cs.nn.tasks.Task;
+import edu.utexas.cs.nn.tasks.picbreeder.PicbreederTask;
 import edu.utexas.cs.nn.util.PopulationUtil;
 import edu.utexas.cs.nn.util.random.RandomNumbers;
 
@@ -26,6 +27,8 @@ import edu.utexas.cs.nn.util.random.RandomNumbers;
  */
 public class SelectiveBreedingEA<T> implements SinglePopulationGenerationalEA<T> {
 
+	public static int MUTATION_RATE;
+	
 	private SinglePopulationTask<T> task;
 	private int parentPop;
 	private int generation;
@@ -48,6 +51,7 @@ public class SelectiveBreedingEA<T> implements SinglePopulationGenerationalEA<T>
 	 * @param parentPop size of initial population
 	 */
 	public SelectiveBreedingEA(SinglePopulationTask<T> task, int parentPop) {
+		MUTATION_RATE = 1;
 		mating = Parameters.parameters.booleanParameter("mating");
 		crossoverRate = Parameters.parameters.doubleParameter("crossoverRate");
 		this.task = task;
@@ -128,7 +132,6 @@ public class SelectiveBreedingEA<T> implements SinglePopulationGenerationalEA<T>
 			children.add(score.individual);
 		}
 		for(int i = scores.size(); i < size; i++) {
-                        @SuppressWarnings("UnusedAssignment")
 			long parentId1 = -1;
 			long parentId2 = -1;
 
@@ -147,7 +150,9 @@ public class SelectiveBreedingEA<T> implements SinglePopulationGenerationalEA<T>
 				offspring.add(new Offspring(offspring1.getId(), parentId1, parentId2, generation));
 			}
 			if(i < size) {
+				for(int z = PicbreederTask.MPG_DEFAULT; z < MUTATION_RATE; z++) {
 				g1.mutate();
+				}
 				children.add(g1);
 				if (parentId2 == -1) {
 					EvolutionaryHistory.logLineageData(parentId1 + " -> " + g1.getId());

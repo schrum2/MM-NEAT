@@ -262,7 +262,7 @@ public class TWEANN implements Network {
 		}
 
 		private void activate() {
-			ActivationFunctions.activation(ftype, sum);
+			activation = ActivationFunctions.activation(ftype, sum);
 		}
 
 		protected void activateAndTransmit() {
