@@ -21,7 +21,7 @@ public class DeleteLinkMutationTest {
 
 	@Before
 	public void setUp() throws Exception {
-		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "recurrency:false", "mmdRate:0.1", "deleteLinkRate:0.0" });
+		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "recurrency:false", "deleteLinkRate:1.0" });
 		MMNEAT.loadClasses();
 		tg1 = new TWEANNGenotype(5, 3, 0);
 		MMNEAT.genotype = tg1.copy();

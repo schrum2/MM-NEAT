@@ -1867,7 +1867,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 	 *
 	 * @return
 	 */
-	private int outputStartIndex() {
+	public int outputStartIndex() {
 		return nodes.size() - numOut;
 	}
 
