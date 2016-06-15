@@ -109,9 +109,9 @@ public class VizDoomBasicShootTask<T extends Network> extends VizDoomTask<T> {
 	 */
 	public static void main(String[] args) {
 		Parameters.initializeParameterCollections(new String[] { "watch:true", "io:false", "netio:false",
-				"task:edu.utexas.cs.nn.tasks.vizdoom.VizDoomBasicShootTask", "trials:1", "printFitness:true", 
-				"doomFullScreenInput:false", "doomInputWidth:20", "doomInputHeight:10", "doomInputStartX:50", 
-				"doomInputStartY:50","doomInputColorVal:2", "doomInputPixelSmudge:4"});
+				"task:edu.utexas.cs.nn.tasks.vizdoom.VizDoomBasicShootTask", "trials:5", "printFitness:true", 
+				"doomFullScreenInput:false", "doomInputWidth:200", "doomInputHeight:5", "doomInputStartX:0", 
+				"doomInputStartY:75","doomInputColorVal:2", "doomInputPixelSmudge:5", "doomSmudgeStat:edu.utexas.cs.nn.util.stats.MostExtreme"});
 		MMNEAT.loadClasses();
 		VizDoomBasicShootTask<TWEANN> vd = new VizDoomBasicShootTask<TWEANN>();
 		TWEANNGenotype individual = new TWEANNGenotype();
