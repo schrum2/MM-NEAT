@@ -21,7 +21,6 @@ package org.rlcommunity.environments.tetris;
 import edu.utexas.cs.nn.tasks.rlglue.RLGlueEnvironment;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Vector;
 
 import org.rlcommunity.environments.tetris.messages.TetrisStateResponse;
 import org.rlcommunity.environments.tetris.visualizer.TetrisVisualizer;

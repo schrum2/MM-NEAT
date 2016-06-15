@@ -2,9 +2,6 @@ package vizdoom.examples;
 
 import vizdoom.*;
 
-import java.util.*;
-import java.lang.*;
-
 public class CIG {
 
 	public static void main(String[] args) {
@@ -48,6 +45,7 @@ public class CIG {
 				// continue;
 			}
 
+			@SuppressWarnings("unused")
 			GameState state = game.getState();
 			// Analyze the state.
 

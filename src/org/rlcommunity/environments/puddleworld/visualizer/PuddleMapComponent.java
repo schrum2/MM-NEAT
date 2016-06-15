@@ -26,8 +26,6 @@ package org.rlcommunity.environments.puddleworld.visualizer;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Observable;
@@ -36,13 +34,12 @@ import java.util.Vector;
 
 import org.rlcommunity.environments.puddleworld.Puddle;
 import org.rlcommunity.environments.puddleworld.PuddleGen;
-import org.rlcommunity.rlglue.codec.types.Observation;
-import org.rlcommunity.rlglue.codec.types.Reward_observation_terminal;
 import rlVizLib.visualization.SelfUpdatingVizComponent;
 import rlVizLib.visualization.VizComponentChangeListener;
 
 public class PuddleMapComponent implements SelfUpdatingVizComponent, Observer {
 
+	@SuppressWarnings("unused")
 	private final PuddleWorldVisualizer theVisualizer;
 	private VizComponentChangeListener theChangeListener;
 	private final Vector<Puddle> thePuddles = PuddleGen.makePuddles();

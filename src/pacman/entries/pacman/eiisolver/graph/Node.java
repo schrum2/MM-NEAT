@@ -1,6 +1,5 @@
 package pacman.entries.pacman.eiisolver.graph;
 
-import pacman.game.*;
 import static pacman.game.Constants.*;
 
 /**

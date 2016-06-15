@@ -2,9 +2,6 @@ package vizdoom.examples;
 
 import vizdoom.*;
 
-import java.util.*;
-import java.lang.*;
-
 public class MultiplayerHost {
 
 	public static void main(String[] args) {

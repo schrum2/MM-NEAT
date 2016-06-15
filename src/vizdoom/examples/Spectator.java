@@ -4,9 +4,6 @@ import vizdoom.*;
 
 import java.util.*;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.PrintStream;
-import java.lang.*;
 
 public class Spectator {
 
@@ -58,6 +55,7 @@ public class Spectator {
 			game.newEpisode();
 			while (!game.isEpisodeFinished()) {
 				GameState s = game.getState();
+				@SuppressWarnings("unused")
 				int[] img = s.imageBuffer;
 				int[] misc = s.gameVariables;
 
