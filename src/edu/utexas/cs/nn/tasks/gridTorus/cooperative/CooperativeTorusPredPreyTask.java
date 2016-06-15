@@ -91,7 +91,7 @@ public abstract class CooperativeTorusPredPreyTask<T extends Network> extends Co
 	public String[] sensorLabels() {
 		//Can't just use the lonerTask version of this method, it crashes
 		//array of evolved agents is not defined
-		
+
 		//This works because preyEvolve is a parameter from the child classes in
 		//the regular, lonerTask version 
 		//(one of these child classes become the task for this cooperative task too)
@@ -137,10 +137,14 @@ public abstract class CooperativeTorusPredPreyTask<T extends Network> extends Co
 			// order to be reset after the creation of this organism
 			Organism<T> organism = new NNTorusPredPreyAgent<T>(team[i], !task.preyEvolve);
 			for (int j = 0; j < fitnesses.length; j++) {
-				fitnesses[j] = task.objectives.get(i).get(j).score(game, organism);
+				//TODO: this should be task.objectives.get(i).get(j).score(game, organism);
+				//but there is an error on the .get(i) because right now there is only one list being added to
+				//the objectives double list and that list is being copied to all members of the team
+				fitnesses[j] = task.objectives.get(0).get(j).score(game, organism);
 			}
 			for (int j = 0; j < otherStats.length; j++) {
-				otherStats[j] = task.otherScores.get(i).get(j).score(game,organism);		
+				//TODO: same as above with otherScores
+				otherStats[j] = task.otherScores.get(0).get(j).score(game,organism);		
 			}
 			scores.add(new Score(team[i], fitnesses, null, otherStats));
 		}
@@ -160,5 +164,20 @@ public abstract class CooperativeTorusPredPreyTask<T extends Network> extends Co
 	 * @return pred agents
 	 */
 	public abstract TorusPredPreyController[] getPredAgents(Genotype<T>[] team);
+
+	@Override
+	/**
+	 * get the min scores of the first populations objectives
+	 * @return min scores of first populations objectives as an array of doubles
+	 */
+	public final double[] minScores() {
+		//TODO: this is potentially problematic, as it is not generalized to all populations
+		
+		double[] mins = new double[objectivesPerPopulation()[0]];
+		for(int i = 0; i < objectivesPerPopulation()[0]; i++){
+			mins[i] = task.objectives.get(0).get(i).minScore();
+		}
+		return mins;
+	}
 
 }
