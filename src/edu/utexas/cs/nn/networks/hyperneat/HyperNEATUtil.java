@@ -7,7 +7,6 @@ import java.util.List;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.graphics.DrawingPanel;
 import edu.utexas.cs.nn.networks.TWEANN.Node;
-import edu.utexas.cs.nn.util.MiscUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 
 /**
@@ -56,8 +55,8 @@ public class HyperNEATUtil {
 	/**
 	 * Draws substrate as a grid with squares representing each substrate coordinate
 	 * @param s substrate
-	 * @param nodes list of substrate nodes TODO: use to extract color of square
-	 * @param c color of squares
+	 * @param nodes list of substrate nodes
+         * @param nodeIndexStart where the relevant nodes start
 	 * @return drawing panel containing substrate drawing
 	 */
 	public static DrawingPanel drawSubstrate(Substrate s, ArrayList<Node> nodes, int nodeIndexStart) { 
@@ -69,12 +68,11 @@ public class HyperNEATUtil {
 	 * Overloaded. Draws substrate as a grid with squares representing each substrate coordinate
 	 *  
 	 * @param dp drawing panel which substrate is going to be drawn onto
-	 * @param s substate in question
-	 * @param nodes list of substrate nodes TODO: use to extract color of square
-	 * @param c color
+	 * @param s substrate in question
+	 * @param nodes list of substrate nodes 
+         * @param nodeIndexStart where the relevant nodes start
 	 * @return drawing panel containing drawing of substrate
 	 */
-	// Call inside of TWEANN.process at end
 	public static DrawingPanel drawSubstrate(DrawingPanel dp, Substrate s, ArrayList<Node> nodes, int nodeIndexStart) { 
 				drawCoord(dp, s.size, nodes, nodeIndexStart);
 				drawGrid(dp, s.size);
