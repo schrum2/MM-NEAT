@@ -17,6 +17,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
@@ -41,6 +42,7 @@ import edu.utexas.cs.nn.util.CombinatoricUtilities;
 import edu.utexas.cs.nn.util.GraphicsUtil;
 import edu.utexas.cs.nn.util.PopulationUtil;
 import java.util.HashSet;
+import java.util.Hashtable;
 
 /**
  * Implementation of picbreeder that uses Java Swing components for graphical interface
@@ -103,6 +105,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	/**
 	 * Default Constructor
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public PicbreederTask() {		
 		//sets mu to a divisible number
 		if(Parameters.parameters.integerParameter("mu") % PicbreederTask.NUM_COLUMNS != 0) { 
@@ -131,7 +134,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		buttons = new ArrayList<JButton>();
 
 		//sets up JFrame
-		frame.setSize(PIC_SIZE * NUM_COLUMNS, PIC_SIZE * NUM_ROWS);
+		frame.setSize(PIC_SIZE * NUM_COLUMNS + 50, PIC_SIZE * NUM_ROWS);
 		frame.setLocation(300, 100);//magic #s 100 correspond to relocating frame to middle of screen
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLayout(new GridLayout(NUM_ROWS + 1, 0));// the + 1 includes room for the title panel
@@ -167,7 +170,8 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 
 		//adds slider for mutation rate change
 		JSlider mutationsPerGeneration = new JSlider(JSlider.HORIZONTAL, MPG_MIN, MPG_MAX, MPG_DEFAULT);
-
+		Hashtable labels = new Hashtable();
+		
 		//set graphic names and toolTip titles
 		evolveButton.setName("" + EVOLVE_BUTTON_INDEX);
 		evolveButton.setToolTipText("Evolve button");
@@ -195,7 +199,10 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		halfLinear.setName("" + HALF_LINEAR_CHECKBOX_INDEX);
 		mutationsPerGeneration.setMinorTickSpacing(1);
 		mutationsPerGeneration.setPaintTicks(true);
-		mutationsPerGeneration.setPaintLabels(true);
+        labels.put(0, new JLabel("Fewer Mutations"));
+        labels.put(10, new JLabel("More Mutations"));
+        mutationsPerGeneration.setLabelTable(labels);
+        mutationsPerGeneration.setPaintLabels(true);
 		
 		//add action listeners to buttons
 		resetButton.addActionListener(this);
