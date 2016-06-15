@@ -23,6 +23,7 @@ public class MultinetworkSelectorNetworkMsPacManController extends MultinetworkS
 				EvolutionaryHistory.getSubnetwork(Parameters.parameters.stringParameter("pillEatingSubnetwork")) });
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public MultinetworkSelectorNetworkMsPacManController(TWEANN nn, Genotype[] genotypes) throws NoSuchMethodException {
 		super(genotypes,
 				MMNEAT.coevolutionMediators != null ? // For backwards

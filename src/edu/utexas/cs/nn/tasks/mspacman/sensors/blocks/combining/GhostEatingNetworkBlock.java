@@ -61,6 +61,7 @@ public class GhostEatingNetworkBlock<T extends Network> extends SubNetworkBlock<
 	 *
 	 * @param args
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static void main(String[] args) throws NoSuchMethodException {
 		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "showNetworks:true", "watch:true", "task:edu.utexas.cs.nn.tasks.mspacman.MsPacManTask" });
 		MMNEAT.loadClasses();

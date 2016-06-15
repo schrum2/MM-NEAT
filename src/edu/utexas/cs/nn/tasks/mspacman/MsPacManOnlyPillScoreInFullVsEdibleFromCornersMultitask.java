@@ -75,6 +75,7 @@ public class MsPacManOnlyPillScoreInFullVsEdibleFromCornersMultitask<T extends N
 					}
 				}
 			}
+			s.close();
 		} catch (FileNotFoundException ex) {
 			System.out.println("Could not load: " + filename);
 			System.exit(1);

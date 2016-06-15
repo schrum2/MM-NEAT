@@ -342,6 +342,7 @@ public class TUGNSGA2<T> extends NSGA2<T> {
 	 *            Parent population of genotypes
 	 * @return child population of genotypes
 	 */
+	@SuppressWarnings("rawtypes")
 	@Override
 	public ArrayList<Genotype<T>> getNextGeneration(ArrayList<Genotype<T>> parents) {
 		ArrayList<Genotype<T>> nextGen = super.getNextGeneration(parents);
@@ -520,6 +521,7 @@ public class TUGNSGA2<T> extends NSGA2<T> {
 
 	// Some unit tests
 	// Should turn into proper JUnit Tests
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static void main(String[] args) {
 		Parameters.initializeParameterCollections(new String[] { "io:false", "tugKeepsParetoFront:false" });
 		MMNEAT.loadClasses();

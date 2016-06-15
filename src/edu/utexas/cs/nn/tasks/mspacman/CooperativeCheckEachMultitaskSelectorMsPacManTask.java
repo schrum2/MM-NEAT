@@ -21,12 +21,14 @@ public class CooperativeCheckEachMultitaskSelectorMsPacManTask<T extends Network
 	/**
 	 * Pass multitask network via static field
 	 */
+	@SuppressWarnings("rawtypes")
 	public static Genotype multitaskGenotype = null;
 
 	public CooperativeCheckEachMultitaskSelectorMsPacManTask() {
 		super();
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public ArrayList<Score> evaluate(Genotype[] team) {
 		multitaskGenotype = team[MULTITASK_INDEX];

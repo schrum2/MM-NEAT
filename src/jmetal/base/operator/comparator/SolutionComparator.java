@@ -17,6 +17,7 @@ import jmetal.util.JMException;
  * This class implements a <code>Comparator</code> (a method for comparing
  * <code>Solution</code> objects) based on the values of the variables.
  */
+@SuppressWarnings("rawtypes")
 public class SolutionComparator implements Comparator {
 
 	/**

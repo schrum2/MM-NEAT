@@ -9,10 +9,12 @@ import edu.utexas.cs.nn.tasks.mspacman.sensors.MsPacManControllerInputOutputMedi
 import edu.utexas.cs.nn.util.CombinatoricUtilities;
 import java.awt.Graphics2D;
 
+@SuppressWarnings("rawtypes")
 public class EnsembleMsPacManController<T extends Network> extends MultinetworkMsPacManController {
 
 	private MsPacManEnsembleArbitrator arbitrator;
 
+	@SuppressWarnings("unchecked")
 	public EnsembleMsPacManController(Genotype<T>[] genotypes, MsPacManControllerInputOutputMediator[] inputMediators) {
 		super(genotypes, inputMediators);
 		this.arbitrator = MMNEAT.ensembleArbitrator;

@@ -32,6 +32,7 @@ import java.util.logging.Level;
  * @author Rudolf Kadlec aka ik
  * @author Jimmy
  */
+@SuppressWarnings("rawtypes")
 @AgentScoped
 public class HunterBot extends UT2004BotModuleController<UT2004Bot> {
 
@@ -98,6 +99,7 @@ public class HunterBot extends UT2004BotModuleController<UT2004Bot> {
 	 * Taboo list of items that are forbidden for some time.
 	 */
 	protected TabooSet<Item> tabooItems = null;
+	@SuppressWarnings("unused")
 	private UT2004PathAutoFixer autoFixer;
 
 	/**
@@ -113,56 +115,19 @@ public class HunterBot extends UT2004BotModuleController<UT2004Bot> {
 		// it reports an appropriate path event and the path executor will stop
 		// following the path which in turn allows
 		// us to issue another follow-path command in the right time
-		pathExecutor.addStuckDetector(new UT2004TimeStuckDetector(bot, 3000, 10000)); // if
-																						// the
-																						// bot
-																						// does
-																						// not
-																						// move
-																						// for
-																						// 3
-																						// seconds,
-																						// considered
-																						// that
-																						// it
-																						// is
-																						// stuck
-		pathExecutor.addStuckDetector(new UT2004PositionStuckDetector(bot)); // watch
-																				// over
-																				// the
-																				// position
-																				// history
-																				// of
-																				// the
-																				// bot,
-																				// if
-																				// the
-																				// bot
-																				// does
-																				// not
-																				// move
-																				// sufficiently
-																				// enough,
-																				// consider
-																				// that
-																				// it
-																				// is
-																				// stuck
-		pathExecutor.addStuckDetector(new UT2004DistanceStuckDetector(bot)); // watch
-																				// over
-																				// distances
-																				// to
-																				// target
+		// if the bot does not move for 3 seconds, considered that it is stuck
 
-		autoFixer = new UT2004PathAutoFixer(bot, pathExecutor, fwMap, navBuilder); // auto-removes
-																					// wrong
-																					// navigation
-																					// links
-																					// between
-																					// navpoints
+		pathExecutor.addStuckDetector(new UT2004TimeStuckDetector(bot, 3000, 10000)); 
+		// watch over the position history of the bot, if the bot does not move sufficiently enough, consider that it is stuck
+		pathExecutor.addStuckDetector(new UT2004PositionStuckDetector(bot)); 
+		// watch over distances to target
+		pathExecutor.addStuckDetector(new UT2004DistanceStuckDetector(bot)); 
+		 // auto-removes wrong navigation links between navpoints
+		autoFixer = new UT2004PathAutoFixer(bot, pathExecutor, fwMap, navBuilder);
 
 		// listeners
 		pathExecutor.getState().addListener(new FlagListener<IPathExecutorState>() {
+			@SuppressWarnings("incomplete-switch")
 			@Override
 			public void flagChanged(IPathExecutorState changedValue) {
 				switch (changedValue.getState()) {
@@ -413,6 +378,7 @@ public class HunterBot extends UT2004BotModuleController<UT2004Bot> {
 	//////////////////
 	// STATE MEDKIT //
 	//////////////////
+	@SuppressWarnings("unchecked")
 	protected void stateMedKit() {
 		log.info("Decision is: MEDKIT");
 		// config.setName("Hunter [MEDKIT]");
@@ -496,6 +462,7 @@ public class HunterBot extends UT2004BotModuleController<UT2004Bot> {
 	}
 
 	///////////////////////////////////
+	@SuppressWarnings("unchecked")
 	public static void main(String args[]) throws PogamutException {
 		// starts 4 Hunters at once
 		// note that this is the most easy way to get a bunch of bots running at

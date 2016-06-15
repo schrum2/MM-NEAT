@@ -75,6 +75,7 @@ public class IO {
 
 				input = br.readLine();
 			}
+			br.close();
 		} catch (IOException ioe) {
 			ioe.printStackTrace();
 		}

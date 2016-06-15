@@ -93,6 +93,7 @@ public final class Maze {
 
 				input = br.readLine();
 			}
+			br.close();
 		} catch (IOException ioe) {
 			ioe.printStackTrace();
 		}
@@ -119,6 +120,7 @@ public final class Maze {
 				shortestPathDistances[index++] = Integer.parseInt(input);
 				input = br.readLine();
 			}
+			br.close();
 		} catch (IOException ioe) {
 			ioe.printStackTrace();
 		}

@@ -9,11 +9,11 @@ package jmetal.base;
 import java.io.Serializable;
 
 import jmetal.util.JMException;
-import jmetal.util.Configuration.*;
 
 /**
  * Abstract class representing a multiobjective optimization problem
  */
+@SuppressWarnings("serial")
 public abstract class Problem implements Serializable {
 
 	/**
@@ -62,6 +62,7 @@ public abstract class Problem implements Serializable {
 	/**
 	 * Stores the type of each variable
 	 */
+	@SuppressWarnings("rawtypes")
 	public Class[] variableType_;
 
 	/**

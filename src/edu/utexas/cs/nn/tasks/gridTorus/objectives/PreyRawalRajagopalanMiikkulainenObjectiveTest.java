@@ -28,6 +28,7 @@ public class PreyRawalRajagopalanMiikkulainenObjectiveTest {
 		MMNEAT.loadClasses();
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Test
 	public void testFitnessWhenAllPreySurvive() {
 		PreyRawalRajagopalanMiikkulainenObjective objective = new PreyRawalRajagopalanMiikkulainenObjective();
@@ -40,6 +41,7 @@ public class PreyRawalRajagopalanMiikkulainenObjectiveTest {
 
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Test
 	public void testFitnessWhenSomePreySurvive() {
 		PreyRawalRajagopalanMiikkulainenObjective objective = new PreyRawalRajagopalanMiikkulainenObjective();
@@ -68,6 +70,7 @@ public class PreyRawalRajagopalanMiikkulainenObjectiveTest {
 
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Test
 	public void testFitnessWhenNoPreySurvive() {
 		PreyRawalRajagopalanMiikkulainenObjective objective = new PreyRawalRajagopalanMiikkulainenObjective();

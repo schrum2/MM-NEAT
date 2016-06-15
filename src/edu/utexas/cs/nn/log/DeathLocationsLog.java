@@ -64,7 +64,9 @@ public class DeathLocationsLog extends MMNEATLog {
 				mazeHash.put(location, 0);
 			}
 			mazeHash.put(location, mazeHash.get(location) + 1);
+			pair.close();
 		}
+		read.close();
 		// System.out.println("Return death count");
 		return result;
 	}

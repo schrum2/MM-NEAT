@@ -13,6 +13,7 @@ import java.util.Comparator;
  * This class implements a <code>Comparator</code> (a method for comparing
  * <code>Solution</code> objects) based on a objective values.
  */
+@SuppressWarnings("rawtypes")
 public class ObjectiveComparator implements Comparator {
 
 	/**

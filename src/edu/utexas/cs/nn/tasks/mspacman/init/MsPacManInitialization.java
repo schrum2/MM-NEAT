@@ -108,6 +108,7 @@ public class MsPacManInitialization {
          * @param <T> phenotype
          * @param subnets change the subnetworks in the
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static <T> void replaceSubnets(ArrayList<Genotype<T>> subnets) {
 		BlockLoadedInputOutputMediator blockMediator = ((BlockLoadedInputOutputMediator) pacmanInputOutputMediator);
 		int numBlocks = blockMediator.blocks.size();
@@ -116,6 +117,7 @@ public class MsPacManInitialization {
 		}
 	}
         
+	@SuppressWarnings("rawtypes")
 	public static void setupCooperativeCoevolutionGhostMonitorsForMsPacman() throws NoSuchMethodException { 
 		boolean includeInputs = Parameters.parameters.booleanParameter("subsumptionIncludesInputs");
 		int outputsPerMonitor = GameFacade.NUM_DIRS;
@@ -148,6 +150,7 @@ public class MsPacManInitialization {
 		}
 	}
 	
+	@SuppressWarnings("rawtypes")
 	public static void setupCooperativeCoevolutionSelectorForMsPacman() throws NoSuchMethodException {
 		MMNEAT.pacmanInputOutputMediator = (MsPacManControllerInputOutputMediator) ClassCreation
 				.createObject("pacmanInputOutputMediator");
@@ -172,6 +175,7 @@ public class MsPacManInitialization {
 		}
 	}
 	
+	@SuppressWarnings("rawtypes")
 	public static void setupCooperativeCoevolutionCheckEachMultitaskPreferenceNetForMsPacman() throws NoSuchMethodException {
 		MMNEAT.pacmanInputOutputMediator = (MsPacManControllerInputOutputMediator) ClassCreation.createObject("pacmanInputOutputMediator");
 		MMNEAT.modesToTrack = CommonConstants.multitaskModules;
@@ -189,6 +193,7 @@ public class MsPacManInitialization {
 		MMNEAT.prepareCoevolutionArchetypes();
 	}
 	
+	@SuppressWarnings("rawtypes")
 	public static void setupCooperativeCoevolutionCombinerForMsPacman() throws NoSuchMethodException {
 		boolean includeInputs = Parameters.parameters.booleanParameter("subsumptionIncludesInputs");
 		int outputsPerSubnet = GameFacade.NUM_DIRS;
@@ -222,6 +227,7 @@ public class MsPacManInitialization {
 		}
 	}
 	
+	@SuppressWarnings("rawtypes")
 	public static void setupCooperativeCoevolutionNonHierarchicalForMsPacman() throws NoSuchMethodException {
 		MMNEAT.pacmanInputOutputMediator = (MsPacManControllerInputOutputMediator) ClassCreation
 				.createObject("pacmanInputOutputMediator");
@@ -241,6 +247,7 @@ public class MsPacManInitialization {
 		MMNEAT.prepareCoevolutionArchetypes();
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static void setupMultitaskSeedPopulationForMsPacman(String ghostDir, String pillDir) {
 		// A combined archetype is needed
 		CombiningTWEANNCrossover cross = new CombiningTWEANNCrossover(true, true);
@@ -268,9 +275,8 @@ public class MsPacManInitialization {
 		String ghostScoreFile = Parameters.parameters.stringParameter("multinetworkScores1");
 		String pillScoreFile = Parameters.parameters.stringParameter("multinetworkScores2");
 
-                @SuppressWarnings("UnusedAssignment")
+
 		NSGA2Score<TWEANN>[] ghostScores = null;
-                @SuppressWarnings("UnusedAssignment")
 		NSGA2Score<TWEANN>[] pillScores = null;
 		try {
 			ghostScores = PopulationUtil.loadScores(ghostScoreFile);

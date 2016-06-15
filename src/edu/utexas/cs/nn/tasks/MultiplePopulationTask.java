@@ -15,6 +15,7 @@ import java.util.ArrayList;
  */
 public interface MultiplePopulationTask extends Task {
 
+	@SuppressWarnings("rawtypes")
 	public ArrayList<ArrayList<Score>> evaluateAllPopulations(ArrayList<ArrayList<Genotype>> populations);
 
 	public int numberOfPopulations();

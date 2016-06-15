@@ -15,12 +15,15 @@ import java.util.ArrayList;
  */
 public class CooperativeCoevolutionTUGNSGA2 extends CooperativeCoevolutionNSGA2 {
 
+	@SuppressWarnings("rawtypes")
 	private final TUGNSGA2 tug;
 
+	@SuppressWarnings("rawtypes")
 	public CooperativeCoevolutionTUGNSGA2() {
 		this.tug = new TUGNSGA2(false);
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public ArrayList<Genotype> selection(int popIndex, int toKeep, ArrayList<Score> sourcePopulation) {
 		if (popIndex == 0) {
@@ -33,6 +36,7 @@ public class CooperativeCoevolutionTUGNSGA2 extends CooperativeCoevolutionNSGA2 
 		}
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void close(ArrayList<ArrayList<Genotype>> populations) {
 		super.close(populations);
@@ -41,6 +45,7 @@ public class CooperativeCoevolutionTUGNSGA2 extends CooperativeCoevolutionNSGA2 
 		}
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public ArrayList<Score> prepareSourcePopulation(int popIndex, ArrayList<Score> parentScores, ArrayList<Score> childrenScores, int mltype) {
 		if (popIndex == 0) {

@@ -20,6 +20,7 @@ import jmetal.util.JMException;
  * <code>Variable</code>. For this reason, they are defined by default as giving
  * a fatal error.
  */
+@SuppressWarnings("serial")
 public abstract class Variable implements Serializable {
 
 	// private VariableType_ type_;
@@ -38,6 +39,7 @@ public abstract class Variable implements Serializable {
 	 * default, and the program is terminated. Those classes requiring this
 	 * method must redefine it.
 	 */
+	@SuppressWarnings("rawtypes")
 	public double getValue() throws JMException {
 		Class cls = java.lang.String.class;
 		String name = cls.getName();
@@ -52,6 +54,7 @@ public abstract class Variable implements Serializable {
 	 * default, and the program is terminated. Those classes requiring this
 	 * method must redefine it.
 	 */
+	@SuppressWarnings("rawtypes")
 	public void setValue(double value) throws JMException {
 		Class cls = java.lang.String.class;
 		String name = cls.getName();
@@ -65,6 +68,7 @@ public abstract class Variable implements Serializable {
 	 * method is considered a fatal error by default, and the program is
 	 * terminated. Those classes requiring this method must redefine it.
 	 */
+	@SuppressWarnings("rawtypes")
 	public double getLowerBound() throws JMException {
 		Class cls = java.lang.String.class;
 		String name = cls.getName();
@@ -78,6 +82,7 @@ public abstract class Variable implements Serializable {
 	 * method is considered a fatal error by default, and the program is
 	 * terminated. Those classes requiring this method mustredefine it.
 	 */
+	@SuppressWarnings("rawtypes")
 	public double getUpperBound() throws JMException {
 		Class cls = java.lang.String.class;
 		String name = cls.getName();
@@ -91,6 +96,7 @@ public abstract class Variable implements Serializable {
 	 * method is considered a fatal error by defaultm and the program is
 	 * terminated. Those classes requiring this method must to redefine it.
 	 */
+	@SuppressWarnings("rawtypes")
 	public void setLowerBound(double lowerBound) throws JMException {
 		Class cls = java.lang.String.class;
 		String name = cls.getName();
@@ -104,6 +110,7 @@ public abstract class Variable implements Serializable {
 	 * method is considered a fatal error by default, and the program is
 	 * terminated. Those classes requiring this method must redefine it.
 	 */
+	@SuppressWarnings("rawtypes")
 	public void setUpperBound(double upperBound) throws JMException {
 		Class cls = java.lang.String.class;
 		String name = cls.getName();
@@ -123,6 +130,7 @@ public abstract class Variable implements Serializable {
 	 *
 	 * @return The type of the variable
 	 */
+	@SuppressWarnings("rawtypes")
 	public Class getVariableType() {
 		return this.getClass();
 	} // getVariableType

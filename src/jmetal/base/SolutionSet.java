@@ -14,6 +14,7 @@ import jmetal.util.Configuration;
 /**
  * Class representing a SolutionSet (a set of solutions)
  */
+@SuppressWarnings("serial")
 public class SolutionSet implements Serializable {
 
 	/**
@@ -93,6 +94,7 @@ public class SolutionSet implements Serializable {
 	 * @param comparator
 	 *            <code>Comparator</code> used to sort.
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void sort(Comparator comparator) {
 		if (comparator == null) {
 			Configuration.logger_.severe("No criterium for compare exist");

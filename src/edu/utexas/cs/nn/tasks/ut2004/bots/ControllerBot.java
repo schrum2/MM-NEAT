@@ -14,7 +14,6 @@ import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.InitedM
 import cz.cuni.amis.pogamut.ut2004.server.IUT2004Server;
 import cz.cuni.amis.pogamut.ut2004.utils.MultipleUT2004BotRunner;
 import cz.cuni.amis.pogamut.ut2004.utils.PogamutUT2004Property;
-import cz.cuni.amis.pogamut.ut2004.utils.UT2004BotRunner;
 import cz.cuni.amis.utils.exception.PogamutException;
 import edu.utexas.cs.nn.tasks.ut2004.actions.BotAction;
 import edu.utexas.cs.nn.tasks.ut2004.controller.BotController;
@@ -22,6 +21,7 @@ import edu.utexas.cs.nn.tasks.ut2004.controller.DummyController;
 import edu.utexas.cs.nn.tasks.ut2004.controller.RandomNavPointPathExplorer;
 import edu.utexas.cs.nn.tasks.ut2004.server.BotKiller;
 
+@SuppressWarnings("rawtypes")
 @AgentScoped
 public class ControllerBot extends UT2004BotModuleController {
 
@@ -101,6 +101,7 @@ public class ControllerBot extends UT2004BotModuleController {
 	 *            port on server to connect bot
 	 * @throws PogamutException
 	 */
+	@SuppressWarnings({ "unchecked" })
 	public static GameDataCollector[] launchBot(IUT2004Server server, String name, BotController[] controllers,
 			int evalSeconds, int desiredSkill, String host, int botPort) {
 		GameDataCollector[] collectors = new GameDataCollector[controllers.length];
@@ -127,6 +128,7 @@ public class ControllerBot extends UT2004BotModuleController {
 		return collectors;
 	}
 
+	@SuppressWarnings({ "unchecked" })
 	public static void main(String[] args) {
 		int port = Pogamut.getPlatform().getIntProperty(PogamutUT2004Property.POGAMUT_UT2004_BOT_PORT.getKey());
 		MultipleUT2004BotRunner multi = new MultipleUT2004BotRunner("TEST").setHost("localhost").setPort(port);

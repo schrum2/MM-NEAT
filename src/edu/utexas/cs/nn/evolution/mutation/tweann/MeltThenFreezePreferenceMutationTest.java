@@ -6,10 +6,15 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import edu.utexas.cs.nn.MMNEAT.MMNEAT;
+import edu.utexas.cs.nn.parameters.Parameters;
+
 public class MeltThenFreezePreferenceMutationTest {
 
 	@Before
 	public void setUp() throws Exception {
+		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "recurrency:false", "freezePreferenceRate"});
+		MMNEAT.loadClasses();
 	}
 
 	@After

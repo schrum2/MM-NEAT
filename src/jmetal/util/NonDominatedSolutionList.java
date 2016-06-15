@@ -17,12 +17,18 @@ import java.util.*;
 public class NonDominatedSolutionList extends SolutionSet {
 
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	/**
 	 * Stores a <code>Comparator</code> for dominance checking
 	 */
+	@SuppressWarnings("rawtypes")
 	private Comparator dominance_ = new DominanceComparator();
 	/**
 	 * Stores a <code>Comparator</code> for checking if two solutions are equal
 	 */
+	@SuppressWarnings("rawtypes")
 	private static final Comparator equal_ = new SolutionComparator();
 
 	/**
@@ -40,6 +46,7 @@ public class NonDominatedSolutionList extends SolutionSet {
 	 * @param dominance
 	 *            The comparator for dominance checking.
 	 */
+	@SuppressWarnings("rawtypes")
 	public NonDominatedSolutionList(Comparator dominance) {
 		super();
 		dominance_ = dominance;
@@ -55,6 +62,7 @@ public class NonDominatedSolutionList extends SolutionSet {
 	 *         variables can be null if the solution is read from a file; in
 	 *         that case, the domination tests are omitted
 	 */
+	@SuppressWarnings("unchecked")
 	public boolean add(Solution solution) {
 		Iterator<Solution> iterator = solutionsList_.iterator();
 

@@ -14,6 +14,7 @@ import java.util.Comparator;
  * <code>Solution</code> objects) based on the overall constraint violation of
  * the solucions, as in NSGA-II.
  */
+@SuppressWarnings("rawtypes")
 public class OverallConstraintViolationComparator implements Comparator {
 
 	/**

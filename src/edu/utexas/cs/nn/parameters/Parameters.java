@@ -889,6 +889,7 @@ public class Parameters {
          * @param label label for Class parameter
          * @param value new value
          */
+	@SuppressWarnings("rawtypes")
 	public void setClass(String label, Class value) {
 		this.classOptions.change(label, value);
 	}

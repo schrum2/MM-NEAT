@@ -42,6 +42,7 @@ public class NNMsPacMan<T extends Network> extends Organism<T> {
 	 * 
 	 * @param genotype
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public NNMsPacMan(Genotype<T> genotype) {
 		super(genotype);
 		Network net = (Network) this.getGenotype().getPhenotype();

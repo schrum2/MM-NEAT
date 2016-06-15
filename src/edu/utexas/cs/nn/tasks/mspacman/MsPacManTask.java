@@ -70,8 +70,11 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 	private final int scoreIndexInOtherScores;
 	private final int pillScoreIndexInOtherScores;
 	private final int ghostRewardIndexInOtherScores;
+	@SuppressWarnings("unused")
 	private final int maxScoreIndexInOtherScores;
+	@SuppressWarnings("unused")
 	private final int maxPillScoreIndexInOtherScores;
+	@SuppressWarnings("unused")
 	private final int maxGhostRewardIndexInOtherScores;
 	private final int properPowerPillIndexInOtherScores;
 	private final int improperPowerPillIndexInOtherScores;
@@ -79,7 +82,9 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 	private final int specificLevelScoreFirstIndexInOtherScores;
 	private final int powerPillEatenWhenGhostFarIndexInOtherScores;
 	private final int avgLevelIndexInOtherScores;
+	@SuppressWarnings("unused")
 	private final int maxLevelIndexInOtherScores;
+	@SuppressWarnings("unused")
 	private final int ghostRegretScoreInOtherScores;
 	private final int ghostsEatenIndexInOtherScores;
 	protected int rawTimeScoreIndex = -1;
@@ -387,10 +392,12 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 		}
 	}
 
+	@SuppressWarnings("rawtypes")
 	public final void addObjective(MsPacManObjective o, ArrayList<MsPacManObjective<T>> list, boolean affectsSelection) {
 		addObjective(o, list, null, affectsSelection);
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public final void addObjective(MsPacManObjective o, ArrayList<MsPacManObjective<T>> list, Statistic override, boolean affectsSelection) {
 		list.add(o);
 		MMNEAT.registerFitnessFunction(o.getClass().getSimpleName(), override, affectsSelection);
@@ -402,6 +409,7 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 		return super.evaluate(individual);
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {
 		Organism<T> organism = evolveGhosts ? new SharedNNGhosts<T>(individual) : new NNMsPacMan<T>(individual);

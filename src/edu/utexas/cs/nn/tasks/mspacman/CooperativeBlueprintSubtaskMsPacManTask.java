@@ -25,6 +25,7 @@ public class CooperativeBlueprintSubtaskMsPacManTask<T extends Network>
 	 * Holds each previous set of scores so that child blueprints will have
 	 * access to parent networks *
 	 */
+	@SuppressWarnings("rawtypes")
 	private ArrayList<ArrayList<Score>> previousScores;
 	/**
 	 * When a parent network score is accessed in previousScores, remember where
@@ -81,6 +82,7 @@ public class CooperativeBlueprintSubtaskMsPacManTask<T extends Network>
 	 *            Populations are: 0=Selectors,1=Ghosts,2=Pills,3=Blueprints.
 	 * @return score for each member of each population
 	 */
+	@SuppressWarnings("rawtypes")
 	@Override
 	public ArrayList<ArrayList<Score>> evaluateAllPopulations(ArrayList<ArrayList<Genotype>> populations) {
 		// Re-initialize each eval cycle
@@ -158,6 +160,7 @@ public class CooperativeBlueprintSubtaskMsPacManTask<T extends Network>
 	 *            index in join order groups
 	 * @return team to evaluate
 	 */
+	@SuppressWarnings("rawtypes")
 	@Override
 	protected Genotype[] getTeam(ArrayList<ArrayList<Genotype>> populations, List<ArrayList<Integer>> joinOrder,
 			int index) {
@@ -195,6 +198,7 @@ public class CooperativeBlueprintSubtaskMsPacManTask<T extends Network>
 	 * @param scores
 	 *            scores for the networks from evaluated team
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	protected void addScores(Score[][] rawSums, List<ArrayList<Integer>> teamOrder, int order,
 			ArrayList<Score> scores) {
@@ -225,6 +229,7 @@ public class CooperativeBlueprintSubtaskMsPacManTask<T extends Network>
 		}
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	protected ArrayList<ArrayList<Score>> wrapUpScores(Score[][] rawSums, ArrayList<ArrayList<Genotype>> populations,
 			List<ArrayList<Integer>> teamOrder) {
@@ -285,6 +290,7 @@ public class CooperativeBlueprintSubtaskMsPacManTask<T extends Network>
 	 *            subpop index
 	 * @return Score of parent network (contains genotype)
 	 */
+	@SuppressWarnings("rawtypes")
 	private Score getParentScore(SimpleBlueprintGenotype bp, List<ArrayList<Integer>> joinOrder, int index,
 			int popIndex) {
 		int popSize = previousScores.get(popIndex).size();

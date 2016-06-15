@@ -15,8 +15,10 @@ import java.util.Scanner;
  */
 public class TUGLog extends StatisticsLog<double[]> {
 
+	@SuppressWarnings("rawtypes")
 	private final TUGNSGA2 ea;
 
+	@SuppressWarnings("rawtypes")
 	public TUGLog(String _prefix, TUGNSGA2 ea) {
 		super(_prefix, null);
 		this.ea = ea;
@@ -38,6 +40,7 @@ public class TUGLog extends StatisticsLog<double[]> {
 				initialClimb[i] = (s.nextInt() == 1); // get use bit
 			}
 			ea.loadTugState(usage, rwas, loadedGoals, lastDeltas, initialClimb);
+			s.close();
 		}
 		// Cannot use the default plot file setup because there are extra things
 		// to plot

@@ -95,6 +95,7 @@ public abstract class CooperativeNonHierarchicalMultiNetMsPacManTask<T extends N
 		}
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public ArrayList<Score> evaluate(Genotype[] team) {
 
@@ -141,6 +142,7 @@ public abstract class CooperativeNonHierarchicalMultiNetMsPacManTask<T extends N
 	 * @param mspacman
 	 * @return
 	 */
+	@SuppressWarnings("static-access")
 	public Score<T> evaluate(NNPacManController multiController) {
 		PacManControllerFacade mspacman = new PacManControllerFacade((NewPacManController) (multiController));
 

@@ -26,6 +26,7 @@ public class PredatorMinimizeDistanceFromPreyObjectiveTest {
 		MMNEAT.loadClasses();
 	}
 
+	@SuppressWarnings({ "unused", "rawtypes", "unchecked" })
 	@Test
 	public void test() {
 		TorusPredPreyGame game = new TorusPredPreyGame(100, 100, 3, 2);
