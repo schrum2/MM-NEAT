@@ -94,3 +94,4 @@ vizdoom.ini
 *.ppt
 .settings/org.eclipse.jdt.core.prefs
 *.png
+_vizdoom.ini

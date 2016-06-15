@@ -1,8 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package edu.utexas.cs.nn.gridTorus;
 
 import edu.utexas.cs.nn.parameters.Parameters;
@@ -24,10 +19,10 @@ public class TorusPredPreyGame {
 	protected final TorusAgent[] preys;
 
 	// array which stores the time that each prey dies (for fitness function)
-	private int[] deathTimes;
+	private final int[] deathTimes;
 	private boolean gameOver;
 	private int time;
-	private int timeLimit;
+	private final int timeLimit;
 
 	/**
 	 * Constructor for the game board
@@ -80,6 +75,7 @@ public class TorusPredPreyGame {
 	/**
 	 * returns a double array with an array of the predators followed by an
 	 * array of the preys
+         * @return array of all agents in world
 	 */
 	public TorusAgent[][] getAgents() {
 		return new TorusAgent[][] { preds, preys };
@@ -146,8 +142,7 @@ public class TorusPredPreyGame {
 	 *            the array of all the agents
 	 */
 	private static void moveAll(int[][] moves, TorusAgent[] agents) {
-		assert moves.length == agents.length : "Moves and Agents don't match up: " + moves.length + " != "
-				+ agents.length;
+		assert moves.length == agents.length : "Moves and Agents don't match up: " + moves.length + " != " + agents.length;
 		for (int i = 0; i < agents.length; i++) {
 			if (agents[i] != null) {
 				agents[i].move(moves[i][0], moves[i][1]);
@@ -165,8 +160,7 @@ public class TorusPredPreyGame {
 	 */
 	private void eat(TorusAgent[] preds, TorusAgent[] preys) {
 		for (int i = 0; i < preys.length; i++) {
-			if (preys[i] != null && preys[i].isCoLocated(preds)) { // Prey is
-																	// eaten
+			if (preys[i] != null && preys[i].isCoLocated(preds)) { // Prey is eaten
 				// The prey at this location is currently being digested, so is
 				// now null
 				preys[i] = null;

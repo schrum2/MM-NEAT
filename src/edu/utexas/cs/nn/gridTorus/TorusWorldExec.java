@@ -10,10 +10,10 @@ import edu.utexas.cs.nn.util.MiscUtil;
  * used to run evaluations in this domain
  */
 public class TorusWorldExec {
-	// Several options are listed - simply remove comments to use the option you
-	// want
+	// Several options are listed - simply remove comments to use the option you want
 	/**
 	 * runs a single evaluation in the PredPrey domain with visuals
+         * @param args not used
 	 */
 	public static void main(String[] args) {
 		// activates the visual
@@ -75,15 +75,6 @@ public class TorusWorldExec {
 		return game;
 	}
 
-	/**
-	 * a class which simply holds an array of the actions taken This is
-	 * commented out because it is also unnecessary to include (as well as the
-	 * threads of Agents)
-	 */
-	// private static class ActionStorage {
-	// public int[] action = new int[]{0,0};
-	// }
-
 	boolean hold = false;
 
 	/**
@@ -97,31 +88,12 @@ public class TorusWorldExec {
 	 * @return the TorusPredPreyGame object that is an instance of the PredPrey
 	 *         game
 	 */
+        @SuppressWarnings({"null", "SleepWhileInLoop"})
 	public TorusPredPreyGame runGameTimed(TorusPredPreyController[] predControllers,
 			TorusPredPreyController[] preyControllers, boolean visual) {
 		game = new TorusPredPreyGame(Parameters.parameters.integerParameter("torusXDimensions"),
 				Parameters.parameters.integerParameter("torusYDimensions"), predControllers.length,
 				preyControllers.length);
-
-		// the threads in this code are overly complicated and unnecessary in
-		// this case
-
-		// ActionStorage[] preyActions = new
-		// ActionStorage[preyControllers.length];
-		// Agent[] preyAgents = new Agent[preyControllers.length];
-		// for (int i = 0; i < preyControllers.length; i++) {
-		// preyActions[i] = new ActionStorage();
-		// preyAgents[i] = new Agent(game.getPrey()[i], preyControllers[i],
-		// preyActions[i]);
-		// }
-		// ActionStorage[] predActions = new
-		// ActionStorage[predControllers.length];
-		// Agent[] predAgents = new Agent[predControllers.length];
-		// for (int i = 0; i < predControllers.length; i++) {
-		// predActions[i] = new ActionStorage();
-		// predAgents[i] = new Agent(game.getPredators()[i], predControllers[i],
-		// predActions[i]);
-		// }
 
 		TorusWorldView gv = null;
 
@@ -131,19 +103,11 @@ public class TorusWorldExec {
 			gv = new TorusWorldView(game).showGame();
 		}
 
-		// a loop that runs for the duration of the game, constantly (every 40
-		// milliseconds) updating
+		// a loop that runs for the duration of the game, constantly 
+                // (every 40 milliseconds) updating
 		// the predator and prey actions and applying visual mechanics if
 		// specified by user
 		while (!game.gameOver()) {
-			// unnecessary agent threads commented out
-			// for (int i = 0; i < predAgents.length; i++) {
-			// predAgents[i].alert();
-			// }
-			// for (int i = 0; i < preyAgents.length; i++) {
-			// preyAgents[i].alert();
-			// }
-
 			try {
 				// have the main thread pause in small increments so it is
 				// visually perceptible
@@ -165,8 +129,7 @@ public class TorusWorldExec {
 				if (game.getPrey()[i] != null)
 					preyGameActions[i] = preyControllers[i].getAction(game.getPrey()[i], game);
 			}
-			// update the game according to the actions of the predators and the
-			// preys
+			// update the game according to the actions of the predators and the preys
 			game.advance(predGameActions, preyGameActions);
 
 			if (visual) {
@@ -178,66 +141,10 @@ public class TorusWorldExec {
 			}
 		}
 
-		// unnecessary agent threads commented out
-		// for (int i = 0; i < predAgents.length; i++) {
-		// predAgents[i].kill();
-		// }
-		// for (int i = 0; i < preyAgents.length; i++) {
-		// preyAgents[i].kill();
-		// }
-
 		if (visual) {
 			gv.getFrame().dispose();
 		}
 
 		return game;
 	}
-
-	// unnecessary agent threads commented out
-	/*
-	 * Wraps the controller in a thread for the timed execution. This class then
-	 * updates the directions for Exec to parse to the game.
-	 */
-	// private final class Agent extends Thread {
-	//
-	// private TorusAgent agent;
-	// private TorusPredPreyController controller;
-	// private final ActionStorage store;
-	// private boolean alive;
-	//
-	// public Agent(TorusAgent agent, TorusPredPreyController controller,
-	// ActionStorage store) {
-	// this.agent = agent;
-	// this.controller = controller;
-	// this.store = store;
-	// alive = true;
-	// start();
-	// }
-	//
-	// public synchronized void kill() {
-	// alive = false;
-	// notify();
-	// }
-	//
-	// public synchronized void alert() {
-	// notify();
-	// }
-	//
-	// @Override
-	// public synchronized void run() {
-	// while (alive) {
-	// try {
-	// synchronized (this) {
-	// wait();
-	// }
-	//
-	// if (!game.gameOver()) {
-	// store.action = controller.getAction(agent, game);
-	// }
-	// } catch (InterruptedException e) {
-	// e.printStackTrace();
-	// }
-	// }
-	// }
-	// }
 }

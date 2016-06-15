@@ -40,6 +40,7 @@ public class TorusAgent implements ILocated2D {
 	/**
 	 * get position of the agent returns the tuple, the x and y coordinates
 	 */
+        @Override
 	public Tuple2D getPosition() {
 		return new Tuple2D(x, y);
 	}
@@ -50,6 +51,7 @@ public class TorusAgent implements ILocated2D {
 	 * @param other
 	 * @return
 	 */
+        @Override
 	public double distance(ILocated2D other) {
 		if (other == null) {
 			// this agent (other) got eaten and no longer exists so is null and
@@ -64,6 +66,7 @@ public class TorusAgent implements ILocated2D {
 	/**
 	 * return the position of the agent on the x-axis of the grid world
 	 */
+        @Override
 	public double getX() {
 		return x;
 	}
@@ -71,6 +74,7 @@ public class TorusAgent implements ILocated2D {
 	/**
 	 * return the position of the agent on the y-axis of the grid world
 	 */
+        @Override
 	public double getY() {
 		return y;
 	}
@@ -116,12 +120,12 @@ public class TorusAgent implements ILocated2D {
 	 * @return whether any share the cell of this agent
 	 */
 	public boolean isCoLocated(TorusAgent[] others) {
-		for (int i = 0; i < others.length; i++) {
-			if (this.isCoLocated(others[i])) {
-				return true;
-			}
-		}
-		return false;
+            for (TorusAgent other : others) {
+                if (isCoLocated(other)) {
+                    return true;
+                }
+            }
+            return false;
 	}
 
 	/**
@@ -132,18 +136,18 @@ public class TorusAgent implements ILocated2D {
 	 *            agents
 	 * @return the closest agent in others
 	 */
-	public TorusAgent closestAgent(TorusAgent[] others) {
-		TorusAgent closest = null;
-		double closestDistance = Integer.MAX_VALUE;
-		for (int i = 0; i < others.length; i++) {
-			double manhattanDistance = distance(others[i]);
-			if (manhattanDistance < closestDistance) {
-				closestDistance = manhattanDistance;
-				closest = others[i];
-			}
-		}
-		return closest;
-	}
+    public TorusAgent closestAgent(TorusAgent[] others) {
+        TorusAgent closest = null;
+        double closestDistance = Integer.MAX_VALUE;
+        for (TorusAgent other : others) {
+            double manhattanDistance = distance(other);
+            if (manhattanDistance < closestDistance) {
+                closestDistance = manhattanDistance;
+                closest = other;
+            }
+        }
+        return closest;
+    }
 
 	/**
 	 * Find the distance from this agent to all other agents
