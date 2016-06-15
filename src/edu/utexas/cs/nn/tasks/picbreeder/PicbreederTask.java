@@ -196,6 +196,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		mutationsPerGeneration.setMinorTickSpacing(1);
 		mutationsPerGeneration.setPaintTicks(true);
 		mutationsPerGeneration.setPaintLabels(true);
+		
 		//add action listeners to buttons
 		resetButton.addActionListener(this);
 		saveButton.addActionListener(this);
