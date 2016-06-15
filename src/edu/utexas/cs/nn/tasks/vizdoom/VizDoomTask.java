@@ -1,6 +1,7 @@
 package edu.utexas.cs.nn.tasks.vizdoom;
 
 import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,9 +15,11 @@ import edu.utexas.cs.nn.networks.NetworkTask;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.NoisyLonerTask;
+import edu.utexas.cs.nn.util.ClassCreation;
 import edu.utexas.cs.nn.util.GraphicsUtil;
 import edu.utexas.cs.nn.util.MiscUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
+import edu.utexas.cs.nn.util.stats.Statistic;
 import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
 import vizdoom.DoomGame;
 import vizdoom.GameState;
@@ -41,6 +44,8 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 	public static final int BLUE_INDEX = 0;
 	public static final int NUM_COLORS = 3;
 	public static final double MAX_COLOR = 255;
+	public static DrawingPanel dp = null;
+	public static Statistic stat;
 
 	public DoomGame game;
 	public List<int[]> actions;
@@ -59,6 +64,13 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 		setRewards();
 		setDoomMiscSettings();
 		MMNEAT.registerFitnessFunction("DoomReward");
+		try {
+			stat = (Statistic) ClassCreation.createObject("doomSmudgeStat");
+		} catch (NoSuchMethodException e) {
+			System.out.println("Could not determine Smudge Statistic");
+			e.printStackTrace();
+			System.exit(1);
+		}
 	}
 
 	@Override
@@ -170,7 +182,8 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 			// drawGameState(s, game.getScreenWidth(), game.getScreenHeight());
 			//drawGameStateRow(s, game.getScreenWidth(), game.getScreenHeight(), getRow());
 
-			double[] inputs = getInputs(s);
+			double[] inputs = getInputs(s); // This is already scaled and smudged
+			//showInputs(s, inputs); //use this to look at the inputs that the agent is seeing
 			double[] outputs = n.process(inputs);
 			// This now takes the arg max of the action outputs
 			//double r = game.makeAction(actions.get(StatisticsUtilities.argmax(outputs))); 
@@ -282,6 +295,58 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 		DrawingPanel dp = GraphicsUtil.drawImage(image, "Doom", width, height);
 		MiscUtil.waitForReadStringAndEnterKeyPress();
 	}
+	
+	public static void showInputs(GameState s, double[] inputs) {
+		int height = Parameters.parameters.integerParameter("doomInputHeight");
+		int width = Parameters.parameters.integerParameter("doomInputWidth");
+		int smudge = Parameters.parameters.integerParameter("doomInputPixelSmudge");
+		int reducedHeight = height / smudge;
+		int reducedWidth = width / smudge;
+		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+		
+		// Scaling the color values
+		int[] inputsScaled = new int[inputs.length];
+		for (int i = 0; i < inputs.length; i++){
+			inputsScaled[i] = (int) (inputs[i] * MAX_COLOR);
+		}
+		
+		// Check for colors used
+		int color = Parameters.parameters.integerParameter("doomInputColorVal");
+		int rOffset = 0;
+		int gOffset = 0;
+		int bOffset = 0;
+		if(color == 3){
+			//we use all colors
+			bOffset = BLUE_INDEX*reducedWidth*reducedHeight;
+			rOffset = RED_INDEX*reducedWidth*reducedHeight;
+			gOffset = GREEN_INDEX*reducedWidth*reducedHeight;
+		} 
+		
+		
+		for (int y = 0; y < reducedHeight; y++) {
+			for (int x = 0; x < reducedWidth; x++) {
+				int linearPosition = (y * reducedWidth) + x;
+				int rgb = new Color(inputsScaled[rOffset + linearPosition],
+									inputsScaled[gOffset + linearPosition], 
+									inputsScaled[bOffset + linearPosition]).getRGB();					
+				for(int i = 0; i < smudge; i++){
+					for(int j = 0; j < smudge; j ++){
+						image.setRGB((x*smudge)+j, (y*smudge)+i, rgb);
+						//System.out.println("Adding [" + x + ", " + y + "] to ["  + ((x*smudge)+j) + ", " + ((y*smudge)+i) + "]");
+					}
+				}
+			}
+		}
+		
+		String name = "Inputs (" + (color == NUM_COLORS ? "All Colors)" : (color == RED_INDEX ? "Red)" : 
+			(color == GREEN_INDEX ? "Green)" : "Blue)")));
+		
+		if(dp == null){
+			dp = GraphicsUtil.drawImage(image, name, width, height);
+		} else {
+			dp.getGraphics().drawRenderedImage(image, null);
+		}
+	}
 
 	/**
 	 * According to the given [x, y] and width by height, this method pulls
@@ -368,6 +433,17 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 		return labels;
 	}
 	
+	/**
+	 * Given a rate of smudging, this method takes pixels and averages them in order
+	 * to lower the amount of inputs being used for the screen.
+	 * (This is similar to lowering resolution)
+	 * @param inputs
+	 * @param width
+	 * @param height
+	 * @param color
+	 * @param smudge
+	 * @return
+	 */
 	public static double[] smudgeInputs(double[] inputs, int width, int height, int color, int smudge){
 		//System.out.println("Smudging inputs at a rate of " + smudge + " where width: " + width + " and height: " + height);
 		int reducedWidth = width / smudge;
@@ -386,22 +462,33 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 		}
 	}
 	
+	/**
+	 * Smudges the inputs according to a rate and specific color given
+	 * @param inputs
+	 * @param width
+	 * @param reducedWidth
+	 * @param reducedHeight
+	 * @param color
+	 * @param smudge
+	 * @return
+	 */
 	public static double[] smudgeColor(double[] inputs, int width, int reducedWidth, int reducedHeight, int color, int smudge){
 		//System.out.println("Smudging for color " + (color == RED_INDEX? "Red": (color == GREEN_INDEX? "Green" : "Blue")) + " at a reduced width: " + reducedWidth + " and height: " + reducedHeight);
 		double[] smudgedInputs = new double[reducedWidth*reducedHeight];
 		int pos = 0;
 		for(int i = 0; i < reducedHeight; i++){
 			for(int j = 0; j < reducedWidth; j++){
-				double sum = 0;
+				double[] values = new double[smudge*smudge];
+				int localIndex = 0;
 				//System.out.print("Sum: ");
 				for(int y = 0; y < smudge; y++){
 					for(int x = 0; x < smudge; x++){
-						sum += inputs[(((i * smudge) + y) * width) + ((j * smudge) + x)];
+						values[localIndex++] = inputs[(((i * smudge) + y) * width) + ((j * smudge) + x)];
 						//System.out.print("[" + ((j * smudge) + x) + ", "+ ((i * smudge) + y) + "], ");
 					}
 				}
 				//System.out.println("to SmudgedInputs[" + pos + "]");
-				smudgedInputs[pos++] = (sum / (smudge * smudge));
+				smudgedInputs[pos++] = stat.stat(values);
 				//System.out.println(" for new coordinate [" + j + ", " + i + "] = " + (smudgedInputs[pos-1]));
 
 			}
