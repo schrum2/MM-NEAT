@@ -2,7 +2,6 @@ package edu.utexas.cs.nn.networks;
 
 import edu.utexas.cs.nn.evolution.genotypes.MLPGenotype;
 import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.util.PopulationUtil;
 import edu.utexas.cs.nn.util.random.RandomNumbers;
 import java.util.Arrays;
 
@@ -160,11 +159,11 @@ public class MLP implements Network {
 		clear(outputs);
 		//manually propagates inputs through network, possible since
 		//network defined as having exactly one input, hidden and output layer
-		PopulationUtil.propagateOneStep(inputs, hiddenNeurons, firstConnectionLayer);
+		NetworkUtil.propagateOneStep(inputs, hiddenNeurons, firstConnectionLayer);
 		//transforms weights
 		tanh(hiddenNeurons);
 		//manually propagates forward
-		PopulationUtil.propagateOneStep(hiddenNeurons, outputs, secondConnectionLayer);
+		NetworkUtil.propagateOneStep(hiddenNeurons, outputs, secondConnectionLayer);
 		//transforms weights
 		tanh(outputs);
 		return outputs;

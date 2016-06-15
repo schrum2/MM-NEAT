@@ -8,7 +8,6 @@ import edu.utexas.cs.nn.evolution.genotypes.HyperNEATCPPNGenotype;
 import edu.utexas.cs.nn.networks.hyperneat.HyperNEATTask;
 import edu.utexas.cs.nn.networks.hyperneat.Substrate;
 import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.util.PopulationUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.util2D.ILocated2D;
 import edu.utexas.cs.nn.util.util2D.Tuple2D;
@@ -57,7 +56,7 @@ public class SubstrateMLP implements Network {
 							boolean expressLink = Math.abs(outputs[i]) > CommonConstants.linkExpressionThreshold;
 							//whether or not to place a link in location
 							if (expressLink) {
-								connect[X1][Y1][X2][Y2] = PopulationUtil.calculateWeight(outputs[i]);
+								connect[X1][Y1][X2][Y2] = NetworkUtil.calculateWeight(outputs[i]);
 							} else {//if not, make weight 0, synonymous to no link in first place
 								connect[X1][Y1][X2][Y2] = 0;
 							}

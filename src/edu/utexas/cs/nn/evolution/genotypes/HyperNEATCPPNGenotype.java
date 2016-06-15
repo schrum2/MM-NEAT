@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
+import edu.utexas.cs.nn.networks.NetworkUtil;
 import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.networks.hyperneat.HyperNEATTask;
 import edu.utexas.cs.nn.networks.hyperneat.Substrate;
 import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.util.PopulationUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.util2D.ILocated2D;
 import edu.utexas.cs.nn.util.util2D.Tuple2D;
@@ -243,7 +243,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 							linksSoFar.add(new LinkGene(
 									getInnovationID(X1, Y1, s1Index, subs), 
 									getInnovationID(X2, Y2, s2Index, subs), 
-									PopulationUtil.calculateWeight(outputs[outputIndex]),
+									NetworkUtil.calculateWeight(outputs[outputIndex]),
 									innovationID++, false));
 						} 
 

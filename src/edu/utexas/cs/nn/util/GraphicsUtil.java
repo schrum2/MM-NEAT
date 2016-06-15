@@ -37,7 +37,7 @@ public class GraphicsUtil {
 				// network outputs computed on hsb, not rgb scale because
 				// creates better images
 				Color childColor = Color.getHSBColor(hsb[HUE_INDEX], hsb[SATURATION_INDEX], hsb[BRIGHTNESS_INDEX]);
-                                // set back to RGB to draw picture to JFrame
+				// set back to RGB to draw picture to JFrame
 				image.setRGB(x, y, childColor.getRGB());
 			}
 		}
