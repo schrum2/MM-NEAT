@@ -111,8 +111,6 @@ public abstract class CooperativeTorusPredPreyTask<T extends Network> extends Co
 	 * @return list of scores, behaviors, and genotype for each member of the team
 	 */
 	public ArrayList<Score> evaluate(Genotype[] team) {
-		//		System.out.println("in cooperative class: objectives size: " + task.objectives.size());
-		//		System.out.println("in cooperative class: otherScores size: " + task.otherScores.size());
 		ArrayList<Score> scores = new ArrayList<Score>();
 
 		TorusPredPreyController[] predAgents = getPredAgents(team);
@@ -131,11 +129,9 @@ public abstract class CooperativeTorusPredPreyTask<T extends Network> extends Co
 			// order to be reset after the creation of this organism
 			Organism<T> organism = new NNTorusPredPreyAgent<T>(team[i], !task.preyEvolve);
 			for (int j = 0; j < fitnesses.length; j++) {
-				//System.out.println("first population objectives size: " + task.objectives.get(i).size());
 				fitnesses[j] = task.objectives.get(i).get(j).score(game, organism);
 			}
 			for (int j = 0; j < otherStats.length; j++) {
-				//System.out.println("first population otherScores size: " + task.otherScores.get(i).size());
 				otherStats[j] = task.otherScores.get(i).get(j).score(game,organism);
 			}
 			scores.add(new Score(team[i], fitnesses, null, otherStats));
