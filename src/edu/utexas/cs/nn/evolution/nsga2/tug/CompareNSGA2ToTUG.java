@@ -59,8 +59,7 @@ public class CompareNSGA2ToTUG<T> extends TUGNSGA2<T> {
 		ArrayList<Genotype<T>> tugResult = super.generateChildren(numChildren, parentScores);
 
 		// The generated children will have different ids, but the parent ids
-		// should
-		// be the same in each case. The two groups are separated by this line.
+		// should be the same in each case. The two groups are separated by this line.
 		EvolutionaryHistory.logLineageData("---Line between comparisons----------------");
 
 		ArrayList<Score<T>> copyScores = new ArrayList<Score<T>>();
@@ -80,15 +79,13 @@ public class CompareNSGA2ToTUG<T> extends TUGNSGA2<T> {
 				s.dropLastScore(); // drops pill score
 			}
 		}
-		NSGA2Score<T>[] scoresArray = staticNSGA2Scores(copyScores);
+		//NSGA2Score<T>[] scoresArray = staticNSGA2Scores(copyScores);
 		// Reset seed for other selection method
-		RandomNumbers.randomGenerator = new Random(seed);
-		ArrayList<Genotype<T>> nsga2Result = generateNSGA2Children(numChildren, scoresArray, currentGeneration(),
-				mating, crossoverRate);
+		//RandomNumbers.randomGenerator = new Random(seed);
+		//ArrayList<Genotype<T>> nsga2Result = generateNSGA2Children(numChildren, scoresArray, currentGeneration(), mating, crossoverRate);
 
 		// Just realized, this comparison simply doesn't work for child
-		// generation
-		// because each child has a newly generated id number. What matters here
+		// generation because each child has a newly generated id number. What matters here
 		// is which parents are chosen to reproduce and mate
 		// logResultDifferences(tugResult,nsga2Result,GHOSTS_ONLY,scoresArray,"Child");
 

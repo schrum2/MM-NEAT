@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.utexas.cs.nn.evolution.nsga2.tug;
 
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
@@ -13,6 +9,7 @@ import java.util.ArrayList;
  *
  * @author Jacob
  */
+@SuppressWarnings("rawtypes") // to allow for different types of populations
 public class CooperativeCoevolutionTUGNSGA2 extends CooperativeCoevolutionNSGA2 {
 
 	private final TUGNSGA2 tug;
@@ -21,6 +18,7 @@ public class CooperativeCoevolutionTUGNSGA2 extends CooperativeCoevolutionNSGA2 
 		this.tug = new TUGNSGA2(false);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public ArrayList<Genotype> selection(int popIndex, int toKeep, ArrayList<Score> sourcePopulation) {
 		if (popIndex == 0) {
@@ -41,6 +39,7 @@ public class CooperativeCoevolutionTUGNSGA2 extends CooperativeCoevolutionNSGA2 
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public ArrayList<Score> prepareSourcePopulation(int popIndex, ArrayList<Score> parentScores, ArrayList<Score> childrenScores, int mltype) {
 		if (popIndex == 0) {
