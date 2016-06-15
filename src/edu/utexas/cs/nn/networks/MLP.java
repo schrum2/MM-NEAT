@@ -2,6 +2,7 @@ package edu.utexas.cs.nn.networks;
 
 import edu.utexas.cs.nn.evolution.genotypes.MLPGenotype;
 import edu.utexas.cs.nn.parameters.Parameters;
+import edu.utexas.cs.nn.util.PopulationUtil;
 import edu.utexas.cs.nn.util.random.RandomNumbers;
 import java.util.Arrays;
 
@@ -159,11 +160,11 @@ public class MLP implements Network {
 		clear(outputs);
 		//manually propagates inputs through network, possible since
 		//network defined as having exactly one input, hidden and output layer
-		propagateOneStep(inputs, hiddenNeurons, firstConnectionLayer);
+		PopulationUtil.propagateOneStep(inputs, hiddenNeurons, firstConnectionLayer);
 		//transforms weights
 		tanh(hiddenNeurons);
 		//manually propagates forward
-		propagateOneStep(hiddenNeurons, outputs, secondConnectionLayer);
+		PopulationUtil.propagateOneStep(hiddenNeurons, outputs, secondConnectionLayer);
 		//transforms weights
 		tanh(outputs);
 		return outputs;
@@ -212,20 +213,7 @@ public class MLP implements Network {
 		return copy;
 	}
 
-	/**
-	 * Propagates values forward one step  by multiplying value at first layer by
-	 * connection weight between layers and setting target layer equal to this value
-	 * @param fromLayer source layer
-	 * @param toLayer target layer
-	 * @param connections connections between the two layers
-	 */
-	protected void propagateOneStep(double[] fromLayer, double[] toLayer, double[][] connections) {
-		for (int from = 0; from < fromLayer.length; from++) {
-			for (int to = 0; to < toLayer.length; to++) {
-				toLayer[to] += fromLayer[from] * connections[from][to];
-			}
-		}
-	}
+
 
 	/**
 	 * Clears given array

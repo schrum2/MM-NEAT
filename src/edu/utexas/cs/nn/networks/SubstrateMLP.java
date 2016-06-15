@@ -142,11 +142,9 @@ public class SubstrateMLP implements Network {
 	 * @param inputs inputs to layer
 	 * @return outputs from layer
 	 */
-	private double[] propagateOneStep(double[] inputs) {//TODO
+	private double[] propagateOneStep(double[] inputs) {
 		double[] outputs = new double[0];
-		/*
-		 * add code here
-		 */
+	//	PopulationUtil.propagateOneStep(fromLayer, toLayer, connections);//TODO
 		for(double a : outputs) {
 			activate(a, ftype);
 		}
