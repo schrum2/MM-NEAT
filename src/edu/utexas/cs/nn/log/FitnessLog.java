@@ -28,11 +28,15 @@ public class FitnessLog<T> extends StatisticsLog<Score<T>> {
 	public FitnessLog(String prefix) {
 		super(prefix, MMNEAT.fitnessPlusMetaheuristics());
 	}
+	
+	public void initPanels(int objectives){
+		initPanels(objectives, 0);
+	}
 
-	public void initPanels(int objectives) {
+	public void initPanels(int objectives, int pop) {
 		panels = new DrawingPanel[objectives];
 		for (int i = 0; i < panels.length; i++) {
-			panels[i] = new DrawingPanel(Plot.BROWSE_DIM, Plot.BROWSE_DIM, MMNEAT.fitnessFunctions.get(i));
+			panels[i] = new DrawingPanel(Plot.BROWSE_DIM, Plot.BROWSE_DIM, MMNEAT.fitnessFunctions.get(pop).get(i));
 			panels[i].setLocation((fitnessPanels++) * (Plot.EDGE + Plot.BROWSE_DIM),
 					Plot.TOP + TWEANN.NETWORK_VIEW_DIM);
 		}

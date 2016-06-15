@@ -1,5 +1,14 @@
 package edu.utexas.cs.nn.MMNEAT;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.StringTokenizer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import org.rlcommunity.rlglue.codec.taskspec.TaskSpec;
+
 import edu.utexas.cs.nn.breve2D.dynamics.Breve2DDynamics;
 import edu.utexas.cs.nn.data.ResultSummaryUtilities;
 import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
@@ -8,7 +17,11 @@ import edu.utexas.cs.nn.evolution.crossover.Crossover;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
 import edu.utexas.cs.nn.evolution.lineage.Offspring;
-import edu.utexas.cs.nn.evolution.metaheuristics.*;
+import edu.utexas.cs.nn.evolution.metaheuristics.AntiMaxModuleUsageFitness;
+import edu.utexas.cs.nn.evolution.metaheuristics.FavorXModulesFitness;
+import edu.utexas.cs.nn.evolution.metaheuristics.LinkPenalty;
+import edu.utexas.cs.nn.evolution.metaheuristics.MaxModulesFitness;
+import edu.utexas.cs.nn.evolution.metaheuristics.Metaheuristic;
 import edu.utexas.cs.nn.experiment.Experiment;
 import edu.utexas.cs.nn.graphics.DrawingPanel;
 import edu.utexas.cs.nn.log.EvalLog;
@@ -22,6 +35,7 @@ import edu.utexas.cs.nn.networks.hyperneat.SubstrateCoordinateMapping;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.scores.Score;
+import edu.utexas.cs.nn.tasks.CooperativeTask;
 import edu.utexas.cs.nn.tasks.MultiplePopulationTask;
 import edu.utexas.cs.nn.tasks.Task;
 import edu.utexas.cs.nn.tasks.breve2D.Breve2DTask;
@@ -33,13 +47,20 @@ import edu.utexas.cs.nn.tasks.gridTorus.cooperative.CooperativePredatorsVsStatic
 import edu.utexas.cs.nn.tasks.gridTorus.cooperative.CooperativeTorusPredPreyTask;
 import edu.utexas.cs.nn.tasks.motests.FunctionOptimization;
 import edu.utexas.cs.nn.tasks.motests.testfunctions.FunctionOptimizationSet;
-import edu.utexas.cs.nn.tasks.mspacman.*;
+import edu.utexas.cs.nn.tasks.mspacman.CooperativeCheckEachMultitaskSelectorMsPacManTask;
+import edu.utexas.cs.nn.tasks.mspacman.CooperativeGhostMonitorNetworksMsPacManTask;
+import edu.utexas.cs.nn.tasks.mspacman.CooperativeMsPacManTask;
+import edu.utexas.cs.nn.tasks.mspacman.CooperativeNonHierarchicalMultiNetMsPacManTask;
+import edu.utexas.cs.nn.tasks.mspacman.CooperativeSubtaskCombinerMsPacManTask;
+import edu.utexas.cs.nn.tasks.mspacman.CooperativeSubtaskSelectorMsPacManTask;
+import edu.utexas.cs.nn.tasks.mspacman.MsPacManTask;
 import edu.utexas.cs.nn.tasks.mspacman.ensemble.MsPacManEnsembleArbitrator;
 import edu.utexas.cs.nn.tasks.mspacman.facades.ExecutorFacade;
 import edu.utexas.cs.nn.tasks.mspacman.init.MsPacManInitialization;
 import edu.utexas.cs.nn.tasks.mspacman.multitask.MsPacManModeSelector;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.*;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.combining.SubNetworkBlock;
+import edu.utexas.cs.nn.tasks.mspacman.sensors.MsPacManControllerInputOutputMediator;
+import edu.utexas.cs.nn.tasks.mspacman.sensors.MultipleInputOutputMediator;
+import edu.utexas.cs.nn.tasks.mspacman.sensors.VariableDirectionBlockLoadedInputOutputMediator;
 import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.VariableDirectionBlock;
 import edu.utexas.cs.nn.tasks.mspacman.sensors.ghosts.GhostControllerInputOutputMediator;
 import edu.utexas.cs.nn.tasks.mspacman.sensors.ghosts.mediators.GhostsCheckEachDirectionMediator;
@@ -56,13 +77,6 @@ import edu.utexas.cs.nn.util.file.FileUtilities;
 import edu.utexas.cs.nn.util.random.RandomGenerator;
 import edu.utexas.cs.nn.util.random.RandomNumbers;
 import edu.utexas.cs.nn.util.stats.Statistic;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.StringTokenizer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.rlcommunity.rlglue.codec.taskspec.TaskSpec;
 import pacman.Executor;
 import wox.serial.Easy;
 
@@ -91,14 +105,11 @@ public class MMNEAT {
 	public static FunctionOptimizationSet fos;
 	public static RLGlueEnvironment rlGlueEnvironment;
 	public static ArrayList<Metaheuristic> metaheuristics;
-	public static ArrayList<String> fitnessFunctions;
-	public static ArrayList<Statistic> aggregationOverrides;
-
 	//TODO: implement this list of coevolution fitness functions for each population in the same 
 	//way that it works with non-coevolution. Make the fitness functions list a double arrayList
 	//and have it work for non-coevolution by just filling the first list index of the double arrayList
-	public static ArrayList<ArrayList<String>> coevolutionFitnessFunctions;
-	
+	public static ArrayList<ArrayList<String>> fitnessFunctions;
+	public static ArrayList<Statistic> aggregationOverrides;
 	public static TaskSpec tso;
 	public static FeatureExtractor rlGlueExtractor;
 	public static boolean blueprints = false;
@@ -117,11 +128,11 @@ public class MMNEAT {
 	public static MMNEATLog ghostLocationsOnPowerPillEaten = null;
 	public static boolean browseLineage = false;
 	public static SubstrateCoordinateMapping substrateMapping = null;
-	
+
 	public static MMNEAT mmneat;
-	
+
 	public static ArrayList<String> fitnessPlusMetaheuristics() {
-		ArrayList<String> result = (ArrayList<String>) fitnessFunctions.clone();
+		ArrayList<String> result = (ArrayList<String>) fitnessFunctions.get(0).clone();
 		ArrayList<String> meta = new ArrayList<String>();
 		for (Metaheuristic m : metaheuristics) {
 			meta.add(m.getClass().getSimpleName());
@@ -147,7 +158,7 @@ public class MMNEAT {
 			crossoverOperator = (Crossover) ClassCreation.createObject("crossover");
 		}
 	}
-	
+
 	private static void setupFunctionOptimization() throws NoSuchMethodException {
 		// Function minimization benchmarks, if they are used
 		fos = (FunctionOptimizationSet) ClassCreation.createObject("fos");
@@ -212,21 +223,21 @@ public class MMNEAT {
 		}
 	}
 
-        /**
-         * Currently, this check only applies to Ms Pac-Man tasks, but could
-         * be used for other coevolution experiments in the future.
-         * @return Whether task involves agents cooperating with subnetworks
-         */
+	/**
+	 * Currently, this check only applies to Ms Pac-Man tasks, but could
+	 * be used for other coevolution experiments in the future.
+	 * @return Whether task involves agents cooperating with subnetworks
+	 */
 	public static boolean taskHasSubnetworks() {
 		return CooperativeSubtaskSelectorMsPacManTask.class.equals(Parameters.parameters.classParameter("task"))
 				|| CooperativeSubtaskCombinerMsPacManTask.class.equals(Parameters.parameters.classParameter("task"));
 	}
 
-    /**
-     * Constructor takes the command line parameters
-     * to initialize the systems parameter values.
-     * @param args directly from command line
-     */
+	/**
+	 * Constructor takes the command line parameters
+	 * to initialize the systems parameter values.
+	 * @param args directly from command line
+	 */
 	public MMNEAT(String[] args) {
 		Parameters.initializeParameterCollections(args);
 	}
@@ -241,58 +252,72 @@ public class MMNEAT {
 		Parameters.initializeParameterCollections(parameterFile);
 	}
 
-    /**
-     * For plotting purposes. Let simulation know that a given fitness function
-     * will be tracked.
-     * @param name Name of fitness function in plot files
-     */
 	public static void registerFitnessFunction(String name) {
-		registerFitnessFunction(name, null, true);
+		registerFitnessFunction(name, 0);
 	}
 
-    /**
-     * Like above, but indicating that the "fitness" function does not affect 
-     * selection means that it is simply an other score that is being tracked
-     * in the logs.
-     * @param name Name of score
-     * @param affectsSelection Whether or not score is actually used for selection
-     */
+	/**
+	 * For plotting purposes. Let simulation know that a given fitness function
+	 * will be tracked.
+	 * @param name Name of fitness function in plot files
+	 */
+	public static void registerFitnessFunction(String name, int pop) {
+		registerFitnessFunction(name, null, true, pop);
+	}
+
 	public static void registerFitnessFunction(String name, boolean affectsSelection) {
-		registerFitnessFunction(name, null, affectsSelection);
+		registerFitnessFunction(name, affectsSelection, 0);
 	}
 
-    /**
-     * As above, but it is now possible to indicate how the score is statistically
-     * summarized when noisy evaluations occur. The default is to average scores
-     * across evaluations, but if an overriding statistic is used, then this will
-     * also be mentioned in the log.
-     * @param name Name of score column
-     * @param override Statistic applied across evaluations (null is default/average)
-     * @param affectsSelection whether it affects selection
-     */
+
+	/**
+	 * Like above, but indicating that the "fitness" function does not affect 
+	 * selection means that it is simply an other score that is being tracked
+	 * in the logs.
+	 * @param name Name of score
+	 * @param affectsSelection Whether or not score is actually used for selection
+	 */
+	public static void registerFitnessFunction(String name, boolean affectsSelection, int pop) {
+		registerFitnessFunction(name, null, affectsSelection, pop);
+	}
+
 	public static void registerFitnessFunction(String name, Statistic override, boolean affectsSelection) {
+		registerFitnessFunction(name, override, affectsSelection, 0);
+	}
+
+	/**
+	 * As above, but it is now possible to indicate how the score is statistically
+	 * summarized when noisy evaluations occur. The default is to average scores
+	 * across evaluations, but if an overriding statistic is used, then this will
+	 * also be mentioned in the log.
+	 * @param name Name of score column
+	 * @param override Statistic applied across evaluations (null is default/average)
+	 * @param affectsSelection whether it affects selection
+	 */
+	public static void registerFitnessFunction(String name, Statistic override, boolean affectsSelection, int pop) {
 		if (affectsSelection) {
 			actualFitnessFunctions++;
 		}
-		fitnessFunctions.add(name);
+		fitnessFunctions.get(pop).add(name);
 		aggregationOverrides.add(override);
 	}
 
-    /**
-     * Load important classes from class parameters.
-     * Other important experiment setup also occurs.
-     * Perhaps the most important classes that always
-     * need to be loaded at the task, the experiment, 
-     * and the ea. These get stored in public static 
-     * variables of this class so they are easily accessible
-     * from all parts of the code.
-     */
+	/**
+	 * Load important classes from class parameters.
+	 * Other important experiment setup also occurs.
+	 * Perhaps the most important classes that always
+	 * need to be loaded at the task, the experiment, 
+	 * and the ea. These get stored in public static 
+	 * variables of this class so they are easily accessible
+	 * from all parts of the code.
+	 */
 	public static void loadClasses() {
 		try {
 			ActivationFunctions.resetFunctionSet();
 			setupSaveDirectory();
 
-			fitnessFunctions = new ArrayList<String>();
+			fitnessFunctions = new ArrayList<ArrayList<String>>();
+			fitnessFunctions.add(new ArrayList<String>());
 			aggregationOverrides = new ArrayList<Statistic>();
 
 			boolean loadFrom = !Parameters.parameters.stringParameter("loadFrom").equals("");
@@ -428,7 +453,7 @@ public class MMNEAT {
 			} else if (task == null) {
 				// this else statement should only happen for JUnit testing cases.
 				// Some default network setup is needed.
-                                System.out.println("No task defined! It is assumed that this is part of a JUnit test.");
+				System.out.println("No task defined! It is assumed that this is part of a JUnit test.");
 				setNNInputParameters(5, 3);
 			} else {
 				System.out.println("A valid task must be specified!");
@@ -509,10 +534,10 @@ public class MMNEAT {
 		// interface no longer applies
 		CommonConstants.monitorInputs = false;
 		Parameters.parameters.setBoolean("monitorInputs", false);
-		
+
 		substrateMapping = (SubstrateCoordinateMapping) ClassCreation.createObject("substrateMapping");
-		
-		
+
+
 		HyperNEATTask hnt = (HyperNEATTask) task;
 		setNNInputParameters(HyperNEATTask.NUM_CPPN_INPUTS, hnt.getSubstrateConnectivity().size());
 	}
@@ -757,7 +782,7 @@ public class MMNEAT {
 	/**
 	 * Write information to the performance log, if it is being used
 	 * 
-         * @param <T> phenotype
+	 * @param <T> phenotype
 	 * @param combined
 	 *            Combined population of scores/genotypes
 	 * @param generation

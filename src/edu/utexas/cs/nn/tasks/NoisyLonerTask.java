@@ -203,7 +203,7 @@ public abstract class NoisyLonerTask<T> extends LonerTask<T> {
 		for (int i = 0; i < fitness.length; i++) {
 			Statistic fitnessStat = MMNEAT.aggregationOverrides.get(globalFitnessFunctionIndex);
 			boolean includeStdev = fitnessStat == null || fitnessStat instanceof Average;
-			String fitnessFunctionName = MMNEAT.fitnessFunctions.get(globalFitnessFunctionIndex)
+			String fitnessFunctionName = MMNEAT.fitnessFunctions.get(0).get(globalFitnessFunctionIndex)
 					+ (includeStdev ? "" : "[" + fitnessStat.getClass().getSimpleName() + "]");
 			globalFitnessFunctionIndex++;
 			double[] xs = ArrayUtil.column(objectiveScores, i);
