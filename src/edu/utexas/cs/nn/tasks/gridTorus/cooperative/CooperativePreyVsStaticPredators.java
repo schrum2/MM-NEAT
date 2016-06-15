@@ -25,10 +25,9 @@ public class CooperativePreyVsStaticPredators<T extends Network> extends Coopera
 	 * @return an array of ints of the fitness objective scores for each team member
 	 */
 	public int[] objectivesPerPopulation() {
-		int objectives = task.numObjectives();
 		int[] result = new int[Parameters.parameters.integerParameter("torusPreys")];
 		for(int i = 0; i < result.length; i++) {
-			result[i] = objectives;
+			result[i] = task.objectives.get(i).size();
 		}
 		return result;
 	}
@@ -43,9 +42,6 @@ public class CooperativePreyVsStaticPredators<T extends Network> extends Coopera
 	public int[] otherStatsPerPopulation() {
 		int scores = task.numOtherScores();
 		int[] result = new int[Parameters.parameters.integerParameter("torusPreys")];
-//		for(int i = 0; i < result.length; i++) {
-//			result[i] = scores;
-//		}
 		result[0] = scores;
 		return result;
 	}

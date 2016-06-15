@@ -392,7 +392,7 @@ public class ResultSummaryUtilities {
 		String file = filePrefix + "AVG" + fileSuffix;
 		for (int i = 1; i < num; i += 4) {
 			Statistic stat = MMNEAT.aggregationOverrides.get((i - 1) / 4);
-			String fitnessFunctionName = MMNEAT.fitnessFunctions.get((i - 1) / 4)
+			String fitnessFunctionName = MMNEAT.fitnessFunctions.get(0).get((i - 1) / 4)
 					+ (stat == null ? "" : "[" + stat.getClass().getSimpleName() + "]");
 			if (makePDF) {
 				out.println("set output \"Average '" + fitnessFunctionName + "' for " + condition + " by Generation.pdf\"");
