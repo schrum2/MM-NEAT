@@ -262,58 +262,7 @@ public class TWEANN implements Network {
 		}
 
 		private void activate() {
-			switch (ftype) {
-			case ActivationFunctions.FTYPE_SAWTOOTH:
-				activation = ActivationFunctions.sawtooth(sum);
-				assert!Double.isNaN(activation) : "sawtooth returns NaN on " + sum;
-				assert!Double.isInfinite(activation) : "sawtooth is infinite on " + sum + " from " + activation;
-				break;
-			case ActivationFunctions.FTYPE_HLPIECEWISE:
-				activation = ActivationFunctions.halfLinear(sum);
-				assert!Double.isNaN(activation) : "halfLinear returns NaN on " + sum;
-				assert!Double.isInfinite(activation) : "halfLinear is infinite on " + sum + " from " + activation;
-				break;
-			case ActivationFunctions.FTYPE_SIGMOID:
-				activation = ActivationFunctions.sigmoid(sum);
-				assert!Double.isNaN(activation) : "sigmoid returns NaN on " + sum;
-				assert!Double.isInfinite(activation) : "sigmoid is infinite on " + sum + " from " + activation;
-				break;
-			case ActivationFunctions.FTYPE_TANH:
-				activation = ActivationFunctions.tanh(sum);
-				assert!Double.isNaN(activation) : "tanh returns NaN on " + sum;
-				assert!Double.isInfinite(activation) : "tanh is infinite on " + sum + " from " + activation;
-				break;
-			case ActivationFunctions.FTYPE_ID:
-				activation = sum;
-				assert!Double.isNaN(activation) : "ID returns NaN on " + sum;
-				assert!Double.isInfinite(activation) : "ID is infinite on " + sum + " from " + activation;
-				break;
-			case ActivationFunctions.FTYPE_APPROX:
-				activation = ActivationFunctions.quickSigmoid(sum);
-				assert!Double.isNaN(activation) : "quickSigmoid returns NaN on " + sum;
-				assert!Double.isInfinite(activation) : "quickSigmoid is infinite on " + sum + " from " + activation;
-				break;
-			case ActivationFunctions.FTYPE_FULLAPPROX:
-				activation = ActivationFunctions.fullQuickSigmoid(sum);
-				assert!Double.isNaN(activation) : "fullQuickSigmoid returns NaN on " + sum;
-				assert!Double.isInfinite(activation) : "fullQuickSigmoid is infinite on " + sum + " from " + activation;
-				break;
-			case ActivationFunctions.FTYPE_GAUSS:
-				activation = ActivationFunctions.gaussian(sum);
-				assert!Double.isNaN(activation) : "gaussian returns NaN on " + sum;
-				assert!Double.isInfinite(activation) : "gaussian is infinite on " + sum + " from " + activation;
-				break;
-			case ActivationFunctions.FTYPE_SINE:
-				activation = ActivationFunctions.sine(sum);
-				assert!Double.isNaN(activation) : "sine returns NaN on " + sum;
-				assert!Double.isInfinite(activation) : "sine is infinite on " + sum + " from " + activation;
-				break;
-			case ActivationFunctions.FTYPE_ABSVAL:
-				activation = ActivationFunctions.absVal(sum);
-				assert!Double.isNaN(activation) : "absVal returns NaN on " + sum;
-				assert!Double.isInfinite(activation) : "absVal is infinite on " + sum + " from " + activation;
-				break;
-			}
+			ActivationFunctions.activation(ftype, sum);
 		}
 
 		protected void activateAndTransmit() {
