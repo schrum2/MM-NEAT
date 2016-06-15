@@ -626,6 +626,7 @@ public class Parameters {
 		classOptions.add("pacmanInputOutputMediator", FullTaskMediator.class, "Defines pacman controllers sensors and actuators");
 		classOptions.add("nicheDefinition", null, "Method for getting the niche of an individual for local competition");
 		classOptions.add("noisyTaskStat", Average.class, "Class for the statistic defining agent score after multiple noisy evals");
+		classOptions.add("doomSmudgeStat", Average.class, "Class for the smudge factor in VizDoom");
 		classOptions.add("breveEnemy", RushingPlayer.class, "Class defining behavior of static enemy in breve domains");
 		classOptions.add("breveDynamics", PlayerPredatorMonsterPrey.class, "Class defining domain dynamics for breve domains");
 		classOptions.add("pacmanMultitaskScheme", GhostsThenPillsModeSelector.class, "Class defining multitask division in Ms. Pac-Man");

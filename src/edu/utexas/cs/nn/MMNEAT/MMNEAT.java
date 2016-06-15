@@ -35,7 +35,6 @@ import edu.utexas.cs.nn.networks.hyperneat.SubstrateCoordinateMapping;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.scores.Score;
-import edu.utexas.cs.nn.tasks.CooperativeTask;
 import edu.utexas.cs.nn.tasks.MultiplePopulationTask;
 import edu.utexas.cs.nn.tasks.Task;
 import edu.utexas.cs.nn.tasks.breve2D.Breve2DTask;
@@ -99,11 +98,15 @@ public class MMNEAT {
 	public static Experiment experiment;
 	public static Task task;
 	public static GenerationalEA ea;
+	@SuppressWarnings("rawtypes") // could hold any type, depending on command line
 	public static Genotype genotype;
+	@SuppressWarnings("rawtypes") // could hold any type, depending on command line
 	public static ArrayList<Genotype> genotypeExamples;
+	@SuppressWarnings("rawtypes") // can crossover any type, depending on command line
 	public static Crossover crossoverOperator;
 	public static FunctionOptimizationSet fos;
 	public static RLGlueEnvironment rlGlueEnvironment;
+	@SuppressWarnings("rawtypes") // depends on genotypes
 	public static ArrayList<Metaheuristic> metaheuristics;
 	//TODO: implement this list of coevolution fitness functions for each population in the same 
 	//way that it works with non-coevolution. Make the fitness functions list a double arrayList
@@ -113,6 +116,7 @@ public class MMNEAT {
 	public static TaskSpec tso;
 	public static FeatureExtractor rlGlueExtractor;
 	public static boolean blueprints = false;
+	@SuppressWarnings("rawtypes") // applies to any population type
 	public static PerformanceLog performanceLog;
 	public static MsPacManControllerInputOutputMediator pacmanInputOutputMediator;
 	public static GhostControllerInputOutputMediator ghostsInputOutputMediator;
@@ -131,7 +135,9 @@ public class MMNEAT {
 
 	public static MMNEAT mmneat;
 
+	@SuppressWarnings("rawtypes")
 	public static ArrayList<String> fitnessPlusMetaheuristics() {
+		@SuppressWarnings("unchecked")
 		ArrayList<String> result = (ArrayList<String>) fitnessFunctions.get(0).clone();
 		ArrayList<String> meta = new ArrayList<String>();
 		for (Metaheuristic m : metaheuristics) {
@@ -152,6 +158,7 @@ public class MMNEAT {
 		}
 	}
 
+	@SuppressWarnings("rawtypes") // type of genotypes being crossed could be anything
 	private static void setupCrossover() throws NoSuchMethodException {
 		// Crossover operator
 		if (Parameters.parameters.booleanParameter("mating")) {
@@ -167,6 +174,7 @@ public class MMNEAT {
 		}
 	}
 
+	@SuppressWarnings("rawtypes") // Metaheuristic can be applied to any type of population
 	private static void setupMetaHeuristics() {
 		// Metaheuristics are objectives that are not associated with the
 		// domain/task
@@ -311,6 +319,7 @@ public class MMNEAT {
 	 * variables of this class so they are easily accessible
 	 * from all parts of the code.
 	 */
+	@SuppressWarnings("rawtypes")
 	public static void loadClasses() {
 		try {
 			ActivationFunctions.resetFunctionSet();
@@ -698,6 +707,10 @@ public class MMNEAT {
 		}
 	}
 
+	/**
+	 * Runs a single evolution experiment with a given run number.
+	 * @param args Command line parameters
+	 */
 	private static void evolutionaryRun(String[] args) {
 		// Commandline
 		mmneat = new MMNEAT(args);
@@ -788,7 +801,7 @@ public class MMNEAT {
 	 * @param generation
 	 *            Current generation information is being logged for
 	 */
-
+	@SuppressWarnings("unchecked")
 	public static <T> void logPerformanceInformation(ArrayList<Score<T>> combined, int generation) {
 		if (performanceLog != null)
 			performanceLog.log(combined, generation);
