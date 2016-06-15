@@ -97,7 +97,11 @@ public class TUGNSGA2<T> extends NSGA2<T> {
 
 	/**
 	 * Loads important state variables associated with TUG
+	 * @param usage whether or not each objective is being used
 	 * @param rwas recency-weighted averages that chase the real performance
+	 * @param loadedGoals current goal level for each objective
+	 * @param deltas changes in goals
+	 * @param climb whether each objective is in initial climb period
 	 */
 	public void loadTugState(boolean[] usage, double[] rwas, double[] loadedGoals, double[] deltas, boolean[] climb) {
 		this.useObjective = usage;
