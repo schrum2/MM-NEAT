@@ -17,14 +17,17 @@ public class BreveModeSelector implements ModeSelector {
 		this.dynamics = dynamics;
 	}
 
+        @Override
 	public int mode() {
 		return dynamics.task;
 	}
 
+        @Override
 	public int numModes() {
 		return dynamics.numTasks();
 	}
 
+        @Override
 	public void reset() {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}

@@ -53,6 +53,7 @@ public class SubstrateMLP implements Network {
 							boolean expressLink = Math.abs(outputs[i]) > CommonConstants.linkExpressionThreshold;
 							//whether or not to place a link in location
 							if (expressLink) {
+                                                                // TODO: Schrum: Shouldn't this value be scaled?
 								connect[X1][Y1][X2][Y2] = outputs[i];
 							} else {//if not, make weight 0, synonymous to no link in first place
 								connect[X1][Y1][X2][Y2] = 0;

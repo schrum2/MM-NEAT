@@ -18,6 +18,7 @@ import edu.utexas.cs.nn.util.datastructures.Pair;
  * Defines the Breve 2D Task by creating the controllers and dynamics, evaluating the
  * genotype of the evolved agent, and defining other task specific details such as numObjectives
  * @author Jacob Schrum
+ * @param <T> phenotype, which must be a network
  */
 public class Breve2DTask<T extends Network> extends NoisyLonerTask<T>implements TUGTask, NetworkTask {
 
@@ -69,9 +70,9 @@ public class Breve2DTask<T extends Network> extends NoisyLonerTask<T>implements 
 		exec = new Breve2DExec();
 		for (int t = 0; t < dynamics.numIsolatedTasks(); t++) {
 			dynamics.reset();
-			for (int j = 0; j < monsters.length; j++) {
-				((NNBreve2DMonster<T>) monsters[j]).reset();
-			}
+                        for (AgentController monster : monsters) {
+                            ((NNBreve2DMonster<T>) monster).reset();
+                        }
 			enemy.reset();
 			if (CommonConstants.watch) {
 				exec.runGameTimed(dynamics, enemy, monsters, true);
@@ -93,6 +94,7 @@ public class Breve2DTask<T extends Network> extends NoisyLonerTask<T>implements 
 	 * gets the number of objectives
 	 * @return the number of objectives as an int
 	 */
+        @Override
 	public int numObjectives() {
 		return minScores().length;
 	}
@@ -102,6 +104,7 @@ public class Breve2DTask<T extends Network> extends NoisyLonerTask<T>implements 
 	 *
 	 * @return the starting goals in an array of doubles
 	 */
+        @Override
 	public double[] startingGoals() {
 		return dynamics.minScores();
 	}
@@ -119,6 +122,7 @@ public class Breve2DTask<T extends Network> extends NoisyLonerTask<T>implements 
 	 * gets the sensor labels
 	 * @return the sensor labels as an array of strings
 	 */
+        @Override
 	public String[] sensorLabels() {
 		return NNBreve2DMonster.sensorLabels(dynamics, numMonsters);
 	}
@@ -127,6 +131,7 @@ public class Breve2DTask<T extends Network> extends NoisyLonerTask<T>implements 
 	 * gets the output labels 
 	 * @return the output labels as an array of strings
 	 */
+        @Override
 	public String[] outputLabels() {
 		return new String[] { "Turn", "Thrust" };
 	}
@@ -135,6 +140,7 @@ public class Breve2DTask<T extends Network> extends NoisyLonerTask<T>implements 
 	 * gets the current game time, returning zero if the game hasn't started yet
 	 * @return the current game time (time stamp) as a double
 	 */
+        @Override
 	public double getTimeStamp() {
 		if (exec == null || exec.game == null) {
 			return 0;

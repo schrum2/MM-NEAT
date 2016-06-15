@@ -22,7 +22,7 @@ public class NNBreve2DMonster<T extends Network> extends Organism<T>implements A
 	public static final int NUM_OUTPUTS = 2;
 	private final int absence;
 	private final int teamIndex;
-	private Network nn;
+	private final Network nn;
 	private final int largeDistance;
 
 	NNBreve2DMonster(int index, Genotype<T> genotype) {
@@ -33,29 +33,20 @@ public class NNBreve2DMonster<T extends Network> extends Organism<T>implements A
 		largeDistance = Math.min(Breve2DGame.SIZE_X, Breve2DGame.SIZE_Y);
 	}
 
+        @Override
 	public Breve2DAction getAction(Breve2DGame game) {
 		boolean monsterResponds = monsterResponds(game.dynamics);
 		boolean playerResponds = playerResponds(game.dynamics);
 		Agent monster = game.getMonster(teamIndex);
 		Agent player = game.getPlayer();
 
-		// double distance = monster.distance(player);
-		// double nearestDistance =
-		// game.nearestMonsterToPosition(player).distance(player);
-
 		double[] inputs = new double[game.dynamics.numInputSensors()];
 		int in = 0;
 		inputs[in++] = 1.0; // bias
-		// inputs[in++] =
-		// circleScale(Util.signedAngleDifference(monster.getOppositeHeading(),
-		// player.getHeading()));
-		inputs[in++] = circleScale(
-				CartesianGeometricUtilities.signedAngleDifference(monster.getHeading(), player.getHeading()));
-		// inputs[in++] =
-		// circleScale(Util.signedAngleFromSourceHeadingToTarget(monster,
-		// player, monster.getOppositeHeading()));
-		inputs[in++] = circleScale(CartesianGeometricUtilities.signedAngleFromSourceHeadingToTarget(monster, player,
-				monster.getHeading()));
+		// inputs[in++] = circleScale(Util.signedAngleDifference(monster.getOppositeHeading(),player.getHeading()));
+		inputs[in++] = circleScale(CartesianGeometricUtilities.signedAngleDifference(monster.getHeading(), player.getHeading()));
+		// inputs[in++] = circleScale(Util.signedAngleFromSourceHeadingToTarget(monster,player, monster.getOppositeHeading()));
+		inputs[in++] = circleScale(CartesianGeometricUtilities.signedAngleFromSourceHeadingToTarget(monster, player, monster.getHeading()));
 		if (monsterResponds) {
 			inputs[in++] = binarySensor(game.lastMonsterResponseToPlayer(teamIndex) == game.getTime());
 			inputs[in++] = binarySensor(game.lastMonsterResponseToPlayer() == game.getTime());
@@ -67,41 +58,29 @@ public class NNBreve2DMonster<T extends Network> extends Organism<T>implements A
 		}
 
 		// inputs[in++] = binarySenseor(distance < VERY_CLOSE_PLAYER_DISTANCE);
-		// inputs[in++] = binarySenseor(distance < VERY_CLOSE_PLAYER_DISTANCE /
-		// 2);
-		// inputs[in++] = binarySenseor(nearestDistance <
-		// VERY_CLOSE_PLAYER_DISTANCE);
-		// inputs[in++] = binarySenseor(nearestDistance <
-		// VERY_CLOSE_PLAYER_DISTANCE / 2);
-		inputs[in++] = binarySensor(CartesianGeometricUtilities.sourceHeadingTowardsTarget(player.getHeading(), player,
-				monster, Math.PI / 2));
+		// inputs[in++] = binarySenseor(distance < VERY_CLOSE_PLAYER_DISTANCE / 2);
+		// inputs[in++] = binarySenseor(nearestDistance < VERY_CLOSE_PLAYER_DISTANCE);
+		// inputs[in++] = binarySenseor(nearestDistance < VERY_CLOSE_PLAYER_DISTANCE / 2);
+		inputs[in++] = binarySensor(CartesianGeometricUtilities.sourceHeadingTowardsTarget(player.getHeading(), player, monster, Math.PI / 2));
 
-		// inputs[in++] = {"get-close-sword-impulse",INPUT_ON,{},{}} onto
-		// additional-input-info.
-		// inputs[in++] = {"get-very-close-sword-impulse",INPUT_ON,{},{}} onto
-		// additional-input-info.
+		// inputs[in++] = {"get-close-sword-impulse",INPUT_ON,{},{}} onto additional-input-info.
+		// inputs[in++] = {"get-very-close-sword-impulse",INPUT_ON,{},{}} onto additional-input-info.
 
 		// Proximity
 		// inputs[in++] = Util.scaleAndInvert(distance, largeDistance);
 		// inputs[in++] = Util.scaleAndInvert(nearestDistance, largeDistance);
 
-		// ArrayList<Agent> proximityList =
-		// game.monstersByDistanceFrom(monster);
-		// double nearestOtherMonsterDistance = proximityList.size() > 1 ?
-		// proximityList.get(1).distance(monster) : Double.MAX_VALUE;
+		// ArrayList<Agent> proximityList = game.monstersByDistanceFrom(monster);
+		// double nearestOtherMonsterDistance = proximityList.size() > 1 ? proximityList.get(1).distance(monster) : Double.MAX_VALUE;
 		//
-		// inputs[in++] = binarySenseor(nearestOtherMonsterDistance <
-		// VERY_CLOSE_MONSTER_DISTANCE);
-		// inputs[in++] = binarySenseor(nearestOtherMonsterDistance <
-		// VERY_CLOSE_MONSTER_DISTANCE / 2);
+		// inputs[in++] = binarySenseor(nearestOtherMonsterDistance < VERY_CLOSE_MONSTER_DISTANCE);
+		// inputs[in++] = binarySenseor(nearestOtherMonsterDistance < VERY_CLOSE_MONSTER_DISTANCE / 2);
 
 		// boolean right = false;
 		// boolean left = false;
 		// for (int i = 1; i < proximityList.size(); i++) {
-		// right = right || Util.onSideOf(monster, monster.getHeading(),
-		// proximityList.get(i), true);
-		// left = left || Util.onSideOf(monster, monster.getHeading(),
-		// proximityList.get(i), false);
+		//  right = right || Util.onSideOf(monster, monster.getHeading(), proximityList.get(i), true);
+		//  left = left || Util.onSideOf(monster, monster.getHeading(), proximityList.get(i), false);
 		// }
 		// inputs[in++] = binarySenseor(right);
 		// inputs[in++] = binarySenseor(left);
@@ -113,18 +92,10 @@ public class NNBreve2DMonster<T extends Network> extends Organism<T>implements A
 				inputs[in++] = 0;
 				inputs[in++] = 0;
 			} else {
-				// inputs[in++] = dead ? 0 :
-				// circleScale(Util.signedAngleDifference(monster.getOppositeHeading(),
-				// other.getHeading()));
-				inputs[in++] = dead ? 0
-						: circleScale(CartesianGeometricUtilities.signedAngleDifference(monster.getHeading(),
-								other.getHeading()));
-				// inputs[in++] = dead ? 0 :
-				// circleScale(Util.signedAngleFromSourceHeadingToTarget(monster,
-				// other, monster.getOppositeHeading()));
-				inputs[in++] = dead ? 0
-						: circleScale(CartesianGeometricUtilities.signedAngleFromSourceHeadingToTarget(monster, other,
-								monster.getHeading()));
+				// inputs[in++] = dead ? 0 : circleScale(Util.signedAngleDifference(monster.getOppositeHeading(), other.getHeading()));
+				inputs[in++] = dead ? 0 : circleScale(CartesianGeometricUtilities.signedAngleDifference(monster.getHeading(), other.getHeading()));
+				// inputs[in++] = dead ? 0 : circleScale(Util.signedAngleFromSourceHeadingToTarget(monster, other, monster.getOppositeHeading()));
+				inputs[in++] = dead ? 0 : circleScale(CartesianGeometricUtilities.signedAngleFromSourceHeadingToTarget(monster, other, monster.getHeading()));
 			}
 			if (playerResponds) {
 				inputs[in++] = binarySensor(!dead && game.lastPlayerResponseToMonster(i) == game.getTime());
@@ -142,15 +113,10 @@ public class NNBreve2DMonster<T extends Network> extends Organism<T>implements A
 		}
 
 		// for(int i = 0; i < sensorArraySize, i++) {
-		// inputs[in++] = {"get-sword-sensor",INPUT_ON,{i},{}}
+		//  inputs[in++] = {"get-sword-sensor",INPUT_ON,{i},{}}
 		// }
 
-		///////////////////
-		if (in != inputs.length) {
-			System.out.println("Improper inputs for Breve");
-			System.out.println("Only " + in + " inputs: " + Arrays.toString(inputs));
-			System.exit(1);
-		}
+		assert (in == inputs.length) : "Improper inputs for Breve. Only " + in + " inputs: " + Arrays.toString(inputs);
 
 		if (nn.isMultitask()) {
 			ModeSelector modeSelector = new BreveModeSelector(game.dynamics);
@@ -195,10 +161,8 @@ public class NNBreve2DMonster<T extends Network> extends Organism<T>implements A
 		// inputs[in++] = "Any Monster Very Close to Player?";
 		inputs[in++] = "Player Facing This Monster?";
 
-		// inputs[in++] = {"get-close-sword-impulse",INPUT_ON,{},{}} onto
-		// additional-input-info.
-		// inputs[in++] = {"get-very-close-sword-impulse",INPUT_ON,{},{}} onto
-		// additional-input-info.
+		// inputs[in++] = {"get-close-sword-impulse",INPUT_ON,{},{}} onto additional-input-info.
+		// inputs[in++] = {"get-very-close-sword-impulse",INPUT_ON,{},{}} onto additional-input-info.
 
 		// inputs[in++] = "This Monster's Proximity to Player";
 		// inputs[in++] = "Any Monster's Proximity to Player";
@@ -250,6 +214,7 @@ public class NNBreve2DMonster<T extends Network> extends Organism<T>implements A
 		return s ? 1 : absence;
 	}
 
+        @Override
 	public void reset() {
 		nn.flush();
 	}
