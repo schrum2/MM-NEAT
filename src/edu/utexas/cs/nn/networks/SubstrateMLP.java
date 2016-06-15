@@ -1,5 +1,6 @@
 package edu.utexas.cs.nn.networks;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
@@ -7,6 +8,7 @@ import edu.utexas.cs.nn.evolution.genotypes.HyperNEATCPPNGenotype;
 import edu.utexas.cs.nn.networks.hyperneat.HyperNEATTask;
 import edu.utexas.cs.nn.networks.hyperneat.Substrate;
 import edu.utexas.cs.nn.parameters.CommonConstants;
+import edu.utexas.cs.nn.util.PopulationUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.util2D.ILocated2D;
 import edu.utexas.cs.nn.util.util2D.Tuple2D;
@@ -22,9 +24,11 @@ public class SubstrateMLP implements Network {
 
 	//private instance variables
 	private List<double[][][][]> connections;
-	private List<double[][]> neurons;
-	private int numInputs;
-	private int numOutputs;
+	private List<Pair<double[][], Integer>> neurons;
+	private int numInputs = 0;
+	private int numOutputs = 0;
+	private int numHiddenLayers = 0;
+	private int ftype;//TODO
 
 	/**
 	 * Constructor
@@ -53,8 +57,7 @@ public class SubstrateMLP implements Network {
 							boolean expressLink = Math.abs(outputs[i]) > CommonConstants.linkExpressionThreshold;
 							//whether or not to place a link in location
 							if (expressLink) {
-                                                                // TODO: Schrum: Shouldn't this value be scaled?
-								connect[X1][Y1][X2][Y2] = outputs[i];
+								connect[X1][Y1][X2][Y2] = PopulationUtil.calculateWeight(outputs[i]);
 							} else {//if not, make weight 0, synonymous to no link in first place
 								connect[X1][Y1][X2][Y2] = 0;
 							}
@@ -64,41 +67,109 @@ public class SubstrateMLP implements Network {
 			}
 			this.connections.add(connect);
 		}
-		for(Substrate sub: subs) {
-			double[][] toAdd = new double[sub.size.t1][sub.size.t2];
-			neurons.add(toAdd);
-			if(sub.stype == Substrate.INPUT_SUBSTRATE){ numInputs += sub.size.t1 * sub.size.t2;
-			} else if(sub.stype == Substrate.OUTPUT_SUBSTRATE){ numOutputs += sub.size.t1 * sub.size.t2;}
-		}
+		addNeurons(subs, neurons);
 	}
 
+	/**
+	 * adds nodes from substrates to neurons list
+	 * @param subs substrate list
+	 * @param neurons node array to add to 
+	 */
+	private final void addNeurons(List<Substrate> subs, List<Pair<double[][], Integer>> neurons) { 
+		for(Substrate sub: subs) {
+			neurons = new ArrayList<Pair<double[][], Integer>>();
+			Pair<double[][], Integer> neuron = new Pair<double[][], Integer>(new double[sub.size.t1][sub.size.t2], sub.stype);
+			neurons.add(neuron);
+			if(sub.stype == Substrate.INPUT_SUBSTRATE){ numInputs += sub.size.t1 * sub.size.t2;
+			} else if(sub.stype == Substrate.PROCCESS_SUBSTRATE) { numHiddenLayers++;
+			}else if(sub.stype == Substrate.OUTPUT_SUBSTRATE){ numOutputs += sub.size.t1 * sub.size.t2;}
+		}
+	}
+	
+	/**
+	 * Fills neurons with correct inputs
+	 * @param neurons list of neurons
+	 * @param inputs inputs 
+	 */
+	private void fillNeurons(List<Pair<double[][], Integer>> neurons, double[] inputs) { 
+		int x = 0;
+		for(Pair<double[][], Integer> sub : neurons) {
+			for(int i = 0; i < sub.t1.length; i++) {
+				for(int j = 0; j< sub.t1[0].length; j++) {
+					if(sub.t2 == Substrate.INPUT_SUBSTRATE) {
+						sub.t1[i][j] = inputs[x++];
+					}else {
+						sub.t1[i][j] = 0;
+					}
+				}
+			}
+		}
+	}
+	/**
+	 * Returns number of inputs
+	 */
 	@Override
 	public int numInputs() {
 		return numInputs;
 	}
 
+	/**
+	 * Returns number of outputs
+	 */
 	@Override
 	public int numOutputs() {
 		return numOutputs;
 	}
 
+	/**
+	 * Processes inputs through network
+	 */
 	@Override
 	public double[] process(double[] inputs) {
-		return propagate(inputs);
-	}
-
-	private double[] propagate(double[] inputs) {
 		assert numInputs == inputs.length: "number of inputs " + numInputs + " does not match size of inputs given: " + inputs.length;
 		double[] outputs = new double[numOutputs];
 		flush();
-		
+		fillNeurons(neurons, inputs);
+		outputs = propagateOneStep(inputs);//sends inputs to hidden layers
+		for(int i = 0; i < numHiddenLayers; i++) {//process through rest of network
+			outputs = propagateOneStep(outputs);
+		}
 		return outputs;
 	}
 
+	/**
+	 * Propagates one step through network
+	 * @param inputs inputs to layer
+	 * @return outputs from layer
+	 */
+	private double[] propagateOneStep(double[] inputs) {//TODO
+		double[] outputs = new double[0];
+		/*
+		 * add code here
+		 */
+		for(double a : outputs) {
+			activate(a, ftype);
+		}
+		return outputs;
+	}
+
+	/**
+	 * Returns the activation of a node
+	 * @param input input to node
+	 * @param ftype activation function of node
+	 * @return activation
+	 */
+	protected double activate(double input, int ftype) {
+		return ActivationFunctions.activation(ftype, input);
+	}
+	
+	/**
+	 * Clears out all previous activations in nodes
+	 */
 	@Override
 	public void flush() {
-		for(double[][] toClear : neurons) {
-			clear(toClear);
+		for(Pair<double[][], Integer> toClear : neurons) {
+			clear(toClear.t1);
 		}
 
 	}
@@ -108,9 +179,9 @@ public class SubstrateMLP implements Network {
 	 * @param toClear array to clear
 	 */
 	private void clear(double[][] toClear) {
-		for(int x = 0; x < toClear.length; x++) {//TODO toClear.length call is wrong but don't know how to fix
-			for(int y = 0; y < toClear.length; y++) {//TODO toClear.length call is wrong but don't know how to fix
-			toClear[x][y] = 0;
+		for(int x = 0; x < toClear.length; x++) {
+			for(int y = 0; y < toClear[0].length; y++) {
+				toClear[x][y] = 0;
 			}
 		}
 	}
@@ -124,7 +195,7 @@ public class SubstrateMLP implements Network {
 	public boolean isMultitask() {
 		return false;
 	}
-	
+
 	@Override
 	/**
 	 * not supported yet
