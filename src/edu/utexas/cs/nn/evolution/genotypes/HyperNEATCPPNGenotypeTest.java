@@ -17,6 +17,7 @@ import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.networks.hyperneat.Substrate;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.util.CartesianGeometricUtilities;
+import edu.utexas.cs.nn.util.PopulationUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.datastructures.Triple;
 import edu.utexas.cs.nn.util.util2D.ILocated2D;
@@ -162,7 +163,7 @@ public class HyperNEATCPPNGenotypeTest {
 	public void testLinkExpressionThreshold() {
 		double x = 1.0;
 		double y = -1.0;
-		assertEquals(hcppn.calculateWeight(x), .8, .0001);
-		assertEquals(hcppn.calculateWeight(y), -.8, .0001);
+		assertEquals(PopulationUtil.calculateWeight(x), .8, .0001);
+		assertEquals(PopulationUtil.calculateWeight(y), -.8, .0001);
 	}
 }

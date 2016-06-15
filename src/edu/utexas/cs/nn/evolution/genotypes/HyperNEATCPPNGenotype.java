@@ -8,6 +8,7 @@ import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.networks.hyperneat.HyperNEATTask;
 import edu.utexas.cs.nn.networks.hyperneat.Substrate;
 import edu.utexas.cs.nn.parameters.CommonConstants;
+import edu.utexas.cs.nn.util.PopulationUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.util2D.ILocated2D;
 import edu.utexas.cs.nn.util.util2D.Tuple2D;
@@ -89,9 +90,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 		HyperNEATTask hnt = (HyperNEATTask) MMNEAT.task;// Cast task to HyperNEATTask
 		List<Substrate> subs = hnt.getSubstrateInformation();// extract substrate information from domain
 		List<Pair<String, String>> connections = hnt.getSubstrateConnectivity();// extract substrate connectivity from domain
-                @SuppressWarnings("UnusedAssignment")
 		ArrayList<NodeGene> newNodes = null;
-                @SuppressWarnings("UnusedAssignment")
 		ArrayList<LinkGene> newLinks = null;
 		innovationID = 0;// reset each time a phenotype is generated
 		int phenotypeOutputs = 0;
@@ -244,7 +243,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 							linksSoFar.add(new LinkGene(
 									getInnovationID(X1, Y1, s1Index, subs), 
 									getInnovationID(X2, Y2, s2Index, subs), 
-									calculateWeight(outputs[outputIndex]),
+									PopulationUtil.calculateWeight(outputs[outputIndex]),
 									innovationID++, false));
 						} 
 
@@ -297,23 +296,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 		return innovationIDAccumulator;
 	}
 
-	/**
-	 * Used for standard HyperNEAT link expression. If a link is to be
-	 * expressed, then values beyond a threshold slide back to 0 so that weights
-	 * with a small magnitude are possible.
-	 *
-	 * @param originalOutput
-	 *            original CPPN output
-	 * @return Scaled synaptic weight
-	 */
-	protected double calculateWeight(double originalOutput) {
-		assert(Math.abs(originalOutput) > CommonConstants.linkExpressionThreshold) : "This link should not be expressed: " + originalOutput;
-		if (originalOutput > CommonConstants.linkExpressionThreshold) {
-			return originalOutput - CommonConstants.linkExpressionThreshold;
-		} else {
-			return originalOutput + CommonConstants.linkExpressionThreshold;
-		}
-	}
+	
 
 	/**
 	 * Creates a new random instance of the hyperNEATCPPNGenotype
