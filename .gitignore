@@ -95,3 +95,5 @@ vizdoom.ini
 .settings/org.eclipse.jdt.core.prefs
 *.png
 _vizdoom.ini
+
+.svn
