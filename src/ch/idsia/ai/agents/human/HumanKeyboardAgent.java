@@ -50,7 +50,7 @@ public class HumanKeyboardAgent extends KeyAdapter implements Agent
     public void keyPressed (KeyEvent e)
     {
         toggleKey(e.getKeyCode(), true);
-        System.out.println("sdf");
+        //System.out.println("sdf");
     }
 
     public void keyReleased (KeyEvent e)
