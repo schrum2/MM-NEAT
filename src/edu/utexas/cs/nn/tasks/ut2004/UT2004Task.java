@@ -86,6 +86,7 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 		MMNEAT.registerFitnessFunction(o.getClass().getSimpleName(), override, affectsSelection);
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {            
 		int botPort = ServerUtil.getAvailablePort();

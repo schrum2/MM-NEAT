@@ -16,6 +16,10 @@ import java.util.logging.Logger;
 public class Configuration implements Serializable {
 
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	/**
 	 * Defines the default number of bits used for binary coded variables.
 	 */
 	// public static final int DEFAULT_PRECISION = 30;

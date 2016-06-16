@@ -33,7 +33,8 @@ public class Stats {
     // found it :
     // This plots sin(x) and cos(x) with linespoints, using the same line type but different point types:
     //  plot sin(x) with linesp lt 1 pt 3, cos(x) with linesp lt 1 pt 4
-    public static double[] v2a(Vector v) {
+    @SuppressWarnings("rawtypes")
+	public static double[] v2a(Vector v) {
         double[] d = new double[v.size()];
         int i = 0;
         for (Enumeration e = v.elements(); e.hasMoreElements();)
@@ -111,7 +112,8 @@ public class Stats {
      * correctness
      */
 
-    private static double variance2(double[] v) {
+    @SuppressWarnings("unused")
+	private static double variance2(double[] v) {
         double mu = mean(v);
         double sumsq = 0.0;
         for (int i = 0; i < v.length; i++)

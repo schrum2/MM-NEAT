@@ -41,8 +41,6 @@ import rlVizLib.visualization.GenericScoreComponent;
 import rlVizLib.visualization.ValueFunctionVizComponent;
 import rlVizLib.visualization.interfaces.DynamicControlTarget;
 import org.rlcommunity.rlglue.codec.types.Observation;
-
-import org.rlcommunity.rlglue.codec.types.Action;
 import rlVizLib.messaging.NotAnRLVizMessageException;
 import rlVizLib.visualization.SelfUpdatingVizComponent;
 

@@ -13,7 +13,6 @@ import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.nearestfarthest.NearestPil
 import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.nearestfarthest.NearestPowerPillBlock;
 import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.proximity.ThreatGhostDirectionalProximityBlock;
 import edu.utexas.cs.nn.util.random.RandomNumbers;
-import java.util.Arrays;
 
 /**
  *
@@ -37,6 +36,7 @@ public class StaticPacManController extends NNDirectionalPacManController {
 		this(new TWEANN(1, 1, false, 1, 1, 1), depth);
 	}
 
+	@SuppressWarnings("static-access")
 	public StaticPacManController(Network n, int depth) {
 		super(n);
 		futureSteps = depth;

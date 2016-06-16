@@ -204,7 +204,8 @@ public class StatisticalTests {
      *         within that confidence interval
      */
 
-    public static double confDiff(double[] d, double conf) {
+    @SuppressWarnings("unused")
+	public static double confDiff(double[] d, double conf) {
         // find the alpha which gives this confidence level
 
         double mean = Stats.mean(d);
@@ -265,7 +266,8 @@ public class StatisticalTests {
      * functions.
      */
 
-    private static double binRoot(double x) {
+    @SuppressWarnings("unused")
+	private static double binRoot(double x) {
         double eps = 0.0001; // accuracy
         // do a binary search for it
         // find the square root of x using a binary search
@@ -397,7 +399,8 @@ public class StatisticalTests {
             d[i] = Math.random() + mean - 0.5;
     }
 
-    private static void test() {
+    @SuppressWarnings("unused")
+	private static void test() {
         System.out.println(tTest(1.311, 29));
         System.out.println(tSingle(1.311, 29));
         System.out.println(tTest(1.699, 29));
@@ -453,7 +456,8 @@ public class StatisticalTests {
 
     }
 
-    private static void addConst(double[] v1, double[] v2, double c) {
+    @SuppressWarnings("unused")
+	private static void addConst(double[] v1, double[] v2, double c) {
         for (int i = 0; i < v1.length; i++)
             v2[i] = v1[i] + c;
     }
@@ -464,7 +468,8 @@ public class StatisticalTests {
      * The data is from page 362 of Statistics for Business and Economics
      */
 
-    private static void testT() {
+    @SuppressWarnings("unused")
+	private static void testT() {
 
         double[] s1 = {137, 135, 83, 125, 47, 46, 114, 157, 57, 144};
         double[] s2 = {53, 114, 81, 86, 34, 66, 89, 113, 88, 111};

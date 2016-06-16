@@ -5,7 +5,6 @@
 package edu.utexas.cs.nn.tasks.mspacman.objectives.fitnessassignment;
 
 import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.parameters.Parameters;
 
 /**
  *

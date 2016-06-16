@@ -9,7 +9,6 @@ import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
 import edu.utexas.cs.nn.util.CombinatoricUtilities;
 import java.awt.Color;
-import java.util.Arrays;
 import java.util.HashMap;
 
 /**

@@ -6,9 +6,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.NoSuchElementException;
-import java.util.Scanner;
 
 /**
  * General logging class. Needs to be generalized more.

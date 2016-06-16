@@ -10,11 +10,9 @@ import org.rlcommunity.rlglue.codec.types.Observation;
 
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
-import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.tasks.rlglue.RLGlueTask;
 import edu.utexas.cs.nn.tasks.rlglue.featureextractors.tetris.BertsekasTsitsiklisTetrisExtractor;
 
 public class TetrisAfterStateAgentTests {
@@ -81,6 +79,7 @@ public class TetrisAfterStateAgentTests {
 		}
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked", "unused" })
 	@Test
 	public void action_sequence() {
 		CommonConstants.randomArgMaxTieBreak = false;

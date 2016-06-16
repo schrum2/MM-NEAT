@@ -1,8 +1,6 @@
 package edu.utexas.cs.nn.networks.hyperneat;
 
 import static org.junit.Assert.*;
-
-import org.junit.Before;
 import org.junit.Test;
 
 import edu.utexas.cs.nn.util.datastructures.Pair;

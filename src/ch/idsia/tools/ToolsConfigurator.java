@@ -29,7 +29,11 @@ import java.util.Set;
  */
 public class ToolsConfigurator extends JFrame
 {
-    private Evaluator evaluator;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private Evaluator evaluator;
     private static CmdLineOptions cmdLineOptions = null;
 
     public static void main(String[] args)
@@ -496,8 +500,10 @@ public class ToolsConfigurator extends JFrame
         }
     }
 
-    public void setGameViewer(GameViewer gameViewer) {        this.gameViewer = gameViewer;    }
-    public void setMarioComponent(MarioComponent marioComponent)
+    @SuppressWarnings("static-access")
+	public void setGameViewer(GameViewer gameViewer) {        this.gameViewer = gameViewer;    }
+    @SuppressWarnings("static-access")
+	public void setMarioComponent(MarioComponent marioComponent)
     {
         this.marioComponent = marioComponent;
         this.marioComponent.setGameViewer(gameViewer);

@@ -1,7 +1,6 @@
 package edu.utexas.cs.nn.tasks.vizdoom;
 
 import java.awt.Color;
-import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -276,6 +275,7 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 	 * @param height
 	 *            screen height
 	 */
+	@SuppressWarnings("unused")
 	public static void drawGameState(GameState s, int width, int height) {
 		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		int bufferPos = 0;

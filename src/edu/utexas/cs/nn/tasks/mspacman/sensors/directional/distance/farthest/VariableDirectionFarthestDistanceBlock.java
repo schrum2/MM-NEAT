@@ -6,7 +6,6 @@ package edu.utexas.cs.nn.tasks.mspacman.sensors.directional.distance.farthest;
 
 import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
 import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.VariableDirectionBlock;
-import edu.utexas.cs.nn.util.datastructures.Pair;
 
 /**
  *

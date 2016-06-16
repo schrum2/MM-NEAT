@@ -7,7 +7,6 @@ import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.parameters.Parameters;
 import vizdoom.Button;
 import vizdoom.GameState;
-import vizdoom.GameVariable;
 
 public class VizDoomPredictPositionTask<T extends Network> extends VizDoomTask<T> {
 

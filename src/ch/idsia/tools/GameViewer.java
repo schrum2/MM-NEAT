@@ -20,7 +20,11 @@ import java.awt.event.ItemListener;
  */
 public class GameViewer extends JFrame
 {
-    Dimension defaultSize = new Dimension(900, 800);
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	Dimension defaultSize = new Dimension(900, 800);
     Point defaultLocation = new Point(350, 10);
 
     //    Thread animator;
@@ -39,14 +43,20 @@ public class GameViewer extends JFrame
 
     private class GameViewerView extends JPanel implements Runnable
     {
-        Thread animator;
-        public void start()
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+		Thread animator;
+        @SuppressWarnings("unused")
+		public void start()
         {
             animator = new Thread(this);
             animator.start();
         }
 
-        public void stop()
+        @SuppressWarnings("unused")
+		public void stop()
         {
             animator = null;
         }

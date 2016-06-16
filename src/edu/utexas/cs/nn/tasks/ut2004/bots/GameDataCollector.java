@@ -31,6 +31,10 @@ import java.util.TreeMap;
  */
 public class GameDataCollector implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	public double evalTime = 0;
 	private boolean successfulEval = false;
 	public int timeNotMoving = 0;
@@ -104,6 +108,7 @@ public class GameDataCollector implements Serializable {
 		return this.successfulEval;
 	}
 
+	@SuppressWarnings("rawtypes")
 	public void endEval(UT2004BotModuleController bot) {
 		this.successfulEval = true;
 		// Get best enemy score
@@ -114,6 +119,7 @@ public class GameDataCollector implements Serializable {
 		}
 	}
 
+	@SuppressWarnings("rawtypes")
 	public void registerListeners(final UT2004BotModuleController bot) {
 		this.info = bot.getInfo();
 		this.weaponry = bot.getWeaponry();

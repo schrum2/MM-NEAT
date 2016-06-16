@@ -38,12 +38,14 @@ public abstract class SequentialPathExplorer implements BotController {
 	 */
 	protected UT2004PathAutoFixer autoFixer;
 
-        @Override
+        @SuppressWarnings("rawtypes")
+		@Override
 	public BotAction control(UT2004BotModuleController bot) {
 		// => navigate to navpoint
 		return handleNavPointNavigation(bot);
 	}
 
+	@SuppressWarnings("rawtypes")
 	private BotAction handleNavPointNavigation(UT2004BotModuleController bot) {
 		if (bot.getNavigation().isNavigating()) {
 			// WE'RE NAVIGATING TO SOME NAVPOINT
@@ -63,7 +65,8 @@ public abstract class SequentialPathExplorer implements BotController {
 		return new NavigateToLocationAction(targetNavPoint);
 	}
 
-        @Override
+        @SuppressWarnings({ "rawtypes", "unchecked" })
+		@Override
 	public void initialize(UT2004BotModuleController bot) {
 		// initialize taboo set where we store temporarily unavailable navpoints
 		tabooNavPoints = new TabooSet<NavPoint>(bot.getBot());
@@ -90,6 +93,7 @@ public abstract class SequentialPathExplorer implements BotController {
 	 *
 	 * @param state
 	 */
+	@SuppressWarnings("incomplete-switch")
 	protected void pathExecutorStateChange(PathExecutorState state) {
 		switch (state) {
 		case PATH_COMPUTATION_FAILED:
@@ -121,9 +125,11 @@ public abstract class SequentialPathExplorer implements BotController {
          * @param bot Bot that is navigating
 	 * @return randomly chosen navpoint
 	 */
+	@SuppressWarnings("rawtypes")
 	public abstract NavPoint getNextNavPoint(UT2004BotModuleController bot);
 
-        @Override
+        @SuppressWarnings("rawtypes")
+		@Override
 	public void reset(UT2004BotModuleController bot) {
 		bot.getNavigation().stopNavigation();
 	}

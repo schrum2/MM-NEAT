@@ -108,6 +108,7 @@ public class MsPacManInitialization {
          * @param <T> phenotype
          * @param subnets change the subnetworks in the
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static <T> void replaceSubnets(ArrayList<Genotype<T>> subnets) {
 		BlockLoadedInputOutputMediator blockMediator = ((BlockLoadedInputOutputMediator) pacmanInputOutputMediator);
 		int numBlocks = blockMediator.blocks.size();
@@ -147,6 +148,7 @@ public class MsPacManInitialization {
 		}
 	}
 	
+	@SuppressWarnings("rawtypes")
 	public static void setupCooperativeCoevolutionSelectorForMsPacman() throws NoSuchMethodException {
 		MMNEAT.pacmanInputOutputMediator = (MsPacManControllerInputOutputMediator) ClassCreation.createObject("pacmanInputOutputMediator");
 		MMNEAT.setNNInputParameters(MMNEAT.pacmanInputOutputMediator.numIn(), MMNEAT.pacmanInputOutputMediator.numOut());
@@ -218,7 +220,7 @@ public class MsPacManInitialization {
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "rawtypes" })
 	public static void setupCooperativeCoevolutionNonHierarchicalForMsPacman() throws NoSuchMethodException {
 		MMNEAT.pacmanInputOutputMediator = (MsPacManControllerInputOutputMediator) ClassCreation.createObject("pacmanInputOutputMediator");
 		MMNEAT.setNNInputParameters(MMNEAT.pacmanInputOutputMediator.numIn(), MMNEAT.pacmanInputOutputMediator.numOut());
@@ -265,10 +267,8 @@ public class MsPacManInitialization {
 		String pillScoreFile = Parameters.parameters.stringParameter("multinetworkScores2");
 
 
-                @SuppressWarnings("UnusedAssignment")
-		NSGA2Score<TWEANN>[] ghostScores = null;
-                @SuppressWarnings("UnusedAssignment")
-		NSGA2Score<TWEANN>[] pillScores = null;
+                NSGA2Score<TWEANN>[] ghostScores = null;
+                NSGA2Score<TWEANN>[] pillScores = null;
 		try {
 			ghostScores = PopulationUtil.loadScores(ghostScoreFile);
 			pillScores = PopulationUtil.loadScores(pillScoreFile);

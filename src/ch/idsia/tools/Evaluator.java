@@ -29,7 +29,8 @@ public class Evaluator implements Runnable
 
     private List<EvaluationInfo> evaluationSummary = new ArrayList<EvaluationInfo>();
 
-    private void evaluateServerMode()
+    @SuppressWarnings("unchecked")
+	private void evaluateServerMode()
     {
         Server server = new Server(evaluationOptions.getServerAgentPort(), Environment.numberOfObservationElements, Environment.numberOfButtons);
         evaluationOptions.setAgent(new ServerAgent(server, evaluationOptions.isFastTCP()));
@@ -95,7 +96,8 @@ public class Evaluator implements Runnable
         }
     }
 
-    public List<EvaluationInfo> evaluate()
+    @SuppressWarnings("unchecked")
+	public List<EvaluationInfo> evaluate()
     {
         if (this.evaluationOptions.isServerMode() )
         {
@@ -228,6 +230,7 @@ public class Evaluator implements Runnable
     }
 }
 
+@SuppressWarnings("rawtypes")
 class evBasicFitnessComparator implements Comparator
 {
     public int compare(Object o, Object o1)
@@ -243,6 +246,7 @@ class evBasicFitnessComparator implements Comparator
     }
 }
 
+@SuppressWarnings("rawtypes")
 class evCoinsFitnessComparator implements Comparator
 {
     public int compare(Object o, Object o1)
@@ -259,6 +263,7 @@ class evCoinsFitnessComparator implements Comparator
     }
 }
 
+@SuppressWarnings("rawtypes")
 class evDistanceFitnessComparator implements Comparator
 {
     public int compare(Object o, Object o1)

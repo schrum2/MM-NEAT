@@ -4,7 +4,6 @@ import edu.utexas.cs.nn.parameters.CommonConstants;
 import java.util.EnumMap;
 import java.util.Map.Entry;
 import pacman.controllers.NewGhostController;
-import pacman.game.Constants;
 import pacman.game.Constants.GHOST;
 import pacman.game.Constants.MOVE;
 

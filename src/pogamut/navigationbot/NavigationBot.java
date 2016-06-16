@@ -1,6 +1,5 @@
 package pogamut.navigationbot;
 
-import java.util.Collection;
 import java.util.logging.Level;
 
 import cz.cuni.amis.pogamut.base.agent.navigation.IPathExecutorState;
@@ -37,6 +36,7 @@ import cz.cuni.amis.utils.flag.FlagListener;
  * @author Rudolf Kadlec aka ik
  * @author Jakub Gemrot aka Jimmy
  */
+@SuppressWarnings("rawtypes")
 @AgentScoped
 public class NavigationBot extends UT2004BotModuleController {
 
@@ -309,6 +309,7 @@ public class NavigationBot extends UT2004BotModuleController {
 	 *
 	 * @param state
 	 */
+	@SuppressWarnings("incomplete-switch")
 	protected void pathExecutorStateChange(PathExecutorState state) {
 		switch (state) {
 		case PATH_COMPUTATION_FAILED:
@@ -359,6 +360,7 @@ public class NavigationBot extends UT2004BotModuleController {
 		return MyCollections.getRandom(getWorldView().getAll(NavPoint.class).values());
 	}
 
+	@SuppressWarnings("unchecked")
 	public static void main(String args[]) throws PogamutException {
 		// wrapped logic for bots executions, suitable to run single bot in
 		// single JVM

@@ -1,7 +1,6 @@
 package edu.utexas.cs.nn.tasks.mspacman.agentcontroller.pacman.actions;
 
 import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.mspacman.data.NodeCollection;
 import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
 import edu.utexas.cs.nn.tasks.mspacman.facades.GhostControllerFacade;

@@ -9,13 +9,11 @@ import edu.utexas.cs.nn.scores.MultiObjectiveScore;
 import edu.utexas.cs.nn.scores.Score;
 import edu.utexas.cs.nn.tasks.mspacman.agentcontroller.pacman.NNCheckEachDirectionPacManController;
 import edu.utexas.cs.nn.util.ClassCreation;
-import edu.utexas.cs.nn.util.MiscUtil;
 import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.stats.Average;
 import edu.utexas.cs.nn.util.stats.Statistic;
 import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
-import java.util.ArrayList;
 import java.util.Arrays;
 
 /**

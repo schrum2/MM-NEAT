@@ -1,6 +1,5 @@
 package pacman.entries.pacman.eiisolver.graph;
 
-import pacman.game.Constants;
 import pacman.game.Constants.GHOST;
 import pacman.game.Constants.MOVE;
 

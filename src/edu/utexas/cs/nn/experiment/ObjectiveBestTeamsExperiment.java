@@ -28,6 +28,7 @@ import edu.utexas.cs.nn.util.stats.Statistic;
  * @author rollinsa
  * @param <T> Type of evolved phenotype
  */
+@SuppressWarnings("unused")
 public class ObjectiveBestTeamsExperiment implements Experiment {
 
 	@SuppressWarnings("rawtypes")

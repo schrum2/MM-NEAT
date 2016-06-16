@@ -1,11 +1,7 @@
 package edu.utexas.cs.nn.tasks.mspacman.facades;
 
 import edu.utexas.cs.nn.parameters.Parameters;
-import java.util.EnumMap;
 import pacman.Executor;
-import pacman.controllers.Controller;
-import pacman.game.Constants;
-import pacman.game.Game;
 
 /**
  *

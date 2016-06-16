@@ -1,8 +1,6 @@
 package edu.utexas.cs.nn.tasks.mspacman.data;
 
-import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
-import java.awt.Color;
 import java.util.ArrayList;
 
 /**
