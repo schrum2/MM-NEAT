@@ -11,7 +11,7 @@ public class NNMarioAgent<T extends Network> extends Organism<T> implements Agen
 	Network n;
     final int numberOfOutputs = 6;
     final int numberOfInputs = 10;
-	private String name = "SimpleMLPAgent";
+	private String name = "NNMarioAgent";
 	
 	public NNMarioAgent(Genotype<T> genotype) {
 		super(genotype);

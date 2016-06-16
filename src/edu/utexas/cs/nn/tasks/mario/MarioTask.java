@@ -25,13 +25,16 @@ public class MarioTask<T extends Network> extends NoisyLonerTask<T>implements Ne
 
 	public MarioTask(){
     	options = new CmdLineOptions(new String[0]);
-        options.setMaxFPS(false);
+        options.setMaxFPS(true);
         options.setVisualization(true);
         options.setNumberOfTrials(1);
         options.setMatlabFileName("");
         options.setLevelRandSeed((int) (Math.random () * Integer.MAX_VALUE));
         options.setLevelDifficulty(3);
         options.setVisualization(CommonConstants.watch);
+        options.setTimeLimit(200);
+        
+        MMNEAT.registerFitnessFunction("Progress");
 	}
 	
 	@Override
