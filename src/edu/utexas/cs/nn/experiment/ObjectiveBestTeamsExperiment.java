@@ -112,7 +112,14 @@ public class ObjectiveBestTeamsExperiment implements Experiment {
 				team[i] = genotypes.get(i).get(combo.get(i));
 			}
 
-			double[][] objectiveScores = new double[CommonConstants.trials][numObjectives[0]];
+			//double[][] objectiveScores = new double[CommonConstants.trials][numObjectives[0]];
+			// Ignore, because all needed information should be in other scores
+			double[][] objectiveScores = new double[CommonConstants.trials][0];
+			
+			// Rather than worry about the different objectives used by each population, we
+			// will put all objectives for each population into the other scores of the first
+			// population. This will allow us to know how all populations are performing
+			// by only looking at the other scores from the first population.
 			double[][] otherScores = new double[CommonConstants.trials][numOtherScores[0]];
 
 			for(int t = 0; t < CommonConstants.trials; t++){
@@ -124,20 +131,21 @@ public class ObjectiveBestTeamsExperiment implements Experiment {
 					CooperativeTask.disposePanels(networks);
 
 				if (Parameters.parameters.booleanParameter("printFitness")) {
-					System.out.println(Arrays.toString(s.get(0).scores) + Arrays.toString(s.get(0).otherStats));
-					if (s.get(0).individual instanceof TWEANNGenotype) {
-						System.out.println("Module Usage: " + Arrays.toString(((TWEANNGenotype) s.get(0).individual).getModuleUsage()));
-					}
+//					System.out.println(Arrays.toString(s.get(0).scores) + Arrays.toString(s.get(0).otherStats));
+					System.out.println(Arrays.toString(s.get(0).otherStats));
+//					if (s.get(0).individual instanceof TWEANNGenotype) {
+//						System.out.println("Module Usage: " + Arrays.toString(((TWEANNGenotype) s.get(0).individual).getModuleUsage()));
+//					}
 				}
-				objectiveScores[t] = s.get(0).scores; // fitness scores
+				//objectiveScores[t] = s.get(0).scores; // fitness scores
 				otherScores[t] = s.get(0).otherStats; // other scores
 			}
 
 			//print scoreSummary
-			double[] fitness = new double[numObjectives[0]];
-			for (int i = 0; i < fitness.length; i++) {
-				fitness[i] = stat.stat(ArrayUtil.column(objectiveScores, i));
-			}
+			double[] fitness = new double[0];
+//			for (int i = 0; i < fitness.length; i++) {
+//				fitness[i] = stat.stat(ArrayUtil.column(objectiveScores, i));
+//			}
 			double[] other = new double[numOtherScores[0]];
 			for (int i = 0; i < other.length; i++) {
 				other[i] = stat.stat(ArrayUtil.column(otherScores, i));
@@ -149,7 +157,7 @@ public class ObjectiveBestTeamsExperiment implements Experiment {
 					System.out.print("["+g.getId()+"]");
 				}
 				System.out.println();
-				System.out.println("\t" + NoisyLonerTask.scoreSummary(objectiveScores, otherScores, fitness, other));
+				System.out.println("\t" + NoisyLonerTask.scoreSummary(objectiveScores, otherScores, fitness, other, numObjectives[0]));
 			}
 
 		}

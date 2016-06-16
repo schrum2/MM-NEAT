@@ -196,6 +196,10 @@ public abstract class NoisyLonerTask<T> extends LonerTask<T> {
 		return s;
 	}
 
+	public static String scoreSummary(double[][] objectiveScores, double[][] otherScores, double[] fitness, double[] other) {
+		return scoreSummary(objectiveScores, otherScores, fitness, other, 0);
+	}	
+	
 	/**
 	 * obtain a summary of the fitness and other scores
 	 *
@@ -203,13 +207,14 @@ public abstract class NoisyLonerTask<T> extends LonerTask<T> {
 	 * @param otherScores
 	 * @param fitness
 	 * @param other
+	 * @param starting index of the scores 
 	 * @return the summary in a string
 	 */
-	public static String scoreSummary(double[][] objectiveScores, double[][] otherScores, double[] fitness, double[] other) {
+	public static String scoreSummary(double[][] objectiveScores, double[][] otherScores, double[] fitness, double[] other, int fitnessStart) {
 		String nl = System.getProperty("line.separator");
 		String result = "";
 		result += "Fitness scores:" + nl;
-		int globalFitnessFunctionIndex = 0;
+		int globalFitnessFunctionIndex = fitnessStart;
 		for (int i = 0; i < fitness.length; i++) {
 			Statistic fitnessStat = MMNEAT.aggregationOverrides.get(globalFitnessFunctionIndex);
 			boolean includeStdev = fitnessStat == null || fitnessStat instanceof Average;
