@@ -31,6 +31,22 @@ import jmetal.qualityIndicator.Hypervolume;
  */
 public class ResultSummaryUtilities {
 
+	/**
+	 * An experiment for postProcess
+	 * Takes the average of the scores of all experiments that were run 
+	 * If there are multiple populations, takes the average of scores for each population
+	 * across all of the experiments
+	 * @param dirPrefix, Directory Prefix
+	 * @param filePrefix, File Prefix
+	 * @param runs, number of runs to process
+	 * @param generations, number of generations
+	 * @param logSuffix, log suffix
+	 * @param genFileMiddle, generation file middle name
+	 * @param outputDir, output directory
+	 * @param popNum, current population
+	 * @throws FileNotFoundException
+	 * @throws NoSuchMethodException
+	 */
 	public static void processExperiment(String dirPrefix, String filePrefix, int runs, int generations,
 			String logSuffix, String genFileMiddle, String outputDir, int popNum)
 					throws FileNotFoundException, NoSuchMethodException {
@@ -58,6 +74,16 @@ public class ResultSummaryUtilities {
 		}
 	}
 
+	/**
+	 * Calculates the hypervolumes and averages them, calls the methods to plot them as well
+	 * @param dirPrefix, Directory Prefix
+	 * @param runs, number of runs to process
+	 * @param filePrefix, File Prefix
+	 * @param genFileMiddle, generation file middle name
+	 * @param generations, number of generations
+	 * @param outputDir, output directory
+	 * @throws FileNotFoundException
+	 */
 	public static void hypervolumeProcessing(String dirPrefix, int runs, String filePrefix, String genFileMiddle,
 			int generations, String outputDir) throws FileNotFoundException {
 		System.out.println("Calculate hypervolumes: " + dirPrefix + "X/" + filePrefix + "X" + genFileMiddle + "HV.txt");
@@ -68,12 +94,33 @@ public class ResultSummaryUtilities {
 		plotHypervolumesFile(filePrefix, genFileMiddle + "HV", runs, outputDir);
 	}
 
+	/**
+	 * Plots a file with given information 
+	 * @param filePrefix, File Prefix
+	 * @param middle, the middle of the file name
+	 * @param num, number of columns in file
+	 * @param outputDir, output directory
+	 * @param labels, labels
+	 * @throws FileNotFoundException
+	 * @throws NoSuchMethodException
+	 */
 	private static void plotInfoFile(String filePrefix, String middle, int num, String outputDir, 
 			ArrayList<String> labels) throws FileNotFoundException, NoSuchMethodException {
 		plotInfoFile(filePrefix, middle, num, outputDir, labels, false);
 		plotInfoFile(filePrefix, middle, num, outputDir, labels, true);
 	}
 
+	/**
+	 * Plots a file with given information 
+	 * @param filePrefix, File Prefix
+	 * @param middle, the middle of the file name
+	 * @param num, number of columns in file
+	 * @param outputDir, output directory
+	 * @param labels, labels
+	 * @param makePDF, true if making a pdf, false if not 
+	 * @throws FileNotFoundException
+	 * @throws NoSuchMethodException
+	 */
 	private static void plotInfoFile(String filePrefix, String middle, int num, String outputDir,
 			ArrayList<String> labels, boolean makePDF) throws FileNotFoundException, NoSuchMethodException {
 		String plotFile = "";
@@ -110,6 +157,16 @@ public class ResultSummaryUtilities {
 		out.close();
 	}
 
+	/**
+	 * Finds the average file columns of each file for the number of runs to process
+	 * @param dirPrefix, Directory Prefix
+	 * @param filePrefix, File Prefix
+	 * @param fileSuffix, File Suffix
+	 * @param runs, number of runs to process
+	 * @param outputDir, Output Directory
+	 * @return the average condition results across the averages for each of the file columns
+	 * @throws FileNotFoundException
+	 */
 	public static int averageConditionResults(String dirPrefix, String filePrefix, String fileSuffix, int runs,
 			String outputDir) throws FileNotFoundException {
 		String[] files = new String[runs];
@@ -174,6 +231,17 @@ public class ResultSummaryUtilities {
 		return result;
 	}
 
+	/**
+	 * Calls hypervolumesByGeneration for each run, which calls hypervolumeForGeneration for each generation, 
+	 * which will print out the hypervolumes for each generation
+	 * @param dirPrefix, directory prefix
+	 * @param runs, number of process runs
+	 * @param filePrefix, file prefix
+	 * @param fileMiddle, middle of the file name
+	 * @param fileExtension, extension for the file
+	 * @param generations, number of generations
+	 * @throws FileNotFoundException
+	 */
 	public static void hypervolumesByGenerationForAllRuns(String dirPrefix, int runs, String filePrefix,
 			String fileMiddle, String fileExtension, int generations) throws FileNotFoundException {
 		for (int i = 0; i < runs; i++) {
@@ -182,6 +250,17 @@ public class ResultSummaryUtilities {
 		}
 	}
 
+	/**
+	 * Calls hypervolumeForGeneration for each generation, which will print out the hypervolumes
+	 * @param dirPrefix, directory prefix
+	 * @param run, number of process runs
+	 * @param filePrefix, file prefix
+	 * @param fileMiddle, middle of the file name
+	 * @param fileExtension, extension for the file
+	 * @param generations, number of generations
+	 * @param outputPrefix, output prefix
+	 * @throws FileNotFoundException
+	 */
 	public static void hypervolumesByGeneration(String dirPrefix, int run, String filePrefix, String fileMiddle,
 			String fileExtension, int generations, String outputPrefix) throws FileNotFoundException {
 		PrintStream out = new PrintStream(new FileOutputStream(outputPrefix + run + fileMiddle + "HV.txt"));
@@ -281,11 +360,28 @@ public class ResultSummaryUtilities {
 		return result;
 	}
 
+	/**
+	 * plots the hypervolumes file which was calculated before
+	 * @param filePrefix, file prefix
+	 * @param fileSuffix, file suffix
+	 * @param runs, number of process runs
+	 * @param outputDir, output directory
+	 * @throws FileNotFoundException
+	 */
 	private static void plotHypervolumesFile(String filePrefix, String fileSuffix, int runs, String outputDir) throws FileNotFoundException {
 		plotHypervolumesFile(filePrefix, fileSuffix, runs, outputDir, false);
 		plotHypervolumesFile(filePrefix, fileSuffix, runs, outputDir, true);
 	}
 
+	/**
+	 * plots the hypervolumes file which was calculated before
+	 * @param filePrefix, file prefix
+	 * @param fileSuffix, file suffix
+	 * @param runs, number of process runs
+	 * @param outputDir, output directory
+	 * @param makePDF, true if making a PDF, false if not
+	 * @throws FileNotFoundException
+	 */
 	private static void plotHypervolumesFile(String filePrefix, String fileSuffix, int runs, String outputDir, boolean makePDF)
 			throws FileNotFoundException {
 		String plotFile = "";
@@ -368,12 +464,37 @@ public class ResultSummaryUtilities {
 		out.close();
 	}
 
+	/**
+	 * plots the average fitnesses across all of the runs in a plot file
+	 * @param filePrefix, file prefix
+	 * @param middle, middle of the file name
+	 * @param fileSuffix, file suffix
+	 * @param num, number of columns in file
+	 * @param runs, number of process runs
+	 * @param outputDir, output directory
+	 * @param t, critical t-value for Student's t-test
+	 * @param popNum, number of current population
+	 * @throws FileNotFoundException
+	 */
 	private static void plotAverageFitnessesFile(String filePrefix, String middle, String fileSuffix, int num,
 			int runs, String outputDir, double t, int popNum) throws FileNotFoundException {
 		plotAverageFitnessesFile(filePrefix, middle, fileSuffix, num, runs, outputDir, t, false, popNum);
 		plotAverageFitnessesFile(filePrefix, middle, fileSuffix, num, runs, outputDir, t, true, popNum);
 	}
 
+	/**
+	 * plots the average fitnesses across all of the runs in a plot file
+	 * @param filePrefix, file prefix
+	 * @param middle, middle of the file name
+	 * @param fileSuffix, file suffix
+	 * @param num, number of columns in file
+	 * @param runs, number of process runs
+	 * @param outputDir, output directory
+	 * @param t, critical t-value for Student's t-test
+	 * @param makePDF, true if making a PDF, false if not
+	 * @param popNum, number of current population
+	 * @throws FileNotFoundException
+	 */
 	private static void plotAverageFitnessesFile(String filePrefix, String middle, String fileSuffix, int num,
 			int runs, String outputDir, double t, boolean makePDF, int popNum) throws FileNotFoundException {
 		String plotFile = "";
