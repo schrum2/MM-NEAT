@@ -3,9 +3,6 @@ package edu.utexas.cs.nn.tasks.mario;
 import java.util.List;
 
 import ch.idsia.ai.agents.Agent;
-import ch.idsia.ai.agents.human.HumanKeyboardAgent;
-import ch.idsia.ai.tasks.ProgressTask;
-import ch.idsia.ai.tasks.Task;
 import ch.idsia.tools.CmdLineOptions;
 import ch.idsia.tools.EvaluationInfo;
 import ch.idsia.tools.EvaluationOptions;
@@ -14,10 +11,10 @@ import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
-import edu.utexas.cs.nn.evolution.nsga2.tug.TUGTask;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.networks.NetworkTask;
 import edu.utexas.cs.nn.networks.TWEANN;
+import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.NoisyLonerTask;
 import edu.utexas.cs.nn.util.datastructures.Pair;
@@ -26,6 +23,17 @@ public class MarioTask<T extends Network> extends NoisyLonerTask<T>implements Ne
 
 	private EvaluationOptions options;
 
+	public MarioTask(){
+    	options = new CmdLineOptions(new String[0]);
+        options.setMaxFPS(false);
+        options.setVisualization(true);
+        options.setNumberOfTrials(1);
+        options.setMatlabFileName("");
+        options.setLevelRandSeed((int) (Math.random () * Integer.MAX_VALUE));
+        options.setLevelDifficulty(3);
+        options.setVisualization(CommonConstants.watch);
+	}
+	
 	@Override
 	public int numObjectives() {
 		return 1; // default, just looking at distance traveled
@@ -86,7 +94,8 @@ public class MarioTask<T extends Network> extends NoisyLonerTask<T>implements Ne
     }
 
     public static void main(String[] args){
-    	Parameters.initializeParameterCollections(new String[]{"io:false", "netio:false"});
+    	Parameters.initializeParameterCollections(new String[]{"io:false", "netio:false", 
+    			"task:edu.utexas.cs.nn.tasks.mario.MarioTask"});
     	MMNEAT.loadClasses();
     	EvolutionaryHistory.initArchetype(0);
     	TWEANNGenotype tg = new TWEANNGenotype(10,6,0);
