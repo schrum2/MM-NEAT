@@ -26,7 +26,11 @@ public class FitnessLog<T> extends StatisticsLog<Score<T>> {
 	DrawingPanel[] panels = null;
 
 	public FitnessLog(String prefix) {
-		super(prefix, MMNEAT.fitnessPlusMetaheuristics());
+		this(prefix, 0);
+	}	
+	
+	public FitnessLog(String prefix, int pop) {
+		super(prefix, MMNEAT.fitnessPlusMetaheuristics(pop));
 	}
 	
 	public void initPanels(int objectives){

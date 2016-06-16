@@ -109,9 +109,9 @@ public abstract class CooperativeCoevolutionMuLambda implements MultiplePopulati
 				childLogs = new FitnessLog[numPopulations];
 			}
 			for (int i = 0; i < numPopulations; i++) {
-				parentLogs[i] = new FitnessLog("pop" + i + "parents");
+				parentLogs[i] = new FitnessLog("pop" + i + "parents", i);
 				if (CommonConstants.logChildScores) {
-					childLogs[i] = new FitnessLog("pop" + i + "children");
+					childLogs[i] = new FitnessLog("pop" + i + "children", i);
 				}
 			}
 		}

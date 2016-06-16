@@ -47,7 +47,7 @@ public class TUGLog extends StatisticsLog<double[]> {
 		// to plot
 		File plotFile = new File(directory + prefix + "_log.plot");
 		if (!plotFile.exists()) {
-			ArrayList<String> labels = MMNEAT.fitnessPlusMetaheuristics();
+			ArrayList<String> labels = MMNEAT.fitnessPlusMetaheuristics(0); // population 0: loner task only!
 			try {
 				PrintStream plotStream = new PrintStream(new FileOutputStream(plotFile));
 				plotStream.println("set style data lines");

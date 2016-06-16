@@ -35,6 +35,7 @@ import edu.utexas.cs.nn.networks.hyperneat.SubstrateCoordinateMapping;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.scores.Score;
+import edu.utexas.cs.nn.tasks.CooperativeTask;
 import edu.utexas.cs.nn.tasks.MultiplePopulationTask;
 import edu.utexas.cs.nn.tasks.Task;
 import edu.utexas.cs.nn.tasks.breve2D.Breve2DTask;
@@ -136,14 +137,16 @@ public class MMNEAT {
 	public static MMNEAT mmneat;
 
 	@SuppressWarnings("rawtypes")
-	public static ArrayList<String> fitnessPlusMetaheuristics() {
+	public static ArrayList<String> fitnessPlusMetaheuristics(int pop) {
 		@SuppressWarnings("unchecked")
-		ArrayList<String> result = (ArrayList<String>) fitnessFunctions.get(0).clone();
-		ArrayList<String> meta = new ArrayList<String>();
-		for (Metaheuristic m : metaheuristics) {
-			meta.add(m.getClass().getSimpleName());
+		ArrayList<String> result = (ArrayList<String>) fitnessFunctions.get(pop).clone();
+		if(pop == 0) {
+			ArrayList<String> meta = new ArrayList<String>();
+			for (Metaheuristic m : metaheuristics) {
+				meta.add(m.getClass().getSimpleName());
+			}
+			result.addAll(actualFitnessFunctions, meta);
 		}
-		result.addAll(actualFitnessFunctions, meta);
 		return result;
 	}
 
@@ -305,6 +308,11 @@ public class MMNEAT {
 	public static void registerFitnessFunction(String name, Statistic override, boolean affectsSelection, int pop) {
 		if (affectsSelection) {
 			actualFitnessFunctions++;
+		}
+		// For coevolution.
+		// Create enough objective arrays to accomadate each population
+		while(fitnessFunctions.size() <= pop) {
+			fitnessFunctions.add(new ArrayList<String>());
 		}
 		fitnessFunctions.get(pop).add(name);
 		aggregationOverrides.add(override);

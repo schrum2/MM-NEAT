@@ -57,7 +57,7 @@ public class IndividualPredatorMinimizeDistanceFromPreyObjective<T extends Netwo
 		int width = Parameters.parameters.integerParameter("torusXDimensions");
 		// max possible distance is the sum of half the world height and width
 		// because the world wraps around
-		double maxDist = height / 2 + width / 2;
+		double maxDist = (height / 2) + (width / 2);
 		// min score, max distance from this predator to each prey
 		return -(maxDist*Parameters.parameters.integerParameter("torusPreys"));
 	}

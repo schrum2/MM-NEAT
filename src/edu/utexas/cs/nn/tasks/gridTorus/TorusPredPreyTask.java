@@ -43,6 +43,7 @@ import edu.utexas.cs.nn.tasks.gridTorus.objectives.cooperative.IndividualPredato
 import edu.utexas.cs.nn.tasks.gridTorus.objectives.cooperative.IndividualPreyMaximizeDistanceFromClosestPredatorObjective;
 import edu.utexas.cs.nn.tasks.gridTorus.objectives.cooperative.IndividualPreyMaximizeDistanceFromIndividualPredatorObjective;
 import edu.utexas.cs.nn.tasks.gridTorus.objectives.cooperative.IndividualPreyMaximizeDistanceFromPredatorsObjective;
+import edu.utexas.cs.nn.tasks.gridTorus.objectives.cooperative.PredatorHerdPreyObjective;
 import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.util2D.Tuple2D;
@@ -137,7 +138,7 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 	 */
 	public final void addObjective(GridTorusObjective<T> o, ArrayList<ArrayList<GridTorusObjective<T>>> list, boolean affectsSelection, int pop) {
 		list.get(pop).add(o);
-		MMNEAT.registerFitnessFunction(o.getClass().getSimpleName(),affectsSelection);
+		MMNEAT.registerFitnessFunction(o.getClass().getSimpleName(),affectsSelection,pop);
 	}
 
 	@Override
@@ -361,7 +362,8 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 	 * so that they can be included in the evolution
 	 */
 	public void addAllObjectives(int pop){
-
+		System.out.println("Adding objectives for population: " + pop);
+		
 		objectives.add(new ArrayList<GridTorusObjective<T>>());
 		otherScores.add(new ArrayList<GridTorusObjective<T>>());
 
@@ -412,6 +414,20 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 				}
 				addObjective(new PredatorEatEachPreyQuicklyObjective<T>(), objectives, pop);
 			}
+			if(Parameters.parameters.booleanParameter("predatorOneHerdCoOpCCQ")){
+				//give the first population just the herding objective
+				if(pop == 0){
+					addObjective(new PredatorHerdPreyObjective<T>(), objectives, pop);
+				} else{
+					//all remaining populations are given MultiIndivCCQ fitnesses with just the individual distance
+					//function corresponding to that agent of this population to each prey
+					addObjective(new PredatorCatchObjective<T>(), objectives, pop);
+					for(int i = 0; i < Parameters.parameters.integerParameter("torusPreys"); i++){
+						addObjective(new IndividualPredatorMinimizeDistanceFromIndividualPreyObjective<T>(pop,i), objectives, pop);
+					}
+					addObjective(new PredatorEatEachPreyQuicklyObjective<T>(), objectives, pop);
+				}
+			}
 
 			//add other scores to be able to show each fitness score even if it's not effecting evolution
 			//only add the other scores to the first population, since the other scores has all possible scores
@@ -419,6 +435,7 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 				//Predator other scores
 				addObjective(new PredatorCatchObjective<T>(), otherScores, false, pop);
 				addObjective(new PredatorMinimizeGameTimeObjective<T>(), otherScores, false, pop);
+				addObjective(new PredatorHerdPreyObjective<T>(), otherScores, false, pop);
 				addObjective(new PredatorEatEachPreyQuicklyObjective<T>(), otherScores, false, pop);
 				addObjective(new PredatorMinimizeDistanceFromPreyObjective<T>(), otherScores, false, pop);
 				if(Parameters.parameters.integerParameter("torusPreys") == 2)

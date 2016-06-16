@@ -298,7 +298,10 @@ public class Parameters {
 		booleanOptions.add("preyMaximizeDistance", false, "Turn on to encourage prey to maximize their distance from the predators at the end of the game");
 		booleanOptions.add("preyMinimizeCaught", false, "Turn on to encourage prey to minimize how many of them are caught");
 		booleanOptions.add("preyCoOpCCQ", false, "Turn on to encourage each independent prey be caught less, survive longer and maximize distance to each individual predator");
+		booleanOptions.add("predatorOneHerdCoOpCCQ", false, "Turn on to encourage each independent predator to catch more prey, catch quickly and minimize distance to each individual prey"
+				+ " other than one predator, who minimizes the distance between the prey");
 		booleanOptions.add("predatorCoOpCCQ", false, "Turn on to encourage each independent predator to catch more prey, catch quickly and minimize distance to each individual prey");
+		booleanOptions.add("predatorHerdPrey", false, "Turn on to encourage minimizing the distance between the prey");
 		booleanOptions.add("predatorCatchCloseQuick", false, "Turn on to encourage catching a higher number of the prey quickly and getting close to the prey");
 		booleanOptions.add("predatorCatchClose", true, "Turn on to encourage catching a higher number of the prey and getting close to the prey");
 		booleanOptions.add("predatorCatch", false, "Turn on to activate the predator fitness function which encourages catching a high number of prey");
