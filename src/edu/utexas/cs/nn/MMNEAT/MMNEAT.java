@@ -46,6 +46,7 @@ import edu.utexas.cs.nn.tasks.gridTorus.TorusEvolvedPredatorsVsStaticPreyTask;
 import edu.utexas.cs.nn.tasks.gridTorus.TorusPredPreyTask;
 import edu.utexas.cs.nn.tasks.gridTorus.cooperative.CooperativePredatorsVsStaticPrey;
 import edu.utexas.cs.nn.tasks.gridTorus.cooperative.CooperativeTorusPredPreyTask;
+import edu.utexas.cs.nn.tasks.mario.MarioTask;
 import edu.utexas.cs.nn.tasks.motests.FunctionOptimization;
 import edu.utexas.cs.nn.tasks.motests.testfunctions.FunctionOptimizationSet;
 import edu.utexas.cs.nn.tasks.mspacman.CooperativeCheckEachMultitaskSelectorMsPacManTask;
@@ -470,6 +471,9 @@ public class MMNEAT {
 				setNNInputParameters(PicbreederTask.CPPN_NUM_INPUTS, PicbreederTask.CPPN_NUM_OUTPUTS);
 			} else if(task instanceof HyperNEATDummyTask) {
 				System.out.println("set up dummy hyperNEAT task. Used for testing purposes only");
+			} else if (task instanceof MarioTask) {
+				setNNInputParameters(10, 6); //hard coded for now, 10 inputs and 6 buttons
+				System.out.println("Set up Mario Task");
 			} else if (task == null) {
 				// this else statement should only happen for JUnit testing cases.
 				// Some default network setup is needed.
