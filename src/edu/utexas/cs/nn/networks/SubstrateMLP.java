@@ -16,14 +16,37 @@ import edu.utexas.cs.nn.util.util2D.Tuple2D;
  * number of in, hidden, and out layers that can be 
  * used as an alternative to TWEANNs, also will
  * hopefully speed up hyperNEAT considerably
+ * 
  * @author Lauren Gillespie
  *
  */
 public class SubstrateMLP implements Network {
 
+
+	public class MLPLayer { 
+		public double[][] nodes;
+		public String name;
+		public int ltype;
+
+		public MLPLayer(double[][] nodes, String name, int ltype) {
+			this.nodes = nodes;
+			this.name = name;
+			this.ltype = ltype;
+		}
+	}
+
+	public class MLPConnection {
+		public double[][][][] connection;
+		public Pair<String, String> connects;
+
+		public MLPConnection(double[][][][] connection, Pair<String, String> connects) { 
+			this.connection = connection;
+			this.connects = connects;
+		}
+	}
 	//private instance variables
-	private List<double[][][][]> connections;
-	private List<Pair<double[][], Integer>> neurons;
+	protected List<MLPLayer> layers;
+	protected List<MLPConnection> connections;
 	private int numInputs = 0;
 	private int numOutputs = 0;
 	private int numHiddenLayers = 0;
@@ -37,6 +60,7 @@ public class SubstrateMLP implements Network {
 	 */
 	public SubstrateMLP(List<Substrate> subs,  List<Pair<String, String>> connections, Network network) {
 		assert network.numInputs() == HyperNEATTask.NUM_CPPN_INPUTS:"Number of inputs to network = " + network.numInputs() + " not " + HyperNEATTask.NUM_CPPN_INPUTS;
+		ftype = ActivationFunctions.FTYPE_TANH;
 		int i = 0;
 		for(Pair<String, String> connection : connections) {
 			i++;
@@ -64,41 +88,43 @@ public class SubstrateMLP implements Network {
 					}
 				}
 			}
-			this.connections.add(connect);
+			MLPConnection conn = new MLPConnection(connect, new Pair<String, String>(sourceSub.name, targetSub.name));
+			this.connections.add(conn);
 		}
-		addNeurons(subs, neurons);
+		addLayers(subs, layers);
 	}
 
 	/**
-	 * adds nodes from substrates to neurons list
+	 * adds nodes from substrates to layers list
 	 * @param subs substrate list
-	 * @param neurons node array to add to 
+	 * @param layers node array to add to 
 	 */
-	private final void addNeurons(List<Substrate> subs, List<Pair<double[][], Integer>> neurons) { 
+	private final void addLayers(List<Substrate> subs, List<MLPLayer> layers) { 
+		layers = new ArrayList<MLPLayer>();
 		for(Substrate sub: subs) {
-			neurons = new ArrayList<Pair<double[][], Integer>>();
-			Pair<double[][], Integer> neuron = new Pair<double[][], Integer>(new double[sub.size.t1][sub.size.t2], sub.stype);
-			neurons.add(neuron);
+			MLPLayer layer = new MLPLayer(new double[sub.size.t1][sub.size.t2], sub.name, sub.stype);
+			layers.add(layer);
 			if(sub.stype == Substrate.INPUT_SUBSTRATE){ numInputs += sub.size.t1 * sub.size.t2;
 			} else if(sub.stype == Substrate.PROCCESS_SUBSTRATE) { numHiddenLayers++;
 			}else if(sub.stype == Substrate.OUTPUT_SUBSTRATE){ numOutputs += sub.size.t1 * sub.size.t2;}
 		}
 	}
-	
+
 	/**
-	 * Fills neurons with correct inputs
-	 * @param neurons list of neurons
+	 * Fills layers with correct inputs
+	 * @param layers list of layers
 	 * @param inputs inputs 
 	 */
-	private void fillNeurons(List<Pair<double[][], Integer>> neurons, double[] inputs) { 
+	private void fillLayers(List<MLPLayer> layers, double[] inputs) { 
 		int x = 0;
-		for(Pair<double[][], Integer> sub : neurons) {
-			for(int i = 0; i < sub.t1.length; i++) {
-				for(int j = 0; j< sub.t1[0].length; j++) {
-					if(sub.t2 == Substrate.INPUT_SUBSTRATE) {
-						sub.t1[i][j] = inputs[x++];
+		for(MLPLayer mlplayer : layers) {
+			double[][] layer = mlplayer.nodes;
+			for(int i = 0; i < layer.length; i++) {
+				for(int j = 0; j< layer[0].length; j++) {
+					if(mlplayer.ltype == Substrate.INPUT_SUBSTRATE) {
+						layer[i][j] = inputs[x++];
 					}else {
-						sub.t1[i][j] = 0;
+						layer[i][j] = 0;
 					}
 				}
 			}
@@ -128,7 +154,7 @@ public class SubstrateMLP implements Network {
 		assert numInputs == inputs.length: "number of inputs " + numInputs + " does not match size of inputs given: " + inputs.length;
 		double[] outputs = new double[numOutputs];
 		flush();
-		fillNeurons(neurons, inputs);
+		fillLayers(layers, inputs);
 		outputs = propagateOneStep(inputs);//sends inputs to hidden layers
 		for(int i = 0; i < numHiddenLayers; i++) {//process through rest of network
 			outputs = propagateOneStep(outputs);
@@ -143,9 +169,9 @@ public class SubstrateMLP implements Network {
 	 */
 	private double[] propagateOneStep(double[] inputs) {
 		double[] outputs = new double[0];
-	//	PopulationUtil.propagateOneStep(fromLayer, toLayer, connections);//TODO
+		//	NetworkUtil.propagateOneStep(??, ??, ??);//TODO
 		for(double a : outputs) {
-			activate(a, ftype);
+			activate(a, ftype);//TODO
 		}
 		return outputs;
 	}
@@ -159,14 +185,14 @@ public class SubstrateMLP implements Network {
 	protected double activate(double input, int ftype) {
 		return ActivationFunctions.activation(ftype, input);
 	}
-	
+
 	/**
 	 * Clears out all previous activations in nodes
 	 */
 	@Override
 	public void flush() {
-		for(Pair<double[][], Integer> toClear : neurons) {
-			clear(toClear.t1);
+		for(MLPLayer toClear : layers) {
+			clear(toClear.nodes);
 		}
 
 	}
@@ -181,6 +207,20 @@ public class SubstrateMLP implements Network {
 				toClear[x][y] = 0;
 			}
 		}
+	}
+
+	/**
+	 * Gets a random activation function 
+	 */
+	public void randomActivation(){
+		this.ftype = ActivationFunctions.randomFunction();
+	}
+	/**
+	 * Changes ftype for nodes
+	 * @param ftype new ftype
+	 */
+	public void changeActivation(int ftype) { 
+		this.ftype = ftype;
 	}
 	@Override
 	/**

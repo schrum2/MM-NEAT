@@ -41,4 +41,19 @@ public class NetworkUtil {
 			}
 		}
 	}
+	
+	/**
+	 * Propagates values forward one step  by multiplying value at first layer by
+	 * connection weight between layers and setting target layer equal to this value
+	 * @param fromLayer source layer
+	 * @param toLayer target layer
+	 * @param connections connections between the two layers
+	 */
+	public static void propagateOneStep(double[][] fromLayer, double[][] toLayer, double[][][][] connections) {
+		for (int from = 0; from < fromLayer.length; from++) {
+			for (int to = 0; to < toLayer.length; to++) {
+			//	toLayer[to] += fromLayer[from] * connections[from][to];
+			}
+		}
+	}
 }
