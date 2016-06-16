@@ -57,7 +57,7 @@ public class ExtendedBertsekasTsitsiklisTetrisExtractor extends BertsekasTsitsik
 		int[] worldState = new int[worldWidth * worldHeight];
 		System.arraycopy(o.intArray, 0, worldState, 0, worldWidth * worldHeight);
 		double[] added = new double[worldWidth];
-                // finds the number of holes for the current column and adds that to added
+		// finds the number of holes for the current column and adds that to added
 		for (int i = 0; i < added.length; i++) { 
 			double h = columnHeight(i, worldState);
 			added[i] = columnHoles(i, worldState, (int) h);

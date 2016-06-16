@@ -33,10 +33,7 @@ public class TetrisState {
 	public static final int LEFT = 0; /* Action value for a move left */
 	public static final int RIGHT = 1; /* Action value for a move right */
 	public static final int CW = 2; /* Action value for a clockwise rotation */
-	public static final int CCW = 3; /*
-										 * Action value for a counter clockwise
-										 * rotation
-										 */
+	public static final int CCW = 3; /*Action value for a counter clockwise rotation */
 	public static final int NONE = 4; /* The no-action Action */
 	public static final int FALL = 5; /* fall down */
 
@@ -113,6 +110,10 @@ public class TetrisState {
 	}
 
 	public Observation get_observation() {
+		return get_observation(true);
+	}
+	
+	public Observation get_observation(boolean includeMobile) {
 		// get observation with only the state space
 		try {
 			int[] worldObservation = new int[worldState.length];
@@ -121,7 +122,9 @@ public class TetrisState {
 				worldObservation[i] = worldState[i];
 			}
 
-			writeCurrentBlock(worldObservation);
+			// Schrum: Don't want to write the block in afterstates
+			if(includeMobile) writeCurrentBlock(worldObservation);
+
 			Observation o = new Observation(TETRIS_STATE_NUMBER_OF_DISCRETE_FEATURES, 0);
 			for (int i = 0; i < worldObservation.length; i++) {
 				if (worldObservation[i] == 0) {
@@ -135,16 +138,12 @@ public class TetrisState {
 			}
 			// Set the bit vector value for which block is currently following
 			o.intArray[worldObservation.length + currentBlockId] = 1;
-
-			o.intArray[TETRIS_STATE_CURRENT_X_INDEX] = this.currentX; // Falling
-																		// piece
-																		// x
-			o.intArray[TETRIS_STATE_CURRENT_Y_INDEX] = this.currentY; // Falling
-																		// piece
-																		// y
-			o.intArray[TETRIS_STATE_CURRENT_ROTATION_INDEX] = this.currentRotation; // Falling
-																					// piece
-																					// rotation
+			// Falling piece x
+			o.intArray[TETRIS_STATE_CURRENT_X_INDEX] = this.currentX; 
+			// Falling piece y
+			o.intArray[TETRIS_STATE_CURRENT_Y_INDEX] = this.currentY; 
+			// Falling piece rotation
+			o.intArray[TETRIS_STATE_CURRENT_ROTATION_INDEX] = this.currentRotation; 
 			o.intArray[TETRIS_STATE_CURRENT_HEIGHT_INDEX] = getHeight();
 			o.intArray[TETRIS_STATE_CURRENT_WIDTH_INDEX] = getWidth();
 			return o;
@@ -153,8 +152,7 @@ public class TetrisState {
 			System.err.println("Error: ArrayIndexOutOfBoundsException in GameState::get_observation");
 			System.err.println("Error: The Exception was: " + e);
 			Thread.dumpStack();
-			System.err.println("Current X is: " + currentX + " Current Y is: " + currentY + " Rotation is: "
-					+ currentRotation + " blockId: " + currentBlockId);
+			System.err.println("Current X is: " + currentX + " Current Y is: " + currentY + " Rotation is: " + currentRotation + " blockId: " + currentBlockId);
 			System.err.println("Not realy sure what to do, so crashing.  Sorry.");
 			System.exit(1);
 			// Can never happen
@@ -177,8 +175,7 @@ public class TetrisState {
 					// 0 if they are clear, and >0 if they are not.
 					int linearIndex = calculateLinearArrayPosition(currentX + x, currentY + y);
 					if (linearIndex < 0) {
-						System.err.printf("Bogus linear index %d for %d + %d, %d + %d\n", linearIndex, currentX, x,
-								currentY, y);
+						System.err.printf("Bogus linear index %d for %d + %d, %d + %d\n", linearIndex, currentX, x, currentY, y);
 						Thread.dumpStack();
 						System.exit(1);
 					}
@@ -431,12 +428,10 @@ public class TetrisState {
 	public void update() {
 		// Sanity check. The game piece should always be in bounds.
 		if (!inBounds(currentX, currentY, currentRotation)) {
-			System.err.println(
-					"In GameState.Java the Current Position of the board is Out Of Bounds... Consistency Check Failed");
+			System.err.println("In GameState.Java the Current Position of the board is Out Of Bounds... Consistency Check Failed");
 		}
 
-		// Need to be careful here because can't check nextColliding if not in
-		// bounds
+		// Need to be careful here because can't check nextColliding if not in bounds
 
 		// onSomething means we're basically done with this piece
 		boolean onSomething = false;
@@ -629,6 +624,18 @@ public class TetrisState {
 
 	}
 
+	public static String toString(int[] worldState) {
+		String result = "";
+		for (int y = 0; y < worldHeight; y++) {
+			for (int x = 0; x < worldWidth; x++) {
+				result += (worldState[y * worldWidth + x]) > 0 ? 1 : 0;
+			}
+			result += ("\n");
+		}
+		result += ("-------------");
+		return result;		
+	}
+	
 	@Override
 	public String toString() {
 		return toString(true);

@@ -94,7 +94,7 @@ public class TetrisAfterStateAgent<T extends Network> extends RLGlueAgent<T> {
 			// for(pairs in the set){
 			for (TetrisStateActionPair i : tetrisStateHolder) {
 				// Basic features
-				double[] inputs = MMNEAT.rlGlueExtractor.extract(i.t1.get_observation());
+				double[] inputs = MMNEAT.rlGlueExtractor.extract(i.t1.get_observation(false));
 				// Scaled to range [0,1] for the neural network
 				double[] inputsScaled = MMNEAT.rlGlueExtractor.scaleInputs(inputs);
 
@@ -118,15 +118,14 @@ public class TetrisAfterStateAgent<T extends Network> extends RLGlueAgent<T> {
 				outputForArgmax[i] = outputPairs.get(i).t1;
 			}
 
-			int index = StatisticsUtilities.argmax(outputForArgmax); // action =
-																		// argmax(list)
+			int index = StatisticsUtilities.argmax(outputForArgmax); // action = argmax(list)
 
 			for (int k = 0; k < outputPairs.get(index).t2.size(); k++) {
 				currentActionList.add(outputPairs.get(index).t2.get(k)); 
 				// this should add the next action to the linked list in the proper order
 			}
-			currentActionList.add(TetrisState.NONE); // Let the block settle and
-														// a new one spawns
+			// Let the block settle and a new one spawns
+			currentActionList.add(TetrisState.NONE); 
 		}
 
 		Action action = new Action(MMNEAT.tso.getNumDiscreteActionDims(), MMNEAT.tso.getNumContinuousActionDims()); 

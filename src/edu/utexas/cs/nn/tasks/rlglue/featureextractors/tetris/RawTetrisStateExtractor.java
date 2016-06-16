@@ -34,8 +34,7 @@ public class RawTetrisStateExtractor implements FeatureExtractor {
 	@Override
 	public double[] extract(Observation o) {
 		boolean negative = Parameters.parameters.booleanParameter("absenceNegative");
-//		TetrisState state = TetrisAfterStateAgent.observationToTetrisState(o);
-//		state.writeCurrentBlock();
+
 		int[] worldState = new int[TetrisState.worldWidth * TetrisState.worldHeight]; 
 		System.arraycopy(o.intArray, 0, worldState, 0, TetrisState.worldWidth * TetrisState.worldHeight);
 		double[] result = new double[worldState.length];

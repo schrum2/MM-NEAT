@@ -175,8 +175,7 @@ public class BertsekasTsitsiklisTetrisExtractor implements FeatureExtractor {
 				if (mobilePiece[x][y] != 0) {
 					int linearIndex = calculateLinearArrayPosition(blockX + x, blockY + y);
 					if (linearIndex < 0) {
-						System.err.printf("Bogus linear index %d for %d + %d, %d + %d\n", linearIndex, blockX, x,
-								blockY, y);
+						System.err.printf("Bogus linear index %d for %d + %d, %d + %d\n", linearIndex, blockX, x, blockY, y);
 						Thread.dumpStack();
 						System.exit(1);
 					}

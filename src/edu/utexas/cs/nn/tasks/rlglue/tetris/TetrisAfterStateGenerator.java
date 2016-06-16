@@ -24,8 +24,7 @@ public class TetrisAfterStateGenerator {
 	 * @return set of pairs (evaluated after-states and list of actions)
 	 */
 	public static HashSet<TetrisStateActionPair> generateAfterStates(TetrisState ts) {
-		int[] actOrder = { TetrisState.FALL, TetrisState.NONE, TetrisState.LEFT, TetrisState.RIGHT, TetrisState.CW,
-				TetrisState.CCW }; 
+		int[] actOrder = { TetrisState.FALL, TetrisState.NONE, TetrisState.LEFT, TetrisState.RIGHT, TetrisState.CW, TetrisState.CCW }; 
 		
 		// only ever as big as # of orientations times the width
 		HashSet<TetrisStateActionPair> evaluated = new HashSet<TetrisStateActionPair>(); 
