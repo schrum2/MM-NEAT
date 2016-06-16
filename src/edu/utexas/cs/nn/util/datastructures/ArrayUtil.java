@@ -56,6 +56,22 @@ public class ArrayUtil {
 		return arrayPath;
 	}
 
+	/**
+	 * returns a 1D double array from a 2D double array
+	 * Only works for non-jagged 2D arrays
+	 * @param inputs 2D array
+	 * @return 1D array
+	 */
+	public static double[] doubleArrayFrom2DdoubleArray(double[][] inputs) {
+		double[] outputs = new double[inputs.length * inputs[0].length];
+		int x = 0;
+		for(double[] a : inputs) {
+			for(double b : a) {
+				outputs[x++] = b;
+			}
+		}
+		return outputs;
+	}
 	public static double[] doubleArrayFromList(List<? extends Number> values) {
 		double[] array = new double[values.size()];
 		int i = 0;

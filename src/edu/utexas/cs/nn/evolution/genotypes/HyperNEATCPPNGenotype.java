@@ -74,6 +74,10 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 		super(networkInputs, networkOutputs, archetypeIndex); 
 	}
 
+	public TWEANN getCPPN() {
+		return super.getPhenotype();
+	}
+	
 	/**
 	 * Uses another CPPN to create a TWEANN controller for the domain. This
 	 * created TWEANN is unique only to the instance in which it is used. In a
@@ -86,7 +90,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 	public TWEANN getPhenotype() {
 		constructingNetwork = true; // prevent displaying of substrates
 		//long time = System.currentTimeMillis(); // for timing
-		TWEANN cppn = super.getPhenotype();// CPPN used to create TWEANN network
+		TWEANN cppn = getCPPN();// CPPN used to create TWEANN network
 		HyperNEATTask hnt = (HyperNEATTask) MMNEAT.task;// Cast task to HyperNEATTask
 		List<Substrate> subs = hnt.getSubstrateInformation();// extract substrate information from domain
 		List<Pair<String, String>> connections = hnt.getSubstrateConnectivity();// extract substrate connectivity from domain

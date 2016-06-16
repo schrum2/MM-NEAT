@@ -7,6 +7,7 @@ import edu.utexas.cs.nn.evolution.genotypes.HyperNEATCPPNGenotype;
 import edu.utexas.cs.nn.networks.hyperneat.HyperNEATTask;
 import edu.utexas.cs.nn.networks.hyperneat.Substrate;
 import edu.utexas.cs.nn.parameters.CommonConstants;
+import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.util2D.ILocated2D;
 import edu.utexas.cs.nn.util.util2D.Tuple2D;
@@ -55,7 +56,7 @@ public class SubstrateMLP implements Network {
 	 *
 	 */
 	public class MLPConnection {
-		
+
 		//information stored by MLPConnection class
 		public double[][][][] connection;
 		public Pair<String, String> connects;
@@ -70,8 +71,8 @@ public class SubstrateMLP implements Network {
 			this.connects = connects;
 		}
 	}
-	
-	
+
+
 	//private instance variables
 	protected List<MLPLayer> layers;
 	protected List<MLPConnection> connections;
@@ -88,11 +89,20 @@ public class SubstrateMLP implements Network {
 	public SubstrateMLP(List<Substrate> subs,  List<Pair<String, String>> connections, Network network) {
 		assert network.numInputs() == HyperNEATTask.NUM_CPPN_INPUTS:"Number of inputs to network = " + network.numInputs() + " not " + HyperNEATTask.NUM_CPPN_INPUTS;
 		ftype = ActivationFunctions.FTYPE_TANH;
-		int i = 0;
+		this.connections = new ArrayList<MLPConnection>();
+		layers = new ArrayList<MLPLayer>();
+		int connectionsIndex = 0;
 		for(Pair<String, String> connection : connections) {
-			i++;
-			Substrate sourceSub = subs.get(subs.indexOf(connection.t1));
-			Substrate targetSub = subs.get(subs.indexOf(connection.t2));
+			Substrate sourceSub = null;
+			Substrate targetSub = null;
+			for(int z = 0; z < subs.size(); z++) {
+				if(subs.get(z).name.equals(connection.t1)) { 
+					sourceSub = subs.get(z);
+				} else if(subs.get(z).name.equals(connection.t2)) {
+					targetSub = subs.get(z);
+				}
+			} 
+			if(sourceSub == null || targetSub == null) { throw new NullPointerException("either source or target substrate is not in subs list!");}
 			double[][][][] connect = new double[sourceSub.size.t1][sourceSub.size.t2][targetSub.size.t1][targetSub.size.t2];
 			for(int X1 = 0; X1 < sourceSub.size.t1; X1++) {
 				for(int Y1 = 0; Y1 < sourceSub.size.t2; Y1++) {
@@ -104,10 +114,10 @@ public class SubstrateMLP implements Network {
 							// inputs to CPPN 
 							double[] inputs = { scaledSourceCoordinates.getX(), scaledSourceCoordinates.getY(), scaledTargetCoordinates.getX(), scaledTargetCoordinates.getY(), HyperNEATCPPNGenotype.BIAS}; 
 							double[] outputs = network.process(inputs);
-							boolean expressLink = Math.abs(outputs[i]) > CommonConstants.linkExpressionThreshold;
+							boolean expressLink = Math.abs(outputs[connectionsIndex]) > CommonConstants.linkExpressionThreshold;
 							//whether or not to place a link in location
 							if (expressLink) {
-								connect[X1][Y1][X2][Y2] = NetworkUtil.calculateWeight(outputs[i]);
+								connect[X1][Y1][X2][Y2] = NetworkUtil.calculateWeight(outputs[connectionsIndex]);
 							} else {//if not, make weight 0, synonymous to no link in first place
 								connect[X1][Y1][X2][Y2] = 0;
 							}
@@ -117,6 +127,7 @@ public class SubstrateMLP implements Network {
 			}
 			MLPConnection conn = new MLPConnection(connect, new Pair<String, String>(sourceSub.name, targetSub.name));
 			this.connections.add(conn);
+			connectionsIndex++;			
 		}
 		addLayers(subs, layers);
 	}
@@ -127,7 +138,6 @@ public class SubstrateMLP implements Network {
 	 * @param layers node array to add to 
 	 */
 	private final void addLayers(List<Substrate> subs, List<MLPLayer> layers) { 
-		layers = new ArrayList<MLPLayer>();
 		for(Substrate sub: subs) {
 			MLPLayer layer = new MLPLayer(new double[sub.size.t1][sub.size.t2], sub.name, sub.stype);
 			layers.add(layer);
@@ -200,11 +210,14 @@ public class SubstrateMLP implements Network {
 			else if(layer.name.equals(connection.connects.t2)) { toLayer = layer;}
 		}
 		if(fromLayer == null || toLayer == null) throw new NullPointerException("either from or to layer was not properly initialized!");
-		double[] outputs = new double[0];
-		NetworkUtil.propagateOneStep(fromLayer.nodes, toLayer.nodes, connection.connection);
-		for(double a : outputs) {
-			activate(a, ftype);//TODO
+		double[] outputs;
+		double[][] processOutputs = NetworkUtil.propagateOneStep(fromLayer.nodes, toLayer.nodes, connection.connection);
+		for(double[] a : processOutputs) {
+			for(double b : a) {
+				activate(b, ftype);
+			}
 		}
+		outputs = ArrayUtil.doubleArrayFrom2DdoubleArray(processOutputs);
 		return outputs;
 	}
 

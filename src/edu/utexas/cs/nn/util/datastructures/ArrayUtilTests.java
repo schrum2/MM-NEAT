@@ -3,6 +3,7 @@ package edu.utexas.cs.nn.util.datastructures;
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -21,6 +22,16 @@ public class ArrayUtilTests {
 		assertArrayEquals(result, expected, 0.0);
 	}
 
+	@Test
+	public void doubleArrayFrom2DdoubleArray_test()  {
+		double[][] inputs = {{1, 2, 3}, {4, 5, 6}, {7, 8 ,9}};
+		double[] outputs = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+		assertTrue(Arrays.equals(outputs, ArrayUtil.doubleArrayFrom2DdoubleArray(inputs)));
+		
+	}
+	
+	
+	
 	/**
 	 * Tests that the given number of "1"s is returned in a int[]
 	 */
