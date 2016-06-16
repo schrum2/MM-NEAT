@@ -10,6 +10,7 @@ import org.junit.Test;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.HyperNEATCPPNGenotype;
 import edu.utexas.cs.nn.networks.hyperneat.HyperNEATDummyTask;
+import edu.utexas.cs.nn.networks.hyperneat.HyperNEATTask;
 import edu.utexas.cs.nn.networks.hyperneat.Substrate;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.util.datastructures.Pair;
@@ -54,7 +55,15 @@ public class SubstrateMLPTest {
 		System.out.println("inputs: " + Arrays.toString(inputs));
 		double[] outputs = mlp.process(inputs);
 		System.out.println("outputs: " + Arrays.toString(outputs));
-		assertTrue(outputs.length == 4);
+		assertEquals(outputs.length, 4);
+		
+
+		TWEANN tweann = hcppn.getPhenotype();
+		double[] tweannOut = tweann.process(inputs);
+		assertEquals(outputs.length, tweannOut.length);
+		for(int i = 0; i < outputs.length; i++) {
+			assertEquals(outputs[i], tweannOut[i], .0001);
+		}
 	}
 
 	@Test
@@ -64,8 +73,9 @@ public class SubstrateMLPTest {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "recurrency:false", "hyperNEAT:true", "task:edu.utexas.cs.nn.networks.hyperneat.HyperNEATDummyTask"});//TODO
+		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "recurrency:false", "hyperNEAT:true", "task:edu.utexas.cs.nn.networks.hyperneat.HyperNEATDummyTask", "ftype:1"});//TODO
 		MMNEAT.loadClasses();
+		MMNEAT.setNNInputParameters(HyperNEATTask.NUM_CPPN_INPUTS, 14);
 		hcppn = new HyperNEATCPPNGenotype();
 		task = (HyperNEATDummyTask<?>) MMNEAT.task;
 
@@ -121,7 +131,39 @@ public class SubstrateMLPTest {
 		}
 		mlp = new SubstrateMLP(subs, connections,  hcppn.getCPPN());
 		double[] outputs = mlp.process(inputs);
-		assertTrue(outputs.length == 16);
+		assertEquals(outputs.length, 16);
+		
+		TWEANN tweann = hcppn.getPhenotype();
+		double[] tweannOut = tweann.process(inputs);
+		assertEquals(outputs.length, tweannOut.length);
+		for(int i = 0; i < outputs.length; i++) {
+			assertEquals(outputs[i], tweannOut[i], .0001);
+		}
 	}
 
+	@Test
+	public void moarTest() { 
+		try {
+			tearDown();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "recurrency:false", "hyperNEAT:true", "task:edu.utexas.cs.nn.networks.hyperneat.HyperNEATDummyTask", "ftype:1"});//TODO
+		MMNEAT.loadClasses();
+		MMNEAT.setNNInputParameters(HyperNEATTask.NUM_CPPN_INPUTS, 1);
+		hcppn = new HyperNEATCPPNGenotype();
+		task = (HyperNEATDummyTask<?>) MMNEAT.task;
+		Substrate input = new Substrate(new Pair<Integer, Integer>(2, 2), Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, 0, 0), "I_0");
+		Substrate output1 = new Substrate(new Pair<Integer, Integer>(1, 1), Substrate.OUTPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(1, 0, 0), "O_0");
+		Pair<String, String> conn1 = new Pair<String, String>("I_0", "O_0");
+		ArrayList<Substrate> subs = new ArrayList<Substrate>();
+		ArrayList<Pair<String, String>> pairs = new ArrayList<Pair<String, String>>();
+		subs.add(input);
+		subs.add(output1);
+		pairs.add(conn1);
+		mlp = new SubstrateMLP(subs, pairs, hcppn.getCPPN());
+		double[] inputs = {1, 2, 3, 4};
+		double[] outputs = mlp.process(inputs);
+		System.out.println("outputs: "+ Arrays.toString(outputs));
+	}
 }

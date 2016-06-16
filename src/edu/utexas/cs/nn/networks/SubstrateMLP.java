@@ -7,6 +7,7 @@ import edu.utexas.cs.nn.evolution.genotypes.HyperNEATCPPNGenotype;
 import edu.utexas.cs.nn.networks.hyperneat.HyperNEATTask;
 import edu.utexas.cs.nn.networks.hyperneat.Substrate;
 import edu.utexas.cs.nn.parameters.CommonConstants;
+import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.util2D.ILocated2D;
@@ -78,17 +79,21 @@ public class SubstrateMLP implements Network {
 	protected List<MLPConnection> connections;
 	private int numInputs = 0;
 	private int numOutputs = 0;
-	private int ftype;//TODO
+	private int ftype;
 
+	public SubstrateMLP(List<Substrate> subs,  List<Pair<String, String>> connections, Network network) {
+		this(subs, connections, network, Parameters.parameters.integerParameter("ftype"));
+	}	
+	
 	/**
 	 * Constructor
 	 * @param subs list of substrates provided by task
 	 * @param connections connections of substrates provided by task
 	 * @param network cppn used to process coordinates to produce weight of links
 	 */
-	public SubstrateMLP(List<Substrate> subs,  List<Pair<String, String>> connections, Network network) {
+	public SubstrateMLP(List<Substrate> subs,  List<Pair<String, String>> connections, Network network, int ftype) {
 		assert network.numInputs() == HyperNEATTask.NUM_CPPN_INPUTS:"Number of inputs to network = " + network.numInputs() + " not " + HyperNEATTask.NUM_CPPN_INPUTS;
-		ftype = ActivationFunctions.FTYPE_TANH;
+		this.ftype = ftype;
 		this.connections = new ArrayList<MLPConnection>();
 		layers = new ArrayList<MLPLayer>();
 		int connectionsIndex = 0;
