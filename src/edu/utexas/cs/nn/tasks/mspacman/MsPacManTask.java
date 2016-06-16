@@ -37,7 +37,8 @@ import pacman.game.Constants;
 import pacman.game.Game;
 
 /**
- *
+ * Ms. Pac-Man vs. four ghosts across four mazes.
+ * 
  * @author Jacob Schrum
  * @param <T>
  *            phenotype of evolved agent
@@ -349,14 +350,8 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 			}
 			break;
 		}
-		return (eachComponentTracksScoreToo && scoreIndex != scoreIndexInOtherScores // Game
-																						// score
-																						// is
-																						// fitness
-																						// in
-																						// addition
-																						// to
-																						// preferred
+                // Game score is fitness in addition to preferred
+		return (eachComponentTracksScoreToo && scoreIndex != scoreIndexInOtherScores 
 				? new double[] { taskScores.otherStats[scoreIndex], taskScores.otherStats[scoreIndexInOtherScores] }
 				: new double[] { taskScores.otherStats[scoreIndex] });
 	}
@@ -392,12 +387,10 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 		}
 	}
 
-	@SuppressWarnings("rawtypes")
 	public final void addObjective(MsPacManObjective o, ArrayList<MsPacManObjective<T>> list, boolean affectsSelection) {
 		addObjective(o, list, null, affectsSelection);
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public final void addObjective(MsPacManObjective o, ArrayList<MsPacManObjective<T>> list, Statistic override, boolean affectsSelection) {
 		list.add(o);
 		MMNEAT.registerFitnessFunction(o.getClass().getSimpleName(), override, affectsSelection);
@@ -409,7 +402,6 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 		return super.evaluate(individual);
 	}
 
-	@SuppressWarnings("rawtypes")
 	@Override
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {
 		Organism<T> organism = evolveGhosts ? new SharedNNGhosts<T>(individual) : new NNMsPacMan<T>(individual);
@@ -472,8 +464,7 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 		} else if (CommonConstants.watch) {
 			// System.out.println("Watch game: " + mspacman);
 			exec.runGameTimed(mspacman, ghosts, game);
-			// exec.runGameTimed(new HumanController(new KeyBoardInput()),
-			// ghosts, true, game);
+			// exec.runGameTimed(new HumanController(new KeyBoardInput()),ghosts, true, game);
 		} else if (CommonConstants.timedPacman) {
 			exec.runGameTimedNonVisual(game, mspacman, ghosts);
 		} else {
@@ -492,6 +483,7 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 		return otherScores.size();
 	}
 
+        @Override
 	public int numObjectives() {
 		return objectives.size();
 	}
@@ -510,18 +502,22 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 		return result;
 	}
 
+        @Override
 	public double[] startingGoals() {
 		return minScores();
 	}
 
+        @Override
 	public String[] sensorLabels() {
 		return MMNEAT.pacmanInputOutputMediator.sensorLabels();
 	}
 
+        @Override
 	public String[] outputLabels() {
 		return MMNEAT.pacmanInputOutputMediator.outputLabels();
 	}
 
+        @Override
 	public double getTimeStamp() {
 		return game.getTotalTime();
 	}

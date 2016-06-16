@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.utexas.cs.nn.tasks.ut2004.controller;
 
 import cz.cuni.amis.pogamut.base.agent.navigation.IPathExecutorState;
@@ -42,13 +38,12 @@ public abstract class SequentialPathExplorer implements BotController {
 	 */
 	protected UT2004PathAutoFixer autoFixer;
 
-	@SuppressWarnings("rawtypes")
+        @Override
 	public BotAction control(UT2004BotModuleController bot) {
 		// => navigate to navpoint
 		return handleNavPointNavigation(bot);
 	}
 
-	@SuppressWarnings("rawtypes")
 	private BotAction handleNavPointNavigation(UT2004BotModuleController bot) {
 		if (bot.getNavigation().isNavigating()) {
 			// WE'RE NAVIGATING TO SOME NAVPOINT
@@ -68,7 +63,7 @@ public abstract class SequentialPathExplorer implements BotController {
 		return new NavigateToLocationAction(targetNavPoint);
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+        @Override
 	public void initialize(UT2004BotModuleController bot) {
 		// initialize taboo set where we store temporarily unavailable navpoints
 		tabooNavPoints = new TabooSet<NavPoint>(bot.getBot());
@@ -79,8 +74,7 @@ public abstract class SequentialPathExplorer implements BotController {
 
 		// IMPORTANT
 		// adds a listener to the path executor for its state changes, it will
-		// allow you to
-		// react on stuff like "PATH TARGET REACHED" or "BOT STUCK"
+		// allow you to react on stuff like "PATH TARGET REACHED" or "BOT STUCK"
 		bot.getPathExecutor().getState().addStrongListener(new FlagListener<IPathExecutorState>() {
 			@Override
 			public void flagChanged(IPathExecutorState changedValue) {
@@ -96,13 +90,11 @@ public abstract class SequentialPathExplorer implements BotController {
 	 *
 	 * @param state
 	 */
-	@SuppressWarnings("incomplete-switch")
 	protected void pathExecutorStateChange(PathExecutorState state) {
 		switch (state) {
 		case PATH_COMPUTATION_FAILED:
 			// if path computation fails to whatever reason, just try another
-			// navpoint
-			// taboo bad navpoint for 3 minutes
+			// navpoint taboo bad navpoint for 3 minutes
 			tabooNavPoints.add(targetNavPoint, 180);
 			break;
 
@@ -126,12 +118,12 @@ public abstract class SequentialPathExplorer implements BotController {
 	/**
 	 * Randomly picks some navigation point to head to.
 	 *
-	 * @return randomly choosen navpoint
+         * @param bot Bot that is navigating
+	 * @return randomly chosen navpoint
 	 */
-	@SuppressWarnings("rawtypes")
 	public abstract NavPoint getNextNavPoint(UT2004BotModuleController bot);
 
-	@SuppressWarnings("rawtypes")
+        @Override
 	public void reset(UT2004BotModuleController bot) {
 		bot.getNavigation().stopNavigation();
 	}

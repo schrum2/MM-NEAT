@@ -21,7 +21,6 @@ import edu.utexas.cs.nn.tasks.ut2004.controller.DummyController;
 import edu.utexas.cs.nn.tasks.ut2004.controller.RandomNavPointPathExplorer;
 import edu.utexas.cs.nn.tasks.ut2004.server.BotKiller;
 
-@SuppressWarnings("rawtypes")
 @AgentScoped
 public class ControllerBot extends UT2004BotModuleController {
 
@@ -91,17 +90,23 @@ public class ControllerBot extends UT2004BotModuleController {
 	 * Launches a bot onto the provided host:port using the given network brain
 	 * to control it
 	 *
+         * @param server
+         *            Server instance
 	 * @param name
 	 *            In-game name of bot
-	 * @param controller
-	 *            the brain/network controlling bot
+         * @param controllers
+         *            Bot controllers to run in game
+         * @param evalSeconds 
+         *            Number of seconds to spend in evaluation
+         * @param desiredSkill
+         *            Skill parameter for bots (affects accuracy)
 	 * @param host
 	 *            host of pre-loaded server
 	 * @param botPort
 	 *            port on server to connect bot
+         * @return Array of game data about each controller in game
 	 * @throws PogamutException
 	 */
-	@SuppressWarnings({ "unchecked" })
 	public static GameDataCollector[] launchBot(IUT2004Server server, String name, BotController[] controllers,
 			int evalSeconds, int desiredSkill, String host, int botPort) {
 		GameDataCollector[] collectors = new GameDataCollector[controllers.length];

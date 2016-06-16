@@ -31,6 +31,7 @@ import java.util.Arrays;
  * that the population is doing poorly in.
  * 
  * @author Jacob Schrum
+ * @param <T> phenotype
  */
 public class TUGNSGA2<T> extends NSGA2<T> {
 
@@ -157,6 +158,11 @@ public class TUGNSGA2<T> extends NSGA2<T> {
 		initialClimb[i] = true;
 	}
 
+        /**
+         * Disables scores in objectives that are currently disabled.
+         * @param scores List of complete scores in each objective.
+         * @return score array where certain objectives may be disabled
+         */
 	public NSGA2Score<T>[] getTUGScores(ArrayList<Score<T>> scores) {
 		@SuppressWarnings("unchecked")
 		NSGA2Score<T>[] result = new NSGA2Score[scores.size()];
@@ -217,6 +223,13 @@ public class TUGNSGA2<T> extends NSGA2<T> {
 		}
 	}
 
+        /**
+         * Determines whether each goal is currently being archieved, and updates
+         * goal values if needed.
+         * @param averages average score in each objective
+         * @param maxes maximum score in each objective (not currently used)
+         * @return boolean array indicated whether each objective is currently achieved
+         */
 	private boolean[] goalAchievement(double[] averages, double[] maxes) {
 		boolean[] achieved = new boolean[goals.length];
 		for (int i = 0; i < achieved.length; i++) {
@@ -224,7 +237,8 @@ public class TUGNSGA2<T> extends NSGA2<T> {
 			achieved[i] = (recencyWeightedAverages[i] > goals[i]) && (averages[i] > goals[i]);
 			if (!before && achieved[i]) { // Wasn't achieved, but is now
 				initialClimb[i] = false;
-			} else if (Parameters.parameters.booleanParameter("tugGoalsIncreaseWhenThrashing") && !initialClimb[i]
+			} else if (Parameters.parameters.booleanParameter("tugGoalsIncreaseWhenThrashing") 
+                                        && !initialClimb[i]
 					&& !achieved[i]) {
 				// Too big of an increase
 				// increaseGoal(i, maxes[i]);
@@ -293,6 +307,10 @@ public class TUGNSGA2<T> extends NSGA2<T> {
 		}
 	}
 
+        /**
+         * Increase goals in each objective
+         * @param maxes Current max scores in each objective
+         */
 	private void increaseGoals(double[] maxes) {
 		System.out.println("Increase goals");
 		resetRecencyWeightedAverages();
@@ -301,6 +319,11 @@ public class TUGNSGA2<T> extends NSGA2<T> {
 		}
 	}
 
+        /**
+         * Increase one objective
+         * @param objective index of objective
+         * @param target 
+         */
 	private void increaseGoal(int objective, double target) {
 		if (CommonConstants.constantTUGGoalIncrements) {
 			goals[objective] += Parameters.parameters.doubleParameter("tugGoalIncrement" + objective);
@@ -333,7 +356,6 @@ public class TUGNSGA2<T> extends NSGA2<T> {
 	 *            Parent population of genotypes
 	 * @return child population of genotypes
 	 */
-	@SuppressWarnings("rawtypes")
 	@Override
 	public ArrayList<Genotype<T>> getNextGeneration(ArrayList<Genotype<T>> parents) {
 		ArrayList<Genotype<T>> nextGen = super.getNextGeneration(parents);
@@ -387,28 +409,9 @@ public class TUGNSGA2<T> extends NSGA2<T> {
 		return nextGen;
 	}
 
-	// This operation needs to be done before generating children so that the
-	// information
-	// can be used in selection there
-	// @Override
-	// public ArrayList<Score<T>> prepareSourcePopulation(ArrayList<Score<T>>
-	// parentScores, ArrayList<Score<T>> childrenScores) {
-	//// // Now only the parents are used to calculate average population scores
-	//// // Should there be an option to use children too?
-	//// double[][] stats = performanceAndGoalTargets(parentScores);
-	//// double[] performance = stats[0];
-	//// double[] targets = stats[1];
-	//// adjustGoalsAndObjectives(performance, targets);
-	//// logOut(performance, targets);
-	//
-	// ArrayList<Score<T>> population =
-	// super.prepareSourcePopulation(parentScores, childrenScores);
-	// return population;
-	// }
 	@Override
 	public ArrayList<Genotype<T>> selection(int numParents, ArrayList<Score<T>> listScores) {
 		if (CommonConstants.tugKeepsParetoFront) {
-			// System.out.println("tugKeepsParetoFront");
 			// Achieved goals are not removed
 			NSGA2Score<T>[] scoresArray = super.getNSGA2Scores(listScores);
 			ArrayList<NSGA2Score<T>> paretoFront = getParetoFront(scoresArray);
@@ -419,7 +422,6 @@ public class TUGNSGA2<T> extends NSGA2<T> {
 			}
 
 			if (paretoFront.size() == numParents) {
-				// System.out.println("Just Pareto front");
 				return keepers;
 			} else if (paretoFront.size() > numParents) {
 				System.out.println("Just portion of Pareto front: " + numParents + " out of " + paretoFront.size());
@@ -431,12 +433,9 @@ public class TUGNSGA2<T> extends NSGA2<T> {
 				NSGA2Score<T>[] scores = getTUGScores(scoreFront);
 				return staticSelection(numParents, scores);
 			} else {
-				// System.out.println("Pareto front and then TUG: front had " +
-				// paretoFront.size());
 				// Save Pareto front and use TUG on the rest
 				ArrayList<Score<T>> reducedScores = new ArrayList<Score<T>>(scoresArray.length);
 				// Check all members of original population
-				// System.out.println("Reduced front contains: ");
 				for (NSGA2Score<T> s : scoresArray) {
 					boolean inFront = false;
 					// See if they are in the Pareto front
@@ -453,8 +452,7 @@ public class TUGNSGA2<T> extends NSGA2<T> {
 						reducedScores.add(s);
 					}
 				}
-				assert reducedScores.size() + paretoFront
-						.size() == scoresArray.length : "Scores array should be split into Pareto front and everything else";
+				assert reducedScores.size() + paretoFront.size() == scoresArray.length : "Scores array should be split into Pareto front and everything else";
 				// Super selection will be done with TUG scores
 				NSGA2Score<T>[] scores = getTUGScores(reducedScores);
 				ArrayList<Genotype<T>> tugResults = staticSelection(numParents - paretoFront.size(), scores);
@@ -464,8 +462,10 @@ public class TUGNSGA2<T> extends NSGA2<T> {
 				return keepers;
 			}
 		} else {
-			// System.out.println("default");
+			// Default NSGA2 plus TUG:
+                        // Possible disable certain objectives
 			NSGA2Score<T>[] scores = getTUGScores(listScores);
+                        // Then use NSGA2 like usual
 			return staticSelection(numParents, scores);
 		}
 	}
@@ -484,17 +484,6 @@ public class TUGNSGA2<T> extends NSGA2<T> {
 		return generateNSGA2Children(numChildren, scoresArray, currentGeneration(), mating, crossoverRate);
 	}
 
-	// private static <T> boolean allAreTugScores(ArrayList<Score<T>> scores) {
-	// for (int i = 0; i < scores.size(); i++) {
-	// Score<T> s = scores.get(i);
-	// if (!(s instanceof TUGNSGA2Score)) {
-	// System.out.println("Index: "+i+": id:"+ s.individual.getId() +": NOT TUG
-	// SCORE: " + s);
-	// return false;
-	// }
-	// }
-	// return true;
-	// }
 	@Override
 	public void close(ArrayList<Genotype<T>> population) {
 		super.close(population);

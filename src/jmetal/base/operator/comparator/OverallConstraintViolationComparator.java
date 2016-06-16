@@ -12,7 +12,7 @@ import java.util.Comparator;
 /**
  * This class implements a <code>Comparator</code> (a method for comparing
  * <code>Solution</code> objects) based on the overall constraint violation of
- * the solucions, as in NSGA-II.
+ * the solutions, as in NSGA-II.
  */
 @SuppressWarnings("rawtypes")
 public class OverallConstraintViolationComparator implements Comparator {
@@ -27,6 +27,7 @@ public class OverallConstraintViolationComparator implements Comparator {
 	 * @return -1, or 0, or 1 if o1 is less than, equal, or greater than o2,
 	 *         respectively.
 	 */
+        @Override
 	public int compare(Object o1, Object o2) {
 		double overall1, overall2;
 		overall1 = ((Solution) o1).getOverallConstraintViolation();

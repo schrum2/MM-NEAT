@@ -77,18 +77,15 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 		return outputModel.outputLabels();
 	}
 
-	@SuppressWarnings("rawtypes")
-	public final void addObjective(UT2004FitnessFunction o, ArrayList<UT2004FitnessFunction<T>> list,boolean affectsSelection) {
+	public final void addObjective(UT2004FitnessFunction<T> o, ArrayList<UT2004FitnessFunction<T>> list,boolean affectsSelection) {
 		addObjective(o, list, null, affectsSelection);
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public final void addObjective(UT2004FitnessFunction o, ArrayList<UT2004FitnessFunction<T>> list, Statistic override, boolean affectsSelection) {
+	public final void addObjective(UT2004FitnessFunction<T> o, ArrayList<UT2004FitnessFunction<T>> list, Statistic override, boolean affectsSelection) {
 		list.add(o);
 		MMNEAT.registerFitnessFunction(o.getClass().getSimpleName(), override, affectsSelection);
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {            
 		int botPort = ServerUtil.getAvailablePort();

@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.utexas.cs.nn.log;
 
 import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
@@ -18,6 +14,8 @@ import java.util.Scanner;
  */
 public class DeathLocationsLog extends MMNEATLog {
 
+        public static final int MAX_COLOR = 255;
+    
 	private HashMap<Integer, HashMap<Integer, ArrayList<Integer>>> intensities = null;
 	private HashMap<Integer, ArrayList<Integer>> sortedKeys = null;
 
@@ -29,7 +27,6 @@ public class DeathLocationsLog extends MMNEATLog {
 	 * Returns (maze, (location, death count)) hash
 	 *
 	 * @return
-	 * @throws FileNotFoundException
 	 */
 	public HashMap<Integer, HashMap<Integer, Integer>> deathCount() {
 		HashMap<Integer, HashMap<Integer, Integer>> result = new HashMap<Integer, HashMap<Integer, Integer>>();
@@ -116,8 +113,8 @@ public class DeathLocationsLog extends MMNEATLog {
 			for (Integer intensity : keys) {
 				// System.out.println("Intensity: " + intensity);
 				ArrayList<Integer> locations = mazeIntensities.get(intensity);
-				g.addPoints(new Color(Math.min(255, intensity), Math.min(255, Math.max(intensity - 255, 0)),
-						Math.min(255, Math.max(intensity - (2 * 255), 0))), locations);
+				g.addPoints(new Color(Math.min(MAX_COLOR, intensity), Math.min(MAX_COLOR, Math.max(intensity - MAX_COLOR, 0)),
+						Math.min(MAX_COLOR, Math.max(intensity - (2 * MAX_COLOR), 0))), locations);
 			}
 		}
 	}

@@ -21,6 +21,7 @@ import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.combining.SubNetworkBlock;
  * Defines an evolved MsPacMan agent
  * 
  * @author Jacob Schrum
+ * @param <T> phenotype which must be a network
  */
 public class NNMsPacMan<T extends Network> extends Organism<T> {
 
@@ -42,7 +43,6 @@ public class NNMsPacMan<T extends Network> extends Organism<T> {
 	 * 
 	 * @param genotype
 	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public NNMsPacMan(Genotype<T> genotype) {
 		super(genotype);
 		Network net = (Network) this.getGenotype().getPhenotype();
@@ -99,8 +99,7 @@ public class NNMsPacMan<T extends Network> extends Organism<T> {
 				}
 			} else if (Parameters.parameters.booleanParameter("afterStates")) {
 				// This should be controlled by a commandline parameter
-				// controller = new
-				// DecisionPointAfterStateNNPacManController(net);
+				// controller = new DecisionPointAfterStateNNPacManController(net);
 				controller = new ImmediateAfterStateNNPacManController(net);
 			} else {
 				controller = new ReactiveNNPacManController(net);

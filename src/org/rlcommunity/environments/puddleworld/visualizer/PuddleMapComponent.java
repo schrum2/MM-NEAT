@@ -49,6 +49,7 @@ public class PuddleMapComponent implements SelfUpdatingVizComponent, Observer {
 		theVisualizer.getTheGlueState().addObserver(this);
 	}
 
+        @Override
 	public void render(Graphics2D g) {
 
 		// AffineTransform theScaleTransform = new AffineTransform();
@@ -83,12 +84,14 @@ public class PuddleMapComponent implements SelfUpdatingVizComponent, Observer {
 
 	}
 
+        @Override
 	public void setVizComponentChangeListener(VizComponentChangeListener theChangeListener) {
 		this.theChangeListener = theChangeListener;
 	}
 
 	boolean everDrawn = false;
 
+        @Override
 	public void update(Observable o, Object arg) {
 		if (!everDrawn) {
 			theChangeListener.vizComponentChanged(this);

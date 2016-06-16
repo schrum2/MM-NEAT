@@ -27,9 +27,9 @@ import pacman.controllers.NewPacManController;
 
 /**
  * @author Jacob Schrum
+ * @param <T> phenotype
  */
-public abstract class CooperativeNonHierarchicalMultiNetMsPacManTask<T extends Network>
-		extends CooperativeMsPacManTask<T> {
+public abstract class CooperativeNonHierarchicalMultiNetMsPacManTask<T extends Network> extends CooperativeMsPacManTask<T> {
 
 	protected int members;
 	protected boolean ensemble;
@@ -106,9 +106,9 @@ public abstract class CooperativeNonHierarchicalMultiNetMsPacManTask<T extends N
 
 		if (task.printFitness) {
 			System.out.print("IDs");
-			for (int i = 0; i < team.length; i++) {
-				System.out.print(":" + team[i].getId());
-			}
+                        for (Genotype team1 : team) {
+                            System.out.print(":" + team1.getId());
+                        }
 			System.out.println();
 		}
 
@@ -139,10 +139,9 @@ public abstract class CooperativeNonHierarchicalMultiNetMsPacManTask<T extends N
 	 * Unfortunately, this function required the duplication of lots of code
 	 * from NoisyLonerTask
 	 *
-	 * @param mspacman
-	 * @return
+         * @param multiController controller with hierarchical subnets
+	 * @return score from evaluation
 	 */
-	@SuppressWarnings("static-access")
 	public Score<T> evaluate(NNPacManController multiController) {
 		PacManControllerFacade mspacman = new PacManControllerFacade((NewPacManController) (multiController));
 
@@ -170,8 +169,7 @@ public abstract class CooperativeNonHierarchicalMultiNetMsPacManTask<T extends N
 
 			if (task.printFitness) {
 				System.out.println(Arrays.toString(result.t1) + Arrays.toString(result.t2));
-				// task.scoreSummary(objectiveScores, otherScores, fitnesses,
-				// scores);
+				// task.scoreSummary(objectiveScores, otherScores, fitnesses, scores);
 			}
 			long after = System.currentTimeMillis();
 			evalTimeSum += (after - before);
@@ -197,38 +195,7 @@ public abstract class CooperativeNonHierarchicalMultiNetMsPacManTask<T extends N
 		}
 		if (task.printFitness) {
 			System.out.println("Team: ");
-			System.out.println("\t" + task.scoreSummary(objectiveScores, otherScores, fitness, other));
-			// System.out.println("\tFitness scores:");
-			// int globalFitnessFunctionIndex = 0;
-			// for (int i = 0; i < fitness.length; i++) {
-			//
-			// Statistic fitnessStat =
-			// MONE.aggregationOverrides.get(globalFitnessFunctionIndex);
-			// String fitnessFunctionName =
-			// MONE.fitnessFunctions.get(globalFitnessFunctionIndex) +
-			// (fitnessStat == null ? "" : "[" +
-			// fitnessStat.getClass().getSimpleName() + "]");
-			// globalFitnessFunctionIndex++;
-			//
-			// System.out.println("\t" + fitnessFunctionName + ":\t" +
-			// Arrays.toString(ArrayUtil.column(objectiveScores, i)) + ":" +
-			// fitness[i]);
-			// }
-			// System.out.println("\tOther scores:");
-			// for (int i = 0; i < other.length; i++) {
-			//
-			// Statistic fitnessStat =
-			// MONE.aggregationOverrides.get(globalFitnessFunctionIndex);
-			// String otherScoreName =
-			// MONE.fitnessFunctions.get(globalFitnessFunctionIndex) +
-			// (fitnessStat == null ? "" : "[" +
-			// fitnessStat.getClass().getSimpleName() + "]");
-			// globalFitnessFunctionIndex++;
-			//
-			// System.out.println("\t" + otherScoreName + ":\t" +
-			// Arrays.toString(ArrayUtil.column(otherScores, i)) + ":" +
-			// other[i]);
-			// }
+			System.out.println("\t" + MsPacManTask.scoreSummary(objectiveScores, otherScores, fitness, other));
 		}
 		task.cleanup();
 		Score<T> s = new MultiObjectiveScore<T>(null, fitness, task.getBehaviorVector(), other);
@@ -241,6 +208,7 @@ public abstract class CooperativeNonHierarchicalMultiNetMsPacManTask<T extends N
 	 *
 	 * @return
 	 */
+        @Override
 	public int numberOfPopulations() {
 		return members;
 	}
@@ -252,6 +220,7 @@ public abstract class CooperativeNonHierarchicalMultiNetMsPacManTask<T extends N
 	 *
 	 * @return
 	 */
+        @Override
 	public int[] objectivesPerPopulation() {
 		int[] result = new int[members];
 		for (int i = 0; i < result.length; i++) {
@@ -267,6 +236,7 @@ public abstract class CooperativeNonHierarchicalMultiNetMsPacManTask<T extends N
 	 *
 	 * @return
 	 */
+        @Override
 	public int[] otherStatsPerPopulation() {
 		int[] result = new int[members];
 		for (int i = 0; i < result.length; i++) {

@@ -10,15 +10,16 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
- *
+ * logs information about TUG:
+ * Targeting Unachieved Goals
+ * 
  * @author Jacob Schrum
  */
 public class TUGLog extends StatisticsLog<double[]> {
-
+        // phenotype unkonown here
 	@SuppressWarnings("rawtypes")
 	private final TUGNSGA2 ea;
 
-	@SuppressWarnings("rawtypes")
 	public TUGLog(String _prefix, TUGNSGA2 ea) {
 		super(_prefix, null);
 		this.ea = ea;
