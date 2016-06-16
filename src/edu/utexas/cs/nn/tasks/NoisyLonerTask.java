@@ -9,6 +9,7 @@ import edu.utexas.cs.nn.scores.MultiObjectiveScore;
 import edu.utexas.cs.nn.scores.Score;
 import edu.utexas.cs.nn.tasks.mspacman.agentcontroller.pacman.NNCheckEachDirectionPacManController;
 import edu.utexas.cs.nn.util.ClassCreation;
+import edu.utexas.cs.nn.util.MiscUtil;
 import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.stats.Average;
@@ -80,10 +81,19 @@ public abstract class NoisyLonerTask<T> extends LonerTask<T> {
 	@Override
 	public Score<T> evaluate(Genotype<T> individual) {
 		prep();
-		double[][] objectiveScores = new double[CommonConstants.trials][this.numObjectives()];
-		double[][] otherScores = new double[CommonConstants.trials][this.numOtherScores()];
+		int numTrials;
+		if(Parameters.parameters.booleanParameter("scaleTrials")){
+			numTrials = (int) Math.ceil((((double) MMNEAT.ea.currentGeneration() + 0.01) / 
+					Parameters.parameters.integerParameter("maxGens")) * CommonConstants.trials);
+			numTrials = Math.min(numTrials, CommonConstants.trials);
+		} else {
+			numTrials = CommonConstants.trials;
+		}
+		
+		double[][] objectiveScores = new double[numTrials][this.numObjectives()];
+		double[][] otherScores = new double[numTrials][this.numOtherScores()];
 		double evalTimeSum = 0;
-		for (int i = 0; i < CommonConstants.trials; i++) {
+		for (int i = 0; i < numTrials; i++) {
 			long before = System.currentTimeMillis();
 			if (MMNEAT.evalReport != null) {
 				MMNEAT.evalReport.log("Eval " + i + ":");
@@ -102,7 +112,7 @@ public abstract class NoisyLonerTask<T> extends LonerTask<T> {
 			// ScoreHistory.add(individual.getId(), result.t1);
 			otherScores[i] = result.t2; // other scores
 		}
-		double averageEvalTime = evalTimeSum / CommonConstants.trials;
+		double averageEvalTime = evalTimeSum / numTrials;
 		double[] fitness = new double[this.numObjectives()];
 		for (int i = 0; i < fitness.length; i++) {
 			if (MMNEAT.aggregationOverrides.get(i) == null) {
@@ -215,7 +225,7 @@ public abstract class NoisyLonerTask<T> extends LonerTask<T> {
 		for (int i = 0; i < other.length; i++) {
 			Statistic fitnessStat = MMNEAT.aggregationOverrides.get(globalFitnessFunctionIndex);
 			boolean includeStdev = fitnessStat == null || fitnessStat instanceof Average;
-			String otherScoreName = MMNEAT.fitnessFunctions.get(globalFitnessFunctionIndex)
+			String otherScoreName = MMNEAT.fitnessFunctions.get(0).get(globalFitnessFunctionIndex)
 					+ (includeStdev ? "" : "[" + fitnessStat.getClass().getSimpleName() + "]");
 			globalFitnessFunctionIndex++;
 			double[] xs = ArrayUtil.column(otherScores, i);
