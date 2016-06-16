@@ -2,7 +2,6 @@ package edu.utexas.cs.nn.networks;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.HyperNEATCPPNGenotype;
 import edu.utexas.cs.nn.networks.hyperneat.HyperNEATTask;
@@ -11,6 +10,7 @@ import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.util2D.ILocated2D;
 import edu.utexas.cs.nn.util.util2D.Tuple2D;
+
 /**
  * Multi-Layer Perceptron class that has a generalized
  * number of in, hidden, and out layers that can be 
@@ -22,12 +22,25 @@ import edu.utexas.cs.nn.util.util2D.Tuple2D;
  */
 public class SubstrateMLP implements Network {
 
+	/**
+	 * MLP layer object. Stores node information, name of layer
+	 * and type of layer
+	 * @author Lauren Gillespie
+	 *
+	 */
+	public class MLPLayer {
 
-	public class MLPLayer { 
+		//information stored by MLPLayer class
 		public double[][] nodes;
 		public String name;
 		public int ltype;
 
+		/**
+		 * Constructor for MLPLayer
+		 * @param nodes nodes in layer
+		 * @param name name of layer
+		 * @param ltype type of layer
+		 */
 		public MLPLayer(double[][] nodes, String name, int ltype) {
 			this.nodes = nodes;
 			this.name = name;
@@ -35,21 +48,35 @@ public class SubstrateMLP implements Network {
 		}
 	}
 
+	/**
+	 * MLP connection object. Stores information on connections between
+	 * MLP layers and connection weights
+	 * @author gillespl
+	 *
+	 */
 	public class MLPConnection {
+		
+		//information stored by MLPConnection class
 		public double[][][][] connection;
 		public Pair<String, String> connects;
 
+		/**
+		 * Constructor for mlpConnection
+		 * @param connection connection between layers
+		 * @param connects the layers connected by MLPConnection
+		 */
 		public MLPConnection(double[][][][] connection, Pair<String, String> connects) { 
 			this.connection = connection;
 			this.connects = connects;
 		}
 	}
+	
+	
 	//private instance variables
 	protected List<MLPLayer> layers;
 	protected List<MLPConnection> connections;
 	private int numInputs = 0;
 	private int numOutputs = 0;
-	private int numHiddenLayers = 0;
 	private int ftype;//TODO
 
 	/**
@@ -105,7 +132,6 @@ public class SubstrateMLP implements Network {
 			MLPLayer layer = new MLPLayer(new double[sub.size.t1][sub.size.t2], sub.name, sub.stype);
 			layers.add(layer);
 			if(sub.stype == Substrate.INPUT_SUBSTRATE){ numInputs += sub.size.t1 * sub.size.t2;
-			} else if(sub.stype == Substrate.PROCCESS_SUBSTRATE) { numHiddenLayers++;
 			}else if(sub.stype == Substrate.OUTPUT_SUBSTRATE){ numOutputs += sub.size.t1 * sub.size.t2;}
 		}
 	}
@@ -155,9 +181,8 @@ public class SubstrateMLP implements Network {
 		double[] outputs = new double[numOutputs];
 		flush();
 		fillLayers(layers, inputs);
-		outputs = propagateOneStep(inputs);//sends inputs to hidden layers
-		for(int i = 0; i < numHiddenLayers; i++) {//process through rest of network
-			outputs = propagateOneStep(outputs);
+		for(int i = 0; i < connections.size(); i++) {//process through rest of network
+			outputs = propagateOneStep(outputs, connections.get(i));
 		}
 		return outputs;
 	}
@@ -167,9 +192,16 @@ public class SubstrateMLP implements Network {
 	 * @param inputs inputs to layer
 	 * @return outputs from layer
 	 */
-	private double[] propagateOneStep(double[] inputs) {
+	private double[] propagateOneStep(double[] inputs, MLPConnection connection) {
+		MLPLayer fromLayer = null;
+		MLPLayer toLayer = null;
+		for(MLPLayer layer : layers) {
+			if(layer.name.equals(connection.connects.t1)) { fromLayer = layer;} 
+			else if(layer.name.equals(connection.connects.t2)) { toLayer = layer;}
+		}
+		if(fromLayer == null || toLayer == null) throw new NullPointerException("either from or to layer was not properly initialized!");
 		double[] outputs = new double[0];
-		//	NetworkUtil.propagateOneStep(??, ??, ??);//TODO
+		NetworkUtil.propagateOneStep(fromLayer.nodes, toLayer.nodes, connection.connection);
 		for(double a : outputs) {
 			activate(a, ftype);//TODO
 		}

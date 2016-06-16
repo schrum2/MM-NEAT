@@ -26,7 +26,7 @@ public class NetworkUtil {
 			return originalOutput + CommonConstants.linkExpressionThreshold;
 		}
 	}
-	
+
 	/**
 	 * Propagates values forward one step  by multiplying value at first layer by
 	 * connection weight between layers and setting target layer equal to this value
@@ -34,14 +34,15 @@ public class NetworkUtil {
 	 * @param toLayer target layer
 	 * @param connections connections between the two layers
 	 */
-	public static void propagateOneStep(double[] fromLayer, double[] toLayer, double[][] connections) {
+	public static double[] propagateOneStep(double[] fromLayer, double[] toLayer, double[][] connections) {
 		for (int from = 0; from < fromLayer.length; from++) {
 			for (int to = 0; to < toLayer.length; to++) {
 				toLayer[to] += fromLayer[from] * connections[from][to];
 			}
 		}
+		return toLayer;
 	}
-	
+
 	/**
 	 * Propagates values forward one step  by multiplying value at first layer by
 	 * connection weight between layers and setting target layer equal to this value
@@ -49,11 +50,18 @@ public class NetworkUtil {
 	 * @param toLayer target layer
 	 * @param connections connections between the two layers
 	 */
-	public static void propagateOneStep(double[][] fromLayer, double[][] toLayer, double[][][][] connections) {
-		for (int from = 0; from < fromLayer.length; from++) {
-			for (int to = 0; to < toLayer.length; to++) {
-			//	toLayer[to] += fromLayer[from] * connections[from][to];
+	public static double[][] propagateOneStep(double[][] fromLayer, double[][] toLayer, double[][][][] connections) {
+		assert(connections.length * connections[0].length == fromLayer.length * fromLayer[0].length):"from layer size doesn't match size of connections!";
+		assert(connections[0][0].length * connections[0][0][0].length == toLayer.length * toLayer[0].length):"to layer size doesn't match size of connections!";
+		for (int X1 = 0; X1 < connections.length; X1++) {
+			for(int Y1 = 0; Y1 < connections[0].length; Y1++) {
+				for(int X2 = 0; X2 < connections[0][0].length; X2++) {
+					for(int Y2 = 0; Y2 < connections[0][0][0].length; Y2++) {
+						toLayer[X2][Y2] += fromLayer[X1][Y1] * connections[X1][Y1][X2][Y2];
+					}
+				}
 			}
 		}
+		return toLayer;
 	}
 }
