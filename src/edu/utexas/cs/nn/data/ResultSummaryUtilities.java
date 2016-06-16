@@ -34,6 +34,8 @@ public class ResultSummaryUtilities {
 	public static void processExperiment(String dirPrefix, String filePrefix, int runs, int generations,
 			String logSuffix, String genFileMiddle, String outputDir, int popNum)
 					throws FileNotFoundException, NoSuchMethodException {
+		//HyperVolumeProcessing only happens with population zero because it would not work correctly with various
+		//fitnesses for each population (coevolution). 
 		if(popNum == 0)
 			hypervolumeProcessing(dirPrefix, runs, filePrefix, genFileMiddle, generations, outputDir);
 		// Average objective scores
