@@ -51,7 +51,7 @@ public class Parameters {
 	public ParameterCollection<Double> doubleOptions;
 	public ParameterCollection<String> stringOptions;
 	// Class can be any type, hence <T> details are inappropriate
-        @SuppressWarnings("rawtypes") 
+	@SuppressWarnings("rawtypes") 
 	public ParameterCollection<Class> classOptions;
 
 	/**
@@ -779,15 +779,15 @@ public class Parameters {
 		}
 	}
 
-        /**
-         * Based on the String arguments passed at the command line, extract
-         * the path and file name of the parameter log file (if it exists). 
-         * This makes it easy to check for an existing experiment run and
-         * resume it.
-         * @param args Same arguments passed to main from command line
-         * @return path and file name of potential parameter log file.
-         */
-	private static String getLogFilename(String[] args) {
+	/**
+	 * Based on the String arguments passed at the command line, extract
+	 * the path and file name of the parameter log file (if it exists). 
+	 * This makes it easy to check for an existing experiment run and
+	 * resume it.
+	 * @param args Same arguments passed to main from command line
+	 * @return path and file name of potential parameter log file.
+	 */
+	public static String getLogFilename(String[] args) {
 		String base = "";
 		String saveTo = "";
 		String log = "";

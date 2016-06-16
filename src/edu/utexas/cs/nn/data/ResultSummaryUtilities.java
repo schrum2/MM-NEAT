@@ -32,13 +32,14 @@ import jmetal.qualityIndicator.Hypervolume;
 public class ResultSummaryUtilities {
 
 	public static void processExperiment(String dirPrefix, String filePrefix, int runs, int generations,
-			String logSuffix, String genFileMiddle, String outputDir)
+			String logSuffix, String genFileMiddle, String outputDir, int popNum)
 					throws FileNotFoundException, NoSuchMethodException {
-		hypervolumeProcessing(dirPrefix, runs, filePrefix, genFileMiddle, generations, outputDir);
+		if(popNum == 0)
+			hypervolumeProcessing(dirPrefix, runs, filePrefix, genFileMiddle, generations, outputDir);
 		// Average objective scores
 		System.out.println("Average scores: " + outputDir + "/" + filePrefix + "AVG" + logSuffix);
 		int num = averageConditionResults(dirPrefix, filePrefix, logSuffix, runs, outputDir);
-		plotAverageFitnessesFile(filePrefix, genFileMiddle + "Scores", logSuffix, num, runs, outputDir, StatisticsUtilities.tValue(runs));
+		plotAverageFitnessesFile(filePrefix, genFileMiddle + "Scores", logSuffix, num, runs, outputDir, StatisticsUtilities.tValue(runs), popNum);
 		// TWEANN Info
 		String loadFrom = Parameters.parameters.stringParameter("loadFrom");
 		if ((loadFrom == null || loadFrom.equals("")) && !(MMNEAT.task instanceof MultiplePopulationTask)) {
@@ -366,13 +367,13 @@ public class ResultSummaryUtilities {
 	}
 
 	private static void plotAverageFitnessesFile(String filePrefix, String middle, String fileSuffix, int num,
-			int runs, String outputDir, double t) throws FileNotFoundException {
-		plotAverageFitnessesFile(filePrefix, middle, fileSuffix, num, runs, outputDir, t, false);
-		plotAverageFitnessesFile(filePrefix, middle, fileSuffix, num, runs, outputDir, t, true);
+			int runs, String outputDir, double t, int popNum) throws FileNotFoundException {
+		plotAverageFitnessesFile(filePrefix, middle, fileSuffix, num, runs, outputDir, t, false, popNum);
+		plotAverageFitnessesFile(filePrefix, middle, fileSuffix, num, runs, outputDir, t, true, popNum);
 	}
 
 	private static void plotAverageFitnessesFile(String filePrefix, String middle, String fileSuffix, int num,
-			int runs, String outputDir, double t, boolean makePDF) throws FileNotFoundException {
+			int runs, String outputDir, double t, boolean makePDF, int popNum) throws FileNotFoundException {
 		String plotFile = "";
 		if(!makePDF){
 			plotFile = outputDir + "/" + filePrefix + "AVG" + middle + ".plot";
@@ -392,7 +393,7 @@ public class ResultSummaryUtilities {
 		String file = filePrefix + "AVG" + fileSuffix;
 		for (int i = 1; i < num; i += 4) {
 			Statistic stat = MMNEAT.aggregationOverrides.get((i - 1) / 4);
-			String fitnessFunctionName = MMNEAT.fitnessFunctions.get(0).get((i - 1) / 4)
+			String fitnessFunctionName = MMNEAT.fitnessFunctions.get(popNum).get((i - 1) / 4)
 					+ (stat == null ? "" : "[" + stat.getClass().getSimpleName() + "]");
 			if (makePDF) {
 				out.println("set output \"Average '" + fitnessFunctionName + "' for " + condition + " by Generation.pdf\"");

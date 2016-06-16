@@ -627,12 +627,33 @@ public class MMNEAT {
 			System.out.println("Failed to instantiate task " + Parameters.parameters.classParameter("task"));
 			System.exit(1);
 		}
-		ResultSummaryUtilities.processExperiment(
-				Parameters.parameters.stringParameter("base") + "/" + Parameters.parameters.stringParameter("saveTo"),
+		String base = Parameters.parameters.stringParameter("base");
+		String saveTo = Parameters.parameters.stringParameter("saveTo");
+		int run = Parameters.parameters.integerParameter("runNumber");
+		if(task instanceof MultiplePopulationTask) {
+			String runDir = base + "/" + saveTo + run + "/";
+			int i = 0;
+			// Note: Only works for populations of evolved TWEANNs,
+			// because an archetype is required. There will be one
+			// archetype file for each population, so checking for the
+			// existence of the files verifies the number of populations.
+			while(new File(runDir + "archetype"+i+".xml").exists()) {
+				ResultSummaryUtilities.processExperiment(
+					base + "/" + saveTo,
+					Parameters.parameters.stringParameter("log"), runs, Parameters.parameters.integerParameter("maxGens"),
+					"_" + ("pop" + i) + "parents_log.txt",
+					"_" + ("pop" + i) + "parents_gen",
+					base, i);
+				i++;
+			}
+		} else { //for lonerTask sending in default of population 0
+			ResultSummaryUtilities.processExperiment(
+				base + "/" + saveTo,
 				Parameters.parameters.stringParameter("log"), runs, Parameters.parameters.integerParameter("maxGens"),
 				"_" + (task instanceof MultiplePopulationTask ? "pop0" : "") + "parents_log.txt",
 				"_" + (task instanceof MultiplePopulationTask ? "pop0" : "") + "parents_gen",
-				Parameters.parameters.stringParameter("base"));
+				base, 0);
+		}
 	}
 
 	/**
