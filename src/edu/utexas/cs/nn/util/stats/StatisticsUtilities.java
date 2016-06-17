@@ -91,10 +91,13 @@ public class StatisticsUtilities {
 	}
 
 	/**
-	 * Exactly same as double[] version above, but for int[]
+	 * The values in xs are checked for the max value, and the array index
+	 * corresponding to the max is returned. If there is a tie, then the
+	 * randomArgMaxTieBreak setting determines whether a random max is chosen or
+	 * the first of the maxes is chosen.
 	 * 
 	 * @param xs
-	 * @return
+	 * @return array index corresponding to max
 	 */
 	public static int argmax(int[] xs) {
 		double max = -Double.MAX_VALUE;
@@ -113,12 +116,17 @@ public class StatisticsUtilities {
 	}
 
 	/**
-	 * rank can make the result more specific, to get the max (rank = 0), next
+	 * The values in xs are checked for the max value, and the array index
+	 * corresponding to the max is returned. If there is a tie, then the
+	 * randomArgMaxTieBreak setting determines whether a random max is chosen or
+	 * the first of the maxes is chosen.
+	 * 
+	 * Rank can make the result more specific, to get the max (rank = 0), next
 	 * highest (rank = 1), or next (rank = 2), etc.
 	 * 
 	 * @param xs
 	 * @param rank
-	 * @return
+	 * @return array index corresponding to max
 	 */
 	public static int argmax(int[] xs, int rank) {
 		Pair<Integer, Integer>[] indexValuePairs = new Pair[xs.length];
@@ -177,6 +185,8 @@ public class StatisticsUtilities {
 				? RandomNumbers.randomGenerator.nextInt(equalMinIndexes.size()) : 0);
 	}
 
+	//Softmax function often implemented at the final layer of a network 
+	//used for classification, but what does this method actually do? -Gab
 	public static int softmax(double[] ps, double temperature) {
 		double[] posExps = new double[ps.length];
 		for (int i = 0; i < posExps.length; i++) {
