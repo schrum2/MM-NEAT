@@ -18,6 +18,7 @@ import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.NoisyLonerTask;
 import edu.utexas.cs.nn.util.datastructures.Pair;
+import edu.utexas.cs.nn.util.random.RandomNumbers;
 
 public class MarioTask<T extends Network> extends NoisyLonerTask<T>implements NetworkTask {
 
@@ -25,21 +26,10 @@ public class MarioTask<T extends Network> extends NoisyLonerTask<T>implements Ne
 
 	public MarioTask(){
     	options = new CmdLineOptions(new String[0]);
-        // Number of trials determined by NoisyLonerTask instead
-        options.setNumberOfTrials(1);
-        // TODO: I think this can be removed
-        options.setMatlabFileName("");
-        // TODO: Use RandomNumbers class
-        // TODO: Do this in oneEval instead: different level each time
-        options.setLevelRandSeed((int) (Math.random () * Integer.MAX_VALUE));
-        // TODO: Define a parameter for this: marioLevelDifficulty
-        options.setLevelDifficulty(3);
-        // Run fast when not watching
-        options.setMaxFPS(!CommonConstants.watch);
+        options.setLevelDifficulty(Parameters.parameters.integerParameter("marioLevelDifficulty"));
+        options.setMaxFPS(!CommonConstants.watch); // Run fast when not watching
         options.setVisualization(CommonConstants.watch);
-        // TODO: Define a parameter for this: marioTimeLimit
-        options.setTimeLimit(200);
-        
+        options.setTimeLimit(Parameters.parameters.integerParameter("marioTimeLimit"));
         MMNEAT.registerFitnessFunction("Progress");
 	}
 	
@@ -56,15 +46,14 @@ public class MarioTask<T extends Network> extends NoisyLonerTask<T>implements Ne
 
 	@Override
 	public String[] sensorLabels() {
-		// TODO Auto-generated method stub
-		return null;
+		
+		return new String[]{"Top Left", "Top Middle", "Top Right", "Mid Left", "Center", "Mid Right", "Bottom Left", "Bottom Middle", "Bottom Right", "Bias"};
 	}
 
 	@Override
 	public String[] outputLabels() {
-		// TODO Auto-generated method stub
-		//probably buttons
-		return null;
+		return new String[]{"Left", "Right", "Down", "Jump", "Speed", "??"};
+		//Note: These may not be correct, as there are only 5/6 -Gab
 	}
 
 	
@@ -72,6 +61,7 @@ public class MarioTask<T extends Network> extends NoisyLonerTask<T>implements Ne
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {
 		double distanceTravelled = 0;
 		options.setAgent(new NNMarioAgent<T>(individual));
+		options.setLevelRandSeed(RandomNumbers.randomGenerator.nextInt(Integer.MAX_VALUE));
 		Evaluator evaluator = new Evaluator(options);
 		List<EvaluationInfo> results = evaluator.evaluate();
 		for (EvaluationInfo result : results) {
@@ -106,7 +96,7 @@ public class MarioTask<T extends Network> extends NoisyLonerTask<T>implements Ne
     			"task:edu.utexas.cs.nn.tasks.mario.MarioTask"});
     	MMNEAT.loadClasses();
     	EvolutionaryHistory.initArchetype(0);
-    	TWEANNGenotype tg = new TWEANNGenotype(10,6,0);
+    	TWEANNGenotype tg = new TWEANNGenotype(10,5,0);
     	MarioTask<TWEANN> mt = new MarioTask<TWEANN>();
     	Agent controller = new NNMarioAgent<TWEANN>(tg);
     	

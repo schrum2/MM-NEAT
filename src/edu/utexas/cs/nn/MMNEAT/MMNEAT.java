@@ -9,6 +9,7 @@ import java.util.logging.Logger;
 
 import org.rlcommunity.rlglue.codec.taskspec.TaskSpec;
 
+import ch.idsia.mario.engine.Scene;
 import edu.utexas.cs.nn.breve2D.dynamics.Breve2DDynamics;
 import edu.utexas.cs.nn.data.ResultSummaryUtilities;
 import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
@@ -473,7 +474,7 @@ public class MMNEAT {
 			} else if(task instanceof HyperNEATDummyTask) {
 				System.out.println("set up dummy hyperNEAT task. Used for testing purposes only");
 			} else if (task instanceof MarioTask) {
-				setNNInputParameters(10, 6); //hard coded for now, 10 inputs and 6 buttons
+				setNNInputParameters(10, Scene.keys.length); //hard coded for now, 10 inputs and 5 buttons
 				System.out.println("Set up Mario Task");
 			} else if (task == null) {
 				// this else statement should only happen for JUnit testing cases.

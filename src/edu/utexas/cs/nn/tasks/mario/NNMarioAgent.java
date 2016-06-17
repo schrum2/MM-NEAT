@@ -9,8 +9,6 @@ import edu.utexas.cs.nn.networks.Network;
 public class NNMarioAgent<T extends Network> extends Organism<T> implements Agent {
 
 	Network n;
-    final int numberOfOutputs = 6;
-    final int numberOfInputs = 10;
 	private String name = "NNMarioAgent";
 	
 	public NNMarioAgent(Genotype<T> genotype) {
@@ -28,14 +26,14 @@ public class NNMarioAgent<T extends Network> extends Organism<T> implements Agen
 
 	@Override
 	public boolean[] getAction(Environment observation) {
-		 byte[][] scene = observation.getLevelSceneObservation(/*1*/);
+		byte[][] scene = observation.getLevelSceneObservation(/*1*/);
         double[] inputs = new double[]{probe(-1, -1, scene), probe(0, -1, scene), 
         							   probe(1, -1, scene), probe(-1, 0, scene), 
         							   probe(0, 0, scene), probe(1, 0, scene), 
         							   probe(-1, 1, scene), probe(0, 1, scene), 
         							   probe(1, 1, scene), 1}; // 10 inputs ? -Gab
         double[] outputs = n.process(inputs);
-        boolean[] action = new boolean[numberOfOutputs];
+        boolean[] action = new boolean[outputs.length];
         for (int i = 0; i < action.length; i++) {
             action[i] = outputs[i] > 0;
         }
@@ -67,7 +65,7 @@ public class NNMarioAgent<T extends Network> extends Organism<T> implements Agen
 	}
 	
 	/**
-	 * Using the scene (byte[][]) determines if the (x, y) is 1 of 0
+	 * Using the scene (byte[][]) determines if the (x, y) is 1 or 0
 	 * @param x
 	 * @param y
 	 * @param scene
