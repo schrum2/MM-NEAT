@@ -1,6 +1,7 @@
 package edu.utexas.cs.nn.tasks.gridTorus;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -95,7 +96,7 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 	public abstract TorusPredPreyController[] getPreyAgents(Genotype<T> individual);
 
 	// boolean to indicate which agent is to be evolved
-	public final boolean preyEvolve;
+	public static boolean preyEvolve;
 	// boolean to indicate if competitive coevolution is happening
 	public final boolean competitive;
 
@@ -136,7 +137,7 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 	 */
 	public TorusPredPreyTask(boolean preyEvolve, boolean competitive) {
 		super();
-		this.preyEvolve = preyEvolve;
+		TorusPredPreyTask.preyEvolve = preyEvolve;
 		this.competitive = competitive;
 		if (CommonConstants.monitorInputs && TWEANN.inputPanel != null) {
 			TWEANN.inputPanel.dispose();
@@ -396,6 +397,7 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 			// if requested, adds visual panels for each of the evolved agents showing its inputs
 			// (offsets to other agents), outputs (possible directional movements), and game time
 			if (CommonConstants.monitorInputs) {
+				preyEvolve = !isPred;
 				DrawingPanel panel = new DrawingPanel(Plot.BROWSE_DIM, (int) (Plot.BROWSE_DIM * 3.5), (isPred ? "Predator " + typeIndex : "Prey " + typeIndex));
 				((NNTorusPredPreyController) container[i]).networkInputs = panel;
 				panel.setLocation(i * (Plot.BROWSE_DIM + 10), 0);

@@ -101,6 +101,9 @@ public class NNTorusPredPreyController extends TorusPredPreyController {
 		if (networkInputs != null) {
 			TWEANN.inputPanel = networkInputs;
 		}
+		// Have to set this so that outputLabels and sensorLabels are
+		// correct when both predators and prey are co-evolving
+		TorusPredPreyTask.preyEvolve = !isPredator; 
 		double[] outputs = nn.process(inputs);
 		// Assume one output for each direction
 		return isPredator ? predatorActions()[StatisticsUtilities.argmax(outputs)]
