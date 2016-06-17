@@ -353,9 +353,7 @@ public class GameFacade {
 	public int nextJunctionInDirection(int current, int currentDir, boolean powerPillsToo) {
 		int[] neighbors = restrictedNeighbors(current, currentDir);
 		int numBlocked = ArrayUtil.countOccurrences(-1, neighbors);
-                @SuppressWarnings("UnusedAssignment")
 		int pos = -1;
-                @SuppressWarnings("UnusedAssignment")
 		int move = -1;
 		switch (numBlocked) {
 		case 2:
@@ -379,8 +377,8 @@ public class GameFacade {
 					+ Arrays.toString(neighbors));
 			System.exit(1);
 		}
-                // Go until a junction is reached
-                while (!isJunction(pos) && (!powerPillsToo || !isPowerPillIndex(pos))) { 
+		// Go until a junction is reached
+		while (!isJunction(pos) && (!powerPillsToo || !isPowerPillIndex(pos))) { 
 			neighbors = restrictedNeighbors(pos, move);
 			pos = ArrayUtil.filter(neighbors, -1)[0];
 			move = ArrayUtil.position(neighbors, pos);

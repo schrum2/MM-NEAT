@@ -42,6 +42,7 @@ public abstract class MultinetworkMsPacManController<T extends Network> extends 
 		return result;
 	}
 
+	@SuppressWarnings("unchecked")
 	public MultinetworkMsPacManController(Genotype<T>[] genotypes,
 			MsPacManControllerInputOutputMediator[] inputMediators) {
 		super(genotypes[0].getPhenotype());
@@ -172,8 +173,7 @@ public abstract class MultinetworkMsPacManController<T extends Network> extends 
 
 	}
 
-	protected abstract void drawModeUsage(GameFacade game, Graphics2D g, int[] actions, int action, int currentScale,
-			int mode);
+	protected abstract void drawModeUsage(GameFacade game, Graphics2D g, int[] actions, int action, int currentScale, int mode);
 
 	protected abstract int[][] getAllControllerActions(GameFacade game, long timeDue);
 
