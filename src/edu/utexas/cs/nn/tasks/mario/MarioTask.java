@@ -25,13 +25,19 @@ public class MarioTask<T extends Network> extends NoisyLonerTask<T>implements Ne
 
 	public MarioTask(){
     	options = new CmdLineOptions(new String[0]);
-        options.setMaxFPS(true);
-        options.setVisualization(true);
+        // Number of trials determined by NoisyLonerTask instead
         options.setNumberOfTrials(1);
+        // TODO: I think this can be removed
         options.setMatlabFileName("");
+        // TODO: Use RandomNumbers class
+        // TODO: Do this in oneEval instead: different level each time
         options.setLevelRandSeed((int) (Math.random () * Integer.MAX_VALUE));
+        // TODO: Define a parameter for this: marioLevelDifficulty
         options.setLevelDifficulty(3);
+        // Run fast when not watching
+        options.setMaxFPS(!CommonConstants.watch);
         options.setVisualization(CommonConstants.watch);
+        // TODO: Define a parameter for this: marioTimeLimit
         options.setTimeLimit(200);
         
         MMNEAT.registerFitnessFunction("Progress");
@@ -65,24 +71,19 @@ public class MarioTask<T extends Network> extends NoisyLonerTask<T>implements Ne
 	@Override
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {
 		double distanceTravelled = 0;
-		// controller.reset();
 		options.setAgent(new NNMarioAgent<T>(individual));
 		Evaluator evaluator = new Evaluator(options);
 		List<EvaluationInfo> results = evaluator.evaluate();
 		for (EvaluationInfo result : results) {
-			// if (result.marioStatus == Mario.STATUS_WIN )
-			// Easy.save(options.getAgent(), options.getAgent().getName() + ".xml");
 			distanceTravelled += result.computeDistancePassed();
 		}
 		distanceTravelled = distanceTravelled / results.size();
 		return new Pair<double[], double[]>(new double[] { distanceTravelled }, new double[0]);
-		// return new double[]{distanceTravelled};
-
 	}
 	
 	/**
-	 * Setter for the task options
-	 * @param EvaluationOptions options 
+	 * Setter for the task options 
+         * @param options settings about evaluation
 	 */
     public void setOptions(EvaluationOptions options) {
         this.options = options;
@@ -96,6 +97,10 @@ public class MarioTask<T extends Network> extends NoisyLonerTask<T>implements Ne
         return options;
     }
 
+    /**
+     * Simple test of MarioTask
+     * @param args 
+     */
     public static void main(String[] args){
     	Parameters.initializeParameterCollections(new String[]{"io:false", "netio:false", 
     			"task:edu.utexas.cs.nn.tasks.mario.MarioTask"});
