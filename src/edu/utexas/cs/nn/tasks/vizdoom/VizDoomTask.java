@@ -190,7 +190,7 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 			// This r seems worthless ... does it give any information?
 			// My hunch is that it picks the action, but I don't think we have to do anything with it? Make action returns a double for some reason.
 			// I'll take out the r for now -Gab
-			if(Parameters.parameters.booleanParameter("stepByStepVizDoom")){
+			if(Parameters.parameters.booleanParameter("stepByStep")){
 				 MiscUtil.waitForReadStringAndEnterKeyPress();	
 			}
 		}

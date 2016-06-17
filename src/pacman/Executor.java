@@ -41,7 +41,7 @@ public class Executor {
 	public static DeathLocationsLog deaths = null;
 
 	public Executor() {
-		hold = Parameters.parameters.booleanParameter("stepByStepPacMan");
+		hold = Parameters.parameters.booleanParameter("stepByStep");
 		logOutput = Parameters.parameters.booleanParameter("logPacManEvals");
 		String saveTo = Parameters.parameters.stringParameter("saveTo");
 		if (!saveTo.isEmpty() && Parameters.parameters.booleanParameter("logDeathLocations")) {
