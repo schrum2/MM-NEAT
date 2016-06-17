@@ -2,12 +2,23 @@ package edu.utexas.cs.nn.tasks.vizdoom;
 
 import static org.junit.Assert.*;
 
+import org.junit.Before;
 import org.junit.Test;
 
+import edu.utexas.cs.nn.MMNEAT.MMNEAT;
+import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
+import edu.utexas.cs.nn.util.stats.Average;
 
 public class VizDoomTaskTests {
 
+	@Before
+	public void setUp() throws Exception {
+//		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "recurrency:false"});//TODO
+//		MMNEAT.loadClasses();
+		VizDoomTask.stat = new Average();
+	}
+	
 	@Test
 	public void correct_value_test() {
 		double[] inputs = {0.2, 0.4, 0.5, 0.6, 0.9, 0.5, 0.2, 0.1, 0.2, 0.1,
