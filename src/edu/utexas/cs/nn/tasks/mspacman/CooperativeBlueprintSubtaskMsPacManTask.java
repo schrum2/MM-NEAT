@@ -41,30 +41,37 @@ public class CooperativeBlueprintSubtaskMsPacManTask<T extends Network>
 	protected int numberFullChildBlueprints;
 	protected int numberFullParentBlueprints;
 
+        @Override
 	public int getNumberUnevaluatedReferences() {
 		return unevaluatedIndividuals;
 	}
 
+        @Override
 	public int getNumberBlueprintParentReferences() {
 		return numberBlueprintParentReferences;
 	}
 
+        @Override
 	public int getTotalBlueprintReferences() {
 		return totalBlueprintReferences;
 	}
 
+        @Override
 	public int getNumberFullParentBlueprints() {
 		return numberFullParentBlueprints;
 	}
 
+        @Override
 	public int getNumberFullChildBlueprints() {
 		return numberFullChildBlueprints;
 	}
 
+        @Override
 	public int getPreviousTotalBlueprintReferences() {
 		return previousTotalBlueprintReferences;
 	}
 
+        @Override
 	public int getPreviousNumberUnevaluatedReferences() {
 		return previousUnevaluatedIndividuals;
 	}
@@ -162,8 +169,7 @@ public class CooperativeBlueprintSubtaskMsPacManTask<T extends Network>
 	 */
 	@SuppressWarnings("rawtypes")
 	@Override
-	protected Genotype[] getTeam(ArrayList<ArrayList<Genotype>> populations, List<ArrayList<Integer>> joinOrder,
-			int index) {
+	protected Genotype[] getTeam(ArrayList<ArrayList<Genotype>> populations, List<ArrayList<Integer>> joinOrder, int index) {
 		int pops = populations.size() - 1; // -1 so blueprint population ignored
 		Genotype[] team = new Genotype[pops];
 		for (int p = 0; p < pops; p++) {
@@ -174,8 +180,6 @@ public class CooperativeBlueprintSubtaskMsPacManTask<T extends Network>
 				// Get the blueprint
 				SimpleBlueprintGenotype bp = (SimpleBlueprintGenotype) populations.get(pops).get(bpIndex);
 				team[p] = getParentScore(bp, joinOrder, index, p).individual;
-				// System.out.println("Net " + team[p].getId() + " found in
-				// parent pop as expected");
 			} else { // Network was in a child population
 				team[p] = populations.get(p).get(popSlot);
 			}
@@ -205,9 +209,8 @@ public class CooperativeBlueprintSubtaskMsPacManTask<T extends Network>
 		int blueprintPop = rawSums.length - 1;
 		for (int p = 0; p < scores.size(); p++) {
 			if (p == SELECTOR_POP_INDEX) {
-				int orderIndex = teamOrder.get(blueprintPop).get(order); // index
-																			// of
-																			// blueprint
+                                // index of blueprint
+				int orderIndex = teamOrder.get(blueprintPop).get(order); 
 				// Each blueprint should only get one set of noisy evals
 				assert(rawSums[blueprintPop][orderIndex] == null);
 				// Blue print gets this score too
@@ -291,8 +294,7 @@ public class CooperativeBlueprintSubtaskMsPacManTask<T extends Network>
 	 * @return Score of parent network (contains genotype)
 	 */
 	@SuppressWarnings("rawtypes")
-	private Score getParentScore(SimpleBlueprintGenotype bp, List<ArrayList<Integer>> joinOrder, int index,
-			int popIndex) {
+	private Score getParentScore(SimpleBlueprintGenotype bp, List<ArrayList<Integer>> joinOrder, int index, int popIndex) {
 		int popSize = previousScores.get(popIndex).size();
 		// Get desired network id
 		long netId = bp.getPhenotype().get(popIndex);

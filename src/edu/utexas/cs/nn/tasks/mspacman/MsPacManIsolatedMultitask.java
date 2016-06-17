@@ -11,23 +11,42 @@ import edu.utexas.cs.nn.util.datastructures.Pair;
  * @param <T>
  */
 public abstract class MsPacManIsolatedMultitask<T extends Network> extends MsPacManTask<T> {
-
+    
+        /**
+         * Code to execute before task 1
+         */
 	public void task1Pre() {
-
 	}
 
+        /**
+         * Code to execute after task 1
+         * @param task1Results  evaluation results of agent
+         */
 	public void task1Post(Pair<double[], double[]> task1Results) {
 
 	}
 
+        /**
+         * Code to execute before task 2
+         */
 	public void task2Pre() {
 
 	}
 
+        /**
+         * Code to execute after task 2
+         * @param task2Results  evaluation results of agent
+         */
 	public void task2Post(Pair<double[], double[]> task2Results) {
 
 	}
 
+        /**
+         * Prepares for each individual task and combines results afterward
+         * @param individual genotype to evaluate
+         * @param num evaluation number
+         * @return combined evaluation results
+         */
 	@Override
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {
 		task1Pre();

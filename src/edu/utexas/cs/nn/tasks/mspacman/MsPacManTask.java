@@ -356,6 +356,9 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 				: new double[] { taskScores.otherStats[scoreIndex] });
 	}
 
+        /**
+         * Define the Ghost team to evolve against
+         */
 	public void loadGhosts() {
 		if (ghosts == null) {
 			try {
@@ -372,12 +375,13 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 	/**
 	 * If a static pacman is being used against evolving ghosts, then this
 	 * method loads it.
+         * 
+         * Is this actually used anywhere?
 	 */
 	public void loadPacMan() {
 		if (mspacman == null) {
 			try {
-				this.mspacman = new PacManControllerFacade(
-						(NewPacManController) ClassCreation.createObject("staticPacMan"));
+				this.mspacman = new PacManControllerFacade((NewPacManController) ClassCreation.createObject("staticPacMan"));
 			} catch (NoSuchMethodException ex) {
 				ex.printStackTrace();
 				System.exit(1);
@@ -416,8 +420,7 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 		agentEval(mspacman, num);
 		if (mspacman.newP instanceof MultinetworkMsPacManController && individual instanceof NetworkGenotype) {
 			// Track subnet selections as if they were modes
-			((NetworkGenotype<T>) individual)
-					.setModuleUsage(((MultinetworkMsPacManController) mspacman.newP).fullUsage);
+			((NetworkGenotype<T>) individual).setModuleUsage(((MultinetworkMsPacManController) mspacman.newP).fullUsage);
 		}
 
 		double[] fitnesses = new double[this.numObjectives()];

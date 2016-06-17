@@ -24,6 +24,7 @@ public abstract class CooperativeMsPacManTask<T extends Network> extends Coopera
 
 	public MsPacManTask<T> task;
 
+        @Override
 	public ArrayList<Score<T>> evaluateAll(ArrayList<Genotype<T>> population) {
 		throw new UnsupportedOperationException(
                                   "This method should not actually be called when using coevolution. "
@@ -31,6 +32,7 @@ public abstract class CooperativeMsPacManTask<T extends Network> extends Coopera
                                 + "to compile");
 	}
 
+        @Override
 	public double[] startingGoals() {
 		return task.startingGoals();
 	}
@@ -39,24 +41,30 @@ public abstract class CooperativeMsPacManTask<T extends Network> extends Coopera
 		task = new MsPacManTask<T>();
 	}
 
+        @Override
 	public int numObjectives() {
 		return task.numObjectives();
 	}
 
+        @Override
 	public double getTimeStamp() {
 		return task.getTimeStamp();
 	}
 
+        @Override
 	public String[] sensorLabels() {
 		return task.sensorLabels();
 	}
 
+        @Override
 	public String[] outputLabels() {
 		return task.outputLabels();
 	}
 
+        @Override
 	public abstract int numberOfPopulations();
 
+        @Override
 	public void finalCleanup() {
 	}
 }

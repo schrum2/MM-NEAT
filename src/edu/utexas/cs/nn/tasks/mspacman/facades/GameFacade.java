@@ -353,7 +353,9 @@ public class GameFacade {
 	public int nextJunctionInDirection(int current, int currentDir, boolean powerPillsToo) {
 		int[] neighbors = restrictedNeighbors(current, currentDir);
 		int numBlocked = ArrayUtil.countOccurrences(-1, neighbors);
+                @SuppressWarnings("UnusedAssignment")
 		int pos = -1;
+                @SuppressWarnings("UnusedAssignment")
 		int move = -1;
 		switch (numBlocked) {
 		case 2:
@@ -377,23 +379,8 @@ public class GameFacade {
 					+ Arrays.toString(neighbors));
 			System.exit(1);
 		}
-		// int pillsLeft = newG.getNumberOfActivePills() +
-		// newG.getNumberOfActivePowerPills();
-		// int pillsEaten = 0;
-		while (!isJunction(pos) && (!powerPillsToo || !isPowerPillIndex(pos))) { // Go
-																					// until
-																					// a
-																					// junction
-																					// is
-																					// reached
-			// Special case: eating the last pill ends the level
-			// if(newG.getPillIndex(pos) != -1 || newG.getPowerPillIndex(pos) !=
-			// -1) {
-			// pillsEaten++;
-			// if(pillsLeft == pillsEaten){
-			// return pos;
-			// }
-			// }
+                // Go until a junction is reached
+                while (!isJunction(pos) && (!powerPillsToo || !isPowerPillIndex(pos))) { 
 			neighbors = restrictedNeighbors(pos, move);
 			pos = ArrayUtil.filter(neighbors, -1)[0];
 			move = ArrayUtil.position(neighbors, pos);
@@ -749,16 +736,9 @@ public class GameFacade {
 	 * @return shortest path ghost can take as array of int
 	 */
 	public int[] getGhostPath(int ghostIndex, int target) {
-		int[] result = newG.getShortestPath(getGhostCurrentNodeIndex(ghostIndex), target,
-				newG.getGhostLastMoveMade(indexToGhost(ghostIndex)));
-		// this.addPoints(CombinatoricUtilities.colorFromInt(ghostIndex),
-		// result);
-		assert(result.length == 0
-				|| result[result.length - 1] == target) : ("Last element of path should be the to location! "
-						+ ("new"));
-		assert(result.length == 0
-				|| result[0] != this.getGhostCurrentNodeIndex(ghostIndex)) : ("Path should NOT start at  location! "
-						+ ("new"));
+		int[] result = newG.getShortestPath(getGhostCurrentNodeIndex(ghostIndex), target, newG.getGhostLastMoveMade(indexToGhost(ghostIndex)));
+		assert(result.length == 0 || result[result.length - 1] == target) : ("Last element of path should be the to location!");
+		assert(result.length == 0 || result[0] != this.getGhostCurrentNodeIndex(ghostIndex)) : ("Path should NOT start at  location!");
 		return result;
 	}
 
@@ -1076,8 +1056,6 @@ public class GameFacade {
 		for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
 			myMoves.put(indexToGhost(i), indexToMove(ghostDirs[i]));
 		}
-		// System.out.println("Advance new: " + indexToMove(pacManDir) + ":" +
-		// myMoves);
 		newG.advanceGame(indexToMove(pacManDir), myMoves);
 	}
 
@@ -1095,15 +1073,11 @@ public class GameFacade {
 		int startLevel = this.getCurrentLevel();
 		int previousLives = getPacmanNumberOfLivesRemaining();
 		GameFacade copy = this;
-		// int steps = 0;
-		// LinkedList<Integer> pathTraversed = new LinkedList<Integer>();
 		while (copy.getPacmanCurrentNodeIndex() != destination && copy.getCurrentLevel() == startLevel
 				&& !copy.gameOver()) {
 			int simCurrent = copy.getPacmanCurrentNodeIndex();
-			// pathTraversed.add(simCurrent);
 			int dir = copy.getNextMoveTowardsTarget(simCurrent, destination);
 			copy = copy.simulateInDir(dir, ghostModel);
-			// steps++;
 			if (previousLives > copy.getPacmanNumberOfLivesRemaining()) {
 				return null;
 			}
@@ -1139,12 +1113,8 @@ public class GameFacade {
 		int previousLives = getPacmanNumberOfLivesRemaining();
 		GameFacade copy = this;
 		int steps = 0;
-		// LinkedList<Integer> pathTraversed = new LinkedList<Integer>();
-		// LinkedList<Integer> movesMade = new LinkedList<Integer>();
 		while (copy.getPacmanCurrentNodeIndex() != target && copy.getCurrentLevel() == startLevel && !copy.gameOver()) {
 			int simCurrent = copy.getPacmanCurrentNodeIndex();
-			// movesMade.add(dir);
-			// pathTraversed.add(simCurrent);
 			dir = steps == 0 ? dir : copy.getRestrictedNextDir(simCurrent, target, dir);
 			copy = copy.simulateInDir(dir, ghostModel);
 			steps++;
@@ -1250,9 +1220,6 @@ public class GameFacade {
 		int[] model = new int[tempPath.length + 1];
 		System.arraycopy(tempPath, 0, model, 1, tempPath.length);
 		model[0] = from;
-		// if (model.length <= 1) {
-		// return model;
-		// }
 		int[] options = this.restrictedNeighbors(from, this.getGhostLastMoveMade(ghostIndex));
 		return sameDistancePathNodes(to, model, options);
 	}
@@ -1284,8 +1251,6 @@ public class GameFacade {
 
 				int[] branch = this.getDirectionalPath(model[0], to, i);
 				if (branch.length == model.length) {
-					// System.out.println("Immediate neighbor possible:" +
-					// options[i]);
 					// Alternate path is same length
 					for (int p = 1; p < branch.length; p++) {
 						Pair<Integer, Integer> pair = new Pair<Integer, Integer>(branch[p], p + 1);
@@ -1293,8 +1258,7 @@ public class GameFacade {
 							junctionDistancePairs.add(pair);
 						}
 						if (set.contains(branch[p])) {
-							// One repeated node means rest of path can be
-							// ignored
+							// One repeated node means rest of path can be ignored
 							break;
 						} else {
 							set.add(branch[p]);

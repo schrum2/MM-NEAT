@@ -48,8 +48,7 @@ public class MsPacManPillsVsEdibleMultitask<T extends Network> extends MsPacManT
 		// Restore eval time for next pill task eval
 		CommonConstants.pacManLevelTimeLimit = Parameters.parameters.integerParameter("pacManLevelTimeLimit");
 		if (Parameters.parameters.booleanParameter("rawTimeScore")) {
-			// Need to subtract time alive in edible task, since it is always
-			// the max
+			// Need to subtract time alive in edible task, since it is always the max
 			task2Results.t1[rawTimeScoreIndex] = 0;
 		}
 	}

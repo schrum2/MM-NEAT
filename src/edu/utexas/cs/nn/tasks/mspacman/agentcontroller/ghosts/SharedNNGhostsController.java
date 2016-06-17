@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.utexas.cs.nn.tasks.mspacman.agentcontroller.ghosts;
 
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
@@ -55,6 +50,7 @@ public abstract class SharedNNGhostsController extends NewGhostController {
 		return myMoves;
 	}
 
+        @Override
 	public EnumMap<GHOST, MOVE> getMove(Game game, long timeDue) {
 		return getMove(new GameFacade(game), timeDue);
 	}

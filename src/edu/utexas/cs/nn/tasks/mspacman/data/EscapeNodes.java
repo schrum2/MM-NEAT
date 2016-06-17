@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.utexas.cs.nn.tasks.mspacman.data;
 
 import edu.utexas.cs.nn.parameters.CommonConstants;
@@ -23,6 +19,7 @@ public class EscapeNodes extends NodeCollection {
 		super(original);
 	}
 
+        @Override
 	public void updateNodes(GameFacade gs, int current, boolean draw) {
 		if (gs.isJunction(current)) {
 			// System.out.println("Remove " + current);

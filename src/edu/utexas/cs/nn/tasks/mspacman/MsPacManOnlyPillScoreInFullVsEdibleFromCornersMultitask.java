@@ -44,9 +44,7 @@ public class MsPacManOnlyPillScoreInFullVsEdibleFromCornersMultitask<T extends N
 		// 4 is number of power pills ... no constant for this?
 		final int NUM_POWER_PILLS = 4;
 		mazePowerPillGhostMap = new int[Constants.NUM_MAZES][NUM_POWER_PILLS][NUM_GHOST_LOCATION_OPTIONS][Constants.NUM_GHOSTS];
-		int[][] progressIndices = new int[Constants.NUM_MAZES][NUM_POWER_PILLS]; // Initialized
-																					// to
-																					// 0
+		int[][] progressIndices = new int[Constants.NUM_MAZES][NUM_POWER_PILLS]; // Initialized to 0
 		try {
 			Scanner s = new Scanner(new File(filename));
 			while (s.hasNextInt()) {
@@ -56,14 +54,9 @@ public class MsPacManOnlyPillScoreInFullVsEdibleFromCornersMultitask<T extends N
 				int ghostNode2 = s.nextInt();
 				int ghostNode3 = s.nextInt();
 				int ghostNode4 = s.nextInt();
-				// System.out.println("progressIndices["+mazeIndex+"]["+powerPillIndex+"]
-				// = " + progressIndices[mazeIndex][powerPillIndex]);
 				if (progressIndices[mazeIndex][powerPillIndex] < NUM_GHOST_LOCATION_OPTIONS) {
 					mazePowerPillGhostMap[mazeIndex][powerPillIndex][progressIndices[mazeIndex][powerPillIndex]++] = new int[] {
 							ghostNode1, ghostNode2, ghostNode3, ghostNode4 };
-					// System.out.println("mazePowerPillGhostMap["+mazeIndex+"]["+powerPillIndex+"]["+progressIndices[mazeIndex][powerPillIndex]+"]
-					// =
-					// "+Arrays.toString(mazePowerPillGhostMap[mazeIndex][powerPillIndex][progressIndices[mazeIndex][powerPillIndex]-1]));
 				}
 			}
 
@@ -101,8 +94,6 @@ public class MsPacManOnlyPillScoreInFullVsEdibleFromCornersMultitask<T extends N
 		// Need to remove ghost eating score
 		full.t1[usedGhostScoreIndex] = 0;
 
-		// System.out.println("First Task:" + Arrays.toString(full.t1));
-
 		// Now do an eval where ghosts start edible
 		removePillsNearPowerPills = false;
 		noPills = true;
@@ -116,7 +107,7 @@ public class MsPacManOnlyPillScoreInFullVsEdibleFromCornersMultitask<T extends N
 		endAfterGhostEatingChances = true;
 		onlyOneLairExitAllowed = true;
 
-		// $ evaluations happen here so that pacman can start at each of the 4
+		// evaluations happen here so that pacman can start at each of the 4
 		// power pill positions
 		Pair<double[], double[]> ghostEating = null;
 		for (CommonConstants.pacmanStartingPowerPillIndex = 0; CommonConstants.pacmanStartingPowerPillIndex < 4; CommonConstants.pacmanStartingPowerPillIndex++) {
@@ -126,9 +117,6 @@ public class MsPacManOnlyPillScoreInFullVsEdibleFromCornersMultitask<T extends N
 				// always the max
 				trial.t1[rawTimeScoreIndex] = 0;
 			}
-			// System.out.println("Second Task Part
-			// "+CommonConstants.pacmanStartingPowerPillIndex+":" +
-			// Arrays.toString(trial.t1));
 			if (ghostEating == null) {
 				ghostEating = trial;
 			} else { // Scores are added up
@@ -136,8 +124,6 @@ public class MsPacManOnlyPillScoreInFullVsEdibleFromCornersMultitask<T extends N
 				ghostEating.t2 = ArrayUtil.zipAdd(ghostEating.t2, trial.t2);
 			}
 		}
-
-		// System.out.println("Second Task:" + Arrays.toString(ghostEating.t1));
 
 		double[] combinedScores = new double[full.t1.length];
 		for (int i = 0; i < combinedScores.length; i++) {

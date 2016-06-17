@@ -33,6 +33,7 @@ public class ToFarthestSafeLocationAction implements MsPacManAction {
 		this.lastMove = -1;
 	}
 
+        @Override
 	public int getMoveAction(GameFacade gf) {
 		HashMap<Integer, Triple<Integer, Integer, Integer>> targets = getTargets(gf);
 		if (targets.isEmpty()) {
@@ -58,17 +59,9 @@ public class ToFarthestSafeLocationAction implements MsPacManAction {
 			if (CommonConstants.watch) {
 				gf.addPoints(Color.RED, new int[] { farthest });
 			}
-			int move = targets.get(farthest).t1; // The direction to go in to
-													// reach farthest safely
-			// System.out.println("currentDir:" + currentDir + ":farthest:" +
-			// farthest + ":move:" + move + ":distance:" +
-			// targets.get(farthest).t2 + ":metric:" +
-			// compareDistance(currentDir, farthest, targets.get(farthest)) +
-			// ":triple:" + targets.get(farthest));
-			// Don't suddenly try to reach the same destination by a different
-			// route
+			int move = targets.get(farthest).t1; // The direction to go in to reach farthest safely
+			// Don't suddenly try to reach the same destination by a different route
 			if (farthest == lastTarget && !gf.isJunction(current) && move == GameFacade.getReverse(lastMove)) {
-				// System.out.print(move + ":force:");
 				move = gf.getRestrictedNextDir(current, farthest, lastMove);
 			}
 			lastTarget = farthest;
@@ -84,29 +77,18 @@ public class ToFarthestSafeLocationAction implements MsPacManAction {
 	 * direction currently being followed as farther, and thus more likely to be
 	 * picked.
 	 *
-	 * @param directionDistancePair
-	 * @return
+         * @param currentDir Direction to move in
+         * @param destination Node index
+         * @param directionDistanceNumPowerPillsTriple
+         * @param gf Game facade
+	 * @return augmented distance metric
 	 */
-	public double compareDistance(int currentDir, int destination,
-			Triple<Integer, Integer, Integer> directionDistanceNumPowerPillsTriple, GameFacade gf) {
-		double result = // directionDistanceNumPowerPillsTriple.t2 // distance
-						// traveled
+	public double compareDistance(int currentDir, int destination, Triple<Integer, Integer, Integer> directionDistanceNumPowerPillsTriple, GameFacade gf) {
+		double result = // directionDistanceNumPowerPillsTriple.t2 // distance traveled
 		gf.getEuclideanDistance(gf.getPacmanCurrentNodeIndex(), destination)
 				+ (directionDistanceNumPowerPillsTriple.t1 == currentDir
-						&& !ArrayUtil.member(destination, gf.getActivePowerPillsIndices()) ? 50 : 0) // paths
-																										// in
-																										// same
-																										// direction
-																										// are
-																										// more
-																										// favorable
-				+ directionDistanceNumPowerPillsTriple.t3 * 200; // paths that
-																	// consume
-																	// fewer
-																	// power
-																	// pills are
-																	// more
-																	// favorable
+						&& !ArrayUtil.member(destination, gf.getActivePowerPillsIndices()) ? 50 : 0) // paths in same direction are more favorable
+				+ directionDistanceNumPowerPillsTriple.t3 * 200; // paths that consume fewer power pills are more favorable
 		return result;
 	}
 
@@ -138,14 +120,6 @@ public class ToFarthestSafeLocationAction implements MsPacManAction {
 				GameFacade next = gf.simulateToNextTarget(i, ghostModel, nearestInDir);
 				// Pacman was not eaten by ghost
 				if (next != null) {
-					// if(next.getPacmanCurrentNodeIndex() != nearestInDir){
-					// System.out.println("Warning: next loc " +
-					// next.getPacmanCurrentNodeIndex() + " != " + nearestInDir
-					// + " path result");
-					// System.out.println("original time: " +
-					// gf.getTotalTime());
-					// System.out.println("next time: " + next.getTotalTime());
-					// }
 					if (CommonConstants.watch) {
 						original.addLines(Color.WHITE, current, nearestInDir);
 					}
@@ -156,8 +130,7 @@ public class ToFarthestSafeLocationAction implements MsPacManAction {
 						int thisDir = originalDir == -1 ? i : originalDir;
 						safe.put(nearestInDir, new Triple<Integer, Integer, Integer>(thisDir, newLength,
 								next.getNumActivePowerPills()));
-						// Don't need to check lives == 0 here since gameOver
-						// covers it
+						// Don't need to check lives == 0 here since gameOver covers it
 						if (original.getCurrentLevel() != next.getCurrentLevel() || next.gameOver()) {
 							return;
 						}
@@ -167,15 +140,6 @@ public class ToFarthestSafeLocationAction implements MsPacManAction {
 						// No reversal
 						boolean found = false;
 						for (int j = 0; !found; j++) {
-							// if(j == 4){
-							// System.out.println("Path to point: " +
-							// Arrays.toString(pair.t2));
-							// System.out.println("junctionNeighbors: " +
-							// Arrays.toString(junctionNeighbors));
-							// System.out.println("lastBeforeTarget:"+lastBeforeTarget);
-							// System.out.println("current:"+current);
-							// System.out.println("nearestInDir:"+nearestInDir);
-							// }
 							if (junctionNeighbors[j] == lastBeforeTarget) {
 								junctionNeighbors[j] = -1;
 								found = true; // should always find

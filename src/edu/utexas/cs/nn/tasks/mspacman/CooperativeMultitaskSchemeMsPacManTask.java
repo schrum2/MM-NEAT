@@ -8,6 +8,7 @@ import edu.utexas.cs.nn.tasks.mspacman.sensors.MsPacManControllerInputOutputMedi
  * human-defined multitask scheme picks one to control the pacman agent.
  *
  * @author Jacob Schrum
+ * @param <T> phenotype
  */
 public class CooperativeMultitaskSchemeMsPacManTask<T extends Network>
 		extends CooperativeNonHierarchicalMultiNetMsPacManTask<T> {

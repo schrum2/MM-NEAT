@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.utexas.cs.nn.tasks.mspacman.agentcontroller.ghosts;
 
 import edu.utexas.cs.nn.networks.Network;
@@ -23,8 +18,8 @@ public class SharedNNCheckEachDirectionGhostsController extends SharedNNDirectio
 	@Override
 	public double[] getDirectionPreferences(GameFacade gf, int ghostIndex) {
 		double[] preferences = new double[GameFacade.NUM_DIRS];
-		Arrays.fill(preferences, -1); // -1 is lowest possible value after
-										// activation function scaling
+                // -1 is lowest possible value after activation function scaling
+		Arrays.fill(preferences, -1); 
 		final int current = gf.getGhostCurrentNodeIndex(ghostIndex);
 		final int[] neighbors = gf.neighbors(current);
 		for (int i = 0; i < neighbors.length; i++) {

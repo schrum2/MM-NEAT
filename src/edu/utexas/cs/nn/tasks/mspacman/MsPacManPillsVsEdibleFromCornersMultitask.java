@@ -12,7 +12,7 @@ import edu.utexas.cs.nn.util.datastructures.Pair;
  * game where ghosts start edible, but pacman starts from power pills.
  *
  * @author Jacob Schrum
- * @param <T>
+ * @param <T> phenotype
  */
 public class MsPacManPillsVsEdibleFromCornersMultitask<T extends Network> extends MsPacManTask<T> {
 
@@ -20,8 +20,7 @@ public class MsPacManPillsVsEdibleFromCornersMultitask<T extends Network> extend
 		Parameters.parameters.setBoolean("imprisonedWhileEdible", true);
 		CommonConstants.imprisonedWhileEdible = true;
 		noPowerPills = true;
-		MsPacManOnlyPillScoreInFullVsEdibleFromCornersMultitask
-				.loadMapPowerPillGhostMap(Parameters.parameters.stringParameter("mazePowerPillGhostMapping"));
+		MsPacManOnlyPillScoreInFullVsEdibleFromCornersMultitask.loadMapPowerPillGhostMap(Parameters.parameters.stringParameter("mazePowerPillGhostMapping"));
 	}
 
 	@Override
@@ -41,9 +40,6 @@ public class MsPacManPillsVsEdibleFromCornersMultitask<T extends Network> extend
 		// Need to remove ghost eating score
 		full.t1[usedGhostScoreIndex] = 0;
 
-		// if(true) return full;
-		// System.out.println("First Task:" + Arrays.toString(full.t1));
-
 		// Now do an eval where ghosts start edible
 		removePillsNearPowerPills = false;
 		noPills = true;
@@ -56,7 +52,7 @@ public class MsPacManPillsVsEdibleFromCornersMultitask<T extends Network> extend
 		endAfterGhostEatingChances = true;
 		onlyOneLairExitAllowed = true;
 
-		// $ evaluations happen here so that pacman can start at each of the 4
+		// evaluations happen here so that pacman can start at each of the 4
 		// power pill positions
 		Pair<double[], double[]> ghostEating = null;
 		for (CommonConstants.pacmanStartingPowerPillIndex = 0; CommonConstants.pacmanStartingPowerPillIndex < 4; CommonConstants.pacmanStartingPowerPillIndex++) {
@@ -69,9 +65,6 @@ public class MsPacManPillsVsEdibleFromCornersMultitask<T extends Network> extend
 				// always the max
 				trial.t1[rawTimeScoreIndex] = 0;
 			}
-			// System.out.println("Second Task Part
-			// "+CommonConstants.pacmanStartingPowerPillIndex+":" +
-			// Arrays.toString(trial.t1));
 			if (ghostEating == null) {
 				ghostEating = trial;
 			} else { // Scores are added up
@@ -79,8 +72,6 @@ public class MsPacManPillsVsEdibleFromCornersMultitask<T extends Network> extend
 				ghostEating.t2 = ArrayUtil.zipAdd(ghostEating.t2, trial.t2);
 			}
 		}
-
-		// System.out.println("Second Task:" + Arrays.toString(ghostEating.t1));
 
 		double[] combinedScores = new double[full.t1.length];
 		for (int i = 0; i < combinedScores.length; i++) {
