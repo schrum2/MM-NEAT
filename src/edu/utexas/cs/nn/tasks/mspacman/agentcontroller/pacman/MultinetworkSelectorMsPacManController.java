@@ -13,7 +13,7 @@ import edu.utexas.cs.nn.util.CombinatoricUtilities;
 import edu.utexas.cs.nn.util.datastructures.Interval;
 import java.awt.Graphics2D;
 
-public class MultinetworkSelectorMsPacManController<T extends Network> extends MultinetworkMsPacManController {
+public class MultinetworkSelectorMsPacManController<T extends Network> extends MultinetworkMsPacManController<T> {
 
 	private int lastMode = -1;
 	private final boolean animateNetwork;
@@ -77,12 +77,8 @@ public class MultinetworkSelectorMsPacManController<T extends Network> extends M
 			if (lastMode != -1) {
 				((Interval<Integer>) usageTimeFrames[lastMode].getLast()).t2 = game.getTotalTime();
 			}
-			usageTimeFrames[mode].add(new Interval<Integer>(true, game.getTotalTime(), Integer.MAX_VALUE, false)); // end
-																													// to
-																													// be
-																													// filled
-																													// in
-																													// later
+			// end to be filled in later
+			usageTimeFrames[mode].add(new Interval<Integer>(true, game.getTotalTime(), Integer.MAX_VALUE, false)); 
 
 			nn = networks[mode];
 			inputMediator = inputMediators[mode];

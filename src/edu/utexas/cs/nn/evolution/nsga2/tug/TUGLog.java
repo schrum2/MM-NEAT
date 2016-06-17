@@ -16,10 +16,11 @@ import java.util.Scanner;
  * @author Jacob Schrum
  */
 public class TUGLog extends StatisticsLog<double[]> {
-        // phenotype unkonown here
+	// phenotype unknown here
 	@SuppressWarnings("rawtypes")
 	private final TUGNSGA2 ea;
 
+	@SuppressWarnings("rawtypes")
 	public TUGLog(String _prefix, TUGNSGA2 ea) {
 		super(_prefix, null);
 		this.ea = ea;
@@ -43,8 +44,7 @@ public class TUGLog extends StatisticsLog<double[]> {
 			ea.loadTugState(usage, rwas, loadedGoals, lastDeltas, initialClimb);
 			s.close();
 		}
-		// Cannot use the default plot file setup because there are extra things
-		// to plot
+		// Cannot use the default plot file setup because there are extra things to plot
 		File plotFile = new File(directory + prefix + "_log.plot");
 		if (!plotFile.exists()) {
 			ArrayList<String> labels = MMNEAT.fitnessPlusMetaheuristics(0); // population 0: loner task only!

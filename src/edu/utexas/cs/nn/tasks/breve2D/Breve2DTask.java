@@ -53,6 +53,7 @@ public class Breve2DTask<T extends Network> extends NoisyLonerTask<T>implements 
 		this.dynamics.registerFitnessFunctions();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	/**
 	 * 

@@ -295,7 +295,7 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
 			for (Score<T> s : scores) {
 				max = Math.max(max, s.scores[index]);
 			}
-			UCB1Comparator ucb1 = new UCB1Comparator(index, scores.size(), max);
+			UCB1Comparator<T> ucb1 = new UCB1Comparator<T>(index, scores.size(), max);
 			Collections.sort(scores, ucb1);
 			int last = scores.size() - 1;
 			// Perform the budgeted number of evals
