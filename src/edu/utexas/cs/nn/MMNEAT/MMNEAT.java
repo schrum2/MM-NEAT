@@ -45,7 +45,8 @@ import edu.utexas.cs.nn.tasks.breve2D.NNBreve2DMonster;
 import edu.utexas.cs.nn.tasks.gridTorus.NNTorusPredPreyController;
 import edu.utexas.cs.nn.tasks.gridTorus.TorusEvolvedPredatorsVsStaticPreyTask;
 import edu.utexas.cs.nn.tasks.gridTorus.TorusPredPreyTask;
-import edu.utexas.cs.nn.tasks.gridTorus.cooperative.CooperativePredatorsVsStaticPrey;
+import edu.utexas.cs.nn.tasks.gridTorus.competitive.CompetitiveHomogenousPredatorsVsPreyTask;
+import edu.utexas.cs.nn.tasks.gridTorus.cooperative.CooperativePredatorsVsStaticPreyTask;
 import edu.utexas.cs.nn.tasks.gridTorus.cooperative.CooperativeTorusPredPreyTask;
 import edu.utexas.cs.nn.tasks.mario.MarioTask;
 import edu.utexas.cs.nn.tasks.motests.FunctionOptimization;
@@ -113,9 +114,6 @@ public class MMNEAT {
 	public static RLGlueEnvironment rlGlueEnvironment;
 	@SuppressWarnings("rawtypes") // depends on genotypes
 	public static ArrayList<Metaheuristic> metaheuristics;
-	//TODO: implement this list of coevolution fitness functions for each population in the same 
-	//way that it works with non-coevolution. Make the fitness functions list a double arrayList
-	//and have it work for non-coevolution by just filling the first list index of the double arrayList
 	public static ArrayList<ArrayList<String>> fitnessFunctions;
 	public static ArrayList<Statistic> aggregationOverrides;
 	public static TaskSpec tso;
@@ -439,7 +437,38 @@ public class MMNEAT {
 				int numInputs = determineNumPredPreyInputs();
 				NetworkTask t = (NetworkTask) task;
 				setNNInputParameters(numInputs, t.outputLabels().length);
-			} else if (task instanceof CooperativeTorusPredPreyTask) {
+			} else if (task instanceof CompetitiveHomogenousPredatorsVsPreyTask) {
+				System.out.println("Setup Competitive Torus Predator/Prey Task");
+				coevolution = true;
+				int numPredInputs = determineNumPredPreyInputs(true);
+				int numPreyInputs = determineNumPredPreyInputs(false);
+				
+				int numPredOutputs = TorusPredPreyTask.outputLabels(true).length;
+				int numPreyOutputs = TorusPredPreyTask.outputLabels(false).length;
+				
+				// Setup genotype early
+				genotypeExamples = new ArrayList<Genotype>(2); // one pred pop, one prey pop
+				
+				// Is this valid for multiple populations?
+
+				// Setup pred population
+				setNNInputParameters(numPredInputs, numPredOutputs);
+				genotype = (Genotype) ClassCreation.createObject("genotype");
+				if(genotype instanceof TWEANNGenotype) {
+					((TWEANNGenotype) genotype).archetypeIndex = 0;
+				}
+				genotypeExamples.add(genotype.newInstance());
+				
+				// Setup prey population
+				setNNInputParameters(numPreyInputs, numPreyOutputs);
+				genotype = (Genotype) ClassCreation.createObject("genotype");
+				if(genotype instanceof TWEANNGenotype) {
+					((TWEANNGenotype) genotype).archetypeIndex = 1;
+				}
+				genotypeExamples.add(genotype.newInstance());
+				
+				prepareCoevolutionArchetypes();
+			} else if (task instanceof CooperativeTorusPredPreyTask) { // Technically, the competitive task also overrides this
 				System.out.println("Setup Cooperative Torus Predator/Prey Task");
 				coevolution = true;
 				int numInputs = determineNumPredPreyInputs();
@@ -447,7 +476,7 @@ public class MMNEAT {
 				setNNInputParameters(numInputs, t.outputLabels().length);
 				// Setup genotype early
 				genotype = (Genotype) ClassCreation.createObject("genotype");
-				int numAgents = (task instanceof CooperativePredatorsVsStaticPrey) ? Parameters.parameters.integerParameter("torusPredators") : Parameters.parameters.integerParameter("torusPreys");
+				int numAgents = (task instanceof CooperativePredatorsVsStaticPreyTask) ? Parameters.parameters.integerParameter("torusPredators") : Parameters.parameters.integerParameter("torusPreys");
 				genotypeExamples = new ArrayList<Genotype>(numAgents);
 				for(int i = 0; i < numAgents; i++) {
 					if(genotype instanceof TWEANNGenotype) {
@@ -578,10 +607,14 @@ public class MMNEAT {
 	 */
 	private static int determineNumPredPreyInputs() {
 		boolean isPredator = task instanceof TorusEvolvedPredatorsVsStaticPreyTask;
+		return determineNumPredPreyInputs(isPredator);
+	}
+	
+	private static int determineNumPredPreyInputs(boolean isPredator) {
 		NNTorusPredPreyController temp = new NNTorusPredPreyController(null, isPredator);
 		return temp.getNumInputs();
 	}
-
+	
 	/**
 	 * Resets the classes used in MMNEAT and and sets them to null.
 	 */

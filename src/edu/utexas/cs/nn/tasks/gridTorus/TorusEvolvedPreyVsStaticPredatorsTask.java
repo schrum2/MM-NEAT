@@ -34,7 +34,7 @@ public class TorusEvolvedPreyVsStaticPredatorsTask<T extends Network> extends To
 	 * A method that gives a list of controllers for the static agents
 	 * (predators) The predators are all given the simple, non-evolving
 	 * controller (specified by user) The user also indicates in a command line
-	 * parameter how many predators there will be (default of 4)
+	 * parameter how many predators there will be (default of 3)
 	 * 
 	 * @return staticAgents a list of controllers for the static agents for this
 	 *         class, which is the predators (static meaning the agent type that
@@ -55,7 +55,7 @@ public class TorusEvolvedPreyVsStaticPredatorsTask<T extends Network> extends To
 	 * A method that gives a list of controllers for the evolving agents (prey)
 	 * The prey are all defined as a new agent of the given genotype with an
 	 * evolved controller The user also indicates in a command line parameter
-	 * how many prey there will be (default of 1)
+	 * how many prey there will be (default of 2)
 	 * 
 	 * @return evolvedAgents a list of controllers for the evolved agents for
 	 *         this class, which is the prey

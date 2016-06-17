@@ -1,6 +1,7 @@
 package edu.utexas.cs.nn.tasks.gridTorus.cooperative;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import edu.utexas.cs.nn.evolution.Organism;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
@@ -43,22 +44,37 @@ public abstract class CooperativeTorusPredPreyTask<T extends Network> extends Co
 
 	/**
 	 * an int designating the number of populations to be evolved
+	 * @return number of population being evolved as an int
 	 */
 	@Override
-	public abstract int numberOfPopulations();
+	public int numberOfPopulations(){
+		return task.objectives.size();
+	}
 
 	/**
 	 * an integer array holding the fitness objectives for each population
 	 */
 	@Override
-	public abstract int[] objectivesPerPopulation();
+	public int[] objectivesPerPopulation() {
+		int[] result = new int[task.objectives.size()];
+		for(int i = 0; i < result.length; i++) {
+			result[i] = task.objectives.get(i).size();
+		}
+		return result;
+	}
 
 	/**
 	 * an integer array holding the other scores for each population (fitness scores
 	 * that are not actually being used in the evaluation and evolution of the agent(s))
 	 */
 	@Override
-	public abstract int[] otherStatsPerPopulation();
+	public int[] otherStatsPerPopulation() {
+		int[] result = new int[task.otherScores.size()];
+		for(int i = 0; i < result.length; i++) {
+			result[i] = task.otherScores.get(i).size();
+		}
+		return result;
+	}
 
 	/**
 	 * gets and returns the time stamp of this task

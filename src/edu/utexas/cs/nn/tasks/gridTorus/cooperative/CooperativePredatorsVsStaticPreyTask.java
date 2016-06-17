@@ -14,47 +14,10 @@ import edu.utexas.cs.nn.tasks.gridTorus.TorusPredPreyTask;
  * @param <T> phenotype of each population
  *
  */
-public class CooperativePredatorsVsStaticPrey<T extends Network> extends CooperativeTorusPredPreyTask<T> {
+public class CooperativePredatorsVsStaticPreyTask<T extends Network> extends CooperativeTorusPredPreyTask<T> {
 
-	public CooperativePredatorsVsStaticPrey(){
+	public CooperativePredatorsVsStaticPreyTask(){
 		super();
-	}
-
-
-	@Override
-	/**
-	 * an integer array holding the fitness objective scores for each population
-	 * @return an array of ints of the fitness objective scores for each team member
-	 */
-	public int[] objectivesPerPopulation() {
-		int[] result = new int[Parameters.parameters.integerParameter("torusPredators")];
-		for(int i = 0; i < result.length; i++) {
-			result[i] = task.objectives.get(i).size();
-		}
-		return result;
-	}
-
-	@Override
-	/**
-	 * an integer array holding the other scores for each population, as fitness scores which do 
-	 * not have an effect on the actual evolution/selection process but are tracked for some other
-	 * data/book-keeping purposes
-	 * @return an array of ints of the other scores for each team member
-	 */
-	public int[] otherStatsPerPopulation() {
-		int scores = task.numOtherScores();
-		int[] result = new int[Parameters.parameters.integerParameter("torusPredators")];
-		result[0] = scores;
-		return result;
-	}
-
-	@Override
-	/**
-	 * an int designating the number of populations to be evolved
-	 * @return number of population being evolved as an int
-	 */
-	public int numberOfPopulations() {
-		return Parameters.parameters.integerParameter("torusPredators");
 	}
 
 	@Override

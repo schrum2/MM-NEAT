@@ -165,9 +165,8 @@ public class MsPacManInitialization {
 		// Now the blueprints come in
 		if (MMNEAT.task instanceof CooperativeBlueprintSubtaskMsPacManTask) {
 			MMNEAT.blueprints = true;
-			MMNEAT.genotypeExamples.add(new SimpleBlueprintGenotype(MMNEAT.modesToTrack + 1)); // subcontrollers
-																					// and
-																					// selector
+			// subcontrollers and selector
+			MMNEAT.genotypeExamples.add(new SimpleBlueprintGenotype(MMNEAT.modesToTrack + 1)); 
 		}
 	}
 	
@@ -193,8 +192,7 @@ public class MsPacManInitialization {
 	public static void setupCooperativeCoevolutionCombinerForMsPacman() throws NoSuchMethodException {
 		boolean includeInputs = Parameters.parameters.booleanParameter("subsumptionIncludesInputs");
 		int outputsPerSubnet = GameFacade.NUM_DIRS;
-		// Use the specified mesiator, but add required subnet blocks to it
-		// later
+		// Use the specified mesiator, but add required subnet blocks to it later
 		MMNEAT.pacmanInputOutputMediator = (MsPacManControllerInputOutputMediator) ClassCreation.createObject("pacmanInputOutputMediator");
 		MMNEAT.coevolutionMediators = new MsPacManControllerInputOutputMediator[MMNEAT.modesToTrack];
 		int numInputs = MMNEAT.pacmanInputOutputMediator.numIn();
