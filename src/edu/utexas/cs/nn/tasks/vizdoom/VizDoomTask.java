@@ -182,7 +182,10 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 			//drawGameStateRow(s, game.getScreenWidth(), game.getScreenHeight(), getRow());
 
 			double[] inputs = getInputs(s); // This is already scaled and smudged
-			//showInputs(s, inputs); //use this to look at the inputs that the agent is seeing
+			if(Parameters.parameters.booleanParameter("showVizDoomInputs")){
+				showInputs(s, inputs); //use this to look at the inputs that the agent is seeing
+				
+			}
 			double[] outputs = n.process(inputs);
 			// This now takes the arg max of the action outputs
 			//double r = game.makeAction(actions.get(StatisticsUtilities.argmax(outputs))); 

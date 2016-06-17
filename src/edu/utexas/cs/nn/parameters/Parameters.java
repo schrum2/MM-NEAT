@@ -275,6 +275,7 @@ public class Parameters {
 		longOptions.add("lastInnovation", 0l, "Highest innovation number used so far");
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
 		// Boolean parameters
+		booleanOptions.add("showVizDoomInputs", false, "Shows the VizDoom inputs to the user as the agent would see them");
 		booleanOptions.add("scaleTrials", false, "Whether or not to scale the number of trials as the number of generations increases");
 		booleanOptions.add("leo", false, "LEO: Link Expression Output, CPPN has 2 outputs, separates presence and weight of link");
 		booleanOptions.add("monitorSubstrates", false, "Allows us to visualizen the features (raw inputs) of a HyperNEAT agent");
