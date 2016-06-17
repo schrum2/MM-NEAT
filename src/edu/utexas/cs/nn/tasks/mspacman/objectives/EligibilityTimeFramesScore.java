@@ -31,7 +31,8 @@ public abstract class EligibilityTimeFramesScore<T extends Network> extends MsPa
 
 	public double fitness(Organism<T> individual) {
 		NNPacManController nn = ((NNMsPacMan<T>) individual).getController();
-		LinkedList<Interval<Integer>> usageTimeFrames = ((MultinetworkSelectorMsPacManController) nn).usageTimeFrames[mode];
+		@SuppressWarnings("unchecked")
+		LinkedList<Interval<Integer>> usageTimeFrames = ((MultinetworkSelectorMsPacManController<T>) nn).usageTimeFrames[mode];
 		List<Integer> eatTimes = eatTimes();
 		return fitness(usageTimeFrames, eatTimes);
 	}
@@ -96,49 +97,12 @@ public abstract class EligibilityTimeFramesScore<T extends Network> extends MsPa
 		return fitness;
 	}
 
-	// public static double fitness(LinkedList<Interval<Integer>>
-	// usageTimeFrames, List<Integer> eatTimes) {
-	// if (eatTimes.isEmpty()) {
-	// return 0;
-	// }
-	// Iterator<Interval<Integer>> itr = usageTimeFrames.iterator();
-	// double itemsEatenByMode = 0;
-	// if (itr.hasNext()) {
-	// int firstUse = usageTimeFrames.get(0).t1;
-	// int lastTime = eatTimes.get(eatTimes.size() - 1);
-	// Interval<Integer> currentFrame = itr.next();
-	// int previousTime = 0;
-	// int stepsAhead = 0;
-	// for (Integer time : eatTimes) {
-	// boolean modeEverUsed = time >= firstUse;
-	// if (currentFrame.contains(time)) {
-	// itemsEatenByMode++;
-	// stepsAhead = 0;
-	// previousTime = currentFrame.t2 - 1;
-	// } else {
-	// stepsAhead = stepsAhead + (time - previousTime);
-	// while (currentFrame.after(time)) {
-	// stepsAhead = time - currentFrame.t2 + 1;
-	// currentFrame = itr.hasNext() ? itr.next() : new Interval<Integer>(true,
-	// lastTime + 1, lastTime + 2, false);
-	// }
-	// if (currentFrame.contains(time)) {
-	// itemsEatenByMode++;
-	// stepsAhead = 0;
-	// previousTime = currentFrame.t2 - 1;
-	// } else {
-	// if (modeEverUsed) {
-	// //System.out.println("Time: " + time + ": steps: " + stepsAhead + ":
-	// lambda:" + lambda + ": add: " + Math.pow(lambda, stepsAhead));
-	// itemsEatenByMode += Math.pow(lambda, stepsAhead);
-	// previousTime = time;
-	// }
-	// }
-	// }
-	// }
-	// }
-	// return itemsEatenByMode;
-	// }
+	/**
+	 * This should be turned into JUnit tests, but the current
+	 * tests don't work, and this was written so long ago that
+	 * I have no idea why.
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		Parameters.initializeParameterCollections(args);
 		lambda = Parameters.parameters.doubleParameter("eligibilityLambda");
