@@ -189,12 +189,15 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 			double[] outputs = n.process(inputs);
 			// This now takes the arg max of the action outputs
 			//double r = game.makeAction(actions.get(StatisticsUtilities.argmax(outputs))); 
-			game.makeAction(actions.get(StatisticsUtilities.argmax(outputs))); 
+			int actIndex = StatisticsUtilities.argmax(outputs);
+			int[] act = actions.get(actIndex);
+			game.makeAction(act); 
 			// This r seems worthless ... does it give any information?
 			// My hunch is that it picks the action, but I don't think we have to do anything with it? Make action returns a double for some reason.
 			// I'll take out the r for now -Gab
 			if(Parameters.parameters.booleanParameter("stepByStep")){
-				 MiscUtil.waitForReadStringAndEnterKeyPress();	
+				System.out.println("Action: " + outputLabels()[actIndex]);
+				MiscUtil.waitForReadStringAndEnterKeyPress();	
 			}
 		}
 		//if(CommonConstants.watch){
