@@ -1,5 +1,6 @@
 package edu.utexas.cs.nn.util.datastructures;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -279,6 +280,35 @@ public class ArrayUtil {
 		for (int i = 0; i < array.length; i++) {
 			if (array[i] != out) {
 				result[resultIndex++] = array[i];
+			}
+		}
+		return result;
+	}
+	
+	/**
+	 * Takes an array and filters out all of the null occurrences in the array,
+	 * returning a new object array with all of the objects except nulls
+	 * The objects shift down indices in the array to replace any nulls,
+	 * so the returned array will not be the same size if there were any nulls
+	 * 
+	 * @param array, array to filter
+	 * @return result, array without nulls
+	 */
+	public static <T> T[] filterNull(T[] array) {
+		int nonNullCounter = 0;
+		for(int i = 0; i < array.length; i++){
+			if(array[i] != null){
+				nonNullCounter++;
+			}
+		}
+		// Don't want copy, just want array of correct length and type
+		T[] result = Arrays.copyOf(array, nonNullCounter);
+		int countFilled = 0;
+		// overwrites contents of copy
+		for(int i = 0; i < array.length; i++){
+			if(array[i] != null){
+				result[countFilled] = array[i];
+				countFilled++;
 			}
 		}
 		return result;

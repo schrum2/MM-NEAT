@@ -5,6 +5,7 @@ import edu.utexas.cs.nn.gridTorus.TorusAgent;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.gridTorus.objectives.GridTorusObjective;
+import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
 import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
 
 /**
@@ -27,12 +28,11 @@ public class PredatorHerdPreyObjective<T extends Network> extends GridTorusObjec
 	 */
 	public double fitness(Organism<T> individual) {
 		TorusAgent[] prey = game.getPrey();
+		TorusAgent[] filteredPrey = ArrayUtil.filterNull(prey);
 		double score = 0;
-		for(int i = 0; i < prey.length; i++){
+		for(int i = 0; i < filteredPrey.length; i++){
 			//if the prey is null, it was eaten, give max score of 0 for that prey by not subtracting anything
-			if(prey[i] != null){
-				score -= StatisticsUtilities.sum(prey[i].distances(prey));
-			}	
+			score -= StatisticsUtilities.sum(filteredPrey[i].distances(filteredPrey));
 		}
 		return score;
 	}
