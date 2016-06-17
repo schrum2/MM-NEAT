@@ -63,7 +63,7 @@ public class RawTetrisStateExtractorTests {
 		TetrisState testState = new TetrisState(); 
 		testState.currentX -= 2;
 		testState.currentY -= 1;
-		Observation o = testState.get_observation();
+		Observation o = testState.get_observation(false);
 		RawTetrisStateExtractor RTSE = new RawTetrisStateExtractor();
 		double[] first = RTSE.extract(o);
 		double[] zeroes = new double[first.length];
@@ -119,7 +119,7 @@ public class RawTetrisStateExtractorTests {
 		TetrisState testState = new TetrisState(); 
 		testState.currentX -= 2;
 		testState.currentY -= 1;
-		Observation o = testState.get_observation();
+		Observation o = testState.get_observation(false);
 		RawTetrisStateExtractor RTSE = new RawTetrisStateExtractor();
 		double[] first = RTSE.extract(o);
 		double[] zeroes = new double[first.length];
