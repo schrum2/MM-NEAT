@@ -5,7 +5,7 @@ import edu.utexas.cs.nn.evolution.MultiplePopulationGenerationalEA;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.evolution.genotypes.SimpleBlueprintGenotype;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
-import edu.utexas.cs.nn.evolution.mulambda.CooperativeCoevolutionMuLambda;
+import edu.utexas.cs.nn.evolution.mulambda.CoevolutionMuLambda;
 import edu.utexas.cs.nn.log.PlotLog;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.parameters.Parameters;
@@ -110,7 +110,7 @@ public abstract class MultiplePopulationGenerationalEAExperiment implements Expe
 				Genotype last = examples.remove(examples.size() - 1);
 				// Initialize the other populations
 				this.populations = ea.initialPopulations(examples);
-				int mu = ((CooperativeCoevolutionMuLambda) ea).mu[examples.size()];
+				int mu = ((CoevolutionMuLambda) ea).mu[examples.size()];
 				// Initialize blueprint population, using other populations
 				this.populations.add(PopulationUtil.removeListGenotypeType(PopulationUtil.initialPopulation(last, mu)));
 				// Put blueprint example back
@@ -170,7 +170,7 @@ public abstract class MultiplePopulationGenerationalEAExperiment implements Expe
 					}
 				}
 				BlueprintTask bpt = (BlueprintTask) MMNEAT.task;
-				CooperativeCoevolutionMuLambda coopEA = (CooperativeCoevolutionMuLambda) ea;
+				CoevolutionMuLambda coopEA = (CoevolutionMuLambda) ea;
 				/**
 				 * Log: generation, number of post-gen blueprint fixes,
 				 * percentage of such fixes, number of children blueprints that

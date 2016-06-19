@@ -4,7 +4,7 @@ import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.evolution.nsga2.NSGA2Score;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.tasks.CooperativeTask;
+import edu.utexas.cs.nn.tasks.GroupTask;
 import edu.utexas.cs.nn.util.CombinatoricUtilities;
 import edu.utexas.cs.nn.util.PopulationUtil;
 import java.io.FileNotFoundException;
@@ -16,18 +16,17 @@ import java.util.List;
  * team combination to get their scores.
  *
  * @author Jacob Schrum
- * @param <T>
  */
-public class AllCooperativeCoevolutionTeamsExperiment implements Experiment {
+public class AllCoevolutionTeamsExperiment implements Experiment {
 
 	@SuppressWarnings("rawtypes")
 	private ArrayList<ArrayList<Genotype>> populations;
-	private CooperativeTask task;
+	private GroupTask task;
 
         @SuppressWarnings({ "rawtypes", "unchecked" })
 		@Override
 	public void init() {
-		task = (CooperativeTask) MMNEAT.task;
+		task = (GroupTask) MMNEAT.task;
 		String lastSavedDir = Parameters.parameters.stringParameter("lastSavedDirectory");
 		int numPops = task.numberOfPopulations();
 		populations = PopulationUtil.loadSubPops(lastSavedDir, numPops);

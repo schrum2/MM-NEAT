@@ -10,7 +10,7 @@ import edu.utexas.cs.nn.graphics.DrawingPanel;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.scores.Score;
-import edu.utexas.cs.nn.tasks.CooperativeTask;
+import edu.utexas.cs.nn.tasks.GroupTask;
 import edu.utexas.cs.nn.tasks.NoisyLonerTask;
 import edu.utexas.cs.nn.util.ClassCreation;
 import edu.utexas.cs.nn.util.CombinatoricUtilities;
@@ -23,7 +23,7 @@ import edu.utexas.cs.nn.util.stats.Statistic;
  * General evolution experiments are meant to save the best genomes in each
  * objective to the bestObjective directories for each population. 
  * This experiment loads those genomes and evaluates them.
- * This experiment also assumes the task is a CooperativeTask
+ This experiment also assumes the task is a GroupTask
  *
  * @author rollinsa
  * @param <T> Type of evolved phenotype
@@ -45,7 +45,7 @@ public class ObjectiveBestTeamsExperiment implements Experiment {
 		genotypes = new ArrayList<ArrayList<Genotype>>();
 		//this is for the batch file which specifies the team being evaluated. Must specify same number of team members as number of populations
 		if(!(Parameters.parameters.stringParameter("coevolvedNet1").isEmpty())){
-			for(int i = 0; i < ((CooperativeTask) MMNEAT.task).numberOfPopulations(); i++){
+			for(int i = 0; i < ((GroupTask) MMNEAT.task).numberOfPopulations(); i++){
 				genotypes.add(new ArrayList<Genotype>());
 				String file = FileUtilities.getSaveDirectory() + "/pop" + i + "_bestObjectives/" + Parameters.parameters.stringParameter("coevolvedNet" + (i+1));
 				genotypes.get(i).add((Genotype) PopulationUtil.extractGenotype(file));
@@ -54,17 +54,17 @@ public class ObjectiveBestTeamsExperiment implements Experiment {
 
 			if (Parameters.parameters.booleanParameter("watchLastBestOfTeams")) {
 				//loop through each population
-				for(int i = 0; i < ((CooperativeTask) MMNEAT.task).numberOfPopulations(); i++){
+				for(int i = 0; i < ((GroupTask) MMNEAT.task).numberOfPopulations(); i++){
 					genotypes.add(new ArrayList<Genotype>());
 					//go for the number of objectives for this population
-					for(int j = 0; j < ((CooperativeTask) MMNEAT.task).objectivesPerPopulation()[i]; j++) {
+					for(int j = 0; j < ((GroupTask) MMNEAT.task).objectivesPerPopulation()[i]; j++) {
 						int lastGen = Parameters.parameters.integerParameter("lastSavedGeneration");
 						String file = FileUtilities.getSaveDirectory() + "/pop" + i + "_bestObjectives/gen" + lastGen + "_bestIn"+j+".xml";
 						genotypes.get(i).add((Genotype) PopulationUtil.extractGenotype(file));
 					}
 				}
 			}else {
-				for(int i = 0; i < ((CooperativeTask) MMNEAT.task).numberOfPopulations(); i++){
+				for(int i = 0; i < ((GroupTask) MMNEAT.task).numberOfPopulations(); i++){
 					String dir = FileUtilities.getSaveDirectory() + "/pop" + i + "_bestObjectives";
 					genotypes.add(PopulationUtil.removeListGenotypeType(PopulationUtil.load(dir)));
 				}
@@ -91,9 +91,9 @@ public class ObjectiveBestTeamsExperiment implements Experiment {
 			System.exit(1);
 		}
 
-		int[] numObjectives = ((CooperativeTask) MMNEAT.task).objectivesPerPopulation();
-		int[] numOtherScores = ((CooperativeTask) MMNEAT.task).otherStatsPerPopulation();
-		int numPopulations = ((CooperativeTask) MMNEAT.task).numberOfPopulations();
+		int[] numObjectives = ((GroupTask) MMNEAT.task).objectivesPerPopulation();
+		int[] numOtherScores = ((GroupTask) MMNEAT.task).otherStatsPerPopulation();
+		int numPopulations = ((GroupTask) MMNEAT.task).numberOfPopulations();
 
 		ArrayList<Integer> lengths = new ArrayList<Integer>();
 		if(Parameters.parameters.stringParameter("coevolvedNet1").isEmpty()){
@@ -126,10 +126,10 @@ public class ObjectiveBestTeamsExperiment implements Experiment {
 			for(int t = 0; t < CommonConstants.trials; t++){
 				DrawingPanel[] networks = null;
 				if(CommonConstants.showNetworks)
-					networks = CooperativeTask.drawNetworks(team);
-				ArrayList<Score> s = ((CooperativeTask) MMNEAT.task).evaluate(team);
+					networks = GroupTask.drawNetworks(team);
+				ArrayList<Score> s = ((GroupTask) MMNEAT.task).evaluate(team);
 				if(networks != null)
-					CooperativeTask.disposePanels(networks);
+					GroupTask.disposePanels(networks);
 
 				if (Parameters.parameters.booleanParameter("printFitness")) {
 //					System.out.println(Arrays.toString(s.get(0).scores) + Arrays.toString(s.get(0).otherStats));
@@ -163,7 +163,7 @@ public class ObjectiveBestTeamsExperiment implements Experiment {
 
 		}
 
-		((CooperativeTask) MMNEAT.task).finalCleanup(); // domain cleanup if necessary
+		((GroupTask) MMNEAT.task).finalCleanup(); // domain cleanup if necessary
 	}
 
 	/**

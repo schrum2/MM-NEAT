@@ -11,7 +11,7 @@ import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.scores.Score;
-import edu.utexas.cs.nn.tasks.CooperativeTask;
+import edu.utexas.cs.nn.tasks.GroupTask;
 import edu.utexas.cs.nn.tasks.MultiplePopulationTask;
 import edu.utexas.cs.nn.tasks.Task;
 import edu.utexas.cs.nn.tasks.mspacman.multitask.DangerousAreaModeSelector;
@@ -23,13 +23,13 @@ import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
 /**
- * A class which supports cooperative cooevolution. Contains many extensions of
+ * A class which supports cooevolution. Contains many extensions of
  * the MuLambda class, but with some changes which will allow for a different
  * genotype for each subPopulation
  * 
  * @author Jacob Schrum
  */
-public abstract class CooperativeCoevolutionMuLambda implements MultiplePopulationGenerationalEA {
+public abstract class CoevolutionMuLambda implements MultiplePopulationGenerationalEA {
 
 	protected boolean mating;
 	public int generation;
@@ -62,8 +62,6 @@ public abstract class CooperativeCoevolutionMuLambda implements MultiplePopulati
 		} else {
 			successfulOffspringSearches++;
 			ArrayList<Long> offspring = recentOffspring.get(parentId);
-			// System.out.println("Providing random offspring from " +
-			// offspring);
 			return offspring.get(RandomNumbers.randomGenerator.nextInt(offspring.size()));
 		}
 	}
@@ -72,7 +70,7 @@ public abstract class CooperativeCoevolutionMuLambda implements MultiplePopulati
 	 * Initializes this MuLambda class according to various parameter values and
 	 * types
 	 */
-	public CooperativeCoevolutionMuLambda() {
+	public CoevolutionMuLambda() {
 		this(MuLambda.MLTYPE_PLUS, Parameters.parameters.integerParameter("mu"),
 				Parameters.parameters.integerParameter("mu"), (MultiplePopulationTask) MMNEAT.task,
 				MMNEAT.genotypeExamples.size());
@@ -89,7 +87,7 @@ public abstract class CooperativeCoevolutionMuLambda implements MultiplePopulati
 	 * @param numPopulations
 	 */
 	@SuppressWarnings("rawtypes")
-	public CooperativeCoevolutionMuLambda(int mltype, int mu, int lambda, MultiplePopulationTask task, int numPopulations) {
+	public CoevolutionMuLambda(int mltype, int mu, int lambda, MultiplePopulationTask task, int numPopulations) {
 		this.mltype = mltype;
 		this.task = task;
 		this.mu = new int[numPopulations];
@@ -130,7 +128,8 @@ public abstract class CooperativeCoevolutionMuLambda implements MultiplePopulati
 			for (int i = 0; i < parentLogs.length; i++) {
 				parentLogs[i].log(parentScores.get(i), generation);
 			}
-			// Only do TWEANN log of first population
+			// Only do TWEANN log of first population.
+                        // TODO: Should all be tracked?
 			Genotype example = parentScores.get(0).get(0).individual;
 			if (example instanceof TWEANNGenotype) {
 				ArrayList<TWEANNGenotype> tweanns = new ArrayList<TWEANNGenotype>(parentScores.size());
@@ -143,7 +142,7 @@ public abstract class CooperativeCoevolutionMuLambda implements MultiplePopulati
 	}
 
 	/**
-	 * Finds the initial populations
+	 * Creates the initial populations
 	 * 
 	 * @param examples,
 	 *            an arrayList of genotypes
@@ -176,6 +175,7 @@ public abstract class CooperativeCoevolutionMuLambda implements MultiplePopulati
 				startingPopulations.add(pop);
 			} else {
 				System.out.println("Fresh subpop " + i);
+                                // Type manipulations required for full generality
 				ArrayList<Genotype> temp = PopulationUtil.removeListGenotypeType(PopulationUtil.initialPopulation(examples.get(i), mu[i]));
 				startingPopulations.add(temp);
 			}
@@ -191,8 +191,8 @@ public abstract class CooperativeCoevolutionMuLambda implements MultiplePopulati
 	 * are derived, and returned.
 	 *
 	 * @param populations
-	 *            vector of subpopulations
-	 * @return vector of all the genotypes to keep after a generation
+	 *            list of subpopulations
+	 * @return list of all the genotypes to keep after a generation
 	 */
 	@SuppressWarnings("rawtypes")
 	@Override
@@ -212,8 +212,8 @@ public abstract class CooperativeCoevolutionMuLambda implements MultiplePopulati
 		end = System.currentTimeMillis();
 		System.out.println("Done children: " + TimeUnit.MILLISECONDS.toMinutes(end - start) + " minutes");
 
-		if (writeOutput && ((CooperativeTask) task).teamLog != null) {
-			((CooperativeTask) task).teamLog.log("---Gen " + generation + " Over-----------------");
+		if (writeOutput && ((GroupTask) task).teamLog != null) {
+			((GroupTask) task).teamLog.log("---Gen " + generation + " Over-----------------");
 		}
 
 		ArrayList<ArrayList<Genotype>> finalKeepers = new ArrayList<ArrayList<Genotype>>(parentScores.size());
@@ -312,6 +312,7 @@ public abstract class CooperativeCoevolutionMuLambda implements MultiplePopulati
 	 * @param populations
 	 */
 	@SuppressWarnings("rawtypes")
+        @Override
 	public void close(ArrayList<ArrayList<Genotype>> populations) {
 		ArrayList<ArrayList<Score>> parentScores = task.evaluateAllPopulations(populations);
 		logParentInfo(parentScores);
@@ -322,8 +323,8 @@ public abstract class CooperativeCoevolutionMuLambda implements MultiplePopulati
 					this.childLogs[i].close();
 				}
 			}
-			if (((CooperativeTask) task).teamLog != null) {
-				((CooperativeTask) task).teamLog.close();
+			if (((GroupTask) task).teamLog != null) {
+				((GroupTask) task).teamLog.close();
 			}
 		}
 	}
@@ -331,6 +332,7 @@ public abstract class CooperativeCoevolutionMuLambda implements MultiplePopulati
 	/**
 	 * @return generation, the current generation as an integer
 	 */
+        @Override
 	public int currentGeneration() {
 		return generation;
 	}
@@ -338,6 +340,7 @@ public abstract class CooperativeCoevolutionMuLambda implements MultiplePopulati
 	/**
 	 * @return task, the current task as a Task object
 	 */
+        @Override
 	public Task getTask() {
 		return task;
 	}
@@ -346,6 +349,8 @@ public abstract class CooperativeCoevolutionMuLambda implements MultiplePopulati
 	 * Given a single sub-population, perform selection to keep the best toKeep
 	 * individuals, which will become the next parent population
 	 *
+         * @param popIndex
+         *            particular population to perform selection on
 	 * @param toKeep
 	 *            number of individuals to keep from sub-pop
 	 * @param sourcePopulation
@@ -360,6 +365,7 @@ public abstract class CooperativeCoevolutionMuLambda implements MultiplePopulati
 	 * 
 	 * @return
 	 */
+        @Override
 	public int evaluationsPerGeneration() {
 		int teams = Parameters.parameters.integerParameter("teams");
 		return (mu[0] * teams) + (lambda[0] * teams);

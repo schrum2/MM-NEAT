@@ -11,33 +11,37 @@ import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
 import edu.utexas.cs.nn.evolution.lineage.Offspring;
-import edu.utexas.cs.nn.evolution.mulambda.CooperativeCoevolutionMuLambda;
+import edu.utexas.cs.nn.evolution.mulambda.CoevolutionMuLambda;
 import edu.utexas.cs.nn.graphics.DrawingPanel;
 import edu.utexas.cs.nn.log.MMNEATLog;
 import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.scores.Score;
-import edu.utexas.cs.nn.tasks.gridTorus.cooperative.CooperativeTorusPredPreyTask;
+import edu.utexas.cs.nn.tasks.gridTorus.GroupTorusPredPreyTask;
 import edu.utexas.cs.nn.tasks.mspacman.CooperativeMsPacManTask;
 import edu.utexas.cs.nn.util.file.FileUtilities;
 import edu.utexas.cs.nn.util.random.RandomNumbers;
 
 /**
- * Task involving multiple individuals combined into a single team or organism
- * that is evaluated.
+ * Task involving multiple individuals taken from separate populations.
+ * Each population could contribute a different member of a team,
+ * or a different component of a single structure. The different
+ * populations may even by in competition.
  *
  * @author Jacob Schrum
  */
-public abstract class CooperativeTask implements MultiplePopulationTask {
+public abstract class GroupTask implements MultiplePopulationTask {
 
 	/**
-	 * Used by blueprint evolution *
+	 * Used by blueprint evolution 
 	 */
 	protected int unevaluatedIndividuals = 0;
 	protected int previousUnevaluatedIndividuals = 0;
 	/**
-	 * Number of times each component has to be evaluated in a team
+	 * Number of times each component has to be evaluated in a team.
+         * A "team" might actually consist of different groups of competing
+         * organisms.
 	 */
 	protected int teams;
 	/**
@@ -46,10 +50,12 @@ public abstract class CooperativeTask implements MultiplePopulationTask {
 	 * so that it doesn't have to be recreated each time, merely reshuffled.
 	 */
 	private ArrayList<ArrayList<Integer>> joinOrder = null;
+        
+        // Logging team data
 	public MMNEATLog teamLog;
 	private final boolean bestTeamScore;
 
-	public CooperativeTask() {
+	public GroupTask() {
 		this.teams = Parameters.parameters.integerParameter("teams");
 		if (Parameters.parameters.booleanParameter("io") && Parameters.parameters.booleanParameter("teamLog")) {
 			this.teamLog = new MMNEATLog("Teams", true);
@@ -70,7 +76,7 @@ public abstract class CooperativeTask implements MultiplePopulationTask {
 	 *            different populations of genotypes, each the same size
 	 * @return score for each member of each population
 	 */
-	@SuppressWarnings("rawtypes") // because populations can be mixed
+	@SuppressWarnings("rawtypes") // because populations can use different genotypes
 	@Override
 	public ArrayList<ArrayList<Score>> evaluateAllPopulations(ArrayList<ArrayList<Genotype>> populations) {
 		int pops = populations.size();
@@ -81,6 +87,7 @@ public abstract class CooperativeTask implements MultiplePopulationTask {
 			for (int p = 0; p < pops; p++) {
 				ArrayList<Integer> order = new ArrayList<Integer>(teams * popSize);
 				for (int t = 0; t < teams; t++) {
+                                        // Each index is repeated "teams" number of times
 					for (int i = 0; i < popSize; i++) {
 						order.add(i);
 					}
@@ -100,13 +107,13 @@ public abstract class CooperativeTask implements MultiplePopulationTask {
 
 
 	/**
-	 * Performs all cooperative evaluations on the collection of populations
-	 * using the designated join orders. Each vector in the joinOrder
-	 * corresponds to a population in populations. Each value in the sub-vectors
+	 * Performs all group evaluations on the collection of populations
+	 * using the designated join orders. Each list in the joinOrder
+	 * corresponds to a population in populations. Each value in the sub-lists
 	 * of joinOrder is the index of a specific individual in the corresponding
-	 * populations sub-vector.
+	 * populations sub-list.
 	 *
-	 * In other words, joinOrder contains parallel vectors of members to choose
+	 * In other words, joinOrder contains parallel lists of members to choose
 	 * from the parallel population arrays of populations.
 	 *
 	 * @param populations
@@ -118,6 +125,7 @@ public abstract class CooperativeTask implements MultiplePopulationTask {
 	@SuppressWarnings("rawtypes") // because population types may be mixed
 	public ArrayList<ArrayList<Score>> evaluateAllPopulations(ArrayList<ArrayList<Genotype>> populations, List<ArrayList<Integer>> teamOrder) {
 		int pops = populations.size();
+                // Each is of same size
 		int popSize = populations.get(0).size();
 
 		// initialize score table (nulls)
@@ -129,8 +137,8 @@ public abstract class CooperativeTask implements MultiplePopulationTask {
 		int maxPacManScore = 0; 
 		Genotype[] bestPacManTeam = null; 
 		boolean trackBestPacManScore = this instanceof CooperativeMsPacManTask
-				&& MMNEAT.ea instanceof CooperativeCoevolutionMuLambda
-				&& ((CooperativeCoevolutionMuLambda) MMNEAT.ea).evaluatingParents;
+				&& MMNEAT.ea instanceof CoevolutionMuLambda
+				&& ((CoevolutionMuLambda) MMNEAT.ea).evaluatingParents;
 
 		// General tracking of best in each objective in each population
 		double[][] bestObjectives =  new double[pops][];
@@ -238,7 +246,7 @@ public abstract class CooperativeTask implements MultiplePopulationTask {
 	 *            vector of the genotypes of the teammates
 	 * @return vector of scores to assign to each teammate
 	 */
-	@SuppressWarnings("rawtypes")  // because each population can have a different type
+	@SuppressWarnings("rawtypes")  // because each population can have a different genotype
 	public abstract ArrayList<Score> evaluate(Genotype[] team);
 
 	/**
@@ -323,7 +331,7 @@ public abstract class CooperativeTask implements MultiplePopulationTask {
 				}
 			}
 		}
-		if (CommonConstants.monitorInputs && !(MMNEAT.task instanceof CooperativeTorusPredPreyTask)) {
+		if (CommonConstants.monitorInputs && !(MMNEAT.task instanceof GroupTorusPredPreyTask)) {
 			Offspring.fillInputs((TWEANNGenotype) team[0]);
 		}
 		return panels;
@@ -380,7 +388,7 @@ public abstract class CooperativeTask implements MultiplePopulationTask {
 	 * Scores for each team member are the max across evals, because team
 	 * members should only be rated based on the best team they contribute to
 	 * ... no punishment for being roped into a crappy team, unless the
-	 * bestTeamScore option is false.
+	 * bestTeamScore option is false. In this case, scores are averaged.
 	 *
 	 * @param rawScores
 	 *            accumulated scores from evals so far

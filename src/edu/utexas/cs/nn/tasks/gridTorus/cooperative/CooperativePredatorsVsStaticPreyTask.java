@@ -1,5 +1,6 @@
 package edu.utexas.cs.nn.tasks.gridTorus.cooperative;
 
+import edu.utexas.cs.nn.tasks.gridTorus.GroupTorusPredPreyTask;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.gridTorus.controllers.TorusPredPreyController;
 import edu.utexas.cs.nn.networks.Network;
@@ -14,7 +15,7 @@ import edu.utexas.cs.nn.tasks.gridTorus.TorusPredPreyTask;
  * @param <T> phenotype of each population
  *
  */
-public class CooperativePredatorsVsStaticPreyTask<T extends Network> extends CooperativeTorusPredPreyTask<T> {
+public class CooperativePredatorsVsStaticPreyTask<T extends Network> extends GroupTorusPredPreyTask<T> {
 
 	public CooperativePredatorsVsStaticPreyTask(){
 		super();

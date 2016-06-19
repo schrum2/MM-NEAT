@@ -1,7 +1,6 @@
-package edu.utexas.cs.nn.tasks.gridTorus.cooperative;
+package edu.utexas.cs.nn.tasks.gridTorus;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import edu.utexas.cs.nn.evolution.Organism;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
@@ -10,34 +9,30 @@ import edu.utexas.cs.nn.gridTorus.controllers.TorusPredPreyController;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.networks.NetworkTask;
 import edu.utexas.cs.nn.scores.Score;
-import edu.utexas.cs.nn.tasks.CooperativeTask;
-import edu.utexas.cs.nn.tasks.gridTorus.NNTorusPredPreyAgent;
-import edu.utexas.cs.nn.tasks.gridTorus.NNTorusPredPreyController;
-import edu.utexas.cs.nn.tasks.gridTorus.TorusPredPreyTask;
+import edu.utexas.cs.nn.tasks.GroupTask;
 
 /**
- * Defines a cooperative torusPredPreyTask for either a group of predators being
- * evolved against a group of static prey or a group of prey being evolved against a
- * group of static predators. Each agent of the team is evolved individually, with
+ * Defines a TorusPredPreyTask for groups of evolved agents. 
+ * Each agent of the team is evolved individually, with
  * its own genotype (a team of evolving populations).
- * @author rollinsa
+ * @author Alex Rollins
  * @param <T> phenotype of all evolving populations
  *
  */
-public abstract class CooperativeTorusPredPreyTask<T extends Network> extends CooperativeTask implements NetworkTask {
+public abstract class GroupTorusPredPreyTask<T extends Network> extends GroupTask implements NetworkTask {
 
 	public TorusPredPreyTask<T> task;
 
 	/**
-	 * construct a cooperative predPrey task based off of the torusPredPreyTask
+	 * construct a predPrey task based off of the torusPredPreyTask
 	 * type that is being evolved
 	 */
-	public CooperativeTorusPredPreyTask() {
+	public GroupTorusPredPreyTask() {
 		task = getLonerTaskInstance();
 	}
 
 	/**
-	 * gets and returns the task instance (for either evolved predators or evolved prey)
+	 * gets and returns a loner task instance
 	 * @return task, torusPredPreyTask instance
 	 */
 	public abstract TorusPredPreyTask<T> getLonerTaskInstance();
@@ -53,6 +48,7 @@ public abstract class CooperativeTorusPredPreyTask<T extends Network> extends Co
 
 	/**
 	 * an integer array holding the fitness objectives for each population
+         * @return number of objectives used by each population 
 	 */
 	@Override
 	public int[] objectivesPerPopulation() {
@@ -66,6 +62,7 @@ public abstract class CooperativeTorusPredPreyTask<T extends Network> extends Co
 	/**
 	 * an integer array holding the other scores for each population (fitness scores
 	 * that are not actually being used in the evaluation and evolution of the agent(s))
+         * @return number of other scores used by each population
 	 */
 	@Override
 	public int[] otherStatsPerPopulation() {
@@ -105,8 +102,9 @@ public abstract class CooperativeTorusPredPreyTask<T extends Network> extends Co
 		//the regular, lonerTask version 
 		//(one of these child classes become the task for this cooperative task too)
 
-		return task.preyEvolve ? (new NNTorusPredPreyController(null,false)).sensorLabels()
-				: (new NNTorusPredPreyController(null,true)).sensorLabels();
+		return TorusPredPreyTask.preyEvolve 
+                        ? (new NNTorusPredPreyController(null,false)).sensorLabels()
+			: (new NNTorusPredPreyController(null,true)).sensorLabels();
 	}
 
 	/**
@@ -143,7 +141,7 @@ public abstract class CooperativeTorusPredPreyTask<T extends Network> extends Co
 			// Fitness function requires an organism, so make this genotype into an organism
 			// this erases information stored about module usage, so was saved in
 			// order to be reset after the creation of this organism
-			Organism<T> organism = new NNTorusPredPreyAgent<T>(team[i], !task.preyEvolve);
+			Organism<T> organism = new NNTorusPredPreyAgent<T>(team[i], !TorusPredPreyTask.preyEvolve);
 			for (int j = 0; j < fitnesses.length; j++) {
 				fitnesses[j] = task.objectives.get(i).get(j).score(game, organism);
 			}

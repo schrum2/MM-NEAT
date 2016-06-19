@@ -6,7 +6,7 @@ import edu.utexas.cs.nn.gridTorus.controllers.TorusPredPreyController;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.gridTorus.TorusPredPreyTask;
-import edu.utexas.cs.nn.tasks.gridTorus.cooperative.CooperativeTorusPredPreyTask;
+import edu.utexas.cs.nn.tasks.gridTorus.GroupTorusPredPreyTask;
 
 /**
  * The following class sets up tasks for
@@ -16,7 +16,7 @@ import edu.utexas.cs.nn.tasks.gridTorus.cooperative.CooperativeTorusPredPreyTask
  * 
  * @author rollinsa
  */
-public class CompetitiveHomogenousPredatorsVsPreyTask<T extends Network> extends CooperativeTorusPredPreyTask<T> {
+public class CompetitiveHomogenousPredatorsVsPreyTask<T extends Network> extends GroupTorusPredPreyTask<T> {
 
 	/**
 	 * constructor for a task where the predators are evolved while the prey are

@@ -5,7 +5,7 @@ import edu.utexas.cs.nn.evolution.nsga2.tug.TUGTask;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.networks.NetworkTask;
 import edu.utexas.cs.nn.scores.Score;
-import edu.utexas.cs.nn.tasks.CooperativeTask;
+import edu.utexas.cs.nn.tasks.GroupTask;
 import edu.utexas.cs.nn.tasks.SinglePopulationTask;
 import java.util.ArrayList;
 
@@ -20,7 +20,7 @@ import java.util.ArrayList;
  * @author Jacob Schrum
  * @param <T> phenotype
  */
-public abstract class CooperativeMsPacManTask<T extends Network> extends CooperativeTask implements NetworkTask, SinglePopulationTask<T>, TUGTask {
+public abstract class CooperativeMsPacManTask<T extends Network> extends GroupTask implements NetworkTask, SinglePopulationTask<T>, TUGTask {
 
 	public MsPacManTask<T> task;
 

@@ -4,7 +4,7 @@ import edu.utexas.cs.nn.log.PerformanceLog;
 import edu.utexas.cs.nn.log.TWEANNLog;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.tasks.CooperativeTask;
+import edu.utexas.cs.nn.tasks.GroupTask;
 import edu.utexas.cs.nn.tasks.LonerTask;
 import edu.utexas.cs.nn.tasks.MultiplePopulationTask;
 import edu.utexas.cs.nn.tasks.Task;
@@ -306,9 +306,9 @@ public class ResultSummaryUtilities {
 		int numObjectives = -1;
 		if(task instanceof LonerTask || task instanceof CooperativeMsPacManTask) {
 			numObjectives = task.numObjectives();
-		} else if(task instanceof CooperativeTask) {
+		} else if(task instanceof GroupTask) {
 			//TODO: eventually should be generalized across all populations
-			numObjectives = ((CooperativeTask) task).objectivesPerPopulation()[0];
+			numObjectives = ((GroupTask) task).objectivesPerPopulation()[0];
 		}
 		while (solutions[0].length > numObjectives) {
 			// Remove extra meta-heuristic objectives
@@ -319,11 +319,11 @@ public class ResultSummaryUtilities {
 		double[] mins = null;
 		if(task instanceof LonerTask || task instanceof CooperativeMsPacManTask) {
 			mins = MMNEAT.task.minScores();
-		} else if(task instanceof CooperativeTask){
+		} else if(task instanceof GroupTask){
 			//TODO: this is unclean and potentially problematic because minScores does not really make sense
 			//with coevolution, and just the first population's objectives' minScores are returned from
 			//the cooperativeTorusPredPreyTask minScore override.
-			mins = ((CooperativeTask) task).minScores();
+			mins = ((GroupTask) task).minScores();
 		}
 		for (int i = 0; i < solutions.length; i++) {
 			for (int j = 0; j < solutions[0].length; j++) {

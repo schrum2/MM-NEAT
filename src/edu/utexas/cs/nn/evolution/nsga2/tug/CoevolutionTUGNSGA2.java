@@ -1,11 +1,7 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.utexas.cs.nn.evolution.nsga2.tug;
 
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.evolution.nsga2.CooperativeCoevolutionNSGA2;
+import edu.utexas.cs.nn.evolution.nsga2.CoevolutionNSGA2;
 import edu.utexas.cs.nn.scores.Score;
 import java.util.ArrayList;
 
@@ -13,13 +9,13 @@ import java.util.ArrayList;
  *
  * @author Jacob
  */
-public class CooperativeCoevolutionTUGNSGA2 extends CooperativeCoevolutionNSGA2 {
+public class CoevolutionTUGNSGA2 extends CoevolutionNSGA2 {
 
 	@SuppressWarnings("rawtypes")
 	private final TUGNSGA2 tug;
 
 	@SuppressWarnings("rawtypes")
-	public CooperativeCoevolutionTUGNSGA2() {
+	public CoevolutionTUGNSGA2() {
 		this.tug = new TUGNSGA2(false);
 	}
 

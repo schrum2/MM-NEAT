@@ -4,7 +4,7 @@ import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.graphics.DrawingPanel;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.scores.Score;
-import edu.utexas.cs.nn.tasks.CooperativeTask;
+import edu.utexas.cs.nn.tasks.GroupTask;
 import edu.utexas.cs.nn.util.file.FileUtilities;
 import java.util.ArrayList;
 import wox.serial.Easy;
@@ -19,14 +19,14 @@ import wox.serial.Easy;
  */
 public class BestCooperativeCoevolutionTeamExperiment implements Experiment {
 
-	private CooperativeTask task;
+	private GroupTask task;
 	@SuppressWarnings("rawtypes")
 	private Genotype[] team;
 
         @SuppressWarnings("rawtypes")
 		@Override
 	public void init() {
-		task = (CooperativeTask) MMNEAT.task;
+		task = (GroupTask) MMNEAT.task;
 		int numMembers = task.numberOfPopulations();
 		team = new Genotype[numMembers];
 		String teamDir = FileUtilities.getSaveDirectory() + "/bestTeam";
@@ -38,9 +38,9 @@ public class BestCooperativeCoevolutionTeamExperiment implements Experiment {
         @SuppressWarnings("rawtypes")
 		@Override
 	public void run() {
-		DrawingPanel[] panels = CooperativeTask.drawNetworks(team);
+		DrawingPanel[] panels = GroupTask.drawNetworks(team);
 		ArrayList<Score> result = task.evaluate(team);
-		CooperativeTask.disposePanels(panels);
+		GroupTask.disposePanels(panels);
 		for (Score s : result) {
 			System.out.println(s);
 		}

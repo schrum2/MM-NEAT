@@ -8,7 +8,7 @@ import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.scores.Score;
-import edu.utexas.cs.nn.tasks.CooperativeTask;
+import edu.utexas.cs.nn.tasks.GroupTask;
 import edu.utexas.cs.nn.tasks.mspacman.CooperativeMultitaskSchemeMsPacManTask;
 import edu.utexas.cs.nn.tasks.mspacman.init.MsPacManInitialization;
 import edu.utexas.cs.nn.tasks.mspacman.multitask.MsPacManModeSelector;
@@ -138,7 +138,7 @@ public final class MultinetworkMsPacManExperiment<T extends Network> implements 
 			}
 			DrawingPanel[] panels = null;
 			if (CommonConstants.showNetworks) {
-				panels = CooperativeTask.drawNetworks(genotypes);
+				panels = GroupTask.drawNetworks(genotypes);
 			}
 
 			// This code evaluates the first network; a simpel test
@@ -149,7 +149,7 @@ public final class MultinetworkMsPacManExperiment<T extends Network> implements 
 			System.out.println("Scores: " + next);
 
 			if (panels != null) {
-				CooperativeTask.disposePanels(panels);
+				GroupTask.disposePanels(panels);
 			}
 			System.out.println("Eval:" + combo + Arrays.toString(ids) + "\n" + next
 					+ "\n-------------------------------------------------");

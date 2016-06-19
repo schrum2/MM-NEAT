@@ -16,7 +16,7 @@ import edu.utexas.cs.nn.scores.Score;
 import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
 import edu.utexas.cs.nn.util.random.RandomNumbers;
 
-public class CooperativeCoevolutionNSGA2Test {
+public class CoevolutionNSGA2Test {
 
 	@Before
 	public void setUp() throws Exception {
@@ -38,7 +38,7 @@ public class CooperativeCoevolutionNSGA2Test {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Test
 	public void test() {
-		CooperativeCoevolutionNSGA2 ea = new CooperativeCoevolutionNSGA2();
+		CoevolutionNSGA2 ea = new CoevolutionNSGA2();
 		
 		assertNotNull(ea);
 		

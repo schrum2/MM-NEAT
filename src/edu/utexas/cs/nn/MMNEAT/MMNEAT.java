@@ -37,7 +37,6 @@ import edu.utexas.cs.nn.networks.hyperneat.SubstrateCoordinateMapping;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.scores.Score;
-import edu.utexas.cs.nn.tasks.CooperativeTask;
 import edu.utexas.cs.nn.tasks.MultiplePopulationTask;
 import edu.utexas.cs.nn.tasks.Task;
 import edu.utexas.cs.nn.tasks.breve2D.Breve2DTask;
@@ -47,7 +46,7 @@ import edu.utexas.cs.nn.tasks.gridTorus.TorusEvolvedPredatorsVsStaticPreyTask;
 import edu.utexas.cs.nn.tasks.gridTorus.TorusPredPreyTask;
 import edu.utexas.cs.nn.tasks.gridTorus.competitive.CompetitiveHomogenousPredatorsVsPreyTask;
 import edu.utexas.cs.nn.tasks.gridTorus.cooperative.CooperativePredatorsVsStaticPreyTask;
-import edu.utexas.cs.nn.tasks.gridTorus.cooperative.CooperativeTorusPredPreyTask;
+import edu.utexas.cs.nn.tasks.gridTorus.GroupTorusPredPreyTask;
 import edu.utexas.cs.nn.tasks.mario.MarioTask;
 import edu.utexas.cs.nn.tasks.motests.FunctionOptimization;
 import edu.utexas.cs.nn.tasks.motests.testfunctions.FunctionOptimizationSet;
@@ -273,6 +272,7 @@ public class MMNEAT {
 	 * For plotting purposes. Let simulation know that a given fitness function
 	 * will be tracked.
 	 * @param name Name of fitness function in plot files
+         * @param pop population index (for coevolution)
 	 */
 	public static void registerFitnessFunction(String name, int pop) {
 		registerFitnessFunction(name, null, true, pop);
@@ -289,6 +289,7 @@ public class MMNEAT {
 	 * in the logs.
 	 * @param name Name of score
 	 * @param affectsSelection Whether or not score is actually used for selection
+         * @param pop population index (for coevolution)
 	 */
 	public static void registerFitnessFunction(String name, boolean affectsSelection, int pop) {
 		registerFitnessFunction(name, null, affectsSelection, pop);
@@ -306,6 +307,7 @@ public class MMNEAT {
 	 * @param name Name of score column
 	 * @param override Statistic applied across evaluations (null is default/average)
 	 * @param affectsSelection whether it affects selection
+         * @param pop population index (for coevolution)
 	 */
 	public static void registerFitnessFunction(String name, Statistic override, boolean affectsSelection, int pop) {
 		if (affectsSelection) {
@@ -437,7 +439,7 @@ public class MMNEAT {
 				int numInputs = determineNumPredPreyInputs();
 				NetworkTask t = (NetworkTask) task;
 				setNNInputParameters(numInputs, t.outputLabels().length);
-			} else if (task instanceof CompetitiveHomogenousPredatorsVsPreyTask) {
+			} else if (task instanceof CompetitiveHomogenousPredatorsVsPreyTask) { // must appear before GroupTorusPredPreyTask
 				System.out.println("Setup Competitive Torus Predator/Prey Task");
 				coevolution = true;
 				int numPredInputs = determineNumPredPreyInputs(true);
@@ -468,7 +470,7 @@ public class MMNEAT {
 				genotypeExamples.add(genotype.newInstance());
 				
 				prepareCoevolutionArchetypes();
-			} else if (task instanceof CooperativeTorusPredPreyTask) { // Technically, the competitive task also overrides this
+			} else if (task instanceof GroupTorusPredPreyTask) { // Technically, the competitive task also overrides this
 				System.out.println("Setup Cooperative Torus Predator/Prey Task");
 				coevolution = true;
 				int numInputs = determineNumPredPreyInputs();
