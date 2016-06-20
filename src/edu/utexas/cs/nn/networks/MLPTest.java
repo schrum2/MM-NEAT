@@ -54,17 +54,19 @@ public class MLPTest {
 		int x = 0;
 		for(int i = 0; i < mlp.firstConnectionLayer.length; i++) {
 			for(int j = 0; j < mlp.firstConnectionLayer[0].length; j++) {
+				actualOutput += Math.tanh(inputs[i]*mlp.firstConnectionLayer[i][j]);
 			hidden[x++] = Math.tanh(inputs[i]*mlp.firstConnectionLayer[i][j]);
 			}
 		}
+		double actualOutputs = 0;
 		for(int i = 0; i < mlp.secondConnectionLayer.length; i++) { 
 			for(int j = 0; j < mlp.secondConnectionLayer[0].length; j++) {
-				System.out.println("hidden size" + hidden.length);
-				MiscUtil.waitForReadStringAndEnterKeyPress();
-				actualOutput += hidden[x++]*mlp.secondConnectionLayer[i][j];
+//				System.out.println("hidden size" + hidden.length);
+//				MiscUtil.waitForReadStringAndEnterKeyPress();
+				actualOutputs += actualOutput*mlp.secondConnectionLayer[i][j];
 			}
 		}
-		double actualOutputs = Math.tanh(actualOutput);
+		actualOutputs = Math.tanh(actualOutputs);
 		assertEquals(outputs[0], actualOutputs, .0000001);
 	}
 }
