@@ -11,7 +11,6 @@ import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.HyperNEATCPPNGenotype;
 import edu.utexas.cs.nn.networks.hyperneat.HyperNEATDummyTask;
 import edu.utexas.cs.nn.networks.hyperneat.HyperNEATTask;
-import edu.utexas.cs.nn.networks.hyperneat.HyperNEATUtil;
 import edu.utexas.cs.nn.networks.hyperneat.Substrate;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
@@ -41,7 +40,7 @@ public class SubstrateMLPTest {
 
 	@Test
 	public void testNumInputs() {
-		assertEquals(25, mlp.numInputs());
+		assertEquals(9, mlp.numInputs());
 	}
 
 	@Test

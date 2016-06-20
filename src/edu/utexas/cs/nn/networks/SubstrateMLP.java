@@ -7,7 +7,6 @@ import edu.utexas.cs.nn.evolution.genotypes.HyperNEATCPPNGenotype;
 import edu.utexas.cs.nn.networks.hyperneat.HyperNEATTask;
 import edu.utexas.cs.nn.networks.hyperneat.Substrate;
 import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.util2D.ILocated2D;
@@ -236,6 +235,7 @@ public class SubstrateMLP implements Network {
 	}
 	@Override
 	public String toString() { 
+		System.out.println("connections size: " + connections.size());
 		String result = "";
 		result += numInputs + " Inputs\n";
 		result += numOutputs + " Outputs\n";
@@ -245,7 +245,7 @@ public class SubstrateMLP implements Network {
 				for(int Y1 = 0; Y1 < connection.connection[0].length; Y1++) {
 					for(int X2 = 0; X2 < connection.connection[0][0].length; X2++) {
 						for(int Y2 = 0; Y2 < connection.connection[0][0][0].length; Y2++) {
-							result += connection.connects.t1 + "---" + connection.connection[X1][Y1][X2][Y2] + "---" + connection.connects.t2 + "\n";
+							result += connection.connects.t1 + ": [" + X1 + ", " + Y1 + "]" + " : " + connection.connection[X1][Y1][X2][Y2] + " : " + connection.connects.t2 +  ": [" + X2 + ", " + Y2 + "]" +"\n";
 						}
 					}
 				}
