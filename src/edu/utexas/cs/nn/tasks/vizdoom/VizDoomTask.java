@@ -201,6 +201,7 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 			// My hunch is that it picks the action, but I don't think we have to do anything with it? Make action returns a double for some reason.
 			// I'll take out the r for now -Gab
 			if(Parameters.parameters.booleanParameter("stepByStep")){
+				System.out.println(Arrays.toString(outputs));
 				System.out.println("Action: " + outputLabels()[actIndex]);
 				MiscUtil.waitForReadStringAndEnterKeyPress();	
 			}
@@ -211,6 +212,10 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 		//}
 		
 		// TODO: Make this reward calculation more general, allow for multiple objectives
+		return getFitness(game);
+	}
+	
+	public Pair<double[], double[]> getFitness(DoomGame game){
 		return new Pair<double[], double[]>(new double[] { game.getTotalReward() }, new double[] {});
 	}
 

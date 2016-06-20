@@ -7,15 +7,60 @@ import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import vizdoom.Button;
+import vizdoom.DoomGame;
 import vizdoom.GameState;
 import vizdoom.GameVariable;
 
 public class VizDoomDefendCenterTask<T extends Network> extends VizDoomTask<T> {
 
+	private final boolean moVizDoom;
+	
 	public VizDoomDefendCenterTask() {
 		super();
+		moVizDoom = Parameters.parameters.booleanParameter("moVizDoom");
+	
+		if(moVizDoom) { 
+			//Register fitness functions
+			MMNEAT.registerFitnessFunction("Time Spent Alive");
+			MMNEAT.registerFitnessFunction("Targets Hit"); 
+			//Register the "other" score
+			MMNEAT.registerFitnessFunction("Doom Reward", null, false);
+		} else {
+			//Register the 1 fitness
+			MMNEAT.registerFitnessFunction("Doom Reward");
+		}
 	}
 
+	@Override
+	public Pair<double[], double[]> getFitness(DoomGame game){
+		double[] fitness = new double[] { game.getTotalReward() }; // default
+		double[] other = new double[] {};
+		if(moVizDoom) {
+			fitness = new double[] { game.getEpisodeTime(), game.getGameVariable(GameVariable.DEATHCOUNT) };
+			other = new double[] { game.getTotalReward() };
+			//Note, not 100% sure this is the correct way to get the current time and number of enemies killed -Gab
+		}
+		return new Pair<double[], double[]>(fitness, other);
+	}
+	
+	@Override
+	public int numObjectives() {
+		if(moVizDoom) {
+			return 2;
+		} else {
+			return 1;
+		}
+	}
+	
+	@Override
+	public int numOtherScores() {
+		if(moVizDoom) {
+			return 1;
+		} else {
+			return 0;
+		}
+	}
+	
 	@Override
 	public void taskSpecificInit() {
 		game.loadConfig("vizdoom/examples/config/defend_the_center.cfg");
@@ -35,11 +80,13 @@ public class VizDoomDefendCenterTask<T extends Network> extends VizDoomTask<T> {
 	@Override
 	public void setDoomActions() {
 		game.addAvailableButton(Button.TURN_LEFT);
-		game.addAvailableButton(Button.TURN_RIGHT);
 		game.addAvailableButton(Button.ATTACK);
+		game.addAvailableButton(Button.TURN_RIGHT);
+		
 		addAction(new int[] { 1, 0, 0 }, "Turn left");
-		addAction(new int[] { 0, 1, 0 }, "Turn right");
-		addAction(new int[] { 0, 0, 1 }, "Stand still and shoot");
+		addAction(new int[] { 0, 1, 0 }, "Stand still and shoot");
+		addAction(new int[] { 0, 0, 1 }, "Turn right");
+		
 	}
 
 	@Override
@@ -85,8 +132,10 @@ public class VizDoomDefendCenterTask<T extends Network> extends VizDoomTask<T> {
 	}
 
 	public static void main(String[] args) {
-		Parameters.initializeParameterCollections(new String[] { "watch:false", "io:false", "netio:false", "doomEpisodeLength:2100",
-				"task:edu.utexas.cs.nn.tasks.vizdoom.VizDoomDefendCenterTask", "trials:8", "printFitness:true"});
+		Parameters.initializeParameterCollections(new String[] { "watch:true", "io:false", "netio:false", "doomEpisodeLength:2100",
+				"task:edu.utexas.cs.nn.tasks.vizdoom.VizDoomDefendCenterTask", "trials:3", "printFitness:true", "doomInputStartX:0", 
+				"doomInputStartY:70", "doomInputHeight:15", "doomInputWidth:200", "doomInputPixelSmudge:5", 
+				"doomSmudgeStat:edu.utexas.cs.nn.util.stats.MostExtreme", "stepByStep:true", "showVizDoomInputs:true"});
 		MMNEAT.loadClasses();
 		VizDoomDefendCenterTask<TWEANN> vd = new VizDoomDefendCenterTask<TWEANN>();
 		TWEANNGenotype individual = new TWEANNGenotype();
@@ -97,7 +146,6 @@ public class VizDoomDefendCenterTask<T extends Network> extends VizDoomTask<T> {
 
 	@Override
 	public Pair<Integer, Integer> outputSubstrateSize() {
-		// TODO Auto-generated method stub
-		return null;
+		return new Pair<Integer, Integer>(actions.size(), 1);
 	}
 }
