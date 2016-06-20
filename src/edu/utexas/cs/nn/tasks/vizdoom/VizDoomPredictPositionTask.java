@@ -13,6 +13,8 @@ public class VizDoomPredictPositionTask<T extends Network> extends VizDoomTask<T
 
 	public VizDoomPredictPositionTask() {
 		super();
+		//Register the 1 fitness
+		MMNEAT.registerFitnessFunction("Doom Reward");
 	}
 
 	@Override

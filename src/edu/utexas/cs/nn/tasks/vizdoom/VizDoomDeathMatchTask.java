@@ -14,6 +14,8 @@ public class VizDoomDeathMatchTask<T extends Network> extends VizDoomTask<T> {
 
 	public VizDoomDeathMatchTask() {
 		super();
+		//Register the 1 fitness
+		MMNEAT.registerFitnessFunction("Doom Reward");
 	}
 
 	@Override
@@ -38,9 +40,12 @@ public class VizDoomDeathMatchTask<T extends Network> extends VizDoomTask<T> {
 		game.addAvailableButton(Button.SPEED);
 		game.addAvailableButton(Button.STRAFE);
 		
-		game.addAvailableButton(Button.MOVE_RIGHT);	game.addAvailableButton(Button.MOVE_LEFT);
-		game.addAvailableButton(Button.MOVE_BACKWARD);		game.addAvailableButton(Button.MOVE_FORWARD);
-		game.addAvailableButton(Button.TURN_RIGHT);		game.addAvailableButton(Button.TURN_LEFT);
+		game.addAvailableButton(Button.MOVE_RIGHT);	
+		game.addAvailableButton(Button.MOVE_LEFT);
+		game.addAvailableButton(Button.MOVE_BACKWARD);		
+		game.addAvailableButton(Button.MOVE_FORWARD);
+		game.addAvailableButton(Button.TURN_RIGHT);		
+		game.addAvailableButton(Button.TURN_LEFT);
 		
 		game.addAvailableButton(Button.SELECT_NEXT_WEAPON);
 		game.addAvailableButton(Button.SELECT_PREV_WEAPON);
