@@ -90,7 +90,6 @@ import wox.serial.Easy;
  * 
  * @author Jacob Schrum
  */
-@SuppressWarnings("unused")
 public class MMNEAT {
 
 	public static boolean seedExample = false;
