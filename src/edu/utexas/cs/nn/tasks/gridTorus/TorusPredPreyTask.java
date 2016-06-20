@@ -569,6 +569,14 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 				addObjective(new PredatorEatEachPreyQuicklyObjective<T>(), objectives, pop);
 			}
 		}
+		if(Parameters.parameters.booleanParameter("predatorCoOpCC")){
+			//all populations are given MultiIndivCC fitnesses with just the individual distance
+			//function corresponding to that agent of this population to each prey
+			addObjective(new PredatorCatchObjective<T>(), objectives, pop);
+			for(int i = 0; i < Parameters.parameters.integerParameter("torusPreys"); i++){
+				addObjective(new IndividualPredatorMinimizeDistanceFromIndividualPreyObjective<T>(pop,i), objectives, pop);
+			}
+		}
 	}
 
 	/**
