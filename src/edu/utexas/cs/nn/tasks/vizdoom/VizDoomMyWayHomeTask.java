@@ -44,7 +44,6 @@ public class VizDoomMyWayHomeTask<T extends Network> extends VizDoomTask<T> {
 		addAction(new int[] { 0, 0, 1, 0, 0 }, "Move forward");
 		addAction(new int[] { 0, 0, 0, 1, 0 }, "Move left");
 		addAction(new int[] { 0, 0, 0, 0, 1 }, "Move right");
-	
 	}
 
 	@Override
@@ -71,7 +70,6 @@ public class VizDoomMyWayHomeTask<T extends Network> extends VizDoomTask<T> {
 
 	@Override
 	public void setRewards() {
-
 		game.setLivingReward(-0.0001);
 	}
 
@@ -100,7 +98,6 @@ public class VizDoomMyWayHomeTask<T extends Network> extends VizDoomTask<T> {
 
 	@Override
 	public Pair<Integer, Integer> outputSubstrateSize() {
-		// TODO Auto-generated method stub
-		return null;
+		return null; // complex, wait to write
 	}
 }

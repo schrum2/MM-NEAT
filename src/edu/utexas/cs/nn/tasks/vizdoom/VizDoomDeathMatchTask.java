@@ -121,7 +121,6 @@ public class VizDoomDeathMatchTask<T extends Network> extends VizDoomTask<T> {
 
 	@Override
 	public Pair<Integer, Integer> outputSubstrateSize() {
-		// TODO Auto-generated method stub
-		return null;
+		return null; //Complex, wait to write
 	}
 }

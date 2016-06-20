@@ -92,7 +92,6 @@ public class VizDoomTakeCoverTask<T extends Network> extends VizDoomTask<T> {
 
 	@Override
 	public Pair<Integer, Integer> outputSubstrateSize() {
-		// TODO Auto-generated method stub
-		return null;
+		return new Pair<Integer, Integer>(actions.size(), 1);
 	}
 }

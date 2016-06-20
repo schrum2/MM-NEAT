@@ -36,11 +36,12 @@ public class VizDoomHealthGatherTask<T extends Network> extends VizDoomTask<T> {
 	@Override
 	public void setDoomActions() {
 		game.addAvailableButton(Button.TURN_LEFT);
-		game.addAvailableButton(Button.TURN_RIGHT);
 		game.addAvailableButton(Button.MOVE_FORWARD);
+		game.addAvailableButton(Button.TURN_RIGHT);
+		
 		addAction(new int[] { 1, 0, 0 }, "Turn left");
-		addAction(new int[] { 0, 1, 0 }, "Turn right");
-		addAction(new int[] { 0, 0, 1 }, "Move forward");
+		addAction(new int[] { 0, 1, 0 }, "Move forward");
+		addAction(new int[] { 0, 0, 1 }, "Turn right");
 	}
 
 	@Override
@@ -96,7 +97,6 @@ public class VizDoomHealthGatherTask<T extends Network> extends VizDoomTask<T> {
 
 	@Override
 	public Pair<Integer, Integer> outputSubstrateSize() {
-		// TODO Auto-generated method stub
-		return null;
+		return new Pair<Integer, Integer>(actions.size(), 1);
 	}
 }

@@ -35,8 +35,8 @@ public class VizDoomBasicShootTask<T extends Network> extends VizDoomTask<T> {
 		// more combinations are naturally possible but only 3 are included for
 		// transparency when watching.
 		addAction(new int[] { 1, 0, 0 }, "Left");
-		addAction(new int[] { 0, 0, 1 }, "Still and Shoot");
-		addAction(new int[] { 0, 1, 0 }, "Right");
+		addAction(new int[] { 0, 1, 0 }, "Still and Shoot");
+		addAction(new int[] { 0, 0, 1 }, "Right");
 	}
 
 	@Override
