@@ -103,6 +103,7 @@ public class TetrisAfterStateAgent<T extends Network> extends RLGlueAgent<T> {
 				// array of 1
 				outputs = this.consultPolicy(inputsScaled);
 				if(Parameters.parameters.booleanParameter("stepByStep")){
+					System.out.println("Utility:" + outputs[0]);
 					System.out.print("Press enter to continue");
 					MiscUtil.waitForReadStringAndEnterKeyPress();
 				}
