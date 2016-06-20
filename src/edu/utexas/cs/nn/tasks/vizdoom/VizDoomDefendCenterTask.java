@@ -36,7 +36,7 @@ public class VizDoomDefendCenterTask<T extends Network> extends VizDoomTask<T> {
 		double[] fitness = new double[] { game.getTotalReward() }; // default
 		double[] other = new double[] {};
 		if(moVizDoom) {
-			fitness = new double[] { game.getEpisodeTime(), game.getGameVariable(GameVariable.DEATHCOUNT) };
+			fitness = new double[] { game.getEpisodeTime(), game.getGameVariable(GameVariable.KILLCOUNT) };
 			other = new double[] { game.getTotalReward() };
 			//Note, not 100% sure this is the correct way to get the current time and number of enemies killed -Gab
 		}

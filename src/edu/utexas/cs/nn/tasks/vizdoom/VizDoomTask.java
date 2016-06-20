@@ -65,7 +65,6 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 		setDoomStateVariables();
 		setRewards();
 		setDoomMiscSettings();
-		MMNEAT.registerFitnessFunction("DoomReward");
 		try {
 			stat = (Statistic) ClassCreation.createObject("doomSmudgeStat");
 		} catch (NoSuchMethodException e) {
@@ -211,7 +210,6 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 		//	MiscUtil.waitForReadStringAndEnterKeyPress();
 		//}
 		
-		// TODO: Make this reward calculation more general, allow for multiple objectives
 		return getFitness(game);
 	}
 	

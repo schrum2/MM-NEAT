@@ -14,6 +14,8 @@ public class VizDoomHealthGatherTask<T extends Network> extends VizDoomTask<T> {
 
 	public VizDoomHealthGatherTask() {
 		super();
+		//Register the 1 fitness
+		MMNEAT.registerFitnessFunction("Doom Reward");
 	}
 
 	@Override
