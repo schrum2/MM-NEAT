@@ -28,7 +28,7 @@ public class CooperativePreyVsStaticPredatorsTask<T extends Network> extends Gro
 	public TorusPredPreyTask<T> getLonerTaskInstance() {
 		if(task == null) {
 			task = new TorusEvolvedPreyVsStaticPredatorsTask<T>();
-			while(task.objectives.size() < numberOfPopulations()) {
+			while(task.objectives.size() < Parameters.parameters.integerParameter("torusPreys")) {
 				task.addAllObjectives(task.objectives.size());
 			}
 		}

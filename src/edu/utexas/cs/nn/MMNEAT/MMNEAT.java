@@ -479,6 +479,7 @@ public class MMNEAT {
 				// Setup genotype early
 				genotype = (Genotype) ClassCreation.createObject("genotype");
 				int numAgents = (task instanceof CooperativePredatorsVsStaticPreyTask) ? Parameters.parameters.integerParameter("torusPredators") : Parameters.parameters.integerParameter("torusPreys");
+				System.out.println("There will be " + numAgents + " evolved agents");
 				genotypeExamples = new ArrayList<Genotype>(numAgents);
 				for(int i = 0; i < numAgents; i++) {
 					if(genotype instanceof TWEANNGenotype) {

@@ -1,6 +1,7 @@
 package edu.utexas.cs.nn.tasks.gridTorus.cooperative;
 
 import edu.utexas.cs.nn.tasks.gridTorus.GroupTorusPredPreyTask;
+
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.gridTorus.controllers.TorusPredPreyController;
 import edu.utexas.cs.nn.networks.Network;
@@ -29,7 +30,7 @@ public class CooperativePredatorsVsStaticPreyTask<T extends Network> extends Gro
 	public TorusPredPreyTask<T> getLonerTaskInstance() {
 		if(task == null) {
 			task = new TorusEvolvedPredatorsVsStaticPreyTask<T>();
-			while(task.objectives.size() < numberOfPopulations()) {
+			while(task.objectives.size() < Parameters.parameters.integerParameter("torusPredators")) {
 				task.addAllObjectives(task.objectives.size());
 			}
 		}
