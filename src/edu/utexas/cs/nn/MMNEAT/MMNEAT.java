@@ -46,6 +46,7 @@ import edu.utexas.cs.nn.tasks.gridTorus.TorusEvolvedPredatorsVsStaticPreyTask;
 import edu.utexas.cs.nn.tasks.gridTorus.TorusPredPreyTask;
 import edu.utexas.cs.nn.tasks.gridTorus.competitive.CompetitiveHomogenousPredatorsVsPreyTask;
 import edu.utexas.cs.nn.tasks.gridTorus.cooperative.CooperativePredatorsVsStaticPreyTask;
+import edu.utexas.cs.nn.tasks.gridTorus.cooperativeAndCompetitive.CompetitiveAndCooperativePredatorsVsPreyTask;
 import edu.utexas.cs.nn.tasks.gridTorus.GroupTorusPredPreyTask;
 import edu.utexas.cs.nn.tasks.mario.MarioTask;
 import edu.utexas.cs.nn.tasks.motests.FunctionOptimization;
@@ -438,7 +439,7 @@ public class MMNEAT {
 				int numInputs = determineNumPredPreyInputs();
 				NetworkTask t = (NetworkTask) task;
 				setNNInputParameters(numInputs, t.outputLabels().length);
-			} else if (task instanceof CompetitiveHomogenousPredatorsVsPreyTask) { // must appear before GroupTorusPredPreyTask
+			} else if (task instanceof CompetitiveHomogenousPredatorsVsPreyTask || task instanceof CompetitiveAndCooperativePredatorsVsPreyTask) { // must appear before GroupTorusPredPreyTask
 				System.out.println("Setup Competitive Torus Predator/Prey Task");
 				coevolution = true;
 				int numPredInputs = determineNumPredPreyInputs(true);
@@ -448,17 +449,33 @@ public class MMNEAT {
 				int numPreyOutputs = TorusPredPreyTask.outputLabels(false).length;
 				
 				// Setup genotype early
-				genotypeExamples = new ArrayList<Genotype>(2); // one pred pop, one prey pop
+				if(task instanceof CompetitiveHomogenousPredatorsVsPreyTask){
+					genotypeExamples = new ArrayList<Genotype>(2); // one pred pop, one prey pop
+				} else if(task instanceof CompetitiveAndCooperativePredatorsVsPreyTask){
+					genotypeExamples = new ArrayList<Genotype>(Parameters.parameters.integerParameter("torusPredators") + 
+							Parameters.parameters.integerParameter("torusPreys"));
+				}
 				
 				// Is this valid for multiple populations?
 
 				// Setup pred population
 				setNNInputParameters(numPredInputs, numPredOutputs);
 				genotype = (Genotype) ClassCreation.createObject("genotype");
-				if(genotype instanceof TWEANNGenotype) {
-					((TWEANNGenotype) genotype).archetypeIndex = 0;
+				//add one for each pred if cooperative and competitive coevolution
+				if(task instanceof CompetitiveAndCooperativePredatorsVsPreyTask){ 
+					for(int i = 0; i < Parameters.parameters.integerParameter("torusPredators"); i++){
+						Genotype temp = genotype.newInstance();
+						if(genotype instanceof TWEANNGenotype) {
+							((TWEANNGenotype) temp).archetypeIndex = i;
+						}
+						genotypeExamples.add(temp);
+					}
+				} else{ //just one pred pop
+					if(genotype instanceof TWEANNGenotype) {
+						((TWEANNGenotype) genotype).archetypeIndex = 0;
+					}
+					genotypeExamples.add(genotype.newInstance());
 				}
-				genotypeExamples.add(genotype.newInstance());
 				
 				// Setup prey population
 				setNNInputParameters(numPreyInputs, numPreyOutputs);
@@ -466,7 +483,21 @@ public class MMNEAT {
 				if(genotype instanceof TWEANNGenotype) {
 					((TWEANNGenotype) genotype).archetypeIndex = 1;
 				}
-				genotypeExamples.add(genotype.newInstance());
+				//add one for each prey if cooperative and competitive coevolution
+				if(task instanceof CompetitiveAndCooperativePredatorsVsPreyTask){ 
+					for(int i = 0; i < Parameters.parameters.integerParameter("torusPreys"); i++){
+						Genotype temp = genotype.newInstance();
+						if(genotype instanceof TWEANNGenotype) {
+							((TWEANNGenotype) temp).archetypeIndex = i + Parameters.parameters.integerParameter("torusPredators");
+						}
+						genotypeExamples.add(temp);
+					}
+				} else{ //just one prey pop
+					if(genotype instanceof TWEANNGenotype) {
+						((TWEANNGenotype) genotype).archetypeIndex = 1;
+					}
+					genotypeExamples.add(genotype.newInstance());
+				}
 				
 				prepareCoevolutionArchetypes();
 			} else if (task instanceof GroupTorusPredPreyTask) { // Technically, the competitive task also overrides this

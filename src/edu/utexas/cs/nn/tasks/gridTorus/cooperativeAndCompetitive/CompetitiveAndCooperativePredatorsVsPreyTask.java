@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.tasks.gridTorus.competitive;
+package edu.utexas.cs.nn.tasks.gridTorus.cooperativeAndCompetitive;
 
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.gridTorus.TorusPredPreyGame;
@@ -14,12 +14,11 @@ import edu.utexas.cs.nn.tasks.gridTorus.GroupTorusPredPreyTask;
  * predators are evolved while the prey are also evolved
  * (competitive coevolution)
  * 
- * There are a total of two populations: 1 prey pop, 1 pred pop
- * Homogenous teams with copies of genotypes/networks to each team member
+ * Each agent in each team has its own population/genotype/network.
  * 
  * @author rollinsa
  */
-public class CompetitiveHomogenousPredatorsVsPreyTask<T extends Network> extends GroupTorusPredPreyTask<T> {
+public class CompetitiveAndCooperativePredatorsVsPreyTask<T extends Network> extends GroupTorusPredPreyTask<T> {
 
 	/**
 	 * constructor for a task where the predators are evolved while the prey are
@@ -27,7 +26,7 @@ public class CompetitiveHomogenousPredatorsVsPreyTask<T extends Network> extends
 	 * predator and the prey agents are both evolving. Includes all of the fitness scores that
 	 * the user wants from the command line parameters
 	 */
-	public CompetitiveHomogenousPredatorsVsPreyTask() {
+	public CompetitiveAndCooperativePredatorsVsPreyTask() {
 		super();
 		task.evolved = new TorusPredPreyController[Parameters.parameters.integerParameter("torusPredators") + Parameters.parameters.integerParameter("torusPreys")];
 	}
@@ -35,22 +34,24 @@ public class CompetitiveHomogenousPredatorsVsPreyTask<T extends Network> extends
 	/**
 	 * A method that gives a list of controllers for the evolving agents
 	 * (predators) The predators are all defined as a new agent of the given
-	 * genotype with an evolved controller The user also indicates in a command
+	 * genotype with an evolved controller. The user also indicates in a command
 	 * line parameter how many predators there will be (default of 3)
 	 *  
 	 * @return evolvedAgents a list of controllers for the evolved agents for
 	 *         this class, which is both prey and predators
-	 * @param team, 
-	 *            the genotype that will be given to all predator agents
-	 *            in index 0
-	 *            (homogeneous team)
+	 * @param team, each agent has its own genotype
 	 */
 	@Override
 	public TorusPredPreyController[] getPredAgents(Genotype<T>[] team) {
-		TorusPredPreyTask.getEvolvedControllers(task.evolved, team[TorusPredPreyGame.AGENT_TYPE_PRED], true, 0, Parameters.parameters.integerParameter("torusPredators"));
+		int numPreds = Parameters.parameters.integerParameter("torusPredators");
+		Genotype[] predTeam = new Genotype[numPreds];
+		//NOTE: Assumes that predators were stored first in the "team" list
+		System.out.println(team.length);
+		System.arraycopy(team, 0, predTeam, 0, numPreds);
+		TorusPredPreyTask.getEvolvedControllers(task.evolved, predTeam, true, 0);
 		// Make smaller array to return just the preds
-		TorusPredPreyController[] predOnly = new TorusPredPreyController[Parameters.parameters.integerParameter("torusPredators")];
-		System.arraycopy(task.evolved, 0, predOnly, 0, Parameters.parameters.integerParameter("torusPredators"));
+		TorusPredPreyController[] predOnly = new TorusPredPreyController[numPreds];
+		System.arraycopy(task.evolved, 0, predOnly, 0, numPreds);
 		return predOnly;
 	}
 
@@ -58,27 +59,29 @@ public class CompetitiveHomogenousPredatorsVsPreyTask<T extends Network> extends
 	/**
 	 * A method that gives a list of controllers for the evolving agents (prey)
 	 * The prey are all defined as a new agent of the given genotype with an
-	 * evolved controller The user also indicates in a command line parameter
+	 * evolved controller. The user also indicates in a command line parameter
 	 * how many prey there will be (default of 2)
 	 * 
 	 * @return evolvedAgents a list of controllers for the evolved agents for
 	 *         this class, which is both prey and predators
-	 * @param team, 
-	 *            the genotype that will be given to all prey agents
-	 *            in index 1
-	 *            (homogeneous team)
+	 * @param team, each agent has its own genotype
 	 */
 	public TorusPredPreyController[] getPreyAgents(Genotype<T>[] team) {
-		TorusPredPreyTask.getEvolvedControllers(task.evolved, team[TorusPredPreyGame.AGENT_TYPE_PREY], false, Parameters.parameters.integerParameter("torusPredators"), Parameters.parameters.integerParameter("torusPreys"));
+		int numPreys = Parameters.parameters.integerParameter("torusPreys");
+		int numPreds = Parameters.parameters.integerParameter("torusPredators");
+		Genotype[] preyTeam = new Genotype[numPreys];
+		//NOTE: Assumes that predators were stored first in the "team" list, then prey
+		System.arraycopy(team, numPreds, preyTeam, 0, numPreys);
+		TorusPredPreyTask.getEvolvedControllers(task.evolved, preyTeam, false, numPreds);
 		// Make smaller array to return just the preys
-		TorusPredPreyController[] preyOnly = new TorusPredPreyController[Parameters.parameters.integerParameter("torusPreys")];
-		System.arraycopy(task.evolved, Parameters.parameters.integerParameter("torusPredators"), preyOnly, 0, Parameters.parameters.integerParameter("torusPreys"));
+		TorusPredPreyController[] preyOnly = new TorusPredPreyController[numPreys];
+		System.arraycopy(task.evolved, numPreds, preyOnly, 0, numPreys);
 		return preyOnly; 
 	}
 
 	@Override
 	/**
-	 * gets and returns the task instance for competitive coevolution
+	 * gets and returns the task instance for competitive and cooperative coevolution
 	 * @return task, torusPredPreyTask instance
 	 */
 	public TorusPredPreyTask<T> getLonerTaskInstance() {
@@ -89,18 +92,22 @@ public class CompetitiveHomogenousPredatorsVsPreyTask<T extends Network> extends
 				// Not used by coevolution
 				@Override
 				public TorusPredPreyController[] getPredAgents(Genotype<T> individual) {
-					throw new UnsupportedOperationException("The CompetitiveHomogenousPredatorsVsPreyTask should not need the getPredAgents method of its LonerTask instance");
+					throw new UnsupportedOperationException("The CompetitiveAndCooperativePredatorsVsPreyTask should not need the getPredAgents method of its LonerTask instance");
 				}
 
 				// Not used by coevolution
 				@Override
 				public TorusPredPreyController[] getPreyAgents(Genotype<T> individual) {
-					throw new UnsupportedOperationException("The CompetitiveHomogenousPredatorsVsPreyTask should not need the getPreyAgents method of its LonerTask instance");
+					throw new UnsupportedOperationException("The CompetitiveAndCooperativePredatorsVsPreyTask should not need the getPreyAgents method of its LonerTask instance");
 				}
 				
 			};
-			task.addAllObjectives(TorusPredPreyGame.AGENT_TYPE_PRED, false);
-			task.addAllObjectives(TorusPredPreyGame.AGENT_TYPE_PREY, true);
+			for(int i = 0; i < Parameters.parameters.integerParameter("torusPredators"); i++){
+				task.addAllObjectives(i, false);
+			}
+			for(int i = 0; i < Parameters.parameters.integerParameter("torusPreys"); i++){
+				task.addAllObjectives(i, true);
+			}
 		}
 		return task;
 	}

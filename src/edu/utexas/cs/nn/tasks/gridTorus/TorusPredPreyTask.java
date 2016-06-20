@@ -613,6 +613,12 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 	 * @param pop, current population
 	 */
 	private void addPreyObjectives(int pop){
+		//Include the offset from the objectives list for competitive coevolution if necessary
+		int competitiveIndex = pop;
+		if(competitive){
+			competitiveIndex -= Parameters.parameters.integerParameter("torusPredators");
+		}
+
 		//Prey fitness scores
 		if (Parameters.parameters.booleanParameter("preyMaximizeTotalTime"))
 			addObjective(new PreyMaximizeGameTimeObjective<T>(), objectives, pop);
@@ -644,7 +650,7 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 			//all populations are given MultiIndivCCQ fitnesses with just the individual distance
 			//function corresponding to that agent of this population
 			addObjective(new PreyMinimizeCaughtObjective<T>(), objectives, pop);
-			addObjective(new IndividualPreyMaximizeDistanceFromClosestPredatorObjective<T>(pop), objectives, pop);
+			addObjective(new IndividualPreyMaximizeDistanceFromClosestPredatorObjective<T>(competitiveIndex), objectives, pop);
 			addObjective(new PreyLongSurvivalTimeObjective<T>(), objectives, pop);
 		}
 	}
