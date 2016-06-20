@@ -20,7 +20,7 @@ public class ActivationFunctions {
 	// For use in sigmoid, it is convenient to bound the inputs to the exp
 	// function
 	public static final double SAFE_EXP_BOUND = 7;
-	
+
 	/**
 	 * Initialize the ftypes to be available for the CPPN/TWEANN
 	 */
@@ -40,7 +40,7 @@ public class ActivationFunctions {
 	 * functions
 	 */
 	public static void resetFunctionSet() {
-                availableActivationFunctions = new ArrayList<>(10);
+		availableActivationFunctions = new ArrayList<>(10);
 		if (Parameters.parameters.booleanParameter("includeSigmoidFunction")) {
 			availableActivationFunctions.add(FTYPE_SIGMOID);
 		}
@@ -135,6 +135,31 @@ public class ActivationFunctions {
 		}
 		return activation;
 	}
+
+	public static String activationName(int ftype) { 
+		assert ftype > -1 && ftype < 11:"given activation function not present!";
+		if(ftype == FTYPE_SIGMOID) {
+			return "Sigmoid";
+		}else if(ftype == FTYPE_TANH) {
+			return "Tanh";
+		} else if(ftype == FTYPE_SAWTOOTH) {
+			return "Sawtooth";
+		} else if(ftype == FTYPE_HLPIECEWISE) {
+			return "Half Piecewise";
+		}else if(ftype == FTYPE_ID) {
+			return "ID";
+		} else if(ftype == FTYPE_APPROX) {
+			return "Approximate";
+		} else if(ftype == FTYPE_FULLAPPROX) {
+			return "Full Approximate";
+		} else if(ftype == FTYPE_GAUSS) {
+			return "Gaussian";
+		} else if(ftype == FTYPE_SINE) {
+			return "Sine";
+		} else {
+			return "Absolute Value";
+		} 
+	}
 	/**
 	 * Takes in the list of all ftypes and randomly selects a function. (For
 	 * CPPN)
@@ -153,7 +178,7 @@ public class ActivationFunctions {
 	 */
 	public static int newNodeFunction() {
 		if (Parameters.parameters.booleanParameter("allowMultipleFunctions")) { // for
-																				// CPPN
+			// CPPN
 			return randomFunction();
 		} else {
 			return CommonConstants.ftype; // for TWEANN
@@ -200,9 +225,9 @@ public class ActivationFunctions {
 	 */
 	public static double quickSigmoid(double x) {
 		return 1.0 / (1.0 + quickExp(-x)); // Purpose of a negative x? I think
-											// it's to allow the sigmoid to
-											// start lower rather than higher?
-											// Or is that backwards - Gabby
+		// it's to allow the sigmoid to
+		// start lower rather than higher?
+		// Or is that backwards - Gabby
 	}
 
 	/**
