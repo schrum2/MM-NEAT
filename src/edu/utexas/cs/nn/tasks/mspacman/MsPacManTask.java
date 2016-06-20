@@ -40,13 +40,12 @@ import pacman.game.Game;
  * Ms. Pac-Man vs. four ghosts across four mazes.
  * 
  * @author Jacob Schrum
- * @param <T>
- *            phenotype of evolved agent
+ * @param <T> phenotype of evolved agent
  */
 public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements TUGTask, NetworkTask {
 
 	public static String saveFilePrefix = "";
-
+	//boolean variables
 	protected boolean deterministic;
 	protected boolean ignorePillScore;
 	protected boolean noPills;
@@ -62,12 +61,14 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 	protected boolean ghostsStartOutsideLair;
 	protected boolean onlyOneLairExitAllowed;
 	protected boolean evolveGhosts;
+	//objectives and scores used for multitask
 	protected ArrayList<MsPacManObjective<T>> objectives;
 	protected ArrayList<MsPacManObjective<T>> otherScores;
 	protected GhostControllerFacade ghosts;
 	protected PacManControllerFacade mspacman;
 	protected ExecutorFacade exec;
 	protected GameFacade game;
+	//indices used for calculation of fitness TODO
 	private final int scoreIndexInOtherScores;
 	private final int pillScoreIndexInOtherScores;
 	private final int ghostRewardIndexInOtherScores;
@@ -96,16 +97,24 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 	private final boolean plainGhostScore;
 	private final TrainingCampManager tcManager;
 
+	/**
+	 * Default constructor
+	 */
 	public MsPacManTask() {
 		this(Parameters.parameters.booleanParameter("deterministic"));
 	}
 
+	/**
+	 * Constructor
+	 * @param det boolean parameter "deterministic"
+	 */
 	public MsPacManTask(boolean det) {
-		super();
+		super();//constructor for noisy loner task
 		exec = new ExecutorFacade(new Executor());
-		this.deterministic = det;
+		this.deterministic = det;//if game is deterministic
 		tcManager = new TrainingCampManager();
 
+		//variables from command line parameters
 		onlyOneLairExitAllowed = false;
 		evolveGhosts = Parameters.parameters.booleanParameter("evolveGhosts");
 		boolean rawScorePacMan = Parameters.parameters.booleanParameter("rawScorePacMan");
@@ -123,43 +132,44 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 		ignorePillScore = Parameters.parameters.booleanParameter("ignorePillScore");
 		eachComponentTracksScoreToo = Parameters.parameters.booleanParameter("eachComponentTracksScoreToo");
 		plainGhostScore = Parameters.parameters.booleanParameter("plainGhostScore");
+		//used in constructor, not global
 		boolean avgGhostsPerPowerPill = Parameters.parameters.booleanParameter("avgGhostsPerPowerPill");
 		boolean punishDeadSpace = Parameters.parameters.booleanParameter("punishDeadSpace");
 		boolean randomSelection = Parameters.parameters.booleanParameter("randomSelection");
 
-		objectives = new ArrayList<MsPacManObjective<T>>(17);
-		otherScores = new ArrayList<MsPacManObjective<T>>(17);
-		if (randomSelection) {
-			addObjective(new RandomScore<T>(), objectives, true);
-		} else if (rawScorePacMan) {
+		objectives = new ArrayList<MsPacManObjective<T>>(17);//why 17? TODO
+		otherScores = new ArrayList<MsPacManObjective<T>>(17);//why 17? TODO
+		if (randomSelection) {//command line parameter, "Only objective is a random objective"
+			addObjective(new RandomScore<T>(), objectives, true);//random score since only objective
+		} else if (rawScorePacMan) {// "Pac-Man uses Game Score as only fitness"
 			addObjective(new GameScore<T>(), objectives, true);
-		} else if (luringTask) {
-			addObjective(new LuringScore<T>(), objectives, true);
+		} else if (luringTask) {//"Pac-Man rewarded for luring ghosts to power pills before eating pill"
+			addObjective(new LuringScore<T>(), objectives, true);//
 		} else if (Parameters.parameters.booleanParameter("individualLevelFitnesses")) {
-			for (int i = 0; i < Constants.NUM_MAZES; i++) {
+			for (int i = 0; i < Constants.NUM_MAZES; i++) {//"One fitness function for each level"
 				addObjective(new LevelGameScore<T>(i), objectives, new Average(), true);
 			}
-		} else {
-			if (!noPowerPills && CommonConstants.numActiveGhosts > 0) {
-				if (!Parameters.parameters.booleanParameter("ignoreGhostScores")) {
-					usedGhostScoreIndex = objectives.size();
-					if (avgGhostsPerPowerPill) {
+		} else {//more than one objective is a random objective
+			if (!noPowerPills && CommonConstants.numActiveGhosts > 0) {//power pills still present and ghosts still active
+				if (!Parameters.parameters.booleanParameter("ignoreGhostScores")) {//"No fitness from edible ghosts in Ms Pac-Man, even though there are present"
+					usedGhostScoreIndex = objectives.size();//keeps track of ghost scores since not used by agent TODO
+					if (avgGhostsPerPowerPill) {//command line parameter, "Ghost score used is the average eaten per power pill eaten"
 						addObjective(new GhostsPerPowerPillScore<T>(true), objectives, true);
-					} else if (rewardFasterGhostEating) {
+					} else if (rewardFasterGhostEating) {//command line parameter, "Ghost reward fitness gives higher fitness to eating ghosts quickly after power pills"
 						addObjective(new FastGhostEatingScore<T>(), objectives, true);
-					} else if (plainGhostScore) {
+					} else if (plainGhostScore) {//command line parameter, "For ghost fitness, just use eaten ghosts instead of ghost score"
 						addObjective(new EatenGhostScore<T>(), objectives, true);
-					} else {
+					} else {//otherwise, ghost fitness determined by proportional ms. pac man and ghost score 
 						addObjective(new GhostRewardScore<T>(), objectives, true);
 					}
-
+					//command line parameter, "Include negative fitness for ghosts that pacman fails to eat"
 					if (Parameters.parameters.booleanParameter("ghostRegretFitness")) {
 						addObjective(new GhostRegretScore<T>(), objectives, true);
-					}
+					}//command line parameter, "Fitness based on time to eat all ghosts after power pill"
 					if (Parameters.parameters.booleanParameter("timeToEatAllFitness")) {
 						addObjective(new TimeToEatAllGhostsScore<T>(), objectives, true);
 					}
-				}
+				}//command line parameter,  "Fitness for eating power pills when all ghosts are threats"
 				if (Parameters.parameters.booleanParameter("awardProperPowerPillEating")) {
 					addObjective(new ProperlyEatenPowerPillScore<T>(), objectives, true);
 				}
