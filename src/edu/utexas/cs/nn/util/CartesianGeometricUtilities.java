@@ -53,6 +53,27 @@ public class CartesianGeometricUtilities {
 		return ((toScale / (maxDimension - 1)) * 2) - 1;
 	}
 
+	/**
+	 * Scales coordinates to 1D in Y-coordinate space
+	 * @param toScale coordinates to scale
+	 * @param width width of domain
+	 * @param height height of domain
+	 * @return scaled coordinates
+	 */
+	public static Tuple2D Bottom1DCenterAndScale(Tuple2D toScale, int width, int height) {
+		double newX = 0.0;
+		double newY = bottomScale(toScale.y, height);
+		assert !Double.isNaN(newY) : "newY is NaN! width="+width+", height="+height+", toScale="+toScale;
+		return new Tuple2D(newX, newY);
+	}
+	
+	/**
+	 * Scales the coordinates to -1 - 1 in X-direction and 0 - 1 in Y-direction
+	 * @param toScale coordiantes to scale
+	 * @param width width of domain
+	 * @param height height of domain
+	 * @return scaled coordinates
+	 */
 	public static Tuple2D bottomCenterAndScale(Tuple2D toScale, int width, int height) { 
 		double newX = centerAndScale(toScale.x, width);
 		double newY = bottomScale(toScale.y, height);
