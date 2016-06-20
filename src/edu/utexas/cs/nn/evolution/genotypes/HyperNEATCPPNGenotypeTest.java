@@ -18,6 +18,7 @@ import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.networks.hyperneat.Substrate;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.util.CartesianGeometricUtilities;
+import edu.utexas.cs.nn.util.MiscUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.datastructures.Triple;
 import edu.utexas.cs.nn.util.util2D.ILocated2D;
@@ -141,6 +142,11 @@ public class HyperNEATCPPNGenotypeTest {
 		assertEquals(newLinks.get(sub1Index).sourceInnovation, hcppn.getInnovationID(0, 0, endingIndex, subs));
 	}
 
+	@Test
+	public void testGetPhenotype()  {
+		hcppn.getPhenotype();
+		MiscUtil.waitForReadStringAndEnterKeyPress();
+	}
 	@Test
 	public void testHashMapping() {
 		assertTrue(sIMap.get(subs.get(sub1Index).getName()).equals(sub1Index));
