@@ -5,6 +5,7 @@ import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.parameters.Parameters;
+import edu.utexas.cs.nn.util.datastructures.Pair;
 import vizdoom.Button;
 import vizdoom.GameState;
 import vizdoom.GameVariable;
@@ -98,5 +99,11 @@ public class VizDoomDeadlyCorridorTask<T extends Network> extends VizDoomTask<T>
 		System.out.println(vd.evaluate(individual));
 		System.out.println(vd.evaluate(individual));
 		vd.finalCleanup();
+	}
+
+	@Override
+	public Pair<Integer, Integer> outputSubstrateSize() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

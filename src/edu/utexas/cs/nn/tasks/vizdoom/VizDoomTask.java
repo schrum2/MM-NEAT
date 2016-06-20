@@ -11,6 +11,8 @@ import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.graphics.DrawingPanel;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.networks.NetworkTask;
+import edu.utexas.cs.nn.networks.hyperneat.HyperNEATTask;
+import edu.utexas.cs.nn.networks.hyperneat.Substrate;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.NoisyLonerTask;
@@ -18,6 +20,7 @@ import edu.utexas.cs.nn.util.ClassCreation;
 import edu.utexas.cs.nn.util.GraphicsUtil;
 import edu.utexas.cs.nn.util.MiscUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
+import edu.utexas.cs.nn.util.datastructures.Triple;
 import edu.utexas.cs.nn.util.stats.Statistic;
 import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
 import vizdoom.DoomGame;
@@ -35,7 +38,7 @@ import vizdoom.SpecifyDLL;
  * @param <T>
  *            Phenotype being evolved
  */
-public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>implements NetworkTask {
+public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>implements NetworkTask, HyperNEATTask {
 
 	// For each pixel in the image buffer, the colors are sorted in this order
 	public static final int RED_INDEX = 2;
@@ -151,6 +154,8 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 		actions.add(buttonPresses);
 	}
 
+	public abstract Pair<Integer, Integer> outputSubstrateSize();
+	
 	public abstract void setDoomActions();
 
 	public abstract void setDoomStateVariables();
@@ -321,7 +326,7 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 		int rOffset = 0;
 		int gOffset = 0;
 		int bOffset = 0;
-		if(color == 3){
+		if(color == NUM_COLORS){
 			//we use all colors
 			bOffset = BLUE_INDEX*reducedWidth*reducedHeight;
 			rOffset = RED_INDEX*reducedWidth*reducedHeight;
@@ -500,6 +505,69 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 			}
 		}
 		return smudgedInputs;
+	}
+	
+	
+	/**
+	 * Method that returns a list of information about the substrate layers
+	 * contained in the network.
+	 *
+	 * @return List of Substrates in order from inputs to hidden to output
+	 *         layers
+	 */
+	@Override
+	public List<Substrate> getSubstrateInformation(){
+		int height = Parameters.parameters.integerParameter("doomInputHeight");
+		int width = Parameters.parameters.integerParameter("doomInputWidth");
+		int smudge = Parameters.parameters.integerParameter("doomInputPixelSmudge");
+		Integer reducedHeight = height / smudge;
+		Integer reducedWidth = width / smudge;
+		ArrayList<Substrate> subs = new ArrayList<Substrate>();
+		String name;
+		int color = Parameters.parameters.integerParameter("doomInputColorVal");
+		int start = (color == NUM_COLORS ? 0 : color);
+		int end = (color == NUM_COLORS ? NUM_COLORS : color + 1);
+		for(int i = start; i < end; i ++){
+			name = "Inputs (" + (i == RED_INDEX ? "Red)" : (i == GREEN_INDEX ? "Green)" : "Blue)"));
+			Substrate inputs = new Substrate(new Pair<Integer, Integer>(reducedWidth, reducedHeight), 
+					Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, Substrate.INPUT_SUBSTRATE, 0), name);
+			subs.add(inputs);
+		}
+		Substrate processing = new Substrate(new Pair<Integer, Integer>(reducedWidth, reducedHeight), 
+				Substrate.PROCCESS_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, Substrate.PROCCESS_SUBSTRATE, 0), "Processing");
+		subs.add(processing);
+		Substrate outputs = new Substrate(outputSubstrateSize(), 
+				Substrate.OUTPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, Substrate.OUTPUT_SUBSTRATE, 0), "Outputs");
+		subs.add(outputs);
+		return subs;
+	}
+
+	/**
+	 * Each Substrate has a unique String name, and this method returns a list
+	 * of String pairs indicating which Substrates are connected: The Substrate
+	 * from the first in the pair has links leading into the neurons in the
+	 * Substrate second in the pair.
+	 *
+	 * @return Last of String pairs where all Strings are names of Substrates
+	 *         for the domain.
+	 */
+	@Override
+	public List<Pair<String, String>> getSubstrateConnectivity(){
+		ArrayList<Pair<String, String>> conn = new ArrayList<Pair<String, String>>();
+		String name;
+		int color = Parameters.parameters.integerParameter("doomInputColorVal");
+		int start = (color == NUM_COLORS ? 0 : color);
+		int end = (color == NUM_COLORS ? NUM_COLORS : color + 1);
+		for(int i = start; i < end; i ++){
+			name = "Inputs (" + (i == RED_INDEX ? "Red)" : (i == GREEN_INDEX ? "Green)" : "Blue)"));
+			conn.add(new Pair<String, String>(name, "Processing"));
+		}		
+		conn.add(new Pair<String, String>("Processing", "Outputs"));
+		return conn;
+	}
+	
+	public double[] getSubstrateInputs(List<Substrate> inputSubstrates){
+		throw new UnsupportedOperationException("The regular approach for obtaining VizDoom inputs should be sufficient");
 	}
 	
 }
