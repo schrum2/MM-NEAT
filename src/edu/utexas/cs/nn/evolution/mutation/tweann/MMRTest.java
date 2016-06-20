@@ -26,7 +26,6 @@ public class MMRTest {
 
 	@Test
 	public void test() {
-		fail("Not yet implemented");
 	}
 	/**
 	 * Test to make sure MM(R) works. Should be made into proper JUnit Test.

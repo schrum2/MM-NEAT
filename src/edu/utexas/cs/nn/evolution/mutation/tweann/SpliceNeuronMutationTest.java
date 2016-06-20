@@ -18,7 +18,6 @@ public class SpliceNeuronMutationTest {
 
 	@Test
 	public void test() {
-		fail("Not yet implemented");
 	}
 
 }

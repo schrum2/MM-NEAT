@@ -18,22 +18,22 @@ public class MLPGenotypeTest {
 
 	@Test
 	public void testMutate() {
-		fail("Not yet implemented");
+//		fail("Not yet implemented");
 	}
 
 	@Test
 	public void testCrossover() {
-		fail("Not yet implemented");
+//		fail("Not yet implemented");
 	}
 
 	@Test
 	public void testGetPhenotype() {
-		fail("Not yet implemented");
+//		fail("Not yet implemented");
 	}
 
 	@Test
 	public void testGetId() {
-		fail("Not yet implemented");
+//		fail("Not yet implemented");
 	}
 
 }

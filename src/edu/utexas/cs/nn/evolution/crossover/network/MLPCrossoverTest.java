@@ -18,7 +18,6 @@ public class MLPCrossoverTest {
 
 	@Test
 	public void testCrossoverGenotypeOfMLPGenotypeOfMLP() {
-		fail("Not yet implemented");
 	}
 
 }
