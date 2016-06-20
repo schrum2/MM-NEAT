@@ -304,6 +304,7 @@ public class Parameters {
 		booleanOptions.add("predatorOneHerdCoOpCCQ", false, "Turn on to encourage each independent predator to catch more prey, catch quickly and minimize distance to each individual prey"
 				+ " other than one predator, who minimizes the distance between the prey");
 		booleanOptions.add("predatorCoOpCCQ", false, "Turn on to encourage each independent predator to catch more prey, catch quickly and minimize distance to each individual prey");
+		booleanOptions.add("predatorCoOpCC", false, "Turn on to encourage each independent predator to catch more prey and minimize distance to each individual prey");
 		booleanOptions.add("predatorHerdPrey", false, "Turn on to encourage minimizing the distance between the prey");
 		booleanOptions.add("predatorCatchCloseQuick", false, "Turn on to encourage catching a higher number of the prey quickly and getting close to the prey");
 		booleanOptions.add("predatorCatchClose", true, "Turn on to encourage catching a higher number of the prey and getting close to the prey");

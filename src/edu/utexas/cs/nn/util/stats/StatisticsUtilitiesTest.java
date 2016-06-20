@@ -3,8 +3,6 @@ package edu.utexas.cs.nn.util.stats;
 import static org.junit.Assert.*;
 import org.junit.Test;
 
-import edu.utexas.cs.nn.util.random.RandomNumbers;
-
 public class StatisticsUtilitiesTest {
 
 	private static final double ERROR = .0001;

@@ -20,8 +20,8 @@ public class HyperNEATDummyTask<T> implements HyperNEATTask, Task, SinglePopulat
 	private Substrate output;
 
 	public HyperNEATDummyTask() {
-		input = new Substrate(new Pair<Integer, Integer>(5, 5), Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, 0, 0), "I_0");
-		process = new Substrate(new Pair<Integer, Integer>(5, 5), Substrate.PROCCESS_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, 4, 0), "P_0");
+		input = new Substrate(new Pair<Integer, Integer>(3, 3), Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, 0, 0), "I_0");
+		process = new Substrate(new Pair<Integer, Integer>(3, 3), Substrate.PROCCESS_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, 4, 0), "P_0");
 		output = new Substrate(new Pair<Integer, Integer>(2, 2), Substrate.OUTPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, 8, 0), "O_0");
 	}
 

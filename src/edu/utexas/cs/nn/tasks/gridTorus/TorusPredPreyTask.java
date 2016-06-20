@@ -294,7 +294,7 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 	public String[] outputLabels() {
 		return outputLabels(!preyEvolve);
 	}
-	
+
 	public static String[] outputLabels(boolean forPredators) {
 		// if it is the predator evolving
 		if (forPredators) {
@@ -347,7 +347,7 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 	public static <T extends Network> void getEvolvedControllers(TorusPredPreyController[] container, Genotype<T> g, boolean isPred){
 		getEvolvedControllers(container, g, isPred, 0, container.length);
 	}	
-	
+
 	/**
 	 * retrieve the evolved controllers for the evolved agent's genotype
 	 * 
@@ -379,7 +379,7 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 	public static <T extends Network> void getEvolvedControllers(TorusPredPreyController[] container, Genotype<T>[] genotypes, boolean isPred){
 		getEvolvedControllers(container, genotypes, isPred, 0);
 	}	
-	
+
 	/**
 	 * retrieve the evolved controllers for each of the evolved agents
 	 * 
@@ -446,18 +446,63 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 			} else{
 				addPredatorObjectives(pop);
 			}
+			//only add other scores to the first population, because the other scores
+			//will have all possible objectives for both predators and prey
+			if(pop == 0){
+				addPredatorOther(pop);
+				addPreyOther(pop);
+			}
 		} else{
 			if(preyEvolve){ 
 				addPreyObjectives(pop);
+				//only add other scores to the first population, because the other scores
+				//will have all possible prey objectives
+				if(pop == 0){
+					addPreyOther(pop);
+				}
 			} else{
 				addPredatorObjectives(pop);
+				//only add other scores to the first population, because the other scores
+				//will have all possible predator objectives
+				if(pop == 0){
+					addPredatorOther(pop);
+				}
 			}
 		}
 	}
 
 	/**
-	 * Add all the corresponding fitness objectives and other scores to the list of objectives
-	 * and other scores for the predators at the current population.
+	 * Adds every possible predator objective as an other score
+	 * 
+	 * @param pop, current population
+	 */
+	private void addPredatorOther(int pop){
+		//add other scores to be able to show each fitness score even if it's not effecting evolution
+		//Predator other scores
+		addObjective(new PredatorCatchObjective<T>(), otherScores, false, pop);
+		addObjective(new PredatorMinimizeGameTimeObjective<T>(), otherScores, false, pop);
+		addObjective(new PredatorHerdPreyObjective<T>(), otherScores, false, pop);
+		addObjective(new PredatorEatEachPreyQuicklyObjective<T>(), otherScores, false, pop);
+		addObjective(new PredatorMinimizeDistanceFromPreyObjective<T>(), otherScores, false, pop);
+		if(Parameters.parameters.integerParameter("torusPreys") == 2)
+			addObjective(new PredatorRawalRajagopalanMiikkulainenObjective<T>(), otherScores, false, pop);
+		addObjective(new PredatorCatchCloseObjective<T>(), otherScores, false, pop);
+		addObjective(new PredatorCatchCloseQuickObjective<T>(), otherScores, false, pop);
+		for(int i = 0; i < Parameters.parameters.integerParameter("torusPreys"); i++){
+			addObjective(new PredatorMinimizeDistanceFromIndividualPreyObjective<T>(i), otherScores, false, pop);
+		}
+		for(int i = 0; i < Parameters.parameters.integerParameter("torusPredators"); i++){
+			addObjective(new IndividualPredatorMinimizeDistanceFromPreyObjective<T>(i), otherScores, false, pop);
+		}
+		for(int i = 0; i < Parameters.parameters.integerParameter("torusPredators"); i++){
+			for(int j = 0; j < Parameters.parameters.integerParameter("torusPreys"); j++){
+				addObjective(new IndividualPredatorMinimizeDistanceFromIndividualPreyObjective<T>(i,j), otherScores, false, pop);
+			}
+		}
+	}
+
+	/**
+	 * Add all the corresponding fitness objectives to the list of objectives at the current population.
 	 * Adds every possible objective as an other score if it is the first population, and no other 
 	 * scores at all if it is not the first population.
 	 * 
@@ -524,37 +569,44 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 				addObjective(new PredatorEatEachPreyQuicklyObjective<T>(), objectives, pop);
 			}
 		}
-
-		//add other scores to be able to show each fitness score even if it's not effecting evolution
-		//only add the other scores to the first population, since the other scores has all possible scores
-		if(pop == 0){
-			//Predator other scores
-			addObjective(new PredatorCatchObjective<T>(), otherScores, false, pop);
-			addObjective(new PredatorMinimizeGameTimeObjective<T>(), otherScores, false, pop);
-			addObjective(new PredatorHerdPreyObjective<T>(), otherScores, false, pop);
-			addObjective(new PredatorEatEachPreyQuicklyObjective<T>(), otherScores, false, pop);
-			addObjective(new PredatorMinimizeDistanceFromPreyObjective<T>(), otherScores, false, pop);
-			if(Parameters.parameters.integerParameter("torusPreys") == 2)
-				addObjective(new PredatorRawalRajagopalanMiikkulainenObjective<T>(), otherScores, false, pop);
-			addObjective(new PredatorCatchCloseObjective<T>(), otherScores, false, pop);
-			addObjective(new PredatorCatchCloseQuickObjective<T>(), otherScores, false, pop);
+		if(Parameters.parameters.booleanParameter("predatorCoOpCC")){
+			//all populations are given MultiIndivCC fitnesses with just the individual distance
+			//function corresponding to that agent of this population to each prey
+			addObjective(new PredatorCatchObjective<T>(), objectives, pop);
 			for(int i = 0; i < Parameters.parameters.integerParameter("torusPreys"); i++){
-				addObjective(new PredatorMinimizeDistanceFromIndividualPreyObjective<T>(i), otherScores, false, pop);
-			}
-			for(int i = 0; i < Parameters.parameters.integerParameter("torusPredators"); i++){
-				addObjective(new IndividualPredatorMinimizeDistanceFromPreyObjective<T>(i), otherScores, false, pop);
-			}
-			for(int i = 0; i < Parameters.parameters.integerParameter("torusPredators"); i++){
-				for(int j = 0; j < Parameters.parameters.integerParameter("torusPreys"); j++){
-					addObjective(new IndividualPredatorMinimizeDistanceFromIndividualPreyObjective<T>(i,j), otherScores, false, pop);
-				}
+				addObjective(new IndividualPredatorMinimizeDistanceFromIndividualPreyObjective<T>(pop,i), objectives, pop);
 			}
 		}
 	}
 
 	/**
-	 * Add all the corresponding fitness objectives and other scores to the list of objectives
-	 * and other scores for the prey at the current population.
+	 * Adds every possible prey objective as an other score 
+	 * 
+	 * @param pop, current population
+	 */
+	private void addPreyOther(int pop){
+		//add other scores to be able to show each fitness score even if it's not effecting evolution
+		//Prey other scores
+		addObjective(new PreyMinimizeCaughtObjective<T>(), otherScores, false, pop);
+		addObjective(new PreyMaximizeGameTimeObjective<T>(), otherScores, false, pop);
+		addObjective(new PreyRawalRajagopalanMiikkulainenObjective<T>(), otherScores, false, pop);
+		addObjective(new PreyLongSurvivalTimeObjective<T>(), otherScores, false, pop);
+		addObjective(new PreyMaximizeDistanceFromPredatorsObjective<T>(), otherScores, false, pop);
+		for(int i = 0; i < Parameters.parameters.integerParameter("torusPreys"); i++){
+			addObjective(new IndividualPreyMaximizeDistanceFromPredatorsObjective<T>(i), otherScores, false, pop);
+		}
+		for(int i = 0; i < Parameters.parameters.integerParameter("torusPreys"); i++){
+			addObjective(new IndividualPreyMaximizeDistanceFromClosestPredatorObjective<T>(i), otherScores, false, pop);
+		}
+		for(int i = 0; i < Parameters.parameters.integerParameter("torusPreys"); i++){
+			for(int j = 0; j < Parameters.parameters.integerParameter("torusPredators"); j++){
+				addObjective(new IndividualPreyMaximizeDistanceFromIndividualPredatorObjective<T>(j,i), otherScores, false, pop);
+			}
+		}
+	}
+
+	/**
+	 * Add all the corresponding fitness objectives to the list of objectives at the current population.
 	 * Adds every possible objective as an other score if it is the first population, and no other 
 	 * scores at all if it is not the first population.
 	 * 
@@ -594,28 +646,6 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 			addObjective(new PreyMinimizeCaughtObjective<T>(), objectives, pop);
 			addObjective(new IndividualPreyMaximizeDistanceFromClosestPredatorObjective<T>(pop), objectives, pop);
 			addObjective(new PreyLongSurvivalTimeObjective<T>(), objectives, pop);
-		}
-
-		//add other scores to be able to show each fitness score even if it's not effecting evolution
-		//only add the other scores to the first population, since the other scores has all possible scores
-		if(pop == 0){
-			//Prey other scores
-			addObjective(new PreyMaximizeGameTimeObjective<T>(), otherScores, false, pop);
-			addObjective(new PreyRawalRajagopalanMiikkulainenObjective<T>(), otherScores, false, pop);
-			addObjective(new PreyLongSurvivalTimeObjective<T>(), otherScores, false, pop);
-			addObjective(new PreyMaximizeDistanceFromPredatorsObjective<T>(), otherScores, false, pop);
-			addObjective(new PreyMinimizeCaughtObjective<T>(), otherScores, false, pop);
-			for(int i = 0; i < Parameters.parameters.integerParameter("torusPreys"); i++){
-				addObjective(new IndividualPreyMaximizeDistanceFromPredatorsObjective<T>(i), otherScores, false, pop);
-			}
-			for(int i = 0; i < Parameters.parameters.integerParameter("torusPreys"); i++){
-				addObjective(new IndividualPreyMaximizeDistanceFromClosestPredatorObjective<T>(i), otherScores, false, pop);
-			}
-			for(int i = 0; i < Parameters.parameters.integerParameter("torusPreys"); i++){
-				for(int j = 0; j < Parameters.parameters.integerParameter("torusPredators"); j++){
-					addObjective(new IndividualPreyMaximizeDistanceFromIndividualPredatorObjective<T>(j,i), otherScores, false, pop);
-				}
-			}
 		}
 	}
 

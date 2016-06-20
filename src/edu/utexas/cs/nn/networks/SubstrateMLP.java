@@ -7,7 +7,6 @@ import edu.utexas.cs.nn.evolution.genotypes.HyperNEATCPPNGenotype;
 import edu.utexas.cs.nn.networks.hyperneat.HyperNEATTask;
 import edu.utexas.cs.nn.networks.hyperneat.Substrate;
 import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.util2D.ILocated2D;
@@ -82,9 +81,9 @@ public class SubstrateMLP implements Network {
 	private int ftype;
 
 	public SubstrateMLP(List<Substrate> subs,  List<Pair<String, String>> connections, Network network) {
-		this(subs, connections, network, Parameters.parameters.integerParameter("ftype"));
+		this(subs, connections, network, CommonConstants.ftype);
 	}	
-	
+
 	/**
 	 * Constructor
 	 * @param subs list of substrates provided by task
@@ -159,13 +158,11 @@ public class SubstrateMLP implements Network {
 	private void fillLayers(List<MLPLayer> layers, double[] inputs) { 
 		int x = 0;
 		for(MLPLayer mlplayer : layers) {
-			double[][] layer = mlplayer.nodes;
-			for(int i = 0; i < layer.length; i++) {
-				for(int j = 0; j< layer[0].length; j++) {
-					if(mlplayer.ltype == Substrate.INPUT_SUBSTRATE) {
+			if(mlplayer.ltype == Substrate.INPUT_SUBSTRATE) {
+				double[][] layer = mlplayer.nodes;
+				for(int i = 0; i < layer.length; i++) {
+					for(int j = 0; j< layer[0].length; j++) {
 						layer[i][j] = inputs[x++];
-					}else {
-						layer[i][j] = 0;
 					}
 				}
 			}
@@ -194,7 +191,6 @@ public class SubstrateMLP implements Network {
 	public double[] process(double[] inputs) {
 		assert numInputs == inputs.length: "number of inputs " + numInputs + " does not match size of inputs given: " + inputs.length;
 		double[] outputs = new double[numOutputs];
-		flush();
 		fillLayers(layers, inputs);
 		for(int i = 0; i < connections.size(); i++) {//process through rest of network
 			outputs = propagateOneStep(outputs, connections.get(i));
@@ -214,26 +210,17 @@ public class SubstrateMLP implements Network {
 			if(layer.name.equals(connection.connects.t1)) { fromLayer = layer;} 
 			else if(layer.name.equals(connection.connects.t2)) { toLayer = layer;}
 		}
+		// TODO Change to an assert later
 		if(fromLayer == null || toLayer == null) throw new NullPointerException("either from or to layer was not properly initialized!");
 		double[] outputs;
 		double[][] processOutputs = NetworkUtil.propagateOneStep(fromLayer.nodes, toLayer.nodes, connection.connection);
-		for(double[] a : processOutputs) {
-			for(double b : a) {
-				activate(b, ftype);
+		for(int i = 0; i < processOutputs.length; i++) {
+			for(int j = 0; j < processOutputs[0].length; j++) {
+				processOutputs[i][j] = ActivationFunctions.activation(ftype,  processOutputs[i][j]);
 			}
 		}
 		outputs = ArrayUtil.doubleArrayFrom2DdoubleArray(processOutputs);
 		return outputs;
-	}
-
-	/**
-	 * Returns the activation of a node
-	 * @param input input to node
-	 * @param ftype activation function of node
-	 * @return activation
-	 */
-	protected double activate(double input, int ftype) {
-		return ActivationFunctions.activation(ftype, input);
 	}
 
 	/**
@@ -246,7 +233,26 @@ public class SubstrateMLP implements Network {
 		}
 
 	}
-
+	@Override
+	public String toString() { 
+		System.out.println("connections size: " + connections.size());
+		String result = "";
+		result += numInputs + " Inputs\n";
+		result += numOutputs + " Outputs\n";
+		result += ActivationFunctions.activationName(ftype) + " activation\n";
+		for(MLPConnection connection : connections) {
+			for(int X1 = 0; X1 < connection.connection.length; X1++) {
+				for(int Y1 = 0; Y1 < connection.connection[0].length; Y1++) {
+					for(int X2 = 0; X2 < connection.connection[0][0].length; X2++) {
+						for(int Y2 = 0; Y2 < connection.connection[0][0][0].length; Y2++) {
+							result += connection.connects.t1 + ": [" + X1 + ", " + Y1 + "]" + " : " + connection.connection[X1][Y1][X2][Y2] + " : " + connection.connects.t2 +  ": [" + X2 + ", " + Y2 + "]" +"\n";
+						}
+					}
+				}
+			}
+		}
+		return result;
+	}
 	/**
 	 * Clears given double array
 	 * @param toClear array to clear
@@ -259,19 +265,10 @@ public class SubstrateMLP implements Network {
 		}
 	}
 
-	/**
-	 * Gets a random activation function 
-	 */
-	public void randomActivation(){
-		this.ftype = ActivationFunctions.randomFunction();
+	public double[][][][] getConnections(int index) { 
+		return connections.get(index).connection;
 	}
-	/**
-	 * Changes ftype for nodes
-	 * @param ftype new ftype
-	 */
-	public void changeActivation(int ftype) { 
-		this.ftype = ftype;
-	}
+
 	@Override
 	/**
 	 * Will always return false
