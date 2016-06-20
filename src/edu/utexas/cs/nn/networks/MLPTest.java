@@ -46,27 +46,12 @@ public class MLPTest {
 	@Test
 	public void testProcessComplex() { 
 		mlp = null;
-		mlp = new MLP(3, 5, 1);
-		double[] inputs = {.7, -.5, .1};
+		mlp = new MLP(2, 2, 1);
+		double[] inputs = {.7, -.5};
 		double[] outputs = mlp.process(inputs);
-		double[] hidden = new double[mlp.firstConnectionLayer.length * mlp.firstConnectionLayer[0].length];
-		double actualOutput = 0.0;
-		int x = 0;
-		for(int i = 0; i < mlp.firstConnectionLayer.length; i++) {
-			for(int j = 0; j < mlp.firstConnectionLayer[0].length; j++) {
-				actualOutput += Math.tanh(inputs[i]*mlp.firstConnectionLayer[i][j]);
-			hidden[x++] = Math.tanh(inputs[i]*mlp.firstConnectionLayer[i][j]);
-			}
-		}
-		double actualOutputs = 0;
-		for(int i = 0; i < mlp.secondConnectionLayer.length; i++) { 
-			for(int j = 0; j < mlp.secondConnectionLayer[0].length; j++) {
-//				System.out.println("hidden size" + hidden.length);
-//				MiscUtil.waitForReadStringAndEnterKeyPress();
-				actualOutputs += actualOutput*mlp.secondConnectionLayer[i][j];
-			}
-		}
-		actualOutputs = Math.tanh(actualOutputs);
-		assertEquals(outputs[0], actualOutputs, .0000001);
+		double p1 = Math.tanh(inputs[0]*mlp.firstConnectionLayer[0][0] + inputs[1]*mlp.firstConnectionLayer[1][0]);
+		double p2 = Math.tanh(inputs[0]*mlp.firstConnectionLayer[0][1] + inputs[1]*mlp.firstConnectionLayer[1][1]);;
+		double O = Math.tanh(p1*mlp.secondConnectionLayer[0][0] + p2*mlp.secondConnectionLayer[1][0]);
+		assertEquals(O, outputs[0], .000001);
 	}
 }
