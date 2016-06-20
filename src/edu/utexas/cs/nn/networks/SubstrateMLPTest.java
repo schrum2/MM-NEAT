@@ -11,8 +11,11 @@ import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.HyperNEATCPPNGenotype;
 import edu.utexas.cs.nn.networks.hyperneat.HyperNEATDummyTask;
 import edu.utexas.cs.nn.networks.hyperneat.HyperNEATTask;
+import edu.utexas.cs.nn.networks.hyperneat.HyperNEATUtil;
 import edu.utexas.cs.nn.networks.hyperneat.Substrate;
+import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
+import edu.utexas.cs.nn.util.MiscUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.datastructures.Triple;
 public class SubstrateMLPTest {
@@ -22,7 +25,7 @@ public class SubstrateMLPTest {
 	HyperNEATDummyTask<?> task;
 	@Before
 	public void setUp() throws Exception {
-		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "recurrency:false", "hyperNEAT:true", "task:edu.utexas.cs.nn.networks.hyperneat.HyperNEATDummyTask"});//TODO
+		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "recurrency:false", "hyperNEAT:true", "task:edu.utexas.cs.nn.networks.hyperneat.HyperNEATDummyTask", "ftype:1"});//TODO
 		MMNEAT.loadClasses();
 		hcppn = new HyperNEATCPPNGenotype();
 		task = (HyperNEATDummyTask<?>) MMNEAT.task;
@@ -38,35 +41,39 @@ public class SubstrateMLPTest {
 
 	@Test
 	public void testNumInputs() {
-		assertTrue(25 == mlp.numInputs());
+		assertEquals(25, mlp.numInputs());
 	}
 
 	@Test
 	public void testNumOutputs() {
-		assertTrue(4 == mlp.numOutputs());
+		assertEquals(4, mlp.numOutputs());
 	}
 
 	@Test
 	public void testProcess() {
 		double[] inputs = new double[25];
-		for(int i = 0; i < inputs.length; i++) {
-			inputs[i] = i;
+		for(double i = 0; i < inputs.length; i++) {
+			// All inputs scaled in [0,1]
+			inputs[(int) i] = i/inputs.length;
 		}
 		System.out.println("inputs: " + Arrays.toString(inputs));
+		mlp.flush();
 		double[] outputs = mlp.process(inputs);
-		System.out.println("outputs: " + Arrays.toString(outputs));
+		System.out.println(mlp);
+		System.out.println("Substrate MLP outputs: " + Arrays.toString(outputs));
 		assertEquals(outputs.length, 4);
-		
-
 		TWEANN tweann = hcppn.getPhenotype();
+		System.out.println(tweann);
 		double[] tweannOut = tweann.process(inputs);
+		System.out.println("TWEANN outputs: " + Arrays.toString(tweannOut));
+		MiscUtil.waitForReadStringAndEnterKeyPress();
 		assertEquals(outputs.length, tweannOut.length);
 		for(int i = 0; i < outputs.length; i++) {
 			assertEquals(outputs[i], tweannOut[i], .0001);
 		}
 	}
 
-	@Test
+//	@Test
 	public void testComplexMLP() {
 		try {
 			tearDown();
@@ -165,5 +172,27 @@ public class SubstrateMLPTest {
 		double[] inputs = {1, 2, 3, 4};
 		double[] outputs = mlp.process(inputs);
 		System.out.println("outputs: "+ Arrays.toString(outputs));
+	}
+	
+	@Test
+	public void valuesTest() { 
+		Substrate in = new Substrate(new Pair<Integer, Integer>(1, 1), Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0,0,0), "I_0");
+		Substrate process = new Substrate(new Pair<Integer, Integer>(1, 1), Substrate.PROCCESS_SUBSTRATE, new Triple<Integer, Integer, Integer>(1,0,0), "P_0");
+		Substrate out = new Substrate(new Pair<Integer, Integer>(1, 1), Substrate.OUTPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(2,0,0), "O_0");
+		ArrayList<Substrate> subs = new ArrayList<Substrate>();
+		subs.add(in);
+		subs.add(process);
+		subs.add(out);
+		ArrayList<Pair<String, String>> connections = new ArrayList<Pair<String, String>>();
+		connections.add(new Pair<String, String>("I_0", "P_0"));
+		connections.add(new Pair<String, String>("P_0", "O_0"));
+		mlp = new SubstrateMLP(subs, connections, hcppn.getCPPN());
+		mlp.flush();
+		double[] inputs = {0.5};
+		double[] networkOutputs = mlp.process(inputs);
+		double[][][][] connection1 = mlp.getConnections(0);
+		double[][][][] connection2 = mlp.getConnections(1);
+		double[] actualOutputs = {ActivationFunctions.activation(CommonConstants.ftype, ActivationFunctions.activation(CommonConstants.ftype, connection1[0][0][0][0]*inputs[0])*connection2[0][0][0][0])};
+		assertEquals(networkOutputs[0], actualOutputs[0], .00000001);
 	}
 }
