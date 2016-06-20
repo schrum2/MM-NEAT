@@ -193,7 +193,7 @@ public class SubstrateMLP implements Network {
 		double[] outputs = new double[numOutputs];
 		fillLayers(layers, inputs);
 		for(int i = 0; i < connections.size(); i++) {//process through rest of network
-			outputs = propagateOneStep(outputs, connections.get(i));
+			outputs = propagateOneStep(connections.get(i));
 		}
 		return outputs;
 	}
@@ -203,7 +203,7 @@ public class SubstrateMLP implements Network {
 	 * @param inputs inputs to layer
 	 * @return outputs from layer
 	 */
-	private double[] propagateOneStep(double[] inputs, MLPConnection connection) {
+	private double[] propagateOneStep(MLPConnection connection) {
 		MLPLayer fromLayer = null;
 		MLPLayer toLayer = null;
 		for(MLPLayer layer : layers) {
@@ -217,6 +217,8 @@ public class SubstrateMLP implements Network {
 		for(int i = 0; i < processOutputs.length; i++) {
 			for(int j = 0; j < processOutputs[0].length; j++) {
 				processOutputs[i][j] = ActivationFunctions.activation(ftype,  processOutputs[i][j]);
+				// TODO fix this method. Figure out why intermediate activations are incorrect
+				//System.out.println(connection.connects.t1 + " to " + connection.connects.t2 + " at ["+i+"]["+j+"] = " + processOutputs[i][j]);
 			}
 		}
 		outputs = ArrayUtil.doubleArrayFrom2DdoubleArray(processOutputs);
