@@ -6,6 +6,7 @@ import edu.utexas.cs.nn.evolution.Organism;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.parameters.Parameters;
+import edu.utexas.cs.nn.util.MiscUtil;
 
 public class NNMarioAgent<T extends Network> extends Organism<T> implements Agent {
 
@@ -27,30 +28,30 @@ public class NNMarioAgent<T extends Network> extends Organism<T> implements Agen
 
 	@Override
 	public boolean[] getAction(Environment observation) {
-		byte[][] scene = observation.getLevelSceneObservation(/*1*/);
+		byte[][] worldScene = observation.getLevelSceneObservation(/*1*/);
+		byte[][] enemiesScene = observation.getEnemiesObservation(/*1*/);
 		int xStart = Parameters.parameters.integerParameter("marioInputStartX");
 		int yStart = Parameters.parameters.integerParameter("marioInputStartY");
 		int width = Parameters.parameters.integerParameter("marioInputWidth");
 		int height = Parameters.parameters.integerParameter("marioInputHeight");
-		int xEnd = width + xStart;
-		int yEnd = height + yStart;
-		int buffer = 0;		
-		double[] inputs = new double[(width * height) + 1];
-		//System.out.println("x start: " + xStart);
-		//System.out.println("y start: " + yStart);
-		//System.out.println("x end: " + xEnd);
-		//System.out.println("y end: " + yEnd);
-		
-		for(int y = yStart; y < yEnd; y++){
-			for(int x = xStart; x < xEnd; x++){
-				inputs[buffer++] = probe(x, y, scene);
-				//System.out.print("probe(" + x + ", " + y + "), ");
+		int xEnd = height + xStart;
+		int yEnd = width + yStart;
+		int worldBuffer = 0;
+		int enemiesBuffer = (width * height);
+		double[] inputs = new double[((width * height) * 2) + 1];
+		for(int x = xStart; x < xEnd; x++){
+			for(int y = yStart; y < yEnd; y++){
+				inputs[worldBuffer++] = probe(x, y, worldScene);
+				inputs[enemiesBuffer++] = probe(x, y, enemiesScene);
+				//System.out.println("	(" + x + ", " + y + ") world(" + (worldBuffer-1) + "): " + inputs[worldBuffer-1] + ", enemies(" + (enemiesBuffer-1) + "): " + inputs[enemiesBuffer-1]);
 			}
 		}
-		inputs[buffer++] = 1;
-		//System.out.println("Buffer: " + buffer + " and inputs size: " + inputs.length);
-
-        double[] outputs = n.process(inputs);
+		inputs[enemiesBuffer++] = 1;
+		if(Parameters.parameters.booleanParameter("showMarioInputs")){
+			printMarioWorld(inputs);
+			MiscUtil.waitForReadStringAndEnterKeyPress();   
+		}
+		double[] outputs = n.process(inputs);
         boolean[] action = new boolean[outputs.length];
         for (int i = 0; i < action.length; i++) {
             action[i] = outputs[i] > 0;
@@ -94,5 +95,28 @@ public class NNMarioAgent<T extends Network> extends Organism<T> implements Agen
         int realY = y + 11;
         return (scene[realX][realY] != 0) ? 1 : 0;
     }
-
+	
+	public static void printMarioWorld(double[] inputs){
+		System.out.println("World: (# for objects, X for enemies)");
+		System.out.println("(0 is top left, goes right then down, etc.)");
+		int width = Parameters.parameters.integerParameter("marioInputWidth");
+		int height = Parameters.parameters.integerParameter("marioInputHeight");
+		int worldBuffer = 0;
+		int enemiesBuffer = (width * height);
+		for(int y = 0; y < height; y++){
+			System.out.print("	");
+			for(int x = 0; x < width; x++){
+				String bit;
+				if(inputs[worldBuffer++] == 1.0){
+					bit = "#";
+				} else if (inputs[enemiesBuffer++] == 1.0){
+					bit = "X";
+				} else {
+					bit = "_";
+				}
+				System.out.print("[" + bit + "]");
+			}
+			System.out.println();
+		}
+	}
 }
