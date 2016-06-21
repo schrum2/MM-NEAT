@@ -1,4 +1,7 @@
 package edu.utexas.cs.nn.tasks.rlglue.featureextractors.tetris;
+
+import org.rlcommunity.environments.tetris.TetrisState;
+
 /**
  * Utility class containing functions for RLGlue feature extractors
  * @author Lauren Gillespie
@@ -6,84 +9,40 @@ package edu.utexas.cs.nn.tasks.rlglue.featureextractors.tetris;
  */
 public class TetrisExtractorUtil {
 
+	public static boolean isHole(int index, int[] worldState) {
+		int x = getColumn(index);
+		// Loop while empty (x += width): ignore open space at top
+		//	if x >= index return false
+		
+		// Loop to bottom:
+		//  if x == width return empty ? true : false
+		
+		// Should never get outside of loop! Error message
+		
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	/**
+	 * Return x-coordinate corresponding to worldState index
+	 * @param index in worldState (linear array)
+	 * @return coresponding x-coordinate
+	 */
+	private static int getColumn(int index) {
+		return index % TetrisState.worldWidth;
+	}
 
 	/**
 	 * Calculate the linear array position from (x,y) components based on
-	 * worldWidth. Package level access so we can use it in tests.
-	 *
-	 * @param x
-	 * @param y
-	 * @return
+	 * worldWidth. 
+	 * 
+	 * @param x x-coord
+	 * @param y y-coord
+	 * @return location in array
 	 */
 	public static int calculateLinearArrayPosition(int x, int y, int worldWidth) {
 		int returnValue = y * worldWidth + x;
+		System.out.println("linear array index: " + returnValue);
 		return returnValue;
-	}
-
-	/**
-	 * Extracts number of holes(empty space with a block above it) in input space
-	 * @return number of holes
-	 */
-	public static int calculateHoles(int worldHeight, int worldWidth, int[] worldState)  {
-		int holes = 0;
-		for(int i = 0; i < worldWidth; i++) {
-			for(int j = 0; j < worldHeight; j++) {
-				holes += columnHoles(i, worldState, columnHeight(i ,worldState, worldHeight), worldHeight);
-			}
-		}
-		
-		return holes;
-	}
-	
-public static int[] setHoles(int worldHeight, int worldWidth, int[] worldState) {
-	for(int i = 0 ; i < worldWidth; i++) {
-		isHole(i, worldState, columnHeight(i, worldState, worldHeight), worldHeight);
-	}
-	return worldState;
-}
-	/**
-	 * Finds the number of holes in a given column for the worldstate
-	 * @param x
-	 * @param intArray
-	 * @param height
-	 * @return holes in a given column
-	 */
-	public static void isHole(int x, int[] worldState, int height, int worldHeight) {
-		for (int y = worldHeight - height; y < worldHeight; y++) {
-			if (worldState[calculateLinearArrayPosition(x, y, worldHeight)] == 0) {
-				worldState[calculateLinearArrayPosition(x, y, worldHeight)] = -1;
-			}
-		}
-	}
-	
-	/**
-	 * Finds the number of holes in a given column for the worldstate
-	 * @param x
-	 * @param intArray
-	 * @param height
-	 * @return holes in a given column
-	 */
-	public static int columnHoles(int x, int[] worldState, int height, int worldHeight) {
-		int holes = 0;
-		for (int y = worldHeight - height; y < worldHeight; y++) {
-			if (worldState[calculateLinearArrayPosition(x, y, worldHeight)] == 0) {
-				holes++;
-			}
-		}
-		return holes;
-	}
-	
-	/**
-	 * Finds the height of a column based on the current row and worldstate
-	 * @param x
-	 * @param intArray
-	 * @return world height
-	 */
-	public static int columnHeight(int x, int[] intArray, int worldHeight) {
-		int y = 0;
-		while (y < worldHeight && intArray[TetrisExtractorUtil.calculateLinearArrayPosition(x, y, worldHeight)] == 0) {
-			y++;
-		}
-		return worldHeight - y;
 	}
 }
