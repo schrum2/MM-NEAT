@@ -440,15 +440,14 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 		int xBuffer = x;
 
 		for(int c = cStart; c < cEnd; c++){ // loops either 3 times or once
-			System.out.println("c loop " + c);
 			for (int i = 0; i < height; i++) {
-				System.out.println("	Y is " + yBuffer + " and height is " + height);
+				//System.out.println("	Y is " + yBuffer + " and height is " + height);
 				for (int j = 0; j < width; j++) {
-					System.out.println("		X is " + xBuffer + "width is " + width);
+					//System.out.println("		X is " + xBuffer + "width is " + width);
 					String col = colorIndex == RED_INDEX ? "Red" : (colorIndex == GREEN_INDEX ? "Green" : "Blue");
-					System.out.println("Color " + col);
+					//System.out.println("Color " + col);
 					String pos = "(" + xBuffer + ", " + yBuffer + ") " + col;
-					System.out.println(pos);
+					//System.out.println(pos);
 					labels[j + (i*width) + (c*width*height)] = pos;
 					yBuffer++;
 					xBuffer++;

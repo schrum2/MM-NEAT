@@ -72,13 +72,6 @@ public class VizDoomDefendCenterTask<T extends Network> extends VizDoomTask<T> {
 
 	@Override
 	public String[] sensorLabels() {
-		String[] array = getSensorLabels(Parameters.parameters.integerParameter("doomInputStartX"), 
-				Parameters.parameters.integerParameter("doomInputStartY"), 
-				(Parameters.parameters.integerParameter("doomInputWidth") / Parameters.parameters.integerParameter("doomInputPixelSmudge")), 
-				(Parameters.parameters.integerParameter("doomInputHeight") / Parameters.parameters.integerParameter("doomInputPixelSmudge")), 
-				Parameters.parameters.integerParameter("doomInputColorVal"));
-		System.out.println("Check if these are null");
-		System.out.println(Arrays.toString(array));
 		return getSensorLabels(Parameters.parameters.integerParameter("doomInputStartX"), 
 				Parameters.parameters.integerParameter("doomInputStartY"), 
 				(Parameters.parameters.integerParameter("doomInputWidth") / Parameters.parameters.integerParameter("doomInputPixelSmudge")), 
