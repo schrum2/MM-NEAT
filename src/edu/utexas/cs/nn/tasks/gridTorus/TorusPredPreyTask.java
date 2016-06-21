@@ -510,6 +510,8 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 	 */
 	private void addPredatorObjectives(int pop){
 		//Predator fitness scores
+		if (Parameters.parameters.booleanParameter("predatorCatch"))
+			addObjective(new PredatorCatchObjective<T>(), objectives, pop);
 		if (Parameters.parameters.booleanParameter("predatorMinimizeTotalTime"))
 			addObjective(new PredatorMinimizeGameTimeObjective<T>(), objectives, pop);
 		if (Parameters.parameters.booleanParameter("predatorsEatQuick"))
@@ -520,8 +522,6 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 			addObjective(new PredatorRawalRajagopalanMiikkulainenObjective<T>(), objectives, pop);
 		if (Parameters.parameters.booleanParameter("predatorCatchClose"))
 			addObjective(new PredatorCatchCloseObjective<T>(), objectives, pop);
-		if (Parameters.parameters.booleanParameter("predatorCatch"))
-			addObjective(new PredatorCatchObjective<T>(), objectives, pop);
 		if (Parameters.parameters.booleanParameter("predatorCatchCloseQuick"))
 			addObjective(new PredatorCatchCloseQuickObjective<T>(), objectives, pop);
 		if (Parameters.parameters.booleanParameter("predatorMinimizeIndividualDistance")){
@@ -620,6 +620,8 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 		}
 
 		//Prey fitness scores
+		if (Parameters.parameters.booleanParameter("preyMinimizeCaught"))
+			addObjective(new PreyMinimizeCaughtObjective<T>(), objectives, pop);
 		if (Parameters.parameters.booleanParameter("preyMaximizeTotalTime"))
 			addObjective(new PreyMaximizeGameTimeObjective<T>(), objectives, pop);
 		if (Parameters.parameters.booleanParameter("preyRRM"))
@@ -628,8 +630,6 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 			addObjective(new PreyLongSurvivalTimeObjective<T>(), objectives, pop);
 		if (Parameters.parameters.booleanParameter("preyMaximizeDistance"))
 			addObjective(new PreyMaximizeDistanceFromPredatorsObjective<T>(), objectives, pop);
-		if (Parameters.parameters.booleanParameter("preyMinimizeCaught"))
-			addObjective(new PreyMinimizeCaughtObjective<T>(), objectives, pop);
 		if (Parameters.parameters.booleanParameter("indivPreyMaxDist")){
 			//get separate distance fitness functions for each prey and add them as objectives
 			for(int i = 0; i < Parameters.parameters.integerParameter("torusPreys"); i++){

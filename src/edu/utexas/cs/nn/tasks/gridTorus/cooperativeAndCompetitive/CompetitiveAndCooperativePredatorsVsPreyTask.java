@@ -46,7 +46,6 @@ public class CompetitiveAndCooperativePredatorsVsPreyTask<T extends Network> ext
 		int numPreds = Parameters.parameters.integerParameter("torusPredators");
 		Genotype[] predTeam = new Genotype[numPreds];
 		//NOTE: Assumes that predators were stored first in the "team" list
-		System.out.println(team.length);
 		System.arraycopy(team, 0, predTeam, 0, numPreds);
 		TorusPredPreyTask.getEvolvedControllers(task.evolved, predTeam, true, 0);
 		// Make smaller array to return just the preds
@@ -106,7 +105,7 @@ public class CompetitiveAndCooperativePredatorsVsPreyTask<T extends Network> ext
 				task.addAllObjectives(i, false);
 			}
 			for(int i = 0; i < Parameters.parameters.integerParameter("torusPreys"); i++){
-				task.addAllObjectives(i, true);
+				task.addAllObjectives(i+Parameters.parameters.integerParameter("torusPredators"), true);
 			}
 		}
 		return task;

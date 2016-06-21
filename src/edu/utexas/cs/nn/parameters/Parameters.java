@@ -586,6 +586,7 @@ public class Parameters {
 		stringOptions.add("coevolvedNet2", "", "Source of second network to combine into a coevolved team");
 		stringOptions.add("coevolvedNet3", "", "Source of third network to combine into a coevolved team");
 		stringOptions.add("coevolvedNet4", "", "Source of fourth network to combine into a coevolved team");
+		stringOptions.add("coevolvedNet5", "", "Source of fifth network to combine into a coevolved team");
 		stringOptions.add("multinetworkPopulation1", "", "Source of first population to combine into multinetworks");
 		stringOptions.add("multinetworkPopulation2", "", "Source of second population to combine into multinetworks");
 		stringOptions.add("multinetworkPopulation3", "", "Source of third population to combine into multinetworks");
