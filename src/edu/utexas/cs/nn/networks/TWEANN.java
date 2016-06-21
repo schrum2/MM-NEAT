@@ -95,7 +95,9 @@ public class TWEANN implements Network {
 			assert!Double.isNaN(signal) : "signal is NaN before transmit";
 			assert!Double.isNaN(weight) : "weight is NaN before transmit";
 			assert!Double.isNaN(signal * weight) : "signal * weight is NaN before transmit: " + signal + "*" + weight;
-			target.sum += (signal * weight);
+			//if(target.innovation == 9) System.out.print(target.sum + " += receiving " + signal + "*"+weight+"; ");
+                        target.sum += (signal * weight);
+			//if(target.innovation == 9) System.out.println("new sum:" + target.sum);
 			assert!Double.isNaN(target.sum) : "target.sum is NaN after transmit: " + signal + "*" + weight;
 		}
 	}
@@ -266,7 +268,9 @@ public class TWEANN implements Network {
 		}
 
 		protected void activateAndTransmit() {
+                        //if(this.innovation == 0) System.out.println("Before: " + sum + ":" + activation);
 			activate();
+                        //if(this.innovation == 0) System.out.println("After: " + activation);
 			// Clear the sum after activation
 			sum = 0.0;
 

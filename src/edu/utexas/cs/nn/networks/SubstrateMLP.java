@@ -58,6 +58,7 @@ public class SubstrateMLP implements Network {
 	public class MLPConnection {
 
 		//information stored by MLPConnection class
+                // (x,y) of source followed by (x,y) of target
 		public double[][][][] connection;
 		public Pair<String, String> connects;
 
@@ -89,6 +90,7 @@ public class SubstrateMLP implements Network {
 	 * @param subs list of substrates provided by task
 	 * @param connections connections of substrates provided by task
 	 * @param network cppn used to process coordinates to produce weight of links
+         * @param ftype An activation function type from ActivationFunctions
 	 */
 	public SubstrateMLP(List<Substrate> subs,  List<Pair<String, String>> connections, Network network, int ftype) {
 		assert network.numInputs() == HyperNEATTask.NUM_CPPN_INPUTS:"Number of inputs to network = " + network.numInputs() + " not " + HyperNEATTask.NUM_CPPN_INPUTS;
@@ -151,21 +153,31 @@ public class SubstrateMLP implements Network {
 	}
 
 	/**
-	 * Fills layers with correct inputs
+	 * Fills layers with correct inputs.
+         * Assumes input layers are at start of layer
+         * list in order that they will be filled.
 	 * @param layers list of layers
 	 * @param inputs inputs 
 	 */
 	private void fillLayers(List<MLPLayer> layers, double[] inputs) { 
 		int x = 0;
 		for(MLPLayer mlplayer : layers) {
+                        assert (mlplayer.ltype == Substrate.INPUT_SUBSTRATE) : "Input layers must be at front of list and have room for inputs";
+                        // TODO remove if-statement once we are confident this works
 			if(mlplayer.ltype == Substrate.INPUT_SUBSTRATE) {
-				double[][] layer = mlplayer.nodes;
-				for(int i = 0; i < layer.length; i++) {
-					for(int j = 0; j< layer[0].length; j++) {
-						layer[i][j] = inputs[x++];
+				for(int i = 0; i < mlplayer.nodes.length; i++) {
+					for(int j = 0; j< mlplayer.nodes[0].length; j++) {
+						mlplayer.nodes[i][j] = inputs[x++];
 					}
 				}
 			}
+                        // To replicate TWEANN behavior, all input neurons also
+                        // transmit through an activation function. This is not
+                        // normal MLP behavior, but I don't think there are any
+                        // problems with this. 
+                        NetworkUtil.activateLayer(mlplayer.nodes, ftype);
+                        // After input layers have been passed
+                        if(x == inputs.length) break;
 		}
 	}
 	/**
@@ -190,12 +202,14 @@ public class SubstrateMLP implements Network {
 	@Override
 	public double[] process(double[] inputs) {
 		assert numInputs == inputs.length: "number of inputs " + numInputs + " does not match size of inputs given: " + inputs.length;
-		double[] outputs = new double[numOutputs];
 		fillLayers(layers, inputs);
-		for(int i = 0; i < connections.size(); i++) {//process through rest of network
-			outputs = propagateOneStep(connections.get(i));
+		for(MLPConnection connect: connections) { //process through rest of network
+			propagateOneStep(connect);
 		}
-		return outputs;
+		// TODO Outputs may actually come from multiple output substrates
+                // Therefore, this size() - 1 trick may not always work.
+                double[] outputs = ArrayUtil.doubleArrayFrom2DdoubleArray(layers.get(layers.size() - 1).nodes);
+                return outputs;
 	}
 
 	/**
@@ -203,26 +217,19 @@ public class SubstrateMLP implements Network {
 	 * @param inputs inputs to layer
 	 * @return outputs from layer
 	 */
-	private double[] propagateOneStep(MLPConnection connection) {
+	private void propagateOneStep(MLPConnection connection) {
 		MLPLayer fromLayer = null;
 		MLPLayer toLayer = null;
-		for(MLPLayer layer : layers) {
+		// TODO make this quicker. Linear lookup too slow
+                for(MLPLayer layer : layers) {
 			if(layer.name.equals(connection.connects.t1)) { fromLayer = layer;} 
 			else if(layer.name.equals(connection.connects.t2)) { toLayer = layer;}
 		}
 		// TODO Change to an assert later
 		if(fromLayer == null || toLayer == null) throw new NullPointerException("either from or to layer was not properly initialized!");
-		double[] outputs;
-		double[][] processOutputs = NetworkUtil.propagateOneStep(fromLayer.nodes, toLayer.nodes, connection.connection);
-		for(int i = 0; i < processOutputs.length; i++) {
-			for(int j = 0; j < processOutputs[0].length; j++) {
-				processOutputs[i][j] = ActivationFunctions.activation(ftype,  processOutputs[i][j]);
-				// TODO fix this method. Figure out why intermediate activations are incorrect
-				//System.out.println(connection.connects.t1 + " to " + connection.connects.t2 + " at ["+i+"]["+j+"] = " + processOutputs[i][j]);
-			}
-		}
-		outputs = ArrayUtil.doubleArrayFrom2DdoubleArray(processOutputs);
-		return outputs;
+		// Modifies toLayer.nodes
+                NetworkUtil.propagateOneStep(fromLayer.nodes, toLayer.nodes, connection.connection);
+		NetworkUtil.activateLayer(toLayer.nodes, ftype);
 	}
 
 	/**

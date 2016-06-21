@@ -53,7 +53,7 @@ public class SubstrateMLPTest {
 		double[] inputs = new double[25];
 		for(double i = 0; i < inputs.length; i++) {
 			// All inputs scaled in [0,1]
-			inputs[(int) i] = i/inputs.length;
+			inputs[(int) i] = (1+i)/inputs.length;
 		}
 		System.out.println("inputs: " + Arrays.toString(inputs));
 		mlp.flush();
