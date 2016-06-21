@@ -46,8 +46,23 @@ public class MarioTask<T extends Network> extends NoisyLonerTask<T>implements Ne
 
 	@Override
 	public String[] sensorLabels() {
-		
-		return new String[]{"Top Left", "Top Middle", "Top Right", "Mid Left", "Center", "Mid Right", "Bottom Left", "Bottom Middle", "Bottom Right", "Bias"};
+		int xStart = Parameters.parameters.integerParameter("marioInputStartX");
+		int yStart = Parameters.parameters.integerParameter("marioInputStartY");
+		int width = Parameters.parameters.integerParameter("marioInputWidth");
+		int height = Parameters.parameters.integerParameter("marioInputHeight");
+		int xEnd = height + xStart;
+		int yEnd = width + yStart;
+		int worldBuffer = 0;
+		int enemiesBuffer = (width * height);
+		String[] labels = new String[((width * height) * 2) + 1];
+		for(int x = xStart; x < xEnd; x++){
+			for(int y = yStart; y < yEnd; y++){
+				labels[worldBuffer++] = "Object at (" + x + ", " + y + "0";
+				labels[enemiesBuffer++] = "Enemy at (" + x + ", " + y + "0";
+			}
+		}
+		labels[enemiesBuffer++] = "Bias";		
+		return labels;
 	}
 
 	@Override
