@@ -11,6 +11,12 @@ public class TetrisExtractorUtil {
 
 	public static boolean isHole(int index, int[] worldState) {
 		int x = getColumn(index);
+		boolean isBlockAbove = false;
+		while(x < index) {
+			if(worldState[x] == 1) { isBlockAbove = true;}
+			x += TetrisState.worldWidth;
+		}
+		if(worldState[index] == 1 && isBlockAbove) { return true;}
 		// Loop while empty (x += width): ignore open space at top
 		//	if x >= index return false
 		
@@ -42,7 +48,7 @@ public class TetrisExtractorUtil {
 	 */
 	public static int calculateLinearArrayPosition(int x, int y, int worldWidth) {
 		int returnValue = y * worldWidth + x;
-		System.out.println("linear array index: " + returnValue);
+		//System.out.println("linear array index: " + returnValue);
 		return returnValue;
 	}
 }

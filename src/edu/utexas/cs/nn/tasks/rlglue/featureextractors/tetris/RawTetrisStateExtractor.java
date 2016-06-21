@@ -1,7 +1,5 @@
 package edu.utexas.cs.nn.tasks.rlglue.featureextractors.tetris;
 
-import java.util.Arrays;
-
 import org.rlcommunity.environments.tetris.TetrisState;
 import org.rlcommunity.rlglue.codec.types.Observation;
 
@@ -41,7 +39,7 @@ public class RawTetrisStateExtractor implements FeatureExtractor {
 		int[] worldState = new int[TetrisState.worldWidth * TetrisState.worldHeight]; 
 		System.arraycopy(o.intArray, 0, worldState, 0, TetrisState.worldWidth * TetrisState.worldHeight);
 		double[] result = new double[worldState.length];
-		System.out.println("worldState: " + Arrays.toString(worldState));
+		//System.out.println("worldState: " + Arrays.toString(worldState));
 		for (int i = 0; i < result.length; i++) {
 			if(Math.signum(worldState[i]) == 0){
 				int temp = negative ? -1 : 0;
