@@ -401,10 +401,12 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 		}
 	}
 
+	@SuppressWarnings("rawtypes")
 	public final void addObjective(MsPacManObjective o, ArrayList<MsPacManObjective<T>> list, boolean affectsSelection) {
 		addObjective(o, list, null, affectsSelection);
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public final void addObjective(MsPacManObjective o, ArrayList<MsPacManObjective<T>> list, Statistic override, boolean affectsSelection) {
 		list.add(o);
 		MMNEAT.registerFitnessFunction(o.getClass().getSimpleName(), override, affectsSelection);
@@ -416,6 +418,7 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 		return super.evaluate(individual);
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {
 		Organism<T> organism = evolveGhosts ? new SharedNNGhosts<T>(individual) : new NNMsPacMan<T>(individual);
