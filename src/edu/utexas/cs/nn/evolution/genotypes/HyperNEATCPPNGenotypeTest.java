@@ -48,7 +48,7 @@ public class HyperNEATCPPNGenotypeTest {
 	@Before
 	public void setUp() {
 		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "recurrency:false",
-				"mmdRate:1.0" });
+				"mmdRate:1.0", "hyperNEAT:true", "task:edu.utexas.cs.nn.networks.hyperneat.HyperNEATDummyTask"});
 		MMNEAT.loadClasses();
 		hcppn = new HyperNEATCPPNGenotype();
 		cppn = new TWEANN(new TWEANNGenotype());
@@ -145,7 +145,6 @@ public class HyperNEATCPPNGenotypeTest {
 	@Test
 	public void testGetPhenotype()  {
 		hcppn.getPhenotype();
-		MiscUtil.waitForReadStringAndEnterKeyPress();
 	}
 	@Test
 	public void testHashMapping() {

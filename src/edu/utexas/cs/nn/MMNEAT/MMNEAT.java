@@ -91,6 +91,7 @@ import wox.serial.Easy;
  * 
  * @author Jacob Schrum
  */
+@SuppressWarnings("unused")
 public class MMNEAT {
 
 	public static boolean seedExample = false;
@@ -627,7 +628,12 @@ public class MMNEAT {
 
 
 		HyperNEATTask hnt = (HyperNEATTask) task;
-		setNNInputParameters(HyperNEATTask.NUM_CPPN_INPUTS, hnt.getSubstrateConnectivity().size());
+		System.out.println("hnt size" + hnt.getSubstrateConnectivity().size());
+		int numOutputs = hnt.getSubstrateConnectivity().size();
+		if(Parameters.parameters.booleanParameter("leo")) { 
+			numOutputs  = numOutputs * 2;
+		}
+		setNNInputParameters(HyperNEATTask.NUM_CPPN_INPUTS, numOutputs);
 	}
 
 	/**
