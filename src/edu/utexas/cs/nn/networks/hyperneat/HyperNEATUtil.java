@@ -105,8 +105,15 @@ public class HyperNEATUtil {
 	private static void drawCoord(DrawingPanel p, Pair<Integer, Integer> size, ArrayList<Node> nodes, int nodeIndex) { 
 		for(int j = 0; j < size.t2; j++) {
 			for(int i = 0; i < size.t1; i++) {
-				double activation = nodes.get(nodeIndex++).output();
-				Color c = new Color(activation > 0 ? (int)(activation*255) : 0, 0, activation < 0 ? (int)(-activation*255) : 0);
+				Node node = nodes.get(nodeIndex++);
+				Color c = Color.white;
+				if(node.outputs != null) {
+				double activation = node.output();
+				c = new Color(activation > 0 ? (int)(activation*255) : 0, 0, activation < 0 ? (int)(-activation*255) : 0);
+				} else {
+				c = Color.gray;
+				}
+				assert c != Color.white:"not all nodes were accounted for!";
 				p.getGraphics().setColor(c);
 				p.getGraphics().fillRect(i*SUBS_GRID_SIZE, j*SUBS_GRID_SIZE, SUBS_GRID_SIZE, SUBS_GRID_SIZE);
 			}
