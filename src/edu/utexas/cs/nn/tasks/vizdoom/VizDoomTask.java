@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.graphics.DrawingPanel;
 import edu.utexas.cs.nn.networks.Network;
@@ -431,16 +430,28 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 	 * @return String[] of labels for inputs
 	 */
 	public static String[] getSensorLabels(int x, int y, int width, int height, int color) {
+		
 		int cStart = 0; // always start loop with 0
 		int cEnd = (color == NUM_COLORS? NUM_COLORS : 1); // if color is 3, set the end as total number of colors, otherwise just 1 
 		int colorIndex = (color == NUM_COLORS? BLUE_INDEX : color); // set index of starting color, or only color
 		int size = (color == NUM_COLORS? NUM_COLORS : 1); // if color is 3, set to use all colors in finished array, otherwise just 1
-		
 		String[] labels = new String[width * height * size];
+		int yBuffer = y;
+		int xBuffer = x;
+
 		for(int c = cStart; c < cEnd; c++){ // loops either 3 times or once
-			for (int i = y; i < height; i++) {
-				for (int j = x; j < width; j++) {
-					labels[j + (i*width) + (c*width*height)] = "Position " + j + ", " + i + " at " + (colorIndex == RED_INDEX ? "Red" : (colorIndex == GREEN_INDEX ? "Green" : "Blue"));
+			System.out.println("c loop " + c);
+			for (int i = 0; i < height; i++) {
+				System.out.println("	Y is " + yBuffer + " and height is " + height);
+				for (int j = 0; j < width; j++) {
+					System.out.println("		X is " + xBuffer + "width is " + width);
+					String col = colorIndex == RED_INDEX ? "Red" : (colorIndex == GREEN_INDEX ? "Green" : "Blue");
+					System.out.println("Color " + col);
+					String pos = "(" + xBuffer + ", " + yBuffer + ") " + col;
+					System.out.println(pos);
+					labels[j + (i*width) + (c*width*height)] = pos;
+					yBuffer++;
+					xBuffer++;
 				}
 			}
 		}
