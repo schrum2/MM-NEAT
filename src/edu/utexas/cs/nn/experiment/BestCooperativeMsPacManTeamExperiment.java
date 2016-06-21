@@ -10,14 +10,14 @@ import java.util.ArrayList;
 import wox.serial.Easy;
 
 /**
- * Actually only works for coevolved Ms. Pac-Man experiments. Rename?
+ * Actually only works for coevolved Ms. Pac-Man experiments.
  * 
  * Load saved results from coevolution experiment and evaluate every possible
  * team combination to get their scores.
  *
  * @author Jacob Schrum
  */
-public class BestCooperativeCoevolutionTeamExperiment implements Experiment {
+public class BestCooperativeMsPacManTeamExperiment implements Experiment {
 
 	private GroupTask task;
 	@SuppressWarnings("rawtypes")

@@ -5,7 +5,6 @@ import java.util.Arrays;
 
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
 import edu.utexas.cs.nn.graphics.DrawingPanel;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
@@ -26,7 +25,6 @@ import edu.utexas.cs.nn.util.stats.Statistic;
  This experiment also assumes the task is a GroupTask
  *
  * @author rollinsa
- * @param <T> Type of evolved phenotype
  */
 @SuppressWarnings("unused")
 public class ObjectiveBestTeamsExperiment implements Experiment {
