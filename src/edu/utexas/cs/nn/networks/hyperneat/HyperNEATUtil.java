@@ -6,6 +6,7 @@ import java.util.List;
 
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.graphics.DrawingPanel;
+import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.networks.TWEANN.Node;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 
@@ -107,7 +108,7 @@ public class HyperNEATUtil {
 			for(int i = 0; i < size.t1; i++) {
 				Node node = nodes.get(nodeIndex++);
 				Color c = Color.white;
-				if(node.outputs != null) {
+				if(node.ntype == TWEANN.Node.NTYPE_OUTPUT || !node.outputs.isEmpty()) {
 				double activation = node.output();
 				c = new Color(activation > 0 ? (int)(activation*255) : 0, 0, activation < 0 ? (int)(-activation*255) : 0);
 				} else {
