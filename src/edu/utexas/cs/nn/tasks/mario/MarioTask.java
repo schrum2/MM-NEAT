@@ -14,13 +14,15 @@ import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.networks.NetworkTask;
 import edu.utexas.cs.nn.networks.TWEANN;
+import edu.utexas.cs.nn.networks.hyperneat.HyperNEATTask;
+import edu.utexas.cs.nn.networks.hyperneat.Substrate;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.NoisyLonerTask;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.random.RandomNumbers;
 
-public class MarioTask<T extends Network> extends NoisyLonerTask<T>implements NetworkTask {
+public class MarioTask<T extends Network> extends NoisyLonerTask<T>implements NetworkTask, HyperNEATTask {
 
 	private EvaluationOptions options;
 	public static final int MARIO_INPUTS = 5; //need to find a way to make sure this isn't hardcoded
@@ -131,4 +133,39 @@ public class MarioTask<T extends Network> extends NoisyLonerTask<T>implements Ne
     	mt.oneEval(tg, 0);
     	
     }
+
+    /**
+	 * Method that returns a list of information about the substrate layers
+	 * contained in the network.
+	 *
+	 * @return List of Substrates in order from inputs to hidden to output
+	 *         layers
+	 */
+	@Override
+	public List<Substrate> getSubstrateInformation(){
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * Each Substrate has a unique String name, and this method returns a list
+	 * of String pairs indicating which Substrates are connected: The Substrate
+	 * from the first in the pair has links leading into the neurons in the
+	 * Substrate second in the pair.
+	 *
+	 * @return Last of String pairs where all Strings are names of Substrates
+	 *         for the domain.
+	 */
+	@Override
+	public List<Pair<String, String>> getSubstrateConnectivity(){
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	//may not need
+	@Override
+	public double[] getSubstrateInputs(List<Substrate> inputSubstrates) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
