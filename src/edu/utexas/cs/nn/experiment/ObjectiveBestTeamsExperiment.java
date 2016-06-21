@@ -72,7 +72,8 @@ public class ObjectiveBestTeamsExperiment implements Experiment {
 
 	/**
 	 * Evaluate each individual. 
-	 * Hard coded to work only for CooperativeTasks
+	 * Hard coded to work only for GroupTasks
+	 * (This experiment only works for cooperative, competitive or competitive and cooperative coevolution)
 	 */
 	@SuppressWarnings({ "rawtypes" })
 	@Override
