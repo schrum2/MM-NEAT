@@ -26,21 +26,30 @@ public class RawTetrisStateExtractor implements FeatureExtractor {
         /**
          * An array containing a 1 if a block is present, and a 0 otherwise.
          * @param o
-         * @return 
+         * @return inputs
          */
 	@Override
 	public double[] extract(Observation o) {
 		boolean negative = Parameters.parameters.booleanParameter("absenceNegative");
-
+		boolean senseHoles = Parameters.parameters.booleanParameter("senseHolesDifferently");
+		if(negative && senseHoles) {
+			System.out.println("can't have absenceNegative and senseHoles in the same experiment!");
+			System.exit(1);
+		}
 		int[] worldState = new int[TetrisState.worldWidth * TetrisState.worldHeight]; 
 		System.arraycopy(o.intArray, 0, worldState, 0, TetrisState.worldWidth * TetrisState.worldHeight);
 		double[] result = new double[worldState.length];
+		if(senseHoles) {
+			worldState = TetrisExtractorUtil.setHoles(TetrisState.worldHeight, TetrisState.worldWidth, worldState);
+		}
 		for (int i = 0; i < result.length; i++) {
 			if(Math.signum(worldState[i]) == 0){
 				int temp = negative ? -1 : 0;
 				result[i] = temp;
-			} else {
+			} else if(worldState[i] > 0){
 				result[i] = Math.signum(worldState[i]);
+			} else if(senseHoles){
+				result[i] = -1;
 			}
 		}
 		
