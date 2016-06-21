@@ -183,6 +183,10 @@ public class Parameters {
 	 */
 	public final void fillDefaults() {
 		// Integer parameters
+		integerOptions.add("marioInputStartX", -1, "The x coordinate offset for Mario inputs grid");
+		integerOptions.add("marioInputStartY", -1, "The y coordinate offset for Mario inputs grid");
+		integerOptions.add("marioInputHeight", 3, "The height for a Mario input section");
+		integerOptions.add("marioInputWidth", 3, "The width for a Mario input section");
 		integerOptions.add("marioLevelDifficulty", 3, "Sets the level difficulty for the Mario level");
 		integerOptions.add("marioTimeLimit", 200, "Sets the time limit for the Mario agent in a given level");
 		integerOptions.add("doomInputPixelSmudge", 1, "Determines the amount of pixels to 'smudge' together for inputs");
