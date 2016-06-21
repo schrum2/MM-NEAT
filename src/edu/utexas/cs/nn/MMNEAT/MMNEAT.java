@@ -536,7 +536,7 @@ public class MMNEAT {
 			} else if(task instanceof HyperNEATDummyTask) {
 				System.out.println("set up dummy hyperNEAT task. Used for testing purposes only");
 			} else if (task instanceof MarioTask) {
-				setNNInputParameters(10, Scene.keys.length); //hard coded for now, 10 inputs and 5 buttons
+				setNNInputParameters(((Parameters.parameters.integerParameter("marioInputWidth") * Parameters.parameters.integerParameter("marioInputHeight")) * 2) + 1, MarioTask.MARIO_INPUTS); //hard coded for now, 10 inputs and 5 buttons
 				System.out.println("Set up Mario Task");
 			} else if (task == null) {
 				// this else statement should only happen for JUnit testing cases.

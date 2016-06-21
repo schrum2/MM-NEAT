@@ -23,6 +23,7 @@ import edu.utexas.cs.nn.util.random.RandomNumbers;
 public class MarioTask<T extends Network> extends NoisyLonerTask<T>implements NetworkTask {
 
 	private EvaluationOptions options;
+	public static final int MARIO_INPUTS = 5; //need to find a way to make sure this isn't hardcoded
 
 	public MarioTask(){
     	options = new CmdLineOptions(new String[0]);
@@ -57,8 +58,8 @@ public class MarioTask<T extends Network> extends NoisyLonerTask<T>implements Ne
 		String[] labels = new String[((width * height) * 2) + 1];
 		for(int x = xStart; x < xEnd; x++){
 			for(int y = yStart; y < yEnd; y++){
-				labels[worldBuffer++] = "Object at (" + x + ", " + y + "0";
-				labels[enemiesBuffer++] = "Enemy at (" + x + ", " + y + "0";
+				labels[worldBuffer++] = "Object at (" + x + ", " + y + ")";
+				labels[enemiesBuffer++] = "Enemy at (" + x + ", " + y + ")";
 			}
 		}
 		labels[enemiesBuffer++] = "Bias";		
@@ -67,7 +68,7 @@ public class MarioTask<T extends Network> extends NoisyLonerTask<T>implements Ne
 
 	@Override
 	public String[] outputLabels() {
-		return new String[]{"Left", "Right", "Down", "Jump", "Speed", "??"};
+		return new String[]{"Left", "Right", "Down", "Jump", "Speed"};
 		//Note: These may not be correct, as there are only 5/6 -Gab
 	}
 
