@@ -6,6 +6,7 @@ import org.rlcommunity.environments.tetris.TetrisState;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.networks.hyperneat.HyperNEATTask;
 import edu.utexas.cs.nn.networks.hyperneat.Substrate;
+import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.datastructures.Triple;
 
@@ -52,6 +53,9 @@ public class HyperNEATTetrisTask<T extends Network> extends TetrisTask<T> implem
 			substrateConnectivity = new LinkedList<Pair<String, String>>();
 			substrateConnectivity.add(new Pair<String, String>("input_0", "process_0"));
 			substrateConnectivity.add(new Pair<String, String>("process_0", "output_0"));
+			if(Parameters.parameters.booleanParameter("extraHNTetrisLinks")) {
+				substrateConnectivity.add(new Pair<String, String>("input_0", "output_0"));
+			}
 		}
 		return substrateConnectivity;
 	}
