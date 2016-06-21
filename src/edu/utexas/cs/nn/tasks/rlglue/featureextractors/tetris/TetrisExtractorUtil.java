@@ -11,22 +11,15 @@ public class TetrisExtractorUtil {
 
 	public static boolean isHole(int index, int[] worldState) {
 		int x = getColumn(index);
-		boolean isBlockAbove = false;
 		while(x < index) {
-			if(worldState[x] == 1) { isBlockAbove = true;}
+			if(worldState[x] == 1) { break;}
 			x += TetrisState.worldWidth;
 		}
-		if(worldState[index] == 1 && isBlockAbove) { return true;}
-		// Loop while empty (x += width): ignore open space at top
-		//	if x >= index return false
-		
-		// Loop to bottom:
-		//  if x == width return empty ? true : false
-		
-		// Should never get outside of loop! Error message
-		
-		// TODO Auto-generated method stub
-		return false;
+		if(x == index) return false;
+		while(x < index) {
+			x += TetrisState.worldWidth;
+		}
+		return worldState[x] == 0;
 	}
 
 	/**
