@@ -59,11 +59,12 @@ public class ArrayUtil {
 
 	/**
 	 * returns a 1D double array from a 2D double array
+	 * using column-major order.
 	 * Only works for non-jagged 2D arrays
 	 * @param inputs 2D array
 	 * @return 1D array
 	 */
-	public static double[] doubleArrayFrom2DdoubleArray(double[][] inputs) {
+	public static double[] doubleArrayFrom2DdoubleArrayColMajor(double[][] inputs) {
 		double[] outputs = new double[inputs.length * inputs[0].length];
 		int x = 0;
 		for(double[] a : inputs) {
@@ -73,6 +74,25 @@ public class ArrayUtil {
 		}
 		return outputs;
 	}
+	
+	/**
+	 * returns a 1D double array from a 2D double array
+	 * using row-major order.
+	 * Only works for non-jagged 2D arrays
+	 * @param inputs 2D array
+	 * @return 1D array
+	 */
+	public static double[] doubleArrayFrom2DdoubleArrayRowMajor(double[][] inputs) {
+		double[] outputs = new double[inputs.length * inputs[0].length];
+		int x = 0;
+		for(int i = 0; i < inputs[0].length; i++) {
+			for(int j = 0; j < inputs.length; j++) {
+				outputs[x++] = inputs[j][i];
+			}
+		}
+		return outputs;
+	}
+	
 	public static double[] doubleArrayFromList(List<? extends Number> values) {
 		double[] array = new double[values.size()];
 		int i = 0;

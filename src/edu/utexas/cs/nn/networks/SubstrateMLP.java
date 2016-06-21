@@ -58,7 +58,7 @@ public class SubstrateMLP implements Network {
 	public class MLPConnection {
 
 		//information stored by MLPConnection class
-                // (x,y) of source followed by (x,y) of target
+        // (x,y) of source followed by (x,y) of target
 		public double[][][][] connection;
 		public Pair<String, String> connects;
 
@@ -108,6 +108,7 @@ public class SubstrateMLP implements Network {
 					targetSub = subs.get(z);
 				}
 			} 
+			// TODO change to an assert once this works reliably
 			if(sourceSub == null || targetSub == null) { throw new NullPointerException("either source or target substrate is not in subs list!");}
 			double[][][][] connect = new double[sourceSub.size.t1][sourceSub.size.t2][targetSub.size.t1][targetSub.size.t2];
 			for(int X1 = 0; X1 < sourceSub.size.t1; X1++) {
@@ -127,6 +128,7 @@ public class SubstrateMLP implements Network {
 							} else {//if not, make weight 0, synonymous to no link in first place
 								connect[X1][Y1][X2][Y2] = 0;
 							}
+							//System.out.println(scaledSourceCoordinates + "->" + scaledTargetCoordinates + "="+connect[X1][Y1][X2][Y2]);
 						}
 					}
 				}
@@ -162,22 +164,22 @@ public class SubstrateMLP implements Network {
 	private void fillLayers(List<MLPLayer> layers, double[] inputs) { 
 		int x = 0;
 		for(MLPLayer mlplayer : layers) {
-                        assert (mlplayer.ltype == Substrate.INPUT_SUBSTRATE) : "Input layers must be at front of list and have room for inputs";
-                        // TODO remove if-statement once we are confident this works
+			assert (mlplayer.ltype == Substrate.INPUT_SUBSTRATE) : "Input layers must be at front of list and have room for inputs";
+			// TODO remove if-statement once we are confident this works
 			if(mlplayer.ltype == Substrate.INPUT_SUBSTRATE) {
-				for(int i = 0; i < mlplayer.nodes.length; i++) {
-					for(int j = 0; j< mlplayer.nodes[0].length; j++) {
+				for(int j = 0; j< mlplayer.nodes[0].length; j++) {
+					for(int i = 0; i < mlplayer.nodes.length; i++) {
 						mlplayer.nodes[i][j] = inputs[x++];
 					}
 				}
 			}
-                        // To replicate TWEANN behavior, all input neurons also
-                        // transmit through an activation function. This is not
-                        // normal MLP behavior, but I don't think there are any
-                        // problems with this. 
-                        NetworkUtil.activateLayer(mlplayer.nodes, ftype);
-                        // After input layers have been passed
-                        if(x == inputs.length) break;
+			// To replicate TWEANN behavior, all input neurons also
+			// transmit through an activation function. This is not
+			// normal MLP behavior, but I don't think there are any
+			// problems with this. 
+			NetworkUtil.activateLayer(mlplayer.nodes, ftype);
+			// After input layers have been passed
+			if(x == inputs.length) break;
 		}
 	}
 	/**
@@ -207,9 +209,9 @@ public class SubstrateMLP implements Network {
 			propagateOneStep(connect);
 		}
 		// TODO Outputs may actually come from multiple output substrates
-                // Therefore, this size() - 1 trick may not always work.
-                double[] outputs = ArrayUtil.doubleArrayFrom2DdoubleArray(layers.get(layers.size() - 1).nodes);
-                return outputs;
+		// Therefore, this size() - 1 trick may not always work.
+		double[] outputs = ArrayUtil.doubleArrayFrom2DdoubleArrayRowMajor(layers.get(layers.size() - 1).nodes);
+		return outputs;
 	}
 
 	/**
@@ -244,7 +246,7 @@ public class SubstrateMLP implements Network {
 	}
 	@Override
 	public String toString() { 
-		System.out.println("connections size: " + connections.size());
+		//System.out.println("connections size: " + connections.size());
 		String result = "";
 		result += numInputs + " Inputs\n";
 		result += numOutputs + " Outputs\n";

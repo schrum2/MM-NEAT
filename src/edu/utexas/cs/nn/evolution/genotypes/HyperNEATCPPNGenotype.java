@@ -9,6 +9,7 @@ import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.networks.hyperneat.HyperNEATTask;
 import edu.utexas.cs.nn.networks.hyperneat.Substrate;
 import edu.utexas.cs.nn.parameters.CommonConstants;
+import edu.utexas.cs.nn.util.MiscUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.util2D.ILocated2D;
 import edu.utexas.cs.nn.util.util2D.Tuple2D;
@@ -91,7 +92,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 		constructingNetwork = true; // prevent displaying of substrates
 		//long time = System.currentTimeMillis(); // for timing
 		TWEANN cppn = getCPPN();// CPPN used to create TWEANN network
-		System.out.println("num hyperNEAT cppn outputs: " + cppn.numOutputs());
+		//System.out.println("num hyperNEAT cppn outputs: " + cppn.numOutputs());
 		HyperNEATTask hnt = (HyperNEATTask) MMNEAT.task;// Cast task to HyperNEATTask
 		List<Substrate> subs = hnt.getSubstrateInformation();// extract substrate information from domain
 		List<Pair<String, String>> connections = hnt.getSubstrateConnectivity();// extract substrate connectivity from domain
@@ -118,7 +119,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 		}		
 
 		// the instantiation of the TWEANNgenotype in question
-
+		
 		// Hard coded to have a single neural output module.
 		// May need to fix this down the line.
 		// An archetype index of -1 is used. Hopefully this won't cause
@@ -166,11 +167,13 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 		ArrayList<NodeGene> newNodes = new ArrayList<NodeGene>();
 		// loops through substrate list
 		for (int i = 0; i < subs.size(); i++) {
-			for (int x = 0; x < subs.get(i).size.t1; x++) {
-				for (int y = 0; y < subs.get(i).size.t2; y++) {
+			for (int y = 0; y < subs.get(i).size.t2; y++) {
+				for (int x = 0; x < subs.get(i).size.t1; x++) {
 					// Substrate types and Neuron types match and use same values
+					//System.out.print("("+x+","+y+"): "+innovationID+" ");
 					newNodes.add(new NodeGene(CommonConstants.ftype, subs.get(i).getStype(), innovationID++));
 				}
+				//System.out.println();
 			}
 		}
 		return newNodes;
@@ -245,14 +248,15 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 						double[] outputs = cppn.process(inputs);
 						boolean expressLink = Math.abs(outputs[outputIndex]) > CommonConstants.linkExpressionThreshold;
 						if (expressLink) {
-							linksSoFar.add(new LinkGene(
-									getInnovationID(X1, Y1, s1Index, subs), 
-									getInnovationID(X2, Y2, s2Index, subs), 
-									NetworkUtil.calculateWeight(outputs[outputIndex]),
-									innovationID++, false));
+							long sourceID = getInnovationID(X1, Y1, s1Index, subs);
+							long targetID = getInnovationID(X2, Y2, s2Index, subs);
+							double weight = NetworkUtil.calculateWeight(outputs[outputIndex]);
+							linksSoFar.add(new LinkGene(sourceID, targetID, weight, innovationID++, false));
+							//System.out.println(sourceID+":"+scaledSourceCoordinates + "->" + targetID+":"+scaledTargetCoordinates + "="+weight);
 						} 
-
 					}
+					// System.out.println();
+					//MiscUtil.waitForReadStringAndEnterKeyPress();
 				}
 			}
 		}

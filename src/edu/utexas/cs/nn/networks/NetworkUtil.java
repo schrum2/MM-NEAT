@@ -57,9 +57,9 @@ public class NetworkUtil {
 			for(int Y1 = 0; Y1 < connections[0].length; Y1++) {
 				for(int X2 = 0; X2 < connections[0][0].length; X2++) {
 					for(int Y2 = 0; Y2 < connections[0][0][0].length; Y2++) {
-                                                //if(X2==0&&Y2==0) System.out.print("MLP:beffore "+toLayer[X2][Y2]+" += "+fromLayer[X1][Y1] +"*"+ connections[X1][Y1][X2][Y2]);
+                        //if(X2==0&&Y2==0) System.out.print("("+X1+","+Y1+")->("+X2+","+Y2+") MLP:before "+toLayer[X2][Y2]+" += "+fromLayer[X1][Y1] +"*"+ connections[X1][Y1][X2][Y2]);
 						toLayer[X2][Y2] += fromLayer[X1][Y1] * connections[X1][Y1][X2][Y2];
-                                                //if(X2==0&&Y2==0) System.out.println(" = "+toLayer[X2][Y2]);
+                        //if(X2==0&&Y2==0) System.out.println(" = "+toLayer[X2][Y2]);
 					}
 				}
 			}
@@ -74,9 +74,9 @@ public class NetworkUtil {
     public static void activateLayer(double[][] nodes, int ftype) {
         for (int i = 0; i < nodes.length; i++) {
             for (int j = 0; j < nodes[0].length; j++) {
-                if(i == 0 && j == 0) System.out.println("Before: " + nodes[i][j]);
+                //if(i == 0 && j == 0) System.out.println("Before: " + nodes[i][j]);
                 nodes[i][j] = ActivationFunctions.activation(ftype, nodes[i][j]);
-                if(i == 0 && j == 0) System.out.println("After: " + nodes[i][j]);
+                //if(i == 0 && j == 0) System.out.println("After: " + nodes[i][j]);
             }
         }
     }

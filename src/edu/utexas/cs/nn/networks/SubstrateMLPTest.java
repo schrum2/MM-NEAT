@@ -50,7 +50,7 @@ public class SubstrateMLPTest {
 
 	@Test
 	public void testProcess() {
-		double[] inputs = new double[25];
+		double[] inputs = new double[9];
 		for(double i = 0; i < inputs.length; i++) {
 			// All inputs scaled in [0,1]
 			inputs[(int) i] = (1+i)/inputs.length;
@@ -65,7 +65,7 @@ public class SubstrateMLPTest {
 		System.out.println(tweann);
 		double[] tweannOut = tweann.process(inputs);
 		System.out.println("TWEANN outputs: " + Arrays.toString(tweannOut));
-		MiscUtil.waitForReadStringAndEnterKeyPress();
+		//MiscUtil.waitForReadStringAndEnterKeyPress();
 		assertEquals(outputs.length, tweannOut.length);
 		for(int i = 0; i < outputs.length; i++) {
 			assertEquals(outputs[i], tweannOut[i], .0001);

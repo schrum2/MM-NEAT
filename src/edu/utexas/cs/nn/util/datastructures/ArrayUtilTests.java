@@ -26,7 +26,7 @@ public class ArrayUtilTests {
 	public void doubleArrayFrom2DdoubleArray_test()  {
 		double[][] inputs = {{1, 2, 3}, {4, 5, 6}, {7, 8 ,9}};
 		double[] outputs = {1, 2, 3, 4, 5, 6, 7, 8, 9};
-		assertTrue(Arrays.equals(outputs, ArrayUtil.doubleArrayFrom2DdoubleArray(inputs)));
+		assertTrue(Arrays.equals(outputs, ArrayUtil.doubleArrayFrom2DdoubleArrayColMajor(inputs)));
 		
 	}
 	
