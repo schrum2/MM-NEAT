@@ -18,11 +18,17 @@ import pacman.game.Game;
  */
 public class GameFacade {
 
+	//public static variables
 	public static final int MAX_DISTANCE = 200;
 	public static final int NUM_DIRS = 4;
 	public static final int DANGEROUS_TIME = 5;
 	public Game newG = null;
 
+	/**
+	 * returns what move to make based on the 
+	 * @param index
+	 * @return
+	 */
 	public static MOVE indexToMove(int index) {
 		switch (index) {
 		case 0:
