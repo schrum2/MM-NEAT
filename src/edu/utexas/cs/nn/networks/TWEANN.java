@@ -114,6 +114,7 @@ public class TWEANN implements Network {
 		public final int ftype;
 		public final long innovation;
 		public final boolean frozen;
+		public final double bias;
 		// Outgoing links
 		public List<Link> outputs;
 		protected double sum;
@@ -122,7 +123,7 @@ public class TWEANN implements Network {
 		public int displayX = 0;
 		public int displayY = 0;
 
-		public boolean isLinkRecurrnt(long targetInnovation) {
+		public boolean isLinkRecurrent(long targetInnovation) {
 			for (Link l : outputs) {
 				if (l.target.innovation == targetInnovation) {
 					return l.recurrent;
@@ -137,6 +138,7 @@ public class TWEANN implements Network {
 			result += innovation + ":";
 			result += ntypeName(ntype) + ":";
 			result += ftypeName(ftype) + ":";
+			result += "bias = " + bias + ":";
 			result += "Sum = " + sum + ":";
 			result += outputs;
 			return result;
@@ -194,6 +196,10 @@ public class TWEANN implements Network {
 			return "ERROR";
 		}
 
+		public Node(int ftype, int ntype, long innovation) {
+			this(ftype, ntype, innovation, 0.0);
+		}
+		
 		/**
 		 * New node with no targets, not frozen by default
 		 *
@@ -204,8 +210,8 @@ public class TWEANN implements Network {
 		 * @param innovation
 		 *            = unique innovation number for node
 		 */
-		public Node(int ftype, int ntype, long innovation) {
-			this(ftype, ntype, innovation, false);
+		public Node(int ftype, int ntype, long innovation, double bias) {
+			this(ftype, ntype, innovation, false, bias);
 		}
 
 		/**
@@ -220,11 +226,12 @@ public class TWEANN implements Network {
 		 * @param frozen
 		 *            = true if new link mutations cannot target this node
 		 */
-		public Node(int ftype, int ntype, long innovation, boolean frozen) {
+		public Node(int ftype, int ntype, long innovation, boolean frozen, double bias) {
 			this.innovation = innovation;
 			this.ftype = ftype;
 			this.ntype = ntype;
 			this.frozen = frozen;
+			this.bias = bias;
 			outputs = new LinkedList<Link>();
 			flush();
 		}
@@ -259,7 +266,7 @@ public class TWEANN implements Network {
 		 * remember anything.
 		 */
 		protected final void flush() {
-			sum = 0.0;
+			sum = bias;
 			activation = 0.0;
 		}
 
@@ -268,14 +275,11 @@ public class TWEANN implements Network {
 		}
 
 		protected void activateAndTransmit() {
-            //if(this.innovation == 0) System.out.println("Before: " + sum + ":" + activation);
-			activate();
-            //if(this.innovation == 0) System.out.println("After: " + activation);
-			// Clear the sum after activation
-			sum = 0.0;
+            activate();
+            // reset sum to original bias after activation 
+			sum = bias;
 
 			for (Link l : outputs) {
-				//System.out.print("from " + innovation + " ");
 				l.transmit(activation);
 			}
 		}
@@ -499,7 +503,7 @@ public class TWEANN implements Network {
 		int section = Node.NTYPE_INPUT;
 		for (int i = 0; i < g.nodes.size(); i++) {
 			TWEANNGenotype.NodeGene ng = g.nodes.get(i);
-			Node n = new Node(ng.ftype, ng.ntype, ng.innovation, ng.frozen);
+			Node n = new Node(ng.ftype, ng.ntype, ng.innovation, ng.frozen, ng.bias);
 			switch (ng.ntype) {
 			case Node.NTYPE_INPUT:
 				assert(section == Node.NTYPE_INPUT) : "Genome encoded false network: inputs: \n" + g;

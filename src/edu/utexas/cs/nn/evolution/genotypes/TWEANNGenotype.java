@@ -70,6 +70,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 		public int ftype;
 		// public String origin = "";
 		public boolean fromCombiningCrossover = false;
+		public double bias;
 
 		/**
 		 * New node gene, not frozen by default
@@ -82,7 +83,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 		 *            = unique innovation number for node
 		 */
 		public NodeGene(int ftype, int ntype, long innovation) {
-			this(ftype, ntype, innovation, false);
+			this(ftype, ntype, innovation, false, 0.0);
 		}
 
 		/**
@@ -97,10 +98,11 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 		 * @param frozen
 		 *            = false if node can accept new inputs
 		 */
-		public NodeGene(int ftype, int ntype, long innovation, boolean frozen) {
+		public NodeGene(int ftype, int ntype, long innovation, boolean frozen, double bias) {
 			super(innovation, frozen);
 			this.ftype = ftype;
 			this.ntype = ntype;
+			this.bias = bias;
 		}
 
 		/**
@@ -124,7 +126,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 		 */
 		@Override
 		public NodeGene clone() {
-			return new NodeGene(ftype, ntype, innovation, frozen);
+			return new NodeGene(ftype, ntype, innovation, frozen, bias);
 		}
 
 		/**
@@ -396,12 +398,12 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 
 		for (int i = 0; i < tweann.nodes.size(); i++) {
 			TWEANN.Node n = tweann.nodes.get(i);
-			NodeGene ng = new NodeGene(n.ftype, n.ntype, n.innovation, n.frozen);
+			NodeGene ng = new NodeGene(n.ftype, n.ntype, n.innovation, n.frozen, n.bias);
 			nodes.add(ng);
 			LinkedList<LinkGene> temp = new LinkedList<LinkGene>();
 			for (TWEANN.Link l : n.outputs) {
 				LinkGene lg = new LinkGene(n.innovation, l.target.innovation, l.weight, l.innovation,
-						n.isLinkRecurrnt(l.target.innovation), l.frozen);
+						n.isLinkRecurrent(l.target.innovation), l.frozen);
 				temp.add(lg);
 			}
 			for (int k = 0; k < temp.size(); k++) {

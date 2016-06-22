@@ -16,6 +16,7 @@ import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype.NodeGene;
 import edu.utexas.cs.nn.networks.NetworkUtil;
 import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.networks.hyperneat.Substrate;
+import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.util.CartesianGeometricUtilities;
 import edu.utexas.cs.nn.util.datastructures.Pair;
@@ -86,30 +87,12 @@ public class HyperNEATCPPNGenotypeTest {
 	 */
 	@Test
 	public void testCreateSubstrateNodesSlow() {
-		ArrayList<NodeGene> nodes = hcppn.createSubstrateNodes(subs);
+		ArrayList<NodeGene> nodes = hcppn.createSubstrateNodes( hcppn.getCPPN(), subs);
 		assertEquals(nodes.size(), subs.get(sub1Index).getSize().t1 * subs.get(sub1Index).getSize().t2
 				+ subs.get(sub2Index).getSize().t1 * subs.get(sub2Index).getSize().t2);
 		assertEquals(hcppn.innovationID, nodes.size());
 		tearDown();
 	}
-
-	// Schrum: Should this be removed now?
-	// /**
-	// * Tests creation of list of links. Utilizes other methods tested below
-	// * Only a viable test when command line parameter for test for expression
-	// threshold is off.
-	// * Otherwise, all other functions of createNodeLinks method checked in
-	// other tests
-	// */
-	// *@Test
-	// *public void testCreateNodeLinks() {
-	// * ArrayList<LinkGene> links = hcppn.createNodeLinks(cppn, connections,
-	// subs, sIMap);
-	// * int sizeLinks = subs.get(sub1Index).size.t1*subs.get(sub2Index).size.t2
-	// * subs.get(sub2Index).size.t1*subs.get(sub2Index).size.t2;
-	// * assertEquals(sizeLinks, links.size());
-	// *}
-	// */
 
 	/**
 	 * Tests looping through the two substrates to be connected and setting
@@ -121,11 +104,6 @@ public class HyperNEATCPPNGenotypeTest {
 		int indexOfTest = 0;
 		ArrayList<LinkGene> newLinks = new ArrayList<LinkGene>();
 		hcppn.loopThroughLinks(newLinks, cppn, indexOfTest, subs.get(sub1Index), subs.get(sub2Index), sub1Index, sub2Index, subs);
-		// below check only necessary when parameter for including link is not
-		// on
-		// assertEquals(subs.get(sub1Index).size.t1*subs.get(sub1Index).size.t2*subs.get(sub2Index).size.t1*subs.get(sub2Index).size.t2,
-		// newLinks.size());
-
 		ILocated2D scaledSourceCoordinates = CartesianGeometricUtilities.centerAndScale(new Tuple2D(0, 0),
 				subs.get(sub1Index).size.t1, subs.get(sub1Index).size.t2);
 		Tuple2D size = new Tuple2D(subs.get(sub2Index).size.t1 - 1, subs.get(sub2Index).size.t2 - 1);
@@ -169,5 +147,20 @@ public class HyperNEATCPPNGenotypeTest {
 		double y = -1.0;
 		assertEquals(NetworkUtil.calculateWeight(x), .8, .0001);
 		assertEquals(NetworkUtil.calculateWeight(y), -.8, .0001);
+	}
+	
+	@Test //TODO
+	public void testLeo() {
+		MMNEAT.clearClasses();
+		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "recurrency:false",
+				"mmdRate:1.0", "hyperNEAT:true", "task:edu.utexas.cs.nn.networks.hyperneat.HyperNEATDummyTask", "leo:true"});
+		MMNEAT.loadClasses();
+		assertEquals(CommonConstants.leo, true);
+		//assertEquals();
+	}
+	
+	@Test //TODO
+	public void testBias() { 
+		
 	}
 }
