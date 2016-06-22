@@ -193,7 +193,8 @@ public abstract class GroupTask implements MultiplePopulationTask {
 				}
 			}
 		}
-
+		System.out.println(totalEvals + " evaluations conducted");
+		
 		if (CommonConstants.netio) {
 			// Go through each population (for saving best objectives and genotypes of each population)
 			for(int i = 0; i < pops; i++){
