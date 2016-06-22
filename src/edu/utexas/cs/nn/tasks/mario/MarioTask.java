@@ -148,18 +148,21 @@ public class MarioTask<T extends Network> extends NoisyLonerTask<T>implements Ne
 		int height = Parameters.parameters.integerParameter("marioInputHeight");
 		int width = Parameters.parameters.integerParameter("marioInputWidth");
 		ArrayList<Substrate> subs = new ArrayList<Substrate>();
-		Substrate inputsW = new Substrate(new Pair<Integer, Integer>(width, height), 
+		Substrate inputsWorld = new Substrate(new Pair<Integer, Integer>(width, height), 
 				Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, Substrate.INPUT_SUBSTRATE, 0), "Inputs World");
-		subs.add(inputsW);
-		Substrate inputsE = new Substrate(new Pair<Integer, Integer>(width, height), 
+		subs.add(inputsWorld);
+		Substrate inputsEnemies = new Substrate(new Pair<Integer, Integer>(width, height), 
 				Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, Substrate.INPUT_SUBSTRATE, 0), "Inputs Enemies");
-		subs.add(inputsE);
+		subs.add(inputsEnemies);
 		Substrate processing = new Substrate(new Pair<Integer, Integer>(width, height), 
 				Substrate.PROCCESS_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, Substrate.PROCCESS_SUBSTRATE, 0), "Processing");
 		subs.add(processing);
-		Substrate outputs = new Substrate(new Pair<Integer, Integer>(MARIO_OUTPUTS, 1), 
-				Substrate.OUTPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, Substrate.OUTPUT_SUBSTRATE, 0), "Outputs");
-		subs.add(outputs);
+		Substrate outputsDpad = new Substrate(new Pair<Integer, Integer>(3, 3), //3 by 3 d-pad
+				Substrate.OUTPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, Substrate.OUTPUT_SUBSTRATE, 0), "Outputs D-Pad");
+		subs.add(outputsDpad);
+		Substrate outputsButton = new Substrate(new Pair<Integer, Integer>(1, 1), //1 by 1 button
+				Substrate.OUTPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, Substrate.OUTPUT_SUBSTRATE, 0), "Outputs Button");
+		subs.add(outputsButton);
 		return subs;
 	}
 
@@ -177,7 +180,8 @@ public class MarioTask<T extends Network> extends NoisyLonerTask<T>implements Ne
 		ArrayList<Pair<String, String>> conn = new ArrayList<Pair<String, String>>();
 		conn.add(new Pair<String, String>("Inputs World", "Processing"));
 		conn.add(new Pair<String, String>("Inputs Enemies", "Processing"));
-		conn.add(new Pair<String, String>("Processing", "Outputs"));		
+		conn.add(new Pair<String, String>("Processing", "Outputs D-Pad"));	
+		conn.add(new Pair<String, String>("Processing", "Outputs Button"));	
 		return conn;
 	}
 
