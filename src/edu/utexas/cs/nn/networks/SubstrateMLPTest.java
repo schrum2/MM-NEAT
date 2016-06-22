@@ -40,14 +40,14 @@ public class SubstrateMLPTest {
 		MMNEAT.clearClasses();
 	}
 
-	//@Test
+	@Test
 	public void testNumInputs() {
 		assertEquals(9, mlp.numInputs());
 	}
 
-	//@Test
+	@Test
 	public void testNumOutputs() {
-		assertEquals(4, mlp.numOutputs());
+		assertEquals(8, mlp.numOutputs());
 	}
 
 	@Test
@@ -59,7 +59,7 @@ public class SubstrateMLPTest {
 		}
 		mlp.flush();
 		double[] outputs = mlp.process(inputs);
-		assertEquals(outputs.length, 4);
+		assertEquals(outputs.length, 8);
 		TWEANN tweann = hcppn.getPhenotype();
 		double[] tweannOut = tweann.process(inputs);
 		assertEquals(outputs.length, tweannOut.length);

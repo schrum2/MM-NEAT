@@ -65,16 +65,18 @@ public class SubstrateMLP implements Network {
 		//information stored by MLPConnection class
 		// (x,y) of source followed by (x,y) of target
 		public double[][][][] connection;
-		public Pair<String, String> connects;
+		public MLPLayer source;
+		public MLPLayer target;
 
 		/**
 		 * Constructor for mlpConnection
 		 * @param connection connection between layers
 		 * @param connects the layers connected by MLPConnection
 		 */
-		public MLPConnection(double[][][][] connection, Pair<String, String> connects) { 
+		public MLPConnection(double[][][][] connection, MLPLayer source, MLPLayer target) { 
 			this.connection = connection;
-			this.connects = connects;
+			this.source = source;
+			this.target = target;
 		}
 	}
 
@@ -103,6 +105,7 @@ public class SubstrateMLP implements Network {
 		this.connections = new ArrayList<MLPConnection>();
 		layers = new ArrayList<MLPLayer>();
 		int connectionsIndex = 0;
+		addLayers(subs, layers);
 		for(Pair<String, String> connection : connections) {
 			Substrate sourceSub = null;
 			Substrate targetSub = null;
@@ -113,8 +116,7 @@ public class SubstrateMLP implements Network {
 					targetSub = subs.get(z);
 				}
 			} 
-			// TODO change to an assert once this works reliably
-			if(sourceSub == null || targetSub == null) { throw new NullPointerException("either source or target substrate is not in subs list!");}
+			assert(sourceSub != null && targetSub != null):"either source or target substrate is not in subs list!";
 			double[][][][] connect = new double[sourceSub.size.t1][sourceSub.size.t2][targetSub.size.t1][targetSub.size.t2];
 			for(int X1 = 0; X1 < sourceSub.size.t1; X1++) {
 				for(int Y1 = 0; Y1 < sourceSub.size.t2; Y1++) {
@@ -137,11 +139,20 @@ public class SubstrateMLP implements Network {
 					}
 				}
 			}
-			MLPConnection conn = new MLPConnection(connect, new Pair<String, String>(sourceSub.name, targetSub.name));
+			MLPLayer sourceLayer = null;
+			MLPLayer toLayer = null;
+			for(MLPLayer layer : layers) {
+			if(layer.name.equals(sourceSub.name)) {
+				sourceLayer = layer;
+				} else if(layer.name.equals(targetSub.name)) { 
+				toLayer = layer;
+					}
+		}
+			assert(sourceLayer != null && toLayer != null):"can't find layers corresponding to substrate!";
+			MLPConnection conn = new MLPConnection(connect, sourceLayer, toLayer);
 			this.connections.add(conn);
 			connectionsIndex++;			
 		}
-		addLayers(subs, layers);
 	}
 
 	/**
@@ -169,7 +180,6 @@ public class SubstrateMLP implements Network {
 		int x = 0;
 		for(MLPLayer mlplayer : layers) {
 			assert (mlplayer.ltype == Substrate.INPUT_SUBSTRATE) : "Input layers must be at front of list and have room for inputs";
-			// TODO remove if-statement once we are confident this works
 			if(mlplayer.ltype == Substrate.INPUT_SUBSTRATE) {
 				for(int j = 0; j< mlplayer.nodes[0].length; j++) {
 					for(int i = 0; i < mlplayer.nodes.length; i++) {
@@ -232,15 +242,9 @@ public class SubstrateMLP implements Network {
 	 * @return outputs from layer
 	 */
 	private void propagateOneStep(MLPConnection connection) {
-		MLPLayer fromLayer = null;
-		MLPLayer toLayer = null;
-		// TODO make this quicker. Linear lookup too slow
-		for(MLPLayer layer : layers) {
-			if(layer.name.equals(connection.connects.t1)) { fromLayer = layer;} 
-			else if(layer.name.equals(connection.connects.t2)) { toLayer = layer;}
-		}
-		// TODO Change to an assert later
-		if(fromLayer == null || toLayer == null) throw new NullPointerException("either from or to layer was not properly initialized!");
+		MLPLayer fromLayer = connection.source;
+		MLPLayer toLayer = connection.target;
+		assert(fromLayer != null && toLayer != null):"either from or to layer was not properly initialized!";
 		// Modifies toLayer.nodes
 		NetworkUtil.propagateOneStep(fromLayer.nodes, toLayer.nodes, connection.connection);
 		NetworkUtil.activateLayer(toLayer.nodes, ftype);
@@ -268,7 +272,7 @@ public class SubstrateMLP implements Network {
 				for(int Y1 = 0; Y1 < connection.connection[0].length; Y1++) {
 					for(int X2 = 0; X2 < connection.connection[0][0].length; X2++) {
 						for(int Y2 = 0; Y2 < connection.connection[0][0][0].length; Y2++) {
-							result += connection.connects.t1 + ": [" + X1 + ", " + Y1 + "]" + " : " + connection.connection[X1][Y1][X2][Y2] + " : " + connection.connects.t2 +  ": [" + X2 + ", " + Y2 + "]" +"\n";
+							result += connection.source.name + ": [" + X1 + ", " + Y1 + "]" + " : " + connection.connection[X1][Y1][X2][Y2] + " : " + connection.target.name +  ": [" + X2 + ", " + Y2 + "]" +"\n";
 						}
 					}
 				}

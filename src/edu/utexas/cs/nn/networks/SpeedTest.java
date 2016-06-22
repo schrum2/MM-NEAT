@@ -20,9 +20,12 @@ public class SpeedTest {
 	SubstrateMLP mlp;
 	@Before
 	public void setUp() throws Exception {
-		Parameters.initializeParameterCollections(new String[] { "io:false", "allowMultipleFunctions:true", "netio:false", "recurrency:false", "mmdRate:0.1", "hyperNEAT:true", "task:edu.utexas.cs.nn.networks.hyperneat.HyperNEATSpeedTask", "ftype:1"});
+		Parameters.initializeParameterCollections(new String[] { "io:false", "allowMultipleFunctions:true", "netio:false", "recurrency:false", "hyperNEAT:true", "task:edu.utexas.cs.nn.networks.hyperneat.HyperNEATSpeedTask", "ftype:1"});
 		MMNEAT.loadClasses();
 		HyperNEATCPPNGenotype hcppn = new HyperNEATCPPNGenotype();
+		for(int i = 0; i < 100; i++) {
+			hcppn.mutate();
+		}
 		tweann = hcppn.getPhenotype();
 		HyperNEATTask task = (HyperNEATSpeedTask) MMNEAT.task;
 		mlp = new SubstrateMLP(task.getSubstrateInformation(), task.getSubstrateConnectivity(), hcppn.getCPPN());
@@ -40,7 +43,7 @@ public class SpeedTest {
 	public void test() {
 		double[] inputs = new double[1000];
 		for(int i = 0; i < inputs.length; i++) {
-			inputs[i] = i / inputs.length;
+			inputs[i] = ((double)i) / inputs.length;
 		}
 		double mlpStartTime = System.currentTimeMillis();
 		double[] mlpout = mlp.process(inputs);
@@ -52,8 +55,6 @@ public class SpeedTest {
 		System.out.println("tweann time: " + (tweannEndTime - tweannStartTime));
 		System.out.println("mlp outputs: " + Arrays.toString(mlpout));
 		System.out.println("tweann outputs: " + Arrays.toString(tweannout));
-	//	System.out.println("tweann:" + tweann.toString());
-		//System.out.println("mlp: " + mlp.toString());
 		assertTrue((mlpEndTime - mlpStartTime) > (tweannEndTime - tweannStartTime));
 	}
 
