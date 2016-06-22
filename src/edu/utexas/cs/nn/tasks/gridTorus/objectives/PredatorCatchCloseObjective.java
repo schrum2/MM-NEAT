@@ -4,23 +4,27 @@ import edu.utexas.cs.nn.evolution.Organism;
 import edu.utexas.cs.nn.gridTorus.TorusAgent;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.parameters.Parameters;
+import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
 
 /**
  * 
  * @author rollinsa
  * 
- *         Encourages catching all prey with a very high score for doing so if
+ *         Encourages catching all prey with a very high score for doing so. If
  *         the prey aren't all caught, this fitness function will emphasize that
- *         as many prey are caught as possible, and if not all are caught then
- *         it minimizes distance to the prey
+ *         as many prey are caught as possible, and with minimized distance to
+ *         any remaining prey
  */
 public class PredatorCatchCloseObjective<T extends Network> extends GridTorusObjective<T> {
 
-	public static final double NO_PREY_SCORE = 10;
+	public static final double NO_PREY_SCORE = Parameters.parameters.integerParameter("torusPreys");
 
 	@Override
 	/**
-	 * Find the score of the predator based on if all prey died or not
+	 *         Encourages catching all prey with a very high score for doing so. If
+	 *         the prey aren't all caught, this fitness function will emphasize that
+	 *         as many prey are caught as possible, and with minimized distance to
+	 *         any remaining prey
 	 */
 	public double fitness(Organism<T> individual) {
 
@@ -36,33 +40,52 @@ public class PredatorCatchCloseObjective<T extends Network> extends GridTorusObj
 			}
 		}
 		// when all prey have been caught. Best possible score
+		// this should be the score that would be returned from the
+		// algorithm below when catching all prey, but this avoids
+		// the unnecessary calculations and is a simplified check.
 		if (numCaught == numPrey)
 			return NO_PREY_SCORE;
 
-		double sumOfDistances = PredatorMinimizeDistanceFromPreyObjective.sumOfPredToPreyDistances(preds, prey);
 		int height = Parameters.parameters.integerParameter("torusYDimensions");
 		int width = Parameters.parameters.integerParameter("torusXDimensions");
+
 		// max possible distance is the sum of half the world height and width
 		// because the world wraps around
-		double maxDistance = height / 2 + width / 2;
-		// d = the normalized sum of distances from the predator to each prey at
-		// the end of the simulation
-		double d = sumOfDistances / (numPrey * numPreds * maxDistance);
+		double maxDistance = (height / 2) + (width / 2);
 
-		assert 0 <= d : "normalized distance less than 0! " + d;
-		assert 1 >= d : "normalized distance greater than 1! " + d;
-
-		// make d essentially its inverse so that less distance is encouraged
-		d = 1 - d;
+		//array to hold each preys' sum of distances to each member of the predator team.
+		double [] preyDistancesFromPredTeam = new double [numPrey];
+		for(int i = 0; i < numPrey; i++){
+			//if the prey was eaten
+			if(prey[i] == null){
+				//award the minimum possible distance score because the numCaught weight is the same as the maximum
+				//possible distance score and the numCaught weight will now have just gone up by one
+				//this allows for the distance score to then take into account the distance to the next prey to catch
+				//because the distance to the next prey will now be the distance score (because the max distance score
+				//is the one that is used in the algorithm, in order to score for getting closer to each individual prey)
+				preyDistancesFromPredTeam[i] = 0.0;
+			} else{
+			//Finds the sum of the distances from this prey to each predator, 
+			//divides this result by the product of the maximum possible distance for each predator to normalize the value, 
+			//and take 1 subtracted by this result to encourage minimizing this distance.
+			preyDistancesFromPredTeam[i] = 1.0 - ((StatisticsUtilities.sum(prey[i].distances(preds)))/(numPreds*maxDistance));
+			}
+		}
 
 		// needs to be less than the maximum score, NO_PREY_SCORE, which is
-		// given when all prey are caught
-		double WEIGHT = (NO_PREY_SCORE / (numPrey + 1.0));
+		// given when all prey are caught.
+		double WEIGHT = NO_PREY_SCORE / (numPrey);
+		
+		//one option here is to take the max of the preyDistances array to encourage getting as close as possible to a single prey
+		//another option is to simply factor in all preyDistances in the array, but this could be problematic because the predators
+		//may attempt to go to a middle ground between each prey, since increasing the distance score to one prey by getting closer
+		//to that one prey may mean decreasing the distance score to the other prey.
+		double d = StatisticsUtilities.maximum(preyDistancesFromPredTeam);
 
 		// distance score is weighted to be less than catching each prey, but
-		// the distance score still helps the predators
+		// the distance score still helps the predators to learn how to
 		// get close to the prey if they haven't learned to catch any prey yet
-		return d * WEIGHT + numCaught * WEIGHT;
+		return (d * WEIGHT) + (numCaught * WEIGHT);
 	}
 
 }
