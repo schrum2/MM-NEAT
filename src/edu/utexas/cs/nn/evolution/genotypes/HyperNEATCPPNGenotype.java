@@ -21,9 +21,10 @@ import edu.utexas.cs.nn.util.util2D.Tuple2D;
  */
 public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 
-	public static final int LEO_OUTPUTS_PER_PAIR = 2;
-	public static final int LEO_WEIGHT_INDEX = 0;
-	public static final int LEO_LINK_INDEX = 1;
+	public static int numCPPNOutputsPerLayerPair = 1;
+	public static final int LINK_INDEX = 0;
+	public static int biasIndex = 0;
+	public static int leoIndex = 0;
 	public static boolean constructingNetwork = false;
 	public static final double BIAS = 1.0;// Necessary for most CPPN networks
 	public int innovationID = 0;// provides unique innovation numbers for links and genes
@@ -250,17 +251,17 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
                         double[] outputs = cppn.process(inputs);
                         boolean expressLink = CommonConstants.leo
                                 // Specific network output determines link expression
-                                ? outputs[(LEO_OUTPUTS_PER_PAIR * outputIndex) + LEO_LINK_INDEX] > CommonConstants.linkExpressionThreshold
+                                ? outputs[(numCPPNOutputsPerLayerPair * outputIndex) + leoIndex] > CommonConstants.linkExpressionThreshold
                                 // Output magnitude determines link expression
-                                : Math.abs(outputs[outputIndex]) > CommonConstants.linkExpressionThreshold;
+                                : Math.abs(outputs[(numCPPNOutputsPerLayerPair * outputIndex) + LINK_INDEX]) > CommonConstants.linkExpressionThreshold;
                         long sourceID = getInnovationID(X1, Y1, s1Index, subs);
                         long targetID = getInnovationID(X2, Y2, s2Index, subs);
                         if (expressLink) {
                             double weight = CommonConstants.leo
                                     // LEO takes its weight directly from the designated network output
-                                    ? outputs[(LEO_OUTPUTS_PER_PAIR * outputIndex) + LEO_WEIGHT_INDEX]
+                                    ? outputs[(numCPPNOutputsPerLayerPair * outputIndex) + LINK_INDEX]
                                     // Standard HyperNEAT must scale the weight
-                                    : NetworkUtil.calculateWeight(outputs[outputIndex]);
+                                    : NetworkUtil.calculateWeight(outputs[(numCPPNOutputsPerLayerPair * outputIndex) + LINK_INDEX]);
                             linksSoFar.add(new LinkGene(sourceID, targetID, weight, innovationID++, false));
                         } else {
                             linksSoFar.add(new LinkGene(sourceID, targetID, 0.0, innovationID++, false));

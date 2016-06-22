@@ -30,7 +30,8 @@ public class CommonConstants {
 	public static boolean hyperNEAT;
 	public static boolean imprisonedWhileEdible;
 	public static boolean infiniteEdibleTime;
-        public static boolean leo;
+	public static boolean leo;
+	public static boolean evolveHyperNEATBias;
 	public static boolean logChildScores;
 	public static boolean meltAfterCrossover;
 	public static boolean minimalSubnetExecution;
@@ -83,7 +84,7 @@ public class CommonConstants {
 	public static int numActiveGhosts;
 	public static int pacManLevelTimeLimit;
 	public static int pacmanStartingPowerPillIndex = -1; // Not a commandline
-															// param yet
+	// param yet
 	public static int stopMode;
 	public static int syllabusSize;
 	public static int trialIncreaseFrequency;
@@ -132,6 +133,7 @@ public class CommonConstants {
 		imprisonedWhileEdible = Parameters.parameters.booleanParameter("imprisonedWhileEdible");
 		infiniteEdibleTime = Parameters.parameters.booleanParameter("infiniteEdibleTime");
 		leo = Parameters.parameters.booleanParameter("leo");
+		evolveHyperNEATBias = Parameters.parameters.booleanParameter("evolveHyperNEATBias");
 		logChildScores = Parameters.parameters.booleanParameter("logChildScores");
 		meltAfterCrossover = Parameters.parameters.booleanParameter("meltAfterCrossover");
 		minimalSubnetExecution = Parameters.parameters.booleanParameter("minimalSubnetExecution");

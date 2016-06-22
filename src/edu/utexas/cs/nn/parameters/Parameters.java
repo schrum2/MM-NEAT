@@ -281,6 +281,7 @@ public class Parameters {
 		longOptions.add("lastInnovation", 0l, "Highest innovation number used so far");
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
 		// Boolean parameters
+		booleanOptions.add("evolveHyperNEATBias", false, "adds an output to evolved cppn that outputs bias of node");
 		booleanOptions.add("extraHNTetrisLinks", false, "adds connections between the input and output substrate layers of tetris hyperNEAT substrates");
 		booleanOptions.add("showMarioInputs", false, "Shows the Mario input frame to the user as the agent would see them");
 		booleanOptions.add("senseHolesDifferently", false, "Makes inputs for a hole different than input of a blank space");

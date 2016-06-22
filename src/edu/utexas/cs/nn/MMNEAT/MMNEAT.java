@@ -16,6 +16,7 @@ import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
 import edu.utexas.cs.nn.evolution.GenerationalEA;
 import edu.utexas.cs.nn.evolution.crossover.Crossover;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
+import edu.utexas.cs.nn.evolution.genotypes.HyperNEATCPPNGenotype;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
 import edu.utexas.cs.nn.evolution.lineage.Offspring;
 import edu.utexas.cs.nn.evolution.metaheuristics.AntiMaxModuleUsageFitness;
@@ -621,20 +622,25 @@ public class MMNEAT {
 	public static void hyperNEATOverrides() throws NoSuchMethodException {
 		// Cannot monitor inputs with HyperNEAT because the NetworkTask
 		// interface no longer applies
+		
 		CommonConstants.monitorInputs = false;
 		Parameters.parameters.setBoolean("monitorInputs", false);
 
 		substrateMapping = (SubstrateCoordinateMapping) ClassCreation.createObject("substrateMapping");
 
-
 		HyperNEATTask hnt = (HyperNEATTask) task;
-		System.out.println("hnt size" + hnt.getSubstrateConnectivity().size());
-		int numOutputs = hnt.getSubstrateConnectivity().size();
-		if(CommonConstants.leo) {
-                        System.out.println("HyperNEAT uses LEO: Link Expression Output");
-			numOutputs  = numOutputs * 2;
+		int numSubstratePairings = hnt.getSubstrateConnectivity().size();
+		if(CommonConstants.evolveHyperNEATBias) {
+			System.out.println("HyperNEAT uses Bias output");
+			HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair++;
+			HyperNEATCPPNGenotype.biasIndex = 1;
 		}
-		setNNInputParameters(HyperNEATTask.NUM_CPPN_INPUTS, numOutputs);
+		if(CommonConstants.leo) {
+			System.out.println("HyperNEAT uses LEO: Link Expression Output");
+			HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair++;
+			HyperNEATCPPNGenotype.leoIndex = HyperNEATCPPNGenotype.biasIndex + 1;
+		}
+		setNNInputParameters(HyperNEATTask.NUM_CPPN_INPUTS, numSubstratePairings * HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair);
 	}
 
 	/**
