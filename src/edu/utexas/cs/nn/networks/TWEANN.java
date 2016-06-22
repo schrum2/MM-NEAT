@@ -690,19 +690,20 @@ public class TWEANN implements Network {
 			}
 
 			// determine winner
-			chosenModule = CommonConstants.softmaxModeSelection
+			chosenModule = CommonConstants.softmaxModeSelection 
 					? StatisticsUtilities.softmax(preferences, CommonConstants.softmaxTemperature)
-							: StatisticsUtilities.argmax(preferences);
-					this.moduleUsage[chosenModule]++;
+					: StatisticsUtilities.argmax(preferences);
+					
+			this.moduleUsage[chosenModule]++;
 
-					// add new fatigue
-					preferenceFatigue[chosenModule] += CommonConstants.preferenceNeuronFatigueUnit;
-					// decay fatigue
-					for (int i = 0; i < preferenceFatigue.length; i++) {
-						if (i != chosenModule) { // don't decay chosen mode
-							preferenceFatigue[i] *= CommonConstants.preferenceNeuronDecay;
-						}
-					}
+			// add new fatigue
+			preferenceFatigue[chosenModule] += CommonConstants.preferenceNeuronFatigueUnit;
+			// decay fatigue
+			for (int i = 0; i < preferenceFatigue.length; i++) {
+				if (i != chosenModule) { // don't decay chosen mode
+					preferenceFatigue[i] *= CommonConstants.preferenceNeuronDecay;
+				}
+			}
 		}
 
 		double[] outputs = new double[neuronsPerMode];
