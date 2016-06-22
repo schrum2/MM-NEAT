@@ -398,7 +398,8 @@ public class LevelScene extends Scene implements SpriteContext
         return ret;
     }
 
-    private String encode(byte[][] state, Generalizer generalize)
+    @SuppressWarnings("unused")
+	private String encode(byte[][] state, Generalizer generalize)
     {
         String estate = "";
 
@@ -408,7 +409,8 @@ public class LevelScene extends Scene implements SpriteContext
 
     // Encode
 
-    public String bitmapLevelObservation(int ZLevel)
+    @SuppressWarnings("unused")
+	public String bitmapLevelObservation(int ZLevel)
     {
         String ret = "";
         int MarioXInMap = (int)mario.x/16;
@@ -464,7 +466,8 @@ public class LevelScene extends Scene implements SpriteContext
         return ret;
     }
 
-    public String bitmapEnemiesObservation(int ZLevel)
+    @SuppressWarnings("unused")
+	public String bitmapEnemiesObservation(int ZLevel)
     {
         String ret = "";
         byte[][] enemiesObservation = enemiesObservation(ZLevel);
@@ -653,7 +656,8 @@ public class LevelScene extends Scene implements SpriteContext
         fireballsToCheck.add(fireball);
     }
 
-    public void tick()
+    @SuppressWarnings("unused")
+	public void tick()
     {
         if (GlobalOptions.TimerOn)
                 timeLeft--;
@@ -797,7 +801,7 @@ public class LevelScene extends Scene implements SpriteContext
                             {
                                 mario.carried = null;
                                 shell.die();
-                                ++this.killedCreaturesTotal;
+                                ++LevelScene.killedCreaturesTotal;
                             }
                         }
                     }

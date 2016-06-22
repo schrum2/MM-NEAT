@@ -48,7 +48,8 @@ public class ForwardAgent extends BasicAIAgent implements Agent
         return false;
     }
 
-    private byte[][] decode(String estate)
+    @SuppressWarnings("unused")
+	private byte[][] decode(String estate)
     {
         byte[][] dstate = new byte[Environment.HalfObsWidth*2][Environment.HalfObsHeight*2];
         for (int i = 0; i < dstate.length; ++i)
@@ -103,7 +104,8 @@ public class ForwardAgent extends BasicAIAgent implements Agent
     }
 
 
-    public boolean[] getAction(Environment observation)
+    @SuppressWarnings("unused")
+	public boolean[] getAction(Environment observation)
     {
         //TODO: Discuss increasing diffuculty for handling the gaps.
         // this Agent requires observation.

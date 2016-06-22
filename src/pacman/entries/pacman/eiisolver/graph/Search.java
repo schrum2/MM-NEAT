@@ -159,6 +159,7 @@ public class Search {
 		TransposTable.clear();
 	}
 
+	@SuppressWarnings("unused")
 	public static void searchMove(Game newGame, long timeDue) {
 		game = newGame;
 		long startTime = System.currentTimeMillis();
@@ -238,6 +239,7 @@ public class Search {
 	 * Performs an alpha-beta search. Search depth is variable, continues until
 	 * p.budget < 0.
 	 */
+	@SuppressWarnings("unused")
 	public static void search() {
 		if (emergencyStopped) {
 			if (log) {
@@ -487,6 +489,7 @@ public class Search {
 	 * @return true if extended searching is recommended (because the situation
 	 *         looks dangerous for pacman)
 	 */
+	@SuppressWarnings("unused")
 	private static boolean evaluate(PlyInfo p, boolean movePacman, boolean mustTakePowerPillToSurvive) {
 		boolean extendSearch = false;
 		int graphBonus = 400;
@@ -771,6 +774,7 @@ public class Search {
 	 *
 	 * @return positive value is good for pacman
 	 */
+	@SuppressWarnings("unused")
 	private static int killingGhostEvaluation() {
 		// calculate which pill is closest to pacman, and how far it is away
 		int closestPillDist = 10000;
@@ -1240,6 +1244,7 @@ public class Search {
 		 */
 		private int[] ghostIsCloser;
 
+		@SuppressWarnings("unused")
 		public boolean checkPacmanHealth(int junction1, BigEdge edge1, int junction2, BigEdge edge2, String logMsg) {
 			nrJunctions = 2;
 			junctions[0] = junction1;
@@ -1458,6 +1463,7 @@ public class Search {
 
 	public static class StaticEvaluator2 {
 
+		@SuppressWarnings("unused")
 		private static final boolean statLog = log && false;
 		BorderEdge[] borders = new BorderEdge[50];
 		int nrBorders;
@@ -1825,6 +1831,7 @@ public class Search {
 		 *
 		 * @return true if the ghosts can capture pacman
 		 */
+		@SuppressWarnings("unused")
 		public boolean match() {
 			if (matchCalled) {
 				return matchResult;

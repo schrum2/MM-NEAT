@@ -194,6 +194,7 @@ public class GhostTrap {
 		Node[] path;
 		MOVE firstMoveIntoPath;
 
+		@SuppressWarnings("unused")
 		public boolean isOnPath(Node n) {
 			for (int i = 0; i < path.length; ++i) {
 				if (path[i] == n) {
@@ -203,6 +204,7 @@ public class GhostTrap {
 			return false;
 		}
 
+		@SuppressWarnings("unused")
 		public MOVE getMove(Game game, Board b) {
 			Node pacmanNode = b.graph.nodes[b.pacmanLocation];
 			for (int i = 0; i < path.length - 1; ++i) {

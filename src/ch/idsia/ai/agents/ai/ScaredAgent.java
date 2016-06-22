@@ -19,7 +19,8 @@ public class ScaredAgent extends BasicAIAgent implements Agent {
     int trueJumpCounter = 0;
     int trueSpeedCounter = 0;
 
-    private boolean DangerOfGap(byte[][] levelScene)
+    @SuppressWarnings("unused")
+	private boolean DangerOfGap(byte[][] levelScene)
     {
         for (int x = 9; x < 13; ++x)
         {
