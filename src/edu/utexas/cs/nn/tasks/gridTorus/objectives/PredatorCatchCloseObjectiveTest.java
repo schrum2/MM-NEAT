@@ -29,12 +29,6 @@ public class PredatorCatchCloseObjectiveTest {
 	@Test
 	public void test() {
 
-		// In this case:
-		// WEIGHT = 3.3333333333333333333 , NO_PREY_SCORE = 10
-		// d = sumOfDistances / (numPrey * numPreds * maxDistance)
-		// d = 1 - d
-		// d*WEIGHT + numCaught*WEIGHT
-
 		TorusPredPreyGame game = new TorusPredPreyGame(100, 100, 3, 2);
 		TorusWorld world = new TorusWorld(100, 100);
 		TorusAgent[] prey = game.getPrey();
@@ -51,7 +45,7 @@ public class PredatorCatchCloseObjectiveTest {
 		preds[2].move((int) -preds[2].getX(), (int) -preds[2].getY());
 		// d = 1 , numPrey = 2, numCaught = 0
 		fitness = objective.score(game, null);
-		assertEquals(fitness, (1 / 3.0) * objective.NO_PREY_SCORE, doubleThreshold);
+		assertEquals(fitness, (1 / 2.0) * objective.NO_PREY_SCORE, doubleThreshold);
 
 		// worst score: max distance and no prey caught
 		preds[0].move(50, 50);
@@ -74,10 +68,12 @@ public class PredatorCatchCloseObjectiveTest {
 		for(int i = 0; i < 10; i++)
 			game.advance(predMoves, preyMoves);
 		assertNull(prey[0]);
-		// d = .5333333333333333 , numPrey = 2, numCaught = 1
-		//1.77777776 + 3.33333333 = 5.11111109
+		//distances from prey 1 (prey 1 hasnt been caught): 100, 100, 80
+		// 280/300 = .933333333333333333333333333...
+		// 1 - .93333333333333333333333333333333... = 0.066666666666666666666666666666666666666667...
+		//1.0 + 0.066666666666666666666666666666666666666667.. = 1.0666666666666667..
 		fitness = objective.score(game, null);
-		assertEquals(fitness, 5.11111109, doubleThreshold); 
+		assertEquals(fitness, 1.0666666666666667, doubleThreshold); 
 
 		// make prey null and see if max fitness score is given
 		// because all of the prey were caught

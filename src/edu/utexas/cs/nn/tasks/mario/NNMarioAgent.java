@@ -1,10 +1,12 @@
 package edu.utexas.cs.nn.tasks.mario;
 
 import ch.idsia.ai.agents.Agent;
+import ch.idsia.mario.engine.sprites.Mario;
 import ch.idsia.mario.environments.Environment;
 import edu.utexas.cs.nn.evolution.Organism;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.networks.Network;
+import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.util.MiscUtil;
 
@@ -12,7 +14,11 @@ public class NNMarioAgent<T extends Network> extends Organism<T> implements Agen
 
 	Network n;
 	private String name = "NNMarioAgent";
-	
+	static final int SUB_LEFT = 3;
+    static final int SUB_RIGHT = 5;
+    static final int SUB_DOWN = 7;
+    static final int SUB_JUMP = 1;
+    static final int SUB_SPEED = 9;
 	public NNMarioAgent(Genotype<T> genotype) {
 		super(genotype);
 		n = genotype.getPhenotype();
@@ -38,7 +44,12 @@ public class NNMarioAgent<T extends Network> extends Organism<T> implements Agen
 		int yEnd = width + yStart;
 		int worldBuffer = 0;
 		int enemiesBuffer = (width * height);
-		double[] inputs = new double[((width * height) * 2) + 1];
+		double[] inputs;
+		if(!CommonConstants.hyperNEAT){
+			inputs = new double[((width * height) * 2) + 1];
+		} else { 
+			inputs = new double[((width * height) * 2)];
+		}
 		for(int x = xStart; x < xEnd; x++){
 			for(int y = yStart; y < yEnd; y++){
 				inputs[worldBuffer++] = probe(x, y, worldScene);
@@ -46,15 +57,27 @@ public class NNMarioAgent<T extends Network> extends Organism<T> implements Agen
 				//System.out.println("	(" + x + ", " + y + ") world(" + (worldBuffer-1) + "): " + inputs[worldBuffer-1] + ", enemies(" + (enemiesBuffer-1) + "): " + inputs[enemiesBuffer-1]);
 			}
 		}
-		inputs[enemiesBuffer++] = 1;
+		if(!CommonConstants.hyperNEAT){
+			inputs[enemiesBuffer++] = 1;
+		}
 		if(Parameters.parameters.booleanParameter("showMarioInputs")){
 			printMarioWorld(inputs);
 			MiscUtil.waitForReadStringAndEnterKeyPress();   
 		}
+		
 		double[] outputs = n.process(inputs);
+				
         boolean[] action = new boolean[outputs.length];
-        for (int i = 0; i < action.length; i++) {
-            action[i] = outputs[i] > 0;
+        if(!CommonConstants.hyperNEAT){
+	        for (int i = 0; i < action.length; i++) {
+	            action[i] = outputs[i] > 0;
+	        }
+        } else {
+            action[Mario.KEY_LEFT] = outputs[SUB_LEFT] > 0; // Left
+            action[Mario.KEY_RIGHT] = outputs[SUB_RIGHT] > 0;
+            action[Mario.KEY_DOWN] = outputs[SUB_DOWN] > 0;
+            action[Mario.KEY_JUMP] = outputs[SUB_JUMP] > 0;
+            action[Mario.KEY_SPEED] = outputs[SUB_SPEED] > 0;
         }
         return action;
 	}

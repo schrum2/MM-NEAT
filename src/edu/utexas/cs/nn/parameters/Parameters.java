@@ -281,6 +281,13 @@ public class Parameters {
 		longOptions.add("lastInnovation", 0l, "Highest innovation number used so far");
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
 		// Boolean parameters
+		booleanOptions.add("tetrisAllowLine", true, "Determines whether or not Line pieces will shown up in Tetris");
+		booleanOptions.add("tetrisAllowSquare", true, "Determines whether or not Square pieces will shown up in Tetris");
+		booleanOptions.add("tetrisAllowTri", true, "Determines whether or not Tri pieces will shown up in Tetris");
+		booleanOptions.add("tetrisAllowSShape", true, "Determines whether or not SShape pieces will shown up in Tetris");
+		booleanOptions.add("tetrisAllowZShape", true, "Determines whether or not ZShape pieces will shown up in Tetris");
+		booleanOptions.add("tetrisAllowLShape", true, "Determines whether or not LShape pieces will shown up in Tetris");
+		booleanOptions.add("tetrisAllowJShape", true, "Determines whether or not JShape pieces will shown up in Tetris");
 		booleanOptions.add("evolveHyperNEATBias", false, "adds an output to evolved cppn that outputs bias of node");
 		booleanOptions.add("extraHNTetrisLinks", false, "adds connections between the input and output substrate layers of tetris hyperNEAT substrates");
 		booleanOptions.add("showMarioInputs", false, "Shows the Mario input frame to the user as the agent would see them");

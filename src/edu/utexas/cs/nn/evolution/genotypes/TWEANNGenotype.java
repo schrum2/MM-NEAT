@@ -1275,7 +1275,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 		if (MMNEAT.ea instanceof MultiplePopulationGenerationalEA) {
 			// Networks from different sub-populations could have differing
 			// numbers of inputs and outputs
-			result = new TWEANNGenotype(this.numIn, this.numOut, this.archetypeIndex);
+			result = new TWEANNGenotype(this.numIn, this.neuronsPerModule, this.archetypeIndex);
 		} else {
 			result = new TWEANNGenotype(MMNEAT.networkInputs, MMNEAT.networkOutputs, this.archetypeIndex);
 		}

@@ -1,0 +1,3 @@
+cd ..
+cd ..
+java -jar dist/MM-NEATv2.jar runNumber:%1 randomSeed:%1 base:mario trials:5 maxGens:100 mu:50 io:true netio:true mating:true task:edu.utexas.cs.nn.tasks.mario.MarioTask cleanOldNetworks:true fs:false log:Mario-Hyper saveTo:Hyper watch:false marioInputStartX:-3 marioInputStartY:-2 marioInputWidth:12 marioInputHeight:5 showMarioInputs:false hyperNEAT:true genotype:edu.utexas.cs.nn.evolution.genotypes.HyperNEATCPPNGenotype allowMultipleFunctions:true ftype:1 netChangeActivationRate:0.3
