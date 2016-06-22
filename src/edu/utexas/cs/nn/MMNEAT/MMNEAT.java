@@ -630,7 +630,8 @@ public class MMNEAT {
 		HyperNEATTask hnt = (HyperNEATTask) task;
 		System.out.println("hnt size" + hnt.getSubstrateConnectivity().size());
 		int numOutputs = hnt.getSubstrateConnectivity().size();
-		if(Parameters.parameters.booleanParameter("leo")) { 
+		if(CommonConstants.leo) {
+                        System.out.println("HyperNEAT uses LEO: Link Expression Output");
 			numOutputs  = numOutputs * 2;
 		}
 		setNNInputParameters(HyperNEATTask.NUM_CPPN_INPUTS, numOutputs);

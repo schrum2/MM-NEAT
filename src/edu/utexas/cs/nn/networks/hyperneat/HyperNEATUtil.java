@@ -107,12 +107,12 @@ public class HyperNEATUtil {
 		for(int j = 0; j < size.t2; j++) {
 			for(int i = 0; i < size.t1; i++) {
 				Node node = nodes.get(nodeIndex++);
-				Color c = Color.white;
+				Color c;
 				if(node.ntype == TWEANN.Node.NTYPE_OUTPUT || !node.outputs.isEmpty()) {
-				double activation = node.output();
-				c = new Color(activation > 0 ? (int)(activation*255) : 0, 0, activation < 0 ? (int)(-activation*255) : 0);
+                                    double activation = node.output();
+                                    c = new Color(activation > 0 ? (int)(activation*255) : 0, 0, activation < 0 ? (int)(-activation*255) : 0);
 				} else {
-				c = Color.gray;
+                                    c = Color.gray;
 				}
 				assert c != Color.white:"not all nodes were accounted for!";
 				p.getGraphics().setColor(c);

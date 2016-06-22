@@ -30,6 +30,7 @@ public class CommonConstants {
 	public static boolean hyperNEAT;
 	public static boolean imprisonedWhileEdible;
 	public static boolean infiniteEdibleTime;
+        public static boolean leo;
 	public static boolean logChildScores;
 	public static boolean meltAfterCrossover;
 	public static boolean minimalSubnetExecution;
@@ -130,6 +131,7 @@ public class CommonConstants {
 		hyperNEAT = Parameters.parameters.booleanParameter("hyperNEAT");
 		imprisonedWhileEdible = Parameters.parameters.booleanParameter("imprisonedWhileEdible");
 		infiniteEdibleTime = Parameters.parameters.booleanParameter("infiniteEdibleTime");
+		leo = Parameters.parameters.booleanParameter("leo");
 		logChildScores = Parameters.parameters.booleanParameter("logChildScores");
 		meltAfterCrossover = Parameters.parameters.booleanParameter("meltAfterCrossover");
 		minimalSubnetExecution = Parameters.parameters.booleanParameter("minimalSubnetExecution");

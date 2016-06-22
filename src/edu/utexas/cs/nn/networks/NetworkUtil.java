@@ -19,7 +19,7 @@ public class NetworkUtil {
 	 * @return Scaled synaptic weight
 	 */
 	public static double calculateWeight(double originalOutput) {
-		assert(Math.abs(originalOutput) > CommonConstants.linkExpressionThreshold) : "This link should not be expressed: " + originalOutput;
+		assert(CommonConstants.leo || Math.abs(originalOutput) > CommonConstants.linkExpressionThreshold) : "This link should not be expressed: " + originalOutput;
 		if (originalOutput > CommonConstants.linkExpressionThreshold) {
 			return originalOutput - CommonConstants.linkExpressionThreshold;
 		} else {

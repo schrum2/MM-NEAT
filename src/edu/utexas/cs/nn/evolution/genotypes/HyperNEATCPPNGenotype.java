@@ -234,39 +234,43 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 	 *            list of substrates
 	 *
 	 */
-	public void loopThroughLinks(ArrayList<LinkGene> linksSoFar, TWEANN cppn, int outputIndex, Substrate s1, Substrate s2, int s1Index, int s2Index, List<Substrate> subs) {
-		// searches through width of first substrate
-		for (int X1 = 0; X1 < s1.size.t1; X1++) {
-			// searches through height of first substrate
-			for (int Y1 = 0; Y1 < s1.size.t2; Y1++) {
-				// searches through width of second substrate
-				for (int X2 = 0; X2 < s2.size.t1; X2++) {
-					// searches through height of second substrate
-					for (int Y2 = 0; Y2 < s2.size.t2; Y2++) {
-						// CPPN inputs need to be centered and scaled
-						ILocated2D scaledSourceCoordinates = MMNEAT.substrateMapping.transformCoordinates(new Tuple2D(X1, Y1), s1.size.t1, s1.size.t2);
-						ILocated2D scaledTargetCoordinates = MMNEAT.substrateMapping.transformCoordinates(new Tuple2D(X2, Y2), s2.size.t1, s2.size.t2);
-						// inputs to CPPN 
-						double[] inputs = { scaledSourceCoordinates.getX(), scaledSourceCoordinates.getY(), scaledTargetCoordinates.getX(), scaledTargetCoordinates.getY(), BIAS }; 
-						double[] outputs = cppn.process(inputs);
-						boolean expressLink = Parameters.parameters.booleanParameter("leo")
-								? outputs[(LEO_OUTPUTS_PER_PAIR * outputIndex) + LEO_LINK_INDEX] > CommonConstants.linkExpressionThreshold
-										: Math.abs(outputs[outputIndex]) > CommonConstants.linkExpressionThreshold;
-										long sourceID = getInnovationID(X1, Y1, s1Index, subs);
-										long targetID = getInnovationID(X2, Y2, s2Index, subs);
-										if(expressLink) {
-											double weight = NetworkUtil.calculateWeight(Parameters.parameters.booleanParameter("leo") 
-													? outputs[(LEO_OUTPUTS_PER_PAIR * outputIndex) + LEO_WEIGHT_INDEX] 
-															: outputs[outputIndex]);
-											linksSoFar.add(new LinkGene(sourceID, targetID, weight, innovationID++, false));
-										} else {
-											linksSoFar.add(new LinkGene(sourceID, targetID, 0.0, innovationID++, false));
-										}
-					} 
-				}
-			}
-		}
-	}
+    public void loopThroughLinks(ArrayList<LinkGene> linksSoFar, TWEANN cppn, int outputIndex, Substrate s1, Substrate s2, int s1Index, int s2Index, List<Substrate> subs) {
+        // searches through width of first substrate
+        for (int X1 = 0; X1 < s1.size.t1; X1++) {
+            // searches through height of first substrate
+            for (int Y1 = 0; Y1 < s1.size.t2; Y1++) {
+                // searches through width of second substrate
+                for (int X2 = 0; X2 < s2.size.t1; X2++) {
+                    // searches through height of second substrate
+                    for (int Y2 = 0; Y2 < s2.size.t2; Y2++) {
+                        // CPPN inputs need to be centered and scaled
+                        ILocated2D scaledSourceCoordinates = MMNEAT.substrateMapping.transformCoordinates(new Tuple2D(X1, Y1), s1.size.t1, s1.size.t2);
+                        ILocated2D scaledTargetCoordinates = MMNEAT.substrateMapping.transformCoordinates(new Tuple2D(X2, Y2), s2.size.t1, s2.size.t2);
+                        // inputs to CPPN 
+                        double[] inputs = {scaledSourceCoordinates.getX(), scaledSourceCoordinates.getY(), scaledTargetCoordinates.getX(), scaledTargetCoordinates.getY(), BIAS};
+                        double[] outputs = cppn.process(inputs);
+                        boolean expressLink = CommonConstants.leo
+                                // Specific network output determines link expression
+                                ? outputs[(LEO_OUTPUTS_PER_PAIR * outputIndex) + LEO_LINK_INDEX] > CommonConstants.linkExpressionThreshold
+                                // Output magnitude determines link expression
+                                : Math.abs(outputs[outputIndex]) > CommonConstants.linkExpressionThreshold;
+                        long sourceID = getInnovationID(X1, Y1, s1Index, subs);
+                        long targetID = getInnovationID(X2, Y2, s2Index, subs);
+                        if (expressLink) {
+                            double weight = CommonConstants.leo
+                                    // LEO takes its weight directly from the designated network output
+                                    ? outputs[(LEO_OUTPUTS_PER_PAIR * outputIndex) + LEO_WEIGHT_INDEX]
+                                    // Standard HyperNEAT must scale the weight
+                                    : NetworkUtil.calculateWeight(outputs[outputIndex]);
+                            linksSoFar.add(new LinkGene(sourceID, targetID, weight, innovationID++, false));
+                        } else {
+                            linksSoFar.add(new LinkGene(sourceID, targetID, 0.0, innovationID++, false));
+                        }
+                    }
+                }
+            }
+        }
+    }
 
 
 	/**
