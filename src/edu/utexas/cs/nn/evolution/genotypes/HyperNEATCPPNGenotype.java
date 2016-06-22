@@ -104,7 +104,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 		innovationID = 0;// reset each time a phenotype is generated
 		int phenotypeOutputs = 0;
 
-		newNodes = createSubstrateNodes(subs);
+		newNodes = createSubstrateNodes(cppn, subs);
 		// Will map substrate names to index in subs List
 		// needs to be switched
 		HashMap<String, Integer> substrateIndexMapping = new HashMap<String, Integer>();
@@ -148,7 +148,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 
 		ArrayList<NodeGene> genes = new ArrayList<NodeGene>(this.nodes.size());
 		for (NodeGene ng : this.nodes) {// needed for a deep copy
-			genes.add(new NodeGene(ng.ftype, ng.ntype, ng.innovation, false));
+			genes.add(new NodeGene(ng.ftype, ng.ntype, ng.innovation, false, ng.bias));
 		}
 		HyperNEATCPPNGenotype result = new HyperNEATCPPNGenotype(linksCopy, genes, MMNEAT.networkOutputs);
 
@@ -166,17 +166,16 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 	 *            list of substrates extracted from domain
 	 * @return array list of NodeGenes from substrates
 	 */
-	public ArrayList<NodeGene> createSubstrateNodes(List<Substrate> subs) {
+	public ArrayList<NodeGene> createSubstrateNodes(TWEANN cppn, List<Substrate> subs) {
 		ArrayList<NodeGene> newNodes = new ArrayList<NodeGene>();
 		// loops through substrate list
 		for (int i = 0; i < subs.size(); i++) {
 			for (int y = 0; y < subs.get(i).size.t2; y++) {
 				for (int x = 0; x < subs.get(i).size.t1; x++) {
 					// Substrate types and Neuron types match and use same values
-					//System.out.print("("+x+","+y+"): "+innovationID+" ");
-					newNodes.add(new NodeGene(CommonConstants.ftype, subs.get(i).getStype(), innovationID++));
+					double bias = CommonConstants.evolveHyperNEATBias ? cppn.process(new double[]{0, 0, x, y, BIAS})[biasIndex] : 0.0;
+					newNodes.add(new NodeGene(CommonConstants.ftype, subs.get(i).getStype(), innovationID++, false, bias));
 				}
-				//System.out.println();
 			}
 		}
 		return newNodes;
