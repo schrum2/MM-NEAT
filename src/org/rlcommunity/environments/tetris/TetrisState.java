@@ -19,6 +19,7 @@
 package org.rlcommunity.environments.tetris;
 
 import edu.utexas.cs.nn.parameters.CommonConstants;
+import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.rlglue.tetris.TetrisViewer;
 import edu.utexas.cs.nn.util.random.RandomNumbers;
 
@@ -76,13 +77,27 @@ public class TetrisState {
 	private TetrisViewer viewer = null;
 
 	public TetrisState() {
-		possibleBlocks.add(TetrisPiece.makeLine());
-		possibleBlocks.add(TetrisPiece.makeSquare());
-		possibleBlocks.add(TetrisPiece.makeTri());
-		possibleBlocks.add(TetrisPiece.makeSShape());
-		possibleBlocks.add(TetrisPiece.makeZShape());
-		possibleBlocks.add(TetrisPiece.makeLShape());
-		possibleBlocks.add(TetrisPiece.makeJShape());
+		if(Parameters.parameters.booleanParameter("tetrisAllowLine")){
+			possibleBlocks.add(TetrisPiece.makeLine());
+		}
+		if(Parameters.parameters.booleanParameter("tetrisAllowSquare")){
+			possibleBlocks.add(TetrisPiece.makeSquare());
+		}
+		if(Parameters.parameters.booleanParameter("tetrisAllowTri")){
+			possibleBlocks.add(TetrisPiece.makeTri());
+		}
+		if(Parameters.parameters.booleanParameter("tetrisAllowSShape")){
+			possibleBlocks.add(TetrisPiece.makeSShape());
+		}
+		if(Parameters.parameters.booleanParameter("tetrisAllowZShape")){
+			possibleBlocks.add(TetrisPiece.makeZShape());
+		}
+		if(Parameters.parameters.booleanParameter("tetrisAllowLShape")){
+			possibleBlocks.add(TetrisPiece.makeLShape());
+		}
+		if(Parameters.parameters.booleanParameter("tetrisAllowJShape")){
+			possibleBlocks.add(TetrisPiece.makeJShape());
+		}
 
 		if (CommonConstants.watch) {
 			if (TetrisViewer.current == null) {
