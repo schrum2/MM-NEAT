@@ -1,5 +1,6 @@
 package edu.utexas.cs.nn.tasks.mario;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import ch.idsia.ai.agents.Agent;
@@ -20,12 +21,13 @@ import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.NoisyLonerTask;
 import edu.utexas.cs.nn.util.datastructures.Pair;
+import edu.utexas.cs.nn.util.datastructures.Triple;
 import edu.utexas.cs.nn.util.random.RandomNumbers;
 
 public class MarioTask<T extends Network> extends NoisyLonerTask<T>implements NetworkTask, HyperNEATTask {
 
 	private EvaluationOptions options;
-	public static final int MARIO_INPUTS = 5; //need to find a way to make sure this isn't hardcoded
+	public static final int MARIO_OUTPUTS = 5; //need to find a way to make sure this isn't hardcoded
 
 	public MarioTask(){
     	options = new CmdLineOptions(new String[0]);
@@ -143,8 +145,22 @@ public class MarioTask<T extends Network> extends NoisyLonerTask<T>implements Ne
 	 */
 	@Override
 	public List<Substrate> getSubstrateInformation(){
-		// TODO Auto-generated method stub
-		return null;
+		int height = Parameters.parameters.integerParameter("marioInputHeight");
+		int width = Parameters.parameters.integerParameter("marioInputWidth");
+		ArrayList<Substrate> subs = new ArrayList<Substrate>();
+		Substrate inputsW = new Substrate(new Pair<Integer, Integer>(width, height), 
+				Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, Substrate.INPUT_SUBSTRATE, 0), "Inputs World");
+		subs.add(inputsW);
+		Substrate inputsE = new Substrate(new Pair<Integer, Integer>(width, height), 
+				Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, Substrate.INPUT_SUBSTRATE, 0), "Inputs Enemies");
+		subs.add(inputsE);
+		Substrate processing = new Substrate(new Pair<Integer, Integer>(width, height), 
+				Substrate.PROCCESS_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, Substrate.PROCCESS_SUBSTRATE, 0), "Processing");
+		subs.add(processing);
+		Substrate outputs = new Substrate(new Pair<Integer, Integer>(MARIO_OUTPUTS, 1), 
+				Substrate.OUTPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, Substrate.OUTPUT_SUBSTRATE, 0), "Outputs");
+		subs.add(outputs);
+		return subs;
 	}
 
 	/**
@@ -158,14 +174,15 @@ public class MarioTask<T extends Network> extends NoisyLonerTask<T>implements Ne
 	 */
 	@Override
 	public List<Pair<String, String>> getSubstrateConnectivity(){
-		// TODO Auto-generated method stub
-		return null;
+		ArrayList<Pair<String, String>> conn = new ArrayList<Pair<String, String>>();
+		conn.add(new Pair<String, String>("Inputs World", "Processing"));
+		conn.add(new Pair<String, String>("Inputs Enemies", "Processing"));
+		conn.add(new Pair<String, String>("Processing", "Outputs"));		
+		return conn;
 	}
 
-	//may not need
 	@Override
 	public double[] getSubstrateInputs(List<Substrate> inputSubstrates) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException("The regular approach for obtaining Mario inputs should be sufficient");
 	}
 }
