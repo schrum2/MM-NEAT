@@ -482,13 +482,13 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 		//add other scores to be able to show each fitness score even if it's not effecting evolution
 		//Predator other scores
 		addObjective(new PredatorCatchObjective<T>(), otherScores, false, pop);
+		addObjective(new PredatorCatchCloseObjective<T>(), otherScores, false, pop);
 		addObjective(new PredatorMinimizeGameTimeObjective<T>(), otherScores, false, pop);
 		addObjective(new PredatorHerdPreyObjective<T>(), otherScores, false, pop);
 		addObjective(new PredatorEatEachPreyQuicklyObjective<T>(), otherScores, false, pop);
 		addObjective(new PredatorMinimizeDistanceFromPreyObjective<T>(), otherScores, false, pop);
 		if(Parameters.parameters.integerParameter("torusPreys") == 2)
 			addObjective(new PredatorRawalRajagopalanMiikkulainenObjective<T>(), otherScores, false, pop);
-		addObjective(new PredatorCatchCloseObjective<T>(), otherScores, false, pop);
 		addObjective(new PredatorCatchCloseQuickObjective<T>(), otherScores, false, pop);
 		for(int i = 0; i < Parameters.parameters.integerParameter("torusPreys"); i++){
 			addObjective(new PredatorMinimizeDistanceFromIndividualPreyObjective<T>(i), otherScores, false, pop);
@@ -514,6 +514,8 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 		//Predator fitness scores
 		if (Parameters.parameters.booleanParameter("predatorCatch"))
 			addObjective(new PredatorCatchObjective<T>(), objectives, pop);
+		if (Parameters.parameters.booleanParameter("predatorCatchClose"))
+			addObjective(new PredatorCatchCloseObjective<T>(), objectives, pop);
 		if (Parameters.parameters.booleanParameter("predatorMinimizeTotalTime"))
 			addObjective(new PredatorMinimizeGameTimeObjective<T>(), objectives, pop);
 		if (Parameters.parameters.booleanParameter("predatorsEatQuick"))
@@ -522,8 +524,6 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 			addObjective(new PredatorMinimizeDistanceFromPreyObjective<T>(), objectives, pop);
 		if (Parameters.parameters.booleanParameter("predatorRRM"))
 			addObjective(new PredatorRawalRajagopalanMiikkulainenObjective<T>(), objectives, pop);
-		if (Parameters.parameters.booleanParameter("predatorCatchClose"))
-			addObjective(new PredatorCatchCloseObjective<T>(), objectives, pop);
 		if (Parameters.parameters.booleanParameter("predatorCatchCloseQuick"))
 			addObjective(new PredatorCatchCloseQuickObjective<T>(), objectives, pop);
 		if (Parameters.parameters.booleanParameter("predatorMinimizeIndividualDistance")){
@@ -590,8 +590,8 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 		//add other scores to be able to show each fitness score even if it's not effecting evolution
 		//Prey other scores
 		addObjective(new PreyMinimizeCaughtObjective<T>(), otherScores, false, pop);
-		addObjective(new PreyMaximizeGameTimeObjective<T>(), otherScores, false, pop);
 		addObjective(new PreyRawalRajagopalanMiikkulainenObjective<T>(), otherScores, false, pop);
+		addObjective(new PreyMaximizeGameTimeObjective<T>(), otherScores, false, pop);
 		addObjective(new PreyLongSurvivalTimeObjective<T>(), otherScores, false, pop);
 		addObjective(new PreyMaximizeDistanceFromPredatorsObjective<T>(), otherScores, false, pop);
 		for(int i = 0; i < Parameters.parameters.integerParameter("torusPreys"); i++){
@@ -624,10 +624,10 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 		//Prey fitness scores
 		if (Parameters.parameters.booleanParameter("preyMinimizeCaught"))
 			addObjective(new PreyMinimizeCaughtObjective<T>(), objectives, pop);
-		if (Parameters.parameters.booleanParameter("preyMaximizeTotalTime"))
-			addObjective(new PreyMaximizeGameTimeObjective<T>(), objectives, pop);
 		if (Parameters.parameters.booleanParameter("preyRRM"))
 			addObjective(new PreyRawalRajagopalanMiikkulainenObjective<T>(), objectives, pop);
+		if (Parameters.parameters.booleanParameter("preyMaximizeTotalTime"))
+			addObjective(new PreyMaximizeGameTimeObjective<T>(), objectives, pop);
 		if (Parameters.parameters.booleanParameter("preyLongSurvivalTime"))
 			addObjective(new PreyLongSurvivalTimeObjective<T>(), objectives, pop);
 		if (Parameters.parameters.booleanParameter("preyMaximizeDistance"))

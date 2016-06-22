@@ -37,7 +37,7 @@ public class PreyRawalRajagopalanMiikkulainenObjectiveTest {
 		world = new TorusWorld(100, 100);
 
 		fitness = objective.score(game, null);
-		assertEquals(fitness, 25.0, doubleThreshold);
+		assertEquals(fitness, 10.0, doubleThreshold);
 
 	}
 
@@ -58,7 +58,7 @@ public class PreyRawalRajagopalanMiikkulainenObjectiveTest {
 		prey.move((int) -prey.getX(), (int) -prey.getY());
 
 		fitness = objective.score(game, null);
-		assertEquals(fitness, 25.0, doubleThreshold);
+		assertEquals(fitness, 10.0, doubleThreshold);
 
 		// call advance with bunch of (0,0) moves to update the game
 		game.advance(new int[][] { { 0, 0 }, { 0, 0 }, { 0, 0 } }, new int[][] { { 0, 0 }, { 0, 0 } });
@@ -66,7 +66,7 @@ public class PreyRawalRajagopalanMiikkulainenObjectiveTest {
 		assertNull(game.getPrey()[0]);
 
 		fitness = objective.score(game, null);
-		assertEquals(fitness, 12.5, doubleThreshold);
+		assertEquals(fitness, 5.0, doubleThreshold);
 
 	}
 
@@ -87,7 +87,7 @@ public class PreyRawalRajagopalanMiikkulainenObjectiveTest {
 		prey.move((int) -prey.getX(), (int) -prey.getY());
 
 		fitness = objective.score(game, null);
-		assertEquals(fitness, 25.0, doubleThreshold);
+		assertEquals(fitness, 10.0, doubleThreshold);
 
 		// call advance with bunch of (0,0) moves to update the game
 		game.advance(new int[][] { { 0, 0 }, { 0, 0 }, { 0, 0 } }, new int[][] { { 0, 0 }, { 0, 0 } });
@@ -95,7 +95,7 @@ public class PreyRawalRajagopalanMiikkulainenObjectiveTest {
 		assertNull(game.getPrey()[0]);
 
 		fitness = objective.score(game, null);
-		assertEquals(fitness, 12.5, doubleThreshold);
+		assertEquals(fitness, 5.0, doubleThreshold);
 
 		// set game time to 350
 		while (game.getTime() < 350) {
@@ -110,7 +110,7 @@ public class PreyRawalRajagopalanMiikkulainenObjectiveTest {
 		game.advance(new int[][] { { 0, 0 }, { 0, 0 }, { 0, 0 } }, new int[][] { { 0, 0 }, { 0, 0 } });
 
 		fitness = objective.score(game, null);
-		assertEquals(fitness, 4.3875, doubleThreshold);
+		assertEquals(fitness, 1.755, doubleThreshold);
 
 	}
 
