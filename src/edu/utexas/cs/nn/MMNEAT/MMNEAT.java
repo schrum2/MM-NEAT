@@ -618,7 +618,7 @@ public class MMNEAT {
 	 * Using HyperNEAT means certain parameters values need to be overridden
 	 * @throws NoSuchMethodException 
 	 */
-	private static void hyperNEATOverrides() throws NoSuchMethodException {
+	public static void hyperNEATOverrides() throws NoSuchMethodException {
 		// Cannot monitor inputs with HyperNEAT because the NetworkTask
 		// interface no longer applies
 		CommonConstants.monitorInputs = false;

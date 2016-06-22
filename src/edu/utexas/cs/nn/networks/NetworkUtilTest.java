@@ -1,10 +1,12 @@
 package edu.utexas.cs.nn.networks;
 
-import java.util.Arrays;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
-
+/**
+ * @author Lauren Gillespie
+ * 
+ */
 public class NetworkUtilTest {
 
 	@Test
@@ -51,5 +53,20 @@ public class NetworkUtilTest {
 		assertEquals(networkOutput2[0][0], 1+0.5*100, 0.00000001);
 		assertEquals(networkOutput3[0][0], 1+0.5*-100, 0.00000001);
 		
+	}
+	
+	@Test
+	public void activateLayerTest() { 
+		double[][] originalValue = {{0.1, 0.2}, {0.3, 0.4}};
+		double[][] changedValue = originalValue.clone();
+		NetworkUtil.activateLayer(changedValue, ActivationFunctions.FTYPE_TANH);
+		double[][] actualValue = {{Math.tanh(.1), Math.tanh(.2)}, {Math.tanh(.3), Math.tanh(.4)}};
+		assertEquals(changedValue.length, actualValue.length);
+		assertEquals(changedValue[0].length, actualValue[0].length);
+		for(int i = 0; i < changedValue.length; i++) { 
+			for(int j = 0; j < changedValue[0].length; j++) {
+				assertEquals(changedValue[i][j], actualValue[i][j], .00000001);
+			}
+		}
 	}
 }

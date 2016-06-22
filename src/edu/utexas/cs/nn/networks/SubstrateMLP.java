@@ -31,6 +31,11 @@ public class SubstrateMLP implements Network {
 	 */
 	public class MLPLayer {
 
+		//Layer types
+		public final static int INPUT_LAYER = 0;
+		public final static int PROCCESS_LAYER = 1;
+		public final static int OUTPUT_LAYER = 2;
+
 		//information stored by MLPLayer class
 		public double[][] nodes;
 		public String name;
@@ -58,7 +63,7 @@ public class SubstrateMLP implements Network {
 	public class MLPConnection {
 
 		//information stored by MLPConnection class
-        // (x,y) of source followed by (x,y) of target
+		// (x,y) of source followed by (x,y) of target
 		public double[][][][] connection;
 		public Pair<String, String> connects;
 
@@ -90,7 +95,7 @@ public class SubstrateMLP implements Network {
 	 * @param subs list of substrates provided by task
 	 * @param connections connections of substrates provided by task
 	 * @param network cppn used to process coordinates to produce weight of links
-         * @param ftype An activation function type from ActivationFunctions
+	 * @param ftype An activation function type from ActivationFunctions
 	 */
 	public SubstrateMLP(List<Substrate> subs,  List<Pair<String, String>> connections, Network network, int ftype) {
 		assert network.numInputs() == HyperNEATTask.NUM_CPPN_INPUTS:"Number of inputs to network = " + network.numInputs() + " not " + HyperNEATTask.NUM_CPPN_INPUTS;
@@ -128,7 +133,6 @@ public class SubstrateMLP implements Network {
 							} else {//if not, make weight 0, synonymous to no link in first place
 								connect[X1][Y1][X2][Y2] = 0;
 							}
-							//System.out.println(scaledSourceCoordinates + "->" + scaledTargetCoordinates + "="+connect[X1][Y1][X2][Y2]);
 						}
 					}
 				}
@@ -156,8 +160,8 @@ public class SubstrateMLP implements Network {
 
 	/**
 	 * Fills layers with correct inputs.
-         * Assumes input layers are at start of layer
-         * list in order that they will be filled.
+	 * Assumes input layers are at start of layer
+	 * list in order that they will be filled.
 	 * @param layers list of layers
 	 * @param inputs inputs 
 	 */
@@ -210,7 +214,14 @@ public class SubstrateMLP implements Network {
 		}
 		// TODO Outputs may actually come from multiple output substrates
 		// Therefore, this size() - 1 trick may not always work.
-		double[] outputs = ArrayUtil.doubleArrayFrom2DdoubleArrayRowMajor(layers.get(layers.size() - 1).nodes);
+		double[] outputs =  ArrayUtil.doubleArrayFrom2DdoubleArrayRowMajor(layers.get(0).nodes);
+		for(int i = 1; i < layers.size(); i++) {
+			if(layers.get(i).ltype == MLPLayer.OUTPUT_LAYER) { 
+				MLPLayer layer = layers.get(i);
+				double[] newOutputs = ArrayUtil.doubleArrayFrom2DdoubleArrayRowMajor(layer.nodes);
+				outputs = ArrayUtil.combineArrays(outputs, newOutputs);
+			}
+		}
 		return outputs;
 	}
 
@@ -223,14 +234,14 @@ public class SubstrateMLP implements Network {
 		MLPLayer fromLayer = null;
 		MLPLayer toLayer = null;
 		// TODO make this quicker. Linear lookup too slow
-                for(MLPLayer layer : layers) {
+		for(MLPLayer layer : layers) {
 			if(layer.name.equals(connection.connects.t1)) { fromLayer = layer;} 
 			else if(layer.name.equals(connection.connects.t2)) { toLayer = layer;}
 		}
 		// TODO Change to an assert later
 		if(fromLayer == null || toLayer == null) throw new NullPointerException("either from or to layer was not properly initialized!");
 		// Modifies toLayer.nodes
-                NetworkUtil.propagateOneStep(fromLayer.nodes, toLayer.nodes, connection.connection);
+		NetworkUtil.propagateOneStep(fromLayer.nodes, toLayer.nodes, connection.connection);
 		NetworkUtil.activateLayer(toLayer.nodes, ftype);
 	}
 

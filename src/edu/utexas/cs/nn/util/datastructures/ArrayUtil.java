@@ -1,6 +1,5 @@
 package edu.utexas.cs.nn.util.datastructures;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -188,6 +187,23 @@ public class ArrayUtil {
 		return result;
 	}
 
+	/**
+	 * Combine two double arrays into one array starting with the elements of the
+	 * first array and ending with the elements of the second array
+	 *
+	 * @param a
+	 *            starting elements
+	 * @param b
+	 *            ending elements
+	 * @return combined array
+	 */
+	public static double[] combineArrays(double[] a, double[] b) {
+		double[] result = new double[a.length + b.length];
+		System.arraycopy(a, 0, result, 0, a.length);
+		System.arraycopy(b, 0, result, a.length, b.length);
+		return result;
+	}
+	
 	/**
 	 * Combine two long arrays into one array starting with the elements of the
 	 * first array and ending with the elements of the second array
