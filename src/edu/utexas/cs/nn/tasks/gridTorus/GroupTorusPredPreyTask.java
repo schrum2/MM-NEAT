@@ -95,16 +95,7 @@ public abstract class GroupTorusPredPreyTask<T extends Network> extends GroupTas
 	 */
 	@Override
 	public String[] sensorLabels() {
-		//Can't just use the lonerTask version of this method, it crashes
-		//array of evolved agents is not defined
-
-		//This works because preyEvolve is a parameter from the child classes in
-		//the regular, lonerTask version 
-		//(one of these child classes become the task for this cooperative task too)
-
-		return TorusPredPreyTask.preyEvolve 
-                        ? (new NNTorusPredPreyController(null,false)).sensorLabels()
-			: (new NNTorusPredPreyController(null,true)).sensorLabels();
+		return task.sensorLabels();
 	}
 
 	/**

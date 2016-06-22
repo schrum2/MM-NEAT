@@ -280,7 +280,9 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 	 */
 	@Override
 	public String[] sensorLabels() {
-		return ((NNTorusPredPreyController) (evolved[0])).sensorLabels();
+		return TorusPredPreyTask.preyEvolve 
+				? (new NNTorusPredPreyController(null,false)).sensorLabels()
+						: (new NNTorusPredPreyController(null,true)).sensorLabels();
 	}
 
 	/**
