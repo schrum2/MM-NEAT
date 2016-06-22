@@ -1,7 +1,8 @@
-package edu.utexas.cs.nn.experiment;
+package edu.utexas.cs.nn.experiment.post;
 
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.evolution.nsga2.NSGA2Score;
+import edu.utexas.cs.nn.experiment.Experiment;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.GroupTask;

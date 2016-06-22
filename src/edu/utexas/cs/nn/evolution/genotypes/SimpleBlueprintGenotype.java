@@ -4,7 +4,7 @@ import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
 import edu.utexas.cs.nn.evolution.crossover.ArrayCrossover;
 import edu.utexas.cs.nn.evolution.mutation.blueprint.BlueprintChildrenMutation;
 import edu.utexas.cs.nn.evolution.mutation.blueprint.BlueprintRandomMutation;
-import edu.utexas.cs.nn.experiment.MultiplePopulationGenerationalEAExperiment;
+import edu.utexas.cs.nn.experiment.evolution.MultiplePopulationGenerationalEAExperiment;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import java.util.ArrayList;
 

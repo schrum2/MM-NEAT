@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.experiment;
+package edu.utexas.cs.nn.experiment.evolution;
 
 import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
 import edu.utexas.cs.nn.evolution.MultiplePopulationGenerationalEA;
@@ -6,6 +6,7 @@ import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.evolution.genotypes.SimpleBlueprintGenotype;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
 import edu.utexas.cs.nn.evolution.mulambda.CoevolutionMuLambda;
+import edu.utexas.cs.nn.experiment.Experiment;
 import edu.utexas.cs.nn.log.PlotLog;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.parameters.Parameters;

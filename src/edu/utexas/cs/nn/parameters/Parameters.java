@@ -15,7 +15,7 @@ import edu.utexas.cs.nn.evolution.crossover.network.TWEANNCrossover;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
 import edu.utexas.cs.nn.evolution.nsga2.NSGA2;
 import edu.utexas.cs.nn.evolution.nsga2.bd.characterizations.DomainSpecificCharacterization;
-import edu.utexas.cs.nn.experiment.LimitedSinglePopulationGenerationalEAExperiment;
+import edu.utexas.cs.nn.experiment.evolution.LimitedSinglePopulationGenerationalEAExperiment;
 import edu.utexas.cs.nn.gridTorus.controllers.AggressivePredatorController;
 import edu.utexas.cs.nn.gridTorus.controllers.PreyFleeClosestPredatorController;
 import edu.utexas.cs.nn.networks.ActivationFunctions;

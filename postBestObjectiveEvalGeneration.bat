@@ -1,4 +1,4 @@
 REM NOTE: Can only be used with saveAllChampions set to true
 REM Usage:   postBestObjectiveEvalGeneration.bat <experiment directory> <log prefix> <run type> <run number> <generation> <number of trials per team>
 REM Example: postBestObjectiveEvalGeneration.bat toruspred TorusPred CoOpMultiCCQ 0 3 10
-java -jar "dist/MM-NEATv2.jar" runNumber:%4 parallelEvaluations:false base:%1 log:%2-%3 saveTo:%3 trials:%6 watch:false showNetworks:false io:false netio:false onlyWatchPareto:true printFitness:true animateNetwork:false ucb1Evaluation:false showSubnetAnalysis:false monitorInputs:false experiment:edu.utexas.cs.nn.experiment.ObjectiveBestTeamsExperiment logLock:true watchLastBestOfTeams:true rlGluePort:4200 lastSavedGeneration:%5
+java -jar "dist/MM-NEATv2.jar" runNumber:%4 parallelEvaluations:false base:%1 log:%2-%3 saveTo:%3 trials:%6 watch:false showNetworks:false io:false netio:false onlyWatchPareto:true printFitness:true animateNetwork:false ucb1Evaluation:false showSubnetAnalysis:false monitorInputs:false experiment:edu.utexas.cs.nn.experiment.post.ObjectiveBestTeamsExperiment logLock:true watchLastBestOfTeams:true rlGluePort:4200 lastSavedGeneration:%5

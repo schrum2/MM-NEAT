@@ -13,7 +13,7 @@ import edu.utexas.cs.nn.evolution.genotypes.SimpleBlueprintGenotype;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
 import edu.utexas.cs.nn.evolution.genotypes.pool.GenotypePool;
 import edu.utexas.cs.nn.evolution.nsga2.NSGA2Score;
-import edu.utexas.cs.nn.experiment.SinglePopulationGenerationalEAExperiment;
+import edu.utexas.cs.nn.experiment.evolution.SinglePopulationGenerationalEAExperiment;
 import edu.utexas.cs.nn.log.MMNEATLog;
 import edu.utexas.cs.nn.networks.ActivationFunctions;
 import edu.utexas.cs.nn.networks.TWEANN;

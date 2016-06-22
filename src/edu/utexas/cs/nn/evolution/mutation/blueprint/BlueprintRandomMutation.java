@@ -3,7 +3,7 @@ package edu.utexas.cs.nn.evolution.mutation.blueprint;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.evolution.genotypes.NumericArrayGenotype;
 import edu.utexas.cs.nn.evolution.mutation.Mutation;
-import edu.utexas.cs.nn.experiment.MultiplePopulationGenerationalEAExperiment;
+import edu.utexas.cs.nn.experiment.evolution.MultiplePopulationGenerationalEAExperiment;
 import edu.utexas.cs.nn.util.random.RandomNumbers;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;

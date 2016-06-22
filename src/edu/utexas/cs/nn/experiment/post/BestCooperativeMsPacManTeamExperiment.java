@@ -1,6 +1,7 @@
-package edu.utexas.cs.nn.experiment;
+package edu.utexas.cs.nn.experiment.post;
 
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
+import edu.utexas.cs.nn.experiment.Experiment;
 import edu.utexas.cs.nn.graphics.DrawingPanel;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.scores.Score;

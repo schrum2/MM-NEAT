@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.experiment;
+package edu.utexas.cs.nn.experiment.evolution;
 
 import edu.utexas.cs.nn.evolution.SinglePopulationGenerationalEA;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;

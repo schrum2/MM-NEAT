@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.experiment;
+package edu.utexas.cs.nn.experiment.evolution;
 
 import edu.utexas.cs.nn.evolution.MultiplePopulationGenerationalEA;
 import edu.utexas.cs.nn.parameters.Parameters;

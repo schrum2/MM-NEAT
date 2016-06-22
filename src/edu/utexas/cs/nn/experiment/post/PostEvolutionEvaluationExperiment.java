@@ -1,6 +1,7 @@
-package edu.utexas.cs.nn.experiment;
+package edu.utexas.cs.nn.experiment.post;
 
 import edu.utexas.cs.nn.evolution.ReplayEA;
+import edu.utexas.cs.nn.experiment.evolution.SinglePopulationGenerationalEAExperiment;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.SinglePopulationTask;
