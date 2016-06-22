@@ -15,6 +15,8 @@ import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype.LinkGene;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype.NodeGene;
 import edu.utexas.cs.nn.networks.NetworkUtil;
 import edu.utexas.cs.nn.networks.TWEANN;
+import edu.utexas.cs.nn.networks.TWEANN.Node;
+import edu.utexas.cs.nn.networks.hyperneat.HyperNEATTask;
 import edu.utexas.cs.nn.networks.hyperneat.Substrate;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
@@ -63,14 +65,8 @@ public class HyperNEATCPPNGenotypeTest {
 		for (int i = 0; i < subs.size(); i++) {
 			sIMap.put(subs.get(i).getName(), i);
 		}
-		System.out.println("----------------Set up---------------------");
-		System.out.println("hcppn: " + hcppn.toString());
-		System.out.println("cppn: " + cppn.toString());
-		System.out.println("subs: " + subs.toString());
-		System.out.println("connections: " + connections.toString());
-		System.out.println("sIMap: " + sIMap.toString());
 	}
-
+	
 	@After
 	public void tearDown() {
 		hcppn = null;
@@ -119,10 +115,19 @@ public class HyperNEATCPPNGenotypeTest {
 		assertEquals(newLinks.get(sub1Index).sourceInnovation, hcppn.getInnovationID(0, 0, endingIndex, subs));
 	}
 
+	/**
+	 * Checks to make sure get phenotype returns the created network and that
+	 * the getCPPN returns the cppn used
+	 */
 	@Test
 	public void testGetPhenotype()  {
 		hcppn.getPhenotype();
+		assertTrue(!hcppn.getPhenotype().equals(hcppn.getCPPN()));
 	}
+
+	/**
+	 * Tests that the hash mapping is correct
+	 */
 	@Test
 	public void testHashMapping() {
 		assertTrue(sIMap.get(subs.get(sub1Index).getName()).equals(sub1Index));
@@ -148,19 +153,67 @@ public class HyperNEATCPPNGenotypeTest {
 		assertEquals(NetworkUtil.calculateWeight(x), .8, .0001);
 		assertEquals(NetworkUtil.calculateWeight(y), -.8, .0001);
 	}
-	
-	@Test //TODO
+
+	/**
+	 * Tests that leo is used correctly
+	 */
+	@Test
 	public void testLeo() {
-		MMNEAT.clearClasses();
+		tearDown();
 		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "recurrency:false",
-				"mmdRate:1.0", "hyperNEAT:true", "task:edu.utexas.cs.nn.networks.hyperneat.HyperNEATDummyTask", "leo:true"});
+				"hyperNEAT:true", "task:edu.utexas.cs.nn.networks.hyperneat.HyperNEATDummyTask", "leo:true", "linkExpressionThreshold:-2.0"});
 		MMNEAT.loadClasses();
+		hcppn = new HyperNEATCPPNGenotype();
 		assertEquals(CommonConstants.leo, true);
-		//assertEquals();
+		TWEANN cppn = hcppn.getCPPN();
+		HyperNEATTask task = (HyperNEATTask) MMNEAT.task;
+		assertEquals(cppn.numOutputs(),task.getSubstrateConnectivity().size() * 2);
+		assertEquals(hcppn.links.size(), HyperNEATTask.NUM_CPPN_INPUTS * task.getSubstrateConnectivity().size() * 2);
+
+		TWEANN t = hcppn.getPhenotype();
+		ArrayList<Node> nodes = t.nodes;
+		for(int i = 0; i < nodes.size(); i++) {
+			Node node = nodes.get(i);
+			if(node.ntype == Node.NTYPE_INPUT) { 
+				assertEquals(node.outputs.size(), 9);
+			}else if(node.ntype == Node.NTYPE_HIDDEN) {
+				assertEquals(node.outputs.size(), 8);
+			}else {
+				assertEquals(node.outputs.size(), 0);
+			}
+		}
 	}
-	
-	@Test //TODO
+
+	/**
+	 * Tests that the biases are inserted correctly
+	 */
+	@Test
 	public void testBias() { 
-		
+		tearDown();
+		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "recurrency:false",
+				"hyperNEAT:true", "task:edu.utexas.cs.nn.networks.hyperneat.HyperNEATDummyTask", "evolveHyperNEATBias:true", "linkExpressionThreshold:0.0"});
+		MMNEAT.loadClasses();
+		assertTrue(CommonConstants.evolveHyperNEATBias);
+		hcppn = new HyperNEATCPPNGenotype();
+		TWEANN t = hcppn.getPhenotype();
+		ArrayList<Node> nodes = t.nodes;
+		for(Node node : nodes) {
+			assertTrue(node.bias != 0.0);
+		}
+		t.flush();
+		nodes = t.nodes;
+		double[] biases = new double[nodes.size()];
+		int x = 0;
+		for(Node node: nodes) {
+			assertTrue(node.bias != 0.0);
+			biases[x++] = node.bias;
+		}
+		double[] inputs = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+		t.process(inputs);
+		nodes = t.nodes;
+		int y = 0;
+		for(Node node : nodes) { 
+			assertEquals(biases[y++], node.bias, .0001);
+		}
 	}
 }

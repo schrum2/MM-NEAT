@@ -216,7 +216,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 	 * dictated via command line parameter.
 	 *
 	 * @param linksSoFar
-	 * 			  All aded links are accumulated in this list
+	 * 			  All added links are accumulated in this list
 	 * @param cppn
 	 *            used to evolve link weight
 	 * @param outputIndex
