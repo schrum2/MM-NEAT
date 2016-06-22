@@ -22,7 +22,7 @@ import edu.utexas.cs.nn.networks.Network;
  */
 public class PreyRawalRajagopalanMiikkulainenObjective<T extends Network> extends GridTorusObjective<T> {
 
-	public static final double ALL_PREY_SCORE = 25;
+	public static final double ALL_PREY_SCORE = 10;
 
 	@Override
 	/**
