@@ -1,5 +1,4 @@
 package edu.utexas.cs.nn.networks;
-import static org.junit.Assert.*;
 
 import java.util.Arrays;
 

@@ -71,7 +71,7 @@ public class SubstrateMLPTest {
 	public abstract class AggregateHyperNEATTask implements Task, HyperNEATTask {
 	}
 
-	@Test
+	//@Test
 	public void testComplexMLP() {
 		try {
 			tearDown();
@@ -208,7 +208,7 @@ public class SubstrateMLPTest {
 		double[] networkOutputs = mlp.process(inputs);
 		double[][][][] connection1 = mlp.getConnections(0);
 		double[][][][] connection2 = mlp.getConnections(1);
-		double[] actualOutputs = {ActivationFunctions.activation(CommonConstants.ftype, ActivationFunctions.activation(CommonConstants.ftype, connection1[0][0][0][0]*inputs[0])*connection2[0][0][0][0])};
+		double[] actualOutputs = {ActivationFunctions.activation(CommonConstants.ftype, ActivationFunctions.activation(CommonConstants.ftype, connection1[0][0][0][0]*ActivationFunctions.activation(CommonConstants.ftype, inputs[0]))*connection2[0][0][0][0])};
 		System.out.println("network outputs: " + Arrays.toString(networkOutputs));
 		System.out.println("actual outputs: " + Arrays.toString(actualOutputs));
 		assertEquals(networkOutputs[0], actualOutputs[0], .00000001);
@@ -228,7 +228,7 @@ public class SubstrateMLPTest {
 		double[] networkOutputs = mlp.process(inputs);
 		double[][][][] connection1 = mlp.getConnections(0);
 		double[][][][] connection2 = mlp.getConnections(1);
-		double[] actualOutputs = {Math.tanh(Math.tanh(connection1[0][0][0][0]*inputs[0])*connection2[0][0][0][0])};
+		double[] actualOutputs = {Math.tanh(Math.tanh(connection1[0][0][0][0]*Math.tanh(inputs[0]))*connection2[0][0][0][0])};
 		System.out.println("network outputs: " + Arrays.toString(networkOutputs));
 		System.out.println("actual outputs: " + Arrays.toString(actualOutputs));
 		assertEquals(networkOutputs[0], actualOutputs[0], .00000001);

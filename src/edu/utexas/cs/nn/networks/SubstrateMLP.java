@@ -213,15 +213,16 @@ public class SubstrateMLP implements Network {
 			propagateOneStep(connect);
 		}
 		// TODO Outputs may actually come from multiple output substrates
+		double[] outputs = ArrayUtil.doubleArrayFrom2DdoubleArrayRowMajor(layers.get(layers.size() - 1).nodes);
 		// Therefore, this size() - 1 trick may not always work.
-		double[] outputs =  ArrayUtil.doubleArrayFrom2DdoubleArrayRowMajor(layers.get(0).nodes);
-		for(int i = 1; i < layers.size(); i++) {
-			if(layers.get(i).ltype == MLPLayer.OUTPUT_LAYER) { 
-				MLPLayer layer = layers.get(i);
-				double[] newOutputs = ArrayUtil.doubleArrayFrom2DdoubleArrayRowMajor(layer.nodes);
-				outputs = ArrayUtil.combineArrays(outputs, newOutputs);
-			}
-		}
+//		double[] outputs =  ArrayUtil.doubleArrayFrom2DdoubleArrayRowMajor(layers.get(0).nodes);
+//		for(int i = 1; i < layers.size(); i++) {
+//			if(layers.get(i).ltype == MLPLayer.OUTPUT_LAYER) { 
+//				MLPLayer layer = layers.get(i);
+//				double[] newOutputs = ArrayUtil.doubleArrayFrom2DdoubleArrayRowMajor(layer.nodes);
+//				outputs = ArrayUtil.combineArrays(outputs, newOutputs);
+//			}
+//		}
 		return outputs;
 	}
 

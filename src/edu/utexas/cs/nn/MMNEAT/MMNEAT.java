@@ -33,6 +33,7 @@ import edu.utexas.cs.nn.networks.ActivationFunctions;
 import edu.utexas.cs.nn.networks.NetworkTask;
 import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.networks.hyperneat.HyperNEATDummyTask;
+import edu.utexas.cs.nn.networks.hyperneat.HyperNEATSpeedTask;
 import edu.utexas.cs.nn.networks.hyperneat.HyperNEATTask;
 import edu.utexas.cs.nn.networks.hyperneat.SubstrateCoordinateMapping;
 import edu.utexas.cs.nn.parameters.CommonConstants;
@@ -274,7 +275,7 @@ public class MMNEAT {
 	 * For plotting purposes. Let simulation know that a given fitness function
 	 * will be tracked.
 	 * @param name Name of fitness function in plot files
-         * @param pop population index (for coevolution)
+	 * @param pop population index (for coevolution)
 	 */
 	public static void registerFitnessFunction(String name, int pop) {
 		registerFitnessFunction(name, null, true, pop);
@@ -291,7 +292,7 @@ public class MMNEAT {
 	 * in the logs.
 	 * @param name Name of score
 	 * @param affectsSelection Whether or not score is actually used for selection
-         * @param pop population index (for coevolution)
+	 * @param pop population index (for coevolution)
 	 */
 	public static void registerFitnessFunction(String name, boolean affectsSelection, int pop) {
 		registerFitnessFunction(name, null, affectsSelection, pop);
@@ -309,7 +310,7 @@ public class MMNEAT {
 	 * @param name Name of score column
 	 * @param override Statistic applied across evaluations (null is default/average)
 	 * @param affectsSelection whether it affects selection
-         * @param pop population index (for coevolution)
+	 * @param pop population index (for coevolution)
 	 */
 	public static void registerFitnessFunction(String name, Statistic override, boolean affectsSelection, int pop) {
 		if (affectsSelection) {
@@ -446,10 +447,10 @@ public class MMNEAT {
 				coevolution = true;
 				int numPredInputs = determineNumPredPreyInputs(true);
 				int numPreyInputs = determineNumPredPreyInputs(false);
-				
+
 				int numPredOutputs = TorusPredPreyTask.outputLabels(true).length;
 				int numPreyOutputs = TorusPredPreyTask.outputLabels(false).length;
-				
+
 				// Setup genotype early
 				if(task instanceof CompetitiveHomogenousPredatorsVsPreyTask){
 					genotypeExamples = new ArrayList<Genotype>(2); // one pred pop, one prey pop
@@ -457,7 +458,7 @@ public class MMNEAT {
 					genotypeExamples = new ArrayList<Genotype>(Parameters.parameters.integerParameter("torusPredators") + 
 							Parameters.parameters.integerParameter("torusPreys"));
 				}
-				
+
 				// Is this valid for multiple populations?
 
 				// Setup pred population
@@ -478,7 +479,7 @@ public class MMNEAT {
 					}
 					genotypeExamples.add(genotype.newInstance());
 				}
-				
+
 				// Setup prey population
 				setNNInputParameters(numPreyInputs, numPreyOutputs);
 				genotype = (Genotype) ClassCreation.createObject("genotype");
@@ -500,7 +501,7 @@ public class MMNEAT {
 					}
 					genotypeExamples.add(genotype.newInstance());
 				}
-				
+
 				prepareCoevolutionArchetypes();
 			} else if (task instanceof GroupTorusPredPreyTask) { // Technically, the competitive task also overrides this
 				System.out.println("Setup Cooperative Torus Predator/Prey Task");
@@ -537,7 +538,9 @@ public class MMNEAT {
 				setNNInputParameters(PicbreederTask.CPPN_NUM_INPUTS, PicbreederTask.CPPN_NUM_OUTPUTS);
 			} else if(task instanceof HyperNEATDummyTask) {
 				System.out.println("set up dummy hyperNEAT task. Used for testing purposes only");
-			} else if (task instanceof MarioTask) {
+			} else if(task instanceof HyperNEATSpeedTask) {
+				System.out.println("set up dummy hyperNEAT task. Used for testing purposes only");
+			}else if (task instanceof MarioTask) {
 				setNNInputParameters(((Parameters.parameters.integerParameter("marioInputWidth") * Parameters.parameters.integerParameter("marioInputHeight")) * 2) + 1, MarioTask.MARIO_OUTPUTS); //hard coded for now, 5 button outputs
 				System.out.println("Set up Mario Task");
 			} else if (task == null) {
@@ -622,7 +625,7 @@ public class MMNEAT {
 	public static void hyperNEATOverrides() throws NoSuchMethodException {
 		// Cannot monitor inputs with HyperNEAT because the NetworkTask
 		// interface no longer applies
-		
+
 		CommonConstants.monitorInputs = false;
 		Parameters.parameters.setBoolean("monitorInputs", false);
 
@@ -655,12 +658,12 @@ public class MMNEAT {
 		boolean isPredator = task instanceof TorusEvolvedPredatorsVsStaticPreyTask;
 		return determineNumPredPreyInputs(isPredator);
 	}
-	
+
 	private static int determineNumPredPreyInputs(boolean isPredator) {
 		NNTorusPredPreyController temp = new NNTorusPredPreyController(null, isPredator);
 		return temp.getNumInputs();
 	}
-	
+
 	/**
 	 * Resets the classes used in MMNEAT and and sets them to null.
 	 */
@@ -720,20 +723,20 @@ public class MMNEAT {
 			// existence of the files verifies the number of populations.
 			while(new File(runDir + "archetype"+i+".xml").exists()) {
 				ResultSummaryUtilities.processExperiment(
-					base + "/" + saveTo,
-					Parameters.parameters.stringParameter("log"), runs, Parameters.parameters.integerParameter("maxGens"),
-					"_" + ("pop" + i) + "parents_log.txt",
-					"_" + ("pop" + i) + "parents_gen",
-					base, i);
+						base + "/" + saveTo,
+						Parameters.parameters.stringParameter("log"), runs, Parameters.parameters.integerParameter("maxGens"),
+						"_" + ("pop" + i) + "parents_log.txt",
+						"_" + ("pop" + i) + "parents_gen",
+						base, i);
 				i++;
 			}
 		} else { //for lonerTask sending in default of population 0
 			ResultSummaryUtilities.processExperiment(
-				base + "/" + saveTo,
-				Parameters.parameters.stringParameter("log"), runs, Parameters.parameters.integerParameter("maxGens"),
-				"_" + (task instanceof MultiplePopulationTask ? "pop0" : "") + "parents_log.txt",
-				"_" + (task instanceof MultiplePopulationTask ? "pop0" : "") + "parents_gen",
-				base, 0);
+					base + "/" + saveTo,
+					Parameters.parameters.stringParameter("log"), runs, Parameters.parameters.integerParameter("maxGens"),
+					"_" + (task instanceof MultiplePopulationTask ? "pop0" : "") + "parents_log.txt",
+					"_" + (task instanceof MultiplePopulationTask ? "pop0" : "") + "parents_gen",
+					base, 0);
 		}
 	}
 
