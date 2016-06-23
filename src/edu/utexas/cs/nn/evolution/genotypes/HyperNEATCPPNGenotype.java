@@ -253,17 +253,15 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
                                 ? outputs[(numCPPNOutputsPerLayerPair * outputIndex) + leoIndex] > CommonConstants.linkExpressionThreshold
                                 // Output magnitude determines link expression
                                 : Math.abs(outputs[(numCPPNOutputsPerLayerPair * outputIndex) + LINK_INDEX]) > CommonConstants.linkExpressionThreshold;
-                        long sourceID = getInnovationID(X1, Y1, s1Index, subs);
-                        long targetID = getInnovationID(X2, Y2, s2Index, subs);
                         if (expressLink) {
+                            long sourceID = getInnovationID(X1, Y1, s1Index, subs);
+                            long targetID = getInnovationID(X2, Y2, s2Index, subs);
                             double weight = CommonConstants.leo
                                     // LEO takes its weight directly from the designated network output
                                     ? outputs[(numCPPNOutputsPerLayerPair * outputIndex) + LINK_INDEX]
                                     // Standard HyperNEAT must scale the weight
                                     : NetworkUtil.calculateWeight(outputs[(numCPPNOutputsPerLayerPair * outputIndex) + LINK_INDEX]);
                             linksSoFar.add(new LinkGene(sourceID, targetID, weight, innovationID++, false));
-                        } else {
-                            linksSoFar.add(new LinkGene(sourceID, targetID, 0.0, innovationID++, false));
                         }
                     }
                 }
