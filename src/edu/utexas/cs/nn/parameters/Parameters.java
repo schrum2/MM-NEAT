@@ -314,6 +314,12 @@ public class Parameters {
 		booleanOptions.add("indivPreyMaxDist", false, "Turn on to encourage the individual prey to be as far from the predators as possible by the end of the game");
 		booleanOptions.add("torusInvertSensorInputs", false, "Causes agents' sensor inputs to be inverted in torusPredPreyTask");
 		booleanOptions.add("torusSenseByProximity", true, "Causes agents' sensor inputs to be by proximity of the agent instead of simply each agent by indices");
+		
+		booleanOptions.add("cooperativeDistanceIndividualSelection", false, "Cooperative Predators with encouraged distance minimization per population");
+		booleanOptions.add("cooperativeDistanceAggregateTeamSelection", false, "Cooperative Predators with encouraged distance minimization as a team");
+		booleanOptions.add("cooperativeDistanceIndividualAndAggregateTeamSelection", false, "Cooperative Predators with encouraged distance minimization per population and as a team");
+		
+		
 		booleanOptions.add("preyLongSurvivalTime", false, "Turn on to encourage each prey to maximize their survival time");
 		booleanOptions.add("preyMaximizeDistance", false, "Turn on to encourage prey to maximize their distance from the predators at the end of the game");
 		booleanOptions.add("preyMinimizeCaught", false, "Turn on to encourage prey to minimize how many of them are caught");

@@ -548,6 +548,27 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 		}
 
 		//Cooperative predator fitness options
+		
+		
+		//The following three cooperative setups test individual versus team selection
+		if(Parameters.parameters.booleanParameter("cooperativeDistanceIndividualSelection")){
+			for(int i = 0; i < Parameters.parameters.integerParameter("torusPreys"); i++){
+				addObjective(new IndividualPredatorMinimizeDistanceFromIndividualPreyObjective<T>(pop,i), objectives, pop);
+			}
+		}
+		if(Parameters.parameters.booleanParameter("cooperativeDistanceAggregateTeamSelection")){
+			for(int i = 0; i < Parameters.parameters.integerParameter("torusPreys"); i++){
+				addObjective(new PredatorMinimizeDistanceFromIndividualPreyObjective<T>(i), objectives, pop);
+			}
+		}
+		if(Parameters.parameters.booleanParameter("cooperativeDistanceIndividualAndAggregateTeamSelection")){
+			for(int i = 0; i < Parameters.parameters.integerParameter("torusPreys"); i++){
+				addObjective(new IndividualPredatorMinimizeDistanceFromIndividualPreyObjective<T>(pop,i), objectives, pop);
+				addObjective(new PredatorMinimizeDistanceFromIndividualPreyObjective<T>(i), objectives, pop);
+			}
+		}
+		
+		
 		if(Parameters.parameters.booleanParameter("predatorCoOpCCQ")){
 			//all populations are given MultiIndivCCQ fitnesses with just the individual distance
 			//function corresponding to that agent of this population to each prey
