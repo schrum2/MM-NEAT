@@ -184,9 +184,4 @@ public class MarioTask<T extends Network> extends NoisyLonerTask<T>implements Ne
 		conn.add(new Pair<String, String>("Processing", "Outputs Button"));	
 		return conn;
 	}
-
-	@Override
-	public double[] getSubstrateInputs(List<Substrate> inputSubstrates) {
-		throw new UnsupportedOperationException("The regular approach for obtaining Mario inputs should be sufficient");
-	}
 }

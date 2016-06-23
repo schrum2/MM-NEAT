@@ -34,14 +34,4 @@ public interface HyperNEATTask {
 	 *         for the domain.
 	 */
 	public List<Pair<String, String>> getSubstrateConnectivity();
-
-	/**
-	 * Given information about the input substrate layers, fill out a linear
-	 * double array with the inputs the controller network will receive.
-	 *
-	 * @param inputSubstrates
-	 *            List of ONLY input substrates, in standard order
-	 * @return linear array of inputs to NN agent.
-	 */
-	public double[] getSubstrateInputs(List<Substrate> inputSubstrates);
 }

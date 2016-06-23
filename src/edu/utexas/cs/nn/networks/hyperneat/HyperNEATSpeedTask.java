@@ -64,11 +64,6 @@ public class HyperNEATSpeedTask implements HyperNEATTask, Task, SinglePopulation
 	}
 
 	@Override
-	public double[] getSubstrateInputs(List<Substrate> inputSubstrates) {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
-
-	@Override
 	public ArrayList evaluateAll(ArrayList population) {
 		throw new UnsupportedOperationException("Not supported yet.");
 	}

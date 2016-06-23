@@ -16,7 +16,7 @@ public class VizDoomTaskTests {
 	public void setUp() throws Exception {
 //		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "recurrency:false"});//TODO
 //		MMNEAT.loadClasses();
-		VizDoomTask.stat = new Average();
+		VizDoomTask.smudgeStat = new Average();
 	}
 	
 	@Test

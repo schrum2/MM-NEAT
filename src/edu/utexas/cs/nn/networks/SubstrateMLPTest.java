@@ -139,11 +139,6 @@ public class SubstrateMLPTest {
 			}
 
 			@Override
-			public double[] getSubstrateInputs(List<Substrate> inputSubstrates) {
-				throw new UnsupportedOperationException("unimplemented method");
-			}
-
-			@Override
 			public int numObjectives() {
 				throw new UnsupportedOperationException("unimplemented method");
 			}
@@ -276,12 +271,6 @@ public class SubstrateMLPTest {
 				connections.add(new Pair<String, String>("P_0", "O_0"));
 				return connections;
 			}
-
-			@Override
-			public double[] getSubstrateInputs(List<Substrate> inputSubstrates) {
-				throw new UnsupportedOperationException("unimplemented method");
-			}
-
 		};
 		try {
 			MMNEAT.hyperNEATOverrides();

@@ -1,7 +1,6 @@
 package edu.utexas.cs.nn.tasks.gridTorus;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -158,6 +157,7 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 	 * @param affectsSelection  
 	 *            true if objective score
 	 *            false if other score
+         * @param pop Index of population
 	 */
 	public final void addObjective(GridTorusObjective<T> o, ArrayList<ArrayList<GridTorusObjective<T>>> list, boolean affectsSelection, int pop) {
 		list.get(pop).add(o);
@@ -375,7 +375,7 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 	 * 
 	 * @param <T>
 	 * @param container An array that will be filled with the newly created controllers
-	 * @param g, the genotypes
+         * @param genotypes genotypes for whole team
 	 * @param isPred, true if predator, false if prey
 	 */
 	public static <T extends Network> void getEvolvedControllers(TorusPredPreyController[] container, Genotype<T>[] genotypes, boolean isPred){
@@ -387,7 +387,7 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 	 * 
 	 * @param <T>
 	 * @param container An array that will be filled with the newly created controllers
-	 * @param g, the genotypes
+         * @param genotypes genotypes for each agent
 	 * @param isPred, true if predator, false if prey
 	 * @param startIndex, the starting index to fill the evolved controller from
 	 */
@@ -746,7 +746,6 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 	 * @return double[] double array containing all inputs to cppn from torus
 	 *         gridworld
 	 */
-	@Override
 	public double[] getSubstrateInputs(List<Substrate> subs) {
 		int torusWidth = this.exec.game.getWorld().width();
 		double[] inputs = new double[numSubstrateInputs]; // defaults to 0.0

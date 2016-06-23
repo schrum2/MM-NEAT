@@ -55,8 +55,8 @@ public class HyperNEATNNTorusPredPreyController extends NNTorusPredPreyControlle
 	}
 
 	public double[] inputs() {
-		HyperNEATTask hnt = (HyperNEATTask) MMNEAT.task;
-		double[] inputs = hnt.getSubstrateInputs(hnt.getSubstrateInformation());
+		TorusPredPreyTask task = (TorusPredPreyTask) MMNEAT.task;
+		double[] inputs = task.getSubstrateInputs(task.getSubstrateInformation());
 		return inputs;
 	}
 }

@@ -46,7 +46,7 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 	public static final int NUM_COLORS = 3;
 	public static final double MAX_COLOR = 255;
 	public static DrawingPanel dp = null;
-	public static Statistic stat;
+	public static Statistic smudgeStat;
 
 	public DoomGame game;
 	public List<int[]> actions;
@@ -65,7 +65,7 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 		setRewards();
 		setDoomMiscSettings();
 		try {
-			stat = (Statistic) ClassCreation.createObject("doomSmudgeStat");
+			smudgeStat = (Statistic) ClassCreation.createObject("doomSmudgeStat");
 		} catch (NoSuchMethodException e) {
 			System.out.println("Could not determine Smudge Statistic");
 			e.printStackTrace();
@@ -305,7 +305,7 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 				bufferPos += 3;
 			}
 		}
-		DrawingPanel dp = GraphicsUtil.drawImage(image, "Doom", width, height);
+		DrawingPanel panel = GraphicsUtil.drawImage(image, "Doom", width, height);
 		MiscUtil.waitForReadStringAndEnterKeyPress();
 	}
 	
@@ -512,7 +512,7 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 					}
 				}
 				//System.out.println("to SmudgedInputs[" + pos + "]");
-				smudgedInputs[pos++] = stat.stat(values);
+				smudgedInputs[pos++] = smudgeStat.stat(values);
 				//System.out.println(" for new coordinate [" + j + ", " + i + "] = " + (smudgedInputs[pos-1]));
 
 			}
@@ -577,10 +577,5 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 		}		
 		conn.add(new Pair<String, String>("Processing", "Outputs"));
 		return conn;
-	}
-	
-	public double[] getSubstrateInputs(List<Substrate> inputSubstrates){
-		throw new UnsupportedOperationException("The regular approach for obtaining VizDoom inputs should be sufficient");
-	}
-	
+	}	
 }
