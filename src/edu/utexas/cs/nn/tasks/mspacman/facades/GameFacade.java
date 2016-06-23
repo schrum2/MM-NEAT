@@ -728,20 +728,47 @@ public class GameFacade {
 		return newG.getGhostInitialNodeIndex();
 	}
 
+	/**
+	 * Adds a line to be drawn using the color specified
+
+	 * @param color
+	 *            the color
+	 * @param fromNnodeIndex
+	 *            the from nnode index
+	 * @param toNodeIndex
+	 *            the to node index
+	 */
 	public void addLines(Color c, int from, int to) {
 		pacman.game.GameView.addLines(newG, c, from, to);
 
 	}
 
+	/**
+	 * Gets time ghost is edible
+	 * @param ghostIndex index of ghost
+	 * @return time ghost is edible
+	 */
 	public int getGhostEdibleTime(int ghostIndex) {
 		return newG.getGhostEdibleTime(indexToGhost(ghostIndex));
 	}
 
+	/**
+	 * 
+	 * @param whichGhost ghost
+	 * @param to index of node to move to
+	 * @return index of move
+	 */
 	public int getNextGhostDirTowards(int whichGhost, int to) {
 		return moveToIndex(newG.getApproximateNextMoveTowardsTarget(getGhostCurrentNodeIndex(whichGhost), to,
 				newG.getGhostLastMoveMade(indexToGhost(whichGhost)), DM.PATH));
 	}
 
+	/**
+	 * 
+	 * @param whichGhost ghost
+	 * @param to index of node to move to
+	 * @return index of move
+	 */
 	public int getNextGhostDirAway(int whichGhost, int to) {
 		return moveToIndex(newG.getApproximateNextMoveAwayFromTarget(getGhostCurrentNodeIndex(whichGhost), to,
 				newG.getGhostLastMoveMade(indexToGhost(whichGhost)), DM.PATH));
@@ -763,42 +790,88 @@ public class GameFacade {
 		return moveToIndex(newG.getApproximateNextMoveTowardsTarget(from, to, indexToMove(lastDir), DM.PATH));
 	}
 
+	/**
+	 * gets direction to go towards target
+	 * @param to node index of target
+	 * @return direction
+	 */
 	public int getNextPacManDirTowardsTarget(int to) {
 		return moveToIndex(newG.getNextMoveTowardsTarget(newG.getPacmanCurrentNodeIndex(), to, DM.PATH));
 	}
 
+	/**
+	 * gets direction to go away from target
+	 * @param to index of target 
+	 * @return direction
+	 */
 	public int getNextPacManDirAwayFromTarget(int to) {
 		return moveToIndex(newG.getNextMoveAwayFromTarget(newG.getPacmanCurrentNodeIndex(), to, DM.PATH));
 	}
 
+	/**
+	 * gets number of pills left in game
+	 * @return num pills
+	 */
 	public int getNumberOfPills() {
 		return newG.getNumberOfPills();
 	}
 
+	/**
+	 * number of power pills left
+	 * @return num power pills
+	 */
 	public int getNumberOfPowerPills() {
 		return newG.getNumberOfPowerPills();
 	}
 
+	/**
+	 * Returns the current value awarded for eating a ghost.
+	 * @return the current value awarded for eating a ghost.
+	 */
 	public int getGhostCurrentEdibleScore() {
 		return newG.getGhostCurrentEdibleScore();
 	}
 
+	/**
+	 * gets x coordinate of given node in maze input space
+	 * @param current index of node
+	 * @return x coordinate
+	 */
 	public int getNodeXCoord(int current) {
 		return newG.getNodeXCoord(current);
 	}
 
+	/**
+	 * gets y coordinate of given node in maze input space 
+	 * @param current index of node 
+	 * @return y coordinate
+	 */
 	public int getNodeYCoord(int current) {
 		return newG.getNodeYCoord(current);
 	}
 
+	/**
+	 * gets indices where pills still are
+	 * @return indices of pills
+	 */
 	public int[] getPillIndices() {
 		return newG.getPillIndices();
 	}
 
+	/**
+	 * gets indices where power pills still are
+	 * @return indices of power pills
+	 */
 	public int[] getPowerPillIndices() {
 		return newG.getPowerPillIndices();
 	}
 
+	/**
+	 * returns whether or not given index from input space
+	 * is a node in the maze
+	 * @param index index in maze
+	 * @return whether or not in maze
+	 */
 	public boolean nodeInMaze(int index) {
 		return index < newG.getCurrentMaze().graph.length;
 	}
@@ -810,6 +883,13 @@ public class GameFacade {
 	public int lengthMaze() {
 		return newG.getCurrentMaze().graph.length;
 	}
+	
+	/**
+	 * Returns whether or not given indices are in maze or not
+	 * true iff all nodes are in maze
+	 * @param indices indices to check
+	 * @return iff nodes are in maze 
+	 */
 	public boolean allNodesInMaze(int[] indices) {
 		for (int i = 0; i < indices.length; i++) {
 			if (indices[i] != -1 && !nodeInMaze(indices[i])) {
@@ -832,13 +912,25 @@ public class GameFacade {
 	 * @return
 	 */
 	public Pair<Integer, int[]> getTargetInDir(int fromNodeIndex, int[] targetNodeIndices, int direction) {
-		return getTargetInDir(fromNodeIndex, targetNodeIndices, direction, true); // default
-																					// to
-																					// shortest
+		return getTargetInDir(fromNodeIndex, targetNodeIndices, direction, true); // default to shortest
 	}
 
-	public Pair<Integer, int[]> getTargetInDir(int fromNodeIndex, int[] targetNodeIndices, int direction,
-			boolean shortest) {
+	/**
+	 *Can return either the shortest or longest path in a given direction to
+	 * any one of several available targets. The chosen target is returned as
+	 * well, in a pair.
+	 * 
+	 * @param fromNodeIndex
+	 *            start point
+	 * @param targetNodeIndices
+	 *            potential targets
+	 * @param direction
+	 *            direction pacman must go in
+	 * @param shortest
+	 *            true for shortest path, longest path otherwise
+	 * @return path and target pair
+	 */
+	public Pair<Integer, int[]> getTargetInDir(int fromNodeIndex, int[] targetNodeIndices, int direction, boolean shortest) {
 		assert fromNodeIndex != -1 : "Invalid from node: " + fromNodeIndex;
 		assert direction >= 0 && direction <= 3 : "Not a valid direction: " + direction;
 		Pair<Integer, int[]> result = getTargetInDirFromNew(fromNodeIndex, targetNodeIndices, direction, shortest);
@@ -895,6 +987,12 @@ public class GameFacade {
 		return new Pair<Integer, int[]>(target, extremePath);
 	}
 
+	/**
+	 * gets distance ghost must travel to get from current index to given index
+	 * @param ghostIndex index of ghost
+	 * @param toNodeIndex index to travel to
+	 * @return euclidian distance
+	 */
 	public double getGhostPathDistance(int ghostIndex, int toNodeIndex) {
 		return newG.getDistance(getGhostCurrentNodeIndex(ghostIndex), toNodeIndex,
 				newG.getGhostLastMoveMade(indexToGhost(ghostIndex)), DM.PATH);
