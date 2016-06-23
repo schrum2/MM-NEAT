@@ -1,6 +1,7 @@
 package edu.utexas.cs.nn.tasks;
 
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
+import edu.utexas.cs.nn.evolution.genotypes.HyperNEATCPPNGenotype;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
 import edu.utexas.cs.nn.evolution.lineage.Offspring;
 import edu.utexas.cs.nn.evolution.metaheuristics.Metaheuristic;
@@ -74,14 +75,19 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
 		 */
 		@SuppressWarnings("unchecked")
 		@Override
-		public Score<T> call() {
+		public Score<T> call() {//TODO 
 			DrawingPanel panel = null;
 			// DrawingPanel[] subPanels = null;
-			if (genotype instanceof TWEANNGenotype) {
+			if (genotype instanceof TWEANNGenotype) {//TODO
 				if (CommonConstants.showNetworks) {
 					panel = new DrawingPanel(TWEANN.NETWORK_VIEW_DIM, TWEANN.NETWORK_VIEW_DIM, "Evolving Network");
 					panel.setLocation(NETWORK_WINDOW_OFFSET, 0);
 					((TWEANNGenotype) genotype).getPhenotype().draw(panel);
+					if(genotype instanceof HyperNEATCPPNGenotype && Parameters.parameters.booleanParameter("showCPPN")) {
+						panel = new DrawingPanel(500, 500, "Evolved CPPN");
+						panel.setLocation(TWEANN.NETWORK_VIEW_DIM + NETWORK_WINDOW_OFFSET, 0);
+						(((HyperNEATCPPNGenotype) genotype).getCPPN()).draw(panel);
+					}
 					// if(genotype instanceof HierarchicalTWEANNGenotype){
 					// HierarchicalTWEANNGenotype htg =
 					// (HierarchicalTWEANNGenotype) genotype;
