@@ -484,7 +484,7 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 		//Predator other scores
 		addObjective(new PredatorCatchObjective<T>(), otherScores, false, pop);
 		for(int i = 0; i < Parameters.parameters.integerParameter("torusPredators"); i++){
-			addObjective(new IndividualPredatorCatchObjective<T>(i), objectives, pop);
+			addObjective(new IndividualPredatorCatchObjective<T>(i), otherScores, false, pop);
 		}
 		addObjective(new PredatorCatchCloseObjective<T>(), otherScores, false, pop);
 		addObjective(new PredatorMinimizeGameTimeObjective<T>(), otherScores, false, pop);
