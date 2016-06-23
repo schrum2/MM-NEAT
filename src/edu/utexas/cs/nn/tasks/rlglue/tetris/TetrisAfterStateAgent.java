@@ -120,7 +120,7 @@ public class TetrisAfterStateAgent<T extends Network> extends RLGlueAgent<T> {
 			}
 
 			int index = StatisticsUtilities.argmax(outputForArgmax); // action = argmax(list)
-
+ 
 			for (int k = 0; k < outputPairs.get(index).t2.size(); k++) {
 				currentActionList.add(outputPairs.get(index).t2.get(k)); 
 				// this should add the next action to the linked list in the proper order
