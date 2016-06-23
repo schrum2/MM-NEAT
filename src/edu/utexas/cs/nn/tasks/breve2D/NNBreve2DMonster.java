@@ -9,8 +9,13 @@ import edu.utexas.cs.nn.breve2D.dynamics.RammingDynamics;
 import edu.utexas.cs.nn.breve2D.sensor.RaySensor;
 import edu.utexas.cs.nn.evolution.Organism;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
+import edu.utexas.cs.nn.evolution.lineage.Offspring;
+import edu.utexas.cs.nn.graphics.DrawingPanel;
+import edu.utexas.cs.nn.graphics.Plot;
 import edu.utexas.cs.nn.networks.ModeSelector;
 import edu.utexas.cs.nn.networks.Network;
+import edu.utexas.cs.nn.networks.TWEANN;
+import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.util.CartesianGeometricUtilities;
 import java.util.Arrays;
@@ -25,10 +30,18 @@ public class NNBreve2DMonster<T extends Network> extends Organism<T>implements A
 	private final Network nn;
 	private final int largeDistance;
 
+	protected DrawingPanel networkInputs;
+	
 	NNBreve2DMonster(int index, Genotype<T> genotype) {
 		super(genotype);
 		this.teamIndex = index;
 		nn = (Network) this.getGenotype().getPhenotype();
+		if (CommonConstants.monitorInputs) {
+			DrawingPanel panel = new DrawingPanel(Plot.BROWSE_DIM, (int) (Plot.BROWSE_DIM * 3.5), ("Monster " + index));
+			networkInputs = panel;
+			panel.setLocation(index * (Plot.BROWSE_DIM + 10), 0);
+			Offspring.fillInputs(panel, genotype);
+		}
 		absence = Parameters.parameters.booleanParameter("absenceNegative") ? -1 : 0;
 		largeDistance = Math.min(Breve2DGame.SIZE_X, Breve2DGame.SIZE_Y);
 	}
@@ -122,6 +135,11 @@ public class NNBreve2DMonster<T extends Network> extends Organism<T>implements A
 			ModeSelector modeSelector = new BreveModeSelector(game.dynamics);
 			nn.chooseMode(modeSelector.mode());
 		}
+		
+		if (networkInputs != null) {
+			TWEANN.inputPanel = networkInputs;
+		}
+		
 		double[] outputs = nn.process(inputs);
 		return new Breve2DAction(outputs[0], outputs[1]);
 	}

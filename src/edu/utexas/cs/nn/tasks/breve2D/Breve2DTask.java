@@ -8,6 +8,7 @@ import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.evolution.nsga2.tug.TUGTask;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.networks.NetworkTask;
+import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.NoisyLonerTask;
@@ -51,6 +52,9 @@ public class Breve2DTask<T extends Network> extends NoisyLonerTask<T>implements 
 		}
 		this.numMonsters = Parameters.parameters.integerParameter("numBreve2DMonsters");
 		this.dynamics.registerFitnessFunctions();
+		if (CommonConstants.monitorInputs && TWEANN.inputPanel != null) {
+			TWEANN.inputPanel.dispose();
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -84,6 +88,13 @@ public class Breve2DTask<T extends Network> extends NoisyLonerTask<T>implements 
 			dynamics.advanceTask();
 			if (enemy instanceof MultitaskPlayer) {
 				((MultitaskPlayer) enemy).advanceTask();
+			}
+		}
+		// dispose of all panels inside of agents/controllers
+		if (CommonConstants.monitorInputs) {
+			// Dispose of existing panels
+			for (int i = 0; i < monsters.length; i++) {
+				((NNBreve2DMonster<T>) (monsters)[i]).networkInputs.dispose();
 			}
 		}
 		double[] oneTrialFitness = dynamics.fitnessScores();

@@ -15,6 +15,7 @@ import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.scores.Score;
+import edu.utexas.cs.nn.tasks.breve2D.Breve2DTask;
 import edu.utexas.cs.nn.tasks.gridTorus.TorusPredPreyTask;
 import edu.utexas.cs.nn.tasks.mspacman.MsPacManTask;
 import edu.utexas.cs.nn.util.PopulationUtil;
@@ -112,7 +113,7 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
 				// "Individual Info" panel is unnecessary, as panels for each
 				// evolved agents are already shown with monitorInputs with all
 				// of their sensors and information
-				if (CommonConstants.monitorInputs && !(MMNEAT.task instanceof TorusPredPreyTask)) {
+				if (CommonConstants.monitorInputs && !(MMNEAT.task instanceof TorusPredPreyTask) && !(MMNEAT.task instanceof Breve2DTask)) {
 					Offspring.fillInputs((TWEANNGenotype) genotype);
 				}
 			}
