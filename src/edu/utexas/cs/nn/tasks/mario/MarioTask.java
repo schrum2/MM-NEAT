@@ -157,12 +157,15 @@ public class MarioTask<T extends Network> extends NoisyLonerTask<T>implements Ne
 		Substrate processing = new Substrate(new Pair<Integer, Integer>(width, height), 
 				Substrate.PROCCESS_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, Substrate.PROCCESS_SUBSTRATE, 0), "Processing");
 		subs.add(processing);
-		Substrate outputsDpad = new Substrate(new Pair<Integer, Integer>(3, 3), //3 by 3 d-pad
+		Substrate outputsDpad = new Substrate(new Pair<Integer, Integer>(3, 2), //3 by 2 d-pad
 				Substrate.OUTPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, Substrate.OUTPUT_SUBSTRATE, 0), "Outputs D-Pad");
 		subs.add(outputsDpad);
-		Substrate outputsButton = new Substrate(new Pair<Integer, Integer>(1, 1), //1 by 1 button
-				Substrate.OUTPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, Substrate.OUTPUT_SUBSTRATE, 0), "Outputs Button");
-		subs.add(outputsButton);
+		Substrate outputSpeed = new Substrate(new Pair<Integer, Integer>(1, 1), //1 by 1 button for speed
+				Substrate.OUTPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, Substrate.OUTPUT_SUBSTRATE, 0), "Output Speed");
+		subs.add(outputSpeed);
+		Substrate outputJump = new Substrate(new Pair<Integer, Integer>(1, 1), //1 by 1 button for speed
+				Substrate.OUTPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, Substrate.OUTPUT_SUBSTRATE, 0), "Output Jump");
+		subs.add(outputJump);
 		return subs;
 	}
 
@@ -181,7 +184,8 @@ public class MarioTask<T extends Network> extends NoisyLonerTask<T>implements Ne
 		conn.add(new Pair<String, String>("Inputs World", "Processing"));
 		conn.add(new Pair<String, String>("Inputs Enemies", "Processing"));
 		conn.add(new Pair<String, String>("Processing", "Outputs D-Pad"));	
-		conn.add(new Pair<String, String>("Processing", "Outputs Button"));	
+		conn.add(new Pair<String, String>("Processing", "Output Speed"));	
+		conn.add(new Pair<String, String>("Processing", "Output Jump"));	
 		return conn;
 	}
 }

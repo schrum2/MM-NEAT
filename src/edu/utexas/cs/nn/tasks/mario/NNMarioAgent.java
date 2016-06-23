@@ -14,11 +14,11 @@ public class NNMarioAgent<T extends Network> extends Organism<T> implements Agen
 
 	Network n;
 	private String name = "NNMarioAgent";
-	static final int SUB_LEFT = 3;
-    static final int SUB_RIGHT = 5;
-    static final int SUB_DOWN = 7;
-    static final int SUB_JUMP = 1;
-    static final int SUB_SPEED = 9;
+	static final int SUB_LEFT = 0;
+    static final int SUB_RIGHT = 2;
+    static final int SUB_DOWN = 4;
+    static final int SUB_JUMP = 7;
+    static final int SUB_SPEED = 6;
 	public NNMarioAgent(Genotype<T> genotype) {
 		super(genotype);
 		n = genotype.getPhenotype();
@@ -73,7 +73,7 @@ public class NNMarioAgent<T extends Network> extends Organism<T> implements Agen
 	            action[i] = outputs[i] > 0;
 	        }
         } else {
-            action[Mario.KEY_LEFT] = outputs[SUB_LEFT] > 0; // Left
+            action[Mario.KEY_LEFT] = outputs[SUB_LEFT] > 0; 
             action[Mario.KEY_RIGHT] = outputs[SUB_RIGHT] > 0;
             action[Mario.KEY_DOWN] = outputs[SUB_DOWN] > 0;
             action[Mario.KEY_JUMP] = outputs[SUB_JUMP] > 0;
