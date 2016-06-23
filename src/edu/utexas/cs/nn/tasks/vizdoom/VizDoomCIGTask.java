@@ -1,9 +1,12 @@
 package edu.utexas.cs.nn.tasks.vizdoom;
 
+import java.util.List;
+
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.networks.TWEANN;
+import edu.utexas.cs.nn.networks.hyperneat.Substrate;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import vizdoom.Button;
@@ -96,8 +99,20 @@ public class VizDoomCIGTask<T extends Network> extends VizDoomTask<T> {
 	}
 
 	@Override
-	public Pair<Integer, Integer> outputSubstrateSize() {
+	public double[] interpretOutputs(double[] rawOutputs) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void addOutputSubstrates(List<Substrate> subs) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addOutputConnections(List<Pair<String, String>> conn) {
+		// TODO Auto-generated method stub
+		
 	}
 }
