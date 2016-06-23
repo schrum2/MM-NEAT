@@ -151,8 +151,6 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 		actionLabels.add(label);
 		actions.add(buttonPresses);
 	}
-
-	public abstract Pair<Integer, Integer> outputSubstrateSize();
 	
 	public abstract void setDoomActions();
 
@@ -189,9 +187,11 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 				showInputs(s, inputs); //use this to look at the inputs that the agent is seeing
 				
 			}
-			double[] outputs = n.process(inputs);
+			double[] rawOutputs = n.process(inputs);
+			
+			double[] outputs = interpretOutputs(rawOutputs);
+			
 			// This now takes the arg max of the action outputs
-			//double r = game.makeAction(actions.get(StatisticsUtilities.argmax(outputs))); 
 			int actIndex = StatisticsUtilities.argmax(outputs);
 			int[] act = actions.get(actIndex);
 			game.makeAction(act); 
@@ -212,6 +212,8 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 		return getFitness(game);
 	}
 	
+	public abstract double[] interpretOutputs(double[] rawOutputs);
+
 	public Pair<double[], double[]> getFitness(DoomGame game){
 		return new Pair<double[], double[]>(new double[] { game.getTotalReward() }, new double[] {});
 	}
@@ -549,12 +551,15 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 		Substrate processing = new Substrate(new Pair<Integer, Integer>(reducedWidth, reducedHeight), 
 				Substrate.PROCCESS_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, Substrate.PROCCESS_SUBSTRATE, 0), "Processing");
 		subs.add(processing);
-		Substrate outputs = new Substrate(outputSubstrateSize(), 
-				Substrate.OUTPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, Substrate.OUTPUT_SUBSTRATE, 0), "Outputs");
-		subs.add(outputs);
+		
+		addOutputSubstrates(subs);
 		return subs;
 	}
 
+	public abstract void addOutputSubstrates(List<Substrate> subs);
+	
+	public abstract void addOutputConnections(List<Pair<String, String>> conn);
+	
 	/**
 	 * Each Substrate has a unique String name, and this method returns a list
 	 * of String pairs indicating which Substrates are connected: The Substrate
@@ -575,7 +580,7 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 			name = "Inputs (" + (i == RED_INDEX ? "Red)" : (i == GREEN_INDEX ? "Green)" : "Blue)"));
 			conn.add(new Pair<String, String>(name, "Processing"));
 		}		
-		conn.add(new Pair<String, String>("Processing", "Outputs"));
+		addOutputConnections(conn);
 		return conn;
 	}	
 }

@@ -1,11 +1,15 @@
 package edu.utexas.cs.nn.tasks.vizdoom;
 
+import java.util.List;
+
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.networks.TWEANN;
+import edu.utexas.cs.nn.networks.hyperneat.Substrate;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.util.datastructures.Pair;
+import edu.utexas.cs.nn.util.datastructures.Triple;
 import vizdoom.Button;
 import vizdoom.GameState;
 import vizdoom.GameVariable;
@@ -37,13 +41,13 @@ public class VizDoomHealthGatherTask<T extends Network> extends VizDoomTask<T> {
 
 	@Override
 	public void setDoomActions() {
-		game.addAvailableButton(Button.TURN_LEFT);
 		game.addAvailableButton(Button.MOVE_FORWARD);
+		game.addAvailableButton(Button.TURN_LEFT);
 		game.addAvailableButton(Button.TURN_RIGHT);
 		
-		addAction(new int[] { 1, 0, 0 }, "Turn left");
-		addAction(new int[] { 0, 1, 0 }, "Move forward");
-		addAction(new int[] { 0, 0, 1 }, "Turn right");
+		addAction(new int[] { 1, 0, 0 }, "Move Forward");
+		addAction(new int[] { 0, 1, 0 }, "Turn Left");
+		addAction(new int[] { 0, 0, 1 }, "Turn Right");
 	}
 
 	@Override
@@ -98,7 +102,23 @@ public class VizDoomHealthGatherTask<T extends Network> extends VizDoomTask<T> {
 	}
 
 	@Override
-	public Pair<Integer, Integer> outputSubstrateSize() {
-		return new Pair<Integer, Integer>(actions.size(), 1);
+	public double[] interpretOutputs(double[] rawOutputs) {
+		double[] action = new double[3];
+		action[0] = rawOutputs[1]; // Forward
+		action[1] = rawOutputs[3]; // Left
+		action[2] = rawOutputs[5]; // Right
+		return action;
+	}
+
+	@Override
+	public void addOutputSubstrates(List<Substrate> subs) {
+		Substrate dpad = new Substrate(new Pair<Integer, Integer>(3, 2), 
+				Substrate.OUTPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, Substrate.OUTPUT_SUBSTRATE, 0), "D-Pad Outputs");
+		subs.add(dpad);
+	}
+
+	@Override
+	public void addOutputConnections(List<Pair<String, String>> conn) {
+		conn.add(new Pair<String, String>("Processing", "D-Pad Outputs"));
 	}
 }

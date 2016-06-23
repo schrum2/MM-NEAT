@@ -1,11 +1,15 @@
 package edu.utexas.cs.nn.tasks.vizdoom;
 
+import java.util.List;
+
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.networks.TWEANN;
+import edu.utexas.cs.nn.networks.hyperneat.Substrate;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.util.datastructures.Pair;
+import edu.utexas.cs.nn.util.datastructures.Triple;
 import vizdoom.Button;
 import vizdoom.GameState;
 import vizdoom.GameVariable;
@@ -29,16 +33,18 @@ public class VizDoomBasicShootTask<T extends Network> extends VizDoomTask<T> {
 	public void setDoomActions() {
 		// Adds buttons that will be allowed.
 		game.addAvailableButton(Button.MOVE_LEFT);
-		game.addAvailableButton(Button.ATTACK);
 		game.addAvailableButton(Button.MOVE_RIGHT);
+		
+		game.addAvailableButton(Button.ATTACK);
 		
 		// Define some actions. Each list entry corresponds to declared buttons:
 		// MOVE_LEFT, MOVE_RIGHT, ATTACK
 		// more combinations are naturally possible but only 3 are included for
 		// transparency when watching.
 		addAction(new int[] { 1, 0, 0 }, "Left");
-		addAction(new int[] { 0, 1, 0 }, "Still and Shoot");
-		addAction(new int[] { 0, 0, 1 }, "Right");
+		addAction(new int[] { 0, 1, 0 }, "Right");
+		
+		addAction(new int[] { 0, 0, 1 }, "Still and Shoot");
 	}
 
 	@Override
@@ -124,7 +130,28 @@ public class VizDoomBasicShootTask<T extends Network> extends VizDoomTask<T> {
 	}
 
 	@Override
-	public Pair<Integer, Integer> outputSubstrateSize() {
-		return new Pair<Integer, Integer>(actions.size(), 1);
+	public void addOutputSubstrates(List<Substrate> subs) {
+		Substrate dpadOutputs = new Substrate(new Pair<Integer, Integer>(2, 1), 
+				Substrate.OUTPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, Substrate.OUTPUT_SUBSTRATE, 0), "D-Pad Outputs");
+		subs.add(dpadOutputs);
+		Substrate buttonOutputs = new Substrate(new Pair<Integer, Integer>(1, 1), 
+				Substrate.OUTPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, Substrate.OUTPUT_SUBSTRATE, 0), "Button Output");
+		subs.add(buttonOutputs);
+	}
+
+	@Override
+	public void addOutputConnections(List<Pair<String, String>> conn) {
+		conn.add(new Pair<String, String>("Processing", "D-Pad Outputs"));
+		conn.add(new Pair<String, String>("Processing", "Button Output"));
+	}
+
+	//not needed, but easier to just implement
+	@Override
+	public double[] interpretOutputs(double[] rawOutputs) {
+		double[] action = new double[3];
+		action[0] = rawOutputs[0]; // Left
+		action[1] = rawOutputs[1]; // Right
+		action[2] = rawOutputs[2]; // Shoot
+		return action;
 	}
 }

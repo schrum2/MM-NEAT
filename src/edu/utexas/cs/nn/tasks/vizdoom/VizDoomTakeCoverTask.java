@@ -1,11 +1,15 @@
 package edu.utexas.cs.nn.tasks.vizdoom;
 
+import java.util.List;
+
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.networks.TWEANN;
+import edu.utexas.cs.nn.networks.hyperneat.Substrate;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.util.datastructures.Pair;
+import edu.utexas.cs.nn.util.datastructures.Triple;
 import vizdoom.Button;
 import vizdoom.GameState;
 import vizdoom.GameVariable;
@@ -38,8 +42,8 @@ public class VizDoomTakeCoverTask<T extends Network> extends VizDoomTask<T> {
 	public void setDoomActions() {
 		game.addAvailableButton(Button.MOVE_LEFT);
 		game.addAvailableButton(Button.MOVE_RIGHT);
-		addAction(new int[] { 1, 0 }, "Move left");
-		addAction(new int[] { 0, 1 }, "Move right");
+		addAction(new int[] { 1, 0 }, "Move Left");
+		addAction(new int[] { 0, 1 }, "Move Right");
 	}
 
 	@Override
@@ -92,8 +96,24 @@ public class VizDoomTakeCoverTask<T extends Network> extends VizDoomTask<T> {
 		vd.finalCleanup();
 	}
 
+	//not needed, but easier to just implement
 	@Override
-	public Pair<Integer, Integer> outputSubstrateSize() {
-		return new Pair<Integer, Integer>(actions.size(), 1);
+	public double[] interpretOutputs(double[] rawOutputs) {
+		double[] action = new double[2];
+		action[0] = rawOutputs[0]; // Left
+		action[1] = rawOutputs[1]; // Right
+		return action;
+	}
+
+	@Override
+	public void addOutputSubstrates(List<Substrate> subs) {
+		Substrate dpadOutputs = new Substrate(new Pair<Integer, Integer>(2, 1), 
+				Substrate.OUTPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, Substrate.OUTPUT_SUBSTRATE, 0), "D-Pad Outputs");
+		subs.add(dpadOutputs);
+	}
+
+	@Override
+	public void addOutputConnections(List<Pair<String, String>> conn) {
+		conn.add(new Pair<String, String>("Processing", "D-Pad Outputs"));		
 	}
 }
