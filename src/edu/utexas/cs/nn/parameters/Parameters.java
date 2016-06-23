@@ -316,9 +316,9 @@ public class Parameters {
 		booleanOptions.add("torusInvertSensorInputs", false, "Causes agents' sensor inputs to be inverted in torusPredPreyTask");
 		booleanOptions.add("torusSenseByProximity", true, "Causes agents' sensor inputs to be by proximity of the agent instead of simply each agent by indices");
 		
-		booleanOptions.add("cooperativeDistanceIndividualSelection", false, "Cooperative Predators with encouraged distance minimization per population");
-		booleanOptions.add("cooperativeDistanceAggregateTeamSelection", false, "Cooperative Predators with encouraged distance minimization as a team");
-		booleanOptions.add("cooperativeDistanceIndividualAndAggregateTeamSelection", false, "Cooperative Predators with encouraged distance minimization per population and as a team");
+		booleanOptions.add("cooperativeIndividualSelection", false, "Cooperative Predators with encouraged distance minimization per population");
+		booleanOptions.add("cooperativeAggregateTeamSelection", false, "Cooperative Predators with encouraged distance minimization as a team");
+		booleanOptions.add("cooperativeIndividualAndAggregateTeamSelection", false, "Cooperative Predators with encouraged distance minimization per population and as a team");
 		
 		
 		booleanOptions.add("preyLongSurvivalTime", false, "Turn on to encourage each prey to maximize their survival time");

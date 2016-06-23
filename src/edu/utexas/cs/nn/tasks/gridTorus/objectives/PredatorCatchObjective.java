@@ -8,13 +8,13 @@ import edu.utexas.cs.nn.networks.Network;
  * 
  * @author rollinsa
  * 
- *         Find the score of the predator based on how many prey died
+ *         Find the score of the predators based on how many prey died
  */
 public class PredatorCatchObjective<T extends Network> extends GridTorusObjective<T> {
 
 	@Override
 	/**
-	 * Find the score of the predator based on how many prey died
+	 * Find the score of the predators based on how many prey died
 	 */
 	public double fitness(Organism<T> individual) {
 
@@ -28,7 +28,7 @@ public class PredatorCatchObjective<T extends Network> extends GridTorusObjectiv
 			}
 		}
 
-		// return a score based on percentage of caught prey
+		// return a score based on number of caught prey
 		return numCaught;
 	}
 

@@ -38,6 +38,7 @@ import edu.utexas.cs.nn.tasks.gridTorus.objectives.PreyMaximizeDistanceFromPreda
 import edu.utexas.cs.nn.tasks.gridTorus.objectives.PreyMaximizeGameTimeObjective;
 import edu.utexas.cs.nn.tasks.gridTorus.objectives.PreyMinimizeCaughtObjective;
 import edu.utexas.cs.nn.tasks.gridTorus.objectives.PreyRawalRajagopalanMiikkulainenObjective;
+import edu.utexas.cs.nn.tasks.gridTorus.objectives.cooperative.IndividualPredatorCatchObjective;
 import edu.utexas.cs.nn.tasks.gridTorus.objectives.cooperative.IndividualPredatorMinimizeDistanceFromIndividualPreyObjective;
 import edu.utexas.cs.nn.tasks.gridTorus.objectives.cooperative.IndividualPredatorMinimizeDistanceFromPreyObjective;
 import edu.utexas.cs.nn.tasks.gridTorus.objectives.cooperative.IndividualPreyMaximizeDistanceFromClosestPredatorObjective;
@@ -482,6 +483,9 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 		//add other scores to be able to show each fitness score even if it's not effecting evolution
 		//Predator other scores
 		addObjective(new PredatorCatchObjective<T>(), otherScores, false, pop);
+		for(int i = 0; i < Parameters.parameters.integerParameter("torusPredators"); i++){
+			addObjective(new IndividualPredatorCatchObjective<T>(i), objectives, pop);
+		}
 		addObjective(new PredatorCatchCloseObjective<T>(), otherScores, false, pop);
 		addObjective(new PredatorMinimizeGameTimeObjective<T>(), otherScores, false, pop);
 		addObjective(new PredatorHerdPreyObjective<T>(), otherScores, false, pop);
@@ -551,17 +555,21 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 		
 		
 		//The following three cooperative setups test individual versus team selection
-		if(Parameters.parameters.booleanParameter("cooperativeDistanceIndividualSelection")){
+		if(Parameters.parameters.booleanParameter("cooperativeIndividualSelection")){
+			addObjective(new IndividualPredatorCatchObjective<T>(pop), objectives, pop);
 			for(int i = 0; i < Parameters.parameters.integerParameter("torusPreys"); i++){
 				addObjective(new IndividualPredatorMinimizeDistanceFromIndividualPreyObjective<T>(pop,i), objectives, pop);
 			}
 		}
-		if(Parameters.parameters.booleanParameter("cooperativeDistanceAggregateTeamSelection")){
+		if(Parameters.parameters.booleanParameter("cooperativeAggregateTeamSelection")){
+			addObjective(new PredatorCatchObjective<T>(), objectives, pop);
 			for(int i = 0; i < Parameters.parameters.integerParameter("torusPreys"); i++){
 				addObjective(new PredatorMinimizeDistanceFromIndividualPreyObjective<T>(i), objectives, pop);
 			}
 		}
-		if(Parameters.parameters.booleanParameter("cooperativeDistanceIndividualAndAggregateTeamSelection")){
+		if(Parameters.parameters.booleanParameter("cooperativeIndividualAndAggregateTeamSelection")){
+			addObjective(new PredatorCatchObjective<T>(), objectives, pop);
+			addObjective(new IndividualPredatorCatchObjective<T>(pop), objectives, pop);
 			for(int i = 0; i < Parameters.parameters.integerParameter("torusPreys"); i++){
 				addObjective(new IndividualPredatorMinimizeDistanceFromIndividualPreyObjective<T>(pop,i), objectives, pop);
 				addObjective(new PredatorMinimizeDistanceFromIndividualPreyObjective<T>(i), objectives, pop);

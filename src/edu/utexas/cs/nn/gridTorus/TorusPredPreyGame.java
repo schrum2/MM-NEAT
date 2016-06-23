@@ -20,6 +20,8 @@ public class TorusPredPreyGame {
 
 	// array which stores the time that each prey dies (for fitness function)
 	private final int[] deathTimes;
+	//will store the number of prey caught by each predator
+	private int[] preyCatchesForEachPred;
 	private boolean gameOver;
 	private int time;
 	private final int timeLimit;
@@ -46,6 +48,8 @@ public class TorusPredPreyGame {
 		// they will live the whole time, then this is updated if they die and
 		// at what time they die
 		deathTimes = new int[numPrey];
+		//will store the number of prey caught by each predator
+		preyCatchesForEachPred = new int[numPred];
 		for (int i = 0; i < numPrey; i++) {
 			deathTimes[i] = timeLimit;
 		}
@@ -75,7 +79,7 @@ public class TorusPredPreyGame {
 	/**
 	 * returns a double array with an array of the predators followed by an
 	 * array of the preys
-         * @return array of all agents in world
+	 * @return array of all agents in world
 	 */
 	public TorusAgent[][] getAgents() {
 		return new TorusAgent[][] { preds, preys };
@@ -134,6 +138,18 @@ public class TorusPredPreyGame {
 	}
 
 	/**
+	 * Returns the number of prey caught by the given predator
+	 * Multiple predators can get credit for catching one prey if they are all
+	 * colocated with the prey
+	 * 
+	 * @param pred, the predator index 
+	 * @return the number of prey caught by the given predator
+	 */
+	public int getPreyCatchesForThisPred(int pred){
+		return preyCatchesForEachPred[pred];
+	}
+
+	/**
 	 * moves all the agents along the x and y coordinates
 	 * 
 	 * @param moves
@@ -161,11 +177,18 @@ public class TorusPredPreyGame {
 	private void eat(TorusAgent[] preds, TorusAgent[] preys) {
 		for (int i = 0; i < preys.length; i++) {
 			if (preys[i] != null && preys[i].isCoLocated(preds)) { // Prey is eaten
+				//designated which predator(s) caught the prey
+				for(int j = 0; j < preds.length; j++){
+					if(preys[i].isCoLocated(preds[j])){
+						preyCatchesForEachPred[j]++;
+					}
+				}
 				// The prey at this location is currently being digested, so is
 				// now null
 				preys[i] = null;
 				// set the deathTime of this prey
 				deathTimes[i] = time;
+
 			}
 		}
 	}
