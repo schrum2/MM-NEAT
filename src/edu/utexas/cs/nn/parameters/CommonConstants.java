@@ -10,7 +10,20 @@ package edu.utexas.cs.nn.parameters;
  */
 public class CommonConstants {
 
+
 	// boolean
+	public static boolean includeSigmoidFunction;
+	public static boolean includeTanhFunction;
+	public static boolean includeIdFunction;
+	public static boolean includeFullApproxFunction;
+	public static boolean includeApproxFunction;
+	public static boolean includeGaussFunction;
+	public static boolean includeSineFunction;
+	public static boolean includeSawtoothFunction;
+	public static boolean includeAbsValFunction;
+	public static boolean includeHalfLinearPiecewiseFunction;
+	public static boolean includeStretchedTanhFunction;
+	
 	public static boolean splitHyperNEATTetrisInputs;
 	public static boolean allowMultipleFunctions;
 	public static boolean allowRandomGhostReversals;
@@ -113,6 +126,17 @@ public class CommonConstants {
 	 */
 	public static void load() {
 		// boolean
+		includeSigmoidFunction = Parameters.parameters.booleanParameter("includeSigmoidFunction");
+		includeTanhFunction = Parameters.parameters.booleanParameter("includeTanhFunction");
+		includeIdFunction = Parameters.parameters.booleanParameter("includeIdFunction");
+		includeFullApproxFunction = Parameters.parameters.booleanParameter("includeFullApproxFunction");
+		includeApproxFunction = Parameters.parameters.booleanParameter("includeApproxFunction");
+		includeGaussFunction = Parameters.parameters.booleanParameter("includeGaussFunction");
+		includeSineFunction = Parameters.parameters.booleanParameter("includeSineFunction");
+		includeSawtoothFunction = Parameters.parameters.booleanParameter("includeSawtoothFunction");
+		includeAbsValFunction = Parameters.parameters.booleanParameter("includeAbsValFunction");
+		includeHalfLinearPiecewiseFunction = Parameters.parameters.booleanParameter("includeHalfLinearPiecewiseFunction");
+		includeStretchedTanhFunction = Parameters.parameters.booleanParameter("includeStretchedTanhFunction");	
 		splitHyperNEATTetrisInputs = Parameters.parameters.booleanParameter("splitHyperNEATTetrisInputs");
 		allowMultipleFunctions = Parameters.parameters.booleanParameter("allowMultipleFunctions");
 		allowRandomGhostReversals = Parameters.parameters.booleanParameter("allowRandomGhostReversals");

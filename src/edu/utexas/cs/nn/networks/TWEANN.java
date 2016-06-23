@@ -188,7 +188,8 @@ public class TWEANN implements Network {
 				return "Sine";
 			case ActivationFunctions.FTYPE_ABSVAL:
 				return "AbsoluteValue";
-
+			case ActivationFunctions.FTYPE_STRETCHED_TANH :
+				return "Stretched Tanh";
 			}
 			// Should never reach
 			System.out.println(ftype + " is not a valid type of activation function");

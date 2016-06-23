@@ -346,7 +346,7 @@ public class Parameters {
 		booleanOptions.add("allowMultipleFunctions", false, "Turning this one will allow you to change TWEANN to CPPN by allowing multiple activation functions");
 		booleanOptions.add("includeSigmoidFunction", true, "Fuction for sigmoid. If true, add to the function set");
 		booleanOptions.add("includeTanhFunction", false, "Fuction for tanh. If true, add to the function set");
-		booleanOptions.add("includeIdFuntion", false, "Just the sum. If true, add to the function set");
+		booleanOptions.add("includeIdFunction", false, "Just the sum. If true, add to the function set");
 		booleanOptions.add("includeFullApproxFunction", false, "Fuction for full quick sigmoid. If true, add to the function set");
 		booleanOptions.add("includeApproxFunction", false, "Fuction for quick sigmoid. If true, add to the function set");
 		booleanOptions.add("includeGaussFunction", true, "Fuction for gaussian. If true, add to the function set");
@@ -354,6 +354,8 @@ public class Parameters {
 		booleanOptions.add("includeSawtoothFunction", true, "Fuction for sawtooth. If true, add to the function set");
 		booleanOptions.add("includeAbsValFunction", true, "Fuction for absolute value. If true, add to the function set");
 		booleanOptions.add("includeHalfLinearPiecewiseFunction", true, "Function for half linear picewise. If true, add to the function set");
+		booleanOptions.add("includeStretchedTanhFunction", false, "Function for stretched tanh function. Good for preventing saturation if values in -1 - 1 range."
+				+ "If true, add to the function set.");
 		booleanOptions.add("logGhostLocOnPowerPill", false, "Log ghost locations corresponding to each eaten power pill");
 		booleanOptions.add("breveDamageOnly", false, "Breve domains only care about damage objectives");
 		booleanOptions.add("getRemainingPills", false, "CEC 2011 rule that Ms. Pac-Man gets the pills in the level when time runs out");

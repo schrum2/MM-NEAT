@@ -15,7 +15,7 @@ public class ActivationFunctions {
 	/**
 	 * Initialize the array list for all ftypes
 	 */
-	public static ArrayList<Integer> availableActivationFunctions = new ArrayList<>(10);
+	public static ArrayList<Integer> availableActivationFunctions = new ArrayList<>(11);
 
 	// For use in sigmoid, it is convenient to bound the inputs to the exp
 	// function
@@ -34,20 +34,21 @@ public class ActivationFunctions {
 	public static final int FTYPE_ABSVAL = 13;
 	public static final int FTYPE_HLPIECEWISE = 15;
 	public static final int FTYPE_SAWTOOTH = 16;
+	public static final int FTYPE_STRETCHED_TANH = 17;
 
 	/**
 	 * Initializes the set of ftypes by checking boolean parameters for included
 	 * functions
 	 */
 	public static void resetFunctionSet() {
-		availableActivationFunctions = new ArrayList<>(10);
+		availableActivationFunctions = new ArrayList<>(11);
 		if (Parameters.parameters.booleanParameter("includeSigmoidFunction")) {
 			availableActivationFunctions.add(FTYPE_SIGMOID);
 		}
 		if (Parameters.parameters.booleanParameter("includeTanhFunction")) {
 			availableActivationFunctions.add(FTYPE_TANH);
 		}
-		if (Parameters.parameters.booleanParameter("includeIdFuntion")) {
+		if (Parameters.parameters.booleanParameter("includeIdFunction")) {
 			availableActivationFunctions.add(FTYPE_ID);
 		}
 		if (Parameters.parameters.booleanParameter("includeFullApproxFunction")) {
@@ -70,6 +71,9 @@ public class ActivationFunctions {
 		}
 		if (Parameters.parameters.booleanParameter("includeSawtoothFunction")) {
 			availableActivationFunctions.add(FTYPE_SAWTOOTH);
+		}
+		if(Parameters.parameters.booleanParameter("includeStretchedTanhFunction")) {
+			availableActivationFunctions.add(FTYPE_STRETCHED_TANH);
 		}
 	}
 
@@ -132,8 +136,17 @@ public class ActivationFunctions {
 			assert!Double.isNaN(activation) : "absVal returns NaN on " + sum;
 			assert!Double.isInfinite(activation) : "absVal is infinite on " + sum + " from " + activation;
 			break;
+		case ActivationFunctions.FTYPE_STRETCHED_TANH:
+			activation = ActivationFunctions.stretchedTanh(sum);
+			assert!Double.isNaN(activation) : "stretchedTanh returns NaN on " + sum;
+			assert!Double.isInfinite(activation) : "stretchedTanh is infinite on " + sum + " from " + activation;
+			break;
 		}
 		return activation;
+	}
+
+	private static double stretchedTanh(double sum) {
+		return 1.7159 * tanh( 2/3 * sum);  
 	}
 
 	public static String activationName(int ftype) { 
@@ -156,9 +169,13 @@ public class ActivationFunctions {
 			return "Gaussian";
 		} else if(ftype == FTYPE_SINE) {
 			return "Sine";
-		} else {
+		} else if(ftype == FTYPE_ABSVAL){
 			return "Absolute Value";
-		} 
+		} else if(ftype == FTYPE_STRETCHED_TANH) {
+			return "Stretched Tanh";
+		} else {
+			return "given ftype is not a valid activation function!";
+		}
 	}
 	/**
 	 * Takes in the list of all ftypes and randomly selects a function. (For

@@ -34,6 +34,7 @@ import edu.utexas.cs.nn.networks.ActivationFunctions;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.networks.NetworkTask;
 import edu.utexas.cs.nn.networks.TWEANN;
+import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.scores.Score;
 import edu.utexas.cs.nn.tasks.SinglePopulationTask;
@@ -79,6 +80,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	private static final int ID_CHECKBOX_INDEX = -15;
 	private static final int FULLAPPROX_CHECKBOX_INDEX = -16;
 	private static final int APPROX_CHECKBOX_INDEX = -17;
+	private static final int STRETCHTANH_CHECKBOX_INDEX = -18;
 	private static final int BORDER_THICKNESS = 4;
 	private static final int MPG_MIN = 0;
 	private static final int MPG_MAX = 10;
@@ -121,7 +123,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		showLineage = false;
 		showNetwork = false;
 		waitingForUser = false;
-		activation = new boolean[Math.abs(APPROX_CHECKBOX_INDEX ) + 1];//magic number is number of activation functions
+		activation = new boolean[Math.abs(STRETCHTANH_CHECKBOX_INDEX ) + 1];//magic number is number of activation functions
 		Arrays.fill(activation, true);
 		if(MMNEAT.browseLineage) {
 			// Do not setup the JFrame if browsing the lineage
@@ -153,25 +155,33 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		JButton undoButton = new JButton( new ImageIcon("data\\picbreeder\\undo.png"));
 
 		//instantiates activation function checkboxes
-		JCheckBox sigmoid = new JCheckBox("sigmoid", true);
-		JCheckBox tanh = new JCheckBox("tanh", false);
-		activation[Math.abs(TANH_CHECKBOX_INDEX)] = false;
-		JCheckBox id = new JCheckBox("ID", false);
-		activation[Math.abs(ID_CHECKBOX_INDEX)] = false;
-		JCheckBox fullApprox = new JCheckBox("full_approximate", false);
-		activation[Math.abs(FULLAPPROX_CHECKBOX_INDEX)] = false;
-		JCheckBox approx = new JCheckBox("approximate", false);
-		activation[Math.abs(APPROX_CHECKBOX_INDEX)] = false;
-		JCheckBox gaussian = new JCheckBox("gaussian", true);
-		JCheckBox sine = new JCheckBox("sine", true);
-		JCheckBox sawtooth = new JCheckBox("sawtooth", true);
-		JCheckBox absVal = new JCheckBox("absolute_value", true);
-		JCheckBox halfLinear = new JCheckBox("half_linear", true);
+		JCheckBox sigmoid = new JCheckBox("sigmoid", CommonConstants.includeSigmoidFunction);
+		activation[Math.abs(SIGMOID_CHECKBOX_INDEX)] = CommonConstants.includeSigmoidFunction;
+		JCheckBox tanh = new JCheckBox("tanh", CommonConstants.includeTanhFunction);
+		activation[Math.abs(TANH_CHECKBOX_INDEX)] = CommonConstants.includeTanhFunction;
+		JCheckBox id = new JCheckBox("ID", CommonConstants.includeIdFunction);
+		activation[Math.abs(ID_CHECKBOX_INDEX)] = CommonConstants.includeIdFunction;
+		JCheckBox fullApprox = new JCheckBox("full_approximate", CommonConstants.includeFullApproxFunction);
+		activation[Math.abs(FULLAPPROX_CHECKBOX_INDEX)] = CommonConstants.includeFullApproxFunction;
+		JCheckBox approx = new JCheckBox("approximate", CommonConstants.includeApproxFunction);
+		activation[Math.abs(APPROX_CHECKBOX_INDEX)] = CommonConstants.includeApproxFunction;
+		JCheckBox gaussian = new JCheckBox("gaussian", CommonConstants.includeGaussFunction);
+		activation[Math.abs(GAUSSIAN_CHECKBOX_INDEX)] = CommonConstants.includeGaussFunction;
+		JCheckBox sine = new JCheckBox("sine", CommonConstants.includeSineFunction);
+		activation[Math.abs(SINE_CHECKBOX_INDEX)] = CommonConstants.includeSineFunction;
+		JCheckBox sawtooth = new JCheckBox("sawtooth", CommonConstants.includeSawtoothFunction);
+		activation[Math.abs(SAWTOOTH_CHECKBOX_INDEX)] = CommonConstants.includeSawtoothFunction;
+		JCheckBox absVal = new JCheckBox("absolute_value", CommonConstants.includeAbsValFunction);
+		activation[Math.abs(ABSVAL_CHECKBOX_INDEX)] = CommonConstants.includeAbsValFunction;
+		JCheckBox halfLinear = new JCheckBox("half_linear", CommonConstants.includeHalfLinearPiecewiseFunction);
+		activation[Math.abs(HALF_LINEAR_CHECKBOX_INDEX)] = CommonConstants.includeHalfLinearPiecewiseFunction;
+		JCheckBox stretchTanh = new JCheckBox("stretched_tanh", CommonConstants.includeStretchedTanhFunction);
+		activation[Math.abs(STRETCHTANH_CHECKBOX_INDEX)] = CommonConstants.includeStretchedTanhFunction;
 
 		//adds slider for mutation rate change
 		JSlider mutationsPerGeneration = new JSlider(JSlider.HORIZONTAL, MPG_MIN, MPG_MAX, MPG_DEFAULT);
 		Hashtable labels = new Hashtable();
-		
+
 		//set graphic names and toolTip titles
 		evolveButton.setName("" + EVOLVE_BUTTON_INDEX);
 		evolveButton.setToolTipText("Evolve button");
@@ -197,13 +207,14 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		approx.setName("" + APPROX_CHECKBOX_INDEX);
 		sawtooth.setName("" + SAWTOOTH_CHECKBOX_INDEX);
 		halfLinear.setName("" + HALF_LINEAR_CHECKBOX_INDEX);
+		stretchTanh.setName("" + STRETCHTANH_CHECKBOX_INDEX);
 		mutationsPerGeneration.setMinorTickSpacing(1);
 		mutationsPerGeneration.setPaintTicks(true);
-        labels.put(0, new JLabel("Fewer Mutations"));
-        labels.put(10, new JLabel("More Mutations"));
-        mutationsPerGeneration.setLabelTable(labels);
-        mutationsPerGeneration.setPaintLabels(true);
-		
+		labels.put(0, new JLabel("Fewer Mutations"));
+		labels.put(10, new JLabel("More Mutations"));
+		mutationsPerGeneration.setLabelTable(labels);
+		mutationsPerGeneration.setPaintLabels(true);
+
 		//add action listeners to buttons
 		resetButton.addActionListener(this);
 		saveButton.addActionListener(this);
@@ -222,6 +233,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		id.addActionListener(this);
 		fullApprox.addActionListener(this);
 		approx.addActionListener(this);
+		stretchTanh.addActionListener(this);
 		mutationsPerGeneration.addChangeListener(this);
 
 		//set checkbox colors to match activation function color
@@ -235,7 +247,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		sawtooth.setForeground(CombinatoricUtilities.colorFromInt(ActivationFunctions.FTYPE_SAWTOOTH));
 		sine.setForeground(CombinatoricUtilities.colorFromInt(ActivationFunctions.FTYPE_SINE));
 		tanh.setForeground(CombinatoricUtilities.colorFromInt(ActivationFunctions.FTYPE_TANH));
-
+		stretchTanh.setForeground(CombinatoricUtilities.colorFromInt(ActivationFunctions.FTYPE_STRETCHED_TANH));
 		//add graphics to title panel
 		top.add(lineageButton);
 		top.add(resetButton);
@@ -255,6 +267,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		bottom.add(id);
 		bottom.add(fullApprox);
 		bottom.add(approx);
+		bottom.add(stretchTanh);
 		bottom.add(mutationsPerGeneration);
 		topper.add(bottom);
 		panels.add(topper);
@@ -490,25 +503,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		scores = new ArrayList<Score<T>>();
 		for(int i = 0; i < newPop.size(); i++) {
 			resetButton(newPop.get(i), i);
-		}
-		// Attempted to completely clear all old log info, but realy complicated
-		//		String base = Parameters.parameters.stringParameter("base");
-		//		int runNumber = Parameters.parameters.integerParameter("runNumber");
-		//		String saveTo = Parameters.parameters.stringParameter("saveTo");
-		//		String prefix = base + "/" + saveTo + runNumber;
-		//		// Null pointer issue?
-		//		((SinglePopulationGenerationalEA<T>) MMNEAT.ea).close(null);
-		//		MMNEAT.closeLogs(); // close logs
-		//		// delete all records
-		//		FileUtilities.deleteDirectoryContents(new File(prefix));
-		//		// Reset some parameters to defaults
-		//		Parameters.parameters.setInteger("lastSavedGeneration", 0);
-		//		Parameters.parameters.setLong("lastInnovation", 0l);
-		//		Parameters.parameters.setLong("lastGenotypeId", 0l);
-		//		Parameters.parameters.setString("lastSavedDirectory", "");
-		//		
-		//		completeReset  = true;
-		//		MMNEAT.mmneat.run();		
+		}	
 	}
 
 	/**
@@ -595,15 +590,18 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 			setCheckBox(activation[Math.abs(TANH_CHECKBOX_INDEX)], TANH_CHECKBOX_INDEX, "includeTanhFunction");
 			System.out.println("param tanh now set to: " + Parameters.parameters.booleanParameter("includeTanhFunction"));
 		} else if(scoreIndex == ID_CHECKBOX_INDEX) { 
-			setCheckBox(activation[Math.abs(ID_CHECKBOX_INDEX)], ID_CHECKBOX_INDEX, "includeIdFuntion");
-			System.out.println("param ID now set to: " + Parameters.parameters.booleanParameter("includeIdFuntion"));
+			setCheckBox(activation[Math.abs(ID_CHECKBOX_INDEX)], ID_CHECKBOX_INDEX, "includeIdFunction");
+			System.out.println("param ID now set to: " + Parameters.parameters.booleanParameter("includeIdFunction"));
 		} else if(scoreIndex == FULLAPPROX_CHECKBOX_INDEX) {
 			setCheckBox(activation[Math.abs(FULLAPPROX_CHECKBOX_INDEX)], FULLAPPROX_CHECKBOX_INDEX, "includeFullApproxFunction");
 			System.out.println("param activation now set to: " + Parameters.parameters.booleanParameter("includeFullApproxFunction"));
 		} else if(scoreIndex == APPROX_CHECKBOX_INDEX) {
 			setCheckBox(activation[Math.abs(APPROX_CHECKBOX_INDEX)], APPROX_CHECKBOX_INDEX, "includeApproxFunction");
 			System.out.println("param approximate now set to: " + Parameters.parameters.booleanParameter("includeApproxFunction"));
-		} else if(scoreIndex == CLOSE_BUTTON_INDEX) {//If close button clicked
+		} else if(scoreIndex == STRETCHTANH_CHECKBOX_INDEX) {
+			setCheckBox(activation[Math.abs(STRETCHTANH_CHECKBOX_INDEX)], STRETCHTANH_CHECKBOX_INDEX, "includeStretchedTanhFunction");
+			System.out.println("param stretchTanh now set to: " + Parameters.parameters.booleanParameter("includeStretchedTanhFunction"));
+		}else if(scoreIndex == CLOSE_BUTTON_INDEX) {//If close button clicked
 			System.exit(0);
 		} else if(scoreIndex == RESET_BUTTON_INDEX) {//If reset button clicked
 			reset();
@@ -751,13 +749,6 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 			System.out.println("score size " + scores.size() + " previousScores size " + previousScores.size() + " buttons size " + buttons.size() + " i " + i);
 			resetButton(previousScores.get(i).individual, i);
 		}
-//		int lastGen = Parameters.parameters.integerParameter("lastSavedGeneration");
-		//		System.out.println("before decrementing generation: " + lastGen);
-		//		Parameters.parameters.setInteger("lastSavedGeneration", lastGen--);
-		//		System.out.println("after decrementing generation: " + Parameters.parameters.integerParameter("lastSavedGeneration"));
-		//		System.out.println("offspring to string prints out: " + "offspring.toString()");
-		//
-		//		System.out.println("This button is not yet implemented")
 	}
 
 	@Override
