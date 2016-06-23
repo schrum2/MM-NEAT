@@ -3,6 +3,7 @@ package edu.utexas.cs.nn.tasks.rlglue.featureextractors.tetris;
 import org.rlcommunity.environments.tetris.TetrisState;
 import org.rlcommunity.rlglue.codec.types.Observation;
 
+import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.rlglue.featureextractors.FeatureExtractor;
 
@@ -20,7 +21,9 @@ public class RawTetrisStateExtractor implements FeatureExtractor {
 	 */
 	@Override
 	public int numFeatures() {
-		return TetrisState.worldHeight * TetrisState.worldWidth;
+		return CommonConstants.splitHyperNEATTetrisInputs ? 
+				TetrisState.worldHeight * TetrisState.worldWidth * 2 :
+					TetrisState.worldHeight * TetrisState.worldWidth;
 	}
 
 	/**
@@ -32,22 +35,32 @@ public class RawTetrisStateExtractor implements FeatureExtractor {
 	public double[] extract(Observation o) {
 		boolean negative = Parameters.parameters.booleanParameter("absenceNegative");
 		boolean senseHoles = Parameters.parameters.booleanParameter("senseHolesDifferently");
+		boolean split = CommonConstants.splitHyperNEATTetrisInputs;
+		int worldSize = TetrisState.worldWidth * TetrisState.worldHeight;
 		if(negative && senseHoles) {
 			System.out.println("can't have absenceNegative and senseHoles in the same experiment!");
 			System.exit(1);
+		} else if(split && !senseHoles){
+			System.out.println("Split must be used with sense holes!");
+			System.exit(1);
 		}
-		int[] worldState = new int[TetrisState.worldWidth * TetrisState.worldHeight]; 
-		System.arraycopy(o.intArray, 0, worldState, 0, TetrisState.worldWidth * TetrisState.worldHeight);
-		double[] result = new double[worldState.length];
-		//System.out.println("worldState: " + Arrays.toString(worldState));
-		for (int i = 0; i < result.length; i++) {
-			if(senseHoles && TetrisExtractorUtil.isHole(i, worldState)){
-				result[i] = -1;
-			} else if(Math.signum(worldState[i]) == 0){
+		// o.intArray below contains the worldState in the first worldSize indices.
+		// No index after that point should be accessed.
+		double[] result = new double[split ? worldSize * 2 : worldSize];
+		assert (split && result.length == 2*worldSize) || result.length == worldSize : "result array was not instantiated properly!";
+		for (int i = 0; i < worldSize; i++) {
+			if(senseHoles && TetrisExtractorUtil.isHole(i, o.intArray)){
+				if(split) {
+					result[i] = 0;
+					result[i + worldSize] = -1;
+				} else {
+					result[i] = -1;
+				}
+			} else if(Math.signum(o.intArray[i]) == 0){
 				int temp = negative ? -1 : 0;
 				result[i] = temp;
-			} else if(worldState[i] > 0){
-				result[i] = Math.signum(worldState[i]);
+			} else if(o.intArray[i] > 0){
+				result[i] = Math.signum(o.intArray[i]);
 			}
 		}
 		return result;
@@ -64,6 +77,13 @@ public class RawTetrisStateExtractor implements FeatureExtractor {
 		for (int i = 0; i < TetrisState.worldHeight; i++) {
 			for (int j = 0; j < TetrisState.worldWidth; j++) {
 				labels[in++] = "(" + j + ", " + i + ") occupied?";
+			}
+		}
+		if(CommonConstants.splitHyperNEATTetrisInputs) {
+			for(int i1 =  0; i1 < TetrisState.worldHeight; i1++) {
+				for(int j = 0; j < TetrisState.worldWidth; j++) {
+					labels[in++] = "(" + j + ", " + i1 + ") hole?";
+				}
 			}
 		}
 		return labels;
