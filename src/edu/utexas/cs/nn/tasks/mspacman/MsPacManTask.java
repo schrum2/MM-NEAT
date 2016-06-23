@@ -52,6 +52,7 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 	public static final int SUB_COORD_INDEX = 2;
 	public static final int MS_PAC_MAN_SUBSTRATE_WIDTH = 108;
 	public static final int MS_PAC_MAN_SUBSTRATE_HEIGHT = 116;
+	public static final int MS_PAC_MAN_SUBSTRATE_SIZE = MS_PAC_MAN_SUBSTRATE_WIDTH * MS_PAC_MAN_SUBSTRATE_HEIGHT;
 	public static String saveFilePrefix = "";
 	//boolean variables
 	protected boolean deterministic;
@@ -550,16 +551,18 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
     	public List<Substrate> getSubstrateInformation() {
     		ArrayList<Substrate> subs = new ArrayList<Substrate>();
     		Pair<Integer, Integer> subSize = new Pair<>(MS_PAC_MAN_SUBSTRATE_WIDTH, MS_PAC_MAN_SUBSTRATE_HEIGHT);
-    		Substrate pillSubstrate = new Substrate(subSize, Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, 0, 0), "I_0");
-    		Substrate powerSubstrate = new Substrate(subSize, Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(SUB_COORD_INDEX, 0, 0), "I_1");
-    		Substrate threatSubstrate = new Substrate(subSize, Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, SUB_COORD_INDEX, 0), "I_2");
-    		Substrate edibleSubstrate = new Substrate(subSize, Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(SUB_COORD_INDEX, SUB_COORD_INDEX, 0), "I_3");
+    		Substrate pillSubstrate = new Substrate(subSize, Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, 0, 0), "Pill_0");
+    		Substrate powerSubstrate = new Substrate(subSize, Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(SUB_COORD_INDEX, 0, 0), "Power_1");
+    		Substrate threatSubstrate = new Substrate(subSize, Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, SUB_COORD_INDEX, 0), "Threat_2");
+    		Substrate edibleSubstrate = new Substrate(subSize, Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(SUB_COORD_INDEX, SUB_COORD_INDEX, 0), "Edible_3");
+    		Substrate pacManSubstrate = new Substrate(subSize, Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>((int) (SUB_COORD_INDEX / 2.0), (int) (SUB_COORD_INDEX / 2.0), 0), "PacMan_4");
     		Substrate processSubstrate = new Substrate(subSize, Substrate.PROCCESS_SUBSTRATE, new Triple<Integer, Integer, Integer>((int) (SUB_COORD_INDEX/2.0), (int) (SUB_COORD_INDEX/2.0), SUB_COORD_INDEX), "P_0");
     		Substrate outputSubstrate = new Substrate(subSize, Substrate.OUTPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>( (int) (SUB_COORD_INDEX/2.0), (int) (SUB_COORD_INDEX/2.0),SUB_COORD_INDEX * 2), "O_0");
     		subs.add(pillSubstrate);
     		subs.add(powerSubstrate);
     		subs.add(threatSubstrate);
     		subs.add(edibleSubstrate);
+    		subs.add(pacManSubstrate);
     		subs.add(processSubstrate);
     		subs.add(outputSubstrate);
     		return subs;
@@ -569,16 +572,18 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
     	@Override
     	public List<Pair<String, String>> getSubstrateConnectivity() {
     		List<Pair<String, String>> connections = new ArrayList<Pair<String, String>>();
-    		connections.add(new Pair<String, String>("I_0", "P_0"));
-    		connections.add(new Pair<String, String>("I_1", "P_0"));
-    		connections.add(new Pair<String, String>("I_2", "P_0"));
-    		connections.add(new Pair<String, String>("I_3", "P_0"));
+    		connections.add(new Pair<String, String>("Pill_0", "P_0"));
+    		connections.add(new Pair<String, String>("Power_1", "P_0"));
+    		connections.add(new Pair<String, String>("Threat_2", "P_0"));
+    		connections.add(new Pair<String, String>("Edible_3", "P_0"));
+    		connections.add(new Pair<String, String>("PacMan_4", "P_0"));
     		connections.add(new Pair<String, String>("P_0", "O_0"));
     		if(Parameters.parameters.booleanParameter("extraHNPacManLinks")) {
-    			connections.add(new Pair<String, String>("I_0", "O_0"));
-    			connections.add(new Pair<String, String>("I_1", "O_0"));
-    			connections.add(new Pair<String, String>("I_2", "O_0"));
-    			connections.add(new Pair<String, String>("I_3", "O_0"));
+    			connections.add(new Pair<String, String>("Pills_0", "O_0"));
+    			connections.add(new Pair<String, String>("Power_1", "O_0"));
+    			connections.add(new Pair<String, String>("Threat_2", "O_0"));
+    			connections.add(new Pair<String, String>("Edible_3", "O_0"));
+    			connections.add(new Pair<String, String>("PacMan_4", "O_0"));
     		}
     		return connections;
     	}

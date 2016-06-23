@@ -5,7 +5,10 @@ import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
 
 /**
- *
+ * Given the sensors, generate a utility for
+ * each available direction and pick the one with the
+ * highest utility.
+ * 
  * @author Jacob Schrum
  */
 public class ReactiveNNPacManController extends NNDirectionalPacManController {
@@ -23,7 +26,6 @@ public class ReactiveNNPacManController extends NNDirectionalPacManController {
 			nn.chooseMode(ms.mode());
 		}
 		double[] outputs = nn.process(inputs);
-		// System.out.println("OUT:"+Arrays.toString(outputs));
 
 		// Make directions towards walls impossible to choose
 		final int referenceDir = CommonConstants.relativePacmanDirections ? gf.getPacmanLastMoveMade() : 0;
@@ -44,8 +46,7 @@ public class ReactiveNNPacManController extends NNDirectionalPacManController {
 			absoluteDirectionPreferences[dir] = outputs[i];
 		}
 		if (externalPreferenceNeurons) {
-			absoluteDirectionPreferences[absoluteDirectionPreferences.length
-					- 1] = outputs[absoluteDirectionPreferences.length - 1];
+			absoluteDirectionPreferences[absoluteDirectionPreferences.length - 1] = outputs[absoluteDirectionPreferences.length - 1];
 		}
 
 		return absoluteDirectionPreferences;

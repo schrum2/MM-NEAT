@@ -14,8 +14,7 @@ public final class Node {
 	public final EnumMap<MOVE, Integer> neighbourhood = new EnumMap<MOVE, Integer>(MOVE.class);
 	public EnumMap<MOVE, MOVE[]> allPossibleMoves = new EnumMap<MOVE, MOVE[]>(MOVE.class);
 	public EnumMap<MOVE, int[]> allNeighbouringNodes = new EnumMap<MOVE, int[]>(MOVE.class);
-	public EnumMap<MOVE, EnumMap<MOVE, Integer>> allNeighbourhoods = new EnumMap<MOVE, EnumMap<MOVE, Integer>>(
-			MOVE.class);
+	public EnumMap<MOVE, EnumMap<MOVE, Integer>> allNeighbourhoods = new EnumMap<MOVE, EnumMap<MOVE, Integer>>(MOVE.class);
 
 	/*
 	 * Instantiates a new node.

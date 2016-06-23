@@ -18,10 +18,8 @@ import static pacman.game.Constants.*;
 public final class Maze {
 
 	public AStar astar;
-	public int[] shortestPathDistances, pillIndices, powerPillIndices, junctionIndices; // Information
-																						// for
-																						// the
-																						// controllers
+	// Information for the controllers
+	public int[] shortestPathDistances, pillIndices, powerPillIndices, junctionIndices; 
 	public int initialPacManNodeIndex, lairNodeIndex, initialGhostNodeIndex; // Maze-specific
 																				// information
 	public Node[] graph; // The actual maze, stored as a graph (set of nodes)

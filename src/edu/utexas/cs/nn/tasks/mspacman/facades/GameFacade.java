@@ -328,6 +328,13 @@ public class GameFacade {
 		return neighbors(newG, current);
 	}
 
+	/**
+	 * returns index of neighbor node in given direction
+	 * returns -1 if no neighbor
+	 * @param current index of current node
+	 * @param dir index of direction to take
+	 * @return index of neighboring node
+	 */
 	public int neighborInDir(int current, int dir) {
 		return neighbors(current)[dir];
 	}
@@ -367,28 +374,55 @@ public class GameFacade {
 		return newG.getTimeOfLastGlobalReversal() == newG.getTotalTime();
 	}
 
+	/**
+	 * returns time of last ghost reversal
+	 * @return time of last ghost reversal
+	 */
 	public int getTimeOfLastGlobalReversal() {
 		return newG.getTimeOfLastGlobalReversal();
 	}
 
+	/**
+	 * returns how much time has passed since a ghost
+	 * last reversed
+	 * @return time since last reversal
+	 */
 	public int timeSinceLastGlobalReversal() {
 		int timeOfReversal = newG.getTimeOfLastGlobalReversal();
-		// System.out.print("timeOfLastGlobalReversal:" + timeOfReversal+":");
 		return timeOfReversal == -1 ? -1 : newG.getTotalTime() - timeOfReversal;
 	}
 
+	/**
+	 * returns the max time a ghost is edible
+	 * @return max time edible ghost
+	 */
 	public int maxEdibleTime() {
 		return maxEdibleTime(newG);
 	}
-
+	/**
+	 * gets index of node ghost is currently occupying
+	 * @param ghostIndex index of ghost in question
+	 * @return index of occupied node
+	 */
 	public int getGhostCurrentNodeIndex(int ghostIndex) {
 		return newG.getGhostCurrentNodeIndex(indexToGhost(ghostIndex));
 	}
 
+	/**
+	 * returns last move ghost made
+	 * @param ghostIndex index of ghost in question
+	 * @return move ghost made
+	 */
 	public int getGhostLastMoveMade(int ghostIndex) {
 		return moveToIndex(newG.getGhostLastMoveMade(indexToGhost(ghostIndex)));
 	}
 
+	/**
+	 * Gets shortest path from one node to another
+	 * @param from source node
+	 * @param to target node
+	 * @return int array containing nodes in shortest path
+	 */
 	public int[] getShortestPath(int from, int to) {
 		int[] result = newG.getShortestPath(from, to);
 		assert(validPath(result)) : "Invalid path! " + Arrays.toString(result) + ":" + ("new");
@@ -398,6 +432,11 @@ public class GameFacade {
 		return result;
 	}
 
+	/**
+	 * returns whether given ghost is edible or not
+	 * @param ghostIndex ghost in question
+	 * @return ghost edible
+	 */
 	public boolean isGhostEdible(int ghostIndex) {
 		return newG.isGhostEdible(indexToGhost(ghostIndex));
 	}
@@ -419,24 +458,29 @@ public class GameFacade {
 		return nextJunctionInDirection(current, currentDir, false);
 	}
 
+	/**
+	 * Gets type of next junction in direction pacman is traveling
+	 * @param current current node index
+	 * @param currentDir current direction of pacman
+	 * @param powerPillsToo if there are power pills in way ??TODO??
+	 * @return
+	 */
 	public int nextJunctionInDirection(int current, int currentDir, boolean powerPillsToo) {
 		int[] neighbors = restrictedNeighbors(current, currentDir);
 		int numBlocked = ArrayUtil.countOccurrences(-1, neighbors);
 		int pos = -1;
 		int move = -1;
 		switch (numBlocked) {
-		case 2:
+		case 2:// Facing a T-junction, so there is no junction "ahead", only to the sides
 			if (neighbors[currentDir] == -1) {
-				// Facing a T-junction, so there is no junction "ahead", only to
-				// the sides
+				
 				return -1;
 			}
-		case 1:
+		case 1://can continue in direction through joint
 			pos = neighbors[currentDir];
 			move = currentDir;
 			break;
-		case 3:
-			// One option
+		case 3:// One option Elbow joint		
 			pos = ArrayUtil.filter(neighbors, -1)[0];
 			move = ArrayUtil.position(neighbors, pos);
 			break;
@@ -479,10 +523,20 @@ public class GameFacade {
 		return move;
 	}
 
+	/**
+	 * Returns whether given index has a power pill on it
+	 * @param index index in question
+	 * @return power pill or not
+	 */
 	public boolean isPowerPillIndex(int index) {
 		return ArrayUtil.member(index, newG.getActivePowerPillsIndices());
 	}
 
+	/**
+	 * returns whether or not current index is a junction
+	 * @param current current index
+	 * @return whether node is a junction
+	 */
 	public boolean isJunction(int current) {
 		return newG.isJunction(current);
 	}
@@ -510,14 +564,31 @@ public class GameFacade {
 		return false;
 	}
 
+	/**
+	 * Gets euclidian distance between two nodes
+	 * @param from source node
+	 * @param to target node
+	 * @return euclidian distance
+	 */
 	public double getEuclideanDistance(int from, int to) {
 		return newG.getEuclideanDistance(from, to);
 	}
 
+	/**
+	 * Gets shortest path(length pacman can travel) distance
+	 * @param from source node
+	 * @param to target node
+	 * @return distance
+	 */
 	public double getShortestPathDistance(int from, int to) {
 		return newG.getShortestPathDistance(from, to);
 	}
 
+	/**
+	 * returns array containing indices of nodes that are 
+	 * junctions
+	 * @return array of node junction indices
+	 */
 	public int[] getJunctionIndices() {
 		return newG.getJunctionIndices();
 	}
@@ -533,10 +604,20 @@ public class GameFacade {
 		return newG.getNeighbouringNodes(node).length;
 	}
 
+	/**
+	 * whether or not node has neighbors
+	 * @param node index
+	 * @return neighbors or no
+	 */
 	public boolean hasNeighbors(int node) {
 		return this.getNumNeighbours(node) > 0;
 	}
 
+	/**
+	 * Gets the index of the current maze.
+	 *
+	 * @return The maze index
+	 */
 	public int getMazeIndex() {
 		return newG.getMazeIndex();
 	}
@@ -560,37 +641,80 @@ public class GameFacade {
 		return result;
 	}
 
+	/**
+	 * gets indices of active power pills on map
+	 * @return indices of power pills
+	 */
 	public int[] getActivePowerPillsIndices() {
 		return newG.getActivePowerPillsIndices();
 	}
 
+	/**
+	 * gets time ghosts are in the lair
+	 * @param ghostIndex ghost
+	 * @return time ghost in lair
+	 */
 	public int getGhostLairTime(int ghostIndex) {
 		return newG.getGhostLairTime(indexToGhost(ghostIndex));
 	}
 
+	/**
+	 * gets indices of active pills
+	 * @return indices of active pills
+	 */
 	public int[] getActivePillsIndices() {
 		return newG.getActivePillsIndices();
 	}
 
+	/**
+	 * Gets the closest node index from node index.
+	 *
+	 * @param fromNodeIndex
+	 *            the from node index
+	 * @param targetNodeIndices
+	 *            the target node indices
+	 * @param distanceMeasure
+	 *            the distance measure
+	 * @return the closest node index from node index
+	 */
 	public int getClosestNodeIndexFromNodeIndex(int current, int[] targets) {
 		return newG.getClosestNodeIndexFromNodeIndex(current, targets, DM.PATH);
 	}
 
+	/**
+	 * colors given set of nodes
+	 * @param c color to set
+	 * @param nodes nodes to set color
+	 */
 	public void addPoints(Color c, Set<Integer> nodes) {
 		addPoints(c, ArrayUtil.integerSetToArray(nodes));
 	}
 
+	/**
+	 * colors given array of nodes
+	 * @param c color
+	 * @param nodes nodes to set color
+	 */
 	public void addPoints(Color c, int[] nodes) {
 		if (nodes.length > 0) {
-			// System.out.println(c +":" + Arrays.toString(nodes));
 			pacman.game.GameView.addPoints(newG, c, ArrayUtil.filter(nodes, -1));
 		}
 	}
 
+	/**
+	 * Gets distance of path from one node to another
+	 * @param from index of sourceNode
+	 * @param to index of TargetNode
+	 * @return distance
+	 */
 	public double getPathDistance(int from, int to) {
 		return newG.getDistance(from, to, DM.PATH);
 	}
 
+	/**
+	 * returns whether or not pacman is hitting a wall
+	 * @return hitting wall
+	 */
 	public boolean pacmanHittingWall() {
 		return newG.getPacmanLastMoveMade().equals(MOVE.NEUTRAL);
 	}
@@ -679,6 +803,13 @@ public class GameFacade {
 		return index < newG.getCurrentMaze().graph.length;
 	}
 
+	/**
+	 * Gets the length of the node array
+	 * @return length of maze
+	 */
+	public int lengthMaze() {
+		return newG.getCurrentMaze().graph.length;
+	}
 	public boolean allNodesInMaze(int[] indices) {
 		for (int i = 0; i < indices.length; i++) {
 			if (indices[i] != -1 && !nodeInMaze(indices[i])) {
