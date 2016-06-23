@@ -11,6 +11,7 @@ import edu.utexas.cs.nn.gridTorus.controllers.TorusPredPreyController;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.parameters.Parameters;
+import edu.utexas.cs.nn.tasks.gridTorus.sensors.BiasSensorBlock;
 import edu.utexas.cs.nn.tasks.gridTorus.sensors.TorusPredPreySensorBlock;
 import edu.utexas.cs.nn.tasks.gridTorus.sensors.TorusPredatorsByIndexSensorBlock;
 import edu.utexas.cs.nn.tasks.gridTorus.sensors.TorusPredatorsByProximitySensorBlock;
@@ -54,11 +55,13 @@ public class NNTorusPredPreyController extends TorusPredPreyController {
 
 		if (Parameters.parameters.booleanParameter("torusSenseTeammates")) {
 			sensorBlocks = new TorusPredPreySensorBlock[] {
+					new BiasSensorBlock(), 
 					(byProximity ? new TorusPreyByProximitySensorBlock()      : new TorusPreyByIndexSensorBlock()),
 					(byProximity ? new TorusPredatorsByProximitySensorBlock() : new TorusPredatorsByIndexSensorBlock()) };
 		} else {
-			sensorBlocks = new TorusPredPreySensorBlock[] { isPredator
-					? (byProximity ? new TorusPreyByProximitySensorBlock()      : new TorusPreyByIndexSensorBlock())
+			sensorBlocks = new TorusPredPreySensorBlock[] { 
+					new BiasSensorBlock(), 
+					isPredator ? (byProximity ? new TorusPreyByProximitySensorBlock()      : new TorusPreyByIndexSensorBlock())
 					: (byProximity ? new TorusPredatorsByProximitySensorBlock() : new TorusPredatorsByIndexSensorBlock()) };
 		}
 
