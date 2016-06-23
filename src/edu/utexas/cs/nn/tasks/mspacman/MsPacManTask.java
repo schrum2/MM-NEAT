@@ -7,6 +7,8 @@ import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.NetworkGenotype;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.networks.NetworkTask;
+import edu.utexas.cs.nn.networks.hyperneat.HyperNEATTask;
+import edu.utexas.cs.nn.networks.hyperneat.Substrate;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.scores.Score;
@@ -23,6 +25,7 @@ import edu.utexas.cs.nn.tasks.mspacman.multitask.MsPacManModeSelector;
 import edu.utexas.cs.nn.tasks.mspacman.objectives.*;
 import edu.utexas.cs.nn.util.ClassCreation;
 import edu.utexas.cs.nn.util.datastructures.Pair;
+import edu.utexas.cs.nn.util.datastructures.Triple;
 import edu.utexas.cs.nn.util.random.RandomNumbers;
 import edu.utexas.cs.nn.util.stats.Average;
 import edu.utexas.cs.nn.util.stats.Max;
@@ -30,6 +33,8 @@ import edu.utexas.cs.nn.util.stats.Mode;
 import edu.utexas.cs.nn.util.stats.Statistic;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+
 import pacman.Executor;
 import pacman.controllers.NewGhostController;
 import pacman.controllers.NewPacManController;
@@ -42,8 +47,11 @@ import pacman.game.Game;
  * @author Jacob Schrum
  * @param <T> phenotype of evolved agent
  */
-public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements TUGTask, NetworkTask {
+public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements TUGTask, NetworkTask, HyperNEATTask {
 
+	public static final int SUB_COORD_INDEX = 2;
+	public static final int MS_PAC_MAN_SUBSTRATE_WIDTH = 108;
+	public static final int MS_PAC_MAN_SUBSTRATE_HEIGHT = 116;
 	public static String saveFilePrefix = "";
 	//boolean variables
 	protected boolean deterministic;
@@ -537,4 +545,41 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 	public double getTimeStamp() {
 		return game.getTotalTime();
 	}
+
+    	@Override
+    	public List<Substrate> getSubstrateInformation() {
+    		ArrayList<Substrate> subs = new ArrayList<Substrate>();
+    		Pair<Integer, Integer> subSize = new Pair<>(MS_PAC_MAN_SUBSTRATE_WIDTH, MS_PAC_MAN_SUBSTRATE_HEIGHT);
+    		Substrate pillSubstrate = new Substrate(subSize, Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, 0, 0), "I_0");
+    		Substrate powerSubstrate = new Substrate(subSize, Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(SUB_COORD_INDEX, 0, 0), "I_1");
+    		Substrate threatSubstrate = new Substrate(subSize, Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, SUB_COORD_INDEX, 0), "I_2");
+    		Substrate edibleSubstrate = new Substrate(subSize, Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(SUB_COORD_INDEX, SUB_COORD_INDEX, 0), "I_3");
+    		Substrate processSubstrate = new Substrate(subSize, Substrate.PROCCESS_SUBSTRATE, new Triple<Integer, Integer, Integer>((int) (SUB_COORD_INDEX/2.0), (int) (SUB_COORD_INDEX/2.0), SUB_COORD_INDEX), "P_0");
+    		Substrate outputSubstrate = new Substrate(subSize, Substrate.OUTPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>( (int) (SUB_COORD_INDEX/2.0), (int) (SUB_COORD_INDEX/2.0),SUB_COORD_INDEX * 2), "O_0");
+    		subs.add(pillSubstrate);
+    		subs.add(powerSubstrate);
+    		subs.add(threatSubstrate);
+    		subs.add(edibleSubstrate);
+    		subs.add(processSubstrate);
+    		subs.add(outputSubstrate);
+    		return subs;
+
+    	}
+
+    	@Override
+    	public List<Pair<String, String>> getSubstrateConnectivity() {
+    		List<Pair<String, String>> connections = new ArrayList<Pair<String, String>>();
+    		connections.add(new Pair<String, String>("I_0", "P_0"));
+    		connections.add(new Pair<String, String>("I_1", "P_0"));
+    		connections.add(new Pair<String, String>("I_2", "P_0"));
+    		connections.add(new Pair<String, String>("I_3", "P_0"));
+    		connections.add(new Pair<String, String>("P_0", "O_0"));
+    		if(Parameters.parameters.booleanParameter("extraHNPacManLinks")) {
+    			connections.add(new Pair<String, String>("I_0", "O_0"));
+    			connections.add(new Pair<String, String>("I_1", "O_0"));
+    			connections.add(new Pair<String, String>("I_2", "O_0"));
+    			connections.add(new Pair<String, String>("I_3", "O_0"));
+    		}
+    		return connections;
+    	}
 }

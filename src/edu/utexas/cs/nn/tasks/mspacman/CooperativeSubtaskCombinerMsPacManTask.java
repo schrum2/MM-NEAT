@@ -34,6 +34,7 @@ public class CooperativeSubtaskCombinerMsPacManTask<T extends Network> extends C
 		fitnessPreferences = fitnessMap.associatedFitnessScores();
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public ArrayList<Score> evaluate(Genotype[] team) {
 		Genotype<T> topLevelNetwork = team[0];

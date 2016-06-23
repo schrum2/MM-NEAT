@@ -27,7 +27,7 @@ public class GameFacade {
 	/**
 	 * returns what move to make based on the 
 	 * @param index
-	 * @return
+	 * @return enum corresponding to move made
 	 */
 	public static MOVE indexToMove(int index) {
 		switch (index) {
@@ -44,6 +44,12 @@ public class GameFacade {
 		}
 	}
 
+	/**
+	 * Given direction to move, returns index that
+	 * cor responds to said move
+	 * @param m enum move made
+	 * @return index of move
+	 */
 	public static int moveToIndex(MOVE m) {
 		switch (m) {
 		case UP:
@@ -59,6 +65,11 @@ public class GameFacade {
 		}
 	}
 
+	/**
+	 * Returns enum corresponding to index given
+	 * @param index index of given ghost
+	 * @return ghost that corresponds to given index
+	 */
 	public static GHOST indexToGhost(int index) {
 		assert index >= 0 && index <= 3 : "Must be a valid ghost index: " + index;
 		switch (index) {
@@ -76,6 +87,11 @@ public class GameFacade {
 		}
 	}
 
+	/**
+	 * returns index corresponding to given ghost
+	 * @param ghost ghost enum
+	 * @return index of ghost
+	 */
 	public static int ghostToIndex(GHOST ghost) {
 		switch (ghost) {
 		case BLINKY:
@@ -104,8 +120,7 @@ public class GameFacade {
 	public ArrayList<Integer> getGhostIndices(boolean edibleVsThreatOnly, boolean all) {
 		ArrayList<Integer> ghosts = new ArrayList<Integer>(CommonConstants.numActiveGhosts);
 		for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
-			if (!ghostInLair(i)
-					&& (all || (edibleVsThreatOnly && isGhostEdible(i)) || (!edibleVsThreatOnly && isGhostThreat(i)))) {
+			if (!ghostInLair(i) && (all || (edibleVsThreatOnly && isGhostEdible(i)) || (!edibleVsThreatOnly && isGhostThreat(i)))) {
 				ghosts.add(i);
 			}
 		}
@@ -113,7 +128,7 @@ public class GameFacade {
 	}
 
 	/**
-	 * return the node index of the node that is the neoghbor of current in the
+	 * return the node index of the node that is the neighbor of current in the
 	 * direction of move
 	 *
 	 * @param g
@@ -162,10 +177,18 @@ public class GameFacade {
 		return result;
 	}
 
+	/**
+	 * Sets game facade based on given game
+	 * @param g game
+	 */
 	public GameFacade(Game g) {
 		newG = g;
 	}
 
+	/**
+	 * gets times taken to eat each pill
+	 * @return list of times
+	 */
 	public List<Integer> getPillEatTimes() {
 		return newG.getPillEatTimes();
 	}
@@ -177,11 +200,14 @@ public class GameFacade {
 	 * @return time
 	 */
 	public int getNextEdibleTime() {
-		// return (int) (Constants.EDIBLE_TIME *
-		// (Math.pow(Constants.EDIBLE_TIME_REDUCTION, this.getCurrentLevel())));
 		return newG.newEdibleTime();
 	}
 
+	/**
+	 * Gets how many times given ghost was eaten
+	 * @param ghostIndex index of ghost
+	 * @return how many times ghost was eaten
+	 */
 	public int getSpecificGhostEatenCount(int ghostIndex) {
 		return newG.getEatenGhosts(ghostIndex);
 	}
@@ -214,38 +240,75 @@ public class GameFacade {
 		return newG.getGhostReward();
 	}
 
+	/**
+	 * Returns current level of game
+	 * @return current level
+	 */
 	public int getCurrentLevel() {
 		return newG.getCurrentLevel();
 	}
 
+	/**
+	 * gets number of pills that have been eaten
+	 * @return number of eaten pills
+	 */
 	public int getEatenPills() {
 		return newG.getEatenPills();
 	}
 
+	/**
+	 * gets total time in play
+	 * @return total game play time
+	 */
 	public int getTotalTime() {
 		return newG.getTotalTime();
 	}
 
+	/**
+	 * gets number of lives pacman has remaining
+	 * @return num lives remaining
+	 */
 	public int getPacmanNumberOfLivesRemaining() {
 		return newG.getPacmanNumberOfLivesRemaining();
 	}
 
+	/**
+	 * Gets current time spent on level
+	 * @return time spent on level
+	 */
 	public int getCurrentLevelTime() {
 		return newG.getCurrentLevelTime();
 	}
 
+	/**
+	 * Gets index of node pacman is currently
+	 * occupying
+	 * @return current node
+	 */
 	public int getPacmanCurrentNodeIndex() {
 		return newG.getPacmanCurrentNodeIndex();
 	}
 
+	/**
+	 * Gets the last move made by pacman
+	 * @return index corresponding to pacmans last move
+	 */
 	public int getPacmanLastMoveMade() {
 		return moveToIndex(newG.getPacmanLastMoveMade());
 	}
 
+	/**
+	 * returns whether or not game requires an action currently
+	 * @return whether or not game requires action
+	 */
 	public boolean anyRequiresAction() {
 		return anyRequiresAction(newG);
 	}
 
+	/**
+	 * returns whether or not any of the ghosts are edible
+	 * @return ghosts edible
+	 */
 	public boolean anyIsEdible() {
 		return anyIsEdible(newG);
 	}

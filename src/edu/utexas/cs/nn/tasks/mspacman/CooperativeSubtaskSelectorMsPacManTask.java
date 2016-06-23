@@ -22,6 +22,7 @@ public class CooperativeSubtaskSelectorMsPacManTask<T extends Network> extends C
 	 * Had to set up a weird method of passing the subnetworks to the pacman
 	 * controller via these static fields
 	 */
+	@SuppressWarnings("rawtypes")
 	public static Genotype[] subNetworks = null;
 	private final int[] fitnessPreferences;
 
@@ -38,6 +39,7 @@ public class CooperativeSubtaskSelectorMsPacManTask<T extends Network> extends C
 		fitnessPreferences = fitnessMap.associatedFitnessScores();
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public ArrayList<Score> evaluate(Genotype[] team) {
 		// Not sure if this will ever work for non-TWEANN networks, but I wanted

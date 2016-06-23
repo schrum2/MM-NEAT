@@ -14,18 +14,14 @@ public class Substrate {
 	public final static int INPUT_SUBSTRATE = 0;
 	public final static int PROCCESS_SUBSTRATE = 1;
 	public final static int OUTPUT_SUBSTRATE = 2;
-	public final String name;// unique string identifier for substrate
-	public final Pair<Integer, Integer> size;// encodes size of rectangular
-												// substrate (sticking with 2D
-												// for now)
-	public final int stype;// encodes type of substrate
-	public final Triple<Integer, Integer, Integer> subLocation;// location of
-																// substrate in
-																// vector space
-	// public final boolean connectToSameLayer;
-	// public boolean fullyConnected;//don't know alternatives yet
-	// public List<Pair<Integer, Integer>> occupied;// come back to later
-
+	// unique string identifier for substrate
+	public final String name;
+	// encodes size of rectangular substrate (sticking with 2D for now)
+	public final Pair<Integer, Integer> size;
+	// encodes type of substrate
+	public final int stype;
+	// location of substrate in vector space
+	public final Triple<Integer, Integer, Integer> subLocation;
 	/**
 	 * constructor for a substrate
 	 *

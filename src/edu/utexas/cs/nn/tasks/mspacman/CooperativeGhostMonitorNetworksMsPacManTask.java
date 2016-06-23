@@ -22,6 +22,7 @@ public class CooperativeGhostMonitorNetworksMsPacManTask<T extends Network> exte
 		}
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public ArrayList<Score> evaluate(Genotype[] team) {
 
