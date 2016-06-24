@@ -7,11 +7,13 @@ import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.networks.HierarchicalTWEANN;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.networks.TWEANN;
+import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.mspacman.CooperativeCheckEachMultitaskSelectorMsPacManTask;
 import edu.utexas.cs.nn.tasks.mspacman.CooperativeSubtaskSelectorMsPacManTask;
 import edu.utexas.cs.nn.tasks.mspacman.sensors.ActionBlockLoadedInputOutputMediator;
 import edu.utexas.cs.nn.tasks.mspacman.sensors.CombiningInputOutputMediator;
+import edu.utexas.cs.nn.tasks.mspacman.sensors.MsPacManHyperNEATMediator;
 import edu.utexas.cs.nn.tasks.mspacman.sensors.VariableDirectionBlockLoadedInputOutputMediator;
 import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.combining.GhostEatingNetworkBlock;
 import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.combining.PillEatingNetworkBlock;
@@ -49,7 +51,9 @@ public class NNMsPacMan<T extends Network> extends Organism<T> {
 		Network net = (Network) this.getGenotype().getPhenotype();
 		boolean evolveNetworkSelector = Parameters.parameters.booleanParameter("evolveNetworkSelector");
 		try {
-			if (MMNEAT.pacmanInputOutputMediator instanceof ActionBlockLoadedInputOutputMediator) {
+			if(CommonConstants.hyperNEAT) {
+				controller = new NNHyperNEATPacManController(net);
+			} else if (MMNEAT.pacmanInputOutputMediator instanceof ActionBlockLoadedInputOutputMediator) {
 				controller = new NNActionPacManController(net);
 			} else if (MMNEAT.pacmanInputOutputMediator instanceof VariableDirectionBlockLoadedInputOutputMediator) {
 				if (MMNEAT.sharedMultitaskNetwork != null) {
@@ -72,9 +76,7 @@ public class NNMsPacMan<T extends Network> extends Organism<T> {
 			} else if (genotype instanceof HierarchicalTWEANNGenotype) {
 				HierarchicalTWEANN ht = (HierarchicalTWEANN) net;
 				Genotype<TWEANN> ghostNet = ht.getSubNetGenotype(GhostEatingNetworkBlock.GHOST_POOL);
-				// System.out.println("ghostNet = " + ghostNet.getId());
 				Genotype<TWEANN> pillNet = ht.getSubNetGenotype(PillEatingNetworkBlock.PILL_POOL);
-				// System.out.println("pillNet = " + pillNet.getId());
 				if (MMNEAT.pacmanInputOutputMediator instanceof CombiningInputOutputMediator) {
 					// Evolve combining net with population of possible subnets
 					((SubNetworkBlock) ((CombiningInputOutputMediator) MMNEAT.pacmanInputOutputMediator).blocks
