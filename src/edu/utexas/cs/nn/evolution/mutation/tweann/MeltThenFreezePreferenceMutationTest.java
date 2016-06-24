@@ -8,19 +8,24 @@ import org.junit.Test;
 
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
+import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype.NodeGene;
+import edu.utexas.cs.nn.networks.TWEANN.Node;
 import edu.utexas.cs.nn.parameters.Parameters;
 
-public class MeltThenFreezePreferenceMutationTest {
+public class MeltThenFreezePreferenceMutationTest {//TODO
 
 	TWEANNGenotype tg1;
 	MeltThenFreezePreferenceMutation mtfpm;
 	
 	@Before
 	public void setUp() throws Exception {
-		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "recurrency:false", "freezePreferenceRate:1.0"});
+		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "recurrency:false", "freezePreferenceRate:1.0", "mmrRate:1.0"});
 		MMNEAT.loadClasses();
 		tg1 = new TWEANNGenotype(MMNEAT.networkInputs, MMNEAT.networkOutputs, 0);
 		mtfpm = new MeltThenFreezePreferenceMutation();
+		MMR mmr = new MMR();
+		mmr.mutate(tg1);
+		assertEquals(tg1.numModules, 2);
 	}
 
 	@After
@@ -32,12 +37,20 @@ public class MeltThenFreezePreferenceMutationTest {
 
 	@Test
 	public void test() {
-		mtfpm.mutate(tg1);
-		int firstPreference = tg1.outputStartIndex() + tg1.neuronsPerModule;
-		for(int i = 0; i < firstPreference; i++) {
-			assertFalse(tg1.nodes.get(i).frozen);
+		for(NodeGene node : tg1.nodes) {
+			if(node.ntype == Node.NTYPE_INPUT || node.ntype == Node.NTYPE_HIDDEN) {
+				node.freeze();
+				assertEquals(node.frozen, true);
+			}
 		}
-		assertTrue(tg1.nodes.get(firstPreference).frozen);
+		mtfpm.mutate(tg1);
+		int numFrozen = 0;
+		for(NodeGene node : tg1.nodes) {
+			if(node.frozen) {
+				numFrozen++;
+			}
+		}
+		assertEquals(numFrozen, tg1.numModules);
 	}
 
 }
