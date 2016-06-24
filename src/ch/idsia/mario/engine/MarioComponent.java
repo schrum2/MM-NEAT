@@ -172,8 +172,9 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
             }
             else
             {
-                System.err.println("Null Action received. Skipping simulation...");
-                stop();
+                //System.err.println("Null Action received. Skipping simulation...");
+                //stop();
+                mario.die();
             }
 
 

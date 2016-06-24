@@ -20,10 +20,25 @@ public class NNMarioAgent<T extends Network> extends Organism<T> implements Agen
     static final int SUB_JUMP = 7;
     static final int SUB_SPEED = 6;
     static int jumpCount = 0;
+    static int stuckCount = 0;
+    static int xPrev = 0;
+    static int xStart;
+    static int yStart;
+    static int width;
+    static int height;
+    static int xEnd;
+    static int yEnd;
+    
     
 	public NNMarioAgent(Genotype<T> genotype) {
 		super(genotype);
 		n = genotype.getPhenotype();
+		xStart = Parameters.parameters.integerParameter("marioInputStartX");
+		yStart = Parameters.parameters.integerParameter("marioInputStartY");
+		width = Parameters.parameters.integerParameter("marioInputWidth");
+		height = Parameters.parameters.integerParameter("marioInputHeight");
+		xEnd = height + xStart;
+		yEnd = width + yStart;
 	}
 
 	/**
@@ -38,12 +53,26 @@ public class NNMarioAgent<T extends Network> extends Organism<T> implements Agen
 	public boolean[] getAction(Environment observation) {
 		byte[][] worldScene = observation.getLevelSceneObservation(/*1*/);
 		byte[][] enemiesScene = observation.getEnemiesObservation(/*1*/);
-		int xStart = Parameters.parameters.integerParameter("marioInputStartX");
-		int yStart = Parameters.parameters.integerParameter("marioInputStartY");
-		int width = Parameters.parameters.integerParameter("marioInputWidth");
-		int height = Parameters.parameters.integerParameter("marioInputHeight");
-		int xEnd = height + xStart;
-		int yEnd = width + yStart;
+		
+		
+		int xPos = (int) observation.getMarioFloatPos()[0];
+		
+		if(xPos <= xPrev){ 
+        	stuckCount++;
+        	if(stuckCount > Parameters.parameters.integerParameter("marioStuckTimeout")){
+        		stuckCount = 0;
+        		return null; // kill mario
+        	}
+        	xPrev = Math.max(xPrev, xPos);
+        } else { 
+        	stuckCount = 0;
+        	xPrev = xPos;
+        }
+		//System.out.println("Current x position " + xPos);
+		//System.out.println("Previous x position " + xPrev);
+		//System.out.println("Stuck Count " + stuckCount);
+		//System.out.println("Stuck Timeout " + Parameters.parameters.integerParameter("marioStuckTimeout"));
+		
 		int worldBuffer = 0;
 		int enemiesBuffer = (width * height);
 		double[] inputs;
@@ -60,7 +89,7 @@ public class NNMarioAgent<T extends Network> extends Organism<T> implements Agen
 			}
 		}
 		if(!CommonConstants.hyperNEAT){
-			inputs[enemiesBuffer++] = 1;
+			inputs[enemiesBuffer++] = 1; // HyperNEAT does not need a bias
 		}
 		if(Parameters.parameters.booleanParameter("showMarioInputs")){
 			printMarioWorld(inputs);

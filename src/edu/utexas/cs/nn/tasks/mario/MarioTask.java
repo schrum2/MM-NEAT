@@ -138,7 +138,7 @@ public class MarioTask<T extends Network> extends NoisyLonerTask<T>implements Ne
     public static void main(String[] args){
     	Parameters.initializeParameterCollections(new String[]{"io:false", "netio:false", 
     			"task:edu.utexas.cs.nn.tasks.mario.MarioTask", "marioInputStartX:-3", "marioInputStartY:-2", 
-    			"marioInputWidth:12", "marioInputHeight:5", "showMarioInputs:false"});
+    			"marioInputWidth:12", "marioInputHeight:5", "showMarioInputs:false", "moMario:true", "marioJumpTimeout:20", "marioStuckTimeout:100"});
     	MMNEAT.loadClasses();
     	EvolutionaryHistory.initArchetype(0);
     	TWEANNGenotype tg = new TWEANNGenotype(10,5,0);
