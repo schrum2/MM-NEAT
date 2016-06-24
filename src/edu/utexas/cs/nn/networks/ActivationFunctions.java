@@ -145,8 +145,18 @@ public class ActivationFunctions {
 		return activation;
 	}
 
-	private static double stretchedTanh(double sum) {
-		return 1.7159 * tanh( 2/3 * sum);  
+        /**
+         * Function proposed in the following paper as being better than standard 
+         * tanh for neural networks.
+         * Y. LeCun, L. Bottou, G. Orr and K. Muller: Efficient BackProp, in 
+         * Orr, G. and Muller K. (Eds), Neural Networks: Tricks of the trade, Springer, 1998
+         * 
+         * The recommendation is for BackProp, but could be useful for us too.
+         * @param sum input
+         * @return function result
+         */
+	public static double stretchedTanh(double sum) {
+		return 1.7159 * tanh( (2.0/3) * sum);  
 	}
 
 	public static String activationName(int ftype) { 
