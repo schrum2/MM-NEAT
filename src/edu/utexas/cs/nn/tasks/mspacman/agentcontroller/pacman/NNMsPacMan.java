@@ -13,7 +13,6 @@ import edu.utexas.cs.nn.tasks.mspacman.CooperativeCheckEachMultitaskSelectorMsPa
 import edu.utexas.cs.nn.tasks.mspacman.CooperativeSubtaskSelectorMsPacManTask;
 import edu.utexas.cs.nn.tasks.mspacman.sensors.ActionBlockLoadedInputOutputMediator;
 import edu.utexas.cs.nn.tasks.mspacman.sensors.CombiningInputOutputMediator;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.MsPacManHyperNEATMediator;
 import edu.utexas.cs.nn.tasks.mspacman.sensors.VariableDirectionBlockLoadedInputOutputMediator;
 import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.combining.GhostEatingNetworkBlock;
 import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.combining.PillEatingNetworkBlock;

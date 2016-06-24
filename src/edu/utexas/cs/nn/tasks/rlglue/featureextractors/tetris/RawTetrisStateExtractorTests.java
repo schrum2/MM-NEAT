@@ -25,7 +25,7 @@ public class RawTetrisStateExtractorTests {
 		EvolutionaryHistory.setHighestGenotypeId(0);
 		Parameters.initializeParameterCollections(
 				new String[] { "io:false", "netio:false", "allowMultipleFunctions:true", "recurrency:false",
-						"includeHalfLinearPiecewiseFunction:true", "includeSawtoothFunction:true", "absenceNegative:true" });
+						"includeHalfLinearPiecewiseFunction:true", "includeSawtoothFunction:true", "absenceNegative:true", "hyperNEAT:true" });
 		MMNEAT.loadClasses();
 	}
 
@@ -188,8 +188,8 @@ public class RawTetrisStateExtractorTests {
 		double[] zeroes = new double[TetrisState.worldHeight * TetrisState.worldWidth];
 		for(int i = 0; i < zeroes.length; i++){
 			zeroes[i] = zeroes[i] - 1; 
-			//System.out.println("First at " + i + ": " + first[i]);
-			//System.out.println("Ones at " + i + ": " + zeroes[i]);
+			System.out.println("First at " + i + ": " + first[i]);
+			System.out.println("Ones at " + i + ": " + zeroes[i]);
 			assertEquals(first[i], zeroes[i], 0.0);
 		}
 		// line piece
