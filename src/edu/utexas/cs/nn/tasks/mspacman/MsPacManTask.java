@@ -369,15 +369,15 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 			}
 			break;
 		}
-                // Game score is fitness in addition to preferred
+		// Game score is fitness in addition to preferred
 		return (eachComponentTracksScoreToo && scoreIndex != scoreIndexInOtherScores 
 				? new double[] { taskScores.otherStats[scoreIndex], taskScores.otherStats[scoreIndexInOtherScores] }
-				: new double[] { taskScores.otherStats[scoreIndex] });
+		: new double[] { taskScores.otherStats[scoreIndex] });
 	}
 
-        /**
-         * Define the Ghost team to evolve against
-         */
+	/**
+	 * Define the Ghost team to evolve against
+	 */
 	public void loadGhosts() {
 		if (ghosts == null) {
 			try {
@@ -394,8 +394,8 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 	/**
 	 * If a static pacman is being used against evolving ghosts, then this
 	 * method loads it.
-         * 
-         * Is this actually used anywhere?
+	 * 
+	 * Is this actually used anywhere?
 	 */
 	public void loadPacMan() {
 		if (mspacman == null) {
@@ -508,7 +508,7 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 		return otherScores.size();
 	}
 
-        @Override
+	@Override
 	public int numObjectives() {
 		return objectives.size();
 	}
@@ -527,64 +527,90 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 		return result;
 	}
 
-        @Override
+	@Override
 	public double[] startingGoals() {
 		return minScores();
 	}
 
-        @Override
+	@Override
 	public String[] sensorLabels() {
 		return MMNEAT.pacmanInputOutputMediator.sensorLabels();
 	}
 
-        @Override
+	@Override
 	public String[] outputLabels() {
 		return MMNEAT.pacmanInputOutputMediator.outputLabels();
 	}
 
-        @Override
+	@Override
 	public double getTimeStamp() {
 		return game.getTotalTime();
 	}
 
-    	@Override
-    	public List<Substrate> getSubstrateInformation() {
-    		ArrayList<Substrate> subs = new ArrayList<Substrate>();
-    		Pair<Integer, Integer> subSize = new Pair<>(MS_PAC_MAN_SUBSTRATE_WIDTH, MS_PAC_MAN_SUBSTRATE_HEIGHT);
-    		Substrate pillSubstrate = new Substrate(subSize, Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, 0, 0), "Pill_0");
-    		Substrate powerSubstrate = new Substrate(subSize, Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(SUB_COORD_INDEX, 0, 0), "Power_1");
-    		Substrate threatSubstrate = new Substrate(subSize, Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, SUB_COORD_INDEX, 0), "Threat_2");
-    		Substrate edibleSubstrate = new Substrate(subSize, Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(SUB_COORD_INDEX, SUB_COORD_INDEX, 0), "Edible_3");
-    		Substrate pacManSubstrate = new Substrate(subSize, Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>((int) (SUB_COORD_INDEX / 2.0), (int) (SUB_COORD_INDEX / 2.0), 0), "PacMan_4");
-    		Substrate processSubstrate = new Substrate(subSize, Substrate.PROCCESS_SUBSTRATE, new Triple<Integer, Integer, Integer>((int) (SUB_COORD_INDEX/2.0), (int) (SUB_COORD_INDEX/2.0), SUB_COORD_INDEX), "P_0");
-    		Substrate outputSubstrate = new Substrate(subSize, Substrate.OUTPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>( (int) (SUB_COORD_INDEX/2.0), (int) (SUB_COORD_INDEX/2.0),SUB_COORD_INDEX * 2), "O_0");
-    		subs.add(pillSubstrate);
-    		subs.add(powerSubstrate);
-    		subs.add(threatSubstrate);
-    		subs.add(edibleSubstrate);
-    		subs.add(pacManSubstrate);
-    		subs.add(processSubstrate);
-    		subs.add(outputSubstrate);
-    		return subs;
+	@Override
+	public List<Substrate> getSubstrateInformation() {
+		boolean everything = false;
+		ArrayList<Substrate> subs = new ArrayList<Substrate>();
+		Pair<Integer, Integer> subSize = new Pair<>(MS_PAC_MAN_SUBSTRATE_WIDTH, MS_PAC_MAN_SUBSTRATE_HEIGHT);
+		if(everything) {
+			Substrate pillSubstrate = new Substrate(subSize, Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, 0, 0), "Pill_0");
+			Substrate powerSubstrate = new Substrate(subSize, Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(SUB_COORD_INDEX, 0, 0), "Power_1");
+			Substrate threatSubstrate = new Substrate(subSize, Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, SUB_COORD_INDEX, 0), "Threat_2");
+			Substrate edibleSubstrate = new Substrate(subSize, Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(SUB_COORD_INDEX, SUB_COORD_INDEX, 0), "Edible_3");
+			Substrate pacManSubstrate = new Substrate(subSize, Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>((int) (SUB_COORD_INDEX / 2.0), (int) (SUB_COORD_INDEX / 2.0), 0), "PacMan_4");
+			Substrate processSubstrate = new Substrate(subSize, Substrate.PROCCESS_SUBSTRATE, new Triple<Integer, Integer, Integer>((int) (SUB_COORD_INDEX/2.0), (int) (SUB_COORD_INDEX/2.0), SUB_COORD_INDEX), "P_0");
+			Substrate outputSubstrate = new Substrate(subSize, Substrate.OUTPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>( (int) (SUB_COORD_INDEX/2.0), (int) (SUB_COORD_INDEX/2.0),SUB_COORD_INDEX * 2), "O_0");
+			subs.add(pillSubstrate);
+			subs.add(powerSubstrate);
+			subs.add(threatSubstrate);
+			subs.add(edibleSubstrate);
+			subs.add(pacManSubstrate);
+			subs.add(processSubstrate);
+			subs.add(outputSubstrate);
+		} else {
+			Substrate pillSubstrate = new Substrate(subSize, Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, 0, 0), "Pill_0");
+			Substrate powerPillSubstrate = new Substrate(new Pair<Integer, Integer>(3, 3), Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(SUB_COORD_INDEX, 0, 0), "Power_1");
+			Substrate ghostSubstrate = new Substrate(subSize, Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, SUB_COORD_INDEX, 0), "Ghost_2");
+			Substrate pacManSubstrate = new Substrate(subSize, Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(SUB_COORD_INDEX, SUB_COORD_INDEX, 0), "PacMan_4");
+			Substrate processSubstrate = new Substrate(subSize, Substrate.PROCCESS_SUBSTRATE, new Triple<Integer, Integer, Integer>((int) (SUB_COORD_INDEX/2.0), (int) (SUB_COORD_INDEX/2.0), SUB_COORD_INDEX), "P_0");
+			Substrate outputSubstrate = new Substrate(new Pair<Integer, Integer>(3, 3), Substrate.OUTPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>( (int) (SUB_COORD_INDEX/2.0), (int) (SUB_COORD_INDEX/2.0),SUB_COORD_INDEX * 2), "O_0");
+			subs.add(pillSubstrate);
+			subs.add(powerPillSubstrate);
+			subs.add(ghostSubstrate);
+			subs.add(pacManSubstrate);
+			subs.add(processSubstrate);
+			subs.add(outputSubstrate); 
+		}
 
-    	}
+		return subs;
+	}
 
-    	@Override
-    	public List<Pair<String, String>> getSubstrateConnectivity() {
-    		List<Pair<String, String>> connections = new ArrayList<Pair<String, String>>();
-    		connections.add(new Pair<String, String>("Pill_0", "P_0"));
-    		connections.add(new Pair<String, String>("Power_1", "P_0"));
-    		connections.add(new Pair<String, String>("Threat_2", "P_0"));
-    		connections.add(new Pair<String, String>("Edible_3", "P_0"));
-    		connections.add(new Pair<String, String>("PacMan_4", "P_0"));
-    		connections.add(new Pair<String, String>("P_0", "O_0"));
-    		if(Parameters.parameters.booleanParameter("extraHNPacManLinks")) {
-    			connections.add(new Pair<String, String>("Pills_0", "O_0"));
-    			connections.add(new Pair<String, String>("Power_1", "O_0"));
-    			connections.add(new Pair<String, String>("Threat_2", "O_0"));
-    			connections.add(new Pair<String, String>("Edible_3", "O_0"));
-    			connections.add(new Pair<String, String>("PacMan_4", "O_0"));
-    		}
-    		return connections;
-    	}
+	@Override
+	public List<Pair<String, String>> getSubstrateConnectivity() {
+		boolean everything = false;
+		List<Pair<String, String>> connections = new ArrayList<Pair<String, String>>();
+		if(everything) {
+			connections.add(new Pair<String, String>("Pill_0", "P_0"));
+			connections.add(new Pair<String, String>("Power_1", "P_0"));
+			connections.add(new Pair<String, String>("Threat_2", "P_0"));
+			connections.add(new Pair<String, String>("Edible_3", "P_0"));
+			connections.add(new Pair<String, String>("PacMan_4", "P_0"));
+			connections.add(new Pair<String, String>("P_0", "O_0"));
+			if(Parameters.parameters.booleanParameter("extraHNPacManLinks")) {
+				connections.add(new Pair<String, String>("Pills_0", "O_0"));
+				connections.add(new Pair<String, String>("Power_1", "O_0"));
+				connections.add(new Pair<String, String>("Threat_2", "O_0"));
+				connections.add(new Pair<String, String>("Edible_3", "O_0"));
+				connections.add(new Pair<String, String>("PacMan_4", "O_0"));
+			}
+		} else {
+			connections.add(new Pair<String, String>("Pill_0", "P_0"));
+			connections.add(new Pair<String, String>("Power_1", "P_0"));
+			connections.add(new Pair<String, String>("Ghost_2", "P_0"));
+			connections.add(new Pair<String, String>("PacMan_4", "P_0"));
+			connections.add(new Pair<String, String>("P_0", "O_0"));
+		}
+
+		return connections;
+	}
 }

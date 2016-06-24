@@ -211,8 +211,6 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 		EvolutionaryHistory.setHighestGenotypeId(0);
 		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "allowMultipleFunctions:true", "netChangeActivationRate:0.4", "recurrency:false" });
 		MMNEAT.loadClasses();
-		// draw8RandomImages();
-		//testImageConsistency();
 		randomCPPNimage(true, 200, 200, 200);
 	}
 

@@ -31,9 +31,8 @@ public class NNHyperNEATPacManController extends NNPacManController {
 		return gf.getNextPacManDirTowardsTarget(chosenNode);
 	}
 	
-	public int getOutputIndexFromNodeCoord(int x, int y) { 
-		int index = -1;
-		index = ((y - 1) * MsPacManTask.MS_PAC_MAN_SUBSTRATE_WIDTH) + x;
+	public static int getOutputIndexFromNodeCoord(int x, int y) { 
+		int index = (y * MsPacManTask.MS_PAC_MAN_SUBSTRATE_WIDTH) + x;
 		return index;
 	}
 }
