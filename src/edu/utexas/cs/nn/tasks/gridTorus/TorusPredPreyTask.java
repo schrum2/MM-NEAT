@@ -158,7 +158,7 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 	 * @param affectsSelection  
 	 *            true if objective score
 	 *            false if other score
-         * @param pop Index of population
+	 * @param pop Index of population
 	 */
 	public final void addObjective(GridTorusObjective<T> o, ArrayList<ArrayList<GridTorusObjective<T>>> list, boolean affectsSelection, int pop) {
 		list.get(pop).add(o);
@@ -376,7 +376,7 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 	 * 
 	 * @param <T>
 	 * @param container An array that will be filled with the newly created controllers
-         * @param genotypes genotypes for whole team
+	 * @param genotypes genotypes for whole team
 	 * @param isPred, true if predator, false if prey
 	 */
 	public static <T extends Network> void getEvolvedControllers(TorusPredPreyController[] container, Genotype<T>[] genotypes, boolean isPred){
@@ -388,7 +388,7 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 	 * 
 	 * @param <T>
 	 * @param container An array that will be filled with the newly created controllers
-         * @param genotypes genotypes for each agent
+	 * @param genotypes genotypes for each agent
 	 * @param isPred, true if predator, false if prey
 	 * @param startIndex, the starting index to fill the evolved controller from
 	 */
@@ -551,10 +551,36 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 			}
 		}
 
-		//Cooperative predator fitness options
 		
-		
-		//The following three cooperative setups test individual versus team selection
+		//The following ten setups test individual versus team selection
+		//homogeneous setups
+		if(Parameters.parameters.booleanParameter("homogeneousTeamSelection")){
+			for(int i = 0; i < Parameters.parameters.integerParameter("torusPredators"); i++){
+				addObjective(new IndividualPredatorCatchObjective<T>(i), objectives, pop);
+				for(int j = 0; j < Parameters.parameters.integerParameter("torusPreys"); j++){
+					addObjective(new IndividualPredatorMinimizeDistanceFromIndividualPreyObjective<T>(i,j), objectives, pop);
+				}
+			}
+		}
+		if(Parameters.parameters.booleanParameter("homogeneousAggregateTeamSelection")){
+			addObjective(new PredatorCatchObjective<T>(), objectives, pop);
+			for(int i = 0; i < Parameters.parameters.integerParameter("torusPreys"); i++){
+				addObjective(new PredatorMinimizeDistanceFromIndividualPreyObjective<T>(i), objectives, pop);
+			}
+		}
+		if(Parameters.parameters.booleanParameter("homogeneousTeamAndAggregateTeamSelection")){
+			addObjective(new PredatorCatchObjective<T>(), objectives, pop);
+			for(int i = 0; i < Parameters.parameters.integerParameter("torusPreys"); i++){
+				addObjective(new PredatorMinimizeDistanceFromIndividualPreyObjective<T>(i), objectives, pop);
+			}
+			for(int i = 0; i < Parameters.parameters.integerParameter("torusPredators"); i++){
+				addObjective(new IndividualPredatorCatchObjective<T>(i), objectives, pop);
+				for(int j = 0; j < Parameters.parameters.integerParameter("torusPreys"); j++){
+					addObjective(new IndividualPredatorMinimizeDistanceFromIndividualPreyObjective<T>(i,j), objectives, pop);
+				}
+			}
+		}
+		//cooperative setups
 		if(Parameters.parameters.booleanParameter("cooperativeIndividualSelection")){
 			addObjective(new IndividualPredatorCatchObjective<T>(pop), objectives, pop);
 			for(int i = 0; i < Parameters.parameters.integerParameter("torusPreys"); i++){
@@ -575,8 +601,51 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 				addObjective(new PredatorMinimizeDistanceFromIndividualPreyObjective<T>(i), objectives, pop);
 			}
 		}
+		if(Parameters.parameters.booleanParameter("cooperativeBalancedIndividualAndTeamSelection")){
+			//all populations are given MultiIndivCC fitnesses with just the individual distance
+			//function corresponding to that agent of this population to each prey
+			addObjective(new PredatorCatchObjective<T>(), objectives, pop);
+			for(int i = 0; i < Parameters.parameters.integerParameter("torusPreys"); i++){
+				addObjective(new IndividualPredatorMinimizeDistanceFromIndividualPreyObjective<T>(pop,i), objectives, pop);
+			}
+		}
+		if(Parameters.parameters.booleanParameter("cooperativeTeamSelection")){
+			for(int i = 0; i < Parameters.parameters.integerParameter("torusPredators"); i++){
+				addObjective(new IndividualPredatorCatchObjective<T>(i), objectives, pop);
+				for(int j = 0; j < Parameters.parameters.integerParameter("torusPreys"); j++){
+					addObjective(new IndividualPredatorMinimizeDistanceFromIndividualPreyObjective<T>(i,j), objectives, pop);
+				}
+			}
+		}
+		//cooperativeIndividualAndTeamSelection is irrelevant because cooperative team selection already includes the cooperativeIndividualSelection functions
+		//So it will just have two copies of the same fitnesses 
+		if(Parameters.parameters.booleanParameter("cooperativeIndividualAndTeamSelection")){
+			addObjective(new IndividualPredatorCatchObjective<T>(pop), objectives, pop);
+			for(int i = 0; i < Parameters.parameters.integerParameter("torusPreys"); i++){
+				addObjective(new IndividualPredatorMinimizeDistanceFromIndividualPreyObjective<T>(pop,i), objectives, pop);
+			}
+			for(int i = 0; i < Parameters.parameters.integerParameter("torusPredators"); i++){
+				addObjective(new IndividualPredatorCatchObjective<T>(i), objectives, pop);
+				for(int j = 0; j < Parameters.parameters.integerParameter("torusPreys"); j++){
+					addObjective(new IndividualPredatorMinimizeDistanceFromIndividualPreyObjective<T>(i,j), objectives, pop);
+				}
+			}
+		}
+		if(Parameters.parameters.booleanParameter("cooperativeTeamAndAggregateTeamSelection")){
+			addObjective(new PredatorCatchObjective<T>(), objectives, pop);
+			for(int i = 0; i < Parameters.parameters.integerParameter("torusPreys"); i++){
+				addObjective(new PredatorMinimizeDistanceFromIndividualPreyObjective<T>(i), objectives, pop);
+			}
+			for(int i = 0; i < Parameters.parameters.integerParameter("torusPredators"); i++){
+				addObjective(new IndividualPredatorCatchObjective<T>(i), objectives, pop);
+				for(int j = 0; j < Parameters.parameters.integerParameter("torusPreys"); j++){
+					addObjective(new IndividualPredatorMinimizeDistanceFromIndividualPreyObjective<T>(i,j), objectives, pop);
+				}
+			}
+		}
+
 		
-		
+		//Cooperative predator fitness options
 		if(Parameters.parameters.booleanParameter("predatorCoOpCCQ")){
 			//all populations are given MultiIndivCCQ fitnesses with just the individual distance
 			//function corresponding to that agent of this population to each prey
@@ -598,14 +667,6 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 					addObjective(new IndividualPredatorMinimizeDistanceFromIndividualPreyObjective<T>(pop,i), objectives, pop);
 				}
 				addObjective(new PredatorEatEachPreyQuicklyObjective<T>(), objectives, pop);
-			}
-		}
-		if(Parameters.parameters.booleanParameter("predatorCoOpCC")){
-			//all populations are given MultiIndivCC fitnesses with just the individual distance
-			//function corresponding to that agent of this population to each prey
-			addObjective(new PredatorCatchObjective<T>(), objectives, pop);
-			for(int i = 0; i < Parameters.parameters.integerParameter("torusPreys"); i++){
-				addObjective(new IndividualPredatorMinimizeDistanceFromIndividualPreyObjective<T>(pop,i), objectives, pop);
 			}
 		}
 	}
