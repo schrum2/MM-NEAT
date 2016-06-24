@@ -26,7 +26,7 @@ public class HyperNEATTetrisTask<T extends Network> extends TetrisTask<T> implem
 			substrateInformation = new LinkedList<Substrate>();
 			int worldWidth = TetrisState.worldWidth;
 			int worldHeight = TetrisState.worldHeight;
-			boolean split = CommonConstants.splitHyperNEATTetrisInputs;
+			boolean split = CommonConstants.splitRawTetrisInputs;
 			Triple<Integer, Integer, Integer> blockSubCoord = new Triple<Integer, Integer, Integer>(0, 0, 0);
 			Triple<Integer, Integer, Integer> processSubCoord = new Triple<Integer, Integer, Integer>(split ? SUBSTRATE_COORDINATES/2 : 0,SUBSTRATE_COORDINATES, 0);
 			Triple<Integer, Integer, Integer> outSubCoord = new Triple<Integer, Integer, Integer>(split ? SUBSTRATE_COORDINATES/2 : 0,SUBSTRATE_COORDINATES * 2, 0);
@@ -57,13 +57,13 @@ public class HyperNEATTetrisTask<T extends Network> extends TetrisTask<T> implem
 		if (substrateConnectivity == null) {
 			substrateConnectivity = new LinkedList<Pair<String, String>>();
 			substrateConnectivity.add(new Pair<String, String>("input_0", "process_0"));
-			if(CommonConstants.splitHyperNEATTetrisInputs) {
+			if(CommonConstants.splitRawTetrisInputs) {
 				substrateConnectivity.add(new Pair<String, String>("input_1", "process_0"));
 			}
 			substrateConnectivity.add(new Pair<String, String>("process_0", "output_0"));
 			if(Parameters.parameters.booleanParameter("extraHNTetrisLinks")) {
 				substrateConnectivity.add(new Pair<String, String>("input_0", "output_0"));
-				if(CommonConstants.splitHyperNEATTetrisInputs) {
+				if(CommonConstants.splitRawTetrisInputs) {
 					substrateConnectivity.add(new Pair<String, String>("input_1", "output_0"));
 				}
 			}

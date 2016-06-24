@@ -24,7 +24,7 @@ public class CommonConstants {
 	public static boolean includeHalfLinearPiecewiseFunction;
 	public static boolean includeStretchedTanhFunction;
 	
-	public static boolean splitHyperNEATTetrisInputs;
+	public static boolean splitRawTetrisInputs;
 	public static boolean allowMultipleFunctions;
 	public static boolean allowRandomGhostReversals;
 	public static boolean checkEachAbsoluteDistanceGhostSort;
@@ -137,7 +137,7 @@ public class CommonConstants {
 		includeAbsValFunction = Parameters.parameters.booleanParameter("includeAbsValFunction");
 		includeHalfLinearPiecewiseFunction = Parameters.parameters.booleanParameter("includeHalfLinearPiecewiseFunction");
 		includeStretchedTanhFunction = Parameters.parameters.booleanParameter("includeStretchedTanhFunction");	
-		splitHyperNEATTetrisInputs = Parameters.parameters.booleanParameter("splitHyperNEATTetrisInputs");
+		splitRawTetrisInputs = Parameters.parameters.booleanParameter("splitRawTetrisInputs");
 		allowMultipleFunctions = Parameters.parameters.booleanParameter("allowMultipleFunctions");
 		allowRandomGhostReversals = Parameters.parameters.booleanParameter("allowRandomGhostReversals");
 		checkEachAbsoluteDistanceGhostSort = Parameters.parameters

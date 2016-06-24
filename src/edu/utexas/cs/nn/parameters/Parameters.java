@@ -282,7 +282,7 @@ public class Parameters {
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
 		// Boolean parameters
 		booleanOptions.add("showCPPN", false, "shows evolved CPPN during post evals");
-		booleanOptions.add("splitHyperNEATTetrisInputs", false, "splits holes and blocks into two separate input substrates");
+		booleanOptions.add("splitRawTetrisInputs", false, "splits holes and blocks into two separate input substrates");
 		booleanOptions.add("tetrisAllowLine", true, "Determines whether or not Line pieces will shown up in Tetris");
 		booleanOptions.add("tetrisAllowSquare", true, "Determines whether or not Square pieces will shown up in Tetris");
 		booleanOptions.add("tetrisAllowTri", true, "Determines whether or not Tri pieces will shown up in Tetris");
@@ -290,7 +290,7 @@ public class Parameters {
 		booleanOptions.add("tetrisAllowZShape", true, "Determines whether or not ZShape pieces will shown up in Tetris");
 		booleanOptions.add("tetrisAllowLShape", true, "Determines whether or not LShape pieces will shown up in Tetris");
 		booleanOptions.add("tetrisAllowJShape", true, "Determines whether or not JShape pieces will shown up in Tetris");
-		booleanOptions.add("evolveHyperNEATBias", false, "adds an output to evolved cppn that outputs bias of node");
+		booleanOptions.add("evolveHyperNEATBias", true, "adds an output to evolved cppn that outputs bias of node");
 		booleanOptions.add("extraHNPacManLinks", false, "adds connections between input and output layers of HN Ms PacMan");
 		booleanOptions.add("extraHNTetrisLinks", false, "adds connections between the input and output substrate layers of tetris hyperNEAT substrates");
 		booleanOptions.add("showMarioInputs", false, "Shows the Mario input frame to the user as the agent would see them");

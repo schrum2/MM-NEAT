@@ -21,9 +21,9 @@ public class RawTetrisStateExtractor implements FeatureExtractor {
 	 */
 	@Override
 	public int numFeatures() {
-		return CommonConstants.splitHyperNEATTetrisInputs ? 
-				TetrisState.worldHeight * TetrisState.worldWidth * 2 :
-					TetrisState.worldHeight * TetrisState.worldWidth;
+		return TetrisState.worldHeight * TetrisState.worldWidth * // Each cell in world state
+                        (CommonConstants.splitRawTetrisInputs ? 2 : 1) +  // Twice as many if split
+                        (CommonConstants.hyperNEAT ? 0 : 1); // Standard bias needed without HyperNEAT
 	}
 
 	/**
@@ -35,22 +35,20 @@ public class RawTetrisStateExtractor implements FeatureExtractor {
 	public double[] extract(Observation o) {
 		boolean negative = Parameters.parameters.booleanParameter("absenceNegative");
 		boolean senseHoles = Parameters.parameters.booleanParameter("senseHolesDifferently");
-		boolean split = CommonConstants.splitHyperNEATTetrisInputs;
 		int worldSize = TetrisState.worldWidth * TetrisState.worldHeight;
 		if(negative && senseHoles) {
 			System.out.println("can't have absenceNegative and senseHoles in the same experiment!");
 			System.exit(1);
-		} else if(split && !senseHoles){
+		} else if(CommonConstants.splitRawTetrisInputs && !senseHoles){
 			System.out.println("Split must be used with sense holes!");
 			System.exit(1);
 		}
 		// o.intArray below contains the worldState in the first worldSize indices.
 		// No index after that point should be accessed.
-		double[] result = new double[split ? worldSize * 2 : worldSize];
-		assert (split && result.length == 2*worldSize) || result.length == worldSize : "result array was not instantiated properly!";
+		double[] result = new double[numFeatures()];
 		for (int i = 0; i < worldSize; i++) {
 			if(senseHoles && TetrisExtractorUtil.isHole(i, o.intArray)){
-				if(split) {
+				if(CommonConstants.splitRawTetrisInputs) {
 					result[i] = 0;
 					result[i + worldSize] = -1;
 				} else {
@@ -63,6 +61,11 @@ public class RawTetrisStateExtractor implements FeatureExtractor {
 				result[i] = Math.signum(o.intArray[i]);
 			}
 		}
+                // Add sensor bias
+                if(!CommonConstants.hyperNEAT) {
+                    // HyperNEAT adds its bias value differently
+                    result[result.length - 1] = 1.0;
+                }
 		return result;
 	}
 
@@ -79,7 +82,7 @@ public class RawTetrisStateExtractor implements FeatureExtractor {
 				labels[in++] = "(" + j + ", " + i + ") occupied?";
 			}
 		}
-		if(CommonConstants.splitHyperNEATTetrisInputs) {
+		if(CommonConstants.splitRawTetrisInputs) {
 			for(int i1 =  0; i1 < TetrisState.worldHeight; i1++) {
 				for(int j = 0; j < TetrisState.worldWidth; j++) {
 					labels[in++] = "(" + j + ", " + i1 + ") hole?";
