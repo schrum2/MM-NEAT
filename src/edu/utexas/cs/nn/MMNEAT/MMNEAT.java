@@ -46,7 +46,7 @@ import edu.utexas.cs.nn.tasks.breve2D.NNBreve2DMonster;
 import edu.utexas.cs.nn.tasks.gridTorus.NNTorusPredPreyController;
 import edu.utexas.cs.nn.tasks.gridTorus.TorusEvolvedPredatorsVsStaticPreyTask;
 import edu.utexas.cs.nn.tasks.gridTorus.TorusPredPreyTask;
-import edu.utexas.cs.nn.tasks.gridTorus.competitive.CompetitiveHomogenousPredatorsVsPreyTask;
+import edu.utexas.cs.nn.tasks.gridTorus.competitive.CompetitiveHomogeneousPredatorsVsPreyTask;
 import edu.utexas.cs.nn.tasks.gridTorus.cooperative.CooperativePredatorsVsStaticPreyTask;
 import edu.utexas.cs.nn.tasks.gridTorus.cooperativeAndCompetitive.CompetitiveAndCooperativePredatorsVsPreyTask;
 import edu.utexas.cs.nn.tasks.gridTorus.GroupTorusPredPreyTask;
@@ -442,7 +442,7 @@ public class MMNEAT {
 				int numInputs = determineNumPredPreyInputs();
 				NetworkTask t = (NetworkTask) task;
 				setNNInputParameters(numInputs, t.outputLabels().length);
-			} else if (task instanceof CompetitiveHomogenousPredatorsVsPreyTask || task instanceof CompetitiveAndCooperativePredatorsVsPreyTask) { // must appear before GroupTorusPredPreyTask
+			} else if (task instanceof CompetitiveHomogeneousPredatorsVsPreyTask || task instanceof CompetitiveAndCooperativePredatorsVsPreyTask) { // must appear before GroupTorusPredPreyTask
 				System.out.println("Setup Competitive Torus Predator/Prey Task");
 				coevolution = true;
 				int numPredInputs = determineNumPredPreyInputs(true);
@@ -452,7 +452,7 @@ public class MMNEAT {
 				int numPreyOutputs = TorusPredPreyTask.outputLabels(false).length;
 
 				// Setup genotype early
-				if(task instanceof CompetitiveHomogenousPredatorsVsPreyTask){
+				if(task instanceof CompetitiveHomogeneousPredatorsVsPreyTask){
 					genotypeExamples = new ArrayList<Genotype>(2); // one pred pop, one prey pop
 				} else if(task instanceof CompetitiveAndCooperativePredatorsVsPreyTask){
 					genotypeExamples = new ArrayList<Genotype>(Parameters.parameters.integerParameter("torusPredators") + 

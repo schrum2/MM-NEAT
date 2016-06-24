@@ -15,11 +15,11 @@ import edu.utexas.cs.nn.tasks.gridTorus.GroupTorusPredPreyTask;
  * (competitive coevolution)
  * 
  * There are a total of two populations: 1 prey pop, 1 pred pop
- * Homogenous teams with copies of genotypes/networks to each team member
+ * Homogeneous teams with copies of genotypes/networks to each team member
  * 
  * @author rollinsa
  */
-public class CompetitiveHomogenousPredatorsVsPreyTask<T extends Network> extends GroupTorusPredPreyTask<T> {
+public class CompetitiveHomogeneousPredatorsVsPreyTask<T extends Network> extends GroupTorusPredPreyTask<T> {
 
 	/**
 	 * constructor for a task where the predators are evolved while the prey are
@@ -27,7 +27,7 @@ public class CompetitiveHomogenousPredatorsVsPreyTask<T extends Network> extends
 	 * predator and the prey agents are both evolving. Includes all of the fitness scores that
 	 * the user wants from the command line parameters
 	 */
-	public CompetitiveHomogenousPredatorsVsPreyTask() {
+	public CompetitiveHomogeneousPredatorsVsPreyTask() {
 		super();
 		task.evolved = new TorusPredPreyController[Parameters.parameters.integerParameter("torusPredators") + Parameters.parameters.integerParameter("torusPreys")];
 	}
