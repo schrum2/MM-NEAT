@@ -275,17 +275,6 @@ public class StatisticsUtilitiesTest {
 	}
 
 	@Test
-	public void testInstantaneousErrorEnergy() {// TODO
-	}
-
-	@Test
-	public void testInstantaneousTotalErrorEnergy() {// TODO
-	}
-
-	@Test
-	public void testAverageSquaredErrorEnergy() {// TODO
-	}
-	@Test
 	public void testTValue() {
 		assertEquals(StatisticsUtilities.tValue(29), 2.048, ERROR);
 		assertEquals(StatisticsUtilities.tValue(24), 2.069, ERROR);
