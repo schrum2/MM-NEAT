@@ -89,13 +89,13 @@ public class CompetitiveHomogeneousPredatorsVsPreyTask<T extends Network> extend
 				// Not used by coevolution
 				@Override
 				public TorusPredPreyController[] getPredAgents(Genotype<T> individual) {
-					throw new UnsupportedOperationException("The CompetitiveHomogenousPredatorsVsPreyTask should not need the getPredAgents method of its LonerTask instance");
+					throw new UnsupportedOperationException("The CompetitiveHomogeneousPredatorsVsPreyTask should not need the getPredAgents method of its LonerTask instance");
 				}
 
 				// Not used by coevolution
 				@Override
 				public TorusPredPreyController[] getPreyAgents(Genotype<T> individual) {
-					throw new UnsupportedOperationException("The CompetitiveHomogenousPredatorsVsPreyTask should not need the getPreyAgents method of its LonerTask instance");
+					throw new UnsupportedOperationException("The CompetitiveHomogeneousPredatorsVsPreyTask should not need the getPreyAgents method of its LonerTask instance");
 				}
 				
 			};
