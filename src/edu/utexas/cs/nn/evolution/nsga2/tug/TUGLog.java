@@ -21,6 +21,12 @@ public class TUGLog extends StatisticsLog<double[]> {
 	private final TUGNSGA2 ea;
 
 	@SuppressWarnings("rawtypes")
+	/**
+	 * Constructs a TUGLog object which logs information
+	 * about Targeting Unachieved Goals
+	 * @param _prefix, string of the log prefix
+	 * @param ea, TUGNSGA2 instance
+	 */
 	public TUGLog(String _prefix, TUGNSGA2 ea) {
 		super(_prefix, null);
 		this.ea = ea;
@@ -92,6 +98,12 @@ public class TUGLog extends StatisticsLog<double[]> {
 	}
 
 	@Override
+	/**
+	 * logs information about TUG:
+	 * Targeting Unachieved Goals
+	 * @param stats, an array of doubles of the stats
+	 * @param generation, an int designating generation number
+	 */
 	public void log(ArrayList<double[]> stats, int generation) {
 		double[] performance = stats.get(0);
 		double[] targets = stats.get(1);

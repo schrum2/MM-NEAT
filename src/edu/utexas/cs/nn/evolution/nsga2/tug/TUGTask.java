@@ -7,5 +7,9 @@ package edu.utexas.cs.nn.evolution.nsga2.tug;
  */
 public interface TUGTask {
 
+	/**
+	 * Gets and returns an array of doubles indicating the starting goals
+	 * @return the starting goals
+	 */
 	public double[] startingGoals();
 }

@@ -23,12 +23,23 @@ public class CompareNSGA2ToTUG<T> extends TUGNSGA2<T> {
 	public static final boolean GHOSTS_ONLY = true;
 	MMNEATLog compareLog;
 
+	/**
+	 * Creates an instance of CompareNSGA2ToTUG
+	 */
 	public CompareNSGA2ToTUG() {
 		super();
 		compareLog = new MMNEATLog("CompareNSGA2ToTUG", true);
 	}
 
 	@Override
+	/**
+	 * Selects the genotypes to be used in the next generation based off of the scores of the parents
+	 * and the children and TUG
+	 * Does not remove the achieved goals with TUG
+	 * 
+	 * @param numParents, an integer indicating the number of parents
+	 * @param scores, an arrayList of Scores
+	 */
 	public ArrayList<Genotype<T>> selection(int numParents, ArrayList<Score<T>> scores) {
 		long seed = RandomNumbers.randomGenerator.nextLong();
 		RandomNumbers.randomGenerator = new Random(seed);
@@ -53,6 +64,12 @@ public class CompareNSGA2ToTUG<T> extends TUGNSGA2<T> {
 	}
 
 	@Override
+	/**
+	 * Creates the children based off of the parents and the parents' scores
+	 * 
+	 * @param numChildren, the number of children to include
+	 * @param parentScores, an arrayList of the Scores of the parents
+	 */
 	public ArrayList<Genotype<T>> generateChildren(int numChildren, ArrayList<Score<T>> parentScores) {
 		long seed = RandomNumbers.randomGenerator.nextLong();
 		RandomNumbers.randomGenerator = new Random(seed);
@@ -92,6 +109,14 @@ public class CompareNSGA2ToTUG<T> extends TUGNSGA2<T> {
 		return tugResult;
 	}
 
+	/**
+	 * Logs the differences between NSGA2 and NSGA2 with TUG
+	 * @param tugResult, the resulting list of genotypes (population) with TUG
+	 * @param nsga2Result, the resulting list of genotypes (population) without TUG (using NSGA2)
+	 * @param ghostOnly, whether or not it is only ghosts
+	 * @param staticScores, an array of NSGA2Score instances
+	 * @param stage, a string indicating what stage in the generation the selection is in
+	 */
 	private void logResultDifferences(ArrayList<Genotype<T>> tugResult, ArrayList<Genotype<T>> nsga2Result,
 			boolean ghostOnly, NSGA2Score<T>[] staticScores, String stage) {
 		Pair<ArrayList<Genotype<T>>, ArrayList<Genotype<T>>> result = PopulationUtil.populationDifferences(nsga2Result,

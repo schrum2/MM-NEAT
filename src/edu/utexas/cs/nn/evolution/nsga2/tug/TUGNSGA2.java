@@ -55,6 +55,10 @@ public class TUGNSGA2<T> extends NSGA2<T> {
 		this(Parameters.parameters.booleanParameter("io"));
 	}
 
+	/**
+	 * creates an instance of TUGNSGA2
+	 * @param io, boolean indicating whether logging is desired or not
+	 */
 	public TUGNSGA2(boolean io) {
 		super(io);
 		alpha = Parameters.parameters.doubleParameter("tugAlpha");
@@ -158,11 +162,11 @@ public class TUGNSGA2<T> extends NSGA2<T> {
 		initialClimb[i] = true;
 	}
 
-        /**
-         * Disables scores in objectives that are currently disabled.
-         * @param scores List of complete scores in each objective.
-         * @return score array where certain objectives may be disabled
-         */
+	/**
+	 * Disables scores in objectives that are currently disabled.
+	 * @param scores List of complete scores in each objective.
+	 * @return score array where certain objectives may be disabled
+	 */
 	public NSGA2Score<T>[] getTUGScores(ArrayList<Score<T>> scores) {
 		@SuppressWarnings("unchecked")
 		NSGA2Score<T>[] result = new NSGA2Score[scores.size()];
@@ -217,19 +221,23 @@ public class TUGNSGA2<T> extends NSGA2<T> {
 		return stats; // [0] = performance, [1] = goal target
 	}
 
+	/**
+	 * moves the recency weighted averages toward the averages
+	 * @param averages, an array of doubles consisting of the averages
+	 */
 	private void moveRecencyWeightedAveragesTowardsAverages(double[] averages) {
 		for (int i = 0; i < averages.length; i++) {
 			recencyWeightedAverages[i] += alpha * (averages[i] - recencyWeightedAverages[i]);
 		}
 	}
 
-        /**
-         * Determines whether each goal is currently being archieved, and updates
-         * goal values if needed.
-         * @param averages average score in each objective
-         * @param maxes maximum score in each objective (not currently used)
-         * @return boolean array indicated whether each objective is currently achieved
-         */
+	/**
+	 * Determines whether each goal is currently being archieved, and updates
+	 * goal values if needed.
+	 * @param averages average score in each objective
+	 * @param maxes maximum score in each objective (not currently used)
+	 * @return boolean array indicated whether each objective is currently achieved
+	 */
 	private boolean[] goalAchievement(double[] averages, double[] maxes) {
 		boolean[] achieved = new boolean[goals.length];
 		for (int i = 0; i < achieved.length; i++) {
@@ -238,8 +246,8 @@ public class TUGNSGA2<T> extends NSGA2<T> {
 			if (!before && achieved[i]) { // Wasn't achieved, but is now
 				initialClimb[i] = false;
 			} else if (Parameters.parameters.booleanParameter("tugGoalsIncreaseWhenThrashing") 
-                                        && !initialClimb[i]
-					&& !achieved[i]) {
+					&& !initialClimb[i]
+							&& !achieved[i]) {
 				// Too big of an increase
 				// increaseGoal(i, maxes[i]);
 				goals[i] *= Parameters.parameters.doubleParameter("increasingTUGGoalRatio");
@@ -249,6 +257,12 @@ public class TUGNSGA2<T> extends NSGA2<T> {
 		return achieved;
 	}
 
+	/**
+	 * Adjusts the goals and objectives based on recent weights which are 
+	 * determined by the achievement or unachievement of the objectives
+	 * @param averages
+	 * @param maxes
+	 */
 	protected void adjustGoalsAndObjectives(double[] averages, double[] maxes) {
 		moveRecencyWeightedAveragesTowardsAverages(averages);
 		boolean[] achieved = goalAchievement(averages, maxes);
@@ -298,6 +312,11 @@ public class TUGNSGA2<T> extends NSGA2<T> {
 		return this.generation - Parameters.parameters.integerParameter("genOfLastTUGGoalIncrease");
 	}
 
+	/**
+	 * Adds some data to the logs if writing output was requested
+	 * @param averages
+	 * @param maxes
+	 */
 	protected void logOut(double[] averages, double[] maxes) {
 		if (writeOutput) {
 			ArrayList<double[]> vStats = new ArrayList<double[]>(2);
@@ -307,10 +326,10 @@ public class TUGNSGA2<T> extends NSGA2<T> {
 		}
 	}
 
-        /**
-         * Increase goals in each objective
-         * @param maxes Current max scores in each objective
-         */
+	/**
+	 * Increase goals in each objective
+	 * @param maxes Current max scores in each objective
+	 */
 	private void increaseGoals(double[] maxes) {
 		System.out.println("Increase goals");
 		resetRecencyWeightedAverages();
@@ -319,11 +338,11 @@ public class TUGNSGA2<T> extends NSGA2<T> {
 		}
 	}
 
-        /**
-         * Increase one objective
-         * @param objective index of objective
-         * @param target 
-         */
+	/**
+	 * Increase one objective
+	 * @param objective index of objective
+	 * @param target 
+	 */
 	private void increaseGoal(int objective, double target) {
 		if (CommonConstants.constantTUGGoalIncrements) {
 			goals[objective] += Parameters.parameters.doubleParameter("tugGoalIncrement" + objective);
@@ -337,6 +356,12 @@ public class TUGNSGA2<T> extends NSGA2<T> {
 		justActivated[objective] = true;
 	}
 
+	/**
+	 * "target" the unachieved goals by using the objectives that have not yet been
+	 * acheived yet.
+	 * @param achieved, a boolean array holding true if the corresponding objective has been achieved
+	 * 			and false if the objective has not been achieved yet
+	 */
 	private void targetUnachievedGoals(boolean[] achieved) {
 		for (int i = 0; i < achieved.length; i++) {
 			justDeactivated[i] = useObjective[i] && achieved[i];
@@ -410,6 +435,14 @@ public class TUGNSGA2<T> extends NSGA2<T> {
 	}
 
 	@Override
+	/**
+	 * Selects the genotypes to be used in the next generation based off of the scores of the parents
+	 * and the children and TUG
+	 * Does not remove the achieved goals
+	 * 
+	 * @param numParents, an integer indicating the number of parents
+	 * @param listScores, an arrayList of Scores
+	 */
 	public ArrayList<Genotype<T>> selection(int numParents, ArrayList<Score<T>> listScores) {
 		if (CommonConstants.tugKeepsParetoFront) {
 			// Achieved goals are not removed
@@ -463,14 +496,20 @@ public class TUGNSGA2<T> extends NSGA2<T> {
 			}
 		} else {
 			// Default NSGA2 plus TUG:
-                        // Possible disable certain objectives
+			// Possible disable certain objectives
 			NSGA2Score<T>[] scores = getTUGScores(listScores);
-                        // Then use NSGA2 like usual
+			// Then use NSGA2 like usual
 			return staticSelection(numParents, scores);
 		}
 	}
 
 	@Override
+	/**
+	 * Creates the children based off of the parents and the parents' scores
+	 * 
+	 * @param numChildren, the number of children to include
+	 * @param parentScores, an arrayList of the Scores of the parents
+	 */
 	public ArrayList<Genotype<T>> generateChildren(int numChildren, ArrayList<Score<T>> parentScores) {
 		// Now only the parents are used to calculate average population scores
 		// Should there be an option to use children too?
@@ -485,426 +524,14 @@ public class TUGNSGA2<T> extends NSGA2<T> {
 	}
 
 	@Override
+	/**
+	 * finishes up with logging and closes related io file content and logs
+	 * @param population, an arrayList of Genotypes of the population
+	 */
 	public void close(ArrayList<Genotype<T>> population) {
 		super.close(population);
 		if (writeOutput) {
 			this.tugLog.close();
 		}
-	}
-
-	// Some unit tests
-	// Should turn into proper JUnit Tests
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static void main(String[] args) {
-		Parameters.initializeParameterCollections(new String[] { "io:false", "tugKeepsParetoFront:false" });
-		MMNEAT.loadClasses();
-		MMNEAT.task = new MsPacManTask();
-		TUGNSGA2 ea = new TUGNSGA2<ArrayList<Double>>();
-
-		ArrayList<Score<ArrayList<Double>>> scores = new ArrayList<Score<ArrayList<Double>>>();
-
-		ArrayList<Long> layer0 = new ArrayList<Long>();
-		RealValuedGenotype g0_10 = new RealValuedGenotype(new double[] { 0, 10 });
-		scores.add(new MultiObjectiveScore<ArrayList<Double>>(g0_10, new double[] { 0, 10 }, null));
-		layer0.add(scores.get(0).individual.getId());
-		RealValuedGenotype g5_5 = new RealValuedGenotype(new double[] { 5, 5 });
-		scores.add(new MultiObjectiveScore<ArrayList<Double>>(g5_5, new double[] { 5, 5 }, null));
-		layer0.add(scores.get(1).individual.getId());
-		RealValuedGenotype g10_0 = new RealValuedGenotype(new double[] { 10, 0 });
-		scores.add(new MultiObjectiveScore<ArrayList<Double>>(g10_0, new double[] { 10, 0 }, null));
-		layer0.add(scores.get(2).individual.getId());
-		RealValuedGenotype g2_6 = new RealValuedGenotype(new double[] { 2, 6 });
-		scores.add(new MultiObjectiveScore<ArrayList<Double>>(g2_6, new double[] { 2, 6 }, null));
-		layer0.add(scores.get(3).individual.getId());
-
-		ArrayList<Long> layer1 = new ArrayList<Long>();
-		RealValuedGenotype g0_4 = new RealValuedGenotype(new double[] { 0, 4 });
-		scores.add(new MultiObjectiveScore<ArrayList<Double>>(g0_4, new double[] { 0, 4 }, null));
-		layer1.add(scores.get(4).individual.getId());
-		RealValuedGenotype g3_3 = new RealValuedGenotype(new double[] { 3, 3 });
-		scores.add(new MultiObjectiveScore<ArrayList<Double>>(g3_3, new double[] { 3, 3 }, null));
-		layer1.add(scores.get(5).individual.getId());
-		RealValuedGenotype g4_0 = new RealValuedGenotype(new double[] { 4, 0 });
-		scores.add(new MultiObjectiveScore<ArrayList<Double>>(g4_0, new double[] { 4, 0 }, null));
-		layer1.add(scores.get(6).individual.getId());
-
-		RealValuedGenotype g1_1 = new RealValuedGenotype(new double[] { 1, 1 });
-		scores.add(new MultiObjectiveScore<ArrayList<Double>>(g1_1, new double[] { 1, 1 }, null));
-
-		System.out.println("Low goals should behave just like NSGA2");
-		// ea.goals = new double[2];
-		// System.out.println("Select 1: " + ea.selection(1, scores) + ", Use: "
-		// + Arrays.toString(((TUGNSGA2) ea).useObjective));
-		// ea.goals = new double[2];
-		// System.out.println("Select 2: " + ea.selection(2, scores) + ", Use: "
-		// + Arrays.toString(((TUGNSGA2) ea).useObjective));
-		// ea.goals = new double[2];
-		// System.out.println("Select 3: " + ea.selection(3, scores) + ", Use: "
-		// + Arrays.toString(((TUGNSGA2) ea).useObjective));
-
-		ea.goals = new double[2];
-		ArrayList<Genotype<ArrayList<Double>>> result0 = ea.selection(4, scores);
-		// System.out.println("Select 4: " + result0 + ", Use: " +
-		// Arrays.toString(((TUGNSGA2) ea).useObjective));
-
-		System.out.println(ArrayUtil.setEquality(PopulationUtil.getGenotypeIds(result0), layer0) ? "PASSED 0"
-				: "FAILED 0 " + layer0 + " AND " + result0);
-
-		// ea.goals = new double[2];
-		// System.out.println("Select 5: " + ea.selection(5, scores) + ", Use: "
-		// + Arrays.toString(((TUGNSGA2) ea).useObjective));
-		// ea.goals = new double[2];
-		// System.out.println("Select 6: " + ea.selection(6, scores) + ", Use: "
-		// + Arrays.toString(((TUGNSGA2) ea).useObjective));
-
-		ea.goals = new double[2];
-		ArrayList<Genotype<ArrayList<Double>>> result1 = ea.selection(7, scores);
-		// System.out.println("Select 7: " + result1 + ", Use: " +
-		// Arrays.toString(((TUGNSGA2) ea).useObjective));
-
-		layer1.addAll(layer0);
-		System.out.println(ArrayUtil.setEquality(PopulationUtil.getGenotypeIds(result1), layer1) ? "PASSED 1"
-				: "FAILED 1 " + layer1 + " AND " + result1);
-
-		ea.useObjective = new boolean[] { true, false };
-		System.out.println("TUG towards objective 0");
-		ea.goals = new double[] { 20, 0 };
-		ArrayList<Genotype<ArrayList<Double>>> result2 = ea.selection(1, scores);
-		ArrayList<Long> best = new ArrayList<Long>();
-		best.add(g10_0.getId());
-		System.out.println(ArrayUtil.setEquality(PopulationUtil.getGenotypeIds(result2), best) ? "PASSED 2"
-				: "FAILED 2 " + best + " AND " + result2);
-		// System.out.println("Select 1: " + ea.selection(1, scores) + ", Use: "
-		// + Arrays.toString(((TUGNSGA2) ea).useObjective));
-
-		ea.goals = new double[] { 20, 0 };
-		ArrayList<Genotype<ArrayList<Double>>> result3 = ea.selection(2, scores);
-		best.add(g5_5.getId());
-		System.out.println(ArrayUtil.setEquality(PopulationUtil.getGenotypeIds(result3), best) ? "PASSED 3"
-				: "FAILED 3 " + best + " AND " + result3);
-		// System.out.println("Select 2: " + ea.selection(2, scores) + ", Use: "
-		// + Arrays.toString(((TUGNSGA2) ea).useObjective));
-
-		ea.goals = new double[] { 20, 0 };
-		ArrayList<Genotype<ArrayList<Double>>> result4 = ea.selection(3, scores);
-		best.add(g4_0.getId());
-		System.out.println(ArrayUtil.setEquality(PopulationUtil.getGenotypeIds(result4), best) ? "PASSED 4"
-				: "FAILED 4 " + best + " AND " + result4);
-		// System.out.println("Select 3: " + ea.selection(3, scores) + ", Use: "
-		// + Arrays.toString(((TUGNSGA2) ea).useObjective));
-
-		ea.goals = new double[] { 20, 0 };
-		ArrayList<Genotype<ArrayList<Double>>> result5 = ea.selection(4, scores);
-		best.add(g3_3.getId());
-		System.out.println(ArrayUtil.setEquality(PopulationUtil.getGenotypeIds(result5), best) ? "PASSED 5"
-				: "FAILED 5 " + best + " AND " + result5);
-		// System.out.println("Select 4: " + ea.selection(4, scores) + ", Use: "
-		// + Arrays.toString(((TUGNSGA2) ea).useObjective));
-
-		ea.goals = new double[] { 20, 0 };
-		ArrayList<Genotype<ArrayList<Double>>> result6 = ea.selection(5, scores);
-		best.add(g2_6.getId());
-		System.out.println(ArrayUtil.setEquality(PopulationUtil.getGenotypeIds(result6), best) ? "PASSED 6"
-				: "FAILED 6 " + best + " AND " + result6);
-		// System.out.println("Select 5: " + ea.selection(5, scores) + ", Use: "
-		// + Arrays.toString(((TUGNSGA2) ea).useObjective));
-
-		ea.goals = new double[] { 20, 0 };
-		ArrayList<Genotype<ArrayList<Double>>> result6a = ea.selection(6, scores);
-		best.add(g1_1.getId());
-		System.out.println(ArrayUtil.setEquality(PopulationUtil.getGenotypeIds(result6a), best) ? "PASSED 6a"
-				: "FAILED 6a " + best + " AND " + result6a);
-
-		// System.out.println("Select 6: " + ea.selection(6, scores) + ", Use: "
-		// + Arrays.toString(((TUGNSGA2) ea).useObjective));
-		// ea.goals = new double[]{20, 0};
-		// System.out.println("Select 7: " + ea.selection(7, scores) + ", Use: "
-		// + Arrays.toString(((TUGNSGA2) ea).useObjective));
-
-		ea.useObjective = new boolean[] { false, true };
-		System.out.println("TUG towards objective 1");
-		ea.goals = new double[] { 0, 20 };
-		ArrayList<Genotype<ArrayList<Double>>> result2b = ea.selection(1, scores);
-		best = new ArrayList<Long>();
-		best.add(g0_10.getId());
-		System.out.println(ArrayUtil.setEquality(PopulationUtil.getGenotypeIds(result2b), best) ? "PASSED 2b"
-				: "FAILED 2b " + best + " AND " + result2b);
-
-		ea.goals = new double[] { 0, 20 };
-		ArrayList<Genotype<ArrayList<Double>>> result3b = ea.selection(2, scores);
-		best.add(g2_6.getId());
-		System.out.println(ArrayUtil.setEquality(PopulationUtil.getGenotypeIds(result3b), best) ? "PASSED 3b"
-				: "FAILED 3b " + best + " AND " + result3b);
-
-		ea.goals = new double[] { 0, 20 };
-		ArrayList<Genotype<ArrayList<Double>>> result4b = ea.selection(3, scores);
-		best.add(g5_5.getId());
-		System.out.println(ArrayUtil.setEquality(PopulationUtil.getGenotypeIds(result4b), best) ? "PASSED 4b"
-				: "FAILED 4b " + best + " AND " + result4b);
-
-		ea.goals = new double[] { 0, 20 };
-		ArrayList<Genotype<ArrayList<Double>>> result5b = ea.selection(4, scores);
-		best.add(g0_4.getId());
-		System.out.println(ArrayUtil.setEquality(PopulationUtil.getGenotypeIds(result5b), best) ? "PASSED 5b"
-				: "FAILED 5b " + best + " AND " + result5b);
-
-		ea.goals = new double[] { 0, 20 };
-		ArrayList<Genotype<ArrayList<Double>>> result6b = ea.selection(5, scores);
-		best.add(g3_3.getId());
-		System.out.println(ArrayUtil.setEquality(PopulationUtil.getGenotypeIds(result6b), best) ? "PASSED 6b"
-				: "FAILED 6b " + best + " AND " + result6b);
-
-		ea.goals = new double[] { 0, 20 };
-		ArrayList<Genotype<ArrayList<Double>>> result7b = ea.selection(6, scores);
-		best.add(g1_1.getId());
-		System.out.println(ArrayUtil.setEquality(PopulationUtil.getGenotypeIds(result7b), best) ? "PASSED 7b"
-				: "FAILED 7b " + best + " AND " + result7b);
-
-		Parameters.parameters.setBoolean("tugKeepsParetoFront", true);
-		CommonConstants.tugKeepsParetoFront = true;
-
-		System.out.println("Low goals should behave just like NSGA2, even with tugKeepsParetoFront on");
-
-		ea.useObjective = new boolean[] { true, true };
-		ArrayList<Genotype<ArrayList<Double>>> result7 = ea.selection(4, scores);
-		ea.goals = new double[2];
-		System.out.println(ArrayUtil.setEquality(PopulationUtil.getGenotypeIds(result7), layer0) ? "PASSED 7"
-				: "FAILED 7 " + layer0 + " AND " + result7);
-
-		ea.goals = new double[2];
-		ArrayList<Genotype<ArrayList<Double>>> result8 = ea.selection(7, scores);
-		System.out.println(ArrayUtil.setEquality(PopulationUtil.getGenotypeIds(result8), layer1) ? "PASSED 8"
-				: "FAILED 8 " + layer1 + " AND " + result8);
-
-		// ea.goals = new double[2];
-		// System.out.println("Select 1: " + ea.selection(1, scores) + ", Use: "
-		// + Arrays.toString(((TUGNSGA2) ea).useObjective));
-		// ea.goals = new double[2];
-		// System.out.println("Select 2: " + ea.selection(2, scores) + ", Use: "
-		// + Arrays.toString(((TUGNSGA2) ea).useObjective));
-		// ea.goals = new double[2];
-		// System.out.println("Select 3: " + ea.selection(3, scores) + ", Use: "
-		// + Arrays.toString(((TUGNSGA2) ea).useObjective));
-		// ea.goals = new double[2];
-		// System.out.println("Select 4: " + ea.selection(4, scores) + ", Use: "
-		// + Arrays.toString(((TUGNSGA2) ea).useObjective));
-		// ea.goals = new double[2];
-		// System.out.println("Select 5: " + ea.selection(5, scores) + ", Use: "
-		// + Arrays.toString(((TUGNSGA2) ea).useObjective));
-		// ea.goals = new double[2];
-		// System.out.println("Select 6: " + ea.selection(6, scores) + ", Use: "
-		// + Arrays.toString(((TUGNSGA2) ea).useObjective));
-		// ea.goals = new double[2];
-		// System.out.println("Select 7: " + ea.selection(7, scores) + ", Use: "
-		// + Arrays.toString(((TUGNSGA2) ea).useObjective));
-
-		ea.useObjective = new boolean[] { true, false };
-		System.out.println("TUG towards objective 0, but favor Pareto front first");
-
-		ArrayList<Genotype<ArrayList<Double>>> result9 = ea.selection(4, scores);
-		ea.goals = new double[] { 20, 0 };
-		System.out.println(ArrayUtil.setEquality(PopulationUtil.getGenotypeIds(result9), layer0) ? "PASSED 9"
-				: "FAILED 9 " + layer0 + " AND " + result9);
-
-		ArrayList<Genotype<ArrayList<Double>>> result10 = ea.selection(5, scores);
-		ea.goals = new double[] { 20, 0 };
-		layer0.add(g4_0.getId());
-		System.out.println(ArrayUtil.setEquality(PopulationUtil.getGenotypeIds(result10), layer0) ? "PASSED 10"
-				: "FAILED 10 " + layer0 + " AND " + result10);
-
-		ArrayList<Genotype<ArrayList<Double>>> result11 = ea.selection(6, scores);
-		ea.goals = new double[] { 20, 0 };
-		layer0.add(g3_3.getId());
-		System.out.println(ArrayUtil.setEquality(PopulationUtil.getGenotypeIds(result11), layer0) ? "PASSED 11"
-				: "FAILED 11 " + layer0 + " AND " + result11);
-
-		ArrayList<Genotype<ArrayList<Double>>> result12 = ea.selection(7, scores);
-		ea.goals = new double[] { 20, 0 };
-		layer0.add(g1_1.getId());
-		System.out.println(ArrayUtil.setEquality(PopulationUtil.getGenotypeIds(result12), layer0) ? "PASSED 12"
-				: "FAILED 12 " + layer0 + " AND " + result12);
-
-		// System.out.println("Select 1: " + ea.selection(1, scores) + ", Use: "
-		// + Arrays.toString(((TUGNSGA2) ea).useObjective));
-		// ea.goals = new double[]{20, 0};
-		// System.out.println("Select 2: " + ea.selection(2, scores) + ", Use: "
-		// + Arrays.toString(((TUGNSGA2) ea).useObjective));
-		// ea.goals = new double[]{20, 0};
-		// System.out.println("Select 3: " + ea.selection(3, scores) + ", Use: "
-		// + Arrays.toString(((TUGNSGA2) ea).useObjective));
-		// ea.goals = new double[]{20, 0};
-		// System.out.println("Select 4: " + ea.selection(4, scores) + ", Use: "
-		// + Arrays.toString(((TUGNSGA2) ea).useObjective));
-		// ea.goals = new double[]{20, 0};
-		// System.out.println("Select 5: " + ea.selection(5, scores) + ", Use: "
-		// + Arrays.toString(((TUGNSGA2) ea).useObjective));
-		// ea.goals = new double[]{20, 0};
-		// System.out.println("Select 6: " + ea.selection(6, scores) + ", Use: "
-		// + Arrays.toString(((TUGNSGA2) ea).useObjective));
-		// ea.goals = new double[]{20, 0};
-		// System.out.println("Select 7: " + ea.selection(7, scores) + ", Use: "
-		// + Arrays.toString(((TUGNSGA2) ea).useObjective));
-
-		scores = new ArrayList<Score<ArrayList<Double>>>();
-
-		layer0 = new ArrayList<Long>();
-		RealValuedGenotype x1000_11 = new RealValuedGenotype(new double[] { 1000, 11 });
-		scores.add(new MultiObjectiveScore<ArrayList<Double>>(x1000_11, new double[] { 1000, 11 }, null));
-		layer0.add(scores.get(0).individual.getId());
-
-		layer1 = new ArrayList<Long>();
-		RealValuedGenotype x0_10 = new RealValuedGenotype(new double[] { 0, 10 });
-		scores.add(new MultiObjectiveScore<ArrayList<Double>>(x0_10, new double[] { 0, 10 }, null));
-		layer1.add(scores.get(1).individual.getId());
-		RealValuedGenotype x5_7 = new RealValuedGenotype(new double[] { 5, 7 });
-		scores.add(new MultiObjectiveScore<ArrayList<Double>>(x5_7, new double[] { 5, 7 }, null));
-		layer1.add(scores.get(2).individual.getId());
-		RealValuedGenotype x50_5 = new RealValuedGenotype(new double[] { 50, 5 });
-		scores.add(new MultiObjectiveScore<ArrayList<Double>>(x50_5, new double[] { 50, 5 }, null));
-		layer1.add(scores.get(3).individual.getId());
-		RealValuedGenotype x100_2 = new RealValuedGenotype(new double[] { 100, 2 });
-		scores.add(new MultiObjectiveScore<ArrayList<Double>>(x100_2, new double[] { 100, 2 }, null));
-		layer1.add(scores.get(4).individual.getId());
-		RealValuedGenotype x500_0 = new RealValuedGenotype(new double[] { 500, 0 });
-		scores.add(new MultiObjectiveScore<ArrayList<Double>>(x500_0, new double[] { 500, 0 }, null));
-		layer1.add(scores.get(5).individual.getId());
-
-		ArrayList<Long> layer2 = new ArrayList<Long>();
-		RealValuedGenotype x10_5 = new RealValuedGenotype(new double[] { 10, 5 });
-		scores.add(new MultiObjectiveScore<ArrayList<Double>>(x10_5, new double[] { 10, 5 }, null));
-		layer2.add(scores.get(6).individual.getId());
-		RealValuedGenotype x11_4 = new RealValuedGenotype(new double[] { 11, 4 });
-		scores.add(new MultiObjectiveScore<ArrayList<Double>>(x11_4, new double[] { 11, 4 }, null));
-		layer2.add(scores.get(7).individual.getId());
-		RealValuedGenotype x40_3 = new RealValuedGenotype(new double[] { 40, 3 });
-		scores.add(new MultiObjectiveScore<ArrayList<Double>>(x40_3, new double[] { 40, 3 }, null));
-		layer2.add(scores.get(8).individual.getId());
-		RealValuedGenotype x75_1 = new RealValuedGenotype(new double[] { 75, 1 });
-		scores.add(new MultiObjectiveScore<ArrayList<Double>>(x75_1, new double[] { 75, 1 }, null));
-		layer2.add(scores.get(9).individual.getId());
-
-		ArrayList<Long> layer3 = new ArrayList<Long>();
-		RealValuedGenotype x40_2 = new RealValuedGenotype(new double[] { 40, 2 });
-		scores.add(new MultiObjectiveScore<ArrayList<Double>>(x40_2, new double[] { 40, 2 }, null));
-		layer3.add(scores.get(10).individual.getId());
-		RealValuedGenotype x50_1 = new RealValuedGenotype(new double[] { 50, 1 });
-		scores.add(new MultiObjectiveScore<ArrayList<Double>>(x50_1, new double[] { 50, 1 }, null));
-		layer3.add(scores.get(11).individual.getId());
-
-		ArrayList<Long> layer4 = new ArrayList<Long>();
-		RealValuedGenotype x10_2 = new RealValuedGenotype(new double[] { 10, 2 });
-		scores.add(new MultiObjectiveScore<ArrayList<Double>>(x10_2, new double[] { 10, 2 }, null));
-		layer4.add(scores.get(12).individual.getId());
-		RealValuedGenotype x40_1 = new RealValuedGenotype(new double[] { 40, 1 });
-		scores.add(new MultiObjectiveScore<ArrayList<Double>>(x40_1, new double[] { 40, 1 }, null));
-		layer4.add(scores.get(13).individual.getId());
-
-		ArrayList<Long> layer5 = new ArrayList<Long>();
-		RealValuedGenotype x5_2 = new RealValuedGenotype(new double[] { 5, 2 });
-		scores.add(new MultiObjectiveScore<ArrayList<Double>>(x5_2, new double[] { 5, 2 }, null));
-		layer5.add(scores.get(14).individual.getId());
-		RealValuedGenotype x10_1 = new RealValuedGenotype(new double[] { 10, 1 });
-		scores.add(new MultiObjectiveScore<ArrayList<Double>>(x10_1, new double[] { 10, 1 }, null));
-		layer5.add(scores.get(15).individual.getId());
-
-		/// Start testing ///////////////////////
-
-		Parameters.parameters.setBoolean("tugKeepsParetoFront", false);
-		CommonConstants.tugKeepsParetoFront = false;
-
-		System.out.println("Using a different set of points");
-		System.out.println("Low goals should behave just like NSGA2");
-
-		ea.useObjective = new boolean[] { true, true };
-		ArrayList<Genotype<ArrayList<Double>>> result13 = ea.selection(1, scores);
-		ea.goals = new double[2];
-		System.out.println(ArrayUtil.setEquality(PopulationUtil.getGenotypeIds(result13), layer0) ? "PASSED 13"
-				: "FAILED 13 " + layer0 + " AND " + result13);
-
-		layer1.addAll(layer0);
-
-		ea.goals = new double[2];
-		ArrayList<Genotype<ArrayList<Double>>> result14 = ea.selection(6, scores);
-		System.out.println(ArrayUtil.setEquality(PopulationUtil.getGenotypeIds(result14), layer1) ? "PASSED 14"
-				: "FAILED 14 " + layer1 + " AND " + result14);
-
-		layer2.addAll(layer1);
-
-		ea.goals = new double[2];
-		ArrayList<Genotype<ArrayList<Double>>> result15 = ea.selection(10, scores);
-		System.out.println(ArrayUtil.setEquality(PopulationUtil.getGenotypeIds(result15), layer2) ? "PASSED 15"
-				: "FAILED 15 " + layer2 + " AND " + result15);
-
-		layer3.addAll(layer2);
-
-		ea.goals = new double[2];
-		ArrayList<Genotype<ArrayList<Double>>> result16 = ea.selection(12, scores);
-		System.out.println(ArrayUtil.setEquality(PopulationUtil.getGenotypeIds(result16), layer3) ? "PASSED 16"
-				: "FAILED 16 " + layer3 + " AND " + result16);
-
-		layer4.addAll(layer3);
-
-		ea.goals = new double[2];
-		ArrayList<Genotype<ArrayList<Double>>> result17 = ea.selection(14, scores);
-		System.out.println(ArrayUtil.setEquality(PopulationUtil.getGenotypeIds(result17), layer4) ? "PASSED 17"
-				: "FAILED 17 " + layer4 + " AND " + result17);
-
-		layer5.addAll(layer4);
-
-		ea.goals = new double[2];
-		ArrayList<Genotype<ArrayList<Double>>> result18 = ea.selection(16, scores);
-		System.out.println(ArrayUtil.setEquality(PopulationUtil.getGenotypeIds(result18), layer5) ? "PASSED 18"
-				: "FAILED 18 " + layer5 + " AND " + result18);
-
-		// Now change the goals
-
-		ea.useObjective = new boolean[] { false, true };
-		System.out.println("TUG towards objective 1");
-		ea.goals = new double[] { 0, 20 };
-		ArrayList<Genotype<ArrayList<Double>>> result19 = ea.selection(1, scores);
-		best = new ArrayList<Long>();
-		best.add(x1000_11.getId());
-		System.out.println(ArrayUtil.setEquality(PopulationUtil.getGenotypeIds(result19), best) ? "PASSED 19"
-				: "FAILED 19 " + best + " AND " + result19);
-
-		ea.goals = new double[] { 0, 20 };
-		ArrayList<Genotype<ArrayList<Double>>> result20 = ea.selection(2, scores);
-		best.add(x0_10.getId());
-		System.out.println(ArrayUtil.setEquality(PopulationUtil.getGenotypeIds(result20), best) ? "PASSED 20"
-				: "FAILED 20 " + best + " AND " + result20);
-
-		ea.goals = new double[] { 0, 20 };
-		ArrayList<Genotype<ArrayList<Double>>> result21 = ea.selection(3, scores);
-		best.add(x5_7.getId());
-		System.out.println(ArrayUtil.setEquality(PopulationUtil.getGenotypeIds(result21), best) ? "PASSED 21"
-				: "FAILED 21 " + best + " AND " + result21);
-
-		ea.goals = new double[] { 0, 20 };
-		ArrayList<Genotype<ArrayList<Double>>> result22 = ea.selection(5, scores);
-		best.add(x10_5.getId());
-		best.add(x50_5.getId());
-		System.out.println(ArrayUtil.setEquality(PopulationUtil.getGenotypeIds(result22), best) ? "PASSED 22"
-				: "FAILED 22 " + best + " AND " + result22);
-
-		ea.goals = new double[] { 0, 20 };
-		ArrayList<Genotype<ArrayList<Double>>> result23 = ea.selection(6, scores);
-		best.add(x11_4.getId());
-		System.out.println(ArrayUtil.setEquality(PopulationUtil.getGenotypeIds(result23), best) ? "PASSED 23"
-				: "FAILED 23 " + best + " AND " + result23);
-
-		ea.goals = new double[] { 0, 20 };
-		ArrayList<Genotype<ArrayList<Double>>> result24 = ea.selection(7, scores);
-		best.add(x40_3.getId());
-		System.out.println(ArrayUtil.setEquality(PopulationUtil.getGenotypeIds(result24), best) ? "PASSED 24"
-				: "FAILED 24 " + best + " AND " + result24);
-
-		ea.goals = new double[] { 0, 20 };
-		ArrayList<Genotype<ArrayList<Double>>> result25 = ea.selection(11, scores);
-		best.add(x5_2.getId());
-		best.add(x10_2.getId());
-		best.add(x40_2.getId());
-		best.add(x100_2.getId());
-		System.out.println(ArrayUtil.setEquality(PopulationUtil.getGenotypeIds(result25), best) ? "PASSED 25"
-				: "FAILED 25 " + best + " AND " + result25);
 	}
 }
