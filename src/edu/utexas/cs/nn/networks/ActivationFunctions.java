@@ -7,8 +7,9 @@ import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.util.random.RandomNumbers;
 
 /**
- *
- * @author Jacob Schrum Edits by Gabby Gonzalez
+ * Contains activation functions used by neural networks.
+ * 
+ * @author Jacob Schrum Edits by Gabby Gonzalez and Lauren Gillespie
  */
 public class ActivationFunctions {
 
@@ -160,7 +161,7 @@ public class ActivationFunctions {
 	}
 
 	public static String activationName(int ftype) { 
-		assert ftype > -1 && ftype < 11:"given activation function not present!";
+		assert ftype > -1 && ftype <= 17:"given activation function not valid! " + ftype;
 		if(ftype == FTYPE_SIGMOID) {
 			return "Sigmoid";
 		}else if(ftype == FTYPE_TANH) {
@@ -184,7 +185,9 @@ public class ActivationFunctions {
 		} else if(ftype == FTYPE_STRETCHED_TANH) {
 			return "Stretched Tanh";
 		} else {
-			return "given ftype is not a valid activation function!";
+			System.out.println("given ftype is not a valid activation function! " + ftype);
+                        System.exit(1);
+                        return null;
 		}
 	}
 	/**
@@ -204,11 +207,12 @@ public class ActivationFunctions {
 	 * @return function for either TWEANN or CPPN
 	 */
 	public static int newNodeFunction() {
-		if (Parameters.parameters.booleanParameter("allowMultipleFunctions")) { // for
-			// CPPN
+		if (Parameters.parameters.booleanParameter("allowMultipleFunctions")) { 
+                        // for CPPN
 			return randomFunction();
 		} else {
-			return CommonConstants.ftype; // for TWEANN
+                        // for TWEANN
+			return CommonConstants.ftype; 
 		}
 	}
 
@@ -251,10 +255,7 @@ public class ActivationFunctions {
 	 * @return approximate value of sigmoid(x)
 	 */
 	public static double quickSigmoid(double x) {
-		return 1.0 / (1.0 + quickExp(-x)); // Purpose of a negative x? I think
-		// it's to allow the sigmoid to
-		// start lower rather than higher?
-		// Or is that backwards - Gabby
+		return 1.0 / (1.0 + quickExp(-x)); 
 	}
 
 	/**
@@ -270,7 +271,8 @@ public class ActivationFunctions {
 	}
 
 	/**
-	 * Derivative function for sigmoid. Used to evaluate weights to change.
+	 * Derivative function for sigmoid. 
+         * Used by backpropagation.
 	 *
 	 * @param x
 	 *            Function parameter
@@ -306,8 +308,8 @@ public class ActivationFunctions {
 	}
 
 	/**
-	 * Derivative function for tanh, hyperbolic tangent. Used to evaluate
-	 * weights to change.
+	 * Derivative function for tanh, hyperbolic tangent. 
+         * Used for backpropogation.
 	 *
 	 * @param x
 	 *            Function parameter
@@ -344,7 +346,11 @@ public class ActivationFunctions {
 	 * moment, can be changed.
 	 *
 	 * @param x,
-	 *            sigma, mu Function parameters
+	 *            function input
+         * @param sig
+         *            standard deviation
+         * @param mu
+         *            mean/center
 	 * @return value of gaussian(x)
 	 */
 	public static double gaussian(double x, double sig, double mu) {
