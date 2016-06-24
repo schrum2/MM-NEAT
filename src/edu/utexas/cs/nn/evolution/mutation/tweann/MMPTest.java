@@ -40,7 +40,11 @@ public class MMPTest {
 	public void test_moduleMutation() {
 		tg2 = (TWEANNGenotype) tg1.copy();
 		new MMP().mutate(tg1);
-		assertTrue(tg1.numModules > 1);
+		assertEquals(tg1.numModules, 2);
+		TWEANN t1 = tg1.getPhenotype();
+		int numNeuronsPerModule = t1.neuronsPerModule();
+		assertEquals(tg1.links.get(numNeuronsPerModule - 1).sourceInnovation, tg1.links.get(tg1.links.size()-1).sourceInnovation);
+		//for(int i = 0; i < )
 		// tg1.
 
 		// //test 1. Tests if moduleMutation method changes number of modules

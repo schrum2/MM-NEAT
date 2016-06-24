@@ -341,7 +341,7 @@ public class NNCheckEachDirectionPacManController extends NNDirectionalPacManCon
 		MMNEAT.evalReport.log("\tNum Nodes: " + ((TWEANN) directionalNetworks[0]).nodes.size());
 		MMNEAT.evalReport.log("\tNum Modes: " + ((TWEANN) directionalNetworks[0]).numModules());
 		MMNEAT.evalReport.log("\tNum Outputs: " + ((TWEANN) directionalNetworks[0]).numOutputs());
-		MMNEAT.evalReport.log("\tNeurons Per Mode: " + ((TWEANN) directionalNetworks[0]).neuronsPerMode());
+		MMNEAT.evalReport.log("\tNeurons Per Mode: " + ((TWEANN) directionalNetworks[0]).neuronsPerModule());
 		MMNEAT.evalReport.log("\tTime Steps: " + totalUsage);
 		MMNEAT.evalReport
 				.log("\tMode Usage For Chosen Direction Networks: " + Arrays.toString(chosenDirectionModeUsageCounts)

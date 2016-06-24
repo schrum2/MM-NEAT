@@ -388,7 +388,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 		numIn = tweann.numInputs();
 		numOut = tweann.numOutputs();
 		numModules = tweann.numModules();
-		neuronsPerModule = tweann.neuronsPerMode();
+		neuronsPerModule = tweann.neuronsPerModule();
 		standardMultitask = tweann.isStandardMultitask();
 		hierarchicalMultitask = tweann.isHierarchicalMultitask();
 		moduleAssociations = Arrays.copyOf(tweann.moduleAssociations, numModules);

@@ -165,7 +165,7 @@ public abstract class NNPacManController extends NewPacManController {
 		MMNEAT.evalReport.log("\tNum Nodes: " + ((TWEANN) nn).nodes.size());
 		MMNEAT.evalReport.log("\tNum Modes: " + ((TWEANN) nn).numModules());
 		MMNEAT.evalReport.log("\tNum Outputs: " + ((TWEANN) nn).numOutputs());
-		MMNEAT.evalReport.log("\tNeurons Per Mode: " + ((TWEANN) nn).neuronsPerMode());
+		MMNEAT.evalReport.log("\tNeurons Per Mode: " + ((TWEANN) nn).neuronsPerModule());
 		MMNEAT.evalReport.log("\tMode Usage: " + Arrays.toString(((TWEANN) nn).moduleUsage));
 		MMNEAT.evalReport.log("");
 	}

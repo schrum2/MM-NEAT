@@ -326,7 +326,7 @@ public class TWEANN implements Network {
 	protected int numIn;
 	protected int numOut;
 	private int numModes;
-	private int neuronsPerMode;
+	private int neuronsPerModule;
 	private boolean standardMultitask;
 	private boolean hierarchicalMultitask;
 	private int presetMode;
@@ -408,7 +408,7 @@ public class TWEANN implements Network {
 				startingModes *= numModes;
 			}
 			// Either a new mode-mutation network or a unimodal network
-			this.neuronsPerMode = numOut;
+			this.neuronsPerModule = numOut;
 			this.standardMultitask = false;
 			// Put preference neuron in place now if it will be needed later
 			if (preferenceNeuron()) {
@@ -418,16 +418,16 @@ public class TWEANN implements Network {
 			numOut *= startingModes;
 		} else {
 			// A Multitask network
-			this.neuronsPerMode = numOut / numModes;
+			this.neuronsPerModule = numOut / numModes;
 			this.numModes = numModes;
 			this.standardMultitask = true;
-			if (numOut % numModes != 0 || numOut % neuronsPerMode != 0) {
+			if (numOut % numModes != 0 || numOut % neuronsPerModule != 0) {
 				System.out.println("Multitask network initialized wrong: ");
 				System.out.println("numOut = " + numOut);
 				System.out.println("numModes = " + numModes);
-				System.out.println("neuronsPerMode = " + neuronsPerMode);
+				System.out.println("neuronsPerMode = " + neuronsPerModule);
 				throw new IllegalArgumentException("Multitask network initialized wrong: numOut = " + numOut
-						+ ", numModes = " + numModes + ",neuronsPerMode = " + neuronsPerMode);
+						+ ", numModes = " + numModes + ",neuronsPerMode = " + neuronsPerModule);
 			}
 		}
 		this.numOut = numOut;
@@ -450,7 +450,7 @@ public class TWEANN implements Network {
 		int linksPer = Parameters.parameters.integerParameter("fsLinksPerOut");
 		for (int j = 0; j < numOut; j++) {
 			int[] inputSources;
-			if (preferenceNeuron() && j % (neuronsPerMode + 1) == neuronsPerMode) {
+			if (preferenceNeuron() && j % (neuronsPerModule + 1) == neuronsPerModule) {
 				// Preference neurons alway start with only one link
 				inputSources = RandomNumbers.randomDistinct(1, numIn);
 			} else if (featureSelective) {
@@ -531,7 +531,7 @@ public class TWEANN implements Network {
 		this.numIn = countIn;
 		this.numOut = countOut;
 		this.numModes = g.numModules;
-		this.neuronsPerMode = g.neuronsPerModule;
+		this.neuronsPerModule = g.neuronsPerModule;
 		this.standardMultitask = g.standardMultitask;
 		this.hierarchicalMultitask = g.hierarchicalMultitask;
 		if (g.moduleAssociations != null) { // This is a backwards compatibility
@@ -546,13 +546,13 @@ public class TWEANN implements Network {
 			}
 		}
 		// Is true if net has one mode
-		assert(numModes != 1 || numOut <= neuronsPerMode + 1) : "Too many outputs for one mode" + "\n" + "g.getId():"
+		assert(numModes != 1 || numOut <= neuronsPerModule + 1) : "Too many outputs for one mode" + "\n" + "g.getId():"
 		+ g.getId() + "\n" + "g.archetypeIndex:" + g.archetypeIndex + "\n" + "g.numIn:" + g.numIn + "\n"
 		+ "g.numOut:" + g.numOut + "\n" + "g.nodes.size():" + g.nodes.size() + "\n"
 		+ "EvolutionaryHistory.archetypeOut:" + Arrays.toString(EvolutionaryHistory.archetypeOut);
 		// Is true if net has more than one mode
 		assert(numModes == 1
-				|| numOut == (neuronsPerMode + (standardMultitask || CommonConstants.ensembleModeMutation ? 0 : 1))
+				|| numOut == (neuronsPerModule + (standardMultitask || CommonConstants.ensembleModeMutation ? 0 : 1))
 				* numModes) : "multitask:" + standardMultitask + "\n" + "Wrong number of outputs (" + numOut
 		+ ") for the number of modes (" + numModes + ")";
 
@@ -589,7 +589,7 @@ public class TWEANN implements Network {
 
 	@Override
 	public int effectiveNumOutputs() {
-		return this.neuronsPerMode;
+		return this.neuronsPerModule;
 	}
 
 	@Override
@@ -597,8 +597,8 @@ public class TWEANN implements Network {
 		return numModes;
 	}
 
-	public int neuronsPerMode() {
-		return neuronsPerMode;
+	public int neuronsPerModule() {
+		return neuronsPerModule;
 	}
 
 	@Override
@@ -675,7 +675,7 @@ public class TWEANN implements Network {
 				preferences[presetMode] = 1.0;
 			} else {
 				for (int m = 0; m < numModes; m++) {
-					Node out = nodes.get(outputStart + (m * (neuronsPerMode + 1)) + neuronsPerMode);
+					Node out = nodes.get(outputStart + (m * (neuronsPerModule + 1)) + neuronsPerModule);
 					// Inviable modes have minimal preference
 					preferences[m] = viableModes[m] ? out.output() : -Double.MAX_VALUE;
 				}
@@ -711,12 +711,12 @@ public class TWEANN implements Network {
 			}
 		}
 
-		double[] outputs = new double[neuronsPerMode];
+		double[] outputs = new double[neuronsPerModule];
 		if (CommonConstants.ensembleModeMutation || CommonConstants.weightedAverageModeAggregation) {
 			// Calculate weighted average across all modes
 			for (int i = 0; i < outputs.length; i++) {
 				for (int j = 0; j < numModes; j++) {
-					int modeStart = outputStart + (j * (neuronsPerMode + (CommonConstants.ensembleModeMutation ? 0 : 1)));
+					int modeStart = outputStart + (j * (neuronsPerModule + (CommonConstants.ensembleModeMutation ? 0 : 1)));
 					outputs[i] += preferences[j] * nodes.get(modeStart + i).output();
 				}
 				outputs[i] /= numModes;
@@ -749,9 +749,9 @@ public class TWEANN implements Network {
 	 */
 	@Override
 	public double[] moduleOutput(int mode) {
-		int selectedModeStart = outputStart + (mode * (neuronsPerMode + (standardMultitask ? 0 : 1)));
-		double[] outputs = new double[neuronsPerMode];
-		for (int i = 0; i < neuronsPerMode; i++) {
+		int selectedModeStart = outputStart + (mode * (neuronsPerModule + (standardMultitask ? 0 : 1)));
+		double[] outputs = new double[neuronsPerModule];
+		for (int i = 0; i < neuronsPerModule; i++) {
 			Node out = nodes.get(selectedModeStart + i);
 			outputs[i] = out.output();
 		}
@@ -773,7 +773,7 @@ public class TWEANN implements Network {
 		}
 		this.preferenceFatigue = new double[numModes];
 		if (inputPanel != null) {
-			refreshActivation(inputPanel, new double[numIn], new double[neuronsPerMode], new double[numModes],
+			refreshActivation(inputPanel, new double[numIn], new double[neuronsPerModule], new double[numModes],
 					standardMultitask, new double[numModes]);
 		}
 	}
@@ -1074,7 +1074,7 @@ public class TWEANN implements Network {
 			System.out.println("id:" + this.id);
 			System.out.println("numIn:" + this.numIn);
 			System.out.println("numOut:" + this.numOut);
-			System.out.println("neuronsPerMode:" + this.neuronsPerMode);
+			System.out.println("neuronsPerMode:" + this.neuronsPerModule);
 			System.out.println("numModes:" + this.numModes);
 			System.out.println("multitask:" + this.standardMultitask);
 			System.out.println("nodes.size():" + nodes.size());
@@ -1262,11 +1262,11 @@ public class TWEANN implements Network {
 	 * @param activation activation number of node
 	 */
 	private void drawOutputNode(Graphics2D g, int n, int x, int y, double activation) {
-		if (n / (neuronsPerMode + (standardMultitask ? 0.0 : 1.0)) == chosenModule) {
+		if (n / (neuronsPerModule + (standardMultitask ? 0.0 : 1.0)) == chosenModule) {
 			eraseModeIndicator(g, x, 0, CombinatoricUtilities.colorFromInt(chosenModule));
 		}
 		if (standardMultitask || CommonConstants.ensembleModeMutation
-				|| n % (neuronsPerMode + 1) == neuronsPerMode) {
+				|| n % (neuronsPerModule + 1) == neuronsPerModule) {
 			g.setColor(Color.GRAY);//gray means multitask and multimodule is on
 		} else {
 			g.setColor(Color.ORANGE);//orange means standard single module and task
