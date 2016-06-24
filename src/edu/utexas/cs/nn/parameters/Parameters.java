@@ -183,6 +183,7 @@ public class Parameters {
 	 */
 	public final void fillDefaults() {
 		// Integer parameters
+		integerOptions.add("marioJumpTimeout", Integer.MAX_VALUE, "Sets the jump timeout for Mario, default is no timeout");
 		integerOptions.add("HNTTetrisProcessDepth", 1, "The number of processing layers in HNT tetris substrate");
 		integerOptions.add("marioInputStartX", -1, "The x coordinate offset for Mario inputs grid");
 		integerOptions.add("marioInputStartY", -1, "The y coordinate offset for Mario inputs grid");
@@ -282,6 +283,7 @@ public class Parameters {
 		longOptions.add("lastInnovation", 0l, "Highest innovation number used so far");
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
 		// Boolean parameters
+		booleanOptions.add("moMario", false, "Mario is multiobjective");
 		booleanOptions.add("showCPPN", false, "shows evolved CPPN during post evals");
 		booleanOptions.add("splitRawTetrisInputs", false, "splits holes and blocks into two separate input substrates");
 		booleanOptions.add("tetrisAllowLine", true, "Determines whether or not Line pieces will shown up in Tetris");

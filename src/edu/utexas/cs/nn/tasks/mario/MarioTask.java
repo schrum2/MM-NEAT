@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ch.idsia.ai.agents.Agent;
+import ch.idsia.mario.engine.sprites.Mario;
 import ch.idsia.tools.CmdLineOptions;
 import ch.idsia.tools.EvaluationInfo;
 import ch.idsia.tools.EvaluationOptions;
@@ -36,11 +37,20 @@ public class MarioTask<T extends Network> extends NoisyLonerTask<T>implements Ne
         options.setVisualization(CommonConstants.watch);
         options.setTimeLimit(Parameters.parameters.integerParameter("marioTimeLimit"));
         MMNEAT.registerFitnessFunction("Progress");
+        
+        if(Parameters.parameters.booleanParameter("moMario")){
+        	 MMNEAT.registerFitnessFunction("Time");
+        	 MMNEAT.registerFitnessFunction("Hits");
+        }
 	}
 	
 	@Override
 	public int numObjectives() {
-		return 1; // default, just looking at distance traveled
+		if(Parameters.parameters.booleanParameter("moMario")){
+			return 3;
+		} else {
+			return 1;
+		}
 	}
 
 	@Override
@@ -79,16 +89,30 @@ public class MarioTask<T extends Network> extends NoisyLonerTask<T>implements Ne
 	
 	@Override
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {
+		Pair<double[], double[]> evalResults;
 		double distanceTravelled = 0;
+		double marioMode = 0;
+		double timeSpent = 0;
 		options.setAgent(new NNMarioAgent<T>(individual));
 		options.setLevelRandSeed(RandomNumbers.randomGenerator.nextInt(Integer.MAX_VALUE));
 		Evaluator evaluator = new Evaluator(options);
 		List<EvaluationInfo> results = evaluator.evaluate();
 		for (EvaluationInfo result : results) {
 			distanceTravelled += result.computeDistancePassed();
+			timeSpent = result.timeSpentOnLevel;
+			if(result.marioStatus == Mario.STATUS_WIN){
+				timeSpent = result.totalTimeGiven;
+			}
+			marioMode = result.marioMode;
 		}
 		distanceTravelled = distanceTravelled / results.size();
-		return new Pair<double[], double[]>(new double[] { distanceTravelled }, new double[0]);
+		
+		if(Parameters.parameters.booleanParameter("moMario")){
+			evalResults = new Pair<double[], double[]>(new double[] { distanceTravelled, timeSpent, marioMode }, new double[0]);
+		} else {
+			evalResults = new Pair<double[], double[]>(new double[] { distanceTravelled }, new double[0]);			
+		}
+		return evalResults;
 	}
 	
 	/**

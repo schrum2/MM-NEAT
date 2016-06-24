@@ -19,6 +19,8 @@ public class NNMarioAgent<T extends Network> extends Organism<T> implements Agen
     static final int SUB_DOWN = 4;
     static final int SUB_JUMP = 7;
     static final int SUB_SPEED = 6;
+    static int jumpCount = 0;
+    
 	public NNMarioAgent(Genotype<T> genotype) {
 		super(genotype);
 		n = genotype.getPhenotype();
@@ -79,6 +81,17 @@ public class NNMarioAgent<T extends Network> extends Organism<T> implements Agen
             action[Mario.KEY_JUMP] = outputs[SUB_JUMP] > 0;
             action[Mario.KEY_SPEED] = outputs[SUB_SPEED] > 0;
         }
+        
+        if(action[Mario.KEY_JUMP]){ 
+        	jumpCount++;
+        	if(jumpCount == Parameters.parameters.integerParameter("marioJumpTimeout")){
+        		action[Mario.KEY_JUMP] = false;
+        		jumpCount = 0;
+        	}
+        } else { 
+        	jumpCount = 0;
+        }
+        
         return action;
 	}
 
