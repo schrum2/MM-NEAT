@@ -109,7 +109,7 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 
 	/**
 	 * ONLY FOR COMPETITIVE COEVOLUTION
-	 * This created a torusPredPreyTask for competitive coevolution
+	 * This creates a torusPredPreyTask for competitive coevolution
 	 */
 	public TorusPredPreyTask(){
 		this(true, true);
@@ -120,9 +120,7 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 	 * while prey are kept static or prey are evolved while predators are kept
 	 * static
 	 *
-	 * @param preyEvolve
-	 *            if true prey are being evolved; if false predators are being
-	 *            evolved
+	 * @param preyEvolve, true if prey are being evolved, false if predators are being evolved
 	 */
 	public TorusPredPreyTask(boolean preyEvolve){
 		this(preyEvolve, false);
