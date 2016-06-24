@@ -1668,11 +1668,11 @@ public class GameFacade {
 	}
 
 	/**
-	 * 
-	 * @param to
-	 * @param model
-	 * @param options
-	 * @return
+	 * Returns a path of the same distance as model, including options
+	 * @param to target node
+	 * @param model distance to model
+	 * @param options different options
+	 * @return different path same length
 	 */
 	private int[] sameDistancePathNodes(int to, int[] model, int[] options) {
 		HashSet<Integer> set = new HashSet<Integer>();
@@ -1736,8 +1736,7 @@ public class GameFacade {
 								junctionDistancePairs.add(pair2);
 							}
 							if (set.contains(branch[p])) {
-								// One repeated node means rest of path can be
-								// ignored
+							// One repeated node means rest of path can be ignored
 								break;
 							} else {
 								set.add(branch[p]);
@@ -1756,6 +1755,11 @@ public class GameFacade {
 		return result;
 	}
 
+	/**
+	 * Adds color to given nodes
+	 * @param c color
+	 * @param list points to color
+	 */
 	public void addPoints(Color c, ArrayList<Integer> list) {
 		this.addPoints(c, ArrayUtil.intArrayFromArrayList(list));
 	}
@@ -1813,7 +1817,7 @@ public class GameFacade {
 	 * Too expensive to actually run this on every path
 	 *
 	 * @param path
-	 * @return
+	 * @return if valid
 	 */
 	private boolean validPath(int[] path) {
 		if (path == null) {
@@ -1844,6 +1848,11 @@ public class GameFacade {
 		return false;
 	}
 
+	/**
+	 * Returns if any of the ghosts require action
+	 * @param ghostIndex index of ghost to check
+	 * @return whether ghost requires action
+	 */
 	public boolean doesGhostRequireAction(int ghostIndex) {
 		return newG.doesGhostRequireAction(indexToGhost(ghostIndex));
 	}
@@ -1879,6 +1888,10 @@ public class GameFacade {
 		return false;
 	}
 
+	/**
+	 * returns if pacman just ate a power pill
+	 * @return if power pill just previously eaten
+	 */
 	public boolean justAtePowerPill() {
 		return newG.wasPowerPillEaten();
 	}
@@ -1893,7 +1906,7 @@ public class GameFacade {
 	 *
 	 * @param path
 	 * @param target
-	 * @return
+	 * @return coordinates of closest threat
 	 */
 	public Pair<Double, Double> closestThreatToPacmanPath(int[] path, int target) {
 		double closestThreatDistance = Double.MAX_VALUE;
@@ -1909,17 +1922,8 @@ public class GameFacade {
 				 */
 				if (pathGoesThroughThreateningGhost(path)) {
 					if (ArrayUtil.subset(gPath, path)) {
-						// System.out.println("Follow behind ghost");
-						distanceToNode = pacManDistance + GameFacade.MAX_DISTANCE; // Ghost
-																					// will
-																					// go
-																					// through
-																					// node,
-																					// making
-																					// it
-																					// safe
-																					// to
-																					// follow
+						 // Ghost will go through node, making it safe to follow
+						distanceToNode = pacManDistance + GameFacade.MAX_DISTANCE;
 					} else {
 						distanceToNode = 0; // Really bad
 					}
@@ -1941,22 +1945,42 @@ public class GameFacade {
 		return new Pair<Double, Double>(pacManDistance, closestThreatDistance);
 	}
 
+	/**
+	 * gets the time since eating ghost, reward//TODO
+	 * @return time
+	 */
 	public int getTimeGhostReward() {
 		return newG.getTimeGhostReward();
 	}
 
+	/**
+	 * Gets the time since eating pill, reward//TODO
+	 * @return time
+	 */
 	public double getTimePillReward() {
 		return newG.getTimePillReward();
 	}
 
+	/**
+	 * Gets the times between eating ghosts
+	 * @return
+	 */
 	public List<Integer> getGhostEatTimes() {
 		return newG.getGhostEatTimes();
 	}
 
+	/**
+	 * Set whether or not to end game after ghost eating chances
+	 * @param endAfterGhostEatingChances to set
+	 */
 	public void setEndAfterGhostEatingChances(boolean endAfterGhostEatingChances) {
 		newG.setEndAfterGhostEatingChances(endAfterGhostEatingChances);
 	}
 
+	/**
+	 * Plays game with no pills
+	 * @param noPills whether to play with pills or not
+	 */
 	public void playWithoutPills(boolean noPills) {
 		if (noPills) {
 			newG.playWithoutPills();
@@ -1965,6 +1989,10 @@ public class GameFacade {
 		}
 	}
 
+	/**
+	 * Plays game with no power pills
+	 * @param noPowerPills play with power pills or not
+	 */
 	public void playWithoutPowerPills(boolean noPowerPills) {
 		if (noPowerPills) {
 			newG.playWithoutPowerPills();
@@ -1973,14 +2001,26 @@ public class GameFacade {
 		}
 	}
 
+	/**
+	 * Gets the sum of lure distances
+	 * @return sum
+	 */
 	public double getLureDistanceSum() {
 		return newG.getLureDistanceSum();
 	}
 
+	/**
+	 * sets the end after power pill eaten
+	 * @param luringTask whether to have luring task
+	 */
 	public void setEndAfterPowerPillsEaten(boolean luringTask) {
 		newG.setEndAfterPowerPillsEaten(luringTask);
 	}
 
+	/**
+	 * Gets the time spent in dead space
+	 * @return time
+	 */
 	public double getTimeInDeadSpace() {
 		return newG.getTimeInDeadSpace();
 	}
@@ -2008,18 +2048,35 @@ public class GameFacade {
 		return result;
 	}
 
+	/**
+	 * Gets size of tree for threat ghost shortest path
+	 * @return size of tree
+	 */
 	public int threatGhostClusterTreeSize() {
 		return clusterTreeNodes(this.getThreatGhostLocations()).size();
 	}
 
+	/**
+	 * Gets size of tree for edible ghost shortest path
+	 * @return size of tree
+	 */
 	public int edibleGhostClusterTreeSize() {
 		return clusterTreeNodes(this.getEdibleGhostLocations()).size();
 	}
 
+	/**
+	 * Gets number of nodes in maze
+	 * @return num modes in maze
+	 */
 	public int getNumMazeNodes() {
 		return newG.getCurrentMaze().graph.length;
 	}
 
+	/**
+	 * Gets location of ghost based on proximity
+	 * @param order ??TODO??
+	 * @return node of ghost
+	 */
 	public int ghostLocationByProximity(int order) {
 		ArrayList<Integer> ghosts = new ArrayList<Integer>(CommonConstants.numActiveGhosts);
 		for (int i = 0; i < getNumActiveGhosts(); i++) {
@@ -2029,14 +2086,26 @@ public class GameFacade {
 		return getGhostCurrentNodeIndex(ghosts.get(order));
 	}
 
+	/**
+	 * Gets properly eaten power pills
+	 * @return num properly eaten power pills
+	 */
 	public double getProperlyEatenPowerPills() {
 		return newG.getProperlyEatenPowerPills();
 	}
 
+	/**
+	 * Gets improperly eaten power pills
+	 * @return num improperly eaten power pills
+	 */
 	public double getImproperlyEatenPowerPills() {
 		return newG.getImproperlyEatenPowerPills();
 	}
 
+	/**
+	 * Gets power pills eaten when ghosts far away
+	 * @return num power pills eaten when ghosts far
+	 */
 	public double getPowerPillsEatenWhenGhostFar() {
 		return newG.getPowerPillsEatenWhenGhostFar();
 	}
@@ -2050,6 +2119,18 @@ public class GameFacade {
 		return this.getThreatGhostLocations().length > 0;
 	}
 
+	/**
+	 * Ghost regret tracks the number of edible ghost chances that were missed.
+	 * To count towards ghost regret, the chance to eat the ghost must first
+	 * arise by eating a power pill. If certain ghosts could not go into the
+	 * edible state because they were in the lair at the time, then they
+	 * contribute to regret. If ghosts were already edible, then a chance to eat
+	 * them was missed, and they contribute to regret. Most obviously, ghosts
+	 * whose edible time runs out become threats again, and they contribute to
+	 * regret.
+	 *
+	 * @return amount of ghost regret (positive)
+	 */
 	public int getGhostRegret() {
 		return newG.getGhostRegret();
 	}
@@ -2144,6 +2225,10 @@ public class GameFacade {
 		return lairTimes[nextExitIndex];
 	}
 
+	/**
+	 * returns if there are any active ghosts in lair
+	 * @return if active ghosts in lair
+	 */
 	public boolean anyActiveGhostInLair() {
 		int num = this.getNumActiveGhosts();
 		for (int i = 0; i < num; i++) {
@@ -2186,38 +2271,77 @@ public class GameFacade {
 		return newG.averageGhostsEatenPerPowerPill(punishUneatenPowerPills);
 	}
 
+	/**
+	 * average time it took pacman to eat all ghosts after eating
+	 * a power pill
+	 * @return average time
+	 */
 	public double averageTimeToEatAllGhostsAfterPowerPill() {
 		return newG.averageTimeToEatAllGhostsAfterPowerPill();
 	}
 
+	/**
+	 * sets whether pacman is edible by 
+	 * ghosts exiting the lair
+	 * @param exitLairEdible if pacman edible
+	 */
 	public void setExitLairEdible(boolean exitLairEdible) {
 		newG.setExitLairEdible(exitLairEdible);
 	}
 
+	/**
+	 * ends game only when time limit reached
+	 * @param endOnlyOnTimeLimit iff games ends on time limit
+	 */
 	public void setEndOnlyOnTimeLimit(boolean endOnlyOnTimeLimit) {
 		newG.setEndOnlyOnTimeLimit(endOnlyOnTimeLimit);
 	}
 
+	/**
+	 * Sets a random exit for lair
+	 * @param randomLairExit if lair exit random
+	 */
 	public void setRandomLairExit(boolean randomLairExit) {
 		newG.setRandomLairExit(randomLairExit);
 	}
 
+	/**
+	 * If more than one ghost can exit lair at same time
+	 * @param simultaneousLairExit if simultaneous ghost exits
+	 */
 	public void setSimultaneousLairExit(boolean simultaneousLairExit) {
 		newG.setSimultaneousLairExit(simultaneousLairExit);
 	}
 
+	/**
+	 * Ghosts start outside of lair at beginning of game
+	 * @param ghostsStartOutsideLair if ghosts start outside lair
+	 */
 	public void setGhostsStartOutsideLair(boolean ghostsStartOutsideLair) {
 		newG.setGhostsStartOutsideLair(ghostsStartOutsideLair);
 	}
 
+	/**
+	 * Allows ghosts to leave via only one lair exit
+	 * @param onlyOneLairExitAllowed if ghosts can leave from more
+	 * than one exit
+	 */
 	public void setOnlyOneLairExitAllowed(boolean onlyOneLairExitAllowed) {
 		newG.setOnlyOneLairExitAllowed(onlyOneLairExitAllowed);
 	}
 
+	/**
+	 * Whether or not to keep a database of lair exits
+	 * @param lairExitDatabase database lair exists
+	 */
 	public void setLairExitDatabase(boolean lairExitDatabase) {
 		newG.setLairExitDatabase(lairExitDatabase);
 	}
 
+	/**
+	 * Removes pills near power pills
+	 * @param removePillsNearPowerPills if remove pills near power pills
+	 */
 	public void setRemovePillsNearPowerPills(boolean removePillsNearPowerPills) {
 		newG.setRemovePillsNearPowerPills(removePillsNearPowerPills);
 	}
