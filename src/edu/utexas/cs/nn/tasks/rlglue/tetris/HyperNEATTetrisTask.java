@@ -16,36 +16,37 @@ public class HyperNEATTetrisTask<T extends Network> extends TetrisTask<T> implem
 	// These values will be defined before they are needed
 	public static final int HYPERNEAT_OUTPUT_SUBSTRATE_DIMENSION = 1;
 	private static final int SUBSTRATE_COORDINATES = 4;
-
+	public final int numProcessLayers = Parameters.parameters.integerParameter("HNTTetrisProcessDepth");
 	private static List<Substrate> substrateInformation = null;
 	private List<Pair<String, String>> substrateConnectivity = null;
 
 	@Override
 	public List<Substrate> getSubstrateInformation() {
+		int outputDepth = SUBSTRATE_COORDINATES;
 		if (substrateInformation == null) {
 			substrateInformation = new LinkedList<Substrate>();
 			int worldWidth = TetrisState.worldWidth;
 			int worldHeight = TetrisState.worldHeight;
 			boolean split = CommonConstants.splitRawTetrisInputs;
 			Triple<Integer, Integer, Integer> blockSubCoord = new Triple<Integer, Integer, Integer>(0, 0, 0);
-			Triple<Integer, Integer, Integer> processSubCoord = new Triple<Integer, Integer, Integer>(split ? SUBSTRATE_COORDINATES/2 : 0,SUBSTRATE_COORDINATES, 0);
-			Triple<Integer, Integer, Integer> outSubCoord = new Triple<Integer, Integer, Integer>(split ? SUBSTRATE_COORDINATES/2 : 0,SUBSTRATE_COORDINATES * 2, 0);
-
 			Pair<Integer, Integer> substrateDimension = new Pair<Integer, Integer>(worldWidth, worldHeight);
-			Pair<Integer, Integer> outputSubstrateDimension = new Pair<Integer, Integer>(HYPERNEAT_OUTPUT_SUBSTRATE_DIMENSION, HYPERNEAT_OUTPUT_SUBSTRATE_DIMENSION);
-			Substrate blockInputSub = new Substrate(substrateDimension, Substrate.INPUT_SUBSTRATE, blockSubCoord, "input_0");
-			Substrate processSub = new Substrate(substrateDimension, Substrate.PROCCESS_SUBSTRATE, processSubCoord,"process_0");
-			Substrate outputSub = new Substrate(outputSubstrateDimension, Substrate.OUTPUT_SUBSTRATE, outSubCoord,"output_0");
+			Substrate blockInputSub = new Substrate(substrateDimension, Substrate.INPUT_SUBSTRATE, blockSubCoord, "input_0");	
 			substrateInformation.add(blockInputSub);
 			if(split) {
 				Triple<Integer, Integer, Integer> holesSubCoord = new Triple<Integer, Integer, Integer>(SUBSTRATE_COORDINATES, 0, 0);
 				Substrate holesInputSub = new Substrate(substrateDimension, Substrate.INPUT_SUBSTRATE, holesSubCoord, "input_1");
 				substrateInformation.add(holesInputSub);
 			}
-			substrateInformation.add(processSub);
+			for(int i = 0; i < numProcessLayers; i++) {
+				Triple<Integer, Integer, Integer> processSubCoord = new Triple<Integer, Integer, Integer>(split ? SUBSTRATE_COORDINATES/2 : 0, outputDepth += SUBSTRATE_COORDINATES, 0);
+				Substrate processSub = new Substrate(substrateDimension, Substrate.PROCCESS_SUBSTRATE, processSubCoord,"process_" + i);
+				substrateInformation.add(processSub);
+			}
+			Triple<Integer, Integer, Integer> outSubCoord = new Triple<Integer, Integer, Integer>(split ? SUBSTRATE_COORDINATES/2 : 0, outputDepth, 0);
+			Pair<Integer, Integer> outputSubstrateDimension = new Pair<Integer, Integer>(HYPERNEAT_OUTPUT_SUBSTRATE_DIMENSION, HYPERNEAT_OUTPUT_SUBSTRATE_DIMENSION);
+			Substrate outputSub = new Substrate(outputSubstrateDimension, Substrate.OUTPUT_SUBSTRATE, outSubCoord,"output_0");
 			substrateInformation.add(outputSub);
 		}
-
 		return substrateInformation;
 	}
 
@@ -60,7 +61,10 @@ public class HyperNEATTetrisTask<T extends Network> extends TetrisTask<T> implem
 			if(CommonConstants.splitRawTetrisInputs) {
 				substrateConnectivity.add(new Pair<String, String>("input_1", "process_0"));
 			}
-			substrateConnectivity.add(new Pair<String, String>("process_0", "output_0"));
+			for(int i = 0; i < (numProcessLayers - 1); i++) {
+				substrateConnectivity.add(new Pair<String, String>("process_" + i, "process_" + (i + 1)));
+			}
+			substrateConnectivity.add(new Pair<String, String>("process_" + (numProcessLayers - 1), "output_0"));
 			if(Parameters.parameters.booleanParameter("extraHNTetrisLinks")) {
 				substrateConnectivity.add(new Pair<String, String>("input_0", "output_0"));
 				if(CommonConstants.splitRawTetrisInputs) {

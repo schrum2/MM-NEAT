@@ -183,6 +183,7 @@ public class Parameters {
 	 */
 	public final void fillDefaults() {
 		// Integer parameters
+		integerOptions.add("HNTTetrisProcessDepth", 1, "The number of processing layers in HNT tetris substrate");
 		integerOptions.add("marioInputStartX", -1, "The x coordinate offset for Mario inputs grid");
 		integerOptions.add("marioInputStartY", -1, "The y coordinate offset for Mario inputs grid");
 		integerOptions.add("marioInputHeight", 3, "The height for a Mario input section");
