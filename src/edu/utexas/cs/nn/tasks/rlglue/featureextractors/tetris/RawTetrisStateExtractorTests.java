@@ -44,11 +44,11 @@ public class RawTetrisStateExtractorTests {
 	public void numFeatures_test() {
 		TetrisState testState = new TetrisState(); 
 		RawTetrisStateExtractor RTSE = new RawTetrisStateExtractor();
-		int first = testState.getHeight() * testState.getWidth();
+		int first = testState.getHeight() * testState.getWidth() + 1; // extra 1 for bias
 		assertEquals(RTSE.numFeatures(), first);
 		TetrisState.worldHeight = 90;
 		TetrisState.worldWidth = 90;
-		int second = 90 * 90;
+		int second = 90 * 90 + 1; // 1 for bias
 		assertEquals(RTSE.numFeatures(), second);	
 		TetrisState.worldHeight = 20;
 		TetrisState.worldWidth = 10;
@@ -67,7 +67,7 @@ public class RawTetrisStateExtractorTests {
 		Observation o = testState.get_observation(false);
 		RawTetrisStateExtractor RTSE = new RawTetrisStateExtractor();
 		double[] first = RTSE.extract(o);
-		double[] zeroes = new double[first.length];
+		double[] zeroes = new double[TetrisState.worldHeight * TetrisState.worldWidth];
 		for(int i = 0; i < zeroes.length; i++){
 			//System.out.println("First at " + i + ": " + first[i]);
 			//System.out.println("Ones at " + i + ": " + zeroes[i]);
@@ -185,7 +185,7 @@ public class RawTetrisStateExtractorTests {
 		Observation o = testState.get_observation(false);
 		RawTetrisStateExtractor RTSE = new RawTetrisStateExtractor();
 		double[] first = RTSE.extract(o);
-		double[] zeroes = new double[first.length];
+		double[] zeroes = new double[TetrisState.worldHeight * TetrisState.worldWidth];
 		for(int i = 0; i < zeroes.length; i++){
 			zeroes[i] = zeroes[i] - 1; 
 			//System.out.println("First at " + i + ": " + first[i]);
