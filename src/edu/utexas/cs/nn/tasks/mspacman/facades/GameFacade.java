@@ -1038,6 +1038,10 @@ public class GameFacade {
 		return result;
 	}
 
+	/**
+	 * Gets number of ghosts that are edible
+	 * @return num edible ghosts
+	 */
 	public int getNumberOfEdibleGhosts() {
 		int total = 0;
 		for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
@@ -1049,6 +1053,11 @@ public class GameFacade {
 		return total;
 	}
 
+	/**
+	 * says whether given ghost is a threat
+	 * @param ghostIndex index of ghost
+	 * @return whether threat
+	 */
 	public boolean isGhostThreat(int ghostIndex) {
 		return !isGhostEdible(ghostIndex) && getNumNeighbours(getGhostCurrentNodeIndex(ghostIndex)) > 0;
 	}
@@ -1066,6 +1075,10 @@ public class GameFacade {
 		return times;
 	}
 
+	/**
+	 * Gets the time each ghost is edible
+	 * @return array of edible times
+	 */
 	public int[] getGhostEdibleTimes() {
 		int[] times = new int[CommonConstants.numActiveGhosts];
 		for (int i = 0; i < times.length; i++) {
@@ -1074,14 +1087,30 @@ public class GameFacade {
 		return times;
 	}
 
+	/**
+	 * Gets the farthest node index from current index
+	 * @param current current index
+	 * @param targets indices of target nodes
+	 * @return farthest node from targets array
+	 */
 	public int getFarthestNodeIndexFromNodeIndex(int current, int[] targets) {
 		return newG.getFarthestNodeIndexFromNodeIndex(current, targets, DM.PATH);
 	}
 
+	/**
+	 * gets indices of edible ghosts
+	 * @return indices of edible ghosts
+	 */
 	public int[] getEdibleGhostLocations() {
 		return getEdibleGhostLocations(new boolean[] { true, true, true, true });
 	}
 
+	/**
+	 * Gets edible ghosts location with decision
+	 * on whether or not to include certain ghosts
+	 * @param include which ghosts are included
+	 * @return indices of chosen edible ghosts
+	 */
 	public int[] getEdibleGhostLocations(boolean[] include) {
 		ArrayList<Integer> ghostPositions = new ArrayList<Integer>(CommonConstants.numActiveGhosts);
 		for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
@@ -1097,16 +1126,27 @@ public class GameFacade {
 	 *
 	 * @param pacmanDir
 	 *            direction relative to pacman
-	 * @return
+	 * @return true if threat imminent
 	 */
 	public boolean isThreatIncoming(int pacmanDir) {
 		return isAnyGhostIncoming(pacmanDir, true);
 	}
 
+	/**
+	 * true if edible ghost coming at pacman along direction
+	 * @param pacmanDir pacman's direction
+	 * @return true if edible ghost is imminent
+	 */
 	public boolean isEdibleIncoming(int pacmanDir) {
 		return isAnyGhostIncoming(pacmanDir, false);
 	}
 
+	/**
+	 * True if any ghost is coming at pacman along direction
+	 * @param pacmanDir direction of pacman
+	 * @param threatNotEdible boolean allowing for reuse of method
+	 * @return whether ghost incoming
+	 */
 	public boolean isAnyGhostIncoming(int pacmanDir, boolean threatNotEdible) {
 		for (int i = 0; i < this.getNumActiveGhosts(); i++) {
 			if ((threatNotEdible && isGhostThreat(i)) || (!threatNotEdible && isGhostEdible(i))) {
@@ -1165,6 +1205,11 @@ public class GameFacade {
 		return getThreatGhostLocations(new boolean[] { true, true, true, true });
 	}
 
+	/**
+	 * gets indices of threat ghosts
+	 * @param include which ghosts to include
+	 * @return indices of threat ghosts
+	 */
 	public int[] getThreatGhostLocations(boolean[] include) {
 		ArrayList<Integer> ghostPositions = new ArrayList<Integer>(CommonConstants.numActiveGhosts);
 		for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
@@ -1185,6 +1230,12 @@ public class GameFacade {
 		return getApproachingThreatGhostLocations(new boolean[] { true, true, true, true });
 	}
 
+	/**
+	 * Gets the locations of ghosts that are directly pursuing pacman along 
+	 * the shortest possible path. Chosen ghosts only
+	 * @param include chosen ghosts
+	 * @return indices of ghost locations
+	 */
 	public int[] getApproachingThreatGhostLocations(boolean[] include) {
 		ArrayList<Integer> ghostPositions = new ArrayList<Integer>(CommonConstants.numActiveGhosts);
 		for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
@@ -1202,13 +1253,24 @@ public class GameFacade {
 	 * where pacman currently is. A ghost is "incoming" from this direction if a
 	 * direct path from it to pacman comes in along this direction.
 	 *
-	 * @param pacmanDir
-	 * @return
+	 * @param pacmanDir pacman's direction
+	 * @return indices of ghosts incoming
 	 */
 	public int[] getIncomingThreatGhostLocations(int pacmanDir) {
 		return getIncomingThreatGhostLocations(pacmanDir, new boolean[] { true, true, true, true });
 	}
 
+	/**
+	 * "Incoming" is different from "approaching". A ghost is approaching pacman
+	 * if it is taking the shortest possible path to reach pacman. The concept
+	 * of incoming is defined with respect to a specific direction away from
+	 * where pacman currently is. A ghost is "incoming" from this direction if a
+	 * direct path from it to pacman comes in along this direction.
+	 *
+	 * @param pacmanDir pacman's direction
+	 * @param include which ghosts to include in eval
+	 * @return indices of ghosts incoming
+	 */
 	public int[] getIncomingThreatGhostLocations(int pacmanDir, boolean[] include) {
 		ArrayList<Integer> ghostPositions = new ArrayList<Integer>(CommonConstants.numActiveGhosts);
 		for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
@@ -1219,10 +1281,21 @@ public class GameFacade {
 		return ArrayUtil.intArrayFromArrayList(ghostPositions);
 	}
 
+	/**
+	 * gets indices of approaching and incoming threat ghosts
+	 * @param pacmanDir pacman's direction 
+	 * @return indices of ghosts 
+	 */
 	public int[] getApproachingOrIncomingThreatGhostLocations(int pacmanDir) {
 		return getApproachingOrIncomingThreatGhostLocations(pacmanDir, new boolean[] { true, true, true, true });
 	}
 
+	/**
+	 * gets indices of approaching and incoming threat ghosts
+	 * @param pacmanDir pacman's direction
+	 * @param include which ghosts to include
+	 * @return indices of ghosts
+	 */
 	public int[] getApproachingOrIncomingThreatGhostLocations(int pacmanDir, boolean[] include) {
 		ArrayList<Integer> ghostPositions = new ArrayList<Integer>(CommonConstants.numActiveGhosts);
 		for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
@@ -1233,10 +1306,21 @@ public class GameFacade {
 		return ArrayUtil.intArrayFromArrayList(ghostPositions);
 	}
 
+	/**
+	 * Gets indices of approaching and incoming edible ghosts
+	 * @param pacmanDir pacman's direction
+	 * @return indices of ghosts
+	 */
 	public int[] getApproachingOrIncomingEdibleGhostLocations(int pacmanDir) {
 		return getApproachingOrIncomingEdibleGhostLocations(pacmanDir, new boolean[] { true, true, true, true });
 	}
 
+	/**
+	 * Gets indices of approaching and imcoming edible ghosts
+	 * @param pacmanDir pacman's direction
+	 * @param include which ghosts to include
+	 * @return indices of ghosts
+	 */
 	public int[] getApproachingOrIncomingEdibleGhostLocations(int pacmanDir, boolean[] include) {
 		ArrayList<Integer> ghostPositions = new ArrayList<Integer>(CommonConstants.numActiveGhosts);
 		for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
@@ -1251,12 +1335,17 @@ public class GameFacade {
 	 * Get the locations of edible ghosts that are directly approaching pacman
 	 * along the shortest possible path.
 	 *
-	 * @return
+	 * @return indices of ghosts
 	 */
 	public int[] getApproachingEdibleGhostLocations() {
 		return getApproachingEdibleGhostLocations(new boolean[] { true, true, true, true });
 	}
 
+	/**
+	 * Get teh locations of edible ghosts that are directly approaching pacman
+	 * @param include which ghosts to include
+	 * @return indices of ghosts
+	 */
 	public int[] getApproachingEdibleGhostLocations(boolean[] include) {
 		ArrayList<Integer> ghostPositions = new ArrayList<Integer>(CommonConstants.numActiveGhosts);
 		for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
@@ -1272,12 +1361,19 @@ public class GameFacade {
 	 * direction relative to pacman's location.
 	 *
 	 * @param pacmanDir
-	 * @return
+	 * @return indices of ghosts
 	 */
 	public int[] getIncomingEdibleGhostLocations(int pacmanDir) {
 		return getIncomingEdibleGhostLocations(pacmanDir, new boolean[] { true, true, true, true });
 	}
 
+	/**
+	 * Gets locations of edible ghosts that are "incoming" along given
+	 * direction relative to pacman's location
+	 * @param pacmanDir direction of pacman
+	 * @param include which ghosts to include
+	 * @return indices of ghosts
+	 */
 	public int[] getIncomingEdibleGhostLocations(int pacmanDir, boolean[] include) {
 		ArrayList<Integer> ghostPositions = new ArrayList<Integer>(CommonConstants.numActiveGhosts);
 		for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
@@ -1339,14 +1435,29 @@ public class GameFacade {
 		return ArrayUtil.intArrayFromArrayList(locs);
 	}
 
+	/**
+	 * Gets next move to take in order to reach given target
+	 * @param from index of source 
+	 * @param to index of target
+	 * @return next move
+	 */
 	public int getNextMoveTowardsTarget(int from, int to) {
 		return moveToIndex(newG.getNextMoveTowardsTarget(from, to, DM.PATH));
 	}
 
+	/**
+	 * returns number of active ghosts
+	 * @return num active ghosts
+	 */
 	public int getNumActiveGhosts() {
 		return CommonConstants.numActiveGhosts;
 	}
 
+	/**
+	 * Advances the game one step
+	 * @param pacManDir direction pacman is to take
+	 * @param ghostDirs direction ghosts are to take
+	 */
 	public void advanceGame(int pacManDir, int[] ghostDirs) {
 		EnumMap<GHOST, MOVE> myMoves = new EnumMap<GHOST, MOVE>(GHOST.class);
 		for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
@@ -1363,7 +1474,7 @@ public class GameFacade {
 	 *            node to move towards
 	 * @param ghostModel
 	 *            how to model the movement of the ghosts
-	 * @return
+	 * @return copy of game facade that moved towards location
 	 */
 	public GameFacade simulateTowardsLocation(int destination, GhostControllerFacade ghostModel) {
 		int startLevel = this.getCurrentLevel();
@@ -1466,34 +1577,70 @@ public class GameFacade {
 		return false;
 	}
 
+	/**
+	 * gets current score
+	 * @param level level pacman is on
+	 * @return score
+	 */
 	public double getScore(int level) {
 		return newG.getScore(level);
 	}
 
+	/**
+	 * copies game facade
+	 * @return copy
+	 */
 	public GameFacade copy() {
 		return new GameFacade(newG.copy());
 	}
 
+	/**
+	 * Gets reverse of given move
+	 * @param move move made
+	 * @return index of move
+	 */
 	public static int getReverse(int move) {
 		return moveToIndex(indexToMove(move).opposite());
 	}
 
+	/**
+	 * Gets index of node to left of move made
+	 * @param move move made
+	 * @return index of left node
+	 */
 	public static int getLeftOf(int move) {
 		return (move + 3) % 4;
 	}
 
+	/**
+	 * gets index of node to right of move made
+	 * @param move move made
+	 * @return index of right node
+	 */
 	public static int getRightOf(int move) {
 		return (move + 1) % 4;
 	}
 
+	/**
+	 * Gets number of active pills
+	 * @return num active pills
+	 */
 	public int getNumActivePills() {
 		return newG.getNumberOfActivePills();
 	}
 
+	/**
+	 * gets whether game is over or not
+	 * @return game over
+	 */
 	public boolean gameOver() {
 		return newG.gameOver();
 	}
 
+	/**
+	 * Gets number of active power pills
+	 * @return num active power pills
+	 */
 	public int getNumActivePowerPills() {
 		return newG.getNumberOfActivePowerPills();
 	}
@@ -1505,8 +1652,8 @@ public class GameFacade {
 	 * along all such paths (no particular order).
 	 *
 	 * @param ghostIndex
-	 * @param to
-	 * @return
+	 * @param to index to move towards
+	 * @return indices of nodes that will get pacman to target node
 	 */
 	public int[] getAllGhostPathNodes(int ghostIndex, int to) {
 		assert this.nodeInMaze(to) : "Node (to) " + to + " not in maze " + this.getMazeIndex();
@@ -1520,6 +1667,13 @@ public class GameFacade {
 		return sameDistancePathNodes(to, model, options);
 	}
 
+	/**
+	 * 
+	 * @param to
+	 * @param model
+	 * @param options
+	 * @return
+	 */
 	private int[] sameDistancePathNodes(int to, int[] model, int[] options) {
 		HashSet<Integer> set = new HashSet<Integer>();
 		Queue<Pair<Integer, Integer>> junctionDistancePairs = new LinkedList<Pair<Integer, Integer>>();
