@@ -89,6 +89,10 @@ public class RawTetrisStateExtractor implements FeatureExtractor {
 				}
 			}
 		}
+                if(!CommonConstants.hyperNEAT) {
+                    // HyperNEAT adds its bias value differently
+                    labels[labels.length - 1] = "Bias";
+                }
 		return labels;
 	}
 

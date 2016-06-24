@@ -19,7 +19,7 @@ import edu.utexas.cs.nn.util.datastructures.Pair;
 public class HyperNEATUtil {
 
 	//size of grid in substrate drawing. Can be changed/turned into a param if need be
-	public final static int SUBS_GRID_SIZE = 30;
+	public final static int SUBS_GRID_SIZE = 20;
 
 	private static List<DrawingPanel> substratePanels = null;
 
@@ -110,6 +110,8 @@ public class HyperNEATUtil {
 				Color c;
 				if(node.ntype == TWEANN.Node.NTYPE_OUTPUT || !node.outputs.isEmpty()) {
                                     double activation = node.output();
+                                    // For unusual activation functions that go outside of the [-1,1] range
+                                    activation = Math.max(-1, Math.min(activation, 1.0));
                                     c = new Color(activation > 0 ? (int)(activation*255) : 0, 0, activation < 0 ? (int)(-activation*255) : 0);
 				} else {
                                     c = Color.gray;
