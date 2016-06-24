@@ -78,6 +78,7 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
 		@Override
 		public Score<T> call() {//TODO 
 			DrawingPanel panel = null;
+			DrawingPanel cppnPanel = null;
 			// DrawingPanel[] subPanels = null;
 			if (genotype instanceof TWEANNGenotype) {//TODO
 				if (CommonConstants.showNetworks) {
@@ -85,9 +86,9 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
 					panel.setLocation(NETWORK_WINDOW_OFFSET, 0);
 					((TWEANNGenotype) genotype).getPhenotype().draw(panel);
 					if(genotype instanceof HyperNEATCPPNGenotype && Parameters.parameters.booleanParameter("showCPPN")) {
-						panel = new DrawingPanel(500, 500, "Evolved CPPN");
-						panel.setLocation(TWEANN.NETWORK_VIEW_DIM + NETWORK_WINDOW_OFFSET, 0);
-						(((HyperNEATCPPNGenotype) genotype).getCPPN()).draw(panel);
+						cppnPanel = new DrawingPanel(500, 500, "Evolved CPPN");
+						cppnPanel.setLocation(TWEANN.NETWORK_VIEW_DIM + NETWORK_WINDOW_OFFSET, 0);
+						(((HyperNEATCPPNGenotype) genotype).getCPPN()).draw(cppnPanel);
 					}
 					// if(genotype instanceof HierarchicalTWEANNGenotype){
 					// HierarchicalTWEANNGenotype htg =
@@ -152,12 +153,15 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
 				System.out.println("Module Usage: " + Arrays.toString(((TWEANNGenotype) score.individual).getModuleUsage()));
 				System.out.println("Fitness: " + score.toString());
 				panel.dispose();
+				
 				// if (subPanels != null) {
 				// for (int i = 0; i < subPanels.length; i++) {
 				// subPanels[i].dispose();
 				// }
 				// subPanels = null;
 				// }
+			} if(cppnPanel != null) {
+				cppnPanel.dispose();
 			}
 			return score;
 		}
