@@ -1,6 +1,10 @@
 package edu.utexas.cs.nn.util.stats;
 
 import static org.junit.Assert.*;
+
+import java.util.ArrayList;
+import java.util.Collection;
+
 import org.junit.Test;
 
 public class StatisticsUtilitiesTest {
@@ -32,9 +36,9 @@ public class StatisticsUtilitiesTest {
 		double[] test1 = {4, 3, 2, 1};
 		double[] test2 = {4, 5, 5};
 		assertEquals(StatisticsUtilities.argmax(test1), 0);
-		assertEquals(test1[StatisticsUtilities.argmax(test1)], 4, 0.0);
+		assertEquals(test1[StatisticsUtilities.argmax(test1)], 4, ERROR);
 		assertEquals(StatisticsUtilities.argmax(test2), 1);
-		assertEquals(test2[StatisticsUtilities.argmax(test2)], 5, 0.0);
+		assertEquals(test2[StatisticsUtilities.argmax(test2)], 5, ERROR);
 	}
 
 	@Test
@@ -71,9 +75,9 @@ public class StatisticsUtilitiesTest {
 		double[] test1 = {4, 3, 2, 1};
 		double[] test2 = {4, 5, 5};
 		assertEquals(StatisticsUtilities.argmin(test1), 3);
-		assertEquals(test1[StatisticsUtilities.argmin(test1)], 1, 0.0);
+		assertEquals(test1[StatisticsUtilities.argmin(test1)], 1, ERROR);
 		assertEquals(StatisticsUtilities.argmin(test2), 0);
-		assertEquals(test2[StatisticsUtilities.argmin(test2)], 4, 0.0);
+		assertEquals(test2[StatisticsUtilities.argmin(test2)], 4, ERROR);
 	}
 
 	@Test
@@ -107,21 +111,21 @@ public class StatisticsUtilitiesTest {
 	@Test
 	public void testDistributionDoubleArray() {
 		double[] test = {1, 2, 3};
-		assertEquals(StatisticsUtilities.distribution(test)[0], (1.0 / 6.0), 0.0);
-		assertEquals(StatisticsUtilities.distribution(test)[1], (2.0 / 6.0), 0.0);
-		assertEquals(StatisticsUtilities.distribution(test)[2], (3.0 / 6.0), 0.0);
+		assertEquals(StatisticsUtilities.distribution(test)[0], (1.0 / 6.0), ERROR);
+		assertEquals(StatisticsUtilities.distribution(test)[1], (2.0 / 6.0), ERROR);
+		assertEquals(StatisticsUtilities.distribution(test)[2], (3.0 / 6.0), ERROR);
 	}
 
 	@Test
 	public void testDistributionIntArray() {
 		int[] test = {1, 2, 3};
-		assertEquals(StatisticsUtilities.distribution(test)[0], (1.0 / 6.0), 0.0);
-		assertEquals(StatisticsUtilities.distribution(test)[1], (2.0 / 6.0), 0.0);
-		assertEquals(StatisticsUtilities.distribution(test)[2], (3.0 / 6.0), 0.0);
+		assertEquals(StatisticsUtilities.distribution(test)[0], (1.0 / 6.0), ERROR);
+		assertEquals(StatisticsUtilities.distribution(test)[1], (2.0 / 6.0), ERROR);
+		assertEquals(StatisticsUtilities.distribution(test)[2], (3.0 / 6.0), ERROR);
 	}
 
 	@Test
-	public void testModeDoubleArray() {// TODO
+	public void testModeDoubleArray() {
 		assertEquals(StatisticsUtilities.mode(new double[] { 1, 1, 1, 2, 2, 2, 3, 4, 5, 6, 7, 8, 8, 8, 8, 8, 8, 9 }), 8.0, ERROR);
 		assertEquals(StatisticsUtilities.mode(new double[] { 1, 1, 1 }), 1, ERROR);
 		assertEquals(StatisticsUtilities.mode(new double[] { 2, 1, 2, 1, 2, 1 }), 2, ERROR);
@@ -130,7 +134,14 @@ public class StatisticsUtilitiesTest {
 	}
 
 	@Test
-	public void testModeDoubleArrayDouble() {// TODO
+	public void testModeDoubleArrayDouble() {
+		assertEquals(StatisticsUtilities.mode(new double[] { 1, 1, 1 }, 0.001), 1, ERROR);
+		assertEquals(StatisticsUtilities.mode(new double[] { 1, 1, 1 }, 0.1), 1, ERROR);
+		assertEquals(StatisticsUtilities.mode(new double[] { 1, 1.01, 1.01, 1.01 }, 0.1), 1.0, ERROR);
+		assertEquals(StatisticsUtilities.mode(new double[] { 1, 1.01, 1.01, 1.01 }, 0.01), 1.01, ERROR);
+		assertEquals(StatisticsUtilities.mode(new double[] { 20, 20.2, 1.0, 1.05, 1.05, 2, 4.5 }, 0.1), 1.0, ERROR);
+		assertEquals(StatisticsUtilities.mode(new double[] { 20, 20.2, 1.0, 1.05, 1.05, 2, 4.5 }, 0.01), 1.05, ERROR);
+		
 	}
 
 	@Test
@@ -149,31 +160,98 @@ public class StatisticsUtilitiesTest {
 	}
 
 	@Test
-	public void testMaximumCollectionOfInteger() {// TODO
+	public void testMaximumCollectionOfInteger() {
+		ArrayList<Integer> test = new ArrayList<Integer>();
+		test.add(1);
+		test.add(2);
+		test.add(3);
+		test.add(4);
+		test.add(5);
+		assertEquals(StatisticsUtilities.maximum(test), 5);
+		ArrayList<Integer> test2 = new ArrayList<Integer>();
+		test2.add(1);
+		test2.add(50);
+		test2.add(100);
+		assertEquals(StatisticsUtilities.maximum(test2), 100, ERROR);
+		test2.add(150);
+		assertEquals(StatisticsUtilities.maximum(test2), 150, ERROR);
 	}
 
 	@Test
-	public void testMaximumLongArray() {// TODO
+	public void testMaximumLongArray() {
+		long[] test1 = { 1, 2, 3, 4, 5 };
+		long[] test2 = { 1, Integer.MAX_VALUE, ((long) Integer.MAX_VALUE) + 1 };
+		assertEquals(StatisticsUtilities.maximum(test1), 5, ERROR);
+		assertEquals(StatisticsUtilities.maximum(test2), ((long) Integer.MAX_VALUE) + 1 , ERROR);
 	}
 
 	@Test
-	public void testMinimum() {// TODO
+	public void testMinimum() {
+		double[] test = { 1, 1, 1, 12, 2, 2, 2, 23, 3, 3, 3, 500};
+		double[] test2 = { 1, 2, 3, 4, 5 };
+		double[] test3 = { 1, 1, 100, 50 };
+		double[] test4 = { 50, 50, 51, 51 };
+		double[] test5 = { 100, 500, 101 };
+		assertEquals(StatisticsUtilities.minimum(test), 1, ERROR);
+		assertEquals(StatisticsUtilities.minimum(test2), 1, ERROR);
+		assertEquals(StatisticsUtilities.minimum(test3), 1, ERROR);
+		assertEquals(StatisticsUtilities.minimum(test4), 50, ERROR);
+		assertEquals(StatisticsUtilities.minimum(test5), 100, ERROR);
 	}
 
 	@Test
-	public void testAverage() {// TODO
+	public void testAverage() {
+		double[] test = {5, 9};
+		assertEquals(StatisticsUtilities.average(test), 7.0, ERROR);
+		double[] test1 = {5, 5, 5, 5, 5, 5, 5, 5};
+		assertEquals(StatisticsUtilities.average(test1), 5.0, ERROR);
+		double[] test2 = {0, 0};
+		assertEquals(StatisticsUtilities.average(test2), 0.0, ERROR);
+		double[] test3 = {0, 1};
+		assertEquals(StatisticsUtilities.average(test3), 0.5, ERROR);
+		double[] test4 = {0.1, 1.5, 3.5, 2.5};
+		assertEquals(StatisticsUtilities.average(test4), 1.9, ERROR);
 	}
 
 	@Test
-	public void testSumIntArray() {// TODO
+	public void testSumIntArray() {
+		int[] test = {1, 2, 3, 4, 5};
+		assertEquals(StatisticsUtilities.sum(test), 15);
+		int[] test1 = {50, 50, 50};
+		assertEquals(StatisticsUtilities.sum(test1), 150);
+		int[] test2 = {50, -50};
+		assertEquals(StatisticsUtilities.sum(test2), 0);
 	}
 
 	@Test
-	public void testSumDoubleArray() {// TODO
+	public void testSumDoubleArray() {
+		double[] test = {1, 2, 3, 4, 5};
+		assertEquals(StatisticsUtilities.sum(test), 15, ERROR);
+		double[] test1 = {50, 50, 50};
+		assertEquals(StatisticsUtilities.sum(test1), 150, ERROR);
+		double[] test2 = {50, -50};
+		assertEquals(StatisticsUtilities.sum(test2), 0, ERROR);
+		double[] test3 = {0.25, 0.75};
+		assertEquals(StatisticsUtilities.sum(test3), 1, ERROR);
+		double[] test4 = {1, -0.5};
+		assertEquals(StatisticsUtilities.sum(test4), .5, ERROR);
 	}
 
 	@Test
-	public void testSumCollectionOfInteger() {// TODO
+	public void testSumCollectionOfInteger() {
+		ArrayList<Integer> test = new ArrayList<Integer>();
+		test.add(1);
+		test.add(2);
+		test.add(3);
+		test.add(4);
+		test.add(5);
+		assertEquals(StatisticsUtilities.sum(test), 15);
+		ArrayList<Integer> test2 = new ArrayList<Integer>();
+		test2.add(1);
+		test2.add(5);
+		assertEquals(StatisticsUtilities.sum(test2), 6);
+		test2.add(-5);
+		assertEquals(StatisticsUtilities.sum(test2), 1);
 	}
 
 	@Test
