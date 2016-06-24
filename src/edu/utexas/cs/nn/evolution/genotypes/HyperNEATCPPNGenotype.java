@@ -162,6 +162,8 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 	/**
 	 * creates an array list containing all the nodes from all the substrates
 	 *
+         * @param cppn
+         *             CPPN that produces phenotype network
 	 * @param subs
 	 *            list of substrates extracted from domain
 	 * @return array list of NodeGenes from substrates
@@ -173,7 +175,12 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 			for (int y = 0; y < subs.get(i).size.t2; y++) {
 				for (int x = 0; x < subs.get(i).size.t1; x++) {
 					// Substrate types and Neuron types match and use same values
-					double bias = CommonConstants.evolveHyperNEATBias ? cppn.process(new double[]{0, 0, x, y, BIAS})[biasIndex] : 0.0;
+					double bias = 0.0; // default
+                                        // Non-input substrates can have a bias if desired
+                                        if(CommonConstants.evolveHyperNEATBias && subs.get(i).stype != Substrate.INPUT_SUBSTRATE) {
+                                            // Ask CPPN to generate a bias for each neuron
+                                            bias = cppn.process(new double[]{0, 0, x, y, BIAS})[biasIndex];
+                                        }
 					newNodes.add(new NodeGene(CommonConstants.ftype, subs.get(i).getStype(), innovationID++, false, bias));
 				}
 			}
@@ -317,6 +324,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 
 	/**
 	 * Creates a new random instance of the hyperNEATCPPNGenotype
+         * @return New genotype for CPPN
 	 */
 	@Override
 	public Genotype<TWEANN> newInstance() {
