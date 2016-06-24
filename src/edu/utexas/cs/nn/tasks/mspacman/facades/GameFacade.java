@@ -13,7 +13,10 @@ import pacman.game.Constants.MOVE;
 import pacman.game.Game;
 
 /**
- *
+ *Contains pac man game. Includes harnesses for both
+ *generations of game. Game mechanics changed drastically
+ *during course of coding for ms pacman so the facade class
+ *was necessary to ensure compatibility between both generations
  * @author Jacob Schrum
  */
 public class GameFacade {
