@@ -91,7 +91,15 @@ public class StatisticsUtilitiesTest {
 	}
 
 	@Test
-	public void testSoftmax() {// TODO, don't know what this method does
+	public void testSoftmax() {
+		double[] test = {6};
+		double temp = 3;
+		double[] test1 = {2, 2};
+		double temp1 = 2;
+		assertEquals(StatisticsUtilities.softmax(test, temp), 0);
+		int result1 = StatisticsUtilities.softmax(test1, temp1);
+		assertFalse(result1 == 2);
+		assertTrue(result1 == 0 || result1 == 1);
 	}
 
 	@Test
@@ -255,23 +263,53 @@ public class StatisticsUtilitiesTest {
 	}
 
 	@Test
-	public void testPopulationStandardDeviation() {// TODO
+	public void testPopulationStandardDeviation() {
+		double[] test1 = {1, 2, 3};
+		double[] test2 = {0, 10, 50};
+		double[] test3 = {2, 4, 6, 8};
+		assertEquals(StatisticsUtilities.populationStandardDeviation(test1), Math.sqrt(2.0 / 3.0), ERROR);
+		assertEquals(StatisticsUtilities.populationStandardDeviation(test2), Math.sqrt(1400.0 / 3.0), ERROR);
+		assertEquals(StatisticsUtilities.populationStandardDeviation(test3), Math.sqrt(5.0), ERROR);
 	}
 
 	@Test
-	public void testSampleStandardDeviation() {// TODO
+	public void testSampleStandardDeviation() {
+		double[] test1 = {1, 2, 3};
+		double[] test2 = {0, 10, 50};
+		double[] test3 = {2, 4, 6, 8};
+		assertEquals(StatisticsUtilities.sampleStandardDeviation(test1), Math.sqrt(1), ERROR);
+		assertEquals(StatisticsUtilities.sampleStandardDeviation(test2), Math.sqrt(700), ERROR);
+		assertEquals(StatisticsUtilities.sampleStandardDeviation(test3), Math.sqrt(20.0 / 3.0), ERROR);
 	}
 
 	@Test
-	public void testPopulationVariance() {// TODO
+	public void testPopulationVariance() {
+		double[] test1 = {1, 2, 3};
+		double[] test2 = {0, 10, 50};
+		double[] test3 = {2, 4, 6, 8};
+		assertEquals(StatisticsUtilities.populationVariance(test1), 2.0 / 3.0, ERROR);
+		assertEquals(StatisticsUtilities.populationVariance(test2), 1400.0 / 3.0, ERROR);
+		assertEquals(StatisticsUtilities.populationVariance(test3), 5.0, ERROR);
 	}
 
 	@Test
-	public void testSampleVariance() {// TODO
+	public void testSampleVariance() {
+		double[] test1 = {1, 2, 3};
+		double[] test2 = {0, 10, 50};
+		double[] test3 = {2, 4, 6, 8};
+		assertEquals(StatisticsUtilities.sampleVariance(test1), 1, ERROR);
+		assertEquals(StatisticsUtilities.sampleVariance(test2), 700, ERROR);
+		assertEquals(StatisticsUtilities.sampleVariance(test3), 20.0 / 3.0, ERROR);
 	}
 
 	@Test
-	public void testSumOfSquares() {// TODO
+	public void testSumOfSquares() {
+		double[] test1 = {1, 2, 3};
+		double[] test2 = {0, 10, 50};
+		double[] test3 = {2, 4, 6, 8};
+		assertEquals(StatisticsUtilities.sumOfSquares(test1), 2, ERROR);
+		assertEquals(StatisticsUtilities.sumOfSquares(test2), 1400, ERROR);
+		assertEquals(StatisticsUtilities.sumOfSquares(test3), 20, ERROR);
 	}
 
 	@Test

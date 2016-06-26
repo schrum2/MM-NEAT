@@ -185,8 +185,6 @@ public class StatisticsUtilities {
 				? RandomNumbers.randomGenerator.nextInt(equalMinIndexes.size()) : 0);
 	}
 
-	//Softmax function often implemented at the final layer of a network 
-	//used for classification, but what does this method actually do? -Gab
 	public static int softmax(double[] ps, double temperature) {
 		double[] posExps = new double[ps.length];
 		for (int i = 0; i < posExps.length; i++) {
