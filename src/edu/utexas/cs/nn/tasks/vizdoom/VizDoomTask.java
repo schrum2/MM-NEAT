@@ -577,10 +577,22 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 		int start = (color == NUM_COLORS ? 0 : color);
 		int end = (color == NUM_COLORS ? NUM_COLORS : color + 1);
 		for(int i = start; i < end; i ++){
-			name = "Inputs (" + (i == RED_INDEX ? "Red)" : (i == GREEN_INDEX ? "Green)" : "Blue)"));
+			name = "Inputs(" + (i == RED_INDEX ? "Red)" : (i == GREEN_INDEX ? "Green)" : "Blue)"));
 			conn.add(new Pair<String, String>(name, "Processing"));
 		}		
 		addOutputConnections(conn);
+		if(Parameters.parameters.booleanParameter("extraHNLinks")) {
+			int connSize = conn.size();
+			for(int j = 0; j < connSize; j++){
+				if(conn.get(j).t1 == "Processing"){
+					for(int i = start; i < end; i ++){
+						name = "Inputs(" + (i == RED_INDEX ? "Red)" : (i == GREEN_INDEX ? "Green)" : "Blue)"));
+						conn.add(new Pair<String, String>(name, conn.get(j).t2));
+					}
+				}
+			}	
+		}
+		System.out.println("Connections! " + conn);
 		return conn;
 	}	
 }

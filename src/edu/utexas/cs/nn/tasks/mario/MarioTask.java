@@ -210,7 +210,15 @@ public class MarioTask<T extends Network> extends NoisyLonerTask<T>implements Ne
 		conn.add(new Pair<String, String>("Inputs Enemies", "Processing"));
 		conn.add(new Pair<String, String>("Processing", "Outputs D-Pad"));	
 		conn.add(new Pair<String, String>("Processing", "Output Speed"));	
-		conn.add(new Pair<String, String>("Processing", "Output Jump"));	
+		conn.add(new Pair<String, String>("Processing", "Output Jump"));
+		if(Parameters.parameters.booleanParameter("extraHNLinks")) {
+			conn.add(new Pair<String, String>("Inputs World", "Outputs D-Pad"));
+			conn.add(new Pair<String, String>("Inputs Enemies", "Outputs D-Pad"));
+			conn.add(new Pair<String, String>("Inputs World", "Outputs Speed"));
+			conn.add(new Pair<String, String>("Inputs Enemies", "Outputs Speed"));
+			conn.add(new Pair<String, String>("Inputs World", "Outputs Jump"));
+			conn.add(new Pair<String, String>("Inputs Enemies", "Outputs Jump"));
+		}
 		return conn;
 	}
 }
