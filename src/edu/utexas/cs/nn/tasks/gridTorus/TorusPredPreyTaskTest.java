@@ -564,6 +564,8 @@ public class TorusPredPreyTaskTest <T extends Network> {
 		MMNEAT.loadClasses();
 		MMNEAT.task = new TorusEvolvedPredatorsVsStaticPreyTask();
 		homoPred = (TorusEvolvedPredatorsVsStaticPreyTask)MMNEAT.task;
+		objectives = homoPred.objectives;
+		otherScores = homoPred.otherScores;
 		//NOTE: addAllObjectives already called once in constructor
 		assertEquals(objectives.size(), 1);
 		assertFalse(objectives.get(0).isEmpty());
