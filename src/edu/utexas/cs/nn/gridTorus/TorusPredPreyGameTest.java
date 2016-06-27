@@ -20,10 +20,9 @@ public class TorusPredPreyGameTest {
 	@Before
 	public void setUp() throws Exception {
 		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "torusTimeLimit:1000",
-				"task:edu.utexas.cs.nn.tasks.gridTorus.TorusEvolvedPredatorsVsStaticPreyTask",
-				"allowDoNothingActionForPredators:true", "torusPreys:2", "torusPredators:3",
+				"torusPreys:2", "torusPredators:3",
 				"staticPreyController:edu.utexas.cs.nn.gridTorus.controllers.PreyFleeClosestPredatorController",
-				"torusSenseTeammates:true" });
+				"predatorCatchClose:false", "preyRRM:false" });
 		MMNEAT.loadClasses();
 	}
 
