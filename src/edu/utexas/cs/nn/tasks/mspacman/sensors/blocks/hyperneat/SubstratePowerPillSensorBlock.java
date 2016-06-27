@@ -21,16 +21,7 @@ public class SubstratePowerPillSensorBlock extends MsPacManSensorBlock {
 	 */
 	public int incorporateSensors(double[] inputs, int startPoint, GameFacade gf, int lastDirection) {
 		int[] powerPillIndices = gf.getActivePowerPillsIndices();
-		int endPoint = startPoint;//TODO fix power pill sensors
-//		if(powerPillIndices[0] == 1.0) { 
-//			inputs[startPoint++] = 1.0;
-//		} else if (powerPillIndices[1] == 1.0) {
-//			inputs[startPoint++] = 1.0;
-//		} else if (powerPillIndices[2] == 1.0) {
-//			inputs[startPoint++] = 1.0;
-//		} else {
-//			inputs[startPoint++] = 1.0;
-//		}
+		int endPoint = startPoint;
 		int xMiddle = (MsPacManTask.MS_PAC_MAN_SUBSTRATE_WIDTH / 2);
 		int yMiddle = (MsPacManTask.MS_PAC_MAN_SUBSTRATE_HEIGHT / 2);
 		for(int i = 0; i < powerPillIndices.length; i++) {
@@ -69,7 +60,7 @@ public class SubstratePowerPillSensorBlock extends MsPacManSensorBlock {
 	 * @return num sensors added
 	 */
 	public int numberAdded() {
-		return Constants.NUM_POWER_PILLS; // magic number!
+		return Constants.NUM_POWER_PILLS;
 	}
 
 	

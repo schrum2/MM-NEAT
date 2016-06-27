@@ -18,10 +18,6 @@ public class NNHyperNEATPacManController extends NNPacManController {
 	public int getDirection(GameFacade gf) {
 		double[] inputs = inputMediator.getInputs(gf, gf.getPacmanLastMoveMade());
 		double[] outputs = nn.process(inputs);
-		System.out.println("-----------Ms PacMan info------------");
-		System.out.println("inputs: " + Arrays.toString(inputs));
-		System.out.println("Network: " + nn.toString());
-		System.out.println("outputs: " + Arrays.toString(outputs));
 /** the size of the output substrate is incorrect for this below schematic
 		int chosenNode = -1;
 		double nodePreference = Double.NEGATIVE_INFINITY;		
