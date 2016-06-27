@@ -65,7 +65,7 @@ public class HyperNEATTetrisTask<T extends Network> extends TetrisTask<T> implem
 				substrateConnectivity.add(new Pair<String, String>("process_" + i, "process_" + (i + 1)));
 			}
 			substrateConnectivity.add(new Pair<String, String>("process_" + (numProcessLayers - 1), "output_0"));
-			if(Parameters.parameters.booleanParameter("extraHNTetrisLinks")) {
+			if(Parameters.parameters.booleanParameter("extraHNLinks")) {
 				substrateConnectivity.add(new Pair<String, String>("input_0", "output_0"));
 				if(CommonConstants.splitRawTetrisInputs) {
 					substrateConnectivity.add(new Pair<String, String>("input_1", "output_0"));
