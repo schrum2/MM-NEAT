@@ -50,8 +50,8 @@ import pacman.game.Game;
 public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements TUGTask, NetworkTask, HyperNEATTask {
 
 	public static final int SUB_COORD_INDEX = 2;
-	public static final int MS_PAC_MAN_SUBSTRATE_WIDTH = 108;
-	public static final int MS_PAC_MAN_SUBSTRATE_HEIGHT = 116;
+	public static final int MS_PAC_MAN_SUBSTRATE_WIDTH = 109;
+	public static final int MS_PAC_MAN_SUBSTRATE_HEIGHT = 117;
 	public static final int MS_PAC_MAN_SUBSTRATE_SIZE = MS_PAC_MAN_SUBSTRATE_WIDTH * MS_PAC_MAN_SUBSTRATE_HEIGHT;
 	public static String saveFilePrefix = "";
 	//boolean variables
@@ -571,15 +571,15 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 			subs.add(processSubstrate);
 			subs.add(outputSubstrate);
 		} else {
-//			Substrate pillSubstrate = new Substrate(subSize, Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, 0, 0), "Pill_0");
-			Substrate powerPillSubstrate = new Substrate(new Pair<Integer, Integer>(2, 2), Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(SUB_COORD_INDEX, 0, 0), "Power_1");
+			Substrate pillSubstrate = new Substrate(subSize, Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, 0, 0), "Pill_0");
+//			Substrate powerPillSubstrate = new Substrate(new Pair<Integer, Integer>(2, 2), Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(SUB_COORD_INDEX, 0, 0), "Power_1");
 //			Substrate ghostSubstrate = new Substrate(subSize, Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, SUB_COORD_INDEX, 0), "Ghost_2");
 //			Substrate pacManSubstrate = new Substrate(subSize, Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(SUB_COORD_INDEX, SUB_COORD_INDEX, 0), "PacMan_4");
 //			Substrate processSubstrate = new Substrate(subSize, Substrate.PROCCESS_SUBSTRATE, new Triple<Integer, Integer, Integer>((int) (SUB_COORD_INDEX/2.0), (int) (SUB_COORD_INDEX/2.0), SUB_COORD_INDEX), "P_0");
 			Substrate processSubstrate = new Substrate(new Pair<Integer, Integer>(3, 3), Substrate.PROCCESS_SUBSTRATE, new Triple<Integer, Integer, Integer>((int) (SUB_COORD_INDEX/2.0), (int) (SUB_COORD_INDEX/2.0), SUB_COORD_INDEX), "P_0");
 			Substrate outputSubstrate = new Substrate(new Pair<Integer, Integer>(3, 3), Substrate.OUTPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>( (int) (SUB_COORD_INDEX/2.0), (int) (SUB_COORD_INDEX/2.0),SUB_COORD_INDEX * 2), "O_0");
-//			subs.add(pillSubstrate);
-			subs.add(powerPillSubstrate);
+			subs.add(pillSubstrate);
+//			subs.add(powerPillSubstrate);
 //			subs.add(ghostSubstrate);
 //			subs.add(pacManSubstrate);
 			subs.add(processSubstrate);
@@ -612,8 +612,8 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 				connections.add(new Pair<String, String>("PacMan_4", "O_0"));
 			}
 		} else {
-//			connections.add(new Pair<String, String>("Pill_0", "P_0"));
-			connections.add(new Pair<String, String>("Power_1", "P_0"));
+			connections.add(new Pair<String, String>("Pill_0", "P_0"));
+//			connections.add(new Pair<String, String>("Power_1", "P_0"));
 //			connections.add(new Pair<String, String>("Ghost_2", "P_0"));
 //			connections.add(new Pair<String, String>("PacMan_4", "P_0"));
 			connections.add(new Pair<String, String>("P_0", "O_0"));

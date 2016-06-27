@@ -17,8 +17,8 @@ public class MsPacManHyperNEATMediator extends BlockLoadedInputOutputMediator {
 	 *  necessary sensor blocks together
 	 */
 	public MsPacManHyperNEATMediator() {
-	//	blocks.add(new SubstratePillsSensorBlock());
-		blocks.add(new SubstratePowerPillSensorBlock());
+		blocks.add(new SubstratePillsSensorBlock());
+//		blocks.add(new SubstratePowerPillSensorBlock());
 	//	blocks.add(new SubstrateGhostSensorBlock());
 //		blocks.add(new SubstratePacManSensorBlock());
 	}
