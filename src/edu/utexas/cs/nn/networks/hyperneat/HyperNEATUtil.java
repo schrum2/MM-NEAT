@@ -31,7 +31,7 @@ public class HyperNEATUtil {
 		if(substratePanels == null) {
 			hyperNEATTask = (HyperNEATTask) MMNEAT.task;
 			substrates = hyperNEATTask.getSubstrateInformation();
-			System.out.println(substrates.toString());
+//			System.out.println(substrates.toString());
 			substratePanels = new ArrayList<DrawingPanel>();
 			int nodeIndexStart = 0;
 			int substratePlacing = 0;

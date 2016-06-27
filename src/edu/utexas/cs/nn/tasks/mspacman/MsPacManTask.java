@@ -102,6 +102,8 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 	protected int usedGhostScoreIndex = -1;
 	public int[] pillTimeFrameIndices;
 	public int[] ghostTimeFrameIndices;
+	public List<Substrate> subs;
+	public List<Pair<String, String>> connections;
 	private final boolean eachComponentTracksScoreToo;
 	private final boolean plainGhostScore;
 	private final TrainingCampManager tcManager;
@@ -549,11 +551,12 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 
 	@Override
 	public List<Substrate> getSubstrateInformation() {
+		if(subs == null) {
 		boolean everything = false;
 		ArrayList<Substrate> subs = new ArrayList<Substrate>();
 		Pair<Integer, Integer> subSize = new Pair<>(MS_PAC_MAN_SUBSTRATE_WIDTH, MS_PAC_MAN_SUBSTRATE_HEIGHT);
 		if(everything) {
-			Substrate pillSubstrate = new Substrate(subSize, Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, 0, 0), "Pill_0");
+			Substrate pillSubstrate = new Substrate(subSize, Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, 0, 0), "Pill_0");//TODO these substrates are 12,500 links l
 			Substrate powerSubstrate = new Substrate(subSize, Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(SUB_COORD_INDEX, 0, 0), "Power_1");
 			Substrate threatSubstrate = new Substrate(subSize, Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, SUB_COORD_INDEX, 0), "Threat_2");
 			Substrate edibleSubstrate = new Substrate(subSize, Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(SUB_COORD_INDEX, SUB_COORD_INDEX, 0), "Edible_3");
@@ -568,25 +571,30 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 			subs.add(processSubstrate);
 			subs.add(outputSubstrate);
 		} else {
-			Substrate pillSubstrate = new Substrate(subSize, Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, 0, 0), "Pill_0");
-			Substrate powerPillSubstrate = new Substrate(new Pair<Integer, Integer>(3, 3), Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(SUB_COORD_INDEX, 0, 0), "Power_1");
-			Substrate ghostSubstrate = new Substrate(subSize, Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, SUB_COORD_INDEX, 0), "Ghost_2");
-			Substrate pacManSubstrate = new Substrate(subSize, Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(SUB_COORD_INDEX, SUB_COORD_INDEX, 0), "PacMan_4");
-			Substrate processSubstrate = new Substrate(subSize, Substrate.PROCCESS_SUBSTRATE, new Triple<Integer, Integer, Integer>((int) (SUB_COORD_INDEX/2.0), (int) (SUB_COORD_INDEX/2.0), SUB_COORD_INDEX), "P_0");
+//			Substrate pillSubstrate = new Substrate(subSize, Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, 0, 0), "Pill_0");
+			Substrate powerPillSubstrate = new Substrate(new Pair<Integer, Integer>(2, 2), Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(SUB_COORD_INDEX, 0, 0), "Power_1");
+//			Substrate ghostSubstrate = new Substrate(subSize, Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, SUB_COORD_INDEX, 0), "Ghost_2");
+//			Substrate pacManSubstrate = new Substrate(subSize, Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(SUB_COORD_INDEX, SUB_COORD_INDEX, 0), "PacMan_4");
+//			Substrate processSubstrate = new Substrate(subSize, Substrate.PROCCESS_SUBSTRATE, new Triple<Integer, Integer, Integer>((int) (SUB_COORD_INDEX/2.0), (int) (SUB_COORD_INDEX/2.0), SUB_COORD_INDEX), "P_0");
+			Substrate processSubstrate = new Substrate(new Pair<Integer, Integer>(3, 3), Substrate.PROCCESS_SUBSTRATE, new Triple<Integer, Integer, Integer>((int) (SUB_COORD_INDEX/2.0), (int) (SUB_COORD_INDEX/2.0), SUB_COORD_INDEX), "P_0");
 			Substrate outputSubstrate = new Substrate(new Pair<Integer, Integer>(3, 3), Substrate.OUTPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>( (int) (SUB_COORD_INDEX/2.0), (int) (SUB_COORD_INDEX/2.0),SUB_COORD_INDEX * 2), "O_0");
-			subs.add(pillSubstrate);
+//			subs.add(pillSubstrate);
 			subs.add(powerPillSubstrate);
-			subs.add(ghostSubstrate);
-			subs.add(pacManSubstrate);
+//			subs.add(ghostSubstrate);
+//			subs.add(pacManSubstrate);
 			subs.add(processSubstrate);
 			subs.add(outputSubstrate); 
 		}
-
+		this.subs = subs;
 		return subs;
+		} else {
+			return subs;
+		}
 	}
 
 	@Override
 	public List<Pair<String, String>> getSubstrateConnectivity() {
+		if(connections == null) {
 		boolean everything = false;
 		List<Pair<String, String>> connections = new ArrayList<Pair<String, String>>();
 		if(everything) {
@@ -604,13 +612,17 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 				connections.add(new Pair<String, String>("PacMan_4", "O_0"));
 			}
 		} else {
-			connections.add(new Pair<String, String>("Pill_0", "P_0"));
+//			connections.add(new Pair<String, String>("Pill_0", "P_0"));
 			connections.add(new Pair<String, String>("Power_1", "P_0"));
-			connections.add(new Pair<String, String>("Ghost_2", "P_0"));
-			connections.add(new Pair<String, String>("PacMan_4", "P_0"));
+//			connections.add(new Pair<String, String>("Ghost_2", "P_0"));
+//			connections.add(new Pair<String, String>("PacMan_4", "P_0"));
 			connections.add(new Pair<String, String>("P_0", "O_0"));
+//			connections.add(new Pair<String, String>("PacMan_4", "O_0"));
 		}
-
+		this.connections = connections;
 		return connections;
+		} else {
+			return connections;
+		}
 	}
 }

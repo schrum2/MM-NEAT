@@ -3,6 +3,7 @@ package edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.hyperneat;
 import edu.utexas.cs.nn.tasks.mspacman.MsPacManTask;
 import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
 import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.MsPacManSensorBlock;
+import pacman.game.Constants;
 /**
  * Gets sensor block for power pill substrate in hyperNEAT msPacMan task
  * @author Lauren Gillespie
@@ -20,21 +21,32 @@ public class SubstratePowerPillSensorBlock extends MsPacManSensorBlock {
 	 */
 	public int incorporateSensors(double[] inputs, int startPoint, GameFacade gf, int lastDirection) {
 		int[] powerPillIndices = gf.getActivePowerPillsIndices();
-		int endPoint = startPoint;
+		int endPoint = startPoint;//TODO fix power pill sensors
+//		if(powerPillIndices[0] == 1.0) { 
+//			inputs[startPoint++] = 1.0;
+//		} else if (powerPillIndices[1] == 1.0) {
+//			inputs[startPoint++] = 1.0;
+//		} else if (powerPillIndices[2] == 1.0) {
+//			inputs[startPoint++] = 1.0;
+//		} else {
+//			inputs[startPoint++] = 1.0;
+//		}
+		int xMiddle = (MsPacManTask.MS_PAC_MAN_SUBSTRATE_WIDTH / 2);
+		int yMiddle = (MsPacManTask.MS_PAC_MAN_SUBSTRATE_HEIGHT / 2);
 		for(int i = 0; i < powerPillIndices.length; i++) {
 			int x = gf.getNodeXCoord(powerPillIndices[i]);
 			int y = gf.getNodeYCoord(powerPillIndices[i]);
-			if(x < MsPacManTask.MS_PAC_MAN_SUBSTRATE_WIDTH / 2 && y < MsPacManTask.MS_PAC_MAN_SUBSTRATE_HEIGHT) { 
-				inputs[startPoint] = 1;
-			} else if(x > MsPacManTask.MS_PAC_MAN_SUBSTRATE_WIDTH / 2 && y < MsPacManTask.MS_PAC_MAN_SUBSTRATE_HEIGHT){
-				inputs[startPoint++] = 1;
-			} else if(x < MsPacManTask.MS_PAC_MAN_SUBSTRATE_WIDTH / 2 && y > MsPacManTask.MS_PAC_MAN_SUBSTRATE_HEIGHT) {
-				inputs[startPoint + 2] = 1;
-			} else {
-				inputs[startPoint + 3] = 1;
+			if(x < xMiddle && y < yMiddle) { 
+				inputs[startPoint + 0] = 1.0;
+			} else if(x > xMiddle && y < yMiddle){
+				inputs[startPoint + 1] = 1.0;
+			} else if(x < xMiddle && y > yMiddle) {
+				inputs[startPoint + 2] = 1.0;
+			} else if(x > xMiddle && y > yMiddle){
+				inputs[startPoint + 3] = 1.0;
 			}
 		}
-		return endPoint + 4;
+		return endPoint + Constants.NUM_POWER_PILLS;
 	}
 
 	@Override
@@ -57,7 +69,7 @@ public class SubstratePowerPillSensorBlock extends MsPacManSensorBlock {
 	 * @return num sensors added
 	 */
 	public int numberAdded() {
-		return 4; // magic number!
+		return Constants.NUM_POWER_PILLS; // magic number!
 	}
 
 	

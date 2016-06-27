@@ -75,6 +75,7 @@ public final class Constants {
 		PATH, EUCLID, MANHATTAN
 	};
 
+	public static final int NUM_POWER_PILLS = 4;
 	public static final int PILL = 10; // points for a normal pill
 	public static final int POWER_PILL = 50; // points for a power pill
 	public static final int GHOST_EAT_SCORE = 200; // score for the first ghost
