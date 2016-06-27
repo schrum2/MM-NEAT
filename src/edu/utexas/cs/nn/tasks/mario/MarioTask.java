@@ -40,14 +40,14 @@ public class MarioTask<T extends Network> extends NoisyLonerTask<T>implements Ne
         
         if(Parameters.parameters.booleanParameter("moMario")){
         	 MMNEAT.registerFitnessFunction("Time");
-        	 MMNEAT.registerFitnessFunction("Hits");
+        	 //MMNEAT.registerFitnessFunction("Hits");
         }
 	}
 	
 	@Override
 	public int numObjectives() {
 		if(Parameters.parameters.booleanParameter("moMario")){
-			return 3;
+			return 2;
 		} else {
 			return 1;
 		}
@@ -108,7 +108,8 @@ public class MarioTask<T extends Network> extends NoisyLonerTask<T>implements Ne
 		distanceTravelled = distanceTravelled / results.size();
 		
 		if(Parameters.parameters.booleanParameter("moMario")){
-			evalResults = new Pair<double[], double[]>(new double[] { distanceTravelled, timeSpent, marioMode }, new double[0]);
+			//evalResults = new Pair<double[], double[]>(new double[] { distanceTravelled, timeSpent, marioMode }, new double[0]);
+			evalResults = new Pair<double[], double[]>(new double[] { distanceTravelled, timeSpent }, new double[0]);
 		} else {
 			evalResults = new Pair<double[], double[]>(new double[] { distanceTravelled }, new double[0]);			
 		}
