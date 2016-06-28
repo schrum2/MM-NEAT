@@ -527,7 +527,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 		new MeltThenFreezeAlternateMutation().go(this, sb);
 		// Delete
 		new DeleteLinkMutation().go(this, sb);
-		new DeleteModeMutation().go(this, sb);
+		//new DeleteModeMutation().go(this, sb); // Disabled until fixed; currently not supported
 		if (CommonConstants.allowMultipleFunctions) { // Can turn a TWEANN into a CPPN
 			new ActivationFunctionMutation().go(this, sb);
 		}

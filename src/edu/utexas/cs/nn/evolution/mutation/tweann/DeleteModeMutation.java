@@ -7,6 +7,10 @@ import edu.utexas.cs.nn.parameters.CommonConstants;
 
 /**
  *
+ *This mutation operator currently does not work because of
+ *details with how the network archetype manages innovation numbers
+ *and node layout. DO NOT USE.
+ *
  * @author Jacob Schrum
  */
 public class DeleteModeMutation extends TWEANNMutation {
@@ -17,6 +21,7 @@ public class DeleteModeMutation extends TWEANNMutation {
 	public DeleteModeMutation() {
 		//command line parameter, "Mutation rate for deleting network modes"
 		super("deleteModeRate");
+		throw new UnsupportedOperationException("Mode deletion currently does not work");
 	}
 
 	/**
