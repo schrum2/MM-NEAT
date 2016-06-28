@@ -41,24 +41,31 @@ public class MeltThenFreezePolicyMutationTest {//TODO
 
 	@Test
 	public void test() {
-		int numPolicy = 2 * tg1.numOut;
 		ArrayList<NodeGene> nodes = tg1.nodes;
 		for(int i = 0; i < tg1.nodes.size(); i++) {
 			NodeGene node = nodes.get(i);
 			if(node.ntype == Node.NTYPE_INPUT || node.ntype == Node.NTYPE_HIDDEN) {
 				node.freeze();
+			}
+		}
+		for(NodeGene node : nodes) {
+			if(node.ntype == Node.NTYPE_INPUT || node.ntype == Node.NTYPE_HIDDEN) {
 				assertEquals(node.frozen, true);
 			}
 		}
+		//System.out.println("mtfpm is not null: " + mtfpm != null);
+		System.out.println("nodes before:" + tg1.nodes.toString());
 		mtfpm.mutate(tg1);
-		 int numFrozen = 0;
-		for(NodeGene node : nodes) {
+		nodes = tg1.nodes;
+		int numFrozen = 0;
+		for(NodeGene node : tg1.nodes) {
 			if(node.frozen) {
 				numFrozen++;
 			}
 		}
-		System.out.println("num outputs: " + tg1.numOut + " num policy as calculated: " + numPolicy);
-		assertEquals(numFrozen, tg1.numOut);
+		System.out.println("num outputs: " + tg1.numOut + " num policy as calculated: " + ((tg1.numIn * 2)- tg1.numModules) + " num modules: " + tg1.numModules);
+		System.out.println("Nodes after:" + tg1.nodes.toString());
+		assertEquals(numFrozen, tg1.nodes.size() - tg1.numModules);
 	}
 
 }

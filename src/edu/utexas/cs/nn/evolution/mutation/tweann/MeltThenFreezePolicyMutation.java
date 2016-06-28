@@ -25,5 +25,6 @@ public class MeltThenFreezePolicyMutation extends TWEANNMutation {
 	public void mutate(Genotype<TWEANN> genotype) {
 		((TWEANNGenotype) genotype).meltNetwork();//melts network
 		((TWEANNGenotype) genotype).freezePolicyNeurons();//freezes policy neuron
+		System.out.println("mtfpm " + genotype.toString());
 	}
 }

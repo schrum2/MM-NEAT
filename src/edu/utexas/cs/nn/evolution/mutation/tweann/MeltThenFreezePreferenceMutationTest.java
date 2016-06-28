@@ -43,14 +43,17 @@ public class MeltThenFreezePreferenceMutationTest {//TODO
 				assertEquals(node.frozen, true);
 			}
 		}
+
+		System.out.println("nodes before: " + tg1.nodes.toString());
 		mtfpm.mutate(tg1);
+		System.out.println("nodes after: " + tg1.nodes.toString());
 		int numFrozen = 0;
 		for(NodeGene node : tg1.nodes) {
 			if(node.frozen) {
 				numFrozen++;
 			}
 		}
-		assertEquals(numFrozen, tg1.numModules);
+		assertTrue(numFrozen == tg1.numModules +1 || numFrozen == tg1.numModules + 2);
 	}
 
 }
