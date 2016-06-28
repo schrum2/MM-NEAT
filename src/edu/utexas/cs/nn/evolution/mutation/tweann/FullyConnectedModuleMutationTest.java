@@ -56,6 +56,7 @@ public class FullyConnectedModuleMutationTest {
 		ArrayList<LinkGene> links = tg1.links;
 		fcmm.addModule(tg1);
 		assertFalse(tg1.numModules == tg2.numModules());
-		assertEquals(links, tg1.links);		
+		assertEquals(links.size(), tg1.links.size());
+		assertTrue(links.equals(tg1.links));
 	}
 }
