@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import org.rlcommunity.rlglue.codec.AgentInterface;
+import org.rlcommunity.rlglue.codec.LocalGlue;
 import org.rlcommunity.rlglue.codec.NetGlue;
 import org.rlcommunity.rlglue.codec.RLGlue;
 import org.rlcommunity.rlglue.codec.util.AgentLoader;
@@ -43,8 +44,8 @@ public class RLGlueTask<T extends Network> extends NoisyLonerTask<T>implements N
 	 * Initialize the elements to be used here
 	 */
 	protected static Process rlglue = null;
-	protected static AgentLoader agentLoader = null;
-	protected static EnvironmentLoader environmentLoader = null;
+	//protected static AgentLoader agentLoader = null;
+	//protected static EnvironmentLoader environmentLoader = null;
 	protected static RLGlueEnvironment environment;
 	@SuppressWarnings("rawtypes") // Needs static access, and type T isn't known yet
 	public static RLGlueAgent agent;
@@ -86,7 +87,7 @@ public class RLGlueTask<T extends Network> extends NoisyLonerTask<T>implements N
 		 * components.
 		 */
 		if (environment != null && rlglue == null) {
-			launchRLGlue();
+			//launchRLGlue();
 			/*
 			 * RL-Glue runs the Agent, Environment and Experiment separately so
 			 * this class needs to launch the Agent and Environment as well
@@ -98,9 +99,10 @@ public class RLGlueTask<T extends Network> extends NoisyLonerTask<T>implements N
 				System.out.println("Could not launch RLGlue agent");
 				System.exit(1);
 			}
-			launchAgent(agent);
-			launchEnvironment(environment);
-			RLGlue.setGlue(new NetGlue("localhost", rlGluePort));
+			//launchAgent(agent);
+			//launchEnvironment(environment);
+			//RLGlue.setGlue(new NetGlue("localhost", rlGluePort));
+			RLGlue.setGlue(new LocalGlue(environment, agent));
 		}
 	}
 
@@ -198,17 +200,17 @@ public class RLGlueTask<T extends Network> extends NoisyLonerTask<T>implements N
 	 * @param agent
 	 *            An agent for RL Glue tasks
 	 */
-	public final void launchAgent(final AgentInterface agent) {
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				agentLoader = new AgentLoader("localhost", "" + rlGluePort, agent);
-				// agentLoader = new AgentLoader(agent);
-				agentLoader.run();
-				System.out.println("Agent done running");
-			}
-		}).start();
-	}
+//	public final void launchAgent(final AgentInterface agent) {
+//		new Thread(new Runnable() {
+//			@Override
+//			public void run() {
+//				agentLoader = new AgentLoader("localhost", "" + rlGluePort, agent);
+//				// agentLoader = new AgentLoader(agent);
+//				agentLoader.run();
+//				System.out.println("Agent done running");
+//			}
+//		}).start();
+//	}
 
 	/**
 	 * Launches the environment using threads
@@ -216,17 +218,17 @@ public class RLGlueTask<T extends Network> extends NoisyLonerTask<T>implements N
 	 * @param environment
 	 *            an RLGlueEnvironment environment
 	 */
-	public final void launchEnvironment(final RLGlueEnvironment environment) {
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				environmentLoader = new EnvironmentLoader("localhost", "" + rlGluePort, environment);
-				// environmentLoader = new EnvironmentLoader(environment);
-				environmentLoader.run();
-				System.out.println("Environment done running");
-			}
-		}).start();
-	}
+//	public final void launchEnvironment(final RLGlueEnvironment environment) {
+//		new Thread(new Runnable() {
+//			@Override
+//			public void run() {
+//				environmentLoader = new EnvironmentLoader("localhost", "" + rlGluePort, environment);
+//				// environmentLoader = new EnvironmentLoader(environment);
+//				environmentLoader.run();
+//				System.out.println("Environment done running");
+//			}
+//		}).start();
+//	}
 
 	/**
 	 * Returns the number of objectives
