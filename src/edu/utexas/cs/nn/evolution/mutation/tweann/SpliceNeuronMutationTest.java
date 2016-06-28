@@ -37,22 +37,34 @@ public class SpliceNeuronMutationTest {
 		System.out.println("tg1: " + nodes);
 		SpliceNeuronMutation SNM = new SpliceNeuronMutation();
 		double[] originalInnovations = new double[nodes.size()];
+		int[] originalNodeTypes = new int[nodes.size()];
 		System.out.println("  Original: " + nodes.size());
 		for(int i = 0; i < nodes.size(); i++) {
 			assertTrue(nodes.get(i).ntype != Node.NTYPE_HIDDEN);
+			originalNodeTypes[i] = nodes.get(i).ntype;
 			originalInnovations[i] = nodes.get(i).innovation;
 			System.out.println("	Innovation at " + i + " is " + nodes.get(i).innovation);
 		}
 		SNM.mutate(tg1);
 		double[] mutatedInnovations = new double[nodes.size()];
+		int[] mutatedNodeTypes = new int[nodes.size()];
 		System.out.println("  Mutated: " + nodes.size());
 		for(int j = 0; j < nodes.size(); j++) {
+			mutatedNodeTypes[j] = nodes.get(j).ntype;
 			mutatedInnovations[j] = nodes.get(j).innovation;
 			System.out.println("	Innovation at " + j + " is " + nodes.get(j).innovation);
 		}
 		
 		assertEquals(originalInnovations.length+1, mutatedInnovations.length);
 		assertFalse(originalInnovations.equals(mutatedInnovations));
+		int buffer = 1;
+		for(int n = 0; n < buffer; n++){
+			if(originalNodeTypes[n] != mutatedNodeTypes[n]){
+				assertEquals(mutatedNodeTypes[n], Node.NTYPE_HIDDEN);
+			} else {
+				buffer++;
+			}
+		}
 	}
 
 }
