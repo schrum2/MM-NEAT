@@ -864,7 +864,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 	 *            = linkInnovations of sourceInnovation node
 	 * @return = null on failure, LinkGene otherwise
 	 */
-	protected LinkGene getLinkBetween(long sourceInnovation, long targetInnovation) {
+	public LinkGene getLinkBetween(long sourceInnovation, long targetInnovation) {
 		for (LinkGene l : links) {
 			if (l.sourceInnovation == sourceInnovation && l.targetInnovation == targetInnovation) {
 				return l;

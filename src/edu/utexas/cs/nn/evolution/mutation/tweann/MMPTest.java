@@ -9,13 +9,14 @@ import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
 import edu.utexas.cs.nn.evolution.crossover.network.TWEANNCrossover;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
+import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype.LinkGene;
 import edu.utexas.cs.nn.graphics.DrawingPanel;
 import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.parameters.Parameters;
 
 public class MMPTest {
 
-	TWEANNGenotype tg1, tg2;
+	TWEANNGenotype tg1;
 	MMP mmp1;
 	final int MUTATIONS1 = 30;
 
@@ -27,45 +28,23 @@ public class MMPTest {
 		tg1 = new TWEANNGenotype(MMNEAT.networkInputs, MMNEAT.networkOutputs, 0);
 		MMNEAT.genotype = tg1.copy();
 		EvolutionaryHistory.initArchetype(0);
-		mutate(tg1);
+		mmp1 = new MMP();
 	}
-
-	public void mutate(TWEANNGenotype tg1) {
-		for (int i = 0; i < MUTATIONS1; i++) {
-			tg1.mutate();
-		}
-	}
-
 	@Test
 	public void test_moduleMutation() {
-		tg2 = (TWEANNGenotype) tg1.copy();
-		new MMP().mutate(tg1);
+		assertEquals(tg1.numOut, 4);
+		mmp1.mutate(tg1);
 		assertEquals(tg1.numModules, 2);
+		assertEquals(tg1.numOut, 8);
 		TWEANN t1 = tg1.getPhenotype();
-		int numNeuronsPerModule = t1.neuronsPerModule();
-		assertEquals(tg1.links.get(numNeuronsPerModule - 1).sourceInnovation, tg1.links.get(tg1.links.size()-1).sourceInnovation);
-		//for(int i = 0; i < )
-		// tg1.
-
-		// //test 1. Tests if moduleMutation method changes number of modules
-		// tg2 = (TWEANNGenotype) tg1.copy();
-		// int numLinksTryingToAdd = 1;
-		// int numLinksAdded = tg1.moduleMutation(false, numLinksTryingToAdd);
-		// assertTrue(tg1.numModules != tg2.numModules);
-		// assertFalse(numLinksAdded == numLinksTryingToAdd);
-		// new MMP().mutate(tg2);
-		// assertFalse(TWEANNGenotype.sameStructure(tg2, tg1));
-		//
-		//
-		// //test 2
-		// mutate(tg1);
-		// mutate(tg2);
-		// TWEANNCrossover cross = new TWEANNCrossover();
-		// TWEANNGenotype new2 = (TWEANNGenotype) cross.crossover(tg1, tg2);
-		// assertFalse(TWEANNGenotype.sameStructure(tg1, new2));
+		int module1Index = tg1.numIn;
+		int module2Index = t1.neuronsPerModule() + 1 + module1Index;
+		assertTrue(tg1.getLinkBetween(tg1.nodes.get(module1Index + 0).innovation, tg1.nodes.get(module2Index + 0).innovation) != null);
+		assertTrue(tg1.getLinkBetween(tg1.nodes.get(module1Index + 1).innovation, tg1.nodes.get(module2Index + 1).innovation) != null);
+		assertTrue(tg1.getLinkBetween(tg1.nodes.get(module1Index + 2).innovation, tg1.nodes.get(module2Index + 2).innovation) != null);
 
 	}
-	public static void main(String[] args) {
+		{
 		Parameters.initializeParameterCollections(new String[] { "io:false", "recurrency:false", "mmdRate:0.1" });
 		MMNEAT.loadClasses();
 		TWEANNGenotype tg1 = new TWEANNGenotype(5, 2, 0);
