@@ -47,8 +47,11 @@ public class NNHyperNEATPacManController extends NNPacManController {
 		return StatisticsUtilities.argmax(realOutputs);
 	}
 	
-	public static int getOutputIndexFromNodeCoord(int x, int y) { 
-		int index = (y * MsPacManTask.MS_PAC_MAN_SUBSTRATE_WIDTH) + x;
+	public static int getOutputIndexFromNodeCoord(int x, int y) {
+                int scaledX = x / MsPacManTask.MS_PAC_MAN_NODE_DIM;
+                int scaledY = y / MsPacManTask.MS_PAC_MAN_NODE_DIM;
+		int index = (scaledY * MsPacManTask.MS_PAC_MAN_SUBSTRATE_WIDTH) + scaledX;
+                //System.out.println("x:"+x+",y:"+y+",scaledX:"+scaledX+",scaledY:"+scaledY+",index:"+index);
 		return index;
 	}
 }

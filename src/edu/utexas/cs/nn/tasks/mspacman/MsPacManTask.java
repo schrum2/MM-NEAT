@@ -50,8 +50,14 @@ import pacman.game.Game;
 public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements TUGTask, NetworkTask, HyperNEATTask {
 
 	public static final int SUB_COORD_INDEX = 2;
-	public static final int MS_PAC_MAN_SUBSTRATE_WIDTH = 109;
-	public static final int MS_PAC_MAN_SUBSTRATE_HEIGHT = 117;
+        // Approximate size of Ms. Pac-Man screen in terms of nodes
+        public static final int MS_PAC_MAN_NODE_WIDTH = 112;
+        public static final int MS_PAC_MAN_NODE_HEIGHT = 120;
+        // Number of nodes between pills (effective cell size)
+        public static final int MS_PAC_MAN_NODE_DIM = 4;
+        // Size of substrate in terms of cells
+	public static final int MS_PAC_MAN_SUBSTRATE_WIDTH = MS_PAC_MAN_NODE_WIDTH/MS_PAC_MAN_NODE_DIM;
+	public static final int MS_PAC_MAN_SUBSTRATE_HEIGHT = MS_PAC_MAN_NODE_HEIGHT/MS_PAC_MAN_NODE_DIM;
 	public static final int MS_PAC_MAN_SUBSTRATE_SIZE = MS_PAC_MAN_SUBSTRATE_WIDTH * MS_PAC_MAN_SUBSTRATE_HEIGHT;
 	public static String saveFilePrefix = "";
 	//boolean variables
