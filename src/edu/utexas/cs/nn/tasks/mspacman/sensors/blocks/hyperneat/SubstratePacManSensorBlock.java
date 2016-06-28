@@ -31,7 +31,7 @@ public class SubstratePacManSensorBlock  extends FullScreenSubstrateSensorBlock{
 		int pacManIndex = gf.getPacmanCurrentNodeIndex();
 			int x = gf.getNodeXCoord(pacManIndex);
 			int y = gf.getNodeYCoord(pacManIndex);
-			inputs[NNHyperNEATPacManController.getOutputIndexFromNodeCoord(x, y)] = 1;
+			inputs[startPoint + NNHyperNEATPacManController.getOutputIndexFromNodeCoord(x, y)] = 1;
 		return startPoint + numberAdded();
 	}
 
