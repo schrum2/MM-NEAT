@@ -40,19 +40,21 @@ public class ActivationFunctionMutationTest {
 		ArrayList<Integer> originalFunc = new ArrayList<Integer>();
 		ArrayList<Integer> mutatedFunc = new ArrayList<Integer>();
 		ActivationFunctionMutation afm = new ActivationFunctionMutation();
-		System.out.println("original nodes: "  + originalNodes.toString());
-		for(int i = 0; i < 100; i ++) {
-			afm.mutate(tg1);
-			tg1.mutate();
-		}
-		System.out.println("new nodes: " + tg1.nodes.toString());
+		//System.out.println("original nodes: "  + originalNodes.toString());
+		TWEANNGenotype tg2 = (TWEANNGenotype) tg1.copy();
+		
+		afm.mutate(tg2);
+		tg2.mutate();
+
+		//System.out.println("new nodes: " + tg1.nodes.toString());
 		for(int i = 0; i < originalNodes.size(); i++) { 
-			originalFunc.add(originalNodes.get(i).ftype);
-			mutatedFunc.add(tg1.nodes.get(i).ftype);
+			originalFunc.add(tg1.nodes.get(i).ftype);
+			mutatedFunc.add(tg2.nodes.get(i).ftype);
 		}
 		System.out.println("original functions: " + originalFunc.toString());
 		System.out.println("new functions: " + mutatedFunc.toString());
 		assertFalse(originalFunc.equals(mutatedFunc));
+
 	}
 
 }
