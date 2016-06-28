@@ -58,6 +58,9 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 	public static final int MS_PAC_MAN_SUBSTRATE_WIDTH = MS_PAC_MAN_NODE_WIDTH/MS_PAC_MAN_NODE_DIM;
 	public static final int MS_PAC_MAN_SUBSTRATE_HEIGHT = MS_PAC_MAN_NODE_HEIGHT/MS_PAC_MAN_NODE_DIM;
 	public static final int MS_PAC_MAN_SUBSTRATE_SIZE = MS_PAC_MAN_SUBSTRATE_WIDTH * MS_PAC_MAN_SUBSTRATE_HEIGHT;
+        public List<Substrate> subs = null; // filled below
+	public List<Pair<String, String>> connections = null; // filled below
+        
 	public static String saveFilePrefix = "";
 	//boolean variables
 	protected boolean deterministic;
@@ -107,8 +110,6 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 	protected int usedGhostScoreIndex = -1;
 	public int[] pillTimeFrameIndices;
 	public int[] ghostTimeFrameIndices;
-	public List<Substrate> subs;
-	public List<Pair<String, String>> connections;
 	private final boolean eachComponentTracksScoreToo;
 	private final boolean plainGhostScore;
 	private final TrainingCampManager tcManager;
@@ -559,13 +560,14 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 		if(subs == null) {
 			subs = new ArrayList<Substrate>();
 			Pair<Integer, Integer> subSize = new Pair<>(MS_PAC_MAN_SUBSTRATE_WIDTH, MS_PAC_MAN_SUBSTRATE_HEIGHT);
-			Substrate pillSubstrate = new Substrate(subSize, Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, 0, 0), "Pills");
+                        Pair<Integer, Integer> processSize = new Pair<>(10,10);
+                        Substrate pillSubstrate = new Substrate(subSize, Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, 0, 0), "Pills");
 			// TODO consider making a full-screen substrate
                         Substrate powerPillSubstrate = new Substrate(new Pair<Integer, Integer>(2, 2), Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(1, 0, 0), "PowerPills");
 			// TODO consider splitting into threat and edible substrates
                         Substrate ghostSubstrate = new Substrate(subSize, Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(2, 0, 0), "Ghosts");
 			Substrate pacManSubstrate = new Substrate(subSize, Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(3, 0, 0), "MsPacMan");
-			Substrate processSubstrate = new Substrate(new Pair<Integer, Integer>(3, 3), Substrate.PROCCESS_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, 1, 0), "P_0");
+			Substrate processSubstrate = new Substrate(processSize, Substrate.PROCCESS_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, 1, 0), "P_0");
 			Substrate outputSubstrate = new Substrate(new Pair<Integer, Integer>(3, 3), Substrate.OUTPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, 2, 0), "O_0");
 			subs.add(pillSubstrate);
 			subs.add(powerPillSubstrate);
