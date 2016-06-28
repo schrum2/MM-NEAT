@@ -577,7 +577,7 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 		int start = (color == NUM_COLORS ? 0 : color);
 		int end = (color == NUM_COLORS ? NUM_COLORS : color + 1);
 		for(int i = start; i < end; i ++){
-			name = "Inputs(" + (i == RED_INDEX ? "Red)" : (i == GREEN_INDEX ? "Green)" : "Blue)"));
+			name = "Inputs (" + (i == RED_INDEX ? "Red)" : (i == GREEN_INDEX ? "Green)" : "Blue)"));
 			conn.add(new Pair<String, String>(name, "Processing"));
 		}		
 		addOutputConnections(conn);
@@ -592,7 +592,6 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 				}
 			}	
 		}
-		System.out.println("Connections! " + conn);
 		return conn;
 	}	
 }

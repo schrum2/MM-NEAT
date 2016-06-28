@@ -104,9 +104,14 @@ public class VizDoomHealthGatherTask<T extends Network> extends VizDoomTask<T> {
 	@Override
 	public double[] interpretOutputs(double[] rawOutputs) {
 		double[] action = new double[3];
-		action[0] = rawOutputs[1]; // Forward
-		action[1] = rawOutputs[3]; // Left
-		action[2] = rawOutputs[5]; // Right
+		if(Parameters.parameters.booleanParameter("hyperNEAT")){
+			action[0] = rawOutputs[1]; // Forward
+			action[1] = rawOutputs[3]; // Left
+			action[2] = rawOutputs[5]; // Right
+		}
+			action[0] = rawOutputs[0]; // Forward
+			action[1] = rawOutputs[1]; // Left
+			action[2] = rawOutputs[2]; // Right
 		return action;
 	}
 
