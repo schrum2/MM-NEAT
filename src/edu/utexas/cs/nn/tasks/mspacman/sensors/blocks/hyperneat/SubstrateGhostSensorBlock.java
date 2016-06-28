@@ -1,5 +1,6 @@
 package edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.hyperneat;
 
+import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.tasks.mspacman.agentcontroller.pacman.NNHyperNEATPacManController;
 import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
 /**
@@ -28,18 +29,18 @@ public class SubstrateGhostSensorBlock  extends FullScreenSubstrateSensorBlock{
 	 * @return last used index in inputs array from this sensor block
 	 */
 	public int incorporateSensors(double[] inputs, int startPoint, GameFacade gf, int lastDirection) {
-		int[] ghostIndices = gf.getActiveGhostLocations();
-		for(Integer node : ghostIndices) {//TODO I feel like there should be an easy way to condense this code across the full substrate sensor blocks, as it is nearly identical
-			int x = gf.getNodeXCoord(node);
-			int y = gf.getNodeYCoord(node);
-			int inputOffset = NNHyperNEATPacManController.getOutputIndexFromNodeCoord(x, y);
-			if(gf.isGhostEdible(node)) {
-				inputs[startPoint + inputOffset] = 1;
-			} else {
-				inputs[startPoint + inputOffset] = -1;
-			}
-		}
-		return startPoint + numberAdded();
+            for(int i = 0; i < CommonConstants.numActiveGhosts; i++) {
+                int node = gf.getGhostCurrentNodeIndex(i);
+                int x = gf.getNodeXCoord(node);
+                int y = gf.getNodeYCoord(node);
+                int inputOffset = NNHyperNEATPacManController.getOutputIndexFromNodeCoord(x, y);
+                if(gf.isGhostEdible(i)) {
+                    inputs[startPoint + inputOffset] = 1;
+                } else {
+                    inputs[startPoint + inputOffset] = -1;
+                }
+            }
+            return startPoint + numberAdded();
 	}
 
 }

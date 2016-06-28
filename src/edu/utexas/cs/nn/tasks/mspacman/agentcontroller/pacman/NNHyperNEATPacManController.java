@@ -35,6 +35,7 @@ public class NNHyperNEATPacManController extends NNPacManController {
 	
  * 
  */
+                // TODO Make these public static final constants
 		int UP = 1;
 		int DOWN = 7;
 		int RIGHT = 5;
@@ -48,10 +49,10 @@ public class NNHyperNEATPacManController extends NNPacManController {
 	}
 	
 	public static int getOutputIndexFromNodeCoord(int x, int y) {
-                int scaledX = x / MsPacManTask.MS_PAC_MAN_NODE_DIM;
-                int scaledY = y / MsPacManTask.MS_PAC_MAN_NODE_DIM;
+		int scaledX = x / MsPacManTask.MS_PAC_MAN_NODE_DIM;
+		int scaledY = y / MsPacManTask.MS_PAC_MAN_NODE_DIM;
 		int index = (scaledY * MsPacManTask.MS_PAC_MAN_SUBSTRATE_WIDTH) + scaledX;
-                //System.out.println("x:"+x+",y:"+y+",scaledX:"+scaledX+",scaledY:"+scaledY+",index:"+index);
+		//System.out.println("x:"+x+",y:"+y+",scaledX:"+scaledX+",scaledY:"+scaledY+",index:"+index);
 		return index;
 	}
 }
