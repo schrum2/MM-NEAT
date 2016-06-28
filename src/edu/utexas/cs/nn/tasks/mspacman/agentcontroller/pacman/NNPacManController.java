@@ -136,7 +136,7 @@ public abstract class NNPacManController extends NewPacManController {
 	 */
 	public void reset() {
 		super.reset();
-		nn.flush();
+		if(nn != null) nn.flush();//might be null when using hyperNEAT w/ msPacMan
 		inputMediator.reset();
 		ScentPath.scents.reset();
 		if (ScentPath.modeScents != null) {
