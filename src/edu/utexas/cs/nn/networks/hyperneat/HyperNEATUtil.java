@@ -8,6 +8,7 @@ import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.graphics.DrawingPanel;
 import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.networks.TWEANN.Node;
+import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 
 /**
@@ -19,7 +20,7 @@ import edu.utexas.cs.nn.util.datastructures.Pair;
 public class HyperNEATUtil {
 
 	//size of grid in substrate drawing. Can be changed/turned into a param if need be
-	public final static int SUBS_GRID_SIZE = 20;
+	public final static int SUBS_GRID_SIZE = Parameters.parameters.integerParameter("substrateGridSize");
 
 	private static List<DrawingPanel> substratePanels = null;
 

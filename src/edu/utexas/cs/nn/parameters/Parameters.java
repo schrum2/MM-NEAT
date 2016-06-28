@@ -25,7 +25,6 @@ import edu.utexas.cs.nn.tasks.mspacman.multitask.GhostsThenPillsModeSelector;
 import edu.utexas.cs.nn.tasks.mspacman.objectives.fitnessassignment.GhostsPillsMap;
 import edu.utexas.cs.nn.tasks.mspacman.sensors.mediators.FullTaskMediator;
 import edu.utexas.cs.nn.tasks.rlglue.RLGlueAgent;
-import edu.utexas.cs.nn.tasks.rlglue.RLGlueTask;
 import edu.utexas.cs.nn.tasks.rlglue.featureextractors.StateVariableExtractor;
 import edu.utexas.cs.nn.tasks.ut2004.actuators.OpponentRelativeMovementOutputModel;
 import edu.utexas.cs.nn.tasks.ut2004.sensors.OpponentRelativeSensorModel;
@@ -183,6 +182,7 @@ public class Parameters {
 	 */
 	public final void fillDefaults() {
 		// Integer parameters
+		integerOptions.add("substrateGridSize", 20, "sets the size for the grids for the substrate visualization");
 		integerOptions.add("marioStuckTimeout", Integer.MAX_VALUE, "Sets the stuck timeout for Mario, default is no timeout");
 		integerOptions.add("marioJumpTimeout", Integer.MAX_VALUE, "Sets the jump timeout for Mario, default is no timeout");
 		integerOptions.add("HNTTetrisProcessDepth", 1, "The number of processing layers in HNT tetris substrate");
@@ -284,6 +284,7 @@ public class Parameters {
 		longOptions.add("lastInnovation", 0l, "Highest innovation number used so far");
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
 		// Boolean parameters
+		booleanOptions.add("pacManFullScreenOutput", false, "Output substrate has a cell for every 5x5 block on pacman screen");
 		booleanOptions.add("moMario", false, "Mario is multiobjective");
 		booleanOptions.add("showCPPN", false, "shows evolved CPPN during post evals");
 		booleanOptions.add("splitRawTetrisInputs", false, "splits holes and blocks into two separate input substrates");
