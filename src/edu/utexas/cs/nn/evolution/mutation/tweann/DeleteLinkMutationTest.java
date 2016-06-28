@@ -49,7 +49,7 @@ public class DeleteLinkMutationTest {
 		int numLinks = tg1.links.size();
 		delete.mutate(tg1);
 		assertFalse(tg1.equals(tg2));
-		assertTrue(numLinks != tg1.links.size());		
+		assertEquals(numLinks-1, tg1.links.size());	//-1 checks for 1 less link	
 	}
 
 	public void visualTest() {
