@@ -200,7 +200,7 @@ public class Parameters {
 		integerOptions.add("doomInputWidth", 200, "The width for a VizDoom input section");
 		integerOptions.add("imageSize", 250, "Size of image for Picbreeder");
 		integerOptions.add("doomEpisodeLength", 200, "The length of the current game's episodes");
-		integerOptions.add("rlGluePort", RLGlueTask.DEFAULT_PORT, "The port number for the current instance of RLGlue");
+		integerOptions.add("rlGluePort", -1, "DEPRECATED: REMOVE FROM CODE AND ALL BATCH FILES");
 		integerOptions.add("imageHeight", 100, "height of CPPN image (overrides height of image being matched if overrideImageSize is true)");
 		integerOptions.add("imageWidth", 100, "width of CPPN image (overrides width of image being matched if overrideImageSize is true)");
 		integerOptions.add("junctionsToSense", 1, "Number of junctions to which distance should be sensed");

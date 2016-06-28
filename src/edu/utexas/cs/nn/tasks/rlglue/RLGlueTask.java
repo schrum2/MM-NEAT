@@ -43,9 +43,6 @@ public class RLGlueTask<T extends Network> extends NoisyLonerTask<T>implements N
 	/**
 	 * Initialize the elements to be used here
 	 */
-	protected static Process rlglue = null;
-	//protected static AgentLoader agentLoader = null;
-	//protected static EnvironmentLoader environmentLoader = null;
 	protected static RLGlueEnvironment environment;
 	@SuppressWarnings("rawtypes") // Needs static access, and type T isn't known yet
 	public static RLGlueAgent agent;
@@ -54,8 +51,6 @@ public class RLGlueTask<T extends Network> extends NoisyLonerTask<T>implements N
 	// cutoff
 	protected int maxStepsPerEpisode;
 	private ArrayList<Double> behaviorVector;
-	public static final int DEFAULT_PORT = 4096;
-	public int rlGluePort;
 
 	/**
 	 * Initializer for the RLGlueTask, it called the
@@ -75,35 +70,20 @@ public class RLGlueTask<T extends Network> extends NoisyLonerTask<T>implements N
 	@SuppressWarnings("unchecked")
 	public RLGlueTask(RLGlueEnvironment environment) {
 		super();
-		rlGluePort = Parameters.parameters.integerParameter("rlGluePort");
-
 		rlNumSteps = new int[CommonConstants.trials];
 		rlReturn = new double[CommonConstants.trials];
 		maxStepsPerEpisode = Parameters.parameters.integerParameter("steps");
 		RLGlueTask.environment = environment;
 
-		/*
-		 * Need to launch RL-Glue, the program that interfaces the separate
-		 * components.
-		 */
-		if (environment != null && rlglue == null) {
-			//launchRLGlue();
-			/*
-			 * RL-Glue runs the Agent, Environment and Experiment separately so
-			 * this class needs to launch the Agent and Environment as well
-			 */
-			try {
-				agent = (RLGlueAgent<T>) ClassCreation.createObject("rlGlueAgent");
-			} catch (NoSuchMethodException e) {
-				e.printStackTrace();
-				System.out.println("Could not launch RLGlue agent");
-				System.exit(1);
-			}
-			//launchAgent(agent);
-			//launchEnvironment(environment);
-			//RLGlue.setGlue(new NetGlue("localhost", rlGluePort));
-			RLGlue.setGlue(new LocalGlue(environment, agent));
+		try {
+			agent = (RLGlueAgent<T>) ClassCreation.createObject("rlGlueAgent");
+		} catch (NoSuchMethodException e) {
+			e.printStackTrace();
+			System.out.println("Could not launch RLGlue agent");
+			System.exit(1);
 		}
+		// The local glue codec does not need any network connectivity
+		RLGlue.setGlue(new LocalGlue(environment, agent));
 	}
 
 	/**
@@ -121,7 +101,6 @@ public class RLGlueTask<T extends Network> extends NoisyLonerTask<T>implements N
 	@Override
 	public void cleanup() {
 		RLGlue.RL_cleanup();
-		// rlglue.destroy(); // Not needed?
 	}
 
 	/**
@@ -135,9 +114,9 @@ public class RLGlueTask<T extends Network> extends NoisyLonerTask<T>implements N
 	}
 
 	/**
-	 * Specific to PuddleWorld? Returns the number of other scores
+	 * Other scores: overridden by specific environments
 	 * 
-	 * @return Only Puddle World has an "other" score. Rest have none (0)
+	 * @return default of 0
 	 */
 	@Override
 	public int numOtherScores() {
@@ -173,63 +152,6 @@ public class RLGlueTask<T extends Network> extends NoisyLonerTask<T>implements N
 		return new Pair<double[], double[]>(new double[] { rlReturn[num] }, new double[0]);
 	}
 	
-	/**
-	 * Actual launch of the RL glue program
-	 */
-	public final void launchRLGlue() {
-		System.out.println("Launch RL Glue");
-		ProcessBuilder processBuilder = new ProcessBuilder("RL-Glue/rl_glue.exe"); 
-		Map<String, String> env = processBuilder.environment();
-		env.put("RLGLUE_HOST", "localhost");
-		env.put("RLGLUE_PORT", "" + rlGluePort);
-		// Runtime rt = Runtime.getRuntime();
-		try {
-			// Launch an executable program
-			// rlglue = rt.exec("RL-Glue/rl_glue.exe"); 
-			rlglue = processBuilder.start();
-		} catch (IOException ex) {
-			ex.printStackTrace();
-			System.out.println("        Exception when launching rl_glue.exe!");
-			System.exit(1);
-		}
-	}
-
-	/**
-	 * Launches the agent used in the scenario
-	 *
-	 * @param agent
-	 *            An agent for RL Glue tasks
-	 */
-//	public final void launchAgent(final AgentInterface agent) {
-//		new Thread(new Runnable() {
-//			@Override
-//			public void run() {
-//				agentLoader = new AgentLoader("localhost", "" + rlGluePort, agent);
-//				// agentLoader = new AgentLoader(agent);
-//				agentLoader.run();
-//				System.out.println("Agent done running");
-//			}
-//		}).start();
-//	}
-
-	/**
-	 * Launches the environment using threads
-	 *
-	 * @param environment
-	 *            an RLGlueEnvironment environment
-	 */
-//	public final void launchEnvironment(final RLGlueEnvironment environment) {
-//		new Thread(new Runnable() {
-//			@Override
-//			public void run() {
-//				environmentLoader = new EnvironmentLoader("localhost", "" + rlGluePort, environment);
-//				// environmentLoader = new EnvironmentLoader(environment);
-//				environmentLoader.run();
-//				System.out.println("Environment done running");
-//			}
-//		}).start();
-//	}
-
 	/**
 	 * Returns the number of objectives
 	 * 
