@@ -2,6 +2,7 @@ package edu.utexas.cs.nn.networks.hyperneat;
 
 import java.util.HashSet;
 
+import edu.utexas.cs.nn.util.MiscUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.datastructures.Triple;
 
@@ -118,6 +119,28 @@ public class Substrate {
 	 * @return if neuron is dead
 	 */
 	public boolean isNeuronDead(int x, int y) {
-		return deadNeurons.contains(new Pair<Integer, Integer>(x, y)) ? true : false;
+		return deadNeurons.contains(new Pair<Integer, Integer>(x, y));
+	}
+	
+	/**
+	 * Kills all neurons in substrate
+	 */
+	public void killAllNeurons() {
+		for(int i = 0; i < size.t1; i++) {
+			for(int j = 0; j < size.t2; j++) {
+				addDeadNeuron(i, j);
+			}
+		}
+	}
+
+	/**
+	 * Whether a dead neuron was actually resurrected
+	 * (as opposed to not being present in the first place)
+	 * @param x x-coord
+	 * @param y y-coord
+	 * @return whether resurrection occurred
+	 */
+	public boolean resurrectNeuron(int x, int y) {
+		return deadNeurons.remove(new Pair<>(x, y));
 	}
 }

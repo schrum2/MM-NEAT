@@ -12,6 +12,7 @@ public class CommonConstants {
 
 
 	// boolean
+	public static boolean monitorSubstrates;
 	public static boolean includeSigmoidFunction;
 	public static boolean includeTanhFunction;
 	public static boolean includeIdFunction;
@@ -126,6 +127,7 @@ public class CommonConstants {
 	 */
 	public static void load() {
 		// boolean
+		monitorSubstrates = Parameters.parameters.booleanParameter("monitorSubstrates");
 		includeSigmoidFunction = Parameters.parameters.booleanParameter("includeSigmoidFunction");
 		includeTanhFunction = Parameters.parameters.booleanParameter("includeTanhFunction");
 		includeIdFunction = Parameters.parameters.booleanParameter("includeIdFunction");

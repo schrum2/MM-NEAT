@@ -9,6 +9,7 @@ import edu.utexas.cs.nn.graphics.DrawingPanel;
 import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.networks.TWEANN.Node;
 import edu.utexas.cs.nn.parameters.Parameters;
+import edu.utexas.cs.nn.util.MiscUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 
 /**
@@ -107,7 +108,7 @@ public class HyperNEATUtil {
 		for(int j = 0; j < s.size.t2; j++) {
 			for(int i = 0; i < s.size.t1; i++) {
 				Node node = nodes.get(nodeIndex++);
-				Color c;
+				Color c;				
 				if((node.ntype == TWEANN.Node.NTYPE_OUTPUT || !node.outputs.isEmpty()) && !s.isNeuronDead(i, j)) {
 					double activation = node.output();
 					// For unusual activation functions that go outside of the [-1,1] range

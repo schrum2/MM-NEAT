@@ -15,6 +15,7 @@ import edu.utexas.cs.nn.scores.Score;
 import edu.utexas.cs.nn.tasks.NoisyLonerTask;
 import edu.utexas.cs.nn.tasks.mspacman.agentcontroller.ghosts.SharedNNGhosts;
 import edu.utexas.cs.nn.tasks.mspacman.agentcontroller.pacman.MultinetworkMsPacManController;
+import edu.utexas.cs.nn.tasks.mspacman.agentcontroller.pacman.NNHyperNEATPacManController;
 import edu.utexas.cs.nn.tasks.mspacman.agentcontroller.pacman.NNMsPacMan;
 import edu.utexas.cs.nn.tasks.mspacman.data.TrainingCampManager;
 import edu.utexas.cs.nn.tasks.mspacman.facades.ExecutorFacade;
@@ -24,6 +25,7 @@ import edu.utexas.cs.nn.tasks.mspacman.facades.PacManControllerFacade;
 import edu.utexas.cs.nn.tasks.mspacman.multitask.MsPacManModeSelector;
 import edu.utexas.cs.nn.tasks.mspacman.objectives.*;
 import edu.utexas.cs.nn.util.ClassCreation;
+import edu.utexas.cs.nn.util.MiscUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.datastructures.Triple;
 import edu.utexas.cs.nn.util.random.RandomNumbers;
@@ -58,9 +60,9 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 	public static final int MS_PAC_MAN_SUBSTRATE_WIDTH = MS_PAC_MAN_NODE_WIDTH/MS_PAC_MAN_NODE_DIM;
 	public static final int MS_PAC_MAN_SUBSTRATE_HEIGHT = MS_PAC_MAN_NODE_HEIGHT/MS_PAC_MAN_NODE_DIM;
 	public static final int MS_PAC_MAN_SUBSTRATE_SIZE = MS_PAC_MAN_SUBSTRATE_WIDTH * MS_PAC_MAN_SUBSTRATE_HEIGHT;
-        public List<Substrate> subs = null; // filled below
+	public List<Substrate> subs = null; // filled below
 	public List<Pair<String, String>> connections = null; // filled below
-        
+
 	public static String saveFilePrefix = "";
 	//boolean variables
 	protected boolean deterministic;
@@ -560,20 +562,25 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 		if(subs == null) {
 			subs = new ArrayList<Substrate>();
 			Pair<Integer, Integer> subSize = new Pair<>(MS_PAC_MAN_SUBSTRATE_WIDTH, MS_PAC_MAN_SUBSTRATE_HEIGHT);
-                        Pair<Integer, Integer> processSize = new Pair<>(10,10);
-                        Substrate pillSubstrate = new Substrate(subSize, Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, 0, 0), "Pills");
+			Pair<Integer, Integer> processSize = new Pair<>(10,10);
+			Substrate pillSubstrate = new Substrate(subSize, Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, 0, 0), "Pills");
 			// TODO consider making a full-screen substrate
-                        Substrate powerPillSubstrate = new Substrate(new Pair<Integer, Integer>(2, 2), Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(1, 0, 0), "PowerPills");
+			Substrate powerPillSubstrate = new Substrate(new Pair<Integer, Integer>(2, 2), Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(1, 0, 0), "PowerPills");
 			// TODO consider splitting into threat and edible substrates
-                        Substrate ghostSubstrate = new Substrate(subSize, Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(2, 0, 0), "Ghosts");
+			Substrate ghostSubstrate = new Substrate(subSize, Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(2, 0, 0), "Ghosts");
 			Substrate pacManSubstrate = new Substrate(subSize, Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(3, 0, 0), "MsPacMan");
 			Substrate processSubstrate = new Substrate(processSize, Substrate.PROCCESS_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, 1, 0), "P_0");
 			Substrate outputSubstrate;
 			if(Parameters.parameters.booleanParameter("pacManFullScreenOutput")) {
 				outputSubstrate = new Substrate(subSize, Substrate.OUTPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, 2, 0), "O_0");
-					
 			}else {
 				outputSubstrate = new Substrate(new Pair<Integer, Integer>(3, 3), Substrate.OUTPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, 2, 0), "O_0");
+				//kills neurons in corner and center of output substrate
+				outputSubstrate.addDeadNeuron(0, 0);
+				outputSubstrate.addDeadNeuron(0, 2);
+				outputSubstrate.addDeadNeuron(1, 1);
+				outputSubstrate.addDeadNeuron(0, 2);
+				outputSubstrate.addDeadNeuron(2, 2);
 			}
 			subs.add(pillSubstrate);
 			subs.add(powerPillSubstrate);
@@ -588,19 +595,42 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 	@Override
 	public List<Pair<String, String>> getSubstrateConnectivity() {
 		if(connections == null) {
-		connections = new ArrayList<Pair<String, String>>();
-		connections.add(new Pair<String, String>("Pills", "P_0"));
-		connections.add(new Pair<String, String>("PowerPills", "P_0"));
-		connections.add(new Pair<String, String>("Ghosts", "P_0"));
-		connections.add(new Pair<String, String>("MsPacMan", "P_0"));
-		connections.add(new Pair<String, String>("P_0", "O_0"));
-		if(Parameters.parameters.booleanParameter("extraHNLinks")) {
-                    connections.add(new Pair<String, String>("Pills", "O_0"));
-                    connections.add(new Pair<String, String>("PowerPills", "O_0"));
-                    connections.add(new Pair<String, String>("Ghosts", "O_0"));
-                    connections.add(new Pair<String, String>("MsPacMan", "O_0"));
+			connections = new ArrayList<Pair<String, String>>();
+			connections.add(new Pair<String, String>("Pills", "P_0"));
+			connections.add(new Pair<String, String>("PowerPills", "P_0"));
+			connections.add(new Pair<String, String>("Ghosts", "P_0"));
+			connections.add(new Pair<String, String>("MsPacMan", "P_0"));
+			connections.add(new Pair<String, String>("P_0", "O_0"));
+			if(Parameters.parameters.booleanParameter("extraHNLinks")) {
+				connections.add(new Pair<String, String>("Pills", "O_0"));
+				connections.add(new Pair<String, String>("PowerPills", "O_0"));
+				connections.add(new Pair<String, String>("Ghosts", "O_0"));
+				connections.add(new Pair<String, String>("MsPacMan", "O_0"));
+			}
 		}
-                }
 		return connections;
+	}
+	
+	/**
+	 * Figures out which neurons can be killed in the
+	 * current maze.
+	 * 
+	 * @param gf game facade, which accesses current maze
+	 */
+	public void customizeSubstratesForMaze(GameFacade gf) {
+		getSubstrateInformation(); // Just to make sure subs is not null
+		for(Substrate s : subs){
+			// Only reset full screen substrates
+			if(s.size.t1 == MS_PAC_MAN_SUBSTRATE_WIDTH && s.size.t2 == MS_PAC_MAN_SUBSTRATE_HEIGHT) {
+				s.killAllNeurons();
+				for(int i = 0; i < gf.lengthMaze(); i++) {
+					int x = gf.getNodeXCoord(i);
+					int y = gf.getNodeYCoord(i);
+					int scaledX = x / MsPacManTask.MS_PAC_MAN_NODE_DIM;
+					int scaledY = y / MsPacManTask.MS_PAC_MAN_NODE_DIM;
+					s.resurrectNeuron(scaledX, scaledY);
+				}
+			}
+		}
 	}
 }

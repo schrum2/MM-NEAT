@@ -1,11 +1,18 @@
 package edu.utexas.cs.nn.tasks.mspacman.agentcontroller.pacman;
 
+import java.util.HashMap;
+
+import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.HyperNEATCPPNGenotype;
+import edu.utexas.cs.nn.networks.Network;
+import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.mspacman.MsPacManTask;
 import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
 import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
+import pacman.game.Constants;
 import pacman.game.Constants.MOVE;
+import pacman.game.Game;
 
 public class NNHyperNEATPacManController extends NNPacManController {
 
@@ -15,29 +22,38 @@ public class NNHyperNEATPacManController extends NNPacManController {
 	public static final int RIGHT = 5;
 	public static final int LEFT = 3;
 	private boolean pacManFullScreenOutput;
-	
-	// This may not be needed, but we'll see
-	//HashMap<Integer, Network> networkForMaze;
+
+	HashMap<Integer, Network> networkForMaze;
 	int currentMaze;
-	private HyperNEATCPPNGenotype genotype;
-	
 	public NNHyperNEATPacManController(HyperNEATCPPNGenotype genotype) {
-		super(genotype.getPhenotype()); // replace this with null
-		this.genotype = genotype;
+		super(null);
 		pacManFullScreenOutput = Parameters.parameters.booleanParameter("pacManFullScreenOutput");
-		//networkForMaze = new HashMap<>();
+		networkForMaze = new HashMap<>();
+		@SuppressWarnings("rawtypes") // Type not needed here
+		MsPacManTask task = (MsPacManTask) MMNEAT.task;
+		for(int i = 0; i < Constants.NUM_MAZES; i++) {
+			// Load facade for maze i
+			GameFacade temp = new GameFacade(new Game(0, i));
+			// Kills unreachable neurons
+			task.customizeSubstratesForMaze(temp);
+			// Don't create links for unusable nodes
+			networkForMaze.put(i, genotype.getPhenotype()); // store network for maze
+		}
+		nn = networkForMaze.get(0); // start on first maze (TODO change for experiments that don't start on first maze)
 		currentMaze = -1; // haven't seen any maze yet
 	}
 	//BTW, node list corresponds to all places pacman can legally travel to, not every coordinate in  maze
+	@SuppressWarnings("rawtypes")
 	@Override
 	public int getDirection(GameFacade gf) {
 		if(gf.getMazeIndex() != currentMaze) {
-			// TODO need to load this for each maze.
-			// Don't create links for unusable nodes
-			//nn = genotype.getPhenotype();
 			currentMaze = gf.getMazeIndex();
+			nn = networkForMaze.get(currentMaze); // recreate network
+			// Need to update for substrate visualizer
+			if(CommonConstants.monitorSubstrates) {
+				((MsPacManTask) MMNEAT.task).customizeSubstratesForMaze(gf);
+			}
 		}
-		
 		double[] inputs = inputMediator.getInputs(gf, gf.getPacmanLastMoveMade());
 		double[] outputs = nn.process(inputs);
 		if(pacManFullScreenOutput) {
@@ -70,7 +86,6 @@ public class NNHyperNEATPacManController extends NNPacManController {
 		int scaledX = x / MsPacManTask.MS_PAC_MAN_NODE_DIM;
 		int scaledY = y / MsPacManTask.MS_PAC_MAN_NODE_DIM;
 		int index = (scaledY * MsPacManTask.MS_PAC_MAN_SUBSTRATE_WIDTH) + scaledX;
-		//System.out.println("x:"+x+",y:"+y+",scaledX:"+scaledX+",scaledY:"+scaledY+",index:"+index);
 		return index;
 	}
 }
