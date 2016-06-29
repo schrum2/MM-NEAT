@@ -586,7 +586,7 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 			for(int j = 0; j < connSize; j++){
 				if(conn.get(j).t1 == "Processing"){
 					for(int i = start; i < end; i ++){
-						name = "Inputs(" + (i == RED_INDEX ? "Red)" : (i == GREEN_INDEX ? "Green)" : "Blue)"));
+						name = "Inputs (" + (i == RED_INDEX ? "Red)" : (i == GREEN_INDEX ? "Green)" : "Blue)"));
 						conn.add(new Pair<String, String>(name, conn.get(j).t2));
 					}
 				}
