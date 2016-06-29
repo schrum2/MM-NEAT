@@ -127,7 +127,7 @@ public class MMNEAT {
 	public static GhostControllerInputOutputMediator ghostsInputOutputMediator;
 	public static MsPacManControllerInputOutputMediator[] coevolutionMediators = null;
 	public static MsPacManEnsembleArbitrator ensembleArbitrator = null;
-	private static int actualFitnessFunctions = 0;
+	private static ArrayList<Integer> actualFitnessFunctions;
 	public static MsPacManModeSelector pacmanMultitaskScheme = null;
 	public static VariableDirectionBlock directionalSafetyFunction;
 	public static TWEANNGenotype sharedMultitaskNetwork = null;
@@ -149,7 +149,7 @@ public class MMNEAT {
 			for (Metaheuristic m : metaheuristics) {
 				meta.add(m.getClass().getSimpleName());
 			}
-			result.addAll(actualFitnessFunctions, meta);
+			result.addAll(actualFitnessFunctions.get(pop), meta);
 		}
 		return result;
 	}
@@ -313,8 +313,15 @@ public class MMNEAT {
 	 * @param pop population index (for coevolution)
 	 */
 	public static void registerFitnessFunction(String name, Statistic override, boolean affectsSelection, int pop) {
+		if(actualFitnessFunctions == null){
+			actualFitnessFunctions = new ArrayList<Integer>();
+		}
+		while(actualFitnessFunctions.size() <= pop){
+			actualFitnessFunctions.add(0);
+		}
 		if (affectsSelection) {
-			actualFitnessFunctions++;
+			int num = actualFitnessFunctions.get(pop) + 1;
+			actualFitnessFunctions.set(pop, num);
 		}
 		// For coevolution.
 		// Create enough objective arrays to accomadate each population
