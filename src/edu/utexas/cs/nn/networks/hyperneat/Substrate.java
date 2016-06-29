@@ -2,7 +2,6 @@ package edu.utexas.cs.nn.networks.hyperneat;
 
 import java.util.HashSet;
 
-import edu.utexas.cs.nn.util.MiscUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.datastructures.Triple;
 
