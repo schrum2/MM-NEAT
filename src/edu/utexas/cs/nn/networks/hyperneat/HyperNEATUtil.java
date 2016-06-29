@@ -75,7 +75,7 @@ public class HyperNEATUtil {
 	 * @return drawing panel containing drawing of substrate
 	 */
 	public static DrawingPanel drawSubstrate(DrawingPanel dp, Substrate s, ArrayList<Node> nodes, int nodeIndexStart) { 
-				drawCoord(dp, s.size, nodes, nodeIndexStart);
+				drawCoord(dp, s, nodes, nodeIndexStart);
 				drawGrid(dp, s.size);
 		return dp;
 	}
@@ -103,18 +103,18 @@ public class HyperNEATUtil {
 	 * @param size size of substrate
 	 * @param c color of square
 	 */
-	private static void drawCoord(DrawingPanel p, Pair<Integer, Integer> size, ArrayList<Node> nodes, int nodeIndex) { 
-		for(int j = 0; j < size.t2; j++) {
-			for(int i = 0; i < size.t1; i++) {
+	private static void drawCoord(DrawingPanel p, Substrate s, ArrayList<Node> nodes, int nodeIndex) { 
+		for(int j = 0; j < s.size.t2; j++) {
+			for(int i = 0; i < s.size.t1; i++) {
 				Node node = nodes.get(nodeIndex++);
 				Color c;
-				if(node.ntype == TWEANN.Node.NTYPE_OUTPUT || !node.outputs.isEmpty()) {
-                                    double activation = node.output();
-                                    // For unusual activation functions that go outside of the [-1,1] range
-                                    activation = Math.max(-1, Math.min(activation, 1.0));
-                                    c = new Color(activation > 0 ? (int)(activation*255) : 0, 0, activation < 0 ? (int)(-activation*255) : 0);
+				if((node.ntype == TWEANN.Node.NTYPE_OUTPUT || !node.outputs.isEmpty()) && !s.isNeuronDead(i, j)) {
+					double activation = node.output();
+					// For unusual activation functions that go outside of the [-1,1] range
+					activation = Math.max(-1, Math.min(activation, 1.0));
+					c = new Color(activation > 0 ? (int)(activation*255) : 0, 0, activation < 0 ? (int)(-activation*255) : 0);
 				} else {
-                                    c = Color.gray;
+					c = Color.gray;
 				}
 				assert c != Color.white:"not all nodes were accounted for!";
 				p.getGraphics().setColor(c);

@@ -184,6 +184,11 @@ public class MarioTask<T extends Network> extends NoisyLonerTask<T>implements Ne
 		subs.add(processing);
 		Substrate outputsDpad = new Substrate(new Pair<Integer, Integer>(3, 2), //3 by 2 d-pad
 				Substrate.OUTPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, Substrate.OUTPUT_SUBSTRATE, 0), "Outputs D-Pad");
+		// Corners and center of D-pad are not used
+		outputsDpad.addDeadNeuron(1,0);
+		outputsDpad.addDeadNeuron(0,1);
+		outputsDpad.addDeadNeuron(2,1);
+
 		subs.add(outputsDpad);
 		Substrate outputSpeed = new Substrate(new Pair<Integer, Integer>(1, 1), //1 by 1 button for speed
 				Substrate.OUTPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, Substrate.OUTPUT_SUBSTRATE, 0), "Output Speed");

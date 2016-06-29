@@ -1,9 +1,6 @@
 package edu.utexas.cs.nn.tasks.mspacman.agentcontroller.pacman;
 
-import java.util.HashMap;
-
 import edu.utexas.cs.nn.evolution.genotypes.HyperNEATCPPNGenotype;
-import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.mspacman.MsPacManTask;
 import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;

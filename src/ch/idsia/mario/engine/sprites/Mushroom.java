@@ -9,12 +9,17 @@ public class Mushroom extends Sprite
     private static float GROUND_INERTIA = 0.89f;
     private static float AIR_INERTIA = 0.89f;
 
-    private float runTime;
+    @SuppressWarnings("unused")
+	private float runTime;
     private boolean onGround = false;
-    private boolean mayJump = false;
-    private int jumpTime = 0;
-    private float xJumpSpeed;
-    private float yJumpSpeed;
+    @SuppressWarnings("unused")
+	private boolean mayJump = false;
+    @SuppressWarnings("unused")
+	private int jumpTime = 0;
+    @SuppressWarnings("unused")
+	private float xJumpSpeed;
+    @SuppressWarnings("unused")
+	private float yJumpSpeed;
 
     private int width = 4;
     int height = 24;
