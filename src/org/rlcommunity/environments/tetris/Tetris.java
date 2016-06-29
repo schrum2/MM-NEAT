@@ -67,8 +67,7 @@ public class Tetris extends RLGlueEnvironment implements HasAVisualizerInterface
 	 * This Tetris method calls super, so that it can get the default parameters
 	 * and use them. It then starts the game state.
 	 * 
-	 * @param ParameterHolder
-	 *            p
+         * @param p contains parameters
 	 */
 	public Tetris(ParameterHolder p) {
 		super();
@@ -101,6 +100,7 @@ public class Tetris extends RLGlueEnvironment implements HasAVisualizerInterface
 	}
 
 	/* Base RL-Glue Functions */
+        @Override
 	public String env_init() {
 		return makeTaskSpec().getStringRepresentation();
 	}
@@ -110,6 +110,7 @@ public class Tetris extends RLGlueEnvironment implements HasAVisualizerInterface
 	 * 
 	 * @return Observation of game state
 	 */
+        @Override
 	public Observation env_start() {
 		gameState.reset();
 		gameState.spawn_block();
@@ -130,15 +131,16 @@ public class Tetris extends RLGlueEnvironment implements HasAVisualizerInterface
 	 * appropriate errors. Then, checks for a moving block, continues to the
 	 * next movement or adds the next block. It also connects reward with the
 	 * game state, checking for game overs and the current score
+         * @param actionObject action to perform
+         * @return reward and observation details
 	 */
+        @Override
 	public Reward_observation_terminal env_step(Action actionObject) {
 		int theAction = 0;
 		try {
 			theAction = actionObject.intArray[0];
 		} catch (ArrayIndexOutOfBoundsException e) {
-			System.err.println(
-					"Error: Action was expected to have 1 dimension but got ArrayIndexOutOfBoundsException when trying to get element 0:"
-							+ e);
+			System.err.println("Error: Action was expected to have 1 dimension but got ArrayIndexOutOfBoundsException when trying to get element 0:" + e);
 			System.err.println("Error: Choosing action 0");
 			theAction = 0;
 		}
@@ -198,6 +200,7 @@ public class Tetris extends RLGlueEnvironment implements HasAVisualizerInterface
 	/**
 	 * Cleans the environment
 	 */
+        @Override
 	public void env_cleanup() {
 	}
 
@@ -206,7 +209,9 @@ public class Tetris extends RLGlueEnvironment implements HasAVisualizerInterface
 	 * parameter
 	 * 
 	 * @param theMessage
+         * @return 
 	 */
+        @Override
 	public String env_message(String theMessage) {
 		EnvironmentMessages theMessageObject;
 		try {
@@ -230,8 +235,7 @@ public class Tetris extends RLGlueEnvironment implements HasAVisualizerInterface
 						gameState.getHeight(), gameState.getNumberedStateSnapShot(), gameState.getCurrentPiece());
 				return theResponseObject.makeStringResponse();
 			}
-			System.out.println(
-					"We need some code written in Env Message for Tetrlais.. unknown custom message type received");
+			System.out.println("We need some code written in Env Message for Tetrlais.. unknown custom message type received");
 			Thread.dumpStack();
 
 			return null;
@@ -249,6 +253,7 @@ public class Tetris extends RLGlueEnvironment implements HasAVisualizerInterface
 	// used to communicated between languages on top of RL-Glue
 	/**
 	 * Getter for the observation of the current game state
+         * @return state observation
 	 */
 	@Override
 	protected Observation makeObservation() {
@@ -257,15 +262,18 @@ public class Tetris extends RLGlueEnvironment implements HasAVisualizerInterface
 
 	/**
 	 * Getter for the name of the visualizer class
+         * @return name of class
 	 */
+        @Override
 	public String getVisualizerClassName() {
 		return TetrisVisualizer.class.getName();
 	}
 
 	/**
-	 * Question: What I assume is this is how the blocks get created, from this
-	 * image? -Gab
+	 * Doesn't seem to be used ... file does not exist.
+         * @return 
 	 */
+        @Override
 	public URL getImageURL() {
 		URL imageURL = Tetris.class.getResource("/images/tetris/tetris.png");
 		return imageURL;
@@ -274,7 +282,9 @@ public class Tetris extends RLGlueEnvironment implements HasAVisualizerInterface
 	/**
 	 * Method returns a taskspec that reflects the current game state
 	 * 
+         * @return provides task details
 	 */
+        @Override
 	public TaskSpec makeTaskSpec() {
 		int boardSize = gameState.getHeight() * gameState.getWidth();
 		int numPieces = gameState.possibleBlocks.size();
@@ -287,9 +297,8 @@ public class Tetris extends RLGlueEnvironment implements HasAVisualizerInterface
 		// Now the binary features to tell what piece is falling
 		theTaskSpecObject.addDiscreteObservation(new IntRange(0, 1, numPieces));
 		// Now the actual board size in the observation. The reason this was
-		// here is/was because
-		// there was no way to add meta-data to the task spec before.
-		// First height
+		// here is/was because there was no way to add meta-data to the task 
+                // spec before. First height
 		theTaskSpecObject.addDiscreteObservation(new IntRange(gameState.getHeight(), gameState.getHeight()));
 		// Then width
 		theTaskSpecObject.addDiscreteObservation(new IntRange(gameState.getWidth(), gameState.getWidth()));
@@ -318,6 +327,7 @@ public class Tetris extends RLGlueEnvironment implements HasAVisualizerInterface
 
 	/**
 	 * Array list, or vector, to hold the current world state.s
+         * @return vector representation of entire game grid
 	 */
 	@Override
 	public ArrayList<Double> getBehaviorVector() {
@@ -338,22 +348,27 @@ public class Tetris extends RLGlueEnvironment implements HasAVisualizerInterface
  */
 class DetailsProvider implements hasVersionDetails {
 
+        @Override
 	public String getName() {
 		return "Tetris 1.1";
 	}
 
+        @Override
 	public String getShortName() {
 		return "Tetris";
 	}
 
+        @Override
 	public String getAuthors() {
 		return "Brian Tanner, Leah Hackman, Matt Radkie, Andrew Butcher";
 	}
 
+        @Override
 	public String getInfoUrl() {
 		return "http://library.rl-community.org/tetris";
 	}
 
+        @Override
 	public String getDescription() {
 		return "Tetris problem from the reinforcement learning library.";
 	}
