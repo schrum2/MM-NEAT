@@ -109,6 +109,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public PicbreederTask() {		
+		MMNEAT.registerFitnessFunction("User Preference");
 		//sets mu to a divisible number
 		if(Parameters.parameters.integerParameter("mu") % PicbreederTask.NUM_COLUMNS != 0) { 
 			Parameters.parameters.setInteger("mu", PicbreederTask.NUM_COLUMNS * ((Parameters.parameters.integerParameter("mu") / PicbreederTask.NUM_COLUMNS) + 1));
@@ -136,7 +137,8 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		buttons = new ArrayList<JButton>();
 
 		//sets up JFrame
-		frame.setSize(PIC_SIZE * NUM_COLUMNS + 50, PIC_SIZE * NUM_ROWS);
+		frame.setSize(PIC_SIZE * NUM_COLUMNS + 200, PIC_SIZE * NUM_ROWS);
+		PIC_SIZE = PIC_SIZE + (int) (200.0 / NUM_COLUMNS);
 		frame.setLocation(300, 100);//magic #s 100 correspond to relocating frame to middle of screen
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLayout(new GridLayout(NUM_ROWS + 1, 0));// the + 1 includes room for the title panel
