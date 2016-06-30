@@ -113,21 +113,40 @@ public class VizDoomDeadlyCorridorTask<T extends Network> extends VizDoomTask<T>
 	@Override
 	public double[] interpretOutputs(double[] rawOutputs) {
 		double[] action = new double[7];
-		action[0] = rawOutputs[1]; // Forward
-		action[1] = rawOutputs[3]; // Left
-		action[2] = rawOutputs[5]; // Right
-		action[3] = rawOutputs[7]; // Backward
-		action[4] = rawOutputs[9]; // Turn Left
-		action[5] = rawOutputs[10]; // Turn Right
-		action[6] = rawOutputs[11]; // Attack
+		if(Parameters.parameters.booleanParameter("hyperNEAT")){
+			action[0] = rawOutputs[1]; // Forward
+			action[1] = rawOutputs[3]; // Left
+			action[2] = rawOutputs[5]; // Right
+			action[3] = rawOutputs[7]; // Backward
+			action[4] = rawOutputs[9]; // Turn Left
+			action[5] = rawOutputs[10]; // Turn Right
+			action[6] = rawOutputs[11]; // Attack
+		} else {
+			action[0] = rawOutputs[0]; // Forward
+			action[1] = rawOutputs[1]; // Left
+			action[2] = rawOutputs[2]; // Right
+			action[3] = rawOutputs[3]; // Backward
+			action[4] = rawOutputs[4]; // Turn Left
+			action[5] = rawOutputs[5]; // Turn Right
+			action[6] = rawOutputs[6]; // Attack
+		}
 		return action;
 	}
 
 	@Override
 	public void addOutputSubstrates(List<Substrate> subs) {
+		
+		
 		Substrate dpad = new Substrate(new Pair<Integer, Integer>(3, 3), 
 				Substrate.OUTPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, Substrate.OUTPUT_SUBSTRATE, 0), "D-Pad Outputs");
+		// Corners and center of D-pad are not used
+		dpad.addDeadNeuron(0,0);
+		dpad.addDeadNeuron(0,2);
+		dpad.addDeadNeuron(1,1);
+		dpad.addDeadNeuron(2,0);
+		dpad.addDeadNeuron(2,2);
 		subs.add(dpad);
+		
 		Substrate cstick = new Substrate(new Pair<Integer, Integer>(2, 1), 
 				Substrate.OUTPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, Substrate.OUTPUT_SUBSTRATE, 0), "C-Stick Outputs");
 		subs.add(cstick);

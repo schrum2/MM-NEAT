@@ -119,6 +119,10 @@ public class VizDoomHealthGatherTask<T extends Network> extends VizDoomTask<T> {
 	public void addOutputSubstrates(List<Substrate> subs) {
 		Substrate dpad = new Substrate(new Pair<Integer, Integer>(3, 2), 
 				Substrate.OUTPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, Substrate.OUTPUT_SUBSTRATE, 0), "D-Pad Outputs");
+		// Corners and center of D-pad are not used
+		dpad.addDeadNeuron(0,0);
+		dpad.addDeadNeuron(0,2);
+		dpad.addDeadNeuron(1,1);
 		subs.add(dpad);
 	}
 
