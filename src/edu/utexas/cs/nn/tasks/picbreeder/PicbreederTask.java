@@ -137,7 +137,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		buttons = new ArrayList<JButton>();
 
 		//sets up JFrame
-		frame.setSize(PIC_SIZE * NUM_COLUMNS + 200, PIC_SIZE * NUM_ROWS);
+		frame.setSize(PIC_SIZE * NUM_COLUMNS + 200, PIC_SIZE * NUM_ROWS + 700);
 		PIC_SIZE = PIC_SIZE + (int) (200.0 / NUM_COLUMNS);
 		frame.setLocation(300, 100);//magic #s 100 correspond to relocating frame to middle of screen
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
