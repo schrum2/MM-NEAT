@@ -108,11 +108,19 @@ public class VizDoomMyWayHomeTask<T extends Network> extends VizDoomTask<T> {
 	@Override
 	public double[] interpretOutputs(double[] rawOutputs) {
 		double[] action = new double[5];
-		action[0] = rawOutputs[1]; // Forward
-		action[1] = rawOutputs[3]; // Left
-		action[2] = rawOutputs[5]; // Right
-		action[3] = rawOutputs[6]; // Turn Left
-		action[4] = rawOutputs[7]; // Turn Right
+		if(Parameters.parameters.booleanParameter("hyperNEAT")){
+			action[0] = rawOutputs[1]; // Forward
+			action[1] = rawOutputs[3]; // Left
+			action[2] = rawOutputs[5]; // Right
+			action[3] = rawOutputs[6]; // Turn Left
+			action[4] = rawOutputs[7]; // Turn Right
+		} else {
+			action[0] = rawOutputs[0]; // Forward
+			action[1] = rawOutputs[1]; // Left
+			action[2] = rawOutputs[2]; // Right
+			action[3] = rawOutputs[3]; // Turn Left
+			action[4] = rawOutputs[4]; // Turn Right
+		}
 		return action;
 	}
 
@@ -120,6 +128,10 @@ public class VizDoomMyWayHomeTask<T extends Network> extends VizDoomTask<T> {
 	public void addOutputSubstrates(List<Substrate> subs) {
 		Substrate dpad = new Substrate(new Pair<Integer, Integer>(3, 2), 
 				Substrate.OUTPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, Substrate.OUTPUT_SUBSTRATE, 0), "D-Pad Outputs");
+		// Corners and center of D-pad are not used
+		dpad.addDeadNeuron(0,0);
+		dpad.addDeadNeuron(0,2);
+		dpad.addDeadNeuron(1,1);
 		subs.add(dpad);
 		Substrate cstick = new Substrate(new Pair<Integer, Integer>(2, 1), 
 				Substrate.OUTPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, Substrate.OUTPUT_SUBSTRATE, 0), "C-Stick Outputs");
