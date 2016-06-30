@@ -27,7 +27,13 @@ public class HyperNEATUtil {
 	private static HyperNEATTask hyperNEATTask;
 
 	private static List<Substrate> substrates;
-	
+
+	public static void resetSubstrates() {
+		if(hyperNEATTask != null) {
+			substrates = hyperNEATTask.getSubstrateInformation();
+		}
+	}
+
 	public static List<DrawingPanel> drawSubstrates(ArrayList<Node> nodes) {
 		if(substratePanels == null) {
 			hyperNEATTask = (HyperNEATTask) MMNEAT.task;

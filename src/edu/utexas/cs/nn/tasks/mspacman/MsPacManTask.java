@@ -88,7 +88,7 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 	public static final int MS_PAC_MAN_SUBSTRATE_SIZE = MS_PAC_MAN_SUBSTRATE_WIDTH * MS_PAC_MAN_SUBSTRATE_HEIGHT;
 	public List<Substrate> subs = null; // filled below
 	public List<Pair<String, String>> connections = null; // filled below
-	public HashMap<Integer, List<Substrate>> substratesForMaze;
+	public HashMap<Integer, List<Substrate>> substratesForMaze = new HashMap<Integer, List<Substrate>>();
 	public static String saveFilePrefix = "";
 	//boolean variables
 	protected boolean deterministic;
@@ -593,6 +593,10 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 		return subs;
 	}
 
+	/**
+	 * Full substrate without dead neurons for specific mazes
+	 * @return
+	 */
 	public List<Substrate> getSubstrateInformationFromScratch() {
 		List<Substrate> localSubs = new ArrayList<Substrate>();
 		Pair<Integer, Integer> subSize = new Pair<>(MS_PAC_MAN_SUBSTRATE_WIDTH, MS_PAC_MAN_SUBSTRATE_HEIGHT);
@@ -651,23 +655,34 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 	 * @param gf game facade, which accesses current maze
 	 */
 	public void customizeSubstratesForMaze(GameFacade gf) {
-		substratesForMaze = new HashMap<Integer, List<Substrate>>();
-		for(int j = 0; j < Constants.NUM_MAZES; j++) {
+		int mazeIndex = gf.getMazeIndex();
+		if(!substratesForMaze.containsKey(mazeIndex)) {
 			List<Substrate> localSubs = getSubstrateInformationFromScratch(); // Just to make sure subs is not null
 			for(Substrate s : localSubs){
 				// Only reset full screen substrates
 				if(s.size.t1 == MS_PAC_MAN_SUBSTRATE_WIDTH && s.size.t2 == MS_PAC_MAN_SUBSTRATE_HEIGHT) {
 					s.killAllNeurons();
-					for(int i = 0; i < gf.lengthMaze(); i++) {
-						int x = gf.getNodeXCoord(i);
-						int y = gf.getNodeYCoord(i);
-						int scaledX = x / MsPacManTask.MS_PAC_MAN_NODE_DIM;
-						int scaledY = y / MsPacManTask.MS_PAC_MAN_NODE_DIM;
-						s.resurrectNeuron(scaledX, scaledY);
+					if(s.name.equals("Pills")){
+						for(int node : gf.getPillIndices()) {
+							int x = gf.getNodeXCoord(node);
+							int y = gf.getNodeYCoord(node);
+							int scaledX = x / MsPacManTask.MS_PAC_MAN_NODE_DIM;
+							int scaledY = y / MsPacManTask.MS_PAC_MAN_NODE_DIM;
+							s.resurrectNeuron(scaledX, scaledY);
+						}
+					} else {
+						for(int i = 0; i < gf.lengthMaze(); i++) {
+							int x = gf.getNodeXCoord(i);
+							int y = gf.getNodeYCoord(i);
+							int scaledX = x / MsPacManTask.MS_PAC_MAN_NODE_DIM;
+							int scaledY = y / MsPacManTask.MS_PAC_MAN_NODE_DIM;
+							s.resurrectNeuron(scaledX, scaledY);
+						}
 					}
 				}
-				substratesForMaze.put(j, localSubs);
 			}
+			substratesForMaze.put(mazeIndex, localSubs);
 		}
+		subs = substratesForMaze.get(mazeIndex);
 	}
 }
