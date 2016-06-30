@@ -284,6 +284,9 @@ public class Parameters {
 		longOptions.add("lastInnovation", 0l, "Highest innovation number used so far");
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
 		// Boolean parameters
+		booleanOptions.add("pacmanFullScreenProcess", false, "full screen process layer");
+		booleanOptions.add("pacmanBothThreatAndEdibleSubstrate", false, "whether or not to have 2 substrates for threat and edible ghosts");
+		booleanOptions.add("pacmanFullScreenPowerInput", false, "full screen input for power pill substrate");
 		booleanOptions.add("pacManFullScreenOutput", false, "Output substrate has a cell for every 5x5 block on pacman screen");
 		booleanOptions.add("moMario", false, "Mario is multiobjective");
 		booleanOptions.add("showCPPN", false, "shows evolved CPPN during post evals");
