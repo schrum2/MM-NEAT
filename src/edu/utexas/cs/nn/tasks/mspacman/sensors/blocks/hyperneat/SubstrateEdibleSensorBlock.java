@@ -2,12 +2,9 @@ package edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.hyperneat;
 
 import edu.utexas.cs.nn.tasks.mspacman.agentcontroller.pacman.NNHyperNEATPacManController;
 import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
-/**
- * Gets sensor block for pacman substrate in hyperNEAT msPacMan task
- * @author Lauren Gillespie
- *
- */
-public class SubstratePacManSensorBlock  extends FullScreenSubstrateSensorBlock{
+
+public class SubstrateEdibleSensorBlock extends FullScreenSubstrateSensorBlock{
+
 
 	@Override
 	/**
@@ -16,7 +13,7 @@ public class SubstratePacManSensorBlock  extends FullScreenSubstrateSensorBlock{
 	 * @return String sensor label
 	 */
 	public String locationLabel() {
-		return "Ms_PacMan";
+		return "Edible";
 	}
 
 	@Override
@@ -28,10 +25,13 @@ public class SubstratePacManSensorBlock  extends FullScreenSubstrateSensorBlock{
 	 * @return last used index in inputs array from this sensor block
 	 */
 	public int incorporateSensors(double[] inputs, int startPoint, GameFacade gf, int lastDirection) {
-		int pacManIndex = gf.getPacmanCurrentNodeIndex();
-		int x = gf.getNodeXCoord(pacManIndex);
-		int y = gf.getNodeYCoord(pacManIndex);
-		inputs[startPoint + NNHyperNEATPacManController.getOutputIndexFromNodeCoord(x, y)] = 1;
+		for(int i = 0; i < gf.getEdibleGhostLocations().length; i++) {
+			int node = gf.getGhostCurrentNodeIndex(i);
+			int x = gf.getNodeXCoord(node);
+			int y = gf.getNodeYCoord(node);
+			int inputOffset = NNHyperNEATPacManController.getOutputIndexFromNodeCoord(x, y);
+			inputs[startPoint + inputOffset] = 1;
+		}
 		return startPoint + numberAdded();
 	}
 

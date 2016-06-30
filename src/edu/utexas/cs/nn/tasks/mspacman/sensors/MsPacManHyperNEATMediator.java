@@ -1,9 +1,13 @@
 package edu.utexas.cs.nn.tasks.mspacman.sensors;
 
+import edu.utexas.cs.nn.parameters.Parameters;
+import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.hyperneat.SubstrateEdibleSensorBlock;
+import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.hyperneat.SubstrateFullScreenPowerPillSensorBlock;
 import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.hyperneat.SubstrateGhostSensorBlock;
 import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.hyperneat.SubstratePacManSensorBlock;
 import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.hyperneat.SubstratePillsSensorBlock;
 import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.hyperneat.SubstratePowerPillSensorBlock;
+import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.hyperneat.SubstrateThreatSensorBlock;
 /**
  * Mediator class for hyperNEAT msPacMan.
  *  Defines the sensor blocks, inputs and their components
@@ -18,8 +22,17 @@ public class MsPacManHyperNEATMediator extends BlockLoadedInputOutputMediator {
 	 */
 	public MsPacManHyperNEATMediator() {
 		blocks.add(new SubstratePillsSensorBlock());
-		blocks.add(new SubstratePowerPillSensorBlock());
-		blocks.add(new SubstrateGhostSensorBlock());
+		if(Parameters.parameters.booleanParameter("pacmanFullScreenPowerInput")) {
+			blocks.add(new SubstrateFullScreenPowerPillSensorBlock());	
+		}else {
+			blocks.add(new SubstratePowerPillSensorBlock());
+		}
+		if(Parameters.parameters.booleanParameter("pacmanBothThreatAndEdibleSubstrate")) {
+			blocks.add(new SubstrateThreatSensorBlock());
+			blocks.add(new SubstrateEdibleSensorBlock());
+		} else {
+			blocks.add(new SubstrateGhostSensorBlock());
+		}
 		blocks.add(new SubstratePacManSensorBlock());
 	}
 }

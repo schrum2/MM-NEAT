@@ -602,12 +602,34 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 		Pair<Integer, Integer> subSize = new Pair<>(MS_PAC_MAN_SUBSTRATE_WIDTH, MS_PAC_MAN_SUBSTRATE_HEIGHT);
 		Pair<Integer, Integer> processSize = new Pair<>(10,10);
 		Substrate pillSubstrate = new Substrate(subSize, Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, 0, 0), "Pills");
-		// TODO consider making a full-screen substrate
-		Substrate powerPillSubstrate = new Substrate(new Pair<Integer, Integer>(2, 2), Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(1, 0, 0), "PowerPills");
-		// TODO consider splitting into threat and edible substrates
-		Substrate ghostSubstrate = new Substrate(subSize, Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(2, 0, 0), "Ghosts");
+		Substrate powerPillSubstrate;
+		if(Parameters.parameters.booleanParameter("pacmanFullScreenPowerInput")) {
+			powerPillSubstrate = new Substrate(subSize, Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(1, 0, 0), "PowerPills");
+		} else {
+			powerPillSubstrate = new Substrate(new Pair<Integer, Integer>(2, 2), Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(1, 0, 0), "PowerPills");		
+		}
+
+
 		Substrate pacManSubstrate = new Substrate(subSize, Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(3, 0, 0), "MsPacMan");
-		Substrate processSubstrate = new Substrate(processSize, Substrate.PROCCESS_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, 1, 0), "P_0");
+
+		if(Parameters.parameters.booleanParameter("pacmanBothThreatAndEdibleSubstrate")) {
+			Substrate threatSubstrate = new Substrate(subSize, Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(2, 0, 0), "Threat");
+			Substrate edibleSubstrate = new Substrate(subSize, Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(4, 0, 0), "Edible");
+			localSubs.add(threatSubstrate);
+			localSubs.add(edibleSubstrate);
+		} else {
+			Substrate ghostSubstrate = new Substrate(subSize, Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(2, 0, 0), "Ghosts");
+			localSubs.add(ghostSubstrate);
+			localSubs.add(ghostSubstrate);
+		}	
+		Substrate processSubstrate;
+		if(Parameters.parameters.booleanParameter("pacmanFullScreenProcess")) {
+			processSubstrate = new Substrate(subSize, Substrate.PROCCESS_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, 1, 0), "P_0");
+
+		} else {
+			processSubstrate = new Substrate(processSize, Substrate.PROCCESS_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, 1, 0), "P_0");
+
+		}
 		Substrate outputSubstrate;
 		if(Parameters.parameters.booleanParameter("pacManFullScreenOutput")) {
 			outputSubstrate = new Substrate(subSize, Substrate.OUTPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, 2, 0), "O_0");
@@ -615,14 +637,13 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 			outputSubstrate = new Substrate(new Pair<Integer, Integer>(3, 3), Substrate.OUTPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, 2, 0), "O_0");
 			//kills neurons in corner and center of output substrate
 			outputSubstrate.addDeadNeuron(0, 0);
-			outputSubstrate.addDeadNeuron(0, 2);
+			outputSubstrate.addDeadNeuron(2, 0);
 			outputSubstrate.addDeadNeuron(1, 1);
 			outputSubstrate.addDeadNeuron(0, 2);
 			outputSubstrate.addDeadNeuron(2, 2);
 		}
 		localSubs.add(pillSubstrate);
 		localSubs.add(powerPillSubstrate);
-		localSubs.add(ghostSubstrate);
 		localSubs.add(pacManSubstrate);
 		localSubs.add(processSubstrate);
 		localSubs.add(outputSubstrate); 
@@ -635,7 +656,12 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 			connections = new ArrayList<Pair<String, String>>();
 			connections.add(new Pair<String, String>("Pills", "P_0"));
 			connections.add(new Pair<String, String>("PowerPills", "P_0"));
-			connections.add(new Pair<String, String>("Ghosts", "P_0"));
+			if(Parameters.parameters.booleanParameter("pacmanBothThreatAndEdibleSubstrate")) {
+				connections.add(new Pair<String, String>("Threat", "P_0"));
+				connections.add(new Pair<String, String>("Edible", "P_0"));
+			} else {
+				connections.add(new Pair<String, String>("Ghosts", "P_0"));
+			}
 			connections.add(new Pair<String, String>("MsPacMan", "P_0"));
 			connections.add(new Pair<String, String>("P_0", "O_0"));
 			if(Parameters.parameters.booleanParameter("extraHNLinks")) {
@@ -670,7 +696,15 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 							int scaledY = y / MsPacManTask.MS_PAC_MAN_NODE_DIM;
 							s.resurrectNeuron(scaledX, scaledY);
 						}
-					} else {
+					} else if(s.name.equals("Power")) {
+						for(int node : gf.getActivePillsIndices()) {
+							int x = gf.getNodeXCoord(node);
+							int y = gf.getNodeYCoord(node);
+							int scaledX = x / MsPacManTask.MS_PAC_MAN_NODE_DIM;
+							int scaledY = y / MsPacManTask.MS_PAC_MAN_NODE_DIM;
+							s.resurrectNeuron(scaledX, scaledY);
+						}
+					} else{
 						for(int i = 0; i < gf.lengthMaze(); i++) {
 							int x = gf.getNodeXCoord(i);
 							int y = gf.getNodeYCoord(i);
