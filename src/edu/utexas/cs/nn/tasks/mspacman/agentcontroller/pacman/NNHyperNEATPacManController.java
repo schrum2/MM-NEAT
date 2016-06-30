@@ -51,7 +51,7 @@ public class NNHyperNEATPacManController extends NNPacManController {
 			nn = networkForMaze.get(currentMaze); // recreate network
 			// Need to update for substrate visualizer
 			if(CommonConstants.monitorSubstrates) {
-				((MsPacManTask) MMNEAT.task).customizeSubstratesForMaze(gf);
+				((MsPacManTask) MMNEAT.task).substratesForMaze.get(currentMaze);
 			}
 		}
 		double[] inputs = inputMediator.getInputs(gf, gf.getPacmanLastMoveMade());
