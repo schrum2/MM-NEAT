@@ -2,13 +2,22 @@ package edu.utexas.cs.nn.tasks.rlglue.featureextractors.tetris;
 
 import static org.junit.Assert.*;
 
+import org.junit.After;
 import org.junit.Test;
 
 import org.rlcommunity.environments.tetris.TetrisState;
 import org.rlcommunity.rlglue.codec.types.Observation;
 
+import edu.utexas.cs.nn.MMNEAT.MMNEAT;
+
 public class BertsekasTsitsiklisTetrisExtractorTests {
 
+	
+	@After
+	public void tearDown() throws Exception {
+		MMNEAT.clearClasses();
+	}
+	
 	/**
 	 * Tests that the outputs given
 	 */

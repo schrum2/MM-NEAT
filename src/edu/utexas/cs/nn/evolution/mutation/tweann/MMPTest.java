@@ -20,7 +20,8 @@ public class MMPTest {
 	final int MUTATIONS1 = 30;
 
 	@Before
-	public void setUp() throws Exception {
+	public void setUp() throws Exception { 
+		MMNEAT.clearClasses();
 		Parameters.initializeParameterCollections(
 				new String[] { "io:false", "netio:false", "recurrency:false", "mmpRate:1.0" });
 		MMNEAT.loadClasses();

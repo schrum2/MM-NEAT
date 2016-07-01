@@ -4,9 +4,11 @@ import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 
+import org.junit.After;
 import org.junit.Test;
 
 import edu.utexas.cs.nn.util.util2D.Tuple2D;
+import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.util.util2D.ILocated2D;
 
 /**
@@ -19,6 +21,11 @@ public class CartesianGeometricUtilitiesTest {
 
 	public final double DOUBLE_THRESHOLD = .0001;
 
+	@After
+	public void tearDown() throws Exception {
+		MMNEAT.clearClasses();
+	}
+	
 	@Test
 	public void testCenterAndScale() {
 		Tuple2D pair = new Tuple2D(1.5, .5);

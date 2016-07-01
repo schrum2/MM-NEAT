@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -91,6 +92,14 @@ public class NSGA2Test {
 		Collections.shuffle(scores, RandomNumbers.randomGenerator);
 	}
 
+	@After
+	public void tearDown() throws Exception {
+		ea = null;
+		scores = null;
+		fronts = null;
+		MMNEAT.clearClasses();
+	}
+	
 	/**
 	 * tests NSGA2 algorithm and selection process
 	 */

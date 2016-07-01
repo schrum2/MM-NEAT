@@ -7,10 +7,20 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.junit.After;
 import org.junit.Test;
+
+import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 
 public class ArrayUtilTests {
 
+	
+	
+	@After
+	public void tearDown() throws Exception {
+		MMNEAT.clearClasses();
+	}
+	
 	/**
 	 * Tests that the given number of "1"s is returned in a double[]
 	 */

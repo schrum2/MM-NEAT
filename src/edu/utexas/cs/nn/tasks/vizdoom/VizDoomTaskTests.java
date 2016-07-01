@@ -2,6 +2,7 @@ package edu.utexas.cs.nn.tasks.vizdoom;
 
 import static org.junit.Assert.*;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -17,6 +18,11 @@ public class VizDoomTaskTests {
 //		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "recurrency:false"});//TODO
 //		MMNEAT.loadClasses();
 		VizDoomTask.smudgeStat = new Average();
+	}
+	
+	@After
+	public void tearDown() throws Exception {
+		MMNEAT.clearClasses();
 	}
 	
 	@Test

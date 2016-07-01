@@ -2,9 +2,11 @@ package edu.utexas.cs.nn.gridTorus;
 
 import static org.junit.Assert.*;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.util.util2D.Tuple2D;
 
 public class TorusAgentTest {
@@ -19,7 +21,13 @@ public class TorusAgentTest {
 		pred = new TorusAgent(new TorusWorld(100, 100), 0, 0, 0);
 		prey = new TorusAgent(new TorusWorld(100, 100), 0, 0, 1);
 	}
-
+	@After
+	public void tearDown() throws Exception {
+		pred = null;
+		prey = null;
+		MMNEAT.clearClasses();
+	}
+	
 	@Test
 	public void testGetPosition() {
 		// returns Tuple2D getPosition()

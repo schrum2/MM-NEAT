@@ -4,7 +4,7 @@ import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 
-import org.junit.Before;
+import org.junit.After;
 import org.junit.Test;
 
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
@@ -20,10 +20,14 @@ import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
 
 public class TUGNSGA2Test {
 
-	@Before
-	public void setUp() throws Exception {
-	}
 
+
+	@After
+	public void tearDown() throws Exception {
+		MMNEAT.clearClasses();
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Test
 	public void test() {
 		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "tugKeepsParetoFront:false" });

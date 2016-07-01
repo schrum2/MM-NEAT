@@ -5,6 +5,7 @@ package edu.utexas.cs.nn.evolution.mutation.tweann;
 
 import static org.junit.Assert.*;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.Assert;
@@ -48,6 +49,13 @@ public class MMDTest {
 		mutate(tg1, tg2);
 	}
 
+	@After
+	public void tearDown() throws Exception {
+		tg1 = null;
+		tg2 = null;
+		MMNEAT.clearClasses();
+	}
+	
 	public void mutate(TWEANNGenotype tg1, TWEANNGenotype tg2) {
 		for (int i = 0; i < MUTATIONS1; i++) {
 			tg1.mutate();

@@ -2,6 +2,7 @@ package edu.utexas.cs.nn.tasks.rlglue.featureextractors.tetris;
 
 import static org.junit.Assert.*;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.rlcommunity.environments.tetris.TetrisState;
@@ -29,6 +30,11 @@ public class RawTetrisStateExtractorTests {
 		MMNEAT.loadClasses();
 	}
 
+	@After
+	public void tearDown() throws Exception {
+		MMNEAT.clearClasses();
+	}
+	
 	@Test
 	public void sanityTest2() {
 	System.out.println("--------------------------------------------------------------------");

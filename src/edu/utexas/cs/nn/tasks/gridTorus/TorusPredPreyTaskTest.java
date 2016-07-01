@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -62,6 +63,17 @@ public class TorusPredPreyTaskTest <T extends Network> {
 		MMNEAT.loadClasses();
 	}
 
+	@After
+	public void tearDown() throws Exception {
+		homoPred = null;
+		homoPrey = null;
+		coPred = null;
+		coPrey = null;
+		homoComp = null;
+		coComp = null;
+		MMNEAT.clearClasses();
+	}
+	
 	@SuppressWarnings({ "rawtypes", "static-access" })
 	@Test
 	public void testConstructors() {
