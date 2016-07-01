@@ -619,7 +619,6 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 		} else {
 			Substrate ghostSubstrate = new Substrate(subSize, Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(2, 0, 0), "Ghosts");
 			localSubs.add(ghostSubstrate);
-			localSubs.add(ghostSubstrate);
 		}	
 		Substrate pacManSubstrate = new Substrate(subSize, Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(3, 0, 0), "MsPacMan");
 		localSubs.add(pacManSubstrate);
@@ -665,7 +664,12 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 			if(Parameters.parameters.booleanParameter("extraHNLinks")) {
 				connections.add(new Pair<String, String>("Pills", "O_0"));
 				connections.add(new Pair<String, String>("PowerPills", "O_0"));
-				connections.add(new Pair<String, String>("Ghosts", "O_0"));
+				if(Parameters.parameters.booleanParameter("pacmanBothThreatAndEdibleSubstrate")) {
+					connections.add(new Pair<String, String>("Threat", "O_0"));
+					connections.add(new Pair<String, String>("Edible", "O_0"));
+				} else {
+					connections.add(new Pair<String, String>("Ghosts", "O_0"));
+				}	
 				connections.add(new Pair<String, String>("MsPacMan", "O_0"));
 			}
 		}
