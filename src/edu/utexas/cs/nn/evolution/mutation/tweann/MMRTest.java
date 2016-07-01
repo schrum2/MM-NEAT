@@ -10,22 +10,49 @@ import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
 import edu.utexas.cs.nn.evolution.crossover.network.TWEANNCrossover;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
+import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype.LinkGene;
 import edu.utexas.cs.nn.graphics.DrawingPanel;
 import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.parameters.Parameters;
 
 public class MMRTest {
 //TODO
+	
+	MMR mmr;
+	TWEANNGenotype tg1, tg2;
+	
 	@Before
 	public void setUp() throws Exception {
+		Parameters.initializeParameterCollections(new String[] { "io:false", "recurrency:false", "mmrRate:.00" });
+		MMNEAT.loadClasses();
+		mmr = new MMR();
+		tg1 = new TWEANNGenotype(MMNEAT.networkInputs, MMNEAT.networkOutputs, 0);
+		tg2 = (TWEANNGenotype) tg1.copy();
 	}
 
 	@After
 	public void tearDown() throws Exception {
+		mmr = null;
+		tg1 = null;
+		tg2 = null;
+		MMNEAT.clearClasses();
 	}
 
 	@Test
 	public void test() {
+		assertEquals(tg1.numIn, tg2.numIn);
+		assertEquals(tg1.numOut, tg2.numOut);
+		mmr.mutate(tg1);
+		assertEquals(tg1.numModules, 2);
+		
+		assertEquals(tg1.numOut, tg2.numOut * 2);
+		TWEANN tg = tg1.getPhenotype();
+		System.out.println("num in and out" + tg.numInputs() + " : " + tg.numOutputs());
+		double[] inputs = {.1, .2, .3, .4, .5};
+		tg.process(inputs);
+		for(int i = 0; i < tg.moduleOutput(0).length; i++) {
+			assertTrue( tg.moduleOutput(0)[i] != tg.moduleOutput(1)[i]);
+		}
 	}
 	/**
 	 * Test to make sure MM(R) works. Should be made into proper JUnit Test.
@@ -33,7 +60,7 @@ public class MMRTest {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		Parameters.initializeParameterCollections(new String[] { "io:false", "recurrency:false", "mmdRate:0.1" });
+		Parameters.initializeParameterCollections(new String[] { "io:false", "recurrency:false", "mmrRate:0.1" });
 		MMNEAT.loadClasses();
 		TWEANNGenotype tg1 = new TWEANNGenotype(5, 2, 0);
 		MMNEAT.genotype = tg1.copy();
