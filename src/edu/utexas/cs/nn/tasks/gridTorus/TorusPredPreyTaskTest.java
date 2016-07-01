@@ -25,10 +25,19 @@ import edu.utexas.cs.nn.tasks.gridTorus.objectives.PreyLongSurvivalTimeObjective
 import edu.utexas.cs.nn.tasks.gridTorus.objectives.PreyMaximizeDistanceFromPredatorsObjective;
 import edu.utexas.cs.nn.tasks.gridTorus.objectives.PreyMaximizeGameTimeObjective;
 import edu.utexas.cs.nn.tasks.gridTorus.objectives.PreyMinimizeCaughtObjective;
+import edu.utexas.cs.nn.tasks.gridTorus.objectives.PreyRawalRajagopalanMiikkulainenObjective;
 
 public class TorusPredPreyTaskTest <T extends Network> {
 	
 	public static final double doubleThreshold = .001;
+	
+	//NOTE: numOthers depends on how many fitnesses are currently added to other scores.
+	//NOTE: If this is failing, probably because there are not 22 other scores anymore.
+	private static final int numOthers = 22;
+	
+	//NOTE: numOthersCompetitive depends on how many fitnesses are currently added to other scores.
+	//NOTE: If this is failing, probably because there are not 37 other scores anymore.
+	private static final int numOthersCompetitive = 37;
 
 	@SuppressWarnings("rawtypes")
 	private static TorusEvolvedPredatorsVsStaticPreyTask homoPred;
@@ -47,7 +56,7 @@ public class TorusPredPreyTaskTest <T extends Network> {
 	public void setUp() throws Exception {
 		//NOTE: MAKE SURE THAT THE BELOW PARAMETER INITIALIZATION SETS THE DEFAULT FITNESSES TO FALSE
 		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "torusTimeLimit:1000",
-				"torusPreys:2", "torusPredators:3", 
+				"torusPreys:2", "torusPredators:3", "allowDoNothingActionForPredators:false", 
 				"staticPreyController:edu.utexas.cs.nn.gridTorus.controllers.PreyFleeClosestPredatorController",
 				"predatorCatchClose:false", "preyRRM:false" });
 		MMNEAT.loadClasses();
@@ -485,45 +494,218 @@ public class TorusPredPreyTaskTest <T extends Network> {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Test
 	public void testNumOtherScores() {
-		//NOTE: this variable depends on how many fitnesses are currently added to other scores
-		//in addAllObjectives from the constructor, which is all the fitnesses
-		int numOthers = 22;
-		
+		//NOTE: numOthers depends on how many fitnesses are currently added to other scores.
+		//NOTE: If this is failing, probably because there are not 22 other scores anymore.
 		MMNEAT.task = new TorusEvolvedPredatorsVsStaticPreyTask();
 		homoPred = (TorusEvolvedPredatorsVsStaticPreyTask)MMNEAT.task;
 		ArrayList<ArrayList<GridTorusObjective<T>>> objectives = homoPred.objectives;
 		ArrayList<ArrayList<GridTorusObjective<T>>> otherScores = homoPred.otherScores;
 		assertEquals(otherScores.size(), 1);
+		//NOTE: numOthers depends on how many fitnesses are currently added to other scores.
+		//NOTE: If this is failing, probably because there are not 22 other scores anymore.
 		assertEquals(homoPred.numOtherScores(), numOthers);
 		homoPred.addObjective(new PredatorCatchCloseObjective(), otherScores, 0);
+		//NOTE: numOthers depends on how many fitnesses are currently added to other scores.
+		//NOTE: If this is failing, probably because there are not 22 other scores anymore.
 		assertEquals(homoPred.numOtherScores(), numOthers + 1);
 		homoPred.addObjective(new PredatorCatchObjective(), otherScores, 0);
+		//NOTE: numOthers depends on how many fitnesses are currently added to other scores.
+		//NOTE: If this is failing, probably because there are not 22 other scores anymore.
 		assertEquals(homoPred.numOtherScores(), numOthers + 2);
 		homoPred.addObjective(new PreyMinimizeCaughtObjective(), otherScores, 0);
+		//NOTE: numOthers depends on how many fitnesses are currently added to other scores.
+		//NOTE: If this is failing, probably because there are not 22 other scores anymore.
 		assertEquals(homoPred.numOtherScores(), numOthers + 3);
 		homoPred.addObjective(new PredatorEatEachPreyQuicklyObjective(), objectives, 0);
+		//NOTE: numOthers depends on how many fitnesses are currently added to other scores.
+		//NOTE: If this is failing, probably because there are not 22 other scores anymore.
 		assertEquals(homoPred.numOtherScores(), numOthers + 3);
 		
 	}
 	
+	@SuppressWarnings("rawtypes")
 	@Test
 	public void testStartingGoals() {
+		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "torusTimeLimit:1000",
+				"torusPreys:2", "torusPredators:3",
+				"staticPreyController:edu.utexas.cs.nn.gridTorus.controllers.PreyFleeClosestPredatorController",
+				"predatorCatchClose:true", "preyRRM:true" });
+		MMNEAT.loadClasses();
+		MMNEAT.task = new TorusEvolvedPredatorsVsStaticPreyTask();
+		homoPred = (TorusEvolvedPredatorsVsStaticPreyTask)MMNEAT.task;
+		//min score of predatorCatchClose is 0
+		assertEquals(homoPred.startingGoals()[0], 0, doubleThreshold);
+		assertEquals(homoPred.startingGoals().length, 1);
 		
+		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "torusTimeLimit:1000",
+				"torusPreys:2", "torusPredators:3",
+				"staticPreyController:edu.utexas.cs.nn.gridTorus.controllers.PreyFleeClosestPredatorController",
+				"predatorCatchClose:true", "predatorMinimizeDistance:true", "predatorsEatQuick:true"});
+		MMNEAT.loadClasses();
+		MMNEAT.task = new TorusEvolvedPredatorsVsStaticPreyTask();
+		homoPred = (TorusEvolvedPredatorsVsStaticPreyTask)MMNEAT.task;
+		//NOTE: This relies on the ordering of the adding of the fitness functions in addPredatorObjectives
+		//NOTE: If this test is failing, the ordering of the fitness objective checks/adds probably changed in addPredatorObjectives
+		//min score of predatorCatchClose is 0
+		assertEquals(homoPred.startingGoals()[0], 0, doubleThreshold);
+		//min score of PredatorMinimizeDistanceFromPreyObjective is -2000 with two prey
+		assertEquals(homoPred.startingGoals()[1], -2000, doubleThreshold);
+		//min score of PredatorEatEachPreyQuicklyObjective is -600 with two prey
+		assertEquals(homoPred.startingGoals()[2], -600, doubleThreshold);
+
 	}
 	
+	@SuppressWarnings("rawtypes")
 	@Test
 	public void testMinScores() {
+		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "torusTimeLimit:1000",
+				"torusPreys:2", "torusPredators:3",
+				"staticPreyController:edu.utexas.cs.nn.gridTorus.controllers.PreyFleeClosestPredatorController",
+				"predatorCatchClose:true", "preyRRM:true" });
+		MMNEAT.loadClasses();
+		MMNEAT.task = new TorusEvolvedPredatorsVsStaticPreyTask();
+		homoPred = (TorusEvolvedPredatorsVsStaticPreyTask)MMNEAT.task;
+		//min score of predatorCatchClose is 0
+		assertEquals(homoPred.minScores()[0], 0, doubleThreshold);
+		assertEquals(homoPred.minScores().length, 1);
+		
+		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "torusTimeLimit:1000",
+				"torusPreys:2", "torusPredators:3",
+				"staticPreyController:edu.utexas.cs.nn.gridTorus.controllers.PreyFleeClosestPredatorController",
+				"predatorCatchClose:true", "predatorMinimizeDistance:true", "predatorsEatQuick:true"});
+		MMNEAT.loadClasses();
+		MMNEAT.task = new TorusEvolvedPredatorsVsStaticPreyTask();
+		homoPred = (TorusEvolvedPredatorsVsStaticPreyTask)MMNEAT.task;
+		//NOTE: This relies on the ordering of the adding of the fitness functions in addPredatorObjectives
+		//NOTE: If this test is failing, the ordering of the fitness objective checks/adds probably changed in addPredatorObjectives
+		//min score of predatorCatchClose is 0
+		assertEquals(homoPred.minScores()[0], 0, doubleThreshold);
+		//min score of PredatorMinimizeDistanceFromPreyObjective is -2000 with two prey
+		assertEquals(homoPred.minScores()[1], -2000, doubleThreshold);
+		//min score of PredatorEatEachPreyQuicklyObjective is -600 with two prey
+		assertEquals(homoPred.minScores()[2], -600, doubleThreshold);
 		
 	}
 	
+	@SuppressWarnings("rawtypes")
 	@Test
 	public void testSensorLabels() {
 		
 	}
 	
+	@SuppressWarnings({ "rawtypes", "static-access" })
 	@Test
 	public void testOutputLabels() {
+		final String[] ALL_ACTIONS = new String[] { "UP", "RIGHT", "DOWN", "LEFT", "NOTHING" };
+		final String[] MOVEMENT_ACTIONS = new String[] { "UP", "RIGHT", "DOWN", "LEFT" };
 		
+		
+		MMNEAT.task = new TorusEvolvedPredatorsVsStaticPreyTask();
+		homoPred = (TorusEvolvedPredatorsVsStaticPreyTask)MMNEAT.task;
+		//Predator is evolving without the possibility of do nothing action
+		assertArrayEquals(homoPred.outputLabels(), MOVEMENT_ACTIONS);
+		MMNEAT.task = new TorusEvolvedPreyVsStaticPredatorsTask();
+		homoPrey = (TorusEvolvedPreyVsStaticPredatorsTask)MMNEAT.task;
+		//Prey is evolving without the possibility of do nothing action
+		assertArrayEquals(homoPrey.outputLabels(), MOVEMENT_ACTIONS);
+		
+		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "torusTimeLimit:1000",
+				"torusPreys:2", "torusPredators:3", "allowDoNothingActionForPredators:true", "allowDoNothingActionForPreys:true", 
+				"staticPreyController:edu.utexas.cs.nn.gridTorus.controllers.PreyFleeClosestPredatorController",
+				"predatorCatchClose:false", "preyRRM:false" });
+		MMNEAT.loadClasses();
+		MMNEAT.task = new TorusEvolvedPredatorsVsStaticPreyTask();
+		homoPred = (TorusEvolvedPredatorsVsStaticPreyTask)MMNEAT.task;
+		//Predator is evolving with the possibility of do nothing action
+		assertArrayEquals(homoPred.outputLabels(), ALL_ACTIONS);
+		MMNEAT.task = new TorusEvolvedPreyVsStaticPredatorsTask();
+		homoPrey = (TorusEvolvedPreyVsStaticPredatorsTask)MMNEAT.task;
+		//Prey is evolving with the possibility of do nothing action
+		assertArrayEquals(homoPrey.outputLabels(), ALL_ACTIONS);
+		
+		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "torusTimeLimit:1000",
+				"torusPreys:2", "torusPredators:3", "allowDoNothingActionForPredators:false", "allowDoNothingActionForPreys:true", 
+				"staticPreyController:edu.utexas.cs.nn.gridTorus.controllers.PreyFleeClosestPredatorController",
+				"predatorCatchClose:false", "preyRRM:false" });
+		MMNEAT.loadClasses();
+		MMNEAT.task = new TorusEvolvedPredatorsVsStaticPreyTask();
+		homoPred = (TorusEvolvedPredatorsVsStaticPreyTask)MMNEAT.task;
+		//Predator is evolving without the possibility of do nothing action
+		assertArrayEquals(homoPred.outputLabels(), MOVEMENT_ACTIONS);
+		MMNEAT.task = new TorusEvolvedPreyVsStaticPredatorsTask();
+		homoPrey = (TorusEvolvedPreyVsStaticPredatorsTask)MMNEAT.task;
+		//Prey is evolving with the possibility of do nothing action
+		assertArrayEquals(homoPrey.outputLabels(), ALL_ACTIONS);
+		
+		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "torusTimeLimit:1000",
+				"torusPreys:2", "torusPredators:3", "allowDoNothingActionForPredators:true", "allowDoNothingActionForPreys:false", 
+				"staticPreyController:edu.utexas.cs.nn.gridTorus.controllers.PreyFleeClosestPredatorController",
+				"predatorCatchClose:false", "preyRRM:false" });
+		MMNEAT.loadClasses();
+		MMNEAT.task = new TorusEvolvedPredatorsVsStaticPreyTask();
+		homoPred = (TorusEvolvedPredatorsVsStaticPreyTask)MMNEAT.task;
+		//Predator is evolving with the possibility of do nothing action
+		assertArrayEquals(homoPred.outputLabels(), ALL_ACTIONS);
+		MMNEAT.task = new TorusEvolvedPreyVsStaticPredatorsTask();
+		homoPrey = (TorusEvolvedPreyVsStaticPredatorsTask)MMNEAT.task;
+		//Prey is evolving without the possibility of do nothing action
+		assertArrayEquals(homoPrey.outputLabels(), MOVEMENT_ACTIONS);
+		
+		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "torusTimeLimit:1000",
+				"torusPreys:2", "torusPredators:3", "allowDoNothingActionForPredators:false", "allowDoNothingActionForPreys:false", 
+				"staticPreyController:edu.utexas.cs.nn.gridTorus.controllers.PreyFleeClosestPredatorController",
+				"predatorCatchClose:false", "preyRRM:false" });
+		MMNEAT.loadClasses();
+		MMNEAT.task = new CompetitiveHomogeneousPredatorsVsPreyTask();
+		homoComp = (CompetitiveHomogeneousPredatorsVsPreyTask)MMNEAT.task;
+		homoComp.getLonerTaskInstance().preyEvolve = true;
+		//Prey is evolving without the possibility of do nothing action
+		assertArrayEquals(homoComp.outputLabels(), MOVEMENT_ACTIONS);
+		homoComp.getLonerTaskInstance().preyEvolve = false;
+		//Predator is evolving without the possibility of do nothing action
+		assertArrayEquals(homoComp.outputLabels(), MOVEMENT_ACTIONS);
+		
+		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "torusTimeLimit:1000",
+				"torusPreys:2", "torusPredators:3", "allowDoNothingActionForPredators:true", "allowDoNothingActionForPreys:false", 
+				"staticPreyController:edu.utexas.cs.nn.gridTorus.controllers.PreyFleeClosestPredatorController",
+				"predatorCatchClose:false", "preyRRM:false" });
+		MMNEAT.loadClasses();
+		MMNEAT.task = new CompetitiveHomogeneousPredatorsVsPreyTask();
+		homoComp = (CompetitiveHomogeneousPredatorsVsPreyTask)MMNEAT.task;
+		homoComp.getLonerTaskInstance().preyEvolve = true;
+		//Prey is evolving without the possibility of do nothing action
+		assertArrayEquals(homoComp.outputLabels(), MOVEMENT_ACTIONS);
+		homoComp.getLonerTaskInstance().preyEvolve = false;
+		//Predator is evolving with the possibility of do nothing action
+		assertArrayEquals(homoComp.outputLabels(), ALL_ACTIONS);
+		
+		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "torusTimeLimit:1000",
+				"torusPreys:2", "torusPredators:3", "allowDoNothingActionForPredators:false", "allowDoNothingActionForPreys:true", 
+				"staticPreyController:edu.utexas.cs.nn.gridTorus.controllers.PreyFleeClosestPredatorController",
+				"predatorCatchClose:false", "preyRRM:false" });
+		MMNEAT.loadClasses();
+		MMNEAT.task = new CompetitiveHomogeneousPredatorsVsPreyTask();
+		homoComp = (CompetitiveHomogeneousPredatorsVsPreyTask)MMNEAT.task;
+		homoComp.getLonerTaskInstance().preyEvolve = true;
+		//Prey is evolving with the possibility of do nothing action
+		assertArrayEquals(homoComp.outputLabels(), ALL_ACTIONS);
+		homoComp.getLonerTaskInstance().preyEvolve = false;
+		//Predator is evolving without the possibility of do nothing action
+		assertArrayEquals(homoComp.outputLabels(), MOVEMENT_ACTIONS);
+		
+		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "torusTimeLimit:1000",
+				"torusPreys:2", "torusPredators:3", "allowDoNothingActionForPredators:true", "allowDoNothingActionForPreys:true", 
+				"staticPreyController:edu.utexas.cs.nn.gridTorus.controllers.PreyFleeClosestPredatorController",
+				"predatorCatchClose:false", "preyRRM:false" });
+		MMNEAT.loadClasses();
+		MMNEAT.task = new CompetitiveHomogeneousPredatorsVsPreyTask();
+		homoComp = (CompetitiveHomogeneousPredatorsVsPreyTask)MMNEAT.task;
+		homoComp.getLonerTaskInstance().preyEvolve = true;
+		//Prey is evolving with the possibility of do nothing action
+		assertArrayEquals(homoComp.outputLabels(), ALL_ACTIONS);
+		homoComp.getLonerTaskInstance().preyEvolve = false;
+		//Predator is evolving with the possibility of do nothing action
+		assertArrayEquals(homoComp.outputLabels(), ALL_ACTIONS);
 	}
 	
 	@Test
@@ -544,10 +726,8 @@ public class TorusPredPreyTaskTest <T extends Network> {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Test
 	public void testAddAllObjectives() {
-		//NOTE: this variable depends on how many fitnesses are currently added to other scores
-		//in addAllObjectives from the constructor, which is all the fitnesses
-		int numOthers = 22;
-		
+		//NOTE: numOthers depends on how many fitnesses are currently added to other scores.
+		//NOTE: If this is failing, probably because there are not 22 other scores anymore.
 		MMNEAT.task = new TorusEvolvedPredatorsVsStaticPreyTask();
 		homoPred = (TorusEvolvedPredatorsVsStaticPreyTask)MMNEAT.task;
 		ArrayList<ArrayList<GridTorusObjective<T>>> objectives = homoPred.objectives;
@@ -555,7 +735,10 @@ public class TorusPredPreyTaskTest <T extends Network> {
 		//NOTE: addAllObjectives already called once in constructor
 		assertEquals(objectives.size(), 1);
 		assertTrue(objectives.get(0).isEmpty());
-		assertFalse(otherScores.isEmpty());
+		assertEquals(otherScores.size(), 1);
+		//NOTE: numOthers depends on how many fitnesses are currently added to other scores.
+		//NOTE: If this is failing, probably because there are not 22 other scores anymore.
+		assertEquals(otherScores.get(0).size(), numOthers);
 		
 		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "torusTimeLimit:1000",
 				"torusPreys:2", "torusPredators:3",
@@ -569,8 +752,59 @@ public class TorusPredPreyTaskTest <T extends Network> {
 		//NOTE: addAllObjectives already called once in constructor
 		assertEquals(objectives.size(), 1);
 		assertFalse(objectives.get(0).isEmpty());
-		assertFalse(otherScores.isEmpty());
+		assertEquals(otherScores.size(), 1);
+		//NOTE: numOthers depends on how many fitnesses are currently added to other scores.
+		//NOTE: If this is failing, probably because there are not 22 other scores anymore.
+		assertEquals(otherScores.get(0).size(), numOthers);
 		assertTrue(objectives.get(0).get(0) instanceof PredatorCatchCloseObjective);
+		
+		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "torusTimeLimit:1000",
+				"torusPreys:2", "torusPredators:3",
+				"staticPreyController:edu.utexas.cs.nn.gridTorus.controllers.PreyFleeClosestPredatorController",
+				"predatorCatchClose:true", "preyRRM:true" });
+		MMNEAT.loadClasses();
+		MMNEAT.task = new CooperativePredatorsVsStaticPreyTask();
+		coPred = (CooperativePredatorsVsStaticPreyTask)MMNEAT.task;
+		objectives = coPred.getLonerTaskInstance().objectives;
+		otherScores = coPred.getLonerTaskInstance().otherScores;
+		//NOTE:constructor for cooperative task calls addAllObjectives once per population
+		assertEquals(objectives.size(), 3);
+		assertFalse(objectives.get(0).isEmpty());
+		assertEquals(otherScores.size(), 3);
+		//NOTE: numOthers depends on how many fitnesses are currently added to other scores.
+		//NOTE: If this is failing, probably because there are not 22 other scores anymore.
+		assertEquals(otherScores.get(0).size(), numOthers);
+		assertTrue(objectives.get(0).get(0) instanceof PredatorCatchCloseObjective);
+		assertTrue(otherScores.get(1).isEmpty());
+		assertTrue(otherScores.get(2).isEmpty());
+		assertTrue(objectives.get(1).get(0) instanceof PredatorCatchCloseObjective);
+		assertTrue(objectives.get(2).get(0) instanceof PredatorCatchCloseObjective);
+		assertEquals(objectives.get(0).size(), 1);
+		assertEquals(objectives.get(1).size(), 1);
+		assertEquals(objectives.get(2).size(), 1);
+		
+		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "torusTimeLimit:1000",
+				"torusPreys:2", "torusPredators:3",
+				"staticPreyController:edu.utexas.cs.nn.gridTorus.controllers.PreyFleeClosestPredatorController",
+				"predatorCatchClose:true", "preyRRM:true" });
+		MMNEAT.loadClasses();
+		MMNEAT.task = new CompetitiveHomogeneousPredatorsVsPreyTask();
+		homoComp = (CompetitiveHomogeneousPredatorsVsPreyTask)MMNEAT.task;
+		objectives = homoComp.getLonerTaskInstance().objectives;
+		otherScores = homoComp.getLonerTaskInstance().otherScores;
+		//NOTE:constructor for cooperative task calls addAllObjectives once per population
+		assertEquals(objectives.size(), 2);
+		assertFalse(objectives.get(0).isEmpty());
+		assertEquals(otherScores.size(), 2);
+		//NOTE: numOthersCompetitive depends on how many fitnesses are currently added to other scores.
+		//NOTE: If this is failing, probably because there are not 37 other scores anymore.
+		assertEquals(otherScores.get(0).size(), numOthersCompetitive);
+		assertTrue(objectives.get(0).get(0) instanceof PredatorCatchCloseObjective);
+		assertTrue(objectives.get(1).get(0) instanceof PreyRawalRajagopalanMiikkulainenObjective);
+		assertTrue(otherScores.get(1).isEmpty());
+		assertEquals(objectives.get(0).size(), 1);
+		assertEquals(objectives.get(1).size(), 1);
+		
 	}
 	
 	//NOTE: HyperNEAT methods are untested
