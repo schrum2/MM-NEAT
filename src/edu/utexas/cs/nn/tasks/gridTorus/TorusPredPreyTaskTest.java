@@ -57,9 +57,9 @@ public class TorusPredPreyTaskTest <T extends Network> {
 	public void setUp() throws Exception {
 		//NOTE: MAKE SURE THAT THE BELOW PARAMETER INITIALIZATION SETS THE DEFAULT FITNESSES TO FALSE
 		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "torusTimeLimit:1000",
-				"torusPreys:2", "torusPredators:3", "allowDoNothingActionForPredators:false", 
+				"torusPreys:2", "torusPredators:3", "allowDoNothingActionForPredators:false", "torusSenseTeammates:true", 
 				"staticPreyController:edu.utexas.cs.nn.gridTorus.controllers.PreyFleeClosestPredatorController",
-				"predatorCatchClose:false", "preyRRM:false" });
+				"torusSenseByProximity:true", "predatorCatchClose:false", "preyRRM:false" });
 		MMNEAT.loadClasses();
 	}
 
@@ -601,7 +601,108 @@ public class TorusPredPreyTaskTest <T extends Network> {
 	
 	@Test
 	public void testSensorLabels() {
+		//Test with proximity sensors and with sense teammates
+		MMNEAT.task = new TorusEvolvedPredatorsVsStaticPreyTask();
+		homoPred = (TorusEvolvedPredatorsVsStaticPreyTask)MMNEAT.task;
+		//with proximity and sense teammates
+		int numPreds = 3;
+		int numPrey = 2;
+		//NOTE: this relies on the fact that prey are listed first followed by predators
+		String type1 = "Closest Prey";
+		String type2 = "Closest Pred";
+		String[] result = new String[(numPreds+numPrey) * 2];
+		for (int i = 0; i < numPrey; i++) {
+			result[(2 * i)] = "X Offset to " + type1 + " " + i;
+			result[(2 * i) + 1] = "Y Offset to " + type1 + " " + i;
+		}
+		for (int i = numPrey; i < numPreds+numPrey; i++) {
+			result[(2 * i)] = "X Offset to " + type2 + " " + (i-numPrey);
+			result[(2 * i) + 1] = "Y Offset to " + type2 + " " + (i-numPrey);
+		}
+		String[] resultWithBias = new String[(numPreds+numPrey) * 2 + 1];
+		resultWithBias[0] = "Bias";
+		System.arraycopy(result, 0, resultWithBias, 1, result.length);
+		//NOTE: this relies on the fact that prey are listed first followed by predators
+		//NOTE: if this is failing, the sensor ordering probably changed (or the labels themselves) 
+		assertArrayEquals(homoPred.sensorLabels(), resultWithBias);
 		
+		//Test without proximity sensors and with sense teammates
+		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "torusTimeLimit:1000",
+				"torusPreys:2", "torusPredators:3", "allowDoNothingActionForPredators:false", "torusSenseTeammates:true", 
+				"staticPreyController:edu.utexas.cs.nn.gridTorus.controllers.PreyFleeClosestPredatorController",
+				"torusSenseByProximity:false", "predatorCatchClose:false", "preyRRM:false" });
+		MMNEAT.loadClasses();
+		MMNEAT.task = new TorusEvolvedPredatorsVsStaticPreyTask();
+		homoPred = (TorusEvolvedPredatorsVsStaticPreyTask)MMNEAT.task;
+		//with proximity and sense teammates
+		numPreds = 3;
+		numPrey = 2;
+		//NOTE: this relies on the fact that prey are listed first followed by predators
+		type1 = "Prey";
+		type2 = "Pred";
+		result = new String[(numPreds+numPrey) * 2];
+		for (int i = 0; i < numPrey; i++) {
+			result[(2 * i)] = "X Offset to " + type1 + " " + i;
+			result[(2 * i) + 1] = "Y Offset to " + type1 + " " + i;
+		}
+		for (int i = numPrey; i < numPreds+numPrey; i++) {
+			result[(2 * i)] = "X Offset to " + type2 + " " + (i-numPrey);
+			result[(2 * i) + 1] = "Y Offset to " + type2 + " " + (i-numPrey);
+		}
+		resultWithBias = new String[(numPreds+numPrey) * 2 + 1];
+		resultWithBias[0] = "Bias";
+		System.arraycopy(result, 0, resultWithBias, 1, result.length);
+		//NOTE: this relies on the fact that prey are listed first followed by predators
+		//NOTE: if this is failing, the sensor ordering probably changed (or the labels themselves) 
+		assertArrayEquals(homoPred.sensorLabels(), resultWithBias);
+		
+		//Test with proximity sensors and without sense teammates
+		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "torusTimeLimit:1000",
+				"torusPreys:2", "torusPredators:3", "allowDoNothingActionForPredators:false", "torusSenseTeammates:false", 
+				"staticPreyController:edu.utexas.cs.nn.gridTorus.controllers.PreyFleeClosestPredatorController",
+				"torusSenseByProximity:true", "predatorCatchClose:false", "preyRRM:false" });
+		MMNEAT.loadClasses();
+		MMNEAT.task = new TorusEvolvedPredatorsVsStaticPreyTask();
+		homoPred = (TorusEvolvedPredatorsVsStaticPreyTask)MMNEAT.task;
+		//with proximity and sense teammates
+		numPrey = 2;
+		//NOTE: this relies on the fact that prey are listed first followed by predators
+		String type = "Closest Prey";
+		result = new String[(numPrey) * 2];
+		for (int i = 0; i < numPrey; i++) {
+			result[(2 * i)] = "X Offset to " + type + " " + i;
+			result[(2 * i) + 1] = "Y Offset to " + type + " " + i;
+		}
+		resultWithBias = new String[(numPrey) * 2 + 1];
+		resultWithBias[0] = "Bias";
+		System.arraycopy(result, 0, resultWithBias, 1, result.length);
+		//NOTE: this relies on the fact that prey are listed first followed by predators
+		//NOTE: if this is failing, the sensor ordering probably changed (or the labels themselves) 
+		assertArrayEquals(homoPred.sensorLabels(), resultWithBias);
+		
+		//Test without proximity sensors and without sense teammates
+		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "torusTimeLimit:1000",
+				"torusPreys:2", "torusPredators:3", "allowDoNothingActionForPredators:false", "torusSenseTeammates:false", 
+				"staticPreyController:edu.utexas.cs.nn.gridTorus.controllers.PreyFleeClosestPredatorController",
+				"torusSenseByProximity:false", "predatorCatchClose:false", "preyRRM:false" });
+		MMNEAT.loadClasses();
+		MMNEAT.task = new TorusEvolvedPredatorsVsStaticPreyTask();
+		homoPred = (TorusEvolvedPredatorsVsStaticPreyTask)MMNEAT.task;
+		//with proximity and sense teammates
+		numPrey = 2;
+		//NOTE: this relies on the fact that prey are listed first followed by predators
+		type = "Prey";
+		result = new String[(numPrey) * 2];
+		for (int i = 0; i < numPrey; i++) {
+			result[(2 * i)] = "X Offset to " + type + " " + i;
+			result[(2 * i) + 1] = "Y Offset to " + type + " " + i;
+		}
+		resultWithBias = new String[(numPrey) * 2 + 1];
+		resultWithBias[0] = "Bias";
+		System.arraycopy(result, 0, resultWithBias, 1, result.length);
+		//NOTE: this relies on the fact that prey are listed first followed by predators
+		//NOTE: if this is failing, the sensor ordering probably changed (or the labels themselves) 
+		assertArrayEquals(homoPred.sensorLabels(), resultWithBias);
 	}
 	
 	@SuppressWarnings({ "rawtypes", "static-access" })
