@@ -128,6 +128,7 @@ public class StatisticsUtilities {
 	 * @param rank
 	 * @return array index corresponding to max
 	 */
+	@SuppressWarnings("unchecked")
 	public static int argmax(int[] xs, int rank) {
 		Pair<Integer, Integer>[] indexValuePairs = new Pair[xs.length];
 		for (int i = 0; i < xs.length; i++) {

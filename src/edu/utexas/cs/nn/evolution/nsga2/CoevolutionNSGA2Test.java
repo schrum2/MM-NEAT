@@ -24,8 +24,8 @@ public class CoevolutionNSGA2Test {
 		MMNEAT.clearClasses();
 		String[] args = new String[] { "runNumber:0", "trials:1", "teams:3", "mu:5", "io:false", "netio:false", "mating:true",
 				"task:edu.utexas.cs.nn.tasks.mspacman.CooperativeSubtaskSelectorMsPacManTask",
-				"experiment:edu.utexas.cs.nn.experiment.LimitedMultiplePopulationGenerationalEAExperiment",
-				"ea:edu.utexas.cs.nn.evolution.nsga2.CooperativeCoevolutionNSGA2",
+				"experiment:edu.utexas.cs.nn.experiment.evolution.LimitedMultiplePopulationGenerationalEAExperiment",
+				"ea:edu.utexas.cs.nn.evolution.nsga2.CoevolutionNSGA2",
 				"pacmanInputOutputMediator:edu.utexas.cs.nn.tasks.mspacman.sensors.mediators.FullTaskMediator",
 				"numCoevolutionSubpops:2",
 				"pacmanFitnessModeMap:edu.utexas.cs.nn.tasks.mspacman.objectives.fitnessassignment.GhostsPillsMap",

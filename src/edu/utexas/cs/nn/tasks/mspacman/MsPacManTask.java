@@ -602,15 +602,14 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 		Pair<Integer, Integer> subSize = new Pair<>(MS_PAC_MAN_SUBSTRATE_WIDTH, MS_PAC_MAN_SUBSTRATE_HEIGHT);
 		Pair<Integer, Integer> processSize = new Pair<>(10,10);
 		Substrate pillSubstrate = new Substrate(subSize, Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, 0, 0), "Pills");
+		localSubs.add(pillSubstrate);
 		Substrate powerPillSubstrate;
 		if(Parameters.parameters.booleanParameter("pacmanFullScreenPowerInput")) {
 			powerPillSubstrate = new Substrate(subSize, Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(1, 0, 0), "PowerPills");
 		} else {
 			powerPillSubstrate = new Substrate(new Pair<Integer, Integer>(2, 2), Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(1, 0, 0), "PowerPills");		
 		}
-
-
-		Substrate pacManSubstrate = new Substrate(subSize, Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(3, 0, 0), "MsPacMan");
+		localSubs.add(powerPillSubstrate);
 
 		if(Parameters.parameters.booleanParameter("pacmanBothThreatAndEdibleSubstrate")) {
 			Substrate threatSubstrate = new Substrate(subSize, Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(2, 0, 0), "Threat");
@@ -622,10 +621,12 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 			localSubs.add(ghostSubstrate);
 			localSubs.add(ghostSubstrate);
 		}	
+		Substrate pacManSubstrate = new Substrate(subSize, Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(3, 0, 0), "MsPacMan");
+		localSubs.add(pacManSubstrate);
+		
 		Substrate processSubstrate;
 		if(Parameters.parameters.booleanParameter("pacmanFullScreenProcess")) {
 			processSubstrate = new Substrate(subSize, Substrate.PROCCESS_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, 1, 0), "P_0");
-
 		} else {
 			processSubstrate = new Substrate(processSize, Substrate.PROCCESS_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, 1, 0), "P_0");
 
@@ -642,9 +643,6 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 			outputSubstrate.addDeadNeuron(0, 2);
 			outputSubstrate.addDeadNeuron(2, 2);
 		}
-		localSubs.add(pillSubstrate);
-		localSubs.add(powerPillSubstrate);
-		localSubs.add(pacManSubstrate);
 		localSubs.add(processSubstrate);
 		localSubs.add(outputSubstrate); 
 		return localSubs;

@@ -74,6 +74,7 @@ public class HyperNEATCPPNGenotypeTest {
 		subs = null;
 		connections = null;
 		sIMap = null;
+		MMNEAT.task = null;
 		MMNEAT.clearClasses();
 	}
 
@@ -159,14 +160,16 @@ public class HyperNEATCPPNGenotypeTest {
 	 */
 	@Test
 	public void testLeo() {
-		tearDown();
-		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "recurrency:false",
-				"hyperNEAT:true", "task:edu.utexas.cs.nn.networks.hyperneat.HyperNEATDummyTask", "leo:true", "linkExpressionThreshold:-2.0"});
+		MMNEAT.clearClasses();
+		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "recurrency:false", "task:edu.utexas.cs.nn.networks.hyperneat.HyperNEATDummyTask", "leo:true", "linkExpressionThreshold:-2.0", "evolveHyperNEATBias:false"});
 		MMNEAT.loadClasses();
 		hcppn = new HyperNEATCPPNGenotype();
 		assertEquals(CommonConstants.leo, true);
 		TWEANN cppn = hcppn.getCPPN();
 		HyperNEATTask task = (HyperNEATTask) MMNEAT.task;
+		
+		System.out.println("CPPN: " + cppn.toString());
+		System.out.println("network:" + hcppn.getPhenotype());
 		assertEquals(cppn.numOutputs(),task.getSubstrateConnectivity().size() * 2);
 		assertEquals(hcppn.links.size(), HyperNEATTask.NUM_CPPN_INPUTS * task.getSubstrateConnectivity().size() * 2);
 
@@ -189,7 +192,7 @@ public class HyperNEATCPPNGenotypeTest {
 	 */
 	@Test
 	public void testBias() { 
-		tearDown();
+		MMNEAT.clearClasses();
 		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "recurrency:false",
 				"hyperNEAT:true", "task:edu.utexas.cs.nn.networks.hyperneat.HyperNEATDummyTask", "evolveHyperNEATBias:true", "linkExpressionThreshold:0.0"});
 		MMNEAT.loadClasses();
