@@ -25,8 +25,7 @@ public class SubstrateEdibleSensorBlock extends FullScreenSubstrateSensorBlock{
 	 * @return last used index in inputs array from this sensor block
 	 */
 	public int incorporateSensors(double[] inputs, int startPoint, GameFacade gf, int lastDirection) {
-		for(int i = 0; i < gf.getEdibleGhostLocations().length; i++) {
-			int node = gf.getGhostCurrentNodeIndex(i);
+		for(Integer node: gf.getEdibleGhostLocations()) {
 			int x = gf.getNodeXCoord(node);
 			int y = gf.getNodeYCoord(node);
 			int inputOffset = NNHyperNEATPacManController.getOutputIndexFromNodeCoord(x, y);

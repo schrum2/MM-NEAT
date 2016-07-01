@@ -694,8 +694,8 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 							int scaledY = y / MsPacManTask.MS_PAC_MAN_NODE_DIM;
 							s.resurrectNeuron(scaledX, scaledY);
 						}
-					} else if(s.name.equals("Power")) {
-						for(int node : gf.getActivePillsIndices()) {
+					} else if(s.name.equals("PowerPills")) {
+						for(int node : gf.getActivePowerPillsIndices()) {
 							int x = gf.getNodeXCoord(node);
 							int y = gf.getNodeYCoord(node);
 							int scaledX = x / MsPacManTask.MS_PAC_MAN_NODE_DIM;
