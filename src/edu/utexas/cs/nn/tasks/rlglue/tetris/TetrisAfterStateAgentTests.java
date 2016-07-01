@@ -2,6 +2,7 @@ package edu.utexas.cs.nn.tasks.rlglue.tetris;
 
 import static org.junit.Assert.*;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.rlcommunity.environments.tetris.TetrisState;
@@ -17,6 +18,11 @@ import edu.utexas.cs.nn.tasks.rlglue.featureextractors.tetris.BertsekasTsitsikli
 
 public class TetrisAfterStateAgentTests {
 
+	@After
+	public void tearDown() throws Exception {
+		MMNEAT.clearClasses();
+	}
+	
 	/**
 	 * Instantiates parameters
 	 * 

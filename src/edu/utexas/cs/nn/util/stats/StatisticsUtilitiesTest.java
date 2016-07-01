@@ -4,12 +4,28 @@ import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
+
+import edu.utexas.cs.nn.MMNEAT.MMNEAT;
+import edu.utexas.cs.nn.parameters.Parameters;
 
 public class StatisticsUtilitiesTest {
 
 	private static final double ERROR = .0001;
 
+	@Before
+	public void setUp() throws Exception {
+		MMNEAT.clearClasses();
+		Parameters.initializeParameterCollections(new String[] {"randomArgMaxTieBreak:false"});
+	}
+	
+	@After
+	public void tearDown() throws Exception {
+		MMNEAT.clearClasses();
+	}
+	
 	@Test
 	public void testPercentile() {
 		final double[] values = { 1, 2, 3, 4, 5 };

@@ -44,6 +44,7 @@ public class DeleteLinkMutationTest {
 
 	@Test
 	public void realTest() { 
+		tg1.meltNetwork();
 		Parameters.parameters.setDouble("deleteLinkRate", 1.0);
 		DeleteLinkMutation delete = new DeleteLinkMutation();
 		int numLinks = tg1.links.size();
@@ -53,13 +54,13 @@ public class DeleteLinkMutationTest {
 	}
 
 	public void visualTest() {
-
+		tg1.meltNetwork();
 		DrawingPanel p1 = new DrawingPanel(TWEANN.NETWORK_VIEW_DIM, TWEANN.NETWORK_VIEW_DIM, "Net 1");
 		DrawingPanel p2 = new DrawingPanel(TWEANN.NETWORK_VIEW_DIM, TWEANN.NETWORK_VIEW_DIM, "Net 2");
 		p2.setLocation(TWEANN.NETWORK_VIEW_DIM + 10, 0);
 		tg1.getPhenotype().draw(p1, true);
 		tg2.getPhenotype().draw(p2, true);
-
+		
 		TWEANNCrossover cross = new TWEANNCrossover();
 		TWEANNGenotype new2 = (TWEANNGenotype) cross.crossover(tg1, tg2);
 

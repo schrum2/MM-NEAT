@@ -599,7 +599,6 @@ public class TorusPredPreyTaskTest <T extends Network> {
 		
 	}
 	
-	@SuppressWarnings("rawtypes")
 	@Test
 	public void testSensorLabels() {
 		

@@ -21,6 +21,7 @@ import edu.utexas.cs.nn.networks.hyperneat.Substrate;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.util.CartesianGeometricUtilities;
+import edu.utexas.cs.nn.util.MiscUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.datastructures.Triple;
 import edu.utexas.cs.nn.util.util2D.ILocated2D;
@@ -49,11 +50,10 @@ public class HyperNEATCPPNGenotypeTest {
 	 */
 	@Before
 	public void setUp() {
-		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "recurrency:false",
-				"mmdRate:1.0", "hyperNEAT:true", "task:edu.utexas.cs.nn.networks.hyperneat.HyperNEATDummyTask"});
+		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "recurrency:false", "hyperNEAT:true", "task:edu.utexas.cs.nn.networks.hyperneat.HyperNEATDummyTask"});
 		MMNEAT.loadClasses();
 		hcppn = new HyperNEATCPPNGenotype();
-		cppn = new TWEANN(new TWEANNGenotype());
+		cppn = hcppn.getCPPN();
 		subs = new LinkedList<Substrate>();
 		connections = new LinkedList<Pair<String, String>>();
 		subs.add(new Substrate(new Pair<Integer, Integer>(5, 5), 0, new Triple<Integer, Integer, Integer>(0, 0, 0),"I_0"));// only 2 substrates in this test
@@ -160,10 +160,13 @@ public class HyperNEATCPPNGenotypeTest {
 	 */
 	@Test
 	public void testLeo() {
+		//System.out.println("\t\tRESET!");
 		MMNEAT.clearClasses();
-		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "recurrency:false", "task:edu.utexas.cs.nn.networks.hyperneat.HyperNEATDummyTask", "leo:true", "linkExpressionThreshold:-2.0", "evolveHyperNEATBias:false"});
+		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "recurrency:false", "task:edu.utexas.cs.nn.networks.hyperneat.HyperNEATDummyTask", "hyperNEAT:true", "leo:true", "linkExpressionThreshold:-2.0", "evolveHyperNEATBias:false"});
 		MMNEAT.loadClasses();
 		hcppn = new HyperNEATCPPNGenotype();
+		//System.out.println("\t\t" + hcppn.numOut);
+		//MiscUtil.waitForReadStringAndEnterKeyPress();
 		assertEquals(CommonConstants.leo, true);
 		TWEANN cppn = hcppn.getCPPN();
 		HyperNEATTask task = (HyperNEATTask) MMNEAT.task;
@@ -201,14 +204,16 @@ public class HyperNEATCPPNGenotypeTest {
 		TWEANN t = hcppn.getPhenotype();
 		ArrayList<Node> nodes = t.nodes;
 		for(Node node : nodes) {
-			assertTrue(node.bias != 0.0);
+			if(node.ntype != TWEANN.Node.NTYPE_INPUT)
+				assertTrue(node + " bias is " + node.bias, node.bias != 0.0);
 		}
 		t.flush();
 		nodes = t.nodes;
 		double[] biases = new double[nodes.size()];
 		int x = 0;
 		for(Node node: nodes) {
-			assertTrue(node.bias != 0.0);
+			if(node.ntype != TWEANN.Node.NTYPE_INPUT)
+				assertTrue(node.bias != 0.0);
 			biases[x++] = node.bias;
 		}
 		double[] inputs = {1, 2, 3, 4, 5, 6, 7, 8, 9};

@@ -5,13 +5,20 @@ import static org.junit.Assert.*;
 import java.util.ArrayList;
 import java.util.Random;
 
+import org.junit.After;
 import org.junit.Test;
 
+import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
 
 public class RandomNumbersTests {
 
+	@After
+	public void tearDown() throws Exception {
+		MMNEAT.clearClasses();
+	}
+	
 	/**
 	 * Tests that the current randomGenerator is replaced by a new one when reset
 	 */

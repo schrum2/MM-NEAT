@@ -2,13 +2,13 @@ package edu.utexas.cs.nn.tasks.gridTorus.objectives;
 
 import static org.junit.Assert.*;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.gridTorus.TorusAgent;
 import edu.utexas.cs.nn.gridTorus.TorusPredPreyGame;
-import edu.utexas.cs.nn.gridTorus.TorusWorld;
 import edu.utexas.cs.nn.parameters.Parameters;
 
 public class PredatorCatchCloseObjectiveTest {
@@ -26,11 +26,16 @@ public class PredatorCatchCloseObjectiveTest {
 		MMNEAT.loadClasses();
 	}
 
+	@After
+	public void tearDown() throws Exception {
+		MMNEAT.clearClasses();
+	}
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Test
 	public void test() {
 
 		TorusPredPreyGame game = new TorusPredPreyGame(100, 100, 3, 2);
-		TorusWorld world = new TorusWorld(100, 100);
 		TorusAgent[] prey = game.getPrey();
 		TorusAgent[] preds = game.getPredators();
 
@@ -45,7 +50,7 @@ public class PredatorCatchCloseObjectiveTest {
 		preds[2].move((int) -preds[2].getX(), (int) -preds[2].getY());
 		// d = 1 , numPrey = 2, numCaught = 0
 		fitness = objective.score(game, null);
-		assertEquals(fitness, (1 / 2.0) * objective.NO_PREY_SCORE, doubleThreshold);
+		assertEquals(fitness, (1 / 2.0) * PredatorCatchCloseObjective.NO_PREY_SCORE, doubleThreshold);
 
 		// worst score: max distance and no prey caught
 		preds[0].move(50, 50);
@@ -88,7 +93,7 @@ public class PredatorCatchCloseObjectiveTest {
 		assertNull(prey[0]);
 		assertNull(prey[1]);
 		fitness = objective.score(game, null);
-		assertEquals(fitness, objective.NO_PREY_SCORE, doubleThreshold);
+		assertEquals(fitness, PredatorCatchCloseObjective.NO_PREY_SCORE, doubleThreshold);
 
 	}
 

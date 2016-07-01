@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -34,6 +35,11 @@ public class CoevolutionNSGA2Test {
 		Parameters.initializeParameterCollections(args);
 		MMNEAT.loadClasses();
 	}	
+	
+	@After
+	public void tearDown() throws Exception {
+		MMNEAT.clearClasses();
+	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Test

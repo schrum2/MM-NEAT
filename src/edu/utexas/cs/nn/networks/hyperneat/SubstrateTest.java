@@ -10,7 +10,6 @@ import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.datastructures.Triple;
 
 public class SubstrateTest {
-
 	Substrate sub = new Substrate(new Pair<Integer, Integer>(5, 5), 0, new Triple<Integer, Integer, Integer>(0, 0, 0),
 			"I_0");
 	@After

@@ -2,6 +2,7 @@ package edu.utexas.cs.nn.evolution.mutation.tweann;
 
 import static org.junit.Assert.*;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -19,6 +20,11 @@ public class MMPTest {
 	MMP mmp1;
 	final int MUTATIONS1 = 30;
 
+	@After
+	public void tearDown() throws Exception {
+		MMNEAT.clearClasses();
+	}
+	
 	@Before
 	public void setUp() throws Exception { 
 		MMNEAT.clearClasses();

@@ -2,9 +2,18 @@ package edu.utexas.cs.nn.networks;
 
 import static org.junit.Assert.*;
 
+import org.junit.After;
 import org.junit.Test;
 
+import edu.utexas.cs.nn.MMNEAT.MMNEAT;
+
 public class ActivationFunctionsTests {
+	
+	@After
+	public void tearDown() throws Exception {
+		MMNEAT.clearClasses();
+	}
+	
 	// Checks extreme edges of range, and the center
 	public static double[] keyActivationPoints = { -ActivationFunctions.SAFE_EXP_BOUND, 0,
 			ActivationFunctions.SAFE_EXP_BOUND };

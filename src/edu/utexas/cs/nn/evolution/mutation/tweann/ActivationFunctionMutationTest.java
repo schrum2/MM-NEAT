@@ -32,6 +32,8 @@ public class ActivationFunctionMutationTest {
 
 	@After
 	public void tearDown() throws Exception {
+		tg1 = null;
+		MMNEAT.clearClasses();
 	}
 
 	@Test

@@ -1,13 +1,12 @@
 package edu.utexas.cs.nn.tasks.vizdoom;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
 import edu.utexas.cs.nn.util.stats.Average;
 

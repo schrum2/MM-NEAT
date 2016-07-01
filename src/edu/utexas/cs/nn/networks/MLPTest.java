@@ -8,7 +8,6 @@ import org.junit.Test;
 
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.util.MiscUtil;
 
 public class MLPTest {
 

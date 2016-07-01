@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.util.Arrays;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -33,6 +34,11 @@ public class TorusPredatorsByProximitySensorBlockTest {
 		MMNEAT.loadClasses();
 	}
 
+	@After
+	public void tearDown() throws Exception {
+		MMNEAT.clearClasses();
+	}
+	
 	@Test
 	public void testNumSensors() {
 		TorusPredatorsByProximitySensorBlock block = new TorusPredatorsByProximitySensorBlock();
