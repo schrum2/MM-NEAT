@@ -37,17 +37,24 @@ public class RedirectLinkMutationTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void test() {
+		TWEANNGenotype copy = (TWEANNGenotype) tg1.copy();
 		ArrayList<LinkGene> links = (ArrayList<LinkGene>) tg1.links.clone();
-		rlm.mutate(tg1);
+		int numLinks = links.size();
+		//System.out.println("before: " + tg1);
+		do {
+			rlm.mutate(copy);
+		} while(copy.links.size() != numLinks && (copy = (TWEANNGenotype) tg1.copy()) != null);
+		//rlm.mutate(tg1);
+		//System.out.println("after: " + tg1);
 		LinkGene missingLink = null;
 		for(LinkGene link : links) {
-			if(!tg1.links.contains(link)){
+			if(!copy.links.contains(link)){
 				missingLink = link;
 			}
 		}
 		assertTrue("all links match!", missingLink != null);
 		LinkGene foundLink = null;
-		for(LinkGene link : tg1.links) {
+		for(LinkGene link : copy.links) {
 			if(link.weight == missingLink.weight) {
 				foundLink = link;
 			}
