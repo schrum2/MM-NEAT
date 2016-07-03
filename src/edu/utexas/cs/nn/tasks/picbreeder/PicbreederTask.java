@@ -106,7 +106,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	/**
 	 * Default Constructor
 	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings({ "rawtypes", "unchecked", "LeakingThisInConstructor" })
 	public PicbreederTask() {		
 		MMNEAT.registerFitnessFunction("User Preference");
 		//sets mu to a divisible number
@@ -408,7 +408,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	 * @param i index of button
 	 * @param button button
 	 */
-	private void save(int i, JButton button) {
+	private void save(int i) {
                 // Use of imageHeight and imageWidth allows saving a higher quality image than is on the button
 		BufferedImage toSave = GraphicsUtil.imageFromCPPN((Network)scores.get(i).individual.getPhenotype(), Parameters.parameters.integerParameter("imageWidth"), Parameters.parameters.integerParameter("imageHeight"));
 		DrawingPanel p = GraphicsUtil.drawImage(toSave, "" + i, toSave.getWidth(), toSave.getHeight());
@@ -460,6 +460,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	 * @return score of each member of population
 	 */
 	@Override
+        @SuppressWarnings("SleepWhileInLoop")
 	public ArrayList<Score<T>> evaluateAll(ArrayList<Genotype<T>> population) {
 		waitingForUser = true;
 		scores = new ArrayList<Score<T>>();
@@ -514,7 +515,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		for(int i = 0; i < chosen.length; i++) {
 			boolean choose = chosen[i];
 			if(choose) {//loops through and any image  clicked automatically saved
-				save(i , buttons.get(i));
+				save(i);
 			}
 		}
 	}
