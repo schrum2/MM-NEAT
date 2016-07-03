@@ -5,7 +5,6 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -101,8 +100,8 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	private boolean showLineage;
 	private boolean showNetwork;
 	private boolean waitingForUser;
-	private boolean[] chosen;
-	private boolean[] activation;
+	private final boolean[] chosen;
+	private final boolean[] activation;
 
 	/**
 	 * Default Constructor
@@ -410,11 +409,11 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	 * @param button button
 	 */
 	private void save(int i, JButton button) {
-		BufferedImage toSave = (BufferedImage) ((ImageIcon) button.getIcon()).getImage();
+                // Use of imageHeight and imageWidth allows saving a higher quality image than is on the button
+		BufferedImage toSave = GraphicsUtil.imageFromCPPN((Network)scores.get(i).individual.getPhenotype(), Parameters.parameters.integerParameter("imageWidth"), Parameters.parameters.integerParameter("imageHeight"));
 		DrawingPanel p = GraphicsUtil.drawImage(toSave, "" + i, toSave.getWidth(), toSave.getHeight());
 		JFileChooser chooser = new JFileChooser();//used to get save name 
 		chooser.setApproveButtonText("Save");
-		chooser.setCurrentDirectory(new File("\\" + "Users" + "\\" + "gillespl" + "\\" + "SCOPE" + "\\" + "MM-NEATv2" + "\\" + "PicbreederImages"));
 		FileNameExtensionFilter filter = new FileNameExtensionFilter("BMP Images", "bmp");
 		chooser.setFileFilter(filter);
 		int returnVal = chooser.showOpenDialog(frame);
