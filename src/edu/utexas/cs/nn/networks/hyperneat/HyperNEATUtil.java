@@ -2,6 +2,7 @@ package edu.utexas.cs.nn.networks.hyperneat;
 
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
@@ -25,15 +26,22 @@ public class HyperNEATUtil {
 		public double activation;
 		public int xCoord, yCoord;
 		public Color c;
+		public boolean dead;
+
 		public VisualNode(double activation, int xCoord, int yCoord) {
 			this(activation, xCoord, yCoord, Color.white);
 		}
 
 		public VisualNode(double activation, int xCoord, int yCoord, Color c) {
+			this(activation, xCoord, yCoord, c, false);
+		}
+
+		public VisualNode(double activation, int xCoord, int yCoord, Color c, boolean dead) {
 			this.activation = activation;
 			this.xCoord = xCoord*SUBS_GRID_SIZE;
 			this.yCoord = yCoord*SUBS_GRID_SIZE;
 			this.c = c;
+			this.dead = dead;
 		}
 
 		public void setColor(Color c) {
@@ -51,6 +59,17 @@ public class HyperNEATUtil {
 		public void drawNode(DrawingPanel p) {
 			p.getGraphics().setColor(c);
 			p.getGraphics().fillRect(xCoord, yCoord, SUBS_GRID_SIZE, SUBS_GRID_SIZE);
+		}
+
+		@Override
+		public String toString() {
+			String s = "Visual Node: (";
+			s += "activation: " + activation;
+			s+= ", X-coord: " + xCoord;
+			s += " Y-coord: " + yCoord;
+			s += ", Color: " + c;
+			s += ") + \n";
+			return s;
 		}
 	}
 
@@ -144,11 +163,12 @@ public class HyperNEATUtil {
 	 * @param size size of substrate
 	 * @param c color of square
 	 */
+	@SuppressWarnings("unchecked")
 	private static void drawCoord(DrawingPanel p, Substrate s, ArrayList<Node> nodes, int nodeIndex) {
 		p.getGraphics().setBackground(Color.gray);
-		System.out.println("-----------------Substrate " + s.name + "---------------------");
-//		boolean sort = Parameters.parameters.booleanParameter("sortOutputActivations") && s.stype == Substrate.OUTPUT_SUBSTRATE;
-//		boolean biggest = Parameters.parameters.booleanParameter("showHighestActivatedOutput") && s.stype == Substrate.OUTPUT_SUBSTRATE;
+		//		System.out.println("-----------------Substrate " + s.name + "---------------------");
+		boolean sort = Parameters.parameters.booleanParameter("sortOutputActivations") && s.stype == Substrate.OUTPUT_SUBSTRATE;
+		boolean biggest = Parameters.parameters.booleanParameter("showHighestActivatedOutput") && s.stype == Substrate.OUTPUT_SUBSTRATE;
 		ArrayList<VisualNode> activations = new ArrayList<VisualNode>(); 
 		for(int j = 0; j < s.size.t2; j++) {
 			for(int i = 0; i < s.size.t1; i++) {
@@ -157,25 +177,38 @@ public class HyperNEATUtil {
 				double activation = node.output();
 				if(node.ntype == TWEANN.Node.NTYPE_OUTPUT || !node.outputs.isEmpty()) {
 					if(!s.isNeuronDead(i, j)) c = HyperNEATUtil.regularVisualization(activation);
-					
+
 				}
-				activations.add(new VisualNode(0.0, i, j, c));//dead neurons
-				System.out.println("Color is: " + c.toString());
+				activations.add(new VisualNode(activation, i, j, c, s.isNeuronDead(i, j)));//dead neurons
 			}
 		}
+		if(sort) {
+			Collections.sort(activations);
+			float scale = activations.size();
+			for(int i = activations.size() - 1; i >= 0; i--) {
+				VisualNode vNode = activations.get(i);
+				if(!vNode.dead) {
+					vNode.setColor(new Color(0, i / scale, 0));
+				}
+			}
+		} else if(biggest) {//only shows biggest neuron 
+			Collections.sort(activations);
+			VisualNode biggestAct = activations.get(activations.size() - 1);
+			biggestAct.setColor(Color.green);
+
+		}  
+
+
+
+
 		for(VisualNode vn : activations) {
 			vn.drawNode(p);
 		}
-		//		if(biggest) {
-		//			assert activations != null:"either the sortOutputActivations or showHighestActivatedOutput parameter was not set correctly";
-		////			p.getGraphics().setColor(Color.green);//Green so it stands out from other neurons
-		////			p.getGraphics().fillRect(biggestActivation.t2.t1, biggestActivation.t2.t2, SUBS_GRID_SIZE, SUBS_GRID_SIZE);
-		//		}
-
 	}
 
 	public static Color regularVisualization(double activation) { 
 		activation = Math.max(-1, Math.min(activation, 1.0));// For unusual activation functions that go outside of the [-1,1] range
 		return new Color(activation > 0 ? (int)(activation*255) : 0, 0, activation < 0 ? (int)(-activation*255) : 0);
+
 	}
 }
