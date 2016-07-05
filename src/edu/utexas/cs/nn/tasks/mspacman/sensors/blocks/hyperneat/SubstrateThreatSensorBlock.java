@@ -1,5 +1,6 @@
 package edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.hyperneat;
 
+import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.mspacman.agentcontroller.pacman.NNHyperNEATPacManController;
 import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
 
@@ -26,6 +27,17 @@ public class SubstrateThreatSensorBlock extends FullScreenSubstrateSensorBlock{
 	 */
 	public int incorporateSensors(double[] inputs, int startPoint, GameFacade gf, int lastDirection) {
 		for(Integer node: gf.getThreatGhostLocations()) {
+			if(Parameters.parameters.booleanParameter("senseHyperNEATGhostPath")) {
+				int[] trail = gf.getGhostPath(node, gf.getPacmanCurrentNodeIndex());
+				for(int j = 0; j < trail.length; j++) {
+					int node2 = trail[j];
+					int x = gf.getNodeXCoord(node2);
+					int y = gf.getNodeYCoord(node2);
+					int inputOffset = NNHyperNEATPacManController.getOutputIndexFromNodeCoord(x, y);
+					inputs[startPoint + inputOffset] = -1.0 / trail.length;	
+					System.out.println("threat sensor ghost path performing");
+				}
+			}
 			int x = gf.getNodeXCoord(node);
 			int y = gf.getNodeYCoord(node);
 			int inputOffset = NNHyperNEATPacManController.getOutputIndexFromNodeCoord(x, y);

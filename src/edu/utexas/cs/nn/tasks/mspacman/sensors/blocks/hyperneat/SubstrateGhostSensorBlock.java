@@ -1,6 +1,7 @@
 package edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.hyperneat;
 
 import edu.utexas.cs.nn.parameters.CommonConstants;
+import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.mspacman.agentcontroller.pacman.NNHyperNEATPacManController;
 import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
 /**
@@ -30,6 +31,22 @@ public class SubstrateGhostSensorBlock  extends FullScreenSubstrateSensorBlock{
 	 */
 	public int incorporateSensors(double[] inputs, int startPoint, GameFacade gf, int lastDirection) {
 		for(int i = 0; i < CommonConstants.numActiveGhosts; i++) {
+			if(Parameters.parameters.booleanParameter("senseHyperNEATGhostPath")) {
+				int[] trail = gf.getGhostPath(i, gf.getPacmanCurrentNodeIndex());
+				for(int j = 0; j < trail.length; j++) {
+					int node = trail[j];
+					int x = gf.getNodeXCoord(node);
+					int y = gf.getNodeYCoord(node);
+					int inputOffset = NNHyperNEATPacManController.getOutputIndexFromNodeCoord(x, y);
+					if(gf.isGhostEdible(i)) {
+						inputs[startPoint + inputOffset] = 1.0 / trail.length;
+					} else {
+						inputs[startPoint + inputOffset] = -1.0 / trail.length;	
+					}
+				}
+
+				System.out.println("sensor ghost path performing");
+			}
 			int node = gf.getGhostCurrentNodeIndex(i);
 			int x = gf.getNodeXCoord(node);
 			int y = gf.getNodeYCoord(node);
@@ -40,6 +57,7 @@ public class SubstrateGhostSensorBlock  extends FullScreenSubstrateSensorBlock{
 				inputs[startPoint + inputOffset] = -1;
 			}
 		}
+
 		return startPoint + numberAdded();
 	}
 
