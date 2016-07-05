@@ -82,7 +82,7 @@ public class HyperNEATUtil {
 	 */
 	public static DrawingPanel drawSubstrate(DrawingPanel dp, Substrate s, ArrayList<Node> nodes, int nodeIndexStart) { 
 				drawCoord(dp, s, nodes, nodeIndexStart);
-			//	drawGrid(dp, s.size);
+				drawGrid(dp, s.size);
 		return dp;
 	}
 	
