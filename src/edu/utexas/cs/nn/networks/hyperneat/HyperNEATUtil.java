@@ -191,7 +191,8 @@ public class HyperNEATUtil {
 					vNode.setColor(new Color(0, i / scale, 0));
 				}
 			}
-		} else if(biggest) {//only shows biggest neuron 
+		}
+		if(biggest) {//only shows biggest neuron 
 			Collections.sort(activations);
 			VisualNode biggestAct = activations.get(activations.size() - 1);
 			biggestAct.setColor(Color.green);
