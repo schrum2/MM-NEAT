@@ -52,8 +52,9 @@ public class ResultSummaryUtilities {
 					throws FileNotFoundException, NoSuchMethodException {
 		//HyperVolumeProcessing only happens with population zero because it would not work correctly with various
 		//fitnesses for each population (coevolution). 
-		if(popNum == 0)
+		if(popNum == 0 && Parameters.parameters.booleanParameter("processHV")){
 			hypervolumeProcessing(dirPrefix, runs, filePrefix, genFileMiddle, generations, outputDir);
+		}
 		// Average objective scores
 		System.out.println("Average scores: " + outputDir + "/" + filePrefix + "AVG" + logSuffix);
 		int num = averageConditionResults(dirPrefix, filePrefix, logSuffix, runs, outputDir);
