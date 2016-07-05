@@ -82,7 +82,7 @@ public class HyperNEATUtil {
 	 */
 	public static DrawingPanel drawSubstrate(DrawingPanel dp, Substrate s, ArrayList<Node> nodes, int nodeIndexStart) { 
 				drawCoord(dp, s, nodes, nodeIndexStart);
-				drawGrid(dp, s.size);
+			//	drawGrid(dp, s.size);
 		return dp;
 	}
 	
@@ -110,12 +110,21 @@ public class HyperNEATUtil {
 	 * @param c color of square
 	 */
 	private static void drawCoord(DrawingPanel p, Substrate s, ArrayList<Node> nodes, int nodeIndex) { 
+		boolean biggest = Parameters.parameters.booleanParameter("showHighestActivatedOutput") && s.stype == Substrate.OUTPUT_SUBSTRATE;
+		//for hard version, consider creating array of pairs to contain biggestActivation info?
+		Pair<Double, Pair<Integer, Integer>> biggestActivation = new Pair<Double, Pair<Integer, Integer>>(nodes.get(0).output(), new Pair<Integer, Integer>(0, 0));
 		for(int j = 0; j < s.size.t2; j++) {
 			for(int i = 0; i < s.size.t1; i++) {
 				Node node = nodes.get(nodeIndex++);
-				Color c;				
+				Color c;
+				double activation = node.output();
 				if((node.ntype == TWEANN.Node.NTYPE_OUTPUT || !node.outputs.isEmpty()) && !s.isNeuronDead(i, j)) {
-					double activation = node.output();
+					if(biggest) {
+						if(biggestActivation.t1 < activation) {
+							biggestActivation.t1 = activation;
+							biggestActivation.t2 = new Pair<Integer, Integer>(i*SUBS_GRID_SIZE, j*SUBS_GRID_SIZE);
+						}
+					}
 					// For unusual activation functions that go outside of the [-1,1] range
 					activation = Math.max(-1, Math.min(activation, 1.0));
 					c = new Color(activation > 0 ? (int)(activation*255) : 0, 0, activation < 0 ? (int)(-activation*255) : 0);
@@ -126,6 +135,10 @@ public class HyperNEATUtil {
 				p.getGraphics().setColor(c);
 				p.getGraphics().fillRect(i*SUBS_GRID_SIZE, j*SUBS_GRID_SIZE, SUBS_GRID_SIZE, SUBS_GRID_SIZE);
 			}
+		}
+		if(biggest) {
+			p.getGraphics().setColor(Color.green);//Green so it stands out from other neurons
+			p.getGraphics().fillRect(biggestActivation.t2.t1, biggestActivation.t2.t2, SUBS_GRID_SIZE, SUBS_GRID_SIZE);
 		}
 
 	}
