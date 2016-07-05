@@ -112,7 +112,7 @@ public class HyperNEATUtil {
 	private static void drawCoord(DrawingPanel p, Substrate s, ArrayList<Node> nodes, int nodeIndex) { 
 		boolean biggest = Parameters.parameters.booleanParameter("showHighestActivatedOutput") && s.stype == Substrate.OUTPUT_SUBSTRATE;
 		//for hard version, consider creating array of pairs to contain biggestActivation info?
-		Pair<Double, Pair<Integer, Integer>> biggestActivation = new Pair<Double, Pair<Integer, Integer>>(nodes.get(0).output(), new Pair<Integer, Integer>(0, 0));
+		Pair<Double, Pair<Integer, Integer>> biggestActivation = null;
 		for(int j = 0; j < s.size.t2; j++) {
 			for(int i = 0; i < s.size.t1; i++) {
 				Node node = nodes.get(nodeIndex++);
@@ -120,9 +120,8 @@ public class HyperNEATUtil {
 				double activation = node.output();
 				if((node.ntype == TWEANN.Node.NTYPE_OUTPUT || !node.outputs.isEmpty()) && !s.isNeuronDead(i, j)) {
 					if(biggest) {
-						if(biggestActivation.t1 < activation) {
-							biggestActivation.t1 = activation;
-							biggestActivation.t2 = new Pair<Integer, Integer>(i*SUBS_GRID_SIZE, j*SUBS_GRID_SIZE);
+						if(biggestActivation == null || biggestActivation.t1 < activation) {
+							biggestActivation = new Pair<Double, Pair<Integer, Integer>>(activation, new Pair<Integer, Integer>(i*SUBS_GRID_SIZE, j*SUBS_GRID_SIZE));
 						}
 					}
 					// For unusual activation functions that go outside of the [-1,1] range
