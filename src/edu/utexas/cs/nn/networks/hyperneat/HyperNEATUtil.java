@@ -19,6 +19,41 @@ import edu.utexas.cs.nn.util.datastructures.Pair;
  */
 public class HyperNEATUtil {
 
+	//may change later to just use collections.sort with a special comparator instead of creating new data type
+	@SuppressWarnings("rawtypes")
+	public static class VisualNode implements Comparable{
+		public double activation;
+		public int xCoord, yCoord;
+		public Color c;
+		public VisualNode(double activation, int xCoord, int yCoord) {
+			this(activation, xCoord, yCoord, Color.white);
+		}
+
+		public VisualNode(double activation, int xCoord, int yCoord, Color c) {
+			this.activation = activation;
+			this.xCoord = xCoord*SUBS_GRID_SIZE;
+			this.yCoord = yCoord*SUBS_GRID_SIZE;
+			this.c = c;
+		}
+
+		public void setColor(Color c) {
+			this.c = c;
+		}
+		@Override
+		public int compareTo(Object o) {
+			if(o instanceof VisualNode) {
+				if(((VisualNode) o).activation > this.activation) return 1;
+				else if(((VisualNode) o).activation == this.activation) return 0;
+				else return -1;
+			}
+			throw new IllegalArgumentException("o is not of type VisualNode, can't compare!");
+		} 
+		public void drawNode(DrawingPanel p) {
+			p.getGraphics().setColor(c);
+			p.getGraphics().fillRect(xCoord, yCoord, SUBS_GRID_SIZE, SUBS_GRID_SIZE);
+		}
+	}
+
 	//size of grid in substrate drawing. Can be changed/turned into a param if need be
 	public final static int SUBS_GRID_SIZE = Parameters.parameters.integerParameter("substrateGridSize");
 
@@ -58,12 +93,12 @@ public class HyperNEATUtil {
 		}
 		return substratePanels;
 	}
-	
+
 	/**
 	 * Draws substrate as a grid with squares representing each substrate coordinate
 	 * @param s substrate
 	 * @param nodes list of substrate nodes
-         * @param nodeIndexStart where the relevant nodes start
+	 * @param nodeIndexStart where the relevant nodes start
 	 * @return drawing panel containing substrate drawing
 	 */
 	public static DrawingPanel drawSubstrate(Substrate s, ArrayList<Node> nodes, int nodeIndexStart) { 
@@ -77,15 +112,15 @@ public class HyperNEATUtil {
 	 * @param dp drawing panel which substrate is going to be drawn onto
 	 * @param s substrate in question
 	 * @param nodes list of substrate nodes 
-         * @param nodeIndexStart where the relevant nodes start
+	 * @param nodeIndexStart where the relevant nodes start
 	 * @return drawing panel containing drawing of substrate
 	 */
 	public static DrawingPanel drawSubstrate(DrawingPanel dp, Substrate s, ArrayList<Node> nodes, int nodeIndexStart) { 
-				drawCoord(dp, s, nodes, nodeIndexStart);
-				drawGrid(dp, s.size);
+		drawCoord(dp, s, nodes, nodeIndexStart);
+		drawGrid(dp, s.size);
 		return dp;
 	}
-	
+
 	/**
 	 * Draws grid around squares so they are more easily distinguishable
 	 * 'Not used currently b/c slows down computation time
@@ -94,7 +129,7 @@ public class HyperNEATUtil {
 	 */
 	private static void drawGrid(DrawingPanel p, Pair<Integer, Integer> size) {
 		// Loop through columns and rows to draw black lines
-		p.getGraphics().setBackground(Color.white);
+		p.getGraphics().setBackground(Color.gray);
 		p.getGraphics().setColor(Color.black);
 		for(int i = 0; i <= size.t1; i++) {
 			for(int j = 0; j <= size.t2; j++) {
@@ -109,36 +144,38 @@ public class HyperNEATUtil {
 	 * @param size size of substrate
 	 * @param c color of square
 	 */
-	private static void drawCoord(DrawingPanel p, Substrate s, ArrayList<Node> nodes, int nodeIndex) { 
-		boolean biggest = Parameters.parameters.booleanParameter("showHighestActivatedOutput") && s.stype == Substrate.OUTPUT_SUBSTRATE;
-		//for hard version, consider creating array of pairs to contain biggestActivation info?
-		Pair<Double, Pair<Integer, Integer>> biggestActivation = null;
+	private static void drawCoord(DrawingPanel p, Substrate s, ArrayList<Node> nodes, int nodeIndex) {
+		p.getGraphics().setBackground(Color.gray);
+		System.out.println("-----------------Substrate " + s.name + "---------------------");
+//		boolean sort = Parameters.parameters.booleanParameter("sortOutputActivations") && s.stype == Substrate.OUTPUT_SUBSTRATE;
+//		boolean biggest = Parameters.parameters.booleanParameter("showHighestActivatedOutput") && s.stype == Substrate.OUTPUT_SUBSTRATE;
+		ArrayList<VisualNode> activations = new ArrayList<VisualNode>(); 
 		for(int j = 0; j < s.size.t2; j++) {
 			for(int i = 0; i < s.size.t1; i++) {
 				Node node = nodes.get(nodeIndex++);
-				Color c;
+				Color c = Color.gray;
 				double activation = node.output();
-				if((node.ntype == TWEANN.Node.NTYPE_OUTPUT || !node.outputs.isEmpty()) && !s.isNeuronDead(i, j)) {
-					if(biggest) {
-						if(biggestActivation == null || biggestActivation.t1 < activation) {
-							biggestActivation = new Pair<Double, Pair<Integer, Integer>>(activation, new Pair<Integer, Integer>(i*SUBS_GRID_SIZE, j*SUBS_GRID_SIZE));
-						}
-					}
-					// For unusual activation functions that go outside of the [-1,1] range
-					activation = Math.max(-1, Math.min(activation, 1.0));
-					c = new Color(activation > 0 ? (int)(activation*255) : 0, 0, activation < 0 ? (int)(-activation*255) : 0);
-				} else {
-					c = Color.gray;
+				if(node.ntype == TWEANN.Node.NTYPE_OUTPUT || !node.outputs.isEmpty()) {
+					if(!s.isNeuronDead(i, j)) c = HyperNEATUtil.regularVisualization(activation);
+					
 				}
-				assert c != Color.white:"not all nodes were accounted for!";
-				p.getGraphics().setColor(c);
-				p.getGraphics().fillRect(i*SUBS_GRID_SIZE, j*SUBS_GRID_SIZE, SUBS_GRID_SIZE, SUBS_GRID_SIZE);
+				activations.add(new VisualNode(0.0, i, j, c));//dead neurons
+				System.out.println("Color is: " + c.toString());
 			}
 		}
-		if(biggest) {
-			p.getGraphics().setColor(Color.green);//Green so it stands out from other neurons
-			p.getGraphics().fillRect(biggestActivation.t2.t1, biggestActivation.t2.t2, SUBS_GRID_SIZE, SUBS_GRID_SIZE);
+		for(VisualNode vn : activations) {
+			vn.drawNode(p);
 		}
+		//		if(biggest) {
+		//			assert activations != null:"either the sortOutputActivations or showHighestActivatedOutput parameter was not set correctly";
+		////			p.getGraphics().setColor(Color.green);//Green so it stands out from other neurons
+		////			p.getGraphics().fillRect(biggestActivation.t2.t1, biggestActivation.t2.t2, SUBS_GRID_SIZE, SUBS_GRID_SIZE);
+		//		}
 
+	}
+
+	public static Color regularVisualization(double activation) { 
+		activation = Math.max(-1, Math.min(activation, 1.0));// For unusual activation functions that go outside of the [-1,1] range
+		return new Color(activation > 0 ? (int)(activation*255) : 0, 0, activation < 0 ? (int)(-activation*255) : 0);
 	}
 }
