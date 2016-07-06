@@ -9,6 +9,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
+import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
+import edu.utexas.cs.nn.gridTorus.controllers.PreyFleeClosestPredatorController;
+import edu.utexas.cs.nn.gridTorus.controllers.RandomPredatorController;
+import edu.utexas.cs.nn.gridTorus.controllers.TorusPredPreyController;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.gridTorus.competitive.CompetitiveHomogeneousPredatorsVsPreyTask;
@@ -599,6 +603,7 @@ public class TorusPredPreyTaskTest <T extends Network> {
 		
 	}
 	
+	@SuppressWarnings("rawtypes")
 	@Test
 	public void testSensorLabels() {
 		//Test with proximity sensors and with sense teammates
@@ -820,19 +825,69 @@ public class TorusPredPreyTaskTest <T extends Network> {
 		assertArrayEquals(homoComp.outputLabels(), ALL_ACTIONS);
 	}
 	
-	@Test
-	public void testGetTimeStamp() {
-		
-	}
-	
+	@SuppressWarnings({ "rawtypes", "static-access" })
 	@Test
 	public void testGetStaticControllers() {
+		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "torusTimeLimit:1000",
+				"torusPreys:2", "torusPredators:3", "allowDoNothingActionForPredators:false", "torusSenseTeammates:true", 
+				"staticPreyController:edu.utexas.cs.nn.gridTorus.controllers.PreyFleeClosestPredatorController", 
+				"staticPredatorController:edu.utexas.cs.nn.gridTorus.controllers.RandomPredatorController", 
+				"torusSenseByProximity:true", "predatorCatchClose:false", "preyRRM:false" });
+		MMNEAT.loadClasses();
 		
+		MMNEAT.task = new TorusEvolvedPredatorsVsStaticPreyTask();
+		homoPred = (TorusEvolvedPredatorsVsStaticPreyTask)MMNEAT.task;
+		TorusPredPreyController[] staticControllers;
+		staticControllers = homoPred.getStaticControllers(false, 2);
+		assertEquals(staticControllers.length, 2);
+		assertTrue(staticControllers[0] instanceof PreyFleeClosestPredatorController);
+		assertTrue(staticControllers[1] instanceof PreyFleeClosestPredatorController);
+		
+		staticControllers = homoPred.getStaticControllers(true, 3);
+		assertEquals(staticControllers.length, 3);
+		assertTrue(staticControllers[0] instanceof RandomPredatorController);
+		assertTrue(staticControllers[1] instanceof RandomPredatorController);
+		assertTrue(staticControllers[2] instanceof RandomPredatorController);
 	}
 	
 	@Test
 	public void testGetEvolvedControllers() {
+		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "torusTimeLimit:1000",
+				"torusPreys:2", "torusPredators:3", "allowDoNothingActionForPredators:true", "torusSenseTeammates:true", 
+				"staticPreyController:edu.utexas.cs.nn.gridTorus.controllers.PreyFleeClosestPredatorController", 
+				"task:edu.utexas.cs.nn.tasks.gridTorus.TorusEvolvedPredatorsVsStaticPreyTask", 
+				"torusSenseByProximity:true", "predatorCatchClose:false", "preyRRM:false" });
+		MMNEAT.loadClasses();
+		TWEANNGenotype g = new TWEANNGenotype();
 		
+		TorusPredPreyController[] evolvedControllers = new TorusPredPreyController[3];
+		TorusPredPreyTask.getEvolvedControllers(evolvedControllers, g, true);
+		
+		assertEquals(evolvedControllers.length, 3);
+		assertTrue(evolvedControllers[0] instanceof NNTorusPredPreyController);
+		assertTrue(evolvedControllers[1] instanceof NNTorusPredPreyController);
+		assertTrue(evolvedControllers[2] instanceof NNTorusPredPreyController);
+		assertTrue(((NNTorusPredPreyController) evolvedControllers[0]).isPredator == true);
+		assertEquals(((NNTorusPredPreyController) evolvedControllers[0]).nn.numInputs(), 11);
+		assertEquals(((NNTorusPredPreyController) evolvedControllers[0]).nn.numOutputs(), 5);
+		
+		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "torusTimeLimit:1000",
+				"torusPreys:2", "torusPredators:3", "allowDoNothingActionForPredators:false", "torusSenseTeammates:false", 
+				"staticPreyController:edu.utexas.cs.nn.gridTorus.controllers.PreyFleeClosestPredatorController", 
+				"task:edu.utexas.cs.nn.tasks.gridTorus.TorusEvolvedPredatorsVsStaticPreyTask", 
+				"torusSenseByProximity:true", "predatorCatchClose:false", "preyRRM:false" });
+		MMNEAT.loadClasses();
+		
+		g = new TWEANNGenotype();
+		evolvedControllers = new TorusPredPreyController[3];
+		TorusPredPreyTask.getEvolvedControllers(evolvedControllers, g, true);
+		assertEquals(evolvedControllers.length, 3);
+		assertTrue(evolvedControllers[0] instanceof NNTorusPredPreyController);
+		assertTrue(evolvedControllers[1] instanceof NNTorusPredPreyController);
+		assertTrue(evolvedControllers[2] instanceof NNTorusPredPreyController);
+		assertTrue(((NNTorusPredPreyController) evolvedControllers[1]).isPredator == true);
+		assertEquals(((NNTorusPredPreyController) evolvedControllers[2]).nn.numInputs(), 5);
+		assertEquals(((NNTorusPredPreyController) evolvedControllers[0]).nn.numOutputs(), 4);
 	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
