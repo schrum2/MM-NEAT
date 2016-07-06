@@ -1421,12 +1421,14 @@ public class GameFacade {
 	}
 
 	/**
-	 * If a ghost is located at the ghostLocation, then the index for that ghost
-	 * is returned. Otherwise, -1 is returned.
+	 * If ghosts are located at the ghostLocation, 
+	 * then an array of the ghost indices
+	 * is returned. The array is empty if there
+	 * are no ghosts.
 	 *
 	 * @param ghostLocation
 	 *            node index where ghost may be
-	 * @return index of ghost, or -1 if not found
+	 * @return array of ghost indices (0 through 3) at location
 	 */
 	public int[] getGhostIndexOfGhostAt(int ghostLocation) {
 		ArrayList<Integer> locs = new ArrayList<Integer>();

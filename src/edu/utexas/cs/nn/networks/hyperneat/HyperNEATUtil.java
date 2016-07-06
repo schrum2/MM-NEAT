@@ -166,7 +166,6 @@ public class HyperNEATUtil {
 	@SuppressWarnings("unchecked")
 	private static void drawCoord(DrawingPanel p, Substrate s, ArrayList<Node> nodes, int nodeIndex) {
 		p.getGraphics().setBackground(Color.gray);
-		//		System.out.println("-----------------Substrate " + s.name + "---------------------");
 		boolean sort = Parameters.parameters.booleanParameter("sortOutputActivations") && s.stype == Substrate.OUTPUT_SUBSTRATE;
 		boolean biggest = Parameters.parameters.booleanParameter("showHighestActivatedOutput") && s.stype == Substrate.OUTPUT_SUBSTRATE;
 		ArrayList<VisualNode> activations = new ArrayList<VisualNode>(); 

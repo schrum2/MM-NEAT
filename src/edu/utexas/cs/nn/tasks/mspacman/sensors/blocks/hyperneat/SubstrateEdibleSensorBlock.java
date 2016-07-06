@@ -28,14 +28,16 @@ public class SubstrateEdibleSensorBlock extends FullScreenSubstrateSensorBlock{
 	public int incorporateSensors(double[] inputs, int startPoint, GameFacade gf, int lastDirection) {
 		for(Integer node: gf.getEdibleGhostLocations()) {
 			if(Parameters.parameters.booleanParameter("senseHyperNEATGhostPath")) {
-				int[] trail = gf.getGhostPath(node, gf.getPacmanCurrentNodeIndex());
+				// index 0 gets the first ghost at that location. There could be a problem if there are two
+				// ghosts going in opposite directions, but this should be rare enough to not be worth
+				// worrying about.
+				int[] trail = gf.getGhostPath(gf.getGhostIndexOfGhostAt(node)[0], gf.getPacmanCurrentNodeIndex());
 				for(int j = 0; j < trail.length; j++) {
 					int node2 = trail[j];
 					int x = gf.getNodeXCoord(node2);
 					int y = gf.getNodeYCoord(node2);
 					int inputOffset = NNHyperNEATPacManController.getOutputIndexFromNodeCoord(x, y);
-					inputs[startPoint + inputOffset] = 1.0 / trail.length;	
-					System.out.println("edible sensor ghost path performing");
+					inputs[startPoint + inputOffset] += 1.0*(trail.length - j) / trail.length;
 				}
 			}
 			int x = gf.getNodeXCoord(node);

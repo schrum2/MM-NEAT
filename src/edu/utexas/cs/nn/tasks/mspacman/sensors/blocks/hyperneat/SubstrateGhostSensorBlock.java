@@ -34,18 +34,16 @@ public class SubstrateGhostSensorBlock  extends FullScreenSubstrateSensorBlock{
 			if(Parameters.parameters.booleanParameter("senseHyperNEATGhostPath")) {
 				int[] trail = gf.getGhostPath(i, gf.getPacmanCurrentNodeIndex());
 				for(int j = 0; j < trail.length; j++) {
-					int node = trail[j];
-					int x = gf.getNodeXCoord(node);
-					int y = gf.getNodeYCoord(node);
+					int node2 = trail[j];
+					int x = gf.getNodeXCoord(node2);
+					int y = gf.getNodeYCoord(node2);
 					int inputOffset = NNHyperNEATPacManController.getOutputIndexFromNodeCoord(x, y);
 					if(gf.isGhostEdible(i)) {
-						inputs[startPoint + inputOffset] = 1.0 / trail.length;
+						inputs[startPoint + inputOffset] += 1.0*(trail.length - j) / trail.length;
 					} else {
-						inputs[startPoint + inputOffset] = -1.0 / trail.length;	
+						inputs[startPoint + inputOffset] += -1.0*(trail.length - j) / trail.length;	
 					}
 				}
-
-				System.out.println("sensor ghost path performing");
 			}
 			int node = gf.getGhostCurrentNodeIndex(i);
 			int x = gf.getNodeXCoord(node);
@@ -57,7 +55,6 @@ public class SubstrateGhostSensorBlock  extends FullScreenSubstrateSensorBlock{
 				inputs[startPoint + inputOffset] = -1;
 			}
 		}
-
 		return startPoint + numberAdded();
 	}
 
