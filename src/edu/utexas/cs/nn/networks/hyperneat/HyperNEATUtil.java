@@ -22,7 +22,7 @@ public class HyperNEATUtil {
 
 	//may change later to just use collections.sort with a special comparator instead of creating new data type
 	@SuppressWarnings("rawtypes")
-	public static class VisualNode implements Comparable{
+	public static class VisualNode implements Comparable<VisualNode> {
 		public double activation;
 		public int xCoord, yCoord;
 		public Color c;
@@ -48,14 +48,13 @@ public class HyperNEATUtil {
 			this.c = c;
 		}
 		@Override
-		public int compareTo(Object o) {
-			if(o instanceof VisualNode) {
-				if(((VisualNode) o).activation > this.activation) return 1;
-				else if(((VisualNode) o).activation == this.activation) return 0;
-				else return -1;
-			}
-			throw new IllegalArgumentException("o is not of type VisualNode, can't compare!");
+		public int compareTo(VisualNode o) {
+			if(o.dead && this.dead) return 0; // dead neurons are alike
+			else if(o.dead) return 1; // this is not dead
+			else if(this.dead) return -1; // o is not dead
+			else return (int) Math.signum(o.activation - this.activation);
 		} 
+
 		public void drawNode(DrawingPanel p) {
 			p.getGraphics().setColor(c);
 			p.getGraphics().fillRect(xCoord, yCoord, SUBS_GRID_SIZE, SUBS_GRID_SIZE);
