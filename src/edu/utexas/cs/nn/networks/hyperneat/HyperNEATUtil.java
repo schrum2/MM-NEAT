@@ -52,7 +52,7 @@ public class HyperNEATUtil {
 			if(o.dead && this.dead) return 0; // dead neurons are alike
 			else if(o.dead) return 1; // this is not dead
 			else if(this.dead) return -1; // o is not dead
-			else return (int) Math.signum(o.activation - this.activation);
+			else return (int) Math.signum(this.activation - o.activation);
 		} 
 
 		public void drawNode(DrawingPanel p) {
@@ -183,7 +183,7 @@ public class HyperNEATUtil {
 		if(sort) {
 			Collections.sort(activations);
 			float scale = activations.size();
-			for(int i = activations.size() - 1; i >= 0; i--) {
+			for(int i = activations.size() - 1; i >= 0 && !activations.get(i).dead; i--) {
 				VisualNode vNode = activations.get(i);
 				if(!vNode.dead) {
 					vNode.setColor(new Color(0, i / scale, 0));
@@ -192,9 +192,11 @@ public class HyperNEATUtil {
 		}
 		if(biggest) {//only shows biggest neuron 
 			Collections.sort(activations);
-			VisualNode biggestAct = activations.get(activations.size() - 1);
-			biggestAct.setColor(Color.green);
-
+                        int currentIndex = activations.size() - 1;
+                        while(activations.get(activations.size() - 1).activation == activations.get(currentIndex).activation) {
+                            activations.get(currentIndex).setColor(Color.MAGENTA);
+                            currentIndex--;
+                        }
 		}  
 
 
