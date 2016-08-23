@@ -2,6 +2,7 @@ package edu.utexas.cs.nn.tasks.rlglue.featureextractors.tetris;
 
 import static org.junit.Assert.*;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.rlcommunity.environments.tetris.TetrisState;
@@ -24,11 +25,16 @@ public class RawTetrisStateExtractorTests {
 		EvolutionaryHistory.setInnovation(0);
 		EvolutionaryHistory.setHighestGenotypeId(0);
 		Parameters.initializeParameterCollections(
-				new String[] { "io:false", "netio:false", "allowMultipleFunctions:true", "recurrency:false",
-						"includeHalfLinearPiecewiseFunction:true", "includeSawtoothFunction:true", "absenceNegative:true", "hyperNEAT:true" });
+				new String[] { "io:false", "netio:false", "allowMultipleFunctions:true", "recurrency:false","splitRawTetrisInputs:false",
+						"includeHalfLinearPiecewiseFunction:true", "includeSawtoothFunction:true", "absenceNegative:true" });
 		MMNEAT.loadClasses();
 	}
 
+	@After
+	public void tearDown() throws Exception {
+		MMNEAT.clearClasses();
+	}
+	
 	@Test
 	public void sanityTest2() {
 	System.out.println("--------------------------------------------------------------------");

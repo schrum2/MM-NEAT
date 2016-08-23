@@ -29,9 +29,9 @@ public class SubstratePacManSensorBlock  extends FullScreenSubstrateSensorBlock{
 	 */
 	public int incorporateSensors(double[] inputs, int startPoint, GameFacade gf, int lastDirection) {
 		int pacManIndex = gf.getPacmanCurrentNodeIndex();
-			int x = gf.getNodeXCoord(pacManIndex);
-			int y = gf.getNodeYCoord(pacManIndex);
-			inputs[startPoint + NNHyperNEATPacManController.getOutputIndexFromNodeCoord(x, y)] = 1;
+		int x = gf.getNodeXCoord(pacManIndex);
+		int y = gf.getNodeYCoord(pacManIndex);
+		inputs[startPoint + NNHyperNEATPacManController.getOutputIndexFromNodeCoord(x, y)] = 1;
 		return startPoint + numberAdded();
 	}
 

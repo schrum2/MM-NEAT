@@ -4,11 +4,19 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
 
+import org.junit.After;
 import org.junit.Test;
 import org.rlcommunity.environments.tetris.TetrisState;
 import org.rlcommunity.rlglue.codec.types.Observation;
 
+import edu.utexas.cs.nn.MMNEAT.MMNEAT;
+
 public class ExtendedBertsekasTsitsiklisTetrisExtractorTests {
+	
+	@After
+	public void tearDown() throws Exception {
+		MMNEAT.clearClasses();
+	}
 	
 	/**
 	 * Tests that the number of holes in a TetrisState is correctly identified

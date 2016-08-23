@@ -2,12 +2,20 @@ package edu.utexas.cs.nn.util.util2D;
 
 import static org.junit.Assert.*;
 
+import org.junit.After;
 import org.junit.Test;
+
+import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 
 public class Tuple2DTest {
 
 	public static final double ERROR = .0001;
-
+	
+	@After
+	public void tearDown() throws Exception {
+		MMNEAT.clearClasses();
+	}
+	
 	@Test
 	public void testTuple2D() {
 		Tuple2D test = new Tuple2D(1, 2);

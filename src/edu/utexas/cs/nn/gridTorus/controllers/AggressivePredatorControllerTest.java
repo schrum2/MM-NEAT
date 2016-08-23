@@ -2,6 +2,7 @@ package edu.utexas.cs.nn.gridTorus.controllers;
 
 import static org.junit.Assert.*;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -22,7 +23,11 @@ public class AggressivePredatorControllerTest {
 				"torusSenseTeammates:true" });
 		MMNEAT.loadClasses();
 	}
-
+	@After
+	public void tearDown() throws Exception {
+		MMNEAT.clearClasses();
+	}
+	
 	@Test
 	public void test() {
 		TorusPredPreyGame game = new TorusPredPreyGame(100, 100, 3, 2);

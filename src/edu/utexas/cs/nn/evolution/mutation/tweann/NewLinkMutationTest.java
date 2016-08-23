@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -36,6 +37,12 @@ public class NewLinkMutationTest {
 		EvolutionaryHistory.initArchetype(0);
 	}
 
+	@After
+	public void tearDown() throws Exception {
+		tg1 = null;
+		MMNEAT.clearClasses();
+	}
+	
 	@Test
 	public void testLinkMutation() {
 		double weight = 0.5;

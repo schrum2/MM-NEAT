@@ -5,6 +5,7 @@ import java.util.HashMap;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.HyperNEATCPPNGenotype;
 import edu.utexas.cs.nn.networks.Network;
+import edu.utexas.cs.nn.networks.hyperneat.HyperNEATUtil;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.mspacman.MsPacManTask;
@@ -51,7 +52,9 @@ public class NNHyperNEATPacManController extends NNPacManController {
 			nn = networkForMaze.get(currentMaze); // recreate network
 			// Need to update for substrate visualizer
 			if(CommonConstants.monitorSubstrates) {
+				System.out.println("Update substrates for maze " + currentMaze);
 				((MsPacManTask) MMNEAT.task).customizeSubstratesForMaze(gf);
+				HyperNEATUtil.resetSubstrates();
 			}
 		}
 		double[] inputs = inputMediator.getInputs(gf, gf.getPacmanLastMoveMade());

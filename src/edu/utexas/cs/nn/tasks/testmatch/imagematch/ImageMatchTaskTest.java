@@ -3,6 +3,8 @@ package edu.utexas.cs.nn.tasks.testmatch.imagematch;
 import static org.junit.Assert.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
@@ -50,6 +52,10 @@ public class ImageMatchTaskTest {
 		imageWidth = test.imageWidth;
 	}
 
+	@After
+	public void tearDown() throws Exception {
+		MMNEAT.clearClasses();
+	}
 	
 	@Test
 	public void sanityCheck() {

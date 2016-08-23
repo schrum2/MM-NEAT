@@ -2,6 +2,7 @@ package edu.utexas.cs.nn.gridTorus.controllers;
 
 import static org.junit.Assert.*;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -25,6 +26,13 @@ public class PreyFleeClosestPredatorControllerTest {
 		MMNEAT.loadClasses();
 	}
 
+	@After
+	public void tearDown() throws Exception {
+		world = null;
+		game = null;
+		MMNEAT.clearClasses();
+	}
+	
 	@Test
 	public void testGetAction() {
 		game = new TorusPredPreyGame(100, 100, 3, 2);

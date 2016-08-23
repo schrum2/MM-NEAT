@@ -13,12 +13,19 @@ import edu.utexas.cs.nn.evolution.genotypes.HyperNEATCPPNGenotype;
 import edu.utexas.cs.nn.networks.hyperneat.HyperNEATSpeedTask;
 import edu.utexas.cs.nn.networks.hyperneat.HyperNEATTask;
 import edu.utexas.cs.nn.parameters.Parameters;
-
+/**
+ * Point of this was to see if substrateMLP was 
+ * faster than regular TWEANN. Alas, it was not
+ * so there is no benefit to using MLP or having
+ * this test.
+ * @author gillespl
+ *
+ */
 public class SpeedTest {
 
 	TWEANN tweann;
 	SubstrateMLP mlp;
-	@Before
+	//@Before
 	public void setUp() throws Exception {
 		Parameters.initializeParameterCollections(new String[] { "io:false", "allowMultipleFunctions:true", "netio:false", "recurrency:false", "hyperNEAT:true", "task:edu.utexas.cs.nn.networks.hyperneat.HyperNEATSpeedTask", "ftype:1"});
 		MMNEAT.loadClasses();
@@ -32,14 +39,14 @@ public class SpeedTest {
 		
 	}
 
-	@After
+//	@After
 	public void tearDown() throws Exception {
 		tweann = null;
 		mlp = null;
 		MMNEAT.clearClasses();
 	}
 
-	@Test
+	//@Test
 	public void test() {
 		double[] inputs = new double[1000];
 		for(int i = 0; i < inputs.length; i++) {

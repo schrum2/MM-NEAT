@@ -5,7 +5,10 @@ package edu.utexas.cs.nn.util.random;
 
 import static org.junit.Assert.*;
 
+import org.junit.After;
 import org.junit.Test;
+
+import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 
 /**
  * This is a JUnit test for the core methods of the Resumable Random class,
@@ -21,6 +24,11 @@ public class ResumableRandomTest {
 	static final long seed = 10;
 	ResumableRandom randomGenerator = new ResumableRandom();
 
+	@After
+	public void tearDown() throws Exception {
+		MMNEAT.clearClasses();
+	}
+	
 	/**
 	 * Tests whether or not the method can get and reset the seed for a
 	 * resumable random number generator

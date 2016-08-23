@@ -7,6 +7,7 @@ import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 
+import org.junit.After;
 import org.junit.Test;
 
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
@@ -29,6 +30,15 @@ public class TWEANNCrossoverTest {
 	private static final int DEFAULT_NUMOUT = 3;
 	TWEANNGenotype m, f;
 
+	
+	@After
+	public void tearDown() throws Exception {
+		MMNEAT.clearClasses();
+		m = null;
+		f = null;
+	}
+	
+	
 	/**
 	 * Sets crossExcessRate = 1.0 so offspring inherit all innovation numbers
 	 * from both parents Essentially assures maximum crossover occurs.

@@ -27,6 +27,7 @@ public class HyperNEATUtilTest {
 	TWEANN  t1;
 	HyperNEATTask htask;
 	
+	
 	/**
 	 * sets up a new substrate array before each test
 	 * @throws Exception
@@ -81,6 +82,8 @@ public class HyperNEATUtilTest {
 	public void tearDown() throws Exception {
 		subs = null;
 		nodes = null;
+		t1 = null;
+		htask = null;
 		MMNEAT.clearClasses();
 	}
 	

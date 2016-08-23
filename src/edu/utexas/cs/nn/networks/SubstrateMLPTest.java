@@ -26,7 +26,7 @@ public class SubstrateMLPTest {
 	HyperNEATTask task;
 	@Before
 	public void setUp() throws Exception {
-		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "recurrency:false", "hyperNEAT:true", "task:edu.utexas.cs.nn.networks.hyperneat.HyperNEATDummyTask", "ftype:1"});
+		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "recurrency:false", "hyperNEAT:true", "evolveHyperNEATBias:false", "task:edu.utexas.cs.nn.networks.hyperneat.HyperNEATDummyTask", "ftype:1"});
 		MMNEAT.loadClasses();
 		hcppn = new HyperNEATCPPNGenotype();
 		task = (HyperNEATDummyTask<?>) MMNEAT.task;

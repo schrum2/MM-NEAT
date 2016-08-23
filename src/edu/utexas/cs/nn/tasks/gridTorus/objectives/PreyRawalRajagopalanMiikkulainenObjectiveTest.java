@@ -2,6 +2,7 @@ package edu.utexas.cs.nn.tasks.gridTorus.objectives;
 
 import static org.junit.Assert.*;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -28,6 +29,13 @@ public class PreyRawalRajagopalanMiikkulainenObjectiveTest {
 		MMNEAT.loadClasses();
 	}
 
+	@After
+	public void tearDown() throws Exception {
+		game = null;
+		world = null;
+		MMNEAT.clearClasses();
+	}
+	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Test
 	public void testFitnessWhenAllPreySurvive() {

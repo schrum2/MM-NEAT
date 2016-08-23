@@ -2,6 +2,7 @@ package edu.utexas.cs.nn.tasks.gridTorus.objectives;
 
 import static org.junit.Assert.*;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -26,6 +27,11 @@ public class PredatorMinimizeDistanceFromPreyObjectiveTest {
 		MMNEAT.loadClasses();
 	}
 
+	@After
+	public void tearDown() throws Exception {
+		MMNEAT.clearClasses();
+	}
+	
 	@SuppressWarnings({ "unused", "rawtypes", "unchecked" })
 	@Test
 	public void test() {

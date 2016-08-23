@@ -5,7 +5,6 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -101,13 +100,13 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	private boolean showLineage;
 	private boolean showNetwork;
 	private boolean waitingForUser;
-	private boolean[] chosen;
-	private boolean[] activation;
+	private final boolean[] chosen;
+	private final boolean[] activation;
 
 	/**
 	 * Default Constructor
 	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings({ "rawtypes", "unchecked", "LeakingThisInConstructor" })
 	public PicbreederTask() {		
 		MMNEAT.registerFitnessFunction("User Preference");
 		//sets mu to a divisible number
@@ -137,7 +136,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		buttons = new ArrayList<JButton>();
 
 		//sets up JFrame
-		frame.setSize(PIC_SIZE * NUM_COLUMNS + 200, PIC_SIZE * NUM_ROWS);
+		frame.setSize(PIC_SIZE * NUM_COLUMNS + 200, PIC_SIZE * NUM_ROWS + 700);
 		PIC_SIZE = PIC_SIZE + (int) (200.0 / NUM_COLUMNS);
 		frame.setLocation(300, 100);//magic #s 100 correspond to relocating frame to middle of screen
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -409,12 +408,12 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	 * @param i index of button
 	 * @param button button
 	 */
-	private void save(int i, JButton button) {
-		BufferedImage toSave = (BufferedImage) ((ImageIcon) button.getIcon()).getImage();
+	private void save(int i) {
+                // Use of imageHeight and imageWidth allows saving a higher quality image than is on the button
+		BufferedImage toSave = GraphicsUtil.imageFromCPPN((Network)scores.get(i).individual.getPhenotype(), Parameters.parameters.integerParameter("imageWidth"), Parameters.parameters.integerParameter("imageHeight"));
 		DrawingPanel p = GraphicsUtil.drawImage(toSave, "" + i, toSave.getWidth(), toSave.getHeight());
 		JFileChooser chooser = new JFileChooser();//used to get save name 
 		chooser.setApproveButtonText("Save");
-		chooser.setCurrentDirectory(new File("\\" + "Users" + "\\" + "gillespl" + "\\" + "SCOPE" + "\\" + "MM-NEATv2" + "\\" + "PicbreederImages"));
 		FileNameExtensionFilter filter = new FileNameExtensionFilter("BMP Images", "bmp");
 		chooser.setFileFilter(filter);
 		int returnVal = chooser.showOpenDialog(frame);
@@ -461,6 +460,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	 * @return score of each member of population
 	 */
 	@Override
+        @SuppressWarnings("SleepWhileInLoop")
 	public ArrayList<Score<T>> evaluateAll(ArrayList<Genotype<T>> population) {
 		waitingForUser = true;
 		scores = new ArrayList<Score<T>>();
@@ -515,7 +515,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		for(int i = 0; i < chosen.length; i++) {
 			boolean choose = chosen[i];
 			if(choose) {//loops through and any image  clicked automatically saved
-				save(i , buttons.get(i));
+				save(i);
 			}
 		}
 	}

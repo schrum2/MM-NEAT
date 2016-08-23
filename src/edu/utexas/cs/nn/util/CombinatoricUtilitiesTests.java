@@ -4,12 +4,19 @@ import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 
+import org.junit.After;
 import org.junit.Test;
 
+import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
 
 public class CombinatoricUtilitiesTests {
 
+	@After
+	public void tearDown() throws Exception {
+		MMNEAT.clearClasses();
+	}
+	
 	@Test
 	public void combinations_test() {
 		ArrayList<Integer> lens = new ArrayList<Integer>();

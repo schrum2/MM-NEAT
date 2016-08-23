@@ -2,13 +2,16 @@ package edu.utexas.cs.nn.util.datastructures;
 
 import static org.junit.Assert.*;
 
-import org.junit.Before;
+import org.junit.After;
 import org.junit.Test;
+
+import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 
 public class IntervalTest {
 
-	@Before
-	public void setUp() throws Exception {
+	@After
+	public void tearDown() throws Exception {
+		MMNEAT.clearClasses();
 	}
 
 	@Test

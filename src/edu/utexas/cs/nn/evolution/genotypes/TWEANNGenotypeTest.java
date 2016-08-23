@@ -3,6 +3,8 @@ package edu.utexas.cs.nn.evolution.genotypes;
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
+
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -25,6 +27,11 @@ public class TWEANNGenotypeTest {
 		EvolutionaryHistory.setHighestGenotypeId(0);
 	}
 
+	@After
+	public void tearDown() throws Exception {
+		MMNEAT.clearClasses();
+	}
+	
 	@Test
 	public void test_Equals() {
 		Parameters.initializeParameterCollections(

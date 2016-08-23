@@ -7,11 +7,19 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 
+import org.junit.After;
 import org.junit.Test;
 import org.rlcommunity.environments.tetris.TetrisState;
 
+import edu.utexas.cs.nn.MMNEAT.MMNEAT;
+
 public class TetrisAfterStateGeneratorTests {
 
+	@After
+	public void tearDown() throws Exception {
+		MMNEAT.clearClasses();
+	}
+	
 	/**
 	 * Tests that all afterstates are present in the returned hash and This part tests 
 	 * that the actions of the action list do give you the given state

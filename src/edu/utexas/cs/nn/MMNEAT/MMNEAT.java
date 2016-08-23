@@ -632,7 +632,10 @@ public class MMNEAT {
 	public static void hyperNEATOverrides() throws NoSuchMethodException {
 		// Cannot monitor inputs with HyperNEAT because the NetworkTask
 		// interface no longer applies
-
+		HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair = 1;
+		HyperNEATCPPNGenotype.biasIndex = 0;
+		HyperNEATCPPNGenotype.leoIndex = 0;
+		
 		CommonConstants.monitorInputs = false;
 		Parameters.parameters.setBoolean("monitorInputs", false);
 
@@ -640,6 +643,7 @@ public class MMNEAT {
 
 		HyperNEATTask hnt = (HyperNEATTask) task;
 		int numSubstratePairings = hnt.getSubstrateConnectivity().size();
+		System.out.println("Number of substrate pairs being connected: "+ numSubstratePairings);
 		if(CommonConstants.evolveHyperNEATBias) {
 			System.out.println("HyperNEAT uses Bias output");
 			HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair++;

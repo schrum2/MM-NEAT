@@ -2,13 +2,22 @@ package edu.utexas.cs.nn.networks;
 
 import static org.junit.Assert.*;
 
+import org.junit.After;
 import org.junit.Test;
+
+import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 /**
  * @author Lauren Gillespie
  * 
  */
 public class NetworkUtilTest {
 
+	@After
+	public void tearDown() throws Exception {
+		MMNEAT.clearClasses();
+	}
+	
+	
 	@Test
 	public void testPropagateOneStepSubstrateMLP() {
 		double[][] fromLayer = {{1, 3}, {2, 4}};
