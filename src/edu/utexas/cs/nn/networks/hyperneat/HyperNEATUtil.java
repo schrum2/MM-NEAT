@@ -21,7 +21,6 @@ import edu.utexas.cs.nn.util.datastructures.Pair;
 public class HyperNEATUtil {
 
 	//may change later to just use collections.sort with a special comparator instead of creating new data type
-	@SuppressWarnings("rawtypes")
 	public static class VisualNode implements Comparable<VisualNode> {
 		public double activation;
 		public int xCoord, yCoord;
@@ -86,7 +85,7 @@ public class HyperNEATUtil {
 			substrates = hyperNEATTask.getSubstrateInformation();
 		}
 	}
-
+	
 	public static List<DrawingPanel> drawSubstrates(ArrayList<Node> nodes) {
 		if(substratePanels == null) {
 			hyperNEATTask = (HyperNEATTask) MMNEAT.task;
@@ -162,7 +161,6 @@ public class HyperNEATUtil {
 	 * @param size size of substrate
 	 * @param c color of square
 	 */
-	@SuppressWarnings("unchecked")
 	private static void drawCoord(DrawingPanel p, Substrate s, ArrayList<Node> nodes, int nodeIndex) {
 		p.getGraphics().setBackground(Color.gray);
 		boolean sort = Parameters.parameters.booleanParameter("sortOutputActivations") && s.stype == Substrate.OUTPUT_SUBSTRATE;

@@ -41,6 +41,7 @@ public class TWEANN implements Network {
 
 	// Variables used for watching the behavior of an active network in a
 	// graphical display
+	public static int WEIGHT_VIEW_DIM;//TODO need to figure this out somehow; should correspond to number of nodes in order to scale window correctly
 	public static int NETWORK_VIEW_DIM;
 	public static final int NODE_DIM = 6;
 	public static final int DISPLAY_BORDER = 25;
@@ -49,6 +50,7 @@ public class TWEANN implements Network {
 	public static DrawingPanel inputPanel = null;
 	public static DrawingPanel preferenceNeuronPanel = null;
 	public static List<DrawingPanel> subsPanel = null;
+	public static DrawingPanel weightPanel = null;
 	public static ArrayList<Double>[] preferenceActivationHistory = null;
 
 	// subclass for a synaptic link between nodes
@@ -326,6 +328,9 @@ public class TWEANN implements Network {
 	protected int numIn;
 	protected int numOut;
 	private int numModes;
+	private int numNodesX;//TODO need this number to correspond to the number of rows we need for weight visualization
+	private int numNodesY;//TODO need this number to correspond to the number of columns we need for weight visualization
+	
 	private int neuronsPerModule;
 	private boolean standardMultitask;
 	private boolean hierarchicalMultitask;
@@ -915,6 +920,32 @@ public class TWEANN implements Network {
 	//used in drawing class. Transient to avoid unnecessary saving to xml files
 	transient private ArrayList<ArrayList<Node>> layers = null;
 
+	public DrawingPanel drawWeight() {//TODO does this start with first layer as input or output neurons?
+		if(Parameters.parameters.booleanParameter("showWeights")){
+		TWEANN.weightPanel = new DrawingPanel(WEIGHT_VIEW_DIM, WEIGHT_VIEW_DIM, "Network Weights");
+		drawWeight(TWEANN.weightPanel);
+		}
+		return TWEANN.weightPanel;
+	}
+	
+	private void drawWeight(DrawingPanel weightDrawingPanel) {
+		ArrayList<Node> nodes = this.nodes;
+		int nodeCount = 0;//TODO need to make sure that this starts and ends at beginning of node list
+		for(int i = 0; i < numNodesY; i++) {
+			for(int j = 0; j < numNodesX; j++) {
+				//searches through each input node
+				drawNodeWeight(weightDrawingPanel, nodes.get(nodeCount++));
+			}
+		}
+			
+	}
+	
+	public void drawNodeWeight(DrawingPanel weightDrawingPanel, Node node) {
+		for(int i = 0; i < node.output(); i++) {
+			//TODO get information about links connected to output nodes
+			//TODO need help with this section
+		}
+	}
 	/**
 	 * Draws the network as a drawing panel to screen. Useful for troubleshooting 
 	 * networks
