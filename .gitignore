@@ -98,3 +98,5 @@ _vizdoom.ini
 
 .svn
 *.docx
+
+*.bash
