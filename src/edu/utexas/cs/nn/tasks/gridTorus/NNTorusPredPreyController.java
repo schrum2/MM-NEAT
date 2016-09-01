@@ -125,6 +125,11 @@ public class NNTorusPredPreyController extends TorusPredPreyController {
 	 * @return the offsets to the other agents provided
 	 */
 	public static double[] getAgentOffsets(TorusAgent me, TorusWorld world, TorusAgent[] agents) {
+		//check to see if agents[] is == to me at any point in the array,
+		//if so shorten agentInputs.length by 2 and save the index in the agents array
+		//that was equal to me, and skip over that agent when putting values in
+		//the agentInputs array
+		
 		double[] agentInputs = new double[agents.length * 2];
 		for (int i = 0; i < agents.length; i++) {
 			agentInputs[(2 * i)] = me.shortestXOffset(agents[i]) / (1.0 * world.width());
