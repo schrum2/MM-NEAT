@@ -64,6 +64,13 @@ public class TorusPredatorsByProximitySensorBlock implements TorusPredPreySensor
 			// proximity will not be put in again
 			overallDists[indexOfMin][0] = Double.POSITIVE_INFINITY;
 		}
+		
+		
+		//make boolean parameter which says if all agents should be sensed
+		//make integer parameter for if not all agents are sensed, how many should be
+		//cut off array proximityPreds so that it only senses the closest specified
+		//number of agents
+		
 		return proximityPreds;
 	}
 
