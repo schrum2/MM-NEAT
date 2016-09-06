@@ -11,12 +11,12 @@ public class BiasSensorBlock implements TorusPredPreySensorBlock{
 	}
 
 	@Override
-	public int numSensors() {
+	public int numSensors(boolean isPredator) {
 		return 1;
 	}
 
 	@Override
-	public String[] sensorLabels() {
+	public String[] sensorLabels(boolean isPredator) {
 		return new String[]{"Bias"};
 	}
 

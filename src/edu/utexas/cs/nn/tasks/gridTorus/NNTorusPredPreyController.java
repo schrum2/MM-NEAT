@@ -67,7 +67,7 @@ public class NNTorusPredPreyController extends TorusPredPreyController {
 
 		numInputs = 0;
 		for (TorusPredPreySensorBlock block : sensorBlocks) {
-			numInputs += block.numSensors();
+			numInputs += block.numSensors(isPredator);
 		}
 
 	}
@@ -125,15 +125,22 @@ public class NNTorusPredPreyController extends TorusPredPreyController {
 	 * @return the offsets to the other agents provided
 	 */
 	public static double[] getAgentOffsets(TorusAgent me, TorusWorld world, TorusAgent[] agents) {
-		//check to see if agents[] is == to me at any point in the array,
-		//if so shorten agentInputs.length by 2 and save the index in the agents array
-		//that was equal to me, and skip over that agent when putting values in
-		//the agentInputs array
-		
-		double[] agentInputs = new double[agents.length * 2];
+		//int to designate which agent in the array is "me" if necessary
+		int myself = -1;
+		for(int i = 0; i < agents.length; i++){
+			if(agents[i] == me){
+				myself = i;
+			}
+		}
+		double[] agentInputs = new double[(myself == -1) ? (agents.length * 2) : (agents.length * 2 - 2)];
+		//index for assigning the agents offsets. Necessary to not sense oneself
+		int j = 0;
 		for (int i = 0; i < agents.length; i++) {
-			agentInputs[(2 * i)] = me.shortestXOffset(agents[i]) / (1.0 * world.width());
-			agentInputs[(2 * i) + 1] = me.shortestYOffset(agents[i]) / (1.0 * world.height());
+			if(i != myself){
+				agentInputs[(2 * j)] = me.shortestXOffset(agents[i]) / (1.0 * world.width());
+				agentInputs[(2 * j) + 1] = me.shortestYOffset(agents[i]) / (1.0 * world.height());
+				j++;
+			}
 		}
 		return agentInputs;
 	}
@@ -156,8 +163,9 @@ public class NNTorusPredPreyController extends TorusPredPreyController {
 		double[] inputs = new double[numInputs];
 		int startPosition = 0;
 		for (TorusPredPreySensorBlock block : sensorBlocks) {
-			System.arraycopy(block.sensorValues(me, world, preds, prey), 0, inputs, startPosition, block.numSensors());
-			startPosition += block.numSensors();
+			System.arraycopy(block.sensorValues(me, world, preds, prey), 0, inputs, startPosition, 
+					block.numSensors(isPredator));
+			startPosition += block.numSensors(isPredator);
 		}
 		return inputs;
 	}
@@ -194,8 +202,8 @@ public class NNTorusPredPreyController extends TorusPredPreyController {
 		String[] labels = new String[numInputs];
 		int startPosition = 0;
 		for (TorusPredPreySensorBlock block : sensorBlocks) {
-			System.arraycopy(block.sensorLabels(), 0, labels, startPosition, block.numSensors());
-			startPosition += block.numSensors();
+			System.arraycopy(block.sensorLabels(isPredator), 0, labels, startPosition, block.numSensors(isPredator));
+			startPosition += block.numSensors(isPredator);
 		}
 		return labels;
 	}

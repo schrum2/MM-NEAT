@@ -615,16 +615,16 @@ public class TorusPredPreyTaskTest <T extends Network> {
 		//NOTE: this relies on the fact that prey are listed first followed by predators
 		String type1 = "Closest Prey";
 		String type2 = "Closest Pred";
-		String[] result = new String[(numPreds+numPrey) * 2];
+		String[] result = new String[(numPreds-1+numPrey) * 2];
 		for (int i = 0; i < numPrey; i++) {
 			result[(2 * i)] = "X Offset to " + type1 + " " + i;
 			result[(2 * i) + 1] = "Y Offset to " + type1 + " " + i;
 		}
-		for (int i = numPrey; i < numPreds+numPrey; i++) {
+		for (int i = numPrey; i < numPreds-1+numPrey; i++) {
 			result[(2 * i)] = "X Offset to " + type2 + " " + (i-numPrey);
 			result[(2 * i) + 1] = "Y Offset to " + type2 + " " + (i-numPrey);
 		}
-		String[] resultWithBias = new String[(numPreds+numPrey) * 2 + 1];
+		String[] resultWithBias = new String[(numPreds-1+numPrey) * 2 + 1];
 		resultWithBias[0] = "Bias";
 		System.arraycopy(result, 0, resultWithBias, 1, result.length);
 		//NOTE: this relies on the fact that prey are listed first followed by predators
@@ -645,16 +645,16 @@ public class TorusPredPreyTaskTest <T extends Network> {
 		//NOTE: this relies on the fact that prey are listed first followed by predators
 		type1 = "Prey";
 		type2 = "Pred";
-		result = new String[(numPreds+numPrey) * 2];
+		result = new String[(numPreds-1+numPrey) * 2];
 		for (int i = 0; i < numPrey; i++) {
 			result[(2 * i)] = "X Offset to " + type1 + " " + i;
 			result[(2 * i) + 1] = "Y Offset to " + type1 + " " + i;
 		}
-		for (int i = numPrey; i < numPreds+numPrey; i++) {
+		for (int i = numPrey; i < numPreds-1+numPrey; i++) {
 			result[(2 * i)] = "X Offset to " + type2 + " " + (i-numPrey);
 			result[(2 * i) + 1] = "Y Offset to " + type2 + " " + (i-numPrey);
 		}
-		resultWithBias = new String[(numPreds+numPrey) * 2 + 1];
+		resultWithBias = new String[(numPreds-1+numPrey) * 2 + 1];
 		resultWithBias[0] = "Bias";
 		System.arraycopy(result, 0, resultWithBias, 1, result.length);
 		//NOTE: this relies on the fact that prey are listed first followed by predators
@@ -868,7 +868,8 @@ public class TorusPredPreyTaskTest <T extends Network> {
 		assertTrue(evolvedControllers[1] instanceof NNTorusPredPreyController);
 		assertTrue(evolvedControllers[2] instanceof NNTorusPredPreyController);
 		assertTrue(((NNTorusPredPreyController) evolvedControllers[0]).isPredator == true);
-		assertEquals(((NNTorusPredPreyController) evolvedControllers[0]).nn.numInputs(), 11);
+		//9 because not sensing self, would have been 11 with sensing self
+		assertEquals(((NNTorusPredPreyController) evolvedControllers[0]).nn.numInputs(), 9);
 		assertEquals(((NNTorusPredPreyController) evolvedControllers[0]).nn.numOutputs(), 5);
 		
 		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "torusTimeLimit:1000",

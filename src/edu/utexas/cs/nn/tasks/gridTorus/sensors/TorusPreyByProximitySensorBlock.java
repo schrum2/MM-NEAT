@@ -34,25 +34,31 @@ public class TorusPreyByProximitySensorBlock implements TorusPredPreySensorBlock
 	 *         offsets
 	 */
 	public double[] sensorValues(TorusAgent me, TorusWorld world, TorusAgent[] preds, TorusAgent[] prey) {
-		double[] proximityPrey = new double[2 * numPrey];
 		double[] preyOffsets = NNTorusPredPreyController.getAgentOffsets(me, world, prey);
+		//Is the agent sensing himself? If so, take that into account
+		boolean self = false;
+		if(preyOffsets.length == numPrey * 2 - 2){
+			self = true;
+		}
 
+		double[] proximityPrey = new double[self ? (2 * numPrey - 2) : (2 * numPrey)];
+		
 		// holds sum of absolute values of X and Y offsets and the first index
 		// of the original offsets
-		double[][] overallDists = new double[numPrey][2];
+		double[][] overallDists = new double[self ? (numPrey - 1) : numPrey][2];
 		// finds the sum of each absolute value X and Y offset pair and stores
 		// them
-		for (int i = 0; i < numPrey; i++) {
+		for (int i = 0; i < (self ? (numPrey - 1) : numPrey); i++) {
 			overallDists[i][0] = Math.abs(preyOffsets[2 * i]) + Math.abs(preyOffsets[2 * i + 1]);
 			overallDists[i][1] = 2 * i;
 		}
 		// sort overallDists array so that the min index is the min distanced
 		// agent (ascending order by distance)
-		for (int i = 0; i < numPrey; i++) {
+		for (int i = 0; i < (self ? (numPrey - 1) : numPrey); i++) {
 			int indexOfMin = 0;
 			double minValue = Double.POSITIVE_INFINITY;
 			// find the next lowest summation value in the double array
-			for (int j = 0; j < numPrey; j++) {
+			for (int j = 0; j < (self ? (numPrey - 1) : numPrey); j++) {
 				if (overallDists[j][0] < minValue) {
 					indexOfMin = j;
 					minValue = overallDists[j][0];
@@ -72,8 +78,8 @@ public class TorusPreyByProximitySensorBlock implements TorusPredPreySensorBlock
 	 * @return the total number of sensors for the prey (X and Y offsets to each
 	 *         prey)
 	 */
-	public int numSensors() {
-		return numPrey * 2;
+	public int numSensors(boolean isPredator) {
+		return isPredator ? (numPrey * 2) : (numPrey * 2 - 2);
 	}
 
 	@Override
@@ -84,8 +90,9 @@ public class TorusPreyByProximitySensorBlock implements TorusPredPreySensorBlock
 	 * 
 	 * @return the sensorLabels for the prey by proximity
 	 */
-	public String[] sensorLabels() {
-		return NNTorusPredPreyController.sensorLabels(numPrey, "Closest Prey");
+	public String[] sensorLabels(boolean isPredator) {
+		return isPredator ? NNTorusPredPreyController.sensorLabels(numPrey, "Closest Prey") : 
+			NNTorusPredPreyController.sensorLabels(numPrey-1, "Closest Prey");
 	}
 
 }

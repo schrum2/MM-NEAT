@@ -43,8 +43,10 @@ public class TorusPredatorsByProximitySensorBlockTest {
 	public void testNumSensors() {
 		TorusPredatorsByProximitySensorBlock block = new TorusPredatorsByProximitySensorBlock();
 		// should be 6 sensors because there are two sensors (X and Y) for each
-		// pred, and there are three preds
-		assertEquals(block.numSensors(), 6);
+		// pred, and there are three preds (as if prey sensing the preds)
+		assertEquals(block.numSensors(false), 6);
+		//for if preds sensing preds (make sure not sensing self)
+		assertEquals(block.numSensors(true), 4);
 
 		// try again with a different number of predators
 		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "torusTimeLimit:1000",
@@ -56,15 +58,20 @@ public class TorusPredatorsByProximitySensorBlockTest {
 		block = new TorusPredatorsByProximitySensorBlock();
 		// should be 10 sensors because there are two sensors (X and Y) for each
 		// pred, and there are 5 preds
-		assertEquals(block.numSensors(), 10);
+		assertEquals(block.numSensors(false), 10);
+		//for if preds sensing preds (make sure not sensing self)
+		assertEquals(block.numSensors(true), 8);
 	}
 
 	@Test
 	public void testSensorLabels() {
 		TorusPredatorsByProximitySensorBlock block = new TorusPredatorsByProximitySensorBlock();
-		assertEquals(Arrays.toString(block.sensorLabels()),
+		assertEquals(Arrays.toString(block.sensorLabels(false)),
 				"[X Offset to Closest Pred 0, Y Offset to Closest Pred 0, X Offset to Closest Pred 1, Y Offset to Closest Pred 1, "
 						+ "X Offset to Closest Pred 2, Y Offset to Closest Pred 2]");
+		
+		assertEquals(Arrays.toString(block.sensorLabels(true)),
+				"[X Offset to Closest Pred 0, Y Offset to Closest Pred 0, X Offset to Closest Pred 1, Y Offset to Closest Pred 1]");
 
 		// try again with a different number of predators
 		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "torusTimeLimit:1000",
@@ -74,10 +81,14 @@ public class TorusPredatorsByProximitySensorBlockTest {
 				"torusSenseTeammates:true", "torusSenseByProximity:true" });
 		MMNEAT.loadClasses();
 		block = new TorusPredatorsByProximitySensorBlock();
-		assertEquals(Arrays.toString(block.sensorLabels()),
+		assertEquals(Arrays.toString(block.sensorLabels(false)),
 				"[X Offset to Closest Pred 0, Y Offset to Closest Pred 0, X Offset to Closest Pred 1, Y Offset to Closest Pred 1, "
 						+ "X Offset to Closest Pred 2, Y Offset to Closest Pred 2, X Offset to Closest Pred 3, Y Offset to Closest Pred 3, "
 						+ "X Offset to Closest Pred 4, Y Offset to Closest Pred 4]");
+		
+		assertEquals(Arrays.toString(block.sensorLabels(true)),
+				"[X Offset to Closest Pred 0, Y Offset to Closest Pred 0, X Offset to Closest Pred 1, Y Offset to Closest Pred 1, "
+						+ "X Offset to Closest Pred 2, Y Offset to Closest Pred 2, X Offset to Closest Pred 3, Y Offset to Closest Pred 3]");
 	}
 
 	@Test
@@ -113,15 +124,15 @@ public class TorusPredatorsByProximitySensorBlockTest {
 		// from pred[0] at point 11,22 , the closest predators are pred[0] then
 		// pred[2] then pred[1]
 		assertEquals(Arrays.toString(block.sensorValues(preds[0], world, preds, prey)),
-				"[0.0, 0.0, -0.12, 0.14, 0.37, -0.37]");
+				"[-0.12, 0.14, 0.37, -0.37]");
 		// from pred[1] at point 48,85 , the closest predators are pred[1] then
 		// pred[0] then pred[2]
 		assertEquals(Arrays.toString(block.sensorValues(preds[1], world, preds, prey)),
-				"[0.0, 0.0, -0.37, 0.37, -0.49, -0.49]");
+				"[-0.37, 0.37, -0.49, -0.49]");
 		// from pred[2] at point 99,36 , the closest predators are pred[2] then
 		// pred[0] then pred[1]
 		assertEquals(Arrays.toString(block.sensorValues(preds[2], world, preds, prey)),
-				"[0.0, 0.0, 0.12, -0.14, 0.49, 0.49]");
+				"[0.12, -0.14, 0.49, 0.49]");
 
 	}
 

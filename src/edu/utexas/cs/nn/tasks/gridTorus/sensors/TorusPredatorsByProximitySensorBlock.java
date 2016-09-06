@@ -34,25 +34,31 @@ public class TorusPredatorsByProximitySensorBlock implements TorusPredPreySensor
 	 *         value of the X and Y offsets
 	 */
 	public double[] sensorValues(TorusAgent me, TorusWorld world, TorusAgent[] preds, TorusAgent[] prey) {
-		double[] proximityPreds = new double[2 * numPredators];
 		double[] predOffsets = NNTorusPredPreyController.getAgentOffsets(me, world, preds);
+		//Is the agent sensing himself? If so, take that into account
+		boolean self = false;
+		if(predOffsets.length == numPredators * 2 - 2){
+			self = true;
+		}
+		
+		double[] proximityPreds = new double[self ? (2 * numPredators - 2) : (2 * numPredators)];
 
 		// holds sum of absolute values of X and Y offsets and the first index
 		// of the original offsets
-		double[][] overallDists = new double[numPredators][2];
+		double[][] overallDists = new double[self ? (numPredators - 1) : numPredators][2];
 		// finds the sum of each absolute value X and Y offset pair and stores
 		// them
-		for (int i = 0; i < numPredators; i++) {
+		for (int i = 0; i < (self ? (numPredators - 1) : numPredators); i++) {
 			overallDists[i][0] = Math.abs(predOffsets[2 * i]) + Math.abs(predOffsets[2 * i + 1]);
 			overallDists[i][1] = 2 * i;
 		}
 		// sort overallDists array so that the min index is the min distanced
 		// agent (ascending order by distance)
-		for (int i = 0; i < numPredators; i++) {
+		for (int i = 0; i < (self ? (numPredators - 1) : numPredators); i++) {
 			int indexOfMin = 0;
 			double minValue = Double.POSITIVE_INFINITY;
 			// find the next lowest summation value in the double array
-			for (int j = 0; j < numPredators; j++) {
+			for (int j = 0; j < (self ? (numPredators - 1) : numPredators); j++) {
 				if (overallDists[j][0] < minValue) {
 					indexOfMin = j;
 					minValue = overallDists[j][0];
@@ -65,11 +71,10 @@ public class TorusPredatorsByProximitySensorBlock implements TorusPredPreySensor
 			overallDists[indexOfMin][0] = Double.POSITIVE_INFINITY;
 		}
 		
-		
 		//make boolean parameter which says if all agents should be sensed
 		//make integer parameter for if not all agents are sensed, how many should be
 		//cut off array proximityPreds so that it only senses the closest specified
-		//number of agents
+		//number of agents		
 		
 		return proximityPreds;
 	}
@@ -79,8 +84,8 @@ public class TorusPredatorsByProximitySensorBlock implements TorusPredPreySensor
 	 * @return the total number of sensors for the predators (X and Y offsets to
 	 *         each pred)
 	 */
-	public int numSensors() {
-		return numPredators * 2;
+	public int numSensors(boolean isPredator) {
+		return isPredator ? (numPredators * 2 - 2) : (numPredators * 2);
 	}
 
 	@Override
@@ -91,8 +96,9 @@ public class TorusPredatorsByProximitySensorBlock implements TorusPredPreySensor
 	 * 
 	 * @return the sensorLabels for the predators by proximity
 	 */
-	public String[] sensorLabels() {
-		return NNTorusPredPreyController.sensorLabels(numPredators, "Closest Pred");
+	public String[] sensorLabels(boolean isPredator) {
+		return isPredator ? NNTorusPredPreyController.sensorLabels(numPredators-1, "Closest Pred") : 
+			NNTorusPredPreyController.sensorLabels(numPredators, "Closest Pred");
 	}
 
 }

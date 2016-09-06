@@ -34,8 +34,8 @@ public class TorusPreyByIndexSensorBlock implements TorusPredPreySensorBlock {
 	 * @return the total number of sensors for the prey (X and Y offsets to each
 	 *         prey)
 	 */
-	public int numSensors() {
-		return numPrey * 2;
+	public int numSensors(boolean isPredator) {
+		return isPredator ? (numPrey * 2) : (numPrey * 2 - 2);
 	}
 
 	@Override
@@ -46,8 +46,9 @@ public class TorusPreyByIndexSensorBlock implements TorusPredPreySensorBlock {
 	 * 
 	 * @return the sensorLabels for the prey by index
 	 */
-	public String[] sensorLabels() {
-		return NNTorusPredPreyController.sensorLabels(numPrey, "Prey");
+	public String[] sensorLabels(boolean isPredator) {
+		return isPredator ? NNTorusPredPreyController.sensorLabels(numPrey, "Prey") : 
+			NNTorusPredPreyController.sensorLabels(numPrey-1, "Prey");
 	}
 
 }

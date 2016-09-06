@@ -32,15 +32,19 @@ public interface TorusPredPreySensorBlock {
 	 * addition to the current one, then they are the total number of sensor
 	 * inputs is summed up in the NNTorusPredPreyController to accommodate for
 	 * this.
+	 * @param prey 
+	 * @param preds 
+	 * @param me 
+	 * @param isPredator 
 	 * 
 	 * @return the number of sensors
 	 */
-	public int numSensors();
+	public int numSensors(boolean isPredator);
 
 	/**
 	 * labels for each sensor input describing what that sensor input is for
 	 * 
 	 * @return sensor labels
 	 */
-	public String[] sensorLabels();
+	public String[] sensorLabels(boolean isPredator);
 }
