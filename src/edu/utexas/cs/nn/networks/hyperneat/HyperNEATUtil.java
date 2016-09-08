@@ -71,7 +71,7 @@ public class HyperNEATUtil {
 		}
 	}
 
-	//size of grid in substrate drawing. Can be changed/turned into a param if need be
+	//size of grid in substrate drawing. 
 	public final static int SUBS_GRID_SIZE = Parameters.parameters.integerParameter("substrateGridSize");
 
 	private static List<DrawingPanel> substratePanels = null;
@@ -85,7 +85,7 @@ public class HyperNEATUtil {
 			substrates = hyperNEATTask.getSubstrateInformation();
 		}
 	}
-	
+
 	public static List<DrawingPanel> drawSubstrates(ArrayList<Node> nodes) {
 		if(substratePanels == null) {
 			hyperNEATTask = (HyperNEATTask) MMNEAT.task;
@@ -190,11 +190,11 @@ public class HyperNEATUtil {
 		}
 		if(biggest) {//only shows biggest neuron 
 			Collections.sort(activations);
-                        int currentIndex = activations.size() - 1;
-                        while(activations.get(activations.size() - 1).activation == activations.get(currentIndex).activation) {
-                            activations.get(currentIndex).setColor(Color.MAGENTA);
-                            currentIndex--;
-                        }
+			int currentIndex = activations.size() - 1;
+			while(activations.get(activations.size() - 1).activation == activations.get(currentIndex).activation) {
+				activations.get(currentIndex).setColor(Color.MAGENTA);
+				currentIndex--;
+			}
 		}  
 
 
@@ -210,4 +210,63 @@ public class HyperNEATUtil {
 		return new Color(activation > 0 ? (int)(activation*255) : 0, 0, activation < 0 ? (int)(-activation*255) : 0);
 
 	}
-}
+
+
+
+
+	//TODO move to hyper neat util
+	public static void drawWeight(List<DrawingPanel> panels) {//TODO does this start with first layer as input or output neurons?
+
+
+		if(Parameters.parameters.booleanParameter("showWeights")){//probably can go somewhere else
+
+			List<Pair<String, String>> connections = hyperNEATTask.getSubstrateConnectivity();// used to get the number of panels needed
+
+
+
+			for(int i = 0; i < connections.size(); i++) {
+				String sub1 = connections.get(i).t1;
+				String sub2 = connections.get(i).t2;
+				Substrate s1 = null;
+				Substrate s2 = null;
+				for(int j = 0; j < substrates.size(); j++) {
+					if(substrates.get(j).name.equals(sub1)) {
+						s1 = substrates.get(j);
+					} else if(substrates.get(j).name.equals(sub2)) {
+						s2 = substrates.get(j);
+					}
+				}
+				assert s1 != null && s2 != null;
+
+				DrawingPanel wPanel = new DrawingPanel(SUBS_GRID_SIZE * s1.getSize().t1, SUBS_GRID_SIZE * s1.getSize().t2, sub1 + " and " + sub2 + " connection weights");
+				drawWeight(wPanel);
+				panels.add(wPanel);
+			}
+		}
+	}
+
+	private static  void drawWeight(DrawingPanel dPanel) {
+
+		//loop through every node in s1 and get innovation number of it and node and call drawNodeWeight method 
+		
+		
+//		ArrayList<Node> nodes = this.nodes;
+//		int nodeCount = 0;//TODO need to make sure that this starts and ends at beginning of node list
+//		for(int i = 0; i < numNodesY; i++) {
+//			for(int j = 0; j < numNodesX; j++) {
+//				//searches through each input node
+//				drawNodeWeight(weightDrawingPanel, nodes.get(nodeCount++));
+//			}
+		}
+//
+
+		private  static void  drawNodeWeight(DrawingPanel dPanel, Node node, int startSize, int endSize) {
+			//get all connections of node to next substrate nodes and get all those links and then link weights
+			//and then paint color to drawing panel corresponding to link weight
+			for(int i = 0; i < node.output(); i++) {
+				//TODO get information about links connected to output nodes
+				//TODO need help with this section
+			}
+		}
+
+	}
