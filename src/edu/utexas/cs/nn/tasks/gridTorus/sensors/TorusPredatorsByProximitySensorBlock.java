@@ -71,10 +71,17 @@ public class TorusPredatorsByProximitySensorBlock implements TorusPredPreySensor
 			overallDists[indexOfMin][0] = Double.POSITIVE_INFINITY;
 		}
 		
-		//make boolean parameter which says if all agents should be sensed
-		//make integer parameter for if not all agents are sensed, how many should be
-		//cut off array proximityPreds so that it only senses the closest specified
-		//number of agents		
+		//cut off array proximityPreds so that it only senses the closest specified number of agents
+		if(me.getAgentType()==0 && !Parameters.parameters.booleanParameter("predsSenseAllPreds")){
+			double[] adjustedOffsets = new double[Parameters.parameters.integerParameter("numberPredsSensedByPreds") * 2];
+			System.arraycopy(proximityPreds, 0, adjustedOffsets, 0, Parameters.parameters.integerParameter("numberPredsSensedByPreds") * 2);
+			return adjustedOffsets;
+		}
+		if(me.getAgentType()==1 && !Parameters.parameters.booleanParameter("preySenseAllPreds")){
+			double[] adjustedOffsets = new double[Parameters.parameters.integerParameter("numberPredsSensedByPrey") * 2];
+			System.arraycopy(proximityPreds, 0, adjustedOffsets, 0, Parameters.parameters.integerParameter("numberPredsSensedByPrey") * 2);
+			return adjustedOffsets;
+		}
 		
 		return proximityPreds;
 	}

@@ -36,6 +36,16 @@ public class TorusAgent implements ILocated2D {
 		this.y = startY;
 		this.type = type;
 	}
+	
+	/**
+	 * Returns a 0 if predator, 1 if prey
+	 * This is based off of the final ints in TorusPredPreyGame class:
+	 * public static final int AGENT_TYPE_PRED = 0;
+	 * public static final int AGENT_TYPE_PREY = 1;
+	 */
+	public int getAgentType(){
+		return type;
+	}
 
 	/**
 	 * get position of the agent returns the tuple, the x and y coordinates

@@ -260,6 +260,10 @@ public class Parameters {
 		integerOptions.add("recentPastMemLength", -1, "Length of queue of past pacman states");
 		integerOptions.add("trialIncreaseFrequency", 1, "If increasing trials, do so every time this many generations pass");
 		integerOptions.add("keeperCampLimit", 0, "Number of camps allowed to persist across generations");
+		integerOptions.add("numberPredsSensedByPreds", -1, "the number of closest predators that will be sensed by other predators (all by default, see boolean)");
+		integerOptions.add("numberPreySensedByPreds", -1, "the number of closest prey that will be sensed by predators (all by default, see boolean)");
+		integerOptions.add("numberPredsSensedByPrey", -1, "the number of closest predators that will be sensed by prey (all by default, see boolean)");
+		integerOptions.add("numberPreySensedByPrey", -1, "the number of closest prey that will be sensed by other prey (all by default, see boolean)");
 		integerOptions.add("torusXDimensions", 100, "The dimension of the X-Axis, or the width, for the grid world");
 		integerOptions.add("torusYDimensions", 100, "The dimension of the Y-Axis, or the height, for the grid world");
 		integerOptions.add("torusTimeLimit", 1000, "Time limit in torus worlds");
@@ -324,6 +328,10 @@ public class Parameters {
 		booleanOptions.add("indivPredMinDist", false, "Turn on to encourage the individual predator to be as close to the prey as possible by the end of the game");
 		booleanOptions.add("indivPreyMaxDistIndivPred", false, "Turn on to encourage the individual prey to be as far from the individual predator as possible by the end of the game");
 		booleanOptions.add("indivPreyMaxDist", false, "Turn on to encourage the individual prey to be as far from the predators as possible by the end of the game");
+		booleanOptions.add("predsSenseAllPreds", true, "When using proximity sensors, causes predators to sense all other predators (always true for non-proximity sensors)");
+		booleanOptions.add("predsSenseAllPrey", true, "When using proximity sensors, causes predators to sense all other prey (always true for non-proximity sensors)");
+		booleanOptions.add("preySenseAllPreds", true, "When using proximity sensors, causes prey to sense all other predators (always true for non-proximity sensors)");
+		booleanOptions.add("preySenseAllPrey", true, "When using proximity sensors, causes prey to sense all other prey (always true for non-proximity sensors)");
 		booleanOptions.add("torusInvertSensorInputs", false, "Causes agents' sensor inputs to be inverted in torusPredPreyTask");
 		booleanOptions.add("torusSenseByProximity", true, "Causes agents' sensor inputs to be by proximity of the agent instead of simply each agent by indices");
 		

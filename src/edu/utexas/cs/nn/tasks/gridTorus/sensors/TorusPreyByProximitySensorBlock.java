@@ -70,6 +70,19 @@ public class TorusPreyByProximitySensorBlock implements TorusPredPreySensorBlock
 			// proximity will not be put in again
 			overallDists[indexOfMin][0] = Double.POSITIVE_INFINITY;
 		}
+		
+		//cut off array proximityPreds so that it only senses the closest specified number of agents
+		if(me.getAgentType()==0 && !Parameters.parameters.booleanParameter("predsSenseAllPrey")){
+			double[] adjustedOffsets = new double[Parameters.parameters.integerParameter("numberPreySensedByPreds") * 2];
+			System.arraycopy(proximityPrey, 0, adjustedOffsets, 0, Parameters.parameters.integerParameter("numberPreySensedByPreds") * 2);
+			return adjustedOffsets;
+		}
+		if(me.getAgentType()==1 && !Parameters.parameters.booleanParameter("preySenseAllPrey")){
+			double[] adjustedOffsets = new double[Parameters.parameters.integerParameter("numberPreySensedByPrey") * 2];
+			System.arraycopy(proximityPrey, 0, adjustedOffsets, 0, Parameters.parameters.integerParameter("numberPreySensedByPrey") * 2);
+			return adjustedOffsets;
+		}
+		
 		return proximityPrey;
 	}
 
