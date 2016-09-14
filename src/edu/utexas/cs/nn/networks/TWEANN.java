@@ -49,7 +49,6 @@ public class TWEANN implements Network {
 	public static DrawingPanel inputPanel = null;
 	public static DrawingPanel preferenceNeuronPanel = null;
 	public static List<DrawingPanel> subsPanel = null;
-	public static List<DrawingPanel> weightPanel = null;
 	public static ArrayList<Double>[] preferenceActivationHistory = null;
 
 	// subclass for a synaptic link between nodes
@@ -730,6 +729,10 @@ public class TWEANN implements Network {
 			if(!HyperNEATCPPNGenotype.constructingNetwork && CommonConstants.hyperNEAT && CommonConstants.monitorSubstrates) {
 				animateSubstrate();
 			}
+			if(!HyperNEATCPPNGenotype.constructingNetwork && CommonConstants.hyperNEAT &&Parameters.parameters.booleanParameter("showWeights") ) {
+				
+			}
+				
 			if (panel != null && Parameters.parameters.booleanParameter("animateNetwork")) {
 				draw(panel);
 			}
@@ -828,6 +831,8 @@ public class TWEANN implements Network {
 	 */
 	public void animateSubstrate() {
 			subsPanel = HyperNEATUtil.drawSubstrates(nodes);
+			//tweannGenotype has getLinkBetween
+			//just need to find a way to get neuron innovation numbers
 	}
 
 	private static void refreshActivation(DrawingPanel inputPanel, double[] inputs, double[] outputs, double[] preferences, boolean multitask, double[] preferenceFatigue) {

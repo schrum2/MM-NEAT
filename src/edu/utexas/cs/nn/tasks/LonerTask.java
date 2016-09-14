@@ -12,6 +12,7 @@ import edu.utexas.cs.nn.graphics.Plot;
 import edu.utexas.cs.nn.log.EvalLog;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.networks.TWEANN;
+import edu.utexas.cs.nn.networks.hyperneat.HyperNEATUtil;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.scores.Score;
@@ -20,6 +21,7 @@ import edu.utexas.cs.nn.tasks.gridTorus.TorusPredPreyTask;
 import edu.utexas.cs.nn.tasks.mspacman.MsPacManTask;
 import edu.utexas.cs.nn.util.PopulationUtil;
 import edu.utexas.cs.nn.util.file.FileUtilities;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.CopyOption;
@@ -79,16 +81,24 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
 		public Score<T> call() {//TODO 
 			DrawingPanel panel = null;
 			DrawingPanel cppnPanel = null;
+			@SuppressWarnings("unused")
+			ArrayList<DrawingPanel> weightPanels;
 			// DrawingPanel[] subPanels = null;
-			if (genotype instanceof TWEANNGenotype) {//TODO
+			if (genotype instanceof TWEANNGenotype) {
 				if (CommonConstants.showNetworks) {
 					panel = new DrawingPanel(TWEANN.NETWORK_VIEW_DIM, TWEANN.NETWORK_VIEW_DIM, "Evolving Network");
 					panel.setLocation(NETWORK_WINDOW_OFFSET, 0);
 					((TWEANNGenotype) genotype).getPhenotype().draw(panel);
-					if(genotype instanceof HyperNEATCPPNGenotype && Parameters.parameters.booleanParameter("showCPPN")) {
-						cppnPanel = new DrawingPanel(500, 500, "Evolved CPPN");
-						cppnPanel.setLocation(TWEANN.NETWORK_VIEW_DIM + NETWORK_WINDOW_OFFSET, 0);
-						(((HyperNEATCPPNGenotype) genotype).getCPPN()).draw(cppnPanel);
+					if(genotype instanceof HyperNEATCPPNGenotype) {
+						if( Parameters.parameters.booleanParameter("showCPPN")) {
+							cppnPanel = new DrawingPanel(500, 500, "Evolved CPPN");
+							cppnPanel.setLocation(TWEANN.NETWORK_VIEW_DIM + NETWORK_WINDOW_OFFSET, 0);
+							(((HyperNEATCPPNGenotype) genotype).getCPPN()).draw(cppnPanel);
+						}
+						if(Parameters.parameters.booleanParameter("showWeights")){
+							weightPanels = HyperNEATUtil.drawWeight((TWEANNGenotype)genotype); 
+					}
+
 					}
 					// if(genotype instanceof HierarchicalTWEANNGenotype){
 					// HierarchicalTWEANNGenotype htg =

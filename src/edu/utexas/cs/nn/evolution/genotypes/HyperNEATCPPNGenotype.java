@@ -113,7 +113,6 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 		}
 		// loop through connections and add links, based on contents of subs
 		newLinks = createNodeLinks(cppn, connections, subs, substrateIndexMapping);
-
 		// Figure out number of output neurons
 		for (Substrate s : subs) {
 			if (s.getStype() == Substrate.OUTPUT_SUBSTRATE) {
@@ -128,11 +127,17 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 		// An archetype index of -1 is used. Hopefully this won't cause
 		// problems, since the archetype is only needed for mutations and crossover.
 		TWEANNGenotype tg = new TWEANNGenotype(newNodes,newLinks, phenotypeOutputs, false, false, -1);
+		
+		//TODO use this genotype for weight visualization
 		//System.out.println("phenotype: " + (System.currentTimeMillis() - time)); // for timing
 		constructingNetwork = false;
-		return tg.getPhenotype();
+		return tg.getPhenotype();//return call to substrate genotype
 	}
 
+	
+//	public getSubstrateGenotype() {//TODO 
+//		
+//	}
 	/**
 	 * Copies given genotype
 	 * 
