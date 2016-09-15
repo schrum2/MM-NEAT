@@ -334,6 +334,7 @@ public class Parameters {
 		booleanOptions.add("preySenseAllPrey", true, "When using proximity sensors, causes prey to sense all other prey (always true for non-proximity sensors)");
 		booleanOptions.add("torusInvertSensorInputs", false, "Causes agents' sensor inputs to be inverted in torusPredPreyTask");
 		booleanOptions.add("torusSenseByProximity", true, "Causes agents' sensor inputs to be by proximity of the agent instead of simply each agent by indices");
+		booleanOptions.add("processHV", false, "Turns on the hyperVolume processing in postProcess, off by default");
 		
 		booleanOptions.add("homogeneousTeamSelection", false, "Homogeneous Predators with encouraged distance minimization and maximizing prey caught for all populations at once");
 		booleanOptions.add("homogeneousAggregateTeamSelection", false, "Homogeneous Predators with encouraged distance minimization and maximizing prey caught as a team");
