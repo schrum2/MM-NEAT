@@ -8,6 +8,8 @@ import edu.utexas.cs.nn.scores.Score;
 
 /**
  * Having excessive links per network module is penalized.
+ * If penalizeLinksPerMode is false, then links in general
+ * are penalized (ignoring modules)
  *
  * @author Jacob Schrum
  */
