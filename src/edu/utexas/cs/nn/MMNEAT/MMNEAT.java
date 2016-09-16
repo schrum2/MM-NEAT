@@ -666,7 +666,10 @@ public class MMNEAT {
 	 * @return numInputs
 	 */
 	private static int determineNumPredPreyInputs() {
-		boolean isPredator = task instanceof TorusEvolvedPredatorsVsStaticPreyTask;
+		//this is probably covering all the cases, but this must cover all cases for all types
+		//of predators tasks. 
+		boolean isPredator = task instanceof TorusEvolvedPredatorsVsStaticPreyTask || 
+				task instanceof CooperativePredatorsVsStaticPreyTask;
 		return determineNumPredPreyInputs(isPredator);
 	}
 
