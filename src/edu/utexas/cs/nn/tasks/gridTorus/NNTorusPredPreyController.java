@@ -162,10 +162,15 @@ public class NNTorusPredPreyController extends TorusPredPreyController {
 	public double[] inputs(TorusAgent me, TorusWorld world, TorusAgent[] preds, TorusAgent[] prey) {
 		double[] inputs = new double[numInputs];
 		int startPosition = 0;
+		//System.out.println("Num inputs:" + numInputs);
 		for (TorusPredPreySensorBlock block : sensorBlocks) {
-			System.arraycopy(block.sensorValues(me, world, preds, prey), 0, inputs, startPosition, 
-					block.numSensors(isPredator));
-			startPosition += block.numSensors(isPredator);
+			double[] sensors = block.sensorValues(me, world, preds, prey);
+			int numSensors = block.numSensors(isPredator);
+			//System.out.println(block + ": " + numSensors + " array length " + sensors.length);
+			System.arraycopy(sensors, 0, inputs, startPosition, numSensors);
+			//System.out.println("startPosition: " + startPosition);
+			startPosition += numSensors;
+			//System.out.println("startPosition: " + startPosition);
 		}
 		return inputs;
 	}

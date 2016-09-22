@@ -92,6 +92,7 @@ public class TorusPreyByProximitySensorBlock implements TorusPredPreySensorBlock
 	 *         prey)
 	 */
 	public int numSensors(boolean isPredator) {
+		//make this take into account limiting agent sensors
 		return isPredator ? (numPrey * 2) : (numPrey * 2 - 2);
 	}
 
@@ -104,6 +105,7 @@ public class TorusPreyByProximitySensorBlock implements TorusPredPreySensorBlock
 	 * @return the sensorLabels for the prey by proximity
 	 */
 	public String[] sensorLabels(boolean isPredator) {
+		//make this take into account limiting agent sensors
 		return isPredator ? NNTorusPredPreyController.sensorLabels(numPrey, "Closest Prey") : 
 			NNTorusPredPreyController.sensorLabels(numPrey-1, "Closest Prey");
 	}
