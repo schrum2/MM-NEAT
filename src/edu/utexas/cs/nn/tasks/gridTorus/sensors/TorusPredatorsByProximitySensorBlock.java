@@ -92,8 +92,20 @@ public class TorusPredatorsByProximitySensorBlock implements TorusPredPreySensor
 	 *         each pred)
 	 */
 	public int numSensors(boolean isPredator) {
-		//make this take into account limiting agent sensors
-		return isPredator ? (numPredators * 2 - 2) : (numPredators * 2);
+		
+		if(isPredator){
+			if(Parameters.parameters.booleanParameter("predsSenseAllPrey")){
+				return numPredators * 2 - 2;
+			}else{
+				return Parameters.parameters.integerParameter("numberPredsSensedByPreds") * 2;
+			}
+		}else{
+			if(Parameters.parameters.booleanParameter("preySenseAllPrey")){
+				return numPredators * 2;
+			}else{
+				return Parameters.parameters.integerParameter("numberPredsSensedByPrey") * 2;
+			}
+		}
 	}
 
 	@Override
@@ -104,10 +116,20 @@ public class TorusPredatorsByProximitySensorBlock implements TorusPredPreySensor
 	 * 
 	 * @return the sensorLabels for the predators by proximity
 	 */
-	public String[] sensorLabels(boolean isPredator) {
-		//make this take into account limiting agent sensors
-		return isPredator ? NNTorusPredPreyController.sensorLabels(numPredators-1, "Closest Pred") : 
-			NNTorusPredPreyController.sensorLabels(numPredators, "Closest Pred");
+	public String[] sensorLabels(boolean isPredator) {	
+		if(isPredator){
+			if(Parameters.parameters.booleanParameter("predsSenseAllPrey")){
+				return NNTorusPredPreyController.sensorLabels(numPredators-1, "Closest Pred");
+			}else{
+				return NNTorusPredPreyController.sensorLabels(Parameters.parameters.integerParameter("numberPredsSensedByPreds"), "Closest Pred");
+			}
+		}else{
+			if(Parameters.parameters.booleanParameter("preySenseAllPrey")){
+				return NNTorusPredPreyController.sensorLabels(numPredators, "Closest Pred");
+			}else{
+				return NNTorusPredPreyController.sensorLabels(Parameters.parameters.integerParameter("numberPredsSensedByPrey"), "Closest Pred");
+			}
+		}
 	}
 
 }

@@ -72,11 +72,13 @@ public class TorusPreyByProximitySensorBlock implements TorusPredPreySensorBlock
 		}
 		
 		//cut off array proximityPreds so that it only senses the closest specified number of agents
+		//agent type 0 is predator
 		if(me.getAgentType()==0 && !Parameters.parameters.booleanParameter("predsSenseAllPrey")){
 			double[] adjustedOffsets = new double[Parameters.parameters.integerParameter("numberPreySensedByPreds") * 2];
 			System.arraycopy(proximityPrey, 0, adjustedOffsets, 0, Parameters.parameters.integerParameter("numberPreySensedByPreds") * 2);
 			return adjustedOffsets;
 		}
+		//agent type 1 is prey
 		if(me.getAgentType()==1 && !Parameters.parameters.booleanParameter("preySenseAllPrey")){
 			double[] adjustedOffsets = new double[Parameters.parameters.integerParameter("numberPreySensedByPrey") * 2];
 			System.arraycopy(proximityPrey, 0, adjustedOffsets, 0, Parameters.parameters.integerParameter("numberPreySensedByPrey") * 2);
@@ -92,8 +94,19 @@ public class TorusPreyByProximitySensorBlock implements TorusPredPreySensorBlock
 	 *         prey)
 	 */
 	public int numSensors(boolean isPredator) {
-		//make this take into account limiting agent sensors
-		return isPredator ? (numPrey * 2) : (numPrey * 2 - 2);
+		if(isPredator){
+			if(Parameters.parameters.booleanParameter("predsSenseAllPrey")){
+				return numPrey*2;
+			}else{
+				return Parameters.parameters.integerParameter("numberPreySensedByPreds") * 2;
+			}
+		}else{
+			if(Parameters.parameters.booleanParameter("preySenseAllPrey")){
+				return numPrey * 2 - 2;
+			}else{
+				return Parameters.parameters.integerParameter("numberPreySensedByPrey") * 2;
+			}
+		}
 	}
 
 	@Override
@@ -105,9 +118,19 @@ public class TorusPreyByProximitySensorBlock implements TorusPredPreySensorBlock
 	 * @return the sensorLabels for the prey by proximity
 	 */
 	public String[] sensorLabels(boolean isPredator) {
-		//make this take into account limiting agent sensors
-		return isPredator ? NNTorusPredPreyController.sensorLabels(numPrey, "Closest Prey") : 
-			NNTorusPredPreyController.sensorLabels(numPrey-1, "Closest Prey");
+		if(isPredator){
+			if(Parameters.parameters.booleanParameter("predsSenseAllPrey")){
+				return NNTorusPredPreyController.sensorLabels(numPrey, "Closest Prey");
+			}else{
+				return NNTorusPredPreyController.sensorLabels(Parameters.parameters.integerParameter("numberPreySensedByPreds"), "Closest Prey");
+			}
+		}else{
+			if(Parameters.parameters.booleanParameter("preySenseAllPrey")){
+				return NNTorusPredPreyController.sensorLabels(numPrey-1, "Closest Prey");
+			}else{
+				return NNTorusPredPreyController.sensorLabels(Parameters.parameters.integerParameter("numberPreySensedByPrey"), "Closest Prey");
+			}
+		}
 	}
 
 }
