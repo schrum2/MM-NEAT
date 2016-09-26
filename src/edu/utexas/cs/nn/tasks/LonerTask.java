@@ -12,6 +12,7 @@ import edu.utexas.cs.nn.graphics.Plot;
 import edu.utexas.cs.nn.log.EvalLog;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.networks.TWEANN;
+import edu.utexas.cs.nn.networks.hyperneat.HyperNEATTask;
 import edu.utexas.cs.nn.networks.hyperneat.HyperNEATUtil;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
@@ -96,7 +97,7 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
 							(((HyperNEATCPPNGenotype) genotype).getCPPN()).draw(cppnPanel);
 						}
 						if(Parameters.parameters.booleanParameter("showWeights")){
-							weightPanels = HyperNEATUtil.drawWeight((TWEANNGenotype)genotype); 
+							weightPanels = HyperNEATUtil.drawWeight((TWEANNGenotype)genotype, (HyperNEATTask) task); 
 					}
 
 					}

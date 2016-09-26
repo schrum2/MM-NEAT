@@ -11,6 +11,7 @@ import edu.utexas.cs.nn.networks.ActivationFunctions;
 import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.networks.TWEANN.Node;
 import edu.utexas.cs.nn.parameters.Parameters;
+import edu.utexas.cs.nn.util.MiscUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.datastructures.Triple;
 import edu.utexas.cs.nn.util.random.RandomNumbers;
@@ -26,7 +27,7 @@ public class HyperNEATUtilTest {
 	ArrayList<Node> nodes;
 	TWEANN  t1;
 	HyperNEATTask htask;
-	
+	TWEANNGenotype tg1;
 	
 	/**
 	 * sets up a new substrate array before each test
@@ -37,11 +38,11 @@ public class HyperNEATUtilTest {
 		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "recurrency:false",
 				"rlGlueEnvironment:org.rlcommunity.environments.tetris.Tetris",
 				"task:edu.utexas.cs.nn.tasks.rlglue.tetris.HyperNEATTetrisTask", "rlGlueAgent:edu.utexas.cs.nn.tasks.rlglue.tetris.TetrisAfterStateAgent",
-				"rlGlueExtractor:edu.utexas.cs.nn.tasks.rlglue.featureextractors.tetris.RawTetrisStateExtractor", "hyperNEAT:true" });
+				"rlGlueExtractor:edu.utexas.cs.nn.tasks.rlglue.featureextractors.tetris.RawTetrisStateExtractor", "hyperNEAT:true", "showWeights:true" });
 		MMNEAT.loadClasses();
 		htask = (HyperNEATTask) MMNEAT.task;
 		//MMNEAT.task = (Task) htask;
-		TWEANNGenotype tg1 = new TWEANNGenotype();
+		tg1 = new TWEANNGenotype();
 		t1 = new TWEANN(tg1);
 		subs = new Substrate[3];
 		Substrate sub1 = new Substrate(new Pair<Integer, Integer>(10, 20), 0, new Triple<Integer, Integer, Integer>(0, 0, 0), "I_0");
@@ -93,11 +94,12 @@ public class HyperNEATUtilTest {
 	@Test
 	public void testDrawSubstrateVisual2() {
 		HyperNEATUtil.drawSubstrate(subs[0], nodes, 0);
+		MiscUtil.waitForReadStringAndEnterKeyPress();
 	}
 	/**
 	 * Visual test of drawSubstrate method
 	 */
-	@Test
+	//@Test
 	public void testDrawSubstrateVisual() {
 		DrawingPanel dp = HyperNEATUtil.drawSubstrate(subs[0], nodes, 0);
 		DrawingPanel pp = HyperNEATUtil.drawSubstrate(dp, subs[0], nodes, 0);
@@ -107,8 +109,16 @@ public class HyperNEATUtilTest {
 	/**
 	 * Tests draw substrates method
 	 */
-	@Test
+	//@Test
 	public void testDrawSubstratesVisual() { 
 		HyperNEATUtil.drawSubstrates(nodes);
+	}
+	
+	@Test
+	public void testDrawWeightsVisual() {
+		ArrayList<DrawingPanel> weightPanels = HyperNEATUtil.drawWeight(tg1, htask);
+//		DrawingPanel d =  HyperNEATUtil.drawWeight(subs[0], subs[1], 0, 30);
+			
+		MiscUtil.waitForReadStringAndEnterKeyPress();
 	}
 }
