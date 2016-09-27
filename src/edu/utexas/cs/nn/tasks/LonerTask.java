@@ -91,13 +91,14 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
 					panel.setLocation(NETWORK_WINDOW_OFFSET, 0);
 					((TWEANNGenotype) genotype).getPhenotype().draw(panel);
 					if(genotype instanceof HyperNEATCPPNGenotype) {
-						if( Parameters.parameters.booleanParameter("showCPPN")) {
+						HyperNEATCPPNGenotype hngt = (HyperNEATCPPNGenotype) genotype;
+                                                if( Parameters.parameters.booleanParameter("showCPPN")) {
 							cppnPanel = new DrawingPanel(500, 500, "Evolved CPPN");
 							cppnPanel.setLocation(TWEANN.NETWORK_VIEW_DIM + NETWORK_WINDOW_OFFSET, 0);
-							(((HyperNEATCPPNGenotype) genotype).getCPPN()).draw(cppnPanel);
+							hngt.getCPPN().draw(cppnPanel);
 						}
 						if(Parameters.parameters.booleanParameter("showWeights")){
-							weightPanels = HyperNEATUtil.drawWeight((TWEANNGenotype)genotype, (HyperNEATTask) task); 
+							weightPanels = HyperNEATUtil.drawWeight(hngt.getSubstrateGenotype(), (HyperNEATTask) task); 
 					}
 
 					}
