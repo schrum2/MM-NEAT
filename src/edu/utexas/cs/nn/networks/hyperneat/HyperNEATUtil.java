@@ -14,6 +14,7 @@ import edu.utexas.cs.nn.networks.ActivationFunctions;
 import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.networks.TWEANN.Node;
 import edu.utexas.cs.nn.parameters.Parameters;
+import edu.utexas.cs.nn.util.MiscUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 
 /**
@@ -241,12 +242,13 @@ public class HyperNEATUtil {
 		int weightPanelsWidth = 0;
 		int weightPanelsHeight = 0;
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+                // TODO Schrum: Based on the output, these may need to be switched, but it will have consequences elsewhere
 		double maxWidth = screenSize.getWidth();
 		double maxHeight = screenSize.getHeight();
 
 		//debugging code
-		System.out.println("tweann genotype: " + tg.toString());
-		System.out.println("number of nodes in tg: "  +tg.nodes.size());
+		//System.out.println("tweann genotype: " + tg.toString());
+		//System.out.println("number of nodes in tg: "  +tg.nodes.size());
 		
 		for(int i = 0; i < connections.size(); i++) {
 			String sub1 = connections.get(i).t1;
@@ -335,8 +337,19 @@ public class HyperNEATUtil {
 		wPanel.getGraphics().setBackground(Color.white);
 		//for every node in s1, draws all links from it to s2
 		for(int i = s1Index; i < (s1Index + s1.size.t1 + s1.size.t2); i++) {//goes through every node in first substrate
-			System.out.println(nodes == null ? "nodes null" : nodes.toString());
+			//System.out.println(nodes == null ? "nodes null" : nodes.toString());
+                        
+                        // TODO Schrum: This is causing out of bounds exceptions: s2Index + s2.size.t1 + s2.size.t2
+                        try {
 			drawNodeWeight(wPanel, nodes.get(i), xCoord, yCoord, s2Index, s2Index + s2.size.t1 + s2.size.t2, nodeVisWidth, nodeVisHeight);
+                        } catch(Exception e) {
+                            System.out.println(s1);
+                            System.out.println(s2);
+                            System.out.println("xCoord, yCoord, s2Index, s2Index + s2.size.t1 + s2.size.t2");
+                            System.out.println(xCoord+","+ yCoord+","+ s2Index +","+ (s2Index + s2.size.t1 + s2.size.t2));
+                            e.printStackTrace();
+                            MiscUtil.waitForReadStringAndEnterKeyPress();
+                        }
 			xCoord += nodeVisWidth;
 			if(xCoord > panelWidth) {
 				xCoord = 0;
@@ -374,16 +387,21 @@ public class HyperNEATUtil {
 	 */
 	private  static void  drawNodeWeight(DrawingPanel dPanel, TWEANNGenotype.NodeGene startingNode, int xCoord, int yCoord, int startingNodeIndex, int endingNodeIndex, int nodeWidth, int nodeHeight) {
 
+                // TODO Schrum: If I'm understanding the intend of this method right, it creates a display of all the weights
+                //              leaving a particular node. We actually want to flip that: the weights entering a particular
+                //              node should be grouped in the display.
+            
 		int xEnd = xCoord;
 		for(int j = startingNodeIndex; j < endingNodeIndex; j++) {//goes through every node in second substrate
-			System.out.println(nodes.toString());
-			System.out.println("startNI: " + startingNodeIndex + "endingNI: " + endingNodeIndex);
-			System.out.println("node index: " + j);
+//			System.out.println(nodes.toString());
+//			System.out.println("startNI: " + startingNodeIndex + "endingNI: " + endingNodeIndex);
+//			System.out.println("node index: " + j);
 			
 			Color c = Color.gray;
-			TWEANNGenotype.LinkGene link = tg.getLinkBetween(startingNode.innovation, nodes.get(j).innovation);
-			double weight = link.weight;
+                        TWEANNGenotype.NodeGene node = nodes.get(j);
+			TWEANNGenotype.LinkGene link = tg.getLinkBetween(startingNode.innovation, node.innovation);
 			if(link != null) {
+                                double weight = link.weight;
 				c = regularVisualization(ActivationFunctions.activation(ActivationFunctions.FTYPE_TANH, weight));
 			}
 			dPanel.getGraphics().setColor(c);
