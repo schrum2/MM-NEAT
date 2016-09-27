@@ -336,14 +336,16 @@ public class HyperNEATUtil {
 		DrawingPanel wPanel = new DrawingPanel(panelWidth, panelHeight, s1.getName() + " and " + s2.getName() + " connection weights");
 		wPanel.getGraphics().setBackground(Color.white);
 		//for every node in s1, draws all links from it to s2
-		for(int i = s1Index; i < (s1Index + s1.size.t1 + s1.size.t2); i++) {//goes through every node in first substrate
+		
+		
+		
+		for(int i = s2Index; i < (s2Index + s2.size.t1 + s2.size.t2); i++) {//goes through every node in second substrate
 			//System.out.println(nodes == null ? "nodes null" : nodes.toString());
             System.out.println("xCoord, yCoord, s2Index, s2Index + s2.size.t1 + s2.size.t2");
             System.out.println(xCoord+","+ yCoord+","+ s2Index +","+ (s2Index + s2.size.t1 * s2.size.t2));
                         
-                        // TODO Schrum: This is causing out of bounds exceptions: s2Index + s2.size.t1 + s2.size.t2
                         try {
-			drawNodeWeight(wPanel, nodes.get(i), xCoord, yCoord, s2Index, s2Index + s2.size.t1 * s2.size.t2, nodeVisWidth, nodeVisHeight);
+			drawNodeWeight(wPanel, nodes.get(i), xCoord, yCoord, s1Index, s1);
                         } catch(Exception e) {
                             System.out.println(s1);
                             System.out.println(s2);
@@ -357,7 +359,7 @@ public class HyperNEATUtil {
 				xCoord = 0;
 				yCoord += nodeVisHeight;
 			}
-            MiscUtil.waitForReadStringAndEnterKeyPress();
+           // MiscUtil.waitForReadStringAndEnterKeyPress();
 		}
 		return wPanel;
 	}
@@ -388,22 +390,19 @@ public class HyperNEATUtil {
 	 * @param startingNodeIndex
 	 * @param endingNodeIndex
 	 */
-	private  static void  drawNodeWeight(DrawingPanel dPanel, TWEANNGenotype.NodeGene startingNode, int xCoord, int yCoord, int startingNodeIndex, int endingNodeIndex, int nodeWidth, int nodeHeight) {
+	private  static void  drawNodeWeight(DrawingPanel dPanel, TWEANNGenotype.NodeGene startingNode, int xCoord, int yCoord, int startingNodeIndex, Substrate endSub) {
 
+		int endingNodeIndex =  startingNodeIndex + endSub.size.t1 * endSub.size.t2;
                 // TODO Schrum: If I'm understanding the intend of this method right, it creates a display of all the weights
                 //              leaving a particular node. We actually want to flip that: the weights entering a particular
                 //              node should be grouped in the display.
             
-		int xEnd = xCoord;
 		for(int j = startingNodeIndex; j < endingNodeIndex; j++) {//goes through every node in second substrate
-//			System.out.println(nodes.toString());
-//			System.out.println("startNI: " + startingNodeIndex + "endingNI: " + endingNodeIndex);
-//			System.out.println("node index: " + j);
-			
+
 			Color c = Color.gray;
-			TWEANNGenotype.NodeGene node = null;;
+			TWEANNGenotype.NodeGene endingNode = null;;
 			try{
-                        node = nodes.get(j);
+                        endingNode = nodes.get(j);
 			}catch(Exception e) {
 				
 				System.out.println(nodes.size());
@@ -411,7 +410,7 @@ public class HyperNEATUtil {
 				System.out.println(j);
 	            MiscUtil.waitForReadStringAndEnterKeyPress();
 			}
-			TWEANNGenotype.LinkGene link = tg.getLinkBetween(startingNode.innovation, node.innovation);
+			TWEANNGenotype.LinkGene link = tg.getLinkBetween(startingNode.innovation, endingNode.innovation);
 			if(link != null) {
                                 double weight = link.weight;
 				c = regularVisualization(ActivationFunctions.activation(ActivationFunctions.FTYPE_TANH, weight));
@@ -419,7 +418,7 @@ public class HyperNEATUtil {
 			dPanel.getGraphics().setColor(c);
 			dPanel.getGraphics().fillRect(xCoord, yCoord, WEIGHT_GRID_SIZE, WEIGHT_GRID_SIZE);
 			xCoord += WEIGHT_GRID_SIZE;
-			if(xCoord > xEnd + nodeWidth ) {
+			if(xCoord > xCoord + endSub.size.t1 * WEIGHT_GRID_SIZE) {
 			xCoord = 0;
 			yCoord += WEIGHT_GRID_SIZE;
 		}
