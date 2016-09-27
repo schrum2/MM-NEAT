@@ -78,7 +78,7 @@ public class HyperNEATUtil {
 
 	//size of grid in substrate drawing. 
 	public final static int SUBS_GRID_SIZE = Parameters.parameters.integerParameter("substrateGridSize");
-	public final static int WEIGHT_GRID_SIZE = 3;//size of each link box is 3 x 3 pixels
+	public final static int WEIGHT_GRID_SIZE = 10;//size of each link box is 3 x 3 pixels
 	private static List<DrawingPanel> substratePanels = null;
 	private static ArrayList<DrawingPanel> weightPanels = null;//TODO is it a problem that I had to make this explicitly an array list instead of a list?
 	private static HyperNEATTask hyperNEATTask;
@@ -288,7 +288,7 @@ public class HyperNEATUtil {
 	 * @param sub substrate 
 	 * @return index of first node in substrate
 	 */
-	private static int getSubstrateNodeStartingIndex(Substrate sub) {//could there be a more useful place to put this?
+	private static int getSubstrateNodeStartingIndex(Substrate sub) {
 		int nodeIndex = 0;
 		for(int i = 0; i < substrates.size(); i++) {
 			System.out.println("substrate name: " + sub.name + " searching against sub name: " + substrates.get(i).getName());
@@ -329,8 +329,8 @@ public class HyperNEATUtil {
 		int yCoord = 0;
 		int nodeVisWidth = WEIGHT_GRID_SIZE* s2.size.t1;
 		int nodeVisHeight = WEIGHT_GRID_SIZE * s2.size.t2;
-		int panelHeight = s1.size.t1 * nodeVisWidth;
-		int panelWidth = s1.size.t2 * nodeVisHeight;
+		int  panelWidth = s1.size.t1 * nodeVisWidth;
+		int panelHeight  = s1.size.t2 * nodeVisHeight;
 		
 		//instantiates panel
 		DrawingPanel wPanel = new DrawingPanel(panelWidth, panelHeight, s1.getName() + " and " + s2.getName() + " connection weights");
@@ -338,15 +338,17 @@ public class HyperNEATUtil {
 		//for every node in s1, draws all links from it to s2
 		for(int i = s1Index; i < (s1Index + s1.size.t1 + s1.size.t2); i++) {//goes through every node in first substrate
 			//System.out.println(nodes == null ? "nodes null" : nodes.toString());
+            System.out.println("xCoord, yCoord, s2Index, s2Index + s2.size.t1 + s2.size.t2");
+            System.out.println(xCoord+","+ yCoord+","+ s2Index +","+ (s2Index + s2.size.t1 * s2.size.t2));
                         
                         // TODO Schrum: This is causing out of bounds exceptions: s2Index + s2.size.t1 + s2.size.t2
                         try {
-			drawNodeWeight(wPanel, nodes.get(i), xCoord, yCoord, s2Index, s2Index + s2.size.t1 + s2.size.t2, nodeVisWidth, nodeVisHeight);
+			drawNodeWeight(wPanel, nodes.get(i), xCoord, yCoord, s2Index, s2Index + s2.size.t1 * s2.size.t2, nodeVisWidth, nodeVisHeight);
                         } catch(Exception e) {
                             System.out.println(s1);
                             System.out.println(s2);
-                            System.out.println("xCoord, yCoord, s2Index, s2Index + s2.size.t1 + s2.size.t2");
-                            System.out.println(xCoord+","+ yCoord+","+ s2Index +","+ (s2Index + s2.size.t1 + s2.size.t2));
+                            System.out.println("xCoord, yCoord, s2Index, s2Index + s2.size.t1 * s2.size.t2");
+                            System.out.println(xCoord+","+ yCoord+","+ s2Index +","+ (s2Index + s2.size.t1 * s2.size.t2));
                             e.printStackTrace();
                             MiscUtil.waitForReadStringAndEnterKeyPress();
                         }
@@ -355,6 +357,7 @@ public class HyperNEATUtil {
 				xCoord = 0;
 				yCoord += nodeVisHeight;
 			}
+            MiscUtil.waitForReadStringAndEnterKeyPress();
 		}
 		return wPanel;
 	}
@@ -398,7 +401,16 @@ public class HyperNEATUtil {
 //			System.out.println("node index: " + j);
 			
 			Color c = Color.gray;
-                        TWEANNGenotype.NodeGene node = nodes.get(j);
+			TWEANNGenotype.NodeGene node = null;;
+			try{
+                        node = nodes.get(j);
+			}catch(Exception e) {
+				
+				System.out.println(nodes.size());
+				System.out.println(nodes);
+				System.out.println(j);
+	            MiscUtil.waitForReadStringAndEnterKeyPress();
+			}
 			TWEANNGenotype.LinkGene link = tg.getLinkBetween(startingNode.innovation, node.innovation);
 			if(link != null) {
                                 double weight = link.weight;
