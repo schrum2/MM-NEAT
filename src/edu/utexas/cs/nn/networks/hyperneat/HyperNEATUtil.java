@@ -14,7 +14,6 @@ import edu.utexas.cs.nn.networks.ActivationFunctions;
 import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.networks.TWEANN.Node;
 import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.util.MiscUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 
 /**
@@ -78,7 +77,7 @@ public class HyperNEATUtil {
 
 	//size of grid in substrate drawing. 
 	public final static int SUBS_GRID_SIZE = Parameters.parameters.integerParameter("substrateGridSize");
-	public final static int WEIGHT_GRID_SIZE = 10;//size of each link box is 3 x 3 pixels
+	public final static int WEIGHT_GRID_SIZE = 2;//size of each link box is 3 x 3 pixels
 	private static List<DrawingPanel> substratePanels = null;
 	private static ArrayList<DrawingPanel> weightPanels = null;//TODO is it a problem that I had to make this explicitly an array list instead of a list?
 	private static HyperNEATTask hyperNEATTask;
@@ -256,9 +255,8 @@ public class HyperNEATUtil {
 			Substrate s1 = getSubstrate(sub1);
 			Substrate s2 = getSubstrate(sub2);
 			
-			System.out.println("sub1: " + s1.toString());
-
-			System.out.println("sub2: " + s2.toString());
+			//System.out.println("sub1: " + s1.toString());
+			//System.out.println("sub2: " + s2.toString());
 			
 			//this block of code gets the substrates and their nodes and indices
 			assert s1 != null && s2 != null;
@@ -291,8 +289,8 @@ public class HyperNEATUtil {
 	private static int getSubstrateNodeStartingIndex(Substrate sub) {
 		int nodeIndex = 0;
 		for(int i = 0; i < substrates.size(); i++) {
-			System.out.println("substrate name: " + sub.name + " searching against sub name: " + substrates.get(i).getName());
-			System.out.println("current nodeIndex: " + nodeIndex);
+			//System.out.println("substrate name: " + sub.name + " searching against sub name: " + substrates.get(i).getName());
+			//System.out.println("current nodeIndex: " + nodeIndex);
 			if(substrates.get(i).getName().equals(sub.getName())){ break;}
 			
 			nodeIndex += substrates.get(i).size.t1 * substrates.get(i).size.t2;
@@ -327,38 +325,26 @@ public class HyperNEATUtil {
 		//create new panel here
 		int xCoord = 0;
 		int yCoord = 0;
-		int nodeVisWidth = WEIGHT_GRID_SIZE* s2.size.t1;
-		int nodeVisHeight = WEIGHT_GRID_SIZE * s2.size.t2;
-		int  panelWidth = s1.size.t1 * nodeVisWidth;
-		int panelHeight  = s1.size.t2 * nodeVisHeight;
+		int nodeVisWidth = WEIGHT_GRID_SIZE* s1.size.t1;
+		int nodeVisHeight = WEIGHT_GRID_SIZE * s1.size.t2;
+		int panelWidth = s2.size.t1 * nodeVisWidth;
+		int panelHeight  = s2.size.t2 * nodeVisHeight;
 		
 		//instantiates panel
 		DrawingPanel wPanel = new DrawingPanel(panelWidth, panelHeight, s1.getName() + " and " + s2.getName() + " connection weights");
 		wPanel.getGraphics().setBackground(Color.white);
 		//for every node in s1, draws all links from it to s2
-		for(int i = s1Index; i < (s1Index + s1.size.t1 + s1.size.t2); i++) {//goes through every node in first substrate
+		for(int i = s2Index; i < (s2Index + (s2.size.t1 * s2.size.t2)); i++) {//goes through every node in target substrate
 			//System.out.println(nodes == null ? "nodes null" : nodes.toString());
-            System.out.println("xCoord, yCoord, s2Index, s2Index + s2.size.t1 + s2.size.t2");
-            System.out.println(xCoord+","+ yCoord+","+ s2Index +","+ (s2Index + s2.size.t1 * s2.size.t2));
-                        
-                        // TODO Schrum: This is causing out of bounds exceptions: s2Index + s2.size.t1 + s2.size.t2
-                        try {
-			drawNodeWeight(wPanel, nodes.get(i), xCoord, yCoord, s2Index, s2Index + s2.size.t1 * s2.size.t2, nodeVisWidth, nodeVisHeight);
-                        } catch(Exception e) {
-                            System.out.println(s1);
-                            System.out.println(s2);
-                            System.out.println("xCoord, yCoord, s2Index, s2Index + s2.size.t1 * s2.size.t2");
-                            System.out.println(xCoord+","+ yCoord+","+ s2Index +","+ (s2Index + s2.size.t1 * s2.size.t2));
-                            e.printStackTrace();
-                            MiscUtil.waitForReadStringAndEnterKeyPress();
-                        }
-			xCoord += nodeVisWidth;
-			if(xCoord > panelWidth) {
+   			drawNodeWeight(wPanel, nodes.get(i), xCoord, yCoord, s1Index, s1Index + (s1.size.t1 * s1.size.t2), nodeVisWidth, nodeVisHeight);
+                        //System.out.println(xCoord +","+ yCoord);    
+                        //MiscUtil.waitForReadStringAndEnterKeyPress();
+                        xCoord += nodeVisWidth;
+			if(xCoord >= panelWidth) {
 				xCoord = 0;
 				yCoord += nodeVisHeight;
 			}
-            MiscUtil.waitForReadStringAndEnterKeyPress();
-		}
+   		}
 		return wPanel;
 	}
 
@@ -382,36 +368,22 @@ public class HyperNEATUtil {
 		use same color scheme as substrate visualizer except dead links are gray
 		
 	 * @param dPanel
-	 * @param startingNode
+	 * @param targetNode
 	 * @param xCoord
 	 * @param yCoord
 	 * @param startingNodeIndex
 	 * @param endingNodeIndex
 	 */
-	private  static void  drawNodeWeight(DrawingPanel dPanel, TWEANNGenotype.NodeGene startingNode, int xCoord, int yCoord, int startingNodeIndex, int endingNodeIndex, int nodeWidth, int nodeHeight) {
-
-                // TODO Schrum: If I'm understanding the intend of this method right, it creates a display of all the weights
-                //              leaving a particular node. We actually want to flip that: the weights entering a particular
-                //              node should be grouped in the display.
-            
-		int xEnd = xCoord;
+	private  static void  drawNodeWeight(DrawingPanel dPanel, TWEANNGenotype.NodeGene targetNode, int xCoord, int yCoord, int startingNodeIndex, int endingNodeIndex, int nodeWidth, int nodeHeight) {
+		int xLeftEdge = xCoord;
 		for(int j = startingNodeIndex; j < endingNodeIndex; j++) {//goes through every node in second substrate
 //			System.out.println(nodes.toString());
 //			System.out.println("startNI: " + startingNodeIndex + "endingNI: " + endingNodeIndex);
 //			System.out.println("node index: " + j);
 			
 			Color c = Color.gray;
-			TWEANNGenotype.NodeGene node = null;;
-			try{
-                        node = nodes.get(j);
-			}catch(Exception e) {
-				
-				System.out.println(nodes.size());
-				System.out.println(nodes);
-				System.out.println(j);
-	            MiscUtil.waitForReadStringAndEnterKeyPress();
-			}
-			TWEANNGenotype.LinkGene link = tg.getLinkBetween(startingNode.innovation, node.innovation);
+			TWEANNGenotype.NodeGene node = nodes.get(j);
+			TWEANNGenotype.LinkGene link = tg.getLinkBetween(node.innovation, targetNode.innovation);
 			if(link != null) {
                                 double weight = link.weight;
 				c = regularVisualization(ActivationFunctions.activation(ActivationFunctions.FTYPE_TANH, weight));
@@ -419,11 +391,11 @@ public class HyperNEATUtil {
 			dPanel.getGraphics().setColor(c);
 			dPanel.getGraphics().fillRect(xCoord, yCoord, WEIGHT_GRID_SIZE, WEIGHT_GRID_SIZE);
 			xCoord += WEIGHT_GRID_SIZE;
-			if(xCoord > xEnd + nodeWidth ) {
-			xCoord = 0;
+			if(xCoord >= xLeftEdge + nodeWidth ) {
+			xCoord = xLeftEdge;
 			yCoord += WEIGHT_GRID_SIZE;
 		}
-	}
+            }
 	}
 
 }
