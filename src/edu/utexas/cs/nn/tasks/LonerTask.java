@@ -99,7 +99,7 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
 						}
 						if(Parameters.parameters.booleanParameter("showWeights")){
 							weightPanels = HyperNEATUtil.drawWeight(hngt.getSubstrateGenotype(), (HyperNEATTask) task); 
-					}
+						}
 
 					}
 					// if(genotype instanceof HierarchicalTWEANNGenotype){
