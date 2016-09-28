@@ -729,9 +729,6 @@ public class TWEANN implements Network {
 			if(!HyperNEATCPPNGenotype.constructingNetwork && CommonConstants.hyperNEAT && CommonConstants.monitorSubstrates) {
 				animateSubstrate();
 			}
-			if(!HyperNEATCPPNGenotype.constructingNetwork && CommonConstants.hyperNEAT &&Parameters.parameters.booleanParameter("showWeights") ) {
-				
-			}
 				
 			if (panel != null && Parameters.parameters.booleanParameter("animateNetwork")) {
 				draw(panel);

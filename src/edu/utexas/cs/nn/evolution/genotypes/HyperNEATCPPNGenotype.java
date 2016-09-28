@@ -93,7 +93,6 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 	@Override
 	public TWEANN getPhenotype() {
 		TWEANNGenotype tg = getSubstrateGenotype() ;
-		constructingNetwork = false;
 		return tg.getPhenotype();//return call to substrate genotype
 	}
 
@@ -137,7 +136,8 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 				phenotypeOutputs += s.size.t1 * s.size.t2;
 			}
 		}		
-
+		constructingNetwork = false;
+		
 		// the instantiation of the TWEANNgenotype in question
 
 		// Hard coded to have a single neural output module.
@@ -147,6 +147,15 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 		TWEANNGenotype tg = new TWEANNGenotype(newNodes,newLinks, phenotypeOutputs, false, false, -1);
                 return tg;
 	}
+	
+	public TWEANNGenotype getSubstrateGenotypeForEvolution() {
+		TWEANNGenotype tg = getSubstrateGenotype() ;
+		
+		//TODO: Make input and output innovation nums negative
+		
+		return tg;
+	}
+	
 	/**
 	 * Copies given genotype
 	 * 

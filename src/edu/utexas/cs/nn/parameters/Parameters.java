@@ -672,6 +672,7 @@ public class Parameters {
 		stringOptions.add("branchRoot", "", "Evolve from some other run as starting point, based off of this parameter file");
 		stringOptions.add("replayNetwork", "", "Network displayed while replaying pacman eval");
 		// Class options
+		classOptions.add("hyperNEATSeedTask", null, "HyperNEAT task that seeds a standard NEAT task");
 		classOptions.add("substrateMapping", CenteredSubstrateMapping.class, "Determines the type of subtrate coordinate mapping we want to use");
 		classOptions.add("staticPreyController", PreyFleeClosestPredatorController.class, "This parameter specifies the prey controller that predators evolve against");
 		classOptions.add("staticPredatorController", AggressivePredatorController.class, "This parameter specifies the predator controller that prey evolve against");
