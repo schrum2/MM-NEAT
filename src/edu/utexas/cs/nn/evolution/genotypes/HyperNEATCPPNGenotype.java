@@ -6,6 +6,7 @@ import java.util.List;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.networks.NetworkUtil;
 import edu.utexas.cs.nn.networks.TWEANN;
+import edu.utexas.cs.nn.networks.TWEANN.Node;
 import edu.utexas.cs.nn.networks.hyperneat.HyperNEATTask;
 import edu.utexas.cs.nn.networks.hyperneat.Substrate;
 import edu.utexas.cs.nn.parameters.CommonConstants;
@@ -149,10 +150,13 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 	}
 	
 	public TWEANNGenotype getSubstrateGenotypeForEvolution() {
-		TWEANNGenotype tg = getSubstrateGenotype() ;
-		
-		//TODO: Make input and output innovation nums negative
-		
+		TWEANNGenotype tg = getSubstrateGenotype();
+		long counter = -1;//is this right???
+		for(int i = 0; i < tg.nodes.size(); i++) {
+			if(tg.nodes.get(i).ntype == Node.NTYPE_INPUT || tg.nodes.get(i).ntype == Node.NTYPE_OUTPUT) {
+				tg.nodes.get(i).innovation = counter--;
+			}
+		}
 		return tg;
 	}
 	
