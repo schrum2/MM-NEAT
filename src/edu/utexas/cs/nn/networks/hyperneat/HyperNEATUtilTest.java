@@ -99,7 +99,7 @@ public class HyperNEATUtilTest {
 	/**
 	 * Visual test of drawSubstrate method
 	 */
-	//@Test
+	@Test
 	public void testDrawSubstrateVisual() {
 		DrawingPanel dp = HyperNEATUtil.drawSubstrate(subs[0], nodes, 0);
 		DrawingPanel pp = HyperNEATUtil.drawSubstrate(dp, subs[0], nodes, 0);
@@ -109,16 +109,16 @@ public class HyperNEATUtilTest {
 	/**
 	 * Tests draw substrates method
 	 */
-	//@Test
+	@Test
 	public void testDrawSubstratesVisual() { 
 		HyperNEATUtil.drawSubstrates(nodes);
 	}
 	
-	@Test
-	public void testDrawWeightsVisual() {
-		ArrayList<DrawingPanel> weightPanels = HyperNEATUtil.drawWeight(tg1, htask);
-//		DrawingPanel d =  HyperNEATUtil.drawWeight(subs[0], subs[1], 0, 30);
-			
-		MiscUtil.waitForReadStringAndEnterKeyPress();
-	}
+//	@Test
+//	public void testDrawWeightsVisual() {
+//	//	ArrayList<DrawingPanel> weightPanels = HyperNEATUtil.drawWeight(tg1, htask);
+////		DrawingPanel d =  HyperNEATUtil.drawWeight(subs[0], subs[1], 0, 30);
+//			
+//		MiscUtil.waitForReadStringAndEnterKeyPress();
+//	}
 }
