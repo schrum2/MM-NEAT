@@ -6,7 +6,6 @@ import java.util.List;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.networks.NetworkUtil;
 import edu.utexas.cs.nn.networks.TWEANN;
-import edu.utexas.cs.nn.networks.TWEANN.Node;
 import edu.utexas.cs.nn.networks.hyperneat.HyperNEATTask;
 import edu.utexas.cs.nn.networks.hyperneat.Substrate;
 import edu.utexas.cs.nn.parameters.CommonConstants;
@@ -149,12 +148,12 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 	
 	public TWEANNGenotype getSubstrateGenotypeForEvolution(HyperNEATTask hnt) {
 		TWEANNGenotype tg = getSubstrateGenotype(hnt);
-		long counter = -1;//is this right???
-		for(int i = 0; i < tg.nodes.size(); i++) {
-			if(tg.nodes.get(i).ntype == Node.NTYPE_INPUT || tg.nodes.get(i).ntype == Node.NTYPE_OUTPUT) {
-				tg.nodes.get(i).innovation = counter--;
-			}
-		}
+//		long counter = -1;//is this right???
+//		for(int i = 0; i < tg.nodes.size(); i++) {
+//			if(tg.nodes.get(i).ntype == Node.NTYPE_INPUT || tg.nodes.get(i).ntype == Node.NTYPE_OUTPUT) {
+//				tg.nodes.get(i).innovation = counter--;
+//			}
+//		}
 		return tg;
 	}
 	
@@ -267,6 +266,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 	 */
 	public void loopThroughLinks(ArrayList<LinkGene> linksSoFar, TWEANN cppn, int outputIndex, Substrate s1, Substrate s2, int s1Index, int s2Index, List<Substrate> subs) {
 		// searches through width of first substrate
+		int debuggerCounter = 0;
 		for (int X1 = 0; X1 < s1.size.t1; X1++) {
 			// searches through height of first substrate
 			for (int Y1 = 0; Y1 < s1.size.t2; Y1++) {
@@ -282,6 +282,9 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 								// inputs to CPPN 
 								double[] inputs = {scaledSourceCoordinates.getX(), scaledSourceCoordinates.getY(), scaledTargetCoordinates.getX(), scaledTargetCoordinates.getY(), BIAS};
 								double[] outputs = cppn.process(inputs);
+								System.out.println("index to access: " + (numCPPNOutputsPerLayerPair * outputIndex) + LINK_INDEX);
+								System.out.println("cppn outputs: " + cppn.numOutputs());
+								System.out.println("count: " + debuggerCounter++);
 								boolean expressLink = CommonConstants.leo
 										// Specific network output determines link expression
 										? outputs[(numCPPNOutputsPerLayerPair * outputIndex) + leoIndex] > CommonConstants.linkExpressionThreshold

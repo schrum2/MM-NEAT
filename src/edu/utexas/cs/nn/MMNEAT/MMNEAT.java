@@ -79,6 +79,7 @@ import edu.utexas.cs.nn.tasks.testmatch.MatchDataTask;
 import edu.utexas.cs.nn.tasks.ut2004.UT2004Task;
 import edu.utexas.cs.nn.tasks.vizdoom.VizDoomTask;
 import edu.utexas.cs.nn.util.ClassCreation;
+import edu.utexas.cs.nn.util.MiscUtil;
 import edu.utexas.cs.nn.util.file.FileUtilities;
 import edu.utexas.cs.nn.util.random.RandomGenerator;
 import edu.utexas.cs.nn.util.random.RandomNumbers;
@@ -567,9 +568,7 @@ public class MMNEAT {
 				hyperNEATOverrides();
 			}
 
-			HyperNEATTask HNTSeedTask = (HyperNEATTask) ClassCreation.createObject("HyperNEATTask");
-			System.out.println("-----------------------------");//debugging code
-			System.out.println("HNTSeedTask: " + HNTSeedTask);
+			HyperNEATTask HNTSeedTask = (HyperNEATTask) ClassCreation.createObject("hyperNEATSeedTask");
 			setupMetaHeuristics();
 			// An EA is always needed. Currently only GenerationalEA classes are supported
 			if (!loadFrom) {
@@ -600,15 +599,13 @@ public class MMNEAT {
 				MsPacManControllerInputOutputMediator pillMediator = (MsPacManControllerInputOutputMediator) ClassCreation.createObject("pacManMediatorClass2");
 				pacmanInputOutputMediator = new MultipleInputOutputMediator(new MsPacManControllerInputOutputMediator[] { ghostMediator, pillMediator });
 				setNNInputParameters(pacmanInputOutputMediator.numIn(), pacmanInputOutputMediator.numOut());
-			} else if (seedGenotype.isEmpty()) {
-				genotype = (Genotype) ClassCreation.createObject("genotype");
+				
 			} else if(HNTSeedTask != null) { // hyperNEATseed is not null
 			
 				HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair = 1;
 				HyperNEATCPPNGenotype.biasIndex = 0;
 				HyperNEATCPPNGenotype.leoIndex = 0;
 				substrateMapping = (SubstrateCoordinateMapping) ClassCreation.createObject("substrateMapping");
-
 				int numSubstratePairings = HNTSeedTask.getSubstrateConnectivity().size();
 				System.out.println("Number of substrate pairs being connected: "+ numSubstratePairings);
 				if(CommonConstants.evolveHyperNEATBias) {
@@ -621,12 +618,13 @@ public class MMNEAT {
 					HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair++;
 					HyperNEATCPPNGenotype.leoIndex = HyperNEATCPPNGenotype.biasIndex + 1;
 				}
-				System.out.println("+++++++++++++++++++++++++++++");//debugging code
-				HyperNEATCPPNGenotype hntGeno = new HyperNEATCPPNGenotype(HyperNEATTask.NUM_CPPN_INPUTS, HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair, -1);//is -1 okay for an archetypeIndex??
+				HyperNEATCPPNGenotype hntGeno = new HyperNEATCPPNGenotype(HyperNEATTask.NUM_CPPN_INPUTS,  numSubstratePairings * HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair, 0);
 				TWEANNGenotype seedGeno = hntGeno.getSubstrateGenotypeForEvolution(HNTSeedTask);
 				genotype = seedGeno;
-				System.out.println("HyperNEAT TWEANN genotype seeded");
+				System.out.println("HyperNEATGenotype seeded");
 				seedExample = true;
+			} else if (seedGenotype.isEmpty()) {
+				genotype = (Genotype) ClassCreation.createObject("genotype");
 			} else {
 				// Copy assures a fresh genotype id
 				System.out.println("Loading seed genotype: " + seedGenotype);
