@@ -600,7 +600,7 @@ public class MMNEAT {
 				pacmanInputOutputMediator = new MultipleInputOutputMediator(new MsPacManControllerInputOutputMediator[] { ghostMediator, pillMediator });
 				setNNInputParameters(pacmanInputOutputMediator.numIn(), pacmanInputOutputMediator.numOut());
 				
-			} else if(HNTSeedTask != null) { // hyperNEATseed is not null
+			} else if(HNTSeedTask != null && Parameters.parameters.integerParameter("lastSavedGeneration") == 0) { // hyperNEATseed is not null
 			
 				HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair = 1;
 				HyperNEATCPPNGenotype.biasIndex = 0;
