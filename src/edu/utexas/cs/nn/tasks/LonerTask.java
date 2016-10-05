@@ -98,7 +98,7 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
 							hngt.getCPPN().draw(cppnPanel);
 						}
 						if(Parameters.parameters.booleanParameter("showWeights")){
-							weightPanels = HyperNEATUtil.drawWeight(hngt.getSubstrateGenotype(), (HyperNEATTask) task); 
+							weightPanels = HyperNEATUtil.drawWeight(hngt.getSubstrateGenotype((HyperNEATTask) task), (HyperNEATTask) task); 
 						}
 
 					}
