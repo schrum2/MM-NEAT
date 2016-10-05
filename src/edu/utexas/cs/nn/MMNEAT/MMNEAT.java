@@ -567,6 +567,9 @@ public class MMNEAT {
 				hyperNEATOverrides();
 			}
 
+			HyperNEATTask HNTSeedTask = (HyperNEATTask) ClassCreation.createObject("HyperNEATTask");
+			System.out.println("-----------------------------");//debugging code
+			System.out.println("HNTSeedTask: " + HNTSeedTask);
 			setupMetaHeuristics();
 			// An EA is always needed. Currently only GenerationalEA classes are supported
 			if (!loadFrom) {
@@ -599,6 +602,31 @@ public class MMNEAT {
 				setNNInputParameters(pacmanInputOutputMediator.numIn(), pacmanInputOutputMediator.numOut());
 			} else if (seedGenotype.isEmpty()) {
 				genotype = (Genotype) ClassCreation.createObject("genotype");
+			} else if(HNTSeedTask != null) { // hyperNEATseed is not null
+			
+				HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair = 1;
+				HyperNEATCPPNGenotype.biasIndex = 0;
+				HyperNEATCPPNGenotype.leoIndex = 0;
+				substrateMapping = (SubstrateCoordinateMapping) ClassCreation.createObject("substrateMapping");
+
+				int numSubstratePairings = HNTSeedTask.getSubstrateConnectivity().size();
+				System.out.println("Number of substrate pairs being connected: "+ numSubstratePairings);
+				if(CommonConstants.evolveHyperNEATBias) {
+					System.out.println("HyperNEAT uses Bias output");
+					HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair++;
+					HyperNEATCPPNGenotype.biasIndex = 1;
+				}
+				if(CommonConstants.leo) {
+					System.out.println("HyperNEAT uses LEO: Link Expression Output");
+					HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair++;
+					HyperNEATCPPNGenotype.leoIndex = HyperNEATCPPNGenotype.biasIndex + 1;
+				}
+				System.out.println("+++++++++++++++++++++++++++++");//debugging code
+				HyperNEATCPPNGenotype hntGeno = new HyperNEATCPPNGenotype(HyperNEATTask.NUM_CPPN_INPUTS, HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair, -1);//is -1 okay for an archetypeIndex??
+				TWEANNGenotype seedGeno = hntGeno.getSubstrateGenotypeForEvolution(HNTSeedTask);
+				genotype = seedGeno;
+				System.out.println("HyperNEAT TWEANN genotype seeded");
+				seedExample = true;
 			} else {
 				// Copy assures a fresh genotype id
 				System.out.println("Loading seed genotype: " + seedGenotype);
