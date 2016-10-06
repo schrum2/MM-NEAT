@@ -148,6 +148,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 	
 	public TWEANNGenotype getSubstrateGenotypeForEvolution(HyperNEATTask hnt) {
 		TWEANNGenotype tg = getSubstrateGenotype(hnt);
+		tg.archetypeIndex = 0;
 		//doesn't seem we need this code but need to evolve a few generations to see if it crashes when crossover and mutation occurs
 		//if crash does occur, need to change link node innovation numbers as well
 //		long counter = -1;//is this right???
