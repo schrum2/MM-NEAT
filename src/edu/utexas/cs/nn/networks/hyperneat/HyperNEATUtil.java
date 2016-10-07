@@ -12,6 +12,7 @@ import edu.utexas.cs.nn.networks.ActivationFunctions;
 import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.networks.TWEANN.Node;
 import edu.utexas.cs.nn.parameters.Parameters;
+import edu.utexas.cs.nn.util.MiscUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 
 /**
@@ -78,7 +79,7 @@ public class HyperNEATUtil {
 	public final static int SUBS_GRID_SIZE = Parameters.parameters.integerParameter("substrateGridSize");
 	public final static int WEIGHT_GRID_SIZE = 1;//size of each link 1 pixel
 	private static List<DrawingPanel> substratePanels = null;
-	private static ArrayList<DrawingPanel> weightPanels = null;//TODO is it a problem that I had to make this explicitly an array list instead of a list?
+	private static ArrayList<DrawingPanel> weightPanels = null;
 	private static HyperNEATTask hyperNEATTask;
 	private static TWEANNGenotype tg;
 	private static List<Substrate> substrates;
@@ -231,21 +232,26 @@ public class HyperNEATUtil {
 	 * @return the weight panels
 	 */
 	public static ArrayList<DrawingPanel> drawWeight(TWEANNGenotype genotype, HyperNEATTask hnt) {
+		
+		//gets all relevant information needed to draw link weights
 		tg = (TWEANNGenotype)genotype.copy();
 		connections = hnt.getSubstrateConnectivity();
 		nodes = tg.nodes;
+		//disposes of weight panels if already instantiated to clean up old panels
 		if(weightPanels != null) {
 			for(int i =0; i < weightPanels.size(); i++) {
 				weightPanels.get(i).dispose();
 			}
 		}
+		//instantiates panel array
 		weightPanels = new ArrayList<DrawingPanel>();
 		substrates = hnt.getSubstrateInformation();
+		
 		//used to instantiate drawing panels not on top of one another
 		int weightPanelsWidth = 0;
 		int weightPanelsHeight = 0;
 
-		
+		//creates each a panel for each connection between substrates
 		for(int i = 0; i < connections.size(); i++) {
 			String sub1 = connections.get(i).t1;
 			String sub2 = connections.get(i).t2;
@@ -257,7 +263,7 @@ public class HyperNEATUtil {
 			int s2StartingIndex = getSubstrateNodeStartingIndex(s2);
 			//actually creates panel with weights
 			weightPanels.add(drawWeight(s1, s2, s1StartingIndex, s2StartingIndex));
-			//sets locations of panels so theyre not right on top of one another
+			//sets locations of panels so they're not right on top of one another
 			weightPanels.get(i).setLocation(weightPanelsWidth, weightPanelsHeight);
 			weightPanelsWidth += weightPanels.get(i).getFrame().getWidth() + LINK_WINDOW_SPACING;
 		}
@@ -267,7 +273,6 @@ public class HyperNEATUtil {
 
 	/**
 	 * Gets the index of the first node in substrate
-	 * TODO might be whats creating bugs?
 	 * @param sub substrate 
 	 * @return index of first node in substrate
 	 */
@@ -310,24 +315,24 @@ public class HyperNEATUtil {
 		int yCoord = 0;
 		int nodeVisWidth = WEIGHT_GRID_SIZE* s1.size.t1;
 		int nodeVisHeight = WEIGHT_GRID_SIZE * s1.size.t2;
-		int panelWidth = s2.size.t1 * nodeVisWidth;
-		int panelHeight  = s2.size.t2 * nodeVisHeight;
+		int panelWidth = s2.size.t1 * nodeVisWidth  + s2.size.t1 - 1;
+		int panelHeight  = s2.size.t2 * nodeVisHeight  + s2.size.t2 - 1;
 		
 		//instantiates panel
 		DrawingPanel wPanel = new DrawingPanel(panelWidth, panelHeight, s1.getName() + "->" + s2.getName());
 		wPanel.getGraphics().setBackground(Color.white);
 		//for every node in s1, draws all links from it to s2
 		for(int i = s2Index; i < (s2Index + (s2.size.t1 * s2.size.t2)); i++) {//goes through every node in target substrate
-   			drawNodeWeight(wPanel, nodes.get(i), xCoord, yCoord, s1Index, s1Index + (s1.size.t1 * s1.size.t2), nodeVisWidth, nodeVisHeight);
-                        xCoord += nodeVisWidth;
+			//drawBorder(wPanel, xCoord, yCoord, nodeVisWidth + 2, nodeVisHeight + 2);
+			drawNodeWeight(wPanel, nodes.get(i), xCoord , yCoord , s1Index, s1Index + (s1.size.t1 * s1.size.t2), nodeVisWidth, nodeVisHeight);
+                        xCoord += nodeVisWidth + 1;
 			if(xCoord >= panelWidth) {
 				xCoord = 0;
-				yCoord += nodeVisHeight;
+				yCoord += nodeVisHeight + 1;
 			}
    		}
 		return wPanel;
 	}
-	
 		
 	/**
 	 * get all connections of node to next substrate nodes and get all those links and then link weights
