@@ -477,20 +477,14 @@ public class EvolutionaryHistory {
 	 *            debugging purposes only
 	 */
 	public static void archetypeAddFromCombiningCrossover(int populationIndex, NodeGene node, int pos, String origin) {
-		NodeGene newNodeGene = node.clone();// adds a clone of node to add so
-											// original node is not affected if
-											// add is unsuccessful
+            // adds a clone of node to add so original node is not affected if add is unsuccessful
+		NodeGene newNodeGene = node.clone();
 		long oldInnovation = newNodeGene.innovation;
-		newNodeGene.innovation = CombiningTWEANNCrossover.getAdjustedInnovationNumber(oldInnovation); // Change
-																										// innovation
-																										// to
-																										// prevent
-																										// weird
-																										// overlaps
-		// newNodeGene.origin = origin + " copied "+oldInnovation+" (" +
-		// (order++) + ")";
-		newNodeGene.fromCombiningCrossover = true;// indicates addition was
-													// successful
+                // Change innovation to prevent weird overlaps
+		newNodeGene.innovation = CombiningTWEANNCrossover.getAdjustedInnovationNumber(oldInnovation); 
+		// newNodeGene.origin = origin + " copied "+oldInnovation+" (" + (order++) + ")";
+                // indicates addition was successful
+		newNodeGene.setFromCombiningCrossover();
 		archetypes[populationIndex].add(pos, newNodeGene);
 	}
 
@@ -507,7 +501,7 @@ public class EvolutionaryHistory {
 	 */
 	public static int indexOfFirstArchetypeNodeFromCombiningCrossover(int populationIndex, int ntype) {
 		for (int i = 0; i < archetypes[populationIndex].size(); i++) {
-			if (archetypes[populationIndex].get(i).fromCombiningCrossover
+			if (archetypes[populationIndex].get(i).fromCombiningCrossover()
 					&& archetypes[populationIndex].get(i).ntype == ntype) {
 				return i;
 			}

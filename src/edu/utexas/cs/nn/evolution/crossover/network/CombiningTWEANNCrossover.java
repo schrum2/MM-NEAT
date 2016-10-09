@@ -278,8 +278,8 @@ public class CombiningTWEANNCrossover extends TWEANNCrossover {
 			combinedNodes.add(nodeGene);
 			if (!splitInputs) {
 				long innovation = nodeGene.innovation;
-				oldToNew.put(innovation, innovation); // Input mapping remains
-														// same
+                                // Input mapping remains same
+				oldToNew.put(innovation, innovation); 
 			}
 		}
 		if (splitInputs) {
@@ -289,12 +289,11 @@ public class CombiningTWEANNCrossover extends TWEANNCrossover {
 				long newInnovation = -(modifyNumIn + modifyNumOut + 1) - i;
 				oldToNew.put(nodeGene.innovation, newInnovation);
 				nodeGene.innovation = newInnovation;
-				nodeGene.fromCombiningCrossover = true;
+				nodeGene.setFromCombiningCrossover();
 				// index will be -1 if innovation does not exist
 				int index = EvolutionaryHistory.indexOfArchetypeInnovation(tToModify.archetypeIndex, newInnovation);
 				if (index == -1) {
-					EvolutionaryHistory.archetypeAdd(tToModify.archetypeIndex, combinedNodes.size(), nodeGene, false,
-							"combined input");
+					EvolutionaryHistory.archetypeAdd(tToModify.archetypeIndex, combinedNodes.size(), nodeGene, false, "combined input");
 				}
 				combinedNodes.add(nodeGene);
 			}
@@ -374,13 +373,9 @@ public class CombiningTWEANNCrossover extends TWEANNCrossover {
 			// System.out.println("\t\tnewInnovation:"+newInnovation+"\t\t");
 			oldToNew.put(oldInnovation, newInnovation);
 			// The newly inserted innovation number will be used
-			nodeGene.innovation = getAdjustedInnovationNumber(oldInnovation); // Change
-																				// innovation
-																				// to
-																				// prevent
-																				// weird
-																				// overlaps
-			nodeGene.fromCombiningCrossover = true;
+                        // Change innovation to prevent weird overlaps
+			nodeGene.innovation = getAdjustedInnovationNumber(oldInnovation); 
+			nodeGene.setFromCombiningCrossover();
 			int index = EvolutionaryHistory.indexOfArchetypeInnovation(tToModify.archetypeIndex, nodeGene.innovation);
 			if (index == -1) {
 				// System.out.print("ArchOut:"+nodeGene.innovation+":");
@@ -401,16 +396,10 @@ public class CombiningTWEANNCrossover extends TWEANNCrossover {
 		// Links from second network need new innovations
 		for (LinkGene l : tToReturn.links) {
 			LinkGene linkGene = l.clone();
-			linkGene.innovation = getAdjustedInnovationNumber(linkGene.innovation); // Link
-																					// itself
-																					// gets
-																					// new
-																					// number
-			linkGene.sourceInnovation = oldToNew.get(linkGene.sourceInnovation); // Connections
-																					// lead
-																					// to
-																					// existing
-																					// structure
+                        // Link itself gets new number
+			linkGene.innovation = getAdjustedInnovationNumber(linkGene.innovation); 
+                        // Connections lead to existing structure
+			linkGene.sourceInnovation = oldToNew.get(linkGene.sourceInnovation); 
 			linkGene.targetInnovation = oldToNew.get(linkGene.targetInnovation);
 			combinedLinks.add(linkGene);
 		}

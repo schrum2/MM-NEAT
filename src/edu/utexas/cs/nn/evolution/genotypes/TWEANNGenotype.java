@@ -75,7 +75,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
         public int ntype;
         public int ftype;
         // public String origin = "";
-        public boolean fromCombiningCrossover = false;
+        protected boolean fromCombiningCrossover = false;
         public double bias;
 
         /**
@@ -105,6 +105,14 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
             this.bias = bias;
         }
 
+        public boolean fromCombiningCrossover() {
+            return fromCombiningCrossover;
+        }
+        
+        public void setFromCombiningCrossover() {
+            fromCombiningCrossover = true;
+        }
+        
         /**
          * Nodes are equal if they have the same innovation number
          *
