@@ -97,7 +97,9 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 		 *            = unique innovation number for node
 		 * @param frozen
 		 *            = false if node can accept new inputs
-		 */
+                 * @param bias
+                 *            = bias offset to sum of this node before activation
+		 */           
 		public NodeGene(int ftype, int ntype, long innovation, boolean frozen, double bias) {
 			super(innovation, frozen);
 			this.ftype = ftype;
@@ -113,9 +115,9 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 		 * @return
 		 */
 		@Override
+                @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
 		public boolean equals(Object o) {
-			NodeGene other = (NodeGene) o; // instanceof check is skipped for
-											// efficiency
+			NodeGene other = (NodeGene) o; // instanceof check is skipped for efficiency
 			return innovation == other.innovation;
 		}
 
@@ -932,13 +934,8 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 		HashSet<Long> sourceInnovationNumbers = new HashSet<Long>();
 		for (LinkGene l : links) {
 			int potentialTargetIndex = indexOfNodeInnovation(l.sourceInnovation);
-			if ((CommonConstants.recurrency || sourceIndex < potentialTargetIndex) // recurrent
-																					// links
-																					// allowed?
-					&& (includeInputs || nodes.get(potentialTargetIndex).ntype != TWEANN.Node.NTYPE_INPUT)) { // links
-																												// to
-																												// inputs
-																												// allowed?
+			if ((CommonConstants.recurrency || sourceIndex < potentialTargetIndex) // recurrent links allowed?
+					&& (includeInputs || nodes.get(potentialTargetIndex).ntype != TWEANN.Node.NTYPE_INPUT)) { // links to inputs allowed?
 				sourceInnovationNumbers.add(l.sourceInnovation);
 
 			}
@@ -981,8 +978,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 			}
 		}
 		Long[] options = new Long[sourceInnovationNumbers.size()];
-		return sourceInnovationNumbers.toArray(options)[RandomNumbers.randomGenerator
-				.nextInt(sourceInnovationNumbers.size())];
+		return sourceInnovationNumbers.toArray(options)[RandomNumbers.randomGenerator.nextInt(sourceInnovationNumbers.size())];
 	}
 
 	/**
@@ -992,10 +988,10 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 	 *            = linkInnovations number of nodeInnovation node
 	 * @param targetInnovation
 	 *            = linkInnovations number of sourceInnovation node
-	 * @param weights
-	 *            = weights of new newNode
-	 * @param linkInnovations
-	 *            = linkInnovations number of new newNode
+	 * @param weight
+	 *            = weight of new link
+	 * @param innovation
+	 *            = innovation number of new new link
 	 */
 	public void addLink(long sourceInnovation, long targetInnovation, double weight, long innovation) {
 		if (getLinkBetween(sourceInnovation, targetInnovation) == null) {
@@ -1047,9 +1043,10 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 	 *            = linkInnovations of nodeInnovation node for splice
 	 * @param targetInnovation
 	 *            = linkInnovations of sourceInnovation node for splice
-	 * @param weights
-	 *            = weights of the new newNode from the nodeInnovation to the
-	 *            new node
+         * @param weight1
+         *            = Weight on link entering newly spliced neuron
+         * @param weight2
+         *            = Weight on link exiting newly spliced neuron
 	 * @param toLinkInnovation
 	 *            = new linkInnovations number for newNode between
 	 *            nodeInnovation and new node
@@ -1064,16 +1061,10 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 		lg.active = CommonConstants.minimizeSpliceImpact;
 		nodes.add(Math.min(outputStartIndex(), Math.max(numIn, indexOfNodeInnovation(sourceInnovation) + 1)), ng);
 		int index = EvolutionaryHistory.indexOfArchetypeInnovation(archetypeIndex, sourceInnovation);
-		// System.out.println("Innovation " + sourceInnovation + " is at index "
-		// + index);
 		int pos = Math.min(EvolutionaryHistory.firstArchetypeOutputIndex(archetypeIndex), Math.max(numIn, index + 1));
-		// System.out.println("Pos:" + pos + ", numIn:" + numIn);
-		EvolutionaryHistory.archetypeAdd(archetypeIndex, pos, ng.clone(), numModules == 1,
-				"splice " + sourceInnovation + "->" + targetInnovation);
-		LinkGene toNew = new LinkGene(sourceInnovation, newNodeInnovation, weight1, toLinkInnovation,
-				indexOfNodeInnovation(newNodeInnovation) <= indexOfNodeInnovation(sourceInnovation));
-		LinkGene fromNew = new LinkGene(newNodeInnovation, targetInnovation, weight2, fromLinkInnovation,
-				indexOfNodeInnovation(targetInnovation) <= indexOfNodeInnovation(newNodeInnovation));
+		EvolutionaryHistory.archetypeAdd(archetypeIndex, pos, ng.clone(), numModules == 1, "splice " + sourceInnovation + "->" + targetInnovation);
+		LinkGene toNew = new LinkGene(sourceInnovation, newNodeInnovation, weight1, toLinkInnovation, indexOfNodeInnovation(newNodeInnovation) <= indexOfNodeInnovation(sourceInnovation));
+		LinkGene fromNew = new LinkGene(newNodeInnovation, targetInnovation, weight2, fromLinkInnovation, indexOfNodeInnovation(targetInnovation) <= indexOfNodeInnovation(newNodeInnovation));
 		links.add(toNew);
 		links.add(fromNew);
 	}
@@ -1836,7 +1827,6 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 	 */
 	public static void sortLinkGenes(ArrayList<LinkGene> linkedGene) {
 		Collections.sort(linkedGene, new Comparator<LinkGene>() {
-
 			@Override
 			public int compare(LinkGene o1, LinkGene o2) {// anonymous class
 				return (int) Math.signum(o1.innovation - o2.innovation);
