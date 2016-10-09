@@ -64,8 +64,9 @@ public class TWEANNLog extends StatisticsLog<TWEANNGenotype> {
 			nextStage[i][5] = tg.maxModuleUsage();
 			nextStage[i][6] = tg.minModuleUsage();
 			double[] modeUsageDistribution = StatisticsUtilities.distribution(tg.getModuleUsage());
-			System.out.println(Arrays.toString(tg.getModuleUsage()));
-			System.out.println(Arrays.toString(modeUsageDistribution));
+			// Why was I printing out the module usage distribution with each generation?
+                        //System.out.println(Arrays.toString(tg.getModuleUsage()));
+			//System.out.println(Arrays.toString(modeUsageDistribution));
 
 			nextStage[i][7] = modeUsageDistribution[0];
 			nextStage[i][8] = modeUsageDistribution.length > 1 ? modeUsageDistribution[1] : 0;
