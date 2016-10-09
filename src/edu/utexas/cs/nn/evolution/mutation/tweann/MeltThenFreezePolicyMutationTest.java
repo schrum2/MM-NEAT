@@ -50,7 +50,7 @@ public class MeltThenFreezePolicyMutationTest {//TODO
 		}
 		for(NodeGene node : nodes) {
 			if(node.ntype == Node.NTYPE_INPUT || node.ntype == Node.NTYPE_HIDDEN) {
-				assertEquals(node.frozen, true);
+				assertEquals(node.isFrozen(), true);
 			}
 		}
 		//System.out.println("mtfpm is not null: " + mtfpm != null);
@@ -59,7 +59,7 @@ public class MeltThenFreezePolicyMutationTest {//TODO
 		nodes = tg1.nodes;
 		int numFrozen = 0;
 		for(NodeGene node : tg1.nodes) {
-			if(node.frozen) {
+			if(node.isFrozen()) {
 				numFrozen++;
 			}
 		}

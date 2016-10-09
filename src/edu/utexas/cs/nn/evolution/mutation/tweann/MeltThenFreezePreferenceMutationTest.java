@@ -40,7 +40,7 @@ public class MeltThenFreezePreferenceMutationTest {//TODO
 		for(NodeGene node : tg1.nodes) {
 			if(node.ntype == Node.NTYPE_INPUT || node.ntype == Node.NTYPE_HIDDEN) {
 				node.freeze();
-				assertEquals(node.frozen, true);
+				assertEquals(node.isFrozen(), true);
 			}
 		}
 
@@ -49,7 +49,7 @@ public class MeltThenFreezePreferenceMutationTest {//TODO
 		System.out.println("nodes after: " + tg1.nodes.toString());
 		int numFrozen = 0;
 		for(NodeGene node : tg1.nodes) {
-			if(node.frozen) {
+			if(node.isFrozen()) {
 				numFrozen++;
 			}
 		}

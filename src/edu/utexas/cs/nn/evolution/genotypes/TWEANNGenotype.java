@@ -34,7 +34,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
     public abstract class Gene {
 
         public long innovation; // unique number for each gene
-        public boolean frozen; // frozen genes cannot be changed by mutation
+        protected boolean frozen; // frozen genes cannot be changed by mutation
 
         public Gene(long innovation, boolean frozen) {
             this.innovation = innovation;
@@ -47,6 +47,11 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 
         public void melt() {
             frozen = false;
+        }
+        
+        public boolean isFrozen() {
+            //return frozen;
+            return false;
         }
 
         public Gene copy() {
@@ -120,7 +125,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
          */
         @Override
         public NodeGene clone() {
-            return new NodeGene(ftype, ntype, innovation, frozen, bias);
+            return new NodeGene(ftype, ntype, innovation, isFrozen(), bias);
         }
 
         /**
@@ -131,7 +136,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
         @Override
         public String toString() {
             return "(inno=" + this.innovation + ",ftype=" + this.ftype + ",ntype=" + this.ntype + ",frozen="
-                    + this.frozen + ")";
+                    + this.isFrozen() + ")";
         }
     }
 
@@ -216,7 +221,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
          */
         @Override
         public LinkGene clone() {
-            return new LinkGene(sourceInnovation, targetInnovation, weight, innovation, active, recurrent, frozen);
+            return new LinkGene(sourceInnovation, targetInnovation, weight, innovation, active, recurrent, isFrozen());
         }
 
         /**
@@ -228,7 +233,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
         public String toString() {
             return "(inno=" + this.innovation + ",source=" + this.sourceInnovation + ",target=" + this.targetInnovation
                     + ",weight=" + this.weight + ",active=" + this.active + ",recurrent=" + this.recurrent + ",frozen="
-                    + this.frozen + ")";
+                    + this.isFrozen() + ")";
             // A shorter output option: Sometimes useful for troubleshooting
             // return "(" + this.innovation + ":" + this.sourceInnovation + "->"
             // + this.targetInnovation + ")";
@@ -708,7 +713,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
      */
     public void allWeightMutation(RandomGenerator rand, double rate) {
         for (LinkGene l : links) {
-            if (!l.frozen && RandomNumbers.randomGenerator.nextDouble() < rate) {
+            if (!l.isFrozen() && RandomNumbers.randomGenerator.nextDouble() < rate) {
                 perturbLink(l, rand.randomOutput());
             }
         }
@@ -721,7 +726,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
      */
     public boolean existsAlterableLink() {
         for (LinkGene lg : links) {
-            if (!lg.frozen && lg.active) {
+            if (!lg.isFrozen() && lg.active) {
                 return true;
             }
         }
@@ -738,7 +743,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
         assert existsAlterableLink() : "There are no alterable links";
         ArrayList<LinkGene> indicies = new ArrayList<LinkGene>(links.size());
         for (LinkGene lg : links) {
-            if (!lg.frozen && lg.active) {
+            if (!lg.isFrozen() && lg.active) {
                 indicies.add(lg);
             }
         }
@@ -762,7 +767,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
     }
 
     public void perturbLink(LinkGene lg, double delta) {
-        assert (!lg.frozen) : "Cannot perturb frozen link!";
+        assert (!lg.isFrozen()) : "Cannot perturb frozen link!";
         lg.weight += delta;
     }
 
@@ -783,7 +788,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
      * @param w new synaptic weight
      */
     public void setWeight(LinkGene lg, double w) {
-        assert (!lg.frozen) : "Cannot set frozen link!";
+        assert (!lg.isFrozen()) : "Cannot set frozen link!";
         lg.weight = w;
     }
 
@@ -885,7 +890,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
         }
         // Exclude frozen nodes
         for (NodeGene n : nodes) {
-            if (n.frozen) {
+            if (n.isFrozen()) {
                 sourceInnovationNumbers.remove(n.innovation);
             }
         }
@@ -1492,7 +1497,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
         // nothing frozen, the preference neurons will be frozen first
         int firstPreference = outputStart + this.neuronsPerModule;
         // If first preference neuron is frozen, assume all are
-        if (nodes.get(firstPreference).frozen) {
+        if (nodes.get(firstPreference).isFrozen()) {
             this.meltNetwork(); // melt preference
             this.freezePolicyNeurons();
             return true;

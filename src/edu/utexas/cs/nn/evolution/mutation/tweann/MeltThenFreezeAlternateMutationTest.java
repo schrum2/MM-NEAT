@@ -37,13 +37,13 @@ public class MeltThenFreezeAlternateMutationTest {
 	public void test() {
 		tg1.insertPreferenceNeuron(0);
 		for(int i = 0; i < tg1.nodes.size(); i++) {
-		assertFalse(tg1.nodes.get(i).frozen);
+		assertFalse(tg1.nodes.get(i).isFrozen());
 		}
 		tg1.freezePreferenceNeurons();
 		int firstPreference = tg1.outputStartIndex() + tg1.neuronsPerModule;
 		mtfam.mutate(tg1);
 		for(int i = 0; i < firstPreference; i++) {
-			assertTrue(tg1.nodes.get(i).frozen);
+			assertTrue(tg1.nodes.get(i).isFrozen());
 		}
 		
 	}

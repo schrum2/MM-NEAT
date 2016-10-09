@@ -505,7 +505,7 @@ public class TWEANN implements Network {
 		int section = Node.NTYPE_INPUT;
 		for (int i = 0; i < g.nodes.size(); i++) {
 			TWEANNGenotype.NodeGene ng = g.nodes.get(i);
-			Node n = new Node(ng.ftype, ng.ntype, ng.innovation, ng.frozen, ng.bias);
+			Node n = new Node(ng.ftype, ng.ntype, ng.innovation, ng.isFrozen(), ng.bias);
 			switch (ng.ntype) {
 			case Node.NTYPE_INPUT:
 				assert(section == Node.NTYPE_INPUT) : "Genome encoded false network: inputs: \n" + g;
@@ -566,7 +566,7 @@ public class TWEANN implements Network {
 				Node target = getNode(lg.targetInnovation);
 				assert(target != null) : "No target: " + lg + "\nNet:" + g.getId();
 				assert(source != null) : "How could the source be null?";
-				source.connect(target, lg.weight, lg.innovation, lg.recurrent, lg.frozen);
+				source.connect(target, lg.weight, lg.innovation, lg.recurrent, lg.isFrozen());
 			}
 		}
 		outputStart = nodes.size() - numOut;
