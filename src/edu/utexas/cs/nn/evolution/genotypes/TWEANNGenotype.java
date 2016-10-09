@@ -50,8 +50,8 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
         }
         
         public boolean isFrozen() {
-            //return frozen;
-            return false;
+            return frozen;
+            //return false;
         }
 
         public Gene copy() {
