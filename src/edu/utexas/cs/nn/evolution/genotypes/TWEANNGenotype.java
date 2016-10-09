@@ -137,7 +137,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
          */
         @Override
         public NodeGene clone() {
-            return new NodeGene(ftype, ntype, innovation, isFrozen(), bias);
+            return new NodeGene(ftype, ntype, innovation, isFrozen(), getBias());
         }
 
         /**
@@ -230,6 +230,10 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
             return active;
         }
         
+        public void setActive(boolean newValue) {
+            active = newValue;
+        }
+        
         /**
          * Clones given link gene
          *
@@ -237,7 +241,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
          */
         @Override
         public LinkGene clone() {
-            return new LinkGene(sourceInnovation, targetInnovation, weight, innovation, active, recurrent, isFrozen());
+            return new LinkGene(sourceInnovation, targetInnovation, weight, innovation, isActive(), recurrent, isFrozen());
         }
 
         /**
@@ -248,7 +252,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
         @Override
         public String toString() {
             return "(inno=" + this.innovation + ",source=" + this.sourceInnovation + ",target=" + this.targetInnovation
-                    + ",weight=" + this.weight + ",active=" + this.active + ",recurrent=" + this.recurrent + ",frozen="
+                    + ",weight=" + this.weight + ",active=" + this.isActive() + ",recurrent=" + this.recurrent + ",frozen="
                     + this.isFrozen() + ")";
             // A shorter output option: Sometimes useful for troubleshooting
             // return "(" + this.innovation + ":" + this.sourceInnovation + "->"
@@ -742,7 +746,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
      */
     public boolean existsAlterableLink() {
         for (LinkGene lg : links) {
-            if (!lg.isFrozen() && lg.active) {
+            if (!lg.isFrozen() && lg.isActive()) {
                 return true;
             }
         }
@@ -759,7 +763,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
         assert existsAlterableLink() : "There are no alterable links";
         ArrayList<LinkGene> indicies = new ArrayList<LinkGene>(links.size());
         for (LinkGene lg : links) {
-            if (!lg.isFrozen() && lg.active) {
+            if (!lg.isFrozen() && lg.isActive()) {
                 indicies.add(lg);
             }
         }
@@ -1004,7 +1008,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
             double weight1, double weight2, long toLinkInnovation, long fromLinkInnovation) {
         NodeGene ng = new NodeGene(ftype, TWEANN.Node.NTYPE_HIDDEN, newNodeInnovation);
         LinkGene lg = getLinkBetween(sourceInnovation, targetInnovation);
-        lg.active = CommonConstants.minimizeSpliceImpact;
+        lg.setActive(CommonConstants.minimizeSpliceImpact);
         nodes.add(Math.min(outputStartIndex(), Math.max(numIn, indexOfNodeInnovation(sourceInnovation) + 1)), ng);
         int index = EvolutionaryHistory.indexOfArchetypeInnovation(archetypeIndex, sourceInnovation);
         int pos = Math.min(EvolutionaryHistory.firstArchetypeOutputIndex(archetypeIndex), Math.max(numIn, index + 1));
@@ -1233,12 +1237,12 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
         // makes sure the only nodes included from link genotypes are those that
         // are active
         for (int i = 0; i < FakemLink.size(); i++) {
-            if (FakemLink.get(i).active) {
+            if (FakemLink.get(i).isActive()) {
                 mLink.add(FakemLink.get(i));
             }
         }
         for (int i = 0; i < FakeoLink.size(); i++) {
-            if (FakeoLink.get(i).active) {
+            if (FakeoLink.get(i).isActive()) {
                 oLink.add(FakeoLink.get(i));
             }
         }
@@ -1450,7 +1454,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
         // Copy all links from old node
         for (NodeGene p : nodes) {
             LinkGene lg = getLinkBetween(p.innovation, n.innovation);
-            if (lg != null && lg.active) {
+            if (lg != null && lg.isActive()) {
                 // Copy newNode if it exists
                 LinkGene duplicate;
                 if (p.innovation == n.innovation) {
