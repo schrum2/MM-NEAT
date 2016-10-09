@@ -566,7 +566,7 @@ public class TWEANN implements Network {
 		this.preferenceFatigue = new double[numModes];
 
 		for (LinkGene lg : g.links) {
-			if (lg.active) {
+			if (lg.isActive()) {
 				Node source = getNode(lg.sourceInnovation);
 				Node target = getNode(lg.targetInnovation);
 				assert(target != null) : "No target: " + lg + "\nNet:" + g.getId();

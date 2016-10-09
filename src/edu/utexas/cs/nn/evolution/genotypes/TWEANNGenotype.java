@@ -162,7 +162,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
         public long sourceInnovation;
         public long targetInnovation;
         public double weight;
-        public boolean active;
+        protected boolean active;
         public boolean recurrent;
 
         /**
@@ -226,6 +226,10 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
             this.recurrent = recurrent;
         }
 
+        public boolean isActive() {
+            return active;
+        }
+        
         /**
          * Clones given link gene
          *
