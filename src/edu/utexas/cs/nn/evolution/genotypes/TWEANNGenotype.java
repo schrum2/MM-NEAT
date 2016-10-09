@@ -76,7 +76,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
         public int ftype;
         // public String origin = "";
         protected boolean fromCombiningCrossover = false;
-        public double bias;
+        protected double bias;
 
         /**
          * New node gene, not frozen by default
@@ -111,6 +111,10 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
         
         public void setFromCombiningCrossover() {
             fromCombiningCrossover = true;
+        }
+        
+        public double getBias() {
+            return bias;
         }
         
         /**

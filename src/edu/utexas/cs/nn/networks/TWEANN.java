@@ -210,6 +210,9 @@ public class TWEANN implements Network {
 		 *            = type of node: input, hidden, output
 		 * @param innovation
 		 *            = unique innovation number for node
+                 * @param bias
+                 *            = bias offset added to neuron sum before activation function.
+                 *              (primarily needed by substrate networks from CPPNs)
 		 */
 		public Node(int ftype, int ntype, long innovation, double bias) {
 			this(ftype, ntype, innovation, false, bias);
@@ -226,6 +229,9 @@ public class TWEANN implements Network {
 		 *            = unique innovation number for node
 		 * @param frozen
 		 *            = true if new link mutations cannot target this node
+                 * @param bias
+                 *            = bias offset added to neuron sum before activation function.
+                 *              (primarily needed by substrate networks from CPPNs)
 		 */
 		public Node(int ftype, int ntype, long innovation, boolean frozen, double bias) {
 			this.innovation = innovation;
@@ -505,7 +511,7 @@ public class TWEANN implements Network {
 		int section = Node.NTYPE_INPUT;
 		for (int i = 0; i < g.nodes.size(); i++) {
 			TWEANNGenotype.NodeGene ng = g.nodes.get(i);
-			Node n = new Node(ng.ftype, ng.ntype, ng.innovation, ng.isFrozen(), ng.bias);
+			Node n = new Node(ng.ftype, ng.ntype, ng.innovation, ng.isFrozen(), ng.getBias());
 			switch (ng.ntype) {
 			case Node.NTYPE_INPUT:
 				assert(section == Node.NTYPE_INPUT) : "Genome encoded false network: inputs: \n" + g;
@@ -539,8 +545,7 @@ public class TWEANN implements Network {
 			// issue:
 			// This array was added for the Hierarchical Multitask networks
 			this.moduleAssociations = Arrays.copyOf(g.moduleAssociations, numModes);
-		} else { // In older networks, simply associate each module with its own
-			// mode
+		} else { // In older networks, simply associate each module with its own mode
 			moduleAssociations = new int[this.numModes];
 			for (int i = 0; i < this.numModes; i++) {
 				moduleAssociations[i] = i;
