@@ -168,8 +168,7 @@ public abstract class MuLambda<T> implements SinglePopulationGenerationalEA<T> {
 		ArrayList<Double> modeCountsOfBest = new ArrayList<Double>();
 		ArrayList<Double> modeCountsOfWorst = new ArrayList<Double>();
 		for (Score<T> g : parentScores) {
-			double score = g.otherStats[0]; // Game score should always be first
-											// "other" stat
+			double score = g.otherStats[0]; // Game score should always be first "other" stat
 			int modes = ((TWEANNGenotype) g.individual).numModules;
 			if (modes <= MAX_MODE_OF_LOG_INTEREST) {
 				modeBests[modes - 1] = Math.max(modeBests[modes - 1], score);
