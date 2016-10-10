@@ -192,11 +192,9 @@ public class EvolutionaryHistory {
 	@SuppressWarnings("unchecked")
 	public static void initArchetype(int populationIndex, String loadedArchetype) {
 		int size = MMNEAT.genotypeExamples == null ? 1 : MMNEAT.genotypeExamples.size();
-		if (archetypes == null) {// checks to see if an archetype has been
-									// created yet for this genotype
+		if (archetypes == null) {// checks to see if an archetype has been created yet for this genotype
 			archetypes = new ArrayList[size];
-		} // this if statement happens if the current experiment hasn't yet been
-			// run or is a resume
+		} // this if statement happens if the current experiment hasn't yet been run or is a resume
 		if (loadedArchetype == null || loadedArchetype.equals("") || !(new File(loadedArchetype).exists())) {
 			// ternary operator allows for coevolution to be implemented
 			TWEANNGenotype tg = (TWEANNGenotype) (MMNEAT.genotypeExamples == null ? MMNEAT.genotype.copy() : MMNEAT.genotypeExamples.get(populationIndex).copy());
