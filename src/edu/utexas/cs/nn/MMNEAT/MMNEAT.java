@@ -621,8 +621,10 @@ public class MMNEAT {
 				HyperNEATCPPNGenotype hntGeno = new HyperNEATCPPNGenotype(HyperNEATTask.NUM_CPPN_INPUTS,  numSubstratePairings * HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair, 0);
 				TWEANNGenotype seedGeno = hntGeno.getSubstrateGenotypeForEvolution(HNTSeedTask);
 				genotype = seedGeno;
-				System.out.println("HyperNEATGenotype seeded");
+				System.out.println("Genotype seeded from HyperNEAT task substrate specification");
 				seedExample = true;
+                                // Cleanup data we don't need any more
+                                HNTSeedTask = null;
 			} else if (seedGenotype.isEmpty()) {
 				genotype = (Genotype) ClassCreation.createObject("genotype");
 			} else {
@@ -799,6 +801,9 @@ public class MMNEAT {
 	}
 
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
+            // Simple way of debugging using the profiler
+            //args = new String[]{"runNumber:0", "randomSeed:3", "base:tetris", "logPerformance:true", "logTWEANNData:true", "trials:1", "maxGens:300", "mu:50", "io:true", "netio:true", "mating:true", "task:edu.utexas.cs.nn.tasks.rlglue.tetris.TetrisTask", "rlGlueEnvironment:org.rlcommunity.environments.tetris.Tetris", "rlGlueExtractor:edu.utexas.cs.nn.tasks.rlglue.featureextractors.tetris.RawTetrisStateExtractor", "tetrisTimeSteps:true", "tetrisBlocksOnScreen:false", "rlGlueAgent:edu.utexas.cs.nn.tasks.rlglue.tetris.TetrisAfterStateAgent", "splitRawTetrisInputs:true", "senseHolesDifferently:true", "log:Tetris-moRawHNSeedFixedSplitInputs", "saveTo:moRawHNSeedFixedSplitInputs", "hyperNEATSeedTask:edu.utexas.cs.nn.tasks.rlglue.tetris.HyperNEATTetrisTask", "substrateMapping:edu.utexas.cs.nn.networks.hyperneat.BottomSubstrateMapping", "HNTTetrisProcessDepth:1", "netLinkRate:0.0", "netSpliceRate:0.0", "linkExpressionThreshold:-1"};
+            
 		if (args.length == 0) {
 			System.out.println("First command line parameter must be one of the following:");
 			System.out.println("\tmultiple:n\twhere n is the number of experiments to run in sequence");
