@@ -571,7 +571,7 @@ public class TWEANN implements Network {
 				Node target = getNode(lg.targetInnovation);
 				assert(target != null) : "No target: " + lg + "\nNet:" + g.getId();
 				assert(source != null) : "How could the source be null?";
-				source.connect(target, lg.weight, lg.innovation, lg.recurrent, lg.isFrozen());
+				source.connect(target, lg.weight, lg.innovation, lg.isRecurrent(), lg.isFrozen());
 			}
 		}
 		outputStart = nodes.size() - numOut;

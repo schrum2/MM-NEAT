@@ -32,22 +32,23 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
      * @author Jacob Schrum
      */
     public abstract class Gene {
-
         public long innovation; // unique number for each gene
 
         private Gene(long innovation) {
             this.innovation = innovation;
         }
 
-        // Freezing methods are required, but do nothing here,
-        // since the default is for freezing to not be possible
+        // These methods are overridden and filled out
+        // in the link and node gene classes that are
+        // fully featured. They are left blank here
+        // to allow for reduced memory versions of the genes.
         
         public void freeze() {
         }
 
         public void melt() {
         }
-        // genes are not frozen by default. Only freezable genes are
+        
         public boolean isFrozen() {
             return false;
         }
@@ -64,47 +65,13 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
     }
 
     /**
-     * Adds capability for freezing
-     */
-    public abstract class FreezableGene extends Gene {
-        protected boolean frozen; // frozen genes cannot be changed by mutation
-
-        private FreezableGene(long innovation, boolean frozen) {
-            super(innovation);
-            this.frozen = frozen;
-        }
-
-        // Override the freezing methods so they actually work.
-        // These genes can be frozen and unfrozen.
-        
-        @Override
-        public void freeze() {
-            frozen = true;
-        }
-
-        @Override
-        public void melt() {
-            frozen = false;
-        }
-        
-        @Override
-        public boolean isFrozen() {
-            return frozen;
-        }
-    }
-
-    /**
      * Single neuron in a neural network
      *
      * @author Jacob Schrum
      */
-    public class NodeGene extends FreezableGene {
-
+    public class NodeGene extends Gene {
         public int ntype;
         public int ftype;
-        // public String origin = "";
-        protected boolean fromCombiningCrossover = false;
-        protected double bias;
 
         /**
          * New node gene
@@ -115,23 +82,26 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
          * @param frozen = false if node can accept new inputs
          * @param bias = bias offset to sum of this node before activation
          */
-        private NodeGene(int ftype, int ntype, long innovation, boolean frozen, double bias) {
-            super(innovation, frozen);
+        private NodeGene(int ftype, int ntype, long innovation) {
+            super(innovation);
             this.ftype = ftype;
             this.ntype = ntype;
-            this.bias = bias;
         }
 
+        // These methods are overridden and filled out
+        // in the link and node gene classes that are
+        // fully featured. They are left blank here
+        // to allow for reduced memory versions of the genes.
+        
         public boolean fromCombiningCrossover() {
-            return fromCombiningCrossover;
+            return false;
         }
         
         public void setFromCombiningCrossover() {
-            fromCombiningCrossover = true;
         }
         
         public double getBias() {
-            return bias;
+            return 0.0;
         }
         
         /**
@@ -170,51 +140,105 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
     }
 
     /**
+     * Node with all possible fields. Increased memory footprint.
+     *
+     * @author Jacob Schrum
+     */
+    public class FullNodeGene extends NodeGene {
+        protected boolean fromCombiningCrossover = false;
+        protected double bias;
+        protected boolean frozen;
+
+        /**
+         * New node gene
+         *
+         * @param ftype = type of activation function
+         * @param ntype = type of node (input, hidden, output)
+         * @param innovation = unique innovation number for node
+         * @param frozen = false if node can accept new inputs
+         * @param bias = bias offset to sum of this node before activation
+         */
+        private FullNodeGene(int ftype, int ntype, long innovation, boolean frozen, double bias) {
+            super(ftype, ntype, innovation);
+            this.frozen = frozen;
+            this.bias = bias;
+        }
+
+        @Override
+        public void freeze() {
+            frozen = true;
+        }
+
+        @Override
+        public void melt() {
+            frozen = false;
+        }
+        
+        @Override
+        public boolean isFrozen() {
+            return frozen;
+        }
+        
+        @Override
+        public boolean fromCombiningCrossover() {
+            return fromCombiningCrossover;
+        }
+        
+        @Override
+        public void setFromCombiningCrossover() {
+            fromCombiningCrossover = true;
+        }
+        
+        @Override
+        public double getBias() {
+            return bias;
+        }
+    }
+        
+    /**
      * Single link between neurons in a neural network
      *
      * @author Jacob Schrum
      */
-    public class LinkGene extends FreezableGene {
+    public class LinkGene extends Gene {
 
         public long sourceInnovation;
         public long targetInnovation;
         public double weight;
-        protected boolean active;
-        public boolean recurrent;
 
         /**
          * New link gene in which it needs to be specified whether or not it is
          * active
          *
-         * @param sourceInnovation = innovation of node of origin @param
-         * targetInnovation = innovation of node target @param weights =
-         * synaptic weights @param innovation = innovation number of link gene
-         * itself @param active = whether the link is present in phenotype
-         * network @param recurrent = true if link is recurrent @param frozen =
-         * true if this link can no longer be changed by mutation
-         * @param targetInnovation Innovation number of node that the link
-         * points to
+         * @param sourceInnovation = innovation of node of origin 
+         * @param targetInnovation Innovation number of node that the link points to
          * @param weight Synaptic weight
          * @param innovation Innovation number of link gene
          * @param active Whether link is expressed in phenotype
          * @param recurrent Whether the link is considered recurrent
          * @param frozen Whether the link is immune to modifications by mutation
          */
-        private LinkGene(long sourceInnovation, long targetInnovation, double weight, long innovation, boolean active, boolean recurrent, boolean frozen) {
-            super(innovation, frozen);
+        private LinkGene(long sourceInnovation, long targetInnovation, double weight, long innovation) {
+            super(innovation);
             this.sourceInnovation = sourceInnovation;
             this.targetInnovation = targetInnovation;
             this.weight = weight;
-            this.active = active;
-            this.recurrent = recurrent;
         }
 
-        public boolean isActive() {
-            return active;
+        // These methods are overridden and filled out
+        // in the link gene classes that are
+        // fully featured. They are left blank here
+        // to allow for reduced memory versions of the genes.
+        
+        public boolean isActive() { // Genes are active by default
+            return true;
         }
         
-        public void setActive(boolean newValue) {
-            active = newValue;
+        public void setActive(boolean newValue) { // can't change active setting
+        }
+        
+        public boolean isRecurrent() {
+            return false;
         }
         
         /**
@@ -224,7 +248,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
          */
         @Override
         public LinkGene clone() {
-            return new LinkGene(sourceInnovation, targetInnovation, weight, innovation, isActive(), recurrent, isFrozen());
+            return newLinkGene(sourceInnovation, targetInnovation, weight, innovation, isActive(), isRecurrent(), isFrozen());
         }
 
         /**
@@ -235,7 +259,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
         @Override
         public String toString() {
             return "(inno=" + this.innovation + ",source=" + this.sourceInnovation + ",target=" + this.targetInnovation
-                    + ",weight=" + this.weight + ",active=" + this.isActive() + ",recurrent=" + this.recurrent + ",frozen="
+                    + ",weight=" + this.weight + ",active=" + this.isActive() + ",recurrent=" + this.isRecurrent() + ",frozen="
                     + this.isFrozen() + ")";
             // A shorter output option: Sometimes useful for troubleshooting
             // return "(" + this.innovation + ":" + this.sourceInnovation + "->"
@@ -243,6 +267,58 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
         }
     }
 
+    public class FullLinkGene extends LinkGene {
+
+        protected boolean active;
+        protected boolean recurrent;
+        protected boolean frozen;
+
+        /**
+         * New link gene in which it needs to be specified whether or not it is
+         * active
+         *
+         * @param sourceInnovation = innovation of node of origin 
+         * @param targetInnovation Innovation number of node that the link points to
+         * @param weight Synaptic weight
+         * @param innovation Innovation number of link gene
+         * @param active Whether link is expressed in phenotype
+         * @param recurrent Whether the link is considered recurrent
+         * @param frozen Whether the link is immune to modifications by mutation
+         */
+        private FullLinkGene(long sourceInnovation, long targetInnovation, double weight, long innovation, boolean active, boolean recurrent, boolean frozen) {
+            super(sourceInnovation, targetInnovation, weight, innovation);
+            this.active = active;
+            this.recurrent = recurrent;
+            this.frozen = frozen;
+        }
+
+        @Override
+        public void freeze() {
+            frozen = true;
+        }
+
+        @Override
+        public void melt() {
+            frozen = false;
+        }
+        
+        @Override
+        public boolean isFrozen() {
+            return frozen;
+        }
+        
+        
+        @Override
+        public boolean isActive() {
+            return active;
+        }
+        
+        @Override
+        public void setActive(boolean newValue) {
+            active = newValue;
+        }
+    }    
+    
     /**
      * Genes are created through these method access points so that an easy
      * distinction between different types of genes (with different memory
@@ -258,15 +334,15 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
     }
     
     public final LinkGene newLinkGene(long sourceInnovation, long targetInnovation, double weight, long innovation, boolean active, boolean recurrent, boolean frozen) {
-        return new LinkGene(sourceInnovation, targetInnovation, weight, innovation, active, recurrent, frozen);
-    }
-    
-    public final NodeGene newNodeGene(int ftype, int ntype, long innovation, boolean frozen, double bias) {
-        return new NodeGene(ftype, ntype, innovation, frozen, bias);
+        return new FullLinkGene(sourceInnovation, targetInnovation, weight, innovation, active, recurrent, frozen);
     }
     
     public final NodeGene newNodeGene(int ftype, int ntype, long innovation) {
-        return new NodeGene(ftype, ntype, innovation, false, 0.0);
+        return newNodeGene(ftype, ntype, innovation, false, 0.0);
+    }
+    
+    public final NodeGene newNodeGene(int ftype, int ntype, long innovation, boolean frozen, double bias) {
+        return new FullNodeGene(ftype, ntype, innovation, frozen, bias);
     }
     
     /**
@@ -374,7 +450,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
     public double numLinks(boolean recurrent) {
         int count = 0;
         for (LinkGene l : links) {
-            if (l.recurrent == recurrent) {
+            if (l.isRecurrent() == recurrent) {
                 count++;
             }
         }
