@@ -38,8 +38,7 @@ public class EvolutionaryHistory {
 	public static long largestUnusedInnovationNumber = 0;
 	public static long largestUnusedGenotypeId = 0;
 	// keeps track of archetype of every genotype from each generation of every
-	// member
-	// of population in an array list
+	// member of population in an array list
 	public static ArrayList<NodeGene>[] archetypes = null;
 	public static int[] archetypeOut = null;
 	// logs that keep track of history of genotype
@@ -451,8 +450,7 @@ public class EvolutionaryHistory {
 			if (CommonConstants.trackCombiningCrossover && combineCopy) {
 				// this statement only runs if we will be tracking combining
 				// crossover information
-				CombiningTWEANNCrossover.addToArchetypeForCombiningCrossover(populationIndex, pos, node, combineCopy,
-						origin);
+				CombiningTWEANNCrossover.addToArchetypeForCombiningCrossover(populationIndex, pos, node, combineCopy, origin);
 			}
 		}
 		assert orderedArchetype(populationIndex) : "Archetype " + populationIndex
