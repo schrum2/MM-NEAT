@@ -171,12 +171,12 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 		int[] temp = moduleUsage; // Schrum: Not sure if keeping moduleUsage is appropriate
 		ArrayList<LinkGene> linksCopy = new ArrayList<LinkGene>(this.links.size());
 		for (LinkGene lg : this.links) {// needed for a deep copy
-			linksCopy.add(new LinkGene(lg.sourceInnovation, lg.targetInnovation, lg.weight, lg.innovation, false));
+			linksCopy.add(newLinkGene(lg.sourceInnovation, lg.targetInnovation, lg.weight, lg.innovation, false));
 		}
 
 		ArrayList<NodeGene> genes = new ArrayList<NodeGene>(this.nodes.size());
 		for (NodeGene ng : this.nodes) {// needed for a deep copy
-			genes.add(new NodeGene(ng.ftype, ng.ntype, ng.innovation, false, ng.getBias()));
+			genes.add(newNodeGene(ng.ftype, ng.ntype, ng.innovation, false, ng.getBias()));
 		}
 		HyperNEATCPPNGenotype result = new HyperNEATCPPNGenotype(linksCopy, genes, MMNEAT.networkOutputs);
 
@@ -209,7 +209,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 						// Ask CPPN to generate a bias for each neuron
 						bias = cppn.process(new double[]{0, 0, x, y, BIAS})[biasIndex];
 					}
-					newNodes.add(new NodeGene(CommonConstants.ftype, subs.get(i).getStype(), innovationID++, false, bias));
+					newNodes.add(newNodeGene(CommonConstants.ftype, subs.get(i).getStype(), innovationID++, false, bias));
 				}
 			}
 		}
@@ -298,7 +298,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 													? outputs[(numCPPNOutputsPerLayerPair * outputIndex) + LINK_INDEX]
 													// Standard HyperNEAT must scale the weight
 													: NetworkUtil.calculateWeight(outputs[(numCPPNOutputsPerLayerPair * outputIndex) + LINK_INDEX]);
-									linksSoFar.add(new LinkGene(sourceID, targetID, weight, innovationID++, false));
+									linksSoFar.add(newLinkGene(sourceID, targetID, weight, innovationID++, false));
 								}
 
 							}

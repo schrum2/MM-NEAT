@@ -36,7 +36,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
         public long innovation; // unique number for each gene
         protected boolean frozen; // frozen genes cannot be changed by mutation
 
-        public Gene(long innovation, boolean frozen) {
+        private Gene(long innovation, boolean frozen) {
             this.innovation = innovation;
             this.frozen = frozen;
         }
@@ -79,17 +79,6 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
         protected double bias;
 
         /**
-         * New node gene, not frozen by default
-         *
-         * @param ftype = type of activation function
-         * @param ntype = type of node (input, hidden, output)
-         * @param innovation = unique innovation number for node
-         */
-        public NodeGene(int ftype, int ntype, long innovation) {
-            this(ftype, ntype, innovation, false, 0.0);
-        }
-
-        /**
          * New node gene
          *
          * @param ftype = type of activation function
@@ -98,7 +87,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
          * @param frozen = false if node can accept new inputs
          * @param bias = bias offset to sum of this node before activation
          */
-        public NodeGene(int ftype, int ntype, long innovation, boolean frozen, double bias) {
+        private NodeGene(int ftype, int ntype, long innovation, boolean frozen, double bias) {
             super(innovation, frozen);
             this.ftype = ftype;
             this.ntype = ntype;
@@ -137,7 +126,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
          */
         @Override
         public NodeGene clone() {
-            return new NodeGene(ftype, ntype, innovation, isFrozen(), getBias());
+            return newNodeGene(ftype, ntype, innovation, isFrozen(), getBias());
         }
 
         /**
@@ -166,39 +155,6 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
         public boolean recurrent;
 
         /**
-         * New link which is active and not frozen by default
-         *
-         * @param sourceInnovation = innovation of node of origin
-         * @param targetInnovation = innovation of node target
-         * @param weight = weight of new link
-         * @param innovation = innovation number of link gene itself
-         * @param recurrent = true if link is recurrent
-         */
-        public LinkGene(long sourceInnovation, long targetInnovation, double weight, long innovation, boolean recurrent) {
-            this(sourceInnovation, targetInnovation, weight, innovation, recurrent, false);
-        }
-
-        /**
-         * New link gene, which is active by default
-         *
-         * @param sourceInnovation = innovation of node of origin @param
-         * targetInnovation = innovation of node target @param weights =
-         * synaptic weights @param innovation = innovation number of link gene
-         * itself @param recurrent = true if link is recurrent @param frozen =
-         * true if link cannot be changed
-         * @param targetInnovation Innovation number of node that the link
-         * points to
-         * @param weight Synaptic weight
-         * @param innovation Innovation number of link gene
-         * @param recurrent Whether the link is considered recurrent
-         * @param frozen Whether the link is immune to modifications by mutation
-         */
-        public LinkGene(long sourceInnovation, long targetInnovation, double weight, long innovation, boolean recurrent,
-                boolean frozen) {
-            this(sourceInnovation, targetInnovation, weight, innovation, true, recurrent, frozen);
-        }
-
-        /**
          * New link gene in which it needs to be specified whether or not it is
          * active
          *
@@ -216,8 +172,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
          * @param recurrent Whether the link is considered recurrent
          * @param frozen Whether the link is immune to modifications by mutation
          */
-        public LinkGene(long sourceInnovation, long targetInnovation, double weight, long innovation, boolean active,
-                boolean recurrent, boolean frozen) {
+        private LinkGene(long sourceInnovation, long targetInnovation, double weight, long innovation, boolean active, boolean recurrent, boolean frozen) {
             super(innovation, frozen);
             this.sourceInnovation = sourceInnovation;
             this.targetInnovation = targetInnovation;
@@ -260,6 +215,32 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
         }
     }
 
+    /**
+     * Genes are created through these method access points so that an easy
+     * distinction between different types of genes (with different memory
+     * footprints) can be made.
+     */
+    
+    public final LinkGene newLinkGene(long sourceInnovation, long targetInnovation, double weight, long innovation, boolean recurrent) {
+        return new LinkGene(sourceInnovation, targetInnovation, weight, innovation, true, recurrent, false);
+    }
+    
+    public final LinkGene newLinkGene(long sourceInnovation, long targetInnovation, double weight, long innovation, boolean recurrent, boolean frozen) {
+        return new LinkGene(sourceInnovation, targetInnovation, weight, innovation, true, recurrent, frozen);
+    }
+    
+    public final LinkGene newLinkGene(long sourceInnovation, long targetInnovation, double weight, long innovation, boolean active, boolean recurrent, boolean frozen) {
+        return new LinkGene(sourceInnovation, targetInnovation, weight, innovation, active, recurrent, frozen);
+    }
+    
+    public final NodeGene newNodeGene(int ftype, int ntype, long innovation, boolean frozen, double bias) {
+        return new NodeGene(ftype, ntype, innovation, frozen, bias);
+    }
+    
+    public final NodeGene newNodeGene(int ftype, int ntype, long innovation) {
+        return new NodeGene(ftype, ntype, innovation, false, 0.0);
+    }
+    
     /**
      * If there is a forward link from node A to node B, then node A must appear
      * before node A in the list nodes. Additionally, all input nodes appear
@@ -392,12 +373,11 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 
         for (int i = 0; i < tweann.nodes.size(); i++) {
             TWEANN.Node n = tweann.nodes.get(i);
-            NodeGene ng = new NodeGene(n.ftype, n.ntype, n.innovation, n.frozen, n.bias);
+            NodeGene ng = newNodeGene(n.ftype, n.ntype, n.innovation, n.frozen, n.bias);
             nodes.add(ng);
             LinkedList<LinkGene> temp = new LinkedList<LinkGene>();
             for (TWEANN.Link l : n.outputs) {
-                LinkGene lg = new LinkGene(n.innovation, l.target.innovation, l.weight, l.innovation,
-                        n.isLinkRecurrent(l.target.innovation), l.frozen);
+                LinkGene lg = newLinkGene(n.innovation, l.target.innovation, l.weight, l.innovation, n.isLinkRecurrent(l.target.innovation), l.frozen);
                 temp.add(lg);
             }
             for (int k = 0; k < temp.size(); k++) {
@@ -955,7 +935,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
             int target = indexOfNodeInnovation(targetInnovation);
             int source = indexOfNodeInnovation(sourceInnovation);
             // System.out.println(nodeInnovation + "->" + sourceInnovation);
-            LinkGene lg = new LinkGene(sourceInnovation, targetInnovation, weight, innovation, target <= source);
+            LinkGene lg = newLinkGene(sourceInnovation, targetInnovation, weight, innovation, target <= source);
             links.add(lg);
         }
     }
@@ -1006,15 +986,15 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
      */
     public void spliceNode(int ftype, long newNodeInnovation, long sourceInnovation, long targetInnovation,
             double weight1, double weight2, long toLinkInnovation, long fromLinkInnovation) {
-        NodeGene ng = new NodeGene(ftype, TWEANN.Node.NTYPE_HIDDEN, newNodeInnovation);
+        NodeGene ng = newNodeGene(ftype, TWEANN.Node.NTYPE_HIDDEN, newNodeInnovation);
         LinkGene lg = getLinkBetween(sourceInnovation, targetInnovation);
         lg.setActive(CommonConstants.minimizeSpliceImpact);
         nodes.add(Math.min(outputStartIndex(), Math.max(numIn, indexOfNodeInnovation(sourceInnovation) + 1)), ng);
         int index = EvolutionaryHistory.indexOfArchetypeInnovation(archetypeIndex, sourceInnovation);
         int pos = Math.min(EvolutionaryHistory.firstArchetypeOutputIndex(archetypeIndex), Math.max(numIn, index + 1));
         EvolutionaryHistory.archetypeAdd(archetypeIndex, pos, ng.clone(), numModules == 1, "splice " + sourceInnovation + "->" + targetInnovation);
-        LinkGene toNew = new LinkGene(sourceInnovation, newNodeInnovation, weight1, toLinkInnovation, indexOfNodeInnovation(newNodeInnovation) <= indexOfNodeInnovation(sourceInnovation));
-        LinkGene fromNew = new LinkGene(newNodeInnovation, targetInnovation, weight2, fromLinkInnovation, indexOfNodeInnovation(targetInnovation) <= indexOfNodeInnovation(newNodeInnovation));
+        LinkGene toNew = newLinkGene(sourceInnovation, newNodeInnovation, weight1, toLinkInnovation, indexOfNodeInnovation(newNodeInnovation) <= indexOfNodeInnovation(sourceInnovation));
+        LinkGene fromNew = newLinkGene(newNodeInnovation, targetInnovation, weight2, fromLinkInnovation, indexOfNodeInnovation(targetInnovation) <= indexOfNodeInnovation(newNodeInnovation));
         links.add(toNew);
         links.add(fromNew);
     }
@@ -1026,13 +1006,12 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
      */
     private void addFullyConnectedOutputNode(int ftype, long newNodeInnovation, ArrayList<Double> weights,
             ArrayList<Long> linkInnovations) {
-        NodeGene ng = new NodeGene(ftype, TWEANN.Node.NTYPE_OUTPUT, newNodeInnovation);
+        NodeGene ng = newNodeGene(ftype, TWEANN.Node.NTYPE_OUTPUT, newNodeInnovation);
         nodes.add(ng);
         numOut++;
         EvolutionaryHistory.archetypeAdd(archetypeIndex, ng.clone(), "full output");
         for (int i = 0; i < numIn; i++) {
-            LinkGene toNew = new LinkGene(nodes.get(i).innovation, newNodeInnovation, weights.get(i),
-                    linkInnovations.get(i), false);
+            LinkGene toNew = newLinkGene(nodes.get(i).innovation, newNodeInnovation, weights.get(i), linkInnovations.get(i), false);
             links.add(toNew);
         }
     }
@@ -1087,13 +1066,12 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
      */
     private int addOutputNode(int ftype, long[] sourceInnovations, double[] weights, long[] linkInnovations) {
         long newNodeInnovation = -(numIn + numOut) - 1;
-        NodeGene ng = new NodeGene(ftype, TWEANN.Node.NTYPE_OUTPUT, newNodeInnovation);
+        NodeGene ng = newNodeGene(ftype, TWEANN.Node.NTYPE_OUTPUT, newNodeInnovation);
         HashSet<Long> addedLinks = new HashSet<Long>();
         for (int i = 0; i < weights.length; i++) {
             if (!addedLinks.contains(sourceInnovations[i])) {
                 addedLinks.add(sourceInnovations[i]);
-                LinkGene toNew = new LinkGene(sourceInnovations[i], newNodeInnovation, weights[i], linkInnovations[i],
-                        false);
+                LinkGene toNew = newLinkGene(sourceInnovations[i], newNodeInnovation, weights[i], linkInnovations[i], false);
                 links.add(toNew);
             }
         }
@@ -1374,8 +1352,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
      */
     public void insertPreferenceNeuron(int moduleIndex) {
         int outputStart = outputStartIndex();
-        // Assume other modes before modeIndex have NOT had preference neurons
-        // added yet
+        // Assume other modes before modeIndex have NOT had preference neurons added yet
         int desiredPreferenceLoc = outputStart + (moduleIndex * neuronsPerModule) + neuronsPerModule;
         assert desiredPreferenceLoc <= nodes.size() : "Desired location too high! desiredPreferenceLoc:"
                 + desiredPreferenceLoc + ",nodes.size()=" + nodes.size() + ",neuronsPerModule=" + neuronsPerModule
@@ -1387,10 +1364,8 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
         if (desiredPreferenceLoc == nodes.size()) {
             // Then just add the preference neuron ... easy
             newNodeInnovation = -(numIn + numOut) - 1;
-            // System.out.println("Pref node at end: " + desiredPreferenceLoc +
-            // " w/innovation " + newNodeInnovation);
             // Create the output node
-            NodeGene ng = new NodeGene(ActivationFunctions.newNodeFunction(), TWEANN.Node.NTYPE_OUTPUT,
+            NodeGene ng = newNodeGene(ActivationFunctions.newNodeFunction(), TWEANN.Node.NTYPE_OUTPUT,
                     newNodeInnovation);
             nodes.add(ng);
             EvolutionaryHistory.archetypeAdd(archetypeIndex, ng.clone(), "insert end preference");
@@ -1398,18 +1373,12 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
             NodeGene current = nodes.get(desiredPreferenceLoc);
             // Get the innovation num of node currently in that position
             newNodeInnovation = current.innovation;
-            // System.out.println("Node at " + desiredPreferenceLoc + "
-            // w/innovation " + newNodeInnovation + " being replaced");
-            NodeGene newPref = new NodeGene(ActivationFunctions.newNodeFunction(), TWEANN.Node.NTYPE_OUTPUT,
-                    newNodeInnovation);
+            NodeGene newPref = newNodeGene(ActivationFunctions.newNodeFunction(), TWEANN.Node.NTYPE_OUTPUT, newNodeInnovation);
             // Put preference neuron after mode and before next mode
             nodes.add(desiredPreferenceLoc, newPref);
             // Shift all subsequent innovation numbers
             for (int i = desiredPreferenceLoc + 1; i < nodes.size(); i++) {
-                // System.out.print("\t" + nodes.get(i).innovation + " becomes
-                // ");
                 nodes.get(i).innovation--;
-                // System.out.println(nodes.get(i).innovation);
             }
             // Shift corresponding link targets
             for (LinkGene l : links) {
@@ -1426,10 +1395,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
                     "insert middle preference");
         }
         // Add one random link to new preference neuron
-        // System.out.println("Add link from " + randomSourceInnovation + " to "
-        // + newNodeInnovation);
-        this.addLink(randomSourceInnovation, newNodeInnovation, RandomNumbers.fullSmallRand(),
-                EvolutionaryHistory.nextInnovation());
+        this.addLink(randomSourceInnovation, newNodeInnovation, RandomNumbers.fullSmallRand(), EvolutionaryHistory.nextInnovation());
         numOut++;
         // EvolutionaryHistory.archetypeOut[archetypeIndex]++;
     }
@@ -1450,7 +1416,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
         // Should this convention change?
         long newNodeInnovation = -(numIn + numOut) - 1;
         // Create the output node
-        NodeGene ng = new NodeGene(ActivationFunctions.newNodeFunction(), TWEANN.Node.NTYPE_OUTPUT, newNodeInnovation);
+        NodeGene ng = newNodeGene(ActivationFunctions.newNodeFunction(), TWEANN.Node.NTYPE_OUTPUT, newNodeInnovation);
         // Copy all links from old node
         for (NodeGene p : nodes) {
             LinkGene lg = getLinkBetween(p.innovation, n.innovation);
@@ -1458,11 +1424,9 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
                 // Copy newNode if it exists
                 LinkGene duplicate;
                 if (p.innovation == n.innovation) {
-                    duplicate = new LinkGene(ng.innovation, ng.innovation, lg.weight,
-                            EvolutionaryHistory.nextInnovation(), false);
+                    duplicate = newLinkGene(ng.innovation, ng.innovation, lg.weight, EvolutionaryHistory.nextInnovation(), false);
                 } else {
-                    duplicate = new LinkGene(p.innovation, ng.innovation, lg.weight,
-                            EvolutionaryHistory.nextInnovation(), false);
+                    duplicate = newLinkGene(p.innovation, ng.innovation, lg.weight, EvolutionaryHistory.nextInnovation(), false);
                 }
                 links.add(duplicate);
             }
