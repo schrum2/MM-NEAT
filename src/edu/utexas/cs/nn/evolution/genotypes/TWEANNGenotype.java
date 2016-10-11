@@ -34,24 +34,22 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
     public abstract class Gene {
 
         public long innovation; // unique number for each gene
-        protected boolean frozen; // frozen genes cannot be changed by mutation
 
-        private Gene(long innovation, boolean frozen) {
+        private Gene(long innovation) {
             this.innovation = innovation;
-            this.frozen = frozen;
         }
 
+        // Freezing methods are required, but do nothing here,
+        // since the default is for freezing to not be possible
+        
         public void freeze() {
-            frozen = true;
         }
 
         public void melt() {
-            frozen = false;
         }
-        
+        // genes are not frozen by default. Only freezable genes are
         public boolean isFrozen() {
-            return frozen;
-            //return false;
+            return false;
         }
 
         public Gene copy() {
@@ -66,11 +64,41 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
     }
 
     /**
+     * Adds capability for freezing
+     */
+    public abstract class FreezableGene extends Gene {
+        protected boolean frozen; // frozen genes cannot be changed by mutation
+
+        private FreezableGene(long innovation, boolean frozen) {
+            super(innovation);
+            this.frozen = frozen;
+        }
+
+        // Override the freezing methods so they actually work.
+        // These genes can be frozen and unfrozen.
+        
+        @Override
+        public void freeze() {
+            frozen = true;
+        }
+
+        @Override
+        public void melt() {
+            frozen = false;
+        }
+        
+        @Override
+        public boolean isFrozen() {
+            return frozen;
+        }
+    }
+
+    /**
      * Single neuron in a neural network
      *
      * @author Jacob Schrum
      */
-    public class NodeGene extends Gene {
+    public class NodeGene extends FreezableGene {
 
         public int ntype;
         public int ftype;
@@ -146,7 +174,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
      *
      * @author Jacob Schrum
      */
-    public class LinkGene extends Gene {
+    public class LinkGene extends FreezableGene {
 
         public long sourceInnovation;
         public long targetInnovation;
@@ -222,11 +250,11 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
      */
     
     public final LinkGene newLinkGene(long sourceInnovation, long targetInnovation, double weight, long innovation, boolean recurrent) {
-        return new LinkGene(sourceInnovation, targetInnovation, weight, innovation, true, recurrent, false);
+        return newLinkGene(sourceInnovation, targetInnovation, weight, innovation, true, recurrent, false);
     }
     
     public final LinkGene newLinkGene(long sourceInnovation, long targetInnovation, double weight, long innovation, boolean recurrent, boolean frozen) {
-        return new LinkGene(sourceInnovation, targetInnovation, weight, innovation, true, recurrent, frozen);
+        return newLinkGene(sourceInnovation, targetInnovation, weight, innovation, true, recurrent, frozen);
     }
     
     public final LinkGene newLinkGene(long sourceInnovation, long targetInnovation, double weight, long innovation, boolean active, boolean recurrent, boolean frozen) {
