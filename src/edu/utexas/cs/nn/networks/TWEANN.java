@@ -543,7 +543,7 @@ public class TWEANN implements Network {
 		this.hierarchicalMultitask = g.hierarchicalMultitask;
 		if (g.moduleAssociations != null) { // This is a backwards compatibility
 			// issue:
-			// This array was added for the Hierarchical Multitask networks
+                        // This array was added for the Hierarchical Multitask networks
 			this.moduleAssociations = Arrays.copyOf(g.moduleAssociations, numModes);
 		} else { // In older networks, simply associate each module with its own mode
 			moduleAssociations = new int[this.numModes];
