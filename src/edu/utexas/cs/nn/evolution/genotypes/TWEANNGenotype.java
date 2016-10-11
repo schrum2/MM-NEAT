@@ -26,6 +26,10 @@ import java.util.*;
  */
 public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
 
+    // If this is true, then plain Node and Link genes are used instead 
+    // of full genes with extra fields. 
+    public static boolean smallerGenotypes = false;
+    
     /**
      * Common features of both node and link genes
      *
@@ -226,7 +230,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
         }
 
         // These methods are overridden and filled out
-        // in the link gene classes that are
+        // in the link gene class that is
         // fully featured. They are left blank here
         // to allow for reduced memory versions of the genes.
         
@@ -319,11 +323,10 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
         }
     }    
     
-    /**
-     * Genes are created through these method access points so that an easy
-     * distinction between different types of genes (with different memory
-     * footprints) can be made.
-     */
+    // Genes are created through these method access points so that an easy
+    // distinction between different types of genes (with different memory
+    // footprints) can be made.
+    
     
     public final LinkGene newLinkGene(long sourceInnovation, long targetInnovation, double weight, long innovation, boolean recurrent) {
         return newLinkGene(sourceInnovation, targetInnovation, weight, innovation, true, recurrent, false);
@@ -334,7 +337,9 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
     }
     
     public final LinkGene newLinkGene(long sourceInnovation, long targetInnovation, double weight, long innovation, boolean active, boolean recurrent, boolean frozen) {
-        return new FullLinkGene(sourceInnovation, targetInnovation, weight, innovation, active, recurrent, frozen);
+        return smallerGenotypes
+                ? new LinkGene(sourceInnovation, targetInnovation, weight, innovation)
+                : new FullLinkGene(sourceInnovation, targetInnovation, weight, innovation, active, recurrent, frozen);
     }
     
     public final NodeGene newNodeGene(int ftype, int ntype, long innovation) {
@@ -342,7 +347,9 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
     }
     
     public final NodeGene newNodeGene(int ftype, int ntype, long innovation, boolean frozen, double bias) {
-        return new FullNodeGene(ftype, ntype, innovation, frozen, bias);
+        return smallerGenotypes
+                ? new NodeGene(ftype, ntype, innovation)
+                : new FullNodeGene(ftype, ntype, innovation, frozen, bias);
     }
     
     /**

@@ -602,6 +602,10 @@ public class MMNEAT {
 				
 			} else if(HNTSeedTask != null && Parameters.parameters.integerParameter("lastSavedGeneration") == 0) { // hyperNEATseed is not null
 			
+                                // Since this approach required many large TWEANNs to be saved in memory, alternative
+                                // gene representations are used with optional fields removed
+                                TWEANNGenotype.smallerGenotypes = true;
+                            
 				HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair = 1;
 				HyperNEATCPPNGenotype.biasIndex = 0;
 				HyperNEATCPPNGenotype.leoIndex = 0;
@@ -802,7 +806,7 @@ public class MMNEAT {
 
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
             // Simple way of debugging using the profiler
-            //args = new String[]{"runNumber:0", "randomSeed:3", "base:tetris", "logPerformance:true", "logTWEANNData:true", "trials:1", "maxGens:300", "mu:50", "io:true", "netio:true", "mating:true", "task:edu.utexas.cs.nn.tasks.rlglue.tetris.TetrisTask", "rlGlueEnvironment:org.rlcommunity.environments.tetris.Tetris", "rlGlueExtractor:edu.utexas.cs.nn.tasks.rlglue.featureextractors.tetris.RawTetrisStateExtractor", "tetrisTimeSteps:true", "tetrisBlocksOnScreen:false", "rlGlueAgent:edu.utexas.cs.nn.tasks.rlglue.tetris.TetrisAfterStateAgent", "splitRawTetrisInputs:true", "senseHolesDifferently:true", "log:Tetris-moRawHNSeedFixedSplitInputs", "saveTo:moRawHNSeedFixedSplitInputs", "hyperNEATSeedTask:edu.utexas.cs.nn.tasks.rlglue.tetris.HyperNEATTetrisTask", "substrateMapping:edu.utexas.cs.nn.networks.hyperneat.BottomSubstrateMapping", "HNTTetrisProcessDepth:1", "netLinkRate:0.0", "netSpliceRate:0.0", "linkExpressionThreshold:-1"};
+            //args = new String[]{"runNumber:1", "randomSeed:0", "base:tetris", "logPerformance:false", "logTWEANNData:false", "trials:1", "maxGens:300", "mu:50", "io:true", "netio:true", "mating:true", "task:edu.utexas.cs.nn.tasks.rlglue.tetris.TetrisTask", "rlGlueEnvironment:org.rlcommunity.environments.tetris.Tetris", "rlGlueExtractor:edu.utexas.cs.nn.tasks.rlglue.featureextractors.tetris.RawTetrisStateExtractor", "tetrisTimeSteps:true", "tetrisBlocksOnScreen:false", "rlGlueAgent:edu.utexas.cs.nn.tasks.rlglue.tetris.TetrisAfterStateAgent", "splitRawTetrisInputs:true", "senseHolesDifferently:true", "log:Tetris-moRawHNSeedFixedSplitInputs", "saveTo:moRawHNSeedFixedSplitInputs", "hyperNEATSeedTask:edu.utexas.cs.nn.tasks.rlglue.tetris.HyperNEATTetrisTask", "substrateMapping:edu.utexas.cs.nn.networks.hyperneat.BottomSubstrateMapping", "HNTTetrisProcessDepth:1", "netLinkRate:0.0", "netSpliceRate:0.0", "linkExpressionThreshold:-1"};
             
 		if (args.length == 0) {
 			System.out.println("First command line parameter must be one of the following:");
