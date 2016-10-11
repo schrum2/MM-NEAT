@@ -9,7 +9,6 @@ import java.util.logging.Logger;
 
 import org.rlcommunity.rlglue.codec.taskspec.TaskSpec;
 
-import ch.idsia.mario.engine.Scene;
 import edu.utexas.cs.nn.breve2D.dynamics.Breve2DDynamics;
 import edu.utexas.cs.nn.data.ResultSummaryUtilities;
 import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
@@ -79,7 +78,6 @@ import edu.utexas.cs.nn.tasks.testmatch.MatchDataTask;
 import edu.utexas.cs.nn.tasks.ut2004.UT2004Task;
 import edu.utexas.cs.nn.tasks.vizdoom.VizDoomTask;
 import edu.utexas.cs.nn.util.ClassCreation;
-import edu.utexas.cs.nn.util.MiscUtil;
 import edu.utexas.cs.nn.util.file.FileUtilities;
 import edu.utexas.cs.nn.util.random.RandomGenerator;
 import edu.utexas.cs.nn.util.random.RandomNumbers;
