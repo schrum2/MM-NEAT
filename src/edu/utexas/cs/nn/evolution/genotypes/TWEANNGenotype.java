@@ -35,7 +35,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
      *
      * @author Jacob Schrum
      */
-    public abstract class Gene {
+    public static abstract class Gene {
         public long innovation; // unique number for each gene
 
         private Gene(long innovation) {
@@ -73,7 +73,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
      *
      * @author Jacob Schrum
      */
-    public class NodeGene extends Gene {
+    public static class NodeGene extends Gene {
         public int ntype;
         public int ftype;
 
@@ -148,7 +148,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
      *
      * @author Jacob Schrum
      */
-    public class FullNodeGene extends NodeGene {
+    public static class FullNodeGene extends NodeGene {
         protected boolean fromCombiningCrossover = false;
         protected double bias;
         protected boolean frozen;
@@ -204,7 +204,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
      *
      * @author Jacob Schrum
      */
-    public class LinkGene extends Gene {
+    public static class LinkGene extends Gene {
 
         public long sourceInnovation;
         public long targetInnovation;
@@ -271,7 +271,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
         }
     }
 
-    public class FullLinkGene extends LinkGene {
+    public static class FullLinkGene extends LinkGene {
 
         protected boolean active;
         protected boolean recurrent;
@@ -328,25 +328,25 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
     // footprints) can be made.
     
     
-    public final LinkGene newLinkGene(long sourceInnovation, long targetInnovation, double weight, long innovation, boolean recurrent) {
+    public static final LinkGene newLinkGene(long sourceInnovation, long targetInnovation, double weight, long innovation, boolean recurrent) {
         return newLinkGene(sourceInnovation, targetInnovation, weight, innovation, true, recurrent, false);
     }
     
-    public final LinkGene newLinkGene(long sourceInnovation, long targetInnovation, double weight, long innovation, boolean recurrent, boolean frozen) {
+    public static final LinkGene newLinkGene(long sourceInnovation, long targetInnovation, double weight, long innovation, boolean recurrent, boolean frozen) {
         return newLinkGene(sourceInnovation, targetInnovation, weight, innovation, true, recurrent, frozen);
     }
     
-    public final LinkGene newLinkGene(long sourceInnovation, long targetInnovation, double weight, long innovation, boolean active, boolean recurrent, boolean frozen) {
+    public static final LinkGene newLinkGene(long sourceInnovation, long targetInnovation, double weight, long innovation, boolean active, boolean recurrent, boolean frozen) {
         return smallerGenotypes
                 ? new LinkGene(sourceInnovation, targetInnovation, weight, innovation)
                 : new FullLinkGene(sourceInnovation, targetInnovation, weight, innovation, active, recurrent, frozen);
     }
     
-    public final NodeGene newNodeGene(int ftype, int ntype, long innovation) {
+    public static final NodeGene newNodeGene(int ftype, int ntype, long innovation) {
         return newNodeGene(ftype, ntype, innovation, false, 0.0);
     }
     
-    public final NodeGene newNodeGene(int ftype, int ntype, long innovation, boolean frozen, double bias) {
+    public static final NodeGene newNodeGene(int ftype, int ntype, long innovation, boolean frozen, double bias) {
         return smallerGenotypes
                 ? new NodeGene(ftype, ntype, innovation)
                 : new FullNodeGene(ftype, ntype, innovation, frozen, bias);
