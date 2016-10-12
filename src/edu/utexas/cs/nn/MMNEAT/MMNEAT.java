@@ -567,6 +567,7 @@ public class MMNEAT {
 			}
 
 			HyperNEATTask HNTSeedTask = (HyperNEATTask) ClassCreation.createObject("hyperNEATSeedTask");
+			//TODO add boolean if hntseedtask is set, as it will be recycled after the first run
 			setupMetaHeuristics();
 			// An EA is always needed. Currently only GenerationalEA classes are supported
 			if (!loadFrom) {
