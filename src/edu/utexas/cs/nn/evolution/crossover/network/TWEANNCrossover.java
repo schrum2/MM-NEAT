@@ -61,8 +61,8 @@ public class TWEANNCrossover extends Crossover<TWEANN> {
 	 * @param toReturn
 	 *            = The other parent. Is modified and returned.
          *              Should be a copy of a member from a parent population.
-	 * @return One of the offspring of crossover is returned (the other modified
-	 *         via side-effects)
+	 * @return One of the offspring of crossover is returned (the other 
+         *          is only modified via side-effects)
 	 */
         @Override
 	public Genotype<TWEANN> crossover(Genotype<TWEANN> toModify, Genotype<TWEANN> toReturn) {
@@ -73,24 +73,11 @@ public class TWEANNCrossover extends Crossover<TWEANN> {
 
 		// Align and cross nodes. Nodes are aligned to archetype
 		ArrayList<ArrayList<NodeGene>> alignedNodes = new ArrayList<ArrayList<NodeGene>>(2);
-		try {// makes sure to add and adjust nodes so archetypes of both parents match
-			alignedNodes.add(alignNodesToArchetype(tm.nodes, tr.archetypeIndex));
-		} catch (IllegalArgumentException e) {
-			System.out.println("Outputs: " + tm.numOut);
-			System.out.println("Modes: " + tm.numModules);
-			System.out.println("Neurons Per Mode: " + tm.neuronsPerModule);
-			e.printStackTrace();
-			System.exit(1);
-		}
-		try {// makes sure to check the number of nodes match the archetype of the network
-			alignedNodes.add(alignNodesToArchetype(tr.nodes, tr.archetypeIndex));
-		} catch (IllegalArgumentException e) {
-			System.out.println("Outputs: " + tr.numOut);
-			System.out.println("Modes: " + tr.numModules);
-			System.out.println("Neurons Per Mode: " + tr.neuronsPerModule);
-			e.printStackTrace();
-			System.exit(1);
-		}// crosses nodes// crosses nodes
+		// makes sure to add and adjust nodes so archetypes of both parents match
+		alignedNodes.add(alignNodesToArchetype(tm.nodes, tr.archetypeIndex));
+		// makes sure to check the number of nodes match the archetype of the network
+		alignedNodes.add(alignNodesToArchetype(tr.nodes, tr.archetypeIndex));
+		// crosses nodes// crosses nodes
 		ArrayList<ArrayList<NodeGene>> crossedNodes = cross(alignedNodes.get(0), alignedNodes.get(1));
 		// Align and cross links. Links are aligned based on innovation order
 		// aligns links to faciliate crossover
@@ -106,27 +93,25 @@ public class TWEANNCrossover extends Crossover<TWEANN> {
 			tm.crossModuleAssociations(originalAssociations, tr.moduleAssociations);
 		}
 
-		// HyperNEAT CPPNs need to maintain their genotype class
-//		TWEANNGenotype result = (MMNEAT.genotype instanceof HyperNEATCPPNGenotype) ? 
-//					new HyperNEATCPPNGenotype(crossedNodes.get(1), crossedLinks.get(1), tr.neuronsPerModule, tr.archetypeIndex) : 
-//					new TWEANNGenotype(crossedNodes.get(1), crossedLinks.get(1), tr.neuronsPerModule, tr.standardMultitask, tr.hierarchicalMultitask, tr.archetypeIndex);
-
                 // Rather than actually create a new network, I can simply move 
                 // the node and link genes into the existing network genotype.
                 // This seems to avoid a memory leak ... hopefully it doesn't cause any problems.
                 tr.nodes = crossedNodes.get(1);
                 tr.links = crossedLinks.get(1);              
-                // This usage doesn't exactly correspond to the new net, but is close
-		// result.setModuleUsage(Arrays.copyOf(tr.getModuleUsage(), tr.getModuleUsage().length));
-		tr.calculateNumModules(); // Needed because excess crossover can result in unknown number of modes
+                tr.calculateNumModules(); // Needed because excess crossover can result in unknown number of modes
 		if (CommonConstants.hierarchicalMultitask) {
 			tr.crossModuleAssociations(tr.moduleAssociations, originalAssociations);
 		}
-		// checks command line parameters to see if true and performs said task
-		if (CommonConstants.meltAfterCrossover) {
+                // These checks/modifications only matter if genes can be frozen,
+                // but smaller genotypes cannot be frozen.
+                if(!TWEANNGenotype.smallerGenotypes) {
+                    // If genes can be frozen, then we may want to melt them after crossover
+                    if (CommonConstants.meltAfterCrossover) {
 			tm.meltNetwork();
 			tr.meltNetwork();
-		} else {// makes sure offspring are alterable so they too can be mutated
+                    } else {
+                    // makes sure offspring are alterable so they too can be mutated.
+                    // These checks only matter if genes can be frozen in the first place.
 			if (!tm.existsAlterableLink()) {
 				if (Parameters.parameters.booleanParameter("prefFreezeUnalterable")) {
 					new MeltThenFreezePreferenceMutation().mutate(tm);
@@ -148,9 +133,8 @@ public class TWEANNCrossover extends Crossover<TWEANN> {
 					System.exit(1);
 				}
 			}
-		}
-
-		assert MMNEAT.genotype.getClass().isInstance(tr) : "Crossover should not change the genotype class!";
+                    }
+                }
 		
 		return tr;
 	}
@@ -251,35 +235,28 @@ public class TWEANNCrossover extends Crossover<TWEANN> {
 		// Deal with matching and disjoint genes
 		int listPos = 0, archetypePos = 0;
 		while (listPos < list.size() && archetypePos < archetype.size()) {
-			// System.out.println("l: " + l + ", r: " + r);
 			long leftInnovation = list.get(listPos).innovation;
 			long rightInnovation = archetype.get(archetypePos).innovation;
 			if (leftInnovation == rightInnovation) {
-				// System.out.println("Same innovation: " + leftInnovation);
 				aligned.add(list.get(listPos++));
 				archetypePos++;
 			} else {// checks if misaligned
-				Integer pos = containsInnovationAt(archetype, leftInnovation);
-				if (pos == null) {
-					System.out.println("archetypeIndex: " + archetypeIndex);
-					System.out.println("How can archetype not have innovation? " + leftInnovation);
-					System.out.println("Archetype:" + archetype);
-					System.out.println("List:" + list);
-					throw new IllegalArgumentException();
-				} else if (pos <= archetypePos) {
-					System.out.println("Mappings:" + CombiningTWEANNCrossover.oldToNew);
-					System.out.println("archetypeIndex: " + archetypeIndex);
-					System.out.println("Already passed the innovation! " + leftInnovation);
-					System.out.println("Archetype:" + archetype);
-					System.out.println("List:" + list);
-					printNodeAlignmentColumns(list, archetypeIndex);
-					throw new IllegalArgumentException();
-				} else {
-					// Fill with blanks until gene is reached
-					aligned.add(null);
-					// Corresponding archetype gene is somewhere ahead
-					archetypePos++;
-				}
+				assert (containsInnovationAt(archetype, leftInnovation) != null) :
+					"archetypeIndex: " + archetypeIndex + "\n" +
+					"How can archetype not have innovation? " + leftInnovation + "\n" +
+					"Archetype:" + archetype + "\n" +
+					"List:" + list;
+				assert (containsInnovationAt(archetype, leftInnovation) > archetypePos) :
+					"Mappings:" + CombiningTWEANNCrossover.oldToNew + "\n" +
+					"archetypeIndex: " + archetypeIndex + "\n" +
+					"Already passed the innovation! " + leftInnovation + "\n" +
+					"Archetype:" + archetype + "\n" +
+					"List:" + list;
+					//printNodeAlignmentColumns(list, archetypeIndex);
+				// Fill with blanks until gene is reached
+				aligned.add(null);
+				// Corresponding archetype gene is somewhere ahead
+				archetypePos++;
 			}
 		}
 
