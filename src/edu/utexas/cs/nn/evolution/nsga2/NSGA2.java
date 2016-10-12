@@ -138,7 +138,10 @@ public class NSGA2<T> extends MuPlusLambda<T> {
 						otherOffspring = keepers.get(1);
 					} else {// keeps all crossovers
 						Genotype<T> other = otherSource.copy();
+                                                // Genotype e is directly modified by the crossover call.
+                                                // Genotype otherOffspring is now a modified version of other.
 						otherOffspring = e.crossover(other);
+                                                assert otherOffspring.getId() != other.getId() : "otherOffspring should be a newly created genotype";
 					}
 					i++;
 					/*
