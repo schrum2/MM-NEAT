@@ -59,9 +59,8 @@ public class TWEANNCrossover extends Crossover<TWEANN> {
 	 *            crossover, to be one of the offspring. It is modified via
 	 *            side-effects because it is not returned.
 	 * @param toReturn
-	 *            = The other parent. Not actually returned, but but the
-	 *            offspring that is returned by this method takes its basic
-	 *            structure from this genotype (unless excess crossover occurs)
+	 *            = The other parent. Is modified and returned.
+         *              Should be a copy of a member from a parent population.
 	 * @return One of the offspring of crossover is returned (the other modified
 	 *         via side-effects)
 	 */
@@ -69,13 +68,13 @@ public class TWEANNCrossover extends Crossover<TWEANN> {
 	public Genotype<TWEANN> crossover(Genotype<TWEANN> toModify, Genotype<TWEANN> toReturn) {
 		includeExcess = RandomNumbers.randomGenerator.nextFloat() < includeExcessRate;
 
-		TWEANNGenotype tg = (TWEANNGenotype) toReturn;
+		TWEANNGenotype tr = (TWEANNGenotype) toReturn;
 		TWEANNGenotype tm = (TWEANNGenotype) toModify;
 
 		// Align and cross nodes. Nodes are aligned to archetype
 		ArrayList<ArrayList<NodeGene>> alignedNodes = new ArrayList<ArrayList<NodeGene>>(2);
 		try {// makes sure to add and adjust nodes so archetypes of both parents match
-			alignedNodes.add(alignNodesToArchetype(tm.nodes, tg.archetypeIndex));
+			alignedNodes.add(alignNodesToArchetype(tm.nodes, tr.archetypeIndex));
 		} catch (IllegalArgumentException e) {
 			System.out.println("Outputs: " + tm.numOut);
 			System.out.println("Modes: " + tm.numModules);
@@ -84,18 +83,18 @@ public class TWEANNCrossover extends Crossover<TWEANN> {
 			System.exit(1);
 		}
 		try {// makes sure to check the number of nodes match the archetype of the network
-			alignedNodes.add(alignNodesToArchetype(tg.nodes, tg.archetypeIndex));
+			alignedNodes.add(alignNodesToArchetype(tr.nodes, tr.archetypeIndex));
 		} catch (IllegalArgumentException e) {
-			System.out.println("Outputs: " + tg.numOut);
-			System.out.println("Modes: " + tg.numModules);
-			System.out.println("Neurons Per Mode: " + tg.neuronsPerModule);
+			System.out.println("Outputs: " + tr.numOut);
+			System.out.println("Modes: " + tr.numModules);
+			System.out.println("Neurons Per Mode: " + tr.neuronsPerModule);
 			e.printStackTrace();
 			System.exit(1);
-		}// crosses nodes
+		}// crosses nodes// crosses nodes
 		ArrayList<ArrayList<NodeGene>> crossedNodes = cross(alignedNodes.get(0), alignedNodes.get(1));
 		// Align and cross links. Links are aligned based on innovation order
 		// aligns links to faciliate crossover
-		ArrayList<ArrayList<LinkGene>> alignedLinks = alignLinkGenes(((TWEANNGenotype) toModify).links, tg.links);
+		ArrayList<ArrayList<LinkGene>> alignedLinks = alignLinkGenes(((TWEANNGenotype) toModify).links, tr.links);
 		ArrayList<ArrayList<LinkGene>> crossedLinks = cross(alignedLinks.get(0), alignedLinks.get(1));// crosses links
 
 		// Assign new lists
@@ -104,23 +103,29 @@ public class TWEANNCrossover extends Crossover<TWEANN> {
 		tm.links = crossedLinks.get(0);
 		tm.calculateNumModules(); // Needed because excess crossover can result in unknown number of modes
 		if (CommonConstants.hierarchicalMultitask) {
-			tm.crossModuleAssociations(originalAssociations, tg.moduleAssociations);
+			tm.crossModuleAssociations(originalAssociations, tr.moduleAssociations);
 		}
 
 		// HyperNEAT CPPNs need to maintain their genotype class
-		TWEANNGenotype result = (MMNEAT.genotype instanceof HyperNEATCPPNGenotype) ? 
-					new HyperNEATCPPNGenotype(crossedNodes.get(1), crossedLinks.get(1), tg.neuronsPerModule, tg.archetypeIndex) : 
-					new TWEANNGenotype(crossedNodes.get(1), crossedLinks.get(1), tg.neuronsPerModule, tg.standardMultitask, tg.hierarchicalMultitask, tg.archetypeIndex);
-		// This usage doesn't exactly correspond to the new net, but is close
-		result.setModuleUsage(Arrays.copyOf(tg.getModuleUsage(), tg.getModuleUsage().length));
-		result.calculateNumModules(); // Needed because excess crossover can result in unknown number of modes
+//		TWEANNGenotype result = (MMNEAT.genotype instanceof HyperNEATCPPNGenotype) ? 
+//					new HyperNEATCPPNGenotype(crossedNodes.get(1), crossedLinks.get(1), tr.neuronsPerModule, tr.archetypeIndex) : 
+//					new TWEANNGenotype(crossedNodes.get(1), crossedLinks.get(1), tr.neuronsPerModule, tr.standardMultitask, tr.hierarchicalMultitask, tr.archetypeIndex);
+
+                // Rather than actually create a new network, I can simply move 
+                // the node and link genes into the existing network genotype.
+                // This seems to avoid a memory leak ... hopefully it doesn't cause any problems.
+                tr.nodes = crossedNodes.get(1);
+                tr.links = crossedLinks.get(1);              
+                // This usage doesn't exactly correspond to the new net, but is close
+		// result.setModuleUsage(Arrays.copyOf(tr.getModuleUsage(), tr.getModuleUsage().length));
+		tr.calculateNumModules(); // Needed because excess crossover can result in unknown number of modes
 		if (CommonConstants.hierarchicalMultitask) {
-			result.crossModuleAssociations(tg.moduleAssociations, originalAssociations);
+			tr.crossModuleAssociations(tr.moduleAssociations, originalAssociations);
 		}
 		// checks command line parameters to see if true and performs said task
 		if (CommonConstants.meltAfterCrossover) {
 			tm.meltNetwork();
-			result.meltNetwork();
+			tr.meltNetwork();
 		} else {// makes sure offspring are alterable so they too can be mutated
 			if (!tm.existsAlterableLink()) {
 				if (Parameters.parameters.booleanParameter("prefFreezeUnalterable")) {
@@ -133,11 +138,11 @@ public class TWEANNCrossover extends Crossover<TWEANN> {
 				}
 			}
 			// makes sure offspring are alterable so they too can be mutated
-			if (!result.existsAlterableLink()) {
+			if (!tr.existsAlterableLink()) {
 				if (Parameters.parameters.booleanParameter("prefFreezeUnalterable")) {
-					new MeltThenFreezePreferenceMutation().mutate(result);
+					new MeltThenFreezePreferenceMutation().mutate(tr);
 				} else if (Parameters.parameters.booleanParameter("policyFreezeUnalterable")) {
-					new MeltThenFreezePolicyMutation().mutate(result);
+					new MeltThenFreezePolicyMutation().mutate(tr);
 				} else {
 					System.out.println("Crossover allowed an unalterable network to be created");
 					System.exit(1);
@@ -145,9 +150,9 @@ public class TWEANNCrossover extends Crossover<TWEANN> {
 			}
 		}
 
-		assert MMNEAT.genotype.getClass().isInstance(result) : "Crossover should not change the genotype class!";
+		assert MMNEAT.genotype.getClass().isInstance(tr) : "Crossover should not change the genotype class!";
 		
-		return result;
+		return tr;
 	}
 
 	/**
