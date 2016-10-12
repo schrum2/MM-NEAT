@@ -63,7 +63,7 @@ public class BertsekasTsitsiklisTetrisExtractor implements FeatureExtractor {
 	 * to allow for an array of inputs to take in certain inputs.
 	 */
         @Override
-	public int numFeatures() {
+	public int numFeatures() {//TODO change if hnt true, remove bias
 		return worldWidth // column heights
 		     + (worldWidth - 1) // column differences
 		     + 3; // MaxHeight, Holes, Bias
@@ -77,7 +77,7 @@ public class BertsekasTsitsiklisTetrisExtractor implements FeatureExtractor {
 	 * @return array of inputs
 	 */
         @Override
-	public double[] extract(Observation o) {
+	public double[] extract(Observation o) {//TODO change based on hnt
 		// numFeatures gives us "worldWidth + (worldWidth - 1) + 3"
 		double[] inputs = new double[numFeatures()]; 
 
@@ -110,7 +110,7 @@ public class BertsekasTsitsiklisTetrisExtractor implements FeatureExtractor {
 	 * Returns an array of feature labels given the current extractor
 	 */
         @Override
-	public String[] featureLabels() {
+	public String[] featureLabels() {//TODO 
 		String[] labels = new String[numFeatures()];
 		int in = 0;
 		for (int i = 0; i < worldWidth; i++) {
@@ -193,7 +193,7 @@ public class BertsekasTsitsiklisTetrisExtractor implements FeatureExtractor {
 	 * @return scaled inputs
 	 */
 	@Override
-	public double[] scaleInputs(double[] inputs) {
+	public double[] scaleInputs(double[] inputs) {//TODO 
 		double[] next = new double[inputs.length];
 		// height values (10), height differences (9), and max height (1)
 		int height_features = TetrisState.worldWidth + (TetrisState.worldWidth - 1) + 1; 
