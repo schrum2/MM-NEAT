@@ -92,7 +92,6 @@ import wox.serial.Easy;
  * 
  * @author Jacob Schrum
  */
-@SuppressWarnings("unused")
 public class MMNEAT {
 
 	public static boolean seedExample = false;
@@ -600,11 +599,10 @@ public class MMNEAT {
 				setNNInputParameters(pacmanInputOutputMediator.numIn(), pacmanInputOutputMediator.numOut());
 				
 			} else if(HNTSeedTask != null && Parameters.parameters.integerParameter("lastSavedGeneration") == 0) { // hyperNEATseed is not null
+				Parameters.parameters.setBoolean("randomizeSeedWeights", true);
 			
-                                // Since this approach required many large TWEANNs to be saved in memory, alternative
-                                // gene representations are used with optional fields removed
-                                TWEANNGenotype.smallerGenotypes = true;
-                            
+                // Since this approach required many large TWEANNs to be saved in memory, alternative gene representations are used with optional fields removed
+                TWEANNGenotype.smallerGenotypes = true;            
 				HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair = 1;
 				HyperNEATCPPNGenotype.biasIndex = 0;
 				HyperNEATCPPNGenotype.leoIndex = 0;
@@ -624,6 +622,9 @@ public class MMNEAT {
 				HyperNEATCPPNGenotype hntGeno = new HyperNEATCPPNGenotype(HyperNEATTask.NUM_CPPN_INPUTS,  numSubstratePairings * HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair, 0);
 				TWEANNGenotype seedGeno = hntGeno.getSubstrateGenotypeForEvolution(HNTSeedTask);
 				genotype = seedGeno;
+				if(Parameters.parameters.booleanParameter("randomizeSeedWeights")) {
+					//TODO not sure what to do here
+				}
 				System.out.println("Genotype seeded from HyperNEAT task substrate specification");
 				seedExample = true;
                                 // Cleanup data we don't need any more
