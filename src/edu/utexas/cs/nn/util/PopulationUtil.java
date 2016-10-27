@@ -7,6 +7,7 @@ import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
 import edu.utexas.cs.nn.evolution.lineage.Offspring;
 import edu.utexas.cs.nn.evolution.mutation.tweann.CauchyDeltaCodeMutation;
+import edu.utexas.cs.nn.evolution.mutation.tweann.WeightRandomReplacement;
 import edu.utexas.cs.nn.evolution.nsga2.NSGA2;
 import edu.utexas.cs.nn.evolution.nsga2.NSGA2Score;
 import edu.utexas.cs.nn.networks.TWEANN;
@@ -212,8 +213,15 @@ public class PopulationUtil {
 	 *            Population size
 	 * @return List of genotypes for initial population
 	 */
-	public static <T> ArrayList<Genotype<T>> initialPopulation(Genotype<T> example, int size) {
+	@SuppressWarnings("unchecked")
+	public static <T> ArrayList<Genotype<T>> initialPopulation(Genotype<T> example, int size) {//TODO add randomization code here
 		ArrayList<Genotype<T>> parents = new ArrayList<Genotype<T>>(size);
+		if(Parameters.parameters.booleanParameter("randomizeSeedWeights")){
+		for(Genotype<T> parent : parents){
+			WeightRandomReplacement wrr = new WeightRandomReplacement();
+			wrr.mutate((Genotype<TWEANN>) parent);
+		}
+		}
 		if (MMNEAT.seedExample) { // Seed whole population with particular starting genotype
 			for (int i = 0; i < size; i++) {
 				// Exact copies of seed network

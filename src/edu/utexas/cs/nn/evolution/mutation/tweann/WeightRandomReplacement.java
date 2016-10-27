@@ -1,7 +1,4 @@
 package edu.utexas.cs.nn.evolution.mutation.tweann;
-
-import java.util.ArrayList;
-
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype.LinkGene;
@@ -11,16 +8,13 @@ import edu.utexas.cs.nn.util.random.RandomNumbers;
 public class WeightRandomReplacement extends TWEANNMutation {
 
 	public WeightRandomReplacement() {
-		super("WeightRandomReplacement");//for its use, will always happen, rate will be 1
-		// TODO Auto-generated constructor stub
+		super(1.0);//for its use, will always happen, rate will be 1
 	}
 
 	@Override
-	public void mutate(Genotype<TWEANN> genotype) {
+	public void mutate(Genotype<TWEANN> genotype) {//randomizes all links in genotype
 		TWEANNGenotype geno = (TWEANNGenotype) genotype;
-		ArrayList<LinkGene> links = geno.links;
-		for(int i = 0; i < links.size(); i++) {
-			LinkGene link = links.get(i);
+		for(LinkGene link: geno.links){
 			link.weight = RandomNumbers.fullSmallRand();
 		}
 		
