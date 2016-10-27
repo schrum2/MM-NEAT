@@ -1,5 +1,6 @@
 package edu.utexas.cs.nn.tasks.rlglue.featureextractors.tetris;
 
+import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.tasks.rlglue.featureextractors.FeatureExtractor;
 import java.util.ArrayList;
 import org.rlcommunity.environments.tetris.TetrisPiece;
@@ -63,10 +64,10 @@ public class BertsekasTsitsiklisTetrisExtractor implements FeatureExtractor {
 	 * to allow for an array of inputs to take in certain inputs.
 	 */
         @Override
-	public int numFeatures() {//TODO change if hnt true, remove bias
+	public int numFeatures() {
 		return worldWidth // column heights
 		     + (worldWidth - 1) // column differences
-		     + 3; // MaxHeight, Holes, Bias
+		     + (CommonConstants.hyperNEAT ? 2 : 3); // MaxHeight, Holes, Bias
 	}
 
 	/**
@@ -77,7 +78,7 @@ public class BertsekasTsitsiklisTetrisExtractor implements FeatureExtractor {
 	 * @return array of inputs
 	 */
         @Override
-	public double[] extract(Observation o) {//TODO change based on hnt
+	public double[] extract(Observation o) {
 		// numFeatures gives us "worldWidth + (worldWidth - 1) + 3"
 		double[] inputs = new double[numFeatures()]; 
 
@@ -101,8 +102,9 @@ public class BertsekasTsitsiklisTetrisExtractor implements FeatureExtractor {
 
 		inputs[in++] = maxHeight;
 		inputs[in++] = holes;
-		inputs[in++] = 1; // bias
-
+		if(!CommonConstants.hyperNEAT){
+			inputs[in++] = 1; // bias
+		}
 		return inputs;
 	}
 
@@ -110,7 +112,7 @@ public class BertsekasTsitsiklisTetrisExtractor implements FeatureExtractor {
 	 * Returns an array of feature labels given the current extractor
 	 */
         @Override
-	public String[] featureLabels() {//TODO 
+	public String[] featureLabels() { 
 		String[] labels = new String[numFeatures()];
 		int in = 0;
 		for (int i = 0; i < worldWidth; i++) {
@@ -121,8 +123,9 @@ public class BertsekasTsitsiklisTetrisExtractor implements FeatureExtractor {
 		}
 		labels[in++] = "Max Column Height";
 		labels[in++] = "Number of Holes";
-		labels[in++] = "Bias";
-
+		if(!CommonConstants.hyperNEAT){
+			labels[in++] = "Bias";
+		}
 		return labels;
 	}
 
@@ -193,7 +196,7 @@ public class BertsekasTsitsiklisTetrisExtractor implements FeatureExtractor {
 	 * @return scaled inputs
 	 */
 	@Override
-	public double[] scaleInputs(double[] inputs) {//TODO 
+	public double[] scaleInputs(double[] inputs) {
 		double[] next = new double[inputs.length];
 		// height values (10), height differences (9), and max height (1)
 		int height_features = TetrisState.worldWidth + (TetrisState.worldWidth - 1) + 1; 
@@ -202,7 +205,9 @@ public class BertsekasTsitsiklisTetrisExtractor implements FeatureExtractor {
 		}
 		// scales down the number of holes in relation to the whole of the board
 		next[height_features] = inputs[height_features] / TetrisState.TETRIS_STATE_NUMBER_WORLD_GRID_BLOCKS; 
-		next[height_features + 1] = 1.0; // bias is 1, so not scaling
+		if(!CommonConstants.hyperNEAT){
+			next[height_features + 1] = 1.0; // bias is 1, so not scaling TODO is this correct?
+		}
 		return next;
 	}
 }

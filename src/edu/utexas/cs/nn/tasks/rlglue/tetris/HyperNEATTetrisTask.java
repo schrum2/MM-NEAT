@@ -59,8 +59,10 @@ public class HyperNEATTetrisTask<T extends Network> extends TetrisTask<T> implem
 				substrateInformation.add(height);
 				Substrate holes = new Substrate(new Pair<Integer,Integer>(1,1), Substrate.INPUT_SUBSTRATE, new Triple<Integer,Integer,Integer>(3,0,0), "total_holes");	
 				substrateInformation.add(holes);
-				Substrate bias = new Substrate(new Pair<Integer,Integer>(1,1), Substrate.INPUT_SUBSTRATE, new Triple<Integer,Integer,Integer>(4,0,0), "bias");	
-				substrateInformation.add(bias);//TODO put in if case if hnt false
+				if(!CommonConstants.hyperNEAT){
+					Substrate bias = new Substrate(new Pair<Integer,Integer>(1,1), Substrate.INPUT_SUBSTRATE, new Triple<Integer,Integer,Integer>(4,0,0), "bias");	
+					substrateInformation.add(bias);//TODO put in if case if hnt false
+				}
 				if(split) {
 					Substrate columnHoles = new Substrate(new Pair<Integer,Integer>(worldWidth,1), Substrate.INPUT_SUBSTRATE, new Triple<Integer,Integer,Integer>(5,0,0), "holes");	
 					substrateInformation.add(columnHoles);
@@ -107,7 +109,9 @@ public class HyperNEATTetrisTask<T extends Network> extends TetrisTask<T> implem
 				substrateConnectivity.add(new Pair<String, String>("differences", "process_0"));
 				substrateConnectivity.add(new Pair<String, String>("max_height", "process_0"));
 				substrateConnectivity.add(new Pair<String, String>("total_holes", "process_0"));
-				substrateConnectivity.add(new Pair<String, String>("bias", "process_0"));
+				if(!CommonConstants.hyperNEAT){
+					substrateConnectivity.add(new Pair<String, String>("bias", "process_0"));
+				}
 				if(CommonConstants.splitRawTetrisInputs) {
 					substrateConnectivity.add(new Pair<String, String>("holes", "process_0"));
 				}
@@ -116,7 +120,9 @@ public class HyperNEATTetrisTask<T extends Network> extends TetrisTask<T> implem
 					substrateConnectivity.add(new Pair<String, String>("differences", "output_0"));
 					substrateConnectivity.add(new Pair<String, String>("max_height", "output_0"));
 					substrateConnectivity.add(new Pair<String, String>("total_holes", "output_0"));
-					substrateConnectivity.add(new Pair<String, String>("bias", "output_0"));
+					if(!CommonConstants.hyperNEAT){
+						substrateConnectivity.add(new Pair<String, String>("bias", "output_0"));
+					}
 					if(CommonConstants.splitRawTetrisInputs) {
 						substrateConnectivity.add(new Pair<String, String>("holes", "output_0"));
 					}
