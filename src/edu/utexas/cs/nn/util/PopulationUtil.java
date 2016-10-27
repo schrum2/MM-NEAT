@@ -217,11 +217,11 @@ public class PopulationUtil {
 	public static <T> ArrayList<Genotype<T>> initialPopulation(Genotype<T> example, int size) {//TODO add randomization code here
 		ArrayList<Genotype<T>> parents = new ArrayList<Genotype<T>>(size);
 		if (MMNEAT.seedExample) { // Seed whole population with particular starting genotype
+			WeightRandomReplacement wrr = new WeightRandomReplacement();
 			for (int i = 0; i < size; i++) {
 				// Exact copies of seed network
 				Genotype<T> temp = example.copy();
 				if(Parameters.parameters.booleanParameter("randomizeSeedWeights")){
-					WeightRandomReplacement wrr = new WeightRandomReplacement();
 					wrr.mutate((Genotype<TWEANN>) temp);
 				}
 				parents.add(temp.copy());
