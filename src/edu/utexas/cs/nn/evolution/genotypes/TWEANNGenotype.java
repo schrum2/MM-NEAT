@@ -115,7 +115,6 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
          * @return
          */
         @Override
-        @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
         public boolean equals(Object o) {
             NodeGene other = (NodeGene) o; // instanceof check is skipped for efficiency
             return innovation == other.innovation;
