@@ -44,6 +44,10 @@ public class HyperNEATTetrisTask<T extends Network> extends TetrisTask<T> implem
 					Substrate holesInputSub = new Substrate(substrateDimension, Substrate.INPUT_SUBSTRATE, holesSubCoord, "input_1");
 					substrateInformation.add(holesInputSub);
 				}
+				if(!CommonConstants.hyperNEAT){
+					Substrate biasSub = new Substrate(new Pair<Integer, Integer>(0,0), Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(SUBSTRATE_COORDINATES+1, 0,0), "bias_1");
+					substrateInformation.add(biasSub);
+				}
 				for(int i = 0; i < numProcessLayers; i++) {
 					Triple<Integer, Integer, Integer> processSubCoord = new Triple<Integer, Integer, Integer>(split ? SUBSTRATE_COORDINATES/2 : 0, outputDepth += SUBSTRATE_COORDINATES, 0);
 					Substrate processSub = new Substrate(substrateDimension, Substrate.PROCCESS_SUBSTRATE, processSubCoord,"process_" + i);

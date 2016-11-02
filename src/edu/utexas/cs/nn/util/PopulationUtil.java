@@ -223,7 +223,7 @@ public class PopulationUtil {
 				Genotype<T> temp = example.copy();
 				if(Parameters.parameters.booleanParameter("randomizeSeedWeights")){
 					wrr.mutate((Genotype<TWEANN>) temp);
-				}
+					}
 				parents.add(temp.copy());
 			}
 		} else { // Random population

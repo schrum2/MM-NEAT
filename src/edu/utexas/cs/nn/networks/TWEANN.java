@@ -398,7 +398,7 @@ public class TWEANN implements Network {
 	 *            = archetype to align with for crossover
 	 */
 	public TWEANN(int numIn, int numOut, boolean featureSelective, int ftype, int numModes, int archetypeIndex) {
-		NETWORK_VIEW_DIM = (Parameters.parameters.booleanParameter("hyperNEAT")) ? 750 : 500;
+		NETWORK_VIEW_DIM = (Parameters.parameters.booleanParameter("hyperNEAT")) ? 1000 : 1000;
 		this.archetypeIndex = archetypeIndex;
 		this.numIn = numIn;
 		this.moduleUsage = new int[numModes];

@@ -3,6 +3,7 @@ package edu.utexas.cs.nn.tasks.rlglue.featureextractors.tetris;
 import org.rlcommunity.environments.tetris.TetrisState;
 import org.rlcommunity.rlglue.codec.types.Observation;
 
+import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.rlglue.featureextractors.FeatureExtractor;
@@ -23,7 +24,7 @@ public class RawTetrisStateExtractor implements FeatureExtractor {
 	public int numFeatures() {
 		return TetrisState.worldHeight * TetrisState.worldWidth * // Each cell in world state
                         (CommonConstants.splitRawTetrisInputs ? 2 : 1) +  // Twice as many if split
-                        (CommonConstants.hyperNEAT ? 0 : 1); // Standard bias needed without HyperNEAT
+                        (CommonConstants.hyperNEAT ? 0 : 1); // Standard bias needed without HyperNEAT TODO added boolean check to (hopefully) solve missing bias problem
 	}
 
 	/**
@@ -62,7 +63,7 @@ public class RawTetrisStateExtractor implements FeatureExtractor {
 			}
 		}
                 // Add sensor bias
-                if(!CommonConstants.hyperNEAT) {
+                if(!CommonConstants.hyperNEAT) {//TODO added boolean check to (hopefully) solve missing bias problem
                     // HyperNEAT adds its bias value differently
                     result[result.length - 1] = 1.0;
                 }
