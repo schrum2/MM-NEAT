@@ -44,6 +44,8 @@ import edu.utexas.cs.nn.util.PopulationUtil;
 import java.util.HashSet;
 import java.util.Hashtable;
 
+
+
 /**
  * Implementation of picbreeder that uses Java Swing components for graphical interface
  * 
@@ -106,7 +108,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	/**
 	 * Default Constructor
 	 */
-	@SuppressWarnings({ "rawtypes", "unchecked", "LeakingThisInConstructor" })
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public PicbreederTask() {		
 		MMNEAT.registerFitnessFunction("User Preference");
 		//sets mu to a divisible number
