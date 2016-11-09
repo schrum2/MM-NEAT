@@ -53,7 +53,6 @@ public class HyperNEATTetrisTask<T extends Network> extends TetrisTask<T> implem
 					Substrate processSub = new Substrate(substrateDimension, Substrate.PROCCESS_SUBSTRATE, processSubCoord,"process_" + i);
 					substrateInformation.add(processSub);
 				}
-				//TODO add bias substrate if hnt is false
 			} else if(MMNEAT.rlGlueExtractor instanceof ExtendedBertsekasTsitsiklisTetrisExtractor) {			
 				Substrate heights = new Substrate(new Pair<Integer,Integer>(worldWidth,1), Substrate.INPUT_SUBSTRATE, new Triple<Integer,Integer,Integer>(0,0,0), "heights");	
 				substrateInformation.add(heights);
