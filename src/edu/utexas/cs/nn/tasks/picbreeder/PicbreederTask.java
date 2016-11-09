@@ -58,7 +58,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	//Global static final variables
 	public static final int CPPN_NUM_INPUTS	= 4;
 	public static final int CPPN_NUM_OUTPUTS = 3;
-	public static final int NUM_COLUMNS	= 4;
+	public static final int NUM_COLUMNS	= 3;
 	public static final int MPG_DEFAULT = 1;
 
 	//private static final Variables
@@ -83,8 +83,8 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	private static final int APPROX_CHECKBOX_INDEX = -17;
 	private static final int STRETCHTANH_CHECKBOX_INDEX = -18;
 	private static final int BORDER_THICKNESS = 4;
-	private static final int MPG_MIN = 0;
-	private static final int MPG_MAX = 10;
+	private static final int MPG_MIN = 0;//minimum # of mutations per generation
+	private static final int MPG_MAX = 10;//maximum # of mutations per generation
 
 	//Private final variables
 	private static int NUM_ROWS;
@@ -498,11 +498,16 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		}
 	}
 
+	
+//	private int getActiveActivationFunction(){ TODO
+//		
+//	}
 	/**
 	 * Resets to a new random population
 	 */
 	@SuppressWarnings("unchecked")
 	private void reset() { 
+		//TWEANN newRandom = new TWEANN(CPPN_NUM_INPUTS, CPPN_NUM_OUTPUTS, false, );// TODO
 		ArrayList<Genotype<T>> newPop = ((SinglePopulationGenerationalEA<T>) MMNEAT.ea).initialPopulation(scores.get(0).individual);
 		scores = new ArrayList<Score<T>>();
 		for(int i = 0; i < newPop.size(); i++) {
