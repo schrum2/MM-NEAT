@@ -182,6 +182,7 @@ public class Parameters {
 	 */
 	public final void fillDefaults() {
 		// Integer parameters
+		integerOptions.add("substrateWeightSize", 1, "dimension of individual weights in substrate visualization");
 		integerOptions.add("substrateGridSize", 20, "sets the size for the grids for the substrate visualization");
 		integerOptions.add("marioStuckTimeout", Integer.MAX_VALUE, "Sets the stuck timeout for Mario, default is no timeout");
 		integerOptions.add("marioJumpTimeout", Integer.MAX_VALUE, "Sets the jump timeout for Mario, default is no timeout");

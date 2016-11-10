@@ -76,7 +76,7 @@ public class HyperNEATUtil {
 	//size of grid in substrate drawing. 
 	public final static int LINK_WINDOW_SPACING = 5;
 	public final static int SUBS_GRID_SIZE = Parameters.parameters.integerParameter("substrateGridSize");
-	public final static int WEIGHT_GRID_SIZE = 1;//size of each link 1 pixel
+	public final static int WEIGHT_GRID_SIZE = Parameters.parameters.integerParameter("substrateWeightSize");
 	private static List<DrawingPanel> substratePanels = null;
 	private static ArrayList<DrawingPanel> weightPanels = null;
 	private static HyperNEATTask hyperNEATTask;
