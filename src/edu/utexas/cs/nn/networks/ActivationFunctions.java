@@ -36,6 +36,10 @@ public class ActivationFunctions {
 	public static final int FTYPE_HLPIECEWISE = 15;
 	public static final int FTYPE_SAWTOOTH = 16;
 	public static final int FTYPE_STRETCHED_TANH = 17;
+	public static final int FTYPE_RE_LU  = 18;
+	public static final int FTYPE_SOFTPLUS  = 19;
+	public static final int FTYPE_LEAKY_RE_LU = 20;
+
 
 	/**
 	 * Initializes the set of ftypes by checking boolean parameters for included
@@ -75,6 +79,15 @@ public class ActivationFunctions {
 		}
 		if(Parameters.parameters.booleanParameter("includeStretchedTanhFunction")) {
 			availableActivationFunctions.add(FTYPE_STRETCHED_TANH);
+		}
+		if(Parameters.parameters.booleanParameter("includeReLUFunction")) {
+			availableActivationFunctions.add(FTYPE_RE_LU);
+		}
+		if(Parameters.parameters.booleanParameter("includeSoftplusFunction")) {
+			availableActivationFunctions.add(FTYPE_SOFTPLUS);
+		}
+		if(Parameters.parameters.booleanParameter("includeLeakyReLUFunction")) {
+			availableActivationFunctions.add(FTYPE_LEAKY_RE_LU);
 		}
 	}
 
@@ -142,11 +155,53 @@ public class ActivationFunctions {
 			assert!Double.isNaN(activation) : "stretchedTanh returns NaN on " + sum;
 			assert!Double.isInfinite(activation) : "stretchedTanh is infinite on " + sum + " from " + activation;
 			break;
+		case ActivationFunctions.FTYPE_RE_LU:
+			activation = ActivationFunctions.ReLU(sum);
+			assert!Double.isNaN(activation) : "rectified linear units returns NaN on " + sum;
+			assert!Double.isInfinite(activation) : "rectified linear units is infinite on " + sum + " from " + activation;
+			break;
+		case ActivationFunctions.FTYPE_SOFTPLUS:
+			activation = ActivationFunctions.Softplus(sum);
+			assert!Double.isNaN(activation) : "softplus returns NaN on " + sum;
+			assert!Double.isInfinite(activation) : "softplus is infinite on " + sum + " from " + activation;
+			break;
+		case ActivationFunctions.FTYPE_LEAKY_RE_LU:
+			activation = ActivationFunctions.LeakyReLU(sum);
+			assert!Double.isNaN(activation) : "leaky ReLU returns NaN on " + sum;
+			assert!Double.isInfinite(activation) : "leaky ReLU is infinite on " + sum + " from " + activation;
+			break;
 		}
 		return activation;
 	}
 
+	/**
+	 * returns the leaky rectified function, which allows for a small, non-zero gradient when the unit is not active
+	 * @param sum input
+	 * @return result
+	 */
+        private static double LeakyReLU(double sum) {
+		return (sum > 0) ? sum : 0.01 * sum;
+	}
+
         /**
+         * The smooth approximation of the reLU function
+         * @param sum
+         * @return
+         */
+		private static double Softplus(double sum) {
+		return Math.log(1 + Math.pow(Math.E, sum));
+	}
+
+		/**
+		 * ramp function, analogous to half-wave rectification in electrical engineering
+		 * @param sum input
+		 * @return result
+		 */
+		private static double ReLU(double sum) {
+		return Math.max(0, sum);
+	}
+
+		/**
          * Function proposed in the following paper as being better than standard 
          * tanh for neural networks.
          * Y. LeCun, L. Bottou, G. Orr and K. Muller: Efficient BackProp, in 
@@ -184,7 +239,13 @@ public class ActivationFunctions {
 			return "Absolute Value";
 		} else if(ftype == FTYPE_STRETCHED_TANH) {
 			return "Stretched Tanh";
-		} else {
+		} else if(ftype == FTYPE_RE_LU) {
+			return "Rectified Linear Units";
+		}else if(ftype == FTYPE_SOFTPLUS) {
+			return "Softplus";
+		}else if(ftype == FTYPE_LEAKY_RE_LU) {
+			return "Leaky Rectified Linear Units";
+		}else {
 			System.out.println("given ftype is not a valid activation function! " + ftype);
                         System.exit(1);
                         return null;
