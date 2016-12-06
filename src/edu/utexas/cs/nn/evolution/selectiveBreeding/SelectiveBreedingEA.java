@@ -134,7 +134,6 @@ public class SelectiveBreedingEA<T> implements SinglePopulationGenerationalEA<T>
 		for(int i = scores.size(); i < size; i++) {
 			long parentId1 = -1;
 			long parentId2 = -1;
-
 			Genotype<T> parent1 = scores.get(RandomNumbers.randomGenerator.nextInt(scores.size())).individual;
 			parentId1 = parent1.getId();
 			Genotype<T> g1 = parent1.copy();
