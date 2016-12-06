@@ -174,46 +174,7 @@ public class ActivationFunctions {
 		return activation;
 	}
 
-	/**
-	 * returns the leaky rectified function, which allows for a small, non-zero gradient when the unit is not active
-	 * @param sum input
-	 * @return result
-	 */
-        private static double LeakyReLU(double sum) {
-		return (sum > 0) ? sum : 0.01 * sum;
-	}
 
-        /**
-         * The smooth approximation of the reLU function
-         * @param sum
-         * @return
-         */
-		private static double Softplus(double sum) {
-		return Math.log(1 + Math.pow(Math.E, sum));
-	}
-
-		/**
-		 * ramp function, analogous to half-wave rectification in electrical engineering
-		 * @param sum input
-		 * @return result
-		 */
-		private static double ReLU(double sum) {
-		return Math.max(0, sum);
-	}
-
-		/**
-         * Function proposed in the following paper as being better than standard 
-         * tanh for neural networks.
-         * Y. LeCun, L. Bottou, G. Orr and K. Muller: Efficient BackProp, in 
-         * Orr, G. and Muller K. (Eds), Neural Networks: Tricks of the trade, Springer, 1998
-         * 
-         * The recommendation is for BackProp, but could be useful for us too.
-         * @param sum input
-         * @return function result
-         */
-	public static double stretchedTanh(double sum) {
-		return 1.7159 * tanh( (2.0/3) * sum);  
-	}
 
 	public static String activationName(int ftype) { 
 		assert ftype > -1 && ftype <= 17:"given activation function not valid! " + ftype;
@@ -467,5 +428,45 @@ public class ActivationFunctions {
 	 */
 	public static double absVal(double x) {
 		return halfLinear(Math.abs(x));
+	}
+	/**
+	 * returns the leaky rectified function, which allows for a small, non-zero gradient when the unit is not active
+	 * @param sum input
+	 * @return result
+	 */
+        private static double LeakyReLU(double sum) {
+		return (sum > 0) ? sum : 0.01 * sum;
+	}
+
+        /**
+         * The smooth approximation of the reLU function
+         * @param sum
+         * @return
+         */
+		private static double Softplus(double sum) {
+		return Math.log(1 + Math.pow(Math.E, sum));
+	}
+
+		/**
+		 * ramp function, analogous to half-wave rectification in electrical engineering
+		 * @param sum input
+		 * @return result
+		 */
+		private static double ReLU(double sum) {
+		return Math.max(0, sum);
+	}
+
+		/**
+         * Function proposed in the following paper as being better than standard 
+         * tanh for neural networks.
+         * Y. LeCun, L. Bottou, G. Orr and K. Muller: Efficient BackProp, in 
+         * Orr, G. and Muller K. (Eds), Neural Networks: Tricks of the trade, Springer, 1998
+         * 
+         * The recommendation is for BackProp, but could be useful for us too.
+         * @param sum input
+         * @return function result
+         */
+	public static double stretchedTanh(double sum) {
+		return 1.7159 * tanh( (2.0/3) * sum);  
 	}
 }

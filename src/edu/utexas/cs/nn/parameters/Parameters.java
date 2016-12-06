@@ -390,6 +390,9 @@ public class Parameters {
 		booleanOptions.add("includeHalfLinearPiecewiseFunction", true, "Function for half linear picewise. If true, add to the function set");
 		booleanOptions.add("includeStretchedTanhFunction", false, "Function for stretched tanh function. Good for preventing saturation if values in -1 - 1 range."
 				+ "If true, add to the function set.");
+		booleanOptions.add("includeReLUFunction", false, "Function for rectified linear unit function. If true, add to the function set");	
+		booleanOptions.add("includeSoftplusFunction", false, "Function for softplus function. If true, add to the function set");
+		booleanOptions.add("includeLeakyReLUFunction", false, "Function for leaky rectified linear unit function. If true, add to the function set");
 		booleanOptions.add("logGhostLocOnPowerPill", false, "Log ghost locations corresponding to each eaten power pill");
 		booleanOptions.add("breveDamageOnly", false, "Breve domains only care about damage objectives");
 		booleanOptions.add("getRemainingPills", false, "CEC 2011 rule that Ms. Pac-Man gets the pills in the level when time runs out");
