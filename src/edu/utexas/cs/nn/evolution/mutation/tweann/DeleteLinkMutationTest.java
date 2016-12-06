@@ -48,6 +48,7 @@ public class DeleteLinkMutationTest {
 		Parameters.parameters.setDouble("deleteLinkRate", 1.0);
 		DeleteLinkMutation delete = new DeleteLinkMutation();
 		int numLinks = tg1.links.size();
+		// Sometimes fails due to randomness ... fix this
 		delete.mutate(tg1);
 		assertFalse(tg1.equals(tg2));
 		assertEquals(numLinks-1, tg1.links.size());	//-1 checks for 1 less link	

@@ -1,5 +1,7 @@
 package edu.utexas.cs.nn.networks.hyperneat;
 
+import static org.junit.Assert.assertFalse;
+
 import java.util.ArrayList;
 import org.junit.After;
 import org.junit.Before;
@@ -93,8 +95,10 @@ public class HyperNEATUtilTest {
 	 */
 	@Test
 	public void testDrawSubstrateVisual2() {
-		HyperNEATUtil.drawSubstrate(subs[0], nodes, 0);
-		MiscUtil.waitForReadStringAndEnterKeyPress();
+		// This isn't actually an automated test
+		//HyperNEATUtil.drawSubstrate(subs[0], nodes, 0);
+		//MiscUtil.waitForReadStringAndEnterKeyPress();
+		assertFalse(true); // Fail test
 	}
 	/**
 	 * Visual test of drawSubstrate method
