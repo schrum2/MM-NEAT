@@ -102,4 +102,63 @@ public class ActivationFunctionsTests {
 		}
 	}
 
+	/**
+	 * Tests rectified linear units function, commonly used in DNNs
+	 */
+	@Test
+	public void test_ReLU(){
+		double test1 = 1.00001;
+		double test2 = -1.0001;
+		double test3  = 0.0001;
+		double test4 = -0.0001;
+		double test5 = -56.009;
+		double test6 = 56.009;
+		assertEquals(ActivationFunctions.ReLU(test1), Math.max(0, test1), .000001);
+		assertEquals(ActivationFunctions.ReLU(test2), Math.max(0, test2), .000001);
+		assertEquals(ActivationFunctions.ReLU(test3), Math.max(0, test3), .000001);
+		assertEquals(ActivationFunctions.ReLU(test4), Math.max(0, test4), .000001);
+		assertEquals(ActivationFunctions.ReLU(test5), Math.max(0, test5), .000001);
+		assertEquals(ActivationFunctions.ReLU(test5), 0, .000001);
+		assertEquals(ActivationFunctions.ReLU(test6), Math.max(0, test6), .000001);
+		
+	}
+	
+	/**
+	 * Tests leaky ReLU, allows for negative outputs unlike ReLU but scaled heavily
+	 */
+	@Test
+	public void test_LeakyReLU() {
+		double test1 = 1.00001;
+		double test2 = -1.0001;
+		double test3  = 0.0001;
+		double test4 = -0.0001;
+		double test5 = -56.009;
+		double test6 = 56.009;
+		assertEquals(ActivationFunctions.LeakyReLU(test1), test1, .00001);
+		assertEquals(ActivationFunctions.LeakyReLU(test2), test2*.01, .00001);
+		assertEquals(ActivationFunctions.LeakyReLU(test3), test3, .00001);
+		assertEquals(ActivationFunctions.LeakyReLU(test4), test4 * .01, .00001);
+		assertEquals(ActivationFunctions.LeakyReLU(test5), test5*.01, .00001);
+		assertEquals(ActivationFunctions.LeakyReLU(test6), test6, .00001);
+		
+	}
+	
+	/**
+	 *derivation of ReLU, ln(1 + e^x)
+	 */
+	@Test
+	public void test_Softplus(){
+		double test1 = 1.00001;
+		double test2 = -1.0001;
+		double test3  = 0.0001;
+		double test4 = -0.0001;
+		double test5 = -56.009;
+		double test6 = 56.009;
+		assertEquals(ActivationFunctions.Softplus(test1), Math.log(1 + Math.pow(Math.E, test1)), .000001);
+		assertEquals(ActivationFunctions.Softplus(test2), Math.log(1 + Math.pow(Math.E, test2)), .000001);
+		assertEquals(ActivationFunctions.Softplus(test3), Math.log(1 + Math.pow(Math.E, test3)), .000001);
+		assertEquals(ActivationFunctions.Softplus(test4), Math.log(1 + Math.pow(Math.E, test4)), .000001);
+		assertEquals(ActivationFunctions.Softplus(test5), Math.log(1 + Math.pow(Math.E, test5)), .000001);
+		assertEquals(ActivationFunctions.Softplus(test6), Math.log(1 + Math.pow(Math.E, test6)), .000001);
+	}
 }

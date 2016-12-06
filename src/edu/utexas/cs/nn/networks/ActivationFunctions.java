@@ -434,7 +434,7 @@ public class ActivationFunctions {
 	 * @param sum input
 	 * @return result
 	 */
-        private static double LeakyReLU(double sum) {
+        public static double LeakyReLU(double sum) {
 		return (sum > 0) ? sum : 0.01 * sum;
 	}
 
@@ -443,7 +443,7 @@ public class ActivationFunctions {
          * @param sum
          * @return
          */
-		private static double Softplus(double sum) {
+		public static double Softplus(double sum) {
 		return Math.log(1 + Math.pow(Math.E, sum));
 	}
 
@@ -452,7 +452,7 @@ public class ActivationFunctions {
 		 * @param sum input
 		 * @return result
 		 */
-		private static double ReLU(double sum) {
+		public static double ReLU(double sum) {
 		return Math.max(0, sum);
 	}
 
