@@ -4,6 +4,8 @@ import java.awt.*;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 
+import edu.utexas.cs.nn.util.CombinatoricUtilities;
+
 @SuppressWarnings("serial")
 /**
  * a class that provides the visual components of an evaluation
@@ -17,7 +19,11 @@ public final class TorusWorldView extends JComponent {
 	private Graphics bufferGraphics;
 	private Image offscreen;
 	private final TorusPredPreyGame game;
-
+	private float[][][][] predScents;
+	private float[][][] predColors;
+	private float[][][][] preyScents;
+	private float[][][] preyColors;
+	
 	/**
 	 * a constructor that creates an instance of this game for this object
 	 * (TorusWorldView)
@@ -27,6 +33,30 @@ public final class TorusWorldView extends JComponent {
 	 */
 	public TorusWorldView(TorusPredPreyGame game) {
 		this.game = game;
+		
+		//TODO:
+		//1. Implement scents for prey as well
+		//2. Based off of modules rather than agents
+		//3. Be able to turn on and off with parameter
+		
+		// 1 needs to change to number of modules
+		predScents = new float[game.getPredators().length][1][game.getWorld().width()][game.getWorld().height()];
+		preyScents = new float[game.getPrey().length][1][game.getWorld().width()][game.getWorld().height()];
+		
+		// 1 needs to change to number of modules
+		predColors = new float[game.getPredators().length][1][3]; // magic number? 3 for R, G, B
+		preyColors = new float[game.getPrey().length][1][3]; // magic number? 3 for R, G, B
+		
+		// In future, change pred colors based on module usage
+		for(int i = 0; i < predColors.length; i++) {
+			for(int j = 0; j < predColors[i].length; j++) {
+				Color c = CombinatoricUtilities.colorFromInt(j);
+				predColors[i][j] = new float[]{c.getRed(), c.getGreen(), c.getBlue()};
+			}
+		}
+		
+		// Do same for prey
+		
 	}
 
 	////////////////////////////////////////
@@ -54,6 +84,7 @@ public final class TorusWorldView extends JComponent {
 		drawInfo();
 
 		g.drawImage(offscreen, 0, 0, this);
+		
 	}
 
 	/**
@@ -84,17 +115,64 @@ public final class TorusWorldView extends JComponent {
 	 * them on the grid
 	 */
 	private void drawAgents() {
+		// Evaporate scents
+		evaporate(); // only when viewing mode preference
+		colorScents(); // only when viewing mode preference
+
 		TorusAgent[][] agents = game.getAgents();
-		for (int i = 0; i < agents.length; i++) {
-			for (int j = 0; j < agents[i].length; j++) {
+		for (int i = 0; i < agents.length; i++) { // loop through types of agent
+			for (int j = 0; j < agents[i].length; j++) { // loop through preds/preys
 				if (agents[i][j] != null) {
-					int x = x((int) agents[i][j].getX());
-					int y = y((int) agents[i][j].getY());
+					int row = (int) agents[i][j].getX();
+					int x = x(row);
+					int col = (int) agents[i][j].getY();
+					int y = y(col);
+					
+					// Agent j has visited location (x,y)
+					int m = 0; // change to the module the agent used
+					(i == TorusPredPreyGame.AGENT_TYPE_PRED ? predScents : preyScents)[j][m][row][col] = 1.0f;
+		
+					// This might be replaced ... eventually
 					bufferGraphics.setColor(agents[i][j].getColor());
 					bufferGraphics.fillRect(x + 1, (y - CELL_SIZE) + 1, CELL_SIZE - 1, CELL_SIZE - 1);
 				}
 			}
 		}
+	}
+
+	private void colorScents() {
+		for(int agent = 0; agent < predScents.length; agent++) {
+			for(int m = 0; m < predScents[agent].length; m++) {
+				for(int x = 0; x < predScents[agent][m].length; x++) {
+					for(int y = 0; y < predScents[agent][m][x].length; y++) {
+						if(predScents[agent][m][x][y] > 0.0001) {
+							int r = (int) (predColors[agent][m][0] * (1-predScents[agent][m][x][y]));
+							int g = (int) (predColors[agent][m][1] * (1-predScents[agent][m][x][y]));
+							int b = (int) (predColors[agent][m][2] * (1-predScents[agent][m][x][y]));
+							Color c = new Color(r,g,b);
+							bufferGraphics.setColor(c);
+							bufferGraphics.fillRect(x(x) + 1, (y(y) - CELL_SIZE) + 1, CELL_SIZE - 1, CELL_SIZE - 1);
+						}
+					}
+				}				
+			}
+		}
+
+		// Repeat this for preyScents
+	}
+
+	private void evaporate() {
+		for(int agent = 0; agent < predScents.length; agent++) {
+			for(int m = 0; m < predScents[agent].length; m++) {
+				for(int x = 0; x < predScents[agent][m].length; x++) {
+					for(int y = 0; y < predScents[agent][m][x].length; y++) {
+						predScents[agent][m][x][y] *= 0.9; // Magic number? Make a parameter?
+					}				
+				}
+			}
+		}
+
+		// Repeat this for preyScents
 	}
 
 	/**
