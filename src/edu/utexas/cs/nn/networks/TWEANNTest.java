@@ -42,11 +42,6 @@ public class TWEANNTest {
 	}
 
 	@Test
-	public void test() {
-		
-	}
-
-	@Test
 	public void testHyperNEATDrawingPanel() { 
 		MMNEAT.clearClasses();
 		Parameters.initializeParameterCollections(new String[]{"io:false", "allowMultipleFunctions:true", "recurrency:false", "hyperNEAT:true"});
