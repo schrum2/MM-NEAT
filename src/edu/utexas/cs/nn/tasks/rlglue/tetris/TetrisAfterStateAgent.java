@@ -104,6 +104,9 @@ public class TetrisAfterStateAgent<T extends Network> extends RLGlueAgent<T> {
 				outputs = this.consultPolicy(inputsScaled);
 				// Option that gives loss states very negative scores so they will be avoided
 				if(i.t1.gameOver() && Parameters.parameters.booleanParameter("tetrisExcludesLossStates")) {
+					// This seems to NEVER come up. Does this mean
+					// we were already excluding loss states? If so, then just remove this.
+					// Need to check.
 					outputs[0] = -Double.MAX_VALUE; // Worst possible score (should I just use -1?)
 				}
 				
