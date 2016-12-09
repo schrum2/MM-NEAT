@@ -8,16 +8,31 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.rlcommunity.environments.tetris.TetrisState;
 
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
+import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
+import edu.utexas.cs.nn.parameters.Parameters;
 
 public class TetrisAfterStateGeneratorTests {
 
 	@After
 	public void tearDown() throws Exception {
 		MMNEAT.clearClasses();
+	}
+	
+	@Before
+	public void setUp() throws Exception {
+		MMNEAT.clearClasses();
+		EvolutionaryHistory.setInnovation(0);
+		EvolutionaryHistory.setHighestGenotypeId(0);
+		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "recurrency:false",
+				"rlGlueEnvironment:org.rlcommunity.environments.tetris.Tetris",
+				"task:edu.utexas.cs.nn.tasks.rlglue.tetris.TetrisTask", "rlGlueAgent:edu.utexas.cs.nn.tasks.rlglue.tetris.TetrisAfterStateAgent",
+				"rlGlueExtractor:edu.utexas.cs.nn.tasks.rlglue.featureextractors.tetris.BertsekasTsitsiklisTetrisExtractor" });
+		MMNEAT.loadClasses();
 	}
 	
 	/**
