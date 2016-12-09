@@ -102,6 +102,11 @@ public class TetrisAfterStateAgent<T extends Network> extends RLGlueAgent<T> {
 				// outputs = constultPolicy(features) REMEMBER outputs is an
 				// array of 1
 				outputs = this.consultPolicy(inputsScaled);
+				// Option that gives loss states very negative scores so they will be avoided
+				if(i.t1.gameOver() && Parameters.parameters.booleanParameter("tetrisExcludesLossStates")) {
+					outputs[0] = -Double.MAX_VALUE; // Worst possible score (should I just use -1?)
+				}
+				
 				if(Parameters.parameters.booleanParameter("stepByStep")){
 					System.out.println("Utility:" + outputs[0]);
 					System.out.print("Press enter to continue");
