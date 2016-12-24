@@ -21,6 +21,7 @@ package org.rlcommunity.environments.tetris;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.rlglue.tetris.TetrisViewer;
+import edu.utexas.cs.nn.util.MiscUtil;
 import edu.utexas.cs.nn.util.random.RandomNumbers;
 
 import java.util.Arrays;
@@ -211,7 +212,7 @@ public class TetrisState {
 	public boolean take_action(int theAction) {
 		// System.out.println(toString(false));
 		if (theAction > 5 || theAction < 0) {
-			System.err.println("Invalid action selected in Tetrlais: " + theAction);
+			System.err.println("Invalid action selected in take_action: " + theAction);
 			// Random >=0 < 6
 			theAction = randomGenerator.nextInt(6);
 		}
