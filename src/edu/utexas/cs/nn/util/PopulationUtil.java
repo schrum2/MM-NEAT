@@ -6,11 +6,13 @@ import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
 import edu.utexas.cs.nn.evolution.lineage.Offspring;
+import edu.utexas.cs.nn.evolution.mutation.tweann.ActivationFunctionRandomReplacement;
 import edu.utexas.cs.nn.evolution.mutation.tweann.CauchyDeltaCodeMutation;
 import edu.utexas.cs.nn.evolution.mutation.tweann.WeightRandomReplacement;
 import edu.utexas.cs.nn.evolution.nsga2.NSGA2;
 import edu.utexas.cs.nn.evolution.nsga2.NSGA2Score;
 import edu.utexas.cs.nn.networks.TWEANN;
+import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.scores.Better;
 import edu.utexas.cs.nn.scores.Score;
@@ -223,12 +225,20 @@ public class PopulationUtil {
 				Genotype<T> temp = example.copy();
 				if(Parameters.parameters.booleanParameter("randomizeSeedWeights")){
 					wrr.mutate((Genotype<TWEANN>) temp);
-					}
+				}
 				parents.add(temp.copy());
 			}
 		} else { // Random population
 			for (int i = 0; i < size; i++) {
 				parents.add(example.newInstance());
+			}
+			// If activation functions can mutate, then they 
+			// should start randomized. 
+			if(CommonConstants.netChangeActivationRate > 0) {
+				ActivationFunctionRandomReplacement afrr = new ActivationFunctionRandomReplacement();
+				for (int i = 0; i < size; i++) {
+					afrr.mutate((Genotype<TWEANN>) parents.get(i));
+				}	
 			}
 		}
 		return parents;

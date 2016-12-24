@@ -6,9 +6,9 @@ import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype.NodeGene;
 import edu.utexas.cs.nn.networks.ActivationFunctions;
 import edu.utexas.cs.nn.networks.TWEANN;
 
-public class FtypeRandomReplacement extends TWEANNMutation{
+public class ActivationFunctionRandomReplacement extends TWEANNMutation{
 
-	public FtypeRandomReplacement() {
+	public ActivationFunctionRandomReplacement() {
 		super(1.0);//for its use, will always happen, rate will be 1
 	}
 	

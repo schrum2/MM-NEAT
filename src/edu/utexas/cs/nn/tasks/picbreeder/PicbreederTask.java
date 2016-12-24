@@ -27,7 +27,7 @@ import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.SinglePopulationGenerationalEA;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.evolution.lineage.Offspring;
-import edu.utexas.cs.nn.evolution.mutation.tweann.FtypeRandomReplacement;
+import edu.utexas.cs.nn.evolution.mutation.tweann.ActivationFunctionRandomReplacement;
 import edu.utexas.cs.nn.evolution.selectiveBreeding.SelectiveBreedingEA;
 import edu.utexas.cs.nn.graphics.DrawingPanel;
 import edu.utexas.cs.nn.networks.ActivationFunctions;
@@ -506,7 +506,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	private void reset() { 
 		ArrayList<Genotype<T>> newPop = ((SinglePopulationGenerationalEA<T>) MMNEAT.ea).initialPopulation(scores.get(0).individual);
 		scores = new ArrayList<Score<T>>();
-		FtypeRandomReplacement frr = new FtypeRandomReplacement();
+		ActivationFunctionRandomReplacement frr = new ActivationFunctionRandomReplacement();
 		for(int i = 0; i < newPop.size(); i++) {
 			frr.mutate((Genotype<TWEANN>) newPop.get(i));
 			resetButton(newPop.get(i), i);
