@@ -1,9 +1,14 @@
 package edu.utexas.cs.nn.tasks.gridTorus.sensors;
 
+import java.util.Arrays;
+import java.util.Comparator;
+
 import edu.utexas.cs.nn.gridTorus.TorusAgent;
+import edu.utexas.cs.nn.gridTorus.TorusPredPreyGame;
 import edu.utexas.cs.nn.gridTorus.TorusWorld;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.gridTorus.NNTorusPredPreyController;
+import edu.utexas.cs.nn.util.datastructures.Pair;
 
 /**
  * finds the sensor inputs for the predators by proximity. The inputs will be
@@ -24,6 +29,7 @@ public class TorusPredatorsByProximitySensorBlock implements TorusPredPreySensor
 		numPredators = Parameters.parameters.integerParameter("torusPredators");
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	/**
 	 * @return the sensor inputs for the predators by proximity. The inputs will
@@ -41,43 +47,31 @@ public class TorusPredatorsByProximitySensorBlock implements TorusPredPreySensor
 			self = true;
 		}
 		
-		double[] proximityPreds = new double[self ? (2 * numPredators - 2) : (2 * numPredators)];
-
-		// holds sum of absolute values of X and Y offsets and the first index
-		// of the original offsets
-		double[][] overallDists = new double[self ? (numPredators - 1) : numPredators][2];
-		// finds the sum of each absolute value X and Y offset pair and stores
-		// them
-		for (int i = 0; i < (self ? (numPredators - 1) : numPredators); i++) {
-			overallDists[i][0] = Math.abs(predOffsets[2 * i]) + Math.abs(predOffsets[2 * i + 1]);
-			overallDists[i][1] = 2 * i;
+		// Make individual x/y offsets into an array of Pairs of (x,y) offsets
+		Pair<Double,Double>[] pairs = new Pair[predOffsets.length/2];
+		for (int i = 0; i < pairs.length; i++) {
+			pairs[i] = new Pair<Double,Double>(predOffsets[2*i], predOffsets[2*i + 1]);
 		}
-		// sort overallDists array so that the min index is the min distanced
-		// agent (ascending order by distance)
-		for (int i = 0; i < (self ? (numPredators - 1) : numPredators); i++) {
-			int indexOfMin = 0;
-			double minValue = Double.POSITIVE_INFINITY;
-			// find the next lowest summation value in the double array
-			for (int j = 0; j < (self ? (numPredators - 1) : numPredators); j++) {
-				if (overallDists[j][0] < minValue) {
-					indexOfMin = j;
-					minValue = overallDists[j][0];
-				}
+		// Sort offset pairs by Manhattan distance
+		Arrays.sort(pairs, new Comparator<Pair<Double,Double>>(){
+			public int compare(Pair<Double,Double> o1, Pair<Double,Double> o2){
+				return (int) Math.signum((Math.abs(o1.t1) + Math.abs(o1.t2)) - (Math.abs(o2.t1) + Math.abs(o2.t2)));
 			}
-			proximityPreds[2 * i] = predOffsets[(int) overallDists[indexOfMin][1]];
-			proximityPreds[2 * i + 1] = predOffsets[((int) overallDists[indexOfMin][1]) + 1];
-			// this is done so that the agent just put into the array by
-			// proximity will not be put in again
-			overallDists[indexOfMin][0] = Double.POSITIVE_INFINITY;
+		});
+		// Transfer sorted pair data back into array of separate x and y offsets
+		double[] proximityPreds = new double[self ? (2 * numPredators - 2) : (2 * numPredators)];
+		for (int i = 0; i < pairs.length; i++) {
+			proximityPreds[2 * i] = pairs[i].t1;
+			proximityPreds[2 * i + 1] = pairs[i].t2;
 		}
 		
 		//cut off array proximityPreds so that it only senses the closest specified number of agents
-		if(me.getAgentType()==0 && !Parameters.parameters.booleanParameter("predsSenseAllPreds")){
+		if(me.getAgentType()==TorusPredPreyGame.AGENT_TYPE_PRED && !Parameters.parameters.booleanParameter("predsSenseAllPreds")){
 			double[] adjustedOffsets = new double[Parameters.parameters.integerParameter("numberPredsSensedByPreds") * 2];
 			System.arraycopy(proximityPreds, 0, adjustedOffsets, 0, Parameters.parameters.integerParameter("numberPredsSensedByPreds") * 2);
 			return adjustedOffsets;
 		}
-		if(me.getAgentType()==1 && !Parameters.parameters.booleanParameter("preySenseAllPreds")){
+		if(me.getAgentType()==TorusPredPreyGame.AGENT_TYPE_PREY && !Parameters.parameters.booleanParameter("preySenseAllPreds")){
 			double[] adjustedOffsets = new double[Parameters.parameters.integerParameter("numberPredsSensedByPrey") * 2];
 			System.arraycopy(proximityPreds, 0, adjustedOffsets, 0, Parameters.parameters.integerParameter("numberPredsSensedByPrey") * 2);
 			return adjustedOffsets;
