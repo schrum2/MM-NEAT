@@ -4,6 +4,7 @@ import java.awt.*;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 
+import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.util.CombinatoricUtilities;
 
 @SuppressWarnings("serial")
@@ -38,24 +39,29 @@ public final class TorusWorldView extends JComponent {
 		//1. Implement scents for prey as well
 		//2. Based off of modules rather than agents
 		//3. Be able to turn on and off with parameter
-		
-		// 1 needs to change to number of modules
-		predScents = new float[game.getPredators().length][1][game.getWorld().width()][game.getWorld().height()];
-		preyScents = new float[game.getPrey().length][1][game.getWorld().width()][game.getWorld().height()];
-		
-		// 1 needs to change to number of modules
-		predColors = new float[game.getPredators().length][1][3]; // magic number? 3 for R, G, B
-		preyColors = new float[game.getPrey().length][1][3]; // magic number? 3 for R, G, B
-		
-		// In future, change pred colors based on module usage
-		for(int i = 0; i < predColors.length; i++) {
-			for(int j = 0; j < predColors[i].length; j++) {
-				Color c = CombinatoricUtilities.colorFromInt(j);
-				predColors[i][j] = new float[]{c.getRed(), c.getGreen(), c.getBlue()};
+
+		if(Parameters.parameters.booleanParameter("viewModePreference")){
+
+			// 1 needs to change to number of modules
+			predScents = new float[game.getPredators().length][1][game.getWorld().width()][game.getWorld().height()];
+			preyScents = new float[game.getPrey().length][1][game.getWorld().width()][game.getWorld().height()];
+
+			// 1 needs to change to number of modules
+			predColors = new float[game.getPredators().length][1][3]; // magic number? 3 for R, G, B
+			preyColors = new float[game.getPrey().length][1][3]; // magic number? 3 for R, G, B
+
+			// In future, change pred colors based on module usage
+			for(int i = 0; i < predColors.length; i++) {
+				for(int j = 0; j < predColors[i].length; j++) {
+					Color c = CombinatoricUtilities.colorFromInt(j);
+					predColors[i][j] = new float[]{c.getRed(), c.getGreen(), c.getBlue()};
+				}
 			}
+
+
+			// Do same for prey
+
 		}
-		
-		// Do same for prey
 		
 	}
 
@@ -116,10 +122,13 @@ public final class TorusWorldView extends JComponent {
 	 */
 	private void drawAgents() {
 		// Evaporate scents
-		evaporate(); // only when viewing mode preference
-		colorScents(); // only when viewing mode preference
+		if(Parameters.parameters.booleanParameter("viewModePreference")){
+			evaporate(); // only when viewing mode preference
+			colorScents(); // only when viewing mode preference
+		}
 
 		TorusAgent[][] agents = game.getAgents();
+
 		for (int i = 0; i < agents.length; i++) { // loop through types of agent
 			for (int j = 0; j < agents[i].length; j++) { // loop through preds/preys
 				if (agents[i][j] != null) {
@@ -127,11 +136,11 @@ public final class TorusWorldView extends JComponent {
 					int x = x(row);
 					int col = (int) agents[i][j].getY();
 					int y = y(col);
-					
-					// Agent j has visited location (x,y)
-					int m = 0; // change to the module the agent used
-					(i == TorusPredPreyGame.AGENT_TYPE_PRED ? predScents : preyScents)[j][m][row][col] = 1.0f;
-		
+					if(Parameters.parameters.booleanParameter("viewModePreference")){
+						// Agent j has visited location (x,y)
+						int m = 0; // change to the module the agent used
+						(i == TorusPredPreyGame.AGENT_TYPE_PRED ? predScents : preyScents)[j][m][row][col] = 1.0f;
+					}
 					// This might be replaced ... eventually
 					bufferGraphics.setColor(agents[i][j].getColor());
 					bufferGraphics.fillRect(x + 1, (y - CELL_SIZE) + 1, CELL_SIZE - 1, CELL_SIZE - 1);
