@@ -1,9 +1,12 @@
 package edu.utexas.cs.nn.gridTorus;
 
 import java.awt.*;
+import java.util.ArrayList;
+
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 
+import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.util.CombinatoricUtilities;
 
@@ -42,13 +45,16 @@ public final class TorusWorldView extends JComponent {
 
 		if(Parameters.parameters.booleanParameter("viewModePreference")){
 
+			ArrayList<Double>[] preferenceActivationHistory = TWEANN.preferenceActivationHistory;
+			int numModules = TWEANN.numModules(); //cant make static reference, must refer to this TWEANN object somehow?
+			
 			// 1 needs to change to number of modules
-			predScents = new float[game.getPredators().length][1][game.getWorld().width()][game.getWorld().height()];
-			preyScents = new float[game.getPrey().length][1][game.getWorld().width()][game.getWorld().height()];
+			predScents = new float[game.getPredators().length][numModules][game.getWorld().width()][game.getWorld().height()];
+			preyScents = new float[game.getPrey().length][numModules][game.getWorld().width()][game.getWorld().height()];
 
 			// 1 needs to change to number of modules
-			predColors = new float[game.getPredators().length][1][3]; // magic number? 3 for R, G, B
-			preyColors = new float[game.getPrey().length][1][3]; // magic number? 3 for R, G, B
+			predColors = new float[game.getPredators().length][numModules][3]; // magic number? 3 for R, G, B
+			preyColors = new float[game.getPrey().length][numModules][3]; // magic number? 3 for R, G, B
 
 			// In future, change pred colors based on module usage
 			for(int i = 0; i < predColors.length; i++) {
@@ -138,7 +144,8 @@ public final class TorusWorldView extends JComponent {
 					int y = y(col);
 					if(Parameters.parameters.booleanParameter("viewModePreference")){
 						// Agent j has visited location (x,y)
-						int m = 0; // change to the module the agent used
+						int m = TWEANN.preferenceNeuron(); // change to the module the agent used
+						//need to say int m = current preference neuron, unsure how
 						(i == TorusPredPreyGame.AGENT_TYPE_PRED ? predScents : preyScents)[j][m][row][col] = 1.0f;
 					}
 					// This might be replaced ... eventually
