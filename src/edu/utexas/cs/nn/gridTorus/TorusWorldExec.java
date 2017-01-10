@@ -100,7 +100,7 @@ public class TorusWorldExec {
 		// if visual is requested then the worldView class is activated,
 		// providing a visual window of the evaluation
 		if (visual) {
-			gv = new TorusWorldView(game).showGame();
+			gv = new TorusWorldView(game, predControllers, preyControllers).showGame();
 		}
 
 		// a loop that runs for the duration of the game, constantly 

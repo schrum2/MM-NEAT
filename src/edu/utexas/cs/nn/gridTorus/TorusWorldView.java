@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 
+import edu.utexas.cs.nn.gridTorus.controllers.*;
+import edu.utexas.cs.nn.tasks.gridTorus.*;
 import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.util.CombinatoricUtilities;
@@ -27,6 +29,8 @@ public final class TorusWorldView extends JComponent {
 	private float[][][] predColors;
 	private float[][][][] preyScents;
 	private float[][][] preyColors;
+	TorusPredPreyController[] predControllers;
+	TorusPredPreyController[] preyControllers;
 	
 	/**
 	 * a constructor that creates an instance of this game for this object
@@ -35,18 +39,20 @@ public final class TorusWorldView extends JComponent {
 	 * @param game
 	 *            a given instance of the PredPrey game
 	 */
-	public TorusWorldView(TorusPredPreyGame game) {
+	public TorusWorldView(TorusPredPreyGame game, TorusPredPreyController[] predControllers, TorusPredPreyController[] preyControllers) {
 		this.game = game;
-		
-		//TODO:
-		//1. Implement scents for prey as well
-		//2. Based off of modules rather than agents
-		//3. Be able to turn on and off with parameter
 
 		if(Parameters.parameters.booleanParameter("viewModePreference")){
+			
+			//TODO:
+			//Make all of the viewModePreference code work for the prey
+			
+			this.predControllers = predControllers;
+			this.preyControllers = preyControllers;
 
-			ArrayList<Double>[] preferenceActivationHistory = TWEANN.preferenceActivationHistory;
-			int numModules = TWEANN.numModules(); //cant make static reference, must refer to this TWEANN object somehow?
+			// FIX LATER TODO:
+			// Based off of just first predator controller, needs to be generalized for all
+			int numModules = ((NNTorusPredPreyController) predControllers[0]).nn.numModules();
 			
 			// 1 needs to change to number of modules
 			predScents = new float[game.getPredators().length][numModules][game.getWorld().width()][game.getWorld().height()];
@@ -64,7 +70,7 @@ public final class TorusWorldView extends JComponent {
 				}
 			}
 
-
+			
 			// Do same for prey
 
 		}
@@ -136,7 +142,10 @@ public final class TorusWorldView extends JComponent {
 		TorusAgent[][] agents = game.getAgents();
 
 		for (int i = 0; i < agents.length; i++) { // loop through types of agent
-			for (int j = 0; j < agents[i].length; j++) { // loop through preds/preys
+			
+			if(i == TorusPredPreyGame.AGENT_TYPE_PREY ) continue;
+			
+			for (int j = 0; j < agents[i].length; j++) { // loop through preds/preys				
 				if (agents[i][j] != null) {
 					int row = (int) agents[i][j].getX();
 					int x = x(row);
@@ -144,7 +153,12 @@ public final class TorusWorldView extends JComponent {
 					int y = y(col);
 					if(Parameters.parameters.booleanParameter("viewModePreference")){
 						// Agent j has visited location (x,y)
-						int m = TWEANN.preferenceNeuron(); // change to the module the agent used
+						
+						// MAKE WORK FOR PREY!
+						
+						//FIX LATER TODO:
+						// Based off of just first predator controller, needs to be generalized for all
+						int m = ((NNTorusPredPreyController) predControllers[j]).nn.lastModule(); // change to the module the agent used
 						//need to say int m = current preference neuron, unsure how
 						(i == TorusPredPreyGame.AGENT_TYPE_PRED ? predScents : preyScents)[j][m][row][col] = 1.0f;
 					}
