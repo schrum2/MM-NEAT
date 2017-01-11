@@ -1,15 +1,17 @@
 package edu.utexas.cs.nn.gridTorus;
 
-import java.awt.*;
-import java.util.ArrayList;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Image;
 
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 
-import edu.utexas.cs.nn.gridTorus.controllers.*;
-import edu.utexas.cs.nn.tasks.gridTorus.*;
-import edu.utexas.cs.nn.networks.TWEANN;
+import edu.utexas.cs.nn.gridTorus.controllers.TorusPredPreyController;
 import edu.utexas.cs.nn.parameters.Parameters;
+import edu.utexas.cs.nn.tasks.gridTorus.NNTorusPredPreyController;
 import edu.utexas.cs.nn.util.CombinatoricUtilities;
 
 @SuppressWarnings("serial")
@@ -47,31 +49,43 @@ public final class TorusWorldView extends JComponent {
 			//TODO:
 			//Make all of the viewModePreference code work for the prey
 			
+			// Saved in order to retrieve module usage information
 			this.predControllers = predControllers;
 			this.preyControllers = preyControllers;
-
-			// FIX LATER TODO:
-			// Based off of just first predator controller, needs to be generalized for all
-			int numModules = ((NNTorusPredPreyController) predControllers[0]).nn.numModules();
 			
-			// 1 needs to change to number of modules
-			predScents = new float[game.getPredators().length][numModules][game.getWorld().width()][game.getWorld().height()];
-			preyScents = new float[game.getPrey().length][numModules][game.getWorld().width()][game.getWorld().height()];
+			predScents = new float[game.getPredators().length][][][];
+			preyScents = new float[game.getPrey().length][][][];
+			predColors = new float[game.getPredators().length][][];
+			preyColors = new float[game.getPrey().length][][];
 
-			// 1 needs to change to number of modules
-			predColors = new float[game.getPredators().length][numModules][3]; // magic number? 3 for R, G, B
-			preyColors = new float[game.getPrey().length][numModules][3]; // magic number? 3 for R, G, B
-
-			// In future, change pred colors based on module usage
+			for(int i = 0; i < game.getPredators().length; i++) {
+				int numModules = predControllers[i] instanceof NNTorusPredPreyController ? ((NNTorusPredPreyController) predControllers[i]).nn.numModules() : 1;
+				predScents[i] = new float[numModules][game.getWorld().width()][game.getWorld().height()];
+				predColors[i] = new float[numModules][3]; // magic number? 3 for R, G, B
+			}
+			
+			for(int i = 0; i < game.getPrey().length; i++) {
+				int numModules = preyControllers[i] instanceof NNTorusPredPreyController ? ((NNTorusPredPreyController) preyControllers[i]).nn.numModules() : 1;
+				preyScents[i] = new float[numModules][game.getWorld().width()][game.getWorld().height()];
+				preyColors[i] = new float[numModules][3]; // magic number? 3 for R, G, B			
+			}
+			
+			// Associate a base color with each predator module or agent (for static controllers)
 			for(int i = 0; i < predColors.length; i++) {
 				for(int j = 0; j < predColors[i].length; j++) {
-					Color c = CombinatoricUtilities.colorFromInt(j);
+					// Add 2 so that standard pred/prey colors are unavailable
+					Color c = CombinatoricUtilities.colorFromInt(predControllers[i] instanceof NNTorusPredPreyController ? 2 + j : TorusPredPreyGame.AGENT_TYPE_PRED);
 					predColors[i][j] = new float[]{c.getRed(), c.getGreen(), c.getBlue()};
 				}
 			}
-
-			
 			// Do same for prey
+			for(int i = 0; i < preyColors.length; i++) {
+				for(int j = 0; j < preyColors[i].length; j++) {
+					// Add 2 so that standard pred/prey colors are unavailable
+					Color c = CombinatoricUtilities.colorFromInt(preyControllers[i] instanceof NNTorusPredPreyController ? 2 + j : TorusPredPreyGame.AGENT_TYPE_PREY);
+					preyColors[i][j] = new float[]{c.getRed(), c.getGreen(), c.getBlue()};
+				}
+			}
 
 		}
 		
@@ -141,10 +155,7 @@ public final class TorusWorldView extends JComponent {
 
 		TorusAgent[][] agents = game.getAgents();
 
-		for (int i = 0; i < agents.length; i++) { // loop through types of agent
-			
-			if(i == TorusPredPreyGame.AGENT_TYPE_PREY ) continue;
-			
+		for (int i = 0; i < agents.length; i++) { // loop through types of agent			
 			for (int j = 0; j < agents[i].length; j++) { // loop through preds/preys				
 				if (agents[i][j] != null) {
 					int row = (int) agents[i][j].getX();
@@ -153,14 +164,14 @@ public final class TorusWorldView extends JComponent {
 					int y = y(col);
 					if(Parameters.parameters.booleanParameter("viewModePreference")){
 						// Agent j has visited location (x,y)
-						
-						// MAKE WORK FOR PREY!
-						
-						//FIX LATER TODO:
-						// Based off of just first predator controller, needs to be generalized for all
-						int m = ((NNTorusPredPreyController) predControllers[j]).nn.lastModule(); // change to the module the agent used
-						//need to say int m = current preference neuron, unsure how
-						(i == TorusPredPreyGame.AGENT_TYPE_PRED ? predScents : preyScents)[j][m][row][col] = 1.0f;
+						TorusPredPreyController controller = (i == TorusPredPreyGame.AGENT_TYPE_PRED ? predControllers : preyControllers)[j];
+						// For NN agents with modules
+						if(controller instanceof NNTorusPredPreyController) {
+							int m = ((NNTorusPredPreyController) controller).nn.lastModule(); // change to the module the agent used
+							(i == TorusPredPreyGame.AGENT_TYPE_PRED ? predScents : preyScents)[j][m][row][col] = 1.0f; // Mark location with color
+						} else { // for static controllers
+							(i == TorusPredPreyGame.AGENT_TYPE_PRED ? predScents : preyScents)[j][0][row][col] = 1.0f; // Mark location with color
+						}
 					}
 					// This might be replaced ... eventually
 					bufferGraphics.setColor(agents[i][j].getColor());
@@ -170,6 +181,9 @@ public final class TorusWorldView extends JComponent {
 		}
 	}
 
+	/**
+	 * Fill cells with color based on the scent strengths
+	 */
 	private void colorScents() {
 		for(int agent = 0; agent < predScents.length; agent++) {
 			for(int m = 0; m < predScents[agent].length; m++) {
@@ -188,9 +202,13 @@ public final class TorusWorldView extends JComponent {
 			}
 		}
 
-		// Repeat this for preyScents
+		// TODO: Repeat this for preyScents
 	}
 
+	/**
+	 * Weaken the scent presence of every cell, so that evidence of an agent
+	 * occupying a given cell eventually disappears.
+	 */
 	private void evaporate() {
 		for(int agent = 0; agent < predScents.length; agent++) {
 			for(int m = 0; m < predScents[agent].length; m++) {
@@ -202,7 +220,7 @@ public final class TorusWorldView extends JComponent {
 			}
 		}
 
-		// Repeat this for preyScents
+		// TODO: Repeat this for preyScents
 	}
 
 	/**
