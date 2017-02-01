@@ -62,7 +62,7 @@ public class HyperNEATTetrisTask<T extends Network> extends TetrisTask<T> implem
 				substrateInformation.add(height);
 				Substrate holes = new Substrate(new Pair<Integer,Integer>(1,1), Substrate.INPUT_SUBSTRATE, new Triple<Integer,Integer,Integer>(3,0,0), "total_holes");	
 				substrateInformation.add(holes);
-				if(!CommonConstants.hyperNEAT){
+				if(!CommonConstants.hyperNEAT){ // This is only needed in HyperNEAT-Seeded NEAT networks, and maybe for HybrID in the future
 					Substrate bias = new Substrate(new Pair<Integer,Integer>(1,1), Substrate.INPUT_SUBSTRATE, new Triple<Integer,Integer,Integer>(4,0,0), "bias");	
 					substrateInformation.add(bias);//TODO put in if case if hnt false
 				}

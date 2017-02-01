@@ -207,6 +207,9 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 					// Non-input substrates can have a bias if desired
 					if(CommonConstants.evolveHyperNEATBias && subs.get(i).stype != Substrate.INPUT_SUBSTRATE) {
 						// Ask CPPN to generate a bias for each neuron
+						// Schrum: 1/31/17: I'm afriad that the value of biasIndex is not being set correctly.
+						//                  Even if it was, there may still be many unused CPPN outputs, which
+						//                  is wasteful. Need to investigate.
 						bias = cppn.process(new double[]{0, 0, x, y, BIAS})[biasIndex];
 					}
 					newNodes.add(newNodeGene(CommonConstants.ftype, subs.get(i).getStype(), innovationID++, false, bias));
