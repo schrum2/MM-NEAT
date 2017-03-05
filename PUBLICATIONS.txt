@@ -1,0 +1,18 @@
+This file contains full citations for all known publications that make use of MM-NEAT. Email schrum2@southwestern.edu if you use MM-NEAT and would like me to add your publication to the list!
+
+Dissertation
+
+Jacob Schrum (2014). Evolving Multimodal Behavior Through Modular Multiobjective Neuroevolution, PhD Thesis, The University of Texas at Austin, May 2014. Tech Report TR-14-07. URL: http://nn.cs.utexas.edu/?schrum:phd2014
+
+Journal Articles
+
+Jacob Schrum, and Risto Miikkulainen (2016). Solving Multiple Isolated, Interleaved, and Blended Tasks through Modular Neuroevolution, Evolutionary Computation Journal (ECJ 2016). September. Volume 24, No. 3, pages 459 - 490. MIT Press. URL: http://hdl.handle.net/11214/156
+
+Jacob Schrum, and Risto Miikkulainen (2016). Discovering Multimodal Behavior in Ms. Pac-Man through Evolution of Modular Neural Networks, IEEE Transactions on Computational Intelligence and AI in Games (TCIAIG 2016). March. Volume 8, Issue 1, pages 67 - 81. IEEE. URL: http://hdl.handle.net/11214/149
+
+Conference Papers
+
+Jacob Schrum, and Risto Miikkulainen (2015). Solving Interleaved and Blended Sequential Decision-Making Problems through Modular Neuroevolution, Proceedings of the Genetic and Evolutionary Computation Conference (GECCO 2015). [Best Paper Award in Digital Entertainment and Arts] URL: http://hdl.handle.net/11214/155
+
+Jacob Schrum, and Risto Miikkulainen (2014). Evolving Multimodal Behavior With Modular Neural Networks in Ms. Pac-Man, Proceedings of the Genetic and Evolutionary Computation Conference (GECCO 2014). [Best Paper Award in Digital Entertainment and Arts] URL: http://hdl.handle.net/11214/152
+

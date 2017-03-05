@@ -2,13 +2,19 @@
 =========== GETTING STARTED ===========
 
 This code requires Java to run, and it is recommended 
-that a modern IDE is used as well (the code was developed 
-in NetBeans IDE 7.4: https://netbeans.org/). The main
-class of the project is edu.utexas.cs.nn.mmneat.MMNEAT.java,
+that a modern IDE is used as well (the code was originally developed 
+in NetBeans IDE 7.4: https://netbeans.org/ but I have since then worked
+with Eclipse without any problems). 
+
+The main class of the project is edu.utexas.cs.nn.mmneat.MMNEAT.java,
 and once the project is compiled in NetBeans, there will be
-a file called MM-NEAT.jar in the "dist" directory. The code 
-can be launched by running java with the jar file and
-appropriate command-line arguments. The general form is:
+a file called MM-NEAT.jar in the "dist" directory. If you are using
+Eclipse, then you will need to first export an executable jar file
+with MMNEAT.java as the main class.
+
+Once the jar file is created, the code can be launched by running 
+java with the jar file and appropriate command-line arguments. 
+The general form is:
 
 java -jar dist/MM-NEAT.jar runNumber:<int> randomSeed:<int> base:<experiment directory> maxGens:<int> mu:<int> io:true netio:true task:<java class> log:<experiment string>-<evaluation method string> saveTo:<evaluation method directory>
 
@@ -34,8 +40,8 @@ are in the many Experiment files described next.
 =========== EXPERIMENT FILES ===========
 
 There are several batch files in the sub-directory "batch".
-Of particular interest are the batch files batch/MsPacMan/.
-Each of these corresponds to an experiment from Jacob Schrum's
+Of particular interest are the batch files in batch/MsPacMan-*/.
+Each of these corresponds to an experiment from Dr. Jacob Schrum's
 publications, including his 2014 dissertation, which is available at:
 
 http://nn.cs.utexas.edu/?schrum:phd2014
@@ -120,15 +126,14 @@ Reinforcement Learning algorithms available here:
 http://glue.rl-community.org
 
 You don't need to download any additional files for RL-Glue to work, but the webpage
-may provide assistance in understanding how it works. The java code actually launches
-the included RL-Glue executable and communicates with it via sockets. RL-Glue domains
+may provide assistance in understanding how it works. RL-Glue domains
 need to be tweaked slightly to work with MM-NEAT, but a few are already functioning:
 PuddleWorld, CartPole, MountainCar, and Tetris. The visualization for MountainCar does
 not work, but visualization for the other domains can be viewed if "watch:true" is
 included in the command line. Post visualizations with some of the batch files above
 also work (postParetoFrontWatch.bat and postBestObjective*). Most of these domains
 have not received much attention, but Tetris is an exception. The batch files in
-batch/RLGlue will launch RL-Glue experiments, but not that these batch files require
+batch/RLGlue will launch RL-Glue experiments, but note that these batch files require
 an additional command-line parameter to specify the run number. For example:
 
 RLGlue-Tetris-moExtendedBT.bat 0
@@ -146,7 +151,7 @@ The BREVE 2D domain in MM-NEAT is not identical to BREVE Monsters, but it is sim
 many ways. The specific domains implemented are Front-Back Ramming (FBR),
 Predator/Prey (PP), and Fight or Flight (FoF). Some work is still needed to bring this
 code up to the level of the original BREVE Monsters experiments, but you are free to play
-with it. Some know issues: monitoring the inputs to the networks causes strange color
+with it. Some known issues: monitoring the inputs to the networks causes strange color
 clashes, likely because each monster has its own network and is trying to write data to
 the same window simultaneously; the sensors don't all work the same as they do in BREVE;
 the camera does not follow the agents, so sometimes all the action happens out of sight;
@@ -165,6 +170,7 @@ Even more domains have been added.
 
 batch/Picbreeder        A reimplementation of Picbreeder: http://picbreeder.org/
 batch/PredPrey          A toroidal Predator/Prey grid world
+batch/Mario             Super Mario Bros as from the Mario AI Competitions: http://julian.togelius.com/mariocompetition2009/
 batch/VizDoom           First-Person Shooter Doom: http://vizdoom.cs.put.edu.pl/ (very early in development)
 
 =========== MAKING YOUR OWN DOMAINS ===========

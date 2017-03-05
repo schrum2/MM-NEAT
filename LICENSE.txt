@@ -1,6 +1,7 @@
 === License MM-NEAT ===
 
 Copyright (c) 2014, The University of Texas at Austin
+and 2016, Southwestern University
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, 
