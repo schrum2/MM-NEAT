@@ -83,6 +83,9 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	private static final int FULLAPPROX_CHECKBOX_INDEX = -16;
 	private static final int APPROX_CHECKBOX_INDEX = -17;
 	private static final int STRETCHTANH_CHECKBOX_INDEX = -18;
+	private static final int RELU_CHECKBOX_INDEX = -19;//TODO
+	private static final int SOFTPLUS_CHECKBOX_INDEX = -20;
+	private static final int LEAKY_RELU_CHECKBOX_INDEX = -21;
 	private static final int BORDER_THICKNESS = 4;
 	private static final int MPG_MIN = 0;//minimum # of mutations per generation
 	private static final int MPG_MAX = 10;//maximum # of mutations per generation
@@ -126,7 +129,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		showLineage = false;
 		showNetwork = false;
 		waitingForUser = false;
-		activation = new boolean[Math.abs(STRETCHTANH_CHECKBOX_INDEX ) + 1];//magic number is number of activation functions
+		activation = new boolean[Math.abs(LEAKY_RELU_CHECKBOX_INDEX) + 1];//magic number is number of activation functions
 		Arrays.fill(activation, true);
 		if(MMNEAT.browseLineage) {
 			// Do not setup the JFrame if browsing the lineage
@@ -181,6 +184,12 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		activation[Math.abs(HALF_LINEAR_CHECKBOX_INDEX)] = CommonConstants.includeHalfLinearPiecewiseFunction;
 		JCheckBox stretchTanh = new JCheckBox("stretched_tanh", CommonConstants.includeStretchedTanhFunction);
 		activation[Math.abs(STRETCHTANH_CHECKBOX_INDEX)] = CommonConstants.includeStretchedTanhFunction;
+		JCheckBox ReLU = new JCheckBox("ReLU", CommonConstants.includeStretchedTanhFunction);
+		activation[Math.abs(RELU_CHECKBOX_INDEX)] = CommonConstants.includeStretchedTanhFunction;
+		JCheckBox Softplus = new JCheckBox("softplus", CommonConstants.includeStretchedTanhFunction);
+		activation[Math.abs(SOFTPLUS_CHECKBOX_INDEX)] = CommonConstants.includeStretchedTanhFunction;
+		JCheckBox LeakyReLU = new JCheckBox("leaky_ReLU", CommonConstants.includeStretchedTanhFunction);
+		activation[Math.abs(LEAKY_RELU_CHECKBOX_INDEX)] = CommonConstants.includeStretchedTanhFunction;
 
 		//adds slider for mutation rate change
 		JSlider mutationsPerGeneration = new JSlider(JSlider.HORIZONTAL, MPG_MIN, MPG_MAX, MPG_DEFAULT);
@@ -212,6 +221,9 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		sawtooth.setName("" + SAWTOOTH_CHECKBOX_INDEX);
 		halfLinear.setName("" + HALF_LINEAR_CHECKBOX_INDEX);
 		stretchTanh.setName("" + STRETCHTANH_CHECKBOX_INDEX);
+		ReLU.setName("" + RELU_CHECKBOX_INDEX);//TODO
+		Softplus.setName("" + SOFTPLUS_CHECKBOX_INDEX);
+		LeakyReLU.setName("" + LEAKY_RELU_CHECKBOX_INDEX);
 		mutationsPerGeneration.setMinorTickSpacing(1);
 		mutationsPerGeneration.setPaintTicks(true);
 		labels.put(0, new JLabel("Fewer Mutations"));
@@ -238,6 +250,9 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		fullApprox.addActionListener(this);
 		approx.addActionListener(this);
 		stretchTanh.addActionListener(this);
+		ReLU.addActionListener(this);
+		Softplus.addActionListener(this);
+		LeakyReLU.addActionListener(this);
 		mutationsPerGeneration.addChangeListener(this);
 
 		//set checkbox colors to match activation function color
@@ -252,6 +267,9 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		sine.setForeground(CombinatoricUtilities.colorFromInt(ActivationFunctions.FTYPE_SINE));
 		tanh.setForeground(CombinatoricUtilities.colorFromInt(ActivationFunctions.FTYPE_TANH));
 		stretchTanh.setForeground(CombinatoricUtilities.colorFromInt(ActivationFunctions.FTYPE_STRETCHED_TANH));
+		ReLU.setForeground(CombinatoricUtilities.colorFromInt(ActivationFunctions.FTYPE_RE_LU));
+		Softplus.setForeground(CombinatoricUtilities.colorFromInt(ActivationFunctions.FTYPE_SOFTPLUS));
+		LeakyReLU.setForeground(CombinatoricUtilities.colorFromInt(ActivationFunctions.FTYPE_LEAKY_RE_LU));
 		//add graphics to title panel
 		top.add(lineageButton);
 		top.add(resetButton);
@@ -272,6 +290,9 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		bottom.add(fullApprox);
 		bottom.add(approx);
 		bottom.add(stretchTanh);
+		bottom.add(ReLU);
+		bottom.add(Softplus);
+		bottom.add(LeakyReLU);
 		bottom.add(mutationsPerGeneration);
 		topper.add(bottom);
 		panels.add(topper);
@@ -608,7 +629,16 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		} else if(scoreIndex == STRETCHTANH_CHECKBOX_INDEX) {
 			setCheckBox(activation[Math.abs(STRETCHTANH_CHECKBOX_INDEX)], STRETCHTANH_CHECKBOX_INDEX, "includeStretchedTanhFunction");
 			System.out.println("param stretchTanh now set to: " + Parameters.parameters.booleanParameter("includeStretchedTanhFunction"));
-		}else if(scoreIndex == CLOSE_BUTTON_INDEX) {//If close button clicked
+		} else if(scoreIndex == RELU_CHECKBOX_INDEX) {
+			setCheckBox(activation[Math.abs(RELU_CHECKBOX_INDEX)], RELU_CHECKBOX_INDEX, "includeReLUFunction");
+			System.out.println("param ReLU now set to: " + Parameters.parameters.booleanParameter("includeReLUFunction"));
+		} else if(scoreIndex == SOFTPLUS_CHECKBOX_INDEX) {
+			setCheckBox(activation[Math.abs(SOFTPLUS_CHECKBOX_INDEX)], SOFTPLUS_CHECKBOX_INDEX, "includeSoftplusTanhFunction");
+			System.out.println("param softplus now set to: " + Parameters.parameters.booleanParameter("includeSoftplusTanhFunction"));
+		} else if(scoreIndex == LEAKY_RELU_CHECKBOX_INDEX) {
+			setCheckBox(activation[Math.abs(LEAKY_RELU_CHECKBOX_INDEX)], LEAKY_RELU_CHECKBOX_INDEX, "includeLeakyReLUFunction");
+			System.out.println("param LeakyReLU now set to: " + Parameters.parameters.booleanParameter("includeLeakyReLUFunction"));
+		} else if(scoreIndex == CLOSE_BUTTON_INDEX) {//If close button clicked
 			System.exit(0);
 		} else if(scoreIndex == RESET_BUTTON_INDEX) {//If reset button clicked
 			reset();
