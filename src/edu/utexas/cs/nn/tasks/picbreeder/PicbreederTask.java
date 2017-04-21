@@ -1,7 +1,9 @@
 package edu.utexas.cs.nn.tasks.picbreeder;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
@@ -109,11 +111,14 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	private final boolean[] chosen;
 	private final boolean[] activation;
 
+	private JPanel topper;
+	
 	/**
 	 * Default Constructor
+	 * @throws IllegalAccessException 
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public PicbreederTask() {		
+	public PicbreederTask() throws IllegalAccessException {		
 		MMNEAT.registerFitnessFunction("User Preference");
 		//sets mu to a divisible number
 		if(Parameters.parameters.integerParameter("mu") % PicbreederTask.NUM_COLUMNS != 0) { 
@@ -142,15 +147,18 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		buttons = new ArrayList<JButton>();
 
 		//sets up JFrame
-		frame.setSize(PIC_SIZE * NUM_COLUMNS + 200, PIC_SIZE * NUM_ROWS + 700);
-		PIC_SIZE = PIC_SIZE + (int) (200.0 / NUM_COLUMNS);
+		
+		
+		//frame.setSize(PIC_SIZE * NUM_COLUMNS + 200, PIC_SIZE * NUM_ROWS + 700);
+		frame.setSize(Toolkit.getDefaultToolkit().getScreenSize());
+		PIC_SIZE = frame.getWidth() / NUM_COLUMNS;
 		frame.setLocation(300, 100);//magic #s 100 correspond to relocating frame to middle of screen
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLayout(new GridLayout(NUM_ROWS + 1, 0));// the + 1 includes room for the title panel
 		frame.setVisible(true);
 
 		//instantiates helper buttons
-		JPanel topper = new JPanel();
+		topper = new JPanel();
 		JPanel top = new JPanel();
 		JPanel bottom = new JPanel();
 		JButton resetButton = new JButton(new ImageIcon("data\\picbreeder\\reset.png"));
@@ -161,6 +169,24 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		JButton networkButton = new JButton(new ImageIcon("data\\picbreeder\\network.png"));
 		JButton undoButton = new JButton( new ImageIcon("data\\picbreeder\\undo.png"));
 
+		//to make it work on my mac
+		resetButton.setPreferredSize(new Dimension(100, 50));
+		saveButton.setPreferredSize(new Dimension(100, 50));
+		evolveButton.setPreferredSize(new Dimension(100, 50));
+		lineageButton.setPreferredSize(new Dimension(100, 50));
+		networkButton.setPreferredSize(new Dimension(100, 50));
+		undoButton.setPreferredSize(new Dimension(100, 50));
+		closeButton.setPreferredSize(new Dimension(100, 50));
+		
+		resetButton.setText("Reset");
+		saveButton.setText("Save");
+		evolveButton.setText("Evolve!");
+		lineageButton.setText("Lineage");
+		networkButton.setText("Network");
+		undoButton.setText("Undo");
+		closeButton.setText("Close");
+		
+		
 		//instantiates activation function checkboxes
 		JCheckBox sigmoid = new JCheckBox("sigmoid", CommonConstants.includeSigmoidFunction);
 		activation[Math.abs(SIGMOID_CHECKBOX_INDEX)] = CommonConstants.includeSigmoidFunction;
@@ -193,8 +219,8 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 
 		//adds slider for mutation rate change
 		JSlider mutationsPerGeneration = new JSlider(JSlider.HORIZONTAL, MPG_MIN, MPG_MAX, MPG_DEFAULT);
-		Hashtable labels = new Hashtable();
 
+		Hashtable labels = new Hashtable();
 		//set graphic names and toolTip titles
 		evolveButton.setName("" + EVOLVE_BUTTON_INDEX);
 		evolveButton.setToolTipText("Evolve button");
@@ -230,7 +256,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		labels.put(10, new JLabel("More Mutations"));
 		mutationsPerGeneration.setLabelTable(labels);
 		mutationsPerGeneration.setPaintLabels(true);
-
+		mutationsPerGeneration.setPreferredSize(new Dimension(350, 40));
 		//add action listeners to buttons
 		resetButton.addActionListener(this);
 		saveButton.addActionListener(this);
@@ -255,6 +281,9 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		LeakyReLU.addActionListener(this);
 		mutationsPerGeneration.addChangeListener(this);
 
+		
+		
+		
 		//set checkbox colors to match activation function color
 		sigmoid.setForeground(CombinatoricUtilities.colorFromInt(ActivationFunctions.FTYPE_SIGMOID));
 		absVal.setForeground(CombinatoricUtilities.colorFromInt(ActivationFunctions.FTYPE_ABSVAL));
@@ -271,6 +300,10 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		Softplus.setForeground(CombinatoricUtilities.colorFromInt(ActivationFunctions.FTYPE_SOFTPLUS));
 		LeakyReLU.setForeground(CombinatoricUtilities.colorFromInt(ActivationFunctions.FTYPE_LEAKY_RE_LU));
 		//add graphics to title panel
+		
+		
+		
+		
 		top.add(lineageButton);
 		top.add(resetButton);
 		top.add(networkButton);
@@ -278,6 +311,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		top.add(saveButton);
 		top.add(undoButton);
 		top.add(closeButton);
+		top.add(mutationsPerGeneration);
 		topper.add(top);
 		bottom.add(halfLinear);
 		bottom.add(absVal);
@@ -293,19 +327,24 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		bottom.add(ReLU);
 		bottom.add(Softplus);
 		bottom.add(LeakyReLU);
-		bottom.add(mutationsPerGeneration);
+		
+
 		topper.add(bottom);
 		panels.add(topper);
-
 		//adds button panels
 		addButtonPanels();
 
+	
+
+		
+		
 		//adds panels to frame
 		for(JPanel panel: panels) frame.add(panel);
 
 		//adds buttons to button panels
 		int x = 0;//used to keep track of index of button panel
 		addButtonsToPanel(x++);
+		
 	}
 
 	/**
@@ -316,7 +355,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		for(int i = 1; i <= NUM_ROWS; i++) {
 			for(int j = 0; j < NUM_COLUMNS; j++) {
 				if(x < NUM_BUTTONS) {
-					JButton image = getImageButton(GraphicsUtil.solidColorImage(Color.BLACK, PIC_SIZE, PIC_SIZE), "x");
+					JButton image = getImageButton(GraphicsUtil.solidColorImage(Color.BLACK, PIC_SIZE,( frame.getHeight() - topper.getHeight())/NUM_ROWS), "x");
 					image.setName("" + x);
 					image.addActionListener(this);
 					panels.get(i).add(image);
@@ -471,7 +510,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	 */
 	private BufferedImage getNetwork(Genotype<T> tg) {
 		T pheno = tg.getPhenotype();
-		DrawingPanel network = new DrawingPanel(PIC_SIZE, PIC_SIZE - 75, "network");
+		DrawingPanel network = new DrawingPanel(PIC_SIZE,( frame.getHeight() - topper.getHeight())/NUM_ROWS, "network");
 		((TWEANN) pheno).draw(network);
 		network.setVisibility(false);
 		return network.image;
