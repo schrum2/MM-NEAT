@@ -1,24 +1,32 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.utexas.cs.nn.evolution.nsga2.bd.vectors;
 
 import edu.utexas.cs.nn.util.CartesianGeometricUtilities;
 import java.util.ArrayList;
 
 /**
- *
  * @author Jacob Schrum
  */
 public class RealBehaviorVector implements BehaviorVector {
 
 	private final ArrayList<Double> v;
 
+	/**
+	 * Characterization of agent behavior consisting of a fixed-length
+	 * number of real (double) values. For use with the Behavioral Diversity
+	 * approach.
+	 * 
+	 * @param v An ArrayList of Doubles
+	 */
 	public RealBehaviorVector(ArrayList<Double> v) {
 		this.v = v;
 	}
 
+	/**
+	 * Takes the provided array values and places them
+	 * in the array list of the behavior vector.
+	 * 
+	 * @param i An Array of Integers
+	 */
 	public RealBehaviorVector(int[] i) {
 		this.v = new ArrayList<Double>(i.length);
 		for (int j = 0; j < i.length; j++) {
@@ -26,6 +34,12 @@ public class RealBehaviorVector implements BehaviorVector {
 		}
 	}
 
+	/**
+	 * Takes the provided array values and places them
+	 * in the array list of the behavior vector
+	 * 
+	 * @param d An Array of Doubles
+	 */
 	public RealBehaviorVector(double[] d) {
 		this.v = new ArrayList<Double>(d.length);
 		for (int j = 0; j < d.length; j++) {
@@ -33,6 +47,17 @@ public class RealBehaviorVector implements BehaviorVector {
 		}
 	}
 
+	/**
+	 * Calculates the Euclidean distance between this
+	 * behavior and the provided behavior vector. The
+	 * shorter of the two vectors is padded with zeros
+	 * first if necessary. The resulting return value is
+	 * the distance between the two vectors in behavior
+	 * space.
+	 * 
+	 * @return The distance between the two vectors in behavior space.
+	 * 
+	 */
 	public double distance(BehaviorVector rhs) {
 		ArrayList<Double> shorter = v;
 		ArrayList<Double> longer = ((RealBehaviorVector) rhs).v;
