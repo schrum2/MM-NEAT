@@ -42,13 +42,13 @@ import wox.serial.Easy;
  */
 public class PopulationUtil {
 
-    /**
-     * Assuming a lineage log was previously saved, this method loads that lineage
-     * based on directories and files specified in command-line parameters.
-     * 
-     * @return generation # generations logged in file
-     * @throws FileNotFoundException No lineage file found
-     */
+	/**
+	 * Assuming a lineage log was previously saved, this method loads that lineage
+	 * based on directories and files specified in command-line parameters.
+	 * 
+	 * @return generation # generations logged in file
+	 * @throws FileNotFoundException No lineage file found
+	 */
 	public static int loadLineage() throws FileNotFoundException {
 		String base = Parameters.parameters.stringParameter("base");
 		String log =  Parameters.parameters.stringParameter("log");
@@ -58,10 +58,10 @@ public class PopulationUtil {
 		String originalPrefix = base + "/" + saveTo + runNumber + "/" + log + runNumber + "_";
 		return loadLineage(originalPrefix + "Lineage_log.txt");
 	}
-        
+
 	/**
-         * Load offspring's lineage
-         * 
+	 * Load offspring's lineage
+	 * 
 	 * @param filename name of lineage log file
 	 * @return generation # generations logged in file
 	 * @throws FileNotFoundException if lineage file cannot be found 
@@ -97,9 +97,9 @@ public class PopulationUtil {
 		s.close();
 		return generation;
 	}
-	
-        // Does this method work? Looks like it was added by Lauren at some point,
-        // perhaps to explore the lineage in Picbreeder.
+
+	// Does this method work? Looks like it was added by Lauren at some point,
+	// perhaps to explore the lineage in Picbreeder.
 	public static long loadID() throws FileNotFoundException { 
 		String base = Parameters.parameters.stringParameter("base");
 		String log =  Parameters.parameters.stringParameter("log");
@@ -112,9 +112,9 @@ public class PopulationUtil {
 		return loadID(originalPrefix + "Lineage_log.txt");
 	}
 
-        // Does this method work? Looks like it was added by Lauren at some point,
-        // perhaps to explore the lineage in Picbreeder.
-        public static long loadID(String filename) throws FileNotFoundException {
+	// Does this method work? Looks like it was added by Lauren at some point,
+	// perhaps to explore the lineage in Picbreeder.
+	public static long loadID(String filename) throws FileNotFoundException {
 		Scanner s = new Scanner(new File(filename));
 		int generation = 0;
 		long offspringId = -1;
@@ -145,19 +145,19 @@ public class PopulationUtil {
 		s.close();
 		return offspringId;
 	}
-        
-        /**
-         * Given the best scoring individuals in each objective from the
-         * current generation, save those genotypes to file with naming
-         * conventions that make them easy to load later. Champions from the
-         * previous generation may need to be deleted first.
-         * 
-         * Note: Methods seems to only be used by SelectiveBreedingEA
-         * 
-         * @param <T> Phenotype associated with genotype
-         * @param bestScores Score entities that contain the best genotypes in each objective
-         *                   (one objective champion per ArrayList entry)
-         */
+
+	/**
+	 * Given the best scoring individuals in each objective from the
+	 * current generation, save those genotypes to file with naming
+	 * conventions that make them easy to load later. Champions from the
+	 * previous generation may need to be deleted first.
+	 * 
+	 * Note: Methods seems to only be used by SelectiveBreedingEA
+	 * 
+	 * @param <T> Phenotype associated with genotype
+	 * @param bestScores Score entities that contain the best genotypes in each objective
+	 *                   (one objective champion per ArrayList entry)
+	 */
 	public static <T> void saveCurrentGen(ArrayList<Score<T>> bestScores) {
 		int currentGen = MMNEAT.ea.currentGeneration();
 		String filePrefix = "gen" + currentGen + "_";
@@ -176,16 +176,16 @@ public class PopulationUtil {
 			FileUtilities.simpleFileWrite(bestDir + "/" + filePrefix + "genotypes" + j + ".txt", bestScores.get(j).individual.toString());
 		}
 	}
-        
-        /**
-         * This method seems very similar to the saveCurrentGen method above, but
-         * is used in the LonerTask. Can they be combined somehow?
-         * 
-         * @param <T>
-         * @param bestObjectives Array of best objective scores in each objective
-         * @param bestGenotypes Genotypes corresponding to those scores
-         * @param bestScores Score entities corresponding to the genotypes (redundant?)
-         */
+
+	/**
+	 * This method seems very similar to the saveCurrentGen method above, but
+	 * is used in the LonerTask. Can they be combined somehow?
+	 * 
+	 * @param <T>
+	 * @param bestObjectives Array of best objective scores in each objective
+	 * @param bestGenotypes Genotypes corresponding to those scores
+	 * @param bestScores Score entities corresponding to the genotypes (redundant?)
+	 */
 	public static <T> void saveBestOfCurrentGen(double[] bestObjectives, Genotype<T>[] bestGenotypes, Score<T>[] bestScores) {
 		int currentGen = MMNEAT.ea.currentGeneration();
 		String filePrefix = "gen" + currentGen + "_";
@@ -243,12 +243,12 @@ public class PopulationUtil {
 		}
 		return parents;
 	}    
-    
+
 	/**
 	 * Given a whole population of scores, get the Pareto front and use them as
 	 * exemplars to create a delta-coded population.
 	 * 
-         * @param <T> phenotype
+	 * @param <T> phenotype
 	 * @param populationScores
 	 *            population with scores
 	 * @return new soft restart population
@@ -262,7 +262,7 @@ public class PopulationUtil {
 	 * Take some example genotypes (e.g. a Pareto front) and create a whole
 	 * population based off of them by delta coding their network weights.
 	 * 
-         * @param <T> phenotype
+	 * @param <T> phenotype
 	 * @param size
 	 *            of population to be
 	 * @param exemplars
@@ -361,7 +361,7 @@ public class PopulationUtil {
 	public static <T> void pruneDownToParetoFront(ArrayList<Genotype<T>> population, NSGA2Score<T>[] scores) {
 		pruneDownToTopParetoLayers(population, scores, 1);
 	}
-	
+
 	/**
 	 * Modifies population so it contains only top Pareto layers
 	 *
@@ -549,46 +549,46 @@ public class PopulationUtil {
 	public static <T> Genotype<T> anonymousIdIndividual(final long offspringId) {
 		return new Genotype<T>() {
 
-                        @Override
+			@Override
 			public Genotype<T> copy() {
 				throw new UnsupportedOperationException("Not supported in dummy genotype.");
 			}
 
-                        @Override
+			@Override
 			public void mutate() {
 				throw new UnsupportedOperationException("Not supported in dummy genotype.");
 			}
 
-                        @Override
+			@Override
 			public Genotype<T> crossover(Genotype<T> g) {
 				throw new UnsupportedOperationException("Not supported in dummy genotype.");
 			}
 
-                        @Override
+			@Override
 			public T getPhenotype() {
 				throw new UnsupportedOperationException("Not supported in dummy genotype.");
 			}
 
-                        @Override
+			@Override
 			public Genotype<T> newInstance() {
 				throw new UnsupportedOperationException("Not supported in dummy genotype.");
 			}
 
-                        @Override
+			@Override
 			public long getId() {
 				return offspringId;
 			}
 		};
 	}
 
-        /**
-         * Save each sub-population of a co-evolutionary run.
-         * 
-         * @param prefix File prefix of files to save
-         * @param saveDirectory Directory to save in
-         * @param populations List of all sub-populations of genotypes
-         * @param parallel Whether or not to save using parallel threads
-         */
+	/**
+	 * Save each sub-population of a co-evolutionary run.
+	 * 
+	 * @param prefix File prefix of files to save
+	 * @param saveDirectory Directory to save in
+	 * @param populations List of all sub-populations of genotypes
+	 * @param parallel Whether or not to save using parallel threads
+	 */
 	@SuppressWarnings("rawtypes")
 	public static void saveAllSubPops(String prefix, String saveDirectory, ArrayList<ArrayList<Genotype>> populations, boolean parallel) {
 		String fullSaveDir = saveDirectory + "/" + prefix;
@@ -603,16 +603,16 @@ public class PopulationUtil {
 		}
 	}
 
-        /**
-         * Save an individual sub-population from a co-evolutionary run.
-         * 
-         * @param <T> Phenotype generated by genotype
-         * @param num Sub-pop index
-         * @param prefix File prefix for saves
-         * @param saveDirectory Directory to save in
-         * @param population Population of genotypes
-         * @param parallel Whether to save in parallel threads
-         */
+	/**
+	 * Save an individual sub-population from a co-evolutionary run.
+	 * 
+	 * @param <T> Phenotype generated by genotype
+	 * @param num Sub-pop index
+	 * @param prefix File prefix for saves
+	 * @param saveDirectory Directory to save in
+	 * @param population Population of genotypes
+	 * @param parallel Whether to save in parallel threads
+	 */
 	public static <T> void saveSubpop(int num, String prefix, String saveDirectory, ArrayList<Genotype<T>> population, boolean parallel) {
 		String experimentPrefix = Parameters.parameters.stringParameter("log") + Parameters.parameters.integerParameter("runNumber");
 		String fullSaveDir = saveDirectory + "/" + prefix + "/" + num;
@@ -665,7 +665,7 @@ public class PopulationUtil {
 	 * Loads xml files from a given directory into a vector of vectors such that
 	 * each sub-vector contains a subpopulation. The "directory" is presumed to
 	 * itself contain subdirectories named numerically: 0, 1, ... , (numPops - 1). 
-         * So, numPops designates the end size of the result returned, and the
+	 * So, numPops designates the end size of the result returned, and the
 	 * number of populations subdirectories to look for.
 	 *
 	 * Each subdir should contain a collection of xml files that can be loaded
@@ -779,7 +779,7 @@ public class PopulationUtil {
 	 * Take two populations and find out, by reference to id numbers, which
 	 * members are in one but not the other.
 	 *
-         * @param <T> phenotype
+	 * @param <T> phenotype
 	 * @param lhs
 	 *            pop 1
 	 * @param rhs
@@ -813,15 +813,15 @@ public class PopulationUtil {
 		}
 		return null;
 	}
-	
-        /**
-         * Converts an ArrayList of Genotype<T> to an array of Genotypes.
-         * This strips off the phenotype T
-         * 
-         * @param <T> Phenotype
-         * @param arrayList List of genotypes
-         * @return array of same genotypes
-         */
+
+	/**
+	 * Converts an ArrayList of Genotype<T> to an array of Genotypes.
+	 * This strips off the phenotype T
+	 * 
+	 * @param <T> Phenotype
+	 * @param arrayList List of genotypes
+	 * @return array of same genotypes
+	 */
 	@SuppressWarnings("rawtypes")
 	public static <T> Genotype[] genotypeArrayFromArrayList(ArrayList<Genotype<T>> arrayList) {
 		Genotype[] genos = new Genotype[arrayList.size()];
@@ -830,5 +830,5 @@ public class PopulationUtil {
 		}
 		return genos;
 	}
-	
+
 }

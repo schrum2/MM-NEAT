@@ -10,14 +10,21 @@ import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.util.util2D.ILocated2D;
 import edu.utexas.cs.nn.util.util2D.Tuple2D;
 
+/**
+ * Several useful methods for creating and manipulating images.
+ * Mostly used by Picbreeder.
+ * 
+ * @author Lauren Gillespie
+ *
+ */
 public class GraphicsUtil {
-	
+
 	private static final int HUE_INDEX = 0;
 	private static final int SATURATION_INDEX = 1;
 	private static final int BRIGHTNESS_INDEX = 2;
 	private static final double BIAS = 1.0;// a common input used in neural networks
-        private static final double SQRT2 = Math.sqrt(2); // Used for scaling distance from center
-        
+	private static final double SQRT2 = Math.sqrt(2); // Used for scaling distance from center
+
 	/**
 	 * Draws the image created by the CPPN to a BufferedImage
 	 *
@@ -61,7 +68,7 @@ public class GraphicsUtil {
 	 */
 	public static float[] getHSBFromCPPN(Network n, int x, int y, int imageWidth, int imageHeight) {
 		double[] input = getCPPNInputs(x, y, imageWidth, imageHeight);
-                 // Eliminate recurrent activation for consistent images at all resolutions
+		// Eliminate recurrent activation for consistent images at all resolutions
 		n.flush();
 		return rangeRestrictHSB(n.process(input));
 	}
@@ -128,21 +135,21 @@ public class GraphicsUtil {
 		return parentPanel;
 	}
 
-        /**
-         * Creates an image of the specified size and height consisting entirely
-         * of a designated solid color.
-         * @param c Color throughout image
-         * @param width width of image in pixels
-         * @param height height of image in pixels
-         * @return BufferedImage in solid color
-         */
-        public static BufferedImage solidColorImage(Color c, int width, int height) {
-            BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+	/**
+	 * Creates an image of the specified size and height consisting entirely
+	 * of a designated solid color.
+	 * @param c Color throughout image
+	 * @param width width of image in pixels
+	 * @param height height of image in pixels
+	 * @return BufferedImage in solid color
+	 */
+	public static BufferedImage solidColorImage(Color c, int width, int height) {
+		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		for (int x = 0; x < width; x++) {// scans across whole image
 			for (int y = 0; y < height; y++) {
 				image.setRGB(x, y, c.getRGB());
 			}
 		}
-                return image;
-        }
+		return image;
+	}
 }
