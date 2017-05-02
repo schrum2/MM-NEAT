@@ -42,10 +42,10 @@ public class Pair<X, Y> {
 	 *            A different pair
 	 * @return Whether pairs are equal
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public boolean equals(Object other) {
 		if (other instanceof Pair) {
+			@SuppressWarnings("unchecked")
 			Pair<X, Y> p = (Pair<X, Y>) other;
 			return t1.equals(p.t1) && t2.equals(p.t2);
 		}

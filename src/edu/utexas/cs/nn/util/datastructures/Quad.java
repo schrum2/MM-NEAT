@@ -28,10 +28,10 @@ public class Quad<W, X, Y, Z> {
 		return "(" + t1.toString() + "," + t2.toString() + "," + t3.toString() + "," + t4.toString() + ")";
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public boolean equals(Object other) {
 		if (other instanceof Quad) {
+			@SuppressWarnings("unchecked")
 			Quad<W, X, Y, Z> p = (Quad<W, X, Y, Z>) other;
 			return t1.equals(p.t1) && t2.equals(p.t2) && t3.equals(p.t3) && t4.equals(p.t4);
 		}

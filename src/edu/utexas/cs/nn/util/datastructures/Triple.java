@@ -28,7 +28,8 @@ public class Triple<X, Y, Z> {
 	@Override
 	public boolean equals(Object other) {
 		if (other instanceof Triple) {
-			Triple p = (Triple) other;
+			@SuppressWarnings("unchecked")
+			Triple<X,Y,Z> p = (Triple<X,Y,Z>) other;
 			return t1.equals(p.t1) && t2.equals(p.t2) && t3.equals(p.t3);
 		}
 		return false;
