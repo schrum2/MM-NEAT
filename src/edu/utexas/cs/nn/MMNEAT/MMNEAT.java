@@ -598,12 +598,12 @@ public class MMNEAT {
 				MsPacManControllerInputOutputMediator pillMediator = (MsPacManControllerInputOutputMediator) ClassCreation.createObject("pacManMediatorClass2");
 				pacmanInputOutputMediator = new MultipleInputOutputMediator(new MsPacManControllerInputOutputMediator[] { ghostMediator, pillMediator });
 				setNNInputParameters(pacmanInputOutputMediator.numIn(), pacmanInputOutputMediator.numOut());
-				
+
 			} else if(HNTSeedTask != null && Parameters.parameters.integerParameter("lastSavedGeneration") == 0) { // hyperNEATseed is not null
-				Parameters.parameters.setBoolean("randomizeSeedWeights", true);
-			
-                // Since this approach required many large TWEANNs to be saved in memory, alternative gene representations are used with optional fields removed
-                TWEANNGenotype.smallerGenotypes = true;            
+				Parameters.parameters.setBoolean("randomizeSeedWeights", true); // Makes sure PopulationUtil randomized all weights
+
+				// Since this approach required many large TWEANNs to be saved in memory, alternative gene representations are used with optional fields removed
+				TWEANNGenotype.smallerGenotypes = true;            
 				HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair = 1;
 				HyperNEATCPPNGenotype.biasIndex = 0;
 				HyperNEATCPPNGenotype.leoIndex = 0;
@@ -623,13 +623,10 @@ public class MMNEAT {
 				HyperNEATCPPNGenotype hntGeno = new HyperNEATCPPNGenotype(HyperNEATTask.NUM_CPPN_INPUTS,  numSubstratePairings * HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair, 0);
 				TWEANNGenotype seedGeno = hntGeno.getSubstrateGenotypeForEvolution(HNTSeedTask);
 				genotype = seedGeno;
-				if(Parameters.parameters.booleanParameter("randomizeSeedWeights")) {
-					//TODO not sure what to do here
-				}
 				System.out.println("Genotype seeded from HyperNEAT task substrate specification");
 				seedExample = true;
-                                // Cleanup data we don't need any more
-                                HNTSeedTask = null;
+				// Cleanup data we don't need any more
+				HNTSeedTask = null;
 			} else if (seedGenotype.isEmpty()) {
 				genotype = (Genotype) ClassCreation.createObject("genotype");
 			} else {
@@ -668,7 +665,7 @@ public class MMNEAT {
 		HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair = 1;
 		HyperNEATCPPNGenotype.biasIndex = 0;
 		HyperNEATCPPNGenotype.leoIndex = 0;
-		
+
 		CommonConstants.monitorInputs = false;
 		Parameters.parameters.setBoolean("monitorInputs", false);
 
@@ -806,9 +803,9 @@ public class MMNEAT {
 	}
 
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
-            // Simple way of debugging using the profiler
-            //args = new String[]{"runNumber:1", "randomSeed:0", "base:tetris", "logPerformance:false", "logTWEANNData:false", "trials:1", "maxGens:300", "mu:50", "io:true", "netio:true", "mating:true", "task:edu.utexas.cs.nn.tasks.rlglue.tetris.TetrisTask", "rlGlueEnvironment:org.rlcommunity.environments.tetris.Tetris", "rlGlueExtractor:edu.utexas.cs.nn.tasks.rlglue.featureextractors.tetris.RawTetrisStateExtractor", "tetrisTimeSteps:true", "tetrisBlocksOnScreen:false", "rlGlueAgent:edu.utexas.cs.nn.tasks.rlglue.tetris.TetrisAfterStateAgent", "splitRawTetrisInputs:true", "senseHolesDifferently:true", "log:Tetris-moRawHNSeedFixedSplitInputs", "saveTo:moRawHNSeedFixedSplitInputs", "hyperNEATSeedTask:edu.utexas.cs.nn.tasks.rlglue.tetris.HyperNEATTetrisTask", "substrateMapping:edu.utexas.cs.nn.networks.hyperneat.BottomSubstrateMapping", "HNTTetrisProcessDepth:1", "netLinkRate:0.0", "netSpliceRate:0.0", "linkExpressionThreshold:-1"};
-            
+		// Simple way of debugging using the profiler
+		//args = new String[]{"runNumber:1", "randomSeed:0", "base:tetris", "logPerformance:false", "logTWEANNData:false", "trials:1", "maxGens:300", "mu:50", "io:true", "netio:true", "mating:true", "task:edu.utexas.cs.nn.tasks.rlglue.tetris.TetrisTask", "rlGlueEnvironment:org.rlcommunity.environments.tetris.Tetris", "rlGlueExtractor:edu.utexas.cs.nn.tasks.rlglue.featureextractors.tetris.RawTetrisStateExtractor", "tetrisTimeSteps:true", "tetrisBlocksOnScreen:false", "rlGlueAgent:edu.utexas.cs.nn.tasks.rlglue.tetris.TetrisAfterStateAgent", "splitRawTetrisInputs:true", "senseHolesDifferently:true", "log:Tetris-moRawHNSeedFixedSplitInputs", "saveTo:moRawHNSeedFixedSplitInputs", "hyperNEATSeedTask:edu.utexas.cs.nn.tasks.rlglue.tetris.HyperNEATTetrisTask", "substrateMapping:edu.utexas.cs.nn.networks.hyperneat.BottomSubstrateMapping", "HNTTetrisProcessDepth:1", "netLinkRate:0.0", "netSpliceRate:0.0", "linkExpressionThreshold:-1"};
+
 		if (args.length == 0) {
 			System.out.println("First command line parameter must be one of the following:");
 			System.out.println("\tmultiple:n\twhere n is the number of experiments to run in sequence");

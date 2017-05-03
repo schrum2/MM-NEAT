@@ -8,6 +8,11 @@ import edu.utexas.cs.nn.tasks.Task;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.datastructures.Triple;
 
+/**
+ * This class is used in certain JUnit tests, but it not a "real" task
+ * @author schrum2
+ *
+ */
 @SuppressWarnings("rawtypes")
 public class HyperNEATSpeedTask implements HyperNEATTask, Task, SinglePopulationTask {
 
