@@ -20,11 +20,15 @@ public class Substrate {
 	public final String name;
 	// encodes size of rectangular substrate (sticking with 2D for now)
 	public final Pair<Integer, Integer> size;
-	// encodes type of substrate
+	// encodes type of substrate: INPUT_SUBSTRATE, PROCCESS_SUBSTRATE, or OUTPUT_SUBSTRATE
 	public final int stype;
-	// location of substrate in vector space
+	// location of substrate in vector space.
+	// Not actually used anywhere, but could aid in visualization in the future
 	public final Triple<Integer, Integer, Integer> subLocation;
+	// Set of neurons in this substrate that cannot process information.
+	// Not all neurons within the rectangle may make sense to use.
 	public HashSet<Pair<Integer, Integer>> deadNeurons;
+
 	/**
 	 * constructor for a substrate
 	 *
@@ -82,13 +86,21 @@ public class Substrate {
 	}
 
 	/**
-	 * Overridden toString for substrate
+	 * Provides some basic summary information about the substrate.
+	 * @return String summary of substrate contents
 	 */
 	public String toString() {
 		return "Substrate name: " + this.name + " size: " + this.size.toString() + " stype: " + this.getStype()
 				+ " getSubLocation: " + this.getSubLocation().toString();
 	}
 
+	/**
+	 * Indicates that the neuron at the given coordinate can have no input or output links.
+	 * The neuron stays dead if it was already dead.
+	 * 
+	 * @param x x-coordinate of neuron to kill
+	 * @param y y-coordinate of neuron to kill
+	 */
 	public void addDeadNeuron(int x, int y) {
 		addDeadNeuron(new Pair<>(x,y));
 	}	
@@ -104,7 +116,7 @@ public class Substrate {
 	}
 	
 	/**
-	 * Removes all dead neurons from substrate
+	 * Removes all dead neurons from substrate (brings them all back to life)
 	 */
 	public void removeDeadNeurons() {
 		this.deadNeurons = new HashSet<Pair<Integer, Integer>>();
@@ -133,11 +145,12 @@ public class Substrate {
 	}
 
 	/**
-	 * Whether a dead neuron was actually resurrected
+	 * Bring neuron back to life if dead, and return
+	 * whether a dead neuron was actually resurrected
 	 * (as opposed to not being present in the first place)
 	 * @param x x-coord
 	 * @param y y-coord
-	 * @return whether resurrection occurred
+	 * @return whether neuron was dead originally
 	 */
 	public boolean resurrectNeuron(int x, int y) {
 		return deadNeurons.remove(new Pair<>(x, y));
