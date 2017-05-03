@@ -1,6 +1,8 @@
 package edu.utexas.cs.nn.networks.hyperneat;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.datastructures.Triple;
@@ -28,7 +30,9 @@ public class Substrate {
 	// Set of neurons in this substrate that cannot process information.
 	// Not all neurons within the rectangle may make sense to use.
 	public HashSet<Pair<Integer, Integer>> deadNeurons;
-
+	// Ordered list of locations of all neurons within this substrate
+	public final List<Pair<Integer,Integer>> neuronCoordinates;
+	
 	/**
 	 * constructor for a substrate
 	 *
@@ -49,6 +53,13 @@ public class Substrate {
 		// this.connectToSameLayer = connectToSameLayer;
 		this.subLocation = subLocation;
 		this.deadNeurons = new HashSet<Pair<Integer, Integer>>();
+
+		neuronCoordinates = new ArrayList<Pair<Integer,Integer>>(numberOfNeurons());
+		for (int y = 0; y < size.t2; y++) {
+			for (int x = 0; x < size.t1; x++) {
+				neuronCoordinates.add(new Pair<>(x,y));
+			}
+		}
 	}
 
 	/**
@@ -85,6 +96,33 @@ public class Substrate {
 		return this.subLocation;
 	}
 
+	/**
+	 * Number of neurons in the substrate layer.
+	 * Simply the width times the height.
+	 * 
+	 * @return Number of neurons.
+	 */
+	public int numberOfNeurons() {
+		return size.t1 * size.t2;
+	}
+	
+	/**
+	 * Return a list of all neuron coordinates contained in the substrate
+	 * (including the dead ones) in the order they should be traversed to
+	 * create a substrate network in HyperNEAT (HyperNEATCPPNGenotype uses
+	 * a mapping between innovation IDs and substrate coordinates to help
+	 * define links between neurons, so order is important).
+	 * 
+	 * Note: 1D substrates can be represented by simply having one coordinate
+	 *       value fixed, but changes will need to be made if you ever move
+	 *       to 3D substrates. 
+	 * 
+	 * @return List of ordered substrate coordinates
+	 */
+	public List<Pair<Integer,Integer>> coordinateList() {
+		return neuronCoordinates;
+	}
+	
 	/**
 	 * Provides some basic summary information about the substrate.
 	 * @return String summary of substrate contents
