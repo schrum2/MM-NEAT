@@ -206,25 +206,23 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 	public ArrayList<NodeGene> createSubstrateNodes(TWEANN cppn, List<Substrate> subs) {
 		ArrayList<NodeGene> newNodes = new ArrayList<NodeGene>();
 		// loops through substrate list
-		for (int i = 0; i < subs.size(); i++) { // for each substrate
+		for (Substrate sub: subs) { // for each substrate
+			// This loop gets every (x,y) coordinate pair from the substrate.
+			for (Pair<Integer,Integer> coord : sub.coordinateList()) {
+				int x = coord.t1;
+				int y = coord.t2;
 
-			// These next two loops get every (x,y) coordinate pair from the substrate.
-			// Could replace with a single, more general loop if we had a way of generating all coordinates.
-			for (int y = 0; y < subs.get(i).size.t2; y++) {
-				for (int x = 0; x < subs.get(i).size.t1; x++) {
-
-					// Substrate types and Neuron types match and use same values
-					double bias = 0.0; // default
-					// Non-input substrates can have a bias if desired
-					if(CommonConstants.evolveHyperNEATBias && subs.get(i).stype != Substrate.INPUT_SUBSTRATE) {
-						// Ask CPPN to generate a bias for each neuron
-						// Schrum: 1/31/17: I'm afriad that the value of biasIndex is not being set correctly.
-						//                  Even if it was, there may still be many unused CPPN outputs, which
-						//                  is wasteful. Need to investigate.
-						bias = cppn.process(new double[]{0, 0, x, y, BIAS})[biasIndex];
-					}
-					newNodes.add(newNodeGene(CommonConstants.ftype, subs.get(i).getStype(), innovationID++, false, bias));
+				// Substrate types and Neuron types match and use same values
+				double bias = 0.0; // default
+				// Non-input substrates can have a bias if desired
+				if(CommonConstants.evolveHyperNEATBias && sub.stype != Substrate.INPUT_SUBSTRATE) {
+					// Ask CPPN to generate a bias for each neuron
+					// Schrum: 1/31/17: I'm afriad that the value of biasIndex is not being set correctly.
+					//                  Even if it was, there may still be many unused CPPN outputs, which
+					//                  is wasteful. Need to investigate.
+					bias = cppn.process(new double[]{0, 0, x, y, BIAS})[biasIndex];
 				}
+				newNodes.add(newNodeGene(CommonConstants.ftype, sub.getStype(), innovationID++, false, bias));
 			}
 		}
 		return newNodes;
@@ -284,48 +282,41 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 	 */
 	public void loopThroughLinks(ArrayList<LinkGene> linksSoFar, TWEANN cppn, int outputIndex, Substrate s1, Substrate s2, int s1Index, int s2Index, List<Substrate> subs) {
 
-		// These first two loops go through every (x,y) coordinate in Substrate s1: source substrate
-		// searches through width of first substrate
-		for (int X1 = 0; X1 < s1.size.t1; X1++) {
-			// searches through height of first substrate
-			for (int Y1 = 0; Y1 < s1.size.t2; Y1++) {
+		// This loop goes through every (x,y) coordinate in Substrate s1: source substrate
+		for(Pair<Integer,Integer> src : s1.coordinateList()) {
+			int X1 = src.t1;
+			int Y1 = src.t2;
+			// If the neuron in the source substrate is dead, it will not have outputs
+			if(!s1.isNeuronDead(X1, Y1)) {
+				// This loop searches through every (x,y) coordinate in Substrate s2: target substrate
+				for(Pair<Integer,Integer> target: s2.coordinateList()) {
+					int X2 = target.t1;
+					int Y2 = target.t2;
+					// If the target neuron is dead, then don't bother with incoming links
+					if(!s2.isNeuronDead(X2, Y2)) {
+						// CPPN inputs need to be centered and scaled
+						ILocated2D scaledSourceCoordinates = MMNEAT.substrateMapping.transformCoordinates(new Tuple2D(X1, Y1), s1.size.t1, s1.size.t2);
+						ILocated2D scaledTargetCoordinates = MMNEAT.substrateMapping.transformCoordinates(new Tuple2D(X2, Y2), s2.size.t1, s2.size.t2);
+						// inputs to CPPN 
+						// These next two lines need to be generalized for different numbers of CPPN inputs
+						double[] inputs = {scaledSourceCoordinates.getX(), scaledSourceCoordinates.getY(), scaledTargetCoordinates.getX(), scaledTargetCoordinates.getY(), BIAS};
+						double[] outputs = cppn.process(inputs);
+						boolean expressLink = CommonConstants.leo
+								// Specific network output determines link expression
+								? outputs[(numCPPNOutputsPerLayerPair * outputIndex) + leoIndex] > CommonConstants.linkExpressionThreshold
+										// Output magnitude determines link expression
+										: Math.abs(outputs[(numCPPNOutputsPerLayerPair * outputIndex) + LINK_INDEX]) > CommonConstants.linkExpressionThreshold;
+										if (expressLink) {
+											long sourceID = getInnovationID(X1, Y1, s1Index, subs);
+											long targetID = getInnovationID(X2, Y2, s2Index, subs);
+											double weight = CommonConstants.leo
+													// LEO takes its weight directly from the designated network output
+													? outputs[(numCPPNOutputsPerLayerPair * outputIndex) + LINK_INDEX]
+															// Standard HyperNEAT must scale the weight
+															: NetworkUtil.calculateWeight(outputs[(numCPPNOutputsPerLayerPair * outputIndex) + LINK_INDEX]);
+													linksSoFar.add(newLinkGene(sourceID, targetID, weight, innovationID++, false));
+										}
 
-				// If the neuron in the source substrate is dead, it will not have outputs
-				if(!s1.isNeuronDead(X1, Y1)) {
-
-					// Next two loops search through every (x,y) coordinate in Substrate s2: target substrate
-					// searches through width of second substrate
-					for (int X2 = 0; X2 < s2.size.t1; X2++) {
-						// searches through height of second substrate
-						for (int Y2 = 0; Y2 < s2.size.t2; Y2++) {
-
-							// If the target neuron is dead, then don't bother with incoming links
-							if(!s2.isNeuronDead(X2, Y2)) {
-								// CPPN inputs need to be centered and scaled
-								ILocated2D scaledSourceCoordinates = MMNEAT.substrateMapping.transformCoordinates(new Tuple2D(X1, Y1), s1.size.t1, s1.size.t2);
-								ILocated2D scaledTargetCoordinates = MMNEAT.substrateMapping.transformCoordinates(new Tuple2D(X2, Y2), s2.size.t1, s2.size.t2);
-								// inputs to CPPN 
-								// These next two lines need to be generalized for different numbers of CPPN inputs
-								double[] inputs = {scaledSourceCoordinates.getX(), scaledSourceCoordinates.getY(), scaledTargetCoordinates.getX(), scaledTargetCoordinates.getY(), BIAS};
-								double[] outputs = cppn.process(inputs);
-								boolean expressLink = CommonConstants.leo
-										// Specific network output determines link expression
-										? outputs[(numCPPNOutputsPerLayerPair * outputIndex) + leoIndex] > CommonConstants.linkExpressionThreshold
-												// Output magnitude determines link expression
-												: Math.abs(outputs[(numCPPNOutputsPerLayerPair * outputIndex) + LINK_INDEX]) > CommonConstants.linkExpressionThreshold;
-												if (expressLink) {
-													long sourceID = getInnovationID(X1, Y1, s1Index, subs);
-													long targetID = getInnovationID(X2, Y2, s2Index, subs);
-													double weight = CommonConstants.leo
-															// LEO takes its weight directly from the designated network output
-															? outputs[(numCPPNOutputsPerLayerPair * outputIndex) + LINK_INDEX]
-																	// Standard HyperNEAT must scale the weight
-																	: NetworkUtil.calculateWeight(outputs[(numCPPNOutputsPerLayerPair * outputIndex) + LINK_INDEX]);
-															linksSoFar.add(newLinkGene(sourceID, targetID, weight, innovationID++, false));
-												}
-
-							}
-						}
 					}
 				}
 			}
