@@ -116,6 +116,6 @@ public class TWEANNGenotypeTest {
 		long trueMaxInno = Math.max(trueMaxInnoGene, trueMaxInnoLink);
 		long maxInno = tg1.biggestInnovation();
 
-		assertTrue(trueMaxInno == maxInno);
+		assertEquals(trueMaxInno,maxInno); // Failed?
 	}
 }

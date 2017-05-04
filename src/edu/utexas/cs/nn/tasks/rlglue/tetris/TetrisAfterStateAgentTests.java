@@ -169,7 +169,7 @@ public class TetrisAfterStateAgentTests {
 		Action a = afterStateAgent.getAction(o);
 		
 		assertFalse(afterStateAgent.currentActionList.isEmpty());
-		assertEquals(afterStateAgent.currentActionList.size(), 4);
+		assertEquals(afterStateAgent.currentActionList.size(), 4); // Failed? Expected 7?
 		assertEquals(a.getInt(0), TetrisState.RIGHT); // 1
 		testState.take_action(a.getInt(0));
 		assertEquals(testState.currentX, oldX + 1);
