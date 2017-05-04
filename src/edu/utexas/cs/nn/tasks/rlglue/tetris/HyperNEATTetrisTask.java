@@ -18,12 +18,34 @@ import edu.utexas.cs.nn.util.datastructures.Triple;
 public class HyperNEATTetrisTask<T extends Network> extends TetrisTask<T> implements HyperNEATTask {
 
 	// These values will be defined before they are needed
-	public static final int HYPERNEAT_OUTPUT_SUBSTRATE_DIMENSION = 1;
-	private static final int SUBSTRATE_COORDINATES = 4;
+	public static final int HYPERNEAT_OUTPUT_SUBSTRATE_DIMENSION = 1; // Tetris output is on single 1 by 1 substrate
+	private static final int SUBSTRATE_COORDINATES = 4; // Schrum: What is this?
 	public final int numProcessLayers = Parameters.parameters.integerParameter("HNTTetrisProcessDepth");
 	private static List<Substrate> substrateInformation = null;
-	private List<Pair<String, String>> substrateConnectivity = null;
+	private List<Pair<String, String>> substrateConnectivity = null; // Schrum: I'm pretty sure this can/should be static
 
+	/**
+	 * Default behavior
+	 * 
+	 * TODO: Change depending on type of feature extractor,
+	 * 		 and also on type of substrate mapping
+	 */
+	@Override
+	public int numCPPNInputs() {
+		return HyperNEATTask.DEFAULT_NUM_CPPN_INPUTS;
+	}
+
+	/**
+	 * Default behavior
+	 * 
+	 * TODO: Change depending on type of feature extractor,
+	 * 		 and also on type of substrate mapping
+	 */
+	@Override
+	public double[] filterCPPNInputs(double[] fullInputs) {
+		return fullInputs;
+	}	
+	
 	@Override
 	public List<Substrate> getSubstrateInformation() {
 		int outputDepth = SUBSTRATE_COORDINATES;

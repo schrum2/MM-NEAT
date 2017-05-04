@@ -25,6 +25,17 @@ public class HyperNEATDummyTask<T> implements HyperNEATTask, Task, SinglePopulat
 		output = new Substrate(new Pair<Integer, Integer>(2, 4), Substrate.OUTPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, 8, 0), "O_0");
 	}
 
+
+	@Override
+	public int numCPPNInputs() {
+		return HyperNEATTask.DEFAULT_NUM_CPPN_INPUTS;
+	}
+
+	@Override
+	public double[] filterCPPNInputs(double[] fullInputs) {
+		return fullInputs;
+	}
+	
 	/**
 	 * returns substrates from dummy task
 	 */

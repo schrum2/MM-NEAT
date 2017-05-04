@@ -28,6 +28,17 @@ public class HyperNEATSpeedTask implements HyperNEATTask, Task, SinglePopulation
 
 	}
 
+
+	@Override
+	public int numCPPNInputs() {
+		return HyperNEATTask.DEFAULT_NUM_CPPN_INPUTS;
+	}
+
+	@Override
+	public double[] filterCPPNInputs(double[] fullInputs) {
+		return fullInputs;
+	}
+	
 	@Override
 	public int numObjectives() {
 		throw new UnsupportedOperationException("Not supported yet.");

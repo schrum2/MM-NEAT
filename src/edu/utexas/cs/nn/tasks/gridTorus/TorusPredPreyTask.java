@@ -908,4 +908,21 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 	private int indexFromCoordinates(double x, double y, int substrateWidth) {
 		return (int) ((substrateWidth * y) + x);
 	}
+	
+	/**
+	 * Default behavior
+	 */
+	@Override
+	public int numCPPNInputs() {
+		return HyperNEATTask.DEFAULT_NUM_CPPN_INPUTS;
+	}
+
+	/**
+	 * Default behavior
+	 */
+	@Override
+	public double[] filterCPPNInputs(double[] fullInputs) {
+		return fullInputs;
+	}
+	
 }

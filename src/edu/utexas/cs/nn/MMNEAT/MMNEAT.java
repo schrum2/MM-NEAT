@@ -620,7 +620,7 @@ public class MMNEAT {
 					HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair++;
 					HyperNEATCPPNGenotype.leoIndex = HyperNEATCPPNGenotype.biasIndex + 1;
 				}
-				HyperNEATCPPNGenotype hntGeno = new HyperNEATCPPNGenotype(HyperNEATTask.NUM_CPPN_INPUTS,  numSubstratePairings * HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair, 0);
+				HyperNEATCPPNGenotype hntGeno = new HyperNEATCPPNGenotype(HNTSeedTask.numCPPNInputs(),  numSubstratePairings * HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair, 0);
 				TWEANNGenotype seedGeno = hntGeno.getSubstrateGenotypeForEvolution(HNTSeedTask);
 				genotype = seedGeno;
 				System.out.println("Genotype seeded from HyperNEAT task substrate specification");
@@ -684,7 +684,7 @@ public class MMNEAT {
 			HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair++;
 			HyperNEATCPPNGenotype.leoIndex = HyperNEATCPPNGenotype.biasIndex + 1;
 		}
-		setNNInputParameters(HyperNEATTask.NUM_CPPN_INPUTS, numSubstratePairings * HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair);
+		setNNInputParameters(hnt.numCPPNInputs(), numSubstratePairings * HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair);
 	}
 
 	/**

@@ -721,4 +721,20 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 		}
 		subs = substratesForMaze.get(mazeIndex);
 	}
+	
+	/**
+	 * Default behavior
+	 */
+	@Override
+	public int numCPPNInputs() {
+		return HyperNEATTask.DEFAULT_NUM_CPPN_INPUTS;
+	}
+
+	/**
+	 * Default behavior
+	 */
+	@Override
+	public double[] filterCPPNInputs(double[] fullInputs) {
+		return fullInputs;
+	}	
 }

@@ -100,7 +100,7 @@ public class SubstrateMLP implements Network {
 	 * @param ftype An activation function type from ActivationFunctions
 	 */
 	public SubstrateMLP(List<Substrate> subs,  List<Pair<String, String>> connections, Network network, int ftype) {
-		assert network.numInputs() == HyperNEATTask.NUM_CPPN_INPUTS:"Number of inputs to network = " + network.numInputs() + " not " + HyperNEATTask.NUM_CPPN_INPUTS;
+		assert network.numInputs() == HyperNEATTask.DEFAULT_NUM_CPPN_INPUTS:"Number of inputs to network = " + network.numInputs() + " not " + HyperNEATTask.DEFAULT_NUM_CPPN_INPUTS;
 		this.ftype = ftype;
 		this.connections = new ArrayList<MLPConnection>();
 		layers = new ArrayList<MLPLayer>();

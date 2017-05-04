@@ -134,7 +134,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 			substrateIndexMapping.put(subs.get(i).getName(), i);
 		}
 		// loop through connections and add links, based on contents of subs
-		newLinks = createNodeLinks(cppn, connections, subs, substrateIndexMapping);
+		newLinks = createNodeLinks(hnt, cppn, connections, subs, substrateIndexMapping);
 		// Figure out number of output neurons
 		for (Substrate s : subs) {
 			if (s.getStype() == Substrate.OUTPUT_SUBSTRATE) {
@@ -244,7 +244,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 	 *
 	 * @return array list containing all the links between substrates
 	 */
-	public ArrayList<LinkGene> createNodeLinks(TWEANN cppn, List<Pair<String, String>> connections, List<Substrate> subs, HashMap<String, Integer> sIMap) {
+	private ArrayList<LinkGene> createNodeLinks(HyperNEATTask hnt, TWEANN cppn, List<Pair<String, String>> connections, List<Substrate> subs, HashMap<String, Integer> sIMap) {
 		ArrayList<LinkGene> result = new ArrayList<LinkGene>();
 		for (int i = 0; i < connections.size(); i++) { // For each pair of substrates that are connected
 			int sourceSubstrateIndex = sIMap.get(connections.get(i).t1);
@@ -252,7 +252,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 			Substrate sourceSubstrate = subs.get(sourceSubstrateIndex);
 			Substrate targetSubstrate = subs.get(targetSubstrateIndex);
 			// adds links from between two substrates to whole list of links
-			loopThroughLinks(result, cppn, i, sourceSubstrate, targetSubstrate, sourceSubstrateIndex, targetSubstrateIndex, subs);
+			loopThroughLinks(hnt, result, cppn, i, sourceSubstrate, targetSubstrate, sourceSubstrateIndex, targetSubstrateIndex, subs);
 		}
 		return result;
 	}
@@ -280,7 +280,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 	 *            list of substrates
 	 *
 	 */
-	public void loopThroughLinks(ArrayList<LinkGene> linksSoFar, TWEANN cppn, int outputIndex, Substrate s1, Substrate s2, int s1Index, int s2Index, List<Substrate> subs) {
+	void loopThroughLinks(HyperNEATTask hnt, ArrayList<LinkGene> linksSoFar, TWEANN cppn, int outputIndex, Substrate s1, Substrate s2, int s1Index, int s2Index, List<Substrate> subs) {
 
 		// This loop goes through every (x,y) coordinate in Substrate s1: source substrate
 		for(Pair<Integer,Integer> src : s1.coordinateList()) {
@@ -299,7 +299,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 						ILocated2D scaledTargetCoordinates = MMNEAT.substrateMapping.transformCoordinates(new Tuple2D(X2, Y2), s2.size.t1, s2.size.t2);
 						// inputs to CPPN 
 						// These next two lines need to be generalized for different numbers of CPPN inputs
-						double[] inputs = {scaledSourceCoordinates.getX(), scaledSourceCoordinates.getY(), scaledTargetCoordinates.getX(), scaledTargetCoordinates.getY(), BIAS};
+						double[] inputs = hnt.filterCPPNInputs(new double[]{scaledSourceCoordinates.getX(), scaledSourceCoordinates.getY(), scaledTargetCoordinates.getX(), scaledTargetCoordinates.getY(), BIAS});
 						double[] outputs = cppn.process(inputs);
 						boolean expressLink = CommonConstants.leo
 								// Specific network output determines link expression

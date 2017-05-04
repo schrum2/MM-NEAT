@@ -68,7 +68,19 @@ public class SubstrateMLPTest {
 		}
 	}
 
+	// Simple class for testing: most methods not actually used
 	public abstract class AggregateHyperNEATTask implements Task, HyperNEATTask {
+
+		@Override
+		public int numCPPNInputs() {
+			return HyperNEATTask.DEFAULT_NUM_CPPN_INPUTS;
+		}
+
+		@Override
+		public double[] filterCPPNInputs(double[] fullInputs) {
+			return fullInputs;
+		}
+
 	}
 
 	//@Test
@@ -157,7 +169,6 @@ public class SubstrateMLPTest {
 			public void finalCleanup() {
 				throw new UnsupportedOperationException("unimplemented method");
 			}
-
 		};
 		try {
 			MMNEAT.hyperNEATOverrides();

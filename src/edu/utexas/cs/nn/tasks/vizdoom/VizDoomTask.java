@@ -594,4 +594,20 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 		}
 		return conn;
 	}	
+	
+	/**
+	 * Default behavior
+	 */
+	@Override
+	public int numCPPNInputs() {
+		return HyperNEATTask.DEFAULT_NUM_CPPN_INPUTS;
+	}
+
+	/**
+	 * Default behavior
+	 */
+	@Override
+	public double[] filterCPPNInputs(double[] fullInputs) {
+		return fullInputs;
+	}
 }

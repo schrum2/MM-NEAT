@@ -100,7 +100,7 @@ public class HyperNEATCPPNGenotypeTest {
 		int endingIndex = connections.size() - 1;
 		int indexOfTest = 0;
 		ArrayList<LinkGene> newLinks = new ArrayList<LinkGene>();
-		hcppn.loopThroughLinks(newLinks, cppn, indexOfTest, subs.get(sub1Index), subs.get(sub2Index), sub1Index, sub2Index, subs);
+		hcppn.loopThroughLinks((HyperNEATTask) MMNEAT.task, newLinks, cppn, indexOfTest, subs.get(sub1Index), subs.get(sub2Index), sub1Index, sub2Index, subs);
 		ILocated2D scaledSourceCoordinates = CartesianGeometricUtilities.centerAndScale(new Tuple2D(0, 0),
 				subs.get(sub1Index).size.t1, subs.get(sub1Index).size.t2);
 		Tuple2D size = new Tuple2D(subs.get(sub2Index).size.t1 - 1, subs.get(sub2Index).size.t2 - 1);
@@ -135,16 +135,6 @@ public class HyperNEATCPPNGenotypeTest {
 	}
 
 	/**
-	 * Test function to get innovation ID of a node
-	 */
-	@Test
-	public void testGetInnovationID() {
-		int indexOfTest = 0;
-		ArrayList<LinkGene> newLinks = new ArrayList<LinkGene>();
-		hcppn.loopThroughLinks(newLinks, cppn, indexOfTest, subs.get(sub1Index), subs.get(sub2Index), sub1Index, sub2Index, subs);
-	}
-
-	/**
 	 * tests link expression calculation works
 	 */
 	@Test
@@ -174,7 +164,7 @@ public class HyperNEATCPPNGenotypeTest {
 		System.out.println("CPPN: " + cppn.toString());
 		System.out.println("network:" + hcppn.getPhenotype());
 		assertEquals(cppn.numOutputs(),task.getSubstrateConnectivity().size() * 2);
-		assertEquals(hcppn.links.size(), HyperNEATTask.NUM_CPPN_INPUTS * task.getSubstrateConnectivity().size() * 2);
+		assertEquals(hcppn.links.size(), HyperNEATTask.DEFAULT_NUM_CPPN_INPUTS * task.getSubstrateConnectivity().size() * 2);
 
 		TWEANN t = hcppn.getPhenotype();
 		ArrayList<Node> nodes = t.nodes;
