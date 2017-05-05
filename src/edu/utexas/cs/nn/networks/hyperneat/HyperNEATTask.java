@@ -14,6 +14,11 @@ public interface HyperNEATTask {
 
 	// Inputs: X1, Y1, X2, Y2, and Bias
 	public static final int DEFAULT_NUM_CPPN_INPUTS = 5;
+	public static final int INDEX_X1 = 0; // source
+	public static final int INDEX_Y1 = 1; // source
+	public static final int INDEX_X2 = 2; // target
+	public static final int INDEX_Y2 = 3; // target
+	public static final int INDEX_BIAS = 4;
 
 	/**
 	 * The task designates how many CPPN inputs there will be.

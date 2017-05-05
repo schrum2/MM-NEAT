@@ -23,27 +23,31 @@ public class HyperNEATTetrisTask<T extends Network> extends TetrisTask<T> implem
 	public final int numProcessLayers = Parameters.parameters.integerParameter("HNTTetrisProcessDepth");
 	private static List<Substrate> substrateInformation = null;
 	private List<Pair<String, String>> substrateConnectivity = null; // Schrum: I'm pretty sure this can/should be static
-
+	// Value should be defined when class is constructed by a ClassCreation call, after the rlGlueExtractor is specified.
+	// TODO: In future, this value may also depend on the particular substrate mapping
+	private final boolean TWO_DIMENSIONAL_SUBSTRATES = MMNEAT.rlGlueExtractor instanceof RawTetrisStateExtractor;
+	
+	// Number of inputs to CPPN if substrates are 1D
+	public static final int NUM_CPPN_INPUTS_1D = 3;
+	
 	/**
-	 * Default behavior
-	 * 
-	 * TODO: Change depending on type of feature extractor,
-	 * 		 and also on type of substrate mapping
+	 * Default number of CPPN substrates when 2D substrates are used, but fewer
+	 * when 1D substrates are used.
 	 */
 	@Override
 	public int numCPPNInputs() {
-		return HyperNEATTask.DEFAULT_NUM_CPPN_INPUTS;
+		return TWO_DIMENSIONAL_SUBSTRATES ? HyperNEATTask.DEFAULT_NUM_CPPN_INPUTS : NUM_CPPN_INPUTS_1D;
 	}
 
 	/**
-	 * Default behavior
-	 * 
-	 * TODO: Change depending on type of feature extractor,
-	 * 		 and also on type of substrate mapping
+	 * When 2D substrates are used, the full inputs are returned unfiltered.
+	 * When 1D substrates are used, only X1, X2, and BIAS inputs are returned.
 	 */
 	@Override
 	public double[] filterCPPNInputs(double[] fullInputs) {
-		return fullInputs;
+		return TWO_DIMENSIONAL_SUBSTRATES ? 
+			fullInputs : // 2D substrates
+			new double[]{fullInputs[HyperNEATTask.INDEX_X1], fullInputs[HyperNEATTask.INDEX_X2], fullInputs[HyperNEATTask.INDEX_BIAS]}; // else 1D
 	}	
 	
 	@Override
