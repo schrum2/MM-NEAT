@@ -31,6 +31,7 @@ import edu.utexas.cs.nn.log.PerformanceLog;
 import edu.utexas.cs.nn.networks.ActivationFunctions;
 import edu.utexas.cs.nn.networks.NetworkTask;
 import edu.utexas.cs.nn.networks.TWEANN;
+import edu.utexas.cs.nn.networks.hyperneat.Bottom1DSubstrateMapping;
 import edu.utexas.cs.nn.networks.hyperneat.HyperNEATDummyTask;
 import edu.utexas.cs.nn.networks.hyperneat.HyperNEATSpeedTask;
 import edu.utexas.cs.nn.networks.hyperneat.HyperNEATTask;
@@ -74,6 +75,7 @@ import edu.utexas.cs.nn.tasks.rlglue.RLGlueEnvironment;
 import edu.utexas.cs.nn.tasks.rlglue.RLGlueTask;
 import edu.utexas.cs.nn.tasks.rlglue.featureextractors.FeatureExtractor;
 import edu.utexas.cs.nn.tasks.rlglue.init.RLGlueInitialization;
+import edu.utexas.cs.nn.tasks.rlglue.tetris.HyperNEATTetrisTask;
 import edu.utexas.cs.nn.tasks.testmatch.MatchDataTask;
 import edu.utexas.cs.nn.tasks.ut2004.UT2004Task;
 import edu.utexas.cs.nn.tasks.vizdoom.VizDoomTask;
@@ -671,6 +673,12 @@ public class MMNEAT {
 
 		substrateMapping = (SubstrateCoordinateMapping) ClassCreation.createObject("substrateMapping");
 
+		// This substrate mapping does not require all CPPN inputs
+		if(substrateMapping instanceof Bottom1DSubstrateMapping) {
+			// Other tasks may also use this mapping in the future.
+			HyperNEATTetrisTask.reduce2DTo1D = true;
+		}
+		
 		HyperNEATTask hnt = (HyperNEATTask) task;
 		int numSubstratePairings = hnt.getSubstrateConnectivity().size();
 		System.out.println("Number of substrate pairs being connected: "+ numSubstratePairings);

@@ -24,29 +24,34 @@ public class HyperNEATTetrisTask<T extends Network> extends TetrisTask<T> implem
 	private static List<Substrate> substrateInformation = null;
 	private List<Pair<String, String>> substrateConnectivity = null; // Schrum: I'm pretty sure this can/should be static
 	// Value should be defined when class is constructed by a ClassCreation call, after the rlGlueExtractor is specified.
-	// TODO: In future, this value may also depend on the particular substrate mapping
 	private final boolean TWO_DIMENSIONAL_SUBSTRATES = MMNEAT.rlGlueExtractor instanceof RawTetrisStateExtractor;
-	
+	// Even if the substrates are 2D, the CPPN inputs may need to be overridden to be 1D with certain substrate mappings
+	public static boolean reduce2DTo1D = false; // This can affect CPPNs via the numCPPNInputs and filterCPPNInputs methods.
+		
 	// Number of inputs to CPPN if substrates are 1D
 	public static final int NUM_CPPN_INPUTS_1D = 3;
 	
 	/**
 	 * Default number of CPPN substrates when 2D substrates are used, but fewer
-	 * when 1D substrates are used.
+	 * when 1D substrates are used, or a 1D substrate mapping on 2D substrates.
 	 */
 	@Override
 	public int numCPPNInputs() {
-		return TWO_DIMENSIONAL_SUBSTRATES ? HyperNEATTask.DEFAULT_NUM_CPPN_INPUTS : NUM_CPPN_INPUTS_1D;
+		return TWO_DIMENSIONAL_SUBSTRATES && !reduce2DTo1D ? HyperNEATTask.DEFAULT_NUM_CPPN_INPUTS : NUM_CPPN_INPUTS_1D;
 	}
 
 	/**
 	 * When 2D substrates are used, the full inputs are returned unfiltered.
 	 * When 1D substrates are used, only X1, X2, and BIAS inputs are returned.
+	 * When Bottom1DSubstrateMapping is used with 2D substrates, only Y1, Y2, and BIAS inputs are returned. 
 	 */
 	@Override
 	public double[] filterCPPNInputs(double[] fullInputs) {
 		return TWO_DIMENSIONAL_SUBSTRATES ? 
-			fullInputs : // 2D substrates
+			(!reduce2DTo1D ? // Use full 2D substrate inputs 
+					fullInputs : // 2D substrates and 2D CPPN inputs
+					// Assume Bottom1DSubstrateMapping being used, which has a constant X but Y varies
+					new double[]{fullInputs[HyperNEATTask.INDEX_Y1], fullInputs[HyperNEATTask.INDEX_Y2], fullInputs[HyperNEATTask.INDEX_BIAS]}): 
 			new double[]{fullInputs[HyperNEATTask.INDEX_X1], fullInputs[HyperNEATTask.INDEX_X2], fullInputs[HyperNEATTask.INDEX_BIAS]}; // else 1D
 	}	
 	
