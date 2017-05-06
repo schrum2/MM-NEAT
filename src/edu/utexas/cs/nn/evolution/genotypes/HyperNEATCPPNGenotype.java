@@ -126,7 +126,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 		innovationID = 0;// reset each time a phenotype is generated
 		int phenotypeOutputs = 0;
 
-		newNodes = createSubstrateNodes(cppn, subs);
+		newNodes = createSubstrateNodes(hnt, cppn, subs);
 		// Will map substrate names to index in subs List
 		// needs to be switched
 		HashMap<String, Integer> substrateIndexMapping = new HashMap<String, Integer>();
@@ -203,7 +203,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 	 *            list of substrates extracted from domain
 	 * @return array list of NodeGenes from substrates
 	 */
-	public ArrayList<NodeGene> createSubstrateNodes(TWEANN cppn, List<Substrate> subs) {
+	public ArrayList<NodeGene> createSubstrateNodes(HyperNEATTask hnt, TWEANN cppn, List<Substrate> subs) {
 		ArrayList<NodeGene> newNodes = new ArrayList<NodeGene>();
 		// loops through substrate list
 		for (Substrate sub: subs) { // for each substrate
@@ -220,7 +220,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 					// Schrum: 1/31/17: I'm afriad that the value of biasIndex is not being set correctly.
 					//                  Even if it was, there may still be many unused CPPN outputs, which
 					//                  is wasteful. Need to investigate.
-					bias = cppn.process(new double[]{0, 0, x, y, BIAS})[biasIndex];
+					bias = cppn.process(hnt.filterCPPNInputs(new double[]{0, 0, x, y, BIAS}))[biasIndex];
 				}
 				newNodes.add(newNodeGene(CommonConstants.ftype, sub.getStype(), innovationID++, false, bias));
 			}
