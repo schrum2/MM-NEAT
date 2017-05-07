@@ -19,7 +19,7 @@ public class TWEANNTest {
 	TWEANNGenotype tg1, tg2;
 	@Before
 	public void setUp() throws Exception {
-		Parameters.initializeParameterCollections(new String[]{"io:false", "allowMultipleFunctions:true", "recurrency:false", "mmdRate:0.1", "task:edu.utexas.cs.nn.tasks.breve2D.Breve2DTask"});
+		Parameters.initializeParameterCollections(new String[]{"io:false", "netio:false","allowMultipleFunctions:true", "recurrency:false", "mmdRate:0.1", "task:edu.utexas.cs.nn.tasks.breve2D.Breve2DTask"});
 		//CommonConstants.freezeBeforeModeMutation = true;
 		MMNEAT.loadClasses();
 		tg1 = new TWEANNGenotype(5, 2, 0);
@@ -44,7 +44,7 @@ public class TWEANNTest {
 	@Test
 	public void testHyperNEATDrawingPanel() { 
 		MMNEAT.clearClasses();
-		Parameters.initializeParameterCollections(new String[]{"io:false", "allowMultipleFunctions:true", "recurrency:false", "hyperNEAT:true"});
+		Parameters.initializeParameterCollections(new String[]{"io:false", "netio:false","allowMultipleFunctions:true", "recurrency:false", "hyperNEAT:true"});
 		DrawingPanel p = new DrawingPanel(TWEANN.NETWORK_VIEW_DIM, TWEANN.NETWORK_VIEW_DIM, "p7");
 		TWEANN t1 = tg1.getPhenotype();
 		t1.draw(p);

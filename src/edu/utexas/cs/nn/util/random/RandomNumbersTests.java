@@ -25,7 +25,7 @@ public class RandomNumbersTests {
 	@Test
 	public void reset_test() {
 		Random rand1 = RandomNumbers.randomGenerator;
-		Parameters.initializeParameterCollections( new String[] { "randomSeed:-1" });
+		Parameters.initializeParameterCollections( new String[] { "randomSeed:-1", "io:false", "netio:false" });
 		RandomNumbers.reset();
 		Random rand2 = RandomNumbers.randomGenerator;
 		assertFalse(rand1 == rand2);
@@ -37,7 +37,7 @@ public class RandomNumbersTests {
 	@Test
 	public void reset_seed_test() {
 		Random rand1 = RandomNumbers.randomGenerator;
-		Parameters.initializeParameterCollections( new String[] { "randomSeed:2" });
+		Parameters.initializeParameterCollections( new String[] { "randomSeed:2", "io:false", "netio:false" });
 		RandomNumbers.reset();
 		Random rand2 = RandomNumbers.randomGenerator;
 		assertFalse(rand1 == rand2);

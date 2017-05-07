@@ -18,7 +18,7 @@ public class StatisticsUtilitiesTest {
 	@Before
 	public void setUp() throws Exception {
 		MMNEAT.clearClasses();
-		Parameters.initializeParameterCollections(new String[] {"randomArgMaxTieBreak:false"});
+		Parameters.initializeParameterCollections(new String[] {"randomArgMaxTieBreak:false", "io:false", "netio:false"});
 	}
 	
 	@After

@@ -51,7 +51,7 @@ public class MMPTest {
 
 	}
 		{
-		Parameters.initializeParameterCollections(new String[] { "io:false", "recurrency:false", "mmdRate:0.1" });
+		Parameters.initializeParameterCollections(new String[] { "io:false",  "netio:false","recurrency:false", "mmdRate:0.1" });
 		MMNEAT.loadClasses();
 		TWEANNGenotype tg1 = new TWEANNGenotype(5, 2, 0);
 		MMNEAT.genotype = tg1.copy();

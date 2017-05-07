@@ -22,7 +22,7 @@ public class MMRTest {
 	
 	@Before
 	public void setUp() throws Exception {
-		Parameters.initializeParameterCollections(new String[] { "io:false", "recurrency:false", "mmrRate:1.0" });
+		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false","recurrency:false", "mmrRate:1.0" });
 		MMNEAT.loadClasses();
 		mmr = new MMR();
 		tg1 = new TWEANNGenotype(MMNEAT.networkInputs, MMNEAT.networkOutputs, 0);

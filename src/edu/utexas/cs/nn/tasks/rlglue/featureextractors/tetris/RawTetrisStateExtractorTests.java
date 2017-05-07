@@ -66,7 +66,7 @@ public class RawTetrisStateExtractorTests {
 	 */
 	@Test
 	public void extract_test() {
-		Parameters.initializeParameterCollections( new String[] { "absenceNegative:false" });
+		Parameters.initializeParameterCollections( new String[] { "absenceNegative:false", "io:false", "netio:false" });
 		TetrisState testState = new TetrisState(); 
 		testState.currentX -= 2;
 		testState.currentY -= 1;
@@ -118,7 +118,7 @@ public class RawTetrisStateExtractorTests {
 	}
 	
 	public void extract_senseHoles_test() {
-		Parameters.initializeParameterCollections( new String[] { "senseHolesDifferently:true" });
+		Parameters.initializeParameterCollections( new String[] { "senseHolesDifferently:true", "io:false", "netio:false" });
 		assertEquals(Parameters.parameters.booleanParameter("absenceNegative"), false);
 		TetrisState testState = new TetrisState();
 		testState.currentX -= 2;
@@ -183,7 +183,7 @@ public class RawTetrisStateExtractorTests {
 	 */
 	@Test
 	public void extract_negative_test() {
-		Parameters.initializeParameterCollections( new String[] { "absenceNegative:true" });
+		Parameters.initializeParameterCollections( new String[] { "absenceNegative:true", "io:false", "netio:false"});
 		assertEquals(Parameters.parameters.booleanParameter("senseHolesDifferently"), false);
 		TetrisState testState = new TetrisState(); 
 		testState.currentX -= 2;
@@ -255,7 +255,7 @@ public class RawTetrisStateExtractorTests {
 	 */
 	@Test
 	public void scaleInputs_test() {
-		Parameters.initializeParameterCollections( new String[] { "absenceNegative:false" });
+		Parameters.initializeParameterCollections( new String[] { "absenceNegative:false" , "io:false", "netio:false"});
 		TetrisState testState = new TetrisState(); 
 		RawTetrisStateExtractor RTSE = new RawTetrisStateExtractor();
 		// line piece
@@ -303,7 +303,7 @@ public class RawTetrisStateExtractorTests {
 	 */
 	@Test
 	public void scaleInputs_negative_test() {
-		Parameters.initializeParameterCollections( new String[] { "absenceNegative:true" });
+		Parameters.initializeParameterCollections( new String[] { "absenceNegative:true" , "io:false", "netio:false"});
 		assertEquals(Parameters.parameters.booleanParameter("senseHolesDifferently"), false);
 		TetrisState testState = new TetrisState(); 
 		RawTetrisStateExtractor RTSE = new RawTetrisStateExtractor();

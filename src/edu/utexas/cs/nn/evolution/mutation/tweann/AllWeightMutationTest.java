@@ -20,7 +20,7 @@ public class AllWeightMutationTest {
 	int MUTATION_NUM = 20;
 	@Before
 	public void setUp() throws Exception {
-		Parameters.initializeParameterCollections(new String[] { "io:false", "recurrency:false", "perLinkMutateRate:1.0"});
+		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "recurrency:false", "perLinkMutateRate:1.0"});
 		MMNEAT.loadClasses();
 		tg1 = new TWEANNGenotype();
 	}
