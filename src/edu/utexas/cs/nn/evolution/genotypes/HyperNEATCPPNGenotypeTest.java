@@ -84,7 +84,7 @@ public class HyperNEATCPPNGenotypeTest {
 	 */
 	@Test
 	public void testCreateSubstrateNodesSlow() {
-		ArrayList<NodeGene> nodes = hcppn.createSubstrateNodes( hcppn.getCPPN(), subs);
+		ArrayList<NodeGene> nodes = hcppn.createSubstrateNodes((HyperNEATTask) MMNEAT.task,  hcppn.getCPPN(), subs);
 		assertEquals(nodes.size(), subs.get(sub1Index).getSize().t1 * subs.get(sub1Index).getSize().t2
 				+ subs.get(sub2Index).getSize().t1 * subs.get(sub2Index).getSize().t2);
 		assertEquals(hcppn.innovationID, nodes.size());
