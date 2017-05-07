@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
+import edu.utexas.cs.nn.evolution.genotypes.HyperNEATCPPNGenotype;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
 import edu.utexas.cs.nn.graphics.DrawingPanel;
 import edu.utexas.cs.nn.networks.ActivationFunctions;
@@ -231,7 +232,7 @@ public class HyperNEATUtil {
 	 * @return the weight panels
 	 */
 	public static ArrayList<DrawingPanel> drawWeight(TWEANNGenotype genotype, HyperNEATTask hnt) {
-		
+
 		//gets all relevant information needed to draw link weights
 		tg = (TWEANNGenotype)genotype.copy();
 		connections = hnt.getSubstrateConnectivity();
@@ -245,7 +246,7 @@ public class HyperNEATUtil {
 		//instantiates panel array
 		weightPanels = new ArrayList<DrawingPanel>();
 		substrates = hnt.getSubstrateInformation();
-		
+
 		//used to instantiate drawing panels not on top of one another
 		int weightPanelsWidth = 0;
 		int weightPanelsHeight = 0;
@@ -279,7 +280,7 @@ public class HyperNEATUtil {
 		int nodeIndex = 0;
 		for(int i = 0; i < substrates.size(); i++) {
 			if(substrates.get(i).getName().equals(sub.getName())){ break;}
-			
+
 			nodeIndex += substrates.get(i).size.t1 * substrates.get(i).size.t2;
 		}
 		return nodeIndex;
@@ -316,7 +317,7 @@ public class HyperNEATUtil {
 		int nodeVisHeight = WEIGHT_GRID_SIZE * s1.size.t2;
 		int panelWidth = s2.size.t1 * nodeVisWidth  + s2.size.t1 - 1;
 		int panelHeight  = s2.size.t2 * nodeVisHeight  + s2.size.t2 - 1;
-		
+
 		//instantiates panel
 		DrawingPanel wPanel = new DrawingPanel(panelWidth, panelHeight, s1.getName() + "->" + s2.getName());
 		wPanel.getGraphics().setBackground(Color.white);
@@ -324,20 +325,20 @@ public class HyperNEATUtil {
 		for(int i = s2Index; i < (s2Index + (s2.size.t1 * s2.size.t2)); i++) {//goes through every node in target substrate
 			//drawBorder(wPanel, xCoord, yCoord, nodeVisWidth + 2, nodeVisHeight + 2);
 			drawNodeWeight(wPanel, nodes.get(i), xCoord , yCoord , s1Index, s1Index + (s1.size.t1 * s1.size.t2), nodeVisWidth, nodeVisHeight);
-                        xCoord += nodeVisWidth + 1;
+			xCoord += nodeVisWidth + 1;
 			if(xCoord >= panelWidth) {
 				xCoord = 0;
 				yCoord += nodeVisHeight + 1;
 			}
-   		}
+		}
 		return wPanel;
 	}
-		
+
 	/**
 	 * get all connections of node to next substrate nodes and get all those links and then link weights
 		and then paint color to drawing panel corresponding to link weight
 		use same color scheme as substrate visualizer except dead links are gray
-		
+
 	 * @param dPanel drawing panel
 	 * @param targetNode node to draw links from
 	 * @param xCoord x coordinate to start from in drawing panel
@@ -354,17 +355,43 @@ public class HyperNEATUtil {
 			TWEANNGenotype.NodeGene node = nodes.get(j);
 			TWEANNGenotype.LinkGene link = tg.getLinkBetween(node.innovation, targetNode.innovation);
 			if(link != null) {
-                                double weight = link.weight;
+				double weight = link.weight;
 				c = regularVisualization(ActivationFunctions.activation(ActivationFunctions.FTYPE_TANH, weight));
 			}
 			dPanel.getGraphics().setColor(c);
 			dPanel.getGraphics().fillRect(xCoord, yCoord, WEIGHT_GRID_SIZE, WEIGHT_GRID_SIZE);
 			xCoord += WEIGHT_GRID_SIZE;
 			if(xCoord >= xLeftEdge + nodeWidth ) {
-			xCoord = xLeftEdge;
-			yCoord += WEIGHT_GRID_SIZE;
+				xCoord = xLeftEdge;
+				yCoord += WEIGHT_GRID_SIZE;
+			}
 		}
-            }
 	}
 
+	/**
+	 * If HyperNEAT neuron bias values are evolved, then this method determines
+	 * how many CPPN outputs are needed to specify them: 1 per non-input substrate layer.
+	 * @param hnt HyperNEATTask that specifies substrate connectivity
+	 * @return number of bias outputs needed by CPPN
+	 */
+	public static int numBiasOutputsNeeded(HyperNEATTask hnt) {
+		List<Substrate> subs = hnt.getSubstrateInformation();
+		int count = 0;
+		for(Substrate s : subs) {
+			if(s.stype != Substrate.INPUT_SUBSTRATE) count++;
+		}
+		return count;
+	}
+	
+	/**
+	 * If bias outputs are used in CPPN, they will appear after all others.
+	 * There should be one output group per layer pairing, so the number of
+	 * layer pairings is multiplied by the neurons per output group to determine
+	 * the index of the first bias output.
+	 * @param hnt HyperNEAT task
+	 * @return index where first bias output is located, if it exists
+	 */
+	public static int indexFirstBiasOutput(HyperNEATTask hnt) {
+		return hnt.getSubstrateConnectivity().size() * HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair;
+	}
 }

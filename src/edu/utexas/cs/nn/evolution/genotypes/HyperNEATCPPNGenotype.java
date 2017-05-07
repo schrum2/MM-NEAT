@@ -7,6 +7,7 @@ import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.networks.NetworkUtil;
 import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.networks.hyperneat.HyperNEATTask;
+import edu.utexas.cs.nn.networks.hyperneat.HyperNEATUtil;
 import edu.utexas.cs.nn.networks.hyperneat.Substrate;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.util.datastructures.Pair;
@@ -21,10 +22,12 @@ import edu.utexas.cs.nn.util.util2D.Tuple2D;
  */
 public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 
+	// For each substrate layer pairing, there can be multiple output neurons in the CPPN
 	public static int numCPPNOutputsPerLayerPair = 1;
+	// Within each group, the first (index 0) will always specify the link value
 	public static final int LINK_INDEX = 0;
-	public static int biasIndex = 0;
-	public static int leoIndex = 0;
+	// If a Link Expression Output is used, it will be second (index 1)
+	public static final int LEO_INDEX = 1;
 	public static boolean constructingNetwork = false;
 	public static final double BIAS = 1.0;// Necessary for most CPPN networks
 	public int innovationID = 0;// provides unique innovation numbers for links and genes
@@ -204,6 +207,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 	 * @return array list of NodeGenes from substrates
 	 */
 	public ArrayList<NodeGene> createSubstrateNodes(HyperNEATTask hnt, TWEANN cppn, List<Substrate> subs) {
+		int biasIndex = HyperNEATUtil.indexFirstBiasOutput(hnt); // first bias index
 		ArrayList<NodeGene> newNodes = new ArrayList<NodeGene>();
 		// loops through substrate list
 		for (Substrate sub: subs) { // for each substrate
@@ -217,12 +221,15 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 				// Non-input substrates can have a bias if desired
 				if(CommonConstants.evolveHyperNEATBias && sub.stype != Substrate.INPUT_SUBSTRATE) {
 					// Ask CPPN to generate a bias for each neuron
-					// Schrum: 1/31/17: I'm afriad that the value of biasIndex is not being set correctly.
-					//                  Even if it was, there may still be many unused CPPN outputs, which
-					//                  is wasteful. Need to investigate.
 					bias = cppn.process(hnt.filterCPPNInputs(new double[]{0, 0, x, y, BIAS}))[biasIndex];
 				}
 				newNodes.add(newNodeGene(CommonConstants.ftype, sub.getStype(), innovationID++, false, bias));
+			}
+			
+			if(CommonConstants.evolveHyperNEATBias && sub.stype != Substrate.INPUT_SUBSTRATE) {
+				// Each non-input substrate has its own bias output for generating bias values.
+				// Move to the next.
+				biasIndex++;
 			}
 		}
 		return newNodes;
@@ -303,7 +310,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 						double[] outputs = cppn.process(inputs);
 						boolean expressLink = CommonConstants.leo
 								// Specific network output determines link expression
-								? outputs[(numCPPNOutputsPerLayerPair * outputIndex) + leoIndex] > CommonConstants.linkExpressionThreshold
+								? outputs[(numCPPNOutputsPerLayerPair * outputIndex) + LEO_INDEX] > CommonConstants.linkExpressionThreshold
 										// Output magnitude determines link expression
 										: Math.abs(outputs[(numCPPNOutputsPerLayerPair * outputIndex) + LINK_INDEX]) > CommonConstants.linkExpressionThreshold;
 										if (expressLink) {
