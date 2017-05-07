@@ -28,9 +28,9 @@ public class TWEANNTest {
 		tg2 = new TWEANNGenotype(5, 2, 0);
 		for (int i = 0; i < MUTATIONS1; i++) {
 			tg1.mutate();
-			tg1.addRandomPreferenceNeuron(tg1.getPhenotype().numIn);
+			//tg1.addRandomPreferenceNeuron(tg1.getPhenotype().numIn); // Schrum: not sure why this was here
 			tg2.mutate();
-			tg2.addRandomPreferenceNeuron(tg2.getPhenotype().numIn);
+			//tg2.addRandomPreferenceNeuron(tg2.getPhenotype().numIn); // Schrum: not sure why this was here
 		}
 	}
 
