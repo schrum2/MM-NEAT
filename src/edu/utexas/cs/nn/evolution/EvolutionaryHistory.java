@@ -195,6 +195,7 @@ public class EvolutionaryHistory {
 			archetypes = new ArrayList[size];
 		} // this if statement happens if the current experiment hasn't yet been run or is a resume
 		if (loadedArchetype == null || loadedArchetype.equals("") || !(new File(loadedArchetype).exists())) {
+			System.out.println("Init archetype from genotype example");
 			// ternary operator allows for coevolution to be implemented
 			TWEANNGenotype tg = (TWEANNGenotype) (MMNEAT.genotypeExamples == null ? MMNEAT.genotype.copy() : MMNEAT.genotypeExamples.get(populationIndex).copy());
 			// saves the genotype of the current generation
@@ -453,7 +454,8 @@ public class EvolutionaryHistory {
 				CombiningTWEANNCrossover.addToArchetypeForCombiningCrossover(populationIndex, pos, node, combineCopy, origin);
 			}
 		}
-		assert orderedArchetype(populationIndex) : "Archetype " + populationIndex
+		assert orderedArchetype(populationIndex) : "Archetype " + populationIndex + " added at pos " + pos
+				+ " " + node
 				+ " did not exhibit proper node order after node addition: " + archetypes[populationIndex];
 	}
 

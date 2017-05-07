@@ -25,7 +25,9 @@ public class ActivationFunctionMutationTest {
 		tg1 = new TWEANNGenotype(MMNEAT.networkInputs, MMNEAT.networkOutputs, 0);
 		MMNEAT.genotype = tg1.copy();
 		EvolutionaryHistory.initArchetype(0);
+		//System.out.println(tg1);
 		for(int i = 0; i < NUM_MUTATIONS; i++) {
+			//System.out.println(EvolutionaryHistory.archetypes[0]);
 			tg1.mutate();
 		}
 	}
