@@ -91,7 +91,7 @@ public class CartPole extends RLGlueEnvironment implements HasAVisualizerInterfa
 				System.out.println("New CartPoleViewer");
 				viewer = new CartPoleViewer();
 			} else {
-				System.out.println("Same PuddleWorldViewer");
+				System.out.println("Same CartPoleViewer");
 				CartPoleViewer.current.reset();
 				viewer = CartPoleViewer.current;
 			}
