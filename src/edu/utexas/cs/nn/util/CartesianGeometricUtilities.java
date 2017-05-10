@@ -26,8 +26,8 @@ public class CartesianGeometricUtilities {
 	 * @return new tuple with scaled coordinates
 	 */
 	public static Tuple2D centerAndScale(Tuple2D toScale, int width, int height) {
-		double newX = centerAndScale(toScale.x, width);
-		double newY = centerAndScale(toScale.y, height);
+		double newX = centerAndScale(toScale.x, width); //scaled x coordinate
+		double newY = centerAndScale(toScale.y, height); //scaled y coordinate
 		assert !Double.isNaN(newX) : "newX is NaN! width="+width+", height="+height+", toScale="+toScale;
 		assert !Double.isNaN(newY) : "newY is NaN! width="+width+", height="+height+", toScale="+toScale;
 		return new Tuple2D(newX, newY);
@@ -69,19 +69,27 @@ public class CartesianGeometricUtilities {
 	
 	/**
 	 * Scales the coordinates to -1 - 1 in X-direction and 0 - 1 in Y-direction
-	 * @param toScale coordiantes to scale
+	 * @param toScale coordinates to scale
 	 * @param width width of domain
 	 * @param height height of domain
 	 * @return scaled coordinates
 	 */
 	public static Tuple2D bottomCenterAndScale(Tuple2D toScale, int width, int height) { 
-		double newX = centerAndScale(toScale.x, width);
-		double newY = bottomScale(toScale.y, height);
+		double newX = centerAndScale(toScale.x, width); //scaled x coordinate
+		double newY = bottomScale(toScale.y, height); //scaled y coordinate
 		assert !Double.isNaN(newX) : "newX is NaN! width="+width+", height="+height+", toScale="+toScale;
 		assert !Double.isNaN(newY) : "newY is NaN! width="+width+", height="+height+", toScale="+toScale;
 		return new Tuple2D(newX, newY);
 	}
 	
+	/**
+	 * Scales coordinates to where origin is at bottom of the plane based on the maximum dimension by mapping 
+	 * the scale to its corresponding dimension
+	 * @param toScale  coordinate to be scaled
+	 * @param maxDimension  either height or width, depending on whether toScale is x or y
+	 *            coordinate
+	 * @return 0 if maxDimension is 1 (special case), otherwise scaled value
+	 */
 	public static double bottomScale(double toScale, int maxDimension) {
 		if(maxDimension == 1) {
 			assert toScale == 0 : "If the dimension is 1, then you can only scale 0";
@@ -137,19 +145,19 @@ public class CartesianGeometricUtilities {
 
 		double xx, yy;
 
-		if (param < 0) {
+		if (param < 0) { //coordinates are set to first point of line segment to create perpendicular (leftmost point)
 			xx = x1;
 			yy = y1;
-		} else if (param > 1) {
+		} else if (param > 1) { //coordinates are set to last point of line segment to create perpendicular (rightmost point)
 			xx = x2;
 			yy = y2;
-		} else {
+		} else { // working out correctly; param between 0 and 1
 			xx = x1 + param * C;
 			yy = y1 + param * D;
 		}
 
 		ILocated2D other = new Tuple2D(xx, yy);
-		return (new Tuple2D(x, y).distance(other));
+		return (new Tuple2D(x, y).distance(other)); //distance between input point and point created based on param
 	}
 
 	/**
@@ -164,10 +172,10 @@ public class CartesianGeometricUtilities {
 	 */
 	public static double euclideanDistance(ArrayList<Double> x1, ArrayList<Double> x2) {
 		double sum = 0;
-		for (int i = 0; i < x1.size(); i++) {
+		for (int i = 0; i < x1.size(); i++) { //sum of squared distances between x1 and x2
 			sum += Math.pow(x1.get(i) - x2.get(i), 2);
 		}
-		return Math.sqrt(sum);
+		return Math.sqrt(sum); // taking square root of squared sums calculates euclidian distance
 	}
 
 	/**
@@ -206,10 +214,10 @@ public class CartesianGeometricUtilities {
 			return Math.PI;
 		}
 		Tuple2D sourceToTarget = target.getPosition().sub(source);
-		if (sourceToTarget.isZero()) {
+		if (sourceToTarget.isZero()) { //if the difference between the vectors is 0
 			return 0;
 		}
-		sourceToTarget = sourceToTarget.normalize();
+		sourceToTarget = sourceToTarget.normalize(); // returns the norm of the difference between vectors
 		double angleToTarget = sourceToTarget.angle();
 		return signedAngleDifference(sourceRads, angleToTarget);
 	}
@@ -241,9 +249,9 @@ public class CartesianGeometricUtilities {
 	 */
 	public static double signedAngleDifference(double rad1, double rad2) {
 		double angleDifference = rad1 - rad2;
-		if (angleDifference > Math.PI) {
-			angleDifference -= 2 * Math.PI;
-		} else if (angleDifference < -Math.PI) {
+		if (angleDifference > Math.PI) { // has exceeded maximum to avoid cycling
+			angleDifference -= 2 * Math.PI; 
+		} else if (angleDifference < -Math.PI) {  // has goen below minimum to avoid cycling
 			angleDifference += 2 * Math.PI;
 		}
 		return -angleDifference;
@@ -300,11 +308,11 @@ public class CartesianGeometricUtilities {
 	 * @return radian within unit circle bounds
 	 */
 	public static double restrictRadians(double rads) {
-		while (rads >= 2 * Math.PI) {
-			rads -= 2 * Math.PI;
+		while (rads >= 2 * Math.PI) { // if radian exceeds unit circle
+			rads -= 2 * Math.PI; // rotate until w/in unit circle parameters
 		}
-		while (rads < 0) {
-			rads += 2 * Math.PI;
+		while (rads < 0) { // if radian is less than unit circle
+			rads += 2 * Math.PI; // rotate until w/in unit circle parameters
 		}
 		return rads;
 	}
