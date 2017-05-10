@@ -15,8 +15,9 @@ public class ArrayUtil {
 	/**
 	 * Return primitive double array of given size containing all ones
 	 *
-	 * @param size
-	 * @return
+	 * @param size 
+	 * 			desired size of array
+	 * @return array of doubles of size 'size', all of which are 1
 	 */
 	public static double[] doubleOnes(int size) {
 		double[] ones = new double[size];
@@ -29,8 +30,8 @@ public class ArrayUtil {
 	/**
 	 * Return primitive int array of given size containing all ones
 	 *
-	 * @param size
-	 * @return
+	 * @param size : desired size of array
+	 * @return array of integers of size 'size', all of which are 1
 	 */
 	public static int[] intOnes(int size) {
 		int[] ones = new int[size];
@@ -40,6 +41,13 @@ public class ArrayUtil {
 		return ones;
 	}
 
+	/**
+	 * creates a new array of primitive doubles and copies into it all the data from the input array 
+	 * 
+	 * @param array	
+	 * 			source to be copied
+	 * @return another array that has the same length and contents as the original
+	 */
 	public static Double[] primitiveDoubleArrayToDoubleArray(double[] array) {
 		Double[] result = new Double[array.length];
 		for (int i = 0; i < result.length; i++) {
@@ -48,6 +56,12 @@ public class ArrayUtil {
 		return result;
 	}
 
+	/**
+	 * creates a new array of primitive ints with the same contents as ArrayList<Integer> input
+	 * 
+	 * @param path ArrayList of type Integer to be copied
+	 * @return an array with the same size and contents as input ArrayList
+	 */
 	public static int[] intArrayFromArrayList(ArrayList<Integer> path) {
 		int[] arrayPath = new int[path.size()];
 		for (int i = 0; i < arrayPath.length; i++) {
@@ -60,6 +74,7 @@ public class ArrayUtil {
 	 * returns a 1D double array from a 2D double array
 	 * using column-major order.
 	 * Only works for non-jagged 2D arrays
+	 * 
 	 * @param inputs 2D array
 	 * @return 1D array
 	 */
@@ -92,6 +107,13 @@ public class ArrayUtil {
 		return outputs;
 	}
 	
+	/**
+	 * Returns an array of doubles from an ArrayList of numbers
+	 * 
+	 * @param values 
+	 * 			ArrayList of numbers (any numeric type) 
+	 * @return an array of doubles with the same length and contents as the list
+	 */
 	public static double[] doubleArrayFromList(List<? extends Number> values) {
 		double[] array = new double[values.size()];
 		int i = 0;
@@ -289,6 +311,15 @@ public class ArrayUtil {
 		return total;
 	}
 
+	/**
+	 * returns the number of times that 'value' occurs within 'array' 
+	 * 
+	 * @param value 
+	 * 			data to be searched for
+	 * @param array
+	 * 			array that may contain instances of that data 
+	 * @return
+	 */
 	public static <T> int countOccurrences(T value, T[] array) {
 		int total = 0;
 		for (int i = 0; i < array.length; i++) {
@@ -718,10 +749,30 @@ public class ArrayUtil {
 		return result;
 	}
 
+	/**
+	 * Return an ArrayList containing all of the elements of lhs that are not
+	 * members of rhs
+	 * 
+	 * @param lhs
+	 *            Array of primitive int
+	 * @param rhs
+	 *            Another Array of primitive int
+	 * @return Set difference of two arrays
+	 */
 	public static int[] setDifference(int[] lhs, int[] rhs) {
 		return intArrayFromArrayList(setDifference(intListFromArray(lhs), intListFromArray(rhs)));
 	}
 
+	/**
+	 * Return an ArrayList containing all of the elements of lhs that are not
+	 * members of rhs
+	 * 
+	 * @param lhs
+	 *            Array of primitive int
+	 * @param rhs
+	 *            ArrayList of type T
+	 * @return Set difference of two arrays
+	 */
 	public static int[] setDifference(int[] lhs, ArrayList<Integer> rhs) {
 		return intArrayFromArrayList(setDifference(intListFromArray(lhs), rhs));
 	}
@@ -762,9 +813,5 @@ public class ArrayUtil {
 			}
 		}
 		return counted.size();
-	}
-
-	public static void main(String[] args) {
-		System.out.println(Arrays.toString(portion(new double[] { 0, 1, 2, 3, 4 }, 1, 3)));
 	}
 }
