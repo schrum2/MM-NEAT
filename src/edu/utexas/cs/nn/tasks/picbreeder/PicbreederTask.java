@@ -92,6 +92,12 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	private static final int MPG_MIN = 0;//minimum # of mutations per generation
 	private static final int MPG_MAX = 10;//maximum # of mutations per generation
 
+	private static final int XEFFECT_CHECKBOX_INDEX = -22;
+	private static final int YEFFECT_CHECKBOX_INDEX = -23;
+	private static final int BIAS_CHECKBOX_INDEX = -24;
+	private static final int CENTERDISTANCE_CHECKBOX_INDEX = -25;
+
+	
 	//Private final variables
 	private static int NUM_ROWS;
 	private static int PIC_SIZE;
@@ -110,6 +116,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	private boolean waitingForUser;
 	private final boolean[] chosen;
 	private final boolean[] activation;
+	private static double[] inputMultipliers = new double[]{1.0,1.0,1.0,1.0};
 
 	private JPanel topper;
 	
@@ -187,6 +194,8 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		closeButton.setText("Close");
 		
 		
+
+		
 		//instantiates activation function checkboxes
 		JCheckBox sigmoid = new JCheckBox("sigmoid", CommonConstants.includeSigmoidFunction);
 		activation[Math.abs(SIGMOID_CHECKBOX_INDEX)] = CommonConstants.includeSigmoidFunction;
@@ -217,6 +226,16 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		JCheckBox LeakyReLU = new JCheckBox("leaky_ReLU", CommonConstants.includeStretchedTanhFunction);
 		activation[Math.abs(LEAKY_RELU_CHECKBOX_INDEX)] = CommonConstants.includeStretchedTanhFunction;
 
+		//Checkboxes to control if x, y, bias, or distance from center effect appear on the console TODO: Figure out why adding these seems to crash the code
+//		JCheckBox xEffect = new JCheckBox("X-Effect", true);
+//		activation[Math.abs(XEFFECT_CHECKBOX_INDEX)] = true;
+//		JCheckBox yEffect = new JCheckBox("Y-Effect", true);
+//		activation[Math.abs(YEFFECT_CHECKBOX_INDEX)] = true;
+//		JCheckBox biasEffect = new JCheckBox("Bias-Effect", true);
+//		activation[Math.abs(BIAS_CHECKBOX_INDEX)] = true;
+//		JCheckBox centerDistanceEffect = new JCheckBox("Center-Distance Effect", true);
+//		activation[Math.abs(CENTERDISTANCE_CHECKBOX_INDEX)] = true;
+		
 		//adds slider for mutation rate change
 		JSlider mutationsPerGeneration = new JSlider(JSlider.HORIZONTAL, MPG_MIN, MPG_MAX, MPG_DEFAULT);
 
@@ -250,6 +269,11 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		ReLU.setName("" + RELU_CHECKBOX_INDEX);//TODO
 		Softplus.setName("" + SOFTPLUS_CHECKBOX_INDEX);
 		LeakyReLU.setName("" + LEAKY_RELU_CHECKBOX_INDEX);
+		// TODO
+//		xEffect.setName("X-Effect");
+//		yEffect.setName("Y-Effect");
+//		biasEffect.setName("Bias Effect");
+//		centerDistanceEffect.setName("Center-Distance Effect");
 		mutationsPerGeneration.setMinorTickSpacing(1);
 		mutationsPerGeneration.setPaintTicks(true);
 		labels.put(0, new JLabel("Fewer Mutations"));
@@ -257,6 +281,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		mutationsPerGeneration.setLabelTable(labels);
 		mutationsPerGeneration.setPaintLabels(true);
 		mutationsPerGeneration.setPreferredSize(new Dimension(350, 40));
+
 		//add action listeners to buttons
 		resetButton.addActionListener(this);
 		saveButton.addActionListener(this);
@@ -279,6 +304,13 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		ReLU.addActionListener(this);
 		Softplus.addActionListener(this);
 		LeakyReLU.addActionListener(this);
+
+		// TODO
+//		xEffect.addActionListener(this);
+//		yEffect.addActionListener(this);
+//		biasEffect.addActionListener(this);
+//		centerDistanceEffect.addActionListener(this);
+		
 		mutationsPerGeneration.addChangeListener(this);
 
 		
@@ -299,11 +331,16 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		ReLU.setForeground(CombinatoricUtilities.colorFromInt(ActivationFunctions.FTYPE_RE_LU));
 		Softplus.setForeground(CombinatoricUtilities.colorFromInt(ActivationFunctions.FTYPE_SOFTPLUS));
 		LeakyReLU.setForeground(CombinatoricUtilities.colorFromInt(ActivationFunctions.FTYPE_LEAKY_RE_LU));
+
+		// TODO
+//		xEffect.setForeground(new Color(0,0,0));
+//		yEffect.setForeground(new Color(0,0,0));
+//		biasEffect.setForeground(new Color(0,0,0));
+//		centerDistanceEffect.setForeground(new Color(0,0,0));
+		
+		
+		
 		//add graphics to title panel
-		
-		
-		
-		
 		top.add(lineageButton);
 		top.add(resetButton);
 		top.add(networkButton);
@@ -327,7 +364,12 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		bottom.add(ReLU);
 		bottom.add(Softplus);
 		bottom.add(LeakyReLU);
-		
+
+		// TODO: Figure out why adding these buttons seems to crash the code
+//		bottom.add(xEffect);
+//		bottom.add(yEffect);
+//		bottom.add(biasEffect);
+//		bottom.add(centerDistanceEffect);
 
 		topper.add(bottom);
 		panels.add(topper);
@@ -473,7 +515,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	 */
 	private void save(int i) {
                 // Use of imageHeight and imageWidth allows saving a higher quality image than is on the button
-		BufferedImage toSave = GraphicsUtil.imageFromCPPN((Network)scores.get(i).individual.getPhenotype(), Parameters.parameters.integerParameter("imageWidth"), Parameters.parameters.integerParameter("imageHeight"));
+		BufferedImage toSave = GraphicsUtil.imageFromCPPN((Network)scores.get(i).individual.getPhenotype(), Parameters.parameters.integerParameter("imageWidth"), Parameters.parameters.integerParameter("imageHeight"), inputMultipliers);
 		DrawingPanel p = GraphicsUtil.drawImage(toSave, "" + i, toSave.getWidth(), toSave.getHeight());
 		JFileChooser chooser = new JFileChooser();//used to get save name 
 		chooser.setApproveButtonText("Save");
@@ -498,7 +540,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	 */
 	private void resetButton(Genotype<T> individual, int x) { 
 		scores.add(new Score<T>(individual, new double[]{0}, null));
-		setButtonImage(showNetwork ? getNetwork(individual) : GraphicsUtil.imageFromCPPN((Network)individual.getPhenotype(), PIC_SIZE, PIC_SIZE), x);
+		setButtonImage(showNetwork ? getNetwork(individual) : GraphicsUtil.imageFromCPPN((Network)individual.getPhenotype(), PIC_SIZE, PIC_SIZE, inputMultipliers), x);
 		chosen[x] = false;
 		buttons.get(x).setBorder(BorderFactory.createLineBorder(Color.lightGray, BORDER_THICKNESS));
 	}
@@ -593,7 +635,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		if(showNetwork) {//puts images back on buttons
 			showNetwork = false;
 			for(int i = 0; i < scores.size(); i++) {
-				setButtonImage(GraphicsUtil.imageFromCPPN((Network)scores.get(i).individual.getPhenotype(), PIC_SIZE, PIC_SIZE), i);
+				setButtonImage(GraphicsUtil.imageFromCPPN((Network)scores.get(i).individual.getPhenotype(), PIC_SIZE, PIC_SIZE, inputMultipliers), i);
 			}
 		} else {//puts networks on buttons
 			showNetwork = true;
@@ -631,9 +673,10 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	public void actionPerformed(ActionEvent event) {
 		//open scanner to read which button was pressed
 		Scanner s = new Scanner(event.toString());
-		s.next();
-		s.next();
+		System.out.println(s.next());
+		System.out.println(s.next());
 		int scoreIndex = s.nextInt();
+		System.out.println(scoreIndex);
 		s.close();
 		if(scoreIndex == SIGMOID_CHECKBOX_INDEX) {
 			setCheckBox(activation[Math.abs(SIGMOID_CHECKBOX_INDEX)], SIGMOID_CHECKBOX_INDEX, "includeSigmoidFunction");
@@ -677,7 +720,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		} else if(scoreIndex == LEAKY_RELU_CHECKBOX_INDEX) {
 			setCheckBox(activation[Math.abs(LEAKY_RELU_CHECKBOX_INDEX)], LEAKY_RELU_CHECKBOX_INDEX, "includeLeakyReLUFunction");
 			System.out.println("param LeakyReLU now set to: " + Parameters.parameters.booleanParameter("includeLeakyReLUFunction"));
-		} else if(scoreIndex == CLOSE_BUTTON_INDEX) {//If close button clicked
+		}else if(scoreIndex == CLOSE_BUTTON_INDEX) {//If close button clicked
 			System.exit(0);
 		} else if(scoreIndex == RESET_BUTTON_INDEX) {//If reset button clicked
 			reset();
@@ -698,7 +741,16 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 			assert (scores.size() == buttons.size()) : 
 				"size mismatch! score array is " + scores.size() + " in length and buttons array is " + buttons.size() + " long";
 			buttonPressed(scoreIndex);
-		}
+		} // TODO: Ensure these tick-boxes work
+//		}else if(scoreIndex == XEFFECT_CHECKBOX_INDEX){ // If X-Effect checkbox is clicked
+//			setCheckBox(activation[Math.abs(XEFFECT_CHECKBOX_INDEX)], XEFFECT_CHECKBOX_INDEX, "X-Effect");
+//		}else if(scoreIndex == YEFFECT_CHECKBOX_INDEX){ // If Y-Effect checkbox is clicked
+//			setCheckBox(activation[Math.abs(YEFFECT_CHECKBOX_INDEX)], YEFFECT_CHECKBOX_INDEX, "Y-Effect");
+//		}else if(scoreIndex == BIAS_CHECKBOX_INDEX){ // If Bias-Effect checkbox is clicked
+//			setCheckBox(activation[Math.abs(BIAS_CHECKBOX_INDEX)], BIAS_CHECKBOX_INDEX, "Bias-Effect");
+//		}else if(scoreIndex == CENTERDISTANCE_CHECKBOX_INDEX){ // If Center-Distance Effect checkbox is clicked
+//			setCheckBox(activation[Math.abs(CENTERDISTANCE_CHECKBOX_INDEX)], CENTERDISTANCE_CHECKBOX_INDEX, "Center-Distance Effect");
+//		} 
 	}
 	//used for lineage and undo button
 	private static HashSet<Long> drawnOffspring = null;
@@ -803,7 +855,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		Offspring o = Offspring.lineage.get((int) id);
 		if(o != null && !drawnOffspring.contains(id)) { // Don't draw if already drawn
 			Genotype<T> g = (Genotype<T>) Offspring.getGenotype(o.xmlNetwork);
-			BufferedImage bi = GraphicsUtil.imageFromCPPN(g.getPhenotype(), PIC_SIZE/2, PIC_SIZE/2);
+			BufferedImage bi = GraphicsUtil.imageFromCPPN(g.getPhenotype(), PIC_SIZE/2, PIC_SIZE/2, inputMultipliers);
 			DrawingPanel p = GraphicsUtil.drawImage(bi, id + " -> " + childId, PIC_SIZE/2, PIC_SIZE/2);
 			p.setLocation(x, y);
 			savedLineage.put(depth, savedLineage.get(depth) == null ? 0 : savedLineage.get(depth) + 1);
