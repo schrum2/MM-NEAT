@@ -16,7 +16,7 @@ import java.util.Comparator;
 public class StatisticsUtilities {
 
 	/**
-	 * TODO
+	 * Returns the value at a given Percentile from a given Array of Doubles
 	 * 
 	 * @param values Array of input values
 	 * @param p Percentile to compute
@@ -25,33 +25,33 @@ public class StatisticsUtilities {
 	 *             if the parameters are not valid or the input array is null
 	 */
 	public static double percentile(final double[] values, final double p) {
-		if ((p > 100) || (p <= 0)) {
+		if ((p > 100) || (p <= 0)) { // Throws an Exception for invalid percentile arguements
 			throw new IllegalArgumentException("invalid quantile value: " + p);
 		}
-		double n = (double) values.length;
-		if (n == 0) {
+		double n = (double) values.length; // Stores the length of the given Array
+		if (n == 0) { // If the Array is empty, returns NaN
 			return Double.NaN;
 		}
-		if (n == 1) {
+		if (n == 1) { // If the Array only has one value, returns that value
 			return values[0]; // always return single value for n = 1
 		}
-		double pos = p * (n + 1) / 100;
-		double fpos = Math.floor(pos);
-		int intPos = (int) fpos;
-		double dif = pos - fpos;
+		double pos = p * (n + 1) / 100; // Calculates the Index where the percentile value would be
+		double fpos = Math.floor(pos); // Floors the calculated value
+		int intPos = (int) fpos; // Stores the Index as calculated above
+		double dif = pos - fpos; // Stores the difference between the calculated Index and the floored Index
 		double[] sorted = new double[values.length];
 		System.arraycopy(values, 0, sorted, 0, values.length);
-		Arrays.sort(sorted);
+		Arrays.sort(sorted); // Sorts the copied values in the new Array
 
-		if (pos < 1) {
+		if (pos < 1) { 
 			return sorted[0];
 		}
 		if (pos >= n) {
 			return sorted[values.length - 1];
 		}
-		double lower = sorted[intPos - 1];
-		double upper = sorted[intPos];
-		return lower + dif * (upper - lower);
+		double lower = sorted[intPos - 1]; // Stores the value before the floored Index
+		double upper = sorted[intPos]; // Stores the value in the floored Index
+		return lower + dif * (upper - lower); // Returns the value at the given Percentile of the given Array
 	}
 
 	/**
@@ -61,11 +61,11 @@ public class StatisticsUtilities {
 	 * @return Median in xs
 	 */
 	public static double median(double[] xs) {
-		Arrays.sort(xs);
+		Arrays.sort(xs); // Sorts the Array
 		if (xs.length % 2 == 0) { // even
-			return (xs[(xs.length / 2) - 1] + xs[xs.length / 2]) / 2.0;
+			return (xs[(xs.length / 2) - 1] + xs[xs.length / 2]) / 2.0; // Returns the average of the two values at the center of the Array
 		} else { // odd
-			return xs[xs.length / 2];
+			return xs[xs.length / 2]; // Returns the value at the center of the Array
 		}
 	}
 
@@ -75,24 +75,23 @@ public class StatisticsUtilities {
 	 * randomArgMaxTieBreak setting determines whether a random max is chosen or
 	 * the first of the maxes is chosen.
 	 * 
-	 * @param xs
-	 *            values to check for max
-	 * @return array index corresponding to max
+	 * @param xs Array of Doubles; contains values to check for max
+	 * @return Array Index corresponding to max
 	 */
 	public static int argmax(double[] xs) {
-		double max = -Double.MAX_VALUE;
+		double max = -Double.MAX_VALUE; // Stores the maximum value; assumed to be the smallest possible Double value (to allow for comparison)
 		ArrayList<Integer> equalMaxIndexes = new ArrayList<Integer>(xs.length);
 		for (int i = 0; i < xs.length; i++) {
-			if (xs[i] == max) {
+			if (xs[i] == max) { // Current value is equal to the maximum value
 				equalMaxIndexes.add(i);
-			} else if (xs[i] > max) {
-				max = xs[i];
-				equalMaxIndexes.clear();
-				equalMaxIndexes.add(i);
+			} else if (xs[i] > max) { // Current value is greater than the maximum value
+				max = xs[i]; // Updates the max value
+				equalMaxIndexes.clear(); // Clears the ArrayList
+				equalMaxIndexes.add(i); // Adds the current Index to the ArrayList
 			}
 		}
 		return equalMaxIndexes.get(CommonConstants.randomArgMaxTieBreak
-				? RandomNumbers.randomGenerator.nextInt(equalMaxIndexes.size()) : 0);
+				? RandomNumbers.randomGenerator.nextInt(equalMaxIndexes.size()) : 0); // Returns an Index containing the maxumim value
 	}
 
 	/**
@@ -101,19 +100,19 @@ public class StatisticsUtilities {
 	 * randomArgMaxTieBreak setting determines whether a random max is chosen or
 	 * the first of the maxes is chosen.
 	 * 
-	 * @param xs
-	 * @return array index corresponding to max
+	 * @param xs Array of Integers; contains values to search for max
+	 * @return Array Index corresponding to max
 	 */
 	public static int argmax(int[] xs) {
-		double max = -Double.MAX_VALUE;
+		double max = -Double.MAX_VALUE; // Stores the maximum value; assumed to be the smallest possible Double value (to allow for comparison)
 		ArrayList<Integer> equalMaxIndexes = new ArrayList<Integer>(xs.length);
 		for (int i = 0; i < xs.length; i++) {
-			if (xs[i] == max) {
+			if (xs[i] == max) { // Current value is equal to the maximum value
 				equalMaxIndexes.add(i);
-			} else if (xs[i] > max) {
-				max = xs[i];
-				equalMaxIndexes.clear();
-				equalMaxIndexes.add(i);
+			} else if (xs[i] > max) { // Current value is greater than the maximum value
+				max = xs[i]; // Updates the max value
+				equalMaxIndexes.clear(); // Clears the ArrayList
+				equalMaxIndexes.add(i); // Adds the current Index to the ArrayList
 			}
 		}
 		return equalMaxIndexes.get(CommonConstants.randomArgMaxTieBreak
@@ -129,8 +128,8 @@ public class StatisticsUtilities {
 	 * Rank can make the result more specific, to get the max (rank = 0), next
 	 * highest (rank = 1), or next (rank = 2), etc.
 	 * 
-	 * @param xs
-	 * @param rank
+	 * @param xs Array of Integers
+	 * @param rank 
 	 * @return array index corresponding to max
 	 */
 	@SuppressWarnings("unchecked")
@@ -160,71 +159,75 @@ public class StatisticsUtilities {
 	 * @return array index corresponding to min
 	 */
 	public static int argmin(double[] xs) {
-		double min = Double.MAX_VALUE;
+		double min = Double.MAX_VALUE; // Stores the minimum value to be returned later; assumed to be the maximum possible Integer value (to allow for comparison)
 		ArrayList<Integer> equalMinIndexes = new ArrayList<Integer>(xs.length);
 		for (int i = 0; i < xs.length; i++) {
-			if (xs[i] == min) {
+			if (xs[i] == min) { // Encountered value is equal to the current minimum
 				equalMinIndexes.add(i);
-			} else if (xs[i] < min) {
-				min = xs[i];
-				equalMinIndexes.clear();
-				equalMinIndexes.add(i);
+			} else if (xs[i] < min) { // Encountered value is less than the current minimum
+				min = xs[i]; // Updates the minimum
+				equalMinIndexes.clear(); // Clears the ArrayList
+				equalMinIndexes.add(i); // Adds the current Index
 			}
 		}
 		return equalMinIndexes.get(CommonConstants.randomArgMaxTieBreak
-				? RandomNumbers.randomGenerator.nextInt(equalMinIndexes.size()) : 0);
+				? RandomNumbers.randomGenerator.nextInt(equalMinIndexes.size()) : 0); // Returns an Index that contains the minimum value
 	}
 
 	/**
-	 * TODO
+	 * Returns the Index of the minimum value in a given Array of Integers
 	 * 
-	 * @param xs
-	 * @return
+	 * @param xs Array of Integers
+	 * @return The Index of the minimum value in xs
 	 */
 	public static int argmin(int[] xs) {
-		double min = Double.MAX_VALUE;
+		double min = Double.MAX_VALUE; // Stores the minimum value to be returned later; assumed to be the maximum possible Integer value (to allow for comparison)
 		ArrayList<Integer> equalMinIndexes = new ArrayList<Integer>(xs.length);
 		for (int i = 0; i < xs.length; i++) {
-			if (xs[i] == min) {
+			if (xs[i] == min) { // Encountered value is equal to the current minimum
 				equalMinIndexes.add(i);
-			} else if (xs[i] < min) {
-				min = xs[i];
-				equalMinIndexes.clear();
-				equalMinIndexes.add(i);
+			} else if (xs[i] < min) { // Encountered value is less than the current minimum
+				min = xs[i]; // Updates the minimum
+				equalMinIndexes.clear(); // Clears the ArrayList
+				equalMinIndexes.add(i); // Adds the current Index
 			}
 		}
 		return equalMinIndexes.get(CommonConstants.randomArgMaxTieBreak
-				? RandomNumbers.randomGenerator.nextInt(equalMinIndexes.size()) : 0);
+				? RandomNumbers.randomGenerator.nextInt(equalMinIndexes.size()) : 0); // Returns an Index that contains the minimum value
 	}
 
 	/**
-	 * TODO
+	 * Returns the Index of a value as weighted by their values, favoring the maximum;
+	 * Converts values into action probabilities
 	 * 
-	 * @param ps
-	 * @param temperature
-	 * @return
+	 * @param ps An Array of Doubles
+	 * @param temperature A Double value used to modify the probability that a given value is selected;
+	 * 		 higher temperatures even the odds for all values
+	 * 
+	 * @return The Index of a value as chosen by the probabilisticSelection method in the RandomNumbers Class
 	 */
 	public static int softmax(double[] ps, double temperature) {
-		double[] posExps = new double[ps.length];
+		double[] posExps = new double[ps.length]; // Creates a new Array to store the modified values
 		for (int i = 0; i < posExps.length; i++) {
-			posExps[i] = Math.exp(ps[i] / temperature);
+			posExps[i] = Math.exp(ps[i] / temperature); // Stores Euler's number raised to the the value in the given Array divided by the temperature
 		}
-		posExps = distribution(posExps);
-		return RandomNumbers.probabilisticSelection(posExps);
+		posExps = distribution(posExps); // Calculates the distribution of the modified values
+		return RandomNumbers.probabilisticSelection(posExps); // Returns an Index as chosen by the probabilisticSelection method
 	}
 
 	/**
-	 * Returns an Integer as calculated by the probabilisticSelection method in the RandomNumbers Class
+	 * Returns an Index as calculated by the probabilisticSelection method in the RandomNumbers Class;
+	 * The values of the given Array are weighted for selection, and an Index is randomly selected and returned based on the probability weighting
 	 * 
 	 * @param ps Array of Doubles
-	 * @return 
+	 * @return An Index of a value as selected by the probabilisticSelection method in the RandomNumbers Class
 	 */
 	public static int probabilistic(double[] ps) {
 		for (int i = 0; i < ps.length; i++) { // Cycles through the given Array to make all values positive
 			ps[i] += 1; // Initial range is [-1,1], so now all are positive
 		}
 		double[] dist = distribution(ps); // Creates a new Array with the distribution of the given Array 
-		return RandomNumbers.probabilisticSelection(dist);
+		return RandomNumbers.probabilisticSelection(dist); // Returns an Index as calculated by the probabilisticSelection method in the RandomNumbers Class
 	}
 
 	/**
@@ -500,11 +503,9 @@ public class StatisticsUtilities {
 	 * Compute "instantaneous error energy" as described on page 161 of Neural
 	 * Networks by Haykin.
 	 * 
-	 * @param desired
-	 *            what output should be
-	 * @param output
-	 *            actual output of one neuron
-	 * @return instantaneous error
+	 * @param desired What output should be
+	 * @param output Actual output of one neuron
+	 * @return Instantaneous Error
 	 */
 	public static double instantaneousErrorEnergy(double desired, double output) {
 		assert!Double.isNaN(output) : "output was NaN!";
@@ -522,36 +523,34 @@ public class StatisticsUtilities {
 	 * Compute "TOTAL instantaneous error energy" as described on page 161 of
 	 * Neural Networks by Haykin. COULD BE SLIGHTLY OPTIMIZED
 	 * 
-	 * @param pairs
-	 *            each pair is desired/actual values for one output neuron
-	 * @return total error across whole output layer
+	 * @param pairs Each pair is desired/actual values for one output neuron
+	 * @return Total Error across whole output layer
 	 */
 	public static double instantaneousTotalErrorEnergy(ArrayList<Pair<Double, Double>> pairs) {
-		double sum = 0;
+		double sum = 0; // Stores the total to be returned later
 		for (Pair<Double, Double> p : pairs) {
-			sum += instantaneousErrorEnergy(p.t1, p.t2);
+			sum += instantaneousErrorEnergy(p.t1, p.t2); // Adds the Instantaneous Error Energy of the pair to the sum
 			assert!Double.isNaN(sum) : "sum was NaN!";
 		}
-		return sum;
+		return sum; // Returns total Instantaneous Error Energy
 	}
 
 	/**
 	 * Compute "average squared error energy" as described on page 161 of Neural
 	 * Networks by Haykin.
 	 * 
-	 * @param samples
-	 *            each member corresponds to a collection of desired/actual
+	 * @param samples Each member corresponds to a collection of desired/actual
 	 *            outputs for a network
-	 * @return
+	 * @return The Average Squared Error Energy
 	 */
 	public static double averageSquaredErrorEnergy(ArrayList<ArrayList<Pair<Double, Double>>> samples) {
 		double[] totalErrors = new double[samples.size()];
 		for (int i = 0; i < totalErrors.length; i++) {
 			ArrayList<Pair<Double, Double>> pairs = samples.get(i);
-			totalErrors[i] = instantaneousTotalErrorEnergy(pairs);
+			totalErrors[i] = instantaneousTotalErrorEnergy(pairs); // Stores the Instantaneous Total Error Energy of a given pair
 			assert!Double.isNaN(totalErrors[i]) : "totalErrors[" + i + "] is NaN!";
 		}
-		return average(totalErrors);
+		return average(totalErrors); // Calculates and returns the average
 	}
 
     /**

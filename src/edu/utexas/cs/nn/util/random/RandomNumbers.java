@@ -112,7 +112,7 @@ public class RandomNumbers {
 	}
 
 	/**
-	 * The elements of probs must sum to 1.0
+	 * The elements of probabilities must sum to 1.0
 	 *
 	 * @param probs
 	 *            array represents a probability distribution and must sum to
