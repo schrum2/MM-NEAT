@@ -100,7 +100,9 @@ public class SelectiveBreedingEA<T> implements SinglePopulationGenerationalEA<T>
 	}
 
 	protected void logInfo(ArrayList<Score<T>> scores) {
-		keeperLog.log(scores, generation);
+		if(keeperLog != null) {
+			keeperLog.log(scores, generation);
+		}
 		Genotype<T> example = scores.get(0).individual;
 		if (example instanceof TWEANNGenotype) {
 			ArrayList<TWEANNGenotype> tweanns = new ArrayList<TWEANNGenotype>(scores.size());
