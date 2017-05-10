@@ -49,9 +49,9 @@ public class Distance2DComparatorTest {
 		
 		//large and negative valued point
 		Distance2DComparator vsFar = new Distance2DComparator(farBottomLeft); // this is never used
-		assertEquals(1, vsBottomLeft.compare(topCenter, bottomRight));
-		assertEquals(-1, vsBottomLeft.compare(bottomLeft, bottomRight));
-		assertEquals(0, vsBottomLeft.compare(topLeft, bottomRight)); 
+		assertEquals(1, vsFar.compare(topCenter, bottomRight));
+		assertEquals(-1, vsFar.compare(bottomLeft, bottomRight));
+		assertEquals(0, vsFar.compare(topLeft, bottomRight)); 
 	}
 
 }
