@@ -41,6 +41,7 @@ public class CartesianGeometricUtilitiesTest {
 		assertEquals(scaledUpper.y, properUpper.y, DOUBLE_THRESHOLD);
 		assertEquals(scaledLower.x, properLower.x, DOUBLE_THRESHOLD);
 		assertEquals(scaledLower.y, properLower.y, DOUBLE_THRESHOLD);
+
 	}
 	
 	@Test
@@ -82,7 +83,7 @@ public class CartesianGeometricUtilitiesTest {
 	public void testBottomScale() {
 		double toScale = 8.0;
 		assertEquals(4.0, CartesianGeometricUtilities.bottomScale(toScale, 3), DOUBLE_THRESHOLD);
-		assertEquals(0, CartesianGeometricUtilities.bottomScale(toScale, 1), DOUBLE_THRESHOLD);
+		assertEquals(0, CartesianGeometricUtilities.bottomScale(toScale, 1), DOUBLE_THRESHOLD); //special case if max dimension is 1
 		assertEquals(2.0, CartesianGeometricUtilities.bottomScale(toScale, 5), DOUBLE_THRESHOLD);
 		assertEquals(1.0, CartesianGeometricUtilities.bottomScale(toScale, 9), DOUBLE_THRESHOLD);
 	}
@@ -93,11 +94,19 @@ public class CartesianGeometricUtilitiesTest {
 		ILocated2D topOfSegment = new Tuple2D(0, 1);
 		ILocated2D point = new Tuple2D(1, 0);
 		ILocated2D otherPoint = new Tuple2D(1, 1.5);
+		ILocated2D paramLessThanZero = new Tuple2D(0, -1);
+		ILocated2D paramGreaterThanOne = new Tuple2D(1, 2);
 		assertEquals(CartesianGeometricUtilities.shortestDistanceToLineSegment(point, topOfSegment, bottomOfSegment),
 				1.0, DOUBLE_THRESHOLD);
 		assertEquals(
 				CartesianGeometricUtilities.shortestDistanceToLineSegment(otherPoint, topOfSegment, bottomOfSegment),
 				1.1180, DOUBLE_THRESHOLD);
+		assertEquals( // test for case if param < 0
+				CartesianGeometricUtilities.shortestDistanceToLineSegment(paramLessThanZero, topOfSegment, bottomOfSegment),
+				1.0, DOUBLE_THRESHOLD);
+		assertEquals( // test for case if param > 1
+				CartesianGeometricUtilities.shortestDistanceToLineSegment(paramGreaterThanOne, topOfSegment, bottomOfSegment),
+				1.4142, DOUBLE_THRESHOLD);
 	}
 
 	@Test
@@ -136,9 +145,12 @@ public class CartesianGeometricUtilitiesTest {
 	@Test
 	public void testSignedAngleFromSourceHeadingToTarget() {
 		ILocated2D source = new Tuple2D(1, 1);
-		ILocated2D target = new Tuple2D(2, 1);
-		assertEquals(CartesianGeometricUtilities.signedAngleFromSourceHeadingToTarget(source, target, Math.PI / 4),
+		ILocated2D target1 = new Tuple2D(2, 1);
+		ILocated2D target2 = new Tuple2D(1, 1);
+		assertEquals(CartesianGeometricUtilities.signedAngleFromSourceHeadingToTarget(source, target1, Math.PI / 4),
 				-Math.PI / 4, DOUBLE_THRESHOLD);
+		assertEquals(CartesianGeometricUtilities.signedAngleFromSourceHeadingToTarget(source, target2, Math.PI / 4),
+				0, DOUBLE_THRESHOLD); //tests special case (if difference is 0)
 	}
 
 	@Test
@@ -154,9 +166,13 @@ public class CartesianGeometricUtilitiesTest {
 	public void testSignedAngleDifference() {
 		double rad1 = Math.PI / 4;
 		double rad2 = Math.PI / 2;
+		double rad3 = 4* Math.PI;
+		double rad4 = 0;
 		assertEquals(CartesianGeometricUtilities.signedAngleDifference(rad1, rad2), rad1, DOUBLE_THRESHOLD);
 		assertEquals(CartesianGeometricUtilities.signedAngleDifference(rad2, rad1), -rad1, DOUBLE_THRESHOLD);
 		assertEquals(CartesianGeometricUtilities.signedAngleDifference(rad1, rad1), 0, DOUBLE_THRESHOLD);
+		assertEquals(CartesianGeometricUtilities.signedAngleDifference(rad3, rad4), -2*Math.PI, DOUBLE_THRESHOLD); //tests correction if exceeding 2pi
+		assertEquals(CartesianGeometricUtilities.signedAngleDifference(rad4, rad3), 2*Math.PI, DOUBLE_THRESHOLD); //tests correction if going below 2pi
 	}
 
 	@Test
