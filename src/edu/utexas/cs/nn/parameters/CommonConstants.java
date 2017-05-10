@@ -100,8 +100,7 @@ public class CommonConstants {
 	public static int multitaskModules;
 	public static int numActiveGhosts;
 	public static int pacManLevelTimeLimit;
-	public static int pacmanStartingPowerPillIndex = -1; // Not a commandline
-	// param yet
+	public static int pacmanStartingPowerPillIndex = -1; // Not a commandline param yet
 	public static int stopMode;
 	public static int syllabusSize;
 	public static int trialIncreaseFrequency;
@@ -147,8 +146,7 @@ public class CommonConstants {
 		splitRawTetrisInputs = Parameters.parameters.booleanParameter("splitRawTetrisInputs");
 		allowMultipleFunctions = Parameters.parameters.booleanParameter("allowMultipleFunctions");
 		allowRandomGhostReversals = Parameters.parameters.booleanParameter("allowRandomGhostReversals");
-		checkEachAbsoluteDistanceGhostSort = Parameters.parameters
-				.booleanParameter("checkEachAbsoluteDistanceGhostSort");
+		checkEachAbsoluteDistanceGhostSort = Parameters.parameters.booleanParameter("checkEachAbsoluteDistanceGhostSort");
 		checkEachFlushWalls = Parameters.parameters.booleanParameter("checkEachFlushWalls");
 		connectToInputs = Parameters.parameters.booleanParameter("connectToInputs");
 		constantTUGGoalIncrements = Parameters.parameters.booleanParameter("constantTUGGoalIncrements");
