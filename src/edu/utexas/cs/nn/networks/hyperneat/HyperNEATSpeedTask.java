@@ -71,8 +71,8 @@ public class HyperNEATSpeedTask implements HyperNEATTask, Task, SinglePopulation
 
 	@Override
 	public List<Pair<String, String>> getSubstrateConnectivity() {
-		Pair<String, String> connect1 = new Pair<String, String>(input.name, process.name);
-		Pair<String, String> connect2 = new Pair<String, String>(process.name, output.name);
+		Pair<String, String> connect1 = new Pair<String, String>(input.getName(), process.getName());
+		Pair<String, String> connect2 = new Pair<String, String>(process.getName(), output.getName());
 		ArrayList<Pair<String, String>>	pairs = new ArrayList<Pair<String, String>>();
 		pairs.add(connect1);
 		pairs.add(connect2);

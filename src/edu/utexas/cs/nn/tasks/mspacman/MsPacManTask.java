@@ -688,9 +688,9 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 			List<Substrate> localSubs = getSubstrateInformationFromScratch(); // Just to make sure subs is not null
 			for(Substrate s : localSubs){
 				// Only reset full screen substrates
-				if(s.size.t1 == MS_PAC_MAN_SUBSTRATE_WIDTH && s.size.t2 == MS_PAC_MAN_SUBSTRATE_HEIGHT) {
+				if(s.getSize().t1 == MS_PAC_MAN_SUBSTRATE_WIDTH && s.getSize().t2 == MS_PAC_MAN_SUBSTRATE_HEIGHT) {
 					s.killAllNeurons();
-					if(s.name.equals("Pills")){
+					if(s.getName().equals("Pills")){
 						for(int node : gf.getPillIndices()) {
 							int x = gf.getNodeXCoord(node);
 							int y = gf.getNodeYCoord(node);
@@ -698,7 +698,7 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 							int scaledY = y / MsPacManTask.MS_PAC_MAN_NODE_DIM;
 							s.resurrectNeuron(scaledX, scaledY);
 						}
-					} else if(s.name.equals("PowerPills")) {
+					} else if(s.getName().equals("PowerPills")) {
 						for(int node : gf.getActivePowerPillsIndices()) {
 							int x = gf.getNodeXCoord(node);
 							int y = gf.getNodeYCoord(node);

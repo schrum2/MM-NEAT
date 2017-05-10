@@ -70,7 +70,7 @@ public class HyperNEATUtilTest {
 	 * @return biggest used inno #
 	 */
 	public long addNodes(Substrate sub, int ntype, long l) {
-		for(int i = 0; i < sub.size.t1 * sub.size.t2; i ++) {
+		for(int i = 0; i < sub.getSize().t1 * sub.getSize().t2; i ++) {
 			Node n = t1.new Node(ActivationFunctions.FTYPE_SIGMOID, ntype, l++);
 			n.artificiallySetActivation(RandomNumbers.fullSmallRand());
 			nodes.add(n);

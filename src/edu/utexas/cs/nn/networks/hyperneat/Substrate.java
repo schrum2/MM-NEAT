@@ -19,19 +19,19 @@ public class Substrate {
 	public final static int PROCCESS_SUBSTRATE = 1;
 	public final static int OUTPUT_SUBSTRATE = 2;
 	// unique string identifier for substrate
-	public final String name;
+	private final String name;
 	// encodes size of rectangular substrate (sticking with 2D for now)
-	public final Pair<Integer, Integer> size;
+	private final Pair<Integer, Integer> size;
 	// encodes type of substrate: INPUT_SUBSTRATE, PROCCESS_SUBSTRATE, or OUTPUT_SUBSTRATE
-	public final int stype;
+	private final int stype;
 	// location of substrate in vector space.
 	// Not actually used anywhere, but could aid in visualization in the future
-	public final Triple<Integer, Integer, Integer> subLocation;
+	private final Triple<Integer, Integer, Integer> subLocation;
 	// Set of neurons in this substrate that cannot process information.
 	// Not all neurons within the rectangle may make sense to use.
-	public HashSet<Pair<Integer, Integer>> deadNeurons;
+	private HashSet<Pair<Integer, Integer>> deadNeurons;
 	// Ordered list of locations of all neurons within this substrate
-	public final List<Pair<Integer,Integer>> neuronCoordinates;
+	private final List<Pair<Integer,Integer>> neuronCoordinates;
 	
 	/**
 	 * constructor for a substrate

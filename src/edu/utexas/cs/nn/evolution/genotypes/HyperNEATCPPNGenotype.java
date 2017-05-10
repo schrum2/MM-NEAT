@@ -141,7 +141,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 		// Figure out number of output neurons
 		for (Substrate s : subs) {
 			if (s.getStype() == Substrate.OUTPUT_SUBSTRATE) {
-				phenotypeOutputs += s.size.t1 * s.size.t2;
+				phenotypeOutputs += s.getSize().t1 * s.getSize().t2;
 			}
 		}		
 		constructingNetwork = false;
@@ -219,14 +219,14 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 				// Substrate types and Neuron types match and use same values
 				double bias = 0.0; // default
 				// Non-input substrates can have a bias if desired
-				if(CommonConstants.evolveHyperNEATBias && sub.stype != Substrate.INPUT_SUBSTRATE) {
+				if(CommonConstants.evolveHyperNEATBias && sub.getStype() != Substrate.INPUT_SUBSTRATE) {
 					// Ask CPPN to generate a bias for each neuron
 					bias = cppn.process(hnt.filterCPPNInputs(new double[]{0, 0, x, y, BIAS}))[biasIndex];
 				}
 				newNodes.add(newNodeGene(CommonConstants.ftype, sub.getStype(), innovationID++, false, bias));
 			}
 			
-			if(CommonConstants.evolveHyperNEATBias && sub.stype != Substrate.INPUT_SUBSTRATE) {
+			if(CommonConstants.evolveHyperNEATBias && sub.getStype() != Substrate.INPUT_SUBSTRATE) {
 				// Each non-input substrate has its own bias output for generating bias values.
 				// Move to the next.
 				biasIndex++;
@@ -302,8 +302,8 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 					// If the target neuron is dead, then don't bother with incoming links
 					if(!s2.isNeuronDead(X2, Y2)) {
 						// CPPN inputs need to be centered and scaled
-						ILocated2D scaledSourceCoordinates = MMNEAT.substrateMapping.transformCoordinates(new Tuple2D(X1, Y1), s1.size.t1, s1.size.t2);
-						ILocated2D scaledTargetCoordinates = MMNEAT.substrateMapping.transformCoordinates(new Tuple2D(X2, Y2), s2.size.t1, s2.size.t2);
+						ILocated2D scaledSourceCoordinates = MMNEAT.substrateMapping.transformCoordinates(new Tuple2D(X1, Y1), s1.getSize().t1, s1.getSize().t2);
+						ILocated2D scaledTargetCoordinates = MMNEAT.substrateMapping.transformCoordinates(new Tuple2D(X2, Y2), s2.getSize().t1, s2.getSize().t2);
 						// inputs to CPPN 
 						// These next two lines need to be generalized for different numbers of CPPN inputs
 						double[] inputs = hnt.filterCPPNInputs(new double[]{scaledSourceCoordinates.getX(), scaledSourceCoordinates.getY(), scaledTargetCoordinates.getX(), scaledTargetCoordinates.getY(), BIAS});
@@ -348,9 +348,9 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 		long innovationIDAccumulator = 0;
 		for (int i = 0; i < sIndex; i++) {
 			Substrate s = subs.get(i);
-			innovationIDAccumulator += s.size.t1 * s.size.t2;
+			innovationIDAccumulator += s.getSize().t1 * s.getSize().t2;
 		}
-		innovationIDAccumulator += (subs.get(sIndex).size.t1 * y) + x;
+		innovationIDAccumulator += (subs.get(sIndex).getSize().t1 * y) + x;
 		return innovationIDAccumulator;
 	}
 
