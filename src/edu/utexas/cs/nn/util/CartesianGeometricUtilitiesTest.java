@@ -42,6 +42,50 @@ public class CartesianGeometricUtilitiesTest {
 		assertEquals(scaledLower.x, properLower.x, DOUBLE_THRESHOLD);
 		assertEquals(scaledLower.y, properLower.y, DOUBLE_THRESHOLD);
 	}
+	
+	@Test
+	public void testBottom1DCenterAndScale() {
+		Tuple2D pair = new Tuple2D(1.5, .5);
+		int width = 2;
+		int height = 3;
+		Tuple2D scaledPair = CartesianGeometricUtilities.Bottom1DCenterAndScale(pair, width, height);
+		assertTrue(scaledPair.x == 0 && scaledPair.y <= 1);
+		Tuple2D scaledUpper = CartesianGeometricUtilities.Bottom1DCenterAndScale(new Tuple2D(2 - 1, 3 - 1), width, height);
+		Tuple2D properUpper = new Tuple2D(0, 1);
+		Tuple2D scaledLower = CartesianGeometricUtilities.Bottom1DCenterAndScale(new Tuple2D(0, 0), width, height);
+		Tuple2D properLower = new Tuple2D(0, 0);
+		assertEquals(scaledUpper.x, properUpper.x, DOUBLE_THRESHOLD);
+		assertEquals(scaledUpper.y, properUpper.y, DOUBLE_THRESHOLD);
+		assertEquals(scaledLower.x, properLower.x, DOUBLE_THRESHOLD);
+		assertEquals(scaledLower.y, properLower.y, DOUBLE_THRESHOLD);
+	}
+	
+	@Test
+	public void testBottomCenterAndScale() {
+		Tuple2D pair = new Tuple2D(1.5, .5);
+		int width = 2;
+		int height = 3;
+		Tuple2D scaledPair = CartesianGeometricUtilities.bottomCenterAndScale(pair, width, height);
+		assertTrue(scaledPair.x >= -1 && scaledPair.y <= 1);
+		Tuple2D scaledUpper = CartesianGeometricUtilities.bottomCenterAndScale(new Tuple2D(2 - 1, 3 - 1), width, height);
+		Tuple2D properUpper = new Tuple2D(1, 1);
+		Tuple2D scaledLower = CartesianGeometricUtilities.bottomCenterAndScale(new Tuple2D(0, 0), width, height);
+		Tuple2D properLower = new Tuple2D(-1, 0);
+		assertEquals(scaledUpper.x, properUpper.x, DOUBLE_THRESHOLD);
+		assertEquals(scaledUpper.y, properUpper.y, DOUBLE_THRESHOLD);
+		assertEquals(scaledLower.x, properLower.x, DOUBLE_THRESHOLD);
+		assertEquals(scaledLower.y, properLower.y, DOUBLE_THRESHOLD);
+		
+	}
+	
+	@Test
+	public void testBottomScale() {
+		double toScale = 8.0;
+		assertEquals(4.0, CartesianGeometricUtilities.bottomScale(toScale, 3), DOUBLE_THRESHOLD);
+		assertEquals(0, CartesianGeometricUtilities.bottomScale(toScale, 1), DOUBLE_THRESHOLD);
+		assertEquals(2.0, CartesianGeometricUtilities.bottomScale(toScale, 5), DOUBLE_THRESHOLD);
+		assertEquals(1.0, CartesianGeometricUtilities.bottomScale(toScale, 9), DOUBLE_THRESHOLD);
+	}
 
 	@Test
 	public void testShortestDistanceToLineSegment() {
