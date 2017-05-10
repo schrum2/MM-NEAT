@@ -31,7 +31,7 @@ public class Distance2DComparatorTest {
 	@Test
 	public void testDistance2DComparator() {
 		Distance2DComparator testComparator = new Distance2DComparator(topRight);
-		assertTrue(testComparator != null);
+		assertNotNull(testComparator);
 	}
 
 	@Test
@@ -48,7 +48,7 @@ public class Distance2DComparatorTest {
 		assertEquals(-1, vsBottomLeft.compare(topCenter, topRight));
 		
 		//large and negative valued point
-		Distance2DComparator vsFar = new Distance2DComparator(farBottomLeft);
+		Distance2DComparator vsFar = new Distance2DComparator(farBottomLeft); // this is never used
 		assertEquals(1, vsBottomLeft.compare(topCenter, bottomRight));
 		assertEquals(-1, vsBottomLeft.compare(bottomLeft, bottomRight));
 		assertEquals(0, vsBottomLeft.compare(topLeft, bottomRight)); 
