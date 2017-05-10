@@ -2,42 +2,56 @@ package edu.utexas.cs.nn.util.util2D;
 
 import static org.junit.Assert.*;
 
-import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class Distance2DComparatorTest {
 
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
-	}
-
-	@AfterClass
-	public static void tearDownAfterClass() throws Exception {
-	}
+	Tuple2D bottomLeft;
+	Tuple2D topLeft;
+	Tuple2D bottomRight;
+	Tuple2D topRight;
+	 
+	Tuple2D topCenter;
+	Tuple2D farBottomLeft;
+	
 
 	@Before
 	public void setUp() throws Exception {
-		Tuple2D bottomLeft = new Tuple2D(1.0, 1.0);
-		Tuple2D topLeft = new Tuple2D(1.0, 8.0);
-		Tuple2D bottomRight = new Tuple2D(8.0, 1.0);
-		Tuple2D topRight = new Tuple2D(8.0, 8.0);
+		bottomLeft = new Tuple2D(1.0, 1.0);
+		topLeft = new Tuple2D(1.0, 8.0);
+		bottomRight = new Tuple2D(8.0, 1.0);
+		topRight = new Tuple2D(8.0, 8.0);
+		
+		topCenter = new Tuple2D(4.5, 8.0);
+		farBottomLeft = new Tuple2D(-200, -200);
 	}
 
-	@After
-	public void tearDown() throws Exception {
-	}
 
 	@Test
 	public void testDistance2DComparator() {
-		fail("Not yet implemented");
+		Distance2DComparator testComparator = new Distance2DComparator(topRight);
+		assertTrue(testComparator != null);
 	}
 
 	@Test
 	public void testCompare() {
-		fail("Not yet implemented");
+		Distance2DComparator vsBottomLeft = new Distance2DComparator(bottomLeft);
+		//same distance
+		assertEquals(0, vsBottomLeft.compare(topLeft, bottomRight)); 
+		//topRight is farthest among the corners
+		assertEquals(1, vsBottomLeft.compare(topRight, bottomRight)); 
+		assertEquals(-1, vsBottomLeft.compare(topLeft, topRight));
+		//non corner
+		assertEquals(1, vsBottomLeft.compare(topCenter, bottomRight));
+		assertEquals(1, vsBottomLeft.compare(topCenter, bottomLeft));
+		assertEquals(-1, vsBottomLeft.compare(topCenter, topRight));
+		
+		//large and negative valued point
+		Distance2DComparator vsFar = new Distance2DComparator(farBottomLeft);
+		assertEquals(1, vsBottomLeft.compare(topCenter, bottomRight));
+		assertEquals(-1, vsBottomLeft.compare(bottomLeft, bottomRight));
+		assertEquals(0, vsBottomLeft.compare(topLeft, bottomRight)); 
 	}
 
 }
