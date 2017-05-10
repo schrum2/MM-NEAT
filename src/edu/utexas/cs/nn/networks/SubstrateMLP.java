@@ -110,21 +110,21 @@ public class SubstrateMLP implements Network {
 			Substrate sourceSub = null;
 			Substrate targetSub = null;
 			for(int z = 0; z < subs.size(); z++) {
-				if(subs.get(z).name.equals(connection.t1)) { 
+				if(subs.get(z).getName().equals(connection.t1)) { 
 					sourceSub = subs.get(z);
-				} else if(subs.get(z).name.equals(connection.t2)) {
+				} else if(subs.get(z).getName().equals(connection.t2)) {
 					targetSub = subs.get(z);
 				}
 			} 
 			assert(sourceSub != null && targetSub != null):"either source or target substrate is not in subs list!";
-			double[][][][] connect = new double[sourceSub.size.t1][sourceSub.size.t2][targetSub.size.t1][targetSub.size.t2];
-			for(int X1 = 0; X1 < sourceSub.size.t1; X1++) {
-				for(int Y1 = 0; Y1 < sourceSub.size.t2; Y1++) {
-					for(int X2 = 0; X2 < targetSub.size.t1; X2++) {
-						for(int Y2 = 0; Y2 < targetSub.size.t2; Y2++) {
+			double[][][][] connect = new double[sourceSub.getSize().t1][sourceSub.getSize().t2][targetSub.getSize().t1][targetSub.getSize().t2];
+			for(int X1 = 0; X1 < sourceSub.getSize().t1; X1++) {
+				for(int Y1 = 0; Y1 < sourceSub.getSize().t2; Y1++) {
+					for(int X2 = 0; X2 < targetSub.getSize().t1; X2++) {
+						for(int Y2 = 0; Y2 < targetSub.getSize().t2; Y2++) {
 							// CPPN inputs need to be centered and scaled
-							ILocated2D scaledSourceCoordinates = MMNEAT.substrateMapping.transformCoordinates(new Tuple2D(X1, Y1), sourceSub.size.t1, sourceSub.size.t2);
-							ILocated2D scaledTargetCoordinates = MMNEAT.substrateMapping.transformCoordinates(new Tuple2D(X2, Y2), targetSub.size.t1, targetSub.size.t2);
+							ILocated2D scaledSourceCoordinates = MMNEAT.substrateMapping.transformCoordinates(new Tuple2D(X1, Y1), sourceSub.getSize().t1, sourceSub.getSize().t2);
+							ILocated2D scaledTargetCoordinates = MMNEAT.substrateMapping.transformCoordinates(new Tuple2D(X2, Y2), targetSub.getSize().t1, targetSub.getSize().t2);
 							// inputs to CPPN 
 							double[] inputs = { scaledSourceCoordinates.getX(), scaledSourceCoordinates.getY(), scaledTargetCoordinates.getX(), scaledTargetCoordinates.getY(), HyperNEATCPPNGenotype.BIAS}; 
 							double[] outputs = network.process(inputs);
@@ -142,9 +142,9 @@ public class SubstrateMLP implements Network {
 			MLPLayer sourceLayer = null;
 			MLPLayer toLayer = null;
 			for(MLPLayer layer : layers) {
-			if(layer.name.equals(sourceSub.name)) {
+			if(layer.name.equals(sourceSub.getName())) {
 				sourceLayer = layer;
-				} else if(layer.name.equals(targetSub.name)) { 
+				} else if(layer.name.equals(targetSub.getName())) { 
 				toLayer = layer;
 					}
 		}
@@ -162,10 +162,10 @@ public class SubstrateMLP implements Network {
 	 */
 	private final void addLayers(List<Substrate> subs, List<MLPLayer> layers) { 
 		for(Substrate sub: subs) {
-			MLPLayer layer = new MLPLayer(new double[sub.size.t1][sub.size.t2], sub.name, sub.stype);
+			MLPLayer layer = new MLPLayer(new double[sub.getSize().t1][sub.getSize().t2], sub.getName(), sub.getStype());
 			layers.add(layer);
-			if(sub.stype == Substrate.INPUT_SUBSTRATE){ numInputs += sub.size.t1 * sub.size.t2;
-			}else if(sub.stype == Substrate.OUTPUT_SUBSTRATE){ numOutputs += sub.size.t1 * sub.size.t2;}
+			if(sub.getStype() == Substrate.INPUT_SUBSTRATE){ numInputs += sub.getSize().t1 * sub.getSize().t2;
+			}else if(sub.getStype() == Substrate.OUTPUT_SUBSTRATE){ numOutputs += sub.getSize().t1 * sub.getSize().t2;}
 		}
 	}
 

@@ -102,10 +102,10 @@ public class HyperNEATCPPNGenotypeTest {
 		ArrayList<LinkGene> newLinks = new ArrayList<LinkGene>();
 		hcppn.loopThroughLinks((HyperNEATTask) MMNEAT.task, newLinks, cppn, indexOfTest, subs.get(sub1Index), subs.get(sub2Index), sub1Index, sub2Index, subs);
 		ILocated2D scaledSourceCoordinates = CartesianGeometricUtilities.centerAndScale(new Tuple2D(0, 0),
-				subs.get(sub1Index).size.t1, subs.get(sub1Index).size.t2);
-		Tuple2D size = new Tuple2D(subs.get(sub2Index).size.t1 - 1, subs.get(sub2Index).size.t2 - 1);
+				subs.get(sub1Index).getSize().t1, subs.get(sub1Index).getSize().t2);
+		Tuple2D size = new Tuple2D(subs.get(sub2Index).getSize().t1 - 1, subs.get(sub2Index).getSize().t2 - 1);
 		ILocated2D scaledTargetCoordinates = CartesianGeometricUtilities.centerAndScale(size,
-				subs.get(sub2Index).size.t1, subs.get(sub2Index).size.t2);
+				subs.get(sub2Index).getSize().t1, subs.get(sub2Index).getSize().t2);
 
 		assertEquals(scaledSourceCoordinates.getY(), -1, .001);
 		assertEquals(scaledSourceCoordinates.getX(), -1, .001);

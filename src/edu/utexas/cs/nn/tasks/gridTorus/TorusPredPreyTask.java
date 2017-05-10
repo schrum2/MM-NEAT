@@ -787,12 +787,12 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 			// Input layers
 			numSubstrateInputs = 0;
 			Substrate firstSubstrate = preyEvolve ? predator : prey;
-			numSubstrateInputs += firstSubstrate.size.t1 * firstSubstrate.size.t2;
+			numSubstrateInputs += firstSubstrate.getSize().t1 * firstSubstrate.getSize().t2;
 			secondSubstrateStartingIndex = numSubstrateInputs;
 			substrateInformation.add(firstSubstrate);
 			if (senseTeammates) {
 				Substrate secondSubstrate = preyEvolve ? prey : predator;
-				numSubstrateInputs += secondSubstrate.size.t1 * secondSubstrate.size.t2;
+				numSubstrateInputs += secondSubstrate.getSize().t1 * secondSubstrate.getSize().t2;
 				substrateInformation.add(secondSubstrate);
 			}
 

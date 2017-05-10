@@ -103,7 +103,7 @@ public class HyperNEATUtil {
 				Substrate s = substrates.get(i);
 				substratePanels.add(drawSubstrate(s, nodes, nodeIndexStart));
 				substratePanels.get(i).setLocation(substratePlacing, 0);
-				nodeIndexStart += s.size.t1 * s.size.t2;
+				nodeIndexStart += s.getSize().t1 * s.getSize().t2;
 				substratePlacing += substratePanels.get(i).getFrame().getWidth();
 			}
 		} else {
@@ -111,7 +111,7 @@ public class HyperNEATUtil {
 			for(int i = 0; i < substrates.size(); i++) {
 				Substrate s = substrates.get(i);
 				drawSubstrate(substratePanels.get(i), s, nodes, nodeIndexStart);
-				nodeIndexStart += s.size.t1 * s.size.t2;
+				nodeIndexStart += s.getSize().t1 * s.getSize().t2;
 			}
 		}
 		return substratePanels;
@@ -125,7 +125,7 @@ public class HyperNEATUtil {
 	 * @return drawing panel containing substrate drawing
 	 */
 	public static DrawingPanel drawSubstrate(Substrate s, ArrayList<Node> nodes, int nodeIndexStart) { 
-		DrawingPanel p = new DrawingPanel(s.size.t1 * SUBS_GRID_SIZE, s.size.t2 * SUBS_GRID_SIZE, s.name);
+		DrawingPanel p = new DrawingPanel(s.getSize().t1 * SUBS_GRID_SIZE, s.getSize().t2 * SUBS_GRID_SIZE, s.getName());
 		return drawSubstrate(p, s, nodes, nodeIndexStart); // updates existing panel
 	}
 
@@ -140,7 +140,7 @@ public class HyperNEATUtil {
 	 */
 	public static DrawingPanel drawSubstrate(DrawingPanel dp, Substrate s, ArrayList<Node> nodes, int nodeIndexStart) { 
 		drawCoord(dp, s, nodes, nodeIndexStart);
-		drawGrid(dp, s.size);
+		drawGrid(dp, s.getSize());
 		return dp;
 	}
 
@@ -169,11 +169,11 @@ public class HyperNEATUtil {
 	 */
 	private static void drawCoord(DrawingPanel p, Substrate s, ArrayList<Node> nodes, int nodeIndex) {
 		p.getGraphics().setBackground(Color.gray);
-		boolean sort = Parameters.parameters.booleanParameter("sortOutputActivations") && s.stype == Substrate.OUTPUT_SUBSTRATE;
-		boolean biggest = Parameters.parameters.booleanParameter("showHighestActivatedOutput") && s.stype == Substrate.OUTPUT_SUBSTRATE;
+		boolean sort = Parameters.parameters.booleanParameter("sortOutputActivations") && s.getStype() == Substrate.OUTPUT_SUBSTRATE;
+		boolean biggest = Parameters.parameters.booleanParameter("showHighestActivatedOutput") && s.getStype() == Substrate.OUTPUT_SUBSTRATE;
 		ArrayList<VisualNode> activations = new ArrayList<VisualNode>(); 
-		for(int j = 0; j < s.size.t2; j++) {
-			for(int i = 0; i < s.size.t1; i++) {
+		for(int j = 0; j < s.getSize().t2; j++) {
+			for(int i = 0; i < s.getSize().t1; i++) {
 				Node node = nodes.get(nodeIndex++);
 				Color c = Color.gray;
 				double activation = node.output();
@@ -281,7 +281,7 @@ public class HyperNEATUtil {
 		for(int i = 0; i < substrates.size(); i++) {
 			if(substrates.get(i).getName().equals(sub.getName())){ break;}
 
-			nodeIndex += substrates.get(i).size.t1 * substrates.get(i).size.t2;
+			nodeIndex += substrates.get(i).getSize().t1 * substrates.get(i).getSize().t2;
 		}
 		return nodeIndex;
 	}
@@ -294,7 +294,7 @@ public class HyperNEATUtil {
 	private static Substrate getSubstrate(String name) {
 		Substrate s = null;
 		for(int i = 0; i < substrates.size(); i++) {
-			if(substrates.get(i).name.equals(name)) { 
+			if(substrates.get(i).getName().equals(name)) { 
 				s =  substrates.get(i);
 			}
 		}
@@ -313,18 +313,18 @@ public class HyperNEATUtil {
 		//create new panel here
 		int xCoord = 0;
 		int yCoord = 0;
-		int nodeVisWidth = WEIGHT_GRID_SIZE* s1.size.t1;
-		int nodeVisHeight = WEIGHT_GRID_SIZE * s1.size.t2;
-		int panelWidth = s2.size.t1 * nodeVisWidth  + s2.size.t1 - 1;
-		int panelHeight  = s2.size.t2 * nodeVisHeight  + s2.size.t2 - 1;
+		int nodeVisWidth = WEIGHT_GRID_SIZE* s1.getSize().t1;
+		int nodeVisHeight = WEIGHT_GRID_SIZE * s1.getSize().t2;
+		int panelWidth = s2.getSize().t1 * nodeVisWidth  + s2.getSize().t1 - 1;
+		int panelHeight  = s2.getSize().t2 * nodeVisHeight  + s2.getSize().t2 - 1;
 
 		//instantiates panel
 		DrawingPanel wPanel = new DrawingPanel(panelWidth, panelHeight, s1.getName() + "->" + s2.getName());
 		wPanel.getGraphics().setBackground(Color.white);
 		//for every node in s1, draws all links from it to s2
-		for(int i = s2Index; i < (s2Index + (s2.size.t1 * s2.size.t2)); i++) {//goes through every node in target substrate
+		for(int i = s2Index; i < (s2Index + (s2.getSize().t1 * s2.getSize().t2)); i++) {//goes through every node in target substrate
 			//drawBorder(wPanel, xCoord, yCoord, nodeVisWidth + 2, nodeVisHeight + 2);
-			drawNodeWeight(wPanel, nodes.get(i), xCoord , yCoord , s1Index, s1Index + (s1.size.t1 * s1.size.t2), nodeVisWidth, nodeVisHeight);
+			drawNodeWeight(wPanel, nodes.get(i), xCoord , yCoord , s1Index, s1Index + (s1.getSize().t1 * s1.getSize().t2), nodeVisWidth, nodeVisHeight);
 			xCoord += nodeVisWidth + 1;
 			if(xCoord >= panelWidth) {
 				xCoord = 0;
@@ -378,7 +378,7 @@ public class HyperNEATUtil {
 		List<Substrate> subs = hnt.getSubstrateInformation();
 		int count = 0;
 		for(Substrate s : subs) {
-			if(s.stype != Substrate.INPUT_SUBSTRATE) count++;
+			if(s.getStype() != Substrate.INPUT_SUBSTRATE) count++;
 		}
 		return count;
 	}
