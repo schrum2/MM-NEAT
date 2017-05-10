@@ -117,7 +117,9 @@ public class CartesianGeometricUtilities {
 	/**
 	 * Calculates the shortest distance from a point to a line segment. In other
 	 * words, the length of a segment that is perpendicular to the line segment,
-	 * and goes through the point.
+	 * and goes through the point. However, if the normal line does not pass 
+	 * through the segment, then the distance to the nearest segment endpoint
+	 * is returned instead.
 	 * 
 	 * @param x
 	 *            x-coordinate of point
@@ -145,13 +147,13 @@ public class CartesianGeometricUtilities {
 
 		double xx, yy;
 
-		if (param < 0) { //coordinates are set to first point of line segment to create perpendicular (leftmost point)
+		if (param < 0) { //normal line does not pass through segment, so focus on first segment endpoint
 			xx = x1;
 			yy = y1;
-		} else if (param > 1) { //coordinates are set to last point of line segment to create perpendicular (rightmost point)
+		} else if (param > 1) { //normal line does not pass through segment, so focus on second segment endpoint
 			xx = x2;
 			yy = y2;
-		} else { // working out correctly; param between 0 and 1
+		} else { // working out correctly; param between 0 and 1: point where normal line intersects segment
 			xx = x1 + param * C;
 			yy = y1 + param * D;
 		}
