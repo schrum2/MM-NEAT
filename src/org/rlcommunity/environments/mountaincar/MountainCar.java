@@ -135,17 +135,17 @@ public class MountainCar extends RLGlueEnvironment
 			System.err.println("Invalid action selected in mountainCar: " + a);
 			a = randomGenerator.nextInt(3);
 		}
+
+		theState.update(a);
 		
 		if (MountainCarViewer.current != null) {
-			MountainCarViewer.current.reset();
+			MountainCarViewer.current.reset(a, theState);
 			try {
 				Thread.sleep(1);
 			} catch (InterruptedException ex) {
 				Logger.getLogger(CartPole.class.getName()).log(Level.SEVERE, null, ex);
 			}
 		}
-
-		theState.update(a);
 
 		return makeRewardObservation(theState.getReward(), theState.inGoalRegion());
 	}

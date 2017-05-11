@@ -2,30 +2,35 @@ package edu.utexas.cs.nn.tasks.rlglue.mountaincar;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
+import java.io.File;
+import java.io.IOException;
 import java.util.Vector;
+
+import javax.imageio.ImageIO;
 
 import org.rlcommunity.environments.mountaincar.MountainCarState;
 import org.rlcommunity.environments.mountaincar.messages.MCGoalRequest;
 import org.rlcommunity.environments.mountaincar.messages.MCGoalResponse;
 import org.rlcommunity.environments.mountaincar.messages.MCHeightRequest;
 import org.rlcommunity.environments.mountaincar.messages.MCHeightResponse;
-import org.rlcommunity.environments.mountaincar.visualizer.MountainCarVisualizer;
 
 import edu.utexas.cs.nn.graphics.DrawingPanel;
 import edu.utexas.cs.nn.networks.TWEANN;
 import rlVizLib.messaging.environment.EnvRangeRequest;
 import rlVizLib.messaging.environment.EnvRangeResponse;
 import rlVizLib.utilities.UtilityShop;
-import rlVizLib.visualization.VizComponentChangeListener;
 
 public final class MountainCarViewer {
 
 	public static MountainCarViewer current = null;
 	public static final int HEIGHT = 500;
 	public static final int WIDTH = 500;
+	public static final double CEILING_SPACE = 50;
+	public static final double SCALE_FACTOR = WIDTH - CEILING_SPACE;
 	public static final String TITLE = "Mountain_Car";
 	public DrawingPanel panel;
 
@@ -33,27 +38,100 @@ public final class MountainCarViewer {
 	private double theGoalHeight = 0.0d;
 	boolean everDrawn = false;
 	
+	private Image carImageNeutral = null;
+	private Image carImageLeft = null;
+	private Image carImageRight = null;
+	
 	/**
 	 * Sets up the viewer for MountainCar
 	 */
 	public MountainCarViewer() {
 		panel = new DrawingPanel(WIDTH, HEIGHT, TITLE);
+		
+		try {
+			carImageNeutral = ImageIO.read(new File("data/MountainCar/auto.png"));
+			carImageNeutral = carImageNeutral.getScaledInstance(50, 50, Image.SCALE_SMOOTH);
+			carImageLeft = ImageIO.read(new File("data/MountainCar/auto_left.png"));
+			carImageLeft = carImageLeft.getScaledInstance(50, 50, Image.SCALE_SMOOTH);
+			carImageRight = ImageIO.read(new File("data/MountainCar/auto_right.png"));
+			carImageRight = carImageRight.getScaledInstance(50, 50, Image.SCALE_SMOOTH);
+		} catch (IOException ex) {
+			System.err.println("ERROR: Problem getting car image.");
+			System.exit(1);
+		}
+
+		
 		panel.setLocation(TWEANN.NETWORK_VIEW_DIM, 0);
 		reset();
 		current = this;
 	}
 	
+	// Default: no last action or state
+	public void reset() { reset(0, null); }
+	
 	/**
 	 * Resets the graphics for the view
 	 */
-	public void reset() {
+	public void reset(int lastAction, MountainCarState theState) {
 		Graphics2D g = panel.getGraphics();
 		g.setColor(Color.WHITE);
 		g.fillRect(0, 0, WIDTH, HEIGHT);
-		render(g);
+		renderBackground(g);
+		if(theState != null)
+			renderCar(g,lastAction, theState);
 	}
 	
-	public void render(Graphics2D g) {
+	public double getCurrentStateInDimension(int whichDimension, MountainCarState theState) {
+		if (whichDimension == 0) {
+			return theState.getPosition();
+		} else {
+			return theState.getVelocity();
+		}
+	}
+	
+	public void renderCar(Graphics2D g, int lastAction, MountainCarState theState) {
+		g.setColor(Color.RED);
+//		AffineTransform saveAT = g.getTransform();
+//		g.scale(.005, .005);
+
+		// to bring things back into the window
+		double minPosition = getMinValueForDim(0);
+		double maxPosition = getMaxValueForDim(0);
+
+		// From parameter instead
+		//int lastAction = mcv.getLastAction();
+
+		double transX = UtilityShop.normalizeValue(getCurrentStateInDimension(0,theState), minPosition, maxPosition);
+
+		// need to get he actual height ranges
+		double transY = UtilityShop.normalizeValue(theState.getHeightAtPosition(theState.getPosition()), getMinHeight(), getMaxHeight());
+		transY = (1.0 - transY - .05);
+
+		transX *= SCALE_FACTOR; // 200.0d;
+		transY *= SCALE_FACTOR; // 200.0d;
+
+		transY += CEILING_SPACE;
+		
+		double theta = -theState.getSlope(theState.getPosition()) * 1.25;
+
+		Image whichImageToDraw = carImageNeutral;
+		if (lastAction == 0) {
+			whichImageToDraw = carImageLeft;
+		}
+		if (lastAction == 2) {
+			whichImageToDraw = carImageRight;
+		}
+		AffineTransform theTransform = AffineTransform.getTranslateInstance(
+				transX - whichImageToDraw.getWidth(null) / 2.0d, transY - whichImageToDraw.getHeight(null) / 2.0d);
+		theTransform.concatenate(AffineTransform.getRotateInstance(theta, whichImageToDraw.getWidth(null) / 2,
+				whichImageToDraw.getHeight(null) / 2));
+		g.drawImage(whichImageToDraw, theTransform, null);
+
+//		g.setTransform(saveAT);
+
+	}
+	
+	public void renderBackground(Graphics2D g) {
 		if (!everDrawn) {
 			theGoalPosition = getGoalPosition();
 			Vector<Double> tempVec = new Vector<Double>();
@@ -72,8 +150,6 @@ public final class MountainCarViewer {
 		//g.setColor(Color.WHITE);
 		//g.fillRect(0, 0, 1, 1);
 
-		final int ceilingspace = 50;
-		double scaleFactor = WIDTH - ceilingspace; // 1000.0d;
 //		theScaleTransform.scale(1.0d / scaleFactor, 1.0d / scaleFactor);
 //		AffineTransform origTransform = g.getTransform();
 //
@@ -94,8 +170,8 @@ public final class MountainCarViewer {
 			double thisY = 1.0 - UtilityShop.normalizeValue(theHeights.get(i), getMinHeight(), getMaxHeight());
 
 			
-			Line2D thisLine = new Line2D.Double(scaleFactor * lastX, ceilingspace + scaleFactor * lastY, 
-					 						    scaleFactor * thisX, ceilingspace + scaleFactor * thisY);
+			Line2D thisLine = new Line2D.Double(SCALE_FACTOR * lastX, CEILING_SPACE + SCALE_FACTOR * lastY, 
+					 						    SCALE_FACTOR * thisX, CEILING_SPACE + SCALE_FACTOR * thisY);
 
 			lastX = thisX;
 			lastY = thisY;
@@ -123,7 +199,7 @@ public final class MountainCarViewer {
 		// Schrum: made these magic numbers up through trial and error
 		double rectWidth = 10; //.05 / 4;
 		double rectHeight = 10; //0.1;
-		Rectangle2D fillRect = new Rectangle2D.Double(transX - rectWidth / 2.0d, ceilingspace + transY - rectHeight / 2.0d, 
+		Rectangle2D fillRect = new Rectangle2D.Double(transX - rectWidth / 2.0d, CEILING_SPACE + transY - rectHeight / 2.0d, 
 													  rectWidth, rectHeight);
 		g.fill(fillRect);
 
