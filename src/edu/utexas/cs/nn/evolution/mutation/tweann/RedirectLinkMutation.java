@@ -28,6 +28,7 @@ public class RedirectLinkMutation extends TWEANNMutation {
 	 */
 	public void mutate(Genotype<TWEANN> genotype) {
 		LinkGene lg = ((TWEANNGenotype) genotype).deleteLinkMutation();
-		((TWEANNGenotype) genotype).linkMutation(lg.sourceInnovation, lg.weight);
+		if(lg != null)
+			((TWEANNGenotype) genotype).linkMutation(lg.sourceInnovation, lg.weight);
 	}
 }

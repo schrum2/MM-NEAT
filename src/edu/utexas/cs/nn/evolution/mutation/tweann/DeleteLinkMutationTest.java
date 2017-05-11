@@ -21,7 +21,7 @@ public class DeleteLinkMutationTest {
 
 	@Before
 	public void setUp() throws Exception {
-		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "recurrency:false", "deleteLinkRate:1.0" });
+		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "recurrency:false" });
 		MMNEAT.loadClasses();
 		tg1 = new TWEANNGenotype(5, 3, 0);
 		MMNEAT.genotype = tg1.copy();
@@ -46,12 +46,24 @@ public class DeleteLinkMutationTest {
 	public void realTest() { 
 		tg1.meltNetwork();
 		Parameters.parameters.setDouble("deleteLinkRate", 1.0);
+		Parameters.parameters.setDouble("netLinkRate", 1.0);
 		DeleteLinkMutation delete = new DeleteLinkMutation();
 		int numLinks = tg1.links.size();
-		// Sometimes fails due to randomness ... fix this
+		for(int i = 1; i <= numLinks; i++){
+			delete.mutate(tg1);
+			assertFalse(tg1.equals(tg2));
+			assertEquals(numLinks-i, tg1.links.size());	//checks that it has one fewer link every iteration	
+		}
+		assertEquals(tg1.links.size(), 0); //can remove links until there are none left
+		delete.mutate(tg1); //nothing happens if we try to delete links that don't exist
+		assertEquals(tg1.links.size(), 0);
+		
+		//can delete links that were added after it has been emptied
+		NewLinkMutation link = new NewLinkMutation();
+		link.mutate(tg1);
+		assertEquals(tg1.links.size(), 1);
 		delete.mutate(tg1);
-		assertFalse(tg1.equals(tg2));
-		assertEquals(numLinks-1, tg1.links.size());	//-1 checks for 1 less link	
+		assertEquals(tg1.links.size(), 0);
 	}
 
 	public void visualTest() {

@@ -1,21 +1,31 @@
 package edu.utexas.cs.nn.util;
 
-import java.io.File;
-import java.net.URL;
-
-import javax.sound.sampled.*;
-
 //import javax.media.*;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.DataLine;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
+
+import javazoom.jl.decoder.JavaLayerException;
+import javazoom.jl.player.advanced.AdvancedPlayer;
+import javazoom.jl.player.advanced.PlaybackListener;
 
 public class SoundUtil {
 
 
 	private static final String BEARGROWL_WAV = "data/sounds/bear_growl_y.wav";
+	private static final String HAPPY_MP3 = "data/sounds/25733.mp3";
 
-	public static void main(String[] args) throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException {
+	public static void main(String[] args) throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException, JavaLayerException {
 		//playWAVFile(BEARGROWL_WAV);
-
+		SoundJLayer soundToPlay = new SoundJLayer(HAPPY_MP3);
+		soundToPlay.play();
 	}
 
 	/**
@@ -79,46 +89,55 @@ public class SoundUtil {
 
 	}
 
-//	private URL url;
-//	private MediaLocator mediaLocator;
-//	private Player playMP3;
-//
-//	public mp3(String mp3)
-//	{
-//		try{
-//			this.url = new URL(mp3);
-//		}catch(java.net.MalformedURLException e)
-//		{System.out.println(e.getMessage());}
-//	}
-//
-//	public void run()
-//	{
-//
-//		try{
-//			mediaLocator = new MediaLocator(url);     
-//			playMP3 = Manager.createPlayer(mediaLocator);
-//		}catch(java.io.IOException e)
-//		{System.out.println(e.getMessage());
-//		}catch(javax.media.NoPlayerException e)
-//		{System.out.println(e.getMessage());}
-//
-//		playMP3.addControllerListener(new ControllerListener()
-//		{
-//			public void controllerUpdate(ControllerEvent e)
-//			{
-//				if (e instanceof EndOfMediaEvent)
-//				{
-//					playMP3.stop();
-//					playMP3.close();
-//				}
-//			}
-//		}
-//				);
-//		SoundUtil.realize();
-//		SoundUtil.start();
-//	} 
-//}
-//TODO: implement methods associated with playing an mp3 file
-//TODO: figure out how to convert an audio file into an array of numbers and vice versa
+	private static class SoundJLayer extends PlaybackListener implements Runnable {
+		private String filePath;
+		private AdvancedPlayer player;
+		private Thread playerThread;    
+
+		public SoundJLayer(String filePath) {
+			this.filePath = filePath;
+		}
+
+		public void play() throws IOException, JavaLayerException{
+			String urlAsString = 
+					"file:///" 
+							+ new java.io.File(".").getCanonicalPath() + "/" 
+							+ this.filePath;
+
+			this.player = new AdvancedPlayer
+					(new java.net.URL(urlAsString).openStream(),
+							javazoom.jl.player.FactoryRegistry.systemRegistry().createAudioDevice());
+			// TODO: Give a specific error message?
+
+
+			this.player.setPlayBackListener(this);
+			this.playerThread = new Thread(this, "AudioPlayerThread");
+			this.playerThread.start();
+
+		}
+
+		// PlaybackListener members
+
+		//		public void playbackStarted(PlaybackEvent playbackEvent){
+		//			System.out.println("playbackStarted");
+		//		}
+		//
+		//		public void playbackFinished(PlaybackEvent playbackEvent)
+		//		{
+		//			System.out.println("playbackEnded");
+		//		}    
+
+		// Runnable members
+
+		public void run()
+		{
+			try{
+				this.player.play();
+			}catch (javazoom.jl.decoder.JavaLayerException ex) {
+				ex.printStackTrace();
+			}
+		}
+	}
+	//TODO: figure out how to convert an audio file into an array of numbers and vice versa
 
 }
