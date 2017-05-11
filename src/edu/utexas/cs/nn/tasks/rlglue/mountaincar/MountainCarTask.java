@@ -4,6 +4,7 @@ import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.tasks.rlglue.RLGlueTask;
+import edu.utexas.cs.nn.tasks.rlglue.mountaincar.MountainCarViewer;
 
 public class MountainCarTask<T extends Network> extends RLGlueTask<T> {
 
