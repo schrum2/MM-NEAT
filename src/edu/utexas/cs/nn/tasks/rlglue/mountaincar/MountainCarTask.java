@@ -8,19 +8,16 @@ import edu.utexas.cs.nn.tasks.rlglue.mountaincar.MountainCarViewer;
 
 public class MountainCarTask<T extends Network> extends RLGlueTask<T> {
 
-	private MountainCarViewer viewer = null;
-	
 	public MountainCarTask() {
 		super();
 		MMNEAT.registerFitnessFunction("RL Return");
 		if (CommonConstants.watch) {
 			if (MountainCarViewer.current == null) {
 				System.out.println("New MountainCarViewer");
-				viewer = new MountainCarViewer();
+				MountainCarViewer.current = new MountainCarViewer();
 			} else {
 				System.out.println("Same MountainCarViewer");
 				MountainCarViewer.current.reset();
-				viewer = MountainCarViewer.current;
 			}
 		}
 	}

@@ -7,12 +7,17 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Vector;
 
+import org.rlcommunity.environments.mountaincar.MountainCarState;
 import org.rlcommunity.environments.mountaincar.messages.MCGoalRequest;
 import org.rlcommunity.environments.mountaincar.messages.MCGoalResponse;
+import org.rlcommunity.environments.mountaincar.messages.MCHeightRequest;
+import org.rlcommunity.environments.mountaincar.messages.MCHeightResponse;
 import org.rlcommunity.environments.mountaincar.visualizer.MountainCarVisualizer;
 
 import edu.utexas.cs.nn.graphics.DrawingPanel;
 import edu.utexas.cs.nn.networks.TWEANN;
+import rlVizLib.messaging.environment.EnvRangeRequest;
+import rlVizLib.messaging.environment.EnvRangeResponse;
 import rlVizLib.utilities.UtilityShop;
 import rlVizLib.visualization.VizComponentChangeListener;
 
@@ -24,8 +29,6 @@ public final class MountainCarViewer {
 	public static final String TITLE = "Mountain_Car";
 	public DrawingPanel panel;
 
-	//private MountainCarVisualizer theVizualizer = null; // Never is initialized; probably causing the NullPointerException. TODO: Find out when, where, and how to initialize it.
-	private Vector<Double> theHeights = null;
 	private double theGoalPosition = 0.0d;
 	private double theGoalHeight = 0.0d;
 	boolean everDrawn = false;
@@ -36,7 +39,6 @@ public final class MountainCarViewer {
 	public MountainCarViewer() {
 		panel = new DrawingPanel(WIDTH, HEIGHT, TITLE);
 		panel.setLocation(TWEANN.NETWORK_VIEW_DIM, 0);
-		//theVizualizer = new MountainCarVisualizer();
 		reset();
 		current = this;
 	}
@@ -53,7 +55,7 @@ public final class MountainCarViewer {
 	
 	public void render(Graphics2D g) {
 		if (!everDrawn) {
-			theGoalPosition = 10; //theVizualizer.getGoalPosition(); // TODO: Fix NullPointerException Error
+			theGoalPosition = getGoalPosition();
 			Vector<Double> tempVec = new Vector<Double>();
 			tempVec.add(theGoalPosition);
 
@@ -86,13 +88,9 @@ public final class MountainCarViewer {
 		g.setColor(Color.BLACK);
 
 		double lastX = 0.0d;
-//		double lastY = 1.0 - UtilityShop.normalizeValue(theHeights.get(0), theVizualizer.getMinHeight(),
-//				theVizualizer.getMaxHeight());
 		double lastY = 1.0 - UtilityShop.normalizeValue(1, getMinHeight(), getMaxHeight());
 		for (int i = 1; i < theHeights.size(); i++) {
 			double thisX = lastX + sizeEachComponent;
-//			double thisY = 1.0 - UtilityShop.normalizeValue(theHeights.get(i), theVizualizer.getMinHeight(),
-//					theVizualizer.getMaxHeight());
 			double thisY = 1.0 - UtilityShop.normalizeValue(theHeights.get(i), getMinHeight(), getMaxHeight());
 
 			
@@ -110,15 +108,11 @@ public final class MountainCarViewer {
 		g.setColor(Color.GREEN);
 
 		// to bring things back into the window
-//		double minPosition = theVizualizer.getMinValueForDim(0);
-//		double maxPosition = theVizualizer.getMaxValueForDim(0);
 		double minPosition = getMinValueForDim(0);
 		double maxPosition = getMaxValueForDim(0);
 
 		double transX = UtilityShop.normalizeValue(theGoalPosition, minPosition, maxPosition);
-		// need to get he actual height ranges
-//		double transY = UtilityShop.normalizeValue(theGoalHeight, theVizualizer.getMinHeight(),
-//				theVizualizer.getMaxHeight());
+		// need to get the actual height ranges
 		double transY = UtilityShop.normalizeValue(theGoalHeight, getMinHeight(), getMaxHeight());
 		transY = (1.0 - transY);
 
@@ -130,36 +124,106 @@ public final class MountainCarViewer {
 
 	}
 
-	private double getMaxValueForDim(int i) { //TODO
-		return 400;
+	////////////////////////////////////////////////////////////////
+	// Code below this line taken from MountainCarVisualizer
+	////////////////////////////////////////////////////////////////
+	
+	private Vector<Double> mins = null;
+	private Vector<Double> maxs = null;
+	double minHeight = Double.MIN_VALUE;
+	double maxHeight = Double.MAX_VALUE;
+	private Vector<Double> theQueryPositions = null;
+	private Vector<Double> theHeights = null;
+
+	public double getMaxHeight() {
+		if (theQueryPositions == null) {
+			initializeHeights();
+		}
+		return minHeight;
 	}
 
-	private double getMinValueForDim(int i) { //TODO
-		return 100;
-	}
-
-	private Vector<Double> getHeightsForPositions(Vector<Double> tempVec) { //TODO
-		return tempVec;
-	}
-
-	private Vector<Double> getSampleHeights() { //TODO
-		Vector<Double> theVect = new Vector<Double>();
-		theVect.add(10.0);
-		theVect.add(30.0);
-		theVect.add(0.0);
-		theVect.add(40.0);
-		theVect.add(50.0);
-		theVect.add(20.0);
-		return theVect;
-	}
-
-	private double getMaxHeight() { //TODO
-		return 100;
-	}
-
-	private double getMinHeight() { //TODO
-		return 0;
+	public double getMinHeight() {
+		if (theQueryPositions == null) {
+			initializeHeights();
+		}
+		return maxHeight;
 	}
 	
+	public Vector<Double> getSampleHeights() {
+		if (theHeights == null) {
+			initializeHeights();
+		}
+		return theHeights;
+	}
+
+	public double getGoalPosition() { 
+		MCGoalResponse goalResponse = MCGoalRequest.Execute();
+		return goalResponse.getGoalPosition();
+	}
+
+	public void initializeHeights() {
+		// Because we can change the shape of the curve we have no guarantees
+		// what
+		// the max and min heights of the mountains may turn out to be...
+		// this takes a quick sample based approach to find out what is a good
+		// approximation
+		// for the min and the max.
+		double minPosition = getMinValueForDim(0);
+		double maxPosition = getMaxValueForDim(0);
+
+		int pointsToDraw = 500;
+		double theRangeSize = maxPosition - minPosition;
+		double pointIncrement = theRangeSize / (double) pointsToDraw;
+
+		theQueryPositions = new Vector<Double>();
+		for (double i = minPosition; i < maxPosition; i += pointIncrement) {
+			theQueryPositions.add(i);
+		}
+		theHeights = this.getHeightsForPositions(theQueryPositions);
+
+		maxHeight = Double.MIN_VALUE;
+		minHeight = Double.MAX_VALUE;
+		for (Double thisHeight : theHeights) {
+			if (thisHeight > maxHeight) {
+				maxHeight = thisHeight;
+			}
+			if (thisHeight < minHeight) {
+				minHeight = thisHeight;
+			}
+		}
+	}
 	
+	public Vector<Double> getHeightsForPositions(Vector<Double> theQueryPositions) {
+		MCHeightResponse heightResponse = MCHeightRequest.Execute(theQueryPositions);
+		return heightResponse.getHeights();
+	}
+
+	public double getMaxValueForDim(int whichDimension) {
+		if (maxs == null) {
+			updateEnvironmentVariableRanges();
+		}
+		return maxs.get(whichDimension);
+	}
+
+	public double getMinValueForDim(int whichDimension) {
+		if (mins == null) {
+			updateEnvironmentVariableRanges();
+		}
+		return mins.get(whichDimension);
+	}
+	
+	public void updateEnvironmentVariableRanges() {
+		// Get the Ranges (internalize this)
+		EnvRangeResponse theERResponse = EnvRangeRequest.Execute();
+
+		if (theERResponse == null) {
+			System.err.println("Asked an Environment for Variable Ranges and didn't get back a parseable message.");
+			Thread.dumpStack();
+			System.exit(1);
+		}
+
+		mins = theERResponse.getMins();
+		maxs = theERResponse.getMaxs();
+	}
+
 }

@@ -18,12 +18,9 @@
  */
 package org.rlcommunity.environments.mountaincar;
 
-import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.tasks.rlglue.RLGlueEnvironment;
-import edu.utexas.cs.nn.tasks.rlglue.mountaincar.MountainCarViewer;
-
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.StringTokenizer;
 import java.util.Vector;
 import java.util.logging.Level;
@@ -33,27 +30,23 @@ import org.rlcommunity.environments.cartpole.CartPole;
 import org.rlcommunity.environments.mountaincar.messages.MCGoalResponse;
 import org.rlcommunity.environments.mountaincar.messages.MCHeightResponse;
 import org.rlcommunity.environments.mountaincar.messages.MCStateResponse;
-import rlVizLib.general.ParameterHolder;
-import rlVizLib.messaging.NotAnRLVizMessageException;
-import rlVizLib.messaging.environment.EnvironmentMessageParser;
-import rlVizLib.messaging.environment.EnvironmentMessages;
-import rlVizLib.messaging.interfaces.HasAVisualizerInterface;
-import rlVizLib.messaging.interfaces.getEnvMaxMinsInterface;
-import rlVizLib.messaging.interfaces.getEnvObsForStateInterface;
-import org.rlcommunity.rlglue.codec.types.Action;
-import org.rlcommunity.rlglue.codec.types.Observation;
-
-import org.rlcommunity.rlglue.codec.types.Reward_observation_terminal;
-
-import java.util.Random;
 import org.rlcommunity.environments.mountaincar.visualizer.MountainCarVisualizer;
 import org.rlcommunity.rlglue.codec.taskspec.TaskSpec;
 import org.rlcommunity.rlglue.codec.taskspec.TaskSpecVRLGLUE3;
 import org.rlcommunity.rlglue.codec.taskspec.ranges.DoubleRange;
 import org.rlcommunity.rlglue.codec.taskspec.ranges.IntRange;
+import org.rlcommunity.rlglue.codec.types.Action;
+import org.rlcommunity.rlglue.codec.types.Observation;
+import org.rlcommunity.rlglue.codec.types.Reward_observation_terminal;
 import org.rlcommunity.rlglue.codec.util.EnvironmentLoader;
-import rlVizLib.general.hasVersionDetails;
 
+import edu.utexas.cs.nn.tasks.rlglue.RLGlueEnvironment;
+import edu.utexas.cs.nn.tasks.rlglue.mountaincar.MountainCarViewer;
+import rlVizLib.general.ParameterHolder;
+import rlVizLib.general.hasVersionDetails;
+import rlVizLib.messaging.NotAnRLVizMessageException;
+import rlVizLib.messaging.environment.EnvironmentMessageParser;
+import rlVizLib.messaging.environment.EnvironmentMessages;
 /*
  * July 2007
  * This is the Java Version MountainCar Domain from the RL-Library.  
@@ -66,12 +59,15 @@ import rlVizLib.general.hasVersionDetails;
  * this is not the easiest environment to get started with.
  */
 import rlVizLib.messaging.environmentShell.TaskSpecPayload;
+import rlVizLib.messaging.interfaces.HasAVisualizerInterface;
 import rlVizLib.messaging.interfaces.HasImageInterface;
+import rlVizLib.messaging.interfaces.getEnvMaxMinsInterface;
+import rlVizLib.messaging.interfaces.getEnvObsForStateInterface;
 
 public class MountainCar extends RLGlueEnvironment
 		implements getEnvMaxMinsInterface, getEnvObsForStateInterface, HasAVisualizerInterface, HasImageInterface {
 
-	static final int numActions = 3;
+	static final int NUM_ACTIONS = 3;
 	protected final MountainCarState theState; // Used for env_save_state and
 												// env_save_state, which don't
 												// exist anymore, but we will
@@ -79,7 +75,6 @@ public class MountainCar extends RLGlueEnvironment
 	// through the messaging system and RL-Viz.
 	// Problem parameters have been moved to MountainCar State
 	private Random randomGenerator = new Random();
-	private MountainCarViewer viewer = new MountainCarViewer();
 
 	public static TaskSpecPayload getTaskSpecPayload(ParameterHolder P) {
 		MountainCar theMC = new MountainCar(P);
@@ -141,8 +136,8 @@ public class MountainCar extends RLGlueEnvironment
 			a = randomGenerator.nextInt(3);
 		}
 		
-		if (viewer != null) {
-			viewer.reset();
+		if (MountainCarViewer.current != null) {
+			MountainCarViewer.current.reset();
 			try {
 				Thread.sleep(1);
 			} catch (InterruptedException ex) {
