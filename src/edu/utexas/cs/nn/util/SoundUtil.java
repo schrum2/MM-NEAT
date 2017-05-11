@@ -26,6 +26,7 @@ public class SoundUtil {
 
 	private static final String BEARGROWL_WAV = "data/sounds/bear_growl_y.wav";
 	private static final String APPLAUSE_WAV = "data/sounds/applause_y.wav";
+	private static final String HARP_WAV = "data/sounds/harp.wav";
 	private static final String HAPPY_MP3 = "data/sounds/25733.mp3";
 
 	public static void main(String[] args) throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException, JavaLayerException {
@@ -37,26 +38,47 @@ public class SoundUtil {
 		byte[] applauseNumbers = WAVToByte(APPLAUSE_WAV);	
 		//System.out.println(Arrays.toString(applauseNumbers));
 		
-		for(int i = 0; i < Math.max(bearNumbers.length, applauseNumbers.length); i++) {
-			if(i < bearNumbers.length) System.out.print(bearNumbers[i]);
-			System.out.print("\t");
-			if(i < applauseNumbers.length) System.out.print(applauseNumbers[i]);
-			System.out.println();
-			
-			new Scanner(System.in).nextLine();
-		}
+		byte[] harpNumbers = WAVToByte(HARP_WAV);
+		System.out.println(Arrays.toString(harpNumbers));
+		
+//		for(int i = 0; i < Math.max(bearNumbers.length, applauseNumbers.length); i++) {
+//			if(i < bearNumbers.length) System.out.print(bearNumbers[i]);
+//			System.out.print("\t");
+//			if(i < applauseNumbers.length) System.out.print(applauseNumbers[i]);
+//			System.out.println();
+//			
+//			new Scanner(System.in).nextLine();
+//		}	
 		
 		//FileOutputStream bearReturns = byteToWAV(BEARGROWL_WAV, bearNumbers);
 		//playWAVFile(bearReturns);
 		
 		//playByteAIS(applauseNumbers);
 		
-//		byte[] experimentNoise = new byte[100];
-//		for(int i = 0; i < experimentNoise.length; i++) {
-//			experimentNoise[i] = (byte) i;
+		for(int i = bearNumbers.length-11; i <= bearNumbers.length-1; i++) {
+			System.out.print(bearNumbers[i] + " ");
+		}
+		System.out.println();
+		
+		byte[] splice = new byte[applauseNumbers.length];
+		for(int i = 0; i < splice.length; i++) {
+			if(i < 46)
+				splice[i] = bearNumbers[i];
+			else 
+				splice[i] = applauseNumbers[i];
+		}
+		playByteAIS(splice);
+		
+//		byte[] original = new byte[bearNumbers.length];
+//		for(int i = 0; i < original.length; i++) {
+//			if(i < 46 || i >= bearNumbers.length-11) 
+//				original[i] = bearNumbers[i];
+//			else 
+//				original[i] = 20;
 //		}
-//		System.out.println(Arrays.toString(experimentNoise));
-//		playByteAIS(experimentNoise);
+//		original[original.length-1] = 0;
+//		
+//		playByteAIS(original);
 	}
 	
 	// Methods associated with playing WAV file
