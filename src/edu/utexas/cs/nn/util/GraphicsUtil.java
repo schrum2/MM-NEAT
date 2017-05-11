@@ -7,6 +7,7 @@ import java.awt.image.BufferedImage;
 import edu.utexas.cs.nn.graphics.DrawingPanel;
 import edu.utexas.cs.nn.networks.ActivationFunctions;
 import edu.utexas.cs.nn.networks.Network;
+import edu.utexas.cs.nn.tasks.picbreeder.PicbreederTask;
 import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
 import edu.utexas.cs.nn.util.util2D.ILocated2D;
 import edu.utexas.cs.nn.util.util2D.Tuple2D;
@@ -25,10 +26,9 @@ public class GraphicsUtil {
 	private static final int BRIGHTNESS_INDEX = 2;
 	private static final double BIAS = 1.0;// a common input used in neural networks
 	private static final double SQRT2 = Math.sqrt(2); // Used for scaling distance from center
-	private static final int NUM_CPPN_INPUTS = 5; // defined somewhere else? check ... maybe remove
 	
 	public static BufferedImage imageFromCPPN(Network n, int imageWidth, int imageHeight) {
-		return imageFromCPPN(n,imageWidth,imageHeight, ArrayUtil.doubleOnes(NUM_CPPN_INPUTS));
+		return imageFromCPPN(n,imageWidth,imageHeight, ArrayUtil.doubleOnes(PicbreederTask.CPPN_NUM_INPUTS));
 	}
 	
 	/**
@@ -73,12 +73,14 @@ public class GraphicsUtil {
 	 * @return double containing the HSB values
 	 */
 	public static float[] getHSBFromCPPN(Network n, int x, int y, int imageWidth, int imageHeight, double[] inputMultiples) {
+
 		double[] input = getCPPNInputs(x, y, imageWidth, imageHeight);
+
 		// Multiplies the inputs of the pictures by the inputMultiples; used to turn on or off the effects in each picture
-//		for(int i = 0; i < inputMultiples.length; i++) {
-//			input[i] = input[i] * inputMultiples[i];
-//		}
-//		
+		for(int i = 0; i < inputMultiples.length; i++) {
+			input[i] = input[i] * inputMultiples[i];
+		}
+		
 		// Eliminate recurrent activation for consistent images at all resolutions
 		n.flush();
 		return rangeRestrictHSB(n.process(input));

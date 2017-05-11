@@ -13,10 +13,12 @@ import edu.utexas.cs.nn.util.random.RandomNumbers;
  */
 public class ActivationFunctions {
 
+	public static final int MAX_POSSIBLE_ACTIVATION_FUNCTIONS = 14;
+
 	/**
 	 * Initialize the array list for all ftypes
 	 */
-	public static ArrayList<Integer> availableActivationFunctions = new ArrayList<>(11);
+	public static ArrayList<Integer> availableActivationFunctions = new ArrayList<>(MAX_POSSIBLE_ACTIVATION_FUNCTIONS);
 
 	// For use in sigmoid, it is convenient to bound the inputs to the exp
 	// function
@@ -39,7 +41,6 @@ public class ActivationFunctions {
 	public static final int FTYPE_RE_LU  = 18;
 	public static final int FTYPE_SOFTPLUS  = 19;
 	public static final int FTYPE_LEAKY_RE_LU = 20;
-
 
 	/**
 	 * Initializes the set of ftypes by checking boolean parameters for included
