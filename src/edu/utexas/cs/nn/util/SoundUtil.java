@@ -1,9 +1,9 @@
 package edu.utexas.cs.nn.util;
 
-//import javax.media.*;
-import java.io.File;
-import java.io.IOException;
+
+import java.io.*;
 import java.net.MalformedURLException;
+import java.util.Arrays;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
@@ -13,9 +13,12 @@ import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
+//import javazoom.jl.converter.Converter.*;
+//import javazoom.jl.decoder.Decoder;
 import javazoom.jl.decoder.JavaLayerException;
 import javazoom.jl.player.advanced.AdvancedPlayer;
 import javazoom.jl.player.advanced.PlaybackListener;
+
 
 public class SoundUtil {
 
@@ -24,8 +27,14 @@ public class SoundUtil {
 	private static final String HAPPY_MP3 = "data/sounds/25733.mp3";
 
 	public static void main(String[] args) throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException, JavaLayerException {
-		playWAVFile(BEARGROWL_WAV);
-		mp3Conversion(HAPPY_MP3).playMP3File();
+		//playWAVFile(BEARGROWL_WAV);
+		//mp3Conversion(HAPPY_MP3).playMP3File();
+		byte[] bearNumbers = WAVToByte(BEARGROWL_WAV);
+		
+		System.out.println(Arrays.toString(bearNumbers));
+		
+		FileOutputStream bearReturns = byteToWAV(BEARGROWL_WAV, bearNumbers);
+		//playWAVFile(bearReturns);
 	}
 	
 	// Methods associated with playing WAV file
@@ -91,6 +100,24 @@ public class SoundUtil {
 
 	}
 	
+	//Methods associated with WAV file conversion
+	
+	public static byte[] WAVToByte(String inputAudio) throws IOException {
+		File file = new File(inputAudio);
+		byte[] data = new byte[(int) file.length()];
+		FileInputStream in = new FileInputStream(file);
+		in.read(data);
+		in.close();
+		return data;
+	}
+	
+	public static FileOutputStream byteToWAV(String file, byte[] data) throws IOException {
+		FileOutputStream out = new FileOutputStream(file);
+		out.write(data);
+		out.close();
+		return out;
+	}
+	
 	// Methods associated with playing MP3 file
 	
 	/**
@@ -138,7 +165,6 @@ public class SoundUtil {
 			this.player = new AdvancedPlayer
 					(new java.net.URL(url).openStream(),
 							javazoom.jl.player.FactoryRegistry.systemRegistry().createAudioDevice());
-			// TODO: Give a specific error message?
 			return player;
 		}
 		
@@ -165,19 +191,6 @@ public class SoundUtil {
 
 		}
 
-		// PlaybackListener members
-
-		//		public void playbackStarted(PlaybackEvent playbackEvent){
-		//			System.out.println("playbackStarted");
-		//		}
-		//
-		//		public void playbackFinished(PlaybackEvent playbackEvent)
-		//		{
-		//			System.out.println("playbackEnded");
-		//		}    
-
-		// Runnable members
-		
 		/**
 		 * Runs player
 		 */
@@ -189,7 +202,13 @@ public class SoundUtil {
 				ex.printStackTrace();
 			}
 		}
+		
 	}
+	
+	
+	
+	
+	
 	//TODO: figure out how to convert an audio file into an array of numbers and vice versa
 
 }
