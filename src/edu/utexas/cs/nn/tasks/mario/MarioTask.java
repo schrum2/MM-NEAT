@@ -102,8 +102,10 @@ public class MarioTask<T extends Network> extends NoisyLonerTask<T>implements Ne
 		double distanceTravelled = 0;
 		double timeSpent = 0;
 		options.setAgent(new NNMarioAgent<T>(individual));
-		options.setLevelRandSeed(RandomNumbers.randomGenerator.nextInt(Integer.MAX_VALUE)); //will soon add option to run deterministically generated level
-		
+		if(Parameters.parameters.booleanParameter("deterministic"))
+			options.setLevelRandSeed(num); //generates from the same seeds for every individual.
+		else
+			options.setLevelRandSeed(RandomNumbers.randomGenerator.nextInt(Integer.MAX_VALUE));
 		Evaluator evaluator = new Evaluator(options);
 		List<EvaluationInfo> results = evaluator.evaluate();
 		
