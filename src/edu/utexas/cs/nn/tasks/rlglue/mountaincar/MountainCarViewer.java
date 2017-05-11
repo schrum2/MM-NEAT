@@ -59,7 +59,6 @@ public final class MountainCarViewer {
 			Vector<Double> tempVec = new Vector<Double>();
 			tempVec.add(theGoalPosition);
 
-//			Vector<Double> returnVector = theVizualizer.getHeightsForPositions(tempVec);
 			Vector<Double> returnVector = getHeightsForPositions(tempVec);
 			theGoalHeight = returnVector.get(0);
 			everDrawn = true;
@@ -68,19 +67,20 @@ public final class MountainCarViewer {
 
 		AffineTransform theScaleTransform = new AffineTransform();
 
+		// Schrum: Was this just clearing the screen? Not necessary
 		// Draw a rectangle
-		g.setColor(Color.WHITE);
-		g.fillRect(0, 0, 1, 1);
+		//g.setColor(Color.WHITE);
+		//g.fillRect(0, 0, 1, 1);
 
-		double scaleFactor = 1000.0d;
-		theScaleTransform.scale(1.0d / scaleFactor, 1.0d / scaleFactor);
-		AffineTransform origTransform = g.getTransform();
+		final int ceilingspace = 50;
+		double scaleFactor = WIDTH - ceilingspace; // 1000.0d;
+//		theScaleTransform.scale(1.0d / scaleFactor, 1.0d / scaleFactor);
+//		AffineTransform origTransform = g.getTransform();
+//
+//		AffineTransform x = g.getTransform();
+//		x.concatenate(theScaleTransform);
+//		g.setTransform(x);
 
-		AffineTransform x = g.getTransform();
-		x.concatenate(theScaleTransform);
-		g.setTransform(x);
-
-//		theHeights = theVizualizer.getSampleHeights();
 		theHeights = getSampleHeights();
 
 		double sizeEachComponent = 1.0 / (double) theHeights.size();
@@ -94,8 +94,8 @@ public final class MountainCarViewer {
 			double thisY = 1.0 - UtilityShop.normalizeValue(theHeights.get(i), getMinHeight(), getMaxHeight());
 
 			
-			Line2D thisLine = new Line2D.Double(scaleFactor * lastX, scaleFactor * lastY, scaleFactor * thisX,
-					scaleFactor * thisY);
+			Line2D thisLine = new Line2D.Double(scaleFactor * lastX, ceilingspace + scaleFactor * lastY, 
+					 						    scaleFactor * thisX, ceilingspace + scaleFactor * thisY);
 
 			lastX = thisX;
 			lastY = thisY;
@@ -103,7 +103,7 @@ public final class MountainCarViewer {
 			g.draw(thisLine);
 		}
 
-		g.setTransform(origTransform);
+//		g.setTransform(origTransform);
 
 		g.setColor(Color.GREEN);
 
@@ -116,10 +116,15 @@ public final class MountainCarViewer {
 		double transY = UtilityShop.normalizeValue(theGoalHeight, getMinHeight(), getMaxHeight());
 		transY = (1.0 - transY);
 
-		double rectWidth = .05 / 4;
-		double rectHeight = 0.1;
-		Rectangle2D fillRect = new Rectangle2D.Double(transX - rectWidth / 2.0d, transY - rectHeight / 2.0d, rectWidth, rectHeight);
-		//Rectangle2D fillRect = new Rectangle2D.Double(1, 2, 10, 10);
+
+		transX *= WIDTH;
+		transY *= HEIGHT;
+		
+		// Schrum: made these magic numbers up through trial and error
+		double rectWidth = 10; //.05 / 4;
+		double rectHeight = 10; //0.1;
+		Rectangle2D fillRect = new Rectangle2D.Double(transX - rectWidth / 2.0d, ceilingspace + transY - rectHeight / 2.0d, 
+													  rectWidth, rectHeight);
 		g.fill(fillRect);
 
 	}
