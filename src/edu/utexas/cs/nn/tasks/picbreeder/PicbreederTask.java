@@ -62,7 +62,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	public static final int CPPN_NUM_INPUTS	= 4;
 	public static final int CPPN_NUM_OUTPUTS = 3;
 	public static final int NUM_COLUMNS	= 3;
-	public static final int MPG_DEFAULT = 1;
+	public static final int MPG_DEFAULT = 1;	
 
 	//private static final Variables
 	//includes indices of buttons for action listener
@@ -92,11 +92,16 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	private static final int MPG_MIN = 0;//minimum # of mutations per generation
 	private static final int MPG_MAX = 10;//maximum # of mutations per generation
 
+	//Indices of inputMultiplier effects
 	private static final int XEFFECT_CHECKBOX_INDEX = -22;
 	private static final int YEFFECT_CHECKBOX_INDEX = -23;
-	private static final int BIAS_CHECKBOX_INDEX = -24;
-	private static final int CENTERDISTANCE_CHECKBOX_INDEX = -25;
-
+	private static final int CENTERDISTANCE_CHECKBOX_INDEX = -24;
+	private static final int BIAS_CHECKBOX_INDEX = -25;
+	
+	private static final int XEFFECT_INPUT_INDEX = 0;
+	private static final int YEFFECT_INPUT_INDEX = 1;
+	private static final int CENTERDISTANCE_INPUT_INDEX = 2;
+	private static final int BIAS_INPUT_INDEX = 3;
 	
 	//Private final variables
 	private static int NUM_ROWS;
@@ -116,7 +121,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	private boolean waitingForUser;
 	private final boolean[] chosen;
 	private final boolean[] activation;
-	private static double[] inputMultipliers = new double[]{1.0,1.0,1.0,1.0};
+	private static double[] inputMultipliers = new double[4];
 
 	private JPanel topper;
 	
@@ -226,15 +231,15 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		JCheckBox LeakyReLU = new JCheckBox("leaky_ReLU", CommonConstants.includeStretchedTanhFunction);
 		activation[Math.abs(LEAKY_RELU_CHECKBOX_INDEX)] = CommonConstants.includeStretchedTanhFunction;
 
-		//Checkboxes to control if x, y, bias, or distance from center effect appear on the console TODO: Figure out why adding these seems to crash the code
-//		JCheckBox xEffect = new JCheckBox("X-Effect", true);
-//		activation[Math.abs(XEFFECT_CHECKBOX_INDEX)] = true;
-//		JCheckBox yEffect = new JCheckBox("Y-Effect", true);
-//		activation[Math.abs(YEFFECT_CHECKBOX_INDEX)] = true;
-//		JCheckBox biasEffect = new JCheckBox("Bias-Effect", true);
-//		activation[Math.abs(BIAS_CHECKBOX_INDEX)] = true;
-//		JCheckBox centerDistanceEffect = new JCheckBox("Center-Distance Effect", true);
-//		activation[Math.abs(CENTERDISTANCE_CHECKBOX_INDEX)] = true;
+		//Checkboxes to control if x, y, distance from center, or bias effects appear on the console
+		JCheckBox xEffect = new JCheckBox("X-Effect", true);
+		inputMultipliers[XEFFECT_INPUT_INDEX] = 1.0;
+		JCheckBox yEffect = new JCheckBox("Y-Effect", true);
+		inputMultipliers[YEFFECT_INPUT_INDEX] = 1.0;
+		JCheckBox centerDistanceEffect = new JCheckBox("Center-Distance_Effect", true);
+		inputMultipliers[CENTERDISTANCE_INPUT_INDEX] = 1.0;
+		JCheckBox biasEffect = new JCheckBox("Bias-Effect", true);
+		inputMultipliers[BIAS_INPUT_INDEX] = 1.0;
 		
 		//adds slider for mutation rate change
 		JSlider mutationsPerGeneration = new JSlider(JSlider.HORIZONTAL, MPG_MIN, MPG_MAX, MPG_DEFAULT);
@@ -269,11 +274,12 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		ReLU.setName("" + RELU_CHECKBOX_INDEX);//TODO
 		Softplus.setName("" + SOFTPLUS_CHECKBOX_INDEX);
 		LeakyReLU.setName("" + LEAKY_RELU_CHECKBOX_INDEX);
-		// TODO
-//		xEffect.setName("X-Effect");
-//		yEffect.setName("Y-Effect");
-//		biasEffect.setName("Bias Effect");
-//		centerDistanceEffect.setName("Center-Distance Effect");
+
+		xEffect.setName("" + XEFFECT_CHECKBOX_INDEX);
+		yEffect.setName("" + YEFFECT_CHECKBOX_INDEX);
+		centerDistanceEffect.setName("" + CENTERDISTANCE_CHECKBOX_INDEX);
+		biasEffect.setName("" + BIAS_CHECKBOX_INDEX);
+		
 		mutationsPerGeneration.setMinorTickSpacing(1);
 		mutationsPerGeneration.setPaintTicks(true);
 		labels.put(0, new JLabel("Fewer Mutations"));
@@ -305,16 +311,12 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		Softplus.addActionListener(this);
 		LeakyReLU.addActionListener(this);
 
-		// TODO
-//		xEffect.addActionListener(this);
-//		yEffect.addActionListener(this);
-//		biasEffect.addActionListener(this);
-//		centerDistanceEffect.addActionListener(this);
+		xEffect.addActionListener(this);
+		yEffect.addActionListener(this);
+		centerDistanceEffect.addActionListener(this);
+		biasEffect.addActionListener(this);
 		
 		mutationsPerGeneration.addChangeListener(this);
-
-		
-		
 		
 		//set checkbox colors to match activation function color
 		sigmoid.setForeground(CombinatoricUtilities.colorFromInt(ActivationFunctions.FTYPE_SIGMOID));
@@ -332,11 +334,10 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		Softplus.setForeground(CombinatoricUtilities.colorFromInt(ActivationFunctions.FTYPE_SOFTPLUS));
 		LeakyReLU.setForeground(CombinatoricUtilities.colorFromInt(ActivationFunctions.FTYPE_LEAKY_RE_LU));
 
-		// TODO
-//		xEffect.setForeground(new Color(0,0,0));
-//		yEffect.setForeground(new Color(0,0,0));
-//		biasEffect.setForeground(new Color(0,0,0));
-//		centerDistanceEffect.setForeground(new Color(0,0,0));
+		xEffect.setForeground(new Color(0,0,0));
+		yEffect.setForeground(new Color(0,0,0));
+		centerDistanceEffect.setForeground(new Color(0,0,0));
+		biasEffect.setForeground(new Color(0,0,0));
 		
 		
 		
@@ -365,11 +366,10 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		bottom.add(Softplus);
 		bottom.add(LeakyReLU);
 
-		// TODO: Figure out why adding these buttons seems to crash the code
-//		bottom.add(xEffect);
-//		bottom.add(yEffect);
-//		bottom.add(biasEffect);
-//		bottom.add(centerDistanceEffect);
+		bottom.add(xEffect);
+		bottom.add(yEffect);
+		bottom.add(centerDistanceEffect);
+		bottom.add(biasEffect);
 
 		topper.add(bottom);
 		panels.add(topper);
@@ -600,7 +600,6 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		}
 	}
 
-	
 	/**
 	 * Resets to a new random population
 	 */
@@ -645,7 +644,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 			}
 		}
 	}
-
+	
 	/**
 	 * Sets the activation functions as true or false based on whether or
 	 * not they were pressed
@@ -653,7 +652,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	 * @param index index of function in boolean array
 	 * @param title title of function in parameters set
 	 */
-	private void setCheckBox(boolean act, int index, String title) { 
+	private void setActivationFunctionCheckBox(boolean act, int index, String title) { 
 		if(act) { 
 			activation[Math.abs(index)] = false;
 			Parameters.parameters.setBoolean(title, false);
@@ -665,6 +664,29 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	}
 
 	/**
+	 * Handles the changing of the input multipliers when an Effect Checkbox is clicked
+	 * 
+	 * @param index Index of the effect being changed
+	 */
+	private void setEffectCheckBox(int index){
+		if(inputMultipliers[index] == 1.0){ // Effect is currently ON
+			inputMultipliers[index] = 0.0;
+		}else{ // Effect is currently OFF
+			inputMultipliers[index] = 1.0;
+		}
+		resetButtons();
+	}
+
+	/**
+	 * Used to reset the buttons when an Effect CheckBox is clicked
+	 */
+	private void resetButtons(){
+		for(int i = 0; i < scores.size(); i++) {
+			setButtonImage(GraphicsUtil.imageFromCPPN((Network)scores.get(i).individual.getPhenotype(), PIC_SIZE, PIC_SIZE, inputMultipliers), i);
+		}		
+	}
+	
+	/**
 	 * Contains actions to be performed based
 	 * on specific events
 	 * @param event that occurred
@@ -673,52 +695,51 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	public void actionPerformed(ActionEvent event) {
 		//open scanner to read which button was pressed
 		Scanner s = new Scanner(event.toString());
-		System.out.println(s.next());
-		System.out.println(s.next());
+		s.next();
+		s.next();
 		int scoreIndex = s.nextInt();
-		System.out.println(scoreIndex);
 		s.close();
 		if(scoreIndex == SIGMOID_CHECKBOX_INDEX) {
-			setCheckBox(activation[Math.abs(SIGMOID_CHECKBOX_INDEX)], SIGMOID_CHECKBOX_INDEX, "includeSigmoidFunction");
+			setActivationFunctionCheckBox(activation[Math.abs(SIGMOID_CHECKBOX_INDEX)], SIGMOID_CHECKBOX_INDEX, "includeSigmoidFunction");
 			System.out.println("param sigmoid now set to: " + Parameters.parameters.booleanParameter("includeSigmoidFunction"));
 		} else if(scoreIndex ==GAUSSIAN_CHECKBOX_INDEX) {
-			setCheckBox(activation[Math.abs(GAUSSIAN_CHECKBOX_INDEX)], GAUSSIAN_CHECKBOX_INDEX, "includeGaussFunction");
+			setActivationFunctionCheckBox(activation[Math.abs(GAUSSIAN_CHECKBOX_INDEX)], GAUSSIAN_CHECKBOX_INDEX, "includeGaussFunction");
 			System.out.println("param Gauss now set to: " + Parameters.parameters.booleanParameter("includeGaussFunction"));
 		} else if(scoreIndex == SINE_CHECKBOX_INDEX) {
-			setCheckBox(activation[Math.abs(SINE_CHECKBOX_INDEX)], SINE_CHECKBOX_INDEX, "includeSineFunction");
+			setActivationFunctionCheckBox(activation[Math.abs(SINE_CHECKBOX_INDEX)], SINE_CHECKBOX_INDEX, "includeSineFunction");
 			System.out.println("param Sine now set to: " + Parameters.parameters.booleanParameter("includeSineFunction"));
 		}else if(scoreIndex == SAWTOOTH_CHECKBOX_INDEX) {
-			setCheckBox(activation[Math.abs(SAWTOOTH_CHECKBOX_INDEX)], SAWTOOTH_CHECKBOX_INDEX, "includeSawtoothFunction");
+			setActivationFunctionCheckBox(activation[Math.abs(SAWTOOTH_CHECKBOX_INDEX)], SAWTOOTH_CHECKBOX_INDEX, "includeSawtoothFunction");
 			System.out.println("param sawtooth now set to: " + Parameters.parameters.booleanParameter("includeSawtoothFunction"));
 		}else if(scoreIndex == ABSVAL_CHECKBOX_INDEX) {
-			setCheckBox(activation[Math.abs(ABSVAL_CHECKBOX_INDEX)], ABSVAL_CHECKBOX_INDEX, "includeAbsValFunction");
+			setActivationFunctionCheckBox(activation[Math.abs(ABSVAL_CHECKBOX_INDEX)], ABSVAL_CHECKBOX_INDEX, "includeAbsValFunction");
 			System.out.println("param abs val now set to: " + Parameters.parameters.booleanParameter("includeAbsValFunction"));
 		}else if(scoreIndex == HALF_LINEAR_CHECKBOX_INDEX) {
-			setCheckBox(activation[Math.abs(HALF_LINEAR_CHECKBOX_INDEX)], HALF_LINEAR_CHECKBOX_INDEX, "includeHalfLinearPiecewiseFunction");
+			setActivationFunctionCheckBox(activation[Math.abs(HALF_LINEAR_CHECKBOX_INDEX)], HALF_LINEAR_CHECKBOX_INDEX, "includeHalfLinearPiecewiseFunction");
 			System.out.println("param half linear now set to: " + Parameters.parameters.booleanParameter("includeHalfLinearPiecewiseFunction"));
 		}else if(scoreIndex == TANH_CHECKBOX_INDEX) {
-			setCheckBox(activation[Math.abs(TANH_CHECKBOX_INDEX)], TANH_CHECKBOX_INDEX, "includeTanhFunction");
+			setActivationFunctionCheckBox(activation[Math.abs(TANH_CHECKBOX_INDEX)], TANH_CHECKBOX_INDEX, "includeTanhFunction");
 			System.out.println("param tanh now set to: " + Parameters.parameters.booleanParameter("includeTanhFunction"));
 		} else if(scoreIndex == ID_CHECKBOX_INDEX) { 
-			setCheckBox(activation[Math.abs(ID_CHECKBOX_INDEX)], ID_CHECKBOX_INDEX, "includeIdFunction");
+			setActivationFunctionCheckBox(activation[Math.abs(ID_CHECKBOX_INDEX)], ID_CHECKBOX_INDEX, "includeIdFunction");
 			System.out.println("param ID now set to: " + Parameters.parameters.booleanParameter("includeIdFunction"));
 		} else if(scoreIndex == FULLAPPROX_CHECKBOX_INDEX) {
-			setCheckBox(activation[Math.abs(FULLAPPROX_CHECKBOX_INDEX)], FULLAPPROX_CHECKBOX_INDEX, "includeFullApproxFunction");
+			setActivationFunctionCheckBox(activation[Math.abs(FULLAPPROX_CHECKBOX_INDEX)], FULLAPPROX_CHECKBOX_INDEX, "includeFullApproxFunction");
 			System.out.println("param activation now set to: " + Parameters.parameters.booleanParameter("includeFullApproxFunction"));
 		} else if(scoreIndex == APPROX_CHECKBOX_INDEX) {
-			setCheckBox(activation[Math.abs(APPROX_CHECKBOX_INDEX)], APPROX_CHECKBOX_INDEX, "includeApproxFunction");
+			setActivationFunctionCheckBox(activation[Math.abs(APPROX_CHECKBOX_INDEX)], APPROX_CHECKBOX_INDEX, "includeApproxFunction");
 			System.out.println("param approximate now set to: " + Parameters.parameters.booleanParameter("includeApproxFunction"));
 		} else if(scoreIndex == STRETCHTANH_CHECKBOX_INDEX) {
-			setCheckBox(activation[Math.abs(STRETCHTANH_CHECKBOX_INDEX)], STRETCHTANH_CHECKBOX_INDEX, "includeStretchedTanhFunction");
+			setActivationFunctionCheckBox(activation[Math.abs(STRETCHTANH_CHECKBOX_INDEX)], STRETCHTANH_CHECKBOX_INDEX, "includeStretchedTanhFunction");
 			System.out.println("param stretchTanh now set to: " + Parameters.parameters.booleanParameter("includeStretchedTanhFunction"));
 		} else if(scoreIndex == RELU_CHECKBOX_INDEX) {
-			setCheckBox(activation[Math.abs(RELU_CHECKBOX_INDEX)], RELU_CHECKBOX_INDEX, "includeReLUFunction");
+			setActivationFunctionCheckBox(activation[Math.abs(RELU_CHECKBOX_INDEX)], RELU_CHECKBOX_INDEX, "includeReLUFunction");
 			System.out.println("param ReLU now set to: " + Parameters.parameters.booleanParameter("includeReLUFunction"));
 		} else if(scoreIndex == SOFTPLUS_CHECKBOX_INDEX) {
-			setCheckBox(activation[Math.abs(SOFTPLUS_CHECKBOX_INDEX)], SOFTPLUS_CHECKBOX_INDEX, "includeSoftplusTanhFunction");
+			setActivationFunctionCheckBox(activation[Math.abs(SOFTPLUS_CHECKBOX_INDEX)], SOFTPLUS_CHECKBOX_INDEX, "includeSoftplusTanhFunction");
 			System.out.println("param softplus now set to: " + Parameters.parameters.booleanParameter("includeSoftplusTanhFunction"));
 		} else if(scoreIndex == LEAKY_RELU_CHECKBOX_INDEX) {
-			setCheckBox(activation[Math.abs(LEAKY_RELU_CHECKBOX_INDEX)], LEAKY_RELU_CHECKBOX_INDEX, "includeLeakyReLUFunction");
+			setActivationFunctionCheckBox(activation[Math.abs(LEAKY_RELU_CHECKBOX_INDEX)], LEAKY_RELU_CHECKBOX_INDEX, "includeLeakyReLUFunction");
 			System.out.println("param LeakyReLU now set to: " + Parameters.parameters.booleanParameter("includeLeakyReLUFunction"));
 		}else if(scoreIndex == CLOSE_BUTTON_INDEX) {//If close button clicked
 			System.exit(0);
@@ -741,16 +762,15 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 			assert (scores.size() == buttons.size()) : 
 				"size mismatch! score array is " + scores.size() + " in length and buttons array is " + buttons.size() + " long";
 			buttonPressed(scoreIndex);
-		} // TODO: Ensure these tick-boxes work
-//		}else if(scoreIndex == XEFFECT_CHECKBOX_INDEX){ // If X-Effect checkbox is clicked
-//			setCheckBox(activation[Math.abs(XEFFECT_CHECKBOX_INDEX)], XEFFECT_CHECKBOX_INDEX, "X-Effect");
-//		}else if(scoreIndex == YEFFECT_CHECKBOX_INDEX){ // If Y-Effect checkbox is clicked
-//			setCheckBox(activation[Math.abs(YEFFECT_CHECKBOX_INDEX)], YEFFECT_CHECKBOX_INDEX, "Y-Effect");
-//		}else if(scoreIndex == BIAS_CHECKBOX_INDEX){ // If Bias-Effect checkbox is clicked
-//			setCheckBox(activation[Math.abs(BIAS_CHECKBOX_INDEX)], BIAS_CHECKBOX_INDEX, "Bias-Effect");
-//		}else if(scoreIndex == CENTERDISTANCE_CHECKBOX_INDEX){ // If Center-Distance Effect checkbox is clicked
-//			setCheckBox(activation[Math.abs(CENTERDISTANCE_CHECKBOX_INDEX)], CENTERDISTANCE_CHECKBOX_INDEX, "Center-Distance Effect");
-//		} 
+		}else if(scoreIndex == XEFFECT_CHECKBOX_INDEX){ // If X-Effect checkbox is clicked
+			setEffectCheckBox(XEFFECT_INPUT_INDEX);
+		}else if(scoreIndex == YEFFECT_CHECKBOX_INDEX){ // If Y-Effect checkbox is clicked
+			setEffectCheckBox(YEFFECT_INPUT_INDEX);
+		}else if(scoreIndex == CENTERDISTANCE_CHECKBOX_INDEX){ // If Bias-Effect checkbox is clicked
+			setEffectCheckBox(CENTERDISTANCE_INPUT_INDEX);
+		}else if(scoreIndex == BIAS_CHECKBOX_INDEX){ // If Center-Distance Effect checkbox is clicked
+			setEffectCheckBox(BIAS_INPUT_INDEX);
+		} 
 	}
 	//used for lineage and undo button
 	private static HashSet<Long> drawnOffspring = null;
