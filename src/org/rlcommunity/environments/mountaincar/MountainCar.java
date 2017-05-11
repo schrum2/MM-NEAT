@@ -18,12 +18,18 @@
  */
 package org.rlcommunity.environments.mountaincar;
 
+import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.tasks.rlglue.RLGlueEnvironment;
+import edu.utexas.cs.nn.tasks.rlglue.mountaincar.MountainCarViewer;
+
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+import org.rlcommunity.environments.cartpole.CartPole;
 import org.rlcommunity.environments.mountaincar.messages.MCGoalResponse;
 import org.rlcommunity.environments.mountaincar.messages.MCHeightResponse;
 import org.rlcommunity.environments.mountaincar.messages.MCStateResponse;
@@ -73,6 +79,7 @@ public class MountainCar extends RLGlueEnvironment
 	// through the messaging system and RL-Viz.
 	// Problem parameters have been moved to MountainCar State
 	private Random randomGenerator = new Random();
+	private MountainCarViewer viewer = new MountainCarViewer();
 
 	public static TaskSpecPayload getTaskSpecPayload(ParameterHolder P) {
 		MountainCar theMC = new MountainCar(P);
@@ -132,6 +139,15 @@ public class MountainCar extends RLGlueEnvironment
 		if (a > 2 || a < 0) {
 			System.err.println("Invalid action selected in mountainCar: " + a);
 			a = randomGenerator.nextInt(3);
+		}
+		
+		if (viewer != null) {
+			viewer.reset();
+			try {
+				Thread.sleep(1);
+			} catch (InterruptedException ex) {
+				Logger.getLogger(CartPole.class.getName()).log(Level.SEVERE, null, ex);
+			}
 		}
 
 		theState.update(a);
