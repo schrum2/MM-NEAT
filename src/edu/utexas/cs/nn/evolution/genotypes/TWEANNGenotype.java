@@ -718,10 +718,13 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
     /**
      * Delete a random link. Doesn't care about making the network disconnected.
      *
-     * @return The link deleted
+     * @return The link deleted, or null if there are no more links to be deleted
      */
     public LinkGene deleteLinkMutation() {
-        return deleteLink(RandomNumbers.randomGenerator.nextInt(links.size()));
+    	if(links.size()>0)
+    		return deleteLink(RandomNumbers.randomGenerator.nextInt(links.size()));
+    	else
+    		return null;
     }
 
     /**
