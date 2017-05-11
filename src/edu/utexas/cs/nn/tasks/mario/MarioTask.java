@@ -40,10 +40,13 @@ public class MarioTask<T extends Network> extends NoisyLonerTask<T>implements Ne
         
         if(Parameters.parameters.booleanParameter("moMario")){
         	 MMNEAT.registerFitnessFunction("Time");
-        	 //MMNEAT.registerFitnessFunction("Hits");
         }
 	}
 	
+	/**
+	 * @returns number of objectives that the controller is being evaluated on,
+	 * 			always at least 1: progress, but sometimes 2: progress and time
+	 */
 	@Override
 	public int numObjectives() {
 		if(Parameters.parameters.booleanParameter("moMario")){
@@ -86,29 +89,33 @@ public class MarioTask<T extends Network> extends NoisyLonerTask<T>implements Ne
 		//Note: These may not be correct, as there are only 5/6 -Gab
 	}
 
-	
+	/**
+	 * @param individual
+	 * 			individual to be tested
+	 * 	@param num
+	 * 			evaluation number
+	 * @return results of the evaluation, distance traveled by individual (+ time if multi-objective)
+	 */
 	@Override
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {
 		Pair<double[], double[]> evalResults;
 		double distanceTravelled = 0;
-		double marioMode = 0;
 		double timeSpent = 0;
 		options.setAgent(new NNMarioAgent<T>(individual));
-		options.setLevelRandSeed(RandomNumbers.randomGenerator.nextInt(Integer.MAX_VALUE));
+		options.setLevelRandSeed(RandomNumbers.randomGenerator.nextInt(Integer.MAX_VALUE)); //will soon add option to run deterministically generated level
+		
 		Evaluator evaluator = new Evaluator(options);
 		List<EvaluationInfo> results = evaluator.evaluate();
+		
 		for (EvaluationInfo result : results) {
 			distanceTravelled += result.computeDistancePassed();
 			timeSpent = result.timeSpentOnLevel;
 			if(result.marioStatus == Mario.STATUS_WIN){
 				timeSpent = result.totalTimeGiven;
-			}
-			marioMode = result.marioMode;
+			} 
 		}
-		distanceTravelled = distanceTravelled / results.size();
-		
+		distanceTravelled /= results.size();
 		if(Parameters.parameters.booleanParameter("moMario")){
-			//evalResults = new Pair<double[], double[]>(new double[] { distanceTravelled, timeSpent, marioMode }, new double[0]);
 			evalResults = new Pair<double[], double[]>(new double[] { distanceTravelled, timeSpent }, new double[0]);
 		} else {
 			evalResults = new Pair<double[], double[]>(new double[] { distanceTravelled }, new double[0]);			
