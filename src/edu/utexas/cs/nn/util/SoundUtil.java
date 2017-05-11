@@ -1,16 +1,21 @@
 package edu.utexas.cs.nn.util;
 
 import java.io.File;
-import java.io.IOException;
+import java.net.URL;
 
 import javax.sound.sampled.*;
 
+//import javax.media.*;
+import java.io.*;
+
 public class SoundUtil {
+
 
 	private static final String BEARGROWL_WAV = "data/sounds/bear_growl_y.wav";
 
 	public static void main(String[] args) throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException {
-		playWAVFile(BEARGROWL_WAV);
+		//playWAVFile(BEARGROWL_WAV);
+
 	}
 
 	/**
@@ -60,7 +65,7 @@ public class SoundUtil {
 	}
 
 	/**
-	 * Reads in audio file instance from previous method, converts it to a clip and plays that clip
+	 * Reads in audio file instance from previous method, converts it to a clip and plays that clip.
 	 * 
 	 * @param audioFile File instance of input string from locally saved file
 	 * @throws UnsupportedAudioFileException if type of audio file cannot be read/recognized as valid
@@ -73,5 +78,47 @@ public class SoundUtil {
 		playClip(audioClip); //calls playClip() to play file
 
 	}
+
+//	private URL url;
+//	private MediaLocator mediaLocator;
+//	private Player playMP3;
+//
+//	public mp3(String mp3)
+//	{
+//		try{
+//			this.url = new URL(mp3);
+//		}catch(java.net.MalformedURLException e)
+//		{System.out.println(e.getMessage());}
+//	}
+//
+//	public void run()
+//	{
+//
+//		try{
+//			mediaLocator = new MediaLocator(url);     
+//			playMP3 = Manager.createPlayer(mediaLocator);
+//		}catch(java.io.IOException e)
+//		{System.out.println(e.getMessage());
+//		}catch(javax.media.NoPlayerException e)
+//		{System.out.println(e.getMessage());}
+//
+//		playMP3.addControllerListener(new ControllerListener()
+//		{
+//			public void controllerUpdate(ControllerEvent e)
+//			{
+//				if (e instanceof EndOfMediaEvent)
+//				{
+//					playMP3.stop();
+//					playMP3.close();
+//				}
+//			}
+//		}
+//				);
+//		SoundUtil.realize();
+//		SoundUtil.start();
+//	} 
+//}
+//TODO: implement methods associated with playing an mp3 file
+//TODO: figure out how to convert an audio file into an array of numbers and vice versa
 
 }
