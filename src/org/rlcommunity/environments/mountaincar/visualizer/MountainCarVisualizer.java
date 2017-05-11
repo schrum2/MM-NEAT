@@ -240,7 +240,7 @@ public class MountainCarVisualizer extends AbstractVisualizer
 		return heightResponse.getHeights();
 	}
 
-	public double getGoalPosition() {
+	public double getGoalPosition() { // TODO: NullPointerException starts here
 		MCGoalResponse goalResponse = MCGoalRequest.Execute();
 		return goalResponse.getGoalPosition();
 	}
