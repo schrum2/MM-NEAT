@@ -52,4 +52,8 @@ public class Box2D {
 		return p.getX() > (left - buffer) && p.getX() < (right + buffer) && p.getY() > (bottom - buffer)
 				&& p.getY() < (top + buffer);
 	}
+	
+	public String toString(){
+		return "(" + top + ", " + bottom + ") (" + left + ", " + right + ")";
+	}
 }
