@@ -4,6 +4,7 @@ package edu.utexas.cs.nn.util;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.util.Arrays;
+import java.util.Scanner;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
@@ -24,17 +25,38 @@ public class SoundUtil {
 
 
 	private static final String BEARGROWL_WAV = "data/sounds/bear_growl_y.wav";
+	private static final String APPLAUSE_WAV = "data/sounds/applause_y.wav";
 	private static final String HAPPY_MP3 = "data/sounds/25733.mp3";
 
 	public static void main(String[] args) throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException, JavaLayerException {
 		//playWAVFile(BEARGROWL_WAV);
 		//mp3Conversion(HAPPY_MP3).playMP3File();
 		byte[] bearNumbers = WAVToByte(BEARGROWL_WAV);
+		//System.out.println(Arrays.toString(bearNumbers));
 		
-		System.out.println(Arrays.toString(bearNumbers));
+		byte[] applauseNumbers = WAVToByte(APPLAUSE_WAV);	
+		//System.out.println(Arrays.toString(applauseNumbers));
 		
-		FileOutputStream bearReturns = byteToWAV(BEARGROWL_WAV, bearNumbers);
+		for(int i = 0; i < Math.max(bearNumbers.length, applauseNumbers.length); i++) {
+			if(i < bearNumbers.length) System.out.print(bearNumbers[i]);
+			System.out.print("\t");
+			if(i < applauseNumbers.length) System.out.print(applauseNumbers[i]);
+			System.out.println();
+			
+			new Scanner(System.in).nextLine();
+		}
+		
+		//FileOutputStream bearReturns = byteToWAV(BEARGROWL_WAV, bearNumbers);
 		//playWAVFile(bearReturns);
+		
+		//playByteAIS(applauseNumbers);
+		
+//		byte[] experimentNoise = new byte[100];
+//		for(int i = 0; i < experimentNoise.length; i++) {
+//			experimentNoise[i] = (byte) i;
+//		}
+//		System.out.println(Arrays.toString(experimentNoise));
+//		playByteAIS(experimentNoise);
 	}
 	
 	// Methods associated with playing WAV file
@@ -52,18 +74,30 @@ public class SoundUtil {
 			Thread.sleep(1000);
 		} while(audioClip.isRunning());      
 	}
+	
+	/**
+	 * Converts audio file into audio input stream.
+	 * 
+	 * @param audioFile file to be converted
+	 * @return AudioInputStream that can be converted into a clip
+	 * @throws UnsupportedAudioFileException if file does not contain valid/recognizable data 
+	 * @throws IOException if an IO operation has failed or been interrupted
+	 */
+	public static AudioInputStream audioStream(File audioFile) throws UnsupportedAudioFileException, IOException {
+		AudioInputStream audioStream = AudioSystem.getAudioInputStream(audioFile); //converts file into audio stream
+		return audioStream;
+	}
 
 	/**
 	 * Converts a file into an audio clip. 
 	 * 
-	 * @param audioFile file to be converted
+	 * @param audioStream stream to be converted
 	 * @return newly converted audio clip
 	 * @throws UnsupportedAudioFileException if type of audio file cannot be read/recognized as valid
 	 * @throws IOException if an IO operation has failed or been interrupted
 	 * @throws LineUnavailableException if line cannot be found
 	 */
-	public static Clip makeClip(File audioFile) throws UnsupportedAudioFileException, LineUnavailableException, IOException {
-		AudioInputStream audioStream = AudioSystem.getAudioInputStream(audioFile); //converts file into audio stream
+	public static Clip makeClip(AudioInputStream audioStream) throws UnsupportedAudioFileException, LineUnavailableException, IOException {
 		AudioFormat format = audioStream.getFormat();
 		DataLine.Info info = new DataLine.Info(Clip.class, format);
 		Clip audioClip = (Clip) AudioSystem.getLine(info); //uses necessary formatting to create clip from audio stream
@@ -95,13 +129,21 @@ public class SoundUtil {
 	 * @throws IOException if an IO operation has failed or been interrupted
 	 */
 	public static void playWAVFile(File audioFile) throws UnsupportedAudioFileException, LineUnavailableException, InterruptedException, IOException {
-		Clip audioClip = makeClip(audioFile); //saves converted clip file as a variable
+		AudioInputStream stream = audioStream(audioFile);
+		Clip audioClip = makeClip(stream); //saves converted clip file as a variable
 		playClip(audioClip); //calls playClip() to play file
 
 	}
 	
 	//Methods associated with WAV file conversion
 	
+	/**
+	 * Reads in a WAV file and converts it into an array of byte data type
+	 * 
+	 * @param inputAudio String audio file being converted
+	 * @return array of bytes - data representation of audio
+	 * @throws IOException if an IO operation has failed or been interrupted
+	 */
 	public static byte[] WAVToByte(String inputAudio) throws IOException {
 		File file = new File(inputAudio);
 		byte[] data = new byte[(int) file.length()];
@@ -111,13 +153,37 @@ public class SoundUtil {
 		return data;
 	}
 	
-	public static FileOutputStream byteToWAV(String file, byte[] data) throws IOException {
-		FileOutputStream out = new FileOutputStream(file);
-		out.write(data);
-		out.close();
-		return out;
+	/**
+	 * converts an array of bytes into an Audio Input Stream so that it can be converted into a clip and played as 
+	 * an audio file
+	 * 
+	 * @param inputData array of bytes
+	 * @return AudioInputStream of data
+	 * @throws UnsupportedAudioFileException if file does not contain valid/recognizable data
+	 * @throws IOException if an IO operation has failed or been interrupted 
+	 */
+	public static AudioInputStream byteToAIS(byte[] inputData) throws UnsupportedAudioFileException, IOException {
+		ByteArrayInputStream IS = new ByteArrayInputStream(inputData);
+		AudioInputStream AIS = AudioSystem.getAudioInputStream(IS);
+		return AIS;
 	}
 	
+	/**
+	 * Converts AIS to a clip and then calls the playClip() method to play it.
+	 * 
+	 * @param data input data used for Audio Input Stream
+	 * @throws UnsupportedAudioFileException if file does not contain valid/recognizable data
+	 * @throws IOException if an IO operation has failed or been interrupted 
+	 * @throws InterruptedException if a thread is waiting, sleeping, or otherwise occupied
+	 * @throws LineUnavailableException if a line cannot be opened because it is unavailable
+	 */
+	public static void playByteAIS(byte[] data) throws UnsupportedAudioFileException, IOException, InterruptedException, LineUnavailableException {
+		AudioInputStream byteAudio = byteToAIS(data);
+		Clip byteAudioClip = makeClip(byteAudio);
+		playClip(byteAudioClip);
+	}
+	
+
 	// Methods associated with playing MP3 file
 	
 	/**
