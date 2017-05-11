@@ -22,7 +22,7 @@ public class SoundUtil {
 	private static final String BEARGROWL_WAV = "data/sounds/bear_growl_y.wav";
 	private static final String HAPPY_MP3 = "data/sounds/25733.mp3";
 
-	public static void main(String[] args) throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException {
+	public static void main(String[] args) throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException, JavaLayerException {
 		//playWAVFile(BEARGROWL_WAV);
 		SoundJLayer soundToPlay = new SoundJLayer(HAPPY_MP3);
 		soundToPlay.play();
@@ -98,21 +98,17 @@ public class SoundUtil {
 			this.filePath = filePath;
 		}
 
-		public void play(){
-			try {
-				String urlAsString = 
-						"file:///" 
-						+ new java.io.File(".").getCanonicalPath() + "/" 
-						+ this.filePath;
+		public void play() throws IOException, JavaLayerException{
+			String urlAsString = 
+					"file:///" 
+							+ new java.io.File(".").getCanonicalPath() + "/" 
+							+ this.filePath;
 
-				this.player = new AdvancedPlayer
-						(new java.net.URL(urlAsString).openStream(),
-						 javazoom.jl.player.FactoryRegistry.systemRegistry().createAudioDevice());
-			} catch (JavaLayerException | IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				System.exit(1); // TODO: Give a specific error message?
-			}
+			this.player = new AdvancedPlayer
+					(new java.net.URL(urlAsString).openStream(),
+							javazoom.jl.player.FactoryRegistry.systemRegistry().createAudioDevice());
+			// TODO: Give a specific error message?
+
 
 			this.player.setPlayBackListener(this);
 			this.playerThread = new Thread(this, "AudioPlayerThread");
@@ -122,14 +118,14 @@ public class SoundUtil {
 
 		// PlaybackListener members
 
-//		public void playbackStarted(PlaybackEvent playbackEvent){
-//			System.out.println("playbackStarted");
-//		}
-//
-//		public void playbackFinished(PlaybackEvent playbackEvent)
-//		{
-//			System.out.println("playbackEnded");
-//		}    
+		//		public void playbackStarted(PlaybackEvent playbackEvent){
+		//			System.out.println("playbackStarted");
+		//		}
+		//
+		//		public void playbackFinished(PlaybackEvent playbackEvent)
+		//		{
+		//			System.out.println("playbackEnded");
+		//		}    
 
 		// Runnable members
 
@@ -142,9 +138,6 @@ public class SoundUtil {
 			}
 		}
 	}
-
-
-	//TODO: implement methods associated with playing an mp3 file
 	//TODO: figure out how to convert an audio file into an array of numbers and vice versa
 
 }
