@@ -51,7 +51,7 @@ public class Breve2DGame {
 	public final boolean rams;
 
 	/////////////////////////////////////////////////////////////////////////////
-	///////////////// Constructors and Initialisers //////////////////////////
+	///////////////// Constructors and Initializers //////////////////////////
 	/////////////////////////////////////////////////////////////////////////////
 	// Constructor
 	protected Breve2DGame(int numMonsters, Breve2DDynamics dynamics) {
@@ -370,31 +370,58 @@ public class Breve2DGame {
 		return this.monsterRays[monster][sensor];
 	}
 	
-	//returns position of player
+	/**
+	 * Returns the position of the Player
+	 * 
+	 * @return Position of the Player
+	 */
 	public Tuple2D getPlayerPosition() {
 		return player.getPosition();
 	}
 	
-	
+	/**
+	 * Returns the Player's heading
+	 * 
+	 * @return Double representing the Player's heading
+	 */
 	public double getPlayerHeading() {
 		return player.getHeading();
 	}
 	
-	//returns player
+	/**
+	 * Returns the Player
+	 * 
+	 * @return Agent representing the Player
+	 */
 	public Agent getPlayer() {
 		return player;
 	}
 	
-	//returns position of monster
+	/**
+	 * Returns the position of a specified monster
+	 * 
+	 * @param index Index representing a specific monster Agent
+	 * @return The Tuple2D position of the monster
+	 */
 	public Tuple2D getMonsterPosition(int index) {
 		return monsters[index].getPosition();
 	}
 
+	/**
+	 * Returns the heading of a specified monster Agent
+	 * 
+	 * @param index index of a specific monster Agent
+	 * @return Double representing the monster heading
+	 */
 	public double getMonsterRadians(int index) {
 		return monsters[index].getHeading();
 	}
 	
-	//creates and returns a list of all monsters
+	/**
+	 * Creates and returns a list of all monster Agents which are not dead
+	 * 
+	 * @return ArrayList containing all living monster Agents
+	 */
 	public ArrayList<Agent> getMonsters() {
 		ArrayList<Agent> monstersList = new ArrayList<Agent>(numMonsters);
 		for (int i = 0; i < numMonsters; i++) {
@@ -405,30 +432,56 @@ public class Breve2DGame {
 		return monstersList;
 	}
 	
-	//returns monster agent
+	/**
+	 * Returns monster agent
+	 * 
+	 * @param index Index of a specific monster Agent
+	 * @return The specified monster Agent
+	 */
 	public Agent getMonster(int index) {
 		return monsters[index];
 	}
 	
-	//number of monsters
+	/**
+	 * Returns the number of all monster Agents
+	 * @return The number of all monster Agents
+	 */
 	public int getNumMonsters() {
 		return numMonsters;
 	}
 	
-	//creates a list of positions organized by distance from a given position
+	/**
+	 * Creates a list of positions organized by distance from a given position
+	 * 
+	 * @param pos ILocated2D representing a specified location
+	 * @param positions ArrayList<ILocated2D> of positions
+	 * @return Given ArrayList<ILocated2D> "positions" sorted in increasing order by distance from specified location pos
+	 */
 	public ArrayList<ILocated2D> positionsByDistanceFrom(ILocated2D pos, ArrayList<ILocated2D> positions) {
 		Distance2DComparator comparator = new Distance2DComparator(pos);
 		Collections.sort(positions, comparator);
 		return positions;
 	}
 	
-	//returns first item on list of positions sorted by distance from given position
+	/**
+	 * Returns first item on list of positions sorted by distance from given position;
+	 * Returns the position closest to a given location
+	 * 
+	 * @param pos ILocated2D representingn a specified location
+	 * @param positions ArrayList<ILocated2D> of positions
+	 * @return Position on given ArrayList<ILocated2D> "positions" closest to the specified location "pos"
+	 */
 	public ILocated2D nearestPositionToPosition(ILocated2D pos, ArrayList<ILocated2D> positions) {
 		ArrayList<ILocated2D> list = positionsByDistanceFrom(pos, positions);
 		return list.get(0);
 	}
 	
-	//creates a list of monsters organized by distance from a given position
+	/**
+	 * Creates a list of monsters organized by distance from a given position
+	 * 
+	 * @param pos ILocated2D representing a specific location
+	 * @return ArrayList<Agent> of monsters sorted in increasing order by distance from the specified location "pos"
+	 */
 	public ArrayList<Agent> monstersByDistanceFrom(ILocated2D pos) {
 		Distance2DComparator comparator = new Distance2DComparator(pos);
 		ArrayList<Agent> list = getMonsters();
@@ -436,7 +489,12 @@ public class Breve2DGame {
 		return list;
 	}
 	
-	//returns first item on list of monsters sorted by distance from position, or null if no monsters
+	/**
+	 * Returns first item on list of monsters sorted by distance from position, or null if no monsters
+	 * 
+	 * @param pos ILocated2D representing a specified location
+	 * @return monster Agent closest to the specified location "pos"
+	 */
 	public Agent nearestMonsterToPosition(ILocated2D pos) {
 		ArrayList<Agent> list = monstersByDistanceFrom(pos);
 		if (list.isEmpty()) {
@@ -448,22 +506,49 @@ public class Breve2DGame {
 	
 	//methods that return total time and response times
 	
+	/**
+	 * Returns the total time of the game
+	 * 
+	 * @return Total time of the game
+	 */
 	public int getTime() {
 		return totalTime;
 	}
 
+	/**
+	 * Returns the time of the last Player response to a Monster
+	 * 
+	 * @return The time of the last Player response to a Monster
+	 */
 	public int lastPlayerResponseToMonster() {
 		return this.lastTimePlayerReactedToMonster;
 	}
 
+	/**
+	 * Returns the time of the last Player response to a specified monster Agent
+	 * 
+	 * @param index Index of a specific monster Agent
+	 * @return The time of the last Player response to the specified monster Agent
+	 */
 	public int lastPlayerResponseToMonster(int index) {
 		return this.lastTimePlayerReactedToThisMonster[index];
 	}
 
+	/**
+	 * Returns the last time a specified monster Agent responded to the Player
+	 * 
+	 * @param index Index of a specific monster Agent
+	 * @return The last time the specified monster Agent responded to the Player
+	 */
 	public int lastMonsterResponseToPlayer(int index) {
 		return this.lastTimeMonsterReactedToPlayer[index];
 	}
 
+	/**
+	 * Returns the last time any monster Agent responded to the Player
+	 * 
+	 * @return The last time any monster Agent responded to the Player
+	 */
 	public int lastMonsterResponseToPlayer() {
 		int m = -1;
 		for (int i = 0; i < numMonsters; i++) {
@@ -475,21 +560,45 @@ public class Breve2DGame {
 	}
 	
 	//true if player has been hit
+	/**
+	 * Returns true if the Player is Locked
+	 * 
+	 * @return True if the Player is Locked, else returns false
+	 */
 	public boolean playerLocked() {
 		return this.playerReactingTime > 0;
 	}
 	
 	//true if monster has been hit
+	/**
+	 * Returns true if a specific monster Agent is Locked, else returns false
+	 * 
+	 * @param index Index of a specific monster Agent
+	 * @return True if the specified monster Agent is Locked, else returns false
+	 */
 	public boolean monsterLocked(int index) {
 		return this.monsterReactingTime[index] > 0;
 	}
 	
 	//true if monster is dead
+	/**
+	 * Returns true if a specified monster Agent is dead, else returns false
+	 * 
+	 * @param index Index of a specific monster Agent
+	 * @return True if the specified monster Agent is dead, else returns false
+	 */
 	public boolean monsterDead(int index) {
 		return this.monsters[index].isDead();
 	}
 	
 	//adds lines
+	/**
+	 * Adds a line to the global ArrayList<> "lines"
+	 * 
+	 * @param c Color of the line to be drawn
+	 * @param p1 ILocated2D representing the starting point of the line
+	 * @param p2 ILocated2D representing the ending point of the line
+	 */
 	public void addLine(Color c, ILocated2D p1, ILocated2D p2) {
 		if (p1 != null && p2 != null && c != null) {
 			lines.add(new Triple<ILocated2D, ILocated2D, Color>(p1, p2, c));
@@ -497,6 +606,12 @@ public class Breve2DGame {
 	}
 	
 	//adds rams to monsters
+	/**
+	 * Returns a specific monster Agent if that monster is able to use a Ram is a specific location
+	 * 
+	 * @param ram ILocated2D representing a specific location where a Ram is located
+	 * @return A monster Agent if the monster is able to use the Ram, else returns null
+	 */
 	private Agent monsterWithRam(ILocated2D ram) {
 		Tuple2D offset = ((RammingDynamics) dynamics).getRamOffset();
 		for (int i = 0; i < monsters.length; i++) {
