@@ -61,18 +61,28 @@ public class Breve2DGame {
 		this.timeLimit = Parameters.parameters.integerParameter("breve2DTimeLimit");
 		this.resetAll = false;
 	}
-
+	
+	/**
+	 * Initial conditions when game is restarted: positions of all agents are reset and the time is set to 0
+	 */
 	protected void init() {
 		newPlacement();
 		this.totalTime = 0;
 	}
-
+	
+	/**
+	 * Calls newPlacement() to reset positions of monsters and player
+	 */
 	protected void reset() {
 		newPlacement();
 	}
-
+	
+	/**
+	 * Resets position of monsters and player.
+	 */
 	protected void newPlacement() {
-
+		
+		//resets reacting times
 		playerReactingTime = 0;
 		this.monsterReactingTime = new int[numMonsters];
 		this.lastTimePlayerReactedToMonster = -1;
@@ -89,7 +99,8 @@ public class Breve2DGame {
 			rand = new Random(0);
 		}
 		player = new Agent(new Tuple2D(SIZE_X / 2, SIZE_Y / 2), heading);
-
+		
+		//brings monsters back on screen if they have escaped
 		if (monsters == null) {
 			monsters = new Agent[numMonsters];
 			for (int i = 0; i < numMonsters; i++) {
@@ -115,6 +126,7 @@ public class Breve2DGame {
 			}
 		}
 		double theta = 0;
+		//resets position and rotation of all monsters
 		for (int i = 0; i < numMonsters; i++, theta += (2 * Math.PI) / numMonsters) {
 			if (!monsters[i].isDead()) {
 				double[] coords = CartesianGeometricUtilities.polarToCartesian(startingDistance, theta);
@@ -156,7 +168,7 @@ public class Breve2DGame {
 		// System.out.println(playerAction + ":" +
 		// Arrays.toString(monsterActions));
 		this.totalTime++;
-
+		
 		if (rams) {
 			RammingDynamics ramDynamics = (RammingDynamics) dynamics;
 			// Interactions between rams and player
@@ -169,6 +181,7 @@ public class Breve2DGame {
 						ramPositions.add(a.getPosition().add(ramDynamics.getRamOffset().rotate(a.getHeading())));
 					}
 				}
+				//if the monster has not been hit and is not dead
 				if (!ramPositions.isEmpty()) {
 					ILocated2D nearest = nearestPositionToPosition(playerLocation, ramPositions);
 					double distance = nearest.distance(playerLocation);
@@ -182,7 +195,8 @@ public class Breve2DGame {
 						lastTimePlayerReactedToMonster = totalTime;
 						lastTimePlayerReactedToThisMonster[monsterWithRam(nearest).getIdentifier()] = totalTime;
 					}
-
+					
+					//if player has been hit
 					if (playerLocked()) {
 						Breve2DAction continued = ramDynamics.playerContinuedResponseToRam(getPlayer(), nearest,
 								totalTime);
@@ -217,6 +231,7 @@ public class Breve2DGame {
 					// System.out.println("Player responsing to monster: " +
 					// nearest.getIdentifier() + ":" + playerAction);
 				}
+				//if player has been hit
 				if (playerLocked()) {
 					Breve2DAction continued = dynamics.playerContinuedResponseToMonster(getPlayer(), nearest,
 							totalTime);
@@ -259,6 +274,7 @@ public class Breve2DGame {
 							dead++;
 						}
 					}
+					//if monster has been hit
 					if (monsterLocked(i)) {
 						Breve2DAction continued = dynamics.monsterContinuedResponseToPlayer(getPlayer(), monster,
 								totalTime);
@@ -293,7 +309,8 @@ public class Breve2DGame {
 							// System.out.println("Monster " + i + " responding:
 							// " + monsterActions[i]);
 						}
-
+						
+						//if monster has been hit
 						if (monsterLocked(i)) {
 							Breve2DAction continued = ramDynamics.monsterContinuedResponseToRam(getMonster(i),
 									ramPosition, totalTime);
@@ -321,7 +338,8 @@ public class Breve2DGame {
 				monsters[i].setPosition(null);
 			}
 		}
-
+		
+		//check whether agents have left the screen
 		boolean boxEscaped = false;
 		if (dynamics.playerRespondsToMonster() && !dynamics.monsterRespondsToPlayer()
 				&& (!rams || (!((RammingDynamics) dynamics).playerHasRam()
@@ -351,19 +369,23 @@ public class Breve2DGame {
 	public RaySensor getRaySensor(int monster, int sensor) {
 		return this.monsterRays[monster][sensor];
 	}
-
+	
+	//returns position of player
 	public Tuple2D getPlayerPosition() {
 		return player.getPosition();
 	}
-
+	
+	
 	public double getPlayerHeading() {
 		return player.getHeading();
 	}
-
+	
+	//returns player
 	public Agent getPlayer() {
 		return player;
 	}
-
+	
+	//returns position of monster
 	public Tuple2D getMonsterPosition(int index) {
 		return monsters[index].getPosition();
 	}
@@ -371,7 +393,8 @@ public class Breve2DGame {
 	public double getMonsterRadians(int index) {
 		return monsters[index].getHeading();
 	}
-
+	
+	//creates and returns a list of all monsters
 	public ArrayList<Agent> getMonsters() {
 		ArrayList<Agent> monstersList = new ArrayList<Agent>(numMonsters);
 		for (int i = 0; i < numMonsters; i++) {
@@ -381,33 +404,39 @@ public class Breve2DGame {
 		}
 		return monstersList;
 	}
-
+	
+	//returns monster agent
 	public Agent getMonster(int index) {
 		return monsters[index];
 	}
-
+	
+	//number of monsters
 	public int getNumMonsters() {
 		return numMonsters;
 	}
-
+	
+	//creates a list of positions organized by distance from a given position
 	public ArrayList<ILocated2D> positionsByDistanceFrom(ILocated2D pos, ArrayList<ILocated2D> positions) {
 		Distance2DComparator comparator = new Distance2DComparator(pos);
 		Collections.sort(positions, comparator);
 		return positions;
 	}
-
+	
+	//returns first item on list of positions sorted by distance from given position
 	public ILocated2D nearestPositionToPosition(ILocated2D pos, ArrayList<ILocated2D> positions) {
 		ArrayList<ILocated2D> list = positionsByDistanceFrom(pos, positions);
 		return list.get(0);
 	}
-
+	
+	//creates a list of monsters organized by distance from a given position
 	public ArrayList<Agent> monstersByDistanceFrom(ILocated2D pos) {
 		Distance2DComparator comparator = new Distance2DComparator(pos);
 		ArrayList<Agent> list = getMonsters();
 		Collections.sort(list, comparator);
 		return list;
 	}
-
+	
+	//returns first item on list of monsters sorted by distance from position, or null if no monsters
 	public Agent nearestMonsterToPosition(ILocated2D pos) {
 		ArrayList<Agent> list = monstersByDistanceFrom(pos);
 		if (list.isEmpty()) {
@@ -416,6 +445,9 @@ public class Breve2DGame {
 		return list.get(0);
 	}
 
+	
+	//methods that return total time and response times
+	
 	public int getTime() {
 		return totalTime;
 	}
@@ -441,25 +473,30 @@ public class Breve2DGame {
 		}
 		return m;
 	}
-
+	
+	//true if player has been hit
 	public boolean playerLocked() {
 		return this.playerReactingTime > 0;
 	}
-
+	
+	//true if monster has been hit
 	public boolean monsterLocked(int index) {
 		return this.monsterReactingTime[index] > 0;
 	}
-
+	
+	//true if monster is dead
 	public boolean monsterDead(int index) {
 		return this.monsters[index].isDead();
 	}
-
+	
+	//adds lines
 	public void addLine(Color c, ILocated2D p1, ILocated2D p2) {
 		if (p1 != null && p2 != null && c != null) {
 			lines.add(new Triple<ILocated2D, ILocated2D, Color>(p1, p2, c));
 		}
 	}
-
+	
+	//adds rams to monsters
 	private Agent monsterWithRam(ILocated2D ram) {
 		Tuple2D offset = ((RammingDynamics) dynamics).getRamOffset();
 		for (int i = 0; i < monsters.length; i++) {

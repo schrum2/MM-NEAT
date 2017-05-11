@@ -41,17 +41,22 @@ public final class Breve2DGameView extends JComponent {
 	////// Visual aids for debugging ///////
 	////////////////////////////////////////
 	@Override
+	/**
+	 * Method that tracks game behavior and  calls drawing methods to create appropriate visual elements/reactions 
+	 * based on the actions in the game
+	 */
 	public void paintComponent(Graphics g) {
-		if (offscreen == null) {
+		if (offscreen == null) { //constructs screen
 			offscreen = createImage(this.getPreferredSize().width, this.getPreferredSize().height);
 			bufferGraphics = offscreen.getGraphics();
 		}
 		bufferGraphics.setColor(Color.WHITE);
 		bufferGraphics.fillRect(0, 0, Breve2DGame.SIZE_X, Breve2DGame.SIZE_Y);
 
+		//construct player and monsters 
 		drawPlayer();
 		drawMonsters();
-		if (rams) {
+		if (rams) { //if either the monsters or the player have rams, they must be drawn
 			RammingDynamics rammingDynamics = (RammingDynamics) game.dynamics;
 			if (rammingDynamics.monstersHaveRams()) {
 				drawMonsterRams(rammingDynamics.getRamOffset());
@@ -70,13 +75,20 @@ public final class Breve2DGameView extends JComponent {
 			itr.remove();
 		}
 
+		//end game
 		if (game.gameOver()) {
 			drawGameOver();
 		}
 
 		g.drawImage(offscreen, 0, 0, this);
 	}
-
+	/**
+	 * Constructs a double array with a triangular outline of where the agent should be drawn
+	 * @param x x-value of center of agent
+	 * @param y y-value of center of agent
+	 * @param rad heading of agent
+	 * @return double array with three points outlining where the agent should be drawn
+	 */
 	private static int[][] trianglePoints(double x, double y, double rad) {
 		int[] xPoints = new int[3];
 		int[] yPoints = new int[3];
@@ -94,15 +106,30 @@ public final class Breve2DGameView extends JComponent {
 
 		return new int[][] { xPoints, yPoints };
 	}
-
+	
+	/**
+	 * Casts x from a double to an int
+	 * @param x (double)
+	 * @return x (int)
+	 */
 	private int x(double x) {
 		return (int) x;
 	}
-
+	
+	/**
+	 * Casts y from a double to an int and converts it based on inverted axis
+	 * @param y (double)
+	 * @return y (int) that is converted based on inverted axis
+	 */
 	private int y(double y) {
 		return (int) (Breve2DGame.SIZE_Y - y);
 	}
 
+	/**
+	 * Constructs game agent graphically
+	 * @param a Agent (used to access position where agent will be drawn)
+	 * @param c Color of agent
+	 */
 	private void drawAgent(Agent a, Color c) {
 		bufferGraphics.setColor(Color.DARK_GRAY);
 		bufferGraphics.fillOval((int) (a.getX() - Breve2DGame.AGENT_MAGNITUDE),
@@ -116,7 +143,10 @@ public final class Breve2DGameView extends JComponent {
 	private void drawPlayer() {
 		drawAgent(game.player, Color.GREEN);
 	}
-
+	/**
+	 * Constructs monster rams.
+	 * @param offset vector distance where ram should be constructed
+	 */
 	private void drawMonsterRams(Tuple2D offset) {
 		for (int i = 0; i < game.numMonsters; i++) {
 			if (!game.monsters[i].isDead()) {
@@ -124,11 +154,20 @@ public final class Breve2DGameView extends JComponent {
 			}
 		}
 	}
-
+	/**
+	 * Constructs player rams. 
+	 * @param ramOffset vector distance where ram should be constructed
+	 */
 	private void drawPlayerRam(Tuple2D ramOffset) {
 		drawRam(game.player, Color.CYAN, ramOffset);
 	}
-
+	
+	/**
+	 * Draws rams on agent based on location of agent
+	 * @param a Agent (used to access location for construction)
+	 * @param c desired color
+	 * @param offset vector distance where ram should be constructed
+	 */
 	private void drawRam(Agent a, Color c, Tuple2D offset) {
 		Tuple2D pos = a.getPosition().add(offset.rotate(a.getHeading()));
 		bufferGraphics.setColor(c);
@@ -136,7 +175,10 @@ public final class Breve2DGameView extends JComponent {
 				(int) (Breve2DGame.SIZE_Y - pos.getY() - Breve2DGame.RAM_MAGNITUDE), 2 * Breve2DGame.RAM_MAGNITUDE,
 				2 * Breve2DGame.RAM_MAGNITUDE);
 	}
-
+	
+	/**
+	 * Constructs all monsters, then calls drawAgent() to draw them
+	 */
 	private void drawMonsters() {
 		for (int i = 0; i < game.numMonsters; i++) {
 			if (!game.monsters[i].isDead()) {
@@ -151,7 +193,10 @@ public final class Breve2DGameView extends JComponent {
 			}
 		}
 	}
-
+	
+	/**
+	 * Method that prints out necessary gameplay info at bottom of screen.
+	 */
 	private void drawGameInfo() {
 		bufferGraphics.setColor(Color.BLACK);
 		ArrayList<Integer> monsterHealths = new ArrayList<Integer>(game.monsters.length);
@@ -163,19 +208,29 @@ public final class Breve2DGameView extends JComponent {
 		bufferGraphics.drawString(
 				"Time: " + game.totalTime + "/" + game.timeLimit + " | Player: " + game.getPlayer().getHealth() + "/"
 						+ maxHealth + " | Monsters: " + monsterHealths + " | Dis: " + distances,
-				4, Breve2DGame.SIZE_Y - 10);
+						4, Breve2DGame.SIZE_Y - 10);
 	}
-
+	
+	/**
+	 * Graphical representation on screen when game is over
+	 */
 	private void drawGameOver() {
 		bufferGraphics.setColor(Color.WHITE);
 		bufferGraphics.drawString("Game Over", 80, 150);
 	}
-
+	
+	/**
+	 * Returns size of screen
+	 */
 	@Override
 	public Dimension getPreferredSize() {
 		return new Dimension(Breve2DGame.SIZE_X, Breve2DGame.SIZE_Y);
 	}
-
+	
+	/**
+	 * Displays game
+	 * @return gameplay display
+	 */
 	public Breve2DGameView showGame() {
 		this.frame = new GameFrame(this);
 
@@ -187,13 +242,21 @@ public final class Breve2DGameView extends JComponent {
 
 		return this;
 	}
-
+	
+	/**
+	 * Retrieves private frame variable
+	 * @return frame
+	 */
 	public GameFrame getFrame() {
 		return frame;
 	}
-
+	
 	public class GameFrame extends JFrame {
-
+		
+		/**
+		 * Creates viewing window
+		 * @param comp constructor
+		 */
 		public GameFrame(JComponent comp) {
 			getContentPane().add(BorderLayout.CENTER, comp);
 			pack();
