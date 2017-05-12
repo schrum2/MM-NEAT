@@ -20,9 +20,14 @@ import javazoom.jl.decoder.JavaLayerException;
 import javazoom.jl.player.advanced.AdvancedPlayer;
 import javazoom.jl.player.advanced.PlaybackListener;
 
-
+/**
+ * Class containing utility methods that manipulate various types of sound files. Can play audio files,
+ * convert them, and reconstruct them. 
+ * 
+ * @author Isabel Tweraser
+ *
+ */
 public class SoundUtil {
-
 
 	private static final String BEARGROWL_WAV = "data/sounds/bear_growl_y.wav";
 	private static final String APPLAUSE_WAV = "data/sounds/applause_y.wav";
@@ -39,7 +44,7 @@ public class SoundUtil {
 		//System.out.println(Arrays.toString(applauseNumbers));
 
 		byte[] harpNumbers = WAVToByte(HARP_WAV);
-		System.out.println(Arrays.toString(harpNumbers));
+		//System.out.println(Arrays.toString(harpNumbers));
 
 		//		for(int i = 0; i < Math.max(bearNumbers.length, applauseNumbers.length); i++) {
 		//			if(i < bearNumbers.length) System.out.print(bearNumbers[i]);
@@ -53,21 +58,26 @@ public class SoundUtil {
 		//FileOutputStream bearReturns = byteToWAV(BEARGROWL_WAV, bearNumbers);
 		//playWAVFile(bearReturns);
 
-		//playByteAIS(applauseNumbers);
+		playByteAIS(applauseNumbers);
+		
+		AudioInputStream applauseAIS = byteToAIS(applauseNumbers);
+		int[] applauseNumbers2 = extractAmplitudeDataFromAudioInputStream(applauseAIS);
+		System.out.println(Arrays.toString(applauseNumbers2));
+		
 
-		for(int i = bearNumbers.length-11; i <= bearNumbers.length-1; i++) {
-			System.out.print(bearNumbers[i] + " ");
-		}
-		System.out.println();
+//		for(int i = bearNumbers.length-11; i <= bearNumbers.length-1; i++) {
+//			System.out.print(bearNumbers[i] + " ");
+//		}
+//		System.out.println();
 
-		byte[] splice = new byte[applauseNumbers.length];
-		for(int i = 0; i < splice.length; i++) {
-			if(i < 46)
-				splice[i] = bearNumbers[i];
-			else 
-				splice[i] = applauseNumbers[i];
-		}
-		playByteAIS(splice);
+//		byte[] splice = new byte[applauseNumbers.length];
+//		for(int i = 0; i < splice.length; i++) {
+//			if(i < 46)
+//				splice[i] = bearNumbers[i];
+//			else 
+//				splice[i] = applauseNumbers[i];
+//		}
+//		playByteAIS(splice);
 
 		//		byte[] original = new byte[bearNumbers.length];
 		//		for(int i = 0; i < original.length; i++) {
@@ -207,36 +217,43 @@ public class SoundUtil {
 
 	//Methods from GT - used to extract amplitude from recorded wave
 
-	private int[] extractAmplitudeFromFile(File wavFile) throws IOException, UnsupportedAudioFileException {  
-		byte[] arrFile; 
-		// create file input stream  
-		FileInputStream fis = new FileInputStream(wavFile);  
-		// create bytearray from file  
-		arrFile = new byte[(int) wavFile.length()];  
-		fis.read(arrFile);  
-		return extractAmplitudeFromFileByteArray(arrFile);  
-	}  
-	private int[] extractAmplitudeFromFileByteArray(byte[] arrFile) throws UnsupportedAudioFileException, IOException {  
-		// System.out.println("File : "+wavFile+""+arrFile.length);  
-		ByteArrayInputStream bis = new ByteArrayInputStream(arrFile);  
-		return extractAmplitudeFromFileByteArrayInputStream(bis);  
-	} 
 	
-	/**  
-	 * for extracting amplitude array the format we are using :16bit, 22khz, 1  
-	 * channel, littleEndian,  
-	 *   
-	 * @return PCM audioData  
-	 * @throws IOException 
-	 * @throws UnsupportedAudioFileException 
-	 * @throws Exception  
-	 */  
-	private int[] extractAmplitudeFromFileByteArrayInputStream(ByteArrayInputStream bis) throws UnsupportedAudioFileException, IOException {  
-		AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(bis);  
-		return extractAmplitudeDataFromAudioInputStream(audioInputStream);  
-	}  
+	//same thing as WAVToByte: 
+	
+//	private int[] extractAmplitudeFromFile(File wavFile) throws IOException, UnsupportedAudioFileException {  
+//		byte[] arrFile; 
+//		// create file input stream  
+//		FileInputStream fis = new FileInputStream(wavFile);  
+//		// create bytearray from file  
+//		arrFile = new byte[(int) wavFile.length()];  
+//		fis.read(arrFile);  
+//		return extractAmplitudeFromFileByteArray(arrFile);  
+//	} 
+	
+	
+	//same thing as byteToAIS: 
+	
+//	private int[] extractAmplitudeFromFileByteArray(byte[] arrFile) throws UnsupportedAudioFileException, IOException {  
+//		// System.out.println("File : "+wavFile+""+arrFile.length);  
+//		ByteArrayInputStream bis = new ByteArrayInputStream(arrFile);  
+//		return extractAmplitudeFromFileByteArrayInputStream(bis);  
+//	} 
+//	
+//	/**  
+//	 * for extracting amplitude array the format we are using :16bit, 22khz, 1  
+//	 * channel, littleEndian,  
+//	 *   
+//	 * @return PCM audioData  
+//	 * @throws IOException 
+//	 * @throws UnsupportedAudioFileException 
+//	 * @throws Exception  
+//	 */  
+//	private int[] extractAmplitudeFromFileByteArrayInputStream(ByteArrayInputStream bis) throws UnsupportedAudioFileException, IOException {  
+//		AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(bis);  
+//		return extractAmplitudeDataFromAudioInputStream(audioInputStream);  
+//	}  
 
-	private int[] extractAmplitudeDataFromAudioInputStream(AudioInputStream audioInputStream) {  
+	private static int[] extractAmplitudeDataFromAudioInputStream(AudioInputStream audioInputStream) {  
 		AudioFormat format = audioInputStream.getFormat();  
 		byte[] audioBytes = new byte[(int) (audioInputStream.getFrameLength() * format.getFrameSize())];  
 		// calculate durations  
@@ -251,7 +268,7 @@ public class SoundUtil {
 		}  
 		return extractAmplitudeDataFromAmplitudeByteArray(format, audioBytes);  
 	}  
-	private int[] extractAmplitudeDataFromAmplitudeByteArray(AudioFormat format, byte[] audioBytes) {  
+	private static int[] extractAmplitudeDataFromAmplitudeByteArray(AudioFormat format, byte[] audioBytes) {  
 		// convert
 		int[]  audioData = null;  
 		if (format.getSampleSizeInBits() == 16) {  
@@ -263,7 +280,7 @@ public class SoundUtil {
 					int MSB = audioBytes[2 * i];  
 					/* Second byte is LSB (low order) */  
 					int LSB = audioBytes[2 * i + 1];  
-					audioData[i] = MSB << 8 | (255 & LSB);  
+					audioData[i] = (MSB << 8 | (255 & LSB));  
 				}  
 			} else {  
 				for (int i = 0; i < nlengthInSamples; i++) {  
@@ -271,7 +288,7 @@ public class SoundUtil {
 					int LSB = audioBytes[2 * i];  
 					/* Second byte is MSB (high order) */  
 					int MSB = audioBytes[2 * i + 1];  
-					audioData[i] = MSB << 8 | (255 & LSB);  
+					audioData[i] = (MSB << 8 | (255 & LSB));  
 				}  
 			}  
 		} else if (format.getSampleSizeInBits() == 8) {  
