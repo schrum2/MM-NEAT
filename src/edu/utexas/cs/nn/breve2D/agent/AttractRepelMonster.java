@@ -9,11 +9,23 @@ public class AttractRepelMonster implements AgentController {
 	private final int index;
 	private final int sign;
 
+	/**
+	 * Constructor for a new AttractRepelMonster
+	 * 
+	 * @param index Integer value setting the index of this specific AttractRepelMonster
+	 * @param forward Boolean value for if the AttractRepelMonster should move forward; true = forward, false = backward
+	 */
 	public AttractRepelMonster(int index, boolean forward) {
 		this.index = index;
 		this.sign = forward ? 1 : -1;
 	}
 
+	/**
+	 * Returns the actions each monster Agent should take based on the player's current position
+	 * 
+	 * @param game A specific instance of a Breve2DGame
+	 * @return A Breve2DAction representing the actions that the monster Agent should take
+	 */
 	public Breve2DAction getAction(Breve2DGame game) {
 		Tuple2D player = game.getPlayerPosition();
 		Tuple2D monster = game.getMonsterPosition(index);
@@ -28,6 +40,9 @@ public class AttractRepelMonster implements AgentController {
 		return new Breve2DAction(angle / Math.PI, sign * 1);
 	}
 
+	/**
+	 * Would reset the actions for the AttractRepelMonster, but does not do anything as of now
+	 */
 	public void reset() {
 	}
 }

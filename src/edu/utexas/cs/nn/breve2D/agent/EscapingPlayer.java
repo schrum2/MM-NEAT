@@ -14,6 +14,12 @@ public final class EscapingPlayer implements AgentController {
 
 	private Tuple2D previousTarget = null;
 
+	/**
+	 * Returns the actions that the EscapingPlayer Agent should take based on the Player Agent's position
+	 * 
+	 * @param game A specific instance of a Breve2DGame
+	 * @return Breve2DAction that represents the actions the EscapingPlayer should take based on the Player Agent's position
+	 */
 	public Breve2DAction getAction(Breve2DGame game) {
 		final Tuple2D player = game.getPlayerPosition();
 		final double playerHeading = game.getPlayerHeading();
@@ -21,6 +27,7 @@ public final class EscapingPlayer implements AgentController {
 
 		ArrayList<Agent> monsters = game.getMonsters();
 		Collections.sort(monsters, new Comparator<Agent>() {
+			
 			public int compare(Agent o1, Agent o2) {
 				double a1 = CartesianGeometricUtilities.signedAngleFromSourceHeadingToTarget(player, o1.getPosition(),
 						playerHeading);
@@ -124,6 +131,9 @@ public final class EscapingPlayer implements AgentController {
 		return new Breve2DAction(turn, force);
 	}
 
+	/**
+	 * Resets the actions for the EscapingPlayer
+	 */
 	public void reset() {
 		previousTarget = null;
 	}
