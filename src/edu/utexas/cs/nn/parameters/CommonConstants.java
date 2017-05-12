@@ -27,6 +27,9 @@ public class CommonConstants {
 	public static boolean includeReLUFunction;
 	public static boolean includeSoftplusFunction;
 	public static boolean includeLeakyReLUFunction;
+	public static boolean includeFullSawtoothFunction;
+	public static boolean includeTriangleWaveFunction;
+	public static boolean includeSquareWaveFunction;
 	public static boolean splitRawTetrisInputs;
 	public static boolean allowMultipleFunctions;
 	public static boolean allowRandomGhostReversals;
@@ -142,7 +145,10 @@ public class CommonConstants {
 		includeStretchedTanhFunction = Parameters.parameters.booleanParameter("includeStretchedTanhFunction");	
 		includeReLUFunction = Parameters.parameters.booleanParameter("includeReLUFunction");	
 		includeSoftplusFunction = Parameters.parameters.booleanParameter("includeSoftplusFunction");	
-		includeLeakyReLUFunction = Parameters.parameters.booleanParameter("includeLeakyReLUFunction");	
+		includeLeakyReLUFunction = Parameters.parameters.booleanParameter("includeLeakyReLUFunction");
+		includeFullSawtoothFunction = Parameters.parameters.booleanParameter("includeFullSawtoothFunction");
+		includeTriangleWaveFunction = Parameters.parameters.booleanParameter("includeTriangleWaveFunction");
+		includeSquareWaveFunction = Parameters.parameters.booleanParameter("includeSquareWaveFunction");
 		splitRawTetrisInputs = Parameters.parameters.booleanParameter("splitRawTetrisInputs");
 		allowMultipleFunctions = Parameters.parameters.booleanParameter("allowMultipleFunctions");
 		allowRandomGhostReversals = Parameters.parameters.booleanParameter("allowRandomGhostReversals");

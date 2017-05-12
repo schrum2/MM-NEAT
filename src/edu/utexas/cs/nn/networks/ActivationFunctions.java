@@ -13,7 +13,7 @@ import edu.utexas.cs.nn.util.random.RandomNumbers;
  */
 public class ActivationFunctions {
 
-	public static final int MAX_POSSIBLE_ACTIVATION_FUNCTIONS = 14;
+	public static final int MAX_POSSIBLE_ACTIVATION_FUNCTIONS = 17;
 
 	/**
 	 * Initialize the array list for all ftypes
@@ -41,13 +41,16 @@ public class ActivationFunctions {
 	public static final int FTYPE_RE_LU  = 18;
 	public static final int FTYPE_SOFTPLUS  = 19;
 	public static final int FTYPE_LEAKY_RE_LU = 20;
+	public static final int FTYPE_FULLSAWTOOTH = 21;
+	public static final int FTYPE_TRIANGLEWAVE = 22;
+	public static final int FTYPE_SQUAREWAVE = 23;
 
 	/**
 	 * Initializes the set of ftypes by checking boolean parameters for included
 	 * functions
 	 */
 	public static void resetFunctionSet() {
-		availableActivationFunctions = new ArrayList<>(11);
+		availableActivationFunctions = new ArrayList<>(MAX_POSSIBLE_ACTIVATION_FUNCTIONS);
 		if (Parameters.parameters.booleanParameter("includeSigmoidFunction")) {
 			availableActivationFunctions.add(FTYPE_SIGMOID);
 		}
@@ -89,6 +92,15 @@ public class ActivationFunctions {
 		}
 		if(Parameters.parameters.booleanParameter("includeLeakyReLUFunction")) {
 			availableActivationFunctions.add(FTYPE_LEAKY_RE_LU);
+		}
+		if(Parameters.parameters.booleanParameter("includeFullSawtoothFunction")) {
+			availableActivationFunctions.add(FTYPE_FULLSAWTOOTH);
+		}
+		if(Parameters.parameters.booleanParameter("includeTriangleWaveFunction")) {
+			availableActivationFunctions.add(FTYPE_TRIANGLEWAVE);
+		}
+		if(Parameters.parameters.booleanParameter("includeSquareFunction")) {
+			availableActivationFunctions.add(FTYPE_SQUAREWAVE);
 		}
 	}
 
@@ -171,6 +183,21 @@ public class ActivationFunctions {
 			assert!Double.isNaN(activation) : "leaky ReLU returns NaN on " + sum;
 			assert!Double.isInfinite(activation) : "leaky ReLU is infinite on " + sum + " from " + activation;
 			break;
+//		case ActivationFunctions.FTYPE_FULLSAWTOOTH:
+//			activation = ActivationFunctions.fullSawtooth(sum);
+//			assert!Double.isNaN(activation) : "fullSawtooth returns NaN on " + sum;
+//			assert!Double.isInfinite(activation) : "fullSawtooth is infinite on " + sum + " from " + activation;
+//			break;
+//		case ActivationFunctions.FTYPE_TRIANGLEWAVE:
+//			activation = ActivationFunctions.triangleWave(sum);
+//			assert!Double.isNaN(activation) : "triangleWave returns NaN on " + sum;
+//			assert!Double.isInfinite(activation) : "triangleWave is infinite on " + sum + " from " + activation;
+//			break;
+//		case ActivationFunctions.FTYPE_SQUAREWAVE:
+//			activation = ActivationFunctions.squareWave(sum);
+//			assert!Double.isNaN(activation) : "squareWave returns NaN on " + sum;
+//			assert!Double.isInfinite(activation) : "squareWave is infinite on " + sum + " from " + activation;
+//			break;
 		}
 		return activation;
 	}
@@ -207,6 +234,12 @@ public class ActivationFunctions {
 			return "Softplus";
 		}else if(ftype == FTYPE_LEAKY_RE_LU) {
 			return "Leaky Rectified Linear Units";
+		}else if(ftype == FTYPE_FULLSAWTOOTH) {
+			return "Full Sawtooth";
+		}else if(ftype == FTYPE_TRIANGLEWAVE) {
+			return "Triangle Wave";
+		}else if(ftype == FTYPE_SQUAREWAVE) {
+			return "Square Wave";
 		}else {
 			System.out.println("given ftype is not a valid activation function! " + ftype);
                         System.exit(1);
@@ -469,5 +502,42 @@ public class ActivationFunctions {
          */
 	public static double stretchedTanh(double sum) {
 		return 1.7159 * tanh( (2.0/3) * sum);  
+	}
+	
+	/**
+	 * Similar to sawtooth function, but with a range of -1 to 1. 
+	 * 
+	 * @param x function parameter
+	 * @param a period
+	 * @return value of fullSawtooth(x, a)
+	 */
+	public static double fullSawtooth(double x, double a) {
+		return 2 * ((x/a) - Math.floor(1/2 + x/a));
+	}
+	
+	/**
+	 * Triangle wave can be represented as the absolute value of the sawtooth function.
+	 * Piecewise linear, continuous real function - useful for sound generation in Java
+	 * 
+	 * @param x function parameter
+	 * @param a period 
+	 * @return value of triangleWave(x, a)
+	 */
+	public static double triangleWave(double x, double a) {
+		return Math.abs(fullSawtooth(x, a));
+	}
+	
+	/**
+	 * Square wave is a sinusoidal periodic waveform. Alternating between 
+	 * minimum and maximum amplitudes at a steady rate - useful for sound generation
+	 * in Java
+	 * 
+	 * @param x function parameter
+	 * @param p period 
+	 * @param a amplitude
+	 * @return value of squareWave(x, p, a)
+	 */
+	public static double squareWave(double x, double p, double a) {
+		return a * 1/Math.sin(2 * Math.PI/p * x) * Math.abs(Math.sin(2 * Math.PI/p * x));
 	}
 }
