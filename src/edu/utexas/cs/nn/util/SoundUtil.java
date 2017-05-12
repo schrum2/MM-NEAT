@@ -34,32 +34,32 @@ public class SoundUtil {
 		//mp3Conversion(HAPPY_MP3).playMP3File();
 		byte[] bearNumbers = WAVToByte(BEARGROWL_WAV);
 		//System.out.println(Arrays.toString(bearNumbers));
-		
+
 		byte[] applauseNumbers = WAVToByte(APPLAUSE_WAV);	
 		//System.out.println(Arrays.toString(applauseNumbers));
-		
+
 		byte[] harpNumbers = WAVToByte(HARP_WAV);
 		System.out.println(Arrays.toString(harpNumbers));
-		
-//		for(int i = 0; i < Math.max(bearNumbers.length, applauseNumbers.length); i++) {
-//			if(i < bearNumbers.length) System.out.print(bearNumbers[i]);
-//			System.out.print("\t");
-//			if(i < applauseNumbers.length) System.out.print(applauseNumbers[i]);
-//			System.out.println();
-//			
-//			new Scanner(System.in).nextLine();
-//		}	
-		
+
+		//		for(int i = 0; i < Math.max(bearNumbers.length, applauseNumbers.length); i++) {
+		//			if(i < bearNumbers.length) System.out.print(bearNumbers[i]);
+		//			System.out.print("\t");
+		//			if(i < applauseNumbers.length) System.out.print(applauseNumbers[i]);
+		//			System.out.println();
+		//			
+		//			new Scanner(System.in).nextLine();
+		//		}	
+
 		//FileOutputStream bearReturns = byteToWAV(BEARGROWL_WAV, bearNumbers);
 		//playWAVFile(bearReturns);
-		
+
 		//playByteAIS(applauseNumbers);
-		
+
 		for(int i = bearNumbers.length-11; i <= bearNumbers.length-1; i++) {
 			System.out.print(bearNumbers[i] + " ");
 		}
 		System.out.println();
-		
+
 		byte[] splice = new byte[applauseNumbers.length];
 		for(int i = 0; i < splice.length; i++) {
 			if(i < 46)
@@ -68,19 +68,19 @@ public class SoundUtil {
 				splice[i] = applauseNumbers[i];
 		}
 		playByteAIS(splice);
-		
-//		byte[] original = new byte[bearNumbers.length];
-//		for(int i = 0; i < original.length; i++) {
-//			if(i < 46 || i >= bearNumbers.length-11) 
-//				original[i] = bearNumbers[i];
-//			else 
-//				original[i] = 20;
-//		}
-//		original[original.length-1] = 0;
-//		
-//		playByteAIS(original);
+
+		//		byte[] original = new byte[bearNumbers.length];
+		//		for(int i = 0; i < original.length; i++) {
+		//			if(i < 46 || i >= bearNumbers.length-11) 
+		//				original[i] = bearNumbers[i];
+		//			else 
+		//				original[i] = 20;
+		//		}
+		//		original[original.length-1] = 0;
+		//		
+		//		playByteAIS(original);
 	}
-	
+
 	// Methods associated with playing WAV file
 
 	/**
@@ -96,7 +96,7 @@ public class SoundUtil {
 			Thread.sleep(1000);
 		} while(audioClip.isRunning());      
 	}
-	
+
 	/**
 	 * Converts audio file into audio input stream.
 	 * 
@@ -156,9 +156,9 @@ public class SoundUtil {
 		playClip(audioClip); //calls playClip() to play file
 
 	}
-	
+
 	//Methods associated with WAV file conversion
-	
+
 	/**
 	 * Reads in a WAV file and converts it into an array of byte data type
 	 * 
@@ -174,7 +174,7 @@ public class SoundUtil {
 		in.close();
 		return data;
 	}
-	
+
 	/**
 	 * converts an array of bytes into an Audio Input Stream so that it can be converted into a clip and played as 
 	 * an audio file
@@ -189,7 +189,7 @@ public class SoundUtil {
 		AudioInputStream AIS = AudioSystem.getAudioInputStream(IS);
 		return AIS;
 	}
-	
+
 	/**
 	 * Converts AIS to a clip and then calls the playClip() method to play it.
 	 * 
@@ -204,10 +204,116 @@ public class SoundUtil {
 		Clip byteAudioClip = makeClip(byteAudio);
 		playClip(byteAudioClip);
 	}
+
+	//Methods from GT - used to extract amplitude from recorded wave
+
+	private int[] extractAmplitudeFromFile(File wavFile) throws IOException, UnsupportedAudioFileException {  
+		byte[] arrFile; 
+		// create file input stream  
+		FileInputStream fis = new FileInputStream(wavFile);  
+		// create bytearray from file  
+		arrFile = new byte[(int) wavFile.length()];  
+		fis.read(arrFile);  
+		return extractAmplitudeFromFileByteArray(arrFile);  
+	}  
+	private int[] extractAmplitudeFromFileByteArray(byte[] arrFile) throws UnsupportedAudioFileException, IOException {  
+		// System.out.println("File : "+wavFile+""+arrFile.length);  
+		ByteArrayInputStream bis = new ByteArrayInputStream(arrFile);  
+		return extractAmplitudeFromFileByteArrayInputStream(bis);  
+	} 
 	
+	/**  
+	 * for extracting amplitude array the format we are using :16bit, 22khz, 1  
+	 * channel, littleEndian,  
+	 *   
+	 * @return PCM audioData  
+	 * @throws IOException 
+	 * @throws UnsupportedAudioFileException 
+	 * @throws Exception  
+	 */  
+	private int[] extractAmplitudeFromFileByteArrayInputStream(ByteArrayInputStream bis) throws UnsupportedAudioFileException, IOException {  
+		AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(bis);  
+		return extractAmplitudeDataFromAudioInputStream(audioInputStream);  
+	}  
+
+	private int[] extractAmplitudeDataFromAudioInputStream(AudioInputStream audioInputStream) {  
+		AudioFormat format = audioInputStream.getFormat();  
+		byte[] audioBytes = new byte[(int) (audioInputStream.getFrameLength() * format.getFrameSize())];  
+		// calculate durations  
+		long durationMSec = (long) ((audioInputStream.getFrameLength() * 1000) / audioInputStream.getFormat().getFrameRate());  
+		//double durationSec = durationMSec / 1000.0;  
+		// System.out.println("The current signal has duration "+durationSec+" Sec");  
+		try {  
+			audioInputStream.read(audioBytes);  
+		} catch (IOException e) {  
+			System.out.println("IOException during reading audioBytes");  
+			e.printStackTrace();  
+		}  
+		return extractAmplitudeDataFromAmplitudeByteArray(format, audioBytes);  
+	}  
+	private int[] extractAmplitudeDataFromAmplitudeByteArray(AudioFormat format, byte[] audioBytes) {  
+		// convert
+		int[]  audioData = null;  
+		if (format.getSampleSizeInBits() == 16) {  
+			int nlengthInSamples = audioBytes.length / 2;  
+			audioData = new int[nlengthInSamples];  
+			if (format.isBigEndian()) {  
+				for (int i = 0; i < nlengthInSamples; i++) {  
+					/* First byte is MSB (high order) */  
+					int MSB = audioBytes[2 * i];  
+					/* Second byte is LSB (low order) */  
+					int LSB = audioBytes[2 * i + 1];  
+					audioData[i] = MSB << 8 | (255 & LSB);  
+				}  
+			} else {  
+				for (int i = 0; i < nlengthInSamples; i++) {  
+					/* First byte is LSB (low order) */  
+					int LSB = audioBytes[2 * i];  
+					/* Second byte is MSB (high order) */  
+					int MSB = audioBytes[2 * i + 1];  
+					audioData[i] = MSB << 8 | (255 & LSB);  
+				}  
+			}  
+		} else if (format.getSampleSizeInBits() == 8) {  
+			int nlengthInSamples = audioBytes.length;  
+			audioData = new int[nlengthInSamples];  
+			if (format.getEncoding().toString().startsWith("PCM_SIGN")) {  
+				// PCM_SIGNED  
+				for (int i = 0; i < audioBytes.length; i++) {  
+					audioData[i] = audioBytes[i];  
+				}  
+			} else {  
+				// PCM_UNSIGNED  
+				for (int i = 0; i < audioBytes.length; i++) {  
+					audioData[i] = audioBytes[i] - 128;  
+				}  
+			}  
+		}
+		return audioData;  
+	}
+
+//	public byte[] getAudioBytes() {  
+//		return audioBytes;  
+//	}  
+//
+//	public double getDurationSec() {  
+//		return durationSec;  
+//	} 
+//
+//	public double getDurationMiliSec() {  
+//		return durationMSec;  
+//	}  
+//
+//	public int[] getAudioData() {  
+//		return audioData;  
+//	}  
+//	public AudioFormat getFormat() {  
+//		return format;  
+//	}  
+
 
 	// Methods associated with playing MP3 file
-	
+
 	/**
 	 * Reads in file reference to an mp3 and converts into SoundJLayer so that it can access methods of the 
 	 * SoundJLayer class and be played. 
@@ -227,7 +333,7 @@ public class SoundUtil {
 		public SoundJLayer(String filePath) {
 			this.filePath = filePath;
 		}
-		
+
 		/**
 		 * Writes filePath reference as a string url
 		 * @param filePath input file being written as string url
@@ -240,7 +346,7 @@ public class SoundUtil {
 					+ filePath;
 			return url;
 		}
-		
+
 		/**
 		 * reads input file into an AdvancedPlayer
 		 * @param url input string url that references audio file
@@ -255,7 +361,7 @@ public class SoundUtil {
 							javazoom.jl.player.FactoryRegistry.systemRegistry().createAudioDevice());
 			return player;
 		}
-		
+
 		/**
 		 * Reads AdvancedPlayer to a thread so that it can be played by the SoundJLayer class
 		 * @param player AdvancedPlayer reading in url file
@@ -266,7 +372,7 @@ public class SoundUtil {
 			this.playerThread = new Thread(this, "AudioPlayerThread");
 			return playerThread;
 		}
-		
+
 		/**
 		 * Converts file into a player and then a thread, and then runs that thread (playing the MP3 file).
 		 * @throws IOException if an IO operation has failed of been interrupted
@@ -290,13 +396,13 @@ public class SoundUtil {
 				ex.printStackTrace();
 			}
 		}
-		
+
 	}
-	
-	
-	
-	
-	
+
+
+
+
+
 	//TODO: figure out how to convert an audio file into an array of numbers and vice versa
 
 }
