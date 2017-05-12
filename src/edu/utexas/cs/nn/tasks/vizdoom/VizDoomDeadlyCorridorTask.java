@@ -100,7 +100,7 @@ public class VizDoomDeadlyCorridorTask<T extends Network> extends VizDoomTask<T>
 	}
 
 	public static void main(String[] args) {
-		Parameters.initializeParameterCollections(new String[] { "watch:false", "io:false", "netio:false", "doomEpisodeLength:2100",
+		Parameters.initializeParameterCollections(new String[] { "watch:true", "io:false", "netio:false", "doomEpisodeLength:2100",
 				"task:edu.utexas.cs.nn.tasks.vizdoom.VizDoomDeadlyCorridorTask", "trials:8", "printFitness:true"});
 		MMNEAT.loadClasses();
 		VizDoomDeadlyCorridorTask<TWEANN> vd = new VizDoomDeadlyCorridorTask<TWEANN>();
