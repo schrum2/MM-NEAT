@@ -73,6 +73,9 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 		}
 	}
 
+	/**
+	 * Initializes the DOOM game; further configuration won't take any effect after this method is run
+	 */
 	@Override
 	public void prep() {
 		// Initialize the game. Further configuration won't 
@@ -96,6 +99,9 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 		game.setDoomGamePath("vizdoom/scenarios/" + Parameters.parameters.stringParameter("gameWad"));
 	}
 
+	/**
+	 * Sets the rendering options for the DOOM game
+	 */
 	public final void setRendering() {
 		// TODO: Should be be able to set this from the command line somehow?
 		setRestrictedScreenResolution(ScreenResolution.RES_200X150); // smallest possible
@@ -156,6 +162,9 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 
 	public abstract void setDoomStateVariables();
 
+	/**
+	 * Sets the DOOM Game's timeout and perspective
+	 */
 	public final void setDoomMiscSettings() {
 		// Causes episodes to finish after designated tics (actions)
 		game.setEpisodeTimeout(Parameters.parameters.integerParameter("doomEpisodeLength"));
@@ -204,16 +213,22 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 				MiscUtil.waitForReadStringAndEnterKeyPress();	
 			}
 		}
-		//if(CommonConstants.watch){
-		//	System.out.print("Press enter to continue");
-		//	MiscUtil.waitForReadStringAndEnterKeyPress();
-		//}
+//		if(CommonConstants.watch){
+//			System.out.print("Press enter to continue");
+//			MiscUtil.waitForReadStringAndEnterKeyPress();
+//		}
 		
 		return getFitness(game);
 	}
 	
 	public abstract double[] interpretOutputs(double[] rawOutputs);
 
+	/**
+	 * Returns the fitness of a given DoomGame
+	 * 
+	 * @param game One instance of a DoomGame
+	 * @return The Total Reward from the specified DoomGame
+	 */
 	public Pair<double[], double[]> getFitness(DoomGame game){
 		return new Pair<double[], double[]>(new double[] { game.getTotalReward() }, new double[] {});
 	}
