@@ -23,7 +23,7 @@ public class ExtendedBertsekasTsitsiklisTetrisExtractorTests {
 	 */
 	@Test
 	public void number_of_holes() {
-		TetrisState testState = new TetrisState(); 
+		TetrisState testState = new TetrisState(); // TODO: NullPointerException starts here; appears to be an issue with the Parameters in TetrisState
 		BertsekasTsitsiklisTetrisExtractor EBTTE = new ExtendedBertsekasTsitsiklisTetrisExtractor();
 		// line piece
 		testState.worldState[166] = 1;

@@ -78,7 +78,7 @@ public class TetrisState {
 	private TetrisViewer viewer = null;
 
 	public TetrisState() {
-		if(Parameters.parameters.booleanParameter("tetrisAllowLine")){
+		if(Parameters.parameters.booleanParameter("tetrisAllowLine")){ // TODO: NullPointerException, but all of the following parameters exist in the Parameters class, under booleanOptions.
 			possibleBlocks.add(TetrisPiece.makeLine());
 		}
 		if(Parameters.parameters.booleanParameter("tetrisAllowSquare")){
@@ -99,6 +99,27 @@ public class TetrisState {
 		if(Parameters.parameters.booleanParameter("tetrisAllowJShape")){
 			possibleBlocks.add(TetrisPiece.makeJShape());
 		}
+//		if(true){ // Used to test if just Parameters are not working; when all Parameters are "true," the test works.
+//			possibleBlocks.add(TetrisPiece.makeLine());
+//		}
+//		if(true){
+//			possibleBlocks.add(TetrisPiece.makeSquare());
+//		}
+//		if(true){
+//			possibleBlocks.add(TetrisPiece.makeTri());
+//		}
+//		if(true){
+//			possibleBlocks.add(TetrisPiece.makeSShape());
+//		}
+//		if(true){
+//			possibleBlocks.add(TetrisPiece.makeZShape());
+//		}
+//		if(true){
+//			possibleBlocks.add(TetrisPiece.makeLShape());
+//		}
+//		if(true){
+//			possibleBlocks.add(TetrisPiece.makeJShape());
+//		}
 
 		if (CommonConstants.watch) {
 			if (TetrisViewer.current == null) {
