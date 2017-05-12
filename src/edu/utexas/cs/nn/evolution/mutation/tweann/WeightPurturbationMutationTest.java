@@ -30,13 +30,17 @@ public class WeightPurturbationMutationTest {
 		tg1 = null;
 		MMNEAT.clearClasses();
 	}
-
+	
+	/**
+	 * Ensures that weight perturbation mutation is functional
+	 */
 	@Test
 	public void test() {
 		ArrayList<LinkGene> links = tg1.links;
 		System.out.println("tg1: " + links);
 		WeightPurturbationMutation WPM = new WeightPurturbationMutation();
 		
+		//fill array with original weights
 		double[] originalWeights = new double[links.size()];
 		System.out.println("  Original: " + links.size());
 		int originalLength = links.size();
@@ -44,7 +48,10 @@ public class WeightPurturbationMutationTest {
 			originalWeights[i] = links.get(i).weight;
 			System.out.println("	Weight at " + i + " is " + links.get(i).weight);
 		}
-		WPM.mutate(tg1);
+		
+		WPM.mutate(tg1); //weight perturbation mutation
+		
+		//fill array with mutated weights
 		double[] mutatedWeights = new double[links.size()];
 		System.out.println("  Mutated: " + links.size());
 		for(int j = 0; j < links.size(); j++) {
@@ -56,7 +63,7 @@ public class WeightPurturbationMutationTest {
 		System.out.println("new links: " + Arrays.toString(mutatedWeights));
 		
 		assertEquals(originalLength, links.size()); // the number of links won't change when mutated
-		assertFalse(originalWeights.equals(mutatedWeights));
+		assertFalse(originalWeights.equals(mutatedWeights)); //mutation has successfully occurred
 	}
 
 }

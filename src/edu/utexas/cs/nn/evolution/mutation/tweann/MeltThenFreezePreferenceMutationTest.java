@@ -37,6 +37,7 @@ public class MeltThenFreezePreferenceMutationTest {//TODO
 
 	@Test
 	public void test() {
+		//checks functionality of freeze() - successfully freezes node when called
 		for(NodeGene node : tg1.nodes) {
 			if(node.ntype == Node.NTYPE_INPUT || node.ntype == Node.NTYPE_HIDDEN) {
 				node.freeze();
@@ -53,7 +54,7 @@ public class MeltThenFreezePreferenceMutationTest {//TODO
 				numFrozen++;
 			}
 		}
-		assertTrue(numFrozen == tg1.numModules +1 || numFrozen == tg1.numModules + 2);
+		assertTrue(numFrozen == tg1.numModules +1 || numFrozen == tg1.numModules + 2); //asserts that number of nodes frozen is correct
 	}
 
 }

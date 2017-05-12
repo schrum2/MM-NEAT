@@ -30,7 +30,12 @@ public class AllWeightMutationTest {
 		tg1 = null;
 		MMNEAT.clearClasses();
 	}
-
+	
+	/**
+	 * New array list is created based on constructed TWEANNGenotype 
+	 * and looped through to test that all weights have been
+	 * properly mutated.
+	 */
 	@Test
 	public void test() {
 		ArrayList<LinkGene> links = tg1.links;

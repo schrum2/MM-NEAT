@@ -34,7 +34,7 @@ public class FullyConnectedModuleMutationTest {
 	}
 	tg1.moduleDuplication();
 	tg1.moduleDuplication();
-	tg2 = (TWEANNGenotype) tg1.copy();
+	tg2 = (TWEANNGenotype) tg1.copy(); //make copy for testing changes to tg1
 	}
 	
 	@After
@@ -45,12 +45,19 @@ public class FullyConnectedModuleMutationTest {
 		MMNEAT.clearClasses();
 	}
 	
+	/**
+	 * because tg2 was a copy of tg1, this ensures that mutation successfully manipulates contents of TWEANNgenotype
+	 */
 	@Test
 	public void testMutate() {
 		fcmm.mutate(tg1);
 		assertFalse(tg1.links.equals(tg2.links));
 	}
-
+	
+	/**
+	 * Shows that adding a TWEANNGenotype module to a FullyConnectedModuleMutation changes the number of modules
+	 * of the TWEANNGenotype, but does not manipulate the links of the TWEANNGenotype 
+	 */
 	@Test
 	public void testAddModule() {
 		ArrayList<LinkGene> links = tg1.links;

@@ -41,7 +41,12 @@ public class DeleteLinkMutationTest {
 		tg1 = null;
 		tg2 = null;
 	}
-
+	
+	/**
+	 * Tests ensuring proper functioning of DeleteLinkMutation by checking to make sure that 
+	 * the size is updated accordingly for each link deletion, and that links can be added
+	 * and subsequently deleted after emptying, etc.
+	 */
 	@Test
 	public void realTest() { 
 		tg1.meltNetwork();
@@ -65,7 +70,10 @@ public class DeleteLinkMutationTest {
 		delete.mutate(tg1);
 		assertEquals(tg1.links.size(), 0);
 	}
-
+	
+	/**
+	 * Tests that all visual aspects of TWEANN network are functioning properly
+	 */
 	public void visualTest() {
 		tg1.meltNetwork();
 		DrawingPanel p1 = new DrawingPanel(TWEANN.NETWORK_VIEW_DIM, TWEANN.NETWORK_VIEW_DIM, "Net 1");

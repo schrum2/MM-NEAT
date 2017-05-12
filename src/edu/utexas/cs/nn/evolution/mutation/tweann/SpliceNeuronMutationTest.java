@@ -30,7 +30,10 @@ public class SpliceNeuronMutationTest {
 		tg1 = null;
 		MMNEAT.clearClasses();
 	}
-
+	
+	/**
+	 * Tests that mutation properly occurs by splitting a neuron
+	 */
 	@Test
 	public void test() {
 		ArrayList<NodeGene> nodes = tg1.nodes;
@@ -39,28 +42,31 @@ public class SpliceNeuronMutationTest {
 		double[] originalInnovations = new double[nodes.size()];
 		int[] originalNodeTypes = new int[nodes.size()];
 		System.out.println("  Original: " + nodes.size());
+		//asserts that all original nodes are correct
 		for(int i = 0; i < nodes.size(); i++) {
 			assertTrue(nodes.get(i).ntype != Node.NTYPE_HIDDEN);
 			originalNodeTypes[i] = nodes.get(i).ntype;
 			originalInnovations[i] = nodes.get(i).innovation;
 			System.out.println("	Innovation at " + i + " is " + nodes.get(i).innovation);
 		}
-		SNM.mutate(tg1);
+		
+		SNM.mutate(tg1); //split neuron mutation
 		double[] mutatedInnovations = new double[nodes.size()];
 		int[] mutatedNodeTypes = new int[nodes.size()];
 		System.out.println("  Mutated: " + nodes.size());
+		//asserts that all mutated nodes are correct
 		for(int j = 0; j < nodes.size(); j++) {
 			mutatedNodeTypes[j] = nodes.get(j).ntype;
 			mutatedInnovations[j] = nodes.get(j).innovation;
 			System.out.println("	Innovation at " + j + " is " + nodes.get(j).innovation);
 		}
 		
-		assertEquals(originalInnovations.length+1, mutatedInnovations.length);
-		assertFalse(originalInnovations.equals(mutatedInnovations));
+		assertEquals(originalInnovations.length+1, mutatedInnovations.length); //mutated innovation should be one unit shorter than original innovation 
+		assertFalse(originalInnovations.equals(mutatedInnovations)); //asserts that mutation has occurred
 		int buffer = 1;
 		for(int n = 0; n < buffer; n++){
 			if(originalNodeTypes[n] != mutatedNodeTypes[n]){
-				assertEquals(mutatedNodeTypes[n], Node.NTYPE_HIDDEN);
+				assertEquals(mutatedNodeTypes[n], Node.NTYPE_HIDDEN); //assert that mutated nodes are of hidden type
 			} else {
 				buffer++;
 			}
