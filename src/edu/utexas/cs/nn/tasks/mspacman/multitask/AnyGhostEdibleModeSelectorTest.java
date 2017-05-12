@@ -1,8 +1,8 @@
 package edu.utexas.cs.nn.tasks.mspacman.multitask;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
+import java.util.Arrays;
 import java.util.EnumMap;
 
 import org.junit.AfterClass;
@@ -11,6 +11,7 @@ import org.junit.Test;
 
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
+import edu.utexas.cs.nn.util.MiscUtil;
 import pacman.game.Constants.GHOST;
 import pacman.game.Constants.MOVE;
 import pacman.game.Game;
@@ -41,7 +42,7 @@ public class AnyGhostEdibleModeSelectorTest {
 		// Create a Ms. Pac-Man game
 		GameFacade g = new GameFacade(new Game(0));
 		// View the game to create tests, but disable afterward		
-		//GameView gv = new GameView(g.newG).showGame();
+//		GameView gv = new GameView(g.newG).showGame();
 
 		// Assign moves to the ghosts: NEUTRAL is default
 		EnumMap<GHOST,MOVE> gm = new EnumMap<GHOST,MOVE>(GHOST.class);
@@ -52,24 +53,24 @@ public class AnyGhostEdibleModeSelectorTest {
 		g.newG.advanceGame(MOVE.LEFT, gm); // Everyone moves
 		
 		// Update view
-		//gv.repaint();
+//		gv.repaint();
 		// Pause for user to press enter
-		//MiscUtil.waitForReadStringAndEnterKeyPress();
+//		MiscUtil.waitForReadStringAndEnterKeyPress();
 				
 		// The game has to be passed to the mode selector before each decision
 		select.giveGame(g);
 		// Ghosts still inside lair
 		assertEquals(AnyGhostEdibleModeSelector.NO_EDIBLE_GHOSTS, select.mode());
-
+		
 		// Loop until ghosts all leave lair
 		while(g.anyActiveGhostInLair()) {
-			g.newG.advanceGame(MOVE.LEFT, gm); 	
+			g.newG.advanceGame(MOVE.LEFT, gm);
 		}
 
 		// Update view
-		//gv.repaint();
+//		gv.repaint();
 		// Pause for user to press enter
-		//MiscUtil.waitForReadStringAndEnterKeyPress();
+//		MiscUtil.waitForReadStringAndEnterKeyPress();
 				
 		// The game has to be passed to the mode selector before each decision
 		select.giveGame(g);
@@ -95,9 +96,9 @@ public class AnyGhostEdibleModeSelectorTest {
 		g.newG.advanceGame(MOVE.DOWN, gm); 	
 		
 		// Update view
-		//gv.repaint();
+//		gv.repaint();
 		// Pause for user to press enter
-		//MiscUtil.waitForReadStringAndEnterKeyPress();
+//		MiscUtil.waitForReadStringAndEnterKeyPress();
 		
 		// The game has to be passed to the mode selector before each decision
 		select.giveGame(g);
@@ -106,9 +107,9 @@ public class AnyGhostEdibleModeSelectorTest {
 
 		
 		// Update view
-		//gv.repaint();
+//		gv.repaint();
 		// Pause for user to press enter
-		//MiscUtil.waitForReadStringAndEnterKeyPress();
+//		MiscUtil.waitForReadStringAndEnterKeyPress();
 
 		// Chase the edible ghosts
 		g.newG.advanceGame(MOVE.UP, gm); 	
@@ -203,9 +204,9 @@ public class AnyGhostEdibleModeSelectorTest {
 		
 	
 		// Update view
-		//gv.repaint();
+//		gv.repaint();
 		// Pause for user to press enter
-		//MiscUtil.waitForReadStringAndEnterKeyPress();
+//		MiscUtil.waitForReadStringAndEnterKeyPress();
 	
 		// The game has to be passed to the mode selector before each decision
 		select.giveGame(g);
@@ -237,9 +238,9 @@ public class AnyGhostEdibleModeSelectorTest {
 		g.newG.advanceGame(MOVE.RIGHT, gm); 	
 
 		// Update view
-		//gv.repaint();
+//		gv.repaint();
 		// Pause for user to press enter
-		//MiscUtil.waitForReadStringAndEnterKeyPress();
+//		MiscUtil.waitForReadStringAndEnterKeyPress();
 		
 		// The game has to be passed to the mode selector before each decision
 		select.giveGame(g);
@@ -349,9 +350,9 @@ public class AnyGhostEdibleModeSelectorTest {
 		g.newG.advanceGame(MOVE.RIGHT, gm);   
 		
 		// Update view
-		//gv.repaint();
+//		gv.repaint();
 		// Pause for user to press enter
-		//MiscUtil.waitForReadStringAndEnterKeyPress();
+//		MiscUtil.waitForReadStringAndEnterKeyPress();
 		
 		// The game has to be passed to the mode selector before each decision
 		select.giveGame(g);
@@ -440,9 +441,9 @@ public class AnyGhostEdibleModeSelectorTest {
 		assertEquals(AnyGhostEdibleModeSelector.SOME_EDIBLE_GHOST, select.mode());
 		
 		// Update view
-		//gv.repaint();
+//		gv.repaint();
 		// Pause for user to press enter
-		//MiscUtil.waitForReadStringAndEnterKeyPress();
+//		MiscUtil.waitForReadStringAndEnterKeyPress();
 
 	}
 
@@ -453,9 +454,39 @@ public class AnyGhostEdibleModeSelectorTest {
 
 	@Test
 	public void testAssociatedFitnessScores() {
-		// TODO: Use Parameters to set each possible combination of values assigned in the constructor
-		//       and check each resulting array
-		fail("Not yet implemented");
+		Parameters.parameters.setBoolean("awardProperPowerPillEating",	 true);
+		Parameters.parameters.setBoolean("punishImproperPowerPillEating",true);
+		Parameters.parameters.setBoolean("levelObjective",				 true);
+		select = new AnyGhostEdibleModeSelector();
+		assertArrayEquals(select.associatedFitnessScores(), new int[]{12,13}); //TTT
+		
+		Parameters.parameters.setBoolean("levelObjective",				 false);
+		select = new AnyGhostEdibleModeSelector();
+		assertArrayEquals(select.associatedFitnessScores(), new int[]{12 , 13}); //TTF
+		
+		Parameters.parameters.setBoolean("punishImproperPowerPillEating",false);
+		select = new AnyGhostEdibleModeSelector();
+		assertArrayEquals(select.associatedFitnessScores(), new int[]{12 , 3}); //TFF
+		
+		Parameters.parameters.setBoolean("levelObjective",				 true);
+		select = new AnyGhostEdibleModeSelector();
+		assertArrayEquals(select.associatedFitnessScores(), new int[]{12 , 21}); //TFT
+		
+		Parameters.parameters.setBoolean("awardProperPowerPillEating",	 false);
+		select = new AnyGhostEdibleModeSelector();
+		assertArrayEquals(select.associatedFitnessScores(), new int[]{1 , 21}); //FFT
+		
+		Parameters.parameters.setBoolean("levelObjective",				 false);
+		select = new AnyGhostEdibleModeSelector();
+		assertArrayEquals(select.associatedFitnessScores(), new int[]{1 , 3}); //FFF
+		
+		Parameters.parameters.setBoolean("punishImproperPowerPillEating",true);
+		select = new AnyGhostEdibleModeSelector();
+		assertArrayEquals(select.associatedFitnessScores(), new int[]{1 , 13}); //FTF
+		
+		Parameters.parameters.setBoolean("levelObjective",				 true);
+		select = new AnyGhostEdibleModeSelector();
+		assertArrayEquals(select.associatedFitnessScores(), new int[]{1 , 13}); //FTT
 	}
 
 }
