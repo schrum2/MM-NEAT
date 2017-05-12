@@ -45,14 +45,16 @@ public class PinballTask<T extends Network> extends NoisyLonerTask<T>implements 
 		PinBall p = new PinBall("data/pinball/pinball_simple_single.cfg");
 		Network n = individual.getPhenotype();
 		double fitness = 0;
+		int timeLimit = 1000;
 		do {
 			State s = p.getState();
 			double[] sensors = s.getDescriptor();
 			double[] outputs = n.process(sensors);
 			int action = StatisticsUtilities.argmax(outputs);
 			double rew = p.step(action);
-			fitness += rew;			
-		} while(!p.episodeEnd());
+			fitness += rew;
+			timeLimit--;
+		} while(!p.episodeEnd() && timeLimit > 0);
 		
 		Pair<double[], double[]> evalResults = new Pair<double[], double[]>(new double[] {fitness}, new double[0]);			
 
