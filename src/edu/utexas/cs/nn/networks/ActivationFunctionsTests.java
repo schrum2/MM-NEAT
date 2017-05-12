@@ -161,4 +161,46 @@ public class ActivationFunctionsTests {
 		assertEquals(ActivationFunctions.Softplus(test5), Math.log(1 + Math.pow(Math.E, test5)), .000001);
 		assertEquals(ActivationFunctions.Softplus(test6), Math.log(1 + Math.pow(Math.E, test6)), .000001);
 	}
+	
+	/**
+	 * tests full sawtooth function, output very similar to sawtooth but values are doubled
+	 */
+	@Test
+	public void test_FullSawtooth() {
+		double[] keyActivationInputs = { -1, -1.5, 0, 0.7, 1, 1.666 };
+		double[] keyActivationAnswers = { 0, 1.0, 0, 1.4, 0, 1.332 };
+		assertEquals(keyActivationInputs.length, keyActivationAnswers.length);
+		for (int i = 0; i < keyActivationAnswers.length; i++) {
+			assertEquals(keyActivationAnswers[i], ActivationFunctions.fullSawtooth(keyActivationInputs[i]), .00001);
+		}
+	}
+	
+	/**
+	 * tests triangle wave function, tests are similar to full sawtooth because function is simply the absolute
+	 * value of full sawtooth
+	 */
+	@Test
+	public void test_TriangleWave() {
+		double[] keyActivationInputs = { -1, -1.5, 0, 0.7, 1, 1.666 };
+		double[] keyActivationAnswers = { 0, 1.0, 0, 1.4, 0, 1.332 };
+		assertEquals(keyActivationInputs.length, keyActivationAnswers.length);
+		for (int i = 0; i < keyActivationAnswers.length; i++) {
+			assertEquals(keyActivationAnswers[i], ActivationFunctions.triangleWave(keyActivationInputs[i]), .00001);
+		}
+	}
+	
+	/**
+	 * tests triangle wave function - avoiding points where frequency alternates because slope is infinite
+	 * here so there is not a defined answer
+	 */
+	@Test
+	public void test_SquareWave() {
+		double[] keyActivationInputs = { -2.1, -1.4, 0.1, 0.7, 3.8, 1.666 };
+		double[] keyActivationAnswers = { -1.0, -1.0, 1.0, -1.0, -1.0,  -1.0};
+		assertEquals(keyActivationInputs.length, keyActivationAnswers.length);
+		for (int i = 0; i < keyActivationAnswers.length; i++) {
+			assertEquals(keyActivationAnswers[i], ActivationFunctions.squareWave(keyActivationInputs[i]), .00001);
+		}
+	}
+	
 }

@@ -99,7 +99,7 @@ public class ActivationFunctions {
 		if(Parameters.parameters.booleanParameter("includeTriangleWaveFunction")) {
 			availableActivationFunctions.add(FTYPE_TRIANGLEWAVE);
 		}
-		if(Parameters.parameters.booleanParameter("includeSquareFunction")) {
+		if(Parameters.parameters.booleanParameter("includeSquareWaveFunction")) {
 			availableActivationFunctions.add(FTYPE_SQUAREWAVE);
 		}
 	}
@@ -183,21 +183,21 @@ public class ActivationFunctions {
 			assert!Double.isNaN(activation) : "leaky ReLU returns NaN on " + sum;
 			assert!Double.isInfinite(activation) : "leaky ReLU is infinite on " + sum + " from " + activation;
 			break;
-//		case ActivationFunctions.FTYPE_FULLSAWTOOTH:
-//			activation = ActivationFunctions.fullSawtooth(sum);
-//			assert!Double.isNaN(activation) : "fullSawtooth returns NaN on " + sum;
-//			assert!Double.isInfinite(activation) : "fullSawtooth is infinite on " + sum + " from " + activation;
-//			break;
-//		case ActivationFunctions.FTYPE_TRIANGLEWAVE:
-//			activation = ActivationFunctions.triangleWave(sum);
-//			assert!Double.isNaN(activation) : "triangleWave returns NaN on " + sum;
-//			assert!Double.isInfinite(activation) : "triangleWave is infinite on " + sum + " from " + activation;
-//			break;
-//		case ActivationFunctions.FTYPE_SQUAREWAVE:
-//			activation = ActivationFunctions.squareWave(sum);
-//			assert!Double.isNaN(activation) : "squareWave returns NaN on " + sum;
-//			assert!Double.isInfinite(activation) : "squareWave is infinite on " + sum + " from " + activation;
-//			break;
+		case ActivationFunctions.FTYPE_FULLSAWTOOTH:
+			activation = ActivationFunctions.fullSawtooth(sum);
+			assert!Double.isNaN(activation) : "fullSawtooth returns NaN on " + sum;
+			assert!Double.isInfinite(activation) : "fullSawtooth is infinite on " + sum + " from " + activation;
+			break;
+		case ActivationFunctions.FTYPE_TRIANGLEWAVE:
+			activation = ActivationFunctions.triangleWave(sum);
+			assert!Double.isNaN(activation) : "triangleWave returns NaN on " + sum;
+			assert!Double.isInfinite(activation) : "triangleWave is infinite on " + sum + " from " + activation;
+			break;
+		case ActivationFunctions.FTYPE_SQUAREWAVE:
+			activation = ActivationFunctions.squareWave(sum);
+			assert!Double.isNaN(activation) : "squareWave returns NaN on " + sum;
+			assert!Double.isInfinite(activation) : "squareWave is infinite on " + sum + " from " + activation;
+			break;
 		}
 		return activation;
 	}
@@ -505,6 +505,16 @@ public class ActivationFunctions {
 	}
 	
 	/**
+	 * Generalization of fullSawtooth with only one parameter.
+	 * @param x Input parameter
+	 * @return value of fullSawtooth(x, 1)
+	 */
+	public static double fullSawtooth(double x) {
+		return fullSawtooth(x,1);
+	}
+	
+	
+	/**
 	 * Similar to sawtooth function, but with a range of -1 to 1. 
 	 * 
 	 * @param x function parameter
@@ -523,8 +533,18 @@ public class ActivationFunctions {
 	 * @param a period 
 	 * @return value of triangleWave(x, a)
 	 */
-	public static double triangleWave(double x, double a) {
-		return Math.abs(fullSawtooth(x, a));
+	public static double triangleWave(double x) {
+		return Math.abs(fullSawtooth(x));
+	}
+	
+	/**
+	 * Generalization of square wave function with only one parameter.
+	 * 
+	 * @param x function parameter
+	 * @return value of squareWave(x, 1, 1)
+	 */
+	public static double squareWave(double x) {
+		return squareWave(x, 1, 1);
 	}
 	
 	/**
@@ -538,6 +558,10 @@ public class ActivationFunctions {
 	 * @return value of squareWave(x, p, a)
 	 */
 	public static double squareWave(double x, double p, double a) {
-		return a * 1/Math.sin(2 * Math.PI/p * x) * Math.abs(Math.sin(2 * Math.PI/p * x));
+		double sineCalculation = Math.sin(2 * Math.PI/p * x);
+		if (sineCalculation == 0) //checks for frequency switch where a discontinuity would occur
+			return 0; 
+		else
+			return a * 1/sineCalculation * Math.abs(sineCalculation);
 	}
 }
