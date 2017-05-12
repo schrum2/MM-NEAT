@@ -2,6 +2,7 @@ package edu.utexas.cs.nn.breve2D;
 
 import edu.utexas.cs.nn.breve2D.agent.*;
 import edu.utexas.cs.nn.breve2D.dynamics.Breve2DDynamics;
+import edu.utexas.cs.nn.breve2D.dynamics.FrontBackRamming;
 import edu.utexas.cs.nn.breve2D.dynamics.InterleavedFightOrFlight;
 import edu.utexas.cs.nn.parameters.Parameters;
 
@@ -22,15 +23,15 @@ public class Breve2DExec {
 		AgentController[] monsters = new AgentController[4];
 		for (int i = 0; i < monsters.length; i++) {
 			monsters[i] = new RushingMonster(i);
-			// monsters[i] = new AttractRepelMonster(i, true);
-			// monsters[i] = new EscapingMonster(i);
-			// monsters[i] = new StationaryAgent();
+			//monsters[i] = new AttractRepelMonster(i, true);
+			//monsters[i] = new EscapingMonster(i);
+			//monsters[i] = new StationaryAgent();
 		}
 
-		// Breve2DDynamics dyn = new FrontBackRamming();
-		Breve2DDynamics dyn = new InterleavedFightOrFlight();
-		// AgentController agent = new FrontBackRammingEnemy();
-		// AgentController agent = new PredatorPreyEnemy();
+		Breve2DDynamics dyn = new FrontBackRamming();
+//		Breve2DDynamics dyn = new InterleavedFightOrFlight();
+//		AgentController agent = new FrontBackRammingEnemy();
+		//AgentController agent = new PredatorPreyEnemy();
 		AgentController agent = new HumanPlayer();
 
 		// exec.runGameTimed(new PlayerPreyMonsterPredator(), new HumanPlayer(),
@@ -39,8 +40,8 @@ public class Breve2DExec {
 		// RushingPlayer(), monsters, true);
 		// exec.runGameTimed(new PlayerPredatorMonsterPrey(monsters.length,
 		// 600), new HumanPlayer(), monsters, true);
-		// exec.runGameTimed(new RammingPlayer(), new RushingPlayer(), monsters,
-		// true);
+//		 exec.runGameTimed(new RammingPlayer(), new RushingPlayer(), monsters,
+//		 true);
 		// exec.runGameTimed(new PlayerPredatorMonsterPrey(monsters.length,
 		// 600), new RushingPlayer(), monsters, true);
 		// exec.runGameTimed(new PredatorPrey(), new HumanPlayer(), monsters,
