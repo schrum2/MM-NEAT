@@ -32,14 +32,18 @@ public class MeltThenFreezeAlternateMutationTest {
 		mtfam = null;
 		MMNEAT.clearClasses();
 	}
-
+	
+	/**
+	 * Loops through TWEANNGenotype and tests whether the data at the nodes has been frozen or not based on
+	 * the state of the preference neurons
+	 */
 	@Test
 	public void test() {
-		tg1.insertPreferenceNeuron(0);
+		tg1.insertPreferenceNeuron(0); //not frozen
 		for(int i = 0; i < tg1.nodes.size(); i++) {
 		assertFalse(tg1.nodes.get(i).isFrozen());
 		}
-		tg1.freezePreferenceNeurons(); // sometimes fails?
+		tg1.freezePreferenceNeurons(); //frozen // sometimes fails?
 		int firstPreference = tg1.outputStartIndex() + tg1.neuronsPerModule;
 		mtfam.mutate(tg1);
 		for(int i = 0; i < firstPreference; i++) {

@@ -19,6 +19,7 @@ public class FullyConnectedModuleMutation extends ModuleMutation {
 
 	/**
 	 * determines whether or not to perform FCMMmutation
+	 * @return true if FCMMmutation should be performed, false otherwise
 	 */
 	@Override
 	public boolean perform() {
@@ -32,7 +33,7 @@ public class FullyConnectedModuleMutation extends ModuleMutation {
 	public void addModule(TWEANNGenotype genotype) {
 		int linksAdded = genotype.fullyConnectedModeMutation();
 		int[] subs = new int[linksAdded];
-		for (int i = 0; i < linksAdded; i++) {
+		for (int i = 0; i < linksAdded; i++) { //copies ascending integer values into an array of the size of linksAdded
 			subs[i] = i + 1;
 		}
 		cullForBestWeight(genotype, subs);

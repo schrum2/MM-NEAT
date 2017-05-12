@@ -39,8 +39,10 @@ public class MMRTest {
 
 	@Test
 	public void test() {
+		//tg1 and tg2 are identical
 		assertEquals(tg1.numIn, tg2.numIn);
 		assertEquals(tg1.numOut, tg2.numOut);
+		//mutation occurs and this is no longer true
 		mmr.mutate(tg1);
 		assertEquals(tg1.numModules, 2);
 		
@@ -49,6 +51,7 @@ public class MMRTest {
 		System.out.println("num in and out" + tg.numInputs() + " : " + tg.numOutputs());
 		double[] inputs = {.1, .2, .3, .4, .5};
 		tg.process(inputs);
+		//tests that no duplicates are being added, and that ouput functions properly
 		for(int i = 0; i < tg.moduleOutput(0).length; i++) {
 			assertTrue( tg.moduleOutput(0)[i] != tg.moduleOutput(1)[i]);
 		}

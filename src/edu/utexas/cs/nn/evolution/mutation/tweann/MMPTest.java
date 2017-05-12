@@ -36,6 +36,9 @@ public class MMPTest {
 		EvolutionaryHistory.initArchetype(0);
 		mmp1 = new MMP();
 	}
+	/**
+	 * test ensuring functionality of module mutation and the linking of modules that are mutated
+	 */
 	@Test
 	public void test_moduleMutation() {
 		assertEquals(tg1.numOut, 4);
@@ -45,6 +48,7 @@ public class MMPTest {
 		TWEANN t1 = tg1.getPhenotype();
 		int module1Index = tg1.numIn;
 		int module2Index = t1.neuronsPerModule() + 1 + module1Index;
+		//asserts that after mutated modules are added, they are linked properly
 		assertTrue(tg1.getLinkBetween(tg1.nodes.get(module1Index + 0).innovation, tg1.nodes.get(module2Index + 0).innovation) != null);
 		assertTrue(tg1.getLinkBetween(tg1.nodes.get(module1Index + 1).innovation, tg1.nodes.get(module2Index + 1).innovation) != null);
 		assertTrue(tg1.getLinkBetween(tg1.nodes.get(module1Index + 2).innovation, tg1.nodes.get(module2Index + 2).innovation) != null);

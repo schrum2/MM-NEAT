@@ -6,11 +6,16 @@ import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.util.random.RandomNumbers;
 
 public class WeightRandomReplacement extends TWEANNMutation {
-
+	/**
+	 * default constructor
+	 */
 	public WeightRandomReplacement() {
 		super(1.0);//for its use, will always happen, rate will be 1
 	}
-
+	
+	/**
+	 * Loops through genotype and randomizes all of its links.
+	 */
 	@Override
 	public void mutate(Genotype<TWEANN> genotype) {//randomizes all links in genotype
 		TWEANNGenotype geno = (TWEANNGenotype) genotype;

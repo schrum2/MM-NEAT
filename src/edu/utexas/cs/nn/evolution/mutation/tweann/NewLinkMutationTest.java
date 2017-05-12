@@ -43,6 +43,9 @@ public class NewLinkMutationTest {
 		MMNEAT.clearClasses();
 	}
 	
+	/**
+	 * Tests that adding a synaptic link between two nodes can be accomplished successfully
+	 */
 	@Test
 	public void testLinkMutation() {
 		double weight = 0.5;
@@ -61,7 +64,7 @@ public class NewLinkMutationTest {
 		for (int i = 0; i < nodes.size(); i++) {
 			nodeInnos.add(nodes.get(i).innovation);
 		}
-		for (LinkGene lg : links) {
+		for (LinkGene lg : links) { //asserts that all links have been added properly
 			assertTrue(nodeInnos.contains(lg.sourceInnovation));
 			assertTrue(nodeInnos.contains(lg.targetInnovation));
 		}

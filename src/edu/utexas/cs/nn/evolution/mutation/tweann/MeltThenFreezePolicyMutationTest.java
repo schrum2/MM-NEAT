@@ -47,7 +47,8 @@ public class MeltThenFreezePolicyMutationTest {//TODO
 			if(node.ntype == Node.NTYPE_INPUT || node.ntype == Node.NTYPE_HIDDEN) {
 				node.freeze();
 			}
-		}
+		}	
+		//checks that calling freeze() successfully freezes node
 		for(NodeGene node : nodes) {
 			if(node.ntype == Node.NTYPE_INPUT || node.ntype == Node.NTYPE_HIDDEN) {
 				assertEquals(node.isFrozen(), true);
@@ -65,7 +66,7 @@ public class MeltThenFreezePolicyMutationTest {//TODO
 		}
 		System.out.println("num outputs: " + tg1.numOut + " num policy as calculated: " + ((tg1.numIn * 2)- tg1.numModules) + " num modules: " + tg1.numModules);
 		System.out.println("Nodes after:" + tg1.nodes.toString());
-		assertEquals(numFrozen, tg1.nodes.size() - tg1.numModules);
+		assertEquals(numFrozen, tg1.nodes.size() - tg1.numModules); //checks that number of frozen nodes is accurate
 	}
 
 }

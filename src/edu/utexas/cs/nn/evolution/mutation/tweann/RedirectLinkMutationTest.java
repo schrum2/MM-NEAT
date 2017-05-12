@@ -33,7 +33,10 @@ public class RedirectLinkMutationTest {
 		rlm = null;
 		MMNEAT.clearClasses();
 	}
-
+	
+	/**
+	 * Tests that links can be redirected after one is deleted.
+	 */
 	@SuppressWarnings("unchecked")
 	@Test
 	public void test() {
@@ -52,6 +55,7 @@ public class RedirectLinkMutationTest {
 				missingLink = link;
 			}
 		}
+		//assert that missingLink has been reassigned (because link was still contained in copy)
 		assertTrue("all links match!", missingLink != null);
 		LinkGene foundLink = null;
 		for(LinkGene link : copy.links) {
@@ -59,6 +63,7 @@ public class RedirectLinkMutationTest {
 				foundLink = link;
 			}
 		}
+		//assert that foundLink has been reassigned (because link was still contained in LinkGene)
 		assertTrue(foundLink != null);
 	}
 

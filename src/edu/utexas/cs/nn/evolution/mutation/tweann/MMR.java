@@ -28,7 +28,7 @@ public class MMR extends ModuleMutation {
 		int linksAdded = genotype.moduleMutation(true, 
 				CommonConstants.fs ? CommonConstants.fsLinksPerOut : genotype.numIn);
 		int[] subs = new int[linksAdded];
-		for (int i = 0; i < linksAdded; i++) {
+		for (int i = 0; i < linksAdded; i++) { //adds ascending integers into an array that is the size of the amount of links added
 			subs[i] = i + 1;
 		}
 		cullForBestWeight(genotype, subs);
