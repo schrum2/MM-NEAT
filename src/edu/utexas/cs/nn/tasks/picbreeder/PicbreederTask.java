@@ -88,15 +88,18 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	private static final int RELU_CHECKBOX_INDEX = -19;//TODO
 	private static final int SOFTPLUS_CHECKBOX_INDEX = -20;
 	private static final int LEAKY_RELU_CHECKBOX_INDEX = -21;
+	private static final int FULL_SAWTOOTH_CHECKBOX_INDEX = -22;
+	private static final int TRIANGLE_WAVE_CHECKBOX_INDEX = -23;
+	private static final int SQUARE_WAVE_CHECKBOX_INDEX = -24;
 	private static final int BORDER_THICKNESS = 4;
 	private static final int MPG_MIN = 0;//minimum # of mutations per generation
 	private static final int MPG_MAX = 10;//maximum # of mutations per generation
 
 	//Indices of inputMultiplier effects
-	private static final int XEFFECT_CHECKBOX_INDEX = -22;
-	private static final int YEFFECT_CHECKBOX_INDEX = -23;
-	private static final int CENTERDISTANCE_CHECKBOX_INDEX = -24;
-	private static final int BIAS_CHECKBOX_INDEX = -25;
+	private static final int XEFFECT_CHECKBOX_INDEX = -25;
+	private static final int YEFFECT_CHECKBOX_INDEX = -26;
+	private static final int CENTERDISTANCE_CHECKBOX_INDEX = -27;
+	private static final int BIAS_CHECKBOX_INDEX = -28;
 	
 	private static final int XEFFECT_INPUT_INDEX = 0;
 	private static final int YEFFECT_INPUT_INDEX = 1;
@@ -146,7 +149,7 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		showLineage = false;
 		showNetwork = false;
 		waitingForUser = false;
-		activation = new boolean[Math.abs(LEAKY_RELU_CHECKBOX_INDEX) + 1];//magic number is number of activation functions
+		activation = new boolean[Math.abs(SQUARE_WAVE_CHECKBOX_INDEX) + 1];//magic number is number of activation functions
 		Arrays.fill(activation, true);
 		if(MMNEAT.browseLineage) {
 			// Do not setup the JFrame if browsing the lineage
@@ -224,12 +227,18 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		activation[Math.abs(HALF_LINEAR_CHECKBOX_INDEX)] = CommonConstants.includeHalfLinearPiecewiseFunction;
 		JCheckBox stretchTanh = new JCheckBox("stretched_tanh", CommonConstants.includeStretchedTanhFunction);
 		activation[Math.abs(STRETCHTANH_CHECKBOX_INDEX)] = CommonConstants.includeStretchedTanhFunction;
-		JCheckBox ReLU = new JCheckBox("ReLU", CommonConstants.includeStretchedTanhFunction);
-		activation[Math.abs(RELU_CHECKBOX_INDEX)] = CommonConstants.includeStretchedTanhFunction;
-		JCheckBox Softplus = new JCheckBox("softplus", CommonConstants.includeStretchedTanhFunction);
-		activation[Math.abs(SOFTPLUS_CHECKBOX_INDEX)] = CommonConstants.includeStretchedTanhFunction;
-		JCheckBox LeakyReLU = new JCheckBox("leaky_ReLU", CommonConstants.includeStretchedTanhFunction);
-		activation[Math.abs(LEAKY_RELU_CHECKBOX_INDEX)] = CommonConstants.includeStretchedTanhFunction;
+		JCheckBox ReLU = new JCheckBox("ReLU", CommonConstants.includeReLUFunction);
+		activation[Math.abs(RELU_CHECKBOX_INDEX)] = CommonConstants.includeReLUFunction;
+		JCheckBox Softplus = new JCheckBox("softplus", CommonConstants.includeSoftplusFunction);
+		activation[Math.abs(SOFTPLUS_CHECKBOX_INDEX)] = CommonConstants.includeSoftplusFunction;
+		JCheckBox LeakyReLU = new JCheckBox("leaky_ReLU", CommonConstants.includeLeakyReLUFunction);
+		activation[Math.abs(LEAKY_RELU_CHECKBOX_INDEX)] = CommonConstants.includeLeakyReLUFunction;
+		JCheckBox fullSawtooth = new JCheckBox("full_sawtooth", CommonConstants.includeFullSawtoothFunction);
+		activation[Math.abs(FULL_SAWTOOTH_CHECKBOX_INDEX)] = CommonConstants.includeFullSawtoothFunction;
+		JCheckBox triangleWave = new JCheckBox("triangle_wave", CommonConstants.includeTriangleWaveFunction);
+		activation[Math.abs(TRIANGLE_WAVE_CHECKBOX_INDEX)] = CommonConstants.includeTriangleWaveFunction;
+		JCheckBox squareWave = new JCheckBox("square_wave", CommonConstants.includeSquareWaveFunction);
+		activation[Math.abs(SQUARE_WAVE_CHECKBOX_INDEX)] = CommonConstants.includeSquareWaveFunction;
 
 		//Checkboxes to control if x, y, distance from center, or bias effects appear on the console
 		JCheckBox xEffect = new JCheckBox("X-Effect", true);
@@ -274,6 +283,9 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		ReLU.setName("" + RELU_CHECKBOX_INDEX);//TODO
 		Softplus.setName("" + SOFTPLUS_CHECKBOX_INDEX);
 		LeakyReLU.setName("" + LEAKY_RELU_CHECKBOX_INDEX);
+		fullSawtooth.setName("" + FULL_SAWTOOTH_CHECKBOX_INDEX);
+		triangleWave.setName("" + TRIANGLE_WAVE_CHECKBOX_INDEX);
+		squareWave.setName("" + SQUARE_WAVE_CHECKBOX_INDEX);
 
 		xEffect.setName("" + XEFFECT_CHECKBOX_INDEX);
 		yEffect.setName("" + YEFFECT_CHECKBOX_INDEX);
@@ -310,6 +322,9 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		ReLU.addActionListener(this);
 		Softplus.addActionListener(this);
 		LeakyReLU.addActionListener(this);
+		fullSawtooth.addActionListener(this);
+		triangleWave.addActionListener(this);
+		squareWave.addActionListener(this);
 
 		xEffect.addActionListener(this);
 		yEffect.addActionListener(this);
@@ -333,6 +348,9 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		ReLU.setForeground(CombinatoricUtilities.colorFromInt(ActivationFunctions.FTYPE_RE_LU));
 		Softplus.setForeground(CombinatoricUtilities.colorFromInt(ActivationFunctions.FTYPE_SOFTPLUS));
 		LeakyReLU.setForeground(CombinatoricUtilities.colorFromInt(ActivationFunctions.FTYPE_LEAKY_RE_LU));
+		fullSawtooth.setForeground(CombinatoricUtilities.colorFromInt(ActivationFunctions.FTYPE_FULLSAWTOOTH));
+		triangleWave.setForeground(CombinatoricUtilities.colorFromInt(ActivationFunctions.FTYPE_TRIANGLEWAVE));
+		squareWave.setForeground(CombinatoricUtilities.colorFromInt(ActivationFunctions.FTYPE_SQUAREWAVE));
 
 		xEffect.setForeground(new Color(0,0,0));
 		yEffect.setForeground(new Color(0,0,0));
@@ -365,6 +383,9 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		bottom.add(ReLU);
 		bottom.add(Softplus);
 		bottom.add(LeakyReLU);
+		bottom.add(fullSawtooth);
+		bottom.add(triangleWave);
+		bottom.add(squareWave);
 
 		bottom.add(xEffect);
 		bottom.add(yEffect);
@@ -741,6 +762,15 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		} else if(scoreIndex == LEAKY_RELU_CHECKBOX_INDEX) {
 			setActivationFunctionCheckBox(activation[Math.abs(LEAKY_RELU_CHECKBOX_INDEX)], LEAKY_RELU_CHECKBOX_INDEX, "includeLeakyReLUFunction");
 			System.out.println("param LeakyReLU now set to: " + Parameters.parameters.booleanParameter("includeLeakyReLUFunction"));
+		} else if(scoreIndex == FULL_SAWTOOTH_CHECKBOX_INDEX) {
+			setActivationFunctionCheckBox(activation[Math.abs(FULL_SAWTOOTH_CHECKBOX_INDEX)], FULL_SAWTOOTH_CHECKBOX_INDEX, "includeFullSawtoothFunction");
+			System.out.println("param full sawtooth now set to: " + Parameters.parameters.booleanParameter("includeFullSawtoothFunction"));
+		} else if(scoreIndex == TRIANGLE_WAVE_CHECKBOX_INDEX) {
+			setActivationFunctionCheckBox(activation[Math.abs(TRIANGLE_WAVE_CHECKBOX_INDEX)], TRIANGLE_WAVE_CHECKBOX_INDEX, "includeTriangleWaveFunction");
+			System.out.println("param triangle wave now set to: " + Parameters.parameters.booleanParameter("includeTriangleWaveFunction"));
+		} else if(scoreIndex == SQUARE_WAVE_CHECKBOX_INDEX) {
+			setActivationFunctionCheckBox(activation[Math.abs(SQUARE_WAVE_CHECKBOX_INDEX)], SQUARE_WAVE_CHECKBOX_INDEX, "includeSquareWaveFunction");
+			System.out.println("param square wave now set to: " + Parameters.parameters.booleanParameter("includeSquareWaveFunction"));
 		}else if(scoreIndex == CLOSE_BUTTON_INDEX) {//If close button clicked
 			System.exit(0);
 		} else if(scoreIndex == RESET_BUTTON_INDEX) {//If reset button clicked
