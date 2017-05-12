@@ -72,6 +72,7 @@ import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.VariableDirectionBloc
 import edu.utexas.cs.nn.tasks.mspacman.sensors.ghosts.GhostControllerInputOutputMediator;
 import edu.utexas.cs.nn.tasks.mspacman.sensors.ghosts.mediators.GhostsCheckEachDirectionMediator;
 import edu.utexas.cs.nn.tasks.picbreeder.PicbreederTask;
+import edu.utexas.cs.nn.tasks.pinball.PinballTask;
 import edu.utexas.cs.nn.tasks.rlglue.RLGlueEnvironment;
 import edu.utexas.cs.nn.tasks.rlglue.RLGlueTask;
 import edu.utexas.cs.nn.tasks.rlglue.featureextractors.FeatureExtractor;
@@ -442,6 +443,9 @@ public class MMNEAT {
 				}
 			} else if (task instanceof RLGlueTask) {
 				setNNInputParameters(rlGlueExtractor.numFeatures(), RLGlueTask.agent.getNumberOutputs());
+			} else if (task instanceof PinballTask) {
+				PinballTask temp = (PinballTask) task;
+				setNNInputParameters(temp.sensorLabels().length, temp.outputLabels().length);
 			} else if (task instanceof Breve2DTask) {
 				System.out.println("Setup Breve 2D Task");
 				Breve2DDynamics dynamics = (Breve2DDynamics) ClassCreation.createObject("breveDynamics");
