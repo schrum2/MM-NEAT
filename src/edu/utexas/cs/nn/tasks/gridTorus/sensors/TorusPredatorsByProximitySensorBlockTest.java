@@ -135,5 +135,29 @@ public class TorusPredatorsByProximitySensorBlockTest {
 				"[0.12, -0.14, 0.49, 0.49]");
 
 	}
+	
+	@Test
+	public void predsSenseAllPredsTest(){ //TODO
+		TorusPredatorsByProximitySensorBlock Tpbpsb = new TorusPredatorsByProximitySensorBlock();
+		fail("not implemented yet");
+	}
+	
+	@Test
+	public void numberPredsSensedByPredsTest(){ //TODO
+		TorusPredatorsByProximitySensorBlock Tpbpsb = new TorusPredatorsByProximitySensorBlock();
+		fail("not implemented yet");
+	}
+	
+	@Test
+	public void preySenseAllPredsTest(){ //TODO
+		TorusPredatorsByProximitySensorBlock Tpbpsb = new TorusPredatorsByProximitySensorBlock();
+		fail("not implemented yet");
+	}
+	
+	@Test
+	public void numberPredsSensedByPreyTest(){ //TODO
+		TorusPredatorsByProximitySensorBlock Tpbpsb = new TorusPredatorsByProximitySensorBlock();
+		fail("not implemented yet");
+	}
 
 }
