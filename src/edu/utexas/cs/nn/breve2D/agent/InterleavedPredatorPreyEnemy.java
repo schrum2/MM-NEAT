@@ -7,7 +7,10 @@ package edu.utexas.cs.nn.breve2D.agent;
  * @author Jacob Schrum
  */
 public class InterleavedPredatorPreyEnemy extends PredatorPreyEnemy {
-
+	
+	/**
+	 * Loops through all players and resets them.
+	 */
 	@Override
 	public void reset() {
 		// Each agent was used in eval, so each needs to be reset
