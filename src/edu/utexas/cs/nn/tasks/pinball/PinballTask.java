@@ -75,67 +75,42 @@ public class PinballTask<T extends Network> extends NoisyLonerTask<T>implements 
 	 */
 	@Override
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {
+
+		PinballViewer view = null;
+		
 		if(CommonConstants.watch){
-			return visualOneEval(individual, num);
-		}else{
-			return nonvisualOneEval(individual, num);
+			view = new PinballViewer();
+			view.setVisible(true);
+			view.setAlwaysOnTop(true);	
 		}
-	}
-
-	/**
-	 * Evaluates a given individual network's Fitness non-visually
-	 * 
-	 * @param individual Genotype<T> specifying a Network to be evaluated
-	 * @param num Integer value
-	 * @return Pair of Double Arrays that show the Fitness of an individual network
-	 */
-	public Pair<double[], double[]> nonvisualOneEval(Genotype<T> individual, int num) {
-		PinBall p = new PinBall( "data/pinball/" + Parameters.parameters.stringParameter("pinballConfig"));
+		
+		PinBall p = new PinBall("data/pinball/" + Parameters.parameters.stringParameter("pinballConfig"));
 		Network n = individual.getPhenotype();
 		double fitness = 0;
 		int timeLimit = 1000;
+
+		view = new PinballViewer();
+		view.setVisible(true);
+		view.setAlwaysOnTop(true);
+		
 		do {
 			State s = p.getState();
 			double[] sensors = s.getDescriptor();
 			double[] outputs = n.process(sensors);
 			int action = StatisticsUtilities.argmax(outputs);
 			double rew = p.step(action);
-			fitness += rew;
-			timeLimit--;
-		} while(!p.episodeEnd() && timeLimit > 0);
-		
-		Pair<double[], double[]> evalResults = new Pair<double[], double[]>(new double[] {fitness}, new double[0]);			
-
-		return evalResults;
-	}
-
-	/**
-	 * Evaluates a given individual network's Fitness visually
-	 * 
-	 * @param individual Genotype<T> specifying a Network to be evaluated
-	 * @param num Integer value
-	 * @return Pair of Double Arrays that show the Fitness of an individual network
-	 */
-	public Pair<double[], double[]> visualOneEval(Genotype<T> individual, int num) {
-		//TODO: Create a visual evaluation; runs the same code as the non-visual evaluation right now
-		PinBall p = new PinBall( "data/pinball/" + Parameters.parameters.stringParameter("pinballConfig"));
-		Network n = individual.getPhenotype();
-		double fitness = 0;
-		int timeLimit = 1000;
-		do {
-			State s = p.getState();
-			double[] sensors = s.getDescriptor();
-			double[] outputs = n.process(sensors);
-			int action = StatisticsUtilities.argmax(outputs);
-			double rew = p.step(action);
-			fitness += rew;
-			timeLimit--;
-		} while(!p.episodeEnd() && timeLimit > 0);
-		
-		Pair<double[], double[]> evalResults = new Pair<double[], double[]>(new double[] {fitness}, new double[0]);			
-
-		return evalResults;
-	}
 	
+		if(view != null){
+			view.actionPerformed(action);
+		}			
+
+			fitness += rew;
+			timeLimit--;
+		} while(!p.episodeEnd() && timeLimit > 0);
+		
+		Pair<double[], double[]> evalResults = new Pair<double[], double[]>(new double[] {fitness}, new double[0]);			
+
+		return evalResults;
+	}
 
 }
