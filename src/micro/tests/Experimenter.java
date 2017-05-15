@@ -33,6 +33,10 @@ import micro.util.XMLWriter;
  *
  * @author santi
  */
+
+/**
+ * contains methods that are used throughout the micro.tests package to simulate games between ai
+ */
 public class Experimenter {
     public static int DEBUG = 0;
     public static boolean GC_EACH_FRAME = true;
@@ -53,17 +57,20 @@ public class Experimenter {
         runExperiments(bots, maps, utt, iterations, max_cycles, max_inactive_cycles, visualize, out, -1, true);
     }
 
+    //all 4 previous methods in this class call this one...
     public static void runExperiments(List<AI> bots, List<PhysicalGameState> maps, UnitTypeTable utt, int iterations, int max_cycles, int max_inactive_cycles, boolean visualize, PrintStream out, 
                                       int run_only_those_involving_this_AI, boolean partiallyObservable) throws Exception {
         runExperiments(bots, maps, utt, iterations, max_cycles, max_inactive_cycles, visualize, out, run_only_those_involving_this_AI, false, partiallyObservable);
     }
  
+    //...which calls this one...
     public static void runExperiments(List<AI> bots, List<PhysicalGameState> maps, UnitTypeTable utt, int iterations, int max_cycles, int max_inactive_cycles, boolean visualize, PrintStream out, 
             int run_only_those_involving_this_AI, boolean skip_self_play, boolean partiallyObservable) throws Exception {
     	runExperiments(bots, maps, utt, iterations, max_cycles, max_inactive_cycles, visualize, out, run_only_those_involving_this_AI, skip_self_play, partiallyObservable,
         		false, false, "");
     }
     
+    //...which calls this one
     public static void runExperiments(List<AI> bots, List<PhysicalGameState> maps, UnitTypeTable utt, int iterations, int max_cycles, int max_inactive_cycles, boolean visualize, PrintStream out, 
                                       int run_only_those_involving_this_AI, boolean skip_self_play, boolean partiallyObservable,
                                       boolean saveTrace, boolean saveZip, String traceDir) throws Exception {
