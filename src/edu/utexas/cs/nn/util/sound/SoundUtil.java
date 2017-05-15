@@ -4,7 +4,6 @@ package edu.utexas.cs.nn.util.sound;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.util.Arrays;
-import java.util.Scanner;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
@@ -35,7 +34,7 @@ public class SoundUtil {
 
 	public static void main(String[] args) throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException, JavaLayerException {
 		//playWAVFile(BEARGROWL_WAV);
-		//mp3Conversion(HAPPY_MP3).playMP3File();
+		mp3Conversion(HAPPY_MP3).playMP3File();
 		byte[] bearNumbers = WAVToByte(BEARGROWL_WAV);
 		//System.out.println(Arrays.toString(bearNumbers));
 		AudioInputStream bearAIS = SoundUtil.byteToAIS(bearNumbers);

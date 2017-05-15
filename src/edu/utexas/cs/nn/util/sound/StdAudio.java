@@ -428,8 +428,6 @@ public final class StdAudio {
 	 */
 	public static void main(String[] args) {
 
-
-
 		// 440 Hz for 1 sec
 		double freq1 = 440.0;
 		for (int i = 0; i <= StdAudio.SAMPLE_RATE; i++) {
@@ -458,8 +456,9 @@ public final class StdAudio {
 			exampleSound[i] = (0.5 * Math.sin(2*Math.PI * freq2 * i / StdAudio.SAMPLE_RATE));
 		}
 		StdAudio.play(exampleSound);
+		
 		for (int i = 0; i <= StdAudio.SAMPLE_RATE; i++) {
-			exampleSound[i] = (0.5 * Math.sin(2*Math.PI * freq2 * i / StdAudio.SAMPLE_RATE));
+			exampleSound[i] = (0.5 * ActivationFunctions.fullSawtooth(2*Math.PI * freq2 * i / StdAudio.SAMPLE_RATE));
 		}
 		StdAudio.play(exampleSound);
 		
@@ -480,8 +479,9 @@ public final class StdAudio {
 		DrawingPanel panel = new DrawingPanel(500,500, "fsljfd"); //create panel where line will be plotted 
 		Plot.linePlot(panel, -1.0, 1.0, fileArrayList, Color.black); //call linePlot with ArrayList to draw graph
 		
-		final String PIRATES = "data/sounds/pirates.mid";
-		play(PIRATES);
+		String pirates= "data/sounds/pirates.mid";
+		//play(pirates);
+		playApplet(pirates);
 
 
 
