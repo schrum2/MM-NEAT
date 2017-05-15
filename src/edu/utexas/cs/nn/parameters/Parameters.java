@@ -679,6 +679,7 @@ public class Parameters {
 		stringOptions.add("combiningCrossoverMapping", "", "File with HashMap from innovations in single mode nets to corresponding duplicate in multitask nets");
 		stringOptions.add("branchRoot", "", "Evolve from some other run as starting point, based off of this parameter file");
 		stringOptions.add("replayNetwork", "", "Network displayed while replaying pacman eval");
+		stringOptions.add("pinballConfig", "pinball_simple_single.cfg", "Configuration file for the PinballTask");
 		// Class options
 		classOptions.add("hyperNEATSeedTask", null, "HyperNEAT task that seeds a standard NEAT task");
 		classOptions.add("substrateMapping", CenteredSubstrateMapping.class, "Determines the type of subtrate coordinate mapping we want to use");
