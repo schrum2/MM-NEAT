@@ -76,12 +76,12 @@ public class PinballTask<T extends Network> extends NoisyLonerTask<T>implements 
 	@Override
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {
 
-		PinballViewer view = null;
+		PinballViewer view = null; 
 		
-		if(CommonConstants.watch){
-			view = new PinballViewer();
-			view.setVisible(true);
-			view.setAlwaysOnTop(true);	
+		if(CommonConstants.watch){ // If set to Visually Evaluate the Task,
+			view = new PinballViewer(); // Create a new PinballViewer
+			view.setVisible(true); // Makes the PinballViewer visible
+			view.setAlwaysOnTop(true); // Makes the PinballViewer always on top
 		}
 		
 		PinBall p = new PinBall("data/pinball/" + Parameters.parameters.stringParameter("pinballConfig"));
@@ -89,10 +89,6 @@ public class PinballTask<T extends Network> extends NoisyLonerTask<T>implements 
 		double fitness = 0;
 		int timeLimit = 1000;
 
-		view = new PinballViewer();
-		view.setVisible(true);
-		view.setAlwaysOnTop(true);
-		
 		do {
 			State s = p.getState();
 			double[] sensors = s.getDescriptor();
@@ -100,7 +96,7 @@ public class PinballTask<T extends Network> extends NoisyLonerTask<T>implements 
 			int action = StatisticsUtilities.argmax(outputs);
 			double rew = p.step(action);
 	
-		if(view != null){
+		if(view != null){ // If the PinballViewer exists, update it
 			view.actionPerformed(action);
 		}			
 
@@ -110,7 +106,7 @@ public class PinballTask<T extends Network> extends NoisyLonerTask<T>implements 
 		
 		Pair<double[], double[]> evalResults = new Pair<double[], double[]>(new double[] {fitness}, new double[0]);			
 
-		return evalResults;
+		return evalResults; // Returns the Fitness of the individual's Genotype<T>
 	}
 
 }
