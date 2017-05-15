@@ -27,6 +27,7 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 
 import edu.utexas.cs.nn.graphics.DrawingPanel;
 import edu.utexas.cs.nn.graphics.Plot;
+import edu.utexas.cs.nn.networks.ActivationFunctions;
 import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
 
 /**
@@ -378,16 +379,7 @@ public final class StdAudio {
 	 */
 	public static void wavePlot(String fileName) {
 		double[] fileArray = read(fileName); //create array of doubles representing audio
-		ArrayList<Double> fileArrayList = ArrayUtil.doubleVectorFromArray(fileArray); //convert array into array lsit
-		//	 ArrayList<Double> fileArrayList = new ArrayList<Double>();
-		//	 fileArrayList.add(-1.0);
-		//	 fileArrayList.add(1.0);
-		//	 fileArrayList.add(0.5);
-		//	 fileArrayList.add(-0.5);
-		//	 fileArrayList.add(0.75);
-		//	 fileArrayList.add(-1.0);
-		//	 fileArrayList.add(-1.0);
-
+		ArrayList<Double> fileArrayList = ArrayUtil.doubleVectorFromArray(fileArray); //convert array into array list
 		DrawingPanel panel = new DrawingPanel(500,500, "Wave for " + fileName); //create panel where line will be plotted 
 		Plot.linePlot(panel, -1.0, 1.0, fileArrayList, Color.black); //call linePlot with ArrayList to draw graph
 	}
@@ -439,17 +431,57 @@ public final class StdAudio {
 
 
 		// 440 Hz for 1 sec
-		double freq = 440.0;
+		double freq1 = 440.0;
 		for (int i = 0; i <= StdAudio.SAMPLE_RATE; i++) {
-			StdAudio.play(0.5 * Math.sin(2*Math.PI * freq * i / StdAudio.SAMPLE_RATE));
+			StdAudio.play(0.5 * Math.sin(2*Math.PI * freq1 * i / StdAudio.SAMPLE_RATE));
 		}
 
-		// scale increments
-		int[] steps = { 0, 2, 4, 5, 7, 9, 11, 12 };
-		for (int i = 0; i < steps.length; i++) {
-			double hz = 440.0 * Math.pow(2, steps[i] / 12.0);
-			StdAudio.play(note(hz, 1.0, 0.5));
+		for (int i = 0; i <= StdAudio.SAMPLE_RATE; i++) {
+			StdAudio.play(0.5 * ActivationFunctions.squareWave(2*Math.PI * freq1 * i / StdAudio.SAMPLE_RATE));
 		}
+		
+		for (int i = 0; i <= StdAudio.SAMPLE_RATE; i++) {
+			StdAudio.play(0.5 * ActivationFunctions.triangleWave(2*Math.PI * freq1 * i / StdAudio.SAMPLE_RATE));
+		}
+		
+	
+//		// scale increments
+//		int[] steps = { 0, 2, 4, 5, 7, 9, 11, 12 };
+//		for (int i = 0; i < steps.length; i++) {
+//			double hz = 440.0 * Math.pow(2, steps[i] / 12.0);
+//			StdAudio.play(note(hz, 1.0, 0.5));
+//		}
+
+		double[] exampleSound = new double[StdAudio.SAMPLE_RATE+1];
+		double freq2 = 440.0;
+		for (int i = 0; i <= StdAudio.SAMPLE_RATE; i++) {
+			exampleSound[i] = (0.5 * Math.sin(2*Math.PI * freq2 * i / StdAudio.SAMPLE_RATE));
+		}
+		StdAudio.play(exampleSound);
+		for (int i = 0; i <= StdAudio.SAMPLE_RATE; i++) {
+			exampleSound[i] = (0.5 * Math.sin(2*Math.PI * freq2 * i / StdAudio.SAMPLE_RATE));
+		}
+		StdAudio.play(exampleSound);
+		
+		double[] test = new double[500];
+		for(int i = 0; i < test.length; i++) {
+			test[i] = i;
+		}
+		StdAudio.play(test);
+
+		
+		for (double i = 0; i <= StdAudio.SAMPLE_RATE; i++) {
+			exampleSound[(int)i] = (ActivationFunctions.tanh( 2*(i/StdAudio.SAMPLE_RATE) - 1 ));
+		}
+		StdAudio.play(exampleSound);
+		
+		
+		ArrayList<Double> fileArrayList = ArrayUtil.doubleVectorFromArray(exampleSound); //convert array into array list
+		DrawingPanel panel = new DrawingPanel(500,500, "fsljfd"); //create panel where line will be plotted 
+		Plot.linePlot(panel, -1.0, 1.0, fileArrayList, Color.black); //call linePlot with ArrayList to draw graph
+		
+		final String PIRATES = "data/sounds/pirates.mid";
+		play(PIRATES);
 
 
 

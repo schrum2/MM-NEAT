@@ -31,6 +31,7 @@ public class SoundUtil {
 	private static final String APPLAUSE_WAV = "data/sounds/applause_y.wav";
 	private static final String HARP_WAV = "data/sounds/harp.wav";
 	private static final String HAPPY_MP3 = "data/sounds/25733.mp3";
+	private static final String PIRATES = "data/sounds/pirates.mid";
 
 	public static void main(String[] args) throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException, JavaLayerException {
 		//playWAVFile(BEARGROWL_WAV);
@@ -49,7 +50,7 @@ public class SoundUtil {
 		AudioInputStream harpAIS = SoundUtil.byteToAIS(harpNumbers);
 		int[] harpData = SoundUtil.extractAmplitudeDataFromAudioInputStream(harpAIS);
 		System.out.println(Arrays.toString(harpData));
-		
+
 		//System.out.println(stream);
 
 		//		for(int i = 0; i < Math.max(bearNumbers.length, applauseNumbers.length); i++) {
@@ -65,45 +66,77 @@ public class SoundUtil {
 		//playWAVFile(bearReturns);
 
 		//playByteAIS(applauseNumbers);
-		
+
 		AudioInputStream applauseAIS = byteToAIS(applauseNumbers);
 		int[] applauseNumbers2 = extractAmplitudeDataFromAudioInputStream(applauseAIS);
 		//System.out.println(Arrays.toString(applauseNumbers2));
-		
-		
 
-//		for(int i = bearNumbers.length-11; i <= bearNumbers.length-1; i++) {
-//			System.out.print(bearNumbers[i] + " ");
-//		}
-//		System.out.println();
 
-//		byte[] splice = new byte[applauseNumbers.length];
+
+		//		for(int i = bearNumbers.length-11; i <= bearNumbers.length-1; i++) {
+		//			System.out.print(bearNumbers[i] + " ");
+		//		}
+		//		System.out.println();
+
+		double[] splice = new double[applauseNumbers.length];
 //		for(int i = 0; i < splice.length; i++) {
 //			if(i < 46)
 //				splice[i] = bearNumbers[i];
 //			else 
 //				splice[i] = applauseNumbers[i];
 //		}
-//		playByteAIS(splice);
+//		StdAudio.play(splice);
 
-		//		byte[] original = new byte[bearNumbers.length];
-		//		for(int i = 0; i < original.length; i++) {
-		//			if(i < 46 || i >= bearNumbers.length-11) 
-		//				original[i] = bearNumbers[i];
-		//			else 
-		//				original[i] = 20;
-		//		}
-		//		original[original.length-1] = 0;
-		//		
-		//		playByteAIS(original);
+		double[] bear = new double[bearNumbers.length];
+		for(int i = 0; i < bear.length; i++) {
+			if(i < 50120 || i >= bearNumbers.length-11) 
+				bear[i] = bearNumbers[i];
+			else 
+				bear[i] = 20;
+		}
+		bear[bear.length-1] = 0;
+		StdAudio.play(bear);
 		
-//		StdAudio.wavePlot(BEARGROWL_WAV);
-//		StdAudio.wavePlot(APPLAUSE_WAV);
-//		StdAudio.wavePlot(HARP_WAV);
+//		double[] applause = new double[bearNumbers.length];
+//		for(int i = 0; i < original.length; i++) {
+//			if(i < 50120 || i >= bearNumbers.length-11) 
+//				original[i] = bearNumbers[i];
+//			else 
+//				original[i] = 20;
+//		}
+//		original[original.length-1] = 0;
+//		StdAudio.play(original);
+//		
+//		double[] original = new double[bearNumbers.length];
+//		for(int i = 0; i < original.length; i++) {
+//			if(i < 50120 || i >= bearNumbers.length-11) 
+//				original[i] = bearNumbers[i];
+//			else 
+//				original[i] = 20;
+//		}
+//		original[original.length-1] = 0;
+//		StdAudio.play(original);
 		
-		//StdAudio.play(StdAudio.overlap(APPLAUSE_WAV, HARP_WAV));
-		//StdAudio.play(StdAudio.overlap(BEARGROWL_WAV, HARP_WAV));
-		StdAudio.play(StdAudio.overlap(APPLAUSE_WAV, BEARGROWL_WAV));
+		//		StdAudio.wavePlot(BEARGROWL_WAV);
+		//		StdAudio.wavePlot(APPLAUSE_WAV);
+		//		StdAudio.wavePlot(HARP_WAV);
+
+		System.out.println("bear growl: " + bearNumbers.length);
+		System.out.println("applause: " + applauseNumbers.length);
+		System.out.println("harp: " + harpNumbers.length);
+		double[] applauseAndHarp = StdAudio.overlap(APPLAUSE_WAV, HARP_WAV);
+		System.out.println("applauseAndHarp length: " + applauseAndHarp.length);
+		double[] bearGrowlAndHarp = StdAudio.overlap(BEARGROWL_WAV, HARP_WAV);
+		System.out.println("bearGrowlAndHarp length: " + bearGrowlAndHarp.length);
+		double[] applauseAndBearGrowl = StdAudio.overlap(APPLAUSE_WAV, BEARGROWL_WAV);
+		System.out.println("applauseAndBearGrowl length: " + applauseAndBearGrowl.length);
+
+		//		StdAudio.play(applauseAndHarp);
+		//		StdAudio.play(bearGrowlAndHarp);
+		//		StdAudio.play(applauseAndBearGrowl);
+		
+		StdAudio.play(PIRATES);
+
 	}
 
 	// Methods associated with playing WAV file
@@ -247,7 +280,7 @@ public class SoundUtil {
 		}  
 		return extractAmplitudeDataFromAmplitudeByteArray(format, audioBytes);  //calls method that extracts amplitude data from byte array formed
 	}  
-	
+
 	private static int[] extractAmplitudeDataFromAmplitudeByteArray(AudioFormat format, byte[] audioBytes) {  
 		// convert
 		int[]  audioData = null;  
