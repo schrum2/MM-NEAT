@@ -1,6 +1,7 @@
 package org.rlcommunity.environments.acrobot;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Random;
 
 import org.rlcommunity.environments.acrobot.AcrobotState;
@@ -19,11 +20,13 @@ import org.rlcommunity.rlglue.codec.taskspec.TaskSpecVRLGLUE3;
 import org.rlcommunity.rlglue.codec.taskspec.ranges.DoubleRange;
 import org.rlcommunity.rlglue.codec.taskspec.ranges.IntRange;
 import org.rlcommunity.rlglue.codec.util.EnvironmentLoader;
+
+import edu.utexas.cs.nn.tasks.rlglue.RLGlueEnvironment;
 import rlVizLib.general.hasVersionDetails;
 import rlVizLib.messaging.environmentShell.TaskSpecPayload;
 import rlVizLib.messaging.interfaces.HasImageInterface;
 
-public class Acrobot extends EnvironmentBase implements HasAVisualizerInterface, HasImageInterface {
+public class Acrobot extends RLGlueEnvironment implements HasAVisualizerInterface, HasImageInterface {
   private final AcrobotState theState;
     
     /*Constructor Business*/
@@ -64,11 +67,35 @@ public class Acrobot extends EnvironmentBase implements HasAVisualizerInterface,
 
     public static TaskSpecPayload getTaskSpecPayload(ParameterHolder P){
         Acrobot theAcrobot=new Acrobot(P);
-        String taskSpec=theAcrobot.makeTaskSpec();
+        String taskSpec=theAcrobot.makeTaskSpecString();
         return new TaskSpecPayload(taskSpec, false, "");
     }
+
+    //private String makeTaskSpec(){
+    public TaskSpec makeTaskSpec(){
+        TaskSpecVRLGLUE3 theTaskSpecObject = new TaskSpecVRLGLUE3();
+        theTaskSpecObject.setEpisodic();
+        theTaskSpecObject.setDiscountFactor(1.0d);
+        theTaskSpecObject.addContinuousObservation(new DoubleRange(-theState.getMaxTheta1(),theState.getMaxTheta1()));
+        theTaskSpecObject.addContinuousObservation(new DoubleRange(-theState.getMaxTheta2(),theState.getMaxTheta2()));
+        theTaskSpecObject.addContinuousObservation(new DoubleRange(-theState.getMaxTheta1Dot(),theState.getMaxTheta1Dot()));
+        theTaskSpecObject.addContinuousObservation(new DoubleRange(-theState.getMaxTheta2Dot(),theState.getMaxTheta2Dot()));
+
+        theTaskSpecObject.addDiscreteAction(new IntRange(0, theState.getNumActions()-1));
+
+        //Apparently we don't say the reward range.
+        theTaskSpecObject.setRewardRange(new DoubleRange(-1.0d,0.0d));
+        theTaskSpecObject.setExtra("EnvName:Acrobot");
+        
+        return new TaskSpec(theTaskSpecObject);
     
-    private String makeTaskSpec(){
+        // From original
+//        String taskSpecString = theTaskSpecObject.toTaskSpec();
+//        TaskSpec.checkTaskSpec(taskSpecString);
+//        return taskSpecString;        
+    }
+
+    private String makeTaskSpecString(){
         TaskSpecVRLGLUE3 theTaskSpecObject = new TaskSpecVRLGLUE3();
         theTaskSpecObject.setEpisodic();
         theTaskSpecObject.setDiscountFactor(1.0d);
@@ -95,7 +122,7 @@ public class Acrobot extends EnvironmentBase implements HasAVisualizerInterface,
 
     /*Beginning of RL-GLUE methods*/
     public String env_init() {
-        return makeTaskSpec();
+        return makeTaskSpecString();
     }
 
 
@@ -187,6 +214,16 @@ public class Acrobot extends EnvironmentBase implements HasAVisualizerInterface,
         EnvironmentLoader L=new EnvironmentLoader(new Acrobot());
         L.run();
     }
+
+    @Override
+	public ArrayList<Double> getBehaviorVector() {
+		ArrayList<Double> result = new ArrayList<Double>(4);
+		result.add(theState.getTheta1());
+		result.add(theState.getTheta2());
+		result.add(theState.getTheta1Dot());
+		result.add(theState.getTheta2Dot());
+		return result;
+	}
 }
 
 class DetailsProvider implements hasVersionDetails {
