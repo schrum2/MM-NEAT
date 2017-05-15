@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.util;
+package edu.utexas.cs.nn.util.sound;
 
 
 import java.io.*;
