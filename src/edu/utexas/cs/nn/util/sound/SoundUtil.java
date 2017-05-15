@@ -97,9 +97,13 @@ public class SoundUtil {
 		//		
 		//		playByteAIS(original);
 		
-		//StdAudio.wavePlot(BEARGROWL_WAV);
-		StdAudio.wavePlot(APPLAUSE_WAV);
-		//StdAudio.wavePlot(HARP_WAV);
+//		StdAudio.wavePlot(BEARGROWL_WAV);
+//		StdAudio.wavePlot(APPLAUSE_WAV);
+//		StdAudio.wavePlot(HARP_WAV);
+		
+		//StdAudio.play(StdAudio.overlap(APPLAUSE_WAV, HARP_WAV));
+		//StdAudio.play(StdAudio.overlap(BEARGROWL_WAV, HARP_WAV));
+		StdAudio.play(StdAudio.overlap(APPLAUSE_WAV, BEARGROWL_WAV));
 	}
 
 	// Methods associated with playing WAV file
