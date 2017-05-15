@@ -7,6 +7,7 @@ import edu.utexas.cs.nn.networks.NetworkTask;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.NoisyLonerTask;
+import edu.utexas.cs.nn.util.MiscUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
 import pinball.PinBall;
@@ -14,6 +15,9 @@ import pinball.State;
 
 public class PinballTask<T extends Network> extends NoisyLonerTask<T>implements NetworkTask {
 	
+	PinballViewer view = null; 
+	
+
 	/**
 	 * Constructor for a new PinballTask
 	 */
@@ -76,15 +80,21 @@ public class PinballTask<T extends Network> extends NoisyLonerTask<T>implements 
 	@Override
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {
 
-		PinballViewer view = null; 
+		PinBall p = new PinBall("data/pinball/" + Parameters.parameters.stringParameter("pinballConfig"));
 		
-		if(CommonConstants.watch){ // If set to Visually Evaluate the Task,
-			view = new PinballViewer(); // Create a new PinballViewer
-			view.setVisible(true); // Makes the PinballViewer visible
-			view.setAlwaysOnTop(true); // Makes the PinballViewer always on top
+		
+		if(CommonConstants.watch){ // If set to Visually Evaluate the Task
+			if(view == null){ // PinballViewer is not initialized yet
+				view = new PinballViewer(p); // Create a new PinballViewer
+				view.setVisible(true); // Makes the PinballViewer visible
+				view.setAlwaysOnTop(true); // Makes the PinballViewer always on top
+			}
+		}else{
+			view.resetViewer(p);
 		}
 		
-		PinBall p = new PinBall("data/pinball/" + Parameters.parameters.stringParameter("pinballConfig"));
+		//MiscUtil.waitForReadStringAndEnterKeyPress();
+		
 		Network n = individual.getPhenotype();
 		double fitness = 0;
 		int timeLimit = 1000;
@@ -98,7 +108,7 @@ public class PinballTask<T extends Network> extends NoisyLonerTask<T>implements 
 	
 		if(view != null){ // If the PinballViewer exists, update it
 			view.actionPerformed(action);
-		}			
+		}	
 
 			fitness += rew;
 			timeLimit--;

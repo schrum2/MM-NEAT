@@ -23,8 +23,9 @@ public class PinballViewer extends JFrame {
 	
 	/**
 	 * Constructor for the PinballViewer
+	 * @param pinball 
 	 */
-	public PinballViewer(){
+	public PinballViewer(PinBall pinball){
 		// Following is the code in common from PinBallGUI and PinBallGUIReplay Constructors
 		setSize(500, 500);
         setTitle("PinBall Domain");
@@ -35,10 +36,14 @@ public class PinballViewer extends JFrame {
         setLocation(size.width/2 - getWidth()/2, 
 		size.height/2 - getHeight()/2);
         
-        pball = new PinBall("data/pinball/" + Parameters.parameters.stringParameter("pinballConfig"));
-        canvas = new PinBallCanvas(pball, "data/pinball/" + Parameters.parameters.stringParameter("pinballConfig"));
+        pball = pinball;
+        canvas = new PinBallCanvas(pball);
         add(canvas);
         canvas.setVisible(true);
+	}
+	
+	public void resetViewer(PinBall newPinball){
+		canvas = new PinBallCanvas(newPinball);
 	}
 	
 	/**
@@ -50,5 +55,6 @@ public class PinballViewer extends JFrame {
 		pball.step(action); // Update PinBall state
 		repaint(); // Repaint PinBallCanvas
 	}
+
 
 }
