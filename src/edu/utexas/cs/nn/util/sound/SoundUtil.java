@@ -70,6 +70,7 @@ public class SoundUtil {
 		int[] applauseNumbers2 = extractAmplitudeDataFromAudioInputStream(applauseAIS);
 		//System.out.println(Arrays.toString(applauseNumbers2));
 		
+		
 
 //		for(int i = bearNumbers.length-11; i <= bearNumbers.length-1; i++) {
 //			System.out.print(bearNumbers[i] + " ");
@@ -223,42 +224,6 @@ public class SoundUtil {
 
 	//Methods from GT - used to extract amplitude from recorded wave
 
-	
-	//same thing as WAVToByte: 
-	
-//	private int[] extractAmplitudeFromFile(File wavFile) throws IOException, UnsupportedAudioFileException {  
-//		byte[] arrFile; 
-//		// create file input stream  
-//		FileInputStream fis = new FileInputStream(wavFile);  
-//		// create bytearray from file  
-//		arrFile = new byte[(int) wavFile.length()];  
-//		fis.read(arrFile);  
-//		return extractAmplitudeFromFileByteArray(arrFile);  
-//	} 
-	
-	
-	//same thing as byteToAIS: 
-	
-//	private int[] extractAmplitudeFromFileByteArray(byte[] arrFile) throws UnsupportedAudioFileException, IOException {  
-//		// System.out.println("File : "+wavFile+""+arrFile.length);  
-//		ByteArrayInputStream bis = new ByteArrayInputStream(arrFile);  
-//		return extractAmplitudeFromFileByteArrayInputStream(bis);  
-//	} 
-//	
-//	/**  
-//	 * for extracting amplitude array the format we are using :16bit, 22khz, 1  
-//	 * channel, littleEndian,  
-//	 *   
-//	 * @return PCM audioData  
-//	 * @throws IOException 
-//	 * @throws UnsupportedAudioFileException 
-//	 * @throws Exception  
-//	 */  
-//	private int[] extractAmplitudeFromFileByteArrayInputStream(ByteArrayInputStream bis) throws UnsupportedAudioFileException, IOException {  
-//		AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(bis);  
-//		return extractAmplitudeDataFromAudioInputStream(audioInputStream);  
-//	}  
-
 	public static int[] extractAmplitudeDataFromAudioInputStream(AudioInputStream audioInputStream) {  
 		AudioFormat format = audioInputStream.getFormat();  
 		byte[] audioBytes = new byte[(int) (audioInputStream.getFrameLength() * format.getFrameSize())];  
@@ -272,7 +237,7 @@ public class SoundUtil {
 			System.out.println("IOException during reading audioBytes");  
 			e.printStackTrace();  
 		}  
-		return extractAmplitudeDataFromAmplitudeByteArray(format, audioBytes);  
+		return extractAmplitudeDataFromAmplitudeByteArray(format, audioBytes);  //calls method that extracts amplitude data from byte array formed
 	}  
 	
 	private static int[] extractAmplitudeDataFromAmplitudeByteArray(AudioFormat format, byte[] audioBytes) {  
@@ -316,25 +281,6 @@ public class SoundUtil {
 		return audioData;  
 	}
 
-//	public byte[] getAudioBytes() {  
-//		return audioBytes;  
-//	}  
-//
-//	public double getDurationSec() {  
-//		return durationSec;  
-//	} 
-//
-//	public double getDurationMiliSec() {  
-//		return durationMSec;  
-//	}  
-//
-//	public int[] getAudioData() {  
-//		return audioData;  
-//	}  
-//	public AudioFormat getFormat() {  
-//		return format;  
-//	}  
-
 
 	// Methods associated with playing MP3 file
 
@@ -349,7 +295,7 @@ public class SoundUtil {
 		return soundToPlay;
 	}
 
-	private static class SoundJLayer extends PlaybackListener implements Runnable {
+	public static class SoundJLayer extends PlaybackListener implements Runnable {
 		private String filePath;
 		private AdvancedPlayer player;
 		private Thread playerThread;    
