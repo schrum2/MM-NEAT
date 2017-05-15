@@ -3,12 +3,11 @@ package edu.utexas.cs.nn.networks.hyperneat;
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
-import java.util.Scanner;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
+import edu.utexas.cs.nn.evolution.genotypes.HyperNEATCPPNGenotype;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
 import edu.utexas.cs.nn.networks.ActivationFunctions;
 import edu.utexas.cs.nn.networks.TWEANN;
@@ -31,7 +30,6 @@ public class HyperNEATUtilTest {
 	TWEANN  t1;
 	HyperNEATTask htask;
 	TWEANNGenotype tg1;
-	Scanner scan = new Scanner(System.in);
 	
 	/**
 	 * sets up a new substrate array before each test
@@ -50,6 +48,7 @@ public class HyperNEATUtilTest {
 		t1 = new TWEANN(tg1);
 		subs = new Substrate[3];
 		Substrate sub1 = new Substrate(new Pair<Integer, Integer>(10, 20), 0, new Triple<Integer, Integer, Integer>(0, 0, 0), "I_0");
+		
 		subs[0] = sub1;
 		nodes = new ArrayList<Node>();
 		Substrate sub2 = new Substrate(new Pair<Integer, Integer>(10, 20), 1, new Triple<Integer, Integer, Integer>(0, 1, 0), "H_0");
@@ -112,5 +111,20 @@ public class HyperNEATUtilTest {
 	public void testDrawWeightsVisual() {
 //		ArrayList<DrawingPanel> weightPanels = HyperNEATUtil.drawWeight(tg1, htask);
 //		DrawingPanel d =  HyperNEATUtil.drawWeight(subs[0], subs[1], 0, 1);
+	}
+	
+	@Test
+	public void testResetSubstrates(){
+		HyperNEATUtil.resetSubstrates();
+	}
+	
+	@Test
+	public void testNumBiasOutputsNeeded(){
+		assertEquals(2, HyperNEATUtil.numBiasOutputsNeeded(htask));
+	}
+	
+	@Test
+	public void testIndexFirstBiasOutput(){
+		assertEquals(2, HyperNEATUtil.indexFirstBiasOutput(htask));
 	}
 }
