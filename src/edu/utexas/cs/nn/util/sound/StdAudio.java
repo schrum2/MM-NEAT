@@ -4,6 +4,7 @@ import javax.sound.sampled.Clip;
 //for playing midi sound files on some older systems
 import java.applet.Applet;
 import java.applet.AudioClip;
+import java.awt.Color;
 import java.net.MalformedURLException;
 
 import java.io.File;
@@ -12,6 +13,7 @@ import java.io.InputStream;
 import java.io.IOException;
 
 import java.net.URL;
+import java.util.ArrayList;
 
 import javax.sound.sampled.AudioFileFormat;
 import javax.sound.sampled.AudioFormat;
@@ -22,7 +24,9 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
+import edu.utexas.cs.nn.graphics.DrawingPanel;
 import edu.utexas.cs.nn.graphics.Plot;
+import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
 
 /**
 *  <i>Standard audio</i>. This class provides a basic capability for
@@ -364,6 +368,22 @@ public final class StdAudio {
          throw new IllegalArgumentException("could not play '" + filename + "'", e);
      }
  }
+ 
+ public static void wavePlot(String fileName) {
+	 double[] fileArray = read(fileName);
+	 //ArrayList<Double> fileArrayList = ArrayUtil.doubleVectorFromArray(fileArray);
+	 ArrayList<Double> fileArrayList = new ArrayList<Double>();
+	 fileArrayList.add(-1.0);
+	 fileArrayList.add(1.0);
+	 fileArrayList.add(0.5);
+	 fileArrayList.add(-0.5);
+	 fileArrayList.add(0.75);
+	 fileArrayList.add(-1.0);
+	 fileArrayList.add(-1.0);
+	 
+	 DrawingPanel panel = new DrawingPanel(500,500, "Wave for " + fileName);
+	 Plot.linePlot(panel, -1.0, 1.0, fileArrayList, Color.black);
+ }
 
 
 /***************************************************************************
@@ -407,7 +427,7 @@ public final class StdAudio {
          StdAudio.play(note(hz, 1.0, 0.5));
      }
      
-     //Plot.linePlot(panel, min, max, scores, color);
+     
 
 
      // need to call this in non-interactive stuff so the program doesn't terminate

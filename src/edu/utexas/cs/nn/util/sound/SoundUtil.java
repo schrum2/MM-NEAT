@@ -96,6 +96,10 @@ public class SoundUtil {
 		//		original[original.length-1] = 0;
 		//		
 		//		playByteAIS(original);
+		
+		//StdAudio.wavePlot(BEARGROWL_WAV);
+		StdAudio.wavePlot(APPLAUSE_WAV);
+		//StdAudio.wavePlot(HARP_WAV);
 	}
 
 	// Methods associated with playing WAV file
