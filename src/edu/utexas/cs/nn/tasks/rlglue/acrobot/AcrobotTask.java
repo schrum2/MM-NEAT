@@ -23,6 +23,6 @@ public class AcrobotTask<T extends Network> extends RLGlueTask<T> {
 	
 	@Override
 	public String[] outputLabels() {
-		return new String[]{"Torque"};
+		return new String[]{"Negative Torque", "No Torque", "Positive Torque"};
 	}
 }
