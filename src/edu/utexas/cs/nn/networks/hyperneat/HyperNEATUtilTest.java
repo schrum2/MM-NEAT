@@ -1,8 +1,10 @@
 package edu.utexas.cs.nn.networks.hyperneat;
 
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.*;
 
 import java.util.ArrayList;
+import java.util.Scanner;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,6 +32,7 @@ public class HyperNEATUtilTest {
 	TWEANN  t1;
 	HyperNEATTask htask;
 	TWEANNGenotype tg1;
+	Scanner scan = new Scanner(System.in);
 	
 	/**
 	 * sets up a new substrate array before each test
@@ -94,22 +97,10 @@ public class HyperNEATUtilTest {
 	 * Tests the draw substrate method
 	 */
 	@Test
-	public void testDrawSubstrateVisual2() {
-		// This isn't actually an automated test
-		//HyperNEATUtil.drawSubstrate(subs[0], nodes, 0);
-		//MiscUtil.waitForReadStringAndEnterKeyPress();
-		assertFalse(true); // Fail test
-	}
-	/**
-	 * Visual test of drawSubstrate method
-	 */
-	@Test
 	public void testDrawSubstrateVisual() {
-		DrawingPanel dp = HyperNEATUtil.drawSubstrate(subs[0], nodes, 0);
-		DrawingPanel pp = HyperNEATUtil.drawSubstrate(dp, subs[0], nodes, 0);
-		pp.setLocation(0, dp.getFrame().getHeight());
-	//	MiscUtil.waitForReadStringAndEnterKeyPress();
+		HyperNEATUtil.drawSubstrate(subs[0], nodes, 0);
 	}
+	
 	/**
 	 * Tests draw substrates method
 	 */
@@ -118,11 +109,9 @@ public class HyperNEATUtilTest {
 		HyperNEATUtil.drawSubstrates(nodes);
 	}
 	
-//	@Test
-//	public void testDrawWeightsVisual() {
-//	//	ArrayList<DrawingPanel> weightPanels = HyperNEATUtil.drawWeight(tg1, htask);
-////		DrawingPanel d =  HyperNEATUtil.drawWeight(subs[0], subs[1], 0, 30);
-//			
-//		MiscUtil.waitForReadStringAndEnterKeyPress();
-//	}
+	@Test
+	public void testDrawWeightsVisual() {
+//		ArrayList<DrawingPanel> weightPanels = HyperNEATUtil.drawWeight(tg1, htask);
+//		DrawingPanel d =  HyperNEATUtil.drawWeight(subs[0], subs[1], 0, 1);
+	}
 }
