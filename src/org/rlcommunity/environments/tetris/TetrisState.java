@@ -18,16 +18,16 @@
  */
 package org.rlcommunity.environments.tetris;
 
-import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.tasks.rlglue.tetris.TetrisViewer;
-import edu.utexas.cs.nn.util.MiscUtil;
-import edu.utexas.cs.nn.util.random.RandomNumbers;
-
 import java.util.Arrays;
 import java.util.Random;
 import java.util.Vector;
+
 import org.rlcommunity.rlglue.codec.types.Observation;
+
+import edu.utexas.cs.nn.parameters.CommonConstants;
+import edu.utexas.cs.nn.parameters.Parameters;
+import edu.utexas.cs.nn.tasks.rlglue.tetris.TetrisViewer;
+import edu.utexas.cs.nn.util.random.RandomNumbers;
 
 public class TetrisState {
 	/* Action values */
@@ -78,7 +78,7 @@ public class TetrisState {
 	private TetrisViewer viewer = null;
 
 	public TetrisState() {
-		if(Parameters.parameters.booleanParameter("tetrisAllowLine")){ // TODO: NullPointerException, but all of the following parameters exist in the Parameters class, under booleanOptions.
+		if(Parameters.parameters.booleanParameter("tetrisAllowLine")){
 			possibleBlocks.add(TetrisPiece.makeLine());
 		}
 		if(Parameters.parameters.booleanParameter("tetrisAllowSquare")){
@@ -99,27 +99,6 @@ public class TetrisState {
 		if(Parameters.parameters.booleanParameter("tetrisAllowJShape")){
 			possibleBlocks.add(TetrisPiece.makeJShape());
 		}
-//		if(true){ // Used to test if just Parameters are not working; when all Parameters are "true," the test works.
-//			possibleBlocks.add(TetrisPiece.makeLine());
-//		}
-//		if(true){
-//			possibleBlocks.add(TetrisPiece.makeSquare());
-//		}
-//		if(true){
-//			possibleBlocks.add(TetrisPiece.makeTri());
-//		}
-//		if(true){
-//			possibleBlocks.add(TetrisPiece.makeSShape());
-//		}
-//		if(true){
-//			possibleBlocks.add(TetrisPiece.makeZShape());
-//		}
-//		if(true){
-//			possibleBlocks.add(TetrisPiece.makeLShape());
-//		}
-//		if(true){
-//			possibleBlocks.add(TetrisPiece.makeJShape());
-//		}
 
 		if (CommonConstants.watch) {
 			if (TetrisViewer.current == null) {

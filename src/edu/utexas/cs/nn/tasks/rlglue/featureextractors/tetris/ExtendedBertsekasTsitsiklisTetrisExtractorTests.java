@@ -5,13 +5,27 @@ import static org.junit.Assert.assertEquals;
 import java.util.Arrays;
 
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.rlcommunity.environments.tetris.TetrisState;
 import org.rlcommunity.rlglue.codec.types.Observation;
 
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
+import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
+import edu.utexas.cs.nn.parameters.Parameters;
 
 public class ExtendedBertsekasTsitsiklisTetrisExtractorTests {
+	
+	@Before
+	public void setUp() throws Exception {
+		MMNEAT.clearClasses();
+		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "recurrency:false",
+				"rlGlueEnvironment:org.rlcommunity.environments.tetris.Tetris",
+				"task:edu.utexas.cs.nn.tasks.rlglue.tetris.TetrisTask", "rlGlueAgent:edu.utexas.cs.nn.tasks.rlglue.tetris.TetrisAfterStateAgent",
+				"rlGlueExtractor:edu.utexas.cs.nn.tasks.rlglue.featureextractors.tetris.ExtendedBertsekasTsitsiklisTetrisExtractor" });
+		MMNEAT.loadClasses();
+	}
+
 	
 	@After
 	public void tearDown() throws Exception {
@@ -23,7 +37,7 @@ public class ExtendedBertsekasTsitsiklisTetrisExtractorTests {
 	 */
 	@Test
 	public void number_of_holes() {
-		TetrisState testState = new TetrisState(); // TODO: NullPointerException starts here; appears to be an issue with the Parameters in TetrisState
+		TetrisState testState = new TetrisState();
 		BertsekasTsitsiklisTetrisExtractor EBTTE = new ExtendedBertsekasTsitsiklisTetrisExtractor();
 		// line piece
 		testState.worldState[166] = 1;
