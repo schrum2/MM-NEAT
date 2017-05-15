@@ -1615,6 +1615,7 @@ public class Offspring {
 
 		Graphics g = panel.getGraphics();
 		g.setColor(Color.black);
+		// x/y-axes?
 		g.drawLine(offset, offset, offset, browseDim - offset);
 		g.drawLine(offset, browseDim - offset, browseDim - offset, browseDim - offset);
 		double max = maxes.get(objective);
@@ -1630,6 +1631,7 @@ public class Offspring {
 					offset + Plot.invert(worstScores[objective][i], maxRange, lowerMin), 1, 1);
 		}
 		g.setColor(Color.black);
+		// Writing labels on axes
 		g.drawString("" + max, offset / 2, offset / 2);
 		g.drawString("" + lowerMin, offset / 2, browseDim - (offset / 2));
 

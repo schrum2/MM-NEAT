@@ -44,7 +44,7 @@ public class SoundUtil {
 		//System.out.println(Arrays.toString(applauseNumbers));
 
 		byte[] harpNumbers = WAVToByte(HARP_WAV);
-		//System.out.println(Arrays.toString(harpNumbers));
+		System.out.println(Arrays.toString(harpNumbers));
 
 		//		for(int i = 0; i < Math.max(bearNumbers.length, applauseNumbers.length); i++) {
 		//			if(i < bearNumbers.length) System.out.print(bearNumbers[i]);
@@ -58,11 +58,11 @@ public class SoundUtil {
 		//FileOutputStream bearReturns = byteToWAV(BEARGROWL_WAV, bearNumbers);
 		//playWAVFile(bearReturns);
 
-		playByteAIS(applauseNumbers);
+		//playByteAIS(applauseNumbers);
 		
 		AudioInputStream applauseAIS = byteToAIS(applauseNumbers);
 		int[] applauseNumbers2 = extractAmplitudeDataFromAudioInputStream(applauseAIS);
-		System.out.println(Arrays.toString(applauseNumbers2));
+		//System.out.println(Arrays.toString(applauseNumbers2));
 		
 
 //		for(int i = bearNumbers.length-11; i <= bearNumbers.length-1; i++) {

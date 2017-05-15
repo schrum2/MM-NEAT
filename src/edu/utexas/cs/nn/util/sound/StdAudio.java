@@ -22,6 +22,8 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
+import edu.utexas.cs.nn.graphics.Plot;
+
 /**
 *  <i>Standard audio</i>. This class provides a basic capability for
 *  creating, reading, and saving audio. 
@@ -390,6 +392,8 @@ public final class StdAudio {
   */
  public static void main(String[] args) {
      
+	
+	 
      // 440 Hz for 1 sec
      double freq = 440.0;
      for (int i = 0; i <= StdAudio.SAMPLE_RATE; i++) {
@@ -402,6 +406,8 @@ public final class StdAudio {
          double hz = 440.0 * Math.pow(2, steps[i] / 12.0);
          StdAudio.play(note(hz, 1.0, 0.5));
      }
+     
+     //Plot.linePlot(panel, min, max, scores, color);
 
 
      // need to call this in non-interactive stuff so the program doesn't terminate
