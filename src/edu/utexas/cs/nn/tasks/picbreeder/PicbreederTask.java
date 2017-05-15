@@ -3,6 +3,7 @@ package edu.utexas.cs.nn.tasks.picbreeder;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -106,6 +107,10 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 	private static final int CENTERDISTANCE_INPUT_INDEX = 2;
 	private static final int BIAS_INPUT_INDEX = 3;
 	
+	// Activation Button Widths and Heights
+	private static final int ACTION_BUTTON_WIDTH = 80;
+	private static final int ACTION_BUTTON_HEIGHT = 60;	
+	
 	//Private final variables
 	private static int NUM_ROWS;
 	private static int PIC_SIZE;
@@ -176,22 +181,46 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		topper = new JPanel();
 		JPanel top = new JPanel();
 		JPanel bottom = new JPanel();
-		JButton resetButton = new JButton(new ImageIcon("data\\picbreeder\\reset.png"));
-		JButton saveButton = new JButton(new ImageIcon("data\\picbreeder\\save.png"));
-		JButton evolveButton = new JButton(new ImageIcon("data\\picbreeder\\arrow.png"));
-		JButton closeButton = new JButton(new ImageIcon("data\\picbreeder\\quit.png"));
-		JButton lineageButton = new JButton(new ImageIcon("data\\picbreeder\\lineage.png"));
-		JButton networkButton = new JButton(new ImageIcon("data\\picbreeder\\network.png"));
-		JButton undoButton = new JButton( new ImageIcon("data\\picbreeder\\undo.png"));
+		
+		// Gets the Button Images from the Picbreeder data Folder and re-scales them for use on the smaller Action Buttons
+		ImageIcon reset = new ImageIcon("data\\picbreeder\\reset.png");
+		Image reset2 = reset.getImage().getScaledInstance(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT, 1);
 
+		ImageIcon save = new ImageIcon("data\\picbreeder\\save.png");
+		Image save2 = save.getImage().getScaledInstance(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT, 1);
+
+		ImageIcon evolve = new ImageIcon("data\\picbreeder\\arrow.png");
+		Image evolve2 = evolve.getImage().getScaledInstance(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT, 1);
+
+		ImageIcon close = new ImageIcon("data\\picbreeder\\quit.png");
+		Image close2 = close.getImage().getScaledInstance(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT, 1);
+		
+		ImageIcon lineage = new ImageIcon("data\\picbreeder\\lineage.png");
+		Image lineage2 = lineage.getImage().getScaledInstance(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT, 1);
+
+		ImageIcon network = new ImageIcon("data\\picbreeder\\network.png");
+		Image network2 = network.getImage().getScaledInstance(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT, 1);
+		
+		ImageIcon undo = new ImageIcon("data\\picbreeder\\undo.png");
+		Image undo2 = undo.getImage().getScaledInstance(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT, 1);
+		
+		JButton resetButton = new JButton(new ImageIcon(reset2));
+		JButton saveButton = new JButton(new ImageIcon(save2));
+		JButton evolveButton = new JButton(new ImageIcon(evolve2));
+		JButton closeButton = new JButton(new ImageIcon(close2));
+		JButton lineageButton = new JButton(new ImageIcon(lineage2));
+		JButton networkButton = new JButton(new ImageIcon(network2));
+		JButton undoButton = new JButton( new ImageIcon(undo2));
+
+		System.out.println("Width: " + undoButton.getIcon().getIconWidth() + ", Height: " + undoButton.getIcon().getIconHeight());
 		//to make it work on my mac
-		resetButton.setPreferredSize(new Dimension(100, 50));
-		saveButton.setPreferredSize(new Dimension(100, 50));
-		evolveButton.setPreferredSize(new Dimension(100, 50));
-		lineageButton.setPreferredSize(new Dimension(100, 50));
-		networkButton.setPreferredSize(new Dimension(100, 50));
-		undoButton.setPreferredSize(new Dimension(100, 50));
-		closeButton.setPreferredSize(new Dimension(100, 50));
+		resetButton.setPreferredSize(new Dimension(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT));
+		saveButton.setPreferredSize(new Dimension(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT));
+		evolveButton.setPreferredSize(new Dimension(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT));
+		lineageButton.setPreferredSize(new Dimension(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT));
+		networkButton.setPreferredSize(new Dimension(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT));
+		undoButton.setPreferredSize(new Dimension(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT));
+		closeButton.setPreferredSize(new Dimension(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT));
 		
 		resetButton.setText("Reset");
 		saveButton.setText("Save");
@@ -368,7 +397,14 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		top.add(undoButton);
 		top.add(closeButton);
 		top.add(mutationsPerGeneration);
+
+		top.add(xEffect);
+		top.add(yEffect);
+		top.add(centerDistanceEffect);
+		top.add(biasEffect);
+
 		topper.add(top);
+		
 		bottom.add(halfLinear);
 		bottom.add(absVal);
 		bottom.add(sawtooth);
@@ -386,11 +422,6 @@ public class PicbreederTask<T extends Network> implements SinglePopulationTask<T
 		bottom.add(fullSawtooth);
 		bottom.add(triangleWave);
 		bottom.add(squareWave);
-
-		bottom.add(xEffect);
-		bottom.add(yEffect);
-		bottom.add(centerDistanceEffect);
-		bottom.add(biasEffect);
 
 		topper.add(bottom);
 		panels.add(topper);
