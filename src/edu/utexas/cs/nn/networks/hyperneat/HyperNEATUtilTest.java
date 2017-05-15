@@ -96,9 +96,9 @@ public class HyperNEATUtilTest {
 	@Test
 	public void testDrawSubstrateVisual2() {
 		// This isn't actually an automated test
-		//HyperNEATUtil.drawSubstrate(subs[0], nodes, 0);
-		//MiscUtil.waitForReadStringAndEnterKeyPress();
-		assertFalse(true); // Fail test
+		HyperNEATUtil.drawSubstrate(subs[0], nodes, 0);
+//		MiscUtil.waitForReadStringAndEnterKeyPress();
+//		assertFalse(true); // Fail test
 	}
 	/**
 	 * Visual test of drawSubstrate method

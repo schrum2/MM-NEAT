@@ -24,20 +24,55 @@ import edu.utexas.cs.nn.util.datastructures.Pair;
 public class HyperNEATUtil {
 
 	//may change later to just use collections.sort with a special comparator instead of creating new data type
+	/**
+	 * Public inner class that creates a new VisualNode
+	 * 
+	 * @author Lauren Gillespie
+	 *
+	 */
 	public static class VisualNode implements Comparable<VisualNode> {
 		public double activation;
 		public int xCoord, yCoord;
 		public Color c;
 		public boolean dead;
 
+		/**
+		 * Default Constructor for a new VisualNode
+		 * 
+		 * @param activation Current activation to be stored in the VisualNode
+		 * @param xCoord X-Coordinate of the new VisualNode
+		 * @param yCoord Y-Coordinate of the new VisualNode
+		 */
 		public VisualNode(double activation, int xCoord, int yCoord) {
 			this(activation, xCoord, yCoord, Color.white);
 		}
 
+		/**
+		 * Constructor for a new VisualNode;
+		 * different from the Default Constructor
+		 * in that the Color is set by the user
+		 * 
+		 * @param activation Current activation to be stored in the VisualNode
+		 * @param xCoord X-Coordinate of the new VisualNode
+		 * @param yCoord Y-Coordinate of the new VisualNode
+		 * @param c Color of the new Visual Node
+		 */
 		public VisualNode(double activation, int xCoord, int yCoord, Color c) {
 			this(activation, xCoord, yCoord, c, false);
 		}
 
+		/**
+		 * Constructor for a new VisualNode;
+		 * different from the Default Constructor
+		 * in that the Color is set by the user
+		 * and that the user sets whether or not the VisualNode is dead
+		 * 
+		 * @param activation Current activation to be stored in the VisualNode
+		 * @param xCoord X-Coordinate of the new VisualNode
+		 * @param yCoord Y-Coordinate of the new VisualNode
+		 * @param c Color of the new Visual Node
+		 * @param dead Boolean that sets the VisualNode to be dead if true, not dead if false
+		 */
 		public VisualNode(double activation, int xCoord, int yCoord, Color c, boolean dead) {
 			this.activation = activation;
 			this.xCoord = xCoord*SUBS_GRID_SIZE;
@@ -46,9 +81,26 @@ public class HyperNEATUtil {
 			this.dead = dead;
 		}
 
+		/**
+		 * Sets the Color of the VisualNode
+		 * 
+		 * @param c New Color of the VisualNode
+		 */
 		public void setColor(Color c) {
 			this.c = c;
 		}
+		
+		/**
+		 * Compares this VisualNode to a specified other VisualNode
+		 * and returns an Integer value that describes the relationship between
+		 * the two.
+		 * 
+		 * @param o Another VisualNode to be compared against
+		 * @return 0 if the VisualNodes are alike,
+		 * 		1 if the other VisualNode is dead and this one isn't,
+		 * 		-1 if this VisualNode is dead and the other one isn't,
+		 * 		or the signum of this VisualNode's activation minus the other VisualNode's activation.
+		 */
 		@Override
 		public int compareTo(VisualNode o) {
 			if(o.dead && this.dead) return 0; // dead neurons are alike
@@ -57,11 +109,23 @@ public class HyperNEATUtil {
 			else return (int) Math.signum(this.activation - o.activation);
 		} 
 
+		/**
+		 * Draws this VisualNode on a Drawing Panel at the VisualNode's
+		 * X-Coordinate and Y-Coordinate with its set Color
+		 * 
+		 * @param p DrawingPanel where the VisualNode should be drawn
+		 */
 		public void drawNode(DrawingPanel p) {
 			p.getGraphics().setColor(c);
 			p.getGraphics().fillRect(xCoord, yCoord, SUBS_GRID_SIZE, SUBS_GRID_SIZE);
 		}
 
+		/**
+		 * Returns a String with the VisualNode's activation,
+		 * X-Coordinate, Y-Coordinate, and Color.
+		 * 
+		 * @return s String with the VisualNode's data
+		 */
 		@Override
 		public String toString() {
 			String s = "Visual Node: (";
@@ -86,12 +150,21 @@ public class HyperNEATUtil {
 	private static List<Pair<String, String>> connections;
 	private static List<TWEANNGenotype.NodeGene> nodes;
 
+	/**
+	 * Resets the Substrates of the HyperNEAT
+	 */
 	public static void resetSubstrates() {
 		if(hyperNEATTask != null) {
 			substrates = hyperNEATTask.getSubstrateInformation();
 		}
 	}
 
+	/**
+	 * Draws the Substrates of the HyperNEAT
+	 * 
+	 * @param nodes ArrayList<Nodes> of Nodes to be drawn
+	 * @return List<DrawingPanel> of DrawingPanels used to draw the Substrates
+	 */
 	public static List<DrawingPanel> drawSubstrates(ArrayList<Node> nodes) {
 		if(substratePanels == null) {
 			hyperNEATTask = (HyperNEATTask) MMNEAT.task;
