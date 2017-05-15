@@ -3,6 +3,8 @@ package org.rlcommunity.environments.acrobot;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.rlcommunity.environments.acrobot.AcrobotState;
 import org.rlcommunity.environments.acrobot.messages.StateResponse;
@@ -15,6 +17,7 @@ import rlVizLib.messaging.environment.EnvironmentMessageParser;
 import rlVizLib.messaging.environment.EnvironmentMessages;
 import rlVizLib.messaging.interfaces.HasAVisualizerInterface;
 import org.rlcommunity.environments.acrobot.visualizer.AcrobotVisualizer;
+import org.rlcommunity.environments.cartpole.CartPole;
 import org.rlcommunity.rlglue.codec.taskspec.TaskSpec;
 import org.rlcommunity.rlglue.codec.taskspec.TaskSpecVRLGLUE3;
 import org.rlcommunity.rlglue.codec.taskspec.ranges.DoubleRange;
@@ -22,6 +25,7 @@ import org.rlcommunity.rlglue.codec.taskspec.ranges.IntRange;
 import org.rlcommunity.rlglue.codec.util.EnvironmentLoader;
 
 import edu.utexas.cs.nn.tasks.rlglue.RLGlueEnvironment;
+import edu.utexas.cs.nn.tasks.rlglue.acrobot.AcrobotViewer;
 import rlVizLib.general.hasVersionDetails;
 import rlVizLib.messaging.environmentShell.TaskSpecPayload;
 import rlVizLib.messaging.interfaces.HasImageInterface;
@@ -148,6 +152,16 @@ public class Acrobot extends RLGlueEnvironment implements HasAVisualizerInterfac
             ro.r=0.0d;
             ro.terminal = 1;
         }
+        
+		if (AcrobotViewer.current != null) {
+			AcrobotViewer.current.reset(theState);
+			
+			try {
+				Thread.sleep(1);
+			} catch (InterruptedException ex) {
+				Logger.getLogger(CartPole.class.getName()).log(Level.SEVERE, null, ex);
+			}
+		}
         return ro;
     }
 

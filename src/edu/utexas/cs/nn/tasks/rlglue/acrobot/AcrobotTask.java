@@ -16,7 +16,7 @@ public class AcrobotTask<T extends Network> extends RLGlueTask<T> {
 				AcrobotViewer.current = new AcrobotViewer();
 			} else {
 				System.out.println("Same AcrobotViewer");
-				AcrobotViewer.current.reset();
+				AcrobotViewer.current.reset(null);
 			}
 		}
 	}
