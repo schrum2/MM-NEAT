@@ -14,8 +14,6 @@ import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
-//import javazoom.jl.converter.Converter.*;
-//import javazoom.jl.decoder.Decoder;
 import javazoom.jl.decoder.JavaLayerException;
 import javazoom.jl.player.advanced.AdvancedPlayer;
 import javazoom.jl.player.advanced.PlaybackListener;
@@ -39,12 +37,20 @@ public class SoundUtil {
 		//mp3Conversion(HAPPY_MP3).playMP3File();
 		byte[] bearNumbers = WAVToByte(BEARGROWL_WAV);
 		//System.out.println(Arrays.toString(bearNumbers));
+		AudioInputStream bearAIS = SoundUtil.byteToAIS(bearNumbers);
+		int[] bearData = SoundUtil.extractAmplitudeDataFromAudioInputStream(bearAIS);
+		//System.out.println(Arrays.toString(bearData));
 
 		byte[] applauseNumbers = WAVToByte(APPLAUSE_WAV);	
 		//System.out.println(Arrays.toString(applauseNumbers));
 
 		byte[] harpNumbers = WAVToByte(HARP_WAV);
-		System.out.println(Arrays.toString(harpNumbers));
+		//System.out.println(Arrays.toString(harpNumbers));
+		AudioInputStream harpAIS = SoundUtil.byteToAIS(harpNumbers);
+		int[] harpData = SoundUtil.extractAmplitudeDataFromAudioInputStream(harpAIS);
+		System.out.println(Arrays.toString(harpData));
+		
+		//System.out.println(stream);
 
 		//		for(int i = 0; i < Math.max(bearNumbers.length, applauseNumbers.length); i++) {
 		//			if(i < bearNumbers.length) System.out.print(bearNumbers[i]);
@@ -253,7 +259,7 @@ public class SoundUtil {
 //		return extractAmplitudeDataFromAudioInputStream(audioInputStream);  
 //	}  
 
-	private static int[] extractAmplitudeDataFromAudioInputStream(AudioInputStream audioInputStream) {  
+	public static int[] extractAmplitudeDataFromAudioInputStream(AudioInputStream audioInputStream) {  
 		AudioFormat format = audioInputStream.getFormat();  
 		byte[] audioBytes = new byte[(int) (audioInputStream.getFrameLength() * format.getFrameSize())];  
 		// calculate durations  
@@ -268,6 +274,7 @@ public class SoundUtil {
 		}  
 		return extractAmplitudeDataFromAmplitudeByteArray(format, audioBytes);  
 	}  
+	
 	private static int[] extractAmplitudeDataFromAmplitudeByteArray(AudioFormat format, byte[] audioBytes) {  
 		// convert
 		int[]  audioData = null;  
