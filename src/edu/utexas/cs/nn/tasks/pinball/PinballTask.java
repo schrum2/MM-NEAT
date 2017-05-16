@@ -1,5 +1,7 @@
 package edu.utexas.cs.nn.tasks.pinball;
 
+import java.util.ArrayList;
+
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.networks.Network;
@@ -16,7 +18,7 @@ import pinball.State;
 public class PinballTask<T extends Network> extends NoisyLonerTask<T>implements NetworkTask {
 
 	PinballViewer view = null; 
-
+	ArrayList<Double> listOfCoordinates = new ArrayList<Double>();
 
 	/**
 	 * Constructor for a new PinballTask
@@ -75,6 +77,22 @@ public class PinballTask<T extends Network> extends NoisyLonerTask<T>implements 
 	}
 
 	/**
+	 * Clears the listOfCoordinates for Behavioral Diversity
+	 */
+	@Override
+	public void prep() {
+		listOfCoordinates.clear();
+	}
+	
+	/**
+	 * Returns the listOfCoordinates for Behavioral Diversity
+	 */
+	@Override
+	public ArrayList<Double> getBehaviorVector() {
+		return listOfCoordinates;
+	}
+	
+	/**
 	 * Evaluates a given individual network's Fitness;
 	 * If the CommonConstants Watch variable is set to "True," runs a visual evaluation,
 	 * Else runs a non-visual evaluation
@@ -132,6 +150,9 @@ public class PinballTask<T extends Network> extends NoisyLonerTask<T>implements 
 
 		Double distance = p.getBall().getCenter().distanceTo(p.getTarget().getCenter()); // Subtracts the distance from the Ball to the Target from the overall Fitness; getting closer means a higher score
 		
+		listOfCoordinates.add(p.getBall().getX());
+		listOfCoordinates.add(p.getBall().getY());
+		
 		Pair<double[], double[]> evalResults = new Pair<double[], double[]>(new double[] {fitness}, new double[0]);			
 
 		if(Parameters.parameters.booleanParameter("moPinball")){
@@ -143,4 +164,9 @@ public class PinballTask<T extends Network> extends NoisyLonerTask<T>implements 
 		return evalResults; // Returns the Fitness of the individual's Genotype<T>
 	}
 
+	@Override
+	public void cleanup(){
+		listOfCoordinates = null;
+	}
+	
 }
