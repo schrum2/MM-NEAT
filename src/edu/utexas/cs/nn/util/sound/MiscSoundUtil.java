@@ -44,7 +44,7 @@ import edu.utexas.cs.nn.util.graphics.Plot;
  *  @author Robert Sedgewick
  *  @author Kevin Wayne
  */
-public final class StdAudio {
+public final class MiscSoundUtil {
 
 	/**
 	 *  The sample rate - 44,100 Hz for CD quality audio.
@@ -61,7 +61,7 @@ public final class StdAudio {
 	private static byte[] buffer;         // our internal buffer
 	private static int bufferSize = 0;    // number of samples currently in internal buffer
 
-	private StdAudio() {
+	private MiscSoundUtil() {
 		// can not instantiate
 	}
 
@@ -184,7 +184,7 @@ public final class StdAudio {
 
 			// try to read from URL
 			else {
-				URL url = StdAudio.class.getResource(filename);
+				URL url = MiscSoundUtil.class.getResource(filename);
 				ais = AudioSystem.getAudioInputStream(url);
 				int bytesToRead = ais.available();
 				data = new byte[bytesToRead];
@@ -258,7 +258,7 @@ public final class StdAudio {
 	public static synchronized void play(final String filename) {
 		if (filename == null) throw new IllegalArgumentException();
 
-		InputStream is = StdAudio.class.getResourceAsStream(filename);
+		InputStream is = MiscSoundUtil.class.getResourceAsStream(filename);
 		if (is == null) {
 			throw new IllegalArgumentException("could not read '" + filename + "'");
 		}
@@ -324,7 +324,7 @@ public final class StdAudio {
 		int BUFFER_SIZE = 4096; // 4K buffer
 
 		try {
-			InputStream is = StdAudio.class.getResourceAsStream(filename);
+			InputStream is = MiscSoundUtil.class.getResourceAsStream(filename);
 			AudioInputStream ais = AudioSystem.getAudioInputStream(is);
 			AudioFormat audioFormat = ais.getFormat();
 			DataLine.Info info = new DataLine.Info(SourceDataLine.class, audioFormat);
@@ -366,7 +366,7 @@ public final class StdAudio {
 		// code adapted from: http://stackoverflow.com/questions/26305/how-can-i-play-sound-in-java
 		try {
 			Clip clip = AudioSystem.getClip();
-			InputStream is = StdAudio.class.getResourceAsStream(filename);
+			InputStream is = MiscSoundUtil.class.getResourceAsStream(filename);
 			AudioInputStream ais = AudioSystem.getAudioInputStream(is);
 			clip.open(ais);
 			clip.loop(Clip.LOOP_CONTINUOUSLY);
@@ -381,31 +381,7 @@ public final class StdAudio {
 			throw new IllegalArgumentException("could not play '" + filename + "'", e);
 		}
 	}
-
 	
-	/**
-	 * Adds the array values at each index of two audio files represented as double arrays, combining them into a single double array.
-	 * Value is decided based on length of shortest array.
-	 * 
-	 * @param fileA First audio file being overlapped
-	 * @param fileB Second audio file being overlapped
-	 * @return array of doubles with values that are the sum of the two input audio files at each index
-	 */
-	public static double[] overlap(String fileA, String fileB) {
-		double[] a = read(fileA); //reads string files in as double arrays
-		double[] b = read(fileB);
-		double[] adjustedA = Arrays.copyOf(a, Math.min(a.length, b.length)); //copy of itself but adjusted based on length of shortest array
-		double[] adjustedB = Arrays.copyOf(b, Math.min(a.length, b.length)); //copy of itself but adjusted based on length of shortest array
-		double[] overlapped = ArrayUtil.zipAdd(adjustedA, adjustedB); //zipAdd() is a method in ArrayUtil that adds values at each index of two arrays into a new array
-		return overlapped;
-	}
-	
-
-
-	/***************************************************************************
-	 * Unit tests {@code StdAudio}.
-	 ***************************************************************************/
-
 	/**
 	 * Creates notes based on frequency, duration, and amplitude inputs. 
 	 * 
@@ -415,86 +391,11 @@ public final class StdAudio {
 	 * @return double array containing notes
 	 */
 	private static double[] note(double hz, double duration, double amplitude) {
-		int n = (int) (StdAudio.SAMPLE_RATE * duration);
+		int n = (int) (MiscSoundUtil.SAMPLE_RATE * duration);
 		double[] a = new double[n+1];
 		for (int i = 0; i <= n; i++)
-			a[i] = amplitude * Math.sin(2 * Math.PI * i * hz / StdAudio.SAMPLE_RATE);
+			a[i] = amplitude * Math.sin(2 * Math.PI * i * hz / MiscSoundUtil.SAMPLE_RATE);
 		return a;
 	}
-
-	/**
-	 * Test client - play an A major scale to standard audio.
-	 *
-	 * @param args the command-line arguments
-	 */
-	/**
-	 * Test client - play an A major scale to standard audio.
-	 *
-	 * @param args the command-line arguments
-	 */
-	public static void main(String[] args) {
-
-		// 440 Hz for 1 sec
-		double freq1 = 440.0;
-		for (int i = 0; i <= StdAudio.SAMPLE_RATE; i++) {
-			//StdAudio.play(0.5 * Math.sin(2*Math.PI * freq1 * i / StdAudio.SAMPLE_RATE));
-		}
-
-		for (int i = 0; i <= StdAudio.SAMPLE_RATE; i++) {
-			//StdAudio.play(0.5 * ActivationFunctions.squareWave(2*Math.PI * freq1 * i / StdAudio.SAMPLE_RATE));
-		}
-		
-		for (int i = 0; i <= StdAudio.SAMPLE_RATE; i++) {
-			//StdAudio.play(0.5 * ActivationFunctions.triangleWave(2*Math.PI * freq1 * i / StdAudio.SAMPLE_RATE));
-		}
-		
 	
-//		// scale increments
-//		int[] steps = { 0, 2, 4, 5, 7, 9, 11, 12 };
-//		for (int i = 0; i < steps.length; i++) {
-//			double hz = 440.0 * Math.pow(2, steps[i] / 12.0);
-//			StdAudio.play(note(hz, 1.0, 0.5));
-//		}
-
-		double[] exampleSound = new double[StdAudio.SAMPLE_RATE+1];
-		double freq2 = 440.0;
-		for (int i = 0; i <= StdAudio.SAMPLE_RATE; i++) {
-			exampleSound[i] = (0.5 * Math.sin(2*Math.PI * freq2 * i / StdAudio.SAMPLE_RATE));
-		}
-		//StdAudio.play(exampleSound);
-		
-		for (int i = 0; i <= StdAudio.SAMPLE_RATE; i++) {
-			exampleSound[i] = (0.5 * ActivationFunctions.fullSawtooth(2*Math.PI * freq2 * i / StdAudio.SAMPLE_RATE));
-		}
-		//StdAudio.play(exampleSound);
-		
-		double[] test = new double[500];
-		for(int i = 0; i < test.length; i++) {
-			test[i] = i;
-		}
-		//StdAudio.play(test);
-
-		
-		for (double i = 0; i <= StdAudio.SAMPLE_RATE; i++) {
-			exampleSound[(int)i] = (ActivationFunctions.tanh( 2*(i/StdAudio.SAMPLE_RATE) - 1 ));
-		}
-		//StdAudio.play(exampleSound);
-		
-		
-	
-		
-		String pirates= "data/sounds/pirates.mid";
-		//play(pirates);
-		//playApplet(pirates);
-		String classical = "data/sounds/CLASSICA.MID";
-		//play(classical);
-		playApplet(classical);
-		
-
-
-
-		// need to call this in non-interactive stuff so the program doesn't terminate
-		// until all the sound leaves the speaker.
-		StdAudio.close(); 
-	}
 }

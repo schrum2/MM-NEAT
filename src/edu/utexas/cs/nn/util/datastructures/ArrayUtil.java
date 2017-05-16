@@ -6,6 +6,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import edu.utexas.cs.nn.util.sound.MiscSoundUtil;
+
 /**
  *
  * @author Jacob Schrum
@@ -605,6 +607,24 @@ public class ArrayUtil {
 		}
 		return result;
 	}
+	
+	/**
+	 * Adds the array values at each index of two audio files represented as double arrays, combining them into a single double array.
+	 * Value is decided based on length of shortest array.
+	 * 
+	 * @param fileA First audio file being overlapped
+	 * @param fileB Second audio file being overlapped
+	 * @return array of doubles with values that are the sum of the two input audio files at each index
+	 */
+	public static double[] overlap(String fileA, String fileB) {
+		double[] a = MiscSoundUtil.read(fileA); //reads string files in as double arrays
+		double[] b = MiscSoundUtil.read(fileB);
+		double[] adjustedA = Arrays.copyOf(a, Math.min(a.length, b.length)); //copy of itself but adjusted based on length of shortest array
+		double[] adjustedB = Arrays.copyOf(b, Math.min(a.length, b.length)); //copy of itself but adjusted based on length of shortest array
+		double[] overlapped = ArrayUtil.zipAdd(adjustedA, adjustedB); //zipAdd() is a method in ArrayUtil that adds values at each index of two arrays into a new array
+		return overlapped;
+	}
+
 
 	/**
 	 * Given two equal length double arrays, create a new array whose elements

@@ -1,14 +1,16 @@
 package edu.utexas.cs.nn.util.sound;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 
 import edu.utexas.cs.nn.evolution.genotypes.HyperNEATCPPNGenotype;
 import edu.utexas.cs.nn.networks.Network;
+import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
 
-public class Amplitude {
+public class SoundAmplitudeArrayManipulator {
 	
 	//Methods from GT - used to extract amplitude from recorded wave
 	
@@ -79,6 +81,7 @@ public class Amplitude {
 		}
 		return audioData;  
 	}
+	
 
 	//CPPN 
 	
@@ -98,8 +101,8 @@ public class Amplitude {
 		for(double time = 0; time < length; time++) {
 			//double[] inputs = new double[]{time/StdAudio.SAMPLE_RATE, Math.sin(2*Math.PI * frequency * time/StdAudio.SAMPLE_RATE), HyperNEATCPPNGenotype.BIAS};
 			//double[] inputs = new double[]{time/StdAudio.SAMPLE_RATE, ActivationFunctions.triangleWave(2*Math.PI * frequency * time/StdAudio.SAMPLE_RATE), HyperNEATCPPNGenotype.BIAS};
-			double[] inputs = new double[]{time/StdAudio.SAMPLE_RATE, 
-					Math.sin(2*Math.PI * frequency * time/StdAudio.SAMPLE_RATE), 
+			double[] inputs = new double[]{time/MiscSoundUtil.SAMPLE_RATE, 
+					Math.sin(2*Math.PI * frequency * time/MiscSoundUtil.SAMPLE_RATE), 
 //					ActivationFunctions.triangleWave(2*Math.PI * frequency * time/StdAudio.SAMPLE_RATE), 
 //					ActivationFunctions.squareWave(2*Math.PI * frequency * time/StdAudio.SAMPLE_RATE), 
 					HyperNEATCPPNGenotype.BIAS};

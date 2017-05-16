@@ -1,7 +1,6 @@
 package edu.utexas.cs.nn.util.sound;
 
 
-import java.awt.Color;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
@@ -29,13 +28,13 @@ import javazoom.jl.player.advanced.AdvancedPlayer;
 import javazoom.jl.player.advanced.PlaybackListener;
 
 /**
- * Class containing utility methods that manipulate various types of sound files. Can play audio files,
- * convert them, and reconstruct them. 
+ * Class containing various testing examples for sound utility methods in sound package.
+ * Pretty disorganized, but just storing the various examples here so we don't lose them.
  * 
  * @author Isabel Tweraser
  *
  */
-public class SoundUtil {
+public class SoundUtilExamples {
 
 	private static final String BEARGROWL_WAV = "data/sounds/bear_growl_y.wav";
 	private static final String APPLAUSE_WAV = "data/sounds/applause_y.wav";
@@ -51,22 +50,21 @@ public class SoundUtil {
 			test.mutate();
 		}
 		Network cppn = test.getCPPN();
-		double[] testArray = Amplitude.amplitudeGenerator(cppn, 60000, 440);
-		StdAudio.play(testArray);
+		double[] testArray = SoundAmplitudeArrayManipulator.amplitudeGenerator(cppn, 60000, 440);
+		MiscSoundUtil.play(testArray);
 		GraphicsUtil.wavePlotFromDoubleArray(testArray);
 		
-//		
-//		ArrayList<Double> fileArrayList2 = ArrayUtil.doubleVectorFromArray(testArray2); //convert array into array list
-//		DrawingPanel panel2 = new DrawingPanel(500,500, "2"); //create panel where line will be plotted 
-//		GraphicsUtil.linePlot(panel2, -1.0, 1.0, fileArrayList2, Color.black); //call linePlot with ArrayList to draw graph
-//		MiscUtil.waitForReadStringAndEnterKeyPress();
-		
+		//		ArrayList<Double> fileArrayList2 = ArrayUtil.doubleVectorFromArray(testArray2); //convert array into array list
+		//		DrawingPanel panel2 = new DrawingPanel(500,500, "2"); //create panel where line will be plotted 
+		//		GraphicsUtil.linePlot(panel2, -1.0, 1.0, fileArrayList2, Color.black); //call linePlot with ArrayList to draw graph
+		//		MiscUtil.waitForReadStringAndEnterKeyPress();
+
 		//playWAVFile(BEARGROWL_WAV);
 		//mp3Conversion(HAPPY_MP3).playMP3File();
 		byte[] bearNumbers = WAVUtil.WAVToByte(BEARGROWL_WAV);
 		//System.out.println(Arrays.toString(bearNumbers));
 		AudioInputStream bearAIS = WAVUtil.byteToAIS(bearNumbers);
-		int[] bearData = Amplitude.extractAmplitudeDataFromAudioInputStream(bearAIS);
+		int[] bearData = SoundAmplitudeArrayManipulator.extractAmplitudeDataFromAudioInputStream(bearAIS);
 		//System.out.println(Arrays.toString(bearData));
 
 		byte[] applauseNumbers =WAVUtil.WAVToByte(APPLAUSE_WAV);	
@@ -75,7 +73,7 @@ public class SoundUtil {
 		byte[] harpNumbers = WAVUtil.WAVToByte(HARP_WAV);
 		//System.out.println(Arrays.toString(harpNumbers));
 		AudioInputStream harpAIS = WAVUtil.byteToAIS(harpNumbers);
-		int[] harpData = Amplitude.extractAmplitudeDataFromAudioInputStream(harpAIS);
+		int[] harpData = SoundAmplitudeArrayManipulator.extractAmplitudeDataFromAudioInputStream(harpAIS);
 		System.out.println(Arrays.toString(harpData));
 
 		//System.out.println(stream);
@@ -95,7 +93,7 @@ public class SoundUtil {
 		//playByteAIS(applauseNumbers);
 
 		AudioInputStream applauseAIS = WAVUtil.byteToAIS(applauseNumbers);
-		int[] applauseNumbers2 = Amplitude.extractAmplitudeDataFromAudioInputStream(applauseAIS);
+		int[] applauseNumbers2 = SoundAmplitudeArrayManipulator.extractAmplitudeDataFromAudioInputStream(applauseAIS);
 		//System.out.println(Arrays.toString(applauseNumbers2));
 
 
@@ -106,13 +104,13 @@ public class SoundUtil {
 		//		System.out.println();
 
 		double[] splice = new double[applauseNumbers.length];
-//		for(int i = 0; i < splice.length; i++) {
-//			if(i < 46)
-//				splice[i] = bearNumbers[i];
-//			else 
-//				splice[i] = applauseNumbers[i];
-//		}
-//		StdAudio.play(splice);
+		//		for(int i = 0; i < splice.length; i++) {
+		//			if(i < 46)
+		//				splice[i] = bearNumbers[i];
+		//			else 
+		//				splice[i] = applauseNumbers[i];
+		//		}
+		//		StdAudio.play(splice);
 
 		double[] bear = new double[bearNumbers.length];
 		for(int i = 0; i < bear.length; i++) {
@@ -122,28 +120,28 @@ public class SoundUtil {
 				bear[i] = 20;
 		}
 		bear[bear.length-1] = 0;
-		StdAudio.play(bear);
-		
-//		double[] applause = new double[bearNumbers.length];
-//		for(int i = 0; i < original.length; i++) {
-//			if(i < 50120 || i >= bearNumbers.length-11) 
-//				original[i] = bearNumbers[i];
-//			else 
-//				original[i] = 20;
-//		}
-//		original[original.length-1] = 0;
-//		StdAudio.play(original);
-//		
-//		double[] original = new double[bearNumbers.length];
-//		for(int i = 0; i < original.length; i++) {
-//			if(i < 50120 || i >= bearNumbers.length-11) 
-//				original[i] = bearNumbers[i];
-//			else 
-//				original[i] = 20;
-//		}
-//		original[original.length-1] = 0;
-//		StdAudio.play(original);
-		
+		MiscSoundUtil.play(bear);
+
+		//		double[] applause = new double[bearNumbers.length];
+		//		for(int i = 0; i < original.length; i++) {
+		//			if(i < 50120 || i >= bearNumbers.length-11) 
+		//				original[i] = bearNumbers[i];
+		//			else 
+		//				original[i] = 20;
+		//		}
+		//		original[original.length-1] = 0;
+		//		StdAudio.play(original);
+		//		
+		//		double[] original = new double[bearNumbers.length];
+		//		for(int i = 0; i < original.length; i++) {
+		//			if(i < 50120 || i >= bearNumbers.length-11) 
+		//				original[i] = bearNumbers[i];
+		//			else 
+		//				original[i] = 20;
+		//		}
+		//		original[original.length-1] = 0;
+		//		StdAudio.play(original);
+
 		//		StdAudio.wavePlot(BEARGROWL_WAV);
 		//		StdAudio.wavePlot(APPLAUSE_WAV);
 		//		StdAudio.wavePlot(HARP_WAV);
@@ -151,21 +149,76 @@ public class SoundUtil {
 		System.out.println("bear growl: " + bearNumbers.length);
 		System.out.println("applause: " + applauseNumbers.length);
 		System.out.println("harp: " + harpNumbers.length);
-		double[] applauseAndHarp = StdAudio.overlap(APPLAUSE_WAV, HARP_WAV);
+		double[] applauseAndHarp = ArrayUtil.overlap(APPLAUSE_WAV, HARP_WAV);
 		System.out.println("applauseAndHarp length: " + applauseAndHarp.length);
-		double[] bearGrowlAndHarp = StdAudio.overlap(BEARGROWL_WAV, HARP_WAV);
+		double[] bearGrowlAndHarp = ArrayUtil.overlap(BEARGROWL_WAV, HARP_WAV);
 		System.out.println("bearGrowlAndHarp length: " + bearGrowlAndHarp.length);
-		double[] applauseAndBearGrowl = StdAudio.overlap(APPLAUSE_WAV, BEARGROWL_WAV);
+		double[] applauseAndBearGrowl = ArrayUtil.overlap(APPLAUSE_WAV, BEARGROWL_WAV);
 		System.out.println("applauseAndBearGrowl length: " + applauseAndBearGrowl.length);
 
 		//		StdAudio.play(applauseAndHarp);
 		//		StdAudio.play(bearGrowlAndHarp);
 		//		StdAudio.play(applauseAndBearGrowl);
-		
-		StdAudio.play(PIRATES);
-		
-		
 
+		MiscSoundUtil.play(PIRATES);
+
+		// 440 Hz for 1 sec
+		double freq1 = 440.0;
+		for (int i = 0; i <= MiscSoundUtil.SAMPLE_RATE; i++) {
+			//StdAudio.play(0.5 * Math.sin(2*Math.PI * freq1 * i / StdAudio.SAMPLE_RATE));
+		}
+
+		for (int i = 0; i <= MiscSoundUtil.SAMPLE_RATE; i++) {
+			//StdAudio.play(0.5 * ActivationFunctions.squareWave(2*Math.PI * freq1 * i / StdAudio.SAMPLE_RATE));
+		}
+
+		for (int i = 0; i <= MiscSoundUtil.SAMPLE_RATE; i++) {
+			//StdAudio.play(0.5 * ActivationFunctions.triangleWave(2*Math.PI * freq1 * i / StdAudio.SAMPLE_RATE));
+		}
+
+
+		//			// scale increments
+		//			int[] steps = { 0, 2, 4, 5, 7, 9, 11, 12 };
+		//			for (int i = 0; i < steps.length; i++) {
+		//				double hz = 440.0 * Math.pow(2, steps[i] / 12.0);
+		//				StdAudio.play(note(hz, 1.0, 0.5));
+		//			}
+
+		double[] exampleSound = new double[MiscSoundUtil.SAMPLE_RATE+1];
+		double freq2 = 440.0;
+		for (int i = 0; i <= MiscSoundUtil.SAMPLE_RATE; i++) {
+			exampleSound[i] = (0.5 * Math.sin(2*Math.PI * freq2 * i / MiscSoundUtil.SAMPLE_RATE));
+		}
+		//StdAudio.play(exampleSound);
+
+		for (int i = 0; i <= MiscSoundUtil.SAMPLE_RATE; i++) {
+			exampleSound[i] = (0.5 * ActivationFunctions.fullSawtooth(2*Math.PI * freq2 * i / MiscSoundUtil.SAMPLE_RATE));
+		}
+		//StdAudio.play(exampleSound);
+
+		double[] thing = new double[500];
+		for(int i = 0; i < thing.length; i++) {
+			thing[i] = i;
+		}
+		//StdAudio.play(thing);
+
+
+		for (double i = 0; i <= MiscSoundUtil.SAMPLE_RATE; i++) {
+			exampleSound[(int)i] = (ActivationFunctions.tanh( 2*(i/MiscSoundUtil.SAMPLE_RATE) - 1 ));
+		}
+		//StdAudio.play(exampleSound);
+
+		String pirates= "data/sounds/pirates.mid";
+		//play(pirates);
+		//playApplet(pirates);
+		String classical = "data/sounds/CLASSICA.MID";
+		//play(classical);
+		//StdAudio.playApplet(classical); //TODO: failure here?
+
+
+		// need to call this in non-interactive stuff so the program doesn't terminate
+		// until all the sound leaves the speaker.
+		MiscSoundUtil.close(); 
 	}
 
 
