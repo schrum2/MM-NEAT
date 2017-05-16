@@ -65,7 +65,7 @@ public class PinballTask<T extends Network> extends NoisyLonerTask<T>implements 
 	@Override
 	public String[] outputLabels() {
 		// TODO Ensure "Up" and "Down" are correct
-		return new String[]{"Right", "Up", "Left", "Down", "None"};
+		return new String[]{"Right", "Down", "Left", "Up", "None"};
 	}
 
 	/**

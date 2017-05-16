@@ -41,7 +41,7 @@ public class PinballViewer extends JFrame {
         canvas.setVisible(true);
 	}
 	
-	public void resetViewer(PinBall newPinball){
-		canvas = new PinBallCanvas(newPinball);
-	}
+//	public void resetViewer(PinBall newPinball){
+//		canvas = new PinBallCanvas(newPinball);
+//	}
 }
