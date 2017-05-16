@@ -13,6 +13,7 @@ import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
+import edu.utexas.cs.nn.networks.Network;
 import javazoom.jl.decoder.JavaLayerException;
 import javazoom.jl.player.advanced.AdvancedPlayer;
 import javazoom.jl.player.advanced.PlaybackListener;
@@ -263,14 +264,17 @@ public class SoundUtil {
 	}
 
 	//Methods from GT - used to extract amplitude from recorded wave
-
+	
+	/**
+	 * Method that inputs an AudioInputStream, obtains the format of the stream and forms an array of bytes 
+	 * based on the size of the stream, and returns a method call to extractAmplitudeDataFromAmplitudeByteArray(). 
+	 * 
+	 * @param audioInputStream stream of audio being converted into amplitude data
+	 * @return  method call that extracts amplitude data from byte array formed
+	 */
 	public static int[] extractAmplitudeDataFromAudioInputStream(AudioInputStream audioInputStream) {  
 		AudioFormat format = audioInputStream.getFormat();  
 		byte[] audioBytes = new byte[(int) (audioInputStream.getFrameLength() * format.getFrameSize())];  
-		// calculate durations  
-		long durationMSec = (long) ((audioInputStream.getFrameLength() * 1000) / audioInputStream.getFormat().getFrameRate());  
-		//double durationSec = durationMSec / 1000.0;  
-		// System.out.println("The current signal has duration "+durationSec+" Sec");  
 		try {  
 			audioInputStream.read(audioBytes);  
 		} catch (IOException e) {  
@@ -279,7 +283,15 @@ public class SoundUtil {
 		}  
 		return extractAmplitudeDataFromAmplitudeByteArray(format, audioBytes);  //calls method that extracts amplitude data from byte array formed
 	}  
-
+	
+	/**
+	 * Method that inputs the format of an AudioInputStream as well as the byte array formed from its contents
+	 * and then creates an array of ints containing the amplitude data of the stream. 
+	 * 
+	 * @param format AudioFormat of AudioinputStream
+	 * @param audioBytes byte array formed based on the size of the stream
+	 * @return int array containing amplitude data from stream
+	 */
 	private static int[] extractAmplitudeDataFromAmplitudeByteArray(AudioFormat format, byte[] audioBytes) {  
 		// convert
 		int[]  audioData = null;  
@@ -334,7 +346,10 @@ public class SoundUtil {
 		SoundJLayer soundToPlay = new SoundJLayer(mp3);
 		return soundToPlay;
 	}
-
+	
+	/**
+	 * Inner SoundJLayer class that contains methods associated with playing an MP3 file.  
+	 */
 	public static class SoundJLayer extends PlaybackListener implements Runnable {
 		private String filePath;
 		private AdvancedPlayer player;
@@ -409,10 +424,15 @@ public class SoundUtil {
 
 	}
 
+	//CPPN 
+	
+	//TODO: Write method that creates a double array of amplitudes using a CPPN.
+	public static double[] amplitudeGenerator(Network CPPN, double time, double bias) {
+		return null;
+	}
 
 
 
 
-	//TODO: figure out how to convert an audio file into an array of numbers and vice versa
 
 }
