@@ -160,7 +160,12 @@ public final class StdAudio {
 		return d;
 	}
 
-	// return data as a byte array
+	/**
+	 * Reads in data from audio file and returns it as an array of bytes. 
+	 * 
+	 * @param filename string reference to audio file being used
+	 * @return byte array containing data from audio file 
+	 */
 	private static byte[] readByte(String filename) {
 		byte[] data = null;
 		AudioInputStream ais = null;
@@ -286,7 +291,11 @@ public final class StdAudio {
 	}
 
 
-	// play sound file using Applet.newAudioClip();
+	/**
+	 * Plays sound using Applet.newAudioClip()
+	 * 
+	 * @param filename string reference to audio file being played
+	 */
 	private static void playApplet(String filename) {
 		URL url = null;
 		try {
@@ -306,9 +315,11 @@ public final class StdAudio {
 		clip.play();
 	}
 
-	// https://www3.ntu.edu.sg/home/ehchua/programming/java/J8c_PlayingSound.html
-	// play a wav or aif file
-	// javax.sound.sampled.Clip fails for long clips (on some systems)
+	/**
+	 * Method used to play wav or aif file. (Fails on long clips?)
+	 * 
+	 * @param filename string reference to audio file being played
+	 */
 	private static void stream(String filename) {
 		SourceDataLine line = null;
 		int BUFFER_SIZE = 4096; // 4K buffer
@@ -407,8 +418,14 @@ public final class StdAudio {
 	 * Unit tests {@code StdAudio}.
 	 ***************************************************************************/
 
-	// create a note (sine wave) of the given frequency (Hz), for the given
-	// duration (seconds) scaled to the given volume (amplitude)
+	/**
+	 * Creates notes based on frequency, duration, and amplitude inputs. 
+	 * 
+	 * @param hz input frequency of note
+	 * @param duration input duration of note
+	 * @param amplitude input amplitude of note
+	 * @return double array containing notes
+	 */
 	private static double[] note(double hz, double duration, double amplitude) {
 		int n = (int) (StdAudio.SAMPLE_RATE * duration);
 		double[] a = new double[n+1];
