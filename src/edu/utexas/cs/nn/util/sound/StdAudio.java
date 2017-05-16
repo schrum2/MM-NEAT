@@ -290,7 +290,6 @@ public final class StdAudio {
 
 	}
 
-
 	/**
 	 * Plays sound using Applet.newAudioClip()
 	 * 
@@ -389,10 +388,20 @@ public final class StdAudio {
 	 * 
 	 * @param fileName String reference to file being plotted
 	 */
-	public static void wavePlot(String fileName) {
+	public static void wavePlotFromFile(String fileName) {
 		double[] fileArray = read(fileName); //create array of doubles representing audio
-		ArrayList<Double> fileArrayList = ArrayUtil.doubleVectorFromArray(fileArray); //convert array into array list
-		DrawingPanel panel = new DrawingPanel(500,500, "Wave for " + fileName); //create panel where line will be plotted 
+		wavePlotFromDoubleArray(fileArray);
+	}
+	
+	/**
+	 *  Creates a graphed visualization of an audio file by taking in the list of doubles that represents the file and 
+	 * plotting it using a DrawingPanel.
+	 * 
+	 * @param inputArray
+	 */
+	public static void wavePlotFromDoubleArray(double[] inputArray) {
+		ArrayList<Double> fileArrayList = ArrayUtil.doubleVectorFromArray(inputArray); //convert array into array list
+		DrawingPanel panel = new DrawingPanel(500,500, "fsljfd"); //create panel where line will be plotted 
 		GraphicsUtil.linePlot(panel, -1.0, 1.0, fileArrayList, Color.black); //call linePlot with ArrayList to draw graph
 	}
 	
@@ -412,6 +421,7 @@ public final class StdAudio {
 		double[] overlapped = ArrayUtil.zipAdd(adjustedA, adjustedB); //zipAdd() is a method in ArrayUtil that adds values at each index of two arrays into a new array
 		return overlapped;
 	}
+	
 
 
 	/***************************************************************************
@@ -449,15 +459,15 @@ public final class StdAudio {
 		// 440 Hz for 1 sec
 		double freq1 = 440.0;
 		for (int i = 0; i <= StdAudio.SAMPLE_RATE; i++) {
-			StdAudio.play(0.5 * Math.sin(2*Math.PI * freq1 * i / StdAudio.SAMPLE_RATE));
+			//StdAudio.play(0.5 * Math.sin(2*Math.PI * freq1 * i / StdAudio.SAMPLE_RATE));
 		}
 
 		for (int i = 0; i <= StdAudio.SAMPLE_RATE; i++) {
-			StdAudio.play(0.5 * ActivationFunctions.squareWave(2*Math.PI * freq1 * i / StdAudio.SAMPLE_RATE));
+			//StdAudio.play(0.5 * ActivationFunctions.squareWave(2*Math.PI * freq1 * i / StdAudio.SAMPLE_RATE));
 		}
 		
 		for (int i = 0; i <= StdAudio.SAMPLE_RATE; i++) {
-			StdAudio.play(0.5 * ActivationFunctions.triangleWave(2*Math.PI * freq1 * i / StdAudio.SAMPLE_RATE));
+			//StdAudio.play(0.5 * ActivationFunctions.triangleWave(2*Math.PI * freq1 * i / StdAudio.SAMPLE_RATE));
 		}
 		
 	
@@ -473,33 +483,35 @@ public final class StdAudio {
 		for (int i = 0; i <= StdAudio.SAMPLE_RATE; i++) {
 			exampleSound[i] = (0.5 * Math.sin(2*Math.PI * freq2 * i / StdAudio.SAMPLE_RATE));
 		}
-		StdAudio.play(exampleSound);
+		//StdAudio.play(exampleSound);
 		
 		for (int i = 0; i <= StdAudio.SAMPLE_RATE; i++) {
 			exampleSound[i] = (0.5 * ActivationFunctions.fullSawtooth(2*Math.PI * freq2 * i / StdAudio.SAMPLE_RATE));
 		}
-		StdAudio.play(exampleSound);
+		//StdAudio.play(exampleSound);
 		
 		double[] test = new double[500];
 		for(int i = 0; i < test.length; i++) {
 			test[i] = i;
 		}
-		StdAudio.play(test);
+		//StdAudio.play(test);
 
 		
 		for (double i = 0; i <= StdAudio.SAMPLE_RATE; i++) {
 			exampleSound[(int)i] = (ActivationFunctions.tanh( 2*(i/StdAudio.SAMPLE_RATE) - 1 ));
 		}
-		StdAudio.play(exampleSound);
+		//StdAudio.play(exampleSound);
 		
 		
-		ArrayList<Double> fileArrayList = ArrayUtil.doubleVectorFromArray(exampleSound); //convert array into array list
-		DrawingPanel panel = new DrawingPanel(500,500, "fsljfd"); //create panel where line will be plotted 
-		GraphicsUtil.linePlot(panel, -1.0, 1.0, fileArrayList, Color.black); //call linePlot with ArrayList to draw graph
+	
 		
 		String pirates= "data/sounds/pirates.mid";
 		//play(pirates);
-		playApplet(pirates);
+		//playApplet(pirates);
+		String classical = "data/sounds/CLASSICA.MID";
+		//play(classical);
+		playApplet(classical);
+		
 
 
 

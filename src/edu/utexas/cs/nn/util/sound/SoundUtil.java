@@ -52,19 +52,14 @@ public class SoundUtil {
 		}
 		Network cppn = test.getCPPN();
 		double[] testArray = amplitudeGenerator(cppn, 60000, 440);
-		double[] testArray2 = amplitudeGenerator(cppn, 60000, 1000);
 		StdAudio.play(testArray);
-		StdAudio.play(testArray2);
+		StdAudio.wavePlotFromDoubleArray(testArray);
 		
-		ArrayList<Double> fileArrayList = ArrayUtil.doubleVectorFromArray(testArray); //convert array into array list
-		DrawingPanel panel = new DrawingPanel(500,500, "1"); //create panel where line will be plotted 
-		GraphicsUtil.linePlot(panel, -1.0, 1.0, fileArrayList, Color.black); //call linePlot with ArrayList to draw graph
-		
-		
-		ArrayList<Double> fileArrayList2 = ArrayUtil.doubleVectorFromArray(testArray2); //convert array into array list
-		DrawingPanel panel2 = new DrawingPanel(500,500, "2"); //create panel where line will be plotted 
-		GraphicsUtil.linePlot(panel2, -1.0, 1.0, fileArrayList2, Color.black); //call linePlot with ArrayList to draw graph
-		MiscUtil.waitForReadStringAndEnterKeyPress();
+//		
+//		ArrayList<Double> fileArrayList2 = ArrayUtil.doubleVectorFromArray(testArray2); //convert array into array list
+//		DrawingPanel panel2 = new DrawingPanel(500,500, "2"); //create panel where line will be plotted 
+//		GraphicsUtil.linePlot(panel2, -1.0, 1.0, fileArrayList2, Color.black); //call linePlot with ArrayList to draw graph
+//		MiscUtil.waitForReadStringAndEnterKeyPress();
 		
 		//playWAVFile(BEARGROWL_WAV);
 		mp3Conversion(HAPPY_MP3).playMP3File();
