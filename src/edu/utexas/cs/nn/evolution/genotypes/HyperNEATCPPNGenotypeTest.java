@@ -50,7 +50,8 @@ public class HyperNEATCPPNGenotypeTest {
 	 */
 	@Before
 	public void setUp() {
-		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "recurrency:false", "hyperNEAT:true", "task:edu.utexas.cs.nn.networks.hyperneat.HyperNEATDummyTask"});
+		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "recurrency:false", "hyperNEAT:true", 
+										"task:edu.utexas.cs.nn.networks.hyperneat.HyperNEATDummyTask","linkExpressionThreshold:-1"});
 		MMNEAT.loadClasses();
 		hcppn = new HyperNEATCPPNGenotype();
 		cppn = hcppn.getCPPN();
@@ -85,10 +86,16 @@ public class HyperNEATCPPNGenotypeTest {
 	@Test
 	public void testCreateSubstrateNodesSlow() {
 		ArrayList<NodeGene> nodes = hcppn.createSubstrateNodes((HyperNEATTask) MMNEAT.task,  hcppn.getCPPN(), subs);
+		//Asserts that the size of the array list created is equal to the sum of the areas of the two substrates
+		// (sub1 height * sub1 width + sub2 height * sub2 width)
 		assertEquals(nodes.size(), subs.get(sub1Index).getSize().t1 * subs.get(sub1Index).getSize().t2
 				+ subs.get(sub2Index).getSize().t1 * subs.get(sub2Index).getSize().t2);
+		//asserts that the size of the ArrayList created is equivalent to the genotype's innovation ID
 		assertEquals(hcppn.innovationID, nodes.size());
-		tearDown();
+		//asserts that genes were generated in the right order
+		for(long i = 0; i < nodes.size(); i++) {
+			assertEquals(nodes.get((int) i).innovation, i);
+		}
 	}
 
 	/**
@@ -104,16 +111,28 @@ public class HyperNEATCPPNGenotypeTest {
 		ILocated2D scaledSourceCoordinates = CartesianGeometricUtilities.centerAndScale(new Tuple2D(0, 0),
 				subs.get(sub1Index).getSize().t1, subs.get(sub1Index).getSize().t2);
 		Tuple2D size = new Tuple2D(subs.get(sub2Index).getSize().t1 - 1, subs.get(sub2Index).getSize().t2 - 1);
+		
+		//assert size is (4,4)
+		
 		ILocated2D scaledTargetCoordinates = CartesianGeometricUtilities.centerAndScale(size,
 				subs.get(sub2Index).getSize().t1, subs.get(sub2Index).getSize().t2);
-
+		
 		assertEquals(scaledSourceCoordinates.getY(), -1, .001);
 		assertEquals(scaledSourceCoordinates.getX(), -1, .001);
 		assertEquals(scaledTargetCoordinates.getX(), 1, .01);
 		assertEquals(scaledTargetCoordinates.getY(), 1, .01);
-
-		assertEquals(newLinks.get(sub1Index).sourceInnovation, hcppn.getInnovationID(0, 0, sub1Index, subs));
-		assertEquals(newLinks.get(sub1Index).sourceInnovation, hcppn.getInnovationID(0, 0, endingIndex, subs));
+	
+		int index = 0;
+		for(long i = 0; i <= 24; i++) { //neuron innovation numbers present in first substrate
+			for(long j = 25; j <= 49; j++) { //neuron innovation numbers present in second substrate
+				assertEquals(newLinks.get(index).sourceInnovation, i);
+				assertEquals(newLinks.get(index).targetInnovation, j);
+				index++;
+			}
+		}
+		
+//		assertEquals(newLinks.get(sub1Index).sourceInnovation, hcppn.getInnovationID(0, 0, sub1Index, subs));
+//		assertEquals(newLinks.get(sub1Index).sourceInnovation, hcppn.getInnovationID(0, 0, endingIndex, subs));
 	}
 
 	/**
@@ -139,10 +158,17 @@ public class HyperNEATCPPNGenotypeTest {
 	 */
 	@Test
 	public void testLinkExpressionThreshold() {
+		// This particular test needs the default expression threashold to work
+		CommonConstants.linkExpressionThreshold = 0.2;
+		
 		double x = 1.0;
 		double y = -1.0;
 		assertEquals(NetworkUtil.calculateWeight(x), .8, .0001);
 		assertEquals(NetworkUtil.calculateWeight(y), -.8, .0001);
+		// More tests needed
+
+		// Set back to -1 so all linkes are expressed
+		CommonConstants.linkExpressionThreshold = -1;	
 	}
 
 	/**
