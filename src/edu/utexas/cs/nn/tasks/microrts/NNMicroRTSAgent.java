@@ -2,13 +2,14 @@ package edu.utexas.cs.nn.tasks.microrts;
 
 import java.util.List;
 
+import edu.utexas.cs.nn.networks.Network;
 import micro.ai.core.AI;
 import micro.ai.core.AIWithComputationBudget;
 import micro.ai.core.ParameterSpecification;
 import micro.rts.GameState;
 import micro.rts.PlayerAction;
 
-public class NNMicroRTSAgent extends AIWithComputationBudget{
+public class NNMicroRTSAgent<T extends Network> extends AIWithComputationBudget{
 
 	public NNMicroRTSAgent(int mt, int mi) {
 		super(mt, mi);
