@@ -14,17 +14,17 @@ import pinball.PinBall;
 import pinball.State;
 
 public class PinballTask<T extends Network> extends NoisyLonerTask<T>implements NetworkTask {
-	
+
 	PinballViewer view = null; 
-	
+
 
 	/**
 	 * Constructor for a new PinballTask
 	 */
 	public PinballTask(){
-        MMNEAT.registerFitnessFunction("Reward");
+		MMNEAT.registerFitnessFunction("Reward");
 	}
-	
+
 	/**
 	 * Returns the number of Objectives for the PinballTask
 	 * 
@@ -81,20 +81,20 @@ public class PinballTask<T extends Network> extends NoisyLonerTask<T>implements 
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {
 
 		PinBall p = new PinBall("data/pinball/" + Parameters.parameters.stringParameter("pinballConfig"));
-		
-		
+
+
 		if(CommonConstants.watch){ // If set to Visually Evaluate the Task
-			if(view == null){ // PinballViewer is not initialized yet
-				view = new PinballViewer(p); // Create a new PinballViewer
-				view.setVisible(true); // Makes the PinballViewer visible
-				view.setAlwaysOnTop(true); // Makes the PinballViewer always on top
+			if(view != null){ 
+				view.dispose();
+				view = null;
 			}
-		}else{
-			view.resetViewer(p);
+			view = new PinballViewer(p); // Create a new PinballViewer
+			view.setVisible(true); // Makes the PinballViewer visible
+			view.setAlwaysOnTop(true); // Makes the PinballViewer always on top
 		}
-		
+
 		//MiscUtil.waitForReadStringAndEnterKeyPress();
-		
+
 		Network n = individual.getPhenotype();
 		double fitness = 0;
 		int timeLimit = 1000;
@@ -105,15 +105,27 @@ public class PinballTask<T extends Network> extends NoisyLonerTask<T>implements 
 			double[] outputs = n.process(sensors);
 			int action = StatisticsUtilities.argmax(outputs);
 			double rew = p.step(action);
-	
-		if(view != null){ // If the PinballViewer exists, update it
-			view.actionPerformed(action);
-		}	
+
+			if(view != null){ // If the PinballViewer exists, update it
+				view.repaint();
+
+				try {
+					Thread.sleep(1);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+				if(Parameters.parameters.booleanParameter("stepByStep")){
+					System.out.print("Press enter to continue");
+					MiscUtil.waitForReadStringAndEnterKeyPress();
+				}
+			}	
 
 			fitness += rew;
 			timeLimit--;
 		} while(!p.episodeEnd() && timeLimit > 0);
-		
+
 		Pair<double[], double[]> evalResults = new Pair<double[], double[]>(new double[] {fitness}, new double[0]);			
 
 		return evalResults; // Returns the Fitness of the individual's Genotype<T>

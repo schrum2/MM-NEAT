@@ -5,7 +5,6 @@ import java.awt.Toolkit;
 
 import javax.swing.JFrame;
 
-import edu.utexas.cs.nn.parameters.Parameters;
 import pinball.PinBall;
 import pinball.PinBallCanvas;
 
@@ -45,16 +44,4 @@ public class PinballViewer extends JFrame {
 	public void resetViewer(PinBall newPinball){
 		canvas = new PinBallCanvas(newPinball);
 	}
-	
-	/**
-	 * Repaints the PinBallCanvas based on the action taken
-	 * 
-	 * @param action Integer representing the action taken in the PinballTask
-	 */
-	public void actionPerformed(int action) {
-		pball.step(action); // Update PinBall state
-		repaint(); // Repaint PinBallCanvas
-	}
-
-
 }
