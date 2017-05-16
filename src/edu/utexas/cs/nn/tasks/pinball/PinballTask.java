@@ -36,8 +36,11 @@ public class PinballTask<T extends Network> extends NoisyLonerTask<T>implements 
 	 */
 	@Override
 	public int numObjectives() {
-		// Appears to only have one goal; reach the end of the obstacles
-		return 1;
+		if(Parameters.parameters.booleanParameter("moPinball")){ // If MO, has two Objectives: Reach Goal, and Distance from Goal
+			return 2;
+		}else{ // Else, only Reach Goal
+			return 1;			
+		}
 	}
 
 	/**
@@ -132,7 +135,7 @@ public class PinballTask<T extends Network> extends NoisyLonerTask<T>implements 
 		Pair<double[], double[]> evalResults = new Pair<double[], double[]>(new double[] {fitness}, new double[0]);			
 
 		if(Parameters.parameters.booleanParameter("moPinball")){
-			evalResults = new Pair<double[], double[]>(new double[] { fitness, distance }, new double[0]);
+			evalResults = new Pair<double[], double[]>(new double[] { fitness, -distance }, new double[0]); // Distance from the Target is a negative reward because we want the Distance to get smaller, not larger.
 		} else {
 			evalResults = new Pair<double[], double[]>(new double[] { fitness }, new double[0]);			
 		}
