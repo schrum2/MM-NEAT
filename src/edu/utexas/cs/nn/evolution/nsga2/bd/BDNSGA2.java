@@ -40,17 +40,11 @@ public class BDNSGA2<T> extends NSGA2<T> {
 			System.out.println("Behavior characterization does not exist");
 			System.exit(1);
 		}
-		maxArchiveSize = Parameters.parameters.integerParameter("bdArchiveSize");// used
-																					// to
-																					// cap
-																					// size
-																					// of
-																					// archive
+		// used to cap size of archive
+		maxArchiveSize = Parameters.parameters.integerParameter("bdArchiveSize");
 		if (maxArchiveSize > 0) {
-			archive = new ArrayList<Score<T>>(maxArchiveSize);// archive keeps
-																// track of all
-																// scores from
-																// all pheno
+			// archive keeps track of all scores from all pheno
+			archive = new ArrayList<Score<T>>(maxArchiveSize);
 		}
 	}
 

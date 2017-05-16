@@ -18,7 +18,7 @@ import pinball.State;
 public class PinballTask<T extends Network> extends NoisyLonerTask<T>implements NetworkTask {
 
 	PinballViewer view = null; 
-	ArrayList<Double> listOfCoordinates = new ArrayList<Double>();
+	ArrayList<Double> listOfCoordinates;
 
 	/**
 	 * Constructor for a new PinballTask
@@ -81,7 +81,7 @@ public class PinballTask<T extends Network> extends NoisyLonerTask<T>implements 
 	 */
 	@Override
 	public void prep() {
-		listOfCoordinates.clear();
+		listOfCoordinates = new ArrayList<Double>();
 	}
 	
 	/**
@@ -164,9 +164,4 @@ public class PinballTask<T extends Network> extends NoisyLonerTask<T>implements 
 		return evalResults; // Returns the Fitness of the individual's Genotype<T>
 	}
 
-	@Override
-	public void cleanup(){
-		listOfCoordinates = null;
-	}
-	
 }
