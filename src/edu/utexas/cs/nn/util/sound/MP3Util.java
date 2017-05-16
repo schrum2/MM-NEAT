@@ -8,6 +8,12 @@ import javazoom.jl.decoder.JavaLayerException;
 import javazoom.jl.player.advanced.AdvancedPlayer;
 import javazoom.jl.player.advanced.PlaybackListener;
 
+/**
+ * Series of utility methods associated with playing an MP3 file.
+ * 
+ * @author Isabel Tweraser
+ *
+ */
 public class MP3Util {
 	/**
 	 * Reads in file reference to an mp3 and converts into SoundJLayer so that it can access methods of the 
