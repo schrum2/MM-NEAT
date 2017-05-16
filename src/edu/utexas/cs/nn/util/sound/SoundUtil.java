@@ -1,8 +1,10 @@
 package edu.utexas.cs.nn.util.sound;
 
 
+import java.awt.Color;
 import java.io.*;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import javax.sound.sampled.AudioFormat;
@@ -13,7 +15,15 @@ import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
+import edu.utexas.cs.nn.MMNEAT.MMNEAT;
+import edu.utexas.cs.nn.evolution.genotypes.HyperNEATCPPNGenotype;
+import edu.utexas.cs.nn.networks.ActivationFunctions;
 import edu.utexas.cs.nn.networks.Network;
+import edu.utexas.cs.nn.parameters.Parameters;
+import edu.utexas.cs.nn.util.MiscUtil;
+import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
+import edu.utexas.cs.nn.util.graphics.DrawingPanel;
+import edu.utexas.cs.nn.util.graphics.GraphicsUtil;
 import javazoom.jl.decoder.JavaLayerException;
 import javazoom.jl.player.advanced.AdvancedPlayer;
 import javazoom.jl.player.advanced.PlaybackListener;
@@ -34,6 +44,28 @@ public class SoundUtil {
 	private static final String PIRATES = "data/sounds/pirates.mid";
 
 	public static void main(String[] args) throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException, JavaLayerException {
+		Parameters.initializeParameterCollections(new String[]{"io:false","netio:false"});
+		MMNEAT.loadClasses();
+		HyperNEATCPPNGenotype test = new HyperNEATCPPNGenotype(3, 1, 0);
+		for(int i = 0; i < 30; i++) {
+			test.mutate();
+		}
+		Network cppn = test.getCPPN();
+		double[] testArray = amplitudeGenerator(cppn, 60000, 440);
+		double[] testArray2 = amplitudeGenerator(cppn, 60000, 1000);
+		StdAudio.play(testArray);
+		StdAudio.play(testArray2);
+		
+		ArrayList<Double> fileArrayList = ArrayUtil.doubleVectorFromArray(testArray); //convert array into array list
+		DrawingPanel panel = new DrawingPanel(500,500, "1"); //create panel where line will be plotted 
+		GraphicsUtil.linePlot(panel, -1.0, 1.0, fileArrayList, Color.black); //call linePlot with ArrayList to draw graph
+		
+		
+		ArrayList<Double> fileArrayList2 = ArrayUtil.doubleVectorFromArray(testArray2); //convert array into array list
+		DrawingPanel panel2 = new DrawingPanel(500,500, "2"); //create panel where line will be plotted 
+		GraphicsUtil.linePlot(panel2, -1.0, 1.0, fileArrayList2, Color.black); //call linePlot with ArrayList to draw graph
+		MiscUtil.waitForReadStringAndEnterKeyPress();
+		
 		//playWAVFile(BEARGROWL_WAV);
 		mp3Conversion(HAPPY_MP3).playMP3File();
 		byte[] bearNumbers = WAVToByte(BEARGROWL_WAV);
@@ -136,6 +168,8 @@ public class SoundUtil {
 		//		StdAudio.play(applauseAndBearGrowl);
 		
 		StdAudio.play(PIRATES);
+		
+		
 
 	}
 
@@ -426,11 +460,32 @@ public class SoundUtil {
 
 	//CPPN 
 	
-	//TODO: Write method that creates a double array of amplitudes using a CPPN.
-	public static double[] amplitudeGenerator(Network CPPN, double time, double bias) {
-		return null;
+	/**
+	 * Creates a double array of amplitudes using a CPPN. CPPN has three inputs - time, frequency,
+	 * and a bias. It only has one output, which is the amplitude. The array of inputs is looped through 
+	 * so that each index is manipulated by the CPPN, and the output indexes are saved into a result array 
+	 * of doubles. 
+	 * 
+	 * @param CPPN network used to generate amplitude 
+	 * @param length length of sample
+	 * @param frequency Frequency of note being manipulated
+	 * @return array of doubles representing all CPPN-manipulated output amplitudes
+	 */
+	public static double[] amplitudeGenerator(Network CPPN, int length, int frequency) {
+		double[] result = new double[length];
+		for(double time = 0; time < length; time++) {
+			//double[] inputs = new double[]{time/StdAudio.SAMPLE_RATE, Math.sin(2*Math.PI * frequency * time/StdAudio.SAMPLE_RATE), HyperNEATCPPNGenotype.BIAS};
+			//double[] inputs = new double[]{time/StdAudio.SAMPLE_RATE, ActivationFunctions.triangleWave(2*Math.PI * frequency * time/StdAudio.SAMPLE_RATE), HyperNEATCPPNGenotype.BIAS};
+			double[] inputs = new double[]{time/StdAudio.SAMPLE_RATE, 
+					Math.sin(2*Math.PI * frequency * time/StdAudio.SAMPLE_RATE), 
+//					ActivationFunctions.triangleWave(2*Math.PI * frequency * time/StdAudio.SAMPLE_RATE), 
+//					ActivationFunctions.squareWave(2*Math.PI * frequency * time/StdAudio.SAMPLE_RATE), 
+					HyperNEATCPPNGenotype.BIAS};
+			double[] outputs = CPPN.process(inputs);
+			result[(int) time] = outputs[0]; // amplitude
+		}
+		return result;
 	}
-
 
 
 
