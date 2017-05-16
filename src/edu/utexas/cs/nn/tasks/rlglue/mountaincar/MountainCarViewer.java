@@ -18,8 +18,8 @@ import org.rlcommunity.environments.mountaincar.messages.MCGoalResponse;
 import org.rlcommunity.environments.mountaincar.messages.MCHeightRequest;
 import org.rlcommunity.environments.mountaincar.messages.MCHeightResponse;
 
-import edu.utexas.cs.nn.graphics.DrawingPanel;
 import edu.utexas.cs.nn.networks.TWEANN;
+import edu.utexas.cs.nn.util.graphics.DrawingPanel;
 import rlVizLib.messaging.environment.EnvRangeRequest;
 import rlVizLib.messaging.environment.EnvRangeResponse;
 import rlVizLib.utilities.UtilityShop;

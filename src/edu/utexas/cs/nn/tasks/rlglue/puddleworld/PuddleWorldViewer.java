@@ -5,9 +5,10 @@
 package edu.utexas.cs.nn.tasks.rlglue.puddleworld;
 
 import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.graphics.DrawingPanel;
 import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.util.CombinatoricUtilities;
+import edu.utexas.cs.nn.util.graphics.DrawingPanel;
+
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Point2D;

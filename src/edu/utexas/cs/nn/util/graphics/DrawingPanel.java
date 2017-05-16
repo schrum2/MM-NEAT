@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.graphics;
+package edu.utexas.cs.nn.util.graphics;
 
 /*
  Stuart Reges and Marty Stepp

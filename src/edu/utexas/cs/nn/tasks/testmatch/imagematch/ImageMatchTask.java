@@ -10,16 +10,16 @@ import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
-import edu.utexas.cs.nn.graphics.DrawingPanel;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.scores.Score;
 import edu.utexas.cs.nn.tasks.testmatch.MatchDataTask;
-import edu.utexas.cs.nn.util.GraphicsUtil;
 import edu.utexas.cs.nn.util.MiscUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
+import edu.utexas.cs.nn.util.graphics.DrawingPanel;
+import edu.utexas.cs.nn.util.graphics.GraphicsUtil;
 
 /**
  * Image match training task for a CPPN

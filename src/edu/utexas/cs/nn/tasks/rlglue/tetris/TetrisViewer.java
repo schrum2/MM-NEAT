@@ -7,8 +7,8 @@ import java.util.logging.Logger;
 
 import org.rlcommunity.environments.tetris.TetrisState;
 
-import edu.utexas.cs.nn.graphics.DrawingPanel;
 import edu.utexas.cs.nn.networks.TWEANN;
+import edu.utexas.cs.nn.util.graphics.DrawingPanel;
 
 /**
  *

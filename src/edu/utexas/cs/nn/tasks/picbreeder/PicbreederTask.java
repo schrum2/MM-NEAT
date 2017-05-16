@@ -32,7 +32,6 @@ import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.evolution.lineage.Offspring;
 import edu.utexas.cs.nn.evolution.mutation.tweann.ActivationFunctionRandomReplacement;
 import edu.utexas.cs.nn.evolution.selectiveBreeding.SelectiveBreedingEA;
-import edu.utexas.cs.nn.graphics.DrawingPanel;
 import edu.utexas.cs.nn.networks.ActivationFunctions;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.networks.NetworkTask;
@@ -43,8 +42,10 @@ import edu.utexas.cs.nn.scores.Score;
 import edu.utexas.cs.nn.tasks.SinglePopulationTask;
 import edu.utexas.cs.nn.util.BooleanUtil;
 import edu.utexas.cs.nn.util.CombinatoricUtilities;
-import edu.utexas.cs.nn.util.GraphicsUtil;
 import edu.utexas.cs.nn.util.PopulationUtil;
+import edu.utexas.cs.nn.util.graphics.DrawingPanel;
+import edu.utexas.cs.nn.util.graphics.GraphicsUtil;
+
 import java.util.HashSet;
 import java.util.Hashtable;
 

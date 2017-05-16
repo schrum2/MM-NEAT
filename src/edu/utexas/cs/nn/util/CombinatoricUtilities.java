@@ -1,7 +1,8 @@
 package edu.utexas.cs.nn.util;
 
-import edu.utexas.cs.nn.graphics.DrawingPanel;
 import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
+import edu.utexas.cs.nn.util.graphics.DrawingPanel;
+
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;

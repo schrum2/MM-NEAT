@@ -5,13 +5,13 @@ import edu.utexas.cs.nn.evolution.genotypes.HyperNEATCPPNGenotype;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype.LinkGene;
 import edu.utexas.cs.nn.evolution.lineage.Offspring;
-import edu.utexas.cs.nn.graphics.DrawingPanel;
-import edu.utexas.cs.nn.graphics.Plot;
 import edu.utexas.cs.nn.networks.hyperneat.HyperNEATUtil;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.util.CombinatoricUtilities;
+import edu.utexas.cs.nn.util.graphics.DrawingPanel;
+import edu.utexas.cs.nn.util.graphics.Plot;
 import edu.utexas.cs.nn.util.random.RandomNumbers;
 import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
 

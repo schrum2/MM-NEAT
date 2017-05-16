@@ -2,11 +2,12 @@ package edu.utexas.cs.nn.experiment.post;
 
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.experiment.Experiment;
-import edu.utexas.cs.nn.graphics.DrawingPanel;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.scores.Score;
 import edu.utexas.cs.nn.tasks.GroupTask;
 import edu.utexas.cs.nn.util.file.FileUtilities;
+import edu.utexas.cs.nn.util.graphics.DrawingPanel;
+
 import java.util.ArrayList;
 import wox.serial.Easy;
 

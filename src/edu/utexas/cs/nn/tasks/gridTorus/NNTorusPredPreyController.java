@@ -1,7 +1,6 @@
 
 package edu.utexas.cs.nn.tasks.gridTorus;
 
-import edu.utexas.cs.nn.graphics.DrawingPanel;
 /**
  * Imports needed parts to initialize the Controller, as in Torus agent and world, the controller, network, and statistic utilities.
  */
@@ -18,6 +17,7 @@ import edu.utexas.cs.nn.tasks.gridTorus.sensors.TorusPredatorsByProximitySensorB
 import edu.utexas.cs.nn.tasks.gridTorus.sensors.TorusPreyByIndexSensorBlock;
 import edu.utexas.cs.nn.tasks.gridTorus.sensors.TorusPreyByProximitySensorBlock;
 import edu.utexas.cs.nn.util.MiscUtil;
+import edu.utexas.cs.nn.util.graphics.DrawingPanel;
 import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
 
 /**

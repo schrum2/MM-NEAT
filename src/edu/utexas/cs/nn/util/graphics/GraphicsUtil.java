@@ -1,13 +1,13 @@
-package edu.utexas.cs.nn.util;
+package edu.utexas.cs.nn.util.graphics;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
-import edu.utexas.cs.nn.graphics.DrawingPanel;
 import edu.utexas.cs.nn.networks.ActivationFunctions;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.tasks.picbreeder.PicbreederTask;
+import edu.utexas.cs.nn.util.CartesianGeometricUtilities;
 import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
 import edu.utexas.cs.nn.util.util2D.ILocated2D;
 import edu.utexas.cs.nn.util.util2D.Tuple2D;

@@ -1,10 +1,10 @@
 package edu.utexas.cs.nn.log;
 
-import edu.utexas.cs.nn.graphics.DrawingPanel;
-import edu.utexas.cs.nn.graphics.Plot;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.scores.Score;
+import edu.utexas.cs.nn.util.graphics.DrawingPanel;
+import edu.utexas.cs.nn.util.graphics.Plot;
 
 import java.awt.Color;
 import java.io.File;

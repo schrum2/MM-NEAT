@@ -12,7 +12,6 @@ import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
 import edu.utexas.cs.nn.evolution.lineage.Offspring;
 import edu.utexas.cs.nn.evolution.mulambda.CoevolutionMuLambda;
-import edu.utexas.cs.nn.graphics.DrawingPanel;
 import edu.utexas.cs.nn.log.MMNEATLog;
 import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.parameters.CommonConstants;
@@ -21,6 +20,7 @@ import edu.utexas.cs.nn.scores.Score;
 import edu.utexas.cs.nn.tasks.gridTorus.GroupTorusPredPreyTask;
 import edu.utexas.cs.nn.tasks.mspacman.CooperativeMsPacManTask;
 import edu.utexas.cs.nn.util.file.FileUtilities;
+import edu.utexas.cs.nn.util.graphics.DrawingPanel;
 import edu.utexas.cs.nn.util.random.RandomNumbers;
 
 /**

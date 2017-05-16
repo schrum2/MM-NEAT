@@ -10,14 +10,15 @@ import edu.utexas.cs.nn.breve2D.sensor.RaySensor;
 import edu.utexas.cs.nn.evolution.Organism;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.evolution.lineage.Offspring;
-import edu.utexas.cs.nn.graphics.DrawingPanel;
-import edu.utexas.cs.nn.graphics.Plot;
 import edu.utexas.cs.nn.networks.ModeSelector;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.util.CartesianGeometricUtilities;
+import edu.utexas.cs.nn.util.graphics.DrawingPanel;
+import edu.utexas.cs.nn.util.graphics.Plot;
+
 import java.util.Arrays;
 
 public class NNBreve2DMonster<T extends Network> extends Organism<T>implements AgentController {

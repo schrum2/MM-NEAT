@@ -10,8 +10,8 @@ import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
 import edu.utexas.cs.nn.evolution.mutation.tweann.MMR;
-import edu.utexas.cs.nn.graphics.DrawingPanel;
 import edu.utexas.cs.nn.parameters.Parameters;
+import edu.utexas.cs.nn.util.graphics.DrawingPanel;
 import edu.utexas.cs.nn.util.random.RandomNumbers;
 
 public class TWEANNTest {

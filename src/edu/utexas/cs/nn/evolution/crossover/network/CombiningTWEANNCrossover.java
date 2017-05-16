@@ -5,11 +5,11 @@ import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype.LinkGene;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype.NodeGene;
-import edu.utexas.cs.nn.graphics.DrawingPanel;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.util.file.FileUtilities;
+import edu.utexas.cs.nn.util.graphics.DrawingPanel;
 
 import java.io.File;
 import java.io.FileNotFoundException;

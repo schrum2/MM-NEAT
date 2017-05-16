@@ -1,10 +1,11 @@
 package edu.utexas.cs.nn.tasks.motests;
 
-import edu.utexas.cs.nn.graphics.DrawingPanel;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
+
+import edu.utexas.cs.nn.util.graphics.DrawingPanel;
 
 /**
  *

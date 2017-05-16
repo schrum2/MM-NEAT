@@ -6,7 +6,6 @@ import java.util.Arrays;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.experiment.Experiment;
-import edu.utexas.cs.nn.graphics.DrawingPanel;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.scores.Score;
@@ -17,6 +16,7 @@ import edu.utexas.cs.nn.util.CombinatoricUtilities;
 import edu.utexas.cs.nn.util.PopulationUtil;
 import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
 import edu.utexas.cs.nn.util.file.FileUtilities;
+import edu.utexas.cs.nn.util.graphics.DrawingPanel;
 import edu.utexas.cs.nn.util.stats.Statistic;
 
 /**

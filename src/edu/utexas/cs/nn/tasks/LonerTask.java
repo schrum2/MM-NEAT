@@ -7,8 +7,6 @@ import edu.utexas.cs.nn.evolution.lineage.Offspring;
 import edu.utexas.cs.nn.evolution.metaheuristics.Metaheuristic;
 import edu.utexas.cs.nn.evolution.mulambda.MuLambda;
 import edu.utexas.cs.nn.evolution.ucb.UCB1Comparator;
-import edu.utexas.cs.nn.graphics.DrawingPanel;
-import edu.utexas.cs.nn.graphics.Plot;
 import edu.utexas.cs.nn.log.EvalLog;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.networks.TWEANN;
@@ -22,6 +20,8 @@ import edu.utexas.cs.nn.tasks.gridTorus.TorusPredPreyTask;
 import edu.utexas.cs.nn.tasks.mspacman.MsPacManTask;
 import edu.utexas.cs.nn.util.PopulationUtil;
 import edu.utexas.cs.nn.util.file.FileUtilities;
+import edu.utexas.cs.nn.util.graphics.DrawingPanel;
+import edu.utexas.cs.nn.util.graphics.Plot;
 
 import java.io.File;
 import java.io.IOException;

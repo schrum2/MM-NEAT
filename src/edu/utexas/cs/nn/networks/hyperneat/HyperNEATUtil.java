@@ -8,12 +8,12 @@ import java.util.List;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.HyperNEATCPPNGenotype;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
-import edu.utexas.cs.nn.graphics.DrawingPanel;
 import edu.utexas.cs.nn.networks.ActivationFunctions;
 import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.networks.TWEANN.Node;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.util.datastructures.Pair;
+import edu.utexas.cs.nn.util.graphics.DrawingPanel;
 
 /**
  * Util class containing methods used by hyperNEAT and its tasks

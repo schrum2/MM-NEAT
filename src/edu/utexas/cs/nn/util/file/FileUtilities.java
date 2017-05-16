@@ -1,9 +1,10 @@
 package edu.utexas.cs.nn.util.file;
 
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
-import edu.utexas.cs.nn.graphics.DrawingPanel;
 import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.parameters.Parameters;
+import edu.utexas.cs.nn.util.graphics.DrawingPanel;
+
 import static edu.utexas.cs.nn.tasks.LonerTask.NETWORK_WINDOW_OFFSET;
 import java.io.File;
 import java.io.FileNotFoundException;

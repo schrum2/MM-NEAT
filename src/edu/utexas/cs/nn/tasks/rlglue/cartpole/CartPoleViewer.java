@@ -1,7 +1,8 @@
 package edu.utexas.cs.nn.tasks.rlglue.cartpole;
 
-import edu.utexas.cs.nn.graphics.DrawingPanel;
 import edu.utexas.cs.nn.networks.TWEANN;
+import edu.utexas.cs.nn.util.graphics.DrawingPanel;
+
 import java.awt.*;
 import rlVizLib.utilities.UtilityShop;
 

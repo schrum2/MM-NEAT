@@ -10,8 +10,6 @@ import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.evolution.genotypes.NetworkGenotype;
 import edu.utexas.cs.nn.evolution.lineage.Offspring;
 import edu.utexas.cs.nn.evolution.nsga2.tug.TUGTask;
-import edu.utexas.cs.nn.graphics.DrawingPanel;
-import edu.utexas.cs.nn.graphics.Plot;
 import edu.utexas.cs.nn.gridTorus.TorusAgent;
 import edu.utexas.cs.nn.gridTorus.TorusPredPreyGame;
 import edu.utexas.cs.nn.gridTorus.TorusWorldExec;
@@ -47,6 +45,8 @@ import edu.utexas.cs.nn.tasks.gridTorus.objectives.cooperative.IndividualPreyMax
 import edu.utexas.cs.nn.tasks.gridTorus.objectives.cooperative.PredatorHerdPreyObjective;
 import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
+import edu.utexas.cs.nn.util.graphics.DrawingPanel;
+import edu.utexas.cs.nn.util.graphics.Plot;
 import edu.utexas.cs.nn.util.util2D.Tuple2D;
 import edu.utexas.cs.nn.util.ClassCreation;
 import edu.utexas.cs.nn.util.datastructures.*;

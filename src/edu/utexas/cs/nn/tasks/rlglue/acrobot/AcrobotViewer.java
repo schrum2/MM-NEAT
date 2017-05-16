@@ -1,7 +1,7 @@
 package edu.utexas.cs.nn.tasks.rlglue.acrobot;
 
-import edu.utexas.cs.nn.graphics.DrawingPanel;
 import edu.utexas.cs.nn.networks.TWEANN;
+import edu.utexas.cs.nn.util.graphics.DrawingPanel;
 import rlVizLib.general.TinyGlue;
 
 import java.awt.*;

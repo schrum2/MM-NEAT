@@ -1,7 +1,6 @@
 package edu.utexas.cs.nn.tasks.mspacman.agentcontroller.pacman;
 
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.graphics.DrawingPanel;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.parameters.CommonConstants;
@@ -11,6 +10,8 @@ import edu.utexas.cs.nn.tasks.mspacman.multitask.MsPacManModeSelector;
 import edu.utexas.cs.nn.tasks.mspacman.sensors.MsPacManControllerInputOutputMediator;
 import edu.utexas.cs.nn.util.CombinatoricUtilities;
 import edu.utexas.cs.nn.util.datastructures.Interval;
+import edu.utexas.cs.nn.util.graphics.DrawingPanel;
+
 import java.awt.Graphics2D;
 
 public class MultinetworkSelectorMsPacManController<T extends Network> extends MultinetworkMsPacManController<T> {
