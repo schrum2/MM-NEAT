@@ -13,11 +13,14 @@ import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
+/**
+ * Series of utility methods associated with playing and converting WAV files. 
+ * 
+ * @author Isabel Tweraser
+ *
+ */
 public class WAVUtil {
 	
-
-	// Methods associated with playing WAV file
-
 	/**
 	 * Plays an input audio clip; exits loop when clip has finished playing.
 	 * 

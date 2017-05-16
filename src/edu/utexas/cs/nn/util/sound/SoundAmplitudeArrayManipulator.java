@@ -1,15 +1,20 @@
 package edu.utexas.cs.nn.util.sound;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 
 import edu.utexas.cs.nn.evolution.genotypes.HyperNEATCPPNGenotype;
 import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
 
+/**
+ * Methods associated with extracting, saving and manipulating amplitude arrays from audio files. 
+ * This class is where CPPNs are employed to generate new sounds/timbres 
+ * 
+ * @author Isabel Tweraser
+ *
+ */
 public class SoundAmplitudeArrayManipulator {
 	
 	//Methods from GT - used to extract amplitude from recorded wave

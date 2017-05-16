@@ -4,7 +4,6 @@ import javax.sound.sampled.Clip;
 //for playing midi sound files on some older systems
 import java.applet.Applet;
 import java.applet.AudioClip;
-import java.awt.Color;
 import java.net.MalformedURLException;
 
 import java.io.File;
@@ -13,8 +12,6 @@ import java.io.InputStream;
 import java.io.IOException;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
 
 import javax.sound.sampled.AudioFileFormat;
 import javax.sound.sampled.AudioFormat;
@@ -24,13 +21,6 @@ import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
 import javax.sound.sampled.UnsupportedAudioFileException;
-
-import edu.utexas.cs.nn.networks.ActivationFunctions;
-import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
-import edu.utexas.cs.nn.util.graphics.DrawingPanel;
-import edu.utexas.cs.nn.util.graphics.GraphicsUtil;
-import edu.utexas.cs.nn.util.graphics.Plot;
-
 /**
  *  <i>Standard audio</i>. This class provides a basic capability for
  *  creating, reading, and saving audio. 
