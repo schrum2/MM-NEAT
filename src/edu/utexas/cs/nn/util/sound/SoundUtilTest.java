@@ -12,7 +12,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import edu.utexas.cs.nn.util.sound.SoundUtil.SoundJLayer;
+import edu.utexas.cs.nn.util.sound.MP3Util.SoundJLayer;
 
 public class SoundUtilTest {
 	
@@ -113,7 +113,7 @@ public class SoundUtilTest {
 	
 	@Test
 	public void testUrlAsString() throws IOException {
-		assertEquals(SoundUtil.SoundJLayer.urlAsString(HAPPY_MP3), "file:///C:\\Users\\twerasei\\workspace\\MM-NEATv2/data/sounds/25733.mp3");
+		assertEquals(MP3Util.SoundJLayer.urlAsString(HAPPY_MP3), "file:///C:\\Users\\twerasei\\workspace\\MM-NEATv2/data/sounds/25733.mp3");
 	}
 
 }
