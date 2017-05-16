@@ -210,7 +210,8 @@ public class GraphicsUtil {
 	
 	/**
 	 * Scales x value based on maximum and minimum value. This scale method is based on original browser 
-	 * dimension, which is meant for evolution lineage. 
+	 * dimension, which is meant for evolution lineage/Ms. Pacman. 
+	 * 
 	 * @param x Input value
 	 * @param max maximum x value
 	 * @param min minimum x value
@@ -220,14 +221,41 @@ public class GraphicsUtil {
 		return scale(x, max, min, Plot.BROWSE_DIM);
 	}
 	
+	/**
+	 * Scales x value based on maximum and minimum value. This scale method is more generalized and 
+	 * was created specifically for plotting sound waves in StdAudio. 
+	 * 
+	 * @param x Input value
+	 * @param max maximum value
+	 * @param min minimum value
+	 * @return scaled x value
+	 */
 	public static int scale(double x, double max, double min, int totalWidth) {
 		return (int) (((x - min) / max) * (totalWidth - (2 * Plot.OFFSET)));
 	}
-
+	
+	/**
+	 * Inverts y value based on maximum and minimum value to fit graphical x/y proportions. 
+	 * This method is the original invert method intended for evolution lineage/Ms. Pacman. 
+	 * 
+	 * @param y Input value
+	 * @param max maximum value
+	 * @param min minimum value
+	 * @return scaled x value
+	 */
 	public static int invert(double y, double max, double min) {
 		return invert(y,max,min);
 	}
 	
+	/**
+	 * Inverts y value based on maximum and minimum value to fit graphical x/y proportions. 
+	 * This method is a secondary invert method created for plotting sound waves in StdAudio
+	 *  
+	 * @param y Input value
+	 * @param max maximum value
+	 * @param min minimum value
+	 * @return scaled x value
+	 */
 	public static int invert(double y, double max, double min, int totalHeight) {
 		return (totalHeight - (2 * Plot.OFFSET)) - scale(y, max, min, totalHeight);
 	}
