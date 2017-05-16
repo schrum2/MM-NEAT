@@ -28,6 +28,7 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 import edu.utexas.cs.nn.networks.ActivationFunctions;
 import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
 import edu.utexas.cs.nn.util.graphics.DrawingPanel;
+import edu.utexas.cs.nn.util.graphics.GraphicsUtil;
 import edu.utexas.cs.nn.util.graphics.Plot;
 
 /**
@@ -381,7 +382,7 @@ public final class StdAudio {
 		double[] fileArray = read(fileName); //create array of doubles representing audio
 		ArrayList<Double> fileArrayList = ArrayUtil.doubleVectorFromArray(fileArray); //convert array into array list
 		DrawingPanel panel = new DrawingPanel(500,500, "Wave for " + fileName); //create panel where line will be plotted 
-		Plot.linePlot(panel, -1.0, 1.0, fileArrayList, Color.black); //call linePlot with ArrayList to draw graph
+		GraphicsUtil.linePlot(panel, -1.0, 1.0, fileArrayList, Color.black); //call linePlot with ArrayList to draw graph
 	}
 	
 	/**
@@ -477,7 +478,7 @@ public final class StdAudio {
 		
 		ArrayList<Double> fileArrayList = ArrayUtil.doubleVectorFromArray(exampleSound); //convert array into array list
 		DrawingPanel panel = new DrawingPanel(500,500, "fsljfd"); //create panel where line will be plotted 
-		Plot.linePlot(panel, -1.0, 1.0, fileArrayList, Color.black); //call linePlot with ArrayList to draw graph
+		GraphicsUtil.linePlot(panel, -1.0, 1.0, fileArrayList, Color.black); //call linePlot with ArrayList to draw graph
 		
 		String pirates= "data/sounds/pirates.mid";
 		//play(pirates);

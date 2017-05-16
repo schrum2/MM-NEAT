@@ -1400,7 +1400,7 @@ public class Offspring {
 	 * @return
 	 */
 	private static int scale(double x, int index) {
-		return Plot.scale(x, maxes.get(index) - mins.get(index), mins.get(index));
+		return GraphicsUtil.scale(x, maxes.get(index) - mins.get(index), mins.get(index));
 	}
 
 	/**
@@ -1624,11 +1624,11 @@ public class Offspring {
 		double lowerMin = Math.min(0, min);
 		for (int i = 0; i < bestScores[objective].length; i++) {
 			g.setColor(Color.blue);
-			g.fillRect(offset + Plot.scale(i, bestScores[objective].length * 1.0, 0),
-					offset + Plot.invert(bestScores[objective][i], maxRange, lowerMin), 1, 1);
+			g.fillRect(offset + GraphicsUtil.scale(i, bestScores[objective].length * 1.0, 0),
+					offset + GraphicsUtil.invert(bestScores[objective][i], maxRange, lowerMin), 1, 1);
 			g.setColor(Color.magenta);
-			g.fillRect(offset + Plot.scale(i, worstScores[objective].length * 1.0, 0),
-					offset + Plot.invert(worstScores[objective][i], maxRange, lowerMin), 1, 1);
+			g.fillRect(offset + GraphicsUtil.scale(i, worstScores[objective].length * 1.0, 0),
+					offset + GraphicsUtil.invert(worstScores[objective][i], maxRange, lowerMin), 1, 1);
 		}
 		g.setColor(Color.black);
 		// Writing labels on axes
@@ -1636,22 +1636,22 @@ public class Offspring {
 		g.drawString("" + lowerMin, offset / 2, browseDim - (offset / 2));
 
 		g.setColor(Color.green);
-		g.fillRect(offset + Plot.scale(gen, bestScores[objective].length * 1.0, 0),
-				offset + Plot.invert(scores.get(focus).get(objective), maxRange, lowerMin), ovalDim, ovalDim);
+		g.fillRect(offset + GraphicsUtil.scale(gen, bestScores[objective].length * 1.0, 0),
+				offset + GraphicsUtil.invert(scores.get(focus).get(objective), maxRange, lowerMin), ovalDim, ovalDim);
 
 		g.setColor(Color.cyan);
 		for (int i = 0; i < scores.size(); i++) {
 			if (i != focus) {
-				g.drawOval(offset + Plot.scale(gen, bestScores[objective].length * 1.0, 0),
-						offset + Plot.invert(scores.get(i).get(objective), maxRange, lowerMin), ovalDim, ovalDim);
+				g.drawOval(offset + GraphicsUtil.scale(gen, bestScores[objective].length * 1.0, 0),
+						offset + GraphicsUtil.invert(scores.get(i).get(objective), maxRange, lowerMin), ovalDim, ovalDim);
 			}
 		}
 
 		if (tugGoals != null) {
 			for (int i = 0; i < tugGoals[objective].length; i++) {
 				g.setColor(Color.green);
-				g.fillRect(offset + Plot.scale(i, bestScores[objective].length * 1.0, 0),
-						offset + Plot.invert(tugGoals[objective][i], maxRange, lowerMin), 1, 1);
+				g.fillRect(offset + GraphicsUtil.scale(i, bestScores[objective].length * 1.0, 0),
+						offset + GraphicsUtil.invert(tugGoals[objective][i], maxRange, lowerMin), 1, 1);
 			}
 		}
 	}
@@ -1717,10 +1717,10 @@ public class Offspring {
 		double maxRange = Math.max(max, max - min);
 		double lowerMin = Math.min(0, min);
 
-		int x1 = offset + Plot.scale(g1, bestScores[objective].length * 1.0, 0);
-		int y1 = offset + Plot.invert(offspringScore, maxRange, lowerMin);
-		int x2 = offset + Plot.scale(g2, bestScores[objective].length * 1.0, 0);
-		int y2 = offset + Plot.invert(bestScore, maxRange, lowerMin);
+		int x1 = offset + GraphicsUtil.scale(g1, bestScores[objective].length * 1.0, 0);
+		int y1 = offset + GraphicsUtil.invert(offspringScore, maxRange, lowerMin);
+		int x2 = offset + GraphicsUtil.scale(g2, bestScores[objective].length * 1.0, 0);
+		int y2 = offset + GraphicsUtil.invert(bestScore, maxRange, lowerMin);
 
 		g.drawLine(x1, y1, x2, y2);
 	}

@@ -4,6 +4,7 @@ import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.scores.Score;
 import edu.utexas.cs.nn.util.graphics.DrawingPanel;
+import edu.utexas.cs.nn.util.graphics.GraphicsUtil;
 import edu.utexas.cs.nn.util.graphics.Plot;
 
 import java.awt.Color;
@@ -115,9 +116,9 @@ public class FitnessLog<T> extends StatisticsLog<Score<T>> {
 			}
 			for (int i = 0; i < objectives; i++) {
 				panels[i].clear();
-				Plot.linePlot(panels[i], overallMins[i], overallMaxes[i], allMaxes.get(i), Color.magenta);
-				Plot.linePlot(panels[i], overallMins[i], overallMaxes[i], allAverages.get(i), Color.blue);
-				Plot.linePlot(panels[i], overallMins[i], overallMaxes[i], allMins.get(i), Color.green);
+				GraphicsUtil.linePlot(panels[i], overallMins[i], overallMaxes[i], allMaxes.get(i), Color.magenta);
+				GraphicsUtil.linePlot(panels[i], overallMins[i], overallMaxes[i], allAverages.get(i), Color.blue);
+				GraphicsUtil.linePlot(panels[i], overallMins[i], overallMaxes[i], allMins.get(i), Color.green);
 			}
 		}
 	}

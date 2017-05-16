@@ -1,8 +1,10 @@
 package edu.utexas.cs.nn.util.graphics;
 
 import java.awt.Color;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
 import edu.utexas.cs.nn.networks.ActivationFunctions;
 import edu.utexas.cs.nn.networks.Network;
@@ -151,6 +153,7 @@ public class GraphicsUtil {
 	/**
 	 * Creates an image of the specified size and height consisting entirely
 	 * of a designated solid color.
+	 * 
 	 * @param c Color throughout image
 	 * @param width width of image in pixels
 	 * @param height height of image in pixels
@@ -164,5 +167,68 @@ public class GraphicsUtil {
 			}
 		}
 		return image;
+	}
+	
+	/**
+	 * Plots a line of a designated color drawn by an input array list of doubles on a drawing panel.
+	 * 
+	 * @param panel DrawingPanel on which line is graphed
+	 * @param min minimum value of score
+	 * @param max maximum value of score
+	 * @param scores list of doubles to be plotted on graph
+	 * @param color Color of line
+	 */
+	public static void linePlot(DrawingPanel panel, double min, double max, ArrayList<Double> scores, Color color) {
+		Graphics g = panel.getGraphics();
+		int height = panel.getFrame().getHeight() - 50; // -50 is to avoid gray panel at bottom of DrawingPanel
+		int width = panel.getFrame().getWidth();		
+		g.setColor(Color.black);
+		// y-axis
+		g.drawLine(Plot.OFFSET, Plot.OFFSET, Plot.OFFSET, height - Plot.OFFSET);	
+		// x-axis
+		g.drawLine(Plot.OFFSET, height - Plot.OFFSET, width - Plot.OFFSET, height - Plot.OFFSET);
+		double last = scores.get(0);
+		double maxRange = Math.max(max, max - min);
+		double lowerMin = Math.min(0, min);
+		for (int i = 1; i < scores.size(); i++) {
+			g.setColor(color);
+			// g.fillRect(OFFSET + scale((double) i, (double) scores.size()),
+			// OFFSET + invert(scores.get(i), max), 1, 1);
+			int x1 = Plot.OFFSET + scale((double) (i - 1), (double) scores.size(), 0, width);
+			int y1 = Plot.OFFSET + invert(last, maxRange, lowerMin, height);
+			int x2 = Plot.OFFSET + scale((double) i, (double) scores.size(), 0, width);
+			int y2 = Plot.OFFSET + invert(scores.get(i), maxRange, lowerMin, height);
+
+			//System.out.println(x1+","+ y1+","+ x2+","+ y2);
+			g.drawLine(x1, y1, x2, y2);
+			g.setColor(Color.black);
+			last = scores.get(i);
+		}
+		g.drawString("" + max, Plot.OFFSET / 2, Plot.OFFSET / 2);
+		g.drawString("" + lowerMin, Plot.OFFSET / 2, height - (Plot.OFFSET / 2));
+	}
+	
+	/**
+	 * Scales x value based on maximum and minimum value. This scale method is based on original browser 
+	 * dimension, which is meant for evolution lineage. 
+	 * @param x Input value
+	 * @param max maximum x value
+	 * @param min minimum x value
+	 * @return scaled x value
+	 */
+	public static int scale(double x, double max, double min) {
+		return scale(x, max, min, Plot.BROWSE_DIM);
+	}
+	
+	public static int scale(double x, double max, double min, int totalWidth) {
+		return (int) (((x - min) / max) * (totalWidth - (2 * Plot.OFFSET)));
+	}
+
+	public static int invert(double y, double max, double min) {
+		return invert(y,max,min);
+	}
+	
+	public static int invert(double y, double max, double min, int totalHeight) {
+		return (totalHeight - (2 * Plot.OFFSET)) - scale(y, max, min, totalHeight);
 	}
 }

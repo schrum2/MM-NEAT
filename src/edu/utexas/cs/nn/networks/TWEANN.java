@@ -11,6 +11,7 @@ import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.util.CombinatoricUtilities;
 import edu.utexas.cs.nn.util.graphics.DrawingPanel;
+import edu.utexas.cs.nn.util.graphics.GraphicsUtil;
 import edu.utexas.cs.nn.util.graphics.Plot;
 import edu.utexas.cs.nn.util.random.RandomNumbers;
 import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
@@ -824,7 +825,7 @@ public class TWEANN implements Network {
 		preferenceNeuronPanel.clear();
 		for (int i = 0; i < preferenceActivationHistory.length; i++) {
 			preferenceActivationHistory[i].add(preferences[i]);
-			Plot.linePlot(preferenceNeuronPanel, -1, 1, preferenceActivationHistory[i],
+			GraphicsUtil.linePlot(preferenceNeuronPanel, -1, 1, preferenceActivationHistory[i],
 					CombinatoricUtilities.colorFromInt(i));
 		}
 	}

@@ -8,6 +8,7 @@ import edu.utexas.cs.nn.tasks.mspacman.agentcontroller.pacman.NNMsPacMan;
 import edu.utexas.cs.nn.tasks.mspacman.agentcontroller.pacman.NNPacManController;
 import edu.utexas.cs.nn.util.datastructures.Interval;
 import edu.utexas.cs.nn.util.graphics.DrawingPanel;
+import edu.utexas.cs.nn.util.graphics.GraphicsUtil;
 import edu.utexas.cs.nn.util.graphics.Plot;
 
 import java.awt.Color;
@@ -169,6 +170,6 @@ public abstract class EligibilityTimeFramesScore<T extends Network> extends MsPa
 			System.out.println(i + ":" + value);
 		}
 
-		Plot.linePlot(new DrawingPanel(600, 600, "Eligibility"), -0.5, 1.5, plotLine, Color.RED);
+		GraphicsUtil.linePlot(new DrawingPanel(600, 600, "Eligibility"), -0.5, 1.5, plotLine, Color.RED);
 	}
 }
