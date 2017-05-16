@@ -23,6 +23,10 @@ public class PinballTask<T extends Network> extends NoisyLonerTask<T>implements 
 	 */
 	public PinballTask(){
 		MMNEAT.registerFitnessFunction("Reward");
+		
+        if(Parameters.parameters.booleanParameter("moPinball")){
+       	 MMNEAT.registerFitnessFunction("Distance");
+       }
 	}
 
 	/**
@@ -64,7 +68,6 @@ public class PinballTask<T extends Network> extends NoisyLonerTask<T>implements 
 	 */
 	@Override
 	public String[] outputLabels() {
-		// TODO Ensure "Up" and "Down" are correct
 		return new String[]{"Right", "Down", "Left", "Up", "None"};
 	}
 
@@ -112,10 +115,8 @@ public class PinballTask<T extends Network> extends NoisyLonerTask<T>implements 
 				try {
 					Thread.sleep(1);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-
 				if(Parameters.parameters.booleanParameter("stepByStep")){
 					System.out.print("Press enter to continue");
 					MiscUtil.waitForReadStringAndEnterKeyPress();
@@ -126,8 +127,16 @@ public class PinballTask<T extends Network> extends NoisyLonerTask<T>implements 
 			timeLimit--;
 		} while(!p.episodeEnd() && timeLimit > 0);
 
+		Double distance = p.getBall().getCenter().distanceTo(p.getTarget().getCenter()); // Subtracts the distance from the Ball to the Target from the overall Fitness; getting closer means a higher score
+		
 		Pair<double[], double[]> evalResults = new Pair<double[], double[]>(new double[] {fitness}, new double[0]);			
 
+		if(Parameters.parameters.booleanParameter("moPinball")){
+			evalResults = new Pair<double[], double[]>(new double[] { fitness, distance }, new double[0]);
+		} else {
+			evalResults = new Pair<double[], double[]>(new double[] { fitness }, new double[0]);			
+		}
+		
 		return evalResults; // Returns the Fitness of the individual's Genotype<T>
 	}
 
