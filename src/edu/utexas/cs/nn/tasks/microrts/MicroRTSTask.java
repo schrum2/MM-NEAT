@@ -109,9 +109,7 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 	 *         other scores (for tracking non-fitness data)
 	 */
 	@Override
-	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {
-		return null;
-	}
+	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {return null;} //TODO this is the real one! just not using params yet
 	public Pair<double[], double[]> testOneEval() {
 
 		GameState gs = new GameState(pgs, utt);
@@ -176,7 +174,7 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 			}
 		}
 		return fitnessFunction(gs);
-	}
+	} //END testOne eval
 
 	private Pair<double[], double[]> fitnessFunction(GameState terminalGameState) {
 		Pair<double[], double[]> score = new Pair<>(new double[3], new double[0]); 
@@ -203,7 +201,7 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 		}
 	}
 	return score;
-	}
+	} //END fitnessFunction
 
 	public static void main(String[] args){
 		Parameters.initializeParameterCollections(new String[]{"io:false","netio:false"});
