@@ -382,28 +382,7 @@ public final class StdAudio {
 		}
 	}
 
-	/**
-	 * Creates a graphed visualization of an audio file by taking in the file represented as a list of doubles and 
-	 * plotting it using a DrawingPanel.
-	 * 
-	 * @param fileName String reference to file being plotted
-	 */
-	public static void wavePlotFromFile(String fileName) {
-		double[] fileArray = read(fileName); //create array of doubles representing audio
-		wavePlotFromDoubleArray(fileArray);
-	}
 	
-	/**
-	 *  Creates a graphed visualization of an audio file by taking in the list of doubles that represents the file and 
-	 * plotting it using a DrawingPanel.
-	 * 
-	 * @param inputArray
-	 */
-	public static void wavePlotFromDoubleArray(double[] inputArray) {
-		ArrayList<Double> fileArrayList = ArrayUtil.doubleVectorFromArray(inputArray); //convert array into array list
-		DrawingPanel panel = new DrawingPanel(500,500, "fsljfd"); //create panel where line will be plotted 
-		GraphicsUtil.linePlot(panel, -1.0, 1.0, fileArrayList, Color.black); //call linePlot with ArrayList to draw graph
-	}
 	
 	/**
 	 * Adds the array values at each index of two audio files represented as double arrays, combining them into a single double array.

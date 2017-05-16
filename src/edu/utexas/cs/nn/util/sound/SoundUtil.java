@@ -53,7 +53,7 @@ public class SoundUtil {
 		Network cppn = test.getCPPN();
 		double[] testArray = amplitudeGenerator(cppn, 60000, 440);
 		StdAudio.play(testArray);
-		StdAudio.wavePlotFromDoubleArray(testArray);
+		GraphicsUtil.wavePlotFromDoubleArray(testArray);
 		
 //		
 //		ArrayList<Double> fileArrayList2 = ArrayUtil.doubleVectorFromArray(testArray2); //convert array into array list

@@ -11,6 +11,7 @@ import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.tasks.picbreeder.PicbreederTask;
 import edu.utexas.cs.nn.util.CartesianGeometricUtilities;
 import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
+import edu.utexas.cs.nn.util.sound.StdAudio;
 import edu.utexas.cs.nn.util.util2D.ILocated2D;
 import edu.utexas.cs.nn.util.util2D.Tuple2D;
 
@@ -206,6 +207,29 @@ public class GraphicsUtil {
 		}
 		g.drawString("" + max, Plot.OFFSET / 2, Plot.OFFSET / 2);
 		g.drawString("" + lowerMin, Plot.OFFSET / 2, height - (Plot.OFFSET / 2));
+	}
+	
+	/**
+	 * Creates a graphed visualization of an audio file by taking in the file represented as a list of doubles and 
+	 * plotting it using a DrawingPanel.
+	 * 
+	 * @param fileName String reference to file being plotted
+	 */
+	public static void wavePlotFromFile(String fileName) {
+		double[] fileArray = StdAudio.read(fileName); //create array of doubles representing audio
+		wavePlotFromDoubleArray(fileArray);
+	}
+	
+	/**
+	 *  Creates a graphed visualization of an audio file by taking in the list of doubles that represents the file and 
+	 * plotting it using a DrawingPanel.
+	 * 
+	 * @param inputArray
+	 */
+	public static void wavePlotFromDoubleArray(double[] inputArray) {
+		ArrayList<Double> fileArrayList = ArrayUtil.doubleVectorFromArray(inputArray); //convert array into array list
+		DrawingPanel panel = new DrawingPanel(500,500, "fsljfd"); //create panel where line will be plotted 
+		GraphicsUtil.linePlot(panel, -1.0, 1.0, fileArrayList, Color.black); //call linePlot with ArrayList to draw graph
 	}
 	
 	/**
