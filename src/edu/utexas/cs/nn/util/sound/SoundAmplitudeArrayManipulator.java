@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import javax.sound.sampled.AudioFileFormat;
 import javax.sound.sampled.AudioFileFormat.Type;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
@@ -15,6 +16,8 @@ import javax.sound.sampled.AudioSystem;
 import edu.utexas.cs.nn.evolution.genotypes.HyperNEATCPPNGenotype;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
+import javazoom.jl.converter.WaveFile;
+import javazoom.jl.converter.WaveFile.WaveFileSample;
 
 /**
  * Methods associated with extracting, saving and manipulating amplitude arrays from audio files. 
@@ -122,6 +125,37 @@ public class SoundAmplitudeArrayManipulator {
 			Path path = Paths.get(fileDest);
 			Files.write(path, amplitudeArray);
 	}
+	
+	/**
+	 * Writes an array of double values to a WAV file.  This method only writes
+	 * single channel data.
+	 *
+	 * @param doubleArray the array of double values to save
+	 * @param fileName the desired name of the file to save
+	 * @return boolean indicating success or failure of the write
+	 */
+	public static boolean writeSingleChannel(AudioFormat format, double[] doubleArray, String fileName) {
+		/* convert the double array to a byte array */
+		byte[] data = new byte[2 * doubleArray.length];
+		for (int i = 0; i < doubleArray.length; i++) {
+			int temp = (short) (doubleArray[i] * Short.MAX_VALUE);                 
+			data[2*i + 0] = (byte) temp;
+			data[2*i + 1] = (byte) (temp >> 8);
+		}
+
+		/* try saving the file */
+		try {
+			//AudioInputStream ais = WAVUtil.byteToAIS(data);
+			ByteArrayInputStream bais = new ByteArrayInputStream(data);
+			AudioInputStream ais = new AudioInputStream(bais, format, doubleArray.length);
+			AudioSystem.write(ais, AudioFileFormat.Type.WAVE, new File(fileName));
+		}
+		catch (Exception e) {
+			System.out.println(e);
+			return false;
+		}
+		return true;
+	}
 
 	//CPPN 
 
@@ -161,9 +195,10 @@ public class SoundAmplitudeArrayManipulator {
 	 * @param fileDest String representation of location where generated file will be saved
 	 * @throws IOException if an I/O operation has failed or been interrupted
 	 */
-	public static void saveFileFromCPPN(Network CPPN, int length, int frequency, String fileDest) throws IOException {
+	public static void saveFileFromCPPN(Network CPPN, int length, int frequency, String fileName, AudioFormat format) throws IOException {
 		double[] generatedSound = amplitudeGenerator(CPPN, length, frequency);
-		saveFileFromArray(ArrayUtil.doublesToBytes(generatedSound), fileDest);
+		writeSingleChannel(format, generatedSound, fileName);
+		//saveFileFromArray(ArrayUtil.doublesToBytes(generatedSound), fileDest);
 	}
 
 }

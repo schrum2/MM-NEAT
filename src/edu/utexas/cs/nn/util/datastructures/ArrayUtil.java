@@ -126,21 +126,21 @@ public class ArrayUtil {
 		return array;
 	}
 	
-	/**
-	 * Takes in an array of doubles and converts it into a byte array.
-	 * Useful for audio file manipulation. 
-	 * 
-	 * @param doubleArray input array of doubles to be converted 
-	 * @return equivalent byte array
-	 */
-	public static byte[] doublesToBytes(double[] doubleArray){
-	    int times = Double.SIZE / Byte.SIZE;
-	    byte[] bytes = new byte[doubleArray.length * times];
-	    for(int i=0;i<doubleArray.length;i++){
-	        ByteBuffer.wrap(bytes, i*times, times).putDouble(doubleArray[i]);
-	    }
-	    return bytes;
-	}
+//	/**
+//	 * Takes in an array of doubles and converts it into a byte array.
+//	 * Useful for audio file manipulation. 
+//	 * 
+//	 * @param doubleArray input array of doubles to be converted 
+//	 * @return equivalent byte array
+//	 */
+//	public static byte[] doublesToBytes(double[] doubleArray){
+//	    int times = Double.SIZE / Byte.SIZE;
+//	    byte[] bytes = new byte[doubleArray.length * times];
+//	    for(int i=0;i<doubleArray.length;i++){
+//	        ByteBuffer.wrap(bytes, i*times, times).putDouble(doubleArray[i]);
+//	    }
+//	    return bytes;
+//	}
 
 	/**
 	 * Return true if any element of members is also an element of set

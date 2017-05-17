@@ -44,7 +44,7 @@ public class SoundUtilExamples {
 	private static final String PIRATES = "data/sounds/pirates.mid";
 
 	public static void main(String[] args) throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException, JavaLayerException {
-
+		CPPNExamples();
 	}
 
 	public static void CPPNExamples() throws IOException {
@@ -56,7 +56,8 @@ public class SoundUtilExamples {
 		}
 		Network cppn = test.getCPPN();
 		double[] testArray = SoundAmplitudeArrayManipulator.amplitudeGenerator(cppn, 60000, 440);
-		SoundAmplitudeArrayManipulator.saveFileFromCPPN(cppn, 60000, 440, "data/sounds/cppnExample.mp3");
+		AudioFormat af = new AudioFormat(MiscSoundUtil.SAMPLE_RATE, MiscSoundUtil.SAMPLE_RATE,1, true, true);
+		SoundAmplitudeArrayManipulator.saveFileFromCPPN(cppn, 60000, 440, "cppn.wav", af);
 		MiscSoundUtil.playDoubleArray(testArray);
 		GraphicsUtil.wavePlotFromDoubleArray(testArray);
 	}
