@@ -4,7 +4,7 @@ import boardGame.BoardGameState;
 
 public class RPSState implements BoardGameState{
 
-	private static int[] playerMoves;
+	private int[] playerMoves;
 	
 	private static final int ROCK = 0;
 	private static final int PAPER = 1;

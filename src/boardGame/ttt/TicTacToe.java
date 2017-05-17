@@ -9,9 +9,9 @@ import boardGame.BoardGameState;
 
 public class TicTacToe implements BoardGame{
 
-	private static int currentPlayer; // Used to keep track of whose turn it is
-	private static TicTacToePlayer[] players; // Used to store the two BoardGamePlayers
-	private static TicTacToeState board;
+	private int currentPlayer; // Used to keep track of whose turn it is
+	private TicTacToePlayer[] players; // Used to store the two BoardGamePlayers
+	private TicTacToeState board;
 	
 	/**
 	 * Default Constructor

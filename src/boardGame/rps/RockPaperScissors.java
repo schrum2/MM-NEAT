@@ -8,9 +8,9 @@ import boardGame.BoardGameState;
 
 public class RockPaperScissors implements BoardGame{
 
-	private static int currentPlayer; // Used to keep track of whose turn it is
-	private static RPSPlayer[] players; // Used to store the two BoardGamePlayers
-	private static RPSState board;
+	private int currentPlayer; // Used to keep track of whose turn it is
+	private RPSPlayer[] players; // Used to store the two BoardGamePlayers
+	private RPSState board;
 	
 	public RockPaperScissors(){
 		currentPlayer = 0;

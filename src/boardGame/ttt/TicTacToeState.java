@@ -10,7 +10,7 @@ import javafx.util.Pair;
 
 public class TicTacToeState implements BoardGameState{
 	
-	private static int[][] boardState;
+	private int[][] boardState;
 	
 	public static final int EMPTY = 0;
 	public static final int X = 1;

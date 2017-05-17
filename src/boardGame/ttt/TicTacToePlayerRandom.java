@@ -6,7 +6,7 @@ import java.util.Random;
 
 public class TicTacToePlayerRandom extends TicTacToePlayer{
 	
-	private static int playerNum;
+	private int playerNum;
 	
 	public TicTacToePlayerRandom(){
 		playerNum = 0;
