@@ -25,7 +25,7 @@ public class NNEvaluationFunction extends EvaluationFunction{
 	}
 	
 	/**
-	 * 
+	 * determines how good a player is doing in a given GameState
 	 * @param playerID 
 	 * 				controller/agent being evaluated
 	 * @param GameState gs
@@ -44,9 +44,19 @@ public class NNEvaluationFunction extends EvaluationFunction{
         return score;
 	}
 
+	/**
+	 * adds up all remaining unharvested resources
+	 * @param GameState gs
+	 * 				specified state of the game  
+	 * @return total unused resources
+	 */
 	@Override
 	public float upperBound(GameState gs) {
-		return 0;
+        PhysicalGameState pgs = gs.getPhysicalGameState();
+        int free_resources = 0;
+        for(Unit u:pgs.getUnits()) {
+            if (u.getPlayer()==-1) free_resources+=u.getResources();
+        }
+		return free_resources;
 	}
-
 }
