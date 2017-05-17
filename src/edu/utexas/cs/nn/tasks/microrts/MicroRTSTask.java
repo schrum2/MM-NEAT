@@ -88,8 +88,9 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 
 	@Override
 	public String[] sensorLabels() {
-		// TODO Auto-generated method stub
-		return null;
+		String[] labels = new String[]{"int maxplayer", "int minplayer", "GameState gs"}; 
+		//this is only so that we can test NNEvaluationFunction early, change later! TODO
+		return labels;
 	}
 
 	@Override
