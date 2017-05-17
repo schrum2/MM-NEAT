@@ -26,13 +26,27 @@ public class SoundAmplitudeArrayManipulator {
 	//Methods from GT - used to extract amplitude from recorded wave
 
 	/**
-	 * Method that inputs an AudioInputStream, obtains the format of the stream and forms an array of bytes 
-	 * based on the size of the stream, and returns a method call to extractAmplitudeDataFromAmplitudeByteArray(). 
+	 * Method that inputs an AudioInputStream, calls method that extracts amplitude byte array from
+	 * the audio input stream, and returns a method call using the resulting byte array to 
+	 * extractAmplitudeDataFromAmplitudeByteArray(). 
 	 * 
 	 * @param audioInputStream stream of audio being converted into amplitude data
 	 * @return  method call that extracts amplitude data from byte array formed
 	 */
 	public static int[] extractAmplitudeDataFromAudioInputStream(AudioInputStream audioInputStream) {  
+		AudioFormat format = audioInputStream.getFormat();  
+		byte[] audioBytes = extractAmplitudeByteArrayFromAudioInputStream(audioInputStream);
+		return extractAmplitudeDataFromAmplitudeByteArray(format, audioBytes);  //calls method that extracts amplitude data from byte array formed
+	}  
+	
+	/**
+	 * Method that inputs an AudioInputStrean, obtains the format of the stream and forms an array of bytes 
+	 * based on the size of the stream to return. 
+	 * 
+	 * @param audioInputStream stream of audio being converted to byte array
+	 * @return byte array representation of audio file
+	 */
+	public static byte[] extractAmplitudeByteArrayFromAudioInputStream(AudioInputStream audioInputStream) {
 		AudioFormat format = audioInputStream.getFormat();  
 		byte[] audioBytes = new byte[(int) (audioInputStream.getFrameLength() * format.getFrameSize())];  
 		try {  
@@ -41,8 +55,8 @@ public class SoundAmplitudeArrayManipulator {
 			System.out.println("IOException during reading audioBytes");  
 			e.printStackTrace();  
 		}  
-		return extractAmplitudeDataFromAmplitudeByteArray(format, audioBytes);  //calls method that extracts amplitude data from byte array formed
-	}  
+		return audioBytes;
+	}
 
 	/**
 	 * Method that inputs the format of an AudioInputStream as well as the byte array formed from its contents
@@ -107,7 +121,6 @@ public class SoundAmplitudeArrayManipulator {
 	        } catch (IOException e) {
 	            e.printStackTrace();
 	        }
-
 	}
 
 	//CPPN 

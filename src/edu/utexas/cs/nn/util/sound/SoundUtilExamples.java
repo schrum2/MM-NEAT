@@ -222,8 +222,12 @@ public class SoundUtilExamples {
 		
 		//SAVING FILES FROM ARRAYS
 		SoundAmplitudeArrayManipulator.saveFileFromArray(bearNumbers, "data/sounds/bearGrowlCopy.wav");
-//		byte[] happyNumbers = MiscSoundUtil.readByte(HAPPY_MP3);
-//		SoundAmplitudeArrayManipulator.saveFileFromArray(happyNumbers, "data/sounds/happyCopy.mp3");
+		
+		File happyFile = new File(HAPPY_MP3);
+		AudioInputStream happyStream = WAVUtil.audioStream(happyFile);
+		byte[] happyNumbers = SoundAmplitudeArrayManipulator.extractAmplitudeByteArrayFromAudioInputStream(happyStream);
+		SoundAmplitudeArrayManipulator.saveFileFromArray(happyNumbers, "data/sounds/happyCopy.mp3");
+		
 		byte[] classicalNumbers = MiscSoundUtil.readByte(classical);
 		SoundAmplitudeArrayManipulator.saveFileFromArray(classicalNumbers, "data/sounds/classicalCopy.mid");
 		MiscSoundUtil.close(); 
