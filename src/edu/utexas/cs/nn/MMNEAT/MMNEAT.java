@@ -49,6 +49,7 @@ import edu.utexas.cs.nn.tasks.gridTorus.TorusPredPreyTask;
 import edu.utexas.cs.nn.tasks.gridTorus.competitive.CompetitiveHomogeneousPredatorsVsPreyTask;
 import edu.utexas.cs.nn.tasks.gridTorus.cooperative.CooperativePredatorsVsStaticPreyTask;
 import edu.utexas.cs.nn.tasks.gridTorus.cooperativeAndCompetitive.CompetitiveAndCooperativePredatorsVsPreyTask;
+import edu.utexas.cs.nn.tasks.interactive.picbreeder.PicbreederTask;
 import edu.utexas.cs.nn.tasks.gridTorus.GroupTorusPredPreyTask;
 import edu.utexas.cs.nn.tasks.mario.MarioTask;
 import edu.utexas.cs.nn.tasks.motests.FunctionOptimization;
@@ -70,7 +71,6 @@ import edu.utexas.cs.nn.tasks.mspacman.sensors.VariableDirectionBlockLoadedInput
 import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.VariableDirectionBlock;
 import edu.utexas.cs.nn.tasks.mspacman.sensors.ghosts.GhostControllerInputOutputMediator;
 import edu.utexas.cs.nn.tasks.mspacman.sensors.ghosts.mediators.GhostsCheckEachDirectionMediator;
-import edu.utexas.cs.nn.tasks.picbreeder.PicbreederTask;
 import edu.utexas.cs.nn.tasks.pinball.PinballTask;
 import edu.utexas.cs.nn.tasks.rlglue.RLGlueEnvironment;
 import edu.utexas.cs.nn.tasks.rlglue.RLGlueTask;

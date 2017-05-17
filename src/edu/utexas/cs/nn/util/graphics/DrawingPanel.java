@@ -21,7 +21,7 @@ import javax.swing.*;
 import javax.swing.event.*;
 
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.tasks.picbreeder.PicbreederTask;
+import edu.utexas.cs.nn.tasks.interactive.picbreeder.PicbreederTask;
 
 public class DrawingPanel implements ActionListener {
 

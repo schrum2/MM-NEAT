@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.tasks.picbreeder;
+package edu.utexas.cs.nn.tasks.interactive.picbreeder;
 
 import java.awt.Color;
 import java.awt.Dimension;

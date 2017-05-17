@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 import edu.utexas.cs.nn.networks.ActivationFunctions;
 import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.tasks.picbreeder.PicbreederTask;
+import edu.utexas.cs.nn.tasks.interactive.picbreeder.PicbreederTask;
 import edu.utexas.cs.nn.util.CartesianGeometricUtilities;
 import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
 import edu.utexas.cs.nn.util.sound.MiscSoundUtil;
