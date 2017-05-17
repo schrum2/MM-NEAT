@@ -2,6 +2,7 @@ package edu.utexas.cs.nn.tasks.microrts;
 
 import java.util.List;
 
+import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.networks.Network;
 import micro.ai.core.AI;
 import micro.ai.core.AIWithComputationBudget;
@@ -11,9 +12,11 @@ import micro.rts.PlayerAction;
 
 public class NNMicroRTSAgent<T extends Network> extends AIWithComputationBudget{
 
-	public NNMicroRTSAgent(int mt, int mi) {
+	private Network nn;
+	
+	public NNMicroRTSAgent(int mt, int mi, Genotype<T> g) {
 		super(mt, mi);
-		// TODO Auto-generated constructor stub
+		nn = g.getPhenotype();
 	}
 
 	//methods from AIWithComputationBudget

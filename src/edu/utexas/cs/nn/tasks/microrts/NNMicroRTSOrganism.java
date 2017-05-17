@@ -6,9 +6,15 @@ import edu.utexas.cs.nn.networks.Network;
 
 public class NNMicroRTSOrganism<T extends Network> extends Organism<T> {
 
+	NNMicroRTSAgent<T> agent;
+	
 	public NNMicroRTSOrganism(Genotype<T> genotype) {
 		super(genotype);
-		// TODO Auto-generated constructor stub
+
+	
+	
 	}
 
+	
+	
 }
