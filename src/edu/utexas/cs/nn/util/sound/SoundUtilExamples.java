@@ -120,7 +120,7 @@ public class SoundUtilExamples {
 				bear[i] = 20;
 		}
 		bear[bear.length-1] = 0;
-		MiscSoundUtil.play(bear);
+		//MiscSoundUtil.play(bear);
 
 		//		double[] applause = new double[bearNumbers.length];
 		//		for(int i = 0; i < original.length; i++) {
@@ -224,9 +224,9 @@ public class SoundUtilExamples {
 		SoundAmplitudeArrayManipulator.saveFileFromArray(bearNumbers, "data/sounds/bearGrowlCopy.wav");
 		
 		File happyFile = new File(HAPPY_MP3);
-		AudioInputStream happyStream = WAVUtil.audioStream(happyFile);
-		byte[] happyNumbers = SoundAmplitudeArrayManipulator.extractAmplitudeByteArrayFromAudioInputStream(happyStream);
-		SoundAmplitudeArrayManipulator.saveFileFromArray(happyNumbers, "data/sounds/happyCopy.mp3");
+//		AudioInputStream happyStream = WAVUtil.audioStream(happyFile);
+//		byte[] happyNumbers = SoundAmplitudeArrayManipulator.extractAmplitudeByteArrayFromAudioInputStream(happyStream);
+//		SoundAmplitudeArrayManipulator.saveFileFromArray(happyNumbers, "data/sounds/happyCopy.mp3");
 		
 		byte[] classicalNumbers = MiscSoundUtil.readByte(classical);
 		SoundAmplitudeArrayManipulator.saveFileFromArray(classicalNumbers, "data/sounds/classicalCopy.mid");

@@ -1,5 +1,6 @@
 package edu.utexas.cs.nn.util.datastructures;
 
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -123,6 +124,22 @@ public class ArrayUtil {
 			array[i++] = n.doubleValue();
 		}
 		return array;
+	}
+	
+	/**
+	 * Takes in an array of doubles and converts it into a byte array.
+	 * Useful for audio file manipulation. 
+	 * 
+	 * @param doubleArray input array of doubles to be converted 
+	 * @return equivalent byte array
+	 */
+	public static byte[] doublesToBytes(double[] doubleArray){
+	    int times = Double.SIZE / Byte.SIZE;
+	    byte[] bytes = new byte[doubleArray.length * times];
+	    for(int i=0;i<doubleArray.length;i++){
+	        ByteBuffer.wrap(bytes, i*times, times).putDouble(doubleArray[i]);
+	    }
+	    return bytes;
 	}
 
 	/**

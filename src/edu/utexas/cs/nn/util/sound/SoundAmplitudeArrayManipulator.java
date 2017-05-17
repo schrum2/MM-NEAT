@@ -1,6 +1,7 @@
 package edu.utexas.cs.nn.util.sound;
 
 import java.io.*;
+import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -13,6 +14,7 @@ import javax.sound.sampled.AudioSystem;
 
 import edu.utexas.cs.nn.evolution.genotypes.HyperNEATCPPNGenotype;
 import edu.utexas.cs.nn.networks.Network;
+import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
 
 /**
  * Methods associated with extracting, saving and manipulating amplitude arrays from audio files. 
@@ -38,7 +40,7 @@ public class SoundAmplitudeArrayManipulator {
 		byte[] audioBytes = extractAmplitudeByteArrayFromAudioInputStream(audioInputStream);
 		return extractAmplitudeDataFromAmplitudeByteArray(format, audioBytes);  //calls method that extracts amplitude data from byte array formed
 	}  
-	
+
 	/**
 	 * Method that inputs an AudioInputStrean, obtains the format of the stream and forms an array of bytes 
 	 * based on the size of the stream to return. 
@@ -106,21 +108,19 @@ public class SoundAmplitudeArrayManipulator {
 		}
 		return audioData;  
 	}
-	
+
 	/**
-	 * File that takes in an array of bytes and saves it as a file. This method
-	 * works for WAV and MIDI files, but not mp3 files. 
+	 * Takes in an array of bytes and saves it as a file. This method
+	 * works for WAV and MIDI files, but not mp3 files. (Also, saved
+	 * WAV files will play, but saved MIDI files won't).  TODO
 	 * 
 	 * @param amplitudeArray array of bytes
 	 * @param fileDest location where file should be saved
+	 * @throws IOException if an I/O operation has failed or been interrupted
 	 */
-	public static void saveFileFromArray(byte[] amplitudeArray, String fileDest) {
-		 try {
-	            Path path = Paths.get(fileDest);
-	            Files.write(path, amplitudeArray);
-	        } catch (IOException e) {
-	            e.printStackTrace();
-	        }
+	public static void saveFileFromArray(byte[] amplitudeArray, String fileDest) throws IOException {
+			Path path = Paths.get(fileDest);
+			Files.write(path, amplitudeArray);
 	}
 
 	//CPPN 
@@ -152,5 +152,18 @@ public class SoundAmplitudeArrayManipulator {
 		return result;
 	}
 
+	/**
+	 * Uses a CPPN to generate an output and saves that output into a file. 
+	 * 
+	 * @param CPPN network used to generate amplitude 
+	 * @param length length of sample
+	 * @param frequency Frequency of note being manipulated
+	 * @param fileDest String representation of location where generated file will be saved
+	 * @throws IOException if an I/O operation has failed or been interrupted
+	 */
+	public static void saveFileFromCPPN(Network CPPN, int length, int frequency, String fileDest) throws IOException {
+		double[] generatedSound = amplitudeGenerator(CPPN, length, frequency);
+		saveFileFromArray(ArrayUtil.doublesToBytes(generatedSound), fileDest);
+	}
 
 }
