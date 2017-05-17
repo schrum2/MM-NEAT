@@ -99,7 +99,7 @@ public final class MiscSoundUtil {
 	 * @param  sample the sample to play
 	 * @throws IllegalArgumentException if the sample is {@code Double.NaN}
 	 */
-	public static void play(double sample) {
+	public static void playDouble(double sample) {
 
 		// clip if outside [-1, +1]
 		if (Double.isNaN(sample)) throw new IllegalArgumentException("sample is NaN");
@@ -126,10 +126,10 @@ public final class MiscSoundUtil {
 	 * @throws IllegalArgumentException if any sample is {@code Double.NaN}
 	 * @throws IllegalArgumentException if {@code samples} is {@code null}
 	 */
-	public static void play(double[] samples) {
+	public static void playDoubleArray(double[] samples) {
 		if (samples == null) throw new IllegalArgumentException("argument to play() is null");
 		for (int i = 0; i < samples.length; i++) {
-			play(samples[i]);
+			playDouble(samples[i]);
 		}
 	}
 
@@ -257,7 +257,7 @@ public final class MiscSoundUtil {
 		try {
 			// check if file format is supported
 			// (if not, will throw an UnsupportedAudioFileException)
-			AudioInputStream ais = AudioSystem.getAudioInputStream(is);
+			AudioInputStream ais = AudioSystem.getAudioInputStream(is); // unnecessary code?
 
 			new Thread(new Runnable() {
 				@Override
