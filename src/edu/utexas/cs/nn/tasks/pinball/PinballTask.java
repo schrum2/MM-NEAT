@@ -34,7 +34,7 @@ public class PinballTask<T extends Network> extends NoisyLonerTask<T>implements 
 	/**
 	 * Returns the number of Objectives for the PinballTask
 	 * 
-	 * @return 1, The number of Objectives for the PinballTask
+	 * @return The number of Objectives for the PinballTask; 2 if Multi-Objective, else 1
 	 */
 	@Override
 	public int numObjectives() {
