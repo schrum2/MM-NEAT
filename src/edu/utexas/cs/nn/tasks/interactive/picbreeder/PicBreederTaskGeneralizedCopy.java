@@ -1,21 +1,16 @@
-package edu.utexas.cs.nn.tasks.interactive.breedesizer;
+package edu.utexas.cs.nn.tasks.interactive.picbreeder;
 
 import java.awt.image.BufferedImage;
 
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.tasks.interactive.InteractiveEvolutionTask;
 
-public class BreedesizerTask extends InteractiveEvolutionTask {
+public class PicBreederTaskGeneralizedCopy extends InteractiveEvolutionTask {
 
-	public BreedesizerTask() throws IllegalAccessException {
+	public PicBreederTaskGeneralizedCopy() throws IllegalAccessException {
 		super();
 		// TODO Auto-generated constructor stub
 	}
-	
-	/* Will need method that plays sound when image is clicked. Can call utility methods
-	 in edu.utexas.cs.nn.util.sounds to accomplish this, but will have to be differentiated 
-	 from Picbreeder because it does not do this.
-	 */
 	
 	/* After save and setEffectCheckbox are generalized so that they can be applied to both 
 	 * Breedesizer and Picbreeder, specified method calls will have to be included here.
