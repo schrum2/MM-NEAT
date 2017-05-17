@@ -1,6 +1,7 @@
 package edu.utexas.cs.nn.util.sound;
 
 
+import java.awt.Color;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
@@ -43,6 +44,10 @@ public class SoundUtilExamples {
 	private static final String PIRATES = "data/sounds/pirates.mid";
 
 	public static void main(String[] args) throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException, JavaLayerException {
+
+	}
+
+	public static void CPPNExamples() throws IOException {
 		Parameters.initializeParameterCollections(new String[]{"io:false","netio:false"});
 		MMNEAT.loadClasses();
 		HyperNEATCPPNGenotype test = new HyperNEATCPPNGenotype(3, 1, 0);
@@ -51,16 +56,23 @@ public class SoundUtilExamples {
 		}
 		Network cppn = test.getCPPN();
 		double[] testArray = SoundAmplitudeArrayManipulator.amplitudeGenerator(cppn, 60000, 440);
-		MiscSoundUtil.play(testArray);
+		SoundAmplitudeArrayManipulator.saveFileFromCPPN(cppn, 60000, 440, "data/sounds/cppnExample.mp3");
+		MiscSoundUtil.playDoubleArray(testArray);
 		GraphicsUtil.wavePlotFromDoubleArray(testArray);
-		
-		//		ArrayList<Double> fileArrayList2 = ArrayUtil.doubleVectorFromArray(testArray2); //convert array into array list
-		//		DrawingPanel panel2 = new DrawingPanel(500,500, "2"); //create panel where line will be plotted 
-		//		GraphicsUtil.linePlot(panel2, -1.0, 1.0, fileArrayList2, Color.black); //call linePlot with ArrayList to draw graph
-		//		MiscUtil.waitForReadStringAndEnterKeyPress();
+	}
+
+	public static void plotExamples() {
+
+		//ArrayList<Double> fileArrayList2 = ArrayUtil.doubleVectorFromArray(testArray2); //convert array into array list
+		DrawingPanel panel2 = new DrawingPanel(500,500, "2"); //create panel where line will be plotted 
+		//GraphicsUtil.linePlot(panel2, -1.0, 1.0, fileArrayList2, Color.black); //call linePlot with ArrayList to draw graph
+		MiscUtil.waitForReadStringAndEnterKeyPress();
+
+	}
+
+	public static void playFileExamples() throws IOException, UnsupportedAudioFileException {
 
 		//playWAVFile(BEARGROWL_WAV);
-		//mp3Conversion(HAPPY_MP3).playMP3File();
 		byte[] bearNumbers = WAVUtil.WAVToByte(BEARGROWL_WAV);
 		//System.out.println(Arrays.toString(bearNumbers));
 		AudioInputStream bearAIS = WAVUtil.byteToAIS(bearNumbers);
@@ -91,7 +103,12 @@ public class SoundUtilExamples {
 		//playWAVFile(bearReturns);
 
 		//playByteAIS(applauseNumbers);
+	}
 
+	public static void manipulationExamples() throws IOException, UnsupportedAudioFileException {
+		byte[] bearNumbers = WAVUtil.WAVToByte(BEARGROWL_WAV);
+		byte[] applauseNumbers =WAVUtil.WAVToByte(APPLAUSE_WAV);	
+		byte[] harpNumbers = WAVUtil.WAVToByte(HARP_WAV);
 		AudioInputStream applauseAIS = WAVUtil.byteToAIS(applauseNumbers);
 		int[] applauseNumbers2 = SoundAmplitudeArrayManipulator.extractAmplitudeDataFromAudioInputStream(applauseAIS);
 		//System.out.println(Arrays.toString(applauseNumbers2));
@@ -159,9 +176,10 @@ public class SoundUtilExamples {
 		//		StdAudio.play(applauseAndHarp);
 		//		StdAudio.play(bearGrowlAndHarp);
 		//		StdAudio.play(applauseAndBearGrowl);
+	}
 
-		//MiscSoundUtil.play(PIRATES);
-
+	//MiscSoundUtil.play(PIRATES);
+	public static void toneGeneratorExamples() {
 		// 440 Hz for 1 sec
 		double freq1 = 440.0;
 		for (int i = 0; i <= MiscSoundUtil.SAMPLE_RATE; i++) {
@@ -215,23 +233,26 @@ public class SoundUtilExamples {
 		//play(classical);
 		//StdAudio.playApplet(classical); //TODO: failure here?
 
+	}
+	// need to call this in non-interactive stuff so the program doesn't terminate
+	// until all the sound leaves the speaker.
 
-		// need to call this in non-interactive stuff so the program doesn't terminate
-		// until all the sound leaves the speaker.
-		
-		
-		//SAVING FILES FROM ARRAYS
+
+	public static void saveFileFromArrayExamples() throws IOException {	
+		byte[] bearNumbers = WAVUtil.WAVToByte(BEARGROWL_WAV);
 		SoundAmplitudeArrayManipulator.saveFileFromArray(bearNumbers, "data/sounds/bearGrowlCopy.wav");
-		
+
 		File happyFile = new File(HAPPY_MP3);
-//		AudioInputStream happyStream = WAVUtil.audioStream(happyFile);
-//		byte[] happyNumbers = SoundAmplitudeArrayManipulator.extractAmplitudeByteArrayFromAudioInputStream(happyStream);
-//		SoundAmplitudeArrayManipulator.saveFileFromArray(happyNumbers, "data/sounds/happyCopy.mp3");
+		//		AudioInputStream happyStream = WAVUtil.audioStream(happyFile);
+		//		byte[] happyNumbers = SoundAmplitudeArrayManipulator.extractAmplitudeByteArrayFromAudioInputStream(happyStream);
 		
+		//		SoundAmplitudeArrayManipulator.saveFileFromArray(happyNumbers, "data/sounds/happyCopy.mp3");
+		String classical = "data/sounds/CLASSICA.MID";
 		byte[] classicalNumbers = MiscSoundUtil.readByte(classical);
 		SoundAmplitudeArrayManipulator.saveFileFromArray(classicalNumbers, "data/sounds/classicalCopy.mid");
 		MiscSoundUtil.close(); 
 	}
+
 
 
 }
