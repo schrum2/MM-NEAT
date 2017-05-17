@@ -156,7 +156,7 @@ public final class MiscSoundUtil {
 	 * @param filename string reference to audio file being used
 	 * @return byte array containing data from audio file 
 	 */
-	private static byte[] readByte(String filename) {
+	public static byte[] readByte(String filename) {
 		byte[] data = null;
 		AudioInputStream ais = null;
 		try {

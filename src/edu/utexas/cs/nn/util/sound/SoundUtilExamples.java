@@ -160,7 +160,7 @@ public class SoundUtilExamples {
 		//		StdAudio.play(bearGrowlAndHarp);
 		//		StdAudio.play(applauseAndBearGrowl);
 
-		MiscSoundUtil.play(PIRATES);
+		//MiscSoundUtil.play(PIRATES);
 
 		// 440 Hz for 1 sec
 		double freq1 = 440.0;
@@ -208,7 +208,7 @@ public class SoundUtilExamples {
 		}
 		//StdAudio.play(exampleSound);
 
-		String pirates= "data/sounds/pirates.mid";
+		//String pirates= "data/sounds/pirates.mid";
 		//play(pirates);
 		//playApplet(pirates);
 		String classical = "data/sounds/CLASSICA.MID";
@@ -218,6 +218,14 @@ public class SoundUtilExamples {
 
 		// need to call this in non-interactive stuff so the program doesn't terminate
 		// until all the sound leaves the speaker.
+		
+		
+		//SAVING FILES FROM ARRAYS
+		SoundAmplitudeArrayManipulator.saveFileFromArray(bearNumbers, "data/sounds/bearGrowlCopy.wav");
+//		byte[] happyNumbers = MiscSoundUtil.readByte(HAPPY_MP3);
+//		SoundAmplitudeArrayManipulator.saveFileFromArray(happyNumbers, "data/sounds/happyCopy.mp3");
+		byte[] classicalNumbers = MiscSoundUtil.readByte(classical);
+		SoundAmplitudeArrayManipulator.saveFileFromArray(classicalNumbers, "data/sounds/classicalCopy.mid");
 		MiscSoundUtil.close(); 
 	}
 

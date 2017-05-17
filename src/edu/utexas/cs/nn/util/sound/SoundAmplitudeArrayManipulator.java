@@ -1,9 +1,15 @@
 package edu.utexas.cs.nn.util.sound;
 
-import java.io.IOException;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
+import javax.sound.sampled.AudioFileFormat.Type;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+
 
 import edu.utexas.cs.nn.evolution.genotypes.HyperNEATCPPNGenotype;
 import edu.utexas.cs.nn.networks.Network;
@@ -16,9 +22,9 @@ import edu.utexas.cs.nn.networks.Network;
  *
  */
 public class SoundAmplitudeArrayManipulator {
-	
+
 	//Methods from GT - used to extract amplitude from recorded wave
-	
+
 	/**
 	 * Method that inputs an AudioInputStream, obtains the format of the stream and forms an array of bytes 
 	 * based on the size of the stream, and returns a method call to extractAmplitudeDataFromAmplitudeByteArray(). 
@@ -37,7 +43,7 @@ public class SoundAmplitudeArrayManipulator {
 		}  
 		return extractAmplitudeDataFromAmplitudeByteArray(format, audioBytes);  //calls method that extracts amplitude data from byte array formed
 	}  
-	
+
 	/**
 	 * Method that inputs the format of an AudioInputStream as well as the byte array formed from its contents
 	 * and then creates an array of ints containing the amplitude data of the stream. 
@@ -87,9 +93,25 @@ public class SoundAmplitudeArrayManipulator {
 		return audioData;  
 	}
 	
+	/**
+	 * File that takes in an array of bytes and saves it as a file. This method
+	 * works for WAV and MIDI files, but not mp3 files. 
+	 * 
+	 * @param amplitudeArray array of bytes
+	 * @param fileDest location where file should be saved
+	 */
+	public static void saveFileFromArray(byte[] amplitudeArray, String fileDest) {
+		 try {
+	            Path path = Paths.get(fileDest);
+	            Files.write(path, amplitudeArray);
+	        } catch (IOException e) {
+	            e.printStackTrace();
+	        }
+
+	}
 
 	//CPPN 
-	
+
 	/**
 	 * Creates a double array of amplitudes using a CPPN. CPPN has three inputs - time, frequency,
 	 * and a bias. It only has one output, which is the amplitude. The array of inputs is looped through 
@@ -108,8 +130,8 @@ public class SoundAmplitudeArrayManipulator {
 			//double[] inputs = new double[]{time/StdAudio.SAMPLE_RATE, ActivationFunctions.triangleWave(2*Math.PI * frequency * time/StdAudio.SAMPLE_RATE), HyperNEATCPPNGenotype.BIAS};
 			double[] inputs = new double[]{time/MiscSoundUtil.SAMPLE_RATE, 
 					Math.sin(2*Math.PI * frequency * time/MiscSoundUtil.SAMPLE_RATE), 
-//					ActivationFunctions.triangleWave(2*Math.PI * frequency * time/StdAudio.SAMPLE_RATE), 
-//					ActivationFunctions.squareWave(2*Math.PI * frequency * time/StdAudio.SAMPLE_RATE), 
+					//					ActivationFunctions.triangleWave(2*Math.PI * frequency * time/StdAudio.SAMPLE_RATE), 
+					//					ActivationFunctions.squareWave(2*Math.PI * frequency * time/StdAudio.SAMPLE_RATE), 
 					HyperNEATCPPNGenotype.BIAS};
 			double[] outputs = CPPN.process(inputs);
 			result[(int) time] = outputs[0]; // amplitude
