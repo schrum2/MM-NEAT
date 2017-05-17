@@ -33,16 +33,17 @@ import micro.rts.units.Unit;
 import micro.rts.units.UnitTypeTable;
 
 public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implements NetworkTask, HyperNEATTask{
-	
+
 	private PhysicalGameState pgs;
 	private UnitTypeTable utt;
 	private int MAXCYCLES = 5000;
+	private int RESULTRANGE = 2; //from -1 to 1
 
 	public MicroRTSTask() {
 		utt = new UnitTypeTable();
 		try {
 			pgs = PhysicalGameState.load("data/microRTS/maps/16x16/basesWorkers16x16.xml", utt);
-			//		        PhysicalGameState pgs = MapGenerator.basesWorkers8x8Obstacle();
+			//PhysicalGameState pgs = MapGenerator.basesWorkers8x8Obstacle();
 		} catch (JDOMException | IOException e) {
 			e.printStackTrace();
 			System.exit(1);
@@ -138,7 +139,7 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 			// simulate:
 			gameover = gs.cycle();
 			w.repaint();
-			
+
 			try {
 				Thread.sleep(1);
 			} catch (Exception e) {
@@ -149,7 +150,7 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 		}while(!gameover && gs.getTime()<MAXCYCLES);
 
 		Pair<double[], double[]> score = new Pair<>(new double[3], new double[0]); 
-			//first[]:{victory, time, unitDifference, } on a scale from -1 to 1, except unit difference, which starts at 0 and can go up or down
+		//first[]:{victory, time, unitDifference, } on a scale from -1 to 1, except unit difference, which starts at 0 and can go up or down
 
 		//TODO make magic numbers into constants
 		//potential scoring methods: # units created, # structures built, time, # enemy units destroyed, 
@@ -157,7 +158,7 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 		int gameEndTime = gs.getTime();
 		List<Unit> unitsLeft = gs.getUnits();
 		System.out.println(unitsLeft.get(6).getType().name);
-		
+
 		if(gs.winner() == 0){ //victory organism being tested! 
 			score.t1[0] = 1;
 			score.t1[1] = (double) (MAXCYCLES - gameEndTime) / MAXCYCLES * 2 - 1; //lower time is better
@@ -177,28 +178,25 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 	private Pair<double[], double[]> fitnessFunction(GameState terminalGameState) {
 		Pair<double[], double[]> score = new Pair<>(new double[3], new double[0]); 
 		//first[]:{victory, time, unitDifference, } on a scale from -1 to 1, except unit difference, which starts at 0 and can go up or down
+		//potential other scoring methods: # units created, # structures built,
+		int gameEndTime = terminalGameState.getTime();
+		List<Unit> unitsLeft = terminalGameState.getUnits();
+		System.out.println(unitsLeft.get(6).getType().name);
 
-	//TODO make magic numbers into constants
-	//potential scoring methods: # units created, # structures built, time, # enemy units destroyed, 
-	//unit # differential (how hard it wins)
-	int gameEndTime = terminalGameState.getTime();
-	List<Unit> unitsLeft = terminalGameState.getUnits();
-	System.out.println(unitsLeft.get(6).getType().name);
-	
-	if(terminalGameState.winner() == 0){ //victory organism being tested! 
-		score.t1[0] = 1;
-		score.t1[1] = (double) (MAXCYCLES - gameEndTime) / MAXCYCLES * 2 - 1; //lower time is better
-		for(Unit u : unitsLeft){
-			if(u.getType().name != "Resource") score.t1[2] += u.getType().cost;
+		if(terminalGameState.winner() == 0){ //victory organism being tested! 
+			score.t1[0] = 1;
+			score.t1[1] = (double) (MAXCYCLES - gameEndTime) / MAXCYCLES * RESULTRANGE - 1; //lower time is better
+			for(Unit u : unitsLeft){
+				if(u.getType().name != "Resource") score.t1[2] += u.getType().cost;
+			}
+		} else { //defeat for organism being tested
+			score.t1[0] = -1;
+			score.t1[1] = (double) (MAXCYCLES - gameEndTime) / MAXCYCLES * -1 * RESULTRANGE + 1; //holding out for longer is better
+			for(Unit u : unitsLeft){
+				if(u.getType().name != "Resource") score.t1[2] -= u.getType().cost;
+			}
 		}
-	} else { //defeat for organism being tested
-		score.t1[0] = -1;
-		score.t1[1] = (double) (MAXCYCLES - gameEndTime) / MAXCYCLES * -2 + 1; //holding out for longer is better
-		for(Unit u : unitsLeft){
-			if(u.getType().name != "Resource") score.t1[2] -= u.getType().cost;
-		}
-	}
-	return score;
+		return score;
 	} //END fitnessFunction
 
 	public static void main(String[] args){

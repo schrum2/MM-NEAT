@@ -12,7 +12,7 @@ import micro.rts.units.*;
  *
  * @author santi
  */
-public class SimpleEvaluationFunction extends EvaluationFunction {    
+public class SimpleEvaluationFunction extends EvaluationFunction {
     public static float RESOURCE = 20;
     public static float RESOURCE_IN_WORKER = 10;
     public static float UNIT_BONUS_MULTIPLIER = 40.0f;
