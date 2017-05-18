@@ -67,4 +67,9 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 		MiscSoundUtil.playDoubleArray(amplitude);		
 	}
 
+	@Override
+	protected void save(int i) {
+		throw new UnsupportedOperationException();		
+	}
+
 }

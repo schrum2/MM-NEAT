@@ -106,15 +106,15 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	private static int numButtonOptions;
 
 	//Private graphic objects
-	private JFrame frame;
+	protected JFrame frame;
 	private ArrayList<JPanel> panels;
 	private ArrayList<JButton> buttons;
-	private ArrayList<Score<T>> scores;
+	protected ArrayList<Score<T>> scores;
 	private ArrayList<Score<T>> previousScores;
 
 	//private helper variables
 	private boolean showLineage;
-	private boolean showNetwork;
+	protected boolean showNetwork;
 	private boolean waitingForUser;
 	private final boolean[] chosen;
 	private final boolean[] activation;
@@ -506,28 +506,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	 * @param i index of button
 	 * @param button button
 	 */
-	private void save(int i) {
-		
-		// TODO: needs to be generalized so it can save either images or audio files
-		
-//                // Use of imageHeight and imageWidth allows saving a higher quality image than is on the button
-//		BufferedImage toSave = GraphicsUtil.imageFromCPPN((Network)scores.get(i).individual.getPhenotype(), Parameters.parameters.integerParameter("imageWidth"), Parameters.parameters.integerParameter("imageHeight"), inputMultipliers);
-//		DrawingPanel p = GraphicsUtil.drawImage(toSave, "" + i, toSave.getWidth(), toSave.getHeight());
-//		JFileChooser chooser = new JFileChooser();//used to get save name 
-//		chooser.setApproveButtonText("Save");
-//		FileNameExtensionFilter filter = new FileNameExtensionFilter("BMP Images", "bmp");
-//		chooser.setFileFilter(filter);
-//		int returnVal = chooser.showOpenDialog(frame);
-//		if(returnVal == JFileChooser.APPROVE_OPTION) {//if the user decides to save the image
-//			System.out.println("You chose to call the image: " + chooser.getSelectedFile().getName());
-//			p.save(chooser.getCurrentDirectory() + "\\" + chooser.getSelectedFile().getName() + (showNetwork ? "network" : "image") + ".bmp");
-//			System.out.println("image " + chooser.getSelectedFile().getName() + " was saved successfully");
-//			p.setVisibility(false);
-//		} else { //else image dumped
-//			p.setVisibility(false);
-//			System.out.println("image not saved");
-//		}
-	}
+	protected abstract void save(int i);
 
 	/**
 	 * used to reset image on button using given genotype
