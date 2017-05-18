@@ -121,6 +121,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	protected static double[] inputMultipliers = new double[4];
 
 	private JPanel topper;
+	protected JPanel top;
 	
 	/**
 	 * Default Constructor
@@ -168,7 +169,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 
 		//instantiates helper buttons
 		topper = new JPanel();
-		JPanel top = new JPanel();
+		top = new JPanel();
 		JPanel bottom = new JPanel();
 		
 		// Gets the Button Images from the Picbreeder data Folder and re-scales them for use on the smaller Action Buttons
