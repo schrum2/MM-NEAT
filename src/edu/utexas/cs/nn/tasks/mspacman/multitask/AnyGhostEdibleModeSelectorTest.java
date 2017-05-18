@@ -2,7 +2,7 @@ package edu.utexas.cs.nn.tasks.mspacman.multitask;
 
 import static org.junit.Assert.*;
 
-import java.util.Arrays;
+//import java.util.Arrays;
 import java.util.EnumMap;
 
 import org.junit.AfterClass;
@@ -11,11 +11,11 @@ import org.junit.Test;
 
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
-import edu.utexas.cs.nn.util.MiscUtil;
+//import edu.utexas.cs.nn.util.MiscUtil;
 import pacman.game.Constants.GHOST;
 import pacman.game.Constants.MOVE;
 import pacman.game.Game;
-import pacman.game.GameView;
+//import pacman.game.GameView; 
 
 public class AnyGhostEdibleModeSelectorTest {
 
