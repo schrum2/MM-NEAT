@@ -60,4 +60,15 @@ public interface BoardGame {
 	 */
 	public String getName();
 
+	/**
+	 * Returns the Feature Labels for the specific BoardGame
+	 * 
+	 * @return String[] containing the Feature Labels for the specific BoardGame
+	 */
+	public String[] getFeatureLabels();
+	
+	/**
+	 * Resets the current BoardGame
+	 */
+	public void reset();
 }

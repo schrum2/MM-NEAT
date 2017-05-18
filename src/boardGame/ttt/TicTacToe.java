@@ -89,4 +89,19 @@ public class TicTacToe implements BoardGame{
 		return this.board.toString();
 	}
 
+	@Override
+	public String[] getFeatureLabels() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * Resets the currentPlayer to 0 and creates a new BoardGameState to use
+	 */
+	@Override
+	public void reset() {
+		currentPlayer = 0;
+		board = new TicTacToeState();
+	}
+
 }

@@ -1,13 +1,11 @@
 package boardGame.rps;
 
-import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 
 import boardGame.BoardGame;
 import boardGame.BoardGamePlayer;
 import boardGame.BoardGameState;
-import boardGame.ttt.TicTacToeState;
 
 public class RockPaperScissors implements BoardGame{
 
@@ -15,7 +13,7 @@ public class RockPaperScissors implements BoardGame{
 	private RPSState board;
 	
 	/**
-	 * Default Constructor; Cerates an empty game of Rock Paper Scissors
+	 * Default Constructor; Creates an empty game of Rock Paper Scissors
 	 */
 	public RockPaperScissors(){
 		currentPlayer = 0;
@@ -89,5 +87,20 @@ public class RockPaperScissors implements BoardGame{
 	 */
 	public String toString() {
 		return board.toString();
+	}
+
+	@Override
+	public String[] getFeatureLabels() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * Resets the currentPlayer to 0 and creates a new BoardGameState to use
+	 */
+	@Override
+	public void reset() {
+		currentPlayer = 0;
+		board = new RPSState();
 	}
 }
