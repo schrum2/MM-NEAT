@@ -62,7 +62,7 @@ import java.util.Hashtable;
 public abstract class InteractiveEvolutionTask<T extends Network> implements SinglePopulationTask<T>, ActionListener, ChangeListener, NetworkTask {
 
 	//Global static final variables
-	public static final int NUM_COLUMNS	= 4;
+	public static final int NUM_COLUMNS	= 5;
 	public static final int MPG_DEFAULT = 1;// Starting number of mutations per generation (on slider)	
 
 	//private static final Variables
@@ -101,9 +101,9 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	private static final int ACTION_BUTTON_HEIGHT = 60;	
 	
 	//Private final variables
-	private static int NUM_ROWS;
-	private static int PIC_SIZE;
-	private static int NUM_BUTTONS;
+	private static int numRows;
+	private static int picSize;
+	private static int numButtonOptions;
 
 	//Private graphic objects
 	private JFrame frame;
@@ -136,10 +136,10 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		}
 
 		//Global variable instantiations
-		NUM_BUTTONS	= Parameters.parameters.integerParameter("mu");
-		NUM_ROWS = NUM_BUTTONS / NUM_COLUMNS;
-		PIC_SIZE = Parameters.parameters.integerParameter("imageSize");
-		chosen = new boolean[NUM_BUTTONS];
+		numButtonOptions	= Parameters.parameters.integerParameter("mu");
+		numRows = numButtonOptions / NUM_COLUMNS;
+		picSize = Parameters.parameters.integerParameter("imageSize");
+		chosen = new boolean[numButtonOptions];
 		showLineage = false;
 		showNetwork = false;
 		waitingForUser = false;
@@ -160,10 +160,10 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		
 		//frame.setSize(PIC_SIZE * NUM_COLUMNS + 200, PIC_SIZE * NUM_ROWS + 700);
 		frame.setSize(Toolkit.getDefaultToolkit().getScreenSize());
-		PIC_SIZE = frame.getWidth() / NUM_COLUMNS;
+		picSize = Math.min(picSize, frame.getWidth() / NUM_COLUMNS);
 		frame.setLocation(300, 100);//magic #s 100 correspond to relocating frame to middle of screen
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setLayout(new GridLayout(NUM_ROWS + 1, 0));// the + 1 includes room for the title panel
+		frame.setLayout(new GridLayout(numRows + 1, 0));// the + 1 includes room for the title panel
 		frame.setVisible(true);
 
 		//instantiates helper buttons
@@ -406,10 +406,10 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	 * @param x size of button array
 	 */
 	private void addButtonsToPanel(int x) {
-		for(int i = 1; i <= NUM_ROWS; i++) {
+		for(int i = 1; i <= numRows; i++) {
 			for(int j = 0; j < NUM_COLUMNS; j++) {
-				if(x < NUM_BUTTONS) {
-					JButton image = getImageButton(GraphicsUtil.solidColorImage(Color.BLACK, PIC_SIZE,( frame.getHeight() - topper.getHeight())/NUM_ROWS), "x");
+				if(x < numButtonOptions) {
+					JButton image = getImageButton(GraphicsUtil.solidColorImage(Color.BLACK, picSize,( frame.getHeight() - topper.getHeight())/numRows), "x");
 					image.setName("" + x);
 					image.addActionListener(this);
 					panels.get(i).add(image);
@@ -424,10 +424,10 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	 * Adds all necessary button panels 
 	 */
 	private void addButtonPanels() { 
-		for(int i = 1; i <= NUM_ROWS; i++) {
+		for(int i = 1; i <= numRows; i++) {
 			JPanel row = new JPanel();
-			row.setSize(frame.getWidth(), PIC_SIZE);
-			row.setSize(frame.getWidth(), PIC_SIZE);
+			row.setSize(frame.getWidth(), picSize);
+			row.setSize(frame.getWidth(), picSize);
 			row.setLayout(new GridLayout(1, NUM_COLUMNS));
 			panels.add(row);
 		}
@@ -494,7 +494,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	 * @param buttonIndex index of button 
 	 */
 	private void setButtonImage(BufferedImage gmi, int buttonIndex){ 
-		ImageIcon img = new ImageIcon(gmi);
+		ImageIcon img = new ImageIcon(gmi.getScaledInstance(picSize,picSize,Image.SCALE_DEFAULT));
 		buttons.get(buttonIndex).setName("" + buttonIndex);
 		buttons.get(buttonIndex).setIcon(img);
 
@@ -535,7 +535,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	 */
 	private void resetButton(Genotype<T> individual, int x) { 
 		scores.add(new Score<T>(individual, new double[]{0}, null));
-		setButtonImage(showNetwork ? getNetwork(individual) : getButtonImage(individual.getPhenotype(),  PIC_SIZE, PIC_SIZE, inputMultipliers), x);
+		setButtonImage(showNetwork ? getNetwork(individual) : getButtonImage(individual.getPhenotype(),  picSize, picSize, inputMultipliers), x);
 		chosen[x] = false;
 		buttons.get(x).setBorder(BorderFactory.createLineBorder(Color.lightGray, BORDER_THICKNESS));
 	}
@@ -549,7 +549,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	 */
 	private BufferedImage getNetwork(Genotype<T> tg) {
 		T pheno = tg.getPhenotype();
-		DrawingPanel network = new DrawingPanel(PIC_SIZE,( frame.getHeight() - topper.getHeight())/NUM_ROWS, "network");
+		DrawingPanel network = new DrawingPanel(picSize,( frame.getHeight() - topper.getHeight())/numRows, "network");
 		((TWEANN) pheno).draw(network);
 		network.setVisibility(false);
 		return network.image;
@@ -565,8 +565,8 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
         public ArrayList<Score<T>> evaluateAll(ArrayList<Genotype<T>> population) {
 		waitingForUser = true;
 		scores = new ArrayList<Score<T>>();
-		if(population.size() != NUM_BUTTONS) {
-			throw new IllegalArgumentException("number of genotypes doesn't match size of population! Size of genotypes: " + population.size() + " Num buttons: " + NUM_BUTTONS);
+		if(population.size() != numButtonOptions) {
+			throw new IllegalArgumentException("number of genotypes doesn't match size of population! Size of genotypes: " + population.size() + " Num buttons: " + numButtonOptions);
 		}	
 		for(int x = 0; x < buttons.size(); x++) {
 			resetButton(population.get(x), x);
@@ -594,8 +594,12 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 			chosen[scoreIndex] = true;
 			buttons.get(scoreIndex).setBorder(BorderFactory.createLineBorder(Color.BLUE, BORDER_THICKNESS));
 			scores.get(scoreIndex).replaceScores(new double[]{1.0});
+			additionalButtonClickAction(scores.get(scoreIndex).individual);
 		}
 	}
+
+
+	protected abstract void additionalButtonClickAction(Genotype<T> individual);
 
 	/**
 	 * Resets to a new random population
@@ -631,7 +635,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		if(showNetwork) {//puts images back on buttons
 			showNetwork = false;
 			for(int i = 0; i < scores.size(); i++) {
-				setButtonImage(getButtonImage(scores.get(i).individual.getPhenotype(), PIC_SIZE, PIC_SIZE, inputMultipliers), i);
+				setButtonImage(getButtonImage(scores.get(i).individual.getPhenotype(), picSize, picSize, inputMultipliers), i);
 			}
 		} else {//puts networks on buttons
 			showNetwork = true;
@@ -682,7 +686,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	 */
 	private void resetButtons(){
 		for(int i = 0; i < scores.size(); i++) {
-			setButtonImage(getButtonImage(scores.get(i).individual.getPhenotype(),  PIC_SIZE, PIC_SIZE, inputMultipliers), i);
+			setButtonImage(getButtonImage(scores.get(i).individual.getPhenotype(),  picSize, picSize, inputMultipliers), i);
 		}		
 	}
 	
@@ -854,10 +858,10 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	private void drawLineage(Offspring o, long id, int x, int y) { 
 		int depth = 0;
 		if(o.parentId1 > -1) {
-			drawLineage(o.parentId1, id, x, y - PIC_SIZE/4, depth++);
+			drawLineage(o.parentId1, id, x, y - picSize/4, depth++);
 		}
 		if(o.parentId2 > -1) {
-			drawLineage(o.parentId2, id, x, y + PIC_SIZE/4, depth++);
+			drawLineage(o.parentId2, id, x, y + picSize/4, depth++);
 		}	
 	}
 
@@ -876,11 +880,11 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		Offspring o = Offspring.lineage.get((int) id);
 		if(o != null && !drawnOffspring.contains(id)) { // Don't draw if already drawn
 			Genotype<T> g = (Genotype<T>) Offspring.getGenotype(o.xmlNetwork);
-			BufferedImage bi = getButtonImage(g.getPhenotype(), PIC_SIZE/2, PIC_SIZE/2, inputMultipliers);
-			DrawingPanel p = GraphicsUtil.drawImage(bi, id + " -> " + childId, PIC_SIZE/2, PIC_SIZE/2);
+			BufferedImage bi = getButtonImage(g.getPhenotype(), picSize/2, picSize/2, inputMultipliers);
+			DrawingPanel p = GraphicsUtil.drawImage(bi, id + " -> " + childId, picSize/2, picSize/2);
 			p.setLocation(x, y);
 			savedLineage.put(depth, savedLineage.get(depth) == null ? 0 : savedLineage.get(depth) + 1);
-			drawLineage(o, id, x + PIC_SIZE/2, y);
+			drawLineage(o, id, x + picSize/2, y);
 			p.setTitle(id + "ancestor" + depth + savedLineage.get(depth));
 			p.save(p.getFrame().getTitle());
 			dPanels.add(p);

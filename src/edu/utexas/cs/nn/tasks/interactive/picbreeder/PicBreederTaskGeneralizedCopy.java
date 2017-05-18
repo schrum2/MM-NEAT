@@ -2,6 +2,7 @@ package edu.utexas.cs.nn.tasks.interactive.picbreeder;
 
 import java.awt.image.BufferedImage;
 
+import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.tasks.interactive.InteractiveEvolutionTask;
 import edu.utexas.cs.nn.util.graphics.GraphicsUtil;
@@ -35,6 +36,10 @@ public class PicBreederTaskGeneralizedCopy<T extends Network> extends Interactiv
 	@Override
 	protected BufferedImage getButtonImage(Network phenotype, int width, int height, double[] inputMultipliers) {
 		return GraphicsUtil.imageFromCPPN(phenotype, width, height, inputMultipliers);
+	}
+
+	@Override
+	protected void additionalButtonClickAction(Genotype<T> individual) {
 	}
 
 }
