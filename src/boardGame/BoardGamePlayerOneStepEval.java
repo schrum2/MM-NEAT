@@ -1,8 +1,10 @@
 package boardGame;
 
+import java.util.List;
+
 import edu.utexas.cs.nn.networks.Network;
 
-public class BoardGamePlayerOneStepEval<T extends Network> implements BoardGamePlayer {
+public class BoardGamePlayerOneStepEval implements BoardGamePlayer {
 
 	public BoardGamePlayerOneStepEval(){
 	}
@@ -10,6 +12,11 @@ public class BoardGamePlayerOneStepEval<T extends Network> implements BoardGameP
 	@Override
 	public BoardGameState takeAction(BoardGameState current) {
 		// TODO Auto-generated method stub
+		List<BoardGameState> poss = current.possibleBoardGameStates(current);
+		for(BoardGameState bgs : poss){
+			double[] description = bgs.getDescriptor();
+			//network.process(description);
+		}
 		return null;
 	}
 
