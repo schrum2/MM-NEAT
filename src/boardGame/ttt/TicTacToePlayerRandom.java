@@ -8,9 +8,17 @@ import edu.utexas.cs.nn.util.random.RandomNumbers;
 
 public class TicTacToePlayerRandom extends TicTacToePlayer{
 	
+	/**
+	 * Default Constructor
+	 */
 	public TicTacToePlayerRandom(){
 	}
 	
+	/**
+	 * Selects a random empty Index in the current TicTacToeState and places a Mark there.
+	 * 
+	 * @return Point to place a Mark and make a Move
+	 */
 	@Override
 	public Point selectMove(TicTacToeState current) {
 		List<Point> index = current.getEmptyIndex();

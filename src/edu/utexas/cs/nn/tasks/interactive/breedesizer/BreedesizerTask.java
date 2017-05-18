@@ -2,6 +2,7 @@ package edu.utexas.cs.nn.tasks.interactive.breedesizer;
 
 import java.awt.image.BufferedImage;
 
+import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.tasks.interactive.InteractiveEvolutionTask;
 import edu.utexas.cs.nn.util.graphics.GraphicsUtil;
@@ -15,7 +16,8 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 	
 	public static final int CPPN_NUM_INPUTS	= 3;
 	public static final int CPPN_NUM_OUTPUTS = 1;
-
+	
+	
 	public BreedesizerTask() throws IllegalAccessException {
 		super();
 		// TODO Auto-generated constructor stub
@@ -52,11 +54,22 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 	protected BufferedImage getButtonImage(Network phenotype, int width, int height, double[] inputMultipliers) {
 		double[] amplitude = SoundAmplitudeArrayManipulator.amplitudeGenerator(phenotype, LENGTH_DEFAULT, FREQUENCY_DEFAULT);
 		BufferedImage wavePlotImage = GraphicsUtil.wavePlotFromDoubleArray(amplitude, height, width);
-		
-		// Move this
-		//MiscSoundUtil.playDoubleArray(amplitude);
-
 		return wavePlotImage;
+	}
+	
+	/**
+	 * Plays sound associated with an image when the image is clicked
+	 */
+	@Override
+	protected void additionalButtonClickAction(Genotype<T> individual) {
+		Network phenotype = individual.getPhenotype();
+		double[] amplitude = SoundAmplitudeArrayManipulator.amplitudeGenerator(phenotype, LENGTH_DEFAULT, FREQUENCY_DEFAULT);
+		MiscSoundUtil.playDoubleArray(amplitude);		
+	}
+
+	@Override
+	protected void save(int i) {
+		throw new UnsupportedOperationException();		
 	}
 
 }

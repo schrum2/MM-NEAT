@@ -62,7 +62,7 @@ import java.util.Hashtable;
 public abstract class InteractiveEvolutionTask<T extends Network> implements SinglePopulationTask<T>, ActionListener, ChangeListener, NetworkTask {
 
 	//Global static final variables
-	public static final int NUM_COLUMNS	= 4;
+	public static final int NUM_COLUMNS	= 5;
 	public static final int MPG_DEFAULT = 1;// Starting number of mutations per generation (on slider)	
 
 	//private static final Variables
@@ -101,26 +101,27 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	private static final int ACTION_BUTTON_HEIGHT = 60;	
 	
 	//Private final variables
-	private static int NUM_ROWS;
-	private static int PIC_SIZE;
-	private static int NUM_BUTTONS;
+	private static int numRows;
+	private static int picSize;
+	private static int numButtonOptions;
 
 	//Private graphic objects
-	private JFrame frame;
+	protected JFrame frame;
 	private ArrayList<JPanel> panels;
 	private ArrayList<JButton> buttons;
-	private ArrayList<Score<T>> scores;
+	protected ArrayList<Score<T>> scores;
 	private ArrayList<Score<T>> previousScores;
 
 	//private helper variables
 	private boolean showLineage;
-	private boolean showNetwork;
+	protected boolean showNetwork;
 	private boolean waitingForUser;
 	private final boolean[] chosen;
 	private final boolean[] activation;
-	private static double[] inputMultipliers = new double[4];
+	protected static double[] inputMultipliers = new double[4];
 
 	private JPanel topper;
+	protected JPanel top;
 	
 	/**
 	 * Default Constructor
@@ -136,10 +137,10 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		}
 
 		//Global variable instantiations
-		NUM_BUTTONS	= Parameters.parameters.integerParameter("mu");
-		NUM_ROWS = NUM_BUTTONS / NUM_COLUMNS;
-		PIC_SIZE = Parameters.parameters.integerParameter("imageSize");
-		chosen = new boolean[NUM_BUTTONS];
+		numButtonOptions	= Parameters.parameters.integerParameter("mu");
+		numRows = numButtonOptions / NUM_COLUMNS;
+		picSize = Parameters.parameters.integerParameter("imageSize");
+		chosen = new boolean[numButtonOptions];
 		showLineage = false;
 		showNetwork = false;
 		waitingForUser = false;
@@ -160,15 +161,15 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		
 		//frame.setSize(PIC_SIZE * NUM_COLUMNS + 200, PIC_SIZE * NUM_ROWS + 700);
 		frame.setSize(Toolkit.getDefaultToolkit().getScreenSize());
-		PIC_SIZE = frame.getWidth() / NUM_COLUMNS;
+		picSize = Math.min(picSize, frame.getWidth() / NUM_COLUMNS);
 		frame.setLocation(300, 100);//magic #s 100 correspond to relocating frame to middle of screen
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setLayout(new GridLayout(NUM_ROWS + 1, 0));// the + 1 includes room for the title panel
+		frame.setLayout(new GridLayout(numRows + 1, 0));// the + 1 includes room for the title panel
 		frame.setVisible(true);
 
 		//instantiates helper buttons
 		topper = new JPanel();
-		JPanel top = new JPanel();
+		top = new JPanel();
 		JPanel bottom = new JPanel();
 		
 		// Gets the Button Images from the Picbreeder data Folder and re-scales them for use on the smaller Action Buttons
@@ -406,10 +407,10 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	 * @param x size of button array
 	 */
 	private void addButtonsToPanel(int x) {
-		for(int i = 1; i <= NUM_ROWS; i++) {
+		for(int i = 1; i <= numRows; i++) {
 			for(int j = 0; j < NUM_COLUMNS; j++) {
-				if(x < NUM_BUTTONS) {
-					JButton image = getImageButton(GraphicsUtil.solidColorImage(Color.BLACK, PIC_SIZE,( frame.getHeight() - topper.getHeight())/NUM_ROWS), "x");
+				if(x < numButtonOptions) {
+					JButton image = getImageButton(GraphicsUtil.solidColorImage(Color.BLACK, picSize,( frame.getHeight() - topper.getHeight())/numRows), "x");
 					image.setName("" + x);
 					image.addActionListener(this);
 					panels.get(i).add(image);
@@ -424,10 +425,10 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	 * Adds all necessary button panels 
 	 */
 	private void addButtonPanels() { 
-		for(int i = 1; i <= NUM_ROWS; i++) {
+		for(int i = 1; i <= numRows; i++) {
 			JPanel row = new JPanel();
-			row.setSize(frame.getWidth(), PIC_SIZE);
-			row.setSize(frame.getWidth(), PIC_SIZE);
+			row.setSize(frame.getWidth(), picSize);
+			row.setSize(frame.getWidth(), picSize);
 			row.setLayout(new GridLayout(1, NUM_COLUMNS));
 			panels.add(row);
 		}
@@ -494,7 +495,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	 * @param buttonIndex index of button 
 	 */
 	private void setButtonImage(BufferedImage gmi, int buttonIndex){ 
-		ImageIcon img = new ImageIcon(gmi);
+		ImageIcon img = new ImageIcon(gmi.getScaledInstance(picSize,picSize,Image.SCALE_DEFAULT));
 		buttons.get(buttonIndex).setName("" + buttonIndex);
 		buttons.get(buttonIndex).setIcon(img);
 
@@ -505,28 +506,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	 * @param i index of button
 	 * @param button button
 	 */
-	private void save(int i) {
-		
-		// TODO: needs to be generalized so it can save either images or audio files
-		
-//                // Use of imageHeight and imageWidth allows saving a higher quality image than is on the button
-//		BufferedImage toSave = GraphicsUtil.imageFromCPPN((Network)scores.get(i).individual.getPhenotype(), Parameters.parameters.integerParameter("imageWidth"), Parameters.parameters.integerParameter("imageHeight"), inputMultipliers);
-//		DrawingPanel p = GraphicsUtil.drawImage(toSave, "" + i, toSave.getWidth(), toSave.getHeight());
-//		JFileChooser chooser = new JFileChooser();//used to get save name 
-//		chooser.setApproveButtonText("Save");
-//		FileNameExtensionFilter filter = new FileNameExtensionFilter("BMP Images", "bmp");
-//		chooser.setFileFilter(filter);
-//		int returnVal = chooser.showOpenDialog(frame);
-//		if(returnVal == JFileChooser.APPROVE_OPTION) {//if the user decides to save the image
-//			System.out.println("You chose to call the image: " + chooser.getSelectedFile().getName());
-//			p.save(chooser.getCurrentDirectory() + "\\" + chooser.getSelectedFile().getName() + (showNetwork ? "network" : "image") + ".bmp");
-//			System.out.println("image " + chooser.getSelectedFile().getName() + " was saved successfully");
-//			p.setVisibility(false);
-//		} else { //else image dumped
-//			p.setVisibility(false);
-//			System.out.println("image not saved");
-//		}
-	}
+	protected abstract void save(int i);
 
 	/**
 	 * used to reset image on button using given genotype
@@ -535,7 +515,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	 */
 	private void resetButton(Genotype<T> individual, int x) { 
 		scores.add(new Score<T>(individual, new double[]{0}, null));
-		setButtonImage(showNetwork ? getNetwork(individual) : getButtonImage(individual.getPhenotype(),  PIC_SIZE, PIC_SIZE, inputMultipliers), x);
+		setButtonImage(showNetwork ? getNetwork(individual) : getButtonImage(individual.getPhenotype(),  picSize, picSize, inputMultipliers), x);
 		chosen[x] = false;
 		buttons.get(x).setBorder(BorderFactory.createLineBorder(Color.lightGray, BORDER_THICKNESS));
 	}
@@ -549,7 +529,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	 */
 	private BufferedImage getNetwork(Genotype<T> tg) {
 		T pheno = tg.getPhenotype();
-		DrawingPanel network = new DrawingPanel(PIC_SIZE,( frame.getHeight() - topper.getHeight())/NUM_ROWS, "network");
+		DrawingPanel network = new DrawingPanel(picSize,( frame.getHeight() - topper.getHeight())/numRows, "network");
 		((TWEANN) pheno).draw(network);
 		network.setVisibility(false);
 		return network.image;
@@ -565,8 +545,8 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
         public ArrayList<Score<T>> evaluateAll(ArrayList<Genotype<T>> population) {
 		waitingForUser = true;
 		scores = new ArrayList<Score<T>>();
-		if(population.size() != NUM_BUTTONS) {
-			throw new IllegalArgumentException("number of genotypes doesn't match size of population! Size of genotypes: " + population.size() + " Num buttons: " + NUM_BUTTONS);
+		if(population.size() != numButtonOptions) {
+			throw new IllegalArgumentException("number of genotypes doesn't match size of population! Size of genotypes: " + population.size() + " Num buttons: " + numButtonOptions);
 		}	
 		for(int x = 0; x < buttons.size(); x++) {
 			resetButton(population.get(x), x);
@@ -594,8 +574,12 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 			chosen[scoreIndex] = true;
 			buttons.get(scoreIndex).setBorder(BorderFactory.createLineBorder(Color.BLUE, BORDER_THICKNESS));
 			scores.get(scoreIndex).replaceScores(new double[]{1.0});
+			additionalButtonClickAction(scores.get(scoreIndex).individual);
 		}
 	}
+
+
+	protected abstract void additionalButtonClickAction(Genotype<T> individual);
 
 	/**
 	 * Resets to a new random population
@@ -631,7 +615,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		if(showNetwork) {//puts images back on buttons
 			showNetwork = false;
 			for(int i = 0; i < scores.size(); i++) {
-				setButtonImage(getButtonImage(scores.get(i).individual.getPhenotype(), PIC_SIZE, PIC_SIZE, inputMultipliers), i);
+				setButtonImage(getButtonImage(scores.get(i).individual.getPhenotype(), picSize, picSize, inputMultipliers), i);
 			}
 		} else {//puts networks on buttons
 			showNetwork = true;
@@ -665,16 +649,16 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	 * 
 	 * @param index Index of the effect being changed
 	 */
-	private void setEffectCheckBox(int index){
+	protected void setEffectCheckBox(int index){
 		
 		// Generalize depending on number of inputs
 		
-//		if(inputMultipliers[index] == 1.0){ // Effect is currently ON
-//			inputMultipliers[index] = 0.0;
-//		}else{ // Effect is currently OFF
-//			inputMultipliers[index] = 1.0;
-//		}
-//		resetButtons();
+		if(inputMultipliers[index] == 1.0){ // Effect is currently ON
+			inputMultipliers[index] = 0.0;
+		}else{ // Effect is currently OFF
+			inputMultipliers[index] = 1.0;
+		}
+		resetButtons();
 	}
 
 	/**
@@ -682,7 +666,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	 */
 	private void resetButtons(){
 		for(int i = 0; i < scores.size(); i++) {
-			setButtonImage(getButtonImage(scores.get(i).individual.getPhenotype(),  PIC_SIZE, PIC_SIZE, inputMultipliers), i);
+			setButtonImage(getButtonImage(scores.get(i).individual.getPhenotype(),  picSize, picSize, inputMultipliers), i);
 		}		
 	}
 	
@@ -697,80 +681,84 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		Scanner s = new Scanner(event.toString());
 		s.next();
 		s.next();
-		int scoreIndex = s.nextInt();
+		int itemID = s.nextInt();
 		s.close();
-		if(scoreIndex == SIGMOID_CHECKBOX_INDEX) {
+		respondToClick(itemID);
+	}
+	
+	protected void respondToClick(int itemID) {
+		if(itemID == SIGMOID_CHECKBOX_INDEX) {
 			setActivationFunctionCheckBox(activation[Math.abs(SIGMOID_CHECKBOX_INDEX)], SIGMOID_CHECKBOX_INDEX, "includeSigmoidFunction");
 			System.out.println("param sigmoid now set to: " + Parameters.parameters.booleanParameter("includeSigmoidFunction"));
-		} else if(scoreIndex ==GAUSSIAN_CHECKBOX_INDEX) {
+		} else if(itemID ==GAUSSIAN_CHECKBOX_INDEX) {
 			setActivationFunctionCheckBox(activation[Math.abs(GAUSSIAN_CHECKBOX_INDEX)], GAUSSIAN_CHECKBOX_INDEX, "includeGaussFunction");
 			System.out.println("param Gauss now set to: " + Parameters.parameters.booleanParameter("includeGaussFunction"));
-		} else if(scoreIndex == SINE_CHECKBOX_INDEX) {
+		} else if(itemID == SINE_CHECKBOX_INDEX) {
 			setActivationFunctionCheckBox(activation[Math.abs(SINE_CHECKBOX_INDEX)], SINE_CHECKBOX_INDEX, "includeSineFunction");
 			System.out.println("param Sine now set to: " + Parameters.parameters.booleanParameter("includeSineFunction"));
-		}else if(scoreIndex == SAWTOOTH_CHECKBOX_INDEX) {
+		}else if(itemID == SAWTOOTH_CHECKBOX_INDEX) {
 			setActivationFunctionCheckBox(activation[Math.abs(SAWTOOTH_CHECKBOX_INDEX)], SAWTOOTH_CHECKBOX_INDEX, "includeSawtoothFunction");
 			System.out.println("param sawtooth now set to: " + Parameters.parameters.booleanParameter("includeSawtoothFunction"));
-		}else if(scoreIndex == ABSVAL_CHECKBOX_INDEX) {
+		}else if(itemID == ABSVAL_CHECKBOX_INDEX) {
 			setActivationFunctionCheckBox(activation[Math.abs(ABSVAL_CHECKBOX_INDEX)], ABSVAL_CHECKBOX_INDEX, "includeAbsValFunction");
 			System.out.println("param abs val now set to: " + Parameters.parameters.booleanParameter("includeAbsValFunction"));
-		}else if(scoreIndex == HALF_LINEAR_CHECKBOX_INDEX) {
+		}else if(itemID == HALF_LINEAR_CHECKBOX_INDEX) {
 			setActivationFunctionCheckBox(activation[Math.abs(HALF_LINEAR_CHECKBOX_INDEX)], HALF_LINEAR_CHECKBOX_INDEX, "includeHalfLinearPiecewiseFunction");
 			System.out.println("param half linear now set to: " + Parameters.parameters.booleanParameter("includeHalfLinearPiecewiseFunction"));
-		}else if(scoreIndex == TANH_CHECKBOX_INDEX) {
+		}else if(itemID == TANH_CHECKBOX_INDEX) {
 			setActivationFunctionCheckBox(activation[Math.abs(TANH_CHECKBOX_INDEX)], TANH_CHECKBOX_INDEX, "includeTanhFunction");
 			System.out.println("param tanh now set to: " + Parameters.parameters.booleanParameter("includeTanhFunction"));
-		} else if(scoreIndex == ID_CHECKBOX_INDEX) { 
+		} else if(itemID == ID_CHECKBOX_INDEX) { 
 			setActivationFunctionCheckBox(activation[Math.abs(ID_CHECKBOX_INDEX)], ID_CHECKBOX_INDEX, "includeIdFunction");
 			System.out.println("param ID now set to: " + Parameters.parameters.booleanParameter("includeIdFunction"));
-		} else if(scoreIndex == FULLAPPROX_CHECKBOX_INDEX) {
+		} else if(itemID == FULLAPPROX_CHECKBOX_INDEX) {
 			setActivationFunctionCheckBox(activation[Math.abs(FULLAPPROX_CHECKBOX_INDEX)], FULLAPPROX_CHECKBOX_INDEX, "includeFullApproxFunction");
 			System.out.println("param activation now set to: " + Parameters.parameters.booleanParameter("includeFullApproxFunction"));
-		} else if(scoreIndex == APPROX_CHECKBOX_INDEX) {
+		} else if(itemID == APPROX_CHECKBOX_INDEX) {
 			setActivationFunctionCheckBox(activation[Math.abs(APPROX_CHECKBOX_INDEX)], APPROX_CHECKBOX_INDEX, "includeApproxFunction");
 			System.out.println("param approximate now set to: " + Parameters.parameters.booleanParameter("includeApproxFunction"));
-		} else if(scoreIndex == STRETCHTANH_CHECKBOX_INDEX) {
+		} else if(itemID == STRETCHTANH_CHECKBOX_INDEX) {
 			setActivationFunctionCheckBox(activation[Math.abs(STRETCHTANH_CHECKBOX_INDEX)], STRETCHTANH_CHECKBOX_INDEX, "includeStretchedTanhFunction");
 			System.out.println("param stretchTanh now set to: " + Parameters.parameters.booleanParameter("includeStretchedTanhFunction"));
-		} else if(scoreIndex == RELU_CHECKBOX_INDEX) {
+		} else if(itemID == RELU_CHECKBOX_INDEX) {
 			setActivationFunctionCheckBox(activation[Math.abs(RELU_CHECKBOX_INDEX)], RELU_CHECKBOX_INDEX, "includeReLUFunction");
 			System.out.println("param ReLU now set to: " + Parameters.parameters.booleanParameter("includeReLUFunction"));
-		} else if(scoreIndex == SOFTPLUS_CHECKBOX_INDEX) {
+		} else if(itemID == SOFTPLUS_CHECKBOX_INDEX) {
 			setActivationFunctionCheckBox(activation[Math.abs(SOFTPLUS_CHECKBOX_INDEX)], SOFTPLUS_CHECKBOX_INDEX, "includeSoftplusTanhFunction");
 			System.out.println("param softplus now set to: " + Parameters.parameters.booleanParameter("includeSoftplusTanhFunction"));
-		} else if(scoreIndex == LEAKY_RELU_CHECKBOX_INDEX) {
+		} else if(itemID == LEAKY_RELU_CHECKBOX_INDEX) {
 			setActivationFunctionCheckBox(activation[Math.abs(LEAKY_RELU_CHECKBOX_INDEX)], LEAKY_RELU_CHECKBOX_INDEX, "includeLeakyReLUFunction");
 			System.out.println("param LeakyReLU now set to: " + Parameters.parameters.booleanParameter("includeLeakyReLUFunction"));
-		} else if(scoreIndex == FULL_SAWTOOTH_CHECKBOX_INDEX) {
+		} else if(itemID == FULL_SAWTOOTH_CHECKBOX_INDEX) {
 			setActivationFunctionCheckBox(activation[Math.abs(FULL_SAWTOOTH_CHECKBOX_INDEX)], FULL_SAWTOOTH_CHECKBOX_INDEX, "includeFullSawtoothFunction");
 			System.out.println("param full sawtooth now set to: " + Parameters.parameters.booleanParameter("includeFullSawtoothFunction"));
-		} else if(scoreIndex == TRIANGLE_WAVE_CHECKBOX_INDEX) {
+		} else if(itemID == TRIANGLE_WAVE_CHECKBOX_INDEX) {
 			setActivationFunctionCheckBox(activation[Math.abs(TRIANGLE_WAVE_CHECKBOX_INDEX)], TRIANGLE_WAVE_CHECKBOX_INDEX, "includeTriangleWaveFunction");
 			System.out.println("param triangle wave now set to: " + Parameters.parameters.booleanParameter("includeTriangleWaveFunction"));
-		} else if(scoreIndex == SQUARE_WAVE_CHECKBOX_INDEX) {
+		} else if(itemID == SQUARE_WAVE_CHECKBOX_INDEX) {
 			setActivationFunctionCheckBox(activation[Math.abs(SQUARE_WAVE_CHECKBOX_INDEX)], SQUARE_WAVE_CHECKBOX_INDEX, "includeSquareWaveFunction");
 			System.out.println("param square wave now set to: " + Parameters.parameters.booleanParameter("includeSquareWaveFunction"));
-		}else if(scoreIndex == CLOSE_BUTTON_INDEX) {//If close button clicked
+		}else if(itemID == CLOSE_BUTTON_INDEX) {//If close button clicked
 			System.exit(0);
-		} else if(scoreIndex == RESET_BUTTON_INDEX) {//If reset button clicked
+		} else if(itemID == RESET_BUTTON_INDEX) {//If reset button clicked
 			reset();
-		} else if(scoreIndex == SAVE_BUTTON_INDEX && BooleanUtil.any(chosen)) { //If save button clicked
+		} else if(itemID == SAVE_BUTTON_INDEX && BooleanUtil.any(chosen)) { //If save button clicked
 			saveAll();
-		} else if(scoreIndex == LINEAGE_BUTTON_INDEX) {//If lineage button clicked
+		} else if(itemID == LINEAGE_BUTTON_INDEX) {//If lineage button clicked
 			setLineage();
-		} else if(scoreIndex == NETWORK_BUTTON_INDEX) {//If network button clicked
+		} else if(itemID == NETWORK_BUTTON_INDEX) {//If network button clicked
 			setNetwork();
-		} else if(scoreIndex == UNDO_BUTTON_INDEX) {//If undo button clicked
+		} else if(itemID == UNDO_BUTTON_INDEX) {//If undo button clicked
 			// Not implemented yet
 			setUndo();
-		}else if(scoreIndex == EVOLVE_BUTTON_INDEX && BooleanUtil.any(chosen)) {//If evolve button clicked
+		}else if(itemID == EVOLVE_BUTTON_INDEX && BooleanUtil.any(chosen)) {//If evolve button clicked
 			previousScores = new ArrayList<Score<T>>();
 			previousScores.addAll(scores);
 			waitingForUser = false;//tells evaluateAll method to finish
-		} else if(scoreIndex >= IMAGE_BUTTON_INDEX) {//If an image button clicked
+		} else if(itemID >= IMAGE_BUTTON_INDEX) {//If an image button clicked
 			assert (scores.size() == buttons.size()) : 
 				"size mismatch! score array is " + scores.size() + " in length and buttons array is " + buttons.size() + " long";
-			buttonPressed(scoreIndex);
+			buttonPressed(itemID);
 		} 
 	}
 	//used for lineage and undo button
@@ -854,10 +842,10 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	private void drawLineage(Offspring o, long id, int x, int y) { 
 		int depth = 0;
 		if(o.parentId1 > -1) {
-			drawLineage(o.parentId1, id, x, y - PIC_SIZE/4, depth++);
+			drawLineage(o.parentId1, id, x, y - picSize/4, depth++);
 		}
 		if(o.parentId2 > -1) {
-			drawLineage(o.parentId2, id, x, y + PIC_SIZE/4, depth++);
+			drawLineage(o.parentId2, id, x, y + picSize/4, depth++);
 		}	
 	}
 
@@ -876,11 +864,11 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		Offspring o = Offspring.lineage.get((int) id);
 		if(o != null && !drawnOffspring.contains(id)) { // Don't draw if already drawn
 			Genotype<T> g = (Genotype<T>) Offspring.getGenotype(o.xmlNetwork);
-			BufferedImage bi = getButtonImage(g.getPhenotype(), PIC_SIZE/2, PIC_SIZE/2, inputMultipliers);
-			DrawingPanel p = GraphicsUtil.drawImage(bi, id + " -> " + childId, PIC_SIZE/2, PIC_SIZE/2);
+			BufferedImage bi = getButtonImage(g.getPhenotype(), picSize/2, picSize/2, inputMultipliers);
+			DrawingPanel p = GraphicsUtil.drawImage(bi, id + " -> " + childId, picSize/2, picSize/2);
 			p.setLocation(x, y);
 			savedLineage.put(depth, savedLineage.get(depth) == null ? 0 : savedLineage.get(depth) + 1);
-			drawLineage(o, id, x + PIC_SIZE/2, y);
+			drawLineage(o, id, x + picSize/2, y);
 			p.setTitle(id + "ancestor" + depth + savedLineage.get(depth));
 			p.save(p.getFrame().getTitle());
 			dPanels.add(p);

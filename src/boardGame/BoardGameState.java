@@ -23,4 +23,10 @@ public interface BoardGameState {
 	 */
 	public boolean endState();
 	
+	/**
+	 * Returns a Duplicate of the current BoardGameState
+	 * 
+	 * @return Duplicate of this BoardGameState
+	 */
+	public BoardGameState copy();
 }
