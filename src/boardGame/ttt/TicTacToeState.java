@@ -14,9 +14,11 @@ public class TicTacToeState implements BoardGameState{
 	int[][] boardState;
 	
 	private int nextPlayer;
-	private int gameWinner;
+	private int winner;
 	
 	public static final int TIE = -1;
+	
+	
 	public static final int EMPTY = 0;
 	public static final int X = 1;
 	public static final int O = 2;
@@ -28,7 +30,7 @@ public class TicTacToeState implements BoardGameState{
 	public TicTacToeState(){
 		boardState = new int[BOARD_WIDTH][BOARD_WIDTH];
 		nextPlayer = X;
-		gameWinner = EMPTY;
+		winner = EMPTY;
 	}
 	
 	/**
@@ -168,22 +170,22 @@ public class TicTacToeState implements BoardGameState{
 						
 			if(boardState[i][0] == boardState[i][1] && boardState[i][1] == boardState[i][2]  && boardState[i][2] != EMPTY){ // Checks each Row for a 3-in-a-Row
 				over = true;
-				gameWinner = boardState[i][0];
+				winner = boardState[i][0];
 			}
 			
 			if(boardState[0][i] == boardState[1][i] && boardState[1][i] == boardState[2][i]  && boardState[2][i] != EMPTY){ // Checks each Column for a 3-in-a-Row
 				over = true;
-				gameWinner = boardState[0][i];
+				winner = boardState[0][i];
 			}
 		}
 		
 		if(boardState[0][0] == boardState[1][1] && boardState[1][1] == boardState[2][2]  && boardState[2][2] != EMPTY){ // Checks the Diagonal for a 3-in-a-Row
 			over = true;
-			gameWinner = boardState[0][0];
+			winner = boardState[0][0];
 		}
 		if(boardState[0][2] == boardState[1][1] && boardState[1][1] == boardState[2][0]  && boardState[2][0] != EMPTY){ // Checks the Diagonal for a 3-in-a-Row
 			over = true;
-			gameWinner = boardState[0][2];
+			winner = boardState[0][2];
 		}
 		
 		if(over){
@@ -202,7 +204,7 @@ public class TicTacToeState implements BoardGameState{
 			}
 		}
 		
-		gameWinner = TIE;
+		winner = TIE;
 		//System.out.println("Board Filled; GAME OVER");
 		return true; // No 3-in-a-Rows nor any Space left to play; game is over
 	}
@@ -213,7 +215,7 @@ public class TicTacToeState implements BoardGameState{
 	 * @return -1 if there is a tie, 0 if the game isn't over, 1 if Player 1 wins, or 2 if Player 2 wins 
 	 */
 	public int getWinner(){
-		return gameWinner;
+		return winner;
 	}
 	
 	/**

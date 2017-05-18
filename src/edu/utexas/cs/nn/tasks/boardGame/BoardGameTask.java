@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import boardGame.*;
+import boardGame.rps.RPSPlayer;
+import boardGame.rps.RPSPlayerRandom;
+import boardGame.rps.RockPaperScissors;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.networks.Network;
@@ -20,16 +23,15 @@ import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
 public class BoardGameTask<T extends Network> extends NoisyLonerTask<T> implements NetworkTask, HyperNEATTask{
 
 	BoardGameViewer view = null;
+	BoardGame bg;
 	
 	/**
 	 * Constructor for a new BoardGameTask
 	 */
 	public BoardGameTask(){
-		MMNEAT.registerFitnessFunction("Reward");
+		MMNEAT.registerFitnessFunction("?????");
 		
-	    if(Parameters.parameters.booleanParameter("moBoardGame")){
-	       	 MMNEAT.registerFitnessFunction("Time Alive"); // Generic MO BoardGame label. Can be changed later.
-	    }
+		// TODO: Instantiate bg using ClassCreation
 	}
 
 	/**
@@ -39,11 +41,7 @@ public class BoardGameTask<T extends Network> extends NoisyLonerTask<T> implemen
 	 */
 	@Override
 	public int numObjectives() {
-		if(Parameters.parameters.booleanParameter("moBoardGame")){
-			return 2;
-		}else{ // Else, only Reach Goal
-			return 1;			
-		}
+		return 1;
 	}
 
 	/**
@@ -63,7 +61,8 @@ public class BoardGameTask<T extends Network> extends NoisyLonerTask<T> implemen
 	 * @return String containing the Sensor Labels for the BoardGameTask
 	 */
 	@Override
-	public String[] sensorLabels() { // TODO: Create generic BoardGame input labels
+	public String[] sensorLabels() {
+		// Should be associated with BoardGame instance bg, as in bg.featureLabels();
 		return new String[]{};
 	}
 
@@ -75,14 +74,6 @@ public class BoardGameTask<T extends Network> extends NoisyLonerTask<T> implemen
 	@Override
 	public String[] outputLabels() {
 		return new String[]{"Utility"};
-	}
-
-	/**
-	 * Used for Behavioral Diversity
-	 */
-	@Override
-	public void prep() {
-		// TODO: Behavioral Diversity
 	}
 	
 	/**
@@ -108,49 +99,21 @@ public class BoardGameTask<T extends Network> extends NoisyLonerTask<T> implemen
 		if(CommonConstants.watch){ // If set to Visually Evaluate the Task
 		}
 
-		//MiscUtil.waitForReadStringAndEnterKeyPress();
-
-		Network n = individual.getPhenotype();
+		BoardGamePlayer p1 = null; // create from Genotype individual
+		BoardGamePlayer p2 = null; // The opponent
+		
 		double fitness = 0;
-		int timeLimit = 1000;
-
-		do {
-			BoardGameState s = null; // TODO: Fill with generic BoardGame instance
-			double[] sensors = s.getDescriptor();
-			double[] outputs = n.process(sensors);
-			int action = StatisticsUtilities.argmax(outputs);
-			double rew = 0; // TODO: Figure out what to initialize "rew" to; may just be 0, but double-check
-
-			if(view != null){ // If the BoardGameTaskViewer exists, update it
-
-				try {
-					Thread.sleep(1);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-				if(Parameters.parameters.booleanParameter("stepByStep")){
-					System.out.print("Press enter to continue");
-					MiscUtil.waitForReadStringAndEnterKeyPress();
-				}
-			}	
-
-			// TODO: Add a GameState Reward update here; make "rew" equal to the new reward
-			
-			fitness += rew;
-			timeLimit--;
-			
-		} while(timeLimit > 0); // TODO: Replace with generic BoardGame end State
-
-		
-		
-		Pair<double[], double[]> evalResults = new Pair<double[], double[]>(new double[] {fitness}, new double[0]);	
-
-		if(Parameters.parameters.booleanParameter("moPinball")){
-			evalResults = new Pair<double[], double[]>(new double[] { fitness, 0 }, new double[0]); // TODO: Fill with generic second Objective for BoardGame.
-		} else {
-			evalResults = new Pair<double[], double[]>(new double[] { fitness }, new double[0]);			
+		BoardGamePlayer[] players = new BoardGamePlayer[]{p1, p2};
+		//bg.reset();
+		while(!bg.isGameOver()){
+			//System.out.println(game);
+			bg.move(players[bg.getCurrentPlayer()]);
 		}
-		
+//		System.out.println("Game over");
+//		System.out.println(game);
+			
+		// TODO: What is the fitness?
+		Pair<double[], double[]> evalResults = new Pair<double[], double[]>(new double[] { fitness }, new double[0]);			
 		return evalResults; // Returns the Fitness of the individual's Genotype<T>
 	}
 
