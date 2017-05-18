@@ -118,7 +118,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	private boolean waitingForUser;
 	private final boolean[] chosen;
 	private final boolean[] activation;
-	private static double[] inputMultipliers = new double[4];
+	protected static double[] inputMultipliers = new double[4];
 
 	private JPanel topper;
 	
@@ -669,16 +669,16 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	 * 
 	 * @param index Index of the effect being changed
 	 */
-	private void setEffectCheckBox(int index){
+	protected void setEffectCheckBox(int index){
 		
 		// Generalize depending on number of inputs
 		
-//		if(inputMultipliers[index] == 1.0){ // Effect is currently ON
-//			inputMultipliers[index] = 0.0;
-//		}else{ // Effect is currently OFF
-//			inputMultipliers[index] = 1.0;
-//		}
-//		resetButtons();
+		if(inputMultipliers[index] == 1.0){ // Effect is currently ON
+			inputMultipliers[index] = 0.0;
+		}else{ // Effect is currently OFF
+			inputMultipliers[index] = 1.0;
+		}
+		resetButtons();
 	}
 
 	/**
@@ -701,80 +701,84 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		Scanner s = new Scanner(event.toString());
 		s.next();
 		s.next();
-		int scoreIndex = s.nextInt();
+		int itemID = s.nextInt();
 		s.close();
-		if(scoreIndex == SIGMOID_CHECKBOX_INDEX) {
+		respondToClick(itemID);
+	}
+	
+	protected void respondToClick(int itemID) {
+		if(itemID == SIGMOID_CHECKBOX_INDEX) {
 			setActivationFunctionCheckBox(activation[Math.abs(SIGMOID_CHECKBOX_INDEX)], SIGMOID_CHECKBOX_INDEX, "includeSigmoidFunction");
 			System.out.println("param sigmoid now set to: " + Parameters.parameters.booleanParameter("includeSigmoidFunction"));
-		} else if(scoreIndex ==GAUSSIAN_CHECKBOX_INDEX) {
+		} else if(itemID ==GAUSSIAN_CHECKBOX_INDEX) {
 			setActivationFunctionCheckBox(activation[Math.abs(GAUSSIAN_CHECKBOX_INDEX)], GAUSSIAN_CHECKBOX_INDEX, "includeGaussFunction");
 			System.out.println("param Gauss now set to: " + Parameters.parameters.booleanParameter("includeGaussFunction"));
-		} else if(scoreIndex == SINE_CHECKBOX_INDEX) {
+		} else if(itemID == SINE_CHECKBOX_INDEX) {
 			setActivationFunctionCheckBox(activation[Math.abs(SINE_CHECKBOX_INDEX)], SINE_CHECKBOX_INDEX, "includeSineFunction");
 			System.out.println("param Sine now set to: " + Parameters.parameters.booleanParameter("includeSineFunction"));
-		}else if(scoreIndex == SAWTOOTH_CHECKBOX_INDEX) {
+		}else if(itemID == SAWTOOTH_CHECKBOX_INDEX) {
 			setActivationFunctionCheckBox(activation[Math.abs(SAWTOOTH_CHECKBOX_INDEX)], SAWTOOTH_CHECKBOX_INDEX, "includeSawtoothFunction");
 			System.out.println("param sawtooth now set to: " + Parameters.parameters.booleanParameter("includeSawtoothFunction"));
-		}else if(scoreIndex == ABSVAL_CHECKBOX_INDEX) {
+		}else if(itemID == ABSVAL_CHECKBOX_INDEX) {
 			setActivationFunctionCheckBox(activation[Math.abs(ABSVAL_CHECKBOX_INDEX)], ABSVAL_CHECKBOX_INDEX, "includeAbsValFunction");
 			System.out.println("param abs val now set to: " + Parameters.parameters.booleanParameter("includeAbsValFunction"));
-		}else if(scoreIndex == HALF_LINEAR_CHECKBOX_INDEX) {
+		}else if(itemID == HALF_LINEAR_CHECKBOX_INDEX) {
 			setActivationFunctionCheckBox(activation[Math.abs(HALF_LINEAR_CHECKBOX_INDEX)], HALF_LINEAR_CHECKBOX_INDEX, "includeHalfLinearPiecewiseFunction");
 			System.out.println("param half linear now set to: " + Parameters.parameters.booleanParameter("includeHalfLinearPiecewiseFunction"));
-		}else if(scoreIndex == TANH_CHECKBOX_INDEX) {
+		}else if(itemID == TANH_CHECKBOX_INDEX) {
 			setActivationFunctionCheckBox(activation[Math.abs(TANH_CHECKBOX_INDEX)], TANH_CHECKBOX_INDEX, "includeTanhFunction");
 			System.out.println("param tanh now set to: " + Parameters.parameters.booleanParameter("includeTanhFunction"));
-		} else if(scoreIndex == ID_CHECKBOX_INDEX) { 
+		} else if(itemID == ID_CHECKBOX_INDEX) { 
 			setActivationFunctionCheckBox(activation[Math.abs(ID_CHECKBOX_INDEX)], ID_CHECKBOX_INDEX, "includeIdFunction");
 			System.out.println("param ID now set to: " + Parameters.parameters.booleanParameter("includeIdFunction"));
-		} else if(scoreIndex == FULLAPPROX_CHECKBOX_INDEX) {
+		} else if(itemID == FULLAPPROX_CHECKBOX_INDEX) {
 			setActivationFunctionCheckBox(activation[Math.abs(FULLAPPROX_CHECKBOX_INDEX)], FULLAPPROX_CHECKBOX_INDEX, "includeFullApproxFunction");
 			System.out.println("param activation now set to: " + Parameters.parameters.booleanParameter("includeFullApproxFunction"));
-		} else if(scoreIndex == APPROX_CHECKBOX_INDEX) {
+		} else if(itemID == APPROX_CHECKBOX_INDEX) {
 			setActivationFunctionCheckBox(activation[Math.abs(APPROX_CHECKBOX_INDEX)], APPROX_CHECKBOX_INDEX, "includeApproxFunction");
 			System.out.println("param approximate now set to: " + Parameters.parameters.booleanParameter("includeApproxFunction"));
-		} else if(scoreIndex == STRETCHTANH_CHECKBOX_INDEX) {
+		} else if(itemID == STRETCHTANH_CHECKBOX_INDEX) {
 			setActivationFunctionCheckBox(activation[Math.abs(STRETCHTANH_CHECKBOX_INDEX)], STRETCHTANH_CHECKBOX_INDEX, "includeStretchedTanhFunction");
 			System.out.println("param stretchTanh now set to: " + Parameters.parameters.booleanParameter("includeStretchedTanhFunction"));
-		} else if(scoreIndex == RELU_CHECKBOX_INDEX) {
+		} else if(itemID == RELU_CHECKBOX_INDEX) {
 			setActivationFunctionCheckBox(activation[Math.abs(RELU_CHECKBOX_INDEX)], RELU_CHECKBOX_INDEX, "includeReLUFunction");
 			System.out.println("param ReLU now set to: " + Parameters.parameters.booleanParameter("includeReLUFunction"));
-		} else if(scoreIndex == SOFTPLUS_CHECKBOX_INDEX) {
+		} else if(itemID == SOFTPLUS_CHECKBOX_INDEX) {
 			setActivationFunctionCheckBox(activation[Math.abs(SOFTPLUS_CHECKBOX_INDEX)], SOFTPLUS_CHECKBOX_INDEX, "includeSoftplusTanhFunction");
 			System.out.println("param softplus now set to: " + Parameters.parameters.booleanParameter("includeSoftplusTanhFunction"));
-		} else if(scoreIndex == LEAKY_RELU_CHECKBOX_INDEX) {
+		} else if(itemID == LEAKY_RELU_CHECKBOX_INDEX) {
 			setActivationFunctionCheckBox(activation[Math.abs(LEAKY_RELU_CHECKBOX_INDEX)], LEAKY_RELU_CHECKBOX_INDEX, "includeLeakyReLUFunction");
 			System.out.println("param LeakyReLU now set to: " + Parameters.parameters.booleanParameter("includeLeakyReLUFunction"));
-		} else if(scoreIndex == FULL_SAWTOOTH_CHECKBOX_INDEX) {
+		} else if(itemID == FULL_SAWTOOTH_CHECKBOX_INDEX) {
 			setActivationFunctionCheckBox(activation[Math.abs(FULL_SAWTOOTH_CHECKBOX_INDEX)], FULL_SAWTOOTH_CHECKBOX_INDEX, "includeFullSawtoothFunction");
 			System.out.println("param full sawtooth now set to: " + Parameters.parameters.booleanParameter("includeFullSawtoothFunction"));
-		} else if(scoreIndex == TRIANGLE_WAVE_CHECKBOX_INDEX) {
+		} else if(itemID == TRIANGLE_WAVE_CHECKBOX_INDEX) {
 			setActivationFunctionCheckBox(activation[Math.abs(TRIANGLE_WAVE_CHECKBOX_INDEX)], TRIANGLE_WAVE_CHECKBOX_INDEX, "includeTriangleWaveFunction");
 			System.out.println("param triangle wave now set to: " + Parameters.parameters.booleanParameter("includeTriangleWaveFunction"));
-		} else if(scoreIndex == SQUARE_WAVE_CHECKBOX_INDEX) {
+		} else if(itemID == SQUARE_WAVE_CHECKBOX_INDEX) {
 			setActivationFunctionCheckBox(activation[Math.abs(SQUARE_WAVE_CHECKBOX_INDEX)], SQUARE_WAVE_CHECKBOX_INDEX, "includeSquareWaveFunction");
 			System.out.println("param square wave now set to: " + Parameters.parameters.booleanParameter("includeSquareWaveFunction"));
-		}else if(scoreIndex == CLOSE_BUTTON_INDEX) {//If close button clicked
+		}else if(itemID == CLOSE_BUTTON_INDEX) {//If close button clicked
 			System.exit(0);
-		} else if(scoreIndex == RESET_BUTTON_INDEX) {//If reset button clicked
+		} else if(itemID == RESET_BUTTON_INDEX) {//If reset button clicked
 			reset();
-		} else if(scoreIndex == SAVE_BUTTON_INDEX && BooleanUtil.any(chosen)) { //If save button clicked
+		} else if(itemID == SAVE_BUTTON_INDEX && BooleanUtil.any(chosen)) { //If save button clicked
 			saveAll();
-		} else if(scoreIndex == LINEAGE_BUTTON_INDEX) {//If lineage button clicked
+		} else if(itemID == LINEAGE_BUTTON_INDEX) {//If lineage button clicked
 			setLineage();
-		} else if(scoreIndex == NETWORK_BUTTON_INDEX) {//If network button clicked
+		} else if(itemID == NETWORK_BUTTON_INDEX) {//If network button clicked
 			setNetwork();
-		} else if(scoreIndex == UNDO_BUTTON_INDEX) {//If undo button clicked
+		} else if(itemID == UNDO_BUTTON_INDEX) {//If undo button clicked
 			// Not implemented yet
 			setUndo();
-		}else if(scoreIndex == EVOLVE_BUTTON_INDEX && BooleanUtil.any(chosen)) {//If evolve button clicked
+		}else if(itemID == EVOLVE_BUTTON_INDEX && BooleanUtil.any(chosen)) {//If evolve button clicked
 			previousScores = new ArrayList<Score<T>>();
 			previousScores.addAll(scores);
 			waitingForUser = false;//tells evaluateAll method to finish
-		} else if(scoreIndex >= IMAGE_BUTTON_INDEX) {//If an image button clicked
+		} else if(itemID >= IMAGE_BUTTON_INDEX) {//If an image button clicked
 			assert (scores.size() == buttons.size()) : 
 				"size mismatch! score array is " + scores.size() + " in length and buttons array is " + buttons.size() + " long";
-			buttonPressed(scoreIndex);
+			buttonPressed(itemID);
 		} 
 	}
 	//used for lineage and undo button
