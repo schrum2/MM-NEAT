@@ -47,7 +47,7 @@ public class SoundUtilExamples {
 		CPPNExamples();
 	}
 
-	public static void CPPNExamples() throws IOException {
+	public static void CPPNExamples() throws IOException, UnsupportedAudioFileException, LineUnavailableException, InterruptedException {
 		Parameters.initializeParameterCollections(new String[]{"io:false","netio:false"});
 		MMNEAT.loadClasses();
 		HyperNEATCPPNGenotype test = new HyperNEATCPPNGenotype(3, 1, 0);
@@ -56,10 +56,25 @@ public class SoundUtilExamples {
 		}
 		Network cppn = test.getCPPN();
 		double[] testArray = SoundAmplitudeArrayManipulator.amplitudeGenerator(cppn, 60000, 440);
-		AudioFormat af = new AudioFormat(MiscSoundUtil.SAMPLE_RATE, MiscSoundUtil.SAMPLE_RATE,1, true, true);
-		SoundAmplitudeArrayManipulator.saveFileFromCPPN(cppn, 60000, 440, "cppn.wav", af);
+		AudioFormat af1 = new AudioFormat(MiscSoundUtil.SAMPLE_RATE, MiscSoundUtil.BITS_PER_SAMPLE,1, true, true);
+		SoundAmplitudeArrayManipulator.saveFileFromCPPN(cppn, 60000, 440, "cppn1.wav", af1);
+		AudioFormat af2 = new AudioFormat(MiscSoundUtil.SAMPLE_RATE, MiscSoundUtil.BITS_PER_SAMPLE,1, true, false); // Correct?
+		SoundAmplitudeArrayManipulator.saveFileFromCPPN(cppn, 60000, 440, "cppn2.wav", af2);
+		AudioFormat af3 = new AudioFormat(MiscSoundUtil.SAMPLE_RATE, MiscSoundUtil.BYTES_PER_SAMPLE,1, true, true);
+		SoundAmplitudeArrayManipulator.saveFileFromCPPN(cppn, 60000, 440, "cppn3.wav", af3);
+		AudioFormat af4 = new AudioFormat(MiscSoundUtil.SAMPLE_RATE, MiscSoundUtil.BYTES_PER_SAMPLE,1, true, false);
+		SoundAmplitudeArrayManipulator.saveFileFromCPPN(cppn, 60000, 440, "cppn4.wav", af4);
 		MiscSoundUtil.playDoubleArray(testArray);
 		GraphicsUtil.wavePlotFromDoubleArray(testArray, 500, 500);
+		
+		
+		//testing writeSingleChannel to see if the problem saving files has to do with initialization of AudioFormat
+		File harp = new File(HARP_WAV);
+		AudioInputStream harpAIS = WAVUtil.audioStream(harp);
+		double[] harpDoubleArray = MiscSoundUtil.read(HARP_WAV);
+		WAVUtil.playWAVFile(harp);
+		SoundAmplitudeArrayManipulator.writeSingleChannel(harpAIS.getFormat(), harpDoubleArray, "harpDoubleArray.wav");
+		
 	}
 
 	public static void plotExamples() {

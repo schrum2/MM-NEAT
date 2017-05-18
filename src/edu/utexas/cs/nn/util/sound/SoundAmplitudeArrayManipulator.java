@@ -1,23 +1,19 @@
 package edu.utexas.cs.nn.util.sound;
 
-import java.io.*;
-import java.nio.ByteBuffer;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import javax.sound.sampled.AudioFileFormat;
-import javax.sound.sampled.AudioFileFormat.Type;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 
-
 import edu.utexas.cs.nn.evolution.genotypes.HyperNEATCPPNGenotype;
 import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
-import javazoom.jl.converter.WaveFile;
-import javazoom.jl.converter.WaveFile.WaveFileSample;
 
 /**
  * Methods associated with extracting, saving and manipulating amplitude arrays from audio files. 
@@ -235,7 +231,6 @@ public class SoundAmplitudeArrayManipulator {
 	public static void saveFileFromCPPN(Network CPPN, int length, int frequency, String fileName, AudioFormat format) throws IOException {
 		double[] generatedSound = amplitudeGenerator(CPPN, length, frequency);
 		writeSingleChannel(format, generatedSound, fileName);
-		//saveFileFromArray(ArrayUtil.doublesToBytes(generatedSound), fileDest);
 	}
 
 }

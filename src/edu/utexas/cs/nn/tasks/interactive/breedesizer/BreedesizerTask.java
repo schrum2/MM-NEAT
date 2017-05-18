@@ -2,12 +2,18 @@ package edu.utexas.cs.nn.tasks.interactive.breedesizer;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 
+import javax.sound.sampled.AudioFormat;
 import javax.swing.JCheckBox;
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.networks.Network;
+import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.interactive.InteractiveEvolutionTask;
+import edu.utexas.cs.nn.util.graphics.DrawingPanel;
 import edu.utexas.cs.nn.util.graphics.GraphicsUtil;
 import edu.utexas.cs.nn.util.sound.MiscSoundUtil;
 import edu.utexas.cs.nn.util.sound.SoundAmplitudeArrayManipulator;
@@ -69,12 +75,12 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 
 	@Override
 	public String[] sensorLabels() {
-		return new String[] { "X-coordinate", "Y-coordinate", "distance from center", "bias" }; //TODO: new strings here
+		return new String[] { "Time", "Sine of time", "bias" };
 	}
 
 	@Override
 	public String[] outputLabels() {
-		return new String[] { "hue-value", "saturation-value", "brightness-value" }; //TODO: new strings here
+		return new String[] { "amplitude" };
 	}
 
 	@Override
@@ -101,7 +107,7 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 		double[] amplitude = SoundAmplitudeArrayManipulator.amplitudeGenerator(phenotype, LENGTH_DEFAULT, FREQUENCY_DEFAULT, inputMultipliers);
 		MiscSoundUtil.playDoubleArray(amplitude);		
 	}
-	
+
 	protected void respondToClick(int itemID) {
 		super.respondToClick(itemID);
 		// Extra checkboxes specific to Picbreeder
@@ -115,8 +121,53 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 	}
 
 	@Override
-	protected void save(int i) {
-		throw new UnsupportedOperationException();		
+	protected void save(int i) {	
+		//SAVING IMAGE
+		
+		// Use of imageHeight and imageWidth allows saving a higher quality image than is on the button
+		BufferedImage toSave = getButtonImage((Network)scores.get(i).individual.getPhenotype(), Parameters.parameters.integerParameter("imageWidth"), Parameters.parameters.integerParameter("imageHeight"), inputMultipliers);
+		DrawingPanel p = GraphicsUtil.drawImage(toSave, "" + i, toSave.getWidth(), toSave.getHeight());
+		JFileChooser chooser = new JFileChooser();//used to get save name 
+		chooser.setApproveButtonText("Save");
+		FileNameExtensionFilter filter = new FileNameExtensionFilter("BMP Images", "bmp");
+		chooser.setFileFilter(filter);
+		int returnVal = chooser.showOpenDialog(frame);
+		if(returnVal == JFileChooser.APPROVE_OPTION) {//if the user decides to save the image
+			System.out.println("You chose to call the image: " + chooser.getSelectedFile().getName());
+			p.save(chooser.getCurrentDirectory() + "\\" + chooser.getSelectedFile().getName() + (showNetwork ? "network" : "image") + ".bmp");
+			System.out.println("image " + chooser.getSelectedFile().getName() + " was saved successfully");
+			p.setVisibility(false);
+		} else { //else image dumped
+			p.setVisibility(false);
+			System.out.println("image not saved");
+		}
+		
+		//SAVING AUDIO
+		
+		chooser = new JFileChooser();
+		AudioFormat af = new AudioFormat(MiscSoundUtil.SAMPLE_RATE, MiscSoundUtil.BITS_PER_SAMPLE,1, true, true);
+		chooser.setApproveButtonText("Save");
+		FileNameExtensionFilter audioFilter = new FileNameExtensionFilter("WAV audio files", "wav");
+		chooser.setFileFilter(audioFilter);
+		int audioReturnVal = chooser.showOpenDialog(frame);
+		if(audioReturnVal == JFileChooser.APPROVE_OPTION) {//if the user decides to save the image
+			System.out.println("You chose to call the file: " + chooser.getSelectedFile().getName());
+			try {
+				SoundAmplitudeArrayManipulator.saveFileFromCPPN(scores.get(i).individual.getPhenotype(), LENGTH_DEFAULT, FREQUENCY_DEFAULT, chooser.getSelectedFile().getName(), af);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			System.out.println("audio file " + chooser.getSelectedFile().getName() + " was saved successfully");
+			p.setVisibility(false);
+		} else { //else image dumped
+			p.setVisibility(false);
+			System.out.println("audio file not saved");
+		
+		}
+		
+		
+		
+
 	}
 
 }
