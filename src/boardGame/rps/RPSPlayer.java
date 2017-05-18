@@ -9,7 +9,9 @@ public abstract class RPSPlayer implements BoardGamePlayer{
 
 	@Override
 	public BoardGameState takeAction(BoardGameState current) {
-		// TODO Auto-generated method stub
-		return null;
+		RPSState state = (RPSState) current;
+		// TODO: Copy the state before modifying it
+		state.playerMoves[state.nextPlayer++] = takeAction(state);
+		return state;
 	}
 }

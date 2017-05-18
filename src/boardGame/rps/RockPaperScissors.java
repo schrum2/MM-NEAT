@@ -54,4 +54,7 @@ public class RockPaperScissors implements BoardGame{
 		return null;
 	}
 
+	public String toString() {
+		return board.toString();
+	}
 }
