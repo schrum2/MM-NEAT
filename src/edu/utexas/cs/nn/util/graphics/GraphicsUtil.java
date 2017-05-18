@@ -173,6 +173,7 @@ public class GraphicsUtil {
 	
 	/**
 	 * Plots line of a designated color drawn by an input array list of doubles on a drawing panel.
+	 * 
 	 * @param panel DrawingPanel
 	 * @param min minimum value of score
 	 * @param max maximum value of score
@@ -185,10 +186,23 @@ public class GraphicsUtil {
 		int width = panel.getFrame().getWidth();		
 		linePlot(g, min, max, height, width, scores, color); // calls secondary linePlot method after necessary info is defined
 	}
-
+	
+	/**
+	 * Creates an image, sets the background to be white, and plots a line on the image.
+	 * 
+	 * @param height of image
+	 * @param width of image
+	 * @param min score for scaling
+	 * @param max score for scaling
+	 * @param scores list of doubles being plotted
+	 * @param color of line being plotted
+	 * @return BufferedImage formed from plotted line
+	 */
 	public static BufferedImage linePlotImage(int height, int width, double min, double max, ArrayList<Double> scores, Color color) {
 		BufferedImage bi = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		Graphics g = bi.getGraphics();
+		g.setColor(Color.WHITE);
+		g.fillRect(0, 0, width, height);
 		linePlot(g, min, max, height, width, scores, color);
 		return bi;
 	}
@@ -250,7 +264,7 @@ public class GraphicsUtil {
 	 */
 	public static BufferedImage wavePlotFromDoubleArray(double[] inputArray, int height, int width) {
 		ArrayList<Double> fileArrayList = ArrayUtil.doubleVectorFromArray(inputArray); //convert array into array list
-		BufferedImage wavePlot = linePlotImage(height, height, -1.0, 1.0, fileArrayList, Color.black);
+		BufferedImage wavePlot = linePlotImage(height, width, -1.0, 1.0, fileArrayList, Color.black);
 		return wavePlot;
 	}
 	

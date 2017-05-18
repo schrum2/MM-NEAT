@@ -62,7 +62,7 @@ import java.util.Hashtable;
 public abstract class InteractiveEvolutionTask<T extends Network> implements SinglePopulationTask<T>, ActionListener, ChangeListener, NetworkTask {
 
 	//Global static final variables
-	public static final int NUM_COLUMNS	= 3;
+	public static final int NUM_COLUMNS	= 4;
 	public static final int MPG_DEFAULT = 1;// Starting number of mutations per generation (on slider)	
 
 	//private static final Variables

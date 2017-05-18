@@ -6,7 +6,7 @@ import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.tasks.interactive.InteractiveEvolutionTask;
 import edu.utexas.cs.nn.util.graphics.GraphicsUtil;
 
-public class PicBreederTaskGeneralizedCopy extends InteractiveEvolutionTask {
+public class PicBreederTaskGeneralizedCopy<T extends Network> extends InteractiveEvolutionTask<T> {
 
 	public PicBreederTaskGeneralizedCopy() throws IllegalAccessException {
 		super();
