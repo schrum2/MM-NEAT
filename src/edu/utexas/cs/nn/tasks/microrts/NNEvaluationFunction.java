@@ -43,13 +43,15 @@ public class NNEvaluationFunction<T extends Network> extends EvaluationFunction{
 		double[] board = gameStateToArray(gs);
 		float score = 0;
 		for(double current : board){
-			
+			if(current >= 1 && current <= 2){
+				
+			}
 		}
 		System.out.println(Arrays.toString(board));
 		return score;
 	}
 	
-	private double[] gameStateToArray(GameState gs){
+	private double[] gameStateToArray(GameState gs){ //not rn
 		PhysicalGameState pgs = gs.getPhysicalGameState();
 		double[] board = new double[pgs.getHeight()*pgs.getWidth()];
 		int boardIndex;
@@ -65,16 +67,16 @@ public class NNEvaluationFunction<T extends Network> extends EvaluationFunction{
 					case "Light": board[boardIndex] = 2; break;
 					case "Heavy": board[boardIndex] = 3; break;
 					case "Ranged": board[boardIndex] = 4; break;
-					case "Base": board[boardIndex] = 10; break;
+					case "Base": board[boardIndex] = 11; break;
 					case "Barracks": board[boardIndex] = 20; break;
-					case "Resource": board[boardIndex] = 100; break;
+					case "Resource": board[boardIndex] = 10; break;
 					default: break;
 					}
 					board[boardIndex] += .01 * currentUnit.getResources();
 					if(currentUnit.getPlayer() == 1) board[boardIndex] *= -1; 
 				}
-			}//end inner loop
-		}//end outer loop
+			}
+		}
 		return board;
 	}
 
@@ -96,12 +98,12 @@ public class NNEvaluationFunction<T extends Network> extends EvaluationFunction{
 		PhysicalGameState testpgs = new PhysicalGameState(10, 10);
 		//public Unit(int a_player, UnitType a_type, int a_x, int a_y, int a_resources)
 		
-		testpgs.addUnit( new Unit(0, utt.getUnitType("Worker"), 0, 1, 0));
-		testpgs.addUnit( new Unit(0, utt.getUnitType("Light"), 0, 2, 0));
+		testpgs.addUnit( new Unit(0, utt.getUnitType("Worker"), 0, 1, 1));
+		testpgs.addUnit( new Unit(1, utt.getUnitType("Light"), 0, 2, 0));
 		testpgs.addUnit( new Unit(0, utt.getUnitType("Heavy"), 0, 3, 0));
-		testpgs.addUnit( new Unit(0, utt.getUnitType("Ranged"), 0, 4, 0));
-//		testpgs.addUnit( new Unit(0, utt.getUnitType("Resource"), 0, 5, 0));
-//		testpgs.addUnit( new Unit(0, utt.getUnitType("Resource"), 0, 6, 0));
+		testpgs.addUnit( new Unit(1, utt.getUnitType("Ranged"), 0, 4, 0));
+		testpgs.addUnit( new Unit(-1, utt.getUnitType("Resource"), 0, 5, 0));
+		testpgs.addUnit( new Unit(-1, utt.getUnitType("Resource"), 0, 6, 26));
 		
 		GameState gs = new GameState(testpgs, utt);
 		System.out.println(ef.evaluate(0, 1, gs));
