@@ -8,8 +8,7 @@ import edu.utexas.cs.nn.util.random.RandomNumbers;
 
 public class TicTacToePlayerRandom extends TicTacToePlayer{
 	
-	public TicTacToePlayerRandom(int symbol){
-		super(symbol);
+	public TicTacToePlayerRandom(){
 	}
 	
 	@Override

@@ -14,7 +14,7 @@ public class Testing {
 		// oneEval method of BoardGameTask
 		
 		BoardGame game = new TicTacToe();
-		TicTacToePlayer[] players = new TicTacToePlayer[]{new TicTacToePlayerHuman(TicTacToeState.X), new TicTacToePlayerRandom(TicTacToeState.O)};
+		TicTacToePlayer[] players = new TicTacToePlayer[]{new TicTacToePlayerHuman(), new TicTacToePlayerRandom()};
 		while(!game.isGameOver()){
 			System.out.println(game);
 			game.move(players[game.getCurrentPlayer()]);

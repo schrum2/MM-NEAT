@@ -13,6 +13,8 @@ public class TicTacToeState implements BoardGameState{
 	// Package private: other classes inside this class can access it
 	int[][] boardState;
 	
+	private int nextPlayer;
+	
 	public static final int EMPTY = 0;
 	public static final int X = 1;
 	public static final int O = 2;
@@ -22,6 +24,11 @@ public class TicTacToeState implements BoardGameState{
 	 */
 	public TicTacToeState(){
 		boardState = new int[3][3];
+		nextPlayer = X;
+	}
+	
+	public int getNextPlayer() {
+		return nextPlayer;
 	}
 
 	/**
@@ -77,10 +84,17 @@ public class TicTacToeState implements BoardGameState{
 		}
 	}
 	
-	public boolean fill(int xOrO, Point space) {
-		if(xOrO == X) return fillX(space);
-		else if(xOrO == O) return fillO(space);
-		else throw new IllegalArgumentException("Can only fill with X or O, not " + xOrO);
+	public boolean fill(Point space) {
+		if(nextPlayer == X) {
+			boolean result = fillX(space);
+			nextPlayer = O;
+			return result;
+		} else if(nextPlayer == O) {
+			boolean result = fillO(space);
+			nextPlayer = X;
+			return result;
+		}
+		else throw new IllegalArgumentException("Can only fill with X or O, not " + nextPlayer);
 	}
 	
 	

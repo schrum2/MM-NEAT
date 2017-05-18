@@ -7,8 +7,7 @@ public class TicTacToePlayerHuman extends TicTacToePlayer{
 	
 	Scanner scan;
 	
-	public TicTacToePlayerHuman(int symbol){
-		super(symbol);
+	public TicTacToePlayerHuman(){
 		scan  = new Scanner(System.in);
 		System.out.println("Press the Number Keys to place your mark:");
 		System.out.println("-------\n|7|8|9|\n-------\n|4|5|6|\n-------\n|1|2|3|\n-------\n\n");

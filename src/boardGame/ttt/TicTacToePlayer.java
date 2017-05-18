@@ -7,11 +7,7 @@ import boardGame.BoardGameState;
 
 public abstract class TicTacToePlayer implements BoardGamePlayer{
 	
-	private int symbol;
-	
-	public TicTacToePlayer(int symbol) {
-		assert symbol == TicTacToeState.X || symbol == TicTacToeState.O;
-		this.symbol = symbol;
+	public TicTacToePlayer() {
 	}
 	
 	public abstract Point selectMove(TicTacToeState current);
@@ -22,7 +18,7 @@ public abstract class TicTacToePlayer implements BoardGamePlayer{
 		Point p = selectMove(state);
 		if(state.boardState[p.x][p.y] != TicTacToeState.EMPTY) throw new IllegalArgumentException("Cannot move to occupied space");
 		// TODO: Rather than modify the state, copy then state then modify that
-		state.fill(symbol, p);
+		state.fill(p);
 		return state;
 	}
 	
