@@ -19,7 +19,10 @@ public class NNEvaluationFunction<T extends Network> extends EvaluationFunction{
 
 	Network nn;
 
-	public NNEvaluationFunction(Genotype<T> g){
+	public NNEvaluationFunction(){
+	}
+	
+	public void setNetwork(Genotype<T> g) {
 		nn = g.getPhenotype();
 	}
 
@@ -34,15 +37,14 @@ public class NNEvaluationFunction<T extends Network> extends EvaluationFunction{
 		double[] inputs = gameStateToArray(gs);
 		double[] outputs = nn.process(inputs);
 		float score = (float) outputs[0];
-		System.out.println(score);
+//		System.out.println(score);
 		return score;
 	}
 
 	/**
 	 * counts the number of each unit belonging to each player
 	 * @param gs current game state
-	 * @return	array containing{#workers, #lights, #heavies, #ranged-units, #bases, #barracks, #enemy-workers, 
-	 * 							#enemy-lights, #enemy-heavies, #enemy-ranged-units, #enemy-bases #enemy-barracks}  
+	 * @return	array containing input information  
 	 */
 	private double[] gameStateToArray(GameState gs){
 		PhysicalGameState pgs = gs.getPhysicalGameState();
@@ -113,6 +115,11 @@ public class NNEvaluationFunction<T extends Network> extends EvaluationFunction{
 		return board;
 	}
 
+	public String[] sensorLabels() {
+		return new String[]{"workers", "lights", "heavies", "ranged-units", "bases", "barracks", "enemy-workers", 
+ 							"enemy-lights", "enemy-heavies", "enemy-ranged-units", "enemy-bases", "enemy-barracks"};
+	}
+	
 	/**
 	 * maximum possible thing returned by the evaluation function
 	 */
@@ -126,7 +133,8 @@ public class NNEvaluationFunction<T extends Network> extends EvaluationFunction{
 		"task:edu.utexas.cs.nn.tasks.microrts.MicroRTSTask"});
 		MMNEAT.loadClasses();
 		TWEANNGenotype individual = new TWEANNGenotype();
-		NNEvaluationFunction<TWEANN> ef = new NNEvaluationFunction<TWEANN>(individual);
+		NNEvaluationFunction<TWEANN> ef = new NNEvaluationFunction<TWEANN>();
+		ef.setNetwork(individual);
 		UnitTypeTable utt = new UnitTypeTable();
 		PhysicalGameState testpgs = new PhysicalGameState(10, 10);
 

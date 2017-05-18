@@ -12,11 +12,13 @@ import org.jdom.JDOMException;
 
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
+import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.networks.NetworkTask;
 import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.networks.hyperneat.HyperNEATTask;
 import edu.utexas.cs.nn.networks.hyperneat.Substrate;
+import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.NoisyLonerTask;
 import edu.utexas.cs.nn.util.datastructures.Pair;
@@ -40,6 +42,8 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 	private int MAXCYCLES = 5000;
 	private int RESULTRANGE = 2; //from -1 to 1
 
+	NNEvaluationFunction<T> ef;
+	
 	public MicroRTSTask() {
 		utt = new UnitTypeTable();
 		try {
@@ -49,6 +53,7 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 			e.printStackTrace();
 			System.exit(1);
 		}
+		ef = new NNEvaluationFunction<>();
 
 	}
 
@@ -89,15 +94,12 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 
 	@Override
 	public String[] sensorLabels() {
-		String[] labels = new String[]{"int maxplayer", "int minplayer", "GameState gs"}; 
-		//this is only so that we can test NNEvaluationFunction early, change later! TODO
-		return labels;
+		return ef.sensorLabels();
 	}
 
 	@Override
 	public String[] outputLabels() {
-		// TODO Auto-generated method stub
-		return null;
+		return new String[]{"Utility"};
 	}
 
 	/**
@@ -116,13 +118,17 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 		GameState gs = new GameState(pgs, utt);
 		boolean gameover = false;
 
-		NNEvaluationFunction<T> ef = new NNEvaluationFunction<>(individual);
+		ef.setNetwork(individual);
+		
 		AI ai1 = new UCT(100, -1, 100, 10, new RandomBiasedAI(), ef);
 				
 		//AI ai1 = new WorkerRush(utt, new BFSPathFinding());
 		AI ai2 = new RandomBiasedAI();
 
-		JFrame w = PhysicalGameStatePanel.newVisualizer(gs,640,640,false,PhysicalGameStatePanel.COLORSCHEME_BLACK);
+		JFrame w = null;
+		
+		if(CommonConstants.watch)
+			w = PhysicalGameStatePanel.newVisualizer(gs,640,640,false,PhysicalGameStatePanel.COLORSCHEME_BLACK);
 
 		do{ //original code in GameVisualSimulationTest contains lines that deal with making the game more viewable (slow)
 			PlayerAction pa1;
@@ -143,42 +149,17 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 			}
 			// simulate:
 			gameover = gs.cycle();
-			w.repaint();
-
-			try {
-				Thread.sleep(1);
-			} catch (Exception e) {
-				e.printStackTrace();
+			if(CommonConstants.watch){
+				w.repaint();
+				try {
+					Thread.sleep(1);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
-
-
 		}while(!gameover && gs.getTime()<MAXCYCLES);
-
-		Pair<double[], double[]> score = new Pair<>(new double[3], new double[0]); 
-		//first[]:{victory, time, unitDifference, } on a scale from -1 to 1, except unit difference, which starts at 0 and can go up or down
-
-		//TODO make magic numbers into constants
-		//potential scoring methods: # units created, # structures built, time, # enemy units destroyed, 
-		//unit # differential (how hard it wins)
-		int gameEndTime = gs.getTime();
-		List<Unit> unitsLeft = gs.getUnits();
-		System.out.println(unitsLeft.get(6).getType().name);
-
-		if(gs.winner() == 0){ //victory organism being tested! 
-			score.t1[0] = 1;
-			score.t1[1] = (double) (MAXCYCLES - gameEndTime) / MAXCYCLES * 2 - 1; //lower time is better
-			for(Unit u : unitsLeft){
-				if(u.getType().name != "Resource") score.t1[2] += u.getType().cost;
-			}
-		} else { //defeat for organism being tested
-			score.t1[0] = -1;
-			score.t1[1] = (double) (MAXCYCLES - gameEndTime) / MAXCYCLES * -2 + 1; //holding out for longer is better
-			for(Unit u : unitsLeft){
-				if(u.getType().name != "Resource") score.t1[2] -= u.getType().cost;
-			}
-		}
 		return fitnessFunction(gs);
-	} //END testOne eval
+	} //END oneEval
 
 	private Pair<double[], double[]> fitnessFunction(GameState terminalGameState) {
 		Pair<double[], double[]> score = new Pair<>(new double[3], new double[0]); 
@@ -208,7 +189,8 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 		Parameters.initializeParameterCollections(new String[]{"io:false","netio:false"});
 		MMNEAT.loadClasses();
 		MicroRTSTask<TWEANN> test = new MicroRTSTask<>();
-		Pair<double[], double[]> result = test.oneEval(null, -1);
+		TWEANNGenotype g = new TWEANNGenotype();
+		Pair<double[], double[]> result = test.oneEval(g, -1);
 		System.out.println(Arrays.toString(result.t1)+ " , "+Arrays.toString(result.t2));
 	}
 
