@@ -24,6 +24,7 @@ import micro.ai.RandomBiasedAI;
 import micro.ai.abstraction.WorkerRush;
 import micro.ai.abstraction.pathfinding.BFSPathFinding;
 import micro.ai.core.AI;
+import micro.ai.mcts.uct.UCT;
 import micro.gui.PhysicalGameStatePanel;
 //import micro.gui.PhysicalGameStatePanel;
 import micro.rts.GameState;
@@ -115,7 +116,10 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 		GameState gs = new GameState(pgs, utt);
 		boolean gameover = false;
 
-		AI ai1 = new WorkerRush(utt, new BFSPathFinding()); //this is the one being evaluated
+		NNEvaluationFunction<T> ef = new NNEvaluationFunction<>(individual);
+		AI ai1 = new UCT(100, -1, 100, 10, new RandomBiasedAI(), ef);
+				
+		//AI ai1 = new WorkerRush(utt, new BFSPathFinding());
 		AI ai2 = new RandomBiasedAI();
 
 		JFrame w = PhysicalGameStatePanel.newVisualizer(gs,640,640,false,PhysicalGameStatePanel.COLORSCHEME_BLACK);

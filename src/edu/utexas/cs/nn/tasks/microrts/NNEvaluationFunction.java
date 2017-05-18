@@ -31,10 +31,10 @@ public class NNEvaluationFunction<T extends Network> extends EvaluationFunction{
 	 */
 	@Override
 	public float evaluate(int maxplayer, int minplayer, GameState gs) {
-		double[] rawInputs = gameStateToArray(gs);
-		double[] outputs = nn.process(rawInputs);
+		double[] inputs = gameStateToArray(gs);
+		double[] outputs = nn.process(inputs);
 		float score = (float) outputs[0];
-		System.out.println(Arrays.toString(rawInputs));
+		System.out.println(score);
 		return score;
 	}
 
@@ -66,9 +66,17 @@ public class NNEvaluationFunction<T extends Network> extends EvaluationFunction{
 				}
 			}
 		}
+		unitsOnBoard = normalize(unitsOnBoard, pgs.getHeight()*pgs.getWidth());
 		return unitsOnBoard;
 	}
 	
+	private double[] normalize (double[] data, int max){
+		for(double d:data){
+			d /= max;
+		}
+		return data;
+	}
+
 	/**
 	 * converts GameState into Array containing information about the contents of every tile
 	 * 			to the detail of what type of unit occupies it and amount of
@@ -121,7 +129,7 @@ public class NNEvaluationFunction<T extends Network> extends EvaluationFunction{
 		NNEvaluationFunction<TWEANN> ef = new NNEvaluationFunction<TWEANN>(individual);
 		UnitTypeTable utt = new UnitTypeTable();
 		PhysicalGameState testpgs = new PhysicalGameState(10, 10);
-		
+
 		//public Unit(int a_player, UnitType a_type, int a_x, int a_y, int a_resources)
 		testpgs.addUnit( new Unit(0, utt.getUnitType("Worker"), 0, 1, 1));
 		testpgs.addUnit( new Unit(1, utt.getUnitType("Light"), 0, 2, 0));
@@ -135,7 +143,6 @@ public class NNEvaluationFunction<T extends Network> extends EvaluationFunction{
 		testpgs.addUnit( new Unit(-1, utt.getUnitType("Resource"), 0, 6, 26));
 
 		GameState gs = new GameState(testpgs, utt);
-		ef.evaluate(0, 1, gs);
 		ef.evaluate(0, 1, gs);
 	}
 }
