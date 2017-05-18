@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.tasks.interactive.InteractiveEvolutionTask;
+import edu.utexas.cs.nn.util.graphics.GraphicsUtil;
 
 public class PicBreederTaskGeneralizedCopy extends InteractiveEvolutionTask {
 
@@ -18,26 +19,22 @@ public class PicBreederTaskGeneralizedCopy extends InteractiveEvolutionTask {
 
 	@Override
 	public String[] sensorLabels() {
-		// TODO Auto-generated method stub
-		return null;
+		return new String[] { "X-coordinate", "Y-coordinate", "distance from center", "bias" };
 	}
 
 	@Override
 	public String[] outputLabels() {
-		// TODO Auto-generated method stub
-		return null;
+		return new String[] { "hue-value", "saturation-value", "brightness-value" };
 	}
 
 	@Override
 	protected String getWindowTitle() {
-		// TODO Auto-generated method stub
-		return null;
+		return "Picbreeder";
 	}
 
 	@Override
 	protected BufferedImage getButtonImage(Network phenotype, int width, int height, double[] inputMultipliers) {
-		// TODO Auto-generated method stub
-		return null;
+		return GraphicsUtil.imageFromCPPN(phenotype, width, height, inputMultipliers);
 	}
 
 }
