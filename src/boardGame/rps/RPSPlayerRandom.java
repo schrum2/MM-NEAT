@@ -1,12 +1,11 @@
 package boardGame.rps;
 
-import java.util.Random;
+import edu.utexas.cs.nn.util.random.RandomNumbers;
 
 public class RPSPlayerRandom extends RPSPlayer{
 
-	public int takeAction(){
-		Random random = new Random();
-		return random.nextInt(3);
+	public int takeAction(RPSState current){
+		return RandomNumbers.randomGenerator.nextInt(3);
 	}
 	
 }

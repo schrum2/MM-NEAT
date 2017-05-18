@@ -4,19 +4,18 @@ import java.awt.Point;
 import java.util.List;
 import java.util.Random;
 
+import edu.utexas.cs.nn.util.random.RandomNumbers;
+
 public class TicTacToePlayerRandom extends TicTacToePlayer{
 	
-	private int playerNum;
-	
-	public TicTacToePlayerRandom(){
-		playerNum = 0;
+	public TicTacToePlayerRandom(int symbol){
+		super(symbol);
 	}
 	
 	@Override
-	public Point takeAction(TicTacToeState current) {
+	public Point selectMove(TicTacToeState current) {
 		List<Point> index = current.getEmptyIndex();
-		Random random = new Random();
-		Point p = index.get(random.nextInt(index.size()));
+		Point p = index.get(RandomNumbers.randomGenerator.nextInt(index.size()));
 		return p;
 	}
 

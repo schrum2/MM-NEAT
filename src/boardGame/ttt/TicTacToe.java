@@ -18,13 +18,13 @@ public class TicTacToe implements BoardGame{
 	 */
 	public TicTacToe(){
 		currentPlayer = 0;
-		players = new TicTacToePlayer[]{new TicTacToePlayerHuman(), new TicTacToePlayerRandom()};
+		players = new TicTacToePlayer[]{new TicTacToePlayerHuman(TicTacToeState.X), new TicTacToePlayerRandom(TicTacToeState.O)};
 		board = new TicTacToeState();
 	}
 	
 	public TicTacToe(TicTacToePlayer player1){
 		currentPlayer = 0;
-		players = new TicTacToePlayer[]{player1, new TicTacToePlayerRandom()};
+		players = new TicTacToePlayer[]{player1, new TicTacToePlayerRandom(TicTacToeState.O)};
 		board = new TicTacToeState();
 	}
 	
@@ -56,18 +56,8 @@ public class TicTacToe implements BoardGame{
 		return null;
 	}
 
-	public void move() { // TODO: Better way of handling this; clean up soon
-		boolean played = false;
-		do{
-			System.out.println("PLAYER " + (currentPlayer + 1) + ":");
-			//board.printState();
-			Point p = players[currentPlayer].takeAction(board);
-			if(currentPlayer == 0){
-				played = board.fillX(p);
-			}else{
-				played = board.fillO(p);			
-			}
-		}while(!played);
+	public void move() { 
+		players[currentPlayer].takeAction(board);
 		currentPlayer = (currentPlayer + 1) % 2; // Switches the currentPlayer
 	}
 

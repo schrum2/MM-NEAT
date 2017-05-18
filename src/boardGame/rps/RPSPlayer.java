@@ -1,10 +1,15 @@
 package boardGame.rps;
 
 import boardGame.BoardGamePlayer;
+import boardGame.BoardGameState;
 
-public class RPSPlayer extends BoardGamePlayer{
+public abstract class RPSPlayer implements BoardGamePlayer{
 
-	public int takeAction(RPSState current) {
-		return 0;
+	public abstract int takeAction(RPSState current);
+
+	@Override
+	public BoardGameState takeAction(BoardGameState current) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

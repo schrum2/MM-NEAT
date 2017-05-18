@@ -76,6 +76,12 @@ public class TicTacToeState implements BoardGameState{
 		}
 	}
 	
+	public boolean fill(int xOrO, Point space) {
+		if(xOrO == X) return fillX(space);
+		else if(xOrO == O) return fillO(space);
+		else throw new IllegalArgumentException("Can only fill with X or O, not " + xOrO);
+	}
+	
 	
 	@Override
 	public double[] getDescriptor() {
