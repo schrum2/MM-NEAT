@@ -1,13 +1,11 @@
 package boardGame.rps;
 
-import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 
 import boardGame.BoardGame;
 import boardGame.BoardGamePlayer;
 import boardGame.BoardGameState;
-import boardGame.ttt.TicTacToeState;
 
 public class RockPaperScissors implements BoardGame{
 
@@ -15,7 +13,7 @@ public class RockPaperScissors implements BoardGame{
 	private RPSState board;
 	
 	/**
-	 * Default Constructor; Cerates an empty game of Rock Paper Scissors
+	 * Default Constructor; Creates an empty game of Rock Paper Scissors
 	 */
 	public RockPaperScissors(){
 		currentPlayer = 0;
@@ -54,27 +52,6 @@ public class RockPaperScissors implements BoardGame{
 	}
 
 	/**
-	 * Returns a List of all possible BoardGameStates starting from a given BoardGameState
-	 * 
-	 * @param player Index representing a Player to take action
-	 * @param currentState Current BoardGameState being used
-	 * @return List<BoardGameState> with all BoardGameStates possible from a given BoardGameState
-	 */
-	@Override
-	public List<BoardGameState> possibleBoardGameStates(int player, BoardGameState currentState) {
-		List<BoardGameState> returnStates = new ArrayList<BoardGameState>();
-		List<Integer> tempMoves = board.getPossibleMoves();
-		
-		for(Integer i : tempMoves){
-			RPSState tempState = (RPSState) currentState.copy();
-			tempState.chooseMove(player, i);
-			returnStates.add(tempState);
-		}
-		
-		return returnStates;
-	}
-
-	/**
 	 * Updates the RPSState based on a Player's action
 	 */
 	@Override
@@ -110,5 +87,20 @@ public class RockPaperScissors implements BoardGame{
 	 */
 	public String toString() {
 		return board.toString();
+	}
+
+	@Override
+	public String[] getFeatureLabels() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * Resets the currentPlayer to 0 and creates a new BoardGameState to use
+	 */
+	@Override
+	public void reset() {
+		currentPlayer = 0;
+		board = new RPSState();
 	}
 }

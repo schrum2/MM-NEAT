@@ -575,7 +575,6 @@ public class Parameters {
 		booleanOptions.add("hierarchicalMultitask", false, "Each multitask mode can consist of multiple preference neuron modules");
 		booleanOptions.add("trackCombiningCrossover", false, "Whether or not to track combining crossover information");
 		booleanOptions.add("moPinball", false, "Subtracts the distance to the target from the Fitness; getting closer means a higher score overall");
-		booleanOptions.add("moBoardGame", false, "Allows a generic BoardGame to be evaluated as a Multi-Objective BoardGame");
 		// Double parameters
 		doubleOptions.add("linkExpressionThreshold", 0.2, "Threshold for hyperNEAT output to result in an expressed link");
 		doubleOptions.add("tugGoalIncrement0", 0.0, "Set amount to increase goal 0 by when using TUG");

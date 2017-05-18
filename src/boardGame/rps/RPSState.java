@@ -9,13 +9,21 @@ public class RPSState implements BoardGameState{
 	// package private
 	int[] playerMoves;
 	int nextPlayer;
-	
-	private int winner;
+		
+	public static final int TIE = 0;
+	public static final int PLAYER1 = 1;
+	public static final int PLAYER1_INDEX = 0;
+	public static final int PLAYER2 = 2;	
+	public static final int PLAYER2_INDEX = 1;	
+
 	
 	public static final int UNDECIDED = -1;
 	public static final int ROCK = 0;
 	public static final int PAPER = 1;
 	public static final int SCISSORS = 2;	
+	
+	private int winner;
+	private int currentPlayer;
 	
 	/**
 	 * Default Constructor
@@ -24,6 +32,7 @@ public class RPSState implements BoardGameState{
 		playerMoves = new int[]{UNDECIDED, UNDECIDED};
 		nextPlayer = 0;
 		winner = UNDECIDED;
+		currentPlayer = PLAYER1;
 	}
 	
 	/**
@@ -80,11 +89,11 @@ public class RPSState implements BoardGameState{
 	public int getWinner(){
 		if(endState()){
 			if((playerMoves[0] == ROCK && playerMoves[1] == SCISSORS) || (playerMoves[0] == PAPER && playerMoves[1] == ROCK) || (playerMoves[0] == SCISSORS && playerMoves[1] == PAPER)){ // Player 1 wins
-				winner = 1;
+				winner = PLAYER1;
 			}else if ((playerMoves[1] == ROCK && playerMoves[0] == SCISSORS) || (playerMoves[1] == PAPER && playerMoves[0] == ROCK) || (playerMoves[1] == SCISSORS && playerMoves[0] == PAPER)){ // Player 2 wins
-				winner = 2;
+				winner = PLAYER2;
 			}else{ // Tie
-				winner = 0;
+				winner = TIE;
 			}
 		}
 		return winner;
@@ -96,11 +105,14 @@ public class RPSState implements BoardGameState{
 	 * @param player Inex representing the Player making a Move
 	 * @param move Integer representing the Move that Player is making
 	 */
-	public void chooseMove(int player, int move){
-		assert player > 0 && player < 2; // Ensures the Player index is correct
+	public void chooseMove(int move){
 		assert move >= 0 && move < 3; // Ensures the Move is correct
-		
-		playerMoves[player] = move;
+		if(currentPlayer == PLAYER1){
+			playerMoves[PLAYER1_INDEX] = move;
+			currentPlayer = PLAYER2;
+		}else{
+			playerMoves[PLAYER2_INDEX] = move;			
+		}
 	}
 	
 	/**
@@ -110,7 +122,11 @@ public class RPSState implements BoardGameState{
 	 */
 	@Override
 	public boolean endState() {
-		return playerMoves[0] != UNDECIDED && playerMoves[1] != UNDECIDED;
+		boolean over = (playerMoves[0] != UNDECIDED && playerMoves[1] != UNDECIDED);
+		if(over){
+			getWinner(); // Sets the global variable "winner"
+		}
+		return over;
 	}
 
 	/**
@@ -151,6 +167,26 @@ public class RPSState implements BoardGameState{
 		RPSState temp = new RPSState(playerMoves);
 		return temp;
 	}
-	
+
+	/**
+	 * Returns a List of all possible BoardGameStates starting from a given BoardGameState
+	 * 
+	 * @param player Index representing a Player to take action
+	 * @param currentState Current BoardGameState being used
+	 * @return List<BoardGameState> with all BoardGameStates possible from a given BoardGameState
+	 */
+	@Override
+	public List<BoardGameState> possibleBoardGameStates(BoardGameState currentState) {
+		List<BoardGameState> returnStates = new ArrayList<BoardGameState>();
+		List<Integer> tempMoves = getPossibleMoves();
+		
+		for(Integer i : tempMoves){
+			RPSState tempState = (RPSState) currentState.copy();
+			tempState.chooseMove(i);
+			returnStates.add(tempState);
+		}
+		
+		return returnStates;
+	}
 	
 }

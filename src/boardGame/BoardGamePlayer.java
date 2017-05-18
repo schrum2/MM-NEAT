@@ -6,7 +6,7 @@ package boardGame;
  * @author johnso17
  */
 public interface BoardGamePlayer {
-	
+		
 	/**
 	 * Updates the current BoardGameState with an action by this BoardGamePlayer
 	 * 
