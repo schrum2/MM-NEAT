@@ -1,5 +1,8 @@
 package boardGame.rps;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import boardGame.BoardGameState;
 
 public class RPSState implements BoardGameState{
@@ -54,6 +57,19 @@ public class RPSState implements BoardGameState{
 	public double[] getDescriptor() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	/**
+	 * Returns a List of Integers representing the possible Moves the Player could take
+	 * 
+	 * @return List<Integer> with 0 (Rock), 1 (Paper), and 2 (Scissors)
+	 */
+	public List<Integer> getPossibleMoves(){
+		List<Integer> moves = new ArrayList<Integer>();
+		moves.add((Integer) ROCK);
+		moves.add((Integer) PAPER);
+		moves.add((Integer) SCISSORS);
+		return moves;
 	}
 	
 	/**

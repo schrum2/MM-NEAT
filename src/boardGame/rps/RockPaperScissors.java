@@ -1,11 +1,13 @@
 package boardGame.rps;
 
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 
 import boardGame.BoardGame;
 import boardGame.BoardGamePlayer;
 import boardGame.BoardGameState;
+import boardGame.ttt.TicTacToeState;
 
 public class RockPaperScissors implements BoardGame{
 
@@ -60,8 +62,16 @@ public class RockPaperScissors implements BoardGame{
 	 */
 	@Override
 	public List<BoardGameState> possibleBoardGameStates(int player, BoardGameState currentState) {
-		// TODO Auto-generated method stub
-		return null;
+		List<BoardGameState> returnStates = new ArrayList<BoardGameState>();
+		List<Integer> tempMoves = board.getPossibleMoves();
+		
+		for(Integer i : tempMoves){
+			RPSState tempState = (RPSState) currentState.copy();
+			tempState.chooseMove(player, i);
+			returnStates.add(tempState);
+		}
+		
+		return returnStates;
 	}
 
 	/**
