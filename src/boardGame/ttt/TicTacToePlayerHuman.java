@@ -5,18 +5,32 @@ import java.util.Scanner;
 
 public class TicTacToePlayerHuman extends TicTacToePlayer{
 	
-	Scanner scan;
+	private Scanner scan;
 	
+	/**
+	 * Default Constructor
+	 */
 	public TicTacToePlayerHuman(){
 		scan  = new Scanner(System.in);
 		System.out.println("Press the Number Keys to place your mark:");
 		System.out.println("-------\n|7|8|9|\n-------\n|4|5|6|\n-------\n|1|2|3|\n-------\n\n");
 	}
 	
+	/**
+	 * Returns a Point to play Tic-Tac-Toe
+	 * 
+	 * @return Point to place a Mark and make a Move
+	 */
 	public Point selectMove(TicTacToeState current) {
 		return getInput(scan);
 	}
 	
+	/**
+	 * Helper method to allow a Human Player to play Tic-Tac-Toe
+	 * 
+	 * @param scan Scanner reading the Human Player's input
+	 * @return Point to place a Mark and make a Move
+	 */
 	private Point getInput(Scanner scan){
 		String message = "Please choose a number between 1 and 9";
 		

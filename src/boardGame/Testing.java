@@ -1,6 +1,7 @@
 package boardGame;
 
 import boardGame.rps.RPSPlayer;
+import boardGame.rps.RPSPlayerHuman;
 import boardGame.rps.RPSPlayerRandom;
 import boardGame.rps.RockPaperScissors;
 import boardGame.ttt.TicTacToe;
