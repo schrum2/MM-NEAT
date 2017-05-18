@@ -3,10 +3,9 @@ package edu.utexas.cs.nn.tasks.boardGame;
 import java.util.ArrayList;
 import java.util.List;
 
-import boardGame.*;
-import boardGame.rps.RPSPlayer;
-import boardGame.rps.RPSPlayerRandom;
-import boardGame.rps.RockPaperScissors;
+import boardGame.BoardGame;
+import boardGame.BoardGamePlayer;
+import boardGame.BoardGameViewer;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.networks.Network;
@@ -14,11 +13,8 @@ import edu.utexas.cs.nn.networks.NetworkTask;
 import edu.utexas.cs.nn.networks.hyperneat.HyperNEATTask;
 import edu.utexas.cs.nn.networks.hyperneat.Substrate;
 import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.NoisyLonerTask;
-import edu.utexas.cs.nn.util.MiscUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
-import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
 
 public class BoardGameTask<T extends Network> extends NoisyLonerTask<T> implements NetworkTask, HyperNEATTask{
 
