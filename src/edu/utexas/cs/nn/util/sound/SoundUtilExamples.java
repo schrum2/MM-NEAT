@@ -59,7 +59,7 @@ public class SoundUtilExamples {
 		AudioFormat af = new AudioFormat(MiscSoundUtil.SAMPLE_RATE, MiscSoundUtil.SAMPLE_RATE,1, true, true);
 		SoundAmplitudeArrayManipulator.saveFileFromCPPN(cppn, 60000, 440, "cppn.wav", af);
 		MiscSoundUtil.playDoubleArray(testArray);
-		GraphicsUtil.wavePlotFromDoubleArray(testArray);
+		GraphicsUtil.wavePlotFromDoubleArray(testArray, 500, 500);
 	}
 
 	public static void plotExamples() {

@@ -187,7 +187,7 @@ public class SoundAmplitudeArrayManipulator {
 	}
 
 	/**
-	 * Uses a CPPN to generate an output and saves that output into a file. 
+	 * Uses a CPPN to generate an output and saves that output into a file. DOESN'T WORK
 	 * 
 	 * @param CPPN network used to generate amplitude 
 	 * @param length length of sample

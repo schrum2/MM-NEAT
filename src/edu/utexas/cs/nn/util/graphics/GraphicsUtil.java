@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 import edu.utexas.cs.nn.networks.ActivationFunctions;
 import edu.utexas.cs.nn.networks.Network;
+import edu.utexas.cs.nn.tasks.interactive.breedesizer.BreedesizerTask;
 import edu.utexas.cs.nn.tasks.interactive.picbreeder.PicbreederTask;
 import edu.utexas.cs.nn.util.CartesianGeometricUtilities;
 import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
@@ -171,9 +172,8 @@ public class GraphicsUtil {
 	}
 	
 	/**
-	 * Plots a line of a designated color drawn by an input array list of doubles on a drawing panel.
-	 * 
-	 * @param panel DrawingPanel on which line is graphed
+	 * Plots line of a designated color drawn by an input array list of doubles on a drawing panel.
+	 * @param panel DrawingPanel
 	 * @param min minimum value of score
 	 * @param max maximum value of score
 	 * @param scores list of doubles to be plotted on graph
@@ -183,6 +183,28 @@ public class GraphicsUtil {
 		Graphics g = panel.getGraphics();
 		int height = panel.getFrame().getHeight() - 50; // -50 is to avoid gray panel at bottom of DrawingPanel
 		int width = panel.getFrame().getWidth();		
+		linePlot(g, min, max, height, width, scores, color); // calls secondary linePlot method after necessary info is defined
+	}
+
+	public static BufferedImage linePlotImage(int height, int width, double min, double max, ArrayList<Double> scores, Color color) {
+		BufferedImage bi = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+		Graphics g = bi.getGraphics();
+		linePlot(g, min, max, height, width, scores, color);
+		return bi;
+	}
+	
+	/**
+	 * Plots a line of a designated color on a graphics image using an input array list of doubles
+	 * 
+	 * @param g input graphics to be manipulated
+	 * @param min minimum value of score
+	 * @param max maximum value of score
+	 * @param height height of image being created
+	 * @param width width of image being created
+	 * @param scores list of doubles to be plotted on graph
+	 * @param color Color of line
+	 */
+	public static void linePlot(Graphics g, double min, double max, int height, int width, ArrayList<Double> scores, Color color) {
 		g.setColor(Color.black);
 		// y-axis
 		g.drawLine(Plot.OFFSET, Plot.OFFSET, Plot.OFFSET, height - Plot.OFFSET);	
@@ -215,9 +237,9 @@ public class GraphicsUtil {
 	 * 
 	 * @param fileName String reference to file being plotted
 	 */
-	public static void wavePlotFromFile(String fileName) {
+	public static void wavePlotFromFile(String fileName, int height, int width) {
 		double[] fileArray = MiscSoundUtil.read(fileName); //create array of doubles representing audio
-		wavePlotFromDoubleArray(fileArray);
+		wavePlotFromDoubleArray(fileArray, height, width);
 	}
 	
 	/**
@@ -226,10 +248,10 @@ public class GraphicsUtil {
 	 * 
 	 * @param inputArray
 	 */
-	public static void wavePlotFromDoubleArray(double[] inputArray) {
+	public static BufferedImage wavePlotFromDoubleArray(double[] inputArray, int height, int width) {
 		ArrayList<Double> fileArrayList = ArrayUtil.doubleVectorFromArray(inputArray); //convert array into array list
-		DrawingPanel panel = new DrawingPanel(500,500, "fsljfd"); //create panel where line will be plotted 
-		GraphicsUtil.linePlot(panel, -1.0, 1.0, fileArrayList, Color.black); //call linePlot with ArrayList to draw graph
+		BufferedImage wavePlot = linePlotImage(height, height, -1.0, 1.0, fileArrayList, Color.black);
+		return wavePlot;
 	}
 	
 	/**
