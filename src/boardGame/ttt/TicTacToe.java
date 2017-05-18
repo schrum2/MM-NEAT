@@ -51,7 +51,7 @@ public class TicTacToe implements BoardGame{
 	}
 
 	@Override
-	public List<BoardGameState> possibleBoardGameStates(BoardGameState currentState) {
+	public List<BoardGameState> possibleBoardGameStates(int player, BoardGameState currentState) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -60,7 +60,7 @@ public class TicTacToe implements BoardGame{
 		boolean played = false;
 		do{
 			System.out.println("PLAYER " + (currentPlayer + 1) + ":");
-			board.printState();
+			//board.printState();
 			Point p = players[currentPlayer].takeAction(board);
 			if(currentPlayer == 0){
 				played = board.fillX(p);
@@ -79,6 +79,10 @@ public class TicTacToe implements BoardGame{
 	@Override
 	public String getName() {
 		return "Tic-Tac-Toe";
+	}
+	
+	public String toString() {
+		return this.board.toString();
 	}
 
 }

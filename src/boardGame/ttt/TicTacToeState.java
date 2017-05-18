@@ -125,8 +125,8 @@ public class TicTacToeState implements BoardGameState{
 		}
 		
 		if(over){
-			System.out.println("Player " + winner + " Wins!");
-			printState();
+			//System.out.println("Player " + winner + " Wins!");
+			//printState();
 			return over;
 		}
 		
@@ -140,18 +140,18 @@ public class TicTacToeState implements BoardGameState{
 			}
 		}
 		
-		System.out.println("Board Filled; GAME OVER");
+		//System.out.println("Board Filled; GAME OVER");
 		return true; // No 3-in-a-Rows nor any Space left to play; game is over
 	}
 
 	/**
 	 * Prints out a visual representation of the TicTacToeState to the console
 	 */
-	public void printState(){
-		System.out.println("-------");
+	public String toString(){
+		String result = "-------\n";
 		
 		for(int i = 0; i < boardState.length; i++){
-			System.out.print("|");
+			result += "|";
 			
 			for(int j = 0; j < boardState[i].length; j++){
 				
@@ -165,12 +165,13 @@ public class TicTacToeState implements BoardGameState{
 				}else{
 					mark = 'O';
 				}
-				System.out.print(mark + "|");
+				result += mark + "|";
 			}
 			
-			System.out.println("\n-------");
+			result += "\n-------\n";
 		}
-		System.out.println("\n");
+		result += "\n\n";
+		return result;
 	}
 	
 	

@@ -35,7 +35,7 @@ public class RockPaperScissors implements BoardGame{
 	}
 
 	@Override
-	public List<BoardGameState> possibleBoardGameStates(BoardGameState currentState) {
+	public List<BoardGameState> possibleBoardGameStates(int player, BoardGameState currentState) {
 		// TODO Auto-generated method stub
 		return null;
 	}

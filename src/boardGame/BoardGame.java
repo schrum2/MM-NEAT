@@ -39,10 +39,11 @@ public interface BoardGame {
 	/**
 	 * Returns a List of all the possible BoardGameStates when starting at a given BoardGameState
 	 * 
+	 * @param player Index indicating which player's turn it is
 	 * @param currentState The current BoardGameState
 	 * @return List<BoardGameState> of all possible BoardGameStates starting from the given currentState
 	 */
-	public List<BoardGameState> possibleBoardGameStates(BoardGameState currentState);
+	public List<BoardGameState> possibleBoardGameStates(int player, BoardGameState currentState);
 	
 	
 	
