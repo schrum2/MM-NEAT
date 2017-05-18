@@ -50,16 +50,17 @@ public interface BoardGame {
 	/**
 	 * Updates the BoardGameState based on the action taken by a given BoardGamePlayer
 	 * 
+	 * @param bgp Player that gets to move next
 	 */
-	public void move();
+	public void move(BoardGamePlayer bgp);
 	
 	
 	/**
-	 * Returns the BoardGamePlayer which will be updating the BoardGameState
+	 * Returns the index of the BoardGamePlayer which will be updating the BoardGameState
 	 * 
-	 * @return The BoardGamePlayer updating the BoardGameState
+	 * @return index of player updating the BoardGameState next
 	 */
-	public BoardGamePlayer getCurrentPlayer();
+	public int getCurrentPlayer();
 
 	
 	

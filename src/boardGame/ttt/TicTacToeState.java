@@ -10,7 +10,8 @@ import javafx.util.Pair;
 
 public class TicTacToeState implements BoardGameState{
 	
-	private int[][] boardState;
+	// Package private: other classes inside this class can access it
+	int[][] boardState;
 	
 	public static final int EMPTY = 0;
 	public static final int X = 1;

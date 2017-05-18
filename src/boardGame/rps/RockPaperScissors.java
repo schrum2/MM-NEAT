@@ -9,12 +9,10 @@ import boardGame.BoardGameState;
 public class RockPaperScissors implements BoardGame{
 
 	private int currentPlayer; // Used to keep track of whose turn it is
-	private RPSPlayer[] players; // Used to store the two BoardGamePlayers
 	private RPSState board;
 	
 	public RockPaperScissors(){
 		currentPlayer = 0;
-		players = new RPSPlayer[]{new RPSPlayerRandom(), new RPSPlayerRandom()};
 		board = new RPSState();
 	}
 	
@@ -41,13 +39,13 @@ public class RockPaperScissors implements BoardGame{
 	}
 
 	@Override
-	public void move() {
-		players[currentPlayer].takeAction(board);
+	public void move(BoardGamePlayer bgp) {
+		bgp.takeAction(board);
 	}
 
 	@Override
-	public BoardGamePlayer getCurrentPlayer() {
-		return 	players[currentPlayer];
+	public int getCurrentPlayer() {
+		return 	currentPlayer;
 	}
 
 	@Override

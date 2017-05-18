@@ -1,6 +1,5 @@
 package boardGame.ttt;
 
-import java.awt.Point;
 import java.util.List;
 
 import boardGame.BoardGame;
@@ -10,7 +9,6 @@ import boardGame.BoardGameState;
 public class TicTacToe implements BoardGame{
 
 	private int currentPlayer; // Used to keep track of whose turn it is
-	private TicTacToePlayer[] players; // Used to store the two BoardGamePlayers
 	private TicTacToeState board;
 	
 	/**
@@ -18,22 +16,9 @@ public class TicTacToe implements BoardGame{
 	 */
 	public TicTacToe(){
 		currentPlayer = 0;
-		players = new TicTacToePlayer[]{new TicTacToePlayerHuman(TicTacToeState.X), new TicTacToePlayerRandom(TicTacToeState.O)};
 		board = new TicTacToeState();
 	}
-	
-	public TicTacToe(TicTacToePlayer player1){
-		currentPlayer = 0;
-		players = new TicTacToePlayer[]{player1, new TicTacToePlayerRandom(TicTacToeState.O)};
-		board = new TicTacToeState();
-	}
-	
-	public TicTacToe(TicTacToePlayer player1, TicTacToePlayer player2){
-		currentPlayer = 0;
-		players = new TicTacToePlayer[]{player1, player2};
-		board = new TicTacToeState();
-	}
-	
+		
 	@Override
 	public int getNumPlayers() {
 		return 2; // TicTacToe can only ever have two Players
@@ -56,14 +41,14 @@ public class TicTacToe implements BoardGame{
 		return null;
 	}
 
-	public void move() { 
-		players[currentPlayer].takeAction(board);
+	public void move(BoardGamePlayer bgp) { 
+		bgp.takeAction(board);
 		currentPlayer = (currentPlayer + 1) % 2; // Switches the currentPlayer
 	}
 
 	@Override
-	public TicTacToePlayer getCurrentPlayer() {
-		return players[currentPlayer];
+	public int getCurrentPlayer() {
+		return currentPlayer;
 	}
 
 	@Override
