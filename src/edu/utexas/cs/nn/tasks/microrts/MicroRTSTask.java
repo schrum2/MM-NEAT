@@ -43,7 +43,7 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 	private int RESULTRANGE = 2; //from -1 to 1
 
 	NNEvaluationFunction<T> ef;
-	
+
 	public MicroRTSTask() {
 		utt = new UnitTypeTable();
 		try {
@@ -54,12 +54,12 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 			System.exit(1);
 		}
 		ef = new NNEvaluationFunction<>();
-
+        MMNEAT.registerFitnessFunction("game fitness");
 	}
 
 	@Override
 	public int numObjectives() {
-		return 3; //this will probably change! 
+		return 1; //this will probably change! 
 	}
 
 	@Override
@@ -148,11 +148,11 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 			gameover = gs.cycle();
 			if(CommonConstants.watch){
 				w.repaint();
-				try {
-					Thread.sleep(1);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+				//				try {
+				//					Thread.sleep(1);
+				//				} catch (Exception e) {
+				//					e.printStackTrace();
+				//				}
 			}
 		}while(!gameover && gs.getTime()<MAXCYCLES);
 		return fitnessFunction(gs);
@@ -179,11 +179,12 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 				if(u.getType().name != "Resource") score.t1[2] -= u.getType().cost;
 			}
 		}
+		System.out.println(score);
 		return score;
 	} //END fitnessFunction
 
 	public static void main(String[] args){
-		Parameters.initializeParameterCollections(new String[]{"io:false","netio:false"});
+		Parameters.initializeParameterCollections(new String[]{"io:false","netio:false", "watch:true"});
 		MMNEAT.loadClasses();
 		MicroRTSTask<TWEANN> test = new MicroRTSTask<>();
 		TWEANNGenotype g = new TWEANNGenotype();
