@@ -53,25 +53,6 @@ public class TicTacToe implements BoardGame{
 	}
 
 	/**
-	 * Returns a List of all possible Moves in a Game starting from a given State
-	 * 
-	 * @return List<BoardGameStates> of States possible starting from a specific BoardGameState
-	 */
-	@Override
-	public List<BoardGameState> possibleBoardGameStates(int player, BoardGameState currentState) {
-		List<BoardGameState> returnStates = new ArrayList<BoardGameState>();
-		List<Point> tempPoints = board.getEmptyIndex();
-		
-		for(Point p : tempPoints){
-			TicTacToeState tempState = (TicTacToeState) currentState.copy();
-			tempState.fill(p);
-			returnStates.add(tempState);
-		}
-		
-		return returnStates;
-	}
-
-	/**
 	 * Updates the Game based on the actions of the current Player
 	 */
 	public void move(BoardGamePlayer bgp) { 

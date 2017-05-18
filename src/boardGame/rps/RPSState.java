@@ -151,6 +151,26 @@ public class RPSState implements BoardGameState{
 		RPSState temp = new RPSState(playerMoves);
 		return temp;
 	}
-	
+
+	/**
+	 * Returns a List of all possible BoardGameStates starting from a given BoardGameState
+	 * 
+	 * @param player Index representing a Player to take action
+	 * @param currentState Current BoardGameState being used
+	 * @return List<BoardGameState> with all BoardGameStates possible from a given BoardGameState
+	 */
+	@Override
+	public List<BoardGameState> possibleBoardGameStates(BoardGameState currentState) {
+		List<BoardGameState> returnStates = new ArrayList<BoardGameState>();
+		List<Integer> tempMoves = getPossibleMoves();
+		
+		for(Integer i : tempMoves){
+			RPSState tempState = (RPSState) currentState.copy();
+			tempState.chooseMove(i);
+			returnStates.add(tempState);
+		}
+		
+		return returnStates;
+	}
 	
 }

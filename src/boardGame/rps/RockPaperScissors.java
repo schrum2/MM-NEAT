@@ -54,27 +54,6 @@ public class RockPaperScissors implements BoardGame{
 	}
 
 	/**
-	 * Returns a List of all possible BoardGameStates starting from a given BoardGameState
-	 * 
-	 * @param player Index representing a Player to take action
-	 * @param currentState Current BoardGameState being used
-	 * @return List<BoardGameState> with all BoardGameStates possible from a given BoardGameState
-	 */
-	@Override
-	public List<BoardGameState> possibleBoardGameStates(int player, BoardGameState currentState) {
-		List<BoardGameState> returnStates = new ArrayList<BoardGameState>();
-		List<Integer> tempMoves = board.getPossibleMoves();
-		
-		for(Integer i : tempMoves){
-			RPSState tempState = (RPSState) currentState.copy();
-			tempState.chooseMove(player, i);
-			returnStates.add(tempState);
-		}
-		
-		return returnStates;
-	}
-
-	/**
 	 * Updates the RPSState based on a Player's action
 	 */
 	@Override

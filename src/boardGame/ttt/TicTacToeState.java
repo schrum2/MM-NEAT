@@ -256,7 +256,24 @@ public class TicTacToeState implements BoardGameState{
 		TicTacToeState temp = new TicTacToeState(boardState);
 		return temp;
 	}
-	
-	
-	
+
+	/**
+	 * Returns a List of all possible Moves in a Game starting from a given State
+	 * 
+	 * @return List<BoardGameStates> of States possible starting from a specific BoardGameState
+	 */
+	@Override
+	public List<BoardGameState> possibleBoardGameStates(BoardGameState currentState) {
+		List<BoardGameState> returnStates = new ArrayList<BoardGameState>();
+		List<Point> tempPoints = getEmptyIndex();
+		
+		for(Point p : tempPoints){
+			TicTacToeState tempState = (TicTacToeState) currentState.copy();
+			tempState.fill(p);
+			returnStates.add(tempState);
+		}
+		
+		return returnStates;
+	}
+
 }
