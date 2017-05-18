@@ -23,8 +23,8 @@ import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.NoisyLonerTask;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import micro.ai.RandomBiasedAI;
-import micro.ai.abstraction.WorkerRush;
-import micro.ai.abstraction.pathfinding.BFSPathFinding;
+//import micro.ai.abstraction.WorkerRush;
+//import micro.ai.abstraction.pathfinding.BFSPathFinding;
 import micro.ai.core.AI;
 import micro.ai.mcts.uct.UCT;
 import micro.gui.PhysicalGameStatePanel;
@@ -119,14 +119,11 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 		boolean gameover = false;
 
 		ef.setNetwork(individual);
-		
 		AI ai1 = new UCT(100, -1, 100, 10, new RandomBiasedAI(), ef);
-				
 		//AI ai1 = new WorkerRush(utt, new BFSPathFinding());
 		AI ai2 = new RandomBiasedAI();
 
 		JFrame w = null;
-		
 		if(CommonConstants.watch)
 			w = PhysicalGameStatePanel.newVisualizer(gs,640,640,false,PhysicalGameStatePanel.COLORSCHEME_BLACK);
 

@@ -73,9 +73,7 @@ public class NNEvaluationFunction<T extends Network> extends EvaluationFunction{
 	}
 	
 	private double[] normalize (double[] data, int max){
-		for(double d:data){
-			d /= max;
-		}
+		for(double d:data) d /= max;
 		return data;
 	}
 
