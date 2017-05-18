@@ -62,14 +62,8 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 		top.add(centerDistanceEffect);
 		top.add(biasEffect);
 
-
-
-		// TODO Auto-generated constructor stub
 	}
 
-	/* After save and setEffectCheckbox are generalized so that they can be applied to both 
-	 * Breedesizer and Picbreeder, specified method calls will have to be included here.
-	 */
 
 	@Override
 	public String[] sensorLabels() {

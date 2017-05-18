@@ -122,10 +122,10 @@ public class SoundAmplitudeArrayManipulator {
 	 * @throws IOException if an I/O operation has failed or been interrupted
 	 */
 	public static void saveFileFromArray(byte[] amplitudeArray, String fileDest) throws IOException {
-			Path path = Paths.get(fileDest);
-			Files.write(path, amplitudeArray);
+		Path path = Paths.get(fileDest);
+		Files.write(path, amplitudeArray);
 	}
-	
+
 	/**
 	 * Writes an array of double values to a WAV file.  This method only writes
 	 * single channel data.
@@ -180,6 +180,43 @@ public class SoundAmplitudeArrayManipulator {
 					//					ActivationFunctions.triangleWave(2*Math.PI * frequency * time/StdAudio.SAMPLE_RATE), 
 					//					ActivationFunctions.squareWave(2*Math.PI * frequency * time/StdAudio.SAMPLE_RATE), 
 					HyperNEATCPPNGenotype.BIAS};
+
+
+
+			double[] outputs = CPPN.process(inputs);
+			result[(int) time] = outputs[0]; // amplitude
+		}
+		return result;
+	}
+	
+	/**
+	 * Creates a double array of amplitudes using a CPPN. CPPN has three inputs - time, frequency,
+	 * and a bias. It only has one output, which is the amplitude. The array of inputs is looped through 
+	 * so that each index is manipulated by the CPPN, and the output indexes are saved into a result array 
+	 * of doubles. This method does basically the same thing as the one above, but the inputs are modified
+	 * for Breedesizer based on whether the checkboxes have been clicked or not. This allows the audio to be
+	 * changed by the checkboxes as well as the images.
+	 * 
+	 * @param CPPN network used to generate amplitude 
+	 * @param length length of sample
+	 * @param frequency Frequency of note being manipulated
+	 * @param inputMultipliers double array determining whether checkboxes have been turned on or off in Breedesizer
+	 * @return array of doubles representing all CPPN-manipulated output amplitudes
+	 */
+	public static double[] amplitudeGenerator(Network CPPN, int length, int frequency, double[] inputMultipliers) {
+		double[] result = new double[length];
+		for(double time = 0; time < length; time++) {
+			//double[] inputs = new double[]{time/StdAudio.SAMPLE_RATE, Math.sin(2*Math.PI * frequency * time/StdAudio.SAMPLE_RATE), HyperNEATCPPNGenotype.BIAS};
+			//double[] inputs = new double[]{time/StdAudio.SAMPLE_RATE, ActivationFunctions.triangleWave(2*Math.PI * frequency * time/StdAudio.SAMPLE_RATE), HyperNEATCPPNGenotype.BIAS};
+			double[] inputs = new double[]{time/MiscSoundUtil.SAMPLE_RATE, 
+					Math.sin(2*Math.PI * frequency * time/MiscSoundUtil.SAMPLE_RATE), 
+					//					ActivationFunctions.triangleWave(2*Math.PI * frequency * time/StdAudio.SAMPLE_RATE), 
+					//					ActivationFunctions.squareWave(2*Math.PI * frequency * time/StdAudio.SAMPLE_RATE), 
+					HyperNEATCPPNGenotype.BIAS};	
+			// Multiplies the inputs of the pictures by the inputMultiples; used to turn on or off the effects in each picture
+			for(int i = 0; i < inputs.length; i++) {
+				inputs[i] = inputs[i] * inputMultipliers[i];
+			}			
 			double[] outputs = CPPN.process(inputs);
 			result[(int) time] = outputs[0]; // amplitude
 		}

@@ -118,6 +118,9 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	private boolean waitingForUser;
 	private final boolean[] chosen;
 	private final boolean[] activation;
+	// Size of 4: This is the number used by Picbreeder, though Breedesizer currently uses 3.
+	// It would be good to generalize this code and make its meaning less obscure.
+	// If any interactive evolution task ever uses more than 4 inputs, then this value needs to change.
 	protected static double[] inputMultipliers = new double[4];
 
 	private JPanel topper;
@@ -399,7 +402,11 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		addButtonsToPanel(x++);
 		
 	}
-
+	
+	/**
+	 * Accesses title of window
+	 * @return string representing title of window
+	 */
 	protected abstract String getWindowTitle();
 
 	/**
@@ -677,10 +684,11 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	 */
 	@Override
 	public void actionPerformed(ActionEvent event) {
+		System.out.println(event.toString());
 		//open scanner to read which button was pressed
 		Scanner s = new Scanner(event.toString());
-		s.next();
-		s.next();
+		s.next(); //parsing action event, no spaces allowed 
+		s.next(); //parsing the word on
 		int itemID = s.nextInt();
 		s.close();
 		respondToClick(itemID);
