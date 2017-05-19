@@ -22,6 +22,13 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 
 	private static final int LENGTH_DEFAULT = 60000; //default length of generated amplitude
 	private static final int FREQUENCY_DEFAULT = 440; //default frequency of generated amplitude: A440
+	
+	//ideal numbers to initialize AudioFormat; based on obtaining formats of a series of WAV files
+	public static final int DEFAULT_SAMPLE_RATE = 11025; //default rate 
+	public static final int DEFAULT_BIT_RATE = 8; //default bit rate 
+	public static final int DEFAULT_CHANNEL = 1; //default channel number
+	public static final int BYTES_PER_FRAME = 1; //default bytes per frame
+	
 
 	public static final int CPPN_NUM_INPUTS	= 3;
 	public static final int CPPN_NUM_OUTPUTS = 1;
@@ -145,7 +152,8 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 		//SAVING AUDIO
 		
 		chooser = new JFileChooser();
-		AudioFormat af = new AudioFormat(MiscSoundUtil.SAMPLE_RATE, MiscSoundUtil.BITS_PER_SAMPLE,1, true, true);
+		AudioFormat af = new AudioFormat(AudioFormat.Encoding.PCM_UNSIGNED, DEFAULT_SAMPLE_RATE, DEFAULT_BIT_RATE, DEFAULT_CHANNEL, BYTES_PER_FRAME, DEFAULT_SAMPLE_RATE, false);
+		//AudioFormat af = new AudioFormat(AudioFormat.Encoding.PCM_UNSIGNED, DEFAULT_SAMPLE_RATE, DEFAULT_BIT_RATE, DEFAULT_CHANNEL, true, false);
 		chooser.setApproveButtonText("Save");
 		FileNameExtensionFilter audioFilter = new FileNameExtensionFilter("WAV audio files", "wav");
 		chooser.setFileFilter(audioFilter);
@@ -153,7 +161,7 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 		if(audioReturnVal == JFileChooser.APPROVE_OPTION) {//if the user decides to save the image
 			System.out.println("You chose to call the file: " + chooser.getSelectedFile().getName());
 			try {
-				SoundAmplitudeArrayManipulator.saveFileFromCPPN(scores.get(i).individual.getPhenotype(), LENGTH_DEFAULT, FREQUENCY_DEFAULT, chooser.getSelectedFile().getName(), af);
+				SoundAmplitudeArrayManipulator.saveFileFromCPPN(scores.get(i).individual.getPhenotype(), LENGTH_DEFAULT, FREQUENCY_DEFAULT, chooser.getSelectedFile().getName() + ".wav", af);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
