@@ -115,9 +115,20 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 	 */
 	@Override
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {
-		GameState gs = new GameState(pgs, utt);
+		//reset
 		boolean gameover = false;
-
+		utt = new UnitTypeTable();
+		try {
+			pgs = PhysicalGameState.load("data/microRTS/maps/16x16/basesWorkers16x16.xml", utt);
+			//PhysicalGameState pgs = MapGenerator.basesWorkers8x8Obstacle();
+		} catch (JDOMException | IOException e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
+		GameState gs = new GameState(pgs, utt);
+		//trying to reset properly
+		
+		
 		ef.setNetwork(individual);
 		AI ai1 = new UCT(100, -1, 100, 10, new RandomBiasedAI(), ef);
 		//AI ai1 = new WorkerRush(utt, new BFSPathFinding());
@@ -148,23 +159,28 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 			gameover = gs.cycle();
 			if(CommonConstants.watch){
 				w.repaint();
-				//				try {
-				//					Thread.sleep(1);
-				//				} catch (Exception e) {
-				//					e.printStackTrace();
-				//				}
+				try { //TODO idk if this is necessary, removing it didnt seem to do much
+					Thread.sleep(1);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 		}while(!gameover && gs.getTime()<MAXCYCLES);
 		return fitnessFunction(gs);
 	} //END oneEval
 
+	/**
+	 * scores performance in a game
+	 * @param terminalGameState
+	 * @return pair of double[], the first of which has {victory, time, unitDifference}
+	 */
 	private Pair<double[], double[]> fitnessFunction(GameState terminalGameState) {
 		Pair<double[], double[]> score = new Pair<>(new double[3], new double[0]); 
 		//first[]:{victory, time, unitDifference, } on a scale from -1 to 1, except unit difference, which starts at 0 and can go up or down
+		
 		//potential other scoring methods: # units created, # structures built,
 		int gameEndTime = terminalGameState.getTime();
 		List<Unit> unitsLeft = terminalGameState.getUnits();
-		System.out.println(unitsLeft.get(6).getType().name);
 
 		if(terminalGameState.winner() == 0){ //victory organism being tested! 
 			score.t1[0] = 1;
@@ -179,7 +195,6 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 				if(u.getType().name != "Resource") score.t1[2] -= u.getType().cost;
 			}
 		}
-		System.out.println(score);
 		return score;
 	} //END fitnessFunction
 
