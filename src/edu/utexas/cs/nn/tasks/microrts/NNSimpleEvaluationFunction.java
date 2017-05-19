@@ -20,45 +20,55 @@ public class NNSimpleEvaluationFunction<T extends Network> extends NNEvaluationF
 		float score = (float) outputs[0];
 		return score;
 	}
-	
+
 	/**
 	 * counts the number of each unit belonging to each player
+	 * 
 	 * @param gs current game state
-	 * @return	array containing input information  
+	 * @return	array containing input information
 	 */
 	public double[] gameStateToArray(GameState gs){
 		PhysicalGameState pgs = gs.getPhysicalGameState();
-		double[] unitsOnBoard = new double[14];
+		double[] unitsOnBoard = new double[16];
 		Unit currentUnit;
 		int playerAdjustment;
 		for(int i = 0; i < pgs.getWidth(); i++){
 			for(int j = 0; j < pgs.getHeight(); j++){
 				currentUnit = pgs.getUnitAt(i, j);
 				if(currentUnit != null){
-					playerAdjustment = (currentUnit.getPlayer() == 0) ? 0 : 6; //shift enemy units +6 in the array
+					playerAdjustment = (currentUnit.getPlayer() == 0) ? 0 : 7; //shift enemy units +6 in the array
 					switch(currentUnit.getType().name){
-					case "Worker": unitsOnBoard[0 + playerAdjustment]++; break;
+					case "Worker":{
+						unitsOnBoard[0 + playerAdjustment]++; 
+						unitsOnBoard[7 + playerAdjustment] += currentUnit.getResources();
+						break;
+					}
 					case "Light": unitsOnBoard[1 + playerAdjustment]++; break;
 					case "Heavy": unitsOnBoard[2 + playerAdjustment]++; break;
 					case "Ranged": unitsOnBoard[3 + playerAdjustment]++; break;
-					case "Base": unitsOnBoard[4 + playerAdjustment]++; break;
+					case "Base": {
+						unitsOnBoard[4 + playerAdjustment]++; 
+						unitsOnBoard[7 + playerAdjustment] += currentUnit.getResources();
+						break;
+					}
 					case "Barracks": unitsOnBoard[5 + playerAdjustment]++; break;
 					default: break;
 					}
 				}
 			}
 		}
+		//maybe also avg distance of workers from friendly base, avg. distance of workers from enemy base
 		unitsOnBoard = normalize(unitsOnBoard, pgs.getHeight()*pgs.getWidth());
 		return unitsOnBoard;
 	}
-	
+
 	private double[] normalize (double[] data, int max){
 		for(double d:data) d /= max;
 		return data;
 	}
-	
+
 	public String[] sensorLabels() {
 		return new String[]{"workers", "lights", "heavies", "ranged-units", "bases", "barracks", "enemy-workers", 
- 							"enemy-lights", "enemy-heavies", "enemy-ranged-units", "enemy-bases", "enemy-barracks"};
+				"enemy-lights", "enemy-heavies", "enemy-ranged-units", "enemy-bases", "enemy-barracks"};
 	}
 }

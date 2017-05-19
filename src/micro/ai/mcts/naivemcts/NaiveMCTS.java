@@ -13,6 +13,8 @@ import micro.ai.evaluation.SimpleSqrtEvaluationFunction3;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
+import edu.utexas.cs.nn.util.random.RandomNumbers;
 import micro.rts.GameState;
 import micro.rts.PlayerAction;
 import micro.rts.units.UnitTypeTable;
@@ -26,7 +28,7 @@ public class NaiveMCTS extends AIWithComputationBudget implements InterruptibleA
     public static int DEBUG = 0;
     public EvaluationFunction ef = null;
        
-    Random r = new Random();
+    Random r = RandomNumbers.randomGenerator;
     public AI playoutPolicy = new RandomBiasedAI();
     long max_actions_so_far = 0;
     
