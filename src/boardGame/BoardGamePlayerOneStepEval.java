@@ -1,9 +1,9 @@
 package boardGame;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import edu.utexas.cs.nn.networks.Network;
+import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
 
 public class BoardGamePlayerOneStepEval<T extends Network> implements BoardGamePlayer {
 
@@ -15,22 +15,16 @@ public class BoardGamePlayerOneStepEval<T extends Network> implements BoardGameP
 	
 	@Override
 	public BoardGameState takeAction(BoardGameState current) {
-		List <double[]> outputs = new ArrayList<double[]>(); // Stores the network's ouputs
 		List<BoardGameState> poss = current.possibleBoardGameStates(current);
+		double[] utilities = new double[poss.size()]; // Stores the network's ouputs
 		
+		int index = 0;
 		for(BoardGameState bgs : poss){ // Gets the network's outputs for all possible BoardGameStates
 			double[] description = bgs.getDescriptor();
-			outputs.add(network.process(description));
+			utilities[index++] = network.process(description)[0];
 		}
-		
-		double[] action = new double[0]; // Stores the Array with the longest length
-		
-		for(double[] d : outputs){ // Gets the output with the longest Array length
-			if(d.length > action.length){
-				action = d;
-			}
-		}
-		return poss.get(outputs.indexOf(action)); // Returns the BoardGameState which produced the highest network output
+
+		return poss.get(StatisticsUtilities.argmax(utilities)); // Returns the BoardGameState which produced the highest network output
 	}
 
 }

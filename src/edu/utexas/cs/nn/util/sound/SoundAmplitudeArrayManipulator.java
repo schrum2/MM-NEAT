@@ -23,6 +23,37 @@ import edu.utexas.cs.nn.networks.Network;
  *
  */
 public class SoundAmplitudeArrayManipulator {
+	
+	public static void notes() {
+		final double c3 = 130.81;
+		final double cSharp3 = 138.59;
+		final double d3 = 146.83;
+		final double dSharp3 = 155.56;
+		final double e3 = 164.81;
+		final double f3 = 174.61;
+		final double fSharp3 = 185.00;
+		final double g3 = 196.00;
+		final double gSharp3 = 207.65;
+		final double a3 = 220.00;
+		final double aSharp3 = 233.08;
+		final double b3 = 246.94;
+		final double c4 = 261.63;
+		final double cSharp4 = 277.18;
+		final double d4 = 293.66;
+		final double dSharp4 = 311.13;
+		final double e4 = 329.63;
+		final double f4 = 349.23;
+		final double fSharp4 = 369.99;
+		final double g4 = 392.00;
+		final double gSharp4 = 415.30;
+		final double a4 = 440.00;
+		final double aSharp4 = 466.16;
+		final double b4 = 493.88;
+		final double c5 = 523.25;
+		
+		double[] keyboard = new double[]{c3, cSharp3, d3, dSharp3, e3, f3, fSharp3, g3, gSharp3, a3, aSharp3, b3, c4, cSharp4, d4, dSharp4, e4, f4, fSharp4, g4, gSharp4, a4, aSharp4, b4, c5};
+		
+	}
 
 	//Methods from GT - used to extract amplitude from recorded wave
 
@@ -129,8 +160,9 @@ public class SoundAmplitudeArrayManipulator {
 	 * @param doubleArray the array of double values to save
 	 * @param fileName the desired name of the file to save
 	 * @return boolean indicating success or failure of the write
+	 * @throws IOException 
 	 */
-	public static boolean writeSingleChannel(AudioFormat format, double[] doubleArray, String fileName) {
+	public static boolean writeSingleChannel(AudioFormat format, double[] doubleArray, String fileName) throws IOException {
 		/* convert the double array to a byte array */
 		byte[] data = new byte[2 * doubleArray.length];
 		for (int i = 0; i < doubleArray.length; i++) {
@@ -166,7 +198,7 @@ public class SoundAmplitudeArrayManipulator {
 	 * @param frequency Frequency of note being manipulated
 	 * @return array of doubles representing all CPPN-manipulated output amplitudes
 	 */
-	public static double[] amplitudeGenerator(Network CPPN, int length, int frequency) {
+	public static double[] amplitudeGenerator(Network CPPN, int length, double frequency) {
 		double[] result = new double[length];
 		for(double time = 0; time < length; time++) {
 			//double[] inputs = new double[]{time/StdAudio.SAMPLE_RATE, Math.sin(2*Math.PI * frequency * time/StdAudio.SAMPLE_RATE), HyperNEATCPPNGenotype.BIAS};
@@ -199,7 +231,7 @@ public class SoundAmplitudeArrayManipulator {
 	 * @param inputMultipliers double array determining whether checkboxes have been turned on or off in Breedesizer
 	 * @return array of doubles representing all CPPN-manipulated output amplitudes
 	 */
-	public static double[] amplitudeGenerator(Network CPPN, int length, int frequency, double[] inputMultipliers) {
+	public static double[] amplitudeGenerator(Network CPPN, int length, double frequency, double[] inputMultipliers) {
 		double[] result = new double[length];
 		for(double time = 0; time < length; time++) {
 			//double[] inputs = new double[]{time/StdAudio.SAMPLE_RATE, Math.sin(2*Math.PI * frequency * time/StdAudio.SAMPLE_RATE), HyperNEATCPPNGenotype.BIAS};
@@ -228,7 +260,7 @@ public class SoundAmplitudeArrayManipulator {
 	 * @param fileDest String representation of location where generated file will be saved
 	 * @throws IOException if an I/O operation has failed or been interrupted
 	 */
-	public static void saveFileFromCPPN(Network CPPN, int length, int frequency, String fileName, AudioFormat format) throws IOException {
+	public static void saveFileFromCPPN(Network CPPN, int length, double frequency, String fileName, AudioFormat format) throws IOException {
 		double[] generatedSound = amplitudeGenerator(CPPN, length, frequency);
 		writeSingleChannel(format, generatedSound, fileName);
 	}

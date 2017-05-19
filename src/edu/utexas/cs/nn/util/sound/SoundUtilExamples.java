@@ -47,7 +47,7 @@ public class SoundUtilExamples {
 		CPPNExamples();
 	}
 
-	public static void CPPNExamples() throws IOException, UnsupportedAudioFileException, LineUnavailableException, InterruptedException {
+	public static void CPPNExamples() throws IOException {
 		Parameters.initializeParameterCollections(new String[]{"io:false","netio:false"});
 		MMNEAT.loadClasses();
 		HyperNEATCPPNGenotype test = new HyperNEATCPPNGenotype(3, 1, 0);
@@ -55,26 +55,59 @@ public class SoundUtilExamples {
 			test.mutate();
 		}
 		Network cppn = test.getCPPN();
-		double[] testArray = SoundAmplitudeArrayManipulator.amplitudeGenerator(cppn, 60000, 440);
-		AudioFormat af1 = new AudioFormat(MiscSoundUtil.SAMPLE_RATE, MiscSoundUtil.BITS_PER_SAMPLE,1, true, true);
-		SoundAmplitudeArrayManipulator.saveFileFromCPPN(cppn, 60000, 440, "cppn1.wav", af1);
-		AudioFormat af2 = new AudioFormat(MiscSoundUtil.SAMPLE_RATE, MiscSoundUtil.BITS_PER_SAMPLE,1, true, false); // Correct?
-		SoundAmplitudeArrayManipulator.saveFileFromCPPN(cppn, 60000, 440, "cppn2.wav", af2);
-		AudioFormat af3 = new AudioFormat(MiscSoundUtil.SAMPLE_RATE, MiscSoundUtil.BYTES_PER_SAMPLE,1, true, true);
-		SoundAmplitudeArrayManipulator.saveFileFromCPPN(cppn, 60000, 440, "cppn3.wav", af3);
-		AudioFormat af4 = new AudioFormat(MiscSoundUtil.SAMPLE_RATE, MiscSoundUtil.BYTES_PER_SAMPLE,1, true, false);
-		SoundAmplitudeArrayManipulator.saveFileFromCPPN(cppn, 60000, 440, "cppn4.wav", af4);
-		MiscSoundUtil.playDoubleArray(testArray);
-		GraphicsUtil.wavePlotFromDoubleArray(testArray, 500, 500);
+//		double[] testArray = SoundAmplitudeArrayManipulator.amplitudeGenerator(cppn, 60000, 440);
+//		AudioFormat af1 = new AudioFormat(MiscSoundUtil.SAMPLE_RATE, MiscSoundUtil.BITS_PER_SAMPLE,1, true, true);
+//		SoundAmplitudeArrayManipulator.saveFileFromCPPN(cppn, 60000, 440, "cppn1.wav", af1);
+//		AudioFormat af2 = new AudioFormat(MiscSoundUtil.SAMPLE_RATE/2, MiscSoundUtil.BITS_PER_SAMPLE/2,1, true, false); // Correct?
+//		SoundAmplitudeArrayManipulator.saveFileFromCPPN(cppn, 60000, 440, "cppn2.wav", af2);
+//		AudioFormat af3 = new AudioFormat(MiscSoundUtil.SAMPLE_RATE, MiscSoundUtil.BYTES_PER_SAMPLE,1, true, true);
+//		SoundAmplitudeArrayManipulator.saveFileFromCPPN(cppn, 60000, 440, "cppn3.wav", af3);
+//		AudioFormat af4 = new AudioFormat(MiscSoundUtil.SAMPLE_RATE, MiscSoundUtil.BYTES_PER_SAMPLE,1, true, false);
+//		SoundAmplitudeArrayManipulator.saveFileFromCPPN(cppn, 60000, 440, "cppn4.wav", af4);
+//		MiscSoundUtil.playDoubleArray(testArray);
+//		GraphicsUtil.wavePlotFromDoubleArray(testArray, 500, 500);
 		
-		
+		//double array containing frequencies of a C Major scale
+		double[] frequencies = new double[]{261.626, 293.665, 329.628, 349.228, 391.995, 440.0, 493.883, 523.251};
+		for(int i = 0; i < frequencies.length; i++) {
+			double[] scaleCPPN = SoundAmplitudeArrayManipulator.amplitudeGenerator(cppn, 30000, frequencies[i]);
+			MiscSoundUtil.playDoubleArray(scaleCPPN);
+		}
+	}
+
+	public static void saveFileTests() throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException {
 		//testing writeSingleChannel to see if the problem saving files has to do with initialization of AudioFormat
 		File harp = new File(HARP_WAV);
 		AudioInputStream harpAIS = WAVUtil.audioStream(harp);
-		double[] harpDoubleArray = MiscSoundUtil.read(HARP_WAV);
-		WAVUtil.playWAVFile(harp);
-		SoundAmplitudeArrayManipulator.writeSingleChannel(harpAIS.getFormat(), harpDoubleArray, "harpDoubleArray.wav");
+		System.out.println("harp: " + harpAIS.getFormat());
+		System.out.println(harpAIS.getFormat().getSampleRate());
+		System.out.println(harpAIS.getFormat().getFrameRate());
+		System.out.println(harpAIS.getFormat().isBigEndian());
+		System.out.println();
 		
+		File bear = new File(BEARGROWL_WAV);
+		AudioInputStream bearAIS = WAVUtil.audioStream(bear);
+		System.out.println("bear: " + bearAIS.getFormat());
+		System.out.println(bearAIS.getFormat().getSampleRate());
+		System.out.println(bearAIS.getFormat().getFrameRate());
+		System.out.println(bearAIS.getFormat().isBigEndian());
+		System.out.println();
+		
+		
+		File applause = new File(APPLAUSE_WAV);
+		AudioInputStream applauseAIS = WAVUtil.audioStream(applause);
+		System.out.println("applause: " + applauseAIS.getFormat());
+		System.out.println(applauseAIS.getFormat().getSampleRate());
+		System.out.println(applauseAIS.getFormat().getFrameRate());
+		System.out.println(applauseAIS.getFormat().isBigEndian());
+		System.out.println();
+		
+		
+		double[] harpDoubleArray = MiscSoundUtil.read(HARP_WAV);
+		//MiscSoundUtil.playDoubleArray(harpDoubleArray);
+		System.out.println(Arrays.toString(harpDoubleArray));
+		//WAVUtil.playWAVFile(harp);
+		SoundAmplitudeArrayManipulator.writeSingleChannel(harpAIS.getFormat(), harpDoubleArray, "harpDoubleArray.wav");
 	}
 
 	public static void plotExamples() {
@@ -261,7 +294,7 @@ public class SoundUtilExamples {
 		File happyFile = new File(HAPPY_MP3);
 		//		AudioInputStream happyStream = WAVUtil.audioStream(happyFile);
 		//		byte[] happyNumbers = SoundAmplitudeArrayManipulator.extractAmplitudeByteArrayFromAudioInputStream(happyStream);
-		
+
 		//		SoundAmplitudeArrayManipulator.saveFileFromArray(happyNumbers, "data/sounds/happyCopy.mp3");
 		String classical = "data/sounds/CLASSICA.MID";
 		byte[] classicalNumbers = MiscSoundUtil.readByte(classical);
