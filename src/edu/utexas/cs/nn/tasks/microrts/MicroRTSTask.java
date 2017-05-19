@@ -202,7 +202,8 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 				else if(u.getPlayer()==1)
 					score.t1[2] -= u.getType().cost;
 			}
-			score.t1[1] = -1 * score.t1[2]; //winning hard but didn't close = very bad, basically even = okay, losing but held out = great 
+			//winning hard but didn't close = very bad, basically even = okay, losing but held out = great
+			score.t1[1] = -1 * score.t1[2] / (pgs.getHeight()*pgs.getWidth());  
 		}
 		System.out.println("result?: "+score.t1[0] + " unit-difference: "+ score.t1[2] + " time: " +score.t1[1]);
 		return score;
