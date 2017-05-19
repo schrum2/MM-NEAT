@@ -129,8 +129,9 @@ public class SoundAmplitudeArrayManipulator {
 	 * @param doubleArray the array of double values to save
 	 * @param fileName the desired name of the file to save
 	 * @return boolean indicating success or failure of the write
+	 * @throws IOException 
 	 */
-	public static boolean writeSingleChannel(AudioFormat format, double[] doubleArray, String fileName) {
+	public static boolean writeSingleChannel(AudioFormat format, double[] doubleArray, String fileName) throws IOException {
 		/* convert the double array to a byte array */
 		byte[] data = new byte[2 * doubleArray.length];
 		for (int i = 0; i < doubleArray.length; i++) {

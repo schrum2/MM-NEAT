@@ -74,26 +74,34 @@ public class SoundUtilExamples {
 		File harp = new File(HARP_WAV);
 		AudioInputStream harpAIS = WAVUtil.audioStream(harp);
 		System.out.println("harp: " + harpAIS.getFormat());
+		System.out.println(harpAIS.getFormat().getSampleRate());
 		System.out.println(harpAIS.getFormat().getFrameRate());
 		System.out.println(harpAIS.getFormat().isBigEndian());
+		System.out.println();
 		
 		File bear = new File(BEARGROWL_WAV);
 		AudioInputStream bearAIS = WAVUtil.audioStream(bear);
 		System.out.println("bear: " + bearAIS.getFormat());
+		System.out.println(bearAIS.getFormat().getSampleRate());
 		System.out.println(bearAIS.getFormat().getFrameRate());
 		System.out.println(bearAIS.getFormat().isBigEndian());
+		System.out.println();
 		
 		
 		File applause = new File(APPLAUSE_WAV);
 		AudioInputStream applauseAIS = WAVUtil.audioStream(applause);
 		System.out.println("applause: " + applauseAIS.getFormat());
+		System.out.println(applauseAIS.getFormat().getSampleRate());
 		System.out.println(applauseAIS.getFormat().getFrameRate());
 		System.out.println(applauseAIS.getFormat().isBigEndian());
+		System.out.println();
 		
 		
-//		double[] harpDoubleArray = MiscSoundUtil.read(HARP_WAV);
-//		WAVUtil.playWAVFile(harp);
-		//SoundAmplitudeArrayManipulator.writeSingleChannel(harpAIS.getFormat(), harpDoubleArray, "harpDoubleArray.wav");
+		double[] harpDoubleArray = MiscSoundUtil.read(HARP_WAV);
+		//MiscSoundUtil.playDoubleArray(harpDoubleArray);
+		System.out.println(Arrays.toString(harpDoubleArray));
+		//WAVUtil.playWAVFile(harp);
+		SoundAmplitudeArrayManipulator.writeSingleChannel(harpAIS.getFormat(), harpDoubleArray, "harpDoubleArray.wav");
 	}
 
 	public static void plotExamples() {

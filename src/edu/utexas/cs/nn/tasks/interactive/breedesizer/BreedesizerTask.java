@@ -24,10 +24,10 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 	private static final int FREQUENCY_DEFAULT = 440; //default frequency of generated amplitude: A440
 	
 	//ideal numbers to initialize AudioFormat; based on obtaining formats of a series of WAV files
-	public static final int DEFAULT_SAMPLE_RATE = 11025; //default rate 
-	public static final int DEFAULT_BIT_RATE = 8; //default bit rate 
-	public static final int DEFAULT_CHANNEL = 1; //default channel number
-	public static final int BYTES_PER_FRAME = 1; //default bytes per frame
+	public static final float DEFAULT_SAMPLE_RATE = 11025; //default frame rate is same value
+	public static final int DEFAULT_BIT_RATE = 8; 
+	public static final int DEFAULT_CHANNEL = 1; 
+	public static final int BYTES_PER_FRAME = 1; 
 	
 
 	public static final int CPPN_NUM_INPUTS	= 3;
@@ -152,8 +152,7 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 		//SAVING AUDIO
 		
 		chooser = new JFileChooser();
-		AudioFormat af = new AudioFormat(AudioFormat.Encoding.PCM_UNSIGNED, DEFAULT_SAMPLE_RATE, DEFAULT_BIT_RATE, DEFAULT_CHANNEL, BYTES_PER_FRAME, DEFAULT_SAMPLE_RATE, false);
-		//AudioFormat af = new AudioFormat(AudioFormat.Encoding.PCM_UNSIGNED, DEFAULT_SAMPLE_RATE, DEFAULT_BIT_RATE, DEFAULT_CHANNEL, true, false);
+		AudioFormat af = new AudioFormat(AudioFormat.Encoding.PCM_UNSIGNED, DEFAULT_SAMPLE_RATE, DEFAULT_BIT_RATE, DEFAULT_CHANNEL, BYTES_PER_FRAME, DEFAULT_SAMPLE_RATE, true);
 		chooser.setApproveButtonText("Save");
 		FileNameExtensionFilter audioFilter = new FileNameExtensionFilter("WAV audio files", "wav");
 		chooser.setFileFilter(audioFilter);
@@ -171,10 +170,7 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 			p.setVisibility(false);
 			System.out.println("audio file not saved");
 		
-		}
-		
-		
-		
+		}	
 
 	}
 
