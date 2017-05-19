@@ -681,6 +681,7 @@ public class Parameters {
 		stringOptions.add("branchRoot", "", "Evolve from some other run as starting point, based off of this parameter file");
 		stringOptions.add("replayNetwork", "", "Network displayed while replaying pacman eval");
 		stringOptions.add("pinballConfig", "pinball_simple_single.cfg", "Configuration file for the PinballTask");
+		stringOptions.add("map", "8x8/basesWorkers8x8.xml", "filepath from maps folder to desired map file for MicroRTSTask");
 		// Class options
 		classOptions.add("hyperNEATSeedTask", null, "HyperNEAT task that seeds a standard NEAT task");
 		classOptions.add("substrateMapping", CenteredSubstrateMapping.class, "Determines the type of subtrate coordinate mapping we want to use");
