@@ -44,7 +44,7 @@ public class SoundUtilExamples {
 	private static final String PIRATES = "data/sounds/pirates.mid";
 
 	public static void main(String[] args) throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException, JavaLayerException {
-		saveFileTests();
+		CPPNExamples();
 	}
 
 	public static void CPPNExamples() throws IOException {
@@ -55,18 +55,24 @@ public class SoundUtilExamples {
 			test.mutate();
 		}
 		Network cppn = test.getCPPN();
-		double[] testArray = SoundAmplitudeArrayManipulator.amplitudeGenerator(cppn, 60000, 440);
-		AudioFormat af1 = new AudioFormat(MiscSoundUtil.SAMPLE_RATE, MiscSoundUtil.BITS_PER_SAMPLE,1, true, true);
-		SoundAmplitudeArrayManipulator.saveFileFromCPPN(cppn, 60000, 440, "cppn1.wav", af1);
-		AudioFormat af2 = new AudioFormat(MiscSoundUtil.SAMPLE_RATE/2, MiscSoundUtil.BITS_PER_SAMPLE/2,1, true, false); // Correct?
-		SoundAmplitudeArrayManipulator.saveFileFromCPPN(cppn, 60000, 440, "cppn2.wav", af2);
-		AudioFormat af3 = new AudioFormat(MiscSoundUtil.SAMPLE_RATE, MiscSoundUtil.BYTES_PER_SAMPLE,1, true, true);
-		SoundAmplitudeArrayManipulator.saveFileFromCPPN(cppn, 60000, 440, "cppn3.wav", af3);
-		AudioFormat af4 = new AudioFormat(MiscSoundUtil.SAMPLE_RATE, MiscSoundUtil.BYTES_PER_SAMPLE,1, true, false);
-		SoundAmplitudeArrayManipulator.saveFileFromCPPN(cppn, 60000, 440, "cppn4.wav", af4);
-		MiscSoundUtil.playDoubleArray(testArray);
-		GraphicsUtil.wavePlotFromDoubleArray(testArray, 500, 500);
-
+//		double[] testArray = SoundAmplitudeArrayManipulator.amplitudeGenerator(cppn, 60000, 440);
+//		AudioFormat af1 = new AudioFormat(MiscSoundUtil.SAMPLE_RATE, MiscSoundUtil.BITS_PER_SAMPLE,1, true, true);
+//		SoundAmplitudeArrayManipulator.saveFileFromCPPN(cppn, 60000, 440, "cppn1.wav", af1);
+//		AudioFormat af2 = new AudioFormat(MiscSoundUtil.SAMPLE_RATE/2, MiscSoundUtil.BITS_PER_SAMPLE/2,1, true, false); // Correct?
+//		SoundAmplitudeArrayManipulator.saveFileFromCPPN(cppn, 60000, 440, "cppn2.wav", af2);
+//		AudioFormat af3 = new AudioFormat(MiscSoundUtil.SAMPLE_RATE, MiscSoundUtil.BYTES_PER_SAMPLE,1, true, true);
+//		SoundAmplitudeArrayManipulator.saveFileFromCPPN(cppn, 60000, 440, "cppn3.wav", af3);
+//		AudioFormat af4 = new AudioFormat(MiscSoundUtil.SAMPLE_RATE, MiscSoundUtil.BYTES_PER_SAMPLE,1, true, false);
+//		SoundAmplitudeArrayManipulator.saveFileFromCPPN(cppn, 60000, 440, "cppn4.wav", af4);
+//		MiscSoundUtil.playDoubleArray(testArray);
+//		GraphicsUtil.wavePlotFromDoubleArray(testArray, 500, 500);
+		
+		//double array containing frequencies of a C Major scale
+		double[] frequencies = new double[]{261.626, 293.665, 329.628, 349.228, 391.995, 440.0, 493.883, 523.251};
+		for(int i = 0; i < frequencies.length; i++) {
+			double[] scaleCPPN = SoundAmplitudeArrayManipulator.amplitudeGenerator(cppn, 30000, frequencies[i]);
+			MiscSoundUtil.playDoubleArray(scaleCPPN);
+		}
 	}
 
 	public static void saveFileTests() throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException {
