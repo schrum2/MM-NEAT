@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.StringTokenizer;
 
+import boardGame.BoardGamePlayerRandom;
 import edu.utexas.cs.nn.breve2D.Breve2DGame;
 import edu.utexas.cs.nn.breve2D.agent.RushingPlayer;
 import edu.utexas.cs.nn.breve2D.dynamics.PlayerPredatorMonsterPrey;
@@ -683,6 +684,8 @@ public class Parameters {
 		stringOptions.add("pinballConfig", "pinball_simple_single.cfg", "Configuration file for the PinballTask");
 		stringOptions.add("map", "8x8/basesWorkers8x8.xml", "filepath from maps folder to desired map file for MicroRTSTask");
 		// Class options
+		classOptions.add("boardGame", null, "Board game being played by BoardGameTask");
+		classOptions.add("boardGameOpponent", BoardGamePlayerRandom.class, "Board game being played by BoardGameTask");
 		classOptions.add("hyperNEATSeedTask", null, "HyperNEAT task that seeds a standard NEAT task");
 		classOptions.add("substrateMapping", CenteredSubstrateMapping.class, "Determines the type of subtrate coordinate mapping we want to use");
 		classOptions.add("staticPreyController", PreyFleeClosestPredatorController.class, "This parameter specifies the prey controller that predators evolve against");

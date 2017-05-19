@@ -5,6 +5,7 @@ import java.util.List;
 
 import boardGame.BoardGame;
 import boardGame.BoardGamePlayer;
+import boardGame.BoardGamePlayerOneStepEval;
 import boardGame.BoardGameViewer;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
@@ -14,20 +15,29 @@ import edu.utexas.cs.nn.networks.hyperneat.HyperNEATTask;
 import edu.utexas.cs.nn.networks.hyperneat.Substrate;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.tasks.NoisyLonerTask;
+import edu.utexas.cs.nn.util.ClassCreation;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 
 public class BoardGameTask<T extends Network> extends NoisyLonerTask<T> implements NetworkTask, HyperNEATTask{
 
 	BoardGameViewer view = null;
 	BoardGame bg;
+	BoardGamePlayer opponent;
 	
 	/**
 	 * Constructor for a new BoardGameTask
 	 */
 	public BoardGameTask(){
-		MMNEAT.registerFitnessFunction("?????");
+		MMNEAT.registerFitnessFunction("Win Reward");
 		
-		// TODO: Instantiate bg using ClassCreation
+		try {
+			bg = (BoardGame) ClassCreation.createObject("boardGame");
+			opponent = (BoardGamePlayer) ClassCreation.createObject("boardGameOpponent"); // The opponent
+		} catch (NoSuchMethodException e) {
+			e.printStackTrace();
+			System.out.println("BoardGame instance could not be loaded");
+			System.exit(1);
+		}
 	}
 
 	/**
@@ -95,11 +105,9 @@ public class BoardGameTask<T extends Network> extends NoisyLonerTask<T> implemen
 		if(CommonConstants.watch){ // If set to Visually Evaluate the Task
 		}
 
-		BoardGamePlayer p1 = null; // create from Genotype individual
-		BoardGamePlayer p2 = null; // The opponent
+		BoardGamePlayer evolved = new BoardGamePlayerOneStepEval<T>(individual.getPhenotype());
 		
-		double fitness = 0;
-		BoardGamePlayer[] players = new BoardGamePlayer[]{p1, p2};
+		BoardGamePlayer[] players = new BoardGamePlayer[]{evolved, opponent};
 		//bg.reset();
 		while(!bg.isGameOver()){
 			//System.out.println(game);
@@ -107,7 +115,13 @@ public class BoardGameTask<T extends Network> extends NoisyLonerTask<T> implemen
 		}
 //		System.out.println("Game over");
 //		System.out.println(game);
-			
+		
+		List<Integer> winners = bg.getWinners();
+		
+		double fitness = winners.size() == 2 ? 0 : // two winners means tie: fitness is 0 
+						(winners.get(0) == 0 ? 1 // If the one winner is 0, then the neural network won: fitness 1
+											 : -2); // Else the network lost: fitness -2
+		
 		// TODO: What is the fitness?
 		Pair<double[], double[]> evalResults = new Pair<double[], double[]>(new double[] { fitness }, new double[0]);			
 		return evalResults; // Returns the Fitness of the individual's Genotype<T>

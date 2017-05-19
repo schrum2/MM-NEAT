@@ -5,7 +5,7 @@ import java.util.List;
 
 import edu.utexas.cs.nn.networks.Network;
 
-public class BoardGamePlayerMinimax<T extends Network> implements BoardGamePlayer{
+public class BoardGamePlayerMinimax<T extends Network,S extends BoardGameState> implements BoardGamePlayer<S> {
 	
 	T network;
 	BoardGameHeuristic boardHeuristic;
@@ -17,10 +17,10 @@ public class BoardGamePlayerMinimax<T extends Network> implements BoardGamePlaye
 	}	
 	
 	@Override
-	public BoardGameState takeAction(BoardGameState current) {
+	public S takeAction(S current) {
 		// TODO: Add Heuristic analysis; Right now, has exact same code as OneStepEval Player
 		List <double[]> outputs = new ArrayList<double[]>(); // Stores the network's ouputs
-		List<BoardGameState> poss = current.possibleBoardGameStates(current);
+		List<S> poss = current.possibleBoardGameStates(current);
 		
 		for(BoardGameState bgs : poss){ // Gets the network's outputs for all possible BoardGameStates
 			double[] description = bgs.getDescriptor();

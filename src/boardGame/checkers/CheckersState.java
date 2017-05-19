@@ -90,8 +90,17 @@ public class CheckersState implements BoardGameState{
 	 */
 	@Override
 	public double[] getDescriptor() {
-		// TODO Auto-generated method stub
-		return null;
+
+		double[] features = new double[BOARD_WIDTH*BOARD_WIDTH];
+		int index = 0;
+		
+		for(int i = 0; i < BOARD_WIDTH; i++){
+			for(int j = 0; j < BOARD_WIDTH; j ++){
+				features[index++] = boardState[i][j];
+			}
+		}
+		
+		return features;
 	}
 
 	/**

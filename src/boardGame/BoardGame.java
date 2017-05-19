@@ -7,7 +7,7 @@ import java.util.List;
  * 
  * @author johnso17
  */
-public interface BoardGame {
+public interface BoardGame<T extends BoardGameState> {
 	
 	/**
 	 * Returns the number of Players in a specific BoardGame
@@ -41,7 +41,7 @@ public interface BoardGame {
 	 * 
 	 * @param bgp Player that gets to move next
 	 */
-	public void move(BoardGamePlayer bgp);
+	public void move(BoardGamePlayer<T> bgp);
 	
 	
 	/**

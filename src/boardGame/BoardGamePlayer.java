@@ -5,14 +5,14 @@ package boardGame;
  * 
  * @author johnso17
  */
-public interface BoardGamePlayer {
-		
+public interface BoardGamePlayer<T extends BoardGameState> {
+	
 	/**
 	 * Updates the current BoardGameState with an action by this BoardGamePlayer
 	 * 
 	 * @param current BoardGameState to be evaluated
 	 * @return BoardGameState updated with the action of this Player
 	 */
-	public BoardGameState takeAction(BoardGameState current);
+	public T takeAction(T current);
 	
 }

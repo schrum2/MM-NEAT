@@ -5,7 +5,7 @@ import java.util.List;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
 
-public class BoardGamePlayerOneStepEval<T extends Network> implements BoardGamePlayer {
+public class BoardGamePlayerOneStepEval<T extends Network> implements BoardGamePlayer<BoardGameState> {
 
 	T network;
 	
@@ -26,5 +26,6 @@ public class BoardGamePlayerOneStepEval<T extends Network> implements BoardGameP
 
 		return poss.get(StatisticsUtilities.argmax(utilities)); // Returns the BoardGameState which produced the highest network output
 	}
+
 
 }

@@ -34,7 +34,7 @@ public interface BoardGameState {
 	 * @param currentState The current BoardGameState
 	 * @return List<BoardGameState> of all possible BoardGameStates starting from the given currentState
 	 */
-	public List<BoardGameState> possibleBoardGameStates(BoardGameState currentState);
+	public <T extends BoardGameState> List<T> possibleBoardGameStates(T currentState);
 	
 	
 	

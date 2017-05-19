@@ -8,7 +8,7 @@ import boardGame.BoardGame;
 import boardGame.BoardGamePlayer;
 import boardGame.BoardGameState;
 
-public class TicTacToe implements BoardGame{
+public class TicTacToe implements BoardGame<TicTacToeState> {
 
 	private int currentPlayer; // Used to keep track of whose turn it is
 	private TicTacToeState board;
@@ -55,8 +55,8 @@ public class TicTacToe implements BoardGame{
 	/**
 	 * Updates the Game based on the actions of the current Player
 	 */
-	public void move(BoardGamePlayer bgp) { 
-		bgp.takeAction(board);
+	public void move(BoardGamePlayer<TicTacToeState> bgp) { 
+		board = bgp.takeAction(board);
 		currentPlayer = (currentPlayer + 1) % 2; // Switches the currentPlayer
 	}
 

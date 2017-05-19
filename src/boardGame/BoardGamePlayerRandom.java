@@ -1,12 +1,11 @@
 package boardGame;
 
 import java.util.List;
-import java.util.Random;
 
 import edu.utexas.cs.nn.util.random.RandomNumbers;
 
-public class BoardGamePlayerRandom implements BoardGamePlayer{
-
+public class BoardGamePlayerRandom<T extends BoardGameState> implements BoardGamePlayer<T> {
+	
 	/**
 	 * Chooses a random action out of the list of possible actions at a given BoardGameState
 	 * 
@@ -14,8 +13,8 @@ public class BoardGamePlayerRandom implements BoardGamePlayer{
 	 * @return BoardGameState updated with the randomly selected move
 	 */
 	@Override
-	public BoardGameState takeAction(BoardGameState current) {
-		List<BoardGameState> poss = current.possibleBoardGameStates(current);
+	public T takeAction(T current) {
+		List<T> poss = current.possibleBoardGameStates(current);
 		return poss.get(RandomNumbers.randomGenerator.nextInt(poss.size()));
 	}
 

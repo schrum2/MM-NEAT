@@ -1,36 +1,26 @@
 package boardGame;
 
-import boardGame.checkers.Checkers;
-import boardGame.rps.RPSPlayer;
-import boardGame.rps.RPSPlayerHuman;
-
-import boardGame.rps.RockPaperScissors;
 import boardGame.ttt.TicTacToe;
-import boardGame.ttt.TicTacToePlayer;
 import boardGame.ttt.TicTacToePlayerHuman;
-
 import boardGame.ttt.TicTacToeState;
 
 public class Testing {
 
 	public static void main(String[] args) {
 		// Code similar to what is below should eventually be placed into the
-		// oneEval method of BoardGameTask
+		// oneEval method of BoardGameTask BoardGamePlayerRandom
 		
-//		BoardGame game = new TicTacToe();
-//		BoardGamePlayer[] players = new TicTacToePlayer[]{new TicTacToePlayerHuman(), new TicTacToePlayerRandom()};
+		BoardGame<TicTacToeState> game = new TicTacToe();
+		BoardGamePlayer[] players = new BoardGamePlayer[]{new TicTacToePlayerHuman(), new BoardGamePlayerRandom<TicTacToeState>()};
 //		BoardGame game = new RockPaperScissors();
 //		BoardGamePlayer[] players = new RPSPlayer[]{new RPSPlayerRandom(), new RPSPlayerRandom()};
-		Checkers game = new Checkers();
+//		Checkers game = new Checkers();
 //		BoardGamePlayer[] players = new RPSPlayer[]{new RPSPlayerRandom(), new RPSPlayerRandom()};
-//		while(!game.isGameOver()){
-//			System.out.println(game);
-//			game.move(players[game.getCurrentPlayer()]);
-//		}
-//		System.out.println("Game over");
-//		System.out.println(game);
-//	}
-	
-		System.out.println(game.getState().toString());
+		while(!game.isGameOver()){
+			System.out.println(game);
+			game.move(players[game.getCurrentPlayer()]);
+}
+		System.out.println("Game over");
+		System.out.println(game);
 	}
 }

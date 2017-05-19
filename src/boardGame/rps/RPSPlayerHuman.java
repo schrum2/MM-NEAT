@@ -2,6 +2,8 @@ package boardGame.rps;
 
 import java.util.Scanner;
 
+import boardGame.BoardGameState;
+
 public class RPSPlayerHuman extends RPSPlayer{
 	private Scanner scan;
 	
@@ -41,5 +43,6 @@ public class RPSPlayerHuman extends RPSPlayer{
 			}
 		}
 	}
+
 	
 }

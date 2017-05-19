@@ -3,7 +3,10 @@ package boardGame.ttt;
 import java.awt.Point;
 import java.util.Scanner;
 
-public class TicTacToePlayerHuman extends TicTacToePlayer{
+import boardGame.BoardGamePlayer;
+import boardGame.BoardGameState;
+
+public class TicTacToePlayerHuman<T extends BoardGameState> implements BoardGamePlayer<T>{
 	
 	private Scanner scan;
 	
@@ -21,8 +24,11 @@ public class TicTacToePlayerHuman extends TicTacToePlayer{
 	 * 
 	 * @return Point to place a Mark and make a Move
 	 */
-	public Point selectMove(TicTacToeState current) {
-		return getInput(scan);
+	@SuppressWarnings("unchecked")
+	public BoardGameState takeAction(BoardGameState current) {
+		TicTacToeState clone = (TicTacToeState)current.copy();
+		clone.fill(getInput(scan));
+		return clone;
 	}
 	
 	/**
@@ -44,25 +50,24 @@ public class TicTacToePlayerHuman extends TicTacToePlayer{
 					System.out.println(message);
 				}else{				
 					Point here = new Point();
-					// TODO: Please replace with a Switch...
-					if(input == 1){ here.x = 2; here.y = 0;}
-					if(input == 2){ here.x = 2; here.y = 1;}
-					if(input == 3){ here.x = 2; here.y = 2;}
-
-					if(input == 4){ here.x = 1; here.y = 0;}
-					if(input == 5){ here.x = 1; here.y = 1;}
-					if(input == 6){ here.x = 1; here.y = 2;}
-
-					if(input == 7){ here.x = 0; here.y = 0;}
-					if(input == 8){ here.x = 0; here.y = 1;}
-					if(input == 9){ here.x = 0; here.y = 2;}
+					
+					switch(input){
+						case 1: here.x = 2; here.y = 0; break;
+						case 2: here.x = 2; here.y = 1; break;
+						case 3: here.x = 2; here.y = 2; break;
+						case 4: here.x = 1; here.y = 0; break;
+						case 5: here.x = 1; here.y = 1; break;
+						case 6: here.x = 1; here.y = 2; break;
+						case 7: here.x = 0; here.y = 0; break;
+						case 8: here.x = 0; here.y = 1; break;
+						case 9: here.x = 0; here.y = 2; break;
+					}
 					
 					return here;
 				}
 			}
 		}
 	}
-		
-		
-	}
+
+}
 	
