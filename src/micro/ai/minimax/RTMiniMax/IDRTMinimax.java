@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
+
+import edu.utexas.cs.nn.util.random.RandomNumbers;
 import micro.rts.GameState;
 import micro.rts.PlayerAction;
 import micro.rts.PlayerActionGenerator;
@@ -54,7 +56,7 @@ public class IDRTMinimax extends AIWithComputationBudget implements Interruptibl
     Pair<PlayerAction,Float> lastResult = null;
     PlayerAction bestMove = null;
     
-    Random r = new Random();
+    Random r = RandomNumbers.randomGenerator;
     int playerForThisComputation;
 
     
