@@ -141,7 +141,7 @@ public class TicTacToeState implements BoardGameState{
 	}
 	
 	private void checkWinner(){
-		for(int i = 0; i < BOARD_WIDTH; i++){						
+		for(int i = 0; i < BOARD_WIDTH; i++){		
 			if(boardState[i][0] == boardState[i][1] && boardState[i][1] == boardState[i][2]  && boardState[i][2] != EMPTY){ // Checks each Row for a 3-in-a-Row
 				winner.add(boardState[i][0]);
 			}else if(boardState[0][i] == boardState[1][i] && boardState[1][i] == boardState[2][i]  && boardState[2][i] != EMPTY){ // Checks each Column for a 3-in-a-Row

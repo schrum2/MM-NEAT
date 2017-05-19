@@ -14,8 +14,10 @@ import edu.utexas.cs.nn.networks.NetworkTask;
 import edu.utexas.cs.nn.networks.hyperneat.HyperNEATTask;
 import edu.utexas.cs.nn.networks.hyperneat.Substrate;
 import edu.utexas.cs.nn.parameters.CommonConstants;
+import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.NoisyLonerTask;
 import edu.utexas.cs.nn.util.ClassCreation;
+import edu.utexas.cs.nn.util.MiscUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 
 public class BoardGameTask<T extends Network> extends NoisyLonerTask<T> implements NetworkTask, HyperNEATTask{
@@ -110,9 +112,13 @@ public class BoardGameTask<T extends Network> extends NoisyLonerTask<T> implemen
 
 		BoardGamePlayer evolved = new BoardGamePlayerOneStepEval<T>(individual.getPhenotype());
 		BoardGamePlayer[] players = new BoardGamePlayer[]{evolved, opponent};
-		//bg.reset();
+		bg.reset();
 		while(!bg.isGameOver()){
-			//System.out.println(game);
+			if(Parameters.parameters.booleanParameter("stepByStep")){
+				System.out.print("Press enter to continue");
+				System.out.println(bg.toString());
+				MiscUtil.waitForReadStringAndEnterKeyPress();
+			}
 			bg.move(players[bg.getCurrentPlayer()]);
 		}
 //		System.out.println("Game over");
