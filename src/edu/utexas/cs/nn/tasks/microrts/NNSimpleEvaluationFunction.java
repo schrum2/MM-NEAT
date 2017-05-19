@@ -29,14 +29,14 @@ public class NNSimpleEvaluationFunction<T extends Network> extends NNEvaluationF
 	 */
 	public double[] gameStateToArray(GameState gs){
 		PhysicalGameState pgs = gs.getPhysicalGameState();
-		double[] unitsOnBoard = new double[16];
+		double[] unitsOnBoard = new double[18];
 		Unit currentUnit;
 		int playerAdjustment;
 		for(int i = 0; i < pgs.getWidth(); i++){
 			for(int j = 0; j < pgs.getHeight(); j++){
 				currentUnit = pgs.getUnitAt(i, j);
 				if(currentUnit != null){
-					playerAdjustment = (currentUnit.getPlayer() == 0) ? 0 : 7; //shift enemy units +6 in the array
+					playerAdjustment = (currentUnit.getPlayer() == 0) ? 0 : 9; //half of size
 					switch(currentUnit.getType().name){
 					case "Worker":{
 						unitsOnBoard[0 + playerAdjustment]++; 
@@ -49,9 +49,14 @@ public class NNSimpleEvaluationFunction<T extends Network> extends NNEvaluationF
 					case "Base": {
 						unitsOnBoard[4 + playerAdjustment]++; 
 						unitsOnBoard[7 + playerAdjustment] += currentUnit.getResources();
+						unitsOnBoard[8 + playerAdjustment] = currentUnit.getHitPoints();
 						break;
 					}
-					case "Barracks": unitsOnBoard[5 + playerAdjustment]++; break;
+					case "Barracks":{
+						unitsOnBoard[5 + playerAdjustment]++; 
+						unitsOnBoard[8 + playerAdjustment] = currentUnit.getHitPoints();
+						break;
+					}
 					default: break;
 					}
 				}
