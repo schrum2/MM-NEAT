@@ -3,6 +3,8 @@ package boardGame;
 import java.util.List;
 import java.util.Random;
 
+import edu.utexas.cs.nn.util.random.RandomNumbers;
+
 public class BoardGamePlayerRandom implements BoardGamePlayer{
 
 	/**
@@ -14,8 +16,7 @@ public class BoardGamePlayerRandom implements BoardGamePlayer{
 	@Override
 	public BoardGameState takeAction(BoardGameState current) {
 		List<BoardGameState> poss = current.possibleBoardGameStates(current);
-		Random random = new Random();
-		return poss.get(random.nextInt(poss.size()));
+		return poss.get(RandomNumbers.randomGenerator.nextInt(poss.size()));
 	}
 
 }
