@@ -221,10 +221,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		networkButton.setText("Network");
 		undoButton.setText("Undo");
 		closeButton.setText("Close");
-		
-		
-
-		
+			
 		//instantiates activation function checkboxes
 		JCheckBox sigmoid = new JCheckBox("sigmoid", CommonConstants.includeSigmoidFunction);
 		activation[Math.abs(SIGMOID_CHECKBOX_INDEX)] = CommonConstants.includeSigmoidFunction;
@@ -388,11 +385,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		topper.add(bottom);
 		panels.add(topper);
 		//adds button panels
-		addButtonPanels();
-
-	
-
-		
+		addButtonPanels();	
 		
 		//adds panels to frame
 		for(JPanel panel: panels) frame.add(panel);

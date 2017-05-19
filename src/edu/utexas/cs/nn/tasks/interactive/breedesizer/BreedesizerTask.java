@@ -3,10 +3,13 @@ package edu.utexas.cs.nn.tasks.interactive.breedesizer;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.sound.sampled.AudioFormat;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
+import javax.swing.JPanel;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
@@ -42,6 +45,8 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 	private static final int SINE_OF_TIME_INPUT_INDEX = 1;
 	private static final int BIAS_INPUT_INDEX = 2;
 
+	
+	// Keyboard keyoard;
 
 	public BreedesizerTask() throws IllegalAccessException {
 		super();
@@ -68,6 +73,9 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 		top.add(timeEffect);
 		top.add(sineOfTimeeffect);
 		top.add(biasEffect);
+		
+		
+		// keyboard = new Keyboard();
 
 	}
 
@@ -112,6 +120,7 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 	protected void additionalButtonClickAction(Genotype<T> individual) {
 		Network phenotype = individual.getPhenotype();
 		double[] amplitude = SoundAmplitudeArrayManipulator.amplitudeGenerator(phenotype, LENGTH_DEFAULT, FREQUENCY_DEFAULT, inputMultipliers);
+		// keyboard.setCPPN(phenotype);
 		MiscSoundUtil.playDoubleArray(amplitude);		
 	}
 
@@ -149,7 +158,7 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 			System.out.println("image not saved");
 		}
 		
-		//SAVING AUDIO
+		//SAVING AUDIO - doesn't work
 		
 		chooser = new JFileChooser();
 		AudioFormat af = new AudioFormat(AudioFormat.Encoding.PCM_UNSIGNED, DEFAULT_SAMPLE_RATE, DEFAULT_BIT_RATE, DEFAULT_CHANNEL, BYTES_PER_FRAME, DEFAULT_SAMPLE_RATE, true);
