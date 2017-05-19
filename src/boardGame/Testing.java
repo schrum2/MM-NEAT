@@ -11,7 +11,7 @@ public class Testing {
 		// oneEval method of BoardGameTask BoardGamePlayerRandom
 		
 		BoardGame<TicTacToeState> game = new TicTacToe();
-		BoardGamePlayer[] players = new BoardGamePlayer[]{new TicTacToePlayerHuman(), new BoardGamePlayerRandom<TicTacToeState>()};
+		BoardGamePlayer[] players = new BoardGamePlayer[]{new TicTacToePlayerHuman<TicTacToeState>(), new BoardGamePlayerRandom<TicTacToeState>()};
 //		BoardGame game = new RockPaperScissors();
 //		BoardGamePlayer[] players = new RPSPlayer[]{new RPSPlayerRandom(), new RPSPlayerRandom()};
 //		Checkers game = new Checkers();

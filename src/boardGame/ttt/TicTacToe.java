@@ -91,8 +91,8 @@ public class TicTacToe implements BoardGame<TicTacToeState> {
 
 	@Override
 	public String[] getFeatureLabels() {
-		// TODO Auto-generated method stub
-		return null;
+		String[] feature = new String[]{"Top-Left", "Top-Mid", "Top-Right", "Center-Left", "Center-Mid", "Center-Right", "Bottom-Left", "Bottom-Mid", "Bottom-Right"};
+		return feature;
 	}
 
 	/**

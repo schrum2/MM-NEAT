@@ -41,6 +41,7 @@ import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.scores.Score;
 import edu.utexas.cs.nn.tasks.MultiplePopulationTask;
 import edu.utexas.cs.nn.tasks.Task;
+import edu.utexas.cs.nn.tasks.boardGame.BoardGameTask;
 import edu.utexas.cs.nn.tasks.breve2D.Breve2DTask;
 import edu.utexas.cs.nn.tasks.breve2D.NNBreve2DMonster;
 import edu.utexas.cs.nn.tasks.gridTorus.NNTorusPredPreyController;
@@ -450,6 +451,9 @@ public class MMNEAT {
 				setNNInputParameters(rlGlueExtractor.numFeatures(), RLGlueTask.agent.getNumberOutputs());
 			} else if (task instanceof PinballTask) {
 				PinballTask temp = (PinballTask) task;
+				setNNInputParameters(temp.sensorLabels().length, temp.outputLabels().length);
+			}else if (task instanceof BoardGameTask) {
+				BoardGameTask temp = (BoardGameTask) task;
 				setNNInputParameters(temp.sensorLabels().length, temp.outputLabels().length);
 			} else if (task instanceof Breve2DTask) {
 				System.out.println("Setup Breve 2D Task");

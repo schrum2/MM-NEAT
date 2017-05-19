@@ -21,12 +21,15 @@ import edu.utexas.cs.nn.util.datastructures.Pair;
 public class BoardGameTask<T extends Network> extends NoisyLonerTask<T> implements NetworkTask, HyperNEATTask{
 
 	BoardGameViewer view = null;
+	@SuppressWarnings("rawtypes")
 	BoardGame bg;
+	@SuppressWarnings("rawtypes")
 	BoardGamePlayer opponent;
 	
 	/**
 	 * Constructor for a new BoardGameTask
 	 */
+	@SuppressWarnings("rawtypes")
 	public BoardGameTask(){
 		MMNEAT.registerFitnessFunction("Win Reward");
 		
@@ -68,8 +71,7 @@ public class BoardGameTask<T extends Network> extends NoisyLonerTask<T> implemen
 	 */
 	@Override
 	public String[] sensorLabels() {
-		// Should be associated with BoardGame instance bg, as in bg.featureLabels();
-		return new String[]{};
+		return bg.getFeatureLabels();
 	}
 
 	/**
@@ -99,6 +101,7 @@ public class BoardGameTask<T extends Network> extends NoisyLonerTask<T> implemen
 	 * @param num Integer value
 	 * @return Pair of Double Arrays that show the Fitness of an individual network
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {
 
@@ -106,7 +109,6 @@ public class BoardGameTask<T extends Network> extends NoisyLonerTask<T> implemen
 		}
 
 		BoardGamePlayer evolved = new BoardGamePlayerOneStepEval<T>(individual.getPhenotype());
-		
 		BoardGamePlayer[] players = new BoardGamePlayer[]{evolved, opponent};
 		//bg.reset();
 		while(!bg.isGameOver()){
