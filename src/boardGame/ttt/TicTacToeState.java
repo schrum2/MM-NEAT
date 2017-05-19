@@ -21,7 +21,7 @@ public class TicTacToeState implements BoardGameState{
 	
 	public static final int EMPTY = 0;
 	public static final int X = 1;
-	public static final int O = 2;
+	public static final int O = -1;
 	public static final int BOARD_WIDTH = 3;
 	
 	/**
@@ -144,8 +144,16 @@ public class TicTacToeState implements BoardGameState{
 	 */
 	@Override
 	public double[] getDescriptor() {
-		// TODO: Figure out how to Implement this...
-		return null;
+		double[] feature = new double[9];
+		int index = 0;
+		
+		for(int i = 0; i < BOARD_WIDTH; i++){
+			for(int j = 0; j < BOARD_WIDTH; j++){
+				feature[index++] = boardState[i][j];
+			}
+		}
+		
+		return feature;
 	}
 
 	/** Visual Representation of the Tic-Tac-Toe Board
