@@ -124,8 +124,8 @@ public class VizDoomDeathMatchTask<T extends Network> extends VizDoomTask<T> {
 	}
 
 	public static void main(String[] args) {
-		Parameters.initializeParameterCollections(new String[] { "watch:false", "io:false", "netio:false", "doomEpisodeLength:4200",
-				"task:edu.utexas.cs.nn.tasks.vizdoom.VizDoomDeathMatchTask", "trials:8", "printFitness:true"});
+		Parameters.initializeParameterCollections(new String[] { "watch:true", "io:false", "netio:false", "doomEpisodeLength:4200",
+				"task:edu.utexas.cs.nn.tasks.vizdoom.VizDoomDeathMatchTask", "trials:8", "printFitness:true","showVizDoomInputs:true", "stepByStep:true"});
 		MMNEAT.loadClasses();
 		VizDoomDeathMatchTask<TWEANN> vd = new VizDoomDeathMatchTask<TWEANN>();
 		TWEANNGenotype individual = new TWEANNGenotype();
