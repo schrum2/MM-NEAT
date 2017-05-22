@@ -1,8 +1,10 @@
 package edu.utexas.cs.nn.tasks.microrts;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Scanner;
 
 import javax.swing.JFrame;
 
@@ -22,6 +24,7 @@ import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.NoisyLonerTask;
 import edu.utexas.cs.nn.util.datastructures.Pair;
+import edu.utexas.cs.nn.util.datastructures.Triple;
 import micro.ai.RandomBiasedAI;
 //import micro.ai.abstraction.WorkerRush;
 //import micro.ai.abstraction.pathfinding.BFSPathFinding;
@@ -45,13 +48,14 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 	private int MAXCYCLES = 5000;
 	private int RESULTRANGE = 2; //from -1 to 1
 	private JFrame w = null;
-
+	private GameState gs;
 	NNSimpleEvaluationFunction<T> ef;
 
 	public MicroRTSTask() {
 		utt = new UnitTypeTable();
 		try {
 			pgs = PhysicalGameState.load("data/microRTS/maps/16x16/basesWorkers16x16.xml", utt);
+			
 			//PhysicalGameState pgs = MapGenerator.basesWorkers8x8Obstacle();
 		} catch (JDOMException | IOException e) {
 			e.printStackTrace();
@@ -59,6 +63,8 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 		}
 		ef = new NNSimpleEvaluationFunction<>();
 		MMNEAT.registerFitnessFunction("game fitness");
+		ef.givePhysicalGameState(pgs);
+		gs = new GameState(pgs, utt);
 	}
 
 	@Override
@@ -68,32 +74,48 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 
 	@Override
 	public double getTimeStamp() {
-		// TODO Auto-generated method stub
-		return 0;
+		return gs.getTime();
 	}
 
+	/**
+	 * default behavior
+	 */
 	@Override
 	public int numCPPNInputs() {
-		// TODO Auto-generated method stub
-		return 0;
+		return HyperNEATTask.DEFAULT_NUM_CPPN_INPUTS;
 	}
 
+	/**
+	 * default behavior
+	 */
 	@Override
 	public double[] filterCPPNInputs(double[] fullInputs) {
-		// TODO Auto-generated method stub
-		return null;
+		return fullInputs;
 	}
 
+	/**
+	 * Method that returns a list of information about the substrate layers
+	 * contained in the network.
+	 *
+	 * @return List of Substrates in order from inputs to hidden to output
+	 *         layers
+	 */
 	@Override
 	public List<Substrate> getSubstrateInformation() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+		int height = pgs.getHeight();
+		int width = pgs.getWidth();
+		ArrayList<Substrate> subs = new ArrayList<Substrate>();
+		Substrate inputsBoardState = new Substrate(new Pair<Integer, Integer>(width, height),
+				Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, Substrate.INPUT_SUBSTRATE, 0), "Inputs Board State");
+		subs.add(inputsBoardState);
+		return subs;
+	} 
 
 	@Override
 	public List<Pair<String, String>> getSubstrateConnectivity() {
-		// TODO Auto-generated method stub
-		return null;
+		ArrayList<Pair<String, String>> conn = new ArrayList<Pair<String, String>>();
+		conn.add(new Pair<String, String>("Inputs Board State", null));
+		return conn;
 	}
 
 	@Override
@@ -129,7 +151,6 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 			e.printStackTrace();
 			System.exit(1);
 		}
-		GameState gs = new GameState(pgs, utt);
 
 		ef.setNetwork(individual);
 		//AI ai1 = new NaiveMCTS(100,-1,100,10, 0.3f, 0.0f, 0.4f, new RandomBiasedAI(), ef, true);
