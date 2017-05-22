@@ -14,9 +14,10 @@ public abstract class CheckersPlayer implements BoardGamePlayer{
 	@Override
 	public BoardGameState takeAction(BoardGameState current) {
 		CheckersState state = (CheckersState) current.copy(); // Copies the current BoardGameState
-		Point p = selectMove(state);
-		if(state.boardState[p.x][p.y] != CheckersState.EMPTY) throw new IllegalArgumentException("Cannot move to occupied space");
-		// TODO: Create actual update here; need to create moveCheck() in CheckersState first
+		Point moveThis = selectMove(state);
+		Point moveTo = selectMove(state);
+		state.moveCheck(moveThis, moveTo);
+
 		return state;
 	}
 

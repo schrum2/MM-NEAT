@@ -32,6 +32,8 @@ public class CheckersState implements BoardGameState{
 	
 	int[][] boardState;
 	
+	private List<Integer> winner;
+	
 	
 	/**
 	 * Default Constructor
@@ -108,18 +110,18 @@ public class CheckersState implements BoardGameState{
 	 * 
 	 * @return -1 if not at an endState, 0 if there's a Tie, 1 if Player 1 wins, or 2 if Player 2 wins
 	 */
-	public int getWinner(){
+	public List<Integer> getWinner(){
+		
 		if(endState()){
 			if(blackChecksLeft > redChecksLeft){
-				return PLAYER1;
+				winner.add(PLAYER1);
 			}else if(redChecksLeft > blackChecksLeft){
-				return PLAYER2;
+				winner.add(PLAYER2);
 			}else{
-				return TIE; // Technically impossible, but may be good to determine when it's impossible to win to end the game early.
+				winner.add(TIE); // Technically impossible, but may be good to determine when it's impossible to win to end the game early.
 			}
-		}else{
-			return UNDECIDED;
 		}
+		return winner;
 	}
 	
 	/**

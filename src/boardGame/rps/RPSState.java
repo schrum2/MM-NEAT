@@ -22,7 +22,7 @@ public class RPSState implements BoardGameState{
 	public static final int PAPER = 1;
 	public static final int SCISSORS = 2;	
 	
-	private int winner;
+	private List<Integer> winner;
 	private int currentPlayer;
 	
 	/**
@@ -31,7 +31,7 @@ public class RPSState implements BoardGameState{
 	public RPSState(){
 		playerMoves = new int[]{UNDECIDED, UNDECIDED};
 		nextPlayer = 0;
-		winner = UNDECIDED;
+		winner = new ArrayList<Integer>();
 		currentPlayer = PLAYER1;
 	}
 	
@@ -86,14 +86,14 @@ public class RPSState implements BoardGameState{
 	 * 
 	 * @return -1 if the game is Undecided, 0 if there was a Tie, 1 if Player 1 wins, or 2 if Player 2 wins
 	 */
-	public int getWinner(){
+	public List<Integer> getWinner(){
 		if(endState()){
 			if((playerMoves[0] == ROCK && playerMoves[1] == SCISSORS) || (playerMoves[0] == PAPER && playerMoves[1] == ROCK) || (playerMoves[0] == SCISSORS && playerMoves[1] == PAPER)){ // Player 1 wins
-				winner = PLAYER1;
+				winner.add(PLAYER1);
 			}else if ((playerMoves[1] == ROCK && playerMoves[0] == SCISSORS) || (playerMoves[1] == PAPER && playerMoves[0] == ROCK) || (playerMoves[1] == SCISSORS && playerMoves[0] == PAPER)){ // Player 2 wins
-				winner = PLAYER2;
+				winner.add(PLAYER2);
 			}else{ // Tie
-				winner = TIE;
+				winner.add(TIE);
 			}
 		}
 		return winner;

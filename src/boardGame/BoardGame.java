@@ -34,7 +34,7 @@ public interface BoardGame<T extends BoardGameState> {
 	 */
 	public List<Integer> getWinners();
 	
-	
+	public String toString();
 	
 	/**
 	 * Updates the BoardGameState based on the action taken by a given BoardGamePlayer

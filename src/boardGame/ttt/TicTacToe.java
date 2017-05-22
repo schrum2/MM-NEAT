@@ -1,12 +1,10 @@
 package boardGame.ttt;
 
-import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 
 import boardGame.BoardGame;
 import boardGame.BoardGamePlayer;
-import boardGame.BoardGameState;
 
 public class TicTacToe implements BoardGame<TicTacToeState> {
 

@@ -25,7 +25,7 @@ public interface BoardGameState {
 	 */
 	public boolean endState();
 	
-	
+
 	
 	/**
 	 * Returns a List of all the possible BoardGameStates when starting at a given BoardGameState
@@ -37,6 +37,14 @@ public interface BoardGameState {
 	public <T extends BoardGameState> List<T> possibleBoardGameStates(T currentState);
 	
 	
+	/**
+	 * Returns a List of the Winners in this BoardGameState
+	 * 
+	 * @return List<Integer> representing the winners in this current BoardGameState
+	 */
+	public List<Integer> getWinner();
+	
+	public String toString();
 	
 	/**
 	 * Returns a Duplicate of the current BoardGameState
