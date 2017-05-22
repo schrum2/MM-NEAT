@@ -19,6 +19,7 @@ public class BoardGamePlayerMinimax<T extends Network,S extends BoardGameState> 
 	@Override
 	public S takeAction(S current) {
 		// TODO: Add Heuristic analysis; Right now, has exact same code as OneStepEval Player
+		
 		List <double[]> outputs = new ArrayList<double[]>(); // Stores the network's ouputs
 		List<S> poss = current.possibleBoardGameStates(current);
 		
