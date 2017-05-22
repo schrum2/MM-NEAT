@@ -669,7 +669,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	/**
 	 * Used to reset the buttons when an Effect CheckBox is clicked
 	 */
-	private void resetButtons(){
+	public void resetButtons(){
 		for(int i = 0; i < scores.size(); i++) {
 			setButtonImage(getButtonImage(scores.get(i).individual.getPhenotype(),  picSize, picSize, inputMultipliers), i);
 		}		

@@ -51,7 +51,7 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 	private static final int SINE_OF_TIME_INPUT_INDEX = 1;
 	private static final int BIAS_INPUT_INDEX = 2;
 
-	
+
 
 	Keyboard keyboard;
 
@@ -64,13 +64,13 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 		inputMultipliers[SINE_OF_TIME_INPUT_INDEX] = 1.0;
 		JCheckBox biasEffect = new JCheckBox("Bias", true);
 		inputMultipliers[BIAS_INPUT_INDEX] = 1.0;
-		
+
 		JSlider clipLength = new JSlider(JSlider.HORIZONTAL, Keyboard.NOTE_LENGTH_DEFAULT, Parameters.parameters.integerParameter("maxClipLength"), Parameters.parameters.integerParameter("clipLength"));
 
 		timeEffect.setName("" + TIME_CHECKBOX_INDEX);
 		sineOfTimeeffect.setName("" + SINE_OF_TIME_CHECKBOX_INDEX);
 		biasEffect.setName("" + BIAS_CHECKBOX_INDEX);
-		
+
 		Hashtable<Integer,JLabel> labels = new Hashtable<>();
 		clipLength.setMinorTickSpacing(10000);
 		clipLength.setPaintTicks(true);
@@ -79,11 +79,11 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 		clipLength.setLabelTable(labels);
 		clipLength.setPaintLabels(true);
 		clipLength.setPreferredSize(new Dimension(350, 40));
-		
+
 		timeEffect.addActionListener(this);
 		sineOfTimeeffect.addActionListener(this);
 		biasEffect.addActionListener(this);
-		
+
 		/**
 		 * Implements ChangeListener to adjust clip length of generated sounds. When clip length is specified, 
 		 * input length is used to reset and redraw buttons. 
@@ -91,12 +91,17 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 		clipLength.addChangeListener(new ChangeListener() {
 			@Override
 			public void stateChanged(ChangeEvent e) {
+
 				// get value
 				JSlider source = (JSlider)e.getSource();
-				int newLength = (int) source.getValue();
-				// reset buttons
-				
-				
+				if(!source.getValueIsAdjusting()) {
+
+					int newLength = (int) source.getValue();
+
+					Parameters.parameters.setInteger("clipLength", newLength);
+					// reset buttons
+					resetButtons();
+				}
 			}
 		});
 
@@ -149,7 +154,7 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 		MiscSoundUtil.playDoubleArray(amplitude);	
 		keyboard.setCPPN(phenotype);
 	}
-	
+
 	protected void respondToClick(int itemID) {
 		super.respondToClick(itemID);
 		// Extra checkboxes specific to Breedesizer
