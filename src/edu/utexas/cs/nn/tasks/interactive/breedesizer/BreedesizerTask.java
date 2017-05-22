@@ -84,15 +84,19 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 		sineOfTimeeffect.addActionListener(this);
 		biasEffect.addActionListener(this);
 		
+		/**
+		 * Implements ChangeListener to adjust clip length of generated sounds. When clip length is specified, 
+		 * input length is used to reset and redraw buttons. 
+		 */
 		clipLength.addChangeListener(new ChangeListener() {
 			@Override
 			public void stateChanged(ChangeEvent e) {
 				// get value
 				JSlider source = (JSlider)e.getSource();
-				// set: Parameters.parameters.integerParameter("clipLength")
-				//clipLength;
-				
+				int newLength = (int) source.getValue();
 				// reset buttons
+				
+				
 			}
 		});
 
@@ -109,14 +113,6 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 
 	}
 
-	/* Will need method that plays sound when image is clicked. Can call utility methods
-	 in edu.utexas.cs.nn.util.sounds to accomplish this, but will have to be differentiated 
-	 from Picbreeder because it does not do this.
-	 */
-
-	/* After save and setEffectCheckbox are generalized so that they can be applied to both 
-	 * Breedesizer and Picbreeder, specified method calls will have to be included here.
-	 */
 
 	@Override
 	public String[] sensorLabels() {
@@ -153,15 +149,15 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 		MiscSoundUtil.playDoubleArray(amplitude);	
 		keyboard.setCPPN(phenotype);
 	}
-
+	
 	protected void respondToClick(int itemID) {
 		super.respondToClick(itemID);
-		// Extra checkboxes specific to Picbreeder
-		if(itemID == TIME_CHECKBOX_INDEX){ // If X-Effect checkbox is clicked
+		// Extra checkboxes specific to Breedesizer
+		if(itemID == TIME_CHECKBOX_INDEX){ // If time checkbox is clicked
 			setEffectCheckBox(TIME_INPUT_INDEX);
-		}else if(itemID == SINE_OF_TIME_CHECKBOX_INDEX){ // If Y-Effect checkbox is clicked
+		}else if(itemID == SINE_OF_TIME_CHECKBOX_INDEX){ // If sine of time checkbox is clicked
 			setEffectCheckBox(SINE_OF_TIME_INPUT_INDEX);
-		}else if(itemID == BIAS_CHECKBOX_INDEX){ // If Center-Distance Effect checkbox is clicked
+		}else if(itemID == BIAS_CHECKBOX_INDEX){ // If bias checkbox is clicked
 			setEffectCheckBox(BIAS_INPUT_INDEX);
 		} 
 	}
@@ -208,7 +204,6 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 		} else { //else image dumped
 			p.setVisibility(false);
 			System.out.println("audio file not saved");
-
 		}	
 
 	}
