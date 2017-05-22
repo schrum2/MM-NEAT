@@ -6,53 +6,57 @@ import boardGame.BoardGame;
 import boardGame.BoardGamePlayer;
 
 public class Othello implements BoardGame<OthelloState>{
-
+	
+	private int currentPlayer; // Used to keep track of whose turn it is
+	private OthelloState board;
+	
+	public Othello(){
+		currentPlayer = 0;
+		board = new OthelloState();
+	}
+	
 	@Override
 	public int getNumPlayers() {
-		// TODO Auto-generated method stub
-		return 0;
+		return 2;
 	}
 
 	@Override
 	public boolean isGameOver() {
-		// TODO Auto-generated method stub
-		return false;
+		return board.endState();
 	}
 
 	@Override
-	public List getWinners() {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Integer> getWinners() {
+		return board.getWinner();
 	}
 
 	@Override
-	public void move(BoardGamePlayer bgp) {
-		// TODO Auto-generated method stub
-		
+	public void move(BoardGamePlayer<OthelloState> bgp) {
+		bgp.takeAction(board);
+		currentPlayer = (currentPlayer + 1) % 2; // Switches the currentPlayer
 	}
 
 	@Override
 	public int getCurrentPlayer() {
-		// TODO Auto-generated method stub
-		return 0;
+		return currentPlayer;
 	}
 
 	@Override
 	public String getName() {
-		// TODO Auto-generated method stub
-		return null;
+		return "Othello/Reversi";
 	}
 
 	@Override
 	public String[] getFeatureLabels() {
 		// TODO Auto-generated method stub
-		return null;
+		String[] feature = new String[0];
+		return feature;
 	}
 
 	@Override
 	public void reset() {
-		// TODO Auto-generated method stub
-		
+		currentPlayer = 0;
+		board = new OthelloState();
 	}
 
 }
