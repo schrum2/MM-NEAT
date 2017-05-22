@@ -13,8 +13,13 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import edu.utexas.cs.nn.networks.Network;
+import edu.utexas.cs.nn.tasks.interactive.InteractiveEvolutionTask;
 import edu.utexas.cs.nn.util.graphics.DrawingPanel;
+import edu.utexas.cs.nn.util.sound.MiscSoundUtil;
+import edu.utexas.cs.nn.util.sound.SoundAmplitudeArrayManipulator;
 
+@SuppressWarnings("serial")
 public class Keyboard extends JFrame implements MouseListener{
 
 	public static final double C3 = 130.81;
@@ -44,6 +49,9 @@ public class Keyboard extends JFrame implements MouseListener{
 	public static final double C5 = 523.25;
 
 	public static final double[] KEYBOARD = new double[]{C3, CSHARP3, D3, DSHARP3, E3, F3, FSHARP3, G3, GSHARP3, A3, ASHARP3, B3, C4, CSHARP4, D4, DSHARP4, E4, F4, FSHARP4, G4, GSHARP4, A4, ASHARP4, B4, C5};
+	public static final double[] WHITE_KEYS = new double[]{C3, D3, E3, F3, G3, A3, B3, C4, D4, E4, F4, G4, A4, B4, C5};
+	public static final double[] BLACK_KEYS = new double[]{CSHARP3, DSHARP3, -1, FSHARP3, GSHARP3, ASHARP3, -1, CSHARP4, DSHARP4, -1, FSHARP4, GSHARP4, ASHARP4};
+	
 	public static final String[] PRENOTE = {"C3","D3","E3","F3","G3","A3","B3","C4","D4","E4","F4","G4","A4","B4","C5"};
 	public static final String[] PREEXTENDEDNOTE = {"C3","C#3","D3","D#3","E3","F3","F#3","G3","G#3","A3","A#3","B3", "C4","C#4","D4","D#4","E4","F4","F#4","G4","G#4","A4","A#4","B4", "C5"};
 	
@@ -52,11 +60,14 @@ public class Keyboard extends JFrame implements MouseListener{
 	public static final int KEYBOARD_HEIGHT = 200;
 	public static final int WHITE_KEY_WIDTH = 40;
 	public static final int BLACK_KEY_WIDTH = 20;	
-	public static final int BLACK_KEY_START = 30;
+	public static final int BLACK_KEY_START_WIDTH = 30;
+	public static final int BLACK_KEY_START_HEIGHT = 100;
+	public static final int WINDOW_EDGE_WIDTH = 8; //to account for construction of graphics being 8 pixels off
+	
+	public static final int NOTE_LENGTH_DEFAULT = 60000;
 	
 	
 
-	@SuppressWarnings("serial")
 	class DrawPane extends JPanel{
 		public void paintComponent(Graphics g){
 			//draw on g here e.g.
@@ -67,9 +78,9 @@ public class Keyboard extends JFrame implements MouseListener{
 				g.drawLine(i, 0, i, KEYBOARD_HEIGHT);
 			}
 			boolean[] blackKeyPresent = new boolean[]{true,true,false,true,true,true,false}; //follows 2-3 pattern of black keys on standard piano
-			for(int i = 0; BLACK_KEY_START+i*WHITE_KEY_WIDTH < KEYBOARD_WIDTH; i++) {
+			for(int i = 0; BLACK_KEY_START_WIDTH+i*WHITE_KEY_WIDTH < KEYBOARD_WIDTH; i++) {
 				if(blackKeyPresent[i % blackKeyPresent.length])	
-					g.fillRect(BLACK_KEY_START + i*WHITE_KEY_WIDTH, 0, BLACK_KEY_WIDTH, 100);
+					g.fillRect(BLACK_KEY_START_WIDTH + i*WHITE_KEY_WIDTH, 0, BLACK_KEY_WIDTH, BLACK_KEY_START_HEIGHT);
 			}
 			
 //			for(int i = 30; i < 600; i += 40) {
@@ -78,6 +89,8 @@ public class Keyboard extends JFrame implements MouseListener{
 //			}
 		}
 	}
+
+	private Network currentCPPN;
 
 	public Keyboard() {
 		this(KEYBOARD_WIDTH, KEYBOARD_HEIGHT,"Keyboard");
@@ -126,10 +139,23 @@ public class Keyboard extends JFrame implements MouseListener{
 	//	              
 	//	    }		
 	//	}
+	
+	public void setCPPN(Network phenotype) {
+		currentCPPN = phenotype;
+	}
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
+		
+		if(currentCPPN == null) return;
+		
+		int indexClicked = (int) (e.getPoint().getX()-WINDOW_EDGE_WIDTH) / WHITE_KEY_WIDTH;
+		double freq = WHITE_KEYS[indexClicked];
+		double[] amplitude = SoundAmplitudeArrayManipulator.amplitudeGenerator(currentCPPN, NOTE_LENGTH_DEFAULT, freq, InteractiveEvolutionTask.getInputMultipliers());
+		MiscSoundUtil.playDoubleArray(amplitude);
+		
 		System.out.println(e.getPoint());
+		System.out.println(indexClicked);
 
 	}
 

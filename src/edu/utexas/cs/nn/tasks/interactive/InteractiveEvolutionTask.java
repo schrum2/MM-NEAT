@@ -396,6 +396,11 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		
 	}
 	
+	public static double[] getInputMultipliers() {
+		double[] inputMultipliersCopy = Arrays.copyOf(inputMultipliers, MMNEAT.networkInputs);
+		return inputMultipliersCopy;
+	}
+	
 	/**
 	 * Accesses title of window
 	 * @return string representing title of window

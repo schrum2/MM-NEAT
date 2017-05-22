@@ -46,7 +46,7 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 	private static final int BIAS_INPUT_INDEX = 2;
 
 	
-	// Keyboard keyoard;
+	 Keyboard keyboard;
 
 	public BreedesizerTask() throws IllegalAccessException {
 		super();
@@ -75,7 +75,7 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 		top.add(biasEffect);
 		
 		
-		// keyboard = new Keyboard();
+		keyboard = new Keyboard();
 
 	}
 
@@ -120,8 +120,8 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 	protected void additionalButtonClickAction(Genotype<T> individual) {
 		Network phenotype = individual.getPhenotype();
 		double[] amplitude = SoundAmplitudeArrayManipulator.amplitudeGenerator(phenotype, LENGTH_DEFAULT, FREQUENCY_DEFAULT, inputMultipliers);
-		// keyboard.setCPPN(phenotype);
-		MiscSoundUtil.playDoubleArray(amplitude);		
+		MiscSoundUtil.playDoubleArray(amplitude);	
+		keyboard.setCPPN(phenotype);
 	}
 
 	protected void respondToClick(int itemID) {
