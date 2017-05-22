@@ -23,6 +23,7 @@ import edu.utexas.cs.nn.networks.hyperneat.Substrate;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.NoisyLonerTask;
+import edu.utexas.cs.nn.util.ClassCreation;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.datastructures.Triple;
 import micro.ai.RandomBiasedAI;
@@ -52,17 +53,17 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 	
 	NNEvaluationFunction<T> ef;
 
+	@SuppressWarnings("unchecked")
 	public MicroRTSTask() {
 		utt = new UnitTypeTable();
 		try {
-			pgs = PhysicalGameState.load("data/microRTS/maps/16x16/basesWorkers16x16.xml", utt);
-			
-			//PhysicalGameState pgs = MapGenerator.basesWorkers8x8Obstacle();
-		} catch (JDOMException | IOException e) {
+			ef = (NNEvaluationFunction<T>) ClassCreation.createObject(Parameters.parameters.classParameter("EvaluationFunction"));
+			pgs = PhysicalGameState.load("data/microRTS/maps/" + Parameters.parameters.stringParameter("map"), utt);
+		} catch (JDOMException | IOException | NoSuchMethodException e) {
 			e.printStackTrace();
 			System.exit(1);
 		}
-		ef = new NNSimpleEvaluationFunction<>();
+		//ef = new NNSimpleEvaluationFunction<>();
 		MMNEAT.registerFitnessFunction("win/loss");
 		MMNEAT.registerFitnessFunction("time");
 		MMNEAT.registerFitnessFunction("unit-difference");
