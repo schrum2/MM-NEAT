@@ -57,7 +57,7 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 	public MicroRTSTask() {
 		utt = new UnitTypeTable();
 		try {
-			ef = (NNEvaluationFunction<T>) ClassCreation.createObject(Parameters.parameters.classParameter("EvaluationFunction"));
+			ef = (NNEvaluationFunction<T>) ClassCreation.createObject(Parameters.parameters.classParameter("microRTSEvaluationFunction"));
 			pgs = PhysicalGameState.load("data/microRTS/maps/" + Parameters.parameters.stringParameter("map"), utt);
 		} catch (JDOMException | IOException | NoSuchMethodException e) {
 			e.printStackTrace();
@@ -234,13 +234,14 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 		return score;
 	} //END fitnessFunction
 
-	//	public static void main(String[] rags){
-	//		Parameters.initializeParameterCollections(new String[]{"io:false","netio:false", "watch:true"});
-	//		MMNEAT.loadClasses();
-	//		MicroRTSTask<TWEANN> test = new MicroRTSTask<>();
-	//		TWEANNGenotype g = new TWEANNGenotype();
-	//		Pair<double[], double[]> result = test.oneEval(g, -1);
-	//		System.out.println(Arrays.toString(result.t1)+ " , "+Arrays.toString(result.t2));
-	//	}
+		public static void main(String[] rags){
+			Parameters.initializeParameterCollections(new String[]{"io:false","netio:false", "watch:true", ""});
+//			MMNEAT.loadClasses();
+//			MicroRTSTask<TWEANN> test = new MicroRTSTask<>();
+//			TWEANNGenotype g = new TWEANNGenotype();
+//			Pair<double[], double[]> result = test.oneEval(g, -1);
+//			System.out.println(Arrays.toString(result.t1)+ " , "+Arrays.toString(result.t2));
+			System.out.println(Parameters.parameters.booleanParameter("netio"));
+		}
 
 }

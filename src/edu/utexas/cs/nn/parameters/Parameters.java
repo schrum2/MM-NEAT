@@ -728,7 +728,7 @@ public class Parameters {
 		classOptions.add("genotype", TWEANNGenotype.class, "A subclass defining the genotype to evolve with");
 		classOptions.add("fos", null, "Function Optimization Set to use for simple tests");
 		classOptions.add("directionalSafetyFunction", null, "Function that decides if CheckEach agent bothers to consider a direction");
-		classOptions.add("evaluationFunction", NNSimpleEvaluationFunction.class, "File containing evaluation function for MicroRTSTask");
+		classOptions.add("microRTSEvaluationFunction", NNSimpleEvaluationFunction.class, "File containing evaluation function for MicroRTSTask");
 	}
 
 	/**
