@@ -43,24 +43,33 @@ public class Keyboard extends JFrame implements MouseListener{
 	public static final double B4 = 493.88;
 	public static final double C5 = 523.25;
 
-	public static final double[] keyboard = new double[]{C3, CSHARP3, D3, DSHARP3, E3, F3, FSHARP3, G3, GSHARP3, A3, ASHARP3, B3, C4, CSHARP4, D4, DSHARP4, E4, F4, FSHARP4, G4, GSHARP4, A4, ASHARP4, B4, C5};
-	public static final String[] preNote = {"C3","D3","E3","F3","G3","A3","B3","C4","D4","E4","F4","G4","A4","B4","C5"};
-	public static final String[] preExtendedNote = {"C3","C#3","D3","D#3","E3","F3","F#3","G3","G#3","A3","A#3","B3", "C4","C#4","D4","D#4","E4","F4","F#4","G4","G#4","A4","A#4","B4", "C5"};
+	public static final double[] KEYBOARD = new double[]{C3, CSHARP3, D3, DSHARP3, E3, F3, FSHARP3, G3, GSHARP3, A3, ASHARP3, B3, C4, CSHARP4, D4, DSHARP4, E4, F4, FSHARP4, G4, GSHARP4, A4, ASHARP4, B4, C5};
+	public static final String[] PRENOTE = {"C3","D3","E3","F3","G3","A3","B3","C4","D4","E4","F4","G4","A4","B4","C5"};
+	public static final String[] PREEXTENDEDNOTE = {"C3","C#3","D3","D#3","E3","F3","F#3","G3","G#3","A3","A#3","B3", "C4","C#4","D4","D#4","E4","F4","F#4","G4","G#4","A4","A#4","B4", "C5"};
+	
+	//variables used for drawing keyboard graphics
+	public static final int KEYBOARD_WIDTH = 600;
+	public static final int KEYBOARD_HEIGHT = 200;
+	public static final int WHITE_KEY_WIDTH = 40;
+	public static final int BLACK_KEY_WIDTH = 20;	
+	public static final int BLACK_KEY_START = 30;
+	
+	
 
 	@SuppressWarnings("serial")
 	class DrawPane extends JPanel{
 		public void paintComponent(Graphics g){
 			//draw on g here e.g.
 			g.setColor(Color.WHITE);
-			g.fillRect(0, 0, 600, 200);
+			g.fillRect(0, 0, KEYBOARD_WIDTH, KEYBOARD_HEIGHT);
 			g.setColor(Color.BLACK);
-			for(int i = 0; i < 1200; i += 40) {
-				g.drawLine(i, 0, i, 200);
+			for(int i = 0; i < KEYBOARD_WIDTH; i += WHITE_KEY_WIDTH) {
+				g.drawLine(i, 0, i, KEYBOARD_HEIGHT);
 			}
-			boolean[] blackKeyPresent = new boolean[]{true,true,false,true,true,true,false};
-			for(int i = 0; 30+i*40 < 1200; i++) {
+			boolean[] blackKeyPresent = new boolean[]{true,true,false,true,true,true,false}; //follows 2-3 pattern of black keys on standard piano
+			for(int i = 0; BLACK_KEY_START+i*WHITE_KEY_WIDTH < KEYBOARD_WIDTH; i++) {
 				if(blackKeyPresent[i % blackKeyPresent.length])	
-					g.fillRect(30 + i*40, 0, 20, 100);
+					g.fillRect(BLACK_KEY_START + i*WHITE_KEY_WIDTH, 0, BLACK_KEY_WIDTH, 100);
 			}
 			
 //			for(int i = 30; i < 600; i += 40) {
@@ -71,7 +80,7 @@ public class Keyboard extends JFrame implements MouseListener{
 	}
 
 	public Keyboard() {
-		this(600,200,"Keyboard");
+		this(KEYBOARD_WIDTH, KEYBOARD_HEIGHT,"Keyboard");
 
 	}
 
@@ -82,9 +91,9 @@ public class Keyboard extends JFrame implements MouseListener{
 		//JFrame frame = new JFrame("Keyboard");
 		//JPanel keyPanel = new JPanel();
 
-		List<String> note = Arrays.asList(preNote);
+		List<String> note = Arrays.asList(PRENOTE);
 
-		List<String> extendedNote = Arrays.asList(preExtendedNote);
+		List<String> extendedNote = Arrays.asList(PREEXTENDEDNOTE);
 
 		//	    for (String currentNote : note) {
 		//	        JButton key = new JButton(currentNote);
@@ -143,8 +152,8 @@ public class Keyboard extends JFrame implements MouseListener{
 
 	public static void main(String[] args) {
 		Keyboard gui = new Keyboard();	  
-		System.out.println(preNote.length);
-		System.out.println(preExtendedNote.length);
+		System.out.println(PRENOTE.length);
+		System.out.println(PREEXTENDEDNOTE.length);
 	}
 
 
