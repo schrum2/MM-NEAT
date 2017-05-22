@@ -20,7 +20,7 @@ import edu.utexas.cs.nn.util.ClassCreation;
 import edu.utexas.cs.nn.util.MiscUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 
-public class BoardGameTask<T extends Network> extends NoisyLonerTask<T> implements NetworkTask, HyperNEATTask{
+public class StaticOpponentBoardGameTask<T extends Network> extends NoisyLonerTask<T> implements NetworkTask, HyperNEATTask{
 
 	BoardGameViewer view = null;
 	@SuppressWarnings("rawtypes")
@@ -32,7 +32,7 @@ public class BoardGameTask<T extends Network> extends NoisyLonerTask<T> implemen
 	 * Constructor for a new BoardGameTask
 	 */
 	@SuppressWarnings("rawtypes")
-	public BoardGameTask(){
+	public StaticOpponentBoardGameTask(){
 		MMNEAT.registerFitnessFunction("Win Reward");
 		
 		try {
