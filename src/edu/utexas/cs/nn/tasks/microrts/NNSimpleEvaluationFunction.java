@@ -29,18 +29,18 @@ public class NNSimpleEvaluationFunction<T extends Network> extends NNEvaluationF
 	 */
 	public double[] gameStateToArray(GameState gs){
 		PhysicalGameState pgs = gs.getPhysicalGameState();
-		double[] unitsOnBoard = new double[18];
+		double[] unitsOnBoard = new double[16];
 		Unit currentUnit;
 		int playerAdjustment;
 		for(int i = 0; i < pgs.getWidth(); i++){
 			for(int j = 0; j < pgs.getHeight(); j++){
 				currentUnit = pgs.getUnitAt(i, j);
 				if(currentUnit != null){
-					playerAdjustment = (currentUnit.getPlayer() == 0) ? 0 : 9; //half of size
+					playerAdjustment = (currentUnit.getPlayer() == 0) ? 0 : 8; //half of size
 					switch(currentUnit.getType().name){
 					case "Worker":{
 						unitsOnBoard[0 + playerAdjustment]++; 
-						unitsOnBoard[7 + playerAdjustment] += currentUnit.getResources();
+						unitsOnBoard[6 + playerAdjustment] += currentUnit.getResources();
 						break;
 					}
 					case "Light": unitsOnBoard[1 + playerAdjustment]++; break;
@@ -48,13 +48,13 @@ public class NNSimpleEvaluationFunction<T extends Network> extends NNEvaluationF
 					case "Ranged": unitsOnBoard[3 + playerAdjustment]++; break;
 					case "Base": {
 						unitsOnBoard[4 + playerAdjustment]++; 
-						unitsOnBoard[7 + playerAdjustment] += currentUnit.getResources();
-						unitsOnBoard[8 + playerAdjustment] = currentUnit.getHitPoints();
+						unitsOnBoard[6 + playerAdjustment] += currentUnit.getResources();
+						unitsOnBoard[7 + playerAdjustment] = currentUnit.getHitPoints();
 						break;
 					}
 					case "Barracks":{
 						unitsOnBoard[5 + playerAdjustment]++; 
-						unitsOnBoard[8 + playerAdjustment] = currentUnit.getHitPoints();
+						unitsOnBoard[7 + playerAdjustment] = currentUnit.getHitPoints();
 						break;
 					}
 					default: break;
@@ -73,7 +73,7 @@ public class NNSimpleEvaluationFunction<T extends Network> extends NNEvaluationF
 	}
 
 	public String[] sensorLabels() {
-		return new String[]{"workers", "lights", "heavies", "ranged-units", "bases", "barracks", "enemy-workers", 
-				"enemy-lights", "enemy-heavies", "enemy-ranged-units", "enemy-bases", "enemy-barracks"};
+		return new String[]{"workers", "lights", "heavies", "ranged-units", "bases", "barracks", "resources", "base-hp", "enemy-workers", 
+				"enemy-lights", "enemy-heavies", "enemy-ranged-units", "enemy-bases", "enemy-barracks", "enemy-resources", "eney-base-hp"};
 	}
 }

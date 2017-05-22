@@ -5,7 +5,7 @@ import micro.rts.GameState;
 import micro.rts.PhysicalGameState;
 import micro.rts.units.Unit;
 
-public class NN2DEvaluationFunction<T extends Network> extends NNEvaluationFunction {
+public class NN2DEvaluationFunction<T extends Network> extends NNEvaluationFunction<T> {
 
 	public static final double BASE_WEIGHT = 4; //hard to quantify because different amount of importance at different stages of the game
 	public static final double BASE_RESOURCE_WEIGHT = .25;

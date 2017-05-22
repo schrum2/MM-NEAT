@@ -49,7 +49,8 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 	private int RESULTRANGE = 2; //from -1 to 1
 	private JFrame w = null;
 	private GameState gs;
-	NNSimpleEvaluationFunction<T> ef;
+	
+	NNEvaluationFunction<T> ef;
 
 	public MicroRTSTask() {
 		utt = new UnitTypeTable();
@@ -62,7 +63,9 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 			System.exit(1);
 		}
 		ef = new NNSimpleEvaluationFunction<>();
-		MMNEAT.registerFitnessFunction("game fitness");
+		MMNEAT.registerFitnessFunction("win/loss");
+		MMNEAT.registerFitnessFunction("time");
+		MMNEAT.registerFitnessFunction("unit-difference");
 		ef.givePhysicalGameState(pgs);
 		gs = new GameState(pgs, utt);
 	}
@@ -199,7 +202,6 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 		Pair<double[], double[]> score = new Pair<>(new double[3], new double[0]); 
 		//first[]:{victory, time, unitDifference, } on a scale from -1 to 1, except unit difference, which starts at 0 and can go up or down
 
-		//potential other scoring methods: # units created, # structures built,
 		int gameEndTime = terminalGameState.getTime();
 		List<Unit> unitsLeft = terminalGameState.getUnits();
 
