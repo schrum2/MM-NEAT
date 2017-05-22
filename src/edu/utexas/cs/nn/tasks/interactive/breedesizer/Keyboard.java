@@ -61,7 +61,7 @@ public class Keyboard extends JFrame implements MouseListener{
 	public static final int WINDOW_EDGE_WIDTH = 8; //to account for construction of graphics being 8 pixels off (width)
 	public static final int WINDOW_EDGE_HEIGHT = 30; //to account for construction of graphics being 30 pixels off (height)
 
-	public static final int NOTE_LENGTH_DEFAULT = 40000;
+	public static final int NOTE_LENGTH_DEFAULT = 20000;
 	
 	/**
 	 * Inner class that constructs the graphical piano keyboard interface using JPanel and Graphics.

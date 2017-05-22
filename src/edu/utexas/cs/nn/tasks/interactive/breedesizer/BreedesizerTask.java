@@ -1,15 +1,21 @@
 package edu.utexas.cs.nn.tasks.interactive.breedesizer;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Hashtable;
 
 import javax.sound.sampled.AudioFormat;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSlider;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
@@ -23,15 +29,15 @@ import edu.utexas.cs.nn.util.sound.SoundAmplitudeArrayManipulator;
 
 public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask<T> {
 
-	private static final int LENGTH_DEFAULT = 60000; //default length of generated amplitude
+	//private static final int LENGTH_DEFAULT = 60000; //default length of generated amplitude
 	private static final int FREQUENCY_DEFAULT = 440; //default frequency of generated amplitude: A440
-	
+
 	//ideal numbers to initialize AudioFormat; based on obtaining formats of a series of WAV files
 	public static final float DEFAULT_SAMPLE_RATE = 11025; //default frame rate is same value
 	public static final int DEFAULT_BIT_RATE = 8; 
 	public static final int DEFAULT_CHANNEL = 1; 
 	public static final int BYTES_PER_FRAME = 1; 
-	
+
 
 	public static final int CPPN_NUM_INPUTS	= 3;
 	public static final int CPPN_NUM_OUTPUTS = 1;
@@ -46,7 +52,8 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 	private static final int BIAS_INPUT_INDEX = 2;
 
 	
-	 Keyboard keyboard;
+
+	Keyboard keyboard;
 
 	public BreedesizerTask() throws IllegalAccessException {
 		super();
@@ -57,14 +64,37 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 		inputMultipliers[SINE_OF_TIME_INPUT_INDEX] = 1.0;
 		JCheckBox biasEffect = new JCheckBox("Bias", true);
 		inputMultipliers[BIAS_INPUT_INDEX] = 1.0;
+		
+		JSlider clipLength = new JSlider(JSlider.HORIZONTAL, Keyboard.NOTE_LENGTH_DEFAULT, Parameters.parameters.integerParameter("maxClipLength"), Parameters.parameters.integerParameter("clipLength"));
 
 		timeEffect.setName("" + TIME_CHECKBOX_INDEX);
 		sineOfTimeeffect.setName("" + SINE_OF_TIME_CHECKBOX_INDEX);
 		biasEffect.setName("" + BIAS_CHECKBOX_INDEX);
-
+		
+		Hashtable<Integer,JLabel> labels = new Hashtable<>();
+		clipLength.setMinorTickSpacing(10000);
+		clipLength.setPaintTicks(true);
+		labels.put(Keyboard.NOTE_LENGTH_DEFAULT, new JLabel("Shorter clip"));
+		labels.put(Parameters.parameters.integerParameter("maxClipLength"), new JLabel("Longer clip"));
+		clipLength.setLabelTable(labels);
+		clipLength.setPaintLabels(true);
+		clipLength.setPreferredSize(new Dimension(350, 40));
+		
 		timeEffect.addActionListener(this);
 		sineOfTimeeffect.addActionListener(this);
 		biasEffect.addActionListener(this);
+		
+		clipLength.addChangeListener(new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				// get value
+				JSlider source = (JSlider)e.getSource();
+				// set: Parameters.parameters.integerParameter("clipLength")
+				//clipLength;
+				
+				// reset buttons
+			}
+		});
 
 		timeEffect.setForeground(new Color(0,0,0));
 		sineOfTimeeffect.setForeground(new Color(0,0,0));
@@ -73,8 +103,8 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 		top.add(timeEffect);
 		top.add(sineOfTimeeffect);
 		top.add(biasEffect);
-		
-		
+		top.add(clipLength);	
+
 		keyboard = new Keyboard();
 
 	}
@@ -108,7 +138,7 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 	 */
 	@Override
 	protected BufferedImage getButtonImage(Network phenotype, int width, int height, double[] inputMultipliers) {
-		double[] amplitude = SoundAmplitudeArrayManipulator.amplitudeGenerator(phenotype, LENGTH_DEFAULT, FREQUENCY_DEFAULT, inputMultipliers);
+		double[] amplitude = SoundAmplitudeArrayManipulator.amplitudeGenerator(phenotype, Parameters.parameters.integerParameter("clipLength"), FREQUENCY_DEFAULT, inputMultipliers);
 		BufferedImage wavePlotImage = GraphicsUtil.wavePlotFromDoubleArray(amplitude, height, width);
 		return wavePlotImage;
 	}
@@ -119,7 +149,7 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 	@Override
 	protected void additionalButtonClickAction(Genotype<T> individual) {
 		Network phenotype = individual.getPhenotype();
-		double[] amplitude = SoundAmplitudeArrayManipulator.amplitudeGenerator(phenotype, LENGTH_DEFAULT, FREQUENCY_DEFAULT, inputMultipliers);
+		double[] amplitude = SoundAmplitudeArrayManipulator.amplitudeGenerator(phenotype, Parameters.parameters.integerParameter("clipLength"), FREQUENCY_DEFAULT, inputMultipliers);
 		MiscSoundUtil.playDoubleArray(amplitude);	
 		keyboard.setCPPN(phenotype);
 	}
@@ -139,7 +169,7 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 	@Override
 	protected void save(int i) {	
 		//SAVING IMAGE
-		
+
 		// Use of imageHeight and imageWidth allows saving a higher quality image than is on the button
 		BufferedImage toSave = getButtonImage((Network)scores.get(i).individual.getPhenotype(), Parameters.parameters.integerParameter("imageWidth"), Parameters.parameters.integerParameter("imageHeight"), inputMultipliers);
 		DrawingPanel p = GraphicsUtil.drawImage(toSave, "" + i, toSave.getWidth(), toSave.getHeight());
@@ -157,9 +187,9 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 			p.setVisibility(false);
 			System.out.println("image not saved");
 		}
-		
+
 		//SAVING AUDIO - doesn't work
-		
+
 		chooser = new JFileChooser();
 		AudioFormat af = new AudioFormat(AudioFormat.Encoding.PCM_UNSIGNED, DEFAULT_SAMPLE_RATE, DEFAULT_BIT_RATE, DEFAULT_CHANNEL, BYTES_PER_FRAME, DEFAULT_SAMPLE_RATE, true);
 		chooser.setApproveButtonText("Save");
@@ -169,7 +199,7 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 		if(audioReturnVal == JFileChooser.APPROVE_OPTION) {//if the user decides to save the image
 			System.out.println("You chose to call the file: " + chooser.getSelectedFile().getName());
 			try {
-				SoundAmplitudeArrayManipulator.saveFileFromCPPN(scores.get(i).individual.getPhenotype(), LENGTH_DEFAULT, FREQUENCY_DEFAULT, chooser.getSelectedFile().getName() + ".wav", af);
+				SoundAmplitudeArrayManipulator.saveFileFromCPPN(scores.get(i).individual.getPhenotype(), Parameters.parameters.integerParameter("clipLength"), FREQUENCY_DEFAULT, chooser.getSelectedFile().getName() + ".wav", af);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -178,7 +208,7 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 		} else { //else image dumped
 			p.setVisibility(false);
 			System.out.println("audio file not saved");
-		
+
 		}	
 
 	}

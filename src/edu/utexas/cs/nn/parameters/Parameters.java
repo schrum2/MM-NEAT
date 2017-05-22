@@ -21,6 +21,7 @@ import edu.utexas.cs.nn.gridTorus.controllers.AggressivePredatorController;
 import edu.utexas.cs.nn.gridTorus.controllers.PreyFleeClosestPredatorController;
 import edu.utexas.cs.nn.networks.ActivationFunctions;
 import edu.utexas.cs.nn.networks.hyperneat.CenteredSubstrateMapping;
+import edu.utexas.cs.nn.tasks.interactive.breedesizer.Keyboard;
 import edu.utexas.cs.nn.tasks.mspacman.data.JunctionNodes;
 import edu.utexas.cs.nn.tasks.mspacman.multitask.GhostsThenPillsModeSelector;
 import edu.utexas.cs.nn.tasks.mspacman.objectives.fitnessassignment.GhostsPillsMap;
@@ -286,6 +287,8 @@ public class Parameters {
 		integerOptions.add("stopMode", -1, "Whenever this mode gets used, pause evaluation and wait for key press");
 		integerOptions.add("scentMode", -1, "Whenever this mode gets used, drop pheremone on scent path");
 		integerOptions.add("pacmanReplayDelay", Constants.DELAY, "Milliseconds of pause between pacman time steps in replay mode");
+		integerOptions.add("clipLength", Keyboard.NOTE_LENGTH_DEFAULT, "Length of clip played in Breedesizer");
+		integerOptions.add("maxClipLength", 100000, "Maximum length of clip played in Breedesizer");
 		// Long parameters
 		longOptions.add("lastInnovation", 0l, "Highest innovation number used so far");
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");

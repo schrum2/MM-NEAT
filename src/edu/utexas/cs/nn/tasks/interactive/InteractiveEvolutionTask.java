@@ -261,7 +261,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		//adds slider for mutation rate change
 		JSlider mutationsPerGeneration = new JSlider(JSlider.HORIZONTAL, MPG_MIN, MPG_MAX, MPG_DEFAULT);
 
-		Hashtable labels = new Hashtable();
+		Hashtable<Integer,JLabel> labels = new Hashtable<>();
 		//set graphic names and toolTip titles
 		evolveButton.setName("" + EVOLVE_BUTTON_INDEX);
 		evolveButton.setToolTipText("Evolve button");
