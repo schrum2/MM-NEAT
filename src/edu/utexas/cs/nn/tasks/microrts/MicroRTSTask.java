@@ -67,17 +67,17 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 		MMNEAT.registerFitnessFunction("time");
 		MMNEAT.registerFitnessFunction("unit-difference");
 		ef.givePhysicalGameState(pgs);
-		gs = new GameState(pgs, utt);
+		gs = null;
 	}
 
 	@Override
 	public int numObjectives() {
-		return 1;
+		return 3;
 	}
 
 	@Override
 	public double getTimeStamp() {
-		return gs.getTime();
+		return gs == null ? 0 : gs.getTime();
 	}
 
 	/**
@@ -154,8 +154,9 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 			e.printStackTrace();
 			System.exit(1);
 		}
-
+		gs = new GameState(pgs, utt);
 		ef.setNetwork(individual);
+		ef.givePhysicalGameState(pgs);
 		//AI ai1 = new NaiveMCTS(100,-1,100,10, 0.3f, 0.0f, 0.4f, new RandomBiasedAI(), ef, true);
 		AI ai1 = new UCT(100, -1, 100, 10, new RandomBiasedAI(), ef);
 		//AI ai1 = new WorkerRush(utt, new BFSPathFinding());
