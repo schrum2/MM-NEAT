@@ -4,11 +4,13 @@ import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.networks.Network;
 import micro.ai.evaluation.EvaluationFunction;
 import micro.rts.GameState;
+import micro.rts.PhysicalGameState;
 
 public abstract class NNEvaluationFunction<T extends Network> extends EvaluationFunction{
 
 	protected Network nn;
-
+	protected PhysicalGameState pgs;
+	
 	public NNEvaluationFunction(){
 	}
 	
@@ -35,5 +37,9 @@ public abstract class NNEvaluationFunction<T extends Network> extends Evaluation
 	@Override
 	public float upperBound(GameState gs) {
 		return 1;
+	}
+	
+	public void givePhysicalGameState(PhysicalGameState pgs) {
+		this.pgs = pgs;
 	}
 }

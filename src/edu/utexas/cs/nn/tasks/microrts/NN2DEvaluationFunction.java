@@ -7,45 +7,67 @@ import micro.rts.units.Unit;
 
 public class NN2DEvaluationFunction<T extends Network> extends NNEvaluationFunction {
 
+	public static final double BASE_WEIGHT = 4; //hard to quantify because different amount of importance at different stages of the game
+	public static final double BASE_RESOURCE_WEIGHT = .25;
+	public static final double BARRACKS_WEIGHT = 2.5;
+	public static final double WORKER_WEIGHT = 1;
+	public static final double WORKER_RESOURCE_WEIGHT = .15;
+	//these subject to change because in experiments so far there have rarely been multiple non-worker units
+	public static final double LIGHT_WEIGHT = 3; 
+	public static final double HEAVY_WEIGHT = 3.25;
+	public static final double RANGED_WEIGHT = 3.75;
+	public static final double RAW_RESOURCE_WEIGHT = .01;
+	
 	/**
-	 * counts all 
+	 * represents all squares of the gameState in an array
 	 */
 	@Override
 	public double[] gameStateToArray(GameState gs) {
-		PhysicalGameState pgs = gs.getPhysicalGameState();
-		double[] unitsOnBoard = new double[14];
+		pgs = gs.getPhysicalGameState();
+		double[] board = new double[pgs.getHeight()*pgs.getWidth()];
+		int boardIndex;
 		Unit currentUnit;
-		int playerAdjustment;
 		for(int i = 0; i < pgs.getWidth(); i++){
 			for(int j = 0; j < pgs.getHeight(); j++){
+				boardIndex = i * pgs.getWidth() + j;
 				currentUnit = pgs.getUnitAt(i, j);
 				if(currentUnit != null){
-					playerAdjustment = (currentUnit.getPlayer() == 0) ? 0 : 6; //shift enemy units +6 in the array
 					switch(currentUnit.getType().name){
-					case "Worker": unitsOnBoard[0 + playerAdjustment]++; break;
-					case "Light": unitsOnBoard[1 + playerAdjustment]++; break;
-					case "Heavy": unitsOnBoard[2 + playerAdjustment]++; break;
-					case "Ranged": unitsOnBoard[3 + playerAdjustment]++; break;
-					case "Base": unitsOnBoard[4 + playerAdjustment]++; break;
-					case "Barracks": unitsOnBoard[5 + playerAdjustment]++; break;
+					case "Worker": board[boardIndex] = WORKER_WEIGHT + (WORKER_RESOURCE_WEIGHT * currentUnit.getResources()); break; 
+					case "Light": board[boardIndex] = LIGHT_WEIGHT; break;
+					case "Heavy": board[boardIndex] = HEAVY_WEIGHT; break;
+					case "Ranged": board[boardIndex] = RANGED_WEIGHT; break;
+					case "Base": board[boardIndex] = BASE_WEIGHT + (BASE_RESOURCE_WEIGHT * currentUnit.getResources()); break;
+					case "Barracks": board[boardIndex] = BARRACKS_WEIGHT; break;
+					case "Resource": board[boardIndex] = RAW_RESOURCE_WEIGHT; break;
 					default: break;
 					}
+					if(currentUnit.getPlayer() == 1) board[boardIndex] *= -1; 
 				}
-			}
-		}
-		return unitsOnBoard;
+			}//end inner loop
+		}//end outer loop
+		return board;
 	}
 
 	@Override
 	public String[] sensorLabels() {
-		// TODO Auto-generated method stub
-		return null;
+		assert pgs != null : "There must be a physical game state in order to extract height and width";
+		String[]labels = new String[pgs.getHeight()*pgs.getWidth()];
+		for(int i = 0; i < pgs.getWidth(); i++){
+			for(int j = 0; j < pgs.getHeight(); j++){
+				String label = "unit at (" + i + ", " + j + ")";
+				labels[i*pgs.getWidth() + j] = label;
+			} 
+		}
+		return labels; 
 	}
-
+	
 	@Override
 	public float evaluate(int maxplayer, int minplayer, GameState gs) {
-		// TODO Auto-generated method stub
-		return 0;
+		double[] inputs = gameStateToArray(gs);
+		double[] outputs = nn.process(inputs);
+		float score = (float) outputs[0];
+		return score;
 	}
 
 }
