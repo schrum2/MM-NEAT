@@ -112,27 +112,7 @@ public class StaticOpponentBoardGameTask<T extends Network> extends NoisyLonerTa
 
 		BoardGamePlayer evolved = new BoardGamePlayerOneStepEval<T>(individual.getPhenotype());
 		BoardGamePlayer[] players = new BoardGamePlayer[]{evolved, opponent};
-		bg.reset();
-		while(!bg.isGameOver()){
-			if(Parameters.parameters.booleanParameter("stepByStep")){
-				System.out.print("Press enter to continue");
-				System.out.println(bg.toString());
-				MiscUtil.waitForReadStringAndEnterKeyPress();
-			}
-			bg.move(players[bg.getCurrentPlayer()]);
-		}
-//		System.out.println("Game over");
-//		System.out.println(game);
-		
-		List<Integer> winners = bg.getWinners();
-		
-		double fitness = winners.size() == 2 ? 0 : // two winners means tie: fitness is 0 
-						(winners.get(0) == 0 ? 1 // If the one winner is 0, then the neural network won: fitness 1
-											 : -2); // Else the network lost: fitness -2
-		
-		// TODO: What is the fitness?
-		Pair<double[], double[]> evalResults = new Pair<double[], double[]>(new double[] { fitness }, new double[0]);			
-		return evalResults; // Returns the Fitness of the individual's Genotype<T>
+		return BoardGameUtil.playGame(bg, players).get(0);
 	}
 
 	// Used for Hyper-NEAT

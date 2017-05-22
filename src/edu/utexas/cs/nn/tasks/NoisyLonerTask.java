@@ -80,17 +80,21 @@ public abstract class NoisyLonerTask<T> extends LonerTask<T> {
 	public Score<T> evaluate(Genotype<T> individual) {
 		prep();
 		int numTrials;
+		// Determine the number of trials to evaluate the agent for
 		if(Parameters.parameters.booleanParameter("scaleTrials")){
 			numTrials = (int) Math.ceil((((double) MMNEAT.ea.currentGeneration() + 0.01) / 
 					Parameters.parameters.integerParameter("maxGens")) * CommonConstants.trials);
 			numTrials = Math.min(numTrials, CommonConstants.trials);
 		} else {
-			numTrials = CommonConstants.trials;
+			numTrials = CommonConstants.trials; // Standard approach
 		}
-		
+
+		// One set of scores for each trial
 		double[][] objectiveScores = new double[numTrials][this.numObjectives()];
 		double[][] otherScores = new double[numTrials][this.numOtherScores()];
 		double evalTimeSum = 0;
+		
+		// Carry out all trials and save all scores
 		for (int i = 0; i < numTrials; i++) {
 			long before = System.currentTimeMillis();
 			if (MMNEAT.evalReport != null) {
@@ -112,18 +116,22 @@ public abstract class NoisyLonerTask<T> extends LonerTask<T> {
 		}
 		double averageEvalTime = evalTimeSum / numTrials;
 		double[] fitness = new double[this.numObjectives()];
+		// Aggregate each fitness score across all trials
 		for (int i = 0; i < fitness.length; i++) {
 			if (MMNEAT.aggregationOverrides.get(i) == null) {
 				fitness[i] = stat.stat(ArrayUtil.column(objectiveScores, i));
 			} else {
+				// Override aggregation statistic for a specific fitness function
 				fitness[i] = MMNEAT.aggregationOverrides.get(i).stat(ArrayUtil.column(objectiveScores, i));
 			}
 		}
 		double[] other = new double[this.numOtherScores()];
+		// Aggregate each other score across all trials
 		for (int i = 0; i < other.length; i++) {
 			if (MMNEAT.aggregationOverrides.get(fitness.length + i) == null) {
 				other[i] = stat.stat(ArrayUtil.column(otherScores, i));
 			} else {
+				// Override aggregation statistic for a specific other function
 				other[i] = MMNEAT.aggregationOverrides.get(fitness.length + i).stat(ArrayUtil.column(otherScores, i));
 			}
 		}
