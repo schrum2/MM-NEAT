@@ -14,7 +14,7 @@ public class Testing {
 		// Code similar to what is below should eventually be placed into the
 		// oneEval method of BoardGameTask BoardGamePlayerRandom
 
-		BoardGame<TicTacToeState> game = new TicTacToe();
+		Othello game = new Othello();
 		BoardGamePlayer[] players = new BoardGamePlayer[]{new BoardGamePlayerRandom<TicTacToeState>(), new BoardGamePlayerRandom<TicTacToeState>()};
 
 		while(!game.isGameOver()){

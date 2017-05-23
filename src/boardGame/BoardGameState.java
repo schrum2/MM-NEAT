@@ -42,7 +42,7 @@ public interface BoardGameState {
 	 * 
 	 * @return List<Integer> representing the winners in this current BoardGameState
 	 */
-	public List<Integer> getWinner();
+	public List<Integer> getWinners();
 	
 	public String toString();
 	

@@ -4,7 +4,6 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 import boardGame.BoardGameState;
 
@@ -18,12 +17,13 @@ public class OthelloState implements BoardGameState{
 
 	private final int BOARD_CORE1 = 3; // Keeps track of the center of the Board
 	private final int BOARD_CORE2 = 4; // Keeps track of the center of the Board
-
 	
 	private final int EMPTY = -1;
 	private final int BLACK_CHIP = 0;
 	private final int WHITE_CHIP = 1;
 		
+	private final int NEW_CHIP = 3;
+	
 	/**
 	 * Default Constructor
 	 */
@@ -138,10 +138,6 @@ public class OthelloState implements BoardGameState{
 		}
 	}
 	
-	private boolean checkChipSelect(int useX, int useY){
-		return boardState[useX][useY] == currentPlayer;
-	}
-	
 	/**
 	 * Allows a Player to make a Move on the current BoardGameState; Returns true if the Move was valid,
 	 * and updates the List of winners
@@ -152,123 +148,90 @@ public class OthelloState implements BoardGameState{
 	 */
 	public boolean move(Point useThis, Point goTo){
 		
-		// TODO: REWORK THIS! LIKE, A LOT! IT DOESN'T WORK!
-
 		int useX = (int) useThis.getX();
 		int useY = (int) useThis.getY();
 
 		int goX = (int) goTo.getX();
 		int goY = (int) goTo.getY();
-		
-		System.out.println("Check Select");
 
-		boolean check1 = checkChipSelect(useX, useY);
-		if(!check1) return false; // Cannot move if it is not your turn
+		assert useX >= 0 && useX < BOARD_WIDTH;
+		assert useY >= 0 && useY < BOARD_WIDTH;
+		assert goX >= 0 && goX < BOARD_WIDTH;
+		assert goY >= 0 && goY < BOARD_WIDTH;
+				
+		boolean check1 = boardState[useX][useY] == currentPlayer;
+		if(!check1) return false; // Cannot move if it is not your chip
 		
-		// Should always be true
-		if(!((useX - goX == 0) || (useY - goY == 0) || (useX - goX == useY - goY))){ // Checks directional selection of the Move; can only be Vertical, Horizontal, or True Diagonal
-			System.out.println("Can only select Vertically, Horizontally, or Diagonally. Selected: (" + useX + ", " + useY + ") Went to: (" + goX + ", " + goY + ")");
-			return false;
-		}else if(boardState[goX][goY] != EMPTY){ // Can only select an Empty Space to Move to
-			System.out.println("Can only select an Empty Space for the end of the Move: (" + goX + ", " + goY + ")");
-			return false;
-		}
+		boolean check2 = boardState[goX][goY] == EMPTY;
+		if(!check2) return false; // Cannot move to a Non-Empty Space
 		
-		boolean vert = useX - goX == 0;
-		boolean hori = useY - goY == 0;
-		boolean tl_br_diag = useX - goX == useY - goY; // Top-Left to Bottom-Right Diagonal
-		boolean bl_tr_diag = useX - goX == -(useY - goY); // Bottom-Left to Top-Right Diagonal
-
-		System.out.println("Check Move");
-
-		// Checks that the entire Move is valid; Only enemy pieces in-between the selected Chip and selected Empty Space
+		boolean check3 = /*Vertical*/ (useX - goX == 0) || /*Horizontal*/ (useY - goY == 0) || /*Slope of 1 Diagonal*/ (useX - goX == useY - goY) || /*Slope of -1 Diagonal*/ (useX - goX == -(useY - goY));
+		if(!check3) return false; // Cannot move in a non-linear way
 		
-		if(vert){
-			for(int i = Math.min(useY, goY); i < Math.max(useY, goY); i++){
-				if((boardState[useX][i] != (currentPlayer + 1 % 2) || boardState[useX][i] != EMPTY) && i != useY){
-					System.out.println("Cannot move to selected Space: (" + goX + ", " + goY + "); there is a(n) " + label(boardState[useX][i]) + " at (" + useX + ", " + useY + ")");
-					return false;
-				}
+		boolean foundEnemy = false;
+		boolean includesSelf = false;
+		
+		if(useX - goX == 0){ // Vertical
+			for(int i = Math.min(useY, goY)+1; i < Math.max(useY, goY); i++){
+				if(boardState[useX][i] == (currentPlayer + 1) % 2) foundEnemy = true;
+				if(boardState[useX][i] == currentPlayer) includesSelf = true;
 			}
-		}else if(hori){
-			for(int i = Math.min(useX, goX); i < Math.max(useX, goX); i++){
-				if((boardState[i][useY] != (currentPlayer + 1 % 2) && boardState[i][useY] != EMPTY) && i != useY){
-					System.out.println("Cannot move to selected Space: (" + goX + ", " + goY + "); there is a(n) " + label(boardState[useX][i]) + " at (" + useX + ", " + useY + ")");
-					return false;
-				}
+		}else if(useY - goY == 0){ // Horizontal
+			for(int i = Math.min(useX, goX)+1; i < Math.max(useX, goX); i++){
+				if(boardState[i][useY] == (currentPlayer + 1) % 2) foundEnemy = true;
+				if(boardState[i][useY] == currentPlayer) includesSelf = true;
 			}
-		}else if(tl_br_diag){
-			for(int i = Math.min(useX, goX); i < Math.max(useX, goX); i++){
-				for(int j = Math.min(useY, goY); j < Math.max(useY, goY); j++){
-					if((boardState[i][j] != (currentPlayer + 1 % 2) && boardState[i][j] != EMPTY)&& i != useY){
-						System.out.println("Cannot move to selected Space: (" + goX + ", " + goY + "); there is a(n) " + label(boardState[useX][i]) + " at (" + useX + ", " + useY + ")");
-						return false;
+		}else if(useX - goX == useY - goY){ // Slope of 1 Diagonal
+			for(int i = Math.min(useX, goX)+1; i < Math.max(useX, goX); i++){
+				for(int j = Math.min(useY, goY)+1; j < Math.max(useY, goY); j++){
+					if(Math.abs(i) == Math.abs(j)){
+						if(boardState[i][j] == (currentPlayer + 1) % 2) foundEnemy = true;
+						if(boardState[i][j] == currentPlayer) includesSelf = true;
 					}
 				}
 			}
-		}else if(bl_tr_diag){
-			for(int i = Math.min(useX, goX); i < Math.max(useX, goX); i++){
-				for(int j = Math.max(useY, goY); j < Math.min(useY, goY); j--){
-					if((boardState[i][j] != (currentPlayer + 1 % 2) && boardState[i][j] != EMPTY) && i != useY){
-						System.out.println("Cannot move to selected Space: (" + goX + ", " + goY + "); there is a(n) " + label(boardState[useX][i]) + " at (" + useX + ", " + useY + ")");
-						return false;
+		}else if(useX - goX == -(useY - goY)){ // Slope of -1 Diagonal
+			for(int i = Math.min(useX, goX)+1; i < Math.max(useX, goX); i++){
+				for(int j = Math.max(useY, goY)+1; j < Math.min(useY, goY); j++){
+					if(Math.abs(i) == Math.abs(j)){
+						if(boardState[i][j] == (currentPlayer + 1) % 2) foundEnemy = true;
+						if(boardState[i][j] == currentPlayer) includesSelf = true;
 					}
 				}
 			}
-		}
 
-		//System.out.println("Did it!");
+		}
 		
-		// Survived the Trials of Logic; Valid Move
+		if(!foundEnemy || includesSelf) return false;
 		
-		// Converts all enemy Chips along the Move to the Player's Chips
-		if(vert){
-			for(int i = Math.min(useY, goY); i < Math.max(useY, goY); i++){
+		if(useX - goX == 0){ // Vertical
+			for(int i = Math.min(useY, goY); i <= Math.max(useY, goY); i++){
 				boardState[useX][i] = currentPlayer;
-				System.out.println("Vert: (" + useX + ", "+ useY + ") to (" + goX + ", " + goY + ").");
 			}
-		}else if(hori){
-			for(int i = Math.min(useX, goX); i < Math.max(useX, goX); i++){
+		}else if(useY - goY == 0){ // Horizontal
+			for(int i = Math.min(useX, goX); i <= Math.max(useX, goX); i++){
 				boardState[i][useY] = currentPlayer;
-				System.out.println("Hori: (" + useX + ", "+ useY + ") to (" + goX + ", " + goY + ").");
 			}
-		}else if(tl_br_diag){ // Ensure that this works...
-			for(int i = Math.min(useX, goX); i < Math.max(useX, goX); i++){
-				for(int j = Math.min(useY, goY); j < Math.max(useY, goY); j++){
-					boardState[i][j] = currentPlayer;
-					System.out.println("tl_br_diag: (" + useX + ", "+ useY + ") to (" + goX + ", " + goY + ").");
+		}else if(useX - goX == useY - goY){ // Slope of 1 Diagonal
+			for(int i = Math.min(useX, goX); i <= Math.max(useX, goX); i++){
+				for(int j = Math.min(useY, goY); j <= Math.max(useY, goY); j++){
+					if(Math.abs(i) == Math.abs(j)) boardState[i][j] = currentPlayer;
 				}
 			}
-		}else if(bl_tr_diag){ // Ensure that this works...
-			for(int i = Math.min(useX, goX); i < Math.max(useX, goX); i++){
-				for(int j = Math.max(useY, goY); j < Math.min(useY, goY); j--){
-					boardState[i][j] = currentPlayer;
-					System.out.println("bl_tr_diag: (" + useX + ", "+ useY + ") to (" + goX + ", " + goY + ").");
+		}else if(useX - goX == -(useY - goY)){ // Slope of -1 Diagonal
+			for(int i = Math.min(useX, goX); i <= Math.max(useX, goX); i++){
+				for(int j = Math.max(useY, goY); j <= Math.min(useY, goY); j++){
+					if(Math.abs(i) == Math.abs(j)) boardState[i][j] = currentPlayer;
 				}
 			}
+
 		}
-		boardState[goX][goY] = currentPlayer; // Places the Player's Chip at the end of the Move
+		
+		currentPlayer = (currentPlayer + 1) % 2;
 		checkWinners();
-		currentPlayer = (currentPlayer + 1) % 2; // Switches the currentPlayer
-		System.out.println(currentPlayer);
 		return true;
 	}
 	
-	/**
-	 * Returns a String representing the specified Index
-	 * 
-	 * @param index Integer being represented as a String
-	 * @return Label of the given Index
-	 */
-	private String label(int index) {
-		switch(index){
-			case EMPTY: return "Empty Space";
-			case BLACK_CHIP: return "Black Chip";
-			case WHITE_CHIP: return "White Chip";
-		}
-		return "Invalid Space Marker";
-	}
-
 	/**
 	 * Creates a List of all possible valid Moves from this BoardGameState
 	 * 
@@ -289,7 +252,7 @@ public class OthelloState implements BoardGameState{
 				}
 			}
 		}
-				
+		
 		for(Point chip : chipMoves){
 			int chipX = (int) chip.getX();
 			int chipY = (int) chip.getY();
@@ -300,26 +263,30 @@ public class OthelloState implements BoardGameState{
 						int x = chipX;
 						int y = chipY;
 						do{
-							x = chipX + dX;
-							y = chipY + dY;
-						}while(boardState[x][y] == (currentPlayer + 1) % 2);
+							x += dX;
+							y += dY;
+						}while((x >= 0 && x < BOARD_WIDTH) && (y >= 0 && y < BOARD_WIDTH) && boardState[x][y] == (currentPlayer + 1) % 2);
+						
 						if((x > 0 && x < BOARD_WIDTH) && (y > 0 && y < BOARD_WIDTH)){
 							if(boardState[x][y] == EMPTY){
 								OthelloState temp = (OthelloState) currentState.copy();
-								temp.move(chip, new Point(x, y));
-								possible.add(temp);
+								if(temp.move(chip, new Point(x, y))){
+									possible.add(temp);
+								}
 							}
 						}
 					}
 				}
 			}
 		}
+		
+		
+		
 		List<T> returnThis = new ArrayList<T>();
 		returnThis.addAll((Collection<? extends T>) possible);
+		System.out.println(returnThis.size());
 		return returnThis;
 	}
-	
-
 
 	/**
 	 * Creates a copy of this BoardGameState
@@ -348,7 +315,7 @@ public class OthelloState implements BoardGameState{
 	 * @return List<Integer> containing the Indexes from this BoardGameState
 	 */
 	@Override
-	public List<Integer> getWinner() {
+	public List<Integer> getWinners() {
 		return winners;
 	}
 
@@ -368,6 +335,8 @@ public class OthelloState implements BoardGameState{
 					result += "B";									
 				}else if(boardState[i][j] == WHITE_CHIP){
 					result += "W";									
+				}else if(boardState[i][j] == NEW_CHIP){
+					result += "N";									
 				}
 				result += "|";
 			}

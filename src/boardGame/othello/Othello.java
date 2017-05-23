@@ -49,7 +49,7 @@ public class Othello implements BoardGame<BoardGameState>{
 	 */
 	@Override
 	public List<Integer> getWinners() {
-		return board.getWinner();
+		return board.getWinners();
 	}
 
 	/**
@@ -57,7 +57,7 @@ public class Othello implements BoardGame<BoardGameState>{
 	 */
 	@Override
 	public void move(BoardGamePlayer<BoardGameState> bgp) {
-		bgp.takeAction(board);
+		board = (OthelloState) bgp.takeAction(board);
 		currentPlayer = (currentPlayer + 1) % 2; // Switches the currentPlayer
 	}
 
