@@ -129,9 +129,9 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 	public List<Pair<String, String>> getSubstrateConnectivity() {
 		ArrayList<Pair<String, String>> conn = new ArrayList<Pair<String, String>>();
 		conn.add(new Pair<String, String>("Inputs Board State", "Processing"));
-		conn.add(new Pair<String, String>("Output", "Processing"));
+		conn.add(new Pair<String, String>("Processing","Output"));
 		if(Parameters.parameters.booleanParameter("extraHNLinks")) {
-			conn.add(new Pair<String, String>("Output", "Inpus Board State"));
+			conn.add(new Pair<String, String>("Inputs Board State","Output"));
 		}
 		return conn;
 	}
