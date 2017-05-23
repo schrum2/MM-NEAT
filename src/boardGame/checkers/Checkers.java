@@ -8,7 +8,7 @@ import boardGame.BoardGamePlayer;
 import boardGame.BoardGameState;
 import boardGame.TwoDimensionalBoardGame;
 
-public class Checkers extends TwoDimensionalBoardGame implements BoardGame<BoardGameState>{
+public class Checkers implements BoardGame<BoardGameState>{
 
 	private int currentPlayer; // Used to keep track of whose turn it is
 	private CheckersState board;

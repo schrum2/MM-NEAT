@@ -7,7 +7,7 @@ import boardGame.BoardGamePlayer;
 import boardGame.BoardGameState;
 import boardGame.TwoDimensionalBoardGame;
 
-public class Othello extends TwoDimensionalBoardGame implements BoardGame<BoardGameState>{
+public class Othello implements BoardGame<BoardGameState>{
 	
 	private int currentPlayer; // Used to keep track of whose turn it is
 	private OthelloState board;
