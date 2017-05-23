@@ -26,13 +26,13 @@ public class TerminalFitnessFunction extends RTSFitnessFunction{
 
 		if(terminalGameState.winner() == 0){ //victory organism being tested! 
 			score.t1[0] = 1;
-			score.t1[1] = (double) (MAXCYCLES - gameEndTime) / MAXCYCLES * RESULTRANGE - 1; //lower time is better
+			score.t1[1] = (double) (maxCycles - gameEndTime) / maxCycles * RESULTRANGE - 1; //lower time is better
 			for(Unit u : unitsLeft){
 				if(u.getType().name != "Resource") score.t1[2] += u.getType().cost;
 			}
 		} else if(terminalGameState.winner() == 1){ //defeat for organism being tested
 			score.t1[0] = -1;
-			score.t1[1] = (double) (MAXCYCLES - gameEndTime) / MAXCYCLES * -1 * RESULTRANGE + 1; //holding out for longer is better
+			score.t1[1] = (double) (maxCycles - gameEndTime) / maxCycles * -1 * RESULTRANGE + 1; //holding out for longer is better
 			for(Unit u : unitsLeft){
 				if(u.getType().name != "Resource") score.t1[2] -= u.getType().cost;
 			}

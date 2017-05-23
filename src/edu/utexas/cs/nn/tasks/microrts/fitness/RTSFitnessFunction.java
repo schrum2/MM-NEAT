@@ -6,8 +6,8 @@ import micro.rts.PhysicalGameState;
 
 public abstract class RTSFitnessFunction {
 	
-	protected final int MAXCYCLES = 5000;
 	protected final int RESULTRANGE = 2;
+	protected int maxCycles;
 	protected PhysicalGameState pgs = null;
 	
 	/**
@@ -19,5 +19,9 @@ public abstract class RTSFitnessFunction {
 	
 	public void givePhysicalGameState(PhysicalGameState pgs){
 		this.pgs = pgs;
+	}
+	
+	public void setMaxCycles(int maxCycles){
+		this.maxCycles = maxCycles;
 	}
 }

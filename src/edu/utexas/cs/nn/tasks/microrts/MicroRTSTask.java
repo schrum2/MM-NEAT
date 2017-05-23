@@ -49,7 +49,6 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 	private PhysicalGameState pgs;
 	private UnitTypeTable utt;
 	private int MAXCYCLES = 5000;
-	private int RESULTRANGE = 2; //from -1 to 1
 	private JFrame w = null;
 	private GameState gs;
 	
@@ -72,6 +71,8 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 		MMNEAT.registerFitnessFunction("time");
 		MMNEAT.registerFitnessFunction("unit-difference");
 		ef.givePhysicalGameState(pgs);
+		ff.givePhysicalGameState(pgs);
+		ff.setMaxCycles(5000);
 		gs = null;
 	}
 
