@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.tasks.microrts;
+package edu.utexas.cs.nn.tasks.microrts.evaluation;
 
 import edu.utexas.cs.nn.networks.Network;
 import micro.rts.GameState;

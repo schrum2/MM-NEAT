@@ -22,7 +22,7 @@ import edu.utexas.cs.nn.gridTorus.controllers.PreyFleeClosestPredatorController;
 import edu.utexas.cs.nn.networks.ActivationFunctions;
 import edu.utexas.cs.nn.networks.hyperneat.CenteredSubstrateMapping;
 import edu.utexas.cs.nn.tasks.interactive.breedesizer.Keyboard;
-import edu.utexas.cs.nn.tasks.microrts.NNSimpleEvaluationFunction;
+import edu.utexas.cs.nn.tasks.microrts.evaluation.NNSimpleEvaluationFunction;
 import edu.utexas.cs.nn.tasks.microrts.fitness.TerminalFitnessFunction;
 import edu.utexas.cs.nn.tasks.mspacman.data.JunctionNodes;
 import edu.utexas.cs.nn.tasks.mspacman.multitask.GhostsThenPillsModeSelector;
