@@ -81,7 +81,7 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 
 	@Override
 	public int numObjectives() {
-		return 3; // Once you generalize the fitness function, this will need to change
+		return ff.getFunctions().length;
 	}
 
 	@Override
