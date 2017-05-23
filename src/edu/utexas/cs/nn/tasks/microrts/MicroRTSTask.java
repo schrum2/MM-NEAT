@@ -23,6 +23,8 @@ import edu.utexas.cs.nn.networks.hyperneat.Substrate;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.NoisyLonerTask;
+import edu.utexas.cs.nn.tasks.microrts.fitness.RTSFitnessFunction;
+import edu.utexas.cs.nn.tasks.microrts.fitness.TerminalFitnessFunction;
 import edu.utexas.cs.nn.util.ClassCreation;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.datastructures.Triple;
@@ -52,18 +54,20 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 	private GameState gs;
 	
 	NNEvaluationFunction<T> ef;
+	RTSFitnessFunction ff = new TerminalFitnessFunction();
 
 	@SuppressWarnings("unchecked")
 	public MicroRTSTask() {
 		utt = new UnitTypeTable();
 		try {
 			ef = (NNEvaluationFunction<T>) ClassCreation.createObject(Parameters.parameters.classParameter("microRTSEvaluationFunction"));
+//			ff = (RTSFitnessFunction) ClassCreation.createObject(Parameters.parameters.classParameter("microRTSFitnessFunction"));
 			pgs = PhysicalGameState.load("data/microRTS/maps/" + Parameters.parameters.stringParameter("map"), utt);
+			
 		} catch (JDOMException | IOException | NoSuchMethodException e) {
 			e.printStackTrace();
 			System.exit(1);
 		}
-		//ef = new NNSimpleEvaluationFunction<>();
 		MMNEAT.registerFitnessFunction("win/loss");
 		MMNEAT.registerFitnessFunction("time");
 		MMNEAT.registerFitnessFunction("unit-difference");
@@ -202,47 +206,8 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 		if(CommonConstants.watch){
 			w.dispose();
 		}
-		return fitnessFunction(gs);
+		return ff.getFitness(gs);
 	} //END oneEval
-
-	/**
-	 * scores performance in a game
-	 * @param terminalGameState
-	 * @return pair of double[], the first of which has {victory, time, unitDifference}
-	 */
-	private Pair<double[], double[]> fitnessFunction(GameState terminalGameState) {
-		Pair<double[], double[]> score = new Pair<>(new double[3], new double[0]); 
-		//first[]:{victory, time, unitDifference, } on a scale from -1 to 1, except unit difference, which starts at 0 and can go up or down
-
-		int gameEndTime = terminalGameState.getTime();
-		List<Unit> unitsLeft = terminalGameState.getUnits();
-
-		if(terminalGameState.winner() == 0){ //victory organism being tested! 
-			score.t1[0] = 1;
-			score.t1[1] = (double) (MAXCYCLES - gameEndTime) / MAXCYCLES * RESULTRANGE - 1; //lower time is better
-			for(Unit u : unitsLeft){
-				if(u.getType().name != "Resource") score.t1[2] += u.getType().cost;
-			}
-		} else if(terminalGameState.winner() == 1){ //defeat for organism being tested
-			score.t1[0] = -1;
-			score.t1[1] = (double) (MAXCYCLES - gameEndTime) / MAXCYCLES * -1 * RESULTRANGE + 1; //holding out for longer is better
-			for(Unit u : unitsLeft){
-				if(u.getType().name != "Resource") score.t1[2] -= u.getType().cost;
-			}
-		} else if(terminalGameState.winner() == -1){ //tie, ran out of time
-			score.t1[0] = 0;
-			for(Unit u : unitsLeft){
-				if(u.getPlayer()==0)
-					score.t1[2] += u.getType().cost;
-				else if(u.getPlayer()==1)
-					score.t1[2] -= u.getType().cost;
-			}
-			//winning hard but didn't close = very bad, basically even = okay, losing but held out = great
-			score.t1[1] = -1 * score.t1[2] / (pgs.getHeight()*pgs.getWidth());  
-		}
-		System.out.println("result?: "+score.t1[0] + " unit-difference: "+ score.t1[2] + " time: " +score.t1[1]);
-		return score;
-	} //END fitnessFunction
 
 		public static void main(String[] rags){
 			Parameters.initializeParameterCollections(new String[]{"io:false","netio:false", "watch:true", ""});
