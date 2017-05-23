@@ -15,7 +15,10 @@ public class BoardGamePlayerRandom<T extends BoardGameState> implements BoardGam
 	@Override
 	public T takeAction(T current) {
 		List<T> poss = current.possibleBoardGameStates(current);
-		return poss.get(RandomNumbers.randomGenerator.nextInt(poss.size()));
+		System.out.println("Size: " + poss.size());
+		T temp = poss.get(RandomNumbers.randomGenerator.nextInt(poss.size()));
+		System.out.println("I did something:\n" + temp.toString());
+		return temp;
 	}
 
 }

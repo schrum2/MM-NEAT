@@ -1,26 +1,26 @@
 package boardGame;
 
-import boardGame.ttt.TicTacToe;
-import boardGame.ttt.TicTacToePlayerHuman;
-import boardGame.ttt.TicTacToeState;
+import boardGame.othello.Othello;
+import boardGame.othello.OthelloHumanPlayer;
+import boardGame.othello.OthelloState;
+import edu.utexas.cs.nn.util.MiscUtil;
 
 public class Testing {
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static void main(String[] args) {
 		// Code similar to what is below should eventually be placed into the
 		// oneEval method of BoardGameTask BoardGamePlayerRandom
-		
-		BoardGame<TicTacToeState> game = new TicTacToe();
-		BoardGamePlayer[] players = new BoardGamePlayer[]{new TicTacToePlayerHuman<TicTacToeState>(), new BoardGamePlayerRandom<TicTacToeState>()};
-//		BoardGame game = new RockPaperScissors();
-//		BoardGamePlayer[] players = new RPSPlayer[]{new RPSPlayerRandom(), new RPSPlayerRandom()};
-//		Checkers game = new Checkers();
-//		BoardGamePlayer[] players = new RPSPlayer[]{new RPSPlayerRandom(), new RPSPlayerRandom()};
+
+		BoardGame<BoardGameState> game = new Othello();
+		BoardGamePlayer[] players = new BoardGamePlayer[]{new BoardGamePlayerRandom<OthelloState>(), new BoardGamePlayerRandom<OthelloState>()};
+
 		while(!game.isGameOver()){
-			System.out.println(game);
+			System.out.println(game.toString());
+			MiscUtil.waitForReadStringAndEnterKeyPress();
 			game.move(players[game.getCurrentPlayer()]);
-}
-		System.out.println("Game over");
-		System.out.println(game);
+			MiscUtil.waitForReadStringAndEnterKeyPress();
+		}
+
 	}
 }

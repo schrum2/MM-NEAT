@@ -2,7 +2,9 @@ package boardGame.othello;
 
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import boardGame.BoardGameState;
 
@@ -14,16 +16,14 @@ public class OthelloState implements BoardGameState{
 	
 	private final int BOARD_WIDTH = 8;
 
-	private final int BOARD_CORE1 = 4; // Keeps track of the center of the Board
-	private final int BOARD_CORE2 = 5; // Keeps track of the center of the Board
+	private final int BOARD_CORE1 = 3; // Keeps track of the center of the Board
+	private final int BOARD_CORE2 = 4; // Keeps track of the center of the Board
 
 	
 	private final int EMPTY = -1;
 	private final int BLACK_CHIP = 0;
 	private final int WHITE_CHIP = 1;
-	
-	// TODO: REMOVE TEXT OUTPUT; CHECK IF THE BATCH FILE IS FINISHING A GAME; FIND A BETTER WAY TO MAKE A VALID MOVE
-	
+		
 	/**
 	 * Default Constructor
 	 */
@@ -59,7 +59,7 @@ public class OthelloState implements BoardGameState{
 		
 		for(int i = 0; i < BOARD_WIDTH; i++){
 			for(int j = 0; j < BOARD_WIDTH; j++){
-				boardState[i][j] = newBoard[i][j]; // TODO: Why is there a NullPointerException here?
+				boardState[i][j] = newBoard[i][j];
 			}
 		}
 		
@@ -126,13 +126,20 @@ public class OthelloState implements BoardGameState{
 			
 			if(blackChipCount > whiteChipCount){
 				winners.add(BLACK_CHIP);
+				System.out.println("Black Chip Wins!");
 			}else if(whiteChipCount > blackChipCount){
-				winners.add(WHITE_CHIP);				
+				winners.add(WHITE_CHIP);
+				System.out.println("White Chip Wins!");
 			}else{
 				winners.add(BLACK_CHIP);
 				winners.add(WHITE_CHIP);
+				System.out.println("It's a Tie!");
 			}
 		}
+	}
+	
+	private boolean checkChipSelect(int useX, int useY){
+		return boardState[useX][useY] == currentPlayer;
 	}
 	
 	/**
@@ -144,22 +151,22 @@ public class OthelloState implements BoardGameState{
 	 * @return True if the Move was successful, else returns false
 	 */
 	public boolean move(Point useThis, Point goTo){
+		
+		// TODO: REWORK THIS! LIKE, A LOT! IT DOESN'T WORK!
 
 		int useX = (int) useThis.getX();
 		int useY = (int) useThis.getY();
 
 		int goX = (int) goTo.getX();
 		int goY = (int) goTo.getY();
-
-		if(boardState[useX][useY] == EMPTY){ // Cannot use an Empty Space to make a Move
-			System.out.println("Cannot select an Empty Space to make a Move: (" + useX + ", " + useY + ")");
-			return false;
-		}else if(boardState[useX][useY] != currentPlayer){ // Cannot select the other Player's Chips to make a Move
-			System.out.println("Cannot select a Chip that isn't yours to make a Move: (" + useX + ", " + useY + ")");
-			return false;
-		}
 		
-		if((useX - goX == 0) || (useY - goY == 0) || (useX - goX == useY - goY)){ // Checks directional selection of the Move; can only be Vertical, Horizontal, or True Diagonal
+		System.out.println("Check Select");
+
+		boolean check1 = checkChipSelect(useX, useY);
+		if(!check1) return false; // Cannot move if it is not your turn
+		
+		// Should always be true
+		if(!((useX - goX == 0) || (useY - goY == 0) || (useX - goX == useY - goY))){ // Checks directional selection of the Move; can only be Vertical, Horizontal, or True Diagonal
 			System.out.println("Can only select Vertically, Horizontally, or Diagonally. Selected: (" + useX + ", " + useY + ") Went to: (" + goX + ", " + goY + ")");
 			return false;
 		}else if(boardState[goX][goY] != EMPTY){ // Can only select an Empty Space to Move to
@@ -172,18 +179,20 @@ public class OthelloState implements BoardGameState{
 		boolean tl_br_diag = useX - goX == useY - goY; // Top-Left to Bottom-Right Diagonal
 		boolean bl_tr_diag = useX - goX == -(useY - goY); // Bottom-Left to Top-Right Diagonal
 
+		System.out.println("Check Move");
+
 		// Checks that the entire Move is valid; Only enemy pieces in-between the selected Chip and selected Empty Space
 		
 		if(vert){
 			for(int i = Math.min(useY, goY); i < Math.max(useY, goY); i++){
-				if(boardState[useX][i] != (currentPlayer + 1 % 2) && i != useY){
+				if((boardState[useX][i] != (currentPlayer + 1 % 2) || boardState[useX][i] != EMPTY) && i != useY){
 					System.out.println("Cannot move to selected Space: (" + goX + ", " + goY + "); there is a(n) " + label(boardState[useX][i]) + " at (" + useX + ", " + useY + ")");
 					return false;
 				}
 			}
 		}else if(hori){
 			for(int i = Math.min(useX, goX); i < Math.max(useX, goX); i++){
-				if(boardState[i][useY] != (currentPlayer + 1 % 2) && i != useY){
+				if((boardState[i][useY] != (currentPlayer + 1 % 2) && boardState[i][useY] != EMPTY) && i != useY){
 					System.out.println("Cannot move to selected Space: (" + goX + ", " + goY + "); there is a(n) " + label(boardState[useX][i]) + " at (" + useX + ", " + useY + ")");
 					return false;
 				}
@@ -191,7 +200,7 @@ public class OthelloState implements BoardGameState{
 		}else if(tl_br_diag){
 			for(int i = Math.min(useX, goX); i < Math.max(useX, goX); i++){
 				for(int j = Math.min(useY, goY); j < Math.max(useY, goY); j++){
-					if(boardState[i][j] != (currentPlayer + 1 % 2) && i != useY){
+					if((boardState[i][j] != (currentPlayer + 1 % 2) && boardState[i][j] != EMPTY)&& i != useY){
 						System.out.println("Cannot move to selected Space: (" + goX + ", " + goY + "); there is a(n) " + label(boardState[useX][i]) + " at (" + useX + ", " + useY + ")");
 						return false;
 					}
@@ -200,7 +209,7 @@ public class OthelloState implements BoardGameState{
 		}else if(bl_tr_diag){
 			for(int i = Math.min(useX, goX); i < Math.max(useX, goX); i++){
 				for(int j = Math.max(useY, goY); j < Math.min(useY, goY); j--){
-					if(boardState[i][j] != (currentPlayer + 1 % 2) && i != useY){
+					if((boardState[i][j] != (currentPlayer + 1 % 2) && boardState[i][j] != EMPTY) && i != useY){
 						System.out.println("Cannot move to selected Space: (" + goX + ", " + goY + "); there is a(n) " + label(boardState[useX][i]) + " at (" + useX + ", " + useY + ")");
 						return false;
 					}
@@ -208,33 +217,40 @@ public class OthelloState implements BoardGameState{
 			}
 		}
 
+		//System.out.println("Did it!");
+		
 		// Survived the Trials of Logic; Valid Move
 		
 		// Converts all enemy Chips along the Move to the Player's Chips
 		if(vert){
 			for(int i = Math.min(useY, goY); i < Math.max(useY, goY); i++){
 				boardState[useX][i] = currentPlayer;
+				System.out.println("Vert: (" + useX + ", "+ useY + ") to (" + goX + ", " + goY + ").");
 			}
 		}else if(hori){
 			for(int i = Math.min(useX, goX); i < Math.max(useX, goX); i++){
 				boardState[i][useY] = currentPlayer;
+				System.out.println("Hori: (" + useX + ", "+ useY + ") to (" + goX + ", " + goY + ").");
 			}
 		}else if(tl_br_diag){ // Ensure that this works...
 			for(int i = Math.min(useX, goX); i < Math.max(useX, goX); i++){
 				for(int j = Math.min(useY, goY); j < Math.max(useY, goY); j++){
 					boardState[i][j] = currentPlayer;
+					System.out.println("tl_br_diag: (" + useX + ", "+ useY + ") to (" + goX + ", " + goY + ").");
 				}
 			}
 		}else if(bl_tr_diag){ // Ensure that this works...
 			for(int i = Math.min(useX, goX); i < Math.max(useX, goX); i++){
 				for(int j = Math.max(useY, goY); j < Math.min(useY, goY); j--){
 					boardState[i][j] = currentPlayer;
+					System.out.println("bl_tr_diag: (" + useX + ", "+ useY + ") to (" + goX + ", " + goY + ").");
 				}
 			}
 		}
 		boardState[goX][goY] = currentPlayer; // Places the Player's Chip at the end of the Move
 		checkWinners();
 		currentPlayer = (currentPlayer + 1) % 2; // Switches the currentPlayer
+		System.out.println(currentPlayer);
 		return true;
 	}
 	
@@ -259,35 +275,51 @@ public class OthelloState implements BoardGameState{
 	 * @param currentState The BoardGameState being played from
 	 * @return List<T> of all BoardGameStates possible from the given BoardGameState
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends BoardGameState> List<T> possibleBoardGameStates(T currentState) {
 		
-		List<T> possible = new ArrayList<T>();
+		List<OthelloState> possible = new ArrayList<OthelloState>();
 		List<Point> chipMoves = new ArrayList<Point>();
-		List<Point> emptySpaces = new ArrayList<Point>();
 		
 		for(int i = 0; i < BOARD_WIDTH; i++){
 			for(int j = 0; j < BOARD_WIDTH; j++){
 				if(boardState[i][j] == currentPlayer){
 					chipMoves.add(new Point(i, j));
-				}else if(boardState[i][j] == EMPTY){
-					emptySpaces.add(new Point(i, j));
 				}
 			}
 		}
-		
+				
 		for(Point chip : chipMoves){
-			for(Point empty : emptySpaces){
-				@SuppressWarnings("unchecked")
-				T temp = (T) currentState.copy(); // Creates a new Copy each time
-				if(move(chip, empty)){ // Valid Move using chip and empty
-					possible.add(temp); // Makes the Move in the Check
+			int chipX = (int) chip.getX();
+			int chipY = (int) chip.getY();
+			
+			for(int dX = -1; dX <= 1; dX++){
+				for(int dY = -1; dY <= 1; dY++){
+					if(dX != 0 || dY != 0){
+						int x = chipX;
+						int y = chipY;
+						do{
+							x = chipX + dX;
+							y = chipY + dY;
+						}while(boardState[x][y] == (currentPlayer + 1) % 2);
+						if((x > 0 && x < BOARD_WIDTH) && (y > 0 && y < BOARD_WIDTH)){
+							if(boardState[x][y] == EMPTY){
+								OthelloState temp = (OthelloState) currentState.copy();
+								temp.move(chip, new Point(x, y));
+								possible.add(temp);
+							}
+						}
+					}
 				}
 			}
 		}
-		
-		return possible;
+		List<T> returnThis = new ArrayList<T>();
+		returnThis.addAll((Collection<? extends T>) possible);
+		return returnThis;
 	}
+	
+
 
 	/**
 	 * Creates a copy of this BoardGameState
@@ -295,7 +327,7 @@ public class OthelloState implements BoardGameState{
 	 * @return Copy of this BoardGameState
 	 */
 	@Override
-	public BoardGameState copy() {
+ 	public BoardGameState copy() {
 		int[][] copy = new int[BOARD_WIDTH][BOARD_WIDTH];
 		for(int i = 0; i < BOARD_WIDTH; i++){
 			for(int j = 0; j < BOARD_WIDTH; j++){
@@ -326,9 +358,9 @@ public class OthelloState implements BoardGameState{
 	 * @return String visually representing the current BoardGameState
 	 */
 	public String toString(){
-		String result = " _ _ _ _ _ _ _ _ ";
+		String result = "  0 1 2 3 4 5 6 7 \n  _ _ _ _ _ _ _ _ ";
 		for(int i = 0; i < BOARD_WIDTH; i++){
-			result += "\n|";
+			result += "\n" + i + "|";
 			for(int j = 0; j < BOARD_WIDTH; j++){
 				if(boardState[i][j] == EMPTY){
 					result += " ";					
@@ -339,7 +371,7 @@ public class OthelloState implements BoardGameState{
 				}
 				result += "|";
 			}
-			result += "\n _ _ _ _ _ _ _ _";
+			result += "\n  _ _ _ _ _ _ _ _";
 		}
 		
 		return result;
