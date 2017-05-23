@@ -16,6 +16,7 @@ public abstract class RTSFitnessFunction {
 	 * @return fitness of an organism
 	 */
 	public abstract Pair<double[], double[]> getFitness(GameState gs);
+	public abstract String[] getFunctions();
 	
 	public void givePhysicalGameState(PhysicalGameState pgs){
 		this.pgs = pgs;
@@ -24,4 +25,5 @@ public abstract class RTSFitnessFunction {
 	public void setMaxCycles(int maxCycles){
 		this.maxCycles = maxCycles;
 	}
+
 }

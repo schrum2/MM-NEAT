@@ -70,6 +70,9 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 		MMNEAT.registerFitnessFunction("win/loss");
 		MMNEAT.registerFitnessFunction("time");
 		MMNEAT.registerFitnessFunction("unit-difference");
+		for(String function : ff.getFunctions()){
+			MMNEAT.registerFitnessFunction(function);
+		}
 		ef.givePhysicalGameState(pgs);
 		ff.givePhysicalGameState(pgs);
 		ff.setMaxCycles(5000);
