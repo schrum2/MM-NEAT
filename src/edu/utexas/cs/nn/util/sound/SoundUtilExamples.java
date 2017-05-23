@@ -7,6 +7,7 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -43,9 +44,11 @@ public class SoundUtilExamples {
 	private static final String HARP_WAV = "data/sounds/harp.wav";
 	private static final String HAPPY_MP3 = "data/sounds/25733.mp3";
 	private static final String PIRATES = "data/sounds/pirates.mid";
+	private static final String CLASSICAL_MID = "data/sounds/CLASSICA.MID";
+	private static final String SOLO_PIANO_MID	= "data/sounds/Chon01.MID";
 
 	public static void main(String[] args) throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException, JavaLayerException {
-		CPPNExamples();
+		MIDITests();
 	}
 
 	public static void CPPNExamples() throws IOException {
@@ -304,7 +307,15 @@ public class SoundUtilExamples {
 		SoundAmplitudeArrayManipulator.saveFileFromArray(classicalNumbers, "data/sounds/classicalCopy.mid");
 		MiscSoundUtil.close(); 
 	}
-
-
-
+	
+	public static void MIDITests() {
+//		File classicalFile = new File(CLASSICAL_MID);
+//		MiscSoundUtil.MIDIData(classicalFile);
+		
+//		File piratesFile = new File(PIRATES);
+//		MiscSoundUtil.MIDIData(piratesFile);
+		
+		File soloPiano = new File(SOLO_PIANO_MID);
+		MiscSoundUtil.MIDIData(soloPiano);
+	}
 }
