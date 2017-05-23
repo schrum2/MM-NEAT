@@ -50,6 +50,9 @@ public final class MiscSoundUtil {
 	private static SourceDataLine line;   // to play the sound
 	private static byte[] buffer;         // our internal buffer
 	private static int bufferSize = 0;    // number of samples currently in internal buffer
+	
+	private static boolean playing = false;
+	private static boolean available = true;
 
 	private MiscSoundUtil() {
 		// can not instantiate
@@ -128,9 +131,25 @@ public final class MiscSoundUtil {
 	 */
 	public static void playDoubleArray(double[] samples) {
 		if (samples == null) throw new IllegalArgumentException("argument to play() is null");
-		for (int i = 0; i < samples.length; i++) {
-			playDouble(samples[i]);
+		playing = false; // Disable any previously playing sample
+		while(!available) { // Wait until previous sample finishes playing
+			try {
+				Thread.sleep(1); // short pause to wait for sound line to become available
+			} catch (InterruptedException e) {
+				e.printStackTrace(); // Should not happen?
+			}
 		}
+		// Play sound in its own Thread
+		new Thread() {
+			public void run() {
+				playing = true;
+				available = false;
+				for (int i = 0; playing && i < samples.length; i++) {
+					playDouble(samples[i]);
+				}				
+				available = true;
+			}
+		}.start();
 	}
 
 	/**
