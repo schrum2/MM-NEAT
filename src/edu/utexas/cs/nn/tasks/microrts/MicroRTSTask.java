@@ -53,6 +53,10 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 	private JFrame w = null;
 	private GameState gs;
 	
+	public double averageUnitDifference;
+	public int baseUpTime;
+	
+	
 	NNEvaluationFunction<T> ef;
 	RTSFitnessFunction ff;
 
@@ -74,6 +78,7 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 		ef.givePhysicalGameState(pgs);
 		ff.givePhysicalGameState(pgs);
 		ff.setMaxCycles(5000);
+		ff.giveTask((NetworkTask)this);
 		gs = null;
 	}
 
@@ -174,40 +179,31 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 		gs = new GameState(pgs, utt);
 		ef.setNetwork(individual);
 		ef.givePhysicalGameState(pgs);
-		//AI ai1 = new NaiveMCTS(100,-1,100,10, 0.3f, 0.0f, 0.4f, new RandomBiasedAI(), ef, true);
 		AI ai1 = new UCT(100, -1, 100, 10, new RandomBiasedAI(), ef);
+		//AI ai1 = new NaiveMCTS(100,-1,100,10, 0.3f, 0.0f, 0.4f, new RandomBiasedAI(), ef, true);
 		//AI ai1 = new WorkerRush(utt, new BFSPathFinding());
 		AI ai2 = new RandomBiasedAI();
 
-		if(CommonConstants.watch){
+		if(CommonConstants.watch)
 			w = PhysicalGameStatePanel.newVisualizer(gs,640,640,false,PhysicalGameStatePanel.COLORSCHEME_BLACK);
-		}
+		
 		do{
 			PlayerAction pa1;
 			try {
 				pa1 = ai1.getAction(0, gs); //throws exception
 				gs.issueSafe(pa1);
-			} catch (Exception e1) {
-				e1.printStackTrace();
-				System.exit(1);
-			}
-
+			} catch (Exception e1) { e1.printStackTrace();System.exit(1); }
 			PlayerAction pa2;
 			try {
 				pa2 = ai2.getAction(1, gs); //throws exception
 				gs.issueSafe(pa2);
-			} catch (Exception e) {
-				e.printStackTrace();
-				System.exit(1);
-			}
-			// simulate:
+			} catch (Exception e) { e.printStackTrace();System.exit(1); }
 			gameover = gs.cycle();
-			if(CommonConstants.watch)
-				w.repaint();
+			if(CommonConstants.watch) w.repaint();
 		}while(!gameover && gs.getTime()<MAXCYCLES);
-		if(CommonConstants.watch){
+		
+		if(CommonConstants.watch) 
 			w.dispose();
-		}
 		return ff.getFitness(gs);
 	} //END oneEval
 

@@ -1,5 +1,6 @@
 package edu.utexas.cs.nn.tasks.microrts.fitness;
 
+import edu.utexas.cs.nn.networks.NetworkTask;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import micro.rts.GameState;
 import micro.rts.PhysicalGameState;
@@ -9,6 +10,7 @@ public abstract class RTSFitnessFunction {
 	protected final int RESULTRANGE = 2;
 	protected int maxCycles;
 	protected PhysicalGameState pgs = null;
+	protected NetworkTask task = null;
 	
 	/**
 	 * judges an individual agent's fitness
@@ -24,6 +26,9 @@ public abstract class RTSFitnessFunction {
 	
 	public void setMaxCycles(int maxCycles){
 		this.maxCycles = maxCycles;
+	}
+	public void giveTask(NetworkTask task) {
+		this.task = task;
 	}
 
 }

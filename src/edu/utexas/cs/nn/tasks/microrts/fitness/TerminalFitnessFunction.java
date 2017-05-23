@@ -39,12 +39,10 @@ public class TerminalFitnessFunction extends RTSFitnessFunction{
 		} else if(terminalGameState.winner() == -1){ //tie, ran out of time
 			score.t1[0] = 0;
 			for(Unit u : unitsLeft){
-				if(u.getPlayer()==0)
-					score.t1[2] += u.getType().cost;
-				else if(u.getPlayer()==1)
-					score.t1[2] -= u.getType().cost;
+				if(u.getPlayer()==0) score.t1[2] += u.getType().cost;
+				else if(u.getPlayer()==1) score.t1[2] -= u.getType().cost;
 			}
-			//winning hard but didn't close = very bad, basically even = okay, losing but held out = great
+			//if winning hard but didn't close out => very bad, if basically even => okay, if losing but held out => great
 			score.t1[1] = -1 * score.t1[2] / (pgs.getHeight()*pgs.getWidth());  
 		}
 		System.out.println("result?: "+score.t1[0] + " unit-difference: "+ score.t1[2] + " time: " +score.t1[1]);
