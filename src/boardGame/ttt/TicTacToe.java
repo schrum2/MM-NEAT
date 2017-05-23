@@ -5,8 +5,10 @@ import java.util.List;
 
 import boardGame.BoardGame;
 import boardGame.BoardGamePlayer;
+import boardGame.BoardGameState;
+import boardGame.TwoDimensionalBoardGame;
 
-public class TicTacToe implements BoardGame<TicTacToeState> {
+public class TicTacToe extends TwoDimensionalBoardGame implements BoardGame<BoardGameState>{
 
 	private int currentPlayer; // Used to keep track of whose turn it is
 	private TicTacToeState board;
@@ -53,8 +55,8 @@ public class TicTacToe implements BoardGame<TicTacToeState> {
 	/**
 	 * Updates the Game based on the actions of the current Player
 	 */
-	public void move(BoardGamePlayer<TicTacToeState> bgp) { 
-		board = bgp.takeAction(board);
+	public void move(BoardGamePlayer<BoardGameState> bgp) { 
+		bgp.takeAction(board);
 		currentPlayer = (currentPlayer + 1) % 2; // Switches the currentPlayer
 	}
 
@@ -101,5 +103,6 @@ public class TicTacToe implements BoardGame<TicTacToeState> {
 		currentPlayer = 0;
 		board = new TicTacToeState();
 	}
+
 
 }

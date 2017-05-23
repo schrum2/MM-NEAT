@@ -4,8 +4,10 @@ import java.util.List;
 
 import boardGame.BoardGame;
 import boardGame.BoardGamePlayer;
+import boardGame.BoardGameState;
+import boardGame.TwoDimensionalBoardGame;
 
-public class Othello implements BoardGame<OthelloState>{
+public class Othello extends TwoDimensionalBoardGame implements BoardGame<BoardGameState>{
 	
 	private int currentPlayer; // Used to keep track of whose turn it is
 	private OthelloState board;
@@ -54,7 +56,7 @@ public class Othello implements BoardGame<OthelloState>{
 	 * Allows a given Player to make a Move on the current BoardGameState
 	 */
 	@Override
-	public void move(BoardGamePlayer<OthelloState> bgp) {
+	public void move(BoardGamePlayer<BoardGameState> bgp) {
 		bgp.takeAction(board);
 		currentPlayer = (currentPlayer + 1) % 2; // Switches the currentPlayer
 	}
@@ -111,4 +113,8 @@ public class Othello implements BoardGame<OthelloState>{
 		board = new OthelloState();
 	}
 
+
+	public String toString() {
+		return board.toString();
+	}
 }

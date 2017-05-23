@@ -6,8 +6,9 @@ import java.util.List;
 import boardGame.BoardGame;
 import boardGame.BoardGamePlayer;
 import boardGame.BoardGameState;
+import boardGame.TwoDimensionalBoardGame;
 
-public class Checkers implements BoardGame{
+public class Checkers extends TwoDimensionalBoardGame implements BoardGame<BoardGameState>{
 
 	private int currentPlayer; // Used to keep track of whose turn it is
 	private CheckersState board;
@@ -58,7 +59,7 @@ public class Checkers implements BoardGame{
 	 * @param bgp BoardGamePlayer making the action to update the BoardGameState
 	 */
 	@Override
-	public void move(BoardGamePlayer bgp) {
+	public void move(BoardGamePlayer<BoardGameState> bgp) {
 		bgp.takeAction(board);
 		currentPlayer = (currentPlayer + 1) % 2; // Switches the currentPlayer
 		}
