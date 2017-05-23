@@ -12,12 +12,26 @@ public class ProgressiveFitnessFunction extends RTSFitnessFunction{
 	 */
 	@Override
 	public Pair<double[], double[]> getFitness(GameState gs) {
-		return null;
+		int baseUpTime = task.getBaseUpTime();
+		double averageUnitDiff = task.getAverageUnitDifference();
+		
+		double[] fitness = new double[]{};
+		Pair<double[], double[]> result = new Pair<double[],double[]>(fitness, null);
+		return result;
 	}
 
 	@Override
 	public String[] getFunctions() {
-		return new String[]{"","","Average Unit Difference"};
+		return new String[]{"Harvesting Efficiency","Time Base was Alive","Average Unit Difference"};
+	}
+	
+	/**
+	 * @param value :value to be converted
+	 * @param max largest possible number in this category
+	 * @return value on a scale from -1 to 1 with 1 being max
+	 */
+	private double normalize(double value, double max){
+		return (value / max) - 2;
 	}
 
 }

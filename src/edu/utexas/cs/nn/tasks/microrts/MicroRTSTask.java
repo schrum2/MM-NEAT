@@ -24,6 +24,7 @@ import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.NoisyLonerTask;
 import edu.utexas.cs.nn.tasks.microrts.evaluation.NNEvaluationFunction;
+import edu.utexas.cs.nn.tasks.microrts.fitness.ProgressiveFitnessFunction;
 import edu.utexas.cs.nn.tasks.microrts.fitness.RTSFitnessFunction;
 import edu.utexas.cs.nn.tasks.microrts.fitness.TerminalFitnessFunction;
 import edu.utexas.cs.nn.util.ClassCreation;
@@ -52,11 +53,13 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 	private int MAXCYCLES = 5000;
 	private JFrame w = null;
 	private GameState gs;
-	
+	private boolean gameover;
+	private int currentCycle;
+
 	public double averageUnitDifference;
 	public int baseUpTime;
-	
-	
+
+
 	NNEvaluationFunction<T> ef;
 	RTSFitnessFunction ff;
 
@@ -67,7 +70,7 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 			ef = (NNEvaluationFunction<T>) ClassCreation.createObject(Parameters.parameters.classParameter("microRTSEvaluationFunction"));
 			ff = (RTSFitnessFunction) ClassCreation.createObject(Parameters.parameters.classParameter("microRTSFitnessFunction"));
 			pgs = PhysicalGameState.load("data/microRTS/maps/" + Parameters.parameters.stringParameter("map"), utt);
-			
+
 		} catch (JDOMException | IOException | NoSuchMethodException e) {
 			e.printStackTrace();
 			System.exit(1);
@@ -78,7 +81,7 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 		ef.givePhysicalGameState(pgs);
 		ff.givePhysicalGameState(pgs);
 		ff.setMaxCycles(5000);
-		ff.giveTask((NetworkTask)this);
+		ff.giveTask(this);
 		gs = null;
 	}
 
@@ -166,12 +169,14 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 	 */
 	@Override
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {
-		//reset
-		boolean gameover = false;
+		//reset:
+		gameover = false;
 		utt = new UnitTypeTable();
+		averageUnitDifference = 0;
+		currentCycle = 0;
+		baseUpTime = 0;
 		try {
 			pgs = PhysicalGameState.load("data/microRTS/maps/" + Parameters.parameters.stringParameter("map"), utt);
-			//PhysicalGameState pgs = MapGenerator.basesWorkers8x8Obstacle();
 		} catch (JDOMException | IOException e) {
 			e.printStackTrace();
 			System.exit(1);
@@ -186,7 +191,7 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 
 		if(CommonConstants.watch)
 			w = PhysicalGameStatePanel.newVisualizer(gs,640,640,false,PhysicalGameStatePanel.COLORSCHEME_BLACK);
-		
+
 		do{
 			PlayerAction pa1;
 			try {
@@ -198,23 +203,56 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 				pa2 = ai2.getAction(1, gs); //throws exception
 				gs.issueSafe(pa2);
 			} catch (Exception e) { e.printStackTrace();System.exit(1); }
+			if(Parameters.parameters.classParameter("microRTSFitnessFunction").equals(ProgressiveFitnessFunction.class)){
+				int unitDifferenceNow = 0;
+				Unit currentUnit;
+				boolean baseIsGone = false;
+				for(int i = 0; i < pgs.getWidth(); i++){
+					for(int j = 0; j < pgs.getHeight(); j++){
+						currentUnit = pgs.getUnitAt(i, j);
+						if(currentUnit.getPlayer() == 0){
+							unitDifferenceNow++;
+							if(!baseIsGone){
+								baseIsGone = true;
+								if(currentUnit.getType().name == "Base")
+									baseIsGone = false;
+								if(baseIsGone)
+									baseUpTime = currentCycle;
+							}
+						}
+						else if(currentUnit.getPlayer() == -1) unitDifferenceNow--;
+					}
+				}
+				averageUnitDifference += (unitDifferenceNow - averageUnitDifference) / currentCycle;
+			} //end if(Parameters...
 			gameover = gs.cycle();
+			currentCycle++;
 			if(CommonConstants.watch) w.repaint();
 		}while(!gameover && gs.getTime()<MAXCYCLES);
-		
+
 		if(CommonConstants.watch) 
 			w.dispose();
 		return ff.getFitness(gs);
 	} //END oneEval
 
-		public static void main(String[] rags){
-			Parameters.initializeParameterCollections(new String[]{"io:false","netio:false", "watch:true", ""});
-//			MMNEAT.loadClasses();
-//			MicroRTSTask<TWEANN> test = new MicroRTSTask<>();
-//			TWEANNGenotype g = new TWEANNGenotype();
-//			Pair<double[], double[]> result = test.oneEval(g, -1);
-//			System.out.println(Arrays.toString(result.t1)+ " , "+Arrays.toString(result.t2));
-			System.out.println(Parameters.parameters.booleanParameter("netio"));
-		}
+	//to be used by fitness function
+	public double getAverageUnitDifference(){
+		return averageUnitDifference;
+	}
+
+	//to be used by fitness function
+	public int getBaseUpTime(){
+		return baseUpTime;
+	}
+
+	public static void main(String[] rags){
+		Parameters.initializeParameterCollections(new String[]{"io:false","netio:false", "watch:true", ""});
+		//			MMNEAT.loadClasses();
+		//			MicroRTSTask<TWEANN> test = new MicroRTSTask<>();
+		//			TWEANNGenotype g = new TWEANNGenotype();
+		//			Pair<double[], double[]> result = test.oneEval(g, -1);
+		//			System.out.println(Arrays.toString(result.t1)+ " , "+Arrays.toString(result.t2));
+		System.out.println(Parameters.parameters.booleanParameter("netio"));
+	}
 
 }
