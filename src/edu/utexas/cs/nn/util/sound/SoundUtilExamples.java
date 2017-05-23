@@ -46,6 +46,7 @@ public class SoundUtilExamples {
 	private static final String PIRATES = "data/sounds/pirates.mid";
 	private static final String CLASSICAL_MID = "data/sounds/CLASSICA.MID";
 	private static final String SOLO_PIANO_MID	= "data/sounds/Chon01.MID";
+	private static final String FUR_ELISE_MID = "data/sounds/for_elise_by_beethoven.mid";
 
 	public static void main(String[] args) throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException, JavaLayerException {
 		MIDITests();
@@ -315,7 +316,17 @@ public class SoundUtilExamples {
 //		File piratesFile = new File(PIRATES);
 //		MiscSoundUtil.MIDIData(piratesFile);
 		
-		File soloPiano = new File(SOLO_PIANO_MID);
-		MIDIUtil.MIDIData(soloPiano);
+//		File soloPiano = new File(SOLO_PIANO_MID);
+//		MIDIUtil.MIDIData(soloPiano);
+		
+		Parameters.initializeParameterCollections(new String[]{"io:false","netio:false"});
+		MMNEAT.loadClasses();
+		HyperNEATCPPNGenotype test = new HyperNEATCPPNGenotype(3, 1, 0);
+		for(int i = 0; i < 30; i++) {
+			test.mutate();
+		}
+		Network cppn = test.getCPPN();
+		double[] furEliseFreq = MIDIUtil.freqFromMIDI(FUR_ELISE_MID);
+		MIDIUtil.playMIDIWithCPPN(cppn, furEliseFreq);
 	}
 }

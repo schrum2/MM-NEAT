@@ -139,17 +139,23 @@ public final class MiscSoundUtil {
 	 * @throws IllegalArgumentException if {@code samples} is {@code null}
 	 */
 	public static void playDoubleArray(double[] samples) {
+		playDoubleArray(samples, true); // allow interrupting by default
+	}
+	
+	public static void playDoubleArray(double[] samples, boolean allowInterrupt) {
 		if (samples == null) throw new IllegalArgumentException("argument to play() is null");
 		playing = false; // Disable any previously playing sample
-		while(!available) { // Wait until previous sample finishes playing
-			try {
-				Thread.sleep(1); // short pause to wait for sound line to become available
-			} catch (InterruptedException e) {
-				e.printStackTrace(); // Should not happen?
+		if(allowInterrupt) {
+			while(!available) { // Wait until previous sample finishes playing
+				try {
+					Thread.sleep(1); // short pause to wait for sound line to become available
+				} catch (InterruptedException e) {
+					e.printStackTrace(); // Should not happen?
+				}
 			}
 		}
 		// Play sound in its own Thread
-		new Thread() {
+		Thread temp = new Thread() {
 			public void run() {
 				playing = true;
 				available = false;
@@ -158,7 +164,10 @@ public final class MiscSoundUtil {
 				}				
 				available = true;
 			}
-		}.start();
+		};
+		
+		if(allowInterrupt) temp.start(); // Launches in new Thread
+		else temp.run(); // Just executes the code sequentially
 	}
 
 	/**
