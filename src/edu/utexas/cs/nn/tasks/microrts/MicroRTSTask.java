@@ -105,20 +105,30 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 	 *         layers
 	 */
 	@Override
-	public List<Substrate> getSubstrateInformation() { // INCOMPLETE
+	public List<Substrate> getSubstrateInformation() {
 		int height = pgs.getHeight();
 		int width = pgs.getWidth();
 		ArrayList<Substrate> subs = new ArrayList<Substrate>();
 		Substrate inputsBoardState = new Substrate(new Pair<Integer, Integer>(width, height),
 				Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, Substrate.INPUT_SUBSTRATE, 0), "Inputs Board State");
+		Substrate processing = new Substrate(new Pair<Integer, Integer>(width, height), 
+				Substrate.PROCCESS_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, Substrate.PROCCESS_SUBSTRATE, 0), "Processing");
+		Substrate output = new Substrate(new Pair<Integer, Integer>(1,1),
+				Substrate.OUTPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, Substrate.OUTPUT_SUBSTRATE, 0), "Output");
 		subs.add(inputsBoardState);
+		subs.add(processing);
+		subs.add(output);
 		return subs;
 	} 
 
 	@Override
-	public List<Pair<String, String>> getSubstrateConnectivity() { // INCOMPLETE
+	public List<Pair<String, String>> getSubstrateConnectivity() {
 		ArrayList<Pair<String, String>> conn = new ArrayList<Pair<String, String>>();
-		conn.add(new Pair<String, String>("Inputs Board State", null));
+		conn.add(new Pair<String, String>("Inputs Board State", "Processing"));
+		conn.add(new Pair<String, String>("Output", "Processing"));
+		if(Parameters.parameters.booleanParameter("extraHNLinks")) {
+			conn.add(new Pair<String, String>("Output", "Inpus Board State"));
+		}
 		return conn;
 	}
 
