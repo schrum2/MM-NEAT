@@ -5,118 +5,31 @@ import java.util.ArrayList;
 import java.util.List;
 
 import boardGame.BoardGameState;
+import boardGame.TwoDimensionalBoardGameState;
 
-public class TicTacToeState implements BoardGameState{
+public class TicTacToeState extends TwoDimensionalBoardGameState {
 	
-	// Package private: other classes inside this class can access it
-	int[][] boardState;
-	
-	private int nextPlayer;
-	private List<Integer> winner;
-	
-	public static final int EMPTY = -1;
+
+	// Really only used in one place now. Probably ok to remove X and O.
 	public static final int X = 0;
 	public static final int O = 1;
+	
 	public static final int BOARD_WIDTH = 3;
 	
 	/**
 	 * Default Constructor; creates a representation of an empty Tic-Tac-Toe Board
 	 */
 	public TicTacToeState(){
-		boardState = new int[BOARD_WIDTH][BOARD_WIDTH];
-		for(int i = 0; i < BOARD_WIDTH; i++){
-			for(int j = 0; j < BOARD_WIDTH; j++){
-				boardState[i][j] = EMPTY;
-			}
-		}
-		nextPlayer = X;
-		winner = new ArrayList<Integer>();
+		super(2); // Always two players for TTT
 	}
 	
 	/**
-	 * Private Constructor that allows a User to create a Tic-Tac-Toe Board with a specific configuration
+	 * Constructor that allows a User to create a Tic-Tac-Toe Board with a specific configuration
 	 * 
 	 * @param newBoard Should be an int[3][3] with values of 0, 1, or 2 only.
 	 */
-	public TicTacToeState(int[][] oldBoard, int oldNext, List<Integer> oldWin){
-		int[][] newBoard = oldBoard;
-		this.nextPlayer = oldNext;
-		// Checks if the newBoard has the correct Dimensions
-		
-		assert oldBoard.length == 3 && oldBoard[0].length == 3 && oldBoard[1].length == 3 && oldBoard[2].length == 3;
-		
-		// Checks if newBoard has correct Markings
-		for(int i = 0; i < BOARD_WIDTH; i++){
-			for(int j = 0; j < BOARD_WIDTH; j++){
-				newBoard[i][j] = oldBoard[i][j];
-			}
-		}
-			// Correct Board Dimensions and Markings
-			boardState = newBoard;
-			winner = new ArrayList<>(2); 
-			winner.addAll(oldWin);
-	}
-
-	/**
-	 * Returns the Index of the next Player
-	 * 
-	 * @return Index of the next Player
-	 */
-	public int getNextPlayer() {
-		return nextPlayer;
-	}
-
-	/**
-	 * Returns the representation of the indexes of empty Spaces as Points
-	 * 
-	 * @return List<Point> of the empty Spaces in the Tic-Tac-Toe Board
-	 */
-	public List<Point> getEmptyIndex(){
-		List<Point> indexes = new ArrayList<Point>();
-		
-		for(int i = 0; i < BOARD_WIDTH; i++){
-			for(int j = 0; j < BOARD_WIDTH; j++){
-				if(boardState[i][j] == EMPTY){
-					indexes.add(new Point(i, j));
-				}
-			}
-		}
-		
-		return indexes;
-	}
-	
-	/**
-	 * Fills an empty Space with an X
-	 * 
-	 * @param space Index representing the Tic-Tac-Toe Space to be filled
-	 * @param playerMark The number representing an X
-	 * @return True if able to place, else returns false
-	 */
-	private boolean fillX(Point space){
-		if(boardState[(int) space.getX()][(int) space.getY()] == EMPTY){
-			boardState[(int) space.getX()][(int) space.getY()] = X;
-			return true;
-		}else{
-			System.out.println("Cannot place there: X");
-			return false;
-		}
-	}
-	
-	/**
-	 * Fills an empty Space with an O
-	 * 
-	 * @param space Index representing the Tic-Tac-Toe Space to be filled
-	 * @param playerMark The number representing an O
-	 * @return True if able to place, else returns false
-	 */
-	private boolean fillO(Point space){
-		if(boardState[(int) space.getX()][(int) space.getY()] == EMPTY){
-			boardState[(int) space.getX()][(int) space.getY()] = O;
-			return true;
-		}else{
-			System.out.println("Cannot place there: O");
-			return false;
-		}
+	public TicTacToeState(TicTacToeState state){
+		super(state);
 	}
 	
 	/**
@@ -126,45 +39,40 @@ public class TicTacToeState implements BoardGameState{
 	 * @return True if the Player is able to place a Marking in the selected Space, else returns false
 	 */
 	public boolean fill(Point space) {
-		if(nextPlayer == X) {
-			boolean result = fillX(space);
-			nextPlayer = O;
+		if(placePlayerPiece(nextPlayer, space)) {
+			nextPlayer = (nextPlayer + 1) % numPlayers;
 			checkWinner();
-			return result;
-		} else if(nextPlayer == O) {
-			boolean result = fillO(space);
-			nextPlayer = X;
-			checkWinner();
-			return result;
+			return true;
+		} else {
+			return false;
 		}
-		else throw new IllegalArgumentException("Can only fill with X or O, not " + nextPlayer);
 	}
 	
 	private void checkWinner(){
 		for(int i = 0; i < BOARD_WIDTH; i++){		
 			if(boardState[i][0] == boardState[i][1] && boardState[i][1] == boardState[i][2]  && boardState[i][2] != EMPTY){ // Checks each Row for a 3-in-a-Row
-				winner.add(boardState[i][0]);
+				winners.add(boardState[i][0]);
 			}else if(boardState[0][i] == boardState[1][i] && boardState[1][i] == boardState[2][i]  && boardState[2][i] != EMPTY){ // Checks each Column for a 3-in-a-Row
-				winner.add(boardState[0][i]);
+				winners.add(boardState[0][i]);
 			}
 		}
 		
-		if(winner.isEmpty()){
+		if(winners.isEmpty()){
 			if(boardState[0][0] == boardState[1][1] && boardState[1][1] == boardState[2][2]  && boardState[2][2] != EMPTY){ // Checks the Diagonal for a 3-in-a-Row
-				winner.add(boardState[0][0]);
+				winners.add(boardState[0][0]);
 			}else if(boardState[0][2] == boardState[1][1] && boardState[1][1] == boardState[2][0]  && boardState[2][0] != EMPTY){ // Checks the Diagonal for a 3-in-a-Row			over = true;
-				winner.add(boardState[0][2]);
+				winners.add(boardState[0][2]);
 			}
 		}
 		
-		if(winner.isEmpty()){
+		if(winners.isEmpty()){
 			// Then checks for Filled Board (now unable to play)
-			winner.add(X);
-			winner.add(O);
+			winners.add(X);
+			winners.add(O);
 			for(int i = 0; i < BOARD_WIDTH; i++){
 				for(int j = 0; j < BOARD_WIDTH; j++){
 					if(boardState[i][j] == EMPTY){ // There is a Space left to play; game is not over
-						winner.clear();
+						winners.clear();
 					}
 				}
 			}
@@ -206,46 +114,7 @@ public class TicTacToeState implements BoardGameState{
 	 */
 	@Override
 	public boolean endState() {
-		return !winner.isEmpty();
-	}
-
-	/**
-	 * Returns the Index of the winning Player
-	 * 
-	 * @return ArrayList<Integer> containing the winners
-	 */
-	public List<Integer> getWinner(){
-		return winner;
-	}
-	
-	/**
-	 * Prints out a visual representation of the TicTacToeState to the console
-	 */
-	public String toString(){
-		String result = "-------\n";
-		
-		for(int i = 0; i < BOARD_WIDTH; i++){
-			result += "|";
-			
-			for(int j = 0; j < BOARD_WIDTH; j++){
-				
-				char mark;
-				int space = boardState[i][j];
-				
-				if(space == EMPTY){
-					mark = ' ';
-				}else if(space == X){
-					mark = 'X';
-				}else{
-					mark = 'O';
-				}
-				result += mark + "|";
-			}
-			
-			result += "\n-------\n";
-		}
-		result += "\n\n";
-		return result;
+		return !winners.isEmpty();
 	}
 
 	/**
@@ -255,20 +124,7 @@ public class TicTacToeState implements BoardGameState{
 	 */
 	@Override
 	public TicTacToeState copy() {
-		int[][] tempBoard = new int[BOARD_WIDTH][BOARD_WIDTH];
-		int tempNext = nextPlayer;
-		List<Integer> tempWin = new ArrayList<Integer>(2);
-		
-		for(int i = 0; i < BOARD_WIDTH; i++){
-			for(int j = 0; j < BOARD_WIDTH; j++){
-				tempBoard[i][j] = boardState[i][j];
-			}
-		}
-				
-		tempWin.addAll(winner);
-		
-		TicTacToeState temp = new TicTacToeState(tempBoard, tempNext, tempWin);
-		return temp;
+		return new TicTacToeState(this);
 	}
 
 	/**
@@ -284,9 +140,30 @@ public class TicTacToeState implements BoardGameState{
 		for(Point p : tempPoints){
 			TicTacToeState temp = (TicTacToeState) currentState.copy();
 			temp.fill(p);
+//			System.out.println(temp);
+//			MiscUtil.waitForReadStringAndEnterKeyPress();
 			returnStates.add(temp);
 		}
 		return returnStates;
+	}
+
+	@Override
+	public void setupStartingBoard() {
+		// Do nothing to the already empty board
+	}
+
+	@Override
+	public int getBoardWidth() {
+		return BOARD_WIDTH;
+	}
+
+	@Override
+	public int getBoardHeight() {
+		return BOARD_WIDTH;
+	}
+	
+	public char[] getPlayerSymbols() {
+		return new char[]{'X','O'};
 	}
 
 }
