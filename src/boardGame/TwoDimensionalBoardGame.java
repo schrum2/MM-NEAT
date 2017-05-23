@@ -17,6 +17,14 @@ public abstract class TwoDimensionalBoardGame<T extends TwoDimensionalBoardGameS
 	}
 	
 	/**
+	 * Starting board game state
+	 * @return
+	 */
+	public T getStartingState() {
+		return startingBoard;
+	}
+	
+	/**
 	 * Returns true if the Game is over, else returns false
 	 * 
 	 * @return True if the BoardState reached an end State, else returns false

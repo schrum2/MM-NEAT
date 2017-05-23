@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.tasks.boardGame;
+package edu.utexas.cs.nn.tasks;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -8,7 +8,6 @@ import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.scores.MultiObjectiveScore;
 import edu.utexas.cs.nn.scores.Score;
-import edu.utexas.cs.nn.tasks.SinglePopulationTask;
 import edu.utexas.cs.nn.util.ClassCreation;
 import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
