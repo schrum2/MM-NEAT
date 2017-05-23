@@ -73,7 +73,7 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 
 	@Override
 	public int numObjectives() {
-		return 3;
+		return 3; // Once you generalize the fitness function, this will need to change
 	}
 
 	@Override
@@ -105,7 +105,7 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 	 *         layers
 	 */
 	@Override
-	public List<Substrate> getSubstrateInformation() {
+	public List<Substrate> getSubstrateInformation() { // INCOMPLETE
 		int height = pgs.getHeight();
 		int width = pgs.getWidth();
 		ArrayList<Substrate> subs = new ArrayList<Substrate>();
@@ -116,7 +116,7 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 	} 
 
 	@Override
-	public List<Pair<String, String>> getSubstrateConnectivity() {
+	public List<Pair<String, String>> getSubstrateConnectivity() { // INCOMPLETE
 		ArrayList<Pair<String, String>> conn = new ArrayList<Pair<String, String>>();
 		conn.add(new Pair<String, String>("Inputs Board State", null));
 		return conn;
