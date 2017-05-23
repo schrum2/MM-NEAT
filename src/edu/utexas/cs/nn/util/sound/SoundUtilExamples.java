@@ -316,6 +316,6 @@ public class SoundUtilExamples {
 //		MiscSoundUtil.MIDIData(piratesFile);
 		
 		File soloPiano = new File(SOLO_PIANO_MID);
-		MiscSoundUtil.MIDIData(soloPiano);
+		MIDIUtil.MIDIData(soloPiano);
 	}
 }
