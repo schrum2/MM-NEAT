@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.tasks.microrts;
+package edu.utexas.cs.nn.tasks.microrts.evaluation;
 
 import java.util.List;
 

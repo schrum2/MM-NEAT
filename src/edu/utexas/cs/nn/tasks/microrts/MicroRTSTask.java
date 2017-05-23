@@ -23,6 +23,7 @@ import edu.utexas.cs.nn.networks.hyperneat.Substrate;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.NoisyLonerTask;
+import edu.utexas.cs.nn.tasks.microrts.evaluation.NNEvaluationFunction;
 import edu.utexas.cs.nn.tasks.microrts.fitness.RTSFitnessFunction;
 import edu.utexas.cs.nn.tasks.microrts.fitness.TerminalFitnessFunction;
 import edu.utexas.cs.nn.util.ClassCreation;
@@ -67,9 +68,6 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 			e.printStackTrace();
 			System.exit(1);
 		}
-		MMNEAT.registerFitnessFunction("win/loss");
-		MMNEAT.registerFitnessFunction("time");
-		MMNEAT.registerFitnessFunction("unit-difference");
 		for(String function : ff.getFunctions()){
 			MMNEAT.registerFitnessFunction(function);
 		}
