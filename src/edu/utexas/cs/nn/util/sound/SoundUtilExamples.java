@@ -20,6 +20,7 @@ import edu.utexas.cs.nn.evolution.genotypes.HyperNEATCPPNGenotype;
 import edu.utexas.cs.nn.networks.ActivationFunctions;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.parameters.Parameters;
+import edu.utexas.cs.nn.tasks.interactive.breedesizer.BreedesizerTask;
 import edu.utexas.cs.nn.util.MiscUtil;
 import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
 import edu.utexas.cs.nn.util.graphics.DrawingPanel;
@@ -67,6 +68,8 @@ public class SoundUtilExamples {
 //		MiscSoundUtil.playDoubleArray(testArray);
 //		GraphicsUtil.wavePlotFromDoubleArray(testArray, 500, 500);
 		
+		//AudioFormat af5 = new AudioFormat(BreedesizerTask.DEFAULT_SAMPLE_RATE, BreedesizerTask.DEFAULT_BIT_RATE, )
+		
 		//double array containing frequencies of a C Major scale
 		double[] frequencies = new double[]{261.626, 293.665, 329.628, 349.228, 391.995, 440.0, 493.883, 523.251};
 		for(int i = 0; i < frequencies.length; i++) {
@@ -103,11 +106,11 @@ public class SoundUtilExamples {
 		System.out.println();
 		
 		
-		double[] harpDoubleArray = MiscSoundUtil.read(HARP_WAV);
+		//double[] harpDoubleArray = MiscSoundUtil.read(HARP_WAV);
 		//MiscSoundUtil.playDoubleArray(harpDoubleArray);
-		System.out.println(Arrays.toString(harpDoubleArray));
+		//System.out.println(Arrays.toString(harpDoubleArray));
 		//WAVUtil.playWAVFile(harp);
-		SoundAmplitudeArrayManipulator.writeSingleChannel(harpAIS.getFormat(), harpDoubleArray, "harpDoubleArray.wav");
+		//SoundAmplitudeArrayManipulator.writeSingleChannel(harpAIS.getFormat(), harpDoubleArray, "harpDoubleArray.wav");
 	}
 
 	public static void plotExamples() {

@@ -38,7 +38,6 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 	public static final int DEFAULT_CHANNEL = 1; 
 	public static final int BYTES_PER_FRAME = 1; 
 
-
 	public static final int CPPN_NUM_INPUTS	= 3;
 	public static final int CPPN_NUM_OUTPUTS = 1;
 
