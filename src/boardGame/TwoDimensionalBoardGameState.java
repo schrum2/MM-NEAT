@@ -126,12 +126,14 @@ public abstract class TwoDimensionalBoardGameState implements BoardGameState {
 		}		
 	}
 	
+	// TODO: Remove Piece method
+	
 	/**
 	 * Returns the Index of the winning Player
 	 * 
 	 * @return ArrayList<Integer> containing the winners
 	 */
-	public List<Integer> getWinner(){
+	public List<Integer> getWinners(){
 		return winners;
 	}
 

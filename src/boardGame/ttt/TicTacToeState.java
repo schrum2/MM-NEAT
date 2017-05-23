@@ -86,7 +86,7 @@ public class TicTacToeState extends TwoDimensionalBoardGameState {
 	 * @return double[] that describes the current BoardState
 	 */
 	@Override
-	public double[] getDescriptor() {
+	public double[] getDescriptor() { // Consider moving to 2DBoardGameState
 		double[] feature = new double[9];
 		int index = 0;
 		
@@ -113,7 +113,7 @@ public class TicTacToeState extends TwoDimensionalBoardGameState {
 	 * @return True if there is a 3-in-a-Row filled with Non-Zeros or if the entire Board is filled with Non-Zeros, else returns false
 	 */
 	@Override
-	public boolean endState() {
+	public boolean endState() { // Consider moving to 2DBoardGameState
 		return !winners.isEmpty();
 	}
 

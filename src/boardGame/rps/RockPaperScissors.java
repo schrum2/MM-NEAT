@@ -47,7 +47,7 @@ public class RockPaperScissors implements BoardGame{
 	 */
 	@Override
 	public List<Integer> getWinners() {
-		List<Integer> winners = new ArrayList<Integer>(board.getWinner());
+		List<Integer> winners = new ArrayList<Integer>(board.getWinners());
 		return winners;
 	}
 

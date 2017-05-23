@@ -110,7 +110,7 @@ public class CheckersState implements BoardGameState{
 	 * 
 	 * @return -1 if not at an endState, 0 if there's a Tie, 1 if Player 1 wins, or 2 if Player 2 wins
 	 */
-	public List<Integer> getWinner(){
+	public List<Integer> getWinners(){
 		
 		if(endState()){
 			if(blackChecksLeft > redChecksLeft){

@@ -86,7 +86,7 @@ public class RPSState implements BoardGameState{
 	 * 
 	 * @return -1 if the game is Undecided, 0 if there was a Tie, 1 if Player 1 wins, or 2 if Player 2 wins
 	 */
-	public List<Integer> getWinner(){
+	public List<Integer> getWinners(){
 		if(endState()){
 			if((playerMoves[0] == ROCK && playerMoves[1] == SCISSORS) || (playerMoves[0] == PAPER && playerMoves[1] == ROCK) || (playerMoves[0] == SCISSORS && playerMoves[1] == PAPER)){ // Player 1 wins
 				winner.add(PLAYER1);
@@ -124,7 +124,7 @@ public class RPSState implements BoardGameState{
 	public boolean endState() {
 		boolean over = (playerMoves[0] != UNDECIDED && playerMoves[1] != UNDECIDED);
 		if(over){
-			getWinner(); // Sets the global variable "winner"
+			getWinners(); // Sets the global variable "winner"
 		}
 		return over;
 	}

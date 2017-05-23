@@ -45,7 +45,7 @@ public class Checkers implements BoardGame<BoardGameState>{
 	 */
 	@Override
 	public List<Integer> getWinners() {
-		List<Integer> temp = new ArrayList<Integer>(board.getWinner());
+		List<Integer> temp = new ArrayList<Integer>(board.getWinners());
 		return temp;
 	}
 

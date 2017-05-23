@@ -41,7 +41,7 @@ public abstract class TwoDimensionalBoardGame<T extends TwoDimensionalBoardGameS
 	 */
 	@Override
 	public List<Integer> getWinners() {
-		 return board.getWinner();
+		 return board.getWinners();
 	}
 	
 	/**
