@@ -53,14 +53,14 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 	private GameState gs;
 	
 	NNEvaluationFunction<T> ef;
-	RTSFitnessFunction ff = new TerminalFitnessFunction();
+	RTSFitnessFunction ff;
 
 	@SuppressWarnings("unchecked")
 	public MicroRTSTask() {
 		utt = new UnitTypeTable();
 		try {
 			ef = (NNEvaluationFunction<T>) ClassCreation.createObject(Parameters.parameters.classParameter("microRTSEvaluationFunction"));
-//			ff = (RTSFitnessFunction) ClassCreation.createObject(Parameters.parameters.classParameter("microRTSFitnessFunction"));
+			ff = (RTSFitnessFunction) ClassCreation.createObject(Parameters.parameters.classParameter("microRTSFitnessFunction"));
 			pgs = PhysicalGameState.load("data/microRTS/maps/" + Parameters.parameters.stringParameter("map"), utt);
 			
 		} catch (JDOMException | IOException | NoSuchMethodException e) {

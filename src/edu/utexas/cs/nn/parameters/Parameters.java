@@ -23,6 +23,7 @@ import edu.utexas.cs.nn.networks.ActivationFunctions;
 import edu.utexas.cs.nn.networks.hyperneat.CenteredSubstrateMapping;
 import edu.utexas.cs.nn.tasks.interactive.breedesizer.Keyboard;
 import edu.utexas.cs.nn.tasks.microrts.NNSimpleEvaluationFunction;
+import edu.utexas.cs.nn.tasks.microrts.fitness.TerminalFitnessFunction;
 import edu.utexas.cs.nn.tasks.mspacman.data.JunctionNodes;
 import edu.utexas.cs.nn.tasks.mspacman.multitask.GhostsThenPillsModeSelector;
 import edu.utexas.cs.nn.tasks.mspacman.objectives.fitnessassignment.GhostsPillsMap;
@@ -729,6 +730,7 @@ public class Parameters {
 		classOptions.add("fos", null, "Function Optimization Set to use for simple tests");
 		classOptions.add("directionalSafetyFunction", null, "Function that decides if CheckEach agent bothers to consider a direction");
 		classOptions.add("microRTSEvaluationFunction", NNSimpleEvaluationFunction.class, "File containing evaluation function for MicroRTSTask");
+		classOptions.add("microRTSFitnessFunction", TerminalFitnessFunction.class, "File containing fitness function for MicroRTSTask");
 	}
 
 	/**
