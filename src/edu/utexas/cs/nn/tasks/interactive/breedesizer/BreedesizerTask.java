@@ -188,7 +188,7 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 			System.out.println("image not saved");
 		}
 
-		//SAVING AUDIO - doesn't work
+		//SAVING AUDIO
 
 		chooser = new JFileChooser();
 		AudioFormat af = new AudioFormat(AudioFormat.Encoding.PCM_UNSIGNED, DEFAULT_SAMPLE_RATE, DEFAULT_BIT_RATE, DEFAULT_CHANNEL, BYTES_PER_FRAME, DEFAULT_SAMPLE_RATE, true);

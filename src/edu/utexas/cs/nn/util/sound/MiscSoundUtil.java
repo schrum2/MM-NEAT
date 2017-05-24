@@ -1,26 +1,12 @@
 package edu.utexas.cs.nn.util.sound;
-import javax.sound.sampled.Clip;
-
 //for playing midi sound files on some older systems
 import java.applet.Applet;
 import java.applet.AudioClip;
-import java.net.MalformedURLException;
-
 import java.io.File;
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.io.IOException;
-
+import java.net.MalformedURLException;
 import java.net.URL;
 
-import javax.sound.midi.InvalidMidiDataException;
-import javax.sound.midi.MidiEvent;
-import javax.sound.midi.MidiMessage;
-import javax.sound.midi.MidiSystem;
-import javax.sound.midi.Sequence;
-import javax.sound.midi.ShortMessage;
-import javax.sound.midi.Track;
-import javax.sound.sampled.AudioFileFormat;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -29,17 +15,18 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
 import javax.sound.sampled.UnsupportedAudioFileException;
 /**
- *  <i>Standard audio</i>. This class provides a basic capability for
+ *  This class provides a basic capability for
  *  creating, reading, and saving audio. 
- *  <p>
+ *  
  *  The audio format uses a sampling rate of 44,100 (CD quality audio), 16-bit, monaural.
  *
- *  <p>
+ *  
  *  For additional documentation, see <a href="http://introcs.cs.princeton.edu/15inout">Section 1.5</a> of
  *  <i>Computer Science: An Interdisciplinary Approach</i> by Robert Sedgewick and Kevin Wayne.
  *
  *  @author Robert Sedgewick
  *  @author Kevin Wayne
+ *  @author Isabel Tweraser
  */
 public final class MiscSoundUtil {
 
@@ -50,11 +37,12 @@ public final class MiscSoundUtil {
 
 	public static final int BYTES_PER_SAMPLE = 2;                // 16-bit audio
 	public static final int BITS_PER_SAMPLE = 16;                // 16-bit audio
-	private static final double MAX_16_BIT = Short.MAX_VALUE;     // 32,767
+	public static final double MAX_16_BIT = Short.MAX_VALUE;     // 32,767
 	private static final int SAMPLE_BUFFER_SIZE = 4096;
 
 
 	private static SourceDataLine line;   // to play the sound
+	private static SourceDataLine lineSave;   // to save the sound
 	private static byte[] buffer;         // our internal buffer
 	private static int bufferSize = 0;    // number of samples currently in internal buffer
 
@@ -81,6 +69,10 @@ public final class MiscSoundUtil {
 
 			line = (SourceDataLine) AudioSystem.getLine(info);
 			line.open(format, SAMPLE_BUFFER_SIZE * BYTES_PER_SAMPLE);
+			
+			// Extra one unnecessary?
+			lineSave = (SourceDataLine) AudioSystem.getLine(info);
+			lineSave.open(format, SAMPLE_BUFFER_SIZE * BYTES_PER_SAMPLE);
 
 			// the internal buffer is a fraction of the actual buffer size, this choice is arbitrary
 			// it gets divided because we can't expect the buffered data to line up exactly with when
@@ -142,6 +134,18 @@ public final class MiscSoundUtil {
 		playDoubleArray(samples, true); // allow interrupting by default
 	}
 	
+	/**
+	 * Writes the array of samples (between -1.0 and +1.0) to standard audio.
+	 * If a sample is outside the range, it will be clipped. Will play
+	 * sample fully if interruptions are not allowed, but samples can be 
+	 * interrupted if input boolean is set to true
+	 *
+	 * @param  samples the array of samples to play
+	 * @param  allowInterrupt dicates whether sounds being played can be interrupted by another
+	 * sound before they finish playing
+	 * @throws IllegalArgumentException if any sample is {@code Double.NaN}
+	 * @throws IllegalArgumentException if {@code samples} is {@code null}
+	 */
 	public static void playDoubleArray(double[] samples, boolean allowInterrupt) {
 		if (samples == null) throw new IllegalArgumentException("argument to play() is null");
 		playing = false; // Disable any previously playing sample
@@ -230,99 +234,13 @@ public final class MiscSoundUtil {
 
 		return data;
 	}
-
+	
 	/**
-	 * Saves the double array as an audio file (using .wav or .au format).
-	 *
-	 * @param  filename the name of the audio file
-	 * @param  samples the array of samples
-	 * @throws IllegalArgumentException if unable to save {@code filename}
-	 * @throws IllegalArgumentException if {@code samples} is {@code null}
-	 */
-	public static void save(String filename, double[] samples) {
-		if (samples == null) {
-			throw new IllegalArgumentException("samples[] is null");
-		}
-
-		// assumes 44,100 samples per second
-		// use 16-bit audio, mono, signed PCM, little Endian
-		AudioFormat format = new AudioFormat(SAMPLE_RATE, 16, 1, true, false);
-		byte[] data = new byte[2 * samples.length];
-		for (int i = 0; i < samples.length; i++) {
-			int temp = (short) (samples[i] * MAX_16_BIT);
-			data[2*i + 0] = (byte) temp;
-			data[2*i + 1] = (byte) (temp >> 8);
-		}
-
-		// now save the file
-		try {
-			ByteArrayInputStream bais = new ByteArrayInputStream(data);
-			AudioInputStream ais = new AudioInputStream(bais, format, samples.length);
-			if (filename.endsWith(".wav") || filename.endsWith(".WAV")) {
-				AudioSystem.write(ais, AudioFileFormat.Type.WAVE, new File(filename));
-			}
-			else if (filename.endsWith(".au") || filename.endsWith(".AU")) {
-				AudioSystem.write(ais, AudioFileFormat.Type.AU, new File(filename));
-			}
-			else {
-				throw new IllegalArgumentException("unsupported audio format: '" + filename + "'");
-			}
-		}
-		catch (IOException ioe) {
-			throw new IllegalArgumentException("unable to save file '" + filename + "'", ioe);
-		}
-	}
-
-
-
-	/**
-	 * Plays an audio file (in .wav, .mid, or .au format) in a background thread.
-	 *
-	 * @param filename the name of the audio file
-	 * @throws IllegalArgumentException if unable to play {@code filename}
-	 * @throws IllegalArgumentException if {@code filename} is {@code null}
-	 */
-	public static synchronized void play(final String filename) {
-		if (filename == null) throw new IllegalArgumentException();
-
-		InputStream is = MiscSoundUtil.class.getResourceAsStream(filename);
-		if (is == null) {
-			throw new IllegalArgumentException("could not read '" + filename + "'");
-		}
-
-		// code adapted from: http://stackoverflow.com/questions/26305/how-can-i-play-sound-in-java
-		try {
-			// check if file format is supported
-			// (if not, will throw an UnsupportedAudioFileException)
-			AudioInputStream ais = AudioSystem.getAudioInputStream(is); // unnecessary code?
-
-			new Thread(new Runnable() {
-				@Override
-				public void run() {
-					stream(filename);
-				}
-			}).start();
-		}
-
-		// let's try Applet.newAudioClip() instead
-		catch (UnsupportedAudioFileException e) {
-			playApplet(filename);
-			return;
-		}
-
-		// something else went wrong
-		catch (IOException ioe) {
-			throw new IllegalArgumentException("could not play '" + filename + "'", ioe);
-		}
-
-	}
-
-	/**
-	 * Plays sound using Applet.newAudioClip()
+	 * Plays sound using Applet.newAudioClip() - works for MIDI files
 	 * 
 	 * @param filename string reference to audio file being played
 	 */
-	private static void playApplet(String filename) {
+	public static void playApplet(String filename) {
 		URL url = null;
 		try {
 			File file = new File(filename);
@@ -340,92 +258,5 @@ public final class MiscSoundUtil {
 		AudioClip clip = Applet.newAudioClip(url);
 		clip.play();
 	}
-
-	/**
-	 * Method used to play wav or aif file. (Fails on long clips?)
-	 * 
-	 * @param filename string reference to audio file being played
-	 */
-	private static void stream(String filename) {
-		SourceDataLine line = null;
-		int BUFFER_SIZE = 4096; // 4K buffer
-
-		try {
-			InputStream is = MiscSoundUtil.class.getResourceAsStream(filename);
-			AudioInputStream ais = AudioSystem.getAudioInputStream(is);
-			AudioFormat audioFormat = ais.getFormat();
-			DataLine.Info info = new DataLine.Info(SourceDataLine.class, audioFormat);
-			line = (SourceDataLine) AudioSystem.getLine(info);
-			line.open(audioFormat);
-			line.start();
-			byte[] samples = new byte[BUFFER_SIZE];
-			int count = 0;
-			while ((count = ais.read(samples, 0, BUFFER_SIZE)) != -1) {
-				line.write(samples, 0, count);
-			}
-		}
-		catch (IOException e) {
-			e.printStackTrace();
-		}
-		catch (UnsupportedAudioFileException e) {
-			e.printStackTrace();
-		}
-		catch (LineUnavailableException e) {
-			e.printStackTrace();
-		}
-		finally {
-			if (line != null) {
-				line.drain();
-				line.close();
-			}
-		}
-	}
-
-	/**
-	 * Loops an audio file (in .wav, .mid, or .au format) in a background thread.
-	 *
-	 * @param filename the name of the audio file
-	 * @throws IllegalArgumentException if {@code filename} is {@code null}
-	 */
-	public static synchronized void loop(String filename) {
-		if (filename == null) throw new IllegalArgumentException();
-
-		// code adapted from: http://stackoverflow.com/questions/26305/how-can-i-play-sound-in-java
-		try {
-			Clip clip = AudioSystem.getClip();
-			InputStream is = MiscSoundUtil.class.getResourceAsStream(filename);
-			AudioInputStream ais = AudioSystem.getAudioInputStream(is);
-			clip.open(ais);
-			clip.loop(Clip.LOOP_CONTINUOUSLY);
-		}
-		catch (UnsupportedAudioFileException e) {
-			throw new IllegalArgumentException("unsupported audio format: '" + filename + "'", e);
-		}
-		catch (LineUnavailableException e) {
-			throw new IllegalArgumentException("could not play '" + filename + "'", e);
-		}
-		catch (IOException e) {
-			throw new IllegalArgumentException("could not play '" + filename + "'", e);
-		}
-	}
-
-	/**
-	 * Creates notes based on frequency, duration, and amplitude inputs. 
-	 * 
-	 * @param hz input frequency of note
-	 * @param duration input duration of note
-	 * @param amplitude input amplitude of note
-	 * @return double array containing notes
-	 */
-	private static double[] note(double hz, double duration, double amplitude) {
-		int n = (int) (MiscSoundUtil.SAMPLE_RATE * duration);
-		double[] a = new double[n+1];
-		for (int i = 0; i <= n; i++)
-			a[i] = amplitude * Math.sin(2 * Math.PI * i * hz / MiscSoundUtil.SAMPLE_RATE);
-		return a;
-	}
-
-	
-
 
 }

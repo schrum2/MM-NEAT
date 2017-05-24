@@ -154,6 +154,50 @@ public class SoundAmplitudeArrayManipulator {
 		}
 		return true;
 	}
+	
+	/**
+	 * Saves the double array as an audio file (using .wav or .au format).
+	 * Fully functional for saving file generated from CPPNs
+	 *
+	 * @param  filename the name of the audio file
+	 * @param  samples the array of samples
+	 * @throws IllegalArgumentException if unable to save {@code filename}
+	 * @throws IllegalArgumentException if {@code samples} is {@code null}
+	 */
+	public static void save(String filename, double[] samples) {
+		if (samples == null) {
+			throw new IllegalArgumentException("samples[] is null");
+		}
+
+		// assumes 44,100 samples per second
+		// use 16-bit audio, mono, signed PCM, little Endian
+		AudioFormat format = new AudioFormat(MiscSoundUtil.SAMPLE_RATE, 16, 1, true, false);
+		byte[] data = new byte[2 * samples.length];
+		for (int i = 0; i < samples.length; i++) {
+			int temp = (short) (samples[i] * MiscSoundUtil.MAX_16_BIT);
+			data[2*i + 0] = (byte) temp;
+			data[2*i + 1] = (byte) (temp >> 8);
+		}
+
+		// now save the file
+		try {
+			ByteArrayInputStream bais = new ByteArrayInputStream(data);
+			AudioInputStream ais = new AudioInputStream(bais, format, samples.length);
+			if (filename.endsWith(".wav") || filename.endsWith(".WAV")) {
+				AudioSystem.write(ais, AudioFileFormat.Type.WAVE, new File(filename));
+			}
+			else if (filename.endsWith(".au") || filename.endsWith(".AU")) {
+				AudioSystem.write(ais, AudioFileFormat.Type.AU, new File(filename));
+			}
+			else {
+				throw new IllegalArgumentException("unsupported audio format: '" + filename + "'");
+			}
+		}
+		catch (IOException ioe) {
+			throw new IllegalArgumentException("unable to save file '" + filename + "'", ioe);
+		}
+	}
+
 
 	//CPPN 
 
@@ -170,17 +214,7 @@ public class SoundAmplitudeArrayManipulator {
 	 */
 	public static double[] amplitudeGenerator(Network CPPN, int length, double frequency) {
 		double[] result = new double[length];
-		for(double time = 0; time < length; time++) {
-			//double[] inputs = new double[]{time/StdAudio.SAMPLE_RATE, Math.sin(2*Math.PI * frequency * time/StdAudio.SAMPLE_RATE), HyperNEATCPPNGenotype.BIAS};
-			//double[] inputs = new double[]{time/StdAudio.SAMPLE_RATE, ActivationFunctions.triangleWave(2*Math.PI * frequency * time/StdAudio.SAMPLE_RATE), HyperNEATCPPNGenotype.BIAS};
-			double[] inputs = new double[]{time/MiscSoundUtil.SAMPLE_RATE, 
-					Math.sin(2*Math.PI * frequency * time/MiscSoundUtil.SAMPLE_RATE), 
-					//					ActivationFunctions.triangleWave(2*Math.PI * frequency * time/StdAudio.SAMPLE_RATE), 
-					//					ActivationFunctions.squareWave(2*Math.PI * frequency * time/StdAudio.SAMPLE_RATE), 
-					HyperNEATCPPNGenotype.BIAS};
-
-
-
+		for(double time = 0; time < length; time++) {double[] inputs = new double[]{time/MiscSoundUtil.SAMPLE_RATE, Math.sin(2*Math.PI * frequency * time/MiscSoundUtil.SAMPLE_RATE), HyperNEATCPPNGenotype.BIAS};
 			double[] outputs = CPPN.process(inputs);
 			result[(int) time] = outputs[0]; // amplitude
 		}
@@ -204,13 +238,7 @@ public class SoundAmplitudeArrayManipulator {
 	public static double[] amplitudeGenerator(Network CPPN, int length, double frequency, double[] inputMultipliers) {
 		double[] result = new double[length];
 		for(double time = 0; time < length; time++) {
-			//double[] inputs = new double[]{time/StdAudio.SAMPLE_RATE, Math.sin(2*Math.PI * frequency * time/StdAudio.SAMPLE_RATE), HyperNEATCPPNGenotype.BIAS};
-			//double[] inputs = new double[]{time/StdAudio.SAMPLE_RATE, ActivationFunctions.triangleWave(2*Math.PI * frequency * time/StdAudio.SAMPLE_RATE), HyperNEATCPPNGenotype.BIAS};
-			double[] inputs = new double[]{time/MiscSoundUtil.SAMPLE_RATE, 
-					Math.sin(2*Math.PI * frequency * time/MiscSoundUtil.SAMPLE_RATE), 
-					//					ActivationFunctions.triangleWave(2*Math.PI * frequency * time/StdAudio.SAMPLE_RATE), 
-					//					ActivationFunctions.squareWave(2*Math.PI * frequency * time/StdAudio.SAMPLE_RATE), 
-					HyperNEATCPPNGenotype.BIAS};	
+			double[] inputs = new double[]{time/MiscSoundUtil.SAMPLE_RATE, Math.sin(2*Math.PI * frequency * time/MiscSoundUtil.SAMPLE_RATE), HyperNEATCPPNGenotype.BIAS};	
 			// Multiplies the inputs of the pictures by the inputMultiples; used to turn on or off the effects in each picture
 			for(int i = 0; i < inputs.length; i++) {
 				inputs[i] = inputs[i] * inputMultipliers[i];
@@ -222,7 +250,7 @@ public class SoundAmplitudeArrayManipulator {
 	}
 
 	/**
-	 * Uses a CPPN to generate an output and saves that output into a file. DOESN'T WORK
+	 * Uses a CPPN to generate an output and saves that output into a file.
 	 * 
 	 * @param CPPN network used to generate amplitude 
 	 * @param length length of sample
@@ -232,7 +260,7 @@ public class SoundAmplitudeArrayManipulator {
 	 */
 	public static void saveFileFromCPPN(Network CPPN, int length, double frequency, String fileName, AudioFormat format) throws IOException {
 		double[] generatedSound = amplitudeGenerator(CPPN, length, frequency);
-		writeSingleChannel(format, generatedSound, fileName);
+		save(fileName, generatedSound);
 	}
 
 }
