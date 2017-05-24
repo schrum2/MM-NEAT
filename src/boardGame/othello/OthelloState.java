@@ -9,11 +9,7 @@ import boardGame.BoardGameState;
 import boardGame.TwoDimensionalBoardGameState;
 
 public class OthelloState extends TwoDimensionalBoardGameState {
-	
-	private int[][] boardState;
-	private int currentPlayer;
-	private List<Integer> winners;
-	
+		
 	private final int BOARD_WIDTH = 8;
 
 	private final int BOARD_CORE1 = 3; // Keeps track of the center of the Board
@@ -22,8 +18,6 @@ public class OthelloState extends TwoDimensionalBoardGameState {
 	private final int EMPTY = -1;
 	private final int BLACK_CHIP = 0;
 	private final int WHITE_CHIP = 1;
-		
-	private final int NEW_CHIP = 3;
 	
 	/**
 	 * Default Constructor
@@ -138,7 +132,7 @@ public class OthelloState extends TwoDimensionalBoardGameState {
 		assert goX >= 0 && goX < BOARD_WIDTH;
 		assert goY >= 0 && goY < BOARD_WIDTH;
 				
-		boolean check1 = boardState[useX][useY] == currentPlayer;
+		boolean check1 = boardState[useX][useY] == nextPlayer;
 		if(!check1) return false; // Cannot move if it is not your chip
 		
 		boolean check2 = boardState[goX][goY] == EMPTY;
@@ -152,32 +146,32 @@ public class OthelloState extends TwoDimensionalBoardGameState {
 		
 		if(useX - goX == 0){ // Vertical
 			for(int i = Math.min(useY, goY)+1; i < Math.max(useY, goY); i++){ // Will never be at useY or goY
-				if(boardState[useX][i] == (currentPlayer + 1) % 2) foundEnemy = true;
-				if(boardState[useX][i] == currentPlayer) includesSelf = true;
+				if(boardState[useX][i] == (nextPlayer + 1) % 2) foundEnemy = true;
+				if(boardState[useX][i] == nextPlayer) includesSelf = true;
 			}
 		}else if(useY - goY == 0){ // Horizontal
 			for(int i = Math.min(useX, goX)+1; i < Math.max(useX, goX); i++){ // Will never be at useX or goX
-				if(boardState[i][useY] == (currentPlayer + 1) % 2) foundEnemy = true;
-				if(boardState[i][useY] == currentPlayer) includesSelf = true;
+				if(boardState[i][useY] == (nextPlayer + 1) % 2) foundEnemy = true;
+				if(boardState[i][useY] == nextPlayer) includesSelf = true;
 			}
 		}else if(useX - goX == useY - goY){
 			for(int i = 1; i < Math.abs(useX - goX); i++){ // Stores the displacement value; will never start at useThis
 				if(useX - goX < 0){ // Going down-right; goX is greater
-					if(boardState[useX + i][useY + i] == (currentPlayer + 1) % 2) foundEnemy = true;
-					if(boardState[useX + i][useY + i] == currentPlayer) includesSelf = true;
+					if(boardState[useX + i][useY + i] == (nextPlayer + 1) % 2) foundEnemy = true;
+					if(boardState[useX + i][useY + i] == nextPlayer) includesSelf = true;
 				}else{ // Going up-left; goX is smaller
-					if(boardState[useX - i][useY - i] == (currentPlayer + 1) % 2) foundEnemy = true;
-					if(boardState[useX - i][useY - i] == currentPlayer) includesSelf = true;
+					if(boardState[useX - i][useY - i] == (nextPlayer + 1) % 2) foundEnemy = true;
+					if(boardState[useX - i][useY - i] == nextPlayer) includesSelf = true;
 				}
 			}
 		}else if(useX - goX == -(useY - goY)){
 			for(int i = 1; i < Math.abs(useX - goX); i++){ // Stores the displacement value; will never start at useThis
 				if(useX - goX < 0){ // Going up-right; goX is greater
-					if(boardState[useX + i][useY - i] == (currentPlayer + 1) % 2) foundEnemy = true;
-					if(boardState[useX + i][useY - i] == currentPlayer) includesSelf = true;
+					if(boardState[useX + i][useY - i] == (nextPlayer + 1) % 2) foundEnemy = true;
+					if(boardState[useX + i][useY - i] == nextPlayer) includesSelf = true;
 				}else{ // Going down-left; goX is smaller
-					if(boardState[useX - i][useY + i] == (currentPlayer + 1) % 2) foundEnemy = true;
-					if(boardState[useX - i][useY + i] == currentPlayer) includesSelf = true;
+					if(boardState[useX - i][useY + i] == (nextPlayer + 1) % 2) foundEnemy = true;
+					if(boardState[useX - i][useY + i] == nextPlayer) includesSelf = true;
 				}
 			}
 		}
@@ -186,32 +180,32 @@ public class OthelloState extends TwoDimensionalBoardGameState {
 		
 		if(useX - goX == 0){ // Vertical
 			for(int i = Math.min(useY, goY); i < Math.max(useY, goY); i++){
-				boardState[useX][i] = currentPlayer;
+				boardState[useX][i] = nextPlayer;
 			}
 		}else if(useY - goY == 0){ // Horizontal
 			for(int i = Math.min(useX, goX); i < Math.max(useX, goX); i++){
-				boardState[i][useY] = currentPlayer;
+				boardState[i][useY] = nextPlayer;
 			}
 		}else if(useX - goX == useY - goY){
 			for(int i = 1; i < Math.abs(useX - goX); i++){ // Stores the displacement value
 				if(useX - goX < 0){ // Going down-right; goX is greater
-					boardState[useX + i][useY + i] = currentPlayer;
+					boardState[useX + i][useY + i] = nextPlayer;
 				}else{ // Going up-left; goX is smaller
-					boardState[useX - i][useY - i] = currentPlayer;
+					boardState[useX - i][useY - i] = nextPlayer;
 				}
 			}
 		}else if(useX - goX == -(useY - goY)){
 			for(int i = 1; i < Math.abs(useX - goX); i++){ // Stores the displacement value
 				if(useX - goX < 0){ // Going up-right; goX is greater
-					boardState[useX + i][useY - i] = currentPlayer;
+					boardState[useX + i][useY - i] = nextPlayer;
 				}else{ // Going down-left; goX is smaller
-					boardState[useX - i][useY + i] = currentPlayer;
+					boardState[useX - i][useY + i] = nextPlayer;
 				}
 			}			
 		}
 		
-		boardState[goX][goY] = currentPlayer;
-		currentPlayer = (currentPlayer + 1) % 2;
+		boardState[goX][goY] = nextPlayer;
+		nextPlayer = (nextPlayer + 1) % 2;
 		checkWinners();
 		return true;
 	}
@@ -231,7 +225,7 @@ public class OthelloState extends TwoDimensionalBoardGameState {
 		
 		for(int i = 0; i < BOARD_WIDTH; i++){ // This part works
 			for(int j = 0; j < BOARD_WIDTH; j++){
-				if(boardState[i][j] == currentPlayer){
+				if(boardState[i][j] == nextPlayer){
 					chipMoves.add(new Point(i, j));
 				}
 			}
@@ -251,7 +245,7 @@ public class OthelloState extends TwoDimensionalBoardGameState {
 						do{
 							x += dX;
 							y += dY;
-						}while((x >= 0 && x < BOARD_WIDTH) && (y >= 0 && y < BOARD_WIDTH) && boardState[x][y] == (currentPlayer + 1) % 2);
+						}while((x >= 0 && x < BOARD_WIDTH) && (y >= 0 && y < BOARD_WIDTH) && boardState[x][y] == (nextPlayer + 1) % 2);
 						
 						if((x >= 0 && x < BOARD_WIDTH) && (y >= 0 && y < BOARD_WIDTH)){
 							if(boardState[x][y] == EMPTY){
@@ -310,8 +304,6 @@ public class OthelloState extends TwoDimensionalBoardGameState {
 					result += "B";									
 				}else if(boardState[i][j] == WHITE_CHIP){
 					result += "W";									
-				}else if(boardState[i][j] == NEW_CHIP){
-					result += "N";									
 				}
 				result += "|";
 			}
@@ -337,7 +329,7 @@ public class OthelloState extends TwoDimensionalBoardGameState {
 		boardState[BOARD_CORE1][BOARD_CORE2] = WHITE_CHIP;
 		boardState[BOARD_CORE2][BOARD_CORE1] = WHITE_CHIP;
 
-		currentPlayer = 0;
+		nextPlayer = 0;
 		winners = new ArrayList<Integer>();
 	}
 
