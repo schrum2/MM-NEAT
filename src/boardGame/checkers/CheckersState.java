@@ -4,10 +4,10 @@ import java.awt.Point;
 import java.util.List;
 
 import boardGame.BoardGameState;
+import boardGame.TwoDimensionalBoardGameState;
 
-public class CheckersState implements BoardGameState{
+public class CheckersState extends TwoDimensionalBoardGameState {
 
-	private static final int UNDECIDED = -1;
 	private static final int TIE = 0;
 	private static final int PLAYER1 = 1; // Player 1 controls Black Checks, at the top of the Board
 	private static final int PLAYER2 = 2; // Player 2 controls Red Checks, at the bottom of the Board
@@ -15,14 +15,13 @@ public class CheckersState implements BoardGameState{
 	private static final int BOARD_WIDTH = 8;	
 	private static final int STARTCHECKS = 12;
 	
-	static final int BLOCKED = -1; // Used for the unreachable parts of the Board
-	static final int EMPTY = 0;
+	static final int EMPTY = -1;
 
-	private static final int BLACK_CHECK = 1;
-	private static final int BLACK_CHECK_KING = 2;
+	private static final int BLACK_CHECK = 0;
+	private static final int BLACK_CHECK_KING = 1;
 
-	private static final int RED_CHECK = 3;
-	private static final int RED_CHECK_KING = 4;
+	private static final int RED_CHECK = 2;
+	private static final int RED_CHECK_KING = 3;
 
 
 	private int blackChecksLeft;
@@ -39,10 +38,7 @@ public class CheckersState implements BoardGameState{
 	 * Default Constructor
 	 */
 	public CheckersState(){
-		boardState = newCheckBoard();
-		blackChecksLeft = STARTCHECKS;
-		redChecksLeft = STARTCHECKS;
-		currentPlayer = PLAYER1;
+		super(2);
 	}
 	
 	/**
@@ -50,39 +46,8 @@ public class CheckersState implements BoardGameState{
 	 * 
 	 * @param newBoard int[][] representing a CheckerBoard
 	 */
-	private CheckersState(int[][] newBoard, int currentPlay){
-		// Checks if the Dimensions of the newBoard are correct
-		if(newBoard.length != BOARD_WIDTH){
-			throw new IllegalArgumentException("Incorrect Dimensions for a Checkers Board: " + newBoard.length);
-		}
-		for(int i = 0; i < BOARD_WIDTH; i++){
-			if(newBoard[i].length != BOARD_WIDTH){
-				throw new IllegalArgumentException("Incorrect Dimensions for a Checkers Board: " + newBoard[i].length);
-			}
-		}
-		
-		int blackChecks = 0;
-		int redChecks = 0;
-		
-		// Checks if the Values within the newBoard are correct and counts up the number of remaining Checks
-		for(int i = 0; i < BOARD_WIDTH; i++){
-			for(int j = 0; j < BOARD_WIDTH; j++){
-				if(newBoard[i][j] != BLACK_CHECK && newBoard[i][j] != BLACK_CHECK_KING && newBoard[i][j] != RED_CHECK
-						&& newBoard[i][j] != RED_CHECK_KING && newBoard[i][j] != EMPTY && newBoard[i][j] != BLOCKED){
-					throw new IllegalArgumentException("Incorrect Check Value for a Checkers Board at (" + i + ", " + j + "): " + newBoard[i][j]);
-				}
-				if(newBoard[i][j] == BLACK_CHECK || newBoard[i][j] == BLACK_CHECK_KING){
-					blackChecks++;
-				}
-				if(newBoard[i][j] == RED_CHECK || newBoard[i][j] == RED_CHECK_KING){
-					redChecks++;
-				}
-			}
-		}
-		// Survived the Tests; can now Construct the CheckersState
-		boardState = newBoard;
-		blackChecksLeft = blackChecks;
-		redChecksLeft = redChecks;
+	public CheckersState(CheckersState state){
+		super(state);
 	}
 	
 	/**
@@ -142,7 +107,7 @@ public class CheckersState implements BoardGameState{
 	 * @param moveTo Point where the selected Check will be moved to
 	 * @return True if able to move the selected Check to the new space, else returns false
 	 */
-	public boolean moveCheck(Point moveThis, Point moveTo){
+	public boolean move(Point moveThis, Point moveTo){
 		assert moveThis.getX() >= 0 && moveThis.getX() < BOARD_WIDTH;
 		assert moveThis.getY() >= 0 && moveThis.getY() < BOARD_WIDTH;
 		assert moveTo.getX() >= 0 && moveTo.getX() < BOARD_WIDTH;
@@ -267,36 +232,9 @@ public class CheckersState implements BoardGameState{
 		case BLACK_CHECK_KING: return "Black Check King";
 		case RED_CHECK: return "Red Check";
 		case RED_CHECK_KING: return "Red Check King";
-		case BLOCKED: return "Blocked";
 		case EMPTY: return "Empty";
 		}
 		throw new IllegalArgumentException("Must choose Rock, Paper, or Scissors, not " + choice);
-	}
-
-	public String toString(){
-		String result = " _ _ _ _ _ _ _ _ ";
-		for(int i = 0; i < BOARD_WIDTH; i++){
-			result += "\n|";
-			for(int j = 0; j < BOARD_WIDTH; j++){
-				if(boardState[i][j] == BLOCKED){
-					result += ".";					
-				}else if(boardState[i][j] == EMPTY){
-					result += " ";					
-				}else if(boardState[i][j] == BLACK_CHECK){
-					result += "b";									
-				}else if(boardState[i][j] == BLACK_CHECK_KING){
-					result += "B";									
-				}else if(boardState[i][j] == RED_CHECK){
-					result += "r";									
-				}else if(boardState[i][j] == RED_CHECK_KING){
-					result += "R";									
-				}
-				result += "|";
-			}
-			result += "\n _ _ _ _ _ _ _ _";
-		}
-		
-		return result;
 	}
 	
 	/**
@@ -306,8 +244,7 @@ public class CheckersState implements BoardGameState{
 	 */
 	@Override
 	public CheckersState copy() {
-		CheckersState temp = new CheckersState(boardState, currentPlayer);
-		return temp;
+		return new CheckersState(this);
 	}
 
 	/**
@@ -328,7 +265,7 @@ public class CheckersState implements BoardGameState{
 				
 				if(i % 2 == 0){ // Even Rows of the Board
 					if(j % 2 == 0){ // Even Columns of the Board
-						temp[i][j] = BLOCKED;
+						temp[i][j] = EMPTY;
 					}else{ // Odd Columns of the Board
 						if(black > 0){
 							temp[i][j] = BLACK_CHECK;
@@ -354,7 +291,7 @@ public class CheckersState implements BoardGameState{
 							red--;
 						}
 					}else{ // Odd Columns of the Board
-						temp[i][j] = BLOCKED;						
+						temp[i][j] = EMPTY;						
 					}					
 				}
 			}
@@ -367,5 +304,28 @@ public class CheckersState implements BoardGameState{
 	public List<BoardGameState> possibleBoardGameStates(BoardGameState currentState) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void setupStartingBoard() {
+		boardState = newCheckBoard();
+		blackChecksLeft = STARTCHECKS;
+		redChecksLeft = STARTCHECKS;
+		currentPlayer = PLAYER1;
+		}
+
+	@Override
+	public int getBoardWidth() {
+		return BOARD_WIDTH;
+	}
+
+	@Override
+	public int getBoardHeight() {
+		return BOARD_WIDTH;
+	}
+
+	@Override
+	public char[] getPlayerSymbols() {
+		return new char[]{'b', 'B', 'r', 'R'};
 	}
 }

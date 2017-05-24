@@ -6,8 +6,9 @@ import java.util.Collection;
 import java.util.List;
 
 import boardGame.BoardGameState;
+import boardGame.TwoDimensionalBoardGameState;
 
-public class OthelloState implements BoardGameState{
+public class OthelloState extends TwoDimensionalBoardGameState {
 	
 	private int[][] boardState;
 	private int currentPlayer;
@@ -28,22 +29,7 @@ public class OthelloState implements BoardGameState{
 	 * Default Constructor
 	 */
 	public OthelloState(){
-		boardState = new int[BOARD_WIDTH][BOARD_WIDTH];
-		
-		for(int i = 0; i < BOARD_WIDTH; i++){
-			for(int j = 0; j < BOARD_WIDTH; j++){
-				boardState[i][j] = EMPTY;
-			}
-		}
-		
-		boardState[BOARD_CORE1][BOARD_CORE1] = BLACK_CHIP;
-		boardState[BOARD_CORE2][BOARD_CORE2] = BLACK_CHIP;
-		
-		boardState[BOARD_CORE1][BOARD_CORE2] = WHITE_CHIP;
-		boardState[BOARD_CORE2][BOARD_CORE1] = WHITE_CHIP;
-
-		currentPlayer = 0;
-		winners = new ArrayList<Integer>();
+		super(2);
 	}
 	
 	/**
@@ -53,20 +39,8 @@ public class OthelloState implements BoardGameState{
 	 * @param nextPlayer Player whose turn it is
 	 * @param newWinners List<Integer> containing the indexes of the current Winners
 	 */
-	public OthelloState(int[][] newBoard, int nextPlayer, List<Integer> newWinners){
-		assert newBoard.length == BOARD_WIDTH && newBoard[0].length == BOARD_WIDTH;
-		boardState = new int[BOARD_WIDTH][BOARD_WIDTH];
-		
-		for(int i = 0; i < BOARD_WIDTH; i++){
-			for(int j = 0; j < BOARD_WIDTH; j++){
-				boardState[i][j] = newBoard[i][j];
-			}
-		}
-		
-		currentPlayer = nextPlayer;
-		
-		winners = new ArrayList<Integer>();
-		winners.addAll(newWinners);
+	public OthelloState(OthelloState state){
+		super(state);
 	}
 	
 	/**
@@ -96,6 +70,8 @@ public class OthelloState implements BoardGameState{
 	@Override
 	public boolean endState() { // Does not work fully; there are ways for the Game to End with Empty Spaces still on the Board; sometimes the currentPlayer can't make a Move in the late-game
 	
+		// TODO: Find a way to accurately return the EndState with the exceptions
+		
 		// Attempts to run a possibleBoardStates() check here have failed; the Testing class never prints out the BoardState
 		
 		for(int i = 0; i < BOARD_WIDTH; i++){
@@ -305,18 +281,7 @@ public class OthelloState implements BoardGameState{
 	 */
 	@Override
  	public BoardGameState copy() {
-		int[][] copy = new int[BOARD_WIDTH][BOARD_WIDTH];
-		for(int i = 0; i < BOARD_WIDTH; i++){
-			for(int j = 0; j < BOARD_WIDTH; j++){
-				copy[i][j] = boardState[i][j];
-			}
-		}
-		
-		ArrayList<Integer> newWin = new ArrayList<Integer>();
-		newWin.addAll(winners);
-		
-		OthelloState temp = new OthelloState(copy, currentPlayer, newWin);
-		return temp;
+		return new OthelloState(this);
 	}
 
 	/**
@@ -354,6 +319,41 @@ public class OthelloState implements BoardGameState{
 		}
 		
 		return result;
+	}
+
+	@Override
+	public void setupStartingBoard() {
+		boardState = new int[BOARD_WIDTH][BOARD_WIDTH];
+		
+		for(int i = 0; i < BOARD_WIDTH; i++){
+			for(int j = 0; j < BOARD_WIDTH; j++){
+				boardState[i][j] = EMPTY;
+			}
+		}
+		
+		boardState[BOARD_CORE1][BOARD_CORE1] = BLACK_CHIP;
+		boardState[BOARD_CORE2][BOARD_CORE2] = BLACK_CHIP;
+		
+		boardState[BOARD_CORE1][BOARD_CORE2] = WHITE_CHIP;
+		boardState[BOARD_CORE2][BOARD_CORE1] = WHITE_CHIP;
+
+		currentPlayer = 0;
+		winners = new ArrayList<Integer>();
+	}
+
+	@Override
+	public int getBoardWidth() {
+		return BOARD_WIDTH;
+	}
+
+	@Override
+	public int getBoardHeight() {
+		return BOARD_WIDTH;
+	}
+
+	@Override
+	public char[] getPlayerSymbols() {
+		return new char[]{'B', 'W'};
 	}
 	
 }
