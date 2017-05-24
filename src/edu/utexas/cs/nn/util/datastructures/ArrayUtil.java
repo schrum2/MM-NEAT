@@ -1,13 +1,12 @@
 package edu.utexas.cs.nn.util.datastructures;
 
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import edu.utexas.cs.nn.util.sound.MiscSoundUtil;
+import edu.utexas.cs.nn.util.sound.SoundToArray;
 
 /**
  *
@@ -126,22 +125,6 @@ public class ArrayUtil {
 		return array;
 	}
 	
-//	/**
-//	 * Takes in an array of doubles and converts it into a byte array.
-//	 * Useful for audio file manipulation. 
-//	 * 
-//	 * @param doubleArray input array of doubles to be converted 
-//	 * @return equivalent byte array
-//	 */
-//	public static byte[] doublesToBytes(double[] doubleArray){
-//	    int times = Double.SIZE / Byte.SIZE;
-//	    byte[] bytes = new byte[doubleArray.length * times];
-//	    for(int i=0;i<doubleArray.length;i++){
-//	        ByteBuffer.wrap(bytes, i*times, times).putDouble(doubleArray[i]);
-//	    }
-//	    return bytes;
-//	}
-
 	/**
 	 * Return true if any element of members is also an element of set
 	 *
@@ -634,8 +617,8 @@ public class ArrayUtil {
 	 * @return array of doubles with values that are the sum of the two input audio files at each index
 	 */
 	public static double[] overlap(String fileA, String fileB) {
-		double[] a = MiscSoundUtil.read(fileA); //reads string files in as double arrays
-		double[] b = MiscSoundUtil.read(fileB);
+		double[] a = SoundToArray.read(fileA); //reads string files in as double arrays
+		double[] b = SoundToArray.read(fileB);
 		double[] adjustedA = Arrays.copyOf(a, Math.min(a.length, b.length)); //copy of itself but adjusted based on length of shortest array
 		double[] adjustedB = Arrays.copyOf(b, Math.min(a.length, b.length)); //copy of itself but adjusted based on length of shortest array
 		double[] overlapped = ArrayUtil.zipAdd(adjustedA, adjustedB); //zipAdd() is a method in ArrayUtil that adds values at each index of two arrays into a new array

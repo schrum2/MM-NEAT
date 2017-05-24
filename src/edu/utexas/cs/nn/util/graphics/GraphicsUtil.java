@@ -12,7 +12,8 @@ import edu.utexas.cs.nn.tasks.interactive.breedesizer.BreedesizerTask;
 import edu.utexas.cs.nn.tasks.interactive.picbreeder.PicbreederTask;
 import edu.utexas.cs.nn.util.CartesianGeometricUtilities;
 import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
-import edu.utexas.cs.nn.util.sound.MiscSoundUtil;
+import edu.utexas.cs.nn.util.sound.PlayDoubleArray;
+import edu.utexas.cs.nn.util.sound.SoundToArray;
 import edu.utexas.cs.nn.util.util2D.ILocated2D;
 import edu.utexas.cs.nn.util.util2D.Tuple2D;
 
@@ -252,7 +253,7 @@ public class GraphicsUtil {
 	 * @param fileName String reference to file being plotted
 	 */
 	public static void wavePlotFromFile(String fileName, int height, int width) {
-		double[] fileArray = MiscSoundUtil.read(fileName); //create array of doubles representing audio
+		double[] fileArray = SoundToArray.read(fileName); //create array of doubles representing audio
 		wavePlotFromDoubleArray(fileArray, height, width);
 	}
 	

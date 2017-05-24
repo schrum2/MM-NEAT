@@ -15,8 +15,9 @@ import javax.swing.JTextField;
 
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.tasks.interactive.InteractiveEvolutionTask;
-import edu.utexas.cs.nn.util.sound.MiscSoundUtil;
-import edu.utexas.cs.nn.util.sound.SoundAmplitudeArrayManipulator;
+import edu.utexas.cs.nn.util.sound.PlayDoubleArray;
+import edu.utexas.cs.nn.util.sound.SaveFromArray;
+import edu.utexas.cs.nn.util.sound.SoundFromCPPNUtil;
 
 /**
  * Constructs graphical representation of two-octave keyboard (C3-C5) that is fully functional through
@@ -201,8 +202,8 @@ public class Keyboard extends JFrame implements MouseListener, KeyListener {
 	 */
 	public void playFrequency(double[] frequencyArray, int i) {
 		double freq = frequencyArray[i];
-		double[] amplitude = SoundAmplitudeArrayManipulator.amplitudeGenerator(currentCPPN, NOTE_LENGTH_DEFAULT, freq, InteractiveEvolutionTask.getInputMultipliers());
-		MiscSoundUtil.playDoubleArray(amplitude);
+		double[] amplitude = SoundFromCPPNUtil.amplitudeGenerator(currentCPPN, NOTE_LENGTH_DEFAULT, freq, InteractiveEvolutionTask.getInputMultipliers());
+		PlayDoubleArray.playDoubleArray(amplitude);
 	}
 
 	

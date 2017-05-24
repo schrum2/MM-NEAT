@@ -24,8 +24,9 @@ import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.interactive.InteractiveEvolutionTask;
 import edu.utexas.cs.nn.util.graphics.DrawingPanel;
 import edu.utexas.cs.nn.util.graphics.GraphicsUtil;
-import edu.utexas.cs.nn.util.sound.MiscSoundUtil;
-import edu.utexas.cs.nn.util.sound.SoundAmplitudeArrayManipulator;
+import edu.utexas.cs.nn.util.sound.PlayDoubleArray;
+import edu.utexas.cs.nn.util.sound.SaveFromArray;
+import edu.utexas.cs.nn.util.sound.SoundFromCPPNUtil;
 
 public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask<T> {
 
@@ -49,8 +50,6 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 	private static final int TIME_INPUT_INDEX = 0;
 	private static final int SINE_OF_TIME_INPUT_INDEX = 1;
 	private static final int BIAS_INPUT_INDEX = 2;
-
-
 
 	Keyboard keyboard;
 
@@ -138,7 +137,7 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 	 */
 	@Override
 	protected BufferedImage getButtonImage(Network phenotype, int width, int height, double[] inputMultipliers) {
-		double[] amplitude = SoundAmplitudeArrayManipulator.amplitudeGenerator(phenotype, Parameters.parameters.integerParameter("clipLength"), FREQUENCY_DEFAULT, inputMultipliers);
+		double[] amplitude = SoundFromCPPNUtil.amplitudeGenerator(phenotype, Parameters.parameters.integerParameter("clipLength"), FREQUENCY_DEFAULT, inputMultipliers);
 		BufferedImage wavePlotImage = GraphicsUtil.wavePlotFromDoubleArray(amplitude, height, width);
 		return wavePlotImage;
 	}
@@ -149,8 +148,8 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 	@Override
 	protected void additionalButtonClickAction(Genotype<T> individual) {
 		Network phenotype = individual.getPhenotype();
-		double[] amplitude = SoundAmplitudeArrayManipulator.amplitudeGenerator(phenotype, Parameters.parameters.integerParameter("clipLength"), FREQUENCY_DEFAULT, inputMultipliers);
-		MiscSoundUtil.playDoubleArray(amplitude);	
+		double[] amplitude = SoundFromCPPNUtil.amplitudeGenerator(phenotype, Parameters.parameters.integerParameter("clipLength"), FREQUENCY_DEFAULT, inputMultipliers);
+		PlayDoubleArray.playDoubleArray(amplitude);	
 		keyboard.setCPPN(phenotype);
 	}
 
@@ -199,7 +198,7 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 		if(audioReturnVal == JFileChooser.APPROVE_OPTION) {//if the user decides to save the image
 			System.out.println("You chose to call the file: " + chooser.getSelectedFile().getName());
 			try {
-				SoundAmplitudeArrayManipulator.saveFileFromCPPN(scores.get(i).individual.getPhenotype(), Parameters.parameters.integerParameter("clipLength"), FREQUENCY_DEFAULT, chooser.getSelectedFile().getName() + ".wav", af);
+				SoundFromCPPNUtil.saveFileFromCPPN(scores.get(i).individual.getPhenotype(), Parameters.parameters.integerParameter("clipLength"), FREQUENCY_DEFAULT, chooser.getSelectedFile().getName() + ".wav", af);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

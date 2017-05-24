@@ -1,34 +1,19 @@
 package edu.utexas.cs.nn.util.sound;
-//for playing midi sound files on some older systems
-import java.applet.Applet;
-import java.applet.AudioClip;
-import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-
 import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioInputStream;
+
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
-import javax.sound.sampled.UnsupportedAudioFileException;
+
 /**
- *  This class provides a basic capability for
- *  creating, reading, and saving audio. 
- *  
- *  The audio format uses a sampling rate of 44,100 (CD quality audio), 16-bit, monaural.
- *
- *  
- *  For additional documentation, see <a href="http://introcs.cs.princeton.edu/15inout">Section 1.5</a> of
- *  <i>Computer Science: An Interdisciplinary Approach</i> by Robert Sedgewick and Kevin Wayne.
- *
- *  @author Robert Sedgewick
- *  @author Kevin Wayne
+ * This class contains a series of methods that can be used to play a double array
+ * as an audio file. Class currently uses static initializer, which should be 
+ * changed at some point. 
+ * 
  *  @author Isabel Tweraser
  */
-public final class MiscSoundUtil {
+public final class PlayDoubleArray {
 
 	/**
 	 *  The sample rate - 44,100 Hz for CD quality audio.
@@ -51,7 +36,7 @@ public final class MiscSoundUtil {
 
 	
 
-	private MiscSoundUtil() {
+	private PlayDoubleArray() {
 		// can not instantiate
 	}
 
@@ -173,90 +158,4 @@ public final class MiscSoundUtil {
 		if(allowInterrupt) temp.start(); // Launches in new Thread
 		else temp.run(); // Just executes the code sequentially
 	}
-
-	/**
-	 * Reads audio samples from a file (in .wav or .au format) and returns
-	 * them as a double array with values between -1.0 and +1.0.
-	 *
-	 * @param  filename the name of the audio file
-	 * @return the array of samples
-	 */
-	public static double[] read(String filename) {
-		byte[] data = readByte(filename);
-		int n = data.length;
-		double[] d = new double[n/2];
-		for (int i = 0; i < n/2; i++) {
-			d[i] = ((short) (((data[2*i+1] & 0xFF) << 8) + (data[2*i] & 0xFF))) / ((double) MAX_16_BIT);
-		}
-		return d;
-	}
-
-	/**
-	 * Reads in data from audio file and returns it as an array of bytes. 
-	 * 
-	 * @param filename string reference to audio file being used
-	 * @return byte array containing data from audio file 
-	 */
-	public static byte[] readByte(String filename) {
-		byte[] data = null;
-		AudioInputStream ais = null;
-		try {
-
-			// try to read from file
-			File file = new File(filename);
-			if (file.exists()) {
-				ais = AudioSystem.getAudioInputStream(file);
-				int bytesToRead = ais.available();
-				data = new byte[bytesToRead];
-				int bytesRead = ais.read(data);
-				if (bytesToRead != bytesRead)
-					throw new IllegalStateException("read only " + bytesRead + " of " + bytesToRead + " bytes"); 
-			}
-
-			// try to read from URL
-			else {
-				URL url = MiscSoundUtil.class.getResource(filename);
-				ais = AudioSystem.getAudioInputStream(url);
-				int bytesToRead = ais.available();
-				data = new byte[bytesToRead];
-				int bytesRead = ais.read(data);
-				if (bytesToRead != bytesRead)
-					throw new IllegalStateException("read only " + bytesRead + " of " + bytesToRead + " bytes"); 
-			}
-		}
-		catch (IOException e) {
-			throw new IllegalArgumentException("could not read '" + filename + "'", e);
-		}
-
-		catch (UnsupportedAudioFileException e) {
-			throw new IllegalArgumentException("unsupported audio format: '" + filename + "'", e);
-		}
-
-		return data;
-	}
-	
-	/**
-	 * Plays sound using Applet.newAudioClip() - works for MIDI files
-	 * 
-	 * @param filename string reference to audio file being played
-	 */
-	public static void playApplet(String filename) {
-		URL url = null;
-		try {
-			File file = new File(filename);
-			if(file.canRead()) url = file.toURI().toURL();
-		}
-		catch (MalformedURLException e) {
-			throw new IllegalArgumentException("could not play '" + filename + "'", e);
-		}
-
-		// URL url = StdAudio.class.getResource(filename);
-		if (url == null) {
-			throw new IllegalArgumentException("could not play '" + filename + "'");
-		}
-
-		AudioClip clip = Applet.newAudioClip(url);
-		clip.play();
-	}
-
 }

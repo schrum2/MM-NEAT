@@ -1,7 +1,11 @@
 package edu.utexas.cs.nn.util.sound;
 
+import java.applet.Applet;
+import java.applet.AudioClip;
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Arrays;
 
 import javax.sound.midi.InvalidMidiDataException;
@@ -43,6 +47,8 @@ public class MIDIUtil {
 	public static final double ASHARP1 = 58.27;
 	public static final double B1 = 61.74;
 	
+	// representative frequencies for octave 1 read into double array so that they 
+	// can be manipulated based on their index in noteToFreq()
 	public static final double[] NOTES = new double[]{C1, CSHARP1, D1, DSHARP1, E1, F1, FSHARP1, G1, GSHARP1, A1, ASHARP1, B1};
 	
 	public static final int NOTES_IN_OCTAVE = 12; //number of chromatic notes in a single octave
@@ -51,6 +57,9 @@ public class MIDIUtil {
 	 * Method that takes in a MIDI file and prints out useful information about the note, whether the 
 	 * note is on or off, the key, and the velocity. This is printed for each individual track in the 
 	 * MIDI file.
+	 * 
+	 * Not necessary for functioning of other methods, but contains useful information about 
+	 * functioning of MIDI files (channels, tracks, notes, velocity, etc.)
 	 * 
 	 * @param audioFile input MIDI file
 	 */
@@ -144,12 +153,42 @@ public class MIDIUtil {
 	public static double noteToFreq(int key) {
 		int note = key % NOTES_IN_OCTAVE;
 		int octave = (key / NOTES_IN_OCTAVE) -1;
-		return NOTES[note] * Math.pow(2.0, (double) octave - 1.0); //this is because frequencies of notes are always double the frequencies of the lower adjacent octave
+		return NOTES[note] * Math.pow(2.0, (double) octave - 1.0); // this is because frequencies of notes are always double the frequencies of the lower adjacent octave
 	}
+	
+	/**
+	 * Plays sound using Applet.newAudioClip() - works for MIDI files
+	 * 
+	 * @param filename string reference to audio file being played
+	 */
+	public static void playApplet(String filename) {
+		URL url = null;
+		try {
+			File file = new File(filename);
+			if(file.canRead()) url = file.toURI().toURL();
+		}
+		catch (MalformedURLException e) {
+			throw new IllegalArgumentException("could not play '" + filename + "'", e);
+		}
+
+		// URL url = StdAudio.class.getResource(filename);
+		if (url == null) {
+			throw new IllegalArgumentException("could not play '" + filename + "'");
+		}
+
+		AudioClip clip = Applet.newAudioClip(url);
+		clip.play();
+	}
+
 	
 	/**
 	 * Loops through array of frequencies generated from a MIDI file and plays it using a CPPN,
 	 * essentially making the CPPN the "instrument". 
+	 * 
+	 * CURRENT ISSUES: Strange skipping between each note (could be due to NOTE_ON and NOTE_OFF
+	 * specifications for each note/track in MIDI files); there is no way to specify rhythmic 
+	 * length of notes; notes cannot overlap with each other so there is no possibility
+	 * for chords or multiple voices
 	 * 
 	 * @param cppn input network used to generate sound
 	 * @param frequencies frequencies corresponding to data taken from MIDI file
@@ -157,9 +196,9 @@ public class MIDIUtil {
 	public static void playMIDIWithCPPN(Network cppn, double[] frequencies) {
 		System.out.println(Arrays.toString(frequencies)); // Something strange about these frequencies
 		for(int i = 0; i < frequencies.length; i++) {
-			double[] amplitude = SoundAmplitudeArrayManipulator.amplitudeGenerator(cppn, Keyboard.NOTE_LENGTH_DEFAULT, frequencies[i]);
+			double[] amplitude = SoundFromCPPNUtil.amplitudeGenerator(cppn, Keyboard.NOTE_LENGTH_DEFAULT, frequencies[i]);
 			System.out.println("note "+ i + " :" + Arrays.toString(amplitude));
-			MiscSoundUtil.playDoubleArray(amplitude, false);
+			PlayDoubleArray.playDoubleArray(amplitude, false);
 		}
 	}
 }

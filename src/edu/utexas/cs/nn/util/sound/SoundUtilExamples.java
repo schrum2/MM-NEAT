@@ -74,15 +74,15 @@ public class SoundUtilExamples {
 		
 		//AudioFormat af5 = new AudioFormat(BreedesizerTask.DEFAULT_SAMPLE_RATE, BreedesizerTask.DEFAULT_BIT_RATE, )
 		
-		double[] testArray = SoundAmplitudeArrayManipulator.amplitudeGenerator(cppn, 60000, 440);
-		MiscSoundUtil.playDoubleArray(testArray, false);
+		double[] testArray = SoundFromCPPNUtil.amplitudeGenerator(cppn, 60000, 440);
+		PlayDoubleArray.playDoubleArray(testArray, false);
 		//File testingSourceDataLine = new File("data/sounds/testingSourceDataLine.wav");
-		SoundAmplitudeArrayManipulator.save("data/sounds/testingSourceDataLine.wav", testArray);
+		SaveFromArray.saveFileFromDoubleArray("data/sounds/testingSourceDataLine.wav", testArray);
 		
 		//double array containing frequencies of a C Major scale
 		double[] frequencies = new double[]{261.626, 293.665, 329.628, 349.228, 391.995, 440.0, 493.883, 523.251};
 		for(int i = 0; i < frequencies.length; i++) {
-			double[] scaleCPPN = SoundAmplitudeArrayManipulator.amplitudeGenerator(cppn, 30000, frequencies[i]);
+			double[] scaleCPPN = SoundFromCPPNUtil.amplitudeGenerator(cppn, 30000, frequencies[i]);
 			//MiscSoundUtil.playDoubleArray(scaleCPPN);
 		}
 	}
@@ -137,7 +137,7 @@ public class SoundUtilExamples {
 		byte[] bearNumbers = WAVUtil.WAVToByte(BEARGROWL_WAV);
 		//System.out.println(Arrays.toString(bearNumbers));
 		AudioInputStream bearAIS = WAVUtil.byteToAIS(bearNumbers);
-		int[] bearData = SoundAmplitudeArrayManipulator.extractAmplitudeDataFromAudioInputStream(bearAIS);
+		int[] bearData = SoundToArray.extractAmplitudeDataFromAudioInputStream(bearAIS);
 		//System.out.println(Arrays.toString(bearData));
 
 		byte[] applauseNumbers =WAVUtil.WAVToByte(APPLAUSE_WAV);	
@@ -146,7 +146,7 @@ public class SoundUtilExamples {
 		byte[] harpNumbers = WAVUtil.WAVToByte(HARP_WAV);
 		//System.out.println(Arrays.toString(harpNumbers));
 		AudioInputStream harpAIS = WAVUtil.byteToAIS(harpNumbers);
-		int[] harpData = SoundAmplitudeArrayManipulator.extractAmplitudeDataFromAudioInputStream(harpAIS);
+		int[] harpData = SoundToArray.extractAmplitudeDataFromAudioInputStream(harpAIS);
 		System.out.println(Arrays.toString(harpData));
 
 		//System.out.println(stream);
@@ -171,7 +171,7 @@ public class SoundUtilExamples {
 		byte[] applauseNumbers =WAVUtil.WAVToByte(APPLAUSE_WAV);	
 		byte[] harpNumbers = WAVUtil.WAVToByte(HARP_WAV);
 		AudioInputStream applauseAIS = WAVUtil.byteToAIS(applauseNumbers);
-		int[] applauseNumbers2 = SoundAmplitudeArrayManipulator.extractAmplitudeDataFromAudioInputStream(applauseAIS);
+		int[] applauseNumbers2 = SoundToArray.extractAmplitudeDataFromAudioInputStream(applauseAIS);
 		//System.out.println(Arrays.toString(applauseNumbers2));
 
 
@@ -243,15 +243,15 @@ public class SoundUtilExamples {
 	public static void toneGeneratorExamples() {
 		// 440 Hz for 1 sec
 		double freq1 = 440.0;
-		for (int i = 0; i <= MiscSoundUtil.SAMPLE_RATE; i++) {
+		for (int i = 0; i <= PlayDoubleArray.SAMPLE_RATE; i++) {
 			//StdAudio.play(0.5 * Math.sin(2*Math.PI * freq1 * i / StdAudio.SAMPLE_RATE));
 		}
 
-		for (int i = 0; i <= MiscSoundUtil.SAMPLE_RATE; i++) {
+		for (int i = 0; i <= PlayDoubleArray.SAMPLE_RATE; i++) {
 			//StdAudio.play(0.5 * ActivationFunctions.squareWave(2*Math.PI * freq1 * i / StdAudio.SAMPLE_RATE));
 		}
 
-		for (int i = 0; i <= MiscSoundUtil.SAMPLE_RATE; i++) {
+		for (int i = 0; i <= PlayDoubleArray.SAMPLE_RATE; i++) {
 			//StdAudio.play(0.5 * ActivationFunctions.triangleWave(2*Math.PI * freq1 * i / StdAudio.SAMPLE_RATE));
 		}
 
@@ -263,15 +263,15 @@ public class SoundUtilExamples {
 		//				StdAudio.play(note(hz, 1.0, 0.5));
 		//			}
 
-		double[] exampleSound = new double[MiscSoundUtil.SAMPLE_RATE+1];
+		double[] exampleSound = new double[PlayDoubleArray.SAMPLE_RATE+1];
 		double freq2 = 440.0;
-		for (int i = 0; i <= MiscSoundUtil.SAMPLE_RATE; i++) {
-			exampleSound[i] = (0.5 * Math.sin(2*Math.PI * freq2 * i / MiscSoundUtil.SAMPLE_RATE));
+		for (int i = 0; i <= PlayDoubleArray.SAMPLE_RATE; i++) {
+			exampleSound[i] = (0.5 * Math.sin(2*Math.PI * freq2 * i / PlayDoubleArray.SAMPLE_RATE));
 		}
 		//StdAudio.play(exampleSound);
 
-		for (int i = 0; i <= MiscSoundUtil.SAMPLE_RATE; i++) {
-			exampleSound[i] = (0.5 * ActivationFunctions.fullSawtooth(2*Math.PI * freq2 * i / MiscSoundUtil.SAMPLE_RATE));
+		for (int i = 0; i <= PlayDoubleArray.SAMPLE_RATE; i++) {
+			exampleSound[i] = (0.5 * ActivationFunctions.fullSawtooth(2*Math.PI * freq2 * i / PlayDoubleArray.SAMPLE_RATE));
 		}
 		//StdAudio.play(exampleSound);
 
@@ -282,8 +282,8 @@ public class SoundUtilExamples {
 		//StdAudio.play(thing);
 
 
-		for (double i = 0; i <= MiscSoundUtil.SAMPLE_RATE; i++) {
-			exampleSound[(int)i] = (ActivationFunctions.tanh( 2*(i/MiscSoundUtil.SAMPLE_RATE) - 1 ));
+		for (double i = 0; i <= PlayDoubleArray.SAMPLE_RATE; i++) {
+			exampleSound[(int)i] = (ActivationFunctions.tanh( 2*(i/PlayDoubleArray.SAMPLE_RATE) - 1 ));
 		}
 		//StdAudio.play(exampleSound);
 
@@ -301,7 +301,7 @@ public class SoundUtilExamples {
 
 	public static void saveFileFromArrayExamples() throws IOException {	
 		byte[] bearNumbers = WAVUtil.WAVToByte(BEARGROWL_WAV);
-		SoundAmplitudeArrayManipulator.saveFileFromArray(bearNumbers, "data/sounds/bearGrowlCopy.wav");
+		SaveFromArray.saveFileFromByteArray(bearNumbers, "data/sounds/bearGrowlCopy.wav");
 
 		File happyFile = new File(HAPPY_MP3);
 		//		AudioInputStream happyStream = WAVUtil.audioStream(happyFile);
@@ -309,9 +309,9 @@ public class SoundUtilExamples {
 
 		//		SoundAmplitudeArrayManipulator.saveFileFromArray(happyNumbers, "data/sounds/happyCopy.mp3");
 		String classical = "data/sounds/CLASSICA.MID";
-		byte[] classicalNumbers = MiscSoundUtil.readByte(classical);
-		SoundAmplitudeArrayManipulator.saveFileFromArray(classicalNumbers, "data/sounds/classicalCopy.mid");
-		MiscSoundUtil.close(); 
+		byte[] classicalNumbers = SoundToArray.readByte(classical);
+		SaveFromArray.saveFileFromByteArray(classicalNumbers, "data/sounds/classicalCopy.mid");
+		PlayDoubleArray.close(); 
 	}
 	
 	public static void MIDITests() {
