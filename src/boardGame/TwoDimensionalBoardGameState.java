@@ -126,7 +126,25 @@ public abstract class TwoDimensionalBoardGameState implements BoardGameState {
 		}		
 	}
 	
-	// TODO: Remove Piece method
+	/**
+	 * Removes a Piece on the Board at a specific Point.
+	 * The Space where the Piece was will be Empty
+	 * 
+	 * @param location Point representing where the Piece to be Removed is
+	 * @return True if the remove was successful, else returns false
+	 */
+	public boolean removePiece(Point location){
+		assert (location.getX() >= 0 && location.getX() < getBoardWidth());
+		assert (location.getX() >= 0 && location.getX() < getBoardHeight());
+
+		if((location.getX() >= 0 && location.getX() < getBoardWidth()) &&
+				(location.getX() >= 0 && location.getX() < getBoardHeight())){
+			boardState[(int) location.getX()][(int) location.getY()] = EMPTY;
+			return true;
+		}else{
+			return false;
+		}
+	}
 	
 	/**
 	 * Returns the Index of the winning Player

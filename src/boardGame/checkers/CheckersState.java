@@ -1,38 +1,27 @@
 package boardGame.checkers;
 
 import java.awt.Point;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import boardGame.BoardGameState;
 import boardGame.TwoDimensionalBoardGameState;
+import boardGame.othello.OthelloState;
 
 public class CheckersState extends TwoDimensionalBoardGameState {
-
-	private static final int TIE = 0;
-	private static final int PLAYER1 = 1; // Player 1 controls Black Checks, at the top of the Board
-	private static final int PLAYER2 = 2; // Player 2 controls Red Checks, at the bottom of the Board
 
 	private static final int BOARD_WIDTH = 8;	
 	private static final int STARTCHECKS = 12;
 	
-	static final int EMPTY = -1;
-
-	private static final int BLACK_CHECK = 0;
+	private static final int BLACK_CHECK = 0; // Player 1 controls Black Checks, at the top of the Board
 	private static final int BLACK_CHECK_KING = 1;
 
-	private static final int RED_CHECK = 2;
+	private static final int RED_CHECK = 2; // Player 2 controls Red Checks, at the bottom of the Board
 	private static final int RED_CHECK_KING = 3;
-
-
-	private int blackChecksLeft;
-	private int redChecksLeft;
-
-	private int currentPlayer;
 	
-	int[][] boardState;
-	
-	private List<Integer> winner;
-	
+	private static int blackChecksLeft;
+	private static int redChecksLeft;	
 	
 	/**
 	 * Default Constructor
@@ -79,14 +68,15 @@ public class CheckersState extends TwoDimensionalBoardGameState {
 		
 		if(endState()){
 			if(blackChecksLeft > redChecksLeft){
-				winner.add(PLAYER1);
+				winners.add(BLACK_CHECK);
 			}else if(redChecksLeft > blackChecksLeft){
-				winner.add(PLAYER2);
+				winners.add(RED_CHECK);
 			}else{
-				winner.add(TIE); // Technically impossible, but may be good to determine when it's impossible to win to end the game early.
+				winners.add(BLACK_CHECK);
+				winners.add(RED_CHECK);
 			}
 		}
-		return winner;
+		return winners;
 	}
 	
 	/**
@@ -108,133 +98,70 @@ public class CheckersState extends TwoDimensionalBoardGameState {
 	 * @return True if able to move the selected Check to the new space, else returns false
 	 */
 	public boolean move(Point moveThis, Point moveTo){
+		
 		assert moveThis.getX() >= 0 && moveThis.getX() < BOARD_WIDTH;
 		assert moveThis.getY() >= 0 && moveThis.getY() < BOARD_WIDTH;
 		assert moveTo.getX() >= 0 && moveTo.getX() < BOARD_WIDTH;
 		assert moveTo.getY() >= 0 && moveTo.getY() < BOARD_WIDTH;
 		
-		int thisCheck = boardState[(int) moveThis.getX()][(int) moveThis.getY()];
-		int otherSpace = boardState[(int) moveTo.getX()][(int) moveTo.getY()];
+		int checkX = (int) moveThis.getX();
+		int checkY = (int) moveThis.getY();
+		
+		int otherX = (int) moveTo.getX();
+		int otherY = (int) moveTo.getY();
+		
+		int thisCheck = boardState[checkX][checkY];
+		int otherSpace = boardState[otherX][otherY];
 		
 		// Prevents the Player from moving a piece that isn't their color of Check
-		if(currentPlayer == PLAYER1){
+		if(nextPlayer == BLACK_CHECK){
 			if(thisCheck != BLACK_CHECK && thisCheck != BLACK_CHECK_KING){ // Player 1 attempted to move something that wasn't a Black Check
-				System.out.println("Player 1 can't move that space; it is a(n) " + getSpaceLabel((int) moveThis.x, (int) moveThis.y) + ", not a Black Check.");
 				return false;
 			}
 		}else{
 			if(thisCheck != RED_CHECK && thisCheck != RED_CHECK_KING){ // Player 2 attempted to move something that wasn't a Red Check
-				System.out.println("Player 2 can't move that space; it is a(n) " + getSpaceLabel((int) moveThis.x, (int) moveThis.y) + ", not a Red Check.");
 				return false;
 			}
 		}
 		
-		// Checks if the Player can move the selected piece to the space described
-		if(Math.abs(moveThis.getX() - moveTo.getX()) != 1 || Math.abs(moveThis.getY() - moveTo.getY()) != 1){ // Can only move Checks diagonally
-			System.out.println("Player " + currentPlayer + " tried to move (" + moveThis.getX() + ", " + moveThis.getY() + ") non-diagonally.");
+		int dX = checkX - otherX;
+		int dY = checkY - otherY;
+		
+		if(Math.abs(dX) != 1 || Math.abs(dY) != 1){
 			return false;
-		}else{
-			if(currentPlayer == PLAYER1){ // Player 1 controls Black Checks, which are at the top of the screen
-				if(thisCheck == BLACK_CHECK && (moveThis.getY() - moveTo.getY() != 1)){ // Can only move down diagonally
-					return false;
-				}
-			}else{ // Player 2 controls Red Checks, which are at the bottom of the screen
-				if(thisCheck == RED_CHECK && (moveThis.getY() - moveTo.getY() != -1)){ // Can only move up diagonally
-					return false;
-				}				
+		}else if(thisCheck == BLACK_CHECK && dX < 0){ // Black Checks only Move Down; X increases, dX must be > 0
+			return false;
+		}else if(thisCheck == RED_CHECK && dX > 0){ // Red Checks can only move Up; X decreases, dX must be < 0
+			return false;
+		} // Kings can Move both Up and Down; no check needed
+		
+		// TODO: Handle Movement Mechanics; still not working right now.
+		
+		if(otherSpace == EMPTY){ // Move to Empty Space; Auto-Succeed Jamboree
+			movePlayerPiece(moveThis, moveTo, false);
+			
+			// Handles being "Kinged"
+			if(thisCheck == BLACK_CHECK && otherX == 7){
+				boardState[otherX][otherY] = BLACK_CHECK_KING;
+			}else if(thisCheck == RED_CHECK && otherX == 0){
+				boardState[otherX][otherY] = RED_CHECK_KING;
 			}
-		}
-
-		Point endSpace = moveTo; // Used to handle Check movement after "collisions"
-		boolean left = moveThis.getX() - moveTo.getX() == 1;
-		
-		// Handles Check collisions and "jumping";
-		if((otherSpace == BLACK_CHECK || otherSpace == BLACK_CHECK_KING) && (otherSpace == RED_CHECK || otherSpace == RED_CHECK_KING)){ // Attempting to "jump" enemy piece. Possible?
-			if(left){ // Going Left
-				if(moveTo.getX() - 1 < 0 || moveTo.getY() + 1 > BOARD_WIDTH){ // Would go off Board; not possible to jump
-					System.out.println("Would go off of the Board: (" + (moveTo.getX()-1) + ", " + (moveTo.getY()+1) + ")");
-					return false;
-				}else{
-					endSpace = new Point((int) moveTo.getX() - 1, (int) moveTo.getY() + 1);
-					if(boardState[(int) endSpace.getX()][(int) endSpace.getY()] != EMPTY){ // Unable to jump
-						System.out.println("Unable to jump the piece at (" + moveTo.getX() + ", " + moveTo.getY() + "); there is a Check at (" + endSpace.getX() + ", " + endSpace.getY() + ")");
-					}else{ // Valid jump; move end position of Check, and remove enemy Check
-						boardState[(int) moveTo.getX()][(int) moveTo.getY()] = EMPTY; // Removes enemy Check
-					}
-				}
-			}else{ // Going Right
-				if(moveTo.getX() + 1 < 0 || moveTo.getY() + 1 > BOARD_WIDTH){ // Would go off Board; not possible to jump
-					System.out.println("Would go off of the Board: (" + (moveTo.getX()+1) + ", " + (moveTo.getY()+1) + ")");
-					return false;
-				}else{ // Valid jump; move end position of Check, and remove enemy Check
-					endSpace = new Point((int) moveTo.getX() + 1, (int) moveTo.getY() + 1);
-					if(boardState[(int) endSpace.getX()][(int) endSpace.getY()] != EMPTY){ // Unable to jump
-						System.out.println("Unable to jump the piece at (" + moveTo.getX() + ", " + moveTo.getY() + "); there is a Check at (" + endSpace.getX() + ", " + endSpace.getY() + ")");
-					}else{ // Valid jump; move end position of Check, and remove enemy Check
-						boardState[(int) moveTo.getX()][(int) moveTo.getY()] = EMPTY; // Removes enemy Check
-					}
-				}				
+			
+			nextPlayer = (nextPlayer + 1) % 2;
+			return true;
+		}else if(thisCheck == BLACK_CHECK && otherSpace == RED_CHECK){
+			otherX = otherX + dX; // Doubles the Move made; attempt to Jump
+			otherY = otherY + dY; // Doubles the Move made; attempt to Jump
+			if(((otherX >= 0 && otherX < BOARD_WIDTH) && (otherY >= 0 && otherY < BOARD_WIDTH)) && boardState[otherX][otherY] == EMPTY){ // otherX and otherY are on the Board; able to Jump
+				movePlayerPiece(moveThis, new Point(otherX, otherY), false);
+				boardState[(int) moveTo.getX()][(int) moveTo.getY()] = EMPTY;
+				return true;
+			}else{ // Not able to Jump; not a valid Move
+				return false;
 			}
-		}else if((otherSpace == RED_CHECK || otherSpace == RED_CHECK_KING) && (otherSpace == BLACK_CHECK || otherSpace == BLACK_CHECK_KING)){ // Attempting to "jump" enemy piece. Possible?
-			if(left){ // Going Left
-				if(moveTo.getX() - 1 < 0 || moveTo.getY() - 1 > BOARD_WIDTH){ // Would go off Board; not possible to jump
-					System.out.println("Would go off of the Board: (" + (moveTo.getX()-1) + ", " + (moveTo.getY()-1) + ")");
-					return false;
-				}else{ // Valid jump; move end position of Check, and remove enemy Check
-					endSpace = new Point((int) moveTo.getX() - 1, (int) moveTo.getY() - 1);
-					if(boardState[(int) endSpace.getX()][(int) endSpace.getY()] != EMPTY){ // Unable to jump
-						System.out.println("Unable to jump the piece at (" + moveTo.getX() + ", " + moveTo.getY() + "); there is a Check at (" + endSpace.getX() + ", " + endSpace.getY() + ")");
-					}else{ // Valid jump; move end position of Check, and remove enemy Check
-						boardState[(int) moveTo.getX()][(int) moveTo.getY()] = EMPTY; // Removes enemy Check
-					}
-				}
-			}else{ // Going Right
-				if(moveTo.getX() + 1 < 0 || moveTo.getY() - 1 > BOARD_WIDTH){ // Would go off Board; not possible to jump
-					System.out.println("Would go off of the Board: (" + (moveTo.getX()+1) + ", " + (moveTo.getY()-1) + ")");
-					return false;
-				}else{ // Valid jump; move end position of Check, and remove enemy Check
-					endSpace = new Point((int) moveTo.getX() + 1, (int) moveTo.getY() - 1);
-					if(boardState[(int) endSpace.getX()][(int) endSpace.getY()] != EMPTY){ // Unable to jump
-						System.out.println("Unable to jump the piece at (" + moveTo.getX() + ", " + moveTo.getY() + "); there is a Check at (" + endSpace.getX() + ", " + endSpace.getY() + ")");
-					}else{ // Valid jump; move end position of Check, and remove enemy Check
-						boardState[(int) moveTo.getX()][(int) moveTo.getY()] = EMPTY; // Removes enemy Check
-					}
-				}				
-			}
+		}else{ // Not attempting to Jump; not a valid Move
+			return false;
 		}
-		
-		// Survived the Deadly Trials of Logic; valid move
-
-		boardState[(int) endSpace.getX()][(int) endSpace.getY()] = thisCheck;
-		boardState[(int) moveThis.getY()][(int) moveThis.getY()] = EMPTY;
-		
-		// Handles being "Kinged"
-		if(thisCheck == BLACK_CHECK && endSpace.getY() == BOARD_WIDTH){
-			boardState[(int) endSpace.getX()][(int) endSpace.getY()] = BLACK_CHECK_KING;
-		}else if(thisCheck == RED_CHECK && endSpace.getY() == 0){
-			boardState[(int) endSpace.getX()][(int) endSpace.getY()] = RED_CHECK_KING;
-		}
-		
-		return true;
-	}
-	
-	/**
-	 * Returns a String representing the piece of the CheckBoard on a given set of coordinates
-	 * 
-	 * @param x X-Coordinate of the specified piece
-	 * @param y Y-Coordinate of the specified piece
-	 * @return String representing the selected piece
-	 */
-	private String getSpaceLabel(int x, int y) {
-		int choice = boardState[x][y];
-		switch(choice) {
-		case BLACK_CHECK: return "Black Check";
-		case BLACK_CHECK_KING: return "Black Check King";
-		case RED_CHECK: return "Red Check";
-		case RED_CHECK_KING: return "Red Check King";
-		case EMPTY: return "Empty";
-		}
-		throw new IllegalArgumentException("Must choose Rock, Paper, or Scissors, not " + choice);
 	}
 	
 	/**
@@ -254,6 +181,9 @@ public class CheckersState extends TwoDimensionalBoardGameState {
 	 */
 	private int[][] newCheckBoard(){
 		int[][] temp = new int[BOARD_WIDTH][BOARD_WIDTH];
+		
+		blackChecksLeft = STARTCHECKS;
+		redChecksLeft = STARTCHECKS;
 		
 		int black = STARTCHECKS;
 		int empty = BOARD_WIDTH; // May create new Variable; turns out the number of empty Spaces at the start is 8, same as the Board Width
@@ -300,19 +230,73 @@ public class CheckersState extends TwoDimensionalBoardGameState {
 		return temp;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public List<BoardGameState> possibleBoardGameStates(BoardGameState currentState) {
-		// TODO Auto-generated method stub
-		return null;
+	public <T extends BoardGameState> List<T> possibleBoardGameStates(T currentState) {
+		// TODO: Ensure that this method works.
+		
+		List<CheckersState> possible = new ArrayList<CheckersState>();
+		List<Point> checkMoves = new ArrayList<Point>();
+		
+		for(int i = 0; i < BOARD_WIDTH; i++){
+			for(int j = 0; j < BOARD_WIDTH; j++){
+				if(nextPlayer == BLACK_CHECK){ // Black Check Player is going
+					if(boardState[i][j] == BLACK_CHECK || boardState[i][j] == BLACK_CHECK_KING){
+						checkMoves.add(new Point(i, j));
+					}
+				}else{ // Red Check Player is going
+					if(boardState[i][j] == RED_CHECK || boardState[i][j] == RED_CHECK_KING){
+						checkMoves.add(new Point(i, j));
+					}
+				}
+			}
+		}
+		
+		for(Point check : checkMoves){ // Cycles through all Chips
+			
+			int checkX = (int) check.getX();
+			int checkY = (int) check.getY();
+			int checkType = boardState[checkX][checkY];
+
+			for(int dX = -1; dX <= 1; dX++){
+				for(int dY = -1; dY <= 1; dY++){
+					if(dX != 0 && dY != 0){ // Does not run if either dX or dY are 0
+						int x = checkX + dX;
+						int y = checkY + dY;
+						
+						if((x >= 0 && x < BOARD_WIDTH) && (y >= 0 && y < BOARD_WIDTH)){ // Only runs if both x and y are on the Board
+							
+							CheckersState temp = (CheckersState) currentState.copy();
+							boolean moved = false;
+							
+							if(checkType == BLACK_CHECK && dX > 0){ // Black Checks only Move Down; X increases, dX must be > 0
+								moved = temp.move(check, new Point(x, y));
+							}else if(checkType == RED_CHECK && dX < 0){ // Red Checks only Move Up; X decreases, dX must be < 0
+								moved = temp.move(check, new Point(x, y));
+							}else if(checkType == BLACK_CHECK_KING || checkType == RED_CHECK_KING){ // Kings move any Direction so long as it's on the Board
+								moved = temp.move(check, new Point(x, y));
+							}
+							
+							if(moved){ // If the Move was successful in the above check, add it to the List of possible Moves
+								possible.add(temp);
+							}
+							
+						}
+					}
+				}
+			}
+		}
+		
+		List<T> returnThis = new ArrayList<T>();
+		returnThis.addAll((Collection<? extends T>) possible);
+		
+		return returnThis;
 	}
 
 	@Override
 	public void setupStartingBoard() {
 		boardState = newCheckBoard();
-		blackChecksLeft = STARTCHECKS;
-		redChecksLeft = STARTCHECKS;
-		currentPlayer = PLAYER1;
-		}
+	}
 
 	@Override
 	public int getBoardWidth() {
@@ -326,6 +310,6 @@ public class CheckersState extends TwoDimensionalBoardGameState {
 
 	@Override
 	public char[] getPlayerSymbols() {
-		return new char[]{'b', 'B', 'r', 'R'};
+		return new char[]{'b', 'B', 'r', 'R', 'X'};
 	}
 }

@@ -1,5 +1,6 @@
 package boardGame;
 
+import boardGame.checkers.Checkers;
 import boardGame.othello.Othello;
 import boardGame.othello.OthelloHumanPlayer;
 import boardGame.othello.OthelloState;
@@ -14,7 +15,7 @@ public class Testing {
 		// Code similar to what is below should eventually be placed into the
 		// oneEval method of BoardGameTask BoardGamePlayerRandom
 
-		Othello game = new Othello();
+		Checkers game = new Checkers();
 		BoardGamePlayer[] players = new BoardGamePlayer[]{new BoardGamePlayerRandom<TicTacToeState>(), new BoardGamePlayerRandom<TicTacToeState>()};
 
 		while(!game.isGameOver()){

@@ -16,7 +16,7 @@ public abstract class CheckersPlayer implements BoardGamePlayer{
 		CheckersState state = (CheckersState) current.copy(); // Copies the current BoardGameState
 		Point moveThis = selectMove(state);
 		Point moveTo = selectMove(state);
-		state.moveCheck(moveThis, moveTo);
+		state.move(moveThis, moveTo);
 
 		return state;
 	}
