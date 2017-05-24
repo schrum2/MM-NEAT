@@ -14,9 +14,9 @@ public class ProgressiveFitnessFunction extends RTSFitnessFunction{
 	public Pair<double[], double[]> getFitness(GameState gs) {
 
 		double[] fitness = new double[] {
-			task.getHarvestingEfficiency(),
+			normalize(task.getHarvestingEfficiency(), maxCycles * task.getResourceGainValue()),
 			normalize(task.getBaseUpTime(), maxCycles),
-			task.getAverageUnitDifference(),
+			normalize(task.getAverageUnitDifference(), pgs.getHeight()*pgs.getWidth()),
 		};
 		Pair<double[], double[]> result = new Pair<double[],double[]>(fitness, null);
 		return result;
@@ -28,12 +28,13 @@ public class ProgressiveFitnessFunction extends RTSFitnessFunction{
 	}
 
 	/**
+	 * precondition: max > 0, min = 0.
 	 * @param value :value to be converted
 	 * @param max largest possible number in this category
 	 * @return value on a scale from -1 to 1 with 1 being max
 	 */
 	private double normalize(double value, double max){
-		return (value / max) - 2;
+		return (2*value - max) / max;
 	}
 
 }

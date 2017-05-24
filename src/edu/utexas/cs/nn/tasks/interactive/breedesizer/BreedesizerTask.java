@@ -24,8 +24,9 @@ import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.interactive.InteractiveEvolutionTask;
 import edu.utexas.cs.nn.util.graphics.DrawingPanel;
 import edu.utexas.cs.nn.util.graphics.GraphicsUtil;
-import edu.utexas.cs.nn.util.sound.MiscSoundUtil;
-import edu.utexas.cs.nn.util.sound.SoundAmplitudeArrayManipulator;
+import edu.utexas.cs.nn.util.sound.PlayDoubleArray;
+import edu.utexas.cs.nn.util.sound.SaveFromArray;
+import edu.utexas.cs.nn.util.sound.SoundFromCPPNUtil;
 
 public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask<T> {
 
@@ -50,8 +51,6 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 	private static final int SINE_OF_TIME_INPUT_INDEX = 1;
 	private static final int BIAS_INPUT_INDEX = 2;
 
-
-
 	Keyboard keyboard;
 
 	public BreedesizerTask() throws IllegalAccessException {
@@ -59,7 +58,7 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 		//Checkboxes to control if x, y, distance from center, or bias effects appear on the console
 		JCheckBox timeEffect = new JCheckBox("Time", true);
 		inputMultipliers[TIME_INPUT_INDEX] = 1.0;
-		JCheckBox sineOfTimeeffect = new JCheckBox("Sine(time)", true); //no spaces because of scanner in actionPerformed
+		JCheckBox sineOfTimeEffect = new JCheckBox("Sine(time)", true); //no spaces because of scanner in actionPerformed
 		inputMultipliers[SINE_OF_TIME_INPUT_INDEX] = 1.0;
 		JCheckBox biasEffect = new JCheckBox("Bias", true);
 		inputMultipliers[BIAS_INPUT_INDEX] = 1.0;
@@ -67,7 +66,7 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 		JSlider clipLength = new JSlider(JSlider.HORIZONTAL, Keyboard.NOTE_LENGTH_DEFAULT, Parameters.parameters.integerParameter("maxClipLength"), Parameters.parameters.integerParameter("clipLength"));
 
 		timeEffect.setName("" + TIME_CHECKBOX_INDEX);
-		sineOfTimeeffect.setName("" + SINE_OF_TIME_CHECKBOX_INDEX);
+		sineOfTimeEffect.setName("" + SINE_OF_TIME_CHECKBOX_INDEX);
 		biasEffect.setName("" + BIAS_CHECKBOX_INDEX);
 
 		Hashtable<Integer,JLabel> labels = new Hashtable<>();
@@ -80,7 +79,7 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 		clipLength.setPreferredSize(new Dimension(350, 40));
 
 		timeEffect.addActionListener(this);
-		sineOfTimeeffect.addActionListener(this);
+		sineOfTimeEffect.addActionListener(this);
 		biasEffect.addActionListener(this);
 
 		/**
@@ -105,11 +104,11 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 		});
 
 		timeEffect.setForeground(new Color(0,0,0));
-		sineOfTimeeffect.setForeground(new Color(0,0,0));
+		sineOfTimeEffect.setForeground(new Color(0,0,0));
 		biasEffect.setForeground(new Color(0,0,0));
 
 		top.add(timeEffect);
-		top.add(sineOfTimeeffect);
+		top.add(sineOfTimeEffect);
 		top.add(biasEffect);
 		top.add(clipLength);	
 
@@ -138,7 +137,7 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 	 */
 	@Override
 	protected BufferedImage getButtonImage(Network phenotype, int width, int height, double[] inputMultipliers) {
-		double[] amplitude = SoundAmplitudeArrayManipulator.amplitudeGenerator(phenotype, Parameters.parameters.integerParameter("clipLength"), FREQUENCY_DEFAULT, inputMultipliers);
+		double[] amplitude = SoundFromCPPNUtil.amplitudeGenerator(phenotype, Parameters.parameters.integerParameter("clipLength"), FREQUENCY_DEFAULT, inputMultipliers);
 		BufferedImage wavePlotImage = GraphicsUtil.wavePlotFromDoubleArray(amplitude, height, width);
 		return wavePlotImage;
 	}
@@ -149,8 +148,8 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 	@Override
 	protected void additionalButtonClickAction(Genotype<T> individual) {
 		Network phenotype = individual.getPhenotype();
-		double[] amplitude = SoundAmplitudeArrayManipulator.amplitudeGenerator(phenotype, Parameters.parameters.integerParameter("clipLength"), FREQUENCY_DEFAULT, inputMultipliers);
-		MiscSoundUtil.playDoubleArray(amplitude);	
+		double[] amplitude = SoundFromCPPNUtil.amplitudeGenerator(phenotype, Parameters.parameters.integerParameter("clipLength"), FREQUENCY_DEFAULT, inputMultipliers);
+		PlayDoubleArray.playDoubleArray(amplitude);	
 		keyboard.setCPPN(phenotype);
 	}
 
@@ -199,7 +198,7 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 		if(audioReturnVal == JFileChooser.APPROVE_OPTION) {//if the user decides to save the image
 			System.out.println("You chose to call the file: " + chooser.getSelectedFile().getName());
 			try {
-				SoundAmplitudeArrayManipulator.saveFileFromCPPN(scores.get(i).individual.getPhenotype(), Parameters.parameters.integerParameter("clipLength"), FREQUENCY_DEFAULT, chooser.getSelectedFile().getName() + ".wav", af);
+				SoundFromCPPNUtil.saveFileFromCPPN(scores.get(i).individual.getPhenotype(), Parameters.parameters.integerParameter("clipLength"), FREQUENCY_DEFAULT, chooser.getSelectedFile().getName() + ".wav", af);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

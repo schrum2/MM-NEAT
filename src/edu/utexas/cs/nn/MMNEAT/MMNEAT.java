@@ -52,6 +52,7 @@ import edu.utexas.cs.nn.tasks.gridTorus.cooperative.CooperativePredatorsVsStatic
 import edu.utexas.cs.nn.tasks.gridTorus.cooperativeAndCompetitive.CompetitiveAndCooperativePredatorsVsPreyTask;
 import edu.utexas.cs.nn.tasks.interactive.breedesizer.BreedesizerTask;
 import edu.utexas.cs.nn.tasks.interactive.picbreeder.PicbreederTask;
+import edu.utexas.cs.nn.tasks.interactive.remixesizer.RemixesizerTask;
 import edu.utexas.cs.nn.tasks.gridTorus.GroupTorusPredPreyTask;
 import edu.utexas.cs.nn.tasks.mario.MarioTask;
 import edu.utexas.cs.nn.tasks.microrts.MicroRTSTask;
@@ -561,6 +562,9 @@ public class MMNEAT {
 			} else if(task instanceof BreedesizerTask) {
 				System.out.println("set up Breedesizer Task");
 				setNNInputParameters(BreedesizerTask.CPPN_NUM_INPUTS, BreedesizerTask.CPPN_NUM_OUTPUTS);
+			} else if(task instanceof RemixesizerTask) {
+				System.out.println("set up Remixesizer Task");
+				setNNInputParameters(RemixesizerTask.CPPN_NUM_INPUTS, RemixesizerTask.CPPN_NUM_OUTPUTS);
 			} else if(task instanceof HyperNEATDummyTask) {
 				System.out.println("set up dummy hyperNEAT task. Used for testing purposes only");
 			} else if(task instanceof HyperNEATSpeedTask) {

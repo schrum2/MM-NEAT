@@ -36,6 +36,8 @@ import edu.utexas.cs.nn.tasks.ut2004.weapons.SimpleWeaponManager;
 import edu.utexas.cs.nn.util.random.GaussianGenerator;
 import edu.utexas.cs.nn.util.stats.Average;
 import edu.utexas.cs.nn.util.stats.Max;
+import micro.ai.RandomBiasedAI;
+import micro.ai.mcts.uct.UCT;
 import pacman.controllers.examples.Legacy;
 import pacman.controllers.examples.StarterPacMan;
 import pacman.game.Constants;
@@ -731,6 +733,8 @@ public class Parameters {
 		classOptions.add("directionalSafetyFunction", null, "Function that decides if CheckEach agent bothers to consider a direction");
 		classOptions.add("microRTSEvaluationFunction", NNSimpleEvaluationFunction.class, "File containing evaluation function for MicroRTSTask");
 		classOptions.add("microRTSFitnessFunction", TerminalFitnessFunction.class, "File containing fitness function for MicroRTSTask");
+		classOptions.add("microRTSAgent", UCT.class, "File containing AI to evolve in MicroRTSTask");
+		classOptions.add("microRTSEnemyAgent", RandomBiasedAI.class, "File containing AI to play against in MicroRTSTask");
 	}
 
 	/**

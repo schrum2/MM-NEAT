@@ -66,7 +66,7 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 	private int baseUpTime;
 	private int harvestingEfficiencyIndex;
 	
-	public static int RESOURCE_GAIN_VALUE = 3;
+	public static int RESOURCE_GAIN_VALUE = 2;
 	public static int WORKER_OUT_OF_BOUNDS_PENALTY = 1;
 	public static double WORKER_HARVEST_VALUE = .5; //relative to 1 resource, for use in pool
 	
@@ -183,7 +183,7 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 		gameover = false;
 		utt = new UnitTypeTable();
 		averageUnitDifference = 0;
-		currentCycle = 0;
+		currentCycle = 1;
 		baseUpTime = 0;
 		harvestingEfficiencyIndex = 0;
 		try {
@@ -284,6 +284,10 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 	public int getHarvestingEfficiency(){
 		return harvestingEfficiencyIndex;
 	}
+	
+	public int getResourceGainValue(){
+		return RESOURCE_GAIN_VALUE;
+	}
 
 	/**
 	 * 
@@ -310,7 +314,7 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 		//			TWEANNGenotype g = new TWEANNGenotype();
 		//			Pair<double[], double[]> result = test.oneEval(g, -1);
 		//			System.out.println(Arrays.toString(result.t1)+ " , "+Arrays.toString(result.t2));
-		System.out.println(Parameters.parameters.booleanParameter("netio"));
+		System.out.println();
 	}
 
 }
