@@ -58,7 +58,7 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 		//Checkboxes to control if x, y, distance from center, or bias effects appear on the console
 		JCheckBox timeEffect = new JCheckBox("Time", true);
 		inputMultipliers[TIME_INPUT_INDEX] = 1.0;
-		JCheckBox sineOfTimeeffect = new JCheckBox("Sine(time)", true); //no spaces because of scanner in actionPerformed
+		JCheckBox sineOfTimeEffect = new JCheckBox("Sine(time)", true); //no spaces because of scanner in actionPerformed
 		inputMultipliers[SINE_OF_TIME_INPUT_INDEX] = 1.0;
 		JCheckBox biasEffect = new JCheckBox("Bias", true);
 		inputMultipliers[BIAS_INPUT_INDEX] = 1.0;
@@ -66,7 +66,7 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 		JSlider clipLength = new JSlider(JSlider.HORIZONTAL, Keyboard.NOTE_LENGTH_DEFAULT, Parameters.parameters.integerParameter("maxClipLength"), Parameters.parameters.integerParameter("clipLength"));
 
 		timeEffect.setName("" + TIME_CHECKBOX_INDEX);
-		sineOfTimeeffect.setName("" + SINE_OF_TIME_CHECKBOX_INDEX);
+		sineOfTimeEffect.setName("" + SINE_OF_TIME_CHECKBOX_INDEX);
 		biasEffect.setName("" + BIAS_CHECKBOX_INDEX);
 
 		Hashtable<Integer,JLabel> labels = new Hashtable<>();
@@ -79,7 +79,7 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 		clipLength.setPreferredSize(new Dimension(350, 40));
 
 		timeEffect.addActionListener(this);
-		sineOfTimeeffect.addActionListener(this);
+		sineOfTimeEffect.addActionListener(this);
 		biasEffect.addActionListener(this);
 
 		/**
@@ -104,11 +104,11 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 		});
 
 		timeEffect.setForeground(new Color(0,0,0));
-		sineOfTimeeffect.setForeground(new Color(0,0,0));
+		sineOfTimeEffect.setForeground(new Color(0,0,0));
 		biasEffect.setForeground(new Color(0,0,0));
 
 		top.add(timeEffect);
-		top.add(sineOfTimeeffect);
+		top.add(sineOfTimeEffect);
 		top.add(biasEffect);
 		top.add(clipLength);	
 
