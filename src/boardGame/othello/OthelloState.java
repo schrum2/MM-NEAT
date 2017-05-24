@@ -94,7 +94,10 @@ public class OthelloState implements BoardGameState{
 	 * @return True if the Board is completely filled, else returns false
 	 */
 	@Override
-	public boolean endState() {
+	public boolean endState() { // Does not work fully; there are ways for the Game to End with Empty Spaces still on the Board; sometimes the currentPlayer can't make a Move in the late-game
+	
+		// Attempts to run a possibleBoardStates() check here have failed; the Testing class never prints out the BoardState
+		
 		for(int i = 0; i < BOARD_WIDTH; i++){
 			for(int j = 0; j < BOARD_WIDTH; j++){
 				if(boardState[i][j] == EMPTY){
@@ -102,6 +105,9 @@ public class OthelloState implements BoardGameState{
 				}
 			}
 		}
+		
+		// Putting a possibleBoardStates() check here don't work, either; less sure about why here.
+		
 		return true;
 	}
 
@@ -126,14 +132,11 @@ public class OthelloState implements BoardGameState{
 			
 			if(blackChipCount > whiteChipCount){
 				winners.add(BLACK_CHIP);
-				System.out.println("Black Chip Wins!");
 			}else if(whiteChipCount > blackChipCount){
 				winners.add(WHITE_CHIP);
-				System.out.println("White Chip Wins!");
 			}else{
 				winners.add(BLACK_CHIP);
 				winners.add(WHITE_CHIP);
-				System.out.println("It's a Tie!");
 			}
 		}
 	}
@@ -172,61 +175,66 @@ public class OthelloState implements BoardGameState{
 		boolean includesSelf = false;
 		
 		if(useX - goX == 0){ // Vertical
-			for(int i = Math.min(useY, goY)+1; i < Math.max(useY, goY); i++){
+			for(int i = Math.min(useY, goY)+1; i < Math.max(useY, goY); i++){ // Will never be at useY or goY
 				if(boardState[useX][i] == (currentPlayer + 1) % 2) foundEnemy = true;
 				if(boardState[useX][i] == currentPlayer) includesSelf = true;
 			}
 		}else if(useY - goY == 0){ // Horizontal
-			for(int i = Math.min(useX, goX)+1; i < Math.max(useX, goX); i++){
+			for(int i = Math.min(useX, goX)+1; i < Math.max(useX, goX); i++){ // Will never be at useX or goX
 				if(boardState[i][useY] == (currentPlayer + 1) % 2) foundEnemy = true;
 				if(boardState[i][useY] == currentPlayer) includesSelf = true;
 			}
-		}else if(useX - goX == useY - goY){ // Slope of 1 Diagonal
-			for(int i = Math.min(useX, goX)+1; i < Math.max(useX, goX); i++){
-				for(int j = Math.min(useY, goY)+1; j < Math.max(useY, goY); j++){
-					if(Math.abs(i) == Math.abs(j)){
-						if(boardState[i][j] == (currentPlayer + 1) % 2) foundEnemy = true;
-						if(boardState[i][j] == currentPlayer) includesSelf = true;
-					}
+		}else if(useX - goX == useY - goY){
+			for(int i = 1; i < Math.abs(useX - goX); i++){ // Stores the displacement value; will never start at useThis
+				if(useX - goX < 0){ // Going down-right; goX is greater
+					if(boardState[useX + i][useY + i] == (currentPlayer + 1) % 2) foundEnemy = true;
+					if(boardState[useX + i][useY + i] == currentPlayer) includesSelf = true;
+				}else{ // Going up-left; goX is smaller
+					if(boardState[useX - i][useY - i] == (currentPlayer + 1) % 2) foundEnemy = true;
+					if(boardState[useX - i][useY - i] == currentPlayer) includesSelf = true;
 				}
 			}
-		}else if(useX - goX == -(useY - goY)){ // Slope of -1 Diagonal
-			for(int i = Math.min(useX, goX)+1; i < Math.max(useX, goX); i++){
-				for(int j = Math.max(useY, goY)+1; j < Math.min(useY, goY); j++){
-					if(Math.abs(i) == Math.abs(j)){
-						if(boardState[i][j] == (currentPlayer + 1) % 2) foundEnemy = true;
-						if(boardState[i][j] == currentPlayer) includesSelf = true;
-					}
+		}else if(useX - goX == -(useY - goY)){
+			for(int i = 1; i < Math.abs(useX - goX); i++){ // Stores the displacement value; will never start at useThis
+				if(useX - goX < 0){ // Going up-right; goX is greater
+					if(boardState[useX + i][useY - i] == (currentPlayer + 1) % 2) foundEnemy = true;
+					if(boardState[useX + i][useY - i] == currentPlayer) includesSelf = true;
+				}else{ // Going down-left; goX is smaller
+					if(boardState[useX - i][useY + i] == (currentPlayer + 1) % 2) foundEnemy = true;
+					if(boardState[useX - i][useY + i] == currentPlayer) includesSelf = true;
 				}
 			}
-
 		}
 		
-		if(!foundEnemy || includesSelf) return false;
+		if(!foundEnemy || includesSelf) return false; // Can only have Enemy Chips in-between the Player Chip and the Empty Space
 		
 		if(useX - goX == 0){ // Vertical
-			for(int i = Math.min(useY, goY); i <= Math.max(useY, goY); i++){
+			for(int i = Math.min(useY, goY); i < Math.max(useY, goY); i++){
 				boardState[useX][i] = currentPlayer;
 			}
 		}else if(useY - goY == 0){ // Horizontal
-			for(int i = Math.min(useX, goX); i <= Math.max(useX, goX); i++){
+			for(int i = Math.min(useX, goX); i < Math.max(useX, goX); i++){
 				boardState[i][useY] = currentPlayer;
 			}
-		}else if(useX - goX == useY - goY){ // Slope of 1 Diagonal
-			for(int i = Math.min(useX, goX); i <= Math.max(useX, goX); i++){
-				for(int j = Math.min(useY, goY); j <= Math.max(useY, goY); j++){
-					if(Math.abs(i) == Math.abs(j)) boardState[i][j] = currentPlayer;
+		}else if(useX - goX == useY - goY){
+			for(int i = 1; i < Math.abs(useX - goX); i++){ // Stores the displacement value
+				if(useX - goX < 0){ // Going down-right; goX is greater
+					boardState[useX + i][useY + i] = currentPlayer;
+				}else{ // Going up-left; goX is smaller
+					boardState[useX - i][useY - i] = currentPlayer;
 				}
 			}
-		}else if(useX - goX == -(useY - goY)){ // Slope of -1 Diagonal
-			for(int i = Math.min(useX, goX); i <= Math.max(useX, goX); i++){
-				for(int j = Math.max(useY, goY); j <= Math.min(useY, goY); j++){
-					if(Math.abs(i) == Math.abs(j)) boardState[i][j] = currentPlayer;
+		}else if(useX - goX == -(useY - goY)){
+			for(int i = 1; i < Math.abs(useX - goX); i++){ // Stores the displacement value
+				if(useX - goX < 0){ // Going up-right; goX is greater
+					boardState[useX + i][useY - i] = currentPlayer;
+				}else{ // Going down-left; goX is smaller
+					boardState[useX - i][useY + i] = currentPlayer;
 				}
-			}
-
+			}			
 		}
 		
+		boardState[goX][goY] = currentPlayer;
 		currentPlayer = (currentPlayer + 1) % 2;
 		checkWinners();
 		return true;
@@ -245,7 +253,7 @@ public class OthelloState implements BoardGameState{
 		List<OthelloState> possible = new ArrayList<OthelloState>();
 		List<Point> chipMoves = new ArrayList<Point>();
 		
-		for(int i = 0; i < BOARD_WIDTH; i++){
+		for(int i = 0; i < BOARD_WIDTH; i++){ // This part works
 			for(int j = 0; j < BOARD_WIDTH; j++){
 				if(boardState[i][j] == currentPlayer){
 					chipMoves.add(new Point(i, j));
@@ -253,21 +261,23 @@ public class OthelloState implements BoardGameState{
 			}
 		}
 		
-		for(Point chip : chipMoves){
+		for(Point chip : chipMoves){ // Cycles through all Chips
 			int chipX = (int) chip.getX();
 			int chipY = (int) chip.getY();
 			
-			for(int dX = -1; dX <= 1; dX++){
+			for(int dX = -1; dX <= 1; dX++){ // Doesn't handle Diagonals well; probably part of the Move check				
 				for(int dY = -1; dY <= 1; dY++){
-					if(dX != 0 || dY != 0){
+					if(dX != 0 || dY != 0){ // Cycles through the dX and dY correctly
+						
 						int x = chipX;
 						int y = chipY;
+						
 						do{
 							x += dX;
 							y += dY;
 						}while((x >= 0 && x < BOARD_WIDTH) && (y >= 0 && y < BOARD_WIDTH) && boardState[x][y] == (currentPlayer + 1) % 2);
 						
-						if((x > 0 && x < BOARD_WIDTH) && (y > 0 && y < BOARD_WIDTH)){
+						if((x >= 0 && x < BOARD_WIDTH) && (y >= 0 && y < BOARD_WIDTH)){
 							if(boardState[x][y] == EMPTY){
 								OthelloState temp = (OthelloState) currentState.copy();
 								if(temp.move(chip, new Point(x, y))){
@@ -284,7 +294,7 @@ public class OthelloState implements BoardGameState{
 		
 		List<T> returnThis = new ArrayList<T>();
 		returnThis.addAll((Collection<? extends T>) possible);
-		System.out.println(returnThis.size());
+		
 		return returnThis;
 	}
 

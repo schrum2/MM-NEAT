@@ -24,5 +24,7 @@ public class Testing {
 			MiscUtil.waitForReadStringAndEnterKeyPress();
 		}
 
+		System.out.println(game.toString());
+		
 	}
 }
