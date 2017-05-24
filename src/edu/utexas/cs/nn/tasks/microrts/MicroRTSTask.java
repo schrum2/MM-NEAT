@@ -56,7 +56,7 @@ import micro.rts.units.UnitTypeTable;
 public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implements NetworkTask, HyperNEATTask{
 
 	private PhysicalGameState pgs;
-	private static UnitTypeTable utt;
+	private UnitTypeTable utt;
 	private int MAXCYCLES = 5000;
 	private JFrame w = null;
 	private GameState gs;
@@ -324,5 +324,9 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 		//			Pair<double[], double[]> result = test.oneEval(g, -1);
 		//			System.out.println(Arrays.toString(result.t1)+ " , "+Arrays.toString(result.t2));
 		System.out.println();
+	}
+
+	public UnitTypeTable getUnitTypeTable() {
+		return utt;
 	}
 }

@@ -6,6 +6,7 @@
 
 package micro.ai.ahtn;
 
+import micro.ai.HasEvaluationFunction;
 import micro.ai.abstraction.WorkerRush;
 import java.util.LinkedList;
 import java.util.List;
@@ -27,13 +28,14 @@ import micro.ai.evaluation.EvaluationFunction;
 import micro.ai.evaluation.SimpleSqrtEvaluationFunction3;
 import java.util.ArrayList;
 import micro.rts.units.UnitTypeTable;
-
+import edu.utexas.cs.nn.MMNEAT.MMNEAT;
+import edu.utexas.cs.nn.tasks.microrts.*;
 /**
  *
  * @author santi
  * 
  */
-public class AHTNAI extends AIWithComputationBudget {
+public class AHTNAI extends AIWithComputationBudget implements HasEvaluationFunction{
     public static int DEBUG = 0;
     
     String domainFileName = null;
@@ -45,6 +47,12 @@ public class AHTNAI extends AIWithComputationBudget {
         
     List<MethodDecomposition> actionsBeingExecuted = null;
     
+    public AHTNAI() throws Exception {
+        this("data/ahtn/microrts-ahtn-definition-flexible-single-target-portfolio.lisp", 
+             100, -1, 100, 
+             new SimpleSqrtEvaluationFunction3(), 
+             new WorkerRush(((MicroRTSTask) MMNEAT.task).getUnitTypeTable()));
+    }
     
     public AHTNAI(UnitTypeTable utt) throws Exception {
         this("data/ahtn/microrts-ahtn-definition-flexible-single-target-portfolio.lisp", 
