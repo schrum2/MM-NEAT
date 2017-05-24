@@ -49,7 +49,7 @@ public class SoundUtilExamples {
 	private static final String FUR_ELISE_MID = "data/sounds/for_elise_by_beethoven.mid";
 
 	public static void main(String[] args) throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException, JavaLayerException {
-		MIDITests();
+		CPPNExamples();
 	}
 
 	public static void CPPNExamples() throws IOException {
@@ -74,11 +74,16 @@ public class SoundUtilExamples {
 		
 		//AudioFormat af5 = new AudioFormat(BreedesizerTask.DEFAULT_SAMPLE_RATE, BreedesizerTask.DEFAULT_BIT_RATE, )
 		
+		double[] testArray = SoundAmplitudeArrayManipulator.amplitudeGenerator(cppn, 60000, 440);
+		MiscSoundUtil.playDoubleArray(testArray, false);
+		//File testingSourceDataLine = new File("data/sounds/testingSourceDataLine.wav");
+		SoundAmplitudeArrayManipulator.save("data/sounds/testingSourceDataLine.wav", testArray);
+		
 		//double array containing frequencies of a C Major scale
 		double[] frequencies = new double[]{261.626, 293.665, 329.628, 349.228, 391.995, 440.0, 493.883, 523.251};
 		for(int i = 0; i < frequencies.length; i++) {
 			double[] scaleCPPN = SoundAmplitudeArrayManipulator.amplitudeGenerator(cppn, 30000, frequencies[i]);
-			MiscSoundUtil.playDoubleArray(scaleCPPN);
+			//MiscSoundUtil.playDoubleArray(scaleCPPN);
 		}
 	}
 
@@ -326,7 +331,11 @@ public class SoundUtilExamples {
 			test.mutate();
 		}
 		Network cppn = test.getCPPN();
-		double[] furEliseFreq = MIDIUtil.freqFromMIDI(FUR_ELISE_MID);
-		MIDIUtil.playMIDIWithCPPN(cppn, furEliseFreq);
+//		double[] furEliseFreq = MIDIUtil.freqFromMIDI(FUR_ELISE_MID);
+//		MIDIUtil.playMIDIWithCPPN(cppn, furEliseFreq);
+		
+		
+		double[] classicalFreq = MIDIUtil.freqFromMIDI(CLASSICAL_MID);
+		MIDIUtil.playMIDIWithCPPN(cppn, classicalFreq);
 	}
 }
