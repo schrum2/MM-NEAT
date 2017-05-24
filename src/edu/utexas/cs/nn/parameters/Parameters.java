@@ -734,7 +734,7 @@ public class Parameters {
 		classOptions.add("microRTSEvaluationFunction", NNSimpleEvaluationFunction.class, "File containing evaluation function for MicroRTSTask");
 		classOptions.add("microRTSFitnessFunction", TerminalFitnessFunction.class, "File containing fitness function for MicroRTSTask");
 		classOptions.add("microRTSAgent", UCT.class, "File containing AI to evolve in MicroRTSTask");
-		classOptions.add("microRTSEnemyAgent", RandomBiasedAI.class, "File containing AI to play against in MicroRTSTask");
+		classOptions.add("microRTSOpponent", RandomBiasedAI.class, "File containing AI to play against in MicroRTSTask");
 	}
 
 	/**

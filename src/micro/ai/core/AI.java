@@ -5,6 +5,8 @@
 package micro.ai.core;
 
 import java.util.List;
+
+import micro.ai.HasEvaluationFunction;
 import micro.rts.GameState;
 import micro.rts.PlayerAction;
 

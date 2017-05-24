@@ -6,9 +6,13 @@ package micro.ai;
 
 import micro.ai.core.AI;
 import micro.ai.core.ParameterSpecification;
+import micro.ai.evaluation.EvaluationFunction;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
+import edu.utexas.cs.nn.tasks.microrts.MicroRTSTask;
 import micro.rts.*;
 import micro.rts.units.Unit;
 import micro.rts.units.UnitTypeTable;
@@ -27,14 +31,11 @@ public class RandomBiasedAI extends AI {
     static final double BIASED_ACTION_WEIGHT = 5;
     Random r = new Random();
 
-    
-    public RandomBiasedAI(UnitTypeTable utt) {
-    }
-    
-
     public RandomBiasedAI() {
     }
     
+    public RandomBiasedAI(UnitTypeTable utt) {
+    }
     
     @Override
     public void reset() {   
@@ -111,6 +112,6 @@ public class RandomBiasedAI extends AI {
     public List<ParameterSpecification> getParameters()
     {
         return new ArrayList<>();
-    }    
+    }   
     
 }

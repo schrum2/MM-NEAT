@@ -30,6 +30,7 @@ import edu.utexas.cs.nn.tasks.microrts.fitness.TerminalFitnessFunction;
 import edu.utexas.cs.nn.util.ClassCreation;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.datastructures.Triple;
+import micro.ai.HasEvaluationFunction;
 import micro.ai.RandomBiasedAI;
 //import micro.ai.abstraction.WorkerRush;
 //import micro.ai.abstraction.pathfinding.BFSPathFinding;
@@ -55,7 +56,7 @@ import micro.rts.units.UnitTypeTable;
 public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implements NetworkTask, HyperNEATTask{
 
 	private PhysicalGameState pgs;
-	private UnitTypeTable utt;
+	private static UnitTypeTable utt;
 	private int MAXCYCLES = 5000;
 	private JFrame w = null;
 	private GameState gs;
@@ -195,11 +196,19 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 		gs = new GameState(pgs, utt);
 		ef.setNetwork(individual);
 		ef.givePhysicalGameState(pgs);
-		AI ai1 = new UCT(100, -1, 100, 10, new RandomBiasedAI(), ef);
+		//AI ai1 = new UCT(100, -1, 100, 10, new RandomBiasedAI(), ef);
 		//AI ai1 = new NaiveMCTS(100,-1,100,10, 0.3f, 0.0f, 0.4f, new RandomBiasedAI(), ef, true);
 		//AI ai1 = new WorkerRush(utt, new BFSPathFinding());
-		AI ai2 = new RandomBiasedAI();
-
+		HasEvaluationFunction ai1 = null;
+		AI ai2 = null;
+		try {
+			ai1 = (HasEvaluationFunction) ClassCreation.createObject(Parameters.parameters.classParameter("microRTSAgent"));
+			ai2 = (AI) ClassCreation.createObject(Parameters.parameters.classParameter("microRTSOpponent"));
+		} catch (NoSuchMethodException e2) {
+			e2.printStackTrace();
+			System.exit(1);
+		}
+		ai1.setEvaluationFunction(ef);
 		if(CommonConstants.watch)
 			w = PhysicalGameStatePanel.newVisualizer(gs,640,640,false,PhysicalGameStatePanel.COLORSCHEME_BLACK);
 
@@ -308,7 +317,7 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 	}
 
 	public static void main(String[] rags){
-		Parameters.initializeParameterCollections(new String[]{"io:false","netio:false", "watch:true", ""});
+		Parameters.initializeParameterCollections(new String[]{"io:false","netio:false", "watch:true"});
 		//			MMNEAT.loadClasses();
 		//			MicroRTSTask<TWEANN> test = new MicroRTSTask<>();
 		//			TWEANNGenotype g = new TWEANNGenotype();
@@ -316,5 +325,4 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 		//			System.out.println(Arrays.toString(result.t1)+ " , "+Arrays.toString(result.t2));
 		System.out.println();
 	}
-
 }
