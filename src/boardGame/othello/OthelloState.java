@@ -9,7 +9,9 @@ import boardGame.BoardGameState;
 import boardGame.TwoDimensionalBoardGameState;
 
 public class OthelloState extends TwoDimensionalBoardGameState {
-		
+	
+	private int numPasses;
+	
 	private final int BOARD_WIDTH = 8;
 
 	private final int BOARD_CORE1 = 3; // Keeps track of the center of the Board
@@ -62,11 +64,9 @@ public class OthelloState extends TwoDimensionalBoardGameState {
 	 * @return True if the Board is completely filled, else returns false
 	 */
 	@Override
-	public boolean endState() { // Does not work fully; there are ways for the Game to End with Empty Spaces still on the Board; sometimes the currentPlayer can't make a Move in the late-game
-	
-		// TODO: Find a way to accurately return the EndState with the exceptions
-		
-		// Attempts to run a possibleBoardStates() check here have failed; the Testing class never prints out the BoardState
+	public boolean endState() {
+
+		if(numPasses > 1) return true;
 		
 		for(int i = 0; i < BOARD_WIDTH; i++){
 			for(int j = 0; j < BOARD_WIDTH; j++){
@@ -75,8 +75,6 @@ public class OthelloState extends TwoDimensionalBoardGameState {
 				}
 			}
 		}
-		
-		// Putting a possibleBoardStates() check here don't work, either; less sure about why here.
 		
 		return true;
 	}
@@ -260,12 +258,16 @@ public class OthelloState extends TwoDimensionalBoardGameState {
 			}
 		}
 		
-		
-		
 		List<T> returnThis = new ArrayList<T>();
 		returnThis.addAll((Collection<? extends T>) possible);
 		
-		return returnThis;
+		if(returnThis.isEmpty()){ // If unable to make a Move, must return the currentState; counts as a Pass
+			returnThis.add(currentState);
+			numPasses++;
+			return returnThis;
+		}else{
+			return returnThis;			
+		}
 	}
 
 	/**
@@ -315,6 +317,7 @@ public class OthelloState extends TwoDimensionalBoardGameState {
 
 	@Override
 	public void setupStartingBoard() {
+		numPasses = 0;
 		boardState = new int[BOARD_WIDTH][BOARD_WIDTH];
 		
 		for(int i = 0; i < BOARD_WIDTH; i++){
