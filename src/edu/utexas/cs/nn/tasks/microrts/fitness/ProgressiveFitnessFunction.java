@@ -4,18 +4,20 @@ import edu.utexas.cs.nn.util.datastructures.Pair;
 import micro.rts.GameState;
 
 public class ProgressiveFitnessFunction extends RTSFitnessFunction{
-	
+
 	public ProgressiveFitnessFunction(){}
-	
+
 	/**
 	 * uses information collected over time in MicroRTSTask.oneEval
 	 */
 	@Override
 	public Pair<double[], double[]> getFitness(GameState gs) {
-		int baseUpTime = task.getBaseUpTime();
-		double averageUnitDiff = task.getAverageUnitDifference();
-		
-		double[] fitness = new double[]{};
+
+		double[] fitness = new double[] {
+			task.getHarvestingEfficiency(),
+			normalize(task.getBaseUpTime(), maxCycles),
+			task.getAverageUnitDifference(),
+		};
 		Pair<double[], double[]> result = new Pair<double[],double[]>(fitness, null);
 		return result;
 	}
@@ -24,7 +26,7 @@ public class ProgressiveFitnessFunction extends RTSFitnessFunction{
 	public String[] getFunctions() {
 		return new String[]{"Harvesting Efficiency","Time Base was Alive","Average Unit Difference"};
 	}
-	
+
 	/**
 	 * @param value :value to be converted
 	 * @param max largest possible number in this category

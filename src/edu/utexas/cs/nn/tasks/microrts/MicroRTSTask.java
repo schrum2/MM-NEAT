@@ -46,6 +46,12 @@ import micro.rts.PlayerAction;
 import micro.rts.units.Unit;
 import micro.rts.units.UnitTypeTable;
 
+/**
+ * 
+ * @author alicequint
+ *
+ * @param <T> phenotype
+ */
 public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implements NetworkTask, HyperNEATTask{
 
 	private PhysicalGameState pgs;
@@ -55,11 +61,15 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 	private GameState gs;
 	private boolean gameover;
 	private int currentCycle;
-
-	public double averageUnitDifference;
-	public int baseUpTime;
-
-
+	
+	private double averageUnitDifference;
+	private int baseUpTime;
+	private int harvestingEfficiencyIndex;
+	
+	public static int RESOURCE_GAIN_VALUE = 3;
+	public static int WORKER_OUT_OF_BOUNDS_PENALTY = 1;
+	public static double WORKER_HARVEST_VALUE = .5; //relative to 1 resource, for use in pool
+	
 	NNEvaluationFunction<T> ef;
 	RTSFitnessFunction ff;
 
@@ -175,6 +185,7 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 		averageUnitDifference = 0;
 		currentCycle = 0;
 		baseUpTime = 0;
+		harvestingEfficiencyIndex = 0;
 		try {
 			pgs = PhysicalGameState.load("data/microRTS/maps/" + Parameters.parameters.stringParameter("map"), utt);
 		} catch (JDOMException | IOException e) {
@@ -205,26 +216,50 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 			} catch (Exception e) { e.printStackTrace();System.exit(1); }
 			if(Parameters.parameters.classParameter("microRTSFitnessFunction").equals(ProgressiveFitnessFunction.class)){
 				int unitDifferenceNow = 0;
+				int maxBaseX = -1, maxBaseY = -1;
+				double resourcePool = 0;
+				double formerResourcePool = 0;
 				Unit currentUnit;
-				boolean baseIsGone = false;
+				boolean baseAlive = false;
+				boolean baseDeathRecorded = false;
 				for(int i = 0; i < pgs.getWidth(); i++){
 					for(int j = 0; j < pgs.getHeight(); j++){
+						baseAlive = false;
 						currentUnit = pgs.getUnitAt(i, j);
-						if(currentUnit.getPlayer() == 0){
-							unitDifferenceNow++;
-							if(!baseIsGone){
-								baseIsGone = true;
-								if(currentUnit.getType().name == "Base")
-									baseIsGone = false;
-								if(baseIsGone)
-									baseUpTime = currentCycle;
-							}
+						if(currentUnit!=null){
+							if(currentUnit.getPlayer() == 0){
+								unitDifferenceNow++;
+								resourcePool += currentUnit.getCost();
+								if(currentUnit.getType().name.equals("Base")){
+									resourcePool += currentUnit.getResources();
+									if(currentUnit.getX() > maxBaseX) maxBaseX = currentUnit.getX();
+									if(currentUnit.getY() > maxBaseY) maxBaseY = currentUnit.getY();
+									baseAlive = true;
+									assert(baseDeathRecorded == false): "base was created after all previous bases have been destroyed!";
+								} //end if(base)
+								else if(currentUnit.getType().name.equals("Worker")){
+									if(currentUnit.getResources() > 0){
+										resourcePool += WORKER_HARVEST_VALUE;
+										if(!isUnitInRange(currentUnit, 0, 0, maxBaseX, maxBaseY)){
+											harvestingEfficiencyIndex-=WORKER_OUT_OF_BOUNDS_PENALTY;
+										}
+									}
+								}
+							} //end if (unit is ours)
+							else if(currentUnit.getPlayer() == 1) unitDifferenceNow--;
 						}
-						else if(currentUnit.getPlayer() == -1) unitDifferenceNow--;
-					}
+					}//end j
+				}//end i
+				if(!baseAlive && !baseDeathRecorded) {
+					baseUpTime = currentCycle;
+					baseDeathRecorded = true;
 				}
+				if(resourcePool > formerResourcePool){
+					harvestingEfficiencyIndex += RESOURCE_GAIN_VALUE;
+				}
+				formerResourcePool = resourcePool;
 				averageUnitDifference += (unitDifferenceNow - averageUnitDifference) / currentCycle;
-			} //end if(Parameters...
+			} //end if(Parameters.. = progressive)
 			gameover = gs.cycle();
 			currentCycle++;
 			if(CommonConstants.watch) w.repaint();
@@ -243,6 +278,29 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 	//to be used by fitness function
 	public int getBaseUpTime(){
 		return baseUpTime;
+	}
+
+	//to be used by fitness function
+	public int getHarvestingEfficiency(){
+		return harvestingEfficiencyIndex;
+	}
+
+	/**
+	 * 
+	 * @param u unit to be judged
+	 * @param x1 top left x of range
+	 * @param y1 top left y of range
+	 * @param x2 bottom right x of range
+	 * @param y2 bottom right y of range
+	 * @return true if u is within or on the borders
+	 */
+	private boolean isUnitInRange(Unit u, int x1, int y1, int x2, int y2){
+		int unitX = u.getX(); 
+		int unitY = u.getY();
+		if(unitX < x1 || unitY < y1 || unitX > x2 || unitY > y2){
+			return false;
+		} else
+			return true;
 	}
 
 	public static void main(String[] rags){
