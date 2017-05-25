@@ -33,7 +33,7 @@ import edu.utexas.cs.nn.tasks.microrts.*;
 /**
  *
  * @author santi
- * 
+ * strange and alien agent that parses code written in LISP
  */
 public class AHTNAI extends AIWithComputationBudget implements HasEvaluationFunction{
     public static int DEBUG = 0;
@@ -47,25 +47,32 @@ public class AHTNAI extends AIWithComputationBudget implements HasEvaluationFunc
         
     List<MethodDecomposition> actionsBeingExecuted = null;
     
-    public AHTNAI() throws Exception {
-        this("data/ahtn/microrts-ahtn-definition-flexible-single-target-portfolio.lisp", 
+    public AHTNAI() {
+        this("data/microRTS/ahtn/microrts-ahtn-definition-flexible-single-target-portfolio.lisp", 
              100, -1, 100, 
              new SimpleSqrtEvaluationFunction3(), 
              new WorkerRush(((MicroRTSTask) MMNEAT.task).getUnitTypeTable()));
     }
     
     public AHTNAI(UnitTypeTable utt) throws Exception {
-        this("data/ahtn/microrts-ahtn-definition-flexible-single-target-portfolio.lisp", 
+        this("data/microRTS/ahtn/microrts-ahtn-definition-flexible-single-target-portfolio.lisp", 
              100, -1, 100, 
              new SimpleSqrtEvaluationFunction3(), 
              new WorkerRush(utt));
     }
     
     
-    public AHTNAI(String a_domainFileName, int available_time, int max_playouts, int playoutLookahead, EvaluationFunction a_ef, AI a_playoutAI) throws Exception {
+    public AHTNAI(String a_domainFileName, int available_time, int max_playouts, int playoutLookahead, EvaluationFunction a_ef, AI a_playoutAI) {
         super(available_time, max_playouts);
         domainFileName = a_domainFileName;
-        dd = DomainDefinition.fromLispFile(domainFileName);
+        try {
+			dd = DomainDefinition.fromLispFile(domainFileName);
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("AHTNAI: Error looking for lisp file.");
+			//if this throws an error too often we may have to abandon AHTNAI -Alice
+			System.exit(1);
+		}
         PLAYOUT_LOOKAHEAD = playoutLookahead;
         ef = a_ef;
         playoutAI = a_playoutAI;
@@ -183,7 +190,7 @@ public class AHTNAI extends AIWithComputationBudget implements HasEvaluationFunc
     {
         List<ParameterSpecification> parameters = new ArrayList<>();
         
-        parameters.add(new ParameterSpecification("DomainFileName",String.class,"data/ahtn/microrts-ahtn-definition-flexible-single-target-portfolio.lisp"));
+        parameters.add(new ParameterSpecification("DomainFileName",String.class,"data/microRTS/ahtn/microrts-ahtn-definition-flexible-single-target-portfolio.lisp"));
         parameters.add(new ParameterSpecification("TimeBudget",int.class,100));
         parameters.add(new ParameterSpecification("IterationsBudget",int.class,-1));
         parameters.add(new ParameterSpecification("PlayoutLookahead",int.class,100));

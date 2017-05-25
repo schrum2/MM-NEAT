@@ -19,6 +19,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import org.jdom.input.SAXBuilder;
+
+import edu.utexas.cs.nn.MMNEAT.MMNEAT;
+import edu.utexas.cs.nn.tasks.microrts.MicroRTSTask;
 import micro.rts.GameState;
 import micro.rts.PlayerAction;
 import micro.rts.units.UnitTypeTable;
@@ -28,7 +31,7 @@ import micro.ai.core.InterruptibleAI;
  *
  * @author santi
  */
-public class InformedNaiveMCTS extends AIWithComputationBudget implements InterruptibleAI {
+public class InformedNaiveMCTS extends AIWithComputationBudget implements InterruptibleAI, HasEvaluationFunction {
     public static int DEBUG = 0;
     public EvaluationFunction ef = null;
     UnitTypeTable utt = null;
@@ -67,6 +70,11 @@ public class InformedNaiveMCTS extends AIWithComputationBudget implements Interr
     public long total_cycles_executed = 0;
     public long total_actions_issued = 0;
     public long total_time = 0;
+    
+    @SuppressWarnings("rawtypes")
+	public InformedNaiveMCTS() throws Exception{
+    	this(((MicroRTSTask) MMNEAT.task).getUnitTypeTable());
+    }
     
     
     public InformedNaiveMCTS(UnitTypeTable a_utt) throws Exception {
