@@ -48,9 +48,6 @@ public class OthelloState extends TwoDimensionalBoardGameState {
 	 */
 	@Override
 	public boolean endState() {
-		// Schrum: Should be able to reduce this method to only checking if two passes have occurred.
-		// Most games will end with two passes because the board will be full, but you avoid the inefficiency
-		// of checking for an empty space every move.
 		if(numPasses == 2) return true;
 		return false;
 	}
@@ -92,8 +89,6 @@ public class OthelloState extends TwoDimensionalBoardGameState {
 	 * @param goTo Point representing an Empty Space being played towards
 	 * @return True if the Move was successful, else returns false
 	 */
-	// TODO: Schrum: this method needs to be completely redesigned to simply take a goTo location
-	//         into account. There is no point being moved from.
 	public boolean move(Point goTo){
 		
 		// goTo will play valid Moves with y == 0; not a problem with possibleBoardStates()
@@ -151,6 +146,7 @@ public class OthelloState extends TwoDimensionalBoardGameState {
 			boardState[goX][goY] = nextPlayer;
 			nextPlayer = (nextPlayer + 1) % 2;
 			checkWinners();
+			numPasses = 0; // Resets the Number of Passes to 0; the Game only ends when both Players are unable to make a Move
 			return true;			
 		}else{ // Unable to Move; return False
 			return false;
