@@ -90,5 +90,13 @@ public abstract class TwoDimensionalBoardGame<T extends TwoDimensionalBoardGameS
 		return result;
 	}
 
+	/**
+	 * Returns the current BoardGameState
+	 * 
+	 * @return The Current BoardGameState
+	 */
+	public TwoDimensionalBoardGameState getState(){
+		return board;
+	}
 
 }

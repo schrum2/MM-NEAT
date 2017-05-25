@@ -41,25 +41,25 @@ public class TwoDimensionalBoardGameViewer<S  extends TwoDimensionalBoardGameSta
 		panel = new DrawingPanel((boardWidth*GRID_WIDTH), (boardHeight*GRID_WIDTH), board.getName());
 		
 		panel.setLocation(TWEANN.NETWORK_VIEW_DIM, 0);
-		reset();
+		reset(start);
 		current = this;		
 	}
 	
 	/**
 	 * Resets the graphics for the view
 	 */
-	public void reset() {
+	public void reset(TwoDimensionalBoardGameState newBoard) {
 		Graphics2D g = panel.getGraphics();
 		g.setColor(Color.black); // Set to Gray because certain BoardGames (Othello) use White Player Tokens
 		g.fillRect(0, 0, WIDTH, HEIGHT);
-		renderBoard(g, start);
+		renderBoard(g, newBoard);
 	}
 	
 	public void renderBoard(Graphics2D g, TwoDimensionalBoardGameState newBoard){
-		int boardWidth = start.getBoardWidth();
-		int boardHeight = start.getBoardHeight();
+		int boardWidth = newBoard.getBoardWidth();
+		int boardHeight = newBoard.getBoardHeight();
 		
-		Color[] colors = start.getPlayerColors();
+		Color[] colors = newBoard.getPlayerColors();
 				
 		int[] pieces = new int[newBoard.getDescriptor().length];
 		int index = 0;
