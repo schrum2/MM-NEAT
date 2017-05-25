@@ -15,9 +15,13 @@ import micro.ai.machinelearning.bayes.BayesianModelByUnitTypeWithDefaultModel;
 import micro.ai.machinelearning.bayes.featuregeneration.FeatureGeneratorSimple;
 import micro.ai.stochastic.UnitActionProbabilityDistribution;
 import micro.ai.stochastic.UnitActionProbabilityDistributionAI;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
+import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
@@ -30,6 +34,7 @@ import micro.ai.core.InterruptibleAI;
 /**
  *
  * @author santi
+ * 
  */
 public class InformedNaiveMCTS extends AIWithComputationBudget implements InterruptibleAI, HasEvaluationFunction {
     public static int DEBUG = 0;
@@ -72,12 +77,23 @@ public class InformedNaiveMCTS extends AIWithComputationBudget implements Interr
     public long total_time = 0;
     
     @SuppressWarnings("rawtypes")
-	public InformedNaiveMCTS() throws Exception{
-    	this(((MicroRTSTask) MMNEAT.task).getUnitTypeTable());
+	public InformedNaiveMCTS(){
+    	super(100, -1);
+    	utt  = ((MicroRTSTask) MMNEAT.task).getUnitTypeTable();
+    	MAXSIMULATIONTIME = 100;
+        //playoutPolicy can be changed here, but by default is random biased ai 
+//        bias = a_bias;
+//        MAX_TREE_DEPTH = max_depth;
+//        initial_epsilon_l = epsilon_l = e1;
+//        initial_epsilon_g = epsilon_g = e2;
+//        initial_epsilon_0 = epsilon_0 = e3;
+//        discount_l = discout1;
+//        discount_g = discout2;
+//        discount_0 = discout3;
     }
     
     
-    public InformedNaiveMCTS(UnitTypeTable a_utt) throws Exception {
+    public InformedNaiveMCTS(UnitTypeTable a_utt) throws JDOMException, IOException, Exception  {
         this(100,-1,100,10,
              0.3f,0.0f,0.4f,
              new UnitActionProbabilityDistributionAI(
