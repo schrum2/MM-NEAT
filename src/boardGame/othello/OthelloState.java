@@ -46,7 +46,9 @@ public class OthelloState extends TwoDimensionalBoardGameState {
 	 */
 	@Override
 	public boolean endState() {
-
+		// Schrum: Should be able to reduce this method to only checking if two passes have occurred.
+		// Most games will end with two passes because the board will be full, but you avoid the inefficiency
+		// of checking for an empty space every move.
 		if(numPasses > 1) return true;
 		
 		for(int i = 0; i < BOARD_WIDTH; i++){
@@ -98,6 +100,8 @@ public class OthelloState extends TwoDimensionalBoardGameState {
 	 * @param goTo Point representing an Empty Space being played towards
 	 * @return True if the Move was successful, else returns false
 	 */
+	// Schrum: this method needs to be completely redesigned to simply take a goTo location
+	//         into account. There is no point being moved from.
 	public boolean move(Point useThis, Point goTo){
 		
 		int useX = (int) useThis.getX();
@@ -240,6 +244,7 @@ public class OthelloState extends TwoDimensionalBoardGameState {
 		}
 		
 		List<T> returnThis = new ArrayList<T>();
+		// Schrum: this case here annoys me. I feel that there is a way to avoid it
 		returnThis.addAll((Collection<? extends T>) possible);
 		
 		if(returnThis.isEmpty()){ // If unable to make a Move, must return the currentState; counts as a Pass
@@ -276,6 +281,10 @@ public class OthelloState extends TwoDimensionalBoardGameState {
 	 * 
 	 * @return String visually representing the current BoardGameState
 	 */
+	// Schrum: You should be able to delete this method entirely fromt this class, since it
+	//         it provided in TwoDimensionalBoardGameState. If you want to add the numbers
+	//         on top of the board, then do it in TwoDimensionalBoardGameState rather than
+	//         overriding the method.
 	public String toString(){
 		String result = "  0 1 2 3 4 5 6 7 \n  _ _ _ _ _ _ _ _ ";
 		for(int i = 0; i < BOARD_WIDTH; i++){
@@ -299,13 +308,17 @@ public class OthelloState extends TwoDimensionalBoardGameState {
 	@Override
 	public void setupStartingBoard() {
 		numPasses = 0;
-		boardState = new int[BOARD_WIDTH][BOARD_WIDTH];
 		
-		for(int i = 0; i < BOARD_WIDTH; i++){
-			for(int j = 0; j < BOARD_WIDTH; j++){
-				boardState[i][j] = EMPTY;
-			}
-		}
+		// Schrum: I commented this out because the setupStartingBoard method is
+		// assumed to be called on an empty board, according to TwoDimensionalBoardGameState.
+		// However, please make sure that every thing still works despite me commenting this out.
+//		boardState = new int[BOARD_WIDTH][BOARD_WIDTH];
+//		
+//		for(int i = 0; i < BOARD_WIDTH; i++){
+//			for(int j = 0; j < BOARD_WIDTH; j++){
+//				boardState[i][j] = EMPTY;
+//			}
+//		}
 		
 		boardState[BOARD_CORE1][BOARD_CORE1] = BLACK_CHIP;
 		boardState[BOARD_CORE2][BOARD_CORE2] = BLACK_CHIP;
@@ -313,8 +326,9 @@ public class OthelloState extends TwoDimensionalBoardGameState {
 		boardState[BOARD_CORE1][BOARD_CORE2] = WHITE_CHIP;
 		boardState[BOARD_CORE2][BOARD_CORE1] = WHITE_CHIP;
 
-		nextPlayer = 0;
-		winners = new ArrayList<Integer>();
+		// Schrum: also unnecessary. See constructor for TwoDimensionalBoardGameState
+//		nextPlayer = 0;
+//		winners = new ArrayList<Integer>();
 	}
 
 	@Override
