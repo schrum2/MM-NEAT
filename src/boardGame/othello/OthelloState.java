@@ -8,7 +8,6 @@ import java.util.List;
 
 import boardGame.BoardGameState;
 import boardGame.TwoDimensionalBoardGameState;
-import edu.utexas.cs.nn.util.MiscUtil;
 
 public class OthelloState extends TwoDimensionalBoardGameState {
 	
@@ -48,7 +47,9 @@ public class OthelloState extends TwoDimensionalBoardGameState {
 	 */
 	@Override
 	public boolean endState() {
-		if(numPasses == 2) return true;
+		if(numPasses == 2){
+			return true;
+		}
 		return false;
 	}
 
@@ -56,7 +57,7 @@ public class OthelloState extends TwoDimensionalBoardGameState {
 	 * Checks the Winners of this current BoardGameState and updates the winners List
 	 */
 	private void checkWinners(){
-		if(endState()){
+		if(endState()){ // Won't run unless an EndState is reached
 			
 			int blackChipCount = 0;
 			int whiteChipCount = 0;
@@ -90,8 +91,6 @@ public class OthelloState extends TwoDimensionalBoardGameState {
 	 * @return True if the Move was successful, else returns false
 	 */
 	public boolean move(Point goTo){
-		
-		// goTo will play valid Moves with y == 0; not a problem with possibleBoardStates()
 		
 		int goX = (int) goTo.getX();
 		int goY = (int) goTo.getY();
@@ -146,9 +145,9 @@ public class OthelloState extends TwoDimensionalBoardGameState {
 			boardState[goX][goY] = nextPlayer;
 			nextPlayer = (nextPlayer + 1) % 2;
 			checkWinners();
-			numPasses = 0; // Resets the Number of Passes to 0; the Game only ends when both Players are unable to make a Move
 			return true;			
 		}else{ // Unable to Move; return False
+			checkWinners();
 			return false;
 		}
 	}
@@ -233,6 +232,7 @@ public class OthelloState extends TwoDimensionalBoardGameState {
 	 */
 	@Override
 	public List<Integer> getWinners() {
+		checkWinners();
 		return winners;
 	}
 

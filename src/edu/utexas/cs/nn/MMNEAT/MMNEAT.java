@@ -41,6 +41,7 @@ import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.scores.Score;
 import edu.utexas.cs.nn.tasks.MultiplePopulationTask;
 import edu.utexas.cs.nn.tasks.Task;
+import edu.utexas.cs.nn.tasks.boardGame.SinglePopulationCompetativeCoevolutionBoardGameTask;
 import edu.utexas.cs.nn.tasks.boardGame.StaticOpponentBoardGameTask;
 import edu.utexas.cs.nn.tasks.breve2D.Breve2DTask;
 import edu.utexas.cs.nn.tasks.breve2D.NNBreve2DMonster;
@@ -456,6 +457,9 @@ public class MMNEAT {
 				setNNInputParameters(temp.sensorLabels().length, temp.outputLabels().length);
 			}else if (task instanceof StaticOpponentBoardGameTask) {
 				StaticOpponentBoardGameTask temp = (StaticOpponentBoardGameTask) task;
+				setNNInputParameters(temp.sensorLabels().length, temp.outputLabels().length);
+			}else if (task instanceof SinglePopulationCompetativeCoevolutionBoardGameTask) {
+				SinglePopulationCompetativeCoevolutionBoardGameTask temp = (SinglePopulationCompetativeCoevolutionBoardGameTask) task;
 				setNNInputParameters(temp.sensorLabels().length, temp.outputLabels().length);
 			} else if (task instanceof Breve2DTask) {
 				System.out.println("Setup Breve 2D Task");

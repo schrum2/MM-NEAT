@@ -134,6 +134,7 @@ public class StaticOpponentBoardGameTask<T extends Network> extends NoisyLonerTa
 	}
 
 	// Used for Hyper-NEAT
+	// TODO: Move into 2D board game task!
 	@Override
 	public List<Substrate> getSubstrateInformation() {
 		if(substrateInformation == null) {
@@ -159,6 +160,7 @@ public class StaticOpponentBoardGameTask<T extends Network> extends NoisyLonerTa
 	}
 
 	// Used for Hyper-NEAT
+	// TODO: Move into 2D board game task!
 	@Override
 	public List<Pair<String, String>> getSubstrateConnectivity() {
 		if(substrateConnectivity == null) {
