@@ -49,6 +49,8 @@ public class SoundUtilExamples {
 	private static final String FUR_ELISE_MID = "data/sounds/for_elise_by_beethoven.mid";
 	private static final String BASS_16BIT_WAV 	= "data/sounds/acousticbass16bit.wav";
 	public static final String SEASHORE_WAV = "data/sounds/Digital-Seashore.wav";
+	public static final String ALARM_WAV = "data/sounds/tone06.wav";
+	public static final String CHIPTUNE_WAV = "data/sounds/8-Bit-Noise-1.wav";
 
 	public static void main(String[] args) throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException, JavaLayerException {
 		saveFileTests();
@@ -91,30 +93,30 @@ public class SoundUtilExamples {
 
 	public static void saveFileTests() throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException {
 		//testing writeSingleChannel to see if the problem saving files has to do with initialization of AudioFormat
-		File harp = new File(HARP_WAV);
-		AudioInputStream harpAIS = WAVUtil.audioStream(harp);
-		System.out.println("harp: " + harpAIS.getFormat());
-		System.out.println(harpAIS.getFormat().getSampleRate());
-		System.out.println(harpAIS.getFormat().getFrameRate());
-		System.out.println(harpAIS.getFormat().isBigEndian());
-		System.out.println();
-
-		File bear = new File(BEARGROWL_WAV);
-		AudioInputStream bearAIS = WAVUtil.audioStream(bear);
-		System.out.println("bear: " + bearAIS.getFormat());
-		System.out.println(bearAIS.getFormat().getSampleRate());
-		System.out.println(bearAIS.getFormat().getFrameRate());
-		System.out.println(bearAIS.getFormat().isBigEndian());
-		System.out.println();
-
-
-		File applause = new File(APPLAUSE_WAV);
-		AudioInputStream applauseAIS = WAVUtil.audioStream(applause);
-		System.out.println("applause: " + applauseAIS.getFormat());
-		System.out.println(applauseAIS.getFormat().getSampleRate());
-		System.out.println(applauseAIS.getFormat().getFrameRate());
-		System.out.println(applauseAIS.getFormat().isBigEndian());
-		System.out.println();
+//		File harp = new File(HARP_WAV);
+//		AudioInputStream harpAIS = WAVUtil.audioStream(harp);
+//		System.out.println("harp: " + harpAIS.getFormat());
+//		System.out.println("Sample rate: " + harpAIS.getFormat().getSampleRate());
+//		System.out.println("Frame rate: " + harpAIS.getFormat().getFrameRate());
+//		System.out.println(harpAIS.getFormat().isBigEndian());
+//		System.out.println();
+//
+//		File bear = new File(BEARGROWL_WAV);
+//		AudioInputStream bearAIS = WAVUtil.audioStream(bear);
+//		System.out.println("bear: " + bearAIS.getFormat());
+//		System.out.println(bearAIS.getFormat().getSampleRate());
+//		System.out.println(bearAIS.getFormat().getFrameRate());
+//		System.out.println(bearAIS.getFormat().isBigEndian());
+//		System.out.println();
+//
+//
+//		File applause = new File(APPLAUSE_WAV);
+//		AudioInputStream applauseAIS = WAVUtil.audioStream(applause);
+//		System.out.println("applause: " + applauseAIS.getFormat());
+//		System.out.println(applauseAIS.getFormat().getSampleRate());
+//		System.out.println(applauseAIS.getFormat().getFrameRate());
+//		System.out.println(applauseAIS.getFormat().isBigEndian());
+//		System.out.println();
 
 		//WAVUtil.playWAVFile(HARP_WAV);
 
@@ -168,16 +170,41 @@ public class SoundUtilExamples {
 
 		//System.out.println(Arrays.toString(bassDoubleArray));
 		//PlayDoubleArray.playDoubleArray(bassDoubleArray);
-
-		WAVUtil.playWAVFile(SEASHORE_WAV);
+		
+//		WAVUtil.playWAVFile(SEASHORE_WAV);
 		AudioInputStream seashoreAIS = WAVUtil.audioStream(SEASHORE_WAV);
 		AudioFormat seashoreFormat = seashoreAIS.getFormat();
-		System.out.println(seashoreFormat);
-		int[] seashoreIntArray = SoundToArray.extractAmplitudeDataFromAudioInputStream(seashoreAIS);
+		System.out.println("Seashore format: " + seashoreFormat);
+		System.out.println("Sample rate: " + seashoreAIS.getFormat().getSampleRate());
+		System.out.println("Frame rate: " + seashoreAIS.getFormat().getFrameRate());
+//		int[] seashoreIntArray = SoundToArray.extractAmplitudeDataFromAudioInputStream(seashoreAIS);
+//
+//		double[] seashoreDoubleArray = SoundToArray.doubleArrayAmplitudesFromIntArrayAmplitudes(seashoreIntArray);
+//		PlayDoubleArray.playDoubleArray(seashoreDoubleArray);
 
-		double[] seashoreDoubleArray = SoundToArray.doubleArrayAmplitudesFromIntArrayAmplitudes(seashoreIntArray);
-		PlayDoubleArray.playDoubleArray(seashoreDoubleArray);
-
+		
+		double[] seashoreDoubleArray = SoundToArray.readDoubleArrayFromStringAudio(SEASHORE_WAV);
+		//PlayDoubleArray.playDoubleArray(seashoreDoubleArray);
+		
+//		WAVUtil.playWAVFile(ALARM_WAV);
+		AudioInputStream alarmAIS = WAVUtil.audioStream(ALARM_WAV);
+		AudioFormat alarmFormat = alarmAIS.getFormat();
+		System.out.println("Alarm format: " + alarmFormat);
+		System.out.println("Sample rate: " + alarmAIS.getFormat().getSampleRate());
+		System.out.println("Frame rate: " + alarmAIS.getFormat().getFrameRate());
+//		MiscUtil.waitForReadStringAndEnterKeyPress();
+//		double[] alarmDoubleArray = SoundToArray.readDoubleArrayFromStringAudio(ALARM_WAV);
+//		PlayDoubleArray.playDoubleArray(alarmDoubleArray);
+		
+		WAVUtil.playWAVFile(CHIPTUNE_WAV);
+		AudioInputStream chiptuneAIS = WAVUtil.audioStream(CHIPTUNE_WAV);
+		AudioFormat chiptuneFormat = chiptuneAIS.getFormat();
+		System.out.println("Chiptune format: " + chiptuneFormat);
+		System.out.println("Sample rate: " + chiptuneAIS.getFormat().getSampleRate());
+		System.out.println("Frame rate: " + chiptuneAIS.getFormat().getFrameRate());
+		MiscUtil.waitForReadStringAndEnterKeyPress();
+		double[] chiptuneDoubleArray = SoundToArray.readDoubleArrayFromStringAudio(CHIPTUNE_WAV);
+		PlayDoubleArray.playDoubleArray(chiptuneDoubleArray);
 
 	}
 

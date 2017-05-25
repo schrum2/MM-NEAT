@@ -34,12 +34,6 @@ public final class PlayDoubleArray {
 	private static boolean playing = false;
 	private static boolean available = true;
 
-	
-
-	private PlayDoubleArray() {
-		// can not instantiate
-	}
-
 	// static initializer
 	static {
 		init();
@@ -47,9 +41,19 @@ public final class PlayDoubleArray {
 
 	// open up an audio stream
 	private static void init() {
+		// 44,100 samples per second, 16-bit audio, mono, signed PCM, little Endian
+		init(new AudioFormat((float) SAMPLE_RATE, BITS_PER_SAMPLE, 1, true, false));
+	}
+	
+	public static void changeAudioFormat(AudioFormat format) {
+		line.close();
+		lineSave.close();
+		
+		init(format);
+	}
+
+	private static void init(AudioFormat format) {
 		try {
-			// 44,100 samples per second, 16-bit audio, mono, signed PCM, little Endian
-			AudioFormat format = new AudioFormat((float) SAMPLE_RATE, BITS_PER_SAMPLE, 1, true, false);
 			DataLine.Info info = new DataLine.Info(SourceDataLine.class, format);
 
 			line = (SourceDataLine) AudioSystem.getLine(info);
