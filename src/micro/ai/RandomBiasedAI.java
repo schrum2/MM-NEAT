@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.tasks.microrts.MicroRTSTask;
 import edu.utexas.cs.nn.util.random.RandomNumbers;
 import micro.rts.*;
@@ -33,6 +34,7 @@ public class RandomBiasedAI extends AI {
     Random r = RandomNumbers.randomGenerator;
 
     public RandomBiasedAI() {
+    	this(((MicroRTSTask) MMNEAT.task).getUnitTypeTable());
     }
     
     public RandomBiasedAI(UnitTypeTable utt) {
