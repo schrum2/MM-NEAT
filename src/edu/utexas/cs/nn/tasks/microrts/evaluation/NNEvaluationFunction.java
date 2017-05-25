@@ -25,13 +25,6 @@ public abstract class NNEvaluationFunction<T extends Network> extends Evaluation
 	}
 
 	/**
-	 * converts GameState into Array containing information useable to the network
-	 * @param gs gamestate to be turned into array
-	 * @return Array of coded info
-	 */
-	public abstract double[] gameStateToArray(GameState gs);
-
-	/**
 	 * 
 	 * @return labels of sensors given to nn
 	 */

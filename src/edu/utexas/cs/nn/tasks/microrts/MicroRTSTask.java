@@ -36,7 +36,6 @@ import micro.ai.RandomBiasedAI;
 //import micro.ai.abstraction.pathfinding.BFSPathFinding;
 import micro.ai.core.AI;
 import micro.ai.evaluation.SimpleSqrtEvaluationFunction3;
-import micro.ai.mcts.naivemcts.NaiveMCTS;
 import micro.ai.mcts.uct.UCT;
 import micro.ai.minimax.RTMiniMax.IDRTMinimax;
 import micro.gui.PhysicalGameStatePanel;
@@ -56,24 +55,30 @@ import micro.rts.units.UnitTypeTable;
 public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implements NetworkTask, HyperNEATTask{
 
 	private PhysicalGameState pgs;
+	private PhysicalGameState initialPgs;
 	private UnitTypeTable utt;
 	private int MAXCYCLES = 5000;
 	private JFrame w = null;
 	private GameState gs;
+	private GameState igs; //initial game state
 	private boolean gameover;
 	private int currentCycle;
-	
+	private boolean AiInitialized = false;
+
 	private double averageUnitDifference;
 	private int baseUpTime;
 	private int harvestingEfficiencyIndex;
-	
+
 	public static int RESOURCE_GAIN_VALUE = 2;
 	public static int WORKER_OUT_OF_BOUNDS_PENALTY = 1;
 	public static double WORKER_HARVEST_VALUE = .5; //relative to 1 resource, for use in pool
-	
+
 	NNEvaluationFunction<T> ef;
 	NNEvaluationFunction<T> ef2;
 	RTSFitnessFunction ff;
+	
+	HasEvaluationFunction ai1 = null;
+	AI ai2 = null;
 
 	@SuppressWarnings("unchecked")
 	public MicroRTSTask() {
@@ -83,8 +88,8 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 			if(Parameters.parameters.classParameter("microRTSOpponentEvaluationFunction") != null)
 				ef2 =(NNEvaluationFunction<T>) ClassCreation.createObject(Parameters.parameters.classParameter("microRTSOpponentEvaluationFunction"));
 			ff = (RTSFitnessFunction) ClassCreation.createObject(Parameters.parameters.classParameter("microRTSFitnessFunction"));
-			pgs = PhysicalGameState.load("data/microRTS/maps/" + Parameters.parameters.stringParameter("map"), utt);
-
+			initialPgs = PhysicalGameState.load("data/microRTS/maps/" + Parameters.parameters.stringParameter("map"), utt);
+			pgs = initialPgs.clone();
 		} catch (JDOMException | IOException | NoSuchMethodException e) {
 			e.printStackTrace();
 			System.exit(1);
@@ -98,7 +103,9 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 		ff.givePhysicalGameState(pgs);
 		ff.setMaxCycles(5000);
 		ff.giveTask(this);
-		gs = null;
+		igs = new GameState(pgs, utt);
+		gs = new GameState(pgs, utt);
+		
 	}
 
 	@Override
@@ -192,31 +199,21 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 		currentCycle = 1;
 		baseUpTime = 0;
 		harvestingEfficiencyIndex = 0;
-		try {
-			pgs = PhysicalGameState.load("data/microRTS/maps/" + Parameters.parameters.stringParameter("map"), utt);
-		} catch (JDOMException | IOException e) {
-			e.printStackTrace();
-			System.exit(1);
+		//file io should happen in the constructor, reset here TODO
+		gs = new GameState(igs.getPhysicalGameState(), utt);
+		if(!AiInitialized)
+			initializeAI();
+		else{
+			ef.givePhysicalGameState(initialPgs);
+			if(ef2 != null){
+				ef2.givePhysicalGameState(initialPgs);
+			}
 		}
-		gs = new GameState(pgs, utt);
+		pgs = initialPgs;
 		ef.setNetwork(individual);
-		ef.givePhysicalGameState(pgs);
-		HasEvaluationFunction ai1 = null;
-		AI ai2 = null;
-		try {
-			ai1 = (HasEvaluationFunction) ClassCreation.createObject(Parameters.parameters.classParameter("microRTSAgent"));
-			ai2 = (AI) ClassCreation.createObject(Parameters.parameters.classParameter("microRTSOpponent"));
-		} catch (NoSuchMethodException e2) {
-			e2.printStackTrace();
-			System.exit(1);
-		}
-		ai1.setEvaluationFunction(ef);
-		if(Parameters.parameters.classParameter("microRTSOpponentEvaluationFunction")!= null){
-				((HasEvaluationFunction) ai2).setEvaluationFunction(ef2);
-		}
 		if(CommonConstants.watch)
 			w = PhysicalGameStatePanel.newVisualizer(gs,640,640,false,PhysicalGameStatePanel.COLORSCHEME_BLACK);
-
+		System.out.println(gs.winner());
 		do{
 			PlayerAction pa1;
 			try {
@@ -284,6 +281,20 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 		return ff.getFitness(gs);
 	} //END oneEval
 
+	private void initializeAI() {
+		try {
+			ai1 = (HasEvaluationFunction) ClassCreation.createObject(Parameters.parameters.classParameter("microRTSAgent"));
+			ai2 = (AI) ClassCreation.createObject(Parameters.parameters.classParameter("microRTSOpponent"));
+		} catch (NoSuchMethodException e2) {
+			e2.printStackTrace();
+			System.exit(1);
+		}
+		ai1.setEvaluationFunction(ef);
+		if(Parameters.parameters.classParameter("microRTSOpponentEvaluationFunction")!= null)
+				((HasEvaluationFunction) ai2).setEvaluationFunction(ef2);
+		AiInitialized = true;
+	}
+
 	//to be used by fitness function
 	public double getAverageUnitDifference(){
 		return averageUnitDifference;
@@ -298,7 +309,7 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 	public int getHarvestingEfficiency(){
 		return harvestingEfficiencyIndex;
 	}
-	
+
 	public int getResourceGainValue(){
 		return RESOURCE_GAIN_VALUE;
 	}

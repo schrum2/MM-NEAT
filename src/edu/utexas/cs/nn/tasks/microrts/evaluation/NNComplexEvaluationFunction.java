@@ -8,9 +8,9 @@ import micro.rts.GameState;
  */
 public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluationFunction{
 
-	@Override
-	//should not be called externally, only public because of parent class
-	public double[] gameStateToArray(GameState gs) {
+	
+	//only does terrain atm
+	private double[] gameStateToArray(GameState gs) {
 		pgs = gs.getPhysicalGameState();
 		double[] basicState = new double[pgs.getHeight()*pgs.getWidth()];
 		for(int i = 0; i < pgs.getWidth(); i++){
@@ -24,12 +24,23 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 
 	@Override
 	public String[] sensorLabels() {
-		return new String[]{""};
+		assert pgs != null : "There must be a physical game state in order to extract height and width";
+		String[]labels = new String[pgs.getHeight()*pgs.getWidth()];
+		for(int i = 0; i < pgs.getWidth(); i++){
+			for(int j = 0; j < pgs.getHeight(); j++){
+				String label = "unit at (" + i + ", " + j + ")";
+				labels[i*pgs.getWidth() + j] = label;
+			} 
+		}
+		return labels; 
 	}
 
 	@Override
 	public float evaluate(int maxplayer, int minplayer, GameState gs) {
-		return 0;
+		double[] inputs = gameStateToArray(gs);
+		double[] outputs = nn.process(inputs);
+		float score = (float) outputs[0];
+		return score;
 	}
 
 }
