@@ -72,6 +72,7 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 	public static double WORKER_HARVEST_VALUE = .5; //relative to 1 resource, for use in pool
 	
 	NNEvaluationFunction<T> ef;
+	NNEvaluationFunction<T> ef2;
 	RTSFitnessFunction ff;
 
 	@SuppressWarnings("unchecked")
@@ -79,6 +80,8 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 		utt = new UnitTypeTable();
 		try {
 			ef = (NNEvaluationFunction<T>) ClassCreation.createObject(Parameters.parameters.classParameter("microRTSEvaluationFunction"));
+			if(Parameters.parameters.classParameter("microRTSOpponentEvaluationFunction") != null)
+				ef2 =(NNEvaluationFunction<T>) ClassCreation.createObject(Parameters.parameters.classParameter("microRTSOpponentEvaluationFunction"));
 			ff = (RTSFitnessFunction) ClassCreation.createObject(Parameters.parameters.classParameter("microRTSFitnessFunction"));
 			pgs = PhysicalGameState.load("data/microRTS/maps/" + Parameters.parameters.stringParameter("map"), utt);
 
@@ -90,6 +93,8 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 			MMNEAT.registerFitnessFunction(function);
 		}
 		ef.givePhysicalGameState(pgs);
+		if(ef2 != null)
+			ef2.givePhysicalGameState(pgs);
 		ff.givePhysicalGameState(pgs);
 		ff.setMaxCycles(5000);
 		ff.giveTask(this);
@@ -196,9 +201,6 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 		gs = new GameState(pgs, utt);
 		ef.setNetwork(individual);
 		ef.givePhysicalGameState(pgs);
-		//AI ai1 = new UCT(100, -1, 100, 10, new RandomBiasedAI(), ef);
-		//AI ai1 = new NaiveMCTS(100,-1,100,10, 0.3f, 0.0f, 0.4f, new RandomBiasedAI(), ef, true);
-		//AI ai1 = new WorkerRush(utt, new BFSPathFinding());
 		HasEvaluationFunction ai1 = null;
 		AI ai2 = null;
 		try {
@@ -209,6 +211,9 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 			System.exit(1);
 		}
 		ai1.setEvaluationFunction(ef);
+		if(Parameters.parameters.classParameter("microRTSOpponentEvaluationFunction")!= null){
+				((HasEvaluationFunction) ai2).setEvaluationFunction(ef2);
+		}
 		if(CommonConstants.watch)
 			w = PhysicalGameStatePanel.newVisualizer(gs,640,640,false,PhysicalGameStatePanel.COLORSCHEME_BLACK);
 
