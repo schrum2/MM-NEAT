@@ -1,5 +1,6 @@
 package boardGame.ttt;
 
+import java.awt.Color;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
@@ -145,6 +146,11 @@ public class TicTacToeState extends TwoDimensionalBoardGameState {
 	
 	public char[] getPlayerSymbols() {
 		return new char[]{'X','O'};
+	}
+
+	@Override
+	public Color[] getPlayerColors() {
+		return new Color[]{Color.blue, Color.red};
 	}
 
 }

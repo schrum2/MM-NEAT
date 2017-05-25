@@ -1,5 +1,6 @@
 package boardGame.checkers;
 
+import java.awt.Color;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -289,6 +290,14 @@ public class CheckersState extends TwoDimensionalBoardGameState {
 
 	@Override
 	public char[] getPlayerSymbols() {
-		return new char[]{'b', 'B', 'r', 'R', 'X'};
+		// Need to account for having King pieces
+		//return new char[]{'b', 'B', 'r', 'R', 'X'};
+		return new char[]{'B', 'R'};
+	}
+
+	@Override
+	public Color[] getPlayerColors() {
+		// Problem here: each player index actually has two associated colors corresponding to different piece types
+		return new Color[]{Color.black, Color.black, Color.red, Color.red};
 	}
 }

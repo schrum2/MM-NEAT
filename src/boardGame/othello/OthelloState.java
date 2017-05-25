@@ -1,5 +1,6 @@
 package boardGame.othello;
 
+import java.awt.Color;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -264,6 +265,11 @@ public class OthelloState extends TwoDimensionalBoardGameState {
 	@Override
 	public char[] getPlayerSymbols() {
 		return new char[]{'B', 'W'};
+	}
+
+	@Override
+	public Color[] getPlayerColors() {
+		return new Color[]{Color.black, Color.white};
 	}
 	
 }

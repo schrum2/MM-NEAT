@@ -1,5 +1,6 @@
 package boardGame;
 
+import java.awt.Color;
 import java.awt.Point;
 import java.util.LinkedList;
 import java.util.List;
@@ -160,6 +161,8 @@ public abstract class TwoDimensionalBoardGameState implements BoardGameState {
 	 * @return array with a char for each player of game
 	 */
 	public abstract char[] getPlayerSymbols();
+	
+	public abstract Color[] getPlayerColors();
 	
 	/**
 	 * Prints out a visual representation of the TicTacToeState to the console
