@@ -52,6 +52,8 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 	private static final int BIAS_INPUT_INDEX = 2;
 
 	Keyboard keyboard;
+	protected JSlider clipLength;
+	protected boolean initializationComplete = false;
 
 	public BreedesizerTask() throws IllegalAccessException {
 		super();
@@ -63,7 +65,7 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 		JCheckBox biasEffect = new JCheckBox("Bias", true);
 		inputMultipliers[BIAS_INPUT_INDEX] = 1.0;
 
-		JSlider clipLength = new JSlider(JSlider.HORIZONTAL, Keyboard.NOTE_LENGTH_DEFAULT, Parameters.parameters.integerParameter("maxClipLength"), Parameters.parameters.integerParameter("clipLength"));
+		clipLength = new JSlider(JSlider.HORIZONTAL, Keyboard.NOTE_LENGTH_DEFAULT, Parameters.parameters.integerParameter("maxClipLength"), Parameters.parameters.integerParameter("clipLength"));
 
 		timeEffect.setName("" + TIME_CHECKBOX_INDEX);
 		sineOfTimeEffect.setName("" + SINE_OF_TIME_CHECKBOX_INDEX);
@@ -89,7 +91,7 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 		clipLength.addChangeListener(new ChangeListener() {
 			@Override
 			public void stateChanged(ChangeEvent e) {
-
+				if(!initializationComplete) return;
 				// get value
 				JSlider source = (JSlider)e.getSource();
 				if(!source.getValueIsAdjusting()) {
@@ -114,6 +116,7 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 
 		keyboard = new Keyboard();
 
+		initializationComplete = true;
 	}
 
 

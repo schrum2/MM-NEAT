@@ -1,11 +1,14 @@
 package edu.utexas.cs.nn.tasks.interactive.remixbreeder;
 
+import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.Hashtable;
 
 import javax.sound.sampled.AudioFormat;
 import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
@@ -13,6 +16,7 @@ import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.interactive.InteractiveEvolutionTask;
 import edu.utexas.cs.nn.tasks.interactive.breedesizer.BreedesizerTask;
+import edu.utexas.cs.nn.tasks.interactive.breedesizer.Keyboard;
 import edu.utexas.cs.nn.util.graphics.DrawingPanel;
 import edu.utexas.cs.nn.util.graphics.GraphicsUtil;
 import edu.utexas.cs.nn.util.sound.PlayDoubleArray;
@@ -69,13 +73,28 @@ public class RemixbreederTask<T extends Network> extends BreedesizerTask<T> {
 //		wavEffect.addActionListener(this);
 //		biasEffect.addActionListener(this);
 		
-		WAVDoubleArray = SoundToArray.read(Parameters.parameters.stringOptions.get("remixWAVFile"));
+		initializationComplete = false;
+		
+		WAVDoubleArray = SoundToArray.readDoubleArrayFromStringAudio(Parameters.parameters.stringOptions.get("remixWAVFile"));
 		Parameters.parameters.setInteger("clipLength", Math.min(Parameters.parameters.integerParameter("clipLength"), WAVDoubleArray.length));
+		Parameters.parameters.setInteger("maxClipLength", WAVDoubleArray.length);
+		
+		Hashtable<Integer,JLabel> labels = new Hashtable<>();
+		clipLength.setMinorTickSpacing(10000);
+		clipLength.setPaintTicks(true);
+		labels.put(Keyboard.NOTE_LENGTH_DEFAULT, new JLabel("Shorter clip"));
+		labels.put(Parameters.parameters.integerParameter("maxClipLength"), new JLabel("Longer clip"));
+		clipLength.setLabelTable(labels);
+		clipLength.setPaintLabels(true);
+		clipLength.setPreferredSize(new Dimension(350, 40));
+		clipLength.setMaximum(Parameters.parameters.integerParameter("maxClipLength"));
 		
 		PlayDoubleArray.playDoubleArray(WAVDoubleArray, false);
 		
 		//WAV file converted to double array in constructor, and double array
 		//saved to be manipulated further
+		
+		initializationComplete = true;
 	}
 
 	@Override

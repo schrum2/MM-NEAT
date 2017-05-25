@@ -47,6 +47,8 @@ public class SoundUtilExamples {
 	private static final String CLASSICAL_MID = "data/sounds/CLASSICA.MID";
 	private static final String SOLO_PIANO_MID	= "data/sounds/Chon01.MID";
 	private static final String FUR_ELISE_MID = "data/sounds/for_elise_by_beethoven.mid";
+	private static final String BASS_16BIT_WAV 	= "data/sounds/acousticbass16bit.wav";
+	public static final String SEASHORE_WAV = "data/sounds/Digital-Seashore.wav";
 
 	public static void main(String[] args) throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException, JavaLayerException {
 		saveFileTests();
@@ -60,25 +62,25 @@ public class SoundUtilExamples {
 			test.mutate();
 		}
 		Network cppn = test.getCPPN();
-//		double[] testArray = SoundAmplitudeArrayManipulator.amplitudeGenerator(cppn, 60000, 440);
-//		AudioFormat af1 = new AudioFormat(MiscSoundUtil.SAMPLE_RATE, MiscSoundUtil.BITS_PER_SAMPLE,1, true, true);
-//		SoundAmplitudeArrayManipulator.saveFileFromCPPN(cppn, 60000, 440, "cppn1.wav", af1);
-//		AudioFormat af2 = new AudioFormat(MiscSoundUtil.SAMPLE_RATE/2, MiscSoundUtil.BITS_PER_SAMPLE/2,1, true, false); // Correct?
-//		SoundAmplitudeArrayManipulator.saveFileFromCPPN(cppn, 60000, 440, "cppn2.wav", af2);
-//		AudioFormat af3 = new AudioFormat(MiscSoundUtil.SAMPLE_RATE, MiscSoundUtil.BYTES_PER_SAMPLE,1, true, true);
-//		SoundAmplitudeArrayManipulator.saveFileFromCPPN(cppn, 60000, 440, "cppn3.wav", af3);
-//		AudioFormat af4 = new AudioFormat(MiscSoundUtil.SAMPLE_RATE, MiscSoundUtil.BYTES_PER_SAMPLE,1, true, false);
-//		SoundAmplitudeArrayManipulator.saveFileFromCPPN(cppn, 60000, 440, "cppn4.wav", af4);
-//		MiscSoundUtil.playDoubleArray(testArray);
-//		GraphicsUtil.wavePlotFromDoubleArray(testArray, 500, 500);
-		
+		//		double[] testArray = SoundAmplitudeArrayManipulator.amplitudeGenerator(cppn, 60000, 440);
+		//		AudioFormat af1 = new AudioFormat(MiscSoundUtil.SAMPLE_RATE, MiscSoundUtil.BITS_PER_SAMPLE,1, true, true);
+		//		SoundAmplitudeArrayManipulator.saveFileFromCPPN(cppn, 60000, 440, "cppn1.wav", af1);
+		//		AudioFormat af2 = new AudioFormat(MiscSoundUtil.SAMPLE_RATE/2, MiscSoundUtil.BITS_PER_SAMPLE/2,1, true, false); // Correct?
+		//		SoundAmplitudeArrayManipulator.saveFileFromCPPN(cppn, 60000, 440, "cppn2.wav", af2);
+		//		AudioFormat af3 = new AudioFormat(MiscSoundUtil.SAMPLE_RATE, MiscSoundUtil.BYTES_PER_SAMPLE,1, true, true);
+		//		SoundAmplitudeArrayManipulator.saveFileFromCPPN(cppn, 60000, 440, "cppn3.wav", af3);
+		//		AudioFormat af4 = new AudioFormat(MiscSoundUtil.SAMPLE_RATE, MiscSoundUtil.BYTES_PER_SAMPLE,1, true, false);
+		//		SoundAmplitudeArrayManipulator.saveFileFromCPPN(cppn, 60000, 440, "cppn4.wav", af4);
+		//		MiscSoundUtil.playDoubleArray(testArray);
+		//		GraphicsUtil.wavePlotFromDoubleArray(testArray, 500, 500);
+
 		//AudioFormat af5 = new AudioFormat(BreedesizerTask.DEFAULT_SAMPLE_RATE, BreedesizerTask.DEFAULT_BIT_RATE, )
-		
+
 		double[] testArray = SoundFromCPPNUtil.amplitudeGenerator(cppn, 60000, 440);
 		PlayDoubleArray.playDoubleArray(testArray, false);
 		//File testingSourceDataLine = new File("data/sounds/testingSourceDataLine.wav");
 		SaveFromArray.saveFileFromDoubleArray("data/sounds/testingSourceDataLine.wav", testArray);
-		
+
 		//double array containing frequencies of a C Major scale
 		double[] frequencies = new double[]{261.626, 293.665, 329.628, 349.228, 391.995, 440.0, 493.883, 523.251};
 		for(int i = 0; i < frequencies.length; i++) {
@@ -96,7 +98,7 @@ public class SoundUtilExamples {
 		System.out.println(harpAIS.getFormat().getFrameRate());
 		System.out.println(harpAIS.getFormat().isBigEndian());
 		System.out.println();
-		
+
 		File bear = new File(BEARGROWL_WAV);
 		AudioInputStream bearAIS = WAVUtil.audioStream(bear);
 		System.out.println("bear: " + bearAIS.getFormat());
@@ -104,8 +106,8 @@ public class SoundUtilExamples {
 		System.out.println(bearAIS.getFormat().getFrameRate());
 		System.out.println(bearAIS.getFormat().isBigEndian());
 		System.out.println();
-		
-		
+
+
 		File applause = new File(APPLAUSE_WAV);
 		AudioInputStream applauseAIS = WAVUtil.audioStream(applause);
 		System.out.println("applause: " + applauseAIS.getFormat());
@@ -113,23 +115,70 @@ public class SoundUtilExamples {
 		System.out.println(applauseAIS.getFormat().getFrameRate());
 		System.out.println(applauseAIS.getFormat().isBigEndian());
 		System.out.println();
-		
+
 		//WAVUtil.playWAVFile(HARP_WAV);
-		
-//		int[] harpIntArray = SoundToArray.extractAmplitudeDataFromAudioInputStream(harpAIS);
-//		double[] harpDoubleArray = new double[harpIntArray.length];
-//		for(int i = 0; i < harpIntArray.length; i++) {
-//			harpDoubleArray[i] = (double) harpIntArray[i];
-//		}
-		
-	
+
+		//		int[] harpIntArray = SoundToArray.extractAmplitudeDataFromAudioInputStream(harpAIS);
+		//		double[] harpDoubleArray = new double[harpIntArray.length];
+		//		for(int i = 0; i < harpIntArray.length; i++) {
+		//			harpDoubleArray[i] = (double) harpIntArray[i];
+		//		}
+
+
 		byte[] harpByteArray = WAVUtil.WAVToByte(HARP_WAV);
-		AudioFormat harpFormat = harpAIS.getFormat();
-		double[] harpDoubleArray = SoundToArray.extractDoubleArrayFromAmplitudeByteArray(harpFormat, harpByteArray);
-		PlayDoubleArray.playDoubleArray(harpDoubleArray, false);
+
+		//		AudioFormat harpFormat = harpAIS.getFormat();
+		// Change to int[]
+		//		double[] harpDoubleArray = SoundToArray.extractDoubleArrayFromAmplitudeByteArray(harpFormat, harpByteArray);
+		//		PlayDoubleArray.playDoubleArray(harpDoubleArray, false);
+
 		//System.out.println(Arrays.toString(harpDoubleArray));
 		//WAVUtil.playWAVFile(harp);
 		//SoundAmplitudeArrayManipulator.writeSingleChannel(harpAIS.getFormat(), harpDoubleArray, "harpDoubleArray.wav");
+
+//		WAVUtil.playWAVFile(BASS_16BIT_WAV);
+//		byte[] bassByteArray = WAVUtil.WAVToByte(BASS_16BIT_WAV);
+//
+//		WAVUtil.playByteAIS(bassByteArray);
+		// can this byte array be saved back to a wav?
+
+//		AudioInputStream bassAIS = WAVUtil.audioStream(BASS_16BIT_WAV);
+//		AudioFormat bassFormat = bassAIS.getFormat();
+//
+//		System.out.println(bassFormat);
+
+		//double[] bassDoubleArray = SoundToArray.extractDoubleArrayFromAmplitudeByteArray(bassFormat, bassByteArray);
+		//int[] bassIntArray = SoundToArray.extractDoubleArrayFromAmplitudeByteArray(bassFormat, bassByteArray);
+
+
+		// from byte array
+		//int[] bassIntArray = SoundToArray.extractDoubleArrayFromAmplitudeByteArray(bassFormat, bassByteArray);
+
+
+		// directly form file instead?
+//		int[] bassIntArray = SoundToArray.extractAmplitudeDataFromAudioInputStream(bassAIS);
+//
+//		double[] bassDoubleArray = new double[bassIntArray.length];
+//		for(int i = 0; i < bassIntArray.length; i++) {
+//			bassDoubleArray[i] = (bassIntArray[i]*1.0) / Short.MAX_VALUE;
+//		}
+
+		// rescale? No, done above instead
+		//bassDoubleArray = ArrayUtil.scale(bassDoubleArray, 1.0/Short.MAX_VALUE); 
+
+		//System.out.println(Arrays.toString(bassDoubleArray));
+		//PlayDoubleArray.playDoubleArray(bassDoubleArray);
+
+		WAVUtil.playWAVFile(SEASHORE_WAV);
+		AudioInputStream seashoreAIS = WAVUtil.audioStream(SEASHORE_WAV);
+		AudioFormat seashoreFormat = seashoreAIS.getFormat();
+		System.out.println(seashoreFormat);
+		int[] seashoreIntArray = SoundToArray.extractAmplitudeDataFromAudioInputStream(seashoreAIS);
+
+		double[] seashoreDoubleArray = SoundToArray.doubleArrayAmplitudesFromIntArrayAmplitudes(seashoreIntArray);
+		PlayDoubleArray.playDoubleArray(seashoreDoubleArray);
+
+
 	}
 
 	public static void plotExamples() {
@@ -323,17 +372,17 @@ public class SoundUtilExamples {
 		SaveFromArray.saveFileFromByteArray(classicalNumbers, "data/sounds/classicalCopy.mid");
 		PlayDoubleArray.close(); 
 	}
-	
+
 	public static void MIDITests() {
-//		File classicalFile = new File(CLASSICAL_MID);
-//		MiscSoundUtil.MIDIData(classicalFile);
-		
-//		File piratesFile = new File(PIRATES);
-//		MiscSoundUtil.MIDIData(piratesFile);
-		
-//		File soloPiano = new File(SOLO_PIANO_MID);
-//		MIDIUtil.MIDIData(soloPiano);
-		
+		//		File classicalFile = new File(CLASSICAL_MID);
+		//		MiscSoundUtil.MIDIData(classicalFile);
+
+		//		File piratesFile = new File(PIRATES);
+		//		MiscSoundUtil.MIDIData(piratesFile);
+
+		//		File soloPiano = new File(SOLO_PIANO_MID);
+		//		MIDIUtil.MIDIData(soloPiano);
+
 		Parameters.initializeParameterCollections(new String[]{"io:false","netio:false"});
 		MMNEAT.loadClasses();
 		HyperNEATCPPNGenotype test = new HyperNEATCPPNGenotype(3, 1, 0);
@@ -341,10 +390,10 @@ public class SoundUtilExamples {
 			test.mutate();
 		}
 		Network cppn = test.getCPPN();
-//		double[] furEliseFreq = MIDIUtil.freqFromMIDI(FUR_ELISE_MID);
-//		MIDIUtil.playMIDIWithCPPN(cppn, furEliseFreq);
-		
-		
+		//		double[] furEliseFreq = MIDIUtil.freqFromMIDI(FUR_ELISE_MID);
+		//		MIDIUtil.playMIDIWithCPPN(cppn, furEliseFreq);
+
+
 		double[] classicalFreq = MIDIUtil.freqFromMIDI(CLASSICAL_MID);
 		MIDIUtil.playMIDIWithCPPN(cppn, classicalFreq);
 	}
