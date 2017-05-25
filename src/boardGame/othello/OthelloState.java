@@ -49,17 +49,8 @@ public class OthelloState extends TwoDimensionalBoardGameState {
 		// Schrum: Should be able to reduce this method to only checking if two passes have occurred.
 		// Most games will end with two passes because the board will be full, but you avoid the inefficiency
 		// of checking for an empty space every move.
-		if(numPasses > 1) return true;
-		
-		for(int i = 0; i < BOARD_WIDTH; i++){
-			for(int j = 0; j < BOARD_WIDTH; j++){
-				if(boardState[i][j] == EMPTY){
-					return false;
-				}
-			}
-		}
-		
-		return true;
+		if(numPasses == 2) return true;
+		return false;
 	}
 
 	/**
@@ -96,101 +87,91 @@ public class OthelloState extends TwoDimensionalBoardGameState {
 	 * Allows a Player to make a Move on the current BoardGameState; Returns true if the Move was valid,
 	 * and updates the List of winners
 	 * 
-	 * @param useThis Point representing the current Chip being used to make a Move
 	 * @param goTo Point representing an Empty Space being played towards
 	 * @return True if the Move was successful, else returns false
 	 */
-	// Schrum: this method needs to be completely redesigned to simply take a goTo location
+	// TODO: Schrum: this method needs to be completely redesigned to simply take a goTo location
 	//         into account. There is no point being moved from.
-	public boolean move(Point useThis, Point goTo){
+	public boolean move(Point goTo){
 		
-		int useX = (int) useThis.getX();
-		int useY = (int) useThis.getY();
-
+		// goTo will play valid Moves with y == 0; not a problem with possibleBoardStates()
+		
 		int goX = (int) goTo.getX();
 		int goY = (int) goTo.getY();
 
-		assert useX >= 0 && useX < BOARD_WIDTH;
-		assert useY >= 0 && useY < BOARD_WIDTH;
 		assert goX >= 0 && goX < BOARD_WIDTH;
 		assert goY >= 0 && goY < BOARD_WIDTH;
-				
-		boolean check1 = boardState[useX][useY] == nextPlayer;
-		if(!check1) return false; // Cannot move if it is not your chip
+						
+		boolean check1 = boardState[goX][goY] == EMPTY;
+		if(!check1) return false; // Cannot move to a Non-Empty Space; y problem not due to Non-Empty Spaces
 		
-		boolean check2 = boardState[goX][goY] == EMPTY;
-		if(!check2) return false; // Cannot move to a Non-Empty Space
+		boolean[] moves = new boolean[8]; // Used to keep track of able to Move or not
+		boolean ableToMove = false;
+		int index = 0;
 		
-		boolean check3 = /*Vertical*/ (useX - goX == 0) || /*Horizontal*/ (useY - goY == 0) || /*Slope of 1 Diagonal*/ (useX - goX == useY - goY) || /*Slope of -1 Diagonal*/ (useX - goX == -(useY - goY));
-		if(!check3) return false; // Cannot move in a non-linear way
-		
-		boolean foundEnemy = false;
-		boolean includesSelf = false;
-		
-		if(useX - goX == 0){ // Vertical
-			for(int i = Math.min(useY, goY)+1; i < Math.max(useY, goY); i++){ // Will never be at useY or goY
-				if(boardState[useX][i] == (nextPlayer + 1) % 2) foundEnemy = true;
-				if(boardState[useX][i] == nextPlayer) includesSelf = true;
+		for(int dX = -1; dX <=1; dX++){ // Works off of the same idea as possibleBoardStates()
+			for(int dY = -1; dY <=1; dY++){
+				if(dX != 0 || dY != 0){ // Does not run if both dX and dY are 0
+					
+					if((goX + dX < 0 || goX + dX >= BOARD_WIDTH) || (goY + dY < 0 || goY + dY >= BOARD_WIDTH)){ // y can be 0 here and not be OoB
+						break;
+					} // Out of Bounds; cannot use this Offset
+					
+					boolean foundEnemy = boardState[goX + dX][goY + dY] == (nextPlayer + 1) % 2; // Found an Enemy Chip
+					// Unable to find Enemies at y == 0; probably due to unable to Place there for some reason
+					if(foundEnemy){ // Only runs if an Enemy is present
+						// TODO: y is never == 0 for some reason. Fix it.
+						// x can be 0 at this part, so it must be something above here...
+
+						int x = goX + dX; // Stores the offset Space
+						int y = goY + dY;
+						do{ // Y never starts at 0 here
+							x += dX;  // Searches the next Space over
+							y += dY;
+							// Y == 0 is always considered In-Bounds
+
+						}while((x >= 0 && x < BOARD_WIDTH) && (y >= 0 && y < BOARD_WIDTH) && (boardState[x][y] == (nextPlayer + 1) % 2)); // Continues while within bounds and Space has an Enemy Chip
+						// y == 0 Error is not affected by the order of these Checks
+						if((x >= 0 && x < BOARD_WIDTH) && (y >= 0 && y < BOARD_WIDTH)){ // Within Bounds? If False, above Check continued off of edge of Board; Enemy Chips continue to edge.
+							if(boardState[x][y] == nextPlayer){ // Found Player Chip at end of Line; able to make the Move
+								ableToMove = true; // Was able to make at least 1 Move
+								moves[index] = true; // Sets this direction to true for the Update
+								// Y != 0 here
+							} // End Able-to-Play If Statement
+						}
+					} // End foundEnemy Check
+					index++;
+				} // End dX, dY Check
 			}
-		}else if(useY - goY == 0){ // Horizontal
-			for(int i = Math.min(useX, goX)+1; i < Math.max(useX, goX); i++){ // Will never be at useX or goX
-				if(boardState[i][useY] == (nextPlayer + 1) % 2) foundEnemy = true;
-				if(boardState[i][useY] == nextPlayer) includesSelf = true;
-			}
-		}else if(useX - goX == useY - goY){
-			for(int i = 1; i < Math.abs(useX - goX); i++){ // Stores the displacement value; will never start at useThis
-				if(useX - goX < 0){ // Going down-right; goX is greater
-					if(boardState[useX + i][useY + i] == (nextPlayer + 1) % 2) foundEnemy = true;
-					if(boardState[useX + i][useY + i] == nextPlayer) includesSelf = true;
-				}else{ // Going up-left; goX is smaller
-					if(boardState[useX - i][useY - i] == (nextPlayer + 1) % 2) foundEnemy = true;
-					if(boardState[useX - i][useY - i] == nextPlayer) includesSelf = true;
-				}
-			}
-		}else if(useX - goX == -(useY - goY)){
-			for(int i = 1; i < Math.abs(useX - goX); i++){ // Stores the displacement value; will never start at useThis
-				if(useX - goX < 0){ // Going up-right; goX is greater
-					if(boardState[useX + i][useY - i] == (nextPlayer + 1) % 2) foundEnemy = true;
-					if(boardState[useX + i][useY - i] == nextPlayer) includesSelf = true;
-				}else{ // Going down-left; goX is smaller
-					if(boardState[useX - i][useY + i] == (nextPlayer + 1) % 2) foundEnemy = true;
-					if(boardState[useX - i][useY + i] == nextPlayer) includesSelf = true;
+		} // End Offset For-Loop
+		
+		int indexCheck = 0;
+		for(int dX = -1; dX <= 1; dX++){ // Update made external from the above Check to avoid interfering with future Checks
+			for(int dY = -1; dY <= 1; dY++){
+				if(dX != 0 || dY != 0){
+					if(moves[indexCheck]){
+						
+						int x = goX; // Stores the offset Space
+						int y = goY;
+						do{
+							boardState[x][y] = nextPlayer;
+							x += dX;  // Searches the next Space over
+							y += dY;
+						}while((x >= 0 && x < BOARD_WIDTH) && (y >= 0 && y < BOARD_WIDTH) && (boardState[x][y] == (nextPlayer + 1) % 2));
+					}
+				indexCheck++;
 				}
 			}
 		}
-		
-		if(!foundEnemy || includesSelf) return false; // Can only have Enemy Chips in-between the Player Chip and the Empty Space
-		
-		if(useX - goX == 0){ // Vertical
-			for(int i = Math.min(useY, goY); i < Math.max(useY, goY); i++){
-				boardState[useX][i] = nextPlayer;
-			}
-		}else if(useY - goY == 0){ // Horizontal
-			for(int i = Math.min(useX, goX); i < Math.max(useX, goX); i++){
-				boardState[i][useY] = nextPlayer;
-			}
-		}else if(useX - goX == useY - goY){
-			for(int i = 1; i < Math.abs(useX - goX); i++){ // Stores the displacement value
-				if(useX - goX < 0){ // Going down-right; goX is greater
-					boardState[useX + i][useY + i] = nextPlayer;
-				}else{ // Going up-left; goX is smaller
-					boardState[useX - i][useY - i] = nextPlayer;
-				}
-			}
-		}else if(useX - goX == -(useY - goY)){
-			for(int i = 1; i < Math.abs(useX - goX); i++){ // Stores the displacement value
-				if(useX - goX < 0){ // Going up-right; goX is greater
-					boardState[useX + i][useY - i] = nextPlayer;
-				}else{ // Going down-left; goX is smaller
-					boardState[useX - i][useY + i] = nextPlayer;
-				}
-			}			
+	
+		if(ableToMove){ // Was able to Move; Update the nextPlayer and boardState, and return True
+			boardState[goX][goY] = nextPlayer;
+			nextPlayer = (nextPlayer + 1) % 2;
+			checkWinners();
+			return true;			
+		}else{ // Unable to Move; return False
+			return false;
 		}
-		
-		boardState[goX][goY] = nextPlayer;
-		nextPlayer = (nextPlayer + 1) % 2;
-		checkWinners();
-		return true;
 	}
 	
 	/**
@@ -233,7 +214,7 @@ public class OthelloState extends TwoDimensionalBoardGameState {
 						if((x >= 0 && x < BOARD_WIDTH) && (y >= 0 && y < BOARD_WIDTH)){
 							if(boardState[x][y] == EMPTY){
 								OthelloState temp = (OthelloState) currentState.copy();
-								if(temp.move(chip, new Point(x, y))){
+								if(temp.move(new Point(x, y))){
 									possible.add(temp);
 								}
 							}
@@ -276,59 +257,16 @@ public class OthelloState extends TwoDimensionalBoardGameState {
 		return winners;
 	}
 
-	/**
-	 * Creates and returns a String visually representing the current BoardGameState
-	 * 
-	 * @return String visually representing the current BoardGameState
-	 */
-	// Schrum: You should be able to delete this method entirely fromt this class, since it
-	//         it provided in TwoDimensionalBoardGameState. If you want to add the numbers
-	//         on top of the board, then do it in TwoDimensionalBoardGameState rather than
-	//         overriding the method.
-	public String toString(){
-		String result = "  0 1 2 3 4 5 6 7 \n  _ _ _ _ _ _ _ _ ";
-		for(int i = 0; i < BOARD_WIDTH; i++){
-			result += "\n" + i + "|";
-			for(int j = 0; j < BOARD_WIDTH; j++){
-				if(boardState[i][j] == EMPTY){
-					result += " ";					
-				}else if(boardState[i][j] == BLACK_CHIP){
-					result += "B";									
-				}else if(boardState[i][j] == WHITE_CHIP){
-					result += "W";									
-				}
-				result += "|";
-			}
-			result += "\n  _ _ _ _ _ _ _ _";
-		}
-		
-		return result;
-	}
-
 	@Override
 	public void setupStartingBoard() {
 		numPasses = 0;
-		
-		// Schrum: I commented this out because the setupStartingBoard method is
-		// assumed to be called on an empty board, according to TwoDimensionalBoardGameState.
-		// However, please make sure that every thing still works despite me commenting this out.
-//		boardState = new int[BOARD_WIDTH][BOARD_WIDTH];
-//		
-//		for(int i = 0; i < BOARD_WIDTH; i++){
-//			for(int j = 0; j < BOARD_WIDTH; j++){
-//				boardState[i][j] = EMPTY;
-//			}
-//		}
-		
+
 		boardState[BOARD_CORE1][BOARD_CORE1] = BLACK_CHIP;
 		boardState[BOARD_CORE2][BOARD_CORE2] = BLACK_CHIP;
 		
 		boardState[BOARD_CORE1][BOARD_CORE2] = WHITE_CHIP;
 		boardState[BOARD_CORE2][BOARD_CORE1] = WHITE_CHIP;
 
-		// Schrum: also unnecessary. See constructor for TwoDimensionalBoardGameState
-//		nextPlayer = 0;
-//		winners = new ArrayList<Integer>();
 	}
 
 	@Override

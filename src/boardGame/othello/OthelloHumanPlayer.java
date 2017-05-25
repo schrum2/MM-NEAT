@@ -24,12 +24,10 @@ public class OthelloHumanPlayer<T extends OthelloState> implements BoardGamePlay
 		
 		do{
 			temp = (T) current.copy();
-			System.out.println("Select your Chip");
-			Point useThis = new Point(getInput(scan, "Column"), getInput(scan, "Row"));
 			System.out.println("Select your Move (choose a valid Empty Space)");
 			Point goTo = new Point(getInput(scan, "Column"), getInput(scan, "Row"));
 
-			temp.move(useThis, goTo);
+			temp.move(goTo);
 			System.out.println(temp.toString());
 			System.out.println(valid);
 		}while(!valid);
