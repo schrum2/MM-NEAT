@@ -7,6 +7,7 @@ import java.util.List;
 
 import boardGame.BoardGameState;
 import boardGame.TwoDimensionalBoardGameState;
+import edu.utexas.cs.nn.util.MiscUtil;
 
 public class OthelloState extends TwoDimensionalBoardGameState {
 	
@@ -105,64 +106,45 @@ public class OthelloState extends TwoDimensionalBoardGameState {
 		boolean check1 = boardState[goX][goY] == EMPTY;
 		if(!check1) return false; // Cannot move to a Non-Empty Space; y problem not due to Non-Empty Spaces
 		
-		boolean[] moves = new boolean[8]; // Used to keep track of able to Move or not
 		boolean ableToMove = false;
-		int index = 0;
 		
 		for(int dX = -1; dX <=1; dX++){ // Works off of the same idea as possibleBoardStates()
 			for(int dY = -1; dY <=1; dY++){
 				if(dX != 0 || dY != 0){ // Does not run if both dX and dY are 0
 					
-					if((goX + dX < 0 || goX + dX >= BOARD_WIDTH) || (goY + dY < 0 || goY + dY >= BOARD_WIDTH)){ // y can be 0 here and not be OoB
-						break;
-					} // Out of Bounds; cannot use this Offset
+					int x = goX + dX; // Stores the offset Space
+					int y = goY + dY;
 					
-					boolean foundEnemy = boardState[goX + dX][goY + dY] == (nextPlayer + 1) % 2; // Found an Enemy Chip
-					// Unable to find Enemies at y == 0; probably due to unable to Place there for some reason
+					if(!isPointInBounds(new Point(x, y))) continue; // Out of Bounds; cannot use this Offset
+					
+					boolean foundEnemy = boardState[x][y] == (nextPlayer + 1) % 2; // Found an Enemy Chip
+					
 					if(foundEnemy){ // Only runs if an Enemy is present
-						// TODO: y is never == 0 for some reason. Fix it.
-						// x can be 0 at this part, so it must be something above here...
-
-						int x = goX + dX; // Stores the offset Space
-						int y = goY + dY;
-						do{ // Y never starts at 0 here
+						do{
 							x += dX;  // Searches the next Space over
 							y += dY;
-							// Y == 0 is always considered In-Bounds
 
 						}while((x >= 0 && x < BOARD_WIDTH) && (y >= 0 && y < BOARD_WIDTH) && (boardState[x][y] == (nextPlayer + 1) % 2)); // Continues while within bounds and Space has an Enemy Chip
-						// y == 0 Error is not affected by the order of these Checks
-						if((x >= 0 && x < BOARD_WIDTH) && (y >= 0 && y < BOARD_WIDTH)){ // Within Bounds? If False, above Check continued off of edge of Board; Enemy Chips continue to edge.
+						
+						if((x >= 0 && x < BOARD_WIDTH) && (y >= 0 && y < BOARD_WIDTH)){
 							if(boardState[x][y] == nextPlayer){ // Found Player Chip at end of Line; able to make the Move
 								ableToMove = true; // Was able to make at least 1 Move
-								moves[index] = true; // Sets this direction to true for the Update
-								// Y != 0 here
+								
+								x = goX; // Stores the offset Space
+								y = goY;
+								
+								do{
+									boardState[x][y] = nextPlayer; // Updates the Space
+									x += dX;  // Searches the next Space over
+									y += dY;
+								}while((x >= 0 && x < BOARD_WIDTH) && (y >= 0 && y < BOARD_WIDTH) && (boardState[x][y] == (nextPlayer + 1) % 2)); // Only converts Enemy Chips
+								
 							} // End Able-to-Play If Statement
 						}
 					} // End foundEnemy Check
-					index++;
 				} // End dX, dY Check
 			}
 		} // End Offset For-Loop
-		
-		int indexCheck = 0;
-		for(int dX = -1; dX <= 1; dX++){ // Update made external from the above Check to avoid interfering with future Checks
-			for(int dY = -1; dY <= 1; dY++){
-				if(dX != 0 || dY != 0){
-					if(moves[indexCheck]){
-						
-						int x = goX; // Stores the offset Space
-						int y = goY;
-						do{
-							boardState[x][y] = nextPlayer;
-							x += dX;  // Searches the next Space over
-							y += dY;
-						}while((x >= 0 && x < BOARD_WIDTH) && (y >= 0 && y < BOARD_WIDTH) && (boardState[x][y] == (nextPlayer + 1) % 2));
-					}
-				indexCheck++;
-				}
-			}
-		}
 	
 		if(ableToMove){ // Was able to Move; Update the nextPlayer and boardState, and return True
 			boardState[goX][goY] = nextPlayer;
@@ -223,7 +205,7 @@ public class OthelloState extends TwoDimensionalBoardGameState {
 				}
 			}
 		}
-		
+				
 		List<T> returnThis = new ArrayList<T>();
 		// Schrum: this case here annoys me. I feel that there is a way to avoid it
 		returnThis.addAll((Collection<? extends T>) possible);

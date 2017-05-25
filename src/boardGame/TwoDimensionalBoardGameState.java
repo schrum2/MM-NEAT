@@ -197,6 +197,16 @@ public abstract class TwoDimensionalBoardGameState implements BoardGameState {
 		return result;
 	}
 
+	/**
+	 * Returns true if a given Point refers to a Space within the Bounds of the Board,
+	 * Else returns false
+	 * 
+	 * @param source Point to be evaluated
+	 * @return True if the Point is In-Bounds, else returns false
+	 */
+	public boolean isPointInBounds(Point source){
+		return ((source.getX() >= 0 && source.getX() < getBoardWidth()) && (source.getY() >= 0 && source.getY() < getBoardHeight()));
+	}
 	
 	/**
 	 * Returns an Array of Doubles that describes this BoardGameState

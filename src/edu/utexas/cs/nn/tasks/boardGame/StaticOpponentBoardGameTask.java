@@ -7,7 +7,7 @@ import java.util.List;
 import boardGame.BoardGame;
 import boardGame.BoardGamePlayer;
 import boardGame.BoardGamePlayerOneStepEval;
-import boardGame.BoardGameViewer;
+import boardGame.TwoDimensionalBoardGameViewer;
 import boardGame.TwoDimensionalBoardGame;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
@@ -24,7 +24,7 @@ import edu.utexas.cs.nn.util.datastructures.Triple;
 
 public class StaticOpponentBoardGameTask<T extends Network> extends NoisyLonerTask<T> implements NetworkTask, HyperNEATTask {
 
-	BoardGameViewer view = null;
+	TwoDimensionalBoardGameViewer view = null;
 	@SuppressWarnings("rawtypes")
 	BoardGame bg;
 	@SuppressWarnings("rawtypes")
