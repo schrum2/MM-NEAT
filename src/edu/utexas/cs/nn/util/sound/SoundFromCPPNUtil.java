@@ -59,6 +59,20 @@ public class SoundFromCPPNUtil {
 		return result;
 	}
 	
+	/**
+	 * Takes in a WAV file represented as a double array and uses an input generated CPPN to "remix" the sound
+	 * or manipulate it according to the specifications of the network. Loops through the inputs and manipulates 
+	 * them according to the length, frequency, and whether the input multipliers have been turned on or not.
+	 * Outputs a double array that represents the audio of the newly remixed audio. 
+	 * 
+	 * @param CPPN network used to generate amplitude
+	 * @param inputWAV double array representing WAV file being remixed
+	 * @param length length of sample
+	 * @param frequency Frequency of note being manipulated
+	 * @param sampleRate specified rate of input wav file 
+	 * @param inputMultipliers double array determining whether checkboxes have been turned on or off in Breedesizer
+	 * @return
+	 */
 	public static double[] amplitudeRemixer(Network CPPN, double[] inputWAV, int length, double frequency, int sampleRate, double[] inputMultipliers) {
 		double[] result = new double[length];
 		for(double time = 0; time < length; time++) {

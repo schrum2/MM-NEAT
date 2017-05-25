@@ -115,11 +115,12 @@ public class SoundUtilExamples {
 		System.out.println();
 		
 		
-		int[] harpIntArray = SoundToArray.extractAmplitudeDataFromAudioInputStream(harpAIS);
-		double[] harpDoubleArray = new double[harpIntArray.length];
-		for(int i = 0; i < harpIntArray.length; i++) {
-			harpDoubleArray[i] = (double) harpIntArray[i];
-		}
+//		int[] harpIntArray = SoundToArray.extractAmplitudeDataFromAudioInputStream(harpAIS);
+//		double[] harpDoubleArray = new double[harpIntArray.length];
+//		for(int i = 0; i < harpIntArray.length; i++) {
+//			harpDoubleArray[i] = (double) harpIntArray[i];
+//		}
+		double[] harpDoubleArray = SoundToArray.read(HARP_WAV);
 		PlayDoubleArray.playDoubleArray(harpDoubleArray, false);
 		System.out.println(Arrays.toString(harpDoubleArray));
 		//WAVUtil.playWAVFile(harp);
