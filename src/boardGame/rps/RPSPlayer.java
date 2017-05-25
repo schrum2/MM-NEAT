@@ -1,9 +1,8 @@
 package boardGame.rps;
 
 import boardGame.BoardGamePlayer;
-import boardGame.BoardGameState;
 
-public abstract class RPSPlayer implements BoardGamePlayer{
+public abstract class RPSPlayer implements BoardGamePlayer<RPSState> {
 
 	/**
 	 * Allows a Player to select a Move based on its internal Logic
@@ -20,7 +19,7 @@ public abstract class RPSPlayer implements BoardGamePlayer{
 	 * @return BoardGameState affected by the Move a Player took
 	 */
 	@Override
-	public BoardGameState takeAction(BoardGameState current) {
+	public RPSState takeAction(RPSState current) {
 		RPSState state = (RPSState) current.copy(); // Copies the current BoardGameState
 
 		state.playerMoves[state.nextPlayer++] = selectMove(state);

@@ -5,9 +5,8 @@ import java.util.List;
 
 import boardGame.BoardGame;
 import boardGame.BoardGamePlayer;
-import boardGame.BoardGameState;
 
-public class RockPaperScissors implements BoardGame{
+public class RockPaperScissors implements BoardGame<RPSState> {
 
 	private int currentPlayer; // Used to keep track of whose turn it is
 	private RPSState board;
@@ -55,7 +54,7 @@ public class RockPaperScissors implements BoardGame{
 	 * Updates the RPSState based on a Player's action
 	 */
 	@Override
-	public void move(BoardGamePlayer bgp) {
+	public void move(BoardGamePlayer<RPSState> bgp) {
 		bgp.takeAction(board);
 		currentPlayer++;
 	}
@@ -89,6 +88,7 @@ public class RockPaperScissors implements BoardGame{
 		return board.toString();
 	}
 
+	// Rock, Paper, Scissors has not state. Not clear how to evolve in this game
 	@Override
 	public String[] getFeatureLabels() {
 		// TODO Auto-generated method stub

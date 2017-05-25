@@ -1,9 +1,8 @@
 package boardGame.checkers;
 
-import boardGame.BoardGame;
 import boardGame.TwoDimensionalBoardGame;
 
-public class Checkers extends TwoDimensionalBoardGame<CheckersState> implements BoardGame<CheckersState>{
+public class Checkers extends TwoDimensionalBoardGame<CheckersState> {
 	
 	public Checkers(){
 		super(new CheckersState());

@@ -7,7 +7,6 @@ import java.util.List;
 
 import boardGame.BoardGameState;
 import boardGame.TwoDimensionalBoardGameState;
-import boardGame.othello.OthelloState;
 
 public class CheckersState extends TwoDimensionalBoardGameState {
 

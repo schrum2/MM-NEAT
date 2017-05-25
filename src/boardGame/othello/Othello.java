@@ -1,9 +1,8 @@
 package boardGame.othello;
 
-import boardGame.BoardGame;
 import boardGame.TwoDimensionalBoardGame;
 
-public class Othello extends TwoDimensionalBoardGame<OthelloState> implements BoardGame<OthelloState>{
+public class Othello extends TwoDimensionalBoardGame<OthelloState>{
 	
 	/**
 	 * Default Constructor

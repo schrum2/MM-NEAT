@@ -4,7 +4,6 @@ import java.awt.Point;
 import java.util.Scanner;
 
 import boardGame.BoardGamePlayer;
-import boardGame.BoardGameState;
 
 public class OthelloHumanPlayer<T extends OthelloState> implements BoardGamePlayer<T> {
 

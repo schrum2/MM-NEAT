@@ -5,15 +5,15 @@ import java.awt.Point;
 import boardGame.BoardGamePlayer;
 import boardGame.BoardGameState;
 
-public abstract class CheckersPlayer implements BoardGamePlayer{
+public abstract class CheckersPlayer implements BoardGamePlayer<CheckersState> {
 
-	public Point selectMove(BoardGameState current) {
-		return null;
-	}
+	// Schrum: Because this method is not properly defined here, it is made abstract
+	public abstract Point selectMove(BoardGameState current);
 	
 	@Override
-	public BoardGameState takeAction(BoardGameState current) {
-		CheckersState state = (CheckersState) current.copy(); // Copies the current BoardGameState
+	public CheckersState takeAction(CheckersState current) {
+		CheckersState state = current.copy(); // Copies the current BoardGameState
+		// Schrum: This double call to selectMove seems suspicious and potentially unnecessary
 		Point moveThis = selectMove(state);
 		Point moveTo = selectMove(state);
 		state.move(moveThis, moveTo);

@@ -1,9 +1,8 @@
 package boardGame.ttt;
 
-import boardGame.BoardGame;
 import boardGame.TwoDimensionalBoardGame;
 
-public class TicTacToe extends TwoDimensionalBoardGame<TicTacToeState> implements BoardGame<TicTacToeState>{
+public class TicTacToe extends TwoDimensionalBoardGame<TicTacToeState> {
 
 	
 	public TicTacToe() {
