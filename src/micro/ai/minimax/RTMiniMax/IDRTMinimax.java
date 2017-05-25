@@ -5,6 +5,7 @@
 package micro.ai.minimax.RTMiniMax;
 
 import micro.ai.evaluation.EvaluationFunctionForwarding;
+import micro.ai.HasEvaluationFunction;
 import micro.ai.core.AI;
 import micro.ai.core.AIWithComputationBudget;
 import micro.ai.core.ParameterSpecification;
@@ -27,7 +28,7 @@ import micro.ai.core.InterruptibleAI;
  *
  * @author santi
  */
-public class IDRTMinimax extends AIWithComputationBudget implements InterruptibleAI {
+public class IDRTMinimax extends AIWithComputationBudget implements InterruptibleAI, HasEvaluationFunction {
     public static int DEBUG = 0;
     
     // reset at each execution of minimax:
@@ -59,6 +60,11 @@ public class IDRTMinimax extends AIWithComputationBudget implements Interruptibl
     Random r = RandomNumbers.randomGenerator;
     int playerForThisComputation;
 
+    //for ClassCreation
+    public IDRTMinimax() {
+    	this(100, new SimpleSqrtEvaluationFunction3()); 
+    	//eval function will be set to MMNeat's param after construction
+    }
     
     public IDRTMinimax(UnitTypeTable utt) {
         this(100, new SimpleSqrtEvaluationFunction3());
