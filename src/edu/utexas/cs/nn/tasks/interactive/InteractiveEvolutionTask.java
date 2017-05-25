@@ -900,4 +900,8 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		SelectiveBreedingEA.MUTATION_RATE = source.getValue();
 
 	}
+	
+	public abstract int numCPPNInputs();
+	
+	public abstract int numCPPNOutputs();
 }

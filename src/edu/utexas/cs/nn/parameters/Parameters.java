@@ -34,6 +34,7 @@ import edu.utexas.cs.nn.tasks.ut2004.actuators.OpponentRelativeMovementOutputMod
 import edu.utexas.cs.nn.tasks.ut2004.sensors.OpponentRelativeSensorModel;
 import edu.utexas.cs.nn.tasks.ut2004.weapons.SimpleWeaponManager;
 import edu.utexas.cs.nn.util.random.GaussianGenerator;
+import edu.utexas.cs.nn.util.sound.SoundUtilExamples;
 import edu.utexas.cs.nn.util.stats.Average;
 import edu.utexas.cs.nn.util.stats.Max;
 import micro.ai.RandomBiasedAI;
@@ -690,6 +691,7 @@ public class Parameters {
 		stringOptions.add("replayNetwork", "", "Network displayed while replaying pacman eval");
 		stringOptions.add("pinballConfig", "pinball_simple_single.cfg", "Configuration file for the PinballTask");
 		stringOptions.add("map", "8x8/basesWorkers8x8.xml", "filepath from maps folder to desired map file for MicroRTSTask");
+		stringOptions.add("remixWAVFile", SoundUtilExamples.HARP_WAV, "Input WAV file to be remixed in Remixbreeder");
 		// Class options
 		classOptions.add("boardGame", null, "Board game being played by BoardGameTask");
 		classOptions.add("boardGameOpponent", BoardGamePlayerRandom.class, "Board game being played by BoardGameTask");

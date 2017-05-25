@@ -28,12 +28,7 @@ public class SoundFromCPPNUtil {
 	 * @return array of doubles representing all CPPN-manipulated output amplitudes
 	 */
 	public static double[] amplitudeGenerator(Network CPPN, int length, double frequency) {
-		double[] result = new double[length];
-		for(double time = 0; time < length; time++) {double[] inputs = new double[]{time/PlayDoubleArray.SAMPLE_RATE, Math.sin(2*Math.PI * frequency * time/PlayDoubleArray.SAMPLE_RATE), HyperNEATCPPNGenotype.BIAS};
-			double[] outputs = CPPN.process(inputs);
-			result[(int) time] = outputs[0]; // amplitude
-		}
-		return result;
+		return amplitudeGenerator(CPPN, length, frequency, new double[]{1.0,1.0,1.0});
 	}
 	
 	/**
@@ -54,6 +49,20 @@ public class SoundFromCPPNUtil {
 		double[] result = new double[length];
 		for(double time = 0; time < length; time++) {
 			double[] inputs = new double[]{time/PlayDoubleArray.SAMPLE_RATE, Math.sin(2*Math.PI * frequency * time/PlayDoubleArray.SAMPLE_RATE), HyperNEATCPPNGenotype.BIAS};	
+			// Multiplies the inputs of the pictures by the inputMultiples; used to turn on or off the effects in each picture
+			for(int i = 0; i < inputs.length; i++) {
+				inputs[i] = inputs[i] * inputMultipliers[i];
+			}			
+			double[] outputs = CPPN.process(inputs);
+			result[(int) time] = outputs[0]; // amplitude
+		}
+		return result;
+	}
+	
+	public static double[] amplitudeRemixer(Network CPPN, double[] inputWAV, int length, double frequency, int sampleRate, double[] inputMultipliers) {
+		double[] result = new double[length];
+		for(double time = 0; time < length; time++) {
+			double[] inputs = new double[]{time/sampleRate, Math.sin(2*Math.PI * frequency * time/sampleRate), inputWAV[(int) time], HyperNEATCPPNGenotype.BIAS};	
 			// Multiplies the inputs of the pictures by the inputMultiples; used to turn on or off the effects in each picture
 			for(int i = 0; i < inputs.length; i++) {
 				inputs[i] = inputs[i] * inputMultipliers[i];

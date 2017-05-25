@@ -124,4 +124,16 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 		}
 	}
 
+
+	@Override
+	public int numCPPNInputs() {
+		return CPPN_NUM_INPUTS;
+	}
+
+
+	@Override
+	public int numCPPNOutputs() {
+		return CPPN_NUM_OUTPUTS;
+	}
+
 }

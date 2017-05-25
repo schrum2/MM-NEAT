@@ -41,7 +41,7 @@ public class SoundUtilExamples {
 
 	private static final String BEARGROWL_WAV = "data/sounds/bear_growl_y.wav";
 	private static final String APPLAUSE_WAV = "data/sounds/applause_y.wav";
-	private static final String HARP_WAV = "data/sounds/harp.wav";
+	public static final String HARP_WAV = "data/sounds/harp.wav";
 	private static final String HAPPY_MP3 = "data/sounds/25733.mp3";
 	private static final String PIRATES = "data/sounds/pirates.mid";
 	private static final String CLASSICAL_MID = "data/sounds/CLASSICA.MID";
@@ -49,7 +49,7 @@ public class SoundUtilExamples {
 	private static final String FUR_ELISE_MID = "data/sounds/for_elise_by_beethoven.mid";
 
 	public static void main(String[] args) throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException, JavaLayerException {
-		CPPNExamples();
+		saveFileTests();
 	}
 
 	public static void CPPNExamples() throws IOException {
@@ -115,9 +115,13 @@ public class SoundUtilExamples {
 		System.out.println();
 		
 		
-		//double[] harpDoubleArray = MiscSoundUtil.read(HARP_WAV);
-		//MiscSoundUtil.playDoubleArray(harpDoubleArray);
-		//System.out.println(Arrays.toString(harpDoubleArray));
+		int[] harpIntArray = SoundToArray.extractAmplitudeDataFromAudioInputStream(harpAIS);
+		double[] harpDoubleArray = new double[harpIntArray.length];
+		for(int i = 0; i < harpIntArray.length; i++) {
+			harpDoubleArray[i] = (double) harpIntArray[i];
+		}
+		PlayDoubleArray.playDoubleArray(harpDoubleArray, false);
+		System.out.println(Arrays.toString(harpDoubleArray));
 		//WAVUtil.playWAVFile(harp);
 		//SoundAmplitudeArrayManipulator.writeSingleChannel(harpAIS.getFormat(), harpDoubleArray, "harpDoubleArray.wav");
 	}

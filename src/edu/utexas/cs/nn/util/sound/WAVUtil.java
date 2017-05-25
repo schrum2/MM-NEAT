@@ -34,6 +34,19 @@ public class WAVUtil {
 			Thread.sleep(1000);
 		} while(audioClip.isRunning());      
 	}
+	
+	/**
+	 * Converts string representation of audio file into audio input stream.
+	 * 
+	 * @param audioFile file to be converted
+	 * @return AudioInputStream that can be converted into a clip
+	 * @throws UnsupportedAudioFileException if file does not contain valid/recognizable data 
+	 * @throws IOException if an IO operation has failed or been interrupted
+	 */
+	public static AudioInputStream audioStream(String audio) throws UnsupportedAudioFileException, IOException {
+		File audioFile = new File(audio);
+		return audioStream(audioFile);
+	}
 
 	/**
 	 * Converts audio file into audio input stream.
