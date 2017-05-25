@@ -62,7 +62,7 @@ public class IDRTMinimax extends AIWithComputationBudget implements Interruptibl
 
     //for ClassCreation
     public IDRTMinimax() {
-    	this(100, new SimpleSqrtEvaluationFunction3()); 
+    	this(100, new SimpleSqrtEvaluationFunction3());
     	//eval function will be set to MMNeat's param after construction
     }
     

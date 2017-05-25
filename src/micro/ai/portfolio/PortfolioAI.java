@@ -6,6 +6,7 @@
 
 package micro.ai.portfolio;
 
+import micro.ai.HasEvaluationFunction;
 import micro.ai.RandomBiasedAI;
 import micro.ai.abstraction.LightRush;
 import micro.ai.abstraction.RangedRush;
@@ -17,6 +18,9 @@ import micro.ai.evaluation.EvaluationFunction;
 import micro.ai.evaluation.SimpleSqrtEvaluationFunction3;
 import java.util.ArrayList;
 import java.util.List;
+
+import edu.utexas.cs.nn.MMNEAT.MMNEAT;
+import edu.utexas.cs.nn.tasks.microrts.MicroRTSTask;
 import micro.rts.GameState;
 import micro.rts.PlayerAction;
 import micro.rts.units.UnitTypeTable;
@@ -25,15 +29,16 @@ import micro.ai.core.InterruptibleAI;
 /**
  *
  * @author santi
+ * suspiciously good -Alice
  */
-public class PortfolioAI extends AIWithComputationBudget implements InterruptibleAI {
+public class PortfolioAI extends AIWithComputationBudget implements InterruptibleAI, HasEvaluationFunction {
     
     public static int DEBUG = 0;
 
     int LOOKAHEAD = 500;
     AI strategies[] = null;
     boolean deterministic[] = null;
-    EvaluationFunction evaluation = null;
+    EvaluationFunction ef = null;
     
     GameState gs_to_start_from = null;
     double scores[][] = null;
@@ -41,7 +46,9 @@ public class PortfolioAI extends AIWithComputationBudget implements Interruptibl
     int nplayouts = 0;
     int playerForThisComputation;
     
-    
+    public PortfolioAI() {
+    	this(((MicroRTSTask) MMNEAT.task).getUnitTypeTable());
+    }
     public PortfolioAI(UnitTypeTable utt) {
         this(new AI[]{new WorkerRush(utt),
                       new LightRush(utt),
@@ -53,12 +60,12 @@ public class PortfolioAI extends AIWithComputationBudget implements Interruptibl
     }
     
     
-    public PortfolioAI(AI s[], boolean d[], int time, int max_playouts, int la, EvaluationFunction e) {
+    public PortfolioAI(AI s[], boolean d[], int time, int max_playouts, int la, EvaluationFunction a_ef) {
         super(time, max_playouts);
         LOOKAHEAD = la;
         strategies = s;
         deterministic = d;
-        evaluation = e;
+        ef = a_ef;
     }
     
     
@@ -125,7 +132,7 @@ public class PortfolioAI extends AIWithComputationBudget implements Interruptibl
                                 gs2.issue(ai2.getAction(1-playerForThisComputation, gs2));
                             }
                         }                
-                        scores[i][j] += evaluation.evaluate(playerForThisComputation, 1-playerForThisComputation, gs2);
+                        scores[i][j] += ef.evaluate(playerForThisComputation, 1-playerForThisComputation, gs2);
                         counts[i][j]++;
                         nplayouts++;
                     }
@@ -193,13 +200,13 @@ public class PortfolioAI extends AIWithComputationBudget implements Interruptibl
     
     @Override
     public AI clone() {
-        return new PortfolioAI(strategies, deterministic, TIME_BUDGET, ITERATIONS_BUDGET, LOOKAHEAD, evaluation);
+        return new PortfolioAI(strategies, deterministic, TIME_BUDGET, ITERATIONS_BUDGET, LOOKAHEAD, ef);
     }
     
     
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "(" + TIME_BUDGET + ", " + ITERATIONS_BUDGET + ", " + LOOKAHEAD + ", " + evaluation + ")";
+        return getClass().getSimpleName() + "(" + TIME_BUDGET + ", " + ITERATIONS_BUDGET + ", " + LOOKAHEAD + ", " + ef + ")";
     }
 
     
@@ -230,11 +237,11 @@ public class PortfolioAI extends AIWithComputationBudget implements Interruptibl
        
     
     public EvaluationFunction getEvaluationFunction() {
-        return evaluation;
+        return ef;
     }
     
     
     public void setEvaluationFunction(EvaluationFunction a_ef) {
-        evaluation = a_ef;
+        ef = a_ef;
     }            
 }

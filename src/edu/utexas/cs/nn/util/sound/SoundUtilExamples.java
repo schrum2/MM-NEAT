@@ -114,15 +114,20 @@ public class SoundUtilExamples {
 		System.out.println(applauseAIS.getFormat().isBigEndian());
 		System.out.println();
 		
+		//WAVUtil.playWAVFile(HARP_WAV);
 		
 //		int[] harpIntArray = SoundToArray.extractAmplitudeDataFromAudioInputStream(harpAIS);
 //		double[] harpDoubleArray = new double[harpIntArray.length];
 //		for(int i = 0; i < harpIntArray.length; i++) {
 //			harpDoubleArray[i] = (double) harpIntArray[i];
 //		}
-		double[] harpDoubleArray = SoundToArray.read(HARP_WAV);
+		
+	
+		byte[] harpByteArray = WAVUtil.WAVToByte(HARP_WAV);
+		AudioFormat harpFormat = harpAIS.getFormat();
+		double[] harpDoubleArray = SoundToArray.extractDoubleArrayFromAmplitudeByteArray(harpFormat, harpByteArray);
 		PlayDoubleArray.playDoubleArray(harpDoubleArray, false);
-		System.out.println(Arrays.toString(harpDoubleArray));
+		//System.out.println(Arrays.toString(harpDoubleArray));
 		//WAVUtil.playWAVFile(harp);
 		//SoundAmplitudeArrayManipulator.writeSingleChannel(harpAIS.getFormat(), harpDoubleArray, "harpDoubleArray.wav");
 	}

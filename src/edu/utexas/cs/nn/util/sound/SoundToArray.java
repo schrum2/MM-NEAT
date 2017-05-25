@@ -3,6 +3,7 @@ package edu.utexas.cs.nn.util.sound;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.ByteBuffer;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
@@ -19,6 +20,9 @@ import javax.sound.sampled.UnsupportedAudioFileException;
  */
 public class SoundToArray {
 	/**
+	 * DOESN'T WORK FOR AUDIO - used for generation of image representations
+	 * of waves
+	 * 
 	 * Reads audio samples from a file (in .wav or .au format) and returns
 	 * them as a double array with values between -1.0 and +1.0.
 	 *
@@ -137,5 +141,73 @@ public class SoundToArray {
 			}  
 		}
 		return audioData;  
+	}
+	
+	/**
+	 * DOESN'T WORK
+	 * Method that inputs the format of an AudioInputStream as well as the byte array formed from its contents
+	 * and then creates an array of doubles containing the amplitude data of the stream. 
+	 * 
+	 * @param format AudioFormat of AudioinputStream
+	 * @param audioBytes byte array formed based on the size of the stream
+	 * @return double array containing amplitude data from stream
+	 */
+	public static double[] extractDoubleArrayFromAmplitudeByteArray(AudioFormat format, byte[] audioBytes) {  
+		// convert
+		double[]  audioData = null;  
+		if (format.getSampleSizeInBits() == 16) {  
+			int nlengthInSamples = audioBytes.length / 2;  
+			audioData = new double[nlengthInSamples];  
+			if (format.isBigEndian()) {  
+				for (int i = 0; i < nlengthInSamples; i++) {  
+					/* First byte is MSB (high order) */  
+					int MSB = audioBytes[2 * i];  
+					/* Second byte is LSB (low order) */  
+					int LSB = audioBytes[2 * i + 1];  
+					audioData[i] = (double) (MSB << 8 | (255 & LSB));  
+				}  
+			} else {  
+				for (int i = 0; i < nlengthInSamples; i++) {  
+					/* First byte is LSB (low order) */  
+					int LSB = audioBytes[2 * i];  
+					/* Second byte is MSB (high order) */  
+					int MSB = audioBytes[2 * i + 1];  
+					audioData[i] = (double) (MSB << 8 | (255 & LSB));  
+				}  
+			}  
+		} else if (format.getSampleSizeInBits() == 8) {  
+			int nlengthInSamples = audioBytes.length;  
+			audioData = new double[nlengthInSamples];  
+			if (format.getEncoding().toString().startsWith("PCM_SIGN")) {  
+				// PCM_SIGNED  
+				for (int i = 0; i < audioBytes.length; i++) {  
+					audioData[i] = audioBytes[i];  
+				}  
+			} else {  
+				// PCM_UNSIGNED  
+				for (int i = 0; i < audioBytes.length; i++) {  
+					audioData[i] = audioBytes[i] - 128;  
+				}  
+			}  
+		}
+		return audioData;  
+	}
+	
+	/**
+	 * DOESN'T WORK
+	 * Method that attempts to convert an array of bytes to an array of doubles. 
+	 * Takes in byte array, declares a double array, and then loops through byte array and
+	 * uses ByteBuffer.wrap to copy the bytes to their corresponding indexes in the double array.
+	 * 
+	 * @param byteArray array of bytes representing audio file
+	 * @return double array containing contents of byte array
+	 */
+	public static double[] toDoubleArray(byte[] byteArray){
+	    int times = Double.SIZE / Byte.SIZE;
+	    double[] doubles = new double[byteArray.length / times];
+	    for(int i=0;i<doubles.length;i++){
+	        doubles[i] = ByteBuffer.wrap(byteArray, i*times, times).getDouble();
+	    }
+	    return doubles;
 	}
 }

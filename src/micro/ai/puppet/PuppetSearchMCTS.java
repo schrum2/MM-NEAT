@@ -1,5 +1,6 @@
 package micro.ai.puppet;
 
+import micro.ai.HasEvaluationFunction;
 import micro.ai.RandomBiasedAI;
 import micro.ai.abstraction.pathfinding.FloodFillPathFinding;
 import java.util.Collection;
@@ -11,12 +12,20 @@ import micro.ai.evaluation.EvaluationFunction;
 import micro.ai.evaluation.SimpleSqrtEvaluationFunction3;
 import java.util.ArrayList;
 import java.util.List;
+
+import edu.utexas.cs.nn.MMNEAT.MMNEAT;
+import edu.utexas.cs.nn.tasks.microrts.MicroRTSTask;
 import micro.rts.GameState;
 import micro.rts.PlayerAction;
 import micro.rts.units.UnitTypeTable;
 import micro.util.Pair;
 
-public class PuppetSearchMCTS extends PuppetBase {
+public class PuppetSearchMCTS extends PuppetBase implements HasEvaluationFunction {
+	
+	public PuppetSearchMCTS(){
+		this(((MicroRTSTask) MMNEAT.task).getUnitTypeTable());
+	}
+	
 	class Plan{
 		PuppetMCTSNode node;
 		Plan(){
