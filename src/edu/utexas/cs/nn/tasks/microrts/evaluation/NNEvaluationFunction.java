@@ -6,6 +6,12 @@ import micro.ai.evaluation.EvaluationFunction;
 import micro.rts.GameState;
 import micro.rts.PhysicalGameState;
 
+/**
+ * 
+ * @author alicequint
+ *
+ * @param NN
+ */
 public abstract class NNEvaluationFunction<T extends Network> extends EvaluationFunction{
 
 	protected Network nn;
