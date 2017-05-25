@@ -5,6 +5,7 @@
 package micro.ai.montecarlo;
 
 import micro.ai.core.AI;
+import micro.ai.HasEvaluationFunction;
 import micro.ai.RandomBiasedAI;
 import micro.ai.core.AIWithComputationBudget;
 import micro.ai.core.ParameterSpecification;
@@ -13,6 +14,10 @@ import micro.ai.evaluation.SimpleSqrtEvaluationFunction3;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
+import edu.utexas.cs.nn.MMNEAT.MMNEAT;
+import edu.utexas.cs.nn.tasks.microrts.MicroRTSTask;
+import edu.utexas.cs.nn.util.random.RandomNumbers;
 import micro.rts.GameState;
 import micro.rts.PlayerAction;
 import micro.rts.PlayerActionGenerator;
@@ -23,7 +28,7 @@ import micro.ai.core.InterruptibleAI;
  *
  * @author santi
  */
-public class MonteCarlo extends AIWithComputationBudget implements InterruptibleAI {
+public class MonteCarlo extends AIWithComputationBudget implements InterruptibleAI, HasEvaluationFunction {
     public static final int DEBUG = 0;
     EvaluationFunction ef = null;
     
@@ -35,7 +40,7 @@ public class MonteCarlo extends AIWithComputationBudget implements Interruptible
     }
     
     
-    Random r = new Random();
+    Random r = RandomNumbers.randomGenerator;
     AI randomAI = new RandomBiasedAI();
     long max_actions_so_far = 0;
     
@@ -54,6 +59,10 @@ public class MonteCarlo extends AIWithComputationBudget implements Interruptible
     long MAXACTIONS = 100;
     int MAXSIMULATIONTIME = 1024;
     
+    //forMMNEAT
+    public MonteCarlo(){
+    	this(((MicroRTSTask) MMNEAT.task).getUnitTypeTable());
+    }
     
     public MonteCarlo(UnitTypeTable utt) {
         this(100, -1, 100,

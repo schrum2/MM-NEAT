@@ -4,6 +4,7 @@
  */
 package micro.ai.minimax.ABCD;
 
+import micro.ai.HasEvaluationFunction;
 import micro.ai.abstraction.WorkerRush;
 import micro.ai.abstraction.pathfinding.AStarPathFinding;
 import micro.ai.core.AI;
@@ -13,6 +14,9 @@ import micro.ai.evaluation.SimpleSqrtEvaluationFunction3;
 import micro.ai.minimax.MiniMaxResult;
 import java.util.ArrayList;
 import java.util.List;
+
+import edu.utexas.cs.nn.MMNEAT.MMNEAT;
+import edu.utexas.cs.nn.tasks.microrts.MicroRTSTask;
 import micro.rts.GameState;
 import micro.rts.PlayerAction;
 import micro.rts.PlayerActionGenerator;
@@ -27,7 +31,7 @@ import micro.rts.units.UnitTypeTable;
  * - In particular, this version uses the "alt" tree alteration technique to improve the
  *   estimation of the alphabeta values when there are simultaneous moves.
  */
-public class ABCD extends AI {
+public class ABCD extends AI implements HasEvaluationFunction {
     public static int DEBUG = 0;
     
     // reset at each execution of minimax:
@@ -45,6 +49,9 @@ public class ABCD extends AI {
     EvaluationFunction ef = null;
     protected int defaultNONEduration = 8;
     
+    public ABCD(){
+    	this(((MicroRTSTask) MMNEAT.task).getUnitTypeTable());
+    }
     
     public ABCD(UnitTypeTable utt) {
         this(4, 

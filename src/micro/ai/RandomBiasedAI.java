@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Random;
 
 import edu.utexas.cs.nn.tasks.microrts.MicroRTSTask;
+import edu.utexas.cs.nn.util.random.RandomNumbers;
 import micro.rts.*;
 import micro.rts.units.Unit;
 import micro.rts.units.UnitTypeTable;
@@ -29,7 +30,7 @@ import micro.util.Sampler;
 public class RandomBiasedAI extends AI {
     static final double REGULAR_ACTION_WEIGHT = 1;
     static final double BIASED_ACTION_WEIGHT = 5;
-    Random r = new Random();
+    Random r = RandomNumbers.randomGenerator;
 
     public RandomBiasedAI() {
     }
