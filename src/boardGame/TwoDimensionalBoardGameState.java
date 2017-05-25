@@ -197,4 +197,24 @@ public abstract class TwoDimensionalBoardGameState implements BoardGameState {
 		return result;
 	}
 
+	
+	/**
+	 * Returns an Array of Doubles that describes this BoardGameState
+	 * 
+	 * @return double[] describing this BoardGameState
+	 */
+	@Override
+	public double[] getDescriptor() {
+
+		double[] features = new double[getBoardWidth()*getBoardHeight()];
+		int index = 0;
+		
+		for(int i = 0; i < getBoardHeight(); i++){
+			for(int j = 0; j < getBoardWidth(); j ++){
+				features[index++] = boardState[i][j];
+			}
+		}
+		
+		return features;
+	}
 }

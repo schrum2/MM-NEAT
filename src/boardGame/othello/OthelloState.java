@@ -38,25 +38,6 @@ public class OthelloState extends TwoDimensionalBoardGameState {
 	public OthelloState(OthelloState state){
 		super(state);
 	}
-	
-	/**
-	 * Returns an Array containing a description of the current BoardGameState
-	 * 
-	 * @return double[] representing the current BoardGameState
-	 */
-	@Override
-	public double[] getDescriptor() {
-		double[] boardArray = new double[BOARD_WIDTH*BOARD_WIDTH];
-		int index = 0;
-		
-		for(int i = 0; i < BOARD_WIDTH; i++){
-			for(int j = 0; j < BOARD_WIDTH; j++){
-				boardArray[index++] = boardState[i][j];
-			}
-		}
-		
-		return boardArray;
-	}
 
 	/**
 	 * Returns true if the Game is over, else returns false

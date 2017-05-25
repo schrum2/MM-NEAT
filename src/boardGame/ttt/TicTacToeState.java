@@ -79,25 +79,6 @@ public class TicTacToeState extends TwoDimensionalBoardGameState {
 			//System.out.println("Board Filled; GAME OVER");
 		}
 	}
-	
-	/**
-	 * Returns an Array of Doubles that describes the current BoardState
-	 * 
-	 * @return double[] that describes the current BoardState
-	 */
-	@Override
-	public double[] getDescriptor() { // Consider moving to 2DBoardGameState
-		double[] feature = new double[9];
-		int index = 0;
-		
-		for(int i = 0; i < BOARD_WIDTH; i++){
-			for(int j = 0; j < BOARD_WIDTH; j++){
-				feature[index++] = boardState[i][j];
-			}
-		}
-		
-		return feature;
-	}
 
 	/** Visual Representation of the Tic-Tac-Toe Board
 	 * 0 | 0|1|2
