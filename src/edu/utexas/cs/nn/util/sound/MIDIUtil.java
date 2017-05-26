@@ -131,7 +131,7 @@ public class MIDIUtil {
 					MidiMessage message = event.getMessage();
 					if (message instanceof ShortMessage) {
 						ShortMessage sm = (ShortMessage) message;
-						if (sm.getCommand() == NOTE_ON) {
+						if (sm.getCommand() == NOTE_ON && sm.getData2() > 0) {
 						int key = sm.getData1();
 						frequencies[i] = noteToFreq(key);
 						}
@@ -193,12 +193,17 @@ public class MIDIUtil {
 	 * @param cppn input network used to generate sound
 	 * @param frequencies frequencies corresponding to data taken from MIDI file
 	 */
-	public static void playMIDIWithCPPN(Network cppn, double[] frequencies) {
+	public static void playMIDIWithCPPNFromDoubleArray(Network cppn, double[] frequencies) {
 		System.out.println(Arrays.toString(frequencies)); // Something strange about these frequencies
 		for(int i = 0; i < frequencies.length; i++) {
 			double[] amplitude = SoundFromCPPNUtil.amplitudeGenerator(cppn, Keyboard.NOTE_LENGTH_DEFAULT, frequencies[i]);
 			System.out.println("note "+ i + " :" + Arrays.toString(amplitude));
 			PlayDoubleArray.playDoubleArray(amplitude, false);
 		}
+	}
+	
+	public static void playMIDIWithCPPNFromString(String audio, Network cppn) {
+		double[] frequencies = freqFromMIDI(audio);
+		playMIDIWithCPPNFromDoubleArray(cppn, frequencies);
 	}
 }

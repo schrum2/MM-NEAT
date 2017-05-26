@@ -46,7 +46,7 @@ public class SoundUtilExamples {
 	private static final String PIRATES = "data/sounds/pirates.mid";
 	private static final String CLASSICAL_MID = "data/sounds/CLASSICA.MID";
 	private static final String SOLO_PIANO_MID	= "data/sounds/Chon01.MID";
-	private static final String FUR_ELISE_MID = "data/sounds/for_elise_by_beethoven.mid";
+	public static final String FUR_ELISE_MID = "data/sounds/for_elise_by_beethoven.mid";
 	private static final String BASS_16BIT_WAV 	= "data/sounds/acousticbass16bit.wav";
 	public static final String SEASHORE_WAV = "data/sounds/Digital-Seashore.wav";
 	public static final String ALARM_WAV = "data/sounds/tone06.wav";
@@ -422,6 +422,6 @@ public class SoundUtilExamples {
 
 
 		double[] classicalFreq = MIDIUtil.freqFromMIDI(CLASSICAL_MID);
-		MIDIUtil.playMIDIWithCPPN(cppn, classicalFreq);
+		MIDIUtil.playMIDIWithCPPNFromDoubleArray(cppn, classicalFreq);
 	}
 }

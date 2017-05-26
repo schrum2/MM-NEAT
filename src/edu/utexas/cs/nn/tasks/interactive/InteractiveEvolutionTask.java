@@ -126,6 +126,8 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	// This is a weird magic number that is used to track the checkboxes
 	public static final int CHECKBOX_IDENTIFIER_START = -25;
 	
+	protected Network currentCPPN;
+	
 	
 	private JPanel topper;
 	protected JPanel top;
@@ -603,6 +605,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 			scores.get(scoreIndex).replaceScores(new double[]{1.0});
 		}
 		additionalButtonClickAction(scoreIndex,scores.get(scoreIndex).individual);
+		currentCPPN = scores.get(scoreIndex).individual.getPhenotype();
 	}
 
 

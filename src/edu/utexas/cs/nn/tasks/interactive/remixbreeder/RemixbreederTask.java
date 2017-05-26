@@ -62,8 +62,9 @@ public class RemixbreederTask<T extends Network> extends BreedesizerTask<T> {
 		clipLength.setMaximum(Parameters.parameters.integerParameter("maxClipLength"));
 
 		JButton playOriginal = new JButton("PlayOriginal");
-		// Name is first available numeric label after the input disablers
-		playOriginal.setName("" + (CHECKBOX_IDENTIFIER_START - inputMultipliers.length));
+		// Name is first available numeric label after the input disablers.
+		// Extra -1 avoids conflict with play MIDI button of breedesizer.
+		playOriginal.setName("" + (CHECKBOX_IDENTIFIER_START - inputMultipliers.length - 1));
 		playOriginal.addActionListener(this);
 		top.add(playOriginal);
 
@@ -77,7 +78,7 @@ public class RemixbreederTask<T extends Network> extends BreedesizerTask<T> {
 		super.respondToClick(itemID);
 
 		// Play original sound if they click the button
-		if(itemID == (CHECKBOX_IDENTIFIER_START - inputMultipliers.length)) {
+		if(itemID == (CHECKBOX_IDENTIFIER_START - inputMultipliers.length - 1)) {
 			PlayDoubleArray.playDoubleArray(WAVDoubleArray);
 		}
 	}
@@ -89,7 +90,7 @@ public class RemixbreederTask<T extends Network> extends BreedesizerTask<T> {
 
 	@Override
 	protected String getWindowTitle() {
-		return "Breederemix";
+		return "Remixbreeder";
 	}
 
 	@Override

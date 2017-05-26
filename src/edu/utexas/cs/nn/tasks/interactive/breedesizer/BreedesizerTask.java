@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.Hashtable;
 
 import javax.sound.sampled.AudioFormat;
+import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JSlider;
@@ -19,6 +20,7 @@ import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.interactive.InteractiveEvolutionTask;
 import edu.utexas.cs.nn.util.graphics.DrawingPanel;
 import edu.utexas.cs.nn.util.graphics.GraphicsUtil;
+import edu.utexas.cs.nn.util.sound.MIDIUtil;
 import edu.utexas.cs.nn.util.sound.PlayDoubleArray;
 import edu.utexas.cs.nn.util.sound.SoundFromCPPNUtil;
 
@@ -44,7 +46,7 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 		this(true);
 	}
 	
-	public BreedesizerTask(boolean useKeyboard) throws IllegalAccessException {
+	public BreedesizerTask(boolean justBreedesizer) throws IllegalAccessException {
 		super();
 		clipLength = new JSlider(JSlider.HORIZONTAL, Keyboard.NOTE_LENGTH_DEFAULT, Parameters.parameters.integerParameter("maxClipLength"), Parameters.parameters.integerParameter("clipLength"));
 
@@ -80,13 +82,27 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 
 		top.add(clipLength);	
 
-		if(useKeyboard)
+		if(justBreedesizer) {
 			keyboard = new Keyboard();
-
+		
+			JButton playWithMIDI = new JButton("PlayWithMIDI");
+			// Name is first available numeric label after the input disablers
+			playWithMIDI.setName("" + (CHECKBOX_IDENTIFIER_START - inputMultipliers.length));
+			playWithMIDI.addActionListener(this);
+			top.add(playWithMIDI);
+		}
 		initializationComplete = true;
 	}
 
 
+	protected void respondToClick(int itemID) {
+		super.respondToClick(itemID);
+		// Play original sound if they click the button
+		if(itemID == (CHECKBOX_IDENTIFIER_START - inputMultipliers.length)) {
+			MIDIUtil.playMIDIWithCPPNFromString(Parameters.parameters.stringParameter("remixMIDIFile"), currentCPPN);
+		}
+	}
+	
 	@Override
 	public String[] sensorLabels() {
 		return new String[] { "Time", "Sine of time", "bias" };
