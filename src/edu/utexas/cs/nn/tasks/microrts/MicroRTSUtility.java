@@ -36,19 +36,25 @@ public class MicroRTSUtility {
 		if(Parameters.parameters.booleanParameter("")) {
 			
 		}
+//		if( My){
+//			
+//		}
 			
+		if(!Parameters.parameters.booleanParameter("mRTSComplex")){
 		Substrate processing = new Substrate(new Pair<Integer, Integer>(width, height), 
 				Substrate.PROCCESS_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, Substrate.PROCCESS_SUBSTRATE, 0), "Processing");
 		subs.add(processing);
 		Substrate output = new Substrate(new Pair<Integer, Integer>(1,1),
 				Substrate.OUTPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, Substrate.OUTPUT_SUBSTRATE, 0), "Output");
 		subs.add(output);
+		}
 		return subs;
 	} 
 	
 	public static List<Pair<String, String>> getSubstrateConnectivity(PhysicalGameState pgs) {
 		ArrayList<Pair<String, String>> conn = new ArrayList<Pair<String, String>>();
 		
+		if(Parameters.parameters.booleanParameter("mRTSComplex")) {
 			conn.add(new Pair<String, String>("Inputs Board State", "Processing"));
 		} else {
 			
@@ -56,6 +62,7 @@ public class MicroRTSUtility {
 		
 		conn.add(new Pair<String, String>("Processing","Output"));
 		if(Parameters.parameters.booleanParameter("extraHNLinks")) {
+			if(Parameters.parameters.booleanParameter("mRTSComplex")) {
 
 			} else {
 				conn.add(new Pair<String, String>("Inputs Board State","Output"));

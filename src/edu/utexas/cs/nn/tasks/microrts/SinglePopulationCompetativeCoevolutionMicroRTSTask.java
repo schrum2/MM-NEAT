@@ -211,7 +211,7 @@ public class SinglePopulationCompetativeCoevolutionMicroRTSTask<T extends Networ
 								if(currentUnit.getResources() > 0){
 									resourcePool += WORKER_HARVEST_VALUE;
 									if(!isUnitInRange(currentUnit, 0, 0, maxBaseX, maxBaseY)){
-										harvestingEfficiencyIndex-=WORKER_OUT_OF_BOUNDS_PENALTY;
+										harvestingEfficiencyIndex1 -= WORKER_OUT_OF_BOUNDS_PENALTY;
 									}
 								}
 							}
@@ -221,11 +221,11 @@ public class SinglePopulationCompetativeCoevolutionMicroRTSTask<T extends Networ
 				}//end j
 			}//end i
 			if(!baseAlive && !baseDeathRecorded) {
-				baseUpTime = currentCycle;
+				baseUpTime1 = currentCycle;
 				baseDeathRecorded = true;
 			}
 			if(resourcePool > formerResourcePool){
-				harvestingEfficiencyIndex += RESOURCE_GAIN_VALUE;
+				harvestingEfficiencyIndex1 += RESOURCE_GAIN_VALUE;
 			}
 			formerResourcePool = resourcePool;
 			averageUnitDifference += (unitDifferenceNow - averageUnitDifference) / currentCycle;
@@ -257,7 +257,7 @@ public class SinglePopulationCompetativeCoevolutionMicroRTSTask<T extends Networ
 								if(currentUnit.getResources() > 0){
 									resourcePool += WORKER_HARVEST_VALUE;
 									if(!isUnitInRange(currentUnit, 0, 0, maxBaseX, maxBaseY)){
-										harvestingEfficiencyIndex-=WORKER_OUT_OF_BOUNDS_PENALTY;
+										harvestingEfficiencyIndex1-=WORKER_OUT_OF_BOUNDS_PENALTY;
 									}
 								}
 							}
@@ -267,17 +267,35 @@ public class SinglePopulationCompetativeCoevolutionMicroRTSTask<T extends Networ
 				}//end j
 			}//end i
 			if(!baseAlive && !baseDeathRecorded) {
-				baseUpTime = currentCycle;
+				baseUpTime1 = currentCycle;
 				baseDeathRecorded = true;
 			}
 			if(resourcePool > formerResourcePool){
-				harvestingEfficiencyIndex += RESOURCE_GAIN_VALUE;
+				harvestingEfficiencyIndex1 += RESOURCE_GAIN_VALUE;
 			}
 			formerResourcePool = resourcePool;
 			averageUnitDifference += (unitDifferenceNow - averageUnitDifference) / currentCycle;
 		} //end if(Parameters.. = progressive)
 		return null;
 
+	}
+	
+	/**
+	 * 
+	 * @param u unit to be judged
+	 * @param x1 top left x of range
+	 * @param y1 top left y of range
+	 * @param x2 bottom right x of range
+	 * @param y2 bottom right y of range
+	 * @return true if u is within or on the borders
+	 */
+	private boolean isUnitInRange(Unit u, int x1, int y1, int x2, int y2){
+		int unitX = u.getX(); 
+		int unitY = u.getY();
+		if(unitX < x1 || unitY < y1 || unitX > x2 || unitY > y2){
+			return false;
+		} else
+			return true;
 	}
 
 	private void initializeAI() {
