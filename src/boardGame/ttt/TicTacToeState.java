@@ -3,7 +3,9 @@ package boardGame.ttt;
 import java.awt.Color;
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import boardGame.BoardGameState;
 import boardGame.TwoDimensionalBoardGameState;
@@ -14,14 +16,14 @@ public class TicTacToeState extends TwoDimensionalBoardGameState {
 	// Really only used in one place now. Probably ok to remove X and O.
 	public static final int X = 0;
 	public static final int O = 1;
-	
+	public static final int NUMBER_0F_PLAYERS = 2;
 	public static final int BOARD_WIDTH = 3;
 	
 	/**
 	 * Default Constructor; creates a representation of an empty Tic-Tac-Toe Board
 	 */
 	public TicTacToeState(){
-		super(2); // Always two players for TTT
+		super(NUMBER_0F_PLAYERS); // Always two players for TTT
 	}
 	
 	/**
@@ -32,6 +34,19 @@ public class TicTacToeState extends TwoDimensionalBoardGameState {
 	public TicTacToeState(TicTacToeState state){
 		super(state);
 	}
+	
+	/**
+	 * Constructor solely used for testing
+	 * 
+	 * @param board
+	 * @param numPlay
+	 * @param player
+	 * @param win
+	 */
+	TicTacToeState(int[][] board, int player, List<Integer> win){
+		super(board, NUMBER_0F_PLAYERS, player, win);
+	}
+	
 	
 	/**
 	 * Fills in the selected Point on the Tic-Tac-Toe Board with the correct Marking
@@ -59,7 +74,7 @@ public class TicTacToeState extends TwoDimensionalBoardGameState {
 		}
 		
 		if(winners.isEmpty()){
-			if(boardState[0][0] == boardState[1][1] && boardState[1][1] == boardState[2][2]  && boardState[2][2] != EMPTY){ // Checks the Diagonal for a 3-in-a-Row
+			if((boardState[0][0] == boardState[1][1] && boardState[1][1] == boardState[2][2]) && boardState[0][0] != EMPTY){ // Checks the Diagonal for a 3-in-a-Row
 				winners.add(boardState[0][0]);
 			}else if(boardState[0][2] == boardState[1][1] && boardState[1][1] == boardState[2][0]  && boardState[2][0] != EMPTY){ // Checks the Diagonal for a 3-in-a-Row			over = true;
 				winners.add(boardState[0][2]);
@@ -96,6 +111,7 @@ public class TicTacToeState extends TwoDimensionalBoardGameState {
 	 */
 	@Override
 	public boolean endState() { // Consider moving to 2DBoardGameState
+		checkWinner();
 		return !winners.isEmpty();
 	}
 
@@ -115,8 +131,8 @@ public class TicTacToeState extends TwoDimensionalBoardGameState {
 	 * @return List<BoardGameStates> of States possible starting from a specific BoardGameState
 	 */
 	@Override
-	public List<BoardGameState> possibleBoardGameStates(BoardGameState currentState) {
-		List<BoardGameState> returnStates = new ArrayList<BoardGameState>();
+	public Set<BoardGameState> possibleBoardGameStates(BoardGameState currentState) {
+		Set<BoardGameState> returnStates = new HashSet<BoardGameState>();
 		List<Point> tempPoints = getEmptyIndex();
 
 		for(Point p : tempPoints){
@@ -152,5 +168,4 @@ public class TicTacToeState extends TwoDimensionalBoardGameState {
 	public Color[] getPlayerColors() {
 		return new Color[]{Color.blue, Color.red};
 	}
-
 }

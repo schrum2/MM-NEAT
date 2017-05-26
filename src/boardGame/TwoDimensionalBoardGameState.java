@@ -2,6 +2,7 @@ package boardGame;
 
 import java.awt.Color;
 import java.awt.Point;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -40,7 +41,24 @@ public abstract class TwoDimensionalBoardGameState implements BoardGameState {
 		winners = new LinkedList<>(); 
 		winners.addAll(state.winners);
 	}	
-
+	
+	/**
+	 * Constructor used for Testing; allow the User to individually control the aspects of the BoardState
+	 * 
+	 * @param board
+	 * @param numPlay
+	 * @param player
+	 * @param win
+	 */
+	protected TwoDimensionalBoardGameState(int[][] board, int numPlay, int player, List<Integer> win){
+		assert board.length == getBoardHeight() && board[0].length == getBoardWidth();
+		boardState = board;
+		numPlayers = numPlay;
+		nextPlayer = player;
+		winners = win;
+	}
+	
+	
 	/**
 	 * Empties all board squares
 	 */
@@ -168,7 +186,8 @@ public abstract class TwoDimensionalBoardGameState implements BoardGameState {
 	 * Prints out a visual representation of the TicTacToeState to the console
 	 */
 	public String toString(){
-		String result = "\n";
+		String result = "Next Player: " + nextPlayer + " numPlayers: " + numPlayers + " winners: " + winners;
+		result +="\n";
 		for(int i = 0; i < getBoardWidth(); i++) {
 			result += "--";
 		}
@@ -230,4 +249,25 @@ public abstract class TwoDimensionalBoardGameState implements BoardGameState {
 		
 		return features;
 	}
+	
+	
+	public boolean equals(Object other){
+		
+		TwoDimensionalBoardGameState other2D = (TwoDimensionalBoardGameState) other;
+		
+		if(this.getBoardWidth() != other2D.getBoardWidth() || this.getBoardHeight() != other2D.getBoardHeight()) return false;
+		
+		for(int i = 0; i < getBoardWidth(); i++){
+			for(int j = 0; j < getBoardHeight(); j++){
+				if(this.boardState[i][j] != other2D.boardState[i][j]){
+					return false;
+				}
+			}
+		}
+		
+		if(this.nextPlayer != other2D.nextPlayer || !(this.winners.equals(other2D.winners) || this.numPlayers != other2D.numPlayers)) return false;
+		
+		return true;
+	}
+	
 }

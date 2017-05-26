@@ -4,7 +4,9 @@ import java.awt.Color;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import boardGame.BoardGameState;
 import boardGame.TwoDimensionalBoardGameState;
@@ -212,10 +214,10 @@ public class CheckersState extends TwoDimensionalBoardGameState {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T extends BoardGameState> List<T> possibleBoardGameStates(T currentState) {
+	public <T extends BoardGameState> Set<T> possibleBoardGameStates(T currentState) {
 		// TODO: Ensure that this method works.
 		
-		List<CheckersState> possible = new ArrayList<CheckersState>();
+		Set<T> possible = new HashSet<T>();
 		List<Point> checkMoves = new ArrayList<Point>();
 		
 		for(int i = 0; i < BOARD_WIDTH; i++){
@@ -258,7 +260,7 @@ public class CheckersState extends TwoDimensionalBoardGameState {
 							}
 							
 							if(moved){ // If the Move was successful in the above check, add it to the List of possible Moves
-								possible.add(temp);
+								possible.add((T) temp);
 							}
 							
 						}
@@ -266,11 +268,8 @@ public class CheckersState extends TwoDimensionalBoardGameState {
 				}
 			}
 		}
-		
-		List<T> returnThis = new ArrayList<T>();
-		returnThis.addAll((Collection<? extends T>) possible);
-		
-		return returnThis;
+				
+		return possible;
 	}
 
 	@Override

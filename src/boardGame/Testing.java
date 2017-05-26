@@ -1,10 +1,6 @@
 package boardGame;
 
-import boardGame.checkers.Checkers;
 import boardGame.othello.Othello;
-import boardGame.othello.OthelloHumanPlayer;
-import boardGame.othello.OthelloState;
-import boardGame.ttt.TicTacToe;
 import boardGame.ttt.TicTacToeState;
 import edu.utexas.cs.nn.util.MiscUtil;
 

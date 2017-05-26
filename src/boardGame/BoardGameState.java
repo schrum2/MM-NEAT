@@ -1,6 +1,7 @@
 package boardGame;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Generic Interface for simulated Board Game State
@@ -34,7 +35,7 @@ public interface BoardGameState {
 	 * @param currentState The current BoardGameState
 	 * @return List<BoardGameState> of all possible BoardGameStates starting from the given currentState
 	 */
-	public <T extends BoardGameState> List<T> possibleBoardGameStates(T currentState);
+	public <T extends BoardGameState> Set<T> possibleBoardGameStates(T currentState);
 	
 	
 	/**

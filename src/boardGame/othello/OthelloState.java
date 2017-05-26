@@ -4,7 +4,9 @@ import java.awt.Color;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import boardGame.BoardGameState;
 import boardGame.TwoDimensionalBoardGameState;
@@ -15,18 +17,20 @@ public class OthelloState extends TwoDimensionalBoardGameState {
 	
 	private final int BOARD_WIDTH = 8;
 
+	private final static int NUMBER_OF_PLAYERS = 2; // Keeps track of the center of the Board
+	
 	private final int BOARD_CORE1 = 3; // Keeps track of the center of the Board
 	private final int BOARD_CORE2 = 4; // Keeps track of the center of the Board
 	
-	private final int EMPTY = -1;
-	private final int BLACK_CHIP = 0;
-	private final int WHITE_CHIP = 1;
+	public static final int EMPTY = -1;
+	public static final int BLACK_CHIP = 0;
+	public static final int WHITE_CHIP = 1;
 	
 	/**
 	 * Default Constructor
 	 */
 	public OthelloState(){
-		super(2);
+		super(NUMBER_OF_PLAYERS);
 	}
 	
 	/**
@@ -40,6 +44,10 @@ public class OthelloState extends TwoDimensionalBoardGameState {
 		super(state);
 	}
 
+	OthelloState(int[][] board, int nextPlay, List<Integer> win){
+		super(board, NUMBER_OF_PLAYERS, nextPlay, win);
+	}
+	
 	/**
 	 * Returns true if the Game is over, else returns false
 	 * 
@@ -160,9 +168,9 @@ public class OthelloState extends TwoDimensionalBoardGameState {
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T extends BoardGameState> List<T> possibleBoardGameStates(T currentState) {
+	public <T extends BoardGameState> Set<T> possibleBoardGameStates(T currentState) {
 		
-		List<OthelloState> possible = new ArrayList<OthelloState>();
+		Set<T> possible = new HashSet<T>();
 		List<Point> chipMoves = new ArrayList<Point>();
 		
 		for(int i = 0; i < BOARD_WIDTH; i++){ // This part works
@@ -193,7 +201,7 @@ public class OthelloState extends TwoDimensionalBoardGameState {
 							if(boardState[x][y] == EMPTY){
 								OthelloState temp = (OthelloState) currentState.copy();
 								if(temp.move(new Point(x, y))){
-									possible.add(temp);
+									possible.add((T) temp);
 								}
 							}
 						}
@@ -202,17 +210,13 @@ public class OthelloState extends TwoDimensionalBoardGameState {
 			}
 		}
 				
-		List<T> returnThis = new ArrayList<T>();
 		// Schrum: this case here annoys me. I feel that there is a way to avoid it
-		returnThis.addAll((Collection<? extends T>) possible);
 		
-		if(returnThis.isEmpty()){ // If unable to make a Move, must return the currentState; counts as a Pass
-			returnThis.add(currentState);
+		if(possible.isEmpty()){ // If unable to make a Move, must return the currentState; counts as a Pass
+			possible.add(currentState);
 			numPasses++;
-			return returnThis;
-		}else{
-			return returnThis;			
 		}
+		return possible;
 	}
 
 	/**
@@ -236,6 +240,9 @@ public class OthelloState extends TwoDimensionalBoardGameState {
 		return winners;
 	}
 
+	/**
+	 * Sets up the Othello Board; only places the starting Chips in the center at the correct positions
+	 */
 	@Override
 	public void setupStartingBoard() {
 		numPasses = 0;

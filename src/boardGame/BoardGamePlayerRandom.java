@@ -1,5 +1,6 @@
 package boardGame;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import edu.utexas.cs.nn.util.random.RandomNumbers;
@@ -14,7 +15,8 @@ public class BoardGamePlayerRandom<T extends BoardGameState> implements BoardGam
 	 */
 	@Override
 	public T takeAction(T current) {
-		List<T> poss = current.possibleBoardGameStates(current);
+		List<T> poss = new ArrayList<T>();
+		poss.addAll(current.possibleBoardGameStates(current));
 		T temp = poss.get(RandomNumbers.randomGenerator.nextInt(poss.size()));
 		return temp;
 	}

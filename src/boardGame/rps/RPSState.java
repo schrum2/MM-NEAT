@@ -1,7 +1,9 @@
 package boardGame.rps;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import boardGame.BoardGameState;
 
@@ -176,8 +178,8 @@ public class RPSState implements BoardGameState{
 	 * @return List<BoardGameState> with all BoardGameStates possible from a given BoardGameState
 	 */
 	@Override
-	public List<BoardGameState> possibleBoardGameStates(BoardGameState currentState) {
-		List<BoardGameState> returnStates = new ArrayList<BoardGameState>();
+	public Set<BoardGameState> possibleBoardGameStates(BoardGameState currentState) {
+		Set<BoardGameState> returnStates = new HashSet<BoardGameState>();
 		List<Integer> tempMoves = getPossibleMoves();
 		
 		for(Integer i : tempMoves){

@@ -1,18 +1,18 @@
 package boardGame;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import edu.utexas.cs.nn.networks.Network;
+import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
 
 public class BoardGamePlayerMinimax<T extends Network,S extends BoardGameState> implements BoardGamePlayer<S> {
 	
-	T network;
-	BoardGameHeuristic boardHeuristic;
+	T network; // Remove eventually
+	BoardGameHeuristic boardHeuristic; // Should generalize to take any heuristic function, not just a network eval
 	
 	
 	public BoardGamePlayerMinimax(T net, BoardGameHeuristic bgh){
-		network = net;
+		network = net; // Remove eventually
 		boardHeuristic = bgh;
 	}	
 	
@@ -20,22 +20,16 @@ public class BoardGamePlayerMinimax<T extends Network,S extends BoardGameState> 
 	public S takeAction(S current) {
 		// TODO: Add Heuristic analysis; Right now, has exact same code as OneStepEval Player
 		
-		List <double[]> outputs = new ArrayList<double[]>(); // Stores the network's ouputs
-		List<S> poss = current.possibleBoardGameStates(current);
+		ArrayList<S> poss = new ArrayList<>();
+		poss.addAll(current.possibleBoardGameStates(current));
+		double[] utilities = new double[poss.size()];
 		
-		for(BoardGameState bgs : poss){ // Gets the network's outputs for all possible BoardGameStates
-			double[] description = bgs.getDescriptor();
-			outputs.add(network.process(description));
+		for(int i = 0; i < utilities.length; i++){ // Gets the network's outputs for all possible BoardGameStates
+			double[] description = poss.get(i).getDescriptor();
+			utilities[i] = network.process(description)[0]; // utility score: replace with call to heuristic function
 		}
-		
-		double[] action = new double[0]; // Stores the Array with the longest length
-		
-		for(double[] d : outputs){ // Gets the output with the longest Array length
-			if(d.length > action.length){
-				action = d;
-			}
-		}
-		return poss.get(outputs.indexOf(action)); // Returns the BoardGameState which produced the highest network output
+
+		return poss.get(StatisticsUtilities.argmax(utilities));
 	}
 
 }
