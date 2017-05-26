@@ -3,6 +3,7 @@ package boardGame;
 import java.awt.Color;
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -250,6 +251,20 @@ public abstract class TwoDimensionalBoardGameState implements BoardGameState {
 		return features;
 	}
 	
+	/**
+	 * Auto-generated hash code method
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + Arrays.deepHashCode(boardState);
+		result = prime * result + nextPlayer;
+		result = prime * result + numPlayers;
+		result = prime * result + ((winners == null) ? 0 : winners.hashCode());
+		return result;
+	}
+
 	
 	public boolean equals(Object other){
 		
@@ -268,6 +283,7 @@ public abstract class TwoDimensionalBoardGameState implements BoardGameState {
 		if(this.nextPlayer != other2D.nextPlayer || !(this.winners.equals(other2D.winners) || this.numPlayers != other2D.numPlayers)) return false;
 		
 		return true;
-	}
+	}	
+	
 	
 }

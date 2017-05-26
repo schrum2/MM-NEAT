@@ -71,6 +71,10 @@ public class OthelloStateTest {
 	public void testSetupStartingBoard() {
 		start.setupStartingBoard();
 		assertEquals(new OthelloState(), start);
+		assertTrue(start.move(new Point(3,5))); // Still able to make this starting Move
+		
+		test1.setupStartingBoard(); // Doesn't actually clear the Board; should be unable to make the starting Move
+		assertFalse(test1.move(new Point(3,5)));
 	}
 
 	@Test
@@ -133,23 +137,44 @@ public class OthelloStateTest {
 		
 		
 		
-		Set<BoardGameState> listTestStart = start.possibleBoardGameStates(start);
+		Set<BoardGameState> listTestStart = new HashSet<BoardGameState>();
+		listTestStart.add(new OthelloState(new int[][]{{e,e,e,e,e,e,e,e},
+													   {e,e,e,e,e,e,e,e},
+													   {e,e,e,e,e,e,e,e},
+													   {e,e,e,B,B,B,e,e},
+													   {e,e,e,W,B,e,e,e},
+													   {e,e,e,e,e,e,e,e},
+													   {e,e,e,e,e,e,e,e},
+													   {e,e,e,e,e,e,e,e}}, W, new ArrayList<Integer>()));
+
+		listTestStart.add(new OthelloState(new int[][]{{e,e,e,e,e,e,e,e},
+													   {e,e,e,e,e,e,e,e},
+													   {e,e,e,e,B,e,e,e},
+													   {e,e,e,B,B,e,e,e},
+													   {e,e,e,W,B,e,e,e},
+													   {e,e,e,e,e,e,e,e},
+													   {e,e,e,e,e,e,e,e},
+													   {e,e,e,e,e,e,e,e}}, W, new ArrayList<Integer>()));
 		
-		OthelloState start1 = (OthelloState) start.copy();
-		start1.move(new Point(3,5));
-		listTestStart.add(start1);
+		listTestStart.add(new OthelloState(new int[][]{{e,e,e,e,e,e,e,e},
+													   {e,e,e,e,e,e,e,e},
+													   {e,e,e,e,e,e,e,e},
+													   {e,e,e,B,W,e,e,e},
+													   {e,e,e,B,B,e,e,e},
+													   {e,e,e,B,e,e,e,e},
+													   {e,e,e,e,e,e,e,e},
+													   {e,e,e,e,e,e,e,e}}, W, new ArrayList<Integer>()));
 		
-		OthelloState start2 = (OthelloState) start.copy();
-		start2.move(new Point(5,3));
-		listTestStart.add(start2);
+		listTestStart.add(new OthelloState(new int[][]{{e,e,e,e,e,e,e,e},
+			   										   {e,e,e,e,e,e,e,e},
+			   										   {e,e,e,e,e,e,e,e},
+			   										   {e,e,e,B,W,e,e,e},
+			   										   {e,e,B,B,B,e,e,e},
+			   										   {e,e,e,e,e,e,e,e},
+			   										   {e,e,e,e,e,e,e,e},
+			   										   {e,e,e,e,e,e,e,e}}, W, new ArrayList<Integer>()));
 		
-		OthelloState start3 = (OthelloState) start.copy();
-		start3.move(new Point(2,4));
-		listTestStart.add(start3);
 		
-		OthelloState start4 = (OthelloState) start.copy();
-		start4.move(new Point(4,2));
-		listTestStart.add(start4);
 		
 		
 		Set<BoardGameState> listTest1 = test1.possibleBoardGameStates(test1);
@@ -186,18 +211,16 @@ public class OthelloStateTest {
 		testBoard8.move(new Point(0,7));
 		listTest1.add(testBoard8);
 		
-		System.out.println("Actual Output: " + listStart + "\n\n\n========>\n Test Output: " + listTestStart);
 		
 		
+		for(BoardGameState othello: listStart){
+			System.out.println(othello);
+			assertTrue(listTestStart.contains(othello)); // TODO: Still doesn't work for some reason; all possible BoardStates are in the test.
+		}
 		
-		
-//		for(BoardGameState othello: listStart){
-//			assertTrue(listTestStart.contains(othello)); // TODO: Still doesn't work for some reason; all possible BoardStates are in the test.
-//		}
-//		
-//		for(BoardGameState othello: list1){
-//			
-//		}
+		for(BoardGameState othello: list1){
+			assertTrue(listTest1.contains(othello));
+		}
 	}
 
 	@Test
