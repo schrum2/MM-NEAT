@@ -1,5 +1,5 @@
 package edu.utexas.cs.nn.tasks.microrts.evaluation;
-
+//path: edu.utexas.cs.nn.tasks.microrts.evaluation.NNMovingStationaryEvaluationFunction
 import micro.rts.GameState;
 import micro.rts.units.Unit;
 
@@ -10,12 +10,11 @@ import micro.rts.units.Unit;
  */
 public class NNMovingStationaryEvaluationFunction extends NNEvaluationFunction{
 	
-	private int substrateSize;
 
 	@Override
 	protected double[] gameStateToArray(GameState gs) {
-		substrateSize = pgs.getWidth()*pgs.getHeight();
-		double[] inputs = new double[substrateSize * 2];
+		pgs = gs.getPhysicalGameState();
+		double[] inputs = new double[pgs.getWidth()*pgs.getHeight() * 2];
 		Unit current = null;
 		for(int i = 0; i < pgs.getWidth(); i++){
 			for(int j = 0; j < pgs.getHeight(); j++){
@@ -24,7 +23,7 @@ public class NNMovingStationaryEvaluationFunction extends NNEvaluationFunction{
 					if(current.getType().canMove){
 						inputs[i*pgs.getWidth() + j] = current.getID(); 
 					} else {
-						inputs[i*pgs.getWidth() + j + substrateSize] = current.getID();
+						inputs[i*pgs.getWidth() + j + pgs.getWidth()*pgs.getHeight()] = current.getID();
 					}
 				}
 			}
@@ -34,11 +33,12 @@ public class NNMovingStationaryEvaluationFunction extends NNEvaluationFunction{
 
 	@Override
 	public String[] sensorLabels() {
-		String[] labels = new String[substrateSize * 2];
+		assert pgs != null : "There must be a physical game state in order to extract height and width";
+		String[] labels = new String[pgs.getWidth()*pgs.getHeight() * 2];
 		for(int i = 0; i < pgs.getWidth(); i++){
 			for(int j = 0; j < pgs.getHeight(); j++){
-				labels[i*pgs.getWidth() + j] = "Mobile unit:  (" + i + ", " + j + ")";
-				labels[i*pgs.getWidth() + j + substrateSize] = "Immobile unit:  (" + i + "," + j + ")";
+				labels[i*pgs.getWidth() + j ] = "Mobile unit:  (" + i + ", " + j + ")";
+				labels[i*pgs.getWidth() + j + pgs.getWidth()*pgs.getHeight()] = "Immobile unit:  (" + i + "," + j + ")";
 			}
 		}
 		return labels;
@@ -46,8 +46,10 @@ public class NNMovingStationaryEvaluationFunction extends NNEvaluationFunction{
 
 	@Override
 	public float evaluate(int maxplayer, int minplayer, GameState gs) {
-		// TODO Auto-generated method stub
-		return 0;
+		double[] inputs = gameStateToArray(gs);
+		double[] outputs = nn.process(inputs);
+		float score = (float) outputs[0];
+		return score;
 	}
 	
 }

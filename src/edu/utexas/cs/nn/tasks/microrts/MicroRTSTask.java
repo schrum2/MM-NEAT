@@ -171,6 +171,7 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 
 	@Override
 	public String[] sensorLabels() {
+		ef.givePhysicalGameState(pgs);
 		return ef.sensorLabels();
 	}
 
@@ -213,7 +214,6 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 		ef.setNetwork(individual);
 		if(CommonConstants.watch)
 			w = PhysicalGameStatePanel.newVisualizer(gs,640,640,false,PhysicalGameStatePanel.COLORSCHEME_BLACK);
-		System.out.println(gs.winner());
 		do{
 			PlayerAction pa1;
 			try {
