@@ -584,7 +584,16 @@ public class Parameters {
 		booleanOptions.add("hierarchicalMultitask", false, "Each multitask mode can consist of multiple preference neuron modules");
 		booleanOptions.add("trackCombiningCrossover", false, "Whether or not to track combining crossover information");
 		booleanOptions.add("moPinball", false, "Subtracts the distance to the target from the Fitness; getting closer means a higher score overall");
-		booleanOptions.add("mRTSComplex", false, "whether multiple substrates are used as inputs"); //TODO
+		booleanOptions.add("mRTSComplex", false, "whether multiple substrates are used as inputs");
+		booleanOptions.add("mRTSUnits", false, "whether there is a substrate dedicated to (both players') movable units");
+		booleanOptions.add("mRTSBuildings", false, "whether there is a substrate dedicated to (both players') NON-movable units");
+		booleanOptions.add("mRTSMyUnits", false, "whether there is a substrate dedicated to blue agent's movable units");
+		booleanOptions.add("mRTSMyBuildings", false, "whether there is a substrate dedicated to blue agent's NON-movable units");
+		booleanOptions.add("mRTSOpponentUnits", false, "whether there is a substrate dedicated to red agent's movable units");
+		booleanOptions.add("mRTSOpponentBuildings", false, "whether there is a substrate dedicated to red agent's NON-movable units");
+		booleanOptions.add("mRTSmyAll", false, "whether there is a substrate dedicated to all of the red agents' units");
+		booleanOptions.add("mRTSOpponentsAll", false, "whether there is a substrate dedicated to all of the blue agents' units");
+		booleanOptions.add("mRTS", false, "whether there is a substrate dedicated to all of the blue agents' units");
 		
 		// Double parameters
 		doubleOptions.add("linkExpressionThreshold", 0.2, "Threshold for hyperNEAT output to result in an expressed link");
