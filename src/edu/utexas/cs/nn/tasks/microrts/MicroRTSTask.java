@@ -200,7 +200,8 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 		baseUpTime = 0;
 		harvestingEfficiencyIndex = 0;
 		//file io should happen in the constructor, reset here TODO
-		gs = new GameState(igs.getPhysicalGameState(), utt);
+		pgs = initialPgs.clone();
+		gs = new GameState(pgs, utt);
 		if(!AiInitialized)
 			initializeAI();
 		else{
@@ -209,7 +210,6 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 				ef2.givePhysicalGameState(initialPgs);
 			}
 		}
-		pgs = initialPgs;
 		ef.setNetwork(individual);
 		if(CommonConstants.watch)
 			w = PhysicalGameStatePanel.newVisualizer(gs,640,640,false,PhysicalGameStatePanel.COLORSCHEME_BLACK);
