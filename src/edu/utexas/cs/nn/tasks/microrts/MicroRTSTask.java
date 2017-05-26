@@ -50,9 +50,9 @@ import micro.rts.units.UnitTypeTable;
  * 
  * @author alicequint
  *
- * @param <T> phenotype
+ * @param <T> NN
  */
-public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implements NetworkTask, HyperNEATTask{
+public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implements NetworkTask, HyperNEATTask, MicroRTSInformation{
 
 	private PhysicalGameState pgs;
 	private PhysicalGameState initialPgs;
@@ -143,35 +143,16 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 	 */
 	@Override
 	public List<Substrate> getSubstrateInformation() {
-		int height = pgs.getHeight();
-		int width = pgs.getWidth();
-		ArrayList<Substrate> subs = new ArrayList<Substrate>();
-		Substrate inputsBoardState = new Substrate(new Pair<Integer, Integer>(width, height),
-				Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, Substrate.INPUT_SUBSTRATE, 0), "Inputs Board State");
-		Substrate processing = new Substrate(new Pair<Integer, Integer>(width, height), 
-				Substrate.PROCCESS_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, Substrate.PROCCESS_SUBSTRATE, 0), "Processing");
-		Substrate output = new Substrate(new Pair<Integer, Integer>(1,1),
-				Substrate.OUTPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, Substrate.OUTPUT_SUBSTRATE, 0), "Output");
-		subs.add(inputsBoardState);
-		subs.add(processing);
-		subs.add(output);
-		return subs;
+		return MicroRTSUtility.getSubstrateInformation(pgs);
 	} 
 
 	@Override
 	public List<Pair<String, String>> getSubstrateConnectivity() {
-		ArrayList<Pair<String, String>> conn = new ArrayList<Pair<String, String>>();
-		conn.add(new Pair<String, String>("Inputs Board State", "Processing"));
-		conn.add(new Pair<String, String>("Processing","Output"));
-		if(Parameters.parameters.booleanParameter("extraHNLinks")) {
-			conn.add(new Pair<String, String>("Inputs Board State","Output"));
-		}
-		return conn;
+		return MicroRTSUtility.getSubstrateConnectivity(pgs);
 	}
 
 	@Override
 	public String[] sensorLabels() {
-		ef.givePhysicalGameState(pgs);
 		return ef.sensorLabels();
 	}
 
@@ -200,7 +181,6 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 		currentCycle = 1;
 		baseUpTime = 0;
 		harvestingEfficiencyIndex = 0;
-		//file io should happen in the constructor, reset here TODO
 		pgs = initialPgs.clone();
 		gs = new GameState(pgs, utt);
 		if(!AiInitialized)
@@ -294,26 +274,7 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 				((HasEvaluationFunction) ai2).setEvaluationFunction(ef2);
 		AiInitialized = true;
 	}
-
-	//to be used by fitness function
-	public double getAverageUnitDifference(){
-		return averageUnitDifference;
-	}
-
-	//to be used by fitness function
-	public int getBaseUpTime(){
-		return baseUpTime;
-	}
-
-	//to be used by fitness function
-	public int getHarvestingEfficiency(){
-		return harvestingEfficiencyIndex;
-	}
-
-	public int getResourceGainValue(){
-		return RESOURCE_GAIN_VALUE;
-	}
-
+	
 	/**
 	 * 
 	 * @param u unit to be judged
@@ -332,6 +293,31 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 			return true;
 	}
 
+	@Override
+	public double getAverageUnitDifference(){
+		return averageUnitDifference;
+	}
+
+	@Override
+	public int getBaseUpTime(){
+		return baseUpTime;
+	}
+
+	@Override
+	public int getHarvestingEfficiency(){
+		return harvestingEfficiencyIndex;
+	}
+
+	@Override
+	public int getResourceGainValue(){
+		return RESOURCE_GAIN_VALUE;
+	}
+	
+	@Override
+	public UnitTypeTable getUnitTypeTable() {
+		return utt;
+	}
+
 	public static void main(String[] rags){
 		Parameters.initializeParameterCollections(new String[]{"io:false","netio:false", "watch:true"});
 		//			MMNEAT.loadClasses();
@@ -340,9 +326,5 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 		//			Pair<double[], double[]> result = test.oneEval(g, -1);
 		//			System.out.println(Arrays.toString(result.t1)+ " , "+Arrays.toString(result.t2));
 		System.out.println();
-	}
-
-	public UnitTypeTable getUnitTypeTable() {
-		return utt;
 	}
 }
