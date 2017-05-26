@@ -53,7 +53,7 @@ public class SoundUtilExamples {
 	public static final String CHIPTUNE_WAV = "data/sounds/8-Bit-Noise-1.wav";
 
 	public static void main(String[] args) throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException, JavaLayerException {
-		saveFileTests();
+		MIDITests();
 	}
 
 	public static void CPPNExamples() throws IOException {
@@ -417,11 +417,12 @@ public class SoundUtilExamples {
 			test.mutate();
 		}
 		Network cppn = test.getCPPN();
-		//		double[] furEliseFreq = MIDIUtil.freqFromMIDI(FUR_ELISE_MID);
-		//		MIDIUtil.playMIDIWithCPPN(cppn, furEliseFreq);
+		MIDIUtil.playMIDIWithCPPNFromString(FUR_ELISE_MID, 1, cppn);
+		File furElise = new File(FUR_ELISE_MID);
+		//MIDIUtil.MIDIData(furElise);
 
 
-		double[] classicalFreq = MIDIUtil.freqFromMIDI(CLASSICAL_MID);
-		MIDIUtil.playMIDIWithCPPNFromDoubleArray(cppn, classicalFreq);
+		//double[] classicalFreq = MIDIUtil.freqFromMIDI(CLASSICAL_MID);
+		//MIDIUtil.playMIDIWithCPPNFromDoubleArray(cppn, classicalFreq);
 	}
 }

@@ -99,7 +99,8 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 		super.respondToClick(itemID);
 		// Play original sound if they click the button
 		if(itemID == (CHECKBOX_IDENTIFIER_START - inputMultipliers.length)) {
-			MIDIUtil.playMIDIWithCPPNFromString(Parameters.parameters.stringParameter("remixMIDIFile"), currentCPPN);
+			// Magic number 1: for track index 1: May need to fix later
+			MIDIUtil.playMIDIWithCPPNFromString(Parameters.parameters.stringParameter("remixMIDIFile"), 1, currentCPPN);
 		}
 	}
 	

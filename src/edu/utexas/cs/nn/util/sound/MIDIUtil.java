@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.HashMap;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiEvent;
@@ -19,6 +20,8 @@ import javax.sound.midi.Track;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.tasks.interactive.InteractiveEvolutionTask;
 import edu.utexas.cs.nn.tasks.interactive.breedesizer.Keyboard;
+import edu.utexas.cs.nn.util.MiscUtil;
+import edu.utexas.cs.nn.util.datastructures.Pair;
 
 /**
  * Series of utility methods that read data from MIDI files and convert it into frequencies
@@ -28,11 +31,11 @@ import edu.utexas.cs.nn.tasks.interactive.breedesizer.Keyboard;
  *
  */
 public class MIDIUtil {
-	
+
 	public static final int NOTE_ON = 0x90;
 	public static final int NOTE_OFF = 0x80;
 	public static final String[] NOTE_NAMES = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
-	
+
 	//Representative frequencies for octave 1
 	public static final double C1 = 32.70;
 	public static final double CSHARP1 = 34.65;
@@ -46,13 +49,16 @@ public class MIDIUtil {
 	public static final double A1 = 55.00;
 	public static final double ASHARP1 = 58.27;
 	public static final double B1 = 61.74;
-	
+
 	// representative frequencies for octave 1 read into double array so that they 
 	// can be manipulated based on their index in noteToFreq()
 	public static final double[] NOTES = new double[]{C1, CSHARP1, D1, DSHARP1, E1, F1, FSHARP1, G1, GSHARP1, A1, ASHARP1, B1};
-	
+
 	public static final int NOTES_IN_OCTAVE = 12; //number of chromatic notes in a single octave
-	
+
+	public static final int BPM = 120;
+	public static final int PPQ = 96;
+
 	/**
 	 * Method that takes in a MIDI file and prints out useful information about the note, whether the 
 	 * note is on or off, the key, and the velocity. This is printed for each individual track in the 
@@ -72,6 +78,7 @@ public class MIDIUtil {
 				trackNumber++;
 				System.out.println("Track " + trackNumber + ": size = " + track.size());
 				System.out.println();
+				//MiscUtil.waitForReadStringAndEnterKeyPress();
 				for (int i=0; i < track.size(); i++) { 
 					MidiEvent event = track.get(i);
 					System.out.print("@" + event.getTick() + " ");
@@ -108,7 +115,7 @@ public class MIDIUtil {
 		}		
 
 	}
-	
+
 	/**
 	 * Method that takes an input string representation of a MIDI file and loops through
 	 * the individual tracks of the file, converting each one to its equivalent 
@@ -117,33 +124,81 @@ public class MIDIUtil {
 	 * @param audio string representation of MIDI file
 	 * @return double array of all frequencies of tracks in order
 	 */
-	public static double[] freqFromMIDI(String audio){
-		double[] frequencies = new double[10000];
+	public static Pair<double[],double[]> freqFromMIDI(String audio, int trackNum){
 		File audioFile = new File(audio);
+		return freqFromMIDI(audioFile, trackNum);
+	}	
+
+	public static int countNotes(Track t) {
+		int total = 0;
+		for(int i = 0; i < t.size(); i++) {
+			MidiEvent event = t.get(i);
+			MidiMessage message = event.getMessage();
+			//System.out.println(message);
+			if (message instanceof ShortMessage) {
+				ShortMessage sm = (ShortMessage) message;
+				if (sm.getCommand() == NOTE_ON && sm.getData2() > 0) {
+					total++;
+				}
+			}
+		}
+		return total;
+	}
+	
+	public static Pair<double[], double[]> freqFromMIDI(File audioFile, int trackNum) {
 		Sequence sequence;
 		try {
 			sequence = MidiSystem.getSequence(audioFile);
-			int trackNumber = 0;
-			for (Track track :  sequence.getTracks()) {
-				trackNumber++;
-				for (int i=0; i < track.size(); i++) { 
-					MidiEvent event = track.get(i);
-					MidiMessage message = event.getMessage();
-					if (message instanceof ShortMessage) {
-						ShortMessage sm = (ShortMessage) message;
-						if (sm.getCommand() == NOTE_ON && sm.getData2() > 0) {
-						int key = sm.getData1();
-						frequencies[i] = noteToFreq(key);
-						}
+			Track[] tracks = sequence.getTracks();
+			Track track = tracks[trackNum];
+			int numNotes = countNotes(track);
+			
+			double[] frequencies = new double[numNotes];
+			long[] starts = new long[numNotes]; 
+			double[] lengths = new double[numNotes]; // Needs to be double?
+			
+			int j = 0;
+			for(int i = 0; i < track.size(); i++) {
+				MidiEvent event = track.get(i);
+				MidiMessage message = event.getMessage();
+				//System.out.println(message);
+				if (message instanceof ShortMessage) {
+					ShortMessage sm = (ShortMessage) message;
+					
+					int key = sm.getData1();
+					double freq = noteToFreq(key);
+					long tick = event.getTick(); // actually starting tick time
+					
+					if (sm.getCommand() == NOTE_ON && sm.getData2() > 0) {
+						frequencies[j] = freq;
+						starts[j] = tick; // actually starting tick time
+						j++;
+					} 
+					
+					if(j > 0) { // Not first note
+						// May not be turning off the right note
+						//lengths[j - 1] = convertTicksToMilliseconds(tick - starts[j-1]);
+						lengths[j-1] = convertTicksToMilliseconds(tick - starts[j-1]);
 					}
+					
+					// This was looking for the stop time of the particular note, but did not account for note overlap
+//					} else if(sm.getCommand() == NOTE_OFF || (sm.getCommand() == NOTE_ON && sm.getData2() == 0)) {
+//						int key = sm.getData1();
+//						int indexInLengths = noteIndex.get(key);
+//						lengths[indexInLengths] = convertTicksToMilliseconds(event.getTick() - starts[indexInLengths]); // actually starting time
+//						//lengths[indexInLengths] = (event.getTick() - starts[indexInLengths]); // actually starting time
+//					}
 				}
 			}
+			return new Pair<>(frequencies,lengths);
 		} catch (InvalidMidiDataException | IOException e) {
 			e.printStackTrace();
+			System.exit(1);
 		}	
-		return frequencies;
+		return null; // never reached
 	}
-	
+
+
 	/**
 	 * Takes an input note value from a MIDI file and converts it to its corresponding frequency.
 	 * 
@@ -155,7 +210,14 @@ public class MIDIUtil {
 		int octave = (key / NOTES_IN_OCTAVE) -1;
 		return NOTES[note] * Math.pow(2.0, (double) octave - 1.0); // this is because frequencies of notes are always double the frequencies of the lower adjacent octave
 	}
-	
+
+	public static float convertTicksToMilliseconds(long ticks) {
+		float millisecondsPerTick = 60000 / (PPQ * BPM);
+		float result = ticks * millisecondsPerTick;
+		//System.out.println(result);
+		return result * 10; // We have no idea why the number 10 goes here, but it seems to scale things nicely
+	}
+
 	/**
 	 * Plays sound using Applet.newAudioClip() - works for MIDI files
 	 * 
@@ -180,7 +242,7 @@ public class MIDIUtil {
 		clip.play();
 	}
 
-	
+
 	/**
 	 * Loops through array of frequencies generated from a MIDI file and plays it using a CPPN,
 	 * essentially making the CPPN the "instrument". 
@@ -193,17 +255,19 @@ public class MIDIUtil {
 	 * @param cppn input network used to generate sound
 	 * @param frequencies frequencies corresponding to data taken from MIDI file
 	 */
-	public static void playMIDIWithCPPNFromDoubleArray(Network cppn, double[] frequencies) {
+	public static void playMIDIWithCPPNFromDoubleArray(Network cppn, double[] frequencies, double[] lengths) {
 		System.out.println(Arrays.toString(frequencies)); // Something strange about these frequencies
 		for(int i = 0; i < frequencies.length; i++) {
-			double[] amplitude = SoundFromCPPNUtil.amplitudeGenerator(cppn, Keyboard.NOTE_LENGTH_DEFAULT, frequencies[i]);
-			System.out.println("note "+ i + " :" + Arrays.toString(amplitude));
+			double[] amplitude = SoundFromCPPNUtil.amplitudeGenerator(cppn, (int) lengths[i], frequencies[i]);
+			//System.out.println("note "+ i + " length " + lengths[i] +  " :"); // + Arrays.toString(amplitude));
 			PlayDoubleArray.playDoubleArray(amplitude, false);
+			//MiscUtil.waitForReadStringAndEnterKeyPress();
 		}
 	}
-	
-	public static void playMIDIWithCPPNFromString(String audio, Network cppn) {
-		double[] frequencies = freqFromMIDI(audio);
-		playMIDIWithCPPNFromDoubleArray(cppn, frequencies);
+
+	public static void playMIDIWithCPPNFromString(String audio, int trackNumber, Network cppn) {
+		Pair<double[],double[]> data = freqFromMIDI(audio, trackNumber);
+		//MiscUtil.waitForReadStringAndEnterKeyPress();
+		playMIDIWithCPPNFromDoubleArray(cppn, data.t1, data.t2);
 	}
 }
