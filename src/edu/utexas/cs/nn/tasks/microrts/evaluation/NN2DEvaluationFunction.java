@@ -21,7 +21,7 @@ public class NN2DEvaluationFunction<T extends Network> extends NNEvaluationFunct
 	/**
 	 * represents all squares of the gameState in an array
 	 */
-	private double[] gameStateToArray(GameState gs) {
+	protected double[] gameStateToArray(GameState gs) {
 		pgs = gs.getPhysicalGameState();
 		double[] board = new double[pgs.getHeight()*pgs.getWidth()];
 		int boardIndex;

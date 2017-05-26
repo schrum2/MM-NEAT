@@ -5,12 +5,14 @@ import micro.rts.GameState;
 
 /**
  * @author alicequint
+ * 
+ * unfinished, eventually different substrate for each unit-type maybe.
  */
 public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluationFunction{
 
 	
 	//only does terrain atm
-	private double[] gameStateToArray(GameState gs) {
+	protected double[] gameStateToArray(GameState gs) {
 		pgs = gs.getPhysicalGameState();
 		double[] basicState = new double[pgs.getHeight()*pgs.getWidth()];
 		for(int i = 0; i < pgs.getWidth(); i++){

@@ -23,7 +23,12 @@ public abstract class NNEvaluationFunction<T extends Network> extends Evaluation
 	public void setNetwork(Genotype<T> g) {
 		nn = g.getPhenotype();
 	}
-
+	
+	/**
+	 *  creates the array to be given to the NN
+	 */
+	protected abstract double[] gameStateToArray(GameState gs);
+	
 	/**
 	 * 
 	 * @return labels of sensors given to nn
