@@ -24,6 +24,16 @@ import edu.utexas.cs.nn.util.sound.MIDIUtil;
 import edu.utexas.cs.nn.util.sound.PlayDoubleArray;
 import edu.utexas.cs.nn.util.sound.SoundFromCPPNUtil;
 
+/**
+ * Class that builds an interface with a variety of sound waves that have been generated with
+ * an input CPPN. These sound waves are represented with an image and with audio, and can be evolved,
+ * saved, and mutated with various activation functions. This class extends InteractiveEvolutionTask,
+ * which is also used to design the Picbreeder and Remixbreeder interfaces.
+ * 
+ * @author Isabel Tweraser
+ *
+ * @param <T>
+ */
 public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask<T> {
 
 	//private static final int LENGTH_DEFAULT = 60000; //default length of generated amplitude
@@ -94,7 +104,10 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 		initializationComplete = true;
 	}
 
-
+	/**
+	 * Calls action associated with clicking a certain button - in this case, the button plays a MIDI
+	 * file with the most recently clicked CPPN as the "instrument"
+	 */
 	protected void respondToClick(int itemID) {
 		super.respondToClick(itemID);
 		// Play original sound if they click the button

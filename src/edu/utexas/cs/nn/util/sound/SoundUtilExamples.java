@@ -43,7 +43,7 @@ public class SoundUtilExamples {
 	private static final String APPLAUSE_WAV = "data/sounds/applause_y.wav";
 	public static final String HARP_WAV = "data/sounds/harp.wav";
 	private static final String HAPPY_MP3 = "data/sounds/25733.mp3";
-	private static final String PIRATES = "data/sounds/pirates.mid";
+	private static final String PIRATES_MID = "data/sounds/pirates.mid";
 	private static final String CLASSICAL_MID = "data/sounds/CLASSICA.MID";
 	private static final String SOLO_PIANO_MID	= "data/sounds/Chon01.MID";
 	public static final String FUR_ELISE_MID = "data/sounds/for_elise_by_beethoven.mid";
@@ -417,7 +417,12 @@ public class SoundUtilExamples {
 			test.mutate();
 		}
 		Network cppn = test.getCPPN();
-		MIDIUtil.playMIDIWithCPPNFromString(FUR_ELISE_MID, 1, cppn);
+		MIDIUtil.playApplet(CLASSICAL_MID);
+		//MIDIUtil.playMIDIWithCPPNFromString(FUR_ELISE_MID, 1, cppn);
+		MiscUtil.waitForReadStringAndEnterKeyPress();
+		for(int i = 0; i < 2; i++) {
+			MIDIUtil.playMIDIWithCPPNFromString(CLASSICAL_MID, i, cppn);
+		}
 		File furElise = new File(FUR_ELISE_MID);
 		//MIDIUtil.MIDIData(furElise);
 

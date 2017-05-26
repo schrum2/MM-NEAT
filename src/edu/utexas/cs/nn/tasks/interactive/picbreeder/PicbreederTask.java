@@ -12,6 +12,15 @@ import edu.utexas.cs.nn.tasks.interactive.InteractiveEvolutionTask;
 import edu.utexas.cs.nn.util.graphics.DrawingPanel;
 import edu.utexas.cs.nn.util.graphics.GraphicsUtil;
 
+/**
+ * Implementation of picbreeder that extends InteractiveEvolutionTask
+ * and uses Java Swing components for graphical interface
+ * 
+ * @author Lauren Gillespie
+ * @author Isabel Tweraser
+ *
+ * @param <T>
+ */
 public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<T> {
 
 	public static final int CPPN_NUM_INPUTS	= 4;

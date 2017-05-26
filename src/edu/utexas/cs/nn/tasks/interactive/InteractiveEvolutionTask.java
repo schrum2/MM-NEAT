@@ -50,11 +50,14 @@ import edu.utexas.cs.nn.util.graphics.GraphicsUtil;
 import java.util.HashSet;
 import java.util.Hashtable;
 
-
-
 /**
- * Implementation of picbreeder that uses Java Swing components for graphical interface
+ * Class that builds an interface designed for interactive evolution. 
+ * Generates a series of images from CPPNs that can be evolved based on
+ * each other and a variety of activation functions that can be turned on
+ * and off. Classes that extend InteractiveEvolutionTask include Picbreeder,
+ * Breedesizer, and Remixbreeder.
  * 
+ * @author Lauren Gillespie
  * @author Isabel Tweraser
  *
  * @param <T>

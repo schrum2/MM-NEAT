@@ -56,8 +56,8 @@ public class MIDIUtil {
 
 	public static final int NOTES_IN_OCTAVE = 12; //number of chromatic notes in a single octave
 
-	public static final int BPM = 120;
-	public static final int PPQ = 96;
+	public static final int BPM = 120; //beats per minute - should be generalized
+	public static final int PPQ = 96; //parts per quarter note - should be generalized
 
 	/**
 	 * Method that takes in a MIDI file and prints out useful information about the note, whether the 
@@ -117,18 +117,28 @@ public class MIDIUtil {
 	}
 
 	/**
-	 * Method that takes an input string representation of a MIDI file and loops through
-	 * the individual tracks of the file, converting each one to its equivalent 
-	 * frequency by calling noteToFreq(). 
+	 * Method that takes in a string reference to a MIDI file and the index of a specified track 
+	 * and saves the values of its frequencies and note lengths sequentially  in a pair of 
+	 * double arrays. Method does so by calling creating a File out of the string reference and
+	 * then calling other freqFromMidi() method.
 	 * 
-	 * @param audio string representation of MIDI file
-	 * @return double array of all frequencies of tracks in order
+	 * @param audio string reference to MIDI file being analyzed
+	 * @param trackNum index of specific track being analyzed 
+	 * @return Pair of double arrays with the frequencies and note lengths saved
 	 */
 	public static Pair<double[],double[]> freqFromMIDI(String audio, int trackNum){
 		File audioFile = new File(audio);
 		return freqFromMIDI(audioFile, trackNum);
 	}	
 
+	/**
+	 * Method that keeps track of the total number of notes in a track.
+	 * This allows freqFromMIDI() to avoid events in the track that are not
+	 * related to notes.
+	 * 
+	 * @param t Track being analyzed
+	 * @return total number of notes in track
+	 */
 	public static int countNotes(Track t) {
 		int total = 0;
 		for(int i = 0; i < t.size(); i++) {
@@ -144,7 +154,16 @@ public class MIDIUtil {
 		}
 		return total;
 	}
-	
+
+	/**
+	 * Method that takes in an audio file and the index of a specified track
+	 * and saves the values of its frequencies and note lengths sequentially
+	 * in a pair of double arrays. 
+	 * 
+	 * @param audioFile MIDI file being analyzed
+	 * @param trackNum index of specific track being analyzed 
+	 * @return Pair of double arrays with the frequencies and note lengths saved
+	 */
 	public static Pair<double[], double[]> freqFromMIDI(File audioFile, int trackNum) {
 		Sequence sequence;
 		try {
@@ -152,11 +171,11 @@ public class MIDIUtil {
 			Track[] tracks = sequence.getTracks();
 			Track track = tracks[trackNum];
 			int numNotes = countNotes(track);
-			
+
 			double[] frequencies = new double[numNotes];
 			long[] starts = new long[numNotes]; 
 			double[] lengths = new double[numNotes]; // Needs to be double?
-			
+
 			int j = 0;
 			for(int i = 0; i < track.size(); i++) {
 				MidiEvent event = track.get(i);
@@ -164,30 +183,30 @@ public class MIDIUtil {
 				//System.out.println(message);
 				if (message instanceof ShortMessage) {
 					ShortMessage sm = (ShortMessage) message;
-					
+
 					int key = sm.getData1();
 					double freq = noteToFreq(key);
 					long tick = event.getTick(); // actually starting tick time
-					
+
 					if (sm.getCommand() == NOTE_ON && sm.getData2() > 0) {
 						frequencies[j] = freq;
 						starts[j] = tick; // actually starting tick time
 						j++;
 					} 
-					
+
 					if(j > 0) { // Not first note
 						// May not be turning off the right note
 						//lengths[j - 1] = convertTicksToMilliseconds(tick - starts[j-1]);
 						lengths[j-1] = convertTicksToMilliseconds(tick - starts[j-1]);
 					}
-					
+
 					// This was looking for the stop time of the particular note, but did not account for note overlap
-//					} else if(sm.getCommand() == NOTE_OFF || (sm.getCommand() == NOTE_ON && sm.getData2() == 0)) {
-//						int key = sm.getData1();
-//						int indexInLengths = noteIndex.get(key);
-//						lengths[indexInLengths] = convertTicksToMilliseconds(event.getTick() - starts[indexInLengths]); // actually starting time
-//						//lengths[indexInLengths] = (event.getTick() - starts[indexInLengths]); // actually starting time
-//					}
+					//					} else if(sm.getCommand() == NOTE_OFF || (sm.getCommand() == NOTE_ON && sm.getData2() == 0)) {
+					//						int key = sm.getData1();
+					//						int indexInLengths = noteIndex.get(key);
+					//						lengths[indexInLengths] = convertTicksToMilliseconds(event.getTick() - starts[indexInLengths]); // actually starting time
+					//						//lengths[indexInLengths] = (event.getTick() - starts[indexInLengths]); // actually starting time
+					//					}
 				}
 			}
 			return new Pair<>(frequencies,lengths);
@@ -211,6 +230,15 @@ public class MIDIUtil {
 		return NOTES[note] * Math.pow(2.0, (double) octave - 1.0); // this is because frequencies of notes are always double the frequencies of the lower adjacent octave
 	}
 
+	/**
+	 * NEEDS TO BE REWORKED
+	 * Takes in the time representation for note duration in MIDI files, which is referred to as
+	 * ticks, and manipulates it according to the BPM (beats per minute) and PPQ (parts per 
+	 * quarter note) to return the equivalent time in milliseconds. 
+	 * 
+	 * @param ticks Length of events in MIDI files
+	 * @return Equivalent length in milliseconds
+	 */
 	public static float convertTicksToMilliseconds(long ticks) {
 		float millisecondsPerTick = 60000 / (PPQ * BPM);
 		float result = ticks * millisecondsPerTick;
@@ -232,28 +260,26 @@ public class MIDIUtil {
 		catch (MalformedURLException e) {
 			throw new IllegalArgumentException("could not play '" + filename + "'", e);
 		}
-
 		// URL url = StdAudio.class.getResource(filename);
 		if (url == null) {
 			throw new IllegalArgumentException("could not play '" + filename + "'");
 		}
-
 		AudioClip clip = Applet.newAudioClip(url);
 		clip.play();
 	}
-
 
 	/**
 	 * Loops through array of frequencies generated from a MIDI file and plays it using a CPPN,
 	 * essentially making the CPPN the "instrument". 
 	 * 
-	 * CURRENT ISSUES: Strange skipping between each note (could be due to NOTE_ON and NOTE_OFF
-	 * specifications for each note/track in MIDI files); there is no way to specify rhythmic 
-	 * length of notes; notes cannot overlap with each other so there is no possibility
-	 * for chords or multiple voices
+	 * CURRENT ISSUES: Cannot play more than one note at a time (chords are impossible), can't 
+	 * handle MIDI files that have multiple tracks containing melodic content. Also, the conversion 
+	 * from ticks to milliseconds is a little bit off because I don't know exactly what to initialize
+	 * BPM and PPQ to and how to extract that from individual MIDI files in a general way. 
 	 * 
 	 * @param cppn input network used to generate sound
 	 * @param frequencies frequencies corresponding to data taken from MIDI file
+	 * @param lengths double array containing lengths of individual notes
 	 */
 	public static void playMIDIWithCPPNFromDoubleArray(Network cppn, double[] frequencies, double[] lengths) {
 		System.out.println(Arrays.toString(frequencies)); // Something strange about these frequencies
@@ -265,6 +291,16 @@ public class MIDIUtil {
 		}
 	}
 
+	/**
+	 * Loops through array of frequencies generated from a MIDI file and plays it using a CPPN,
+	 * essentially making the CPPN the "instrument". Does so by calling freqFromMIDI to generate
+	 * a pair of double arrays corresponding to the frequencies and durations of all notes in a 
+	 * specific track, and then calls playMIDIWithCPPNFromDoubleArray() with the double arrays.
+	 * 
+	 * @param audio string representation of MIDI file being analyzed
+	 * @param trackNumber specific track in file from which data is being extracted
+	 * @param cppn Input network being used as the "instrument" to generate MIDI file playback
+	 */
 	public static void playMIDIWithCPPNFromString(String audio, int trackNumber, Network cppn) {
 		Pair<double[],double[]> data = freqFromMIDI(audio, trackNumber);
 		//MiscUtil.waitForReadStringAndEnterKeyPress();

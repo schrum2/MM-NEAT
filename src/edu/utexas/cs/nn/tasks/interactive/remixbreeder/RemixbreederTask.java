@@ -22,12 +22,20 @@ import edu.utexas.cs.nn.util.sound.SoundFromCPPNUtil;
 import edu.utexas.cs.nn.util.sound.SoundToArray;
 import edu.utexas.cs.nn.util.sound.WAVUtil;
 
+/**
+ * Interface that can play input sounds with a variety of CPPNs, like in Breedesizer, "remixing"
+ * the sounds based on various activation functions. 
+ * 
+ * @author Isabel Tweraser
+ *
+ * @param <T>
+ */
 public class RemixbreederTask<T extends Network> extends BreedesizerTask<T> {
 
 	public static final int CPPN_NUM_INPUTS	= 4;
 
 	public double[] WAVDoubleArray;
-	public int playBackFrequency;
+	public int playBackRate;
 
 	public RemixbreederTask() throws IllegalAccessException {
 		super(false); // do not use keyboard		
@@ -35,7 +43,7 @@ public class RemixbreederTask<T extends Network> extends BreedesizerTask<T> {
 		try {
 			AudioInputStream AIS = WAVUtil.audioStream(Parameters.parameters.stringOptions.get("remixWAVFile"));
 			AudioFormat format = AIS.getFormat();
-			playBackFrequency = format.getSampleSizeInBits();
+			playBackRate = format.getSampleSizeInBits(); //sample size - should be changed?
 			//format = SoundToArray.getAudioFormatRestrictedTo16Bits(format);
 			PlayDoubleArray.changeAudioFormat(format);
 		} catch (UnsupportedAudioFileException | IOException e) {
@@ -44,12 +52,9 @@ public class RemixbreederTask<T extends Network> extends BreedesizerTask<T> {
 			System.exit(1);
 		}
 
-
 		WAVDoubleArray = SoundToArray.readDoubleArrayFromStringAudio(Parameters.parameters.stringOptions.get("remixWAVFile"));
 		Parameters.parameters.setInteger("clipLength", Math.min(Parameters.parameters.integerParameter("clipLength"), WAVDoubleArray.length));
 		Parameters.parameters.setInteger("maxClipLength", WAVDoubleArray.length);
-
-
 
 		Hashtable<Integer,JLabel> labels = new Hashtable<>();
 		clipLength.setMinorTickSpacing(10000);
@@ -95,7 +100,7 @@ public class RemixbreederTask<T extends Network> extends BreedesizerTask<T> {
 
 	@Override
 	protected BufferedImage getButtonImage(Network phenotype, int width, int height, double[] inputMultipliers) {
-		double[] amplitude = SoundFromCPPNUtil.amplitudeRemixer(phenotype, WAVDoubleArray, Parameters.parameters.integerParameter("clipLength"), playBackFrequency, playBackFrequency, inputMultipliers);
+		double[] amplitude = SoundFromCPPNUtil.amplitudeRemixer(phenotype, WAVDoubleArray, Parameters.parameters.integerParameter("clipLength"), playBackRate, playBackRate, inputMultipliers);
 		BufferedImage wavePlotImage = GraphicsUtil.wavePlotFromDoubleArray(amplitude, height, width);
 		return wavePlotImage;
 	}
@@ -104,7 +109,7 @@ public class RemixbreederTask<T extends Network> extends BreedesizerTask<T> {
 	protected void additionalButtonClickAction(int scoreIndex, Genotype<T> individual) {
 		if(chosen[scoreIndex]) {
 			Network phenotype = individual.getPhenotype();
-			double[] amplitude = SoundFromCPPNUtil.amplitudeRemixer(phenotype, WAVDoubleArray, Parameters.parameters.integerParameter("clipLength"), playBackFrequency, playBackFrequency, inputMultipliers);
+			double[] amplitude = SoundFromCPPNUtil.amplitudeRemixer(phenotype, WAVDoubleArray, Parameters.parameters.integerParameter("clipLength"), playBackRate, playBackRate, inputMultipliers);
 			PlayDoubleArray.playDoubleArray(amplitude);	
 		} else {
 			PlayDoubleArray.stopPlayback();
