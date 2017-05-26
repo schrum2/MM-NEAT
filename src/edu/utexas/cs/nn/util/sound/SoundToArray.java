@@ -6,10 +6,12 @@ import java.net.URL;
 import java.nio.ByteBuffer;
 
 import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioFormat.Encoding;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
+import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.util.MiscUtil;
 
 /**
@@ -147,7 +149,7 @@ public class SoundToArray {
 		}
 		return audioData;  
 	}
-	
+
 	/**
 	 * Converts an integer array of amplitudes to a double array using conversions
 	 * that specify that all values will be between -1.0 and 1.0 using the 
@@ -163,7 +165,7 @@ public class SoundToArray {
 		}
 		return doubleArray;
 	}
-	
+
 	/**
 	 * Method that takes in a string reference to an audio file and uses the file's
 	 * Audio Input Stream to extract an array of bytes, which is then converted to 
@@ -184,7 +186,25 @@ public class SoundToArray {
 		} catch (UnsupportedAudioFileException | IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		return null; //this shouldn't happen
+	}
+	
+	/**
+	 * Doesn't work - makes 8 bit files playable, but they don't sound like original file.
+	 * Converting AudioFormat of files directly isn't the best way to go
+	 * 
+	 * @param format AudioFormat of source wave
+	 * @return adjusted format specified to 16 bits, 2 bytes/frame, and a signed PCM encoding
+	 */
+	public static AudioFormat getAudioFormatRestrictedTo16Bits(AudioFormat format) {
+		//Encoding encoding = format.getEncoding();
+		float sampleRate = format.getSampleRate();
+		int channels = format.getChannels();
+		boolean endian = format.isBigEndian();
+		float frameRate = format.getFrameRate();
+		// only thing not in original format is the bits per sample and bytes per sample (set to 16 and 2 respectively)
+		AudioFormat adjustedFormat = new AudioFormat(Encoding.PCM_SIGNED, sampleRate, PlayDoubleArray.BITS_PER_SAMPLE, channels, PlayDoubleArray.BYTES_PER_SAMPLE, frameRate, endian);
+		return adjustedFormat;
 	}
 }

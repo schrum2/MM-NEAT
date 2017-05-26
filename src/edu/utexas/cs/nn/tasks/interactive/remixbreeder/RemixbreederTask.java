@@ -5,6 +5,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Hashtable;
 
+import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.JButton;
@@ -33,8 +34,10 @@ public class RemixbreederTask<T extends Network> extends BreedesizerTask<T> {
 		initializationComplete = false;
 		try {
 			AudioInputStream AIS = WAVUtil.audioStream(Parameters.parameters.stringOptions.get("remixWAVFile"));
-			playBackFrequency = AIS.getFormat().getSampleSizeInBits();
-			PlayDoubleArray.changeAudioFormat(AIS.getFormat());
+			AudioFormat format = AIS.getFormat();
+			playBackFrequency = format.getSampleSizeInBits();
+			//format = SoundToArray.getAudioFormatRestrictedTo16Bits(format);
+			PlayDoubleArray.changeAudioFormat(format);
 		} catch (UnsupportedAudioFileException | IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -91,7 +94,7 @@ public class RemixbreederTask<T extends Network> extends BreedesizerTask<T> {
 
 	@Override
 	protected BufferedImage getButtonImage(Network phenotype, int width, int height, double[] inputMultipliers) {
-		double[] amplitude = SoundFromCPPNUtil.amplitudeRemixer(phenotype, WAVDoubleArray, Parameters.parameters.integerParameter("clipLength"), playBackFrequency, PlayDoubleArray.SAMPLE_RATE, inputMultipliers);
+		double[] amplitude = SoundFromCPPNUtil.amplitudeRemixer(phenotype, WAVDoubleArray, Parameters.parameters.integerParameter("clipLength"), playBackFrequency, playBackFrequency, inputMultipliers);
 		BufferedImage wavePlotImage = GraphicsUtil.wavePlotFromDoubleArray(amplitude, height, width);
 		return wavePlotImage;
 	}
@@ -100,7 +103,7 @@ public class RemixbreederTask<T extends Network> extends BreedesizerTask<T> {
 	protected void additionalButtonClickAction(int scoreIndex, Genotype<T> individual) {
 		if(chosen[scoreIndex]) {
 			Network phenotype = individual.getPhenotype();
-			double[] amplitude = SoundFromCPPNUtil.amplitudeRemixer(phenotype, WAVDoubleArray, Parameters.parameters.integerParameter("clipLength"), playBackFrequency, PlayDoubleArray.SAMPLE_RATE, inputMultipliers);
+			double[] amplitude = SoundFromCPPNUtil.amplitudeRemixer(phenotype, WAVDoubleArray, Parameters.parameters.integerParameter("clipLength"), playBackFrequency, playBackFrequency, inputMultipliers);
 			PlayDoubleArray.playDoubleArray(amplitude);	
 		} else {
 			PlayDoubleArray.stopPlayback();
