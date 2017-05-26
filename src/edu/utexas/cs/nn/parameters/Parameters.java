@@ -691,7 +691,7 @@ public class Parameters {
 		stringOptions.add("replayNetwork", "", "Network displayed while replaying pacman eval");
 		stringOptions.add("pinballConfig", "pinball_simple_single.cfg", "Configuration file for the PinballTask");
 		stringOptions.add("map", "8x8/basesWorkers8x8.xml", "filepath from maps folder to desired map file for MicroRTSTask");
-		stringOptions.add("remixWAVFile", SoundUtilExamples.SEASHORE_WAV, "Input WAV file to be remixed in Remixbreeder");
+		stringOptions.add("remixWAVFile", SoundUtilExamples.ALARM_WAV, "Input WAV file to be remixed in Remixbreeder");
 		// Class options
 		classOptions.add("boardGame", null, "Board game being played by BoardGameTask");
 		classOptions.add("boardGameOpponent", BoardGamePlayerRandom.class, "Board game being played by BoardGameTask");

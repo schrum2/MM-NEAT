@@ -1,18 +1,13 @@
 package edu.utexas.cs.nn.tasks.interactive.breedesizer;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Hashtable;
 
 import javax.sound.sampled.AudioFormat;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -25,7 +20,6 @@ import edu.utexas.cs.nn.tasks.interactive.InteractiveEvolutionTask;
 import edu.utexas.cs.nn.util.graphics.DrawingPanel;
 import edu.utexas.cs.nn.util.graphics.GraphicsUtil;
 import edu.utexas.cs.nn.util.sound.PlayDoubleArray;
-import edu.utexas.cs.nn.util.sound.SaveFromArray;
 import edu.utexas.cs.nn.util.sound.SoundFromCPPNUtil;
 
 public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask<T> {
@@ -42,34 +36,17 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 	public static final int CPPN_NUM_INPUTS	= 3;
 	public static final int CPPN_NUM_OUTPUTS = 1;
 
-	//Indices of inputMultiplier effects
-	private static final int TIME_CHECKBOX_INDEX = -25;
-	private static final int SINE_OF_TIME_CHECKBOX_INDEX = -26;
-	private static final int BIAS_CHECKBOX_INDEX = -27;
-
-	private static final int TIME_INPUT_INDEX = 0;
-	private static final int SINE_OF_TIME_INPUT_INDEX = 1;
-	private static final int BIAS_INPUT_INDEX = 2;
-
 	Keyboard keyboard;
 	protected JSlider clipLength;
 	protected boolean initializationComplete = false;
 
 	public BreedesizerTask() throws IllegalAccessException {
+		this(true);
+	}
+	
+	public BreedesizerTask(boolean useKeyboard) throws IllegalAccessException {
 		super();
-		//Checkboxes to control if x, y, distance from center, or bias effects appear on the console
-		JCheckBox timeEffect = new JCheckBox("Time", true);
-		inputMultipliers[TIME_INPUT_INDEX] = 1.0;
-		JCheckBox sineOfTimeEffect = new JCheckBox("Sine(time)", true); //no spaces because of scanner in actionPerformed
-		inputMultipliers[SINE_OF_TIME_INPUT_INDEX] = 1.0;
-		JCheckBox biasEffect = new JCheckBox("Bias", true);
-		inputMultipliers[BIAS_INPUT_INDEX] = 1.0;
-
 		clipLength = new JSlider(JSlider.HORIZONTAL, Keyboard.NOTE_LENGTH_DEFAULT, Parameters.parameters.integerParameter("maxClipLength"), Parameters.parameters.integerParameter("clipLength"));
-
-		timeEffect.setName("" + TIME_CHECKBOX_INDEX);
-		sineOfTimeEffect.setName("" + SINE_OF_TIME_CHECKBOX_INDEX);
-		biasEffect.setName("" + BIAS_CHECKBOX_INDEX);
 
 		Hashtable<Integer,JLabel> labels = new Hashtable<>();
 		clipLength.setMinorTickSpacing(10000);
@@ -79,10 +56,6 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 		clipLength.setLabelTable(labels);
 		clipLength.setPaintLabels(true);
 		clipLength.setPreferredSize(new Dimension(350, 40));
-
-		timeEffect.addActionListener(this);
-		sineOfTimeEffect.addActionListener(this);
-		biasEffect.addActionListener(this);
 
 		/**
 		 * Implements ChangeListener to adjust clip length of generated sounds. When clip length is specified, 
@@ -105,16 +78,10 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 			}
 		});
 
-		timeEffect.setForeground(new Color(0,0,0));
-		sineOfTimeEffect.setForeground(new Color(0,0,0));
-		biasEffect.setForeground(new Color(0,0,0));
-
-		top.add(timeEffect);
-		top.add(sineOfTimeEffect);
-		top.add(biasEffect);
 		top.add(clipLength);	
 
-		keyboard = new Keyboard();
+		if(useKeyboard)
+			keyboard = new Keyboard();
 
 		initializationComplete = true;
 	}
@@ -149,23 +116,15 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 	 * Plays sound associated with an image when the image is clicked
 	 */
 	@Override
-	protected void additionalButtonClickAction(Genotype<T> individual) {
-		Network phenotype = individual.getPhenotype();
-		double[] amplitude = SoundFromCPPNUtil.amplitudeGenerator(phenotype, Parameters.parameters.integerParameter("clipLength"), FREQUENCY_DEFAULT, inputMultipliers);
-		PlayDoubleArray.playDoubleArray(amplitude);	
-		keyboard.setCPPN(phenotype);
-	}
-
-	protected void respondToClick(int itemID) {
-		super.respondToClick(itemID);
-		// Extra checkboxes specific to Breedesizer
-		if(itemID == TIME_CHECKBOX_INDEX){ // If time checkbox is clicked
-			setEffectCheckBox(TIME_INPUT_INDEX);
-		}else if(itemID == SINE_OF_TIME_CHECKBOX_INDEX){ // If sine of time checkbox is clicked
-			setEffectCheckBox(SINE_OF_TIME_INPUT_INDEX);
-		}else if(itemID == BIAS_CHECKBOX_INDEX){ // If bias checkbox is clicked
-			setEffectCheckBox(BIAS_INPUT_INDEX);
-		} 
+	protected void additionalButtonClickAction(int scoreIndex, Genotype<T> individual) {
+		if(chosen[scoreIndex]) { // Play sound if item was just selected
+			Network phenotype = individual.getPhenotype();
+			double[] amplitude = SoundFromCPPNUtil.amplitudeGenerator(phenotype, Parameters.parameters.integerParameter("clipLength"), FREQUENCY_DEFAULT, inputMultipliers);
+			PlayDoubleArray.playDoubleArray(amplitude);	
+			keyboard.setCPPN(phenotype);
+		} else {
+			PlayDoubleArray.stopPlayback();
+		}
 	}
 
 	@Override

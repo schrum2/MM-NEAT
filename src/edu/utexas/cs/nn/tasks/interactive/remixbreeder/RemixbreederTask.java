@@ -7,6 +7,7 @@ import java.util.Hashtable;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.UnsupportedAudioFileException;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
@@ -23,13 +24,12 @@ import edu.utexas.cs.nn.util.sound.WAVUtil;
 public class RemixbreederTask<T extends Network> extends BreedesizerTask<T> {
 
 	public static final int CPPN_NUM_INPUTS	= 4;
-	
+
 	public double[] WAVDoubleArray;
 	public int playBackFrequency;
-	
 
 	public RemixbreederTask() throws IllegalAccessException {
-		super();		
+		super(false); // do not use keyboard		
 		initializationComplete = false;
 		try {
 			AudioInputStream AIS = WAVUtil.audioStream(Parameters.parameters.stringOptions.get("remixWAVFile"));
@@ -38,15 +38,16 @@ public class RemixbreederTask<T extends Network> extends BreedesizerTask<T> {
 		} catch (UnsupportedAudioFileException | IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			System.exit(1);
 		}
-			
-		
+
+
 		WAVDoubleArray = SoundToArray.readDoubleArrayFromStringAudio(Parameters.parameters.stringOptions.get("remixWAVFile"));
 		Parameters.parameters.setInteger("clipLength", Math.min(Parameters.parameters.integerParameter("clipLength"), WAVDoubleArray.length));
 		Parameters.parameters.setInteger("maxClipLength", WAVDoubleArray.length);
-		
-		
-		
+
+
+
 		Hashtable<Integer,JLabel> labels = new Hashtable<>();
 		clipLength.setMinorTickSpacing(10000);
 		clipLength.setPaintTicks(true);
@@ -54,15 +55,28 @@ public class RemixbreederTask<T extends Network> extends BreedesizerTask<T> {
 		labels.put(Parameters.parameters.integerParameter("maxClipLength"), new JLabel("Longer clip"));
 		clipLength.setLabelTable(labels);
 		clipLength.setPaintLabels(true);
-		clipLength.setPreferredSize(new Dimension(350, 40));
+		clipLength.setPreferredSize(new Dimension(200, 40));
 		clipLength.setMaximum(Parameters.parameters.integerParameter("maxClipLength"));
-		
-		PlayDoubleArray.playDoubleArray(WAVDoubleArray, false);
-		
+
+		JButton playOriginal = new JButton("PlayOriginal");
+		// Name is first available numeric label after the input disablers
+		playOriginal.setName("" + (CHECKBOX_IDENTIFIER_START - inputMultipliers.length));
+		playOriginal.addActionListener(this);
+		top.add(playOriginal);
+
 		//WAV file converted to double array in constructor, and double array
 		//saved to be manipulated further
-		
+
 		initializationComplete = true;
+	}
+
+	protected void respondToClick(int itemID) {
+		super.respondToClick(itemID);
+
+		// Play original sound if they click the button
+		if(itemID == (CHECKBOX_IDENTIFIER_START - inputMultipliers.length)) {
+			PlayDoubleArray.playDoubleArray(WAVDoubleArray);
+		}
 	}
 
 	@Override
@@ -75,10 +89,6 @@ public class RemixbreederTask<T extends Network> extends BreedesizerTask<T> {
 		return "Breederemix";
 	}
 
-	protected void respondToClick(int itemID) {
-		super.respondToClick(itemID);
-	}
-
 	@Override
 	protected BufferedImage getButtonImage(Network phenotype, int width, int height, double[] inputMultipliers) {
 		double[] amplitude = SoundFromCPPNUtil.amplitudeRemixer(phenotype, WAVDoubleArray, Parameters.parameters.integerParameter("clipLength"), playBackFrequency, PlayDoubleArray.SAMPLE_RATE, inputMultipliers);
@@ -87,10 +97,14 @@ public class RemixbreederTask<T extends Network> extends BreedesizerTask<T> {
 	}
 
 	@Override
-	protected void additionalButtonClickAction(Genotype<T> individual) {
-		Network phenotype = individual.getPhenotype();
-		double[] amplitude = SoundFromCPPNUtil.amplitudeRemixer(phenotype, WAVDoubleArray, Parameters.parameters.integerParameter("clipLength"), playBackFrequency, PlayDoubleArray.SAMPLE_RATE, inputMultipliers);
-		PlayDoubleArray.playDoubleArray(amplitude);	
+	protected void additionalButtonClickAction(int scoreIndex, Genotype<T> individual) {
+		if(chosen[scoreIndex]) {
+			Network phenotype = individual.getPhenotype();
+			double[] amplitude = SoundFromCPPNUtil.amplitudeRemixer(phenotype, WAVDoubleArray, Parameters.parameters.integerParameter("clipLength"), playBackFrequency, PlayDoubleArray.SAMPLE_RATE, inputMultipliers);
+			PlayDoubleArray.playDoubleArray(amplitude);	
+		} else {
+			PlayDoubleArray.stopPlayback();
+		}
 
 	}
 

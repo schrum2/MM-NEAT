@@ -116,13 +116,17 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	private boolean showLineage;
 	protected boolean showNetwork;
 	private boolean waitingForUser;
-	private final boolean[] chosen;
+	protected final boolean[] chosen;
 	private final boolean[] activation;
 	// Size of 4: This is the number used by Picbreeder, though Breedesizer currently uses 3.
 	// It would be good to generalize this code and make its meaning less obscure.
 	// If any interactive evolution task ever uses more than 4 inputs, then this value needs to change.
 	protected static double[] inputMultipliers = new double[4];
 
+	// This is a weird magic number that is used to track the checkboxes
+	public static final int CHECKBOX_IDENTIFIER_START = -25;
+	
+	
 	private JPanel topper;
 	protected JPanel top;
 	
@@ -130,7 +134,6 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	 * Default Constructor
 	 * @throws IllegalAccessException 
 	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public InteractiveEvolutionTask() throws IllegalAccessException {		
 		MMNEAT.registerFitnessFunction("User Preference");
 		//sets mu to a divisible number
@@ -301,7 +304,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		labels.put(10, new JLabel("More Mutations"));
 		mutationsPerGeneration.setLabelTable(labels);
 		mutationsPerGeneration.setPaintLabels(true);
-		mutationsPerGeneration.setPreferredSize(new Dimension(350, 40));
+		mutationsPerGeneration.setPreferredSize(new Dimension(200, 40));
 
 		//add action listeners to buttons
 		resetButton.addActionListener(this);
@@ -394,6 +397,25 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		int x = 0;//used to keep track of index of button panel
 		addButtonsToPanel(x++);
 		
+		inputCheckBoxes();
+	}
+	
+	/**
+	 * Adds checkboxes for disabling certain input values
+	 */
+	public void inputCheckBoxes() {		
+		String[] inputLabels = this.sensorLabels();
+		inputMultipliers = new double[inputLabels.length];
+		for(int i = 0; i < inputLabels.length; i++) {
+			// Remove spaces because the buttons are parsed based on whitespace
+			String label = inputLabels[i].replaceAll(" ", "_");
+			JCheckBox inputEffect = new JCheckBox(label, true);
+			inputMultipliers[i] = 1.0;
+			inputEffect.setName("" + (CHECKBOX_IDENTIFIER_START - i));
+			inputEffect.addActionListener(this);
+			inputEffect.setForeground(new Color(0,0,0));
+			top.add(inputEffect);
+		}
 	}
 	
 	public static double[] getInputMultipliers() {
@@ -579,12 +601,12 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 			chosen[scoreIndex] = true;
 			buttons.get(scoreIndex).setBorder(BorderFactory.createLineBorder(Color.BLUE, BORDER_THICKNESS));
 			scores.get(scoreIndex).replaceScores(new double[]{1.0});
-			additionalButtonClickAction(scores.get(scoreIndex).individual);
 		}
+		additionalButtonClickAction(scoreIndex,scores.get(scoreIndex).individual);
 	}
 
 
-	protected abstract void additionalButtonClickAction(Genotype<T> individual);
+	protected abstract void additionalButtonClickAction(int scoreIndex, Genotype<T> individual);
 
 	/**
 	 * Resets to a new random population
@@ -682,7 +704,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	 */
 	@Override
 	public void actionPerformed(ActionEvent event) {
-		System.out.println(event.toString());
+//		System.out.println(event.toString());
 		//open scanner to read which button was pressed
 		Scanner s = new Scanner(event.toString());
 		s.next(); //parsing action event, no spaces allowed 
@@ -766,6 +788,13 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 				"size mismatch! score array is " + scores.size() + " in length and buttons array is " + buttons.size() + " long";
 			buttonPressed(itemID);
 		} 
+		
+		// Handle all input disabling checkboxes
+		for(int i = 0; i < sensorLabels().length; i++) {			
+			if(itemID == CHECKBOX_IDENTIFIER_START - i){
+				setEffectCheckBox(i);
+			}
+		}		
 	}
 	//used for lineage and undo button
 	private static HashSet<Long> drawnOffspring = null;

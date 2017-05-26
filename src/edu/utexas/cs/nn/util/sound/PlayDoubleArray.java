@@ -34,6 +34,14 @@ public final class PlayDoubleArray {
 	private static boolean playing = false;
 	private static boolean available = true;
 
+	/**
+	 * If play back is interruptable, then it can be stopped with this command
+	 */
+	public static void stopPlayback() {
+		playing = false;
+		available  = true;
+	}
+	
 	// static initializer
 	static {
 		init();
