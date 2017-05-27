@@ -21,6 +21,7 @@ import edu.utexas.cs.nn.tasks.interactive.InteractiveEvolutionTask;
 import edu.utexas.cs.nn.util.graphics.DrawingPanel;
 import edu.utexas.cs.nn.util.graphics.GraphicsUtil;
 import edu.utexas.cs.nn.util.sound.MIDIUtil;
+import edu.utexas.cs.nn.util.sound.MIDIUtil.CPPNNoteSequencePlayer;
 import edu.utexas.cs.nn.util.sound.PlayDoubleArray;
 import edu.utexas.cs.nn.util.sound.SoundFromCPPNUtil;
 
@@ -52,12 +53,17 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 	protected JSlider clipLength;
 	protected boolean initializationComplete = false;
 
+	// Controls MIDI playback, and allows for interruption
+	private CPPNNoteSequencePlayer midiPlay = null;
+	
 	public BreedesizerTask() throws IllegalAccessException {
 		this(true);
 	}
 	
 	public BreedesizerTask(boolean justBreedesizer) throws IllegalAccessException {
 		super();
+		midiPlay = new CPPNNoteSequencePlayer(); // no sequence to play
+		
 		clipLength = new JSlider(JSlider.HORIZONTAL, Keyboard.NOTE_LENGTH_DEFAULT, Parameters.parameters.integerParameter("maxClipLength"), Parameters.parameters.integerParameter("clipLength"));
 
 		Hashtable<Integer,JLabel> labels = new Hashtable<>();
@@ -109,11 +115,18 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 	 * file with the most recently clicked CPPN as the "instrument"
 	 */
 	protected void respondToClick(int itemID) {
+		boolean justStopped = false;
+		if(midiPlay.isPlaying()) {
+			midiPlay.stopPlayback();
+			justStopped = true;
+		}
 		super.respondToClick(itemID);
 		// Play original sound if they click the button
 		if(itemID == (CHECKBOX_IDENTIFIER_START - inputMultipliers.length)) {
-			// Magic number 1: for track index 1: May need to fix later
-			MIDIUtil.playMIDIWithCPPNFromString(Parameters.parameters.stringParameter("remixMIDIFile"), 1, currentCPPN);
+			if(!justStopped) { // Pressing original button can stop playback too
+				// Magic number 1: for track index 1: May need to fix later
+				midiPlay = MIDIUtil.playMIDIWithCPPNFromString(Parameters.parameters.stringParameter("remixMIDIFile"), 1, currentCPPN);
+			}
 		}
 	}
 	

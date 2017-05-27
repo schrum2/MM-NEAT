@@ -281,13 +281,51 @@ public class MIDIUtil {
 	 * @param frequencies frequencies corresponding to data taken from MIDI file
 	 * @param lengths double array containing lengths of individual notes
 	 */
-	public static void playMIDIWithCPPNFromDoubleArray(Network cppn, double[] frequencies, double[] lengths) {
-		System.out.println(Arrays.toString(frequencies)); // Something strange about these frequencies
-		for(int i = 0; i < frequencies.length; i++) {
-			double[] amplitude = SoundFromCPPNUtil.amplitudeGenerator(cppn, (int) lengths[i], frequencies[i]);
-			//System.out.println("note "+ i + " length " + lengths[i] +  " :"); // + Arrays.toString(amplitude));
-			PlayDoubleArray.playDoubleArray(amplitude, false);
-			//MiscUtil.waitForReadStringAndEnterKeyPress();
+	public static CPPNNoteSequencePlayer playMIDIWithCPPNFromDoubleArray(Network cppn, double[] frequencies, double[] lengths) {
+		CPPNNoteSequencePlayer result = new CPPNNoteSequencePlayer(cppn, frequencies, lengths);
+		result.start();
+		return result; // To allow for interrupting of playback
+	}
+	
+	/**
+	 * Class starts playback of a note seqeunce in its own Thread, but can be interrupted
+	 * @author Jacob Schrum
+	 *
+	 */
+	public static class CPPNNoteSequencePlayer extends Thread {
+		boolean play;
+		private Network cppn; // CPPN generating amplitudes to play
+		private double[] lengths; // length to play each note
+		private double[] frequencies; // frequency to play each item (implicitly defines the notes)
+
+		public CPPNNoteSequencePlayer() {
+			// Without any content to play, playing cannot occur
+			play = false; 
+		}
+		
+		public CPPNNoteSequencePlayer(Network cppn, double[] frequencies, double[] lengths) {
+			play = true;
+			this.cppn = cppn;
+			this.frequencies = frequencies;
+			this.lengths = lengths;
+		}
+		
+		public void run() {
+			for(int i = 0; play && i < frequencies.length; i++) {
+				double[] amplitude = SoundFromCPPNUtil.amplitudeGenerator(cppn, (int) lengths[i], frequencies[i]);
+				//System.out.println("note "+ i + " length " + lengths[i] +  " :"); // + Arrays.toString(amplitude));
+				PlayDoubleArray.playDoubleArray(amplitude, false);
+				//MiscUtil.waitForReadStringAndEnterKeyPress();
+			}	
+			play = false;
+		}
+		
+		public void stopPlayback() {
+			play = false;
+		}
+		
+		public boolean isPlaying() {
+			return play;
 		}
 	}
 
@@ -301,9 +339,9 @@ public class MIDIUtil {
 	 * @param trackNumber specific track in file from which data is being extracted
 	 * @param cppn Input network being used as the "instrument" to generate MIDI file playback
 	 */
-	public static void playMIDIWithCPPNFromString(String audio, int trackNumber, Network cppn) {
+	public static CPPNNoteSequencePlayer playMIDIWithCPPNFromString(String audio, int trackNumber, Network cppn) {
 		Pair<double[],double[]> data = freqFromMIDI(audio, trackNumber);
 		//MiscUtil.waitForReadStringAndEnterKeyPress();
-		playMIDIWithCPPNFromDoubleArray(cppn, data.t1, data.t2);
+		return playMIDIWithCPPNFromDoubleArray(cppn, data.t1, data.t2);
 	}
 }
