@@ -1,6 +1,7 @@
 package edu.utexas.cs.nn.evolution.genotypes;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,7 +22,6 @@ import edu.utexas.cs.nn.networks.hyperneat.Substrate;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.util.CartesianGeometricUtilities;
-import edu.utexas.cs.nn.util.MiscUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.datastructures.Triple;
 import edu.utexas.cs.nn.util.util2D.ILocated2D;
@@ -104,7 +104,6 @@ public class HyperNEATCPPNGenotypeTest {
 	 */
 	@Test
 	public void testLoopThroughLinks() {
-		int endingIndex = connections.size() - 1;
 		int indexOfTest = 0;
 		ArrayList<LinkGene> newLinks = new ArrayList<LinkGene>();
 		hcppn.loopThroughLinks((HyperNEATTask) MMNEAT.task, newLinks, cppn, indexOfTest, subs.get(sub1Index), subs.get(sub2Index), sub1Index, sub2Index, subs);

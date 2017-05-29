@@ -2,7 +2,6 @@ package edu.utexas.cs.nn.tasks.interactive;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.GraphicsConfiguration;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Toolkit;
@@ -13,19 +12,20 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.Scanner;
+
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.filechooser.FileNameExtensionFilter;
 
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.SinglePopulationGenerationalEA;
@@ -46,9 +46,6 @@ import edu.utexas.cs.nn.util.CombinatoricUtilities;
 import edu.utexas.cs.nn.util.PopulationUtil;
 import edu.utexas.cs.nn.util.graphics.DrawingPanel;
 import edu.utexas.cs.nn.util.graphics.GraphicsUtil;
-
-import java.util.HashSet;
-import java.util.Hashtable;
 
 /**
  * Class that builds an interface designed for interactive evolution. 

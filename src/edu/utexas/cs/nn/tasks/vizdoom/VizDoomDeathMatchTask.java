@@ -2,7 +2,6 @@ package edu.utexas.cs.nn.tasks.vizdoom;
 
 import java.util.List;
 
-import ch.idsia.mario.engine.sprites.Mario;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
 import edu.utexas.cs.nn.networks.Network;

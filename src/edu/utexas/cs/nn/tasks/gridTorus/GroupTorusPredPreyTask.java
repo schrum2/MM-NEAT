@@ -107,6 +107,7 @@ public abstract class GroupTorusPredPreyTask<T extends Network> extends GroupTas
 		return task.outputLabels();
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	/**
 	 * One genotype for each member of the team, and one score for each member

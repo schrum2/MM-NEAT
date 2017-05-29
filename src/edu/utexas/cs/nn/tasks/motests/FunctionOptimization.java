@@ -17,6 +17,7 @@ import java.util.ArrayList;
  */
 public class FunctionOptimization extends LonerTask<ArrayList<Double>> {
 
+	@SuppressWarnings("rawtypes")
 	FitnessFunction[] functions;
 	double sign;
 	OptimizationDisplay display;
@@ -27,6 +28,7 @@ public class FunctionOptimization extends LonerTask<ArrayList<Double>> {
 	boolean addToFront = false;
 	int frontSamples = 300;
 
+	@SuppressWarnings("rawtypes")
 	public FunctionOptimization(FitnessFunction[] functions, double sign) {
 		this.functions = functions;
 		for (FitnessFunction f : functions) {
@@ -67,6 +69,7 @@ public class FunctionOptimization extends LonerTask<ArrayList<Double>> {
 		return result;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Score<ArrayList<Double>> evaluate(Genotype<ArrayList<Double>> individual) {
 		// System.out.println(individual);

@@ -2,32 +2,29 @@ package org.rlcommunity.environments.acrobot;
 
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.rlcommunity.environments.acrobot.AcrobotState;
 import org.rlcommunity.environments.acrobot.messages.StateResponse;
-import org.rlcommunity.rlglue.codec.types.Action;
-import org.rlcommunity.rlglue.codec.types.Observation;
-import org.rlcommunity.rlglue.codec.types.Reward_observation_terminal;
-import rlVizLib.Environments.EnvironmentBase;
-import rlVizLib.general.ParameterHolder;
-import rlVizLib.messaging.environment.EnvironmentMessageParser;
-import rlVizLib.messaging.environment.EnvironmentMessages;
-import rlVizLib.messaging.interfaces.HasAVisualizerInterface;
 import org.rlcommunity.environments.acrobot.visualizer.AcrobotVisualizer;
 import org.rlcommunity.environments.cartpole.CartPole;
 import org.rlcommunity.rlglue.codec.taskspec.TaskSpec;
 import org.rlcommunity.rlglue.codec.taskspec.TaskSpecVRLGLUE3;
 import org.rlcommunity.rlglue.codec.taskspec.ranges.DoubleRange;
 import org.rlcommunity.rlglue.codec.taskspec.ranges.IntRange;
+import org.rlcommunity.rlglue.codec.types.Action;
+import org.rlcommunity.rlglue.codec.types.Observation;
+import org.rlcommunity.rlglue.codec.types.Reward_observation_terminal;
 import org.rlcommunity.rlglue.codec.util.EnvironmentLoader;
 
 import edu.utexas.cs.nn.tasks.rlglue.RLGlueEnvironment;
 import edu.utexas.cs.nn.tasks.rlglue.acrobot.AcrobotViewer;
+import rlVizLib.general.ParameterHolder;
 import rlVizLib.general.hasVersionDetails;
+import rlVizLib.messaging.environment.EnvironmentMessageParser;
+import rlVizLib.messaging.environment.EnvironmentMessages;
 import rlVizLib.messaging.environmentShell.TaskSpecPayload;
+import rlVizLib.messaging.interfaces.HasAVisualizerInterface;
 import rlVizLib.messaging.interfaces.HasImageInterface;
 
 public class Acrobot extends RLGlueEnvironment implements HasAVisualizerInterface, HasImageInterface {

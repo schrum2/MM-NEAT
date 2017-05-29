@@ -1,5 +1,11 @@
 package edu.utexas.cs.nn.tasks.mspacman.objectives;
 
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+
 import edu.utexas.cs.nn.evolution.Organism;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.parameters.Parameters;
@@ -9,13 +15,6 @@ import edu.utexas.cs.nn.tasks.mspacman.agentcontroller.pacman.NNPacManController
 import edu.utexas.cs.nn.util.datastructures.Interval;
 import edu.utexas.cs.nn.util.graphics.DrawingPanel;
 import edu.utexas.cs.nn.util.graphics.GraphicsUtil;
-import edu.utexas.cs.nn.util.graphics.Plot;
-
-import java.awt.Color;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  *

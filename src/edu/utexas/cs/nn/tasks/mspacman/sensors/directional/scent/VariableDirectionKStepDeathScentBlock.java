@@ -1,8 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package edu.utexas.cs.nn.tasks.mspacman.sensors.directional.scent;
 
 import edu.utexas.cs.nn.parameters.Parameters;
@@ -35,10 +30,10 @@ public class VariableDirectionKStepDeathScentBlock extends VariableDirectionBloc
 
 	public VariableDirectionKStepDeathScentBlock(int dir, int k, boolean max) {
 		super(dir);
-		this.stepCount = k;
+		stepCount = k;
 		this.max = max;
 		// This needs to be updated every generation
-		scentMaps = new HashMap();
+		scentMaps = new HashMap<>();
 		updateScentMaps();
 	}
 

@@ -73,7 +73,7 @@ public class NSGA2<T> extends MuPlusLambda<T> {
 	 *            number of children to be created in evolved population
 	 * @param parentScores
 	 *            array list of parent scores
-         * @return child genotypes
+	 * @return child genotypes
 	 */
 	@Override
 	public ArrayList<Genotype<T>> generateChildren(int numChildren, ArrayList<Score<T>> parentScores) {
@@ -189,7 +189,7 @@ public class NSGA2<T> extends MuPlusLambda<T> {
 	 * static version of getNSGA2Scores converts array list form of scores to
 	 * NSGA2Score array
 	 * 
-         * @param <T> phenotype
+	 * @param <T> phenotype
 	 * @param scores
 	 *            scores to convert
 	 * @return array of NSGA2Scores
@@ -220,7 +220,7 @@ public class NSGA2<T> extends MuPlusLambda<T> {
 	/**
 	 * static version of NSGA2 selection method
 	 * 
-         * @param <T> phenotype
+	 * @param <T> phenotype
 	 * @param numParents
 	 *            number of parents to select from
 	 * @param scoresArray
@@ -360,13 +360,13 @@ public class NSGA2<T> extends MuPlusLambda<T> {
 	/**
 	 * Return just the Pareto front for a given population of scores.
 	 * 
-         * @param <T> phenotype
+	 * @param <T> phenotype
 	 * @param scores
 	 *            Multiobjective scores for evaluated individuals.
 	 * @return All non-dominated individuals in population: The Pareto front
 	 */
 	public static <T> ArrayList<NSGA2Score<T>> getParetoFront(NSGA2Score<T>[] scores) {
-                // gets first member from return array b/c that corresponds with first front
+		// gets first member from return array b/c that corresponds with first front
 		return fastNonDominatedSort(scores).get(0);
 	}
 
@@ -374,7 +374,7 @@ public class NSGA2<T> extends MuPlusLambda<T> {
 	 * Why is this needed in addition to fastNonDominatedSort? Not sure.
 	 * Basically a public way to access fastNonDominatedSort
 	 * 
-         * @param <T> phenotype
+	 * @param <T> phenotype
 	 * @param scores
 	 *            See fastNonDominatedSort
 	 * @return See fastNonDominatedSort
@@ -382,39 +382,40 @@ public class NSGA2<T> extends MuPlusLambda<T> {
 	public static <T> ArrayList<ArrayList<NSGA2Score<T>>> getParetoLayers(NSGA2Score<T>[] scores) {
 		return fastNonDominatedSort(scores);
 	}
-        
-        /**
-         * Method mates two genotypes multiple times and evaluates the offspring.
-         * Only the best resulting offspring is actually kept as the real children of
-         * the pairing.
-         * 
-         * @param <T> Phenotype
-         * @param parent1 First parent
-         * @param parent2 Second parent
-         * @return List of best two offspring
-         */
-    public static <T> ArrayList<Genotype<T>> cullCrossovers(Genotype<T> parent1, Genotype<T> parent2) {
-        ArrayList<Score<T>> litter = new ArrayList<Score<T>>(CommonConstants.litterSize);
-        // Fill litter
-        while (litter.size() < CommonConstants.litterSize) {
-            // Try crossover
-            // Will be a candidate once crossover modifies it
-            Genotype<T> candidate1 = parent1.copy();
-            Genotype<T> other = parent2.copy();
-            Genotype<T> candidate2 = candidate1.crossover(other);// crossover  of  candidate
-            // Evaluate and add to litter
-            Pair<double[], double[]> score = ((NoisyLonerTask<T>) MMNEAT.task).oneEval(candidate1, 0);
-            MultiObjectiveScore<T> s = new MultiObjectiveScore<T>(candidate1, score.t1, null, score.t2);
-            litter.add(s);// adds either candidate or cross over candidate
 
-            if (litter.size() < CommonConstants.litterSize) {
-                score = ((NoisyLonerTask<T>) MMNEAT.task).oneEval(candidate2, 0);
-                s = new MultiObjectiveScore<T>(candidate2, score.t1, null, score.t2);
-                litter.add(s);
-            }
-        }
-        // Cull litter
-        ArrayList<Genotype<T>> keepers = staticSelection(2, staticNSGA2Scores(litter));
-        return keepers;
-    }
+	/**
+	 * Method mates two genotypes multiple times and evaluates the offspring.
+	 * Only the best resulting offspring is actually kept as the real children of
+	 * the pairing.
+	 * 
+	 * @param <T> Phenotype
+	 * @param parent1 First parent
+	 * @param parent2 Second parent
+	 * @return List of best two offspring
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T> ArrayList<Genotype<T>> cullCrossovers(Genotype<T> parent1, Genotype<T> parent2) {
+		ArrayList<Score<T>> litter = new ArrayList<Score<T>>(CommonConstants.litterSize);
+		// Fill litter
+		while (litter.size() < CommonConstants.litterSize) {
+			// Try crossover
+			// Will be a candidate once crossover modifies it
+			Genotype<T> candidate1 = parent1.copy();
+			Genotype<T> other = parent2.copy();
+			Genotype<T> candidate2 = candidate1.crossover(other);// crossover  of  candidate
+			// Evaluate and add to litter
+			Pair<double[], double[]> score = ((NoisyLonerTask<T>) MMNEAT.task).oneEval(candidate1, 0);
+			MultiObjectiveScore<T> s = new MultiObjectiveScore<T>(candidate1, score.t1, null, score.t2);
+			litter.add(s);// adds either candidate or cross over candidate
+
+			if (litter.size() < CommonConstants.litterSize) {
+				score = ((NoisyLonerTask<T>) MMNEAT.task).oneEval(candidate2, 0);
+				s = new MultiObjectiveScore<T>(candidate2, score.t1, null, score.t2);
+				litter.add(s);
+			}
+		}
+		// Cull litter
+		ArrayList<Genotype<T>> keepers = staticSelection(2, staticNSGA2Scores(litter));
+		return keepers;
+	}
 }

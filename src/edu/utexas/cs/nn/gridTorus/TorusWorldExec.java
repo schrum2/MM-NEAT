@@ -88,7 +88,6 @@ public class TorusWorldExec {
 	 * @return the TorusPredPreyGame object that is an instance of the PredPrey
 	 *         game
 	 */
-        @SuppressWarnings({"null", "SleepWhileInLoop"})
 	public TorusPredPreyGame runGameTimed(TorusPredPreyController[] predControllers,
 			TorusPredPreyController[] preyControllers, boolean visual) {
 		game = new TorusPredPreyGame(Parameters.parameters.integerParameter("torusXDimensions"),

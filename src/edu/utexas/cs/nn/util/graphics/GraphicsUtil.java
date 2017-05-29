@@ -8,11 +8,9 @@ import java.util.ArrayList;
 
 import edu.utexas.cs.nn.networks.ActivationFunctions;
 import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.tasks.interactive.breedesizer.BreedesizerTask;
 import edu.utexas.cs.nn.tasks.interactive.picbreeder.PicbreederTask;
 import edu.utexas.cs.nn.util.CartesianGeometricUtilities;
 import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
-import edu.utexas.cs.nn.util.sound.PlayDoubleArray;
 import edu.utexas.cs.nn.util.sound.SoundToArray;
 import edu.utexas.cs.nn.util.util2D.ILocated2D;
 import edu.utexas.cs.nn.util.util2D.Tuple2D;

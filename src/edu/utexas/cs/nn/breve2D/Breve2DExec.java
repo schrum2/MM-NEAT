@@ -1,9 +1,11 @@
 package edu.utexas.cs.nn.breve2D;
 
-import edu.utexas.cs.nn.breve2D.agent.*;
-import edu.utexas.cs.nn.breve2D.dynamics.Breve2DDynamics;
-import edu.utexas.cs.nn.breve2D.dynamics.FrontBackRamming;
-import edu.utexas.cs.nn.breve2D.dynamics.InterleavedFightOrFlight;
+import edu.utexas.cs.nn.breve2D.agent.AgentController;
+import edu.utexas.cs.nn.breve2D.agent.Breve2DAction;
+import edu.utexas.cs.nn.breve2D.agent.HumanPlayer;
+import edu.utexas.cs.nn.breve2D.agent.MultitaskPlayer;
+import edu.utexas.cs.nn.breve2D.agent.RushingMonster;
+import edu.utexas.cs.nn.breve2D.dynamics.*;
 import edu.utexas.cs.nn.parameters.Parameters;
 
 /**

@@ -1,10 +1,11 @@
 package edu.utexas.cs.nn.evolution.crossover.network;
 
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
 import edu.utexas.cs.nn.evolution.crossover.Crossover;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.evolution.genotypes.HyperNEATCPPNGenotype;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype.Gene;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype.LinkGene;
@@ -16,9 +17,6 @@ import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.random.RandomNumbers;
-
-import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * This class crosses over two TWEANN networks with a command line parameter
@@ -60,11 +58,11 @@ public class TWEANNCrossover extends Crossover<TWEANN> {
 	 *            side-effects because it is not returned.
 	 * @param toReturn
 	 *            = The other parent. Is modified and returned.
-         *              Should be a copy of a member from a parent population.
+	 *              Should be a copy of a member from a parent population.
 	 * @return One of the offspring of crossover is returned (the other 
-         *          is only modified via side-effects)
+	 *          is only modified via side-effects)
 	 */
-        @Override
+	@Override
 	public Genotype<TWEANN> crossover(Genotype<TWEANN> toModify, Genotype<TWEANN> toReturn) {
 		includeExcess = RandomNumbers.randomGenerator.nextFloat() < includeExcessRate;
 
@@ -93,49 +91,49 @@ public class TWEANNCrossover extends Crossover<TWEANN> {
 			tm.crossModuleAssociations(originalAssociations, tr.moduleAssociations);
 		}
 
-                // Rather than actually create a new network, I can simply move 
-                // the node and link genes into the existing network genotype.
-                // This seems to avoid a memory leak ... hopefully it doesn't cause any problems.
-                tr.nodes = crossedNodes.get(1);
-                tr.links = crossedLinks.get(1);              
-                tr.calculateNumModules(); // Needed because excess crossover can result in unknown number of modes
+		// Rather than actually create a new network, I can simply move 
+		// the node and link genes into the existing network genotype.
+		// This seems to avoid a memory leak ... hopefully it doesn't cause any problems.
+		tr.nodes = crossedNodes.get(1);
+		tr.links = crossedLinks.get(1);              
+		tr.calculateNumModules(); // Needed because excess crossover can result in unknown number of modes
 		if (CommonConstants.hierarchicalMultitask) {
 			tr.crossModuleAssociations(tr.moduleAssociations, originalAssociations);
 		}
-                // These checks/modifications only matter if genes can be frozen,
-                // but smaller genotypes cannot be frozen.
-                if(!TWEANNGenotype.smallerGenotypes) {
-                    // If genes can be frozen, then we may want to melt them after crossover
-                    if (CommonConstants.meltAfterCrossover) {
-			tm.meltNetwork();
-			tr.meltNetwork();
-                    } else {
-                    // makes sure offspring are alterable so they too can be mutated.
-                    // These checks only matter if genes can be frozen in the first place.
-			if (!tm.existsAlterableLink()) {
-				if (Parameters.parameters.booleanParameter("prefFreezeUnalterable")) {
-					new MeltThenFreezePreferenceMutation().mutate(tm);
-				} else if (Parameters.parameters.booleanParameter("policyFreezeUnalterable")) {
-					new MeltThenFreezePolicyMutation().mutate(tm);
-				} else {
-					System.out.println("Crossover allowed an unalterable network to be created");
-					System.exit(1);
+		// These checks/modifications only matter if genes can be frozen,
+		// but smaller genotypes cannot be frozen.
+		if(!TWEANNGenotype.smallerGenotypes) {
+			// If genes can be frozen, then we may want to melt them after crossover
+			if (CommonConstants.meltAfterCrossover) {
+				tm.meltNetwork();
+				tr.meltNetwork();
+			} else {
+				// makes sure offspring are alterable so they too can be mutated.
+				// These checks only matter if genes can be frozen in the first place.
+				if (!tm.existsAlterableLink()) {
+					if (Parameters.parameters.booleanParameter("prefFreezeUnalterable")) {
+						new MeltThenFreezePreferenceMutation().mutate(tm);
+					} else if (Parameters.parameters.booleanParameter("policyFreezeUnalterable")) {
+						new MeltThenFreezePolicyMutation().mutate(tm);
+					} else {
+						System.out.println("Crossover allowed an unalterable network to be created");
+						System.exit(1);
+					}
+				}
+				// makes sure offspring are alterable so they too can be mutated
+				if (!tr.existsAlterableLink()) {
+					if (Parameters.parameters.booleanParameter("prefFreezeUnalterable")) {
+						new MeltThenFreezePreferenceMutation().mutate(tr);
+					} else if (Parameters.parameters.booleanParameter("policyFreezeUnalterable")) {
+						new MeltThenFreezePolicyMutation().mutate(tr);
+					} else {
+						System.out.println("Crossover allowed an unalterable network to be created");
+						System.exit(1);
+					}
 				}
 			}
-			// makes sure offspring are alterable so they too can be mutated
-			if (!tr.existsAlterableLink()) {
-				if (Parameters.parameters.booleanParameter("prefFreezeUnalterable")) {
-					new MeltThenFreezePreferenceMutation().mutate(tr);
-				} else if (Parameters.parameters.booleanParameter("policyFreezeUnalterable")) {
-					new MeltThenFreezePolicyMutation().mutate(tr);
-				} else {
-					System.out.println("Crossover allowed an unalterable network to be created");
-					System.exit(1);
-				}
-			}
-                    }
-                }
-		
+		}
+
 		return tr;
 	}
 
@@ -252,7 +250,7 @@ public class TWEANNCrossover extends Crossover<TWEANN> {
 					"Already passed the innovation! " + leftInnovation + "\n" +
 					"Archetype:" + archetype + "\n" +
 					"List:" + list;
-					//printNodeAlignmentColumns(list, archetypeIndex);
+				//printNodeAlignmentColumns(list, archetypeIndex);
 				// Fill with blanks until gene is reached
 				aligned.add(null);
 				// Corresponding archetype gene is somewhere ahead

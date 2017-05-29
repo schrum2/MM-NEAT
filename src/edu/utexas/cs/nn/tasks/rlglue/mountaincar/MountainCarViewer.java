@@ -143,7 +143,7 @@ public final class MountainCarViewer {
 
 		}
 
-		AffineTransform theScaleTransform = new AffineTransform();
+		//AffineTransform theScaleTransform = new AffineTransform();
 
 		// Schrum: Was this just clearing the screen? Not necessary
 		// Draw a rectangle

@@ -17,16 +17,10 @@
  */
 package edu.utexas.cs.nn.tasks.rlglue;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Map;
 
-import org.rlcommunity.rlglue.codec.AgentInterface;
 import org.rlcommunity.rlglue.codec.LocalGlue;
-import org.rlcommunity.rlglue.codec.NetGlue;
 import org.rlcommunity.rlglue.codec.RLGlue;
-import org.rlcommunity.rlglue.codec.util.AgentLoader;
-import org.rlcommunity.rlglue.codec.util.EnvironmentLoader;
 
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;

@@ -6,17 +6,13 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.Arrays;
-import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.tasks.interactive.InteractiveEvolutionTask;
 import edu.utexas.cs.nn.util.sound.PlayDoubleArray;
-import edu.utexas.cs.nn.util.sound.SaveFromArray;
 import edu.utexas.cs.nn.util.sound.SoundFromCPPNUtil;
 
 /**

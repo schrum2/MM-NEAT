@@ -31,6 +31,7 @@ import micro.rts.units.Unit;
 import micro.rts.units.UnitTypeTable;
 
 /**
+ * TODO: Comments
  * 
  * @author alicequint
  * 

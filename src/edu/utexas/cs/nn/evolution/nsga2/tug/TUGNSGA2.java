@@ -1,25 +1,20 @@
 package edu.utexas.cs.nn.evolution.nsga2.tug;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.evolution.genotypes.RealValuedGenotype;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
 import edu.utexas.cs.nn.evolution.nsga2.NSGA2;
 import edu.utexas.cs.nn.evolution.nsga2.NSGA2Score;
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.scores.MultiObjectiveScore;
 import edu.utexas.cs.nn.scores.Score;
-import edu.utexas.cs.nn.tasks.mspacman.MsPacManTask;
 import edu.utexas.cs.nn.util.BooleanUtil;
 import edu.utexas.cs.nn.util.ClassCreation;
-import edu.utexas.cs.nn.util.PopulationUtil;
-import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
 import edu.utexas.cs.nn.util.stats.Statistic;
 import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
-
-import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * Implementation of an idea from my dissertation:

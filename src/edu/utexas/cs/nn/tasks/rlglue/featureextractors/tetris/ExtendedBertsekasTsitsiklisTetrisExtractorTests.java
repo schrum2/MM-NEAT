@@ -11,7 +11,6 @@ import org.rlcommunity.environments.tetris.TetrisState;
 import org.rlcommunity.rlglue.codec.types.Observation;
 
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
 import edu.utexas.cs.nn.parameters.Parameters;
 
 public class ExtendedBertsekasTsitsiklisTetrisExtractorTests {

@@ -1,12 +1,12 @@
 package edu.utexas.cs.nn.log;
 
+import java.util.ArrayList;
+
+import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.networks.NetworkTask;
 import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
-import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * Log for details about an evolving population of TWEANNs

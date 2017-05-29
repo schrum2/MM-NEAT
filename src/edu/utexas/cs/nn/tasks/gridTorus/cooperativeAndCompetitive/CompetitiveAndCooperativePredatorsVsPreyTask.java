@@ -1,12 +1,11 @@
 package edu.utexas.cs.nn.tasks.gridTorus.cooperativeAndCompetitive;
 
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.gridTorus.TorusPredPreyGame;
 import edu.utexas.cs.nn.gridTorus.controllers.TorusPredPreyController;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.tasks.gridTorus.TorusPredPreyTask;
 import edu.utexas.cs.nn.tasks.gridTorus.GroupTorusPredPreyTask;
+import edu.utexas.cs.nn.tasks.gridTorus.TorusPredPreyTask;
 
 /**
  * The following class sets up tasks for

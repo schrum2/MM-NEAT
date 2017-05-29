@@ -43,6 +43,7 @@ public class UT2004OneVsNativeBotsDeathMatchTask<T extends Network> extends UT20
 	 *
 	 * @param args
 	 */
+	@SuppressWarnings("rawtypes")
 	public static void main(String[] args) {
 		Parameters.initializeParameterCollections(new String[] { "utDrive:D", "trials:2", "io:false", "netio:false", 
 				"task:edu.utexas.cs.nn.tasks.ut2004.UT2004OneVsNativeBotsDeathMatchTask" });

@@ -5,7 +5,6 @@ import edu.utexas.cs.nn.gridTorus.TorusAgent;
 import edu.utexas.cs.nn.gridTorus.TorusWorld;
 import edu.utexas.cs.nn.gridTorus.controllers.TorusPredPreyController;
 import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.networks.hyperneat.HyperNEATTask;
 import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
 
 /**

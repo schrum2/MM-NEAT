@@ -24,6 +24,7 @@ public abstract class TimeFramesScore<T extends Network> extends MsPacManObjecti
 
 	public double fitness(Organism<T> individual) {
 		NNPacManController nn = ((NNMsPacMan<T>) individual).getController();
+		@SuppressWarnings({ "unchecked", "rawtypes" })
 		LinkedList<Interval<Integer>> usageTimeFrames = ((MultinetworkSelectorMsPacManController) nn).usageTimeFrames[mode];
 		List<Integer> eatTimes = eatTimes();
 		return fitness(usageTimeFrames, eatTimes);

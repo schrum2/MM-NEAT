@@ -1,6 +1,7 @@
 package edu.utexas.cs.nn.tasks.mspacman.multitask;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 import java.util.EnumMap;
 
@@ -10,11 +11,9 @@ import org.junit.Test;
 
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
-import edu.utexas.cs.nn.util.MiscUtil;
-import pacman.game.Game;
-import pacman.game.GameView;
 import pacman.game.Constants.GHOST;
 import pacman.game.Constants.MOVE;
+import pacman.game.Game;
 
 public class CompleteTaskModeSelectorTest {
 

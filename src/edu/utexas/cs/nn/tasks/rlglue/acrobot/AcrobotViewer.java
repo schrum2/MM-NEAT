@@ -1,15 +1,13 @@
 package edu.utexas.cs.nn.tasks.rlglue.acrobot;
 
-import edu.utexas.cs.nn.networks.TWEANN;
-import edu.utexas.cs.nn.util.graphics.DrawingPanel;
-import rlVizLib.general.TinyGlue;
-
-import java.awt.*;
-import java.awt.geom.AffineTransform;
+import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.geom.Ellipse2D;
 
 import org.rlcommunity.environments.acrobot.AcrobotState;
-import org.rlcommunity.environments.acrobot.visualizer.AcrobotVisualizer;
+
+import edu.utexas.cs.nn.networks.TWEANN;
+import edu.utexas.cs.nn.util.graphics.DrawingPanel;
 
 public class AcrobotViewer {
 

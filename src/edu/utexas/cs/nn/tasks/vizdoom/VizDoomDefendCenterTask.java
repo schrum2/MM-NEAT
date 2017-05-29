@@ -1,6 +1,5 @@
 package edu.utexas.cs.nn.tasks.vizdoom;
 
-import java.util.Arrays;
 import java.util.List;
 
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;

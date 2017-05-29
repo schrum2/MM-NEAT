@@ -1,12 +1,8 @@
 package edu.utexas.cs.nn.util.graphics;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.util.ArrayList;
-
-import edu.utexas.cs.nn.util.MiscUtil;
-
 /**
+ * This file should really be removed, but we need to find a place to move these
+ * constants.
  *
  * @author Jacob Schrum
  */

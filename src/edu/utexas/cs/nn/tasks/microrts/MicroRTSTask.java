@@ -1,10 +1,7 @@
 package edu.utexas.cs.nn.tasks.microrts;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Scanner;
 
 import javax.swing.JFrame;
 
@@ -14,10 +11,8 @@ import org.jdom.JDOMException;
 
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.networks.NetworkTask;
-import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.networks.hyperneat.HyperNEATTask;
 import edu.utexas.cs.nn.networks.hyperneat.Substrate;
 import edu.utexas.cs.nn.parameters.CommonConstants;
@@ -26,18 +21,12 @@ import edu.utexas.cs.nn.tasks.NoisyLonerTask;
 import edu.utexas.cs.nn.tasks.microrts.evaluation.NNEvaluationFunction;
 import edu.utexas.cs.nn.tasks.microrts.fitness.ProgressiveFitnessFunction;
 import edu.utexas.cs.nn.tasks.microrts.fitness.RTSFitnessFunction;
-import edu.utexas.cs.nn.tasks.microrts.fitness.TerminalFitnessFunction;
 import edu.utexas.cs.nn.util.ClassCreation;
 import edu.utexas.cs.nn.util.datastructures.Pair;
-import edu.utexas.cs.nn.util.datastructures.Triple;
 import micro.ai.HasEvaluationFunction;
-import micro.ai.RandomBiasedAI;
 //import micro.ai.abstraction.WorkerRush;
 //import micro.ai.abstraction.pathfinding.BFSPathFinding;
 import micro.ai.core.AI;
-import micro.ai.evaluation.SimpleSqrtEvaluationFunction3;
-import micro.ai.mcts.uct.UCT;
-import micro.ai.minimax.RTMiniMax.IDRTMinimax;
 import micro.gui.PhysicalGameStatePanel;
 //import micro.gui.PhysicalGameStatePanel;
 import micro.rts.GameState;
@@ -47,6 +36,7 @@ import micro.rts.units.Unit;
 import micro.rts.units.UnitTypeTable;
 
 /**
+ * TODO: Comments
  * 
  * @author alicequint
  *
@@ -60,7 +50,7 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 	private int MAXCYCLES = 5000;
 	private JFrame w = null;
 	private GameState gs;
-	private GameState igs; //initial game state
+	private GameState igs; //initial game state: Schrum: Why is this not used?
 	private boolean gameover;
 	private int currentCycle;
 	private boolean AiInitialized = false;

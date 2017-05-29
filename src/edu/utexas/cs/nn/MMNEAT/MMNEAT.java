@@ -45,6 +45,7 @@ import edu.utexas.cs.nn.tasks.boardGame.SinglePopulationCompetativeCoevolutionBo
 import edu.utexas.cs.nn.tasks.boardGame.StaticOpponentBoardGameTask;
 import edu.utexas.cs.nn.tasks.breve2D.Breve2DTask;
 import edu.utexas.cs.nn.tasks.breve2D.NNBreve2DMonster;
+import edu.utexas.cs.nn.tasks.gridTorus.GroupTorusPredPreyTask;
 import edu.utexas.cs.nn.tasks.gridTorus.NNTorusPredPreyController;
 import edu.utexas.cs.nn.tasks.gridTorus.TorusEvolvedPredatorsVsStaticPreyTask;
 import edu.utexas.cs.nn.tasks.gridTorus.TorusPredPreyTask;
@@ -52,10 +53,6 @@ import edu.utexas.cs.nn.tasks.gridTorus.competitive.CompetitiveHomogeneousPredat
 import edu.utexas.cs.nn.tasks.gridTorus.cooperative.CooperativePredatorsVsStaticPreyTask;
 import edu.utexas.cs.nn.tasks.gridTorus.cooperativeAndCompetitive.CompetitiveAndCooperativePredatorsVsPreyTask;
 import edu.utexas.cs.nn.tasks.interactive.InteractiveEvolutionTask;
-import edu.utexas.cs.nn.tasks.interactive.breedesizer.BreedesizerTask;
-import edu.utexas.cs.nn.tasks.interactive.picbreeder.PicbreederTask;
-import edu.utexas.cs.nn.tasks.interactive.remixbreeder.RemixbreederTask;
-import edu.utexas.cs.nn.tasks.gridTorus.GroupTorusPredPreyTask;
 import edu.utexas.cs.nn.tasks.mario.MarioTask;
 import edu.utexas.cs.nn.tasks.microrts.MicroRTSTask;
 import edu.utexas.cs.nn.tasks.motests.FunctionOptimization;

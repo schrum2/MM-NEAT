@@ -3,7 +3,6 @@ package edu.utexas.cs.nn.tasks.rlglue.featureextractors.tetris;
 import org.rlcommunity.environments.tetris.TetrisState;
 import org.rlcommunity.rlglue.codec.types.Observation;
 
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.rlglue.featureextractors.FeatureExtractor;
