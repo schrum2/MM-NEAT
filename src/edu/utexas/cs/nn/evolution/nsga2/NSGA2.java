@@ -85,7 +85,7 @@ public class NSGA2<T> extends MuPlusLambda<T> {
 	 * Generates a list of offspring genotypes created through NSGA2 sort of
 	 * parent genotypes
 	 * 
-         * @param <T> phenotype
+     * @param <T> phenotype
 	 * @param numChildren
 	 * @param scoresArray
 	 * @param generation
@@ -93,7 +93,6 @@ public class NSGA2<T> extends MuPlusLambda<T> {
 	 * @param crossoverRate
 	 * @return list of offspring genotypes from sort
 	 */
-	@SuppressWarnings("unchecked")
 	public static <T> ArrayList<Genotype<T>> generateNSGA2Children(int numChildren, NSGA2Score<T>[] scoresArray,
 			int generation, boolean mating, double crossoverRate) {
 		assignCrowdingDistance(scoresArray);
@@ -117,12 +116,18 @@ public class NSGA2<T> extends MuPlusLambda<T> {
 			long parentId2 = -1;
 			Genotype<T> e = source.copy();
 
+			// TODO: If we want children to have access to the fitness of their
+			// parents, then some code needs to be added here. Specifically, each
+			// child genotype that is created needs to store its parent IDs.
+			// Additionally, the fitness scores of those parents need to be scores
+			// in some globally accessible location for easy lookup.
+			
 			// This restriction on mutation and crossover only makes sense when
 			// using pacman coevolution with a fitness/population for each 
 			// individual level
 			if (!CommonConstants.requireFitnessDifferenceForChange || better.scores[0] > 0) {
 				// If neither net has reached a given level, the scores of 0
-				// will prevent evolution mating only occurs if on and randomly
+				// will prevent mating.
 				if (mating && RandomNumbers.randomGenerator.nextDouble() < crossoverRate) {
 					e1 = RandomNumbers.randomGenerator.nextInt(scoresArray.length);
 					e2 = RandomNumbers.randomGenerator.nextInt(scoresArray.length);
@@ -138,10 +143,10 @@ public class NSGA2<T> extends MuPlusLambda<T> {
 						otherOffspring = keepers.get(1);
 					} else {// keeps all crossovers
 						Genotype<T> other = otherSource.copy();
-                                                // Genotype e is directly modified by the crossover call.
-                                                // Genotype otherOffspring is now a modified version of other.
+						// Genotype e is directly modified by the crossover call.
+						// Genotype otherOffspring is now a modified version of other.
 						otherOffspring = e.crossover(other);
-                                                assert otherOffspring.getId() != other.getId() : "otherOffspring should be a newly created genotype";
+						assert otherOffspring.getId() != other.getId() : "otherOffspring should be a newly created genotype";
 					}
 					i++;
 					/*

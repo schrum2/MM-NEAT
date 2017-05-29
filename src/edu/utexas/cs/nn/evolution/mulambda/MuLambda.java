@@ -150,13 +150,19 @@ public abstract class MuLambda<T> implements SinglePopulationGenerationalEA<T> {
 				}
 				EvolutionaryHistory.logTWEANNData(tweanns, generation);
 				if (modeLog != null) {
-					modeLogging(parentScores);
+					moduleLogging(parentScores);
 				}
 			}
 		}
 	}
 
-	private void modeLogging(ArrayList<Score<T>> parentScores) {
+	/**
+	 * For multi-module networks. Log information about numbers of
+	 * modules. Not used by default.
+	 * @param parentScores Scores from evaluated parents, which also
+	 *                     contain module information (within TWEANNGenotype).
+	 */
+	private void moduleLogging(ArrayList<Score<T>> parentScores) {
 		// Find out how many modes the best and worst nets had
 		double[] modeBests = new double[MAX_MODE_OF_LOG_INTEREST + 1];
 		double max = 0;
