@@ -50,7 +50,6 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 	private int MAXCYCLES = 5000;
 	private JFrame w = null;
 	private GameState gs;
-	private GameState igs; //initial game state: Schrum: Why is this not used?
 	private boolean gameover;
 	private int currentCycle;
 	private boolean AiInitialized = false;
@@ -93,7 +92,6 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 		ff.givePhysicalGameState(pgs);
 		ff.setMaxCycles(5000);
 		ff.giveTask(this);
-		igs = new GameState(pgs, utt);
 		gs = new GameState(pgs, utt);
 		
 	}
