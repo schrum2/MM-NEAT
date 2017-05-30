@@ -1,9 +1,13 @@
 package boardGame;
 
-public class BoardGameHeuristic {
-	
-	public BoardGameHeuristic(){
-		// TODO: Create better constructor
-	}
+public interface BoardGameHeuristic<T extends BoardGameState> {
+		
+	/**
+	 * Returns a Score based on the State
+	 * 
+	 * @param bgState The BoardGameState to be evaluated
+	 * @return Double representing the Score of the specified State
+	 */
+	public double heuristicEvalution(T bgState);
 	
 }

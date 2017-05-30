@@ -1,35 +1,31 @@
 package boardGame;
 
 import java.util.ArrayList;
+import java.util.List;
 
-import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
 
-public class BoardGamePlayerMinimax<T extends Network,S extends BoardGameState> implements BoardGamePlayer<S> {
+public class BoardGamePlayerMinimax<T extends BoardGameState, S extends BoardGameHeuristic<T>> implements BoardGamePlayer<T> {
 	
-	T network; // Remove eventually
-	BoardGameHeuristic boardHeuristic; // Should generalize to take any heuristic function, not just a network eval
+	S boardHeuristic; // Should generalize to take any heuristic function, not just a network eval
 	
 	
-	public BoardGamePlayerMinimax(T net, BoardGameHeuristic bgh){
-		network = net; // Remove eventually
+	public BoardGamePlayerMinimax(T net, S bgh){
 		boardHeuristic = bgh;
 	}	
 	
 	@Override
-	public S takeAction(S current) {
-		// TODO: Add Heuristic analysis; Right now, has exact same code as OneStepEval Player
-		
-		ArrayList<S> poss = new ArrayList<>();
+	public T takeAction(T current) {
+		List<T> poss = new ArrayList<T>();
 		poss.addAll(current.possibleBoardGameStates(current));
-		double[] utilities = new double[poss.size()];
+		double[] utilities = new double[poss.size()]; // Stores the network's ouputs
 		
-		for(int i = 0; i < utilities.length; i++){ // Gets the network's outputs for all possible BoardGameStates
-			double[] description = poss.get(i).getDescriptor();
-			utilities[i] = network.process(description)[0]; // utility score: replace with call to heuristic function
+		int index = 0;
+		for(T bgs : poss){ // Gets the network's outputs for all possible BoardGameStates
+			utilities[index++] = boardHeuristic.heuristicEvalution(bgs);
 		}
 
-		return poss.get(StatisticsUtilities.argmax(utilities));
+		return poss.get(StatisticsUtilities.argmax(utilities)); // Returns the BoardGameState which produced the highest network output
 	}
 
 }

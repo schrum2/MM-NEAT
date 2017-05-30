@@ -6,12 +6,12 @@ import java.util.List;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
 
-public class BoardGamePlayerOneStepEval<T extends Network> implements BoardGamePlayer<BoardGameState> {
+public class BoardGamePlayerOneStepEval implements BoardGamePlayer<BoardGameState> {
 
-	T network;
+	BoardGameHeuristic<BoardGameState> boardHeuristic;
 	
-	public BoardGamePlayerOneStepEval(T net){
-		network = net;
+	public BoardGamePlayerOneStepEval(BoardGameHeuristic<BoardGameState> heuristic){
+		boardHeuristic = heuristic;
 	}
 	
 	@Override
@@ -22,8 +22,7 @@ public class BoardGamePlayerOneStepEval<T extends Network> implements BoardGameP
 		
 		int index = 0;
 		for(BoardGameState bgs : poss){ // Gets the network's outputs for all possible BoardGameStates
-			double[] description = bgs.getDescriptor();
-			utilities[index++] = network.process(description)[0];
+			utilities[index++] = boardHeuristic.heuristicEvalution(bgs);
 		}
 
 		return poss.get(StatisticsUtilities.argmax(utilities)); // Returns the BoardGameState which produced the highest network output

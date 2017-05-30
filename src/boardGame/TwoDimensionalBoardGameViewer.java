@@ -29,8 +29,7 @@ public class TwoDimensionalBoardGameViewer<S  extends TwoDimensionalBoardGameSta
 	public static final int WIDTH = 600;
 	
 	public static final int GRID_WIDTH = 60;
-	
-	
+		
 	public TwoDimensionalBoardGameViewer(T bGame){
 		board = bGame;
 		start = board.getStartingState();
@@ -50,7 +49,7 @@ public class TwoDimensionalBoardGameViewer<S  extends TwoDimensionalBoardGameSta
 	 */
 	public void reset(TwoDimensionalBoardGameState newBoard) {
 		Graphics2D g = panel.getGraphics();
-		g.setColor(Color.black); // Set to Gray because certain BoardGames (Othello) use White Player Tokens
+		g.setColor(Color.black); // Set to Black to distinguish the Background from the Board
 		g.fillRect(0, 0, WIDTH, HEIGHT);
 		renderBoard(g, newBoard);
 	}
