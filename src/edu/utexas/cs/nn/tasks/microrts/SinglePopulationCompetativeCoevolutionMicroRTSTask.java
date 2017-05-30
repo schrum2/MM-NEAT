@@ -1,6 +1,7 @@
 package edu.utexas.cs.nn.tasks.microrts;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JFrame;
@@ -16,6 +17,7 @@ import edu.utexas.cs.nn.networks.hyperneat.Substrate;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.NoisyLonerTask;
+import edu.utexas.cs.nn.tasks.SinglePopulationCoevolutionTask;
 import edu.utexas.cs.nn.tasks.microrts.evaluation.NNEvaluationFunction;
 import edu.utexas.cs.nn.tasks.microrts.fitness.ProgressiveFitnessFunction;
 import edu.utexas.cs.nn.tasks.microrts.fitness.RTSFitnessFunction;
@@ -31,13 +33,11 @@ import micro.rts.units.Unit;
 import micro.rts.units.UnitTypeTable;
 
 /**
- * TODO: Comments
- * 
  * @author alicequint
  * 
  * @param <T> NN
  */
-public class SinglePopulationCompetativeCoevolutionMicroRTSTask<T extends Network> extends NoisyLonerTask<T> implements NetworkTask, HyperNEATTask, MicroRTSInformation {
+public class SinglePopulationCompetativeCoevolutionMicroRTSTask<T extends Network> extends SinglePopulationCoevolutionTask<T> implements NetworkTask, HyperNEATTask, MicroRTSInformation {
 
 	private PhysicalGameState pgs;
 	private PhysicalGameState initialPgs;
@@ -55,10 +55,6 @@ public class SinglePopulationCompetativeCoevolutionMicroRTSTask<T extends Networ
 	private int harvestingEfficiencyIndex1;
 	private int harvestingEfficiencyIndex2;
 
-	public static int RESOURCE_GAIN_VALUE = 2;
-	public static int WORKER_OUT_OF_BOUNDS_PENALTY = 1;
-	public static double WORKER_HARVEST_VALUE = .5; //relative to 1 resource, for use in pool
-
 	NNEvaluationFunction<T> ef1;
 	NNEvaluationFunction<T> ef2;
 	RTSFitnessFunction ff;
@@ -68,6 +64,7 @@ public class SinglePopulationCompetativeCoevolutionMicroRTSTask<T extends Networ
 
 	public SinglePopulationCompetativeCoevolutionMicroRTSTask() {
 		utt = new UnitTypeTable();
+		//create objects
 		try {
 			ef1 = (NNEvaluationFunction<T>) ClassCreation.createObject(Parameters.parameters.classParameter("microRTSEvaluationFunction"));
 			ef2 =(NNEvaluationFunction<T>) ClassCreation.createObject(Parameters.parameters.classParameter("microRTSOpponentEvaluationFunction"));
@@ -80,6 +77,7 @@ public class SinglePopulationCompetativeCoevolutionMicroRTSTask<T extends Networ
 		for(String function : ff.getFunctions()){
 			MMNEAT.registerFitnessFunction(function);
 		}
+		//create a copy of the physical game state so that it can be edited without changing initialPgs
 		pgs = initialPgs.clone();
 		ef1.givePhysicalGameState(pgs);
 		ef2.givePhysicalGameState(pgs);
@@ -152,8 +150,18 @@ public class SinglePopulationCompetativeCoevolutionMicroRTSTask<T extends Networ
 		return new String[]{"Utility"};
 	}
 
+	/**
+	 * all actions performed in a single evaluation of a genotype
+	 * 
+	 * @param individual
+	 *            genotype to be evaluated
+	 * @param num
+	 *            which evaluation is currently being performed
+	 * @return Combination of fitness scores (multiobjective possible), and
+	 *         other scores (for tracking non-fitness data)
+	 */
 	@Override
-	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {
+	public ArrayList<Pair<double[], double[]>> evaluateGroup(ArrayList<Genotype<T>> group) {
 		//reset:
 		gameover = false;
 		utt = new UnitTypeTable();
@@ -165,141 +173,6 @@ public class SinglePopulationCompetativeCoevolutionMicroRTSTask<T extends Networ
 		harvestingEfficiencyIndex2 = 0;
 		pgs = initialPgs.clone();
 		gs = new GameState(pgs, utt);
-		if(!AiInitialized)
-			initializeAI();
-		else{
-			ef1.givePhysicalGameState(initialPgs);
-			ef2.givePhysicalGameState(initialPgs);
-		}
-		ef1.setNetwork(individual);
-		ef2.setNetwork(individual); //TODO probably have to find another one
-		if(CommonConstants.watch)
-			w = PhysicalGameStatePanel.newVisualizer(gs,640,640,false,PhysicalGameStatePanel.COLORSCHEME_WHITE);
-		PlayerAction pa1;
-		try {
-			pa1 = ai1.getAction(0, gs); //throws exception
-			gs.issueSafe(pa1);
-		} catch (Exception e1) { e1.printStackTrace();System.exit(1); }
-		PlayerAction pa2;
-		try {
-			pa2 = ai2.getAction(1, gs); //throws exception
-			gs.issueSafe(pa2);
-		} catch (Exception e) { e.printStackTrace();System.exit(1); }
-		if(Parameters.parameters.classParameter("microRTSFitnessFunction").equals(ProgressiveFitnessFunction.class)){
-			int unitDifferenceNow = 0;
-			int maxBaseX = -1, maxBaseY = -1;
-			double resourcePool = 0;
-			double formerResourcePool = 0;
-			Unit currentUnit;
-			boolean baseAlive = false;
-			boolean baseDeathRecorded = false;
-			for(int i = 0; i < pgs.getWidth(); i++){
-				for(int j = 0; j < pgs.getHeight(); j++){
-					baseAlive = false;
-					currentUnit = pgs.getUnitAt(i, j);
-					if(currentUnit!=null){
-						if(currentUnit.getPlayer() == 0){
-							unitDifferenceNow++;
-							resourcePool += currentUnit.getCost();
-							if(currentUnit.getType().name.equals("Base")){
-								resourcePool += currentUnit.getResources();
-								if(currentUnit.getX() > maxBaseX) maxBaseX = currentUnit.getX();
-								if(currentUnit.getY() > maxBaseY) maxBaseY = currentUnit.getY();
-								baseAlive = true;
-								assert(baseDeathRecorded == false): "base was created after all previous bases have been destroyed!";
-							} //end if(base)
-							else if(currentUnit.getType().name.equals("Worker")){
-								if(currentUnit.getResources() > 0){
-									resourcePool += WORKER_HARVEST_VALUE;
-									if(!isUnitInRange(currentUnit, 0, 0, maxBaseX, maxBaseY)){
-										harvestingEfficiencyIndex1 -= WORKER_OUT_OF_BOUNDS_PENALTY;
-									}
-								}
-							}
-						} //end if (unit is ours)
-						else if(currentUnit.getPlayer() == 1) unitDifferenceNow--;
-					}
-				}//end j
-			}//end i
-			if(!baseAlive && !baseDeathRecorded) {
-				baseUpTime1 = currentCycle;
-				baseDeathRecorded = true;
-			}
-			if(resourcePool > formerResourcePool){
-				harvestingEfficiencyIndex1 += RESOURCE_GAIN_VALUE;
-			}
-			formerResourcePool = resourcePool;
-			averageUnitDifference += (unitDifferenceNow - averageUnitDifference) / currentCycle;
-		} //end if(Parameters.. = progressive)
-		if(Parameters.parameters.classParameter("microRTSFitnessFunction").equals(ProgressiveFitnessFunction.class)){
-			int unitDifferenceNow = 0;
-			int maxBaseX = -1, maxBaseY = -1;
-			double resourcePool = 0;
-			double formerResourcePool = 0;
-			Unit currentUnit;
-			boolean baseAlive = false;
-			boolean baseDeathRecorded = false;
-			for(int i = 0; i < pgs.getWidth(); i++){
-				for(int j = 0; j < pgs.getHeight(); j++){
-					baseAlive = false;
-					currentUnit = pgs.getUnitAt(i, j);
-					if(currentUnit!=null){
-						if(currentUnit.getPlayer() == 0){
-							unitDifferenceNow++;
-							resourcePool += currentUnit.getCost();
-							if(currentUnit.getType().name.equals("Base")){
-								resourcePool += currentUnit.getResources();
-								if(currentUnit.getX() > maxBaseX) maxBaseX = currentUnit.getX();
-								if(currentUnit.getY() > maxBaseY) maxBaseY = currentUnit.getY();
-								baseAlive = true;
-								assert(baseDeathRecorded == false): "base was created after all previous bases have been destroyed!";
-							} //end if(base)
-							else if(currentUnit.getType().name.equals("Worker")){
-								if(currentUnit.getResources() > 0){
-									resourcePool += WORKER_HARVEST_VALUE;
-									if(!isUnitInRange(currentUnit, 0, 0, maxBaseX, maxBaseY)){
-										harvestingEfficiencyIndex1-=WORKER_OUT_OF_BOUNDS_PENALTY;
-									}
-								}
-							}
-						} //end if (unit is ours)
-						else if(currentUnit.getPlayer() == 1) unitDifferenceNow--;
-					}
-				}//end j
-			}//end i
-			if(!baseAlive && !baseDeathRecorded) {
-				baseUpTime1 = currentCycle;
-				baseDeathRecorded = true;
-			}
-			if(resourcePool > formerResourcePool){
-				harvestingEfficiencyIndex1 += RESOURCE_GAIN_VALUE;
-			}
-			formerResourcePool = resourcePool;
-			averageUnitDifference += (unitDifferenceNow - averageUnitDifference) / currentCycle;
-		} //end if(Parameters.. = progressive)
-		return null;
-
-	}
-	
-	/**
-	 * 
-	 * @param u unit to be judged
-	 * @param x1 top left x of range
-	 * @param y1 top left y of range
-	 * @param x2 bottom right x of range
-	 * @param y2 bottom right y of range
-	 * @return true if u is within or on the borders
-	 */
-	private boolean isUnitInRange(Unit u, int x1, int y1, int x2, int y2){
-		int unitX = u.getX(); 
-		int unitY = u.getY();
-		if(unitX < x1 || unitY < y1 || unitX > x2 || unitY > y2){
-			return false;
-		} else
-			return true;
-	}
-
-	private void initializeAI() {
 		try {
 			ai1 = (HasEvaluationFunction) ClassCreation.createObject(Parameters.parameters.classParameter("microRTSAgent"));
 			ai2 = (HasEvaluationFunction) ClassCreation.createObject(Parameters.parameters.classParameter("microRTSOpponent"));
@@ -310,6 +183,17 @@ public class SinglePopulationCompetativeCoevolutionMicroRTSTask<T extends Networ
 		ai1.setEvaluationFunction(ef1);
 		ai2.setEvaluationFunction(ef2);
 		AiInitialized = true;
+		ef1.setNetwork(group.get(0));
+		ef2.setNetwork(group.get(1));
+		if(CommonConstants.watch)
+			w = PhysicalGameStatePanel.newVisualizer(gs,640,640,false,PhysicalGameStatePanel.COLORSCHEME_WHITE);
+		ArrayList<Pair<double[], double[]>> a = new ArrayList<Pair<double[], double[]>>();
+		a.add(MicroRTSUtility.oneEval((AI)ai1, (AI)ai2, this));
+		return a;
+	}
+
+	private void initializeAI() {
+
 	}
 
 	@Override
@@ -328,13 +212,30 @@ public class SinglePopulationCompetativeCoevolutionMicroRTSTask<T extends Networ
 	}
 
 	@Override
-	public int getResourceGainValue(){
-		return RESOURCE_GAIN_VALUE;
+	public UnitTypeTable getUnitTypeTable() {
+		return utt;
 	}
 
 	@Override
-	public UnitTypeTable getUnitTypeTable() {
-		return utt;
+	public double[] minScores() {
+		return new double[]{}; //TODO
+	}
+
+	@Override
+	public int groupSize() {
+		return 2;
+	}
+
+	@Override
+	public int getResourceGainValue() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void setHarvestingEfficiency() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

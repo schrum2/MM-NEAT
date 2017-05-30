@@ -27,6 +27,7 @@ import micro.ai.HasEvaluationFunction;
 //import micro.ai.abstraction.WorkerRush;
 //import micro.ai.abstraction.pathfinding.BFSPathFinding;
 import micro.ai.core.AI;
+import micro.ai.evaluation.EvaluationFunction;
 import micro.gui.PhysicalGameStatePanel;
 //import micro.gui.PhysicalGameStatePanel;
 import micro.rts.GameState;
@@ -52,15 +53,11 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 	private GameState gs;
 	private boolean gameover;
 	private int currentCycle;
-	private boolean AiInitialized = false;
+	public boolean AiInitialized = false;
 
 	private double averageUnitDifference;
 	private int baseUpTime;
 	private int harvestingEfficiencyIndex;
-
-	public static int RESOURCE_GAIN_VALUE = 2;
-	public static int WORKER_OUT_OF_BOUNDS_PENALTY = 1;
-	public static double WORKER_HARVEST_VALUE = .5; //relative to 1 resource, for use in pool
 
 	NNEvaluationFunction<T> ef;
 	NNEvaluationFunction<T> ef2;
@@ -86,6 +83,7 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 		for(String function : ff.getFunctions()){
 			MMNEAT.registerFitnessFunction(function);
 		}
+		MMNEAT.registerFitnessFunction("win?", false);
 		ef.givePhysicalGameState(pgs);
 		if(ef2 != null)
 			ef2.givePhysicalGameState(pgs);
@@ -182,74 +180,15 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 		ef.setNetwork(individual);
 		if(CommonConstants.watch)
 			w = PhysicalGameStatePanel.newVisualizer(gs,640,640,false,PhysicalGameStatePanel.COLORSCHEME_BLACK);
-		do{
-			PlayerAction pa1;
-			try {
-				pa1 = ai1.getAction(0, gs); //throws exception
-				gs.issueSafe(pa1);
-			} catch (Exception e1) { e1.printStackTrace();System.exit(1); }
-			PlayerAction pa2;
-			try {
-				pa2 = ai2.getAction(1, gs); //throws exception
-				gs.issueSafe(pa2);
-			} catch (Exception e) { e.printStackTrace();System.exit(1); }
-			if(Parameters.parameters.classParameter("microRTSFitnessFunction").equals(ProgressiveFitnessFunction.class)){
-				int unitDifferenceNow = 0;
-				int maxBaseX = -1, maxBaseY = -1;
-				double resourcePool = 0;
-				double formerResourcePool = 0;
-				Unit currentUnit;
-				boolean baseAlive = false;
-				boolean baseDeathRecorded = false;
-				for(int i = 0; i < pgs.getWidth(); i++){
-					for(int j = 0; j < pgs.getHeight(); j++){
-						baseAlive = false;
-						currentUnit = pgs.getUnitAt(i, j);
-						if(currentUnit!=null){
-							if(currentUnit.getPlayer() == 0){
-								unitDifferenceNow++;
-								resourcePool += currentUnit.getCost();
-								if(currentUnit.getType().name.equals("Base")){
-									resourcePool += currentUnit.getResources();
-									if(currentUnit.getX() > maxBaseX) maxBaseX = currentUnit.getX();
-									if(currentUnit.getY() > maxBaseY) maxBaseY = currentUnit.getY();
-									baseAlive = true;
-									assert(baseDeathRecorded == false): "base was created after all previous bases have been destroyed!";
-								} //end if(base)
-								else if(currentUnit.getType().name.equals("Worker")){
-									if(currentUnit.getResources() > 0){
-										resourcePool += WORKER_HARVEST_VALUE;
-										if(!isUnitInRange(currentUnit, 0, 0, maxBaseX, maxBaseY)){
-											harvestingEfficiencyIndex-=WORKER_OUT_OF_BOUNDS_PENALTY;
-										}
-									}
-								}
-							} //end if (unit is ours)
-							else if(currentUnit.getPlayer() == 1) unitDifferenceNow--;
-						}
-					}//end j
-				}//end i
-				if(!baseAlive && !baseDeathRecorded) {
-					baseUpTime = currentCycle;
-					baseDeathRecorded = true;
-				}
-				if(resourcePool > formerResourcePool){
-					harvestingEfficiencyIndex += RESOURCE_GAIN_VALUE;
-				}
-				formerResourcePool = resourcePool;
-				averageUnitDifference += (unitDifferenceNow - averageUnitDifference) / currentCycle;
-			} //end if(Parameters.. = progressive)
-			gameover = gs.cycle();
-			currentCycle++;
-			if(CommonConstants.watch) w.repaint();
-		}while(!gameover && gs.getTime()<MAXCYCLES);
-
-		if(CommonConstants.watch) 
-			w.dispose();
-		return ff.getFitness(gs);
+		return MicroRTSUtility.oneEval((AI) ai1, ai2, this);
+		
 	} //END oneEval
-
-	private void initializeAI() {
+	
+	/**
+	 *initializes ai (only called once for efficiency) 
+	 * @return 
+	 */
+	void initializeAI() {
 		try {
 			ai1 = (HasEvaluationFunction) ClassCreation.createObject(Parameters.parameters.classParameter("microRTSAgent"));
 			ai2 = (AI) ClassCreation.createObject(Parameters.parameters.classParameter("microRTSOpponent"));
@@ -261,24 +200,6 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 		if(Parameters.parameters.classParameter("microRTSOpponentEvaluationFunction")!= null)
 				((HasEvaluationFunction) ai2).setEvaluationFunction(ef2);
 		AiInitialized = true;
-	}
-	
-	/**
-	 * 
-	 * @param u unit to be judged
-	 * @param x1 top left x of range
-	 * @param y1 top left y of range
-	 * @param x2 bottom right x of range
-	 * @param y2 bottom right y of range
-	 * @return true if u is within or on the borders
-	 */
-	private boolean isUnitInRange(Unit u, int x1, int y1, int x2, int y2){
-		int unitX = u.getX(); 
-		int unitY = u.getY();
-		if(unitX < x1 || unitY < y1 || unitX > x2 || unitY > y2){
-			return false;
-		} else
-			return true;
 	}
 
 	@Override
@@ -295,11 +216,6 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 	public int getHarvestingEfficiency(){
 		return harvestingEfficiencyIndex;
 	}
-
-	@Override
-	public int getResourceGainValue(){
-		return RESOURCE_GAIN_VALUE;
-	}
 	
 	@Override
 	public UnitTypeTable getUnitTypeTable() {
@@ -314,5 +230,17 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 		//			Pair<double[], double[]> result = test.oneEval(g, -1);
 		//			System.out.println(Arrays.toString(result.t1)+ " , "+Arrays.toString(result.t2));
 		System.out.println();
+	}
+
+	@Override
+	public int getResourceGainValue() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void setHarvestingEfficiency() {
+		// TODO Auto-generated method stub
+		
 	}
 }
