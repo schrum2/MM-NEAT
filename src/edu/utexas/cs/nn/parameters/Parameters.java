@@ -9,6 +9,7 @@ import java.util.Scanner;
 import java.util.StringTokenizer;
 
 import boardGame.BoardGamePlayerRandom;
+import boardGame.NNBoardGameHeuristic;
 import edu.utexas.cs.nn.breve2D.Breve2DGame;
 import edu.utexas.cs.nn.breve2D.agent.RushingPlayer;
 import edu.utexas.cs.nn.breve2D.dynamics.PlayerPredatorMonsterPrey;
@@ -705,7 +706,7 @@ public class Parameters {
 		stringOptions.add("remixWAVFile", SoundUtilExamples.ALARM_WAV, "Input WAV file to be remixed in Remixbreeder");
 		stringOptions.add("remixMIDIFile", SoundUtilExamples.FUR_ELISE_MID, "Input MIDI file to be played with CPPN in Breedesizer");
 		// Class options
-		classOptions.add("boardGame", null, "Board game being played by BoardGameTask");
+		classOptions.add("boardGame", null, "Board Game being played by BoardGameTask");
 		classOptions.add("boardGameOpponent", BoardGamePlayerRandom.class, "Board game being played by BoardGameTask");
 		classOptions.add("hyperNEATSeedTask", null, "HyperNEAT task that seeds a standard NEAT task");
 		classOptions.add("substrateMapping", CenteredSubstrateMapping.class, "Determines the type of subtrate coordinate mapping we want to use");

@@ -4,8 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import boardGame.BoardGame;
+import boardGame.BoardGameHeuristic;
 import boardGame.BoardGamePlayer;
 import boardGame.BoardGamePlayerOneStepEval;
+import boardGame.BoardGameState;
+import boardGame.NNBoardGameHeuristic;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.networks.Network;
@@ -23,7 +26,7 @@ public class SinglePopulationCompetativeCoevolutionBoardGameTask<T extends Netwo
 	@SuppressWarnings("rawtypes")
 	BoardGamePlayer opponent;
 	
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public SinglePopulationCompetativeCoevolutionBoardGameTask(){
 		MMNEAT.registerFitnessFunction("Win Reward");
 		
@@ -47,13 +50,14 @@ public class SinglePopulationCompetativeCoevolutionBoardGameTask<T extends Netwo
 		return new double[]{-1}; // -1 is for a loss
 	}
 
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public ArrayList<Pair<double[], double[]>> evaluateGroup(ArrayList<Genotype<T>> group) {
 		BoardGamePlayer[] players = new BoardGamePlayer[group.size()];
 		int index = 0;
 		for(Genotype<T> gene : group){
-			BoardGamePlayer evolved = new BoardGamePlayerOneStepEval<T>(gene.getPhenotype());
+			
+			BoardGamePlayer evolved = new BoardGamePlayerOneStepEval(new NNBoardGameHeuristic(gene.getPhenotype()));
 			players[index++] = evolved;
 		}
 		return BoardGameUtil.playGame(bg, players);

@@ -3,7 +3,6 @@ package boardGame;
 import java.util.ArrayList;
 import java.util.List;
 
-import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
 
 public class BoardGamePlayerOneStepEval implements BoardGamePlayer<BoardGameState> {

@@ -5,8 +5,11 @@ import java.util.LinkedList;
 import java.util.List;
 
 import boardGame.BoardGame;
+import boardGame.BoardGameHeuristic;
 import boardGame.BoardGamePlayer;
 import boardGame.BoardGamePlayerOneStepEval;
+import boardGame.BoardGameState;
+import boardGame.NNBoardGameHeuristic;
 import boardGame.TwoDimensionalBoardGameViewer;
 import boardGame.TwoDimensionalBoardGame;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
@@ -29,7 +32,7 @@ public class StaticOpponentBoardGameTask<T extends Network> extends NoisyLonerTa
 	BoardGame bg;
 	@SuppressWarnings("rawtypes")
 	BoardGamePlayer opponent;
-
+	
 	// These only get filled in if HyperNEAT is being used
 	List<Substrate> substrateInformation = null;
 	List<Pair<String, String>> substrateConnectivity = null;
@@ -37,7 +40,7 @@ public class StaticOpponentBoardGameTask<T extends Network> extends NoisyLonerTa
 	/**
 	 * Constructor for a new BoardGameTask
 	 */
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public StaticOpponentBoardGameTask(){
 		MMNEAT.registerFitnessFunction("Win Reward");
 
@@ -109,14 +112,14 @@ public class StaticOpponentBoardGameTask<T extends Network> extends NoisyLonerTa
 	 * @param num Integer value
 	 * @return Pair of Double Arrays that show the Fitness of an individual network
 	 */
-	@SuppressWarnings({ "rawtypes" })
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {
 
 		if(CommonConstants.watch){ // If set to Visually Evaluate the Task
 		}
-
-		BoardGamePlayer evolved = new BoardGamePlayerOneStepEval<T>(individual.getPhenotype());
+		
+		BoardGamePlayer evolved = new BoardGamePlayerOneStepEval(new NNBoardGameHeuristic(individual.getPhenotype()));
 		BoardGamePlayer[] players = new BoardGamePlayer[]{evolved, opponent};
 		return BoardGameUtil.playGame(bg, players).get(0);
 	}
