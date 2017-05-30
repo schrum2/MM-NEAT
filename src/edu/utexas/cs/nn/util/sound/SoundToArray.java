@@ -74,7 +74,8 @@ public class SoundToArray {
 	 * @return  method call that extracts amplitude data from byte array formed
 	 */
 	public static int[] extractAmplitudeDataFromAudioInputStream(AudioInputStream audioInputStream) {  
-		AudioFormat format = audioInputStream.getFormat();  
+		AudioFormat format = audioInputStream.getFormat();  	
+		PlayDoubleArray.changeAudioFormat(format);
 		byte[] audioBytes = extractAmplitudeByteArrayFromAudioInputStream(audioInputStream);
 		return extractAmplitudeDataFromAmplitudeByteArray(format, audioBytes);  //calls method that extracts amplitude data from byte array formed
 	}  
@@ -106,7 +107,7 @@ public class SoundToArray {
 	 * @param audioBytes byte array formed based on the size of the stream
 	 * @return int array containing amplitude data from stream
 	 */
-	private static int[] extractAmplitudeDataFromAmplitudeByteArray(AudioFormat format, byte[] audioBytes) {  
+	public static int[] extractAmplitudeDataFromAmplitudeByteArray(AudioFormat format, byte[] audioBytes) {  
 		// convert
 		int[]  audioData = null;  
 		if (format.getSampleSizeInBits() == 16) {  
@@ -179,7 +180,7 @@ public class SoundToArray {
 	public static double[] readDoubleArrayFromStringAudio(String audio) {
 		AudioInputStream AIS;
 		try {
-			AIS = WAVUtil.audioStream(audio);
+			AIS = WAVUtil.audioStream(audio);	
 			int[] intArray = SoundToArray.extractAmplitudeDataFromAudioInputStream(AIS);
 			double[] doubleArray = SoundToArray.doubleArrayAmplitudesFromIntArrayAmplitudes(intArray);
 			return doubleArray;
@@ -197,7 +198,7 @@ public class SoundToArray {
 	 * @param format AudioFormat of source wave
 	 * @return adjusted format specified to 16 bits, 2 bytes/frame, and a signed PCM encoding
 	 */
-	public static AudioFormat getAudioFormatRestrictedTo16Bits(AudioFormat format) {
+	private static AudioFormat getAudioFormatRestrictedTo16Bits(AudioFormat format) {
 		//Encoding encoding = format.getEncoding();
 		float sampleRate = format.getSampleRate();
 		int channels = format.getChannels();
