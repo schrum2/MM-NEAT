@@ -168,6 +168,8 @@ public class SoundUtilExamples {
 		System.out.println("harp: " + harpAIS.getFormat());
 		System.out.println("Sample rate: " + harpAIS.getFormat().getSampleRate());
 		System.out.println("Frame rate: " + harpAIS.getFormat().getFrameRate());
+		System.out.println("getSampleSizeInBits: " + harpAIS.getFormat().getSampleSizeInBits());
+		System.out.println("bytes/frame: " + harpAIS.getFormat().getFrameSize());
 		System.out.println(harpAIS.getFormat().isBigEndian());
 		System.out.println();
 		//bear AudioFormat

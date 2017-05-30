@@ -65,16 +65,16 @@ public final class PlayDoubleArray {
 			DataLine.Info info = new DataLine.Info(SourceDataLine.class, format);
 
 			line = (SourceDataLine) AudioSystem.getLine(info);
-			line.open(format, SAMPLE_BUFFER_SIZE * BYTES_PER_SAMPLE);
+			line.open(format, SAMPLE_BUFFER_SIZE * format.getFrameSize());
 			
 			// Extra one unnecessary?
 			lineSave = (SourceDataLine) AudioSystem.getLine(info);
-			lineSave.open(format, SAMPLE_BUFFER_SIZE * BYTES_PER_SAMPLE);
+			lineSave.open(format, SAMPLE_BUFFER_SIZE * format.getFrameSize());
 
 			// the internal buffer is a fraction of the actual buffer size, this choice is arbitrary
 			// it gets divided because we can't expect the buffered data to line up exactly with when
 			// the sound card decides to push out its samples.
-			buffer = new byte[SAMPLE_BUFFER_SIZE * BYTES_PER_SAMPLE/3];
+			buffer = new byte[SAMPLE_BUFFER_SIZE * format.getFrameSize()/3];
 		}
 		catch (LineUnavailableException e) {
 			System.out.println(e.getMessage());
