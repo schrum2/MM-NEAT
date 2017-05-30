@@ -52,7 +52,12 @@ public abstract class TwoDimensionalBoardGameState implements BoardGameState {
 	 * @param win
 	 */
 	protected TwoDimensionalBoardGameState(int[][] board, int numPlay, int player, List<Integer> win){
-		assert board.length == getBoardHeight() && board[0].length == getBoardWidth();
+		assert board.length == getBoardHeight();
+		
+		for(int i = 0; i < board.length; i++){
+			assert board[i].length == getBoardWidth();
+		}
+		
 		boardState = board;
 		numPlayers = numPlay;
 		nextPlayer = player;
