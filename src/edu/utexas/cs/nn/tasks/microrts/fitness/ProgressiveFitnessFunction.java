@@ -14,11 +14,16 @@ public class ProgressiveFitnessFunction extends RTSFitnessFunction{
 	public Pair<double[], double[]> getFitness(GameState gs) {
 
 		double[] fitness = new double[] {
-			normalize(task.getHarvestingEfficiency(), maxCycles * task.getResourceGainValue()),
-			normalize(task.getBaseUpTime(), maxCycles),
-			normalize(task.getAverageUnitDifference(), pgs.getHeight()*pgs.getWidth())+1,
+				normalize(task.getHarvestingEfficiency(), maxCycles * task.getResourceGainValue()),
+				normalize(task.getBaseUpTime(), maxCycles),
+				normalize(task.getAverageUnitDifference(), pgs.getHeight()*pgs.getWidth())+1,
 		};
-		Pair<double[], double[]> result = new Pair<double[],double[]>(fitness, null);
+		int winner = gs.winner(); //0:win 1:loss -1:tie
+		double[]other = new double[]{
+				winner + 1 % 2, //1:win 0:tie -1:loss 
+				gs.getTime()
+		};
+		Pair<double[], double[]> result = new Pair<double[],double[]>(fitness, other);
 		return result;
 	}
 

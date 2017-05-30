@@ -24,7 +24,7 @@ public class TerminalFitnessFunction extends RTSFitnessFunction{
 		int gameEndTime = terminalGameState.getTime();
 		List<Unit> unitsLeft = terminalGameState.getUnits();
 
-		if(terminalGameState.winner() == 0){ 
+		if(terminalGameState.winner() == 0){
 			//victory organism being tested! 
 			score.t1[0] = 1;
 			score.t1[1] = (double) (maxCycles - gameEndTime) / maxCycles * RESULTRANGE - 1; //lower time is better
