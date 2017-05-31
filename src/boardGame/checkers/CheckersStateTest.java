@@ -97,8 +97,10 @@ public class CheckersStateTest {
 
 	@Test
 	public void testSetupStartingBoard() {
-		fail("Not yet implemented");
-		// TODO
+		// TODO: Below Test isn't working.
+		assertFalse(test3.move(new Point(2,1), new Point(3,0))); // Unable to make the known good Starting Move; no Check is at the specified location
+		test3.setupStartingBoard(); // Resets the Board to a new CheckBoard
+		assertTrue(test3.move(new Point(2,1), new Point(3,0))); // Known good Starting move
 	}
 
 	@Test
@@ -125,7 +127,7 @@ public class CheckersStateTest {
 
 	@Test
 	public void testGetPlayerSymbols() {
-		assertArrayEquals(new char[]{'B', 'R'}, start.getPlayerSymbols());
+		assertArrayEquals(new char[]{'b', 'r', 'B', 'R'}, start.getPlayerSymbols());
 	}
 
 	@Test
@@ -143,12 +145,38 @@ public class CheckersStateTest {
 
 	@Test
 	public void testMove() {
-		assertTrue(start.move(new Point(2,1), new Point(3,0))); // Known good Starting move
+		
+		// Basic Movement
+		assertTrue(start.move(new Point(2,1), new Point(3,2))); // Known good Starting move
 		assertTrue(start.move(new Point(5,0), new Point(4,1))); // Known good Enemy Starting move
 		assertFalse(start.move(new Point(2,3), new Point(3,3))); // Tried to move Non-Diagonally
 		assertFalse(start.move(new Point(1,4), new Point(2,5))); // Tried to move to a Non-Empty, Non-Enemy Space
 		
-		// TODO: King Movement, Jumping, Double Jumping
+		// TODO: Below Test is failing.
+		assertFalse(start.move(new Point(3,2), new Point(2,1))); // Tried to move a Black Non-King Check up
+		assertTrue(start.move(new Point(2,3), new Point(3,2))); // Known good Move; needed to change Players
+		assertFalse(start.move(new Point(4,1), new Point(5,0))); // Tried to move a Red Non-King Check down
+
+		
+		
+		
+		// King Movement
+		assertTrue(test1.move(new Point(2,3), new Point(3,2))); // Black King Down-Left
+		assertTrue(test1.move(new Point(5,4), new Point(6,3))); // Red King Down-Left
+		
+		assertTrue(test1.move(new Point(3,2), new Point(2,3))); // Black King Up-Right
+		assertTrue(test1.move(new Point(6,3), new Point(5,4))); // Red King Up-Right
+		
+		assertTrue(test1.move(new Point(2,3), new Point(1,2))); // Black King Up-Left
+		assertTrue(test1.move(new Point(5,4), new Point(4,3))); // Red King Up-Left
+		
+		assertTrue(test1.move(new Point(1,2), new Point(2,3))); // Black King Down-Right
+		assertTrue(test1.move(new Point(4,3), new Point(5,4))); // Red King Down-Right
+		
+		// TODO: Jumping, Double Jumping
+		
+		
+		
 	}
 
 	@Test

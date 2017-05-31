@@ -123,15 +123,31 @@ public class CheckersState extends TwoDimensionalBoardGameState {
 		int xOffset = (int) Math.abs(moveThis.getX() - moveTo.getX());
 		int yOffset = (int) Math.abs(moveThis.getY() - moveTo.getY());
 		
+		int thisCheck = boardState[(int) moveThis.getX()][(int) moveThis.getY()];
 		
-		if(!(xOffset == 1 && yOffset == 1)) return false; // Both the X-Offset and the Y-Offset must be exactly 1; Jumping selects the Enemy Check being Jumped
+		// Cannot Move an Empty Space or an Enemy Check
+		if(thisCheck == EMPTY){
+			return false;
+		}else if(nextPlayer == BLACK_CHECK && (thisCheck == RED_CHECK || thisCheck == RED_CHECK_KING)){
+			return false;
+		}else if(nextPlayer == RED_CHECK && (thisCheck == BLACK_CHECK || thisCheck == BLACK_CHECK_KING)){
+			return false;
+		}
+		
+		if(!(xOffset == 1 && yOffset == 1)){
+			System.out.println("Offset Incorrect: checkMovement()");
+			return false; // Both the X-Offset and the Y-Offset must be exactly 1; Jumping selects the Enemy Check being Jumped
+		}
 		
 		if(doubleJumpCheck != null){ // If able, must complete a Double Jump
 			if((int) moveThis.getX() != (int) doubleJumpCheck.getX() || (int) moveThis.getY() != (int) doubleJumpCheck.getY()) return false;
 		}
 		
-		// Returns False only if unable to Move or Jump
-		return (boardState[(int) moveTo.getX()][(int) moveTo.getY()] == EMPTY || ableToJump(moveThis, moveTo));
+		if(boardState[(int) moveTo.getX()][(int) moveTo.getY()] == EMPTY){
+			return true;
+		}else{
+			return ableToJump(moveThis, moveTo);			
+		}
 	}
 	
 	/**
@@ -156,7 +172,10 @@ public class CheckersState extends TwoDimensionalBoardGameState {
 		
 		int dX = 2*checkX - 2*otherX; // Used to check Jump Space
 		int dY = 2*checkY - 2*otherY; // Used to check Jump Space
-		if(!isPointInBounds(new Point(dX, dY))) return false; // dX and/or dY are off the Board; impossible to Jump
+		if(!isPointInBounds(new Point(dX, dY))){
+			System.out.println("Not In-Bounds: ableToJump()");
+			return false; // dX and/or dY are off the Board; impossible to Jump
+		}
 		
 		
 		
@@ -170,6 +189,7 @@ public class CheckersState extends TwoDimensionalBoardGameState {
 		// Jump Space is within Bounds and is Empty; must check other conditions of the Board
 		
 		if(thisCheck == BLACK_CHECK && dY > 0 && (otherSpace == RED_CHECK || otherSpace == RED_CHECK_KING)){ // Black Checks must Move down the screen; Y increases
+			System.out.println("Jumping: ableToJump()");
 			return true;
 		}else if(thisCheck == RED_CHECK && dY < 0 && (otherSpace == BLACK_CHECK || otherSpace == BLACK_CHECK_KING)){ // Red Checks must Move up the screen; Y decreases
 			return true;
@@ -414,7 +434,7 @@ public class CheckersState extends TwoDimensionalBoardGameState {
 	public char[] getPlayerSymbols() {
 		// Need to account for having King pieces
 		//return new char[]{'b', 'B', 'r', 'R', 'X'};
-		return new char[]{'B', 'R'};
+		return new char[]{'b', 'r', 'B', 'R'};
 	}
 
 	@Override
