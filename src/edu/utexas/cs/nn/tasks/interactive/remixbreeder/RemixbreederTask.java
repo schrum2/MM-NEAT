@@ -84,10 +84,12 @@ public class RemixbreederTask<T extends Network> extends BreedesizerTask<T> {
 
 	protected void respondToClick(int itemID) {
 		super.respondToClick(itemID);
-
-		// Play original sound if they click the button
-		if(itemID == (CHECKBOX_IDENTIFIER_START - inputMultipliers.length - 1)) {
-			PlayDoubleArray.playDoubleArray(WAVDoubleArray);
+		
+		if(arrayPlayer != null && arrayPlayer.isPlaying()) { // Always stop any currently playing sound
+			arrayPlayer.stopPlayback();
+		} else if(itemID == (CHECKBOX_IDENTIFIER_START - inputMultipliers.length - 1)) { // only play if wasn't playing
+			// Play original sound if they click the button
+			arrayPlayer = PlayDoubleArray.playDoubleArray(format, WAVDoubleArray);
 		}
 	}
 

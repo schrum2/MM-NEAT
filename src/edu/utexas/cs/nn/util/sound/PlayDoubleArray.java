@@ -113,7 +113,12 @@ public final class PlayDoubleArray {
 			playing = true;
 			for (int i = 0; playing && i < samples.length; i++) {
 				playDouble(samples[i]);
-			}				
+			}		
+			playing = false;
+		}
+		
+		public boolean isPlaying() {
+			return playing;
 		}
 	}	
 	
