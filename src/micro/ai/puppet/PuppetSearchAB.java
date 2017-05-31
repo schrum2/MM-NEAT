@@ -4,14 +4,13 @@
 package micro.ai.puppet;
 
 import micro.ai.HasEvaluationFunction;
-import micro.ai.RandomBiasedAI;
 import micro.ai.abstraction.pathfinding.FloodFillPathFinding;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Stack;
 
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.tasks.microrts.MicroRTSTask;
+import edu.utexas.cs.nn.tasks.microrts.MicroRTSInformation;
 import micro.ai.core.AI;
 import micro.ai.core.ParameterSpecification;
 import micro.ai.evaluation.EvaluationFunction;
@@ -32,7 +31,7 @@ import micro.util.Pair;
 public class PuppetSearchAB extends PuppetBase implements HasEvaluationFunction {
 
 	public PuppetSearchAB(){
-		this(((MicroRTSTask) MMNEAT.task).getUnitTypeTable());
+		this(((MicroRTSInformation) MMNEAT.task).getUnitTypeTable());
 	}
 
 	class Result{

@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Random;
 
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.tasks.microrts.MicroRTSTask;
+import edu.utexas.cs.nn.tasks.microrts.MicroRTSInformation;
 import edu.utexas.cs.nn.util.random.RandomNumbers;
 import micro.rts.GameState;
 import micro.rts.PhysicalGameState;
@@ -38,7 +38,7 @@ public class WorkerRush extends AbstractionLayerAI {
     // If we have a worker: do this if needed: build base, harvest resources
     
     public WorkerRush(){
-    	this(((MicroRTSTask) MMNEAT.task).getUnitTypeTable());
+    	this(((MicroRTSInformation) MMNEAT.task).getUnitTypeTable());
     }
     public WorkerRush(UnitTypeTable a_utt) {
         this(a_utt, new AStarPathFinding());
@@ -63,7 +63,7 @@ public class WorkerRush extends AbstractionLayerAI {
     public PlayerAction getAction(int player, GameState gs) {
         PhysicalGameState pgs = gs.getPhysicalGameState();
         Player p = gs.getPlayer(player);
-        PlayerAction pa = new PlayerAction();
+//        PlayerAction pa = new PlayerAction();
 //        System.out.println("LightRushAI for player " + player + " (cycle " + gs.getTime() + ")");
                 
         // behavior of bases:

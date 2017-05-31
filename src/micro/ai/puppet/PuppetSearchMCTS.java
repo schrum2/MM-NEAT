@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.tasks.microrts.MicroRTSTask;
+import edu.utexas.cs.nn.tasks.microrts.MicroRTSInformation;
 import micro.rts.GameState;
 import micro.rts.PlayerAction;
 import micro.rts.units.UnitTypeTable;
@@ -23,7 +23,7 @@ import micro.util.Pair;
 public class PuppetSearchMCTS extends PuppetBase implements HasEvaluationFunction {
 	
 	public PuppetSearchMCTS(){
-		this(((MicroRTSTask) MMNEAT.task).getUnitTypeTable());
+		this(((MicroRTSInformation) MMNEAT.task).getUnitTypeTable());
 	}
 	
 	class Plan{

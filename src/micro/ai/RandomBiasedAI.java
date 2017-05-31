@@ -6,19 +6,18 @@ package micro.ai;
 
 import micro.ai.core.AI;
 import micro.ai.core.ParameterSpecification;
-import micro.ai.evaluation.EvaluationFunction;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.tasks.microrts.MicroRTSTask;
 import edu.utexas.cs.nn.util.random.RandomNumbers;
 import micro.rts.*;
 import micro.rts.units.Unit;
 import micro.rts.units.UnitTypeTable;
 import micro.util.Sampler;
+
+import edu.utexas.cs.nn.tasks.microrts.MicroRTSInformation;
 
 /**
  *
@@ -34,7 +33,7 @@ public class RandomBiasedAI extends AI {
     Random r = RandomNumbers.randomGenerator;
 
     public RandomBiasedAI() {
-    	this(((MicroRTSTask) MMNEAT.task).getUnitTypeTable());
+    	this(((MicroRTSInformation) MMNEAT.task).getUnitTypeTable());
     }
     
     public RandomBiasedAI(UnitTypeTable utt) {

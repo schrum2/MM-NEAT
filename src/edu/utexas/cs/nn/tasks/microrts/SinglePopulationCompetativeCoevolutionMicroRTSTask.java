@@ -60,7 +60,7 @@ public class SinglePopulationCompetativeCoevolutionMicroRTSTask<T extends Networ
 		//create objects
 		try {
 			ef1 = (NNEvaluationFunction<T>) ClassCreation.createObject(Parameters.parameters.classParameter("microRTSEvaluationFunction"));
-			ef2 =(NNEvaluationFunction<T>) ClassCreation.createObject(Parameters.parameters.classParameter("microRTSOpponentEvaluationFunction"));
+			ef2 = (NNEvaluationFunction<T>) ClassCreation.createObject(Parameters.parameters.classParameter("microRTSEvaluationFunction"));
 			ff = (RTSFitnessFunction) ClassCreation.createObject(Parameters.parameters.classParameter("microRTSFitnessFunction"));
 			initialPgs = PhysicalGameState.load("data/microRTS/maps/" + Parameters.parameters.stringParameter("map"), utt);
 		} catch (JDOMException | IOException | NoSuchMethodException e) {
@@ -166,7 +166,7 @@ public class SinglePopulationCompetativeCoevolutionMicroRTSTask<T extends Networ
 		gs = new GameState(pgs, utt);
 		if(!AiInitialized)
 			initializeAI();
-		ef1.setNetwork(group.get(0));
+		ef1.setNetwork(group.get(0)); //pass each agent its own neural network
 		ef2.setNetwork(group.get(1));
 		if(CommonConstants.watch)
 			w = PhysicalGameStatePanel.newVisualizer(gs,640,640,false,PhysicalGameStatePanel.COLORSCHEME_WHITE);
@@ -182,7 +182,7 @@ public class SinglePopulationCompetativeCoevolutionMicroRTSTask<T extends Networ
 	void initializeAI() {
 		try {
 			ai1 = (HasEvaluationFunction) ClassCreation.createObject(Parameters.parameters.classParameter("microRTSAgent"));
-			ai2 = (HasEvaluationFunction) ClassCreation.createObject(Parameters.parameters.classParameter("microRTSOpponent"));
+			ai2 = (HasEvaluationFunction) ClassCreation.createObject(Parameters.parameters.classParameter("microRTSAgent"));
 		} catch (NoSuchMethodException e2) {
 			e2.printStackTrace();
 			System.exit(1);

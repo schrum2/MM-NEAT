@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.tasks.microrts.MicroRTSTask;
+import edu.utexas.cs.nn.tasks.microrts.MicroRTSInformation;
 import micro.rts.GameState;
 import micro.rts.PlayerAction;
 import micro.rts.units.UnitTypeTable;
@@ -47,7 +47,7 @@ public class PortfolioAI extends AIWithComputationBudget implements Interruptibl
     int playerForThisComputation;
     
     public PortfolioAI() {
-    	this(((MicroRTSTask) MMNEAT.task).getUnitTypeTable());
+    	this(((MicroRTSInformation) MMNEAT.task).getUnitTypeTable());
     }
     public PortfolioAI(UnitTypeTable utt) {
         this(new AI[]{new WorkerRush(utt),

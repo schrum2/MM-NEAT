@@ -19,8 +19,8 @@ public class ProgressiveFitnessFunction extends RTSFitnessFunction{
 		fitness[2] = normalize(task.getAverageUnitDifference(), pgs.getHeight()*pgs.getWidth())+1;
 		if(coevolution){
 			fitness[3] = normalize(task.getHarvestingEfficiency2(), maxCycles * task.getResourceGainValue());
-			fitness[1] = normalize(task.getBaseUpTime(), maxCycles);
-			fitness[2] = normalize(task.getAverageUnitDifference(), pgs.getHeight()*pgs.getWidth())+1;
+			fitness[4] = normalize(task.getBaseUpTime(), maxCycles);
+			fitness[5] = (normalize(task.getAverageUnitDifference(), pgs.getHeight()*pgs.getWidth())+1) * -1;
 		}
 
 		int winner = gs.winner(); //0:win 1:loss -1:tie

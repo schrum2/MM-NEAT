@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.tasks.microrts.MicroRTSTask;
+import edu.utexas.cs.nn.tasks.microrts.MicroRTSInformation;
 import micro.rts.GameState;
 import micro.rts.PlayerAction;
 import micro.rts.PlayerActionGenerator;
@@ -50,7 +50,7 @@ public class ABCD extends AI implements HasEvaluationFunction {
     protected int defaultNONEduration = 8;
     
     public ABCD(){
-    	this(((MicroRTSTask) MMNEAT.task).getUnitTypeTable());
+    	this(((MicroRTSInformation) MMNEAT.task).getUnitTypeTable());
     }
     
     public ABCD(UnitTypeTable utt) {
