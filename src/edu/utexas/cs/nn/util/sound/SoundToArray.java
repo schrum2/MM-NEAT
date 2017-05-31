@@ -75,7 +75,8 @@ public class SoundToArray {
 	 */
 	public static int[] extractAmplitudeDataFromAudioInputStream(AudioInputStream audioInputStream) {  
 		AudioFormat format = audioInputStream.getFormat();  	
-		PlayDoubleArray.changeAudioFormat(format);
+		// TODO: Does commenting this out cause problems?
+		//PlayDoubleArray.changeAudioFormat(format);
 		byte[] audioBytes = extractAmplitudeByteArrayFromAudioInputStream(audioInputStream);
 		return extractAmplitudeDataFromAmplitudeByteArray(format, audioBytes);  //calls method that extracts amplitude data from byte array formed
 	}  

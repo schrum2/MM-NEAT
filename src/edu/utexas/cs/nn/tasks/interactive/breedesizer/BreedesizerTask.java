@@ -166,7 +166,9 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 			PlayDoubleArray.playDoubleArray(amplitude);	
 			keyboard.setCPPN(phenotype);
 		} else {
-			PlayDoubleArray.stopPlayback();
+			
+			// TODO: Fix this soon
+			//PlayDoubleArray.stopPlayback();
 		}
 	}
 
