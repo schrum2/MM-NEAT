@@ -9,7 +9,6 @@ import java.util.Scanner;
 import java.util.StringTokenizer;
 
 import boardGame.BoardGamePlayerRandom;
-import boardGame.NNBoardGameHeuristic;
 import edu.utexas.cs.nn.breve2D.Breve2DGame;
 import edu.utexas.cs.nn.breve2D.agent.RushingPlayer;
 import edu.utexas.cs.nn.breve2D.dynamics.PlayerPredatorMonsterPrey;
@@ -295,7 +294,7 @@ public class Parameters {
 		integerOptions.add("pacmanReplayDelay", Constants.DELAY, "Milliseconds of pause between pacman time steps in replay mode");
 		integerOptions.add("clipLength", Keyboard.NOTE_LENGTH_DEFAULT, "Length of clip played in Breedesizer");
 		integerOptions.add("maxClipLength", 100000, "Maximum length of clip played in Breedesizer");
-		integerOptions.add("microRTSMaxCyles", 5000, "Time limit for simulated games");
+		integerOptions.add("microRTSMaxCycles", 5000, "Time limit for simulated games");
 		// Long parameters
 		longOptions.add("lastInnovation", 0l, "Highest innovation number used so far");
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");

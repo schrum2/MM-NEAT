@@ -54,6 +54,7 @@ public class SinglePopulationCompetativeCoevolutionMicroRTSTask<T extends Networ
 	HasEvaluationFunction ai1 = null;
 	HasEvaluationFunction ai2 = null;
 
+	@SuppressWarnings("unchecked")
 	public SinglePopulationCompetativeCoevolutionMicroRTSTask() {
 		utt = new UnitTypeTable();
 		//create objects

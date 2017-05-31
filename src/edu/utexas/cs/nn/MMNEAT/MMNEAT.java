@@ -55,6 +55,7 @@ import edu.utexas.cs.nn.tasks.gridTorus.cooperativeAndCompetitive.CompetitiveAnd
 import edu.utexas.cs.nn.tasks.interactive.InteractiveEvolutionTask;
 import edu.utexas.cs.nn.tasks.mario.MarioTask;
 import edu.utexas.cs.nn.tasks.microrts.MicroRTSTask;
+import edu.utexas.cs.nn.tasks.microrts.SinglePopulationCompetativeCoevolutionMicroRTSTask;
 import edu.utexas.cs.nn.tasks.motests.FunctionOptimization;
 import edu.utexas.cs.nn.tasks.motests.testfunctions.FunctionOptimizationSet;
 import edu.utexas.cs.nn.tasks.mspacman.CooperativeCheckEachMultitaskSelectorMsPacManTask;
@@ -446,7 +447,11 @@ public class MMNEAT {
 				}
 			} else if (task instanceof MicroRTSTask) {
 				MicroRTSTask temp = (MicroRTSTask) task;
-				setNNInputParameters(temp.sensorLabels().length, 1); //this is only so that we can test NNEvaluationFunction early, change later!
+				setNNInputParameters(temp.sensorLabels().length, 1); //only one output because it is utility value for state being evaluated
+			} else if (task instanceof SinglePopulationCompetativeCoevolutionMicroRTSTask){
+				SinglePopulationCompetativeCoevolutionMicroRTSTask temp = (SinglePopulationCompetativeCoevolutionMicroRTSTask) task;
+				setNNInputParameters(temp.sensorLabels().length, 1); //only one output because it is utility value for state being evaluated
+				
 			} else if (task instanceof RLGlueTask) {
 				setNNInputParameters(rlGlueExtractor.numFeatures(), RLGlueTask.agent.getNumberOutputs());
 			} else if (task instanceof PinballTask) {
