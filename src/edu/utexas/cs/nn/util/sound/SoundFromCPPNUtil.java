@@ -96,8 +96,25 @@ public class SoundFromCPPNUtil {
 	 * @param fileDest String representation of location where generated file will be saved
 	 * @throws IOException if an I/O operation has failed or been interrupted
 	 */
-	public static void saveFileFromCPPN(Network CPPN, int length, double frequency, String fileName, AudioFormat format) throws IOException {
+	public static void saveFileFromCPPN(Network CPPN, int length, double frequency, String fileName) throws IOException {
 		double[] generatedSound = amplitudeGenerator(CPPN, length, frequency);
+		SaveFromArray.saveFileFromDoubleArray(fileName, generatedSound);
+	}
+	
+	/**
+	 * Uses a double array of amplitudes and a CPPN to generate a remixed sound and saves that 
+	 * output into a file.
+	 * 
+	 *@param CPPN network used to generate amplitude
+	 * @param inputWAV double array representing WAV file being remixed
+	 * @param length length of sample
+	 * @param frequency Frequency of note being manipulated
+	 * @param sampleRate specified rate of input wav file 
+	 * @param inputMultipliers double array determining whether checkboxes have been turned on or off in Breedesizer
+	 * @param fileName String representation of location where generated file will be saved
+	 */
+	public static void saveRemixedFileFromCPPN(Network cppn, double[] inputWAV, int length, double frequency, int sampleRate, double[] inputMultipliers, String fileName) {
+		double[] generatedSound = amplitudeRemixer(cppn, inputWAV, length, frequency, sampleRate, inputMultipliers);
 		SaveFromArray.saveFileFromDoubleArray(fileName, generatedSound);
 	}
 

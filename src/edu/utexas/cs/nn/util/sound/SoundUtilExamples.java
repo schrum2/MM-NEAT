@@ -63,21 +63,20 @@ public class SoundUtilExamples {
 		Network cppn = test.getCPPN();
 
 		//method call
-		getAudioFormat();
-		eightBitTests();
+		saveWAVFileForRemix();
 	}
 
 	public static void randomCPPNExamples(Network cppn) throws IOException {
 		//saves CPPN with variety of AudioFormat initializations to see which one works the best
 		double[] testArray = SoundFromCPPNUtil.amplitudeGenerator(cppn, 60000, 440);
 		AudioFormat af1 = new AudioFormat(PlayDoubleArray.SAMPLE_RATE, PlayDoubleArray.BITS_PER_SAMPLE,1, true, true);
-		SoundFromCPPNUtil.saveFileFromCPPN(cppn, 60000, 440, "cppn1.wav", af1);
+		SoundFromCPPNUtil.saveFileFromCPPN(cppn, 60000, 440, "cppn1.wav");
 		AudioFormat af2 = new AudioFormat(PlayDoubleArray.SAMPLE_RATE/2, PlayDoubleArray.BITS_PER_SAMPLE/2,1, true, false); // Correct?
-		SoundFromCPPNUtil.saveFileFromCPPN(cppn, 60000, 440, "cppn2.wav", af2);
+		SoundFromCPPNUtil.saveFileFromCPPN(cppn, 60000, 440, "cppn2.wav");
 		AudioFormat af3 = new AudioFormat(PlayDoubleArray.SAMPLE_RATE, PlayDoubleArray.BYTES_PER_SAMPLE,1, true, true);
-		SoundFromCPPNUtil.saveFileFromCPPN(cppn, 60000, 440, "cppn3.wav", af3);
+		SoundFromCPPNUtil.saveFileFromCPPN(cppn, 60000, 440, "cppn3.wav");
 		AudioFormat af4 = new AudioFormat(PlayDoubleArray.SAMPLE_RATE, PlayDoubleArray.BYTES_PER_SAMPLE,1, true, false);
-		SoundFromCPPNUtil.saveFileFromCPPN(cppn, 60000, 440, "cppn4.wav", af4);
+		SoundFromCPPNUtil.saveFileFromCPPN(cppn, 60000, 440, "cppn4.wav");
 		PlayDoubleArray.playDoubleArray(testArray);
 		GraphicsUtil.wavePlotFromDoubleArray(testArray, 500, 500);
 
@@ -380,5 +379,10 @@ public class SoundUtilExamples {
 		File furElise = new File(FUR_ELISE_MID);
 		MIDIUtil.MIDIData(furElise);
 
+	}
+	
+	public static void saveWAVFileForRemix() throws IOException {
+		byte[] alarmByteArray = WAVUtil.WAVToByte(ALARM_WAV);
+		SaveFromArray.saveFileFromByteArray(alarmByteArray, "data/sounds/alarmCopy.wav");
 	}
 }

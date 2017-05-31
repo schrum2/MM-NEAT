@@ -38,7 +38,7 @@ import edu.utexas.cs.nn.util.sound.SoundFromCPPNUtil;
 public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask<T> {
 
 	//private static final int LENGTH_DEFAULT = 60000; //default length of generated amplitude
-	private static final int FREQUENCY_DEFAULT = 440; //default frequency of generated amplitude: A440
+	public static final int FREQUENCY_DEFAULT = 440; //default frequency of generated amplitude: A440
 
 	//ideal numbers to initialize AudioFormat; based on obtaining formats of a series of WAV files
 	public static final float DEFAULT_SAMPLE_RATE = 11025; //default frame rate is same value
@@ -195,27 +195,36 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 		//SAVING AUDIO
 
 		chooser = new JFileChooser();
-		AudioFormat af = new AudioFormat(AudioFormat.Encoding.PCM_UNSIGNED, DEFAULT_SAMPLE_RATE, DEFAULT_BIT_RATE, DEFAULT_CHANNEL, BYTES_PER_FRAME, DEFAULT_SAMPLE_RATE, true);
+		
 		chooser.setApproveButtonText("Save");
 		FileNameExtensionFilter audioFilter = new FileNameExtensionFilter("WAV audio files", "wav");
 		chooser.setFileFilter(audioFilter);
 		int audioReturnVal = chooser.showOpenDialog(frame);
 		if(audioReturnVal == JFileChooser.APPROVE_OPTION) {//if the user decides to save the image
 			System.out.println("You chose to call the file: " + chooser.getSelectedFile().getName());
-			try {
-				SoundFromCPPNUtil.saveFileFromCPPN(scores.get(i).individual.getPhenotype(), Parameters.parameters.integerParameter("clipLength"), FREQUENCY_DEFAULT, chooser.getSelectedFile().getName() + ".wav", af);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			saveSound(i, chooser);
 			System.out.println("audio file " + chooser.getSelectedFile().getName() + " was saved successfully");
 			p.setVisibility(false);
 		} else { //else image dumped
 			p.setVisibility(false);
 			System.out.println("audio file not saved");
 		}	
-
 	}
-
+	
+	/**
+	 * The way sound is saved has to be a different method call for Breedesizer and Remixbreeder, so this code is
+	 * extracted from the original save method and made into a protected method.
+	 * 
+	 * @param i location of current phenotype
+	 * @param chooser user input of desired file name
+	 */
+	protected void saveSound(int i, JFileChooser chooser) {
+		try {
+			SoundFromCPPNUtil.saveFileFromCPPN(scores.get(i).individual.getPhenotype(), Parameters.parameters.integerParameter("clipLength"), FREQUENCY_DEFAULT, chooser.getSelectedFile().getName() + ".wav");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 
 	@Override
 	public int numCPPNInputs() {

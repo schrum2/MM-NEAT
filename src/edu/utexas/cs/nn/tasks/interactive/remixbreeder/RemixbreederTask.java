@@ -9,6 +9,7 @@ import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
@@ -47,7 +48,6 @@ public class RemixbreederTask<T extends Network> extends BreedesizerTask<T> {
 			//format = SoundToArray.getAudioFormatRestrictedTo16Bits(format);
 			PlayDoubleArray.changeAudioFormat(format);
 		} catch (UnsupportedAudioFileException | IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			System.exit(1);
 		}
@@ -116,7 +116,12 @@ public class RemixbreederTask<T extends Network> extends BreedesizerTask<T> {
 		}
 
 	}
-
+	
+	@Override
+	protected void saveSound(int i, JFileChooser chooser) {
+		SoundFromCPPNUtil.saveRemixedFileFromCPPN(scores.get(i).individual.getPhenotype(), WAVDoubleArray, Parameters.parameters.integerParameter("clipLength"), playBackRate, playBackRate, inputMultipliers, chooser.getSelectedFile().getName() + ".wav");
+	}
+	
 	@Override
 	public int numCPPNInputs() {
 		return CPPN_NUM_INPUTS;
