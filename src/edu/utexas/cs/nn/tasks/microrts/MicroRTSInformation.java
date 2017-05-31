@@ -1,9 +1,7 @@
 package edu.utexas.cs.nn.tasks.microrts;
 
-import edu.utexas.cs.nn.tasks.microrts.evaluation.NNEvaluationFunction;
-import micro.ai.HasEvaluationFunction;
-import micro.ai.core.AI;
-import micro.ai.evaluation.EvaluationFunction;
+import micro.rts.GameState;
+import micro.rts.PhysicalGameState;
 import micro.rts.units.UnitTypeTable;
 
 /**
@@ -15,15 +13,28 @@ import micro.rts.units.UnitTypeTable;
  */
 public interface MicroRTSInformation {
 
-		public double getAverageUnitDifference();
+	public double getAverageUnitDifference();
 
-		public int getBaseUpTime();
+	public void setAvgUnitDiff(double diff);
 
-		public int getHarvestingEfficiency();
-		
-		public void setHarvestingEfficiency();
+	public int getBaseUpTime();
 
-		public int getResourceGainValue();
-		
-		public UnitTypeTable getUnitTypeTable();
+	public void setBaseUpTime(int but);
+
+	public int getHarvestingEfficiency();
+
+	public void setHarvestingEfficiency(int hei);
+
+	public UnitTypeTable getUnitTypeTable();
+
+	public GameState getGameState();
+
+	public PhysicalGameState getPhysicalGameState();
+
+	//for co-evolution:
+	int getBaseUpTime2();
+
+	void setBaseUpTime2(int but);
+
+	int getHarvestingEfficiency2();
 }

@@ -25,6 +25,7 @@ import edu.utexas.cs.nn.util.ClassCreation;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import micro.ai.HasEvaluationFunction;
 import micro.ai.core.AI;
+import micro.gui.PhysicalGameStateJFrame;
 import micro.gui.PhysicalGameStatePanel;
 import micro.rts.GameState;
 import micro.rts.PhysicalGameState;
@@ -42,11 +43,8 @@ public class SinglePopulationCompetativeCoevolutionMicroRTSTask<T extends Networ
 	private PhysicalGameState pgs;
 	private PhysicalGameState initialPgs;
 	private UnitTypeTable utt;
-	private int MAXCYCLES = 5000;
-	private JFrame w = null;
+	private PhysicalGameStateJFrame w = null;
 	private GameState gs;
-	private boolean gameover;
-	private int currentCycle;
 	private boolean AiInitialized = false;
 
 	private double averageUnitDifference;
@@ -163,16 +161,30 @@ public class SinglePopulationCompetativeCoevolutionMicroRTSTask<T extends Networ
 	@Override
 	public ArrayList<Pair<double[], double[]>> evaluateGroup(ArrayList<Genotype<T>> group) {
 		//reset:
-		gameover = false;
 		utt = new UnitTypeTable();
 		averageUnitDifference = 0;
-		currentCycle = 1;
 		baseUpTime1 = 0;
 		baseUpTime2 = 0;
 		harvestingEfficiencyIndex1 = 0;
 		harvestingEfficiencyIndex2 = 0;
 		pgs = initialPgs.clone();
 		gs = new GameState(pgs, utt);
+		if(!AiInitialized)
+			initializeAI();
+		ef1.setNetwork(group.get(0));
+		ef2.setNetwork(group.get(1));
+		if(CommonConstants.watch)
+			w = PhysicalGameStatePanel.newVisualizer(gs,640,640,false,PhysicalGameStatePanel.COLORSCHEME_WHITE);
+		ArrayList<Pair<double[], double[]>> a = new ArrayList<Pair<double[], double[]>>();
+		a.add(MicroRTSUtility.oneEval((AI)ai1, (AI)ai2, this, ff, w));
+		return a;
+	}
+	
+	/**
+	 *initializes ai (only called once for efficiency) 
+	 * @return 
+	 */
+	void initializeAI() {
 		try {
 			ai1 = (HasEvaluationFunction) ClassCreation.createObject(Parameters.parameters.classParameter("microRTSAgent"));
 			ai2 = (HasEvaluationFunction) ClassCreation.createObject(Parameters.parameters.classParameter("microRTSOpponent"));
@@ -183,37 +195,6 @@ public class SinglePopulationCompetativeCoevolutionMicroRTSTask<T extends Networ
 		ai1.setEvaluationFunction(ef1);
 		ai2.setEvaluationFunction(ef2);
 		AiInitialized = true;
-		ef1.setNetwork(group.get(0));
-		ef2.setNetwork(group.get(1));
-		if(CommonConstants.watch)
-			w = PhysicalGameStatePanel.newVisualizer(gs,640,640,false,PhysicalGameStatePanel.COLORSCHEME_WHITE);
-		ArrayList<Pair<double[], double[]>> a = new ArrayList<Pair<double[], double[]>>();
-		a.add(MicroRTSUtility.oneEval((AI)ai1, (AI)ai2, this));
-		return a;
-	}
-
-	private void initializeAI() {
-
-	}
-
-	@Override
-	public double getAverageUnitDifference(){
-		return averageUnitDifference;
-	}
-
-	@Override
-	public int getBaseUpTime(){
-		return baseUpTime1 - baseUpTime2;
-	}
-
-	@Override
-	public int getHarvestingEfficiency(){
-		return harvestingEfficiencyIndex1 - harvestingEfficiencyIndex2;
-	}
-
-	@Override
-	public UnitTypeTable getUnitTypeTable() {
-		return utt;
 	}
 
 	@Override
@@ -227,15 +208,28 @@ public class SinglePopulationCompetativeCoevolutionMicroRTSTask<T extends Networ
 	}
 
 	@Override
-	public int getResourceGainValue() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
+	public double getAverageUnitDifference(){return averageUnitDifference;}
 	@Override
-	public void setHarvestingEfficiency() {
-		// TODO Auto-generated method stub
-		
-	}
+	public int getBaseUpTime(){return baseUpTime1;}
+	@Override
+	public int getBaseUpTime2(){return baseUpTime2;}
+	@Override
+	public void setBaseUpTime(int but) {baseUpTime1 = but;}
+	@Override
+	public void setBaseUpTime2(int but) {baseUpTime2 = but;}
+	@Override
+	public int getHarvestingEfficiency(){return harvestingEfficiencyIndex1;}
+	@Override
+	public void setHarvestingEfficiency(int hei) {harvestingEfficiencyIndex1 = hei;}
+	@Override
+	public int getHarvestingEfficiency2(){return harvestingEfficiencyIndex2;}
+	@Override
+	public UnitTypeTable getUnitTypeTable() {return utt;}
+	@Override
+	public GameState getGameState() {return gs;}
+	@Override
+	public PhysicalGameState getPhysicalGameState() {return pgs;}
+	@Override
+	public void setAvgUnitDiff(double diff) {averageUnitDifference = diff;}
 
 }

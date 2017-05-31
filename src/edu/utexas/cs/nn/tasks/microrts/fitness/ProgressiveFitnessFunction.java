@@ -14,7 +14,7 @@ public class ProgressiveFitnessFunction extends RTSFitnessFunction{
 	public Pair<double[], double[]> getFitness(GameState gs) {
 
 		double[] fitness = new double[] {
-				normalize(task.getHarvestingEfficiency(), maxCycles * task.getResourceGainValue()),
+//				normalize(task.getHarvestingEfficiency(), maxCycles * task.getResourceGainValue()),
 				normalize(task.getBaseUpTime(), maxCycles),
 				normalize(task.getAverageUnitDifference(), pgs.getHeight()*pgs.getWidth())+1,
 		};

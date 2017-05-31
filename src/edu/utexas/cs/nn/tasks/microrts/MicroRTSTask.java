@@ -28,6 +28,7 @@ import micro.ai.HasEvaluationFunction;
 //import micro.ai.abstraction.pathfinding.BFSPathFinding;
 import micro.ai.core.AI;
 import micro.ai.evaluation.EvaluationFunction;
+import micro.gui.PhysicalGameStateJFrame;
 import micro.gui.PhysicalGameStatePanel;
 //import micro.gui.PhysicalGameStatePanel;
 import micro.rts.GameState;
@@ -48,11 +49,8 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 	private PhysicalGameState pgs;
 	private PhysicalGameState initialPgs;
 	private UnitTypeTable utt;
-	private int MAXCYCLES = 5000;
-	private JFrame w = null;
+	private PhysicalGameStateJFrame w = null;
 	private GameState gs;
-	private boolean gameover;
-	private int currentCycle;
 	public boolean AiInitialized = false;
 
 	private double averageUnitDifference;
@@ -161,10 +159,8 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 	@Override
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {
 		//reset:
-		gameover = false;
 		utt = new UnitTypeTable();
 		averageUnitDifference = 0;
-		currentCycle = 1;
 		baseUpTime = 0;
 		harvestingEfficiencyIndex = 0;
 		pgs = initialPgs.clone();
@@ -180,7 +176,7 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 		ef.setNetwork(individual);
 		if(CommonConstants.watch)
 			w = PhysicalGameStatePanel.newVisualizer(gs,640,640,false,PhysicalGameStatePanel.COLORSCHEME_BLACK);
-		return MicroRTSUtility.oneEval((AI) ai1, ai2, this);
+		return MicroRTSUtility.oneEval((AI) ai1, ai2, this, ff, w);
 		
 	} //END oneEval
 	
@@ -203,25 +199,24 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 	}
 
 	@Override
-	public double getAverageUnitDifference(){
-		return averageUnitDifference;
-	}
-
+	public double getAverageUnitDifference(){return averageUnitDifference;}
 	@Override
-	public int getBaseUpTime(){
-		return baseUpTime;
-	}
-
+	public int getBaseUpTime(){return baseUpTime;}
 	@Override
-	public int getHarvestingEfficiency(){
-		return harvestingEfficiencyIndex;
-	}
+	public void setBaseUpTime(int but) {baseUpTime = but;}
+	@Override
+	public int getHarvestingEfficiency(){return harvestingEfficiencyIndex;}
+	@Override
+	public void setHarvestingEfficiency(int hei) {harvestingEfficiencyIndex = hei;}
+	@Override
+	public UnitTypeTable getUnitTypeTable() {return utt;}
+	@Override
+	public GameState getGameState() {return gs;}
+	@Override
+	public PhysicalGameState getPhysicalGameState() {return pgs;}
+	@Override
+	public void setAvgUnitDiff(double diff) {averageUnitDifference = diff;}
 	
-	@Override
-	public UnitTypeTable getUnitTypeTable() {
-		return utt;
-	}
-
 	public static void main(String[] rags){
 		Parameters.initializeParameterCollections(new String[]{"io:false","netio:false", "watch:true"});
 		//			MMNEAT.loadClasses();
@@ -232,15 +227,13 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 		System.out.println();
 	}
 
+	//these methods here because they needed to be in Interface
+	//they do not affect anything
 	@Override
-	public int getResourceGainValue() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+	public int getBaseUpTime2() {return -1;}
+	@Override
+	public void setBaseUpTime2(int but) {return;}
+	@Override
+	public int getHarvestingEfficiency2() {return -1;}
 
-	@Override
-	public void setHarvestingEfficiency() {
-		// TODO Auto-generated method stub
-		
-	}
 }
