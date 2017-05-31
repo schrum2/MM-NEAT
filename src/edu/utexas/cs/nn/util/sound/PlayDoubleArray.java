@@ -24,7 +24,9 @@ public final class PlayDoubleArray {
 	public static final int BITS_PER_SAMPLE = 16;                // 16-bit audio
 	public static final double MAX_16_BIT = Short.MAX_VALUE;     // 32,767
 	private static final int SAMPLE_BUFFER_SIZE = 4096;
-
+	
+	// TODO: Comment explaining this format
+	private static final AudioFormat DEFAULT_AUDIO_FORMAT = new AudioFormat((float) SAMPLE_RATE, BITS_PER_SAMPLE, 1, true, false);
 	
 	public static class AmplitudeArrayPlayer extends Thread {
 		private SourceDataLine line;   // to play the sound
@@ -43,7 +45,7 @@ public final class PlayDoubleArray {
 		
 		public AmplitudeArrayPlayer(double[] samples) {
 			// 44,100 samples per second, 16-bit audio, mono, signed PCM, little Endian
-			this(new AudioFormat((float) SAMPLE_RATE, BITS_PER_SAMPLE, 1, true, false), samples);
+			this(DEFAULT_AUDIO_FORMAT, samples);
 				
 		}
 		
@@ -90,7 +92,6 @@ public final class PlayDoubleArray {
 		 * @throws IllegalArgumentException if the sample is {@code Double.NaN}
 		 */
 		public void playDouble(double sample) {
-
 			// clip if outside [-1, +1]
 			if (Double.isNaN(sample)) throw new IllegalArgumentException("sample is NaN");
 			if (sample < -1.0) sample = -1.0;
@@ -114,23 +115,7 @@ public final class PlayDoubleArray {
 				playDouble(samples[i]);
 			}				
 		}
-	}
-
-	
-
-	
-
-	/**
-	 * Writes the array of samples (between -1.0 and +1.0) to standard audio.
-	 * If a sample is outside the range, it will be clipped.
-	 *
-	 * @param  samples the array of samples to play
-	 * @throws IllegalArgumentException if any sample is {@code Double.NaN}
-	 * @throws IllegalArgumentException if {@code samples} is {@code null}
-	 */
-	public static void playDoubleArray(double[] samples) {
-		playDoubleArray(samples, true); // allow interrupting by default
-	}
+	}	
 	
 	/**
 	 * Writes the array of samples (between -1.0 and +1.0) to standard audio.
@@ -143,30 +128,33 @@ public final class PlayDoubleArray {
 	 * sound before they finish playing
 	 * @throws IllegalArgumentException if any sample is {@code Double.NaN}
 	 * @throws IllegalArgumentException if {@code samples} is {@code null}
+	 *
+	 *
+	 * TODO: Revise comments above
 	 */
-
-	// TOD: Eventually delete this version of the method
-	public static void playDoubleArray(double[] samples, boolean allowInterrupt) {
-		if (samples == null) throw new IllegalArgumentException("argument to play() is null");
-		AmplitudeArrayPlayer aap = new AmplitudeArrayPlayer(samples);
-		// TODO: Big changes needed here soon
-		
-		if(allowInterrupt) aap.start(); // Launches in new Thread
-		else aap.run(); // Just executes the code sequentially
-	}
 	
-
-	public static void playDoubleArray(AudioFormat format, double[] samples) {
-		playDoubleArray(format, samples, false);
-	}	
-	
-	public static void playDoubleArray(AudioFormat format, double[] samples, boolean allowInterrupt) {
+	public static AmplitudeArrayPlayer playDoubleArray(AudioFormat format, double[] samples, boolean allowInterrupt) {
 		if (samples == null) throw new IllegalArgumentException("argument to play() is null");
 		AmplitudeArrayPlayer aap = new AmplitudeArrayPlayer(format,samples);
-		// TODO: Big changes needed here soon
-		
-		if(allowInterrupt) aap.start(); // Launches in new Thread
-		else aap.run(); // Just executes the code sequentially
+		if(allowInterrupt) {
+			aap.start(); // Launches in new Thread
+			return aap; // Can be stopped via the returned AmplitudeArrayPlayer
+		} else {
+			aap.run(); // Play to completion
+			return null; // then return null
+		}
+	}
+
+	public static AmplitudeArrayPlayer playDoubleArray(AudioFormat format, double[] samples) {
+		return playDoubleArray(format, samples, true); // Allow interrupt
+	}	
+	
+	public static AmplitudeArrayPlayer playDoubleArray(double[] samples) {
+		return playDoubleArray(DEFAULT_AUDIO_FORMAT, samples, true); // Allow interrupt
+	}
+
+	public static AmplitudeArrayPlayer playDoubleArray(double[] samples, boolean allowInterrupt) {
+		return playDoubleArray(DEFAULT_AUDIO_FORMAT, samples, allowInterrupt);
 	}
 
 }

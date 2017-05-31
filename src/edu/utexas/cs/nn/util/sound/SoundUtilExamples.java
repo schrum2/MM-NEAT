@@ -63,7 +63,7 @@ public class SoundUtilExamples {
 		Network cppn = test.getCPPN();
 
 		//method call
-		saveWAVFileForRemix();
+		sixteenBit44100HzTests();
 	}
 
 	public static void randomCPPNExamples(Network cppn) throws IOException {
@@ -81,7 +81,7 @@ public class SoundUtilExamples {
 		GraphicsUtil.wavePlotFromDoubleArray(testArray, 500, 500);
 
 		double[] testArray2 = SoundFromCPPNUtil.amplitudeGenerator(cppn, 60000, 440);
-		PlayDoubleArray.playDoubleArray(testArray2, false);
+		PlayDoubleArray.playDoubleArray(testArray2);
 		SaveFromArray.saveFileFromDoubleArray("data/sounds/testingSourceDataLine.wav", testArray2);
 	}
 
@@ -102,7 +102,7 @@ public class SoundUtilExamples {
 		// Change to int[]
 		int[] harpIntArray = SoundToArray.extractAmplitudeDataFromAmplitudeByteArray(harpFormat, harpByteArray);
 		double[] harpDoubleArray = SoundToArray.doubleArrayAmplitudesFromIntArrayAmplitudes(harpIntArray);
-		PlayDoubleArray.playDoubleArray(harpDoubleArray, false);
+		PlayDoubleArray.playDoubleArray(harpDoubleArray);
 	}
 	
 	//PlayDoubleArray works for WAV files with this format:
@@ -110,19 +110,20 @@ public class SoundUtilExamples {
 	public static void sixteenBit44100HzTests() throws IOException, UnsupportedAudioFileException, LineUnavailableException, InterruptedException {
 		WAVUtil.playWAVFile(SEASHORE_WAV);
 		AudioInputStream seashoreAIS = WAVUtil.audioStream(SEASHORE_WAV);
+		
 		int[] seashoreIntArray = SoundToArray.extractAmplitudeDataFromAudioInputStream(seashoreAIS);
-
 		double[] seashoreDoubleArray = SoundToArray.doubleArrayAmplitudesFromIntArrayAmplitudes(seashoreIntArray);
-		PlayDoubleArray.playDoubleArray(seashoreDoubleArray);
+		PlayDoubleArray.playDoubleArray(seashoreDoubleArray, false);
 
 		seashoreDoubleArray = SoundToArray.readDoubleArrayFromStringAudio(SEASHORE_WAV);
-		PlayDoubleArray.playDoubleArray(seashoreDoubleArray);
+		PlayDoubleArray.playDoubleArray(seashoreDoubleArray, false);
 		
 		MiscUtil.waitForReadStringAndEnterKeyPress();
 		
 		WAVUtil.playWAVFile(CHIPTUNE_WAV);	
+		
 		double[] chiptuneDoubleArray = SoundToArray.readDoubleArrayFromStringAudio(CHIPTUNE_WAV);
-		PlayDoubleArray.playDoubleArray(chiptuneDoubleArray);
+		PlayDoubleArray.playDoubleArray(chiptuneDoubleArray, false);
 
 	}
 	

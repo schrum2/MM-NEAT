@@ -110,15 +110,15 @@ public class RemixbreederTask<T extends Network> extends BreedesizerTask<T> {
 
 	@Override
 	protected void additionalButtonClickAction(int scoreIndex, Genotype<T> individual) {
+		if(arrayPlayer != null) { // Always stop any currently playing sound
+			arrayPlayer.stopPlayback();
+		}
+
 		if(chosen[scoreIndex]) {
 			Network phenotype = individual.getPhenotype();
 			double[] amplitude = SoundFromCPPNUtil.amplitudeRemixer(phenotype, WAVDoubleArray, Parameters.parameters.integerParameter("clipLength"), playBackRate, playBackRate, inputMultipliers);
-			PlayDoubleArray.playDoubleArray(format, amplitude);	
-		} else {
-			// TODO: fix this soon
-			//PlayDoubleArray.stopPlayback();
-		}
-
+			arrayPlayer = PlayDoubleArray.playDoubleArray(format, amplitude);	
+		} 
 	}
 	
 	@Override
