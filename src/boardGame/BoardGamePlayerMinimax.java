@@ -4,14 +4,26 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import boardGame.heuristics.BoardGameHeuristic;
+import edu.utexas.cs.nn.util.ClassCreation;
 import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
 
-public class BoardGamePlayerMinimax<T extends BoardGameState, S extends BoardGameHeuristic<T>> implements BoardGamePlayer<T> {
+public class BoardGamePlayerMinimax<T extends BoardGameState> implements BoardGamePlayer<T> {
 	
-	S boardHeuristic; // Should generalize to take any heuristic function, not just a network eval
+	BoardGameHeuristic<T> boardHeuristic; // Should generalize to take any heuristic function, not just a network eval
 	private static final int DEPTH = 4; // Used to keep track of how far down the Tree to check
 	
-	public BoardGamePlayerMinimax(T net, S bgh){
+	@SuppressWarnings("unchecked")
+	public BoardGamePlayerMinimax(){
+		try {
+			boardHeuristic = (BoardGameHeuristic<T>) ClassCreation.createObject("boardGameOpponentHeuristic");
+		} catch (NoSuchMethodException e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
+	}
+	
+	public BoardGamePlayerMinimax(BoardGameHeuristic<T> bgh){
 		boardHeuristic = bgh;
 	}	
 	

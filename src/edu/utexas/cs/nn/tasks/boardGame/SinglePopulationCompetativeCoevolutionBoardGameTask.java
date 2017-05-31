@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import boardGame.BoardGame;
-import boardGame.BoardGameHeuristic;
 import boardGame.BoardGamePlayer;
 import boardGame.BoardGamePlayerOneStepEval;
 import boardGame.BoardGameState;
-import boardGame.NNBoardGameHeuristic;
+import boardGame.heuristics.BoardGameHeuristic;
+import boardGame.heuristics.NNBoardGameHeuristic;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.networks.Network;

@@ -1,5 +1,6 @@
-package boardGame;
+package boardGame.heuristics;
 
+import boardGame.BoardGameState;
 import edu.utexas.cs.nn.networks.Network;
 
 public class NNBoardGameHeuristic<T extends Network, S extends BoardGameState> implements BoardGameHeuristic<S> {

@@ -5,12 +5,12 @@ import java.util.LinkedList;
 import java.util.List;
 
 import boardGame.BoardGame;
-import boardGame.BoardGameHeuristic;
 import boardGame.BoardGamePlayer;
 import boardGame.BoardGamePlayerOneStepEval;
 import boardGame.BoardGameState;
-import boardGame.NNBoardGameHeuristic;
 import boardGame.TwoDimensionalBoardGameViewer;
+import boardGame.heuristics.BoardGameHeuristic;
+import boardGame.heuristics.NNBoardGameHeuristic;
 import boardGame.TwoDimensionalBoardGame;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
@@ -46,7 +46,7 @@ public class StaticOpponentBoardGameTask<T extends Network> extends NoisyLonerTa
 
 		try {
 			bg = (BoardGame) ClassCreation.createObject("boardGame");
-			opponent = (BoardGamePlayer) ClassCreation.createObject("boardGameOpponent"); // The opponent
+			opponent = (BoardGamePlayer) ClassCreation.createObject("boardGameOpponent"); // The Opponent
 		} catch (NoSuchMethodException e) {
 			e.printStackTrace();
 			System.out.println("BoardGame instance could not be loaded");
@@ -118,7 +118,7 @@ public class StaticOpponentBoardGameTask<T extends Network> extends NoisyLonerTa
 
 		if(CommonConstants.watch){ // If set to Visually Evaluate the Task
 		}
-		
+		// TODO: Generalize the Player
 		BoardGamePlayer evolved = new BoardGamePlayerOneStepEval(new NNBoardGameHeuristic(individual.getPhenotype()));
 		BoardGamePlayer[] players = new BoardGamePlayer[]{evolved, opponent};
 		return BoardGameUtil.playGame(bg, players).get(0);

@@ -23,7 +23,7 @@ public abstract class TwoDimensionalBoardGameState implements BoardGameState {
 		emptyBoard();
 		setupStartingBoard();
 	}
-
+	
 	/**
 	 * Copy constructor
 	 * @param state Another TwoDimensionalBoardGameState
@@ -64,6 +64,13 @@ public abstract class TwoDimensionalBoardGameState implements BoardGameState {
 		winners = win;
 	}
 	
+	/**
+	 * Get number of players in the game
+	 * @return number of players
+	 */
+	public int getNumPlayers() {
+		return this.numPlayers;
+	}
 	
 	/**
 	 * Empties all board squares
@@ -193,14 +200,14 @@ public abstract class TwoDimensionalBoardGameState implements BoardGameState {
 	 */
 	public String toString(){
 		String result = "Next Player: " + nextPlayer + " numPlayers: " + numPlayers + " winners: " + winners;
-		result +="\n";
+		result += "\n  0 1 2 3 4 5 6 7\n ";
 		for(int i = 0; i < getBoardWidth(); i++) {
 			result += "--";
 		}
 		result += "-\n";
 		
 		for(int i = 0; i < getBoardHeight(); i++){
-			result += "|";
+			result += i + "|";
 			
 			for(int j = 0; j < getBoardWidth(); j++){
 				
@@ -215,7 +222,7 @@ public abstract class TwoDimensionalBoardGameState implements BoardGameState {
 				result += mark + "|";
 			}
 			
-			result += "\n-";
+			result += "\n -";
 			for(int k = 0; k < getBoardWidth(); k++) {
 				result += "--";
 			}
@@ -234,6 +241,19 @@ public abstract class TwoDimensionalBoardGameState implements BoardGameState {
 	 */
 	public boolean isPointInBounds(Point source){
 		return ((source.getX() >= 0 && source.getX() < getBoardWidth()) && (source.getY() >= 0 && source.getY() < getBoardHeight()));
+	}
+	
+	
+	public int numberOfPieces(int playerIndex){
+		int numPieces = 0;
+		
+		for(int i = 0; i < getBoardWidth(); i++){
+			for(int j = 0; j < getBoardHeight(); j++){
+				if(boardState[i][j] == playerIndex) numPieces++;
+			}
+		}
+		
+		return numPieces;
 	}
 	
 	/**
@@ -288,7 +308,6 @@ public abstract class TwoDimensionalBoardGameState implements BoardGameState {
 		if(this.nextPlayer != other2D.nextPlayer || !(this.winners.equals(other2D.winners) || this.numPlayers != other2D.numPlayers)) return false;
 		
 		return true;
-	}	
-	
+	}
 	
 }

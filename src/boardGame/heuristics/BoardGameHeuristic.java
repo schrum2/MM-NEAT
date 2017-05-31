@@ -1,4 +1,6 @@
-package boardGame;
+package boardGame.heuristics;
+
+import boardGame.BoardGameState;
 
 public interface BoardGameHeuristic<T extends BoardGameState> {
 		
