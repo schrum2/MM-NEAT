@@ -100,6 +100,7 @@ public final class PlayDoubleArray {
 			// convert to bytes
 			short s = (short) (MAX_16_BIT * sample);
 			buffer[bufferSize++] = (byte) s;
+			//TODO: Causes IndexOutOfBoundsException if an 8 bit file is played
 			buffer[bufferSize++] = (byte) (s >> 8);   // little Endian
 
 			// send to sound card if buffer is full        

@@ -14,6 +14,7 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.SourceDataLine;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
@@ -26,6 +27,7 @@ import edu.utexas.cs.nn.util.MiscUtil;
 import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
 import edu.utexas.cs.nn.util.graphics.DrawingPanel;
 import edu.utexas.cs.nn.util.graphics.GraphicsUtil;
+import edu.utexas.cs.nn.util.sound.PlayDoubleArray.AmplitudeArrayPlayer;
 import javazoom.jl.decoder.JavaLayerException;
 import javazoom.jl.player.advanced.AdvancedPlayer;
 import javazoom.jl.player.advanced.PlaybackListener;
@@ -63,7 +65,7 @@ public class SoundUtilExamples {
 		Network cppn = test.getCPPN();
 
 		//method call
-		sixteenBit44100HzTests();
+		eightBitTests();
 	}
 
 	public static void randomCPPNExamples(Network cppn) throws IOException {
@@ -111,10 +113,12 @@ public class SoundUtilExamples {
 		WAVUtil.playWAVFile(SEASHORE_WAV);
 		AudioInputStream seashoreAIS = WAVUtil.audioStream(SEASHORE_WAV);
 		
+		//testing converting WAV file using step-by-step method calls
 		int[] seashoreIntArray = SoundToArray.extractAmplitudeDataFromAudioInputStream(seashoreAIS);
 		double[] seashoreDoubleArray = SoundToArray.doubleArrayAmplitudesFromIntArrayAmplitudes(seashoreIntArray);
 		PlayDoubleArray.playDoubleArray(seashoreDoubleArray, false);
-
+		
+		//testing converting WAV files using shortcut method call
 		seashoreDoubleArray = SoundToArray.readDoubleArrayFromStringAudio(SEASHORE_WAV);
 		PlayDoubleArray.playDoubleArray(seashoreDoubleArray, false);
 		
@@ -154,10 +158,11 @@ public class SoundUtilExamples {
 	//cannot currently play eight bit WAV files
 	public static void eightBitTests() throws IOException, UnsupportedAudioFileException, LineUnavailableException, InterruptedException {
 		double[] harpDoubleArray = SoundToArray.readDoubleArrayFromStringAudio(HARP_WAV);
+		AudioInputStream harpAIS = WAVUtil.audioStream(HARP_WAV);
 		System.out.println(Arrays.toString(harpDoubleArray));
 		WAVUtil.playWAVFile(HARP_WAV);
 		MiscUtil.waitForReadStringAndEnterKeyPress();
-		PlayDoubleArray.playDoubleArray(harpDoubleArray);	
+		PlayDoubleArray.playDoubleArray(harpAIS.getFormat(), harpDoubleArray, false);	
 	}
 
 	public static void getAudioFormat() throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException {
@@ -389,5 +394,25 @@ public class SoundUtilExamples {
 	public static void saveWAVFileForRemix() throws IOException {
 		byte[] alarmByteArray = WAVUtil.WAVToByte(ALARM_WAV);
 		SaveFromArray.saveFileFromByteArray(alarmByteArray, "data/sounds/alarmCopy.wav");
+	}
+	
+	public static void twoSoundsSimultaneously() {
+		AudioInputStream aisAlarm;
+		AudioInputStream aisChiptune;
+		try {
+			aisAlarm = WAVUtil.audioStream(ALARM_WAV);
+			double[] alarm = SoundToArray.readDoubleArrayFromStringAudio(ALARM_WAV);
+				
+			aisChiptune = WAVUtil.audioStream(CHIPTUNE_WAV);
+			double[] chiptune = SoundToArray.readDoubleArrayFromStringAudio(CHIPTUNE_WAV);
+			
+			PlayDoubleArray.playDoubleArray(aisAlarm.getFormat(), alarm, true);
+			PlayDoubleArray.playDoubleArray(aisChiptune.getFormat(), chiptune, true);		
+			
+		} catch (UnsupportedAudioFileException | IOException e) {
+
+			e.printStackTrace();
+		}
+		
 	}
 }
