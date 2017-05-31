@@ -37,13 +37,14 @@ public class RemixbreederTask<T extends Network> extends BreedesizerTask<T> {
 
 	public double[] WAVDoubleArray;
 	public int playBackRate;
+	public AudioFormat format;
 
 	public RemixbreederTask() throws IllegalAccessException {
 		super(false); // do not use keyboard		
 		initializationComplete = false;
 		try {
 			AudioInputStream AIS = WAVUtil.audioStream(Parameters.parameters.stringOptions.get("remixWAVFile"));
-			AudioFormat format = AIS.getFormat();
+			format = AIS.getFormat();
 			playBackRate = format.getSampleSizeInBits(); //sample size - should be changed?
 			//format = SoundToArray.getAudioFormatRestrictedTo16Bits(format);
 			PlayDoubleArray.changeAudioFormat(format);
@@ -119,7 +120,7 @@ public class RemixbreederTask<T extends Network> extends BreedesizerTask<T> {
 	
 	@Override
 	protected void saveSound(int i, JFileChooser chooser) {
-		SoundFromCPPNUtil.saveRemixedFileFromCPPN(scores.get(i).individual.getPhenotype(), WAVDoubleArray, Parameters.parameters.integerParameter("clipLength"), playBackRate, playBackRate, inputMultipliers, chooser.getSelectedFile().getName() + ".wav");
+		SoundFromCPPNUtil.saveRemixedFileFromCPPN(scores.get(i).individual.getPhenotype(), WAVDoubleArray, Parameters.parameters.integerParameter("clipLength"), playBackRate, playBackRate, inputMultipliers, chooser.getSelectedFile().getName() + ".wav", format);
 	}
 	
 	@Override

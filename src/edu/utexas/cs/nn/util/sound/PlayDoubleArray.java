@@ -27,7 +27,7 @@ public final class PlayDoubleArray {
 
 
 	private static SourceDataLine line;   // to play the sound
-	private static SourceDataLine lineSave;   // to save the sound
+//	private static SourceDataLine lineSave;   // to save the sound
 	private static byte[] buffer;         // our internal buffer
 	private static int bufferSize = 0;    // number of samples currently in internal buffer
 
@@ -55,7 +55,7 @@ public final class PlayDoubleArray {
 	
 	public static void changeAudioFormat(AudioFormat format) {
 		line.close();
-		lineSave.close();
+		//lineSave.close();
 		
 		init(format);
 	}
@@ -68,8 +68,8 @@ public final class PlayDoubleArray {
 			line.open(format, SAMPLE_BUFFER_SIZE * format.getFrameSize());
 			
 			// Extra one unnecessary?
-			lineSave = (SourceDataLine) AudioSystem.getLine(info);
-			lineSave.open(format, SAMPLE_BUFFER_SIZE * format.getFrameSize());
+			//lineSave = (SourceDataLine) AudioSystem.getLine(info);
+			//lineSave.open(format, SAMPLE_BUFFER_SIZE * format.getFrameSize());
 
 			// the internal buffer is a fraction of the actual buffer size, this choice is arbitrary
 			// it gets divided because we can't expect the buffered data to line up exactly with when

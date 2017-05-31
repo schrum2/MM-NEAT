@@ -112,10 +112,11 @@ public class SoundFromCPPNUtil {
 	 * @param sampleRate specified rate of input wav file 
 	 * @param inputMultipliers double array determining whether checkboxes have been turned on or off in Breedesizer
 	 * @param fileName String representation of location where generated file will be saved
+	 * @param format 
 	 */
-	public static void saveRemixedFileFromCPPN(Network cppn, double[] inputWAV, int length, double frequency, int sampleRate, double[] inputMultipliers, String fileName) {
+	public static void saveRemixedFileFromCPPN(Network cppn, double[] inputWAV, int length, double frequency, int sampleRate, double[] inputMultipliers, String fileName, AudioFormat format) {
 		double[] generatedSound = amplitudeRemixer(cppn, inputWAV, length, frequency, sampleRate, inputMultipliers);
-		SaveFromArray.saveFileFromDoubleArray(fileName, generatedSound);
+		SaveFromArray.saveFileFromDoubleArray(fileName, generatedSound, format);
 	}
 
 }

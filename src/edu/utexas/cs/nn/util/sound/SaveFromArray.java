@@ -47,13 +47,14 @@ public class SaveFromArray {
 	 * @throws IllegalArgumentException if {@code samples} is {@code null}
 	 */
 	public static void saveFileFromDoubleArray(String filename, double[] samples) {
+		AudioFormat format = new AudioFormat(PlayDoubleArray.SAMPLE_RATE, 16, 1, true, false);
+		saveFileFromDoubleArray(filename, samples, format);
+	}
+	
+	public static void saveFileFromDoubleArray(String filename, double[] samples, AudioFormat format) {
 		if (samples == null) {
 			throw new IllegalArgumentException("samples[] is null");
 		}
-
-		// assumes 44,100 samples per second
-		// use 16-bit audio, mono, signed PCM, little Endian
-		AudioFormat format = new AudioFormat(PlayDoubleArray.SAMPLE_RATE, 16, 1, true, false);
 		byte[] data = new byte[2 * samples.length];
 		for (int i = 0; i < samples.length; i++) {
 			int temp = (short) (samples[i] * PlayDoubleArray.MAX_16_BIT);
