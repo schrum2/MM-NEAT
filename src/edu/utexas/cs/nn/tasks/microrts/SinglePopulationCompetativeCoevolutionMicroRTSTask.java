@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.JFrame;
-
 import org.jdom.JDOMException;
 
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
@@ -16,10 +14,8 @@ import edu.utexas.cs.nn.networks.hyperneat.HyperNEATTask;
 import edu.utexas.cs.nn.networks.hyperneat.Substrate;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.tasks.NoisyLonerTask;
 import edu.utexas.cs.nn.tasks.SinglePopulationCoevolutionTask;
 import edu.utexas.cs.nn.tasks.microrts.evaluation.NNEvaluationFunction;
-import edu.utexas.cs.nn.tasks.microrts.fitness.ProgressiveFitnessFunction;
 import edu.utexas.cs.nn.tasks.microrts.fitness.RTSFitnessFunction;
 import edu.utexas.cs.nn.util.ClassCreation;
 import edu.utexas.cs.nn.util.datastructures.Pair;
@@ -29,8 +25,6 @@ import micro.gui.PhysicalGameStateJFrame;
 import micro.gui.PhysicalGameStatePanel;
 import micro.rts.GameState;
 import micro.rts.PhysicalGameState;
-import micro.rts.PlayerAction;
-import micro.rts.units.Unit;
 import micro.rts.units.UnitTypeTable;
 
 /**
@@ -231,5 +225,11 @@ public class SinglePopulationCompetativeCoevolutionMicroRTSTask<T extends Networ
 	public PhysicalGameState getPhysicalGameState() {return pgs;}
 	@Override
 	public void setAvgUnitDiff(double diff) {averageUnitDifference = diff;}
+
+	//for progressive fitness function
+	@Override
+	public int getResourceGainValue() {
+		return MicroRTSUtility.RESOURCE_GAIN_VALUE;
+	}
 
 }

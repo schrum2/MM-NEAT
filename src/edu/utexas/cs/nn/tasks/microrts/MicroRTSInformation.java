@@ -37,4 +37,7 @@ public interface MicroRTSInformation {
 	void setBaseUpTime2(int but);
 
 	int getHarvestingEfficiency2();
+
+	//for progressive fitness function
+	public int getResourceGainValue();
 }

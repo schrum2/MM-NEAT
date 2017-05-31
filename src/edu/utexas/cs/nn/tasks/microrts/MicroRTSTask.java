@@ -3,8 +3,6 @@ package edu.utexas.cs.nn.tasks.microrts;
 import java.io.IOException;
 import java.util.List;
 
-import javax.swing.JFrame;
-
 //import javax.swing.JFrame;
 
 import org.jdom.JDOMException;
@@ -19,27 +17,18 @@ import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.NoisyLonerTask;
 import edu.utexas.cs.nn.tasks.microrts.evaluation.NNEvaluationFunction;
-import edu.utexas.cs.nn.tasks.microrts.fitness.ProgressiveFitnessFunction;
 import edu.utexas.cs.nn.tasks.microrts.fitness.RTSFitnessFunction;
 import edu.utexas.cs.nn.util.ClassCreation;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import micro.ai.HasEvaluationFunction;
-//import micro.ai.abstraction.WorkerRush;
-//import micro.ai.abstraction.pathfinding.BFSPathFinding;
 import micro.ai.core.AI;
-import micro.ai.evaluation.EvaluationFunction;
 import micro.gui.PhysicalGameStateJFrame;
 import micro.gui.PhysicalGameStatePanel;
-//import micro.gui.PhysicalGameStatePanel;
 import micro.rts.GameState;
 import micro.rts.PhysicalGameState;
-import micro.rts.PlayerAction;
-import micro.rts.units.Unit;
 import micro.rts.units.UnitTypeTable;
 
 /**
- * TODO: Comments
- * 
  * @author alicequint
  *
  * @param <T> NN
@@ -60,7 +49,7 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 	NNEvaluationFunction<T> ef;
 	NNEvaluationFunction<T> ef2;
 	RTSFitnessFunction ff;
-	
+
 	HasEvaluationFunction ai1 = null;
 	AI ai2 = null;
 
@@ -89,7 +78,6 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 		ff.setMaxCycles(5000);
 		ff.giveTask(this);
 		gs = new GameState(pgs, utt);
-		
 	}
 
 	@Override
@@ -177,9 +165,9 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 		if(CommonConstants.watch)
 			w = PhysicalGameStatePanel.newVisualizer(gs,640,640,false,PhysicalGameStatePanel.COLORSCHEME_BLACK);
 		return MicroRTSUtility.oneEval((AI) ai1, ai2, this, ff, w);
-		
+
 	} //END oneEval
-	
+
 	/**
 	 *initializes ai (only called once for efficiency) 
 	 * @return 
@@ -194,7 +182,7 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 		}
 		ai1.setEvaluationFunction(ef);
 		if(Parameters.parameters.classParameter("microRTSOpponentEvaluationFunction")!= null)
-				((HasEvaluationFunction) ai2).setEvaluationFunction(ef2);
+			((HasEvaluationFunction) ai2).setEvaluationFunction(ef2);
 		AiInitialized = true;
 	}
 
@@ -216,7 +204,13 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 	public PhysicalGameState getPhysicalGameState() {return pgs;}
 	@Override
 	public void setAvgUnitDiff(double diff) {averageUnitDifference = diff;}
-	
+
+	//for progressive fitness function
+	@Override
+	public int getResourceGainValue() {
+		return MicroRTSUtility.RESOURCE_GAIN_VALUE;
+	}
+
 	public static void main(String[] rags){
 		Parameters.initializeParameterCollections(new String[]{"io:false","netio:false", "watch:true"});
 		//			MMNEAT.loadClasses();
@@ -235,5 +229,4 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 	public void setBaseUpTime2(int but) {return;}
 	@Override
 	public int getHarvestingEfficiency2() {return -1;}
-
 }

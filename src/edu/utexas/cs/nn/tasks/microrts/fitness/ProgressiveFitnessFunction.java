@@ -8,13 +8,13 @@ public class ProgressiveFitnessFunction extends RTSFitnessFunction{
 	public ProgressiveFitnessFunction(){}
 
 	/**
-	 * uses information collected over time in MicroRTSTask.oneEval
+	 * uses information collected over time in MicroRTSUtility.oneEval
 	 */
 	@Override
 	public Pair<double[], double[]> getFitness(GameState gs) {
 
 		double[] fitness = new double[] {
-//				normalize(task.getHarvestingEfficiency(), maxCycles * task.getResourceGainValue()),
+				normalize(task.getHarvestingEfficiency(), maxCycles * task.getResourceGainValue()),
 				normalize(task.getBaseUpTime(), maxCycles),
 				normalize(task.getAverageUnitDifference(), pgs.getHeight()*pgs.getWidth())+1,
 		};

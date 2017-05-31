@@ -19,7 +19,7 @@ import micro.rts.units.Unit;
 
 public class MicroRTSUtility {
 	
-	private static final int RESOURCE_GAIN_VALUE = 2;
+	public static final int RESOURCE_GAIN_VALUE = 2;
 	private static final int WORKER_OUT_OF_BOUNDS_PENALTY = 1;
 	private static final double WORKER_HARVEST_VALUE = .5; //relative to 1 resource, for use in pool
 
