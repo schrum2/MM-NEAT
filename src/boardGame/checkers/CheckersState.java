@@ -13,19 +13,16 @@ import boardGame.TwoDimensionalBoardGameState;
 
 public class CheckersState extends TwoDimensionalBoardGameState {
 
-	private static final int BOARD_WIDTH = 8;	
-	private static final int STARTCHECKS = 12;
+	public static final int BOARD_WIDTH = 8;	
+	public static final int STARTCHECKS = 12;
 	
-	private static final int BLACK_CHECK = 0; // Player 1 controls Black Checks, at the top of the Board
-	private static final int BLACK_CHECK_KING = 1;
+	public static final int BLACK_CHECK = 0; // Player 1 controls Black Checks, at the top of the Board
+	public static final int BLACK_CHECK_KING = 2;
 
-	private static final int RED_CHECK = 2; // Player 2 controls Red Checks, at the bottom of the Board
-	private static final int RED_CHECK_KING = 3;
-	
-	private static int blackChecksLeft;
-	private static int redChecksLeft;	
-	
-	private static Point doubleJumpCheck; // Used to keep track of a Check that can Double Jump
+	public static final int RED_CHECK = 1; // Player 2 controls Red Checks, at the bottom of the Board
+	public static final int RED_CHECK_KING = 3;
+		
+	public Point doubleJumpCheck; // Used to keep track of a Check that can Double Jump
 	
 	/**
 	 * Default Constructor
@@ -62,11 +59,26 @@ public class CheckersState extends TwoDimensionalBoardGameState {
 	public List<Integer> getWinners(){
 		
 		if(endState()){
+			
+			int blackChecksLeft = 0;
+			int redChecksLeft = 0;
+			
+			for(int i = 0; i < BOARD_WIDTH; i++){
+				for(int j = 0; j < BOARD_WIDTH; j++){
+					int space = boardState[i][j];
+					if(space ==  BLACK_CHECK || space == BLACK_CHECK_KING){
+						blackChecksLeft++;
+					}else if(space ==  RED_CHECK || space == RED_CHECK_KING){
+						redChecksLeft++;
+					}
+				}
+			}
+			
 			if(blackChecksLeft > redChecksLeft){
 				winners.add(BLACK_CHECK);
 			}else if(redChecksLeft > blackChecksLeft){
 				winners.add(RED_CHECK);
-			}else{
+			}else{ // Technically impossible
 				winners.add(BLACK_CHECK);
 				winners.add(RED_CHECK);
 			}
@@ -81,6 +93,21 @@ public class CheckersState extends TwoDimensionalBoardGameState {
 	 */
 	@Override
 	public boolean endState() {
+		
+		int blackChecksLeft = 0;
+		int redChecksLeft = 0;
+		
+		for(int i = 0; i < BOARD_WIDTH; i++){
+			for(int j = 0; j < BOARD_WIDTH; j++){
+				int space = boardState[i][j];
+				if(space ==  BLACK_CHECK || space == BLACK_CHECK_KING){
+					blackChecksLeft++;
+				}else if(space ==  RED_CHECK || space == RED_CHECK_KING){
+					redChecksLeft++;
+				}
+			}
+		}
+		
 		return blackChecksLeft == 0 || redChecksLeft == 0;
 	}
 
@@ -252,10 +279,7 @@ public class CheckersState extends TwoDimensionalBoardGameState {
 	 */
 	private int[][] newCheckBoard(){
 		int[][] temp = new int[BOARD_WIDTH][BOARD_WIDTH];
-		
-		blackChecksLeft = STARTCHECKS;
-		redChecksLeft = STARTCHECKS;
-		
+				
 		int black = STARTCHECKS;
 		int empty = BOARD_WIDTH; // May create new Variable; turns out the number of empty Spaces at the start is 8, same as the Board Width
 		int red = STARTCHECKS;
