@@ -64,12 +64,12 @@ public class SoundUtilExamples {
 		}
 		Network cppn = test.getCPPN();
 
-		//method call
-		eightBitTests();
+		// method call
+		useDifferentByteConversion();
 	}
 
 	public static void randomCPPNExamples(Network cppn) throws IOException {
-		//saves CPPN with variety of AudioFormat initializations to see which one works the best
+		// saves CPPN with variety of AudioFormat initializations to see which one works the best
 		double[] testArray = SoundFromCPPNUtil.amplitudeGenerator(cppn, 60000, 440);
 		AudioFormat af1 = new AudioFormat(PlayDoubleArray.SAMPLE_RATE, PlayDoubleArray.BITS_PER_SAMPLE,1, true, true);
 		SoundFromCPPNUtil.saveFileFromCPPN(cppn, 60000, 440, "cppn1.wav");
@@ -89,7 +89,7 @@ public class SoundUtilExamples {
 
 
 	public static void playCPPNAtDifferentFrequencies(Network cppn) {
-		//double array containing frequencies of a C Major scale
+		// double array containing frequencies of a C Major scale
 		double[] frequencies = new double[]{261.626, 293.665, 329.628, 349.228, 391.995, 440.0, 493.883, 523.251};
 		for(int i = 0; i < frequencies.length; i++) {
 			double[] scaleCPPN = SoundFromCPPNUtil.amplitudeGenerator(cppn, 30000, frequencies[i]);
@@ -103,22 +103,22 @@ public class SoundUtilExamples {
 		AudioFormat harpFormat = harpAIS.getFormat();
 		// Change to int[]
 		int[] harpIntArray = SoundToArray.extractAmplitudeDataFromAmplitudeByteArray(harpFormat, harpByteArray);
-		double[] harpDoubleArray = SoundToArray.doubleArrayAmplitudesFromIntArrayAmplitudes(harpIntArray);
+		double[] harpDoubleArray = SoundToArray.doubleArrayAmplitudesFromIntArrayAmplitudes(harpIntArray, 8);
 		PlayDoubleArray.playDoubleArray(harpDoubleArray);
 	}
 	
-	//PlayDoubleArray works for WAV files with this format:
-	//PCM_SIGNED, 16 bit, mono, 2 bytes/frame, little-endian
+	// PlayDoubleArray works for WAV files with this format:
+	// PCM_SIGNED, 16 bit, mono, 2 bytes/frame, little-endian
 	public static void sixteenBit44100HzTests() throws IOException, UnsupportedAudioFileException, LineUnavailableException, InterruptedException {
 		WAVUtil.playWAVFile(SEASHORE_WAV);
 		AudioInputStream seashoreAIS = WAVUtil.audioStream(SEASHORE_WAV);
 		
-		//testing converting WAV file using step-by-step method calls
+		// testing converting WAV file using step-by-step method calls
 		int[] seashoreIntArray = SoundToArray.extractAmplitudeDataFromAudioInputStream(seashoreAIS);
-		double[] seashoreDoubleArray = SoundToArray.doubleArrayAmplitudesFromIntArrayAmplitudes(seashoreIntArray);
+		double[] seashoreDoubleArray = SoundToArray.doubleArrayAmplitudesFromIntArrayAmplitudes(seashoreIntArray, 16);
 		PlayDoubleArray.playDoubleArray(seashoreDoubleArray, false);
 		
-		//testing converting WAV files using shortcut method call
+		// testing converting WAV files using shortcut method call
 		seashoreDoubleArray = SoundToArray.readDoubleArrayFromStringAudio(SEASHORE_WAV);
 		PlayDoubleArray.playDoubleArray(seashoreDoubleArray, false);
 		
@@ -131,16 +131,16 @@ public class SoundUtilExamples {
 
 	}
 	
-	//sixteen bit files can now be played at multiple sample rates!
+	// sixteen bit files can now be played at multiple sample rates!
 	public static void sixteenBit11025HzTests() throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException {
 		WAVUtil.playWAVFile(ALARM_WAV);
-		MiscUtil.waitForReadStringAndEnterKeyPress();
+		AudioInputStream alarmAIS = WAVUtil.audioStream(ALARM_WAV);
 		double[] alarmDoubleArray = SoundToArray.readDoubleArrayFromStringAudio(ALARM_WAV);
 		MiscUtil.waitForReadStringAndEnterKeyPress();
-		PlayDoubleArray.playDoubleArray(alarmDoubleArray);
+		PlayDoubleArray.playDoubleArray(alarmAIS.getFormat(), alarmDoubleArray);
 	}
 	
-	//cannot currently play WAV files with stereo channels
+	// cannot currently play WAV files with stereo channels
 	public static void sixteenBitStereoTests() throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException {
 		WAVUtil.playWAVFile(BASS_16BIT_WAV);
 		byte[] bassByteArray = WAVUtil.WAVToByte(BASS_16BIT_WAV);
@@ -151,23 +151,34 @@ public class SoundUtilExamples {
 		int[] bassIntArray = SoundToArray.extractAmplitudeDataFromAmplitudeByteArray(bassFormat, bassByteArray);
 		// directly form file instead?
 		bassIntArray = SoundToArray.extractAmplitudeDataFromAudioInputStream(bassAIS);
-		double[] bassDoubleArray = SoundToArray.doubleArrayAmplitudesFromIntArrayAmplitudes(bassIntArray);
+		double[] bassDoubleArray = SoundToArray.doubleArrayAmplitudesFromIntArrayAmplitudes(bassIntArray, 16);
 		PlayDoubleArray.playDoubleArray(bassDoubleArray);
 	}
 	
-	//cannot currently play eight bit WAV files
+	// cannot currently play eight bit WAV files
 	public static void eightBitTests() throws IOException, UnsupportedAudioFileException, LineUnavailableException, InterruptedException {
 		double[] harpDoubleArray = SoundToArray.readDoubleArrayFromStringAudio(HARP_WAV);
 		AudioInputStream harpAIS = WAVUtil.audioStream(HARP_WAV);
-		System.out.println(Arrays.toString(harpDoubleArray));
+		//System.out.println(Arrays.toString(harpDoubleArray));
 		WAVUtil.playWAVFile(HARP_WAV);
 		MiscUtil.waitForReadStringAndEnterKeyPress();
 		PlayDoubleArray.playDoubleArray(harpAIS.getFormat(), harpDoubleArray, false);	
 	}
+	
+	// Testing to see if using a different byte conversion method (the one from WAVUtil) would work better than the 
+	// extractAmplitudeByteArrayFromAudioInputStream method in SoundToArray. this doesn't work - it sounds the same 
+	// if not worse than the original method.
+	public static void useDifferentByteConversion() throws UnsupportedAudioFileException, IOException, InterruptedException, LineUnavailableException {
+		AudioInputStream harpAIS = WAVUtil.audioStream(HARP_WAV);
+		byte[] harpNumbers = WAVUtil.WAVToByte(HARP_WAV);
+		int[] harpIntArray = SoundToArray.extractAmplitudeDataFromAmplitudeByteArray(harpAIS.getFormat(), harpNumbers);
+		double[] harpDoubleArray = SoundToArray.doubleArrayAmplitudesFromIntArrayAmplitudes(harpIntArray, harpAIS.getFormat().getSampleSizeInBits());
+		PlayDoubleArray.playDoubleArray(harpAIS.getFormat(), harpDoubleArray, false);
+	}
 
 	public static void getAudioFormat() throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException {
-		//testing writeSingleChannel to see if the problem saving files has to do with initialization of AudioFormat
-		//harp AudioFormat
+		// testing writeSingleChannel to see if the problem saving files has to do with initialization of AudioFormat
+		// harp AudioFormat
 		File harp = new File(HARP_WAV);
 		AudioInputStream harpAIS = WAVUtil.audioStream(harp);
 		System.out.println("harp: " + harpAIS.getFormat());
@@ -177,7 +188,7 @@ public class SoundUtilExamples {
 		System.out.println("bytes/frame: " + harpAIS.getFormat().getFrameSize());
 		System.out.println(harpAIS.getFormat().isBigEndian());
 		System.out.println();
-		//bear AudioFormat
+		// bear AudioFormat
 		File bear = new File(BEARGROWL_WAV);
 		AudioInputStream bearAIS = WAVUtil.audioStream(bear);
 		System.out.println("bear: " + bearAIS.getFormat());
@@ -185,7 +196,7 @@ public class SoundUtilExamples {
 		System.out.println(bearAIS.getFormat().getFrameRate());
 		System.out.println(bearAIS.getFormat().isBigEndian());
 		System.out.println();
-		//applause AudioFormat
+		// applause AudioFormat
 		File applause = new File(APPLAUSE_WAV);
 		AudioInputStream applauseAIS = WAVUtil.audioStream(applause);
 		System.out.println("applause: " + applauseAIS.getFormat());
@@ -193,25 +204,25 @@ public class SoundUtilExamples {
 		System.out.println(applauseAIS.getFormat().getFrameRate());
 		System.out.println(applauseAIS.getFormat().isBigEndian());
 		System.out.println();
-		//seashore AudioFormat
+		// seashore AudioFormat
 		AudioInputStream bassAIS = WAVUtil.audioStream(BASS_16BIT_WAV);
 		AudioFormat bassFormat = bassAIS.getFormat();
 		System.out.println("Bass format: " + bassFormat);
 		System.out.println("Sample rate: " + bassFormat.getSampleRate());
 		System.out.println("Frame rate: " + bassFormat.getFrameRate());
-		//seashore AudioFormat
+		// seashore AudioFormat
 		AudioInputStream seashoreAIS = WAVUtil.audioStream(SEASHORE_WAV);
 		AudioFormat seashoreFormat = seashoreAIS.getFormat();
 		System.out.println("Seashore format: " + seashoreFormat);
 		System.out.println("Sample rate: " + seashoreAIS.getFormat().getSampleRate());
 		System.out.println("Frame rate: " + seashoreAIS.getFormat().getFrameRate());
-		//alarm AudioFormat
+		// alarm AudioFormat
 		AudioInputStream alarmAIS = WAVUtil.audioStream(ALARM_WAV);
 		AudioFormat alarmFormat = alarmAIS.getFormat();
 		System.out.println("Alarm format: " + alarmFormat);
 		System.out.println("Sample rate: " + alarmAIS.getFormat().getSampleRate());
 		System.out.println("Frame rate: " + alarmAIS.getFormat().getFrameRate());
-		//chip tune AudioFormat
+		// chip tune AudioFormat
 		AudioInputStream chiptuneAIS = WAVUtil.audioStream(CHIPTUNE_WAV);
 		AudioFormat chiptuneFormat = chiptuneAIS.getFormat();
 		System.out.println("Chiptune format: " + chiptuneFormat);
@@ -254,8 +265,8 @@ public class SoundUtilExamples {
 		byte[] applauseNumbers =WAVUtil.WAVToByte(APPLAUSE_WAV);	
 		AudioInputStream applauseAIS = WAVUtil.byteToAIS(applauseNumbers);
 		double[] bear = new double[bearNumbers.length];
-		//Trying to take a preexisting WAV file and rewrite certain numbers in it to see how the sound output
-		//would be affected. These tests proved to be unsuccessful
+		// Trying to take a preexisting WAV file and rewrite certain numbers in it to see how the sound output
+		// would be affected. These tests proved to be unsuccessful
 		for(int i = 0; i < bear.length; i++) {
 			if(i < 50120 || i >= bearNumbers.length-11) 
 				bear[i] = bearNumbers[i];

@@ -23,6 +23,7 @@ public final class PlayDoubleArray {
 	public static final int BYTES_PER_SAMPLE = 2;                // 16-bit audio
 	public static final int BITS_PER_SAMPLE = 16;                // 16-bit audio
 	public static final double MAX_16_BIT = Short.MAX_VALUE;     // 32,767
+	public static final double MAX_8_BIT = Short.MAX_VALUE / 2;
 	private static final int SAMPLE_BUFFER_SIZE = 4096;
 	
 	// The format below is based on a 16 bit, 44100 Hz, mono, little Endian audio file. This default
@@ -36,6 +37,7 @@ public final class PlayDoubleArray {
 		private byte[] buffer;         // our internal buffer
 		private int bufferSize = 0;    // number of samples currently in internal buffer
 		private double[] samples;
+		private int bitNum;            // number of bits in audio (typically 16 or 8)
 
 		private boolean playing = false;
 		
@@ -80,6 +82,9 @@ public final class PlayDoubleArray {
 		public void changeAudioFormat(AudioFormat format) {
 			if(line != null) line.close();
 			try {
+				bitNum = format.getSampleSizeInBits();
+				//System.out.println("bitNum:"+bitNum);
+				
 				DataLine.Info info = new DataLine.Info(SourceDataLine.class, format);
 
 				line = (SourceDataLine) AudioSystem.getLine(info);
@@ -93,8 +98,8 @@ public final class PlayDoubleArray {
 			}
 			catch (LineUnavailableException e) {
 				System.out.println(e.getMessage());
+				System.exit(1);
 			}
-
 			// no sound gets made before this call
 			line.start();		
 		}
@@ -120,11 +125,13 @@ public final class PlayDoubleArray {
 			if (sample < -1.0) sample = -1.0;
 			if (sample > +1.0) sample = +1.0;
 
-			// convert to bytes
+			// convert to bytes: Assume can only be 16 or 8
+			// TODO: Handle 32-bit?
 			short s = (short) (MAX_16_BIT * sample);
+			//short s = (short) ((bitNum == 16 ? MAX_16_BIT : MAX_8_BIT) * sample);
 			buffer[bufferSize++] = (byte) s;
-			//TODO: Causes IndexOutOfBoundsException if an 8 bit file is played
-			buffer[bufferSize++] = (byte) (s >> 8);   // little Endian
+			if(bitNum == 16)
+				buffer[bufferSize++] = (byte) (s >> 8);   // little Endian
 
 			// send to sound card if buffer is full        
 			if (bufferSize >= buffer.length) {

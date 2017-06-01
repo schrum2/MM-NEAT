@@ -28,12 +28,22 @@ public class SoundToArray {
 	 */
 	public static double[] read(String filename) {
 		byte[] data= readByte(filename);
-		int N= data.length;
-		double[] d= new double[N/2];
-		for (int i= 0; i < N/2; i++) {
-			d[i]= ((short) (((data[2*i+1] & 0xFF) << 8) + (data[2*i] & 0xFF))) / PlayDoubleArray.MAX_16_BIT;
+		try {
+			// audio input stream used to access sample size in bits of audio format
+			AudioInputStream ais = WAVUtil.audioStream(filename);
+			int bits = ais.getFormat().getSampleSizeInBits();
+			// decides which maximum value to use based on number of bits
+			double max = bits == 16 ? PlayDoubleArray.MAX_16_BIT : PlayDoubleArray.MAX_8_BIT;
+			int N= data.length;
+			double[] d= new double[N/2];
+			for (int i= 0; i < N/2; i++) {
+				d[i]= ((short) (((data[2*i+1] & 0xFF) << 8) + (data[2*i] & 0xFF))) / max;
+			}
+			return d;
+		} catch (UnsupportedAudioFileException | IOException e) {
+			e.printStackTrace();
 		}
-		return d;
+		return null; // shouldn't happen
 	}
 
 	/**
@@ -126,6 +136,8 @@ public class SoundToArray {
 				}  
 			}  
 		} else if (format.getSampleSizeInBits() == 8) {  
+			System.out.println("8 bit!");
+			
 			int nlengthInSamples = audioBytes.length;  
 			audioData = new int[nlengthInSamples];  
 			if (format.getEncoding().toString().startsWith("PCM_SIGN")) {  
@@ -151,10 +163,12 @@ public class SoundToArray {
 	 * @param intArray integer array of amplitudes
 	 * @return converted double array of amplitudes
 	 */
-	public static double[] doubleArrayAmplitudesFromIntArrayAmplitudes(int[] intArray) {
+	public static double[] doubleArrayAmplitudesFromIntArrayAmplitudes(int[] intArray, int sampleSizeInBits) {
+		// Assumes only 16 bit or 8 bit, no 32 bit
+		double max = sampleSizeInBits == 16 ? PlayDoubleArray.MAX_16_BIT : PlayDoubleArray.MAX_8_BIT;
 		double[] doubleArray = new double[intArray.length];
 		for(int i = 0; i < intArray.length; i++) {
-			doubleArray[i] = (intArray[i]*1.0) / Short.MAX_VALUE;
+			doubleArray[i] = (intArray[i]*1.0) / max;
 		}
 		return doubleArray;
 	}
@@ -174,7 +188,8 @@ public class SoundToArray {
 		try {
 			AIS = WAVUtil.audioStream(audio);	
 			int[] intArray = SoundToArray.extractAmplitudeDataFromAudioInputStream(AIS);
-			double[] doubleArray = SoundToArray.doubleArrayAmplitudesFromIntArrayAmplitudes(intArray);
+			int bitNum = AIS.getFormat().getSampleSizeInBits();
+			double[] doubleArray = SoundToArray.doubleArrayAmplitudesFromIntArrayAmplitudes(intArray,bitNum);
 			return doubleArray;
 		} catch (UnsupportedAudioFileException | IOException e) {
 			e.printStackTrace();
