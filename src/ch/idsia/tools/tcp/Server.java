@@ -29,9 +29,11 @@ public class Server
 
     enum STATUS {SUCCEED, ERROR_SENDING, ERROR_RECEIVING}
     private int port;
-    private int requiredSentDataSize = 1;
+    @SuppressWarnings("unused")
+	private int requiredSentDataSize = 1;
     private int requiredReceiveDataSize = 1;
-    private List<Integer> trustedLengths = null; // TODO:SK trustedLengths
+    @SuppressWarnings("unused")
+	private List<Integer> trustedLengths = null; // TODO:SK trustedLengths
 
     private BufferedReader in = null;
     PrintWriter out = null;
