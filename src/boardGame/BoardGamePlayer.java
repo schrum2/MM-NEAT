@@ -1,5 +1,7 @@
 package boardGame;
 
+import boardGame.heuristics.BoardGameHeuristic;
+
 /**
  * Generic Interface for a simulated Board Game Player
  * 
@@ -14,5 +16,8 @@ public interface BoardGamePlayer<T extends BoardGameState> {
 	 * @return BoardGameState updated with the action of this Player
 	 */
 	public T takeAction(T current);
+	
+	@SuppressWarnings("rawtypes")
+	public void setHeuristic(BoardGameHeuristic bgh);
 	
 }

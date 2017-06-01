@@ -39,5 +39,11 @@ public class BoardGamePlayerOneStepEval implements BoardGamePlayer<BoardGameStat
 		return poss.get(StatisticsUtilities.argmax(utilities)); // Returns the BoardGameState which produced the highest network output
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@Override
+	public void setHeuristic(BoardGameHeuristic bgh) {
+		boardHeuristic = bgh;
+	}
+
 
 }

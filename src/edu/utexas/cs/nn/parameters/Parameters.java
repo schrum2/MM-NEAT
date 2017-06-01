@@ -712,6 +712,8 @@ public class Parameters {
 		classOptions.add("boardGame", null, "Board Game being played by BoardGameTask");
 		classOptions.add("boardGameOpponent", BoardGamePlayerRandom.class, "Board game Opponent being played against");
 		classOptions.add("boardGameOpponentHeuristic", PieceDifferentialBoardGameHeuristic.class, "Board game heuristic used by the Opponent");
+		classOptions.add("boardGamePlayer", BoardGamePlayerOneStepEval.class, "Board game Player being evolved");
+		classOptions.add("boardGamePlayerHeuristic", NNBoardGameHeuristic.class, "Board game heuristic used by the Player");
 		classOptions.add("hyperNEATSeedTask", null, "HyperNEAT task that seeds a standard NEAT task");
 		classOptions.add("substrateMapping", CenteredSubstrateMapping.class, "Determines the type of subtrate coordinate mapping we want to use");
 		classOptions.add("staticPreyController", PreyFleeClosestPredatorController.class, "This parameter specifies the prey controller that predators evolve against");

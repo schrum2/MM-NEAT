@@ -3,6 +3,7 @@ package boardGame;
 import java.util.ArrayList;
 import java.util.List;
 
+import boardGame.heuristics.BoardGameHeuristic;
 import edu.utexas.cs.nn.util.random.RandomNumbers;
 
 public class BoardGamePlayerRandom<T extends BoardGameState> implements BoardGamePlayer<T> {
@@ -19,6 +20,12 @@ public class BoardGamePlayerRandom<T extends BoardGameState> implements BoardGam
 		poss.addAll(current.possibleBoardGameStates(current));
 		T temp = poss.get(RandomNumbers.randomGenerator.nextInt(poss.size()));
 		return temp;
+	}
+
+	@SuppressWarnings("rawtypes")
+	@Override
+	public void setHeuristic(BoardGameHeuristic bgh) {
+		// Doesn't change the Random Player's actions
 	}
 
 }

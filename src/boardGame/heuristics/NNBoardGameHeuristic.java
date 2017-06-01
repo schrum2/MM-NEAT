@@ -11,6 +11,9 @@ public class NNBoardGameHeuristic<T extends Network, S extends BoardGameState> i
 		network = net;
 	}
 	
+	public NNBoardGameHeuristic(){ // Used as a blank constructor; the Network can be set in the BoardGameTasks
+	}
+	
 	@Override
 	public double heuristicEvalution(S current) {
 		return network.process(current.getDescriptor())[0]; // Returns the Network's Score for the current BoardGameState's descriptor

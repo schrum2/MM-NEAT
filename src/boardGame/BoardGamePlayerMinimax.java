@@ -85,5 +85,11 @@ public class BoardGamePlayerMinimax<T extends BoardGameState> implements BoardGa
 			return bestValue;
 		}
 	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@Override
+	public void setHeuristic(BoardGameHeuristic bgh) {
+		boardHeuristic = bgh;
+	}
 	
 }

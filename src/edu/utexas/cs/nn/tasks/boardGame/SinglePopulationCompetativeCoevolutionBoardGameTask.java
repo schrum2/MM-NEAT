@@ -25,14 +25,28 @@ public class SinglePopulationCompetativeCoevolutionBoardGameTask<T extends Netwo
 	BoardGame bg;
 	@SuppressWarnings("rawtypes")
 	BoardGamePlayer opponent;
+	@SuppressWarnings("rawtypes")
+	BoardGameHeuristic opponentHeuristic;
 	
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings("rawtypes")
+	BoardGamePlayer player;
+	@SuppressWarnings("rawtypes")
+	BoardGameHeuristic playerHeuristic;	
+	
+	@SuppressWarnings({ "rawtypes"})
 	public SinglePopulationCompetativeCoevolutionBoardGameTask(){
 		MMNEAT.registerFitnessFunction("Win Reward");
 		
 		try {
 			bg = (BoardGame) ClassCreation.createObject("boardGame");
-			opponent = (BoardGamePlayer) ClassCreation.createObject("boardGameOpponent"); // The opponent
+			opponent = (BoardGamePlayer) ClassCreation.createObject("boardGameOpponent"); // The Opponent
+			opponentHeuristic = (BoardGameHeuristic) ClassCreation.createObject("boardGameOpponentHeuristic"); // The Opponent's Heuristic
+			opponent.setHeuristic(opponentHeuristic); // Set's the Heuristic for the Opponent
+			
+			player = (BoardGamePlayer) ClassCreation.createObject("boardGamePlayer"); // The Player
+			playerHeuristic = (BoardGameHeuristic) ClassCreation.createObject("boardGamePlayerHeuristic"); // The Player's Heuristic
+			player.setHeuristic(playerHeuristic); // Set's the Heuristic for the Opponent
+
 		} catch (NoSuchMethodException e) {
 			e.printStackTrace();
 			System.out.println("BoardGame instance could not be loaded");
@@ -57,7 +71,12 @@ public class SinglePopulationCompetativeCoevolutionBoardGameTask<T extends Netwo
 		int index = 0;
 		for(Genotype<T> gene : group){
 			
-			BoardGamePlayer evolved = new BoardGamePlayerOneStepEval(new NNBoardGameHeuristic(gene.getPhenotype()));
+			BoardGamePlayer evolved = player; // Creates the Player based on the command line
+			
+			if(playerHeuristic instanceof NNBoardGameHeuristic){ // If the Player Heuristic is NNBoardGameHeuristic, this sets the Network of that Heuristic to the Phenotype
+				player.setHeuristic((new NNBoardGameHeuristic(gene.getPhenotype())));
+			}
+			
 			players[index++] = evolved;
 		}
 		return BoardGameUtil.playGame(bg, players);
@@ -80,18 +99,12 @@ public class SinglePopulationCompetativeCoevolutionBoardGameTask<T extends Netwo
 		return fullInputs; // default behavior
 	}
 
-	// TODO: Get from 2D board game task once it is moved there from StaticOpponentBoardGameTask
-	@Override
 	public List<Substrate> getSubstrateInformation() {
-		// TODO Auto-generated method stub
-		return null;
+		return BoardGameUtil.getSubstrateInformation(bg);
 	}
-
-	// TODO: Get from 2D board game task once it is moved there from StaticOpponentBoardGameTask
-	@Override
+	
 	public List<Pair<String, String>> getSubstrateConnectivity() {
-		// TODO Auto-generated method stub
-		return null;
+		return BoardGameUtil.getSubstrateConnectivity();
 	}
 	
 	/**
