@@ -1,10 +1,12 @@
 package edu.utexas.cs.nn.util.sound;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioFormat.Encoding;
 import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
 /**
@@ -19,6 +21,8 @@ public class SoundToArray {
 	/**
 	 * DOESN'T WORK FOR AUDIO - used for generation of image representations
 	 * of waves
+	 * 
+	 * TODO: Need to delete/replace this eventually
 	 * 
 	 * Reads audio samples from a file (in .wav or .au format) and returns
 	 * them as a double array with values between -1.0 and +1.0.
@@ -79,6 +83,7 @@ public class SoundToArray {
 	public static int[] extractAmplitudeDataFromAudioInputStream(AudioInputStream audioInputStream) {  
 		AudioFormat format = audioInputStream.getFormat();  	
 		byte[] audioBytes = extractAmplitudeByteArrayFromAudioInputStream(audioInputStream);
+		//System.out.println(Arrays.toString(audioBytes));
 		return extractAmplitudeDataFromAmplitudeByteArray(format, audioBytes);  //calls method that extracts amplitude data from byte array formed
 	}  
 
@@ -97,7 +102,7 @@ public class SoundToArray {
 		} catch (IOException e) {  
 			System.out.println("IOException during reading audioBytes");  
 			e.printStackTrace();  
-		}  
+		}  		
 		return audioBytes;
 	}
 
@@ -113,11 +118,11 @@ public class SoundToArray {
 		// convert
 		int[]  audioData = null;  
 		if (format.getSampleSizeInBits() == 16) {  
-			//System.out.println("16 bit!");
+			System.out.println("16 bit!");
 			int nlengthInSamples = audioBytes.length / 2;  
 			audioData = new int[nlengthInSamples];  
 			if (format.isBigEndian()) {  
-				//System.out.println("isBigEndian");
+				System.out.println("isBigEndian");
 				for (int i = 0; i < nlengthInSamples; i++) {  
 					/* First byte is MSB (high order) */  
 					int MSB = audioBytes[2 * i];  
@@ -126,7 +131,7 @@ public class SoundToArray {
 					audioData[i] = (MSB << 8 | (255 & LSB));  
 				}  
 			} else {  
-				//System.out.println("isLittleEndian");
+				System.out.println("isLittleEndian");
 				for (int i = 0; i < nlengthInSamples; i++) {  
 					/* First byte is LSB (low order) */  
 					int LSB = audioBytes[2 * i];  
@@ -137,21 +142,25 @@ public class SoundToArray {
 			}  
 		} else if (format.getSampleSizeInBits() == 8) {  
 			System.out.println("8 bit!");
-			
+
 			int nlengthInSamples = audioBytes.length;  
 			audioData = new int[nlengthInSamples];  
 			if (format.getEncoding().toString().startsWith("PCM_SIGN")) {  
+				System.out.println("signed: " + format.getEncoding().toString());
 				// PCM_SIGNED  
 				for (int i = 0; i < audioBytes.length; i++) {  
 					audioData[i] = audioBytes[i];  
 				}  
 			} else {  
+				System.out.println("unsigned: " + format.getEncoding().toString());
 				// PCM_UNSIGNED  
 				for (int i = 0; i < audioBytes.length; i++) {  
 					audioData[i] = audioBytes[i] - 128;  
 				}  
 			}  
 		}
+		//System.out.println(Arrays.toString(audioData));
+
 		return audioData;  
 	}
 
@@ -165,6 +174,7 @@ public class SoundToArray {
 	 */
 	public static double[] doubleArrayAmplitudesFromIntArrayAmplitudes(int[] intArray, int sampleSizeInBits) {
 		// Assumes only 16 bit or 8 bit, no 32 bit
+		// Currently only works for 16 bit
 		double max = sampleSizeInBits == 16 ? PlayDoubleArray.MAX_16_BIT : PlayDoubleArray.MAX_8_BIT;
 		double[] doubleArray = new double[intArray.length];
 		for(int i = 0; i < intArray.length; i++) {
@@ -190,6 +200,7 @@ public class SoundToArray {
 			int[] intArray = SoundToArray.extractAmplitudeDataFromAudioInputStream(AIS);
 			int bitNum = AIS.getFormat().getSampleSizeInBits();
 			double[] doubleArray = SoundToArray.doubleArrayAmplitudesFromIntArrayAmplitudes(intArray,bitNum);
+			//System.out.println(Arrays.toString(doubleArray));
 			return doubleArray;
 		} catch (UnsupportedAudioFileException | IOException e) {
 			e.printStackTrace();
@@ -197,7 +208,7 @@ public class SoundToArray {
 
 		return null; //this shouldn't happen
 	}
-	
+
 	/**
 	 * Doesn't work - makes 8 bit files playable, but they don't sound like original file.
 	 * Converting AudioFormat of files directly isn't the best way to go
@@ -205,7 +216,7 @@ public class SoundToArray {
 	 * @param format AudioFormat of source wave
 	 * @return adjusted format specified to 16 bits, 2 bytes/frame, and a signed PCM encoding
 	 */
-	private static AudioFormat getAudioFormatRestrictedTo16Bits(AudioFormat format) {
+	public static AudioFormat getAudioFormatRestrictedTo16Bits(AudioFormat format) {
 		//Encoding encoding = format.getEncoding();
 		float sampleRate = format.getSampleRate();
 		int channels = format.getChannels();
@@ -214,5 +225,31 @@ public class SoundToArray {
 		// only thing not in original format is the bits per sample and bytes per sample (set to 16 and 2 respectively)
 		AudioFormat adjustedFormat = new AudioFormat(Encoding.PCM_SIGNED, sampleRate, PlayDoubleArray.BITS_PER_SAMPLE, channels, PlayDoubleArray.BYTES_PER_SAMPLE, frameRate, endian);
 		return adjustedFormat;
+	}
+	
+	/**
+	 * Doesn't work - meant to adjust sample size of AudioFormat so that it can be played back correctly, 
+	 * but instead creates an error because the SourceDataLine does not support an adjusted AudioFormat.
+	 * 
+	 * @param nSampleSizeInBits target sample size 
+	 * @param bBigEndian true if bigEndian, false otherwise
+	 * @param sourceStream input AudioInputStream of source audio
+	 * @return adjusted AudioInputStream
+	 */
+	public static AudioInputStream convertSampleSizeAndEndianess(int nSampleSizeInBits, boolean bBigEndian, AudioInputStream sourceStream) {
+		AudioFormat sourceFormat = sourceStream.getFormat();
+		AudioFormat targetFormat = new AudioFormat(sourceFormat.getEncoding(), sourceFormat.getSampleRate(), nSampleSizeInBits, sourceFormat.getChannels(), calculateFrameSize(sourceFormat.getChannels(),nSampleSizeInBits),sourceFormat.getFrameRate(), bBigEndian);
+		return AudioSystem.getAudioInputStream(targetFormat, sourceStream);
+	}
+	
+	/**
+	 * Calculates size of frame. Necessary for method above
+	 * 
+	 * @param nChannels number of channels
+	 * @param nSampleSizeInBits sample size in bits
+	 * @return frame size
+	 */
+	private static int calculateFrameSize(int nChannels, int nSampleSizeInBits) {
+		return ((nSampleSizeInBits + 7) / 8) * nChannels;
 	}
 }

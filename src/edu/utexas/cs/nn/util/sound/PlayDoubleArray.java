@@ -23,7 +23,7 @@ public final class PlayDoubleArray {
 	public static final int BYTES_PER_SAMPLE = 2;                // 16-bit audio
 	public static final int BITS_PER_SAMPLE = 16;                // 16-bit audio
 	public static final double MAX_16_BIT = Short.MAX_VALUE;     // 32,767
-	public static final double MAX_8_BIT = Short.MAX_VALUE / 2;
+	public static final double MAX_8_BIT = 256;
 	private static final int SAMPLE_BUFFER_SIZE = 4096;
 	
 	// The format below is based on a 16 bit, 44100 Hz, mono, little Endian audio file. This default
@@ -127,8 +127,8 @@ public final class PlayDoubleArray {
 
 			// convert to bytes: Assume can only be 16 or 8
 			// TODO: Handle 32-bit?
-			short s = (short) (MAX_16_BIT * sample);
-			//short s = (short) ((bitNum == 16 ? MAX_16_BIT : MAX_8_BIT) * sample);
+			// short s = (short) (MAX_16_BIT * sample);
+			short s = (short) ((bitNum == 16 ? MAX_16_BIT : MAX_8_BIT) * sample);
 			buffer[bufferSize++] = (byte) s;
 			if(bitNum == 16)
 				buffer[bufferSize++] = (byte) (s >> 8);   // little Endian

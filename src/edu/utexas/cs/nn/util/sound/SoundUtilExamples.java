@@ -65,7 +65,9 @@ public class SoundUtilExamples {
 		Network cppn = test.getCPPN();
 
 		// method call
-		useDifferentByteConversion();
+		eightBitTests();
+		MiscUtil.waitForReadStringAndEnterKeyPress();
+		changeEntireAudioFormat();
 	}
 
 	public static void randomCPPNExamples(Network cppn) throws IOException {
@@ -170,10 +172,11 @@ public class SoundUtilExamples {
 	// if not worse than the original method.
 	public static void useDifferentByteConversion() throws UnsupportedAudioFileException, IOException, InterruptedException, LineUnavailableException {
 		AudioInputStream harpAIS = WAVUtil.audioStream(HARP_WAV);
-		byte[] harpNumbers = WAVUtil.WAVToByte(HARP_WAV);
+		byte[] harpNumbers = SoundToArray.extractAmplitudeByteArrayFromAudioInputStream(harpAIS);
+		//WAVUtil.playByteAIS(harpNumbers); // DOES NOT WORK?!?
 		int[] harpIntArray = SoundToArray.extractAmplitudeDataFromAmplitudeByteArray(harpAIS.getFormat(), harpNumbers);
 		double[] harpDoubleArray = SoundToArray.doubleArrayAmplitudesFromIntArrayAmplitudes(harpIntArray, harpAIS.getFormat().getSampleSizeInBits());
-		PlayDoubleArray.playDoubleArray(harpAIS.getFormat(), harpDoubleArray, false);
+		//PlayDoubleArray.playDoubleArray(harpAIS.getFormat(), harpDoubleArray, false);
 	}
 
 	public static void getAudioFormat() throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException {
@@ -421,9 +424,40 @@ public class SoundUtilExamples {
 			PlayDoubleArray.playDoubleArray(aisChiptune.getFormat(), chiptune, true);		
 			
 		} catch (UnsupportedAudioFileException | IOException e) {
-
 			e.printStackTrace();
-		}
+		}	
+	}
+	
+	// Tests meant to adjust specific aspects of a file's AudioFormat. Conversion does not work because SourceDataLine does not
+	// support the format. I tried this with two 16 bit audio files that have different formats, and neither of their formats could
+	// be integrated with the 8-bit format to produce a new AudioFormat. this means that the SourceDataLine won't run unless the
+	// AudioFormat is extremely specific and the components match up in a certain way.
+	public static void adjustAudioFormat() throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException {
+		AudioInputStream harpAIS = WAVUtil.audioStream(HARP_WAV);
 		
+		//test with 11025 Hz 16-bit file
+		
+//		AudioInputStream alarmAIS = WAVUtil.audioStream(ALARM_WAV);
+//		AudioInputStream adjustedAIS = SoundToArray.convertSampleSizeAndEndianess(alarmAIS.getFormat().getSampleSizeInBits(), alarmAIS.getFormat().isBigEndian(), harpAIS);
+		
+		//test with 44100Hz 16-bit file
+		
+		AudioInputStream seashoreAIS = WAVUtil.audioStream(SEASHORE_WAV);
+		AudioInputStream adjustedAIS = SoundToArray.convertSampleSizeAndEndianess(seashoreAIS.getFormat().getSampleSizeInBits(), seashoreAIS.getFormat().isBigEndian(), harpAIS);
+		int[] harpIntArray = SoundToArray.extractAmplitudeDataFromAudioInputStream(adjustedAIS);
+		double[] harpDoubleArray = SoundToArray.doubleArrayAmplitudesFromIntArrayAmplitudes(harpIntArray, adjustedAIS.getFormat().getSampleSizeInBits());
+		PlayDoubleArray.playDoubleArray(adjustedAIS.getFormat(), harpDoubleArray);
+		Clip clip = WAVUtil.makeClip(adjustedAIS);
+		WAVUtil.playClip(clip);
+	}
+	
+	// Test that converts entire audio format of audio into a 16-bit format that is known to be supported.
+	// The sound will play, but it sounds just as bad as before. Just changing the AudioFormat to a format
+	// that works won't make the file play properly if its original AudioFormat doesn't match.
+	public static void changeEntireAudioFormat() throws UnsupportedAudioFileException, IOException {
+		AudioInputStream harpAIS = WAVUtil.audioStream(HARP_WAV);
+		AudioFormat adjustedFormat = SoundToArray.getAudioFormatRestrictedTo16Bits(harpAIS.getFormat());
+		double[] harpDoubleArray = SoundToArray.readDoubleArrayFromStringAudio(HARP_WAV);
+		PlayDoubleArray.playDoubleArray(adjustedFormat, harpDoubleArray, true);
 	}
 }
