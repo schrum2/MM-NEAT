@@ -11,7 +11,7 @@ import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
 public class BoardGamePlayerMinimax<T extends BoardGameState> implements BoardGamePlayer<T> {
 	
 	BoardGameHeuristic<T> boardHeuristic; // Should generalize to take any heuristic function, not just a network eval
-	private static final int DEPTH = 4; // Used to keep track of how far down the Tree to check
+	private static final int DEPTH = 2; // Used to keep track of how far down the Tree to check
 	
 	@SuppressWarnings("unchecked")
 	public BoardGamePlayerMinimax(){

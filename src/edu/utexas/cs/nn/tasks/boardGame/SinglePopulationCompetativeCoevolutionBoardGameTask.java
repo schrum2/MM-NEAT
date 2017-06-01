@@ -5,8 +5,6 @@ import java.util.List;
 
 import boardGame.BoardGame;
 import boardGame.BoardGamePlayer;
-import boardGame.BoardGamePlayerOneStepEval;
-import boardGame.BoardGameState;
 import boardGame.heuristics.BoardGameHeuristic;
 import boardGame.heuristics.NNBoardGameHeuristic;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
