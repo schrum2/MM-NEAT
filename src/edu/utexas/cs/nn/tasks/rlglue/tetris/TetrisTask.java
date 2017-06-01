@@ -13,21 +13,25 @@ public class TetrisTask<T extends Network> extends RLGlueTask<T> {
 
 	private final boolean tetrisTimeSteps;
 	private final boolean tetrisBlocksOnScreen;
+	private final boolean tetrisAvgEmptySpaces;
 	
 	/**
 	 * Default constructor
 	 */
 	public TetrisTask() {
 		super();
-		boolean tetris = (MMNEAT.rlGlueEnvironment instanceof Tetris);
-		tetrisTimeSteps = tetris && Parameters.parameters.booleanParameter("tetrisTimeSteps");
-		tetrisBlocksOnScreen = tetris && Parameters.parameters.booleanParameter("tetrisBlocksOnScreen");
+		tetrisTimeSteps = Parameters.parameters.booleanParameter("tetrisTimeSteps");
+		tetrisBlocksOnScreen = Parameters.parameters.booleanParameter("tetrisBlocksOnScreen");
+		tetrisAvgEmptySpaces = Parameters.parameters.booleanParameter("tetrisAvgEmptySpaces");
 
 		if (tetrisTimeSteps) { // Staying alive is good
 			MMNEAT.registerFitnessFunction("Time Steps");
 		}
 		if (tetrisBlocksOnScreen) { // On game over, more blocks left is better
 			MMNEAT.registerFitnessFunction("Blocks on Screen");
+		}
+		if(tetrisAvgEmptySpaces) {
+			MMNEAT.registerFitnessFunction("Average Number of Empty Spaces");
 		}
 		MMNEAT.registerFitnessFunction("RL Return");
 
@@ -55,30 +59,26 @@ public class TetrisTask<T extends Network> extends RLGlueTask<T> {
 	 */
 	@Override
 	public Pair<double[], double[]> episodeResult(int num) {
-		double[] fitness = new double[] { rlReturn[num] }; // default
-		Tetris game = (Tetris) environment;
-		if (tetrisBlocksOnScreen || tetrisTimeSteps) {
-			if (tetrisBlocksOnScreen) {
-				@SuppressWarnings("unchecked")
-				TetrisAfterStateAgent<T> tasa = (TetrisAfterStateAgent<T>) agent;
-				int numberOfBlocksInState;
-				// Checks if the we have reached the last step allowed
-				if (rlNumSteps[num] == maxStepsPerEpisode) {
-					// Sets to max to reward not losing for this long
-					numberOfBlocksInState = TetrisState.worldHeight * TetrisState.worldWidth;
-
-				} else {
-					numberOfBlocksInState = tasa.getNumberOfBlocksInLastState();
-				}
-				if (tetrisBlocksOnScreen && tetrisTimeSteps) {
-					fitness = new double[] { rlNumSteps[num], numberOfBlocksInState, rlReturn[num] };
-				} else if (tetrisBlocksOnScreen) {
-					fitness = new double[] { rlNumSteps[num], numberOfBlocksInState, rlReturn[num] };
-				}
-			} else { // timeSteps only
-				fitness = new double[] { rlNumSteps[num], rlReturn[num] };
+		double[] fitness = new double[numObjectives()];
+		int index = 0;
+		fitness[index++] = rlReturn[num]; // default
+		if(tetrisTimeSteps) fitness[index++] = rlNumSteps[num]; // time steps
+		if(tetrisBlocksOnScreen) { // more blocks in final state means an attempt was made to clear lines
+			@SuppressWarnings("unchecked")
+			TetrisAfterStateAgent<T> tasa = (TetrisAfterStateAgent<T>) agent;
+			int numberOfBlocksInState;
+			// Checks if the we have reached the last step allowed
+			if (rlNumSteps[num] == maxStepsPerEpisode) {
+				// Sets to max to reward not losing for this long
+				numberOfBlocksInState = TetrisState.worldHeight * TetrisState.worldWidth;
+			} else {
+				numberOfBlocksInState = tasa.getNumberOfBlocksInLastState();
 			}
+			fitness[index++] = numberOfBlocksInState;
 		}
+		Tetris game = (Tetris) environment;
+		// Average empty spaces across all piece placements
+		if(tetrisAvgEmptySpaces) fitness[index++] = game.getAverageNumEmptyBlocks();		
 		Pair<double[], double[]> p = new Pair<double[], double[]>(fitness, game.getNumberOfRowsCleared());
 		return p;
 	}
@@ -90,14 +90,11 @@ public class TetrisTask<T extends Network> extends RLGlueTask<T> {
 	 */
 	@Override
 	public int numObjectives() {
-		// There are special cases, but the default fitness is the total summed
-		// reward
-		if (tetrisTimeSteps && tetrisBlocksOnScreen)
-			return 3; // both fitnesses used
-		if (tetrisTimeSteps || tetrisBlocksOnScreen)
-			return 2; // only one is used
-		else
-			return 1; // default: just the RL Return
+		int total = 1; // Just RL Return
+		if(tetrisAvgEmptySpaces) total++;
+		if(tetrisTimeSteps) total++;
+		if(tetrisBlocksOnScreen) total++;
+		return total;
 	}
 
 	/**

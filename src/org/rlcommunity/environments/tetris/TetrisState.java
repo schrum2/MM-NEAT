@@ -27,6 +27,7 @@ import org.rlcommunity.rlglue.codec.types.Observation;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.rlglue.tetris.TetrisViewer;
+import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
 import edu.utexas.cs.nn.util.random.RandomNumbers;
 
 public class TetrisState {
@@ -272,6 +273,14 @@ public class TetrisState {
 
 	}
 
+	/**
+	 * Number of game spaces that do not contain a block
+	 * @return
+	 */
+	public int numEmptySpaces() {
+		return ArrayUtil.countOccurrences(0, worldState);
+	}
+	
 	/**
 	 * Calculate the learn array position from (x,y) components based on
 	 * worldWidth. Package level access so we can use it in tests.
@@ -594,13 +603,16 @@ public class TetrisState {
 
 	}
 
+	/**
+	 * ID of currently falling Tetris piece
+	 * @return falling piece id
+	 */
 	public int getCurrentPiece() {
 		return currentBlockId;
 	}
 
 	/**
-	 * Utility methd for debuggin
-	 *
+	 * Utility method for debugging
 	 */
 	public void printState() {
 		for (int i = 0; i < worldHeight - 1; i++) {
@@ -613,6 +625,10 @@ public class TetrisState {
 
 	}
 
+	/**
+	 * Return the random number generator used
+	 * @return
+	 */
 	public Random getRandom() {
 		return randomGenerator;
 	}

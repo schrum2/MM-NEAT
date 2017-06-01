@@ -1,0 +1,3 @@
+cd ..
+cd ..
+java -jar dist/MM-NEATv2.jar runNumber:%1 randomSeed:%1 base:tetrisAES trials:3 maxGens:500 mu:50 io:true netio:true mating:true task:edu.utexas.cs.nn.tasks.rlglue.tetris.TetrisTask rlGlueEnvironment:org.rlcommunity.environments.tetris.Tetris rlGlueExtractor:edu.utexas.cs.nn.tasks.rlglue.featureextractors.tetris.RawTetrisStateExtractor tetrisAvgEmptySpaces:true rlGlueAgent:edu.utexas.cs.nn.tasks.rlglue.tetris.TetrisAfterStateAgent splitRawTetrisInputs:true senseHolesDifferently:true log:TetrisAES-PlainRaw saveTo:PlainRaw steps:500000

@@ -24,6 +24,7 @@ import java.util.ArrayList;
 
 import org.rlcommunity.environments.tetris.messages.TetrisStateResponse;
 import org.rlcommunity.environments.tetris.visualizer.TetrisVisualizer;
+import org.rlcommunity.rlglue.codec.RLGlue;
 import org.rlcommunity.rlglue.codec.taskspec.TaskSpec;
 import org.rlcommunity.rlglue.codec.taskspec.TaskSpecVRLGLUE3;
 import org.rlcommunity.rlglue.codec.taskspec.ranges.DoubleRange;
@@ -50,10 +51,12 @@ public class Tetris extends RLGlueEnvironment implements HasAVisualizerInterface
 	private int currentScore = 0;
 	protected TetrisState gameState = null;
 	static final int terminalScore = 0;
-	public int rowsOf1 = 0;
-	public int rowsOf2 = 0;
-	public int rowsOf3 = 0;
-	public int rowsOf4 = 0;	
+	private int rowsOf1 = 0;
+	private int rowsOf2 = 0;
+	private int rowsOf3 = 0;
+	private int rowsOf4 = 0;	
+	private double averageNumEmptyBlocks = 0;
+	private int numBlockPlacements = 0;
 
 	/**
 	 * This Tetris method calls getDefaultParameters so it can initialize with
@@ -120,7 +123,8 @@ public class Tetris extends RLGlueEnvironment implements HasAVisualizerInterface
 		rowsOf2 = 0;
 		rowsOf3 = 0;
 		rowsOf4 = 0;	
-
+		averageNumEmptyBlocks = 0;
+		numBlockPlacements = 0;
 
 		Observation o = gameState.get_observation();
 		return o;
@@ -158,6 +162,11 @@ public class Tetris extends RLGlueEnvironment implements HasAVisualizerInterface
 			gameState.take_action(theAction);
 			gameState.update();
 		} else {
+			// Track average number of empty blocks after each block placement
+			double numEmpty = gameState.numEmptySpaces();
+			// Incremental average calculation
+			averageNumEmptyBlocks += (numEmpty - averageNumEmptyBlocks) / (++numBlockPlacements);
+			
 			gameState.spawn_block();
 		}
 
@@ -203,6 +212,14 @@ public class Tetris extends RLGlueEnvironment implements HasAVisualizerInterface
 		return rows;
 	}
 
+	/**
+	 * Average number of game spaces that do not contain any blocks
+	 * across all states in which a block was just placed (afterstates)
+	 * @return The average across afterstates
+	 */
+	public double getAverageNumEmptyBlocks() {
+		return averageNumEmptyBlocks;
+	}
 
 	/**
 	 * Cleans the environment
