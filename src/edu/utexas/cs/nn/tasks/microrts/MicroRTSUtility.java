@@ -24,30 +24,42 @@ public class MicroRTSUtility {
 	private static final double WORKER_HARVEST_VALUE = .5; //relative to 1 resource, for use in pool
 
 	public static <T> ArrayList<Pair<double[], double[]>> oneEval(AI ai1, AI ai2, MicroRTSInformation task, RTSFitnessFunction ff, PhysicalGameStateJFrame w) {
+		boolean prog = Parameters.parameters.classParameter("microRTSFitnessFunction").equals(ProgressiveFitnessFunction.class);
 		GameState gs = task.getGameState();
 		PhysicalGameState pgs = task.getPhysicalGameState();
 		boolean gameover = false;
 		int averageUnitDifference = 0;
 		int maxCycles = Parameters.parameters.integerParameter("microRTSMaxCycles");
+		PlayerAction pa1;
+		PlayerAction pa2;
+		int unitDifferenceNow = 0;
+		int maxBaseX = -1, maxBaseY = -1;
+		double resourcePool = 0;
+		double formerResourcePool = 0;
+		Unit currentUnit;
+		boolean baseAlive = false;
+		boolean baseDeathRecorded = false;
 		do{
-			PlayerAction pa1;
+			System.out.println("getting action 1...");
 			try {
 				pa1 = ai1.getAction(0, gs); //throws exception
-				gs.issueSafe(pa1);
+//				gs.issueSafe(pa1);
 			} catch (Exception e1) { e1.printStackTrace();System.exit(1); }
-			PlayerAction pa2;
+			System.out.println("getting action 2...");
 			try {
 				pa2 = ai2.getAction(1, gs); //throws exception
-				gs.issueSafe(pa2);
+//				gs.issueSafe(pa2);
 			} catch (Exception e) { e.printStackTrace();System.exit(1); }
-			if(Parameters.parameters.classParameter("microRTSFitnessFunction").equals(ProgressiveFitnessFunction.class)){
-				int unitDifferenceNow = 0;
-				int maxBaseX = -1, maxBaseY = -1;
-				double resourcePool = 0;
-				double formerResourcePool = 0;
-				Unit currentUnit;
-				boolean baseAlive = false;
-				boolean baseDeathRecorded = false;
+			System.out.println("action gotten");
+			if(prog){
+				unitDifferenceNow = 0;
+				maxBaseX = -1; //Eventually will have to change this to accomodate maps where multiple bases will not be in a straight line 
+				maxBaseY = -1;
+				resourcePool = 0;
+				formerResourcePool = 0;
+				currentUnit = null;
+				baseAlive = false;
+				baseDeathRecorded = false;
 				for(int i = 0; i < pgs.getWidth(); i++){
 					for(int j = 0; j < pgs.getHeight(); j++){
 						baseAlive = false;
@@ -79,6 +91,7 @@ public class MicroRTSUtility {
 						}
 					}//end j
 				}//end i
+				System.out.println("units searched");
 				if(!baseAlive && !baseDeathRecorded) {
 					task.setBaseUpTime(gs.getTime());
 					baseDeathRecorded = true;
@@ -91,7 +104,9 @@ public class MicroRTSUtility {
 			} //end if(Parameters.. = progressive)
 			gameover  = gs.cycle();
 			if(CommonConstants.watch) w.repaint();
+			System.out.println("data recorded for cycle: "+gs.getTime());
 		}while(!gameover && gs.getTime()< maxCycles);
+		System.out.println("game completed");
 		task.setAvgUnitDiff(averageUnitDifference);
 		if(CommonConstants.watch) 
 			w.dispose();
