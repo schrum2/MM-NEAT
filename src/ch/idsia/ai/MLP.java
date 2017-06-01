@@ -233,7 +233,8 @@ public class MLP implements FA<double[], double[]>, Evolvable {
     }
 
 
-    private double sig(double val) {
+    @SuppressWarnings("unused")
+	private double sig(double val) {
         return 1.0d / (1.0d + Math.exp(-val));
     }
 

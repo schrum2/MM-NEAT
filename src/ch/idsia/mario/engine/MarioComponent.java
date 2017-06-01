@@ -26,7 +26,8 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
     private int width, height;
     private GraphicsConfiguration graphicsConfiguration;
     private Scene scene;
-    private boolean focused = false;
+    @SuppressWarnings("unused")
+	private boolean focused = false;
 
     int frame;
     int delay;

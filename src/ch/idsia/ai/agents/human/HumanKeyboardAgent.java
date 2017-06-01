@@ -36,7 +36,8 @@ public class HumanKeyboardAgent extends KeyAdapter implements Agent
 
     public boolean[] getAction(Environment observation)
     {
-        float[] enemiesPos = observation.getEnemiesFloatPos();
+        @SuppressWarnings("unused")
+		float[] enemiesPos = observation.getEnemiesFloatPos();
         return Action;
     }
 

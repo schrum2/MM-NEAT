@@ -14,7 +14,8 @@ public class GeneralizerEnemies implements Generalizer
 
     public byte ZLevelGeneralization(byte el, int ZLevel)
     {
-        byte ret = 0;
+        @SuppressWarnings("unused")
+		byte ret = 0;
         switch (ZLevel)
         {
             case(0):

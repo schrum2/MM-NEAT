@@ -35,7 +35,6 @@ public class OthelloStateTest {
 
 	@Before
 	public void setUp() throws Exception {
-		@SuppressWarnings("unused")		//0,1,2,3,4,5,6,7
 		int[][] startBoard = new int[][]{{e,e,e,e,e,e,e,e}, //  0
 										 {e,e,e,e,e,e,e,e}, //  1
 										 {e,e,e,e,e,e,e,e}, //  2

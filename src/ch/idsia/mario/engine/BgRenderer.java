@@ -1,8 +1,14 @@
 package ch.idsia.mario.engine;
 
-import java.awt.*;
-import java.util.Random;
-import ch.idsia.mario.engine.level.*;
+import java.awt.AlphaComposite;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
+import java.awt.Image;
+import java.awt.Transparency;
+
+import ch.idsia.mario.engine.level.Level;
 
 
 public class BgRenderer
@@ -14,7 +20,7 @@ public class BgRenderer
     private static final Color transparent = new Color(0, 0, 0, 0);
     private Level level;
 
-    private Random random = new Random();
+    //private Random random = new Random();
     public boolean renderBehaviors = false;
 
     private int width;

@@ -126,7 +126,8 @@ public class Level
     {
         long header = dis.readLong();
         if (header != Level.FILE_HEADER) throw new IOException("Bad level header");
-        int version = dis.read() & 0xff;
+        @SuppressWarnings("unused")
+		int version = dis.read() & 0xff;
 
         int width = dis.readShort() & 0xffff;
         int height = dis.readShort() & 0xffff;

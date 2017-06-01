@@ -1,9 +1,9 @@
 package ch.idsia.mario.engine.level;
 
-import ch.idsia.mario.engine.sprites.Enemy;
-
 import java.util.Random;
 
+import ch.idsia.mario.engine.sprites.Enemy;
+import edu.utexas.cs.nn.util.random.RandomNumbers;
 
 public class LevelGenerator
 {
@@ -11,7 +11,7 @@ public class LevelGenerator
     public static final int TYPE_UNDERGROUND = 1;
     public static final int TYPE_CASTLE = 2;
 
-    private static Random levelSeedRandom = new Random();
+    //private static Random levelSeedRandom = new Random();
     public static long lastSeed;
     public static final int LevelLengthMinThreshold = 50;
 
@@ -66,7 +66,7 @@ public class LevelGenerator
 
         lastSeed = seed;
         level = new Level(width, height);
-        random = new Random(seed);
+        random = RandomNumbers.randomGenerator;
 
         int length = 0;
         length += buildStraight(0, level.width, true);
@@ -475,9 +475,9 @@ public class LevelGenerator
             }
         }
 
+        /*
         int length = x1 - x0 - 2;
-
-        /*        if (length > 5 && rocks)
+        if (length > 5 && rocks)
          {
          decorate(x0, x1, floor - 4);
          }*/
