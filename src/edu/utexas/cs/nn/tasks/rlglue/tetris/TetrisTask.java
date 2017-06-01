@@ -1,5 +1,7 @@
 package edu.utexas.cs.nn.tasks.rlglue.tetris;
 
+import java.util.Arrays;
+
 import org.rlcommunity.environments.tetris.Tetris;
 import org.rlcommunity.environments.tetris.TetrisState;
 
@@ -79,6 +81,7 @@ public class TetrisTask<T extends Network> extends RLGlueTask<T> {
 		Tetris game = (Tetris) environment;
 		// Average empty spaces across all piece placements
 		if(tetrisAvgEmptySpaces) fitness[index++] = game.getAverageNumEmptyBlocks();		
+		//System.out.println(Arrays.toString(fitness));
 		Pair<double[], double[]> p = new Pair<double[], double[]>(fitness, game.getNumberOfRowsCleared());
 		return p;
 	}

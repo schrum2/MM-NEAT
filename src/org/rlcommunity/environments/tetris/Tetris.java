@@ -166,7 +166,6 @@ public class Tetris extends RLGlueEnvironment implements HasAVisualizerInterface
 			double numEmpty = gameState.numEmptySpaces();
 			// Incremental average calculation
 			averageNumEmptyBlocks += (numEmpty - averageNumEmptyBlocks) / (++numBlockPlacements);
-			
 			gameState.spawn_block();
 		}
 
