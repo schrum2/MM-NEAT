@@ -136,8 +136,17 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 		for (int i = 0; i < subs.size(); i++) {
 			substrateIndexMapping.put(subs.get(i).getName(), i);
 		}
-		// loop through connections and add links, based on contents of subs
-		newLinks = createNodeLinks(hnt, cppn, connections, subs, substrateIndexMapping);
+		
+		try {
+			// loop through connections and add links, based on contents of subs
+			newLinks = createNodeLinks(hnt, cppn, connections, subs, substrateIndexMapping);
+		}catch(NullPointerException npe) {
+			System.out.println("Error in substrate configutation!");
+			System.out.println(subs);
+			System.out.println(connections);
+			System.exit(1);
+		}
+		
 		// Figure out number of output neurons
 		for (Substrate s : subs) {
 			if (s.getStype() == Substrate.OUTPUT_SUBSTRATE) {

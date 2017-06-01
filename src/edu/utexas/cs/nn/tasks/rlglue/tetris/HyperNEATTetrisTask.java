@@ -27,10 +27,10 @@ public class HyperNEATTetrisTask<T extends Network> extends TetrisTask<T> implem
 	private final boolean TWO_DIMENSIONAL_SUBSTRATES = MMNEAT.rlGlueExtractor instanceof RawTetrisStateExtractor;
 	// Even if the substrates are 2D, the CPPN inputs may need to be overridden to be 1D with certain substrate mappings
 	public static boolean reduce2DTo1D = false; // This can affect CPPNs via the numCPPNInputs and filterCPPNInputs methods.
-		
+
 	// Number of inputs to CPPN if substrates are 1D
 	public static final int NUM_CPPN_INPUTS_1D = 3;
-	
+
 	/**
 	 * Default number of CPPN substrates when 2D substrates are used, but fewer
 	 * when 1D substrates are used, or a 1D substrate mapping on 2D substrates.
@@ -48,13 +48,13 @@ public class HyperNEATTetrisTask<T extends Network> extends TetrisTask<T> implem
 	@Override
 	public double[] filterCPPNInputs(double[] fullInputs) {
 		return TWO_DIMENSIONAL_SUBSTRATES ? 
-			(!reduce2DTo1D ? // Use full 2D substrate inputs 
-					fullInputs : // 2D substrates and 2D CPPN inputs
-					// Assume Bottom1DSubstrateMapping being used, which has a constant X but Y varies
-					new double[]{fullInputs[HyperNEATTask.INDEX_Y1], fullInputs[HyperNEATTask.INDEX_Y2], fullInputs[HyperNEATTask.INDEX_BIAS]}): 
-			new double[]{fullInputs[HyperNEATTask.INDEX_X1], fullInputs[HyperNEATTask.INDEX_X2], fullInputs[HyperNEATTask.INDEX_BIAS]}; // else 1D
+				(!reduce2DTo1D ? // Use full 2D substrate inputs 
+						fullInputs : // 2D substrates and 2D CPPN inputs
+							// Assume Bottom1DSubstrateMapping being used, which has a constant X but Y varies
+							new double[]{fullInputs[HyperNEATTask.INDEX_Y1], fullInputs[HyperNEATTask.INDEX_Y2], fullInputs[HyperNEATTask.INDEX_BIAS]}): 
+								new double[]{fullInputs[HyperNEATTask.INDEX_X1], fullInputs[HyperNEATTask.INDEX_X2], fullInputs[HyperNEATTask.INDEX_BIAS]}; // else 1D
 	}	
-	
+
 	@Override
 	public List<Substrate> getSubstrateInformation() {
 		int outputDepth = SUBSTRATE_COORDINATES;
@@ -63,7 +63,7 @@ public class HyperNEATTetrisTask<T extends Network> extends TetrisTask<T> implem
 			int worldWidth = TetrisState.worldWidth;
 			int worldHeight = TetrisState.worldHeight;
 			boolean split = CommonConstants.splitRawTetrisInputs;
-		
+
 			// Different extractors correspond to different substrate configurations
 			if(MMNEAT.rlGlueExtractor instanceof RawTetrisStateExtractor) { // 2D grid of blocks			
 				Triple<Integer, Integer, Integer> blockSubCoord = new Triple<Integer, Integer, Integer>(0, 0, 0);
@@ -128,9 +128,11 @@ public class HyperNEATTetrisTask<T extends Network> extends TetrisTask<T> implem
 			substrateConnectivity = new LinkedList<Pair<String, String>>();
 			// Different extractors correspond to different substrate configurations
 			if(MMNEAT.rlGlueExtractor instanceof RawTetrisStateExtractor) {			
-				substrateConnectivity.add(new Pair<String, String>("input_0", "process_0")); // Link the block locations to the processing layer
-				if(CommonConstants.splitRawTetrisInputs) {
-					substrateConnectivity.add(new Pair<String, String>("input_1", "process_0")); // Link hole locations to processing layer
+				if(numProcessLayers > 0) {
+					substrateConnectivity.add(new Pair<String, String>("input_0", "process_0")); // Link the block locations to the processing layer
+					if(CommonConstants.splitRawTetrisInputs) {
+						substrateConnectivity.add(new Pair<String, String>("input_1", "process_0")); // Link hole locations to processing layer
+					}
 				}
 				if(Parameters.parameters.booleanParameter("extraHNLinks")) { // Optional: link inputs directly to output neuron
 					substrateConnectivity.add(new Pair<String, String>("input_0", "output_0")); // Link block inputs to output
@@ -139,16 +141,18 @@ public class HyperNEATTetrisTask<T extends Network> extends TetrisTask<T> implem
 					}
 				}
 			} else if(MMNEAT.rlGlueExtractor instanceof ExtendedBertsekasTsitsiklisTetrisExtractor) {	
-				// Link all inputs to processing layer
-				substrateConnectivity.add(new Pair<String, String>("heights", "process_0"));
-				substrateConnectivity.add(new Pair<String, String>("differences", "process_0"));
-				substrateConnectivity.add(new Pair<String, String>("max_height", "process_0"));
-				substrateConnectivity.add(new Pair<String, String>("total_holes", "process_0"));
-				if(!CommonConstants.hyperNEAT){ // Possible if using HyperNEAT seed for standard NEAT networks
-					substrateConnectivity.add(new Pair<String, String>("bias", "process_0")); // Extra bias input is needed
-				}
-				if(CommonConstants.splitRawTetrisInputs) {
-					substrateConnectivity.add(new Pair<String, String>("holes", "process_0"));
+				if(numProcessLayers > 0) {
+					// Link all inputs to processing layer
+					substrateConnectivity.add(new Pair<String, String>("heights", "process_0"));
+					substrateConnectivity.add(new Pair<String, String>("differences", "process_0"));
+					substrateConnectivity.add(new Pair<String, String>("max_height", "process_0"));
+					substrateConnectivity.add(new Pair<String, String>("total_holes", "process_0"));
+					if(!CommonConstants.hyperNEAT){ // Possible if using HyperNEAT seed for standard NEAT networks
+						substrateConnectivity.add(new Pair<String, String>("bias", "process_0")); // Extra bias input is needed
+					}
+					if(CommonConstants.splitRawTetrisInputs) {
+						substrateConnectivity.add(new Pair<String, String>("holes", "process_0"));
+					}
 				}
 				if(Parameters.parameters.booleanParameter("extraHNLinks")) { // Connect each input substrate directly to the output neuron
 					substrateConnectivity.add(new Pair<String, String>("heights", "output_0"));
@@ -171,8 +175,10 @@ public class HyperNEATTetrisTask<T extends Network> extends TetrisTask<T> implem
 				// Connect each processing layer to the subsequent processing layer (if there are multiple)
 				substrateConnectivity.add(new Pair<String, String>("process_" + i, "process_" + (i + 1)));
 			}
-			// Connect final (only?) processing layer to the output neuron
-			substrateConnectivity.add(new Pair<String, String>("process_" + (numProcessLayers - 1), "output_0"));
+			if(numProcessLayers > 0) {
+				// Connect final (only?) processing layer to the output neuron
+				substrateConnectivity.add(new Pair<String, String>("process_" + (numProcessLayers - 1), "output_0"));
+			}
 		}
 		return substrateConnectivity;
 	}
