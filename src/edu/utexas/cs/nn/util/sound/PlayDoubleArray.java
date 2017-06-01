@@ -25,7 +25,10 @@ public final class PlayDoubleArray {
 	public static final double MAX_16_BIT = Short.MAX_VALUE;     // 32,767
 	private static final int SAMPLE_BUFFER_SIZE = 4096;
 	
-	// TODO: Comment explaining this format
+	// The format below is based on a 16 bit, 44100 Hz, mono, little Endian audio file. This default
+	// AudioFormat is used for generated frequencies, such as frequencies from the breedesizer,
+	// but is not acceptable to use when converting an input audio file because the sound cannot be 
+	// replicated if the AudioFormat doesn't exactly match the AudioFormat of the input file. 
 	private static final AudioFormat DEFAULT_AUDIO_FORMAT = new AudioFormat((float) SAMPLE_RATE, BITS_PER_SAMPLE, 1, true, false);
 	
 	public static class AmplitudeArrayPlayer extends Thread {
@@ -43,17 +46,37 @@ public final class PlayDoubleArray {
 			playing = false;
 		}
 		
+		/**
+		 * Constructor that uses default AudioFormat (typically only for originally 
+		 * generated wave amplitudes that don't have an accessible AudioFormat
+		 * 
+		 * @param samples double array representation of generated sound
+		 */
 		public AmplitudeArrayPlayer(double[] samples) {
 			// 44,100 samples per second, 16-bit audio, mono, signed PCM, little Endian
 			this(DEFAULT_AUDIO_FORMAT, samples);
 				
 		}
 		
+		/**
+		 * Constructor that takes in AudioFormat and representative double array of an 
+		 * audio file and changes the audio format so it can be used by the 
+		 * SourceDataLine
+		 * 
+		 * @param format AudioFormat of audio
+		 * @param samples double array representation of audio
+		 */
 		public AmplitudeArrayPlayer(AudioFormat format, double[] samples) {
 			changeAudioFormat(format);
 			this.samples = samples;
 		}
 		
+		/**
+		 * Method that changes the audio format being used for the SourceDataLine to 
+		 * the specific audio format of the file being played. 
+		 * 
+		 * @param format AudioFormat of input audio
+		 */
 		public void changeAudioFormat(AudioFormat format) {
 			if(line != null) line.close();
 			try {
@@ -110,6 +133,11 @@ public final class PlayDoubleArray {
 			}
 		}
 		
+		/**
+		 * Loops through array of doubles and plays it as audio
+		 * using playDouble(). When loop is exited, playing should be
+		 * set to false. 
+		 */
 		public void run() {
 			playing = true;
 			for (int i = 0; playing && i < samples.length; i++) {
@@ -118,6 +146,10 @@ public final class PlayDoubleArray {
 			playing = false;
 		}
 		
+		/**
+		 * Method to access whether sound is playing or not
+		 * @return true if playing, false if not
+		 */
 		public boolean isPlaying() {
 			return playing;
 		}
@@ -129,14 +161,13 @@ public final class PlayDoubleArray {
 	 * sample fully if interruptions are not allowed, but samples can be 
 	 * interrupted if input boolean is set to true
 	 *
+	 * @param  format the AudioFormat of the specified audio (preset if a generated amplitude from
+	 * breedesizer is being played
 	 * @param  samples the array of samples to play
 	 * @param  allowInterrupt dicates whether sounds being played can be interrupted by another
 	 * sound before they finish playing
-	 * @throws IllegalArgumentException if any sample is {@code Double.NaN}
-	 * @throws IllegalArgumentException if {@code samples} is {@code null}
-	 *
-	 *
-	 * TODO: Revise comments above
+	 * @return AmplitudeArrayPlayer instance that plays audio or null if interruption is not allowed.
+	 * Plays audio regardless
 	 */
 	
 	public static AmplitudeArrayPlayer playDoubleArray(AudioFormat format, double[] samples, boolean allowInterrupt) {
@@ -150,15 +181,40 @@ public final class PlayDoubleArray {
 			return null; // then return null
 		}
 	}
-
+	
+	/**
+	 * Plays double array given the input audio format. Allows interruption by default.
+	 * This is used for audio being converted from an input file.
+	 * 
+	 * @param format AudioFormat of input file
+	 * @param samples double array representing audio file
+	 * @return AmplitudeArrayPlayer instance that plays audio
+	 */
 	public static AmplitudeArrayPlayer playDoubleArray(AudioFormat format, double[] samples) {
 		return playDoubleArray(format, samples, true); // Allow interrupt
 	}	
 	
+	/**
+	 * Plays double array. Allows interruption by default, and also uses the default
+	 * audio format. This is used for originally generated sounds that don't have
+	 * an accessible AudioFormat.
+	 * 
+	 * @param samples double array representing generated audio
+	 *  @return AmplitudeArrayPlayer instance that plays audio
+	 */
 	public static AmplitudeArrayPlayer playDoubleArray(double[] samples) {
 		return playDoubleArray(DEFAULT_AUDIO_FORMAT, samples, true); // Allow interrupt
 	}
-
+	
+	/**
+	 * Plays double array based on whether interruption has been allowed or not. Uses
+	 * default audio format. this is used for originally generated sounds that don't
+	 * have an accessible AudioFormat.
+	 * 
+	 * @param samples double array representing generated audio
+	 * @param allowInterrupt true if audio interruption is allowed, false otherwise
+	 * @return AmplitudeArrayPlayer instance that plays audio
+	 */
 	public static AmplitudeArrayPlayer playDoubleArray(double[] samples, boolean allowInterrupt) {
 		return playDoubleArray(DEFAULT_AUDIO_FORMAT, samples, allowInterrupt);
 	}
