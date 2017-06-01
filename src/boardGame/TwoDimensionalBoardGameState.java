@@ -266,9 +266,16 @@ public abstract class TwoDimensionalBoardGameState implements BoardGameState {
 		double[] features = new double[getBoardWidth()*getBoardHeight()];
 		int index = 0;
 		
+		// This method will not work with BoardGames with more than 2 Players TODO: Generalize this?
 		for(int i = 0; i < getBoardHeight(); i++){
 			for(int j = 0; j < getBoardWidth(); j ++){
-				features[index++] = boardState[i][j];
+				switch(boardState[i][j]){
+				case EMPTY: features[index++] = 0; break; // Empty Space
+				case 0: features[index++] = 1; break; // Player 1 = +1
+				case 1: features[index++] = -1; break; // Player 2 = -1
+				}
+				
+				
 			}
 		}
 		

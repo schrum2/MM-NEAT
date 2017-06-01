@@ -11,6 +11,10 @@ public class Othello extends TwoDimensionalBoardGame<OthelloState>{
 		super(new OthelloState());
 	}
 	
+	Othello(OthelloState state){
+		super(state);
+	}
+	
 	/**
 	 * Returns the number of Players for Othello
 	 * 
