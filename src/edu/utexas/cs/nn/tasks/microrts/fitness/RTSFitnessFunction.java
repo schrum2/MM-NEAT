@@ -1,5 +1,7 @@
 package edu.utexas.cs.nn.tasks.microrts.fitness;
 
+import java.util.ArrayList;
+
 import edu.utexas.cs.nn.tasks.microrts.MicroRTSInformation;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import micro.rts.GameState;
@@ -17,7 +19,7 @@ public abstract class RTSFitnessFunction {
 	 * @param gs
 	 * @return fitness of an organism
 	 */
-	public abstract Pair<double[], double[]> getFitness(GameState gs);
+	public abstract ArrayList<Pair<double[], double[]>> getFitness(GameState gs);
 	public abstract String[] getFunctions();
 	
 	public void givePhysicalGameState(PhysicalGameState pgs){

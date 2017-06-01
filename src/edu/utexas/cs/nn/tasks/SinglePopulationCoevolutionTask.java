@@ -64,6 +64,9 @@ public abstract class SinglePopulationCoevolutionTask<T> implements SinglePopula
 				ArrayList<Pair<double[], double[]>> result = evaluateGroup(group);
 				// Save scores in the right place
 				for(int k = 0; k < groupSize; k++) {
+					assert j+k < groupOrder.size() : "Should have "+j+"+"+k+" < " + groupOrder.size();
+					assert groupOrder.get(j+k) < allScores.size() : "Should have "+groupOrder.get(j+k)+" < "+allScores.size();
+					assert k < result.size() : "Should have "+k+" < "+result.size();
 					allScores.get(groupOrder.get(j+k)).add(result.get(k));
 				}
 			}

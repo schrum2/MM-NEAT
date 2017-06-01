@@ -1,6 +1,7 @@
 package edu.utexas.cs.nn.tasks.microrts;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 //import javax.swing.JFrame;
@@ -164,7 +165,8 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 		ef.setNetwork(individual);
 		if(CommonConstants.watch)
 			w = PhysicalGameStatePanel.newVisualizer(gs,640,640,false,PhysicalGameStatePanel.COLORSCHEME_BLACK);
-		return MicroRTSUtility.oneEval((AI) ai1, ai2, this, ff, w);
+		ArrayList<Pair<double[], double[]>> eval = MicroRTSUtility.oneEval((AI) ai1, ai2, this, ff, w);
+		return eval.get(0);
 
 	} //END oneEval
 

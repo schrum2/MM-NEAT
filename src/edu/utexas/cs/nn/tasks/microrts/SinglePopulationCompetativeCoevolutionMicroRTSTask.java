@@ -170,8 +170,8 @@ public class SinglePopulationCompetativeCoevolutionMicroRTSTask<T extends Networ
 		ef2.setNetwork(group.get(1));
 		if(CommonConstants.watch)
 			w = PhysicalGameStatePanel.newVisualizer(gs,640,640,false,PhysicalGameStatePanel.COLORSCHEME_WHITE);
-		ArrayList<Pair<double[], double[]>> a = new ArrayList<Pair<double[], double[]>>();
-		a.add(MicroRTSUtility.oneEval((AI)ai1, (AI)ai2, this, ff, w));
+		ArrayList<Pair<double[], double[]>> a = (MicroRTSUtility.oneEval((AI)ai1, (AI)ai2, this, ff, w));
+		//TODO oneEval calls ff which will soon return an ArrayList of pairs
 		return a;
 	}
 	

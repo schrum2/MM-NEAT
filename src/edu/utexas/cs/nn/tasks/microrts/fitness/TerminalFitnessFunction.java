@@ -1,5 +1,6 @@
 package edu.utexas.cs.nn.tasks.microrts.fitness;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import edu.utexas.cs.nn.util.datastructures.Pair;
@@ -16,7 +17,7 @@ public class TerminalFitnessFunction extends RTSFitnessFunction{
 	 * @param terminalGameState
 	 * @return pair of double[], the first of which has {victory, time, unitDifference}
 	 */
-	public Pair<double[], double[]> getFitness(GameState terminalGameState) {
+	public ArrayList<Pair<double[], double[]>> getFitness(GameState terminalGameState) {
 		Pair<double[], double[]> score = new Pair<>(new double[3], new double[2]); 
 		//first[]:{victory, time, unitDifference, } on a scale from -1 to 1, except unit difference, which starts at 0 and can go up or down
 		
@@ -54,7 +55,9 @@ public class TerminalFitnessFunction extends RTSFitnessFunction{
 		};
 		score.t2 = other;
 //		System.out.println("result?: "+score.t1[0] + " unit-difference: "+ score.t1[2] + " time: " +score.t1[1]);
-		return score;
+		ArrayList<Pair<double[], double[]>> result = new ArrayList<>();
+		result.add(score);
+		return result;
 	} //END fitnessFunction
 
 	@Override

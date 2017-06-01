@@ -23,7 +23,7 @@ public class MicroRTSUtility {
 	private static final int WORKER_OUT_OF_BOUNDS_PENALTY = 1;
 	private static final double WORKER_HARVEST_VALUE = .5; //relative to 1 resource, for use in pool
 
-	public static <T> Pair<double[], double[]> oneEval(AI ai1, AI ai2, MicroRTSInformation task, RTSFitnessFunction ff, PhysicalGameStateJFrame w) {
+	public static <T> ArrayList<Pair<double[], double[]>> oneEval(AI ai1, AI ai2, MicroRTSInformation task, RTSFitnessFunction ff, PhysicalGameStateJFrame w) {
 		GameState gs = task.getGameState();
 		PhysicalGameState pgs = task.getPhysicalGameState();
 		boolean gameover = false;
