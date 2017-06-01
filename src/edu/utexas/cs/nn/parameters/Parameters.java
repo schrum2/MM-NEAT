@@ -554,7 +554,6 @@ public class Parameters {
 		booleanOptions.add("relativePacmanDirections", true, "Ms. Pac-Man senses and actions for directions are relative to current direction");
 		booleanOptions.add("moVizDoom", false, "VizDoom is multiobjective");
 		booleanOptions.add("moPuddleWorld", true, "Puddle World is multiobjective, and separates step score from puddle score");
-		booleanOptions.add("moTetris", false, "Tetris is multiobjective, and separates time steps from lines cleared");
 		booleanOptions.add("tetrisTimeSteps", false, "For Tetris multiobjective, separates time steps from lines cleared");
 		booleanOptions.add("tetrisBlocksOnScreen", false, "For Tetris multiobjective, seperates number of blocks on screen from lines cleared");
 		booleanOptions.add("tetrisAvgEmptySpaces", false, "For Tetris multiobjective, average number of empty spaces after piece placements");
