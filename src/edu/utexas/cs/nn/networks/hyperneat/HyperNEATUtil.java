@@ -270,10 +270,13 @@ public class HyperNEATUtil {
 		if(biggest) {//only shows biggest neuron 
 			Collections.sort(activations);
 			int currentIndex = activations.size() - 1;
-			while(activations.get(activations.size() - 1).activation == activations.get(currentIndex).activation) {
+			while(activations.get(activations.size() - 1).activation == activations.get(currentIndex).activation && currentIndex > 0) {
 				activations.get(currentIndex).setColor(Color.MAGENTA);
 				currentIndex--;
 			}
+//			activations.get(currentIndex).setColor(Color.MAGENTA);
+			
+			
 		}  
 
 

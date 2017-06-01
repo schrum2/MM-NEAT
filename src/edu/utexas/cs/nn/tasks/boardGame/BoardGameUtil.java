@@ -13,6 +13,7 @@ import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.util.MiscUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.datastructures.Triple;
+import pacman.game.Constants.MOVE;
 
 public class BoardGameUtil {
 	
@@ -21,11 +22,6 @@ public class BoardGameUtil {
 	public static ArrayList<Pair<double[], double[]>> playGame(BoardGame bg, BoardGamePlayer[] players){
 		bg.reset();
 		while(!bg.isGameOver()){
-			if(Parameters.parameters.booleanParameter("stepByStep")){
-				System.out.print("Press enter to continue");
-				System.out.println(bg.toString());
-				MiscUtil.waitForReadStringAndEnterKeyPress();
-			}
 			bg.move(players[bg.getCurrentPlayer()]);
 		}
 //		System.out.println("Game over");
