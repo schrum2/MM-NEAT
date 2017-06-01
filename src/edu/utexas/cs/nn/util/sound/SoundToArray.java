@@ -1,18 +1,11 @@
 package edu.utexas.cs.nn.util.sound;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.URL;
-import java.nio.ByteBuffer;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioFormat.Encoding;
 import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
-
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.util.MiscUtil;
 
 /**
  * Contains a variety of utility methods that can extract byte 
@@ -75,7 +68,6 @@ public class SoundToArray {
 	 */
 	public static int[] extractAmplitudeDataFromAudioInputStream(AudioInputStream audioInputStream) {  
 		AudioFormat format = audioInputStream.getFormat();  	
-		PlayDoubleArray.changeAudioFormat(format);
 		byte[] audioBytes = extractAmplitudeByteArrayFromAudioInputStream(audioInputStream);
 		return extractAmplitudeDataFromAmplitudeByteArray(format, audioBytes);  //calls method that extracts amplitude data from byte array formed
 	}  
@@ -111,11 +103,11 @@ public class SoundToArray {
 		// convert
 		int[]  audioData = null;  
 		if (format.getSampleSizeInBits() == 16) {  
-			System.out.println("16 bit!");
+			//System.out.println("16 bit!");
 			int nlengthInSamples = audioBytes.length / 2;  
 			audioData = new int[nlengthInSamples];  
 			if (format.isBigEndian()) {  
-				System.out.println("isBigEndian");
+				//System.out.println("isBigEndian");
 				for (int i = 0; i < nlengthInSamples; i++) {  
 					/* First byte is MSB (high order) */  
 					int MSB = audioBytes[2 * i];  
@@ -124,7 +116,7 @@ public class SoundToArray {
 					audioData[i] = (MSB << 8 | (255 & LSB));  
 				}  
 			} else {  
-				System.out.println("isLittleEndian");
+				//System.out.println("isLittleEndian");
 				for (int i = 0; i < nlengthInSamples; i++) {  
 					/* First byte is LSB (low order) */  
 					int LSB = audioBytes[2 * i];  

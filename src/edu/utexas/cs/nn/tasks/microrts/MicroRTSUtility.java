@@ -28,6 +28,7 @@ public class MicroRTSUtility {
 		PhysicalGameState pgs = task.getPhysicalGameState();
 		boolean gameover = false;
 		int averageUnitDifference = 0;
+		int maxCycles = Parameters.parameters.integerParameter("microRTSMaxCycles");
 		do{
 			PlayerAction pa1;
 			try {
@@ -86,11 +87,11 @@ public class MicroRTSUtility {
 					task.setHarvestingEfficiency(task.getHarvestingEfficiency() + RESOURCE_GAIN_VALUE);
 				}
 				formerResourcePool = resourcePool;
-				averageUnitDifference = (unitDifferenceNow - averageUnitDifference) / gs.getTime();
+				averageUnitDifference = (unitDifferenceNow - averageUnitDifference) / (gs.getTime()+1);
 			} //end if(Parameters.. = progressive)
 			gameover  = gs.cycle();
 			if(CommonConstants.watch) w.repaint();
-		}while(!gameover && gs.getTime()< Parameters.parameters.integerParameter("microRTSMaxCycles"));
+		}while(!gameover && gs.getTime()< maxCycles);
 		task.setAvgUnitDiff(averageUnitDifference);
 		if(CommonConstants.watch) 
 			w.dispose();

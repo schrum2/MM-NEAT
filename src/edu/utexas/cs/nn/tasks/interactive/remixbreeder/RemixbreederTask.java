@@ -47,7 +47,9 @@ public class RemixbreederTask<T extends Network> extends BreedesizerTask<T> {
 			format = AIS.getFormat();
 			playBackRate = format.getSampleSizeInBits(); //sample size - should be changed?
 			//format = SoundToArray.getAudioFormatRestrictedTo16Bits(format);
-			PlayDoubleArray.changeAudioFormat(format);
+			
+			// Doesn't work any more ... remove eventually
+			//PlayDoubleArray.changeAudioFormat(format);
 		} catch (UnsupportedAudioFileException | IOException e) {
 			e.printStackTrace();
 			System.exit(1);
@@ -82,10 +84,12 @@ public class RemixbreederTask<T extends Network> extends BreedesizerTask<T> {
 
 	protected void respondToClick(int itemID) {
 		super.respondToClick(itemID);
-
-		// Play original sound if they click the button
-		if(itemID == (CHECKBOX_IDENTIFIER_START - inputMultipliers.length - 1)) {
-			PlayDoubleArray.playDoubleArray(WAVDoubleArray);
+		
+		if(arrayPlayer != null && arrayPlayer.isPlaying()) { // Always stop any currently playing sound
+			arrayPlayer.stopPlayback();
+		} else if(itemID == (CHECKBOX_IDENTIFIER_START - inputMultipliers.length - 1)) { // only play if wasn't playing
+			// Play original sound if they click the button
+			arrayPlayer = PlayDoubleArray.playDoubleArray(format, WAVDoubleArray);
 		}
 	}
 
@@ -108,14 +112,15 @@ public class RemixbreederTask<T extends Network> extends BreedesizerTask<T> {
 
 	@Override
 	protected void additionalButtonClickAction(int scoreIndex, Genotype<T> individual) {
+		if(arrayPlayer != null) { // Always stop any currently playing sound
+			arrayPlayer.stopPlayback();
+		}
+
 		if(chosen[scoreIndex]) {
 			Network phenotype = individual.getPhenotype();
 			double[] amplitude = SoundFromCPPNUtil.amplitudeRemixer(phenotype, WAVDoubleArray, Parameters.parameters.integerParameter("clipLength"), playBackRate, playBackRate, inputMultipliers);
-			PlayDoubleArray.playDoubleArray(amplitude);	
-		} else {
-			PlayDoubleArray.stopPlayback();
-		}
-
+			arrayPlayer = PlayDoubleArray.playDoubleArray(format, amplitude);	
+		} 
 	}
 	
 	@Override

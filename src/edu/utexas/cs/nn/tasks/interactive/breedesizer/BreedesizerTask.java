@@ -23,6 +23,7 @@ import edu.utexas.cs.nn.util.graphics.GraphicsUtil;
 import edu.utexas.cs.nn.util.sound.MIDIUtil;
 import edu.utexas.cs.nn.util.sound.MIDIUtil.CPPNNoteSequencePlayer;
 import edu.utexas.cs.nn.util.sound.PlayDoubleArray;
+import edu.utexas.cs.nn.util.sound.PlayDoubleArray.AmplitudeArrayPlayer;
 import edu.utexas.cs.nn.util.sound.SoundFromCPPNUtil;
 
 /**
@@ -52,6 +53,7 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 	Keyboard keyboard;
 	protected JSlider clipLength;
 	protected boolean initializationComplete = false;
+	protected AmplitudeArrayPlayer arrayPlayer = null;
 
 	// Controls MIDI playback, and allows for interruption
 	private CPPNNoteSequencePlayer midiPlay = null;
@@ -160,14 +162,16 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 	 */
 	@Override
 	protected void additionalButtonClickAction(int scoreIndex, Genotype<T> individual) {
+		if(arrayPlayer != null) { // Always stop any currently playing sound
+			arrayPlayer.stopPlayback();
+		}
+		
 		if(chosen[scoreIndex]) { // Play sound if item was just selected
 			Network phenotype = individual.getPhenotype();
 			double[] amplitude = SoundFromCPPNUtil.amplitudeGenerator(phenotype, Parameters.parameters.integerParameter("clipLength"), FREQUENCY_DEFAULT, inputMultipliers);
-			PlayDoubleArray.playDoubleArray(amplitude);	
+			arrayPlayer = PlayDoubleArray.playDoubleArray(amplitude);	
 			keyboard.setCPPN(phenotype);
-		} else {
-			PlayDoubleArray.stopPlayback();
-		}
+		} 
 	}
 
 	@Override
