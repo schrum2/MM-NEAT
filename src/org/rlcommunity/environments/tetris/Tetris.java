@@ -67,7 +67,7 @@ public class Tetris extends RLGlueEnvironment implements HasAVisualizerInterface
 	 * This Tetris method calls super, so that it can get the default parameters
 	 * and use them. It then starts the game state.
 	 * 
-         * @param p contains parameters
+	 * @param p contains parameters
 	 */
 	public Tetris(ParameterHolder p) {
 		super();
@@ -100,7 +100,7 @@ public class Tetris extends RLGlueEnvironment implements HasAVisualizerInterface
 	}
 
 	/* Base RL-Glue Functions */
-        @Override
+	@Override
 	public String env_init() {
 		return makeTaskSpec().getStringRepresentation();
 	}
@@ -110,7 +110,7 @@ public class Tetris extends RLGlueEnvironment implements HasAVisualizerInterface
 	 * 
 	 * @return Observation of game state
 	 */
-        @Override
+	@Override
 	public Observation env_start() {
 		gameState.reset();
 		gameState.spawn_block();
@@ -131,10 +131,10 @@ public class Tetris extends RLGlueEnvironment implements HasAVisualizerInterface
 	 * appropriate errors. Then, checks for a moving block, continues to the
 	 * next movement or adds the next block. It also connects reward with the
 	 * game state, checking for game overs and the current score
-         * @param actionObject action to perform
-         * @return reward and observation details
+	 * @param actionObject action to perform
+	 * @return reward and observation details
 	 */
-        @Override
+	@Override
 	public Reward_observation_terminal env_step(Action actionObject) {
 		int theAction = 0;
 		try {
@@ -182,7 +182,7 @@ public class Tetris extends RLGlueEnvironment implements HasAVisualizerInterface
 				rowsOf4++;
 			}
 			currentScore = gameState.get_score();
-			
+
 		} else {
 			ro.r = Tetris.terminalScore;
 			currentScore = 0;
@@ -191,16 +191,23 @@ public class Tetris extends RLGlueEnvironment implements HasAVisualizerInterface
 		return ro;
 	}
 
-	public double[] getNumberOfRows(){
+	/**
+	 * At end of game, the array will contain the number of times
+	 * that 1, 2, 3, and 4 rows were cleared simultaneously.
+	 * Used for "other score" tracking.
+	 * 
+	 * @return Array of numbers of simultaneous row clearings for 1-4 rows
+	 */
+	public double[] getNumberOfRowsCleared(){
 		double[] rows = {rowsOf1, rowsOf2, rowsOf3, rowsOf4};
 		return rows;
 	}
-	
-	
+
+
 	/**
 	 * Cleans the environment
 	 */
-        @Override
+	@Override
 	public void env_cleanup() {
 	}
 
@@ -209,9 +216,9 @@ public class Tetris extends RLGlueEnvironment implements HasAVisualizerInterface
 	 * parameter
 	 * 
 	 * @param theMessage
-         * @return 
+	 * @return 
 	 */
-        @Override
+	@Override
 	public String env_message(String theMessage) {
 		EnvironmentMessages theMessageObject;
 		try {
@@ -253,7 +260,7 @@ public class Tetris extends RLGlueEnvironment implements HasAVisualizerInterface
 	// used to communicated between languages on top of RL-Glue
 	/**
 	 * Getter for the observation of the current game state
-         * @return state observation
+	 * @return state observation
 	 */
 	@Override
 	protected Observation makeObservation() {
@@ -262,18 +269,18 @@ public class Tetris extends RLGlueEnvironment implements HasAVisualizerInterface
 
 	/**
 	 * Getter for the name of the visualizer class
-         * @return name of class
+	 * @return name of class
 	 */
-        @Override
+	@Override
 	public String getVisualizerClassName() {
 		return TetrisVisualizer.class.getName();
 	}
 
 	/**
 	 * Doesn't seem to be used ... file does not exist.
-         * @return 
+	 * @return 
 	 */
-        @Override
+	@Override
 	public URL getImageURL() {
 		URL imageURL = Tetris.class.getResource("/images/tetris/tetris.png");
 		return imageURL;
@@ -282,9 +289,9 @@ public class Tetris extends RLGlueEnvironment implements HasAVisualizerInterface
 	/**
 	 * Method returns a taskspec that reflects the current game state
 	 * 
-         * @return provides task details
+	 * @return provides task details
 	 */
-        @Override
+	@Override
 	public TaskSpec makeTaskSpec() {
 		int boardSize = gameState.getHeight() * gameState.getWidth();
 		int numPieces = gameState.possibleBlocks.size();
@@ -298,7 +305,7 @@ public class Tetris extends RLGlueEnvironment implements HasAVisualizerInterface
 		theTaskSpecObject.addDiscreteObservation(new IntRange(0, 1, numPieces));
 		// Now the actual board size in the observation. The reason this was
 		// here is/was because there was no way to add meta-data to the task 
-                // spec before. First height
+		// spec before. First height
 		theTaskSpecObject.addDiscreteObservation(new IntRange(gameState.getHeight(), gameState.getHeight()));
 		// Then width
 		theTaskSpecObject.addDiscreteObservation(new IntRange(gameState.getWidth(), gameState.getWidth()));
@@ -309,7 +316,7 @@ public class Tetris extends RLGlueEnvironment implements HasAVisualizerInterface
 
 		// This is a better way to tell the rows and cols
 		theTaskSpecObject.setExtra("EnvName:Tetris HEIGHT:" + gameState.getHeight() + " WIDTH:" + gameState.getWidth()
-				+ " Revision: " + this.getClass().getPackage().getImplementationVersion());
+		+ " Revision: " + this.getClass().getPackage().getImplementationVersion());
 
 		String taskSpecString = theTaskSpecObject.toTaskSpec();
 
@@ -327,7 +334,7 @@ public class Tetris extends RLGlueEnvironment implements HasAVisualizerInterface
 
 	/**
 	 * Array list, or vector, to hold the current world state.s
-         * @return vector representation of entire game grid
+	 * @return vector representation of entire game grid
 	 */
 	@Override
 	public ArrayList<Double> getBehaviorVector() {
@@ -348,27 +355,27 @@ public class Tetris extends RLGlueEnvironment implements HasAVisualizerInterface
  */
 class DetailsProvider implements hasVersionDetails {
 
-        @Override
+	@Override
 	public String getName() {
 		return "Tetris 1.1";
 	}
 
-        @Override
+	@Override
 	public String getShortName() {
 		return "Tetris";
 	}
 
-        @Override
+	@Override
 	public String getAuthors() {
 		return "Brian Tanner, Leah Hackman, Matt Radkie, Andrew Butcher";
 	}
 
-        @Override
+	@Override
 	public String getInfoUrl() {
 		return "http://library.rl-community.org/tetris";
 	}
 
-        @Override
+	@Override
 	public String getDescription() {
 		return "Tetris problem from the reinforcement learning library.";
 	}

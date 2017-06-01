@@ -79,7 +79,7 @@ public class TetrisTask<T extends Network> extends RLGlueTask<T> {
 				fitness = new double[] { rlNumSteps[num], rlReturn[num] };
 			}
 		}
-		Pair<double[], double[]> p = new Pair<double[], double[]>(fitness, game.getNumberOfRows());
+		Pair<double[], double[]> p = new Pair<double[], double[]>(fitness, game.getNumberOfRowsCleared());
 		return p;
 	}
 
