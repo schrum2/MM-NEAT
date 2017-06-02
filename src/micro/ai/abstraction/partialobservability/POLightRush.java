@@ -5,6 +5,8 @@
  */
 package micro.ai.abstraction.partialobservability;
 
+import edu.utexas.cs.nn.MMNEAT.MMNEAT;
+import edu.utexas.cs.nn.tasks.microrts.MicroRTSInformation;
 import micro.ai.abstraction.LightRush;
 import micro.ai.abstraction.pathfinding.AStarPathFinding;
 import micro.ai.abstraction.pathfinding.PathFinding;
@@ -31,7 +33,12 @@ public class POLightRush extends LightRush {
         super(a_utt, a_pf);
     }
 
-    public void reset() {
+    public POLightRush() {
+    	this(((MicroRTSInformation) MMNEAT.task).getUnitTypeTable());
+	}
+
+
+	public void reset() {
     	super.reset();
     }
 
