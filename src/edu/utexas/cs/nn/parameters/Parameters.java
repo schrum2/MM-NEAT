@@ -302,7 +302,7 @@ public class Parameters {
 		longOptions.add("lastInnovation", 0l, "Highest innovation number used so far");
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
 		// Boolean parameters
-		booleanOptions.add("randomizeSeedWeights", false, "randomizes all the weights in a hyperNEAT-seeded tetris task");
+		booleanOptions.add("randomizeSeedWeights", false, "randomizes all the weights in a hyperNEAT-seeded task");
 		booleanOptions.add("showWeights", false, "visualizes weights of all links in network. Compatible for HyperNEAT only currently");
 		booleanOptions.add("senseHyperNEATGhostPath", false, "shows nearest path to ghost with stronger activation as pacman gets closer to the ghost");
 		booleanOptions.add("sortOutputActivations", false, "shows activations as sorted from most activated to least activated");
@@ -554,6 +554,7 @@ public class Parameters {
 		booleanOptions.add("relativePacmanDirections", true, "Ms. Pac-Man senses and actions for directions are relative to current direction");
 		booleanOptions.add("moVizDoom", false, "VizDoom is multiobjective");
 		booleanOptions.add("moPuddleWorld", true, "Puddle World is multiobjective, and separates step score from puddle score");
+		booleanOptions.add("tetrisLinesNotScore", false, "For Tetris track lines cleared instead of game score");
 		booleanOptions.add("tetrisTimeSteps", false, "For Tetris multiobjective, separates time steps from lines cleared");
 		booleanOptions.add("tetrisBlocksOnScreen", false, "For Tetris multiobjective, seperates number of blocks on screen from lines cleared");
 		booleanOptions.add("tetrisAvgEmptySpaces", false, "For Tetris multiobjective, average number of empty spaces after piece placements");

@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import edu.utexas.cs.nn.MMNEAT.MMNEAT;
+import edu.utexas.cs.nn.tasks.microrts.MicroRTSInformation;
 import edu.utexas.cs.nn.util.random.RandomNumbers;
 import micro.rts.GameState;
 import micro.rts.PlayerAction;
@@ -123,7 +125,12 @@ public class NaiveMCTS extends AIWithComputationBudget implements InterruptibleA
         forceExplorationOfNonSampledActions = fensa;
     }        
     
-    public void reset() {
+    public NaiveMCTS() {
+    	this(((MicroRTSInformation) MMNEAT.task).getUnitTypeTable());
+	}
+
+
+	public void reset() {
         tree = null;
         gs_to_start_from = null;
         total_runs = 0;

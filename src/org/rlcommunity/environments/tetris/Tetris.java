@@ -49,6 +49,7 @@ public class Tetris extends RLGlueEnvironment implements HasAVisualizerInterface
 	 * Initialize the scores to 0 and game state to null
 	 */
 	private int currentScore = 0;
+	private int linesCleared = 0;
 	protected TetrisState gameState = null;
 	static final int terminalScore = 0;
 	private int rowsOf1 = 0;
@@ -119,6 +120,7 @@ public class Tetris extends RLGlueEnvironment implements HasAVisualizerInterface
 		gameState.spawn_block();
 		gameState.blockMobile = true;
 		currentScore = 0;
+		linesCleared = 0;
 		rowsOf1 = 0;
 		rowsOf2 = 0;
 		rowsOf3 = 0;
@@ -183,18 +185,22 @@ public class Tetris extends RLGlueEnvironment implements HasAVisualizerInterface
 			ro.r = gameState.get_score() - currentScore;
 			if(ro.r == 1){
 				rowsOf1++;
+				linesCleared += 1;
 			} else if(ro.r == 2){
 				rowsOf2++;
+				linesCleared += 2;
 			} else if(ro.r == 4){
 				rowsOf3++;
+				linesCleared += 3;
 			} else if(ro.r == 8){
 				rowsOf4++;
+				linesCleared += 4;
 			}
 			currentScore = gameState.get_score();
-
 		} else {
 			ro.r = Tetris.terminalScore;
 			currentScore = 0;
+			linesCleared = 0;
 		}
 
 		return ro;
@@ -362,6 +368,16 @@ public class Tetris extends RLGlueEnvironment implements HasAVisualizerInterface
 			result.add(b * 1.0);
 		}
 		return result;
+	}
+	
+	/**
+	 * Schrum: added.
+	 * 
+	 * Number of lines cleared (distinct from score)
+	 * @return raw number of lines cleared
+	 */
+	public int getLinesCleared() {
+		return linesCleared;
 	}
 }
 
