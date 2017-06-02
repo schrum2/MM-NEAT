@@ -169,6 +169,14 @@ public class MIDIUtil {
 	public static long ticksInTrack(Track track) {
 		return track.ticks();
 	}
+
+//	public static ArrayList<double[]> soundLines(Track[] tracks) {
+//		ArrayList<double[]> result = new ArrayList<double[]>();
+//		for(Track t: tracks) {
+//			result.addAll(soundLines(t));
+//		}
+//		return result;
+//	}
 	
 	/**
 	 * Divides each piano voice up into a single list, so that all indexes when voice is not playing
@@ -200,7 +208,7 @@ public class MIDIUtil {
 					map.put(freq, tick);
 					lines.put(freq, index);
 				}
-				if(sm.getCommand() == NOTE_OFF || (sm.getCommand() == NOTE_ON && sm.getData2() == 0)) {
+				if((sm.getCommand() == NOTE_OFF || (sm.getCommand() == NOTE_ON && sm.getData2() == 0))) {
 					int index = lines.get(freq);
 					long tickStart = map.get(freq);
 					long tickEnd = tick;
@@ -392,8 +400,8 @@ public class MIDIUtil {
 	 * @param frequencies frequencies corresponding to data taken from MIDI file
 	 * @param lengths double array containing lengths of individual notes
 	 */
-	public static CPPNNoteSequencePlayer playMIDIWithCPPNFromDoubleArray(Network cppn, double[] frequencies, double[] lengths) {
-		CPPNNoteSequencePlayer result = new CPPNNoteSequencePlayer(cppn, frequencies, lengths);
+	public static CPPNNoteSequencePlayer playMIDIWithCPPNFromDoubleArray(Network cppn, ArrayList<double[]> soundLines) {
+		CPPNNoteSequencePlayer result = new CPPNNoteSequencePlayer(cppn, soundLines);
 		result.start();
 		return result; // To allow for interrupting of playback
 	}
@@ -405,47 +413,25 @@ public class MIDIUtil {
 	 */
 	public static class CPPNNoteSequencePlayer extends Thread {
 		boolean play;
-		private double[] amplitudeArray;
+		private double[][] amplitudeArrays;
 
 		public CPPNNoteSequencePlayer() {
 			// Without any content to play, playing cannot occur
 			play = false; 
 		}
 
-		public CPPNNoteSequencePlayer(Network cppn, double[] frequencies, double[] lengths) {
+		public CPPNNoteSequencePlayer(Network cppn, ArrayList<double[]> soundLines) {
 			play = true;
-			this.amplitudeArray = lineToAmplitudeArray(frequencies, lengths, cppn);
+			amplitudeArrays = new double[soundLines.size()][];
+			for(int i = 0; i < soundLines.size(); i++) {
+				amplitudeArrays[i] = lineToAmplitudeArray(soundLines.get(i), cppn);
+			}
 		}
-
-//		public void run() {
-//			for(int i = 0; play && i < frequencies.length; i++) {
-//				int amplitudeLength = (int) lengths[i]*50;
-//				//double[] amplitude = SoundFromCPPNUtil.amplitudeGenerator(cppn, amplitudeLength, frequencies[i]);
-//
-//				// An amplitude array of all 0s still makes some noise?
-//				double[] amplitude = frequencies[i] == 0 ? new double[amplitudeLength] : SoundFromCPPNUtil.amplitudeGenerator(cppn, amplitudeLength, frequencies[i]);
-//				PlayDoubleArray.removePops(amplitude, CLIP_VOLUME_LENGTH);
-//				//System.out.println("note "+ i + " length " + lengths[i] +  " :" + amplitude.length); // + Arrays.toString(amplitude));
-//				
-//				// Trying to figure out if 0 causes problems
-////				if(frequencies[i] == 0) {
-////					try {
-////						Thread.sleep(amplitudeLength/10);
-////					} catch (InterruptedException e) {
-////						// TODO Auto-generated catch block
-////						e.printStackTrace();
-////					}
-////				} else {
-//					PlayDoubleArray.playDoubleArray(amplitude, false);
-////				}
-//				//MiscUtil.waitForReadStringAndEnterKeyPress();
-//			}	
-//			play = false;
-//		}
 		
 		public void run() {
-			// TODO: Allow for interruption			
-			PlayDoubleArray.playDoubleArray(amplitudeArray, false);
+			// TODO: Allow for interruption	
+			for(int i = 0; i < amplitudeArrays.length; i++) 
+				PlayDoubleArray.playDoubleArray(amplitudeArrays[i]);
 		}
 
 		public void stopPlayback() {
@@ -468,8 +454,17 @@ public class MIDIUtil {
 	 * @param cppn Input network being used as the "instrument" to generate MIDI file playback
 	 */
 	public static CPPNNoteSequencePlayer playMIDIWithCPPNFromString(String audio, int trackNumber, Network cppn) {
-		Pair<double[],double[]> data = freqFromMIDI(audio, trackNumber);
-		//MiscUtil.waitForReadStringAndEnterKeyPress();
-		return playMIDIWithCPPNFromDoubleArray(cppn, data.t1, data.t2);
+		File audioFile = new File(audio);
+		Sequence sequence;
+		try {
+			sequence = MidiSystem.getSequence(audioFile);
+			Track[] tracks = sequence.getTracks();
+			Track track = tracks[trackNumber];
+			ArrayList<double[]> data = soundLines(track);
+			return playMIDIWithCPPNFromDoubleArray(cppn, data);
+		} catch (InvalidMidiDataException | IOException e) {
+			e.printStackTrace();
+		}
+		return null; //shouldn't happen
 	}
 }

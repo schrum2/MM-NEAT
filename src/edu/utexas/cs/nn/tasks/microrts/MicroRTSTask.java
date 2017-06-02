@@ -65,7 +65,7 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 			ff = (RTSFitnessFunction) ClassCreation.createObject(Parameters.parameters.classParameter("microRTSFitnessFunction"));
 			initialPgs = PhysicalGameState.load("data/microRTS/maps/" + Parameters.parameters.stringParameter("map"), utt);
 			pgs = initialPgs.clone();
-		} catch (JDOMException | IOException | NoSuchMethodException e) {
+		} catch (JDOMException | IOException | NoSuchMethodException e) { 
 			e.printStackTrace();
 			System.exit(1);
 		}
@@ -154,6 +154,21 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 		baseUpTime = 0;
 		harvestingEfficiencyIndex = 0;
 		pgs = initialPgs.clone();
+		if(Parameters.parameters.booleanParameter("microRTSMapSequence")){
+			String newMapName = mapSequence.getAppropriateMap(MMNEAT.ea.currentGeneration());
+			if (!newMapName.equals(mapName)){
+				try {
+					pgs = PhysicalGameState.load("data/microRTS/maps/" + newMapName, utt); //somehow is loading Wrong map!!
+					System.out.println("########## at gen" + MMNEAT.ea.currentGeneration() + " loaded new map: " + newMapName);
+					mapName = newMapName;
+				} catch (JDOMException e) {
+					e.printStackTrace(); System.exit(1);
+				} catch (IOException e) {
+					e.printStackTrace(); System.exit(1);
+				}
+			}
+			ef.givePhysicalGameState(pgs);
+		}
 		gs = new GameState(pgs, utt);
 		if(!AiInitialized)
 			initializeAI();
@@ -163,22 +178,8 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 				ef2.givePhysicalGameState(initialPgs);
 			}
 		}
-		if(Parameters.parameters.booleanParameter("microRTSEnemySequence")){
+		if(Parameters.parameters.booleanParameter("microRTSEnemySequence"))
 			ai2 = enemySequence.getAppropriateEnemy(MMNEAT.ea.currentGeneration());
-		}
-		if(Parameters.parameters.booleanParameter("microRTSMapSequence")){ 
-			String newMapName = mapSequence.getAppropriateMap(MMNEAT.ea.currentGeneration());
-			if (!newMapName.equals(mapName)){
-				try {
-					pgs.load("data/microRTS/maps/" + mapName, utt);
-				} catch (JDOMException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-
 		ef.setNetwork(individual);
 		if(CommonConstants.watch)
 			w = PhysicalGameStatePanel.newVisualizer(gs,640,640,false,PhysicalGameStatePanel.COLORSCHEME_BLACK);

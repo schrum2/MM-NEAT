@@ -390,6 +390,7 @@ public class JunctionGraph {
 			int maxDist) {
 		++nrVisit;
 		// update distances
+		@SuppressWarnings("unused")
 		boolean improvedDistance = updateDist(start, startMove, end, lastMove, currDist);
 		// if (visited[end.junctionIndex] && !improvedDistance) {
 		if (maxDist <= 0 /* || !improvedDistance */) {

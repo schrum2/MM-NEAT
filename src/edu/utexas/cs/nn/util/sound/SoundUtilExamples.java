@@ -480,23 +480,24 @@ public class SoundUtilExamples {
 	}
 	
 	public static void MIDIWithLengths(Network cppn) throws InvalidMidiDataException, IOException {
-		File furElise = new File(FUR_ELISE_MID);
-		Sequence sequence = MidiSystem.getSequence(furElise);
+		File midiFile = new File(FUR_ELISE_MID);
+		Sequence sequence = MidiSystem.getSequence(midiFile);
 		Track[] tracks = sequence.getTracks();
 		Track track = tracks[1];
 		ArrayList<double[]> listOfData = MIDIUtil.soundLines(track);
-		double[][][] toPlay = new double[listOfData.size()][2][];
-		for(int i = 0; i < listOfData.size(); i++) {
-			Pair<ArrayList<Double>, ArrayList<Double>> notesAndLengths = MIDIUtil.notesAndLengthsOfLine(listOfData.get(i));
-			// Magic numbers: 0 = frequencies, 1 = lengths
-			toPlay[i][0] = ArrayUtil.doubleArrayFromList(notesAndLengths.t1);
-			toPlay[i][1] = ArrayUtil.doubleArrayFromList(notesAndLengths.t2);
-		}
-		
-		// TODO: Work up to allow playback of all sound components
-		//for(int i = 0; i < 1 /*toPlay.length*/; i++) {
-			int i = 0;
-			MIDIUtil.playMIDIWithCPPNFromDoubleArray(cppn, toPlay[i][0], toPlay[i][1]);
+		//System.out.println("listOfData.length = " + listOfData.size());
+//		double[][][] toPlay = new double[listOfData.size()][2][];
+//		for(int i = 0; i < listOfData.size(); i++) {
+//			Pair<ArrayList<Double>, ArrayList<Double>> notesAndLengths = MIDIUtil.notesAndLengthsOfLine(listOfData.get(i));
+//			// Magic numbers: 0 = frequencies, 1 = lengths
+//			toPlay[i][0] = ArrayUtil.doubleArrayFromList(notesAndLengths.t1);
+//			toPlay[i][1] = ArrayUtil.doubleArrayFromList(notesAndLengths.t2);
+//		}
+//		
+//		// TODO: Work up to allow playback of all sound components
+//		//for(int i = 0; i < 1 /*toPlay.length*/; i++) {
+//			int i = 0;
+			MIDIUtil.playMIDIWithCPPNFromDoubleArray(cppn, listOfData);
 		//}
 	}
 }

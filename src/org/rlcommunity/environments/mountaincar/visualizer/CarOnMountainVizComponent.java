@@ -35,6 +35,7 @@ import rlVizLib.visualization.VizComponentChangeListener;
 public class CarOnMountainVizComponent implements SelfUpdatingVizComponent, Observer {
 
 	private MountainCarVisualizer mcv = null;
+	@SuppressWarnings("unused")
 	private boolean showAction = true;
 	private VizComponentChangeListener theChangeListener;
 	private Image carImageNeutral = null;
