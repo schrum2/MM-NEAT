@@ -22,11 +22,6 @@ public class SinglePopulationCompetativeCoevolutionBoardGameTask<T extends Netwo
 	@SuppressWarnings("rawtypes")
 	BoardGame bg;
 	@SuppressWarnings("rawtypes")
-	BoardGamePlayer opponent;
-	@SuppressWarnings("rawtypes")
-	BoardGameHeuristic opponentHeuristic;
-	
-	@SuppressWarnings("rawtypes")
 	BoardGamePlayer player;
 	@SuppressWarnings("rawtypes")
 	BoardGameHeuristic playerHeuristic;	
@@ -37,14 +32,9 @@ public class SinglePopulationCompetativeCoevolutionBoardGameTask<T extends Netwo
 		
 		try {
 			bg = (BoardGame) ClassCreation.createObject("boardGame");
-			opponent = (BoardGamePlayer) ClassCreation.createObject("boardGameOpponent"); // The Opponent
-			opponentHeuristic = (BoardGameHeuristic) ClassCreation.createObject("boardGameOpponentHeuristic"); // The Opponent's Heuristic
-			opponent.setHeuristic(opponentHeuristic); // Set's the Heuristic for the Opponent
-			
 			player = (BoardGamePlayer) ClassCreation.createObject("boardGamePlayer"); // The Player
 			playerHeuristic = (BoardGameHeuristic) ClassCreation.createObject("boardGamePlayerHeuristic"); // The Player's Heuristic
 			player.setHeuristic(playerHeuristic); // Set's the Heuristic for the Opponent
-
 		} catch (NoSuchMethodException e) {
 			e.printStackTrace();
 			System.out.println("BoardGame instance could not be loaded");

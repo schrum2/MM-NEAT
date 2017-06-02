@@ -3,6 +3,8 @@ package edu.utexas.cs.nn.tasks.boardGame;
 import java.util.ArrayList;
 
 import boardGame.BoardGame;
+import boardGame.BoardGamePlayer;
+import boardGame.heuristics.BoardGameHeuristic;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.scores.Score;
@@ -13,6 +15,10 @@ public class MultiPopulationCompetativeCoevolutionBoardGameTask extends GroupTas
 
 	@SuppressWarnings("rawtypes")
 	BoardGame bg;
+	@SuppressWarnings("rawtypes")
+	BoardGamePlayer player;
+	@SuppressWarnings("rawtypes")
+	BoardGameHeuristic playerHeuristic;	
 	
 	@SuppressWarnings("rawtypes")
 	public MultiPopulationCompetativeCoevolutionBoardGameTask(){
@@ -20,6 +26,9 @@ public class MultiPopulationCompetativeCoevolutionBoardGameTask extends GroupTas
 		
 		try {
 			bg = (BoardGame) ClassCreation.createObject("boardGame");
+			player = (BoardGamePlayer) ClassCreation.createObject("boardGamePlayer"); // The Player
+			playerHeuristic = (BoardGameHeuristic) ClassCreation.createObject("boardGamePlayerHeuristic"); // The Player's Heuristic
+			player.setHeuristic(playerHeuristic); // Set's the Heuristic for the Opponent
 		} catch (NoSuchMethodException e) {
 			e.printStackTrace();
 			System.out.println("BoardGame instance could not be loaded");
