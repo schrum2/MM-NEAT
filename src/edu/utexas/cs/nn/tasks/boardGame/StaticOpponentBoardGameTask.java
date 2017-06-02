@@ -26,13 +26,7 @@ public class StaticOpponentBoardGameTask<T extends Network> extends NoisyLonerTa
 	BoardGame bg;
 	@SuppressWarnings("rawtypes")
 	BoardGamePlayer opponent;
-	@SuppressWarnings("rawtypes")
-	BoardGameHeuristic opponentHeuristic;
-	
-	@SuppressWarnings("rawtypes")
 	BoardGamePlayer player;
-	@SuppressWarnings("rawtypes")
-	BoardGameHeuristic playerHeuristic;
 	
 	/**
 	 * Constructor for a new BoardGameTask
@@ -44,13 +38,8 @@ public class StaticOpponentBoardGameTask<T extends Network> extends NoisyLonerTa
 		try {
 			bg = (BoardGame) ClassCreation.createObject("boardGame");
 			opponent = (BoardGamePlayer) ClassCreation.createObject("boardGameOpponent"); // The Opponent
-			opponentHeuristic = (BoardGameHeuristic) ClassCreation.createObject("boardGameOpponentHeuristic"); // The Opponent's Heuristic
-			opponent.setHeuristic(opponentHeuristic); // Set's the Heuristic for the Opponent
 			
 			player = (BoardGamePlayer) ClassCreation.createObject("boardGamePlayer"); // The Player
-			playerHeuristic = (BoardGameHeuristic) ClassCreation.createObject("boardGamePlayerHeuristic"); // The Player's Heuristic
-			player.setHeuristic(playerHeuristic); // Set's the Heuristic for the Opponent
-
 		} catch (NoSuchMethodException e) {
 			e.printStackTrace();
 			System.out.println("BoardGame instance could not be loaded");
@@ -125,9 +114,7 @@ public class StaticOpponentBoardGameTask<T extends Network> extends NoisyLonerTa
 
 		BoardGamePlayer evolved = player; // Creates the Player based on the command line
 		
-		if(playerHeuristic instanceof NNBoardGameHeuristic){ // If the Player Heuristic is NNBoardGameHeuristic, this sets the Network of that Heuristic to the Phenotype
-			player.setHeuristic((new NNBoardGameHeuristic(individual.getPhenotype())));
-		}
+		player.setHeuristic((new NNBoardGameHeuristic(individual.getPhenotype())));
 		
 		BoardGamePlayer[] players = new BoardGamePlayer[]{evolved, opponent};
 		return BoardGameUtil.playGame(bg, players).get(0);

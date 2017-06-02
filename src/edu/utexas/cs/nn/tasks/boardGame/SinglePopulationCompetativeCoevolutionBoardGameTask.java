@@ -22,9 +22,7 @@ public class SinglePopulationCompetativeCoevolutionBoardGameTask<T extends Netwo
 	@SuppressWarnings("rawtypes")
 	BoardGame bg;
 	@SuppressWarnings("rawtypes")
-	BoardGamePlayer player;
-	@SuppressWarnings("rawtypes")
-	BoardGameHeuristic playerHeuristic;	
+	BoardGamePlayer[] players;
 	
 	@SuppressWarnings({ "rawtypes"})
 	public SinglePopulationCompetativeCoevolutionBoardGameTask(){
@@ -32,9 +30,12 @@ public class SinglePopulationCompetativeCoevolutionBoardGameTask<T extends Netwo
 		
 		try {
 			bg = (BoardGame) ClassCreation.createObject("boardGame");
-			player = (BoardGamePlayer) ClassCreation.createObject("boardGamePlayer"); // The Player
-			playerHeuristic = (BoardGameHeuristic) ClassCreation.createObject("boardGamePlayerHeuristic"); // The Player's Heuristic
-			player.setHeuristic(playerHeuristic); // Set's the Heuristic for the Opponent
+			
+			players = new BoardGamePlayer[groupSize()];
+			
+			for(int i = 0; i < groupSize(); i++){
+				players[i] = (BoardGamePlayer) ClassCreation.createObject("boardGamePlayer"); // The Player
+			}
 		} catch (NoSuchMethodException e) {
 			e.printStackTrace();
 			System.out.println("BoardGame instance could not be loaded");
@@ -59,11 +60,9 @@ public class SinglePopulationCompetativeCoevolutionBoardGameTask<T extends Netwo
 		int index = 0;
 		for(Genotype<T> gene : group){
 			
-			BoardGamePlayer evolved = player; // Creates the Player based on the command line
+			BoardGamePlayer evolved = players[index]; // Creates the Player based on the command line
 			
-			if(playerHeuristic instanceof NNBoardGameHeuristic){ // If the Player Heuristic is NNBoardGameHeuristic, this sets the Network of that Heuristic to the Phenotype
-				player.setHeuristic((new NNBoardGameHeuristic(gene.getPhenotype())));
-			}
+			evolved.setHeuristic((new NNBoardGameHeuristic(gene.getPhenotype())));
 			
 			players[index++] = evolved;
 		}
