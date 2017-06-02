@@ -41,6 +41,7 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 	private UnitTypeTable utt;
 	private PhysicalGameStateJFrame w = null;
 	private GameState gs;
+	private String mapName;
 	public boolean AiInitialized = false;
 
 	private double averageUnitDifference;
@@ -162,11 +163,22 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 				ef2.givePhysicalGameState(initialPgs);
 			}
 		}
-		System.out.println(Parameters.parameters.booleanParameter("microRTSEnemySequence") + "____________________________");
 		if(Parameters.parameters.booleanParameter("microRTSEnemySequence")){
 			ai2 = enemySequence.getAppropriateEnemy(MMNEAT.ea.currentGeneration());
-			System.out.println("ASHDJSHDAAAAAAA   " + ai2.getClass().getName());
 		}
+		if(Parameters.parameters.booleanParameter("microRTSMapSequence")){ 
+			String newMapName = mapSequence.getAppropriateMap(MMNEAT.ea.currentGeneration());
+			if (!newMapName.equals(mapName)){
+				try {
+					pgs.load("data/microRTS/maps/" + mapName, utt);
+				} catch (JDOMException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
 		ef.setNetwork(individual);
 		if(CommonConstants.watch)
 			w = PhysicalGameStatePanel.newVisualizer(gs,640,640,false,PhysicalGameStatePanel.COLORSCHEME_BLACK);

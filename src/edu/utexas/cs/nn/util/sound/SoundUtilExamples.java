@@ -60,7 +60,7 @@ public class SoundUtilExamples {
 
 	public static void main(String[] args) throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException, JavaLayerException, InvalidMidiDataException {
 		//CPPN initialization
-		Parameters.initializeParameterCollections(new String[]{"io:false","netio:false"});
+		Parameters.initializeParameterCollections(new String[]{"io:false","netio:false","randomSeed:12"});
 		MMNEAT.loadClasses();
 		HyperNEATCPPNGenotype test = new HyperNEATCPPNGenotype(3, 1, 0);
 		for(int i = 0; i < 30; i++) {
@@ -485,10 +485,18 @@ public class SoundUtilExamples {
 		Track[] tracks = sequence.getTracks();
 		Track track = tracks[1];
 		ArrayList<double[]> listOfData = MIDIUtil.soundLines(track);
+		double[][][] toPlay = new double[listOfData.size()][2][];
 		for(int i = 0; i < listOfData.size(); i++) {
 			Pair<ArrayList<Double>, ArrayList<Double>> notesAndLengths = MIDIUtil.notesAndLengthsOfLine(listOfData.get(i));
-			//playMIDIWithCPPNFromDoubleArray(cppn, notesAndLengths.t1, notesAndLengths.t2);
+			// Magic numbers: 0 = frequencies, 1 = lengths
+			toPlay[i][0] = ArrayUtil.doubleArrayFromList(notesAndLengths.t1);
+			toPlay[i][1] = ArrayUtil.doubleArrayFromList(notesAndLengths.t2);
 		}
 		
+		// TODO: Work up to allow playback of all sound components
+		//for(int i = 0; i < 1 /*toPlay.length*/; i++) {
+			int i = 0;
+			MIDIUtil.playMIDIWithCPPNFromDoubleArray(cppn, toPlay[i][0], toPlay[i][1]);
+		//}
 	}
 }

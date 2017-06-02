@@ -29,7 +29,7 @@ public class MicroRTSUtility {
 		PhysicalGameState pgs = task.getPhysicalGameState();
 		boolean gameover = false;
 		int averageUnitDifference = 0;
-		int maxCycles = Parameters.parameters.integerParameter("microRTSMaxCycles");
+		int maxCycles = 1000 * (int) Math.ceil(Math.sqrt(pgs.getHeight()));
 		PlayerAction pa1;
 		PlayerAction pa2;
 		int unitDifferenceNow = 0;

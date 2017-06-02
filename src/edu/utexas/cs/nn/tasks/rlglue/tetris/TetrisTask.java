@@ -7,7 +7,9 @@ import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.rlglue.RLGlueTask;
+import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
+import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
 
 public class TetrisTask<T extends Network> extends RLGlueTask<T> {
 
@@ -97,6 +99,9 @@ public class TetrisTask<T extends Network> extends RLGlueTask<T> {
 		}
 
 		double[] rowCounts = game.getNumberOfRowsCleared();
+		
+		assert StatisticsUtilities.sum(ArrayUtil.zipMultiply(rowCounts, new double[]{1,2,3,4})) == game.getLinesCleared() : "Total of lines cleared of each type should equal total lines cleared";
+		
 		double[] otherScores = new double[numOtherScores()];
 		
 		otherScores[0] = rowCounts[0];

@@ -13,8 +13,9 @@ import micro.ai.portfolio.PortfolioAI;
 
 public class enemySequence {
 	
+	private static final int gensPerEnemy = 5;
 	private static final AI[] enemies = new AI[]{
-		new PassiveAI(),
+//		new PassiveAI(),
 		new RandomAI(),
 		new RandomBiasedAI(), //used in competition
 		new UCT(),
@@ -26,6 +27,6 @@ public class enemySequence {
 	};
 	
 	public static AI getAppropriateEnemy(int generation){
-		return enemies[Math.min(generation, enemies.length)]; // gen/5
+		return enemies[Math.min(gensPerEnemy, enemies.length)];
 	}
 }
