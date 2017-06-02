@@ -598,7 +598,7 @@ public class Parameters {
 		booleanOptions.add("mRTSOpponentBuildings", false, "whether there is a substrate dedicated to red agent's NON-movable units");
 		booleanOptions.add("mRTSmyAll", false, "whether there is a substrate dedicated to all of the red agents' units");
 		booleanOptions.add("mRTSOpponentsAll", false, "whether there is a substrate dedicated to all of the blue agents' units");
-		booleanOptions.add("mRTS", false, "whether there is a substrate dedicated to all of the blue agents' units");
+		booleanOptions.add("microRTSEnemySequence", false, "enables iterative evolution with increasingly difficult opponents");
 		
 		// Double parameters
 		doubleOptions.add("linkExpressionThreshold", 0.2, "Threshold for hyperNEAT output to result in an expressed link");

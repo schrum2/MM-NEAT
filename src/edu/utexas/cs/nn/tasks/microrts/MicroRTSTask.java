@@ -162,6 +162,11 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 				ef2.givePhysicalGameState(initialPgs);
 			}
 		}
+		System.out.println(Parameters.parameters.booleanParameter("microRTSEnemySequence") + "____________________________");
+		if(Parameters.parameters.booleanParameter("microRTSEnemySequence")){
+			ai2 = enemySequence.getAppropriateEnemy(MMNEAT.ea.currentGeneration());
+			System.out.println("ASHDJSHDAAAAAAA   " + ai2.getClass().getName());
+		}
 		ef.setNetwork(individual);
 		if(CommonConstants.watch)
 			w = PhysicalGameStatePanel.newVisualizer(gs,640,640,false,PhysicalGameStatePanel.COLORSCHEME_BLACK);
@@ -177,7 +182,8 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 	void initializeAI() {
 		try {
 			ai1 = (HasEvaluationFunction) ClassCreation.createObject(Parameters.parameters.classParameter("microRTSAgent"));
-			ai2 = (AI) ClassCreation.createObject(Parameters.parameters.classParameter("microRTSOpponent"));
+			if( ! Parameters.parameters.booleanParameter("microRTSEnemySequence"))
+				ai2 = (AI) ClassCreation.createObject(Parameters.parameters.classParameter("microRTSOpponent"));
 		} catch (NoSuchMethodException e2) {
 			e2.printStackTrace();
 			System.exit(1);

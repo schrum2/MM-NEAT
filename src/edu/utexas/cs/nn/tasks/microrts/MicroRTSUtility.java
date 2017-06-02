@@ -40,17 +40,17 @@ public class MicroRTSUtility {
 		boolean baseAlive = false;
 		boolean baseDeathRecorded = false;
 		do{
-			System.out.println("getting action 1...");
+//			System.out.println("getting action 1...");
 			try {
 				pa1 = ai1.getAction(0, gs); //throws exception
-//				gs.issueSafe(pa1);
+				gs.issueSafe(pa1);
 			} catch (Exception e1) { e1.printStackTrace();System.exit(1); }
-			System.out.println("getting action 2...");
+//			System.out.println("getting action 2...");
 			try {
 				pa2 = ai2.getAction(1, gs); //throws exception
-//				gs.issueSafe(pa2);
+				gs.issueSafe(pa2);
 			} catch (Exception e) { e.printStackTrace();System.exit(1); }
-			System.out.println("action gotten");
+//			System.out.println("action gotten");
 			if(prog){
 				unitDifferenceNow = 0;
 				maxBaseX = -1; //Eventually will have to change this to accomodate maps where multiple bases will not be in a straight line 
@@ -91,7 +91,7 @@ public class MicroRTSUtility {
 						}
 					}//end j
 				}//end i
-				System.out.println("units searched");
+//				System.out.println("units searched");
 				if(!baseAlive && !baseDeathRecorded) {
 					task.setBaseUpTime(gs.getTime());
 					baseDeathRecorded = true;
@@ -104,9 +104,9 @@ public class MicroRTSUtility {
 			} //end if(Parameters.. = progressive)
 			gameover  = gs.cycle();
 			if(CommonConstants.watch) w.repaint();
-			System.out.println("data recorded for cycle: "+gs.getTime());
+//			System.out.println("data recorded for cycle: "+gs.getTime());
 		}while(!gameover && gs.getTime()< maxCycles);
-		System.out.println("game completed");
+//		System.out.println("game completed");
 		task.setAvgUnitDiff(averageUnitDifference);
 		if(CommonConstants.watch) 
 			w.dispose();
