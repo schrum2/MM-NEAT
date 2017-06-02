@@ -17,7 +17,11 @@ public interface BoardGamePlayer<T extends BoardGameState> {
 	 */
 	public T takeAction(T current);
 	
-	@SuppressWarnings("rawtypes")
-	public void setHeuristic(BoardGameHeuristic bgh);
+	/**
+	 * Sets the Heuristic for the BoardGamePlayer
+	 * 
+	 * @param bgh BoardGameHeuristic to be used by the Player
+	 */
+	public void setHeuristic(BoardGameHeuristic<T> bgh);
 	
 }

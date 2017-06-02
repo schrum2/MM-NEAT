@@ -16,8 +16,6 @@ public interface BoardGame<T extends BoardGameState> {
 	 */
 	public int getNumPlayers();
 	
-	
-	
 	/**
 	 * Returns true if the BoardGame reached an end state, else returns false
 	 * 
@@ -25,7 +23,7 @@ public interface BoardGame<T extends BoardGameState> {
 	 */
 	public boolean isGameOver();
 	
-	
+	public double[] getDescription();
 	
 	/**
 	 * Returns a List of all indexes of the winners of a BoardGame

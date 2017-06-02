@@ -16,6 +16,11 @@ public abstract class TwoDimensionalBoardGame<T extends TwoDimensionalBoardGameS
 		board = (T) startingBoard.copy();
 	}
 	
+	@Override
+	public double[] getDescription(){
+		return board.getDescriptor();
+	}
+	
 	/**
 	 * Starting board game state
 	 * @return

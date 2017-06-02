@@ -17,6 +17,7 @@ import edu.utexas.cs.nn.networks.hyperneat.Substrate;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.tasks.NoisyLonerTask;
 import edu.utexas.cs.nn.util.ClassCreation;
+import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 
 public class StaticOpponentBoardGameTask<T extends Network> extends NoisyLonerTask<T> implements NetworkTask, HyperNEATTask {
@@ -93,7 +94,7 @@ public class StaticOpponentBoardGameTask<T extends Network> extends NoisyLonerTa
 	 */
 	@Override
 	public ArrayList<Double> getBehaviorVector() {
-		return null; // TODO: Behavioral Diversity
+		return ArrayUtil.doubleVectorFromArray(bg.getDescription());
 	}
 
 	/**
