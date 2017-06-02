@@ -53,4 +53,11 @@ public interface BoardGameState {
 	 * @return Duplicate of this BoardGameState
 	 */
 	public BoardGameState copy();
+	
+	/**
+	 * Returns the number of Players in a specific BoardGame
+	 * 
+	 * @return Number of Players
+	 */
+	public int getNumPlayers();
 }

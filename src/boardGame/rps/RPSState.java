@@ -190,5 +190,11 @@ public class RPSState implements BoardGameState{
 		
 		return returnStates;
 	}
+
+	@Override
+	public int getNumPlayers() {
+		// TODO Auto-generated method stub
+		return 2;
+	}
 	
 }

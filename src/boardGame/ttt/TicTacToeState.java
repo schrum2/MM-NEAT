@@ -15,14 +15,14 @@ public class TicTacToeState extends TwoDimensionalBoardGameState {
 	// Really only used in one place now. Probably ok to remove X and O.
 	public static final int X = 0;
 	public static final int O = 1;
-	public static final int NUMBER_0F_PLAYERS = 2;
+	public static final int NUMBER_OF_PLAYERS = 2;
 	public static final int BOARD_WIDTH = 3;
 	
 	/**
 	 * Default Constructor; creates a representation of an empty Tic-Tac-Toe Board
 	 */
 	public TicTacToeState(){
-		super(NUMBER_0F_PLAYERS); // Always two players for TTT
+		super(NUMBER_OF_PLAYERS); // Always two players for TTT
 	}
 	
 	/**
@@ -43,9 +43,12 @@ public class TicTacToeState extends TwoDimensionalBoardGameState {
 	 * @param win
 	 */
 	TicTacToeState(int[][] board, int player, List<Integer> win){
-		super(board, NUMBER_0F_PLAYERS, player, win);
+		super(board, NUMBER_OF_PLAYERS, player, win);
 	}
 	
+	public int getNumPlayers(){
+		return NUMBER_OF_PLAYERS;
+	}
 	
 	/**
 	 * Fills in the selected Point on the Tic-Tac-Toe Board with the correct Marking

@@ -21,14 +21,16 @@ public class CheckersState extends TwoDimensionalBoardGameState {
 
 	public static final int RED_CHECK = 1; // Player 2 controls Red Checks, at the bottom of the Board
 	public static final int RED_CHECK_KING = 3;
-		
+	
+	private final static int NUMBER_OF_PLAYERS = 2;
+	
 	public Point doubleJumpCheck; // Used to keep track of a Check that can Double Jump
 	
 	/**
 	 * Default Constructor
 	 */
 	public CheckersState(){
-		super(2);
+		super(NUMBER_OF_PLAYERS);
 	}
 	
 	/**
@@ -49,6 +51,10 @@ public class CheckersState extends TwoDimensionalBoardGameState {
 	 */
 	CheckersState(int[][] newBoard, int player, ArrayList<Integer> win){
 		super(newBoard, 2, player, win);
+	}
+	
+	public int getNumPlayers(){
+		return NUMBER_OF_PLAYERS;
 	}
 	
 	/**

@@ -16,7 +16,7 @@ public class OthelloState extends TwoDimensionalBoardGameState {
 	
 	private final int BOARD_WIDTH = 8;
 
-	private final static int NUMBER_OF_PLAYERS = 2; // Keeps track of the center of the Board
+	private final static int NUMBER_OF_PLAYERS = 2;
 	
 	private final int BOARD_CORE1 = 3; // Keeps track of the center of the Board
 	private final int BOARD_CORE2 = 4; // Keeps track of the center of the Board
@@ -45,6 +45,10 @@ public class OthelloState extends TwoDimensionalBoardGameState {
 
 	OthelloState(int[][] board, int nextPlay, List<Integer> win){
 		super(board, NUMBER_OF_PLAYERS, nextPlay, win);
+	}
+	
+	public int getNumPlayers(){
+		return NUMBER_OF_PLAYERS;
 	}
 	
 	/**
