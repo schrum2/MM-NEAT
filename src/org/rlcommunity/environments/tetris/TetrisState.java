@@ -581,18 +581,31 @@ public class TetrisState {
 
 	}
 
+	/**
+	 * Game score (multiplies contributions for simultaneously cleared lines)
+	 * @return Game score
+	 */
 	public int get_score() {
 		return score;
 	}
 	
+	/**
+	 * Game board width
+	 * @return
+	 */
 	public int getWidth() {
 		return worldWidth;
 	}
 
+	/**
+	 * Game board height
+	 * @return
+	 */
 	public int getHeight() {
 		return worldHeight;
 	}
 
+	// Schrum: What is this method?
 	public int[] getNumberedStateSnapShot() {
 		int[] numberedStateCopy = new int[worldState.length];
 		for (int i = 0; i < worldState.length; i++) {
@@ -634,6 +647,11 @@ public class TetrisState {
 	}
 
 	/* End of Tetris Helper Functions */
+	
+	/**
+	 * Copy constructor
+	 * @param stateToCopy
+	 */
 	public TetrisState(TetrisState stateToCopy) {
 		this.blockMobile = stateToCopy.blockMobile;
 		this.currentBlockId = stateToCopy.currentBlockId;
@@ -656,6 +674,11 @@ public class TetrisState {
 
 	}
 
+	/**
+	 * Produce a String form a provided world state array
+	 * @param worldState 1D array representing the 2D game grid
+	 * @return String representation of game board
+	 */
 	public static String toString(int[] worldState) {
 		String result = "";
 		for (int y = 0; y < worldHeight; y++) {
@@ -668,11 +691,19 @@ public class TetrisState {
 		return result;		
 	}
 	
+	/**
+	 * String method that shows falling piece by default
+	 */
 	@Override
 	public String toString() {
 		return toString(true);
 	}
 
+	/**
+	 * String representation that may or may not include the currently falling piece
+	 * @param showFallingPiece Whether falling piece is part of representation
+	 * @return String representation of board
+	 */
 	public String toString(boolean showFallingPiece) {
 		int[][] thePiece = possibleBlocks.get(currentBlockId).getShape(this.currentRotation);
 		String result = "";
@@ -696,10 +727,8 @@ public class TetrisState {
 		return result;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#hashCode()
+	/**
+	 * Auto-gen by Eclipse
 	 */
 	@Override
 	public int hashCode() {
@@ -716,10 +745,8 @@ public class TetrisState {
 		return result;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#equals(java.lang.Object)
+	/**
+	 * Auto-gen by Eclipse
 	 */
 	@Override
 	public boolean equals(Object obj) {
@@ -748,5 +775,4 @@ public class TetrisState {
 			return false;
 		return true;
 	}
-
 }
