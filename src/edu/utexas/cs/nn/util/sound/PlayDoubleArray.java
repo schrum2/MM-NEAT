@@ -225,5 +225,16 @@ public final class PlayDoubleArray {
 	public static AmplitudeArrayPlayer playDoubleArray(double[] samples, boolean allowInterrupt) {
 		return playDoubleArray(DEFAULT_AUDIO_FORMAT, samples, allowInterrupt);
 	}
+	
+	public static void removePops(double[] amplitude, int unitsToClip) {
+		//ramping up volume at beginning
+		for(int i = 0; i < unitsToClip; i++) {
+			 amplitude[i] *= i/(float)unitsToClip;
+		}
+		//decreasing volume at end
+		for(int i = amplitude.length - 1 - unitsToClip; i < amplitude.length; i++) {
+			amplitude[i] *= (amplitude.length - 1 - i)/(float)unitsToClip;
+		}
+	}
 
 }

@@ -60,6 +60,8 @@ public class MIDIUtil {
 
 	public static final int BPM = 120; //beats per minute - should be generalized
 	public static final int PPQ = 96; //parts per quarter note - should be generalized
+	
+	public static final int CLIP_VOLUME_LENGTH = 4000;
 
 	/**
 	 * Method that takes in a MIDI file and prints out useful information about the note, whether the 
@@ -353,7 +355,7 @@ public class MIDIUtil {
 	}
 
 	/**
-	 * Class starts playback of a note seqeunce in its own Thread, but can be interrupted
+	 * Class starts playback of a note sequence in its own Thread, but can be interrupted
 	 * @author Jacob Schrum
 	 *
 	 */
@@ -377,9 +379,25 @@ public class MIDIUtil {
 
 		public void run() {
 			for(int i = 0; play && i < frequencies.length; i++) {
-				double[] amplitude = SoundFromCPPNUtil.amplitudeGenerator(cppn, (int) lengths[i], frequencies[i]);
-				//System.out.println("note "+ i + " length " + lengths[i] +  " :"); // + Arrays.toString(amplitude));
-				PlayDoubleArray.playDoubleArray(amplitude, false);
+				int amplitudeLength = (int) lengths[i]*50;
+				//double[] amplitude = SoundFromCPPNUtil.amplitudeGenerator(cppn, amplitudeLength, frequencies[i]);
+
+				// An amplitude array of all 0s still makes some noise?
+				double[] amplitude = frequencies[i] == 0 ? new double[amplitudeLength] : SoundFromCPPNUtil.amplitudeGenerator(cppn, amplitudeLength, frequencies[i]);
+				PlayDoubleArray.removePops(amplitude, CLIP_VOLUME_LENGTH);
+				//System.out.println("note "+ i + " length " + lengths[i] +  " :" + amplitude.length); // + Arrays.toString(amplitude));
+				
+				// Trying to figure out if 0 causes problems
+//				if(frequencies[i] == 0) {
+//					try {
+//						Thread.sleep(amplitudeLength/10);
+//					} catch (InterruptedException e) {
+//						// TODO Auto-generated catch block
+//						e.printStackTrace();
+//					}
+//				} else {
+					PlayDoubleArray.playDoubleArray(amplitude, false);
+//				}
 				//MiscUtil.waitForReadStringAndEnterKeyPress();
 			}	
 			play = false;
