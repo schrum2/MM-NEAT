@@ -14,6 +14,13 @@ import edu.utexas.cs.nn.util.sound.SoundToArray;
  */
 public class ArrayUtil {
 
+	public static void printArrayRange(double[] array, int start, int end) {
+		for(int i = start; i < end; i++) {
+			System.out.print(array[i] + ", ");
+		}
+		System.out.println(array[end]);
+	}
+	
 	/**
 	 * Return primitive double array of given size containing all ones
 	 *

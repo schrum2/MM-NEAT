@@ -6,8 +6,10 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiEvent;
@@ -85,7 +87,7 @@ public class MIDIUtil {
 					MidiMessage message = event.getMessage();
 					if (message instanceof ShortMessage) {
 						ShortMessage sm = (ShortMessage) message;
-						//System.out.print("Channel: " + sm.getChannel() + " ");
+						System.out.print("Channel: " + sm.getChannel() + " ");
 						if (sm.getCommand() == NOTE_ON) {
 							int key = sm.getData1();
 							int octave = (key / 12)-1;
@@ -153,6 +155,69 @@ public class MIDIUtil {
 			}
 		}
 		return total;
+	}
+
+	/**
+	 * Returns number of ticks in track
+	 * @param track Track from MIDI being analyzed
+	 * @return maximum ticks in track
+	 */
+	public static long ticksInTrack(Track track) {
+		return track.ticks();
+	}
+
+	public static ArrayList<double[]> soundLines(Track track) {
+		Map<Double, Long> map = new HashMap<Double, Long>();
+		ArrayList<double[]> soundLines = new ArrayList<double[]>();
+		HashMap<Double, Integer> lines = new HashMap<Double, Integer>();
+		for(int i = 0; i < track.size(); i++) {
+			MidiEvent event = track.get(i);
+			MidiMessage message = event.getMessage();
+			if (message instanceof ShortMessage) {
+				ShortMessage sm = (ShortMessage) message;
+				int key = sm.getData1();
+				double freq = noteToFreq(key);
+				long tick = event.getTick(); // actually starting tick time
+				if (sm.getCommand() == NOTE_ON && sm.getData2() > 0) { //turn on
+					int index = map.size();
+					if(index >= soundLines.size()) {
+						soundLines.add(new double[(int) ticksInTrack(track)]);
+					}
+					map.put(freq, tick);
+					lines.put(freq, index);
+				}
+				if(sm.getCommand() == NOTE_OFF || (sm.getCommand() == NOTE_ON && sm.getData2() == 0)) {
+					int index = lines.get(freq);
+					long tickStart = map.get(freq);
+					long tickEnd = tick;
+					double[] lineArray = soundLines.get(index);
+					for(long j = tickStart; j <= tickEnd; j++) {
+						lineArray[(int) j] = freq;
+					}
+					lines.remove(freq);
+					map.remove(freq);
+				}
+			}
+		}
+		return soundLines;
+	}
+
+	public static Pair<ArrayList<Double>, ArrayList<Double>> notesAndLengthsOfLine(double[] soundLine) {
+		ArrayList<Double> frequencies = new ArrayList<Double>();
+		ArrayList<Double> lengths = new ArrayList<Double>(); // Needs to be double?
+		int prevIndex = 0;
+		double prevVal = soundLine[0];
+		for(int i = 0; i < soundLine.length; i++) {
+			if(soundLine[i] != prevVal) {
+				frequencies.add(prevVal);
+				lengths.add((double) (i - prevIndex) + 1); 
+				prevVal = soundLine[i];
+				prevIndex = i;
+			}
+		}
+		frequencies.add(prevVal);
+		lengths.add((double) soundLine.length-prevIndex);
+		return new Pair<>(frequencies, lengths);
 	}
 
 	/**
@@ -286,7 +351,7 @@ public class MIDIUtil {
 		result.start();
 		return result; // To allow for interrupting of playback
 	}
-	
+
 	/**
 	 * Class starts playback of a note seqeunce in its own Thread, but can be interrupted
 	 * @author Jacob Schrum
@@ -302,14 +367,14 @@ public class MIDIUtil {
 			// Without any content to play, playing cannot occur
 			play = false; 
 		}
-		
+
 		public CPPNNoteSequencePlayer(Network cppn, double[] frequencies, double[] lengths) {
 			play = true;
 			this.cppn = cppn;
 			this.frequencies = frequencies;
 			this.lengths = lengths;
 		}
-		
+
 		public void run() {
 			for(int i = 0; play && i < frequencies.length; i++) {
 				double[] amplitude = SoundFromCPPNUtil.amplitudeGenerator(cppn, (int) lengths[i], frequencies[i]);
@@ -319,11 +384,11 @@ public class MIDIUtil {
 			}	
 			play = false;
 		}
-		
+
 		public void stopPlayback() {
 			play = false;
 		}
-		
+
 		public boolean isPlaying() {
 			return play;
 		}

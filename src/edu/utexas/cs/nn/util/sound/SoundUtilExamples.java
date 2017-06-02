@@ -8,6 +8,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MidiSystem;
+import javax.sound.midi.Sequence;
+import javax.sound.midi.Track;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -25,6 +28,7 @@ import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.interactive.breedesizer.BreedesizerTask;
 import edu.utexas.cs.nn.util.MiscUtil;
 import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
+import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.graphics.DrawingPanel;
 import edu.utexas.cs.nn.util.graphics.GraphicsUtil;
 import edu.utexas.cs.nn.util.sound.PlayDoubleArray.AmplitudeArrayPlayer;
@@ -54,7 +58,7 @@ public class SoundUtilExamples {
 	public static final String ALARM_WAV = "data/sounds/tone06.wav";
 	public static final String CHIPTUNE_WAV = "data/sounds/8-Bit-Noise-1.wav";
 
-	public static void main(String[] args) throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException, JavaLayerException {
+	public static void main(String[] args) throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException, JavaLayerException, InvalidMidiDataException {
 		//CPPN initialization
 		Parameters.initializeParameterCollections(new String[]{"io:false","netio:false"});
 		MMNEAT.loadClasses();
@@ -65,9 +69,7 @@ public class SoundUtilExamples {
 		Network cppn = test.getCPPN();
 
 		// method call
-		eightBitTests();
-		MiscUtil.waitForReadStringAndEnterKeyPress();
-		changeEntireAudioFormat();
+		MIDIWithLengths(cppn);
 	}
 
 	public static void randomCPPNExamples(Network cppn) throws IOException {
@@ -108,31 +110,31 @@ public class SoundUtilExamples {
 		double[] harpDoubleArray = SoundToArray.doubleArrayAmplitudesFromIntArrayAmplitudes(harpIntArray, 8);
 		PlayDoubleArray.playDoubleArray(harpDoubleArray);
 	}
-	
+
 	// PlayDoubleArray works for WAV files with this format:
 	// PCM_SIGNED, 16 bit, mono, 2 bytes/frame, little-endian
 	public static void sixteenBit44100HzTests() throws IOException, UnsupportedAudioFileException, LineUnavailableException, InterruptedException {
 		WAVUtil.playWAVFile(SEASHORE_WAV);
 		AudioInputStream seashoreAIS = WAVUtil.audioStream(SEASHORE_WAV);
-		
+
 		// testing converting WAV file using step-by-step method calls
 		int[] seashoreIntArray = SoundToArray.extractAmplitudeDataFromAudioInputStream(seashoreAIS);
 		double[] seashoreDoubleArray = SoundToArray.doubleArrayAmplitudesFromIntArrayAmplitudes(seashoreIntArray, 16);
 		PlayDoubleArray.playDoubleArray(seashoreDoubleArray, false);
-		
+
 		// testing converting WAV files using shortcut method call
 		seashoreDoubleArray = SoundToArray.readDoubleArrayFromStringAudio(SEASHORE_WAV);
 		PlayDoubleArray.playDoubleArray(seashoreDoubleArray, false);
-		
+
 		MiscUtil.waitForReadStringAndEnterKeyPress();
-		
+
 		WAVUtil.playWAVFile(CHIPTUNE_WAV);	
-		
+
 		double[] chiptuneDoubleArray = SoundToArray.readDoubleArrayFromStringAudio(CHIPTUNE_WAV);
 		PlayDoubleArray.playDoubleArray(chiptuneDoubleArray, false);
 
 	}
-	
+
 	// sixteen bit files can now be played at multiple sample rates!
 	public static void sixteenBit11025HzTests() throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException {
 		WAVUtil.playWAVFile(ALARM_WAV);
@@ -141,7 +143,7 @@ public class SoundUtilExamples {
 		MiscUtil.waitForReadStringAndEnterKeyPress();
 		PlayDoubleArray.playDoubleArray(alarmAIS.getFormat(), alarmDoubleArray);
 	}
-	
+
 	// cannot currently play WAV files with stereo channels
 	public static void sixteenBitStereoTests() throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException {
 		WAVUtil.playWAVFile(BASS_16BIT_WAV);
@@ -156,7 +158,7 @@ public class SoundUtilExamples {
 		double[] bassDoubleArray = SoundToArray.doubleArrayAmplitudesFromIntArrayAmplitudes(bassIntArray, 16);
 		PlayDoubleArray.playDoubleArray(bassDoubleArray);
 	}
-	
+
 	// cannot currently play eight bit WAV files
 	public static void eightBitTests() throws IOException, UnsupportedAudioFileException, LineUnavailableException, InterruptedException {
 		double[] harpDoubleArray = SoundToArray.readDoubleArrayFromStringAudio(HARP_WAV);
@@ -166,7 +168,7 @@ public class SoundUtilExamples {
 		MiscUtil.waitForReadStringAndEnterKeyPress();
 		PlayDoubleArray.playDoubleArray(harpAIS.getFormat(), harpDoubleArray, false);	
 	}
-	
+
 	// Testing to see if using a different byte conversion method (the one from WAVUtil) would work better than the 
 	// extractAmplitudeByteArrayFromAudioInputStream method in SoundToArray. this doesn't work - it sounds the same 
 	// if not worse than the original method.
@@ -337,17 +339,17 @@ public class SoundUtilExamples {
 		// 440 Hz for 1 sec
 		double freq1 = 440.0;
 		//uses sine function to generate sound wave
-//		for (int i = 0; i <= PlayDoubleArray.SAMPLE_RATE; i++) {
-//			PlayDoubleArray.playDouble(0.5 * Math.sin(2*Math.PI * freq1 * i / PlayDoubleArray.SAMPLE_RATE));
-//		}
-//		//uses square wave function to generate sound wave
-//		for (int i = 0; i <= PlayDoubleArray.SAMPLE_RATE; i++) {
-//			PlayDoubleArray.playDouble(0.5 * ActivationFunctions.squareWave(2*Math.PI * freq1 * i / PlayDoubleArray.SAMPLE_RATE));
-//		}
-//		//uses triangle wave function to generate sound wave
-//		for (int i = 0; i <= PlayDoubleArray.SAMPLE_RATE; i++) {
-//			PlayDoubleArray.playDouble(0.5 * ActivationFunctions.triangleWave(2*Math.PI * freq1 * i / PlayDoubleArray.SAMPLE_RATE));
-//		}
+		//		for (int i = 0; i <= PlayDoubleArray.SAMPLE_RATE; i++) {
+		//			PlayDoubleArray.playDouble(0.5 * Math.sin(2*Math.PI * freq1 * i / PlayDoubleArray.SAMPLE_RATE));
+		//		}
+		//		//uses square wave function to generate sound wave
+		//		for (int i = 0; i <= PlayDoubleArray.SAMPLE_RATE; i++) {
+		//			PlayDoubleArray.playDouble(0.5 * ActivationFunctions.squareWave(2*Math.PI * freq1 * i / PlayDoubleArray.SAMPLE_RATE));
+		//		}
+		//		//uses triangle wave function to generate sound wave
+		//		for (int i = 0; i <= PlayDoubleArray.SAMPLE_RATE; i++) {
+		//			PlayDoubleArray.playDouble(0.5 * ActivationFunctions.triangleWave(2*Math.PI * freq1 * i / PlayDoubleArray.SAMPLE_RATE));
+		//		}
 		//Fills up double array with sounds generated by sine function
 		double[] exampleSound = new double[PlayDoubleArray.SAMPLE_RATE+1];
 		double freq2 = 440.0;
@@ -379,7 +381,7 @@ public class SoundUtilExamples {
 		String classical = "data/sounds/CLASSICA.MID";
 		byte[] classicalNumbers = SoundToArray.readByte(classical);
 		SaveFromArray.saveFileFromByteArray(classicalNumbers, "data/sounds/classicalCopy.mid");
-		
+
 		// Not necessary any more?
 		//PlayDoubleArray.close(); 
 	}
@@ -404,44 +406,44 @@ public class SoundUtilExamples {
 		MIDIUtil.MIDIData(furElise);
 
 	}
-	
+
 	public static void saveWAVFileForRemix() throws IOException {
 		byte[] alarmByteArray = WAVUtil.WAVToByte(ALARM_WAV);
 		SaveFromArray.saveFileFromByteArray(alarmByteArray, "data/sounds/alarmCopy.wav");
 	}
-	
+
 	public static void twoSoundsSimultaneously() {
 		AudioInputStream aisAlarm;
 		AudioInputStream aisChiptune;
 		try {
 			aisAlarm = WAVUtil.audioStream(ALARM_WAV);
 			double[] alarm = SoundToArray.readDoubleArrayFromStringAudio(ALARM_WAV);
-				
+
 			aisChiptune = WAVUtil.audioStream(CHIPTUNE_WAV);
 			double[] chiptune = SoundToArray.readDoubleArrayFromStringAudio(CHIPTUNE_WAV);
-			
+
 			PlayDoubleArray.playDoubleArray(aisAlarm.getFormat(), alarm, true);
 			PlayDoubleArray.playDoubleArray(aisChiptune.getFormat(), chiptune, true);		
-			
+
 		} catch (UnsupportedAudioFileException | IOException e) {
 			e.printStackTrace();
 		}	
 	}
-	
+
 	// Tests meant to adjust specific aspects of a file's AudioFormat. Conversion does not work because SourceDataLine does not
 	// support the format. I tried this with two 16 bit audio files that have different formats, and neither of their formats could
 	// be integrated with the 8-bit format to produce a new AudioFormat. this means that the SourceDataLine won't run unless the
 	// AudioFormat is extremely specific and the components match up in a certain way.
 	public static void adjustAudioFormat() throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException {
 		AudioInputStream harpAIS = WAVUtil.audioStream(HARP_WAV);
-		
+
 		//test with 11025 Hz 16-bit file
-		
-//		AudioInputStream alarmAIS = WAVUtil.audioStream(ALARM_WAV);
-//		AudioInputStream adjustedAIS = SoundToArray.convertSampleSizeAndEndianess(alarmAIS.getFormat().getSampleSizeInBits(), alarmAIS.getFormat().isBigEndian(), harpAIS);
-		
+
+		//		AudioInputStream alarmAIS = WAVUtil.audioStream(ALARM_WAV);
+		//		AudioInputStream adjustedAIS = SoundToArray.convertSampleSizeAndEndianess(alarmAIS.getFormat().getSampleSizeInBits(), alarmAIS.getFormat().isBigEndian(), harpAIS);
+
 		//test with 44100Hz 16-bit file
-		
+
 		AudioInputStream seashoreAIS = WAVUtil.audioStream(SEASHORE_WAV);
 		AudioInputStream adjustedAIS = SoundToArray.convertSampleSizeAndEndianess(seashoreAIS.getFormat().getSampleSizeInBits(), seashoreAIS.getFormat().isBigEndian(), harpAIS);
 		int[] harpIntArray = SoundToArray.extractAmplitudeDataFromAudioInputStream(adjustedAIS);
@@ -450,7 +452,7 @@ public class SoundUtilExamples {
 		Clip clip = WAVUtil.makeClip(adjustedAIS);
 		WAVUtil.playClip(clip);
 	}
-	
+
 	// Test that converts entire audio format of audio into a 16-bit format that is known to be supported.
 	// The sound will play, but it sounds just as bad as before. Just changing the AudioFormat to a format
 	// that works won't make the file play properly if its original AudioFormat doesn't match.
@@ -459,5 +461,34 @@ public class SoundUtilExamples {
 		AudioFormat adjustedFormat = SoundToArray.getAudioFormatRestrictedTo16Bits(harpAIS.getFormat());
 		double[] harpDoubleArray = SoundToArray.readDoubleArrayFromStringAudio(HARP_WAV);
 		PlayDoubleArray.playDoubleArray(adjustedFormat, harpDoubleArray, true);
+	}
+
+	public static void viewMIDIChannel() {
+		File furElise = new File(FUR_ELISE_MID);
+		MIDIUtil.MIDIData(furElise);
+	}
+
+	public static void MIDIAsArrayList() throws InvalidMidiDataException, IOException {
+		File furElise = new File(FUR_ELISE_MID);
+		Sequence sequence = MidiSystem.getSequence(furElise);
+		Track[] tracks = sequence.getTracks();
+		Track track = tracks[1];
+		ArrayList<double[]> listOfData = MIDIUtil.soundLines(track);
+		for(int i = 0; i < listOfData.size(); i++) {
+			ArrayUtil.printArrayRange(listOfData.get(i), 152000, 153000);
+		}
+	}
+	
+	public static void MIDIWithLengths(Network cppn) throws InvalidMidiDataException, IOException {
+		File furElise = new File(FUR_ELISE_MID);
+		Sequence sequence = MidiSystem.getSequence(furElise);
+		Track[] tracks = sequence.getTracks();
+		Track track = tracks[1];
+		ArrayList<double[]> listOfData = MIDIUtil.soundLines(track);
+		for(int i = 0; i < listOfData.size(); i++) {
+			Pair<ArrayList<Double>, ArrayList<Double>> notesAndLengths = MIDIUtil.notesAndLengthsOfLine(listOfData.get(i));
+			//playMIDIWithCPPNFromDoubleArray(cppn, notesAndLengths.t1, notesAndLengths.t2);
+		}
+		
 	}
 }
