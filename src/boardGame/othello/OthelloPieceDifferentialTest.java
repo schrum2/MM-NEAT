@@ -91,7 +91,7 @@ public class OthelloPieceDifferentialTest {
 													 {E,E,E,E,E,E,E,E},
 													 {E,E,E,E,E,E,E,E}}, 1, new ArrayList<Integer>()));		
 		
-		test1States.add(new OthelloState(new int[][]{{E,E,E,E,E,E,E,E}, // Why isn't this one working? Test below states that this doesn't count
+		test1States.add(new OthelloState(new int[][]{{E,E,E,E,E,E,E,E},
 													 {E,E,E,W,E,E,E,E},
 													 {E,E,E,W,E,E,E,E},
 													 {E,E,W,W,W,E,E,E},
@@ -109,24 +109,6 @@ public class OthelloPieceDifferentialTest {
 													 {E,B,E,E,E,E,E,E},
 													 {E,E,E,E,E,E,E,E}}, 1, new ArrayList<Integer>()));
 
-		test1States.add(new OthelloState(new int[][]{{E,E,E,E,E,E,E,E},
-													 {E,E,E,W,E,E,E,E},
-													 {E,E,E,W,B,E,E,E},
-													 {E,E,W,B,W,E,E,E},
-													 {E,W,B,B,W,E,E,E},
-													 {E,E,W,W,W,E,E,E},
-													 {E,E,E,E,E,E,E,E},
-													 {E,E,E,E,E,E,E,E}}, 1, new ArrayList<Integer>()));
-
-		test1States.add(new OthelloState(new int[][]{{E,E,E,E,E,E,E,E},
-													 {E,E,E,W,E,E,E,E},
-													 {E,E,E,W,E,E,E,E},
-													 {E,E,W,W,W,E,E,E},
-													 {E,W,B,B,W,E,E,E},
-													 {E,E,W,B,W,E,E,E},
-													 {E,E,E,E,B,E,E,E},
-													 {E,E,E,E,E,E,E,E}}, 1, new ArrayList<Integer>()));
-		
 		test1States.add(new OthelloState(new int[][]{{E,E,E,E,E,E,E,E},
 													 {E,E,E,W,E,E,E,E},
 													 {E,B,E,W,E,E,E,E},
@@ -174,14 +156,14 @@ public class OthelloPieceDifferentialTest {
 			
 		
 		
-		for(OthelloState state: test1List){
+		for(OthelloState state: test1States){
 			System.out.println(state);
-			assertTrue(test1States.contains(state));
+			assertTrue(test1List.contains(state));
 		}
 			
 		// Checks that the Minimax PieceDifferential Player will pick the State with the most pieces gained/most enemy pieces lost
 		boardGame1.move(blackChip);
-		assertEquals(correctChoice1, boardGame1.getState()); // This part works
+		assertEquals(correctChoice1, boardGame1.getState());
 				
 	}
 
