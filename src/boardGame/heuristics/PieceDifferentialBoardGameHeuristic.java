@@ -1,7 +1,6 @@
 package boardGame.heuristics;
 
 import boardGame.TwoDimensionalBoardGameState;
-import edu.utexas.cs.nn.networks.Network;
 
 public class PieceDifferentialBoardGameHeuristic<T extends TwoDimensionalBoardGameState> implements BoardGameHeuristic<T>{
 

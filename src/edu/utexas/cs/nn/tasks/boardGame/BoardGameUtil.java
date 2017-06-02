@@ -6,14 +6,11 @@ import java.util.List;
 
 import boardGame.BoardGame;
 import boardGame.BoardGamePlayer;
-import boardGame.BoardGameState;
 import boardGame.TwoDimensionalBoardGame;
 import edu.utexas.cs.nn.networks.hyperneat.Substrate;
 import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.util.MiscUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.datastructures.Triple;
-import pacman.game.Constants.MOVE;
 
 public class BoardGameUtil {
 	

@@ -21,6 +21,14 @@ import edu.utexas.cs.nn.util.graphics.Plot;
 
 import java.util.Arrays;
 
+/**
+ * Class controlling a Monster agent in the Breve2D world based on
+ * my earlier Breve Monsters work.
+ * 
+ * @author Jacob Schrum
+ *
+ * @param <T>
+ */
 public class NNBreve2DMonster<T extends Network> extends Organism<T>implements AgentController {
 
 	public static final double VERY_CLOSE_PLAYER_DISTANCE = 40;
@@ -29,6 +37,7 @@ public class NNBreve2DMonster<T extends Network> extends Organism<T>implements A
 	private final int absence;
 	private final int teamIndex;
 	private final Network nn;
+	@SuppressWarnings("unused")
 	private final int largeDistance;
 
 	protected DrawingPanel networkInputs;
@@ -47,7 +56,7 @@ public class NNBreve2DMonster<T extends Network> extends Organism<T>implements A
 		largeDistance = Math.min(Breve2DGame.SIZE_X, Breve2DGame.SIZE_Y);
 	}
 
-        @Override
+	@Override
 	public Breve2DAction getAction(Breve2DGame game) {
 		boolean monsterResponds = monsterResponds(game.dynamics);
 		boolean playerResponds = playerResponds(game.dynamics);
@@ -233,7 +242,7 @@ public class NNBreve2DMonster<T extends Network> extends Organism<T>implements A
 		return s ? 1 : absence;
 	}
 
-        @Override
+	@Override
 	public void reset() {
 		nn.flush();
 	}

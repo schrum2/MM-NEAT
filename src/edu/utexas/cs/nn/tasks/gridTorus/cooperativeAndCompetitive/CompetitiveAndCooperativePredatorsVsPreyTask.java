@@ -98,7 +98,7 @@ public class CompetitiveAndCooperativePredatorsVsPreyTask<T extends Network> ext
 				public TorusPredPreyController[] getPreyAgents(Genotype<T> individual) {
 					throw new UnsupportedOperationException("The CompetitiveAndCooperativePredatorsVsPreyTask should not need the getPreyAgents method of its LonerTask instance");
 				}
-				
+
 			};
 			for(int i = 0; i < Parameters.parameters.integerParameter("torusPredators"); i++){
 				task.addAllObjectives(i, false);

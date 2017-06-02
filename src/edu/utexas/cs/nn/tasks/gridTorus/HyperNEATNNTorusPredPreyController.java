@@ -53,6 +53,7 @@ public class HyperNEATNNTorusPredPreyController extends NNTorusPredPreyControlle
 		return modifiedOutputs;
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public double[] inputs() {
 		TorusPredPreyTask task = (TorusPredPreyTask) MMNEAT.task;
 		double[] inputs = task.getSubstrateInputs(task.getSubstrateInformation());
