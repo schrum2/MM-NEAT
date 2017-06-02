@@ -651,6 +651,21 @@ public class ArrayUtil {
 		}
 		return result;
 	}
+	
+	/**
+	 * Pair-wise multiplication of elements in the two arrays to get one result array of products
+	 * @param a input array 
+	 * @param b input array
+	 * @return array of products
+	 */
+	public static double[] zipMultiply(double[]a, double[] b) {
+		assert(a.length == b.length);
+		double[] result = new double[a.length];
+		for (int i = 0; i < a.length; i++) {
+			result[i] = a[i] * b[i];
+		}
+		return result;
+	}
 
 	/**
 	 * Return new array of all elements in a multiplied by the given scale
