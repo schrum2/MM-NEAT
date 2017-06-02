@@ -494,9 +494,9 @@ public class SoundUtilExamples {
 		}
 		
 		// TODO: Work up to allow playback of all sound components
-		for(int i = 0; i < 1 /*toPlay.length*/; i++) {
-			//int i = 0;
+		//for(int i = 0; i < 1 /*toPlay.length*/; i++) {
+			int i = 0;
 			MIDIUtil.playMIDIWithCPPNFromDoubleArray(cppn, toPlay[i][0], toPlay[i][1]);
-		}
+		//}
 	}
 }

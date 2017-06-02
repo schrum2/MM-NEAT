@@ -23,7 +23,9 @@ import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.tasks.interactive.InteractiveEvolutionTask;
 import edu.utexas.cs.nn.tasks.interactive.breedesizer.Keyboard;
 import edu.utexas.cs.nn.util.MiscUtil;
+import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
+import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
 
 /**
  * Series of utility methods that read data from MIDI files and convert it into frequencies
@@ -167,7 +169,17 @@ public class MIDIUtil {
 	public static long ticksInTrack(Track track) {
 		return track.ticks();
 	}
-
+	
+	/**
+	 * Divides each piano voice up into a single list, so that all indexes when voice is not playing
+	 * are filled with a 0 and indexes when the voice is playing are filled with the frequency. This
+	 * is done so that each sound can be fed into a separate SourceDataLine and the double arrays can 
+	 * potentially be played simultaneously.
+	 * 
+	 * @param track input track of MIDI file being analyzed (track represents a single instrument, usually)
+	 * @return List of representative double arrays for each voice (number of arrays in list should be 
+	 * equal to the max number of notes played at once on the given instrument)
+	 */
 	public static ArrayList<double[]> soundLines(Track track) {
 		Map<Double, Long> map = new HashMap<Double, Long>();
 		ArrayList<double[]> soundLines = new ArrayList<double[]>();
@@ -203,7 +215,15 @@ public class MIDIUtil {
 		}
 		return soundLines;
 	}
-
+	
+	/**
+	 * Takes in a double array representing a single voice in a track and extracts vital information
+	 * out of it so that the individual notes are retained sequentially in an ArrayList and the lengths
+	 * of those notes are also retained in a separate ArrayList. 
+	 * 
+	 * @param soundLine double array representing single voice in track
+	 * @return pair of Array Lists containing the frequencies and lengths of the notes in a single sound line
+	 */
 	public static Pair<ArrayList<Double>, ArrayList<Double>> notesAndLengthsOfLine(double[] soundLine) {
 		ArrayList<Double> frequencies = new ArrayList<Double>();
 		ArrayList<Double> lengths = new ArrayList<Double>(); // Needs to be double?
@@ -334,6 +354,30 @@ public class MIDIUtil {
 		AudioClip clip = Applet.newAudioClip(url);
 		clip.play();
 	}
+	
+	public static double[] lineToAmplitudeArray(double[] soundLine, Network cppn) {
+		Pair<ArrayList<Double>, ArrayList<Double>> lineData = notesAndLengthsOfLine(soundLine);
+		double[] frequencies = ArrayUtil.doubleArrayFromList(lineData.t1);
+		double[] lengths = ArrayUtil.doubleArrayFromList(lineData.t2);
+		return lineToAmplitudeArray(frequencies, lengths, cppn);
+		
+	}
+
+	public static double[] lineToAmplitudeArray(double[] frequencies, double[] lengths, Network cppn) {
+	
+		// VERY MAGIC NUMBER! NO IDEA WHY THIS NUMBER WORKS!
+		int amplitudeLengthMultiplier = 50;
+
+		double[] amplitudeArray = new double[(int) StatisticsUtilities.sum(lengths)*amplitudeLengthMultiplier];
+		int noteLength = 0;
+		for(int i = 0; i < lengths.length; i++) {
+			int amplitudeLength = (int)(lengths[i] * amplitudeLengthMultiplier);
+			double[] amplitude = frequencies[i] == 0 ? new double[amplitudeLength] : SoundFromCPPNUtil.amplitudeGenerator(cppn, amplitudeLength, frequencies[i]);
+			System.arraycopy(amplitude, 0, amplitudeArray, noteLength, amplitude.length);
+			noteLength += amplitudeLength;
+		}
+		return amplitudeArray;
+	}
 
 	/**
 	 * Loops through array of frequencies generated from a MIDI file and plays it using a CPPN,
@@ -361,9 +405,7 @@ public class MIDIUtil {
 	 */
 	public static class CPPNNoteSequencePlayer extends Thread {
 		boolean play;
-		private Network cppn; // CPPN generating amplitudes to play
-		private double[] lengths; // length to play each note
-		private double[] frequencies; // frequency to play each item (implicitly defines the notes)
+		private double[] amplitudeArray;
 
 		public CPPNNoteSequencePlayer() {
 			// Without any content to play, playing cannot occur
@@ -372,35 +414,38 @@ public class MIDIUtil {
 
 		public CPPNNoteSequencePlayer(Network cppn, double[] frequencies, double[] lengths) {
 			play = true;
-			this.cppn = cppn;
-			this.frequencies = frequencies;
-			this.lengths = lengths;
+			this.amplitudeArray = lineToAmplitudeArray(frequencies, lengths, cppn);
 		}
 
+//		public void run() {
+//			for(int i = 0; play && i < frequencies.length; i++) {
+//				int amplitudeLength = (int) lengths[i]*50;
+//				//double[] amplitude = SoundFromCPPNUtil.amplitudeGenerator(cppn, amplitudeLength, frequencies[i]);
+//
+//				// An amplitude array of all 0s still makes some noise?
+//				double[] amplitude = frequencies[i] == 0 ? new double[amplitudeLength] : SoundFromCPPNUtil.amplitudeGenerator(cppn, amplitudeLength, frequencies[i]);
+//				PlayDoubleArray.removePops(amplitude, CLIP_VOLUME_LENGTH);
+//				//System.out.println("note "+ i + " length " + lengths[i] +  " :" + amplitude.length); // + Arrays.toString(amplitude));
+//				
+//				// Trying to figure out if 0 causes problems
+////				if(frequencies[i] == 0) {
+////					try {
+////						Thread.sleep(amplitudeLength/10);
+////					} catch (InterruptedException e) {
+////						// TODO Auto-generated catch block
+////						e.printStackTrace();
+////					}
+////				} else {
+//					PlayDoubleArray.playDoubleArray(amplitude, false);
+////				}
+//				//MiscUtil.waitForReadStringAndEnterKeyPress();
+//			}	
+//			play = false;
+//		}
+		
 		public void run() {
-			for(int i = 0; play && i < frequencies.length; i++) {
-				int amplitudeLength = (int) lengths[i]*50;
-				//double[] amplitude = SoundFromCPPNUtil.amplitudeGenerator(cppn, amplitudeLength, frequencies[i]);
-
-				// An amplitude array of all 0s still makes some noise?
-				double[] amplitude = frequencies[i] == 0 ? new double[amplitudeLength] : SoundFromCPPNUtil.amplitudeGenerator(cppn, amplitudeLength, frequencies[i]);
-				PlayDoubleArray.removePops(amplitude, CLIP_VOLUME_LENGTH);
-				//System.out.println("note "+ i + " length " + lengths[i] +  " :" + amplitude.length); // + Arrays.toString(amplitude));
-				
-				// Trying to figure out if 0 causes problems
-//				if(frequencies[i] == 0) {
-//					try {
-//						Thread.sleep(amplitudeLength/10);
-//					} catch (InterruptedException e) {
-//						// TODO Auto-generated catch block
-//						e.printStackTrace();
-//					}
-//				} else {
-					PlayDoubleArray.playDoubleArray(amplitude, false);
-//				}
-				//MiscUtil.waitForReadStringAndEnterKeyPress();
-			}	
-			play = false;
+			// TODO: Allow for interruption			
+			PlayDoubleArray.playDoubleArray(amplitudeArray, false);
 		}
 
 		public void stopPlayback() {
