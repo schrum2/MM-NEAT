@@ -1,6 +1,9 @@
 package boardGame.checkers;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.awt.Color;
 import java.awt.Point;
@@ -9,10 +12,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class CheckersStateTest {
@@ -27,14 +27,8 @@ public class CheckersStateTest {
 	CheckersState test1;
 	CheckersState test2;
 	CheckersState test3;
-	
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
-	}
-
-	@AfterClass
-	public static void tearDownAfterClass() throws Exception {
-	}
+	CheckersState test4;
+	CheckersState test5;
 
 	@Before
 	public void setUp() throws Exception {
@@ -51,31 +45,31 @@ public class CheckersStateTest {
 										 {E,R,E,R,E,R,E,R}, // 6
 										 {R,E,R,E,R,E,R,E}};// 7
 									 
-		int[][] board1 = new int[][]{{E,E,E,E ,E ,E,E,E}, // 0 // Test King Movement
-									 {E,E,E,E ,E ,E,E,E}, // 1
-									 {E,E,E,BK,E ,E,E,E}, // 2
-									 {E,E,E,E ,E ,E,E,E}, // 3
-									 {E,E,E,E ,E ,E,E,E}, // 4
-									 {E,E,E,E ,RK,E,E,E}, // 5
-									 {E,E,E,E ,E ,E,E,E}, // 6
-									 {E,E,E,E ,E ,E,E,E}};// 7
+		int[][] board1 = new int[][]{{E ,E ,E ,E ,E ,E ,E ,E}, // 0 // Test King Movement
+									 {E ,E ,E ,E ,E ,E ,E ,E}, // 1
+									 {E ,E ,E ,BK,E ,E ,E ,E}, // 2
+									 {E ,E ,E ,E ,E ,E ,E ,E}, // 3
+									 {E ,E ,E ,E ,E ,E ,E ,E}, // 4
+									 {E ,E ,E ,E ,RK,E ,E ,E}, // 5
+									 {E ,E ,E ,E ,E ,E ,E ,E}, // 6
+									 {E ,E ,E ,E ,E ,E ,E ,E}};// 7
 									 
 		test1 = new CheckersState(board1, 0, new ArrayList<Integer>());
 		
 		
-		int[][] board2 = new int[][]{{E,B,E,B,E,B,E,B}, // 0 Test Double Jumping/ Multi-Jumping
-									 {B,E,B,E,B,E,B,E}, // 1
-									 {E,B,E,B,E,B,E,B}, // 2
-									 {E,E,E,E,E,E,E,E}, // 3
+		int[][] board2 = new int[][]{{E,E,E,E,E,E,E,E}, // 0 Test Single Jumping/Forced Jump
+									 {E,E,E,E,E,E,E,E}, // 1
+									 {E,E,E,B,E,E,E,E}, // 2
+									 {E,E,E,E,R,E,E,E}, // 3
 									 {E,E,E,E,E,E,E,E}, // 4
-									 {R,E,R,E,R,E,R,E}, // 5
-									 {E,R,E,R,E,R,E,R}, // 6
-									 {R,E,R,E,R,E,R,E}};// 7
+									 {E,E,E,E,E,E,E,E}, // 5
+									 {E,E,E,E,E,E,E,E}, // 6
+									 {E,E,E,E,E,E,E,E}};// 7
 			 
 		test2 = new CheckersState(board2, 0, new ArrayList<Integer>());
 		
 		
-		int[][] board3 = new int[][]{{E,E,E,E,E,E,E,E}, // 0 Improbable, but good for Testing End State
+		int[][] board3 = new int[][]{{E,E,E,E,E,E,E,E}, // 0 Improbable, but good for Testing End State and getWinners()
 									 {E,E,E,E,E,E,E,E}, // 1
 									 {E,E,E,E,E,E,E,E}, // 2
 									 {E,E,E,E,E,E,E,E}, // 3
@@ -83,22 +77,38 @@ public class CheckersStateTest {
 									 {R,E,R,E,R,E,R,E}, // 5
 									 {E,E,E,E,E,E,E,E}, // 6
 									 {E,E,E,E,E,E,E,E}};// 7
-
-		List<Integer> win3 = new ArrayList<Integer>();
-		win3.add(1);
 		
 		test3 = new CheckersState(board3, 1, new ArrayList<Integer>());
 		
-	}
+		int[][] board4 = new int[][]{{E,E,E,E,E,E,E,B}, // 0 Double/Multi-Jump Testing
+			 						 {E,E,E,E,E,E,E,E}, // 1
+			 						 {E,E,E,B,E,E,E,E}, // 2
+			 						 {E,E,R,E,E,E,E,E}, // 3
+			 						 {E,E,E,E,E,E,E,E}, // 4
+			 						 {E,E,R,E,E,E,E,E}, // 5
+			 						 {E,E,E,E,E,E,E,E}, // 6
+			 						 {E,E,E,E,E,E,E,E}};// 7
+		
+		test4 = new CheckersState(board4, 0, new ArrayList<Integer>());
+		
+		int[][] board5 = new int[][]{{E,E,E,E,E,E,E,E},
+			 						 {E,E,E,E,E,E,E,E},
+			 						 {E,E,E,E,E,E,E,E},
+			 						 {E,E,R,E,E,E,E,E},
+			 						 {E,E,E,E,E,E,E,E},
+			 						 {E,E,R,E,E,E,E,E},
+			 						 {E,E,E,E,E,B,E,E},
+			 						 {E,E,E,E,E,E,E,E}};
 
-	@After
-	public void tearDown() throws Exception {
+			 test5 = new CheckersState(board5, 0, new ArrayList<Integer>());
 	}
 
 	@Test
 	public void testSetupStartingBoard() {
-		// TODO: Fix This.
-		fail("Not Implemented Yet");
+		assertFalse(test1.move(new Point(2,1), new Point(3,2))); // No Check at that Point
+		test1.setupStartingBoard(); // Resets the entire Board
+		assertEquals(start, test1); // test1 now is a Starting State
+		assertTrue(test1.move(new Point(2,1), new Point(3,2))); // Known good Starting Move
 	}
 
 	@Test
@@ -143,27 +153,16 @@ public class CheckersStateTest {
 
 	@Test
 	public void testMove() {
-		
-		// TODO: Commented out Tests are failing. Find and Fix the problem
-		
 		// Basic Movement
+
 		assertTrue(start.move(new Point(2,1), new Point(3,2))); // Known good Starting move
 		assertTrue(start.move(new Point(5,0), new Point(4,1))); // Known good Enemy Starting move
 		assertFalse(start.move(new Point(2,3), new Point(3,3))); // Tried to move Non-Diagonally
+		assertFalse(start.move(new Point(1,4), new Point(2,5))); // Tried to move to a Non-Empty, Non-Enemy Space
 		
-		
-//		assertFalse(start.move(new Point(1,4), new Point(2,5))); // Tried to move to a Non-Empty, Non-Enemy Space
-		
-
 		assertFalse(start.move(new Point(3,2), new Point(2,1))); // Tried to move a Black Non-King Check up
-		
-		
-//		assertTrue(start.move(new Point(2,3), new Point(3,2))); // Known good Move; needed to change Players
-		
-		
-		assertFalse(start.move(new Point(4,1), new Point(5,0))); // Tried to move a Red Non-King Check down
-
-		
+		assertTrue(start.move(new Point(2,3), new Point(3,4))); // Known good Move; needed to change Players
+		assertFalse(start.move(new Point(4,1), new Point(5,0))); // Tried to move a Red Non-King Check down		
 		
 		
 		// King Movement
@@ -179,10 +178,15 @@ public class CheckersStateTest {
 		assertTrue(test1.move(new Point(1,2), new Point(2,3))); // Black King Down-Right
 		assertTrue(test1.move(new Point(4,3), new Point(5,4))); // Red King Down-Right
 		
-		// TODO: Jumping, Double Jumping
+		assertFalse(test4.move(new Point(2,3), new Point(3,4))); // Tried to make a Non-Jump Move when a Jump is available; Forced Jump
+		assertTrue(test4.move(new Point(2,3), new Point(3,2))); // Made the First Jump; must now make the Second Jump
+		assertFalse(test4.move(new Point(5,2), new Point(4,1))); // Tried to Move the Enemy Check
+		assertFalse(test4.move(new Point(0,7), new Point(1,6))); // Tried to Move the Non-Double Jump Check
+		assertTrue(test4.move(new Point(4,1), new Point(5,2))); // Made the Second Jump
 		
-		
-		
+		assertTrue(test5.move(new Point(6,5), new Point(7,6))); // Moves a Black Check to the end of the Board
+		assertTrue(test5.move(new Point(3,2), new Point(2,3))); // Moves an Enemy Check; needed to change Players
+		assertTrue(test5.move(new Point(7,6), new Point(6,5))); // Able to move the new Black King Check back up
 	}
 
 	@Test
@@ -198,76 +202,199 @@ public class CheckersStateTest {
 		Set<CheckersState> startSet = start.possibleBoardGameStates(start);
 		
 		Set<CheckersState> startTest = new HashSet<CheckersState>();
-		startTest.add(new CheckersState(new int[][]{{E,B,E,B,E,B,E,B}, // 0
-			 										{B,E,B,E,B,E,B,E}, // 1
-			 										{E,E,E,B,E,B,E,B}, // 2
-			 										{B,E,E,E,E,E,E,E}, // 3
-			 										{E,E,E,E,E,E,E,E}, // 4
-			 										{R,E,R,E,R,E,R,E}, // 5
-			 										{E,R,E,R,E,R,E,R}, // 6
-			 										{R,E,R,E,R,E,R,E}} , 1, new ArrayList<Integer>()));
+
+		startTest.add(new CheckersState(new int[][]{{E,B,E,B,E,B,E,B}, 
+													{B,E,B,E,B,E,B,E}, 
+													{E,E,E,B,E,B,E,B}, 
+													{B,E,E,E,E,E,E,E}, 
+													{E,E,E,E,E,E,E,E}, 
+													{R,E,R,E,R,E,R,E}, 
+													{E,R,E,R,E,R,E,R}, 
+													{R,E,R,E,R,E,R,E}}, 1, new ArrayList<Integer>()));
 		
-		startTest.add(new CheckersState(new int[][]{{E,B,E,B,E,B,E,B}, // 0
-													{B,E,B,E,B,E,B,E}, // 1
-													{E,E,E,B,E,B,E,B}, // 2
-													{E,E,B,E,E,E,E,E}, // 3
-													{E,E,E,E,E,E,E,E}, // 4
-													{R,E,R,E,R,E,R,E}, // 5
-													{E,R,E,R,E,R,E,R}, // 6
-													{R,E,R,E,R,E,R,E}} , 1, new ArrayList<Integer>()));
+		startTest.add(new CheckersState(new int[][]{{E,B,E,B,E,B,E,B}, 
+													{B,E,B,E,B,E,B,E}, 
+													{E,E,E,B,E,B,E,B}, 
+													{E,E,B,E,E,E,E,E}, 
+													{E,E,E,E,E,E,E,E}, 
+													{R,E,R,E,R,E,R,E}, 
+													{E,R,E,R,E,R,E,R}, 
+													{R,E,R,E,R,E,R,E}}, 1, new ArrayList<Integer>()));
 		
-		startTest.add(new CheckersState(new int[][]{{E,B,E,B,E,B,E,B}, // 0
-													{B,E,B,E,B,E,B,E}, // 1
-													{E,B,E,E,E,B,E,B}, // 2
-													{E,E,B,E,E,E,E,E}, // 3
-													{E,E,E,E,E,E,E,E}, // 4
-													{R,E,R,E,R,E,R,E}, // 5
-													{E,R,E,R,E,R,E,R}, // 6
-													{R,E,R,E,R,E,R,E}} , 1, new ArrayList<Integer>()));
+		startTest.add(new CheckersState(new int[][]{{E,B,E,B,E,B,E,B}, 
+													{B,E,B,E,B,E,B,E}, 
+													{E,B,E,E,E,B,E,B}, 
+													{E,E,B,E,E,E,E,E}, 
+													{E,E,E,E,E,E,E,E}, 
+													{R,E,R,E,R,E,R,E}, 
+													{E,R,E,R,E,R,E,R}, 
+													{R,E,R,E,R,E,R,E}}, 1, new ArrayList<Integer>()));
 		
-		startTest.add(new CheckersState(new int[][]{{E,B,E,B,E,B,E,B}, // 0
-													{B,E,B,E,B,E,B,E}, // 1
-													{E,B,E,E,E,B,E,B}, // 2
-													{E,E,E,E,B,E,E,E}, // 3
-													{E,E,E,E,E,E,E,E}, // 4
-													{R,E,R,E,R,E,R,E}, // 5
-													{E,R,E,R,E,R,E,R}, // 6
-													{R,E,R,E,R,E,R,E}} , 1, new ArrayList<Integer>()));
-	
-		startTest.add(new CheckersState(new int[][]{{E,B,E,B,E,B,E,B}, // 0
-													{B,E,B,E,B,E,B,E}, // 1
-													{E,B,E,B,E,E,E,B}, // 2
-													{E,E,E,E,B,E,E,E}, // 3
-													{E,E,E,E,E,E,E,E}, // 4
-													{R,E,R,E,R,E,R,E}, // 5
-													{E,R,E,R,E,R,E,R}, // 6
-													{R,E,R,E,R,E,R,E}} , 1, new ArrayList<Integer>()));
+		startTest.add(new CheckersState(new int[][]{{E,B,E,B,E,B,E,B}, 
+													{B,E,B,E,B,E,B,E}, 
+													{E,B,E,E,E,B,E,B}, 
+													{E,E,E,E,B,E,E,E}, 
+													{E,E,E,E,E,E,E,E}, 
+													{R,E,R,E,R,E,R,E}, 
+													{E,R,E,R,E,R,E,R}, 
+													{R,E,R,E,R,E,R,E}}, 1, new ArrayList<Integer>()));
 			
-		startTest.add(new CheckersState(new int[][]{{E,B,E,B,E,B,E,B}, // 0
-													{B,E,B,E,B,E,B,E}, // 1
-													{E,B,E,B,E,E,E,B}, // 2
-													{E,E,E,E,E,E,B,E}, // 3
-													{E,E,E,E,E,E,E,E}, // 4
-													{R,E,R,E,R,E,R,E}, // 5
-													{E,R,E,R,E,R,E,R}, // 6
-													{R,E,R,E,R,E,R,E}} , 1, new ArrayList<Integer>()));
+		startTest.add(new CheckersState(new int[][]{{E,B,E,B,E,B,E,B}, 
+													{B,E,B,E,B,E,B,E}, 
+													{E,B,E,B,E,E,E,B}, 
+													{E,E,E,E,B,E,E,E}, 
+													{E,E,E,E,E,E,E,E}, 
+													{R,E,R,E,R,E,R,E}, 
+													{E,R,E,R,E,R,E,R}, 
+													{R,E,R,E,R,E,R,E}}, 1, new ArrayList<Integer>()));
 		
-		startTest.add(new CheckersState(new int[][]{{E,B,E,B,E,B,E,B}, // 0
-													{B,E,B,E,B,E,B,E}, // 1
-													{E,B,E,B,E,B,E,E}, // 2
-													{E,E,E,E,E,E,B,E}, // 3
-													{E,E,E,E,E,E,E,E}, // 4
-													{R,E,R,E,R,E,R,E}, // 5
-													{E,R,E,R,E,R,E,R}, // 6
-													{R,E,R,E,R,E,R,E}} , 1, new ArrayList<Integer>()));
+		startTest.add(new CheckersState(new int[][]{{E,B,E,B,E,B,E,B}, 
+													{B,E,B,E,B,E,B,E}, 
+													{E,B,E,B,E,E,E,B}, 
+													{E,E,E,E,E,E,B,E}, 
+													{E,E,E,E,E,E,E,E}, 
+													{R,E,R,E,R,E,R,E}, 
+													{E,R,E,R,E,R,E,R}, 
+													{R,E,R,E,R,E,R,E}}, 1, new ArrayList<Integer>()));
 		
-		// TODO: Below Test is failing
+		startTest.add(new CheckersState(new int[][]{{E,B,E,B,E,B,E,B}, 
+													{B,E,B,E,B,E,B,E}, 
+													{E,B,E,B,E,B,E,E}, 
+													{E,E,E,E,E,E,B,E}, 
+													{E,E,E,E,E,E,E,E}, 
+													{R,E,R,E,R,E,R,E}, 
+													{E,R,E,R,E,R,E,R}, 
+													{R,E,R,E,R,E,R,E}}, 1, new ArrayList<Integer>()));
 		
-		for(CheckersState state: startSet){
+		
+		for(CheckersState state : startSet){
 			assertTrue(startTest.contains(state));
+		}
+
+	Set<CheckersState> test1Set = test1.possibleBoardGameStates(test1);
+		
+		Set<CheckersState> test1Test = new HashSet<CheckersState>();
+
+		test1Test.add(new CheckersState(new int[][]{{E ,E ,E ,E ,E ,E ,E ,E},
+													{E ,E ,BK,E ,E ,E ,E ,E},
+													{E ,E ,E ,E, E ,E ,E ,E},
+													{E ,E ,E ,E ,E ,E ,E ,E},
+													{E ,E ,E ,E ,E ,E ,E ,E},
+													{E ,E ,E ,E ,RK,E ,E ,E},
+													{E ,E ,E ,E ,E ,E ,E ,E},
+													{E ,E ,E ,E ,E ,E ,E ,E}}, 1, new ArrayList<Integer>()));
+		
+		test1Test.add(new CheckersState(new int[][]{{E ,E ,E ,E ,E ,E ,E ,E},
+													{E ,E ,E ,E ,BK,E ,E ,E},
+													{E ,E ,E ,E ,E ,E ,E ,E},
+													{E ,E ,E ,E ,E ,E ,E ,E},
+													{E ,E ,E ,E ,E ,E ,E ,E},
+													{E ,E ,E ,E ,RK,E ,E ,E},
+													{E ,E ,E ,E ,E ,E ,E ,E},
+													{E ,E ,E ,E ,E ,E ,E ,E}}, 1, new ArrayList<Integer>()));
+		
+		test1Test.add(new CheckersState(new int[][]{{E ,E ,E ,E ,E ,E ,E ,E},
+													{E ,E ,E ,E ,E ,E ,E ,E},
+													{E ,E ,E ,E ,E ,E ,E ,E},
+													{E ,E ,E ,E ,BK,E ,E ,E},
+													{E ,E ,E ,E ,E ,E ,E ,E},
+													{E ,E ,E ,E ,RK,E ,E ,E},
+													{E ,E ,E ,E ,E ,E ,E ,E},
+													{E ,E ,E ,E ,E ,E ,E ,E}}, 1, new ArrayList<Integer>()));
+		
+		test1Test.add(new CheckersState(new int[][]{{E ,E ,E ,E ,E ,E ,E ,E},
+													{E ,E ,E ,E ,E ,E ,E ,E},
+													{E ,E ,E ,E ,E ,E ,E ,E},
+													{E ,E ,BK,E ,E ,E ,E ,E},
+													{E ,E ,E ,E ,E ,E ,E ,E},
+													{E ,E ,E ,E ,RK,E ,E ,E},
+													{E ,E ,E ,E ,E ,E ,E ,E},
+													{E ,E ,E ,E ,E ,E ,E ,E}}, 1, new ArrayList<Integer>()));
+		
+		for(CheckersState state : test1Set){
+			assertTrue(test1Test.contains(state));
 		}
 		
 		
+		Set<CheckersState> test2Set = test2.possibleBoardGameStates(test2);
+		
+		Set<CheckersState> test2Test = new HashSet<CheckersState>();
+		
+		test2Test.add(new CheckersState(new int[][]{{E,E,E,E,E,E,E,E},
+													{E,E,E,E,E,E,E,E},
+													{E,E,E,E,E,E,E,E},
+													{E,E,E,E,E,E,E,E},
+													{E,E,E,E,E,B,E,E},
+													{E,E,E,E,E,E,E,E},
+													{E,E,E,E,E,E,E,E},
+													{E,E,E,E,E,E,E,E}}, 1, new ArrayList<Integer>()));
+		
+		for(CheckersState state : test2Set){
+			assertTrue(test2Test.contains(state));
+		}
+		
+		Set<CheckersState> test4Set = test4.possibleBoardGameStates(test4);
+		
+		Set<CheckersState> test4ATest = new HashSet<CheckersState>();
+		
+		test4ATest.add(new CheckersState(new int[][]{{E,E,E,E,E,E,E,B},
+													 {E,E,E,E,E,E,E,E},
+													 {E,E,E,E,E,E,E,E},
+													 {E,E,E,E,E,E,E,E},
+													 {E,B,E,E,E,E,E,E},
+													 {E,E,R,E,E,E,E,E},
+													 {E,E,E,E,E,E,E,E},
+													 {E,E,E,E,E,E,E,E}}, 0, new ArrayList<Integer>()));
+		for(CheckersState state : test4Set){
+			assertTrue(test4ATest.contains(state));
+		}
+		test4.move(new Point(2,3), new Point(3,2));
+		test4Set = test4.possibleBoardGameStates(test4);
+		
+		Set<CheckersState> test4BTest = new HashSet<CheckersState>();
+		
+		test4BTest.add(new CheckersState(new int[][]{{E,E,E,E,E,E,E,B},
+													 {E,E,E,E,E,E,E,E},
+													 {E,E,E,E,E,E,E,E},
+													 {E,E,E,E,E,E,E,E},
+													 {E,E,E,E,E,E,E,E},
+													 {E,E,E,E,E,E,E,E},
+													 {E,E,E,B,E,E,E,E},
+													 {E,E,E,E,E,E,E,E}}, 1, new ArrayList<Integer>()));
+		
+		for(CheckersState state : test4BTest){
+			assertTrue(test4Set.contains(state));
+		}
+		
+		
+		
+		Set<CheckersState> test5Set = test5.possibleBoardGameStates(test5);
+		
+		Set<CheckersState> test5Test = new HashSet<CheckersState>();
+		
+		test5Test.add(new CheckersState(new int[][]{{E,E,E,E,E,E,E,E},
+													{E,E,E,E,E,E,E,E},
+													{E,E,E,E,E,E,E,E},
+													{E,E,R,E,E,E,E,E},
+													{E,E,E,E,E,E,E,E},
+													{E,E,R,E,E,E,E,E},
+													{E,E,E,E,E,E,E,E},
+													{E,E,E,E,E,E,BK,E}}, 1, new ArrayList<Integer>()));
+		
+		test5Test.add(new CheckersState(new int[][]{{E,E,E,E,E,E,E,E},
+													{E,E,E,E,E,E,E,E},
+													{E,E,E,E,E,E,E,E},
+													{E,E,R,E,E,E,E,E},
+													{E,E,E,E,E,E,E,E},
+													{E,E,R,E,E,E,E,E},
+													{E,E,E,E,E,E,E,E},
+													{E,E,E,E,BK,E,E,E}}, 1, new ArrayList<Integer>()));
+		
+		for(CheckersState state : test5Set){
+			assertTrue(test5Test.contains(state));
+		}
+		
+	
 		
 	}
 
