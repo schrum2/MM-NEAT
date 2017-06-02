@@ -297,7 +297,6 @@ public class Parameters {
 		integerOptions.add("pacmanReplayDelay", Constants.DELAY, "Milliseconds of pause between pacman time steps in replay mode");
 		integerOptions.add("clipLength", Keyboard.NOTE_LENGTH_DEFAULT, "Length of clip played in Breedesizer");
 		integerOptions.add("maxClipLength", 100000, "Maximum length of clip played in Breedesizer");
-		integerOptions.add("microRTSMaxCycles", 5000, "Time limit for simulated games");
 		// Long parameters
 		longOptions.add("lastInnovation", 0l, "Highest innovation number used so far");
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
@@ -599,6 +598,7 @@ public class Parameters {
 		booleanOptions.add("mRTSmyAll", false, "whether there is a substrate dedicated to all of the red agents' units");
 		booleanOptions.add("mRTSOpponentsAll", false, "whether there is a substrate dedicated to all of the blue agents' units");
 		booleanOptions.add("microRTSEnemySequence", false, "enables iterative evolution with increasingly difficult opponents");
+		booleanOptions.add("microRTSMapSequence", false, "enables iterative evolution with increasingly large maps");
 		
 		// Double parameters
 		doubleOptions.add("linkExpressionThreshold", 0.2, "Threshold for hyperNEAT output to result in an expressed link");
