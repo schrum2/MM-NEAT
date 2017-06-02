@@ -27,6 +27,6 @@ public class enemySequence {
 	};
 	
 	public static AI getAppropriateEnemy(int generation){
-		return enemies[Math.min(gensPerEnemy, enemies.length)];
+		return enemies[Math.min(gensPerEnemy, enemies.length-1)];
 	}
 }

@@ -130,9 +130,9 @@ public class MicroRTSUtility {
 				Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, Substrate.INPUT_SUBSTRATE, 0), "Inputs Board State");
 		subs.add(inputsBoardState);
 		
-		if(Parameters.parameters.booleanParameter("")) {
-			
-		}
+//		if(Parameters.parameters.booleanParameter("")) {
+//			
+//		}
 //		if( My){
 //			
 //		}
