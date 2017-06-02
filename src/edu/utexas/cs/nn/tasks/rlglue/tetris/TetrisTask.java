@@ -63,7 +63,6 @@ public class TetrisTask<T extends Network> extends RLGlueTask<T> {
 	public Pair<double[], double[]> episodeResult(int num) {
 		double[] fitness = new double[numObjectives()];
 		int index = 0;
-		fitness[index++] = rlReturn[num]; // default
 		if(tetrisTimeSteps) fitness[index++] = rlNumSteps[num]; // time steps
 		if(tetrisBlocksOnScreen) { // more blocks in final state means an attempt was made to clear lines
 			@SuppressWarnings("unchecked")
@@ -80,8 +79,9 @@ public class TetrisTask<T extends Network> extends RLGlueTask<T> {
 		}
 		Tetris game = (Tetris) environment;
 		// Average empty spaces across all piece placements
-		if(tetrisAvgEmptySpaces) fitness[index++] = game.getAverageNumEmptyBlocks();		
+		if(tetrisAvgEmptySpaces) fitness[index++] = game.getAverageNumEmptySpaces();		
 		//System.out.println(Arrays.toString(fitness));
+		fitness[index++] = rlReturn[num]; // default
 		Pair<double[], double[]> p = new Pair<double[], double[]>(fitness, game.getNumberOfRowsCleared());
 		return p;
 	}

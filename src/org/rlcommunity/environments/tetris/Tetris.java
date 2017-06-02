@@ -217,7 +217,8 @@ public class Tetris extends RLGlueEnvironment implements HasAVisualizerInterface
 	 * across all states in which a block was just placed (afterstates)
 	 * @return The average across afterstates
 	 */
-	public double getAverageNumEmptyBlocks() {
+	public double getAverageNumEmptySpaces() {
+		System.out.println(averageNumEmptyBlocks);
 		return averageNumEmptyBlocks;
 	}
 
