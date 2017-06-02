@@ -74,33 +74,41 @@ public class TetrisState {
 							 * block
 							 */
 
-	// /*Hold all the possible bricks that can fall*/
-	public Vector<TetrisPiece> possibleBlocks = new Vector<TetrisPiece>();
+	/*Hold all the possible bricks that can fall*/
+	// Schrum: Making this static to save repeated computation
+	public static final Vector<TetrisPiece> POSSIBLE_BLOCKS = new Vector<TetrisPiece>();
+
+	static { // gets called the first time the class is loaded
+		initPossibleBlocks();
+	}
+	
+	public static void initPossibleBlocks() {
+		if(Parameters.parameters.booleanParameter("tetrisAllowLine")){
+			POSSIBLE_BLOCKS.add(TetrisPiece.makeLine());
+		}
+		if(Parameters.parameters.booleanParameter("tetrisAllowSquare")){
+			POSSIBLE_BLOCKS.add(TetrisPiece.makeSquare());
+		}
+		if(Parameters.parameters.booleanParameter("tetrisAllowTri")){
+			POSSIBLE_BLOCKS.add(TetrisPiece.makeTri());
+		}
+		if(Parameters.parameters.booleanParameter("tetrisAllowSShape")){
+			POSSIBLE_BLOCKS.add(TetrisPiece.makeSShape());
+		}
+		if(Parameters.parameters.booleanParameter("tetrisAllowZShape")){
+			POSSIBLE_BLOCKS.add(TetrisPiece.makeZShape());
+		}
+		if(Parameters.parameters.booleanParameter("tetrisAllowLShape")){
+			POSSIBLE_BLOCKS.add(TetrisPiece.makeLShape());
+		}
+		if(Parameters.parameters.booleanParameter("tetrisAllowJShape")){
+			POSSIBLE_BLOCKS.add(TetrisPiece.makeJShape());
+		}
+	}
+	
 	private TetrisViewer viewer = null;
 
 	public TetrisState() {
-		if(Parameters.parameters.booleanParameter("tetrisAllowLine")){
-			possibleBlocks.add(TetrisPiece.makeLine());
-		}
-		if(Parameters.parameters.booleanParameter("tetrisAllowSquare")){
-			possibleBlocks.add(TetrisPiece.makeSquare());
-		}
-		if(Parameters.parameters.booleanParameter("tetrisAllowTri")){
-			possibleBlocks.add(TetrisPiece.makeTri());
-		}
-		if(Parameters.parameters.booleanParameter("tetrisAllowSShape")){
-			possibleBlocks.add(TetrisPiece.makeSShape());
-		}
-		if(Parameters.parameters.booleanParameter("tetrisAllowZShape")){
-			possibleBlocks.add(TetrisPiece.makeZShape());
-		}
-		if(Parameters.parameters.booleanParameter("tetrisAllowLShape")){
-			possibleBlocks.add(TetrisPiece.makeLShape());
-		}
-		if(Parameters.parameters.booleanParameter("tetrisAllowJShape")){
-			possibleBlocks.add(TetrisPiece.makeJShape());
-		}
-
 		if (CommonConstants.watch) {
 			if (TetrisViewer.current == null) {
 				// System.out.println("New TetrisViewer");
@@ -150,7 +158,7 @@ public class TetrisState {
 					o.intArray[i] = 1;
 				}
 			}
-			for (int j = 0; j < possibleBlocks.size(); ++j) {
+			for (int j = 0; j < POSSIBLE_BLOCKS.size(); ++j) {
 				o.intArray[worldObservation.length + j] = 0;
 			}
 			// Set the bit vector value for which block is currently following
@@ -182,7 +190,7 @@ public class TetrisState {
 	}
 
 	public void writeCurrentBlock(int[] game_world) {
-		int[][] thisPiece = possibleBlocks.get(currentBlockId).getShape(currentRotation);
+		int[][] thisPiece = POSSIBLE_BLOCKS.get(currentBlockId).getShape(currentRotation);
 
 		for (int y = 0; y < thisPiece[0].length; ++y) {
 			for (int x = 0; x < thisPiece.length; ++x) {
@@ -308,7 +316,7 @@ public class TetrisState {
 	 * @return
 	 */
 	private boolean colliding(int checkX, int checkY, int checkOrientation) {
-		int[][] thePiece = possibleBlocks.get(currentBlockId).getShape(checkOrientation);
+		int[][] thePiece = POSSIBLE_BLOCKS.get(currentBlockId).getShape(checkOrientation);
 		try {
 
 			for (int y = 0; y < thePiece[0].length; ++y) {
@@ -354,7 +362,7 @@ public class TetrisState {
 	}
 
 	private boolean collidingCheckOnlySpotsInBounds(int checkX, int checkY, int checkOrientation) {
-		int[][] thePiece = possibleBlocks.get(currentBlockId).getShape(checkOrientation);
+		int[][] thePiece = POSSIBLE_BLOCKS.get(currentBlockId).getShape(checkOrientation);
 		try {
 
 			for (int y = 0; y < thePiece[0].length; ++y) {
@@ -404,7 +412,7 @@ public class TetrisState {
 	 */
 	private boolean inBounds(int checkX, int checkY, int checkOrientation) {
 		try {
-			int[][] thePiece = possibleBlocks.get(currentBlockId).getShape(checkOrientation);
+			int[][] thePiece = POSSIBLE_BLOCKS.get(currentBlockId).getShape(checkOrientation);
 
 			for (int y = 0; y < thePiece[0].length; ++y) {
 				for (int x = 0; x < thePiece.length; ++x) {
@@ -486,7 +494,7 @@ public class TetrisState {
 	public void spawn_block() {
 		blockMobile = true;
 
-		currentBlockId = randomGenerator.nextInt(possibleBlocks.size());
+		currentBlockId = randomGenerator.nextInt(POSSIBLE_BLOCKS.size());
 
 		currentRotation = 0;
 		currentX = (worldWidth / 2) - 2;
@@ -665,13 +673,6 @@ public class TetrisState {
 		for (int i = 0; i < this.worldState.length; i++) {
 			this.worldState[i] = stateToCopy.worldState[i];
 		}
-
-		this.possibleBlocks = new Vector<TetrisPiece>();
-		// hopefully nobody modifies the pieces as they go
-		for (TetrisPiece thisPiece : stateToCopy.possibleBlocks) {
-			this.possibleBlocks.add(thisPiece);
-		}
-
 	}
 
 	/**
@@ -705,7 +706,7 @@ public class TetrisState {
 	 * @return String representation of board
 	 */
 	public String toString(boolean showFallingPiece) {
-		int[][] thePiece = possibleBlocks.get(currentBlockId).getShape(this.currentRotation);
+		int[][] thePiece = POSSIBLE_BLOCKS.get(currentBlockId).getShape(this.currentRotation);
 		String result = "";
 		for (int y = 0; y < worldHeight; y++) {
 			for (int x = 0; x < worldWidth; x++) {

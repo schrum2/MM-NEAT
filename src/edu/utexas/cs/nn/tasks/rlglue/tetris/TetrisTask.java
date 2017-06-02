@@ -104,7 +104,7 @@ public class TetrisTask<T extends Network> extends RLGlueTask<T> {
 		otherScores[2] = rowCounts[2];
 		otherScores[3] = rowCounts[3];
 		otherScores[4] = game.getLinesCleared();
-		otherScores[3] = rlReturn[num]; // Game score
+		otherScores[5] = rlReturn[num]; // Game score
 		
 		Pair<double[], double[]> p = new Pair<double[], double[]>(fitness, otherScores);
 		return p;

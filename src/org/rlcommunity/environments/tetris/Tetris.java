@@ -18,30 +18,28 @@
  */
 package org.rlcommunity.environments.tetris;
 
-import edu.utexas.cs.nn.tasks.rlglue.RLGlueEnvironment;
 import java.net.URL;
 import java.util.ArrayList;
 
 import org.rlcommunity.environments.tetris.messages.TetrisStateResponse;
 import org.rlcommunity.environments.tetris.visualizer.TetrisVisualizer;
-import org.rlcommunity.rlglue.codec.RLGlue;
 import org.rlcommunity.rlglue.codec.taskspec.TaskSpec;
 import org.rlcommunity.rlglue.codec.taskspec.TaskSpecVRLGLUE3;
 import org.rlcommunity.rlglue.codec.taskspec.ranges.DoubleRange;
 import org.rlcommunity.rlglue.codec.taskspec.ranges.IntRange;
-import rlVizLib.general.ParameterHolder;
-import rlVizLib.messaging.environment.EnvironmentMessageParser;
-import rlVizLib.messaging.environment.EnvironmentMessages;
-import rlVizLib.messaging.interfaces.HasAVisualizerInterface;
 import org.rlcommunity.rlglue.codec.types.Action;
 import org.rlcommunity.rlglue.codec.types.Observation;
-
 import org.rlcommunity.rlglue.codec.types.Reward_observation_terminal;
-
 import org.rlcommunity.rlglue.codec.util.EnvironmentLoader;
+
+import edu.utexas.cs.nn.tasks.rlglue.RLGlueEnvironment;
+import rlVizLib.general.ParameterHolder;
 import rlVizLib.general.hasVersionDetails;
-import rlVizLib.messaging.interfaces.HasImageInterface;
+import rlVizLib.messaging.environment.EnvironmentMessageParser;
+import rlVizLib.messaging.environment.EnvironmentMessages;
 import rlVizLib.messaging.environmentShell.TaskSpecPayload;
+import rlVizLib.messaging.interfaces.HasAVisualizerInterface;
+import rlVizLib.messaging.interfaces.HasImageInterface;
 
 public class Tetris extends RLGlueEnvironment implements HasAVisualizerInterface, HasImageInterface {
 
@@ -200,7 +198,6 @@ public class Tetris extends RLGlueEnvironment implements HasAVisualizerInterface
 		} else {
 			ro.r = Tetris.terminalScore;
 			currentScore = 0;
-			linesCleared = 0;
 		}
 
 		return ro;
@@ -318,7 +315,7 @@ public class Tetris extends RLGlueEnvironment implements HasAVisualizerInterface
 	@Override
 	public TaskSpec makeTaskSpec() {
 		int boardSize = gameState.getHeight() * gameState.getWidth();
-		int numPieces = gameState.possibleBlocks.size();
+		int numPieces = TetrisState.POSSIBLE_BLOCKS.size();
 
 		TaskSpecVRLGLUE3 theTaskSpecObject = new TaskSpecVRLGLUE3();
 		theTaskSpecObject.setEpisodic();

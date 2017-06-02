@@ -185,7 +185,7 @@ public class TetrisAfterStateAgent<T extends Network> extends RLGlueAgent<T> {
 	 *            TetrisState
 	 */
 	public static void blotMobilePiece(TetrisState ts) {
-		Vector<TetrisPiece> possibleBlocks = ts.possibleBlocks;
+		Vector<TetrisPiece> possibleBlocks = TetrisState.POSSIBLE_BLOCKS;
 		int[][] mobilePiece = possibleBlocks.get(ts.currentBlockId).getShape(ts.currentRotation);
 		for (int x = 0; x < mobilePiece.length; x++) {
 			for (int y = 0; y < mobilePiece[x].length; y++) {
