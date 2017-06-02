@@ -9,7 +9,8 @@ import java.util.Random;
 public class AcrobotState {
 
     /*STATIC CONSTANTS*/
-    private final static int stateSize = 4;
+    @SuppressWarnings("unused")
+	private final static int stateSize = 4;
     private final static int numActions = 3;
     private final static double maxTheta1 = Math.PI;
     private final static double maxTheta2 = Math.PI;

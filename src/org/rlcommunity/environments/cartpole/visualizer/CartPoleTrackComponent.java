@@ -10,6 +10,7 @@ import rlVizLib.visualization.VizComponentChangeListener;
 
 public class CartPoleTrackComponent implements SelfUpdatingVizComponent, Observer {
 
+	@SuppressWarnings("unused")
 	private CartPoleVisualizer cartVis = null;
 	boolean drawn = false;
 

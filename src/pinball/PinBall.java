@@ -192,6 +192,7 @@ public class PinBall
 			}
 			
 			resetBall();
+			inputStream.close();
 		}
 		catch(java.io.IOException e)
 		{

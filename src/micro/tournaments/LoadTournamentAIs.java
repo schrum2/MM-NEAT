@@ -21,7 +21,8 @@ import java.util.zip.ZipInputStream;
  */
 public class LoadTournamentAIs {
 
-    public static List<Class> loadTournamentAIsFromFolder(String path) throws Exception {
+    @SuppressWarnings("rawtypes")
+	public static List<Class> loadTournamentAIsFromFolder(String path) throws Exception {
         List<Class> cl = new ArrayList<>();
         File f = new File(path);
         
@@ -37,7 +38,8 @@ public class LoadTournamentAIs {
     }
     
     
-    public static List<Class> loadTournamentAIsFromJAR(String jarPath) throws Exception {
+    @SuppressWarnings("rawtypes")
+	public static List<Class> loadTournamentAIsFromJAR(String jarPath) throws Exception {
         ClassLoader loader = URLClassLoader.newInstance(new URL[]{new File(jarPath).toURI().toURL()},
                 LoadTournamentAIs.class.getClassLoader()
         );
@@ -60,7 +62,8 @@ public class LoadTournamentAIs {
     }
 
     
-    public static boolean isTournamentAIClass(Class c) {
+    @SuppressWarnings("rawtypes")
+	public static boolean isTournamentAIClass(Class c) {
         if (c == AIWithComputationBudget.class) return true;
         c = c.getSuperclass();
         if (c!=null) return isTournamentAIClass(c);

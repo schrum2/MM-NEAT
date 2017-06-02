@@ -192,6 +192,7 @@ public class GhostTrap {
 
 		Node powerPill;
 		Node[] path;
+		@SuppressWarnings("unused")
 		MOVE firstMoveIntoPath;
 
 		@SuppressWarnings("unused")

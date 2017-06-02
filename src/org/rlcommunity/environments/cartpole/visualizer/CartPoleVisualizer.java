@@ -13,6 +13,7 @@ public class CartPoleVisualizer extends AbstractVisualizer implements GlueStateP
 
 	private TinyGlue theGlueState = null;
 	private CartpoleTrackResponse trackResponse = null;
+	@SuppressWarnings("unused")
 	private int lastStateUpdateTimeStep = -1;
 
 	/**

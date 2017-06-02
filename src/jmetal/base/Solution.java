@@ -12,6 +12,7 @@ import java.io.Serializable;
 /**
  * Class representing a solution for a problem.
  */
+@SuppressWarnings("serial")
 public class Solution implements Serializable {
 
 	/**
