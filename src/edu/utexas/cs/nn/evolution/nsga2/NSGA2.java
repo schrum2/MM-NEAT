@@ -146,7 +146,8 @@ public class NSGA2<T> extends MuPlusLambda<T> {
 						// Genotype e is directly modified by the crossover call.
 						// Genotype otherOffspring is now a modified version of other.
 						otherOffspring = e.crossover(other);
-						assert otherOffspring.getId() != other.getId() : "otherOffspring should be a newly created genotype";
+						assert otherOffspring.getId() != otherSource.getId() : "otherOffspring should be a newly created genotype. otherSource.getId() is " + otherSource.getId() + 
+																	           ", and otherOffspring.getId() is "+otherOffspring.getId()+", and other.getId() is "+other.getId();
 					}
 					i++;
 					/*
