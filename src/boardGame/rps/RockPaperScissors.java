@@ -88,11 +88,10 @@ public class RockPaperScissors implements BoardGame<RPSState> {
 		return board.toString();
 	}
 
-	// Rock, Paper, Scissors has not state. Not clear how to evolve in this game
+	// Rock, Paper, Scissors has no state. Not clear how to evolve in this game
 	@Override
 	public String[] getFeatureLabels() {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	/**
@@ -102,5 +101,10 @@ public class RockPaperScissors implements BoardGame<RPSState> {
 	public void reset() {
 		currentPlayer = 0;
 		board = new RPSState();
+	}
+
+	@Override
+	public double[] getDescription() {
+		throw new UnsupportedOperationException();
 	}
 }
