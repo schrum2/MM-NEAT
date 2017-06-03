@@ -30,6 +30,8 @@ import micro.rts.PhysicalGameState;
 import micro.rts.units.UnitTypeTable;
 
 /**
+ * TODO: Comments. Clarify the type of opponent(s) being evolved against.
+ * 
  * @author alicequint
  *
  * @param <T> NN
@@ -181,7 +183,7 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 		if(Parameters.parameters.booleanParameter("microRTSEnemySequence"))
 			ai2 = EnemySequence.getAppropriateEnemy(MMNEAT.ea.currentGeneration());
 		ef.setNetwork(individual);
-		if(CommonConstants.watch)
+		if(CommonConstants.watch) // TODO: Make 640 be a public static final constant in MicroRTSUtility
 			w = PhysicalGameStatePanel.newVisualizer(gs,640,640,false,PhysicalGameStatePanel.COLORSCHEME_BLACK);
 		ArrayList<Pair<double[], double[]>> eval = MicroRTSUtility.oneEval((AI) ai1, ai2, this, ff, w);
 		return eval.get(0);

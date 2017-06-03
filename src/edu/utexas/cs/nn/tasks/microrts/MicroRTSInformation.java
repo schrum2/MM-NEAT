@@ -13,6 +13,8 @@ import micro.rts.units.UnitTypeTable;
  */
 public interface MicroRTSInformation {
 
+	// TODO: Comments need to clarify what all of these do
+	
 	public double getAverageUnitDifference();
 
 	public void setAvgUnitDiff(double diff);
@@ -31,7 +33,9 @@ public interface MicroRTSInformation {
 
 	public PhysicalGameState getPhysicalGameState();
 
-	//for co-evolution:
+	//for co-evolution: TODO: These need more clarification. Does the "2" mean for the second player?
+	// If so, then you should instead generalize the original versions of the methods to take an index
+	// identifying the player. Instead of having getBaseUpTime and getBaseUpTime2, just have getBaseUpTime(int player)
 	int getBaseUpTime2();
 
 	void setBaseUpTime2(int but);
