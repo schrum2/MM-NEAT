@@ -56,6 +56,8 @@ public abstract class NNEvaluationFunction<T extends Network> extends Evaluation
 	@Override
 	public float evaluate(int maxplayer, int minplayer, GameState gs) {
 		double[] inputs = gameStateToArray(gs);
+//		System.out.println("inputs.length:"+inputs.length);
+//		System.out.println("nn.numInputs():"+nn.numInputs());
 		double[] outputs = nn.process(inputs);
 		float score = (float) outputs[0];
 		return score;

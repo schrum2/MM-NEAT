@@ -119,12 +119,12 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 	 */
 	@Override
 	public List<Substrate> getSubstrateInformation() {
-		return MicroRTSUtility.getSubstrateInformation(pgs);
+		return MicroRTSUtility.getSubstrateInformation(initialPgs);
 	} 
 
 	@Override
 	public List<Pair<String, String>> getSubstrateConnectivity() {
-		return MicroRTSUtility.getSubstrateConnectivity(pgs);
+		return MicroRTSUtility.getSubstrateConnectivity(initialPgs);
 	}
 
 	@Override
@@ -137,6 +137,30 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 		return new String[]{"Utility"};
 	}
 
+	/**
+	 * Overrides a newly added method to LonerTask. It gets called before each evaluation.
+	 * If a MapSequence is used, then the new map is loaded here. This order of events is
+	 * required in order to make sure networks are displayed properly, because an agent's
+	 * network is displayed before the oneEval method below is called. Therefore, the map
+	 * gets set here, then the neural network is drawn in LonerTask, then the oneEval method
+	 * below executes.
+	 */
+	public void preEval() {
+		if(Parameters.parameters.booleanParameter("microRTSMapSequence")){
+			String newMapName = MapSequence.getAppropriateMap(MMNEAT.ea.currentGeneration());
+			if (!newMapName.equals(mapName)){ // Change the map
+				try {
+					// The new map is in the new initial game state
+					initialPgs = PhysicalGameState.load("data/microRTS/maps/" + newMapName, utt);
+					System.out.println("########## at gen" + MMNEAT.ea.currentGeneration() + " loaded new map: " + newMapName);
+					mapName = newMapName;
+				} catch (JDOMException | IOException e) {
+					e.printStackTrace(); System.exit(1);
+				}
+			}
+		}
+	}
+	
 	/**
 	 * all actions performed in a single evaluation of a genotype
 	 * loop taken from GameVisualSimulationTest, the rest based on MsPacManTask.oneEval()
@@ -155,22 +179,10 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 		averageUnitDifference = 0;
 		baseUpTime = 0;
 		harvestingEfficiencyIndex = 0;
+		// Clone the initial game state: fresh start
 		pgs = initialPgs.clone();
-		if(Parameters.parameters.booleanParameter("microRTSMapSequence")){
-			String newMapName = MapSequence.getAppropriateMap(MMNEAT.ea.currentGeneration());
-			if (!newMapName.equals(mapName)){
-				try {
-					pgs = PhysicalGameState.load("data/microRTS/maps/" + newMapName, utt); //somehow is loading Wrong map!!
-					System.out.println("########## at gen" + MMNEAT.ea.currentGeneration() + " loaded new map: " + newMapName);
-					mapName = newMapName;
-				} catch (JDOMException e) {
-					e.printStackTrace(); System.exit(1);
-				} catch (IOException e) {
-					e.printStackTrace(); System.exit(1);
-				}
-			}
-			ef.givePhysicalGameState(pgs);
-		}
+		// Evaluation function needs to track this state as it changes
+		ef.givePhysicalGameState(pgs);
 		gs = new GameState(pgs, utt);
 		if(!AiInitialized)
 			initializeAI();

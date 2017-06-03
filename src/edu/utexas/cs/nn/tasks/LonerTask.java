@@ -79,20 +79,26 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
 		 */
 		@SuppressWarnings("unchecked")
 		@Override
-		public Score<T> call() {//TODO 
+		public Score<T> call() {
 			DrawingPanel panel = null;
 			DrawingPanel cppnPanel = null;
+			// Before any evaluation happens
+			preEval();
+			//System.out.println("preEval done on gen " + MMNEAT.ea.currentGeneration());
+			
 			@SuppressWarnings("unused")
 			ArrayList<DrawingPanel> weightPanels;
 			// DrawingPanel[] subPanels = null;
 			if (genotype instanceof TWEANNGenotype) {
 				if (CommonConstants.showNetworks) {
-					panel = new DrawingPanel(TWEANN.NETWORK_VIEW_DIM, TWEANN.NETWORK_VIEW_DIM, "Evolving Network");
+					panel = new DrawingPanel(TWEANN.NETWORK_VIEW_DIM, TWEANN.NETWORK_VIEW_DIM, "Evolved Network "+genotype.getId());
 					panel.setLocation(NETWORK_WINDOW_OFFSET, 0);
-					((TWEANNGenotype) genotype).getPhenotype().draw(panel);
-					if(genotype instanceof HyperNEATCPPNGenotype) {//TODO
+					TWEANN network = ((TWEANNGenotype) genotype).getPhenotype();
+					//System.out.println("Draw network with " + network.numInputs() + " inputs");
+					network.draw(panel);
+					if(genotype instanceof HyperNEATCPPNGenotype) {
 						HyperNEATCPPNGenotype hngt = (HyperNEATCPPNGenotype) genotype;
-                                                if( Parameters.parameters.booleanParameter("showCPPN")) {
+						if( Parameters.parameters.booleanParameter("showCPPN")) {
 							cppnPanel = new DrawingPanel(500, 500, "Evolved CPPN");
 							cppnPanel.setLocation(TWEANN.NETWORK_VIEW_DIM + NETWORK_WINDOW_OFFSET, 0);
 							hngt.getCPPN().draw(cppnPanel);
@@ -172,7 +178,8 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
 				// }
 				// subPanels = null;
 				// }
-			} if(cppnPanel != null) {
+			} 
+			if(cppnPanel != null) {
 				cppnPanel.dispose();
 			}
 			return score;
@@ -200,6 +207,13 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
 	 */
 	public Score<T> evaluateOne(Genotype<T> genotype) {
 		return new EvaluationThread(this, genotype).call();
+	}
+	
+	/**
+	 * Code that can be executed before each evaluation starts
+	 */
+	public void preEval() {
+		// Do nothing by default
 	}
 
 	/**
@@ -246,8 +260,7 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
 		int maxPacManScore = 0;
 		Genotype<T> bestPacMan = null;
 		Score<T> bestScoreSet = null;
-		boolean trackBestPacManScore = 
-                                   CommonConstants.netio && this instanceof MsPacManTask
+		boolean trackBestPacManScore = CommonConstants.netio && this instanceof MsPacManTask
 				&& MMNEAT.ea instanceof MuLambda && ((MuLambda<T>) MMNEAT.ea).evaluatingParents;
 		for (int i = 0; i < population.size(); i++) {
 			try {
@@ -290,8 +303,7 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
 				bestDir.mkdir();
 			}
 			Easy.save(bestPacMan, bestPacManDir + "/bestPacMan.xml");
-			// System.out.println("Saved best Ms. Pac-Man agent with score of "
-			// + maxPacManScore);
+			// System.out.println("Saved best Ms. Pac-Man agent with score of "+maxPacManScore);
 			FileUtilities.simpleFileWrite(bestPacManDir + "/score.txt", bestScoreSet.toString());
 		}
 
