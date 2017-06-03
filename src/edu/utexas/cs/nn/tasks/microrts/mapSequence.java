@@ -1,6 +1,9 @@
 package edu.utexas.cs.nn.tasks.microrts;
 
-public class mapSequence {
+//TODO: Comment
+
+// TODO: Also, this should be an interface rather than a static class
+public class MapSequence {
 
 	private static final int gensPerMap = 1;
 	private static final String[] maps = new String[]{
@@ -13,6 +16,7 @@ public class mapSequence {
 			"BroodWar/(4)BloodBath.scmA.xml",
 	};
 
+	// Once this is made into an interface, this will not be static.
 	public static String getAppropriateMap(int generation){
 		return maps[Math.min(generation / gensPerMap, maps.length-1)];
 

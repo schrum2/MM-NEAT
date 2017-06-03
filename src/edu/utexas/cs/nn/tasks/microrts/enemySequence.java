@@ -11,7 +11,10 @@ import micro.ai.mcts.naivemcts.NaiveMCTS;
 import micro.ai.mcts.uct.UCT;
 import micro.ai.portfolio.PortfolioAI;
 
-public class enemySequence {
+// TODO: Add comments
+
+// TODO: Also, need to make this into an interface
+public class EnemySequence {
 	
 	private static final int gensPerEnemy = 5;
 	private static final AI[] enemies = new AI[]{
@@ -26,6 +29,7 @@ public class enemySequence {
 		new PortfolioAI()
 	};
 	
+	// TODO: This will no longer be a static method once this is an interface
 	public static AI getAppropriateEnemy(int generation){
 		return enemies[Math.min(gensPerEnemy, enemies.length-1)];
 	}
