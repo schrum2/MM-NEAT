@@ -155,7 +155,7 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 		harvestingEfficiencyIndex = 0;
 		pgs = initialPgs.clone();
 		if(Parameters.parameters.booleanParameter("microRTSMapSequence")){
-			String newMapName = mapSequence.getAppropriateMap(MMNEAT.ea.currentGeneration());
+			String newMapName = MapSequence.getAppropriateMap(MMNEAT.ea.currentGeneration());
 			if (!newMapName.equals(mapName)){
 				try {
 					pgs = PhysicalGameState.load("data/microRTS/maps/" + newMapName, utt); //somehow is loading Wrong map!!
@@ -179,7 +179,7 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 			}
 		}
 		if(Parameters.parameters.booleanParameter("microRTSEnemySequence"))
-			ai2 = enemySequence.getAppropriateEnemy(MMNEAT.ea.currentGeneration());
+			ai2 = EnemySequence.getAppropriateEnemy(MMNEAT.ea.currentGeneration());
 		ef.setNetwork(individual);
 		if(CommonConstants.watch)
 			w = PhysicalGameStatePanel.newVisualizer(gs,640,640,false,PhysicalGameStatePanel.COLORSCHEME_BLACK);
