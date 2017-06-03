@@ -29,6 +29,7 @@ public class MicroRTSUtility {
 		PhysicalGameState pgs = task.getPhysicalGameState();
 		boolean gameover = false;
 		int averageUnitDifference = 0;
+		// TODO: Explain this confusing calculation. Mention the competition rules
 		int maxCycles = 1000 * (int) Math.ceil(Math.sqrt(pgs.getHeight()));
 		PlayerAction pa1;
 		PlayerAction pa2;
