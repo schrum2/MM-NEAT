@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import boardGame.BoardGame;
 import boardGame.BoardGamePlayer;
-import boardGame.heuristics.BoardGameHeuristic;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.scores.Score;

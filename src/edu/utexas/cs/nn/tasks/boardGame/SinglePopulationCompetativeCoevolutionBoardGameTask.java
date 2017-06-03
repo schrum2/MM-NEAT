@@ -56,10 +56,10 @@ public class SinglePopulationCompetativeCoevolutionBoardGameTask<T extends Netwo
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public ArrayList<Pair<double[], double[]>> evaluateGroup(ArrayList<Genotype<T>> group) {
-		BoardGamePlayer[] players = new BoardGamePlayer[group.size()];
+		HeuristicBoardGamePlayer[] players = new HeuristicBoardGamePlayer[group.size()];
 		int index = 0;
 		for(Genotype<T> gene : group){
-			HeuristicBoardGamePlayer evolved = (HeuristicBoardGamePlayer) players[index]; // Creates the Player based on the command line
+			HeuristicBoardGamePlayer evolved = players[index]; // Creates the Player based on the command line
 			evolved.setHeuristic((new NNBoardGameHeuristic(gene.getPhenotype())));
 			players[index++] = evolved;
 		}

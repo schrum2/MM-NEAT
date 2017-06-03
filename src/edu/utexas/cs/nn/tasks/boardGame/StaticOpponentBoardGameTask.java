@@ -6,7 +6,6 @@ import java.util.List;
 import boardGame.BoardGame;
 import boardGame.BoardGamePlayer;
 import boardGame.TwoDimensionalBoardGameViewer;
-import boardGame.heuristics.BoardGameHeuristic;
 import boardGame.heuristics.HeuristicBoardGamePlayer;
 import boardGame.heuristics.NNBoardGameHeuristic;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
