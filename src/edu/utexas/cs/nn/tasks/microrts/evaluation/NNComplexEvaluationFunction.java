@@ -5,13 +5,15 @@ import micro.rts.GameState;
 import micro.rts.units.Unit;
 
 /**
+ * TODO: Explain what this class is
+ * 
  * @author alicequint
  * 
  * unfinished, eventually different substrate for each unit-type maybe.
  */
-public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluationFunction{
+public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluationFunction<T> {
 
-	
+	// TODO: Comments
 	@Override
 	protected double[] gameStateToArray(GameState gs) {
 		pgs = gs.getPhysicalGameState();
@@ -32,6 +34,7 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 		return inputs;
 	}
 
+	// TODO: Comments
 	@Override
 	public String[] sensorLabels() {
 		assert pgs != null : "There must be a physical game state in order to extract height and width";
@@ -43,14 +46,6 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 			}
 		}
 		return labels;
-	}
-
-	@Override
-	public float evaluate(int maxplayer, int minplayer, GameState gs) {
-		double[] inputs = gameStateToArray(gs);
-		double[] outputs = nn.process(inputs);
-		float score = (float) outputs[0];
-		return score;
 	}
 
 }
