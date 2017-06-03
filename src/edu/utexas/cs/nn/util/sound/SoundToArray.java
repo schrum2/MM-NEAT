@@ -5,6 +5,9 @@ import java.util.Arrays;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioFormat.Encoding;
+
+import edu.utexas.cs.nn.util.MiscUtil;
+
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
@@ -260,6 +263,9 @@ public class SoundToArray {
 	 * array using 16-bit audio format. Pretty sure it is throwing an UnsupportedAudioFileException
 	 * because it just returns null
 	 * 
+	 * Schrum: I fixed this so it returns an array (you just forgot the return) but the result still does
+	 *  not sound right. Annoying.
+	 * 
 	 * @param audio audio file
 	 * @return adjusted 16 bit double array
 	 */
@@ -268,13 +274,16 @@ public class SoundToArray {
 			AudioInputStream eightBitAIS = WAVUtil.audioStream(audio);
 			byte[] eightBitBytes = WAVUtil.WAVToByte(audio);
 			int[] eightBitInts = SoundToArray.extractAmplitudeDataFromAmplitudeByteArray(eightBitAIS.getFormat(), eightBitBytes);
+			//System.out.println(Arrays.toString(eightBitInts));
+			//MiscUtil.waitForReadStringAndEnterKeyPress();
 			int[] sixteenBitInts = new int[eightBitInts.length];
 			for(int i = 0; i < eightBitInts.length; i++) {
 				sixteenBitInts[i] = (eightBitInts[i]-128) *256;
 			}
-			SoundToArray.doubleArrayAmplitudesFromIntArrayAmplitudes(sixteenBitInts, 16);
+			return SoundToArray.doubleArrayAmplitudesFromIntArrayAmplitudes(sixteenBitInts, 16);
 		} catch (IOException | UnsupportedAudioFileException e) {
 			e.printStackTrace();
+			System.exit(1);
 		}
 		return null; //shouldn't happen
 	}

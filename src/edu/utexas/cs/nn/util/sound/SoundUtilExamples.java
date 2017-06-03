@@ -491,6 +491,6 @@ public class SoundUtilExamples {
 	public static void eightBitToSixteenBit() {
 		double[] harpAsSixteenBit = SoundToArray.eightBitToSixteenBit(HARP_WAV);
 		System.out.println(Arrays.toString(harpAsSixteenBit));
-		//PlayDoubleArray.playDoubleArray(harpAsSixteenBit);
+		PlayDoubleArray.playDoubleArray(harpAsSixteenBit);
 	}
 }
