@@ -5,12 +5,12 @@ import java.util.List;
 import java.util.Set;
 
 import boardGame.heuristics.BoardGameHeuristic;
+import boardGame.heuristics.HeuristicBoardGamePlayer;
 import edu.utexas.cs.nn.util.ClassCreation;
 import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
 
-public class BoardGamePlayerMinimax<T extends BoardGameState> implements BoardGamePlayer<T> {
+public class BoardGamePlayerMinimax<T extends BoardGameState> extends HeuristicBoardGamePlayer<T> {
 	
-	BoardGameHeuristic<T> boardHeuristic; // Should generalize to take any heuristic function, not just a network eval
 	private static final int DEPTH = 2; // Used to keep track of how far down the Tree to check
 	
 	/**
@@ -96,9 +96,4 @@ public class BoardGamePlayerMinimax<T extends BoardGameState> implements BoardGa
 		}
 	}
 
-	@Override
-	public void setHeuristic(BoardGameHeuristic<T> bgh) {
-		boardHeuristic = bgh;
-	}
-	
 }

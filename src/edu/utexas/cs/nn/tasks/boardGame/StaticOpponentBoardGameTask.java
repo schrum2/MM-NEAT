@@ -7,6 +7,7 @@ import boardGame.BoardGame;
 import boardGame.BoardGamePlayer;
 import boardGame.TwoDimensionalBoardGameViewer;
 import boardGame.heuristics.BoardGameHeuristic;
+import boardGame.heuristics.HeuristicBoardGamePlayer;
 import boardGame.heuristics.NNBoardGameHeuristic;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
@@ -27,7 +28,8 @@ public class StaticOpponentBoardGameTask<T extends Network> extends NoisyLonerTa
 	BoardGame bg;
 	@SuppressWarnings("rawtypes")
 	BoardGamePlayer opponent;
-	BoardGamePlayer player;
+	@SuppressWarnings("rawtypes")
+	HeuristicBoardGamePlayer player;
 	
 	/**
 	 * Constructor for a new BoardGameTask
@@ -40,7 +42,7 @@ public class StaticOpponentBoardGameTask<T extends Network> extends NoisyLonerTa
 			bg = (BoardGame) ClassCreation.createObject("boardGame");
 			opponent = (BoardGamePlayer) ClassCreation.createObject("boardGameOpponent"); // The Opponent
 			
-			player = (BoardGamePlayer) ClassCreation.createObject("boardGamePlayer"); // The Player
+			player = (HeuristicBoardGamePlayer) ClassCreation.createObject("boardGamePlayer"); // The Player
 		} catch (NoSuchMethodException e) {
 			e.printStackTrace();
 			System.out.println("BoardGame instance could not be loaded");
@@ -112,12 +114,8 @@ public class StaticOpponentBoardGameTask<T extends Network> extends NoisyLonerTa
 
 		if(CommonConstants.watch){ // If set to Visually Evaluate the Task
 		}
-
-		BoardGamePlayer evolved = player; // Creates the Player based on the command line
-		
 		player.setHeuristic((new NNBoardGameHeuristic(individual.getPhenotype())));
-		
-		BoardGamePlayer[] players = new BoardGamePlayer[]{evolved, opponent};
+		BoardGamePlayer[] players = new BoardGamePlayer[]{player, opponent};
 		return BoardGameUtil.playGame(bg, players).get(0);
 	}
 

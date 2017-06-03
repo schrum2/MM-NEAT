@@ -5,7 +5,7 @@ import java.util.List;
 
 import boardGame.BoardGame;
 import boardGame.BoardGamePlayer;
-import boardGame.heuristics.BoardGameHeuristic;
+import boardGame.heuristics.HeuristicBoardGamePlayer;
 import boardGame.heuristics.NNBoardGameHeuristic;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
@@ -59,11 +59,8 @@ public class SinglePopulationCompetativeCoevolutionBoardGameTask<T extends Netwo
 		BoardGamePlayer[] players = new BoardGamePlayer[group.size()];
 		int index = 0;
 		for(Genotype<T> gene : group){
-			
-			BoardGamePlayer evolved = players[index]; // Creates the Player based on the command line
-			
+			HeuristicBoardGamePlayer evolved = (HeuristicBoardGamePlayer) players[index]; // Creates the Player based on the command line
 			evolved.setHeuristic((new NNBoardGameHeuristic(gene.getPhenotype())));
-			
 			players[index++] = evolved;
 		}
 		return BoardGameUtil.playGame(bg, players);
