@@ -103,4 +103,10 @@ public class RockPaperScissors implements BoardGame<RPSState> {
 		currentPlayer = 0;
 		board = new RPSState();
 	}
+
+	@Override
+	public double[] getDescription() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
