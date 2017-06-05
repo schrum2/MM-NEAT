@@ -6,12 +6,13 @@ import java.util.Set;
 
 import boardGame.heuristics.BoardGameHeuristic;
 import boardGame.heuristics.HeuristicBoardGamePlayer;
+import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.util.ClassCreation;
 import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
 
 public class BoardGamePlayerMinimax<T extends BoardGameState> extends HeuristicBoardGamePlayer<T> {
 	
-	private static final int DEPTH = 2; // Used to keep track of how far down the Tree to check
+	private static final int DEPTH = Parameters.parameters.integerParameter("minimaxSearchDepth"); // Used to keep track of how far down the Tree to check
 	
 	/**
 	 * This constructor assumes an opponent agent is being created.
