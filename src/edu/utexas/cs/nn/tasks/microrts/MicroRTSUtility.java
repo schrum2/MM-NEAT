@@ -19,6 +19,8 @@ import micro.rts.units.Unit;
 
 public class MicroRTSUtility {
 	
+	public static final int WINDOW_LENGTH = 640;
+	
 	public static final int RESOURCE_GAIN_VALUE = 2;
 	private static final int WORKER_OUT_OF_BOUNDS_PENALTY = 1;
 	private static final double WORKER_HARVEST_VALUE = .5; //relative to 1 resource, for use in pool
@@ -29,7 +31,7 @@ public class MicroRTSUtility {
 		PhysicalGameState pgs = task.getPhysicalGameState();
 		boolean gameover = false;
 		int averageUnitDifference = 0;
-		// TODO: Explain this confusing calculation. Mention the competition rules
+		//evaluates to correct number of cycles in accordance with competition rules: 8x8 => 3000, 16x16 => 4000, 24x24 => 5000, etc.
 		int maxCycles = 1000 * (int) Math.ceil(Math.sqrt(pgs.getHeight()));
 		PlayerAction pa1;
 		PlayerAction pa2;
@@ -40,19 +42,18 @@ public class MicroRTSUtility {
 		Unit currentUnit;
 		boolean baseAlive = false;
 		boolean baseDeathRecorded = false;
-		do{
-//			System.out.println("getting action 1...");
+		
+		do{ //simulate game:
 			try {
 				pa1 = ai1.getAction(0, gs); //throws exception
 				gs.issueSafe(pa1);
 			} catch (Exception e1) { e1.printStackTrace();System.exit(1); }
-//			System.out.println("getting action 2...");
 			try {
 				pa2 = ai2.getAction(1, gs); //throws exception
 				gs.issueSafe(pa2);
 			} catch (Exception e) { e.printStackTrace();System.exit(1); }
-//			System.out.println("action gotten");
-			if(prog){
+			
+			if(prog){ //if our FitnessFunction needs us to record information throughout the game
 				unitDifferenceNow = 0;
 				maxBaseX = -1; //Eventually will have to change this to accomodate maps where multiple bases will not be in a straight line 
 				maxBaseY = -1;
@@ -92,7 +93,6 @@ public class MicroRTSUtility {
 						}
 					}//end j
 				}//end i
-//				System.out.println("units searched");
 				if(!baseAlive && !baseDeathRecorded) {
 					task.setBaseUpTime(gs.getTime());
 					baseDeathRecorded = true;
@@ -105,9 +105,7 @@ public class MicroRTSUtility {
 			} //end if(Parameters.. = progressive)
 			gameover  = gs.cycle();
 			if(CommonConstants.watch) w.repaint();
-//			System.out.println("data recorded for cycle: "+gs.getTime());
 		}while(!gameover && gs.getTime()< maxCycles);
-//		System.out.println("game completed");
 		task.setAvgUnitDiff(averageUnitDifference);
 		if(CommonConstants.watch) 
 			w.dispose();
@@ -116,7 +114,7 @@ public class MicroRTSUtility {
 	}
 
 	/**
-	 * Method that returns a list of information about the substrate layers
+	 * HyperNEAT Method that returns a list of information about the substrate layers
 	 * contained in the network.
 	 *
 	 * @return List of Substrates in order from inputs to hidden to output
@@ -137,38 +135,36 @@ public class MicroRTSUtility {
 //		if( My){
 //			
 //		}
+		
+		// Alice: when ComplexEvaluationFunction is more developped, this method will
+		// need to be generalized so that it can work with any combination of substrate parameters
 			
-		if(!Parameters.parameters.booleanParameter("mRTSComplex")){
 		Substrate processing = new Substrate(new Pair<Integer, Integer>(width, height), 
 				Substrate.PROCCESS_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, Substrate.PROCCESS_SUBSTRATE, 0), "Processing");
 		subs.add(processing);
 		Substrate output = new Substrate(new Pair<Integer, Integer>(1,1),
 				Substrate.OUTPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, Substrate.OUTPUT_SUBSTRATE, 0), "Output");
 		subs.add(output);
-		}
+		
 		return subs;
 	} 
 	
+	/**
+	 * HyperNEAT method that connects substrates to eachother
+	 * @param pgs 
+	 * 			physical game state in use
+	 * @return
+	 */
 	public static List<Pair<String, String>> getSubstrateConnectivity(PhysicalGameState pgs) {
 		ArrayList<Pair<String, String>> conn = new ArrayList<Pair<String, String>>();
 		
-		// Schrum: it is unclear what the intent of mRTSComplex is, since this code is
-		// unfinished. Whenever you leave confusing incomplete code in the project, you MUST
-		// leave comments explaining what you intend to eventually do with the code.
-		if(Parameters.parameters.booleanParameter("mRTSComplex")) {
-			// Schrum: Not sure what will eventually go here
-		} else {
-			// Schrum: Moved this to else case since since this should be the default
-			conn.add(new Pair<String, String>("Inputs Board State", "Processing"));			
-		}
+		//Alice: when ComplexEvaluationFunction is more developped, here is where additional substrates will be connected to each other
+		
+		conn.add(new Pair<String, String>("Inputs Board State", "Processing"));			
 		
 		conn.add(new Pair<String, String>("Processing","Output"));
 		if(Parameters.parameters.booleanParameter("extraHNLinks")) {
-			if(Parameters.parameters.booleanParameter("mRTSComplex")) {
-				// TODO: Add comment explaining what will eventually go here
-			} else {
 				conn.add(new Pair<String, String>("Inputs Board State","Output"));
-			}
 		}
 		return conn;
 	}

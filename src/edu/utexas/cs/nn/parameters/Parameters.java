@@ -590,7 +590,6 @@ public class Parameters {
 		booleanOptions.add("hierarchicalMultitask", false, "Each multitask mode can consist of multiple preference neuron modules");
 		booleanOptions.add("trackCombiningCrossover", false, "Whether or not to track combining crossover information");
 		booleanOptions.add("moPinball", false, "Subtracts the distance to the target from the Fitness; getting closer means a higher score overall");
-		booleanOptions.add("mRTSComplex", false, "whether multiple substrates are used as inputs");
 		booleanOptions.add("mRTSUnits", false, "whether there is a substrate dedicated to (both players') movable units");
 		booleanOptions.add("mRTSBuildings", false, "whether there is a substrate dedicated to (both players') NON-movable units");
 		booleanOptions.add("mRTSMyUnits", false, "whether there is a substrate dedicated to blue agent's movable units");
@@ -599,8 +598,6 @@ public class Parameters {
 		booleanOptions.add("mRTSOpponentBuildings", false, "whether there is a substrate dedicated to red agent's NON-movable units");
 		booleanOptions.add("mRTSmyAll", false, "whether there is a substrate dedicated to all of the red agents' units");
 		booleanOptions.add("mRTSOpponentsAll", false, "whether there is a substrate dedicated to all of the blue agents' units");
-		booleanOptions.add("microRTSEnemySequence", false, "enables iterative evolution with increasingly difficult opponents");
-		booleanOptions.add("microRTSMapSequence", false, "enables iterative evolution with increasingly large maps");
 		booleanOptions.add("heuristicOverrideTerminalStates", false, "Overrides the Network's evaluation of a terminal BoardGameState");
 		// Double parameters
 		doubleOptions.add("linkExpressionThreshold", 0.2, "Threshold for hyperNEAT output to result in an expressed link");
@@ -760,6 +757,8 @@ public class Parameters {
 		classOptions.add("microRTSAgent", UCT.class, "File containing AI to evolve in MicroRTSTask");
 		classOptions.add("microRTSOpponent", RandomBiasedAI.class, "File containing AI to play against in MicroRTSTask");
 		classOptions.add("microRTSOpponentEvaluationFunction", null, "File containing evaluation function for opponent in MicroRTSTask");
+		classOptions.add("microRTSEnemySequence", null, "class containing sequence of opponents for iterative evolution");
+		classOptions.add("microRTSMapSequence", null, "class containing sequence of maps for iterative evolution");
 	}
 
 	/**

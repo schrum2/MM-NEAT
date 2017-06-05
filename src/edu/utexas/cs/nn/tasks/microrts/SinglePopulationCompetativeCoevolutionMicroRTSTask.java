@@ -40,9 +40,10 @@ public class SinglePopulationCompetativeCoevolutionMicroRTSTask<T extends Networ
 	private PhysicalGameStateJFrame w = null;
 	private GameState gs;
 	private boolean AiInitialized = false;
-
-	private double averageUnitDifference;
+	private MapSequence maps = null;
 	private String mapName;
+	
+	private double averageUnitDifference;
 	private int baseUpTime1;
 	private int baseUpTime2;
 	private int harvestingEfficiencyIndex1;
@@ -204,13 +205,12 @@ public class SinglePopulationCompetativeCoevolutionMicroRTSTask<T extends Networ
 
 	@Override
 	public void preEval() {
-		if(Parameters.parameters.booleanParameter("microRTSMapSequence")){
-			String newMapName = MapSequence.getAppropriateMap(MMNEAT.ea.currentGeneration());
+		if(Parameters.parameters.classParameter("microRTSMapSequence") != null){
+			String newMapName = maps.getAppropriateMap(MMNEAT.ea.currentGeneration());
 			if (!newMapName.equals(mapName)){ // Change the map
 				try {
 					// The new map is in the new initial game state
 					initialPgs = PhysicalGameState.load("data/microRTS/maps/" + newMapName, utt);
-					System.out.println("########## at gen" + MMNEAT.ea.currentGeneration() + " loaded new map: " + newMapName);
 					mapName = newMapName;
 				} catch (JDOMException | IOException e) {
 					e.printStackTrace(); System.exit(1);

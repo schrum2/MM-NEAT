@@ -45,6 +45,8 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 	private GameState gs;
 	private String mapName;
 	public boolean AiInitialized = false;
+	private MapSequence maps = null;
+	private EnemySequence enemies = null;
 
 	private double averageUnitDifference;
 	private int baseUpTime;
@@ -63,10 +65,14 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 		try {
 			ef = (NNEvaluationFunction<T>) ClassCreation.createObject(Parameters.parameters.classParameter("microRTSEvaluationFunction"));
 			if(Parameters.parameters.classParameter("microRTSOpponentEvaluationFunction") != null)
-				ef2 =(NNEvaluationFunction<T>) ClassCreation.createObject(Parameters.parameters.classParameter("microRTSOpponentEvaluationFunction"));
+				ef2 = (NNEvaluationFunction<T>) ClassCreation.createObject(Parameters.parameters.classParameter("microRTSOpponentEvaluationFunction"));
 			ff = (RTSFitnessFunction) ClassCreation.createObject(Parameters.parameters.classParameter("microRTSFitnessFunction"));
 			initialPgs = PhysicalGameState.load("data/microRTS/maps/" + Parameters.parameters.stringParameter("map"), utt);
 			pgs = initialPgs.clone();
+			
+			maps = (MapSequence) ClassCreation.createObject(Parameters.parameters.classParameter("microRTSMapSequence"));
+			enemies = (EnemySequence) ClassCreation.createObject(Parameters.parameters.classParameter("microRTSenemySequence")); 
+			
 		} catch (JDOMException | IOException | NoSuchMethodException e) { 
 			e.printStackTrace();
 			System.exit(1);
@@ -146,8 +152,8 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 	 * below executes.
 	 */
 	public void preEval() {
-		if(Parameters.parameters.booleanParameter("microRTSMapSequence")){
-			String newMapName = MapSequence.getAppropriateMap(MMNEAT.ea.currentGeneration());
+		if(Parameters.parameters.classParameter("microRTSMapSequence") != null){
+			String newMapName = maps.getAppropriateMap(MMNEAT.ea.currentGeneration());
 			if (!newMapName.equals(mapName)){ // Change the map
 				try {
 					// The new map is in the new initial game state
@@ -192,11 +198,11 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 				ef2.givePhysicalGameState(initialPgs);
 			}
 		}
-		if(Parameters.parameters.booleanParameter("microRTSEnemySequence"))
-			ai2 = EnemySequence.getAppropriateEnemy(MMNEAT.ea.currentGeneration());
+		if(Parameters.parameters.classParameter("microRTSEnemySequence")!=null)
+			ai2 = enemies.getAppropriateEnemy(MMNEAT.ea.currentGeneration());
 		ef.setNetwork(individual);
 		if(CommonConstants.watch) // TODO: Make 640 be a public static final constant in MicroRTSUtility
-			w = PhysicalGameStatePanel.newVisualizer(gs,640,640,false,PhysicalGameStatePanel.COLORSCHEME_BLACK);
+			w = PhysicalGameStatePanel.newVisualizer(gs,MicroRTSUtility.WINDOW_LENGTH,MicroRTSUtility.WINDOW_LENGTH,false,PhysicalGameStatePanel.COLORSCHEME_BLACK);
 		ArrayList<Pair<double[], double[]>> eval = MicroRTSUtility.oneEval((AI) ai1, ai2, this, ff, w);
 		return eval.get(0);
 
