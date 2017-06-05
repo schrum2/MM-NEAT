@@ -13,6 +13,8 @@ import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
 public class BoardGamePlayerMinimax<T extends BoardGameState> extends HeuristicBoardGamePlayer<T> {
 	
 	private static final int DEPTH = Parameters.parameters.integerParameter("minimaxSearchDepth"); // Used to keep track of how far down the Tree to check
+	private static final double ALPHA = Double.NEGATIVE_INFINITY; // Holds the Starting Value for Alpha
+	private static final double BETA = Double.POSITIVE_INFINITY; // Holds the Starting Value for Beta
 	
 	/**
 	 * This constructor assumes an opponent agent is being created.
@@ -53,7 +55,7 @@ public class BoardGamePlayerMinimax<T extends BoardGameState> extends HeuristicB
 
 		int index = 0;
 		for(T bgs : poss){ // Gets the network's outputs for all possible BoardGameStates
-			utilities[index++] = minimax(bgs, DEPTH, true); // Action is being taken as the Maximizing Player; maxPlayer == true
+			utilities[index++] = minimax(bgs, DEPTH, ALPHA, BETA, true); // Action is being taken as the Maximizing Player; maxPlayer == true
 		}
 
 		return poss.get(StatisticsUtilities.argmax(utilities)); // Returns the BoardGameState which produced the highest network output
@@ -66,11 +68,12 @@ public class BoardGamePlayerMinimax<T extends BoardGameState> extends HeuristicB
 	 * 
 	 * @param bgState Possible BoardGame Move being evaluated
 	 * @param depth Depth of the current Move in the Move Tree
+	 * @param alpha Ignored by default Minimax, but used by Alpha-Beta Pruning Minimax
+	 * @param beta Ignored by default Minimax, but used by Alpha-Beta Pruning Minimax
 	 * @param maxPlayer Is the current Move being taken by the Player?
 	 * @return Max Double Value to be Scored from the given Move
 	 */
-	// TODO: Add parameters that are ignored by minimax, but used by alpha-beta pruning
-	protected double minimax(T bgState, int depth, boolean maxPlayer){
+	protected double minimax(T bgState, int depth, double alpha, double beta, boolean maxPlayer){
 		
 		if(depth == 0 || bgState.endState()){
 			return boardHeuristic.heuristicEvalution(bgState); // Return the Heuristic value of the Node
@@ -81,7 +84,7 @@ public class BoardGamePlayerMinimax<T extends BoardGameState> extends HeuristicB
 			Set<T> poss = bgState.possibleBoardGameStates(bgState);
 			
 			for(T childState: poss){
-				double v = minimax(childState, depth-1, !maxPlayer);
+				double v = minimax(childState, depth-1, ALPHA, BETA, !maxPlayer);
 				bestValue = Math.max(bestValue, v);
 			}
 			return bestValue;
@@ -90,7 +93,7 @@ public class BoardGamePlayerMinimax<T extends BoardGameState> extends HeuristicB
 			Set<T> poss = bgState.possibleBoardGameStates(bgState);
 			
 			for(T childState: poss){
-				double v = minimax(childState, depth -1, !maxPlayer);
+				double v = minimax(childState, depth-1, ALPHA, BETA, !maxPlayer);
 				bestValue = Math.min(bestValue, v);
 			}
 			return bestValue;
