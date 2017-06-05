@@ -31,7 +31,7 @@ import edu.utexas.cs.nn.util.sound.WAVUtil;
  *
  * @param <T>
  */
-public class RemixbreederTask<T extends Network> extends BreedesizerTask<T> {
+public class SoundRemixTask<T extends Network> extends BreedesizerTask<T> {
 
 	public static final int CPPN_NUM_INPUTS	= 4;
 
@@ -39,7 +39,7 @@ public class RemixbreederTask<T extends Network> extends BreedesizerTask<T> {
 	public int playBackRate;
 	public AudioFormat format;
 
-	public RemixbreederTask() throws IllegalAccessException {
+	public SoundRemixTask() throws IllegalAccessException {
 		super(false); // do not use keyboard		
 		initializationComplete = false;
 		try {
@@ -100,7 +100,7 @@ public class RemixbreederTask<T extends Network> extends BreedesizerTask<T> {
 
 	@Override
 	protected String getWindowTitle() {
-		return "Remixbreeder";
+		return "SoundRemix";
 	}
 
 	@Override
