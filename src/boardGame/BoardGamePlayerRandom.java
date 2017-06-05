@@ -2,10 +2,13 @@ package boardGame;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import edu.utexas.cs.nn.util.random.RandomNumbers;
 
 public class BoardGamePlayerRandom<T extends BoardGameState> implements BoardGamePlayer<T> {
+	
+	Random random = RandomNumbers.randomGenerator;
 	
 	/**
 	 * Chooses a random action out of the list of possible actions at a given BoardGameState
@@ -17,7 +20,7 @@ public class BoardGamePlayerRandom<T extends BoardGameState> implements BoardGam
 	public T takeAction(T current) {
 		List<T> poss = new ArrayList<T>();
 		poss.addAll(current.possibleBoardGameStates(current));
-		T temp = poss.get(RandomNumbers.randomGenerator.nextInt(poss.size()));
+		T temp = poss.get(random.nextInt(poss.size()));
 		return temp;
 	}
 }
