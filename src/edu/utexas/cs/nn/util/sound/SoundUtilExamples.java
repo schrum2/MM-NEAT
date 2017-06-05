@@ -69,7 +69,7 @@ public class SoundUtilExamples {
 		Network cppn = test.getCPPN();
 
 		// method call
-		eightBitToSixteenBit();
+		overlapWAVFiles();
 	}
 
 	public static void randomCPPNExamples(Network cppn) throws IOException {
@@ -314,7 +314,7 @@ public class SoundUtilExamples {
 		PlayDoubleArray.playDoubleArray(splice);
 	}
 
-	public static void overlapWAVFiles() throws IOException {
+	public static void overlapWAVFiles() throws IOException, UnsupportedAudioFileException {
 		byte[] bearNumbers = WAVUtil.WAVToByte(BEARGROWL_WAV);
 		byte[] applauseNumbers =WAVUtil.WAVToByte(APPLAUSE_WAV);	
 		byte[] harpNumbers = WAVUtil.WAVToByte(HARP_WAV);
@@ -322,15 +322,20 @@ public class SoundUtilExamples {
 		System.out.println("applause: " + applauseNumbers.length);
 		System.out.println("harp: " + harpNumbers.length);
 		double[] applauseAndHarp = ArrayUtil.overlap(APPLAUSE_WAV, HARP_WAV);
+		for(int i = 0; i < applauseAndHarp.length; i++) {
+			applauseAndHarp[i] = applauseAndHarp[i]/2.0;
+		}
 		System.out.println("applauseAndHarp length: " + applauseAndHarp.length);
 		double[] bearGrowlAndHarp = ArrayUtil.overlap(BEARGROWL_WAV, HARP_WAV);
 		System.out.println("bearGrowlAndHarp length: " + bearGrowlAndHarp.length);
 		double[] applauseAndBearGrowl = ArrayUtil.overlap(APPLAUSE_WAV, BEARGROWL_WAV);
 		System.out.println("applauseAndBearGrowl length: " + applauseAndBearGrowl.length);
+		
+		AudioInputStream harpAIS = WAVUtil.audioStream(HARP_WAV);
 
-		PlayDoubleArray.playDoubleArray(applauseAndHarp);
-		PlayDoubleArray.playDoubleArray(bearGrowlAndHarp);
-		PlayDoubleArray.playDoubleArray(applauseAndBearGrowl);
+		PlayDoubleArray.playDoubleArray(harpAIS.getFormat(), applauseAndHarp);
+		//PlayDoubleArray.playDoubleArray(bearGrowlAndHarp);
+		//PlayDoubleArray.playDoubleArray(applauseAndBearGrowl);
 	}
 
 	// Won't work with the new AmplitudeArrayPlayer that contains the playDouble method (no longer static).
