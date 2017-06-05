@@ -78,6 +78,17 @@ public class GraphicsUtil {
 		return remixedImage;
 	}
 	
+	/**
+	 * Accesses HSB at a specific pixel in a BufferedImage. Does so by accessing the 
+	 * RGB first and then creating a Color class instance to convert the components of 
+	 * the RGB to HSB. Creates an array of floats that numerically represent the hue,
+	 * saturation, and brightness of the pixel. 
+	 * 
+	 * @param img Image containing pixel
+	 * @param x x-coordinate of pixel
+	 * @param y y-coordinate of pixel
+	 * @return array of floats representing hue, saturation, and brightness of pixel
+	 */
 	private static float[] getHSB(BufferedImage img, int x, int y) {
 		int RGB = img.getRGB(x, y);
 		 Color c = new Color(RGB, true);
