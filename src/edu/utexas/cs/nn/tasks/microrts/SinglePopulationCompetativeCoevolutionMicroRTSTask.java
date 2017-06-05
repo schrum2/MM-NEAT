@@ -42,6 +42,7 @@ public class SinglePopulationCompetativeCoevolutionMicroRTSTask<T extends Networ
 	private boolean AiInitialized = false;
 
 	private double averageUnitDifference;
+	private String mapName;
 	private int baseUpTime1;
 	private int baseUpTime2;
 	private int harvestingEfficiencyIndex1;
@@ -170,9 +171,8 @@ public class SinglePopulationCompetativeCoevolutionMicroRTSTask<T extends Networ
 		ef2.setNetwork(group.get(1));
 		if(CommonConstants.watch)
 			w = PhysicalGameStatePanel.newVisualizer(gs,640,640,false,PhysicalGameStatePanel.COLORSCHEME_WHITE);
-		ArrayList<Pair<double[], double[]>> a = (MicroRTSUtility.oneEval((AI)ai1, (AI)ai2, this, ff, w));
-		//TODO oneEval calls ff which will soon return an ArrayList of pairs
-		return a;
+		ArrayList<Pair<double[], double[]>> al = (MicroRTSUtility.oneEval((AI)ai1, (AI)ai2, this, ff, w));
+		return al;
 	}
 	
 	/**
@@ -202,6 +202,24 @@ public class SinglePopulationCompetativeCoevolutionMicroRTSTask<T extends Networ
 		return 2;
 	}
 
+	@Override
+	public void preEval() {
+		if(Parameters.parameters.booleanParameter("microRTSMapSequence")){
+			String newMapName = MapSequence.getAppropriateMap(MMNEAT.ea.currentGeneration());
+			if (!newMapName.equals(mapName)){ // Change the map
+				try {
+					// The new map is in the new initial game state
+					initialPgs = PhysicalGameState.load("data/microRTS/maps/" + newMapName, utt);
+					System.out.println("########## at gen" + MMNEAT.ea.currentGeneration() + " loaded new map: " + newMapName);
+					mapName = newMapName;
+				} catch (JDOMException | IOException e) {
+					e.printStackTrace(); System.exit(1);
+				}
+			}
+		}
+		
+	}
+	
 	@Override
 	public double getAverageUnitDifference(){return averageUnitDifference;}
 	@Override

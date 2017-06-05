@@ -24,6 +24,9 @@ public abstract class SinglePopulationCoevolutionTask<T> implements SinglePopula
 		}		
 	}
 	
+	//most tasks dont need to do anything here,
+	public void preEval(){};
+	
 	@Override
 	public double getTimeStamp() {
 		// Many Domains don't use TimeStamp
@@ -60,6 +63,7 @@ public abstract class SinglePopulationCoevolutionTask<T> implements SinglePopula
 				for(int k = 0; k < groupSize; k++) {
 					group.add(population.get(groupOrder.get(j+k)));
 				}
+				preEval();
 				// Get scores
 				ArrayList<Pair<double[], double[]>> result = evaluateGroup(group);
 				// Save scores in the right place

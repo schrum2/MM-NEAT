@@ -111,5 +111,11 @@ public class SinglePopulationCompetativeCoevolutionBoardGameTask<T extends Netwo
 		return new String[]{"Utility"};
 	}
 
+	@Override
+	public void preEval() {
+		// TODO Auto-generated method stub
+		
+	}
+
 
 }
