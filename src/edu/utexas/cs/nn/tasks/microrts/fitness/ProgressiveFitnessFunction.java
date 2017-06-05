@@ -13,11 +13,9 @@ public class ProgressiveFitnessFunction extends RTSFitnessFunction{
 	/**
 	 * uses information collected over time in MicroRTSUtility.oneEval
 	 */
-	//TODO return arraylist of pairs 
 	@Override
 	public ArrayList<Pair<double[], double[]>> getFitness(GameState gs) {
 		ArrayList<Pair<double[], double[]>> result = new ArrayList<>(); 
-		boolean coevolution = task.getClass().getName().equals("SinglePopulationCompetativeCoevolutionMicroRTSTask");
 		double[] fitness = new double[]{
 				normalize(task.getHarvestingEfficiency(1), maxCycles * task.getResourceGainValue()),
 				normalize(task.getBaseUpTime(1), maxCycles),
@@ -44,7 +42,7 @@ public class ProgressiveFitnessFunction extends RTSFitnessFunction{
 
 	@Override
 	public String[] getFunctions() {
-		if(task.getClass().equals(MicroRTSTask.class))
+		if(!coevolution)
 			return new String[]{"Harvesting Efficiency","Time Base was Alive","Average Unit Difference"};
 		else //assuming task is co-evolving counterpart 
 			return new String[]{"p1's Harvesting Efficiency","p1's Time Base was Alive","p1's Average Unit Difference"

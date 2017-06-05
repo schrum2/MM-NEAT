@@ -69,13 +69,13 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 			initialPgs = PhysicalGameState.load("data/microRTS/maps/" + Parameters.parameters.stringParameter("map"), utt);
 			pgs = initialPgs.clone();
 
-			maps = (MapSequence) ClassCreation.createObject(Parameters.parameters.classParameter("microRTSMapSequence"));
-			enemies = (EnemySequence) ClassCreation.createObject(Parameters.parameters.classParameter("microRTSEnemySequence")); 
+			maps = (MapSequence) ClassCreation.createObject(Parameters.parameters.classParameter("microRTSMapSequence")); 
 
 		} catch (JDOMException | IOException | NoSuchMethodException e) { 
 			e.printStackTrace();
 			System.exit(1);
 		}
+		ff.setCoevolution(false);
 		for(String function : ff.getFunctions()){
 			MMNEAT.registerFitnessFunction(function);
 		}
@@ -151,13 +151,17 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 	 * below executes.
 	 */
 	public void preEval() {
+		if(enemies == null){
+			try {
+				enemies = (EnemySequence) ClassCreation.createObject(Parameters.parameters.classParameter("microRTSEnemySequence"));
+			} catch (NoSuchMethodException e1) { e1.printStackTrace(); System.exit(1);}
+		}
 		if(Parameters.parameters.classParameter("microRTSMapSequence") != null){
 			String newMapName = maps.getAppropriateMap(MMNEAT.ea.currentGeneration());
 			if (!newMapName.equals(mapName)){ // Change the map
 				try {
 					// The new map is in the new initial game state
 					initialPgs = PhysicalGameState.load("data/microRTS/maps/" + newMapName, utt);
-					System.out.println("########## at gen" + MMNEAT.ea.currentGeneration() + " loaded new map: " + newMapName);
 					mapName = newMapName;
 				} catch (JDOMException | IOException e) {
 					e.printStackTrace(); System.exit(1);
@@ -235,7 +239,7 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 	public void setBaseUpTime(int but, int player) {
 		if(player == 1)baseUpTime = but;
 		else throw new IllegalArgumentException("MicroRTSTask is not equipped to record results for > 1 player");
-		
+
 	}
 	@Override
 	public int getHarvestingEfficiency(int player){

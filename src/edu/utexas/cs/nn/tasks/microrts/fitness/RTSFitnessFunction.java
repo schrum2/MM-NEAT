@@ -13,6 +13,7 @@ public abstract class RTSFitnessFunction {
 	protected int maxCycles;
 	protected PhysicalGameState pgs = null;
 	protected MicroRTSInformation task = null;
+	protected boolean coevolution;
 	
 	/**
 	 * judges an individual agent's fitness
@@ -33,6 +34,9 @@ public abstract class RTSFitnessFunction {
 	@SuppressWarnings("rawtypes") //doesn't need to know phenotype
 	public void giveTask(MicroRTSInformation task) {
 		this.task = task;
+	}
+	public void setCoevolution(boolean b) {
+		coevolution = b;
 	}
 
 }

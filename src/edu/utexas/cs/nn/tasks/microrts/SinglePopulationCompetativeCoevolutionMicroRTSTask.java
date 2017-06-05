@@ -73,6 +73,7 @@ public class SinglePopulationCompetativeCoevolutionMicroRTSTask<T extends Networ
 			e.printStackTrace();
 			System.exit(1);
 		}
+		ff.setCoevolution(true);
 		for(String function : ff.getFunctions()){
 			MMNEAT.registerFitnessFunction(function);
 		}
