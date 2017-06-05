@@ -35,12 +35,10 @@ public class NNBoardGameHeuristic<T extends Network, S extends BoardGameState> i
 			System.out.println(current);
 			MiscUtil.waitForReadStringAndEnterKeyPress();
 		}
-		network.flush(); // wipe out recurrent activations
-		
 		if(Parameters.parameters.booleanParameter("heuristicOverrideTerminalStates")){ // Overrides the Network's evaluation if set to True
 			if(current.endState()){
 				List<Integer> winners = current.getWinners();
-				
+
 				if(winners.size() == 1 && winners.contains(current.getCurrentPlayer())){ // Current Player is the only winning Player
 					return 1;
 				}else if(winners.size() > 1 && winners.contains(current.getCurrentPlayer())){ // More than one Player wins, but contains Current Player; considered a Tie
@@ -48,8 +46,9 @@ public class NNBoardGameHeuristic<T extends Network, S extends BoardGameState> i
 				}else{ // Undisputed Loss; Current Player does not win at all
 					return -1;
 				}
-				
+
 			}else{
+				network.flush(); // wipe out recurrent activations
 				return network.process(featExtract.getFeatures(current))[0]; // Returns the Network's Score for the current BoardGameState's descriptor
 			}
 		}
