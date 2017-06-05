@@ -26,7 +26,12 @@ public interface BoardGameState {
 	 */
 	public boolean endState();
 	
-
+	/**
+	 * Returns the Index of the next Player to make a Move
+	 * 
+	 * @return Index of the Player about to make a Move
+	 */
+	public int getCurrentPlayer();
 	
 	/**
 	 * Returns a List of all the possible BoardGameStates when starting at a given BoardGameState

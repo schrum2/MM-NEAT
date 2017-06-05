@@ -82,6 +82,10 @@ public abstract class TwoDimensionalBoardGameState implements BoardGameState {
 			}
 		}
 	}
+	
+	public int getCurrentPlayer(){
+		return nextPlayer;
+	}
 
 	/**
 	 * Places pieces on board as they will be at the start of a game

@@ -196,5 +196,11 @@ public class RPSState implements BoardGameState{
 		// TODO Auto-generated method stub
 		return 2;
 	}
+
+	@Override
+	public int getCurrentPlayer() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 	
 }
