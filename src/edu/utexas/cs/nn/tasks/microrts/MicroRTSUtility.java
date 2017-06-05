@@ -29,6 +29,7 @@ public class MicroRTSUtility {
 		PhysicalGameState pgs = task.getPhysicalGameState();
 		boolean gameover = false;
 		int averageUnitDifference = 0;
+		// TODO: Explain this confusing calculation. Mention the competition rules
 		int maxCycles = 1000 * (int) Math.ceil(Math.sqrt(pgs.getHeight()));
 		PlayerAction pa1;
 		PlayerAction pa2;
@@ -151,16 +152,20 @@ public class MicroRTSUtility {
 	public static List<Pair<String, String>> getSubstrateConnectivity(PhysicalGameState pgs) {
 		ArrayList<Pair<String, String>> conn = new ArrayList<Pair<String, String>>();
 		
+		// Schrum: it is unclear what the intent of mRTSComplex is, since this code is
+		// unfinished. Whenever you leave confusing incomplete code in the project, you MUST
+		// leave comments explaining what you intend to eventually do with the code.
 		if(Parameters.parameters.booleanParameter("mRTSComplex")) {
-			conn.add(new Pair<String, String>("Inputs Board State", "Processing"));
+			// Schrum: Not sure what will eventually go here
 		} else {
-			
+			// Schrum: Moved this to else case since since this should be the default
+			conn.add(new Pair<String, String>("Inputs Board State", "Processing"));			
 		}
 		
 		conn.add(new Pair<String, String>("Processing","Output"));
 		if(Parameters.parameters.booleanParameter("extraHNLinks")) {
 			if(Parameters.parameters.booleanParameter("mRTSComplex")) {
-
+				// TODO: Add comment explaining what will eventually go here
 			} else {
 				conn.add(new Pair<String, String>("Inputs Board State","Output"));
 			}

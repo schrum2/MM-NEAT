@@ -2,7 +2,6 @@ package edu.utexas.cs.nn.tasks.microrts.evaluation;
 
 import edu.utexas.cs.nn.networks.Network;
 import micro.rts.GameState;
-import micro.rts.PhysicalGameState;
 import micro.rts.units.Unit;
 
 public class NN2DEvaluationFunction<T extends Network> extends NNEvaluationFunction<T> {
@@ -59,14 +58,5 @@ public class NN2DEvaluationFunction<T extends Network> extends NNEvaluationFunct
 			} 
 		}
 		return labels; 
-	}
-	
-	@Override
-	public float evaluate(int maxplayer, int minplayer, GameState gs) {
-		double[] inputs = gameStateToArray(gs);
-		double[] outputs = nn.process(inputs);
-		float score = (float) outputs[0];
-		return score;
-	}
-
+	}	
 }

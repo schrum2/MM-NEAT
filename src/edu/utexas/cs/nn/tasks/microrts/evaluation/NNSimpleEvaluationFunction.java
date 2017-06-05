@@ -8,20 +8,6 @@ import micro.rts.units.Unit;
 public class NNSimpleEvaluationFunction<T extends Network> extends NNEvaluationFunction<T> {
 
 	/**
-	 * @param maxplayer - player to be evaluated
-	 * @param minplayer - opponent
-	 * @param gs - specified state of the game
-	 * @return number from -1 to 1 depending on if and how hard evaluated player is winning/losing
-	 */
-	@Override
-	public float evaluate(int maxplayer, int minplayer, GameState gs) {
-		double[] inputs = gameStateToArray(gs);
-		double[] outputs = nn.process(inputs);
-		float score = (float) outputs[0];
-		return score;
-	}
-
-	/**
 	 * counts the number of each unit belonging to each player
 	 * 
 	 * @param gs current game state
@@ -67,8 +53,22 @@ public class NNSimpleEvaluationFunction<T extends Network> extends NNEvaluationF
 		return unitsOnBoard;
 	}
 
+	/**
+	 * Normalize all values in the array to the range [0,1].
+	 * 
+	 * This kind of operation is so common that it should probably be defined in ArrayUtil instead.
+	 * 
+	 * @param data array whose values are normalized
+	 * @param max Maximum raw score used for normalization
+	 * @return Array of normalized values
+	 * 
+	 * HOWEVER: The original data is normalized too. Either do not return anything,
+	 *          or use Arrays.copyOf to copy the array before returning the normalized version.
+	 */
 	private double[] normalize (double[] data, int max){
-		for(double d:data) d /= max;
+		for(int i = 0; i < data.length; i++) {
+			data[i] /= max;
+		}
 		return data;
 	}
 

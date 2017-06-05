@@ -5,14 +5,19 @@ import java.util.List;
 import java.util.Set;
 
 import boardGame.heuristics.BoardGameHeuristic;
+import boardGame.heuristics.HeuristicBoardGamePlayer;
 import edu.utexas.cs.nn.util.ClassCreation;
 import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
 
-public class BoardGamePlayerMinimax<T extends BoardGameState> implements BoardGamePlayer<T> {
+public class BoardGamePlayerMinimax<T extends BoardGameState> extends HeuristicBoardGamePlayer<T> {
 	
-	BoardGameHeuristic<T> boardHeuristic; // Should generalize to take any heuristic function, not just a network eval
 	private static final int DEPTH = 2; // Used to keep track of how far down the Tree to check
 	
+	/**
+	 * This constructor assumes an opponent agent is being created.
+	 * But if an evolved agent needs to be created, its heuristic
+	 * can be re-loaded with the setHeuristic method.
+	 */
 	@SuppressWarnings("unchecked")
 	public BoardGamePlayerMinimax(){
 		try {
@@ -23,6 +28,10 @@ public class BoardGamePlayerMinimax<T extends BoardGameState> implements BoardGa
 		}
 	}
 	
+	/**
+	 * New instance with a given heuristic.
+	 * @param bgh BoardGameHeuristic
+	 */
 	public BoardGamePlayerMinimax(BoardGameHeuristic<T> bgh){
 		boardHeuristic = bgh;
 	}	
@@ -59,7 +68,8 @@ public class BoardGamePlayerMinimax<T extends BoardGameState> implements BoardGa
 	 * @param maxPlayer Is the current Move being taken by the Player?
 	 * @return Max Double Value to be Scored from the given Move
 	 */
-	private double minimax(T bgState, int depth, boolean maxPlayer){
+	// TODO: Add parameters that are ignored by minimax, but used by alpha-beta pruning
+	protected double minimax(T bgState, int depth, boolean maxPlayer){
 		
 		if(depth == 0 || bgState.endState()){
 			return boardHeuristic.heuristicEvalution(bgState); // Return the Heuristic value of the Node
@@ -86,10 +96,4 @@ public class BoardGamePlayerMinimax<T extends BoardGameState> implements BoardGa
 		}
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	@Override
-	public void setHeuristic(BoardGameHeuristic bgh) {
-		boardHeuristic = bgh;
-	}
-	
 }
