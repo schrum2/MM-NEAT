@@ -46,4 +46,20 @@ public abstract class NNEvaluationFunction<T extends Network> extends Evaluation
 	public void givePhysicalGameState(PhysicalGameState pgs) {
 		this.pgs = pgs;
 	}
+	
+	/**
+	 * @param maxplayer - player to be evaluated
+	 * @param minplayer - opponent
+	 * @param gs - specified state of the game
+	 * @return number from -1 to 1 depending on if and how hard evaluated player is winning/losing
+	 */
+	@Override
+	public float evaluate(int maxplayer, int minplayer, GameState gs) {
+		double[] inputs = gameStateToArray(gs);
+//		System.out.println("inputs.length:"+inputs.length);
+//		System.out.println("nn.numInputs():"+nn.numInputs());
+		double[] outputs = nn.process(inputs);
+		float score = (float) outputs[0];
+		return score;
+	}
 }

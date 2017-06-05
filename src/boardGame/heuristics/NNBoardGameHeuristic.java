@@ -23,6 +23,7 @@ public class NNBoardGameHeuristic<T extends Network, S extends BoardGameState> i
 			System.out.println(current);
 			MiscUtil.waitForReadStringAndEnterKeyPress();
 		}
+		network.flush(); // wipe out recurrent activations
 		return network.process(current.getDescriptor())[0]; // Returns the Network's Score for the current BoardGameState's descriptor
 	}
 

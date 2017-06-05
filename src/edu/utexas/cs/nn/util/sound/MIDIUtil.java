@@ -429,9 +429,39 @@ public class MIDIUtil {
 		}
 		
 		public void run() {
-			// TODO: Allow for interruption	
+			// TODO: Allow for interruption
+			
+			// This doesn't work either, but it is close. It plays all
+			// of the sound lines simultaneously. The only problem is that
+			// as the song goes on, the difference sound lines tend to
+			// get a bit out of sync.
 			for(int i = 0; i < amplitudeArrays.length; i++) 
 				PlayDoubleArray.playDoubleArray(amplitudeArrays[i]);
+			
+			// Schrum:
+			// This code does not work, but I wanted to commit it anyway in case something like
+			// it works. It takes all of the separate amplitude waves and simply adds them together
+			// into a single amplitude wave. Then, it re-scales the amplitudes to [-1,1]. It seems
+			// like it is working early on, but weird distortions happen in the interesting portion
+			// of the song.
+//			int max = 0;
+//			for(int i = 0; i < amplitudeArrays.length; i++) {
+//				max = Math.max(max, amplitudeArrays[i].length);
+//			}
+//			double maxNote = 0;
+//			double[] toPlay = new double[max];
+//			for(int i = 0; i < amplitudeArrays.length; i++) {
+//				for(int j = 0; j < amplitudeArrays[i].length; j++) {
+//					maxNote = Math.max(maxNote, Math.abs(amplitudeArrays[i][j]));
+//					toPlay[j] += amplitudeArrays[i][j];
+//				}
+//			}
+//			System.out.println(maxNote);
+//			for(int i = 0; i < toPlay.length; i++) {
+//				toPlay[i] /= maxNote;
+//			}
+//			PlayDoubleArray.playDoubleArray(toPlay);
+			
 		}
 
 		public void stopPlayback() {

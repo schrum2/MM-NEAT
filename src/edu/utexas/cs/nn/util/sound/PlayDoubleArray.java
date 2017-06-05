@@ -30,7 +30,7 @@ public final class PlayDoubleArray {
 	// AudioFormat is used for generated frequencies, such as frequencies from the breedesizer,
 	// but is not acceptable to use when converting an input audio file because the sound cannot be 
 	// replicated if the AudioFormat doesn't exactly match the AudioFormat of the input file. 
-	private static final AudioFormat DEFAULT_AUDIO_FORMAT = new AudioFormat((float) SAMPLE_RATE, BITS_PER_SAMPLE, 1, true, false);
+	public static final AudioFormat DEFAULT_AUDIO_FORMAT = new AudioFormat((float) SAMPLE_RATE, BITS_PER_SAMPLE, 1, true, false);
 	
 	public static class AmplitudeArrayPlayer extends Thread {
 		private SourceDataLine line;   // to play the sound
