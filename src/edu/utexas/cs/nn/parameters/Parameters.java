@@ -297,6 +297,7 @@ public class Parameters {
 		integerOptions.add("pacmanReplayDelay", Constants.DELAY, "Milliseconds of pause between pacman time steps in replay mode");
 		integerOptions.add("clipLength", Keyboard.NOTE_LENGTH_DEFAULT, "Length of clip played in Breedesizer");
 		integerOptions.add("maxClipLength", 100000, "Maximum length of clip played in Breedesizer");
+		integerOptions.add("minimaxSearchDepth", 2, "Tree-Search Depth of the Minimax BoardGamePlayer");
 		// Long parameters
 		longOptions.add("lastInnovation", 0l, "Highest innovation number used so far");
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
