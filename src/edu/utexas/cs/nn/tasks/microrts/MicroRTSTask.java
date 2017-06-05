@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-//import javax.swing.JFrame;
-
 import org.jdom.JDOMException;
 
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
@@ -19,6 +17,8 @@ import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.NoisyLonerTask;
 import edu.utexas.cs.nn.tasks.microrts.evaluation.NNEvaluationFunction;
 import edu.utexas.cs.nn.tasks.microrts.fitness.RTSFitnessFunction;
+import edu.utexas.cs.nn.tasks.microrts.iterativeevolution.EnemySequence;
+import edu.utexas.cs.nn.tasks.microrts.iterativeevolution.MapSequence;
 import edu.utexas.cs.nn.util.ClassCreation;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import micro.ai.HasEvaluationFunction;
@@ -30,10 +30,9 @@ import micro.rts.PhysicalGameState;
 import micro.rts.units.UnitTypeTable;
 
 /**
- * TODO: Comments. Clarify the type of opponent(s) being evolved against.
- * 
  * @author alicequint
- *
+ * evolves NNs for microRTS against opponents 
+ * that are Not controlled by a NN.
  * @param <T> NN
  */
 public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implements NetworkTask, HyperNEATTask, MicroRTSInformation{
@@ -69,10 +68,10 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 			ff = (RTSFitnessFunction) ClassCreation.createObject(Parameters.parameters.classParameter("microRTSFitnessFunction"));
 			initialPgs = PhysicalGameState.load("data/microRTS/maps/" + Parameters.parameters.stringParameter("map"), utt);
 			pgs = initialPgs.clone();
-			
+
 			maps = (MapSequence) ClassCreation.createObject(Parameters.parameters.classParameter("microRTSMapSequence"));
-			enemies = (EnemySequence) ClassCreation.createObject(Parameters.parameters.classParameter("microRTSenemySequence")); 
-			
+			enemies = (EnemySequence) ClassCreation.createObject(Parameters.parameters.classParameter("microRTSEnemySequence")); 
+
 		} catch (JDOMException | IOException | NoSuchMethodException e) { 
 			e.printStackTrace();
 			System.exit(1);
@@ -166,7 +165,7 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 			}
 		}
 	}
-	
+
 	/**
 	 * all actions performed in a single evaluation of a genotype
 	 * loop taken from GameVisualSimulationTest, the rest based on MsPacManTask.oneEval()
@@ -201,7 +200,7 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 		if(Parameters.parameters.classParameter("microRTSEnemySequence")!=null)
 			ai2 = enemies.getAppropriateEnemy(MMNEAT.ea.currentGeneration());
 		ef.setNetwork(individual);
-		if(CommonConstants.watch) // TODO: Make 640 be a public static final constant in MicroRTSUtility
+		if(CommonConstants.watch)
 			w = PhysicalGameStatePanel.newVisualizer(gs,MicroRTSUtility.WINDOW_LENGTH,MicroRTSUtility.WINDOW_LENGTH,false,PhysicalGameStatePanel.COLORSCHEME_BLACK);
 		ArrayList<Pair<double[], double[]>> eval = MicroRTSUtility.oneEval((AI) ai1, ai2, this, ff, w);
 		return eval.get(0);
@@ -215,7 +214,7 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 	void initializeAI() {
 		try {
 			ai1 = (HasEvaluationFunction) ClassCreation.createObject(Parameters.parameters.classParameter("microRTSAgent"));
-			if( ! Parameters.parameters.booleanParameter("microRTSEnemySequence"))
+			if(Parameters.parameters.classParameter("microRTSEnemySequence") == null)
 				ai2 = (AI) ClassCreation.createObject(Parameters.parameters.classParameter("microRTSOpponent"));
 		} catch (NoSuchMethodException e2) {
 			e2.printStackTrace();
@@ -228,21 +227,34 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 	}
 
 	@Override
-	public double getAverageUnitDifference(){return averageUnitDifference;}
+	public int getBaseUpTime(int player){
+		if(player == 1)return baseUpTime;
+		else throw new IllegalArgumentException("MicroRTSTask is not equipped to record results for > 1 player");
+	}
 	@Override
-	public int getBaseUpTime(){return baseUpTime;}
+	public void setBaseUpTime(int but, int player) {
+		if(player == 1)baseUpTime = but;
+		else throw new IllegalArgumentException("MicroRTSTask is not equipped to record results for > 1 player");
+		
+	}
 	@Override
-	public void setBaseUpTime(int but) {baseUpTime = but;}
+	public int getHarvestingEfficiency(int player){
+		if(player == 1) return harvestingEfficiencyIndex;
+		else throw new IllegalArgumentException("MicroRTSTask is not equipped to record results for > 1 player");
+	}
 	@Override
-	public int getHarvestingEfficiency(){return harvestingEfficiencyIndex;}
-	@Override
-	public void setHarvestingEfficiency(int hei) {harvestingEfficiencyIndex = hei;}
+	public void setHarvestingEfficiency(int hei, int player) {
+		if(player == 1) harvestingEfficiencyIndex = hei;
+		else throw new IllegalArgumentException("MicroRTSTask is not equipped to record results for > 1 player");
+	}
 	@Override
 	public UnitTypeTable getUnitTypeTable() {return utt;}
 	@Override
 	public GameState getGameState() {return gs;}
 	@Override
 	public PhysicalGameState getPhysicalGameState() {return pgs;}
+	@Override
+	public double getAverageUnitDifference(){return averageUnitDifference;}
 	@Override
 	public void setAvgUnitDiff(double diff) {averageUnitDifference = diff;}
 
@@ -261,13 +273,4 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 		//			System.out.println(Arrays.toString(result.t1)+ " , "+Arrays.toString(result.t2));
 		System.out.println();
 	}
-
-	//these methods here because they needed to be in Interface
-	//they do not affect anything
-	@Override
-	public int getBaseUpTime2() {return -1;}
-	@Override
-	public void setBaseUpTime2(int but) {return;}
-	@Override
-	public int getHarvestingEfficiency2() {return -1;}
 }

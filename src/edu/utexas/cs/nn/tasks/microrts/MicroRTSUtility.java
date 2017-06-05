@@ -17,6 +17,10 @@ import micro.rts.PhysicalGameState;
 import micro.rts.PlayerAction;
 import micro.rts.units.Unit;
 
+/**
+ * @author alicequint
+ * contains methods used by both MicroRTSTask and SinglePopulationCompetativeCoevolutionMicroRTSTask
+ */
 public class MicroRTSUtility {
 	
 	public static final int WINDOW_LENGTH = 640;
@@ -84,7 +88,7 @@ public class MicroRTSUtility {
 												currentUnit.getPlayer() == 0 ? 0 : pgs.getWidth(), 
 												currentUnit.getPlayer() == 0 ? 0 : pgs.getWidth(), 
 														maxBaseX, maxBaseY)){
-											task.setHarvestingEfficiency (task.getHarvestingEfficiency() - WORKER_OUT_OF_BOUNDS_PENALTY);
+											task.setHarvestingEfficiency (task.getHarvestingEfficiency(1) - WORKER_OUT_OF_BOUNDS_PENALTY, 1); //for ai1
 										}
 									}
 								}
@@ -94,11 +98,11 @@ public class MicroRTSUtility {
 					}//end j
 				}//end i
 				if(!baseAlive && !baseDeathRecorded) {
-					task.setBaseUpTime(gs.getTime());
+					task.setBaseUpTime(gs.getTime(), 1);
 					baseDeathRecorded = true;
 				}
 				if(resourcePool > formerResourcePool){
-					task.setHarvestingEfficiency(task.getHarvestingEfficiency() + RESOURCE_GAIN_VALUE);
+					task.setHarvestingEfficiency(task.getHarvestingEfficiency(1) + RESOURCE_GAIN_VALUE, 1);
 				}
 				formerResourcePool = resourcePool;
 				averageUnitDifference = (unitDifferenceNow - averageUnitDifference) / (gs.getTime()+1);

@@ -17,6 +17,7 @@ import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.SinglePopulationCoevolutionTask;
 import edu.utexas.cs.nn.tasks.microrts.evaluation.NNEvaluationFunction;
 import edu.utexas.cs.nn.tasks.microrts.fitness.RTSFitnessFunction;
+import edu.utexas.cs.nn.tasks.microrts.iterativeevolution.MapSequence;
 import edu.utexas.cs.nn.util.ClassCreation;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import micro.ai.HasEvaluationFunction;
@@ -29,6 +30,9 @@ import micro.rts.units.UnitTypeTable;
 
 /**
  * @author alicequint
+ * 
+ * evolves NNs for microRTS against opponents that are 
+ * controlled by other members of the same population
  * 
  * @param <T> NN
  */
@@ -221,27 +225,33 @@ public class SinglePopulationCompetativeCoevolutionMicroRTSTask<T extends Networ
 	}
 	
 	@Override
-	public double getAverageUnitDifference(){return averageUnitDifference;}
+	public int getBaseUpTime(int player){
+		if(player == 1) return baseUpTime1;
+		else if(player == 2) return baseUpTime2;
+		else throw new IllegalArgumentException("not a valid player: " + player);
+		}
 	@Override
-	public int getBaseUpTime(){return baseUpTime1;}
+	public void setBaseUpTime(int but, int player) {
+		if(player == 1) baseUpTime1 = but;
+		else if(player == 2) baseUpTime2 = but;
+		else throw new IllegalArgumentException("not a valid player: " + player);
+	}
 	@Override
-	public int getBaseUpTime2(){return baseUpTime2;}
+	public int getHarvestingEfficiency(int player){return harvestingEfficiencyIndex1;}
 	@Override
-	public void setBaseUpTime(int but) {baseUpTime1 = but;}
-	@Override
-	public void setBaseUpTime2(int but) {baseUpTime2 = but;}
-	@Override
-	public int getHarvestingEfficiency(){return harvestingEfficiencyIndex1;}
-	@Override
-	public void setHarvestingEfficiency(int hei) {harvestingEfficiencyIndex1 = hei;}
-	@Override
-	public int getHarvestingEfficiency2(){return harvestingEfficiencyIndex2;}
+	public void setHarvestingEfficiency(int hei, int player) {
+		if(player == 1) harvestingEfficiencyIndex1 = hei;
+		else if(player == 2) harvestingEfficiencyIndex2 = hei;
+		else throw new IllegalArgumentException("not a valid player: " + player);
+	}
 	@Override
 	public UnitTypeTable getUnitTypeTable() {return utt;}
 	@Override
 	public GameState getGameState() {return gs;}
 	@Override
 	public PhysicalGameState getPhysicalGameState() {return pgs;}
+	@Override
+	public double getAverageUnitDifference(){return averageUnitDifference;}
 	@Override
 	public void setAvgUnitDiff(double diff) {averageUnitDifference = diff;}
 

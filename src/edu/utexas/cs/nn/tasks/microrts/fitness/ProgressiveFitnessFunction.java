@@ -2,6 +2,7 @@ package edu.utexas.cs.nn.tasks.microrts.fitness;
 
 import java.util.ArrayList;
 
+import edu.utexas.cs.nn.tasks.microrts.MicroRTSTask;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import micro.rts.GameState;
 
@@ -18,14 +19,14 @@ public class ProgressiveFitnessFunction extends RTSFitnessFunction{
 		ArrayList<Pair<double[], double[]>> result = new ArrayList<>(); 
 		boolean coevolution = task.getClass().getName().equals("SinglePopulationCompetativeCoevolutionMicroRTSTask");
 		double[] fitness = new double[]{
-				normalize(task.getHarvestingEfficiency(), maxCycles * task.getResourceGainValue()),
-				normalize(task.getBaseUpTime(), maxCycles),
+				normalize(task.getHarvestingEfficiency(1), maxCycles * task.getResourceGainValue()),
+				normalize(task.getBaseUpTime(1), maxCycles),
 				normalize(task.getAverageUnitDifference(), pgs.getHeight()*pgs.getWidth())+1,
 		};
 		double[] fitness2 = new double[fitness.length];
 		if(coevolution){
-			fitness2[0] = normalize(task.getHarvestingEfficiency2(), maxCycles * task.getResourceGainValue());
-			fitness2[1] = normalize(task.getBaseUpTime2(), maxCycles);
+			fitness2[0] = normalize(task.getHarvestingEfficiency(2), maxCycles * task.getResourceGainValue());
+			fitness2[1] = normalize(task.getBaseUpTime(2), maxCycles);
 			fitness2[2] = (normalize(task.getAverageUnitDifference(), pgs.getHeight()*pgs.getWidth())+1) * -1;
 		}
 
@@ -43,7 +44,11 @@ public class ProgressiveFitnessFunction extends RTSFitnessFunction{
 
 	@Override
 	public String[] getFunctions() {
-		return new String[]{"Harvesting Efficiency","Time Base was Alive","Average Unit Difference"};
+		if(task.getClass().equals(MicroRTSTask.class))
+			return new String[]{"Harvesting Efficiency","Time Base was Alive","Average Unit Difference"};
+		else //assuming task is co-evolving counterpart 
+			return new String[]{"p1's Harvesting Efficiency","p1's Time Base was Alive","p1's Average Unit Difference"
+							   +"p2's Harvesting Efficiency","p2's Time Base was Alive","p2's Average Unit Difference"};
 	}
 
 	/**

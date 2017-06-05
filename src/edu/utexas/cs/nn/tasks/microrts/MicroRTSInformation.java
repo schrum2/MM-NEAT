@@ -12,36 +12,35 @@ import micro.rts.units.UnitTypeTable;
  *so that FF and MicroRTSUtility can access data tracked in their Evaluations.
  */
 public interface MicroRTSInformation {
-
-	// TODO: Comments need to clarify what all of these do
 	
+	//returns value stored in variable:
 	public double getAverageUnitDifference();
-
+	
+	//stores passed-in value in averageUnitDifference
 	public void setAvgUnitDiff(double diff);
-
-	public int getBaseUpTime();
-
-	public void setBaseUpTime(int but);
-
-	public int getHarvestingEfficiency();
-
-	public void setHarvestingEfficiency(int hei);
-
+	
+	//returns players's value stored in variable: baseUpTime or baseUpTime2
+	public int getBaseUpTime(int player);
+	
+	//stores passed-in value in BaseUpTime or BaseUpTime2 based on player 
+	public void setBaseUpTime(int but, int player);
+	
+	//returns player's value stored in variable: harvestingEfficienyIndex or harvestingEfficienyIndex2  
+	public int getHarvestingEfficiency(int player);
+	
+	//stores passed-in value in 
+	public void setHarvestingEfficiency(int hei, int player);
+	
+	//returns current unit type table
 	public UnitTypeTable getUnitTypeTable();
-
+	
+	//returns current game state
 	public GameState getGameState();
-
+	
+	//returns current physical game state
 	public PhysicalGameState getPhysicalGameState();
-
-	//for co-evolution: TODO: These need more clarification. Does the "2" mean for the second player?
-	// If so, then you should instead generalize the original versions of the methods to take an index
-	// identifying the player. Instead of having getBaseUpTime and getBaseUpTime2, just have getBaseUpTime(int player)
-	int getBaseUpTime2();
-
-	void setBaseUpTime2(int but);
-
-	int getHarvestingEfficiency2();
-
+	
 	//for progressive fitness function
+	//returns value stored in constant RESOURCE_GAIN_VALUE
 	public int getResourceGainValue();
 }
