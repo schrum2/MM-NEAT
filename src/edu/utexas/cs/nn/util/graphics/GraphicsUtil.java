@@ -109,8 +109,6 @@ public class GraphicsUtil {
 				(float) Math.abs(hsb[BRIGHTNESS_INDEX]) };
 	}
 
-
-
 	/**
 	 * Gets scaled inputs to send to CPPN
 	 *

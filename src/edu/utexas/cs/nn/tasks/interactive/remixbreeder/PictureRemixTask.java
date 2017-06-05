@@ -21,8 +21,7 @@ public class PictureRemixTask<T extends Network> extends PicbreederTask {
 	private BufferedImage img = null;
 
 	public PictureRemixTask() throws IllegalAccessException {
-		super();
-		inputImage = Parameters.parameters.stringParameter("matchImageFile");	
+		this(Parameters.parameters.stringParameter("matchImageFile"));	
 		
 	}
 	
@@ -30,7 +29,7 @@ public class PictureRemixTask<T extends Network> extends PicbreederTask {
 	
 	public PictureRemixTask(String filename) throws IllegalAccessException{
 		try {// throws and exception if filename is not valid
-			img = ImageIO.read(new File(inputImage + "\\" + filename));
+			img = ImageIO.read(new File(filename));
 		} catch (IOException e) {
 			System.out.println("Could not load image: " + filename);
 			System.exit(1);
@@ -47,6 +46,13 @@ public class PictureRemixTask<T extends Network> extends PicbreederTask {
 	@Override
 	protected String getWindowTitle() {
 		return "PictureRemix";
+	}
+	
+	@Override
+	protected BufferedImage getButtonImage(Network phenotype, int width, int height, double[] inputMultipliers) {
+		// TODO: Need to generalize GraphicsUtil methods so that input images can be manipulated with a CPPN and 
+		// so that the HSB/HSV can be extracted from an already existing image. 
+		return null; 
 	}
 	
 	@Override
