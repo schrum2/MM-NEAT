@@ -5,7 +5,9 @@ import java.util.List;
 
 import boardGame.BoardGame;
 import boardGame.BoardGamePlayer;
+import boardGame.BoardGameState;
 import boardGame.TwoDimensionalBoardGameViewer;
+import boardGame.featureExtractor.BoardGameFeatureExtractor;
 import boardGame.heuristics.HeuristicBoardGamePlayer;
 import boardGame.heuristics.NNBoardGameHeuristic;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
@@ -29,19 +31,21 @@ public class StaticOpponentBoardGameTask<T extends Network> extends NoisyLonerTa
 	BoardGamePlayer opponent;
 	@SuppressWarnings("rawtypes")
 	HeuristicBoardGamePlayer player;
+	BoardGameFeatureExtractor<BoardGameState> featExtract;
+	
 	
 	/**
 	 * Constructor for a new BoardGameTask
 	 */
-	@SuppressWarnings({ "rawtypes" })
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public StaticOpponentBoardGameTask(){
 		MMNEAT.registerFitnessFunction("Win Reward");
 
 		try {
 			bg = (BoardGame) ClassCreation.createObject("boardGame");
 			opponent = (BoardGamePlayer) ClassCreation.createObject("boardGameOpponent"); // The Opponent
-			
 			player = (HeuristicBoardGamePlayer) ClassCreation.createObject("boardGamePlayer"); // The Player
+			featExtract = (BoardGameFeatureExtractor<BoardGameState>) ClassCreation.createObject("boardGameFeatureExtractor");
 		} catch (NoSuchMethodException e) {
 			e.printStackTrace();
 			System.out.println("BoardGame instance could not be loaded");
@@ -77,7 +81,7 @@ public class StaticOpponentBoardGameTask<T extends Network> extends NoisyLonerTa
 	 */
 	@Override
 	public String[] sensorLabels() {
-		return bg.getFeatureLabels();
+		return featExtract.getFeatureLabels();
 	}
 
 	/**

@@ -10,7 +10,7 @@ import java.util.StringTokenizer;
 
 import boardGame.BoardGamePlayerOneStepEval;
 import boardGame.BoardGamePlayerRandom;
-import boardGame.heuristics.NNBoardGameHeuristic;
+import boardGame.featureExtractor.TwoDimensionalRawBoardGameFeatureExtractor;
 import boardGame.heuristics.PieceDifferentialBoardGameHeuristic;
 import edu.utexas.cs.nn.breve2D.Breve2DGame;
 import edu.utexas.cs.nn.breve2D.agent.RushingPlayer;
@@ -716,6 +716,7 @@ public class Parameters {
 		classOptions.add("boardGameOpponent", BoardGamePlayerRandom.class, "Board game Opponent being played against");
 		classOptions.add("boardGameOpponentHeuristic", PieceDifferentialBoardGameHeuristic.class, "Board game heuristic used by the Opponent");
 		classOptions.add("boardGamePlayer", BoardGamePlayerOneStepEval.class, "Board game Player being evolved");
+		classOptions.add("boardGameFeatureExtractor", TwoDimensionalRawBoardGameFeatureExtractor.class, "Feature Extractor used by the NNBoardGamePlayer");
 		classOptions.add("hyperNEATSeedTask", null, "HyperNEAT task that seeds a standard NEAT task");
 		classOptions.add("substrateMapping", CenteredSubstrateMapping.class, "Determines the type of subtrate coordinate mapping we want to use");
 		classOptions.add("staticPreyController", PreyFleeClosestPredatorController.class, "This parameter specifies the prey controller that predators evolve against");

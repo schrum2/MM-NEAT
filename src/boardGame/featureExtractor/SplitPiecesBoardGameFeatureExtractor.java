@@ -1,7 +1,9 @@
-package boardGame;
+package boardGame.featureExtractor;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import boardGame.BoardGameState;
 
 public class SplitPiecesBoardGameFeatureExtractor<T extends BoardGameState> implements BoardGameFeatureExtractor<T> {
 
@@ -34,6 +36,12 @@ public class SplitPiecesBoardGameFeatureExtractor<T extends BoardGameState> impl
 		}while(resultIndex < result.length); // Keeps adding to result until result is full
 		
 		return result;
+	}
+
+	@Override
+	public String[] getFeatureLabels() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

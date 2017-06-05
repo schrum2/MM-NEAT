@@ -3,16 +3,26 @@ package boardGame.heuristics;
 import java.util.List;
 
 import boardGame.BoardGameState;
+import boardGame.featureExtractor.BoardGameFeatureExtractor;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.parameters.Parameters;
+import edu.utexas.cs.nn.util.ClassCreation;
 import edu.utexas.cs.nn.util.MiscUtil;
 
 public class NNBoardGameHeuristic<T extends Network, S extends BoardGameState> implements BoardGameHeuristic<S> {
 
 	T network;
+	BoardGameFeatureExtractor<BoardGameState> featExtract;
 	
+	@SuppressWarnings("unchecked")
 	public NNBoardGameHeuristic(T net){
 		network = net;
+		try {
+			featExtract = (BoardGameFeatureExtractor<BoardGameState>) ClassCreation.createObject("boardGameFeatureExtractor");
+		} catch (NoSuchMethodException e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
 	}
 	
 	public NNBoardGameHeuristic(){ // Used as a blank constructor; the Network can be set in the BoardGameTasks
@@ -40,11 +50,11 @@ public class NNBoardGameHeuristic<T extends Network, S extends BoardGameState> i
 				}
 				
 			}else{
-				return network.process(current.getDescriptor())[0]; // Returns the Network's Score for the current BoardGameState's descriptor
+				return network.process(featExtract.getFeatures(current))[0]; // Returns the Network's Score for the current BoardGameState's descriptor
 			}
 		}
 		
-		return network.process(current.getDescriptor())[0]; // Returns the Network's Score for the current BoardGameState's descriptor
+		return network.process(featExtract.getFeatures(current))[0]; // Returns the Network's Score for the current BoardGameState's descriptor
 		
 	}
 

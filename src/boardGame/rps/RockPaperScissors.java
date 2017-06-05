@@ -88,12 +88,6 @@ public class RockPaperScissors implements BoardGame<RPSState> {
 		return board.toString();
 	}
 
-	// Rock, Paper, Scissors has no state. Not clear how to evolve in this game
-	@Override
-	public String[] getFeatureLabels() {
-		throw new UnsupportedOperationException();
-	}
-
 	/**
 	 * Resets the currentPlayer to 0 and creates a new BoardGameState to use
 	 */

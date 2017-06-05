@@ -5,6 +5,8 @@ import java.util.List;
 
 import boardGame.BoardGame;
 import boardGame.BoardGamePlayer;
+import boardGame.BoardGameState;
+import boardGame.featureExtractor.BoardGameFeatureExtractor;
 import boardGame.heuristics.HeuristicBoardGamePlayer;
 import boardGame.heuristics.NNBoardGameHeuristic;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
@@ -23,19 +25,22 @@ public class SinglePopulationCompetativeCoevolutionBoardGameTask<T extends Netwo
 	BoardGame bg;
 	@SuppressWarnings("rawtypes")
 	BoardGamePlayer[] players;
+	BoardGameFeatureExtractor<BoardGameState> featExtract;
 	
-	@SuppressWarnings({ "rawtypes"})
+	
+	@SuppressWarnings({ "rawtypes", "unchecked"})
 	public SinglePopulationCompetativeCoevolutionBoardGameTask(){
 		MMNEAT.registerFitnessFunction("Win Reward");
 		
 		try {
 			bg = (BoardGame) ClassCreation.createObject("boardGame");
-			
 			players = new BoardGamePlayer[groupSize()];
-			
+			featExtract = (BoardGameFeatureExtractor<BoardGameState>) ClassCreation.createObject("boardGameFeatureExtractor");
+
 			for(int i = 0; i < groupSize(); i++){
 				players[i] = (BoardGamePlayer) ClassCreation.createObject("boardGamePlayer"); // The Player
 			}
+			
 		} catch (NoSuchMethodException e) {
 			e.printStackTrace();
 			System.out.println("BoardGame instance could not be loaded");
@@ -98,7 +103,7 @@ public class SinglePopulationCompetativeCoevolutionBoardGameTask<T extends Netwo
 	 */
 	@Override
 	public String[] sensorLabels() {
-		return bg.getFeatureLabels();
+		return featExtract.getFeatureLabels();
 	}
 
 	/**

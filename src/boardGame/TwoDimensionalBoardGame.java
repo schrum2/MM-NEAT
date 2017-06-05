@@ -84,19 +84,7 @@ public abstract class TwoDimensionalBoardGame<T extends TwoDimensionalBoardGameS
 		board = (T) startingBoard.copy();
 	}
 
-	/**
-	 * Simply names all features according to the coordinates associated with each space.
-	 */
-	@Override
-	public String[] getFeatureLabels() {
-		String[] result = new String[startingBoard.getBoardHeight() * startingBoard.getBoardWidth()];
-		for(int j = 0; j < startingBoard.getBoardHeight(); j++) {
-			for(int i = 0; i < startingBoard.getBoardWidth(); i++) {
-				result[j * startingBoard.getBoardWidth() + i] = "Space ("+i+","+j+")";
-			}
-		}
-		return result;
-	}
+
 
 	/**
 	 * Returns the current BoardGameState
