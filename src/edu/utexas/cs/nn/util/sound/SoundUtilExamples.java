@@ -323,7 +323,7 @@ public class SoundUtilExamples {
 		System.out.println("harp: " + harpNumbers.length);
 		double[] applauseAndHarp = ArrayUtil.overlap(APPLAUSE_WAV, HARP_WAV);
 		for(int i = 0; i < applauseAndHarp.length; i++) {
-			applauseAndHarp[i] = applauseAndHarp[i]/2.0;
+			applauseAndHarp[i] = applauseAndHarp[i]/1.5;
 		}
 		System.out.println("applauseAndHarp length: " + applauseAndHarp.length);
 		double[] bearGrowlAndHarp = ArrayUtil.overlap(BEARGROWL_WAV, HARP_WAV);
@@ -334,8 +334,10 @@ public class SoundUtilExamples {
 		AudioInputStream harpAIS = WAVUtil.audioStream(HARP_WAV);
 
 		PlayDoubleArray.playDoubleArray(harpAIS.getFormat(), applauseAndHarp);
-		//PlayDoubleArray.playDoubleArray(bearGrowlAndHarp);
-		//PlayDoubleArray.playDoubleArray(applauseAndBearGrowl);
+		MiscUtil.waitForReadStringAndEnterKeyPress();
+		PlayDoubleArray.playDoubleArray(harpAIS.getFormat(), bearGrowlAndHarp);
+		MiscUtil.waitForReadStringAndEnterKeyPress();
+		PlayDoubleArray.playDoubleArray(harpAIS.getFormat(), applauseAndBearGrowl);
 	}
 
 	// Won't work with the new AmplitudeArrayPlayer that contains the playDouble method (no longer static).
@@ -496,6 +498,6 @@ public class SoundUtilExamples {
 	public static void eightBitToSixteenBit() {
 		double[] harpAsSixteenBit = SoundToArray.eightBitToSixteenBit(HARP_WAV);
 		System.out.println(Arrays.toString(harpAsSixteenBit));
-		PlayDoubleArray.playDoubleArray(harpAsSixteenBit);
+		//PlayDoubleArray.playDoubleArray(harpAsSixteenBit);
 	}
 }
