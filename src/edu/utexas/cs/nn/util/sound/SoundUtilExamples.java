@@ -2,8 +2,8 @@ package edu.utexas.cs.nn.util.sound;
 
 
 import java.awt.Color;
-import java.io.*;
-import java.net.MalformedURLException;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -13,11 +13,8 @@ import javax.sound.midi.Sequence;
 import javax.sound.midi.Track;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
-import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.SourceDataLine;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
@@ -25,16 +22,11 @@ import edu.utexas.cs.nn.evolution.genotypes.HyperNEATCPPNGenotype;
 import edu.utexas.cs.nn.networks.ActivationFunctions;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.tasks.interactive.breedesizer.BreedesizerTask;
 import edu.utexas.cs.nn.util.MiscUtil;
 import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
-import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.graphics.DrawingPanel;
 import edu.utexas.cs.nn.util.graphics.GraphicsUtil;
-import edu.utexas.cs.nn.util.sound.PlayDoubleArray.AmplitudeArrayPlayer;
 import javazoom.jl.decoder.JavaLayerException;
-import javazoom.jl.player.advanced.AdvancedPlayer;
-import javazoom.jl.player.advanced.PlaybackListener;
 
 /**
  * Class containing various testing examples for sound utility methods in sound package.
@@ -323,7 +315,7 @@ public class SoundUtilExamples {
 		System.out.println("harp: " + harpNumbers.length);
 		double[] applauseAndHarp = ArrayUtil.overlap(APPLAUSE_WAV, HARP_WAV);
 		for(int i = 0; i < applauseAndHarp.length; i++) {
-			applauseAndHarp[i] = applauseAndHarp[i]/1.5;
+			applauseAndHarp[i] = applauseAndHarp[i]/2.0; //to avoid overflow
 		}
 		System.out.println("applauseAndHarp length: " + applauseAndHarp.length);
 		double[] bearGrowlAndHarp = ArrayUtil.overlap(BEARGROWL_WAV, HARP_WAV);
