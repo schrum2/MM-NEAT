@@ -9,6 +9,7 @@ import javax.imageio.ImageIO;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.interactive.picbreeder.PicbreederTask;
+import edu.utexas.cs.nn.util.graphics.GraphicsUtil;
 
 public class PictureRemixTask<T extends Network> extends PicbreederTask {
 	
@@ -50,9 +51,7 @@ public class PictureRemixTask<T extends Network> extends PicbreederTask {
 	
 	@Override
 	protected BufferedImage getButtonImage(Network phenotype, int width, int height, double[] inputMultipliers) {
-		// TODO: Need to generalize GraphicsUtil methods so that input images can be manipulated with a CPPN and 
-		// so that the HSB/HSV can be extracted from an already existing image. 
-		return null; 
+		 return GraphicsUtil.remixedImageFromCPPN(phenotype, img, inputMultipliers);
 	}
 	
 	@Override
