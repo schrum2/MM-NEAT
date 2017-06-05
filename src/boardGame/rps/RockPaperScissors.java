@@ -105,11 +105,6 @@ public class RockPaperScissors implements BoardGame<RPSState> {
 
 	@Override
 	public double[] getDescription() {
-<<<<<<< HEAD
-		// TODO Auto-generated method stub
-		return null;
-=======
 		throw new UnsupportedOperationException();
->>>>>>> 65d60b9b4f48bbb2909ffeaeaf8952ffd7e2c4e1
 	}
 }
