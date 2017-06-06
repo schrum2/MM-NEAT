@@ -19,7 +19,7 @@ public class Animate extends javax.swing.JApplet implements Runnable {
 	int totalPictures = 3;
 	int current = 0;
 	Thread runner;
-	int pause = 1000;
+	int pause = 500;
 	
 	public Animate() {
 		try {
@@ -37,8 +37,7 @@ public class Animate extends javax.swing.JApplet implements Runnable {
 			String imageText = null;
 			imageText = getParameter("image"+i);
 			if (imageText != null) {
-				totalPictures++;
-				//picture[i] = getImage(getCodeBase(), imageText);
+				totalPictures++; // keeps track of index in image array
 			} else
 				break;
 		}
@@ -52,7 +51,7 @@ public class Animate extends javax.swing.JApplet implements Runnable {
 	public void paint(Graphics screen) {
 		super.paint(screen);
 		Graphics2D screen2D = (Graphics2D) screen;
-		if (picture[current] != null)
+		if (picture[current] != null) // draw image
 			screen2D.drawImage(picture[current], 0, 0, this);
 	}
 
@@ -69,7 +68,7 @@ public class Animate extends javax.swing.JApplet implements Runnable {
 			System.out.println(current);
 			repaint();
 			current++;
-			if (current >= totalPictures)
+			if (current >= totalPictures) // restarts loop once all pictures in array have been displayed
 				current = 0;
 			try {
 				Thread.sleep(pause);
