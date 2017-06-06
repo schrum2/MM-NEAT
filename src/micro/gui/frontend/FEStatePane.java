@@ -110,6 +110,9 @@ public class FEStatePane extends JPanel {
 
     JFileChooser fileChooser = new JFileChooser();
 
+    // TODO: I believe that if you add the NN eval function to this, you can select it from the drop down.
+    //       However, you will need to make a version of the constructor that accepts a String filename of
+    //       an xml file containing an evolved neural network that is loaded to be the evaluation function.
     EvaluationFunction efs[] = {new SimpleEvaluationFunction(),
                                 new SimpleSqrtEvaluationFunction(),
                                 new SimpleSqrtEvaluationFunction2(),
