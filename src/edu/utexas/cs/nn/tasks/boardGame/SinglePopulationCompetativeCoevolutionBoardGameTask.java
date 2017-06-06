@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import boardGame.BoardGame;
-import boardGame.BoardGamePlayer;
 import boardGame.BoardGameState;
+import boardGame.agents.BoardGamePlayer;
 import boardGame.featureExtractor.BoardGameFeatureExtractor;
 import boardGame.heuristics.HeuristicBoardGamePlayer;
 import boardGame.heuristics.NNBoardGameHeuristic;

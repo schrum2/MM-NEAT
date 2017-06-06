@@ -11,7 +11,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import boardGame.BoardGamePlayerMinimax;
+import boardGame.agents.treesearch.BoardGamePlayerMinimax;
 import boardGame.heuristics.PieceDifferentialBoardGameHeuristic;
 
 public class OthelloPieceDifferentialTest {
@@ -163,7 +163,7 @@ public class OthelloPieceDifferentialTest {
 			
 		// Checks that the Minimax PieceDifferential Player will pick the State with the most pieces gained/most enemy pieces lost
 		boardGame1.move(blackChip);
-		assertEquals(correctChoice1, boardGame1.getState());
+		assertEquals(correctChoice1, boardGame1.getCurrentState());
 				
 	}
 

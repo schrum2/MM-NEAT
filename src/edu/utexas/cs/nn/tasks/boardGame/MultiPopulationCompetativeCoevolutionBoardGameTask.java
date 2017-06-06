@@ -3,7 +3,7 @@ package edu.utexas.cs.nn.tasks.boardGame;
 import java.util.ArrayList;
 
 import boardGame.BoardGame;
-import boardGame.BoardGamePlayer;
+import boardGame.agents.BoardGamePlayer;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.scores.Score;

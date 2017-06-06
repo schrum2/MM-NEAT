@@ -2,6 +2,8 @@ package boardGame;
 
 import java.util.List;
 
+import boardGame.agents.BoardGamePlayer;
+
 public abstract class TwoDimensionalBoardGame<T extends TwoDimensionalBoardGameState> implements BoardGame<T>{
 	
 	private T startingBoard;
@@ -84,14 +86,15 @@ public abstract class TwoDimensionalBoardGame<T extends TwoDimensionalBoardGameS
 		board = (T) startingBoard.copy();
 	}
 
-
+	
 
 	/**
 	 * Returns the current BoardGameState
 	 * 
 	 * @return The Current BoardGameState
 	 */
-	public TwoDimensionalBoardGameState getState(){
+	@Override
+	public TwoDimensionalBoardGameState getCurrentState(){
 		return board;
 	}
 

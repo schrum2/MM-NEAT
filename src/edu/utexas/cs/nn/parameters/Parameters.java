@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.StringTokenizer;
 
-import boardGame.BoardGamePlayerOneStepEval;
-import boardGame.BoardGamePlayerRandom;
+import boardGame.agents.BoardGamePlayerOneStepEval;
+import boardGame.agents.BoardGamePlayerRandom;
 import boardGame.featureExtractor.TwoDimensionalRawBoardGameFeatureExtractor;
 import boardGame.heuristics.PieceDifferentialBoardGameHeuristic;
 import edu.utexas.cs.nn.breve2D.Breve2DGame;

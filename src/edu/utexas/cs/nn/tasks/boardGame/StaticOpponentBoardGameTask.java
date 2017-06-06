@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import boardGame.BoardGame;
-import boardGame.BoardGamePlayer;
 import boardGame.BoardGameState;
 import boardGame.TwoDimensionalBoardGameViewer;
+import boardGame.agents.BoardGamePlayer;
 import boardGame.featureExtractor.BoardGameFeatureExtractor;
 import boardGame.heuristics.HeuristicBoardGamePlayer;
 import boardGame.heuristics.NNBoardGameHeuristic;
@@ -115,8 +115,6 @@ public class StaticOpponentBoardGameTask<T extends Network> extends NoisyLonerTa
 	@Override
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {
 
-		if(CommonConstants.watch){ // If set to Visually Evaluate the Task
-		}
 		player.setHeuristic((new NNBoardGameHeuristic(individual.getPhenotype())));
 		BoardGamePlayer[] players = new BoardGamePlayer[]{player, opponent};
 		return BoardGameUtil.playGame(bg, players).get(0);
