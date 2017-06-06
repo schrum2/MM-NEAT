@@ -1,4 +1,4 @@
-package boardGame.agents.treeSearch;
+package boardGame.agents.treesearch;
 
 import static org.junit.Assert.assertEquals;
 

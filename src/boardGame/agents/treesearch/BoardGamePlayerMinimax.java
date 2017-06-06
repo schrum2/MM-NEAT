@@ -1,4 +1,4 @@
-package boardGame.agents.treeSearch;
+package boardGame.agents.treesearch;
 
 import java.util.ArrayList;
 import java.util.List;
