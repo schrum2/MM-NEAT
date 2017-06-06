@@ -36,6 +36,14 @@ public class NN2DEvaluationFunction<T extends Network> extends NNEvaluationFunct
 		Genotype<T> g = PopulationUtil.extractGenotype(NNfile);
 		nn = g.getPhenotype();
 	}
+
+	/**
+	 * Default constructor used by MMNEAT's class creation methods.
+	 * Must pass in the network via the setNetwork method of parent clas.
+	 */
+	public NN2DEvaluationFunction(){
+		super();
+	}
 	
 	/**
 	 * represents all squares of the gameState in an array
