@@ -37,6 +37,7 @@ public class MicroRTSUtility {
 		int averageUnitDifference = 0;
 		//evaluates to correct number of cycles in accordance with competition rules: 8x8 => 3000, 16x16 => 4000, 24x24 => 5000, etc.
 		int maxCycles = 1000 * (int) Math.ceil(Math.sqrt(pgs.getHeight()));
+		ff.setMaxCycles(maxCycles);
 		PlayerAction pa1;
 		PlayerAction pa2;
 		int unitDifferenceNow = 0;
@@ -44,7 +45,8 @@ public class MicroRTSUtility {
 		double resourcePool = 0;
 		double formerResourcePool = 0;
 		Unit currentUnit;
-		boolean baseAlive = false;
+		boolean base1Alive = false;
+		boolean base2Alive = false;
 		boolean baseDeathRecorded = false;
 		
 		do{ //simulate game:
@@ -59,16 +61,16 @@ public class MicroRTSUtility {
 			
 			if(prog){ //if our FitnessFunction needs us to record information throughout the game
 				unitDifferenceNow = 0;
-				maxBaseX = -1; //Eventually will have to change this to accomodate maps where multiple bases will not be in a straight line 
+				maxBaseX = -1; //Eventually will have to change this to accomodate maps where multiple bases will not be in a straight line
 				maxBaseY = -1;
 				resourcePool = 0;
 				formerResourcePool = 0;
-				currentUnit = null;
-				baseAlive = false;
+				currentUnit = null;				
 				baseDeathRecorded = false;
 				for(int i = 0; i < pgs.getWidth(); i++){
 					for(int j = 0; j < pgs.getHeight(); j++){
-						baseAlive = false;
+						base1Alive = false;
+						base2Alive = false; //TODO update p2's values, maybe make some of this stuff into methods: 
 						currentUnit = pgs.getUnitAt(i, j);
 						if(currentUnit!=null){
 							if(currentUnit.getPlayer() == 0){
@@ -78,7 +80,7 @@ public class MicroRTSUtility {
 									resourcePool += currentUnit.getResources();
 									if(currentUnit.getX() > maxBaseX) maxBaseX = currentUnit.getX(); //if its a new base record its location
 									if(currentUnit.getY() > maxBaseY) maxBaseY = currentUnit.getY();
-									baseAlive = true;
+									base1Alive = true;
 									assert(baseDeathRecorded == false): "base was created after all previous bases have been destroyed!";
 								} //end if(base)
 								else if(currentUnit.getType().name.equals("Worker")){
@@ -92,12 +94,14 @@ public class MicroRTSUtility {
 										}
 									}
 								}
-							} //end if (unit is ours)
-							else if(currentUnit.getPlayer() == 1) unitDifferenceNow--;
+							} //end if (unit is player 1's)
+							else if(currentUnit.getPlayer() == 1){
+								unitDifferenceNow--;
+							} //end if (unit is player 2's)
 						}
 					}//end j
 				}//end i
-				if(!baseAlive && !baseDeathRecorded) {
+				if(!base1Alive && !baseDeathRecorded) {
 					task.setBaseUpTime(gs.getTime(), 1);
 					baseDeathRecorded = true;
 				}

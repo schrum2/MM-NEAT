@@ -51,7 +51,7 @@ public class SinglePopulationCompetativeCoevolutionMicroRTSTask<T extends Networ
 	private int baseUpTime1;
 	private int baseUpTime2;
 	private int harvestingEfficiencyIndex1;
-	private int harvestingEfficiencyIndex2; // TODO: Is there a reason this is not used? Seems like a potential error.
+	private int harvestingEfficiencyIndex2;
 
 	NNEvaluationFunction<T> ef1;
 	NNEvaluationFunction<T> ef2;
@@ -201,8 +201,8 @@ public class SinglePopulationCompetativeCoevolutionMicroRTSTask<T extends Networ
 	@Override
 	public double[] minScores() {
 		// TODO: This should be easy to implement, but in the mean time throw an exception
-		throw new UnsupportedOperationException("minScores not yet implemented");
-		//return new double[]{}; //TODO
+//		throw new UnsupportedOperationException("minScores not yet implemented");
+		return new double[]{};
 	}
 
 	@Override
@@ -241,7 +241,11 @@ public class SinglePopulationCompetativeCoevolutionMicroRTSTask<T extends Networ
 		else throw new IllegalArgumentException("not a valid player: " + player);
 	}
 	@Override
-	public int getHarvestingEfficiency(int player){return harvestingEfficiencyIndex1;}
+	public int getHarvestingEfficiency(int player){
+		if(player == 1) return harvestingEfficiencyIndex1;
+		else if (player == 2) return harvestingEfficiencyIndex2;
+		else throw new IllegalArgumentException("not a valid player: " + player);
+	}
 	@Override
 	public void setHarvestingEfficiency(int hei, int player) {
 		if(player == 1) harvestingEfficiencyIndex1 = hei;
