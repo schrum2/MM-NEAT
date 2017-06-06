@@ -9,9 +9,9 @@ import micro.rts.PhysicalGameState;
 
 /**
  * 
- * TODO: Comment describing this class
+ * parent class for all fitness functions usable in MicroRTSTask or similar
  * 
- * @author 
+ * @author alicequint 
  *
  */
 public abstract class RTSFitnessFunction {

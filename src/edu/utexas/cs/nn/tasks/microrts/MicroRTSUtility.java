@@ -24,14 +24,12 @@ import micro.rts.units.Unit;
 public class MicroRTSUtility {
 	
 	public static final int WINDOW_LENGTH = 640;
-	
 	public static final int RESOURCE_GAIN_VALUE = 2;
 	private static final int WORKER_OUT_OF_BOUNDS_PENALTY = 1;
 	private static final double WORKER_HARVEST_VALUE = .5; //relative to 1 resource, for use in pool
-
-	public static <T> ArrayList<Pair<double[], double[]>> oneEval(AI ai1, AI ai2, MicroRTSInformation task, RTSFitnessFunction ff, PhysicalGameStateJFrame w) {
-		// TODO: Avoid doing a class equality check on every single eval. This information could be stored as a global static variable in this class.
-		boolean prog = Parameters.parameters.classParameter("microRTSFitnessFunction").equals(ProgressiveFitnessFunction.class);
+	private static boolean prog = Parameters.parameters.classParameter("microRTSFitnessFunction").equals(ProgressiveFitnessFunction.class);
+	
+	public static <T> ArrayList<Pair<double[], double[]>> oneEval(AI ai1, AI ai2, MicroRTSInformation task, RTSFitnessFunction ff, PhysicalGameStateJFrame w) {		
 		
 		GameState gs = task.getGameState();
 		PhysicalGameState pgs = task.getPhysicalGameState();
