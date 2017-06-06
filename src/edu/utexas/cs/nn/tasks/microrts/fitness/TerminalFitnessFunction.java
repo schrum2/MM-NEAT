@@ -5,7 +5,6 @@ import java.util.List;
 
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import micro.rts.GameState;
-import micro.rts.PhysicalGameState;
 import micro.rts.units.Unit;
 
 public class TerminalFitnessFunction extends RTSFitnessFunction{
