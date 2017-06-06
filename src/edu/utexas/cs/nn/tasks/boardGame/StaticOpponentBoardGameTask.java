@@ -7,8 +7,8 @@ import boardGame.BoardGame;
 import boardGame.BoardGameState;
 import boardGame.TwoDimensionalBoardGameViewer;
 import boardGame.agents.BoardGamePlayer;
+import boardGame.agents.HeuristicBoardGamePlayer;
 import boardGame.featureExtractor.BoardGameFeatureExtractor;
-import boardGame.heuristics.HeuristicBoardGamePlayer;
 import boardGame.heuristics.NNBoardGameHeuristic;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
@@ -24,7 +24,6 @@ import edu.utexas.cs.nn.util.datastructures.Pair;
 
 public class StaticOpponentBoardGameTask<T extends Network> extends NoisyLonerTask<T> implements NetworkTask, HyperNEATTask {
 
-	TwoDimensionalBoardGameViewer view = null;
 	@SuppressWarnings("rawtypes")
 	BoardGame bg;
 	@SuppressWarnings("rawtypes")

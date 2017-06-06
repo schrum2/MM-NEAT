@@ -5,7 +5,6 @@ import java.util.List;
 
 import boardGame.BoardGameState;
 import boardGame.heuristics.BoardGameHeuristic;
-import boardGame.heuristics.HeuristicBoardGamePlayer;
 import edu.utexas.cs.nn.util.ClassCreation;
 import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
 

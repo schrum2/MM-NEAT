@@ -24,4 +24,8 @@ public class BoardGamePlayerRandom<T extends BoardGameState> implements BoardGam
 		T temp = poss.get(random.nextInt(poss.size()));
 		return temp;
 	}
+	
+	public void setRandomSeed(long seed){
+		random.setSeed(seed);
+	}
 }
