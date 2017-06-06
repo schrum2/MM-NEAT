@@ -17,9 +17,9 @@ import edu.utexas.cs.nn.util.util2D.Tuple2D;
 
 /**
  * Several useful methods for creating and manipulating images.
- * Mostly used by Picbreeder.
+ * Mostly used by Picbreeder and PictureRemix.
  * 
- * @author Lauren Gillespie
+ * @author Lauren Gillespie, edits by Isabel Tweraser
  *
  */
 public class GraphicsUtil {
@@ -60,18 +60,31 @@ public class GraphicsUtil {
 		return image;
 	}
 	
+	/**
+	 * Returns adjusted image based on manipulation of an input image with a CPPN.
+	 * 
+	 * @param n CPPN
+	 * @param img input image being "remixed"
+	 * @param inputMultiples array of multiples indicating wheter to turn activation functions on or off
+	 * @return BufferedImage representation of adjusted image
+	 */
 	public static BufferedImage remixedImageFromCPPN(Network n, BufferedImage img, double[] inputMultiples) {
 		//initialize new image
 		BufferedImage remixedImage = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_RGB);
 		for(int x = 0; x < img.getWidth(); x++) {
 			for(int y = 0; y < img.getHeight(); y++) {
 				//get HSB from input image
-				float[] hsb = getHSB(img, x, y);
+				float[] originalHSB = getHSB(img, x, y); //not sure how this is used
+				ILocated2D scaled = CartesianGeometricUtilities.centerAndScale(new Tuple2D(x, y), img.getWidth(), img.getHeight());
+				double[] remixedInputs = { scaled.getX(), scaled.getY(), scaled.distance(new Tuple2D(0, 0)) * SQRT2, originalHSB[0], originalHSB[1], originalHSB[2], BIAS };
+				// Multiplies the inputs of the pictures by the inputMultiples; used to turn on or off the effects in each picture
+				for(int i = 0; i < inputMultiples.length; i++) {
+					remixedInputs[i] = remixedInputs[i] * inputMultiples[i];
+				}			
+				n.flush(); // erase recurrent activation
+				float[] hsb = rangeRestrictHSB(n.process(remixedInputs));
 				Color childColor = Color.getHSBColor(hsb[HUE_INDEX], hsb[SATURATION_INDEX], hsb[BRIGHTNESS_INDEX]);
-				//TODO: call new CPPNInput method to get scaled values for image. Need this to incorporate CPPN
-				//new double[] { scaled.getX(), scaled.getY(), scaled.distance(new Tuple2D(0, 0)) * SQRT2, hsb[HUE_INDEX], hsb[SATURATION_INDEX], hsb[BRIGHTNESS_INDEX], BIAS };
-				
-				// set back to RGB to draw new picture to JFrame
+				// set back to RGB to draw picture to JFrame
 				remixedImage.setRGB(x, y, childColor.getRGB());
 			}
 		}
@@ -128,6 +141,7 @@ public class GraphicsUtil {
 		n.flush();
 		return rangeRestrictHSB(n.process(input));
 	}
+	
 	/**
 	 * Given the direct HSB values from the CPPN (a double array), convert to a
 	 * float array (required by Color methods) and do range restriction on
@@ -166,31 +180,6 @@ public class GraphicsUtil {
 	public static double[] getCPPNInputs(int x, int y, int imageWidth, int imageHeight) {
 		ILocated2D scaled = CartesianGeometricUtilities.centerAndScale(new Tuple2D(x, y), imageWidth, imageHeight);
 		return new double[] { scaled.getX(), scaled.getY(), scaled.distance(new Tuple2D(0, 0)) * SQRT2, BIAS };
-	}
-	
-	/**
-	 * Method that returns CPPN inputs for the picture remix task. Similar to obtaining CPPN
-	 * inputs for Picbreeder, but the HSB of the input image must also be accessed.
-	 * 
-	 * @param n CPPN
-	 * @param img input image saved as a BufferedImage
-	 * @param x x-coordinate of pixel
-	 * @param y y-coordinate of pixel
-	 * @param inputMultiples determines whether checkboxes should be turned on or off
-	 * @return array containing inputs for CPPN
-	 */
-	public static double[] getCPPNRemixedInputs(Network n, BufferedImage img, int x, int y, double[] inputMultiples) {
-		ILocated2D scaled = CartesianGeometricUtilities.centerAndScale(new Tuple2D(x, y), img.getWidth(), img.getHeight());
-		double[] input = getCPPNInputs((int) scaled.getX(), (int) scaled.getY(), img.getWidth(), img.getHeight());
-		// Multiplies the inputs of the pictures by the inputMultiples; used to turn on or off the effects in each picture
-		for(int i = 0; i < inputMultiples.length; i++) {
-			input[i] = input[i] * inputMultiples[i];
-		}	
-		// Eliminate recurrent activation for consistent images at all resolutions
-		n.flush();
-		float[] hsb = rangeRestrictHSB(n.process(input));
-		return new double[] { scaled.getX(), scaled.getY(), scaled.distance(new Tuple2D(0, 0)) * SQRT2, hsb[0], hsb[1], hsb[2], BIAS };
-		
 	}
 
 	/**
