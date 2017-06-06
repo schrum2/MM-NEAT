@@ -23,7 +23,7 @@ import edu.utexas.cs.nn.util.stats.Statistic;
  * General evolution experiments are meant to save the best genomes in each
  * objective to the bestObjective directories for each population. 
  * This experiment loads those genomes and evaluates them.
- This experiment also assumes the task is a GroupTask
+ * This experiment also assumes the task is a GroupTask
  *
  * @author rollinsa
  */

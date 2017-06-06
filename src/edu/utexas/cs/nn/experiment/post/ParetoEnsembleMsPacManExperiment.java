@@ -61,13 +61,13 @@ public final class ParetoEnsembleMsPacManExperiment<T extends Network> implement
 		MsPacManInitialization.setupMsPacmanParameters();
 	}
 
-        @Override
+	@Override
 	public void init() {
 		// All work already done in constructor ... should move that here?
 	}
 
-        @SuppressWarnings({ "unchecked", "rawtypes" })
-		@Override
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
 	public void run() {
 
 		CooperativeEnsembleMsPacManTask pmTask = new CooperativeEnsembleMsPacManTask(front.size());
@@ -88,7 +88,7 @@ public final class ParetoEnsembleMsPacManExperiment<T extends Network> implement
 	/*
 	 * Never called
 	 */
-        @Override
+	@Override
 	public boolean shouldStop() {
 		return true;
 	}

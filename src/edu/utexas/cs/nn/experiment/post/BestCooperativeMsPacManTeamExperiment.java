@@ -25,8 +25,8 @@ public class BestCooperativeMsPacManTeamExperiment implements Experiment {
 	@SuppressWarnings("rawtypes")
 	private Genotype[] team;
 
-        @SuppressWarnings("rawtypes")
-		@Override
+	@SuppressWarnings("rawtypes")
+	@Override
 	public void init() {
 		task = (GroupTask) MMNEAT.task;
 		int numMembers = task.numberOfPopulations();
@@ -37,8 +37,8 @@ public class BestCooperativeMsPacManTeamExperiment implements Experiment {
 		}
 	}
 
-        @SuppressWarnings("rawtypes")
-		@Override
+	@SuppressWarnings("rawtypes")
+	@Override
 	public void run() {
 		DrawingPanel[] panels = GroupTask.drawNetworks(team);
 		ArrayList<Score> result = task.evaluate(team);
@@ -48,7 +48,7 @@ public class BestCooperativeMsPacManTeamExperiment implements Experiment {
 		}
 	}
 
-        @Override
+	@Override
 	public boolean shouldStop() {
 		// Will never be called
 		return true;

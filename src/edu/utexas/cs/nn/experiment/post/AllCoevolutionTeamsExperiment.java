@@ -24,8 +24,8 @@ public class AllCoevolutionTeamsExperiment implements Experiment {
 	private ArrayList<ArrayList<Genotype>> populations;
 	private GroupTask task;
 
-        @SuppressWarnings({ "rawtypes", "unchecked" })
-		@Override
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@Override
 	public void init() {
 		task = (GroupTask) MMNEAT.task;
 		String lastSavedDir = Parameters.parameters.stringParameter("lastSavedDirectory");
@@ -50,8 +50,8 @@ public class AllCoevolutionTeamsExperiment implements Experiment {
 		}
 	}
 
-        @SuppressWarnings("rawtypes")
-		@Override
+	@SuppressWarnings("rawtypes")
+	@Override
 	public void run() {
 		ArrayList<Integer> lengths = new ArrayList<Integer>(populations.size());
 		for (ArrayList<Genotype> pop : populations) {
@@ -62,7 +62,7 @@ public class AllCoevolutionTeamsExperiment implements Experiment {
 		task.evaluateAllPopulations(populations, joinOrder);
 	}
 
-        @Override
+	@Override
 	public boolean shouldStop() {
 		// Will never be called
 		return true;
@@ -75,7 +75,7 @@ public class AllCoevolutionTeamsExperiment implements Experiment {
 	 * This method should probably be moved into a utility class, but it's not
 	 * clear where at the moment.
 	 *
-         * @param <T>
+	 * @param <T>
 	 * @param mat
 	 *            vector of vectors
 	 * @return vector of vectors representing inverse of mat

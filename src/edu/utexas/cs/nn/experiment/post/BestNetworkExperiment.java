@@ -26,7 +26,7 @@ public class BestNetworkExperiment implements Experiment {
 	private Genotype net;
 
 	@SuppressWarnings("rawtypes")
-        @Override
+	@Override
 	public void init() {
 		String dir = FileUtilities.getSaveDirectory() + "/bestPacMan";
 		net = (Genotype) Easy.load(dir + "/bestPacMan.xml");
@@ -34,14 +34,14 @@ public class BestNetworkExperiment implements Experiment {
 
 	// Will always be running the Ms. Pac-Man experiment
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-        @Override
+	@Override
 	public void run() {
 		RandomNumbers.reset();
 		Score s = ((LonerTask) MMNEAT.task).evaluateOne(net);
 		System.out.println(s);
 	}
 
-        @Override
+	@Override
 	public boolean shouldStop() {
 		// Will never be called
 		return true;
