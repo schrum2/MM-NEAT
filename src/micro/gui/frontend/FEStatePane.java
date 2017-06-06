@@ -83,6 +83,9 @@ import javax.swing.JSeparator;
 import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 
+import edu.utexas.cs.nn.networks.Network;
+import edu.utexas.cs.nn.tasks.microrts.evaluation.NN2DEvaluationFunction;
+import edu.utexas.cs.nn.tasks.microrts.evaluation.NNSimpleEvaluationFunction;
 import micro.rts.GameState;
 import micro.rts.PartiallyObservableGameState;
 import micro.rts.PhysicalGameState;
@@ -110,15 +113,13 @@ public class FEStatePane extends JPanel {
 
     JFileChooser fileChooser = new JFileChooser();
 
-    // TODO: I believe that if you add the NN eval function to this, you can select it from the drop down.
-    //       However, you will need to make a version of the constructor that accepts a String filename of
-    //       an xml file containing an evolved neural network that is loaded to be the evaluation function.
     EvaluationFunction efs[] = {new SimpleEvaluationFunction(),
                                 new SimpleSqrtEvaluationFunction(),
                                 new SimpleSqrtEvaluationFunction2(),
                                 new SimpleSqrtEvaluationFunction3(),
                                 new EvaluationFunctionForwarding(new SimpleEvaluationFunction()),
-                                new SimpleOptEvaluationFunction()};
+                                new SimpleOptEvaluationFunction(),    							
+                                new NN2DEvaluationFunction<Network>("MicroRTS/2DProgressiveHYPER0/bestObjectives/gen27_BestIn0.xml"),};
 
     public static Class AIs[] = {PassiveAI.class,
                    MouseController.class,

@@ -1,6 +1,11 @@
 package edu.utexas.cs.nn.tasks.microrts.evaluation;
 
+import edu.utexas.cs.nn.MMNEAT.MMNEAT;
+import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.networks.Network;
+import edu.utexas.cs.nn.parameters.Parameters;
+import edu.utexas.cs.nn.util.PopulationUtil;
+import edu.utexas.cs.nn.util.file.FileUtilities;
 import micro.rts.GameState;
 import micro.rts.units.Unit;
 
@@ -16,6 +21,21 @@ public class NN2DEvaluationFunction<T extends Network> extends NNEvaluationFunct
 	public static final double HEAVY_WEIGHT = 3.25;
 	public static final double RANGED_WEIGHT = 3.75;
 	public static final double RAW_RESOURCE_WEIGHT = .01;
+	
+	/**
+	 * constructor for FEStatePane and similar
+	 * @param NNfile
+	 * 				neural network .xml file 
+	 */
+	public NN2DEvaluationFunction(String NNfile){
+		// Parameter init can/should be removed when moving to stand-alone competition entry
+		Parameters.initializeParameterCollections(new String[]{"task:edu.utexas.cs.nn.tasks.microrts.MicroRTSTask","hyperNEAT:true"
+				,"microRTSEnemySequence:edu.utexas.cs.nn.tasks.microrts.iterativeevolution.HardeningEnemySequence",
+				"microRTSMapSequence:edu.utexas.cs.nn.tasks.microrts.iterativeevolution.GrowingMapSequence","log:microRTS-temp","saveTo:temp"});
+		MMNEAT.loadClasses();
+		Genotype<T> g = PopulationUtil.extractGenotype(NNfile);
+		nn = g.getPhenotype();
+	}
 	
 	/**
 	 * represents all squares of the gameState in an array

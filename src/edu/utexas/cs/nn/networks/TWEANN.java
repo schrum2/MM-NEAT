@@ -501,7 +501,7 @@ public class TWEANN implements Network {
 	 *            The genotype
 	 */
 	public TWEANN(TWEANNGenotype g) {
-		NETWORK_VIEW_DIM = (Parameters.parameters.booleanParameter("hyperNEAT")) ? Parameters.parameters.integerParameter("hyperNEATNetworkDisplaySize") : 500;
+		NETWORK_VIEW_DIM = (Parameters.parameters != null && Parameters.parameters.booleanParameter("hyperNEAT")) ? Parameters.parameters.integerParameter("hyperNEATNetworkDisplaySize") : 500;
 		this.archetypeIndex = g.archetypeIndex;
 		this.id = g.getId();
 		this.nodes = new ArrayList<Node>(g.nodes.size());
