@@ -663,7 +663,7 @@ public class Parameters {
 		doubleOptions.add("explorePreference", 0.5, "High for more exploration vs. low for more exploitation when using UCB1");
 		// String parameters
 		stringOptions.add("gameWad", "freedoom2.wad", "The wad file name for the current VizDoom game");
-		stringOptions.add("matchImageFile", "data/imagematch/sunset1.png", "path of the image for image match task");
+		stringOptions.add("matchImageFile", "data/imagematch/theScream.png", "path of the image for image match task");
 		stringOptions.add("mazePowerPillGhostMapping", "", "File with saved locations of ghosts when particular power pills are eaten");
 		stringOptions.add("pacmanSaveFile", "", "Filename to save a pacman game recording to");
 		stringOptions.add("utMap", "DM-TrainingDay", "Map to play in Unreal Tournament 2004");
