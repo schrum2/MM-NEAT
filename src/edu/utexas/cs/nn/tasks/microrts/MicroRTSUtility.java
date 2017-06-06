@@ -30,7 +30,9 @@ public class MicroRTSUtility {
 	private static final double WORKER_HARVEST_VALUE = .5; //relative to 1 resource, for use in pool
 
 	public static <T> ArrayList<Pair<double[], double[]>> oneEval(AI ai1, AI ai2, MicroRTSInformation task, RTSFitnessFunction ff, PhysicalGameStateJFrame w) {
+		// TODO: Avoid doing a class equality check on every single eval. This information could be stored as a global static variable in this class.
 		boolean prog = Parameters.parameters.classParameter("microRTSFitnessFunction").equals(ProgressiveFitnessFunction.class);
+		
 		GameState gs = task.getGameState();
 		PhysicalGameState pgs = task.getPhysicalGameState();
 		boolean gameover = false;

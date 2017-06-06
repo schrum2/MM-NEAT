@@ -51,7 +51,7 @@ public class SinglePopulationCompetativeCoevolutionMicroRTSTask<T extends Networ
 	private int baseUpTime1;
 	private int baseUpTime2;
 	private int harvestingEfficiencyIndex1;
-	private int harvestingEfficiencyIndex2;
+	private int harvestingEfficiencyIndex2; // TODO: Is there a reason this is not used? Seems like a potential error.
 
 	NNEvaluationFunction<T> ef1;
 	NNEvaluationFunction<T> ef2;
@@ -65,9 +65,9 @@ public class SinglePopulationCompetativeCoevolutionMicroRTSTask<T extends Networ
 		utt = new UnitTypeTable();
 		//create objects
 		try {
-			ef1 = (NNEvaluationFunction<T>) ClassCreation.createObject(Parameters.parameters.classParameter("microRTSEvaluationFunction"));
-			ef2 = (NNEvaluationFunction<T>) ClassCreation.createObject(Parameters.parameters.classParameter("microRTSEvaluationFunction"));
-			ff = (RTSFitnessFunction) ClassCreation.createObject(Parameters.parameters.classParameter("microRTSFitnessFunction"));
+			ef1 = (NNEvaluationFunction<T>) ClassCreation.createObject("microRTSEvaluationFunction");
+			ef2 = (NNEvaluationFunction<T>) ClassCreation.createObject("microRTSEvaluationFunction");
+			ff = (RTSFitnessFunction) ClassCreation.createObject("microRTSFitnessFunction");
 			initialPgs = PhysicalGameState.load("data/microRTS/maps/" + Parameters.parameters.stringParameter("map"), utt);
 		} catch (JDOMException | IOException | NoSuchMethodException e) {
 			e.printStackTrace();
@@ -200,7 +200,9 @@ public class SinglePopulationCompetativeCoevolutionMicroRTSTask<T extends Networ
 
 	@Override
 	public double[] minScores() {
-		return new double[]{}; //TODO
+		// TODO: This should be easy to implement, but in the mean time throw an exception
+		throw new UnsupportedOperationException("minScores not yet implemented");
+		//return new double[]{}; //TODO
 	}
 
 	@Override
@@ -224,13 +226,14 @@ public class SinglePopulationCompetativeCoevolutionMicroRTSTask<T extends Networ
 		}
 		
 	}
-	
+
 	@Override
 	public int getBaseUpTime(int player){
 		if(player == 1) return baseUpTime1;
 		else if(player == 2) return baseUpTime2;
 		else throw new IllegalArgumentException("not a valid player: " + player);
-		}
+	}
+	
 	@Override
 	public void setBaseUpTime(int but, int player) {
 		if(player == 1) baseUpTime1 = but;

@@ -7,6 +7,13 @@ import edu.utexas.cs.nn.util.datastructures.Pair;
 import micro.rts.GameState;
 import micro.rts.PhysicalGameState;
 
+/**
+ * 
+ * TODO: Comment describing this class
+ * 
+ * @author 
+ *
+ */
 public abstract class RTSFitnessFunction {
 	
 	protected final int RESULTRANGE = 2;
@@ -31,7 +38,6 @@ public abstract class RTSFitnessFunction {
 		this.maxCycles = maxCycles;
 	}
 	
-	@SuppressWarnings("rawtypes") //doesn't need to know phenotype
 	public void giveTask(MicroRTSInformation task) {
 		this.task = task;
 	}
