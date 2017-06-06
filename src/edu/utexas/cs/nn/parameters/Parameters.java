@@ -299,6 +299,7 @@ public class Parameters {
 		integerOptions.add("clipLength", Keyboard.NOTE_LENGTH_DEFAULT, "Length of clip played in Breedesizer");
 		integerOptions.add("maxClipLength", 100000, "Maximum length of clip played in Breedesizer");
 		integerOptions.add("minimaxSearchDepth", 2, "Tree-Search Depth of the Minimax BoardGamePlayer");
+		integerOptions.add("remixImageWindow", 10, "Size of window being remixed by CPPN in Picture Remixer");
 		// Long parameters
 		longOptions.add("lastInnovation", 0l, "Highest innovation number used so far");
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");

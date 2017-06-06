@@ -29,11 +29,11 @@ public class GraphicsUtil {
 	private static final int BRIGHTNESS_INDEX = 2;
 	private static final double BIAS = 1.0;// a common input used in neural networks
 	private static final double SQRT2 = Math.sqrt(2); // Used for scaling distance from center
-	
+
 	public static BufferedImage imageFromCPPN(Network n, int imageWidth, int imageHeight) {
 		return imageFromCPPN(n,imageWidth,imageHeight, ArrayUtil.doubleOnes(PicbreederTask.CPPN_NUM_INPUTS));
 	}
-	
+
 	/**
 	 * Draws the image created by the CPPN to a BufferedImage
 	 *
@@ -59,24 +59,45 @@ public class GraphicsUtil {
 		}
 		return image;
 	}
-	
+
 	/**
 	 * Returns adjusted image based on manipulation of an input image with a CPPN.
 	 * 
 	 * @param n CPPN
 	 * @param img input image being "remixed"
-	 * @param inputMultiples array of multiples indicating wheter to turn activation functions on or off
+	 * @param inputMultiples array of multiples indicating whether to turn activation functions on or off
 	 * @return BufferedImage representation of adjusted image
 	 */
-	public static BufferedImage remixedImageFromCPPN(Network n, BufferedImage img, double[] inputMultiples) {
+	public static BufferedImage remixedImageFromCPPN(Network n, BufferedImage img, double[] inputMultiples, int remixWindow) {
 		//initialize new image
 		BufferedImage remixedImage = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_RGB);
+		int loopWindow = remixWindow/2; //ensures that pixel is in center
 		for(int x = 0; x < img.getWidth(); x++) {
 			for(int y = 0; y < img.getHeight(); y++) {
 				//get HSB from input image
-				float[] originalHSB = getHSB(img, x, y); //not sure how this is used
+				int totalH = 0;
+				int totalS = 0;
+				int totalB = 0;
+				float[] queriedHSB;
+				if(x >= loopWindow && y >= loopWindow && x < img.getWidth()-loopWindow && y < img.getHeight()-loopWindow) {
+					for(int queryX = x-loopWindow; queryX < x + loopWindow; queryX++) {
+						for(int queryY = y-loopWindow; queryY < y + loopWindow; queryY++) {
+							float[] tempHSB = getHSBFromImage(img, queryX, queryY);
+							totalH += tempHSB[HUE_INDEX];
+							totalS += tempHSB[SATURATION_INDEX];
+							totalB += tempHSB[BRIGHTNESS_INDEX];
+						}
+					}
+					int avgH = totalH/remixWindow;
+					int avgS = totalS/remixWindow;
+					int avgB = totalB/remixWindow;
+					queriedHSB = new float[]{avgH, avgS, avgB};
+				} else {
+					queriedHSB = getHSBFromImage(img, x, y);
+				}
+
 				ILocated2D scaled = CartesianGeometricUtilities.centerAndScale(new Tuple2D(x, y), img.getWidth(), img.getHeight());
-				double[] remixedInputs = { scaled.getX(), scaled.getY(), scaled.distance(new Tuple2D(0, 0)) * SQRT2, originalHSB[0], originalHSB[1], originalHSB[2], BIAS };
+				double[] remixedInputs = { scaled.getX(), scaled.getY(), scaled.distance(new Tuple2D(0, 0)) * SQRT2, queriedHSB[0], queriedHSB[1], queriedHSB[2], BIAS };
 				// Multiplies the inputs of the pictures by the inputMultiples; used to turn on or off the effects in each picture
 				for(int i = 0; i < inputMultiples.length; i++) {
 					remixedInputs[i] = remixedInputs[i] * inputMultiples[i];
@@ -90,7 +111,17 @@ public class GraphicsUtil {
 		}
 		return remixedImage;
 	}
-	
+
+	private static int[] accessRGB(BufferedImage img, int x, int y) {
+		int RGB = img.getRGB(x, y);
+		Color c = new Color(RGB, true);
+		int r = c.getRed();
+		int g = c.getGreen();
+		int b = c.getBlue();
+		int[] result = new int[]{r,g,b};
+		return result;
+	}
+
 	/**
 	 * Accesses HSB at a specific pixel in a BufferedImage. Does so by accessing the 
 	 * RGB first and then creating a Color class instance to convert the components of 
@@ -102,20 +133,15 @@ public class GraphicsUtil {
 	 * @param y y-coordinate of pixel
 	 * @return array of floats representing hue, saturation, and brightness of pixel
 	 */
-	private static float[] getHSB(BufferedImage img, int x, int y) {
-		int RGB = img.getRGB(x, y);
-		 Color c = new Color(RGB, true);
-		 int r = c.getRed();
-		 int g = c.getGreen();
-		 int b = c.getBlue();
-		 float[] HSB = Color.RGBtoHSB(r, g, b, null);
-		 return HSB;
+	private static float[] getHSBFromImage(BufferedImage img, int x, int y) {
+		int[] RGB = accessRGB(img, x, y);
+		float[] HSB = Color.RGBtoHSB(RGB[HUE_INDEX], RGB[SATURATION_INDEX], RGB[BRIGHTNESS_INDEX], null);
+		return HSB;
 	}
 
 	/**
 	 * Gets HSB outputs from the CPPN in question
 	 *
-	 * @param n
 	 *            the CPPN
 	 * @param x
 	 *            x-coordinate of pixel
@@ -136,12 +162,12 @@ public class GraphicsUtil {
 		for(int i = 0; i < inputMultiples.length; i++) {
 			input[i] = input[i] * inputMultiples[i];
 		}
-		
+
 		// Eliminate recurrent activation for consistent images at all resolutions
 		n.flush();
 		return rangeRestrictHSB(n.process(input));
 	}
-	
+
 	/**
 	 * Given the direct HSB values from the CPPN (a double array), convert to a
 	 * float array (required by Color methods) and do range restriction on
@@ -221,7 +247,7 @@ public class GraphicsUtil {
 		}
 		return image;
 	}
-	
+
 	/**
 	 * Plots line of a designated color drawn by an input array list of doubles on a drawing panel.
 	 * 
@@ -237,7 +263,7 @@ public class GraphicsUtil {
 		int width = panel.getFrame().getWidth();		
 		linePlot(g, min, max, height, width, scores, color); // calls secondary linePlot method after necessary info is defined
 	}
-	
+
 	/**
 	 * Creates an image, sets the background to be white, and plots a line on the image.
 	 * 
@@ -257,7 +283,7 @@ public class GraphicsUtil {
 		linePlot(g, min, max, height, width, scores, color);
 		return bi;
 	}
-	
+
 	/**
 	 * Plots a line of a designated color on a graphics image using an input array list of doubles
 	 * 
@@ -295,7 +321,7 @@ public class GraphicsUtil {
 		g.drawString("" + max, Plot.OFFSET / 2, Plot.OFFSET / 2);
 		g.drawString("" + lowerMin, Plot.OFFSET / 2, height - (Plot.OFFSET / 2));
 	}
-	
+
 	/**
 	 * Creates a graphed visualization of an audio file by taking in the file represented as a list of doubles and 
 	 * plotting it using a DrawingPanel.
@@ -306,7 +332,7 @@ public class GraphicsUtil {
 		double[] fileArray = SoundToArray.read(fileName); //create array of doubles representing audio
 		wavePlotFromDoubleArray(fileArray, height, width);
 	}
-	
+
 	/**
 	 *  Creates a graphed visualization of an audio file by taking in the list of doubles that represents the file and 
 	 * plotting it using a DrawingPanel.
@@ -318,7 +344,7 @@ public class GraphicsUtil {
 		BufferedImage wavePlot = linePlotImage(height, width, -1.0, 1.0, fileArrayList, Color.black);
 		return wavePlot;
 	}
-	
+
 	/**
 	 * Scales x value based on maximum and minimum value. This scale method is based on original browser 
 	 * dimension, which is meant for evolution lineage/Ms. Pacman. 
@@ -331,7 +357,7 @@ public class GraphicsUtil {
 	public static int scale(double x, double max, double min) {
 		return scale(x, max, min, Plot.BROWSE_DIM);
 	}
-	
+
 	/**
 	 * Scales x value based on maximum and minimum value. This scale method is more generalized and 
 	 * was created specifically for plotting sound waves in StdAudio. 
@@ -344,7 +370,7 @@ public class GraphicsUtil {
 	public static int scale(double x, double max, double min, int totalWidth) {
 		return (int) (((x - min) / max) * (totalWidth - (2 * Plot.OFFSET)));
 	}
-	
+
 	/**
 	 * Inverts y value based on maximum and minimum value to fit graphical x/y proportions. 
 	 * This method is the original invert method intended for evolution lineage/Ms. Pacman. 
@@ -357,7 +383,7 @@ public class GraphicsUtil {
 	public static int invert(double y, double max, double min) {
 		return invert(y,max,min);
 	}
-	
+
 	/**
 	 * Inverts y value based on maximum and minimum value to fit graphical x/y proportions. 
 	 * This method is a secondary invert method created for plotting sound waves in StdAudio
