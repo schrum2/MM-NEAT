@@ -1,5 +1,7 @@
 package boardGame;
 
+import boardGame.agents.BoardGamePlayer;
+import boardGame.agents.BoardGamePlayerRandom;
 import boardGame.othello.Othello;
 import boardGame.ttt.TicTacToeState;
 import edu.utexas.cs.nn.util.MiscUtil;
