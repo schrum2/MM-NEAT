@@ -78,22 +78,6 @@ public class GraphicsUtil {
 		
 		for(int x = 0; x < img.getWidth(); x++) {
 			for(int y = 0; y < img.getHeight(); y++) {
-				
-				// Decide which source x/y coordinate to remix
-				ILocated2D scaled = CartesianGeometricUtilities.centerAndScale(new Tuple2D(x, y), img.getWidth(), img.getHeight());
-				// Ignore HSB for now
-				double[] positionInputs = { scaled.getX(), scaled.getY(), scaled.distance(new Tuple2D(0, 0)) * SQRT2, 0, 0, 0, BIAS };
-				// Multiplies the inputs of the pictures by the inputMultiples; used to turn on or off the effects in each picture
-				for(int i = 0; i < inputMultiples.length; i++) {
-					positionInputs[i] = positionInputs[i] * inputMultiples[i];
-				}			
-				n.flush(); // erase recurrent activation
-				double[] firstOutput = n.process(positionInputs);
-				// TODO: fix magic numbers 3 and 4. Uncentering and unscaling also happening
-				int[] newXY = new int[]{(int) (img.getWidth()*(firstOutput[3]+1)/2.0), (int) (img.getHeight()*(firstOutput[4]+1)/2.0)}; 
-				
-				
-				
 				//get HSB from input image
 				float totalH = 0;
 				float totalS = 0;
@@ -102,11 +86,9 @@ public class GraphicsUtil {
 				// loop through all pixels in surrounding window of current pixel to add up the 
 				// average hue, saturation, and brightness. The average HSB is taken and applied
 				// to the remixed image
-				
-				// TODO: more magic numbers: 0 and 1
-				for(int windowX = newXY[0]-loopWindow; windowX < newXY[0] + loopWindow; windowX++) {
+				for(int windowX = x-loopWindow; windowX < x + loopWindow; windowX++) {
 					if(windowX >= 0 && windowX < img.getWidth()) { //if current x-coordinate is within image bounds
-						for(int windowY = newXY[1]-loopWindow; windowY < newXY[1] + loopWindow; windowY++) {
+						for(int windowY = y-loopWindow; windowY < y + loopWindow; windowY++) {
 							if(windowY >= 0 && windowY < img.getHeight()) { //if current y-coordinate is within image bounds
 								if(windowX >= 0 && windowX < img.getWidth()) {
 									if(sourceHSB[windowX][windowY] == null) sourceHSB[windowX][windowY] = getHSBFromImage(img, windowX, windowY);
@@ -126,7 +108,7 @@ public class GraphicsUtil {
 				float avgB = totalB/count;
 				float[] queriedHSB = new float[]{avgH, avgS, avgB};
 				//scale point for CPPN input
-				scaled = CartesianGeometricUtilities.centerAndScale(new Tuple2D(x, y), img.getWidth(), img.getHeight());
+				ILocated2D scaled = CartesianGeometricUtilities.centerAndScale(new Tuple2D(x, y), img.getWidth(), img.getHeight());
 				double[] remixedInputs = { scaled.getX(), scaled.getY(), scaled.distance(new Tuple2D(0, 0)) * SQRT2, queriedHSB[HUE_INDEX], queriedHSB[SATURATION_INDEX], queriedHSB[BRIGHTNESS_INDEX], BIAS };
 				// Multiplies the inputs of the pictures by the inputMultiples; used to turn on or off the effects in each picture
 				for(int i = 0; i < inputMultiples.length; i++) {
