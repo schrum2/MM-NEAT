@@ -6,16 +6,16 @@ import java.util.Set;
 
 import boardGame.BoardGameState;
 import boardGame.heuristics.BoardGameHeuristic;
-import boardGame.heuristics.HeuristicBoardGamePlayer;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.util.ClassCreation;
 import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
 
-public class BoardGamePlayerMinimax<T extends BoardGameState> extends HeuristicBoardGamePlayer<T> {
+public class BoardGamePlayerMinimax<T extends BoardGameState> extends boardGame.agents.HeuristicBoardGamePlayer<T> {
 	
-	private static final int DEPTH = Parameters.parameters.integerParameter("minimaxSearchDepth"); // Used to keep track of how far down the Tree to check
+	private static int depth; // Used to keep track of how far down the Tree to check
 	private static final double ALPHA = Double.NEGATIVE_INFINITY; // Holds the Starting Value for Alpha
 	private static final double BETA = Double.POSITIVE_INFINITY; // Holds the Starting Value for Beta
+	protected static BoardGameHeuristic boardHeuristic;
 	
 	/**
 	 * This constructor assumes an opponent agent is being created.
@@ -26,6 +26,7 @@ public class BoardGamePlayerMinimax<T extends BoardGameState> extends HeuristicB
 	public BoardGamePlayerMinimax(){
 		try {
 			boardHeuristic = (BoardGameHeuristic<T>) ClassCreation.createObject("boardGameOpponentHeuristic");
+			depth = Parameters.parameters.integerParameter("minimaxSearchDepth");
 		} catch (NoSuchMethodException e) {
 			e.printStackTrace();
 			System.exit(1);
@@ -56,7 +57,7 @@ public class BoardGamePlayerMinimax<T extends BoardGameState> extends HeuristicB
 
 		int index = 0;
 		for(T bgs : poss){ // Gets the network's outputs for all possible BoardGameStates
-			utilities[index++] = minimax(bgs, DEPTH, ALPHA, BETA, true); // Action is being taken as the Maximizing Player; maxPlayer == true
+			utilities[index++] = minimax(bgs, depth, ALPHA, BETA, true); // Action is being taken as the Maximizing Player; maxPlayer == true
 		}
 
 		return poss.get(StatisticsUtilities.argmax(utilities)); // Returns the BoardGameState which produced the highest network output

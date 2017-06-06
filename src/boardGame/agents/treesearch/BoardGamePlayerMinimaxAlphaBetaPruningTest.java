@@ -8,46 +8,46 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import boardGame.BoardGame;
-import boardGame.BoardGameState;
-import boardGame.agents.BoardGamePlayer;
-import boardGame.agents.BoardGamePlayerRandom;
-import boardGame.heuristics.PieceDifferentialBoardGameHeuristic;
-import boardGame.othello.Othello;
+import boardGame.*;
+import boardGame.agents.*;
+import boardGame.featureExtractor.BoardGameFeatureExtractor;
+import boardGame.heuristics.*;
+import boardGame.othello.*;
+import edu.utexas.cs.nn.util.ClassCreation;
 
 public class BoardGamePlayerMinimaxAlphaBetaPruningTest {
 	
-	BoardGame bg1;
-	BoardGame bg2;
-	BoardGamePlayerRandom random;
-	BoardGamePlayerMinimax mini;
-	BoardGamePlayerMinimaxAlphaBetaPruning alpha;
-	BoardGamePlayer[] players;
+	Othello bg1 = new Othello();
+	Othello bg2 = new Othello();
+	
+	BoardGamePlayerRandom randomPlayer = new BoardGamePlayerRandom<BoardGameState>();
+	
+	@SuppressWarnings("unchecked")
+	BoardGamePlayer[] players = new BoardGamePlayer[]{randomPlayer, null};
+	
+	BoardGameHeuristic bgh = new PieceDifferentialBoardGameHeuristic();
+	
+	BoardGamePlayerMinimax mini = new BoardGamePlayerMinimax(bgh);
+	BoardGamePlayerMinimaxAlphaBetaPruning alpha = new BoardGamePlayerMinimaxAlphaBetaPruning(bgh);
 	
 	
 	
-	@Before
-	public void setUp() throws Exception {
-		bg1 = new Othello();
-		bg2 = new Othello();
-		random = new BoardGamePlayerRandom();
-		mini = new BoardGamePlayerMinimax(new PieceDifferentialBoardGameHeuristic());
-		alpha = new BoardGamePlayerMinimaxAlphaBetaPruning(new PieceDifferentialBoardGameHeuristic());
-		players = new BoardGamePlayer[]{random, null};
-	}
-	
+	@SuppressWarnings("unchecked")
 	@Test
 	public void test() {
-
-		for(int i = 0; i <= 100; i++){ // Cycles through the Random Seeds
+		
+		for(int i = 0; i <= 100; i++){
+			randomPlayer.setRandomSeed(i);
+			
 			bg1.reset();
+			bg2.reset();
+			
 			players[1] = mini;
 			while(!bg1.isGameOver()){
 				bg1.move(players[bg1.getCurrentPlayer()]);
 			}
 			
-			players[1] = alpha;
-			bg2.reset();
+			players[1] = mini;
 			while(!bg2.isGameOver()){
 				bg2.move(players[bg2.getCurrentPlayer()]);
 			}

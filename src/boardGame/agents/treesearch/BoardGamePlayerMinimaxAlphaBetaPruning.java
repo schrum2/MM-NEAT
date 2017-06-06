@@ -8,6 +8,10 @@ import boardGame.heuristics.PieceDifferentialBoardGameHeuristic;
 
 public class BoardGamePlayerMinimaxAlphaBetaPruning<T extends BoardGameState> extends BoardGamePlayerMinimax<BoardGameState> {
 	
+	public BoardGamePlayerMinimaxAlphaBetaPruning() {
+		super();
+	}
+	
 	public BoardGamePlayerMinimaxAlphaBetaPruning(BoardGameHeuristic bgh) {
 		super(bgh);
 	}
