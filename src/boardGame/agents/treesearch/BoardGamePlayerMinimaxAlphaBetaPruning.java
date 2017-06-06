@@ -4,31 +4,29 @@ import java.util.Set;
 
 import boardGame.BoardGameState;
 import boardGame.heuristics.BoardGameHeuristic;
-import boardGame.heuristics.PieceDifferentialBoardGameHeuristic;
 
-public class BoardGamePlayerMinimaxAlphaBetaPruning<T extends BoardGameState> extends BoardGamePlayerMinimax<BoardGameState> {
+public class BoardGamePlayerMinimaxAlphaBetaPruning<T extends BoardGameState> extends BoardGamePlayerMinimax<T> {
 	
 	public BoardGamePlayerMinimaxAlphaBetaPruning() {
 		super();
 	}
 	
-	public BoardGamePlayerMinimaxAlphaBetaPruning(BoardGameHeuristic bgh) {
+	public BoardGamePlayerMinimaxAlphaBetaPruning(BoardGameHeuristic<T> bgh) {
 		super(bgh);
 	}
 
 	@Override
-	protected double minimax(BoardGameState bgState, int depth, double alpha, double beta, boolean maxPlayer) {
+	protected double minimax(T bgState, int depth, double alpha, double beta, boolean maxPlayer) {
 		
 		if(depth == 0 || bgState.endState()){
-			boardHeuristic.heuristicEvalution(bgState);
+			return boardHeuristic.heuristicEvalution(bgState); // Return the Heuristic value of the Node
 		}
 		
 		if(maxPlayer){
 			double v = Double.NEGATIVE_INFINITY;
+			Set<T> poss = bgState.possibleBoardGameStates(bgState);
 			
-			Set<BoardGameState> poss = bgState.possibleBoardGameStates(bgState);
-			
-			for(BoardGameState childState : poss){
+			for(T childState: poss){
 				v = Math.max(v, minimax(childState, depth-1, alpha, beta, false));
 				alpha = Math.max(alpha, v);
 				if(beta <= alpha){
@@ -36,13 +34,11 @@ public class BoardGamePlayerMinimaxAlphaBetaPruning<T extends BoardGameState> ex
 				}
 			}
 			return v;
-			
 		}else{
 			double v = Double.POSITIVE_INFINITY;
+			Set<T> poss = bgState.possibleBoardGameStates(bgState);
 			
-			Set<BoardGameState> poss = bgState.possibleBoardGameStates(bgState);
-			
-			for(BoardGameState childState : poss){
+			for(T childState: poss){
 				v = Math.min(v, minimax(childState, depth-1, alpha, beta, true));
 				beta = Math.min(beta, v);
 				if(beta <= alpha){
@@ -51,6 +47,7 @@ public class BoardGamePlayerMinimaxAlphaBetaPruning<T extends BoardGameState> ex
 			}
 			return v;
 		}
+		
 	}	
 	
 		

@@ -5,17 +5,18 @@ import java.util.List;
 import java.util.Set;
 
 import boardGame.BoardGameState;
+import boardGame.agents.HeuristicBoardGamePlayer;
 import boardGame.heuristics.BoardGameHeuristic;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.util.ClassCreation;
 import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
 
-public class BoardGamePlayerMinimax<T extends BoardGameState> extends boardGame.agents.HeuristicBoardGamePlayer<T> {
+public class BoardGamePlayerMinimax<T extends BoardGameState> extends HeuristicBoardGamePlayer<T> {
 	
 	private static int depth; // Used to keep track of how far down the Tree to check
-	private static final double ALPHA = Double.NEGATIVE_INFINITY; // Holds the Starting Value for Alpha
-	private static final double BETA = Double.POSITIVE_INFINITY; // Holds the Starting Value for Beta
-	protected static BoardGameHeuristic boardHeuristic;
+	protected static final double ALPHA = Double.NEGATIVE_INFINITY; // Holds the Starting Value for Alpha
+	protected static final double BETA = Double.POSITIVE_INFINITY; // Holds the Starting Value for Beta
+	protected BoardGameHeuristic<T> boardHeuristic;
 	
 	/**
 	 * This constructor assumes an opponent agent is being created.
