@@ -196,7 +196,7 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
                 if (action != null)
                 {
                     for (int i = 0; i < Environment.numberOfButtons; ++i)
-                        msg += (action[i]) ? scene.keysStr[i] : "      ";
+                        msg += (action[i]) ? Scene.keysStr[i] : "      ";
                 }
                 else
                     msg = "NULL";                    
@@ -245,7 +245,7 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
         evaluationInfo.agentType = agent.getClass().getSimpleName();
         evaluationInfo.agentName = agent.getName();
         evaluationInfo.marioStatus = mario.getStatus();
-        evaluationInfo.livesLeft = mario.lives;
+        evaluationInfo.livesLeft = Mario.lives;
         evaluationInfo.lengthOfLevelPassedPhys = mario.x;
         evaluationInfo.lengthOfLevelPassedCells = mario.mapX;
         evaluationInfo.totalLengthOfLevelCells = levelScene.level.getWidthCells();
@@ -258,7 +258,7 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
         evaluationInfo.totalActionsPerfomed = totalActionsPerfomed; // Counted during the play/simulation process
         evaluationInfo.totalFramesPerfomed = frame;
         evaluationInfo.marioMode = mario.getMode();
-        evaluationInfo.killsTotal = mario.world.killedCreaturesTotal;
+        evaluationInfo.killsTotal = LevelScene.killedCreaturesTotal;
 //        evaluationInfo.Memo = "Number of attempt: " + Mario.numberOfAttempts;
         if (agent instanceof ServerAgent && mario.keys != null /*this will happen if client quits unexpectedly in case of Server mode*/)
             ((ServerAgent)agent).integrateEvaluationInfo(evaluationInfo);
@@ -352,19 +352,19 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
     }
 
     public int getKillsTotal() {
-        return mario.world.killedCreaturesTotal;
+        return LevelScene.killedCreaturesTotal;
     }
 
     public int getKillsByFire() {
-        return mario.world.killedCreaturesByFireBall;
+        return LevelScene.killedCreaturesByFireBall;
     }
 
     public int getKillsByStomp() {
-        return mario.world.killedCreaturesByStomp;
+        return LevelScene.killedCreaturesByStomp;
     }
 
     public int getKillsByShell() {
-        return mario.world.killedCreaturesByShell;
+        return LevelScene.killedCreaturesByShell;
     }
 
     public byte[][] getCompleteObservation() {

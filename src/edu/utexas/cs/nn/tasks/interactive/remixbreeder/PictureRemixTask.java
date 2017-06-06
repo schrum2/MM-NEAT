@@ -11,7 +11,7 @@ import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.interactive.picbreeder.PicbreederTask;
 import edu.utexas.cs.nn.util.graphics.GraphicsUtil;
 
-public class PictureRemixTask<T extends Network> extends PicbreederTask {
+public class PictureRemixTask<T extends Network> extends PicbreederTask<T> {
 	
 	public static final int CPPN_NUM_INPUTS	= 7;
 	

@@ -20,6 +20,7 @@ import java.util.Vector;
  * for the gm() !!!
  */
 
+@SuppressWarnings("serial")
 public class StatisticalSummary implements java.io.Serializable {
 
     // a temporary fix for an immediate need
@@ -214,10 +215,10 @@ public class StatisticalSummary implements java.io.Serializable {
         }
     }
 
-    public void add(Vector v) {
+    public void add(Vector<? extends Number> v) {
         for (int i = 0; i < v.size(); i++) {
             try {
-                add(((Number) v.elementAt(i)).doubleValue());
+                add((v.elementAt(i)).doubleValue());
             } catch (Exception e) {
             }
         }
@@ -265,7 +266,8 @@ public class StatisticalSummary implements java.io.Serializable {
     }
 
 
-    public static void main(String[] args) throws Exception {
+    @SuppressWarnings("unused")
+	public static void main(String[] args) throws Exception {
         // demonstrate some possible usage...
 
         StatisticalSummary ts1 = new StatisticalSummary();
