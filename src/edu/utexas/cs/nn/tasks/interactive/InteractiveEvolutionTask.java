@@ -102,7 +102,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	
 	//Private final variables
 	private static int numRows;
-	private static int picSize;
+	protected static int picSize;
 	private static int numButtonOptions;
 
 	//Private graphic objects
@@ -118,10 +118,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	private boolean waitingForUser;
 	protected final boolean[] chosen;
 	private final boolean[] activation;
-	// Size of 4: This is the number used by Picbreeder, though Breedesizer currently uses 3.
-	// It would be good to generalize this code and make its meaning less obscure.
-	// If any interactive evolution task ever uses more than 4 inputs, then this value needs to change.
-	protected static double[] inputMultipliers = new double[4];
+	protected static double[] inputMultipliers;
 
 	// This is a weird magic number that is used to track the checkboxes
 	public static final int CHECKBOX_IDENTIFIER_START = -25;
@@ -137,6 +134,8 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	 * @throws IllegalAccessException 
 	 */
 	public InteractiveEvolutionTask() throws IllegalAccessException {		
+		inputMultipliers = new double[numCPPNInputs()];
+		
 		MMNEAT.registerFitnessFunction("User Preference");
 		//sets mu to a divisible number
 		if(Parameters.parameters.integerParameter("mu") % InteractiveEvolutionTask.NUM_COLUMNS != 0) { 

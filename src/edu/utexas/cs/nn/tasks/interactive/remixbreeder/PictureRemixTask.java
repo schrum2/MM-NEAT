@@ -11,6 +11,14 @@ import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.interactive.picbreeder.PicbreederTask;
 import edu.utexas.cs.nn.util.graphics.GraphicsUtil;
 
+/**
+ * Takes in an input image and remixes it by extending the
+ * Picbreeder interface.
+ * 
+ * @author Isabel Tweraser
+ *
+ * @param <T>
+ */
 public class PictureRemixTask<T extends Network> extends PicbreederTask<T> {
 	
 	public static final int CPPN_NUM_INPUTS	= 7;
@@ -23,7 +31,6 @@ public class PictureRemixTask<T extends Network> extends PicbreederTask<T> {
 
 	public PictureRemixTask() throws IllegalAccessException {
 		this(Parameters.parameters.stringParameter("matchImageFile"));	
-		
 	}
 	
 	//do I need to use ImageIO and read in the image to access the height and width?
@@ -35,8 +42,6 @@ public class PictureRemixTask<T extends Network> extends PicbreederTask<T> {
 			System.out.println("Could not load image: " + filename);
 			System.exit(1);
 		}
-		imageHeight = img.getHeight();
-		imageWidth = img.getWidth();
 	}
 	
 	@Override
@@ -51,6 +56,7 @@ public class PictureRemixTask<T extends Network> extends PicbreederTask<T> {
 	
 	@Override
 	protected BufferedImage getButtonImage(Network phenotype, int width, int height, double[] inputMultipliers) {
+		// Rescale image based on width and height?
 		 return GraphicsUtil.remixedImageFromCPPN(phenotype, img, inputMultipliers);
 	}
 	
