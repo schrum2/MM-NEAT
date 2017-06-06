@@ -5,24 +5,45 @@ import java.util.LinkedList;
 import java.util.List;
 
 import boardGame.BoardGame;
-import boardGame.BoardGamePlayer;
 import boardGame.TwoDimensionalBoardGame;
+import boardGame.TwoDimensionalBoardGameState;
+import boardGame.TwoDimensionalBoardGameViewer;
+import boardGame.agents.BoardGamePlayer;
 import edu.utexas.cs.nn.networks.hyperneat.Substrate;
+import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.datastructures.Triple;
 
 public class BoardGameUtil {
-	
+	@SuppressWarnings("rawtypes")
+	static TwoDimensionalBoardGameViewer view = null;
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static ArrayList<Pair<double[], double[]>> playGame(BoardGame bg, BoardGamePlayer[] players){
+		
 		bg.reset();
+		
+		if(CommonConstants.watch && bg instanceof TwoDimensionalBoardGame){ // Creates a new BoardGameViewer if bg is a TwoDimensionalBoardGame
+			if(view != null){ 
+				view.panel.dispose();
+				view = null;
+			}
+			view = new TwoDimensionalBoardGameViewer((TwoDimensionalBoardGame) bg);
+			view.reset((TwoDimensionalBoardGameState) bg.getCurrentState());
+		}
+		
 		while(!bg.isGameOver()){
 			bg.move(players[bg.getCurrentPlayer()]);
+			
+			if(CommonConstants.watch && bg instanceof TwoDimensionalBoardGame){ // Renders each Move in the game
+				view.reset((TwoDimensionalBoardGameState) bg.getCurrentState());
+			}
 		}
-//		System.out.println("Game over");
-//		System.out.println(game);
+		
+		if(CommonConstants.watch && bg instanceof TwoDimensionalBoardGame){ // Renders the last Move of the game
+			view.reset((TwoDimensionalBoardGameState) bg.getCurrentState());
+		}
 		
 		List<Integer> winners = bg.getWinners();
 		ArrayList<Pair<double[], double[]>> scoring = new ArrayList<Pair<double[], double[]>>(bg.getNumPlayers());
@@ -36,7 +57,6 @@ public class BoardGameUtil {
 		Pair<double[], double[]> evalResults = new Pair<double[], double[]>(new double[] { fitness }, new double[0]);
 		scoring.add(evalResults);
 		 }
-		
 		
 		return scoring; // Returns the Fitness of the individual's Genotype<T>
 	}
