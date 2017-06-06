@@ -1,4 +1,6 @@
-package boardGame;
+package boardGame.agents;
+
+import boardGame.BoardGameState;
 
 /**
  * Generic Interface for a simulated Board Game Player

@@ -1,9 +1,17 @@
-package boardGame;
+package boardGame.agents.treesearch;
 
 import java.util.Set;
 
+import boardGame.BoardGameState;
+import boardGame.heuristics.BoardGameHeuristic;
+import boardGame.heuristics.PieceDifferentialBoardGameHeuristic;
+
 public class BoardGamePlayerMinimaxAlphaBetaPruning<T extends BoardGameState> extends BoardGamePlayerMinimax<BoardGameState> {
 	
+	public BoardGamePlayerMinimaxAlphaBetaPruning(BoardGameHeuristic bgh) {
+		super(bgh);
+	}
+
 	@Override
 	protected double minimax(BoardGameState bgState, int depth, double alpha, double beta, boolean maxPlayer) {
 		

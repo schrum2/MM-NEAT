@@ -2,6 +2,8 @@ package boardGame;
 
 import java.util.List;
 
+import boardGame.agents.BoardGamePlayer;
+
 /**
  * Generic Interface for a simulated Board Game
  * 
@@ -47,7 +49,7 @@ public interface BoardGame<T extends BoardGameState> {
 	 */
 	public int getCurrentPlayer();
 
-	
+	public BoardGameState getCurrentState();
 	
 	/**
 	 * Returns the name of the BoardGame

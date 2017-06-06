@@ -1,9 +1,10 @@
-package boardGame;
+package boardGame.agents.treesearch;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import boardGame.BoardGameState;
 import boardGame.heuristics.BoardGameHeuristic;
 import boardGame.heuristics.HeuristicBoardGamePlayer;
 import edu.utexas.cs.nn.parameters.Parameters;

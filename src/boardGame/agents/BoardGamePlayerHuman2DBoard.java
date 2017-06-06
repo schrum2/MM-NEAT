@@ -1,4 +1,4 @@
-package boardGame;
+package boardGame.agents;
 
 public class BoardGamePlayerHuman2DBoard {
 
