@@ -25,8 +25,6 @@ import edu.utexas.cs.nn.util.datastructures.Pair;
 public class StaticOpponentBoardGameTask<T extends Network> extends NoisyLonerTask<T> implements NetworkTask, HyperNEATTask {
 
 	@SuppressWarnings("rawtypes")
-	BoardGame bg;
-	@SuppressWarnings("rawtypes")
 	BoardGamePlayer opponent;
 	@SuppressWarnings("rawtypes")
 	HeuristicBoardGamePlayer player;
@@ -41,7 +39,6 @@ public class StaticOpponentBoardGameTask<T extends Network> extends NoisyLonerTa
 		MMNEAT.registerFitnessFunction("Win Reward");
 
 		try {
-			bg = (BoardGame) ClassCreation.createObject("boardGame");
 			opponent = (BoardGamePlayer) ClassCreation.createObject("boardGameOpponent"); // The Opponent
 			player = (HeuristicBoardGamePlayer) ClassCreation.createObject("boardGamePlayer"); // The Player
 			featExtract = (BoardGameFeatureExtractor<BoardGameState>) ClassCreation.createObject("boardGameFeatureExtractor");
@@ -98,7 +95,7 @@ public class StaticOpponentBoardGameTask<T extends Network> extends NoisyLonerTa
 	 */
 	@Override
 	public ArrayList<Double> getBehaviorVector() {
-		return ArrayUtil.doubleVectorFromArray(bg.getDescription());
+		return ArrayUtil.doubleVectorFromArray(MMNEAT.boardGame.getDescription());
 	}
 
 	/**
@@ -116,7 +113,7 @@ public class StaticOpponentBoardGameTask<T extends Network> extends NoisyLonerTa
 
 		player.setHeuristic((new NNBoardGameHeuristic(individual.getPhenotype())));
 		BoardGamePlayer[] players = new BoardGamePlayer[]{player, opponent};
-		return BoardGameUtil.playGame(bg, players).get(0);
+		return BoardGameUtil.playGame(MMNEAT.boardGame, players).get(0);
 	}
 
 	// Used for Hyper-NEAT
@@ -132,7 +129,7 @@ public class StaticOpponentBoardGameTask<T extends Network> extends NoisyLonerTa
 	}
 
 	public List<Substrate> getSubstrateInformation() {
-		return BoardGameUtil.getSubstrateInformation(bg);
+		return BoardGameUtil.getSubstrateInformation(MMNEAT.boardGame);
 	}
 	
 	public List<Pair<String, String>> getSubstrateConnectivity() {

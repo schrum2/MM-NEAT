@@ -22,8 +22,6 @@ import edu.utexas.cs.nn.util.datastructures.Pair;
 public class SinglePopulationCompetativeCoevolutionBoardGameTask<T extends Network> extends SinglePopulationCoevolutionTask<T> implements NetworkTask, HyperNEATTask  {
 
 	@SuppressWarnings("rawtypes")
-	BoardGame bg;
-	@SuppressWarnings("rawtypes")
 	BoardGamePlayer[] players;
 	BoardGameFeatureExtractor<BoardGameState> featExtract;
 	
@@ -33,7 +31,6 @@ public class SinglePopulationCompetativeCoevolutionBoardGameTask<T extends Netwo
 		MMNEAT.registerFitnessFunction("Win Reward");
 		
 		try {
-			bg = (BoardGame) ClassCreation.createObject("boardGame");
 			players = new BoardGamePlayer[groupSize()];
 			featExtract = (BoardGameFeatureExtractor<BoardGameState>) ClassCreation.createObject("boardGameFeatureExtractor");
 
@@ -68,12 +65,12 @@ public class SinglePopulationCompetativeCoevolutionBoardGameTask<T extends Netwo
 			evolved.setHeuristic((new NNBoardGameHeuristic(gene.getPhenotype())));
 			players[index++] = evolved;
 		}
-		return BoardGameUtil.playGame(bg, players);
+		return BoardGameUtil.playGame(MMNEAT.boardGame, players);
 	}
 
 	@Override
 	public int groupSize() {
-		return bg.getNumPlayers();
+		return MMNEAT.boardGame.getNumPlayers();
 	}
 
 	// Used for Hyper-NEAT
@@ -89,7 +86,7 @@ public class SinglePopulationCompetativeCoevolutionBoardGameTask<T extends Netwo
 	}
 
 	public List<Substrate> getSubstrateInformation() {
-		return BoardGameUtil.getSubstrateInformation(bg);
+		return BoardGameUtil.getSubstrateInformation(MMNEAT.boardGame);
 	}
 	
 	public List<Pair<String, String>> getSubstrateConnectivity() {
