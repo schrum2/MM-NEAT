@@ -29,6 +29,7 @@ import edu.utexas.cs.nn.util.graphics.GraphicsUtil;
 public class PictureRemixTask<T extends Network> extends PicbreederTask<T> {
 
 	public static final int CPPN_NUM_INPUTS	= 7;
+	public static final int CPPN_NUM_OUTPUTS = 5;
 
 	public String inputImage;
 	public int imageHeight;
@@ -61,7 +62,7 @@ public class PictureRemixTask<T extends Network> extends PicbreederTask<T> {
 				JSlider source = (JSlider)e.getSource();
 				if(!source.getValueIsAdjusting()) {
 					int newLength = (int) source.getValue();
-					Parameters.parameters.setInteger("windowSize", newLength);
+					Parameters.parameters.setInteger("remixImageWindow", newLength);
 					// reset buttons
 					resetButtons();
 				}
@@ -101,6 +102,9 @@ public class PictureRemixTask<T extends Network> extends PicbreederTask<T> {
 		return CPPN_NUM_INPUTS;
 	}
 
-
+	@Override
+	public int numCPPNOutputs() {
+		return CPPN_NUM_OUTPUTS;
+	}
 
 }
