@@ -61,7 +61,8 @@ public class GraphicsUtil {
 	}
 
 	/**
-	 * Returns adjusted image based on manipulation of an input image with a CPPN.
+	 * Returns adjusted image based on manipulation of an input image with a CPPN. To add
+	 * more variation, each pixel is manipulated based on the average HSB of its surrounding pixels.
 	 * 
 	 * @param n CPPN
 	 * @param img input image being "remixed"
@@ -79,27 +80,19 @@ public class GraphicsUtil {
 				float totalS = 0;
 				float totalB = 0;
 				int count = 0;
-				for(int queryX = x-loopWindow; queryX < x + loopWindow; queryX++) {
-					if(queryX >= 0 && queryX < img.getWidth()) {
-						for(int queryY = y-loopWindow; queryY < y + loopWindow; queryY++) {
-							if(queryY >= 0 && queryY < img.getHeight()) {
-								if(queryX >= 0 && queryX < img.getWidth()) {
+				// loop through all pixels in surrounding window of current pixel to add up the 
+				// average hue, saturation, and brightness. The average HSB is taken and applied
+				// to the remixed image
+				for(int windowX = x-loopWindow; windowX < x + loopWindow; windowX++) {
+					if(windowX >= 0 && windowX < img.getWidth()) { //if current x-coordinate is within image bounds
+						for(int windowY = y-loopWindow; windowY < y + loopWindow; windowY++) {
+							if(windowY >= 0 && windowY < img.getHeight()) { //if current y-coordinate is within image bounds
+								if(windowX >= 0 && windowX < img.getWidth()) {
 									// TODO: Cache tempHSB instead of recomputing?
-									float[] tempHSB = getHSBFromImage(img, queryX, queryY);
-									//ILocated2D scaled = CartesianGeometricUtilities.centerAndScale(new Tuple2D(x, y), img.getWidth(), img.getHeight());
-									ILocated2D scaled = CartesianGeometricUtilities.centerAndScale(new Tuple2D(queryX, queryY), img.getWidth(), img.getHeight());
-									//double[] remixedInputs = { scaled.getX(), scaled.getY(), scaled.distance(new Tuple2D(0, 0)) * SQRT2, tempHSB[0], tempHSB[1], tempHSB[2], BIAS };
-									double[] remixedInputs = { scaled.getX(), scaled.getY(), scaled.distance(new Tuple2D(x, y)) * SQRT2, tempHSB[0], tempHSB[1], tempHSB[2], BIAS };
-									// Multiplies the inputs of the pictures by the inputMultiples; used to turn on or off the effects in each picture
-									for(int i = 0; i < inputMultiples.length; i++) {
-										remixedInputs[i] = remixedInputs[i] * inputMultiples[i];
-									}			
-									n.flush(); // erase recurrent activation
-									float[] hsb = rangeRestrictHSB(n.process(remixedInputs));
-
-									totalH += hsb[HUE_INDEX];
-									totalS += hsb[SATURATION_INDEX];
-									totalB += hsb[BRIGHTNESS_INDEX];
+									float[] tempHSB = getHSBFromImage(img, windowX, windowY);
+									totalH += tempHSB[HUE_INDEX];
+									totalS += tempHSB[SATURATION_INDEX];
+									totalB += tempHSB[BRIGHTNESS_INDEX];
 									
 									count++;
 								}
@@ -107,28 +100,26 @@ public class GraphicsUtil {
 						}
 					}
 				}
+				//calculate average HSB after querying surrounding pixels
 				float avgH = totalH/count;
 				float avgS = totalS/count;
 				float avgB = totalB/count;
 				float[] queriedHSB = new float[]{avgH, avgS, avgB};
-
-
-				Color childColor = Color.getHSBColor(queriedHSB[HUE_INDEX], queriedHSB[SATURATION_INDEX], queriedHSB[BRIGHTNESS_INDEX]);
+				//scale point for CPPN input
+				ILocated2D scaled = CartesianGeometricUtilities.centerAndScale(new Tuple2D(x, y), img.getWidth(), img.getHeight());
+				double[] remixedInputs = { scaled.getX(), scaled.getY(), scaled.distance(new Tuple2D(0, 0)) * SQRT2, queriedHSB[HUE_INDEX], queriedHSB[SATURATION_INDEX], queriedHSB[BRIGHTNESS_INDEX], BIAS };
+				// Multiplies the inputs of the pictures by the inputMultiples; used to turn on or off the effects in each picture
+				for(int i = 0; i < inputMultiples.length; i++) {
+					remixedInputs[i] = remixedInputs[i] * inputMultiples[i];
+				}			
+				n.flush(); // erase recurrent activation
+				float[] hsb = rangeRestrictHSB(n.process(remixedInputs));
+				Color childColor = Color.getHSBColor(hsb[HUE_INDEX], hsb[SATURATION_INDEX], hsb[BRIGHTNESS_INDEX]);
 				// set back to RGB to draw picture to JFrame
 				remixedImage.setRGB(x, y, childColor.getRGB());
 			}
 		}
 		return remixedImage;
-	}
-
-	private static int[] accessRGB(BufferedImage img, int x, int y) {
-		int RGB = img.getRGB(x, y);
-		Color c = new Color(RGB, true);
-		int r = c.getRed();
-		int g = c.getGreen();
-		int b = c.getBlue();
-		int[] result = new int[]{r,g,b};
-		return result;
 	}
 
 	/**
@@ -143,8 +134,12 @@ public class GraphicsUtil {
 	 * @return array of floats representing hue, saturation, and brightness of pixel
 	 */
 	private static float[] getHSBFromImage(BufferedImage img, int x, int y) {
-		int[] RGB = accessRGB(img, x, y);
-		float[] HSB = Color.RGBtoHSB(RGB[HUE_INDEX], RGB[SATURATION_INDEX], RGB[BRIGHTNESS_INDEX], null);
+		int RGB = img.getRGB(x, y);
+		Color c = new Color(RGB, true);
+		int r = c.getRed();
+		int g = c.getGreen();
+		int b = c.getBlue();
+		float[] HSB = Color.RGBtoHSB(r, g, b, null);
 		return HSB;
 	}
 
