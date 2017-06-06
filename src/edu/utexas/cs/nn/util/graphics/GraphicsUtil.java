@@ -75,36 +75,45 @@ public class GraphicsUtil {
 		for(int x = 0; x < img.getWidth(); x++) {
 			for(int y = 0; y < img.getHeight(); y++) {
 				//get HSB from input image
-				int totalH = 0;
-				int totalS = 0;
-				int totalB = 0;
-				float[] queriedHSB;
-				if(x >= loopWindow && y >= loopWindow && x < img.getWidth()-loopWindow && y < img.getHeight()-loopWindow) {
-					for(int queryX = x-loopWindow; queryX < x + loopWindow; queryX++) {
+				float totalH = 0;
+				float totalS = 0;
+				float totalB = 0;
+				int count = 0;
+				for(int queryX = x-loopWindow; queryX < x + loopWindow; queryX++) {
+					if(queryX >= 0 && queryX < img.getWidth()) {
 						for(int queryY = y-loopWindow; queryY < y + loopWindow; queryY++) {
-							float[] tempHSB = getHSBFromImage(img, queryX, queryY);
-							totalH += tempHSB[HUE_INDEX];
-							totalS += tempHSB[SATURATION_INDEX];
-							totalB += tempHSB[BRIGHTNESS_INDEX];
+							if(queryY >= 0 && queryY < img.getHeight()) {
+								if(queryX >= 0 && queryX < img.getWidth()) {
+									// TODO: Cache tempHSB instead of recomputing?
+									float[] tempHSB = getHSBFromImage(img, queryX, queryY);
+									//ILocated2D scaled = CartesianGeometricUtilities.centerAndScale(new Tuple2D(x, y), img.getWidth(), img.getHeight());
+									ILocated2D scaled = CartesianGeometricUtilities.centerAndScale(new Tuple2D(queryX, queryY), img.getWidth(), img.getHeight());
+									//double[] remixedInputs = { scaled.getX(), scaled.getY(), scaled.distance(new Tuple2D(0, 0)) * SQRT2, tempHSB[0], tempHSB[1], tempHSB[2], BIAS };
+									double[] remixedInputs = { scaled.getX(), scaled.getY(), scaled.distance(new Tuple2D(x, y)) * SQRT2, tempHSB[0], tempHSB[1], tempHSB[2], BIAS };
+									// Multiplies the inputs of the pictures by the inputMultiples; used to turn on or off the effects in each picture
+									for(int i = 0; i < inputMultiples.length; i++) {
+										remixedInputs[i] = remixedInputs[i] * inputMultiples[i];
+									}			
+									n.flush(); // erase recurrent activation
+									float[] hsb = rangeRestrictHSB(n.process(remixedInputs));
+
+									totalH += hsb[HUE_INDEX];
+									totalS += hsb[SATURATION_INDEX];
+									totalB += hsb[BRIGHTNESS_INDEX];
+									
+									count++;
+								}
+							}
 						}
 					}
-					int avgH = totalH/remixWindow;
-					int avgS = totalS/remixWindow;
-					int avgB = totalB/remixWindow;
-					queriedHSB = new float[]{avgH, avgS, avgB};
-				} else {
-					queriedHSB = getHSBFromImage(img, x, y);
 				}
+				float avgH = totalH/count;
+				float avgS = totalS/count;
+				float avgB = totalB/count;
+				float[] queriedHSB = new float[]{avgH, avgS, avgB};
 
-				ILocated2D scaled = CartesianGeometricUtilities.centerAndScale(new Tuple2D(x, y), img.getWidth(), img.getHeight());
-				double[] remixedInputs = { scaled.getX(), scaled.getY(), scaled.distance(new Tuple2D(0, 0)) * SQRT2, queriedHSB[0], queriedHSB[1], queriedHSB[2], BIAS };
-				// Multiplies the inputs of the pictures by the inputMultiples; used to turn on or off the effects in each picture
-				for(int i = 0; i < inputMultiples.length; i++) {
-					remixedInputs[i] = remixedInputs[i] * inputMultiples[i];
-				}			
-				n.flush(); // erase recurrent activation
-				float[] hsb = rangeRestrictHSB(n.process(remixedInputs));
-				Color childColor = Color.getHSBColor(hsb[HUE_INDEX], hsb[SATURATION_INDEX], hsb[BRIGHTNESS_INDEX]);
+
+				Color childColor = Color.getHSBColor(queriedHSB[HUE_INDEX], queriedHSB[SATURATION_INDEX], queriedHSB[BRIGHTNESS_INDEX]);
 				// set back to RGB to draw picture to JFrame
 				remixedImage.setRGB(x, y, childColor.getRGB());
 			}
