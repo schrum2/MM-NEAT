@@ -36,7 +36,8 @@ public class ProgressiveFitnessFunction extends RTSFitnessFunction{
 		int winner = gs.winner(); //0:win 1:loss -1:tie
 		double[]other = new double[]{
 				winner + 1 % 2, //1:win 0:tie -1:loss (from ai1's perspective)
-				gs.getTime()
+				gs.getTime(),
+				mapSwitches //updated when map is switched
 		};
 		Pair<double[], double[]> data1 = new Pair<double[],double[]>(fitness, other);
 		Pair<double[], double[]> data2 = new Pair<double[],double[]>(fitness, other);
@@ -47,15 +48,16 @@ public class ProgressiveFitnessFunction extends RTSFitnessFunction{
 
 	@Override
 	public String[] getFunctions() {
-		// TODO: Despite the effort put in to fix this today, as I look at it, I think this is designed incorrectly.
-		//       Although coevolution is happening, there is still only one copy of each fitness function per individual,
-		//       which is why I've commented things out. Check that this works and let me know of any problems you run
-		//       in to.
-		//if(!coevolution)
-			return new String[]{"Harvesting Efficiency","Time Base was Alive","Average Unit Difference"};
+			return new String[]{"Harvesting Efficiency","Time Base was Alive","Average Unit Difference"};//Fitness
+								 
 //		else //assuming task is co-evolving counterpart 
 //			return new String[]{"p1's Harvesting Efficiency","p1's Time Base was Alive","p1's Average Unit Difference"
 //							   +"p2's Harvesting Efficiency","p2's Time Base was Alive","p2's Average Unit Difference"};
+	}
+	
+	@Override
+	public String[] getOtherScores(){
+		return new String[]{"win?","time game lasted","map switches"}; //Other
 	}
 
 	/**
