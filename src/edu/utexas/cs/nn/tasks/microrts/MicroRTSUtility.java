@@ -8,6 +8,7 @@ import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.microrts.fitness.ProgressiveFitnessFunction;
 import edu.utexas.cs.nn.tasks.microrts.fitness.RTSFitnessFunction;
+import edu.utexas.cs.nn.util.MiscUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.datastructures.Triple;
 import micro.ai.core.AI;
@@ -34,7 +35,7 @@ public class MicroRTSUtility {
 		GameState gs = task.getGameState();
 		PhysicalGameState pgs = task.getPhysicalGameState();
 		boolean gameover = false;
-		int averageUnitDifference = 0;
+		double averageUnitDifference = 0;
 		//evaluates to correct number of cycles in accordance with competition rules: 8x8 => 3000, 16x16 => 4000, 24x24 => 5000, etc.
 		int maxCycles = 1000 * (int) Math.ceil(Math.sqrt(pgs.getHeight()));
 		ff.setMaxCycles(maxCycles);
@@ -46,8 +47,9 @@ public class MicroRTSUtility {
 		double formerResourcePool = 0;
 		Unit currentUnit;
 		boolean base1Alive = false;
-		boolean base2Alive = false;
+		boolean base2Alive = false; //TODO record information here for coevolution
 		boolean baseDeathRecorded = false;
+		int currentCycle = 0;
 		
 		do{ //simulate game:
 			try {
@@ -60,21 +62,25 @@ public class MicroRTSUtility {
 			} catch (Exception e) { e.printStackTrace();System.exit(1); }
 			
 			if(prog){ //if our FitnessFunction needs us to record information throughout the game
-				unitDifferenceNow = 0;
 				maxBaseX = -1; //Eventually will have to change this to accomodate maps where multiple bases will not be in a straight line
 				maxBaseY = -1;
 				resourcePool = 0;
 				formerResourcePool = 0;
 				currentUnit = null;				
 				baseDeathRecorded = false;
+				
+				int p1units = 0;
+				int p2units = 0;
+				
+				
 				for(int i = 0; i < pgs.getWidth(); i++){
 					for(int j = 0; j < pgs.getHeight(); j++){
 						base1Alive = false;
-						base2Alive = false; //TODO update p2's values, maybe make some of this stuff into methods: 
+						base2Alive = false; //TODO update player 2's values, maybe make some of this stuff into methods:
 						currentUnit = pgs.getUnitAt(i, j);
 						if(currentUnit!=null){
 							if(currentUnit.getPlayer() == 0){
-								unitDifferenceNow++;
+								p1units++;
 								resourcePool += currentUnit.getCost();
 								if(currentUnit.getType().name.equals("Base")){
 									resourcePool += currentUnit.getResources();
@@ -96,9 +102,9 @@ public class MicroRTSUtility {
 								}
 							} //end if (unit is player 1's)
 							else if(currentUnit.getPlayer() == 1){
-								unitDifferenceNow--;
+								p2units++;
 							} //end if (unit is player 2's)
-						}
+						} //end if (there is a unit on this space)
 					}//end j
 				}//end i
 				if(!base1Alive && !baseDeathRecorded) {
@@ -108,8 +114,11 @@ public class MicroRTSUtility {
 				if(resourcePool > formerResourcePool){
 					task.setHarvestingEfficiency(task.getHarvestingEfficiency(1) + RESOURCE_GAIN_VALUE, 1);
 				}
+				unitDifferenceNow = p1units - p2units;
+				currentCycle++;
 				formerResourcePool = resourcePool;
-				averageUnitDifference = (unitDifferenceNow - averageUnitDifference) / (gs.getTime()+1);
+				averageUnitDifference += (unitDifferenceNow - averageUnitDifference) / (1.0*currentCycle); //incremental calculation of the avg.
+//				System.out.println(p1units + ":" + p2units + ":" + averageUnitDifference);
 			} //end if(Parameters.. = progressive)
 			gameover  = gs.cycle();
 			if(CommonConstants.watch) w.repaint();

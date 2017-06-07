@@ -68,8 +68,9 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 			ff = (RTSFitnessFunction) ClassCreation.createObject(Parameters.parameters.classParameter("microRTSFitnessFunction"));
 			initialPgs = PhysicalGameState.load("data/microRTS/maps/" + Parameters.parameters.stringParameter("map"), utt);
 			pgs = initialPgs.clone();
-
-			maps = (MapSequence) ClassCreation.createObject(Parameters.parameters.classParameter("microRTSMapSequence")); 
+			
+			if(Parameters.parameters.classParameter("microRTSMapSequence") != null)
+				maps = (MapSequence) ClassCreation.createObject(Parameters.parameters.classParameter("microRTSMapSequence")); 
 
 		} catch (JDOMException | IOException | NoSuchMethodException e) { 
 			e.printStackTrace();
@@ -156,7 +157,7 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 				enemies = (EnemySequence) ClassCreation.createObject(Parameters.parameters.classParameter("microRTSEnemySequence"));
 			} catch (NoSuchMethodException e1) { e1.printStackTrace(); System.exit(1);}
 		}
-		if(Parameters.parameters.classParameter("microRTSMapSequence") != null){
+		if(maps != null){
 			String newMapName = maps.getAppropriateMap(MMNEAT.ea.currentGeneration());
 			if (!newMapName.equals(mapName)){ // Change the map
 				try {
