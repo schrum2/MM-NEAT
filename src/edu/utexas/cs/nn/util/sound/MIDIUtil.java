@@ -171,6 +171,7 @@ public class MIDIUtil {
 		return track.ticks();
 	}
 
+	// TODO: Since we'll be keeping this method after all, comment it.
 	public static ArrayList<double[]> soundLines(Track[] tracks) {
 		ArrayList<double[]> result = new ArrayList<double[]>();
 		for(Track t: tracks) {
@@ -191,11 +192,24 @@ public class MIDIUtil {
 	 */
 	public static ArrayList<double[]> soundLines(Track track) {
 		Map<Double, Long> map = new HashMap<Double, Long>();
+		// TODO: Don't even create this ArrayList in the first place because it takes up
+		// tons of memory. Rather, create one double array that has one index for each tick,
+		// and add each sound result you encounter to the appropriate tick/index.
+		// Accomplishing this will require a method that first determines which track across
+		// the whole file has the most ticks, so that you can initailize the array to the right size.
+		// ALSO: after looking at the code some more, I realized that the values returned here are
+		// frequencies, not amplitudes. The trick of adding only works with amplitudes, but we can
+		// only derive amplitudes after using the CPPN. That means we need to extract the sound
+		// info and encode with the CPPN at the same time in order to increase efficiency and reduce
+		// the memory footprint.
 		ArrayList<double[]> soundLines = new ArrayList<double[]>();
 		HashMap<Double, Integer> lines = new HashMap<Double, Integer>();
 		for(int i = 0; i < track.size(); i++) {
 			MidiEvent event = track.get(i);
 			MidiMessage message = event.getMessage();
+			// TODO: I wonder if we should start investigating other types of messages.
+			// Some nuance about the sounds produces could depend on interpreting the
+			// other messages correctly.
 			if (message instanceof ShortMessage) {
 				ShortMessage sm = (ShortMessage) message;
 				int key = sm.getData1();
@@ -203,16 +217,18 @@ public class MIDIUtil {
 				long tick = event.getTick(); // actually starting tick time
 				if (sm.getCommand() == NOTE_ON && sm.getData2() > 0) { //turn on
 					int index = map.size();
+					// TODO: Remove once the ArrayList is gone
 					if(index >= soundLines.size()) {
 						soundLines.add(new double[(int) ticksInTrack(track)]);
 					}
 					map.put(freq, tick);
 					lines.put(freq, index);
-				}
-				if((sm.getCommand() == NOTE_OFF || (sm.getCommand() == NOTE_ON && sm.getData2() == 0))) {
+				} else if((sm.getCommand() == NOTE_OFF || (sm.getCommand() == NOTE_ON && sm.getData2() == 0))) { // Check: is negative velocity possible?
 					int index = lines.get(freq);
 					long tickStart = map.get(freq);
 					long tickEnd = tick;
+					
+					// TODO: Rather than what happens here, you would simply add to the one universal array
 					double[] lineArray = soundLines.get(index);
 					for(long j = tickStart; j <= tickEnd; j++) {
 						lineArray[(int) j] = freq;
@@ -222,6 +238,8 @@ public class MIDIUtil {
 				}
 			}
 		}
+		// TODO: Some normalization (division) might be needed here before the final return.
+		
 		return soundLines;
 	}
 	
@@ -236,6 +254,10 @@ public class MIDIUtil {
 	public static Pair<ArrayList<Double>, ArrayList<Double>> notesAndLengthsOfLine(double[] soundLine) {
 		ArrayList<Double> frequencies = new ArrayList<Double>();
 		ArrayList<Double> lengths = new ArrayList<Double>(); // Needs to be double?
+
+		// TODO: The length calculations here look suspiscious to me.
+		// I wonder if they have problems for the first freq value and last
+		// freq values in the array. Could use more analysis.
 		int prevIndex = 0;
 		double prevVal = soundLine[0];
 		for(int i = 0; i < soundLine.length; i++) {
@@ -335,6 +357,9 @@ public class MIDIUtil {
 	 * @param ticks Length of events in MIDI files
 	 * @return Equivalent length in milliseconds
 	 */
+	
+	// TODO: Make this method correct, and then actually use it (or something like it) in place
+	// of that weird magic number 50.
 	public static float convertTicksToMilliseconds(long ticks) {
 		float millisecondsPerTick = 60000 / (PPQ * BPM);
 		float result = ticks * millisecondsPerTick;
@@ -364,6 +389,7 @@ public class MIDIUtil {
 		clip.play();
 	}
 	
+	// TODO: Needs comments
 	public static double[] lineToAmplitudeArray(double[] soundLine, Network cppn) {
 		Pair<ArrayList<Double>, ArrayList<Double>> lineData = notesAndLengthsOfLine(soundLine);
 		double[] frequencies = ArrayUtil.doubleArrayFromList(lineData.t1);
@@ -372,8 +398,17 @@ public class MIDIUtil {
 		
 	}
 
+	// TODO: Needs comments
+	// TODO: I wonder if some of this code needs to be moved into soundLines as well.
+	// I forgot about the Pair<freq,lengths> step, which makes me reconsider some of my
+	// previous TODO statements ... do as much computation up front as possible.
 	public static double[] lineToAmplitudeArray(double[] frequencies, double[] lengths, Network cppn) {
 	
+		// TODO: We really need to find out what the deal with this number is.
+		// In particular, I suspect that part of the reason that other MIDI files failed
+		// is this number ... maybe it only works for fur Elise. We should try to properly
+		// calculate this value, or at least try different values with different MIDI files
+		// to get a feel for the result.
 		// VERY MAGIC NUMBER! NO IDEA WHY THIS NUMBER WORKS!
 		int amplitudeLengthMultiplier = 50;
 
@@ -414,6 +449,7 @@ public class MIDIUtil {
 	 */
 	public static class CPPNNoteSequencePlayer extends Thread {
 		boolean play;
+		// TODO: Replace this variable with a single double array
 		private double[][] amplitudeArrays;
 
 		public CPPNNoteSequencePlayer() {
@@ -421,6 +457,8 @@ public class MIDIUtil {
 			play = false; 
 		}
 
+		//TODO: Rather than pass in the ArrayList of double arrays, a single double array would be passed in.
+		// This single double array would already contain the values in the toPlay array that is computed in run().
 		public CPPNNoteSequencePlayer(Network cppn, ArrayList<double[]> soundLines) {
 			play = true;
 			amplitudeArrays = new double[soundLines.size()][];
@@ -430,21 +468,16 @@ public class MIDIUtil {
 		}
 		
 		public void run() {
-			// TODO: Allow for interruption
+			// TODO: Allow for interruption. Now that only a single array is used,
+			// this should be easy. The playDoubleArray method returns an AmplitudeArrayPlayer
+			// that has a method capable of stopping playback. Save the AmplitudeArrayPlayer
+			// in a global variable (of CPPNNoteSequencePlayer) and shut down the AmplitudeArrayPlayer
+			// when the stopPlayback method of the CPPNNoteSequencePlayer is called.
 			
-			// This doesn't work either, but it is close. It plays all
-			// of the sound lines simultaneously. The only problem is that
-			// as the song goes on, the difference sound lines tend to
-			// get a bit out of sync.
-//			for(int i = 0; i < amplitudeArrays.length; i++) 
-//				PlayDoubleArray.playDoubleArray(amplitudeArrays[i]);
-			
-			// Schrum:
-			// This code does not work, but I wanted to commit it anyway in case something like
-			// it works. It takes all of the separate amplitude waves and simply adds them together
-			// into a single amplitude wave. Then, it re-scales the amplitudes to [-1,1]. It seems
-			// like it is working early on, but weird distortions happen in the interesting portion
-			// of the song.
+			// TODO: The code below would essentially be moved into the soundLines method,
+			// or other helper methods that are used in the soundLines method. However, some of
+			// these operations are so general that they may be (or should be) util methods in 
+			// ArrayUtil and/or StatisticsUtilities
 			int max = 0;
 			for(int i = 0; i < amplitudeArrays.length; i++) {
 				max = Math.max(max, amplitudeArrays[i].length);
@@ -500,7 +533,15 @@ public class MIDIUtil {
 		try {
 			sequence = MidiSystem.getSequence(audioFile);
 			Track[] tracks = sequence.getTracks();
+			// TODO: Note that I am already ignoring the track number here,
+			// but we should actually have a version of this method that uses
+			// a specific track and another version that uses all tracks.
 			//Track track = tracks[trackNumber];
+			
+			// TODO: Instead of having a method that returns this massive ArrayList of separate sound lines,
+			// simply return a single double array. Essentially, stop using the ArrayList as a middle format
+			// between MIDI and the one array of double that gets played inside of the run method of the
+			// note sequence player.
 			ArrayList<double[]> data = soundLines(tracks);
 			return playMIDIWithCPPNFromDoubleArray(cppn, data);
 		} catch (InvalidMidiDataException | IOException e) {
