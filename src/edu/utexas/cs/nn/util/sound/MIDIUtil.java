@@ -167,16 +167,17 @@ public class MIDIUtil {
 	 * @return maximum ticks in track
 	 */
 	public static long ticksInTrack(Track track) {
+		assert track.ticks() <= Integer.MAX_VALUE : "Cannot handle this many ticks in a track: " +track.ticks();
 		return track.ticks();
 	}
 
-//	public static ArrayList<double[]> soundLines(Track[] tracks) {
-//		ArrayList<double[]> result = new ArrayList<double[]>();
-//		for(Track t: tracks) {
-//			result.addAll(soundLines(t));
-//		}
-//		return result;
-//	}
+	public static ArrayList<double[]> soundLines(Track[] tracks) {
+		ArrayList<double[]> result = new ArrayList<double[]>();
+		for(Track t: tracks) {
+			result.addAll(soundLines(t));
+		}
+		return result;
+	}
 	
 	/**
 	 * Divides each piano voice up into a single list, so that all indexes when voice is not playing
@@ -435,8 +436,8 @@ public class MIDIUtil {
 			// of the sound lines simultaneously. The only problem is that
 			// as the song goes on, the difference sound lines tend to
 			// get a bit out of sync.
-			for(int i = 0; i < amplitudeArrays.length; i++) 
-				PlayDoubleArray.playDoubleArray(amplitudeArrays[i]);
+//			for(int i = 0; i < amplitudeArrays.length; i++) 
+//				PlayDoubleArray.playDoubleArray(amplitudeArrays[i]);
 			
 			// Schrum:
 			// This code does not work, but I wanted to commit it anyway in case something like
@@ -444,23 +445,33 @@ public class MIDIUtil {
 			// into a single amplitude wave. Then, it re-scales the amplitudes to [-1,1]. It seems
 			// like it is working early on, but weird distortions happen in the interesting portion
 			// of the song.
-//			int max = 0;
-//			for(int i = 0; i < amplitudeArrays.length; i++) {
-//				max = Math.max(max, amplitudeArrays[i].length);
-//			}
-//			double maxNote = 0;
-//			double[] toPlay = new double[max];
-//			for(int i = 0; i < amplitudeArrays.length; i++) {
-//				for(int j = 0; j < amplitudeArrays[i].length; j++) {
-//					maxNote = Math.max(maxNote, Math.abs(amplitudeArrays[i][j]));
-//					toPlay[j] += amplitudeArrays[i][j];
-//				}
-//			}
-//			System.out.println(maxNote);
-//			for(int i = 0; i < toPlay.length; i++) {
-//				toPlay[i] /= maxNote;
-//			}
-//			PlayDoubleArray.playDoubleArray(toPlay);
+			int max = 0;
+			for(int i = 0; i < amplitudeArrays.length; i++) {
+				max = Math.max(max, amplitudeArrays[i].length);
+			}
+			double maxNote = 0;
+			double[] toPlay = new double[max];
+			for(int i = 0; i < amplitudeArrays.length; i++) {
+				for(int j = 0; j < amplitudeArrays[i].length; j++) {
+					maxNote = Math.max(maxNote, Math.abs(amplitudeArrays[i][j]));
+					toPlay[j] += amplitudeArrays[i][j];
+				}
+			}
+			//System.out.println(maxNote);
+			//if(maxNote >= 1) { // normalize for excessive volume
+				for(int i = 0; i < toPlay.length; i++) {
+					//toPlay[i] /= maxNote;
+					toPlay[i] /= 2.0;
+					// Schrum: dividing by 2 seems to produce the least scratchy outcome when
+					// playing fur Elise. I originally attempted this because it was recommended
+					// for combining 2 sound sources. However, in retrospect, It is confusing that
+					// this works for our sounds because there are more than 2 sources. However,
+					// most of them are empty at any given time. It could be that there are usually
+					// no more than two sources with actual volume at the same time. This parameter
+					// is something we need to pay attention to.
+				}
+			//}
+			PlayDoubleArray.playDoubleArray(toPlay);
 			
 		}
 
@@ -489,8 +500,8 @@ public class MIDIUtil {
 		try {
 			sequence = MidiSystem.getSequence(audioFile);
 			Track[] tracks = sequence.getTracks();
-			Track track = tracks[trackNumber];
-			ArrayList<double[]> data = soundLines(track);
+			//Track track = tracks[trackNumber];
+			ArrayList<double[]> data = soundLines(tracks);
 			return playMIDIWithCPPNFromDoubleArray(cppn, data);
 		} catch (InvalidMidiDataException | IOException e) {
 			e.printStackTrace();
