@@ -21,12 +21,14 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
+import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
 import edu.utexas.cs.nn.evolution.genotypes.HyperNEATCPPNGenotype;
 import edu.utexas.cs.nn.networks.ActivationFunctions;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.util.MiscUtil;
 import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
+import edu.utexas.cs.nn.util.datastructures.Triple;
 import edu.utexas.cs.nn.util.graphics.DrawingPanel;
 import edu.utexas.cs.nn.util.graphics.GraphicsUtil;
 import javazoom.jl.decoder.JavaLayerException;
@@ -55,8 +57,10 @@ public class SoundUtilExamples {
 
 	public static void main(String[] args) throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException, JavaLayerException, InvalidMidiDataException {
 		//CPPN initialization
-		Parameters.initializeParameterCollections(new String[]{"io:false","netio:false","randomSeed:12"});
+		Parameters.initializeParameterCollections(new String[]{"io:false","netio:false","randomSeed:10"});
 		MMNEAT.loadClasses();
+		EvolutionaryHistory.initArchetype(0);
+
 		HyperNEATCPPNGenotype test = new HyperNEATCPPNGenotype(3, 1, 0);
 		for(int i = 0; i < 30; i++) {
 			test.mutate();
@@ -64,7 +68,7 @@ public class SoundUtilExamples {
 		Network cppn = test.getCPPN();
 
 		// method call
-		MIDIWithLengths(cppn);
+		newMIDIUtilPlay(cppn);
 	}
 
 	public static void randomCPPNExamples(Network cppn) throws IOException {
@@ -509,6 +513,41 @@ public class SoundUtilExamples {
 				System.out.println("Tick: " + tick);
 				//System.out.println("length of tick in milliseconds: " + MIDIUtil.convertTicksToMilliseconds(sequence, tick));
 			}
+		}
+	}
+	
+	public static void newMIDIUtilPrint() throws InvalidMidiDataException, IOException {
+		File midiFile = new File(FUR_ELISE_MID);
+		Sequence sequence = MidiSystem.getSequence(midiFile);
+		Track[] tracks = sequence.getTracks();
+		Track track = tracks[1];
+		ArrayList<Triple<ArrayList<Double>, ArrayList<Long>, ArrayList<Long>>> midiLists = MIDIUtil.soundLines2(track);
+		for(int i = 0; i < midiLists.size(); i++) {
+			System.out.println("frequencies: " + midiLists.get(i).t1);
+			System.out.println("lengths: " + midiLists.get(i).t2);
+			System.out.println("start times: " + midiLists.get(i).t3);
+			System.out.println();
+		}
+	}
+	
+	public static void newMIDIUtilPlay(Network cppn) throws InvalidMidiDataException, IOException {
+		File midiFile = new File(FUR_ELISE_MID);
+		Sequence sequence = MidiSystem.getSequence(midiFile);
+		Track[] tracks = sequence.getTracks();
+		Track track = tracks[1];
+		ArrayList<Triple<ArrayList<Double>, ArrayList<Long>, ArrayList<Long>>> midiLists = MIDIUtil.soundLines2(track);
+		for(int i = 0; i < midiLists.size(); i++) {
+			double[] test = MIDIUtil.lineToAmplitudeArray(FUR_ELISE_MID,  midiLists.get(i).t1,  midiLists.get(i).t2,  midiLists.get(i).t3, cppn);
+			System.out.println(test.length);
+			ArrayUtil.printArrayRange(test, 800, 1200);
+			
+			PlayDoubleArray.playDoubleArray(test);
+			
+			MiscUtil.waitForReadStringAndEnterKeyPress();
+//			System.out.println("frequencies: " + midiLists.get(i).t1);
+//			System.out.println("lengths: " + midiLists.get(i).t2);
+//			System.out.println("start times: " + midiLists.get(i).t3);
+//			System.out.println();
 		}
 	}
 }
