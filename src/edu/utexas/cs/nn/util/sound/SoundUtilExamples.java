@@ -64,7 +64,7 @@ public class SoundUtilExamples {
 		Network cppn = test.getCPPN();
 
 		// method call
-		tickConversionData();
+		MIDIWithLengths(cppn);
 	}
 
 	public static void randomCPPNExamples(Network cppn) throws IOException {
@@ -482,11 +482,11 @@ public class SoundUtilExamples {
 	}
 
 	public static void MIDIWithLengths(Network cppn) throws InvalidMidiDataException, IOException {
-		File midiFile = new File(SOLO_PIANO_MID);
+		File midiFile = new File(FUR_ELISE_MID);
 		Sequence sequence = MidiSystem.getSequence(midiFile);
 		Track[] tracks = sequence.getTracks();
 		ArrayList<double[]> listOfData = MIDIUtil.soundLines(tracks);
-		MIDIUtil.playMIDIWithCPPNFromDoubleArray(SOLO_PIANO_MID, cppn, listOfData);
+		MIDIUtil.playMIDIWithCPPNFromDoubleArray(FUR_ELISE_MID, cppn, listOfData);
 	}
 	
 	public static void eightBitToSixteenBit() {
@@ -507,7 +507,7 @@ public class SoundUtilExamples {
 			if (message instanceof ShortMessage) {
 				long tick = event.getTick(); // actually starting tick time
 				System.out.println("Tick: " + tick);
-				System.out.println("length of tick in milliseconds: " + MIDIUtil.convertTicksToMilliseconds(sequence, tick));
+				//System.out.println("length of tick in milliseconds: " + MIDIUtil.convertTicksToMilliseconds(sequence, tick));
 			}
 		}
 	}
