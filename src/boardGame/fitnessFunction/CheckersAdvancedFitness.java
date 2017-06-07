@@ -3,7 +3,14 @@ package boardGame.fitnessFunction;
 import boardGame.BoardGameState;
 
 /**
- * Fitness Function from: 
+ * Fitness Function from:
+ * 
+ * A Case Study on the Critical Role
+ * of Geometric Regularity in Machine Learning
+ * 
+ * (Jason Gauci and Kenneth O. Stanley)
+ * 
+ * http://eplex.cs.ucf.edu/papers/gauci_aaai08.pdf
  */
 public class CheckersAdvancedFitness<T extends BoardGameState> implements BoardGameFitnessFunction<T> {
 
