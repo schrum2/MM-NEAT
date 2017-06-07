@@ -12,6 +12,7 @@ import boardGame.agents.BoardGamePlayer;
 import edu.utexas.cs.nn.networks.hyperneat.Substrate;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
+import edu.utexas.cs.nn.util.MiscUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.datastructures.Triple;
 
@@ -38,6 +39,10 @@ public class BoardGameUtil {
 			
 			if(CommonConstants.watch && bg instanceof TwoDimensionalBoardGame){ // Renders each Move in the game
 				view.reset((TwoDimensionalBoardGameState) bg.getCurrentState());
+			}
+			if(Parameters.parameters.booleanParameter("stepByStep")){
+				System.out.print("Press enter to continue");
+				MiscUtil.waitForReadStringAndEnterKeyPress();
 			}
 		}
 		

@@ -60,9 +60,9 @@ public class TwoDimensionalBoardGameViewer<S  extends TwoDimensionalBoardGameSta
 		
 		Color[] colors = newBoard.getPlayerColors();
 				
-		int[] pieces = new int[newBoard.getDescriptor().length];
+		int[] pieces = new int[newBoard.getViewerPieces().length];
 		int index = 0;
-		for(double d : newBoard.getDescriptor()){
+		for(double d : newBoard.getViewerPieces()){
 			pieces[index++] = (int) d;
 		}
 		
@@ -89,7 +89,7 @@ public class TwoDimensionalBoardGameViewer<S  extends TwoDimensionalBoardGameSta
 	
 	
 	public static void main(String[] args) {
-		new TwoDimensionalBoardGameViewer(new TicTacToe());
+		new TwoDimensionalBoardGameViewer(new Othello());
 	}
 	
 }

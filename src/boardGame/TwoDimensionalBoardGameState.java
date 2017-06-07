@@ -286,6 +286,22 @@ public abstract class TwoDimensionalBoardGameState implements BoardGameState {
 		return features;
 	}
 	
+	
+	public double[] getViewerPieces(){
+		
+		double[] pieces = new double[getBoardWidth()*getBoardHeight()];
+		int index = 0;
+		
+		for(int i = 0; i < getBoardHeight(); i++){
+			for(int j = 0; j < getBoardWidth(); j ++){
+				pieces[index++] = boardState[i][j]; // Returns the literal Piece Values
+			}
+		}		
+		return pieces;
+	}
+
+		
+	
 	/**
 	 * Auto-generated hash code method
 	 */
