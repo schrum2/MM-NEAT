@@ -39,7 +39,7 @@ public class MicroRTSUtility {
 	
 	public static <T> ArrayList<Pair<double[], double[]>> oneEval(AI ai1, AI ai2, MicroRTSInformation task, RTSFitnessFunction ff, PhysicalGameStateJFrame w) {		
 		
-		coevolution = ff.coevolution;
+		coevolution = ff.getCoevolution();
 		GameState gs = task.getGameState();
 		PhysicalGameState pgs = task.getPhysicalGameState();
 		boolean gameover = false;
@@ -91,7 +91,6 @@ public class MicroRTSUtility {
 							if(currentUnit.getPlayer() == 0){
 								
 								if(currentUnit.getType().name.equals("Base")){
-									resourcePool += currentUnit.getResources();
 									if(currentUnit.getX() > maxBaseX) maxBaseX = currentUnit.getX(); //if its a new base record its location
 									if(currentUnit.getY() > maxBaseY) maxBaseY = currentUnit.getY();
 									base1Alive = true;
@@ -99,7 +98,6 @@ public class MicroRTSUtility {
 								} //end if(base)
 								else if(currentUnit.getType().name.equals("Worker")){
 									if(currentUnit.getResources() > 0){
-										resourcePool += WORKER_HARVEST_VALUE;
 										if(!isUnitInRange(currentUnit, 
 												currentUnit.getPlayer() == 0 ? 0 : pgs.getWidth(), 
 												currentUnit.getPlayer() == 0 ? 0 : pgs.getWidth(), 
@@ -118,11 +116,11 @@ public class MicroRTSUtility {
 					task.setBaseUpTime(gs.getTime(), 1);
 					baseDeathRecorded = true;
 				}
-				if(resourcePool > formerResourcePool){
+				if(resourcePool1 > formerResourcePool1){
 					task.setHarvestingEfficiency(task.getHarvestingEfficiency(1) + RESOURCE_GAIN_VALUE, 1);
 				}
 				currentCycle++;
-				formerResourcePool = resourcePool;
+				formerResourcePool1 = resourcePool1;
 				averageUnitDifference += (unitDifferenceNow - averageUnitDifference) / (1.0*currentCycle); //incremental calculation of the avg.
 //				System.out.println(p1units + ":" + p2units + ":" + averageUnitDifference);
 			} //end if(Parameters.. = progressive)
@@ -144,7 +142,7 @@ public class MicroRTSUtility {
 		}
 	}
 	
-	private void updateResourcePools(Unit u, boolean coevolution){
+	private static void updateResourcePools(Unit u, boolean coevolution){
 		if(u.getPlayer() == 0){
 			resourcePool1 += u.getCost() + u.getResources();
 		} else if(u.getPlayer() == 1 && coevolution){
