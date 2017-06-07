@@ -8,7 +8,6 @@ import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.microrts.fitness.ProgressiveFitnessFunction;
 import edu.utexas.cs.nn.tasks.microrts.fitness.RTSFitnessFunction;
-import edu.utexas.cs.nn.util.MiscUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.datastructures.Triple;
 import micro.ai.core.AI;
@@ -26,21 +25,20 @@ public class MicroRTSUtility {
 	
 	public static final int WINDOW_LENGTH = 640;
 	public static final int RESOURCE_GAIN_VALUE = 2;
-	private static final int WORKER_OUT_OF_BOUNDS_PENALTY = 1;
-	private static final double WORKER_HARVEST_VALUE = .5; //relative to 1 resource, for use in pool
 	private static boolean prog = Parameters.parameters.classParameter("microRTSFitnessFunction").equals(ProgressiveFitnessFunction.class);
 	private static boolean coevolution;
+	static boolean base1Alive = false;
+	static boolean base2Alive = false;
 	
 	private static int unitDifferenceNow = 0;
-	private static double resourcePool1 = 0;
-	private static double formerResourcePool1 = 0;
-	private static double resourcePool2 = 0;
-	private static double formerResourcePool2 = 0;
+	private static GameState gs;
+	
+	private static ArrayList<Integer> workerWithResourceID = new ArrayList<>();
 	
 	public static <T> ArrayList<Pair<double[], double[]>> oneEval(AI ai1, AI ai2, MicroRTSInformation task, RTSFitnessFunction ff, PhysicalGameStateJFrame w) {		
 		
 		coevolution = ff.getCoevolution();
-		GameState gs = task.getGameState();
+		gs = task.getGameState();
 		PhysicalGameState pgs = task.getPhysicalGameState();
 		boolean gameover = false;
 		double averageUnitDifference = 0;
@@ -51,10 +49,10 @@ public class MicroRTSUtility {
 		PlayerAction pa2;
 		
 		int maxBaseX = -1, maxBaseY = -1;
-		Unit currentUnit;
-		boolean base1Alive = false;
-		boolean base2Alive = false; //TODO record information here for coevolution
-		boolean baseDeathRecorded = false;
+		Unit currentUnit; 
+		boolean baseDeath1Recorded = false;
+		boolean baseDeath2Recorded = false;
+		
 		int currentCycle = 0;
 		
 		do{ //simulate game:
@@ -70,59 +68,35 @@ public class MicroRTSUtility {
 			if(prog){ //if our FitnessFunction needs us to record information throughout the game
 				maxBaseX = -1; //Eventually will have to change this to accomodate maps where multiple bases will not be in a straight line
 				maxBaseY = -1;
-				resourcePool1 = 0;
-				formerResourcePool1 = 0;
-				resourcePool1 = 0;
-				formerResourcePool1 = 0;
 				currentUnit = null;				
-				baseDeathRecorded = false;
 				unitDifferenceNow = 0;
+				base1Alive = false;
+				base2Alive = false;
 				
 				for(int i = 0; i < pgs.getWidth(); i++){
 					for(int j = 0; j < pgs.getHeight(); j++){
-						base1Alive = false;
-						base2Alive = false; //TODO update player 2's values, maybe make some of this stuff into methods:
 						currentUnit = pgs.getUnitAt(i, j);
 						if(currentUnit!=null){
 							
 							updateUnitDifference(currentUnit);
-							updateResourcePools(currentUnit, coevolution);
+							if(currentUnit.getType().name.equals("Worker"))
+								updateHarvestingEfficiency(currentUnit, coevolution, task);
+							if(currentUnit.getType().name.equals("Base"))
+								updateBaseIsAlive(currentUnit, coevolution);
 							
-							if(currentUnit.getPlayer() == 0){
-								
-								if(currentUnit.getType().name.equals("Base")){
-									if(currentUnit.getX() > maxBaseX) maxBaseX = currentUnit.getX(); //if its a new base record its location
-									if(currentUnit.getY() > maxBaseY) maxBaseY = currentUnit.getY();
-									base1Alive = true;
-									assert(baseDeathRecorded == false): "base was created after all previous bases have been destroyed!";
-								} //end if(base)
-								else if(currentUnit.getType().name.equals("Worker")){
-									if(currentUnit.getResources() > 0){
-										if(!isUnitInRange(currentUnit, 
-												currentUnit.getPlayer() == 0 ? 0 : pgs.getWidth(), 
-												currentUnit.getPlayer() == 0 ? 0 : pgs.getWidth(), 
-														maxBaseX, maxBaseY)){
-											task.setHarvestingEfficiency (task.getHarvestingEfficiency(1) - WORKER_OUT_OF_BOUNDS_PENALTY, 1); //for ai1
-										}
-									}
-								}
-							} //end if (unit is player 1's)
-							else if(currentUnit.getPlayer() == 1){
-							} //end if (unit is player 2's)
 						} //end if (there is a unit on this space)
 					}//end j
 				}//end i
-				if(!base1Alive && !baseDeathRecorded) {
+				if(!base1Alive && !baseDeath1Recorded) {
 					task.setBaseUpTime(gs.getTime(), 1);
-					baseDeathRecorded = true;
+					baseDeath1Recorded = true;
 				}
-				if(resourcePool1 > formerResourcePool1){
-					task.setHarvestingEfficiency(task.getHarvestingEfficiency(1) + RESOURCE_GAIN_VALUE, 1);
+				if(!base2Alive && !baseDeath2Recorded) {
+					task.setBaseUpTime(gs.getTime(), 2);
+					baseDeath2Recorded = true;
 				}
 				currentCycle++;
-				formerResourcePool1 = resourcePool1;
 				averageUnitDifference += (unitDifferenceNow - averageUnitDifference) / (1.0*currentCycle); //incremental calculation of the avg.
-//				System.out.println(p1units + ":" + p2units + ":" + averageUnitDifference);
 			} //end if(Parameters.. = progressive)
 			gameover  = gs.cycle();
 			if(CommonConstants.watch) w.repaint();
@@ -136,17 +110,30 @@ public class MicroRTSUtility {
 	
 	private static void updateUnitDifference(Unit u){
 		if(u.getPlayer() == 0){
-			unitDifferenceNow++;
+			unitDifferenceNow+= u.getCost();
 		} else if(u.getPlayer() == 1){
-			unitDifferenceNow--;
+			unitDifferenceNow-= u.getCost();
 		}
 	}
 	
-	private static void updateResourcePools(Unit u, boolean coevolution){
+	private static void updateHarvestingEfficiency(Unit u, boolean coevolution, MicroRTSInformation task){
+		//assume the unit is a worker
+		int id = (int) u.getID();
+		int player = u.getPlayer()+1; //+1 because this methods returns 0 or 1, but we want to use it as 1 or 2
+		if( (u.getPlayer() == 0 || coevolution) && u.getResources() >= 1 && !workerWithResourceID.contains(id))
+			workerWithResourceID.add(id);
+		else if(u.getResources() <= 0 && workerWithResourceID.contains(id)){
+			workerWithResourceID.remove(id);
+			//add one to player's harvesting efficiency 
+			task.setHarvestingEfficiency(task.getHarvestingEfficiency(player)+1,player);
+		}
+	}
+	
+	private static void updateBaseIsAlive(Unit u, boolean coevolution) {
 		if(u.getPlayer() == 0){
-			resourcePool1 += u.getCost() + u.getResources();
-		} else if(u.getPlayer() == 1 && coevolution){
-			resourcePool2 += u.getCost() + u.getResources();
+			base1Alive = true;
+		} else if(u.getPlayer() == 1){
+			base2Alive = true;
 		}
 	}
 
