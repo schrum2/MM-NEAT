@@ -29,9 +29,17 @@ public class MicroRTSUtility {
 	private static final int WORKER_OUT_OF_BOUNDS_PENALTY = 1;
 	private static final double WORKER_HARVEST_VALUE = .5; //relative to 1 resource, for use in pool
 	private static boolean prog = Parameters.parameters.classParameter("microRTSFitnessFunction").equals(ProgressiveFitnessFunction.class);
+	private static boolean coevolution;
+	
+	private static int unitDifferenceNow = 0;
+	private static double resourcePool1 = 0;
+	private static double formerResourcePool1 = 0;
+	private static double resourcePool2 = 0;
+	private static double formerResourcePool2 = 0;
 	
 	public static <T> ArrayList<Pair<double[], double[]>> oneEval(AI ai1, AI ai2, MicroRTSInformation task, RTSFitnessFunction ff, PhysicalGameStateJFrame w) {		
 		
+		coevolution = ff.coevolution;
 		GameState gs = task.getGameState();
 		PhysicalGameState pgs = task.getPhysicalGameState();
 		boolean gameover = false;
@@ -41,10 +49,8 @@ public class MicroRTSUtility {
 		ff.setMaxCycles(maxCycles);
 		PlayerAction pa1;
 		PlayerAction pa2;
-		int unitDifferenceNow = 0;
+		
 		int maxBaseX = -1, maxBaseY = -1;
-		double resourcePool = 0;
-		double formerResourcePool = 0;
 		Unit currentUnit;
 		boolean base1Alive = false;
 		boolean base2Alive = false; //TODO record information here for coevolution
@@ -64,14 +70,13 @@ public class MicroRTSUtility {
 			if(prog){ //if our FitnessFunction needs us to record information throughout the game
 				maxBaseX = -1; //Eventually will have to change this to accomodate maps where multiple bases will not be in a straight line
 				maxBaseY = -1;
-				resourcePool = 0;
-				formerResourcePool = 0;
+				resourcePool1 = 0;
+				formerResourcePool1 = 0;
+				resourcePool1 = 0;
+				formerResourcePool1 = 0;
 				currentUnit = null;				
 				baseDeathRecorded = false;
-				
-				int p1units = 0;
-				int p2units = 0;
-				
+				unitDifferenceNow = 0;
 				
 				for(int i = 0; i < pgs.getWidth(); i++){
 					for(int j = 0; j < pgs.getHeight(); j++){
@@ -79,9 +84,12 @@ public class MicroRTSUtility {
 						base2Alive = false; //TODO update player 2's values, maybe make some of this stuff into methods:
 						currentUnit = pgs.getUnitAt(i, j);
 						if(currentUnit!=null){
+							
+							updateUnitDifference(currentUnit);
+							updateResourcePools(currentUnit, coevolution);
+							
 							if(currentUnit.getPlayer() == 0){
-								p1units++;
-								resourcePool += currentUnit.getCost();
+								
 								if(currentUnit.getType().name.equals("Base")){
 									resourcePool += currentUnit.getResources();
 									if(currentUnit.getX() > maxBaseX) maxBaseX = currentUnit.getX(); //if its a new base record its location
@@ -102,7 +110,6 @@ public class MicroRTSUtility {
 								}
 							} //end if (unit is player 1's)
 							else if(currentUnit.getPlayer() == 1){
-								p2units++;
 							} //end if (unit is player 2's)
 						} //end if (there is a unit on this space)
 					}//end j
@@ -114,7 +121,6 @@ public class MicroRTSUtility {
 				if(resourcePool > formerResourcePool){
 					task.setHarvestingEfficiency(task.getHarvestingEfficiency(1) + RESOURCE_GAIN_VALUE, 1);
 				}
-				unitDifferenceNow = p1units - p2units;
 				currentCycle++;
 				formerResourcePool = resourcePool;
 				averageUnitDifference += (unitDifferenceNow - averageUnitDifference) / (1.0*currentCycle); //incremental calculation of the avg.
@@ -128,6 +134,22 @@ public class MicroRTSUtility {
 			w.dispose();
 		
 		return ff.getFitness(gs);
+	}
+	
+	private static void updateUnitDifference(Unit u){
+		if(u.getPlayer() == 0){
+			unitDifferenceNow++;
+		} else if(u.getPlayer() == 1){
+			unitDifferenceNow--;
+		}
+	}
+	
+	private void updateResourcePools(Unit u, boolean coevolution){
+		if(u.getPlayer() == 0){
+			resourcePool1 += u.getCost() + u.getResources();
+		} else if(u.getPlayer() == 1 && coevolution){
+			resourcePool2 += u.getCost() + u.getResources();
+		}
 	}
 
 	/**

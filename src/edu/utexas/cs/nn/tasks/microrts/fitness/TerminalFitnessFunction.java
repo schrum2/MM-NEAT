@@ -64,4 +64,10 @@ public class TerminalFitnessFunction extends RTSFitnessFunction{
 		return new String[]{"win/loss","time","unit-difference"};
 	}
 
+	//not used
+	@Override
+	public String[] getOtherScores() { 
+		return null;
+	}
+
 }

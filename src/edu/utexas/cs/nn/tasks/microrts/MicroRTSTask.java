@@ -80,7 +80,9 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 		for(String function : ff.getFunctions()){
 			MMNEAT.registerFitnessFunction(function);
 		}
-		MMNEAT.registerFitnessFunction("win?", false);
+		for(String other : ff.getOtherScores()){
+			MMNEAT.registerFitnessFunction(other, false);
+		}
 		ef.givePhysicalGameState(pgs);
 		if(ef2 != null)
 			ef2.givePhysicalGameState(pgs);
@@ -94,6 +96,12 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 	public int numObjectives() {
 		return ff.getFunctions().length;
 	}
+	
+	@Override
+	public int numOtherScores() {
+		return ff.getOtherScores().length;
+	}
+
 
 	@Override
 	public double getTimeStamp() {
@@ -144,7 +152,7 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 	}
 
 	/**
-	 * Overrides a newly added method to LonerTask. It gets called before each evaluation.
+	 * called before each evaluation.
 	 * If a MapSequence is used, then the new map is loaded here. This order of events is
 	 * required in order to make sure networks are displayed properly, because an agent's
 	 * network is displayed before the oneEval method below is called. Therefore, the map
@@ -167,6 +175,7 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 				} catch (JDOMException | IOException e) {
 					e.printStackTrace(); System.exit(1);
 				}
+				ff.informOfMapSwitch();
 			}
 		}
 	}

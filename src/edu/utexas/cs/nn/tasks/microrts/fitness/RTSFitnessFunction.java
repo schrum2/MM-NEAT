@@ -21,6 +21,7 @@ public abstract class RTSFitnessFunction {
 	protected PhysicalGameState pgs = null;
 	protected MicroRTSInformation task = null;
 	protected boolean coevolution;
+	protected int mapSwitches = 0;
 	
 	/**
 	 * judges an individual agent's fitness
@@ -43,6 +44,15 @@ public abstract class RTSFitnessFunction {
 	}
 	public void setCoevolution(boolean b) {
 		coevolution = b;
+	}
+	public abstract String[] getOtherScores();
+	
+	public void informOfMapSwitch(){
+		mapSwitches++;
+	}
+	
+	public boolean getCoevolution(){
+		return coevolution;
 	}
 
 }
