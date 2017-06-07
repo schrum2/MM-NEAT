@@ -315,7 +315,7 @@ public class MIDIUtil {
 					if(j > 0) { // Not first note
 						// May not be turning off the right note
 						//lengths[j - 1] = convertTicksToMilliseconds(tick - starts[j-1]);
-						lengths[j-1] = convertTicksToMilliseconds(tick - starts[j-1]);
+						lengths[j-1] = convertTicksToMilliseconds(sequence, tick - starts[j-1]);
 					}
 
 					// This was looking for the stop time of the particular note, but did not account for note overlap
@@ -349,22 +349,18 @@ public class MIDIUtil {
 	}
 
 	/**
-	 * NEEDS TO BE REWORKED
-	 * Takes in the time representation for note duration in MIDI files, which is referred to as
-	 * ticks, and manipulates it according to the BPM (beats per minute) and PPQ (parts per 
-	 * quarter note) to return the equivalent time in milliseconds. 
+	 * Takes in the sequence of a MIDI file and the length of MIDI 
+	 * file events and calculates the milliseconds per tick using
+	 * data accessible by the sequence about the length of the tracks
+	 * in microseconds and in ticks.
 	 * 
 	 * @param ticks Length of events in MIDI files
 	 * @return Equivalent length in milliseconds
 	 */
-	
-	// TODO: Make this method correct, and then actually use it (or something like it) in place
-	// of that weird magic number 50.
-	public static float convertTicksToMilliseconds(long ticks) {
-		float millisecondsPerTick = 60000 / (PPQ * BPM);
+	public static float convertTicksToMilliseconds(Sequence sequence, long ticks) {
+		float millisecondsPerTick = sequence.getMicrosecondLength()/sequence.getTickLength();
 		float result = ticks * millisecondsPerTick;
-		//System.out.println(result);
-		return result * 10; // We have no idea why the number 10 goes here, but it seems to scale things nicely
+		return result;
 	}
 
 	/**
@@ -390,11 +386,11 @@ public class MIDIUtil {
 	}
 	
 	// TODO: Needs comments
-	public static double[] lineToAmplitudeArray(double[] soundLine, Network cppn) {
+	public static double[] lineToAmplitudeArray(String audio, double[] soundLine, Network cppn) {
 		Pair<ArrayList<Double>, ArrayList<Double>> lineData = notesAndLengthsOfLine(soundLine);
 		double[] frequencies = ArrayUtil.doubleArrayFromList(lineData.t1);
 		double[] lengths = ArrayUtil.doubleArrayFromList(lineData.t2);
-		return lineToAmplitudeArray(frequencies, lengths, cppn);
+		return lineToAmplitudeArray(audio, frequencies, lengths, cppn);
 		
 	}
 
@@ -402,7 +398,7 @@ public class MIDIUtil {
 	// TODO: I wonder if some of this code needs to be moved into soundLines as well.
 	// I forgot about the Pair<freq,lengths> step, which makes me reconsider some of my
 	// previous TODO statements ... do as much computation up front as possible.
-	public static double[] lineToAmplitudeArray(double[] frequencies, double[] lengths, Network cppn) {
+	public static double[] lineToAmplitudeArray(String audio, double[] frequencies, double[] lengths, Network cppn) {
 	
 		// TODO: We really need to find out what the deal with this number is.
 		// In particular, I suspect that part of the reason that other MIDI files failed
@@ -436,8 +432,8 @@ public class MIDIUtil {
 	 * @param frequencies frequencies corresponding to data taken from MIDI file
 	 * @param lengths double array containing lengths of individual notes
 	 */
-	public static CPPNNoteSequencePlayer playMIDIWithCPPNFromDoubleArray(Network cppn, ArrayList<double[]> soundLines) {
-		CPPNNoteSequencePlayer result = new CPPNNoteSequencePlayer(cppn, soundLines);
+	public static CPPNNoteSequencePlayer playMIDIWithCPPNFromDoubleArray(String audio, Network cppn, ArrayList<double[]> soundLines) {
+		CPPNNoteSequencePlayer result = new CPPNNoteSequencePlayer(audio, cppn, soundLines);
 		result.start();
 		return result; // To allow for interrupting of playback
 	}
@@ -459,11 +455,11 @@ public class MIDIUtil {
 
 		//TODO: Rather than pass in the ArrayList of double arrays, a single double array would be passed in.
 		// This single double array would already contain the values in the toPlay array that is computed in run().
-		public CPPNNoteSequencePlayer(Network cppn, ArrayList<double[]> soundLines) {
+		public CPPNNoteSequencePlayer(String audio, Network cppn, ArrayList<double[]> soundLines) {
 			play = true;
 			amplitudeArrays = new double[soundLines.size()][];
 			for(int i = 0; i < soundLines.size(); i++) {
-				amplitudeArrays[i] = lineToAmplitudeArray(soundLines.get(i), cppn);
+				amplitudeArrays[i] = lineToAmplitudeArray(audio, soundLines.get(i), cppn);
 			}
 		}
 		
@@ -520,8 +516,36 @@ public class MIDIUtil {
 	/**
 	 * Loops through array of frequencies generated from a MIDI file and plays it using a CPPN,
 	 * essentially making the CPPN the "instrument". Does so by calling freqFromMIDI to generate
-	 * a pair of double arrays corresponding to the frequencies and durations of all notes in a 
-	 * specific track, and then calls playMIDIWithCPPNFromDoubleArray() with the double arrays.
+	 * a pair of double arrays corresponding to the frequencies and durations of all notes in  
+	 * all tracks of a file, and then calls playMIDIWithCPPNFromDoubleArray() with the double arrays.
+	 * 
+	 * @param audio string representation of MIDI file being analyzed
+	 * @param cppn Input network being used as the "instrument" to generate MIDI file playback
+	 */
+	public static CPPNNoteSequencePlayer playMIDIWithCPPNFromString(String audio, Network cppn) {
+		File audioFile = new File(audio);
+		Sequence sequence;
+		try {
+			sequence = MidiSystem.getSequence(audioFile);
+			Track[] tracks = sequence.getTracks();
+			
+			// TODO: Instead of having a method that returns this massive ArrayList of separate sound lines,
+			// simply return a single double array. Essentially, stop using the ArrayList as a middle format
+			// between MIDI and the one array of double that gets played inside of the run method of the
+			// note sequence player.
+			ArrayList<double[]> data = soundLines(tracks);
+			return playMIDIWithCPPNFromDoubleArray(audio, cppn, data);
+		} catch (InvalidMidiDataException | IOException e) {
+			e.printStackTrace();
+		}
+		return null; //shouldn't happen
+	}
+	
+	/**
+	 * Loops through array of frequencies generated from a MIDI file and plays it using a CPPN,
+	 * essentially making the CPPN the "instrument". Does so by calling freqFromMIDI to generate
+	 * a pair of double arrays corresponding to the frequencies and durations of all notes in a
+	 * specific track of a file, and then calls playMIDIWithCPPNFromDoubleArray() with the double arrays.
 	 * 
 	 * @param audio string representation of MIDI file being analyzed
 	 * @param trackNumber specific track in file from which data is being extracted
@@ -533,17 +557,13 @@ public class MIDIUtil {
 		try {
 			sequence = MidiSystem.getSequence(audioFile);
 			Track[] tracks = sequence.getTracks();
-			// TODO: Note that I am already ignoring the track number here,
-			// but we should actually have a version of this method that uses
-			// a specific track and another version that uses all tracks.
-			//Track track = tracks[trackNumber];
-			
+			Track track = tracks[trackNumber];			
 			// TODO: Instead of having a method that returns this massive ArrayList of separate sound lines,
 			// simply return a single double array. Essentially, stop using the ArrayList as a middle format
 			// between MIDI and the one array of double that gets played inside of the run method of the
 			// note sequence player.
-			ArrayList<double[]> data = soundLines(tracks);
-			return playMIDIWithCPPNFromDoubleArray(cppn, data);
+			ArrayList<double[]> data = soundLines(track);
+			return playMIDIWithCPPNFromDoubleArray(audio, cppn, data);
 		} catch (InvalidMidiDataException | IOException e) {
 			e.printStackTrace();
 		}

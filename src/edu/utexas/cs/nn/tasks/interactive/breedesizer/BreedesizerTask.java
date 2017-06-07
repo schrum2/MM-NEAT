@@ -130,7 +130,7 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 				// make the version that does not accept a track number the default.
 				// Being able to play an individual track could be useful for troubleshooting
 				// later
-				midiPlay = MIDIUtil.playMIDIWithCPPNFromString(Parameters.parameters.stringParameter("remixMIDIFile"), 1, currentCPPN);
+				midiPlay = MIDIUtil.playMIDIWithCPPNFromString(Parameters.parameters.stringParameter("remixMIDIFile"), currentCPPN);
 			}
 		}
 	}

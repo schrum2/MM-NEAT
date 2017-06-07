@@ -8,8 +8,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MidiEvent;
+import javax.sound.midi.MidiMessage;
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.Sequence;
+import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Track;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
@@ -61,7 +64,7 @@ public class SoundUtilExamples {
 		Network cppn = test.getCPPN();
 
 		// method call
-		overlapWAVFiles();
+		tickConversionData();
 	}
 
 	public static void randomCPPNExamples(Network cppn) throws IOException {
@@ -479,17 +482,33 @@ public class SoundUtilExamples {
 	}
 
 	public static void MIDIWithLengths(Network cppn) throws InvalidMidiDataException, IOException {
-		File midiFile = new File(FUR_ELISE_MID);
+		File midiFile = new File(SOLO_PIANO_MID);
 		Sequence sequence = MidiSystem.getSequence(midiFile);
 		Track[] tracks = sequence.getTracks();
-		Track track = tracks[1];
-		ArrayList<double[]> listOfData = MIDIUtil.soundLines(track);
-		MIDIUtil.playMIDIWithCPPNFromDoubleArray(cppn, listOfData);
+		ArrayList<double[]> listOfData = MIDIUtil.soundLines(tracks);
+		MIDIUtil.playMIDIWithCPPNFromDoubleArray(SOLO_PIANO_MID, cppn, listOfData);
 	}
 	
 	public static void eightBitToSixteenBit() {
 		double[] harpAsSixteenBit = SoundToArray.eightBitToSixteenBit(HARP_WAV);
 		System.out.println(Arrays.toString(harpAsSixteenBit));
 		//PlayDoubleArray.playDoubleArray(harpAsSixteenBit);
+	}
+	
+	public static void tickConversionData() throws InvalidMidiDataException, IOException {
+		File midiFile = new File(FUR_ELISE_MID);
+		Sequence sequence = MidiSystem.getSequence(midiFile);
+		Track[] tracks = sequence.getTracks();
+		Track track = tracks[1];
+		for(int i = 0; i < track.size(); i++) {
+			MidiEvent event = track.get(i);
+			MidiMessage message = event.getMessage();
+			//System.out.println(message);
+			if (message instanceof ShortMessage) {
+				long tick = event.getTick(); // actually starting tick time
+				System.out.println("Tick: " + tick);
+				System.out.println("length of tick in milliseconds: " + MIDIUtil.convertTicksToMilliseconds(sequence, tick));
+			}
+		}
 	}
 }
