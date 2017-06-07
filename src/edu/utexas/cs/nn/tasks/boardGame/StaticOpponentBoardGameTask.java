@@ -9,6 +9,7 @@ import boardGame.TwoDimensionalBoardGameViewer;
 import boardGame.agents.BoardGamePlayer;
 import boardGame.agents.HeuristicBoardGamePlayer;
 import boardGame.featureExtractor.BoardGameFeatureExtractor;
+import boardGame.fitnessFunction.BoardGameFitnessFunction;
 import boardGame.heuristics.NNBoardGameHeuristic;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
@@ -29,7 +30,8 @@ public class StaticOpponentBoardGameTask<T extends Network> extends NoisyLonerTa
 	@SuppressWarnings("rawtypes")
 	HeuristicBoardGamePlayer player;
 	BoardGameFeatureExtractor<BoardGameState> featExtract;
-	
+	@SuppressWarnings("rawtypes")
+	BoardGameFitnessFunction fitnessFunction;
 	
 	/**
 	 * Constructor for a new BoardGameTask
@@ -42,6 +44,7 @@ public class StaticOpponentBoardGameTask<T extends Network> extends NoisyLonerTa
 			opponent = (BoardGamePlayer) ClassCreation.createObject("boardGameOpponent"); // The Opponent
 			player = (HeuristicBoardGamePlayer) ClassCreation.createObject("boardGamePlayer"); // The Player
 			featExtract = (BoardGameFeatureExtractor<BoardGameState>) ClassCreation.createObject("boardGameFeatureExtractor");
+			fitnessFunction = (BoardGameFitnessFunction) ClassCreation.createObject("boardGameFitnessFunction");
 		} catch (NoSuchMethodException e) {
 			e.printStackTrace();
 			System.out.println("BoardGame instance could not be loaded");
@@ -113,7 +116,7 @@ public class StaticOpponentBoardGameTask<T extends Network> extends NoisyLonerTa
 
 		player.setHeuristic((new NNBoardGameHeuristic(individual.getPhenotype(), featExtract)));
 		BoardGamePlayer[] players = new BoardGamePlayer[]{player, opponent};
-		return BoardGameUtil.playGame(MMNEAT.boardGame, players).get(0);
+		return BoardGameUtil.playGame(MMNEAT.boardGame, players, fitnessFunction).get(0);
 	}
 
 	// Used for Hyper-NEAT

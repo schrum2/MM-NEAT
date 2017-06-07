@@ -8,6 +8,7 @@ import boardGame.BoardGameState;
 import boardGame.agents.BoardGamePlayer;
 import boardGame.agents.HeuristicBoardGamePlayer;
 import boardGame.featureExtractor.BoardGameFeatureExtractor;
+import boardGame.fitnessFunction.BoardGameFitnessFunction;
 import boardGame.heuristics.NNBoardGameHeuristic;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
@@ -24,7 +25,8 @@ public class SinglePopulationCompetativeCoevolutionBoardGameTask<T extends Netwo
 	@SuppressWarnings("rawtypes")
 	BoardGamePlayer[] players;
 	BoardGameFeatureExtractor<BoardGameState> featExtract;
-	
+	@SuppressWarnings("rawtypes")
+	BoardGameFitnessFunction fitnessFunction;
 	
 	@SuppressWarnings({ "rawtypes", "unchecked"})
 	public SinglePopulationCompetativeCoevolutionBoardGameTask(){
@@ -33,7 +35,7 @@ public class SinglePopulationCompetativeCoevolutionBoardGameTask<T extends Netwo
 		try {
 			players = new BoardGamePlayer[groupSize()];
 			featExtract = (BoardGameFeatureExtractor<BoardGameState>) ClassCreation.createObject("boardGameFeatureExtractor");
-
+			fitnessFunction = (BoardGameFitnessFunction) ClassCreation.createObject("boardGameFitnessFunction");
 			for(int i = 0; i < groupSize(); i++){
 				players[i] = (BoardGamePlayer) ClassCreation.createObject("boardGamePlayer"); // The Player
 			}
@@ -58,14 +60,14 @@ public class SinglePopulationCompetativeCoevolutionBoardGameTask<T extends Netwo
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public ArrayList<Pair<double[], double[]>> evaluateGroup(ArrayList<Genotype<T>> group) {
-		HeuristicBoardGamePlayer[] players = new HeuristicBoardGamePlayer[group.size()];
+		HeuristicBoardGamePlayer[] teamPlayers = new HeuristicBoardGamePlayer[group.size()];
 		int index = 0;
 		for(Genotype<T> gene : group){
-			HeuristicBoardGamePlayer evolved = players[index]; // Creates the Player based on the command line
+			HeuristicBoardGamePlayer evolved = (HeuristicBoardGamePlayer) players[index]; // Creates the Player based on the command line
 			evolved.setHeuristic((new NNBoardGameHeuristic(gene.getPhenotype(),featExtract)));
-			players[index++] = evolved;
+			teamPlayers[index++] = evolved;
 		}
-		return BoardGameUtil.playGame(MMNEAT.boardGame, players);
+		return BoardGameUtil.playGame(MMNEAT.boardGame, teamPlayers, fitnessFunction);
 	}
 
 	@Override

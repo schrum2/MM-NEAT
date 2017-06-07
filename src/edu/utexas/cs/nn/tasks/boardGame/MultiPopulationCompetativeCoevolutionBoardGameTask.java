@@ -4,6 +4,10 @@ import java.util.ArrayList;
 
 import boardGame.BoardGame;
 import boardGame.agents.BoardGamePlayer;
+import boardGame.agents.HeuristicBoardGamePlayer;
+import boardGame.featureExtractor.BoardGameFeatureExtractor;
+import boardGame.fitnessFunction.BoardGameFitnessFunction;
+import boardGame.heuristics.NNBoardGameHeuristic;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.scores.Score;
@@ -17,6 +21,10 @@ public class MultiPopulationCompetativeCoevolutionBoardGameTask extends GroupTas
 	BoardGame bg;
 	@SuppressWarnings("rawtypes")
 	BoardGamePlayer[] players;
+	@SuppressWarnings("rawtypes")
+	BoardGameFeatureExtractor featExtract;
+	@SuppressWarnings("rawtypes")
+	BoardGameFitnessFunction fitnessFunction;
 	
 	@SuppressWarnings("rawtypes")
 	public MultiPopulationCompetativeCoevolutionBoardGameTask(){
@@ -25,7 +33,8 @@ public class MultiPopulationCompetativeCoevolutionBoardGameTask extends GroupTas
 		try {
 			bg = (BoardGame) ClassCreation.createObject("boardGame");
 			players = new BoardGamePlayer[numberOfPopulations()];
-			
+			featExtract = (BoardGameFeatureExtractor) ClassCreation.createObject("boardGameFeatureExtractor");
+			fitnessFunction = (BoardGameFitnessFunction) ClassCreation.createObject("boardGameFitnessFunction");
 			for(int i = 0; i < numberOfPopulations(); i++){
 				players[i] = (BoardGamePlayer) ClassCreation.createObject("boardGamePlayer"); // The Player
 			}
@@ -67,12 +76,9 @@ public class MultiPopulationCompetativeCoevolutionBoardGameTask extends GroupTas
 	@SuppressWarnings("rawtypes")
 	@Override
 	public ArrayList<Score> evaluate(Genotype[] team) {
-		// TODO Auto-generated method stub
-		
-		
-		
-		BoardGameUtil.playGame(bg, null); // TODO
-		
+		// TODO
+		BoardGameUtil.playGame(bg, players, fitnessFunction);
+		// TODO
 		return null;
 	}
 

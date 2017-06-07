@@ -9,9 +9,11 @@ import boardGame.TwoDimensionalBoardGame;
 import boardGame.TwoDimensionalBoardGameState;
 import boardGame.TwoDimensionalBoardGameViewer;
 import boardGame.agents.BoardGamePlayer;
+import boardGame.fitnessFunction.BoardGameFitnessFunction;
 import edu.utexas.cs.nn.networks.hyperneat.Substrate;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
+import edu.utexas.cs.nn.util.ClassCreation;
 import edu.utexas.cs.nn.util.MiscUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.datastructures.Triple;
@@ -21,7 +23,8 @@ public class BoardGameUtil {
 	static TwoDimensionalBoardGameViewer view = null;
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static ArrayList<Pair<double[], double[]>> playGame(BoardGame bg, BoardGamePlayer[] players){
+	public static ArrayList<Pair<double[], double[]>> playGame(BoardGame bg, BoardGamePlayer[] players, BoardGameFitnessFunction fit){
+		
 		
 		bg.reset();
 		
@@ -53,15 +56,17 @@ public class BoardGameUtil {
 			}
 		}
 		
-		List<Integer> winners = bg.getWinners();
+//		List<Integer> winners = bg.getWinners();
 		ArrayList<Pair<double[], double[]>> scoring = new ArrayList<Pair<double[], double[]>>(bg.getNumPlayers());
 		
 		for(int i = 0; i < players.length; i++){
 		
-		double fitness = winners.size() > 1 && winners.contains(i) ? 0 : // multiple winners means tie: fitness is 0 
-						(winners.get(0) == i ? 1 // If the one winner is 0, then the neural network won: fitness 1
-											 : -2); // Else the network lost: fitness -2
-				
+//		double fitness = winners.size() > 1 && winners.contains(i) ? 0 : // multiple winners means tie: fitness is 0 
+//						(winners.get(0) == i ? 1 // If the one winner is 0, then the neural network won: fitness 1
+//											 : -2); // Else the network lost: fitness -2
+
+		double fitness = fit.getFitness(bg.getCurrentState(), 0); // Evaluates the final State of the BoardGame for the Player at index 0
+			
 		Pair<double[], double[]> evalResults = new Pair<double[], double[]>(new double[] { fitness }, new double[0]);
 		scoring.add(evalResults);
 		 }
