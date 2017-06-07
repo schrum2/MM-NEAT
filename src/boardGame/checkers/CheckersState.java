@@ -112,8 +112,10 @@ public class CheckersState extends TwoDimensionalBoardGameState {
 				}
 			}
 		}
-		
-		return blackChecksLeft == 0 || redChecksLeft == 0;
+
+		// Returns True if there are no more of one Player's Checks left or if there are no more possible Moves
+		if(blackChecksLeft == 0 || redChecksLeft == 0) return true;
+		return (possibleBoardGameStates(this).size() == 0);
 	}
 
 	/**
