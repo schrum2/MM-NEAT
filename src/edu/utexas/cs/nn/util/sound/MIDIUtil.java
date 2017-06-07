@@ -25,6 +25,7 @@ import edu.utexas.cs.nn.tasks.interactive.breedesizer.Keyboard;
 import edu.utexas.cs.nn.util.MiscUtil;
 import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
+import edu.utexas.cs.nn.util.datastructures.Triple;
 import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
 
 /**
@@ -166,6 +167,8 @@ public class MIDIUtil {
 	}
 	
 	/**
+	 * MARKED FOR DELETION
+	 * 
 	 * Divides each piano voice up into a single list, so that all indexes when voice is not playing
 	 * are filled with a 0 and indexes when the voice is playing are filled with the frequency. This
 	 * is done so that each sound can be fed into a separate SourceDataLine and the double arrays can 
@@ -229,6 +232,64 @@ public class MIDIUtil {
 	}
 	
 	/**
+	 * Divides each piano voice up into a single list, so that all indexes when voice is not playing
+	 * are filled with a 0 and indexes when the voice is playing are filled with the frequency. This
+	 * is done so that each sound can be fed into a separate SourceDataLine and the double arrays can 
+	 * potentially be played simultaneously.
+	 * 
+	 * @param track input track of MIDI file being analyzed (track represents a single instrument, usually)
+	 * @return List of representative double arrays for each voice (number of arrays in list should be 
+	 * equal to the max number of notes played at once on the given instrument)
+	 */
+	public static ArrayList<Triple<ArrayList<Double>, ArrayList<Double>, ArrayList<Double>>> soundLines2(Track track) {
+		Map<Double, Long> map = new HashMap<Double, Long>();
+		// TODO: Don't even create this ArrayList in the first place because it takes up
+		// tons of memory. Rather, create one double array that has one index for each tick,
+		// and add each sound result you encounter to the appropriate tick/index.
+		// Accomplishing this will require a method that first determines which track across
+		// the whole file has the most ticks, so that you can initailize the array to the right size.
+		// ALSO: after looking at the code some more, I realized that the values returned here are
+		// frequencies, not amplitudes. The trick of adding only works with amplitudes, but we can
+		// only derive amplitudes after using the CPPN. That means we need to extract the sound
+		// info and encode with the CPPN at the same time in order to increase efficiency and reduce
+		// the memory footprint.
+		ArrayList<Triple<ArrayList<Double>, ArrayList<Double>, ArrayList<Double>>> soundLines = new ArrayList<Triple<ArrayList<Double>, ArrayList<Double>, ArrayList<Double>>>();
+		HashMap<Double, Integer> lines = new HashMap<Double, Integer>();
+		for(int i = 0; i < track.size(); i++) {
+			MidiEvent event = track.get(i);
+			MidiMessage message = event.getMessage();
+			// TODO: I wonder if we should start investigating other types of messages.
+			// Some nuance about the sounds produces could depend on interpreting the
+			// other messages correctly.
+			if (message instanceof ShortMessage) {
+				ShortMessage sm = (ShortMessage) message;
+				int key = sm.getData1();
+				double freq = noteToFreq(key);
+				long tick = event.getTick(); // actually starting tick time
+				if (sm.getCommand() == NOTE_ON && sm.getData2() > 0) { //turn on
+					int index = map.size();
+					if(index >= soundLines.size()) {
+						soundLines.add(new Triple<ArrayList<Double>, ArrayList<Double>, ArrayList<Double>>(new ArrayList<Double>(), new ArrayList<Double>(), new ArrayList<Double>()));
+					}
+					map.put(freq, tick);
+					lines.put(freq, index);
+				} else if((sm.getCommand() == NOTE_OFF || (sm.getCommand() == NOTE_ON && sm.getData2() == 0))) { // Check: is negative velocity possible?
+					int index = lines.get(freq);
+					long tickStart = map.get(freq);
+					long tickEnd = tick;
+					
+					soundLines.get(index).t1.add(freq);                         // add frequency 
+					soundLines.get(index).t2.add((double) tickEnd-tickStart+1); // add length
+					soundLines.get(index).t3.add((double) tickStart);           // add start time
+				}
+			}
+		}
+		// TODO: Some normalization (division) might be needed here before the final return.
+		
+		return soundLines;
+	}
+	
+	/**
 	 * Takes in a double array representing a single voice in a track and extracts vital information
 	 * out of it so that the individual notes are retained sequentially in an ArrayList and the lengths
 	 * of those notes are also retained in a separate ArrayList. 
@@ -257,7 +318,6 @@ public class MIDIUtil {
 		lengths.add((double) soundLine.length-prevIndex);
 		return new Pair<>(frequencies, lengths);
 	}
-
 
 	/**
 	 * Takes an input note value from a MIDI file and converts it to its corresponding frequency.
@@ -302,7 +362,8 @@ public class MIDIUtil {
 		return lineToAmplitudeArray(audio, frequencies, lengths, cppn);
 		
 	}
-
+	
+	// MARKED FOR DELETION
 	// TODO: Needs comments
 	// TODO: I wonder if some of this code needs to be moved into soundLines as well.
 	// I forgot about the Pair<freq,lengths> step, which makes me reconsider some of my
@@ -330,6 +391,34 @@ public class MIDIUtil {
 				double[] amplitude = frequencies[i] == 0 ? new double[amplitudeLength] : SoundFromCPPNUtil.amplitudeGenerator(cppn, amplitudeLength, frequencies[i]);
 				System.arraycopy(amplitude, 0, amplitudeArray, noteLength, amplitude.length);
 				noteLength += amplitudeLength;
+			}
+			return amplitudeArray;
+		} catch (InvalidMidiDataException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null; //shouldn't happen
+	}
+	
+	public static double[] lineToAmplitudeArray(String audio, ArrayList<Double> frequencies, ArrayList<Double> lengths, ArrayList<Double> startTimes, Network cppn) {
+		File audioFile = new File(audio);
+		try {
+			Sequence sequence = MidiSystem.getSequence(audioFile);
+			//dividing sample rate of default audio format by the microseconds per tick to get equivalent of correct answer
+			float amplitudeLengthMultiplier = PlayDoubleArray.DEFAULT_AUDIO_FORMAT.getFrameRate()/(sequence.getMicrosecondLength()/sequence.getTickLength());
+			System.out.println("amplitudeLengthMultiplier: " + amplitudeLengthMultiplier);
+			
+			//TODO: sum of values at indexes in array list
+			double[] amplitudeArray = new double[(int) StatisticsUtilities.sumDouble(lengths)* (int) amplitudeLengthMultiplier];
+			int noteLength = 0;
+			for(int i = 0; i < lengths.size(); i++) {
+				int amplitudeLength = (int)(lengths.get(i) * amplitudeLengthMultiplier);
+				double[] amplitude = frequencies.get(i) == 0 ? new double[amplitudeLength] : SoundFromCPPNUtil.amplitudeGenerator(cppn, amplitudeLength, frequencies.get(i));
+				System.arraycopy(amplitude, 0, amplitudeArray, noteLength, amplitude.length);
+				noteLength += amplitudeLength;
+				if(noteLength < startTimes.get(i+1)) {
+					
+				}
 			}
 			return amplitudeArray;
 		} catch (InvalidMidiDataException | IOException e) {
