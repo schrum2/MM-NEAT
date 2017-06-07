@@ -6,23 +6,16 @@ import boardGame.BoardGameState;
 import boardGame.featureExtractor.BoardGameFeatureExtractor;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.util.ClassCreation;
 import edu.utexas.cs.nn.util.MiscUtil;
 
 public class NNBoardGameHeuristic<T extends Network, S extends BoardGameState> implements BoardGameHeuristic<S> {
 
 	T network;
-	BoardGameFeatureExtractor<BoardGameState> featExtract;
+	BoardGameFeatureExtractor<S> featExtract;
 	
-	@SuppressWarnings("unchecked")
-	public NNBoardGameHeuristic(T net){
+	public NNBoardGameHeuristic(T net, BoardGameFeatureExtractor<S> fe){
 		network = net;
-		try {
-			featExtract = (BoardGameFeatureExtractor<BoardGameState>) ClassCreation.createObject("boardGameFeatureExtractor");
-		} catch (NoSuchMethodException e) {
-			e.printStackTrace();
-			System.exit(1);
-		}
+		featExtract = fe;
 	}
 	
 	public NNBoardGameHeuristic(){ // Used as a blank constructor; the Network can be set in the BoardGameTasks

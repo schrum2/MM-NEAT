@@ -111,7 +111,7 @@ public class StaticOpponentBoardGameTask<T extends Network> extends NoisyLonerTa
 	@Override
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {
 
-		player.setHeuristic((new NNBoardGameHeuristic(individual.getPhenotype())));
+		player.setHeuristic((new NNBoardGameHeuristic(individual.getPhenotype(), featExtract)));
 		BoardGamePlayer[] players = new BoardGamePlayer[]{player, opponent};
 		return BoardGameUtil.playGame(MMNEAT.boardGame, players).get(0);
 	}

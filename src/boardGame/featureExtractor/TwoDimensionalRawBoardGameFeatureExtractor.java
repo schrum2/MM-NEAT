@@ -1,10 +1,16 @@
 package boardGame.featureExtractor;
 
 import boardGame.TwoDimensionalBoardGameState;
+import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 
 public class TwoDimensionalRawBoardGameFeatureExtractor<T extends TwoDimensionalBoardGameState> implements BoardGameFeatureExtractor<T> {
 
 	T board;
+
+	@SuppressWarnings("unchecked")
+	public TwoDimensionalRawBoardGameFeatureExtractor(){
+		this((T) MMNEAT.boardGame.getCurrentState());
+	}
 	
 	public TwoDimensionalRawBoardGameFeatureExtractor(T bgs){
 		board = bgs;
