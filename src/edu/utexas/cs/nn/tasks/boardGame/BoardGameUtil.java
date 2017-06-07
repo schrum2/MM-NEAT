@@ -64,6 +64,7 @@ public class BoardGameUtil {
 		ArrayList<Pair<double[], double[]>> scoring = new ArrayList<Pair<double[], double[]>>(bg.getNumPlayers());
 		
 		for(int i = 0; i < players.length; i++){
+			double fitness = fitStore[i]; // Gets the final Fitness for each Player
 
 			Pair<double[], double[]> evalResults = new Pair<double[], double[]>(new double[] { fitness }, new double[0]);
 			scoring.add(evalResults);
