@@ -7,7 +7,7 @@ import boardGame.BoardGameState;
 public class SimpleWinLoseDrawBoardGameFitness<T extends BoardGameState> implements BoardGameFitnessFunction<T>{
 
 	@Override
-	public double getFitness(T bgs, int index) {
+	public double updateFitness(T bgs, int index) {
 		List<Integer> winners = bgs.getWinners();
 		
 		double fitness = winners.size() > 1 && winners.contains(index) ? 0 : // multiple winners means tie: fitness is 0 
@@ -16,7 +16,5 @@ public class SimpleWinLoseDrawBoardGameFitness<T extends BoardGameState> impleme
 		
 		return fitness;
 	}
-	
-	
 	
 }

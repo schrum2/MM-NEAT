@@ -77,7 +77,11 @@ public class MultiPopulationCompetativeCoevolutionBoardGameTask extends GroupTas
 	@Override
 	public ArrayList<Score> evaluate(Genotype[] team) {
 		// TODO
+		
+		
 		BoardGameUtil.playGame(bg, players, fitnessFunction);
+		
+		
 		// TODO
 		return null;
 	}

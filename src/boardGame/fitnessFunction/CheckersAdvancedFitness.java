@@ -2,13 +2,17 @@ package boardGame.fitnessFunction;
 
 import boardGame.BoardGameState;
 
+/**
+ * Fitness Function from: 
+ */
 public class CheckersAdvancedFitness<T extends BoardGameState> implements BoardGameFitnessFunction<T> {
 
 	private static final int KING = 2; // Checkers is structured so that the
 										// Index for Kings is PlayerIndex + 2
 
+
 	@Override
-	public double getFitness(T bgs, int index) {
+	public double updateFitness(T bgs, int index) {
 
 		int playerChecks = 0;
 		int playerKings = 0;
@@ -29,10 +33,8 @@ public class CheckersAdvancedFitness<T extends BoardGameState> implements BoardG
 				opponentKings++;
 			}
 		}
-
-		double fitness = 100 + 2 * playerChecks + 3 * playerKings + 2 * (12 - opponentChecks) + 3 * (12 - opponentKings);
-
-		return fitness;
+		return (100 + 2 * playerChecks + 3 * playerKings + 2 * (12 - opponentChecks) + 3 * (12 - opponentKings));
 	}
+
 
 }

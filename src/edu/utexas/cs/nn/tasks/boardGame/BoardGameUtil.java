@@ -27,6 +27,7 @@ public class BoardGameUtil {
 		
 		
 		bg.reset();
+		double[] fitStore = new double[players.length];
 		
 		if(CommonConstants.watch && bg instanceof TwoDimensionalBoardGame){ // Creates a new BoardGameViewer if bg is a TwoDimensionalBoardGame
 			if(view != null){ 
@@ -44,8 +45,12 @@ public class BoardGameUtil {
 			if(Parameters.parameters.booleanParameter("stepByStep")){
 				System.out.print("Press enter to continue");
 				MiscUtil.waitForReadStringAndEnterKeyPress();
-			}			
+			}
+			
+			int playIndex = bg.getCurrentPlayer(); // Stores the current Player's Index to access the Player's Fitness
 			bg.move(players[bg.getCurrentPlayer()]);
+			
+			fitStore[playIndex] += fit.updateFitness(bg.getCurrentState(), playIndex); // Updates the Fitness for the Player that just made a Move
 		}
 		
 		if(CommonConstants.watch && bg instanceof TwoDimensionalBoardGame){ // Renders the last Move of the game
@@ -56,20 +61,13 @@ public class BoardGameUtil {
 			}
 		}
 		
-//		List<Integer> winners = bg.getWinners();
 		ArrayList<Pair<double[], double[]>> scoring = new ArrayList<Pair<double[], double[]>>(bg.getNumPlayers());
 		
 		for(int i = 0; i < players.length; i++){
-		
-//		double fitness = winners.size() > 1 && winners.contains(i) ? 0 : // multiple winners means tie: fitness is 0 
-//						(winners.get(0) == i ? 1 // If the one winner is 0, then the neural network won: fitness 1
-//											 : -2); // Else the network lost: fitness -2
 
-		double fitness = fit.getFitness(bg.getCurrentState(), 0); // Evaluates the final State of the BoardGame for the Player at index 0
-			
-		Pair<double[], double[]> evalResults = new Pair<double[], double[]>(new double[] { fitness }, new double[0]);
-		scoring.add(evalResults);
-		 }
+			Pair<double[], double[]> evalResults = new Pair<double[], double[]>(new double[] { fitness }, new double[0]);
+			scoring.add(evalResults);
+		}
 		
 		return scoring; // Returns the Fitness of the individual's Genotype<T>
 	}
