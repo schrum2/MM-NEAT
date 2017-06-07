@@ -52,7 +52,8 @@ public class Mushroom extends Sprite
     {
         float xMarioD = world.mario.x - x;
         float yMarioD = world.mario.y - y;
-        float w = 16;
+        @SuppressWarnings("unused")
+		float w = 16;
         if (xMarioD > -16 && xMarioD < 16)
         {
             if (yMarioD > -height && yMarioD < world.mario.height)
@@ -210,7 +211,8 @@ public class Mushroom extends Sprite
 
         boolean blocking = world.level.isBlocking(x, y, xa, ya);
 
-        byte block = world.level.getBlock(x, y);
+        @SuppressWarnings("unused")
+		byte block = world.level.getBlock(x, y);
 
         return blocking;
     }

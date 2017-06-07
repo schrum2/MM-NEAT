@@ -9,7 +9,8 @@ public class Fireball extends Sprite
     private static float GROUND_INERTIA = 0.89f;
     private static float AIR_INERTIA = 0.89f;
 
-    private float runTime;
+    @SuppressWarnings("unused")
+	private float runTime;
     private boolean onGround = false;
 
     private int width = 4;
@@ -203,7 +204,8 @@ public class Fireball extends Sprite
 
         boolean blocking = world.level.isBlocking(x, y, xa, ya);
 
-        byte block = world.level.getBlock(x, y);
+        @SuppressWarnings("unused")
+		byte block = world.level.getBlock(x, y);
 
         return blocking;
     }

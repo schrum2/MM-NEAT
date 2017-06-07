@@ -100,7 +100,8 @@ public class Mario extends Sprite
     private int invulnerableTime = 0;
 
     public Sprite carried = null;
-    private static Mario instance;
+    @SuppressWarnings("unused")
+	private static Mario instance;
 
     public Mario(LevelScene world)
     {
@@ -311,7 +312,7 @@ public class Mario extends Sprite
         if (GlobalOptions.PowerRestoration && keys[KEY_SPEED] && (!Mario.large || !Mario.fire))
             setLarge(true, true);
         if (cheatKeys[KEY_LIFE_UP])
-            this.lives++;
+            Mario.lives++;
         world.paused = GlobalOptions.pauseWorld;
         if (cheatKeys[KEY_WIN])
             win();

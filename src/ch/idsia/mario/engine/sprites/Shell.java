@@ -9,7 +9,8 @@ public class Shell extends Sprite
     private static float GROUND_INERTIA = 0.89f;
     private static float AIR_INERTIA = 0.89f;
 
-    private float runTime;
+    @SuppressWarnings("unused")
+	private float runTime;
     private boolean onGround = false;
 
     private int width = 4;
@@ -77,7 +78,8 @@ public class Shell extends Sprite
 
         float xMarioD = world.mario.x - x;
         float yMarioD = world.mario.y - y;
-        float w = 16;
+        @SuppressWarnings("unused")
+		float w = 16;
         if (xMarioD > -16 && xMarioD < 16)
         {
             if (yMarioD > -height && yMarioD < world.mario.height)
@@ -287,7 +289,8 @@ public class Shell extends Sprite
 
         boolean blocking = world.level.isBlocking(x, y, xa, ya);
 
-        byte block = world.level.getBlock(x, y);
+        @SuppressWarnings("unused")
+		byte block = world.level.getBlock(x, y);
         
         if (blocking && ya == 0 && xa!=0)
         {

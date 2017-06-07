@@ -19,10 +19,14 @@ public class Enemy extends Sprite
 
     private float runTime;
     private boolean onGround = false;
-    private boolean mayJump = false;
-    private int jumpTime = 0;
-    private float xJumpSpeed;
-    private float yJumpSpeed;
+    @SuppressWarnings("unused")
+	private boolean mayJump = false;
+    @SuppressWarnings("unused")
+	private int jumpTime = 0;
+    @SuppressWarnings("unused")
+	private float xJumpSpeed;
+    @SuppressWarnings("unused")
+	private float yJumpSpeed;
 
     int width = 4;
     int height = 24;
@@ -94,7 +98,8 @@ public class Enemy extends Sprite
 
         float xMarioD = world.mario.x - x;
         float yMarioD = world.mario.y - y;
-        float w = 16;
+        @SuppressWarnings("unused")
+		float w = 16;
         if (xMarioD > -width*2-4 && xMarioD < width*2+4)
         {
             if (yMarioD > -height && yMarioD < world.mario.height)
@@ -322,7 +327,8 @@ public class Enemy extends Sprite
 
         boolean blocking = world.level.isBlocking(x, y, xa, ya);
 
-        byte block = world.level.getBlock(x, y);
+        @SuppressWarnings("unused")
+		byte block = world.level.getBlock(x, y);
 
         return blocking;
     }
