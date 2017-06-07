@@ -7,7 +7,7 @@ import micro.ai.core.AI;
 import micro.ai.mcts.naivemcts.NaiveMCTS;
 
 /**
- * CYCLES THROUGH the static opponents that are used in the
+ * sequence of the static opponents that are used in the
  * MicroRTS competition
  * 
  * @author alicequint
@@ -15,7 +15,7 @@ import micro.ai.mcts.naivemcts.NaiveMCTS;
  */
 public class CompetitiveEnemySequence implements EnemySequence{
 
-	private static final int gensPerEnemy = 4;
+	private static final int gensPerEnemy = 20;
 	
 	private final AI[] enemies = new AI[]{
 			new RandomBiasedAI(), //used in competition
@@ -26,7 +26,7 @@ public class CompetitiveEnemySequence implements EnemySequence{
 	
 	@Override
 	public AI getAppropriateEnemy(int generation) {
-		return enemies[generation % gensPerEnemy]; //cyclical
+		return enemies[Math.min(generation/gensPerEnemy, enemies.length-1)]; 
 	}
 
 }
