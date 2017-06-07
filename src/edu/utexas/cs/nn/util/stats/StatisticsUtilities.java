@@ -447,6 +447,20 @@ public class StatisticsUtilities {
 		}
 		return result; // Returns the sum of all the values in the given Array
 	}
+	
+	/**
+	 * Returns the sum of numbers in a given Collection of Integers
+	 * 
+	 * @param xs A Collection of Integers
+	 * @return Sum of the values in xs
+	 */
+	public static double sumDouble(Collection<Double> xs) {
+		double result = 0; // Stores the sum to be returned later
+		for (Double x : xs) { // Cycles through the given Collection to calculate the sum of all values
+			result += x; // Stores the overall sum of the values in the given Array
+		}
+		return result; // Returns the sum of all the values in the given Array
+	}
 
 	/**
 	 * Calculates the Population Standard Deviation in a given Array of Doubles
