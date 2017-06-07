@@ -31,23 +31,26 @@ public class BoardGameUtil {
 				view = null;
 			}
 			view = new TwoDimensionalBoardGameViewer((TwoDimensionalBoardGame) bg);
-			view.reset((TwoDimensionalBoardGameState) bg.getCurrentState());
 		}
 		
 		while(!bg.isGameOver()){
-			bg.move(players[bg.getCurrentPlayer()]);
-			
+
 			if(CommonConstants.watch && bg instanceof TwoDimensionalBoardGame){ // Renders each Move in the game
 				view.reset((TwoDimensionalBoardGameState) bg.getCurrentState());
 			}
 			if(Parameters.parameters.booleanParameter("stepByStep")){
 				System.out.print("Press enter to continue");
 				MiscUtil.waitForReadStringAndEnterKeyPress();
-			}
+			}			
+			bg.move(players[bg.getCurrentPlayer()]);
 		}
 		
 		if(CommonConstants.watch && bg instanceof TwoDimensionalBoardGame){ // Renders the last Move of the game
 			view.reset((TwoDimensionalBoardGameState) bg.getCurrentState());
+			if(Parameters.parameters.booleanParameter("stepByStep")){
+				System.out.print("Press enter to continue");
+				MiscUtil.waitForReadStringAndEnterKeyPress();
+			}
 		}
 		
 		List<Integer> winners = bg.getWinners();
