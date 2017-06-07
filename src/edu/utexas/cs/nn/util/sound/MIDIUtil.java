@@ -123,21 +123,6 @@ public class MIDIUtil {
 	}
 
 	/**
-	 * Method that takes in a string reference to a MIDI file and the index of a specified track 
-	 * and saves the values of its frequencies and note lengths sequentially  in a pair of 
-	 * double arrays. Method does so by calling creating a File out of the string reference and
-	 * then calling other freqFromMidi() method.
-	 * 
-	 * @param audio string reference to MIDI file being analyzed
-	 * @param trackNum index of specific track being analyzed 
-	 * @return Pair of double arrays with the frequencies and note lengths saved
-	 */
-	public static Pair<double[],double[]> freqFromMIDI(String audio, int trackNum){
-		File audioFile = new File(audio);
-		return freqFromMIDI(audioFile, trackNum);
-	}	
-
-	/**
 	 * Method that keeps track of the total number of notes in a track.
 	 * This allows freqFromMIDI() to avoid events in the track that are not
 	 * related to notes.
@@ -273,68 +258,6 @@ public class MIDIUtil {
 		return new Pair<>(frequencies, lengths);
 	}
 
-	/**
-	 * Method that takes in an audio file and the index of a specified track
-	 * and saves the values of its frequencies and note lengths sequentially
-	 * in a pair of double arrays. 
-	 * 
-	 * @param audioFile MIDI file being analyzed
-	 * @param trackNum index of specific track being analyzed 
-	 * @return Pair of double arrays with the frequencies and note lengths saved
-	 */
-	public static Pair<double[], double[]> freqFromMIDI(File audioFile, int trackNum) {
-		Sequence sequence;
-		try {
-			sequence = MidiSystem.getSequence(audioFile);
-			Track[] tracks = sequence.getTracks();
-			Track track = tracks[trackNum];
-			int numNotes = countNotes(track);
-
-			double[] frequencies = new double[numNotes];
-			long[] starts = new long[numNotes]; 
-			double[] lengths = new double[numNotes]; // Needs to be double?
-
-			int j = 0;
-			for(int i = 0; i < track.size(); i++) {
-				MidiEvent event = track.get(i);
-				MidiMessage message = event.getMessage();
-				//System.out.println(message);
-				if (message instanceof ShortMessage) {
-					ShortMessage sm = (ShortMessage) message;
-
-					int key = sm.getData1();
-					double freq = noteToFreq(key);
-					long tick = event.getTick(); // actually starting tick time
-
-					if (sm.getCommand() == NOTE_ON && sm.getData2() > 0) {
-						frequencies[j] = freq;
-						starts[j] = tick; // actually starting tick time
-						j++;
-					} 
-
-					if(j > 0) { // Not first note
-						// May not be turning off the right note
-						//lengths[j - 1] = convertTicksToMilliseconds(tick - starts[j-1]);
-						lengths[j-1] = convertTicksToMilliseconds(sequence, tick - starts[j-1]);
-					}
-
-					// This was looking for the stop time of the particular note, but did not account for note overlap
-					//					} else if(sm.getCommand() == NOTE_OFF || (sm.getCommand() == NOTE_ON && sm.getData2() == 0)) {
-					//						int key = sm.getData1();
-					//						int indexInLengths = noteIndex.get(key);
-					//						lengths[indexInLengths] = convertTicksToMilliseconds(event.getTick() - starts[indexInLengths]); // actually starting time
-					//						//lengths[indexInLengths] = (event.getTick() - starts[indexInLengths]); // actually starting time
-					//					}
-				}
-			}
-			return new Pair<>(frequencies,lengths);
-		} catch (InvalidMidiDataException | IOException e) {
-			e.printStackTrace();
-			System.exit(1);
-		}	
-		return null; // never reached
-	}
-
 
 	/**
 	 * Takes an input note value from a MIDI file and converts it to its corresponding frequency.
@@ -348,20 +271,6 @@ public class MIDIUtil {
 		return NOTES[note] * Math.pow(2.0, (double) octave - 1.0); // this is because frequencies of notes are always double the frequencies of the lower adjacent octave
 	}
 
-	/**
-	 * Takes in the sequence of a MIDI file and the length of MIDI 
-	 * file events and calculates the milliseconds per tick using
-	 * data accessible by the sequence about the length of the tracks
-	 * in microseconds and in ticks.
-	 * 
-	 * @param ticks Length of events in MIDI files
-	 * @return Equivalent length in milliseconds
-	 */
-	public static float convertTicksToMilliseconds(Sequence sequence, long ticks) {
-		float millisecondsPerTick = sequence.getMicrosecondLength()/sequence.getTickLength();
-		float result = ticks * millisecondsPerTick;
-		return result;
-	}
 
 	/**
 	 * Plays sound using Applet.newAudioClip() - works for MIDI files
@@ -406,17 +315,28 @@ public class MIDIUtil {
 		// calculate this value, or at least try different values with different MIDI files
 		// to get a feel for the result.
 		// VERY MAGIC NUMBER! NO IDEA WHY THIS NUMBER WORKS!
-		int amplitudeLengthMultiplier = 50;
+		File audioFile = new File(audio);
+		try {
+			Sequence sequence = MidiSystem.getSequence(audioFile);
+			//dividing sample rate of default audio format by the microseconds per tick to get equivalent of correct answer
+			float amplitudeLengthMultiplier = PlayDoubleArray.DEFAULT_AUDIO_FORMAT.getFrameRate()/(sequence.getMicrosecondLength()/sequence.getTickLength());
+			System.out.println("amplitudeLengthMultiplier: " + amplitudeLengthMultiplier);
+			
 
-		double[] amplitudeArray = new double[(int) StatisticsUtilities.sum(lengths)*amplitudeLengthMultiplier];
-		int noteLength = 0;
-		for(int i = 0; i < lengths.length; i++) {
-			int amplitudeLength = (int)(lengths[i] * amplitudeLengthMultiplier);
-			double[] amplitude = frequencies[i] == 0 ? new double[amplitudeLength] : SoundFromCPPNUtil.amplitudeGenerator(cppn, amplitudeLength, frequencies[i]);
-			System.arraycopy(amplitude, 0, amplitudeArray, noteLength, amplitude.length);
-			noteLength += amplitudeLength;
+			double[] amplitudeArray = new double[(int) StatisticsUtilities.sum(lengths)* (int) amplitudeLengthMultiplier];
+			int noteLength = 0;
+			for(int i = 0; i < lengths.length; i++) {
+				int amplitudeLength = (int)(lengths[i] * amplitudeLengthMultiplier);
+				double[] amplitude = frequencies[i] == 0 ? new double[amplitudeLength] : SoundFromCPPNUtil.amplitudeGenerator(cppn, amplitudeLength, frequencies[i]);
+				System.arraycopy(amplitude, 0, amplitudeArray, noteLength, amplitude.length);
+				noteLength += amplitudeLength;
+			}
+			return amplitudeArray;
+		} catch (InvalidMidiDataException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		return amplitudeArray;
+		return null; //shouldn't happen
 	}
 
 	/**
