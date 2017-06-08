@@ -96,7 +96,6 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
 			
 			if (genotype instanceof TWEANNGenotype) {
 				if (CommonConstants.showNetworks) {
-			//		panel = new DrawingPanel(TWEANN.NETWORK_VIEW_DIM, TWEANN.NETWORK_VIEW_DIM, "Evolved Network "+genotype.getId());
 					if(panel != null){ // Draws the panel if it exists
 						panel.setLocation(NETWORK_WINDOW_OFFSET, 0);
 					}
@@ -106,7 +105,6 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
 					if(genotype instanceof HyperNEATCPPNGenotype) {
 						HyperNEATCPPNGenotype hngt = (HyperNEATCPPNGenotype) genotype;
 						if( Parameters.parameters.booleanParameter("showCPPN")) {
-			//				cppnPanel = new DrawingPanel(500, 500, "Evolved CPPN");
 							if(cppnPanel != null){ // Draws the cppnPanel if it exists
 								cppnPanel.setLocation(TWEANN.NETWORK_VIEW_DIM + NETWORK_WINDOW_OFFSET, 0);
 								hngt.getCPPN().draw(cppnPanel);

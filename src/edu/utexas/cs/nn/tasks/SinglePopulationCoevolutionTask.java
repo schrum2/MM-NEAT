@@ -2,6 +2,7 @@ package edu.utexas.cs.nn.tasks;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.parameters.CommonConstants;
@@ -9,6 +10,7 @@ import edu.utexas.cs.nn.scores.MultiObjectiveScore;
 import edu.utexas.cs.nn.scores.Score;
 import edu.utexas.cs.nn.util.ClassCreation;
 import edu.utexas.cs.nn.util.datastructures.Pair;
+import edu.utexas.cs.nn.util.graphics.DrawingPanel;
 import edu.utexas.cs.nn.util.stats.Statistic;
 
 public abstract class SinglePopulationCoevolutionTask<T> implements SinglePopulationTask<T>{
@@ -64,8 +66,33 @@ public abstract class SinglePopulationCoevolutionTask<T> implements SinglePopula
 					group.add(population.get(groupOrder.get(j+k)));
 				}
 				preEval();
+				
+				// Call getDrawingPanels here; every Genotype displays its control Network and CPPN panel
+				List<Pair<DrawingPanel, DrawingPanel>> drawPanels = new ArrayList<>(); // Stores the DrawingPanels to be drawn
+				
+				if(CommonConstants.watch){
+					for(Genotype<T> gene : group){ // Creates the DrawingPanels for each Genotype being evaluated
+						Pair<DrawingPanel, DrawingPanel> panels = CommonTaskUtil.getDrawingPanels(gene);
+						drawPanels.add(panels);
+					}
+					
+					// Draw Panels here
+					for(Pair<DrawingPanel, DrawingPanel> panelSet : drawPanels){
+						panelSet.t1.setVisibility(true);
+						panelSet.t2.setVisibility(true);
+					}
+				}
+				
 				// Get scores
 				ArrayList<Pair<double[], double[]>> result = evaluateGroup(group);
+				
+				// Clean up all Panels here
+				for(Pair<DrawingPanel, DrawingPanel> panelSet : drawPanels){
+					panelSet.t1.dispose();
+					panelSet.t2.dispose();
+				}
+				drawPanels.clear();
+				
 				// Save scores in the right place
 				for(int k = 0; k < groupSize; k++) {
 					assert j+k < groupOrder.size() : "Should have "+j+"+"+k+" < " + groupOrder.size();
