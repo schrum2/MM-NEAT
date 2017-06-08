@@ -49,6 +49,13 @@ public final class PlayDoubleArray {
 		}
 		
 		/**
+		 * Allows construction, but playback not possible
+		 */
+		public AmplitudeArrayPlayer() {
+			this(null);
+		}
+		
+		/**
 		 * Constructor that uses default AudioFormat (typically only for originally 
 		 * generated wave amplitudes that don't have an accessible AudioFormat
 		 * 

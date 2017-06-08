@@ -58,7 +58,7 @@ public class SoundUtilExamples {
 
 	public static void main(String[] args) throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException, JavaLayerException, InvalidMidiDataException {
 		//CPPN initialization
-		Parameters.initializeParameterCollections(new String[]{"io:false","netio:false","randomSeed:10"});
+		Parameters.initializeParameterCollections(new String[]{"io:false","netio:false","randomSeed:12"});
 		MMNEAT.loadClasses();
 		EvolutionaryHistory.initArchetype(0);
 
@@ -393,14 +393,14 @@ public class SoundUtilExamples {
 		//PlayDoubleArray.close(); 
 	}
 
-	public static void playMIDIWithCPPNTests(Network cppn) {
-		MIDIUtil.playApplet(CLASSICAL_MID);
-		MIDIUtil.playMIDIWithCPPNFromString(FUR_ELISE_MID, 1, cppn);
-		MiscUtil.waitForReadStringAndEnterKeyPress();
-		for(int i = 0; i < 2; i++) {
-			MIDIUtil.playMIDIWithCPPNFromString(CLASSICAL_MID, i, cppn);
-		}
-	}
+//	public static void playMIDIWithCPPNTests(Network cppn) {
+//		MIDIUtil.playApplet(CLASSICAL_MID);
+//		MIDIUtil.playMIDIWithCPPNFromString(FUR_ELISE_MID, 1, cppn);
+//		MiscUtil.waitForReadStringAndEnterKeyPress();
+//		for(int i = 0; i < 2; i++) {
+//			MIDIUtil.playMIDIWithCPPNFromString(CLASSICAL_MID, i, cppn);
+//		}
+//	}
 
 	public static void printMIDIData() {
 		File classicalFile = new File(CLASSICAL_MID);
@@ -480,19 +480,25 @@ public class SoundUtilExamples {
 		Sequence sequence = MidiSystem.getSequence(furElise);
 		Track[] tracks = sequence.getTracks();
 		Track track = tracks[1];
-		ArrayList<double[]> listOfData = MIDIUtil.soundLines(track);
-		for(int i = 0; i < listOfData.size(); i++) {
-			ArrayUtil.printArrayRange(listOfData.get(i), 152000, 153000);
-		}
+//		ArrayList<double[]> listOfData = MIDIUtil.soundLines(track);
+//		for(int i = 0; i < listOfData.size(); i++) {
+//			ArrayUtil.printArrayRange(listOfData.get(i), 152000, 153000);
+//		}
 	}
 
-	public static void MIDIWithLengths(Network cppn) throws InvalidMidiDataException, IOException {
-		File midiFile = new File(FUR_ELISE_MID);
-		Sequence sequence = MidiSystem.getSequence(midiFile);
-		Track[] tracks = sequence.getTracks();
-		ArrayList<double[]> listOfData = MIDIUtil.soundLines(tracks);
-		MIDIUtil.playMIDIWithCPPNFromDoubleArray(FUR_ELISE_MID, cppn, listOfData);
-	}
+//	public static void MIDIWithLengths(Network cppn) throws InvalidMidiDataException, IOException {
+//		File midiFile = new File(FUR_ELISE_MID);
+//		Sequence sequence = MidiSystem.getSequence(midiFile);
+//		Track[] tracks = sequence.getTracks();
+//		Track track = tracks[1];
+//		ArrayList<Triple<ArrayList<Double>, ArrayList<Long>, ArrayList<Long>>> sound = MIDIUtil.soundLines2(track);
+//		for(int i = 0; i < sound.size(); i++) {
+//			double[] data = MIDIUtil.lineToAmplitudeArray(FUR_ELISE_MID, sound, cppn);
+//			MIDIUtil.playMIDIWithCPPNFromDoubleArray(FUR_ELISE_MID, cppn, data);
+//		}
+//		//ArrayList<double[]> listOfData = MIDIUtil.soundLines(tracks);
+//		//MIDIUtil.playMIDIWithCPPNFromDoubleArray(FUR_ELISE_MID, cppn, listOfData);
+//	}
 	
 	public static void eightBitToSixteenBit() {
 		double[] harpAsSixteenBit = SoundToArray.eightBitToSixteenBit(HARP_WAV);
@@ -518,10 +524,10 @@ public class SoundUtilExamples {
 	}
 	
 	public static void newMIDIUtilPrint() throws InvalidMidiDataException, IOException {
-		File midiFile = new File(FUR_ELISE_MID);
+		File midiFile = new File(SOLO_PIANO_MID);
 		Sequence sequence = MidiSystem.getSequence(midiFile);
 		Track[] tracks = sequence.getTracks();
-		Track track = tracks[1];
+		Track track = tracks[0];
 		ArrayList<Triple<ArrayList<Double>, ArrayList<Long>, ArrayList<Long>>> midiLists = MIDIUtil.soundLines2(track);
 		for(int i = 0; i < midiLists.size(); i++) {
 			System.out.println("frequencies: " + midiLists.get(i).t1);
@@ -532,12 +538,14 @@ public class SoundUtilExamples {
 	}
 	
 	public static void newMIDIUtilPlay(Network cppn) throws InvalidMidiDataException, IOException {
-		File midiFile = new File(FUR_ELISE_MID);
+		//MIDIUtil.playApplet(SOLO_PIANO_MID);
+		//MiscUtil.waitForReadStringAndEnterKeyPress();
+		File midiFile = new File(SOLO_PIANO_MID);
 		Sequence sequence = MidiSystem.getSequence(midiFile);
 		Track[] tracks = sequence.getTracks();
-		Track track = tracks[1];
+		Track track = tracks[0];
 		ArrayList<Triple<ArrayList<Double>, ArrayList<Long>, ArrayList<Long>>> midiLists = MIDIUtil.soundLines2(track);		
-		double[] amplitudes = MIDIUtil.lineToAmplitudeArray(FUR_ELISE_MID, midiLists, cppn);
+		double[] amplitudes = MIDIUtil.lineToAmplitudeArray(SOLO_PIANO_MID, midiLists, cppn);
 		PlayDoubleArray.playDoubleArray(amplitudes);
 		
 //		for(int i = 0; i < midiLists.size(); i++) {

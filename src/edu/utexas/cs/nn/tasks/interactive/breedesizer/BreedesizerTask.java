@@ -22,7 +22,6 @@ import edu.utexas.cs.nn.tasks.interactive.InteractiveEvolutionTask;
 import edu.utexas.cs.nn.util.graphics.DrawingPanel;
 import edu.utexas.cs.nn.util.graphics.GraphicsUtil;
 import edu.utexas.cs.nn.util.sound.MIDIUtil;
-import edu.utexas.cs.nn.util.sound.MIDIUtil.CPPNNoteSequencePlayer;
 import edu.utexas.cs.nn.util.sound.PlayDoubleArray;
 import edu.utexas.cs.nn.util.sound.PlayDoubleArray.AmplitudeArrayPlayer;
 import edu.utexas.cs.nn.util.sound.SoundFromCPPNUtil;
@@ -57,7 +56,7 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 	protected AmplitudeArrayPlayer arrayPlayer = null;
 
 	// Controls MIDI playback, and allows for interruption
-	private CPPNNoteSequencePlayer midiPlay = null;
+	private AmplitudeArrayPlayer midiPlay = null;
 	
 	public BreedesizerTask() throws IllegalAccessException {
 		this(true);
@@ -65,7 +64,7 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 	
 	public BreedesizerTask(boolean justBreedesizer) throws IllegalAccessException {
 		super();
-		midiPlay = new CPPNNoteSequencePlayer(); // no sequence to play
+		midiPlay = new AmplitudeArrayPlayer(); // no sequence to play
 		
 		clipLength = new JSlider(JSlider.HORIZONTAL, Keyboard.NOTE_LENGTH_DEFAULT, Parameters.parameters.integerParameter("maxClipLength"), Parameters.parameters.integerParameter("clipLength"));
 

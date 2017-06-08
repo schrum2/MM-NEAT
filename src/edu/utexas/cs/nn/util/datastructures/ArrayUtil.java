@@ -21,6 +21,26 @@ public class ArrayUtil {
 		System.out.println(array[end]);
 	}
 	
+	public static int maxArrayLengthFrom2DArray(double[][] array) {
+		int max = 0;
+		for(int i = 0; i < array.length; i++) {
+			max = Math.max(max, array[i].length);
+		}
+		return max;
+	}
+	
+	public static double[] arrayOfMaxLengthsFrom2DArray(double[][] array, int maxArrayLength) {
+		double max = 0;
+		double[] result = new double[maxArrayLength];
+		for(int i = 0; i < array.length; i++) {
+			for(int j = 0; j < array[i].length; j++) {
+				max = Math.max(max, Math.abs(array[i][j]));
+				result[j] += array[i][j];
+			}
+		}
+		return result;
+	}
+	
 	/**
 	 * Return primitive double array of given size containing all ones
 	 *
