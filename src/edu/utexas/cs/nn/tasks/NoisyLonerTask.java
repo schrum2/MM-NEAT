@@ -115,26 +115,11 @@ public abstract class NoisyLonerTask<T> extends LonerTask<T> {
 			otherScores[i] = result.t2; // other scores
 		}
 		double averageEvalTime = evalTimeSum / numTrials;
-		double[] fitness = new double[this.numObjectives()];
-		// Aggregate each fitness score across all trials
-		for (int i = 0; i < fitness.length; i++) {
-			if (MMNEAT.aggregationOverrides.get(i) == null) {
-				fitness[i] = stat.stat(ArrayUtil.column(objectiveScores, i));
-			} else {
-				// Override aggregation statistic for a specific fitness function
-				fitness[i] = MMNEAT.aggregationOverrides.get(i).stat(ArrayUtil.column(objectiveScores, i));
-			}
-		}
-		double[] other = new double[this.numOtherScores()];
-		// Aggregate each other score across all trials
-		for (int i = 0; i < other.length; i++) {
-			if (MMNEAT.aggregationOverrides.get(fitness.length + i) == null) {
-				other[i] = stat.stat(ArrayUtil.column(otherScores, i));
-			} else {
-				// Override aggregation statistic for a specific other function
-				other[i] = MMNEAT.aggregationOverrides.get(fitness.length + i).stat(ArrayUtil.column(otherScores, i));
-			}
-		}
+		// Combine scores acorss evals into one score in each obejctive
+		Pair<double[],double[]> aggregated = aggregateResults(stat, objectiveScores, otherScores);
+		double[] fitness = aggregated.t1;
+		double[] other = aggregated.t2;		
+		
 		if (printFitness) {
 			System.out.println("Individual: " + individual.getId());
 			System.out.println("\t" + scoreSummary(objectiveScores, otherScores, fitness, other));
@@ -200,6 +185,54 @@ public abstract class NoisyLonerTask<T> extends LonerTask<T> {
 		// set the average time
 		s.averageEvalTime = averageEvalTime;
 		return s;
+	}
+
+	/**
+	 * Aggregates objective/fitness scores and other scores by averaging them.
+	 * @param objectiveScores fitness scores: affect selection. 
+	 * 						  Each objectiveScores[i] contains scores in different objectives from one eval.
+	 * @param otherScores other scores that do not affect selection
+	 * 					  Each otherScores[i] contains scores from different other scores from one eval
+	 * @return Pair of averaged scores: first item is from each fitness objective, and second item is from each other score.
+	 */
+	public static Pair<double[], double[]> averageResults(double[][] objectiveScores, double[][] otherScores) {
+		return aggregateResults(new Average(), objectiveScores,otherScores);
+	}	
+	
+	/**
+	 * Given several objective/fitness score results and other score results, aggregate them
+	 * using the specified default Statistic (although individual fitness functions can have
+	 * their aggregation method overridden).
+	 * 
+	 * @param stat Aggregation method
+	 * @param objectiveScores fitness scores: affect selection. 
+	 * 						  Each objectiveScores[i] contains scores in different objectives from one eval.
+	 * @param otherScores other scores that do not affect selection
+	 * 					  Each otherScores[i] contains scores from different other scores from one eval
+	 * @return Pair of aggregated scores: first item is from each fitness objective, and second item is from each other score.
+	 */
+	public static Pair<double[], double[]> aggregateResults(Statistic stat, double[][] objectiveScores, double[][] otherScores) {
+		double[] fitness = new double[objectiveScores[0].length];
+		// Aggregate each fitness score across all trials
+		for (int i = 0; i < fitness.length; i++) {
+			if (MMNEAT.aggregationOverrides.get(i) == null) {
+				fitness[i] = stat.stat(ArrayUtil.column(objectiveScores, i));
+			} else {
+				// Override aggregation statistic for a specific fitness function
+				fitness[i] = MMNEAT.aggregationOverrides.get(i).stat(ArrayUtil.column(objectiveScores, i));
+			}
+		}
+		double[] other = new double[otherScores[0].length];
+		// Aggregate each other score across all trials
+		for (int i = 0; i < other.length; i++) {
+			if (MMNEAT.aggregationOverrides.get(fitness.length + i) == null) {
+				other[i] = stat.stat(ArrayUtil.column(otherScores, i));
+			} else {
+				// Override aggregation statistic for a specific other function
+				other[i] = MMNEAT.aggregationOverrides.get(fitness.length + i).stat(ArrayUtil.column(otherScores, i));
+			}
+		}
+		return new Pair<>(fitness,other);
 	}
 
 	public static String scoreSummary(double[][] objectiveScores, double[][] otherScores, double[] fitness, double[] other) {
