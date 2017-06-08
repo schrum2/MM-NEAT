@@ -19,6 +19,7 @@ import edu.utexas.cs.nn.tasks.breve2D.Breve2DTask;
 import edu.utexas.cs.nn.tasks.gridTorus.TorusPredPreyTask;
 import edu.utexas.cs.nn.tasks.mspacman.MsPacManTask;
 import edu.utexas.cs.nn.util.PopulationUtil;
+import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.file.FileUtilities;
 import edu.utexas.cs.nn.util.graphics.DrawingPanel;
 import edu.utexas.cs.nn.util.graphics.Plot;
@@ -86,24 +87,33 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
 			
 			@SuppressWarnings("unused")
 			ArrayList<DrawingPanel> weightPanels;
-			DrawingPanel panel = null;
-			DrawingPanel cppnPanel = null;
+			
+			Pair<DrawingPanel, DrawingPanel> drawPanels = CommonTaskUtil.getDrawingPanels(genotype);
+			
+			DrawingPanel panel = drawPanels.t1;
+			DrawingPanel cppnPanel = drawPanels.t2;
+			
+			
 			if (genotype instanceof TWEANNGenotype) {
 				if (CommonConstants.showNetworks) {
-					panel = new DrawingPanel(TWEANN.NETWORK_VIEW_DIM, TWEANN.NETWORK_VIEW_DIM, "Evolved Network "+genotype.getId());
-					panel.setLocation(NETWORK_WINDOW_OFFSET, 0);
+			//		panel = new DrawingPanel(TWEANN.NETWORK_VIEW_DIM, TWEANN.NETWORK_VIEW_DIM, "Evolved Network "+genotype.getId());
+					if(panel != null){ // Draws the panel if it exists
+						panel.setLocation(NETWORK_WINDOW_OFFSET, 0);
+					}
 					TWEANN network = ((TWEANNGenotype) genotype).getPhenotype();
 					//System.out.println("Draw network with " + network.numInputs() + " inputs");
 					network.draw(panel);
 					if(genotype instanceof HyperNEATCPPNGenotype) {
 						HyperNEATCPPNGenotype hngt = (HyperNEATCPPNGenotype) genotype;
 						if( Parameters.parameters.booleanParameter("showCPPN")) {
-							cppnPanel = new DrawingPanel(500, 500, "Evolved CPPN");
-							cppnPanel.setLocation(TWEANN.NETWORK_VIEW_DIM + NETWORK_WINDOW_OFFSET, 0);
-							hngt.getCPPN().draw(cppnPanel);
+			//				cppnPanel = new DrawingPanel(500, 500, "Evolved CPPN");
+							if(cppnPanel != null){ // Draws the cppnPanel if it exists
+								cppnPanel.setLocation(TWEANN.NETWORK_VIEW_DIM + NETWORK_WINDOW_OFFSET, 0);
+								hngt.getCPPN().draw(cppnPanel);
+							}
 						}
 						if(Parameters.parameters.booleanParameter("showWeights")){
-							weightPanels = HyperNEATUtil.drawWeight(hngt.getSubstrateGenotype((HyperNEATTask) task),(HyperNEATTask) task); //TODO
+							weightPanels = HyperNEATUtil.drawWeight(hngt.getSubstrateGenotype((HyperNEATTask) task),(HyperNEATTask) task); // TODO
 						}
 
 					}
