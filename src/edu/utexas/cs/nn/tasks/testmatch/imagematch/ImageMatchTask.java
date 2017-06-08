@@ -171,7 +171,8 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 				Color color = new Color(img.getRGB(x, y));
 				float[] hsb = new float[numOutputs()];
 				Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), hsb);
-				pairs.add(new Pair<double[], double[]>(GraphicsUtil.getCPPNInputs(x, y, imageWidth, imageHeight),
+				// -1 input is used as default so that time is not taken into account
+				pairs.add(new Pair<double[], double[]>(GraphicsUtil.getCPPNInputs(x, y, imageWidth, imageHeight, -1),
 						new double[] { hsb[HUE_INDEX], hsb[SATURATION_INDEX], hsb[BRIGHTNESS_INDEX] }));
 			}
 		}

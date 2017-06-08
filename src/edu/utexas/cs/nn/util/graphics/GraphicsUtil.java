@@ -29,9 +29,31 @@ public class GraphicsUtil {
 	private static final int BRIGHTNESS_INDEX = 2;
 	private static final double BIAS = 1.0;// a common input used in neural networks
 	private static final double SQRT2 = Math.sqrt(2); // Used for scaling distance from center
-
+	/**
+	 * Used by imagematch because we assume all inputs are on and time is irrelevant.
+	 * 
+	 * @param n CPPN
+	 * @param imageWidth width of image
+	 * @param imageHeight height of image
+	 * @return buffered image containing image drawn by network
+	 */
 	public static BufferedImage imageFromCPPN(Network n, int imageWidth, int imageHeight) {
-		return imageFromCPPN(n,imageWidth,imageHeight, ArrayUtil.doubleOnes(PicbreederTask.CPPN_NUM_INPUTS));
+		//-1 indicates that we don't care about time
+		return imageFromCPPN(n,imageWidth,imageHeight, ArrayUtil.doubleOnes(PicbreederTask.CPPN_NUM_INPUTS), -1);
+	}
+	
+	/**
+	 * Default version of Buffered Image creation used for Picbreeder. Takes input multipliers into account,
+	 * but time is irrelevant so it is defaulted to -1.
+	 * 
+	 * @param n CPPN
+	 * @param imageWidth width of image
+	 * @param imageHeight height of image
+	 * @param inputMultiples array of multiples indicating whether to turn activation functions on or off
+	 * @return buffered image containing image drawn by network
+	 */
+	public static BufferedImage imageFromCPPN(Network n, int imageWidth, int imageHeight, double[] inputMultiples) {
+		return imageFromCPPN(n, imageWidth, imageHeight, inputMultiples, -1);
 	}
 
 	/**
@@ -45,11 +67,11 @@ public class GraphicsUtil {
 	 *            height of image
 	 * @return buffered image containing image drawn by network
 	 */
-	public static BufferedImage imageFromCPPN(Network n, int imageWidth, int imageHeight, double[] inputMultiples) {
+	public static BufferedImage imageFromCPPN(Network n, int imageWidth, int imageHeight, double[] inputMultiples, int time) {
 		BufferedImage image = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_RGB);
 		for (int x = 0; x < imageWidth; x++) {// scans across whole image
 			for (int y = 0; y < imageHeight; y++) {
-				float[] hsb = getHSBFromCPPN(n, x, y, imageWidth, imageHeight, inputMultiples);
+				float[] hsb = getHSBFromCPPN(n, x, y, imageWidth, imageHeight, inputMultiples, time);
 				// network outputs computed on hsb, not rgb scale because
 				// creates better images
 				Color childColor = Color.getHSBColor(hsb[HUE_INDEX], hsb[SATURATION_INDEX], hsb[BRIGHTNESS_INDEX]);
@@ -160,9 +182,9 @@ public class GraphicsUtil {
 	 *
 	 * @return double containing the HSB values
 	 */
-	public static float[] getHSBFromCPPN(Network n, int x, int y, int imageWidth, int imageHeight, double[] inputMultiples) {
+	public static float[] getHSBFromCPPN(Network n, int x, int y, int imageWidth, int imageHeight, double[] inputMultiples, int time) {
 
-		double[] input = getCPPNInputs(x, y, imageWidth, imageHeight);
+		double[] input = getCPPNInputs(x, y, imageWidth, imageHeight, time);
 
 		// Multiplies the inputs of the pictures by the inputMultiples; used to turn on or off the effects in each picture
 		for(int i = 0; i < inputMultiples.length; i++) {
@@ -209,9 +231,13 @@ public class GraphicsUtil {
 	 *
 	 * @return array containing inputs for CPPN
 	 */
-	public static double[] getCPPNInputs(int x, int y, int imageWidth, int imageHeight) {
+	public static double[] getCPPNInputs(int x, int y, int imageWidth, int imageHeight, int time) {
 		ILocated2D scaled = CartesianGeometricUtilities.centerAndScale(new Tuple2D(x, y), imageWidth, imageHeight);
-		return new double[] { scaled.getX(), scaled.getY(), scaled.distance(new Tuple2D(0, 0)) * SQRT2, BIAS };
+		if(time == -1) { // default, single image. Do not care about time
+			return new double[] { scaled.getX(), scaled.getY(), scaled.distance(new Tuple2D(0, 0)) * SQRT2, BIAS };
+		} else { // TODO: May need to divide time by frame rate later
+			return new double[] { scaled.getX(), scaled.getY(), scaled.distance(new Tuple2D(0, 0)) * SQRT2, time, BIAS };
+		}
 	}
 
 	/**

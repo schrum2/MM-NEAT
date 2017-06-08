@@ -522,7 +522,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	 * @param gmi replacing image
 	 * @param buttonIndex index of button 
 	 */
-	private void setButtonImage(BufferedImage gmi, int buttonIndex){ 
+	protected void setButtonImage(BufferedImage gmi, int buttonIndex){ 
 		ImageIcon img = new ImageIcon(gmi.getScaledInstance(picSize,picSize,Image.SCALE_DEFAULT));
 		buttons.get(buttonIndex).setName("" + buttonIndex);
 		buttons.get(buttonIndex).setIcon(img);

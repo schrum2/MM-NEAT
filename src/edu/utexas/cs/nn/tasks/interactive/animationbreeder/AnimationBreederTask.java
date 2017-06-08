@@ -10,6 +10,8 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 	
 	public static final int CPPN_NUM_INPUTS	= 5;
 	public static final int CPPN_NUM_OUTPUTS = 3;
+	
+	public static final int BUFFERED_IMAGE_INDEX = 0;
 
 	public AnimationBreederTask() throws IllegalAccessException {
 		super();
