@@ -19,7 +19,6 @@ import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Track;
 
 import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.datastructures.Triple;
 import edu.utexas.cs.nn.util.sound.PlayDoubleArray.AmplitudeArrayPlayer;
 
@@ -117,39 +116,39 @@ public class MIDIUtil {
 		}		
 	}
 
-	/**
-	 * Method that keeps track of the total number of notes in a track.
-	 * This allows freqFromMIDI() to avoid events in the track that are not
-	 * related to notes.
-	 * 
-	 * @param t Track being analyzed
-	 * @return total number of notes in track
-	 */
-	public static int countNotes(Track t) {
-		int total = 0;
-		for(int i = 0; i < t.size(); i++) {
-			MidiEvent event = t.get(i);
-			MidiMessage message = event.getMessage();
-			//System.out.println(message);
-			if (message instanceof ShortMessage) {
-				ShortMessage sm = (ShortMessage) message;
-				if (sm.getCommand() == NOTE_ON && sm.getData2() > 0) {
-					total++;
-				}
-			}
-		}
-		return total;
-	}
+//	/**
+//	 * Method that keeps track of the total number of notes in a track.
+//	 * This allows freqFromMIDI() to avoid events in the track that are not
+//	 * related to notes.
+//	 * 
+//	 * @param t Track being analyzed
+//	 * @return total number of notes in track
+//	 */
+//	private static int countNotes(Track t) {
+//		int total = 0;
+//		for(int i = 0; i < t.size(); i++) {
+//			MidiEvent event = t.get(i);
+//			MidiMessage message = event.getMessage();
+//			//System.out.println(message);
+//			if (message instanceof ShortMessage) {
+//				ShortMessage sm = (ShortMessage) message;
+//				if (sm.getCommand() == NOTE_ON && sm.getData2() > 0) {
+//					total++;
+//				}
+//			}
+//		}
+//		return total;
+//	}
 
-	/**
-	 * Returns number of ticks in track
-	 * @param track Track from MIDI being analyzed
-	 * @return maximum ticks in track
-	 */
-	public static long ticksInTrack(Track track) {
-		assert track.ticks() <= Integer.MAX_VALUE : "Cannot handle this many ticks in a track: " +track.ticks();
-		return track.ticks();
-	}
+//	/**
+//	 * Returns number of ticks in track
+//	 * @param track Track from MIDI being analyzed
+//	 * @return maximum ticks in track
+//	 */
+//	private static long ticksInTrack(Track track) {
+//		assert track.ticks() <= Integer.MAX_VALUE : "Cannot handle this many ticks in a track: " +track.ticks();
+//		return track.ticks();
+//	}
 
 	/**
 	 * Method that calculates array lists of frequency, length, and start time data for all tracks in an array
@@ -180,6 +179,7 @@ public class MIDIUtil {
 		Map<Double, Long> map = new HashMap<Double, Long>();
 		ArrayList<Triple<ArrayList<Double>, ArrayList<Long>, ArrayList<Long>>> soundLines = new ArrayList<Triple<ArrayList<Double>, ArrayList<Long>, ArrayList<Long>>>();
 		HashMap<Double, Integer> lines = new HashMap<Double, Integer>();
+		boolean began = false;
 		for(int i = 0; i < track.size(); i++) {
 			MidiEvent event = track.get(i);
 			MidiMessage message = event.getMessage();
@@ -192,14 +192,15 @@ public class MIDIUtil {
 				double freq = noteToFreq(key);
 				long tick = event.getTick(); // actually starting tick time
 				if (sm.getCommand() == NOTE_ON && sm.getData2() > 0) { //turn on
+					began = true;
 					int index = map.size();
 					if(index >= soundLines.size()) {
 						soundLines.add(new Triple<ArrayList<Double>, ArrayList<Long>, ArrayList<Long>>(new ArrayList<Double>(), new ArrayList<Long>(), new ArrayList<Long>()));
 					}
 					map.put(freq, tick);
 					lines.put(freq, index);
-				} else if((sm.getCommand() == NOTE_OFF || (sm.getCommand() == NOTE_ON && sm.getData2() == 0))) { // Check: is negative velocity possible?
-					int index = lines.get(freq);
+				} else if((sm.getCommand() == NOTE_OFF || (sm.getCommand() == NOTE_ON && sm.getData2() == 0)) && began) { // Check: is negative velocity possible?
+					int index = lines.get(freq); //TODO: this line causes an error with files w/multiple tracks. Tried to fix it with boolean began
 					long tickStart = map.get(freq);
 					long tickEnd = tick;
 
@@ -215,35 +216,35 @@ public class MIDIUtil {
 		return soundLines;
 	}
 
-	/**
-	 * Takes in a double array representing a single voice in a track and extracts vital information
-	 * out of it so that the individual notes are retained sequentially in an ArrayList and the lengths
-	 * of those notes are also retained in a separate ArrayList. 
-	 * 
-	 * @param soundLine double array representing single voice in track
-	 * @return pair of Array Lists containing the frequencies and lengths of the notes in a single sound line
-	 */
-	public static Pair<ArrayList<Double>, ArrayList<Double>> notesAndLengthsOfLine(double[] soundLine) {
-		ArrayList<Double> frequencies = new ArrayList<Double>();
-		ArrayList<Double> lengths = new ArrayList<Double>(); // Needs to be double?
-
-		// TODO: The length calculations here look suspiscious to me.
-		// I wonder if they have problems for the first freq value and last
-		// freq values in the array. Could use more analysis.
-		int prevIndex = 0;
-		double prevVal = soundLine[0];
-		for(int i = 0; i < soundLine.length; i++) {
-			if(soundLine[i] != prevVal) {
-				frequencies.add(prevVal);
-				lengths.add((double) (i - prevIndex) + 1); 
-				prevVal = soundLine[i];
-				prevIndex = i;
-			}
-		}
-		frequencies.add(prevVal);
-		lengths.add((double) soundLine.length-prevIndex);
-		return new Pair<>(frequencies, lengths);
-	}
+//	/**
+//	 * Takes in a double array representing a single voice in a track and extracts vital information
+//	 * out of it so that the individual notes are retained sequentially in an ArrayList and the lengths
+//	 * of those notes are also retained in a separate ArrayList. 
+//	 * 
+//	 * @param soundLine double array representing single voice in track
+//	 * @return pair of Array Lists containing the frequencies and lengths of the notes in a single sound line
+//	 */
+//	private static Pair<ArrayList<Double>, ArrayList<Double>> notesAndLengthsOfLine(double[] soundLine) {
+//		ArrayList<Double> frequencies = new ArrayList<Double>();
+//		ArrayList<Double> lengths = new ArrayList<Double>(); // Needs to be double?
+//
+//		// TODO: The length calculations here look suspiscious to me.
+//		// I wonder if they have problems for the first freq value and last
+//		// freq values in the array. Could use more analysis.
+//		int prevIndex = 0;
+//		double prevVal = soundLine[0];
+//		for(int i = 0; i < soundLine.length; i++) {
+//			if(soundLine[i] != prevVal) {
+//				frequencies.add(prevVal);
+//				lengths.add((double) (i - prevIndex) + 1); 
+//				prevVal = soundLine[i];
+//				prevIndex = i;
+//			}
+//		}
+//		frequencies.add(prevVal);
+//		lengths.add((double) soundLine.length-prevIndex);
+//		return new Pair<>(frequencies, lengths);
+//	}
 
 	/**
 	 * Takes an input note value from a MIDI file and converts it to its corresponding frequency.
