@@ -1,5 +1,7 @@
 package edu.utexas.cs.nn.tasks.microrts.iterativeevolution;
 
+import edu.utexas.cs.nn.parameters.Parameters;
+
 /**
  * @author alicequint
  *

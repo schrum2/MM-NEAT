@@ -1,5 +1,8 @@
 package edu.utexas.cs.nn.tasks.microrts.iterativeevolution;
 
+import java.util.ArrayList;
+
+import edu.utexas.cs.nn.parameters.Parameters;
 import micro.ai.core.AI;
 
 /**
@@ -10,6 +13,8 @@ import micro.ai.core.AI;
  */
 public interface EnemySequence {
 	
+	boolean growingSet = Parameters.parameters.booleanParameter("microRTSGrowingEnemySet");
+	
 	/**
 	 * 
 	 * @param generation
@@ -17,5 +22,5 @@ public interface EnemySequence {
 	 * @return
 	 * 			appropriate AI for current generation
 	 */
-	public AI getAppropriateEnemy(int generation);
+	public ArrayList<AI> getAppropriateEnemy(int generation);
 }

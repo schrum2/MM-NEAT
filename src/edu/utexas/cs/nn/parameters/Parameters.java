@@ -603,6 +603,7 @@ public class Parameters {
 		booleanOptions.add("mRTSmyAll", false, "whether there is a substrate dedicated to all of the red agents' units");
 		booleanOptions.add("mRTSOpponentsAll", false, "whether there is a substrate dedicated to all of the blue agents' units");
 		booleanOptions.add("heuristicOverrideTerminalStates", false, "Overrides the Network's evaluation of a terminal BoardGameState");
+		booleanOptions.add("microRTSGrowingEnemySet", false, "adds multiple enemies to a trial instead of cycling through them by generation");
 		// Double parameters
 		doubleOptions.add("linkExpressionThreshold", 0.2, "Threshold for hyperNEAT output to result in an expressed link");
 		doubleOptions.add("tugGoalIncrement0", 0.0, "Set amount to increase goal 0 by when using TUG");

@@ -1,5 +1,7 @@
 package edu.utexas.cs.nn.tasks.microrts.iterativeevolution;
 
+import java.util.ArrayList;
+
 import micro.ai.RandomAI;
 import micro.ai.RandomBiasedAI;
 import micro.ai.abstraction.partialobservability.POLightRush;
@@ -30,7 +32,9 @@ public class HardeningEnemySequence implements EnemySequence{
 		new PortfolioAI()
 	};
 	
-	public AI getAppropriateEnemy(int generation){
-		return enemies[Math.min(gensPerEnemy, enemies.length-1)];
+	public ArrayList<AI> getAppropriateEnemy(int generation){
+		ArrayList<AI> appropriateEnemies = new ArrayList<AI>();
+		appropriateEnemies.add(enemies[Math.min(gensPerEnemy, enemies.length-1)]);
+		return appropriateEnemies;
 	}
 }

@@ -46,7 +46,8 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 	public boolean AiInitialized = false;
 	private MapSequence maps = null;
 	private EnemySequence enemies = null;
-
+	private ArrayList<AI> enemySet;
+	
 	private double averageUnitDifference;
 	private int baseUpTime;
 	private int harvestingEfficiencyIndex;
@@ -207,18 +208,33 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 			initializeAI();
 		else{
 			ef.givePhysicalGameState(initialPgs);
-			if(ef2 != null){
+			if(ef2 != null)
 				ef2.givePhysicalGameState(initialPgs);
-			}
 		}
-		if(Parameters.parameters.classParameter("microRTSEnemySequence")!=null)
-			ai2 = enemies.getAppropriateEnemy(MMNEAT.ea.currentGeneration());
+		if(Parameters.parameters.classParameter("microRTSEnemySequence")!=null){
+			enemySet = enemies.getAppropriateEnemy(MMNEAT.ea.currentGeneration());
+		} else {
+			enemySet.add(ai2);
+		}
 		ef.setNetwork(individual);
 		if(CommonConstants.watch)
 			w = PhysicalGameStatePanel.newVisualizer(gs,MicroRTSUtility.WINDOW_LENGTH,MicroRTSUtility.WINDOW_LENGTH,false,PhysicalGameStatePanel.COLORSCHEME_BLACK);
-		ArrayList<Pair<double[], double[]>> eval = MicroRTSUtility.oneEval((AI) ai1, ai2, this, ff, w);
-		return eval.get(0);
-
+		
+		System.out.println(enemySet.toString());
+		double[][] fitnesses = new double[enemySet.size()][numObjectives()];
+		double[][] others 	 = new double[enemySet.size()][numOtherScores()];
+		
+		for(int i = 0; i < enemySet.size(); i++){
+			ai2 = enemySet.get(i);
+			if(CommonConstants.watch){
+				System.out.println("Current Enemy: "+ ai2.getClass().getName());
+			}
+			ArrayList<Pair<double[], double[]>> currentEval = MicroRTSUtility.oneEval((AI) ai1, ai2, this, ff, w);
+			fitnesses[i] = currentEval.get(0).t1;
+			others[i] 	 = currentEval.get(0).t1;
+		}
+		Pair<double[], double[]> averageResults = NoisyLonerTask.averageResults(fitnesses,others);
+		return averageResults;
 	} //END oneEval
 
 	/**
