@@ -88,7 +88,7 @@ public class MicroRTSUtility {
 					task.setBaseUpTime(gs.getTime(), 1);
 					baseDeath1Recorded = true;
 				}
-				if(!base2Alive && !baseDeath2Recorded) {
+				if(!base2Alive && !baseDeath2Recorded && coevolution) {
 					task.setBaseUpTime(gs.getTime(), 2);
 					baseDeath2Recorded = true;
 				}
