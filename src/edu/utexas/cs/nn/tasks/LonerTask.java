@@ -80,15 +80,14 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
 		@SuppressWarnings("unchecked")
 		@Override
 		public Score<T> call() {
-			DrawingPanel panel = null;
-			DrawingPanel cppnPanel = null;
 			// Before any evaluation happens
 			preEval();
 			//System.out.println("preEval done on gen " + MMNEAT.ea.currentGeneration());
 			
 			@SuppressWarnings("unused")
 			ArrayList<DrawingPanel> weightPanels;
-			// DrawingPanel[] subPanels = null;
+			DrawingPanel panel = null;
+			DrawingPanel cppnPanel = null;
 			if (genotype instanceof TWEANNGenotype) {
 				if (CommonConstants.showNetworks) {
 					panel = new DrawingPanel(TWEANN.NETWORK_VIEW_DIM, TWEANN.NETWORK_VIEW_DIM, "Evolved Network "+genotype.getId());
@@ -108,21 +107,6 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
 						}
 
 					}
-					// if(genotype instanceof HierarchicalTWEANNGenotype){
-					// HierarchicalTWEANNGenotype htg =
-					// (HierarchicalTWEANNGenotype) genotype;
-					// ArrayList<Integer> subnetIds =
-					// htg.subNetIds.getPhenotype();
-					// subPanels = new DrawingPanel[subnetIds.size()];
-					// for(int i = 0; i < subPanels.length; i++){
-					// subPanels[i] = new DrawingPanel(TWEANN.NETWORK_VIEW_DIM,
-					// TWEANN.NETWORK_VIEW_DIM, "Subnet " + i);
-					// subPanels[i].setLocation(NETWORK_WINDOW_OFFSET + (i *
-					// TWEANN.NETWORK_VIEW_DIM), TWEANN.NETWORK_VIEW_DIM);
-					// ((TWEANNGenotype)
-					// htg.getSubNetGenotype(i)).getPhenotype().draw(subPanels[i]);
-					// }
-					// }
 				}
 				if (CommonConstants.viewModePreference && TWEANN.preferenceNeuronPanel == null && TWEANN.preferenceNeuron()) {
 					TWEANN.preferenceNeuronPanel = new DrawingPanel(Plot.BROWSE_DIM, Plot.BROWSE_DIM, "Preference Neuron Activation");
@@ -171,13 +155,6 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
 				System.out.println("Module Usage: " + Arrays.toString(((TWEANNGenotype) score.individual).getModuleUsage()));
 				System.out.println("Fitness: " + score.toString());
 				panel.dispose();
-				
-				// if (subPanels != null) {
-				// for (int i = 0; i < subPanels.length; i++) {
-				// subPanels[i].dispose();
-				// }
-				// subPanels = null;
-				// }
 			} 
 			if(cppnPanel != null) {
 				cppnPanel.dispose();
