@@ -10,6 +10,8 @@ import java.util.logging.Logger;
 import org.rlcommunity.rlglue.codec.taskspec.TaskSpec;
 
 import boardGame.BoardGame;
+import boardGame.TwoDimensionalBoardGame;
+import boardGame.TwoDimensionalBoardGameViewer;
 import edu.utexas.cs.nn.breve2D.dynamics.Breve2DDynamics;
 import edu.utexas.cs.nn.data.ResultSummaryUtilities;
 import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
@@ -147,6 +149,7 @@ public class MMNEAT {
 	public static SubstrateCoordinateMapping substrateMapping = null;
 
 	public static boardGame.BoardGame boardGame;
+	public static boardGame.TwoDimensionalBoardGameViewer boardGameViewer;
 	
 	public static MMNEAT mmneat;
 
@@ -384,6 +387,11 @@ public class MMNEAT {
 			
 			if(Parameters.parameters.classParameter("boardGame") != null){
 				boardGame = (BoardGame) ClassCreation.createObject("boardGame");
+				if(boardGame instanceof TwoDimensionalBoardGame){
+					boardGameViewer = new TwoDimensionalBoardGameViewer((TwoDimensionalBoardGame) boardGame);
+				}else{
+					boardGameViewer = null;
+				}
 			}
 			
 			task = (Task) ClassCreation.createObject("task");

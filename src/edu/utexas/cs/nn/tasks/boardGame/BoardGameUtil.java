@@ -10,6 +10,7 @@ import boardGame.TwoDimensionalBoardGameState;
 import boardGame.TwoDimensionalBoardGameViewer;
 import boardGame.agents.BoardGamePlayer;
 import boardGame.fitnessFunction.BoardGameFitnessFunction;
+import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.networks.hyperneat.Substrate;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
@@ -34,7 +35,7 @@ public class BoardGameUtil {
 				view.panel.dispose();
 				view = null;
 			}
-			view = new TwoDimensionalBoardGameViewer((TwoDimensionalBoardGame) bg);
+			view = MMNEAT.boardGameViewer;
 		}
 		
 		while(!bg.isGameOver()){
