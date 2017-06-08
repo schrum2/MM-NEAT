@@ -537,18 +537,14 @@ public class SoundUtilExamples {
 		Track[] tracks = sequence.getTracks();
 		Track track = tracks[1];
 		ArrayList<Triple<ArrayList<Double>, ArrayList<Long>, ArrayList<Long>>> midiLists = MIDIUtil.soundLines2(track);		
-		for(int i = 0; i < midiLists.size(); i++) {
-			double[] test = MIDIUtil.lineToAmplitudeArray(FUR_ELISE_MID,  midiLists.get(i).t1,  midiLists.get(i).t2,  midiLists.get(i).t3, cppn);
-			System.out.println(test.length);
-			ArrayUtil.printArrayRange(test, 800, 1200);
-			
-			PlayDoubleArray.playDoubleArray(test);
-			
-//			MiscUtil.waitForReadStringAndEnterKeyPress();
-//			System.out.println("frequencies: " + midiLists.get(i).t1);
-//			System.out.println("lengths: " + midiLists.get(i).t2);
-//			System.out.println("start times: " + midiLists.get(i).t3);
-//			System.out.println();
-		}
+		double[] amplitudes = MIDIUtil.lineToAmplitudeArray(FUR_ELISE_MID, midiLists, cppn);
+		PlayDoubleArray.playDoubleArray(amplitudes);
+		
+//		for(int i = 0; i < midiLists.size(); i++) {
+//			double[] test = MIDIUtil.lineToAmplitudeArray(FUR_ELISE_MID,  midiLists.get(i).t1,  midiLists.get(i).t2,  midiLists.get(i).t3, cppn);
+//			System.out.println(test.length);
+//			ArrayUtil.printArrayRange(test, 800, 1200);			
+//			PlayDoubleArray.playDoubleArray(test);
+//		}
 	}
 }

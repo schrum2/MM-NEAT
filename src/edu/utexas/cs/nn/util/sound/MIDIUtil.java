@@ -403,6 +403,7 @@ public class MIDIUtil {
 		return null; //shouldn't happen
 	}
 
+	// TODO: This method can actually be deleted in favor of the version below
 	public static double[] lineToAmplitudeArray(String audio, ArrayList<Double> frequencies, ArrayList<Long> lengths, ArrayList<Long> startTimes, Network cppn) {
 		assert frequencies.size() == lengths.size() && lengths.size() == startTimes.size();
 		File audioFile = new File(audio);
@@ -428,6 +429,48 @@ public class MIDIUtil {
 		return null; //shouldn't happen
 	}
 
+	public static double[] lineToAmplitudeArray(String audio, ArrayList<Triple<ArrayList<Double>, ArrayList<Long>, ArrayList<Long>>> midiLists, Network cppn) {
+		File audioFile = new File(audio);
+		try {
+			Sequence sequence = MidiSystem.getSequence(audioFile);
+			//dividing sample rate of default audio format by the microseconds per tick to get equivalent of correct answer
+			double amplitudeLengthMultiplier = PlayDoubleArray.DEFAULT_AUDIO_FORMAT.getFrameRate()/(sequence.getMicrosecondLength()/sequence.getTickLength());
+			amplitudeLengthMultiplier = Math.ceil(amplitudeLengthMultiplier); // To prevent rounding issues with array indexes
+			
+			long totalTicks = 0;
+			// Need as many ticks as are in the longest line
+			for(int i = 0; i < midiLists.size(); i++) {
+				long lineTicks = midiLists.get(i).t3.get(midiLists.get(i).t3.size()-1) // last start time, plus
+						       + midiLists.get(i).t2.get(midiLists.get(i).t2.size()-1);// last duration
+				totalTicks = Math.max(totalTicks, lineTicks);
+			}
+			
+			double[] amplitudeArray = new double[(int) (amplitudeLengthMultiplier*totalTicks)];
+			for(int k = 0; k < midiLists.size(); k++) {
+				for(int i = 0; i < midiLists.get(k).t1.size(); i++) {
+					int amplitudeLength = (int)(amplitudeLengthMultiplier*midiLists.get(k).t2.get(i));
+					double[] amplitude = SoundFromCPPNUtil.amplitudeGenerator(cppn, amplitudeLength, midiLists.get(k).t1.get(i));
+					int start = (int)(amplitudeLengthMultiplier*midiLists.get(k).t3.get(i));
+					for(int j = 0; j < amplitude.length; j++) {
+						amplitudeArray[start+j] += amplitude[j];
+					}
+				}
+			}
+			
+			// Schrum: regarding this normalization step: we seem to have another magic number.
+			// The value 2 works for fur Elise, but what about other MIDIs?
+			for(int i = 0; i < amplitudeArray.length; i++) {
+				amplitudeArray[i] /= 2; // TODO: Replace magic number
+			}
+			
+			return amplitudeArray;
+		} catch (InvalidMidiDataException | IOException e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
+		return null; //shouldn't happen
+	}	
+	
 	/**
 	 * Loops through array of frequencies generated from a MIDI file and plays it using a CPPN,
 	 * essentially making the CPPN the "instrument". 
@@ -473,12 +516,7 @@ public class MIDIUtil {
 		}
 
 		public void run() {
-			
-			// TODO: Remove next three lines
-//			PlayDoubleArray.playDoubleArray(amplitudeArrays[0]);
-//			System.out.println(amplitudeArrays[0].length);
-//			MiscUtil.waitForReadStringAndEnterKeyPress();
-			
+						
 			// TODO: Allow for interruption. Now that only a single array is used,
 			// this should be easy. The playDoubleArray method returns an AmplitudeArrayPlayer
 			// that has a method capable of stopping playback. Save the AmplitudeArrayPlayer
