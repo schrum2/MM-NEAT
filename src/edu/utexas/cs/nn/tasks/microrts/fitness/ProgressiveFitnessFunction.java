@@ -35,7 +35,7 @@ public class ProgressiveFitnessFunction extends RTSFitnessFunction{
 
 		int winner = gs.winner(); //0:win 1:loss -1:tie
 		double[]other = new double[]{
-				winner + 1 % 2, //1:win 0:tie -1:loss (from ai1's perspective)
+				(winner == 1 ? -1 : winner + 1), //changes 0:win, -1:tie, 1:loss  => 1:win 0:tie -1:loss (from ai1's perspective)
 				gs.getTime(),
 				mapSwitches //updated when map is switched
 		};
