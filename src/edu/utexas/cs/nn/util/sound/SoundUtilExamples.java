@@ -4,6 +4,7 @@ package edu.utexas.cs.nn.util.sound;
 import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -535,15 +536,23 @@ public class SoundUtilExamples {
 		Sequence sequence = MidiSystem.getSequence(midiFile);
 		Track[] tracks = sequence.getTracks();
 		Track track = tracks[1];
-		ArrayList<Triple<ArrayList<Double>, ArrayList<Long>, ArrayList<Long>>> midiLists = MIDIUtil.soundLines2(track);
+		ArrayList<Triple<ArrayList<Double>, ArrayList<Long>, ArrayList<Long>>> midiLists = MIDIUtil.soundLines2(track);		
 		for(int i = 0; i < midiLists.size(); i++) {
+
+			// Schrum: trouble shooting code
+//			PrintStream ps = new PrintStream(new File("NewFreLengthStartTriple"+i+".csv"));
+//			for(int j = 0; j < midiLists.get(i).t1.size(); j++) {
+//				ps.println(midiLists.get(i).t1.get(j)+","+midiLists.get(i).t2.get(j)+","+midiLists.get(i).t3.get(j));
+//			}
+//			ps.close();
+			
 			double[] test = MIDIUtil.lineToAmplitudeArray(FUR_ELISE_MID,  midiLists.get(i).t1,  midiLists.get(i).t2,  midiLists.get(i).t3, cppn);
 			System.out.println(test.length);
 			ArrayUtil.printArrayRange(test, 800, 1200);
 			
 			PlayDoubleArray.playDoubleArray(test);
 			
-			MiscUtil.waitForReadStringAndEnterKeyPress();
+//			MiscUtil.waitForReadStringAndEnterKeyPress();
 //			System.out.println("frequencies: " + midiLists.get(i).t1);
 //			System.out.println("lengths: " + midiLists.get(i).t2);
 //			System.out.println("start times: " + midiLists.get(i).t3);

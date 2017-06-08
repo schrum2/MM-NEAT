@@ -3,7 +3,9 @@ package edu.utexas.cs.nn.util.sound;
 import java.applet.Applet;
 import java.applet.AudioClip;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -357,11 +359,26 @@ public class MIDIUtil {
 		clip.play();
 	}
 
+	// Schrum: used in debugging code below
+//	public static int count = 0;
+	
 	// TODO: Needs comments
 	public static double[] lineToAmplitudeArray(String audio, double[] soundLine, Network cppn) {
 		Pair<ArrayList<Double>, ArrayList<Double>> lineData = notesAndLengthsOfLine(soundLine);
 		double[] frequencies = ArrayUtil.doubleArrayFromList(lineData.t1);
 		double[] lengths = ArrayUtil.doubleArrayFromList(lineData.t2);
+
+		// Schrum: debug code to save all information about frequencies and lengths of notes
+//		try {
+//			PrintStream temp = new PrintStream(new File("FreqLengthPair"+(count++)+".csv"));
+//			for(int i = 0; i < frequencies.length; i++) {
+//				temp.println(frequencies[i] + "," + lengths[i]);
+//			}
+//			temp.close();
+//		} catch (FileNotFoundException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 		return lineToAmplitudeArray(audio, frequencies, lengths, cppn);
 
 	}
@@ -419,13 +436,13 @@ public class MIDIUtil {
 			
 			//TODO: sum of values at indexes in array list
 			// TODO: explain
-			double[] amplitudeArray = new double[(int) (startTimes.get(startTimes.size()-1) + lengths.get(lengths.size()-1))];
+			double[] amplitudeArray = new double[(int) (amplitudeLengthMultiplier*(startTimes.get(startTimes.size()-1) + lengths.get(lengths.size()-1)))];
 //			int noteLength = 0;
 //			int currentTime = 0;
 			for(int i = 0; i < lengths.size(); i++) {
-				int amplitudeLength = lengths.get(i).intValue();
+				int amplitudeLength = (int)(amplitudeLengthMultiplier*lengths.get(i).intValue());
 				double[] amplitude = SoundFromCPPNUtil.amplitudeGenerator(cppn, amplitudeLength, frequencies.get(i));
-				System.arraycopy(amplitude, 0, amplitudeArray, startTimes.get(i).intValue(), amplitude.length);
+				System.arraycopy(amplitude, 0, amplitudeArray, (int)(amplitudeLengthMultiplier*startTimes.get(i).intValue()), amplitude.length);
 				
 //				if(currentTime < startTimes.get(i)) {
 //					amplitudeArray[i] = 0;
@@ -568,6 +585,24 @@ public class MIDIUtil {
 			// between MIDI and the one array of double that gets played inside of the run method of the
 			// note sequence player.
 			ArrayList<double[]> data = soundLines(tracks);
+			
+			// Schrum: Code used to print out all note information.
+//			PrintStream temp = System.out;
+//			int max = 0;
+//			for(int i = 0; i < data.size(); i++) {
+//				max = Math.max(max, data.get(i).length);
+//			}
+//			System.setOut(new PrintStream(new File("notes.csv")));
+//			for(int i = 0; i < max; i++) {
+//				for(int j = 0; j < data.size(); j++){
+//					double[] array = data.get(j);
+//					System.out.print(i < array.length ? array[i] : "");
+//					if(j < data.size() - 1) System.out.print(",");
+//				}
+//				System.out.println();
+//			}
+//			System.setOut(temp);
+			
 			return playMIDIWithCPPNFromDoubleArray(audio, cppn, data);
 		} catch (InvalidMidiDataException | IOException e) {
 			e.printStackTrace();
