@@ -22,7 +22,7 @@ public class TwoDimensionalBoardGameViewer<S  extends TwoDimensionalBoardGameSta
 	private static final long serialVersionUID = 1L;
 	
 	private T board;
-	private S start;
+	private S state;
 	public DrawingPanel panel;
 	
 	public static final int HEIGHT = 600;
@@ -32,25 +32,27 @@ public class TwoDimensionalBoardGameViewer<S  extends TwoDimensionalBoardGameSta
 		
 	public TwoDimensionalBoardGameViewer(T bGame){
 		board = bGame;
-		start = board.getStartingState();
+		state = board.getStartingState();
 		
-		int boardWidth = start.getBoardWidth();
-		int boardHeight = start.getBoardHeight();
+		int boardWidth = state.getBoardWidth();
+		int boardHeight = state.getBoardHeight();
 		
 		panel = new DrawingPanel((boardWidth*GRID_WIDTH), (boardHeight*GRID_WIDTH), board.getName());
 		
 		panel.setLocation(TWEANN.NETWORK_VIEW_DIM, 0);
-		reset(start);
+		reset(state);
 		current = this;		
 	}
 	
 	/**
 	 * Resets the graphics for the view
 	 */
-	public void reset(TwoDimensionalBoardGameState newBoard) {
+	@SuppressWarnings("unchecked")
+	public void reset(S newBoard) {
 		Graphics2D g = panel.getGraphics();
 		g.setColor(Color.black); // Set to Black to distinguish the Background from the Board
 		g.fillRect(0, 0, WIDTH, HEIGHT);
+		state = (S) newBoard.copy();
 		renderBoard(g, newBoard);
 	}
 	
