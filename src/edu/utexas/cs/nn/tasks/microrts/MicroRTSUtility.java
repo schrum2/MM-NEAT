@@ -48,7 +48,6 @@ public class MicroRTSUtility {
 		PlayerAction pa1;
 		PlayerAction pa2;
 		
-		int maxBaseX = -1, maxBaseY = -1;
 		Unit currentUnit; 
 		boolean baseDeath1Recorded = false;
 		boolean baseDeath2Recorded = false;
@@ -66,8 +65,6 @@ public class MicroRTSUtility {
 			} catch (Exception e) { e.printStackTrace();System.exit(1); }
 			
 			if(prog){ //if our FitnessFunction needs us to record information throughout the game
-				maxBaseX = -1; //Eventually will have to change this to accomodate maps where multiple bases will not be in a straight line
-				maxBaseY = -1;
 				currentUnit = null;				
 				unitDifferenceNow = 0;
 				base1Alive = false;
@@ -123,12 +120,13 @@ public class MicroRTSUtility {
 		if( (u.getPlayer() == 0 || coevolution) && u.getResources() >= 1 && !workerWithResourceID.contains(id))
 			workerWithResourceID.add(id);
 		else if(u.getResources() <= 0 && workerWithResourceID.contains(id)){
-			workerWithResourceID.remove(id);
+			workerWithResourceID.remove(workerWithResourceID.indexOf(id));
 			//add one to player's harvesting efficiency 
 			task.setHarvestingEfficiency(task.getHarvestingEfficiency(player)+1,player);
 		}
 	}
 	
+	//Assumes bases exist at the start of the map
 	private static void updateBaseIsAlive(Unit u, boolean coevolution) {
 		if(u.getPlayer() == 0){
 			base1Alive = true;
