@@ -1,5 +1,7 @@
 package edu.utexas.cs.nn.evolution.genotypes;
 
+import java.util.List;
+
 /**
  * Basic interface for all genotypes.
  * 
@@ -9,6 +11,19 @@ package edu.utexas.cs.nn.evolution.genotypes;
  */
 public interface Genotype<T> {
 
+	/**
+	 * Indicate the ID of a parent of this genotype.
+	 * Can be called multiple times.
+	 * @param id Genotype ID of a parent of this genotype
+	 */
+	public void addParent(long id);
+	
+	/**
+	 * Get ids of all parents of this genotype
+	 * @return List of all parent genotype ids
+	 */
+	public List<Long> getParentIDs();
+	
 	/**
 	 * Make and return a copy of the genotype
 	 * 

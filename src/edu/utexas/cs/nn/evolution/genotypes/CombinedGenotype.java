@@ -1,5 +1,8 @@
 package edu.utexas.cs.nn.evolution.genotypes;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 
@@ -52,4 +55,17 @@ public class CombinedGenotype<X, Y> extends Pair<Genotype<X>, Genotype<Y>>implem
 	public long getId() {
 		return id;
 	}
+	
+	transient List<Long> parents = new LinkedList<Long>();
+	
+	@Override
+	public void addParent(long id) {
+		parents.add(id);
+	}
+
+	@Override
+	public List<Long> getParentIDs() {
+		return parents;
+	}
+
 }

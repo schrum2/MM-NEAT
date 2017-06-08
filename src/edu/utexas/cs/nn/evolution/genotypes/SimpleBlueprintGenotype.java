@@ -7,6 +7,8 @@ import edu.utexas.cs.nn.evolution.mutation.blueprint.BlueprintRandomMutation;
 import edu.utexas.cs.nn.experiment.evolution.MultiplePopulationGenerationalEAExperiment;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  *
@@ -50,4 +52,17 @@ public class SimpleBlueprintGenotype extends NumericArrayGenotype<Long> {
 		return new SimpleBlueprintGenotype(
 				((MultiplePopulationGenerationalEAExperiment) MMNEAT.experiment).randomBlueprint());
 	}
+	
+	transient List<Long> parents = new LinkedList<Long>();
+	
+	@Override
+	public void addParent(long id) {
+		parents.add(id);
+	}
+
+	@Override
+	public List<Long> getParentIDs() {
+		return parents;
+	}
+
 }

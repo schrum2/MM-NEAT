@@ -4,6 +4,8 @@ import edu.utexas.cs.nn.evolution.mutation.real.PerturbMutation;
 import edu.utexas.cs.nn.util.random.RandomNumbers;
 import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  *
@@ -34,4 +36,17 @@ public class RealValuedGenotype extends NumericArrayGenotype<Double> {
 	public void mutate() {
 		new PerturbMutation(genes.size()).mutate(this);
 	}
+	
+	transient List<Long> parents = new LinkedList<Long>();
+	
+	@Override
+	public void addParent(long id) {
+		parents.add(id);
+	}
+
+	@Override
+	public List<Long> getParentIDs() {
+		return parents;
+	}
+
 }

@@ -27,6 +27,7 @@ import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -577,6 +578,16 @@ public class PopulationUtil {
 			@Override
 			public long getId() {
 				return offspringId;
+			}
+
+			@Override
+			public void addParent(long id) {
+				throw new UnsupportedOperationException("Not supported in dummy genotype.");
+			}
+
+			@Override
+			public List<Long> getParentIDs() {
+				throw new UnsupportedOperationException("Not supported in dummy genotype.");
 			}
 		};
 	}

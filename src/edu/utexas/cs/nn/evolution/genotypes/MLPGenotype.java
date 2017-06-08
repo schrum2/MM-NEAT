@@ -1,6 +1,10 @@
 package edu.utexas.cs.nn.evolution.genotypes;
 
 import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
+
+import java.util.LinkedList;
+import java.util.List;
+
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.networks.MLP;
 import edu.utexas.cs.nn.parameters.Parameters;
@@ -113,4 +117,17 @@ public class MLPGenotype implements Genotype<MLP> {
 	public long getId() {
 		return id;
 	}
+	
+	transient List<Long> parents = new LinkedList<Long>();
+	
+	@Override
+	public void addParent(long id) {
+		parents.add(id);
+	}
+
+	@Override
+	public List<Long> getParentIDs() {
+		return parents;
+	}
+
 }

@@ -4,6 +4,8 @@ import edu.utexas.cs.nn.evolution.mutation.integer.ReplaceMutation;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.util.random.RandomNumbers;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  *
@@ -33,5 +35,17 @@ public class BoundedIntegerValuedGenotype extends NumericArrayGenotype<Integer> 
 
 	public void mutate() {
 		new ReplaceMutation().mutate(this);
+	}
+
+	transient List<Long> parents = new LinkedList<Long>();
+	
+	@Override
+	public void addParent(long id) {
+		parents.add(id);
+	}
+
+	@Override
+	public List<Long> getParentIDs() {
+		return parents;
 	}
 }
