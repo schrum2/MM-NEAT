@@ -3,7 +3,6 @@ package edu.utexas.cs.nn.tasks.boardGame;
 import java.util.ArrayList;
 import java.util.List;
 
-import boardGame.BoardGame;
 import boardGame.BoardGameState;
 import boardGame.agents.BoardGamePlayer;
 import boardGame.agents.HeuristicBoardGamePlayer;
@@ -30,7 +29,7 @@ public class SinglePopulationCompetativeCoevolutionBoardGameTask<T extends Netwo
 	
 	@SuppressWarnings({ "rawtypes", "unchecked"})
 	public SinglePopulationCompetativeCoevolutionBoardGameTask(){
-		MMNEAT.registerFitnessFunction("Win Reward");
+		MMNEAT.registerFitnessFunction("Win Reward"); // TODO: Title of fitness needs to come from BoardGameFitnessFunction, depending on what it is
 		
 		try {
 			players = new BoardGamePlayer[groupSize()];
