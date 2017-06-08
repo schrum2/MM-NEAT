@@ -116,40 +116,6 @@ public class MIDIUtil {
 		}		
 	}
 
-//	/**
-//	 * Method that keeps track of the total number of notes in a track.
-//	 * This allows freqFromMIDI() to avoid events in the track that are not
-//	 * related to notes.
-//	 * 
-//	 * @param t Track being analyzed
-//	 * @return total number of notes in track
-//	 */
-//	private static int countNotes(Track t) {
-//		int total = 0;
-//		for(int i = 0; i < t.size(); i++) {
-//			MidiEvent event = t.get(i);
-//			MidiMessage message = event.getMessage();
-//			//System.out.println(message);
-//			if (message instanceof ShortMessage) {
-//				ShortMessage sm = (ShortMessage) message;
-//				if (sm.getCommand() == NOTE_ON && sm.getData2() > 0) {
-//					total++;
-//				}
-//			}
-//		}
-//		return total;
-//	}
-
-//	/**
-//	 * Returns number of ticks in track
-//	 * @param track Track from MIDI being analyzed
-//	 * @return maximum ticks in track
-//	 */
-//	private static long ticksInTrack(Track track) {
-//		assert track.ticks() <= Integer.MAX_VALUE : "Cannot handle this many ticks in a track: " +track.ticks();
-//		return track.ticks();
-//	}
-
 	/**
 	 * Method that calculates array lists of frequency, length, and start time data for all tracks in an array
 	 * of tracks in a MIDI file.
@@ -216,36 +182,6 @@ public class MIDIUtil {
 		return soundLines;
 	}
 
-//	/**
-//	 * Takes in a double array representing a single voice in a track and extracts vital information
-//	 * out of it so that the individual notes are retained sequentially in an ArrayList and the lengths
-//	 * of those notes are also retained in a separate ArrayList. 
-//	 * 
-//	 * @param soundLine double array representing single voice in track
-//	 * @return pair of Array Lists containing the frequencies and lengths of the notes in a single sound line
-//	 */
-//	private static Pair<ArrayList<Double>, ArrayList<Double>> notesAndLengthsOfLine(double[] soundLine) {
-//		ArrayList<Double> frequencies = new ArrayList<Double>();
-//		ArrayList<Double> lengths = new ArrayList<Double>(); // Needs to be double?
-//
-//		// TODO: The length calculations here look suspiscious to me.
-//		// I wonder if they have problems for the first freq value and last
-//		// freq values in the array. Could use more analysis.
-//		int prevIndex = 0;
-//		double prevVal = soundLine[0];
-//		for(int i = 0; i < soundLine.length; i++) {
-//			if(soundLine[i] != prevVal) {
-//				frequencies.add(prevVal);
-//				lengths.add((double) (i - prevIndex) + 1); 
-//				prevVal = soundLine[i];
-//				prevIndex = i;
-//			}
-//		}
-//		frequencies.add(prevVal);
-//		lengths.add((double) soundLine.length-prevIndex);
-//		return new Pair<>(frequencies, lengths);
-//	}
-
 	/**
 	 * Takes an input note value from a MIDI file and converts it to its corresponding frequency.
 	 * 
@@ -280,15 +216,26 @@ public class MIDIUtil {
 		clip.play();
 	}
 	
+	/**
+	 * Takes in data of frequencies, lengths, and starting times of an audio file and 
+	 * reconstructs the file as a single playable amplitude array that uses a generated
+	 * CPPN as the instrument.
+	 * 
+	 * @param audio Original MIDI file
+	 * @param midiLists ArrayList containing ArrayLists with the file's frequencies, lengths, and start times of all notes
+	 * @param cppn input CPPN used to play back reconstructed audio
+	 * @return playable double array of amplitudes
+	 */
 	public static double[] lineToAmplitudeArray(String audio, ArrayList<Triple<ArrayList<Double>, ArrayList<Long>, ArrayList<Long>>> midiLists, Network cppn) {
 		File audioFile = new File(audio);
 		try {
 			Sequence sequence = MidiSystem.getSequence(audioFile);
-			//dividing sample rate of default audio format by the microseconds per tick to get equivalent of correct answer
+			// dividing sample rate of default audio format by the microseconds per tick to get equivalent of correct answer
 			double amplitudeLengthMultiplier = PlayDoubleArray.DEFAULT_AUDIO_FORMAT.getFrameRate()/(sequence.getMicrosecondLength()/sequence.getTickLength());
 			amplitudeLengthMultiplier = Math.ceil(amplitudeLengthMultiplier); // To prevent rounding issues with array indexes
 			System.out.println("amplitudeLengthMultiplier: " + amplitudeLengthMultiplier);
-			//amplitudeLengthMultiplier = 60.0;
+			// amplitudeLengthMultiplier = 60.0; //this value works better for SOLO_PIANO_MID, and it is almost twice the value of the original 
+			// amplitudeLengthMultiplier. Need to figure this out eventually
 
 			long totalTicks = 0;
 			// Need as many ticks as are in the longest line
@@ -315,7 +262,6 @@ public class MIDIUtil {
 			for(int i = 0; i < amplitudeArray.length; i++) {
 				amplitudeArray[i] /= 2; // TODO: Replace magic number
 			}
-
 			return amplitudeArray;
 		} catch (InvalidMidiDataException | IOException e) {
 			e.printStackTrace();
