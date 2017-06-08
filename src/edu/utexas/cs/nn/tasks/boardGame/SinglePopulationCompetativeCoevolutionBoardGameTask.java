@@ -29,8 +29,6 @@ public class SinglePopulationCompetativeCoevolutionBoardGameTask<T extends Netwo
 	
 	@SuppressWarnings({ "rawtypes", "unchecked"})
 	public SinglePopulationCompetativeCoevolutionBoardGameTask(){
-		MMNEAT.registerFitnessFunction("Win Reward"); // TODO: Title of fitness needs to come from BoardGameFitnessFunction, depending on what it is
-		
 		try {
 			players = new BoardGamePlayer[groupSize()];
 			featExtract = (BoardGameFeatureExtractor<BoardGameState>) ClassCreation.createObject("boardGameFeatureExtractor");
@@ -44,6 +42,7 @@ public class SinglePopulationCompetativeCoevolutionBoardGameTask<T extends Netwo
 			System.out.println("BoardGame instance could not be loaded");
 			System.exit(1);
 		}
+		MMNEAT.registerFitnessFunction(fitnessFunction.getFitnessName());
 	}
 	
 	@Override

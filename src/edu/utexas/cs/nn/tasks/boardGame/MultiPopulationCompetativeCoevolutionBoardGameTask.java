@@ -28,7 +28,6 @@ public class MultiPopulationCompetativeCoevolutionBoardGameTask extends GroupTas
 	
 	@SuppressWarnings("rawtypes")
 	public MultiPopulationCompetativeCoevolutionBoardGameTask(){
-		MMNEAT.registerFitnessFunction("Win Reward");
 		
 		try {
 			bg = (BoardGame) ClassCreation.createObject("boardGame");
@@ -43,6 +42,7 @@ public class MultiPopulationCompetativeCoevolutionBoardGameTask extends GroupTas
 			System.out.println("BoardGame instance could not be loaded");
 			System.exit(1);
 		}
+		MMNEAT.registerFitnessFunction(fitnessFunction.getFitnessName());
 	}
 	
 	@Override

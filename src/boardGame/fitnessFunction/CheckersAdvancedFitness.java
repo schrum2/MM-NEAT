@@ -44,4 +44,10 @@ public class CheckersAdvancedFitness<T extends BoardGameState> implements BoardG
 	}
 
 
+	@Override
+	public String getFitnessName() {
+		return "Checkers Advanced Fitness";
+	}
+
+
 }

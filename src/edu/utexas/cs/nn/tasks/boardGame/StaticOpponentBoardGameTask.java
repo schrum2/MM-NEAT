@@ -39,8 +39,6 @@ public class StaticOpponentBoardGameTask<T extends Network> extends NoisyLonerTa
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public StaticOpponentBoardGameTask(){
-		MMNEAT.registerFitnessFunction("Win Reward");
-
 		try {
 			opponent = (BoardGamePlayer) ClassCreation.createObject("boardGameOpponent"); // The Opponent
 			player = (HeuristicBoardGamePlayer) ClassCreation.createObject("boardGamePlayer"); // The Player
@@ -51,6 +49,7 @@ public class StaticOpponentBoardGameTask<T extends Network> extends NoisyLonerTa
 			System.out.println("BoardGame instance could not be loaded");
 			System.exit(1);
 		}
+		MMNEAT.registerFitnessFunction(fitnessFunction.getFitnessName());
 	}
 
 	/**

@@ -20,5 +20,10 @@ public class SimpleWinLoseDrawBoardGameFitness<T extends BoardGameState> impleme
 			return 0;
 		}
 	}
+
+	@Override
+	public String getFitnessName() {
+		return "Simple Win-Lose-Draw";
+	}
 	
 }
