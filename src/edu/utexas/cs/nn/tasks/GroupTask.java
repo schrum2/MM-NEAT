@@ -327,7 +327,7 @@ public abstract class GroupTask implements MultiplePopulationTask {
 			for (int p = 0; p < team.length; p++) {
 				if (team[p] instanceof TWEANNGenotype) {
 					panels[p] = new DrawingPanel(TWEANN.NETWORK_VIEW_DIM, TWEANN.NETWORK_VIEW_DIM, "Evolved Network " + p);
-					panels[p].setLocation(LonerTask.NETWORK_WINDOW_OFFSET, p * (TWEANN.NETWORK_VIEW_DIM + 20));
+					panels[p].setLocation(CommonTaskUtil.NETWORK_WINDOW_OFFSET, p * (TWEANN.NETWORK_VIEW_DIM + 20));
 					((TWEANNGenotype) team[p]).getPhenotype().draw(panels[p]);
 				}
 			}

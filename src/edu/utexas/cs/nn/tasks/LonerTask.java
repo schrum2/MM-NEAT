@@ -47,8 +47,6 @@ import wox.serial.Easy;
  */
 public abstract class LonerTask<T> implements SinglePopulationTask<T> {
 
-	public static final int NETWORK_WINDOW_OFFSET = 0;
-
 	/**
 	 * Since agents are evaluated in isolation, it is possible to parallelize
 	 * their evaluation. This thread class enables parallel evaluation, and
@@ -85,49 +83,10 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
 			preEval();
 			//System.out.println("preEval done on gen " + MMNEAT.ea.currentGeneration());
 			
-			@SuppressWarnings("unused")
-			ArrayList<DrawingPanel> weightPanels;
-			
 			Pair<DrawingPanel, DrawingPanel> drawPanels = CommonTaskUtil.getDrawingPanels(genotype);
 			
 			DrawingPanel panel = drawPanels.t1;
 			DrawingPanel cppnPanel = drawPanels.t2;
-			
-			
-			if (genotype instanceof TWEANNGenotype) {
-				if (CommonConstants.showNetworks) {
-					if(panel != null){ // Draws the panel if it exists
-						panel.setLocation(NETWORK_WINDOW_OFFSET, 0);
-					}
-					TWEANN network = ((TWEANNGenotype) genotype).getPhenotype();
-					//System.out.println("Draw network with " + network.numInputs() + " inputs");
-					network.draw(panel);
-					if(genotype instanceof HyperNEATCPPNGenotype) {
-						HyperNEATCPPNGenotype hngt = (HyperNEATCPPNGenotype) genotype;
-						if( Parameters.parameters.booleanParameter("showCPPN")) {
-							if(cppnPanel != null){ // Draws the cppnPanel if it exists
-								cppnPanel.setLocation(TWEANN.NETWORK_VIEW_DIM + NETWORK_WINDOW_OFFSET, 0);
-								hngt.getCPPN().draw(cppnPanel);
-							}
-						}
-						if(Parameters.parameters.booleanParameter("showWeights")){
-							weightPanels = HyperNEATUtil.drawWeight(hngt.getSubstrateGenotype((HyperNEATTask) task),(HyperNEATTask) task); // TODO
-						}
-
-					}
-				}
-				if (CommonConstants.viewModePreference && TWEANN.preferenceNeuronPanel == null && TWEANN.preferenceNeuron()) {
-					TWEANN.preferenceNeuronPanel = new DrawingPanel(Plot.BROWSE_DIM, Plot.BROWSE_DIM, "Preference Neuron Activation");
-					TWEANN.preferenceNeuronPanel.setLocation(Plot.BROWSE_DIM + Plot.EDGE, Plot.BROWSE_DIM + Plot.TOP);
-				}
-				// this does not happen for TorusPredPreyTasks because the
-				// "Individual Info" panel is unnecessary, as panels for each
-				// evolved agents are already shown with monitorInputs with all
-				// of their sensors and information
-				if (CommonConstants.monitorInputs && !(MMNEAT.task instanceof TorusPredPreyTask) && !(MMNEAT.task instanceof Breve2DTask)) {
-					Offspring.fillInputs((TWEANNGenotype) genotype);
-				}
-			}
 			// Output a report about the specific evals
 			if (CommonConstants.evalReport) {
 				MMNEAT.evalReport = new EvalLog("Eval-Net" + genotype.getId());

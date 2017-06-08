@@ -3,9 +3,9 @@ package edu.utexas.cs.nn.util.file;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
 import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.parameters.Parameters;
+import edu.utexas.cs.nn.tasks.CommonTaskUtil;
 import edu.utexas.cs.nn.util.graphics.DrawingPanel;
 
-import static edu.utexas.cs.nn.tasks.LonerTask.NETWORK_WINDOW_OFFSET;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -92,7 +92,7 @@ public class FileUtilities {
 	public static void drawTWEANN(String filename) {
 		TWEANNGenotype genotype = (TWEANNGenotype) Easy.load(filename);
 		DrawingPanel panel = new DrawingPanel(TWEANN.NETWORK_VIEW_DIM, TWEANN.NETWORK_VIEW_DIM, "Evolving Network");
-		panel.setLocation(NETWORK_WINDOW_OFFSET, 0);
+		panel.setLocation(CommonTaskUtil.NETWORK_WINDOW_OFFSET, 0);
 		genotype.getPhenotype().draw(panel);
 	}
 }
