@@ -1,6 +1,6 @@
 package edu.utexas.cs.nn.util.graphics;
 
-import java.awt.Image;
+import java.awt.image.BufferedImage;
 
 import edu.utexas.cs.nn.networks.Network;
 
@@ -23,13 +23,11 @@ public class AnimationUtil {
 	 * @param inputMultiples array with inputs determining whether checkboxes in interface should be turned on or off
 	 * @return Array of images that can be animated in a JApplet
 	 */
-	public static Image[] imagesFromCPPN(Network n, int imageWidth, int imageHeight, int time, double[] inputMultiples) {
-		Image[] images = new Image[time];
+	public static BufferedImage[] imagesFromCPPN(Network n, int imageWidth, int imageHeight, int time, double[] inputMultiples) {
+		BufferedImage[] images = new BufferedImage[time];
 		for(int i = 0; i < time; i++) {
 			images[i] = GraphicsUtil.imageFromCPPN(n, imageWidth, imageHeight, inputMultiples, i);
 		}
 		return images;
-	}
-	
-	
+	}	
 }

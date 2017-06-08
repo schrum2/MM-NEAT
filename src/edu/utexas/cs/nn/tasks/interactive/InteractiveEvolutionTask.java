@@ -108,7 +108,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	//Private graphic objects
 	protected JFrame frame;
 	private ArrayList<JPanel> panels;
-	private ArrayList<JButton> buttons;
+	protected ArrayList<JButton> buttons;
 	protected ArrayList<Score<T>> scores;
 	private ArrayList<Score<T>> previousScores;
 
@@ -570,7 +570,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	 * @return score of each member of population
 	 */
 	@Override
-        public ArrayList<Score<T>> evaluateAll(ArrayList<Genotype<T>> population) {
+	public ArrayList<Score<T>> evaluateAll(ArrayList<Genotype<T>> population) {
 		waitingForUser = true;
 		scores = new ArrayList<Score<T>>();
 		if(population.size() != numButtonOptions) {
