@@ -20,6 +20,7 @@ import edu.utexas.cs.nn.networks.hyperneat.Substrate;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.tasks.NoisyLonerTask;
 import edu.utexas.cs.nn.util.ClassCreation;
+import edu.utexas.cs.nn.util.MiscUtil;
 import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 
@@ -116,6 +117,7 @@ public class StaticOpponentBoardGameTask<T extends Network> extends NoisyLonerTa
 
 		player.setHeuristic((new NNBoardGameHeuristic(individual.getPhenotype(), featExtract)));
 		BoardGamePlayer[] players = new BoardGamePlayer[]{player, opponent};
+		// get(0) because information for both players is returned, but only the first is about the evolved player
 		return BoardGameUtil.playGame(MMNEAT.boardGame, players, fitnessFunction).get(0);
 	}
 

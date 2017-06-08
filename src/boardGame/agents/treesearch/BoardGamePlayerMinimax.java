@@ -16,7 +16,6 @@ public class BoardGamePlayerMinimax<T extends BoardGameState> extends HeuristicB
 	private static int depth; // Used to keep track of how far down the Tree to check
 	protected static final double ALPHA = Double.NEGATIVE_INFINITY; // Holds the Starting Value for Alpha
 	protected static final double BETA = Double.POSITIVE_INFINITY; // Holds the Starting Value for Beta
-	protected BoardGameHeuristic<T> boardHeuristic;
 	
 	/**
 	 * This constructor assumes an opponent agent is being created.
