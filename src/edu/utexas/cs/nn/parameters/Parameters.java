@@ -303,6 +303,14 @@ public class Parameters {
 		integerOptions.add("remixImageWindow", 10, "Size of window being remixed by CPPN in Picture Remixer");
 		integerOptions.add("minRemixImageWindow", 2, "Minimum size of window being remixed by CPPN in Picture Remixer");
 		integerOptions.add("maxRemixImageWindow", 100, "Maximum size of window being remixed by CPPN in Picture Remixer");
+		integerOptions.add("minAnimationLength", 10, "Minimum length of animation in AnimationBreeder");
+		integerOptions.add("minAnimationLength", 10, "Minimum length of animation in AnimationBreeder");
+		integerOptions.add("defaultAnimationLength", 50, "Default length of animation in AnimationBreeder");
+		integerOptions.add("maxAnimationLength", 150, "Maximum length of animation in AnimationBreeder");
+		integerOptions.add("minPause", 10, "Minimum pause length between each iteraton of animation in AnimationBreeder");
+		integerOptions.add("defaultPause", 50, "Default pause length between each iteraton of animation in AnimationBreeder");
+		integerOptions.add("maxPause", 500, "Maximum pause length between each iteraton of animation in AnimationBreeder");
+		integerOptions.add("defaultFramePause", 10, "Default pause length between frames in AnimationBreeder");
 		// Long parameters
 		longOptions.add("lastInnovation", 0l, "Highest innovation number used so far");
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");

@@ -13,6 +13,9 @@ import edu.utexas.cs.nn.networks.Network;
  */
 public class AnimationUtil {
 	
+	//default frame rate to smooth out animation
+	public static final double FRAMES_PER_SEC = 24.0;
+	
 	/**
 	 * Utility method that generates an array of images based on an input CPPN.
 	 * 
@@ -23,10 +26,10 @@ public class AnimationUtil {
 	 * @param inputMultiples array with inputs determining whether checkboxes in interface should be turned on or off
 	 * @return Array of images that can be animated in a JApplet
 	 */
-	public static BufferedImage[] imagesFromCPPN(Network n, int imageWidth, int imageHeight, int time, double[] inputMultiples) {
-		BufferedImage[] images = new BufferedImage[time];
-		for(int i = 0; i < time; i++) {
-			images[i] = GraphicsUtil.imageFromCPPN(n, imageWidth, imageHeight, inputMultiples, i);
+	public static BufferedImage[] imagesFromCPPN(Network n, int imageWidth, int imageHeight, int startTime, int endTime, double[] inputMultiples) {
+		BufferedImage[] images = new BufferedImage[endTime-startTime];
+		for(int i = startTime; i < endTime; i++) {
+			images[i-startTime] = GraphicsUtil.imageFromCPPN(n, imageWidth, imageHeight, inputMultiples, i/FRAMES_PER_SEC);
 		}
 		return images;
 	}	

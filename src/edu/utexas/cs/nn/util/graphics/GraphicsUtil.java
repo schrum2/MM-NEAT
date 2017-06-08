@@ -67,7 +67,7 @@ public class GraphicsUtil {
 	 *            height of image
 	 * @return buffered image containing image drawn by network
 	 */
-	public static BufferedImage imageFromCPPN(Network n, int imageWidth, int imageHeight, double[] inputMultiples, int time) {
+	public static BufferedImage imageFromCPPN(Network n, int imageWidth, int imageHeight, double[] inputMultiples, double time) {
 		BufferedImage image = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_RGB);
 		for (int x = 0; x < imageWidth; x++) {// scans across whole image
 			for (int y = 0; y < imageHeight; y++) {
@@ -182,7 +182,7 @@ public class GraphicsUtil {
 	 *
 	 * @return double containing the HSB values
 	 */
-	public static float[] getHSBFromCPPN(Network n, int x, int y, int imageWidth, int imageHeight, double[] inputMultiples, int time) {
+	public static float[] getHSBFromCPPN(Network n, int x, int y, int imageWidth, int imageHeight, double[] inputMultiples, double time) {
 
 		double[] input = getCPPNInputs(x, y, imageWidth, imageHeight, time);
 
@@ -231,7 +231,7 @@ public class GraphicsUtil {
 	 *
 	 * @return array containing inputs for CPPN
 	 */
-	public static double[] getCPPNInputs(int x, int y, int imageWidth, int imageHeight, int time) {
+	public static double[] getCPPNInputs(int x, int y, int imageWidth, int imageHeight, double time) {
 		ILocated2D scaled = CartesianGeometricUtilities.centerAndScale(new Tuple2D(x, y), imageWidth, imageHeight);
 		if(time == -1) { // default, single image. Do not care about time
 			return new double[] { scaled.getX(), scaled.getY(), scaled.distance(new Tuple2D(0, 0)) * SQRT2, BIAS };
