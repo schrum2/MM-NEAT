@@ -528,7 +528,7 @@ public class SoundUtilExamples {
 		Sequence sequence = MidiSystem.getSequence(midiFile);
 		Track[] tracks = sequence.getTracks();
 		Track track = tracks[0];
-		ArrayList<Triple<ArrayList<Double>, ArrayList<Long>, ArrayList<Long>>> midiLists = MIDIUtil.soundLines2(track);
+		ArrayList<Triple<ArrayList<Double>, ArrayList<Long>, ArrayList<Long>>> midiLists = MIDIUtil.soundLines(track);
 		for(int i = 0; i < midiLists.size(); i++) {
 			System.out.println("frequencies: " + midiLists.get(i).t1);
 			System.out.println("lengths: " + midiLists.get(i).t2);
@@ -540,12 +540,11 @@ public class SoundUtilExamples {
 	public static void newMIDIUtilPlay(Network cppn) throws InvalidMidiDataException, IOException {
 		//MIDIUtil.playApplet(SOLO_PIANO_MID);
 		//MiscUtil.waitForReadStringAndEnterKeyPress();
-		File midiFile = new File(SOLO_PIANO_MID);
+		File midiFile = new File(PIRATES_MID);
 		Sequence sequence = MidiSystem.getSequence(midiFile);
 		Track[] tracks = sequence.getTracks();
-		Track track = tracks[0];
-		ArrayList<Triple<ArrayList<Double>, ArrayList<Long>, ArrayList<Long>>> midiLists = MIDIUtil.soundLines2(track);		
-		double[] amplitudes = MIDIUtil.lineToAmplitudeArray(SOLO_PIANO_MID, midiLists, cppn);
+		ArrayList<Triple<ArrayList<Double>, ArrayList<Long>, ArrayList<Long>>> midiLists = MIDIUtil.soundLines(tracks);		
+		double[] amplitudes = MIDIUtil.lineToAmplitudeArray(PIRATES_MID, midiLists, cppn);
 		PlayDoubleArray.playDoubleArray(amplitudes);
 		
 //		for(int i = 0; i < midiLists.size(); i++) {

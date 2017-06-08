@@ -3,13 +3,10 @@ package edu.utexas.cs.nn.util.sound;
 import java.applet.Applet;
 import java.applet.AudioClip;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,14 +19,9 @@ import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Track;
 
 import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.tasks.interactive.InteractiveEvolutionTask;
-import edu.utexas.cs.nn.tasks.interactive.breedesizer.Keyboard;
-import edu.utexas.cs.nn.util.MiscUtil;
-import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.datastructures.Triple;
 import edu.utexas.cs.nn.util.sound.PlayDoubleArray.AmplitudeArrayPlayer;
-import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
 
 /**
  * Series of utility methods that read data from MIDI files and convert it into frequencies
@@ -123,7 +115,6 @@ public class MIDIUtil {
 		} catch (InvalidMidiDataException | IOException e) {
 			e.printStackTrace();
 		}		
-
 	}
 
 	/**
@@ -160,80 +151,21 @@ public class MIDIUtil {
 		return track.ticks();
 	}
 
-//	// TODO: Since we'll be keeping this method after all, comment it.
-//	public static ArrayList<double[]> soundLines(Track[] tracks) {
-//		ArrayList<double[]> result = new ArrayList<double[]>();
-//		for(Track t: tracks) {
-//			result.addAll(soundLines(t));
-//		}
-//		return result;
-//	}
-
-//	/**
-//	 * MARKED FOR DELETION
-//	 * 
-//	 * Divides each piano voice up into a single list, so that all indexes when voice is not playing
-//	 * are filled with a 0 and indexes when the voice is playing are filled with the frequency. This
-//	 * is done so that each sound can be fed into a separate SourceDataLine and the double arrays can 
-//	 * potentially be played simultaneously.
-//	 * 
-//	 * @param track input track of MIDI file being analyzed (track represents a single instrument, usually)
-//	 * @return List of representative double arrays for each voice (number of arrays in list should be 
-//	 * equal to the max number of notes played at once on the given instrument)
-//	 */
-//	public static ArrayList<double[]> soundLines(Track track) {
-//		Map<Double, Long> map = new HashMap<Double, Long>();
-//		// TODO: Don't even create this ArrayList in the first place because it takes up
-//		// tons of memory. Rather, create one double array that has one index for each tick,
-//		// and add each sound result you encounter to the appropriate tick/index.
-//		// Accomplishing this will require a method that first determines which track across
-//		// the whole file has the most ticks, so that you can initailize the array to the right size.
-//		// ALSO: after looking at the code some more, I realized that the values returned here are
-//		// frequencies, not amplitudes. The trick of adding only works with amplitudes, but we can
-//		// only derive amplitudes after using the CPPN. That means we need to extract the sound
-//		// info and encode with the CPPN at the same time in order to increase efficiency and reduce
-//		// the memory footprint.
-//		ArrayList<double[]> soundLines = new ArrayList<double[]>();
-//		HashMap<Double, Integer> lines = new HashMap<Double, Integer>();
-//		for(int i = 0; i < track.size(); i++) {
-//			MidiEvent event = track.get(i);
-//			MidiMessage message = event.getMessage();
-//			// TODO: I wonder if we should start investigating other types of messages.
-//			// Some nuance about the sounds produces could depend on interpreting the
-//			// other messages correctly.
-//			if (message instanceof ShortMessage) {
-//				ShortMessage sm = (ShortMessage) message;
-//				int key = sm.getData1();
-//				double freq = noteToFreq(key);
-//				long tick = event.getTick(); // actually starting tick time
-//				if (sm.getCommand() == NOTE_ON && sm.getData2() > 0) { //turn on
-//					int index = map.size();
-//					// TODO: Remove once the ArrayList is gone
-//					if(index >= soundLines.size()) {
-//						soundLines.add(new double[(int) ticksInTrack(track)]);
-//					}
-//					map.put(freq, tick);
-//					lines.put(freq, index);
-//				} else if((sm.getCommand() == NOTE_OFF || (sm.getCommand() == NOTE_ON && sm.getData2() == 0))) { // Check: is negative velocity possible?
-//					int index = lines.get(freq);
-//					long tickStart = map.get(freq);
-//					long tickEnd = tick;
-//
-//					// TODO: Rather than what happens here, you would simply add to the one universal array
-//					double[] lineArray = soundLines.get(index);
-//					for(long j = tickStart; j <= tickEnd; j++) {
-//						lineArray[(int) j] = freq;
-//					}
-//					lines.remove(freq);
-//					map.remove(freq);
-//				}
-//			}
-//		}
-//		// TODO: Some normalization (division) might be needed here before the final return.
-//
-//		return soundLines;
-//	}
-
+	/**
+	 * Method that calculates array lists of frequency, length, and start time data for all tracks in an array
+	 * of tracks in a MIDI file.
+	 * 
+	 * @param tracks Representative array of tracks derived from a MIDI file's Sequence
+	 * @return array list of all frequency, length, and start time data of a MIDI file
+	 */
+	public static ArrayList<Triple<ArrayList<Double>, ArrayList<Long>, ArrayList<Long>>> soundLines(Track[] tracks) {
+		ArrayList<Triple<ArrayList<Double>, ArrayList<Long>, ArrayList<Long>>> result = new ArrayList<Triple<ArrayList<Double>, ArrayList<Long>, ArrayList<Long>>>();
+		for(Track t: tracks) {
+			result.addAll(soundLines(t));
+		}
+		return result;
+	}
+	
 	/**
 	 * Divides each piano voice up into a single list, so that all indexes when voice is not playing
 	 * are filled with a 0 and indexes when the voice is playing are filled with the frequency. This
@@ -244,18 +176,8 @@ public class MIDIUtil {
 	 * @return List of representative double arrays for each voice (number of arrays in list should be 
 	 * equal to the max number of notes played at once on the given instrument)
 	 */
-	public static ArrayList<Triple<ArrayList<Double>, ArrayList<Long>, ArrayList<Long>>> soundLines2(Track track) {
+	public static ArrayList<Triple<ArrayList<Double>, ArrayList<Long>, ArrayList<Long>>> soundLines(Track track) {
 		Map<Double, Long> map = new HashMap<Double, Long>();
-		// TODO: Don't even create this ArrayList in the first place because it takes up
-		// tons of memory. Rather, create one double array that has one index for each tick,
-		// and add each sound result you encounter to the appropriate tick/index.
-		// Accomplishing this will require a method that first determines which track across
-		// the whole file has the most ticks, so that you can initailize the array to the right size.
-		// ALSO: after looking at the code some more, I realized that the values returned here are
-		// frequencies, not amplitudes. The trick of adding only works with amplitudes, but we can
-		// only derive amplitudes after using the CPPN. That means we need to extract the sound
-		// info and encode with the CPPN at the same time in order to increase efficiency and reduce
-		// the memory footprint.
 		ArrayList<Triple<ArrayList<Double>, ArrayList<Long>, ArrayList<Long>>> soundLines = new ArrayList<Triple<ArrayList<Double>, ArrayList<Long>, ArrayList<Long>>>();
 		HashMap<Double, Integer> lines = new HashMap<Double, Integer>();
 		for(int i = 0; i < track.size(); i++) {
@@ -281,7 +203,7 @@ public class MIDIUtil {
 					long tickStart = map.get(freq);
 					long tickEnd = tick;
 
-					soundLines.get(index).t1.add(freq);                         // add frequency 
+					soundLines.get(index).t1.add(freq);                // add frequency 
 					soundLines.get(index).t2.add(tickEnd-tickStart+1); // add length
 					soundLines.get(index).t3.add(tickStart);           // add start time
 
@@ -290,8 +212,6 @@ public class MIDIUtil {
 				}
 			}
 		}
-		// TODO: Some normalization (division) might be needed here before the final return.
-
 		return soundLines;
 	}
 
@@ -337,7 +257,6 @@ public class MIDIUtil {
 		return NOTES[note] * Math.pow(2.0, (double) octave - 1.0); // this is because frequencies of notes are always double the frequencies of the lower adjacent octave
 	}
 
-
 	/**
 	 * Plays sound using Applet.newAudioClip() - works for MIDI files
 	 * 
@@ -359,77 +278,7 @@ public class MIDIUtil {
 		AudioClip clip = Applet.newAudioClip(url);
 		clip.play();
 	}
-
-//	// TODO: Needs comments
-//	public static double[] lineToAmplitudeArray(String audio, double[] soundLine, Network cppn) {
-//		Pair<ArrayList<Double>, ArrayList<Double>> lineData = notesAndLengthsOfLine(soundLine);
-//		double[] frequencies = ArrayUtil.doubleArrayFromList(lineData.t1);
-//		double[] lengths = ArrayUtil.doubleArrayFromList(lineData.t2);
-//		return lineToAmplitudeArray(audio, frequencies, lengths, cppn);
-//
-//	}
-
-//	// MARKED FOR DELETION
-//	// TODO: Needs comments
-//	// TODO: I wonder if some of this code needs to be moved into soundLines as well.
-//	// I forgot about the Pair<freq,lengths> step, which makes me reconsider some of my
-//	// previous TODO statements ... do as much computation up front as possible.
-//	public static double[] lineToAmplitudeArray(String audio, double[] frequencies, double[] lengths, Network cppn) {
-//
-//		// TODO: We really need to find out what the deal with this number is.
-//		// In particular, I suspect that part of the reason that other MIDI files failed
-//		// is this number ... maybe it only works for fur Elise. We should try to properly
-//		// calculate this value, or at least try different values with different MIDI files
-//		// to get a feel for the result.
-//		// VERY MAGIC NUMBER! NO IDEA WHY THIS NUMBER WORKS!
-//		File audioFile = new File(audio);
-//		try {
-//			Sequence sequence = MidiSystem.getSequence(audioFile);
-//			//dividing sample rate of default audio format by the microseconds per tick to get equivalent of correct answer
-//			double amplitudeLengthMultiplier = PlayDoubleArray.DEFAULT_AUDIO_FORMAT.getFrameRate()/(sequence.getMicrosecondLength()/sequence.getTickLength());
-//			amplitudeLengthMultiplier = Math.ceil(amplitudeLengthMultiplier); // To prevent rounding issues with array indexes
-//			double[] amplitudeArray = new double[(int) StatisticsUtilities.sum(lengths) * (int) amplitudeLengthMultiplier];
-//			int noteLength = 0;
-//			for(int i = 0; i < lengths.length; i++) {
-//				int amplitudeLength = (int)(lengths[i] * amplitudeLengthMultiplier);
-//				double[] amplitude = frequencies[i] == 0 ? new double[amplitudeLength] : SoundFromCPPNUtil.amplitudeGenerator(cppn, amplitudeLength, frequencies[i]);
-//				System.arraycopy(amplitude, 0, amplitudeArray, noteLength, amplitude.length);
-//				noteLength += amplitudeLength;
-//			}
-//			return amplitudeArray;
-//		} catch (InvalidMidiDataException | IOException e) {
-//			e.printStackTrace();
-//			System.exit(1);
-//		}
-//		return null; //shouldn't happen
-//	}
-
-//	// TODO: This method can actually be deleted in favor of the version below
-//	public static double[] lineToAmplitudeArray(String audio, ArrayList<Double> frequencies, ArrayList<Long> lengths, ArrayList<Long> startTimes, Network cppn) {
-//		assert frequencies.size() == lengths.size() && lengths.size() == startTimes.size();
-//		File audioFile = new File(audio);
-//		try {
-//			Sequence sequence = MidiSystem.getSequence(audioFile);
-//			//dividing sample rate of default audio format by the microseconds per tick to get equivalent of correct answer
-//			double amplitudeLengthMultiplier = PlayDoubleArray.DEFAULT_AUDIO_FORMAT.getFrameRate()/(sequence.getMicrosecondLength()/sequence.getTickLength());
-//			amplitudeLengthMultiplier = Math.ceil(amplitudeLengthMultiplier); // To prevent rounding issues with array indexes
-//
-//			//TODO: sum of values at indexes in array list
-//			// TODO: explain
-//			double[] amplitudeArray = new double[(int) (amplitudeLengthMultiplier*(startTimes.get(startTimes.size()-1) + lengths.get(lengths.size()-1)))];
-//			for(int i = 0; i < lengths.size(); i++) {
-//				int amplitudeLength = (int)(amplitudeLengthMultiplier*lengths.get(i).intValue());
-//				double[] amplitude = SoundFromCPPNUtil.amplitudeGenerator(cppn, amplitudeLength, frequencies.get(i));
-//				System.arraycopy(amplitude, 0, amplitudeArray, (int)(amplitudeLengthMultiplier*startTimes.get(i).intValue()), amplitude.length);				
-//			}
-//			return amplitudeArray;
-//		} catch (InvalidMidiDataException | IOException e) {
-//			e.printStackTrace();
-//			System.exit(1);
-//		}
-//		return null; //shouldn't happen
-//	}
-
+	
 	public static double[] lineToAmplitudeArray(String audio, ArrayList<Triple<ArrayList<Double>, ArrayList<Long>, ArrayList<Long>>> midiLists, Network cppn) {
 		File audioFile = new File(audio);
 		try {
@@ -476,90 +325,6 @@ public class MIDIUtil {
 
 	/**
 	 * Loops through array of frequencies generated from a MIDI file and plays it using a CPPN,
-	 * essentially making the CPPN the "instrument". 
-	 * 
-	 * CURRENT ISSUES: Cannot play more than one note at a time (chords are impossible), can't 
-	 * handle MIDI files that have multiple tracks containing melodic content. Also, the conversion 
-	 * from ticks to milliseconds is a little bit off because I don't know exactly what to initialize
-	 * BPM and PPQ to and how to extract that from individual MIDI files in a general way. 
-	 * 
-	 * @param cppn input network used to generate sound
-	 * @param frequencies frequencies corresponding to data taken from MIDI file
-	 * @param lengths double array containing lengths of individual notes
-	 */
-//	public static AmplitudeArrayPlayer playMIDIWithCPPNFromDoubleArray(String audio, Network cppn, double[] amplitudeArray) {
-//		AmplitudeArrayPlayer result = new AmplitudeArrayPlayer(amplitudeArray);
-//		result.start();
-//		return result; // To allow for interrupting of playback
-//	}
-
-	/**
-	 * Class starts playback of a note sequence in its own Thread, but can be interrupted
-	 * @author Jacob Schrum
-	 *
-	 */
-//	public static class CPPNNoteSequencePlayer extends Thread {
-//		boolean play;
-//		// TODO: Replace this variable with a single double array
-//		//private double[][] amplitudeArrays;
-//		private double[] amplitudeArray;
-//		private AmplitudeArrayPlayer arrayPlayer;
-//
-//		public CPPNNoteSequencePlayer() {
-//			// Without any content to play, playing cannot occur
-//			play = false; 
-//		}
-//
-//		//TODO: Rather than pass in the ArrayList of double arrays, a single double array would be passed in.
-//		// This single double array would already contain the values in the toPlay array that is computed in run().
-//		public CPPNNoteSequencePlayer(String audio, Network cppn, double[] amplitudeArray) {
-//			play = true;
-//			
-//		}
-//
-//		public void run() {
-//
-//			// TODO: Allow for interruption. Now that only a single array is used,
-//			// this should be easy. The playDoubleArray method returns an AmplitudeArrayPlayer
-//			// that has a method capable of stopping playback. Save the AmplitudeArrayPlayer
-//			// in a global variable (of CPPNNoteSequencePlayer) and shut down the AmplitudeArrayPlayer
-//			// when the stopPlayback method of the CPPNNoteSequencePlayer is called.
-//
-//			// TODO: The code below would essentially be moved into the soundLines method,
-//			// or other helper methods that are used in the soundLines method. 
-//
-//			//			int max = ArrayUtil.maxArrayLengthFrom2DArray(amplitudeArrays);
-//			//			double[] toPlay = ArrayUtil.arrayOfMaxLengthsFrom2DArray(amplitudeArrays, max);
-//
-//
-//			//System.out.println(maxNote);
-//			//if(maxNote >= 1) { // normalize for excessive volume
-//			for(int i = 0; i < amplitudeArray.length; i++) {
-//				//toPlay[i] /= maxNote;
-//				amplitudeArray[i] /= 2.0;
-//				// Schrum: dividing by 2 seems to produce the least scratchy outcome when
-//				// playing fur Elise. I originally attempted this because it was recommended
-//				// for combining 2 sound sources. However, in retrospect, It is confusing that
-//				// this works for our sounds because there are more than 2 sources. However,
-//				// most of them are empty at any given time. It could be that there are usually
-//				// no more than two sources with actual volume at the same time. This parameter
-//				// is something we need to pay attention to.
-//			}
-//			//}
-//			PlayDoubleArray.playDoubleArray(amplitudeArray);
-//		}
-//
-//		public void stopPlayback() {
-//			play = false;
-//		}
-//
-//		public boolean isPlaying() {
-//			return play;
-//		}
-//	}
-
-	/**
-	 * Loops through array of frequencies generated from a MIDI file and plays it using a CPPN,
 	 * essentially making the CPPN the "instrument". Does so by calling freqFromMIDI to generate
 	 * a pair of double arrays corresponding to the frequencies and durations of all notes in  
 	 * all tracks of a file, and then calls playMIDIWithCPPNFromDoubleArray() with the double arrays.
@@ -573,10 +338,7 @@ public class MIDIUtil {
 		try {
 			sequence = MidiSystem.getSequence(audioFile);
 			Track[] tracks = sequence.getTracks();
-			//TODO: change this magic number! Only works with Fur Elise!
-			Track track = tracks[1];
-
-			ArrayList<Triple<ArrayList<Double>, ArrayList<Long>, ArrayList<Long>>> sound = soundLines2(track);
+			ArrayList<Triple<ArrayList<Double>, ArrayList<Long>, ArrayList<Long>>> sound = soundLines(tracks);
 			double[] data = lineToAmplitudeArray(audio, sound, cppn);
 			return PlayDoubleArray.playDoubleArray(data);
 		} catch (InvalidMidiDataException | IOException e) {
@@ -584,36 +346,4 @@ public class MIDIUtil {
 		}
 		return null; //shouldn't happen
 	}
-
-	/**
-	 * Loops through array of frequencies generated from a MIDI file and plays it using a CPPN,
-	 * essentially making the CPPN the "instrument". Does so by calling freqFromMIDI to generate
-	 * a pair of double arrays corresponding to the frequencies and durations of all notes in a
-	 * specific track of a file, and then calls playMIDIWithCPPNFromDoubleArray() with the double arrays.
-	 * 
-	 * @param audio string representation of MIDI file being analyzed
-	 * @param trackNumber specific track in file from which data is being extracted
-	 * @param cppn Input network being used as the "instrument" to generate MIDI file playback
-	 */
-//	public static CPPNNoteSequencePlayer playMIDIWithCPPNFromString(String audio, int trackNumber, Network cppn) {
-//		File audioFile = new File(audio);
-//		Sequence sequence;
-//		try {
-//			sequence = MidiSystem.getSequence(audioFile);
-//			Track[] tracks = sequence.getTracks();
-//			Track track = tracks[trackNumber];			
-//			// TODO: Instead of having a method that returns this massive ArrayList of separate sound lines,
-//			// simply return a single double array. Essentially, stop using the ArrayList as a middle format
-//			// between MIDI and the one array of double that gets played inside of the run method of the
-//			// note sequence player.
-//			ArrayList<Triple<ArrayList<Double>, ArrayList<Long>, ArrayList<Long>>> sound = soundLines2(track);
-//			for(int i = 0; i < sound.size(); i++) {
-//				double[] data = lineToAmplitudeArray(audio, sound, cppn);
-//				return playMIDIWithCPPNFromDoubleArray(audio, cppn, data);
-//			}
-//		} catch (InvalidMidiDataException | IOException e) {
-//			e.printStackTrace();
-//		}
-//		return null; //shouldn't happen
-//	}
 }

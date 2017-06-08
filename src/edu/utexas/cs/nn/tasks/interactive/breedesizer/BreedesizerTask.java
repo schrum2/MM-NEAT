@@ -126,11 +126,6 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 		// Play original sound if they click the button
 		if(itemID == (CHECKBOX_IDENTIFIER_START - inputMultipliers.length)) {
 			if(!justStopped) { // Pressing original button can stop playback too
-				// Magic number 1: for track index 1: May need to fix later
-				// TODO: Simply remove the track number from this method ... or rather,
-				// make the version that does not accept a track number the default.
-				// Being able to play an individual track could be useful for troubleshooting
-				// later
 				midiPlay = MIDIUtil.playMIDIWithCPPNFromString(Parameters.parameters.stringParameter("remixMIDIFile"), currentCPPN);
 			}
 		}
