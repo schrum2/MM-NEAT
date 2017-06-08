@@ -46,12 +46,14 @@ public class SinglePopulationCompetativeCoevolutionMicroRTSTask<T extends Networ
 	private boolean AiInitialized = false;
 	private MapSequence maps = null;
 	private String mapName;
-	
+
 	private double averageUnitDifference;
 	private int baseUpTime1;
 	private int baseUpTime2;
 	private int harvestingEfficiencyIndex1;
 	private int harvestingEfficiencyIndex2;
+	private double percentEnemiesDestroyed1;
+	private double percentEnemiesDestroyed2;
 
 	NNEvaluationFunction<T> ef1;
 	NNEvaluationFunction<T> ef2;
@@ -180,7 +182,7 @@ public class SinglePopulationCompetativeCoevolutionMicroRTSTask<T extends Networ
 		ArrayList<Pair<double[], double[]>> al = (MicroRTSUtility.oneEval((AI)ai1, (AI)ai2, this, ff, w));
 		return al;
 	}
-	
+
 	/**
 	 *initializes ai (only called once for efficiency) 
 	 * @return 
@@ -201,7 +203,7 @@ public class SinglePopulationCompetativeCoevolutionMicroRTSTask<T extends Networ
 	@Override
 	public double[] minScores() {
 		// TODO: This should be easy to implement, but in the mean time throw an exception
-//		throw new UnsupportedOperationException("minScores not yet implemented");
+		//		throw new UnsupportedOperationException("minScores not yet implemented");
 		return new double[]{};
 	}
 
@@ -224,7 +226,7 @@ public class SinglePopulationCompetativeCoevolutionMicroRTSTask<T extends Networ
 				}
 			}
 		}
-		
+
 	}
 
 	@Override
@@ -233,7 +235,6 @@ public class SinglePopulationCompetativeCoevolutionMicroRTSTask<T extends Networ
 		else if(player == 2) return baseUpTime2;
 		else throw new IllegalArgumentException("not a valid player: " + player);
 	}
-	
 	@Override
 	public void setBaseUpTime(int but, int player) {
 		if(player == 1) baseUpTime1 = but;
@@ -253,6 +254,18 @@ public class SinglePopulationCompetativeCoevolutionMicroRTSTask<T extends Networ
 		else throw new IllegalArgumentException("not a valid player: " + player);
 	}
 	@Override
+	public double getPercentEnemiesDestroyed(int player) {
+		if(player == 1)	return percentEnemiesDestroyed1;
+		if(player == 2) return percentEnemiesDestroyed2;
+		else throw new IllegalArgumentException("not a valid player: " + player);
+	}
+	@Override
+	public void setPercentEnemiesDestroyed(double enemies, int player) {
+		if(player == 1) percentEnemiesDestroyed1 = enemies;
+		else if (player == 2) percentEnemiesDestroyed2 = enemies;
+		else throw new IllegalArgumentException("not a valid player: " + player);
+	}
+	@Override
 	public UnitTypeTable getUnitTypeTable() {return utt;}
 	@Override
 	public GameState getGameState() {return gs;}
@@ -268,5 +281,4 @@ public class SinglePopulationCompetativeCoevolutionMicroRTSTask<T extends Networ
 	public int getResourceGainValue() {
 		return MicroRTSUtility.RESOURCE_GAIN_VALUE;
 	}
-
 }

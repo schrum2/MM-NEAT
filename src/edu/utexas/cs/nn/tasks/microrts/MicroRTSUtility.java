@@ -33,6 +33,14 @@ public class MicroRTSUtility {
 	private static int unitDifferenceNow = 0;
 	private static GameState gs;
 	
+	//for % destroyed
+	private static int uniqueAllTime1;
+	private static int uniqueAllTime2;
+	private static int unitDeaths1;
+	private static int unitDeaths2;
+	private static ArrayList<Unit> unitsAliveBefore = new ArrayList<Unit>();
+	private static ArrayList<Unit> unitsStillAlive = new ArrayList<Unit>();
+	
 	private static ArrayList<Integer> workerWithResourceID = new ArrayList<>();
 	
 	public static <T> ArrayList<Pair<double[], double[]>> oneEval(AI ai1, AI ai2, MicroRTSInformation task, RTSFitnessFunction ff, PhysicalGameStateJFrame w) {		
@@ -72,9 +80,11 @@ public class MicroRTSUtility {
 				
 				for(int i = 0; i < pgs.getWidth(); i++){
 					for(int j = 0; j < pgs.getHeight(); j++){
+						
 						currentUnit = pgs.getUnitAt(i, j);
 						if(currentUnit!=null){
 							
+							updateUnitsAlive(currentUnit);
 							updateUnitDifference(currentUnit);
 							if(currentUnit.getType().name.equals("Worker"))
 								updateHarvestingEfficiency(currentUnit, coevolution, task);
@@ -84,6 +94,8 @@ public class MicroRTSUtility {
 						} //end if (there is a unit on this space)
 					}//end j
 				}//end i
+				updateUnitDeaths();
+				
 				if(!base1Alive && !baseDeath1Recorded) {
 					task.setBaseUpTime(gs.getTime(), 1);
 					baseDeath1Recorded = true;
@@ -98,6 +110,8 @@ public class MicroRTSUtility {
 			gameover  = gs.cycle();
 			if(CommonConstants.watch) w.repaint();
 		}while(!gameover && gs.getTime()< maxCycles);
+		task.setPercentEnemiesDestroyed((unitDeaths2 * 100 ) / uniqueAllTime2, 1);
+		task.setPercentEnemiesDestroyed((unitDeaths1 * 100 ) / uniqueAllTime1, 2);
 		task.setAvgUnitDiff(averageUnitDifference);
 		if(CommonConstants.watch) 
 			w.dispose();
@@ -105,6 +119,31 @@ public class MicroRTSUtility {
 		return ff.getFitness(gs);
 	}
 	
+	private static void updateUnitDeaths() {
+		for(Unit u : unitsAliveBefore){
+			if(!unitsStillAlive.contains(u)){ //TODO ok but maybe this can never happen
+				unitsAliveBefore.remove(unitsAliveBefore.indexOf(u));
+				if(u.getPlayer() == 0){
+					unitDeaths1++;
+				} else if(u.getPlayer() == 1){
+					unitDeaths2++;
+				}
+			}
+		}
+		//TODO unitsAliveBefore = unitsStillAlive
+	}
+
+	private static void updateUnitsAlive(Unit u) {
+		if(!unitsStillAlive.contains(u)){
+			unitsStillAlive.add(u);
+			
+			if(u.getPlayer() == 0)
+				uniqueAllTime1++;
+			else if(u.getPlayer() == 1)
+				uniqueAllTime2++;
+		}
+	}
+
 	private static void updateUnitDifference(Unit u){
 		if(u.getPlayer() == 0){
 			unitDifferenceNow+= u.getCost();

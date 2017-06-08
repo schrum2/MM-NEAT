@@ -25,12 +25,14 @@ public class ProgressiveFitnessFunction extends RTSFitnessFunction{
 				normalize(task.getAverageUnitDifference(), pgs.getHeight()*pgs.getWidth())+1,
 				// normalize() assumes that the results range from 0 to a maximum number, whereas unit differences is 0 on average
 				// and very unlikely to be anywhere close to the max; +1 makes it so that (-2 to 0) => (-1 to 1)
+				normalize(task.getPercentEnemiesDestroyed(1), 100),
 		};
 		double[] opponentFitness = new double[fitness.length];
 		if(coevolution){
 			opponentFitness[0] = normalize(task.getHarvestingEfficiency(2), maxCycles * task.getResourceGainValue());
 			opponentFitness[1] = normalize(task.getBaseUpTime(2), maxCycles);
 			opponentFitness[2] = fitness[2] * -1; // * -1 because each players UnitDifference score will be the Reverse of the other's.
+			opponentFitness[3] = normalize(task.getPercentEnemiesDestroyed(2), 100);
 		}
 
 		int winner = gs.winner(); //0:win 1:loss -1:tie
@@ -48,7 +50,7 @@ public class ProgressiveFitnessFunction extends RTSFitnessFunction{
 
 	@Override
 	public String[] getFunctions() {
-			return new String[]{"Harvesting Efficiency","Time Base was Alive","Average Unit Difference"};//Fitness
+			return new String[]{"Harvesting Efficiency","Time Base was Alive","Average Unit Difference","% Enemies Destroyed"};//Fitness
 								 
 //		else //assuming task is co-evolving counterpart 
 //			return new String[]{"p1's Harvesting Efficiency","p1's Time Base was Alive","p1's Average Unit Difference"

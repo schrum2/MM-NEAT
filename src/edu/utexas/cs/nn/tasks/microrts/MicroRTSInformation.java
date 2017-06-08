@@ -13,7 +13,13 @@ import micro.rts.units.UnitTypeTable;
  */
 public interface MicroRTSInformation {
 	
-	//returns value stored in variable:
+	//returns value stored in variable: percentEnemiesDestroyed
+	public double getPercentEnemiesDestroyed(int player);
+	
+	//stores passed-in value in percentEnemiesDestroyed
+	void setPercentEnemiesDestroyed(double enemies, int player);
+	
+	//returns value stored in variable: avgUnitDifference
 	public double getAverageUnitDifference();
 	
 	//stores passed-in value in averageUnitDifference
@@ -43,4 +49,5 @@ public interface MicroRTSInformation {
 	//for progressive fitness function
 	//returns value stored in constant RESOURCE_GAIN_VALUE
 	public int getResourceGainValue();
+	
 }

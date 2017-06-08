@@ -51,6 +51,7 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 	private double averageUnitDifference;
 	private int baseUpTime;
 	private int harvestingEfficiencyIndex;
+	private double percentEnemiesDestroyed;
 
 	NNEvaluationFunction<T> ef;
 	NNEvaluationFunction<T> ef2;
@@ -278,6 +279,17 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 		else throw new IllegalArgumentException("MicroRTSTask is not equipped to record results for > 1 player");
 	}
 	@Override
+	public double getPercentEnemiesDestroyed(int player) {
+		if(player == 1) return percentEnemiesDestroyed;
+		else throw new IllegalArgumentException("MicroRTSTask is not equipped to record results for > 1 player");
+	}
+
+	@Override
+	public void setPercentEnemiesDestroyed(double enemies, int player) {
+		if(player == 1) percentEnemiesDestroyed = enemies;
+		else throw new IllegalArgumentException("MicroRTSTask is not equipped to record results for > 1 player");
+	}
+	@Override
 	public UnitTypeTable getUnitTypeTable() {return utt;}
 	@Override
 	public GameState getGameState() {return gs;}
@@ -287,7 +299,7 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 	public double getAverageUnitDifference(){return averageUnitDifference;}
 	@Override
 	public void setAvgUnitDiff(double diff) {averageUnitDifference = diff;}
-
+	
 	//for progressive fitness function
 	@Override
 	public int getResourceGainValue() {
