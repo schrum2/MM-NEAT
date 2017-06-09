@@ -223,7 +223,7 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 	 */
 	protected void saveSound(int i, JFileChooser chooser) {
 		try {
-			SoundFromCPPNUtil.saveFileFromCPPN(scores.get(i).individual.getPhenotype(), Parameters.parameters.integerParameter("clipLength"), FREQUENCY_DEFAULT, chooser.getSelectedFile().getName() + ".wav");
+			SoundFromCPPNUtil.saveFileFromCPPN(scores.get(i).individual.getPhenotype(), Parameters.parameters.integerParameter("clipLength"), FREQUENCY_DEFAULT, chooser.getCurrentDirectory() + "\\" + chooser.getSelectedFile().getName() + ".wav");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
