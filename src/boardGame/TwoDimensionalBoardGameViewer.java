@@ -2,6 +2,7 @@ package boardGame;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Point;
 
 import boardGame.othello.Othello;
 import edu.utexas.cs.nn.networks.TWEANN;
@@ -24,7 +25,11 @@ public class TwoDimensionalBoardGameViewer<S  extends TwoDimensionalBoardGameSta
 	public static final int WIDTH = 600;
 	
 	public static final int GRID_WIDTH = 60;
-		
+	public static final int XY_OFFSET = 0;	
+	final int EMPTY = TwoDimensionalBoardGameState.EMPTY;
+
+	
+	
 	public TwoDimensionalBoardGameViewer(T bGame){
 		board = bGame;
 		state = board.getStartingState();
@@ -48,6 +53,7 @@ public class TwoDimensionalBoardGameViewer<S  extends TwoDimensionalBoardGameSta
 		g.setColor(Color.black); // Set to Black to distinguish the Background from the Board
 		g.fillRect(0, 0, WIDTH, HEIGHT);
 		state = (S) newBoard.copy();
+		 
 		renderBoard(g, newBoard);
 	}
 	
@@ -83,7 +89,6 @@ public class TwoDimensionalBoardGameViewer<S  extends TwoDimensionalBoardGameSta
 		}
 		
 	}
-	
 	
 	public static void main(String[] args) {
 		new TwoDimensionalBoardGameViewer(new Othello());

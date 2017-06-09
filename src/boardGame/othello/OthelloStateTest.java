@@ -70,10 +70,10 @@ public class OthelloStateTest {
 	public void testSetupStartingBoard() {
 		start.setupStartingBoard();
 		assertEquals(new OthelloState(), start);
-		assertTrue(start.move(new Point(3,5))); // Still able to make this starting Move
+		assertTrue(start.moveSinglePoint(new Point(3,5))); // Still able to make this starting Move
 		
 		test1.setupStartingBoard(); // Doesn't actually clear the Board; should be unable to make the starting Move
-		assertFalse(test1.move(new Point(3,5)));
+		assertFalse(test1.moveSinglePoint(new Point(3,5)));
 	}
 
 	@Test
@@ -110,22 +110,22 @@ public class OthelloStateTest {
 
 	@Test
 	public void testMove() {
-		assertTrue(start.move(new Point(3, 5))); // Known Point that can be played at the start of Othello
-		assertFalse(start.move(new Point(3, 4))); // Enemy Chip at specified Point
+		assertTrue(start.moveSinglePoint(new Point(3, 5))); // Known Point that can be played at the start of Othello
+		assertFalse(start.moveSinglePoint(new Point(3, 4))); // Enemy Chip at specified Point
 		
 		// Test all 8 possible Directional Moves; copies the original State to avoid changing Players
-		assertTrue(((OthelloState) test1.copy()).move(new Point(6,4))); // Possible Move
-		assertTrue(((OthelloState) test1.copy()).move(new Point(0,4))); // Possible Move
-		assertTrue(((OthelloState) test1.copy()).move(new Point(3,1))); // Possible Move
-		assertTrue(((OthelloState) test1.copy()).move(new Point(3,7))); // Possible Move
-		assertTrue(((OthelloState) test1.copy()).move(new Point(6,1))); // Possible Move
-		assertTrue(((OthelloState) test1.copy()).move(new Point(6,7))); // Possible Move
-		assertTrue(((OthelloState) test1.copy()).move(new Point(0,1))); // Possible Move
-		assertTrue(((OthelloState) test1.copy()).move(new Point(0,7))); // Possible Move
+		assertTrue(((OthelloState) test1.copy()).moveSinglePoint(new Point(6,4))); // Possible Move
+		assertTrue(((OthelloState) test1.copy()).moveSinglePoint(new Point(0,4))); // Possible Move
+		assertTrue(((OthelloState) test1.copy()).moveSinglePoint(new Point(3,1))); // Possible Move
+		assertTrue(((OthelloState) test1.copy()).moveSinglePoint(new Point(3,7))); // Possible Move
+		assertTrue(((OthelloState) test1.copy()).moveSinglePoint(new Point(6,1))); // Possible Move
+		assertTrue(((OthelloState) test1.copy()).moveSinglePoint(new Point(6,7))); // Possible Move
+		assertTrue(((OthelloState) test1.copy()).moveSinglePoint(new Point(0,1))); // Possible Move
+		assertTrue(((OthelloState) test1.copy()).moveSinglePoint(new Point(0,7))); // Possible Move
 		
-		assertFalse(((OthelloState) test1.copy()).move(new Point(5,6))); // Enemy Chip at specified Point
-		assertFalse(((OthelloState) test1.copy()).move(new Point(4,1))); // Non-Linear Path
-		assertFalse(((OthelloState) test1.copy()).move(new Point(1,3))); // Enemy at Point and Non-Linear Path
+		assertFalse(((OthelloState) test1.copy()).moveSinglePoint(new Point(5,6))); // Enemy Chip at specified Point
+		assertFalse(((OthelloState) test1.copy()).moveSinglePoint(new Point(4,1))); // Non-Linear Path
+		assertFalse(((OthelloState) test1.copy()).moveSinglePoint(new Point(1,3))); // Enemy at Point and Non-Linear Path
 	}
 
 	@Test
@@ -179,35 +179,35 @@ public class OthelloStateTest {
 		Set<BoardGameState> listTest1 = test1.possibleBoardGameStates(test1);
 		
 		OthelloState testBoard1 = (OthelloState) test1.copy();
-		testBoard1.move(new Point(6,4));
+		testBoard1.moveSinglePoint(new Point(6,4));
 		listTest1.add(testBoard1);
 		
 		OthelloState testBoard2 = (OthelloState) test1.copy();
-		testBoard2.move(new Point(0,4));
+		testBoard2.moveSinglePoint(new Point(0,4));
 		listTest1.add(testBoard2);
 		
 		OthelloState testBoard3 = (OthelloState) test1.copy();
-		testBoard3.move(new Point(3,1));
+		testBoard3.moveSinglePoint(new Point(3,1));
 		listTest1.add(testBoard3);
 
 		OthelloState testBoard4 = (OthelloState) test1.copy();
-		testBoard4.move(new Point(3,7));
+		testBoard4.moveSinglePoint(new Point(3,7));
 		listTest1.add(testBoard4);
 
 		OthelloState testBoard5 = (OthelloState) test1.copy();
-		testBoard5.move(new Point(6,1));
+		testBoard5.moveSinglePoint(new Point(6,1));
 		listTest1.add(testBoard5);
 
 		OthelloState testBoard6 = (OthelloState) test1.copy();
-		testBoard6.move(new Point(6,7));
+		testBoard6.moveSinglePoint(new Point(6,7));
 		listTest1.add(testBoard6);
 
 		OthelloState testBoard7 = (OthelloState) test1.copy();
-		testBoard7.move(new Point(0,1));
+		testBoard7.moveSinglePoint(new Point(0,1));
 		listTest1.add(testBoard7);
 
 		OthelloState testBoard8 = (OthelloState) test1.copy();
-		testBoard8.move(new Point(0,7));
+		testBoard8.moveSinglePoint(new Point(0,7));
 		listTest1.add(testBoard8);
 		
 		

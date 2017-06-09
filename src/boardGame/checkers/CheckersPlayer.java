@@ -16,7 +16,7 @@ public abstract class CheckersPlayer implements BoardGamePlayer<CheckersState> {
 		// Schrum: This double call to selectMove seems suspicious and potentially unnecessary
 		Point moveThis = selectMove(state);
 		Point moveTo = selectMove(state);
-		state.move(moveThis, moveTo);
+		state.moveDoublePoint(moveThis, moveTo);
 
 		return state;
 	}

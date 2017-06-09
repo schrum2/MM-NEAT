@@ -89,30 +89,30 @@ public class TicTacToeStateTest {
 		
 		start.setupStartingBoard(); // Does nothing to the empty Board; able to fill every Space
 		
-		assertTrue(start.fill(new Point(0,0)));	
-		assertTrue(start.fill(new Point(0,1)));	
-		assertTrue(start.fill(new Point(0,2)));	
-		assertTrue(start.fill(new Point(1,0)));	
-		assertTrue(start.fill(new Point(1,1)));	
-		assertTrue(start.fill(new Point(1,2)));	
-		assertTrue(start.fill(new Point(2,0)));	
-		assertTrue(start.fill(new Point(2,1)));	
-		assertTrue(start.fill(new Point(2,2)));	
+		assertTrue(start.moveSinglePoint(new Point(0,0)));	
+		assertTrue(start.moveSinglePoint(new Point(0,1)));	
+		assertTrue(start.moveSinglePoint(new Point(0,2)));	
+		assertTrue(start.moveSinglePoint(new Point(1,0)));	
+		assertTrue(start.moveSinglePoint(new Point(1,1)));	
+		assertTrue(start.moveSinglePoint(new Point(1,2)));	
+		assertTrue(start.moveSinglePoint(new Point(2,0)));	
+		assertTrue(start.moveSinglePoint(new Point(2,1)));	
+		assertTrue(start.moveSinglePoint(new Point(2,2)));	
 
 		
-		assertFalse(test3.fill(new Point(1,1))); // Unable to fill any more Spaces because the Board is full
+		assertFalse(test3.moveSinglePoint(new Point(1,1))); // Unable to fill any more Spaces because the Board is full
 		
 		test3.setupStartingBoard(); // Does nothing to the Board; unable to fill any Spaces
 		
-		assertFalse(test3.fill(new Point(0,0)));	
-		assertFalse(test3.fill(new Point(0,1)));	
-		assertFalse(test3.fill(new Point(0,2)));
-		assertFalse(start.fill(new Point(1,0)));	
-		assertFalse(start.fill(new Point(1,1)));	
-		assertFalse(start.fill(new Point(1,2)));	
-		assertFalse(start.fill(new Point(2,0)));	
-		assertFalse(start.fill(new Point(2,1)));	
-		assertFalse(start.fill(new Point(2,2)));
+		assertFalse(test3.moveSinglePoint(new Point(0,0)));	
+		assertFalse(test3.moveSinglePoint(new Point(0,1)));	
+		assertFalse(test3.moveSinglePoint(new Point(0,2)));
+		assertFalse(start.moveSinglePoint(new Point(1,0)));	
+		assertFalse(start.moveSinglePoint(new Point(1,1)));	
+		assertFalse(start.moveSinglePoint(new Point(1,2)));	
+		assertFalse(start.moveSinglePoint(new Point(2,0)));	
+		assertFalse(start.moveSinglePoint(new Point(2,1)));	
+		assertFalse(start.moveSinglePoint(new Point(2,2)));
 	}
 
 	@Test
@@ -145,19 +145,19 @@ public class TicTacToeStateTest {
 
 	@Test
 	public void testFill() {
-		assertTrue(start.fill(new Point(0,0)));	
-		assertTrue(start.fill(new Point(0,1)));	
-		assertTrue(start.fill(new Point(0,2)));	
-		assertTrue(start.fill(new Point(1,0)));	
-		assertTrue(start.fill(new Point(1,1)));	
-		assertTrue(start.fill(new Point(1,2)));	
-		assertTrue(start.fill(new Point(2,0)));	
-		assertTrue(start.fill(new Point(2,1)));	
-		assertTrue(start.fill(new Point(2,2)));	
+		assertTrue(start.moveSinglePoint(new Point(0,0)));	
+		assertTrue(start.moveSinglePoint(new Point(0,1)));	
+		assertTrue(start.moveSinglePoint(new Point(0,2)));	
+		assertTrue(start.moveSinglePoint(new Point(1,0)));	
+		assertTrue(start.moveSinglePoint(new Point(1,1)));	
+		assertTrue(start.moveSinglePoint(new Point(1,2)));	
+		assertTrue(start.moveSinglePoint(new Point(2,0)));	
+		assertTrue(start.moveSinglePoint(new Point(2,1)));	
+		assertTrue(start.moveSinglePoint(new Point(2,2)));	
 		
 		assertEquals(start, test3); // After filling Start with the above, it should resemble test3
 		
-		assertFalse(start.fill(new Point(1,1))); // Unable to fill any more Spaces because the Board is full
+		assertFalse(start.moveSinglePoint(new Point(1,1))); // Unable to fill any more Spaces because the Board is full
 	}
 
 	@Test

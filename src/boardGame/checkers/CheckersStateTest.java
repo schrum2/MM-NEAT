@@ -105,10 +105,10 @@ public class CheckersStateTest {
 
 	@Test
 	public void testSetupStartingBoard() {
-		assertFalse(test1.move(new Point(2,1), new Point(3,2))); // No Check at that Point
+		assertFalse(test1.moveDoublePoint(new Point(2,1), new Point(3,2))); // No Check at that Point
 		test1.setupStartingBoard(); // Resets the entire Board
 		assertEquals(start, test1); // test1 now is a Starting State
-		assertTrue(test1.move(new Point(2,1), new Point(3,2))); // Known good Starting Move
+		assertTrue(test1.moveDoublePoint(new Point(2,1), new Point(3,2))); // Known good Starting Move
 	}
 
 	@Test
@@ -155,38 +155,38 @@ public class CheckersStateTest {
 	public void testMove() {
 		// Basic Movement
 
-		assertTrue(start.move(new Point(2,1), new Point(3,2))); // Known good Starting move
-		assertTrue(start.move(new Point(5,0), new Point(4,1))); // Known good Enemy Starting move
-		assertFalse(start.move(new Point(2,3), new Point(3,3))); // Tried to move Non-Diagonally
-		assertFalse(start.move(new Point(1,4), new Point(2,5))); // Tried to move to a Non-Empty, Non-Enemy Space
+		assertTrue(start.moveDoublePoint(new Point(2,1), new Point(3,2))); // Known good Starting move
+		assertTrue(start.moveDoublePoint(new Point(5,0), new Point(4,1))); // Known good Enemy Starting move
+		assertFalse(start.moveDoublePoint(new Point(2,3), new Point(3,3))); // Tried to move Non-Diagonally
+		assertFalse(start.moveDoublePoint(new Point(1,4), new Point(2,5))); // Tried to move to a Non-Empty, Non-Enemy Space
 		
-		assertFalse(start.move(new Point(3,2), new Point(2,1))); // Tried to move a Black Non-King Check up
-		assertTrue(start.move(new Point(2,3), new Point(3,4))); // Known good Move; needed to change Players
-		assertFalse(start.move(new Point(4,1), new Point(5,0))); // Tried to move a Red Non-King Check down		
+		assertFalse(start.moveDoublePoint(new Point(3,2), new Point(2,1))); // Tried to move a Black Non-King Check up
+		assertTrue(start.moveDoublePoint(new Point(2,3), new Point(3,4))); // Known good Move; needed to change Players
+		assertFalse(start.moveDoublePoint(new Point(4,1), new Point(5,0))); // Tried to move a Red Non-King Check down		
 		
 		
 		// King Movement
-		assertTrue(test1.move(new Point(2,3), new Point(3,2))); // Black King Down-Left
-		assertTrue(test1.move(new Point(5,4), new Point(6,3))); // Red King Down-Left
+		assertTrue(test1.moveDoublePoint(new Point(2,3), new Point(3,2))); // Black King Down-Left
+		assertTrue(test1.moveDoublePoint(new Point(5,4), new Point(6,3))); // Red King Down-Left
 		
-		assertTrue(test1.move(new Point(3,2), new Point(2,3))); // Black King Up-Right
-		assertTrue(test1.move(new Point(6,3), new Point(5,4))); // Red King Up-Right
+		assertTrue(test1.moveDoublePoint(new Point(3,2), new Point(2,3))); // Black King Up-Right
+		assertTrue(test1.moveDoublePoint(new Point(6,3), new Point(5,4))); // Red King Up-Right
 		
-		assertTrue(test1.move(new Point(2,3), new Point(1,2))); // Black King Up-Left
-		assertTrue(test1.move(new Point(5,4), new Point(4,3))); // Red King Up-Left
+		assertTrue(test1.moveDoublePoint(new Point(2,3), new Point(1,2))); // Black King Up-Left
+		assertTrue(test1.moveDoublePoint(new Point(5,4), new Point(4,3))); // Red King Up-Left
 		
-		assertTrue(test1.move(new Point(1,2), new Point(2,3))); // Black King Down-Right
-		assertTrue(test1.move(new Point(4,3), new Point(5,4))); // Red King Down-Right
+		assertTrue(test1.moveDoublePoint(new Point(1,2), new Point(2,3))); // Black King Down-Right
+		assertTrue(test1.moveDoublePoint(new Point(4,3), new Point(5,4))); // Red King Down-Right
 		
-		assertFalse(test4.move(new Point(2,3), new Point(3,4))); // Tried to make a Non-Jump Move when a Jump is available; Forced Jump
-		assertTrue(test4.move(new Point(2,3), new Point(3,2))); // Made the First Jump; must now make the Second Jump
-		assertFalse(test4.move(new Point(5,2), new Point(4,1))); // Tried to Move the Enemy Check
-		assertFalse(test4.move(new Point(0,7), new Point(1,6))); // Tried to Move the Non-Double Jump Check
-		assertTrue(test4.move(new Point(4,1), new Point(5,2))); // Made the Second Jump
+		assertFalse(test4.moveDoublePoint(new Point(2,3), new Point(3,4))); // Tried to make a Non-Jump Move when a Jump is available; Forced Jump
+		assertTrue(test4.moveDoublePoint(new Point(2,3), new Point(3,2))); // Made the First Jump; must now make the Second Jump
+		assertFalse(test4.moveDoublePoint(new Point(5,2), new Point(4,1))); // Tried to Move the Enemy Check
+		assertFalse(test4.moveDoublePoint(new Point(0,7), new Point(1,6))); // Tried to Move the Non-Double Jump Check
+		assertTrue(test4.moveDoublePoint(new Point(4,1), new Point(5,2))); // Made the Second Jump
 		
-		assertTrue(test5.move(new Point(6,5), new Point(7,6))); // Moves a Black Check to the end of the Board
-		assertTrue(test5.move(new Point(3,2), new Point(2,3))); // Moves an Enemy Check; needed to change Players
-		assertTrue(test5.move(new Point(7,6), new Point(6,5))); // Able to move the new Black King Check back up
+		assertTrue(test5.moveDoublePoint(new Point(6,5), new Point(7,6))); // Moves a Black Check to the end of the Board
+		assertTrue(test5.moveDoublePoint(new Point(3,2), new Point(2,3))); // Moves an Enemy Check; needed to change Players
+		assertTrue(test5.moveDoublePoint(new Point(7,6), new Point(6,5))); // Able to move the new Black King Check back up
 	}
 
 	@Test
@@ -348,7 +348,7 @@ public class CheckersStateTest {
 		for(CheckersState state : test4Set){
 			assertTrue(test4ATest.contains(state));
 		}
-		test4.move(new Point(2,3), new Point(3,2));
+		test4.moveDoublePoint(new Point(2,3), new Point(3,2));
 		test4Set = test4.possibleBoardGameStates(test4);
 		
 		Set<CheckersState> test4BTest = new HashSet<CheckersState>();

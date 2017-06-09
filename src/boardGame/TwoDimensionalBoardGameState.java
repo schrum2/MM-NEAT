@@ -336,4 +336,36 @@ public abstract class TwoDimensionalBoardGameState implements BoardGameState {
 		return true;
 	}
 	
+	/**
+	 * Used to handle movement for Human2DBoardGamePlayer
+	 * If the BoardGame being played only requires a single Point,
+	 * returns true; else returns false.
+	 * 
+	 * @return True if the BoardGame only requires one Point to move,
+	 * Else returns false
+	 */
+	public abstract boolean moveOnePiece();
+	
+	/**
+	 * Used by games like Othello and TicTacToe;
+	 * Handles movement for Human2DBoardGamePlayer
+	 * Calls the appropriate Move method for the game.
+	 * 
+	 * @param goTo Point clicked on to make a Move
+	 * @return True if the Move is valid, else returns false
+	 */
+	public abstract boolean moveSinglePoint(Point goTo);
+	
+	/**
+	 * Used by games like Checkers;
+	 * Handles movement for Human2DBoardGamePlayer
+	 * Calls the appropriate Move method for the game.
+	 * 
+	 * @param goTo Point clicked on to make a Move
+	 * @param moveTo Point to move to in a valid Move
+	 * @return True if the Move is valid, else returns false
+	 */
+	public abstract boolean moveDoublePoint(Point goTo, Point moveTo);
+	
+	
 }

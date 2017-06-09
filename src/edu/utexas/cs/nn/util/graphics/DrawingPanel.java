@@ -109,6 +109,10 @@ public class DrawingPanel implements ActionListener {
 		// repaint timer so that the screen will update
 		new Timer(DELAY, this).start();
 	}
+	
+	public void addMouseListener(MouseListener ml) {
+		this.panel.addMouseListener(ml);
+	}
 
 	// used for an internal timer that keeps repainting
 	@Override

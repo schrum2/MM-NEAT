@@ -101,7 +101,8 @@ public class OthelloState extends TwoDimensionalBoardGameState {
 	 * @param goTo Point representing an Empty Space being played towards
 	 * @return True if the Move was successful, else returns false
 	 */
-	public boolean move(Point goTo){
+	@Override
+	public boolean moveSinglePoint(Point goTo){
 		
 		int goX = (int) goTo.getX();
 		int goY = (int) goTo.getY();
@@ -203,7 +204,7 @@ public class OthelloState extends TwoDimensionalBoardGameState {
 						if((x >= 0 && x < BOARD_WIDTH) && (y >= 0 && y < BOARD_WIDTH)){
 							if(boardState[x][y] == EMPTY){
 								OthelloState temp = (OthelloState) currentState.copy();
-								if(temp.move(new Point(x, y))){
+								if(temp.moveSinglePoint(new Point(x, y))){
 									possible.add((T) temp);
 								}
 							}
@@ -276,6 +277,22 @@ public class OthelloState extends TwoDimensionalBoardGameState {
 	@Override
 	public Color[] getPlayerColors() {
 		return new Color[]{Color.black, Color.white};
+	}
+
+	/**
+	 * Unused by this BoardGame; always returns false
+	 */
+	@Override
+	public boolean moveDoublePoint(Point goTo, Point moveTo) {
+		return false;
+	}
+
+	/**
+	 * Othello only requires one Point to move; always returns true
+	 */
+	@Override
+	public boolean moveOnePiece() {
+		return true;
 	}
 	
 }

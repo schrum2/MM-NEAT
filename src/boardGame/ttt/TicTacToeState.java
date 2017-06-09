@@ -56,7 +56,8 @@ public class TicTacToeState extends TwoDimensionalBoardGameState {
 	 * @param space Point representing a Space on the Tic-Tac-Toe Board
 	 * @return True if the Player is able to place a Marking in the selected Space, else returns false
 	 */
-	public boolean fill(Point space) {
+	@Override
+	public boolean moveSinglePoint(Point space) {
 		if(placePlayerPiece(nextPlayer, space)) {
 			nextPlayer = (nextPlayer + 1) % numPlayers;
 			checkWinner();
@@ -139,7 +140,7 @@ public class TicTacToeState extends TwoDimensionalBoardGameState {
 
 		for(Point p : tempPoints){
 			TicTacToeState temp = (TicTacToeState) currentState.copy();
-			temp.fill(p);
+			temp.moveSinglePoint(p);
 //			System.out.println(temp);
 //			MiscUtil.waitForReadStringAndEnterKeyPress();
 			returnStates.add(temp);
@@ -169,5 +170,21 @@ public class TicTacToeState extends TwoDimensionalBoardGameState {
 	@Override
 	public Color[] getPlayerColors() {
 		return new Color[]{Color.blue, Color.red};
+	}
+
+	/**
+	 * Unused by this BoardGame; always returns false
+	 */
+	@Override
+	public boolean moveDoublePoint(Point goTo, Point moveTo) {
+		return false;
+	}
+
+	/**
+	 * TicTacToe only requires one Point to move; always returns true
+	 */
+	@Override
+	public boolean moveOnePiece() {
+		return true;
 	}
 }

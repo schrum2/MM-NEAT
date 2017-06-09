@@ -242,7 +242,8 @@ public class CheckersState extends TwoDimensionalBoardGameState {
 	 * @param moveTo Point where the selected Check will be moved to
 	 * @return True if able to move the selected Check to the new space, else returns false
 	 */
-	public boolean move(Point moveThis, Point moveTo){
+	@Override
+	public boolean moveDoublePoint(Point moveThis, Point moveTo){
 		
 		assert isPointInBounds(moveThis);
 		assert isPointInBounds(moveTo);
@@ -403,11 +404,11 @@ public class CheckersState extends TwoDimensionalBoardGameState {
 
 							if(checkMovement(check, moveTo)){ // If able to Move, check if it's a Jump or not
 								if(ableToJump(check, moveTo)){ // Able to Jump
-									temp.move(check, moveTo);
+									temp.moveDoublePoint(check, moveTo);
 									possibleJump.add((T) temp);
 									possibleNonJump.clear();
 								}else{ // Unable to Jump
-									temp.move(check, moveTo);
+									temp.moveDoublePoint(check, moveTo);
 									possibleNonJump.add((T) temp);
 								}
 							}
@@ -451,6 +452,22 @@ public class CheckersState extends TwoDimensionalBoardGameState {
 	@Override
 	public Color[] getPlayerColors() {
 		// Problem here: each player index actually has two associated colors corresponding to different piece types
-		return new Color[]{Color.black, Color.black, Color.red, Color.red};
+		return new Color[]{Color.black, Color.red, new Color(54,54,54), new Color(255,81,81)};
+	}
+
+	/**
+	 * Unused by this BoardGame; always returns false
+	 */
+	@Override
+	public boolean moveSinglePoint(Point goTo) {
+		return false;
+	}
+
+	/**
+	 * Checkers requires two Points to move; returns false
+	 */
+	@Override
+	public boolean moveOnePiece() {
+		return false;
 	}
 }
