@@ -18,7 +18,7 @@ import micro.ai.mcts.naivemcts.NaiveMCTS;
  */
 public class CompetitiveEnemySequence implements EnemySequence{
 
-	private static final int gensPerEnemy = 1;
+	private static final int gensPerEnemy = 20;
 	private ArrayList<AI> appropriateEnemies = new ArrayList<>();
 	private int generationOfLastUpdate = -1;
 

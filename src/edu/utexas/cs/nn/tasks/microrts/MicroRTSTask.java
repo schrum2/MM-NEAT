@@ -208,7 +208,6 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 		}
 		if(Parameters.parameters.classParameter("microRTSEnemySequence")!=null){
 			enemySet = enemies.getAppropriateEnemy(MMNEAT.ea.currentGeneration());
-			System.out.println("changed enemy set to: " + enemySet.toString());
 		} else {
 			enemySet = new ArrayList<>(1); // will only contain one enemy
 			enemySet.add(ai2);

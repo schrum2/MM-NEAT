@@ -1,6 +1,7 @@
 package edu.utexas.cs.nn.tasks.microrts;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import edu.utexas.cs.nn.networks.hyperneat.Substrate;
@@ -8,6 +9,7 @@ import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.microrts.fitness.ProgressiveFitnessFunction;
 import edu.utexas.cs.nn.tasks.microrts.fitness.RTSFitnessFunction;
+import edu.utexas.cs.nn.util.MiscUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.datastructures.Triple;
 import micro.ai.core.AI;
@@ -36,12 +38,8 @@ public class MicroRTSUtility {
 	private static GameState gs;
 
 	//for % destroyed
-	private static int uniqueAllTime1;
-	private static int uniqueAllTime2;
-	private static int unitDeaths1;
-	private static int unitDeaths2;
-	private static ArrayList<Unit> unitsAliveBefore = new ArrayList<Unit>();
-	private static ArrayList<Unit> unitsStillAlive = new ArrayList<Unit>();
+	static HashSet<Long> createdUnitIDs1 = new HashSet<>();
+	static HashSet<Long> createdUnitIDs2 = new HashSet<>();
 
 	private static ArrayList<Integer> workerWithResourceID = new ArrayList<>();
 
@@ -86,7 +84,11 @@ public class MicroRTSUtility {
 						currentUnit = pgs.getUnitAt(i, j);
 						if(currentUnit!=null){
 							
-							updateUnitsAlive(currentUnit);
+							if(currentUnit.getPlayer() == 0)
+								createdUnitIDs1.add(currentUnit.getID());
+							else if(currentUnit.getPlayer() == 1)
+								createdUnitIDs2.add(currentUnit.getID());
+							
 							updateUnitDifference(currentUnit);
 							if(currentUnit.getType().name.equals("Worker"))
 								updateHarvestingEfficiency(currentUnit, coevolution, task);
@@ -96,8 +98,6 @@ public class MicroRTSUtility {
 						} //end if (there is a unit on this space)
 					}//end j
 				}//end i
-				updateUnitDeaths();
-				
 				if(!base1Alive && !baseDeath1Recorded) {
 					task.setBaseUpTime(gs.getTime(), 1);
 					baseDeath1Recorded = true;
@@ -113,48 +113,30 @@ public class MicroRTSUtility {
 			if(CommonConstants.watch) w.repaint();
 		}while(!gameover && gs.getTime()< maxCycles);
 		ff.setGameEndTime(gs.getTime());
+		//count remaining units
+		int terminalUnits1= 0;
+		int terminalUnits2= 0;
+		for(int i = 0; i < pgs.getWidth(); i++){
+			for(int j = 0; j < pgs.getHeight(); j++){
+				currentUnit = pgs.getUnitAt(i, j);
+				if(currentUnit!=null){
+					if(currentUnit.getPlayer() == 0)
+						terminalUnits1++;
+					else if(currentUnit.getPlayer() == 1)
+						terminalUnits2++;
+				}
+			}
+		}
 		
-		//actually it looks like both of these 2 things are being calculated wrongly. oops.
-		System.out.println("!!! " + unitDeaths2 + " out of " + uniqueAllTime2 + " = "+((unitDeaths2 * 100 ) / uniqueAllTime2) + " % !!!!");
-		task.setPercentEnemiesDestroyed((unitDeaths2 * 100 ) / uniqueAllTime2, 1);
+//		System.out.println("!!! " + unitDeaths2 + " out of " + uniqueAllTime2 + " = "+((unitDeaths2 * 100 ) / uniqueAllTime2) + " % !!!!"); //TODO remove when fix
+		task.setPercentEnemiesDestroyed(((createdUnitIDs2.size() - terminalUnits2) * 100 ) / createdUnitIDs2.size(), 1);
 		if(coevolution)
-			task.setPercentEnemiesDestroyed((unitDeaths1 * 100 ) / uniqueAllTime1, 2);
+			task.setPercentEnemiesDestroyed(((createdUnitIDs1.size() - terminalUnits1) * 100 ) / createdUnitIDs1.size(), 2);
 		task.setAvgUnitDiff(averageUnitDifference);
 		if(CommonConstants.watch) 
 			w.dispose();
 
 		return ff.getFitness(gs);
-	}
-
-	private static void updateUnitsAlive(Unit u) { //add new units to stillAlive
-		if(!unitsStillAlive.contains(u)){
-			unitsStillAlive.add(u);
-
-			if(!unitsAliveBefore.contains(u)){ //new unit created!
-				if(u.getPlayer() == 0)
-					uniqueAllTime1++;
-				else if(u.getPlayer() == 1)
-					uniqueAllTime2++;
-			}
-		}
-	}
-	
-	private static void updateUnitDeaths() { //Remove from aliveBefore all that is not also in stillAlive 
-		for(Unit u : unitsAliveBefore){
-			if(!unitsStillAlive.contains(u)){
-				unitsAliveBefore.remove(u);
-				if(u.getPlayer() == 0){
-					unitDeaths1++;
-				} else if(u.getPlayer() == 1){
-					unitDeaths2++;
-				}
-			}
-		}
-		for(Unit u : unitsStillAlive){ //about to move to the next game state: make unitsAliveBefore = unitsStillAlive
-			if(!unitsAliveBefore.contains(u)){
-				unitsAliveBefore.add(u);
-			}
-		}
 	}
 
 	private static void updateUnitDifference(Unit u){
@@ -178,7 +160,7 @@ public class MicroRTSUtility {
 		}
 	}
 
-	//Assumes bases exist at the start of the map
+	//Assumes bases exist at the start of the game
 	private static void updateBaseIsAlive(Unit u, boolean coevolution) {
 		if(u.getPlayer() == 0){
 			base1Alive = true;
