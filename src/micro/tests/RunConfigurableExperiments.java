@@ -350,7 +350,8 @@ public class RunConfigurableExperiments {
     }
     //Arguments: bots1file (bots2file|-) mapsfile resultsfile iterations (traceDir)
 
-    public static void main(String args[]) throws Exception {
+    @SuppressWarnings("unused")
+	public static void main(String args[]) throws Exception {
         boolean asymetric = !args[1].equals("-");
         loadBots1(args[0]);
         if (asymetric) {

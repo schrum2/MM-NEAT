@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package micro.rts.units;
 
 import java.io.Serializable;
@@ -12,6 +8,7 @@ import java.util.List;
  *
  * @author santi
  */
+@SuppressWarnings("serial")
 public class UnitTypeTable implements Serializable {
     public static final int VERSION_ORIGINAL = 1;
     public static final int VERSION_ORIGINAL_FINETUNED = 2;

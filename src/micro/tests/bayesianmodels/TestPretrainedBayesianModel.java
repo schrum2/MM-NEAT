@@ -86,7 +86,8 @@ public class TestPretrainedBayesianModel {
                                          int nfolds, boolean DEBUG, boolean calibrate) throws Exception
     {
         Random r = new Random();
-        List<Integer> folds[] = new List[nfolds];
+        @SuppressWarnings("unchecked")
+		List<Integer> folds[] = new List[nfolds];
         int nfeatures = X_l.get(0).length;
         int []Xsizes = new int[nfeatures];
         int Ysize = 0;

@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package micro.rts;
 
 import java.util.LinkedList;
@@ -12,6 +8,7 @@ import micro.rts.units.Unit;
  *
  * @author santi
  */
+@SuppressWarnings("serial")
 public class PartiallyObservableGameState extends GameState {
     int player;   // the observer player
 

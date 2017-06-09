@@ -1,30 +1,27 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package micro.rts;
 
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-
-import micro.rts.units.Unit;
 import java.util.LinkedList;
 import java.util.List;
-import micro.util.XMLWriter;
+
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
+
+import micro.rts.units.Unit;
 import micro.rts.units.UnitTypeTable;
+import micro.util.XMLWriter;
 
 
 /**
  *
  * @author santi
  */
+@SuppressWarnings("serial")
 public class PhysicalGameState implements Serializable {
     public static final int TERRAIN_NONE = 0;
     public static final int TERRAIN_WALL = 1;

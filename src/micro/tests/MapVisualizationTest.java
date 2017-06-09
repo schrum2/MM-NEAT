@@ -18,7 +18,8 @@ import micro.util.XMLWriter;
  * @author santi
  */
 public class MapVisualizationTest {
-    public static void main(String args[]) throws Exception {
+    @SuppressWarnings("unused")
+	public static void main(String args[]) throws Exception {
         UnitTypeTable utt = new UnitTypeTable();
         PhysicalGameState pgs = PhysicalGameState.load("maps/8x8/basesWorkers8x8Obstacle.xml", utt);
 

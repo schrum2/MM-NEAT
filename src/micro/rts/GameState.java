@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package micro.rts;
 
 import java.io.Serializable;
@@ -17,6 +13,7 @@ import micro.util.XMLWriter;
  *
  * @author santi
  */
+@SuppressWarnings("serial")
 public class GameState implements Serializable{
     static Random r = new Random();         // only used if the action conflict resolution strategy is set to random
     int unitCancelationCounter = 0;  // only used if the action conflict resolution strategy is set to alternating

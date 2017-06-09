@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package micro.rts;
 
 import java.io.Serializable;
@@ -17,6 +13,7 @@ import micro.util.XMLWriter;
  *
  * @author santi
  */
+@SuppressWarnings("serial")
 public class UnitAction implements Serializable {
     public static Random r = new Random();  // only used for non-deterministic events    
     

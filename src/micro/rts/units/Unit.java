@@ -19,6 +19,7 @@ import micro.util.XMLWriter;
  *
  * @author santi
  */
+@SuppressWarnings("serial")
 public class Unit implements Serializable {
     UnitType type;
     

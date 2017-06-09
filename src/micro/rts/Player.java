@@ -1,20 +1,17 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package micro.rts;
 
 import java.io.Serializable;
 import java.io.Writer;
 
 import org.jdom.Element;
-import micro.rts.units.Unit;
+
 import micro.util.XMLWriter;
 
 /**
  *
  * @author santi
  */
+@SuppressWarnings("serial")
 public class Player  implements Serializable {
     int ID = 0;
     int resources = 0;

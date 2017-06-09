@@ -10,6 +10,7 @@ import java.util.ArrayList;
  * @author santi, inspired in the original UnitDefinitino class by Jeff Bernard
  *
  */
+@SuppressWarnings("serial")
 public class UnitType implements Serializable {
 
     public int ID = 0;          // the type ID of units of this type

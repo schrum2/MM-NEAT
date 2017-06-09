@@ -35,6 +35,7 @@ public class TetrisVisualizer extends AbstractVisualizer {
 
 	private TetrisStateResponse currentState = null;
 	private TinyGlue theGlueState = null;
+	@SuppressWarnings("unused")
 	private int lastUpdateTimeStep = -1;
 	javax.swing.JCheckBox printGridCheckBox = null;
 

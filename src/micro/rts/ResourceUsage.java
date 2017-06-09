@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package micro.rts;
 
 import java.io.Serializable;
@@ -12,6 +8,7 @@ import java.util.List;
  *
  * @author santi
  */
+@SuppressWarnings("serial")
 public class ResourceUsage implements Serializable {
     List<Integer> positionsUsed = new LinkedList<Integer>();
     int []resourcesUsed = new int[2];   // 2 players is hardcoded here! FIX!!!

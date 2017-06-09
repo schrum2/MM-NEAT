@@ -42,7 +42,8 @@ public class AIComplianceTest {
     
     
     
-    public static boolean complianceTest(Class c) {
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	public static boolean complianceTest(Class c) {
         System.out.println("Testing " + c.getName() + "...");
         
         List<Class> superclasses = getSuperClasses(c);
@@ -114,7 +115,8 @@ public class AIComplianceTest {
     }
     
     
-    public static List<Class> getSuperClasses(Class c) {
+    @SuppressWarnings("rawtypes")
+	public static List<Class> getSuperClasses(Class c) {
         List<Class> l = new ArrayList<>();
         while(c!=null) {
             l.add(c);
