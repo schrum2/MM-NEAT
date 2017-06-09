@@ -1,12 +1,14 @@
 package edu.utexas.cs.nn.tasks.boardGame;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import boardGame.BoardGame;
 import boardGame.agents.BoardGamePlayer;
 import boardGame.agents.HeuristicBoardGamePlayer;
 import boardGame.featureExtractor.BoardGameFeatureExtractor;
 import boardGame.fitnessFunction.BoardGameFitnessFunction;
+import boardGame.fitnessFunction.SimpleWinLoseDrawBoardGameFitness;
 import boardGame.heuristics.NNBoardGameHeuristic;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
@@ -24,7 +26,10 @@ public class MultiPopulationCompetativeCoevolutionBoardGameTask extends GroupTas
 	@SuppressWarnings("rawtypes")
 	BoardGameFeatureExtractor featExtract;
 	@SuppressWarnings("rawtypes")
-	BoardGameFitnessFunction fitnessFunction;
+	BoardGameFitnessFunction selectionFunction;
+	
+	List<BoardGameFitnessFunction> fitFunctions = new ArrayList<BoardGameFitnessFunction>();
+
 	
 	@SuppressWarnings("rawtypes")
 	public MultiPopulationCompetativeCoevolutionBoardGameTask(){
@@ -33,7 +38,7 @@ public class MultiPopulationCompetativeCoevolutionBoardGameTask extends GroupTas
 			bg = (BoardGame) ClassCreation.createObject("boardGame");
 			players = new BoardGamePlayer[numberOfPopulations()];
 			featExtract = (BoardGameFeatureExtractor) ClassCreation.createObject("boardGameFeatureExtractor");
-			fitnessFunction = (BoardGameFitnessFunction) ClassCreation.createObject("boardGameFitnessFunction");
+			selectionFunction = (BoardGameFitnessFunction) ClassCreation.createObject("boardGameFitnessFunction");
 			for(int i = 0; i < numberOfPopulations(); i++){
 				players[i] = (BoardGamePlayer) ClassCreation.createObject("boardGamePlayer"); // The Player
 			}
@@ -42,7 +47,17 @@ public class MultiPopulationCompetativeCoevolutionBoardGameTask extends GroupTas
 			System.out.println("BoardGame instance could not be loaded");
 			System.exit(1);
 		}
-		MMNEAT.registerFitnessFunction(fitnessFunction.getFitnessName());
+		
+		MMNEAT.registerFitnessFunction(selectionFunction.getFitnessName());
+		
+		// Add Other Scores here to keep track of other Fitness Functions
+		fitFunctions.add(new SimpleWinLoseDrawBoardGameFitness());
+		
+		for(BoardGameFitnessFunction fit : fitFunctions){
+			MMNEAT.registerFitnessFunction(fit.getFitnessName(), false);
+		}
+		
+		fitFunctions.add(0, selectionFunction);
 	}
 	
 	@Override
@@ -79,7 +94,7 @@ public class MultiPopulationCompetativeCoevolutionBoardGameTask extends GroupTas
 		// TODO
 		
 		
-		BoardGameUtil.playGame(bg, players, fitnessFunction);
+		BoardGameUtil.playGame(bg, players, fitFunctions);
 		
 		
 		// TODO

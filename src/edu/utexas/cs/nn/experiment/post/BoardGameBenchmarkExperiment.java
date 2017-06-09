@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import boardGame.BoardGame;
 import boardGame.BoardGameState;
@@ -11,6 +12,7 @@ import boardGame.agents.BoardGamePlayer;
 import boardGame.agents.HeuristicBoardGamePlayer;
 import boardGame.featureExtractor.BoardGameFeatureExtractor;
 import boardGame.fitnessFunction.BoardGameFitnessFunction;
+import boardGame.fitnessFunction.SimpleWinLoseDrawBoardGameFitness;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
@@ -34,10 +36,13 @@ public class BoardGameBenchmarkExperiment<T> implements Experiment{
 
 	
 	private BoardGame bg;
-	private BoardGameFitnessFunction fitFunct;
+	private BoardGameFitnessFunction selectionFunction;
 	private BoardGameFeatureExtractor featExtract;
 	private BoardGamePlayer[] players;
 	private BoardGamePlayer opponent;
+	
+	private List<BoardGameFitnessFunction> fitFunctions = new ArrayList<BoardGameFitnessFunction>();
+	
 	
 	/**
 	 * Gets the best Coevolved BoardGamePlayer in a given Task; initializes the boardGame and fitnessFunction
@@ -75,13 +80,26 @@ public class BoardGameBenchmarkExperiment<T> implements Experiment{
 		// TODO: Find a way to load up these specifications from the directory?/Parameters File?
 		try {
 			bg = (BoardGame) ClassCreation.createObject("boardGame");
-			fitFunct = (BoardGameFitnessFunction<?>) ClassCreation.createObject("boardGameFitnessFunction");
+			selectionFunction = (BoardGameFitnessFunction<?>) ClassCreation.createObject("boardGameFitnessFunction");
 			featExtract = (BoardGameFeatureExtractor<BoardGameState>) ClassCreation.createObject("boardGameFeatureExtractor");
 			opponent = (BoardGamePlayer) ClassCreation.createObject("boardGameOpponent");
 		} catch (NoSuchMethodException e) {
 			e.printStackTrace();
 			System.exit(1);
 		}
+		
+
+		MMNEAT.registerFitnessFunction(selectionFunction.getFitnessName());
+		
+		// Add Other Scores here to keep track of other Fitness Functions
+		fitFunctions.add(new SimpleWinLoseDrawBoardGameFitness());
+		
+		for(BoardGameFitnessFunction fit : fitFunctions){
+			MMNEAT.registerFitnessFunction(fit.getFitnessName(), false);
+		}
+		
+		fitFunctions.add(0, selectionFunction);
+		
 	}
 	
 	/**
@@ -118,7 +136,7 @@ public class BoardGameBenchmarkExperiment<T> implements Experiment{
 			
 			
 			
-			BoardGameUtil.playGame(bg, players, fitFunct);
+			BoardGameUtil.playGame(bg, players, fitFunctions);
 			
 			if (panel != null) {
 				panel.dispose();

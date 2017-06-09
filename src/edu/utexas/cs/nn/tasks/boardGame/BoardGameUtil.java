@@ -23,11 +23,10 @@ public class BoardGameUtil {
 	static TwoDimensionalBoardGameViewer view = null;
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static ArrayList<Pair<double[], double[]>> playGame(BoardGame bg, BoardGamePlayer[] players, BoardGameFitnessFunction fit){
+	public static ArrayList<Pair<double[], double[]>> playGame(BoardGame bg, BoardGamePlayer[] players, List<BoardGameFitnessFunction> fit){
 		
 		
 		bg.reset();
-		double[] fitStore = new double[players.length];
 		
 		if(CommonConstants.watch && bg instanceof TwoDimensionalBoardGame){ // Creates a new BoardGameViewer if bg is a TwoDimensionalBoardGame
 			if(view != null){ 
@@ -50,7 +49,10 @@ public class BoardGameUtil {
 			int playIndex = bg.getCurrentPlayer(); // Stores the current Player's Index to access the Player's Fitness
 			bg.move(players[bg.getCurrentPlayer()]);
 			
-			fitStore[playIndex] += fit.updateFitness(bg.getCurrentState(), playIndex); // Updates the Fitness for the Player that just made a Move
+			for(BoardGameFitnessFunction fitFunct : fit){
+				fitFunct.updateFitness(bg.getCurrentState(), playIndex);
+			}
+			
 		}
 		
 		if(CommonConstants.watch && bg instanceof TwoDimensionalBoardGame){ // Renders the last Move of the game
@@ -64,9 +66,14 @@ public class BoardGameUtil {
 		ArrayList<Pair<double[], double[]>> scoring = new ArrayList<Pair<double[], double[]>>(bg.getNumPlayers());
 		
 		for(int i = 0; i < players.length; i++){
-			double fitness = fitStore[i]; // Gets the final Fitness for each Player
-
-			Pair<double[], double[]> evalResults = new Pair<double[], double[]>(new double[] { fitness }, new double[0]);
+			
+			double[] otherScores = new double[fit.size()-1]; // Stores all other Scores except the first, which is used as the Selection Fitness
+			
+			for(int j = 0; i < fit.size() - 1; j++){
+				otherScores[j] = fit.get(j+1).getFitness(); // Gets all Scores except the first one
+			}
+			
+			Pair<double[], double[]> evalResults = new Pair<double[], double[]>(new double[] { fit.get(0).getFitness() }, otherScores);
 			scoring.add(evalResults);
 		}
 		

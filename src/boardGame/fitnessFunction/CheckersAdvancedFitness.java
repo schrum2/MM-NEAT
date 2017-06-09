@@ -17,9 +17,14 @@ public class CheckersAdvancedFitness<T extends BoardGameState> implements BoardG
 	private static final int KING = 2; // Checkers is structured so that the
 										// Index for Kings is PlayerIndex + 2
 
-
+	private double fitness = 0;
+	
+	public double getFitness(){
+		return fitness;
+	}
+	
 	@Override
-	public double updateFitness(T bgs, int index) {
+	public void updateFitness(T bgs, int index) {
 
 		int playerChecks = 0;
 		int playerKings = 0;
@@ -40,7 +45,7 @@ public class CheckersAdvancedFitness<T extends BoardGameState> implements BoardG
 				opponentKings++;
 			}
 		}
-		return (100 + 2 * playerChecks + 3 * playerKings + 2 * (12 - opponentChecks) + 3 * (12 - opponentKings));
+		fitness += (100 + 2 * playerChecks + 3 * playerKings + 2 * (12 - opponentChecks) + 3 * (12 - opponentKings));
 	}
 
 

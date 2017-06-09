@@ -8,6 +8,7 @@ import boardGame.agents.BoardGamePlayer;
 import boardGame.agents.HeuristicBoardGamePlayer;
 import boardGame.featureExtractor.BoardGameFeatureExtractor;
 import boardGame.fitnessFunction.BoardGameFitnessFunction;
+import boardGame.fitnessFunction.SimpleWinLoseDrawBoardGameFitness;
 import boardGame.heuristics.NNBoardGameHeuristic;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
@@ -25,14 +26,17 @@ public class SinglePopulationCompetativeCoevolutionBoardGameTask<T extends Netwo
 	BoardGamePlayer[] players;
 	BoardGameFeatureExtractor<BoardGameState> featExtract;
 	@SuppressWarnings("rawtypes")
-	BoardGameFitnessFunction fitnessFunction;
+	BoardGameFitnessFunction selectionFunction;
+	
+	List<BoardGameFitnessFunction> fitFunctions = new ArrayList<BoardGameFitnessFunction>();
+	
 	
 	@SuppressWarnings({ "rawtypes", "unchecked"})
 	public SinglePopulationCompetativeCoevolutionBoardGameTask(){
 		try {
 			players = new BoardGamePlayer[groupSize()];
 			featExtract = (BoardGameFeatureExtractor<BoardGameState>) ClassCreation.createObject("boardGameFeatureExtractor");
-			fitnessFunction = (BoardGameFitnessFunction) ClassCreation.createObject("boardGameFitnessFunction");
+			selectionFunction = (BoardGameFitnessFunction) ClassCreation.createObject("boardGameFitnessFunction");
 			for(int i = 0; i < groupSize(); i++){
 				players[i] = (BoardGamePlayer) ClassCreation.createObject("boardGamePlayer"); // The Player
 			}
@@ -42,7 +46,17 @@ public class SinglePopulationCompetativeCoevolutionBoardGameTask<T extends Netwo
 			System.out.println("BoardGame instance could not be loaded");
 			System.exit(1);
 		}
-		MMNEAT.registerFitnessFunction(fitnessFunction.getFitnessName());
+		
+		MMNEAT.registerFitnessFunction(selectionFunction.getFitnessName());
+		
+		// Add Other Scores here to keep track of other Fitness Functions
+		fitFunctions.add(new SimpleWinLoseDrawBoardGameFitness());
+		
+		for(BoardGameFitnessFunction fit : fitFunctions){
+			MMNEAT.registerFitnessFunction(fit.getFitnessName(), false);
+		}
+		
+		fitFunctions.add(0, selectionFunction);
 	}
 	
 	@Override
@@ -65,7 +79,7 @@ public class SinglePopulationCompetativeCoevolutionBoardGameTask<T extends Netwo
 			evolved.setHeuristic((new NNBoardGameHeuristic(gene.getPhenotype(),featExtract)));
 			teamPlayers[index++] = evolved;
 		}
-		return BoardGameUtil.playGame(MMNEAT.boardGame, teamPlayers, fitnessFunction);
+		return BoardGameUtil.playGame(MMNEAT.boardGame, teamPlayers, fitFunctions);
 	}
 
 	@Override
