@@ -22,17 +22,17 @@ import micro.rts.units.Unit;
  * contains methods used by both MicroRTSTask and SinglePopulationCompetativeCoevolutionMicroRTSTask
  */
 public class MicroRTSUtility {
-	
+
 	public static final int WINDOW_LENGTH = 640;
 	public static final int RESOURCE_GAIN_VALUE = 2;
 	private static boolean prog = Parameters.parameters.classParameter("microRTSFitnessFunction").equals(ProgressiveFitnessFunction.class);
 	private static boolean coevolution;
 	static boolean base1Alive = false;
 	static boolean base2Alive = false;
-	
+
 	private static int unitDifferenceNow = 0;
 	private static GameState gs;
-	
+
 	//for % destroyed
 	private static int uniqueAllTime1;
 	private static int uniqueAllTime2;
@@ -40,11 +40,11 @@ public class MicroRTSUtility {
 	private static int unitDeaths2;
 	private static ArrayList<Unit> unitsAliveBefore = new ArrayList<Unit>();
 	private static ArrayList<Unit> unitsStillAlive = new ArrayList<Unit>();
-	
+
 	private static ArrayList<Integer> workerWithResourceID = new ArrayList<>();
-	
+
 	public static <T> ArrayList<Pair<double[], double[]>> oneEval(AI ai1, AI ai2, MicroRTSInformation task, RTSFitnessFunction ff, PhysicalGameStateJFrame w) {		
-		
+
 		coevolution = ff.getCoevolution();
 		gs = task.getGameState();
 		PhysicalGameState pgs = task.getPhysicalGameState();
@@ -55,13 +55,13 @@ public class MicroRTSUtility {
 		ff.setMaxCycles(maxCycles);
 		PlayerAction pa1;
 		PlayerAction pa2;
-		
+
 		Unit currentUnit; 
 		boolean baseDeath1Recorded = false;
 		boolean baseDeath2Recorded = false;
-		
+
 		int currentCycle = 0;
-		
+
 		do{ //simulate game:
 			try {
 				pa1 = ai1.getAction(0, gs); //throws exception
@@ -71,13 +71,13 @@ public class MicroRTSUtility {
 				pa2 = ai2.getAction(1, gs); //throws exception
 				gs.issueSafe(pa2);
 			} catch (Exception e) { e.printStackTrace();System.exit(1); }
-			
+
 			if(prog){ //if our FitnessFunction needs us to record information throughout the game
-				currentUnit = null;				
+				currentUnit = null;	
 				unitDifferenceNow = 0;
 				base1Alive = false;
 				base2Alive = false;
-				
+
 				for(int i = 0; i < pgs.getWidth(); i++){
 					for(int j = 0; j < pgs.getHeight(); j++){
 						
@@ -110,20 +110,36 @@ public class MicroRTSUtility {
 			gameover  = gs.cycle();
 			if(CommonConstants.watch) w.repaint();
 		}while(!gameover && gs.getTime()< maxCycles);
+		
+		//actually it looks like both of these 2 things are being calculated wrongly. oops.
+		System.out.println("!!! " + unitDeaths2 + " out of " + uniqueAllTime2 + " = "+((unitDeaths2 * 100 ) / uniqueAllTime2) + " % !!!!");
 		task.setPercentEnemiesDestroyed((unitDeaths2 * 100 ) / uniqueAllTime2, 1);
 		if(coevolution)
 			task.setPercentEnemiesDestroyed((unitDeaths1 * 100 ) / uniqueAllTime1, 2);
 		task.setAvgUnitDiff(averageUnitDifference);
 		if(CommonConstants.watch) 
 			w.dispose();
-		
+
 		return ff.getFitness(gs);
 	}
+
+	private static void updateUnitsAlive(Unit u) { //add new units to stillAlive
+		if(!unitsStillAlive.contains(u)){
+			unitsStillAlive.add(u);
+
+			if(!unitsAliveBefore.contains(u)){ //new unit created!
+				if(u.getPlayer() == 0)
+					uniqueAllTime1++;
+				else if(u.getPlayer() == 1)
+					uniqueAllTime2++;
+			}
+		}
+	}
 	
-	private static void updateUnitDeaths() {
+	private static void updateUnitDeaths() { //Remove from aliveBefore all that is not also in stillAlive 
 		for(Unit u : unitsAliveBefore){
-			if(!unitsStillAlive.contains(u)){ //TODO ok but maybe this can never happen
-				unitsAliveBefore.remove(unitsAliveBefore.indexOf(u));
+			if(!unitsStillAlive.contains(u)){
+				unitsAliveBefore.remove(u);
 				if(u.getPlayer() == 0){
 					unitDeaths1++;
 				} else if(u.getPlayer() == 1){
@@ -131,17 +147,10 @@ public class MicroRTSUtility {
 				}
 			}
 		}
-		//TODO unitsAliveBefore = unitsStillAlive
-	}
-
-	private static void updateUnitsAlive(Unit u) {
-		if(!unitsStillAlive.contains(u)){
-			unitsStillAlive.add(u);
-			
-			if(u.getPlayer() == 0)
-				uniqueAllTime1++;
-			else if(u.getPlayer() == 1)
-				uniqueAllTime2++;
+		for(Unit u : unitsStillAlive){ //about to move to the next game state: make unitsAliveBefore = unitsStillAlive
+			if(!unitsAliveBefore.contains(u)){
+				unitsAliveBefore.add(u);
+			}
 		}
 	}
 
@@ -152,7 +161,7 @@ public class MicroRTSUtility {
 			unitDifferenceNow-= u.getCost();
 		}
 	}
-	
+
 	private static void updateHarvestingEfficiency(Unit u, boolean coevolution, MicroRTSInformation task){
 		//assume the unit is a worker
 		int id = (int) u.getID();
@@ -165,7 +174,7 @@ public class MicroRTSUtility {
 			task.setHarvestingEfficiency(task.getHarvestingEfficiency(player)+1,player);
 		}
 	}
-	
+
 	//Assumes bases exist at the start of the map
 	private static void updateBaseIsAlive(Unit u, boolean coevolution) {
 		if(u.getPlayer() == 0){
@@ -186,31 +195,31 @@ public class MicroRTSUtility {
 		int height = pgs.getHeight();
 		int width = pgs.getWidth();
 		ArrayList<Substrate> subs = new ArrayList<Substrate>();
-		
+
 		Substrate inputsBoardState = new Substrate(new Pair<Integer, Integer>(width, height),
 				Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, Substrate.INPUT_SUBSTRATE, 0), "Inputs Board State");
 		subs.add(inputsBoardState);
-		
-//		if(Parameters.parameters.booleanParameter("")) {
-//			
-//		}
-//		if( My){
-//			
-//		}
-		
+
+		//		if(Parameters.parameters.booleanParameter("")) {
+		//			
+		//		}
+		//		if( My){
+		//			
+		//		}
+
 		// Alice: when ComplexEvaluationFunction is more developped, this method will
 		// need to be generalized so that it can work with any combination of substrate parameters
-			
+
 		Substrate processing = new Substrate(new Pair<Integer, Integer>(width, height), 
 				Substrate.PROCCESS_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, Substrate.PROCCESS_SUBSTRATE, 0), "Processing");
 		subs.add(processing);
 		Substrate output = new Substrate(new Pair<Integer, Integer>(1,1),
 				Substrate.OUTPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, Substrate.OUTPUT_SUBSTRATE, 0), "Output");
 		subs.add(output);
-		
+
 		return subs;
 	} 
-	
+
 	/**
 	 * HyperNEAT method that connects substrates to eachother
 	 * @param pgs 
@@ -219,18 +228,18 @@ public class MicroRTSUtility {
 	 */
 	public static List<Pair<String, String>> getSubstrateConnectivity(PhysicalGameState pgs) {
 		ArrayList<Pair<String, String>> conn = new ArrayList<Pair<String, String>>();
-		
+
 		//Alice: when ComplexEvaluationFunction is more developped, here is where additional substrates will be connected to each other
-		
+
 		conn.add(new Pair<String, String>("Inputs Board State", "Processing"));			
-		
+
 		conn.add(new Pair<String, String>("Processing","Output"));
 		if(Parameters.parameters.booleanParameter("extraHNLinks")) {
-				conn.add(new Pair<String, String>("Inputs Board State","Output"));
+			conn.add(new Pair<String, String>("Inputs Board State","Output"));
 		}
 		return conn;
 	}
-	
+
 	/**
 	 * determines whether unit is in given range.
 	 * @param u unit to be judged

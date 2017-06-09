@@ -27,6 +27,7 @@ public class GraphicsUtil {
 	private static final int HUE_INDEX = 0;
 	private static final int SATURATION_INDEX = 1;
 	private static final int BRIGHTNESS_INDEX = 2;
+	public static final int NUM_HSB = 3;
 	private static final double BIAS = 1.0;// a common input used in neural networks
 	private static final double SQRT2 = Math.sqrt(2); // Used for scaling distance from center
 	/**
@@ -41,7 +42,7 @@ public class GraphicsUtil {
 		//-1 indicates that we don't care about time
 		return imageFromCPPN(n,imageWidth,imageHeight, ArrayUtil.doubleOnes(PicbreederTask.CPPN_NUM_INPUTS), -1);
 	}
-	
+
 	/**
 	 * Default version of Buffered Image creation used for Picbreeder. Takes input multipliers into account,
 	 * but time is irrelevant so it is defaulted to -1.
@@ -89,6 +90,7 @@ public class GraphicsUtil {
 	 * @param n CPPN
 	 * @param img input image being "remixed"
 	 * @param inputMultiples array of multiples indicating whether to turn activation functions on or off
+	 * @param remixWindow size of window being adjusted
 	 * @return BufferedImage representation of adjusted image
 	 */
 	public static BufferedImage remixedImageFromCPPN(Network n, BufferedImage img, double[] inputMultiples, int remixWindow) {
@@ -97,7 +99,7 @@ public class GraphicsUtil {
 		int loopWindow = remixWindow/2; //ensures that pixel is in center
 
 		float[][][] sourceHSB = new float[img.getWidth()][img.getHeight()][];
-		
+
 		for(int x = 0; x < img.getWidth(); x++) {
 			for(int y = 0; y < img.getHeight(); y++) {
 				//get HSB from input image
@@ -117,7 +119,7 @@ public class GraphicsUtil {
 									totalH += sourceHSB[windowX][windowY][HUE_INDEX];
 									totalS += sourceHSB[windowX][windowY][SATURATION_INDEX];
 									totalB += sourceHSB[windowX][windowY][BRIGHTNESS_INDEX];
-									
+
 									count++;
 								}
 							}
@@ -145,6 +147,73 @@ public class GraphicsUtil {
 		}
 		return remixedImage;
 	}
+	
+	/**
+	 * Alternative approach to remixing an image from a CPPN. This version, instead of averaging all HSBs across a window, 
+	 * reads in the individual HSBs of evenly spaced out points across a window and uses them. This method produced some
+	 * interesting results (it created lots of static that looked similar to brush strokes, could translate the image, and 
+	 * distorted it more than the original method). However, it wasn't as aesthetically pleasing as the original approach and 
+	 * slowed the interface down a lot. Keeping it here for future reference.
+	 * 
+	 * @param n CPPN
+	 * @param img input image being "remixed"
+	 * @param inputMultiples array of multiples indicating whether to turn activation functions on or off
+	 * @param remixWindow size of window being adjusted
+	 * @param remixSamplesPerDimension number of samples being taken in the window
+	 * @return BufferedImage representation of adjusted image
+	 */
+//	public static BufferedImage remixedImageFromCPPN(Network n, BufferedImage img, double[] inputMultiples, int remixWindow, int remixSamplesPerDimension) {
+//		int spaceBetweenPixels = remixWindow/(remixSamplesPerDimension-1);
+//		int loopWindow = remixWindow/2; //ensures that pixel is in center
+//		BufferedImage remixedImage = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_RGB);
+//		float[][][] sourceHSB = new float[img.getWidth()][img.getHeight()][]; //use 3d array to keep track of calculated inputs at each coordinate
+//		
+//		
+//		for(int x = 0; x < img.getWidth(); x++) {
+//			for(int y = 0; y < img.getHeight(); y++) { //loop through all pixels of image
+//				
+//				double[] inputs = new double[4+remixSamplesPerDimension*remixSamplesPerDimension*NUM_HSB];
+//				ILocated2D scaled = CartesianGeometricUtilities.centerAndScale(new Tuple2D(x, y), img.getWidth(), img.getHeight());
+//				inputs[0] = scaled.getX();
+//				inputs[1] = scaled.getY();
+//				inputs[2] = scaled.distance(new Tuple2D(0, 0)) * SQRT2;
+//				
+//				int windowX = x - loopWindow;
+//				int windowY = y - loopWindow;
+//				for(int i = 0; i < remixSamplesPerDimension; i++) {
+//					int currentX = windowX + i*spaceBetweenPixels;
+//					if(currentX >= 0 && currentX < img.getWidth()) { //if current location is within bounds of image
+//						for(int j = 0; j < remixSamplesPerDimension; j++) {
+//							int currentY = windowY + j*spaceBetweenPixels;
+//							if(currentY >= 0 && currentY < img.getHeight()) { //if current location is within bounds of image
+//								if(sourceHSB[currentX][currentY] == null) sourceHSB[currentX][currentY] = getHSBFromImage(img, currentX, currentY);
+//								int inputIndex = 3 + (i*remixSamplesPerDimension) + (j*NUM_HSB);
+//								//save HSB values from current point to respective indexes in inputs array
+//								inputs[inputIndex+HUE_INDEX] = sourceHSB[currentX][currentY][HUE_INDEX];
+//								inputs[inputIndex+SATURATION_INDEX] = sourceHSB[currentX][currentY][SATURATION_INDEX];
+//								inputs[inputIndex+BRIGHTNESS_INDEX] = sourceHSB[currentX][currentY][BRIGHTNESS_INDEX];
+//							}
+//						}
+//					}
+//				}
+//				
+//				inputs[inputs.length-1] = BIAS;
+//								
+//				
+//				// set image pixel
+//				// Multiplies the inputs of the pictures by the inputMultiples; used to turn on or off the effects in each picture
+//				for(int i = 0; i < inputMultiples.length; i++) {
+//					inputs[i] = inputs[i] * inputMultiples[i];
+//				}			
+//				n.flush(); // erase recurrent activation
+//				float[] hsb = rangeRestrictHSB(n.process(inputs));
+//				Color childColor = Color.getHSBColor(hsb[HUE_INDEX], hsb[SATURATION_INDEX], hsb[BRIGHTNESS_INDEX]);
+//				// set back to RGB to draw picture to JFrame
+//				remixedImage.setRGB(x, y, childColor.getRGB());
+//			}
+//		}
+//		return remixedImage;
+//	}
 
 	/**
 	 * Accesses HSB at a specific pixel in a BufferedImage. Does so by accessing the 

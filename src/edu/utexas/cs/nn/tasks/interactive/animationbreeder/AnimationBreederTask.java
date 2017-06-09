@@ -30,8 +30,10 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 	
 	protected JSlider animationLength;
 	protected JSlider pauseLength;
+	protected JSlider pauseLengthBetweenFrames;
 	
 	
+	// use private inner class to run animation in a loop
 	private class AnimationThread extends Thread {
 		private boolean playing;
 		private int imageID;
@@ -40,6 +42,7 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 		public AnimationThread(int imageID) {
 			this.imageID = imageID;
 			this.end = Parameters.parameters.integerParameter("defaultAnimationLength");
+			//adds images to array at index of specified button (imageID)
 			if(animations[imageID].size() < Parameters.parameters.integerParameter("defaultAnimationLength")) {
 				int start = animations[imageID].size();
 				BufferedImage[] newFrames = AnimationUtil.imagesFromCPPN(scores.get(imageID).individual.getPhenotype(), picSize, picSize, start, end, getInputMultipliers());
@@ -57,12 +60,14 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 					// set button over and over
 					setButtonImage(animations[imageID].get(frame), imageID);
 					try {
+						// pause between frames (each image in animation)
 						Thread.sleep(Parameters.parameters.integerParameter("defaultFramePause"));
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}		
 				}
 				try {
+					// pause between animations
 					Thread.sleep(Parameters.parameters.integerParameter("defaultPause"));
 				} catch (InterruptedException e) {
 					e.printStackTrace();
@@ -71,16 +76,20 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 		}
 		
 		public void stopAnimation() {
-			playing = false;
+			playing = false; //exits playing loop to stop animation
 		}		
 	}
 	
 	public static final int CPPN_NUM_INPUTS	= 5;
 	public static final int CPPN_NUM_OUTPUTS = 3;
 	
+	// stores all animations in an array with a different button's animation at each index
 	public ArrayList<BufferedImage>[] animations;
-	private JSlider pauseLengthBetweenFrames;
 	
+	/**
+	 * Constructor - all sliders are added here and mouse listening is enabled for hovering over the buttons
+	 * @throws IllegalAccessException
+	 */
 	public AnimationBreederTask() throws IllegalAccessException {
 		super();
 		
@@ -129,7 +138,7 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 		pauseLength.setPreferredSize(new Dimension(100, 40));
 		
 		/**
-		 * Implements ChangeListener to adjust animation length. When animation length is specified, 
+		 * Implements ChangeListener to adjust pause length. When pause length is specified, 
 		 * input length is used to reset and redraw buttons. 
 		 */
 		pauseLength.addChangeListener(new ChangeListener() {
@@ -146,6 +155,8 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 			}
 		});
 		
+		//Construction of JSlider for desired length of pause between each frame within an animation
+		
 		pauseLengthBetweenFrames = new JSlider(JSlider.HORIZONTAL, Parameters.parameters.integerParameter("minPause"), Parameters.parameters.integerParameter("maxPause"), Parameters.parameters.integerParameter("defaultPause"));
 		
 		Hashtable<Integer,JLabel> framePauseLabels = new Hashtable<>();
@@ -158,7 +169,7 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 		pauseLengthBetweenFrames.setPreferredSize(new Dimension(100, 40));
 		
 		/**
-		 * Implements ChangeListener to adjust animation length. When animation length is specified, 
+		 * Implements ChangeListener to adjust frame pause length. When frame pause length is specified, 
 		 * input length is used to reset and redraw buttons. 
 		 */
 		pauseLengthBetweenFrames.addChangeListener(new ChangeListener() {
@@ -175,6 +186,9 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 			}
 		});
 		
+		//Add all JSliders to individual panels so that they can be titled with JLabels
+		
+		//Animation slider
 		JPanel animation = new JPanel();
 		animation.setLayout(new BoxLayout(animation, BoxLayout.Y_AXIS));
 		JLabel animationLabel = new JLabel();
@@ -182,6 +196,7 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 		animation.add(animationLabel);
 		animation.add(animationLength);
 		
+		//Pause (between animations) slider
 		JPanel pause = new JPanel();
 		pause.setLayout(new BoxLayout(pause, BoxLayout.Y_AXIS));
 		JLabel pauseLabel = new JLabel();
@@ -189,6 +204,7 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 		pause.add(pauseLabel);
 		pause.add(pauseLength);
 		
+		//Pause (between frames) slider
 		JPanel framePause = new JPanel();
 		framePause.setLayout(new BoxLayout(framePause, BoxLayout.Y_AXIS));
 		JLabel framePauseLabel = new JLabel();
@@ -196,11 +212,12 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 		framePause.add(framePauseLabel);
 		framePause.add(pauseLengthBetweenFrames);
 		
+		//Add all panels to interface
 		top.add(animation);
 		top.add(pause);
 		top.add(framePause);
 		
-		
+		//Enables MouseListener so that animation on a button will play when mouse is hovering over it
 		for(JButton button: buttons) {
 			button.addMouseListener(new MouseListener() {
 				
@@ -226,7 +243,7 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 				
 				@Override
 				public void mouseExited(MouseEvent e) {
-					animation.stopAnimation();
+					animation.stopAnimation(); //exits loop in which animation is played
 				}
 			});
 		}
@@ -278,6 +295,7 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 	@Override
 	public void resetButtons() {
 		super.resetButtons();
+		//Clears out all pre-computed animations so that checking/unchecking boxes actually creates new animations
 		for(int i = 0; i < animations.length; i++) {
 			animations[i].clear();
 		}

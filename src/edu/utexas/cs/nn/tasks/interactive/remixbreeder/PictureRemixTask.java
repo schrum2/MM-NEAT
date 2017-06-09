@@ -29,7 +29,9 @@ import edu.utexas.cs.nn.util.graphics.GraphicsUtil;
  */
 public class PictureRemixTask<T extends Network> extends PicbreederTask<T> {
 
-	public static final int CPPN_NUM_INPUTS	= 7;
+	public static final int CPPN_NUM_INPUTS = 7;
+	//public static final int CPPN_NUM_INPUTS = 4 + Parameters.parameters.integerParameter("remixSamplesPerDimension") * Parameters.parameters.integerParameter("remixSamplesPerDimension") * GraphicsUtil.NUM_HSB;
+	
 	public static final int CPPN_NUM_OUTPUTS = 5;
 
 	public String inputImage;
