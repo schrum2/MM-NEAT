@@ -110,7 +110,8 @@ public class MultiPopulationCompetativeCoevolutionBoardGameTask extends GroupTas
 		
 		// TODO: Unsure on if this part works; everything above was copied, but this returns something different. Double-check the Score?
 		for(int i = 0; i < team.length; i++){
-			finalScores.add(new Score(team[i], scored.get(i).t1, scored));
+			// Replace null with the behavior representation for this task
+			finalScores.add(new Score(team[i], scored.get(i).t1, null, scored.get(i).t2));
 		}
 		
 		return finalScores;
