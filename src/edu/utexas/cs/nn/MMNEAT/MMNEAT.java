@@ -148,8 +148,10 @@ public class MMNEAT {
 	public static boolean browseLineage = false;
 	public static SubstrateCoordinateMapping substrateMapping = null;
 
+	@SuppressWarnings("rawtypes")
 	public static boardGame.BoardGame boardGame;
-	public static boardGame.TwoDimensionalBoardGameViewer boardGameViewer;
+	@SuppressWarnings("rawtypes")
+	public static TwoDimensionalBoardGameViewer boardGameViewer;
 	
 	public static MMNEAT mmneat;
 
@@ -354,7 +356,7 @@ public class MMNEAT {
 	 * variables of this class so they are easily accessible
 	 * from all parts of the code.
 	 */
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static void loadClasses() {
 		try {
 			ActivationFunctions.resetFunctionSet();

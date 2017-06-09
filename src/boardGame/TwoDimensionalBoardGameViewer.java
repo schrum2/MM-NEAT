@@ -1,13 +1,9 @@
 package boardGame;
 
-import java.awt.*;
+import java.awt.Color;
 import java.awt.Graphics2D;
 
-import javax.swing.JFrame;
-
-import boardGame.checkers.Checkers;
 import boardGame.othello.Othello;
-import boardGame.ttt.TicTacToe;
 import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.util.graphics.DrawingPanel;
 
@@ -19,7 +15,6 @@ import edu.utexas.cs.nn.util.graphics.DrawingPanel;
 public class TwoDimensionalBoardGameViewer<S  extends TwoDimensionalBoardGameState,T extends TwoDimensionalBoardGame<S>> {
 
 	public static TwoDimensionalBoardGameViewer current = null;
-	private static final long serialVersionUID = 1L;
 	
 	private T board;
 	private S state;
