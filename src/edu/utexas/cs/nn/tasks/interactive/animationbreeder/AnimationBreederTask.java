@@ -234,7 +234,7 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 
 	@Override
 	public String[] sensorLabels() {
-		return new String[] { "X-coordinate", "Y-coordinate", "distance from center", "bias", "time" };
+		return new String[] { "X-coordinate", "Y-coordinate", "distance from center", "time", "bias" };
 	}
 
 	@Override
