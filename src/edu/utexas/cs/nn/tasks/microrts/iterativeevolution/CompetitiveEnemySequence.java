@@ -2,6 +2,7 @@ package edu.utexas.cs.nn.tasks.microrts.iterativeevolution;
 
 import java.util.ArrayList;
 
+import edu.utexas.cs.nn.parameters.CommonConstants;
 import micro.ai.RandomBiasedAI;
 import micro.ai.abstraction.partialobservability.POLightRush;
 import micro.ai.abstraction.partialobservability.POWorkerRush;
@@ -17,9 +18,9 @@ import micro.ai.mcts.naivemcts.NaiveMCTS;
  */
 public class CompetitiveEnemySequence implements EnemySequence{
 
-	private static final int gensPerEnemy = 20;
+	private static final int gensPerEnemy = 1;
 	private ArrayList<AI> appropriateEnemies = new ArrayList<>();
-	private boolean parent = true;
+	private int generationOfLastUpdate = -1;
 
 	private final AI[] enemies = new AI[]{
 			new RandomBiasedAI(), //used in competition
@@ -31,17 +32,17 @@ public class CompetitiveEnemySequence implements EnemySequence{
 	@Override
 	public ArrayList<AI> getAppropriateEnemy(int generation) {
 		if(growingSet){
-			if(parent){
-				if(generation % gensPerEnemy == 0 && appropriateEnemies.size() < enemies.length){
+				if(generationOfLastUpdate != generation && generation % gensPerEnemy == 0 && appropriateEnemies.size() < enemies.length){
+					generationOfLastUpdate = generation;
+					if(CommonConstants.watch)
+						System.out.println("gen: " + generation + " adding to set: " + enemies[generation*gensPerEnemy]);
 					appropriateEnemies.add(enemies[generation*gensPerEnemy]);
-					parent = false;
 				}
-			} else { //eval children
-				parent = true;
-			}
 			return appropriateEnemies;
-		}else
+		}else {
+			appropriateEnemies = new ArrayList<>(1); // only one enemy: set does not grow
 			appropriateEnemies.add(enemies[Math.min(generation/gensPerEnemy, enemies.length-1)]);
+		}
 		return appropriateEnemies;
 	}
 

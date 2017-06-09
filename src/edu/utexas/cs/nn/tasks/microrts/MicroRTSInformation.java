@@ -45,9 +45,4 @@ public interface MicroRTSInformation {
 	
 	//returns current physical game state
 	public PhysicalGameState getPhysicalGameState();
-	
-	//for progressive fitness function
-	//returns value stored in constant RESOURCE_GAIN_VALUE
-	public int getResourceGainValue();
-	
 }

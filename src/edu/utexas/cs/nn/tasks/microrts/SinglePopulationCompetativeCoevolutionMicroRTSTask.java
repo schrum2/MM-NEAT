@@ -275,10 +275,4 @@ public class SinglePopulationCompetativeCoevolutionMicroRTSTask<T extends Networ
 	public double getAverageUnitDifference(){return averageUnitDifference;}
 	@Override
 	public void setAvgUnitDiff(double diff) {averageUnitDifference = diff;}
-
-	//for progressive fitness function
-	@Override
-	public int getResourceGainValue() {
-		return MicroRTSUtility.RESOURCE_GAIN_VALUE;
-	}
 }

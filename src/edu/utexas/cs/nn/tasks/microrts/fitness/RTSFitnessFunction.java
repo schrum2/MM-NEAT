@@ -22,6 +22,7 @@ public abstract class RTSFitnessFunction {
 	protected MicroRTSInformation task = null;
 	protected boolean coevolution;
 	protected int mapSwitches = 0;
+	protected int gameEndTime; // for progressive fitness function, to scale timestamps of events to game length
 	
 	/**
 	 * judges an individual agent's fitness
@@ -53,6 +54,9 @@ public abstract class RTSFitnessFunction {
 	
 	public boolean getCoevolution(){
 		return coevolution;
+	}
+	public void setGameEndTime(int time) {
+		gameEndTime = time;
 	}
 
 }

@@ -47,7 +47,7 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 	private MapSequence maps = null;
 	private EnemySequence enemies = null;
 	private ArrayList<AI> enemySet;
-	private boolean growingEnemySet = Parameters.parameters.booleanParameter("microRTSGrowingEnemySet"); 
+	private boolean growingEnemySet = Parameters.parameters.booleanParameter("microRTSGrowingEnemySet"); //TODO use this
 	
 	private double averageUnitDifference;
 	private int baseUpTime;
@@ -197,15 +197,7 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 	 */
 	@Override
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {
-		//reset:
-		utt = new UnitTypeTable();
-		averageUnitDifference = 0;
-		baseUpTime = 0;
-		harvestingEfficiencyIndex = 0;
-		// Clone the initial game state: fresh start
-		pgs = initialPgs.clone();
-		// Evaluation function needs to track this state as it changes
-		ef.givePhysicalGameState(pgs);
+		reset();
 		gs = new GameState(pgs, utt);
 		if(!AiInitialized)
 			initializeAI();
@@ -216,18 +208,20 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 		}
 		if(Parameters.parameters.classParameter("microRTSEnemySequence")!=null){
 			enemySet = enemies.getAppropriateEnemy(MMNEAT.ea.currentGeneration());
+			System.out.println("changed enemy set to: " + enemySet.toString());
 		} else {
+			enemySet = new ArrayList<>(1); // will only contain one enemy
 			enemySet.add(ai2);
 		}
 		ef.setNetwork(individual);
 		if(CommonConstants.watch)
 			w = PhysicalGameStatePanel.newVisualizer(gs,MicroRTSUtility.WINDOW_LENGTH,MicroRTSUtility.WINDOW_LENGTH,false,PhysicalGameStatePanel.COLORSCHEME_BLACK);
 		
-		System.out.println(enemySet.toString());
 		double[][] fitnesses = new double[enemySet.size()][numObjectives()];
 		double[][] others 	 = new double[enemySet.size()][numOtherScores()];
 		
 		for(int i = 0; i < enemySet.size(); i++){
+			reset();
 			ai2 = enemySet.get(i);
 			if(CommonConstants.watch){
 				System.out.println("Current Enemy: "+ ai2.getClass().getName());
@@ -243,10 +237,23 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 	} //END oneEval
 
 	/**
+	 * resets the conditions of the game to be how they are supposed
+	 * to be at the beginning of an evaluation
+	 */
+	private void reset(){
+				utt = new UnitTypeTable();
+				averageUnitDifference = 0;
+				baseUpTime = 0;
+				harvestingEfficiencyIndex = 0;
+				// Clone the initial game state; start from beginning
+				pgs = initialPgs.clone();
+				ef.givePhysicalGameState(pgs);
+	}
+	/**
 	 *initializes ai (only called once for efficiency) 
 	 * @return 
 	 */
-	void initializeAI() {
+	void initializeAI() { //TODO is used?
 		try {
 			ai1 = (HasEvaluationFunction) ClassCreation.createObject(Parameters.parameters.classParameter("microRTSAgent"));
 			if(Parameters.parameters.classParameter("microRTSEnemySequence") == null)
@@ -303,12 +310,6 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 	public double getAverageUnitDifference(){return averageUnitDifference;}
 	@Override
 	public void setAvgUnitDiff(double diff) {averageUnitDifference = diff;}
-	
-	//for progressive fitness function
-	@Override
-	public int getResourceGainValue() {
-		return MicroRTSUtility.RESOURCE_GAIN_VALUE;
-	}
 
 	public static void main(String[] rags){
 		Parameters.initializeParameterCollections(new String[]{"io:false","netio:false", "watch:true"});

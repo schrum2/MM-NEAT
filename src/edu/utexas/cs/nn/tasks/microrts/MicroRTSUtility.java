@@ -18,13 +18,15 @@ import micro.rts.PlayerAction;
 import micro.rts.units.Unit;
 
 /**
+ * contains methods used by both MicroRTSTask and 
+ * SinglePopulationCompetativeCoevolutionMicroRTSTask
+ * 
  * @author alicequint
- * contains methods used by both MicroRTSTask and SinglePopulationCompetativeCoevolutionMicroRTSTask
+ * 
  */
 public class MicroRTSUtility {
 
 	public static final int WINDOW_LENGTH = 640;
-	public static final int RESOURCE_GAIN_VALUE = 2;
 	private static boolean prog = Parameters.parameters.classParameter("microRTSFitnessFunction").equals(ProgressiveFitnessFunction.class);
 	private static boolean coevolution;
 	static boolean base1Alive = false;
@@ -110,6 +112,7 @@ public class MicroRTSUtility {
 			gameover  = gs.cycle();
 			if(CommonConstants.watch) w.repaint();
 		}while(!gameover && gs.getTime()< maxCycles);
+		ff.setGameEndTime(gs.getTime());
 		
 		//actually it looks like both of these 2 things are being calculated wrongly. oops.
 		System.out.println("!!! " + unitDeaths2 + " out of " + uniqueAllTime2 + " = "+((unitDeaths2 * 100 ) / uniqueAllTime2) + " % !!!!");
