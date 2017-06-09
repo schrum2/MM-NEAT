@@ -6,17 +6,20 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Scanner;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
@@ -25,20 +28,22 @@ import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.scores.Score;
 import edu.utexas.cs.nn.tasks.interactive.InteractiveEvolutionTask;
 import edu.utexas.cs.nn.util.graphics.AnimationUtil;
+import edu.utexas.cs.nn.util.graphics.DrawingPanel;
+import edu.utexas.cs.nn.util.graphics.GraphicsUtil;
 
 public class AnimationBreederTask<T extends Network> extends InteractiveEvolutionTask<T>{
-	
+
 	protected JSlider animationLength;
 	protected JSlider pauseLength;
 	protected JSlider pauseLengthBetweenFrames;
-	
-	
+
+
 	// use private inner class to run animation in a loop
 	private class AnimationThread extends Thread {
 		private boolean playing;
 		private int imageID;
 		private int end;
-		
+
 		public AnimationThread(int imageID) {
 			this.imageID = imageID;
 			this.end = Parameters.parameters.integerParameter("defaultAnimationLength");
@@ -51,7 +56,7 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 				}
 			}
 		}
-		
+
 		public void run() {
 			playing = true;
 			while(playing) {
@@ -74,29 +79,29 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 				}		
 			}
 		}
-		
+
 		public void stopAnimation() {
 			playing = false; //exits playing loop to stop animation
 		}		
 	}
-	
+
 	public static final int CPPN_NUM_INPUTS	= 5;
 	public static final int CPPN_NUM_OUTPUTS = 3;
-	
+
 	// stores all animations in an array with a different button's animation at each index
 	public ArrayList<BufferedImage>[] animations;
-	
+
 	/**
 	 * Constructor - all sliders are added here and mouse listening is enabled for hovering over the buttons
 	 * @throws IllegalAccessException
 	 */
 	public AnimationBreederTask() throws IllegalAccessException {
 		super();
-		
+
 		//Construction of JSlider for desired animation length
-		
+
 		animationLength = new JSlider(JSlider.HORIZONTAL, Parameters.parameters.integerParameter("minAnimationLength"), Parameters.parameters.integerParameter("maxAnimationLength"), Parameters.parameters.integerParameter("defaultAnimationLength"));
-		
+
 		Hashtable<Integer,JLabel> animationLabels = new Hashtable<>();
 		animationLength.setMinorTickSpacing(20);
 		animationLength.setPaintTicks(true);
@@ -105,7 +110,7 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 		animationLength.setLabelTable(animationLabels);
 		animationLength.setPaintLabels(true);
 		animationLength.setPreferredSize(new Dimension(150, 40));
-		
+
 		/**
 		 * Implements ChangeListener to adjust animation length. When animation length is specified, 
 		 * input length is used to reset and redraw buttons. 
@@ -123,11 +128,11 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 				}
 			}
 		});
-		
+
 		//Construction of JSlider for desired length of pause between each iteration of animation
-		
+
 		pauseLength = new JSlider(JSlider.HORIZONTAL, Parameters.parameters.integerParameter("minPause"), Parameters.parameters.integerParameter("maxPause"), Parameters.parameters.integerParameter("defaultPause"));
-		
+
 		Hashtable<Integer,JLabel> pauseLabels = new Hashtable<>();
 		pauseLength.setMinorTickSpacing(75);
 		pauseLength.setPaintTicks(true);
@@ -136,7 +141,7 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 		pauseLength.setLabelTable(pauseLabels);
 		pauseLength.setPaintLabels(true);
 		pauseLength.setPreferredSize(new Dimension(100, 40));
-		
+
 		/**
 		 * Implements ChangeListener to adjust pause length. When pause length is specified, 
 		 * input length is used to reset and redraw buttons. 
@@ -154,11 +159,11 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 				}
 			}
 		});
-		
+
 		//Construction of JSlider for desired length of pause between each frame within an animation
-		
-		pauseLengthBetweenFrames = new JSlider(JSlider.HORIZONTAL, Parameters.parameters.integerParameter("minPause"), Parameters.parameters.integerParameter("maxPause"), Parameters.parameters.integerParameter("defaultPause"));
-		
+
+		pauseLengthBetweenFrames = new JSlider(JSlider.HORIZONTAL, Parameters.parameters.integerParameter("minPause"), Parameters.parameters.integerParameter("maxPause"), Parameters.parameters.integerParameter("defaultFramePause"));
+
 		Hashtable<Integer,JLabel> framePauseLabels = new Hashtable<>();
 		pauseLengthBetweenFrames.setMinorTickSpacing(75);
 		pauseLengthBetweenFrames.setPaintTicks(true);
@@ -167,7 +172,7 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 		pauseLengthBetweenFrames.setLabelTable(pauseLabels);
 		pauseLengthBetweenFrames.setPaintLabels(true);
 		pauseLengthBetweenFrames.setPreferredSize(new Dimension(100, 40));
-		
+
 		/**
 		 * Implements ChangeListener to adjust frame pause length. When frame pause length is specified, 
 		 * input length is used to reset and redraw buttons. 
@@ -185,9 +190,9 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 				}
 			}
 		});
-		
+
 		//Add all JSliders to individual panels so that they can be titled with JLabels
-		
+
 		//Animation slider
 		JPanel animation = new JPanel();
 		animation.setLayout(new BoxLayout(animation, BoxLayout.Y_AXIS));
@@ -195,7 +200,7 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 		animationLabel.setText("Animation length");
 		animation.add(animationLabel);
 		animation.add(animationLength);
-		
+
 		//Pause (between animations) slider
 		JPanel pause = new JPanel();
 		pause.setLayout(new BoxLayout(pause, BoxLayout.Y_AXIS));
@@ -203,7 +208,7 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 		pauseLabel.setText("Pause between animations");
 		pause.add(pauseLabel);
 		pause.add(pauseLength);
-		
+
 		//Pause (between frames) slider
 		JPanel framePause = new JPanel();
 		framePause.setLayout(new BoxLayout(framePause, BoxLayout.Y_AXIS));
@@ -211,18 +216,18 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 		framePauseLabel.setText("Pause between frames");
 		framePause.add(framePauseLabel);
 		framePause.add(pauseLengthBetweenFrames);
-		
+
 		//Add all panels to interface
 		top.add(animation);
 		top.add(pause);
 		top.add(framePause);
-		
+
 		//Enables MouseListener so that animation on a button will play when mouse is hovering over it
 		for(JButton button: buttons) {
 			button.addMouseListener(new MouseListener() {
-				
+
 				AnimationThread animation;
-				
+
 				@Override
 				public void mouseClicked(MouseEvent e) { } // Do not use
 				@Override
@@ -240,7 +245,7 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 					id.close();
 					animation.start();
 				}
-				
+
 				@Override
 				public void mouseExited(MouseEvent e) {
 					animation.stopAnimation(); //exits loop in which animation is played
@@ -266,8 +271,25 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 
 	@Override
 	protected void save(int i) {
-		// TODO Auto-generated method stub
-		
+		// Use of imageHeight and imageWidth allows saving a higher quality image than is on the button
+		BufferedImage[] toSave = AnimationUtil.imagesFromCPPN((Network)scores.get(i).individual.getPhenotype(), Parameters.parameters.integerParameter("imageWidth"), Parameters.parameters.integerParameter("imageHeight"), 0, Parameters.parameters.integerParameter("defaultAnimationLength"), inputMultipliers);	
+		JFileChooser chooser = new JFileChooser();//used to get save name 
+		chooser.setApproveButtonText("Save");
+		FileNameExtensionFilter filter = new FileNameExtensionFilter("GIF", "gif");
+		chooser.setFileFilter(filter);
+		int returnVal = chooser.showOpenDialog(frame);
+		if(returnVal == JFileChooser.APPROVE_OPTION) {//if the user decides to save the image
+			System.out.println("You chose to call the image: " + chooser.getSelectedFile().getName());
+			try {
+				//saves gif to chosen file name
+				AnimationUtil.createGif(toSave, Parameters.parameters.integerParameter("defaultFramePause"), chooser.getSelectedFile().getName() + ".gif");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			System.out.println("image " + chooser.getSelectedFile().getName() + " was saved successfully");
+		} else { //else image dumped
+			System.out.println("image not saved");
+		}
 	}
 
 	@Override
@@ -278,20 +300,20 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 
 	@Override
 	protected void additionalButtonClickAction(int scoreIndex, Genotype<T> individual) {
-		// TODO Auto-generated method stub
-		
+		// do nothing
+
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public ArrayList<Score<T>> evaluateAll(ArrayList<Genotype<T>> population) {
 		// Load all Image arrays with animations
 		animations = new ArrayList[population.size()];
 		for(int i = 0; i < animations.length; i++) {
 			animations[i] = new ArrayList<BufferedImage>();
- 		}
+		}
 		return super.evaluateAll(population); // wait for user choices
 	}
-	
+
 	@Override
 	public void resetButtons() {
 		super.resetButtons();
@@ -317,7 +339,7 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 	 */
 	public static void main(String[] args) {
 		try {
-			MMNEAT.main(new String[]{"runNumber:5","randomSeed:5","trials:1","mu:16","maxGens:500","io:false","netio:false","mating:true","task:edu.utexas.cs.nn.tasks.interactive.animationbreeder.AnimationBreederTask","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3","cleanFrequency:-1","recurrency:false","ea:edu.utexas.cs.nn.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:2000","imageHeight:2000","imageSize:200"});
+			MMNEAT.main(new String[]{"runNumber:5","randomSeed:5","trials:1","mu:16","maxGens:500","io:false","netio:false","mating:true","task:edu.utexas.cs.nn.tasks.interactive.animationbreeder.AnimationBreederTask","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3","cleanFrequency:-1","recurrency:false","ea:edu.utexas.cs.nn.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:500","imageHeight:500","imageSize:200"});
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}
