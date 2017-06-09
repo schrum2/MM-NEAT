@@ -114,8 +114,14 @@ public class CheckersState extends TwoDimensionalBoardGameState {
 		}
 
 		// Returns True if there are no more of one Player's Checks left or if there are no more possible Moves
-		if(blackChecksLeft == 0 || redChecksLeft == 0) return true;
-		return (possibleBoardGameStates(this).size() == 0);
+		if(blackChecksLeft == 0 || redChecksLeft == 0){
+			System.out.println("Black Checks: " + blackChecksLeft + "\nRed Checks: " + redChecksLeft);
+			return true;
+		}else if(possibleBoardGameStates(this).size() == 0){
+			System.out.println("No Moves Left");
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -452,7 +458,7 @@ public class CheckersState extends TwoDimensionalBoardGameState {
 	@Override
 	public Color[] getPlayerColors() {
 		// Problem here: each player index actually has two associated colors corresponding to different piece types
-		return new Color[]{Color.black, Color.red, new Color(54,54,54), new Color(255,81,81)};
+		return new Color[]{Color.black, Color.red, new Color(64,64,64), new Color(255,81,81)};
 	}
 
 	/**

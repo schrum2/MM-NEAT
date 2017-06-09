@@ -57,6 +57,10 @@ public class TwoDimensionalBoardGameViewer<S  extends TwoDimensionalBoardGameSta
 		renderBoard(g, newBoard);
 	}
 	
+	public void close(){
+		panel.dispose();
+	}
+	
 	public void renderBoard(Graphics2D g, TwoDimensionalBoardGameState newBoard){
 		int boardWidth = newBoard.getBoardWidth();
 		int boardHeight = newBoard.getBoardHeight();
