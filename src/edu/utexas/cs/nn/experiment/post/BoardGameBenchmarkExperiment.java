@@ -1,9 +1,7 @@
 package edu.utexas.cs.nn.experiment.post;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import boardGame.BoardGame;
@@ -15,7 +13,6 @@ import boardGame.fitnessFunction.BoardGameFitnessFunction;
 import boardGame.fitnessFunction.SimpleWinLoseDrawBoardGameFitness;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
 import edu.utexas.cs.nn.evolution.nsga2.NSGA2Score;
 import edu.utexas.cs.nn.experiment.Experiment;
 import edu.utexas.cs.nn.parameters.CommonConstants;
@@ -26,7 +23,6 @@ import edu.utexas.cs.nn.tasks.boardGame.BoardGameUtil;
 import edu.utexas.cs.nn.util.ClassCreation;
 import edu.utexas.cs.nn.util.PopulationUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
-import edu.utexas.cs.nn.util.file.FileUtilities;
 import edu.utexas.cs.nn.util.graphics.DrawingPanel;
 
 public class BoardGameBenchmarkExperiment<T> implements Experiment{

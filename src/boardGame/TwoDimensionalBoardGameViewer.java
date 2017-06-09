@@ -2,7 +2,6 @@ package boardGame;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Point;
 
 import boardGame.othello.Othello;
 import edu.utexas.cs.nn.networks.TWEANN;
