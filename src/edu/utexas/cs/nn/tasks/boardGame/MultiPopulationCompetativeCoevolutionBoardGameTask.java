@@ -12,10 +12,12 @@ import boardGame.fitnessFunction.SimpleWinLoseDrawBoardGameFitness;
 import boardGame.heuristics.NNBoardGameHeuristic;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
+import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.scores.Score;
 import edu.utexas.cs.nn.tasks.GroupTask;
 import edu.utexas.cs.nn.util.ClassCreation;
 import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
+import edu.utexas.cs.nn.util.datastructures.Pair;
 
 public class MultiPopulationCompetativeCoevolutionBoardGameTask extends GroupTask{
 
@@ -57,7 +59,7 @@ public class MultiPopulationCompetativeCoevolutionBoardGameTask extends GroupTas
 			MMNEAT.registerFitnessFunction(fit.getFitnessName(), false);
 		}
 		
-		fitFunctions.add(0, selectionFunction);
+		fitFunctions.add(0, selectionFunction); // Adds the Selection Function to the first Index
 	}
 	
 	@Override
@@ -88,17 +90,32 @@ public class MultiPopulationCompetativeCoevolutionBoardGameTask extends GroupTas
 		// Default to empty
 	}
 
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public ArrayList<Score> evaluate(Genotype[] team) {
-		// TODO
 		
+		// Copied from SinglePopulationCompetativeCoevolutionBoardGameTask
+		HeuristicBoardGamePlayer[] teamPlayers = new HeuristicBoardGamePlayer[team.length];
+		int index = 0;
+		for(Genotype gene : team){
+			HeuristicBoardGamePlayer evolved = (HeuristicBoardGamePlayer) players[index]; // Creates the Player based on the command line
+			evolved.setHeuristic((new NNBoardGameHeuristic((Network) gene.getPhenotype(), featExtract)));
+			teamPlayers[index++] = evolved;
+		}
 		
-		BoardGameUtil.playGame(bg, players, fitFunctions);
+		BoardGamePlayer[] play = new BoardGamePlayer[]{};
+		// End of Copied Code
 		
+		ArrayList<Pair<double[], double[]>> scored = BoardGameUtil.playGame(bg, players, fitFunctions);
 		
-		// TODO
-		return null;
+		ArrayList<Score> finalScores = new ArrayList<Score>();
+		
+		// TODO: Unsure on if this part works; everything above was copied, but this returns something different. Double-check the Score?
+		for(int i = 0; i < team.length; i++){
+			finalScores.add(new Score(team[i], scored.get(i).t1, scored));
+		}
+		
+		return finalScores;
 	}
 
 }
