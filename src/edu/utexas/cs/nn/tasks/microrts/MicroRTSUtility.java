@@ -111,7 +111,8 @@ public class MicroRTSUtility {
 			if(CommonConstants.watch) w.repaint();
 		}while(!gameover && gs.getTime()< maxCycles);
 		task.setPercentEnemiesDestroyed((unitDeaths2 * 100 ) / uniqueAllTime2, 1);
-		task.setPercentEnemiesDestroyed((unitDeaths1 * 100 ) / uniqueAllTime1, 2);
+		if(coevolution)
+			task.setPercentEnemiesDestroyed((unitDeaths1 * 100 ) / uniqueAllTime1, 2);
 		task.setAvgUnitDiff(averageUnitDifference);
 		if(CommonConstants.watch) 
 			w.dispose();

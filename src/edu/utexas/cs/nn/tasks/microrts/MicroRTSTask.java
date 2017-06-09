@@ -43,10 +43,11 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 	private PhysicalGameStateJFrame w = null;
 	private GameState gs;
 	private String mapName;
-	public boolean AiInitialized = false;
+	private boolean AiInitialized = false;
 	private MapSequence maps = null;
 	private EnemySequence enemies = null;
 	private ArrayList<AI> enemySet;
+	private boolean growingEnemySet = Parameters.parameters.booleanParameter("microRTSGrowingEnemySet"); 
 	
 	private double averageUnitDifference;
 	private int baseUpTime;
@@ -85,6 +86,7 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 		for(String other : ff.getOtherScores()){
 			MMNEAT.registerFitnessFunction(other, false);
 		}
+		
 		ef.givePhysicalGameState(pgs);
 		if(ef2 != null)
 			ef2.givePhysicalGameState(pgs);
@@ -232,9 +234,15 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 			}
 			ArrayList<Pair<double[], double[]>> currentEval = MicroRTSUtility.oneEval((AI) ai1, ai2, this, ff, w);
 			fitnesses[i] = currentEval.get(0).t1;
-			others[i] 	 = currentEval.get(0).t1;
+			others[i] 	 = currentEval.get(0).t2;
 		}
-		Pair<double[], double[]> averageResults = NoisyLonerTask.averageResults(fitnesses,others);
+		
+		Pair<double[], double[]> averageResults; 
+		if(growingEnemySet && enemySet.size() > 1){
+//			averageResults = NoisyLonerTask.averageResults(fitnesses,others);
+		}
+//		else 
+			averageResults = new Pair<double[], double[]>(fitnesses[0],others[0]); 
 		return averageResults;
 	} //END oneEval
 

@@ -114,6 +114,8 @@ public abstract class NoisyLonerTask<T> extends LonerTask<T> {
 			// ScoreHistory.add(individual.getId(), result.t1);
 			otherScores[i] = result.t2; // other scores
 		}
+//		System.out.println(Arrays.deepToString(objectiveScores));
+//		System.out.println(Arrays.deepToString(otherScores));
 		double averageEvalTime = evalTimeSum / numTrials;
 		// Combine scores acorss evals into one score in each obejctive
 		Pair<double[],double[]> aggregated = aggregateResults(stat, objectiveScores, otherScores);
