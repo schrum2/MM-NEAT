@@ -395,7 +395,11 @@ public class MMNEAT {
 			if(Parameters.parameters.classParameter("boardGame") != null){
 				boardGame = (BoardGame) ClassCreation.createObject("boardGame");
 				if(boardGame instanceof TwoDimensionalBoardGame){
-					boardGameViewer = new TwoDimensionalBoardGameViewer((TwoDimensionalBoardGame) boardGame);
+					if(CommonConstants.watch){
+						boardGameViewer = new TwoDimensionalBoardGameViewer((TwoDimensionalBoardGame) boardGame);
+					}else{
+						boardGameViewer = null;
+					}
 				}else{
 					boardGameViewer = null;
 				}

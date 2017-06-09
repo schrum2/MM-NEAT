@@ -50,10 +50,7 @@ public class TwoDimensionalBoardGameViewer<S  extends TwoDimensionalBoardGameSta
 	@SuppressWarnings("unchecked")
 	public void reset(S newBoard) {
 		Graphics2D g = panel.getGraphics();
-		g.setColor(Color.black); // Set to Black to distinguish the Background from the Board
-		g.fillRect(0, 0, WIDTH, HEIGHT);
 		state = (S) newBoard.copy();
-		 
 		renderBoard(g, newBoard);
 	}
 	

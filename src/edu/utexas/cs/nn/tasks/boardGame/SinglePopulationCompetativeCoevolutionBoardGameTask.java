@@ -56,7 +56,7 @@ public class SinglePopulationCompetativeCoevolutionBoardGameTask<T extends Netwo
 			MMNEAT.registerFitnessFunction(fit.getFitnessName(), false);
 		}
 		
-		fitFunctions.add(0, selectionFunction);
+		fitFunctions.add(0, selectionFunction); // Adds the Selection Function to the first Index
 	}
 	
 	@Override
@@ -130,7 +130,6 @@ public class SinglePopulationCompetativeCoevolutionBoardGameTask<T extends Netwo
 	@Override
 	public void preEval() {
 		// TODO Auto-generated method stub
-		
 	}
 
 

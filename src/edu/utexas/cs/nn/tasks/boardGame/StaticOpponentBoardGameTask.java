@@ -61,7 +61,7 @@ public class StaticOpponentBoardGameTask<T extends Network> extends NoisyLonerTa
 			MMNEAT.registerFitnessFunction(fit.getFitnessName(), false);
 		}
 		
-		fitFunctions.add(0, selectionFunction);
+		fitFunctions.add(0, selectionFunction); // Adds the Selection Function to the first Index
 
 	}
 

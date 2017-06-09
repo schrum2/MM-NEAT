@@ -69,8 +69,8 @@ public class BoardGameUtil {
 			
 			double[] otherScores = new double[fit.size()-1]; // Stores all other Scores except the first, which is used as the Selection Fitness
 			
-			for(int j = 0; i < fit.size() - 1; j++){
-				otherScores[j] = fit.get(j+1).getFitness(); // Gets all Scores except the first one
+			for(int j = 1; j < fit.size(); j++){
+				otherScores[j-1] = fit.get(j).getFitness(); // Gets all Scores except the first one
 			}
 			
 			Pair<double[], double[]> evalResults = new Pair<double[], double[]>(new double[] { fit.get(0).getFitness() }, otherScores);

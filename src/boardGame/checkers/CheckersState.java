@@ -115,10 +115,8 @@ public class CheckersState extends TwoDimensionalBoardGameState {
 
 		// Returns True if there are no more of one Player's Checks left or if there are no more possible Moves
 		if(blackChecksLeft == 0 || redChecksLeft == 0){
-			System.out.println("Black Checks: " + blackChecksLeft + "\nRed Checks: " + redChecksLeft);
 			return true;
 		}else if(possibleBoardGameStates(this).size() == 0){
-			System.out.println("No Moves Left");
 			return true;
 		}
 		return false;
