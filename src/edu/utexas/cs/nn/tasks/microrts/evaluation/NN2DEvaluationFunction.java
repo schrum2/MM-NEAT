@@ -53,9 +53,9 @@ public class NN2DEvaluationFunction<T extends Network> extends NNEvaluationFunct
 		double[] board = new double[pgs.getHeight()*pgs.getWidth()];
 		int boardIndex;
 		Unit currentUnit;
-		for(int i = 0; i < pgs.getWidth(); i++){
-			for(int j = 0; j < pgs.getHeight(); j++){
-				boardIndex = i * pgs.getWidth() + j;
+		for(int j = 0; j < pgs.getHeight(); j++){
+			for(int i = 0; i < pgs.getWidth(); i++){
+				boardIndex = i + j * pgs.getHeight();
 				currentUnit = pgs.getUnitAt(i, j);
 				if(currentUnit != null){
 					switch(currentUnit.getType().name){

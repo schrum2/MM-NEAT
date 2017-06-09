@@ -119,7 +119,7 @@ public class FEStatePane extends JPanel {
                                 new SimpleSqrtEvaluationFunction3(),
                                 new EvaluationFunctionForwarding(new SimpleEvaluationFunction()),
                                 new SimpleOptEvaluationFunction(),    							
-                                new NN2DEvaluationFunction<Network>("MicroRTS/2DProgressiveHYPER0/bestObjectives/gen27_BestIn0.xml"),};
+                                new NN2DEvaluationFunction<Network>("data/networks/RandomMicroRTSHyperNEATCPPN.xml"),};
 
     public static Class AIs[] = {PassiveAI.class,
                    MouseController.class,

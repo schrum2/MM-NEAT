@@ -127,8 +127,6 @@ public class MicroRTSUtility {
 				}
 			}
 		}
-		
-//		System.out.println("!!! " + unitDeaths2 + " out of " + uniqueAllTime2 + " = "+((unitDeaths2 * 100 ) / uniqueAllTime2) + " % !!!!"); //TODO remove when fix
 		task.setPercentEnemiesDestroyed(((createdUnitIDs2.size() - terminalUnits2) * 100 ) / createdUnitIDs2.size(), 1);
 		if(coevolution)
 			task.setPercentEnemiesDestroyed(((createdUnitIDs1.size() - terminalUnits1) * 100 ) / createdUnitIDs1.size(), 2);

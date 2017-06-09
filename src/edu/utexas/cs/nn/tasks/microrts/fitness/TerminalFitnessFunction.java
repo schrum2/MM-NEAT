@@ -67,7 +67,7 @@ public class TerminalFitnessFunction extends RTSFitnessFunction{
 	//not used
 	@Override
 	public String[] getOtherScores() { 
-		return null;
+		return new String[0];
 	}
 
 }
