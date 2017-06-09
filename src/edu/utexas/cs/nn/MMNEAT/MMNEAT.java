@@ -26,6 +26,7 @@ import edu.utexas.cs.nn.evolution.metaheuristics.FavorXModulesFitness;
 import edu.utexas.cs.nn.evolution.metaheuristics.LinkPenalty;
 import edu.utexas.cs.nn.evolution.metaheuristics.MaxModulesFitness;
 import edu.utexas.cs.nn.evolution.metaheuristics.Metaheuristic;
+import edu.utexas.cs.nn.evolution.metaheuristics.SubstrateLinkPenalty;
 import edu.utexas.cs.nn.experiment.Experiment;
 import edu.utexas.cs.nn.log.EvalLog;
 import edu.utexas.cs.nn.log.MMNEATLog;
@@ -218,6 +219,10 @@ public class MMNEAT {
 		if (Parameters.parameters.booleanParameter("maximizeModes")) {
 			System.out.println("Maximize Modes");
 			metaheuristics.add(new MaxModulesFitness());
+		}
+		if (Parameters.parameters.booleanParameter("penalizeSubstrateLinks")) {
+			System.out.println("Penalize Substrate Links");
+			metaheuristics.add(new SubstrateLinkPenalty());
 		}
 	}
 

@@ -3,11 +3,14 @@ package edu.utexas.cs.nn.networks.hyperneat;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.HyperNEATCPPNGenotype;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
+import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype.LinkGene;
+import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype.NodeGene;
 import edu.utexas.cs.nn.networks.ActivationFunctions;
 import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.networks.TWEANN.Node;
@@ -469,5 +472,33 @@ public class HyperNEATUtil {
 	 */
 	public static int indexFirstBiasOutput(HyperNEATTask hnt) {
 		return hnt.getSubstrateConnectivity().size() * HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair;
+	}
+
+	/**
+	 * Number of links that a fully connected substrate network would possess for the
+	 * given HyperNEAT task (which defines potential substrate connectivity)
+	 * @param hnt HyperNEATTask
+	 * @return Total possible links
+	 */
+	public static int totalPossibleLinks(HyperNEATTask hnt) {
+		List<Substrate> subs = hnt.getSubstrateInformation();// extract substrate information from domain
+		List<Pair<String, String>> connections = hnt.getSubstrateConnectivity();// extract substrate connectivity from domain TODO this is causing no bias to be inserted into network
+		// Will map substrate names to index in subs List
+		// needs to be switched
+		HashMap<String, Integer> substrateIndexMapping = new HashMap<String, Integer>();
+		for (int i = 0; i < subs.size(); i++) {
+			substrateIndexMapping.put(subs.get(i).getName(), i);
+		}
+
+		int count = 0;
+		for(int i = 0; i < connections.size(); i++) {
+			String source = connections.get(i).t1;
+			String target = connections.get(i).t2;
+			Substrate subSource = subs.get(substrateIndexMapping.get(source));
+			Substrate subTarget = subs.get(substrateIndexMapping.get(target));
+			count += subSource.getSize().t1 * subSource.getSize().t2 * subTarget.getSize().t1 * subTarget.getSize().t2; 
+		}
+		
+		return count;
 	}
 }
