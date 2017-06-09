@@ -274,6 +274,14 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
  		}
 		return super.evaluateAll(population); // wait for user choices
 	}
+	
+	@Override
+	public void resetButtons() {
+		super.resetButtons();
+		for(int i = 0; i < animations.length; i++) {
+			animations[i].clear();
+		}
+	}
 
 	@Override
 	public int numCPPNInputs() {
