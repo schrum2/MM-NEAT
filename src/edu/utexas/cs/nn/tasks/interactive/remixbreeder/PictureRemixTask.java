@@ -29,7 +29,8 @@ import edu.utexas.cs.nn.util.graphics.GraphicsUtil;
  */
 public class PictureRemixTask<T extends Network> extends PicbreederTask<T> {
 
-	//public static final int CPPN_NUM_INPUTS = 7;
+	public static final int CPPN_NUM_INPUTS = 7;
+	//public static final int CPPN_NUM_INPUTS = 4 + Parameters.parameters.integerParameter("remixSamplesPerDimension") * Parameters.parameters.integerParameter("remixSamplesPerDimension") * GraphicsUtil.NUM_HSB;
 	
 	public static final int CPPN_NUM_OUTPUTS = 5;
 
@@ -96,12 +97,12 @@ public class PictureRemixTask<T extends Network> extends PicbreederTask<T> {
 	@Override
 	protected BufferedImage getButtonImage(Network phenotype, int width, int height, double[] inputMultipliers) {
 		// Rescale image based on width and height?
-		return GraphicsUtil.remixedImageFromCPPN(phenotype, img, inputMultipliers, Parameters.parameters.integerParameter("remixImageWindow"), Parameters.parameters.integerParameter("remixSamplesPerDimension"));
+		return GraphicsUtil.remixedImageFromCPPN(phenotype, img, inputMultipliers, Parameters.parameters.integerParameter("remixImageWindow"));
 	}
 
 	@Override
 	public int numCPPNInputs() {
-		return 4 + Parameters.parameters.integerParameter("remixSamplesPerDimension") * Parameters.parameters.integerParameter("remixSamplesPerDimension") * GraphicsUtil.NUM_HSB;
+		return CPPN_NUM_INPUTS;
 	}
 
 	@Override
