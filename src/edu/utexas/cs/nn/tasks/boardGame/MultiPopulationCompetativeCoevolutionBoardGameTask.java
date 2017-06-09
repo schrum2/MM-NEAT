@@ -102,11 +102,9 @@ public class MultiPopulationCompetativeCoevolutionBoardGameTask extends GroupTas
 			evolved.setHeuristic((new NNBoardGameHeuristic((Network) gene.getPhenotype(), featExtract)));
 			teamPlayers[index++] = evolved;
 		}
-		
-		BoardGamePlayer[] play = new BoardGamePlayer[]{};
 		// End of Copied Code
 		
-		ArrayList<Pair<double[], double[]>> scored = BoardGameUtil.playGame(bg, players, fitFunctions);
+		ArrayList<Pair<double[], double[]>> scored = BoardGameUtil.playGame(bg, teamPlayers, fitFunctions);
 		
 		ArrayList<Score> finalScores = new ArrayList<Score>();
 		
