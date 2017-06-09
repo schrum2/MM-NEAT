@@ -1,6 +1,7 @@
 package edu.utexas.cs.nn.tasks.interactive.animationbreeder;
 
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
@@ -9,8 +10,10 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Scanner;
 
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -88,11 +91,11 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 		Hashtable<Integer,JLabel> animationLabels = new Hashtable<>();
 		animationLength.setMinorTickSpacing(20);
 		animationLength.setPaintTicks(true);
-		animationLabels.put(Parameters.parameters.integerParameter("minAnimationLength"), new JLabel("Short animation"));
-		animationLabels.put(Parameters.parameters.integerParameter("maxAnimationLength"), new JLabel("Long animation"));
+		animationLabels.put(Parameters.parameters.integerParameter("minAnimationLength"), new JLabel("Short"));
+		animationLabels.put(Parameters.parameters.integerParameter("maxAnimationLength"), new JLabel("Long"));
 		animationLength.setLabelTable(animationLabels);
 		animationLength.setPaintLabels(true);
-		animationLength.setPreferredSize(new Dimension(200, 40));
+		animationLength.setPreferredSize(new Dimension(150, 40));
 		
 		/**
 		 * Implements ChangeListener to adjust animation length. When animation length is specified, 
@@ -123,7 +126,7 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 		pauseLabels.put(Parameters.parameters.integerParameter("maxPause"), new JLabel("Long pause"));
 		pauseLength.setLabelTable(pauseLabels);
 		pauseLength.setPaintLabels(true);
-		pauseLength.setPreferredSize(new Dimension(150, 40));
+		pauseLength.setPreferredSize(new Dimension(100, 40));
 		
 		/**
 		 * Implements ChangeListener to adjust animation length. When animation length is specified, 
@@ -152,7 +155,7 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 		framePauseLabels.put(Parameters.parameters.integerParameter("maxPause"), new JLabel("Long pause"));
 		pauseLengthBetweenFrames.setLabelTable(pauseLabels);
 		pauseLengthBetweenFrames.setPaintLabels(true);
-		pauseLengthBetweenFrames.setPreferredSize(new Dimension(150, 40));
+		pauseLengthBetweenFrames.setPreferredSize(new Dimension(100, 40));
 		
 		/**
 		 * Implements ChangeListener to adjust animation length. When animation length is specified, 
@@ -172,9 +175,30 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 			}
 		});
 		
-		top.add(animationLength);
-		top.add(pauseLength);
-		top.add(pauseLengthBetweenFrames);
+		JPanel animation = new JPanel();
+		animation.setLayout(new BoxLayout(animation, BoxLayout.Y_AXIS));
+		JLabel animationLabel = new JLabel();
+		animationLabel.setText("Animation length");
+		animation.add(animationLabel);
+		animation.add(animationLength);
+		
+		JPanel pause = new JPanel();
+		pause.setLayout(new BoxLayout(pause, BoxLayout.Y_AXIS));
+		JLabel pauseLabel = new JLabel();
+		pauseLabel.setText("Pause between animations");
+		pause.add(pauseLabel);
+		pause.add(pauseLength);
+		
+		JPanel framePause = new JPanel();
+		framePause.setLayout(new BoxLayout(framePause, BoxLayout.Y_AXIS));
+		JLabel framePauseLabel = new JLabel();
+		framePauseLabel.setText("Pause between frames");
+		framePause.add(framePauseLabel);
+		framePause.add(pauseLengthBetweenFrames);
+		
+		top.add(animation);
+		top.add(pause);
+		top.add(framePause);
 		
 		
 		for(JButton button: buttons) {

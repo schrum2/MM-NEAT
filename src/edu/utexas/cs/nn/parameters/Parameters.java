@@ -306,7 +306,7 @@ public class Parameters {
 		integerOptions.add("minAnimationLength", 10, "Minimum length of animation in AnimationBreeder");
 		integerOptions.add("minAnimationLength", 10, "Minimum length of animation in AnimationBreeder");
 		integerOptions.add("defaultAnimationLength", 50, "Default length of animation in AnimationBreeder");
-		integerOptions.add("maxAnimationLength", 150, "Maximum length of animation in AnimationBreeder");
+		integerOptions.add("maxAnimationLength", 250, "Maximum length of animation in AnimationBreeder");
 		integerOptions.add("minPause", 10, "Minimum pause length between each iteraton of animation in AnimationBreeder");
 		integerOptions.add("defaultPause", 50, "Default pause length between each iteraton of animation in AnimationBreeder");
 		integerOptions.add("maxPause", 500, "Maximum pause length between each iteraton of animation in AnimationBreeder");
