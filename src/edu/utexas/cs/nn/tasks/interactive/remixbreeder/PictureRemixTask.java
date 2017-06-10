@@ -1,7 +1,6 @@
 package edu.utexas.cs.nn.tasks.interactive.remixbreeder;
 
 import java.awt.Dimension;
-import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -18,7 +17,6 @@ import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.interactive.picbreeder.PicbreederTask;
@@ -40,7 +38,7 @@ public class PictureRemixTask<T extends Network> extends PicbreederTask<T> {
 	
 	public static final int CPPN_NUM_OUTPUTS = 5;
 	
-	private static final int FILE_LOADER_CHECKBOX_INDEX = -25;
+	private static final int FILE_LOADER_CHECKBOX_INDEX = CHECKBOX_IDENTIFIER_START - CPPN_NUM_INPUTS;
 
 	public String inputImage;
 	public int imageHeight;
@@ -87,8 +85,6 @@ public class PictureRemixTask<T extends Network> extends PicbreederTask<T> {
 		
 		top.add(windowSize);
 		top.add(fileLoadButton);
-		
-		
 	}
 
 	public PictureRemixTask(String filename) throws IllegalAccessException{
@@ -117,9 +113,9 @@ public class PictureRemixTask<T extends Network> extends PicbreederTask<T> {
 	}
 	
 	@Override
-	protected void additionalButtonClickAction(int scoreIndex, Genotype<T> individual) {
-		System.out.println("score index: " + scoreIndex);
-		if(scoreIndex == FILE_LOADER_CHECKBOX_INDEX) {
+	protected void respondToClick(int itemID) {
+		super.respondToClick(itemID);
+		if(itemID == FILE_LOADER_CHECKBOX_INDEX) {
 			JFileChooser chooser = new JFileChooser();//used to get new file
 			chooser.setApproveButtonText("Open");
 			FileNameExtensionFilter filter = new FileNameExtensionFilter("BMP Images", "bmp");
@@ -127,6 +123,13 @@ public class PictureRemixTask<T extends Network> extends PicbreederTask<T> {
 			int returnVal = chooser.showOpenDialog(frame);
 			if(returnVal == JFileChooser.APPROVE_OPTION) {//if the user decides to save the image
 				Parameters.parameters.setString("matchImageFile", chooser.getCurrentDirectory() + "\\" + chooser.getSelectedFile().getName());
+				String filename = Parameters.parameters.stringParameter("matchImageFile");
+				try {// throws and exception if filename is not valid
+					img = ImageIO.read(new File(filename));
+				} catch (IOException e) {
+					System.out.println("Could not load image: " + filename);
+					System.exit(1);
+				}
 				resetButtons();
 			}
 		}
