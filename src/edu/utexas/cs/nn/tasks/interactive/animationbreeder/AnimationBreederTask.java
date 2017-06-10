@@ -1,7 +1,6 @@
 package edu.utexas.cs.nn.tasks.interactive.animationbreeder;
 
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
@@ -28,8 +27,6 @@ import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.scores.Score;
 import edu.utexas.cs.nn.tasks.interactive.InteractiveEvolutionTask;
 import edu.utexas.cs.nn.util.graphics.AnimationUtil;
-import edu.utexas.cs.nn.util.graphics.DrawingPanel;
-import edu.utexas.cs.nn.util.graphics.GraphicsUtil;
 
 public class AnimationBreederTask<T extends Network> extends InteractiveEvolutionTask<T>{
 

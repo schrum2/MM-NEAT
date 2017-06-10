@@ -726,16 +726,16 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		} else if(itemID == SINE_CHECKBOX_INDEX) {
 			setActivationFunctionCheckBox(activation[Math.abs(SINE_CHECKBOX_INDEX)], SINE_CHECKBOX_INDEX, "includeSineFunction");
 			System.out.println("param Sine now set to: " + Parameters.parameters.booleanParameter("includeSineFunction"));
-		}else if(itemID == SAWTOOTH_CHECKBOX_INDEX) {
+		} else if(itemID == SAWTOOTH_CHECKBOX_INDEX) {
 			setActivationFunctionCheckBox(activation[Math.abs(SAWTOOTH_CHECKBOX_INDEX)], SAWTOOTH_CHECKBOX_INDEX, "includeSawtoothFunction");
 			System.out.println("param sawtooth now set to: " + Parameters.parameters.booleanParameter("includeSawtoothFunction"));
-		}else if(itemID == ABSVAL_CHECKBOX_INDEX) {
+		} else if(itemID == ABSVAL_CHECKBOX_INDEX) {
 			setActivationFunctionCheckBox(activation[Math.abs(ABSVAL_CHECKBOX_INDEX)], ABSVAL_CHECKBOX_INDEX, "includeAbsValFunction");
 			System.out.println("param abs val now set to: " + Parameters.parameters.booleanParameter("includeAbsValFunction"));
-		}else if(itemID == HALF_LINEAR_CHECKBOX_INDEX) {
+		} else if(itemID == HALF_LINEAR_CHECKBOX_INDEX) {
 			setActivationFunctionCheckBox(activation[Math.abs(HALF_LINEAR_CHECKBOX_INDEX)], HALF_LINEAR_CHECKBOX_INDEX, "includeHalfLinearPiecewiseFunction");
 			System.out.println("param half linear now set to: " + Parameters.parameters.booleanParameter("includeHalfLinearPiecewiseFunction"));
-		}else if(itemID == TANH_CHECKBOX_INDEX) {
+		} else if(itemID == TANH_CHECKBOX_INDEX) {
 			setActivationFunctionCheckBox(activation[Math.abs(TANH_CHECKBOX_INDEX)], TANH_CHECKBOX_INDEX, "includeTanhFunction");
 			System.out.println("param tanh now set to: " + Parameters.parameters.booleanParameter("includeTanhFunction"));
 		} else if(itemID == ID_CHECKBOX_INDEX) { 
@@ -768,7 +768,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		} else if(itemID == SQUARE_WAVE_CHECKBOX_INDEX) {
 			setActivationFunctionCheckBox(activation[Math.abs(SQUARE_WAVE_CHECKBOX_INDEX)], SQUARE_WAVE_CHECKBOX_INDEX, "includeSquareWaveFunction");
 			System.out.println("param square wave now set to: " + Parameters.parameters.booleanParameter("includeSquareWaveFunction"));
-		}else if(itemID == CLOSE_BUTTON_INDEX) {//If close button clicked
+		} else if(itemID == CLOSE_BUTTON_INDEX) {//If close button clicked
 			System.exit(0);
 		} else if(itemID == RESET_BUTTON_INDEX) {//If reset button clicked
 			reset();
@@ -781,7 +781,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		} else if(itemID == UNDO_BUTTON_INDEX) {//If undo button clicked
 			// Not implemented yet
 			setUndo();
-		}else if(itemID == EVOLVE_BUTTON_INDEX && BooleanUtil.any(chosen)) {//If evolve button clicked
+		} else if(itemID == EVOLVE_BUTTON_INDEX && BooleanUtil.any(chosen)) {//If evolve button clicked
 			previousScores = new ArrayList<Score<T>>();
 			previousScores.addAll(scores);
 			waitingForUser = false;//tells evaluateAll method to finish
