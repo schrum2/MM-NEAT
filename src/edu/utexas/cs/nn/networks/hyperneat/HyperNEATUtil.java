@@ -9,8 +9,6 @@ import java.util.List;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.HyperNEATCPPNGenotype;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
-import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype.LinkGene;
-import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype.NodeGene;
 import edu.utexas.cs.nn.networks.ActivationFunctions;
 import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.networks.TWEANN.Node;
@@ -481,10 +479,10 @@ public class HyperNEATUtil {
 	 * @return Total possible links
 	 */
 	public static int totalPossibleLinks(HyperNEATTask hnt) {
-		List<Substrate> subs = hnt.getSubstrateInformation();// extract substrate information from domain
-		List<Pair<String, String>> connections = hnt.getSubstrateConnectivity();// extract substrate connectivity from domain TODO this is causing no bias to be inserted into network
+		// extract substrate information from domain
+		List<Substrate> subs = hnt.getSubstrateInformation();
+		List<Pair<String, String>> connections = hnt.getSubstrateConnectivity();
 		// Will map substrate names to index in subs List
-		// needs to be switched
 		HashMap<String, Integer> substrateIndexMapping = new HashMap<String, Integer>();
 		for (int i = 0; i < subs.size(); i++) {
 			substrateIndexMapping.put(subs.get(i).getName(), i);

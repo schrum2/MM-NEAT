@@ -123,7 +123,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 		//long time = System.currentTimeMillis(); // for timing
 		TWEANN cppn = getCPPN();// CPPN used to create TWEANN network
 		List<Substrate> subs = hnt.getSubstrateInformation();// extract substrate information from domain
-		List<Pair<String, String>> connections = hnt.getSubstrateConnectivity();// extract substrate connectivity from domain TODO this is causing no bias to be inserted into network
+		List<Pair<String, String>> connections = hnt.getSubstrateConnectivity();// extract substrate connectivity from domain
 		ArrayList<NodeGene> newNodes = null;
 		ArrayList<LinkGene> newLinks = null;
 		innovationID = 0;// reset each time a phenotype is generated
@@ -131,7 +131,6 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 
 		newNodes = createSubstrateNodes(hnt, cppn, subs);
 		// Will map substrate names to index in subs List
-		// needs to be switched
 		HashMap<String, Integer> substrateIndexMapping = new HashMap<String, Integer>();
 		for (int i = 0; i < subs.size(); i++) {
 			substrateIndexMapping.put(subs.get(i).getName(), i);
