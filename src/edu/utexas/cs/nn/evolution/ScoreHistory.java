@@ -8,6 +8,7 @@ package edu.utexas.cs.nn.evolution;
 import edu.utexas.cs.nn.util.stats.Statistic;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * TODO: Actually use these methods at an appropriate place in the code,
@@ -44,15 +45,6 @@ public class ScoreHistory {
 		}
 		allScores.get(id).add(scores);
 		accessed.put(id, Boolean.TRUE);
-	}
-
-	/**
-	 * Remove score record of a given genotype ID
-	 * @param id of genotype
-	 */
-	public static void remove(long id) {
-		allScores.remove(id);
-		accessed.remove(id);
 	}
 
 	/**
@@ -116,9 +108,12 @@ public class ScoreHistory {
 	 * Also resets access to all remaining scores.
 	 */
 	public static void clean() {
-		for (Long id : allScores.keySet()) {
+		Iterator<Long> itr = allScores.keySet().iterator();
+		while (itr.hasNext()) {
+			Long id = itr.next();
 			if (!accessed.get(id)) {
-				remove(id);
+				itr.remove();
+				accessed.remove(id);
 			}
 		}
 		resetAccess();
