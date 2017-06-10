@@ -1,15 +1,15 @@
 package edu.utexas.cs.nn.scores;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import edu.utexas.cs.nn.evolution.ScoreHistory;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.util.ClassCreation;
 import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
 import edu.utexas.cs.nn.util.stats.Statistic;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * This is a class that keeps track of an agent's score, the number of
@@ -106,7 +106,24 @@ public class Score<T> {
 		// http://eplex.cs.ucf.edu/papers/morse_gecco16.pdf
 		if(CommonConstants.inheritFitness) {
 			List<Long> parentIDs = individual.getParentIDs();
-			
+			// Get and average all parent scores if there are any
+			double[] adjustedLEEAScores = new double[scores.length];
+			for(Long id: parentIDs) {
+				double[] parentScores = ScoreHistory.getLast(id);
+				// Calculate sum
+				for(int i = 0; i < adjustedLEEAScores.length; i++) {
+					adjustedLEEAScores[i] += parentScores[i];
+				}
+			}
+			// divide for average, and incorporate inherited fitness
+			for(int i = 0; i < adjustedLEEAScores.length; i++) {
+				adjustedLEEAScores[i] /= parentIDs.size(); // average
+				adjustedLEEAScores[i] *= CommonConstants.inheritProportion; // decayed
+				adjustedLEEAScores[i] += scores[i]; // add to child fitness
+			}
+			// Save adjusted fitness
+			ScoreHistory.add(individual.getId(), adjustedLEEAScores);
+			this.scores = adjustedLEEAScores;
 		}
 		
 		// Do not use both inheritFitness and averageScoreHistory

@@ -97,6 +97,17 @@ public class ScoreHistory {
 		}
 		return result;
 	}
+	
+	/**
+	 * This is the approach used for fitness inheritance as in LEEA.
+	 * Just get the most recent fitness score logged by the parent.
+	 * @param id Genotype ID
+	 * @return Score received by genotype on previous generation
+	 */
+	public static double[] getLast(long id) {
+		ArrayList<double[]> scores = allScores.get(id);
+		return scores.get(scores.size() - 1);
+	}
 
 	/**
 	 * Remove score information for ids that were not accessed
