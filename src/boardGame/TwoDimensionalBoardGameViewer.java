@@ -3,7 +3,6 @@ package boardGame;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
-import boardGame.othello.Othello;
 import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.util.graphics.DrawingPanel;
 
@@ -14,8 +13,6 @@ import edu.utexas.cs.nn.util.graphics.DrawingPanel;
  */
 public class TwoDimensionalBoardGameViewer<S  extends TwoDimensionalBoardGameState,T extends TwoDimensionalBoardGame<S>> {
 
-	public static TwoDimensionalBoardGameViewer current = null;
-	
 	private T board;
 	private S state;
 	public DrawingPanel panel;
@@ -25,10 +22,8 @@ public class TwoDimensionalBoardGameViewer<S  extends TwoDimensionalBoardGameSta
 	
 	public static final int GRID_WIDTH = 60;
 	public static final int XY_OFFSET = 0;	
-	final int EMPTY = TwoDimensionalBoardGameState.EMPTY;
+	public static final int EMPTY = TwoDimensionalBoardGameState.EMPTY;
 
-	
-	
 	public TwoDimensionalBoardGameViewer(T bGame){
 		board = bGame;
 		state = board.getStartingState();
@@ -40,23 +35,29 @@ public class TwoDimensionalBoardGameViewer<S  extends TwoDimensionalBoardGameSta
 		
 		panel.setLocation(TWEANN.NETWORK_VIEW_DIM, 0);
 		reset(state);
-		current = this;		
 	}
 	
 	/**
 	 * Resets the graphics for the view
 	 */
-	@SuppressWarnings("unchecked")
 	public void reset(S newBoard) {
 		Graphics2D g = panel.getGraphics();
-		state = (S) newBoard.copy();
+		state = newBoard.copy();
 		renderBoard(g, newBoard);
 	}
 	
+	/**
+	 * Close visualizer
+	 */
 	public void close(){
 		panel.dispose();
 	}
 	
+	/**
+	 * Depict the given board game state on the provided graphics instance.
+	 * @param g graphics instances
+	 * @param newBoard 2D board game state
+	 */
 	public void renderBoard(Graphics2D g, TwoDimensionalBoardGameState newBoard){
 		int boardWidth = newBoard.getBoardWidth();
 		int boardHeight = newBoard.getBoardHeight();
@@ -89,9 +90,4 @@ public class TwoDimensionalBoardGameViewer<S  extends TwoDimensionalBoardGameSta
 		}
 		
 	}
-	
-	public static void main(String[] args) {
-		new TwoDimensionalBoardGameViewer(new Othello());
-	}
-	
 }
