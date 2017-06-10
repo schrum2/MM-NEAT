@@ -2,6 +2,7 @@ package edu.utexas.cs.nn.experiment.evolution;
 
 import edu.utexas.cs.nn.data.SaveThread;
 import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
+import edu.utexas.cs.nn.evolution.ScoreHistory;
 import edu.utexas.cs.nn.evolution.SinglePopulationGenerationalEA;
 import edu.utexas.cs.nn.evolution.crossover.network.CombiningTWEANNCrossover;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
@@ -221,6 +222,8 @@ public abstract class SinglePopulationGenerationalEAExperiment<T> implements Exp
 				}
 				EvolutionaryHistory.cleanArchetype(0, tweannPopulation, gen);
 			}
+			// If tracking score history, clean it up after each generation
+			ScoreHistory.clean();
 			if (writeOutput) {
 				save("gen" + gen);
 				Parameters.parameters.setInteger("lastSavedGeneration", gen);

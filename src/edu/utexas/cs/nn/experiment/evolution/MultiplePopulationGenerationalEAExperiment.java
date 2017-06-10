@@ -2,6 +2,7 @@ package edu.utexas.cs.nn.experiment.evolution;
 
 import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
 import edu.utexas.cs.nn.evolution.MultiplePopulationGenerationalEA;
+import edu.utexas.cs.nn.evolution.ScoreHistory;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.evolution.genotypes.SimpleBlueprintGenotype;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
@@ -210,6 +211,8 @@ public abstract class MultiplePopulationGenerationalEAExperiment implements Expe
 					EvolutionaryHistory.cleanArchetype(i, tweannPopulation, gen);
 				}
 			}
+			// If tracking score history, clean it up after each generation
+			ScoreHistory.clean();
 			// Write output
 			if (writeOutput) {
 				save("gen" + gen);

@@ -1,9 +1,15 @@
 package edu.utexas.cs.nn.scores;
 
+import edu.utexas.cs.nn.evolution.ScoreHistory;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
+import edu.utexas.cs.nn.parameters.CommonConstants;
+import edu.utexas.cs.nn.util.ClassCreation;
 import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
+import edu.utexas.cs.nn.util.stats.Statistic;
+
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * This is a class that keeps track of an agent's score, the number of
@@ -13,6 +19,20 @@ import java.util.Arrays;
  * @author Jacob Schrum
  */
 public class Score<T> {
+	
+	// Use a scoreHistoryStat aggregation when averaging scores across whole score history
+	static {
+		if(CommonConstants.averageScoreHistory) {
+			try {
+				scoreHistoryStat = (Statistic) ClassCreation.createObject("noisyTaskStat");
+			} catch (NoSuchMethodException ex) {
+				ex.printStackTrace();
+				System.exit(1);
+			}	
+		} else scoreHistoryStat = null;
+	}
+	private static Statistic scoreHistoryStat;
+	
 	// number of evals performed to determine this agent's score
 	public int evals;
 	// Array of scores in each objective
@@ -81,6 +101,30 @@ public class Score<T> {
 		this.scores = scores;
 		this.otherStats = otherStats;
 		this.behaviorVector = behaviorVector;
+		
+		// This technique is based on LEEA by G. Morse and K. Stanley:
+		// http://eplex.cs.ucf.edu/papers/morse_gecco16.pdf
+		if(CommonConstants.inheritFitness) {
+			List<Long> parentIDs = individual.getParentIDs();
+			
+		}
+		
+		// Do not use both inheritFitness and averageScoreHistory
+		assert !(CommonConstants.inheritFitness && CommonConstants.averageScoreHistory) :
+			    "Do not use both inheritFitness and averageScoreHistory";
+		
+		// My mu/lambda EAs re-evaluate the parents on every
+		// generation, which is actually generally not done.
+		// This is useful though because most domains in MM-NEAT
+		// have noisy evaluations. However, this setting takes
+		// further advantage by averaging fitnesses across all
+		// evaluations from subsequent generations.
+		if(CommonConstants.averageScoreHistory) {
+			// Add the raw scores to the history
+			ScoreHistory.add(individual.getId(), scores);
+			// Get aggregation (default average) across all scores
+			this.scores = ScoreHistory.applyStat(individual.getId(), scoreHistoryStat);
+		}
 	}
 
 	/**

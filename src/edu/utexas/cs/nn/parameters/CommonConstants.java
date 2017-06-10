@@ -12,6 +12,7 @@ public class CommonConstants {
 
 
 	// boolean
+	public static boolean averageScoreHistory;
 	public static boolean monitorSubstrates;
 	public static boolean includeSigmoidFunction;
 	public static boolean includeTanhFunction;
@@ -30,6 +31,7 @@ public class CommonConstants {
 	public static boolean includeFullSawtoothFunction;
 	public static boolean includeTriangleWaveFunction;
 	public static boolean includeSquareWaveFunction;
+	public static boolean inheritFitness;
 	public static boolean splitRawTetrisInputs;
 	public static boolean allowMultipleFunctions;
 	public static boolean allowRandomGhostReversals;
@@ -112,6 +114,7 @@ public class CommonConstants {
 
 	public static double campPercentOfTrials;
 	public static double distanceForNewMode;
+	public static double inheritProportion;
 	public static double linkExpressionThreshold;
 	public static double netChangeActivationRate;
 	public static double preferenceNeuronDecay;
@@ -131,6 +134,7 @@ public class CommonConstants {
 	 */
 	public static void load() {
 		// boolean
+		averageScoreHistory = Parameters.parameters.booleanParameter("averageScoreHistory");
 		monitorSubstrates = Parameters.parameters.booleanParameter("monitorSubstrates");
 		includeSigmoidFunction = Parameters.parameters.booleanParameter("includeSigmoidFunction");
 		includeTanhFunction = Parameters.parameters.booleanParameter("includeTanhFunction");
@@ -149,6 +153,7 @@ public class CommonConstants {
 		includeFullSawtoothFunction = Parameters.parameters.booleanParameter("includeFullSawtoothFunction");
 		includeTriangleWaveFunction = Parameters.parameters.booleanParameter("includeTriangleWaveFunction");
 		includeSquareWaveFunction = Parameters.parameters.booleanParameter("includeSquareWaveFunction");
+		inheritFitness = Parameters.parameters.booleanParameter("inheritFitness");
 		splitRawTetrisInputs = Parameters.parameters.booleanParameter("splitRawTetrisInputs");
 		allowMultipleFunctions = Parameters.parameters.booleanParameter("allowMultipleFunctions");
 		allowRandomGhostReversals = Parameters.parameters.booleanParameter("allowRandomGhostReversals");
@@ -231,6 +236,7 @@ public class CommonConstants {
 		// double
 		campPercentOfTrials = Parameters.parameters.doubleParameter("campPercentOfTrials");
 		distanceForNewMode = Parameters.parameters.doubleParameter("distanceForNewMode");
+		inheritProportion = Parameters.parameters.doubleParameter("inheritProportion");
 		linkExpressionThreshold = Parameters.parameters.doubleParameter("linkExpressionThreshold");
 		netChangeActivationRate = Parameters.parameters.doubleParameter("netChangeActivationRate");
 		preferenceNeuronDecay = Parameters.parameters.doubleParameter("preferenceNeuronDecay");

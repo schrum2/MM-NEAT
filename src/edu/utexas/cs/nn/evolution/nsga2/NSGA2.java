@@ -115,12 +115,6 @@ public class NSGA2<T> extends MuPlusLambda<T> {
 			long parentId1 = source.getId();
 			long parentId2 = -1;
 			Genotype<T> e = source.copy();
-
-			// TODO: If we want children to have access to the fitness of their
-			// parents, then some code needs to be added here. Specifically, each
-			// child genotype that is created needs to store its parent IDs.
-			// Additionally, the fitness scores of those parents need to be scores
-			// in some globally accessible location for easy lookup.
 			
 			// This restriction on mutation and crossover only makes sense when
 			// using pacman coevolution with a fitness/population for each 

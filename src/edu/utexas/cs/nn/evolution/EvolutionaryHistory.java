@@ -272,7 +272,7 @@ public class EvolutionaryHistory {
 	 * Initializes the mutation and lineage logs of an archetype
 	 */
 	public static void initLineageAndMutationLogs() {
-                // Seective breeding allows for an unusual number of log lines per generation
+		// Selective breeding allows for an unusual number of log lines per generation
 		mutationLog = new MMNEATLog("Mutations", true, false, MMNEAT.ea instanceof SelectiveBreedingEA);
 		lineageLog = new MMNEATLog("Lineage", true, false, MMNEAT.ea instanceof SelectiveBreedingEA);
 	}
@@ -321,7 +321,7 @@ public class EvolutionaryHistory {
 	 * @param cloneChild Child/clone genotype id
 	 */
 	public static void logLineageData(long parent, Genotype<?> cloneChild) {
-		if(Parameters.parameters.booleanParameter("inheritFitness")) {
+		if(CommonConstants.inheritFitness) {
 			cloneChild.addParent(parent);
 		}
 		logLineageData(parent + " -> " + cloneChild.getId());
@@ -334,7 +334,7 @@ public class EvolutionaryHistory {
 	 * @param childOffspring
 	 */
 	public static void logLineageData(long parent1, long parent2, Genotype<?> childOffspring) {
-		if(Parameters.parameters.booleanParameter("inheritFitness")) {
+		if(CommonConstants.inheritFitness) {
 			childOffspring.addParent(parent1);
 			childOffspring.addParent(parent2);
 		}
