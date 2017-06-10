@@ -334,16 +334,16 @@ public class PopulationUtil {
 					// System.out.println(i + ":Mutate Child");
 					otherOffspring.mutate();
 					offspring.add(otherOffspring);
-					EvolutionaryHistory.logLineageData(parentId1,parentId2,otherOffspring.getId());
+					EvolutionaryHistory.logLineageData(parentId1,parentId2,otherOffspring);
 				}
 			}
 
 			e.mutate();
 			offspring.add(e);
 			if (parentId2 == -1) {
-				EvolutionaryHistory.logLineageData(parentId1,e.getId());
+				EvolutionaryHistory.logLineageData(parentId1,e);
 			} else {
-				EvolutionaryHistory.logLineageData(parentId1,parentId2,e.getId());
+				EvolutionaryHistory.logLineageData(parentId1,parentId2,e);
 			}
 		}
 		return offspring;

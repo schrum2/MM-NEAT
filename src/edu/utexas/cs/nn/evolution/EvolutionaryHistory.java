@@ -320,8 +320,11 @@ public class EvolutionaryHistory {
 	 * @param parent Parent genotype id
 	 * @param cloneChild Child/clone genotype id
 	 */
-	public static void logLineageData(long parent, long cloneChild) {
-		logLineageData(parent + " -> " + cloneChild);
+	public static void logLineageData(long parent, Genotype<?> cloneChild) {
+		if(Parameters.parameters.booleanParameter("inheritFitness")) {
+			cloneChild.addParent(parent);
+		}
+		logLineageData(parent + " -> " + cloneChild.getId());
 	}
 	
 	/**
@@ -330,8 +333,12 @@ public class EvolutionaryHistory {
 	 * @param parent2
 	 * @param childOffspring
 	 */
-	public static void logLineageData(long parent1, long parent2, long childOffspring) {
-		logLineageData(parent1 + " X " + parent2 + " -> " + childOffspring);
+	public static void logLineageData(long parent1, long parent2, Genotype<?> childOffspring) {
+		if(Parameters.parameters.booleanParameter("inheritFitness")) {
+			childOffspring.addParent(parent1);
+			childOffspring.addParent(parent2);
+		}
+		logLineageData(parent1 + " X " + parent2 + " -> " + childOffspring.getId());
 	}
 	
 	/**
