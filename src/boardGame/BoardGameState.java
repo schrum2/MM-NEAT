@@ -57,7 +57,7 @@ public interface BoardGameState {
 	 * 
 	 * @return Duplicate of this BoardGameState
 	 */
-	public BoardGameState copy();
+	public <T extends BoardGameState> T copy();
 	
 	/**
 	 * Returns the number of Players in a specific BoardGame
