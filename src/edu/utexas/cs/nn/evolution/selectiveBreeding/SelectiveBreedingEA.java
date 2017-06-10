@@ -147,7 +147,7 @@ public class SelectiveBreedingEA<T> implements SinglePopulationGenerationalEA<T>
 				offspring1.mutate();
 				children.add(offspring1);
 				i++;
-				EvolutionaryHistory.logLineageData(parentId1 + " X " + parentId2 + " -> " + offspring1.getId());
+				EvolutionaryHistory.logLineageData(parentId1,parentId2,offspring1.getId());
 				offspring.add(new Offspring(offspring1.getId(), parentId1, parentId2, generation));
 			}
 			if(i < size) {
@@ -156,10 +156,10 @@ public class SelectiveBreedingEA<T> implements SinglePopulationGenerationalEA<T>
 				}
 				children.add(g1);
 				if (parentId2 == -1) {
-					EvolutionaryHistory.logLineageData(parentId1 + " -> " + g1.getId());
+					EvolutionaryHistory.logLineageData(parentId1,g1.getId());
 					offspring.add(new Offspring(g1.getId(), parentId1, generation));
 				} else {
-					EvolutionaryHistory.logLineageData(parentId1 + " X " + parentId2 + " -> " + g1.getId());
+					EvolutionaryHistory.logLineageData(parentId1,parentId2,g1.getId());
 					offspring.add(new Offspring(g1.getId(), parentId1, parentId2, generation));
 				}
 			}

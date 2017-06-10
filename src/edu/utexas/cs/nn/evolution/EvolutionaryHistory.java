@@ -316,6 +316,25 @@ public class EvolutionaryHistory {
 	}
 
 	/**
+	 * Track the parent ID of a cloned child
+	 * @param parent Parent genotype id
+	 * @param cloneChild Child/clone genotype id
+	 */
+	public static void logLineageData(long parent, long cloneChild) {
+		logLineageData(parent + " -> " + cloneChild);
+	}
+	
+	/**
+	 * Track the two parent IDs of child offspring
+	 * @param parent1
+	 * @param parent2
+	 * @param childOffspring
+	 */
+	public static void logLineageData(long parent1, long parent2, long childOffspring) {
+		logLineageData(parent1 + " X " + parent2 + " -> " + childOffspring);
+	}
+	
+	/**
 	 * logs lineage data about a network to lineageLog
 	 * 
 	 * @param data
