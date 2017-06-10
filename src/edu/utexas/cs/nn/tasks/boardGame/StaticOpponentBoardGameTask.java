@@ -5,7 +5,6 @@ import java.util.List;
 
 import boardGame.BoardGame;
 import boardGame.BoardGameState;
-import boardGame.TwoDimensionalBoardGameViewer;
 import boardGame.agents.BoardGamePlayer;
 import boardGame.agents.HeuristicBoardGamePlayer;
 import boardGame.featureExtractor.BoardGameFeatureExtractor;
@@ -18,35 +17,30 @@ import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.networks.NetworkTask;
 import edu.utexas.cs.nn.networks.hyperneat.HyperNEATTask;
 import edu.utexas.cs.nn.networks.hyperneat.Substrate;
-import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.tasks.NoisyLonerTask;
 import edu.utexas.cs.nn.util.ClassCreation;
-import edu.utexas.cs.nn.util.MiscUtil;
 import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 
-public class StaticOpponentBoardGameTask<T extends Network> extends NoisyLonerTask<T> implements NetworkTask, HyperNEATTask {
+public class StaticOpponentBoardGameTask<T extends Network, S extends BoardGameState> extends NoisyLonerTask<T> implements NetworkTask, HyperNEATTask {
 
-	@SuppressWarnings("rawtypes")
-	BoardGamePlayer opponent;
-	@SuppressWarnings("rawtypes")
-	HeuristicBoardGamePlayer player;
-	BoardGameFeatureExtractor<BoardGameState> featExtract;
-	@SuppressWarnings("rawtypes")
-	BoardGameFitnessFunction selectionFunction;
+	BoardGamePlayer<S> opponent;
+	HeuristicBoardGamePlayer<S> player;
+	BoardGameFeatureExtractor<S> featExtract;
+	BoardGameFitnessFunction<S> selectionFunction;
 	
-	List<BoardGameFitnessFunction> fitFunctions = new ArrayList<BoardGameFitnessFunction>();
+	List<BoardGameFitnessFunction<S>> fitFunctions = new ArrayList<BoardGameFitnessFunction<S>>();
 	
 	/**
 	 * Constructor for a new BoardGameTask
 	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings("unchecked")
 	public StaticOpponentBoardGameTask(){
 		try {
-			opponent = (BoardGamePlayer) ClassCreation.createObject("boardGameOpponent"); // The Opponent
-			player = (HeuristicBoardGamePlayer) ClassCreation.createObject("boardGamePlayer"); // The Player
-			featExtract = (BoardGameFeatureExtractor<BoardGameState>) ClassCreation.createObject("boardGameFeatureExtractor");
-			selectionFunction = (BoardGameFitnessFunction) ClassCreation.createObject("boardGameFitnessFunction");
+			opponent = (BoardGamePlayer<S>) ClassCreation.createObject("boardGameOpponent"); // The Opponent
+			player = (HeuristicBoardGamePlayer<S>) ClassCreation.createObject("boardGamePlayer"); // The Player
+			featExtract = (BoardGameFeatureExtractor<S>) ClassCreation.createObject("boardGameFeatureExtractor");
+			selectionFunction = (BoardGameFitnessFunction<S>) ClassCreation.createObject("boardGameFitnessFunction");
 		} catch (NoSuchMethodException e) {
 			e.printStackTrace();
 			System.out.println("BoardGame instance could not be loaded");
@@ -55,14 +49,13 @@ public class StaticOpponentBoardGameTask<T extends Network> extends NoisyLonerTa
 		MMNEAT.registerFitnessFunction(selectionFunction.getFitnessName());
 		
 		// Add Other Scores here to keep track of other Fitness Functions
-		fitFunctions.add(new SimpleWinLoseDrawBoardGameFitness());
+		fitFunctions.add(new SimpleWinLoseDrawBoardGameFitness<S>());
 		
-		for(BoardGameFitnessFunction fit : fitFunctions){
+		for(BoardGameFitnessFunction<S> fit : fitFunctions){
 			MMNEAT.registerFitnessFunction(fit.getFitnessName(), false);
 		}
 		
 		fitFunctions.add(0, selectionFunction); // Adds the Selection Function to the first Index
-
 	}
 
 	/**
@@ -123,14 +116,14 @@ public class StaticOpponentBoardGameTask<T extends Network> extends NoisyLonerTa
 	 * @param num Integer value
 	 * @return Pair of Double Arrays that show the Fitness of an individual network
 	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings("unchecked")
 	@Override
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {
 
-		player.setHeuristic((new NNBoardGameHeuristic(individual.getPhenotype(), featExtract)));
-		BoardGamePlayer[] players = new BoardGamePlayer[]{player, opponent};
+		player.setHeuristic((new NNBoardGameHeuristic<T,S>(individual.getPhenotype(), featExtract)));
+		BoardGamePlayer<S>[] players = new BoardGamePlayer[]{player, opponent};
 		// get(0) because information for both players is returned, but only the first is about the evolved player
-		return BoardGameUtil.playGame(MMNEAT.boardGame, players, fitFunctions).get(0);
+		return BoardGameUtil.playGame((BoardGame<S>) MMNEAT.boardGame, players, fitFunctions).get(0);
 	}
 
 	// Used for Hyper-NEAT
@@ -145,6 +138,7 @@ public class StaticOpponentBoardGameTask<T extends Network> extends NoisyLonerTa
 		return fullInputs; // default behavior
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<Substrate> getSubstrateInformation() {
 		return BoardGameUtil.getSubstrateInformation(MMNEAT.boardGame);
 	}

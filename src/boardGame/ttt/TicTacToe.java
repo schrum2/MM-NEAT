@@ -3,18 +3,17 @@ package boardGame.ttt;
 import java.util.ArrayList;
 import java.util.List;
 
-import boardGame.BoardGame;
 import boardGame.TwoDimensionalBoardGame;
 import boardGame.agents.BoardGamePlayer;
 import boardGame.agents.BoardGamePlayerHuman2DBoard;
 import boardGame.agents.treesearch.BoardGamePlayerMinimaxAlphaBetaPruning;
 import boardGame.fitnessFunction.BoardGameFitnessFunction;
 import boardGame.fitnessFunction.SimpleWinLoseDrawBoardGameFitness;
-import boardGame.othello.OthelloState;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.boardGame.BoardGameUtil;
 import edu.utexas.cs.nn.util.ClassCreation;
+import edu.utexas.cs.nn.util.MiscUtil;
 
 public class TicTacToe extends TwoDimensionalBoardGame<TicTacToeState> {
 
@@ -26,22 +25,24 @@ public class TicTacToe extends TwoDimensionalBoardGame<TicTacToeState> {
 		
 		MMNEAT.loadClasses();
 		
-		BoardGame bg = null;
+		TicTacToe bg = null;
 		
 		try {
-			bg = (BoardGame) ClassCreation.createObject("boardGame");
+			bg = (TicTacToe) ClassCreation.createObject("boardGame");
 		} catch (NoSuchMethodException e) {
 			e.printStackTrace();
 			System.exit(1);
 		}
 		
-		BoardGamePlayer[] players = new BoardGamePlayer[]{new BoardGamePlayerMinimaxAlphaBetaPruning<OthelloState>(), new BoardGamePlayerHuman2DBoard<OthelloState>()};
+		@SuppressWarnings("unchecked")
+		BoardGamePlayer<TicTacToeState>[] players = new BoardGamePlayer[]{new BoardGamePlayerMinimaxAlphaBetaPruning<TicTacToeState>(), new BoardGamePlayerHuman2DBoard<TicTacToeState>()};
 		
-		List<BoardGameFitnessFunction> scores = new ArrayList<BoardGameFitnessFunction>();
-		scores.add(new SimpleWinLoseDrawBoardGameFitness<OthelloState>());
+		List<BoardGameFitnessFunction<TicTacToeState>> scores = new ArrayList<BoardGameFitnessFunction<TicTacToeState>>();
+		scores.add(new SimpleWinLoseDrawBoardGameFitness<TicTacToeState>());
 		
 		BoardGameUtil.playGame(bg, players, scores);
-		System.out.println("Game Over");
+		System.out.println("Game Over. Press Enter");
+		MiscUtil.waitForReadStringAndEnterKeyPress();
 		MMNEAT.boardGameViewer.close();
 	}
 	

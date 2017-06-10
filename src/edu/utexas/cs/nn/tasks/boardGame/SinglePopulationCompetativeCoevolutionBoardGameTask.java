@@ -20,27 +20,23 @@ import edu.utexas.cs.nn.tasks.SinglePopulationCoevolutionTask;
 import edu.utexas.cs.nn.util.ClassCreation;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 
-public class SinglePopulationCompetativeCoevolutionBoardGameTask<T extends Network> extends SinglePopulationCoevolutionTask<T> implements NetworkTask, HyperNEATTask  {
+public class SinglePopulationCompetativeCoevolutionBoardGameTask<T extends Network, S extends BoardGameState> extends SinglePopulationCoevolutionTask<T> implements NetworkTask, HyperNEATTask  {
 
-	@SuppressWarnings("rawtypes")
-	BoardGamePlayer[] players;
-	BoardGameFeatureExtractor<BoardGameState> featExtract;
-	@SuppressWarnings("rawtypes")
-	BoardGameFitnessFunction selectionFunction;
+	BoardGamePlayer<S>[] players;
+	BoardGameFeatureExtractor<S> featExtract;
+	BoardGameFitnessFunction<S> selectionFunction;
 	
-	List<BoardGameFitnessFunction> fitFunctions = new ArrayList<BoardGameFitnessFunction>();
+	List<BoardGameFitnessFunction<S>> fitFunctions = new ArrayList<BoardGameFitnessFunction<S>>();
 	
-	
-	@SuppressWarnings({ "rawtypes", "unchecked"})
+	@SuppressWarnings("unchecked")
 	public SinglePopulationCompetativeCoevolutionBoardGameTask(){
 		try {
 			players = new BoardGamePlayer[groupSize()];
-			featExtract = (BoardGameFeatureExtractor<BoardGameState>) ClassCreation.createObject("boardGameFeatureExtractor");
-			selectionFunction = (BoardGameFitnessFunction) ClassCreation.createObject("boardGameFitnessFunction");
+			featExtract = (BoardGameFeatureExtractor<S>) ClassCreation.createObject("boardGameFeatureExtractor");
+			selectionFunction = (BoardGameFitnessFunction<S>) ClassCreation.createObject("boardGameFitnessFunction");
 			for(int i = 0; i < groupSize(); i++){
-				players[i] = (BoardGamePlayer) ClassCreation.createObject("boardGamePlayer"); // The Player
+				players[i] = (BoardGamePlayer<S>) ClassCreation.createObject("boardGamePlayer"); // The Player
 			}
-			
 		} catch (NoSuchMethodException e) {
 			e.printStackTrace();
 			System.out.println("BoardGame instance could not be loaded");
@@ -50,9 +46,9 @@ public class SinglePopulationCompetativeCoevolutionBoardGameTask<T extends Netwo
 		MMNEAT.registerFitnessFunction(selectionFunction.getFitnessName());
 		
 		// Add Other Scores here to keep track of other Fitness Functions
-		fitFunctions.add(new SimpleWinLoseDrawBoardGameFitness());
+		fitFunctions.add(new SimpleWinLoseDrawBoardGameFitness<S>());
 		
-		for(BoardGameFitnessFunction fit : fitFunctions){
+		for(BoardGameFitnessFunction<S> fit : fitFunctions){
 			MMNEAT.registerFitnessFunction(fit.getFitnessName(), false);
 		}
 		
@@ -69,14 +65,14 @@ public class SinglePopulationCompetativeCoevolutionBoardGameTask<T extends Netwo
 		return new double[]{-1}; // -1 is for a loss
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings("unchecked")
 	@Override
 	public ArrayList<Pair<double[], double[]>> evaluateGroup(ArrayList<Genotype<T>> group) {
-		HeuristicBoardGamePlayer[] teamPlayers = new HeuristicBoardGamePlayer[group.size()];
+		HeuristicBoardGamePlayer<S>[] teamPlayers = new HeuristicBoardGamePlayer[group.size()];
 		int index = 0;
 		for(Genotype<T> gene : group){
-			HeuristicBoardGamePlayer evolved = (HeuristicBoardGamePlayer) players[index]; // Creates the Player based on the command line
-			evolved.setHeuristic((new NNBoardGameHeuristic(gene.getPhenotype(),featExtract)));
+			HeuristicBoardGamePlayer<S> evolved = (HeuristicBoardGamePlayer<S>) players[index]; // Creates the Player based on the command line
+			evolved.setHeuristic((new NNBoardGameHeuristic<T,S>(gene.getPhenotype(),featExtract)));
 			teamPlayers[index++] = evolved;
 		}
 		return BoardGameUtil.playGame(MMNEAT.boardGame, teamPlayers, fitFunctions);
@@ -99,6 +95,7 @@ public class SinglePopulationCompetativeCoevolutionBoardGameTask<T extends Netwo
 		return fullInputs; // default behavior
 	}
 
+	@SuppressWarnings("unchecked")
 	public List<Substrate> getSubstrateInformation() {
 		return BoardGameUtil.getSubstrateInformation(MMNEAT.boardGame);
 	}
@@ -129,7 +126,7 @@ public class SinglePopulationCompetativeCoevolutionBoardGameTask<T extends Netwo
 
 	@Override
 	public void preEval() {
-		// TODO Auto-generated method stub
+		// No action required
 	}
 
 

@@ -3,18 +3,18 @@ package boardGame.checkers;
 import java.util.ArrayList;
 import java.util.List;
 
-import boardGame.BoardGame;
 import boardGame.TwoDimensionalBoardGame;
 import boardGame.agents.BoardGamePlayer;
 import boardGame.agents.BoardGamePlayerHuman2DBoard;
 import boardGame.agents.treesearch.BoardGamePlayerMinimaxAlphaBetaPruning;
 import boardGame.fitnessFunction.BoardGameFitnessFunction;
 import boardGame.fitnessFunction.SimpleWinLoseDrawBoardGameFitness;
-import boardGame.othello.OthelloState;
+import boardGame.heuristics.PieceDifferentialBoardGameHeuristic;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.boardGame.BoardGameUtil;
 import edu.utexas.cs.nn.util.ClassCreation;
+import edu.utexas.cs.nn.util.MiscUtil;
 
 public class Checkers extends TwoDimensionalBoardGame<CheckersState> {
 	
@@ -26,22 +26,25 @@ public class Checkers extends TwoDimensionalBoardGame<CheckersState> {
 		
 		MMNEAT.loadClasses();
 		
-		BoardGame bg = null;
+		Checkers bg = null;
 		
 		try {
-			bg = (BoardGame) ClassCreation.createObject("boardGame");
+			bg = (Checkers) ClassCreation.createObject("boardGame");
 		} catch (NoSuchMethodException e) {
 			e.printStackTrace();
 			System.exit(1);
 		}
 		
-		BoardGamePlayer[] players = new BoardGamePlayer[]{new BoardGamePlayerMinimaxAlphaBetaPruning<OthelloState>(), new BoardGamePlayerHuman2DBoard<OthelloState>()};
+		@SuppressWarnings("unchecked")
+		BoardGamePlayer<CheckersState>[] players = new BoardGamePlayer[]{new BoardGamePlayerMinimaxAlphaBetaPruning<CheckersState>(new PieceDifferentialBoardGameHeuristic<CheckersState>()), new BoardGamePlayerHuman2DBoard<CheckersState>()};
 		
-		List<BoardGameFitnessFunction> scores = new ArrayList<BoardGameFitnessFunction>();
-		scores.add(new SimpleWinLoseDrawBoardGameFitness<OthelloState>());
+		List<BoardGameFitnessFunction<CheckersState>> scores = new ArrayList<BoardGameFitnessFunction<CheckersState>>();
+		scores.add(new SimpleWinLoseDrawBoardGameFitness<CheckersState>());
 		
 		BoardGameUtil.playGame(bg, players, scores);
-		System.out.println("Game Over");
+		System.out.println("Game Over. Press enter");
+		MiscUtil.waitForReadStringAndEnterKeyPress();
+		
 		MMNEAT.boardGameViewer.close();
 	}
 	

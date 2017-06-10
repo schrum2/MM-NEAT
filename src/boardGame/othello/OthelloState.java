@@ -228,8 +228,9 @@ public class OthelloState extends TwoDimensionalBoardGameState {
 	 * 
 	 * @return Copy of this BoardGameState
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
- 	public BoardGameState copy() {
+ 	public OthelloState copy() {
 		return new OthelloState(this);
 	}
 

@@ -123,6 +123,7 @@ public class TicTacToeState extends TwoDimensionalBoardGameState {
 	 * 
 	 * @return TicTacToeState identical to this TicTacToeState
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public TicTacToeState copy() {
 		return new TicTacToeState(this);

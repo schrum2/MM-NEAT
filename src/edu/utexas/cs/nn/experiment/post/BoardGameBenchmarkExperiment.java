@@ -25,21 +25,20 @@ import edu.utexas.cs.nn.util.PopulationUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.graphics.DrawingPanel;
 
-public class BoardGameBenchmarkExperiment<T> implements Experiment{
+public class BoardGameBenchmarkExperiment<T, S extends BoardGameState> implements Experiment{
 	
 	protected ArrayList<Genotype<T>> population;
 	protected SinglePopulationTask<T> task;
 
 	
-	private BoardGame bg;
-	private BoardGameFitnessFunction selectionFunction;
-	private BoardGameFeatureExtractor featExtract;
-	private BoardGamePlayer[] players;
-	private BoardGamePlayer opponent;
+	private BoardGame<S> bg;
+	private BoardGameFitnessFunction<S> selectionFunction;
+	private BoardGameFeatureExtractor<S> featExtract;
+	private BoardGamePlayer<S>[] players;
+	private BoardGamePlayer<S> opponent;
 	
-	private List<BoardGameFitnessFunction> fitFunctions = new ArrayList<BoardGameFitnessFunction>();
-	
-	
+	private List<BoardGameFitnessFunction<S>> fitFunctions = new ArrayList<BoardGameFitnessFunction<S>>();
+		
 	/**
 	 * Gets the best Coevolved BoardGamePlayer in a given Task; initializes the boardGame and fitnessFunction
 	 */
@@ -75,10 +74,10 @@ public class BoardGameBenchmarkExperiment<T> implements Experiment{
 		
 		// TODO: Find a way to load up these specifications from the directory?/Parameters File?
 		try {
-			bg = (BoardGame) ClassCreation.createObject("boardGame");
-			selectionFunction = (BoardGameFitnessFunction<?>) ClassCreation.createObject("boardGameFitnessFunction");
-			featExtract = (BoardGameFeatureExtractor<BoardGameState>) ClassCreation.createObject("boardGameFeatureExtractor");
-			opponent = (BoardGamePlayer) ClassCreation.createObject("boardGameOpponent");
+			bg = (BoardGame<S>) ClassCreation.createObject("boardGame");
+			selectionFunction = (BoardGameFitnessFunction<S>) ClassCreation.createObject("boardGameFitnessFunction");
+			featExtract = (BoardGameFeatureExtractor<S>) ClassCreation.createObject("boardGameFeatureExtractor");
+			opponent = (BoardGamePlayer<S>) ClassCreation.createObject("boardGameOpponent");
 		} catch (NoSuchMethodException e) {
 			e.printStackTrace();
 			System.exit(1);
@@ -88,9 +87,9 @@ public class BoardGameBenchmarkExperiment<T> implements Experiment{
 		MMNEAT.registerFitnessFunction(selectionFunction.getFitnessName());
 		
 		// Add Other Scores here to keep track of other Fitness Functions
-		fitFunctions.add(new SimpleWinLoseDrawBoardGameFitness());
+		fitFunctions.add(new SimpleWinLoseDrawBoardGameFitness<S>());
 		
-		for(BoardGameFitnessFunction fit : fitFunctions){
+		for(BoardGameFitnessFunction<S> fit : fitFunctions){
 			MMNEAT.registerFitnessFunction(fit.getFitnessName(), false);
 		}
 		
@@ -120,7 +119,8 @@ public class BoardGameBenchmarkExperiment<T> implements Experiment{
 			}
 			
 			try {
-				HeuristicBoardGamePlayer evolved = (HeuristicBoardGamePlayer) ClassCreation.createObject("boardGamePlayer");
+				@SuppressWarnings("unchecked")
+				HeuristicBoardGamePlayer<S> evolved = (HeuristicBoardGamePlayer<S>) ClassCreation.createObject("boardGamePlayer");
 				
 				// TODO: Create BoardGamePlayer "evolved" Heuristic with "gene"
 				

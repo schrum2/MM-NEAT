@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import boardGame.BoardGame;
+import boardGame.BoardGameState;
 import boardGame.TwoDimensionalBoardGame;
 import boardGame.TwoDimensionalBoardGameState;
 import boardGame.TwoDimensionalBoardGameViewer;
@@ -23,11 +24,8 @@ public class BoardGameUtil {
 	static TwoDimensionalBoardGameViewer view = null;
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static ArrayList<Pair<double[], double[]>> playGame(BoardGame bg, BoardGamePlayer[] players, List<BoardGameFitnessFunction> fit){
-		
-		
-		bg.reset();
-		
+	public static <T extends BoardGameState> ArrayList<Pair<double[], double[]>> playGame(BoardGame<T> bg, BoardGamePlayer<T>[] players, List<BoardGameFitnessFunction<T>> fit){
+		bg.reset();		
 		if(CommonConstants.watch && bg instanceof TwoDimensionalBoardGame){ // Creates a new BoardGameViewer if bg is a TwoDimensionalBoardGame
 			if(view != null){ 
 				view.panel.dispose();
@@ -45,14 +43,12 @@ public class BoardGameUtil {
 				System.out.print("Press enter to continue");
 				MiscUtil.waitForReadStringAndEnterKeyPress();
 			}
-			
 			int playIndex = bg.getCurrentPlayer(); // Stores the current Player's Index to access the Player's Fitness
 			bg.move(players[bg.getCurrentPlayer()]);
 			
 			for(BoardGameFitnessFunction fitFunct : fit){
 				fitFunct.updateFitness(bg.getCurrentState(), playIndex);
 			}
-			
 		}
 		
 		if(CommonConstants.watch && bg instanceof TwoDimensionalBoardGame){ // Renders the last Move of the game
@@ -80,37 +76,33 @@ public class BoardGameUtil {
 		return scoring; // Returns the Fitness of the individual's Genotype<T>
 	}
 	
-	
-	@SuppressWarnings("rawtypes")
-	public static List<Substrate> getSubstrateInformation(BoardGame bg) {
-			TwoDimensionalBoardGame temp = (TwoDimensionalBoardGame) bg;
-			int height = temp.getStartingState().getBoardHeight();
-			int width = temp.getStartingState().getBoardWidth();
-			List<Substrate> substrateInformation = new LinkedList<Substrate>();
-			Substrate boardInputs = new Substrate(new Pair<Integer, Integer>(width, height), 
-			Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, Substrate.INPUT_SUBSTRATE, 0), "Board Inputs");
-			substrateInformation.add(boardInputs);
-			Substrate processing = new Substrate(new Pair<Integer, Integer>(width, height), 
-			Substrate.PROCCESS_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, Substrate.PROCCESS_SUBSTRATE, 0), "Processing");
-			substrateInformation.add(processing);
-			Substrate output = new Substrate(new Pair<Integer, Integer>(1, 1), // Single utility value
-			Substrate.OUTPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, Substrate.OUTPUT_SUBSTRATE, 0), "Utility Output");
-			substrateInformation.add(output);
-			// Otherwise, no substrates will be defined, and the code will crash from the null result
-		
+	public static <S extends TwoDimensionalBoardGameState> List<Substrate> getSubstrateInformation(BoardGame<S> bg) {
+		TwoDimensionalBoardGame<S> temp = (TwoDimensionalBoardGame<S>) bg;
+		int height = temp.getStartingState().getBoardHeight();
+		int width = temp.getStartingState().getBoardWidth();
+		List<Substrate> substrateInformation = new LinkedList<Substrate>();
+		Substrate boardInputs = new Substrate(new Pair<Integer, Integer>(width, height), 
+				Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, Substrate.INPUT_SUBSTRATE, 0), "Board Inputs");
+		substrateInformation.add(boardInputs);
+		Substrate processing = new Substrate(new Pair<Integer, Integer>(width, height), 
+				Substrate.PROCCESS_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, Substrate.PROCCESS_SUBSTRATE, 0), "Processing");
+		substrateInformation.add(processing);
+		Substrate output = new Substrate(new Pair<Integer, Integer>(1, 1), // Single utility value
+				Substrate.OUTPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, Substrate.OUTPUT_SUBSTRATE, 0), "Utility Output");
+		substrateInformation.add(output);
+		// Otherwise, no substrates will be defined, and the code will crash from the null result
+
 		return substrateInformation;
 	}
 
 	// Used for Hyper-NEAT
-
 	public static List<Pair<String, String>> getSubstrateConnectivity() {
-			List<Pair<String, String>> substrateConnectivity = new LinkedList<Pair<String, String>>();
-			substrateConnectivity.add(new Pair<String, String>("Board Inputs", "Processing"));
-			substrateConnectivity.add(new Pair<String, String>("Processing", "Utility Output"));	
-			if(Parameters.parameters.booleanParameter("extraHNLinks")) {
-				substrateConnectivity.add(new Pair<String, String>("Board Inputs", "Utility Output"));
-			}
-		
+		List<Pair<String, String>> substrateConnectivity = new LinkedList<Pair<String, String>>();
+		substrateConnectivity.add(new Pair<String, String>("Board Inputs", "Processing"));
+		substrateConnectivity.add(new Pair<String, String>("Processing", "Utility Output"));	
+		if(Parameters.parameters.booleanParameter("extraHNLinks")) {
+			substrateConnectivity.add(new Pair<String, String>("Board Inputs", "Utility Output"));
+		}
 		return substrateConnectivity;
 	}
 	

@@ -3,7 +3,6 @@ package boardGame.othello;
 import java.util.ArrayList;
 import java.util.List;
 
-import boardGame.BoardGame;
 import boardGame.TwoDimensionalBoardGame;
 import boardGame.agents.BoardGamePlayer;
 import boardGame.agents.BoardGamePlayerHuman2DBoard;
@@ -26,18 +25,19 @@ public class Othello extends TwoDimensionalBoardGame<OthelloState>{
 		
 		MMNEAT.loadClasses();
 		
-		BoardGame bg = null;
+		Othello bg = null;
 		
 		try {
-			bg = (BoardGame) ClassCreation.createObject("boardGame");
+			bg = (Othello) ClassCreation.createObject("boardGame");
 		} catch (NoSuchMethodException e) {
 			e.printStackTrace();
 			System.exit(1);
 		}
 		
-		BoardGamePlayer[] players = new BoardGamePlayer[]{new BoardGamePlayerMinimaxAlphaBetaPruning<OthelloState>(), new BoardGamePlayerHuman2DBoard<OthelloState>()};
+		@SuppressWarnings("unchecked")
+		BoardGamePlayer<OthelloState>[] players = new BoardGamePlayer[]{new BoardGamePlayerMinimaxAlphaBetaPruning<OthelloState>(), new BoardGamePlayerHuman2DBoard<OthelloState>()};
 		
-		List<BoardGameFitnessFunction> scores = new ArrayList<BoardGameFitnessFunction>();
+		List<BoardGameFitnessFunction<OthelloState>> scores = new ArrayList<BoardGameFitnessFunction<OthelloState>>();
 		scores.add(new SimpleWinLoseDrawBoardGameFitness<OthelloState>());
 		
 		BoardGameUtil.playGame(bg, players, scores);

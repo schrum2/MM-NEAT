@@ -148,9 +148,8 @@ public class MMNEAT {
 	public static MMNEATLog ghostLocationsOnPowerPillEaten = null;
 	public static boolean browseLineage = false;
 	public static SubstrateCoordinateMapping substrateMapping = null;
-
 	@SuppressWarnings("rawtypes")
-	public static boardGame.BoardGame boardGame;
+	public static BoardGame boardGame;
 	@SuppressWarnings("rawtypes")
 	public static TwoDimensionalBoardGameViewer boardGameViewer;
 	

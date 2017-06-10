@@ -302,6 +302,7 @@ public class CheckersState extends TwoDimensionalBoardGameState {
 	 * 
 	 * @return BoardGameState that is a duplicate of this BoardGameState
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public CheckersState copy() {
 		return new CheckersState(this);

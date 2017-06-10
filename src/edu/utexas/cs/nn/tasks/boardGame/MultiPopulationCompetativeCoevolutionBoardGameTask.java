@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import boardGame.BoardGame;
+import boardGame.BoardGameState;
 import boardGame.agents.BoardGamePlayer;
 import boardGame.agents.HeuristicBoardGamePlayer;
 import boardGame.featureExtractor.BoardGameFeatureExtractor;
@@ -19,30 +20,25 @@ import edu.utexas.cs.nn.util.ClassCreation;
 import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 
-public class MultiPopulationCompetativeCoevolutionBoardGameTask extends GroupTask{
+public class MultiPopulationCompetativeCoevolutionBoardGameTask<S extends BoardGameState> extends GroupTask {
 
-	@SuppressWarnings("rawtypes")
-	BoardGame bg;
-	@SuppressWarnings("rawtypes")
-	BoardGamePlayer[] players;
-	@SuppressWarnings("rawtypes")
-	BoardGameFeatureExtractor featExtract;
-	@SuppressWarnings("rawtypes")
-	BoardGameFitnessFunction selectionFunction;
+	BoardGame<S> bg;
+	BoardGamePlayer<S>[] players;
+	BoardGameFeatureExtractor<S> featExtract;
+	BoardGameFitnessFunction<S> selectionFunction;
 	
-	List<BoardGameFitnessFunction> fitFunctions = new ArrayList<BoardGameFitnessFunction>();
-
+	List<BoardGameFitnessFunction<S>> fitFunctions = new ArrayList<BoardGameFitnessFunction<S>>();
 	
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings("unchecked")
 	public MultiPopulationCompetativeCoevolutionBoardGameTask(){
 		
 		try {
-			bg = (BoardGame) ClassCreation.createObject("boardGame");
+			bg = (BoardGame<S>) ClassCreation.createObject("boardGame");
 			players = new BoardGamePlayer[numberOfPopulations()];
-			featExtract = (BoardGameFeatureExtractor) ClassCreation.createObject("boardGameFeatureExtractor");
-			selectionFunction = (BoardGameFitnessFunction) ClassCreation.createObject("boardGameFitnessFunction");
+			featExtract = (BoardGameFeatureExtractor<S>) ClassCreation.createObject("boardGameFeatureExtractor");
+			selectionFunction = (BoardGameFitnessFunction<S>) ClassCreation.createObject("boardGameFitnessFunction");
 			for(int i = 0; i < numberOfPopulations(); i++){
-				players[i] = (BoardGamePlayer) ClassCreation.createObject("boardGamePlayer"); // The Player
+				players[i] = (BoardGamePlayer<S>) ClassCreation.createObject("boardGamePlayer"); // The Player
 			}
 		} catch (NoSuchMethodException e) {
 			e.printStackTrace();
@@ -53,9 +49,9 @@ public class MultiPopulationCompetativeCoevolutionBoardGameTask extends GroupTas
 		MMNEAT.registerFitnessFunction(selectionFunction.getFitnessName());
 		
 		// Add Other Scores here to keep track of other Fitness Functions
-		fitFunctions.add(new SimpleWinLoseDrawBoardGameFitness());
+		fitFunctions.add(new SimpleWinLoseDrawBoardGameFitness<S>());
 		
-		for(BoardGameFitnessFunction fit : fitFunctions){
+		for(BoardGameFitnessFunction<S> fit : fitFunctions){
 			MMNEAT.registerFitnessFunction(fit.getFitnessName(), false);
 		}
 		
@@ -95,10 +91,10 @@ public class MultiPopulationCompetativeCoevolutionBoardGameTask extends GroupTas
 	public ArrayList<Score> evaluate(Genotype[] team) {
 		
 		// Copied from SinglePopulationCompetativeCoevolutionBoardGameTask
-		HeuristicBoardGamePlayer[] teamPlayers = new HeuristicBoardGamePlayer[team.length];
+		HeuristicBoardGamePlayer<S>[] teamPlayers = new HeuristicBoardGamePlayer[team.length];
 		int index = 0;
 		for(Genotype gene : team){
-			HeuristicBoardGamePlayer evolved = (HeuristicBoardGamePlayer) players[index]; // Creates the Player based on the command line
+			HeuristicBoardGamePlayer<S> evolved = (HeuristicBoardGamePlayer<S>) players[index]; // Creates the Player based on the command line
 			evolved.setHeuristic((new NNBoardGameHeuristic((Network) gene.getPhenotype(), featExtract)));
 			teamPlayers[index++] = evolved;
 		}
