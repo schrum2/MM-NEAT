@@ -104,6 +104,8 @@ public class Score<T> {
 		
 		// This technique is based on LEEA by G. Morse and K. Stanley:
 		// http://eplex.cs.ucf.edu/papers/morse_gecco16.pdf
+		// However, the original method proposed seems to cause fitness
+		// scores to grow without bound, so I've adjusted it.
 		if(CommonConstants.inheritFitness) {
 			List<Long> parentIDs = individual.getParentIDs();
 			// Get and average all parent scores if there are any
@@ -121,7 +123,8 @@ public class Score<T> {
 					adjustedLEEAScores[i] /= parentIDs.size(); // average
 					adjustedLEEAScores[i] *= CommonConstants.inheritProportion; // decayed
 				}
-				adjustedLEEAScores[i] += scores[i]; // add to child fitness
+				//adjustedLEEAScores[i] += scores[i]; // original LEEA?
+				adjustedLEEAScores[i] += (1 - CommonConstants.inheritProportion)*scores[i]; // weighted average
 			}
 			// Save adjusted fitness
 			ScoreHistory.add(individual.getId(), adjustedLEEAScores);
