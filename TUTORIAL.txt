@@ -40,26 +40,62 @@ are in the many Experiment files described next.
 =========== EXPERIMENT FILES ===========
 
 There are several batch files in the sub-directory "batch".
-Of particular interest are the batch files in batch/MsPacMan-*/.
-Each of these corresponds to an experiment from Dr. Jacob Schrum's
-publications, including his 2014 dissertation, which is available at:
+Each sub-directory with the prefix Experiments-* contains batch
+files associated with experiments from either my dissertation or
+from peer-reviewed publications that have used MM-NEAT since then.
+In each such sub-directory there is a batch file called LAUNCHALL.bat
+that you can simply double-click to launch each group of experiments  
+simultaneously. This is the easiest approach to recreating experimental
+results, but not necessarily the best. In some cases, the number of
+experiments launching may overwhelm the memory of your machine, so you
+can launch the experiments individually instead. However, for the most 
+part these experiments were run on a cluster, so distributing all execution
+would be best.
 
-http://nn.cs.utexas.edu/?schrum:phd2014
+Below are details on research conducted with MM-NEAT, and the associated
+batch files.
 
-These results, and results from additional experiments were
-published in several follow-up publications:
+* Jacob Schrum (2014). Evolving Multimodal Behavior Through Modular Multiobjective 
+  Neuroevolution, PhD Thesis, The University of Texas at Austin, May 2014. Tech Report TR-14-07.
+  http://nn.cs.utexas.edu/?schrum:phd2014
+  Batch files for Ms. Pac-Man experiments in: batch/Experiments-2014-Dissertation-MsPacMan 
 
-http://nn.cs.utexas.edu/?schrum:gecco2014
-http://nn.cs.utexas.edu/?schrum:gecco2015
-http://nn.cs.utexas.edu/?schrum:tciaig16
-http://nn.cs.utexas.edu/?schrum:ecj16
+* Jacob Schrum, and Risto Miikkulainen (2014). Evolving Multimodal Behavior With Modular Neural 
+  Networks in Ms. Pac-Man, Proceedings of the Genetic and Evolutionary Computation Conference (GECCO 2014).
+  Best Paper Award in Digital Entertainment and Arts
+  https://suscholar.southwestern.edu/handle/11214/152
+  Batch files for experiments in: batch/Experiments-2014-GECCO-MsPacMan
 
-The Ms Pac-Man batch files can be run simply by double-clicking them in windows
-(simply treating the file as a bash script in Linux should also work).
-Launching any one file simply executes a single run of a particular
-experimental condition. To recreate the results from the dissertation,
-multiple runs of each type are required, which can be done by incrementing
-the runNumber and randomSeed parameters in the Experiment files.
+* Jacob Schrum, and Risto Miikkulainen (2015). Solving Interleaved and Blended Sequential Decision-Making 
+  Problems through Modular Neuroevolution, Proceedings of the Genetic and Evolutionary Computation Conference 
+  (GECCO 2015). 
+  Best Paper Award in Digital Entertainment and Arts
+  https://suscholar.southwestern.edu/handle/11214/155
+  Batch files for experiments in: batch/Experiments-2015-GECCO-MsPacMan
+
+* Jacob Schrum, and Risto Miikkulainen (2016). Discovering Multimodal Behavior in Ms. Pac-Man through 
+  Evolution of Modular Neural Networks, IEEE Transactions on Computational Intelligence and AI in Games 
+  (TCIAIG 2016). March. Volume 8, Issue 1, pages 67 - 81. IEEE.
+  https://suscholar.southwestern.edu/handle/11214/149
+  Batch files for experiments in: batch/Experiments-2016-TCIAIG-MsPacMan
+
+* Jacob Schrum, and Risto Miikkulainen (2016). Solving Multiple Isolated, Interleaved, and Blended Tasks 
+  through Modular Neuroevolution, Evolutionary Computation Journal (ECJ 2016). September. Volume 24, No. 3, 
+  pages 459 - 490. MIT Press. 
+  https://suscholar.southwestern.edu/handle/11214/156
+  Batch files for experiments in: batch/Experiments-2016-ECJ-MsPacMan
+
+* Alex Rollins, and Jacob Schrum (2017). Balancing Selection Pressures, Multiple Objectives, and Neural 
+  Modularity to Coevolve Cooperative Agent Behavior, Companion to the Proceedings of the Conference on Genetic 
+  and Evolutionary Computation (GECCO Companion 2017).
+  http://people.southwestern.edu/~schrum2/SCOPE/rollins.gecco17.pdf
+  Batch files for experiments in: batch/Experiments-2017-GECCO-PredPrey
+
+* Lauren E. Gillespie, Gabriela R. Gonzalez, and Jacob Schrum (2017). Comparing Direct and Indirect Encodings 
+  Using Both Raw and Hand-Designed Features in Tetris, Proceedings of the Genetic and Evolutionary Computation 
+  Conference (GECCO 2017).
+  http://people.southwestern.edu/~schrum2/SCOPE/gillespie.gecco17.pdf
+  Batch files for experiments in: batch/Experiments-2017-GECCO-Tetris
 
 After running any of these experiments, you will likely want to look at the 
 results. Each experiment outputs several files with the suffix "plot" that
@@ -128,15 +164,10 @@ http://glue.rl-community.org
 You don't need to download any additional files for RL-Glue to work, but the webpage
 may provide assistance in understanding how it works. RL-Glue domains
 need to be tweaked slightly to work with MM-NEAT, but a few are already functioning:
-PuddleWorld, CartPole, MountainCar, and Tetris. The visualization for MountainCar does
-not work, but visualization for the other domains can be viewed if "watch:true" is
-included in the command line. Post visualizations with some of the batch files above
+PuddleWorld, CartPole, MountainCar, and Tetris. Visualization can be viewed if "watch:true" 
+is included in the command line. Post visualizations with some of the batch files above
 also work (postParetoFrontWatch.bat and postBestObjective*). Most of these domains
-have not received much attention, but Tetris is an exception. The batch files in
-batch/RLGlue will launch RL-Glue experiments, but note that these batch files require
-an additional command-line parameter to specify the run number. For example:
-
-RLGlue-Tetris-moExtendedBT.bat 0
+have not received much attention, but Tetris is an exception (see publication above). 
 
 If you achieve any interesting results, I would be happy to hear from 
 you at schrum2@southwestern.edu.
@@ -164,14 +195,9 @@ in the original BREVE Monsters domain. If you manage to produce any interesting 
 with this code, or fix any of the issues mentioned above, please let me know by emailing
 me at schrum2@southwestern.edu
 
-===UPDATE! June 2016=======
-
-Even more domains have been added.
-
-batch/Picbreeder        A reimplementation of Picbreeder: http://picbreeder.org/
-batch/PredPrey          A toroidal Predator/Prey grid world
-batch/Mario             Super Mario Bros as from the Mario AI Competitions: http://julian.togelius.com/mariocompetition2009/
-batch/VizDoom           First-Person Shooter Doom: http://vizdoom.cs.put.edu.pl/ (very early in development)
+Other pre-existing domains include a toroidal Predator/Prey grid world, several board games,
+Super Mario, and VizDoom. Several ways of interactively creating interesting art and sounds
+are also available. Please explore!
 
 =========== MAKING YOUR OWN DOMAINS ===========
 
