@@ -97,6 +97,7 @@ public class ScoreHistory {
 	 * @return Score received by genotype on previous generation
 	 */
 	public static double[] getLast(long id) {
+		accessed.put(id, Boolean.TRUE);
 		ArrayList<double[]> scores = allScores.get(id);
 		return scores.get(scores.size() - 1);
 	}

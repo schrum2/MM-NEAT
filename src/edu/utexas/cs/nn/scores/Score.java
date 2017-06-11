@@ -117,8 +117,10 @@ public class Score<T> {
 			}
 			// divide for average, and incorporate inherited fitness
 			for(int i = 0; i < adjustedLEEAScores.length; i++) {
-				adjustedLEEAScores[i] /= parentIDs.size(); // average
-				adjustedLEEAScores[i] *= CommonConstants.inheritProportion; // decayed
+				if(parentIDs.size() > 0) {
+					adjustedLEEAScores[i] /= parentIDs.size(); // average
+					adjustedLEEAScores[i] *= CommonConstants.inheritProportion; // decayed
+				}
 				adjustedLEEAScores[i] += scores[i]; // add to child fitness
 			}
 			// Save adjusted fitness
