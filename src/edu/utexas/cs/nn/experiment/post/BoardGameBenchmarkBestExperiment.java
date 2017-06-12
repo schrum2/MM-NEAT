@@ -1,6 +1,5 @@
 package edu.utexas.cs.nn.experiment.post;
 
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +13,6 @@ import boardGame.fitnessFunction.SimpleWinLoseDrawBoardGameFitness;
 import boardGame.heuristics.NNBoardGameHeuristic;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.evolution.nsga2.NSGA2Score;
 import edu.utexas.cs.nn.experiment.Experiment;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.parameters.CommonConstants;
@@ -25,9 +23,10 @@ import edu.utexas.cs.nn.tasks.boardGame.BoardGameUtil;
 import edu.utexas.cs.nn.util.ClassCreation;
 import edu.utexas.cs.nn.util.PopulationUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
+import edu.utexas.cs.nn.util.file.FileUtilities;
 import edu.utexas.cs.nn.util.graphics.DrawingPanel;
 
-public class BoardGameBenchmarkExperiment<T extends Network, S extends BoardGameState> implements Experiment{
+public class BoardGameBenchmarkBestExperiment<T extends Network, S extends BoardGameState> implements Experiment{
 	
 	protected ArrayList<Genotype<T>> population;
 	protected SinglePopulationTask<T> task;
@@ -58,19 +57,19 @@ public class BoardGameBenchmarkExperiment<T extends Network, S extends BoardGame
 			System.out.println("Nothing to load");
 			System.exit(1);
 		} else {
-			System.out.println("Loading: " + lastSavedDir);
-			population = PopulationUtil.load(lastSavedDir);
-//			if (Parameters.parameters.booleanParameter("onlyWatchPareto")) { // TODO: Fix the Error here; it looks like the scores file does not exist.
-//				NSGA2Score<T>[] scores = null;
-//				try {
-//					scores = PopulationUtil.loadScores(Parameters.parameters.integerParameter("lastSavedGeneration"));
-//				} catch (FileNotFoundException ex) {
-//					ex.printStackTrace();
-//					System.exit(1);
-//				}
-//				PopulationUtil.pruneDownToParetoFront(population, scores);
-//			}
-		}
+			if (Parameters.parameters.booleanParameter("watchLastBest")) {
+				population = new ArrayList<Genotype<T>>();
+				for(int i = 0; i < MMNEAT.task.numObjectives(); i++) {
+					int lastGen = Parameters.parameters.integerParameter("lastSavedGeneration");
+					String file = FileUtilities.getSaveDirectory() + "/bestObjectives/gen" + lastGen + "_bestIn"+i+".xml";
+					population.add((Genotype<T>) PopulationUtil.extractGenotype(file));
+				}
+			} else {
+				String dir = FileUtilities.getSaveDirectory() + "/bestObjectives";
+				population = PopulationUtil.load(dir);
+			}
+			}
+		
 		// End section from LoadAndWatchExperiment
 		
 		try {
@@ -107,7 +106,7 @@ public class BoardGameBenchmarkExperiment<T extends Network, S extends BoardGame
 		for(int i = 0; i < CommonConstants.trials; i++){
 			
 			Genotype<T> gene = population.get(i);
-			
+
 			DrawingPanel panel = null;
 			DrawingPanel cppnPanel = null;
 			
