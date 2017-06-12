@@ -9,6 +9,7 @@ import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.microrts.fitness.ProgressiveFitnessFunction;
 import edu.utexas.cs.nn.tasks.microrts.fitness.RTSFitnessFunction;
+import edu.utexas.cs.nn.util.MiscUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.datastructures.Triple;
 import micro.ai.core.AI;
@@ -100,7 +101,7 @@ public class MicroRTSUtility {
 						} //end if (there is a unit on this space)
 					}//end j
 				}//end i
-//				MiscUtil.waitForReadStringAndEnterKeyPress();
+				MiscUtil.waitForReadStringAndEnterKeyPress();
 				if((!base1Alive) && (!baseDeath1Recorded)) {
 //					System.out.println("setting base up time 1: " + gs.getTime());
 					task.setBaseUpTime(gs.getTime(), 1);

@@ -22,6 +22,8 @@ public abstract class RTSFitnessFunction {
 	protected MicroRTSInformation task = null;
 	protected boolean coevolution;
 	protected int mapSwitches = 0;
+	protected int enemySwitches = 0;
+	protected int numEvals = -1;
 	protected int gameEndTime; // for progressive fitness function, to scale timestamps of events to game length
 	
 	/**
@@ -50,6 +52,14 @@ public abstract class RTSFitnessFunction {
 	
 	public void informOfMapSwitch(){
 		mapSwitches++;
+	}
+	
+	public void informOfEnemySwitch(){
+		enemySwitches++;
+	}
+	
+	public void setNumEvals(int num){
+		numEvals = num;
 	}
 	
 	public boolean getCoevolution(){
