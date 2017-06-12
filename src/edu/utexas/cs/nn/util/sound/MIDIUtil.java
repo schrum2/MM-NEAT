@@ -130,7 +130,7 @@ public class MIDIUtil {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * Divides each piano voice up into a single list, so that all indexes when voice is not playing
 	 * are filled with a 0 and indexes when the voice is playing are filled with the frequency. This
@@ -145,7 +145,6 @@ public class MIDIUtil {
 		Map<Double, Long> map = new HashMap<Double, Long>();
 		ArrayList<Triple<ArrayList<Double>, ArrayList<Long>, ArrayList<Long>>> soundLines = new ArrayList<Triple<ArrayList<Double>, ArrayList<Long>, ArrayList<Long>>>();
 		HashMap<Double, Integer> lines = new HashMap<Double, Integer>();
-		boolean began = false;
 		for(int i = 0; i < track.size(); i++) {
 			MidiEvent event = track.get(i);
 			MidiMessage message = event.getMessage();
@@ -158,24 +157,25 @@ public class MIDIUtil {
 				double freq = noteToFreq(key);
 				long tick = event.getTick(); // actually starting tick time
 				if (sm.getCommand() == NOTE_ON && sm.getData2() > 0) { //turn on
-					began = true;
 					int index = map.size();
 					if(index >= soundLines.size()) {
 						soundLines.add(new Triple<ArrayList<Double>, ArrayList<Long>, ArrayList<Long>>(new ArrayList<Double>(), new ArrayList<Long>(), new ArrayList<Long>()));
 					}
 					map.put(freq, tick);
 					lines.put(freq, index);
-				} else if((sm.getCommand() == NOTE_OFF || (sm.getCommand() == NOTE_ON && sm.getData2() == 0)) && began) { // Check: is negative velocity possible?
-					int index = lines.get(freq); //TODO: this line causes an error with files w/multiple tracks. Tried to fix it with boolean began
-					long tickStart = map.get(freq);
-					long tickEnd = tick;
+				} else if((sm.getCommand() == NOTE_OFF || (sm.getCommand() == NOTE_ON && sm.getData2() == 0))) { // Check: is negative velocity possible?
+					if(lines.containsKey(freq)) {
+						int index = lines.get(freq); //TODO: this line causes an error with files w/multiple tracks. Tried to fix it with boolean began
+						long tickStart = map.get(freq);
+						long tickEnd = tick;
 
-					soundLines.get(index).t1.add(freq);                // add frequency 
-					soundLines.get(index).t2.add(tickEnd-tickStart+1); // add length
-					soundLines.get(index).t3.add(tickStart);           // add start time
+						soundLines.get(index).t1.add(freq);                // add frequency 
+						soundLines.get(index).t2.add(tickEnd-tickStart+1); // add length
+						soundLines.get(index).t3.add(tickStart);           // add start time
 
-					lines.remove(freq);
-					map.remove(freq);
+						lines.remove(freq);
+						map.remove(freq);
+					}
 				}
 			}
 		}
@@ -215,7 +215,7 @@ public class MIDIUtil {
 		AudioClip clip = Applet.newAudioClip(url);
 		clip.play();
 	}
-	
+
 	/**
 	 * Takes in data of frequencies, lengths, and starting times of an audio file and 
 	 * reconstructs the file as a single playable amplitude array that uses a generated
@@ -242,6 +242,8 @@ public class MIDIUtil {
 			for(int i = 0; i < midiLists.size(); i++) {
 				long lineTicks = midiLists.get(i).t3.get(midiLists.get(i).t3.size()-1) // last start time, plus
 						+ midiLists.get(i).t2.get(midiLists.get(i).t2.size()-1);// last duration
+				System.out.println("line ticks: " + lineTicks);
+				System.out.println("total ticks: " + totalTicks);
 				totalTicks = Math.max(totalTicks, lineTicks);
 			}
 
