@@ -19,6 +19,7 @@ import edu.utexas.cs.nn.networks.hyperneat.Substrate;
 import edu.utexas.cs.nn.tasks.SinglePopulationCoevolutionTask;
 import edu.utexas.cs.nn.util.ClassCreation;
 import edu.utexas.cs.nn.util.datastructures.Pair;
+import edu.utexas.cs.nn.util.datastructures.Triple;
 
 public class SinglePopulationCompetativeCoevolutionBoardGameTask<T extends Network, S extends BoardGameState> extends SinglePopulationCoevolutionTask<T> implements NetworkTask, HyperNEATTask  {
 
@@ -100,7 +101,7 @@ public class SinglePopulationCompetativeCoevolutionBoardGameTask<T extends Netwo
 		return BoardGameUtil.getSubstrateInformation(MMNEAT.boardGame);
 	}
 	
-	public List<Pair<String, String>> getSubstrateConnectivity() {
+	public List<Triple<String, String, Boolean>> getSubstrateConnectivity() {
 		return BoardGameUtil.getSubstrateConnectivity();
 	}
 	

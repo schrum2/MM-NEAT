@@ -807,7 +807,7 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 		return substrateInformation;
 	}
 
-	private List<Pair<String, String>> substrateConnectivity = null;
+	private List<Triple<String, String, Boolean>> substrateConnectivity = null;
 
 	/**
 	 * Returns a list of connections between substrates
@@ -815,13 +815,13 @@ public abstract class TorusPredPreyTask<T extends Network> extends NoisyLonerTas
 	 * @return list of connections between substrates
 	 */
 	@Override
-	public List<Pair<String, String>> getSubstrateConnectivity() {
+	public List<Triple<String, String, Boolean>> getSubstrateConnectivity() {
 		if (substrateConnectivity == null) {
-			substrateConnectivity = new LinkedList<Pair<String, String>>();
-			substrateConnectivity.add(new Pair<String, String>(preyEvolve ? "input_predator" : "input_prey", "process_0"));
+			substrateConnectivity = new LinkedList<Triple<String, String, Boolean>>();
+			substrateConnectivity.add(new Triple<String, String, Boolean>(preyEvolve ? "input_predator" : "input_prey", "process_0", Boolean.FALSE));
 			if (Parameters.parameters.booleanParameter("torusSenseTeammates"))
-				substrateConnectivity.add(new Pair<String, String>(preyEvolve ? "input_prey" : "input_predator", "process_0"));
-			substrateConnectivity.add(new Pair<String, String>("process_0", "output_0"));
+				substrateConnectivity.add(new Triple<String, String, Boolean>(preyEvolve ? "input_prey" : "input_predator", "process_0", Boolean.FALSE));
+			substrateConnectivity.add(new Triple<String, String, Boolean>("process_0", "output_0", Boolean.FALSE));
 		}
 		return substrateConnectivity;
 	}

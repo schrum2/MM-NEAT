@@ -127,7 +127,7 @@ public class VizDoomHealthGatherTask<T extends Network> extends VizDoomTask<T> {
 	}
 
 	@Override
-	public void addOutputConnections(List<Pair<String, String>> conn) {
-		conn.add(new Pair<String, String>("Processing", "D-Pad Outputs"));
+	public void addOutputConnections(List<Triple<String, String, Boolean>> conn) {
+		conn.add(new Triple<String, String, Boolean>("Processing", "D-Pad Outputs", Boolean.FALSE));
 	}
 }

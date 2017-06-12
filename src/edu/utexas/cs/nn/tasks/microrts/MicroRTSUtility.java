@@ -9,7 +9,6 @@ import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.microrts.fitness.ProgressiveFitnessFunction;
 import edu.utexas.cs.nn.tasks.microrts.fitness.RTSFitnessFunction;
-import edu.utexas.cs.nn.util.MiscUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.datastructures.Triple;
 import micro.ai.core.AI;
@@ -219,16 +218,16 @@ public class MicroRTSUtility {
 	 * 			physical game state in use
 	 * @return
 	 */
-	public static List<Pair<String, String>> getSubstrateConnectivity(PhysicalGameState pgs) {
-		ArrayList<Pair<String, String>> conn = new ArrayList<Pair<String, String>>();
+	public static List<Triple<String, String, Boolean>> getSubstrateConnectivity(PhysicalGameState pgs) {
+		ArrayList<Triple<String, String, Boolean>> conn = new ArrayList<Triple<String, String, Boolean>>();
 
-		//Alice: when ComplexEvaluationFunction is more developped, here is where additional substrates will be connected to each other
+		//TODO: when ComplexEvaluationFunction is more developed, here is where additional substrates will be connected to each other
 
-		conn.add(new Pair<String, String>("Inputs Board State", "Processing"));			
+		conn.add(new Triple<String, String, Boolean>("Inputs Board State", "Processing", Boolean.FALSE));			
 
-		conn.add(new Pair<String, String>("Processing","Output"));
+		conn.add(new Triple<String, String, Boolean>("Processing","Output", Boolean.FALSE));
 		if(Parameters.parameters.booleanParameter("extraHNLinks")) {
-			conn.add(new Pair<String, String>("Inputs Board State","Output"));
+			conn.add(new Triple<String, String, Boolean>("Inputs Board State","Output", Boolean.FALSE));
 		}
 		return conn;
 	}

@@ -20,6 +20,7 @@ import edu.utexas.cs.nn.tasks.microrts.fitness.RTSFitnessFunction;
 import edu.utexas.cs.nn.tasks.microrts.iterativeevolution.MapSequence;
 import edu.utexas.cs.nn.util.ClassCreation;
 import edu.utexas.cs.nn.util.datastructures.Pair;
+import edu.utexas.cs.nn.util.datastructures.Triple;
 import micro.ai.HasEvaluationFunction;
 import micro.ai.core.AI;
 import micro.gui.PhysicalGameStateJFrame;
@@ -122,7 +123,7 @@ public class SinglePopulationCompetativeCoevolutionMicroRTSTask<T extends Networ
 	}
 
 	@Override
-	public List<Pair<String, String>> getSubstrateConnectivity() {
+	public List<Triple<String, String, Boolean>> getSubstrateConnectivity() {
 		return MicroRTSUtility.getSubstrateConnectivity(pgs);
 	}
 

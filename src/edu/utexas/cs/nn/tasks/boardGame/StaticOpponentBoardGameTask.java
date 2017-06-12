@@ -21,6 +21,7 @@ import edu.utexas.cs.nn.tasks.NoisyLonerTask;
 import edu.utexas.cs.nn.util.ClassCreation;
 import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
+import edu.utexas.cs.nn.util.datastructures.Triple;
 
 public class StaticOpponentBoardGameTask<T extends Network, S extends BoardGameState> extends NoisyLonerTask<T> implements NetworkTask, HyperNEATTask {
 
@@ -143,7 +144,7 @@ public class StaticOpponentBoardGameTask<T extends Network, S extends BoardGameS
 		return BoardGameUtil.getSubstrateInformation(MMNEAT.boardGame);
 	}
 	
-	public List<Pair<String, String>> getSubstrateConnectivity() {
+	public List<Triple<String, String, Boolean>> getSubstrateConnectivity() {
 		return BoardGameUtil.getSubstrateConnectivity();
 	}
 	

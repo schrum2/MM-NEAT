@@ -218,20 +218,20 @@ public class MarioTask<T extends Network> extends NoisyLonerTask<T>implements Ne
 	 *         for the domain.
 	 */
 	@Override
-	public List<Pair<String, String>> getSubstrateConnectivity(){
-		ArrayList<Pair<String, String>> conn = new ArrayList<Pair<String, String>>();
-		conn.add(new Pair<String, String>("Inputs World", "Processing"));
-		conn.add(new Pair<String, String>("Inputs Enemies", "Processing"));
-		conn.add(new Pair<String, String>("Processing", "Outputs D-Pad"));	
-		conn.add(new Pair<String, String>("Processing", "Output Speed"));	
-		conn.add(new Pair<String, String>("Processing", "Output Jump"));
+	public List<Triple<String, String, Boolean>> getSubstrateConnectivity(){
+		ArrayList<Triple<String, String, Boolean>> conn = new ArrayList<Triple<String, String, Boolean>>();
+		conn.add(new Triple<String, String, Boolean>("Inputs World", "Processing", Boolean.FALSE));
+		conn.add(new Triple<String, String, Boolean>("Inputs Enemies", "Processing", Boolean.FALSE));
+		conn.add(new Triple<String, String, Boolean>("Processing", "Outputs D-Pad", Boolean.FALSE));	
+		conn.add(new Triple<String, String, Boolean>("Processing", "Output Speed", Boolean.FALSE));	
+		conn.add(new Triple<String, String, Boolean>("Processing", "Output Jump", Boolean.FALSE));
 		if(Parameters.parameters.booleanParameter("extraHNLinks")) {
-			conn.add(new Pair<String, String>("Inputs World", "Outputs D-Pad"));
-			conn.add(new Pair<String, String>("Inputs Enemies", "Outputs D-Pad"));
-			conn.add(new Pair<String, String>("Inputs World", "Outputs Speed"));
-			conn.add(new Pair<String, String>("Inputs Enemies", "Outputs Speed"));
-			conn.add(new Pair<String, String>("Inputs World", "Outputs Jump"));
-			conn.add(new Pair<String, String>("Inputs Enemies", "Outputs Jump"));
+			conn.add(new Triple<String, String, Boolean>("Inputs World", "Outputs D-Pad", Boolean.FALSE));
+			conn.add(new Triple<String, String, Boolean>("Inputs Enemies", "Outputs D-Pad", Boolean.FALSE));
+			conn.add(new Triple<String, String, Boolean>("Inputs World", "Outputs Speed", Boolean.FALSE));
+			conn.add(new Triple<String, String, Boolean>("Inputs Enemies", "Outputs Speed", Boolean.FALSE));
+			conn.add(new Triple<String, String, Boolean>("Inputs World", "Outputs Jump", Boolean.FALSE));
+			conn.add(new Triple<String, String, Boolean>("Inputs Enemies", "Outputs Jump", Boolean.FALSE));
 		}
 		return conn;
 	}

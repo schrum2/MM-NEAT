@@ -87,7 +87,7 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 	public static final int MS_PAC_MAN_SUBSTRATE_HEIGHT = MS_PAC_MAN_NODE_HEIGHT/MS_PAC_MAN_NODE_DIM;
 	public static final int MS_PAC_MAN_SUBSTRATE_SIZE = MS_PAC_MAN_SUBSTRATE_WIDTH * MS_PAC_MAN_SUBSTRATE_HEIGHT;
 	public List<Substrate> subs = null; // filled below
-	public List<Pair<String, String>> connections = null; // filled below
+	public List<Triple<String, String, Boolean>> connections = null; // filled below
 	public HashMap<Integer, List<Substrate>> substratesForMaze = new HashMap<Integer, List<Substrate>>();
 	public static String saveFilePrefix = "";
 	//boolean variables
@@ -648,29 +648,29 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 	}
 
 	@Override
-	public List<Pair<String, String>> getSubstrateConnectivity() {
+	public List<Triple<String, String, Boolean>> getSubstrateConnectivity() {
 		if(connections == null) {
-			connections = new ArrayList<Pair<String, String>>();
-			connections.add(new Pair<String, String>("Pills", "P_0"));
-			connections.add(new Pair<String, String>("PowerPills", "P_0"));
+			connections = new ArrayList<Triple<String, String, Boolean>>();
+			connections.add(new Triple<String, String, Boolean>("Pills", "P_0", Boolean.FALSE));
+			connections.add(new Triple<String, String, Boolean>("PowerPills", "P_0", Boolean.FALSE));
 			if(Parameters.parameters.booleanParameter("pacmanBothThreatAndEdibleSubstrate")) {
-				connections.add(new Pair<String, String>("Threat", "P_0"));
-				connections.add(new Pair<String, String>("Edible", "P_0"));
+				connections.add(new Triple<String, String, Boolean>("Threat", "P_0", Boolean.FALSE));
+				connections.add(new Triple<String, String, Boolean>("Edible", "P_0", Boolean.FALSE));
 			} else {
-				connections.add(new Pair<String, String>("Ghosts", "P_0"));
+				connections.add(new Triple<String, String, Boolean>("Ghosts", "P_0", Boolean.FALSE));
 			}
-			connections.add(new Pair<String, String>("MsPacMan", "P_0"));
-			connections.add(new Pair<String, String>("P_0", "O_0"));
+			connections.add(new Triple<String, String, Boolean>("MsPacMan", "P_0", Boolean.FALSE));
+			connections.add(new Triple<String, String, Boolean>("P_0", "O_0", Boolean.FALSE));
 			if(Parameters.parameters.booleanParameter("extraHNLinks")) {
-				connections.add(new Pair<String, String>("Pills", "O_0"));
-				connections.add(new Pair<String, String>("PowerPills", "O_0"));
+				connections.add(new Triple<String, String, Boolean>("Pills", "O_0", Boolean.FALSE));
+				connections.add(new Triple<String, String, Boolean>("PowerPills", "O_0", Boolean.FALSE));
 				if(Parameters.parameters.booleanParameter("pacmanBothThreatAndEdibleSubstrate")) {
-					connections.add(new Pair<String, String>("Threat", "O_0"));
-					connections.add(new Pair<String, String>("Edible", "O_0"));
+					connections.add(new Triple<String, String, Boolean>("Threat", "O_0", Boolean.FALSE));
+					connections.add(new Triple<String, String, Boolean>("Edible", "O_0", Boolean.FALSE));
 				} else {
-					connections.add(new Pair<String, String>("Ghosts", "O_0"));
+					connections.add(new Triple<String, String, Boolean>("Ghosts", "O_0", Boolean.FALSE));
 				}	
-				connections.add(new Pair<String, String>("MsPacMan", "O_0"));
+				connections.add(new Triple<String, String, Boolean>("MsPacMan", "O_0", Boolean.FALSE));
 			}
 		}
 		return connections;

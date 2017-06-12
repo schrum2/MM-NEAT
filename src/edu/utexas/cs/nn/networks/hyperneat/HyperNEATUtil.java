@@ -14,6 +14,7 @@ import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.networks.TWEANN.Node;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.util.datastructures.Pair;
+import edu.utexas.cs.nn.util.datastructures.Triple;
 import edu.utexas.cs.nn.util.graphics.DrawingPanel;
 
 /**
@@ -148,7 +149,7 @@ public class HyperNEATUtil {
 	private static HyperNEATTask hyperNEATTask;
 	private static TWEANNGenotype tg;
 	private static List<Substrate> substrates;
-	private static List<Pair<String, String>> connections;
+	private static List<Triple<String, String, Boolean>> connections;
 	private static List<TWEANNGenotype.NodeGene> nodes;
 
 	/**
@@ -481,7 +482,7 @@ public class HyperNEATUtil {
 	public static int totalPossibleLinks(HyperNEATTask hnt) {
 		// extract substrate information from domain
 		List<Substrate> subs = hnt.getSubstrateInformation();
-		List<Pair<String, String>> connections = hnt.getSubstrateConnectivity();
+		List<Triple<String, String, Boolean>> connections = hnt.getSubstrateConnectivity();
 		// Will map substrate names to index in subs List
 		HashMap<String, Integer> substrateIndexMapping = new HashMap<String, Integer>();
 		for (int i = 0; i < subs.size(); i++) {

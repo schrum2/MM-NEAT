@@ -160,12 +160,12 @@ public class VizDoomDeathMatchTask<T extends Network> extends VizDoomTask<T> {
 	}
 
 	@Override
-	public void addOutputConnections(List<Pair<String, String>> conn) {
-		conn.add(new Pair<String, String>("Processing", "D-Pad Outputs"));
-		conn.add(new Pair<String, String>("Processing", "C-Stick Outputs"));
-		conn.add(new Pair<String, String>("Processing", "Button Outputs"));
-		conn.add(new Pair<String, String>("Processing", "Bumper Outputs"));
-		conn.add(new Pair<String, String>("Processing", "Misc. Outputs"));
+	public void addOutputConnections(List<Triple<String, String, Boolean>> conn) {
+		conn.add(new Triple<String, String, Boolean>("Processing", "D-Pad Outputs", Boolean.FALSE));
+		conn.add(new Triple<String, String, Boolean>("Processing", "C-Stick Outputs", Boolean.FALSE));
+		conn.add(new Triple<String, String, Boolean>("Processing", "Button Outputs", Boolean.FALSE));
+		conn.add(new Triple<String, String, Boolean>("Processing", "Bumper Outputs", Boolean.FALSE));
+		conn.add(new Triple<String, String, Boolean>("Processing", "Misc. Outputs", Boolean.FALSE));
 	}
 
 	@Override

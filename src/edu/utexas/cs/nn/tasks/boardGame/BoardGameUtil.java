@@ -92,12 +92,12 @@ public class BoardGameUtil {
 	}
 
 	// Used for Hyper-NEAT
-	public static List<Pair<String, String>> getSubstrateConnectivity() {
-		List<Pair<String, String>> substrateConnectivity = new LinkedList<Pair<String, String>>();
-		substrateConnectivity.add(new Pair<String, String>("Board Inputs", "Processing"));
-		substrateConnectivity.add(new Pair<String, String>("Processing", "Utility Output"));	
+	public static List<Triple<String, String, Boolean>> getSubstrateConnectivity() {
+		List<Triple<String, String, Boolean>> substrateConnectivity = new LinkedList<Triple<String, String, Boolean>>();
+		substrateConnectivity.add(new Triple<String, String, Boolean>("Board Inputs", "Processing", Boolean.FALSE));
+		substrateConnectivity.add(new Triple<String, String, Boolean>("Processing", "Utility Output", Boolean.FALSE));	
 		if(Parameters.parameters.booleanParameter("extraHNLinks")) {
-			substrateConnectivity.add(new Pair<String, String>("Board Inputs", "Utility Output"));
+			substrateConnectivity.add(new Triple<String, String, Boolean>("Board Inputs", "Utility Output", Boolean.FALSE));
 		}
 		return substrateConnectivity;
 	}

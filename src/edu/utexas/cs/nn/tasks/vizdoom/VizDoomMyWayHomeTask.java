@@ -139,9 +139,9 @@ public class VizDoomMyWayHomeTask<T extends Network> extends VizDoomTask<T> {
 	}
 
 	@Override
-	public void addOutputConnections(List<Pair<String, String>> conn) {
-		conn.add(new Pair<String, String>("Processing", "D-Pad Outputs"));
-		conn.add(new Pair<String, String>("Processing", "C-Stick Outputs"));	
+	public void addOutputConnections(List<Triple<String, String, Boolean>> conn) {
+		conn.add(new Triple<String, String, Boolean>("Processing", "D-Pad Outputs", Boolean.FALSE));
+		conn.add(new Triple<String, String, Boolean>("Processing", "C-Stick Outputs", Boolean.FALSE));	
 	}
 
 

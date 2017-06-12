@@ -11,6 +11,7 @@ import edu.utexas.cs.nn.networks.hyperneat.HyperNEATUtil;
 import edu.utexas.cs.nn.networks.hyperneat.Substrate;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.util.datastructures.Pair;
+import edu.utexas.cs.nn.util.datastructures.Triple;
 import edu.utexas.cs.nn.util.util2D.ILocated2D;
 import edu.utexas.cs.nn.util.util2D.Tuple2D;
 
@@ -123,7 +124,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 		//long time = System.currentTimeMillis(); // for timing
 		TWEANN cppn = getCPPN();// CPPN used to create TWEANN network
 		List<Substrate> subs = hnt.getSubstrateInformation();// extract substrate information from domain
-		List<Pair<String, String>> connections = hnt.getSubstrateConnectivity();// extract substrate connectivity from domain
+		List<Triple<String, String, Boolean>> connections = hnt.getSubstrateConnectivity();// extract substrate connectivity from domain
 		ArrayList<NodeGene> newNodes = null;
 		ArrayList<LinkGene> newLinks = null;
 		innovationID = 0;// reset each time a phenotype is generated
@@ -259,7 +260,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 	 *
 	 * @return array list containing all the links between substrates
 	 */
-	private ArrayList<LinkGene> createNodeLinks(HyperNEATTask hnt, TWEANN cppn, List<Pair<String, String>> connections, List<Substrate> subs, HashMap<String, Integer> sIMap) {
+	private ArrayList<LinkGene> createNodeLinks(HyperNEATTask hnt, TWEANN cppn, List<Triple<String, String,Boolean>> connections, List<Substrate> subs, HashMap<String, Integer> sIMap) {
 		ArrayList<LinkGene> result = new ArrayList<LinkGene>();
 		for (int i = 0; i < connections.size(); i++) { // For each pair of substrates that are connected
 			int sourceSubstrateIndex = sIMap.get(connections.get(i).t1);

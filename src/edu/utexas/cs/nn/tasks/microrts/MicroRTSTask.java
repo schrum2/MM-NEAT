@@ -21,6 +21,7 @@ import edu.utexas.cs.nn.tasks.microrts.iterativeevolution.EnemySequence;
 import edu.utexas.cs.nn.tasks.microrts.iterativeevolution.MapSequence;
 import edu.utexas.cs.nn.util.ClassCreation;
 import edu.utexas.cs.nn.util.datastructures.Pair;
+import edu.utexas.cs.nn.util.datastructures.Triple;
 import micro.ai.HasEvaluationFunction;
 import micro.ai.core.AI;
 import micro.gui.PhysicalGameStateJFrame;
@@ -141,7 +142,7 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 	} 
 
 	@Override
-	public List<Pair<String, String>> getSubstrateConnectivity() {
+	public List<Triple<String, String, Boolean>> getSubstrateConnectivity() {
 		return MicroRTSUtility.getSubstrateConnectivity(initialPgs);
 	}
 

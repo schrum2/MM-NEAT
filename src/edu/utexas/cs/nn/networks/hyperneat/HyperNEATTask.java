@@ -1,7 +1,8 @@
 package edu.utexas.cs.nn.networks.hyperneat;
 
 import java.util.List;
-import edu.utexas.cs.nn.util.datastructures.Pair;
+
+import edu.utexas.cs.nn.util.datastructures.Triple;
 
 /**
  * A task that HyperNEAT can be applied to. Need to get substrate defining info
@@ -59,11 +60,13 @@ public interface HyperNEATTask {
 	/**
 	 * Each Substrate has a unique String name, and this method returns a list
 	 * of String pairs indicating which Substrates are connected: The Substrate
-	 * from the first in the pair has links leading into the neurons in the
-	 * Substrate second in the pair.
+	 * from the first in the triple has links leading into the neurons in the
+	 * Substrate second in the triple. The boolean value indicates whether or
+	 * not the layers should be joined using convolutional structure rather than
+	 * standard fully connected layers.
 	 *
 	 * @return Last of String pairs where all Strings are names of Substrates
 	 *         for the domain.
 	 */
-	public List<Pair<String, String>> getSubstrateConnectivity();
+	public List<Triple<String, String, Boolean>> getSubstrateConnectivity();
 }

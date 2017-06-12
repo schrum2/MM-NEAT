@@ -120,8 +120,8 @@ public class VizDoomPredictPositionTask<T extends Network> extends VizDoomTask<T
 	}
 
 	@Override
-	public void addOutputConnections(List<Pair<String, String>> conn) {
-		conn.add(new Pair<String, String>("Processing", "C-Stick Outputs"));
-		conn.add(new Pair<String, String>("Processing", "Button Output"));
+	public void addOutputConnections(List<Triple<String, String, Boolean>> conn) {
+		conn.add(new Triple<String, String, Boolean>("Processing", "C-Stick Outputs", Boolean.FALSE));
+		conn.add(new Triple<String, String, Boolean>("Processing", "Button Output", Boolean.FALSE));
 	}
 }

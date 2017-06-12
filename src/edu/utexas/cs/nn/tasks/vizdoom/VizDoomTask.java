@@ -573,7 +573,7 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 
 	public abstract void addOutputSubstrates(List<Substrate> subs);
 	
-	public abstract void addOutputConnections(List<Pair<String, String>> conn);
+	public abstract void addOutputConnections(List<Triple<String, String, Boolean>> conn);
 	
 	/**
 	 * Each Substrate has a unique String name, and this method returns a list
@@ -585,15 +585,15 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 	 *         for the domain.
 	 */
 	@Override
-	public List<Pair<String, String>> getSubstrateConnectivity(){
-		ArrayList<Pair<String, String>> conn = new ArrayList<Pair<String, String>>();
+	public List<Triple<String, String, Boolean>> getSubstrateConnectivity(){
+		ArrayList<Triple<String, String, Boolean>> conn = new ArrayList<Triple<String, String, Boolean>>();
 		String name;
 		int color = Parameters.parameters.integerParameter("doomInputColorVal");
 		int start = (color == NUM_COLORS ? 0 : color);
 		int end = (color == NUM_COLORS ? NUM_COLORS : color + 1);
 		for(int i = start; i < end; i ++){
 			name = "Inputs (" + (i == RED_INDEX ? "Red)" : (i == GREEN_INDEX ? "Green)" : "Blue)"));
-			conn.add(new Pair<String, String>(name, "Processing"));
+			conn.add(new Triple<String, String, Boolean>(name, "Processing", Boolean.FALSE));
 		}		
 		addOutputConnections(conn);
 		if(Parameters.parameters.booleanParameter("extraHNLinks")) {
@@ -602,7 +602,7 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 				if(conn.get(j).t1 == "Processing"){
 					for(int i = start; i < end; i ++){
 						name = "Inputs (" + (i == RED_INDEX ? "Red)" : (i == GREEN_INDEX ? "Green)" : "Blue)"));
-						conn.add(new Pair<String, String>(name, conn.get(j).t2));
+						conn.add(new Triple<String, String, Boolean>(name, conn.get(j).t2, Boolean.FALSE));
 					}
 				}
 			}	
