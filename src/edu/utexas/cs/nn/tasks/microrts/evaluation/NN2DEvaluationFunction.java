@@ -9,6 +9,15 @@ import edu.utexas.cs.nn.util.file.FileUtilities;
 import micro.rts.GameState;
 import micro.rts.units.Unit;
 
+/**
+ * Evaluation function compatible with NEAT and HyperNEAT that
+ * uses 1 substrate containing information about every tile of
+ * the game state.
+ * 
+ * @author alicequint
+ *
+ * @param <T> NN
+ */
 public class NN2DEvaluationFunction<T extends Network> extends NNEvaluationFunction<T> {
 
 	public static final double BASE_WEIGHT = 4; //hard to quantify because different amount of importance at different stages of the game
@@ -75,6 +84,10 @@ public class NN2DEvaluationFunction<T extends Network> extends NNEvaluationFunct
 		return board;
 	}
 
+	/**
+	 * returns labels describing what gameStateToArray will
+	 * give for the inputs to a NN  
+	 */
 	@Override
 	public String[] sensorLabels() {
 		assert pgs != null : "There must be a physical game state in order to extract height and width";
