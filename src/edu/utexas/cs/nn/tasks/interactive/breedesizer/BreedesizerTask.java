@@ -49,6 +49,8 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 
 	public static final int CPPN_NUM_INPUTS	= 3;
 	public static final int CPPN_NUM_OUTPUTS = 1;
+	
+	private static final int FILE_LOADER_CHECKBOX_INDEX = CHECKBOX_IDENTIFIER_START - (CPPN_NUM_INPUTS+CPPN_NUM_OUTPUTS);
 
 	Keyboard keyboard;
 	protected JSlider clipLength;
@@ -110,6 +112,12 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 			top.add(playWithMIDI);
 		}
 		initializationComplete = true;
+		
+		JButton fileLoadButton = new JButton();
+		fileLoadButton.setText("ChooseNewSound");
+		fileLoadButton.setName("" + FILE_LOADER_CHECKBOX_INDEX);
+		fileLoadButton.addActionListener(this);
+		top.add(fileLoadButton);
 	}
 
 	/**
@@ -125,9 +133,23 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 		super.respondToClick(itemID);
 		// Play original sound if they click the button
 		if(itemID == (CHECKBOX_IDENTIFIER_START - inputMultipliers.length)) {
+			System.out.println("checkbox identifier - # of input multipliers: " + (CHECKBOX_IDENTIFIER_START - inputMultipliers.length));
+			System.out.println("file loader checkbox index: " + FILE_LOADER_CHECKBOX_INDEX);
 			if(!justStopped) { // Pressing original button can stop playback too
 				midiPlay = MIDIUtil.playMIDIWithCPPNFromString(Parameters.parameters.stringParameter("remixMIDIFile"), currentCPPN);
 			}
+		}
+		super.respondToClick(itemID);
+		if(itemID == FILE_LOADER_CHECKBOX_INDEX) {
+			JFileChooser chooser = new JFileChooser();//used to get new file
+			chooser.setApproveButtonText("Open");
+			FileNameExtensionFilter filter = new FileNameExtensionFilter("MIDI Files", "mid");
+			chooser.setFileFilter(filter);
+			int returnVal = chooser.showOpenDialog(frame);
+			if(returnVal == JFileChooser.APPROVE_OPTION) {//if the user decides to save the image
+				Parameters.parameters.setString("remixMIDIFile", chooser.getCurrentDirectory() + "\\" + chooser.getSelectedFile().getName());
+			}
+			resetButtons();
 		}
 	}
 	
