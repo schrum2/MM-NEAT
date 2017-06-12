@@ -11,10 +11,12 @@ import boardGame.agents.HeuristicBoardGamePlayer;
 import boardGame.featureExtractor.BoardGameFeatureExtractor;
 import boardGame.fitnessFunction.BoardGameFitnessFunction;
 import boardGame.fitnessFunction.SimpleWinLoseDrawBoardGameFitness;
+import boardGame.heuristics.NNBoardGameHeuristic;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.evolution.nsga2.NSGA2Score;
 import edu.utexas.cs.nn.experiment.Experiment;
+import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.CommonTaskUtil;
@@ -25,7 +27,7 @@ import edu.utexas.cs.nn.util.PopulationUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.graphics.DrawingPanel;
 
-public class BoardGameBenchmarkExperiment<T, S extends BoardGameState> implements Experiment{
+public class BoardGameBenchmarkExperiment<T extends Network, S extends BoardGameState> implements Experiment{
 	
 	protected ArrayList<Genotype<T>> population;
 	protected SinglePopulationTask<T> task;
@@ -34,7 +36,7 @@ public class BoardGameBenchmarkExperiment<T, S extends BoardGameState> implement
 	private BoardGame<S> bg;
 	private BoardGameFitnessFunction<S> selectionFunction;
 	private BoardGameFeatureExtractor<S> featExtract;
-	private BoardGamePlayer<S>[] players;
+	private HeuristicBoardGamePlayer<S> player;
 	private BoardGamePlayer<S> opponent;
 	
 	private List<BoardGameFitnessFunction<S>> fitFunctions = new ArrayList<BoardGameFitnessFunction<S>>();
@@ -58,25 +60,24 @@ public class BoardGameBenchmarkExperiment<T, S extends BoardGameState> implement
 		} else {
 			System.out.println("Loading: " + lastSavedDir);
 			population = PopulationUtil.load(lastSavedDir);
-//			if (Parameters.parameters.booleanParameter("onlyWatchPareto")) { // Always only evaluates the Pareto Front
-				NSGA2Score<T>[] scores = null;
-				try {
-					scores = PopulationUtil.loadScores(Parameters.parameters.integerParameter("lastSavedGeneration"));
-				} catch (FileNotFoundException ex) {
-					ex.printStackTrace();
-					System.exit(1);
-				}
-				PopulationUtil.pruneDownToParetoFront(population, scores);
+//			if (Parameters.parameters.booleanParameter("onlyWatchPareto")) { // TODO: Fix the Error here; it looks like the scores file does not exist.
+//				NSGA2Score<T>[] scores = null;
+//				try {
+//					scores = PopulationUtil.loadScores(Parameters.parameters.integerParameter("lastSavedGeneration"));
+//				} catch (FileNotFoundException ex) {
+//					ex.printStackTrace();
+//					System.exit(1);
+//				}
+//				PopulationUtil.pruneDownToParetoFront(population, scores);
 //			}
 		}
 		// End section from LoadAndWatchExperiment
 		
-		
-		// TODO: Find a way to load up these specifications from the directory?/Parameters File?
 		try {
 			bg = (BoardGame<S>) ClassCreation.createObject("boardGame");
 			selectionFunction = (BoardGameFitnessFunction<S>) ClassCreation.createObject("boardGameFitnessFunction");
 			featExtract = (BoardGameFeatureExtractor<S>) ClassCreation.createObject("boardGameFeatureExtractor");
+			player = (HeuristicBoardGamePlayer<S>) ClassCreation.createObject("boardGamePlayer"); // The Player
 			opponent = (BoardGamePlayer<S>) ClassCreation.createObject("boardGameOpponent");
 		} catch (NoSuchMethodException e) {
 			e.printStackTrace();
@@ -103,7 +104,9 @@ public class BoardGameBenchmarkExperiment<T, S extends BoardGameState> implement
 	@Override
 	public void run() {
 		
-		for(Genotype<T> gene : population){
+		for(int i = 0; i < CommonConstants.trials; i++){
+			
+			Genotype<T> gene = population.get(i);
 			
 			DrawingPanel panel = null;
 			DrawingPanel cppnPanel = null;
@@ -118,20 +121,9 @@ public class BoardGameBenchmarkExperiment<T, S extends BoardGameState> implement
 				cppnPanel.setVisible(true);
 			}
 			
-			try {
-				@SuppressWarnings("unchecked")
-				HeuristicBoardGamePlayer<S> evolved = (HeuristicBoardGamePlayer<S>) ClassCreation.createObject("boardGamePlayer");
-				
-				// TODO: Create BoardGamePlayer "evolved" Heuristic with "gene"
-				
-				players = new BoardGamePlayer[]{evolved, opponent};
-			} catch (NoSuchMethodException e) {
-				e.printStackTrace();
-				System.exit(1);
-			}
 			
-			
-			
+			player.setHeuristic((new NNBoardGameHeuristic<T,S>(gene.getPhenotype(), featExtract)));
+			BoardGamePlayer<S>[] players = new BoardGamePlayer[]{player, opponent};
 			BoardGameUtil.playGame(bg, players, fitFunctions);
 			
 			if (panel != null) {
