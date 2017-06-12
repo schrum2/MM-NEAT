@@ -23,6 +23,9 @@ public class CheckersState extends TwoDimensionalBoardGameState {
 	
 	private final static int NUMBER_OF_PLAYERS = 2;
 	
+	int movesSinceLastJump;
+	int movesSinceNon_King;
+	
 	public Point doubleJumpCheck; // Used to keep track of a Check that can Double Jump
 	
 	/**
@@ -63,7 +66,7 @@ public class CheckersState extends TwoDimensionalBoardGameState {
 	 */
 	public List<Integer> getWinners(){
 		
-		if(endState()){
+		if(endState() && winners.size() == 0){ // If one Player is unable to make a Move, winners is updated by endState()
 			
 			int blackChecksLeft = 0;
 			int redChecksLeft = 0;
@@ -83,7 +86,7 @@ public class CheckersState extends TwoDimensionalBoardGameState {
 				winners.add(BLACK_CHECK);
 			}else if(redChecksLeft > blackChecksLeft){
 				winners.add(RED_CHECK);
-			}else{ // Technically impossible
+			}else{ // Likely improbable; the new Draw state makes this a possibility, though
 				winners.add(BLACK_CHECK);
 				winners.add(RED_CHECK);
 			}
@@ -117,6 +120,9 @@ public class CheckersState extends TwoDimensionalBoardGameState {
 		if(blackChecksLeft == 0 || redChecksLeft == 0){
 			return true;
 		}else if(possibleBoardGameStates(this).size() == 0){
+			winners.add((nextPlayer + 1) % 2); // One Player can't make a Move; other Player is the winner
+			return true;
+		}else if(movesSinceLastJump > 50 && movesSinceNon_King > 50){ // A Draw has been reached
 			return true;
 		}
 		return false;
@@ -297,6 +303,7 @@ public class CheckersState extends TwoDimensionalBoardGameState {
 			boardState[(int) moveTo.getX()][(int) moveTo.getY()] = thisCheck;
 			finalX = (int) moveTo.getX();
 			finalY = (int) moveTo.getY();
+			movesSinceLastJump++;
 		}else{ // Must be a Jump
 			int jumpX = (int) moveTo.getX() + (int) (moveTo.getX() - moveThis.getX());
 			int jumpY = (int) moveTo.getY() + (int) (moveTo.getY() - moveThis.getY());
@@ -306,7 +313,14 @@ public class CheckersState extends TwoDimensionalBoardGameState {
 			finalX = jumpX;
 			finalY = jumpY;
 			
+			movesSinceLastJump = 0;
 			checkDoubleJump(new Point(jumpX, jumpY));
+		}
+		
+		if(thisCheck == BLACK_CHECK_KING || thisCheck == RED_CHECK_KING){
+			movesSinceNon_King++;
+		}else{
+			movesSinceNon_King = 0;
 		}
 		
 		if(doubleJumpCheck == null){
@@ -331,7 +345,10 @@ public class CheckersState extends TwoDimensionalBoardGameState {
 	@SuppressWarnings("unchecked")
 	@Override
 	public CheckersState copy() {
-		return new CheckersState(this);
+		CheckersState temp = new CheckersState(this);
+		temp.movesSinceLastJump = this.movesSinceLastJump;
+		temp.movesSinceNon_King = this.movesSinceNon_King;
+		return temp;
 	}
 
 	/**
@@ -460,6 +477,8 @@ public class CheckersState extends TwoDimensionalBoardGameState {
 	@Override
 	public void setupStartingBoard() {
 		boardState = newCheckBoard();
+		movesSinceLastJump = 0;
+		movesSinceNon_King = 0;
 		doubleJumpCheck = null;
 	}
 
