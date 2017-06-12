@@ -314,6 +314,7 @@ public class Parameters {
 		//integerOptions.add("remixSamplesPerDimension", 3, "Number of remix samples to input to Picture Remixer"); //used for alternative approach of remixing pictures
 		integerOptions.add("receptiveFieldSize", 3, "Size of input windows for convolutional structures");
 		integerOptions.add("stride", 1, "Offset between receptive fields in convolutional structures");
+		integerOptions.add("hybrIDSwitchGeneration", 3, "Generation when HybrID should switch from HyperNEAT to NEAT");
 		// Long parameters
 		longOptions.add("lastInnovation", 0l, "Highest innovation number used so far");
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
@@ -619,6 +620,7 @@ public class Parameters {
 		booleanOptions.add("mRTSOpponentsAll", false, "whether there is a substrate dedicated to all of the blue agents' units");
 		booleanOptions.add("heuristicOverrideTerminalStates", false, "Overrides the Network's evaluation of a terminal BoardGameState");
 		booleanOptions.add("microRTSGrowingEnemySet", false, "adds multiple enemies to a trial instead of cycling through them by generation");
+		booleanOptions.add("hybrID", true, "Indecates whether HybrID is running or not");
 		// Double parameters
 		doubleOptions.add("inheritProportion", 0.4, "Portion of a parent's fitness that contributes to child fitness (with inheritFitness, as in LEEA)");
 		doubleOptions.add("linkExpressionThreshold", 0.2, "Threshold for hyperNEAT output to result in an expressed link");

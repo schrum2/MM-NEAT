@@ -288,6 +288,16 @@ public class HyperNEATUtil {
 			vn.drawNode(p);
 		}
 	}
+	
+	/**
+	 * Converts defined MMNEAT task into a HyperNEATTask and returns it
+	 * 
+	 * @return HyperNEATTask
+	 */
+	public static HyperNEATTask getHyperNEATTask() {
+		HyperNEATTask hnt = (HyperNEATTask) MMNEAT.task;
+		return hnt;
+	}
 
 	/**
 	 * Compresses values from -1 to 1 and then returns a color where -1 is blue, 0 is black and 1 is red.

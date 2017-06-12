@@ -4,6 +4,7 @@ import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.data.SaveThread;
 import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
+import edu.utexas.cs.nn.evolution.genotypes.HyperNEATCPPNGenotype;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
 import edu.utexas.cs.nn.evolution.lineage.Offspring;
 import edu.utexas.cs.nn.evolution.mutation.tweann.ActivationFunctionRandomReplacement;
@@ -11,7 +12,9 @@ import edu.utexas.cs.nn.evolution.mutation.tweann.CauchyDeltaCodeMutation;
 import edu.utexas.cs.nn.evolution.mutation.tweann.WeightRandomReplacement;
 import edu.utexas.cs.nn.evolution.nsga2.NSGA2;
 import edu.utexas.cs.nn.evolution.nsga2.NSGA2Score;
+import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.networks.TWEANN;
+import edu.utexas.cs.nn.networks.hyperneat.HyperNEATTask;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.scores.Better;
@@ -841,5 +844,21 @@ public class PopulationUtil {
 		}
 		return genos;
 	}
-
+	
+	/**
+	 * Converts an ArrayList of HyperNEAT CPPN genotypes to an ArrayList of corresponding 
+	 * TWEANN genotypes based on an input HyperNEATTask.
+	 * 
+	 * @param hnt HyperNEATTask used to define substrate description
+	 * @param population array list of HyperNEAT CPPN genotypes
+	 * @return array list of substrate genotypes from population ArrayList
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T> ArrayList<Genotype<T>> getSubstrateGenotypesFromCPPNs(HyperNEATTask hnt, ArrayList<Genotype<T>> population) {
+		ArrayList<Genotype<T>> substrateGenotypes = new ArrayList<>();
+		for(int i = 0; i < population.size(); i++) {
+			substrateGenotypes.add( (Genotype<T>) ((HyperNEATCPPNGenotype) population.get(i)).getSubstrateGenotype(hnt));
+		}
+		return substrateGenotypes;
+	}
 }

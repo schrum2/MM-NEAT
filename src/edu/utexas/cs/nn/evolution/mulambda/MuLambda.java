@@ -3,11 +3,13 @@ package edu.utexas.cs.nn.evolution.mulambda;
 import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
 import edu.utexas.cs.nn.evolution.SinglePopulationGenerationalEA;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
+import edu.utexas.cs.nn.evolution.genotypes.HyperNEATCPPNGenotype;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
 import edu.utexas.cs.nn.log.FitnessLog;
 import edu.utexas.cs.nn.log.PlotLog;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.networks.TWEANN;
+import edu.utexas.cs.nn.networks.hyperneat.HyperNEATUtil;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.scores.Score;
@@ -394,6 +396,9 @@ public abstract class MuLambda<T> implements SinglePopulationGenerationalEA<T> {
 		}
 		ArrayList<Genotype<T>> result = selectAndAdvance(parentScores, childrenScores);
 		// TODO: Insert hybrID switch here on appropriate generation
+		if(Parameters.parameters.booleanParameter("hybrID") && currentGeneration() == Parameters.parameters.integerParameter("hybrIDSwitchGeneration")) {	
+			result = PopulationUtil.getSubstrateGenotypesFromCPPNs(HyperNEATUtil.getHyperNEATTask(), result);
+		}
 		return result;
 	}
 
