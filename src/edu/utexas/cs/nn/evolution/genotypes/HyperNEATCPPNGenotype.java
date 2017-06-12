@@ -10,6 +10,7 @@ import edu.utexas.cs.nn.networks.hyperneat.HyperNEATTask;
 import edu.utexas.cs.nn.networks.hyperneat.HyperNEATUtil;
 import edu.utexas.cs.nn.networks.hyperneat.Substrate;
 import edu.utexas.cs.nn.parameters.CommonConstants;
+import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.datastructures.Triple;
 import edu.utexas.cs.nn.util.util2D.ILocated2D;
@@ -260,17 +261,78 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 	 *
 	 * @return array list containing all the links between substrates
 	 */
-	private ArrayList<LinkGene> createNodeLinks(HyperNEATTask hnt, TWEANN cppn, List<Triple<String, String,Boolean>> connections, List<Substrate> subs, HashMap<String, Integer> sIMap) {
+	private ArrayList<LinkGene> createNodeLinks(HyperNEATTask hnt, TWEANN cppn, List<Triple<String, String, Boolean>> connections, List<Substrate> subs, HashMap<String, Integer> sIMap) {
 		ArrayList<LinkGene> result = new ArrayList<LinkGene>();
 		for (int i = 0; i < connections.size(); i++) { // For each pair of substrates that are connected
 			int sourceSubstrateIndex = sIMap.get(connections.get(i).t1);
 			int targetSubstrateIndex = sIMap.get(connections.get(i).t2);
 			Substrate sourceSubstrate = subs.get(sourceSubstrateIndex);
 			Substrate targetSubstrate = subs.get(targetSubstrateIndex);
-			// adds links from between two substrates to whole list of links
-			loopThroughLinks(hnt, result, cppn, i, sourceSubstrate, targetSubstrate, sourceSubstrateIndex, targetSubstrateIndex, subs);
+			
+			// Whether to connect these layers used convolutional structure instead of standard fully connected structure
+			boolean convolution = connections.get(i).t3 && Parameters.parameters.booleanParameter("convolution");
+			// both options add links from between two substrates to whole list of links
+			if(convolution) {
+				convolutionalLoopThroughLinks(hnt, result, cppn, i, sourceSubstrate, targetSubstrate, sourceSubstrateIndex, targetSubstrateIndex, subs);
+			} else {
+				loopThroughLinks(hnt, result, cppn, i, sourceSubstrate, targetSubstrate, sourceSubstrateIndex, targetSubstrateIndex, subs);
+			}
 		}
 		return result;
+	}
+
+	/**
+	 * Connect two substrate layers using convolutional link structures
+	 * @param hnt HyperNEATTask instance with
+	 * @param linksSoFar List of link genes to add to
+	 * @param cppn Network generating link weights
+	 * @param outputIndex index from cppn outputs to be used as weight in creating link
+	 * @param s1 Where links come from
+	 * @param s2 Where links go to
+	 * @param s1Index Index in substrate list of source substrate
+	 * @param s2Index Index in substrate list of target substrate
+	 * @param subs List of substrates
+	 */
+	void convolutionalLoopThroughLinks(HyperNEATTask hnt, ArrayList<LinkGene> linksSoFar, TWEANN cppn, int outputIndex,
+			Substrate s1, Substrate s2, int s1Index, int s2Index,
+			List<Substrate> subs) {
+		
+		int receptiveFieldSize = Parameters.parameters.integerParameter("receptiveFieldSize");
+		assert receptiveFieldSize % 2 == 1 : "Receptive field size needs to be odd to be centered: " + receptiveFieldSize;
+		int edgeOffset = receptiveFieldSize / 2; // might allow zero-padding around edge later
+		
+		int stride = Parameters.parameters.integerParameter("stride");
+		
+		// Traverse center points of receptive fields
+		for(int x = edgeOffset; x < s1.getSize().t1 - edgeOffset; x += stride) {
+			for(int y = edgeOffset; y < s1.getSize().t2 - edgeOffset; y += stride) {
+				// There is a direct correspondence between each receptive field and
+				// its target neuron in the next layer
+				int targetXindex = (x - edgeOffset) / stride; 
+				int targetYIndex = (y - edgeOffset) / stride;
+				// If target neuron is dead, do not continue
+				if(!s2.isNeuronDead(targetXindex, targetYIndex)) {
+					// Loop through all neurons in the receptive field
+					for(int fX = -edgeOffset; fX <= edgeOffset; fX++) {
+						for(int fY = -edgeOffset; fY <= edgeOffset; fY++) {
+							// Source neuron is offset from receptive field center
+							int fromXIndex = x + fX;
+							int fromYIndex = y + fY;
+							// Do not continue if source neuron is dead
+							if(!s1.isNeuronDead(fromXIndex, fromYIndex)) {
+								// CPPN inputs need to be centered and scaled
+								ILocated2D scaledFieldCoordinates = MMNEAT.substrateMapping.transformCoordinates(new Tuple2D(fX+edgeOffset, fY+edgeOffset), receptiveFieldSize, receptiveFieldSize);
+								ILocated2D scaledTargetCoordinates = MMNEAT.substrateMapping.transformCoordinates(new Tuple2D(targetXindex, targetYIndex), s2.getSize().t1, s2.getSize().t2);
+								// inputs to CPPN 
+								// NOTE: filterCPPNInputs call was removed because it doesn't seem to make sense with convolutional inputs
+								double[] inputs = new double[]{scaledFieldCoordinates.getX(), scaledFieldCoordinates.getY(), scaledTargetCoordinates.getX(), scaledTargetCoordinates.getY(), BIAS};
+								conditionalLinkAdd(linksSoFar, cppn, inputs, outputIndex, fromXIndex, fromYIndex, s1Index, targetXindex, targetYIndex, s2Index, subs);
+							}							
+						}						
+					}
+				}
+			}		
+		}
 	}
 
 	/**
@@ -300,43 +362,62 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 
 		// This loop goes through every (x,y) coordinate in Substrate s1: source substrate
 		for(Pair<Integer,Integer> src : s1.coordinateList()) {
-			int X1 = src.t1;
-			int Y1 = src.t2;
+			int fromXIndex = src.t1;
+			int fromYIndex = src.t2;
 			// If the neuron in the source substrate is dead, it will not have outputs
-			if(!s1.isNeuronDead(X1, Y1)) {
+			if(!s1.isNeuronDead(fromXIndex, fromYIndex)) {
 				// This loop searches through every (x,y) coordinate in Substrate s2: target substrate
 				for(Pair<Integer,Integer> target: s2.coordinateList()) {
-					int X2 = target.t1;
-					int Y2 = target.t2;
+					int targetXindex = target.t1;
+					int targetYIndex = target.t2;
 					// If the target neuron is dead, then don't bother with incoming links
-					if(!s2.isNeuronDead(X2, Y2)) {
+					if(!s2.isNeuronDead(targetXindex, targetYIndex)) {
 						// CPPN inputs need to be centered and scaled
-						ILocated2D scaledSourceCoordinates = MMNEAT.substrateMapping.transformCoordinates(new Tuple2D(X1, Y1), s1.getSize().t1, s1.getSize().t2);
-						ILocated2D scaledTargetCoordinates = MMNEAT.substrateMapping.transformCoordinates(new Tuple2D(X2, Y2), s2.getSize().t1, s2.getSize().t2);
+						ILocated2D scaledSourceCoordinates = MMNEAT.substrateMapping.transformCoordinates(new Tuple2D(fromXIndex, fromYIndex), s1.getSize().t1, s1.getSize().t2);
+						ILocated2D scaledTargetCoordinates = MMNEAT.substrateMapping.transformCoordinates(new Tuple2D(targetXindex, targetYIndex), s2.getSize().t1, s2.getSize().t2);
 						// inputs to CPPN 
 						// These next two lines need to be generalized for different numbers of CPPN inputs
 						double[] inputs = hnt.filterCPPNInputs(new double[]{scaledSourceCoordinates.getX(), scaledSourceCoordinates.getY(), scaledTargetCoordinates.getX(), scaledTargetCoordinates.getY(), BIAS});
-						double[] outputs = cppn.process(inputs);
-						boolean expressLink = CommonConstants.leo
-								// Specific network output determines link expression
-								? outputs[(numCPPNOutputsPerLayerPair * outputIndex) + LEO_INDEX] > CommonConstants.linkExpressionThreshold
-										// Output magnitude determines link expression
-										: Math.abs(outputs[(numCPPNOutputsPerLayerPair * outputIndex) + LINK_INDEX]) > CommonConstants.linkExpressionThreshold;
-										if (expressLink) {
-											long sourceID = getInnovationID(X1, Y1, s1Index, subs);
-											long targetID = getInnovationID(X2, Y2, s2Index, subs);
-											double weight = CommonConstants.leo
-													// LEO takes its weight directly from the designated network output
-													? outputs[(numCPPNOutputsPerLayerPair * outputIndex) + LINK_INDEX]
-															// Standard HyperNEAT must scale the weight
-															: NetworkUtil.calculateWeight(outputs[(numCPPNOutputsPerLayerPair * outputIndex) + LINK_INDEX]);
-													linksSoFar.add(newLinkGene(sourceID, targetID, weight, innovationID++, false));
-										}
-
+						conditionalLinkAdd(linksSoFar, cppn, inputs, outputIndex, fromXIndex, fromYIndex, s1Index, targetXindex, targetYIndex, s2Index, subs);
 					}
 				}
 			}
 		}
+	}
+	
+	/**
+	 * If the given inputs to the CPPN indicate that a link should be added, then it is added to the provided list of links with the
+	 * appropriate weight.
+	 * 
+	 * @param linksSoFar List of links to add to
+	 * @param cppn Network generating link weights
+	 * @param inputs inputs to the CPPN
+	 * @param outputIndex index within CPPN outputs to look for weight information
+	 * @param fromXIndex x-coordinate of neuron in source substrate
+	 * @param fromYIndex y-coordinate of neuron in source substrate
+	 * @param s1Index source substrate index in substrate list
+	 * @param targetXindex x-coordinate of neuron in target substrate
+	 * @param targetYIndex y-coordinate of neuron in target substrate
+	 * @param s2Index target substrate index in substrate list
+	 * @param subs list of substrates
+	 */
+	void conditionalLinkAdd(ArrayList<LinkGene> linksSoFar, TWEANN cppn, double[] inputs, int outputIndex, int fromXIndex, int fromYIndex, int s1Index, int targetXindex, int targetYIndex, int s2Index, List<Substrate> subs) {
+		double[] outputs = cppn.process(inputs);
+		boolean expressLink = CommonConstants.leo
+				// Specific network output determines link expression
+				? outputs[(numCPPNOutputsPerLayerPair * outputIndex) + LEO_INDEX] > CommonConstants.linkExpressionThreshold
+						// Output magnitude determines link expression
+						: Math.abs(outputs[(numCPPNOutputsPerLayerPair * outputIndex) + LINK_INDEX]) > CommonConstants.linkExpressionThreshold;
+						if (expressLink) {
+							long sourceID = getInnovationID(fromXIndex, fromYIndex, s1Index, subs);
+							long targetID = getInnovationID(targetXindex, targetYIndex, s2Index, subs);
+							double weight = CommonConstants.leo
+									// LEO takes its weight directly from the designated network output
+									? outputs[(numCPPNOutputsPerLayerPair * outputIndex) + LINK_INDEX]
+											// Standard HyperNEAT must scale the weight
+											: NetworkUtil.calculateWeight(outputs[(numCPPNOutputsPerLayerPair * outputIndex) + LINK_INDEX]);
+									linksSoFar.add(newLinkGene(sourceID, targetID, weight, innovationID++, false));
+						}
 	}
 
 	/**
