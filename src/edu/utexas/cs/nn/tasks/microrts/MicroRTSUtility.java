@@ -31,23 +31,23 @@ public class MicroRTSUtility {
 	public static final int WINDOW_LENGTH = 640;
 	private static boolean prog = Parameters.parameters.classParameter("microRTSFitnessFunction").equals(ProgressiveFitnessFunction.class);
 	private static boolean coevolution;
-	static boolean base1Alive = false;
-	static boolean base2Alive = false;
-
-	private static int unitDifferenceNow = 0;
+	
 	private static GameState gs;
-
-	//for % destroyed
-	static HashSet<Long> createdUnitIDs1 = new HashSet<>();
-	static HashSet<Long> createdUnitIDs2 = new HashSet<>();
 
 	private static ArrayList<Integer> workerWithResourceID = new ArrayList<>();
 
 	public static <T> ArrayList<Pair<double[], double[]>> oneEval(AI ai1, AI ai2, MicroRTSInformation task, RTSFitnessFunction ff, PhysicalGameStateJFrame w) {		
-
+		//for % destroyed ff
+		HashSet<Long> createdUnitIDs1 = new HashSet<>();
+		HashSet<Long> createdUnitIDs2 = new HashSet<>();
+		//for fitness functions
+		boolean base1Alive = false;
+		boolean base2Alive = false;
+		int unitDifferenceNow = 0;
+		
 		coevolution = ff.getCoevolution();
 		gs = task.getGameState();
-		PhysicalGameState pgs = task.getPhysicalGameState();
+		PhysicalGameState pgs = gs.getPhysicalGameState(); //task.getPhysicalGameState();
 		boolean gameover = false;
 		double averageUnitDifference = 0;
 		//evaluates to correct number of cycles in accordance with competition rules: 8x8 => 3000, 16x16 => 4000, 24x24 => 5000, etc.
@@ -71,34 +71,39 @@ public class MicroRTSUtility {
 				pa2 = ai2.getAction(1, gs); //throws exception
 				gs.issueSafe(pa2);
 			} catch (Exception e) { e.printStackTrace();System.exit(1); }
-
+			
 			if(prog){ //if our FitnessFunction needs us to record information throughout the game
 				currentUnit = null;	
 				unitDifferenceNow = 0;
 				base1Alive = false;
 				base2Alive = false;
-
+//				System.out.println("-------------------------------------------");
 				for(int i = 0; i < pgs.getWidth(); i++){
 					for(int j = 0; j < pgs.getHeight(); j++){
 						
 						currentUnit = pgs.getUnitAt(i, j);
 						if(currentUnit!=null){
+//							System.out.println(i + "," + j + " has " + currentUnit);
 							
 							if(currentUnit.getPlayer() == 0)
 								createdUnitIDs1.add(currentUnit.getID());
 							else if(currentUnit.getPlayer() == 1)
 								createdUnitIDs2.add(currentUnit.getID());
 							
-							updateUnitDifference(currentUnit);
-							if(currentUnit.getType().name.equals("Worker"))
+							unitDifferenceNow = updateUnitDifference(currentUnit, unitDifferenceNow);
+							if(currentUnit.getType().name.equals("Worker")) {
 								updateHarvestingEfficiency(currentUnit, coevolution, task);
-							if(currentUnit.getType().name.equals("Base"))
-								updateBaseIsAlive(currentUnit, coevolution);
-							
+							}
+							if(currentUnit.getType().name.equals("Base")){
+								base1Alive = base1Alive || updateBaseIsAlive(currentUnit, 1);
+								base2Alive = base2Alive || updateBaseIsAlive(currentUnit, 2);
+							}
 						} //end if (there is a unit on this space)
 					}//end j
 				}//end i
-				if(!base1Alive && !baseDeath1Recorded) {
+//				MiscUtil.waitForReadStringAndEnterKeyPress();
+				if((!base1Alive) && (!baseDeath1Recorded)) {
+//					System.out.println("setting base up time 1: " + gs.getTime());
 					task.setBaseUpTime(gs.getTime(), 1);
 					baseDeath1Recorded = true;
 				}
@@ -127,6 +132,7 @@ public class MicroRTSUtility {
 				}
 			}
 		}
+//		System.out.println("setting % enemies destroyed: " + ((createdUnitIDs2.size() - terminalUnits2) * 100 ) / createdUnitIDs2.size());
 		task.setPercentEnemiesDestroyed(((createdUnitIDs2.size() - terminalUnits2) * 100 ) / createdUnitIDs2.size(), 1);
 		if(coevolution)
 			task.setPercentEnemiesDestroyed(((createdUnitIDs1.size() - terminalUnits1) * 100 ) / createdUnitIDs1.size(), 2);
@@ -137,18 +143,21 @@ public class MicroRTSUtility {
 		return ff.getFitness(gs);
 	}
 
-	private static void updateUnitDifference(Unit u){
+	private static int updateUnitDifference(Unit u, int unitDifferenceNow){
 		if(u.getPlayer() == 0){
-			unitDifferenceNow+= u.getCost();
+			return unitDifferenceNow+ u.getCost();
 		} else if(u.getPlayer() == 1){
-			unitDifferenceNow-= u.getCost();
-		}
+			return unitDifferenceNow- u.getCost();
+		} else 
+			return unitDifferenceNow;
 	}
 
 	private static void updateHarvestingEfficiency(Unit u, boolean coevolution, MicroRTSInformation task){
 		//assume the unit is a worker
 		int id = (int) u.getID();
 		int player = u.getPlayer()+1; //+1 because this methods returns 0 or 1, but we want to use it as 1 or 2
+//		System.out.println(workerWithResourceID + " , " + id + " , " + player);
+//		System.out.println(u.getResources() + " already there?: " + !workerWithResourceID.contains(id));
 		if( (u.getPlayer() == 0 || coevolution) && u.getResources() >= 1 && !workerWithResourceID.contains(id))
 			workerWithResourceID.add(id);
 		else if(u.getResources() <= 0 && workerWithResourceID.contains(id)){
@@ -159,12 +168,13 @@ public class MicroRTSUtility {
 	}
 
 	//Assumes bases exist at the start of the game
-	private static void updateBaseIsAlive(Unit u, boolean coevolution) {
-		if(u.getPlayer() == 0){
-			base1Alive = true;
-		} else if(u.getPlayer() == 1){
-			base2Alive = true;
-		}
+	private static boolean updateBaseIsAlive(Unit u, int player) {
+		if(u.getPlayer() == 0 && player == 1){
+			return true; //base1Alive
+		} else if(u.getPlayer() == 1 && player == 2){
+			return true; //base2Alive
+		} else
+			return false; //'player' does not match unit's player
 	}
 
 	/**

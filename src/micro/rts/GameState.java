@@ -3,6 +3,8 @@ package micro.rts;
 import java.io.Serializable;
 import java.io.Writer;
 import java.util.*;
+
+import edu.utexas.cs.nn.util.random.RandomNumbers;
 import micro.rts.units.Unit;
 import micro.rts.units.UnitType;
 import micro.rts.units.UnitTypeTable;
@@ -15,7 +17,7 @@ import micro.util.XMLWriter;
  */
 @SuppressWarnings("serial")
 public class GameState implements Serializable{
-    static Random r = new Random();         // only used if the action conflict resolution strategy is set to random
+    static Random r = RandomNumbers.randomGenerator;         // only used if the action conflict resolution strategy is set to random
     int unitCancelationCounter = 0;  // only used if the action conflict resolution strategy is set to alternating
     
     int time = 0;

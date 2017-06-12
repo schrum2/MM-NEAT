@@ -213,9 +213,9 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 			enemySet.add(ai2);
 		}
 		ef.setNetwork(individual);
-		if(CommonConstants.watch)
+		if(CommonConstants.watch){
 			w = PhysicalGameStatePanel.newVisualizer(gs,MicroRTSUtility.WINDOW_LENGTH,MicroRTSUtility.WINDOW_LENGTH,false,PhysicalGameStatePanel.COLORSCHEME_BLACK);
-		
+		}
 		double[][] fitnesses = new double[enemySet.size()][numObjectives()];
 		double[][] others 	 = new double[enemySet.size()][numOtherScores()];
 		
@@ -243,16 +243,17 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 				utt = new UnitTypeTable();
 				averageUnitDifference = 0;
 				baseUpTime = 0;
+//				System.out.println("setting h e i to 0");
 				harvestingEfficiencyIndex = 0;
 				// Clone the initial game state; start from beginning
 				pgs = initialPgs.clone();
 				ef.givePhysicalGameState(pgs);
 	}
 	/**
-	 *initializes ai (only called once for efficiency) 
+	 *initializes ai (only called once for efficiency in this oneEval) 
 	 * @return 
 	 */
-	void initializeAI() { //TODO is used?
+	private void initializeAI() {
 		try {
 			ai1 = (HasEvaluationFunction) ClassCreation.createObject(Parameters.parameters.classParameter("microRTSAgent"));
 			if(Parameters.parameters.classParameter("microRTSEnemySequence") == null)
@@ -285,6 +286,7 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 	}
 	@Override
 	public void setHarvestingEfficiency(int hei, int player) {
+//		System.out.println("setHarvestingEfficiency " + hei + "," + player + " current: "+harvestingEfficiencyIndex);
 		if(player == 1) harvestingEfficiencyIndex = hei;
 		else throw new IllegalArgumentException("MicroRTSTask is not equipped to record results for > 1 player");
 	}
