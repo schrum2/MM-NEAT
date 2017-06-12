@@ -12,6 +12,7 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
@@ -20,6 +21,7 @@ import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.interactive.breedesizer.BreedesizerTask;
 import edu.utexas.cs.nn.tasks.interactive.breedesizer.Keyboard;
 import edu.utexas.cs.nn.util.graphics.GraphicsUtil;
+import edu.utexas.cs.nn.util.sound.MIDIUtil;
 import edu.utexas.cs.nn.util.sound.PlayDoubleArray;
 import edu.utexas.cs.nn.util.sound.SoundFromCPPNUtil;
 import edu.utexas.cs.nn.util.sound.SoundToArray;
@@ -36,6 +38,8 @@ import edu.utexas.cs.nn.util.sound.WAVUtil;
 public class SoundRemixTask<T extends Network> extends BreedesizerTask<T> {
 
 	public static final int CPPN_NUM_INPUTS	= 4;
+	
+	private static final int FILE_LOADER_CHECKBOX_INDEX = CHECKBOX_IDENTIFIER_START-CPPN_NUM_INPUTS-2;
 
 	public double[] WAVDoubleArray;
 	public int playBackRate;
@@ -93,6 +97,17 @@ public class SoundRemixTask<T extends Network> extends BreedesizerTask<T> {
 			// Play original sound if they click the button
 			arrayPlayer = PlayDoubleArray.playDoubleArray(format, WAVDoubleArray);
 		}
+		if(itemID == FILE_LOADER_CHECKBOX_INDEX) {
+			JFileChooser chooser = new JFileChooser();//used to get new file
+			chooser.setApproveButtonText("Open");
+			FileNameExtensionFilter filter = new FileNameExtensionFilter("WAV Files", "wav");
+			chooser.setFileFilter(filter);
+			int returnVal = chooser.showOpenDialog(frame);
+			if(returnVal == JFileChooser.APPROVE_OPTION) {//if the user decides to save the image
+				Parameters.parameters.setString("remixWAVFile", chooser.getCurrentDirectory() + "\\" + chooser.getSelectedFile().getName());
+			}
+			resetButtons();
+		}
 	}
 
 	@Override
@@ -111,7 +126,7 @@ public class SoundRemixTask<T extends Network> extends BreedesizerTask<T> {
 		BufferedImage wavePlotImage = GraphicsUtil.wavePlotFromDoubleArray(amplitude, height, width);
 		return wavePlotImage;
 	}
-
+	
 	@Override
 	protected void additionalButtonClickAction(int scoreIndex, Genotype<T> individual) {
 		if(arrayPlayer != null) { // Always stop any currently playing sound
