@@ -50,8 +50,8 @@ public abstract class MuLambda<T> implements SinglePopulationGenerationalEA<T> {
 	protected boolean writeOutput;
 	private final int MAX_MODE_OF_LOG_INTEREST = 5;
 	public boolean evaluatingParents = false;
-        public boolean msPacMan;
-        
+	public boolean msPacMan;
+
 	/**
 	 * Initialize evolutionary algorithm.
 	 * 
@@ -281,19 +281,19 @@ public abstract class MuLambda<T> implements SinglePopulationGenerationalEA<T> {
 		generation++;
 		EvolutionaryHistory.frozenPreferenceVsPolicyStatusUpdate(newParents, generation);
 		CommonConstants.trialsByGenerationUpdate(generation);
-                if(msPacMan) { // Pacman-specific updates
-                    if (Parameters.parameters.booleanParameter("scalePillsByGen")) { // For pacman
-                            Parameters.parameters.setDouble("preEatenPillPercentage", 1.0 - ((generation * 1.0) / Parameters.parameters.integerParameter("maxGens")));
-                    }
-                    if (Parameters.parameters.booleanParameter("incrementallyDecreasingEdibleTime")) { // For pacman
-                            MsPacManInitialization.setEdibleTimeBasedOnGeneration(generation);
-                    }
-                    if (Parameters.parameters.booleanParameter("incrementallyDecreasingLairTime")) { // For pacman
-                    		MsPacManInitialization.setLairTimeBasedOnGeneration(generation);
-                    }
-                    VariableDirectionKStepDeathScentBlock.updateScentMaps(); // For pacman
-                    DangerousAreaModeSelector.updateScentMaps(); // For pacman
-                }
+		if(msPacMan) { // Pacman-specific updates
+			if (Parameters.parameters.booleanParameter("scalePillsByGen")) { // For pacman
+				Parameters.parameters.setDouble("preEatenPillPercentage", 1.0 - ((generation * 1.0) / Parameters.parameters.integerParameter("maxGens")));
+			}
+			if (Parameters.parameters.booleanParameter("incrementallyDecreasingEdibleTime")) { // For pacman
+				MsPacManInitialization.setEdibleTimeBasedOnGeneration(generation);
+			}
+			if (Parameters.parameters.booleanParameter("incrementallyDecreasingLairTime")) { // For pacman
+				MsPacManInitialization.setLairTimeBasedOnGeneration(generation);
+			}
+			VariableDirectionKStepDeathScentBlock.updateScentMaps(); // For pacman
+			DangerousAreaModeSelector.updateScentMaps(); // For pacman
+		}
 		return newParents;
 	}
 
@@ -392,7 +392,9 @@ public abstract class MuLambda<T> implements SinglePopulationGenerationalEA<T> {
 			combined.addAll(childrenScores);
 			MMNEAT.logPerformanceInformation(combined, generation);
 		}
-		return selectAndAdvance(parentScores, childrenScores);
+		ArrayList<Genotype<T>> result = selectAndAdvance(parentScores, childrenScores);
+		// TODO: Insert hybrID switch here on appropriate generation
+		return result;
 	}
 
 	/**
