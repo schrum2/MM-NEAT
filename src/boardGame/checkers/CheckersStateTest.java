@@ -29,6 +29,7 @@ public class CheckersStateTest {
 	CheckersState test3;
 	CheckersState test4;
 	CheckersState test5;
+	CheckersState test6; // Used to test the incorrect End State Error
 
 	@Before
 	public void setUp() throws Exception {
@@ -100,7 +101,18 @@ public class CheckersStateTest {
 			 						 {E,E,E,E,E,B,E,E},
 			 						 {E,E,E,E,E,E,E,E}};
 
-			 test5 = new CheckersState(board5, 0, new ArrayList<Integer>());
+		test5 = new CheckersState(board5, 0, new ArrayList<Integer>());
+		
+		int[][] board6 = new int[][]{{E,B,E,B,E,B,E,B}, // 0 Used to test the End State Error
+									 {B,E,B,E,B,E,B,E}, // 1
+									 {E,B,E,B,E,R,E,E}, // 2
+									 {E,E,E,E,E,E,B,E}, // 3
+									 {E,E,E,E,E,E,E,E}, // 4
+									 {R,E,E,E,R,E,R,E}, // 5
+									 {E,R,E,R,E,R,E,R}, // 6
+									 {R,E,R,E,R,E,R,E}};// 7
+
+		test6 = new CheckersState(board6, 1, new ArrayList<Integer>());  // Used to test the incorrect EndState Error
 	}
 
 	@Test
@@ -140,7 +152,7 @@ public class CheckersStateTest {
 
 	@Test
 	public void testGetPlayerColors() {
-		assertArrayEquals(new Color[]{Color.black, Color.black, Color.red, Color.red}, start.getPlayerColors());
+		assertArrayEquals(new Color[]{Color.black, Color.red, new Color(64,64,64), new Color(255,81,81)}, start.getPlayerColors());
 	}
 
 	@Test
@@ -394,8 +406,10 @@ public class CheckersStateTest {
 			assertTrue(test5Test.contains(state));
 		}
 		
-	
+		Set<CheckersState> test6Set = test6.possibleBoardGameStates(test6);
 		
+		System.out.println("Size: " + test6Set.size() + " End: " + test6.endState());
+		System.out.println("Winners: " + test6.getWinners());
 	}
 
 }

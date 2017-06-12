@@ -22,7 +22,7 @@ public class Checkers extends TwoDimensionalBoardGame<CheckersState> {
 		Parameters.initializeParameterCollections(new String[]{"io:false", "netio:false", "task:edu.utexas.cs.nn.tasks.boardGame.StaticOpponentBoardGameTask",
 				"boardGame:boardGame.checkers.Checkers", "boardGameOpponent:boardGame.agents.BoardGamePlayerHuman2DBoard",
 				"boardGameOpponentHeuristic:boardGame.heuristics.PieceDifferentialBoardGameHeuristic",
-				"boardGamePlayer:boardGame.agents.treesearch.BoardGamePlayerMinimaxAlphaBetaPruning", "watch:true"});
+				"boardGamePlayer:boardGame.agents.treesearch.BoardGamePlayerMinimaxAlphaBetaPruning", "watch:true", "minimaxSearchDepth:2"});
 		
 		MMNEAT.loadClasses();
 		
