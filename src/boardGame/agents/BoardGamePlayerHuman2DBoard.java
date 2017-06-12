@@ -42,7 +42,7 @@ public class BoardGamePlayerHuman2DBoard<T extends TwoDimensionalBoardGameState>
 		boardView.reset(move);
 		
 		try {
-			Thread.sleep(350);
+			Thread.sleep(75);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -115,7 +115,7 @@ public class BoardGamePlayerHuman2DBoard<T extends TwoDimensionalBoardGameState>
 		ready = false; // Did not click yet
 		while(!ready){ // Will continue to run until the Player clicks on a Space
 			try {
-				Thread.sleep(300);
+				Thread.sleep(75);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

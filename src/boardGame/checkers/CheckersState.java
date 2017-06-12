@@ -155,13 +155,11 @@ public class CheckersState extends TwoDimensionalBoardGameState {
 			return false; // Both the X-Offset and the Y-Offset must be exactly 1; Jumping selects the Enemy Check being Jumped
 		}
 		
-		
+		if( checkForcedJump().size() > 0 && !checkForcedJump().contains(moveThis)) return false; // Did not take a Forced Jump; return false
 		
 		if(doubleJumpCheck != null){ // If able, must complete a Double Jump
 			if((int) moveThis.getX() != (int) doubleJumpCheck.getX() || (int) moveThis.getY() != (int) doubleJumpCheck.getY()) return false;
 		}
-		
-		if(checkDoubleJump(moveThis) && !ableToJump(moveThis, moveTo))return false; // Tried to make a Non-Jump Move when a Jump is available
 		
 		if(boardState[(int) moveTo.getX()][(int) moveTo.getY()] == EMPTY){
 			return true;
@@ -218,25 +216,57 @@ public class CheckersState extends TwoDimensionalBoardGameState {
 			for(int dY = -1; dY <= 1; dY++){
 				if(dX != 0 && dY != 0){ // Won't run if either dX or dY == 0
 					
-					Point moveTo = new Point((int) check.getX() + dX, (int) check.getY() + dY);
+					Point moveTo = new Point(checkX + dX, checkY + dY);
 					if(isPointInBounds(moveTo)){
 					
-						if(thisCheck == BLACK_CHECK && dX > 0){ // Black Checks move down the Board; X increases, dX > 0
-							if(ableToJump(check, moveTo)) return true;
-						}else if(thisCheck == RED_CHECK && dX < 0){ // Red Checks move down the Board; X decreases, dX < 0
-							if(ableToJump(check, moveTo)) return true;
+						if(thisCheck == BLACK_CHECK && dX > 0 && ableToJump(check, moveTo)){ // Black Checks move down the Board; X increases, dX > 0
+								doubleJumpCheck = check;
+								return true;
+						}else if(thisCheck == RED_CHECK && dX < 0 && ableToJump(check, moveTo)){ // Red Checks move down the Board; X decreases, dX < 0
+								doubleJumpCheck = check;
+								return true;
+							}
 						}else{ // King's Directional Movement doesn't need to be checked
-							if(ableToJump(check, moveTo)) return true;
+							if(ableToJump(check, moveTo)){
+								doubleJumpCheck = check;
+								return true;
+							}
 						}
 
 					}			
 				}
 			}
-		}
 		
+		
+		doubleJumpCheck = null;
 		return false; // Unable to make any additional Jumps
 	}
 	
+	private List<Point> checkForcedJump(){
+		
+		List<Point> checkMoves = new ArrayList<Point>();
+		List<Point> ableToJump = new ArrayList<Point>();
+		
+		for(int i = 0; i < BOARD_WIDTH; i++){
+			for(int j = 0; j < BOARD_WIDTH; j++){
+				if(nextPlayer == BLACK_CHECK){ // Black Check Player is going
+					if(boardState[i][j] == BLACK_CHECK || boardState[i][j] == BLACK_CHECK_KING){
+						checkMoves.add(new Point(i, j));
+					}
+				}else{ // Red Check Player is going
+					if(boardState[i][j] == RED_CHECK || boardState[i][j] == RED_CHECK_KING){
+						checkMoves.add(new Point(i, j));
+					}
+				}
+			}
+		}
+		
+		for(Point check : checkMoves){
+			if(checkDoubleJump(check)) ableToJump.add(check);
+		}
+		
+		return ableToJump;
+	}
 	
 	/**
 	 * Moves a Check from one position in the CheckBoard to another diagonally
@@ -275,12 +305,8 @@ public class CheckersState extends TwoDimensionalBoardGameState {
 			boardState[(int) moveTo.getX()][(int) moveTo.getY()] = EMPTY;
 			finalX = jumpX;
 			finalY = jumpY;
-			if(checkDoubleJump(new Point(jumpX, jumpY))){
-				doubleJumpCheck = new Point(jumpX, jumpY);
-			}else{
-				doubleJumpCheck = null;
-			}
 			
+			checkDoubleJump(new Point(jumpX, jumpY));
 		}
 		
 		if(doubleJumpCheck == null){

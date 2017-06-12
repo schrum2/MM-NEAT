@@ -173,7 +173,8 @@ public class CheckersStateTest {
 		assertFalse(start.moveDoublePoint(new Point(1,4), new Point(2,5))); // Tried to move to a Non-Empty, Non-Enemy Space
 		
 		assertFalse(start.moveDoublePoint(new Point(3,2), new Point(2,1))); // Tried to move a Black Non-King Check up
-		assertTrue(start.moveDoublePoint(new Point(2,3), new Point(3,4))); // Known good Move; needed to change Players
+		assertFalse(start.moveDoublePoint(new Point(2,3), new Point(3,4))); // Tried to make a Non-Jump Move when a Jump is available; Forced Jump
+		assertTrue(start.moveDoublePoint(new Point(3,2), new Point(4,1))); // Known good Move; needed to change Players
 		assertFalse(start.moveDoublePoint(new Point(4,1), new Point(5,0))); // Tried to move a Red Non-King Check down		
 		
 		
@@ -190,7 +191,6 @@ public class CheckersStateTest {
 		assertTrue(test1.moveDoublePoint(new Point(1,2), new Point(2,3))); // Black King Down-Right
 		assertTrue(test1.moveDoublePoint(new Point(4,3), new Point(5,4))); // Red King Down-Right
 		
-		assertFalse(test4.moveDoublePoint(new Point(2,3), new Point(3,4))); // Tried to make a Non-Jump Move when a Jump is available; Forced Jump
 		assertTrue(test4.moveDoublePoint(new Point(2,3), new Point(3,2))); // Made the First Jump; must now make the Second Jump
 		assertFalse(test4.moveDoublePoint(new Point(5,2), new Point(4,1))); // Tried to Move the Enemy Check
 		assertFalse(test4.moveDoublePoint(new Point(0,7), new Point(1,6))); // Tried to Move the Non-Double Jump Check
@@ -406,10 +406,10 @@ public class CheckersStateTest {
 			assertTrue(test5Test.contains(state));
 		}
 		
-		Set<CheckersState> test6Set = test6.possibleBoardGameStates(test6);
-		
-		System.out.println("Size: " + test6Set.size() + " End: " + test6.endState());
-		System.out.println("Winners: " + test6.getWinners());
+//		Set<CheckersState> test6Set = test6.possibleBoardGameStates(test6);
+//		
+//		System.out.println("Size: " + test6Set.size() + " End: " + test6.endState());
+//		System.out.println("Winners: " + test6.getWinners());
 	}
 
 }
