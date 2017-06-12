@@ -311,11 +311,14 @@ public class Parameters {
 		integerOptions.add("defaultPause", 50, "Default pause length between each iteraton of animation in AnimationBreeder");
 		integerOptions.add("maxPause", 500, "Maximum pause length between each iteraton of animation in AnimationBreeder");
 		integerOptions.add("defaultFramePause", 10, "Default pause length between frames in AnimationBreeder");
-		integerOptions.add("remixSamplesPerDimension", 3, "Number of remix samples to input to Picture Remixer"); //used for alternative approach of remixing pictures
+		//integerOptions.add("remixSamplesPerDimension", 3, "Number of remix samples to input to Picture Remixer"); //used for alternative approach of remixing pictures
+		integerOptions.add("receptiveFieldSize", 3, "Size of input windows for convolutional structures");
+		integerOptions.add("stride", 1, "Offset between receptive fields in convolutional structures");
 		// Long parameters
 		longOptions.add("lastInnovation", 0l, "Highest innovation number used so far");
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
 		// Boolean parameters
+		booleanOptions.add("convolution", false, "HyperNEAT phenotypes allow convolutional structure");
 		booleanOptions.add("averageScoreHistory", false, "Surviving parent fitness averaged across generations");
 		booleanOptions.add("inheritFitness", false, "Child fitness is partially inherited from parents");
 		booleanOptions.add("penalizeSubstrateLinks", false, "Whether to use additional fitness punishing substrate links");
