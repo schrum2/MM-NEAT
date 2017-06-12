@@ -19,6 +19,7 @@ import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Track;
 
 import edu.utexas.cs.nn.networks.Network;
+import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.util.datastructures.Triple;
 import edu.utexas.cs.nn.util.sound.PlayDoubleArray.AmplitudeArrayPlayer;
 
@@ -226,12 +227,13 @@ public class MIDIUtil {
 	 * @param cppn input CPPN used to play back reconstructed audio
 	 * @return playable double array of amplitudes
 	 */
-	public static double[] lineToAmplitudeArray(String audio, ArrayList<Triple<ArrayList<Double>, ArrayList<Long>, ArrayList<Long>>> midiLists, Network cppn) {
+	public static double[] lineToAmplitudeArray(String audio, ArrayList<Triple<ArrayList<Double>, ArrayList<Long>, ArrayList<Long>>> midiLists, Network cppn, double noteLengthScale) {
 		File audioFile = new File(audio);
 		try {
 			Sequence sequence = MidiSystem.getSequence(audioFile);
 			// dividing sample rate of default audio format by the microseconds per tick to get equivalent of correct answer
 			double amplitudeLengthMultiplier = PlayDoubleArray.DEFAULT_AUDIO_FORMAT.getFrameRate()/(sequence.getMicrosecondLength()/sequence.getTickLength());
+			amplitudeLengthMultiplier *= noteLengthScale;
 			amplitudeLengthMultiplier = Math.ceil(amplitudeLengthMultiplier); // To prevent rounding issues with array indexes
 			System.out.println("amplitudeLengthMultiplier: " + amplitudeLengthMultiplier);
 			// amplitudeLengthMultiplier = 60.0; //this value works better for SOLO_PIANO_MID, and it is almost twice the value of the original 
@@ -281,14 +283,14 @@ public class MIDIUtil {
 	 * @param audio string representation of MIDI file being analyzed
 	 * @param cppn Input network being used as the "instrument" to generate MIDI file playback
 	 */
-	public static AmplitudeArrayPlayer playMIDIWithCPPNFromString(String audio, Network cppn) {
+	public static AmplitudeArrayPlayer playMIDIWithCPPNFromString(String audio, Network cppn, double noteLengthScale) {
 		File audioFile = new File(audio);
 		Sequence sequence;
 		try {
 			sequence = MidiSystem.getSequence(audioFile);
 			Track[] tracks = sequence.getTracks();
 			ArrayList<Triple<ArrayList<Double>, ArrayList<Long>, ArrayList<Long>>> sound = soundLines(tracks);
-			double[] data = lineToAmplitudeArray(audio, sound, cppn);
+			double[] data = lineToAmplitudeArray(audio, sound, cppn, noteLengthScale);
 			return PlayDoubleArray.playDoubleArray(data);
 		} catch (InvalidMidiDataException | IOException e) {
 			e.printStackTrace();

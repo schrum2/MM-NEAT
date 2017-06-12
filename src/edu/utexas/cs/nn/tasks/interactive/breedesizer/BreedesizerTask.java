@@ -56,9 +56,12 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 	protected JSlider clipLength;
 	protected boolean initializationComplete = false;
 	protected AmplitudeArrayPlayer arrayPlayer = null;
+	public double noteLengthScale;
 
 	// Controls MIDI playback, and allows for interruption
 	private AmplitudeArrayPlayer midiPlay = null;
+
+	private JSlider speedOfMIDI;
 	
 	public BreedesizerTask() throws IllegalAccessException {
 		this(true);
@@ -77,7 +80,7 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 		labels.put(Parameters.parameters.integerParameter("maxClipLength"), new JLabel("Longer clip"));
 		clipLength.setLabelTable(labels);
 		clipLength.setPaintLabels(true);
-		clipLength.setPreferredSize(new Dimension(350, 40));
+		clipLength.setPreferredSize(new Dimension(200, 40));
 
 		/**
 		 * Implements ChangeListener to adjust clip length of generated sounds. When clip length is specified, 
@@ -103,8 +106,45 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 		top.add(clipLength);	
 
 		if(justBreedesizer) {
+			//keyboard constructor
 			keyboard = new Keyboard();
-		
+			
+			int minMultiplier = 10; //non-scaled minimum value (correlates with fastest speed)
+			int maxMultiplier = 400; //non-scaled maximum value (correlates with slowest speed)
+			int defaultMultiplier = 100; //non-scaled default value - simply amplitude length multiplier
+			double scale = 100.0;
+			noteLengthScale = defaultMultiplier/scale; //no scaling by default
+			
+			speedOfMIDI = new JSlider(JSlider.HORIZONTAL, minMultiplier, maxMultiplier, defaultMultiplier);
+
+			Hashtable<Integer,JLabel> speedLabels = new Hashtable<>();
+			speedOfMIDI.setMinorTickSpacing(40);
+			speedOfMIDI.setPaintTicks(true);
+			speedLabels.put(minMultiplier, new JLabel("Fast"));
+			speedLabels.put(maxMultiplier, new JLabel("Slow"));
+			speedOfMIDI.setLabelTable(speedLabels);
+			speedOfMIDI.setPaintLabels(true);
+			speedOfMIDI.setPreferredSize(new Dimension(150, 40));		
+			speedOfMIDI.addChangeListener(new ChangeListener() {
+
+				@Override
+				public void stateChanged(ChangeEvent e) {
+					if(!initializationComplete) return;
+					// get value
+					JSlider source = (JSlider)e.getSource();
+					if(!source.getValueIsAdjusting()) {
+
+						double newSpeed = source.getValue()/scale;
+
+						noteLengthScale = newSpeed;
+						// reset buttons
+						resetButtons();
+					}
+				}
+				
+			});
+			top.add(speedOfMIDI);
+			
 			JButton playWithMIDI = new JButton("PlayWithMIDI");
 			// Name is first available numeric label after the input disablers
 			playWithMIDI.setName("" + (CHECKBOX_IDENTIFIER_START - inputMultipliers.length));
@@ -116,9 +156,7 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 			fileLoadButton.addActionListener(this);
 			top.add(fileLoadButton);
 		}
-		initializationComplete = true;
-		
-		
+		initializationComplete = true;		
 	}
 
 	/**
@@ -137,7 +175,7 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 //			System.out.println("checkbox identifier - # of input multipliers: " + (CHECKBOX_IDENTIFIER_START - inputMultipliers.length));
 //			System.out.println("file loader checkbox index: " + FILE_LOADER_CHECKBOX_INDEX);
 			if(!justStopped) { // Pressing original button can stop playback too
-				midiPlay = MIDIUtil.playMIDIWithCPPNFromString(Parameters.parameters.stringParameter("remixMIDIFile"), currentCPPN);
+				midiPlay = MIDIUtil.playMIDIWithCPPNFromString(Parameters.parameters.stringParameter("remixMIDIFile"), currentCPPN, noteLengthScale);
 			}
 		}
 		if(itemID == FILE_LOADER_CHECKBOX_INDEX) {

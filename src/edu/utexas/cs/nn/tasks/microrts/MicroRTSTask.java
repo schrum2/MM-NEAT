@@ -227,6 +227,7 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 				System.out.println("Current Enemy: "+ ai2.getClass().getName());
 			}
 			ArrayList<Pair<double[], double[]>> currentEval = MicroRTSUtility.oneEval((AI) ai1, ai2, this, ff, w);
+			ff.setNumEvals(ef.getNumEvals());
 			fitnesses[i] = currentEval.get(0).t1;
 			others[i] 	 = currentEval.get(0).t2;
 		}
