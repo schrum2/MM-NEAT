@@ -27,10 +27,6 @@ public class BoardGameUtil {
 	public static <T extends BoardGameState> ArrayList<Pair<double[], double[]>> playGame(BoardGame<T> bg, BoardGamePlayer<T>[] players, List<BoardGameFitnessFunction<T>> fit){
 		bg.reset();		
 		if(CommonConstants.watch && bg instanceof TwoDimensionalBoardGame){ // Creates a new BoardGameViewer if bg is a TwoDimensionalBoardGame
-			if(view != null){ 
-				view.panel.dispose();
-				view = null;
-			}
 			view = MMNEAT.boardGameViewer;
 		}
 		
