@@ -270,7 +270,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 			Substrate targetSubstrate = subs.get(targetSubstrateIndex);
 			
 			// Whether to connect these layers used convolutional structure instead of standard fully connected structure
-			boolean convolution = connections.get(i).t3 && Parameters.parameters.booleanParameter("convolution");
+			boolean convolution = connections.get(i).t3 && CommonConstants.convolution;
 			// both options add links from between two substrates to whole list of links
 			if(convolution) {
 				convolutionalLoopThroughLinks(hnt, result, cppn, i, sourceSubstrate, targetSubstrate, sourceSubstrateIndex, targetSubstrateIndex, subs);

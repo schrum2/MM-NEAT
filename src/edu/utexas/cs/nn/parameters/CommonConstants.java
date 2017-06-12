@@ -12,6 +12,7 @@ public class CommonConstants {
 
 
 	// boolean
+	public static boolean convolution;
 	public static boolean averageScoreHistory;
 	public static boolean monitorSubstrates;
 	public static boolean includeSigmoidFunction;
@@ -135,6 +136,7 @@ public class CommonConstants {
 	public static void load() {
 		// boolean
 		averageScoreHistory = Parameters.parameters.booleanParameter("averageScoreHistory");
+		convolution = Parameters.parameters.booleanParameter("convolution");
 		monitorSubstrates = Parameters.parameters.booleanParameter("monitorSubstrates");
 		includeSigmoidFunction = Parameters.parameters.booleanParameter("includeSigmoidFunction");
 		includeTanhFunction = Parameters.parameters.booleanParameter("includeTanhFunction");

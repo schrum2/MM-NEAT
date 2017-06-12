@@ -81,6 +81,14 @@ public class HyperNEATTetrisTask<T extends Network> extends TetrisTask<T> implem
 				}
 				for(int i = 0; i < numProcessLayers; i++) { // Add 2D hidden/processing layer(s)
 					Triple<Integer, Integer, Integer> processSubCoord = new Triple<Integer, Integer, Integer>(split ? SUBSTRATE_COORDINATES/2 : 0, outputDepth += SUBSTRATE_COORDINATES, 0);
+					if(CommonConstants.convolution) {
+						// Convolutional network layer sizes depend on the size of the preceding layer,
+						// along with the receptive field size (unless zero-padding is used ... not implemented yet)
+						int receptiveFieldSize = Parameters.parameters.integerParameter("receptiveFieldSize");
+						assert receptiveFieldSize % 2 == 1 : "Receptive field size needs to be odd to be centered: " + receptiveFieldSize;
+						int edgeOffset = receptiveFieldSize / 2; // might allow zero-padding around edge later
+						substrateDimension = new Pair<Integer, Integer>(substrateDimension.t1 - 2*edgeOffset, substrateDimension.t2 - 2*edgeOffset);
+					}
 					Substrate processSub = new Substrate(substrateDimension, Substrate.PROCCESS_SUBSTRATE, processSubCoord,"process_" + i);
 					substrateInformation.add(processSub);
 				}
@@ -129,9 +137,11 @@ public class HyperNEATTetrisTask<T extends Network> extends TetrisTask<T> implem
 			// Different extractors correspond to different substrate configurations
 			if(MMNEAT.rlGlueExtractor instanceof RawTetrisStateExtractor) {			
 				if(numProcessLayers > 0) {
-					substrateConnectivity.add(new Triple<String, String, Boolean>("input_0", "process_0", Boolean.FALSE)); // Link the block locations to the processing layer
+					// Link the block locations to the processing layer: allows convolution
+					substrateConnectivity.add(new Triple<String, String, Boolean>("input_0", "process_0", Boolean.TRUE)); 
 					if(CommonConstants.splitRawTetrisInputs) {
-						substrateConnectivity.add(new Triple<String, String, Boolean>("input_1", "process_0", Boolean.FALSE)); // Link hole locations to processing layer
+						 // Link hole locations to processing layer: allows convolution
+						substrateConnectivity.add(new Triple<String, String, Boolean>("input_1", "process_0", Boolean.TRUE));
 					}
 				}
 				if(Parameters.parameters.booleanParameter("extraHNLinks")) { // Optional: link inputs directly to output neuron
@@ -173,7 +183,7 @@ public class HyperNEATTetrisTask<T extends Network> extends TetrisTask<T> implem
 			// hidden layer connectivity is the same, regardless of input configuration
 			for(int i = 0; i < (numProcessLayers - 1); i++) {
 				// Connect each processing layer to the subsequent processing layer (if there are multiple)
-				substrateConnectivity.add(new Triple<String, String, Boolean>("process_" + i, "process_" + (i + 1), Boolean.FALSE));
+				substrateConnectivity.add(new Triple<String, String, Boolean>("process_" + i, "process_" + (i + 1), Boolean.TRUE));
 			}
 			if(numProcessLayers > 0) {
 				// Connect final (only?) processing layer to the output neuron
