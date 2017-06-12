@@ -110,14 +110,15 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 			playWithMIDI.setName("" + (CHECKBOX_IDENTIFIER_START - inputMultipliers.length));
 			playWithMIDI.addActionListener(this);
 			top.add(playWithMIDI);
+			JButton fileLoadButton = new JButton();
+			fileLoadButton.setText("ChooseNewSound");
+			fileLoadButton.setName("" + FILE_LOADER_CHECKBOX_INDEX);
+			fileLoadButton.addActionListener(this);
+			top.add(fileLoadButton);
 		}
 		initializationComplete = true;
 		
-		JButton fileLoadButton = new JButton();
-		fileLoadButton.setText("ChooseNewSound");
-		fileLoadButton.setName("" + FILE_LOADER_CHECKBOX_INDEX);
-		fileLoadButton.addActionListener(this);
-		top.add(fileLoadButton);
+		
 	}
 
 	/**

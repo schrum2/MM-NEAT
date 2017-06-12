@@ -81,6 +81,12 @@ public class SoundRemixTask<T extends Network> extends BreedesizerTask<T> {
 		playOriginal.setName("" + (CHECKBOX_IDENTIFIER_START - inputMultipliers.length - 1));
 		playOriginal.addActionListener(this);
 		top.add(playOriginal);
+		
+		JButton fileLoadButton = new JButton();
+		fileLoadButton.setText("ChooseNewSound");
+		fileLoadButton.setName("" + FILE_LOADER_CHECKBOX_INDEX);
+		fileLoadButton.addActionListener(this);
+		top.add(fileLoadButton);
 
 		//WAV file converted to double array in constructor, and double array
 		//saved to be manipulated further
@@ -105,6 +111,18 @@ public class SoundRemixTask<T extends Network> extends BreedesizerTask<T> {
 			int returnVal = chooser.showOpenDialog(frame);
 			if(returnVal == JFileChooser.APPROVE_OPTION) {//if the user decides to save the image
 				Parameters.parameters.setString("remixWAVFile", chooser.getCurrentDirectory() + "\\" + chooser.getSelectedFile().getName());
+				try {
+					AudioInputStream AIS = WAVUtil.audioStream(Parameters.parameters.stringOptions.get("remixWAVFile"));
+					format = AIS.getFormat();
+					playBackRate = format.getSampleSizeInBits(); //sample size - should be changed?
+				} catch (UnsupportedAudioFileException | IOException e) {
+					e.printStackTrace();
+					System.exit(1);
+				}
+
+				WAVDoubleArray = SoundToArray.readDoubleArrayFromStringAudio(Parameters.parameters.stringOptions.get("remixWAVFile"));
+				Parameters.parameters.setInteger("clipLength", Math.min(Parameters.parameters.integerParameter("clipLength"), WAVDoubleArray.length));
+				Parameters.parameters.setInteger("maxClipLength", WAVDoubleArray.length);
 			}
 			resetButtons();
 		}
