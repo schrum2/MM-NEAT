@@ -33,7 +33,7 @@ public class MicroRTSUtility {
 	
 	private static GameState gs;
 
-	private static ArrayList<Integer> workerWithResourceID = new ArrayList<>();
+	private static ArrayList<Integer> workerWithResourceID = new ArrayList<>(); //change to hashset
 
 	public static <T> ArrayList<Pair<double[], double[]>> oneEval(AI ai1, AI ai2, MicroRTSInformation task, RTSFitnessFunction ff, PhysicalGameStateJFrame w) {		
 		//for % destroyed ff
