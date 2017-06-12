@@ -17,7 +17,10 @@ public abstract class NNEvaluationFunction<T extends Network> extends Evaluation
 	protected Network nn;
 	protected PhysicalGameState pgs;
 	
+	private static int howManyEvals = 0;
+	
 	public NNEvaluationFunction(){
+		howManyEvals = 0;
 	}
 	
 	public void setNetwork(Genotype<T> g) {
@@ -55,9 +58,18 @@ public abstract class NNEvaluationFunction<T extends Network> extends Evaluation
 	 */
 	@Override
 	public float evaluate(int maxplayer, int minplayer, GameState gs) {
+		howManyEvals++;
 		double[] inputs = gameStateToArray(gs);
 		double[] outputs = nn.process(inputs);
 		float score = (float) outputs[0];
 		return score;
+	}
+	
+	/**
+	 *  for FF
+	 * @return # of times a game state has been evaluated
+	 */
+	public int getNumEvals(){
+		return howManyEvals;
 	}
 }
