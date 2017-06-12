@@ -543,7 +543,7 @@ public class SoundUtilExamples {
 		Sequence sequence = MidiSystem.getSequence(midiFile);
 		Track[] tracks = sequence.getTracks();
 		ArrayList<Triple<ArrayList<Double>, ArrayList<Long>, ArrayList<Long>>> midiLists = MIDIUtil.soundLines(tracks);		
-		double[] amplitudes = MIDIUtil.lineToAmplitudeArray(CLASSICAL_MID, midiLists, cppn);
+		double[] amplitudes = MIDIUtil.lineToAmplitudeArray(CLASSICAL_MID, midiLists, cppn, 1);
 		PlayDoubleArray.playDoubleArray(amplitudes);
 	}
 }
