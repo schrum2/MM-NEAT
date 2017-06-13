@@ -9,4 +9,6 @@ public interface BoardGameFitnessFunction<T extends BoardGameState> {
 	public void updateFitness(T bgs, int index);
 	
 	public String getFitnessName();
+	
+	public void reset();
 }

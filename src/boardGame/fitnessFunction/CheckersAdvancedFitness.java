@@ -54,5 +54,10 @@ public class CheckersAdvancedFitness<T extends BoardGameState> implements BoardG
 		return "Checkers Advanced Fitness";
 	}
 
+	@Override
+	public void reset() {
+		fitness = 0;
+	}
+
 
 }

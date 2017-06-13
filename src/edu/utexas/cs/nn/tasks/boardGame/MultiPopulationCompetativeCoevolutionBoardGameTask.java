@@ -116,6 +116,12 @@ public class MultiPopulationCompetativeCoevolutionBoardGameTask<S extends BoardG
 		return finalScores;
 	}
 
+	public int numOtherScores() {
+		// Other Scores are kept in the fitFunctions ArrayList;
+		// everything except the first Fitness Function is an Other Score
+		return fitFunctions.size()-1;
+	}
+	
 	@Override
 	public int numCPPNInputs() {
 		return HyperNEATTask.DEFAULT_NUM_CPPN_INPUTS;

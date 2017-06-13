@@ -51,7 +51,6 @@ public class StaticOpponentBoardGameTask<T extends Network, S extends BoardGameS
 		
 		// Add Other Scores here to keep track of other Fitness Functions
 		fitFunctions.add(new SimpleWinLoseDrawBoardGameFitness<S>());
-		
 		for(BoardGameFitnessFunction<S> fit : fitFunctions){
 			MMNEAT.registerFitnessFunction(fit.getFitnessName(), false);
 		}
@@ -59,6 +58,12 @@ public class StaticOpponentBoardGameTask<T extends Network, S extends BoardGameS
 		fitFunctions.add(0, selectionFunction); // Adds the Selection Function to the first Index
 	}
 
+	public int numOtherScores() {
+		// Other Scores are kept in the fitFunctions ArrayList;
+		// everything except the first Fitness Function is an Other Score
+		return fitFunctions.size()-1;
+	}
+	
 	/**
 	 * Returns the number of Objectives for the BoardGameTask
 	 * 

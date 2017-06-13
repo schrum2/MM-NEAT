@@ -61,6 +61,12 @@ public class SinglePopulationCompetativeCoevolutionBoardGameTask<T extends Netwo
 		return 1;
 	}
 
+	public int numOtherScores() {
+		// Other Scores are kept in the fitFunctions ArrayList;
+		// everything except the first Fitness Function is an Other Score
+		return fitFunctions.size()-1;
+	}
+	
 	@Override
 	public double[] minScores() {
 		return new double[]{-1}; // -1 is for a loss
