@@ -14,13 +14,17 @@ import boardGame.heuristics.NNBoardGameHeuristic;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.networks.Network;
+import edu.utexas.cs.nn.networks.NetworkTask;
+import edu.utexas.cs.nn.networks.hyperneat.HyperNEATTask;
+import edu.utexas.cs.nn.networks.hyperneat.Substrate;
 import edu.utexas.cs.nn.scores.Score;
 import edu.utexas.cs.nn.tasks.GroupTask;
 import edu.utexas.cs.nn.util.ClassCreation;
 import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
+import edu.utexas.cs.nn.util.datastructures.Triple;
 
-public class MultiPopulationCompetativeCoevolutionBoardGameTask<S extends BoardGameState> extends GroupTask {
+public class MultiPopulationCompetativeCoevolutionBoardGameTask<S extends BoardGameState> extends GroupTask implements NetworkTask, HyperNEATTask  {
 
 	BoardGame<S> bg;
 	BoardGamePlayer<S>[] players;
@@ -71,8 +75,8 @@ public class MultiPopulationCompetativeCoevolutionBoardGameTask<S extends BoardG
 
 	@Override
 	public int[] otherStatsPerPopulation() {
-		// There are no other Stats for the Populations
-		return new int[numberOfPopulations()];
+		// Returns an Array to store the Other Scores for each Population
+		return new int[(fitFunctions.size()-1)];
 	}
 
 	@Override
@@ -104,13 +108,42 @@ public class MultiPopulationCompetativeCoevolutionBoardGameTask<S extends BoardG
 		
 		ArrayList<Score> finalScores = new ArrayList<Score>();
 		
-		// TODO: Unsure on if this part works; everything above was copied, but this returns something different. Double-check the Score?
 		for(int i = 0; i < team.length; i++){
 			// Replace null with the behavior representation for this task
 			finalScores.add(new Score(team[i], scored.get(i).t1, null, scored.get(i).t2));
 		}
 		
 		return finalScores;
+	}
+
+	@Override
+	public int numCPPNInputs() {
+		return HyperNEATTask.DEFAULT_NUM_CPPN_INPUTS;
+	}
+
+	@Override
+	public double[] filterCPPNInputs(double[] fullInputs) {
+		return fullInputs;
+	}
+
+	@Override
+	public List<Substrate> getSubstrateInformation() {
+		return BoardGameUtil.getSubstrateInformation(MMNEAT.boardGame);
+	}
+
+	@Override
+	public List<Triple<String, String, Boolean>> getSubstrateConnectivity() {
+		return BoardGameUtil.getSubstrateConnectivity();
+	}
+
+	@Override
+	public String[] sensorLabels() {
+		return featExtract.getFeatureLabels();
+	}
+
+	@Override
+	public String[] outputLabels() {
+		return new String[]{"Utility"};
 	}
 
 }

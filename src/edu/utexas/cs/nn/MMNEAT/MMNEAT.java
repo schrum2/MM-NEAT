@@ -45,6 +45,7 @@ import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.scores.Score;
 import edu.utexas.cs.nn.tasks.MultiplePopulationTask;
 import edu.utexas.cs.nn.tasks.Task;
+import edu.utexas.cs.nn.tasks.boardGame.MultiPopulationCompetativeCoevolutionBoardGameTask;
 import edu.utexas.cs.nn.tasks.boardGame.SinglePopulationCompetativeCoevolutionBoardGameTask;
 import edu.utexas.cs.nn.tasks.boardGame.StaticOpponentBoardGameTask;
 import edu.utexas.cs.nn.tasks.breve2D.Breve2DTask;
@@ -483,12 +484,30 @@ public class MMNEAT {
 			} else if (task instanceof PinballTask) {
 				PinballTask temp = (PinballTask) task;
 				setNNInputParameters(temp.sensorLabels().length, temp.outputLabels().length);
-			}else if (task instanceof StaticOpponentBoardGameTask) {
+			} else if (task instanceof StaticOpponentBoardGameTask) {
 				StaticOpponentBoardGameTask temp = (StaticOpponentBoardGameTask) task;
 				setNNInputParameters(temp.sensorLabels().length, temp.outputLabels().length);
-			}else if (task instanceof SinglePopulationCompetativeCoevolutionBoardGameTask) {
+			} else if (task instanceof SinglePopulationCompetativeCoevolutionBoardGameTask) {
 				SinglePopulationCompetativeCoevolutionBoardGameTask temp = (SinglePopulationCompetativeCoevolutionBoardGameTask) task;
 				setNNInputParameters(temp.sensorLabels().length, temp.outputLabels().length);
+			} else if (task instanceof MultiPopulationCompetativeCoevolutionBoardGameTask) {
+				
+				MultiPopulationCompetativeCoevolutionBoardGameTask temp = (MultiPopulationCompetativeCoevolutionBoardGameTask) task;
+				genotype = (Genotype) ClassCreation.createObject("genotype");
+				genotypeExamples = new ArrayList<Genotype>(boardGame.getNumPlayers());
+			
+				for(int i = 0; i < boardGame.getNumPlayers(); i++){
+					Genotype gene = genotype.newInstance(); // TODO: NullPointerException Here
+					if(genotype instanceof TWEANNGenotype) {
+						((TWEANNGenotype) gene).archetypeIndex = i;
+					}
+					
+					genotypeExamples.add(gene);
+				}
+				
+				prepareCoevolutionArchetypes();
+				setNNInputParameters(temp.sensorLabels().length, temp.outputLabels().length);	
+				
 			} else if (task instanceof Breve2DTask) {
 				System.out.println("Setup Breve 2D Task");
 				Breve2DDynamics dynamics = (Breve2DDynamics) ClassCreation.createObject("breveDynamics");
