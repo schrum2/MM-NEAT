@@ -7,6 +7,9 @@ package micro.ai.mcts;
 import micro.ai.evaluation.EvaluationFunction;
 import java.util.List;
 import java.util.Random;
+
+import edu.utexas.cs.nn.util.random.RandomGenerator;
+import edu.utexas.cs.nn.util.random.RandomNumbers;
 import micro.rts.GameState;
 import micro.rts.PlayerAction;
 
@@ -15,7 +18,7 @@ import micro.rts.PlayerAction;
  * @author santi
  */
 public abstract class MCTSNode {
-    public static Random r = new Random();
+    public static Random r = RandomNumbers.randomGenerator;
 
     public int type;    // 0 : max, 1 : min, -1: Game-over
     public MCTSNode parent = null;
