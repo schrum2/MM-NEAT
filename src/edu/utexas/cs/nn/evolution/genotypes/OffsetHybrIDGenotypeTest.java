@@ -6,7 +6,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.networks.hyperneat.HyperNEATUtil;
+import edu.utexas.cs.nn.parameters.Parameters;
 
 public class OffsetHybrIDGenotypeTest {
 	HyperNEATCPPNGenotype hncg;
@@ -14,6 +16,9 @@ public class OffsetHybrIDGenotypeTest {
 	
 	@Before
 	public void setUp() throws Exception {
+		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "recurrency:false", "hyperNEAT:true", 
+				"task:edu.utexas.cs.nn.networks.hyperneat.HyperNEATDummyTask","linkExpressionThreshold:-1"});
+		MMNEAT.loadClasses();
 		hncg = new HyperNEATCPPNGenotype();
 		ohg = new OffsetHybrIDGenotype(hncg.links, hncg.nodes, hncg.neuronsPerModule);
 	}
@@ -24,9 +29,8 @@ public class OffsetHybrIDGenotypeTest {
 	
 	@Test
 	public void testAllOffsetsZero() {
-		RealValuedGenotype rvg = new RealValuedGenotype(HyperNEATUtil.totalPossibleLinks(HyperNEATUtil.getHyperNEATTask()));
 		for(int i = 0; i < HyperNEATUtil.totalPossibleLinks(HyperNEATUtil.getHyperNEATTask()); i++) {
-			rvg.setValue(i, 0.0);
+			ohg.rvg.setValue(i, 0.0);
 		}
 		assertEquals(hncg.getPhenotype(), ohg.getPhenotype());
 	}

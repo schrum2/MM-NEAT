@@ -4,16 +4,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype.LinkGene;
-import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype.NodeGene;
 import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.networks.hyperneat.HyperNEATUtil;
 import edu.utexas.cs.nn.networks.hyperneat.Substrate;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.datastructures.Triple;
-import edu.utexas.cs.nn.util.util2D.ILocated2D;
-import edu.utexas.cs.nn.util.util2D.Tuple2D;
 
 public class OffsetHybrIDGenotype extends HyperNEATCPPNGenotype {
 
