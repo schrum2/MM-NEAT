@@ -314,7 +314,7 @@ public class Parameters {
 		//integerOptions.add("remixSamplesPerDimension", 3, "Number of remix samples to input to Picture Remixer"); //used for alternative approach of remixing pictures
 		integerOptions.add("receptiveFieldSize", 3, "Size of input windows for convolutional structures");
 		integerOptions.add("stride", 1, "Offset between receptive fields in convolutional structures");
-		integerOptions.add("hybrIDSwitchGeneration", 3, "Generation when HybrID should switch from HyperNEAT to NEAT");
+		integerOptions.add("hybrIDSwitchGeneration", 200, "Generation when HybrID should switch from HyperNEAT to NEAT");
 		// Long parameters
 		longOptions.add("lastInnovation", 0l, "Highest innovation number used so far");
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
