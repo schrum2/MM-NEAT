@@ -17,13 +17,13 @@ public abstract class NNEvaluationFunction<T extends Network> extends Evaluation
 	protected Network nn;
 	protected PhysicalGameState pgs;
 	
-	private static int howManyEvals = 0;
+	private int howManyEvals = 0;
 	
 	public NNEvaluationFunction(){
-		howManyEvals = 0;
 	}
 	
 	public void setNetwork(Genotype<T> g) {
+		howManyEvals = 0;
 		nn = g.getPhenotype();
 	}
 	
