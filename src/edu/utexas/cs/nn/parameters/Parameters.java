@@ -199,6 +199,7 @@ public class Parameters {
 		integerOptions.add("marioStuckTimeout", Integer.MAX_VALUE, "Sets the stuck timeout for Mario, default is no timeout");
 		integerOptions.add("marioJumpTimeout", Integer.MAX_VALUE, "Sets the jump timeout for Mario, default is no timeout");
 		integerOptions.add("HNTTetrisProcessDepth", 1, "The number of processing layers in HNT tetris substrate");
+		integerOptions.add("HNTTetrisProcessWidth", 1, "The number of adjacent processing substrates per layer in HNT tetris substrate");
 		integerOptions.add("marioInputStartX", -1, "The x coordinate offset for Mario inputs grid");
 		integerOptions.add("marioInputStartY", -1, "The y coordinate offset for Mario inputs grid");
 		integerOptions.add("marioInputHeight", 3, "The height for a Mario input section");
