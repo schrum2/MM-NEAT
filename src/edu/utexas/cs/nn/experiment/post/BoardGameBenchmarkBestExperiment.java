@@ -26,7 +26,7 @@ import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.file.FileUtilities;
 import edu.utexas.cs.nn.util.graphics.DrawingPanel;
 
-public class BoardGameBenchmarkStaticBestExperiment<T extends Network, S extends BoardGameState> implements Experiment{
+public class BoardGameBenchmarkBestExperiment<T extends Network, S extends BoardGameState> implements Experiment{
 	
 	protected ArrayList<Genotype<T>> population;
 	protected SinglePopulationTask<T> task;

@@ -25,7 +25,7 @@ import edu.utexas.cs.nn.util.PopulationUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.graphics.DrawingPanel;
 
-public class BoardGameBenchmarkCoevolvedAllPopExperiment<T extends Network, S extends BoardGameState> implements Experiment{
+public class BoardGameBenchmarkAllPopExperiment<T extends Network, S extends BoardGameState> implements Experiment{
 	
 	protected ArrayList<Genotype<T>> population;
 	protected SinglePopulationTask<T> task;

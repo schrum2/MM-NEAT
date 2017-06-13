@@ -9,6 +9,7 @@ import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.scores.MultiObjectiveScore;
 import edu.utexas.cs.nn.scores.Score;
 import edu.utexas.cs.nn.util.ClassCreation;
+import edu.utexas.cs.nn.util.PopulationUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.graphics.DrawingPanel;
 import edu.utexas.cs.nn.util.stats.Statistic;
@@ -56,6 +57,12 @@ public abstract class SinglePopulationCoevolutionTask<T> implements SinglePopula
 		int groupSize = groupSize(); // Replace: make task dependent
 		
 		assert population.size()%groupSize == 0;
+		
+		double[] bestObjectives = minScores();
+		@SuppressWarnings("unchecked")
+		Genotype<T>[] bestGenotypes = new Genotype[bestObjectives.length];
+		@SuppressWarnings("unchecked")
+		Score<T>[] bestScores = new Score[bestObjectives.length];
 		
 		for(int i = 0; i < CommonConstants.trials; i++){
 			Collections.shuffle(groupOrder); // Randomize who individuals are grouped with
@@ -105,6 +112,7 @@ public abstract class SinglePopulationCoevolutionTask<T> implements SinglePopula
 		
 		// Collect scores
 		ArrayList<Score<T>> scores = new ArrayList<Score<T>>(population.size());
+		
 		for(int k = 0; k < population.size(); k++) {
 			double[] fitness = new double[this.numObjectives()];
 			// Aggregate each fitness score across all trials
@@ -123,6 +131,29 @@ public abstract class SinglePopulationCoevolutionTask<T> implements SinglePopula
 			scores.add(s);
 		}
 
+		// Cycles through the Population
+		for(int i = 0; i < population.size(); i++){
+			// Cycles through each Objective
+			for(int j = 0; j < bestObjectives.length; j++){
+				
+				double objectiveScore = scores.get(i).scores[j];
+				
+				// i == 0 saves first member of the population as the tentative best until a better individual is found
+				
+				if(i == 0 || objectiveScore >= bestObjectives[j]){
+					// update best individual in objective j
+					bestGenotypes[j] = scores.get(j).individual;
+					bestObjectives[j] = objectiveScore;
+					bestScores[j] = scores.get(j);
+				}
+				
+			}
+		}
+		
+		if (CommonConstants.netio) {
+			PopulationUtil.saveBestOfCurrentGen(bestObjectives, bestGenotypes, bestScores);
+		}
+		
 		return scores;
 	}
 
@@ -149,6 +180,10 @@ public abstract class SinglePopulationCoevolutionTask<T> implements SinglePopula
 
 	public int numOtherScores() {
 		return 0;
+	}
+	
+	public double[] minScores() {
+		return new double[this.numObjectives()];
 	}
 	
 	/**
