@@ -67,10 +67,10 @@ public class BoardGameUtil {
 			double[] otherScores = new double[fit.size()-1]; // Stores all other Scores except the first, which is used as the Selection Fitness
 			
 			for(int j = 1; j < fit.size(); j++){
-				otherScores[j-1] = fit.get(j).getFitness(); // Gets all Scores except the first one
+				otherScores[j-1] = fit.get(j).getFitness(players[i]); // Gets all Scores except the first one
 			}
 			
-			Pair<double[], double[]> evalResults = new Pair<double[], double[]>(new double[] { fit.get(0).getFitness() }, otherScores);
+			Pair<double[], double[]> evalResults = new Pair<double[], double[]>(new double[] { fit.get(0).getFitness(players[i]) }, otherScores);
 			scoring.add(evalResults);
 		}
 		

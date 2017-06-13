@@ -3,12 +3,14 @@ package boardGame.fitnessFunction;
 import java.util.List;
 
 import boardGame.BoardGameState;
+import boardGame.agents.BoardGamePlayer;
 
 public class SimpleWinLoseDrawBoardGameFitness<T extends BoardGameState> implements BoardGameFitnessFunction<T>{
 	
 	private double fitness = 0;
 	
-	public double getFitness(){
+	@Override
+	public double getFitness(BoardGamePlayer<T> player){
 		return fitness;
 	}
 	

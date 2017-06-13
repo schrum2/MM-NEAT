@@ -1,6 +1,7 @@
 package boardGame.fitnessFunction;
 
 import boardGame.BoardGameState;
+import boardGame.agents.BoardGamePlayer;
 
 /**
  * Fitness Function from:
@@ -19,7 +20,8 @@ public class CheckersAdvancedFitness<T extends BoardGameState> implements BoardG
 
 	private double fitness = 0;
 	
-	public double getFitness(){
+	@Override
+	public double getFitness(BoardGamePlayer<T> player){
 		return fitness;
 	}
 	
@@ -58,6 +60,5 @@ public class CheckersAdvancedFitness<T extends BoardGameState> implements BoardG
 	public void reset() {
 		fitness = 0;
 	}
-
 
 }

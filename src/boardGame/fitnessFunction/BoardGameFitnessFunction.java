@@ -1,6 +1,7 @@
 package boardGame.fitnessFunction;
 
 import boardGame.BoardGameState;
+import boardGame.agents.BoardGamePlayer;
 
 public interface BoardGameFitnessFunction<T extends BoardGameState> {
 	
@@ -9,7 +10,7 @@ public interface BoardGameFitnessFunction<T extends BoardGameState> {
 	 * 
 	 * @return Double representing the Fitness of a given Board Game Agent
 	 */
-	public double getFitness();
+	public double getFitness(BoardGamePlayer<T> player);
 	
 	/**
 	 * Updates a given Board Game Agent's Fitness over the course
