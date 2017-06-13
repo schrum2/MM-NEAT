@@ -493,20 +493,19 @@ public class MMNEAT {
 			} else if (task instanceof MultiPopulationCompetativeCoevolutionBoardGameTask) {
 				
 				MultiPopulationCompetativeCoevolutionBoardGameTask temp = (MultiPopulationCompetativeCoevolutionBoardGameTask) task;
+				setNNInputParameters(temp.sensorLabels().length, temp.outputLabels().length);	
+
 				genotype = (Genotype) ClassCreation.createObject("genotype");
 				genotypeExamples = new ArrayList<Genotype>(boardGame.getNumPlayers());
-			
 				for(int i = 0; i < boardGame.getNumPlayers(); i++){
-					Genotype gene = genotype.newInstance(); // TODO: NullPointerException Here
+					Genotype gene = genotype.newInstance();
 					if(genotype instanceof TWEANNGenotype) {
 						((TWEANNGenotype) gene).archetypeIndex = i;
 					}
 					
 					genotypeExamples.add(gene);
 				}
-				
 				prepareCoevolutionArchetypes();
-				setNNInputParameters(temp.sensorLabels().length, temp.outputLabels().length);	
 				
 			} else if (task instanceof Breve2DTask) {
 				System.out.println("Setup Breve 2D Task");
