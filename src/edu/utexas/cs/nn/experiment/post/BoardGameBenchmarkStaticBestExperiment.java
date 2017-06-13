@@ -26,7 +26,7 @@ import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.file.FileUtilities;
 import edu.utexas.cs.nn.util.graphics.DrawingPanel;
 
-public class BoardGameBenchmarkBestExperiment<T extends Network, S extends BoardGameState> implements Experiment{
+public class BoardGameBenchmarkStaticBestExperiment<T extends Network, S extends BoardGameState> implements Experiment{
 	
 	protected ArrayList<Genotype<T>> population;
 	protected SinglePopulationTask<T> task;
@@ -98,39 +98,39 @@ public class BoardGameBenchmarkBestExperiment<T extends Network, S extends Board
 	}
 	
 	/**
-	 * Pits the best Co-Evolved BoardGamePlayer against a Static Opponent
+	 * Pits the best Static Evolved BoardGamePlayer against a Static Opponent
 	 */
 	@Override
 	public void run() {
 		
+		Genotype<T> gene = population.get(0);
+			
+		DrawingPanel panel = null;
+		DrawingPanel cppnPanel = null;
+			
+		if(CommonConstants.watch){
+			Pair<DrawingPanel, DrawingPanel> drawPanels = CommonTaskUtil.getDrawingPanels(gene);
+				
+			panel = drawPanels.t1;
+			cppnPanel = drawPanels.t2;
+				
+			panel.setVisible(true);
+			cppnPanel.setVisible(true);
+		}
+			
+			
+		player.setHeuristic((new NNBoardGameHeuristic<T,S>(gene.getPhenotype(), featExtract)));
+		BoardGamePlayer<S>[] players = new BoardGamePlayer[]{player, opponent};
+			
 		for(int i = 0; i < CommonConstants.trials; i++){
-			
-			Genotype<T> gene = population.get(i);
-
-			DrawingPanel panel = null;
-			DrawingPanel cppnPanel = null;
-			
-			if(CommonConstants.watch){
-				Pair<DrawingPanel, DrawingPanel> drawPanels = CommonTaskUtil.getDrawingPanels(gene);
-				
-				panel = drawPanels.t1;
-				cppnPanel = drawPanels.t2;
-				
-				panel.setVisible(true);
-				cppnPanel.setVisible(true);
-			}
-			
-			
-			player.setHeuristic((new NNBoardGameHeuristic<T,S>(gene.getPhenotype(), featExtract)));
-			BoardGamePlayer<S>[] players = new BoardGamePlayer[]{player, opponent};
 			BoardGameUtil.playGame(bg, players, fitFunctions);
+		}
 			
-			if (panel != null) {
-				panel.dispose();
-			} 
-			if(cppnPanel != null) {
-				cppnPanel.dispose();
-			}
+		if (panel != null) {
+			panel.dispose();
+		} 
+		if(cppnPanel != null) {
+			cppnPanel.dispose();
 		}
 	}
 
