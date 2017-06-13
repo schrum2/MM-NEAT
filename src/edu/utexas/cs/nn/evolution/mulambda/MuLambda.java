@@ -397,7 +397,11 @@ public abstract class MuLambda<T> implements SinglePopulationGenerationalEA<T> {
 		}
 		ArrayList<Genotype<T>> result = selectAndAdvance(parentScores, childrenScores);
 		if(Parameters.parameters.booleanParameter("hybrID") && currentGeneration() == Parameters.parameters.integerParameter("hybrIDSwitchGeneration")) {	
-			TWEANNGenotype.smallerGenotypes = true; // Need small genes because there are so many of them
+			// Turn HyperNEAT off
+			CommonConstants.hyperNEAT = false;
+			Parameters.parameters.setBoolean("hyperNEAT", false);
+			// Need small genes because there are so many of them
+			TWEANNGenotype.smallerGenotypes = true; 
 			// Substrate networks cannot have different activation functions
 			CommonConstants.netChangeActivationRate = 0;
 			Parameters.parameters.setDouble("netChangeActivationRate", 0);
