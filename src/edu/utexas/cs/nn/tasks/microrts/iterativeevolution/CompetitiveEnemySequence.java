@@ -35,8 +35,8 @@ public class CompetitiveEnemySequence implements EnemySequence{
 				if(generationOfLastUpdate != generation && generation % gensPerEnemy == 0 && appropriateEnemies.size() < enemies.length){
 					generationOfLastUpdate = generation;
 					if(CommonConstants.watch)
-						System.out.println("gen: " + generation + " adding to set: " + enemies[generation*gensPerEnemy]);
-					appropriateEnemies.add(enemies[generation*gensPerEnemy]);
+						System.out.println("gen: " + generation + ", adding to set: " + enemies[generation/gensPerEnemy]); //index out of bounds! gen x 2
+					appropriateEnemies.add(enemies[generation/gensPerEnemy]);
 				}
 			return appropriateEnemies;
 		}else {
