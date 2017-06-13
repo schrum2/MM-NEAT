@@ -25,7 +25,7 @@ public class OffsetHybrIDGenotype extends HyperNEATCPPNGenotype {
 	}
 
 	public OffsetHybrIDGenotype(HyperNEATCPPNGenotype hngt) {
-		this(hngt.links, hngt.nodes, hngt.numOut);
+		this(hngt.links, hngt.nodes, hngt.neuronsPerModule);
 	}
 	
 	public OffsetHybrIDGenotype(ArrayList<LinkGene> links, ArrayList<NodeGene> genes, int outputNeurons) {
@@ -36,14 +36,19 @@ public class OffsetHybrIDGenotype extends HyperNEATCPPNGenotype {
 	@Override
 	public TWEANN getPhenotype() {
 		TWEANNGenotype genotype = (TWEANNGenotype) super.getSubstrateGenotype(HyperNEATUtil.getHyperNEATTask()).copy();
+		//offsets to all links accessed through RealValuedGenotype
 		ArrayList<Double> offsets = rvg.getPhenotype();
+		//substrate connectivity of HyperNEATTask used to access all source and target substrate indexes
 		List<Triple<String, String, Boolean>> connections = HyperNEATUtil.getHyperNEATTask().getSubstrateConnectivity();
+		//substrate info used to access all source and target substrates at obtained indexes
 		List<Substrate> subs = HyperNEATUtil.getHyperNEATTask().getSubstrateInformation();
 		HashMap<String, Integer> substrateIndexMapping = new HashMap<String, Integer>();
 		for (int i = 0; i < subs.size(); i++) {
 			substrateIndexMapping.put(subs.get(i).getName(), i);
-		}		
+		}	
+		//instead of looping through offsets, use an index that updates regardless of case in for loop
 		int offsetIndex = 0;
+		//loop through all substrates
 		for (int j = 0; j < connections.size(); j++) { // For each pair of substrates that are connected
 			int sourceSubstrateIndex = substrateIndexMapping.get(connections.get(j).t1);
 			int targetSubstrateIndex = substrateIndexMapping.get(connections.get(j).t2);
@@ -62,26 +67,23 @@ public class OffsetHybrIDGenotype extends HyperNEATCPPNGenotype {
 						// If the target neuron is dead, then don't bother with incoming links
 						if(!targetSubstrate.isNeuronDead(targetXindex, targetYIndex)) {
 							long sourceID = getInnovationID(fromXIndex, fromYIndex, sourceSubstrateIndex, subs);
-							long targetID = getInnovationID(targetXindex, targetYIndex, targetSubstrateIndex, subs);
-							
-							LinkGene link = getLinkBetween(sourceID, targetID);
+							long targetID = getInnovationID(targetXindex, targetYIndex, targetSubstrateIndex, subs);		
+							LinkGene link = getLinkBetween(sourceID, targetID); //calculate link between source and target
 							double offset = offsets.get(offsetIndex);
-							link.weight += offset;
-							offsetIndex++;
+							link.weight += offset; //manipulate link weight based on offset at current index
+							offsetIndex++; //increment offsetIndex
 						}
 					}
 				}
 			}
 		}
 		// Modify genotype
-
-
 		return genotype.getPhenotype();
 	}
 
 	@Override
 	public Genotype<TWEANN> copy() {
-		HyperNEATCPPNGenotype initialCopy = (HyperNEATCPPNGenotype) super.copy();
+		HyperNEATCPPNGenotype initialCopy = (HyperNEATCPPNGenotype) super.copy(); 
 		RealValuedGenotype rvgCopy = (RealValuedGenotype) rvg.copy();
 		OffsetHybrIDGenotype result = new OffsetHybrIDGenotype(initialCopy);
 		result.rvg = rvgCopy;
