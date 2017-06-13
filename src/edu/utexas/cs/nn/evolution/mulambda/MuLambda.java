@@ -8,6 +8,7 @@ import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
 import edu.utexas.cs.nn.evolution.SinglePopulationGenerationalEA;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
+import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype.LinkGene;
 import edu.utexas.cs.nn.log.FitnessLog;
 import edu.utexas.cs.nn.log.PlotLog;
 import edu.utexas.cs.nn.networks.TWEANN;
@@ -405,7 +406,14 @@ public abstract class MuLambda<T> implements SinglePopulationGenerationalEA<T> {
 			// Reset archetype because the evolved CPPN genes are no longer relevant.
 			// 0 indicates that there is only one population, null will cause the archetype to reset, 
 			// and the nodes from the nodes from the first member of the new population will define the genotype	
-			EvolutionaryHistory.initArchetype(0, null, (TWEANNGenotype) result.get(0).copy());
+			TWEANNGenotype exemplar = (TWEANNGenotype) result.get(0).copy();
+			// Reset next innovation based on the maximum in the exemplar genotype
+			long maxInnovation = 0;
+			for(LinkGene lg : exemplar.links) {
+				maxInnovation = Math.max(maxInnovation, lg.innovation);
+			}
+			EvolutionaryHistory.setInnovation(maxInnovation+1);
+			EvolutionaryHistory.initArchetype(0, null, exemplar);
 		}
 		return result;
 	}
