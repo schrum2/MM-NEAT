@@ -75,10 +75,10 @@ public class TWEANNCrossover extends Crossover<TWEANN> {
 		alignedNodes.add(alignNodesToArchetype(tm.nodes, tr.archetypeIndex));
 		// makes sure to check the number of nodes match the archetype of the network
 		alignedNodes.add(alignNodesToArchetype(tr.nodes, tr.archetypeIndex));
-		// crosses nodes// crosses nodes
+		// crosses nodes
 		ArrayList<ArrayList<NodeGene>> crossedNodes = cross(alignedNodes.get(0), alignedNodes.get(1));
 		// Align and cross links. Links are aligned based on innovation order
-		// aligns links to faciliate crossover
+		// aligns links to facilitate crossover
 		ArrayList<ArrayList<LinkGene>> alignedLinks = alignLinkGenes(((TWEANNGenotype) toModify).links, tr.links);
 		ArrayList<ArrayList<LinkGene>> crossedLinks = cross(alignedLinks.get(0), alignedLinks.get(1));// crosses links
 

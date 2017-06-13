@@ -176,6 +176,17 @@ public class EvolutionaryHistory {
 	}
 
 	/**
+	 * Initialize new archetype with default starting genotype
+	 * (source depends on whether coevolution is happening)
+	 * @param populationIndex
+	 * @param loadedArchetype
+	 */
+	public static void initArchetype(int populationIndex, String loadedArchetype) {
+		TWEANNGenotype tg = (TWEANNGenotype) (MMNEAT.genotypeExamples == null ? MMNEAT.genotype.copy() : MMNEAT.genotypeExamples.get(populationIndex).copy());
+		initArchetype(populationIndex, loadedArchetype, tg);
+	}
+	
+	/**
 	 * A method that allows the current archetype to be saved if a resume is not
 	 * occuring
 	 * 
@@ -187,9 +198,12 @@ public class EvolutionaryHistory {
 	 * @param loadedArchetype
 	 *            information needed to create the archetype file stored in a
 	 *            string
+	 *            
+	 * @param startingGenotype used to derive initial archetype if it is empty, but can
+	 * 						   be null otherwise
 	 */
 	@SuppressWarnings("unchecked")
-	public static void initArchetype(int populationIndex, String loadedArchetype) {
+	public static void initArchetype(int populationIndex, String loadedArchetype, TWEANNGenotype startingGenotype) {
 		int size = MMNEAT.genotypeExamples == null ? 1 : MMNEAT.genotypeExamples.size();
 		if (archetypes == null) {// checks to see if an archetype has been created yet for this genotype
 			archetypes = new ArrayList[size];
@@ -197,7 +211,7 @@ public class EvolutionaryHistory {
 		if (loadedArchetype == null || loadedArchetype.equals("") || !(new File(loadedArchetype).exists())) {
 			System.out.println("Init archetype from genotype example");
 			// ternary operator allows for coevolution to be implemented
-			TWEANNGenotype tg = (TWEANNGenotype) (MMNEAT.genotypeExamples == null ? MMNEAT.genotype.copy() : MMNEAT.genotypeExamples.get(populationIndex).copy());
+			TWEANNGenotype tg = startingGenotype;
 			// saves the genotype of the current generation
 			archetypes[populationIndex] = tg.nodes;
 			saveArchetype(populationIndex);

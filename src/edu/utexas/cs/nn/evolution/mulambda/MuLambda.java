@@ -1,13 +1,15 @@
 package edu.utexas.cs.nn.evolution.mulambda;
 
+import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
+
+import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
 import edu.utexas.cs.nn.evolution.SinglePopulationGenerationalEA;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.evolution.genotypes.HyperNEATCPPNGenotype;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
 import edu.utexas.cs.nn.log.FitnessLog;
 import edu.utexas.cs.nn.log.PlotLog;
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.networks.hyperneat.HyperNEATUtil;
 import edu.utexas.cs.nn.parameters.CommonConstants;
@@ -23,8 +25,6 @@ import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.scent.VariableDirecti
 import edu.utexas.cs.nn.util.PopulationUtil;
 import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
 import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
-import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
 
 /**
  *
@@ -395,9 +395,17 @@ public abstract class MuLambda<T> implements SinglePopulationGenerationalEA<T> {
 			MMNEAT.logPerformanceInformation(combined, generation);
 		}
 		ArrayList<Genotype<T>> result = selectAndAdvance(parentScores, childrenScores);
-		// TODO: Insert hybrID switch here on appropriate generation
 		if(Parameters.parameters.booleanParameter("hybrID") && currentGeneration() == Parameters.parameters.integerParameter("hybrIDSwitchGeneration")) {	
-			result = PopulationUtil.getSubstrateGenotypesFromCPPNs(HyperNEATUtil.getHyperNEATTask(), result);
+			TWEANNGenotype.smallerGenotypes = true; // Need small genes because there are so many of them
+			// Substrate networks cannot have different activation functions
+			CommonConstants.netChangeActivationRate = 0;
+			Parameters.parameters.setDouble("netChangeActivationRate", 0);
+			// Get substrate genotypes
+			result = PopulationUtil.getSubstrateGenotypesFromCPPNs(HyperNEATUtil.getHyperNEATTask(), result, 0); // 0 is only population
+			// Reset archetype because the evolved CPPN genes are no longer relevant.
+			// 0 indicates that there is only one population, null will cause the archetype to reset, 
+			// and the nodes from the nodes from the first member of the new population will define the genotype	
+			EvolutionaryHistory.initArchetype(0, null, (TWEANNGenotype) result.get(0).copy());
 		}
 		return result;
 	}

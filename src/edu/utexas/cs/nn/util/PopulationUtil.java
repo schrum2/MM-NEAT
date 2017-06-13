@@ -1,29 +1,5 @@
 package edu.utexas.cs.nn.util;
 
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.data.SaveThread;
-import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
-import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.evolution.genotypes.HyperNEATCPPNGenotype;
-import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
-import edu.utexas.cs.nn.evolution.lineage.Offspring;
-import edu.utexas.cs.nn.evolution.mutation.tweann.ActivationFunctionRandomReplacement;
-import edu.utexas.cs.nn.evolution.mutation.tweann.CauchyDeltaCodeMutation;
-import edu.utexas.cs.nn.evolution.mutation.tweann.WeightRandomReplacement;
-import edu.utexas.cs.nn.evolution.nsga2.NSGA2;
-import edu.utexas.cs.nn.evolution.nsga2.NSGA2Score;
-import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.networks.TWEANN;
-import edu.utexas.cs.nn.networks.hyperneat.HyperNEATTask;
-import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.scores.Better;
-import edu.utexas.cs.nn.scores.Score;
-import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
-import edu.utexas.cs.nn.util.datastructures.Pair;
-import edu.utexas.cs.nn.util.file.FileUtilities;
-import edu.utexas.cs.nn.util.file.XMLFilter;
-import edu.utexas.cs.nn.util.random.RandomNumbers;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
@@ -36,6 +12,30 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+
+import edu.utexas.cs.nn.MMNEAT.MMNEAT;
+import edu.utexas.cs.nn.data.SaveThread;
+import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
+import edu.utexas.cs.nn.evolution.genotypes.Genotype;
+import edu.utexas.cs.nn.evolution.genotypes.HyperNEATCPPNGenotype;
+import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
+import edu.utexas.cs.nn.evolution.lineage.Offspring;
+import edu.utexas.cs.nn.evolution.mutation.tweann.ActivationFunctionRandomReplacement;
+import edu.utexas.cs.nn.evolution.mutation.tweann.CauchyDeltaCodeMutation;
+import edu.utexas.cs.nn.evolution.mutation.tweann.WeightRandomReplacement;
+import edu.utexas.cs.nn.evolution.nsga2.NSGA2;
+import edu.utexas.cs.nn.evolution.nsga2.NSGA2Score;
+import edu.utexas.cs.nn.networks.TWEANN;
+import edu.utexas.cs.nn.networks.hyperneat.HyperNEATTask;
+import edu.utexas.cs.nn.parameters.CommonConstants;
+import edu.utexas.cs.nn.parameters.Parameters;
+import edu.utexas.cs.nn.scores.Better;
+import edu.utexas.cs.nn.scores.Score;
+import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
+import edu.utexas.cs.nn.util.datastructures.Pair;
+import edu.utexas.cs.nn.util.file.FileUtilities;
+import edu.utexas.cs.nn.util.file.XMLFilter;
+import edu.utexas.cs.nn.util.random.RandomNumbers;
 import wox.serial.Easy;
 
 /**
@@ -854,10 +854,13 @@ public class PopulationUtil {
 	 * @return array list of substrate genotypes from population ArrayList
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T> ArrayList<Genotype<T>> getSubstrateGenotypesFromCPPNs(HyperNEATTask hnt, ArrayList<Genotype<T>> population) {
+	public static <T> ArrayList<Genotype<T>> getSubstrateGenotypesFromCPPNs(HyperNEATTask hnt, ArrayList<Genotype<T>> population, int archetypeIndex) {
 		ArrayList<Genotype<T>> substrateGenotypes = new ArrayList<>();
 		for(int i = 0; i < population.size(); i++) {
-			substrateGenotypes.add( (Genotype<T>) ((HyperNEATCPPNGenotype) population.get(i)).getSubstrateGenotype(hnt));
+			TWEANNGenotype genotype = ((HyperNEATCPPNGenotype) population.get(i)).getSubstrateGenotype(hnt);
+			// Since these networks will evolve now, they need a real archetype index
+			genotype.archetypeIndex = archetypeIndex;
+			substrateGenotypes.add((Genotype<T>) genotype);
 		}
 		return substrateGenotypes;
 	}
