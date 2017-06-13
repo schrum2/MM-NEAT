@@ -621,7 +621,8 @@ public class Parameters {
 		booleanOptions.add("mRTSOpponentsAll", false, "whether there is a substrate dedicated to all of the blue agents' units");
 		booleanOptions.add("heuristicOverrideTerminalStates", false, "Overrides the Network's evaluation of a terminal BoardGameState");
 		booleanOptions.add("microRTSGrowingEnemySet", false, "adds multiple enemies to a trial instead of cycling through them by generation");
-		booleanOptions.add("hybrID", true, "Indecates whether HybrID is running or not");
+		booleanOptions.add("hybrID", true, "Indicates whether HybrID is running or not");
+		booleanOptions.add("minimaxRandomChance", true, "Controls whether or not a Minimax Player has a chance of picking a Random Move instead of the best Move");
 		// Double parameters
 		doubleOptions.add("inheritProportion", 0.4, "Portion of a parent's fitness that contributes to child fitness (with inheritFitness, as in LEEA)");
 		doubleOptions.add("linkExpressionThreshold", 0.2, "Threshold for hyperNEAT output to result in an expressed link");
@@ -685,6 +686,7 @@ public class Parameters {
 		doubleOptions.add("monsterRayLength", 5.0 * Breve2DGame.AGENT_MAGNITUDE, "Length of monster ray traces");
 		doubleOptions.add("crossExcessRate", 0.0, "Portion of TWEANN crossovers that include excess/disjoint genes");
 		doubleOptions.add("explorePreference", 0.5, "High for more exploration vs. low for more exploitation when using UCB1");
+		doubleOptions.add("minimaxRandomRate", 0.0, "Chance of a Minimax Player choosing a Random legal Move instead of the best Move");
 		// String parameters
 		stringOptions.add("gameWad", "freedoom2.wad", "The wad file name for the current VizDoom game");
 		stringOptions.add("matchImageFile", "data/imagematch/theScream.png", "path of the image for image match task");

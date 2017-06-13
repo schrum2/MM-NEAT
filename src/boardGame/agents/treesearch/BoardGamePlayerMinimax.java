@@ -2,6 +2,7 @@ package boardGame.agents.treesearch;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 import boardGame.BoardGameState;
@@ -9,13 +10,29 @@ import boardGame.agents.HeuristicBoardGamePlayer;
 import boardGame.heuristics.BoardGameHeuristic;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.util.ClassCreation;
+import edu.utexas.cs.nn.util.random.RandomNumbers;
 import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
 
+/**
+ * Random selection process based on:
+ * 
+ * Temporal Difference Learning Versus Co-Evolution
+ * for Acquiring Othello Position Evaluation
+ * 
+ * (Simon M. Lucas and Thomas P. Runarsson)
+ * 
+ * http://citeseerx.ist.psu.edu/viewdoc/download;jsessionid=10AB4B0966FEE51BE133255498065C42?doi=10.1.1.580.8400&rep=rep1&type=pdf
+ * 
+ * @author johnso17
+ * 
+ */
 public class BoardGamePlayerMinimax<T extends BoardGameState> extends HeuristicBoardGamePlayer<T> {
 	
 	private static int depth; // Used to keep track of how far down the Tree to check
 	protected static final double ALPHA = Double.NEGATIVE_INFINITY; // Holds the Starting Value for Alpha
 	protected static final double BETA = Double.POSITIVE_INFINITY; // Holds the Starting Value for Beta
+	
+	Random random = RandomNumbers.randomGenerator;
 	
 	/**
 	 * This constructor assumes an opponent agent is being created.
@@ -60,7 +77,13 @@ public class BoardGamePlayerMinimax<T extends BoardGameState> extends HeuristicB
 			utilities[index++] = minimax(bgs, depth, ALPHA, BETA, true); // Action is being taken as the Maximizing Player; maxPlayer == true
 		}
 
-		return poss.get(StatisticsUtilities.argmax(utilities)); // Returns the BoardGameState which produced the highest network output
+		double rand = random.nextDouble();
+		
+		if(rand < Parameters.parameters.doubleParameter("minimaxRandomRate")){
+			return RandomNumbers.randomElement(poss);
+		}else{ // Will always return best Move
+			return poss.get(StatisticsUtilities.argmax(utilities)); // Returns the BoardGameState which produced the highest network output
+		}
 	}
 	
 	/**
@@ -100,6 +123,10 @@ public class BoardGamePlayerMinimax<T extends BoardGameState> extends HeuristicB
 			}
 			return bestValue;
 		}
+	}
+	
+	public void setRandomSeed(long seed){
+		random.setSeed(seed);
 	}
 
 }

@@ -4,6 +4,7 @@ import edu.utexas.cs.nn.parameters.Parameters;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -234,7 +235,7 @@ public class RandomNumbers {
 	 *            of <T>
 	 * @return random T of <T>
 	 */
-	public static <T> T randomElement(ArrayList<T> list) {
+	public static <T> T randomElement(List<T> list) {
 		int index = randomGenerator.nextInt(list.size());
 		return list.get(index);
 	}
