@@ -326,7 +326,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 								// inputs to CPPN 
 								// NOTE: filterCPPNInputs call was removed because it doesn't seem to make sense with convolutional inputs
 								double[] inputs = new double[]{scaledFieldCoordinates.getX(), scaledFieldCoordinates.getY(), scaledTargetCoordinates.getX(), scaledTargetCoordinates.getY(), BIAS};
-								conditionalLinkAdd(linksSoFar, cppn, inputs, outputIndex, fromXIndex, fromYIndex, s1Index, targetXindex, targetYIndex, s2Index, subs);
+								conditionalLinkAdd(linksSoFar, cppn, inputs, outputIndex, fromXIndex, fromYIndex, s1Index, targetXindex, targetYIndex, s2Index, subs, innovationID++);
 							}							
 						}						
 					}
@@ -378,7 +378,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 						// inputs to CPPN 
 						// These next two lines need to be generalized for different numbers of CPPN inputs
 						double[] inputs = hnt.filterCPPNInputs(new double[]{scaledSourceCoordinates.getX(), scaledSourceCoordinates.getY(), scaledTargetCoordinates.getX(), scaledTargetCoordinates.getY(), BIAS});
-						conditionalLinkAdd(linksSoFar, cppn, inputs, outputIndex, fromXIndex, fromYIndex, s1Index, targetXindex, targetYIndex, s2Index, subs);
+						conditionalLinkAdd(linksSoFar, cppn, inputs, outputIndex, fromXIndex, fromYIndex, s1Index, targetXindex, targetYIndex, s2Index, subs, innovationID++); // increment innovation regardless of whether link is added
 					}
 				}
 			}
@@ -401,7 +401,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 	 * @param s2Index target substrate index in substrate list
 	 * @param subs list of substrates
 	 */
-	void conditionalLinkAdd(ArrayList<LinkGene> linksSoFar, TWEANN cppn, double[] inputs, int outputIndex, int fromXIndex, int fromYIndex, int s1Index, int targetXindex, int targetYIndex, int s2Index, List<Substrate> subs) {
+	void conditionalLinkAdd(ArrayList<LinkGene> linksSoFar, TWEANN cppn, double[] inputs, int outputIndex, int fromXIndex, int fromYIndex, int s1Index, int targetXindex, int targetYIndex, int s2Index, List<Substrate> subs, long linkInnovationID) {
 		double[] outputs = cppn.process(inputs);
 		boolean expressLink = CommonConstants.leo
 				// Specific network output determines link expression
@@ -416,7 +416,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 									? outputs[(numCPPNOutputsPerLayerPair * outputIndex) + LINK_INDEX]
 											// Standard HyperNEAT must scale the weight
 											: NetworkUtil.calculateWeight(outputs[(numCPPNOutputsPerLayerPair * outputIndex) + LINK_INDEX]);
-									linksSoFar.add(newLinkGene(sourceID, targetID, weight, innovationID++, false));
+									linksSoFar.add(newLinkGene(sourceID, targetID, weight, linkInnovationID, false));
 						}
 	}
 
