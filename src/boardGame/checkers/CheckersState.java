@@ -49,7 +49,7 @@ public class CheckersState extends TwoDimensionalBoardGameState {
 	 * 
 	 * @param newBoard
 	 * @param player
-	 * @param win3
+	 * @param win
 	 */
 	CheckersState(int[][] newBoard, int player, List<Integer> win){
 		super(newBoard, 2, player, win);
@@ -225,23 +225,21 @@ public class CheckersState extends TwoDimensionalBoardGameState {
 					Point moveTo = new Point(checkX + dX, checkY + dY);
 					if(isPointInBounds(moveTo)){
 					
-						if(thisCheck == BLACK_CHECK && dX > 0 && ableToJump(check, moveTo)){ // Black Checks move down the Board; X increases, dX > 0
-								doubleJumpCheck = check;
-								return true;
+						if((thisCheck == BLACK_CHECK_KING || thisCheck == RED_CHECK_KING) && ableToJump(check, moveTo)){
+							doubleJumpCheck = check;
+							return true;							
+						}else if(thisCheck == BLACK_CHECK && dX > 0 && ableToJump(check, moveTo)){ // Black Checks move down the Board; X increases, dX > 0
+							doubleJumpCheck = check;
+							return true;
 						}else if(thisCheck == RED_CHECK && dX < 0 && ableToJump(check, moveTo)){ // Red Checks move down the Board; X decreases, dX < 0
-								doubleJumpCheck = check;
-								return true;
-							}
-						}else{ // King's Directional Movement doesn't need to be checked
-							if(ableToJump(check, moveTo)){
-								doubleJumpCheck = check;
-								return true;
-							}
-						}
+							doubleJumpCheck = check;
+							return true;
+						}	
+					}
 
-					}			
-				}
+				}			
 			}
+		}
 		
 		
 		doubleJumpCheck = null;
@@ -495,7 +493,6 @@ public class CheckersState extends TwoDimensionalBoardGameState {
 	@Override
 	public char[] getPlayerSymbols() {
 		// Need to account for having King pieces
-		//return new char[]{'b', 'B', 'r', 'R', 'X'};
 		return new char[]{'b', 'r', 'B', 'R'};
 	}
 
