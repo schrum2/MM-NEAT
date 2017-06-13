@@ -145,13 +145,30 @@ public class HyperNEATUtil {
 	public final static int SUBS_GRID_SIZE = Parameters.parameters.integerParameter("substrateGridSize");
 	public final static int WEIGHT_GRID_SIZE = Parameters.parameters.integerParameter("substrateWeightSize");
 	private static List<DrawingPanel> substratePanels = null;
-	private static ArrayList<DrawingPanel> weightPanels = null;
+	private static List<DrawingPanel> weightPanels = null;
 	private static HyperNEATTask hyperNEATTask;
 	private static TWEANNGenotype tg;
 	private static List<Substrate> substrates;
 	private static List<Triple<String, String, Boolean>> connections;
 	private static List<TWEANNGenotype.NodeGene> nodes;
 
+	/**
+	 * Turn off all HyperNEAT visualization.
+	 * Used when hybrID switches over.
+	 */
+	public static void clearHyperNEATVisualizations() {
+		if(substratePanels != null) {
+			for(DrawingPanel dp: substratePanels) {
+				dp.dispose();
+			}
+		}
+		if(weightPanels != null) {
+			for(DrawingPanel dp: weightPanels) {
+				dp.dispose();
+			}
+		}
+	}
+	
 	/**
 	 * Resets the Substrates of the HyperNEAT
 	 */
@@ -319,7 +336,7 @@ public class HyperNEATUtil {
 	 * @param hnt hyperNEAT task
 	 * @return the weight panels
 	 */
-	public static ArrayList<DrawingPanel> drawWeight(TWEANNGenotype genotype, HyperNEATTask hnt) {
+	public static List<DrawingPanel> drawWeight(TWEANNGenotype genotype, HyperNEATTask hnt) {
 
 		//gets all relevant information needed to draw link weights
 		tg = (TWEANNGenotype)genotype.copy();

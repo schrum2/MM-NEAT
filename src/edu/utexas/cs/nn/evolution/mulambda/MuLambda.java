@@ -400,6 +400,10 @@ public abstract class MuLambda<T> implements SinglePopulationGenerationalEA<T> {
 			// Turn HyperNEAT off
 			CommonConstants.hyperNEAT = false;
 			Parameters.parameters.setBoolean("hyperNEAT", false);
+			// HyperNEAT disables monitorInputs, but if the parameter was true, then hybrID can turn it back on
+			CommonConstants.monitorInputs = Parameters.parameters.booleanParameter("monitorInputs");
+			// Turn off HyperNEAT visualizations
+			HyperNEATUtil.clearHyperNEATVisualizations();
 			// Need small genes because there are so many of them
 			TWEANNGenotype.smallerGenotypes = true; 
 			// Substrate networks cannot have different activation functions

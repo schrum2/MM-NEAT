@@ -733,7 +733,9 @@ public class MMNEAT {
 		int numBias = 0;
 
 		CommonConstants.monitorInputs = false;
-		Parameters.parameters.setBoolean("monitorInputs", false);
+		// Setting the common constant should be sufficient, but keeping the parameter means
+		// that hybrID can turn it back on if it needs to
+		//Parameters.parameters.setBoolean("monitorInputs", false);
 
 		substrateMapping = (SubstrateCoordinateMapping) ClassCreation.createObject("substrateMapping");
 
