@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.rlcommunity.environments.tetris.TetrisState;
+
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.HyperNEATCPPNGenotype;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
@@ -533,6 +535,49 @@ public class HyperNEATUtil {
 	}
 	
 	/**
+	 * Generalizes the retrieval of Substrate Information
+	 * 
+	 * @param inputWidth Width of each Input and Processing Board
+	 * @param inputHeight Height of each Input and Processing Board
+	 * @param numInputs Number of Input Boards
+	 * @param processWidth Number of Processing Boards per Processing Layer
+	 * @param processDepth Number of Processing Layers
+	 * @return Substrate Information
+	 */
+	public static List<Substrate> getSubstrateInformation(int inputWidth, int inputHeight, int numInputs, int processWidth, int processDepth) {
+		
+		// SUBSTRATE_COORDINATES is from HyperNEATTetrisTask, but I'm not sure what it does. The only comment related to it is asking what it is for
+		// TODO: Figure out what to do about SUBSTRATE_COORDINATES and outputDepth
+		
+		int SUBSTRATE_COORDINATES = 4;
+		int outputDepth = SUBSTRATE_COORDINATES;
+		
+		List<Substrate> substrateInformation = new LinkedList<Substrate>();
+			
+			// Different extractors correspond to different substrate configurations
+				Triple<Integer, Integer, Integer> blockSubCoord = new Triple<Integer, Integer, Integer>(0, 0, 0);
+				Pair<Integer, Integer> substrateDimension = new Pair<Integer, Integer>(inputWidth, inputHeight);
+				Substrate blockInputSub = new Substrate(substrateDimension, Substrate.INPUT_SUBSTRATE, blockSubCoord, "blocks"); // 2D grid of block locations
+				substrateInformation.add(blockInputSub);
+				
+				if(!CommonConstants.hyperNEAT){ // Possible when using HyperNEAT seed with standard NEAT networks: need the extra bias input
+					Substrate biasSub = new Substrate(new Pair<Integer, Integer>(0,0), Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(SUBSTRATE_COORDINATES+1, 0,0), "bias_1");
+					substrateInformation.add(biasSub);
+				}
+				for(int i = 0; i < processDepth; i++) { // Add 2D hidden/processing layer(s)
+					for(int k = 0; k < processWidth; k++) {
+						// Not sure processSubCoord coordinates make sense
+						Triple<Integer, Integer, Integer> processSubCoord = new Triple<Integer, Integer, Integer>(k, outputDepth += SUBSTRATE_COORDINATES, 0);
+						Substrate processSub = new Substrate(substrateDimension, Substrate.PROCCESS_SUBSTRATE, processSubCoord,"process(" + k + "," + i + ")");
+						substrateInformation.add(processSub);
+					}
+				}
+				
+		return substrateInformation;
+	}
+	
+	
+	/**
 	 * Generalizes the creation of HyperNEAT Substrates
 	 * 
 	 * (Output layers are domain-specific)
@@ -542,28 +587,20 @@ public class HyperNEATUtil {
 	 * @param processDepth Number of Processing Layers
 	 * @return Substrate connectivity
 	 */
-	public static List<Triple<String, String,Boolean>> getSubstrateConnectivity(int numInputs, int processWidth, int processDepth){
+	public static List<Triple<String, String,Boolean>> getSubstrateConnectivityExceptOutputs(int numInputs, int processWidth, int processDepth){
 		
 		List<Triple<String, String, Boolean>> substrateConnectivity = null;
 		
-		// TODO: Generalize the String labels?
+		
 		
 		substrateConnectivity = new LinkedList<Triple<String, String, Boolean>>();
 		// Different extractors correspond to different substrate configurations
 		if(processDepth > 0) {
 			for(int k = 0; k < processWidth; k++) {
 				// Link the block locations to the processing layer: allows convolution
-				substrateConnectivity.add(new Triple<String, String, Boolean>("blocks", "process(" + k + ",0)", Boolean.TRUE)); 
-				if(CommonConstants.splitRawTetrisInputs) { // TODO: Put a different Parameter here?
-					// Link hole locations to processing layer: allows convolution
-					substrateConnectivity.add(new Triple<String, String, Boolean>("holes", "process(" + k + ",0)", Boolean.TRUE));
+				for(int i = 0; i < numInputs; i++){
+					substrateConnectivity.add(new Triple<String, String, Boolean>("Input(" + i + ")", "process(" + k + ",0)", Boolean.TRUE));
 				}
-			}
-		}
-		if(Parameters.parameters.booleanParameter("extraHNLinks")) { // Optional: link inputs directly to output neuron
-			substrateConnectivity.add(new Triple<String, String, Boolean>("blocks", "output:utility", Boolean.FALSE)); // Link block inputs to output
-			if(CommonConstants.splitRawTetrisInputs) { // TODO: Put a different Parameter here?
-				substrateConnectivity.add(new Triple<String, String, Boolean>("holes", "output:utility", Boolean.FALSE)); // Link hole inputs to output
 			}
 		}
 			
@@ -576,14 +613,7 @@ public class HyperNEATUtil {
 				}
 			}
 		}
-		// This is the final output for Tetris; outputs are domain specific. Pretty sure we'll remove this, but it's left here in case we discover that that's not the case.
-//		if(processDepth > 0) {
-//			for(int k = 0; k < processWidth; k++) {
-//				// Connect final (only?) processing layer(s) to the output neuron
-//				substrateConnectivity.add(new Triple<String, String, Boolean>("process("+k+","+(processDepth - 1)+")", "output:utility", Boolean.FALSE));
-//			}
-//		}
-			
+		
 		return substrateConnectivity;
 	}
 	
