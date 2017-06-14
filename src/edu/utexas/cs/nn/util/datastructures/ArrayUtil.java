@@ -609,9 +609,25 @@ public class ArrayUtil {
 	 */
 	public static double[] zipAdd(double[] a, double[] b) {
 		assert(a.length == b.length);
-		double[] result = new double[a.length];
+		return zipAdd(a,b,a.length);
+	}
+		
+	/**
+	 * Creates an array adding two arrays together at their respective indexes that
+	 * may not necessarily be the same length. Length of result array is specified
+	 * 
+	 * @param a array of doubles
+	 * @param b array of doubles
+	 * @param length desired size of result array
+	 * @return array a[i] + b[i] for all i
+	 */
+	public static double[] zipAdd(double[] a, double[] b, int length) {
+		double[] result = new double[length];
 		for (int i = 0; i < a.length; i++) {
-			result[i] = a[i] + b[i];
+			result[i] += a[i];
+		}
+		for (int i = 0; i < b.length; i++) {
+			result[i] += b[i];
 		}
 		return result;
 	}
