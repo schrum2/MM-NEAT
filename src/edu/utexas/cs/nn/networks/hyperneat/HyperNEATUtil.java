@@ -539,12 +539,12 @@ public class HyperNEATUtil {
 	 * 
 	 * @param inputWidth Width of each Input and Processing Board
 	 * @param inputHeight Height of each Input and Processing Board
-	 * @param numInputs Number of Input Boards
+	 * @param numInputSubstrates Number of Input Boards
 	 * @param processWidth Number of Processing Boards per Processing Layer
 	 * @param processDepth Number of Processing Layers
 	 * @return Substrate Information
 	 */
-	public static List<Substrate> getSubstrateInformation(int inputWidth, int inputHeight, int numInputs, int processWidth, int processDepth) {
+	public static List<Substrate> getSubstrateInformation(int inputWidth, int inputHeight, int numInputSubstrates, int processWidth, int processDepth) {
 		
 		// SUBSTRATE_COORDINATES is from HyperNEATTetrisTask, but I'm not sure what it does. The only comment related to it is asking what it is for
 		// TODO: Figure out what to do about SUBSTRATE_COORDINATES and outputDepth
@@ -554,25 +554,23 @@ public class HyperNEATUtil {
 		
 		List<Substrate> substrateInformation = new LinkedList<Substrate>();
 			
-			// Different extractors correspond to different substrate configurations
-				Triple<Integer, Integer, Integer> blockSubCoord = new Triple<Integer, Integer, Integer>(0, 0, 0);
-				Pair<Integer, Integer> substrateDimension = new Pair<Integer, Integer>(inputWidth, inputHeight);
-				Substrate blockInputSub = new Substrate(substrateDimension, Substrate.INPUT_SUBSTRATE, blockSubCoord, "blocks"); // 2D grid of block locations
-				substrateInformation.add(blockInputSub);
+		// Different extractors correspond to different substrate configurations
+		Triple<Integer, Integer, Integer> blockSubCoord = new Triple<Integer, Integer, Integer>(0, 0, 0);
+		Pair<Integer, Integer> substrateDimension = new Pair<Integer, Integer>(inputWidth, inputHeight);
 				
-				if(!CommonConstants.hyperNEAT){ // Possible when using HyperNEAT seed with standard NEAT networks: need the extra bias input
-					Substrate biasSub = new Substrate(new Pair<Integer, Integer>(0,0), Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(SUBSTRATE_COORDINATES+1, 0,0), "bias_1");
-					substrateInformation.add(biasSub);
-				}
-				for(int i = 0; i < processDepth; i++) { // Add 2D hidden/processing layer(s)
-					for(int k = 0; k < processWidth; k++) {
-						// Not sure processSubCoord coordinates make sense
-						Triple<Integer, Integer, Integer> processSubCoord = new Triple<Integer, Integer, Integer>(k, outputDepth += SUBSTRATE_COORDINATES, 0);
-						Substrate processSub = new Substrate(substrateDimension, Substrate.PROCCESS_SUBSTRATE, processSubCoord,"process(" + k + "," + i + ")");
-						substrateInformation.add(processSub);
-					}
-				}
+		for(int i = 0; i < numInputSubstrates; i++){
+			Substrate blockInputSub = new Substrate(substrateDimension, Substrate.INPUT_SUBSTRATE, blockSubCoord, "blocks"); // 2D grid of block locations
+			substrateInformation.add(blockInputSub);
+		}
 				
+		for(int i = 0; i < processDepth; i++) { // Add 2D hidden/processing layer(s)
+			for(int k = 0; k < processWidth; k++) {
+				// Not sure processSubCoord coordinates make sense
+				Triple<Integer, Integer, Integer> processSubCoord = new Triple<Integer, Integer, Integer>(k, outputDepth += SUBSTRATE_COORDINATES, 0);
+				Substrate processSub = new Substrate(substrateDimension, Substrate.PROCCESS_SUBSTRATE, processSubCoord,"process(" + k + "," + i + ")");
+				substrateInformation.add(processSub);
+			}
+		}
 		return substrateInformation;
 	}
 	
@@ -582,12 +580,12 @@ public class HyperNEATUtil {
 	 * 
 	 * (Output layers are domain-specific)
 	 * 
-	 * @param numInputs Number of individual Input Boards being processed
+	 * @param numInputSubstrates Number of individual Input Boards being processed
 	 * @param processWidth Number of Processing Boards per Processing Layer
 	 * @param processDepth Number of Processing Layers
 	 * @return Substrate connectivity
 	 */
-	public static List<Triple<String, String,Boolean>> getSubstrateConnectivityExceptOutputs(int numInputs, int processWidth, int processDepth){
+	public static List<Triple<String, String,Boolean>> getSubstrateConnectivityExceptOutputs(int numInputSubstrates, int processWidth, int processDepth){
 		
 		List<Triple<String, String, Boolean>> substrateConnectivity = null;
 		
@@ -598,7 +596,7 @@ public class HyperNEATUtil {
 		if(processDepth > 0) {
 			for(int k = 0; k < processWidth; k++) {
 				// Link the block locations to the processing layer: allows convolution
-				for(int i = 0; i < numInputs; i++){
+				for(int i = 0; i < numInputSubstrates; i++){
 					substrateConnectivity.add(new Triple<String, String, Boolean>("Input(" + i + ")", "process(" + k + ",0)", Boolean.TRUE));
 				}
 			}
