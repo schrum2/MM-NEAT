@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import edu.utexas.cs.nn.networks.TWEANN;
+import edu.utexas.cs.nn.networks.hyperneat.HyperNEATTask;
 import edu.utexas.cs.nn.networks.hyperneat.HyperNEATUtil;
 import edu.utexas.cs.nn.networks.hyperneat.Substrate;
 import edu.utexas.cs.nn.util.datastructures.Pair;
@@ -14,9 +15,19 @@ public class OffsetHybrIDGenotype extends HyperNEATCPPNGenotype {
 
 	RealValuedGenotype rvg;
 
+	/**
+	 * New genotype of all 0 values
+	 * @param length
+	 * @return
+	 */
+	public static RealValuedGenotype newZeroOffsets(int length) {
+		return new RealValuedGenotype(new double[length]);
+	}
+	
+	
 	public OffsetHybrIDGenotype() {
 		super();
-		rvg = new RealValuedGenotype(HyperNEATUtil.totalPossibleLinks(HyperNEATUtil.getHyperNEATTask()));
+		rvg = newZeroOffsets(HyperNEATUtil.totalPossibleLinks(HyperNEATUtil.getHyperNEATTask()));
 	}
 
 	public OffsetHybrIDGenotype(HyperNEATCPPNGenotype hngt) {
@@ -25,7 +36,7 @@ public class OffsetHybrIDGenotype extends HyperNEATCPPNGenotype {
 
 	public OffsetHybrIDGenotype(ArrayList<LinkGene> links, ArrayList<NodeGene> genes, int outputNeurons) {
 		super(links, genes, outputNeurons);
-		rvg = new RealValuedGenotype(HyperNEATUtil.totalPossibleLinks(HyperNEATUtil.getHyperNEATTask()));
+		rvg = newZeroOffsets(HyperNEATUtil.totalPossibleLinks(HyperNEATUtil.getHyperNEATTask()));
 	}
 
 	@Override
@@ -97,4 +108,23 @@ public class OffsetHybrIDGenotype extends HyperNEATCPPNGenotype {
 		return result;
 
 	}
+	
+	/**
+	 * Converts an ArrayList of HyperNEAT CPPN genotypes to an ArrayList of corresponding 
+	 * TWEANN genotypes based on an input HyperNEATTask.
+	 * 
+	 * @param hnt HyperNEATTask used to define substrate description
+	 * @param population array list of HyperNEAT CPPN genotypes
+	 * @return array list of substrate genotypes from population ArrayList
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T> ArrayList<Genotype<T>> getSubstrateGenotypesFromCPPNs(HyperNEATTask hnt, ArrayList<Genotype<T>> population) {
+		ArrayList<Genotype<T>> substrateGenotypes = new ArrayList<>();
+		for(int i = 0; i < population.size(); i++) {
+			OffsetHybrIDGenotype genotype = new OffsetHybrIDGenotype((HyperNEATCPPNGenotype) population.get(i));
+			substrateGenotypes.add((Genotype<T>) genotype);
+		}
+		return substrateGenotypes;
+	}      
+
 }

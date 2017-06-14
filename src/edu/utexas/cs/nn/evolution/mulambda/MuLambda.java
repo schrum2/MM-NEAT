@@ -7,6 +7,7 @@ import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
 import edu.utexas.cs.nn.evolution.SinglePopulationGenerationalEA;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
+import edu.utexas.cs.nn.evolution.genotypes.OffsetHybrIDGenotype;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype.LinkGene;
 import edu.utexas.cs.nn.log.FitnessLog;
@@ -239,13 +240,13 @@ public abstract class MuLambda<T> implements SinglePopulationGenerationalEA<T> {
 		// Get offspring from parents
 		ArrayList<Genotype<T>> children = performDeltaCoding(generation)
 				? PopulationUtil.getBestAndDeltaCode(parentScores) : generateChildren(lambda, parentScores);
-		// Evaluate the children
-		ArrayList<Score<T>> childrenScores = task.evaluateAll(children);
-		// Log child information to file
-		if (writeOutput && CommonConstants.logChildScores) {
-			childLog.log(childrenScores, generation);
-		}
-		return childrenScores;
+				// Evaluate the children
+				ArrayList<Score<T>> childrenScores = task.evaluateAll(children);
+				// Log child information to file
+				if (writeOutput && CommonConstants.logChildScores) {
+					childLog.log(childrenScores, generation);
+				}
+				return childrenScores;
 	}
 
 	/**
@@ -397,31 +398,35 @@ public abstract class MuLambda<T> implements SinglePopulationGenerationalEA<T> {
 		}
 		ArrayList<Genotype<T>> result = selectAndAdvance(parentScores, childrenScores);
 		if(Parameters.parameters.booleanParameter("hybrID") && currentGeneration() == Parameters.parameters.integerParameter("hybrIDSwitchGeneration")) {	
-			// Turn HyperNEAT off
-			CommonConstants.hyperNEAT = false;
-			Parameters.parameters.setBoolean("hyperNEAT", false);
-			// HyperNEAT disables monitorInputs, but if the parameter was true, then hybrID can turn it back on
-			CommonConstants.monitorInputs = Parameters.parameters.booleanParameter("monitorInputs");
-			// Turn off HyperNEAT visualizations
-			HyperNEATUtil.clearHyperNEATVisualizations();
-			// Need small genes because there are so many of them
-			TWEANNGenotype.smallerGenotypes = true; 
-			// Substrate networks cannot have different activation functions
-			CommonConstants.netChangeActivationRate = 0;
-			Parameters.parameters.setDouble("netChangeActivationRate", 0);
-			// Get substrate genotypes
-			result = PopulationUtil.getSubstrateGenotypesFromCPPNs(HyperNEATUtil.getHyperNEATTask(), result, 0); // 0 is only population
-			// Reset archetype because the evolved CPPN genes are no longer relevant.
-			// 0 indicates that there is only one population, null will cause the archetype to reset, 
-			// and the nodes from the nodes from the first member of the new population will define the genotype	
-			TWEANNGenotype exemplar = (TWEANNGenotype) result.get(0).copy();
-			// Reset next innovation based on the maximum in the exemplar genotype
-			long maxInnovation = 0;
-			for(LinkGene lg : exemplar.links) {
-				maxInnovation = Math.max(maxInnovation, lg.innovation);
+			if(Parameters.parameters.booleanParameter("offsetHybrID")) { //offsetHybrid is being used
+				result = OffsetHybrIDGenotype.getSubstrateGenotypesFromCPPNs(HyperNEATUtil.getHyperNEATTask(), result);
+			} else { //if preset-switch HybrID is being used
+				// Turn HyperNEAT off
+				CommonConstants.hyperNEAT = false;
+				Parameters.parameters.setBoolean("hyperNEAT", false);
+				// HyperNEAT disables monitorInputs, but if the parameter was true, then hybrID can turn it back on
+				CommonConstants.monitorInputs = Parameters.parameters.booleanParameter("monitorInputs");
+				// Turn off HyperNEAT visualizations
+				HyperNEATUtil.clearHyperNEATVisualizations();
+				// Need small genes because there are so many of them
+				TWEANNGenotype.smallerGenotypes = true; 
+				// Substrate networks cannot have different activation functions
+				CommonConstants.netChangeActivationRate = 0;
+				Parameters.parameters.setDouble("netChangeActivationRate", 0);
+				// Get substrate genotypes
+				result = PopulationUtil.getSubstrateGenotypesFromCPPNs(HyperNEATUtil.getHyperNEATTask(), result, 0); // 0 is only population
+				// Reset archetype because the evolved CPPN genes are no longer relevant.
+				// 0 indicates that there is only one population, null will cause the archetype to reset, 
+				// and the nodes from the nodes from the first member of the new population will define the genotype	
+				TWEANNGenotype exemplar = (TWEANNGenotype) result.get(0).copy();
+				// Reset next innovation based on the maximum in the exemplar genotype
+				long maxInnovation = 0;
+				for(LinkGene lg : exemplar.links) {
+					maxInnovation = Math.max(maxInnovation, lg.innovation);
+				}
+				EvolutionaryHistory.setInnovation(maxInnovation+1);
+				EvolutionaryHistory.initArchetype(0, null, exemplar);
 			}
-			EvolutionaryHistory.setInnovation(maxInnovation+1);
-			EvolutionaryHistory.initArchetype(0, null, exemplar);
 		}
 		return result;
 	}

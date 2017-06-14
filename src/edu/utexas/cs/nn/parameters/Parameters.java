@@ -623,6 +623,7 @@ public class Parameters {
 		booleanOptions.add("microRTSGrowingEnemySet", false, "adds multiple enemies to a trial instead of cycling through them by generation");
 		booleanOptions.add("hybrID", true, "Indicates whether HybrID is running or not");
 		booleanOptions.add("minimaxRandomChance", true, "Controls whether or not a Minimax Player has a chance of picking a Random Move instead of the best Move");
+		booleanOptions.add("offsetHybrID", false, "Determines whether to implement preset-switch version of HybrID or offset version of HybrID");
 		// Double parameters
 		doubleOptions.add("inheritProportion", 0.4, "Portion of a parent's fitness that contributes to child fitness (with inheritFitness, as in LEEA)");
 		doubleOptions.add("linkExpressionThreshold", 0.2, "Threshold for hyperNEAT output to result in an expressed link");
