@@ -84,6 +84,7 @@ import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 
 import edu.utexas.cs.nn.networks.Network;
+import edu.utexas.cs.nn.tasks.microrts.evaluation.DummyEvaluationFunction;
 import edu.utexas.cs.nn.tasks.microrts.evaluation.NN2DEvaluationFunction;
 import edu.utexas.cs.nn.tasks.microrts.evaluation.NNSimpleEvaluationFunction;
 import micro.rts.GameState;
@@ -119,7 +120,9 @@ public class FEStatePane extends JPanel {
                                 new SimpleSqrtEvaluationFunction3(),
                                 new EvaluationFunctionForwarding(new SimpleEvaluationFunction()),
                                 new SimpleOptEvaluationFunction(),    							
-                                new NN2DEvaluationFunction<Network>("data/networks/RandomMicroRTSHyperNEATCPPN.xml"),};
+                                new NN2DEvaluationFunction<Network>("data/networks/RandomMicroRTSHyperNEATCPPN.xml"),
+    							new DummyEvaluationFunction<Network>(),};
+    						
 
     public static Class AIs[] = {PassiveAI.class,
                    MouseController.class,

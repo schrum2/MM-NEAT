@@ -14,6 +14,7 @@ import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.datastructures.Triple;
 import micro.ai.core.AI;
 import micro.gui.PhysicalGameStateJFrame;
+import micro.gui.PhysicalGameStatePanel;
 import micro.rts.GameState;
 import micro.rts.PhysicalGameState;
 import micro.rts.PlayerAction;
@@ -32,11 +33,8 @@ public class MicroRTSUtility {
 	private static boolean prog = Parameters.parameters.classParameter("microRTSFitnessFunction").equals(ProgressiveFitnessFunction.class);
 	private static boolean coevolution;
 
-	private static GameState gs;
-
-	private static ArrayList<Integer> workerWithResourceID = new ArrayList<>(); //change to hashset
-
 	public static <T> ArrayList<Pair<double[], double[]>> oneEval(AI ai1, AI ai2, MicroRTSInformation task, RTSFitnessFunction ff, PhysicalGameStateJFrame w) {		
+		ArrayList<Integer> workerWithResourceID = new ArrayList<>(); //change to hashset		
 		//for % destroyed ff
 		HashSet<Long> createdUnitIDs1 = new HashSet<>();
 		HashSet<Long> createdUnitIDs2 = new HashSet<>();
@@ -46,7 +44,7 @@ public class MicroRTSUtility {
 		int unitDifferenceNow = 0;
 
 		coevolution = ff.getCoevolution();
-		gs = task.getGameState();
+		GameState gs = task.getGameState();
 		PhysicalGameState pgs = gs.getPhysicalGameState(); //task.getPhysicalGameState();
 		boolean gameover = false;
 		double averageUnitDifference = 0;
@@ -86,14 +84,19 @@ public class MicroRTSUtility {
 						if(currentUnit!=null){
 							//							System.out.println(i + "," + j + " has " + currentUnit);
 
-							if(currentUnit.getPlayer() == 0)
+							if(currentUnit.getPlayer() == 0){
 								createdUnitIDs1.add(currentUnit.getID());
-							else if(currentUnit.getPlayer() == 1)
+//								System.out.print(createdUnitIDs1 + " : ");
+//								System.out.println(createdUnitIDs1.size());
+							}
+							else if(currentUnit.getPlayer() == 1){
 								createdUnitIDs2.add(currentUnit.getID());
+//								System.out.println(createdUnitIDs2);
+							}
 
 							unitDifferenceNow = updateUnitDifference(currentUnit, unitDifferenceNow);
 							if(currentUnit.getType().name.equals("Worker")) {
-								updateHarvestingEfficiency(currentUnit, coevolution, task);
+								updateHarvestingEfficiency(workerWithResourceID, currentUnit, coevolution, task);
 							}
 							if(currentUnit.getType().name.equals("Base")){
 								base1Alive = base1Alive || updateBaseIsAlive(currentUnit, 1);
@@ -102,6 +105,10 @@ public class MicroRTSUtility {
 						} //end if (there is a unit on this space)
 					}//end j
 				}//end i
+				
+//				System.out.print(createdUnitIDs1 + " : ");
+//				System.out.println(createdUnitIDs1.size());
+				
 				if((!base1Alive) && (!baseDeath1Recorded)) {
 					//					System.out.println("setting base up time 1: " + gs.getTime());
 					task.setBaseUpTime(gs.getTime(), 1);
@@ -133,9 +140,17 @@ public class MicroRTSUtility {
 					}
 				}
 			}
+			try{
 			task.setPercentEnemiesDestroyed(((createdUnitIDs2.size() - terminalUnits2) * 100 ) / createdUnitIDs2.size(), 1); //createdIds' size should never =0
 			if(coevolution)
 				task.setPercentEnemiesDestroyed(((createdUnitIDs1.size() - terminalUnits1) * 100 ) / createdUnitIDs1.size(), 2);
+			} catch(ArithmeticException e){
+				System.out.println("Units 2" + createdUnitIDs2 + " : " + createdUnitIDs2.size());
+				System.out.println("Units 1" + createdUnitIDs1 + " : " + createdUnitIDs1.size());
+				w = PhysicalGameStatePanel.newVisualizer(gs,MicroRTSUtility.WINDOW_LENGTH,MicroRTSUtility.WINDOW_LENGTH,false,PhysicalGameStatePanel.COLORSCHEME_BLACK);
+				w.repaint();
+				MiscUtil.waitForReadStringAndEnterKeyPress();
+			}
 			task.setAvgUnitDiff(averageUnitDifference);
 		}
 		
@@ -154,7 +169,7 @@ public class MicroRTSUtility {
 			return unitDifferenceNow;
 	}
 
-	private static void updateHarvestingEfficiency(Unit u, boolean coevolution, MicroRTSInformation task){
+	private static void updateHarvestingEfficiency(ArrayList<Integer> workerWithResourceID, Unit u, boolean coevolution, MicroRTSInformation task){
 		//assume the unit is a worker
 		int id = (int) u.getID();
 		int player = u.getPlayer()+1; //+1 because this methods returns 0 or 1, but we want to use it as 1 or 2
