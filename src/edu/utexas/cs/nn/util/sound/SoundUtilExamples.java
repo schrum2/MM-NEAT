@@ -75,7 +75,7 @@ public class SoundUtilExamples {
 		Network cppn = test.getCPPN();
 
 		// method call
-		newMIDIUtilPlay(cppn);
+		multipleCPPNMIDIPlayback();
 	}
 
 	public static void randomCPPNExamples(Network cppn) throws IOException {
@@ -574,5 +574,15 @@ public class SoundUtilExamples {
 		System.out.println("classicalALM: " + classicalALM);
 		System.out.println("furEliseALM: " + furEliseALM);
 		System.out.println("piratesALM: " + piratesALM);
+	}
+	
+	public static void multipleCPPNMIDIPlayback() {
+		HyperNEATCPPNGenotype test = new HyperNEATCPPNGenotype(3, 1, 0);
+		Network[] cppns = new Network[30];
+		for(int i = 0; i < 30; i++) {
+			test.mutate();
+			cppns[i] = test.getCPPN();
+		}
+		MIDIUtil.playMIDIWithCPPNsFromString(FUR_ELISE_MID, cppns, 1);
 	}
 }

@@ -19,6 +19,7 @@ import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Track;
 
 import edu.utexas.cs.nn.networks.Network;
+import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
 import edu.utexas.cs.nn.util.datastructures.Triple;
 import edu.utexas.cs.nn.util.sound.PlayDoubleArray.AmplitudeArrayPlayer;
 
@@ -174,8 +175,8 @@ public class MIDIUtil {
 		for(int i = 0; i < midiLists.size(); i++) {
 			long lineTicks = midiLists.get(i).t3.get(midiLists.get(i).t3.size()-1) // last start time, plus
 					+ midiLists.get(i).t2.get(midiLists.get(i).t2.size()-1);// last duration
-			System.out.println("line ticks: " + lineTicks);
-			System.out.println("total ticks: " + totalTicks);
+//			System.out.println("line ticks: " + lineTicks);
+//			System.out.println("total ticks: " + totalTicks);
 			totalTicks = Math.max(totalTicks, lineTicks);
 		}
 		//create representative double array of all soundlines
@@ -235,6 +236,44 @@ public class MIDIUtil {
 			Track[] tracks = sequence.getTracks();
 			ArrayList<Triple<ArrayList<Double>, ArrayList<Long>, ArrayList<Long>>> sound = soundLines(tracks);
 			double[] data = lineToAmplitudeArray(audio, sound, cppn, noteLengthScale);
+			return PlayDoubleArray.playDoubleArray(data);
+		} catch (InvalidMidiDataException | IOException e) {
+			e.printStackTrace();
+		}
+		return null; //shouldn't happen
+	}
+
+	/**
+	 * Loops through array of frequencies generated from a MIDI file and plays it using a CPPN,
+	 * essentially making the CPPN the "instrument". Does so by calling freqFromMIDI to generate
+	 * a pair of double arrays corresponding to the frequencies and durations of all notes in  
+	 * all tracks of a file, and then calls playMIDIWithCPPNFromDoubleArray() with the double arrays.
+	 * 
+	 * @param audio string representation of MIDI file being analyzed
+	 * @param cppn Input network being used as the "instrument" to generate MIDI file playback
+	 */
+	public static AmplitudeArrayPlayer playMIDIWithCPPNsFromString(String audio, Network[] cppns, double noteLengthScale) {
+		File audioFile = new File(audio);
+		Sequence sequence;
+		try {
+			sequence = MidiSystem.getSequence(audioFile);
+			Track[] tracks = sequence.getTracks();
+			int arrayLength = 0;
+			for(int i = 0; i < tracks.length; i++) {
+				arrayLength = Math.max(tracks[i].size(), arrayLength);
+			}
+			double[] data = new double[arrayLength];
+			System.out.println("array length: " + arrayLength);
+			for(int i = 0; i < tracks.length; i++) {
+				ArrayList<Triple<ArrayList<Double>, ArrayList<Long>, ArrayList<Long>>> sound = soundLines(tracks[i]);
+				if(i > cppns.length) {
+					double[] lineData = lineToAmplitudeArray(audio, sound, cppns[i-cppns.length], noteLengthScale);
+					data = ArrayUtil.zipAdd(data, lineData, arrayLength);
+				} else {
+					double[] lineData = lineToAmplitudeArray(audio, sound, cppns[i], noteLengthScale);
+					data = ArrayUtil.zipAdd(data, lineData, arrayLength);
+				}				
+			}		
 			return PlayDoubleArray.playDoubleArray(data);
 		} catch (InvalidMidiDataException | IOException e) {
 			e.printStackTrace();
