@@ -64,10 +64,14 @@ public class BoardGameUtil {
 		
 		for(int i = 0; i < players.length; i++){
 			
-			double[] otherScores = new double[fit.size()-1]; // Stores all other Scores except the first, which is used as the Selection Fitness
+			double[] otherScores = new double[players.length]; // Initialized to empty to avoid errors
 			
-			for(int j = 1; j < fit.size(); j++){
-				otherScores[j-1] = fit.get(j).getFitness(players[i]); // Gets all Scores except the first one
+			if(fit.size() > 1){ // Has at least 1 Other Score; must track their fitness
+				otherScores = new double[fit.size()-1]; // Stores all other Scores except the first, which is used as the Selection Fitness
+				
+				for(int j = 1; j < fit.size(); j++){
+					otherScores[j-1] = fit.get(j).getFitness(players[i]); // Gets all Scores except the first one
+				}
 			}
 			
 			Pair<double[], double[]> evalResults = new Pair<double[], double[]>(new double[] { fit.get(0).getFitness(players[i]) }, otherScores);

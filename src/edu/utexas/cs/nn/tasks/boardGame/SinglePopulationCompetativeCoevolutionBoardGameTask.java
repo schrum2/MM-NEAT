@@ -9,6 +9,7 @@ import boardGame.agents.HeuristicBoardGamePlayer;
 import boardGame.featureExtractor.BoardGameFeatureExtractor;
 import boardGame.fitnessFunction.BoardGameFitnessFunction;
 import boardGame.fitnessFunction.SimpleWinLoseDrawBoardGameFitness;
+import boardGame.fitnessFunction.StaticOtherOpponentFitness;
 import boardGame.heuristics.NNBoardGameHeuristic;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
@@ -48,6 +49,7 @@ public class SinglePopulationCompetativeCoevolutionBoardGameTask<T extends Netwo
 		
 		// Add Other Scores here to keep track of other Fitness Functions
 		fitFunctions.add(new SimpleWinLoseDrawBoardGameFitness<S>());
+		fitFunctions.add(new StaticOtherOpponentFitness<S>()); // Automatically is set to boardGameOpponent
 		
 		for(BoardGameFitnessFunction<S> fit : fitFunctions){
 			MMNEAT.registerFitnessFunction(fit.getFitnessName(), false);

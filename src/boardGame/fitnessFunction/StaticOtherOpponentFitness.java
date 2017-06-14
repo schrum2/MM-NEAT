@@ -21,12 +21,14 @@ public class StaticOtherOpponentFitness<T extends BoardGameState> implements Boa
 	public StaticOtherOpponentFitness(){
 		try {
 			opponent = (BoardGamePlayer<T>) ClassCreation.createObject("boardGameOpponent"); // The Opponent; TODO: Add OtherStaticOpponent Parameter?
-			selectionFunction = (BoardGameFitnessFunction<T>) ClassCreation.createObject("boardGameFitnessFunction");
+			selectionFunction = new SimpleWinLoseDrawBoardGameFitness<T>();
 		} catch (NoSuchMethodException e) {
 			e.printStackTrace();
 			System.out.println("BoardGame instance could not be loaded");
 			System.exit(1);
 		}
+		
+		fitFunctions.add(selectionFunction);
 	}
 	
 	@Override
