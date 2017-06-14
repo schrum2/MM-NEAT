@@ -173,6 +173,7 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 		if(maps != null){
 			String newMapName = maps.getAppropriateMap(MMNEAT.ea.currentGeneration());
 			if (!newMapName.equals(mapName)){ // Change the map
+				System.out.println("loading new map: " + newMapName);
 				try {
 					// The new map is in the new initial game state
 					initialPgs = PhysicalGameState.load("data/microRTS/maps/" + newMapName, utt);

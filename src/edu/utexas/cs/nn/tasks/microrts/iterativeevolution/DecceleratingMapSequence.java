@@ -9,7 +9,7 @@ package edu.utexas.cs.nn.tasks.microrts.iterativeevolution;
  */
 public class DecceleratingMapSequence implements MapSequence{
 
-	int gensPerMap = 20;
+	int gensPerMap = 20 ;
 	
 	String[] maps = new String[]{
 			"8x8/basesWorkers8x8.xml",
