@@ -60,6 +60,8 @@ public class MIDIUtil {
 	public static final int PPQ = 96; //parts per quarter note - should be generalized
 
 	public static final int CLIP_VOLUME_LENGTH = 4000;
+	
+	public static final double ALM_CONSTANT = 23.0;
 
 	/**
 	 * Method that takes in a MIDI file and prints out useful information about the note, whether the 
@@ -75,6 +77,10 @@ public class MIDIUtil {
 		Sequence sequence;
 		try {
 			sequence = MidiSystem.getSequence(audioFile);
+			System.out.println("tick length: " + sequence.getTickLength());
+			System.out.println("microsecond length: " + sequence.getMicrosecondLength());
+			System.out.println("resolution: " + sequence.getResolution());
+			System.out.println("division type: " + sequence.getDivisionType());
 			int trackNumber = 0;
 			for (Track track :  sequence.getTracks()) {
 				trackNumber++;
@@ -83,30 +89,30 @@ public class MIDIUtil {
 				//MiscUtil.waitForReadStringAndEnterKeyPress();
 				for (int i=0; i < track.size(); i++) { 
 					MidiEvent event = track.get(i);
-					System.out.print("@" + event.getTick() + " ");
+					//System.out.print("@" + event.getTick() + " ");
 					MidiMessage message = event.getMessage();
 					if (message instanceof ShortMessage) {
 						ShortMessage sm = (ShortMessage) message;
-						System.out.print("Channel: " + sm.getChannel() + " ");
+						//System.out.print("Channel: " + sm.getChannel() + " ");
 						if (sm.getCommand() == NOTE_ON) {
 							int key = sm.getData1();
 							int octave = (key / 12)-1;
 							int note = key % 12;
 							String noteName = NOTE_NAMES[note];
 							int velocity = sm.getData2();
-							System.out.println("Note on, " + noteName + octave + " key=" + key + " velocity: " + velocity);
+							//System.out.println("Note on, " + noteName + octave + " key=" + key + " velocity: " + velocity);
 						} else if (sm.getCommand() == NOTE_OFF) {
 							int key = sm.getData1();
 							int octave = (key / 12)-1;
 							int note = key % 12;
 							String noteName = NOTE_NAMES[note];
 							int velocity = sm.getData2();
-							System.out.println("Note off, " + noteName + octave + " key=" + key + " velocity: " + velocity);
+							//System.out.println("Note off, " + noteName + octave + " key=" + key + " velocity: " + velocity);
 						} else {
-							System.out.println("Command:" + sm.getCommand());
+							//System.out.println("Command:" + sm.getCommand());
 						}
 					} else {
-						System.out.println("Other message: " + message.getClass());
+						//System.out.println("Other message: " + message.getClass());
 					}
 				}
 
@@ -231,8 +237,15 @@ public class MIDIUtil {
 		File audioFile = new File(audio);
 		try {
 			Sequence sequence = MidiSystem.getSequence(audioFile);
+			Track[] tracks = sequence.getTracks();
+			int longestTrack = 0;
+			for(int i = 0; i < tracks.length; i++) {
+				longestTrack = Math.max(longestTrack, tracks[i].size());
+			}
+			System.out.println("longest track: " + longestTrack);
 			// dividing sample rate of default audio format by the microseconds per tick to get equivalent of correct answer
-			double amplitudeLengthMultiplier = PlayDoubleArray.DEFAULT_AUDIO_FORMAT.getFrameRate()/(sequence.getMicrosecondLength()/sequence.getTickLength());
+			double amplitudeLengthMultiplier = getAmplitudeLengthMultiplier(audio);
+			System.out.println("midi list size: " + midiLists.size());
 			amplitudeLengthMultiplier *= noteLengthScale;
 			amplitudeLengthMultiplier = Math.ceil(amplitudeLengthMultiplier); // To prevent rounding issues with array indexes
 			System.out.println("amplitudeLengthMultiplier: " + amplitudeLengthMultiplier);
@@ -264,7 +277,7 @@ public class MIDIUtil {
 			// Schrum: regarding this normalization step: we seem to have another magic number.
 			// The value 2 works for fur Elise, but what about other MIDIs?
 			for(int i = 0; i < amplitudeArray.length; i++) {
-				amplitudeArray[i] /= 2; // TODO: Replace magic number
+				amplitudeArray[i] /= midiLists.size(); // divide by total number of voices played at once
 			}
 			return amplitudeArray;
 		} catch (InvalidMidiDataException | IOException e) {
@@ -273,6 +286,27 @@ public class MIDIUtil {
 		}
 		return null; //shouldn't happen
 	}	
+	
+	/**
+	 * Obtains value all amplitudes are multiplied by so that 
+	 * values play back at the correct speed after being manipulated
+	 * by a CPPN
+	 * 
+	 * @param audio input audio file
+	 * @return Double value that all indexes in amplitude array are multiplied by
+	 */
+	public static double getAmplitudeLengthMultiplier(String audio) {
+		File audioFile = new File(audio);
+		try {
+			Sequence sequence = MidiSystem.getSequence(audioFile);
+			double alm = ((1.0*sequence.getMicrosecondLength())/sequence.getTickLength())/ALM_CONSTANT;
+			return alm;
+		} catch (InvalidMidiDataException | IOException e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
+		return 0; // shouldn't happen
+	}
 
 	/**
 	 * Loops through array of frequencies generated from a MIDI file and plays it using a CPPN,
