@@ -583,6 +583,6 @@ public class SoundUtilExamples {
 			test.mutate();
 			cppns[i] = test.getCPPN();
 		}
-		MIDIUtil.playMIDIWithCPPNsFromString(FUR_ELISE_MID, cppns, 1);
+		MIDIUtil.playMIDIWithCPPNsFromString(SOLO_PIANO_MID, cppns, 1);
 	}
 }

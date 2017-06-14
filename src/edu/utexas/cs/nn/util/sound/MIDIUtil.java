@@ -248,7 +248,7 @@ public class MIDIUtil {
 	 * Loops through array of frequencies generated from a MIDI file and plays it using an array of CPPNS,
 	 * essentially making the CPPN the "instrument" for each track. Uses similar code as the original 
 	 * playMIDIWithCPPNFromString() method, but calculates double arrays for individual tracks so that they can
-	 * be manipulated by unique CPPNs, and then adds all arrays together into a larger one using zipAdd().
+	 * be manipulated by unique CPPNs, and then adds all arrays together using zipAdd().
 	 * 
 	 * @param audio string representation of MIDI file being analyzed
 	 * @param cppn Input network being used as the "instrument" to generate MIDI file playback
@@ -261,19 +261,22 @@ public class MIDIUtil {
 			sequence = MidiSystem.getSequence(audioFile);
 			Track[] tracks = sequence.getTracks();
 			int arrayLength = 0;
+			//TODO: calculating length wrong - needs to be calculated with already generated amplitudes from lineToAmplitudeArray somehow
 			for(int i = 0; i < tracks.length; i++) { //calculate longest track so that array can be initialized at correct size
 				arrayLength = Math.max(tracks[i].size(), arrayLength);
 			}
-			double[] data = new double[arrayLength]; //larger array that all arrays from individual tracks will be fed into
+			double[] data = new double[0];
 			System.out.println("array length: " + arrayLength);
 			for(int i = 0; i < tracks.length; i++) {
 				ArrayList<Triple<ArrayList<Double>, ArrayList<Long>, ArrayList<Long>>> sound = soundLines(tracks[i]);
-				if(i > cppns.length) { //if the number of tracks outnumbers the CPPNs, it loops through them again
+				if(i > cppns.length-1) { //if the number of tracks outnumbers the CPPNs, it loops through them again
 					double[] lineData = lineToAmplitudeArray(audio, sound, cppns[i-cppns.length], noteLengthScale);
-					data = ArrayUtil.zipAdd(data, lineData, arrayLength); //add new values to larger double array
+					data = ArrayUtil.zipAdd(data, lineData, Math.max(data.length, lineData.length)); //add new values to larger double array
 				} else { //first loopthrough of CPPNs
 					double[] lineData = lineToAmplitudeArray(audio, sound, cppns[i], noteLengthScale);
-					data = ArrayUtil.zipAdd(data, lineData, arrayLength); //add new values to larger double array
+					System.out.println("larger array length: " + data.length);
+					System.out.println("line data length: " + lineData.length);
+					data = ArrayUtil.zipAdd(data, lineData, Math.max(data.length, lineData.length)); //add new values to larger double array
 				}				
 			}		
 			return PlayDoubleArray.playDoubleArray(data);
