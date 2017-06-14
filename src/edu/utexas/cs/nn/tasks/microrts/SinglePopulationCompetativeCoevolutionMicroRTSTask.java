@@ -72,6 +72,9 @@ public class SinglePopulationCompetativeCoevolutionMicroRTSTask<T extends Networ
 			ef2 = (NNEvaluationFunction<T>) ClassCreation.createObject("microRTSEvaluationFunction");
 			ff = (RTSFitnessFunction) ClassCreation.createObject("microRTSFitnessFunction");
 			initialPgs = PhysicalGameState.load("data/microRTS/maps/" + Parameters.parameters.stringParameter("map"), utt);
+			
+			if(Parameters.parameters.classParameter("microRTSMapSequence") != null)
+				maps = (MapSequence) ClassCreation.createObject(Parameters.parameters.classParameter("microRTSMapSequence")); 
 		} catch (JDOMException | IOException | NoSuchMethodException e) {
 			e.printStackTrace();
 			System.exit(1);

@@ -56,7 +56,7 @@ public abstract class SinglePopulationCoevolutionTask<T> implements SinglePopula
 		
 		int groupSize = groupSize(); // Replace: make task dependent
 		
-		assert population.size()%groupSize == 0;
+		assert population.size()%groupSize == 0 : "Population size " + population.size() + " should be divisible by group size " + groupSize;
 		
 		double[] bestObjectives = minScores();
 		@SuppressWarnings("unchecked")
@@ -85,8 +85,10 @@ public abstract class SinglePopulationCoevolutionTask<T> implements SinglePopula
 					
 					// Draw Panels here
 					for(Pair<DrawingPanel, DrawingPanel> panelSet : drawPanels){
-						panelSet.t1.setVisibility(true);
-						panelSet.t2.setVisibility(true);
+						if(panelSet.t1 != null)
+							panelSet.t1.setVisibility(true);
+						if(panelSet.t2 != null)
+							panelSet.t2.setVisibility(true);
 					}
 				}
 				
@@ -95,8 +97,10 @@ public abstract class SinglePopulationCoevolutionTask<T> implements SinglePopula
 				
 				// Clean up all Panels here
 				for(Pair<DrawingPanel, DrawingPanel> panelSet : drawPanels){
-					panelSet.t1.dispose();
-					panelSet.t2.dispose();
+					if(panelSet.t1 != null)
+						panelSet.t1.dispose();
+					if(panelSet.t2 != null)
+						panelSet.t2.dispose();
 				}
 				drawPanels.clear();
 				
