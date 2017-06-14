@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
@@ -12,7 +13,10 @@ import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
 import edu.utexas.cs.nn.networks.ActivationFunctions;
 import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.networks.TWEANN.Node;
+import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
+import edu.utexas.cs.nn.tasks.rlglue.featureextractors.tetris.ExtendedBertsekasTsitsiklisTetrisExtractor;
+import edu.utexas.cs.nn.tasks.rlglue.featureextractors.tetris.RawTetrisStateExtractor;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.datastructures.Triple;
 import edu.utexas.cs.nn.util.graphics.DrawingPanel;
@@ -527,4 +531,60 @@ public class HyperNEATUtil {
 		
 		return count;
 	}
+	
+	/**
+	 * Generalizes the creation of HyperNEAT Substrates
+	 * 
+	 * (Output layers are domain-specific)
+	 * 
+	 * @param numInputs Number of individual Input Boards being processed
+	 * @param processWidth Number of Processing Boards per Processing Layer
+	 * @param processDepth Number of Processing Layers
+	 * @return Substrate connectivity
+	 */
+	public static List<Triple<String, String,Boolean>> getSubstrateConnectivity(int numInputs, int processWidth, int processDepth){
+		
+		List<Triple<String, String, Boolean>> substrateConnectivity = null;
+		
+		// TODO: Generalize the String labels?
+		
+		substrateConnectivity = new LinkedList<Triple<String, String, Boolean>>();
+		// Different extractors correspond to different substrate configurations
+		if(processDepth > 0) {
+			for(int k = 0; k < processWidth; k++) {
+				// Link the block locations to the processing layer: allows convolution
+				substrateConnectivity.add(new Triple<String, String, Boolean>("blocks", "process(" + k + ",0)", Boolean.TRUE)); 
+				if(CommonConstants.splitRawTetrisInputs) { // TODO: Put a different Parameter here?
+					// Link hole locations to processing layer: allows convolution
+					substrateConnectivity.add(new Triple<String, String, Boolean>("holes", "process(" + k + ",0)", Boolean.TRUE));
+				}
+			}
+		}
+		if(Parameters.parameters.booleanParameter("extraHNLinks")) { // Optional: link inputs directly to output neuron
+			substrateConnectivity.add(new Triple<String, String, Boolean>("blocks", "output:utility", Boolean.FALSE)); // Link block inputs to output
+			if(CommonConstants.splitRawTetrisInputs) { // TODO: Put a different Parameter here?
+				substrateConnectivity.add(new Triple<String, String, Boolean>("holes", "output:utility", Boolean.FALSE)); // Link hole inputs to output
+			}
+		}
+			
+		// hidden layer connectivity is the same, regardless of input configuration
+		for(int i = 0; i < (processDepth - 1); i++) {
+			for(int k = 0; k < processWidth; k++) {
+				for(int q = 0; q < processWidth; q++) {
+					// Each processing substrate at one depth connected to processing subsrates at next depth
+					substrateConnectivity.add(new Triple<String, String, Boolean>("process("+k+","+i+")", "process("+q+","+(i + 1)+")", Boolean.TRUE));
+				}
+			}
+		}
+		// This is the final output for Tetris; outputs are domain specific. Pretty sure we'll remove this, but it's left here in case we discover that that's not the case.
+//		if(processDepth > 0) {
+//			for(int k = 0; k < processWidth; k++) {
+//				// Connect final (only?) processing layer(s) to the output neuron
+//				substrateConnectivity.add(new Triple<String, String, Boolean>("process("+k+","+(processDepth - 1)+")", "output:utility", Boolean.FALSE));
+//			}
+//		}
+			
+		return substrateConnectivity;
+	}
+	
 }
