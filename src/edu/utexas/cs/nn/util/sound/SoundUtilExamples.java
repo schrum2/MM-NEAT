@@ -56,6 +56,11 @@ public class SoundUtilExamples {
 	public static final String ALARM_WAV = "data/sounds/tone06.wav";
 	public static final String CHIPTUNE_WAV = "data/sounds/8-Bit-Noise-1.wav";
 	public static final String CHRISTMAS_MID = "data/sounds/christmas.mid";
+	
+	//used to obtain MIDI file data
+	public static final int NOTE_ON = 0x90;
+	public static final int NOTE_OFF = 0x80;
+	public static final String[] NOTE_NAMES = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
 
 	public static void main(String[] args) throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException, JavaLayerException, InvalidMidiDataException {
 		//CPPN initialization
@@ -70,8 +75,6 @@ public class SoundUtilExamples {
 		Network cppn = test.getCPPN();
 
 		// method call
-		//MIDIUtil.playApplet(CHRISTMAS_MID);
-		//MiscUtil.waitForReadStringAndEnterKeyPress();
 		newMIDIUtilPlay(cppn);
 	}
 
@@ -396,27 +399,7 @@ public class SoundUtilExamples {
 		//PlayDoubleArray.close(); 
 	}
 
-//	public static void playMIDIWithCPPNTests(Network cppn) {
-//		MIDIUtil.playApplet(CLASSICAL_MID);
-//		MIDIUtil.playMIDIWithCPPNFromString(FUR_ELISE_MID, 1, cppn);
-//		MiscUtil.waitForReadStringAndEnterKeyPress();
-//		for(int i = 0; i < 2; i++) {
-//			MIDIUtil.playMIDIWithCPPNFromString(CLASSICAL_MID, i, cppn);
-//		}
-//	}
-
-	public static void printMIDIData() {
-		File classicalFile = new File(CLASSICAL_MID);
-		MIDIUtil.MIDIData(classicalFile);
-		File piratesFile = new File(PIRATES_MID);
-		MIDIUtil.MIDIData(piratesFile);
-		File soloPiano = new File(SOLO_PIANO_MID);
-		MIDIUtil.MIDIData(soloPiano);
-		File furElise = new File(FUR_ELISE_MID);
-		MIDIUtil.MIDIData(furElise);
-
-	}
-
+	
 	public static void saveWAVFileForRemix() throws IOException {
 		byte[] alarmByteArray = WAVUtil.WAVToByte(ALARM_WAV);
 		SaveFromArray.saveFileFromByteArray(alarmByteArray, "data/sounds/alarmCopy.wav");
@@ -475,57 +458,88 @@ public class SoundUtilExamples {
 
 	public static void viewMIDIChannel() {
 		File file = new File(PIRATES_MID);
-		MIDIUtil.MIDIData(file);
+		MIDIData(file);
 	}
 
-	public static void MIDIAsArrayList() throws InvalidMidiDataException, IOException {
-		File furElise = new File(FUR_ELISE_MID);
-		Sequence sequence = MidiSystem.getSequence(furElise);
-		Track[] tracks = sequence.getTracks();
-		Track track = tracks[1];
-//		ArrayList<double[]> listOfData = MIDIUtil.soundLines(track);
-//		for(int i = 0; i < listOfData.size(); i++) {
-//			ArrayUtil.printArrayRange(listOfData.get(i), 152000, 153000);
-//		}
-	}
-
-//	public static void MIDIWithLengths(Network cppn) throws InvalidMidiDataException, IOException {
-//		File midiFile = new File(FUR_ELISE_MID);
-//		Sequence sequence = MidiSystem.getSequence(midiFile);
-//		Track[] tracks = sequence.getTracks();
-//		Track track = tracks[1];
-//		ArrayList<Triple<ArrayList<Double>, ArrayList<Long>, ArrayList<Long>>> sound = MIDIUtil.soundLines2(track);
-//		for(int i = 0; i < sound.size(); i++) {
-//			double[] data = MIDIUtil.lineToAmplitudeArray(FUR_ELISE_MID, sound, cppn);
-//			MIDIUtil.playMIDIWithCPPNFromDoubleArray(FUR_ELISE_MID, cppn, data);
-//		}
-//		//ArrayList<double[]> listOfData = MIDIUtil.soundLines(tracks);
-//		//MIDIUtil.playMIDIWithCPPNFromDoubleArray(FUR_ELISE_MID, cppn, listOfData);
-//	}
 	
 	public static void eightBitToSixteenBit() {
 		double[] harpAsSixteenBit = SoundToArray.eightBitToSixteenBit(HARP_WAV);
 		System.out.println(Arrays.toString(harpAsSixteenBit));
-		//PlayDoubleArray.playDoubleArray(harpAsSixteenBit);
+		PlayDoubleArray.playDoubleArray(harpAsSixteenBit);
 	}
 	
-	public static void tickConversionData() throws InvalidMidiDataException, IOException {
-		File midiFile = new File(FUR_ELISE_MID);
-		Sequence sequence = MidiSystem.getSequence(midiFile);
-		Track[] tracks = sequence.getTracks();
-		Track track = tracks[1];
-		for(int i = 0; i < track.size(); i++) {
-			MidiEvent event = track.get(i);
-			MidiMessage message = event.getMessage();
-			//System.out.println(message);
-			if (message instanceof ShortMessage) {
-				long tick = event.getTick(); // actually starting tick time
-				System.out.println("Tick: " + tick);
-				//System.out.println("length of tick in milliseconds: " + MIDIUtil.convertTicksToMilliseconds(sequence, tick));
+	public static void printMIDIData() {
+		File classicalFile = new File(CLASSICAL_MID);
+		MIDIData(classicalFile);
+		File piratesFile = new File(PIRATES_MID);
+		MIDIData(piratesFile);
+		File soloPiano = new File(SOLO_PIANO_MID);
+		MIDIData(soloPiano);
+		File furElise = new File(FUR_ELISE_MID);
+		MIDIData(furElise);
+	}
+	
+	/**
+	 * Method that takes in a MIDI file and prints out useful information about the note, whether the 
+	 * note is on or off, the key, and the velocity. This is printed for each individual track in the 
+	 * MIDI file.
+	 * 
+	 * Not necessary for functioning of other methods, but contains useful information about 
+	 * functioning of MIDI files (channels, tracks, notes, velocity, etc.)
+	 * 
+	 * @param audioFile input MIDI file
+	 */
+	public static void MIDIData(File audioFile) {
+		Sequence sequence;
+		try {
+			sequence = MidiSystem.getSequence(audioFile);
+			System.out.println("tick length: " + sequence.getTickLength());
+			System.out.println("microsecond length: " + sequence.getMicrosecondLength());
+			System.out.println("resolution: " + sequence.getResolution());
+			System.out.println("division type: " + sequence.getDivisionType());
+			int trackNumber = 0;
+			for (Track track :  sequence.getTracks()) {
+				trackNumber++;
+				System.out.println("Track " + trackNumber + ": size = " + track.size());
+				System.out.println();
+				for (int i=0; i < track.size(); i++) { 
+					MidiEvent event = track.get(i);
+					System.out.print("@" + event.getTick() + " ");
+					MidiMessage message = event.getMessage();
+					if (message instanceof ShortMessage) {
+						ShortMessage sm = (ShortMessage) message;
+						System.out.print("Channel: " + sm.getChannel() + " ");
+						if (sm.getCommand() == NOTE_ON) {
+							int key = sm.getData1();
+							int octave = (key / 12)-1;
+							int note = key % 12;
+							String noteName = NOTE_NAMES[note];
+							int velocity = sm.getData2();
+							System.out.println("Note on, " + noteName + octave + " key=" + key + " velocity: " + velocity);
+						} else if (sm.getCommand() == NOTE_OFF) {
+							int key = sm.getData1();
+							int octave = (key / 12)-1;
+							int note = key % 12;
+							String noteName = NOTE_NAMES[note];
+							int velocity = sm.getData2();
+							System.out.println("Note off, " + noteName + octave + " key=" + key + " velocity: " + velocity);
+						} else {
+							System.out.println("Command:" + sm.getCommand());
+						}
+					} else {
+						//System.out.println("Other message: " + message.getClass());
+					}
+				}
+
+				System.out.println();
 			}
-		}
+		} catch (InvalidMidiDataException | IOException e) {
+			e.printStackTrace();
+		}		
 	}
 	
+	//Test printing a MIDI file's representative data after it is broken into lines 
+	//of representative frequencies, lengths, and start times
 	public static void newMIDIUtilPrint() throws InvalidMidiDataException, IOException {
 		File midiFile = new File(PIRATES_MID);
 		Sequence sequence = MidiSystem.getSequence(midiFile);
@@ -539,6 +553,7 @@ public class SoundUtilExamples {
 		}
 	}
 	
+	//Test playing MIDI file after it is manipulated by a CPPN
 	public static void newMIDIUtilPlay(Network cppn) throws InvalidMidiDataException, IOException {
 		//MIDIUtil.playApplet(SOLO_PIANO_MID);
 		//MiscUtil.waitForReadStringAndEnterKeyPress();
@@ -550,6 +565,8 @@ public class SoundUtilExamples {
 		PlayDoubleArray.playDoubleArray(amplitudes);
 	}
 	
+	//Tests printing the calculated amplitude length multiplier of multiple MIDI files so that I could compare 
+	//with the ideal value and see how to manipulate the multiplier calculation to obtain that value
 	public static void printALM() {
 		double classicalALM = MIDIUtil.getAmplitudeLengthMultiplier(CLASSICAL_MID);
 		double furEliseALM = MIDIUtil.getAmplitudeLengthMultiplier(FUR_ELISE_MID);

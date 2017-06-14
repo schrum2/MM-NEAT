@@ -19,7 +19,6 @@ import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Track;
 
 import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.util.datastructures.Triple;
 import edu.utexas.cs.nn.util.sound.PlayDoubleArray.AmplitudeArrayPlayer;
 
@@ -34,7 +33,6 @@ public class MIDIUtil {
 
 	public static final int NOTE_ON = 0x90;
 	public static final int NOTE_OFF = 0x80;
-	public static final String[] NOTE_NAMES = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
 
 	//Representative frequencies for octave 1
 	public static final double C1 = 32.70;
@@ -53,75 +51,9 @@ public class MIDIUtil {
 	// representative frequencies for octave 1 read into double array so that they 
 	// can be manipulated based on their index in noteToFreq()
 	public static final double[] NOTES = new double[]{C1, CSHARP1, D1, DSHARP1, E1, F1, FSHARP1, G1, GSHARP1, A1, ASHARP1, B1};
-
 	public static final int NOTES_IN_OCTAVE = 12; //number of chromatic notes in a single octave
 
-	public static final int BPM = 120; //beats per minute - should be generalized
-	public static final int PPQ = 96; //parts per quarter note - should be generalized
-
-	public static final int CLIP_VOLUME_LENGTH = 4000;
-	
-	public static final double ALM_CONSTANT = 23.0;
-
-	/**
-	 * Method that takes in a MIDI file and prints out useful information about the note, whether the 
-	 * note is on or off, the key, and the velocity. This is printed for each individual track in the 
-	 * MIDI file.
-	 * 
-	 * Not necessary for functioning of other methods, but contains useful information about 
-	 * functioning of MIDI files (channels, tracks, notes, velocity, etc.)
-	 * 
-	 * @param audioFile input MIDI file
-	 */
-	public static void MIDIData(File audioFile) {
-		Sequence sequence;
-		try {
-			sequence = MidiSystem.getSequence(audioFile);
-			System.out.println("tick length: " + sequence.getTickLength());
-			System.out.println("microsecond length: " + sequence.getMicrosecondLength());
-			System.out.println("resolution: " + sequence.getResolution());
-			System.out.println("division type: " + sequence.getDivisionType());
-			int trackNumber = 0;
-			for (Track track :  sequence.getTracks()) {
-				trackNumber++;
-				System.out.println("Track " + trackNumber + ": size = " + track.size());
-				System.out.println();
-				//MiscUtil.waitForReadStringAndEnterKeyPress();
-				for (int i=0; i < track.size(); i++) { 
-					MidiEvent event = track.get(i);
-					//System.out.print("@" + event.getTick() + " ");
-					MidiMessage message = event.getMessage();
-					if (message instanceof ShortMessage) {
-						ShortMessage sm = (ShortMessage) message;
-						//System.out.print("Channel: " + sm.getChannel() + " ");
-						if (sm.getCommand() == NOTE_ON) {
-							int key = sm.getData1();
-							int octave = (key / 12)-1;
-							int note = key % 12;
-							String noteName = NOTE_NAMES[note];
-							int velocity = sm.getData2();
-							//System.out.println("Note on, " + noteName + octave + " key=" + key + " velocity: " + velocity);
-						} else if (sm.getCommand() == NOTE_OFF) {
-							int key = sm.getData1();
-							int octave = (key / 12)-1;
-							int note = key % 12;
-							String noteName = NOTE_NAMES[note];
-							int velocity = sm.getData2();
-							//System.out.println("Note off, " + noteName + octave + " key=" + key + " velocity: " + velocity);
-						} else {
-							//System.out.println("Command:" + sm.getCommand());
-						}
-					} else {
-						//System.out.println("Other message: " + message.getClass());
-					}
-				}
-
-				System.out.println();
-			}
-		} catch (InvalidMidiDataException | IOException e) {
-			e.printStackTrace();
-		}		
-	}
+	public static final double ALM_CONSTANT = 23.0; //constant used to derive correct amplitude length multiplier - not sure why it works
 
 	/**
 	 * Method that calculates array lists of frequency, length, and start time data for all tracks in an array
@@ -172,7 +104,7 @@ public class MIDIUtil {
 					lines.put(freq, index);
 				} else if((sm.getCommand() == NOTE_OFF || (sm.getCommand() == NOTE_ON && sm.getData2() == 0))) { // Check: is negative velocity possible?
 					if(lines.containsKey(freq)) {
-						int index = lines.get(freq); //TODO: this line causes an error with files w/multiple tracks. Tried to fix it with boolean began
+						int index = lines.get(freq);
 						long tickStart = map.get(freq);
 						long tickEnd = tick;
 
@@ -195,7 +127,7 @@ public class MIDIUtil {
 	 * @param key Input integer taken from MIDI file that encodes the note and octave
 	 * @return Frequency of input MIDI note
 	 */
-	public static double noteToFreq(int key) {
+	private static double noteToFreq(int key) {
 		int note = key % NOTES_IN_OCTAVE;
 		int octave = (key / NOTES_IN_OCTAVE) -1;
 		return NOTES[note] * Math.pow(2.0, (double) octave - 1.0); // this is because frequencies of notes are always double the frequencies of the lower adjacent octave
@@ -234,59 +166,37 @@ public class MIDIUtil {
 	 * @return playable double array of amplitudes
 	 */
 	public static double[] lineToAmplitudeArray(String audio, ArrayList<Triple<ArrayList<Double>, ArrayList<Long>, ArrayList<Long>>> midiLists, Network cppn, double noteLengthScale) {
-		File audioFile = new File(audio);
-		try {
-			Sequence sequence = MidiSystem.getSequence(audioFile);
-			Track[] tracks = sequence.getTracks();
-			int longestTrack = 0;
-			for(int i = 0; i < tracks.length; i++) {
-				longestTrack = Math.max(longestTrack, tracks[i].size());
-			}
-			System.out.println("longest track: " + longestTrack);
-			// dividing sample rate of default audio format by the microseconds per tick to get equivalent of correct answer
-			double amplitudeLengthMultiplier = getAmplitudeLengthMultiplier(audio);
-			System.out.println("midi list size: " + midiLists.size());
-			amplitudeLengthMultiplier *= noteLengthScale;
-			amplitudeLengthMultiplier = Math.ceil(amplitudeLengthMultiplier); // To prevent rounding issues with array indexes
-			System.out.println("amplitudeLengthMultiplier: " + amplitudeLengthMultiplier);
-			// amplitudeLengthMultiplier = 60.0; //this value works better for SOLO_PIANO_MID, and it is almost twice the value of the original 
-			// amplitudeLengthMultiplier. Need to figure this out eventually
-
-			long totalTicks = 0;
-			// Need as many ticks as are in the longest line
-			for(int i = 0; i < midiLists.size(); i++) {
-				long lineTicks = midiLists.get(i).t3.get(midiLists.get(i).t3.size()-1) // last start time, plus
-						+ midiLists.get(i).t2.get(midiLists.get(i).t2.size()-1);// last duration
-				System.out.println("line ticks: " + lineTicks);
-				System.out.println("total ticks: " + totalTicks);
-				totalTicks = Math.max(totalTicks, lineTicks);
-			}
-
-			double[] amplitudeArray = new double[(int) (amplitudeLengthMultiplier*totalTicks)];
-			for(int k = 0; k < midiLists.size(); k++) {
-				for(int i = 0; i < midiLists.get(k).t1.size(); i++) {
-					int amplitudeLength = (int)(amplitudeLengthMultiplier*midiLists.get(k).t2.get(i));
-					double[] amplitude = SoundFromCPPNUtil.amplitudeGenerator(cppn, amplitudeLength, midiLists.get(k).t1.get(i));
-					int start = (int)(amplitudeLengthMultiplier*midiLists.get(k).t3.get(i));
-					for(int j = 0; j < amplitude.length; j++) {
-						amplitudeArray[start+j] += amplitude[j];
-					}
+		double amplitudeLengthMultiplier = getAmplitudeLengthMultiplier(audio); // access value that amplitudes are multiplied by to ensure correct playback speed 
+		amplitudeLengthMultiplier *= noteLengthScale; // for JSlider with user feedback regarding playback speed
+		amplitudeLengthMultiplier = Math.ceil(amplitudeLengthMultiplier); // To prevent rounding issues with array indexes
+		long totalTicks = 0;
+		// Need as many ticks as are in the longest line
+		for(int i = 0; i < midiLists.size(); i++) {
+			long lineTicks = midiLists.get(i).t3.get(midiLists.get(i).t3.size()-1) // last start time, plus
+					+ midiLists.get(i).t2.get(midiLists.get(i).t2.size()-1);// last duration
+			System.out.println("line ticks: " + lineTicks);
+			System.out.println("total ticks: " + totalTicks);
+			totalTicks = Math.max(totalTicks, lineTicks);
+		}
+		//create representative double array of all soundlines
+		double[] amplitudeArray = new double[(int) (amplitudeLengthMultiplier*totalTicks)];
+		for(int k = 0; k < midiLists.size(); k++) { //loop through all lines
+			for(int i = 0; i < midiLists.get(k).t1.size(); i++) { //loop through all frequencies in a line
+				int amplitudeLength = (int)(amplitudeLengthMultiplier*midiLists.get(k).t2.get(i));
+				double[] amplitude = SoundFromCPPNUtil.amplitudeGenerator(cppn, amplitudeLength, midiLists.get(k).t1.get(i));
+				//incorporate note lengths into array after frequencies are added
+				int start = (int)(amplitudeLengthMultiplier*midiLists.get(k).t3.get(i));
+				for(int j = 0; j < amplitude.length; j++) {
+					amplitudeArray[start+j] += amplitude[j];
 				}
 			}
-
-			// Schrum: regarding this normalization step: we seem to have another magic number.
-			// The value 2 works for fur Elise, but what about other MIDIs?
-			for(int i = 0; i < amplitudeArray.length; i++) {
-				amplitudeArray[i] /= midiLists.size(); // divide by total number of voices played at once
-			}
-			return amplitudeArray;
-		} catch (InvalidMidiDataException | IOException e) {
-			e.printStackTrace();
-			System.exit(1);
 		}
-		return null; //shouldn't happen
+		for(int i = 0; i < amplitudeArray.length; i++) {
+			amplitudeArray[i] /= midiLists.size(); // divide by total number of voices played at once
+		}
+		return amplitudeArray;
 	}	
-	
+
 	/**
 	 * Obtains value all amplitudes are multiplied by so that 
 	 * values play back at the correct speed after being manipulated
