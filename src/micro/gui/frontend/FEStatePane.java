@@ -150,7 +150,8 @@ public class FEStatePane extends JPanel {
                    MLPSMCTS.class,
                    AHTNAI.class,
                    InformedNaiveMCTS.class,
-                   PuppetSearchMCTS.class
+                   PuppetSearchMCTS.class,
+                   PortfolioAI.class
                   };
 
     
