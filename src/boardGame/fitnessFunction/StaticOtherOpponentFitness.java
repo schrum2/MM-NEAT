@@ -1,10 +1,15 @@
 package boardGame.fitnessFunction;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import boardGame.BoardGameState;
 import boardGame.agents.BoardGamePlayer;
+import boardGame.agents.HeuristicBoardGamePlayer;
+import boardGame.heuristics.BoardGameHeuristic;
+import boardGame.heuristics.NNBoardGameHeuristic;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.tasks.boardGame.BoardGameUtil;
 import edu.utexas.cs.nn.util.ClassCreation;
@@ -14,13 +19,15 @@ public class StaticOtherOpponentFitness<T extends BoardGameState> implements Boa
 	
 	BoardGamePlayer<T> opponent;
 	BoardGameFitnessFunction<T> selectionFunction;
-	
+	int currentGen = -1;
 	List<BoardGameFitnessFunction<T>> fitFunctions = new ArrayList<BoardGameFitnessFunction<T>>();
+	
+	Map<Long, Double> evaluated = new HashMap<Long, Double>();
 
 	@SuppressWarnings("unchecked")
 	public StaticOtherOpponentFitness(){
 		try {
-			opponent = (BoardGamePlayer<T>) ClassCreation.createObject("boardGameOpponent"); // The Opponent; TODO: Add OtherStaticOpponent Parameter?
+			opponent = (BoardGamePlayer<T>) ClassCreation.createObject("boardGameOpponent");
 			selectionFunction = new SimpleWinLoseDrawBoardGameFitness<T>();
 		} catch (NoSuchMethodException e) {
 			e.printStackTrace();
@@ -33,11 +40,29 @@ public class StaticOtherOpponentFitness<T extends BoardGameState> implements Boa
 	
 	@Override
 	public double getFitness(BoardGamePlayer<T> player) {
-		BoardGamePlayer<T>[] players = new BoardGamePlayer[]{player, opponent};
 		
-		ArrayList<Pair<double[], double[]>> score = BoardGameUtil.playGame(MMNEAT.boardGame, players, fitFunctions);
+		long genotypeID = -1;
+		BoardGameHeuristic bgh;
 		
-		return score.get(0).t1[0];
+		if(player instanceof HeuristicBoardGamePlayer){
+			bgh = ((HeuristicBoardGamePlayer) player).getHeuristic();
+			if(bgh instanceof NNBoardGameHeuristic){
+				genotypeID = ((NNBoardGameHeuristic) bgh).getID();
+			}
+		}
+		
+		if(evaluated.containsKey(genotypeID)){
+			return evaluated.get(genotypeID);
+		}else{
+			BoardGamePlayer<T>[] players = new BoardGamePlayer[]{player, opponent};
+			
+			ArrayList<Pair<double[], double[]>> game = BoardGameUtil.playGame(MMNEAT.boardGame, players, fitFunctions);
+			Double score = game.get(0).t1[0];
+			
+			evaluated.put(genotypeID, score);
+			
+			return score;
+		}
 	}
 
 	@Override
@@ -52,7 +77,12 @@ public class StaticOtherOpponentFitness<T extends BoardGameState> implements Boa
 
 	@Override
 	public void reset() {
-		// Doesn't need to be reset
+		 int testGen = MMNEAT.ea.currentGeneration();
+		 
+		 if(currentGen != testGen){
+			evaluated.clear(); 
+			currentGen = testGen;
+		 }
 	}
 
 }

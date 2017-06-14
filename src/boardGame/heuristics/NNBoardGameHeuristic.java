@@ -10,15 +10,21 @@ import edu.utexas.cs.nn.util.MiscUtil;
 
 public class NNBoardGameHeuristic<T extends Network, S extends BoardGameState> implements BoardGameHeuristic<S> {
 
+	long ID;
 	T network;
 	BoardGameFeatureExtractor<S> featExtract;
 	
-	public NNBoardGameHeuristic(T net, BoardGameFeatureExtractor<S> fe){
+	public NNBoardGameHeuristic(long genotypeID, T net, BoardGameFeatureExtractor<S> fe){
+		ID = genotypeID;
 		network = net;
 		featExtract = fe;
 	}
 	
 	public NNBoardGameHeuristic(){ // Used as a blank constructor; the Network can be set in the BoardGameTasks
+	}
+	
+	public long getID(){
+		return ID;
 	}
 	
 	@Override

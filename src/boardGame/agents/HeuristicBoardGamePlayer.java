@@ -16,5 +16,8 @@ public abstract class HeuristicBoardGamePlayer<T extends BoardGameState> impleme
 		boardHeuristic = bgh;
 	}
 
-
+	public BoardGameHeuristic<T> getHeuristic(){
+		return boardHeuristic;
+	}
+	
 }

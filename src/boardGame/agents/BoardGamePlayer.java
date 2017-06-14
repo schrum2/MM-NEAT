@@ -17,4 +17,6 @@ public interface BoardGamePlayer<T extends BoardGameState> {
 	 */
 	public T takeAction(T current);
 	
+	
+	
 }

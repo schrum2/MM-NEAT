@@ -109,7 +109,7 @@ public class BoardGameBenchmarkAllPopExperiment<T extends Network, S extends Boa
 			}
 			
 			
-			player.setHeuristic((new NNBoardGameHeuristic<T,S>(gene.getPhenotype(), featExtract)));
+			player.setHeuristic((new NNBoardGameHeuristic<T,S>(gene.getId(), gene.getPhenotype(), featExtract)));
 			BoardGamePlayer<S>[] players = new BoardGamePlayer[]{player, opponent};
 
 			for(int i = 0; i < CommonConstants.trials; i++){

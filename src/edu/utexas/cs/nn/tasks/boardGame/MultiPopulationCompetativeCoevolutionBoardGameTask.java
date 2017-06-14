@@ -99,7 +99,7 @@ public class MultiPopulationCompetativeCoevolutionBoardGameTask<S extends BoardG
 		int index = 0;
 		for(Genotype gene : team){
 			HeuristicBoardGamePlayer<S> evolved = (HeuristicBoardGamePlayer<S>) players[index]; // Creates the Player based on the command line
-			evolved.setHeuristic((new NNBoardGameHeuristic((Network) gene.getPhenotype(), featExtract)));
+			evolved.setHeuristic((new NNBoardGameHeuristic(gene.getId(), (Network) gene.getPhenotype(), featExtract)));
 			teamPlayers[index++] = evolved;
 		}
 		// End of Copied Code
