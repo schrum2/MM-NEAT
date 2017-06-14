@@ -22,7 +22,7 @@ public class OffsetHybrIDGenotype extends HyperNEATCPPNGenotype {
 	public OffsetHybrIDGenotype(HyperNEATCPPNGenotype hngt) {
 		this(hngt.links, hngt.nodes, hngt.neuronsPerModule);
 	}
-	
+
 	public OffsetHybrIDGenotype(ArrayList<LinkGene> links, ArrayList<NodeGene> genes, int outputNeurons) {
 		super(links, genes, outputNeurons);
 		rvg = new RealValuedGenotype(HyperNEATUtil.totalPossibleLinks(HyperNEATUtil.getHyperNEATTask()));
@@ -64,8 +64,11 @@ public class OffsetHybrIDGenotype extends HyperNEATCPPNGenotype {
 							long sourceID = getInnovationID(fromXIndex, fromYIndex, sourceSubstrateIndex, subs);
 							long targetID = getInnovationID(targetXindex, targetYIndex, targetSubstrateIndex, subs);		
 							LinkGene link = getLinkBetween(sourceID, targetID); //calculate link between source and target
-							double offset = offsets.get(offsetIndex);
-							link.weight += offset; //manipulate link weight based on offset at current index
+							if(link != null) {
+								double offset = offsets.get(offsetIndex);
+								link.weight += offset; //manipulate link weight based on offset at current index
+							}
+
 							offsetIndex++; //increment offsetIndex
 						}
 					}

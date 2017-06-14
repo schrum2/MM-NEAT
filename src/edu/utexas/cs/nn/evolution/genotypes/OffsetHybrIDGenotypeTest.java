@@ -2,6 +2,8 @@ package edu.utexas.cs.nn.evolution.genotypes;
 
 import static org.junit.Assert.*;
 
+import java.util.Arrays;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -9,6 +11,7 @@ import org.junit.Test;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.networks.hyperneat.HyperNEATUtil;
 import edu.utexas.cs.nn.parameters.Parameters;
+import edu.utexas.cs.nn.util.random.RandomNumbers;
 
 public class OffsetHybrIDGenotypeTest {
 	HyperNEATCPPNGenotype hncg;
@@ -32,27 +35,23 @@ public class OffsetHybrIDGenotypeTest {
 		for(int i = 0; i < HyperNEATUtil.totalPossibleLinks(HyperNEATUtil.getHyperNEATTask()); i++) {
 			ohg.rvg.setValue(i, 0.0);
 		}
-		assertEquals(hncg.getPhenotype(), ohg.getPhenotype());
+		
+		// Loop 100 times
+		// Generate random input arrays: RandomNumbers.randomArray(size)
+		// Send input array to both networks: use process to send input and get output
+		// assertArrayEquals on output arrays
+		
+		for(int i = 0; i < 100; i++) {
+			double[] randomArray = RandomNumbers.randomArray(hncg.numIn);
+			double[] hncgOutput = hncg.getPhenotype().process(randomArray);
+			double[] ohgOutput = ohg.getPhenotype().process(randomArray);
+			assertTrue(Arrays.equals(hncgOutput, ohgOutput));
+		}
 	}
 	
 	@Test
 	public void testLinkSize() {
 		assertEquals(ohg.links.size(), hncg.links.size());
 	}
-	
-//	@Test
-//	public void testGetPhenotype() {
-//		fail("Not yet implemented");
-//	}
-//
-//	@Test
-//	public void testCopy() {
-//		fail("Not yet implemented");
-//	}
-//
-//	@Test
-//	public void testNewInstance() {
-//		fail("Not yet implemented");
-//	}
 
 }
