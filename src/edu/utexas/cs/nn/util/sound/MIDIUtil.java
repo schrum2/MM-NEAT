@@ -223,10 +223,11 @@ public class MIDIUtil {
 	 * Loops through array of frequencies generated from a MIDI file and plays it using a CPPN,
 	 * essentially making the CPPN the "instrument". Does so by calling freqFromMIDI to generate
 	 * a pair of double arrays corresponding to the frequencies and durations of all notes in  
-	 * all tracks of a file, and then calls playMIDIWithCPPNFromDoubleArray() with the double arrays.
+	 * all tracks of a file, and then calls playDoubleArray() with the double arrays.
 	 * 
 	 * @param audio string representation of MIDI file being analyzed
 	 * @param cppn Input network being used as the "instrument" to generate MIDI file playback
+	 * @param noteLengthScale Specified playback speed from JSlider on Breedesizer interface
 	 */
 	public static AmplitudeArrayPlayer playMIDIWithCPPNFromString(String audio, Network cppn, double noteLengthScale) {
 		File audioFile = new File(audio);
@@ -244,13 +245,14 @@ public class MIDIUtil {
 	}
 
 	/**
-	 * Loops through array of frequencies generated from a MIDI file and plays it using a CPPN,
-	 * essentially making the CPPN the "instrument". Does so by calling freqFromMIDI to generate
-	 * a pair of double arrays corresponding to the frequencies and durations of all notes in  
-	 * all tracks of a file, and then calls playMIDIWithCPPNFromDoubleArray() with the double arrays.
+	 * Loops through array of frequencies generated from a MIDI file and plays it using an array of CPPNS,
+	 * essentially making the CPPN the "instrument" for each track. Uses similar code as the original 
+	 * playMIDIWithCPPNFromString() method, but calculates double arrays for individual tracks so that they can
+	 * be manipulated by unique CPPNs, and then adds all arrays together into a larger one using zipAdd().
 	 * 
 	 * @param audio string representation of MIDI file being analyzed
 	 * @param cppn Input network being used as the "instrument" to generate MIDI file playback
+	 * @param noteLengthScale Specified playback speed from JSlider on Breedesizer interface
 	 */
 	public static AmplitudeArrayPlayer playMIDIWithCPPNsFromString(String audio, Network[] cppns, double noteLengthScale) {
 		File audioFile = new File(audio);
@@ -259,19 +261,19 @@ public class MIDIUtil {
 			sequence = MidiSystem.getSequence(audioFile);
 			Track[] tracks = sequence.getTracks();
 			int arrayLength = 0;
-			for(int i = 0; i < tracks.length; i++) {
+			for(int i = 0; i < tracks.length; i++) { //calculate longest track so that array can be initialized at correct size
 				arrayLength = Math.max(tracks[i].size(), arrayLength);
 			}
-			double[] data = new double[arrayLength];
+			double[] data = new double[arrayLength]; //larger array that all arrays from individual tracks will be fed into
 			System.out.println("array length: " + arrayLength);
 			for(int i = 0; i < tracks.length; i++) {
 				ArrayList<Triple<ArrayList<Double>, ArrayList<Long>, ArrayList<Long>>> sound = soundLines(tracks[i]);
-				if(i > cppns.length) {
+				if(i > cppns.length) { //if the number of tracks outnumbers the CPPNs, it loops through them again
 					double[] lineData = lineToAmplitudeArray(audio, sound, cppns[i-cppns.length], noteLengthScale);
-					data = ArrayUtil.zipAdd(data, lineData, arrayLength);
-				} else {
+					data = ArrayUtil.zipAdd(data, lineData, arrayLength); //add new values to larger double array
+				} else { //first loopthrough of CPPNs
 					double[] lineData = lineToAmplitudeArray(audio, sound, cppns[i], noteLengthScale);
-					data = ArrayUtil.zipAdd(data, lineData, arrayLength);
+					data = ArrayUtil.zipAdd(data, lineData, arrayLength); //add new values to larger double array
 				}				
 			}		
 			return PlayDoubleArray.playDoubleArray(data);
