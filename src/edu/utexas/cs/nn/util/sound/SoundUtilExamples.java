@@ -55,6 +55,7 @@ public class SoundUtilExamples {
 	public static final String SEASHORE_WAV = "data/sounds/Digital-Seashore.wav";
 	public static final String ALARM_WAV = "data/sounds/tone06.wav";
 	public static final String CHIPTUNE_WAV = "data/sounds/8-Bit-Noise-1.wav";
+	public static final String CHRISTMAS_MID = "data/sounds/christmas.mid";
 
 	public static void main(String[] args) throws UnsupportedAudioFileException, IOException, LineUnavailableException, InterruptedException, JavaLayerException, InvalidMidiDataException {
 		//CPPN initialization
@@ -69,6 +70,8 @@ public class SoundUtilExamples {
 		Network cppn = test.getCPPN();
 
 		// method call
+		//MIDIUtil.playApplet(CHRISTMAS_MID);
+		//MiscUtil.waitForReadStringAndEnterKeyPress();
 		newMIDIUtilPlay(cppn);
 	}
 
@@ -539,11 +542,11 @@ public class SoundUtilExamples {
 	public static void newMIDIUtilPlay(Network cppn) throws InvalidMidiDataException, IOException {
 		//MIDIUtil.playApplet(SOLO_PIANO_MID);
 		//MiscUtil.waitForReadStringAndEnterKeyPress();
-		File midiFile = new File(SOLO_PIANO_MID);
+		File midiFile = new File(CHRISTMAS_MID);
 		Sequence sequence = MidiSystem.getSequence(midiFile);
 		Track[] tracks = sequence.getTracks();
 		ArrayList<Triple<ArrayList<Double>, ArrayList<Long>, ArrayList<Long>>> midiLists = MIDIUtil.soundLines(tracks);		
-		double[] amplitudes = MIDIUtil.lineToAmplitudeArray(SOLO_PIANO_MID, midiLists, cppn, 1);
+		double[] amplitudes = MIDIUtil.lineToAmplitudeArray(CHRISTMAS_MID, midiLists, cppn, 1);
 		PlayDoubleArray.playDoubleArray(amplitudes);
 	}
 	
