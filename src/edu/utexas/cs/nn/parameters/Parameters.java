@@ -621,7 +621,7 @@ public class Parameters {
 		booleanOptions.add("mRTSOpponentsAll", false, "whether there is a substrate dedicated to all of the blue agents' units");
 		booleanOptions.add("heuristicOverrideTerminalStates", false, "Overrides the Network's evaluation of a terminal BoardGameState");
 		booleanOptions.add("microRTSGrowingEnemySet", false, "adds multiple enemies to a trial instead of cycling through them by generation");
-		booleanOptions.add("hybrID", true, "Indicates whether HybrID is running or not");
+		booleanOptions.add("hybrID", false, "Indicates whether HybrID is running or not");
 		booleanOptions.add("minimaxRandomChance", true, "Controls whether or not a Minimax Player has a chance of picking a Random Move instead of the best Move");
 		booleanOptions.add("offsetHybrID", false, "Determines whether to implement preset-switch version of HybrID or offset version of HybrID");
 		// Double parameters
