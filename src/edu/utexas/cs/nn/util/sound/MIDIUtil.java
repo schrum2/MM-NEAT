@@ -264,15 +264,10 @@ public class MIDIUtil {
 			double[] data = new double[0];
 			for(int i = 0; i < tracks.length; i++) {
 				ArrayList<Triple<ArrayList<Double>, ArrayList<Long>, ArrayList<Long>>> sound = soundLines(tracks[i]);
-				if(i > cppns.length-1) { //if the number of tracks outnumbers the CPPNs, it loops through them again
-					double[] lineData = lineToAmplitudeArray(audio, sound, cppns[i-cppns.length], noteLengthScale);
-					data = ArrayUtil.zipAdd(data, lineData, Math.max(data.length, lineData.length)); //add new values to larger double array
-				} else { //first loopthrough of CPPNs
-					double[] lineData = lineToAmplitudeArray(audio, sound, cppns[i], noteLengthScale);
-//					System.out.println("larger array length: " + data.length);
-//					System.out.println("line data length: " + lineData.length);
-					data = ArrayUtil.zipAdd(data, lineData, Math.max(data.length, lineData.length)); //add new values to larger double array
-				}				
+				double[] lineData = lineToAmplitudeArray(audio, sound, cppns[i % cppns.length], noteLengthScale);
+//				System.out.println("larger array length: " + data.length);
+//				System.out.println("line data length: " + lineData.length);
+				data = ArrayUtil.zipAdd(data, lineData, Math.max(data.length, lineData.length)); //add new values to larger double array
 			}
 			//to control volume
 			for(int i = 0; i < data.length; i++) {

@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.LinkedList;
 import java.util.Scanner;
 
 import javax.swing.BorderFactory;
@@ -129,12 +130,16 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	private JPanel topper;
 	protected JPanel top;
 	
+	public LinkedList<Integer> selectedCPPNs;
+	
 	/**
 	 * Default Constructor
 	 * @throws IllegalAccessException 
 	 */
 	public InteractiveEvolutionTask() throws IllegalAccessException {		
 		inputMultipliers = new double[numCPPNInputs()];
+		
+		selectedCPPNs = new LinkedList<Integer>();
 		
 		MMNEAT.registerFitnessFunction("User Preference");
 		//sets mu to a divisible number
@@ -595,10 +600,12 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	 */
 	private void buttonPressed(int scoreIndex) {
 		if(chosen[scoreIndex]) {//if image has already been clicked, reset
+			selectedCPPNs.remove(scoreIndex);
 			chosen[scoreIndex] = false;
 			buttons.get(scoreIndex).setBorder(BorderFactory.createLineBorder(Color.lightGray, BORDER_THICKNESS));
 			scores.get(scoreIndex).replaceScores(new double[]{0});
 		} else {//if image has not been clicked, set it
+			selectedCPPNs.add(scoreIndex);
 			chosen[scoreIndex] = true;
 			buttons.get(scoreIndex).setBorder(BorderFactory.createLineBorder(Color.BLUE, BORDER_THICKNESS));
 			scores.get(scoreIndex).replaceScores(new double[]{1.0});
