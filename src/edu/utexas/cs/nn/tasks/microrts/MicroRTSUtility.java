@@ -211,7 +211,8 @@ public class MicroRTSUtility {
 	 *         layers
 	 */
 	public static List<Substrate> getSubstrateInformation(PhysicalGameState pgs) {
-		return HyperNEATUtil.getSubstrateInformation(pgs.getWidth(), pgs.getHeight(), , processingWidth, processingDepth, output);
+		List<Triple<String, Integer, Integer>> output = null; //TODO
+		return HyperNEATUtil.getSubstrateInformation(pgs.getWidth(), pgs.getHeight(), getNumInputSubstrates(), processingWidth, processingDepth, output);
 	} 
 
 	/**
@@ -221,7 +222,12 @@ public class MicroRTSUtility {
 	 * @return
 	 */
 	public static List<Triple<String, String, Boolean>> getSubstrateConnectivity(PhysicalGameState pgs) {
-		return HyperNEATUtil.getSubstrateConnectivity(numInputSubstrates, processingWidth, processingDepth, outputNames);
+		List<String> outputNames = null;//TODO
+		return HyperNEATUtil.getSubstrateConnectivity(getNumInputSubstrates(), outputNames);
+	}
+	
+	private static int getNumInputSubstrates(){
+		return -1; //TODO
 	}
 	
 	/**
