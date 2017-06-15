@@ -45,7 +45,7 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 		Genotype<T> g = PopulationUtil.extractGenotype(NNfile);
 		nn = g.getPhenotype();
 	}
-	
+
 	/**
 	 * Default constructor used by MMNEAT's class creation methods.
 	 * Must pass in the network via the setNetwork method of parent class.
@@ -79,7 +79,7 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 		}
 		return inputs;
 	}
-	
+
 	/**
 	 * puts the current unit into all substrates where it should go
 	 * according to parameters.
@@ -161,11 +161,13 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 	@Override
 	public String[] sensorLabels() {
 		assert pgs != null : "There must be a physical game state in order to extract height and width";
-		String[] labels = new String[pgs.getWidth()*pgs.getHeight() * 2];
-		for(int i = 0; i < pgs.getWidth(); i++){
-			for(int j = 0; j < pgs.getHeight(); j++){
-				labels[i*pgs.getWidth() + j ] = "Mobile unit:  (" + i + ", " + j + ")";
-				labels[i*pgs.getWidth() + j + pgs.getWidth()*pgs.getHeight()] = "Immobile unit:  (" + i + "," + j + ")";
+		String[] labels = new String[pgs.getWidth()*pgs.getHeight() * numSubstrates];
+		for(int h = 0; h < numSubstrates; h++ ){
+			for(int i = 0; i < pgs.getWidth(); i++){
+				for(int j = 0; j < pgs.getHeight(); j++){
+					labels[i*pgs.getWidth() + j ] = "Mobile unit:  (" + i + ", " + j + ")";
+					labels[i*pgs.getWidth() + j + pgs.getWidth()*pgs.getHeight()] = "Immobile unit:  (" + i + "," + j + ")";
+				}
 			}
 		}
 		return labels;
