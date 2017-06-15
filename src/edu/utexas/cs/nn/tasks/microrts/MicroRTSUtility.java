@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import edu.utexas.cs.nn.networks.hyperneat.HyperNEATUtil;
 import edu.utexas.cs.nn.networks.hyperneat.Substrate;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
@@ -32,6 +33,9 @@ public class MicroRTSUtility {
 	public static final int WINDOW_LENGTH = 640;
 	private static boolean prog = Parameters.parameters.classParameter("microRTSFitnessFunction").equals(ProgressiveFitnessFunction.class);
 	private static boolean coevolution;
+	
+	public final static int processingDepth = Parameters.parameters.integerParameter("HNProcessDepth"); //not used yet
+	public final static int processingWidth = Parameters.parameters.integerParameter("HNProcessWidth"); //not used yet
 
 	public static <T> ArrayList<Pair<double[], double[]>> oneEval(AI ai1, AI ai2, MicroRTSInformation task, RTSFitnessFunction ff, PhysicalGameStateJFrame w) {		
 		ArrayList<Integer> workerWithResourceID = new ArrayList<>(); //change to hashset		
@@ -207,32 +211,7 @@ public class MicroRTSUtility {
 	 *         layers
 	 */
 	public static List<Substrate> getSubstrateInformation(PhysicalGameState pgs) {
-		int height = pgs.getHeight();
-		int width = pgs.getWidth();
-		ArrayList<Substrate> subs = new ArrayList<Substrate>();
-
-		Substrate inputsBoardState = new Substrate(new Pair<Integer, Integer>(width, height),
-				Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, Substrate.INPUT_SUBSTRATE, 0), "Inputs Board State");
-		subs.add(inputsBoardState);
-
-		//		if(Parameters.parameters.booleanParameter("")) {
-		//			
-		//		}
-		//		if( My){
-		//			
-		//		}
-
-		// Alice: when ComplexEvaluationFunction is more developped, this method will
-		// need to be generalized so that it can work with any combination of substrate parameters
-
-		Substrate processing = new Substrate(new Pair<Integer, Integer>(width, height), 
-				Substrate.PROCCESS_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, Substrate.PROCCESS_SUBSTRATE, 0), "Processing");
-		subs.add(processing);
-		Substrate output = new Substrate(new Pair<Integer, Integer>(1,1),
-				Substrate.OUTPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, Substrate.OUTPUT_SUBSTRATE, 0), "Output");
-		subs.add(output);
-
-		return subs;
+		return HyperNEATUtil.getSubstrateInformation(pgs.getWidth(), pgs.getHeight(), , processingWidth, processingDepth, output);
 	} 
 
 	/**
@@ -242,19 +221,9 @@ public class MicroRTSUtility {
 	 * @return
 	 */
 	public static List<Triple<String, String, Boolean>> getSubstrateConnectivity(PhysicalGameState pgs) {
-		ArrayList<Triple<String, String, Boolean>> conn = new ArrayList<Triple<String, String, Boolean>>();
-
-		//TODO: when ComplexEvaluationFunction is more developed, here is where additional substrates will be connected to each other
-
-		conn.add(new Triple<String, String, Boolean>("Inputs Board State", "Processing", Boolean.FALSE));			
-
-		conn.add(new Triple<String, String, Boolean>("Processing","Output", Boolean.FALSE));
-		if(Parameters.parameters.booleanParameter("extraHNLinks")) {
-			conn.add(new Triple<String, String, Boolean>("Inputs Board State","Output", Boolean.FALSE));
-		}
-		return conn;
+		return HyperNEATUtil.getSubstrateConnectivity(numInputSubstrates, processingWidth, processingDepth, outputNames);
 	}
-
+	
 	/**
 	 * determines whether unit is in given range.
 	 * @param u unit to be judged
