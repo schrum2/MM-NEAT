@@ -77,7 +77,6 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 				System.out.println();
 			}
 		}
-		MiscUtil.waitForReadStringAndEnterKeyPress(); //toto delet
 		return inputs;
 	}
 	
