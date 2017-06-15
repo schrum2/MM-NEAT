@@ -20,8 +20,8 @@ public class HyperNEATTetrisTask<T extends Network> extends TetrisTask<T> implem
 	// These values will be defined before they are needed
 	public static final int HYPERNEAT_OUTPUT_SUBSTRATE_DIMENSION = 1; // Tetris output is on single 1 by 1 substrate
 	private static final int SUBSTRATE_COORDINATES = 4; // Schrum: What is this?
-	public final int numProcessLayers = Parameters.parameters.integerParameter("HNTTetrisProcessDepth");
-	public final int processingWidth = Parameters.parameters.integerParameter("HNTTetrisProcessWidth");
+	public final int numProcessLayers = Parameters.parameters.integerParameter("HNProcessDepth");
+	public final int processingWidth = Parameters.parameters.integerParameter("HNProcessWidth");
 	private static List<Substrate> substrateInformation = null;
 	private List<Triple<String, String, Boolean>> substrateConnectivity = null; // Schrum: I'm pretty sure this can/should be static
 	// Value should be defined when class is constructed by a ClassCreation call, after the rlGlueExtractor is specified.
