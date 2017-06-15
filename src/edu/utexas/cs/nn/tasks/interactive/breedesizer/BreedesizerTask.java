@@ -191,7 +191,9 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 				if(!MIDIPlaybackType.isSelected()) { // action for simple MIDI playback
 					midiPlay = MIDIUtil.playMIDIWithCPPNFromString(Parameters.parameters.stringParameter("remixMIDIFile"), currentCPPN, noteLengthScale);
 				} else { // action for advanced MIDI playback
-					for(int i = 0; i < selectedCPPNs.size(); i++) { //read in all CPPNs from selectedCPPNS list to an array of networks
+					//read in all CPPNs from selectedCPPNS list to an array of networks
+					// Read backwards so most recent selection is present
+					for(int i = selectedCPPNs.size() - 1; i >= 0; i--) { 
 						cppns[i] = scores.get(selectedCPPNs.get(i)).individual.getPhenotype();
 					}
 					midiPlay = MIDIUtil.playMIDIWithCPPNsFromString(Parameters.parameters.stringParameter("remixMIDIFile"), cppns, noteLengthScale);

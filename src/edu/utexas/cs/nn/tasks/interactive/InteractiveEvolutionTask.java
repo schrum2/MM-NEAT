@@ -600,7 +600,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	 */
 	private void buttonPressed(int scoreIndex) {
 		if(chosen[scoreIndex]) {//if image has already been clicked, reset
-			selectedCPPNs.remove(scoreIndex); //remove CPPN from list of currently selected CPPNs
+			selectedCPPNs.remove(new Integer(scoreIndex)); //remove CPPN from list of currently selected CPPNs
 			chosen[scoreIndex] = false;
 			buttons.get(scoreIndex).setBorder(BorderFactory.createLineBorder(Color.lightGray, BORDER_THICKNESS));
 			scores.get(scoreIndex).replaceScores(new double[]{0});
