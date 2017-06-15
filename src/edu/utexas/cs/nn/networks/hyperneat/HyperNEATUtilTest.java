@@ -3,6 +3,7 @@ package edu.utexas.cs.nn.networks.hyperneat;
 import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
@@ -127,4 +128,80 @@ public class HyperNEATUtilTest {
 	public void testIndexFirstBiasOutput(){
 		assertEquals(2, HyperNEATUtil.indexFirstBiasOutput(htask));
 	}
+	
+	@Test
+	public void testGetSubstrateInformation(){
+		
+		List<Triple<String, Integer, Integer>> output = new ArrayList<Triple<String, Integer, Integer>>();
+		output.add(new Triple<String, Integer, Integer>("o1", 5, 5));
+		output.add(new Triple<String, Integer, Integer>("o2", 10, 10));
+		output.add(new Triple<String, Integer, Integer>("o3", 1, 1));
+		
+		List<Substrate> test = HyperNEATUtil.getSubstrateInformation(10, 20, 3, 2, 3, output); // Should have 12 Substrates
+		
+		for(int i = 0; i < 9; i++){ // Tests the size of the non-output substrates
+			assertEquals(test.get(i).getSize(), new Pair<Integer, Integer>(10, 20));
+		}
+		
+		// Tests the Size of the three Output Substrates
+		assertEquals(test.get(9).getSize(), new Pair<Integer, Integer>(5, 5));
+		assertEquals(test.get(10).getSize(), new Pair<Integer, Integer>(10, 10));
+		assertEquals(test.get(11).getSize(), new Pair<Integer, Integer>(1, 1));
+		
+		// Tests the Names of each Substrate
+		
+		for(int i = 0; i < 3; i++){
+			assertEquals(test.get(i).getName(), "Input(" + i + ")");			
+		}
+		
+		int index = 3;
+		for(int i = 0; i < 3; i++){ // Process Depth
+			for(int j = 0; j < 2; j++){ // Process Width
+				assertEquals(test.get(index++).getName(), "process(" + j + "," + i + ")");
+			}
+		}
+		
+		assertEquals(test.get(9).getName(), "o1");
+		assertEquals(test.get(10).getName(), "o2");
+		assertEquals(test.get(11).getName(), "o3");
+	}
+	
+	@Test
+	public void testGetSubstrateConnectivity(){
+		
+		List<String> outputNames = new ArrayList<String>();
+		outputNames.add("o1");
+		outputNames.add("o2");
+		outputNames.add("o3");
+		
+		List<Triple<String,String,Boolean>> test = HyperNEATUtil.getSubstrateConnectivity(3, 2, 3, outputNames);
+		
+		assertEquals(test.get(0), new Triple<String, String, Boolean>("Input(0)", "process(0,0)", Boolean.TRUE));
+		
+		int index = 0;
+		
+		for(int i = 0; i < 2; i++){ // Process Width
+			for(int j = 0; j < 3; j++){ // Number of Inputs
+				assertEquals(test.get(index++), new Triple<String, String, Boolean>("Input("+ j +")", "process(" + i + ",0)", Boolean.TRUE));
+			}
+		}
+		
+		
+		for(int i = 0; i < 2; i++){ // Process Depth-1
+			for(int j = 0; j < 2; j++){ // Process Width
+				for(int k = 0; k < 2; k++){ // Process Width
+					assertEquals(test.get(index++), new Triple<String, String, Boolean>("process("+ j + "," + i +")", "process(" + k + ","+ (i+1) + ")", Boolean.TRUE));
+				}
+			}
+		}
+		
+		for(int i = 0; i < 2; i++){ // Process Width
+			for(int j = 0; j < 3; j++){ // Number of Outputs
+				assertEquals(test.get(index++), new Triple<String, String, Boolean>("process(" + i + ",3)", "o" + (j+1),  Boolean.FALSE));
+			}
+		}
+		
+	}
+	
+	
 }

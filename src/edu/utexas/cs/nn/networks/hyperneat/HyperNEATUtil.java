@@ -540,7 +540,6 @@ public class HyperNEATUtil {
 	 * @param output List<Triple<String, Integer, Integer>> that defines the name of the substrates, followed by their sizes
 	 * @return Substrate Information
 	 */
-	// TODO: Add output information after all: see comment below
 	public static List<Substrate> getSubstrateInformation(int inputWidth, int inputHeight, int numInputSubstrates, int processWidth, int processDepth, List<Triple<String, Integer, Integer>> output) {		
 		List<Substrate> substrateInformation = new LinkedList<Substrate>();
 			
@@ -548,10 +547,10 @@ public class HyperNEATUtil {
 		Pair<Integer, Integer> substrateDimension = new Pair<Integer, Integer>(inputWidth, inputHeight);
 				
 		for(int i = 0; i < numInputSubstrates; i++){
-			Substrate blockInputSub = new Substrate(substrateDimension, Substrate.INPUT_SUBSTRATE, 
+			Substrate inputSub = new Substrate(substrateDimension, Substrate.INPUT_SUBSTRATE, 
 					new Triple<Integer, Integer, Integer>(i, 0, 0), // i is the x-coordinate: all are at the bottom level: y = 0, z = 0 
 					"Input(" + i + ")");
-			substrateInformation.add(blockInputSub);
+			substrateInformation.add(inputSub);
 		}
 				
 		for(int i = 0; i < processDepth; i++) { // Add 2D hidden/processing layer(s)
@@ -562,11 +561,13 @@ public class HyperNEATUtil {
 				substrateInformation.add(processSub);
 			}
 		}
-				
-		// TODO: Add outputs after all by taking as input a list of Triple<String,Integer,Integer> instances that define the name of the substrates,
-		//       followed by their sizes
 		
-		
+		for(int i = 0; i < output.size(); i++){
+			Substrate outputSub = new Substrate(new Pair<Integer, Integer>(output.get(i).t2, output.get(i).t3), Substrate.OUTPUT_SUBSTRATE,
+					new Triple<Integer, Integer, Integer>(i, (processDepth+1), 0), // i is the x-coordinate, y = one above the top processing layer, z = 0 
+					output.get(i).t1);
+			substrateInformation.add(outputSub);
+		}
 		
 		return substrateInformation;
 	}
@@ -582,7 +583,6 @@ public class HyperNEATUtil {
 	 * @param processDepth Number of Processing Layers
 	 * @return Substrate connectivity
 	 */
-	// TODO: Remove "except outputs" by passing in a list of output substrate names and connecting them accordingly
 	public static List<Triple<String, String,Boolean>> getSubstrateConnectivity(int numInputSubstrates, int processWidth, int processDepth, List<String> outputNames){
 		
 		List<Triple<String, String, Boolean>> substrateConnectivity = null;
@@ -593,7 +593,7 @@ public class HyperNEATUtil {
 		// Different extractors correspond to different substrate configurations
 		if(processDepth > 0) {
 			for(int k = 0; k < processWidth; k++) {
-				// Link the block locations to the processing layer: allows convolution
+				// Link the input layer to the processing layer: allows convolution
 				for(int i = 0; i < numInputSubstrates; i++){
 					substrateConnectivity.add(new Triple<String, String, Boolean>("Input(" + i + ")", "process(" + k + ",0)", Boolean.TRUE));
 				}
@@ -606,6 +606,15 @@ public class HyperNEATUtil {
 				for(int q = 0; q < processWidth; q++) {
 					// Each processing substrate at one depth connected to processing subsrates at next depth
 					substrateConnectivity.add(new Triple<String, String, Boolean>("process("+k+","+i+")", "process("+q+","+(i + 1)+")", Boolean.TRUE));
+				}
+			}
+		}
+		
+		if(processDepth > 0) {
+			for(int k = 0; k < processWidth; k++) {
+				// Link the final processing layer to the output layer
+				for(String name : outputNames){
+					substrateConnectivity.add(new Triple<String, String, Boolean>("process(" + k + "," + processDepth + ")", name, Boolean.FALSE));
 				}
 			}
 		}
