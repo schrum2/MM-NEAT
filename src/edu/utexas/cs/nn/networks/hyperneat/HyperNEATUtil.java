@@ -7,18 +7,13 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.rlcommunity.environments.tetris.TetrisState;
-
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.HyperNEATCPPNGenotype;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
 import edu.utexas.cs.nn.networks.ActivationFunctions;
 import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.networks.TWEANN.Node;
-import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.tasks.rlglue.featureextractors.tetris.ExtendedBertsekasTsitsiklisTetrisExtractor;
-import edu.utexas.cs.nn.tasks.rlglue.featureextractors.tetris.RawTetrisStateExtractor;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.datastructures.Triple;
 import edu.utexas.cs.nn.util.graphics.DrawingPanel;
@@ -544,33 +539,32 @@ public class HyperNEATUtil {
 	 * @param processDepth Number of Processing Layers
 	 * @return Substrate Information
 	 */
-	public static List<Substrate> getSubstrateInformation(int inputWidth, int inputHeight, int numInputSubstrates, int processWidth, int processDepth) {
-		
-		// SUBSTRATE_COORDINATES is from HyperNEATTetrisTask, but I'm not sure what it does. The only comment related to it is asking what it is for
-		// TODO: Figure out what to do about SUBSTRATE_COORDINATES and outputDepth
-		
-		int SUBSTRATE_COORDINATES = 4;
-		int outputDepth = SUBSTRATE_COORDINATES;
-		
+	// TODO: Add output information after all: see comment below
+	public static List<Substrate> getSubstrateInformation(int inputWidth, int inputHeight, int numInputSubstrates, int processWidth, int processDepth) {		
 		List<Substrate> substrateInformation = new LinkedList<Substrate>();
 			
 		// Different extractors correspond to different substrate configurations
-		Triple<Integer, Integer, Integer> blockSubCoord = new Triple<Integer, Integer, Integer>(0, 0, 0);
 		Pair<Integer, Integer> substrateDimension = new Pair<Integer, Integer>(inputWidth, inputHeight);
 				
 		for(int i = 0; i < numInputSubstrates; i++){
-			Substrate blockInputSub = new Substrate(substrateDimension, Substrate.INPUT_SUBSTRATE, blockSubCoord, "blocks"); // 2D grid of block locations
+			Substrate blockInputSub = new Substrate(substrateDimension, Substrate.INPUT_SUBSTRATE, 
+					new Triple<Integer, Integer, Integer>(i, 0, 0), // i is the x-coordinate: all are at the bottom level: y = 0, z = 0 
+					"Input(" + i + ")");
 			substrateInformation.add(blockInputSub);
 		}
 				
 		for(int i = 0; i < processDepth; i++) { // Add 2D hidden/processing layer(s)
 			for(int k = 0; k < processWidth; k++) {
-				// Not sure processSubCoord coordinates make sense
-				Triple<Integer, Integer, Integer> processSubCoord = new Triple<Integer, Integer, Integer>(k, outputDepth += SUBSTRATE_COORDINATES, 0);
+				// x coord = k, y = 1 + i because the height is the depth plus 1 (for the input layer)
+				Triple<Integer, Integer, Integer> processSubCoord = new Triple<Integer, Integer, Integer>(k, 1 + i, 0);
 				Substrate processSub = new Substrate(substrateDimension, Substrate.PROCCESS_SUBSTRATE, processSubCoord,"process(" + k + "," + i + ")");
 				substrateInformation.add(processSub);
 			}
 		}
+				
+		// TODO: Add outputs after all by taking as input a list of Triple<String,Integer,Integer> instances that define the name of the substrates,
+		//       followed by their sizes
+		
 		return substrateInformation;
 	}
 	
@@ -585,6 +579,7 @@ public class HyperNEATUtil {
 	 * @param processDepth Number of Processing Layers
 	 * @return Substrate connectivity
 	 */
+	// TODO: Remove "except outputs" by passing in a list of output substrate names and connecting them accordingly
 	public static List<Triple<String, String,Boolean>> getSubstrateConnectivityExceptOutputs(int numInputSubstrates, int processWidth, int processDepth){
 		
 		List<Triple<String, String, Boolean>> substrateConnectivity = null;

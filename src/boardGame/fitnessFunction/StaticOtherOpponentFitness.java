@@ -38,16 +38,17 @@ public class StaticOtherOpponentFitness<T extends BoardGameState> implements Boa
 		fitFunctions.add(selectionFunction);
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public double getFitness(BoardGamePlayer<T> player) {
 		
 		long genotypeID = -1;
-		BoardGameHeuristic bgh;
+		BoardGameHeuristic<T> bgh;
 		
 		if(player instanceof HeuristicBoardGamePlayer){
-			bgh = ((HeuristicBoardGamePlayer) player).getHeuristic();
+			bgh = ((HeuristicBoardGamePlayer<T>) player).getHeuristic();
 			if(bgh instanceof NNBoardGameHeuristic){
-				genotypeID = ((NNBoardGameHeuristic) bgh).getID();
+				genotypeID = ((NNBoardGameHeuristic<?,T>) bgh).getID();
 			}
 		}
 		

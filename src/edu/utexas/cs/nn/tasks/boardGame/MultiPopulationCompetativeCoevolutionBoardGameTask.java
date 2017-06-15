@@ -132,6 +132,7 @@ public class MultiPopulationCompetativeCoevolutionBoardGameTask<S extends BoardG
 		return fullInputs;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Substrate> getSubstrateInformation() {
 		return BoardGameUtil.getSubstrateInformation(MMNEAT.boardGame);
