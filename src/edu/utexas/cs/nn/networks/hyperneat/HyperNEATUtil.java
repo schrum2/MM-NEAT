@@ -537,10 +537,11 @@ public class HyperNEATUtil {
 	 * @param numInputSubstrates Number of Input Boards
 	 * @param processWidth Number of Processing Boards per Processing Layer
 	 * @param processDepth Number of Processing Layers
+	 * @param output List<Triple<String, Integer, Integer>> that defines the name of the substrates, followed by their sizes
 	 * @return Substrate Information
 	 */
 	// TODO: Add output information after all: see comment below
-	public static List<Substrate> getSubstrateInformation(int inputWidth, int inputHeight, int numInputSubstrates, int processWidth, int processDepth) {		
+	public static List<Substrate> getSubstrateInformation(int inputWidth, int inputHeight, int numInputSubstrates, int processWidth, int processDepth, List<Triple<String, Integer, Integer>> output) {		
 		List<Substrate> substrateInformation = new LinkedList<Substrate>();
 			
 		// Different extractors correspond to different substrate configurations
@@ -565,6 +566,8 @@ public class HyperNEATUtil {
 		// TODO: Add outputs after all by taking as input a list of Triple<String,Integer,Integer> instances that define the name of the substrates,
 		//       followed by their sizes
 		
+		
+		
 		return substrateInformation;
 	}
 	
@@ -580,7 +583,7 @@ public class HyperNEATUtil {
 	 * @return Substrate connectivity
 	 */
 	// TODO: Remove "except outputs" by passing in a list of output substrate names and connecting them accordingly
-	public static List<Triple<String, String,Boolean>> getSubstrateConnectivityExceptOutputs(int numInputSubstrates, int processWidth, int processDepth){
+	public static List<Triple<String, String,Boolean>> getSubstrateConnectivity(int numInputSubstrates, int processWidth, int processDepth, List<String> outputNames){
 		
 		List<Triple<String, String, Boolean>> substrateConnectivity = null;
 		
