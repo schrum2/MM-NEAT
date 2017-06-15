@@ -39,7 +39,7 @@ public class SoundRemixTask<T extends Network> extends BreedesizerTask<T> {
 
 	public static final int CPPN_NUM_INPUTS	= 4;
 	
-	private static final int FILE_LOADER_CHECKBOX_INDEX = CHECKBOX_IDENTIFIER_START-CPPN_NUM_INPUTS-2;
+	private static final int FILE_LOADER_BUTTON_INDEX = CHECKBOX_IDENTIFIER_START-CPPN_NUM_INPUTS-3;
 
 	public double[] WAVDoubleArray;
 	public int playBackRate;
@@ -84,7 +84,7 @@ public class SoundRemixTask<T extends Network> extends BreedesizerTask<T> {
 		
 		JButton fileLoadButton = new JButton();
 		fileLoadButton.setText("ChooseNewSound");
-		fileLoadButton.setName("" + FILE_LOADER_CHECKBOX_INDEX);
+		fileLoadButton.setName("" + FILE_LOADER_BUTTON_INDEX);
 		fileLoadButton.addActionListener(this);
 		top.add(fileLoadButton);
 
@@ -103,7 +103,7 @@ public class SoundRemixTask<T extends Network> extends BreedesizerTask<T> {
 			// Play original sound if they click the button
 			arrayPlayer = PlayDoubleArray.playDoubleArray(format, WAVDoubleArray);
 		}
-		if(itemID == FILE_LOADER_CHECKBOX_INDEX) {
+		if(itemID == FILE_LOADER_BUTTON_INDEX) {
 			JFileChooser chooser = new JFileChooser();//used to get new file
 			chooser.setApproveButtonText("Open");
 			FileNameExtensionFilter filter = new FileNameExtensionFilter("WAV Files", "wav");

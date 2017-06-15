@@ -52,7 +52,9 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 	public static final int CPPN_NUM_INPUTS	= 3;
 	public static final int CPPN_NUM_OUTPUTS = 1;
 
-	private static final int FILE_LOADER_CHECKBOX_INDEX = CHECKBOX_IDENTIFIER_START - CPPN_NUM_INPUTS - 1;
+	private static final int FILE_LOADER_BUTTON_INDEX = CHECKBOX_IDENTIFIER_START - CPPN_NUM_INPUTS - 1;
+	
+	private static final int MIDI_PLAY_BUTTON_INDEX = CHECKBOX_IDENTIFIER_START - CPPN_NUM_INPUTS; //inputMultipliers.length;
 
 	private static final int MIDI_PLAYBACK_TYPE_CHECKBOX_INDEX = CHECKBOX_IDENTIFIER_START - CPPN_NUM_INPUTS - 2;
 
@@ -152,12 +154,12 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 
 			JButton playWithMIDI = new JButton("PlayWithMIDI");
 			// Name is first available numeric label after the input disablers
-			playWithMIDI.setName("" + (CHECKBOX_IDENTIFIER_START - inputMultipliers.length));
+			playWithMIDI.setName("" + (MIDI_PLAY_BUTTON_INDEX));
 			playWithMIDI.addActionListener(this);
 			top.add(playWithMIDI);
 			JButton fileLoadButton = new JButton();
 			fileLoadButton.setText("ChooseNewSound");
-			fileLoadButton.setName("" + FILE_LOADER_CHECKBOX_INDEX);
+			fileLoadButton.setName("" + FILE_LOADER_BUTTON_INDEX);
 			fileLoadButton.addActionListener(this);
 			top.add(fileLoadButton);
 
@@ -172,7 +174,8 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 
 	/**
 	 * Calls action associated with clicking a certain button - in this case, the button plays a MIDI
-	 * file with the most recently clicked CPPN as the "instrument"
+	 * file with the most recently clicked CPPN as the "instrument", or uses a series of most recently
+	 * clicked CPPNs as instruments for each track of the file
 	 */
 	protected void respondToClick(int itemID) {
 		boolean justStopped = false;
@@ -184,12 +187,16 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 		// Play original sound if they click the button
 		if(itemID == MIDI_PLAYBACK_TYPE_CHECKBOX_INDEX) {
 			if(MIDIPlaybackType.isSelected()){ // Effect is currently ON
-				MIDIPlaybackType.setSelected(false);
+				System.out.println("select");
+				//MIDIPlaybackType.setSelected(false);
+				//MIDIPlaybackType.doClick();
 			}else{ // Effect is currently OFF
-				MIDIPlaybackType.setSelected(true);
+				System.out.println("unselect");
+				//MIDIPlaybackType.setSelected(true);
+				//MIDIPlaybackType.doClick();
 			}
 		}
-		if(itemID == (CHECKBOX_IDENTIFIER_START - inputMultipliers.length)) {
+		if(itemID == (MIDI_PLAY_BUTTON_INDEX)) {
 			Network[] cppns = new Network[selectedCPPNs.size()];
 			if(!justStopped) { // Pressing original button can stop playback too
 				if(!MIDIPlaybackType.isSelected()) { // action for simple MIDI playback
@@ -202,7 +209,7 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 				}
 			}
 		}
-		if(itemID == FILE_LOADER_CHECKBOX_INDEX) {
+		if(itemID == FILE_LOADER_BUTTON_INDEX) {
 			JFileChooser chooser = new JFileChooser();//used to get new file
 			chooser.setApproveButtonText("Open");
 			FileNameExtensionFilter filter = new FileNameExtensionFilter("MIDI Files", "mid");
