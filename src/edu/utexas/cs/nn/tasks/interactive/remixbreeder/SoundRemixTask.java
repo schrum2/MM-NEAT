@@ -21,7 +21,6 @@ import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.interactive.breedesizer.BreedesizerTask;
 import edu.utexas.cs.nn.tasks.interactive.breedesizer.Keyboard;
 import edu.utexas.cs.nn.util.graphics.GraphicsUtil;
-import edu.utexas.cs.nn.util.sound.MIDIUtil;
 import edu.utexas.cs.nn.util.sound.PlayDoubleArray;
 import edu.utexas.cs.nn.util.sound.SoundFromCPPNUtil;
 import edu.utexas.cs.nn.util.sound.SoundToArray;

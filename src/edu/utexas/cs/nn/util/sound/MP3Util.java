@@ -3,7 +3,6 @@ package edu.utexas.cs.nn.util.sound;
 import java.io.IOException;
 import java.net.MalformedURLException;
 
-import edu.utexas.cs.nn.util.sound.MP3Util.SoundJLayer;
 import javazoom.jl.decoder.JavaLayerException;
 import javazoom.jl.player.advanced.AdvancedPlayer;
 import javazoom.jl.player.advanced.PlaybackListener;

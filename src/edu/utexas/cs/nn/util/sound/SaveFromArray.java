@@ -12,9 +12,6 @@ import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 
-import edu.utexas.cs.nn.evolution.genotypes.HyperNEATCPPNGenotype;
-import edu.utexas.cs.nn.networks.Network;
-
 /**
  * Includes methods that can save audio files from either an input
  * byte array or an input double array. 
