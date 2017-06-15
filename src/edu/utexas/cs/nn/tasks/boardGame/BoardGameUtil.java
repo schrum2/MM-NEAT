@@ -35,20 +35,24 @@ public class BoardGameUtil {
 			view = MMNEAT.boardGameViewer;
 		}
 		
-		while(!bg.isGameOver()){
+		for(int i = 0; i < bg.getNumPlayers(); i++){ // Cycles through the number of possible Player positions
+		
+			while(!bg.isGameOver()){
 
-			if(CommonConstants.watch && bg instanceof TwoDimensionalBoardGame){ // Renders each Move in the game
-				view.reset((TwoDimensionalBoardGameState) bg.getCurrentState());
-			}
-			if(Parameters.parameters.booleanParameter("stepByStep")){
-				System.out.print("Press enter to continue");
-				MiscUtil.waitForReadStringAndEnterKeyPress();
-			}
-			int playIndex = bg.getCurrentPlayer(); // Stores the current Player's Index to access the Player's Fitness
-			bg.move(players[bg.getCurrentPlayer()]);
+				if(CommonConstants.watch && bg instanceof TwoDimensionalBoardGame){ // Renders each Move in the game
+					view.reset((TwoDimensionalBoardGameState) bg.getCurrentState());
+				}
+				if(Parameters.parameters.booleanParameter("stepByStep")){
+					System.out.print("Press enter to continue");
+					MiscUtil.waitForReadStringAndEnterKeyPress();
+				}
+				
+				int playIndex = (bg.getCurrentPlayer() + i) % bg.getNumPlayers(); // Stores the current Player's Index to access the Player's Fitness; the Player's cycle through the different Player positions
+				bg.move(players[playIndex]);
 			
-			for(BoardGameFitnessFunction fitFunct : fit){
-				fitFunct.updateFitness(bg.getCurrentState(), playIndex);
+				for(BoardGameFitnessFunction fitFunct : fit){
+					fitFunct.updateFitness(bg.getCurrentState(), playIndex);
+				}
 			}
 		}
 		
@@ -64,17 +68,19 @@ public class BoardGameUtil {
 		
 		for(int i = 0; i < players.length; i++){
 			
+			double fitness = (fit.get(0).getFitness(players[i]) / bg.getNumPlayers()); // Averages the total accumulated Fitness over the number of games played
+			
 			double[] otherScores = new double[players.length]; // Initialized to empty to avoid errors
 			
 			if(fit.size() > 1){ // Has at least 1 Other Score; must track their fitness
 				otherScores = new double[fit.size()-1]; // Stores all other Scores except the first, which is used as the Selection Fitness
 				
 				for(int j = 1; j < fit.size(); j++){
-					otherScores[j-1] = fit.get(j).getFitness(players[i]); // Gets all Scores except the first one
+					otherScores[j-1] = (fit.get(j).getFitness(players[i]) / bg.getNumPlayers()); // Gets all Scores except the first one; averages the total fitness over the number of games played
 				}
 			}
 			
-			Pair<double[], double[]> evalResults = new Pair<double[], double[]>(new double[] { fit.get(0).getFitness(players[i]) }, otherScores);
+			Pair<double[], double[]> evalResults = new Pair<double[], double[]>(new double[] { fitness }, otherScores);
 			scoring.add(evalResults);
 		}
 		
