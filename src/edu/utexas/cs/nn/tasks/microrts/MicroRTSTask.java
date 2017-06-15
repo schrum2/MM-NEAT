@@ -28,6 +28,7 @@ import micro.gui.PhysicalGameStateJFrame;
 import micro.gui.PhysicalGameStatePanel;
 import micro.rts.GameState;
 import micro.rts.PhysicalGameState;
+import micro.rts.units.Unit;
 import micro.rts.units.UnitTypeTable;
 
 /**
@@ -177,6 +178,12 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 				try {
 					// The new map is in the new initial game state
 					initialPgs = PhysicalGameState.load("data/microRTS/maps/" + newMapName, utt);
+					
+					assert !initialPgs.getUnits().isEmpty(): "initial pgs has no units after map load";
+					
+					assert (unitsExist(0, initialPgs)): "player 0 does not have any units to start";
+					assert (unitsExist(1, initialPgs)): "player 1 does not have any units to start";
+					
 					mapName = newMapName;
 				} catch (JDOMException | IOException e) {
 					e.printStackTrace(); System.exit(1);
@@ -186,6 +193,23 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 		}
 	}
 
+	private boolean unitsExist(int player, PhysicalGameState pgs){
+		for(int i = 0; i < pgs.getWidth(); i++){
+			for(int j = 0; j < pgs.getHeight(); j++){
+
+				 Unit currentUnit = pgs.getUnitAt(i, j);
+				if(currentUnit!=null){
+					//							System.out.println(i + "," + j + " has " + currentUnit);
+
+					if(currentUnit.getPlayer() == player){
+						return true;
+					}
+				} //end if (there is a unit on this space)
+			}//end j
+		}//end i
+		return false;
+	}
+	
 	/**
 	 * all actions performed in a single evaluation of a genotype
 	 * loop taken from GameVisualSimulationTest, the rest based on MsPacManTask.oneEval()
@@ -199,8 +223,7 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 	 */
 	@Override
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {
-		reset();
-		gs = new GameState(pgs, utt);
+		
 		if(!AiInitialized)
 			initializeAI();
 		else{
@@ -223,6 +246,10 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 		
 		for(int i = 0; i < enemySet.size(); i++){
 			reset();
+			assert (unitsExist(0, pgs)): "player 0 does not have any units to start";
+			assert (unitsExist(1, pgs)): "player 1 does not have any units to start";
+			gs = new GameState(pgs, utt);
+			
 			ai2 = enemySet.get(i);
 			if(CommonConstants.watch){
 				System.out.println("Current Enemy: "+ ai2.getClass().getName());
@@ -246,7 +273,6 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 				utt = new UnitTypeTable();
 				averageUnitDifference = 0;
 				baseUpTime = 0;
-//				System.out.println("setting h e i to 0");
 				harvestingEfficiencyIndex = 0;
 				// Clone the initial game state; start from beginning
 				pgs = initialPgs.clone();

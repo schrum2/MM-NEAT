@@ -59,7 +59,9 @@ public class MicroRTSUtility {
 		boolean baseDeath2Recorded = false;
 
 		int currentCycle = 0;
-
+		
+		int previousCreatedUnitsIDSize = 0;
+		
 		do{ //simulate game:
 			try {
 				pa1 = ai1.getAction(0, gs); //throws exception
@@ -86,12 +88,9 @@ public class MicroRTSUtility {
 
 							if(currentUnit.getPlayer() == 0){
 								createdUnitIDs1.add(currentUnit.getID());
-//								System.out.print(createdUnitIDs1 + " : ");
-//								System.out.println(createdUnitIDs1.size());
 							}
 							else if(currentUnit.getPlayer() == 1){
 								createdUnitIDs2.add(currentUnit.getID());
-//								System.out.println(createdUnitIDs2);
 							}
 
 							unitDifferenceNow = updateUnitDifference(currentUnit, unitDifferenceNow);
@@ -106,8 +105,11 @@ public class MicroRTSUtility {
 					}//end j
 				}//end i
 				
+				assert previousCreatedUnitsIDSize <= createdUnitIDs2.size() : "createdUnitIDs2 decreased in size!!! "
+						+previousCreatedUnitsIDSize + " ==> " + createdUnitIDs2.size() + " T: " + currentCycle;
+				
+				assert createdUnitIDs2.size() > 0 : "units not found! createdUnitIDs2.size() did not find any units. T: " + currentCycle;
 //				System.out.print(createdUnitIDs1 + " : ");
-//				System.out.println(createdUnitIDs1.size());
 				
 				if((!base1Alive) && (!baseDeath1Recorded)) {
 					//					System.out.println("setting base up time 1: " + gs.getTime());
@@ -141,12 +143,15 @@ public class MicroRTSUtility {
 				}
 			}
 			try{
-			task.setPercentEnemiesDestroyed(((createdUnitIDs2.size() - terminalUnits2) * 100 ) / createdUnitIDs2.size(), 1); //createdIds' size should never =0
-			if(coevolution)
-				task.setPercentEnemiesDestroyed(((createdUnitIDs1.size() - terminalUnits1) * 100 ) / createdUnitIDs1.size(), 2);
+				//createdIds' size should never = 0 because all players start with a base
+				task.setPercentEnemiesDestroyed(((createdUnitIDs2.size() - terminalUnits2) * 100 ) / createdUnitIDs2.size(), 1); 
+				if(coevolution)
+					task.setPercentEnemiesDestroyed(((createdUnitIDs1.size() - terminalUnits1) * 100 ) / createdUnitIDs1.size(), 2);
 			} catch(ArithmeticException e){
-				System.out.println("Units 2" + createdUnitIDs2 + " : " + createdUnitIDs2.size());
+				System.out.println("Units 2 Ever created: " + createdUnitIDs2 + " : " + createdUnitIDs2.size()); //only shows units alive at the end
+				System.out.println("Units 2 At End: " + terminalUnits2);
 				System.out.println("Units 1" + createdUnitIDs1 + " : " + createdUnitIDs1.size());
+				System.out.println("Units 2 At End: " + terminalUnits1);
 				w = PhysicalGameStatePanel.newVisualizer(gs,MicroRTSUtility.WINDOW_LENGTH,MicroRTSUtility.WINDOW_LENGTH,false,PhysicalGameStatePanel.COLORSCHEME_BLACK);
 				w.repaint();
 				MiscUtil.waitForReadStringAndEnterKeyPress();

@@ -71,6 +71,8 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 		super();
 		midiPlay = new AmplitudeArrayPlayer(); // no sequence to play
 		
+		
+		
 		clipLength = new JSlider(JSlider.HORIZONTAL, Keyboard.NOTE_LENGTH_DEFAULT, Parameters.parameters.integerParameter("maxClipLength"), Parameters.parameters.integerParameter("clipLength"));
 
 		Hashtable<Integer,JLabel> labels = new Hashtable<>();
@@ -172,10 +174,15 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 		super.respondToClick(itemID);
 		// Play original sound if they click the button
 		if(itemID == (CHECKBOX_IDENTIFIER_START - inputMultipliers.length)) {
+			Network[] cppns = new Network[selectedCPPNs.size()];
 //			System.out.println("checkbox identifier - # of input multipliers: " + (CHECKBOX_IDENTIFIER_START - inputMultipliers.length));
 //			System.out.println("file loader checkbox index: " + FILE_LOADER_CHECKBOX_INDEX);
-			if(!justStopped) { // Pressing original button can stop playback too
-				midiPlay = MIDIUtil.playMIDIWithCPPNFromString(Parameters.parameters.stringParameter("remixMIDIFile"), currentCPPN, noteLengthScale);
+			if(!justStopped) { // Pressing original button can stop playback too		
+				//midiPlay = MIDIUtil.playMIDIWithCPPNFromString(Parameters.parameters.stringParameter("remixMIDIFile"), currentCPPN, noteLengthScale);		
+				for(int i = 0; i < selectedCPPNs.size(); i++) {
+					cppns[i] = scores.get(selectedCPPNs.get(i)).individual.getPhenotype();
+				}
+				midiPlay = MIDIUtil.playMIDIWithCPPNsFromString(Parameters.parameters.stringParameter("remixMIDIFile"), cppns, noteLengthScale);
 			}
 		}
 		if(itemID == FILE_LOADER_CHECKBOX_INDEX) {

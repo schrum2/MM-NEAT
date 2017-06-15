@@ -192,6 +192,7 @@ public class MIDIUtil {
 				}
 			}
 		}
+		//to control volume
 		for(int i = 0; i < amplitudeArray.length; i++) {
 			amplitudeArray[i] /= midiLists.size(); // divide by total number of voices played at once
 		}
@@ -260,25 +261,18 @@ public class MIDIUtil {
 		try {
 			sequence = MidiSystem.getSequence(audioFile);
 			Track[] tracks = sequence.getTracks();
-			int arrayLength = 0;
-			//TODO: calculating length wrong - needs to be calculated with already generated amplitudes from lineToAmplitudeArray somehow
-			for(int i = 0; i < tracks.length; i++) { //calculate longest track so that array can be initialized at correct size
-				arrayLength = Math.max(tracks[i].size(), arrayLength);
-			}
 			double[] data = new double[0];
-			System.out.println("array length: " + arrayLength);
 			for(int i = 0; i < tracks.length; i++) {
 				ArrayList<Triple<ArrayList<Double>, ArrayList<Long>, ArrayList<Long>>> sound = soundLines(tracks[i]);
-				if(i > cppns.length-1) { //if the number of tracks outnumbers the CPPNs, it loops through them again
-					double[] lineData = lineToAmplitudeArray(audio, sound, cppns[i-cppns.length], noteLengthScale);
-					data = ArrayUtil.zipAdd(data, lineData, Math.max(data.length, lineData.length)); //add new values to larger double array
-				} else { //first loopthrough of CPPNs
-					double[] lineData = lineToAmplitudeArray(audio, sound, cppns[i], noteLengthScale);
-					System.out.println("larger array length: " + data.length);
-					System.out.println("line data length: " + lineData.length);
-					data = ArrayUtil.zipAdd(data, lineData, Math.max(data.length, lineData.length)); //add new values to larger double array
-				}				
-			}		
+				double[] lineData = lineToAmplitudeArray(audio, sound, cppns[i % cppns.length], noteLengthScale);
+//				System.out.println("larger array length: " + data.length);
+//				System.out.println("line data length: " + lineData.length);
+				data = ArrayUtil.zipAdd(data, lineData, Math.max(data.length, lineData.length)); //add new values to larger double array
+			}
+			//to control volume
+			for(int i = 0; i < data.length; i++) {
+				data[i] /= tracks.length; // divide by number of tracks
+			}
 			return PlayDoubleArray.playDoubleArray(data);
 		} catch (InvalidMidiDataException | IOException e) {
 			e.printStackTrace();
