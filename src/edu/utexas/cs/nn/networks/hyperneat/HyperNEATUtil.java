@@ -684,12 +684,12 @@ public class HyperNEATUtil {
 					// Each processing substrate at one depth connected to processing subsrates at next depth
 					substrateConnectivity.add(new Triple<String, String, Boolean>("process("+k+","+i+")", "process("+q+","+(i + 1)+")", Boolean.TRUE));
 				}
-				
+
 				if(!CommonConstants.hyperNEAT){
 					// connect bias to each remaining processing substrate
 					substrateConnectivity.add(new Triple<String, String, Boolean>("bias", "process("+k+","+(i + 1)+")", Boolean.TRUE));
 				}
-				
+
 			}
 		}
 		
@@ -706,17 +706,19 @@ public class HyperNEATUtil {
 			// Link the input layer to the output layer
 			for(int i = 0; i < numInputSubstrates; i++){
 				for(String name : outputNames) {
-						substrateConnectivity.add(new Triple<String, String, Boolean>("Input(" + i + ")", name, Boolean.FALSE));
-					}
+					substrateConnectivity.add(new Triple<String, String, Boolean>("Input(" + i + ")", name, Boolean.FALSE));
 				}
-			
+			}
+
+			// For HyperNEAT seeded tasks
 			if(!CommonConstants.hyperNEAT){
 				for(String name : outputNames){
+					// Each output substrate has a bias connection
 					substrateConnectivity.add(new Triple<String, String, Boolean>("bias", name, Boolean.FALSE));
 				}
 			}
 		}
-		
+
 		return substrateConnectivity;
 	}
 	
