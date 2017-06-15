@@ -51,10 +51,10 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 
 	public static final int CPPN_NUM_INPUTS	= 3;
 	public static final int CPPN_NUM_OUTPUTS = 1;
-
-	private static final int FILE_LOADER_CHECKBOX_INDEX = CHECKBOX_IDENTIFIER_START - CPPN_NUM_INPUTS - 1;
-
-	private static final int MIDI_PLAYBACK_TYPE_CHECKBOX_INDEX = CHECKBOX_IDENTIFIER_START - CPPN_NUM_INPUTS - 2;
+	
+	private static final int MIDI_PLAY_BUTTON_INDEX = CHECKBOX_IDENTIFIER_START - CPPN_NUM_INPUTS; //index of button for MIDI playback
+	private static final int FILE_LOADER_BUTTON_INDEX = CHECKBOX_IDENTIFIER_START - CPPN_NUM_INPUTS - 1; //index for button to load new MIDI file
+	private static final int MIDI_PLAYBACK_TYPE_CHECKBOX_INDEX = CHECKBOX_IDENTIFIER_START - CPPN_NUM_INPUTS - 2; //index for type of MIDI playback
 
 	Keyboard keyboard;
 	protected JSlider clipLength;
@@ -75,9 +75,9 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 	public BreedesizerTask(boolean justBreedesizer) throws IllegalAccessException {
 		super();
 		midiPlay = new AmplitudeArrayPlayer(); // no sequence to play
-
+		
+		//Construction of JSlider to determine length of generated CPPN amplitude
 		clipLength = new JSlider(JSlider.HORIZONTAL, Keyboard.NOTE_LENGTH_DEFAULT, Parameters.parameters.integerParameter("maxClipLength"), Parameters.parameters.integerParameter("clipLength"));
-
 		Hashtable<Integer,JLabel> labels = new Hashtable<>();
 		clipLength.setMinorTickSpacing(10000);
 		clipLength.setPaintTicks(true);
@@ -119,9 +119,9 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 			int defaultMultiplier = 100; //non-scaled default value - simply amplitude length multiplier
 			double scale = 100.0;
 			noteLengthScale = defaultMultiplier/scale; //no scaling by default
-
+			
+			//Construction of JSlider used to determine playback speed of MIDI file
 			speedOfMIDI = new JSlider(JSlider.HORIZONTAL, minMultiplier, maxMultiplier, defaultMultiplier);
-
 			Hashtable<Integer,JLabel> speedLabels = new Hashtable<>();
 			speedOfMIDI.setMinorTickSpacing(40);
 			speedOfMIDI.setPaintTicks(true);
@@ -149,18 +149,20 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 
 			});
 			top.add(speedOfMIDI);
-
+			
+			//Construction of button that plays MIDI file with the selected CPPN(s)
 			JButton playWithMIDI = new JButton("PlayWithMIDI");
 			// Name is first available numeric label after the input disablers
-			playWithMIDI.setName("" + (CHECKBOX_IDENTIFIER_START - inputMultipliers.length));
+			playWithMIDI.setName("" + (MIDI_PLAY_BUTTON_INDEX));
 			playWithMIDI.addActionListener(this);
 			top.add(playWithMIDI);
 			JButton fileLoadButton = new JButton();
 			fileLoadButton.setText("ChooseNewSound");
-			fileLoadButton.setName("" + FILE_LOADER_CHECKBOX_INDEX);
+			fileLoadButton.setName("" + FILE_LOADER_BUTTON_INDEX);
 			fileLoadButton.addActionListener(this);
 			top.add(fileLoadButton);
-
+			
+			//JCheckbox to specify whether MIDI playback occurs with one CPPN or multiple CPPNs
 			MIDIPlaybackType = new JCheckBox("advancedMIDIPlayback", false);
 			MIDIPlaybackType.setName("" + MIDI_PLAYBACK_TYPE_CHECKBOX_INDEX);
 			MIDIPlaybackType.addActionListener(this);
@@ -172,7 +174,8 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 
 	/**
 	 * Calls action associated with clicking a certain button - in this case, the button plays a MIDI
-	 * file with the most recently clicked CPPN as the "instrument"
+	 * file with the most recently clicked CPPN as the "instrument", or uses a series of most recently
+	 * clicked CPPNs as instruments for each track of the file
 	 */
 	protected void respondToClick(int itemID) {
 		boolean justStopped = false;
@@ -182,27 +185,22 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 		}
 		super.respondToClick(itemID);
 		// Play original sound if they click the button
-		if(itemID == MIDI_PLAYBACK_TYPE_CHECKBOX_INDEX) {
-			if(MIDIPlaybackType.isSelected()){ // Effect is currently ON
-				MIDIPlaybackType.setSelected(false);
-			}else{ // Effect is currently OFF
-				MIDIPlaybackType.setSelected(true);
-			}
-		}
-		if(itemID == (CHECKBOX_IDENTIFIER_START - inputMultipliers.length)) {
+		if(itemID == (MIDI_PLAY_BUTTON_INDEX)) {
 			Network[] cppns = new Network[selectedCPPNs.size()];
 			if(!justStopped) { // Pressing original button can stop playback too
 				if(!MIDIPlaybackType.isSelected()) { // action for simple MIDI playback
 					midiPlay = MIDIUtil.playMIDIWithCPPNFromString(Parameters.parameters.stringParameter("remixMIDIFile"), currentCPPN, noteLengthScale);
 				} else { // action for advanced MIDI playback
-					for(int i = 0; i < selectedCPPNs.size(); i++) {
+					//read in all CPPNs from selectedCPPNS list to an array of networks
+					// Read backwards so most recent selection is present
+					for(int i = selectedCPPNs.size() - 1; i >= 0; i--) { 
 						cppns[i] = scores.get(selectedCPPNs.get(i)).individual.getPhenotype();
 					}
 					midiPlay = MIDIUtil.playMIDIWithCPPNsFromString(Parameters.parameters.stringParameter("remixMIDIFile"), cppns, noteLengthScale);
 				}
 			}
 		}
-		if(itemID == FILE_LOADER_CHECKBOX_INDEX) {
+		if(itemID == FILE_LOADER_BUTTON_INDEX) {
 			JFileChooser chooser = new JFileChooser();//used to get new file
 			chooser.setApproveButtonText("Open");
 			FileNameExtensionFilter filter = new FileNameExtensionFilter("MIDI Files", "mid");
