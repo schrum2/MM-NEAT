@@ -19,9 +19,17 @@ import micro.rts.units.Unit;
  * unfinished, eventually different substrate for each unit-type maybe.
  */
 public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluationFunction<T> {
-	
+
+	private boolean allMobile = Parameters.parameters.booleanParameter("mRTSMobileUnits");
+	private boolean allBuildings = Parameters.parameters.booleanParameter("mRTSBuildings");
+	private boolean myMobile = Parameters.parameters.booleanParameter("mRTSMyMobileUnits");
+	private boolean myBuildings = Parameters.parameters.booleanParameter("mRTSMyBuildings");
+	private boolean opponentsMobile = Parameters.parameters.booleanParameter("mRTSOpponentsMobileUnits");
+	private boolean opponentsBuildings = Parameters.parameters.booleanParameter("mRTSOpponentsBuildings");
+	private boolean myAll = Parameters.parameters.booleanParameter("mRTSMyAll");
+	private boolean opponentsAll= Parameters.parameters.booleanParameter("mRTSOpponentsAll");
 	private final int numSubstrates = 2; //TODO generalize
-	
+
 	/**
 	 * constructor for FEStatePane and similar
 	 * @param NNfile
@@ -36,7 +44,7 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 		Genotype<T> g = PopulationUtil.extractGenotype(NNfile);
 		nn = g.getPhenotype();
 	}
-	
+
 	/**
 	 * takes the gameState and separates into substrates that contain
 	 * different information.
@@ -50,6 +58,7 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 		int boardIndex;
 		for(int j = 0; j < pgs.getHeight(); j++){
 			for(int i = 0; i < pgs.getWidth(); i++){
+				pgs.getTerrain(i, j);
 				boardIndex =  i + j * pgs.getHeight(); 
 				current = pgs.getUnitAt(i, j);
 				if(current!= null){
@@ -59,7 +68,7 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 		}
 		return inputs;
 	}
-	
+
 	/**
 	 * puts the current unit into all substrates where it should go
 	 * according to parameters.
@@ -76,13 +85,61 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 	 */
 	private double[] populateSubstratesWith(Unit u, double[] substrates, int substrateSize, int location){
 		HashSet<Integer> appropriateSubstrates = new HashSet<>();
-		
-		//ok but what if it needs to be in >1 substrate
+		int numCurrentSubs = 0;
+		//TODO: go to microRTSUtility and make the substrate connectivity methods reflect this order 
+		if(allMobile){  
+			numCurrentSubs++;
+			if(u.getType().canMove){
+				appropriateSubstrates.add(numCurrentSubs);
+			}
+		}
+		if(allBuildings){
+			numCurrentSubs++;
+			if(!u.getType().canMove){
+				appropriateSubstrates.add(numCurrentSubs);
+			}
+		}
+		if(myMobile){
+			numCurrentSubs++;
+			if(u.getType().canMove && u.getPlayer() == 0){
+				appropriateSubstrates.add(numCurrentSubs);
+			}
+		}
+		if(myBuildings){ //includes resources
+			numCurrentSubs++;
+			if(!u.getType().canMove && u.getPlayer() != 1){
+				appropriateSubstrates.add(numCurrentSubs);
+			}
+		}
+		if(opponentsMobile){
+			numCurrentSubs++;
+			if(u.getType().canMove && u.getPlayer() == 1){
+				appropriateSubstrates.add(numCurrentSubs);
+			}
+		}
+		if(opponentsBuildings){ //includes resources
+			numCurrentSubs++;
+			if(!u.getType().canMove && u.getPlayer() != 0){
+				appropriateSubstrates.add(numCurrentSubs);
+			}
+		}
+		if(myAll){
+			numCurrentSubs++;
+			if(u.getPlayer() == 0){
+				appropriateSubstrates.add(numCurrentSubs);
+			}
+		}
+		if(opponentsAll){
+			numCurrentSubs++;
+			if(u.getPlayer() == 1){
+				appropriateSubstrates.add(numCurrentSubs);
+			}
+		}
 		for(int appropriateSubstrate : appropriateSubstrates){
 			System.out.println("putting unit in sub: " + appropriateSubstrate);
 			int indexWithinAll = substrateSize * appropriateSubstrate + location;
-			substrates[indexWithinAll] = u.getHitPoints(); //or something else that represents what it is
-		}
+			substrates[indexWithinAll] = 1; //maybe change something else that represents what it is
+		} 
 		return substrates;
 	}
 

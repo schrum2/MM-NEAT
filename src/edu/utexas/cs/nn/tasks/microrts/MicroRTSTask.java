@@ -72,7 +72,7 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 				ef2 = (NNEvaluationFunction<T>) ClassCreation.createObject(Parameters.parameters.classParameter("microRTSOpponentEvaluationFunction"));
 			ff = (RTSFitnessFunction) ClassCreation.createObject(Parameters.parameters.classParameter("microRTSFitnessFunction"));
 			initialPgs = PhysicalGameState.load("data/microRTS/maps/" + Parameters.parameters.stringParameter("map"), utt);
-			pgs = initialPgs.clone();
+			pgs = initialPgs.cloneIncludingTerrain();
 			
 			if(Parameters.parameters.classParameter("microRTSMapSequence") != null)
 				maps = (MapSequence) ClassCreation.createObject(Parameters.parameters.classParameter("microRTSMapSequence")); 
@@ -275,7 +275,7 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 				baseUpTime = 0;
 				harvestingEfficiencyIndex = 0;
 				// Clone the initial game state; start from beginning
-				pgs = initialPgs.clone();
+				pgs = initialPgs.cloneIncludingTerrain();
 				ef.givePhysicalGameState(pgs);
 	}
 	/**
