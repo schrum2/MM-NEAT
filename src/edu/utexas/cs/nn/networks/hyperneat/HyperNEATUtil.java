@@ -530,6 +530,16 @@ public class HyperNEATUtil {
 		return count;
 	}
 	
+	/**
+	 * Generalizes the retrieval of Substrate Information
+	 * 
+	 * @param inputWidth Width of each Input and Processing Board
+	 * @param inputHeight Height of each Input and Processing Board
+	 * @param numInputSubstrates Number of Input Boards
+	 * @param output List<Triple<String, Integer, Integer>> that defines the name of the substrates, followed by their sizes
+	 * 
+	 * @return Substrate Information
+	 */	
 	public static List<Substrate> getSubstrateInformation(int inputWidth, int inputHeight, int numInputSubstrates, List<Triple<String, Integer, Integer>> output){
 		int processWidth = Parameters.parameters.integerParameter("HNProcessWidth");
 		int processDepth = Parameters.parameters.integerParameter("HNProcessDepth");
@@ -545,6 +555,7 @@ public class HyperNEATUtil {
 	 * @param processWidth Number of Processing Boards per Processing Layer
 	 * @param processDepth Number of Processing Layers
 	 * @param output List<Triple<String, Integer, Integer>> that defines the name of the substrates, followed by their sizes
+	 * 
 	 * @return Substrate Information
 	 */
 	public static List<Substrate> getSubstrateInformation(int inputWidth, int inputHeight, int numInputSubstrates, int processWidth, int processDepth, List<Triple<String, Integer, Integer>> output) {		
@@ -584,13 +595,33 @@ public class HyperNEATUtil {
 		return substrateInformation;
 	}
 	
-
+	/**
+	 * Generalizes the creation of HyperNEAT Substrates
+	 * 
+	 * (Output layers are domain-specific)
+	 * 
+	 * @param numInputSubstrates Number of individual Input Boards being processed
+	 * @param outputNames Names of the Output Layers (Domain-Specific)
+	 * 
+	 * @return Substrate connectivity
+	 */
 	public static List<Triple<String, String,Boolean>> getSubstrateConnectivity(int numInputSubstrates, List<String> outputNames){
 		int processWidth = Parameters.parameters.integerParameter("HNProcessWidth");
 		int processDepth = Parameters.parameters.integerParameter("HNProcessDepth");
 		return getSubstrateConnectivity(numInputSubstrates, processWidth, processDepth, outputNames, Parameters.parameters.booleanParameter("extraHNLinks"));
 	}
-	
+
+	/**
+	 * Generalizes the creation of HyperNEAT Substrates
+	 * 
+	 * (Output layers are domain-specific)
+	 * 
+	 * @param numInputSubstrates Number of individual Input Boards being processed
+	 * @param outputNames Names of the Output Layers (Domain-Specific)
+	 * @param connectInputsToOutputs Should the Input Layer be directly connected to the Output Layer?
+	 * 
+	 * @return Substrate connectivity
+	 */
 	public static List<Triple<String, String,Boolean>> getSubstrateConnectivity(int numInputSubstrates, List<String> outputNames, boolean connectInputsToOutputs){
 		int processWidth = Parameters.parameters.integerParameter("HNProcessWidth");
 		int processDepth = Parameters.parameters.integerParameter("HNProcessDepth");
@@ -605,6 +636,25 @@ public class HyperNEATUtil {
 	 * @param numInputSubstrates Number of individual Input Boards being processed
 	 * @param processWidth Number of Processing Boards per Processing Layer
 	 * @param processDepth Number of Processing Layers
+	 * @param outputNames Names of the Output Layers (Domain-Specific)
+	 * 
+	 * @return Substrate connectivity
+	 */
+	public static List<Triple<String, String,Boolean>> getSubstrateConnectivity(int numInputSubstrates, int processWidth, int processDepth, List<String> outputNames){
+		return getSubstrateConnectivity(numInputSubstrates, processWidth, processDepth, outputNames, Parameters.parameters.booleanParameter("extraHNLinks"));
+	}
+	
+	/**
+	 * Generalizes the creation of HyperNEAT Substrates
+	 * 
+	 * (Output layers are domain-specific)
+	 * 
+	 * @param numInputSubstrates Number of individual Input Boards being processed
+	 * @param processWidth Number of Processing Boards per Processing Layer
+	 * @param processDepth Number of Processing Layers
+	 * @param outputNames Names of the Output Layers (Domain-Specific)
+	 * @param connectInputsToOutputs Should the Input Layer be directly connected to the Output Layer?
+	 * 
 	 * @return Substrate connectivity
 	 */
 	public static List<Triple<String, String,Boolean>> getSubstrateConnectivity(int numInputSubstrates, int processWidth, int processDepth, List<String> outputNames, boolean connectInputsToOutputs){

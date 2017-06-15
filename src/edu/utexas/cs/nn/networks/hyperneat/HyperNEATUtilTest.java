@@ -130,7 +130,7 @@ public class HyperNEATUtilTest {
 	}
 	
 	@Test
-	public void testGetSubstrateInformation(){
+	public void testGetSubstrateInformationHyperNEAT(){
 		
 		List<Triple<String, Integer, Integer>> output = new ArrayList<Triple<String, Integer, Integer>>();
 		output.add(new Triple<String, Integer, Integer>("o1", 5, 5));
@@ -167,14 +167,14 @@ public class HyperNEATUtilTest {
 	}
 	
 	@Test
-	public void testGetSubstrateConnectivity(){
+	public void testGetSubstrateConnectivityHyperNEAT(){
 		
 		List<String> outputNames = new ArrayList<String>();
 		outputNames.add("o1");
 		outputNames.add("o2");
 		outputNames.add("o3");
 		
-		List<Triple<String,String,Boolean>> test = HyperNEATUtil.getSubstrateConnectivity(3, 2, 3, outputNames);
+		List<Triple<String,String,Boolean>> test = HyperNEATUtil.getSubstrateConnectivity(3, 2, 3, outputNames, false);
 		
 		assertEquals(test.get(0), new Triple<String, String, Boolean>("Input(0)", "process(0,0)", Boolean.TRUE));
 		
