@@ -43,15 +43,15 @@ import javazoom.jl.decoder.JavaLayerException;
  */
 public class SoundUtilExamples {
 
-	private static final String BEARGROWL_WAV = "data/sounds/bear_growl_y.wav";
-	private static final String APPLAUSE_WAV = "data/sounds/applause_y.wav";
+	public static final String BEARGROWL_WAV = "data/sounds/bear_growl_y.wav";
+	public static final String APPLAUSE_WAV = "data/sounds/applause_y.wav";
 	public static final String HARP_WAV = "data/sounds/harp.wav";
-	private static final String HAPPY_MP3 = "data/sounds/25733.mp3";
-	private static final String PIRATES_MID = "data/sounds/pirates.mid";
-	private static final String CLASSICAL_MID = "data/sounds/CLASSICA.MID";
-	private static final String SOLO_PIANO_MID	= "data/sounds/Chon01.MID";
+	public static final String HAPPY_MP3 = "data/sounds/25733.mp3";
+	public static final String PIRATES_MID = "data/sounds/pirates.mid";
+	public static final String CLASSICAL_MID = "data/sounds/CLASSICA.MID";
+	public static final String SOLO_PIANO_MID	= "data/sounds/Chon01.MID";
 	public static final String FUR_ELISE_MID = "data/sounds/for_elise_by_beethoven.mid";
-	private static final String BASS_16BIT_WAV 	= "data/sounds/acousticbass16bit.wav";
+	public static final String BASS_16BIT_WAV 	= "data/sounds/acousticbass16bit.wav";
 	public static final String SEASHORE_WAV = "data/sounds/Digital-Seashore.wav";
 	public static final String ALARM_WAV = "data/sounds/tone06.wav";
 	public static final String CHIPTUNE_WAV = "data/sounds/8-Bit-Noise-1.wav";
