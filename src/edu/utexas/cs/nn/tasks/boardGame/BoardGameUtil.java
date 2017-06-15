@@ -78,6 +78,10 @@ public class BoardGameUtil {
 			scoring.add(evalResults);
 		}
 		
+		if(CommonConstants.watch){ // Prints out the list of Winners at the end of a visual evaluation
+			System.out.println("Winner(s): " + bg.getWinners());
+		}
+		
 		return scoring; // Returns the Fitness of the individual's Genotype<T>
 	}
 	

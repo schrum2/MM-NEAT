@@ -29,11 +29,11 @@ public class NNBoardGameHeuristic<T extends Network, S extends BoardGameState> i
 	
 	@Override
 	public double heuristicEvalution(S current) {
-		if(Parameters.parameters.booleanParameter("stepByStep")){
-			System.out.print("Press enter to continue");
-			System.out.println(current);
-			MiscUtil.waitForReadStringAndEnterKeyPress();
-		}
+//		if(Parameters.parameters.booleanParameter("stepByStep")){
+//			System.out.print("Press enter to continue");
+//			System.out.println(current);
+//			MiscUtil.waitForReadStringAndEnterKeyPress();
+//		}
 		if(Parameters.parameters.booleanParameter("heuristicOverrideTerminalStates")){ // Overrides the Network's evaluation if set to True
 			if(current.endState()){
 				List<Integer> winners = current.getWinners();
