@@ -48,7 +48,7 @@ public class NN2DEvaluationFunction<T extends Network> extends NNEvaluationFunct
 
 	/**
 	 * Default constructor used by MMNEAT's class creation methods.
-	 * Must pass in the network via the setNetwork method of parent clas.
+	 * Must pass in the network via the setNetwork method of parent class.
 	 */
 	public NN2DEvaluationFunction(){
 		super();

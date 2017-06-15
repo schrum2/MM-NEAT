@@ -6,6 +6,7 @@ import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.parameters.Parameters;
+import edu.utexas.cs.nn.util.MiscUtil;
 import edu.utexas.cs.nn.util.PopulationUtil;
 import micro.rts.GameState;
 import micro.rts.units.Unit;
@@ -44,6 +45,14 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 		Genotype<T> g = PopulationUtil.extractGenotype(NNfile);
 		nn = g.getPhenotype();
 	}
+	
+	/**
+	 * Default constructor used by MMNEAT's class creation methods.
+	 * Must pass in the network via the setNetwork method of parent class.
+	 */
+	public NNComplexEvaluationFunction(){
+		super();
+	}
 
 	/**
 	 * takes the gameState and separates into substrates that contain
@@ -58,17 +67,20 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 		int boardIndex;
 		for(int j = 0; j < pgs.getHeight(); j++){
 			for(int i = 0; i < pgs.getWidth(); i++){
-				pgs.getTerrain(i, j);
+				int ter = pgs.getTerrain(i, j);
+				System.out.print(ter);
 				boardIndex =  i + j * pgs.getHeight(); 
 				current = pgs.getUnitAt(i, j);
 				if(current!= null){
 					inputs = populateSubstratesWith(current, inputs, substrateSize, boardIndex);
 				}
+				System.out.println();
 			}
 		}
+		MiscUtil.waitForReadStringAndEnterKeyPress(); //toto delet
 		return inputs;
 	}
-
+	
 	/**
 	 * puts the current unit into all substrates where it should go
 	 * according to parameters.
