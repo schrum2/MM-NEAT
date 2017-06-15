@@ -1,5 +1,7 @@
 package edu.utexas.cs.nn.tasks.microrts.evaluation;
 
+import java.util.HashSet;
+
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.networks.Network;
@@ -18,7 +20,7 @@ import micro.rts.units.Unit;
  */
 public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluationFunction<T> {
 	
-	private final int numSubstrates = 2; //TODO generalize so that everything can go well
+	private final int numSubstrates = 2; //TODO generalize
 	
 	/**
 	 * constructor for FEStatePane and similar
@@ -62,15 +64,25 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 	 * puts the current unit into all substrates where it should go
 	 * according to parameters.
 	 * 
+	 * @param u
+	 * 			unit to be put into substrates
 	 * @param substrates
 	 * 				array containing all substrates
-	 * @param index
-	 * 				place within the substrate where
+	 * @param substrateSize
+	 * 				how big each substrate is
+	 * @param location
+	 * 				index within an individual substrate
+	 * 
 	 */
-	private double[] populateSubstratesWith(Unit u, double[] substrates, int substrateSize, int indexWithinSingleSubstrate){
-		int appropriateSubstrate = -1; //decide this based on qualities that the unit has & parameters, TODO
-		int indexWithinAll = substrateSize * appropriateSubstrate+ indexWithinSingleSubstrate;
-		substrates[indexWithinAll] = u.getHitPoints(); //or something else that represents what it is
+	private double[] populateSubstratesWith(Unit u, double[] substrates, int substrateSize, int location){
+		HashSet<Integer> appropriateSubstrates = new HashSet<>();
+		
+		//ok but what if it needs to be in >1 substrate
+		for(int appropriateSubstrate : appropriateSubstrates){
+			System.out.println("putting unit in sub: " + appropriateSubstrate);
+			int indexWithinAll = substrateSize * appropriateSubstrate + location;
+			substrates[indexWithinAll] = u.getHitPoints(); //or something else that represents what it is
+		}
 		return substrates;
 	}
 
