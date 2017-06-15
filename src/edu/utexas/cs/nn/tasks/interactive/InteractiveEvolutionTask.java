@@ -96,11 +96,11 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	private static final int BORDER_THICKNESS = 4;
 	private static final int MPG_MIN = 0;//minimum # of mutations per generation
 	private static final int MPG_MAX = 10;//maximum # of mutations per generation
-	
+
 	// Activation Button Widths and Heights
 	private static final int ACTION_BUTTON_WIDTH = 80;
 	private static final int ACTION_BUTTON_HEIGHT = 60;	
-	
+
 	//Private final variables
 	private static int numRows;
 	protected static int picSize;
@@ -123,24 +123,24 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 
 	// This is a weird magic number that is used to track the checkboxes
 	public static final int CHECKBOX_IDENTIFIER_START = -25;
-	
+
 	protected Network currentCPPN;
-	
-	
+
+
 	private JPanel topper;
 	protected JPanel top;
-	
+
 	public LinkedList<Integer> selectedCPPNs;
-	
+
 	/**
 	 * Default Constructor
 	 * @throws IllegalAccessException 
 	 */
 	public InteractiveEvolutionTask() throws IllegalAccessException {		
 		inputMultipliers = new double[numCPPNInputs()];
-		
-		selectedCPPNs = new LinkedList<Integer>();
-		
+
+		selectedCPPNs = new LinkedList<Integer>(); //keeps track of selected CPPNs for MIDI playback with multiple CPPNS in Breedesizer
+
 		MMNEAT.registerFitnessFunction("User Preference");
 		//sets mu to a divisible number
 		if(Parameters.parameters.integerParameter("mu") % InteractiveEvolutionTask.NUM_COLUMNS != 0) { 
@@ -169,8 +169,8 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		buttons = new ArrayList<JButton>();
 
 		//sets up JFrame
-		
-		
+
+
 		//frame.setSize(PIC_SIZE * NUM_COLUMNS + 200, PIC_SIZE * NUM_ROWS + 700);
 		frame.setSize(Toolkit.getDefaultToolkit().getScreenSize());
 		picSize = Math.min(picSize, frame.getWidth() / NUM_COLUMNS);
@@ -183,7 +183,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		topper = new JPanel();
 		top = new JPanel();
 		JPanel bottom = new JPanel();
-		
+
 		// Gets the Button Images from the Picbreeder data Folder and re-scales them for use on the smaller Action Buttons
 		ImageIcon reset = new ImageIcon("data\\picbreeder\\reset.png");
 		Image reset2 = reset.getImage().getScaledInstance(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT, 1);
@@ -196,16 +196,16 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 
 		ImageIcon close = new ImageIcon("data\\picbreeder\\quit.png");
 		Image close2 = close.getImage().getScaledInstance(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT, 1);
-		
+
 		ImageIcon lineage = new ImageIcon("data\\picbreeder\\lineage.png");
 		Image lineage2 = lineage.getImage().getScaledInstance(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT, 1);
 
 		ImageIcon network = new ImageIcon("data\\picbreeder\\network.png");
 		Image network2 = network.getImage().getScaledInstance(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT, 1);
-		
+
 		ImageIcon undo = new ImageIcon("data\\picbreeder\\undo.png");
 		Image undo2 = undo.getImage().getScaledInstance(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT, 1);
-		
+
 		JButton resetButton = new JButton(new ImageIcon(reset2));
 		JButton saveButton = new JButton(new ImageIcon(save2));
 		JButton evolveButton = new JButton(new ImageIcon(evolve2));
@@ -222,7 +222,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		networkButton.setPreferredSize(new Dimension(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT));
 		undoButton.setPreferredSize(new Dimension(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT));
 		closeButton.setPreferredSize(new Dimension(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT));
-		
+
 		resetButton.setText("Reset");
 		saveButton.setText("Save");
 		evolveButton.setText("Evolve!");
@@ -230,7 +230,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		networkButton.setText("Network");
 		undoButton.setText("Undo");
 		closeButton.setText("Close");
-			
+
 		//instantiates activation function checkboxes
 		JCheckBox sigmoid = new JCheckBox("sigmoid", CommonConstants.includeSigmoidFunction);
 		activation[Math.abs(SIGMOID_CHECKBOX_INDEX)] = CommonConstants.includeSigmoidFunction;
@@ -266,7 +266,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		activation[Math.abs(TRIANGLE_WAVE_CHECKBOX_INDEX)] = CommonConstants.includeTriangleWaveFunction;
 		JCheckBox squareWave = new JCheckBox("square_wave", CommonConstants.includeSquareWaveFunction);
 		activation[Math.abs(SQUARE_WAVE_CHECKBOX_INDEX)] = CommonConstants.includeSquareWaveFunction;
-		
+
 		//adds slider for mutation rate change
 		JSlider mutationsPerGeneration = new JSlider(JSlider.HORIZONTAL, MPG_MIN, MPG_MAX, MPG_DEFAULT);
 
@@ -303,7 +303,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		fullSawtooth.setName("" + FULL_SAWTOOTH_CHECKBOX_INDEX);
 		triangleWave.setName("" + TRIANGLE_WAVE_CHECKBOX_INDEX);
 		squareWave.setName("" + SQUARE_WAVE_CHECKBOX_INDEX);
-		
+
 		mutationsPerGeneration.setMinorTickSpacing(1);
 		mutationsPerGeneration.setPaintTicks(true);
 		labels.put(0, new JLabel("Fewer Mutations"));
@@ -339,7 +339,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		squareWave.addActionListener(this);
 
 		mutationsPerGeneration.addChangeListener(this);
-		
+
 		//set checkbox colors to match activation function color
 		sigmoid.setForeground(CombinatoricUtilities.colorFromInt(ActivationFunctions.FTYPE_SIGMOID));
 		absVal.setForeground(CombinatoricUtilities.colorFromInt(ActivationFunctions.FTYPE_ABSVAL));
@@ -358,8 +358,8 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		fullSawtooth.setForeground(CombinatoricUtilities.colorFromInt(ActivationFunctions.FTYPE_FULLSAWTOOTH));
 		triangleWave.setForeground(CombinatoricUtilities.colorFromInt(ActivationFunctions.FTYPE_TRIANGLEWAVE));
 		squareWave.setForeground(CombinatoricUtilities.colorFromInt(ActivationFunctions.FTYPE_SQUAREWAVE));
-		
-		
+
+
 		//add graphics to title panel
 		top.add(lineageButton);
 		top.add(resetButton);
@@ -372,7 +372,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 
 
 		topper.add(top);
-		
+
 		bottom.add(halfLinear);
 		bottom.add(absVal);
 		bottom.add(sawtooth);
@@ -395,17 +395,17 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		panels.add(topper);
 		//adds button panels
 		addButtonPanels();	
-		
+
 		//adds panels to frame
 		for(JPanel panel: panels) frame.add(panel);
 
 		//adds buttons to button panels
 		int x = 0;//used to keep track of index of button panel
 		addButtonsToPanel(x++);
-		
+
 		inputCheckBoxes();
 	}
-	
+
 	/**
 	 * Adds checkboxes for disabling certain input values
 	 */
@@ -423,12 +423,12 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 			top.add(inputEffect);
 		}
 	}
-	
+
 	public static double[] getInputMultipliers() {
 		double[] inputMultipliersCopy = Arrays.copyOf(inputMultipliers, MMNEAT.networkInputs);
 		return inputMultipliersCopy;
 	}
-	
+
 	/**
 	 * Accesses title of window
 	 * @return string representing title of window
@@ -600,12 +600,12 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	 */
 	private void buttonPressed(int scoreIndex) {
 		if(chosen[scoreIndex]) {//if image has already been clicked, reset
-			selectedCPPNs.remove(scoreIndex);
+			selectedCPPNs.remove(scoreIndex); //remove CPPN from list of currently selected CPPNs
 			chosen[scoreIndex] = false;
 			buttons.get(scoreIndex).setBorder(BorderFactory.createLineBorder(Color.lightGray, BORDER_THICKNESS));
 			scores.get(scoreIndex).replaceScores(new double[]{0});
 		} else {//if image has not been clicked, set it
-			selectedCPPNs.add(scoreIndex);
+			selectedCPPNs.add(scoreIndex); //add CPPN to list of currently selected CPPNs
 			chosen[scoreIndex] = true;
 			buttons.get(scoreIndex).setBorder(BorderFactory.createLineBorder(Color.BLUE, BORDER_THICKNESS));
 			scores.get(scoreIndex).replaceScores(new double[]{1.0});
@@ -613,7 +613,6 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		additionalButtonClickAction(scoreIndex,scores.get(scoreIndex).individual);
 		currentCPPN = scores.get(scoreIndex).individual.getPhenotype();
 	}
-
 
 	protected abstract void additionalButtonClickAction(int scoreIndex, Genotype<T> individual);
 
@@ -661,7 +660,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 			}
 		}
 	}
-	
+
 	/**
 	 * Sets the activation functions as true or false based on whether or
 	 * not they were pressed
@@ -686,9 +685,9 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	 * @param index Index of the effect being changed
 	 */
 	protected void setEffectCheckBox(int index){
-		
+
 		// Generalize depending on number of inputs
-		
+
 		if(inputMultipliers[index] == 1.0){ // Effect is currently ON
 			inputMultipliers[index] = 0.0;
 		}else{ // Effect is currently OFF
@@ -705,7 +704,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 			setButtonImage(getButtonImage(scores.get(i).individual.getPhenotype(),  picSize, picSize, inputMultipliers), i);
 		}		
 	}
-	
+
 	/**
 	 * Contains actions to be performed based
 	 * on specific events
@@ -713,7 +712,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	 */
 	@Override
 	public void actionPerformed(ActionEvent event) {
-//		System.out.println(event.toString());
+		//		System.out.println(event.toString());
 		//open scanner to read which button was pressed
 		Scanner s = new Scanner(event.toString());
 		s.next(); //parsing action event, no spaces allowed 
@@ -722,7 +721,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		s.close();
 		respondToClick(itemID);
 	}
-	
+
 	protected void respondToClick(int itemID) {
 		if(itemID == SIGMOID_CHECKBOX_INDEX) {
 			setActivationFunctionCheckBox(activation[Math.abs(SIGMOID_CHECKBOX_INDEX)], SIGMOID_CHECKBOX_INDEX, "includeSigmoidFunction");
@@ -797,7 +796,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 				"size mismatch! score array is " + scores.size() + " in length and buttons array is " + buttons.size() + " long";
 			buttonPressed(itemID);
 		} 
-		
+
 		// Handle all input disabling checkboxes
 		for(int i = 0; i < sensorLabels().length; i++) {			
 			if(itemID == CHECKBOX_IDENTIFIER_START - i){
@@ -938,8 +937,8 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		SelectiveBreedingEA.MUTATION_RATE = source.getValue();
 
 	}
-	
+
 	public abstract int numCPPNInputs();
-	
+
 	public abstract int numCPPNOutputs();
 }

@@ -1,5 +1,6 @@
 package edu.utexas.cs.nn.tasks.interactive.breedesizer;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.io.FileNotFoundException;
@@ -7,6 +8,7 @@ import java.io.IOException;
 import java.util.Hashtable;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JSlider;
@@ -49,30 +51,31 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 
 	public static final int CPPN_NUM_INPUTS	= 3;
 	public static final int CPPN_NUM_OUTPUTS = 1;
-	
+
 	private static final int FILE_LOADER_CHECKBOX_INDEX = CHECKBOX_IDENTIFIER_START - CPPN_NUM_INPUTS - 1;
+
+	private static final int MIDI_PLAYBACK_TYPE_CHECKBOX_INDEX = CHECKBOX_IDENTIFIER_START - CPPN_NUM_INPUTS - 2;
 
 	Keyboard keyboard;
 	protected JSlider clipLength;
 	protected boolean initializationComplete = false;
 	protected AmplitudeArrayPlayer arrayPlayer = null;
 	public double noteLengthScale;
+	private JCheckBox MIDIPlaybackType;
 
 	// Controls MIDI playback, and allows for interruption
 	private AmplitudeArrayPlayer midiPlay = null;
 
 	private JSlider speedOfMIDI;
-	
+
 	public BreedesizerTask() throws IllegalAccessException {
 		this(true);
 	}
-	
+
 	public BreedesizerTask(boolean justBreedesizer) throws IllegalAccessException {
 		super();
 		midiPlay = new AmplitudeArrayPlayer(); // no sequence to play
-		
-		
-		
+
 		clipLength = new JSlider(JSlider.HORIZONTAL, Keyboard.NOTE_LENGTH_DEFAULT, Parameters.parameters.integerParameter("maxClipLength"), Parameters.parameters.integerParameter("clipLength"));
 
 		Hashtable<Integer,JLabel> labels = new Hashtable<>();
@@ -110,13 +113,13 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 		if(justBreedesizer) {
 			//keyboard constructor
 			keyboard = new Keyboard();
-			
+
 			int minMultiplier = 10; //non-scaled minimum value (correlates with fastest speed)
 			int maxMultiplier = 400; //non-scaled maximum value (correlates with slowest speed)
 			int defaultMultiplier = 100; //non-scaled default value - simply amplitude length multiplier
 			double scale = 100.0;
 			noteLengthScale = defaultMultiplier/scale; //no scaling by default
-			
+
 			speedOfMIDI = new JSlider(JSlider.HORIZONTAL, minMultiplier, maxMultiplier, defaultMultiplier);
 
 			Hashtable<Integer,JLabel> speedLabels = new Hashtable<>();
@@ -143,10 +146,10 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 						resetButtons();
 					}
 				}
-				
+
 			});
 			top.add(speedOfMIDI);
-			
+
 			JButton playWithMIDI = new JButton("PlayWithMIDI");
 			// Name is first available numeric label after the input disablers
 			playWithMIDI.setName("" + (CHECKBOX_IDENTIFIER_START - inputMultipliers.length));
@@ -157,8 +160,14 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 			fileLoadButton.setName("" + FILE_LOADER_CHECKBOX_INDEX);
 			fileLoadButton.addActionListener(this);
 			top.add(fileLoadButton);
-		}
-		initializationComplete = true;		
+
+			MIDIPlaybackType = new JCheckBox("advancedMIDIPlayback", false);
+			MIDIPlaybackType.setName("" + MIDI_PLAYBACK_TYPE_CHECKBOX_INDEX);
+			MIDIPlaybackType.addActionListener(this);
+			MIDIPlaybackType.setForeground(new Color(0,0,0));
+			top.add(MIDIPlaybackType);		
+		}		
+		initializationComplete = true;
 	}
 
 	/**
@@ -173,16 +182,24 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 		}
 		super.respondToClick(itemID);
 		// Play original sound if they click the button
+		if(itemID == MIDI_PLAYBACK_TYPE_CHECKBOX_INDEX) {
+			if(MIDIPlaybackType.isSelected()){ // Effect is currently ON
+				MIDIPlaybackType.setSelected(false);
+			}else{ // Effect is currently OFF
+				MIDIPlaybackType.setSelected(true);
+			}
+		}
 		if(itemID == (CHECKBOX_IDENTIFIER_START - inputMultipliers.length)) {
 			Network[] cppns = new Network[selectedCPPNs.size()];
-//			System.out.println("checkbox identifier - # of input multipliers: " + (CHECKBOX_IDENTIFIER_START - inputMultipliers.length));
-//			System.out.println("file loader checkbox index: " + FILE_LOADER_CHECKBOX_INDEX);
-			if(!justStopped) { // Pressing original button can stop playback too		
-				//midiPlay = MIDIUtil.playMIDIWithCPPNFromString(Parameters.parameters.stringParameter("remixMIDIFile"), currentCPPN, noteLengthScale);		
-				for(int i = 0; i < selectedCPPNs.size(); i++) {
-					cppns[i] = scores.get(selectedCPPNs.get(i)).individual.getPhenotype();
+			if(!justStopped) { // Pressing original button can stop playback too
+				if(!MIDIPlaybackType.isSelected()) { // action for simple MIDI playback
+					midiPlay = MIDIUtil.playMIDIWithCPPNFromString(Parameters.parameters.stringParameter("remixMIDIFile"), currentCPPN, noteLengthScale);
+				} else { // action for advanced MIDI playback
+					for(int i = 0; i < selectedCPPNs.size(); i++) {
+						cppns[i] = scores.get(selectedCPPNs.get(i)).individual.getPhenotype();
+					}
+					midiPlay = MIDIUtil.playMIDIWithCPPNsFromString(Parameters.parameters.stringParameter("remixMIDIFile"), cppns, noteLengthScale);
 				}
-				midiPlay = MIDIUtil.playMIDIWithCPPNsFromString(Parameters.parameters.stringParameter("remixMIDIFile"), cppns, noteLengthScale);
 			}
 		}
 		if(itemID == FILE_LOADER_CHECKBOX_INDEX) {
@@ -197,7 +214,7 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 			resetButtons();
 		}
 	}
-	
+
 	@Override
 	public String[] sensorLabels() {
 		return new String[] { "Time", "Sine of time", "bias" };
@@ -231,7 +248,7 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 		if(arrayPlayer != null) { // Always stop any currently playing sound
 			arrayPlayer.stopPlayback();
 		}
-		
+
 		if(chosen[scoreIndex]) { // Play sound if item was just selected
 			Network phenotype = individual.getPhenotype();
 			double[] amplitude = SoundFromCPPNUtil.amplitudeGenerator(phenotype, Parameters.parameters.integerParameter("clipLength"), FREQUENCY_DEFAULT, inputMultipliers);
@@ -265,7 +282,7 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 		//SAVING AUDIO
 
 		chooser = new JFileChooser();
-		
+
 		chooser.setApproveButtonText("Save");
 		FileNameExtensionFilter audioFilter = new FileNameExtensionFilter("WAV audio files", "wav");
 		chooser.setFileFilter(audioFilter);
@@ -280,7 +297,7 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 			System.out.println("audio file not saved");
 		}	
 	}
-	
+
 	/**
 	 * The way sound is saved has to be a different method call for Breedesizer and Remixbreeder, so this code is
 	 * extracted from the original save method and made into a protected method.
