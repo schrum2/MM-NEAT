@@ -559,15 +559,14 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 		int start = (color == NUM_COLORS ? 0 : color);
 		int end = (color == NUM_COLORS ? NUM_COLORS : color + 1);
 		
-		List<Substrate> subs = HyperNEATUtil.getSubstrateInformation(reducedWidth, reducedHeight, (end - start), new ArrayList<Triple<String, Integer, Integer>>()); // Outputs are added separately
+		List<Substrate> subs = HyperNEATUtil.getSubstrateInformation(reducedWidth, reducedHeight, (end - start), getOutputInfo()); // Outputs are added separately
 
-		addOutputSubstrates(subs); // Output Substrates are added here
 		return subs;
 	}
 
-	public abstract void addOutputSubstrates(List<Substrate> subs);
+	public abstract List<Triple<String, Integer, Integer>> getOutputInfo();
 	
-	public abstract void addOutputConnections(List<Triple<String, String, Boolean>> conn);
+	public abstract List<String> getOutputNames();
 	
 	/**
 	 * Each Substrate has a unique String name, and this method returns a list
@@ -584,9 +583,8 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 		int start = (color == NUM_COLORS ? 0 : color);
 		int end = (color == NUM_COLORS ? NUM_COLORS : color + 1);
 		
-		List<Triple<String, String, Boolean>> conn = HyperNEATUtil.getSubstrateConnectivity((end - start), new ArrayList<String>()); // Outputs are added separately
+		List<Triple<String, String, Boolean>> conn = HyperNEATUtil.getSubstrateConnectivity((end - start), getOutputNames()); // Outputs are added separately
 		
-		addOutputConnections(conn); // Outputs are added here
 		return conn;
 	}	
 	

@@ -1,5 +1,6 @@
 package edu.utexas.cs.nn.tasks.vizdoom;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
@@ -8,7 +9,6 @@ import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.networks.hyperneat.Substrate;
 import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.datastructures.Triple;
 import vizdoom.Button;
 import vizdoom.GameState;
@@ -110,18 +110,22 @@ public class VizDoomPredictPositionTask<T extends Network> extends VizDoomTask<T
 	}
 
 	@Override
-	public void addOutputSubstrates(List<Substrate> subs) {
-		Substrate cstick = new Substrate(new Pair<Integer, Integer>(2, 1), 
-				Substrate.OUTPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, Substrate.OUTPUT_SUBSTRATE, 0), "C-Stick Outputs");
-		subs.add(cstick);
-		Substrate button = new Substrate(new Pair<Integer, Integer>(1, 1), 
-				Substrate.OUTPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, Substrate.OUTPUT_SUBSTRATE, 0), "Button Output");
-		subs.add(button);
+	public List<Triple<String, Integer, Integer>> getOutputInfo() {
+		List<Triple<String, Integer, Integer>> outputs = new ArrayList<Triple<String, Integer, Integer>>();
+		
+		outputs.add(new Triple<String, Integer, Integer>("C-Stick Outputs", 0, Substrate.OUTPUT_SUBSTRATE));
+		outputs.add(new Triple<String, Integer, Integer>("Button Output", 0, Substrate.OUTPUT_SUBSTRATE));
+		
+		return outputs;
 	}
 
 	@Override
-	public void addOutputConnections(List<Triple<String, String, Boolean>> conn) {
-		conn.add(new Triple<String, String, Boolean>("Processing", "C-Stick Outputs", Boolean.FALSE));
-		conn.add(new Triple<String, String, Boolean>("Processing", "Button Output", Boolean.FALSE));
+	public List<String> getOutputNames() {
+		List<String> outputs = new ArrayList<String>();
+		
+		outputs.add("C-Stick Outputs");
+		outputs.add("Button Output");
+		
+		return outputs;
 	}
 }

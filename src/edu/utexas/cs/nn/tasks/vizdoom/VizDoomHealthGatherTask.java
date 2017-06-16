@@ -1,5 +1,6 @@
 package edu.utexas.cs.nn.tasks.vizdoom;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
@@ -8,7 +9,6 @@ import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.networks.hyperneat.Substrate;
 import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.datastructures.Triple;
 import vizdoom.Button;
 import vizdoom.GameState;
@@ -116,18 +116,24 @@ public class VizDoomHealthGatherTask<T extends Network> extends VizDoomTask<T> {
 	}
 
 	@Override
-	public void addOutputSubstrates(List<Substrate> subs) {
-		Substrate dpad = new Substrate(new Pair<Integer, Integer>(3, 2), 
-				Substrate.OUTPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, Substrate.OUTPUT_SUBSTRATE, 0), "D-Pad Outputs");
+	public List<Triple<String, Integer, Integer>> getOutputInfo() {
+		List<Triple<String, Integer, Integer>> outputs = new ArrayList<Triple<String, Integer, Integer>>();
+		
+		outputs.add(new Triple<String, Integer, Integer>("D-Pad Outputs", 0, Substrate.OUTPUT_SUBSTRATE));
 		// Corners and center of D-pad are not used
-		dpad.addDeadNeuron(0,0);
-		dpad.addDeadNeuron(2,0);
-		dpad.addDeadNeuron(1,1);
-		subs.add(dpad);
+//		dpad.addDeadNeuron(0,0);
+//		dpad.addDeadNeuron(2,0);
+//		dpad.addDeadNeuron(1,1);
+		
+		return outputs;
 	}
 
 	@Override
-	public void addOutputConnections(List<Triple<String, String, Boolean>> conn) {
-		conn.add(new Triple<String, String, Boolean>("Processing", "D-Pad Outputs", Boolean.FALSE));
+	public List<String> getOutputNames() {
+		List<String> outputs = new ArrayList<String>();
+		
+		outputs.add("D-Pad Outputs");
+		
+		return outputs;
 	}
 }

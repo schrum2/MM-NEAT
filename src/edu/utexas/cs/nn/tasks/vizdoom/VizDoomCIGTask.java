@@ -1,14 +1,13 @@
 package edu.utexas.cs.nn.tasks.vizdoom;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.networks.TWEANN;
-import edu.utexas.cs.nn.networks.hyperneat.Substrate;
 import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.datastructures.Triple;
 import vizdoom.Button;
 import vizdoom.GameState;
@@ -106,14 +105,16 @@ public class VizDoomCIGTask<T extends Network> extends VizDoomTask<T> {
 	}
 
 	@Override
-	public void addOutputSubstrates(List<Substrate> subs) {
+	public List<Triple<String, Integer, Integer>> getOutputInfo() {
+		List<Triple<String, Integer, Integer>> outputs = new ArrayList<Triple<String, Integer, Integer>>();
 		// TODO Auto-generated method stub
-		
+		return outputs;
 	}
 
 	@Override
-	public void addOutputConnections(List<Triple<String, String, Boolean>> conn) {
+	public List<String> getOutputNames() {
+		List<String> outputs = new ArrayList<String>();
 		// TODO Auto-generated method stub
-		
+		return outputs;
 	}
 }
