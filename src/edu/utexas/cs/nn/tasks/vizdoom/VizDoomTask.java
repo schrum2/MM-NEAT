@@ -10,6 +10,7 @@ import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.networks.NetworkTask;
 import edu.utexas.cs.nn.networks.hyperneat.HyperNEATTask;
+import edu.utexas.cs.nn.networks.hyperneat.HyperNEATUtil;
 import edu.utexas.cs.nn.networks.hyperneat.Substrate;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
@@ -550,24 +551,17 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 		int height = Parameters.parameters.integerParameter("doomInputHeight");
 		int width = Parameters.parameters.integerParameter("doomInputWidth");
 		int smudge = Parameters.parameters.integerParameter("doomInputPixelSmudge");
+		
 		Integer reducedHeight = height / smudge;
 		Integer reducedWidth = width / smudge;
-		ArrayList<Substrate> subs = new ArrayList<Substrate>();
-		String name;
+		
 		int color = Parameters.parameters.integerParameter("doomInputColorVal");
 		int start = (color == NUM_COLORS ? 0 : color);
 		int end = (color == NUM_COLORS ? NUM_COLORS : color + 1);
-		for(int i = start; i < end; i ++){
-			name = "Inputs (" + (i == RED_INDEX ? "Red)" : (i == GREEN_INDEX ? "Green)" : "Blue)"));
-			Substrate inputs = new Substrate(new Pair<Integer, Integer>(reducedWidth, reducedHeight), 
-					Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, Substrate.INPUT_SUBSTRATE, 0), name);
-			subs.add(inputs);
-		}
-		Substrate processing = new Substrate(new Pair<Integer, Integer>(reducedWidth, reducedHeight), 
-				Substrate.PROCCESS_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, Substrate.PROCCESS_SUBSTRATE, 0), "Processing");
-		subs.add(processing);
 		
-		addOutputSubstrates(subs);
+		List<Substrate> subs = HyperNEATUtil.getSubstrateInformation(reducedWidth, reducedHeight, (end - start), new ArrayList<Triple<String, Integer, Integer>>()); // Outputs are added separately
+
+		addOutputSubstrates(subs); // Output Substrates are added here
 		return subs;
 	}
 
@@ -586,27 +580,13 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 	 */
 	@Override
 	public List<Triple<String, String, Boolean>> getSubstrateConnectivity(){
-		ArrayList<Triple<String, String, Boolean>> conn = new ArrayList<Triple<String, String, Boolean>>();
-		String name;
 		int color = Parameters.parameters.integerParameter("doomInputColorVal");
 		int start = (color == NUM_COLORS ? 0 : color);
 		int end = (color == NUM_COLORS ? NUM_COLORS : color + 1);
-		for(int i = start; i < end; i ++){
-			name = "Inputs (" + (i == RED_INDEX ? "Red)" : (i == GREEN_INDEX ? "Green)" : "Blue)"));
-			conn.add(new Triple<String, String, Boolean>(name, "Processing", Boolean.FALSE));
-		}		
-		addOutputConnections(conn);
-		if(Parameters.parameters.booleanParameter("extraHNLinks")) {
-			int connSize = conn.size();
-			for(int j = 0; j < connSize; j++){
-				if(conn.get(j).t1 == "Processing"){
-					for(int i = start; i < end; i ++){
-						name = "Inputs (" + (i == RED_INDEX ? "Red)" : (i == GREEN_INDEX ? "Green)" : "Blue)"));
-						conn.add(new Triple<String, String, Boolean>(name, conn.get(j).t2, Boolean.FALSE));
-					}
-				}
-			}	
-		}
+		
+		List<Triple<String, String, Boolean>> conn = HyperNEATUtil.getSubstrateConnectivity((end - start), new ArrayList<String>()); // Outputs are added separately
+		
+		addOutputConnections(conn); // Outputs are added here
 		return conn;
 	}	
 	
