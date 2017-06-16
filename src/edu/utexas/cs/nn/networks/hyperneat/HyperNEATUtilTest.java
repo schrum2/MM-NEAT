@@ -197,7 +197,7 @@ public class HyperNEATUtilTest {
 		
 		for(int i = 0; i < 2; i++){ // Process Width
 			for(int j = 0; j < 3; j++){ // Number of Outputs
-				assertEquals(test.get(index++), new Triple<String, String, Boolean>("process(" + i + ",3)", "o" + (j+1),  Boolean.FALSE));
+				assertEquals(test.get(index++), new Triple<String, String, Boolean>("process(" + i + ",2)", "o" + (j+1),  Boolean.FALSE));
 			}
 		}
 		

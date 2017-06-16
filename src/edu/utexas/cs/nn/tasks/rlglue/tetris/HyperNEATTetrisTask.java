@@ -7,6 +7,7 @@ import org.rlcommunity.environments.tetris.TetrisState;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.networks.hyperneat.HyperNEATTask;
+import edu.utexas.cs.nn.networks.hyperneat.HyperNEATUtil;
 import edu.utexas.cs.nn.networks.hyperneat.Substrate;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
@@ -60,43 +61,18 @@ public class HyperNEATTetrisTask<T extends Network> extends TetrisTask<T> implem
 	public List<Substrate> getSubstrateInformation() {
 		int outputDepth = SUBSTRATE_COORDINATES;
 		if (substrateInformation == null) {
-			substrateInformation = new LinkedList<Substrate>();
 			int worldWidth = TetrisState.worldWidth;
 			int worldHeight = TetrisState.worldHeight;
 			boolean split = CommonConstants.splitRawTetrisInputs;
 
 			// Different extractors correspond to different substrate configurations
 			if(MMNEAT.rlGlueExtractor instanceof RawTetrisStateExtractor) { // 2D grid of blocks			
-				Triple<Integer, Integer, Integer> blockSubCoord = new Triple<Integer, Integer, Integer>(0, 0, 0);
-				Pair<Integer, Integer> substrateDimension = new Pair<Integer, Integer>(worldWidth, worldHeight);
-				Substrate blockInputSub = new Substrate(substrateDimension, Substrate.INPUT_SUBSTRATE, blockSubCoord, "blocks"); // 2D grid of block locations
-				substrateInformation.add(blockInputSub);
-				if(split) { // Optional 2D grid of hole locations
-					Triple<Integer, Integer, Integer> holesSubCoord = new Triple<Integer, Integer, Integer>(SUBSTRATE_COORDINATES, 0, 0);
-					Substrate holesInputSub = new Substrate(substrateDimension, Substrate.INPUT_SUBSTRATE, holesSubCoord, "holes");
-					substrateInformation.add(holesInputSub);
-				}
-				if(!CommonConstants.hyperNEAT){ // Possible when using HyperNEAT seed with standard NEAT networks: need the extra bias input
-					Substrate biasSub = new Substrate(new Pair<Integer, Integer>(0,0), Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(SUBSTRATE_COORDINATES+1, 0,0), "bias_1");
-					substrateInformation.add(biasSub);
-				}
-				for(int i = 0; i < numProcessLayers; i++) { // Add 2D hidden/processing layer(s)
-					if(CommonConstants.convolution) {
-						// Convolutional network layer sizes depend on the size of the preceding layer,
-						// along with the receptive field size (unless zero-padding is used ... not implemented yet)
-						int receptiveFieldSize = Parameters.parameters.integerParameter("receptiveFieldSize");
-						assert receptiveFieldSize % 2 == 1 : "Receptive field size needs to be odd to be centered: " + receptiveFieldSize;
-						int edgeOffset = receptiveFieldSize / 2; // might allow zero-padding around edge later
-						substrateDimension = new Pair<Integer, Integer>(substrateDimension.t1 - 2*edgeOffset, substrateDimension.t2 - 2*edgeOffset);
-					}
-					for(int k = 0; k < processingWidth; k++) {
-						// Not sure processSubCoord coordinates make sense
-						Triple<Integer, Integer, Integer> processSubCoord = new Triple<Integer, Integer, Integer>(k, outputDepth += SUBSTRATE_COORDINATES, 0);
-						Substrate processSub = new Substrate(substrateDimension, Substrate.PROCCESS_SUBSTRATE, processSubCoord,"process(" + k + "," + i + ")");
-						substrateInformation.add(processSub);
-					}
-				}
+				List<Triple<String,Integer,Integer>> output = new LinkedList<>();
+				output.add(new Triple<>("output:utility", 1, 1));
+				substrateInformation = HyperNEATUtil.getSubstrateInformation(worldWidth, worldHeight, split ? 2 : 1, output);
 			} else if(MMNEAT.rlGlueExtractor instanceof ExtendedBertsekasTsitsiklisTetrisExtractor) { // Several 1D input substrates
+				substrateInformation = new LinkedList<Substrate>();
+				
 				Substrate heights = new Substrate(new Pair<Integer,Integer>(worldWidth,1), Substrate.INPUT_SUBSTRATE, new Triple<Integer,Integer,Integer>(0,0,0), "heights");	
 				substrateInformation.add(heights);
 				Substrate heightDiffs = new Substrate(new Pair<Integer,Integer>(worldWidth - 1,1), Substrate.INPUT_SUBSTRATE, new Triple<Integer,Integer,Integer>(1,0,0), "differences");	
@@ -121,15 +97,15 @@ public class HyperNEATTetrisTask<T extends Network> extends TetrisTask<T> implem
 						substrateInformation.add(processSub);
 					}
 				}
+				// Regardless of inputs, there is only one output: state utility
+				Triple<Integer, Integer, Integer> outSubCoord = new Triple<Integer, Integer, Integer>(split ? SUBSTRATE_COORDINATES/2 : 0, outputDepth, 0);
+				Pair<Integer, Integer> outputSubstrateDimension = new Pair<Integer, Integer>(HYPERNEAT_OUTPUT_SUBSTRATE_DIMENSION, HYPERNEAT_OUTPUT_SUBSTRATE_DIMENSION);
+				Substrate outputSub = new Substrate(outputSubstrateDimension, Substrate.OUTPUT_SUBSTRATE, outSubCoord,"output:utility");
+				substrateInformation.add(outputSub);
 			} else {
 				System.out.println("No substrate configuration defined for this extractor!");
 				System.exit(1);
 			}
-			// Regardless of inputs, there is only one output: state utility
-			Triple<Integer, Integer, Integer> outSubCoord = new Triple<Integer, Integer, Integer>(split ? SUBSTRATE_COORDINATES/2 : 0, outputDepth, 0);
-			Pair<Integer, Integer> outputSubstrateDimension = new Pair<Integer, Integer>(HYPERNEAT_OUTPUT_SUBSTRATE_DIMENSION, HYPERNEAT_OUTPUT_SUBSTRATE_DIMENSION);
-			Substrate outputSub = new Substrate(outputSubstrateDimension, Substrate.OUTPUT_SUBSTRATE, outSubCoord,"output:utility");
-			substrateInformation.add(outputSub);
 		}
 		return substrateInformation;
 	}
@@ -140,26 +116,13 @@ public class HyperNEATTetrisTask<T extends Network> extends TetrisTask<T> implem
 	@Override
 	public List<Triple<String, String,Boolean>> getSubstrateConnectivity() {
 		if (substrateConnectivity == null) { // Generate once and save to be reused later
-			substrateConnectivity = new LinkedList<Triple<String, String, Boolean>>();
 			// Different extractors correspond to different substrate configurations
 			if(MMNEAT.rlGlueExtractor instanceof RawTetrisStateExtractor) {			
-				if(numProcessLayers > 0) {
-					for(int k = 0; k < processingWidth; k++) {
-						// Link the block locations to the processing layer: allows convolution
-						substrateConnectivity.add(new Triple<String, String, Boolean>("blocks", "process(" + k + ",0)", Boolean.TRUE)); 
-						if(CommonConstants.splitRawTetrisInputs) {
-							// Link hole locations to processing layer: allows convolution
-							substrateConnectivity.add(new Triple<String, String, Boolean>("holes", "process(" + k + ",0)", Boolean.TRUE));
-						}
-					}
-				}
-				if(Parameters.parameters.booleanParameter("extraHNLinks")) { // Optional: link inputs directly to output neuron
-					substrateConnectivity.add(new Triple<String, String, Boolean>("blocks", "output:utility", Boolean.FALSE)); // Link block inputs to output
-					if(CommonConstants.splitRawTetrisInputs) {
-						substrateConnectivity.add(new Triple<String, String, Boolean>("holes", "output:utility", Boolean.FALSE)); // Link hole inputs to output
-					}
-				}
+				List<String> outputNames = new LinkedList<>();
+				outputNames.add("output:utility");
+				substrateConnectivity = HyperNEATUtil.getSubstrateConnectivity(CommonConstants.splitRawTetrisInputs ? 2 : 1, outputNames);				
 			} else if(MMNEAT.rlGlueExtractor instanceof ExtendedBertsekasTsitsiklisTetrisExtractor) {	
+				substrateConnectivity = new LinkedList<Triple<String, String, Boolean>>();
 				if(numProcessLayers > 0) {
 					for(int k = 0; k < processingWidth; k++) {
 						// Link all inputs to processing layer
@@ -187,24 +150,24 @@ public class HyperNEATTetrisTask<T extends Network> extends TetrisTask<T> implem
 						substrateConnectivity.add(new Triple<String, String, Boolean>("holes", "output:utility", Boolean.FALSE));
 					}
 				}
+
+				for(int i = 0; i < (numProcessLayers - 1); i++) {
+					for(int k = 0; k < processingWidth; k++) {
+						for(int q = 0; q < processingWidth; q++) {
+							// Each processing substrate at one depth connected to processing subsrates at next depth
+							substrateConnectivity.add(new Triple<String, String, Boolean>("process("+k+","+i+")", "process("+q+","+(i + 1)+")", Boolean.TRUE));
+						}
+					}
+				}
+				if(numProcessLayers > 0) {
+					for(int k = 0; k < processingWidth; k++) {
+						// Connect final (only?) processing layer(s) to the output neuron
+						substrateConnectivity.add(new Triple<String, String, Boolean>("process("+k+","+(numProcessLayers - 1)+")", "output:utility", Boolean.FALSE));
+					}
+				}
 			} else {
 				System.out.println("No substrate configuration defined for this extractor!");
 				System.exit(1);
-			}
-			// hidden layer connectivity is the same, regardless of input configuration
-			for(int i = 0; i < (numProcessLayers - 1); i++) {
-				for(int k = 0; k < processingWidth; k++) {
-					for(int q = 0; q < processingWidth; q++) {
-						// Each processing substrate at one depth connected to processing subsrates at next depth
-						substrateConnectivity.add(new Triple<String, String, Boolean>("process("+k+","+i+")", "process("+q+","+(i + 1)+")", Boolean.TRUE));
-					}
-				}
-			}
-			if(numProcessLayers > 0) {
-				for(int k = 0; k < processingWidth; k++) {
-					// Connect final (only?) processing layer(s) to the output neuron
-					substrateConnectivity.add(new Triple<String, String, Boolean>("process("+k+","+(numProcessLayers - 1)+")", "output:utility", Boolean.FALSE));
-				}
 			}
 		}
 		return substrateConnectivity;

@@ -577,6 +577,14 @@ public class HyperNEATUtil {
 			substrateInformation.add(biasSub);
 		}				
 		for(int i = 0; i < processDepth; i++) { // Add 2D hidden/processing layer(s)
+			if(CommonConstants.convolution) {
+				// Convolutional network layer sizes depend on the size of the preceding layer,
+				// along with the receptive field size (unless zero-padding is used ... not implemented yet)
+				int receptiveFieldSize = Parameters.parameters.integerParameter("receptiveFieldSize");
+				assert receptiveFieldSize % 2 == 1 : "Receptive field size needs to be odd to be centered: " + receptiveFieldSize;
+				int edgeOffset = receptiveFieldSize / 2; // might allow zero-padding around edge later
+				substrateDimension = new Pair<Integer, Integer>(substrateDimension.t1 - 2*edgeOffset, substrateDimension.t2 - 2*edgeOffset);
+			}
 			for(int k = 0; k < processWidth; k++) {
 				// x coord = k, y = 1 + i because the height is the depth plus 1 (for the input layer)
 				Triple<Integer, Integer, Integer> processSubCoord = new Triple<Integer, Integer, Integer>(k, 1 + i, 0);
@@ -697,7 +705,7 @@ public class HyperNEATUtil {
 			for(int k = 0; k < processWidth; k++) {
 				// Link the final processing layer to the output layer
 				for(String name : outputNames){
-					substrateConnectivity.add(new Triple<String, String, Boolean>("process(" + k + "," + processDepth + ")", name, Boolean.FALSE));
+					substrateConnectivity.add(new Triple<String, String, Boolean>("process(" + k + "," + (processDepth-1) + ")", name, Boolean.FALSE));
 				}
 			}
 		}
