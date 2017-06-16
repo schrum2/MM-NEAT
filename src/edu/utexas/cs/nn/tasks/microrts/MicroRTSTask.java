@@ -233,26 +233,28 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 			if(ef2 != null)
 				ef2.givePhysicalGameState(initialPgs);
 		}
-		if(enemies!=null){
+		if(enemies!=null){ //growing sets of opponents
 			enemySet = enemies.getAppropriateEnemy(MMNEAT.ea.currentGeneration());
 			ff.informOfEnemySwitch();
-		} else {
+		} else { //single opponent
 			enemySet = new ArrayList<>(1); // will only contain the following enemy:
 			enemySet.add(ai2);
 		}
 		ef.setNetwork(individual);
-		if(CommonConstants.watch){
-			w = PhysicalGameStatePanel.newVisualizer(gs,MicroRTSUtility.WINDOW_LENGTH,MicroRTSUtility.WINDOW_LENGTH,false,PhysicalGameStatePanel.COLORSCHEME_BLACK);
-		}
 		
 		double[][] fitnesses = new double[enemySet.size()][numObjectives()];
 		double[][] others 	 = new double[enemySet.size()][numOtherScores()];
+		
+		assert enemySet.size() > 0 : "enemy set doesnt contain anything";
 		
 		for(int i = 0; i < enemySet.size(); i++){ //perform one evaluation for every enemy in the set
 			reset();
 			assert (unitsExist(0, pgs)): "player 0 does not have any units to start";
 			assert (unitsExist(1, pgs)): "player 1 does not have any units to start";
 			gs = new GameState(pgs, utt);
+			if(CommonConstants.watch){
+				w = PhysicalGameStatePanel.newVisualizer(gs,MicroRTSUtility.WINDOW_LENGTH,MicroRTSUtility.WINDOW_LENGTH,false,PhysicalGameStatePanel.COLORSCHEME_BLACK);
+			}
 			
 			ai2 = enemySet.get(i);
 			if(CommonConstants.watch){

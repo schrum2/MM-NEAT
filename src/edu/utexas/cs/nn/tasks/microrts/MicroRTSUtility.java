@@ -81,7 +81,6 @@ public class MicroRTSUtility {
 				gs.issueSafe(pa2);
 			} catch (Exception e) { e.printStackTrace();System.exit(1); }
 			pgs = gs.getPhysicalGameState(); //update after actions
-			
 			if(prog){ //if our FitnessFunction needs us to record information throughout the game
 				currentUnit = null;	
 				unitDifferenceNow = 0;
@@ -219,7 +218,6 @@ public class MicroRTSUtility {
 		List<Triple<String, Integer, Integer>> output = new LinkedList<>();
 		output.add(new Triple<>("Utility", 1,1));
 		int numInputSubstrates = getNumInputSubstrates();
-//		System.out.println(numInputSubstrates);
 		return HyperNEATUtil.getSubstrateInformation(pgs.getWidth(), pgs.getHeight(), numInputSubstrates, output);
 	} 
 

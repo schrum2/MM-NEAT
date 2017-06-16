@@ -21,38 +21,19 @@ import micro.ai.puppet.PuppetSearchMCTS;
  * @author alicequint
  *
  */
-public class FastEnemySequence implements EnemySequence{
+public class FastEnemySequence extends EnemySequence{
 
-	private static final int gensPerEnemy = 1;
-	private ArrayList<AI> appropriateEnemies = new ArrayList<>();
-	private int generationOfLastUpdate = -1;
-
-	private final AI[] enemies = new AI[]{
-			new RandomBiasedAI(), //used in competition
-			new POWorkerRush(), //used in competition
-			new POLightRush(), //used in competition
-			new NaiveMCTS(), //used in competition
-			new UCT(),
-			new MLPSMCTS(),
-			new PuppetSearchMCTS(),
-			new PortfolioAI(),
-	};
-
-	@Override
-	public ArrayList<AI> getAppropriateEnemy(int generation) {
-		if(growingSet){
-				if(generationOfLastUpdate != generation && generation % gensPerEnemy == 0 && appropriateEnemies.size() < enemies.length){
-					generationOfLastUpdate = generation;
-					if(CommonConstants.watch)
-						System.out.println("gen: " + generation + ", adding to set: " + enemies[generation/gensPerEnemy]); //index out of bounds! gen x 2
-					appropriateEnemies.add(enemies[generation/gensPerEnemy]);
-				}
-			return appropriateEnemies;
-		}else {
-			appropriateEnemies = new ArrayList<>(1); // only one enemy: set does not grow
-			appropriateEnemies.add(enemies[Math.min(generation/gensPerEnemy, enemies.length-1)]);
-		}
-		return appropriateEnemies;
+	public FastEnemySequence(){
+		gensPerEnemy = 1;
+		enemies = new AI[]{
+				new RandomBiasedAI(),
+				new POWorkerRush(),
+				new POLightRush(),
+				new NaiveMCTS(),
+				new UCT(),
+				new MLPSMCTS(),
+				new PuppetSearchMCTS(),
+				new PortfolioAI(),
+		};
 	}
-
 }
