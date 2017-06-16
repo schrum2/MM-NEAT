@@ -169,6 +169,10 @@ public class VizDoomDefendCenterTask<T extends Network> extends VizDoomTask<T> {
 		
 		return outputs;
 	}
+	
+	public void addDeadNeurons(List<Substrate> subs){
+		// This Task does not have Dead Neurons
+	}
 
 	@Override
 	public List<String> getOutputNames() {

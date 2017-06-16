@@ -559,14 +559,17 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 		int start = (color == NUM_COLORS ? 0 : color);
 		int end = (color == NUM_COLORS ? NUM_COLORS : color + 1);
 		
-		List<Substrate> subs = HyperNEATUtil.getSubstrateInformation(reducedWidth, reducedHeight, (end - start), getOutputInfo()); // Outputs are added separately
-
+		List<Substrate> subs = HyperNEATUtil.getSubstrateInformation(reducedWidth, reducedHeight, (end - start), getOutputInfo());
+		addDeadNeurons(subs);
+		
 		return subs;
 	}
 
 	public abstract List<Triple<String, Integer, Integer>> getOutputInfo();
 	
 	public abstract List<String> getOutputNames();
+	
+	public abstract void addDeadNeurons(List<Substrate> subs);
 	
 	/**
 	 * Each Substrate has a unique String name, and this method returns a list
@@ -583,7 +586,7 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 		int start = (color == NUM_COLORS ? 0 : color);
 		int end = (color == NUM_COLORS ? NUM_COLORS : color + 1);
 		
-		List<Triple<String, String, Boolean>> conn = HyperNEATUtil.getSubstrateConnectivity((end - start), getOutputNames()); // Outputs are added separately
+		List<Triple<String, String, Boolean>> conn = HyperNEATUtil.getSubstrateConnectivity((end - start), getOutputNames());
 		
 		return conn;
 	}	

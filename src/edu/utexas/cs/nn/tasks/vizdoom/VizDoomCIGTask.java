@@ -7,6 +7,7 @@ import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.networks.TWEANN;
+import edu.utexas.cs.nn.networks.hyperneat.Substrate;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.util.datastructures.Triple;
 import vizdoom.Button;
@@ -117,4 +118,9 @@ public class VizDoomCIGTask<T extends Network> extends VizDoomTask<T> {
 		// TODO Auto-generated method stub
 		return outputs;
 	}
+	
+	public void addDeadNeurons(List<Substrate> subs){
+		// This Task does not have Dead Neurons
+	}
+	
 }

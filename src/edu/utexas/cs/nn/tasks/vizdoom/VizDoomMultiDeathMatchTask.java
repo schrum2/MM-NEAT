@@ -147,20 +147,30 @@ public class VizDoomMultiDeathMatchTask<T extends Network> extends VizDoomTask<T
 		List<Triple<String, Integer, Integer>> outputs = new ArrayList<Triple<String, Integer, Integer>>();
 		
 		outputs.add(new Triple<String, Integer, Integer>("D-Pad Outputs", 0, Substrate.OUTPUT_SUBSTRATE));
-		// Corners and center of D-pad are not used
-//		dpad.addDeadNeuron(0,0);
-//		dpad.addDeadNeuron(0,2);
-//		dpad.addDeadNeuron(1,1);
-//		dpad.addDeadNeuron(2,0);
-//		dpad.addDeadNeuron(2,2);
-		
 		outputs.add(new Triple<String, Integer, Integer>("C-Stick Outputs", 0, Substrate.OUTPUT_SUBSTRATE));
 		outputs.add(new Triple<String, Integer, Integer>("Button Output", 0, Substrate.OUTPUT_SUBSTRATE));
 		outputs.add(new Triple<String, Integer, Integer>("Misc. Outputs", 0, Substrate.OUTPUT_SUBSTRATE));
 		
 		return outputs;
 	}
-
+	
+	public void addDeadNeurons(List<Substrate> subs){
+		Substrate dPad = null; // Stores the Substrate associated with the D-Pad
+		
+		for(Substrate sub : subs){
+			if(sub.getName().equals("D-Pad Outputs")){
+				dPad = sub;
+			}
+		}
+		
+		// Corners and center of D-pad are not used
+		dPad.addDeadNeuron(0,0);
+		dPad.addDeadNeuron(0,2);
+		dPad.addDeadNeuron(1,1);
+		dPad.addDeadNeuron(2,0);
+		dPad.addDeadNeuron(2,2);
+	}
+	
 	@Override
 	public List<String> getOutputNames() {
 		List<String> outputs = new ArrayList<String>();
