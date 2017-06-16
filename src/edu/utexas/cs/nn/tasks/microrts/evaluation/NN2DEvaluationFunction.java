@@ -99,5 +99,9 @@ public class NN2DEvaluationFunction<T extends Network> extends NNEvaluationFunct
 			} 
 		}
 		return labels; 
-	}	
+	}
+	
+	public int getNumInputSubstrates(){
+		return 1;
+	}
 }

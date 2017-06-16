@@ -2,8 +2,10 @@ package edu.utexas.cs.nn.tasks.microrts;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 
+import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.networks.hyperneat.HyperNEATUtil;
 import edu.utexas.cs.nn.networks.hyperneat.Substrate;
 import edu.utexas.cs.nn.parameters.CommonConstants;
@@ -36,8 +38,10 @@ public class MicroRTSUtility {
 	
 	public final static int processingDepth = Parameters.parameters.integerParameter("HNProcessDepth"); //not used yet
 	public final static int processingWidth = Parameters.parameters.integerParameter("HNProcessWidth"); //not used yet
+	
+	private static MicroRTSInformation task;
 
-	public static <T> ArrayList<Pair<double[], double[]>> oneEval(AI ai1, AI ai2, MicroRTSInformation task, RTSFitnessFunction ff, PhysicalGameStateJFrame w) {		
+	public static <T> ArrayList<Pair<double[], double[]>> oneEval(AI ai1, AI ai2, MicroRTSInformation mrtsInfo, RTSFitnessFunction ff, PhysicalGameStateJFrame w) {		
 		ArrayList<Integer> workerWithResourceID = new ArrayList<>(); //change to hashset		
 		//for % destroyed ff
 		HashSet<Long> createdUnitIDs1 = new HashSet<>();
@@ -46,7 +50,8 @@ public class MicroRTSUtility {
 		boolean base1Alive = false;
 		boolean base2Alive = false;
 		int unitDifferenceNow = 0;
-
+		
+		task = mrtsInfo;
 		coevolution = ff.getCoevolution();
 		GameState gs = task.getGameState();
 		PhysicalGameState pgs = gs.getPhysicalGameState(); //task.getPhysicalGameState();
@@ -211,8 +216,11 @@ public class MicroRTSUtility {
 	 *         layers
 	 */
 	public static List<Substrate> getSubstrateInformation(PhysicalGameState pgs) {
-		List<Triple<String, Integer, Integer>> output = null; //TODO
-		return HyperNEATUtil.getSubstrateInformation(pgs.getWidth(), pgs.getHeight(), getNumInputSubstrates(), processingWidth, processingDepth, output);
+		List<Triple<String, Integer, Integer>> output = new LinkedList<>();
+		output.add(new Triple<>("Utility", 1,1));
+		int numInputSubstrates = getNumInputSubstrates();
+//		System.out.println(numInputSubstrates);
+		return HyperNEATUtil.getSubstrateInformation(pgs.getWidth(), pgs.getHeight(), numInputSubstrates, output);
 	} 
 
 	/**
@@ -222,14 +230,15 @@ public class MicroRTSUtility {
 	 * @return
 	 */
 	public static List<Triple<String, String, Boolean>> getSubstrateConnectivity(PhysicalGameState pgs) {
-		List<String> outputNames = null;//TODO
+		List<String> outputNames = new LinkedList<>();
+		outputNames.add("Utility");
 		return HyperNEATUtil.getSubstrateConnectivity(getNumInputSubstrates(), outputNames);
 	}
 	
-	private static int getNumInputSubstrates(){
-		return -1; //TODO
+	private static int getNumInputSubstrates() {
+		return ((MicroRTSInformation) MMNEAT.task).getNumInputSubstrates();
 	}
-	
+
 	/**
 	 * determines whether unit is in given range.
 	 * @param u unit to be judged

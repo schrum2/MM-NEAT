@@ -32,5 +32,10 @@ public class DummyEvaluationFunction<T extends Network>  extends NNEvaluationFun
 	public float evaluate(int maxplayer, int minplayer, GameState gs) {
 		return 0;
 	}
+
+	@Override
+	public int getNumInputSubstrates() {
+		return 0;
+	}
 	
 }

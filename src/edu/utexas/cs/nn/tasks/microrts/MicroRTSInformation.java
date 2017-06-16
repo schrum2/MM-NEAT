@@ -45,4 +45,6 @@ public interface MicroRTSInformation {
 	
 	//returns current physical game state
 	public PhysicalGameState getPhysicalGameState();
+
+	public int getNumInputSubstrates();
 }

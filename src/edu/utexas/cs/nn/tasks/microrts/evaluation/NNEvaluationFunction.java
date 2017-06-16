@@ -72,4 +72,6 @@ public abstract class NNEvaluationFunction<T extends Network> extends Evaluation
 	public int getNumEvals(){
 		return howManyEvals;
 	}
+
+	public abstract int getNumInputSubstrates();
 }

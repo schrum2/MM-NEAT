@@ -52,7 +52,6 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 	private MapSequence maps = null;
 	private EnemySequence enemies = null;
 	private ArrayList<AI> enemySet;
-	private boolean growingEnemySet = Parameters.parameters.booleanParameter("microRTSGrowingEnemySet"); //TODO use this
 	
 	private double averageUnitDifference;
 	private int baseUpTime;
@@ -354,5 +353,10 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 		//			Pair<double[], double[]> result = test.oneEval(g, -1);
 		//			System.out.println(Arrays.toString(result.t1)+ " , "+Arrays.toString(result.t2));
 		System.out.println();
+	}
+
+	@Override
+	public int getNumInputSubstrates() {
+		return ef.getNumInputSubstrates();
 	}
 }

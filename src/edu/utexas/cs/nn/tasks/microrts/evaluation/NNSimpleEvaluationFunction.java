@@ -76,4 +76,9 @@ public class NNSimpleEvaluationFunction<T extends Network> extends NNEvaluationF
 		return new String[]{"workers", "lights", "heavies", "ranged-units", "bases", "barracks", "resources", "base-hp", "enemy-workers", 
 				"enemy-lights", "enemy-heavies", "enemy-ranged-units", "enemy-bases", "enemy-barracks", "enemy-resources", "eney-base-hp"};
 	}
+
+	@Override
+	public int getNumInputSubstrates() {
+		return 1;
+	}
 }

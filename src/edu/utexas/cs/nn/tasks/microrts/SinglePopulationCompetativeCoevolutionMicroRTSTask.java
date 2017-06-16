@@ -206,9 +206,7 @@ public class SinglePopulationCompetativeCoevolutionMicroRTSTask<T extends Networ
 
 	@Override
 	public double[] minScores() {
-		// TODO: This should be easy to implement, but in the mean time throw an exception
-		//		throw new UnsupportedOperationException("minScores not yet implemented");
-		return new double[]{};
+		return new double[numObjectives()]; //all 0's, not necessarily correct
 	}
 
 	@Override
@@ -279,4 +277,9 @@ public class SinglePopulationCompetativeCoevolutionMicroRTSTask<T extends Networ
 	public double getAverageUnitDifference(){return averageUnitDifference;}
 	@Override
 	public void setAvgUnitDiff(double diff) {averageUnitDifference = diff;}
+
+	@Override
+	public int getNumInputSubstrates() {
+		return Math.max(ef1.getNumInputSubstrates(),ef2.getNumInputSubstrates());
+	}
 }

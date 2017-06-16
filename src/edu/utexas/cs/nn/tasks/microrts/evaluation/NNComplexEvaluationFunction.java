@@ -6,14 +6,13 @@ import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.util.MiscUtil;
 import edu.utexas.cs.nn.util.PopulationUtil;
 import micro.rts.GameState;
 import micro.rts.units.Unit;
 
 /**
  * Evaluation Function for MicroRTS that puts different unit-classes
- * onto their own substrates, according to parameters (TODO it doesn't do that yet)
+ * onto their own substrates, according to parameters
  * 
  * @author alicequint
  * 
@@ -21,15 +20,18 @@ import micro.rts.units.Unit;
  */
 public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluationFunction<T> {
 
-	private boolean allMobile = Parameters.parameters.booleanParameter("mRTSMobileUnits");
-	private boolean allBuildings = Parameters.parameters.booleanParameter("mRTSBuildings");
-	private boolean myMobile = Parameters.parameters.booleanParameter("mRTSMyMobileUnits");
-	private boolean myBuildings = Parameters.parameters.booleanParameter("mRTSMyBuildings");
-	private boolean opponentsMobile = Parameters.parameters.booleanParameter("mRTSOpponentsMobileUnits");
-	private boolean opponentsBuildings = Parameters.parameters.booleanParameter("mRTSOpponentsBuildings");
-	private boolean myAll = Parameters.parameters.booleanParameter("mRTSMyAll");
-	private boolean opponentsAll= Parameters.parameters.booleanParameter("mRTSOpponentsAll");
-	private final int numSubstrates = 2; //TODO generalize
+	private boolean[] activeSubs = new boolean[]{
+			Parameters.parameters.booleanParameter("mRTSMobileUnits"),
+			Parameters.parameters.booleanParameter("mRTSBuildings"),
+			Parameters.parameters.booleanParameter("mRTSMyMobileUnits"),
+			Parameters.parameters.booleanParameter("mRTSMyBuildings"),
+			Parameters.parameters.booleanParameter("mRTSOpponentsMobileUnits"),
+			Parameters.parameters.booleanParameter("mRTSOpponentsBuildings"),
+			Parameters.parameters.booleanParameter("mRTSMyAll"),
+			Parameters.parameters.booleanParameter("mRTSOpponentsAll"),
+		//	Parameters.parameters.booleanParameter("mRTSTerrain"),
+	};
+	private int numSubstrates;
 
 	/**
 	 * constructor for FEStatePane and similar
@@ -52,6 +54,10 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 	 */
 	public NNComplexEvaluationFunction(){
 		super();
+		numSubstrates = 0;
+		for(boolean b : activeSubs){
+			if(b) numSubstrates++;
+		}
 	}
 
 	/**
@@ -97,50 +103,49 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 	private double[] populateSubstratesWith(Unit u, double[] substrates, int substrateSize, int location){
 		HashSet<Integer> appropriateSubstrates = new HashSet<>();
 		int numCurrentSubs = 0;
-		//TODO: go to microRTSUtility and make the substrate connectivity methods reflect this order 
-		if(allMobile){  
+		if(activeSubs[0]){  
 			numCurrentSubs++;
 			if(u.getType().canMove){
 				appropriateSubstrates.add(numCurrentSubs);
 			}
 		}
-		if(allBuildings){
+		if(activeSubs[1]){
 			numCurrentSubs++;
 			if(!u.getType().canMove){
 				appropriateSubstrates.add(numCurrentSubs);
 			}
 		}
-		if(myMobile){
+		if(activeSubs[2]){
 			numCurrentSubs++;
 			if(u.getType().canMove && u.getPlayer() == 0){
 				appropriateSubstrates.add(numCurrentSubs);
 			}
 		}
-		if(myBuildings){ //includes resources
+		if(activeSubs[3]){ //includes resources
 			numCurrentSubs++;
 			if(!u.getType().canMove && u.getPlayer() != 1){
 				appropriateSubstrates.add(numCurrentSubs);
 			}
 		}
-		if(opponentsMobile){
+		if(activeSubs[4]){
 			numCurrentSubs++;
 			if(u.getType().canMove && u.getPlayer() == 1){
 				appropriateSubstrates.add(numCurrentSubs);
 			}
 		}
-		if(opponentsBuildings){ //includes resources
+		if(activeSubs[5]){ //includes resources
 			numCurrentSubs++;
 			if(!u.getType().canMove && u.getPlayer() != 0){
 				appropriateSubstrates.add(numCurrentSubs);
 			}
 		}
-		if(myAll){
+		if(activeSubs[6]){
 			numCurrentSubs++;
 			if(u.getPlayer() == 0){
 				appropriateSubstrates.add(numCurrentSubs);
 			}
 		}
-		if(opponentsAll){
+		if(activeSubs[7]){
 			numCurrentSubs++;
 			if(u.getPlayer() == 1){
 				appropriateSubstrates.add(numCurrentSubs);
@@ -171,6 +176,11 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 			}
 		}
 		return labels;
+	}
+
+	@Override
+	public int getNumInputSubstrates() {
+		return numSubstrates;
 	}
 
 }
