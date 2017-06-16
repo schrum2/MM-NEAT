@@ -46,61 +46,63 @@ public class Construct3DObject {
 				g2.fillRect(0, 0, getWidth(), getHeight());
 
 				Vertex center = new Vertex(0,0,0);
+				
+				List<Triangle> tris = cubeConstructor(center, 100.0, Color.RED);
 
-				List<Triangle> tris = new ArrayList<>();
-				tris.add(new Triangle(center.add(new Vertex(vertexNum, vertexNum, vertexNum)),
-						center.add(new Vertex(vertexNum, vertexNum, -vertexNum)),
-						center.add(new Vertex(-vertexNum, vertexNum, -vertexNum)),
-						Color.ORANGE));
-				tris.add(new Triangle(center.add(new Vertex(-vertexNum, vertexNum, vertexNum)),
-						center.add(new Vertex(vertexNum, vertexNum, vertexNum)),
-						center.add(new Vertex(-vertexNum, vertexNum, -vertexNum)),
-						Color.ORANGE));
-
-				tris.add(new Triangle(center.add(new Vertex(-vertexNum, vertexNum, vertexNum)),
-						center.add(new Vertex(-vertexNum, -vertexNum, vertexNum)),
-						center.add(new Vertex(vertexNum, vertexNum, vertexNum)),
-						Color.GREEN));
-				tris.add(new Triangle(center.add(new Vertex(vertexNum, vertexNum, vertexNum)),
-						center.add(new Vertex(-vertexNum, -vertexNum, vertexNum)),
-						center.add(new Vertex(vertexNum, -vertexNum, vertexNum)),
-						Color.GREEN));
-
-				tris.add(new Triangle(center.add(new Vertex(vertexNum, vertexNum, vertexNum)),
-						center.add(new Vertex(vertexNum, vertexNum, -vertexNum)),
-						center.add(new Vertex(vertexNum, -vertexNum, vertexNum)),
-						Color.RED));
-				tris.add(new Triangle(center.add(new Vertex(vertexNum, -vertexNum, -vertexNum)),
-						center.add(new Vertex(vertexNum, -vertexNum, vertexNum)),
-						center.add(new Vertex(vertexNum, vertexNum, -vertexNum)),
-						Color.RED));
-
-				tris.add(new Triangle(center.add(new Vertex(-vertexNum, -vertexNum, vertexNum)),
-						center.add(new Vertex(-vertexNum, -vertexNum, -vertexNum)),
-						center.add(new Vertex(vertexNum, -vertexNum, vertexNum)),
-						Color.BLUE));
-				tris.add(new Triangle(center.add(new Vertex(vertexNum, -vertexNum, -vertexNum)),
-						center.add(new Vertex(vertexNum, -vertexNum, vertexNum)),
-						center.add(new Vertex(-vertexNum, -vertexNum, -vertexNum)),
-						Color.BLUE));
-
-				tris.add(new Triangle(center.add(new Vertex(-vertexNum, -vertexNum, -vertexNum)),
-						center.add(new Vertex(-vertexNum, vertexNum, -vertexNum)),
-						center.add(new Vertex(vertexNum, -vertexNum, -vertexNum)),
-						Color.WHITE));
-				tris.add(new Triangle(center.add(new Vertex(vertexNum, vertexNum, -vertexNum)),
-						center.add(new Vertex(vertexNum, -vertexNum, -vertexNum)),
-						center.add(new Vertex(-vertexNum, vertexNum, -vertexNum)),
-						Color.WHITE));
-
-				tris.add(new Triangle(center.add(new Vertex(-vertexNum, -vertexNum, -vertexNum)),
-						center.add(new Vertex(-vertexNum, vertexNum, -vertexNum)),
-						center.add(new Vertex(-vertexNum, -vertexNum, vertexNum)),
-						Color.YELLOW));
-				tris.add(new Triangle(center.add(new Vertex(-vertexNum, vertexNum, vertexNum)),
-						center.add(new Vertex(-vertexNum, -vertexNum, vertexNum)),
-						center.add(new Vertex(-vertexNum, vertexNum, -vertexNum)),
-						Color.YELLOW));
+//				List<Triangle> tris = new ArrayList<>();
+//				tris.add(new Triangle(center.add(new Vertex(vertexNum, vertexNum, vertexNum)),
+//						center.add(new Vertex(vertexNum, vertexNum, -vertexNum)),
+//						center.add(new Vertex(-vertexNum, vertexNum, -vertexNum)),
+//						Color.ORANGE));				
+//				tris.add(new Triangle(center.add(new Vertex(-vertexNum, vertexNum, vertexNum)),
+//						center.add(new Vertex(vertexNum, vertexNum, vertexNum)),
+//						center.add(new Vertex(-vertexNum, vertexNum, -vertexNum)),
+//						Color.ORANGE));
+//
+//				tris.add(new Triangle(center.add(new Vertex(-vertexNum, vertexNum, vertexNum)),
+//						center.add(new Vertex(-vertexNum, -vertexNum, vertexNum)),
+//						center.add(new Vertex(vertexNum, vertexNum, vertexNum)),
+//						Color.GREEN));
+//				tris.add(new Triangle(center.add(new Vertex(vertexNum, vertexNum, vertexNum)),
+//						center.add(new Vertex(-vertexNum, -vertexNum, vertexNum)),
+//						center.add(new Vertex(vertexNum, -vertexNum, vertexNum)),
+//						Color.GREEN));
+//
+//				tris.add(new Triangle(center.add(new Vertex(vertexNum, vertexNum, vertexNum)),
+//						center.add(new Vertex(vertexNum, vertexNum, -vertexNum)),
+//						center.add(new Vertex(vertexNum, -vertexNum, vertexNum)),
+//						Color.RED));
+//				tris.add(new Triangle(center.add(new Vertex(vertexNum, -vertexNum, -vertexNum)),
+//						center.add(new Vertex(vertexNum, -vertexNum, vertexNum)),
+//						center.add(new Vertex(vertexNum, vertexNum, -vertexNum)),
+//						Color.RED));
+//
+//				tris.add(new Triangle(center.add(new Vertex(-vertexNum, -vertexNum, vertexNum)),
+//						center.add(new Vertex(-vertexNum, -vertexNum, -vertexNum)),
+//						center.add(new Vertex(vertexNum, -vertexNum, vertexNum)),
+//						Color.BLUE));
+//				tris.add(new Triangle(center.add(new Vertex(vertexNum, -vertexNum, -vertexNum)),
+//						center.add(new Vertex(vertexNum, -vertexNum, vertexNum)),
+//						center.add(new Vertex(-vertexNum, -vertexNum, -vertexNum)),
+//						Color.BLUE));
+//
+//				tris.add(new Triangle(center.add(new Vertex(-vertexNum, -vertexNum, -vertexNum)),
+//						center.add(new Vertex(-vertexNum, vertexNum, -vertexNum)),
+//						center.add(new Vertex(vertexNum, -vertexNum, -vertexNum)),
+//						Color.WHITE));
+//				tris.add(new Triangle(center.add(new Vertex(vertexNum, vertexNum, -vertexNum)),
+//						center.add(new Vertex(vertexNum, -vertexNum, -vertexNum)),
+//						center.add(new Vertex(-vertexNum, vertexNum, -vertexNum)),
+//						Color.WHITE));
+//
+//				tris.add(new Triangle(center.add(new Vertex(-vertexNum, -vertexNum, -vertexNum)),
+//						center.add(new Vertex(-vertexNum, vertexNum, -vertexNum)),
+//						center.add(new Vertex(-vertexNum, -vertexNum, vertexNum)),
+//						Color.YELLOW));
+//				tris.add(new Triangle(center.add(new Vertex(-vertexNum, vertexNum, vertexNum)),
+//						center.add(new Vertex(-vertexNum, -vertexNum, vertexNum)),
+//						center.add(new Vertex(-vertexNum, vertexNum, -vertexNum)),
+//						Color.YELLOW));
 
 				double heading = Math.toRadians(headingSlider.getValue());
 				Matrix3 headingTransform = new Matrix3(new double[] {
@@ -197,6 +199,75 @@ public class Construct3DObject {
 
 		return new Color(red, green, blue);
 	}
+	
+	/**
+	 * Method that takes in a color, a vertex and a sidelength of a desired cube
+	 * and returns a list of triangles that can be used to construct the cube.
+	 * 
+	 * @param center vertex representing center of line
+	 * @param sideLength length of one side of the cube
+	 * @param color desired color of the cube
+	 * @return list of triangles used to construct cube
+	 */
+	public static List<Triangle> cubeConstructor(Vertex center, double sideLength, Color color) {
+		double halfLength = (sideLength/2);
+		
+		List<Triangle> tris = new ArrayList<>();
+		tris.add(new Triangle(center.add(new Vertex(halfLength, halfLength, halfLength)),
+				center.add(new Vertex(halfLength, halfLength, -halfLength)),
+				center.add(new Vertex(-halfLength, halfLength, -halfLength)),
+				color));
+		tris.add(new Triangle(center.add(new Vertex(-halfLength, halfLength, halfLength)),
+				center.add(new Vertex(halfLength, halfLength, halfLength)),
+				center.add(new Vertex(-halfLength, halfLength, -halfLength)),
+				color));
+
+		tris.add(new Triangle(center.add(new Vertex(-halfLength, halfLength, halfLength)),
+				center.add(new Vertex(-halfLength, -halfLength, halfLength)),
+				center.add(new Vertex(halfLength, halfLength, halfLength)),
+				color));
+		tris.add(new Triangle(center.add(new Vertex(halfLength, halfLength, halfLength)),
+				center.add(new Vertex(-halfLength, -halfLength, halfLength)),
+				center.add(new Vertex(halfLength, -halfLength, halfLength)),
+				color));
+
+		tris.add(new Triangle(center.add(new Vertex(halfLength, halfLength, halfLength)),
+				center.add(new Vertex(halfLength, halfLength, -halfLength)),
+				center.add(new Vertex(halfLength, -halfLength, halfLength)),
+				color));
+		tris.add(new Triangle(center.add(new Vertex(halfLength, -halfLength, -halfLength)),
+				center.add(new Vertex(halfLength, -halfLength, halfLength)),
+				center.add(new Vertex(halfLength, halfLength, -halfLength)),
+				color));
+
+		tris.add(new Triangle(center.add(new Vertex(-halfLength, -halfLength, halfLength)),
+				center.add(new Vertex(-halfLength, -halfLength, -halfLength)),
+				center.add(new Vertex(halfLength, -halfLength, halfLength)),
+				color));
+		tris.add(new Triangle(center.add(new Vertex(halfLength, -halfLength, -halfLength)),
+				center.add(new Vertex(halfLength, -halfLength, halfLength)),
+				center.add(new Vertex(-halfLength, -halfLength, -halfLength)),
+				color));
+
+		tris.add(new Triangle(center.add(new Vertex(-halfLength, -halfLength, -halfLength)),
+				center.add(new Vertex(-halfLength, halfLength, -halfLength)),
+				center.add(new Vertex(halfLength, -halfLength, -halfLength)),
+				color));
+		tris.add(new Triangle(center.add(new Vertex(halfLength, halfLength, -halfLength)),
+				center.add(new Vertex(halfLength, -halfLength, -halfLength)),
+				center.add(new Vertex(-halfLength, halfLength, -halfLength)),
+				color));
+
+		tris.add(new Triangle(center.add(new Vertex(-halfLength, -halfLength, -halfLength)),
+				center.add(new Vertex(-halfLength, halfLength, -halfLength)),
+				center.add(new Vertex(-halfLength, -halfLength, halfLength)),
+				color));
+		tris.add(new Triangle(center.add(new Vertex(-halfLength, halfLength, halfLength)),
+				center.add(new Vertex(-halfLength, -halfLength, halfLength)),
+				center.add(new Vertex(-halfLength, halfLength, -halfLength)),
+				color));
+		return tris;
+	}
 }
 
 class Vertex extends Vector3d {
@@ -218,6 +289,7 @@ class Vertex extends Vector3d {
 		return newV;
 	}
 }
+
 
 class Triangle {
 	Vertex v1;
