@@ -8,6 +8,7 @@ import java.util.Hashtable;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -39,6 +40,7 @@ public class SoundRemixTask<T extends Network> extends BreedesizerTask<T> {
 	public static final int CPPN_NUM_INPUTS	= 4;
 	
 	private static final int FILE_LOADER_BUTTON_INDEX = CHECKBOX_IDENTIFIER_START-CPPN_NUM_INPUTS-3;
+	private static final int PLAY_ORIGINAL_BUTTON_INDEX = CHECKBOX_IDENTIFIER_START-CPPN_NUM_INPUTS-4;
 
 	public double[] WAVDoubleArray;
 	public int playBackRate;
@@ -77,7 +79,7 @@ public class SoundRemixTask<T extends Network> extends BreedesizerTask<T> {
 		JButton playOriginal = new JButton("PlayOriginal");
 		// Name is first available numeric label after the input disablers.
 		// Extra -1 avoids conflict with play MIDI button of breedesizer.
-		playOriginal.setName("" + (CHECKBOX_IDENTIFIER_START - inputMultipliers.length - 1));
+		playOriginal.setName("" + (PLAY_ORIGINAL_BUTTON_INDEX));
 		playOriginal.addActionListener(this);
 		top.add(playOriginal);
 		
@@ -98,9 +100,14 @@ public class SoundRemixTask<T extends Network> extends BreedesizerTask<T> {
 		
 		if(arrayPlayer != null && arrayPlayer.isPlaying()) { // Always stop any currently playing sound
 			arrayPlayer.stopPlayback();
-		} else if(itemID == (CHECKBOX_IDENTIFIER_START - inputMultipliers.length - 1)) { // only play if wasn't playing
+		} else if(itemID == (PLAY_ORIGINAL_BUTTON_INDEX)) { // only play if wasn't playing
 			// Play original sound if they click the button
-			arrayPlayer = PlayDoubleArray.playDoubleArray(format, WAVDoubleArray);
+			//arrayPlayer = PlayDoubleArray.playDoubleArray(format, WAVDoubleArray);
+			try {
+				WAVUtil.playWAVFile(Parameters.parameters.stringParameter("remixWAVFile"));
+			} catch (UnsupportedAudioFileException | IOException | LineUnavailableException | InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 		if(itemID == FILE_LOADER_BUTTON_INDEX) {
 			JFileChooser chooser = new JFileChooser();//used to get new file

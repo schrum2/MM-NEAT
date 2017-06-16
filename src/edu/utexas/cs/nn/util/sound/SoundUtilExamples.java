@@ -55,6 +55,7 @@ public class SoundUtilExamples {
 	public static final String ALARM_WAV = "data/sounds/tone06.wav";
 	public static final String CHIPTUNE_WAV = "data/sounds/8-Bit-Noise-1.wav";
 	public static final String CHRISTMAS_MID = "data/sounds/christmas.mid";
+	public static final String PORTAL2_WAV = "data/sounds/portal2.wav";
 	
 	//used to obtain MIDI file data
 	public static final int NOTE_ON = 0x90;
