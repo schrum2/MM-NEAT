@@ -34,5 +34,16 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="lib/junit-4.10.jar"/>
 	<classpathentry kind="lib" path="vizdoom/bin/java/vizdoom.jar"/>
+	<classpathentry kind="lib" path="lib/ggp/Clojure/clojure.jar"/>
+	<classpathentry kind="lib" path="lib/ggp/Guava/guava-14.0.1.jar"/>
+	<classpathentry kind="lib" path="lib/ggp/Guava/guava-14.0.1-sources.jar"/>
+	<classpathentry kind="lib" path="lib/ggp/FlyingSaucer/core-renderer.jar"/>
+	<classpathentry kind="lib" path="lib/ggp/Htmlparser/htmlparser-1.4.jar"/>
+	<classpathentry kind="lib" path="lib/ggp/Batik/batik-1.7.jar"/>
+	<classpathentry kind="lib" path="lib/ggp/Batik/xml-apis-ext.jar"/>
+	<classpathentry kind="lib" path="lib/ggp/reflections/reflections-0.9.9-RC1.jar"/>
+	<classpathentry kind="lib" path="lib/ggp/gdl-validation/gdl-validation-0.2.2.jar"/>
+	<classpathentry kind="lib" path="lib/ggp/gdl-validation/gdl-validation-0.2.2-sources.jar"/>
+	<classpathentry kind="lib" path="lib/ggp/gdl-validation/java-cup-11b-runtime-2015.03.26.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
