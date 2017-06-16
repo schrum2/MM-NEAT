@@ -13,6 +13,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.SwingConstants;
+import javax.vecmath.Vector3d;
 
 /**
  * Imported class that constructs a three-dimensional tetrahedral object.
@@ -44,59 +45,61 @@ public class Construct3DObject {
 				g2.setColor(Color.BLACK);
 				g2.fillRect(0, 0, getWidth(), getHeight());
 
+				Vertex center = new Vertex(0,0,0);
+
 				List<Triangle> tris = new ArrayList<>();
-				tris.add(new Triangle(new Vertex(vertexNum, vertexNum, vertexNum),
-						new Vertex(vertexNum, vertexNum, -vertexNum),
-						new Vertex(-vertexNum, vertexNum, -vertexNum),
+				tris.add(new Triangle(center.add(new Vertex(vertexNum, vertexNum, vertexNum)),
+						center.add(new Vertex(vertexNum, vertexNum, -vertexNum)),
+						center.add(new Vertex(-vertexNum, vertexNum, -vertexNum)),
 						Color.ORANGE));
-				tris.add(new Triangle(new Vertex(-vertexNum, vertexNum, vertexNum),
-						new Vertex(vertexNum, vertexNum, vertexNum),
-						new Vertex(-vertexNum, vertexNum, -vertexNum),
+				tris.add(new Triangle(center.add(new Vertex(-vertexNum, vertexNum, vertexNum)),
+						center.add(new Vertex(vertexNum, vertexNum, vertexNum)),
+						center.add(new Vertex(-vertexNum, vertexNum, -vertexNum)),
 						Color.ORANGE));
-				
-				tris.add(new Triangle(new Vertex(-vertexNum, vertexNum, vertexNum),
-						new Vertex(-vertexNum, -vertexNum, vertexNum),
-						new Vertex(vertexNum, vertexNum, vertexNum),
+
+				tris.add(new Triangle(center.add(new Vertex(-vertexNum, vertexNum, vertexNum)),
+						center.add(new Vertex(-vertexNum, -vertexNum, vertexNum)),
+						center.add(new Vertex(vertexNum, vertexNum, vertexNum)),
 						Color.GREEN));
-				tris.add(new Triangle(new Vertex(vertexNum, vertexNum, vertexNum),
-						new Vertex(-vertexNum, -vertexNum, vertexNum),
-						new Vertex(vertexNum, -vertexNum, vertexNum),
+				tris.add(new Triangle(center.add(new Vertex(vertexNum, vertexNum, vertexNum)),
+						center.add(new Vertex(-vertexNum, -vertexNum, vertexNum)),
+						center.add(new Vertex(vertexNum, -vertexNum, vertexNum)),
 						Color.GREEN));
-				
-				tris.add(new Triangle(new Vertex(vertexNum, vertexNum, vertexNum),
-						new Vertex(vertexNum, vertexNum, -vertexNum),
-						new Vertex(vertexNum, -vertexNum, vertexNum),
+
+				tris.add(new Triangle(center.add(new Vertex(vertexNum, vertexNum, vertexNum)),
+						center.add(new Vertex(vertexNum, vertexNum, -vertexNum)),
+						center.add(new Vertex(vertexNum, -vertexNum, vertexNum)),
 						Color.RED));
-				tris.add(new Triangle(new Vertex(vertexNum, -vertexNum, -vertexNum),
-						new Vertex(vertexNum, -vertexNum, vertexNum),
-						new Vertex(vertexNum, vertexNum, -vertexNum),
+				tris.add(new Triangle(center.add(new Vertex(vertexNum, -vertexNum, -vertexNum)),
+						center.add(new Vertex(vertexNum, -vertexNum, vertexNum)),
+						center.add(new Vertex(vertexNum, vertexNum, -vertexNum)),
 						Color.RED));
-				
-				tris.add(new Triangle(new Vertex(-vertexNum, -vertexNum, vertexNum),
-						new Vertex(-vertexNum, -vertexNum, -vertexNum),
-						new Vertex(vertexNum, -vertexNum, vertexNum),
+
+				tris.add(new Triangle(center.add(new Vertex(-vertexNum, -vertexNum, vertexNum)),
+						center.add(new Vertex(-vertexNum, -vertexNum, -vertexNum)),
+						center.add(new Vertex(vertexNum, -vertexNum, vertexNum)),
 						Color.BLUE));
-				tris.add(new Triangle(new Vertex(vertexNum, -vertexNum, -vertexNum),
-						new Vertex(vertexNum, -vertexNum, vertexNum),
-						new Vertex(-vertexNum, -vertexNum, -vertexNum),
+				tris.add(new Triangle(center.add(new Vertex(vertexNum, -vertexNum, -vertexNum)),
+						center.add(new Vertex(vertexNum, -vertexNum, vertexNum)),
+						center.add(new Vertex(-vertexNum, -vertexNum, -vertexNum)),
 						Color.BLUE));
-				
-				tris.add(new Triangle(new Vertex(-vertexNum, -vertexNum, -vertexNum),
-						new Vertex(-vertexNum, vertexNum, -vertexNum),
-						new Vertex(vertexNum, -vertexNum, -vertexNum),
+
+				tris.add(new Triangle(center.add(new Vertex(-vertexNum, -vertexNum, -vertexNum)),
+						center.add(new Vertex(-vertexNum, vertexNum, -vertexNum)),
+						center.add(new Vertex(vertexNum, -vertexNum, -vertexNum)),
 						Color.WHITE));
-				tris.add(new Triangle(new Vertex(vertexNum, vertexNum, -vertexNum),
-						new Vertex(vertexNum, -vertexNum, -vertexNum),
-						new Vertex(-vertexNum, vertexNum, -vertexNum),
+				tris.add(new Triangle(center.add(new Vertex(vertexNum, vertexNum, -vertexNum)),
+						center.add(new Vertex(vertexNum, -vertexNum, -vertexNum)),
+						center.add(new Vertex(-vertexNum, vertexNum, -vertexNum)),
 						Color.WHITE));
-				
-				tris.add(new Triangle(new Vertex(-vertexNum, -vertexNum, -vertexNum),
-						new Vertex(-vertexNum, vertexNum, -vertexNum),
-						new Vertex(-vertexNum, -vertexNum, vertexNum),
+
+				tris.add(new Triangle(center.add(new Vertex(-vertexNum, -vertexNum, -vertexNum)),
+						center.add(new Vertex(-vertexNum, vertexNum, -vertexNum)),
+						center.add(new Vertex(-vertexNum, -vertexNum, vertexNum)),
 						Color.YELLOW));
-				tris.add(new Triangle(new Vertex(-vertexNum, vertexNum, vertexNum),
-						new Vertex(-vertexNum, -vertexNum, vertexNum),
-						new Vertex(-vertexNum, vertexNum, -vertexNum),
+				tris.add(new Triangle(center.add(new Vertex(-vertexNum, vertexNum, vertexNum)),
+						center.add(new Vertex(-vertexNum, -vertexNum, vertexNum)),
+						center.add(new Vertex(-vertexNum, vertexNum, -vertexNum)),
 						Color.YELLOW));
 
 				double heading = Math.toRadians(headingSlider.getValue());
@@ -196,14 +199,23 @@ public class Construct3DObject {
 	}
 }
 
-class Vertex {
-	double x;
-	double y;
-	double z;
-	Vertex(double x, double y, double z) {
-		this.x = x;
-		this.y = y;
-		this.z = z;
+class Vertex extends Vector3d {
+	public Vertex(double x, double y, double z) {
+		super(x,y,z);
+	}
+
+	/**
+	 * Copy constructor
+	 * @param other
+	 */
+	public Vertex(Vertex other) {
+		this(other.x, other.y, other.z);
+	}
+
+	public Vertex add(Vertex v) {
+		Vertex newV = new Vertex(this);
+		newV.add((Vector3d) v);
+		return newV;
 	}
 }
 
