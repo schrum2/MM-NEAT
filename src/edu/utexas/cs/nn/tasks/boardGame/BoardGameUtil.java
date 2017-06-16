@@ -12,6 +12,7 @@ import boardGame.TwoDimensionalBoardGameViewer;
 import boardGame.agents.BoardGamePlayer;
 import boardGame.fitnessFunction.BoardGameFitnessFunction;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
+import edu.utexas.cs.nn.networks.hyperneat.HyperNEATUtil;
 import edu.utexas.cs.nn.networks.hyperneat.Substrate;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
@@ -54,6 +55,10 @@ public class BoardGameUtil {
 					fitFunct.updateFitness(bg.getCurrentState(), playIndex);
 				}
 			}
+			
+			// TODO: The fitness processing code below needs to be moved here, and then you also need to account
+			// for averaging the fitness values across the multiple games (talk to Alice about how this was done
+			// in MicroRTS.
 		}
 		
 		if(CommonConstants.watch && bg instanceof TwoDimensionalBoardGame){ // Renders the last Move of the game
@@ -95,30 +100,19 @@ public class BoardGameUtil {
 		TwoDimensionalBoardGame<S> temp = (TwoDimensionalBoardGame<S>) bg;
 		int height = temp.getStartingState().getBoardHeight();
 		int width = temp.getStartingState().getBoardWidth();
-		List<Substrate> substrateInformation = new LinkedList<Substrate>();
-		Substrate boardInputs = new Substrate(new Pair<Integer, Integer>(width, height), 
-				Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, Substrate.INPUT_SUBSTRATE, 0), "Board Inputs");
-		substrateInformation.add(boardInputs);
-		Substrate processing = new Substrate(new Pair<Integer, Integer>(width, height), 
-				Substrate.PROCCESS_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, Substrate.PROCCESS_SUBSTRATE, 0), "Processing");
-		substrateInformation.add(processing);
-		Substrate output = new Substrate(new Pair<Integer, Integer>(1, 1), // Single utility value
-				Substrate.OUTPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, Substrate.OUTPUT_SUBSTRATE, 0), "Utility Output");
-		substrateInformation.add(output);
+		List<Triple<String, Integer, Integer>> outputInfo = new LinkedList<Triple<String, Integer, Integer>>();
+		outputInfo.add(new Triple<String, Integer, Integer>("Processing", 0, Substrate.OUTPUT_SUBSTRATE));
 		// Otherwise, no substrates will be defined, and the code will crash from the null result
 
-		return substrateInformation;
+		return HyperNEATUtil.getSubstrateInformation(width, height, 1, outputInfo); // Only has 1 Input Substrate with the Height and Width of the Board Game
 	}
 
 	// Used for Hyper-NEAT
 	public static List<Triple<String, String, Boolean>> getSubstrateConnectivity() {
-		List<Triple<String, String, Boolean>> substrateConnectivity = new LinkedList<Triple<String, String, Boolean>>();
-		substrateConnectivity.add(new Triple<String, String, Boolean>("Board Inputs", "Processing", Boolean.FALSE));
-		substrateConnectivity.add(new Triple<String, String, Boolean>("Processing", "Utility Output", Boolean.FALSE));	
-		if(Parameters.parameters.booleanParameter("extraHNLinks")) {
-			substrateConnectivity.add(new Triple<String, String, Boolean>("Board Inputs", "Utility Output", Boolean.FALSE));
-		}
-		return substrateConnectivity;
+		List<String> outputNames = new LinkedList<String>();
+		outputNames.add("Utility Output");	
+		
+		return HyperNEATUtil.getSubstrateConnectivity(1, outputNames); // Only has 1 Input Substrate
 	}
 	
 }

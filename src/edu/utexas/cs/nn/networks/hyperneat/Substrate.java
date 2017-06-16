@@ -47,7 +47,7 @@ public class Substrate {
 	 */
 	public Substrate(Pair<Integer, Integer> size, int stype, Triple<Integer, Integer, Integer> subLocation,
 			String name) {
-		this.size = size;
+		this.size = new Pair<Integer, Integer>(size.t1,size.t2); // copy
 		this.stype = stype;
 		this.name = name;
 		// this.connectToSameLayer = connectToSameLayer;

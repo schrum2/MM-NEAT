@@ -60,14 +60,26 @@ public class StaticCheckersHeuristic<T extends BoardGameState> implements BoardG
 
 		int playCenterPawns = 0;
 		int oppCenterPawns = 0;
-		// TODO: Central Kings
-		// TODO: Main Diag Pawns
-		// TODO: Main Diag Kings
-		// TODO: Double Diag Pawns
-		// TODO: Double Diag Kings
-		// TODO: Loner Pawns
-		// TODO: Loner Kings
-		// TODO: Number of Holes (Empty Squares adjacent to at least 3 Pieces of the same color)
+		int playCenterKings = 0;
+		int oppCenterKings = 0;
+		
+		int playMainDiagPawns = 0;
+		int oppMainDiagPawns = 0;
+		int playMainDiagKings = 0;
+		int oppMainDiagKings = 0;
+		
+		int playDoubleDiagPawns = 0;
+		int oppDoubleDiagPawns = 0;
+		int playDoubleDiagKings = 0;
+		int oppDoubleDiagKings = 0;
+
+		int playLonePawns = 0;
+		int oppLonePawns = 0;
+		int playLoneKings = 0;
+		int oppLoneKings = 0;
+		
+		
+		int numHoles = 0; // (Empty Squares adjacent to at least 3 Pieces of the same color)
 		
 		// List of possible Patterns to be kept track of
 		boolean playTriangle = false;

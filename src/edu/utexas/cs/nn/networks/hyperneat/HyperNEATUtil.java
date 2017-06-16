@@ -530,6 +530,16 @@ public class HyperNEATUtil {
 		return count;
 	}
 	
+	/**
+	 * Generalizes the retrieval of Substrate Information
+	 * 
+	 * @param inputWidth Width of each Input and Processing Board
+	 * @param inputHeight Height of each Input and Processing Board
+	 * @param numInputSubstrates Number of Input Boards
+	 * @param output List<Triple<String, Integer, Integer>> that defines the name of the substrates, followed by their sizes
+	 * 
+	 * @return Substrate Information
+	 */	
 	public static List<Substrate> getSubstrateInformation(int inputWidth, int inputHeight, int numInputSubstrates, List<Triple<String, Integer, Integer>> output){
 		int processWidth = Parameters.parameters.integerParameter("HNProcessWidth");
 		int processDepth = Parameters.parameters.integerParameter("HNProcessDepth");
@@ -545,6 +555,7 @@ public class HyperNEATUtil {
 	 * @param processWidth Number of Processing Boards per Processing Layer
 	 * @param processDepth Number of Processing Layers
 	 * @param output List<Triple<String, Integer, Integer>> that defines the name of the substrates, followed by their sizes
+	 * 
 	 * @return Substrate Information
 	 */
 	public static List<Substrate> getSubstrateInformation(int inputWidth, int inputHeight, int numInputSubstrates, int processWidth, int processDepth, List<Triple<String, Integer, Integer>> output) {		
@@ -566,6 +577,14 @@ public class HyperNEATUtil {
 			substrateInformation.add(biasSub);
 		}				
 		for(int i = 0; i < processDepth; i++) { // Add 2D hidden/processing layer(s)
+			if(CommonConstants.convolution) {
+				// Convolutional network layer sizes depend on the size of the preceding layer,
+				// along with the receptive field size (unless zero-padding is used ... not implemented yet)
+				int receptiveFieldSize = Parameters.parameters.integerParameter("receptiveFieldSize");
+				assert receptiveFieldSize % 2 == 1 : "Receptive field size needs to be odd to be centered: " + receptiveFieldSize;
+				int edgeOffset = receptiveFieldSize / 2; // might allow zero-padding around edge later
+				substrateDimension = new Pair<Integer, Integer>(substrateDimension.t1 - 2*edgeOffset, substrateDimension.t2 - 2*edgeOffset);
+			}
 			for(int k = 0; k < processWidth; k++) {
 				// x coord = k, y = 1 + i because the height is the depth plus 1 (for the input layer)
 				Triple<Integer, Integer, Integer> processSubCoord = new Triple<Integer, Integer, Integer>(k, 1 + i, 0);
@@ -584,13 +603,33 @@ public class HyperNEATUtil {
 		return substrateInformation;
 	}
 	
-
+	/**
+	 * Generalizes the creation of HyperNEAT Substrates
+	 * 
+	 * (Output layers are domain-specific)
+	 * 
+	 * @param numInputSubstrates Number of individual Input Boards being processed
+	 * @param outputNames Names of the Output Layers (Domain-Specific)
+	 * 
+	 * @return Substrate connectivity
+	 */
 	public static List<Triple<String, String,Boolean>> getSubstrateConnectivity(int numInputSubstrates, List<String> outputNames){
 		int processWidth = Parameters.parameters.integerParameter("HNProcessWidth");
 		int processDepth = Parameters.parameters.integerParameter("HNProcessDepth");
 		return getSubstrateConnectivity(numInputSubstrates, processWidth, processDepth, outputNames, Parameters.parameters.booleanParameter("extraHNLinks"));
 	}
-	
+
+	/**
+	 * Generalizes the creation of HyperNEAT Substrates
+	 * 
+	 * (Output layers are domain-specific)
+	 * 
+	 * @param numInputSubstrates Number of individual Input Boards being processed
+	 * @param outputNames Names of the Output Layers (Domain-Specific)
+	 * @param connectInputsToOutputs Should the Input Layer be directly connected to the Output Layer?
+	 * 
+	 * @return Substrate connectivity
+	 */
 	public static List<Triple<String, String,Boolean>> getSubstrateConnectivity(int numInputSubstrates, List<String> outputNames, boolean connectInputsToOutputs){
 		int processWidth = Parameters.parameters.integerParameter("HNProcessWidth");
 		int processDepth = Parameters.parameters.integerParameter("HNProcessDepth");
@@ -605,6 +644,25 @@ public class HyperNEATUtil {
 	 * @param numInputSubstrates Number of individual Input Boards being processed
 	 * @param processWidth Number of Processing Boards per Processing Layer
 	 * @param processDepth Number of Processing Layers
+	 * @param outputNames Names of the Output Layers (Domain-Specific)
+	 * 
+	 * @return Substrate connectivity
+	 */
+	public static List<Triple<String, String,Boolean>> getSubstrateConnectivity(int numInputSubstrates, int processWidth, int processDepth, List<String> outputNames){
+		return getSubstrateConnectivity(numInputSubstrates, processWidth, processDepth, outputNames, Parameters.parameters.booleanParameter("extraHNLinks"));
+	}
+	
+	/**
+	 * Generalizes the creation of HyperNEAT Substrates
+	 * 
+	 * (Output layers are domain-specific)
+	 * 
+	 * @param numInputSubstrates Number of individual Input Boards being processed
+	 * @param processWidth Number of Processing Boards per Processing Layer
+	 * @param processDepth Number of Processing Layers
+	 * @param outputNames Names of the Output Layers (Domain-Specific)
+	 * @param connectInputsToOutputs Should the Input Layer be directly connected to the Output Layer?
+	 * 
 	 * @return Substrate connectivity
 	 */
 	public static List<Triple<String, String,Boolean>> getSubstrateConnectivity(int numInputSubstrates, int processWidth, int processDepth, List<String> outputNames, boolean connectInputsToOutputs){
@@ -634,12 +692,12 @@ public class HyperNEATUtil {
 					// Each processing substrate at one depth connected to processing subsrates at next depth
 					substrateConnectivity.add(new Triple<String, String, Boolean>("process("+k+","+i+")", "process("+q+","+(i + 1)+")", Boolean.TRUE));
 				}
-				
+
 				if(!CommonConstants.hyperNEAT){
 					// connect bias to each remaining processing substrate
 					substrateConnectivity.add(new Triple<String, String, Boolean>("bias", "process("+k+","+(i + 1)+")", Boolean.TRUE));
 				}
-				
+
 			}
 		}
 		
@@ -647,7 +705,7 @@ public class HyperNEATUtil {
 			for(int k = 0; k < processWidth; k++) {
 				// Link the final processing layer to the output layer
 				for(String name : outputNames){
-					substrateConnectivity.add(new Triple<String, String, Boolean>("process(" + k + "," + processDepth + ")", name, Boolean.FALSE));
+					substrateConnectivity.add(new Triple<String, String, Boolean>("process(" + k + "," + (processDepth-1) + ")", name, Boolean.FALSE));
 				}
 			}
 		}
@@ -656,17 +714,19 @@ public class HyperNEATUtil {
 			// Link the input layer to the output layer
 			for(int i = 0; i < numInputSubstrates; i++){
 				for(String name : outputNames) {
-						substrateConnectivity.add(new Triple<String, String, Boolean>("Input(" + i + ")", name, Boolean.FALSE));
-					}
+					substrateConnectivity.add(new Triple<String, String, Boolean>("Input(" + i + ")", name, Boolean.FALSE));
 				}
-			
+			}
+
+			// For HyperNEAT seeded tasks
 			if(!CommonConstants.hyperNEAT){
 				for(String name : outputNames){
+					// Each output substrate has a bias connection
 					substrateConnectivity.add(new Triple<String, String, Boolean>("bias", name, Boolean.FALSE));
 				}
 			}
 		}
-		
+
 		return substrateConnectivity;
 	}
 	
