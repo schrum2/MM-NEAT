@@ -10,22 +10,22 @@ import gvgai.tracks.ArcadeMachine;
  */
 public class Test {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) { 
 
 		// Available tracks:
-		String sampleRandomController = "tracks.singlePlayer.simple.sampleRandom.Agent";
-		String doNothingController = "tracks.singlePlayer.simple.doNothing.Agent";
-		String sampleOneStepController = "tracks.singlePlayer.simple.sampleonesteplookahead.Agent";
-		String sampleFlatMCTSController = "tracks.singlePlayer.simple.greedyTreeSearch.Agent";
+		String sampleRandomController = "gvgai.tracks.singlePlayer.simple.sampleRandom.Agent";
+		String doNothingController = "gvgai.tracks.singlePlayer.simple.doNothing.Agent";
+		String sampleOneStepController = "gvgai.tracks.singlePlayer.simple.sampleonesteplookahead.Agent";
+		String sampleFlatMCTSController = "gvgai.tracks.singlePlayer.simple.greedyTreeSearch.Agent";
 
-		String sampleMCTSController = "tracks.singlePlayer.advanced.sampleMCTS.Agent";
-        String sampleRSController = "tracks.singlePlayer.advanced.sampleRS.Agent";
-        String sampleRHEAController = "tracks.singlePlayer.advanced.sampleRHEA.Agent";
-		String sampleOLETSController = "tracks.singlePlayer.advanced.olets.Agent";
+		String sampleMCTSController = "gvgai.tracks.singlePlayer.advanced.sampleMCTS.Agent";
+        String sampleRSController = "gvgai.tracks.singlePlayer.advanced.sampleRS.Agent";
+        String sampleRHEAController = "gvgai.tracks.singlePlayer.advanced.sampleRHEA.Agent";
+		String sampleOLETSController = "gvgai.tracks.singlePlayer.advanced.olets.Agent";
 
 		// Available games:
-		String gridGamesPath = "examples/gridphysics/";
-        String contGamesPath = "examples/contphysics/";
+		String gridGamesPath = "data/gvgai/examples/gridphysics/"; //data/gvgai/ put wherever it refers to examples
+        String contGamesPath = "data/gvgai/examples/contphysics/";
         String gamesPath;
 		String games[];
         boolean GRID_PHYSICS = true;
