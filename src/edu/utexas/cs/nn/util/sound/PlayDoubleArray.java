@@ -25,13 +25,13 @@ public final class PlayDoubleArray {
 	public static final double MAX_16_BIT = Short.MAX_VALUE;     // 32,767
 	public static final double MAX_8_BIT = 256;
 	private static final int SAMPLE_BUFFER_SIZE = 4096;
-	
+
 	// The format below is based on a 16 bit, 44100 Hz, mono, little Endian audio file. This default
 	// AudioFormat is used for generated frequencies, such as frequencies from the breedesizer,
 	// but is not acceptable to use when converting an input audio file because the sound cannot be 
 	// replicated if the AudioFormat doesn't exactly match the AudioFormat of the input file. 
 	public static final AudioFormat DEFAULT_AUDIO_FORMAT = new AudioFormat((float) SAMPLE_RATE, BITS_PER_SAMPLE, 1, true, false);
-	
+
 	public static class AmplitudeArrayPlayer extends Thread {
 		private SourceDataLine line;   // to play the sound
 		private byte[] buffer;         // our internal buffer
@@ -40,21 +40,21 @@ public final class PlayDoubleArray {
 		private int bitNum;            // number of bits in audio (typically 16 or 8)
 
 		private boolean playing = false;
-		
+
 		/**
 		 * If play back is interruptable, then it can be stopped with this command
 		 */
 		public void stopPlayback() {
 			playing = false;
 		}
-		
+
 		/**
 		 * Allows construction, but playback not possible
 		 */
 		public AmplitudeArrayPlayer() {
 			this(null);
 		}
-		
+
 		/**
 		 * Constructor that uses default AudioFormat (typically only for originally 
 		 * generated wave amplitudes that don't have an accessible AudioFormat
@@ -64,9 +64,9 @@ public final class PlayDoubleArray {
 		public AmplitudeArrayPlayer(double[] samples) {
 			// 44,100 samples per second, 16-bit audio, mono, signed PCM, little Endian
 			this(DEFAULT_AUDIO_FORMAT, samples);
-				
+
 		}
-		
+
 		/**
 		 * Constructor that takes in AudioFormat and representative double array of an 
 		 * audio file and changes the audio format so it can be used by the 
@@ -76,10 +76,10 @@ public final class PlayDoubleArray {
 		 * @param samples double array representation of audio
 		 */
 		public AmplitudeArrayPlayer(AudioFormat format, double[] samples) {
-			changeAudioFormat(format);
-			this.samples = samples;
+			changeAudioFormat(format);		
+			this.samples = samples;	
 		}
-		
+
 		/**
 		 * Method that changes the audio format being used for the SourceDataLine to 
 		 * the specific audio format of the file being played. 
@@ -91,7 +91,7 @@ public final class PlayDoubleArray {
 			try {
 				bitNum = format.getSampleSizeInBits();
 				//System.out.println("bitNum:"+bitNum);
-				
+
 				DataLine.Info info = new DataLine.Info(SourceDataLine.class, format);
 
 				line = (SourceDataLine) AudioSystem.getLine(info);
@@ -110,7 +110,7 @@ public final class PlayDoubleArray {
 			// no sound gets made before this call
 			line.start();		
 		}
-		
+
 		/**
 		 * Closes standard audio.
 		 */
@@ -118,7 +118,7 @@ public final class PlayDoubleArray {
 			line.drain();
 			line.stop();
 		}
-		
+
 		/**
 		 * Writes one sample (between -1.0 and +1.0) to standard audio.
 		 * If the sample is outside the range, it will be clipped.
@@ -146,7 +146,7 @@ public final class PlayDoubleArray {
 				bufferSize = 0;
 			}
 		}
-		
+
 		/**
 		 * Loops through array of doubles and plays it as audio
 		 * using playDouble(). When loop is exited, playing should be
@@ -159,7 +159,7 @@ public final class PlayDoubleArray {
 			}		
 			playing = false;
 		}
-		
+
 		/**
 		 * Method to access whether sound is playing or not
 		 * @return true if playing, false if not
@@ -168,7 +168,7 @@ public final class PlayDoubleArray {
 			return playing;
 		}
 	}	
-	
+
 	/**
 	 * Writes the array of samples (between -1.0 and +1.0) to standard audio.
 	 * If a sample is outside the range, it will be clipped. Will play
@@ -183,7 +183,7 @@ public final class PlayDoubleArray {
 	 * @return AmplitudeArrayPlayer instance that plays audio or null if interruption is not allowed.
 	 * Plays audio regardless
 	 */
-	
+
 	public static AmplitudeArrayPlayer playDoubleArray(AudioFormat format, double[] samples, boolean allowInterrupt) {
 		if (samples == null) throw new IllegalArgumentException("argument to play() is null");
 		AmplitudeArrayPlayer aap = new AmplitudeArrayPlayer(format,samples);
@@ -195,7 +195,7 @@ public final class PlayDoubleArray {
 			return null; // then return null
 		}
 	}
-	
+
 	/**
 	 * Plays double array given the input audio format. Allows interruption by default.
 	 * This is used for audio being converted from an input file.
@@ -207,7 +207,7 @@ public final class PlayDoubleArray {
 	public static AmplitudeArrayPlayer playDoubleArray(AudioFormat format, double[] samples) {
 		return playDoubleArray(format, samples, true); // Allow interrupt
 	}	
-	
+
 	/**
 	 * Plays double array. Allows interruption by default, and also uses the default
 	 * audio format. This is used for originally generated sounds that don't have
@@ -219,7 +219,7 @@ public final class PlayDoubleArray {
 	public static AmplitudeArrayPlayer playDoubleArray(double[] samples) {
 		return playDoubleArray(DEFAULT_AUDIO_FORMAT, samples, true); // Allow interrupt
 	}
-	
+
 	/**
 	 * Plays double array based on whether interruption has been allowed or not. Uses
 	 * default audio format. this is used for originally generated sounds that don't
@@ -232,11 +232,11 @@ public final class PlayDoubleArray {
 	public static AmplitudeArrayPlayer playDoubleArray(double[] samples, boolean allowInterrupt) {
 		return playDoubleArray(DEFAULT_AUDIO_FORMAT, samples, allowInterrupt);
 	}
-	
+
 	public static void removePops(double[] amplitude, int unitsToClip) {
 		//ramping up volume at beginning
 		for(int i = 0; i < unitsToClip; i++) {
-			 amplitude[i] *= i/(float)unitsToClip;
+			amplitude[i] *= i/(float)unitsToClip;
 		}
 		//decreasing volume at end
 		for(int i = amplitude.length - 1 - unitsToClip; i < amplitude.length; i++) {

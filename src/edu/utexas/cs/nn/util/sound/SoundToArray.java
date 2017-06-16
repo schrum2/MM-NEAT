@@ -101,7 +101,8 @@ public class SoundToArray {
 		} catch (IOException e) {  
 			System.out.println("IOException during reading audioBytes");  
 			e.printStackTrace();  
-		}  		
+		} 
+
 		return audioBytes;
 	}
 
@@ -159,8 +160,22 @@ public class SoundToArray {
 			}  
 		}
 		//System.out.println(Arrays.toString(audioData));
-
-		return audioData;  
+		if(format.getChannels() > 1) { //if AudioFormat is stereo and not mono
+			int start = 0;
+			int[] stereoToMonoSamples = new int[audioData.length/2];
+			for(int i = 0; i < audioData.length; i += 4) {
+				//adds two bytes to previous two
+				stereoToMonoSamples[start] = audioData[i] + audioData[i+2];
+				stereoToMonoSamples[start+1] = audioData[i+1] + audioData[i+3];
+				//skips every two bytes
+//				stereoToMonoSamples[start] = audioData[i];
+//				stereoToMonoSamples[start+1] = audioData[start+1];
+				start += 2;
+			}
+			return stereoToMonoSamples;
+		} else {
+			return audioData;  
+		}
 	}
 
 	/**
@@ -225,7 +240,7 @@ public class SoundToArray {
 		AudioFormat adjustedFormat = new AudioFormat(Encoding.PCM_SIGNED, sampleRate, PlayDoubleArray.BITS_PER_SAMPLE, channels, PlayDoubleArray.BYTES_PER_SAMPLE, frameRate, endian);
 		return adjustedFormat;
 	}
-	
+
 	/**
 	 * Doesn't work - meant to adjust sample size of AudioFormat so that it can be played back correctly, 
 	 * but instead creates an error because the SourceDataLine does not support an adjusted AudioFormat.
@@ -240,7 +255,7 @@ public class SoundToArray {
 		AudioFormat targetFormat = new AudioFormat(sourceFormat.getEncoding(), sourceFormat.getSampleRate(), nSampleSizeInBits, sourceFormat.getChannels(), calculateFrameSize(sourceFormat.getChannels(),nSampleSizeInBits),sourceFormat.getFrameRate(), bBigEndian);
 		return AudioSystem.getAudioInputStream(targetFormat, sourceStream);
 	}
-	
+
 	/**
 	 * Calculates size of frame. Necessary for method above
 	 * 
@@ -251,7 +266,7 @@ public class SoundToArray {
 	private static int calculateFrameSize(int nChannels, int nSampleSizeInBits) {
 		return ((nSampleSizeInBits + 7) / 8) * nChannels;
 	}
-	
+
 	/**
 	 * Doesn't work - another attempt at converting eight bit files to sixteen bit. Takes in 8-bit 
 	 * audio and converts it to an int array. The values of the int array are then individually 

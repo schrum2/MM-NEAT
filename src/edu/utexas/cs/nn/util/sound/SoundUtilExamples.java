@@ -75,7 +75,7 @@ public class SoundUtilExamples {
 		Network cppn = test.getCPPN();
 
 		// method call
-		multipleCPPNMIDIPlayback();
+		getAudioFormat();
 	}
 
 	public static void randomCPPNExamples(Network cppn) throws IOException {
@@ -239,7 +239,12 @@ public class SoundUtilExamples {
 		System.out.println("Chiptune format: " + chiptuneFormat);
 		System.out.println("Sample rate: " + chiptuneAIS.getFormat().getSampleRate());
 		System.out.println("Frame rate: " + chiptuneAIS.getFormat().getFrameRate());
-
+		//portal 2 audioformat
+		AudioInputStream portal2AIS = WAVUtil.audioStream(PORTAL2_WAV);
+		AudioFormat portal2Format = portal2AIS.getFormat();
+		System.out.println("Portal2 format: " + portal2Format);
+		System.out.println("Sample rate: " + portal2AIS.getFormat().getSampleRate());
+		System.out.println("Frame rate: " + portal2AIS.getFormat().getFrameRate());
 	}
 
 	public static void plotExamples(Network cppn) {
