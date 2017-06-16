@@ -39,40 +39,65 @@ public class Construct3DObject {
 		@SuppressWarnings("serial")
 		JPanel renderPanel = new JPanel() {
 			public void paintComponent(Graphics g) {
+				int vertexNum = 100;
 				Graphics2D g2 = (Graphics2D) g;
 				g2.setColor(Color.BLACK);
 				g2.fillRect(0, 0, getWidth(), getHeight());
 
 				List<Triangle> tris = new ArrayList<>();
-				tris.add(new Triangle(new Vertex(100, 100, 100),
-						new Vertex(100, 100, -100),
-						new Vertex(-100, 100, -100),
+				tris.add(new Triangle(new Vertex(vertexNum, vertexNum, vertexNum),
+						new Vertex(vertexNum, vertexNum, -vertexNum),
+						new Vertex(-vertexNum, vertexNum, -vertexNum),
 						Color.ORANGE));
-				tris.add(new Triangle(new Vertex(-100, 100, 100),
-						new Vertex(100, 100, 100),
-						new Vertex(-100, 100, -100),
+				tris.add(new Triangle(new Vertex(-vertexNum, vertexNum, vertexNum),
+						new Vertex(vertexNum, vertexNum, vertexNum),
+						new Vertex(-vertexNum, vertexNum, -vertexNum),
 						Color.ORANGE));
-				tris.add(new Triangle(new Vertex(100, 100, 100),
-						new Vertex(-100, -100, 100),
-						new Vertex(-100, 100, -100),
-						Color.WHITE));
-				tris.add(new Triangle(new Vertex(100, 100, 100),
-						new Vertex(-100, -100, 100),
-						new Vertex(100, -100, -100),
-						Color.RED));
-				tris.add(new Triangle(new Vertex(-100, 100, -100),
-						new Vertex(100, -100, -100),
-						new Vertex(100, 100, 100),
+				
+				tris.add(new Triangle(new Vertex(-vertexNum, vertexNum, vertexNum),
+						new Vertex(-vertexNum, -vertexNum, vertexNum),
+						new Vertex(vertexNum, vertexNum, vertexNum),
 						Color.GREEN));
-				tris.add(new Triangle(new Vertex(-100, 100, -100),
-						new Vertex(100, -100, -100),
-						new Vertex(-100, -100, 100),
+				tris.add(new Triangle(new Vertex(vertexNum, vertexNum, vertexNum),
+						new Vertex(-vertexNum, -vertexNum, vertexNum),
+						new Vertex(vertexNum, -vertexNum, vertexNum),
+						Color.GREEN));
+				
+				tris.add(new Triangle(new Vertex(vertexNum, vertexNum, vertexNum),
+						new Vertex(vertexNum, vertexNum, -vertexNum),
+						new Vertex(vertexNum, -vertexNum, vertexNum),
+						Color.RED));
+				tris.add(new Triangle(new Vertex(vertexNum, -vertexNum, -vertexNum),
+						new Vertex(vertexNum, -vertexNum, vertexNum),
+						new Vertex(vertexNum, vertexNum, -vertexNum),
+						Color.RED));
+				
+				tris.add(new Triangle(new Vertex(-vertexNum, -vertexNum, vertexNum),
+						new Vertex(-vertexNum, -vertexNum, -vertexNum),
+						new Vertex(vertexNum, -vertexNum, vertexNum),
+						Color.BLUE));
+				tris.add(new Triangle(new Vertex(vertexNum, -vertexNum, -vertexNum),
+						new Vertex(vertexNum, -vertexNum, vertexNum),
+						new Vertex(-vertexNum, -vertexNum, -vertexNum),
 						Color.BLUE));
 				
-
-//				for (int i = 0; i < 4; i++) {
-//					tris = inflate(tris);
-//				}
+				tris.add(new Triangle(new Vertex(-vertexNum, -vertexNum, -vertexNum),
+						new Vertex(-vertexNum, vertexNum, -vertexNum),
+						new Vertex(vertexNum, -vertexNum, -vertexNum),
+						Color.WHITE));
+				tris.add(new Triangle(new Vertex(vertexNum, vertexNum, -vertexNum),
+						new Vertex(vertexNum, -vertexNum, -vertexNum),
+						new Vertex(-vertexNum, vertexNum, -vertexNum),
+						Color.WHITE));
+				
+				tris.add(new Triangle(new Vertex(-vertexNum, -vertexNum, -vertexNum),
+						new Vertex(-vertexNum, vertexNum, -vertexNum),
+						new Vertex(-vertexNum, -vertexNum, vertexNum),
+						Color.YELLOW));
+				tris.add(new Triangle(new Vertex(-vertexNum, vertexNum, vertexNum),
+						new Vertex(-vertexNum, -vertexNum, vertexNum),
+						new Vertex(-vertexNum, vertexNum, -vertexNum),
+						Color.YELLOW));
 
 				double heading = Math.toRadians(headingSlider.getValue());
 				Matrix3 headingTransform = new Matrix3(new double[] {
@@ -168,28 +193,6 @@ public class Construct3DObject {
 		int blue = (int) Math.pow(blueLinear, 1/2.4);
 
 		return new Color(red, green, blue);
-	}
-
-	public static List<Triangle> inflate(List<Triangle> tris) {
-		List<Triangle> result = new ArrayList<>();
-		for (Triangle t : tris) {
-			Vertex m1 = new Vertex((t.v1.x + t.v2.x)/2, (t.v1.y + t.v2.y)/2, (t.v1.z + t.v2.z)/2);
-			Vertex m2 = new Vertex((t.v2.x + t.v3.x)/2, (t.v2.y + t.v3.y)/2, (t.v2.z + t.v3.z)/2);
-			Vertex m3 = new Vertex((t.v1.x + t.v3.x)/2, (t.v1.y + t.v3.y)/2, (t.v1.z + t.v3.z)/2);
-			result.add(new Triangle(t.v1, m1, m3, t.color));
-			result.add(new Triangle(t.v2, m1, m2, t.color));
-			result.add(new Triangle(t.v3, m2, m3, t.color));
-			result.add(new Triangle(m1, m2, m3, t.color));
-		}
-		for (Triangle t : result) {
-			for (Vertex v : new Vertex[] { t.v1, t.v2, t.v3 }) {
-				double l = Math.sqrt(v.x * v.x + v.y * v.y + v.z * v.z) / Math.sqrt(30000);
-				v.x /= l;
-				v.y /= l;
-				v.z /= l;
-			}
-		}
-		return result;
 	}
 }
 
