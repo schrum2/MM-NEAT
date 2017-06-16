@@ -299,7 +299,9 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 		
 		int receptiveFieldSize = Parameters.parameters.integerParameter("receptiveFieldSize");
 		assert receptiveFieldSize % 2 == 1 : "Receptive field size needs to be odd to be centered: " + receptiveFieldSize;
-		int edgeOffset = receptiveFieldSize / 2; // might allow zero-padding around edge later
+		// Need to watch out for links that want to connect out of bounds
+		boolean zeroPadding = Parameters.parameters.booleanParameter("zeroPadding");
+		int edgeOffset = zeroPadding ? 0 : receptiveFieldSize / 2;
 		
 		int stride = Parameters.parameters.integerParameter("stride");
 		
@@ -314,21 +316,26 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 				if(!s2.isNeuronDead(targetXindex, targetYIndex)) {
 					// Loop through all neurons in the receptive field
 					for(int fX = -edgeOffset; fX <= edgeOffset; fX++) {
-						for(int fY = -edgeOffset; fY <= edgeOffset; fY++) {
-							// Source neuron is offset from receptive field center
-							int fromXIndex = x + fX;
-							int fromYIndex = y + fY;
-							// Do not continue if source neuron is dead
-							if(!s1.isNeuronDead(fromXIndex, fromYIndex)) {
-								// CPPN inputs need to be centered and scaled
-								ILocated2D scaledFieldCoordinates = MMNEAT.substrateMapping.transformCoordinates(new Tuple2D(fX+edgeOffset, fY+edgeOffset), receptiveFieldSize, receptiveFieldSize);
-								ILocated2D scaledTargetCoordinates = MMNEAT.substrateMapping.transformCoordinates(new Tuple2D(targetXindex, targetYIndex), s2.getSize().t1, s2.getSize().t2);
-								// inputs to CPPN 
-								// NOTE: filterCPPNInputs call was removed because it doesn't seem to make sense with convolutional inputs
-								double[] inputs = new double[]{scaledFieldCoordinates.getX(), scaledFieldCoordinates.getY(), scaledTargetCoordinates.getX(), scaledTargetCoordinates.getY(), BIAS};
-								conditionalLinkAdd(linksSoFar, cppn, inputs, outputIndex, fromXIndex, fromYIndex, s1Index, targetXindex, targetYIndex, s2Index, subs, innovationID++);
-							}							
-						}						
+						// Source neuron is offset from receptive field center
+						int fromXIndex = x + fX;
+						if(fromXIndex >= 0 && fromXIndex < s1.getSize().t1) {
+							for(int fY = -edgeOffset; fY <= edgeOffset; fY++) {
+								// Source neuron is offset from receptive field center
+								int fromYIndex = y + fY;
+								if(fromYIndex >= 0 && fromYIndex < s1.getSize().t2) {
+									// Do not continue if source neuron is dead
+									if(!s1.isNeuronDead(fromXIndex, fromYIndex)) {
+										// CPPN inputs need to be centered and scaled
+										ILocated2D scaledFieldCoordinates = MMNEAT.substrateMapping.transformCoordinates(new Tuple2D(fX+edgeOffset, fY+edgeOffset), receptiveFieldSize, receptiveFieldSize);
+										ILocated2D scaledTargetCoordinates = MMNEAT.substrateMapping.transformCoordinates(new Tuple2D(targetXindex, targetYIndex), s2.getSize().t1, s2.getSize().t2);
+										// inputs to CPPN 
+										// NOTE: filterCPPNInputs call was removed because it doesn't seem to make sense with convolutional inputs
+										double[] inputs = new double[]{scaledFieldCoordinates.getX(), scaledFieldCoordinates.getY(), scaledTargetCoordinates.getX(), scaledTargetCoordinates.getY(), BIAS};
+										conditionalLinkAdd(linksSoFar, cppn, inputs, outputIndex, fromXIndex, fromYIndex, s1Index, targetXindex, targetYIndex, s2Index, subs, innovationID++);
+									}	
+								}
+							}						
+						}
 					}
 				}
 			}		

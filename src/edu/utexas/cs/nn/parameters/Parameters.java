@@ -322,6 +322,7 @@ public class Parameters {
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
 		// Boolean parameters
 		booleanOptions.add("convolution", false, "HyperNEAT phenotypes allow convolutional structure");
+		booleanOptions.add("zeroPadding", false, "Whether the input border for convolutional structures is padded with zeros");
 		booleanOptions.add("averageScoreHistory", false, "Surviving parent fitness averaged across generations");
 		booleanOptions.add("inheritFitness", false, "Child fitness is partially inherited from parents");
 		booleanOptions.add("penalizeSubstrateLinks", false, "Whether to use additional fitness punishing substrate links");
