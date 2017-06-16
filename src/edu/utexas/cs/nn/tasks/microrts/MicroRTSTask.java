@@ -32,9 +32,12 @@ import micro.rts.units.Unit;
 import micro.rts.units.UnitTypeTable;
 
 /**
- * @author alicequint
+ * 
  * evolves NNs for microRTS against opponents 
  * that are Not controlled by a NN.
+ * 
+ * @author alicequint
+ * 
  * @param <T> NN
  */
 public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implements NetworkTask, HyperNEATTask, MicroRTSInformation{
@@ -231,20 +234,22 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 			if(ef2 != null)
 				ef2.givePhysicalGameState(initialPgs);
 		}
-		if(Parameters.parameters.classParameter("microRTSEnemySequence")!=null){
+		if(enemies!=null){
 			enemySet = enemies.getAppropriateEnemy(MMNEAT.ea.currentGeneration());
+			ff.informOfEnemySwitch();
 		} else {
-			enemySet = new ArrayList<>(1); // will only contain one enemy
+			enemySet = new ArrayList<>(1); // will only contain the following enemy:
 			enemySet.add(ai2);
 		}
 		ef.setNetwork(individual);
 		if(CommonConstants.watch){
 			w = PhysicalGameStatePanel.newVisualizer(gs,MicroRTSUtility.WINDOW_LENGTH,MicroRTSUtility.WINDOW_LENGTH,false,PhysicalGameStatePanel.COLORSCHEME_BLACK);
 		}
+		
 		double[][] fitnesses = new double[enemySet.size()][numObjectives()];
 		double[][] others 	 = new double[enemySet.size()][numOtherScores()];
 		
-		for(int i = 0; i < enemySet.size(); i++){
+		for(int i = 0; i < enemySet.size(); i++){ //perform one evaluation for every enemy in the set
 			reset();
 			assert (unitsExist(0, pgs)): "player 0 does not have any units to start";
 			assert (unitsExist(1, pgs)): "player 1 does not have any units to start";

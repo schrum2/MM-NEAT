@@ -21,7 +21,5 @@ public class GrowingMapSequence implements MapSequence{
 	public String getAppropriateMap(int generation) {
 		return maps[Math.min(generation / gensPerMap, maps.length-1)];
 	}
-	
-	
 
 }
