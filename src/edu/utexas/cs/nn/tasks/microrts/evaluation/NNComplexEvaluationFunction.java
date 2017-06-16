@@ -19,7 +19,7 @@ import micro.rts.units.Unit;
  * unfinished, eventually different substrate for each unit-type maybe.
  */
 public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluationFunction<T> {
-
+	
 	private boolean[] activeSubs = new boolean[]{
 			Parameters.parameters.booleanParameter("mRTSMobileUnits"),
 			Parameters.parameters.booleanParameter("mRTSBuildings"),
@@ -29,6 +29,7 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 			Parameters.parameters.booleanParameter("mRTSOpponentsBuildings"),
 			Parameters.parameters.booleanParameter("mRTSMyAll"),
 			Parameters.parameters.booleanParameter("mRTSOpponentsAll"),
+			Parameters.parameters.booleanParameter("mRTSAll"), //the only one that is true by default
 		//	Parameters.parameters.booleanParameter("mRTSTerrain"),
 	};
 	private int numSubstrates;
@@ -52,7 +53,7 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 	 * Default constructor used by MMNEAT's class creation methods.
 	 * Must pass in the network via the setNetwork method of parent class.
 	 */
-	public NNComplexEvaluationFunction(){
+	public NNComplexEvaluationFunction(){ //TODO not used, causing error described in TODO below 
 		super();
 		numSubstrates = 0;
 		for(boolean b : activeSubs){
@@ -93,16 +94,18 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 	 * @param u
 	 * 			unit to be put into substrates
 	 * @param substrates
-	 * 				array containing all substrates
+	 * 				array containing all substrates. this array is modified and then returned
 	 * @param substrateSize
 	 * 				how big each substrate is
 	 * @param location
 	 * 				index within an individual substrate
+	 * @return double[] input as substrates, but with the unit added at location for every appropriate substrate
 	 * 
 	 */
 	private double[] populateSubstratesWith(Unit u, double[] substrates, int substrateSize, int location){
 		HashSet<Integer> appropriateSubstrates = new HashSet<>();
 		int numCurrentSubs = 0;
+		//for each unit, go in and find which substrates it belongs to
 		if(activeSubs[0]){  
 			numCurrentSubs++;
 			if(u.getType().canMove){
@@ -151,6 +154,10 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 				appropriateSubstrates.add(numCurrentSubs);
 			}
 		}
+		if(activeSubs[8]){ //all
+			numCurrentSubs++;
+			appropriateSubstrates.add(numCurrentSubs);
+		}
 		for(int appropriateSubstrate : appropriateSubstrates){
 			System.out.println("putting unit in sub: " + appropriateSubstrate);
 			int indexWithinAll = substrateSize * appropriateSubstrate + location;
@@ -164,7 +171,7 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 	 * give for the inputs to a NN
 	 */
 	@Override
-	public String[] sensorLabels() {
+	public String[] sensorLabels() { //TODO labels turns out to be too small when this is called Before numSubstrates is set to the true number
 		assert pgs != null : "There must be a physical game state in order to extract height and width";
 		String[] labels = new String[pgs.getWidth()*pgs.getHeight() * numSubstrates];
 		for(int h = 0; h < numSubstrates; h++ ){

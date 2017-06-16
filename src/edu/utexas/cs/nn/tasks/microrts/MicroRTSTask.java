@@ -266,8 +266,7 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 			others[i] 	 = currentEval.get(0).t2;
 		}
 		
-		Pair<double[], double[]> averageResults;
-		averageResults = NoisyLonerTask.averageResults(fitnesses,others); 
+		Pair<double[], double[]> averageResults = NoisyLonerTask.averageResults(fitnesses,others); 
 		return averageResults;
 	} //END oneEval
 
