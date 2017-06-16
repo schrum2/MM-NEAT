@@ -54,6 +54,10 @@ public class BoardGameUtil {
 					fitFunct.updateFitness(bg.getCurrentState(), playIndex);
 				}
 			}
+			
+			// TODO: The fitness processing code below needs to be moved here, and then you also need to account
+			// for averaging the fitness values across the multiple games (talk to Alice about how this was done
+			// in MicroRTS.
 		}
 		
 		if(CommonConstants.watch && bg instanceof TwoDimensionalBoardGame){ // Renders the last Move of the game
