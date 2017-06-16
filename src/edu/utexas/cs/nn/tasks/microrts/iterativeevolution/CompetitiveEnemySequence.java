@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import micro.ai.RandomBiasedAI;
+import micro.ai.abstraction.LightRush;
+import micro.ai.abstraction.WorkerRush;
 import micro.ai.abstraction.partialobservability.POLightRush;
 import micro.ai.abstraction.partialobservability.POWorkerRush;
 import micro.ai.core.AI;
@@ -27,9 +29,8 @@ public class CompetitiveEnemySequence implements EnemySequence{
 	private int generationOfLastUpdate = -1;
 
 	private final AI[] enemies = new AI[]{
-			new RandomBiasedAI(), //used in competition
-			new POWorkerRush(), //used in competition
-			new POLightRush(), //used in competition
+			new WorkerRush(), //used in competition
+			new LightRush(), //used in competition
 			new NaiveMCTS(), //used in competition
 			new UCT(),
 			new MLPSMCTS(),

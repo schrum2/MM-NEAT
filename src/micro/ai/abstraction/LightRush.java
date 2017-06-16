@@ -12,6 +12,10 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
+
+import edu.utexas.cs.nn.MMNEAT.MMNEAT;
+import edu.utexas.cs.nn.tasks.microrts.MicroRTSInformation;
+import edu.utexas.cs.nn.util.random.RandomNumbers;
 import micro.rts.GameState;
 import micro.rts.PhysicalGameState;
 import micro.rts.Player;
@@ -24,7 +28,7 @@ import micro.rts.units.*;
  */
 public class LightRush extends AbstractionLayerAI {
 
-    Random r = new Random();
+    Random r = RandomNumbers.randomGenerator;
     protected UnitTypeTable utt;
     UnitType workerType;
     UnitType baseType;
@@ -37,6 +41,10 @@ public class LightRush extends AbstractionLayerAI {
     // If we have a barracks: train light
     // If we have a worker: do this if needed: build base, build barracks, harvest resources
 
+    public LightRush(){
+    	this(((MicroRTSInformation) MMNEAT.task).getUnitTypeTable());
+    }
+    
     public LightRush(UnitTypeTable a_utt) {
         this(a_utt, new AStarPathFinding());
     }
