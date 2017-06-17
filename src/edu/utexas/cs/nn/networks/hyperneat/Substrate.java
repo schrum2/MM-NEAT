@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.datastructures.Triple;
 
@@ -32,6 +33,15 @@ public class Substrate {
 	private HashSet<Pair<Integer, Integer>> deadNeurons;
 	// Ordered list of locations of all neurons within this substrate
 	private final List<Pair<Integer,Integer>> neuronCoordinates;
+	// The activation function used by these neurons
+	private final int ftype;
+	// Default activation function is to use whatever the Parameter setting is
+	public static final int DEFAULT_ACTIVATION_FUNCTION = -1;
+	
+	public Substrate(Pair<Integer, Integer> size, int stype, Triple<Integer, Integer, Integer> subLocation,
+			String name) {
+		this(size,stype,subLocation,name,DEFAULT_ACTIVATION_FUNCTION);
+	}
 	
 	/**
 	 * constructor for a substrate
@@ -44,16 +54,19 @@ public class Substrate {
 	 *            location in vector space of substrate
 	 * @param name
 	 *            unique string identifier for substrate
+	 * @param ftype
+	 * 			  type of activation functions used by neurons in this layer
 	 */
 	public Substrate(Pair<Integer, Integer> size, int stype, Triple<Integer, Integer, Integer> subLocation,
-			String name) {
+			String name, int ftype) {
 		this.size = new Pair<Integer, Integer>(size.t1,size.t2); // copy
 		this.stype = stype;
 		this.name = name;
 		// this.connectToSameLayer = connectToSameLayer;
 		this.subLocation = subLocation;
 		this.deadNeurons = new HashSet<Pair<Integer, Integer>>();
-
+		this.ftype = ftype;
+		
 		neuronCoordinates = new ArrayList<Pair<Integer,Integer>>(numberOfNeurons());
 		for (int y = 0; y < size.t2; y++) {
 			for (int x = 0; x < size.t1; x++) {
@@ -88,6 +101,15 @@ public class Substrate {
 		return this.stype;
 	}
 
+	/**
+	 * Returns the type of the activation function (see ActivationFunctions)
+	 * for neurons in this substrate.
+	 * @return function type.
+	 */
+	public int getFtype() {
+		return ftype == DEFAULT_ACTIVATION_FUNCTION ? CommonConstants.ftype : ftype;
+	}
+	
 	/**
 	 * Returns the location of substrate in substrate space
 	 * @return location of substrate

@@ -233,7 +233,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 					// Ask CPPN to generate a bias for each neuron
 					bias = cppn.process(hnt.filterCPPNInputs(new double[]{0, 0, x, y, BIAS}))[biasIndex];
 				}
-				newNodes.add(newNodeGene(CommonConstants.ftype, sub.getStype(), innovationID++, false, bias));
+				newNodes.add(newNodeGene(sub.getFtype(), sub.getStype(), innovationID++, false, bias));
 			}
 			
 			if(CommonConstants.evolveHyperNEATBias && sub.getStype() != Substrate.INPUT_SUBSTRATE) {

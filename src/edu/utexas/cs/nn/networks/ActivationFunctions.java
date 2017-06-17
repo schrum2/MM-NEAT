@@ -20,8 +20,7 @@ public class ActivationFunctions {
 	 */
 	public static ArrayList<Integer> availableActivationFunctions = new ArrayList<>(MAX_POSSIBLE_ACTIVATION_FUNCTIONS);
 
-	// For use in sigmoid, it is convenient to bound the inputs to the exp
-	// function
+	// For use in sigmoid, it is convenient to bound the inputs to the exp function
 	public static final double SAFE_EXP_BOUND = 7;
 
 	/**

@@ -591,7 +591,9 @@ public class HyperNEATUtil {
 			for(int k = 0; k < processWidth; k++) {
 				// x coord = k, y = 1 + i because the height is the depth plus 1 (for the input layer)
 				Triple<Integer, Integer, Integer> processSubCoord = new Triple<Integer, Integer, Integer>(k, 1 + i, 0);
-				Substrate processSub = new Substrate(substrateDimension, Substrate.PROCCESS_SUBSTRATE, processSubCoord,"process(" + k + "," + i + ")");
+				Substrate processSub = new Substrate(substrateDimension, Substrate.PROCCESS_SUBSTRATE, processSubCoord,
+													"process(" + k + "," + i + ")", 
+													CommonConstants.convolution ? ActivationFunctions.FTYPE_RE_LU : Substrate.DEFAULT_ACTIVATION_FUNCTION);
 				substrateInformation.add(processSub);
 			}
 		}
