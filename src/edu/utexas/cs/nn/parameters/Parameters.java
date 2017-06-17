@@ -321,6 +321,7 @@ public class Parameters {
 		longOptions.add("lastInnovation", 0l, "Highest innovation number used so far");
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
 		// Boolean parameters
+		booleanOptions.add("heterogeneousSubstrateActivations", false, "HyperNEAT phenotypes can have a mix of activation functions");
 		booleanOptions.add("convolution", false, "HyperNEAT phenotypes allow convolutional structure");
 		booleanOptions.add("zeroPadding", false, "Whether the input border for convolutional structures is padded with zeros");
 		booleanOptions.add("averageScoreHistory", false, "Surviving parent fitness averaged across generations");
@@ -374,23 +375,19 @@ public class Parameters {
 		booleanOptions.add("torusInvertSensorInputs", false, "Causes agents' sensor inputs to be inverted in torusPredPreyTask");
 		booleanOptions.add("torusSenseByProximity", true, "Causes agents' sensor inputs to be by proximity of the agent instead of simply each agent by indices");
 		booleanOptions.add("processHV", false, "Turns on the hyperVolume processing in postProcess, off by default");
-		
 		booleanOptions.add("homogeneousTeamSelection", false, "Homogeneous Predators with encouraged distance minimization and maximizing prey caught for all populations at once");
 		booleanOptions.add("homogeneousAggregateTeamSelection", false, "Homogeneous Predators with encouraged distance minimization and maximizing prey caught as a team");
-		booleanOptions.add("homogeneousTeamAndAggregateTeamSelection", false, "Homogeneous Predators with encouraged distance minimization and maximizing prey caught as a team"
-				+ " and for all populations at once");
+		booleanOptions.add("homogeneousTeamAndAggregateTeamSelection", false, "Homogeneous Predators with encouraged distance minimization and maximizing prey caught as a team and for all populations at once");
 		booleanOptions.add("cooperativeIndividualSelection", false, "Cooperative Predators with encouraged distance minimization and maximizing prey caught per population");
 		booleanOptions.add("cooperativeAggregateTeamSelection", false, "Cooperative Predators with encouraged distance minimization and maximizing prey caught as a team");
 		booleanOptions.add("cooperativeIndividualAndAggregateTeamSelection", false, "Cooperative Predators with encouraged distance minimization and maximizing prey caught per population and as a team");
-		booleanOptions.add("cooperativeBalancedIndividualAndTeamSelection", false, "Cooperative Predators with encouraged distance minimization per population"
-				+ " and maximizing prey caught as a team");
+		booleanOptions.add("cooperativeBalancedIndividualAndTeamSelection", false, "Cooperative Predators with encouraged distance minimization per population and maximizing prey caught as a team");
 		booleanOptions.add("cooperativeTeamSelection", false, "Cooperative Predators with encouraged distance minimization and maximizing prey caught for all populations at once");
 		//cooperativeIndividualAndTeamSelection is irrelevant because cooperative team selection already includes the cooperativeIndividualSelection functions
 		//So it will just have two copies of the same fitnesses 
 		booleanOptions.add("cooperativeIndividualAndTeamSelection", false, "Cooperative Predators with encouraged distance minimization and maximizing prey caught for all populations at once");
 		booleanOptions.add("cooperativeTeamAndAggregateTeamSelection", false, "Cooperative Predators with encouraged distance minimization and maximizing prey caught as a team"
 				+ " and for all populations at once");
-		
 		booleanOptions.add("preyLongSurvivalTime", false, "Turn on to encourage each prey to maximize their survival time");
 		booleanOptions.add("preyMaximizeDistance", false, "Turn on to encourage prey to maximize their distance from the predators at the end of the game");
 		booleanOptions.add("preyMinimizeCaught", false, "Turn on to encourage prey to minimize how many of them are caught");
@@ -398,7 +395,6 @@ public class Parameters {
 		booleanOptions.add("predatorOneHerdCoOpCCQ", false, "Turn on to encourage each independent predator to catch more prey, catch quickly and minimize distance to each individual prey"
 				+ " other than one predator, who minimizes the distance between the prey");
 		booleanOptions.add("predatorCoOpCCQ", false, "Turn on to encourage each independent predator to catch more prey, catch quickly and minimize distance to each individual prey");
-		
 		booleanOptions.add("predatorHerdPrey", false, "Turn on to encourage minimizing the distance between the prey");
 		booleanOptions.add("predatorCatchCloseQuick", false, "Turn on to encourage catching a higher number of the prey quickly and getting close to the prey");
 		booleanOptions.add("predatorCatchClose", true, "Turn on to encourage catching a higher number of the prey and getting close to the prey");

@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import edu.utexas.cs.nn.parameters.CommonConstants;
+import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.datastructures.Triple;
 
@@ -16,6 +17,8 @@ import edu.utexas.cs.nn.util.datastructures.Triple;
  */
 public class Substrate {
 
+	public static final boolean heterogeneousSubstrateActivations = Parameters.parameters.booleanParameter("heterogeneousSubstrateActivations");
+	
 	public final static int INPUT_SUBSTRATE = 0;
 	public final static int PROCCESS_SUBSTRATE = 1;
 	public final static int OUTPUT_SUBSTRATE = 2;
@@ -107,7 +110,7 @@ public class Substrate {
 	 * @return function type.
 	 */
 	public int getFtype() {
-		return ftype == DEFAULT_ACTIVATION_FUNCTION ? CommonConstants.ftype : ftype;
+		return !heterogeneousSubstrateActivations || ftype == DEFAULT_ACTIVATION_FUNCTION ? CommonConstants.ftype : ftype;
 	}
 	
 	/**
