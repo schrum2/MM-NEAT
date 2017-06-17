@@ -20,4 +20,7 @@ public abstract class HeuristicBoardGamePlayer<T extends BoardGameState> impleme
 		return boardHeuristic;
 	}
 	
+	public String toString() {
+		return this.getClass().getSimpleName() + ":" + boardHeuristic.toString();
+	}
 }

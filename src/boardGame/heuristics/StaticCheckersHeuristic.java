@@ -101,6 +101,11 @@ public class StaticCheckersHeuristic<T extends BoardGameState> implements BoardG
 		
 		double[] desc = bgState.getDescriptor(); // Stores the Board State to be evaluated
 		
+		// Schrum: This is incomplete, but keep the following in mind when working on it.
+		// A heuristic evaluation function should return the same score regardless of
+		// which player's turn it is. All heuristics should be thought of as calculating
+		// the score for "how good is this for the first player?" This works because the
+		// second player in minimax search is actually trying to minimize the heuristic score.
 		
 		for(double piece : desc){ // Stores the non-location dependent info
 			int pieceVal = (int) piece; // Makes comparison easier

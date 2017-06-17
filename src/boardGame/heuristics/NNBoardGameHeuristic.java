@@ -6,7 +6,6 @@ import boardGame.BoardGameState;
 import boardGame.featureExtractor.BoardGameFeatureExtractor;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.util.MiscUtil;
 
 public class NNBoardGameHeuristic<T extends Network, S extends BoardGameState> implements BoardGameHeuristic<S> {
 
@@ -38,12 +37,14 @@ public class NNBoardGameHeuristic<T extends Network, S extends BoardGameState> i
 			if(current.endState()){
 				List<Integer> winners = current.getWinners();
 
-				if(winners.size() == 1 && winners.contains(current.getCurrentPlayer())){ // Current Player is the only winning Player
+				if(winners.size() == 1 && winners.contains(0)){ // Player 1 is only winner
 					return 1;
-				}else if(winners.size() > 1 && winners.contains(current.getCurrentPlayer())){ // More than one Player wins, but contains Current Player; considered a Tie
-					return 0;
-				}else{ // Undisputed Loss; Current Player does not win at all
+				} else if(winners.size() == 1 && winners.contains(1)){ // Player 2 is only winner
 					return -1;
+				} else if(winners.size() > 1){ // More than one Player wins, considered a Tie
+					return 0;
+				} else{  
+					throw new IllegalStateException("This heuristic is currently only capable of handling two-player games");
 				}
 
 			}else{
@@ -51,7 +52,6 @@ public class NNBoardGameHeuristic<T extends Network, S extends BoardGameState> i
 				return network.process(featExtract.getFeatures(current))[0]; // Returns the Network's Score for the current BoardGameState's descriptor
 			}
 		}
-		
 		return network.process(featExtract.getFeatures(current))[0]; // Returns the Network's Score for the current BoardGameState's descriptor
 		
 	}

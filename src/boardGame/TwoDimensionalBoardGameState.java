@@ -3,8 +3,10 @@ package boardGame;
 import java.awt.Color;
 import java.awt.Point;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 public abstract class TwoDimensionalBoardGameState implements BoardGameState {
 
@@ -278,11 +280,9 @@ public abstract class TwoDimensionalBoardGameState implements BoardGameState {
 				case 0: features[index++] = 1; break; // Player 1 = +1
 				case 1: features[index++] = -1; break; // Player 2 = -1
 				}
-				
-				
 			}
 		}
-		
+
 		return features;
 	}
 	

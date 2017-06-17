@@ -120,7 +120,9 @@ public class CheckersState extends TwoDimensionalBoardGameState {
 		if(blackChecksLeft == 0 || redChecksLeft == 0){
 			return true;
 		}else if(possibleBoardGameStates(this).size() == 0){
-			winners.add((nextPlayer + 1) % 2); // One Player can't make a Move; other Player is the winner
+			if(winners.isEmpty()) { // TODO: Can this check be avoided?
+				winners.add((nextPlayer + 1) % 2); // One Player can't make a Move; other Player is the winner
+			}
 			return true;
 		}else if(movesSinceLastJump > 50 && movesSinceNon_King > 50){ // A Draw has been reached
 			return true;

@@ -68,7 +68,7 @@ public class OthelloState extends TwoDimensionalBoardGameState {
 	 * Checks the Winners of this current BoardGameState and updates the winners List
 	 */
 	private void checkWinners(){
-		if(endState()){ // Won't run unless an EndState is reached
+		if(endState() && winners.isEmpty()){ // Won't run unless an EndState is reached
 			
 			int blackChipCount = 0;
 			int whiteChipCount = 0;

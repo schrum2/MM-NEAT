@@ -1,7 +1,6 @@
 package boardGame;
 
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Generic Interface for simulated Board Game State

@@ -18,11 +18,11 @@ public class CheckersAdvancedFitness<T extends BoardGameState> implements BoardG
 	private static final int KING = 2; // Checkers is structured so that the
 										// Index for Kings is PlayerIndex + 2
 
-	private double fitness = 0;
+	private double[] fitness = new double[2]; // Checkers always has two players
 	
 	@Override
-	public double getFitness(BoardGamePlayer<T> player){
-		return fitness;
+	public double getFitness(BoardGamePlayer<T> player, int index){
+		return fitness[index];
 	}
 	
 	@Override
@@ -47,7 +47,7 @@ public class CheckersAdvancedFitness<T extends BoardGameState> implements BoardG
 				opponentKings++;
 			}
 		}
-		fitness += (100 + 2 * playerChecks + 3 * playerKings + 2 * (12 - opponentChecks) + 3 * (12 - opponentKings));
+		fitness[index] += (100 + 2 * playerChecks + 3 * playerKings + 2 * (12 - opponentChecks) + 3 * (12 - opponentKings));
 	}
 
 
@@ -58,7 +58,7 @@ public class CheckersAdvancedFitness<T extends BoardGameState> implements BoardG
 
 	@Override
 	public void reset() {
-		fitness = 0;
+		fitness = new double[2]; // Checkers always has two players;
 	}
 
 }

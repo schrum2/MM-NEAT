@@ -8,9 +8,11 @@ public interface BoardGameFitnessFunction<T extends BoardGameState> {
 	/**
 	 * Returns the Fitness of a given Board Game Agent after a single Board Game
 	 * 
+	 * @param player Player whose fitness is being calculated
+	 * @param index Index of player
 	 * @return Double representing the Fitness of a given Board Game Agent
 	 */
-	public double getFitness(BoardGamePlayer<T> player);
+	public double getFitness(BoardGamePlayer<T> player, int index);
 	
 	/**
 	 * Updates a given Board Game Agent's Fitness over the course

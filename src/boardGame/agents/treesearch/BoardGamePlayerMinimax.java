@@ -8,6 +8,7 @@ import java.util.Set;
 import boardGame.BoardGameState;
 import boardGame.agents.HeuristicBoardGamePlayer;
 import boardGame.heuristics.BoardGameHeuristic;
+import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.util.ClassCreation;
 import edu.utexas.cs.nn.util.random.RandomNumbers;
@@ -43,11 +44,11 @@ public class BoardGamePlayerMinimax<T extends BoardGameState> extends HeuristicB
 	public BoardGamePlayerMinimax(){
 		try {
 			boardHeuristic = (BoardGameHeuristic<T>) ClassCreation.createObject("boardGameOpponentHeuristic");
-			depth = Parameters.parameters.integerParameter("minimaxSearchDepth");
 		} catch (NoSuchMethodException e) {
 			e.printStackTrace();
 			System.exit(1);
 		}
+		sharedInit();
 	}
 	
 	/**
@@ -56,7 +57,20 @@ public class BoardGamePlayerMinimax<T extends BoardGameState> extends HeuristicB
 	 */
 	public BoardGamePlayerMinimax(BoardGameHeuristic<T> bgh){
 		boardHeuristic = bgh;
+		sharedInit();
 	}	
+	
+	/**
+	 * Initialization code common to both constructors
+	 */
+	private void sharedInit() {
+		depth = Parameters.parameters.integerParameter("minimaxSearchDepth");
+		if(MMNEAT.boardGame.getNumPlayers() != 2) {
+			System.out.println("The BoardGamePlayerMinimax can only be applied to two-player games");
+			System.out.println("This one has " + MMNEAT.boardGame.getNumPlayers());
+			System.exit(1);
+		}
+	}
 	
 	/**
 	 * Evaluates the current possible BoardGameStates to a certain Depth
@@ -68,21 +82,38 @@ public class BoardGamePlayerMinimax<T extends BoardGameState> extends HeuristicB
 	 */
 	@Override
 	public T takeAction(T current) {
+		int currentPlayer = current.getCurrentPlayer();
+		// For a two player game, player 0 tries to maximize, and player 1 tries to minimize
+		boolean maximize = currentPlayer == 0;
+		
 		List<T> poss = new ArrayList<T>();
 		poss.addAll(current.possibleBoardGameStates(current));
+
+		// If occasional random moves are allowed, then minimax calculation can be skipped
+		double rand = random.nextDouble();
+		if(rand < Parameters.parameters.doubleParameter("minimaxRandomRate")){
+			return RandomNumbers.randomElement(poss);
+		}
+		
 		double[] utilities = new double[poss.size()]; // Stores the network's ouputs
 
 		int index = 0;
 		for(T bgs : poss){ // Gets the network's outputs for all possible BoardGameStates
-			utilities[index++] = minimax(bgs, depth, ALPHA, BETA, true); // Action is being taken as the Maximizing Player; maxPlayer == true
+			// Use !maximize because the next level down are the opponent's moves
+			utilities[index++] = minimax(bgs, depth, ALPHA, BETA, !maximize);
+			
+			// TODO: The above code is actually not fully optimized for alpha/beta pruning.
+			// it will return correct minimax results, but will check some unnecssary states still.
+			// The alpha and beta values in the recursive calls have to be updated for each call
+			// within this loop.
 		}
 
-		double rand = random.nextDouble();
-		
-		if(rand < Parameters.parameters.doubleParameter("minimaxRandomRate")){
-			return RandomNumbers.randomElement(poss);
-		}else{ // Will always return best Move
+		if(maximize) {
+			// Best move for player 1
 			return poss.get(StatisticsUtilities.argmax(utilities)); // Returns the BoardGameState which produced the highest network output
+		} else {
+			// Best move for player 2
+			return poss.get(StatisticsUtilities.argmin(utilities)); // Returns the BoardGameState which produced the lowest network output
 		}
 	}
 	

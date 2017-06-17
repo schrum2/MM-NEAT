@@ -9,18 +9,48 @@ import java.util.Set;
 import edu.utexas.cs.nn.util.sound.SoundToArray;
 
 /**
+ * Various useful methods with arrays
  *
  * @author Jacob Schrum
  */
 public class ArrayUtil {
 
+	/**
+	 * Move all contents to the right a certain number of spaces
+	 * @param array Array to rotate
+	 * @param spaces Spaces to move the indexes
+	 */
+	public static void rotateRight(Object[] array, int spaces) {
+		Object[] temp = new Object[array.length];
+		for(int i = 0; i < array.length; i++) {
+			temp[(i + spaces) % array.length] = array[i];
+		}
+		for(int i = 0; i < array.length; i++) {
+			array[i] = temp[i];
+		}
+	}
+	
+	/**
+	 * Print values in the array from the start index to the end index (inclusive)
+	 * @param array Array to print values from
+	 * @param start First index to print
+	 * @param end Last index to print
+	 */
 	public static void printArrayRange(double[] array, int start, int end) {
+		assert start >= 0 : "Start not in bounds: " + start;
+		assert start <= end : "Start not less than end : " + start + ", " + end;
+		assert end < array.length : "End not in bounds: " + end;
 		for(int i = start; i < end; i++) {
 			System.out.print(array[i] + ", ");
 		}
 		System.out.println(array[end]);
 	}
 	
+	/**
+	 * Get max length across all sub-arrays.
+	 * @param array 2D array to check
+	 * @return Maximum across all array[i] for all valid i
+	 */
 	public static int maxArrayLengthFrom2DArray(double[][] array) {
 		int max = 0;
 		for(int i = 0; i < array.length; i++) {

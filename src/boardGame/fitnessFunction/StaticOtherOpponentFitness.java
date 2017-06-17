@@ -40,7 +40,7 @@ public class StaticOtherOpponentFitness<T extends BoardGameState> implements Boa
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public double getFitness(BoardGamePlayer<T> player) {
+	public double getFitness(BoardGamePlayer<T> player, int index) {
 		
 		long genotypeID = -1;
 		BoardGameHeuristic<T> bgh;
@@ -49,7 +49,11 @@ public class StaticOtherOpponentFitness<T extends BoardGameState> implements Boa
 			bgh = ((HeuristicBoardGamePlayer<T>) player).getHeuristic();
 			if(bgh instanceof NNBoardGameHeuristic){
 				genotypeID = ((NNBoardGameHeuristic<?,T>) bgh).getID();
+			} else {
+				return 0; // Don't have static opponents play against other static opponents
 			}
+		} else {
+			return 0; // Don't have static opponents play against other static opponents
 		}
 		
 		if(evaluated.containsKey(genotypeID)){

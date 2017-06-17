@@ -12,23 +12,19 @@ public class WeightedPieceCounterHeuristic<T extends TwoDimensionalBoardGameStat
 
 	@Override
 	public double heuristicEvalution(T bgState) {
+		assert bgState.getNumPlayers() == 2 : "WeightedPieceCounterHeuristic only works for two player games!";
 		
-		double fitness = 0;
+		double score = 0;
 		double[] description = bgState.getDescriptor();
 		
 		for(int i = 0; i < bgState.getBoardWidth(); i++){
 			for(int j = 0; j < bgState.getBoardHeight(); j++){
-				
-				if(description[i+j] == bgState.getCurrentPlayer()){ // Found Player Chip at a given Space
-					fitness += pieceWeights[i][j]; // Adds the Weight on the given Space
-				}else if(description[i+j] == (bgState.getCurrentPlayer() + 1) % 2){ // Found Enemy Chip at a given Space
-					fitness -= pieceWeights[i][j]; // Subtracts the Weight on the given Space
-				}
-				
+				double piece = description[i*bgState.getBoardHeight()+j];
+				score += piece * pieceWeights[i][j];
 			}
 		}
 		
-		return fitness;
+		return score;
 	}
 
 }
