@@ -27,7 +27,7 @@ public class CombinedConstraints extends AbstractConstraint{
 	public void addConstraints(String[] conStrings){
 		for(String c:conStrings){
 			try{
-				Class constrainClass = Class.forName("tracks.levelGeneration.constraints." + c);
+				Class constrainClass = Class.forName("gvgai.tracks.levelGeneration.constraints." + c);
 				Constructor constrainConstructor = constrainClass.getConstructor();
 				AbstractConstraint constraint = (AbstractConstraint) constrainConstructor.newInstance();
 				constraints.add(constraint);

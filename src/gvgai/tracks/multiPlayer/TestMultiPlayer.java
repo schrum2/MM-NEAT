@@ -12,15 +12,15 @@ public class TestMultiPlayer {
 
     public static void main(String[] args) {
 	// Available tracks:
-	String doNothingController = "tracks.multiPlayer.simple.doNothing.Agent";
-	String randomController = "tracks.multiPlayer.simple.sampleRandom.Agent";
-	String oneStepController = "tracks.multiPlayer.simple.sampleOneStepLookAhead.Agent";
+	String doNothingController = "gvgai.tracks.multiPlayer.simple.doNothing.Agent";
+	String randomController = "gvgai.tracks.multiPlayer.simple.sampleRandom.Agent";
+	String oneStepController = "gvgai.tracks.multiPlayer.simple.sampleOneStepLookAhead.Agent";
 
-	String sampleMCTSController = "tracks.multiPlayer.advanced.sampleMCTS.Agent";
-	String sampleRSController = "tracks.multiPlayer.advanced.sampleRS.Agent";
-	String sampleRHEAController = "tracks.multiPlayer.advanced.sampleRHEA.Agent";
+	String sampleMCTSController = "gvgai.tracks.multiPlayer.advanced.sampleMCTS.Agent";
+	String sampleRSController = "gvgai.tracks.multiPlayer.advanced.sampleRS.Agent";
+	String sampleRHEAController = "gvgai.tracks.multiPlayer.advanced.sampleRHEA.Agent";
 
-	String humanController = "tracks.multiPlayer.tools.human.Agent";
+	String humanController = "gvgai.tracks.multiPlayer.tools.human.Agent";
 
 
 	// Set here the tracks used in the games (need 2 separated by space).
@@ -28,7 +28,7 @@ public class TestMultiPlayer {
 	// String tracks = sampleMCTSController + " " + sampleMCTSController;
 
 	// Available games:
-	String gamesPath = "examples/2player/";
+	String gamesPath = "data/gvgai/examples/2player/";
 	String games[] = new String[] {};
 
 	// All public games

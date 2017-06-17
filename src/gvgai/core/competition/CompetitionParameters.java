@@ -85,7 +85,7 @@ public class CompetitionParameters
     /**
      * Path to sprite images.
      */
-    public static String IMG_PATH = "sprites/";
+    public static String IMG_PATH = "data/gvgai/sprites/";
 
 
     /**

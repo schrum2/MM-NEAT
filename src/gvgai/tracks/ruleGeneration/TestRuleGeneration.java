@@ -13,14 +13,14 @@ public class TestRuleGeneration {
     public static void main(String[] args) {
 
         // Available Rule Generator
-        String randomRuleGenerator = "tracks.ruleGeneration.randomRuleGenerator.RuleGenerator";
-        String constructiveRuleGenerator = "tracks.ruleGeneration.constructiveRuleGenerator.RuleGenerator";
+        String randomRuleGenerator = "gvgai.tracks.ruleGeneration.randomRuleGenerator.RuleGenerator";
+        String constructiveRuleGenerator = "gvgai.tracks.ruleGeneration.constructiveRuleGenerator.RuleGenerator";
 
-        String sampleMCTSController = "tracks.singlePlayer.advanced.sampleMCTS.Agent";
+        String sampleMCTSController = "gvgai.tracks.singlePlayer.advanced.sampleMCTS.Agent";
 
         // Available games:
-        String gamesPath = "examples/gridphysics/";
-        String physicsGamesPath = "examples/contphysics/";
+        String gamesPath = "data/gvgai/examples/gridphysics/";
+        String physicsGamesPath = "data/gvgai/examples/contphysics/";
         String generateRulePath = gamesPath;
 
         // All public games (gridphysics)

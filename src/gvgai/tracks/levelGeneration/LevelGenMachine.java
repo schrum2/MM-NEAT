@@ -149,7 +149,7 @@ public class LevelGenMachine
      *            a file to save the generated level
      */
     public static double playOneGeneratedLevel(String gameFile, String actionFile, String levelFile, int randomSeed) {
-        String agentName = "tracks.singlePlayer.tools.human.Agent";
+        String agentName = "gvgai.tracks.singlePlayer.tools.human.Agent";
         boolean visuals = true;
         return runOneGeneratedLevel(gameFile, visuals, agentName, actionFile, levelFile, randomSeed, true);
     }
@@ -236,7 +236,7 @@ public class LevelGenMachine
      * @param isHuman indicates if the level will be played by a human or a bot.
      */
     public static void playGeneratedLevels(String gameFile, String[] actionFile, String[] levelFile, boolean isHuman) {
-        String agentName = "tracks.singlePlayer.tools.human.Agent";
+        String agentName = "gvgai.tracks.singlePlayer.tools.human.Agent";
 
         VGDLFactory.GetInstance().init(); // This always first thing to do.
         VGDLRegistry.GetInstance().init();

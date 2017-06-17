@@ -7,8 +7,8 @@ import java.io.UnsupportedEncodingException;
 
 public class OptClearJar {
     public static void main(String args[]) throws FileNotFoundException, UnsupportedEncodingException {
-	String dataRuns = "examples/dataRuns.txt";
-	String outputPath = "outputs/";
+	String dataRuns = "data/gvgai/examples/dataRuns.txt";
+	String outputPath = "data/gvgai/outputs/";
 
 	String[] data = new gvgai.tools.IO().readFile(dataRuns);
 	PrintWriter writer = new PrintWriter(dataRuns, "UTF-8");

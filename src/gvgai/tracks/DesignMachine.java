@@ -58,7 +58,7 @@ public class DesignMachine {
 
     public double[] playGame(int[] parameters, String game_file, String level_file, int randomSeed)
     {
-        String agentName = "tracks.singlePlayer.tools.human.Agent";
+        String agentName = "gvgai.tracks.singlePlayer.tools.human.Agent";
         boolean visuals = true;
         return runOneGame(parameters, game_file, level_file, visuals, agentName, null, randomSeed, 0);
     }
@@ -66,7 +66,7 @@ public class DesignMachine {
 
     public double[] playGame2P(int[] parameters, String game_file, String level_file, int randomSeed)
     {
-        String humanController = "tracks.multiPlayer.tools.human.Agent";
+        String humanController = "gvgai.tracks.multiPlayer.tools.human.Agent";
         String controllers = humanController + " " + humanController;
         boolean visuals = true;
         return runOneGame(parameters, game_file, level_file, visuals, controllers, null, randomSeed, 0);
@@ -111,7 +111,7 @@ public class DesignMachine {
 			String[] newNames = new String[no_players];
 			System.arraycopy(names, 0, newNames, 0, names.length);
 			for (int i = names.length; i < no_players; ++i)
-			newNames[i] = "tracks.multiPlayer.tools.human.Agent";
+			newNames[i] = "gvgai.tracks.multiPlayer.tools.human.Agent";
 			names = newNames;
 		}
 

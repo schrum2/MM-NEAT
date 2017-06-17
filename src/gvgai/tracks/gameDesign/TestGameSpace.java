@@ -12,19 +12,19 @@ public class TestGameSpace {
 
     public static void main(String[] args) {
         // Available tracks:
-        String sampleRandomController = "tracks.singlePlayer.simple.sampleRandom.Agent";
-        String doNothingController = "tracks.singlePlayer.simple.doNothing.Agent";
-        String sampleOneStepController = "tracks.singlePlayer.simple.sampleonesteplookahead.Agent";
-        String sampleMCTSController = "tracks.singlePlayer.deprecated.sampleMCTS.Agent";
-        String sampleFlatMCTSController = "tracks.singlePlayer.simple.greedyTreeSearch.Agent";
-        String sampleOLMCTSController = "tracks.singlePlayer.advanced.sampleMCTS.Agent";
-        String sampleGAController = "tracks.singlePlayer.deprecated.sampleGA.Agent";
-        String sampleOLETSController = "tracks.singlePlayer.advanced.olets.Agent";
-        String repeatOLETS = "tracks.singlePlayer.tools.repeatOLETS.Agent";
+        String sampleRandomController = "gvgai.tracks.singlePlayer.simple.sampleRandom.Agent";
+        String doNothingController = "gvgai.tracks.singlePlayer.simple.doNothing.Agent";
+        String sampleOneStepController = "gvgai.tracks.singlePlayer.simple.sampleonesteplookahead.Agent";
+        String sampleMCTSController = "gvgai.tracks.singlePlayer.deprecated.sampleMCTS.Agent";
+        String sampleFlatMCTSController = "gvgai.tracks.singlePlayer.simple.greedyTreeSearch.Agent";
+        String sampleOLMCTSController = "gvgai.tracks.singlePlayer.advanced.sampleMCTS.Agent";
+        String sampleGAController = "gvgai.tracks.singlePlayer.deprecated.sampleGA.Agent";
+        String sampleOLETSController = "gvgai.tracks.singlePlayer.advanced.olets.Agent";
+        String repeatOLETS = "gvgai.tracks.singlePlayer.tools.repeatOLETS.Agent";
 
 
         // Available games:
-        String gamesPath = "examples/gameDesign/";
+        String gamesPath = "data/gvgai/examples/gameDesign/";
         String games[] = new String[] {};
         String gameRules[] = new String[] {};
 

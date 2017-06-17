@@ -101,15 +101,15 @@ public class SharedData {
 	/**
 	 * The name of a the best agent with some human error
 	 */
-	public static final String AGENT_NAME = "tracks.singlePlayer.tools.repeatOLETS.Agent";
+	public static final String AGENT_NAME = "gvgai.tracks.singlePlayer.tools.repeatOLETS.Agent";
 	/**
 	 * The name of a naive agent
 	 */
-	public static final String NAIVE_AGENT_NAME = "tracks.singlePlayer.simple.sampleonesteplookahead.Agent";
+	public static final String NAIVE_AGENT_NAME = "gvgai.tracks.singlePlayer.simple.sampleonesteplookahead.Agent";
 	/**
 	 * The name of the do nothing agent
 	 */
-	public static final String DO_NOTHING_AGENT_NAME = "tracks.singlePlayer.simple.doNothing.Agent";
+	public static final String DO_NOTHING_AGENT_NAME = "gvgai.tracks.singlePlayer.simple.doNothing.Agent";
 	
 	/**
 	 * The game description object

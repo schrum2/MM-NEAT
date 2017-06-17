@@ -45,7 +45,7 @@ public class RuleGenMachine
 	 *            file with the level to be played.
 	 */
 	public static double[] playOneGame(String original_game, String generated_game, String level_file, String actionFile, int randomSeed) {
-		String agentName = "tracks.singlePlayer.tools.human.Agent";
+		String agentName = "gvgai.tracks.singlePlayer.tools.human.Agent";
 		boolean visuals = true;
 		return runOneGame(original_game, generated_game, level_file, visuals, agentName, actionFile, randomSeed, 0);
 	}
@@ -105,7 +105,7 @@ public class RuleGenMachine
 			String[] newNames = new String[no_players];
 			System.arraycopy(names, 0, newNames, 0, names.length);
 			for (int i = names.length; i < no_players; ++i)
-				newNames[i] = "tracks.multiPlayer.tools.human.Agent";
+				newNames[i] = "gvgai.tracks.multiPlayer.tools.human.Agent";
 			names = newNames;
 		}
 
@@ -402,8 +402,8 @@ public class RuleGenMachine
 	}
 
 	private static final boolean isHuman(String agentName) {
-		if (agentName.equalsIgnoreCase("tracks.multiPlayer.tools.human.Agent")
-				|| agentName.equalsIgnoreCase("tracks.singlePlayer.tools.human.Agent"))
+		if (agentName.equalsIgnoreCase("gvgai.tracks.multiPlayer.tools.human.Agent")
+				|| agentName.equalsIgnoreCase("gvgai.tracks.singlePlayer.tools.human.Agent"))
 			return true;
 		return false;
 	}

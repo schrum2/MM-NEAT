@@ -2,6 +2,7 @@ package gvgai.core.optimization.ucbOptimization;
 
 import java.util.Random;
 
+import edu.utexas.cs.nn.util.random.RandomNumbers;
 import gvgai.core.optimization.OptimizationObjective;
 import gvgai.tracks.ArcadeMachine;
 
@@ -115,7 +116,7 @@ public class UCBOptimization implements OptimizationObjective {
 		double[] gameResults = null;
 		do {
 		    gameResults = ArcadeMachine.runOneGame(this.gamePaths[i], this.levelPaths[i], false,
-			    "tracks.singlePlayer.tools.ucbOptimizerAgent.Agent", null, new Random().nextInt(), 0);
+			    "gvgai.tracks.singlePlayer.tools.ucbOptimizerAgent.Agent", null, RandomNumbers.randomGenerator.nextInt(), 0);
 		} while (gameResults[0] < -10);
 
 		totalWins += Math.max(gameResults[0], 0);

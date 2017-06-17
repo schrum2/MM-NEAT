@@ -8,12 +8,12 @@ public class TestLevelGeneration {
     public static void main(String[] args) {
 
 		// Available Level Generators
-		String randomLevelGenerator = "tracks.levelGeneration.randomLevelGenerator.LevelGenerator";
-		String geneticGenerator = "tracks.levelGeneration.geneticLevelGenerator.LevelGenerator";
-		String constructiveLevelGenerator = "tracks.levelGeneration.constructiveLevelGenerator.LevelGenerator";
+		String randomLevelGenerator = "gvgai.tracks.levelGeneration.randomLevelGenerator.LevelGenerator";
+		String geneticGenerator = "gvgai.tracks.levelGeneration.geneticLevelGenerator.LevelGenerator";
+		String constructiveLevelGenerator = "gvgai.tracks.levelGeneration.constructiveLevelGenerator.LevelGenerator";
 
-		String gamesPath = "examples/gridphysics/";
-		String physicsGamesPath = "examples/contphysics/";
+		String gamesPath = "data/gvgai/examples/gridphysics/";
+		String physicsGamesPath = "data/gvgai/examples/contphysics/";
 		String generateLevelPath = gamesPath;
 
 
@@ -57,12 +57,12 @@ public class TestLevelGeneration {
 
 
 		// 2. This generates numberOfLevels levels.
-		// String levelGenerator = "tracks.levelGeneration." + args[0] + ".LevelGenerator";
+		// String levelGenerator = "gvgai.tracks.levelGeneration." + args[0] + ".LevelGenerator";
 		// int numberOfLevels = 5;
 		// tracks.levelGeneration.randomLevelGenerator.LevelGenerator.includeBorders = true;
 
 		// String[] folderName = levelGenerator.split("\\.");
-		// generateLevelPath = "examples/generatedLevels/" + folderName[1] + "/";
+		// generateLevelPath = "data/gvgai/examples/generatedLevels/" + folderName[1] + "/";
 
 		// game = gamesPath + args[1] + ".txt";
 		// for (int i = 0; i < numberOfLevels; i++) {

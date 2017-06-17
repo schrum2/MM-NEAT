@@ -2,6 +2,7 @@ package gvgai.tracks.singlePlayer;
 
 import java.util.Random;
 
+import edu.utexas.cs.nn.util.random.RandomNumbers;
 import gvgai.tracks.ArcadeMachine;
 
 /**
@@ -62,7 +63,7 @@ public class Test {
 
 		// Other settings
 		boolean visuals = true;
-		int seed = new Random().nextInt();
+		int seed = RandomNumbers.randomGenerator.nextInt();
 
 		// Game and level to play
 		int gameIdx = 90;

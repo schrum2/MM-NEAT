@@ -29,10 +29,10 @@ public class OptEvaluateJar {
     }
 
     public static void main(String[] args) throws FileNotFoundException, UnsupportedEncodingException {
-	String gamesPath = "examples/gridphysics/";
-	String parameterFilePath = "examples/parameters.txt";
-	String dataRuns = "examples/dataRuns.txt";
-	String outputPath = "outputs/";
+	String gamesPath = "data/gvgai/examples/gridphysics/";
+	String parameterFilePath = "data/gvgai/examples/parameters.txt";
+	String dataRuns = "data/gvgai/examples/dataRuns.txt";
+	String outputPath = "data/gvgai/outputs/";
 
 	String[] engineParameters = new gvgai.tools.IO().readFile(parameterFilePath);
 	ArrayList<String> games = new ArrayList<String>();

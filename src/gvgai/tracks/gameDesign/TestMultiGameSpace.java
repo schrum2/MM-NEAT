@@ -13,20 +13,20 @@ public class TestMultiGameSpace {
 
     public static void main(String[] args) {
         // Available tracks:
-        String doNothingController = "tracks.multiPlayer.simple.doNothing.Agent";
-        String randomController = "tracks.multiPlayer.simple.sampleRandom.Agent";
-        String oneStepController = "tracks.multiPlayer.simple.sampleOneStepLookAhead.Agent";
-        String sampleMCTSController = "tracks.multiPlayer.deprecated.sampleMCTS.Agent";
-        String sampleOLMCTSController = "tracks.multiPlayer.deprecated.sampleMCTS.Agent";
-        String sampleGAController = "tracks.multiPlayer.deprecated.sampleGA.Agent";
-        String humanController = "tracks.multiPlayer.tools.human.Agent";
+        String doNothingController = "gvgai.tracks.multiPlayer.simple.doNothing.Agent";
+        String randomController = "gvgai.tracks.multiPlayer.simple.sampleRandom.Agent";
+        String oneStepController = "gvgai.tracks.multiPlayer.simple.sampleOneStepLookAhead.Agent";
+        String sampleMCTSController = "gvgai.tracks.multiPlayer.deprecated.sampleMCTS.Agent";
+        String sampleOLMCTSController = "gvgai.tracks.multiPlayer.deprecated.sampleMCTS.Agent";
+        String sampleGAController = "gvgai.tracks.multiPlayer.deprecated.sampleGA.Agent";
+        String humanController = "gvgai.tracks.multiPlayer.tools.human.Agent";
 
-        String sampleRHEA = "tracks.multiPlayer.advanced.sampleRHEA.Agent";
-        String sampleRS = "tracks.multiPlayer.advanced.sampleRS.Agent";
+        String sampleRHEA = "gvgai.tracks.multiPlayer.advanced.sampleRHEA.Agent";
+        String sampleRS = "gvgai.tracks.multiPlayer.advanced.sampleRS.Agent";
 
 
         // Available games:
-        String gamesPath = "examples/gameDesign/";
+        String gamesPath = "data/gvgai/examples/gameDesign/";
         String games[] = new String[]{};
         String gameRules[] = new String[]{};
 
