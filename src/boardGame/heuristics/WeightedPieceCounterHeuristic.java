@@ -23,7 +23,7 @@ public class WeightedPieceCounterHeuristic<T extends TwoDimensionalBoardGameStat
 				score += piece * pieceWeights[i][j];
 			}
 		}
-		
+		//System.out.println(bgState + " gets " + score);
 		return score;
 	}
 

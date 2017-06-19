@@ -1,6 +1,7 @@
 package boardGame.agents.treesearch;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -32,23 +33,24 @@ public class BoardGamePlayerMinimax<T extends BoardGameState> extends HeuristicB
 	private static int depth; // Used to keep track of how far down the Tree to check
 	protected static final double ALPHA = Double.NEGATIVE_INFINITY; // Holds the Starting Value for Alpha
 	protected static final double BETA = Double.POSITIVE_INFINITY; // Holds the Starting Value for Beta
+	protected boolean prune;
 	
 	Random random = RandomNumbers.randomGenerator;
 	
-	protected static class Container {
-		double value;
-		public Container(double value) {
-			this.value = value;
-		}
-		
-		public void setValue(double newValue) {
-			value = newValue;
-		}
-		
-		public double getValue() {
-			return value;
-		}
-	}
+//	protected static class Container {
+//		double value;
+//		public Container(double value) {
+//			this.value = value;
+//		}
+//		
+//		public void setValue(double newValue) {
+//			value = newValue;
+//		}
+//		
+//		public double getValue() {
+//			return value;
+//		}
+//	}
 	
 	/**
 	 * This constructor assumes an opponent agent is being created.
@@ -79,6 +81,7 @@ public class BoardGamePlayerMinimax<T extends BoardGameState> extends HeuristicB
 	 * Initialization code common to both constructors
 	 */
 	private void sharedInit() {
+		prune = false; // standard minimax does not prune
 		depth = Parameters.parameters.integerParameter("minimaxSearchDepth"); // One Test fails here
 		if(MMNEAT.boardGame.getNumPlayers() != 2) { // Another Test fails here...
 			System.out.println("The BoardGamePlayerMinimax can only be applied to two-player games");
@@ -106,6 +109,8 @@ public class BoardGamePlayerMinimax<T extends BoardGameState> extends HeuristicB
 		List<T> poss = new ArrayList<T>();
 		poss.addAll(current.possibleBoardGameStates(current));
 
+		//System.out.println(poss);
+		
 		// If occasional random moves are allowed, then minimax calculation can be skipped
 		double rand = random.nextDouble();
 		if(rand < Parameters.parameters.doubleParameter("minimaxRandomRate")){
@@ -114,14 +119,35 @@ public class BoardGamePlayerMinimax<T extends BoardGameState> extends HeuristicB
 		
 		double[] utilities = new double[poss.size()]; // Stores the network's outputs
 
-		Container alpha = new Container(ALPHA);
-		Container beta = new Container(BETA);
+		double alpha = ALPHA;
+		double beta = BETA;
 
 		int index = 0;
+		double v = maximize ? Double.NEGATIVE_INFINITY : Double.POSITIVE_INFINITY;
 		for(T bgs : poss){ // Gets the network's outputs for all possible BoardGameStates
 			// Use !maximize because the next level down are the opponent's moves
-			utilities[index++] = minimax(bgs, depth, alpha, beta, !maximize);
+			utilities[index] = minimax(bgs, depth, alpha, beta, !maximize);
+			
+			if(prune) {
+				// Update alpha/beta (copied from)
+				if(maximize) {
+					v = Math.max(v, utilities[index]);
+					alpha = Math.max(alpha, v);
+					if(beta <= alpha){
+						break; // Beta cut-off
+					}
+				} else { // minimize 
+					v = Math.min(v, utilities[index]);
+					beta = Math.min(beta, v);
+					if(beta <= alpha){
+						break; // Alpha cut-off
+					}
+				}
+			}
+			index++;
 		}
+		
+		//System.out.println(Arrays.toString(utilities));
 
 		if(maximize) {
 			// Best move for player 1
@@ -144,7 +170,7 @@ public class BoardGamePlayerMinimax<T extends BoardGameState> extends HeuristicB
 	 * @param maxPlayer Is the current Move being taken by the Player?
 	 * @return Max Double Value to be Scored from the given Move
 	 */
-	protected double minimax(T bgState, int depth, Container alpha, Container beta, boolean maxPlayer){
+	protected double minimax(T bgState, int depth, double alpha, double beta, boolean maxPlayer){
 		
 		if(depth == 0 || bgState.endState()){
 			return boardHeuristic.heuristicEvalution(bgState); // Return the Heuristic value of the Node

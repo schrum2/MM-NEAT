@@ -27,12 +27,13 @@ public class BoardGamePlayerMinimaxAlphaBetaPruningTest {
 	BoardGameHeuristic<OthelloState> bgh;
 	
 	BoardGamePlayerMinimax<OthelloState> mini;
-	BoardGamePlayerMinimaxAlphaBetaPruning<OthelloState> alpha;
+	BoardGamePlayerMinimax<OthelloState> alpha;
 		
 	@Before
 	public void setup(){
 		Parameters.initializeParameterCollections(new String[]{"io:false", "netio:false", "task:edu.utexas.cs.nn.tasks.boardGame.StaticOpponentBoardGameTask",
-				"boardGame:boardGame.othello.Othello", "minimaxSearchDepth:2"});
+				"boardGame:boardGame.othello.Othello", "minimaxSearchDepth:2", 
+				"randomArgMaxTieBreak:false"});
 		MMNEAT.loadClasses();
 		
 		bg1 = new Othello();
@@ -45,7 +46,6 @@ public class BoardGamePlayerMinimaxAlphaBetaPruningTest {
 	@Test
 	public void test() {
 
-		
 		for(int i = 0; i <= 100; i++){
 
 			randomPlayer.setRandomSeed(i);
@@ -61,8 +61,9 @@ public class BoardGamePlayerMinimaxAlphaBetaPruningTest {
 			while(!bg2.isGameOver()){
 				bg2.move(players[bg2.getCurrentPlayer()]);
 			}
-			System.out.println("Test Seed: " + i);
 			assertEquals(bg1.getCurrentState(), bg2.getCurrentState()); // TODO: Incorrect here. Why?
+			
+			//System.out.println("Done " + i);
 		}
 	}
 

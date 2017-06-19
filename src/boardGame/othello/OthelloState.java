@@ -21,7 +21,6 @@ public class OthelloState extends TwoDimensionalBoardGameState {
 	private final int BOARD_CORE1 = 3; // Keeps track of the center of the Board
 	private final int BOARD_CORE2 = 4; // Keeps track of the center of the Board
 	
-	public static final int EMPTY = -1;
 	public static final int BLACK_CHIP = 0;
 	public static final int WHITE_CHIP = 1;
 	
@@ -156,11 +155,9 @@ public class OthelloState extends TwoDimensionalBoardGameState {
 		if(ableToMove){ // Was able to Move; Update the nextPlayer and boardState, and return True
 			boardState[goX][goY] = nextPlayer;
 			nextPlayer = (nextPlayer + 1) % 2;
-			checkWinners();
 			numPasses = 0; // Just made a Move; reset passes
 			return true;			
 		}else{ // Unable to Move; return False
-			checkWinners();
 			return false;
 		}
 	}
@@ -251,7 +248,13 @@ public class OthelloState extends TwoDimensionalBoardGameState {
 	@Override
 	public void setupStartingBoard() {
 		numPasses = 0;
-
+		
+		for(int i = 0; i < BOARD_WIDTH; i++){
+			for(int j = 0; j < BOARD_WIDTH; j++){
+				boardState[i][j] = EMPTY;
+			}
+		}
+		
 		boardState[BOARD_CORE1][BOARD_CORE1] = BLACK_CHIP;
 		boardState[BOARD_CORE2][BOARD_CORE2] = BLACK_CHIP;
 		
