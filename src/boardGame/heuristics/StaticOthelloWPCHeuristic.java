@@ -2,7 +2,7 @@ package boardGame.heuristics;
 
 import boardGame.TwoDimensionalBoardGameState;
 
-public class StaticOthelloWeightedPieceCounterHeursitic<T extends TwoDimensionalBoardGameState> extends WeightedPieceCounterHeuristic<T> {
+public class StaticOthelloWPCHeuristic<T extends TwoDimensionalBoardGameState> extends WeightedPieceCounterHeuristic<T> {
 
 
 
@@ -26,7 +26,7 @@ public class StaticOthelloWeightedPieceCounterHeursitic<T extends TwoDimensional
 	 * 
 	 * http://citeseerx.ist.psu.edu/viewdoc/download;jsessionid=10AB4B0966FEE51BE133255498065C42?doi=10.1.1.580.8400&rep=rep1&type=pdf											 
 	 */
-	public StaticOthelloWeightedPieceCounterHeursitic() {
+	public StaticOthelloWPCHeuristic() {
 		super(WEIGHTS);
 	}
 	

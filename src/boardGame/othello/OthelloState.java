@@ -12,7 +12,7 @@ import boardGame.TwoDimensionalBoardGameState;
 
 public class OthelloState extends TwoDimensionalBoardGameState {
 	
-	private int numPasses;
+	int numPasses;
 	
 	private final int BOARD_WIDTH = 8;
 
@@ -43,7 +43,7 @@ public class OthelloState extends TwoDimensionalBoardGameState {
 		super(state);
 	}
 
-	OthelloState(int[][] board, int nextPlay, List<Integer> win){
+	public OthelloState(int[][] board, int nextPlay, List<Integer> win){
 		super(board, NUMBER_OF_PLAYERS, nextPlay, win);
 	}
 	
@@ -58,7 +58,7 @@ public class OthelloState extends TwoDimensionalBoardGameState {
 	 */
 	@Override
 	public boolean endState() {
-		if(numPasses == 2){
+		if(numPasses >= 2){
 			return true;
 		}
 		return false;
@@ -157,6 +157,7 @@ public class OthelloState extends TwoDimensionalBoardGameState {
 			boardState[goX][goY] = nextPlayer;
 			nextPlayer = (nextPlayer + 1) % 2;
 			checkWinners();
+			numPasses = 0; // Just made a Move; reset passes
 			return true;			
 		}else{ // Unable to Move; return False
 			checkWinners();
@@ -217,8 +218,7 @@ public class OthelloState extends TwoDimensionalBoardGameState {
 		// Schrum: this case here annoys me. I feel that there is a way to avoid it
 		
 		if(possible.isEmpty()){ // If unable to make a Move, must return the currentState; counts as a Pass
-			possible.add(currentState);
-			numPasses++;
+			possible.add((T) this.pass());
 		}
 		return possible;
 	}
@@ -279,7 +279,14 @@ public class OthelloState extends TwoDimensionalBoardGameState {
 	public Color[] getPlayerColors() {
 		return new Color[]{Color.black, Color.white};
 	}
-
+	
+	OthelloState pass(){
+		OthelloState temp = this.copy();
+		temp.numPasses = this.numPasses + 1; // Can't use ++ here; not sure why
+		temp.nextPlayer = (this.nextPlayer + 1) % 2;
+		return temp;
+	}
+	
 	/**
 	 * Unused by this BoardGame; always returns false
 	 */

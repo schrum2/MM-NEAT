@@ -64,8 +64,8 @@ public class BoardGamePlayerMinimax<T extends BoardGameState> extends HeuristicB
 	 * Initialization code common to both constructors
 	 */
 	private void sharedInit() {
-		depth = Parameters.parameters.integerParameter("minimaxSearchDepth");
-		if(MMNEAT.boardGame.getNumPlayers() != 2) {
+		depth = Parameters.parameters.integerParameter("minimaxSearchDepth"); // One Test fails here
+		if(MMNEAT.boardGame.getNumPlayers() != 2) { // Another Test fails here...
 			System.out.println("The BoardGamePlayerMinimax can only be applied to two-player games");
 			System.out.println("This one has " + MMNEAT.boardGame.getNumPlayers());
 			System.exit(1);
@@ -95,7 +95,7 @@ public class BoardGamePlayerMinimax<T extends BoardGameState> extends HeuristicB
 			return RandomNumbers.randomElement(poss);
 		}
 		
-		double[] utilities = new double[poss.size()]; // Stores the network's ouputs
+		double[] utilities = new double[poss.size()]; // Stores the network's outputs
 
 		int index = 0;
 		for(T bgs : poss){ // Gets the network's outputs for all possible BoardGameStates
@@ -103,7 +103,7 @@ public class BoardGamePlayerMinimax<T extends BoardGameState> extends HeuristicB
 			utilities[index++] = minimax(bgs, depth, ALPHA, BETA, !maximize);
 			
 			// TODO: The above code is actually not fully optimized for alpha/beta pruning.
-			// it will return correct minimax results, but will check some unnecssary states still.
+			// it will return correct minimax results, but will check some unnecessary states still.
 			// The alpha and beta values in the recursive calls have to be updated for each call
 			// within this loop.
 		}
