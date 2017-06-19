@@ -1,6 +1,6 @@
 package edu.utexas.cs.nn.util.sound;
 import javax.sound.sampled.AudioFormat;
-
+import javax.sound.sampled.AudioFormat.Encoding;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineUnavailableException;
@@ -205,6 +205,7 @@ public final class PlayDoubleArray {
 	 * @return AmplitudeArrayPlayer instance that plays audio
 	 */
 	public static AmplitudeArrayPlayer playDoubleArray(AudioFormat format, double[] samples) {
+		System.out.println("format: " + format);
 		return playDoubleArray(format, samples, true); // Allow interrupt
 	}	
 

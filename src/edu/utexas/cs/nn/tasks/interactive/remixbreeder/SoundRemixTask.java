@@ -105,6 +105,8 @@ public class SoundRemixTask<T extends Network> extends BreedesizerTask<T> {
 			// Play original sound if they click the button
 			//arrayPlayer = PlayDoubleArray.playDoubleArray(format, WAVDoubleArray);
 			try {
+				// TODO: If this method could launch in a Thread or return a Thread reference, we could interrupt playback when
+				//       other buttons are clicked
 				WAVUtil.playWAVFile(Parameters.parameters.stringParameter("remixWAVFile"));
 			} catch (UnsupportedAudioFileException | IOException | LineUnavailableException | InterruptedException e) {
 				e.printStackTrace();
@@ -147,7 +149,7 @@ public class SoundRemixTask<T extends Network> extends BreedesizerTask<T> {
 
 	@Override
 	protected BufferedImage getButtonImage(Network phenotype, int width, int height, double[] inputMultipliers) {
-		double[] amplitude = SoundFromCPPNUtil.amplitudeRemixer(phenotype, WAVDoubleArray, Parameters.parameters.integerParameter("clipLength"),playBackRate, inputMultipliers);
+		double[] amplitude = SoundFromCPPNUtil.amplitudeRemixer(phenotype, WAVDoubleArray, Parameters.parameters.integerParameter("clipLength"),FREQUENCY_DEFAULT, inputMultipliers);
 		BufferedImage wavePlotImage = GraphicsUtil.wavePlotFromDoubleArray(amplitude, height, width);
 		return wavePlotImage;
 	}
@@ -160,14 +162,16 @@ public class SoundRemixTask<T extends Network> extends BreedesizerTask<T> {
 
 		if(chosen[scoreIndex]) {
 			Network phenotype = individual.getPhenotype();
-			double[] amplitude = SoundFromCPPNUtil.amplitudeRemixer(phenotype, WAVDoubleArray, Parameters.parameters.integerParameter("clipLength"), playBackRate, inputMultipliers);
-			arrayPlayer = PlayDoubleArray.playDoubleArray(format, amplitude);	
+			double[] amplitude = SoundFromCPPNUtil.amplitudeRemixer(phenotype, WAVDoubleArray, Parameters.parameters.integerParameter("clipLength"), FREQUENCY_DEFAULT, inputMultipliers);
+			arrayPlayer = PlayDoubleArray.playDoubleArray(amplitude);	
+			// Should we use original audio format? Using it breaks stereo playback
+			// arrayPlayer = PlayDoubleArray.playDoubleArray(format, amplitude);	
 		} 
 	}
 	
 	@Override
 	protected void saveSound(int i, JFileChooser chooser) {
-		SoundFromCPPNUtil.saveRemixedFileFromCPPN(scores.get(i).individual.getPhenotype(), WAVDoubleArray, Parameters.parameters.integerParameter("clipLength"), playBackRate, inputMultipliers, chooser.getSelectedFile().getName() + ".wav", format);
+		SoundFromCPPNUtil.saveRemixedFileFromCPPN(scores.get(i).individual.getPhenotype(), WAVDoubleArray, Parameters.parameters.integerParameter("clipLength"), FREQUENCY_DEFAULT, inputMultipliers, chooser.getSelectedFile().getName() + ".wav", format);
 	}
 	
 	@Override
