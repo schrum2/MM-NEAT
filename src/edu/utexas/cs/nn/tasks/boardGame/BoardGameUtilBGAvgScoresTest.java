@@ -14,6 +14,8 @@ import boardGame.agents.BoardGamePlayer;
 import boardGame.agents.BoardGamePlayerRandom;
 import boardGame.fitnessFunction.BoardGameFitnessFunction;
 import boardGame.fitnessFunction.SimpleWinLoseDrawBoardGameFitness;
+import edu.utexas.cs.nn.MMNEAT.MMNEAT;
+import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 
 public class BoardGameUtilBGAvgScoresTest<T extends BoardGameState> {
@@ -27,6 +29,9 @@ public class BoardGameUtilBGAvgScoresTest<T extends BoardGameState> {
 		fit.add(new SimpleWinLoseDrawBoardGameFitness<T>());
 		// Doesn't matter which players are playing; TestBoardGame is always an End State and Player 1 wins
 		players = new BoardGamePlayer[]{new BoardGamePlayerRandom<T>(), new BoardGamePlayerRandom<T>()};
+		Parameters.initializeParameterCollections(new String[]{"io:false", "netio:false", "task:edu.utexas.cs.nn.tasks.boardGame.StaticOpponentBoardGameTask",
+				"boardGame:boardGame.othello.Othello", "minimaxSearchDepth:2"});
+		MMNEAT.loadClasses();
 	}
 
 	@Test

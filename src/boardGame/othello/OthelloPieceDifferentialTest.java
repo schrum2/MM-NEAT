@@ -13,6 +13,8 @@ import org.junit.Test;
 
 import boardGame.agents.treesearch.BoardGamePlayerMinimax;
 import boardGame.heuristics.PieceDifferentialBoardGameHeuristic;
+import edu.utexas.cs.nn.MMNEAT.MMNEAT;
+import edu.utexas.cs.nn.parameters.Parameters;
 
 public class OthelloPieceDifferentialTest {
 
@@ -26,6 +28,10 @@ public class OthelloPieceDifferentialTest {
 	
 	@Before
 	public void setUp() throws Exception {
+		Parameters.initializeParameterCollections(new String[]{"io:false", "netio:false", "task:edu.utexas.cs.nn.tasks.boardGame.StaticOpponentBoardGameTask",
+				"boardGame:boardGame.othello.Othello", "minimaxSearchDepth:3"});
+		MMNEAT.loadClasses();
+		
 		blackChip = new BoardGamePlayerMinimax<OthelloState>(new PieceDifferentialBoardGameHeuristic<OthelloState>());
 		
 		int[][] board1 = new int[][]{{E,E,E,E,E,E,E,E},
@@ -163,7 +169,7 @@ public class OthelloPieceDifferentialTest {
 			
 		// Checks that the Minimax PieceDifferential Player will pick the State with the most pieces gained/most enemy pieces lost
 		boardGame1.move(blackChip);
-		assertEquals(correctChoice1, boardGame1.getCurrentState());
+		assertEquals(correctChoice1, boardGame1.getCurrentState()); // TODO: Incorrect here. Why?
 				
 	}
 

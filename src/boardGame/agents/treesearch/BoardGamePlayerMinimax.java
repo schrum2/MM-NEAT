@@ -35,6 +35,21 @@ public class BoardGamePlayerMinimax<T extends BoardGameState> extends HeuristicB
 	
 	Random random = RandomNumbers.randomGenerator;
 	
+	protected static class Container {
+		double value;
+		public Container(double value) {
+			this.value = value;
+		}
+		
+		public void setValue(double newValue) {
+			value = newValue;
+		}
+		
+		public double getValue() {
+			return value;
+		}
+	}
+	
 	/**
 	 * This constructor assumes an opponent agent is being created.
 	 * But if an evolved agent needs to be created, its heuristic
@@ -82,6 +97,8 @@ public class BoardGamePlayerMinimax<T extends BoardGameState> extends HeuristicB
 	 */
 	@Override
 	public T takeAction(T current) {
+		assert current.getNumPlayers() == 2 : "Only works for two player games."; // TODO: Generalize this later
+		
 		int currentPlayer = current.getCurrentPlayer();
 		// For a two player game, player 0 tries to maximize, and player 1 tries to minimize
 		boolean maximize = currentPlayer == 0;
@@ -97,15 +114,13 @@ public class BoardGamePlayerMinimax<T extends BoardGameState> extends HeuristicB
 		
 		double[] utilities = new double[poss.size()]; // Stores the network's outputs
 
+		Container alpha = new Container(ALPHA);
+		Container beta = new Container(BETA);
+
 		int index = 0;
 		for(T bgs : poss){ // Gets the network's outputs for all possible BoardGameStates
 			// Use !maximize because the next level down are the opponent's moves
-			utilities[index++] = minimax(bgs, depth, ALPHA, BETA, !maximize);
-			
-			// TODO: The above code is actually not fully optimized for alpha/beta pruning.
-			// it will return correct minimax results, but will check some unnecessary states still.
-			// The alpha and beta values in the recursive calls have to be updated for each call
-			// within this loop.
+			utilities[index++] = minimax(bgs, depth, alpha, beta, !maximize);
 		}
 
 		if(maximize) {
@@ -129,7 +144,7 @@ public class BoardGamePlayerMinimax<T extends BoardGameState> extends HeuristicB
 	 * @param maxPlayer Is the current Move being taken by the Player?
 	 * @return Max Double Value to be Scored from the given Move
 	 */
-	protected double minimax(T bgState, int depth, double alpha, double beta, boolean maxPlayer){
+	protected double minimax(T bgState, int depth, Container alpha, Container beta, boolean maxPlayer){
 		
 		if(depth == 0 || bgState.endState()){
 			return boardHeuristic.heuristicEvalution(bgState); // Return the Heuristic value of the Node
@@ -140,7 +155,7 @@ public class BoardGamePlayerMinimax<T extends BoardGameState> extends HeuristicB
 			Set<T> poss = bgState.possibleBoardGameStates(bgState);
 			
 			for(T childState: poss){
-				double v = minimax(childState, depth-1, ALPHA, BETA, !maxPlayer);
+				double v = minimax(childState, depth-1, alpha, beta, !maxPlayer);
 				bestValue = Math.max(bestValue, v);
 			}
 			return bestValue;
@@ -149,7 +164,7 @@ public class BoardGamePlayerMinimax<T extends BoardGameState> extends HeuristicB
 			Set<T> poss = bgState.possibleBoardGameStates(bgState);
 			
 			for(T childState: poss){
-				double v = minimax(childState, depth-1, ALPHA, BETA, !maxPlayer);
+				double v = minimax(childState, depth-1, alpha, beta, !maxPlayer);
 				bestValue = Math.min(bestValue, v);
 			}
 			return bestValue;

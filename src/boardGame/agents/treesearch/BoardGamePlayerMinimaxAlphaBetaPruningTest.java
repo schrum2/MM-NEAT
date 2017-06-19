@@ -2,32 +2,49 @@ package boardGame.agents.treesearch;
 
 import static org.junit.Assert.assertEquals;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import boardGame.agents.BoardGamePlayer;
 import boardGame.agents.BoardGamePlayerRandom;
 import boardGame.heuristics.BoardGameHeuristic;
-import boardGame.heuristics.PieceDifferentialBoardGameHeuristic;
+import boardGame.heuristics.StaticOthelloWPCHeuristic;
 import boardGame.othello.Othello;
 import boardGame.othello.OthelloState;
+import edu.utexas.cs.nn.MMNEAT.MMNEAT;
+import edu.utexas.cs.nn.parameters.Parameters;
 
 public class BoardGamePlayerMinimaxAlphaBetaPruningTest {
 	
-	Othello bg1 = new Othello();
-	Othello bg2 = new Othello();
+	Othello bg1;
+	Othello bg2;
 	
 	BoardGamePlayerRandom<OthelloState> randomPlayer = new BoardGamePlayerRandom<OthelloState>();
 	
 	@SuppressWarnings("unchecked")
 	BoardGamePlayer<OthelloState>[] players = new BoardGamePlayer[]{randomPlayer, null};
 	
-	BoardGameHeuristic<OthelloState> bgh = new PieceDifferentialBoardGameHeuristic<OthelloState>();
+	BoardGameHeuristic<OthelloState> bgh;
 	
-	BoardGamePlayerMinimax<OthelloState> mini = new BoardGamePlayerMinimax<OthelloState>(bgh);
-	BoardGamePlayerMinimaxAlphaBetaPruning<OthelloState> alpha = new BoardGamePlayerMinimaxAlphaBetaPruning<OthelloState>(bgh);
+	BoardGamePlayerMinimax<OthelloState> mini;
+	BoardGamePlayerMinimaxAlphaBetaPruning<OthelloState> alpha;
 		
+	@Before
+	public void setup(){
+		Parameters.initializeParameterCollections(new String[]{"io:false", "netio:false", "task:edu.utexas.cs.nn.tasks.boardGame.StaticOpponentBoardGameTask",
+				"boardGame:boardGame.othello.Othello", "minimaxSearchDepth:2"});
+		MMNEAT.loadClasses();
+		
+		bg1 = new Othello();
+		bg2 = new Othello();
+		bgh = new StaticOthelloWPCHeuristic<OthelloState>();
+		mini = new BoardGamePlayerMinimax<OthelloState>(bgh);
+		alpha = new BoardGamePlayerMinimaxAlphaBetaPruning<OthelloState>(bgh);
+	}
+	
 	@Test
 	public void test() {
+
 		
 		for(int i = 0; i <= 100; i++){
 
@@ -44,9 +61,8 @@ public class BoardGamePlayerMinimaxAlphaBetaPruningTest {
 			while(!bg2.isGameOver()){
 				bg2.move(players[bg2.getCurrentPlayer()]);
 			}
-			
-			assertEquals(bg1.getCurrentState(), bg2.getCurrentState());
-			
+			System.out.println("Test Seed: " + i);
+			assertEquals(bg1.getCurrentState(), bg2.getCurrentState()); // TODO: Incorrect here. Why?
 		}
 	}
 

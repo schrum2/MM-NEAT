@@ -16,7 +16,7 @@ public class BoardGamePlayerMinimaxAlphaBetaPruning<T extends BoardGameState> ex
 	}
 
 	@Override
-	protected double minimax(T bgState, int depth, double alpha, double beta, boolean maxPlayer) {
+	protected double minimax(T bgState, int depth, Container alpha, Container beta, boolean maxPlayer) {
 		
 		if(depth == 0 || bgState.endState()){
 			return boardHeuristic.heuristicEvalution(bgState); // Return the Heuristic value of the Node
@@ -28,8 +28,8 @@ public class BoardGamePlayerMinimaxAlphaBetaPruning<T extends BoardGameState> ex
 			
 			for(T childState: poss){
 				v = Math.max(v, minimax(childState, depth-1, alpha, beta, false));
-				alpha = Math.max(alpha, v);
-				if(beta <= alpha){
+				alpha.setValue(Math.max(alpha.getValue(), v));
+				if(beta.getValue() <= alpha.getValue()){
 					break; // Beta cut-off
 				}
 			}
@@ -40,8 +40,8 @@ public class BoardGamePlayerMinimaxAlphaBetaPruning<T extends BoardGameState> ex
 			
 			for(T childState: poss){
 				v = Math.min(v, minimax(childState, depth-1, alpha, beta, true));
-				beta = Math.min(beta, v);
-				if(beta <= alpha){
+				beta.setValue(Math.min(beta.getValue(), v));
+				if(beta.getValue() <= alpha.getValue()){
 					break; // Alpha cut-off
 				}
 			}
