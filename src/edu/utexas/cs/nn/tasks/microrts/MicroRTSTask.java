@@ -234,8 +234,11 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 				ef2.givePhysicalGameState(initialPgs);
 		}
 		if(enemies!=null){ //growing sets of opponents
-			enemySet = enemies.getAppropriateEnemy(MMNEAT.ea.currentGeneration());
-			ff.informOfEnemySwitch();
+			ArrayList<AI> newEnemySet = enemies.getAppropriateEnemy(MMNEAT.ea.currentGeneration());
+			if(!enemySet.equals(1)){
+				ff.informOfEnemySwitch();
+				enemySet = newEnemySet;
+			}
 		} else { //single opponent
 			enemySet = new ArrayList<>(1); // will only contain the following enemy:
 			enemySet.add(ai2);

@@ -159,17 +159,16 @@ public class SoundToArray {
 				}  
 			}  
 		}
-		//System.out.println(Arrays.toString(audioData));
-		if(format.getChannels() > 1) { //if AudioFormat is stereo and not mono
+
+		// Added to combine stereo into mono
+		if(format.getChannels() == 2 && format.getFrameSize() == 4) { //if AudioFormat is stereo and not mono
+			System.out.println("Stereo with 4 bytes per frame");
 			int start = 0;
 			int[] stereoToMonoSamples = new int[audioData.length/2];
 			for(int i = 0; i < audioData.length; i += 4) {
 				//adds two bytes to previous two
 				stereoToMonoSamples[start] = audioData[i] + audioData[i+2];
 				stereoToMonoSamples[start+1] = audioData[i+1] + audioData[i+3];
-				//skips every two bytes
-//				stereoToMonoSamples[start] = audioData[i];
-//				stereoToMonoSamples[start+1] = audioData[start+1];
 				start += 2;
 			}
 			return stereoToMonoSamples;

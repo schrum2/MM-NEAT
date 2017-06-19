@@ -75,7 +75,7 @@ public class SoundUtilExamples {
 		Network cppn = test.getCPPN();
 
 		// method call
-		getAudioFormat();
+		convertStereoWAV();
 	}
 
 	public static void randomCPPNExamples(Network cppn) throws IOException {
@@ -589,5 +589,10 @@ public class SoundUtilExamples {
 			cppns[i] = test.getCPPN();
 		}
 		MIDIUtil.playMIDIWithCPPNsFromString(CHRISTMAS_MID, cppns, 1);
+	}
+	
+	public static void convertStereoWAV() {
+		double[] sound = SoundToArray.readDoubleArrayFromStringAudio(PORTAL2_WAV);
+		PlayDoubleArray.playDoubleArray(sound);
 	}
 }

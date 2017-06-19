@@ -21,6 +21,7 @@ import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.interactive.breedesizer.BreedesizerTask;
 import edu.utexas.cs.nn.tasks.interactive.breedesizer.Keyboard;
+import edu.utexas.cs.nn.util.MiscUtil;
 import edu.utexas.cs.nn.util.graphics.GraphicsUtil;
 import edu.utexas.cs.nn.util.sound.PlayDoubleArray;
 import edu.utexas.cs.nn.util.sound.SoundFromCPPNUtil;
@@ -146,7 +147,7 @@ public class SoundRemixTask<T extends Network> extends BreedesizerTask<T> {
 
 	@Override
 	protected BufferedImage getButtonImage(Network phenotype, int width, int height, double[] inputMultipliers) {
-		double[] amplitude = SoundFromCPPNUtil.amplitudeRemixer(phenotype, WAVDoubleArray, Parameters.parameters.integerParameter("clipLength"), playBackRate, playBackRate, inputMultipliers);
+		double[] amplitude = SoundFromCPPNUtil.amplitudeRemixer(phenotype, WAVDoubleArray, Parameters.parameters.integerParameter("clipLength"),playBackRate, inputMultipliers);
 		BufferedImage wavePlotImage = GraphicsUtil.wavePlotFromDoubleArray(amplitude, height, width);
 		return wavePlotImage;
 	}
@@ -159,14 +160,14 @@ public class SoundRemixTask<T extends Network> extends BreedesizerTask<T> {
 
 		if(chosen[scoreIndex]) {
 			Network phenotype = individual.getPhenotype();
-			double[] amplitude = SoundFromCPPNUtil.amplitudeRemixer(phenotype, WAVDoubleArray, Parameters.parameters.integerParameter("clipLength"), playBackRate, playBackRate, inputMultipliers);
+			double[] amplitude = SoundFromCPPNUtil.amplitudeRemixer(phenotype, WAVDoubleArray, Parameters.parameters.integerParameter("clipLength"), playBackRate, inputMultipliers);
 			arrayPlayer = PlayDoubleArray.playDoubleArray(format, amplitude);	
 		} 
 	}
 	
 	@Override
 	protected void saveSound(int i, JFileChooser chooser) {
-		SoundFromCPPNUtil.saveRemixedFileFromCPPN(scores.get(i).individual.getPhenotype(), WAVDoubleArray, Parameters.parameters.integerParameter("clipLength"), playBackRate, playBackRate, inputMultipliers, chooser.getSelectedFile().getName() + ".wav", format);
+		SoundFromCPPNUtil.saveRemixedFileFromCPPN(scores.get(i).individual.getPhenotype(), WAVDoubleArray, Parameters.parameters.integerParameter("clipLength"), playBackRate, inputMultipliers, chooser.getSelectedFile().getName() + ".wav", format);
 	}
 	
 	@Override

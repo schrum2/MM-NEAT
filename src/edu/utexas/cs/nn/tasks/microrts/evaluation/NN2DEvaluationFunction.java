@@ -67,16 +67,16 @@ public class NN2DEvaluationFunction<T extends Network> extends NNEvaluationFunct
 				boardIndex = i + j * pgs.getHeight();
 				currentUnit = pgs.getUnitAt(i, j);
 				if(currentUnit != null){
-//					switch(currentUnit.getType().name){
-//					case "Worker": board[boardIndex] = WORKER_WEIGHT + (WORKER_RESOURCE_WEIGHT * currentUnit.getResources()); break; 
-//					case "Light": board[boardIndex] = LIGHT_WEIGHT; break;
-//					case "Heavy": board[boardIndex] = HEAVY_WEIGHT; break;
-//					case "Ranged": board[boardIndex] = RANGED_WEIGHT; break;
-//					case "Base": board[boardIndex] = BASE_WEIGHT + (BASE_RESOURCE_WEIGHT * currentUnit.getResources()); break;
-//					case "Barracks": board[boardIndex] = BARRACKS_WEIGHT; break;
-//					case "Resource": board[boardIndex] = RAW_RESOURCE_WEIGHT; break;
-//					default: break;
-//					}
+					switch(currentUnit.getType().name){
+					case "Worker": board[boardIndex] = WORKER_WEIGHT + (WORKER_RESOURCE_WEIGHT * currentUnit.getResources()); break; 
+					case "Light": board[boardIndex] = LIGHT_WEIGHT; break;
+					case "Heavy": board[boardIndex] = HEAVY_WEIGHT; break;
+					case "Ranged": board[boardIndex] = RANGED_WEIGHT; break;
+					case "Base": board[boardIndex] = BASE_WEIGHT + (BASE_RESOURCE_WEIGHT * currentUnit.getResources()); break;
+					case "Barracks": board[boardIndex] = BARRACKS_WEIGHT; break;
+					case "Resource": board[boardIndex] = RAW_RESOURCE_WEIGHT; break;
+					default: break;
+					}
 					if(currentUnit.getPlayer() == 1) board[boardIndex] *= -1; 
 				}
 			}//end inner loop
