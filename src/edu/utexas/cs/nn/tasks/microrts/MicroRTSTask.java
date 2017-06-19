@@ -171,7 +171,9 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 		if(enemies == null){
 			try {
 				enemies = (EnemySequence) ClassCreation.createObject(Parameters.parameters.classParameter("microRTSEnemySequence"));
-			} catch (NoSuchMethodException e1) { e1.printStackTrace(); System.exit(1);}
+			} 
+			catch (NoSuchMethodException e1) { e1.printStackTrace(); System.exit(1); }
+			catch (NullPointerException e){} //no enemy sequence, this is fine.
 		}
 		if(maps != null){
 			String newMapName = maps.getAppropriateMap(MMNEAT.ea.currentGeneration());
@@ -235,7 +237,7 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 		}
 		if(enemies!=null){ //growing sets of opponents
 			ArrayList<AI> newEnemySet = enemies.getAppropriateEnemy(MMNEAT.ea.currentGeneration());
-			if(!enemySet.equals(1)){
+			if(!newEnemySet.equals(enemySet)){ //add a new enemy to the set:
 				ff.informOfEnemySwitch();
 				enemySet = newEnemySet;
 			}
@@ -348,16 +350,6 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 	public double getAverageUnitDifference(){return averageUnitDifference;}
 	@Override
 	public void setAvgUnitDiff(double diff) {averageUnitDifference = diff;}
-
-	public static void main(String[] rags){
-		Parameters.initializeParameterCollections(new String[]{"io:false","netio:false", "watch:true"});
-		//			MMNEAT.loadClasses();
-		//			MicroRTSTask<TWEANN> test = new MicroRTSTask<>();
-		//			TWEANNGenotype g = new TWEANNGenotype();
-		//			Pair<double[], double[]> result = test.oneEval(g, -1);
-		//			System.out.println(Arrays.toString(result.t1)+ " , "+Arrays.toString(result.t2));
-		System.out.println();
-	}
 
 	@Override
 	public int getNumInputSubstrates() {
