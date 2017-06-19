@@ -7,6 +7,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.JFrame;
@@ -40,11 +41,17 @@ public class Construct3DObject {
 		@SuppressWarnings("serial")
 		JPanel renderPanel = new JPanel() {
 			public void paintComponent(Graphics g) {
-				Vertex center = new Vertex(0,0,0);				
-				List<Triangle> tris = cubeConstructor(center, 100.0, Color.RED);
+				List<Triangle> tris = new LinkedList<Triangle>();
+				tris.addAll(cubeConstructor(new Vertex(0,0,0), 10.0, Color.RED));
+				tris.addAll(cubeConstructor(new Vertex(10,0,0), 10.0, Color.GREEN));
+				tris.addAll(cubeConstructor(new Vertex(0,10,0), 10.0, Color.YELLOW));
+				tris.addAll(cubeConstructor(new Vertex(0,20,0), 10.0, Color.GREEN));
+				tris.addAll(cubeConstructor(new Vertex(0,0,20), 10.0, Color.GRAY));
+				
 				Graphics2D g2 = (Graphics2D) g;
 				double heading = Math.toRadians(headingSlider.getValue());
 				double pitch = Math.toRadians(pitchSlider.getValue());
+				//rotate(g2, tris, getWidth(), getHeight());
 				drawTriangles(g2,tris,getWidth(), getHeight(), heading, pitch);
 			}
 		};
@@ -129,18 +136,21 @@ public class Construct3DObject {
 			Vertex v3 = transform.transform(t.v3);
 			v3.x += width / 2;
 			v3.y += height / 2;
+			
+			Vertex norm = getNorm(v1, v2, v3);
 
-			Vertex ab = new Vertex(v2.x - v1.x, v2.y - v1.y, v2.z - v1.z);
-			Vertex ac = new Vertex(v3.x - v1.x, v3.y - v1.y, v3.z - v1.z);
-			Vertex norm = new Vertex(
-					ab.y * ac.z - ab.z * ac.y,
-					ab.z * ac.x - ab.x * ac.z,
-					ab.x * ac.y - ab.y * ac.x
-					);
-			double normalLength = Math.sqrt(norm.x * norm.x + norm.y * norm.y + norm.z * norm.z);
-			norm.x /= normalLength;
-			norm.y /= normalLength;
-			norm.z /= normalLength;
+//			Vertex ab = new Vertex(v2.x - v1.x, v2.y - v1.y, v2.z - v1.z);
+//			Vertex ac = new Vertex(v3.x - v1.x, v3.y - v1.y, v3.z - v1.z);
+//			Vertex norm = new Vertex(
+//					ab.y * ac.z - ab.z * ac.y,
+//					ab.z * ac.x - ab.x * ac.z,
+//					ab.x * ac.y - ab.y * ac.x
+//					);
+//			double normalLength = Math.sqrt(norm.x * norm.x + norm.y * norm.y + norm.z * norm.z);
+//			norm.x /= normalLength;
+//			norm.y /= normalLength;
+//			norm.z /= normalLength;
+			
 
 			double angleCos = Math.abs(norm.z);
 
@@ -169,6 +179,21 @@ public class Construct3DObject {
 
 		}
 		return img;
+	}
+	
+	private static Vertex getNorm(Vertex v1, Vertex v2, Vertex v3) {
+		Vertex ab = new Vertex(v2.x - v1.x, v2.y - v1.y, v2.z - v1.z);
+		Vertex ac = new Vertex(v3.x - v1.x, v3.y - v1.y, v3.z - v1.z);
+		Vertex norm = new Vertex(
+				ab.y * ac.z - ab.z * ac.y,
+				ab.z * ac.x - ab.x * ac.z,
+				ab.x * ac.y - ab.y * ac.x
+				);
+		double normalLength = Math.sqrt(norm.x * norm.x + norm.y * norm.y + norm.z * norm.z);
+		norm.x /= normalLength;
+		norm.y /= normalLength;
+		norm.z /= normalLength;
+		return norm;
 	}
 
 	public static Color getShade(Color color, double shade) {
@@ -251,8 +276,23 @@ public class Construct3DObject {
 				color));
 		return tris;
 	}
+
+	// TODO: This method does NOT work
+	public static void rotate(Graphics2D g2, List<Triangle> tris, int width, int height) {
+		for(double heading = 0; heading < 2*Math.PI; heading += 1/Math.PI) {
+			System.out.println(heading);
+			drawTriangles(g2,tris,width, height, heading, 0);
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}
 }
 
+@SuppressWarnings("serial")
 class Vertex extends Vector3d {
 	public Vertex(double x, double y, double z) {
 		super(x,y,z);
