@@ -200,7 +200,15 @@ public class Construct3DObject {
 		norm.z /= normalLength;
 		return norm;
 	}
-
+	
+	/**
+	 * Returns shading of color based on angle to make rendering of three
+	 * dimensions look more accurate.
+	 * 
+	 * @param color Color being shaded
+	 * @param shade Result color after shading
+	 * @return
+	 */
 	public static Color getShade(Color color, double shade) {
 		double redLinear = Math.pow(color.getRed(), 2.4) * shade;
 		double greenLinear = Math.pow(color.getGreen(), 2.4) * shade;
@@ -211,6 +219,24 @@ public class Construct3DObject {
 		int blue = (int) Math.pow(blueLinear, 1/2.4);
 
 		return new Color(red, green, blue);
+	}
+	
+	/**
+	 * Takes in a list of vertexes, a triangle sidelength, and a desired color and 
+	 * returns a list of triangles that construct a series of cubes centered at the various
+	 * vertexes. 
+	 * 
+	 * @param centers List of vertexes where cubes will be constructed
+	 * @param sideLength length of triangle side
+	 * @param color desired color of cubes
+	 * @return List of triangles that construct a series of cubes centered at the various vertexes
+	 */
+	public static List<Triangle> constructor(List<Vertex> centers, double sideLength, Color color) {
+		List<Triangle> tris = new ArrayList<>();
+		for(Vertex v: centers) { //construct individual cubes and add them to larger list
+			tris.addAll(cubeConstructor(v, sideLength, color));
+		}
+		return tris;
 	}
 	
 	/**
