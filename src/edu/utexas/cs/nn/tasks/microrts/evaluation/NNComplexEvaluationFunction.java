@@ -6,7 +6,9 @@ import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.parameters.Parameters;
+import edu.utexas.cs.nn.util.MiscUtil;
 import edu.utexas.cs.nn.util.PopulationUtil;
+import edu.utexas.cs.nn.util.datastructures.Pair;
 import micro.rts.GameState;
 import micro.rts.units.Unit;
 
@@ -20,7 +22,7 @@ import micro.rts.units.Unit;
  */
 public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluationFunction<T> {
 	
-	private boolean[] activeSubs = new boolean[]{
+	private boolean[] areSubsActive = new boolean[]{
 			Parameters.parameters.booleanParameter("mRTSMobileUnits"),
 			Parameters.parameters.booleanParameter("mRTSBuildings"),
 			Parameters.parameters.booleanParameter("mRTSMyMobileUnits"),
@@ -31,6 +33,8 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 			Parameters.parameters.booleanParameter("mRTSOpponentsAll"),
 			Parameters.parameters.booleanParameter("mRTSAll"), //the only one that is true by default
 		//	Parameters.parameters.booleanParameter("mRTSTerrain"),
+			//resources separate from units, seperate from bases
+			//mobile , bases , terrain + resources. : first thing to try 
 	};
 	private int numSubstrates;
 
@@ -53,10 +57,10 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 	 * Default constructor used by MMNEAT's class creation methods.
 	 * Must pass in the network via the setNetwork method of parent class.
 	 */
-	public NNComplexEvaluationFunction(){ //TODO not used, causing error described in TODO below 
+	public NNComplexEvaluationFunction(){
 		super();
 		numSubstrates = 0;
-		for(boolean b : activeSubs){
+		for(boolean b : areSubsActive){
 			if(b) numSubstrates++;
 		}
 	}
@@ -74,16 +78,20 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 		int boardIndex;
 		for(int j = 0; j < pgs.getHeight(); j++){
 			for(int i = 0; i < pgs.getWidth(); i++){
-				int ter = pgs.getTerrain(i, j);
-				System.out.print(ter);
+//				int isTerrain = pgs.getTerrain(i, j);
+//				System.out.print(isTerrain); // 0 = no, (1 = yes (maybe))
 				boardIndex =  i + j * pgs.getHeight(); 
 				current = pgs.getUnitAt(i, j);
 				if(current!= null){
 					inputs = populateSubstratesWith(current, inputs, substrateSize, boardIndex);
 				}
-				System.out.println();
-			}
-		}
+			}//end i : width
+		}//end j : height
+		System.out.println("SUB 0 -----------------------");
+		printSubstrateConfig(0, inputs);
+		System.out.println("SUB 1 -----------------------");
+		printSubstrateConfig(0, inputs);
+		MiscUtil.waitForReadStringAndEnterKeyPress();
 		return inputs;
 	}
 
@@ -105,63 +113,67 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 	private double[] populateSubstratesWith(Unit u, double[] substrates, int substrateSize, int location){
 		HashSet<Integer> appropriateSubstrates = new HashSet<>();
 		int numCurrentSubs = 0;
-		//for each unit, go in and find which substrates it belongs to
-		if(activeSubs[0]){  
-			numCurrentSubs++;
+		//for current unit, find which substrates it belongs to
+		
+		System.out.println("unit: " + u.getX() + " " + u.getY()+ " ==> " + location);
+		
+		if(areSubsActive[0]){ //all mobile units   
 			if(u.getType().canMove){
 				appropriateSubstrates.add(numCurrentSubs);
 			}
-		}
-		if(activeSubs[1]){
 			numCurrentSubs++;
+		}
+		if(areSubsActive[1]){ //all buildings
 			if(!u.getType().canMove){
 				appropriateSubstrates.add(numCurrentSubs);
 			}
-		}
-		if(activeSubs[2]){
 			numCurrentSubs++;
+		}
+		if(areSubsActive[2]){
 			if(u.getType().canMove && u.getPlayer() == 0){
 				appropriateSubstrates.add(numCurrentSubs);
 			}
-		}
-		if(activeSubs[3]){ //includes resources
 			numCurrentSubs++;
+		}
+		if(areSubsActive[3]){ //includes resources
 			if(!u.getType().canMove && u.getPlayer() != 1){
 				appropriateSubstrates.add(numCurrentSubs);
 			}
-		}
-		if(activeSubs[4]){
 			numCurrentSubs++;
+		}
+		if(areSubsActive[4]){
 			if(u.getType().canMove && u.getPlayer() == 1){
 				appropriateSubstrates.add(numCurrentSubs);
 			}
-		}
-		if(activeSubs[5]){ //includes resources
 			numCurrentSubs++;
+		}
+		if(areSubsActive[5]){ //includes resources
 			if(!u.getType().canMove && u.getPlayer() != 0){
 				appropriateSubstrates.add(numCurrentSubs);
 			}
-		}
-		if(activeSubs[6]){
 			numCurrentSubs++;
+		}
+		if(areSubsActive[6]){
 			if(u.getPlayer() == 0){
 				appropriateSubstrates.add(numCurrentSubs);
 			}
-		}
-		if(activeSubs[7]){
 			numCurrentSubs++;
+		}
+		if(areSubsActive[7]){
 			if(u.getPlayer() == 1){
 				appropriateSubstrates.add(numCurrentSubs);
 			}
-		}
-		if(activeSubs[8]){ //all
 			numCurrentSubs++;
+		}
+		if(areSubsActive[8]){ //all
 			appropriateSubstrates.add(numCurrentSubs);
+			numCurrentSubs++;
 		}
 		for(int appropriateSubstrate : appropriateSubstrates){
-			System.out.println("putting unit in sub: " + appropriateSubstrate);
-			int indexWithinAll = substrateSize * appropriateSubstrate + location;
-			substrates[indexWithinAll] = 1; //maybe change something else that represents what it is
+			System.out.println("putting unit in sub: " + appropriateSubstrate + " at sublocation " + location + " out of " + substrateSize);
+			int indexWithinAll = (substrateSize * appropriateSubstrate) + location;
+			System.out.println("index within all: " + indexWithinAll + " = " + substrateSize  + " * " + appropriateSubstrate + " + " + location);
+			substrates[indexWithinAll] = 1; //TODO depends on which sub, etc.
 		} 
 		return substrates;
 	}
@@ -171,14 +183,14 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 	 * give for the inputs to a NN
 	 */
 	@Override
-	public String[] sensorLabels() { //TODO labels turns out to be too small when this is called Before numSubstrates is set to the true number
+	public String[] sensorLabels() {
 		assert pgs != null : "There must be a physical game state in order to extract height and width";
 		String[] labels = new String[pgs.getWidth()*pgs.getHeight() * numSubstrates];
 		for(int h = 0; h < numSubstrates; h++ ){
 			for(int i = 0; i < pgs.getWidth(); i++){
 				for(int j = 0; j < pgs.getHeight(); j++){
 					labels[i*pgs.getWidth() + j ] = "Mobile unit:  (" + i + ", " + j + ")";
-					labels[i*pgs.getWidth() + j + pgs.getWidth()*pgs.getHeight()] = "Immobile unit:  (" + i + "," + j + ")";
+					labels[i*pgs.getWidth() + j + (pgs.getWidth()*pgs.getHeight()*h)] = "Immobile unit: (" + i + "," + j + ")";
 				}
 			}
 		}
@@ -188,6 +200,21 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 	@Override
 	public int getNumInputSubstrates() {
 		return numSubstrates;
+	}
+	
+	/**
+	 * for debugging & ghostbusting
+	 * @param whichSub
+	 * 				
+	 * @param substrates
+	 */
+	private void printSubstrateConfig(int whichSub, double[] substrates){
+		for(int i = 0; i < pgs.getWidth(); i++){
+			for(int j = 0; j < pgs.getHeight(); j++){
+				System.out.print(substrates[whichSub*pgs.getHeight()*pgs.getWidth()+(i*pgs.getWidth() + j)] + " ");
+			}
+			System.out.println();
+		}
 	}
 
 }
