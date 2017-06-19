@@ -69,8 +69,24 @@ public class Construct3DObject {
 	 */
 	protected static void drawTriangles(Graphics2D g2, List<Triangle> tris, int width, int height, double heading, double pitch) {
 		g2.setColor(Color.BLACK);
-		g2.fillRect(0, 0, width, height);
-
+		g2.fillRect(0, 0, width, height);	
+		// get Matrix3 used to align vectors of triangles in relation to each other to render cube
+		Matrix3 transform = getTransform(heading, pitch);
+		//construct image based on input Matrix3 instance (position of JSliders)
+		BufferedImage img = getImage(tris, width, height, transform);
+		//draw image in graphics instance
+		g2.drawImage(img, 0, 0, null);
+	}
+	
+	/**
+	 * Creates Matrix3 instance that is used to transform/manipulate a list of Triangles into a 
+	 * rendered cube.
+	 * 
+	 * @param heading Input horizontal position from JSlider
+	 * @param pitch Input vertical position from JSlider
+	 * @return Matrix3 used to manipulate vectors of triangles in list
+	 */
+	private static Matrix3 getTransform(double heading, double pitch) {
 		Matrix3 headingTransform = new Matrix3(new double[] {
 				Math.cos(heading), 0, -Math.sin(heading),
 				0, 1, 0,
@@ -82,9 +98,21 @@ public class Construct3DObject {
 				0, -Math.sin(pitch), Math.cos(pitch)
 		});
 		Matrix3 transform = headingTransform.multiply(pitchTransform);
-
+		return transform;
+	}
+	
+	/**
+	 * Constructs BufferedImage from list of triangles based on the input Matrix3 specifications
+	 * (positions of JSliders determining rotation of 3D image)
+	 * 
+	 * @param tris list of triangles
+	 * @param width width of image
+	 * @param height height of image
+	 * @param transform Matrix3 instance determining where JSlider rotation occurs for image construction
+	 * @return BufferedImage representing current view of 3D image
+	 */
+	private static BufferedImage getImage(List<Triangle> tris, int width, int height, Matrix3 transform) {
 		BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-
 		double[] zBuffer = new double[img.getWidth() * img.getHeight()];
 		// initialize array with extremely far away depths
 		for (int q = 0; q < zBuffer.length; q++) {
@@ -140,8 +168,7 @@ public class Construct3DObject {
 			}
 
 		}
-
-		g2.drawImage(img, 0, 0, null);
+		return img;
 	}
 
 	public static Color getShade(Color color, double shade) {
