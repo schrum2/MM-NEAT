@@ -73,10 +73,10 @@ public class SoundFromCPPNUtil {
 	 * @param inputMultipliers double array determining whether checkboxes have been turned on or off in Breedesizer
 	 * @return
 	 */
-	public static double[] amplitudeRemixer(Network CPPN, double[] inputWAV, int length, double frequency, int sampleRate, double[] inputMultipliers) {
+	public static double[] amplitudeRemixer(Network CPPN, double[] inputWAV, int length, double sampleRate, double[] inputMultipliers) {
 		double[] result = new double[length];
 		for(double time = 0; time < length; time++) {
-			double[] inputs = new double[]{time/sampleRate, Math.sin(2*Math.PI * frequency * time/sampleRate), inputWAV[(int) time], HyperNEATCPPNGenotype.BIAS};	
+			double[] inputs = new double[]{time/sampleRate, Math.sin(2*Math.PI * time/sampleRate), inputWAV[(int) time], HyperNEATCPPNGenotype.BIAS};	
 			// Multiplies the inputs of the pictures by the inputMultiples; used to turn on or off the effects in each picture
 			for(int i = 0; i < inputs.length; i++) {
 				inputs[i] = inputs[i] * inputMultipliers[i];
@@ -114,8 +114,8 @@ public class SoundFromCPPNUtil {
 	 * @param fileName String representation of location where generated file will be saved
 	 * @param format 
 	 */
-	public static void saveRemixedFileFromCPPN(Network cppn, double[] inputWAV, int length, double frequency, int sampleRate, double[] inputMultipliers, String fileName, AudioFormat format) {
-		double[] generatedSound = amplitudeRemixer(cppn, inputWAV, length, frequency, sampleRate, inputMultipliers);
+	public static void saveRemixedFileFromCPPN(Network cppn, double[] inputWAV, int length, double sampleRate, double[] inputMultipliers, String fileName, AudioFormat format) {
+		double[] generatedSound = amplitudeRemixer(cppn, inputWAV, length, sampleRate, inputMultipliers);
 		SaveFromArray.saveFileFromDoubleArray(fileName, generatedSound, format);
 	}
 
