@@ -54,6 +54,8 @@ public class SoundRemixTask<T extends Network> extends BreedesizerTask<T> {
 			AudioInputStream AIS = WAVUtil.audioStream(Parameters.parameters.stringOptions.get("remixWAVFile"));
 			format = AIS.getFormat();
 			playBackRate = format.getSampleSizeInBits(); //sample size - should be changed?
+			if (playBackRate != 16) //currently throws exception for anything other than 16 bit audio because 8 bit audio won't play properly
+					throw new UnsupportedOperationException("This program currently only supports 16 bit audio files: bitRate = " + playBackRate);
 			//format = SoundToArray.getAudioFormatRestrictedTo16Bits(format);
 			
 			// Doesn't work any more ... remove eventually

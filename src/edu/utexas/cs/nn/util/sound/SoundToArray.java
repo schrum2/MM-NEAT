@@ -117,12 +117,10 @@ public class SoundToArray {
 	public static int[] extractAmplitudeDataFromAmplitudeByteArray(AudioFormat format, byte[] audioBytes) {  
 		// convert
 		int[]  audioData = null;  
-		if (format.getSampleSizeInBits() == 16) {  
-			System.out.println("16 bit!");
+		if (format.getSampleSizeInBits() == 16) {
 			int nlengthInSamples = audioBytes.length / 2;  
 			audioData = new int[nlengthInSamples];  
-			if (format.isBigEndian()) {  
-				System.out.println("isBigEndian");
+			if (format.isBigEndian()) { 
 				for (int i = 0; i < nlengthInSamples; i++) {  
 					/* First byte is MSB (high order) */  
 					int MSB = audioBytes[2 * i];  
@@ -130,8 +128,7 @@ public class SoundToArray {
 					int LSB = audioBytes[2 * i + 1];  
 					audioData[i] = (MSB << 8 | (255 & LSB));  
 				}  
-			} else {  
-				System.out.println("isLittleEndian");
+			} else { 
 				for (int i = 0; i < nlengthInSamples; i++) {  
 					/* First byte is LSB (low order) */  
 					int LSB = audioBytes[2 * i];  
@@ -141,28 +138,22 @@ public class SoundToArray {
 				}  
 			}  
 		} else if (format.getSampleSizeInBits() == 8) {  
-			System.out.println("8 bit!");
-
 			int nlengthInSamples = audioBytes.length;  
 			audioData = new int[nlengthInSamples];  
 			if (format.getEncoding().toString().startsWith("PCM_SIGN")) {  
-				System.out.println("signed: " + format.getEncoding().toString());
 				// PCM_SIGNED  
 				for (int i = 0; i < audioBytes.length; i++) {  
 					audioData[i] = audioBytes[i];  
 				}  
 			} else {  
-				System.out.println("unsigned: " + format.getEncoding().toString());
 				// PCM_UNSIGNED  
 				for (int i = 0; i < audioBytes.length; i++) {  
 					audioData[i] = audioBytes[i] - 128;  
 				}  
 			}  
 		}
-
 		// Added to combine stereo into mono
 		if(format.getChannels() == 2 && format.getFrameSize() == 4) { //if AudioFormat is stereo and not mono
-			System.out.println("Stereo with 4 bytes per frame");
 			int start = 0;
 			int[] stereoToMonoSamples = new int[audioData.length/2];
 			for(int i = 0; i < audioData.length; i += 4) {
