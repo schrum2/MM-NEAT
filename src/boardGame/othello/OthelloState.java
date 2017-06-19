@@ -43,7 +43,7 @@ public class OthelloState extends TwoDimensionalBoardGameState {
 		super(state);
 	}
 
-	OthelloState(int[][] board, int nextPlay, List<Integer> win){
+	public OthelloState(int[][] board, int nextPlay, List<Integer> win){
 		super(board, NUMBER_OF_PLAYERS, nextPlay, win);
 	}
 	
