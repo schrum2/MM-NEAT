@@ -21,7 +21,7 @@ import micro.rts.units.Unit;
  * unfinished, eventually different substrate for each unit-type maybe.
  */
 public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluationFunction<T> {
-	
+
 	private boolean[] areSubsActive = new boolean[]{
 			Parameters.parameters.booleanParameter("mRTSMobileUnits"),
 			Parameters.parameters.booleanParameter("mRTSBuildings"),
@@ -32,7 +32,8 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 			Parameters.parameters.booleanParameter("mRTSMyAll"),
 			Parameters.parameters.booleanParameter("mRTSOpponentsAll"),
 			Parameters.parameters.booleanParameter("mRTSAll"), //the only one that is true by default
-		//	Parameters.parameters.booleanParameter("mRTSTerrain"),
+			Parameters.parameters.booleanParameter("mRTSNeutral"), 
+			//	Parameters.parameters.booleanParameter("mRTSTerrain"),
 			//resources separate from units, seperate from bases
 			//mobile , bases , terrain + resources. : first thing to try 
 	};
@@ -78,11 +79,18 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 		int boardIndex;
 		for(int j = 0; j < pgs.getHeight(); j++){
 			for(int i = 0; i < pgs.getWidth(); i++){
-//				int isTerrain = pgs.getTerrain(i, j);
-//				System.out.print(isTerrain); // 0 = no, (1 = yes (maybe))
+				//				int isTerrain = pgs.getTerrain(i, j);
+				//				System.out.print(isTerrain); // 0 = no, 1 = yes
 				boardIndex =  i + j * pgs.getHeight(); 
 				current = pgs.getUnitAt(i, j);
+				
+				
 				if(current!= null){
+					if(current.getType().name.equals("Worker")){
+						System.out.println(current.getID());
+						System.out.println("player" + current.getPlayer());
+						System.out.println(current.getCost());
+					}
 					inputs = populateSubstratesWith(current, inputs, substrateSize, boardIndex);
 				}
 			}//end i : width
@@ -90,8 +98,10 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 		System.out.println("SUB 0 -----------------------");
 		printSubstrateConfig(0, inputs);
 		System.out.println("SUB 1 -----------------------");
-		printSubstrateConfig(0, inputs);
-		MiscUtil.waitForReadStringAndEnterKeyPress();
+		printSubstrateConfig(1, inputs);
+		System.out.println("SUB 2 (resources)  -----------------------");
+		printSubstrateConfig(2, inputs);
+//		MiscUtil.waitForReadStringAndEnterKeyPress();
 		return inputs;
 	}
 
@@ -114,17 +124,16 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 		HashSet<Integer> appropriateSubstrates = new HashSet<>();
 		int numCurrentSubs = 0;
 		//for current unit, find which substrates it belongs to
-		
-		System.out.println("unit: " + u.getX() + " " + u.getY()+ " ==> " + location);
-		
+//		System.out.println("unit: " + u.getX() + " " + u.getY()+ " ==> " + location);
 		if(areSubsActive[0]){ //all mobile units   
 			if(u.getType().canMove){
+//				System.out.println("- "+ u.getType().name + u.getPlayer());
 				appropriateSubstrates.add(numCurrentSubs);
 			}
 			numCurrentSubs++;
 		}
 		if(areSubsActive[1]){ //all buildings
-			if(!u.getType().canMove){
+			if(!u.getType().canMove && u.getPlayer() != -1){
 				appropriateSubstrates.add(numCurrentSubs);
 			}
 			numCurrentSubs++;
@@ -169,6 +178,12 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 			appropriateSubstrates.add(numCurrentSubs);
 			numCurrentSubs++;
 		}
+		if(areSubsActive[9]){ //neutral (terrain & resources) TODO make this get terrain
+			if(u.getPlayer() == -1){
+				appropriateSubstrates.add(numCurrentSubs);
+				numCurrentSubs++;
+			}
+		}
 		for(int appropriateSubstrate : appropriateSubstrates){
 			System.out.println("putting unit in sub: " + appropriateSubstrate + " at sublocation " + location + " out of " + substrateSize);
 			int indexWithinAll = (substrateSize * appropriateSubstrate) + location;
@@ -201,7 +216,7 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 	public int getNumInputSubstrates() {
 		return numSubstrates;
 	}
-	
+
 	/**
 	 * for debugging & ghostbusting
 	 * @param whichSub
