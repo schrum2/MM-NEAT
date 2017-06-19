@@ -16,9 +16,6 @@ import javax.swing.JSlider;
 import javax.swing.SwingConstants;
 import javax.vecmath.Vector3d;
 
-import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.util.graphics.GraphicsUtil;
-
 /**
  * Imported class that constructs a three-dimensional tetrahedral object.
  * 
@@ -319,7 +316,7 @@ public class Construct3DObject {
 	 * @param endTime end of animation
 	 * @return Array of BufferedImages that can be played as an animation of a 3D object
 	 */
-	private static BufferedImage[] objectsFromCPPN(List<Triangle> tris, int imageWidth, int imageHeight, int startTime, int endTime) {
+	public static BufferedImage[] objectsFromCPPN(List<Triangle> tris, int imageWidth, int imageHeight, int startTime, int endTime) {
 		BufferedImage[] images = new BufferedImage[endTime-startTime];
 		for(int i = startTime; i < endTime; i++) {
 			//TODO: How should inputs be manipulated to have enough images to render the object?
@@ -336,7 +333,6 @@ public class Construct3DObject {
 			try {
 				Thread.sleep(10);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
