@@ -3,10 +3,8 @@ package boardGame;
 import java.awt.Color;
 import java.awt.Point;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 public abstract class TwoDimensionalBoardGameState implements BoardGameState {
 
@@ -204,6 +202,7 @@ public abstract class TwoDimensionalBoardGameState implements BoardGameState {
 	 * Prints out a visual representation of the TicTacToeState to the console
 	 */
 	public String toString(){
+		getWinners();
 		String result = "Next Player: " + nextPlayer + " numPlayers: " + numPlayers + " winners: " + winners;
 		result += "\n  0 1 2 3 4 5 6 7\n ";
 		for(int i = 0; i < getBoardWidth(); i++) {

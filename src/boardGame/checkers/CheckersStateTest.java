@@ -30,7 +30,9 @@ public class CheckersStateTest {
 	CheckersState test4;
 	CheckersState test5;
 	CheckersState test6; // Used to test the incorrect End State Error
-
+	CheckersState test7; // Used to test the Triple Winners Error
+	CheckersState test8; // Used to test the Triple Winners Error
+	
 	@Before
 	public void setUp() throws Exception {
 		start = new CheckersState();
@@ -113,6 +115,32 @@ public class CheckersStateTest {
 									 {R,E,R,E,R,E,R,E}};// 7
 
 		test6 = new CheckersState(board6, 1, new ArrayList<Integer>());  // Used to test the incorrect EndState Error
+		
+		int[][] board7 = new int[][]{{E,B,E,B,E,B,E,B}, // 0 End State, but tied; impossible, but good for testing Draws
+			 						 {B,E,B,E,B,E,B,E}, // 1
+			 						 {E,B,E,B,E,B,E,B}, // 2
+			 						 {E,E,E,E,E,E,E,E}, // 3
+			 						 {E,E,E,E,E,E,E,E}, // 4
+			 						 {R,E,R,E,R,E,R,E}, // 5
+			 						 {E,R,E,R,E,R,E,R}, // 6
+			 						 {R,E,R,E,R,E,R,E}};// 7
+
+		test7 = new CheckersState(board7, 1, new ArrayList<Integer>());  // Used to test the Triple Winners Error
+		test7.movesSinceLastJump = 51; // End State
+		test7.movesSinceNon_King = 51; // End State
+		
+		int[][] board8 = new int[][]{{E,B,E,B,E,B,E,B}, // 0 End State, but due to the time limit; impossible, but good for testing
+			 						 {B,E,B,E,B,E,B,E}, // 1
+			 						 {E,E,E,E,E,E,E,E}, // 2
+			 						 {E,E,E,E,E,E,E,E}, // 3
+			 						 {E,E,E,E,E,E,E,E}, // 4
+			 						 {R,E,R,E,R,E,R,E}, // 5
+			 						 {E,R,E,R,E,R,E,R}, // 6
+			 						 {R,E,R,E,R,E,R,E}};// 7
+
+		test8 = new CheckersState(board8, 1, new ArrayList<Integer>());  // Used to test the Triple Winners Error
+		test8.movesSinceLastJump = 51; // End State
+		test8.movesSinceNon_King = 51; // End State
 	}
 
 	@Test
@@ -143,6 +171,19 @@ public class CheckersStateTest {
 		win3.add(1);
 		
 		assertEquals(win3, test3.getWinners()); // End State; Player 2 wins
+		
+		assertEquals(new ArrayList<Integer>(), test6.getWinners()); // Not an End State; no Winners yet
+		
+		List<Integer> win7 = new ArrayList<Integer>();
+		win7.add(0);
+		win7.add(1);
+		
+		assertEquals(win7, test7.getWinners()); // Tied End State; both Players win
+		
+		List<Integer> win8 = new ArrayList<Integer>();
+		win8.add(1);
+		
+		assertEquals(win8, test8.getWinners()); // Tied End State; both Players win
 	}
 
 	@Test
