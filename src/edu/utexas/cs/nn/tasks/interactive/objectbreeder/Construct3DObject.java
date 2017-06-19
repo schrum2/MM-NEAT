@@ -16,6 +16,9 @@ import javax.swing.JSlider;
 import javax.swing.SwingConstants;
 import javax.vecmath.Vector3d;
 
+import edu.utexas.cs.nn.networks.Network;
+import edu.utexas.cs.nn.util.graphics.GraphicsUtil;
+
 /**
  * Imported class that constructs a three-dimensional tetrahedral object.
  * 
@@ -86,6 +89,21 @@ public class Construct3DObject {
 	}
 	
 	/**
+	 * Constructs a BufferedImage of the current 3D image rotation based on the current heading and pitch.
+	 * 
+	 * @param tris list of triangles
+	 * @param width width of image
+	 * @param height height of image
+	 * @param heading Input horizontal position from JSlider
+	 * @param pitch Input vertical position from JSlider
+	 * @return BufferedImage representing current view of 3D image
+	 */
+	private static BufferedImage getImage(List<Triangle> tris, int width, int height, double heading, double pitch) {
+		Matrix3 transform = getTransform(heading, pitch);
+		return getImage(tris, width, height, transform);
+	}
+	
+	/**
 	 * Creates Matrix3 instance that is used to transform/manipulate a list of Triangles into a 
 	 * rendered cube.
 	 * 
@@ -138,19 +156,6 @@ public class Construct3DObject {
 			v3.y += height / 2;
 			
 			Vertex norm = getNorm(v1, v2, v3);
-
-//			Vertex ab = new Vertex(v2.x - v1.x, v2.y - v1.y, v2.z - v1.z);
-//			Vertex ac = new Vertex(v3.x - v1.x, v3.y - v1.y, v3.z - v1.z);
-//			Vertex norm = new Vertex(
-//					ab.y * ac.z - ab.z * ac.y,
-//					ab.z * ac.x - ab.x * ac.z,
-//					ab.x * ac.y - ab.y * ac.x
-//					);
-//			double normalLength = Math.sqrt(norm.x * norm.x + norm.y * norm.y + norm.z * norm.z);
-//			norm.x /= normalLength;
-//			norm.y /= normalLength;
-//			norm.z /= normalLength;
-			
 
 			double angleCos = Math.abs(norm.z);
 
@@ -275,6 +280,26 @@ public class Construct3DObject {
 				center.add(new Vertex(-halfLength, halfLength, -halfLength)),
 				color));
 		return tris;
+	}
+	
+	/**
+	 * Produces an array of images that are meant to animate a 3-dimensional object
+	 * rotating. This is done by repeatedly calling getImage() at different input 
+	 * headings and pitches.
+	 * @param tris array of triangles representing cube
+	 * @param imageWidth width of image
+	 * @param imageHeight height of image
+	 * @param startTime beginning of animation
+	 * @param endTime end of animation
+	 * @return Array of BufferedImages that can be played as an animation of a 3D object
+	 */
+	private static BufferedImage[] objectsFromCPPN(List<Triangle> tris, int imageWidth, int imageHeight, int startTime, int endTime) {
+		BufferedImage[] images = new BufferedImage[endTime-startTime];
+		for(int i = startTime; i < endTime; i++) {
+			//TODO: How should inputs be manipulated to have enough images to render the object?
+			images[i-startTime] = getImage(tris, imageWidth, imageHeight, i, i);
+		}
+		return images;
 	}
 
 	// TODO: This method does NOT work
