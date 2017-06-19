@@ -22,35 +22,32 @@ import javax.vecmath.Vector3d;
  *
  */
 public class Construct3DObject {
+	private static JSlider headingSlider;
+	private static JSlider pitchSlider;
+	private static Graphics2D g2;
+	private static JPanel renderPanel;
 
-	public static void main(String[] args) {
-		// panel to display render results
-		Vertex center = new Vertex(0,0,0);
-		List<Triangle> tris = cubeConstructor(center, 100.0, Color.RED);
-		@SuppressWarnings("serial")
-		JPanel renderPanel = new JPanel() {
-			public void paintComponent(Graphics g) {
-				Graphics2D g2 = (Graphics2D) g;
-				g2.setColor(Color.BLACK);
-				g2.fillRect(0, 0, getWidth(), getHeight());		
-			}
-		};
-
-		drawObject(renderPanel, renderPanel.getGraphics(), tris);
-		
-	}
-	public static void drawObject(JPanel renderPanel, Graphics g2, List<Triangle> tris) {
+	public Construct3DObject() {
 		JFrame frame = new JFrame();
 		Container pane = frame.getContentPane();
 		pane.setLayout(new BorderLayout());
 
 		// slider to control horizontal rotation
-		JSlider headingSlider = new JSlider(-180, 180, 0);
+		headingSlider = new JSlider(-180, 180, 0);
 		pane.add(headingSlider, BorderLayout.SOUTH);
 
 		// slider to control vertical rotation
-		JSlider pitchSlider = new JSlider(SwingConstants.VERTICAL, -90, 90, 0);
+		pitchSlider = new JSlider(SwingConstants.VERTICAL, -90, 90, 0);
 		pane.add(pitchSlider, BorderLayout.EAST);
+
+		@SuppressWarnings("serial")
+		JPanel renderPanel = new JPanel() {
+			public void paintComponent(Graphics g) {
+				g2 = (Graphics2D) g;
+				g2.setColor(Color.BLACK);
+				g2.fillRect(0, 0, getWidth(), getHeight());			
+			}
+		};
 
 		pane.add(renderPanel, BorderLayout.CENTER);
 
@@ -59,6 +56,19 @@ public class Construct3DObject {
 
 		frame.setSize(400, 400);
 		frame.setVisible(true);
+
+	}
+
+	public static void main(String[] args) {
+		// panel to display render results
+		Vertex center = new Vertex(0,0,0);
+		List<Triangle> tris = cubeConstructor(center, 100.0, Color.RED);
+		drawObject(g2, tris);
+
+
+	}
+
+	public static void drawObject(Graphics2D g2, List<Triangle> tris) {
 		double heading = Math.toRadians(headingSlider.getValue());
 		Matrix3 headingTransform = new Matrix3(new double[] {
 				Math.cos(heading), 0, -Math.sin(heading),
@@ -80,6 +90,7 @@ public class Construct3DObject {
 		for (int q = 0; q < zBuffer.length; q++) {
 			zBuffer[q] = Double.NEGATIVE_INFINITY;
 		}
+
 		for (Triangle t : tris) {
 			Vertex v1 = transform.transform(t.v1);
 			v1.x += renderPanel.getWidth() / 2;
@@ -234,6 +245,7 @@ class Vertex extends Vector3d {
 		return newV;
 	}
 }
+
 
 class Triangle {
 	Vertex v1;
