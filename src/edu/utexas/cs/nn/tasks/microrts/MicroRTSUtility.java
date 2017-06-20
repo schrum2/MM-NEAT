@@ -133,6 +133,10 @@ public class MicroRTSUtility {
 			} //end if(Parameters.. = progressive)
 			gameover  = gs.cycle();
 			if(CommonConstants.watch) w.repaint();
+			// To Alive: remove the wait command below, but if you run the experiment,
+			// you will see that several states are evaluated on the first cycle, then
+			// several cycles pass with no eval, then another batch of evals happen.
+			MiscUtil.waitForReadStringAndEnterKeyPress();
 		}while(!gameover && gs.getTime()< maxCycles);
 		ff.setGameEndTime(gs.getTime());
 		
