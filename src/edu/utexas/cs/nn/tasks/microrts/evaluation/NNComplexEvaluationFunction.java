@@ -198,7 +198,6 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 			numCurrentSubs++;
 		}
 		if(areSubsActive[neutral]){ //neutral (terrain & resources)
-			System.out.println(isTerrain + " : " + u);
 			if(isTerrain || (u != null && u.getPlayer() == -1)){
 				appropriateSubstrates.add(numCurrentSubs);
 				subIDs.add(neutral);
@@ -214,7 +213,6 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 		}
 		for(int i = 0; i < appropriateSubstrates.size(); i++){
 			int indexWithinAll = (substrateSize * appropriateSubstrates.get(i)) + location;
-			System.out.println("### putting into substrate: " + appropriateSubstrates.get(i) + " which is out of AL: " + subIDs);
 			int subID = subIDs.get(i);
 			substrates[indexWithinAll] = getWeightedValue(subID , u, isTerrain);
 		} 
