@@ -107,7 +107,7 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 				boolean isTerrain = pgs.getTerrain(i, j) == PhysicalGameState.TERRAIN_WALL;
 				boardIndex =  i + j * pgs.getHeight(); 
 				current = pgs.getUnitAt(i, j);
-				assert (isTerrain == (current == null));
+				assert !(isTerrain && (current != null)): "there appears to be both a unit AND a wall at: " + i + " , " + j;
 				inputs = populateSubstratesWith(current, isTerrain, inputs, substrateSize, boardIndex);
 			}//end i : width
 		}//end j : height
@@ -130,7 +130,7 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 	 * 
 	 */
 	private double[] populateSubstratesWith(Unit u, boolean isTerrain, double[] substrates, int substrateSize, int location){
-		HashSet<Integer> appropriateSubstrates = new HashSet<>();
+		ArrayList<Integer> appropriateSubstrates = new ArrayList<>();
 		ArrayList<Integer> subIDs = new ArrayList<>(); //ends up that indexes correspond to appropriateSubstrates, and data corresponds to globals
 		int numCurrentSubs = 0;
 		//for current, find which substrates it belongs to
@@ -198,7 +198,8 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 			numCurrentSubs++;
 		}
 		if(areSubsActive[neutral]){ //neutral (terrain & resources)
-			if(isTerrain || u.getPlayer() == -1){
+			System.out.println(isTerrain + " : " + u);
+			if(isTerrain || (u != null && u.getPlayer() == -1)){
 				appropriateSubstrates.add(numCurrentSubs);
 				subIDs.add(neutral);
 			}
@@ -211,9 +212,10 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 			}
 			numCurrentSubs++;
 		}
-		for(int appropriateSubstrate : appropriateSubstrates){
-			int indexWithinAll = (substrateSize * appropriateSubstrate) + location;
-			int subID = subIDs.get(appropriateSubstrate);
+		for(int i = 0; i < appropriateSubstrates.size(); i++){
+			int indexWithinAll = (substrateSize * appropriateSubstrates.get(i)) + location;
+			System.out.println("### putting into substrate: " + appropriateSubstrates.get(i) + " which is out of AL: " + subIDs);
+			int subID = subIDs.get(i);
 			substrates[indexWithinAll] = getWeightedValue(subID , u, isTerrain);
 		} 
 		return substrates;
