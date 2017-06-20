@@ -16,10 +16,15 @@ import javax.swing.JSlider;
 import javax.swing.SwingConstants;
 import javax.vecmath.Vector3d;
 
+import edu.utexas.cs.nn.networks.Network;
+import edu.utexas.cs.nn.util.CartesianGeometricUtilities;
+import edu.utexas.cs.nn.util.graphics.GraphicsUtil;
+
 /**
- * Imported class that constructs a three-dimensional tetrahedral object.
+ * Series of utility methods associated with rendering 
+ * a 3D object created from a series of vertexes
  * 
- * @author Rogach
+ * @author Isabel Tweraser
  *
  */
 public class Construct3DObject {
@@ -42,11 +47,11 @@ public class Construct3DObject {
 		JPanel renderPanel = new JPanel() {
 			public void paintComponent(Graphics g) {
 				List<Triangle> tris = new LinkedList<Triangle>();
-				tris.addAll(cubeConstructor(new Vertex(0,0,0), 10.0, Color.RED));
-				tris.addAll(cubeConstructor(new Vertex(10,0,0), 10.0, Color.GREEN));
-				tris.addAll(cubeConstructor(new Vertex(0,10,0), 10.0, Color.YELLOW));
-				tris.addAll(cubeConstructor(new Vertex(0,20,0), 10.0, Color.GREEN));
-				tris.addAll(cubeConstructor(new Vertex(0,0,20), 10.0, Color.GRAY));
+				tris.addAll(cubeConstructor(new Vertex(0,0,0), 50.0, Color.RED));
+				tris.addAll(cubeConstructor(new Vertex(10,0,0), 50.0, Color.GREEN));
+				tris.addAll(cubeConstructor(new Vertex(0,10,0), 50.0, Color.YELLOW));
+				tris.addAll(cubeConstructor(new Vertex(0,20,0), 50.0, Color.GREEN));
+				tris.addAll(cubeConstructor(new Vertex(0,0,20), 50.0, Color.GRAY));
 				
 				Graphics2D g2 = (Graphics2D) g;
 				double heading = Math.toRadians(headingSlider.getValue());
@@ -228,7 +233,7 @@ public class Construct3DObject {
 	 * @param color desired color of cubes
 	 * @return List of triangles that construct a series of cubes centered at the various vertexes
 	 */
-	public static List<Triangle> constructor(List<Vertex> centers, double sideLength, Color color) {
+	public static List<Triangle> getShapes(List<Vertex> centers, double sideLength, Color color) {
 		List<Triangle> tris = new ArrayList<>();
 		for(Vertex v: centers) { //construct individual cubes and add them to larger list
 			tris.addAll(cubeConstructor(v, sideLength, color));
@@ -236,6 +241,75 @@ public class Construct3DObject {
 		return tris;
 	}
 	
+	/**
+	 * Creates a list of vertexes where cube pixels will be constructed in a shape based on 
+	 * the CPPN
+	 * 
+	 * @param cppn network used to modify shape being constructed
+	 * @param imageWidth width of screen
+	 * @param imageHeight height of screen
+	 * @param cubeSize size of cube
+	 * @param shapeWidth width of shape being constructed 
+	 * @param shapeHeight height of shape being constructed
+	 * @param shapeDepth depth of shape being constructed
+	 * @return List of vertexes denoting center points of all cubes being constructed
+	 */
+	public static List<Vertex> getVertexesFromCPPN(Network cppn, int imageWidth, int imageHeight, int cubeSize, int shapeWidth, int shapeHeight, int shapeDepth) {
+		assert shapeWidth % cubeSize == 0 && shapeHeight % cubeSize == 0 && shapeDepth % cubeSize == 0;
+		int halfWidth = shapeWidth/2;
+		int halfHeight = shapeHeight/2;
+		int halfDepth = shapeDepth/2;
+		int halfCube = cubeSize/2;
+		List<Vertex> result = new ArrayList<>();
+		for(int x = -halfWidth + halfCube; x < halfWidth; x+=cubeSize) {
+			for(int y = -halfHeight + halfCube; y < halfHeight; y += cubeSize) {
+				for(int z = -halfDepth + halfCube; z < halfDepth; z += cubeSize) {
+					double[] inputs = getCPPNInputs(x, y, z, shapeWidth, shapeHeight, shapeDepth);
+					//TODO: figure out input value access
+//					if(input value > 0.1) {
+//						result.add(new Vertex(x, y, z));
+//					}
+				}
+			}
+		}
+		return result;
+	}
+	
+	/**
+	 * Returns CPPN inputs for 3D object construction
+	 * 
+	 * @param x Current voxel x-coordinate
+	 * @param y Current voxel y-coordinate
+	 * @param z current voxel z-coordinate
+	 * @param width width of shape
+	 * @param height height of shape
+	 * @param depth depth of shape
+	 * @return inputs to CPPN (x, y, z coordinates of a Vertex and bias)
+	 */
+	public static double[] getCPPNInputs(int x, int y, int z, int width, int height, int depth) {
+		Vertex v = new Vertex(x, y, z);
+		Vertex newV = centerAndScale(v, width, height, depth);
+		return new double[]{newV.x, newV.y, newV.z, GraphicsUtil.BIAS};
+	}
+	
+	/**
+	 * Method that centers and scales a vertex based on the width, height, and depth of the shape
+	 * 
+	 * @param toScale Vertex to be scaled
+	 * @param width width of shape
+	 * @param height height of shape
+	 * @param depth depth of shape
+	 * @return scaled vertex
+	 */
+	public static Vertex centerAndScale(Vertex toScale, int width, int height, int depth) {
+		double newX = CartesianGeometricUtilities.centerAndScale(toScale.x, width); //scaled x coordinate
+		double newY = CartesianGeometricUtilities.centerAndScale(toScale.y, height); //scaled y coordinate
+		double newZ = CartesianGeometricUtilities.centerAndScale(toScale.z, depth); //scaled z coordinate
+		assert !Double.isNaN(newX) : "newX is NaN! width="+width+", height="+height+", toScale="+toScale;
+		assert !Double.isNaN(newY) : "newY is NaN! width="+width+", height="+height+", toScale="+toScale;
+		assert !Double.isNaN(newZ) : "newZ is NaN! width="+width+", height="+height+", toScale="+toScale;
+		return new Vertex(newX, newY, newZ);
+	}
 	/**
 	 * Method that takes in a color, a vertex and a sidelength of a desired cube
 	 * and returns a list of triangles that can be used to construct the cube.
@@ -316,11 +390,11 @@ public class Construct3DObject {
 	 * @param endTime end of animation
 	 * @return Array of BufferedImages that can be played as an animation of a 3D object
 	 */
-	public static BufferedImage[] objectsFromCPPN(List<Triangle> tris, int imageWidth, int imageHeight, int startTime, int endTime) {
+	public static BufferedImage[] objectsFromCPPN(List<Triangle> tris, int imageWidth, int imageHeight, int startTime, int endTime, double pitch) {
 		BufferedImage[] images = new BufferedImage[endTime-startTime];
 		for(int i = startTime; i < endTime; i++) {
 			//TODO: How should inputs be manipulated to have enough images to render the object?
-			images[i-startTime] = getImage(tris, imageWidth, imageHeight, i, i);
+			images[i-startTime] = getImage(tris, imageWidth, imageHeight, (i*2*Math.PI)/images.length, pitch);
 		}
 		return images;
 	}
