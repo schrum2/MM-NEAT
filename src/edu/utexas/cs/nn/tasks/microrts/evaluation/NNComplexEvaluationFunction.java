@@ -20,14 +20,21 @@ import micro.rts.units.Unit;
  * unfinished, eventually different substrate for each unit-type maybe.
  */
 public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluationFunction<T> {
-
+	
+	private int numSubstrates;
+	
+	//Indexes within areSubsActive
 	private final int mobile = 0;
 	private final int buildings = 1;
 	private final int myMobile = 2;
 	private final int myBuildings = 3;
 	private final int oppsMobile = 4;
 	private final int oppsBuildings = 5;
-	
+	private final int myAll = 6;
+	private final int oppsAll = 7;
+	private final int all = 8;
+	private final int neutral = 9;
+	private final int terrain = 10;
 	
 	private boolean[] areSubsActive = new boolean[]{
 			Parameters.parameters.booleanParameter("mRTSMobileUnits"),
@@ -42,7 +49,18 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 			Parameters.parameters.booleanParameter("mRTSNeutral"), //terrain and resources
 			Parameters.parameters.booleanParameter("mRTSTerrain"),
 	};
-	private int numSubstrates;
+	
+	//from NN2DEvaluationFunction
+	private static final double BASE_WEIGHT = 4; //hard to quantify because different amount of importance at different stages of the game
+	private static final double BASE_RESOURCE_WEIGHT = .25;
+	private static final double BARRACKS_WEIGHT = 2.5;
+	private static final double WORKER_WEIGHT = 1;
+	private static final double WORKER_RESOURCE_WEIGHT = .15;
+	private static final double LIGHT_WEIGHT = 3; 
+	private static final double HEAVY_WEIGHT = 3.25;
+	private static final double RANGED_WEIGHT = 3.75;
+	private static final double RAW_RESOURCE_WEIGHT = .01;
+	private static final double TERRAIN_WEIGHT = -.01;
 
 	/**
 	 * constructor for FEStatePane and similar
@@ -114,73 +132,113 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 		int numCurrentSubs = 0;
 		//for current, find which substrates it belongs to
 		if(u != null){
-			if(areSubsActive[0]){ //all mobile units   
+			if(areSubsActive[mobile]){ //all mobile units   
 				if(u.getType().canMove){
 					appropriateSubstrates.add(numCurrentSubs);
 				}
 				numCurrentSubs++;
 			}
-			if(areSubsActive[1]){ //all buildings
+			if(areSubsActive[buildings]){ //all buildings
 				if(!u.getType().canMove && u.getPlayer() != -1){
 					appropriateSubstrates.add(numCurrentSubs);
 				}
 				numCurrentSubs++;
 			}
-			if(areSubsActive[2]){
+			if(areSubsActive[myMobile]){
 				if(u.getType().canMove && u.getPlayer() == 0){
 					appropriateSubstrates.add(numCurrentSubs);
 				}
 				numCurrentSubs++;
 			}
-			if(areSubsActive[3]){ //includes resources
+			if(areSubsActive[myBuildings]){
 				if(!u.getType().canMove && u.getPlayer() != 1){
 					appropriateSubstrates.add(numCurrentSubs);
 				}
 				numCurrentSubs++;
 			}
-			if(areSubsActive[4]){
+			if(areSubsActive[oppsMobile]){
 				if(u.getType().canMove && u.getPlayer() == 1){
 					appropriateSubstrates.add(numCurrentSubs);
 				}
 				numCurrentSubs++;
 			}
-			if(areSubsActive[5]){ //includes resources
+			if(areSubsActive[oppsBuildings]){
 				if(!u.getType().canMove && u.getPlayer() != 0){
 					appropriateSubstrates.add(numCurrentSubs);
 				}
 				numCurrentSubs++;
 			}
-			if(areSubsActive[6]){
+			if(areSubsActive[myAll]){
 				if(u.getPlayer() == 0){
 					appropriateSubstrates.add(numCurrentSubs);
 				}
 				numCurrentSubs++;
 			}
-			if(areSubsActive[7]){
+			if(areSubsActive[oppsAll]){
 				if(u.getPlayer() == 1){
 					appropriateSubstrates.add(numCurrentSubs);
 				}
 				numCurrentSubs++;
 			}
 		} //end if (u != null) : following subs can be appropriate if we are considering terrain 
-		if(areSubsActive[8]){ //everything
+		if(areSubsActive[all]){ //everything
 			appropriateSubstrates.add(numCurrentSubs);
 			numCurrentSubs++;
 		}
-		if(areSubsActive[9]){ //neutral (terrain & resources) TODO make this get terrain
+		if(areSubsActive[neutral]){ //neutral (terrain & resources)
 			if(isTerrain || u.getPlayer() == -1){
 				appropriateSubstrates.add(numCurrentSubs);
-				numCurrentSubs++;
 			}
+			numCurrentSubs++;
 		}
-		 //TODO make indexes constants
+		if(areSubsActive[terrain]){
+			if(isTerrain){
+				appropriateSubstrates.add(numCurrentSubs);
+			}
+			numCurrentSubs++;
+		}
 		for(int appropriateSubstrate : appropriateSubstrates){
-			System.out.println("putting unit in sub: " + appropriateSubstrate + " at sublocation " + location + " out of " + substrateSize);
 			int indexWithinAll = (substrateSize * appropriateSubstrate) + location;
-			System.out.println("index within all: " + indexWithinAll + " = " + substrateSize  + " * " + appropriateSubstrate + " + " + location);
-			substrates[indexWithinAll] = 1; //TODO depends on which sub, etc.
+			int subID = -1; //TODO make it equal to appropriate global
+			substrates[indexWithinAll] = getWeightedValue(subID , u, isTerrain);
 		} 
 		return substrates;
+	}
+	
+	/**
+	 * returns a value to be used as an input that represents a specific entity in a substrate,
+	 * allows us to differentiate between different things inside the same substrate.
+	 * 
+	 * @param sub
+	 * 			which substrate the value will be put in
+	 * @param u
+	 * 			unit
+	 * @param isTerrain
+	 * 			true if entity in question is a wall, false if traversable
+	 * @return
+	 * 			value to be put into the NN
+	 */
+	private double getWeightedValue(int sub, Unit u, boolean isTerrain){
+		if(sub == neutral){
+			if(isTerrain) return .25;
+		}
+		if(sub == all){
+			double value = 0;
+			if(isTerrain) value = .25;
+			switch(u.getType().name){
+			case "Worker": value = WORKER_WEIGHT + (WORKER_RESOURCE_WEIGHT * u.getResources()); break; 
+			case "Light": value = LIGHT_WEIGHT; break;
+			case "Heavy": value = HEAVY_WEIGHT; break;
+			case "Ranged": value = RANGED_WEIGHT; break;
+			case "Base": value = BASE_WEIGHT + (BASE_RESOURCE_WEIGHT * u.getResources()); break;
+			case "Barracks": value = BARRACKS_WEIGHT; break;
+			case "Resource": value = RAW_RESOURCE_WEIGHT; break;
+			default: break;
+			}
+			if(u.getPlayer() == 1) value *= -1;
+			return value;
+		}
+		return 1.0;
 	}
 
 	/**
