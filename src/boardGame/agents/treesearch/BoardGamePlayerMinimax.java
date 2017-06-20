@@ -37,21 +37,6 @@ public class BoardGamePlayerMinimax<T extends BoardGameState> extends HeuristicB
 	
 	Random random = RandomNumbers.randomGenerator;
 	
-//	protected static class Container {
-//		double value;
-//		public Container(double value) {
-//			this.value = value;
-//		}
-//		
-//		public void setValue(double newValue) {
-//			value = newValue;
-//		}
-//		
-//		public double getValue() {
-//			return value;
-//		}
-//	}
-	
 	/**
 	 * This constructor assumes an opponent agent is being created.
 	 * But if an evolved agent needs to be created, its heuristic
@@ -128,8 +113,9 @@ public class BoardGamePlayerMinimax<T extends BoardGameState> extends HeuristicB
 			// Use !maximize because the next level down are the opponent's moves
 			utilities[index] = minimax(bgs, depth, alpha, beta, !maximize);
 			
+			// Pruning is only for the alpha-beta agent
 			if(prune) {
-				// Update alpha/beta (copied from)
+				// Update alpha/beta (copied code)
 				if(maximize) {
 					v = Math.max(v, utilities[index]);
 					alpha = Math.max(alpha, v);
