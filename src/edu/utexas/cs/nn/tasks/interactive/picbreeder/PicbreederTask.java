@@ -17,6 +17,7 @@ import edu.utexas.cs.nn.util.graphics.GraphicsUtil;
 /**
  * Implementation of picbreeder that extends InteractiveEvolutionTask
  * and uses Java Swing components for graphical interface
+ * Original Picbreeder paper: http://cognet.mit.edu/journal/10.1162/evco_a_00030
  * 
  * @author Lauren Gillespie
  * @author Isabel Tweraser
