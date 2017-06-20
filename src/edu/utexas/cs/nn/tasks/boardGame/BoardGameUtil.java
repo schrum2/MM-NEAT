@@ -29,7 +29,6 @@ public class BoardGameUtil {
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static <T extends BoardGameState> ArrayList<Pair<double[], double[]>> playGame(BoardGame<T> bg, BoardGamePlayer<T>[] players, List<BoardGameFitnessFunction<T>> fit){
-		System.out.println("playGame");
 		if(CommonConstants.watch && bg instanceof TwoDimensionalBoardGame){ // Creates a new BoardGameViewer if bg is a TwoDimensionalBoardGame
 			view = MMNEAT.boardGameViewer;
 		}
@@ -45,7 +44,6 @@ public class BoardGameUtil {
 			for(BoardGameFitnessFunction fitFunct : fit){
 				fitFunct.reset();
 			}
-			System.out.println("play pos " + i);
 			
 			while(!bg.isGameOver()){
 

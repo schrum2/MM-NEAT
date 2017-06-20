@@ -50,13 +50,15 @@ public class MultiPopulationCompetativeCoevolutionBoardGameTask<S extends BoardG
 			System.exit(1);
 		}
 		
-		MMNEAT.registerFitnessFunction(selectionFunction.getFitnessName());
-		
 		// Add Other Scores here to keep track of other Fitness Functions
 		fitFunctions.add(new SimpleWinLoseDrawBoardGameFitness<S>());
 		
-		for(BoardGameFitnessFunction<S> fit : fitFunctions){
-			MMNEAT.registerFitnessFunction(fit.getFitnessName(), false);
+		for(int i = 0; i < bg.getNumPlayers(); i++){
+			MMNEAT.registerFitnessFunction(selectionFunction.getFitnessName(),true,i);
+			
+			for(BoardGameFitnessFunction<S> fit : fitFunctions){
+				MMNEAT.registerFitnessFunction(fit.getFitnessName(),false,i);
+			}
 		}
 		
 		fitFunctions.add(0, selectionFunction); // Adds the Selection Function to the first Index
@@ -76,7 +78,7 @@ public class MultiPopulationCompetativeCoevolutionBoardGameTask<S extends BoardG
 	@Override
 	public int[] otherStatsPerPopulation() {
 		// Returns an Array to store the Other Scores for each Population
-		return new int[(fitFunctions.size()-1)];
+		return ArrayUtil.intOnes(fitFunctions.size()-1);
 	}
 
 	@Override
