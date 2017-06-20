@@ -32,7 +32,8 @@ import edu.utexas.cs.nn.util.sound.SoundFromCPPNUtil;
  * Class that builds an interface with a variety of sound waves that have been generated with
  * an input CPPN. These sound waves are represented with an image and with audio, and can be evolved,
  * saved, and mutated with various activation functions. This class extends InteractiveEvolutionTask,
- * which is also used to design the Picbreeder and Remixbreeder interfaces.
+ * which is also used to design the Picbreeder and Remixbreeder interfaces. 
+ * Original breedesizer paper: sebastianrisi.com/wp-content/uploads/jonsson_gecco15.pdf
  * 
  * @author Isabel Tweraser
  *

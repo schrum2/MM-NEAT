@@ -28,6 +28,14 @@ import edu.utexas.cs.nn.scores.Score;
 import edu.utexas.cs.nn.tasks.interactive.InteractiveEvolutionTask;
 import edu.utexas.cs.nn.util.graphics.AnimationUtil;
 
+/**
+ * Interface that interactively evolves originally generated animations
+ * from a CPPN. Uses the interactive evolution interface to complete this.
+ * 
+ * @author Isabel Tweraser
+ *
+ * @param <T>
+ */
 public class AnimationBreederTask<T extends Network> extends InteractiveEvolutionTask<T>{
 
 	protected JSlider animationLength;
