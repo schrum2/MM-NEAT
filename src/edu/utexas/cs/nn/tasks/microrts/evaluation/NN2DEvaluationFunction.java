@@ -19,7 +19,7 @@ import micro.rts.units.Unit;
  * @param <T> NN
  */
 public class NN2DEvaluationFunction<T extends Network> extends NNEvaluationFunction<T> {
-
+ 
 	private static final double BASE_WEIGHT = 4; //hard to quantify because different amount of importance at different stages of the game
 	private static final double BASE_RESOURCE_WEIGHT = .25;
 	private static final double BARRACKS_WEIGHT = 2.5;

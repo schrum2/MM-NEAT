@@ -1,5 +1,6 @@
 package edu.utexas.cs.nn.tasks.microrts.evaluation;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
@@ -12,8 +13,9 @@ import micro.rts.PhysicalGameState;
 import micro.rts.units.Unit;
 
 /**
- * Evaluation Function for MicroRTS that puts different unit-classes
- * onto their own substrates, according to parameters
+ * Puts different types of units onto their own substrates, 
+ * according to parameters. Now the one-and-only default
+ * evaluation function for microRTSTasks! 
  * 
  * @author alicequint
  * 
@@ -129,77 +131,89 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 	 */
 	private double[] populateSubstratesWith(Unit u, boolean isTerrain, double[] substrates, int substrateSize, int location){
 		HashSet<Integer> appropriateSubstrates = new HashSet<>();
+		ArrayList<Integer> subIDs = new ArrayList<>(); //ends up that indexes correspond to appropriateSubstrates, and data corresponds to globals
 		int numCurrentSubs = 0;
 		//for current, find which substrates it belongs to
 		if(u != null){
 			if(areSubsActive[mobile]){ //all mobile units   
 				if(u.getType().canMove){
 					appropriateSubstrates.add(numCurrentSubs);
+					subIDs.add(mobile);
 				}
-				numCurrentSubs++;
+				numCurrentSubs++; 
 			}
 			if(areSubsActive[buildings]){ //all buildings
 				if(!u.getType().canMove && u.getPlayer() != -1){
 					appropriateSubstrates.add(numCurrentSubs);
+					subIDs.add(buildings);
 				}
 				numCurrentSubs++;
 			}
 			if(areSubsActive[myMobile]){
 				if(u.getType().canMove && u.getPlayer() == 0){
 					appropriateSubstrates.add(numCurrentSubs);
+					subIDs.add(myMobile);
 				}
 				numCurrentSubs++;
 			}
 			if(areSubsActive[myBuildings]){
 				if(!u.getType().canMove && u.getPlayer() != 1){
 					appropriateSubstrates.add(numCurrentSubs);
+					subIDs.add(myBuildings);
 				}
 				numCurrentSubs++;
 			}
 			if(areSubsActive[oppsMobile]){
 				if(u.getType().canMove && u.getPlayer() == 1){
 					appropriateSubstrates.add(numCurrentSubs);
+					subIDs.add(oppsMobile);
 				}
 				numCurrentSubs++;
 			}
 			if(areSubsActive[oppsBuildings]){
 				if(!u.getType().canMove && u.getPlayer() != 0){
 					appropriateSubstrates.add(numCurrentSubs);
+					subIDs.add(oppsBuildings);
 				}
 				numCurrentSubs++;
 			}
 			if(areSubsActive[myAll]){
 				if(u.getPlayer() == 0){
 					appropriateSubstrates.add(numCurrentSubs);
+					subIDs.add(myAll);
 				}
 				numCurrentSubs++;
 			}
 			if(areSubsActive[oppsAll]){
 				if(u.getPlayer() == 1){
 					appropriateSubstrates.add(numCurrentSubs);
+					subIDs.add(oppsAll);
 				}
 				numCurrentSubs++;
 			}
 		} //end if (u != null) : following subs can be appropriate if we are considering terrain 
 		if(areSubsActive[all]){ //everything
 			appropriateSubstrates.add(numCurrentSubs);
+			subIDs.add(all);
 			numCurrentSubs++;
 		}
 		if(areSubsActive[neutral]){ //neutral (terrain & resources)
 			if(isTerrain || u.getPlayer() == -1){
 				appropriateSubstrates.add(numCurrentSubs);
+				subIDs.add(neutral);
 			}
 			numCurrentSubs++;
 		}
 		if(areSubsActive[terrain]){
 			if(isTerrain){
 				appropriateSubstrates.add(numCurrentSubs);
+				subIDs.add(terrain);
 			}
 			numCurrentSubs++;
 		}
 		for(int appropriateSubstrate : appropriateSubstrates){
 			int indexWithinAll = (substrateSize * appropriateSubstrate) + location;
-			int subID = -1; //TODO make it equal to appropriate global
+			int subID = subIDs.get(appropriateSubstrate);
 			substrates[indexWithinAll] = getWeightedValue(subID , u, isTerrain);
 		} 
 		return substrates;
@@ -221,26 +235,39 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 	private double getWeightedValue(int sub, Unit u, boolean isTerrain){
 		if(sub == neutral){
 			if(isTerrain) return .25;
-		}
-		if(sub == all){
+		} else if(sub == all){
 			double value = 0;
-			if(isTerrain) value = .25;
-			switch(u.getType().name){
-			case "Worker": value = WORKER_WEIGHT + (WORKER_RESOURCE_WEIGHT * u.getResources()); break; 
-			case "Light": value = LIGHT_WEIGHT; break;
-			case "Heavy": value = HEAVY_WEIGHT; break;
-			case "Ranged": value = RANGED_WEIGHT; break;
-			case "Base": value = BASE_WEIGHT + (BASE_RESOURCE_WEIGHT * u.getResources()); break;
-			case "Barracks": value = BARRACKS_WEIGHT; break;
-			case "Resource": value = RAW_RESOURCE_WEIGHT; break;
-			default: break;
-			}
+			if(isTerrain) value = TERRAIN_WEIGHT;
+			value = weight(u); 
 			if(u.getPlayer() == 1) value *= -1;
 			return value;
+		} else if(sub == myAll || sub == oppsAll){
+			return weight(u);
+		} else if(sub == myMobile || sub == oppsMobile){
+			return u.getCost();
 		}
 		return 1.0;
 	}
-
+	
+	/**
+	 * weighs units the way the NN2D used to.
+	 * @param u unit
+	 * @return appropriate weight
+	 */
+	private double weight(Unit u){
+		double value = 1;
+		switch(u.getType().name){
+		case "Worker": value = WORKER_WEIGHT + (WORKER_RESOURCE_WEIGHT * u.getResources()); break; 
+		case "Light": value = LIGHT_WEIGHT; break;
+		case "Heavy": value = HEAVY_WEIGHT; break;
+		case "Ranged": value = RANGED_WEIGHT; break;
+		case "Base": value = BASE_WEIGHT + (BASE_RESOURCE_WEIGHT * u.getResources()); break;
+		case "Barracks": value = BARRACKS_WEIGHT; break;
+		case "Resource": value = RAW_RESOURCE_WEIGHT; break;
+		default: break;
+		}
+		return value;
+	}
 	/**
 	 * returns labels describing what gameStateToArray will
 	 * give for the inputs to a NN
