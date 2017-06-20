@@ -6,10 +6,9 @@ import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.util.MiscUtil;
 import edu.utexas.cs.nn.util.PopulationUtil;
-import edu.utexas.cs.nn.util.datastructures.Pair;
 import micro.rts.GameState;
+import micro.rts.PhysicalGameState;
 import micro.rts.units.Unit;
 
 /**
@@ -22,6 +21,14 @@ import micro.rts.units.Unit;
  */
 public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluationFunction<T> {
 
+	private final int mobile = 0;
+	private final int buildings = 1;
+	private final int myMobile = 2;
+	private final int myBuildings = 3;
+	private final int oppsMobile = 4;
+	private final int oppsBuildings = 5;
+	
+	
 	private boolean[] areSubsActive = new boolean[]{
 			Parameters.parameters.booleanParameter("mRTSMobileUnits"),
 			Parameters.parameters.booleanParameter("mRTSBuildings"),
@@ -32,10 +39,8 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 			Parameters.parameters.booleanParameter("mRTSMyAll"),
 			Parameters.parameters.booleanParameter("mRTSOpponentsAll"),
 			Parameters.parameters.booleanParameter("mRTSAll"), //the only one that is true by default
-			Parameters.parameters.booleanParameter("mRTSNeutral"), 
-			//	Parameters.parameters.booleanParameter("mRTSTerrain"),
-			//resources separate from units, seperate from bases
-			//mobile , bases , terrain + resources. : first thing to try 
+			Parameters.parameters.booleanParameter("mRTSNeutral"), //terrain and resources
+			Parameters.parameters.booleanParameter("mRTSTerrain"),
 	};
 	private int numSubstrates;
 
@@ -79,29 +84,13 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 		int boardIndex;
 		for(int j = 0; j < pgs.getHeight(); j++){
 			for(int i = 0; i < pgs.getWidth(); i++){
-				//				int isTerrain = pgs.getTerrain(i, j);
-				//				System.out.print(isTerrain); // 0 = no, 1 = yes
+				boolean isTerrain = pgs.getTerrain(i, j) == PhysicalGameState.TERRAIN_WALL;
 				boardIndex =  i + j * pgs.getHeight(); 
 				current = pgs.getUnitAt(i, j);
-				
-				
-				if(current!= null){
-					if(current.getType().name.equals("Worker")){
-						System.out.println(current.getID());
-						System.out.println("player" + current.getPlayer());
-						System.out.println(current.getCost());
-					}
-					inputs = populateSubstratesWith(current, inputs, substrateSize, boardIndex);
-				}
+				assert (isTerrain == (current == null));
+				inputs = populateSubstratesWith(current, isTerrain, inputs, substrateSize, boardIndex);
 			}//end i : width
 		}//end j : height
-		System.out.println("SUB 0 -----------------------");
-		printSubstrateConfig(0, inputs);
-		System.out.println("SUB 1 -----------------------");
-		printSubstrateConfig(1, inputs);
-		System.out.println("SUB 2 (resources)  -----------------------");
-		printSubstrateConfig(2, inputs);
-//		MiscUtil.waitForReadStringAndEnterKeyPress();
 		return inputs;
 	}
 
@@ -120,70 +109,71 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 	 * @return double[] input as substrates, but with the unit added at location for every appropriate substrate
 	 * 
 	 */
-	private double[] populateSubstratesWith(Unit u, double[] substrates, int substrateSize, int location){
+	private double[] populateSubstratesWith(Unit u, boolean isTerrain, double[] substrates, int substrateSize, int location){
 		HashSet<Integer> appropriateSubstrates = new HashSet<>();
 		int numCurrentSubs = 0;
-		//for current unit, find which substrates it belongs to
-//		System.out.println("unit: " + u.getX() + " " + u.getY()+ " ==> " + location);
-		if(areSubsActive[0]){ //all mobile units   
-			if(u.getType().canMove){
-//				System.out.println("- "+ u.getType().name + u.getPlayer());
-				appropriateSubstrates.add(numCurrentSubs);
+		//for current, find which substrates it belongs to
+		if(u != null){
+			if(areSubsActive[0]){ //all mobile units   
+				if(u.getType().canMove){
+					appropriateSubstrates.add(numCurrentSubs);
+				}
+				numCurrentSubs++;
 			}
-			numCurrentSubs++;
-		}
-		if(areSubsActive[1]){ //all buildings
-			if(!u.getType().canMove && u.getPlayer() != -1){
-				appropriateSubstrates.add(numCurrentSubs);
+			if(areSubsActive[1]){ //all buildings
+				if(!u.getType().canMove && u.getPlayer() != -1){
+					appropriateSubstrates.add(numCurrentSubs);
+				}
+				numCurrentSubs++;
 			}
-			numCurrentSubs++;
-		}
-		if(areSubsActive[2]){
-			if(u.getType().canMove && u.getPlayer() == 0){
-				appropriateSubstrates.add(numCurrentSubs);
+			if(areSubsActive[2]){
+				if(u.getType().canMove && u.getPlayer() == 0){
+					appropriateSubstrates.add(numCurrentSubs);
+				}
+				numCurrentSubs++;
 			}
-			numCurrentSubs++;
-		}
-		if(areSubsActive[3]){ //includes resources
-			if(!u.getType().canMove && u.getPlayer() != 1){
-				appropriateSubstrates.add(numCurrentSubs);
+			if(areSubsActive[3]){ //includes resources
+				if(!u.getType().canMove && u.getPlayer() != 1){
+					appropriateSubstrates.add(numCurrentSubs);
+				}
+				numCurrentSubs++;
 			}
-			numCurrentSubs++;
-		}
-		if(areSubsActive[4]){
-			if(u.getType().canMove && u.getPlayer() == 1){
-				appropriateSubstrates.add(numCurrentSubs);
+			if(areSubsActive[4]){
+				if(u.getType().canMove && u.getPlayer() == 1){
+					appropriateSubstrates.add(numCurrentSubs);
+				}
+				numCurrentSubs++;
 			}
-			numCurrentSubs++;
-		}
-		if(areSubsActive[5]){ //includes resources
-			if(!u.getType().canMove && u.getPlayer() != 0){
-				appropriateSubstrates.add(numCurrentSubs);
+			if(areSubsActive[5]){ //includes resources
+				if(!u.getType().canMove && u.getPlayer() != 0){
+					appropriateSubstrates.add(numCurrentSubs);
+				}
+				numCurrentSubs++;
 			}
-			numCurrentSubs++;
-		}
-		if(areSubsActive[6]){
-			if(u.getPlayer() == 0){
-				appropriateSubstrates.add(numCurrentSubs);
+			if(areSubsActive[6]){
+				if(u.getPlayer() == 0){
+					appropriateSubstrates.add(numCurrentSubs);
+				}
+				numCurrentSubs++;
 			}
-			numCurrentSubs++;
-		}
-		if(areSubsActive[7]){
-			if(u.getPlayer() == 1){
-				appropriateSubstrates.add(numCurrentSubs);
+			if(areSubsActive[7]){
+				if(u.getPlayer() == 1){
+					appropriateSubstrates.add(numCurrentSubs);
+				}
+				numCurrentSubs++;
 			}
-			numCurrentSubs++;
-		}
-		if(areSubsActive[8]){ //all
+		} //end if (u != null) : following subs can be appropriate if we are considering terrain 
+		if(areSubsActive[8]){ //everything
 			appropriateSubstrates.add(numCurrentSubs);
 			numCurrentSubs++;
 		}
 		if(areSubsActive[9]){ //neutral (terrain & resources) TODO make this get terrain
-			if(u.getPlayer() == -1){
+			if(isTerrain || u.getPlayer() == -1){
 				appropriateSubstrates.add(numCurrentSubs);
 				numCurrentSubs++;
 			}
 		}
+		 //TODO make indexes constants
 		for(int appropriateSubstrate : appropriateSubstrates){
 			System.out.println("putting unit in sub: " + appropriateSubstrate + " at sublocation " + location + " out of " + substrateSize);
 			int indexWithinAll = (substrateSize * appropriateSubstrate) + location;
@@ -215,21 +205,6 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 	@Override
 	public int getNumInputSubstrates() {
 		return numSubstrates;
-	}
-
-	/**
-	 * for debugging & ghostbusting
-	 * @param whichSub
-	 * 				
-	 * @param substrates
-	 */
-	private void printSubstrateConfig(int whichSub, double[] substrates){
-		for(int i = 0; i < pgs.getWidth(); i++){
-			for(int j = 0; j < pgs.getHeight(); j++){
-				System.out.print(substrates[whichSub*pgs.getHeight()*pgs.getWidth()+(i*pgs.getWidth() + j)] + " ");
-			}
-			System.out.println();
-		}
 	}
 
 }
