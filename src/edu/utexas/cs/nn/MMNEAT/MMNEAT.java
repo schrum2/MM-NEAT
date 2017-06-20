@@ -406,7 +406,7 @@ public class MMNEAT {
 			}
 			
 			task = (Task) ClassCreation.createObject("task");
-			boolean coevolution = false;
+			boolean multiPopulationCoevolution = false;
 			// For all types of Ms Pac-Man tasks
 			if (Parameters.parameters.booleanParameter("scalePillsByGen")
 					&& Parameters.parameters.stringParameter("lastSavedDirectory").equals("")
@@ -457,7 +457,7 @@ public class MMNEAT {
 				}
 			} else if (task instanceof CooperativeMsPacManTask) {
 				System.out.println("Setup Coevolution Ms. Pac-Man Task");
-				coevolution = true;
+				multiPopulationCoevolution = true;
 				// Is this next line redundant
 				EvolutionaryHistory.initInnovationHistory();
 				MsPacManInitialization.setupMsPacmanParameters();
@@ -491,6 +491,8 @@ public class MMNEAT {
 				SinglePopulationCompetativeCoevolutionBoardGameTask temp = (SinglePopulationCompetativeCoevolutionBoardGameTask) task;
 				setNNInputParameters(temp.sensorLabels().length, temp.outputLabels().length);
 			} else if (task instanceof MultiPopulationCompetativeCoevolutionBoardGameTask) {
+				System.out.println("Setup Multi-Population Board Game Coevolution Task");
+				multiPopulationCoevolution = true;
 				
 				MultiPopulationCompetativeCoevolutionBoardGameTask temp = (MultiPopulationCompetativeCoevolutionBoardGameTask) task;
 				setNNInputParameters(temp.sensorLabels().length, temp.outputLabels().length);	
@@ -518,7 +520,7 @@ public class MMNEAT {
 				setNNInputParameters(numInputs, t.outputLabels().length);
 			} else if (task instanceof CompetitiveHomogeneousPredatorsVsPreyTask || task instanceof CompetitiveAndCooperativePredatorsVsPreyTask) { // must appear before GroupTorusPredPreyTask
 				System.out.println("Setup Competitive Torus Predator/Prey Task");
-				coevolution = true;
+				multiPopulationCoevolution = true;
 				int numPredInputs = determineNumPredPreyInputs(true);
 				int numPreyInputs = determineNumPredPreyInputs(false);
 
@@ -579,7 +581,7 @@ public class MMNEAT {
 				prepareCoevolutionArchetypes();
 			} else if (task instanceof GroupTorusPredPreyTask) { // Technically, the competitive task also overrides this
 				System.out.println("Setup Cooperative Torus Predator/Prey Task");
-				coevolution = true;
+				multiPopulationCoevolution = true;
 				int numInputs = determineNumPredPreyInputs();
 				NetworkTask t = (NetworkTask) task;
 				setNNInputParameters(numInputs, t.outputLabels().length);
@@ -702,13 +704,13 @@ public class MMNEAT {
 				// System.out.println(genotype);
 				seedExample = true;
 			}
-			setupTWEANNGenotypeDataTracking(coevolution);
+			setupTWEANNGenotypeDataTracking(multiPopulationCoevolution);
 			// An Experiment is always needed
 			System.out.println("Create Experiment");
 			experiment = (Experiment) ClassCreation.createObject("experiment");
 			experiment.init();
 			if (!loadFrom && Parameters.parameters.booleanParameter("io")) {
-				if (Parameters.parameters.booleanParameter("logPerformance") && !coevolution) {
+				if (Parameters.parameters.booleanParameter("logPerformance") && !multiPopulationCoevolution) {
 					performanceLog = new PerformanceLog("Performance");
 				}
 				if (Parameters.parameters.booleanParameter("logMutationAndLineage")) {
