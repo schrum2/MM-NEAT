@@ -253,7 +253,7 @@ public class GraphicsUtil {
 	 */
 	public static float[] getHSBFromCPPN(Network n, int x, int y, int imageWidth, int imageHeight, double[] inputMultiples, double time) {
 
-		double[] input = getCPPNInputs(x, y, imageWidth, imageHeight, time);
+		double[] input = get2DObjectCPPNInputs(x, y, imageWidth, imageHeight, time);
 
 		// Multiplies the inputs of the pictures by the inputMultiples; used to turn on or off the effects in each picture
 		for(int i = 0; i < inputMultiples.length; i++) {
@@ -300,7 +300,7 @@ public class GraphicsUtil {
 	 *
 	 * @return array containing inputs for CPPN
 	 */
-	public static double[] getCPPNInputs(int x, int y, int imageWidth, int imageHeight, double time) {
+	public static double[] get2DObjectCPPNInputs(int x, int y, int imageWidth, int imageHeight, double time) {
 		ILocated2D scaled = CartesianGeometricUtilities.centerAndScale(new Tuple2D(x, y), imageWidth, imageHeight);
 		if(time == -1) { // default, single image. Do not care about time
 			return new double[] { scaled.getX(), scaled.getY(), scaled.distance(new Tuple2D(0, 0)) * SQRT2, BIAS };
