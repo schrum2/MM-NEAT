@@ -233,7 +233,7 @@ public class Construct3DObject {
 	 * @param color desired color of cubes
 	 * @return List of triangles that construct a series of cubes centered at the various vertexes
 	 */
-	public static List<Triangle> getShapes(List<Vertex> centers, double sideLength, Color color) {
+	public static List<Triangle> getShape(List<Vertex> centers, double sideLength, Color color) {
 		List<Triangle> tris = new ArrayList<>();
 		for(Vertex v: centers) { //construct individual cubes and add them to larger list
 			tris.addAll(cubeConstructor(v, sideLength, color));
@@ -252,23 +252,26 @@ public class Construct3DObject {
 	 * @param shapeWidth width of shape being constructed 
 	 * @param shapeHeight height of shape being constructed
 	 * @param shapeDepth depth of shape being constructed
+	 * @param inputMultipliers determines whether inputs are turned on or off
 	 * @return List of vertexes denoting center points of all cubes being constructed
 	 */
-	public static List<Vertex> getVertexesFromCPPN(Network cppn, int imageWidth, int imageHeight, int cubeSize, int shapeWidth, int shapeHeight, int shapeDepth) {
-		assert shapeWidth % cubeSize == 0 && shapeHeight % cubeSize == 0 && shapeDepth % cubeSize == 0;
-		int halfWidth = shapeWidth/2;
-		int halfHeight = shapeHeight/2;
-		int halfDepth = shapeDepth/2;
-		int halfCube = cubeSize/2;
+	public static List<Vertex> getVertexesFromCPPN(Network cppn, int imageWidth, int imageHeight, int cubeSize, int shapeWidth, int shapeHeight, int shapeDepth, double[] inputMultipliers) {
 		List<Vertex> result = new ArrayList<>();
-		for(int x = -halfWidth + halfCube; x < halfWidth; x+=cubeSize) {
-			for(int y = -halfHeight + halfCube; y < halfHeight; y += cubeSize) {
-				for(int z = -halfDepth + halfCube; z < halfDepth; z += cubeSize) {
-					double[] inputs = getCPPNInputs(x, y, z, shapeWidth, shapeHeight, shapeDepth);
-					//TODO: figure out input value access
-//					if(input value > 0.1) {
-//						result.add(new Vertex(x, y, z));
-//					}
+		for(int x = 0; x < shapeWidth; x++) {
+			for(int y = 0; y < shapeHeight; y++) {
+				for(int z = 0; z < shapeDepth; z++) {
+					double[] inputs = get3DObjectCPPNInputs(x, y, z, shapeWidth, shapeHeight, shapeDepth);
+					//determine whether inputs are turned on or off
+					for(int i = 0; i < inputMultipliers.length; i++) {
+						inputs[i] = inputs[i] * inputMultipliers[i];
+					}	
+					double[] output = cppn.process(inputs);
+					if(output[0] > 0.1) {
+						double actualX = -(shapeWidth/2.0) + (cubeSize/2.0) + x*cubeSize;
+						double actualY = -(shapeHeight/2.0) + (cubeSize/2.0) + y*cubeSize;
+						double actualZ = -(shapeDepth/2.0) + (cubeSize/2.0) + z*cubeSize;
+						result.add(new Vertex(actualX, actualY, actualZ));
+					}
 				}
 			}
 		}
@@ -286,7 +289,7 @@ public class Construct3DObject {
 	 * @param depth depth of shape
 	 * @return inputs to CPPN (x, y, z coordinates of a Vertex and bias)
 	 */
-	public static double[] getCPPNInputs(int x, int y, int z, int width, int height, int depth) {
+	public static double[] get3DObjectCPPNInputs(int x, int y, int z, int width, int height, int depth) {
 		Vertex v = new Vertex(x, y, z);
 		Vertex newV = centerAndScale(v, width, height, depth);
 		return new double[]{newV.x, newV.y, newV.z, GraphicsUtil.BIAS};
@@ -301,6 +304,7 @@ public class Construct3DObject {
 	 * @param depth depth of shape
 	 * @return scaled vertex
 	 */
+	// TODO: Move to Cartesian util
 	public static Vertex centerAndScale(Vertex toScale, int width, int height, int depth) {
 		double newX = CartesianGeometricUtilities.centerAndScale(toScale.x, width); //scaled x coordinate
 		double newY = CartesianGeometricUtilities.centerAndScale(toScale.y, height); //scaled y coordinate
@@ -383,6 +387,7 @@ public class Construct3DObject {
 	 * Produces an array of images that are meant to animate a 3-dimensional object
 	 * rotating. This is done by repeatedly calling getImage() at different input 
 	 * headings and pitches.
+	 * 
 	 * @param tris array of triangles representing cube
 	 * @param imageWidth width of image
 	 * @param imageHeight height of image
@@ -390,13 +395,38 @@ public class Construct3DObject {
 	 * @param endTime end of animation
 	 * @return Array of BufferedImages that can be played as an animation of a 3D object
 	 */
-	public static BufferedImage[] objectsFromCPPN(List<Triangle> tris, int imageWidth, int imageHeight, int startTime, int endTime, double pitch) {
+	public static BufferedImage[] objectGenerator(List<Triangle> tris, int imageWidth, int imageHeight, int startTime, int endTime, double pitch) {
 		BufferedImage[] images = new BufferedImage[endTime-startTime];
 		for(int i = startTime; i < endTime; i++) {
 			//TODO: How should inputs be manipulated to have enough images to render the object?
 			images[i-startTime] = getImage(tris, imageWidth, imageHeight, (i*2*Math.PI)/images.length, pitch);
 		}
 		return images;
+	}
+	
+	/**
+	 * Produces an array of images that are meant to animate a 3-dimensional object
+	 * rotating based on an input CPPN. 
+	 * 
+	 * @param cppn input network
+	 * @param imageWidth width of image
+	 * @param imageHeight height of image
+	 * @param sideLength size of cube (voxel)
+	 * @param shapeWidth width of shape being generated
+	 * @param shapeHeight height of shape being generated
+	 * @param shapeDepth depth of shape being generated
+	 * @param color desired color of object
+	 * @param startTime start time of animation
+	 * @param endTime end time of animation
+	 * @param pitch input y-rotation of image
+	 * @param inputMultipliers array determining whether to turn inputs on or off
+	 * @return
+	 */
+	public static BufferedImage[] generate3DObjectFromCPPN(Network cppn, int imageWidth, int imageHeight, int sideLength, int shapeWidth, int shapeHeight, int shapeDepth, Color color, int startTime, int endTime, double pitch, double[] inputMultipliers) {
+		List<Vertex> cubeVertexes = getVertexesFromCPPN(cppn, imageWidth, imageHeight, sideLength, shapeWidth, shapeHeight, shapeDepth, inputMultipliers);
+		List<Triangle> tris = getShape(cubeVertexes, sideLength, color);
+		BufferedImage[] resultImages = objectGenerator(tris, imageWidth, imageHeight, startTime, endTime, pitch);
+		return resultImages;
 	}
 
 	// TODO: This method does NOT work
