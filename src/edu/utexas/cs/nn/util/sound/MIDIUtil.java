@@ -175,8 +175,6 @@ public class MIDIUtil {
 		for(int i = 0; i < midiLists.size(); i++) {
 			long lineTicks = midiLists.get(i).t3.get(midiLists.get(i).t3.size()-1) // last start time, plus
 					+ midiLists.get(i).t2.get(midiLists.get(i).t2.size()-1);// last duration
-//			System.out.println("line ticks: " + lineTicks);
-//			System.out.println("total ticks: " + totalTicks);
 			totalTicks = Math.max(totalTicks, lineTicks);
 		}
 		//create representative double array of all soundlines
@@ -265,8 +263,6 @@ public class MIDIUtil {
 			for(int i = 0; i < tracks.length; i++) {
 				ArrayList<Triple<ArrayList<Double>, ArrayList<Long>, ArrayList<Long>>> sound = soundLines(tracks[i]);
 				double[] lineData = lineToAmplitudeArray(audio, sound, cppns[i % cppns.length], noteLengthScale);
-//				System.out.println("larger array length: " + data.length);
-//				System.out.println("line data length: " + lineData.length);
 				data = ArrayUtil.zipAdd(data, lineData, Math.max(data.length, lineData.length)); //add new values to larger double array
 			}
 			//to control volume
