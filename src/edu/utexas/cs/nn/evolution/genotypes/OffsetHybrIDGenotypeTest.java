@@ -3,7 +3,6 @@ package edu.utexas.cs.nn.evolution.genotypes;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.junit.After;
@@ -11,7 +10,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.networks.hyperneat.HyperNEATTask;
 import edu.utexas.cs.nn.networks.hyperneat.HyperNEATUtil;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.util.random.RandomNumbers;
