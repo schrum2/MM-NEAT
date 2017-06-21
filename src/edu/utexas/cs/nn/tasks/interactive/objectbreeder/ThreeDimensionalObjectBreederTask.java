@@ -38,6 +38,8 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask {
 	public static final int CPPN_NUM_INPUTS = 4;
 	public static final int CPPN_NUM_OUTPUTS = 1;
 	
+	public static final int MAX_PITCH = 260;
+	
 	protected JSlider pitchValue;
 					
 
@@ -45,13 +47,13 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask {
 		super(false);
 		Parameters.parameters.setInteger("defaultPause", 0);
 		
-		pitchValue = new JSlider(JSlider.HORIZONTAL, 0, 360, Parameters.parameters.integerParameter("defaultPitch"));
+		pitchValue = new JSlider(JSlider.HORIZONTAL, 0, MAX_PITCH, Parameters.parameters.integerParameter("defaultPitch"));
 
 		Hashtable<Integer,JLabel> pitchLabels = new Hashtable<>();
 		pitchValue.setMinorTickSpacing(20);
 		pitchValue.setPaintTicks(true);
 		pitchLabels.put(0, new JLabel("0"));
-		pitchLabels.put(360, new JLabel("360")); // TODO: Magic number constant
+		pitchLabels.put(MAX_PITCH, new JLabel("360"));
 		pitchValue.setLabelTable(pitchLabels);
 		pitchValue.setPaintLabels(true);
 		pitchValue.setPreferredSize(new Dimension(150, 40));
@@ -113,7 +115,7 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask {
 	@Override
 	protected BufferedImage getButtonImage(Network phenotype, int width, int height, double[] inputMultipliers) {
 		// Just get first frame for button. Slightly inefficent though, since all animation frames were pre-computed
-		double pitch = (Parameters.parameters.integerParameter("defaultPitch")/360.0) * 2 * Math.PI; // TODO: magic number!
+		double pitch = (Parameters.parameters.integerParameter("defaultPitch")/(double) MAX_PITCH) * 2 * Math.PI; 
 		return Construct3DObject.generate3DObjectFromCPPN(phenotype, picSize, picSize, CUBE_SIDE_LENGTH, SHAPE_WIDTH, SHAPE_HEIGHT, SHAPE_DEPTH, COLOR,  0, 1, pitch, getInputMultipliers())[0];
 	}
 	
@@ -121,7 +123,7 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask {
 	protected BufferedImage[] getAnimationImages(Network cppn, int startFrame, int endFrame) {
 		// For rotating the 3D object, we ignore the endFrame from the animation breeder
 		endFrame = (int) (AnimationUtil.FRAMES_PER_SEC * 4); // 4 seconds worth of animation
-		double pitch = (Parameters.parameters.integerParameter("defaultPitch")/360.0) * 2 * Math.PI;// TODO: magic number!
+		double pitch = (Parameters.parameters.integerParameter("defaultPitch")/(double) MAX_PITCH) * 2 * Math.PI;
 		return Construct3DObject.generate3DObjectFromCPPN(cppn, picSize, picSize, CUBE_SIDE_LENGTH, SHAPE_WIDTH, SHAPE_HEIGHT, SHAPE_DEPTH, COLOR,  startFrame, endFrame, pitch, getInputMultipliers());
 	}
 	
