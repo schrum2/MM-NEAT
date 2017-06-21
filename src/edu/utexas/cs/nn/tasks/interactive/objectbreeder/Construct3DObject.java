@@ -20,6 +20,7 @@ import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.util.CartesianGeometricUtilities;
 import edu.utexas.cs.nn.util.datastructures.Vertex;
 import edu.utexas.cs.nn.util.graphics.GraphicsUtil;
+import edu.utexas.cs.nn.util.util2D.Tuple2D;
 
 /**
  * Series of utility methods associated with rendering 
@@ -293,7 +294,7 @@ public class Construct3DObject {
 	public static double[] get3DObjectCPPNInputs(int x, int y, int z, int width, int height, int depth) {
 		Vertex v = new Vertex(x, y, z);
 		Vertex newV = CartesianGeometricUtilities.centerAndScale(v, width, height, depth);
-		return new double[]{newV.x, newV.y, newV.z, GraphicsUtil.BIAS};
+		return new double[]{newV.x, newV.y, newV.z, newV.distance(new Vertex(0, 0, 0)) * GraphicsUtil.SQRT2, GraphicsUtil.BIAS};
 	}
 
 

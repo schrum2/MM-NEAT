@@ -40,7 +40,7 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 	public static final int SHAPE_DEPTH = 10;
 	public static final Color COLOR = Color.RED;
 
-	public static final int CPPN_NUM_INPUTS = 4;
+	public static final int CPPN_NUM_INPUTS = 5;
 	public static final int CPPN_NUM_OUTPUTS = 1;
 
 	public static final int MAX_ROTATION = 360;
@@ -190,7 +190,7 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 	
 	@Override
 	public String[] sensorLabels() {
-		return new String[] { "X-coordinate", "Y-coordinate", "Z-coordinate", "bias" };
+		return new String[] { "X-coordinate", "Y-coordinate", "Z-coordinate", "distance from center", "bias" };
 	}
 
 	@Override
