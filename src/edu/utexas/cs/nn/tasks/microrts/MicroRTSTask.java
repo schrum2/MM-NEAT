@@ -50,9 +50,9 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 	private String mapName;
 	private boolean AiInitialized = false;
 	private MapSequence maps = null;
-	private EnemySequence enemies = null;
+	private EnemySequence enemySequencePlan = null;
 	private ArrayList<AI> enemySet;
-	
+
 	private double averageUnitDifference;
 	private int baseUpTime;
 	private int harvestingEfficiencyIndex;
@@ -75,7 +75,7 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 			ff = (RTSFitnessFunction) ClassCreation.createObject(Parameters.parameters.classParameter("microRTSFitnessFunction"));
 			initialPgs = PhysicalGameState.load("data/microRTS/maps/" + Parameters.parameters.stringParameter("map"), utt);
 			pgs = initialPgs.cloneIncludingTerrain();
-			
+
 			if(Parameters.parameters.classParameter("microRTSMapSequence") != null)
 				maps = (MapSequence) ClassCreation.createObject(Parameters.parameters.classParameter("microRTSMapSequence")); 
 
@@ -90,7 +90,7 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 		for(String other : ff.getOtherScores()){
 			MMNEAT.registerFitnessFunction(other, false);
 		}
-		
+
 		ef.givePhysicalGameState(pgs);
 		if(ef2 != null)
 			ef2.givePhysicalGameState(pgs);
@@ -104,7 +104,7 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 	public int numObjectives() {
 		return ff.getFunctions().length;
 	}
-	
+
 	@Override
 	public int numOtherScores() {
 		return ff.getOtherScores().length;
@@ -168,12 +168,12 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 	 * below executes.
 	 */
 	public void preEval() {
-		if(enemies == null){
+		if(enemySequencePlan == null){
 			try {
-				enemies = (EnemySequence) ClassCreation.createObject(Parameters.parameters.classParameter("microRTSEnemySequence"));
+				enemySequencePlan = (EnemySequence) ClassCreation.createObject(Parameters.parameters.classParameter("microRTSEnemySequence"));
 			} 
 			catch (NoSuchMethodException e1) { e1.printStackTrace(); System.exit(1); }
-			catch (NullPointerException e){} //no enemy sequence, this is fine.
+			catch (NullPointerException e){} //enemies will not change over time, this is fine.
 		}
 		if(maps != null){
 			String newMapName = maps.getAppropriateMap(MMNEAT.ea.currentGeneration());
@@ -182,12 +182,12 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 				try {
 					// The new map is in the new initial game state
 					initialPgs = PhysicalGameState.load("data/microRTS/maps/" + newMapName, utt);
-					
+
 					assert !initialPgs.getUnits().isEmpty(): "initial pgs has no units after map load";
-					
+
 					assert (unitsExist(0, initialPgs)): "player 0 does not have any units to start";
 					assert (unitsExist(1, initialPgs)): "player 1 does not have any units to start";
-					
+
 					mapName = newMapName;
 				} catch (JDOMException | IOException e) {
 					e.printStackTrace(); System.exit(1);
@@ -201,7 +201,7 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 		for(int i = 0; i < pgs.getWidth(); i++){
 			for(int j = 0; j < pgs.getHeight(); j++){
 
-				 Unit currentUnit = pgs.getUnitAt(i, j);
+				Unit currentUnit = pgs.getUnitAt(i, j);
 				if(currentUnit!=null){
 					//							System.out.println(i + "," + j + " has " + currentUnit);
 
@@ -213,7 +213,7 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 		}//end i
 		return false;
 	}
-	
+
 	/**
 	 * all actions performed in a single evaluation of a genotype
 	 * loop taken from GameVisualSimulationTest, the rest based on MsPacManTask.oneEval()
@@ -227,7 +227,6 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 	 */
 	@Override
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {
-		
 		if(!AiInitialized)
 			initializeAI();
 		else{
@@ -235,23 +234,22 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 			if(ef2 != null)
 				ef2.givePhysicalGameState(initialPgs);
 		}
-		if(enemies!=null){ //growing sets of opponents
-			ArrayList<AI> newEnemySet = enemies.getAppropriateEnemy(MMNEAT.ea.currentGeneration());
-			if(!newEnemySet.equals(enemySet)){ //add a new enemy to the set:
-				ff.informOfEnemySwitch();
-				enemySet = newEnemySet;
+		if(enemySequencePlan!=null){ //growing sets of opponents
+			ArrayList<AI> potentialNewEnemySet = enemySequencePlan.getAppropriateEnemySet(MMNEAT.ea.currentGeneration(), ff);
+			if(enemySet == null){
+				enemySet = potentialNewEnemySet;
 			}
 		} else { //single opponent
 			enemySet = new ArrayList<>(1); // will only contain the following enemy:
 			enemySet.add(ai2);
 		}
 		ef.setNetwork(individual);
-		
+
 		double[][] fitnesses = new double[enemySet.size()][numObjectives()];
 		double[][] others 	 = new double[enemySet.size()][numOtherScores()];
-		
+
 		assert enemySet.size() > 0 : "enemy set doesnt contain anything";
-		
+
 		for(int i = 0; i < enemySet.size(); i++){ //perform one evaluation for every enemy in the set
 			reset();
 			assert (unitsExist(0, pgs)): "player 0 does not have any units to start";
@@ -260,7 +258,7 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 			if(CommonConstants.watch){
 				w = PhysicalGameStatePanel.newVisualizer(gs,MicroRTSUtility.WINDOW_LENGTH,MicroRTSUtility.WINDOW_LENGTH,false,PhysicalGameStatePanel.COLORSCHEME_BLACK);
 			}
-			
+
 			ai2 = enemySet.get(i);
 			if(CommonConstants.watch){
 				System.out.println("Current Enemy: "+ ai2.getClass().getName());
@@ -270,23 +268,23 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 			fitnesses[i] = currentEval.get(0).t1;
 			others[i] 	 = currentEval.get(0).t2;
 		}
-		
-		Pair<double[], double[]> averageResults = NoisyLonerTask.averageResults(fitnesses,others); 
+
+		Pair<double[], double[]> averageResults = NoisyLonerTask.averageResults(fitnesses,others);
 		return averageResults;
-	} //END oneEval
+	}
 
 	/**
 	 * resets the conditions of the game to be how they are supposed
 	 * to be at the beginning of an evaluation
 	 */
 	private void reset(){
-				utt = new UnitTypeTable();
-				averageUnitDifference = 0;
-				baseUpTime = 0;
-				harvestingEfficiencyIndex = 0;
-				// Clone the initial game state; start from beginning
-				pgs = initialPgs.cloneIncludingTerrain();
-				ef.givePhysicalGameState(pgs);
+		utt = new UnitTypeTable();
+		averageUnitDifference = 0;
+		baseUpTime = 0;
+		harvestingEfficiencyIndex = 0;
+		// Clone the initial game state; start from beginning
+		pgs = initialPgs.cloneIncludingTerrain();
+		ef.givePhysicalGameState(pgs);
 	}
 	/**
 	 *initializes ai (only called once for efficiency in this oneEval) 
@@ -325,7 +323,7 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 	}
 	@Override
 	public void setHarvestingEfficiency(int hei, int player) {
-//		System.out.println("setHarvestingEfficiency " + hei + "," + player + " current: "+harvestingEfficiencyIndex);
+		//		System.out.println("setHarvestingEfficiency " + hei + "," + player + " current: "+harvestingEfficiencyIndex);
 		if(player == 1) harvestingEfficiencyIndex = hei;
 		else throw new IllegalArgumentException("MicroRTSTask is not equipped to record results for > 1 player");
 	}

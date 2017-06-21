@@ -48,12 +48,14 @@ public class ProgressiveFitnessFunction extends RTSFitnessFunction{
 		Pair<double[], double[]> data2 = new Pair<double[],double[]>(fitness, other);
 		result.add(data1);
 		result.add(data2);
+		
+		
 		return result;
 	}
 	
 	@Override
 	public String[] getFunctions() {
-			return new String[]{"Harvesting Efficiency","Time Base was Alive","Average Unit Difference","% Enemies Destroyed"};//Fitness
+			return new String[]{"Harvesting Efficiency","Time Base was Alive","Average Unit Difference","% Enemies Destroyed"}; //Fitness
 	}
 	
 	@Override

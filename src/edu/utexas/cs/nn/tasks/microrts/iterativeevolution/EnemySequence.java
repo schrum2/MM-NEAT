@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
+import edu.utexas.cs.nn.tasks.microrts.fitness.RTSFitnessFunction;
 import micro.ai.core.AI;
 
 /**
@@ -24,10 +25,11 @@ public abstract class EnemySequence {
 	 * 
 	 * @param generation
 	 * 				current generation
+	 * @param ff 
 	 * @return
-	 * 			appropriate AI for current generation
+	 * 			appropriate AI(s) for current generation
 	 */
-	public ArrayList<AI> getAppropriateEnemy(int generation) {
+	public ArrayList<AI> getAppropriateEnemySet(int generation, RTSFitnessFunction ff) {
 		if(generation != 0 && appropriateEnemies.isEmpty() && growingSet){ //post best watch, or resuming from before 
 			for(int i = 0; i < generation; i++){
 				if(i % gensPerEnemy == 0 && appropriateEnemies.size() < enemies.length){
@@ -40,13 +42,15 @@ public abstract class EnemySequence {
 				if(generationOfLastUpdate != generation && generation % gensPerEnemy == 0 && appropriateEnemies.size() < enemies.length){
 					generationOfLastUpdate = generation;
 					if(CommonConstants.watch)
-						System.out.println("gen: " + generation + ", adding to set: " + enemies[generation/gensPerEnemy]); //index out of bounds! gen x 2
+						System.out.println("gen: " + generation + ", adding to set: " + enemies[generation/gensPerEnemy]);
+					ff.informOfEnemySwitch();
 					appropriateEnemies.add(enemies[generation/gensPerEnemy]);
 				}
 			return appropriateEnemies;
 		}else {
 			appropriateEnemies = new ArrayList<>(1); // only one enemy: set does not grow
 			appropriateEnemies.add(enemies[Math.min(generation/gensPerEnemy, enemies.length-1)]);
+			ff.informOfEnemySwitch(); //
 		}
 		return appropriateEnemies;
 	}
