@@ -401,12 +401,13 @@ public class Construct3DObject {
 	 * @param color desired color of object
 	 * @param startTime start time of animation
 	 * @param endTime end time of animation
+	 * @param heading input x-rotation of image
 	 * @param pitch input y-rotation of image
 	 * @param inputMultipliers array determining whether to turn inputs on or off
 	 * @return
 	 */
 	// TODO: Change name of method "rotation sequence"
-	public static BufferedImage[] generate3DObjectFromCPPN(Network cppn, int imageWidth, int imageHeight, int sideLength, int shapeWidth, int shapeHeight, int shapeDepth, Color color, int startTime, int endTime, double pitch, double[] inputMultipliers) {
+	public static BufferedImage[] rotationSequenceFromCPPN(Network cppn, int imageWidth, int imageHeight, int sideLength, int shapeWidth, int shapeHeight, int shapeDepth, Color color, int startTime, int endTime, double heading, double pitch, double[] inputMultipliers) {
 		List<Vertex> cubeVertexes = getVertexesFromCPPN(cppn, imageWidth, imageHeight, sideLength, shapeWidth, shapeHeight, shapeDepth, inputMultipliers);
 		List<Triangle> tris = getShape(cubeVertexes, sideLength, color);
 		BufferedImage[] resultImages = imagesFromTriangles(tris, imageWidth, imageHeight, startTime, endTime, pitch);
