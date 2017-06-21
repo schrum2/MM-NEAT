@@ -22,7 +22,9 @@ import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.scores.Score;
 import edu.utexas.cs.nn.tasks.interactive.animationbreeder.AnimationBreederTask;
+import edu.utexas.cs.nn.util.datastructures.Triangle;
 import edu.utexas.cs.nn.util.graphics.AnimationUtil;
+import edu.utexas.cs.nn.util.graphics.ThreeDimensionalUtil;
 
 /**
  * Interface that interactively evolves three-dimensional
@@ -135,55 +137,13 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 		heading.add(headingValue);
 
 		top.add(heading);
-//
-//		//Construction of JSlider for desired length of pause between each frame within an animation
-//
-//		pauseLengthBetweenFrames = new JSlider(JSlider.HORIZONTAL, Parameters.parameters.integerParameter("minPause"), Parameters.parameters.integerParameter("maxPause"), Parameters.parameters.integerParameter("defaultFramePause"));
-//
-//		Hashtable<Integer,JLabel> framePauseLabels = new Hashtable<>();
-//		pauseLengthBetweenFrames.setMinorTickSpacing(75);
-//		pauseLengthBetweenFrames.setPaintTicks(true);
-//		framePauseLabels.put(Parameters.parameters.integerParameter("minPause"), new JLabel("No pause"));
-//		framePauseLabels.put(Parameters.parameters.integerParameter("maxPause"), new JLabel("Long pause"));
-//		pauseLengthBetweenFrames.setLabelTable(framePauseLabels);
-//		pauseLengthBetweenFrames.setPaintLabels(true);
-//		pauseLengthBetweenFrames.setPreferredSize(new Dimension(100, 40));
-//
-//		/**
-//		 * Implements ChangeListener to adjust frame pause length. When frame pause length is specified, 
-//		 * input length is used to reset and redraw buttons. 
-//		 */
-//		pauseLengthBetweenFrames.addChangeListener(new ChangeListener() {
-//			@Override
-//			public void stateChanged(ChangeEvent e) {
-//				// get value
-//				JSlider source = (JSlider)e.getSource();
-//				if(!source.getValueIsAdjusting()) {
-//					int newLength = (int) source.getValue();
-//					Parameters.parameters.setInteger("defaultFramePause", newLength);
-//					// reset buttons
-//					resetButtons();
-//				}
-//			}
-//		});		
-//
-//		//Pause (between frames) slider
-//		JPanel framePause = new JPanel();
-//		framePause.setLayout(new BoxLayout(framePause, BoxLayout.Y_AXIS));
-//		JLabel framePauseLabel = new JLabel();
-//		framePauseLabel.setText("Pause between frames");
-//		framePause.add(framePauseLabel);
-//		framePause.add(pauseLengthBetweenFrames);
-//
-//
-//		top.add(framePause);
 	}
 
 	public ArrayList<Score<TWEANN>> evaluateAll(ArrayList<Genotype<TWEANN>> population) {
 		// Load all shapes in advance
 		shapes = new HashMap<Long,List<Triangle>>();
 		for(Genotype<TWEANN> g : population) {
-			shapes.put(g.getId(), Construct3DObject.trianglesFromCPPN(g.getPhenotype(), picSize, picSize, CUBE_SIDE_LENGTH, SHAPE_WIDTH, SHAPE_HEIGHT, SHAPE_DEPTH, COLOR, getInputMultipliers()));
+			shapes.put(g.getId(), ThreeDimensionalUtil.trianglesFromCPPN(g.getPhenotype(), picSize, picSize, CUBE_SIDE_LENGTH, SHAPE_WIDTH, SHAPE_HEIGHT, SHAPE_DEPTH, COLOR, getInputMultipliers()));
 		}
 		return super.evaluateAll(population); // wait for user choices
 	}
@@ -217,7 +177,7 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 	protected BufferedImage getButtonImage(TWEANN phenotype, int width, int height, double[] inputMultipliers) {
 		//return Construct3DObject.rotationSequenceFromCPPN(phenotype, picSize, picSize, CUBE_SIDE_LENGTH, SHAPE_WIDTH, SHAPE_HEIGHT, SHAPE_DEPTH, COLOR,  0, 1, heading, pitch, getInputMultipliers())[0];
 		//return Construct3DObject.currentImageFromCPPN(phenotype, picSize, picSize, CUBE_SIDE_LENGTH, SHAPE_WIDTH, SHAPE_HEIGHT, SHAPE_DEPTH, COLOR, heading, pitch, getInputMultipliers());
-		return Construct3DObject.getImage(shapes.get(phenotype.getId()), picSize, picSize, heading, pitch);
+		return ThreeDimensionalUtil.getImage(shapes.get(phenotype.getId()), picSize, picSize, heading, pitch);
 	}
 
 	@Override
@@ -225,7 +185,7 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 		// For rotating the 3D object, we ignore the endFrame from the animation breeder
 		endFrame = (int) (AnimationUtil.FRAMES_PER_SEC * 4); // 4 seconds worth of animation
 		//return Construct3DObject.rotationSequenceFromCPPN(cppn, picSize, picSize, CUBE_SIDE_LENGTH, SHAPE_WIDTH, SHAPE_HEIGHT, SHAPE_DEPTH, COLOR,  startFrame, endFrame, heading, pitch, getInputMultipliers());
-		return Construct3DObject.imagesFromTriangles(shapes.get(cppn.getId()), picSize, picSize, startFrame, endFrame, heading, pitch);
+		return ThreeDimensionalUtil.imagesFromTriangles(shapes.get(cppn.getId()), picSize, picSize, startFrame, endFrame, heading, pitch);
 	}
 
 	/**

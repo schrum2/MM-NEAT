@@ -1,26 +1,14 @@
-package edu.utexas.cs.nn.tasks.interactive.objectbreeder;
+package edu.utexas.cs.nn.util.graphics;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Container;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JSlider;
-import javax.swing.SwingConstants;
-import javax.vecmath.Vector3d;
 
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.util.CartesianGeometricUtilities;
+import edu.utexas.cs.nn.util.datastructures.Triangle;
 import edu.utexas.cs.nn.util.datastructures.Vertex;
-import edu.utexas.cs.nn.util.graphics.GraphicsUtil;
-import edu.utexas.cs.nn.util.util2D.Tuple2D;
 
 /**
  * Series of utility methods associated with rendering 
@@ -29,68 +17,7 @@ import edu.utexas.cs.nn.util.util2D.Tuple2D;
  * @author Isabel Tweraser
  *
  */
-public class Construct3DObject {
-
-	public static void main(String[] args) {
-		JFrame frame = new JFrame();
-		Container pane = frame.getContentPane();
-		pane.setLayout(new BorderLayout());
-
-		// slider to control horizontal rotation
-		JSlider headingSlider = new JSlider(-180, 180, 0);
-		pane.add(headingSlider, BorderLayout.SOUTH);
-
-		// slider to control vertical rotation
-		JSlider pitchSlider = new JSlider(SwingConstants.VERTICAL, -90, 90, 0);
-		pane.add(pitchSlider, BorderLayout.EAST);
-
-		// panel to display render results
-		@SuppressWarnings("serial")
-		JPanel renderPanel = new JPanel() {
-			public void paintComponent(Graphics g) {
-				List<Triangle> tris = new LinkedList<Triangle>();
-				tris.addAll(cubeConstructor(new Vertex(0,0,0), 50.0, Color.RED));
-				tris.addAll(cubeConstructor(new Vertex(10,0,0), 50.0, Color.GREEN));
-				tris.addAll(cubeConstructor(new Vertex(0,10,0), 50.0, Color.YELLOW));
-				tris.addAll(cubeConstructor(new Vertex(0,20,0), 50.0, Color.GREEN));
-				tris.addAll(cubeConstructor(new Vertex(0,0,20), 50.0, Color.GRAY));
-
-				Graphics2D g2 = (Graphics2D) g;
-				double heading = Math.toRadians(headingSlider.getValue());
-				double pitch = Math.toRadians(pitchSlider.getValue());
-				//rotate(g2, tris, getWidth(), getHeight());
-				drawTriangles(g2,tris,getWidth(), getHeight(), heading, pitch);
-			}
-		};
-		pane.add(renderPanel, BorderLayout.CENTER);
-
-		headingSlider.addChangeListener(e -> renderPanel.repaint());
-		pitchSlider.addChangeListener(e -> renderPanel.repaint());
-
-		frame.setSize(400, 400);
-		frame.setVisible(true);
-	}
-
-	/**
-	 * Renders list of triangles as a cube. 
-	 * 
-	 * @param g2 graphics instance
-	 * @param tris representative list of triangles
-	 * @param width width of image
-	 * @param height height of image
-	 * @param heading input heading value for JSlider
-	 * @param pitch input pitch value for JSlider
-	 */
-	protected static void drawTriangles(Graphics2D g2, List<Triangle> tris, int width, int height, double heading, double pitch) {
-		g2.setColor(Color.BLACK);
-		g2.fillRect(0, 0, width, height);	
-		// get Matrix3 used to align vectors of triangles in relation to each other to render cube
-		Matrix3 transform = getTransform(heading, pitch);
-		//construct image based on input Matrix3 instance (position of JSliders)
-		BufferedImage img = getImage(tris, width, height, transform);
-		//draw image in graphics instance
-		g2.drawImage(img, 0, 0, null);
-	}
+public class ThreeDimensionalUtil {
 
 	/**
 	 * Constructs a BufferedImage of the current 3D image rotation based on the current heading and pitch.
@@ -438,19 +365,6 @@ public class Construct3DObject {
 		List<Triangle> tris = trianglesFromCPPN(cppn, imageWidth, imageHeight, sideLength, shapeWidth, shapeHeight, shapeDepth, color, inputMultipliers);
 		BufferedImage currentImage = getImage(tris, imageWidth, imageHeight, heading, pitch);
 		return currentImage;
-	}
-}
-
-class Triangle {
-	Vertex v1;
-	Vertex v2;
-	Vertex v3;
-	Color color;
-	Triangle(Vertex v1, Vertex v2, Vertex v3, Color color) {
-		this.v1 = v1;
-		this.v2 = v2;
-		this.v3 = v3;
-		this.color = color;
 	}
 }
 
