@@ -1,5 +1,6 @@
 package boardGame.agents;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -113,7 +114,27 @@ public class GGPPlayer<T extends BoardGameState> extends StateMachineGamer imple
 	 */
 	@Override
 	public T takeAction(T current) {
-		// TODO What do we need here?
+		// Selects a Move based on the GGP stateMachineSelectMove() method
+		Move selected = null;
+		try {
+			selected = stateMachineSelectMove(1000l); // TODO: Find a way to get the timeout here
+		} catch (TransitionDefinitionException | MoveDefinitionException | GoalDefinitionException e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
+		List<Move> moves = new ArrayList<Move>();
+		moves.add(selected);
+		
+		// Appears to be the way to advance the game to the next State
+		try {
+			getStateMachine().getNextState(getCurrentState(), moves);
+		} catch (TransitionDefinitionException e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
+		
+		// TODO: Find something to return other than null?
+		// Can't find something in GGP to turn into BoardGameState...
 		return null;
 	}
 
