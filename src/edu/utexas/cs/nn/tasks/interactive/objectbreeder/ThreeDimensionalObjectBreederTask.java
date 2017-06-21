@@ -21,7 +21,7 @@ import edu.utexas.cs.nn.util.graphics.AnimationUtil;
 public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask {
 	public static final int CUBE_SIDE_LENGTH = 10;
 	public static final int SHAPE_WIDTH = 10;
-	public static final int SHAPE_HEIGHT = 20;
+	public static final int SHAPE_HEIGHT = 15; //20;
 	public static final int SHAPE_DEPTH = 10;
 	public static final Color COLOR = Color.RED;
 	
@@ -62,8 +62,14 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask {
 	@Override
 	protected BufferedImage getButtonImage(Network phenotype, int width, int height, double[] inputMultipliers) {
 		// Just get first frame for button. Slightly inefficent though, since all animation frames were pre-computed
-		// TODO: Magic numbers 0, 20, PI, and 17 were used to tilt the shape in an interesting way, but this needs to be replaced eventually.
-		return Construct3DObject.generate3DObjectFromCPPN(phenotype, picSize, picSize, CUBE_SIDE_LENGTH, SHAPE_WIDTH, SHAPE_HEIGHT, SHAPE_DEPTH, COLOR,  0, 20, Math.PI, getInputMultipliers())[17];
+		return Construct3DObject.generate3DObjectFromCPPN(phenotype, picSize, picSize, CUBE_SIDE_LENGTH, SHAPE_WIDTH, SHAPE_HEIGHT, SHAPE_DEPTH, COLOR,  0, 1, Math.PI, getInputMultipliers())[0];
+	}
+	
+	@Override
+	protected BufferedImage[] getAnimationImages(Network cppn, int startFrame, int endFrame) {
+		// For rotating the 3D object, we ignore the endFrame from the animation breeder
+		endFrame = (int) (AnimationUtil.FRAMES_PER_SEC * 4); // 4 seconds worth of animation
+		return Construct3DObject.generate3DObjectFromCPPN(cppn, picSize, picSize, CUBE_SIDE_LENGTH, SHAPE_WIDTH, SHAPE_HEIGHT, SHAPE_DEPTH, COLOR,  startFrame, endFrame, Math.PI, getInputMultipliers());
 	}
 	
 	/**

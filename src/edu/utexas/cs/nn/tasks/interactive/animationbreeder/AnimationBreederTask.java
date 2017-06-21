@@ -42,9 +42,12 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 	protected JSlider pauseLength;
 	protected JSlider pauseLengthBetweenFrames;
 
+	protected BufferedImage[] getAnimationImages(Network cppn, int startFrame, int endFrame) {
+		return AnimationUtil.imagesFromCPPN(cppn, picSize, picSize, startFrame, endFrame, getInputMultipliers());
+	}
 
 	// use private inner class to run animation in a loop
-	private class AnimationThread extends Thread {
+	protected class AnimationThread extends Thread {
 		private boolean playing;
 		private int imageID;
 		private int end;
@@ -55,7 +58,7 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 			//adds images to array at index of specified button (imageID)
 			if(animations[imageID].size() < Parameters.parameters.integerParameter("defaultAnimationLength")) {
 				int start = animations[imageID].size();
-				BufferedImage[] newFrames = AnimationUtil.imagesFromCPPN(scores.get(imageID).individual.getPhenotype(), picSize, picSize, start, end, getInputMultipliers());
+				BufferedImage[] newFrames = getAnimationImages(scores.get(imageID).individual.getPhenotype(), start, end);
 				for(BufferedImage bi : newFrames) {
 					animations[imageID].add(bi); 	
 				}

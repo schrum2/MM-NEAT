@@ -249,6 +249,9 @@ public class Construct3DObject {
 	 * @param imageWidth width of screen
 	 * @param imageHeight height of screen
 	 * @param cubeSize size of cube
+	 * 
+	 * TODO: explain parameters
+	 * 
 	 * @param shapeWidth width of shape being constructed 
 	 * @param shapeHeight height of shape being constructed
 	 * @param shapeDepth depth of shape being constructed
@@ -267,9 +270,9 @@ public class Construct3DObject {
 					}	
 					double[] output = cppn.process(inputs);
 					if(output[0] > 0.1) {
-						double actualX = -(shapeWidth/2.0) + (cubeSize/2.0) + x*cubeSize;
-						double actualY = -(shapeHeight/2.0) + (cubeSize/2.0) + y*cubeSize;
-						double actualZ = -(shapeDepth/2.0) + (cubeSize/2.0) + z*cubeSize;
+						double actualX = -(cubeSize*shapeWidth/2.0) + (cubeSize/2.0) + x*cubeSize;
+						double actualY = -(cubeSize*shapeHeight/2.0) + (cubeSize/2.0) + y*cubeSize;
+						double actualZ = -(cubeSize*shapeDepth/2.0) + (cubeSize/2.0) + z*cubeSize;
 						result.add(new Vertex(actualX, actualY, actualZ));
 					}
 				}
@@ -395,11 +398,12 @@ public class Construct3DObject {
 	 * @param endTime end of animation
 	 * @return Array of BufferedImages that can be played as an animation of a 3D object
 	 */
+	// TODO: Give better name
 	public static BufferedImage[] objectGenerator(List<Triangle> tris, int imageWidth, int imageHeight, int startTime, int endTime, double pitch) {
-		BufferedImage[] images = new BufferedImage[endTime-startTime];
-		for(int i = startTime; i < endTime; i++) {
-			//TODO: How should inputs be manipulated to have enough images to render the object?
-			images[i-startTime] = getImage(tris, imageWidth, imageHeight, (i*2*Math.PI)/images.length, pitch);
+		BufferedImage[] images = new BufferedImage[(endTime-startTime)+1];
+		for(int i = startTime; i <= endTime; i++) {
+			// We're not clear why 4pi is used here instead of 2pi
+			images[i-startTime] = getImage(tris, imageWidth, imageHeight, (i*4*Math.PI)/images.length, pitch);
 		}
 		return images;
 	}
@@ -427,19 +431,6 @@ public class Construct3DObject {
 		List<Triangle> tris = getShape(cubeVertexes, sideLength, color);
 		BufferedImage[] resultImages = objectGenerator(tris, imageWidth, imageHeight, startTime, endTime, pitch);
 		return resultImages;
-	}
-
-	// TODO: This method does NOT work
-	public static void rotate(Graphics2D g2, List<Triangle> tris, int width, int height) {
-		for(double heading = 0; heading < 2*Math.PI; heading += 1/Math.PI) {
-			System.out.println(heading);
-			drawTriangles(g2,tris,width, height, heading, 0);
-			try {
-				Thread.sleep(10);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
 	}
 }
 
