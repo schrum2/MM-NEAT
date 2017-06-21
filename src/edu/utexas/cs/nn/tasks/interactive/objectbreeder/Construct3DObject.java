@@ -382,7 +382,8 @@ public class Construct3DObject {
 		BufferedImage[] images = new BufferedImage[(endTime-startTime)+1];
 		for(int i = startTime; i <= endTime; i++) {
 			// We're not clear why 4pi is used here instead of 2pi
-			images[i-startTime] = getImage(tris, imageWidth, imageHeight, heading, pitch);
+			// Causes slight twitch at end of each rotation sequence
+			images[i-startTime] = getImage(tris, imageWidth, imageHeight, heading + (4*Math.PI*i)/images.length, pitch);
 		}
 		return images;
 	}

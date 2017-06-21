@@ -23,6 +23,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.networks.Network;
+import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.scores.Score;
 import edu.utexas.cs.nn.tasks.interactive.InteractiveEvolutionTask;
@@ -42,7 +43,7 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 	protected JSlider pauseLength;
 	protected JSlider pauseLengthBetweenFrames;
 
-	protected BufferedImage[] getAnimationImages(Network cppn, int startFrame, int endFrame) {
+	protected BufferedImage[] getAnimationImages(T cppn, int startFrame, int endFrame) {
 		return AnimationUtil.imagesFromCPPN(cppn, picSize, picSize, startFrame, endFrame, getInputMultipliers());
 	}
 
