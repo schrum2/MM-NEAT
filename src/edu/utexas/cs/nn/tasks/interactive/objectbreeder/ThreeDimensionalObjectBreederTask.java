@@ -63,13 +63,13 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 		pitchValue = new JSlider(JSlider.HORIZONTAL, 0, MAX_ROTATION, Parameters.parameters.integerParameter("defaultPitch"));
 
 		Hashtable<Integer,JLabel> pitchLabels = new Hashtable<>();
-		pitchValue.setMinorTickSpacing(20);
+		pitchValue.setMinorTickSpacing(72);
 		pitchValue.setPaintTicks(true);
 		pitchLabels.put(0, new JLabel("0"));
 		pitchLabels.put(MAX_ROTATION, new JLabel("360"));
 		pitchValue.setLabelTable(pitchLabels);
 		pitchValue.setPaintLabels(true);
-		pitchValue.setPreferredSize(new Dimension(150, 40));
+		pitchValue.setPreferredSize(new Dimension(75, 40));
 
 		/**
 		 * Implements ChangeListener to adjust animation length. When animation length is specified, 
@@ -93,7 +93,7 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 		JPanel pitch = new JPanel();
 		pitch.setLayout(new BoxLayout(pitch, BoxLayout.Y_AXIS));
 		JLabel pitchLabel = new JLabel();
-		pitchLabel.setText("Vertical Rotation of Object");
+		pitchLabel.setText("Vertical Tilt");
 		pitch.add(pitchLabel);
 		pitch.add(pitchValue);
 
@@ -102,13 +102,13 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 		headingValue = new JSlider(JSlider.HORIZONTAL, 0, MAX_ROTATION, Parameters.parameters.integerParameter("defaultHeading"));
 
 		Hashtable<Integer,JLabel> headingLabels = new Hashtable<>();
-		headingValue.setMinorTickSpacing(20);
+		headingValue.setMinorTickSpacing(72);
 		headingValue.setPaintTicks(true);
 		headingLabels.put(0, new JLabel("0"));
 		headingLabels.put(MAX_ROTATION, new JLabel("360"));
 		headingValue.setLabelTable(headingLabels);
 		headingValue.setPaintLabels(true);
-		headingValue.setPreferredSize(new Dimension(150, 40));
+		headingValue.setPreferredSize(new Dimension(75, 40));
 
 		/**
 		 * Implements ChangeListener to adjust animation length. When animation length is specified, 
@@ -132,7 +132,7 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 		JPanel heading = new JPanel();
 		heading.setLayout(new BoxLayout(heading, BoxLayout.Y_AXIS));
 		JLabel headingLabel = new JLabel();
-		headingLabel.setText("Horizontal Rotation of Object");
+		headingLabel.setText("Horizontal Tilt");
 		heading.add(headingLabel);
 		heading.add(headingValue);
 
