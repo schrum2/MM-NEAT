@@ -107,7 +107,7 @@ public class PictureRemixTask<T extends Network> extends PicbreederTask<T> {
 	}
 
 	@Override
-	protected BufferedImage getButtonImage(Network phenotype, int width, int height, double[] inputMultipliers) {
+	protected BufferedImage getButtonImage(T phenotype, int width, int height, double[] inputMultipliers) {
 		// Rescale image based on width and height?
 		return GraphicsUtil.remixedImageFromCPPN(phenotype, img, inputMultipliers, Parameters.parameters.integerParameter("remixImageWindow"));
 	}

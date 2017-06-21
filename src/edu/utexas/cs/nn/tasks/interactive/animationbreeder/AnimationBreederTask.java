@@ -309,7 +309,7 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 	}
 
 	@Override
-	protected BufferedImage getButtonImage(Network phenotype, int width, int height, double[] inputMultipliers) {
+	protected BufferedImage getButtonImage(T phenotype, int width, int height, double[] inputMultipliers) {
 		// Just get first frame for button. Slightly inefficent though, since all animation frames were pre-computed
 		return AnimationUtil.imagesFromCPPN(phenotype, picSize, picSize, 0, 1, getInputMultipliers())[0];
 	}

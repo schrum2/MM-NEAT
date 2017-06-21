@@ -329,6 +329,8 @@ public class TWEANN implements Network {
 		}
 	}
 
+	public long getId() { return id; };
+	
 	private long id = -1;
 	protected int numIn;
 	protected int numOut;

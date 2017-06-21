@@ -4,25 +4,25 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
 
 import javax.swing.BoxLayout;
-import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.filechooser.FileNameExtensionFilter;
 
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.networks.Network;
+import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.parameters.Parameters;
+import edu.utexas.cs.nn.scores.Score;
 import edu.utexas.cs.nn.tasks.interactive.InteractiveEvolutionTask;
-import edu.utexas.cs.nn.tasks.interactive.animationbreeder.AnimationBreederTask;
-import edu.utexas.cs.nn.util.graphics.AnimationUtil;
 
 /**
  * Interface that interactively evolves three-dimensional
@@ -33,7 +33,7 @@ import edu.utexas.cs.nn.util.graphics.AnimationUtil;
  * @author Isabel Tweraser
  *
  */
-public class ThreeDimensionalObjectBreederTask extends InteractiveEvolutionTask {
+public class ThreeDimensionalObjectBreederTask extends InteractiveEvolutionTask<TWEANN> {
 	public static final int CUBE_SIDE_LENGTH = 10;
 	public static final int SHAPE_WIDTH = 10;
 	public static final int SHAPE_HEIGHT = 15; //20;
@@ -49,6 +49,7 @@ public class ThreeDimensionalObjectBreederTask extends InteractiveEvolutionTask 
 	protected JSlider headingValue;
 	protected JSlider pauseLengthBetweenFrames;
 
+	public HashMap<Long,List<Triangle>> shapes;
 
 	public ThreeDimensionalObjectBreederTask() throws IllegalAccessException {
 		super();
@@ -175,6 +176,15 @@ public class ThreeDimensionalObjectBreederTask extends InteractiveEvolutionTask 
 		top.add(framePause);
 	}
 
+	public ArrayList<Score<TWEANN>> evaluateAll(ArrayList<Genotype<TWEANN>> population) {
+		// Load all shapes in advance
+		shapes = new HashMap<Long,List<Triangle>>();
+		for(Genotype<TWEANN> g : population) {
+			shapes.put(g.getId(), Construct3DObject.trianglesFromCPPN(g.getPhenotype(), picSize, picSize, CUBE_SIDE_LENGTH, SHAPE_WIDTH, SHAPE_HEIGHT, SHAPE_DEPTH, COLOR, getInputMultipliers()));
+		}
+		return super.evaluateAll(population); // wait for user choices
+	}
+	
 	@Override
 	public String[] sensorLabels() {
 		return new String[] { "X-coordinate", "Y-coordinate", "Z-coordinate", "bias" };
@@ -199,22 +209,24 @@ public class ThreeDimensionalObjectBreederTask extends InteractiveEvolutionTask 
 	public int numCPPNOutputs() {
 		return CPPN_NUM_OUTPUTS;
 	}
-
+	
 	@Override
-	protected BufferedImage getButtonImage(Network phenotype, int width, int height, double[] inputMultipliers) {
+	protected BufferedImage getButtonImage(TWEANN phenotype, int width, int height, double[] inputMultipliers) {
 		// Just get first frame for button. Slightly inefficent though, since all animation frames were pre-computed
 		double pitch = (Parameters.parameters.integerParameter("defaultPitch")/(double) MAX_ROTATION) * 2 * Math.PI; 
 		double heading = (Parameters.parameters.integerParameter("defaultHeading")/(double) MAX_ROTATION) * 2 * Math.PI;
-		return Construct3DObject.rotationSequenceFromCPPN(phenotype, picSize, picSize, CUBE_SIDE_LENGTH, SHAPE_WIDTH, SHAPE_HEIGHT, SHAPE_DEPTH, COLOR,  0, 1, heading, pitch, getInputMultipliers())[0];
+		//return Construct3DObject.rotationSequenceFromCPPN(phenotype, picSize, picSize, CUBE_SIDE_LENGTH, SHAPE_WIDTH, SHAPE_HEIGHT, SHAPE_DEPTH, COLOR,  0, 1, heading, pitch, getInputMultipliers())[0];
+		//return Construct3DObject.currentImageFromCPPN(phenotype, picSize, picSize, CUBE_SIDE_LENGTH, SHAPE_WIDTH, SHAPE_HEIGHT, SHAPE_DEPTH, COLOR, heading, pitch, getInputMultipliers());
+		return Construct3DObject.getImage(shapes.get(phenotype.getId()), picSize, picSize, heading, pitch);
 	}
 
-	protected BufferedImage[] getAnimationImages(Network cppn, int startFrame, int endFrame) {
-		// For rotating the 3D object, we ignore the endFrame from the animation breeder
-		endFrame = (int) (AnimationUtil.FRAMES_PER_SEC * 4); // 4 seconds worth of animation
-		double pitch = (Parameters.parameters.integerParameter("defaultPitch")/(double) MAX_ROTATION) * 2 * Math.PI;
-		double heading = (Parameters.parameters.integerParameter("defaultHeading")/(double) MAX_ROTATION) * 2 * Math.PI;
-		return Construct3DObject.rotationSequenceFromCPPN(cppn, picSize, picSize, CUBE_SIDE_LENGTH, SHAPE_WIDTH, SHAPE_HEIGHT, SHAPE_DEPTH, COLOR,  startFrame, endFrame, heading, pitch, getInputMultipliers());
-	}
+//	protected BufferedImage[] getAnimationImages(Network cppn, int startFrame, int endFrame) {
+//		// For rotating the 3D object, we ignore the endFrame from the animation breeder
+//		endFrame = (int) (AnimationUtil.FRAMES_PER_SEC * 4); // 4 seconds worth of animation
+//		double pitch = (Parameters.parameters.integerParameter("defaultPitch")/(double) MAX_ROTATION) * 2 * Math.PI;
+//		double heading = (Parameters.parameters.integerParameter("defaultHeading")/(double) MAX_ROTATION) * 2 * Math.PI;
+//		return Construct3DObject.rotationSequenceFromCPPN(cppn, picSize, picSize, CUBE_SIDE_LENGTH, SHAPE_WIDTH, SHAPE_HEIGHT, SHAPE_DEPTH, COLOR,  startFrame, endFrame, heading, pitch, getInputMultipliers());
+//	}
 
 	/**
 	 * Allows for quick and easy launching without saving any files
@@ -254,9 +266,8 @@ public class ThreeDimensionalObjectBreederTask extends InteractiveEvolutionTask 
 	}
 
 	@Override
-	protected void additionalButtonClickAction(int scoreIndex, Genotype individual) {
-		// TODO Auto-generated method stub
-
+	protected void additionalButtonClickAction(int scoreIndex, Genotype<TWEANN> individual) {
+		// Do nothing
 	}
 
 }

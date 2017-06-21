@@ -53,7 +53,7 @@ public class Construct3DObject {
 				tris.addAll(cubeConstructor(new Vertex(0,10,0), 50.0, Color.YELLOW));
 				tris.addAll(cubeConstructor(new Vertex(0,20,0), 50.0, Color.GREEN));
 				tris.addAll(cubeConstructor(new Vertex(0,0,20), 50.0, Color.GRAY));
-				
+
 				Graphics2D g2 = (Graphics2D) g;
 				double heading = Math.toRadians(headingSlider.getValue());
 				double pitch = Math.toRadians(pitchSlider.getValue());
@@ -69,7 +69,7 @@ public class Construct3DObject {
 		frame.setSize(400, 400);
 		frame.setVisible(true);
 	}
-	
+
 	/**
 	 * Renders list of triangles as a cube. 
 	 * 
@@ -90,7 +90,7 @@ public class Construct3DObject {
 		//draw image in graphics instance
 		g2.drawImage(img, 0, 0, null);
 	}
-	
+
 	/**
 	 * Constructs a BufferedImage of the current 3D image rotation based on the current heading and pitch.
 	 * 
@@ -101,11 +101,11 @@ public class Construct3DObject {
 	 * @param pitch Input vertical position from JSlider
 	 * @return BufferedImage representing current view of 3D image
 	 */
-	private static BufferedImage getImage(List<Triangle> tris, int width, int height, double heading, double pitch) {
+	public static BufferedImage getImage(List<Triangle> tris, int width, int height, double heading, double pitch) {
 		Matrix3 transform = getTransform(heading, pitch);
 		return getImage(tris, width, height, transform);
 	}
-	
+
 	/**
 	 * Creates Matrix3 instance that is used to transform/manipulate a list of Triangles into a 
 	 * rendered cube.
@@ -128,7 +128,7 @@ public class Construct3DObject {
 		Matrix3 transform = headingTransform.multiply(pitchTransform);
 		return transform;
 	}
-	
+
 	/**
 	 * Constructs BufferedImage from list of triangles based on the input Matrix3 specifications
 	 * (positions of JSliders determining rotation of 3D image)
@@ -157,7 +157,7 @@ public class Construct3DObject {
 			Vertex v3 = transform.transform(t.v3);
 			v3.x += width / 2;
 			v3.y += height / 2;
-			
+
 			Vertex norm = getNorm(v1, v2, v3);
 
 			double angleCos = Math.abs(norm.z);
@@ -188,7 +188,7 @@ public class Construct3DObject {
 		}
 		return img;
 	}
-	
+
 	private static Vertex getNorm(Vertex v1, Vertex v2, Vertex v3) {
 		Vertex ab = new Vertex(v2.x - v1.x, v2.y - v1.y, v2.z - v1.z);
 		Vertex ac = new Vertex(v3.x - v1.x, v3.y - v1.y, v3.z - v1.z);
@@ -203,7 +203,7 @@ public class Construct3DObject {
 		norm.z /= normalLength;
 		return norm;
 	}
-	
+
 	/**
 	 * Returns shading of color based on angle to make rendering of three
 	 * dimensions look more accurate.
@@ -223,7 +223,7 @@ public class Construct3DObject {
 
 		return new Color(red, green, blue);
 	}
-	
+
 	/**
 	 * Takes in a list of vertexes, a triangle sidelength, and a desired color and 
 	 * returns a list of triangles that construct a series of cubes centered at the various
@@ -241,7 +241,7 @@ public class Construct3DObject {
 		}
 		return tris;
 	}
-	
+
 	/**
 	 * Creates a list of vertexes where cube pixels will be constructed in a shape based on 
 	 * the CPPN
@@ -278,7 +278,7 @@ public class Construct3DObject {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * Returns CPPN inputs for 3D object construction
 	 * 
@@ -295,8 +295,8 @@ public class Construct3DObject {
 		Vertex newV = CartesianGeometricUtilities.centerAndScale(v, width, height, depth);
 		return new double[]{newV.x, newV.y, newV.z, GraphicsUtil.BIAS};
 	}
-	
-	
+
+
 	/**
 	 * Method that takes in a color, a vertex and a sidelength of a desired cube
 	 * and returns a list of triangles that can be used to construct the cube.
@@ -308,7 +308,7 @@ public class Construct3DObject {
 	 */
 	public static List<Triangle> cubeConstructor(Vertex center, double sideLength, Color color) {
 		double halfLength = (sideLength/2);
-		
+
 		List<Triangle> tris = new ArrayList<>();
 		tris.add(new Triangle(center.add(new Vertex(halfLength, halfLength, halfLength)),
 				center.add(new Vertex(halfLength, halfLength, -halfLength)),
@@ -365,7 +365,7 @@ public class Construct3DObject {
 				color));
 		return tris;
 	}
-	
+
 	/**
 	 * Produces an array of images that are meant to animate a 3-dimensional object
 	 * rotating. This is done by repeatedly calling getImage() at different input 
@@ -378,15 +378,15 @@ public class Construct3DObject {
 	 * @param endTime end of animation
 	 * @return Array of BufferedImages that can be played as an animation of a 3D object
 	 */
-	public static BufferedImage[] imagesFromTriangles(List<Triangle> tris, int imageWidth, int imageHeight, int startTime, int endTime, double pitch) {
+	public static BufferedImage[] imagesFromTriangles(List<Triangle> tris, int imageWidth, int imageHeight, int startTime, int endTime, double heading, double pitch) {
 		BufferedImage[] images = new BufferedImage[(endTime-startTime)+1];
 		for(int i = startTime; i <= endTime; i++) {
 			// We're not clear why 4pi is used here instead of 2pi
-			images[i-startTime] = getImage(tris, imageWidth, imageHeight, (i*4*Math.PI)/images.length, pitch);
+			images[i-startTime] = getImage(tris, imageWidth, imageHeight, heading, pitch);
 		}
 		return images;
 	}
-	
+
 	/**
 	 * Produces an array of images that are meant to animate a 3-dimensional object
 	 * rotating based on an input CPPN. 
@@ -406,12 +406,36 @@ public class Construct3DObject {
 	 * @param inputMultipliers array determining whether to turn inputs on or off
 	 * @return
 	 */
-	// TODO: Change name of method "rotation sequence"
 	public static BufferedImage[] rotationSequenceFromCPPN(Network cppn, int imageWidth, int imageHeight, int sideLength, int shapeWidth, int shapeHeight, int shapeDepth, Color color, int startTime, int endTime, double heading, double pitch, double[] inputMultipliers) {
+		List<Triangle> tris = trianglesFromCPPN(cppn, imageWidth, imageHeight, sideLength, shapeWidth, shapeHeight, shapeDepth, color, inputMultipliers);
+		BufferedImage[] resultImages = imagesFromTriangles(tris, imageWidth, imageHeight, startTime, endTime, heading, pitch);
+		return resultImages;
+	}
+	
+	/**
+	 * Produces a list of triangles used to construct a 3D object.
+	 * 
+	 * @param cppn input network
+	 * @param imageWidth width of image
+	 * @param imageHeight height of image
+	 * @param sideLength length of cube
+	 * @param shapeWidth width of shape
+	 * @param shapeHeight height of shape
+	 * @param shapeDepth depth of shape
+	 * @param color desired color of object
+	 * @param inputMultipliers array determining whether to turn inputs on or off
+	 * @return
+	 */
+	public static List<Triangle> trianglesFromCPPN(Network cppn, int imageWidth, int imageHeight, int sideLength, int shapeWidth, int shapeHeight, int shapeDepth, Color color, double[] inputMultipliers) {
 		List<Vertex> cubeVertexes = getVertexesFromCPPN(cppn, imageWidth, imageHeight, sideLength, shapeWidth, shapeHeight, shapeDepth, inputMultipliers);
 		List<Triangle> tris = getShape(cubeVertexes, sideLength, color);
-		BufferedImage[] resultImages = imagesFromTriangles(tris, imageWidth, imageHeight, startTime, endTime, pitch);
-		return resultImages;
+		return tris;
+	}
+	
+	public static BufferedImage currentImageFromCPPN(Network cppn, int imageWidth, int imageHeight, int sideLength, int shapeWidth, int shapeHeight, int shapeDepth, Color color, double heading, double pitch, double[]inputMultipliers) {
+		List<Triangle> tris = trianglesFromCPPN(cppn, imageWidth, imageHeight, sideLength, shapeWidth, shapeHeight, shapeDepth, color, inputMultipliers);
+		BufferedImage currentImage = getImage(tris, imageWidth, imageHeight, heading, pitch);
+		return currentImage;
 	}
 }
 

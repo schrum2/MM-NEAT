@@ -149,7 +149,7 @@ public class SoundRemixTask<T extends Network> extends BreedesizerTask<T> {
 	}
 
 	@Override
-	protected BufferedImage getButtonImage(Network phenotype, int width, int height, double[] inputMultipliers) {
+	protected BufferedImage getButtonImage(T phenotype, int width, int height, double[] inputMultipliers) {
 		double[] amplitude = SoundFromCPPNUtil.amplitudeRemixer(phenotype, WAVDoubleArray, Parameters.parameters.integerParameter("clipLength"),FREQUENCY_DEFAULT, inputMultipliers);
 		BufferedImage wavePlotImage = GraphicsUtil.wavePlotFromDoubleArray(amplitude, height, width);
 		return wavePlotImage;

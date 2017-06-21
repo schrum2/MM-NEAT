@@ -49,7 +49,7 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 	}
 
 	@Override
-	protected BufferedImage getButtonImage(Network phenotype, int width, int height, double[] inputMultipliers) {
+	protected BufferedImage getButtonImage(T phenotype, int width, int height, double[] inputMultipliers) {
 		return GraphicsUtil.imageFromCPPN(phenotype, width, height, inputMultipliers);
 	}
 

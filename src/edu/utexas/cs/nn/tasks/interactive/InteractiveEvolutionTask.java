@@ -553,7 +553,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		buttons.get(x).setBorder(BorderFactory.createLineBorder(Color.lightGray, BORDER_THICKNESS));
 	}
 
-	protected abstract BufferedImage getButtonImage(Network phenotype, int width, int height, double[] inputMultipliers);
+	protected abstract BufferedImage getButtonImage(T phenotype, int width, int height, double[] inputMultipliers);
 
 	/**
 	 * Used to get the image of a network using a drawing panel
