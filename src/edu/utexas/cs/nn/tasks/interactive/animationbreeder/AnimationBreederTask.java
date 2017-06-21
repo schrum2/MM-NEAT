@@ -99,85 +99,113 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 	// stores all animations in an array with a different button's animation at each index
 	public ArrayList<BufferedImage>[] animations;
 
+	public AnimationBreederTask() throws IllegalAccessException {
+		this(true);
+	}
+	
 	/**
 	 * Constructor - all sliders are added here and mouse listening is enabled for hovering over the buttons
 	 * @throws IllegalAccessException
 	 */
-	public AnimationBreederTask() throws IllegalAccessException {
+	public AnimationBreederTask(boolean justAnimationBreeder) throws IllegalAccessException {
 		super();
+		if(justAnimationBreeder) {
+			//Construction of JSlider for desired animation length
 
-		//Construction of JSlider for desired animation length
+			animationLength = new JSlider(JSlider.HORIZONTAL, Parameters.parameters.integerParameter("minAnimationLength"), Parameters.parameters.integerParameter("maxAnimationLength"), Parameters.parameters.integerParameter("defaultAnimationLength"));
 
-		animationLength = new JSlider(JSlider.HORIZONTAL, Parameters.parameters.integerParameter("minAnimationLength"), Parameters.parameters.integerParameter("maxAnimationLength"), Parameters.parameters.integerParameter("defaultAnimationLength"));
+			Hashtable<Integer,JLabel> animationLabels = new Hashtable<>();
+			animationLength.setMinorTickSpacing(20);
+			animationLength.setPaintTicks(true);
+			animationLabels.put(Parameters.parameters.integerParameter("minAnimationLength"), new JLabel("Short"));
+			animationLabels.put(Parameters.parameters.integerParameter("maxAnimationLength"), new JLabel("Long"));
+			animationLength.setLabelTable(animationLabels);
+			animationLength.setPaintLabels(true);
+			animationLength.setPreferredSize(new Dimension(150, 40));
 
-		Hashtable<Integer,JLabel> animationLabels = new Hashtable<>();
-		animationLength.setMinorTickSpacing(20);
-		animationLength.setPaintTicks(true);
-		animationLabels.put(Parameters.parameters.integerParameter("minAnimationLength"), new JLabel("Short"));
-		animationLabels.put(Parameters.parameters.integerParameter("maxAnimationLength"), new JLabel("Long"));
-		animationLength.setLabelTable(animationLabels);
-		animationLength.setPaintLabels(true);
-		animationLength.setPreferredSize(new Dimension(150, 40));
-
-		/**
-		 * Implements ChangeListener to adjust animation length. When animation length is specified, 
-		 * input length is used to reset and redraw buttons. 
-		 */
-		animationLength.addChangeListener(new ChangeListener() {
-			@Override
-			public void stateChanged(ChangeEvent e) {
-				// get value
-				JSlider source = (JSlider)e.getSource();
-				if(!source.getValueIsAdjusting()) {
-					int newLength = (int) source.getValue();
-					Parameters.parameters.setInteger("defaultAnimationLength", newLength);
-					// reset buttons
-					resetButtons();
+			/**
+			 * Implements ChangeListener to adjust animation length. When animation length is specified, 
+			 * input length is used to reset and redraw buttons. 
+			 */
+			animationLength.addChangeListener(new ChangeListener() {
+				@Override
+				public void stateChanged(ChangeEvent e) {
+					// get value
+					JSlider source = (JSlider)e.getSource();
+					if(!source.getValueIsAdjusting()) {
+						int newLength = (int) source.getValue();
+						Parameters.parameters.setInteger("defaultAnimationLength", newLength);
+						// reset buttons
+						resetButtons();
+					}
 				}
-			}
-		});
+			});
 
-		//Construction of JSlider for desired length of pause between each iteration of animation
+			//Construction of JSlider for desired length of pause between each iteration of animation
 
-		pauseLength = new JSlider(JSlider.HORIZONTAL, Parameters.parameters.integerParameter("minPause"), Parameters.parameters.integerParameter("maxPause"), Parameters.parameters.integerParameter("defaultPause"));
+			pauseLength = new JSlider(JSlider.HORIZONTAL, Parameters.parameters.integerParameter("minPause"), Parameters.parameters.integerParameter("maxPause"), Parameters.parameters.integerParameter("defaultPause"));
 
-		Hashtable<Integer,JLabel> pauseLabels = new Hashtable<>();
-		pauseLength.setMinorTickSpacing(75);
-		pauseLength.setPaintTicks(true);
-		pauseLabels.put(Parameters.parameters.integerParameter("minPause"), new JLabel("No pause"));
-		pauseLabels.put(Parameters.parameters.integerParameter("maxPause"), new JLabel("Long pause"));
-		pauseLength.setLabelTable(pauseLabels);
-		pauseLength.setPaintLabels(true);
-		pauseLength.setPreferredSize(new Dimension(100, 40));
+			Hashtable<Integer,JLabel> pauseLabels = new Hashtable<>();
+			pauseLength.setMinorTickSpacing(75);
+			pauseLength.setPaintTicks(true);
+			pauseLabels.put(Parameters.parameters.integerParameter("minPause"), new JLabel("No pause"));
+			pauseLabels.put(Parameters.parameters.integerParameter("maxPause"), new JLabel("Long pause"));
+			pauseLength.setLabelTable(pauseLabels);
+			pauseLength.setPaintLabels(true);
+			pauseLength.setPreferredSize(new Dimension(100, 40));
 
-		/**
-		 * Implements ChangeListener to adjust pause length. When pause length is specified, 
-		 * input length is used to reset and redraw buttons. 
-		 */
-		pauseLength.addChangeListener(new ChangeListener() {
-			@Override
-			public void stateChanged(ChangeEvent e) {
-				// get value
-				JSlider source = (JSlider)e.getSource();
-				if(!source.getValueIsAdjusting()) {
-					int newLength = (int) source.getValue();
-					Parameters.parameters.setInteger("defaultPause", newLength);
-					// reset buttons
-					resetButtons();
+			/**
+			 * Implements ChangeListener to adjust pause length. When pause length is specified, 
+			 * input length is used to reset and redraw buttons. 
+			 */
+			pauseLength.addChangeListener(new ChangeListener() {
+				@Override
+				public void stateChanged(ChangeEvent e) {
+					// get value
+					JSlider source = (JSlider)e.getSource();
+					if(!source.getValueIsAdjusting()) {
+						int newLength = (int) source.getValue();
+						Parameters.parameters.setInteger("defaultPause", newLength);
+						// reset buttons
+						resetButtons();
+					}
 				}
-			}
-		});
+			});
+
+			//Add all JSliders to individual panels so that they can be titled with JLabels
+
+			//Animation slider
+			JPanel animation = new JPanel();
+			animation.setLayout(new BoxLayout(animation, BoxLayout.Y_AXIS));
+			JLabel animationLabel = new JLabel();
+			animationLabel.setText("Animation length");
+			animation.add(animationLabel);
+			animation.add(animationLength);
+
+			//Pause (between animations) slider
+			JPanel pause = new JPanel();
+			pause.setLayout(new BoxLayout(pause, BoxLayout.Y_AXIS));
+			JLabel pauseLabel = new JLabel();
+			pauseLabel.setText("Pause between animations");
+			pause.add(pauseLabel);
+			pause.add(pauseLength);
+
+
+			//Add all panels to interface
+			top.add(animation);
+			top.add(pause);
+		}
 
 		//Construction of JSlider for desired length of pause between each frame within an animation
 
 		pauseLengthBetweenFrames = new JSlider(JSlider.HORIZONTAL, Parameters.parameters.integerParameter("minPause"), Parameters.parameters.integerParameter("maxPause"), Parameters.parameters.integerParameter("defaultFramePause"));
-
+		
 		Hashtable<Integer,JLabel> framePauseLabels = new Hashtable<>();
 		pauseLengthBetweenFrames.setMinorTickSpacing(75);
 		pauseLengthBetweenFrames.setPaintTicks(true);
 		framePauseLabels.put(Parameters.parameters.integerParameter("minPause"), new JLabel("No pause"));
 		framePauseLabels.put(Parameters.parameters.integerParameter("maxPause"), new JLabel("Long pause"));
-		pauseLengthBetweenFrames.setLabelTable(pauseLabels);
+		pauseLengthBetweenFrames.setLabelTable(framePauseLabels);
 		pauseLengthBetweenFrames.setPaintLabels(true);
 		pauseLengthBetweenFrames.setPreferredSize(new Dimension(100, 40));
 
@@ -197,25 +225,7 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 					resetButtons();
 				}
 			}
-		});
-
-		//Add all JSliders to individual panels so that they can be titled with JLabels
-
-		//Animation slider
-		JPanel animation = new JPanel();
-		animation.setLayout(new BoxLayout(animation, BoxLayout.Y_AXIS));
-		JLabel animationLabel = new JLabel();
-		animationLabel.setText("Animation length");
-		animation.add(animationLabel);
-		animation.add(animationLength);
-
-		//Pause (between animations) slider
-		JPanel pause = new JPanel();
-		pause.setLayout(new BoxLayout(pause, BoxLayout.Y_AXIS));
-		JLabel pauseLabel = new JLabel();
-		pauseLabel.setText("Pause between animations");
-		pause.add(pauseLabel);
-		pause.add(pauseLength);
+		});		
 
 		//Pause (between frames) slider
 		JPanel framePause = new JPanel();
@@ -225,9 +235,7 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 		framePause.add(framePauseLabel);
 		framePause.add(pauseLengthBetweenFrames);
 
-		//Add all panels to interface
-		top.add(animation);
-		top.add(pause);
+
 		top.add(framePause);
 
 		//Enables MouseListener so that animation on a button will play when mouse is hovering over it

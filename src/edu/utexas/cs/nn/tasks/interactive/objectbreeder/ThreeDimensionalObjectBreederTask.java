@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.networks.Network;
+import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.interactive.animationbreeder.AnimationBreederTask;
 import edu.utexas.cs.nn.util.graphics.AnimationUtil;
 
@@ -27,11 +28,13 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask {
 	
 	public static final int CPPN_NUM_INPUTS = 4;
 	public static final int CPPN_NUM_OUTPUTS = 1;
+	
+	public static final double PITCH = Math.PI / 8;
 					
 
 	public ThreeDimensionalObjectBreederTask() throws IllegalAccessException {
-		super();
-		
+		super(false);
+		Parameters.parameters.setInteger("defaultPause", 0);
 	}
 	
 	@Override
@@ -62,14 +65,14 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask {
 	@Override
 	protected BufferedImage getButtonImage(Network phenotype, int width, int height, double[] inputMultipliers) {
 		// Just get first frame for button. Slightly inefficent though, since all animation frames were pre-computed
-		return Construct3DObject.generate3DObjectFromCPPN(phenotype, picSize, picSize, CUBE_SIDE_LENGTH, SHAPE_WIDTH, SHAPE_HEIGHT, SHAPE_DEPTH, COLOR,  0, 1, Math.PI, getInputMultipliers())[0];
+		return Construct3DObject.generate3DObjectFromCPPN(phenotype, picSize, picSize, CUBE_SIDE_LENGTH, SHAPE_WIDTH, SHAPE_HEIGHT, SHAPE_DEPTH, COLOR,  0, 1, PITCH, getInputMultipliers())[0];
 	}
 	
 	@Override
 	protected BufferedImage[] getAnimationImages(Network cppn, int startFrame, int endFrame) {
 		// For rotating the 3D object, we ignore the endFrame from the animation breeder
 		endFrame = (int) (AnimationUtil.FRAMES_PER_SEC * 4); // 4 seconds worth of animation
-		return Construct3DObject.generate3DObjectFromCPPN(cppn, picSize, picSize, CUBE_SIDE_LENGTH, SHAPE_WIDTH, SHAPE_HEIGHT, SHAPE_DEPTH, COLOR,  startFrame, endFrame, Math.PI, getInputMultipliers());
+		return Construct3DObject.generate3DObjectFromCPPN(cppn, picSize, picSize, CUBE_SIDE_LENGTH, SHAPE_WIDTH, SHAPE_HEIGHT, SHAPE_DEPTH, COLOR,  startFrame, endFrame, PITCH, getInputMultipliers());
 	}
 	
 	/**

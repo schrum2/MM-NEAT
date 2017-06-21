@@ -18,6 +18,7 @@ import javax.vecmath.Vector3d;
 
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.util.CartesianGeometricUtilities;
+import edu.utexas.cs.nn.util.datastructures.Vertex;
 import edu.utexas.cs.nn.util.graphics.GraphicsUtil;
 
 /**
@@ -249,12 +250,9 @@ public class Construct3DObject {
 	 * @param imageWidth width of screen
 	 * @param imageHeight height of screen
 	 * @param cubeSize size of cube
-	 * 
-	 * TODO: explain parameters
-	 * 
-	 * @param shapeWidth width of shape being constructed 
-	 * @param shapeHeight height of shape being constructed
-	 * @param shapeDepth depth of shape being constructed
+	 * @param shapeWidth width of shape being constructed (measured in # of cubes in dimension)
+	 * @param shapeHeight height of shape being constructed (measured in # of cubes in dimension)
+	 * @param shapeDepth depth of shape being constructed (measured in # of cubes in dimension)
 	 * @param inputMultipliers determines whether inputs are turned on or off
 	 * @return List of vertexes denoting center points of all cubes being constructed
 	 */
@@ -294,29 +292,11 @@ public class Construct3DObject {
 	 */
 	public static double[] get3DObjectCPPNInputs(int x, int y, int z, int width, int height, int depth) {
 		Vertex v = new Vertex(x, y, z);
-		Vertex newV = centerAndScale(v, width, height, depth);
+		Vertex newV = CartesianGeometricUtilities.centerAndScale(v, width, height, depth);
 		return new double[]{newV.x, newV.y, newV.z, GraphicsUtil.BIAS};
 	}
 	
-	/**
-	 * Method that centers and scales a vertex based on the width, height, and depth of the shape
-	 * 
-	 * @param toScale Vertex to be scaled
-	 * @param width width of shape
-	 * @param height height of shape
-	 * @param depth depth of shape
-	 * @return scaled vertex
-	 */
-	// TODO: Move to Cartesian util
-	public static Vertex centerAndScale(Vertex toScale, int width, int height, int depth) {
-		double newX = CartesianGeometricUtilities.centerAndScale(toScale.x, width); //scaled x coordinate
-		double newY = CartesianGeometricUtilities.centerAndScale(toScale.y, height); //scaled y coordinate
-		double newZ = CartesianGeometricUtilities.centerAndScale(toScale.z, depth); //scaled z coordinate
-		assert !Double.isNaN(newX) : "newX is NaN! width="+width+", height="+height+", toScale="+toScale;
-		assert !Double.isNaN(newY) : "newY is NaN! width="+width+", height="+height+", toScale="+toScale;
-		assert !Double.isNaN(newZ) : "newZ is NaN! width="+width+", height="+height+", toScale="+toScale;
-		return new Vertex(newX, newY, newZ);
-	}
+	
 	/**
 	 * Method that takes in a color, a vertex and a sidelength of a desired cube
 	 * and returns a list of triangles that can be used to construct the cube.
@@ -398,8 +378,7 @@ public class Construct3DObject {
 	 * @param endTime end of animation
 	 * @return Array of BufferedImages that can be played as an animation of a 3D object
 	 */
-	// TODO: Give better name
-	public static BufferedImage[] objectGenerator(List<Triangle> tris, int imageWidth, int imageHeight, int startTime, int endTime, double pitch) {
+	public static BufferedImage[] imagesFromTriangles(List<Triangle> tris, int imageWidth, int imageHeight, int startTime, int endTime, double pitch) {
 		BufferedImage[] images = new BufferedImage[(endTime-startTime)+1];
 		for(int i = startTime; i <= endTime; i++) {
 			// We're not clear why 4pi is used here instead of 2pi
@@ -429,32 +408,10 @@ public class Construct3DObject {
 	public static BufferedImage[] generate3DObjectFromCPPN(Network cppn, int imageWidth, int imageHeight, int sideLength, int shapeWidth, int shapeHeight, int shapeDepth, Color color, int startTime, int endTime, double pitch, double[] inputMultipliers) {
 		List<Vertex> cubeVertexes = getVertexesFromCPPN(cppn, imageWidth, imageHeight, sideLength, shapeWidth, shapeHeight, shapeDepth, inputMultipliers);
 		List<Triangle> tris = getShape(cubeVertexes, sideLength, color);
-		BufferedImage[] resultImages = objectGenerator(tris, imageWidth, imageHeight, startTime, endTime, pitch);
+		BufferedImage[] resultImages = imagesFromTriangles(tris, imageWidth, imageHeight, startTime, endTime, pitch);
 		return resultImages;
 	}
 }
-
-@SuppressWarnings("serial")
-class Vertex extends Vector3d {
-	public Vertex(double x, double y, double z) {
-		super(x,y,z);
-	}
-
-	/**
-	 * Copy constructor
-	 * @param other
-	 */
-	public Vertex(Vertex other) {
-		this(other.x, other.y, other.z);
-	}
-
-	public Vertex add(Vertex v) {
-		Vertex newV = new Vertex(this);
-		newV.add((Vector3d) v);
-		return newV;
-	}
-}
-
 
 class Triangle {
 	Vertex v1;
