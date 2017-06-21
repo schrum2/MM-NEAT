@@ -1,5 +1,6 @@
 package edu.utexas.cs.nn.util;
 
+import edu.utexas.cs.nn.util.datastructures.Vertex;
 import edu.utexas.cs.nn.util.util2D.ILocated2D;
 import edu.utexas.cs.nn.util.util2D.Tuple2D;
 import java.util.ArrayList;
@@ -31,6 +32,25 @@ public class CartesianGeometricUtilities {
 		assert !Double.isNaN(newX) : "newX is NaN! width="+width+", height="+height+", toScale="+toScale;
 		assert !Double.isNaN(newY) : "newY is NaN! width="+width+", height="+height+", toScale="+toScale;
 		return new Tuple2D(newX, newY);
+	}
+	
+	/**
+	 * Method that centers and scales a vertex based on the width, height, and depth of the shape
+	 * 
+	 * @param toScale Vertex to be scaled
+	 * @param width width of shape
+	 * @param height height of shape
+	 * @param depth depth of shape
+	 * @return scaled vertex
+	 */
+	public static Vertex centerAndScale(Vertex toScale, int width, int height, int depth) {
+		double newX = CartesianGeometricUtilities.centerAndScale(toScale.x, width); //scaled x coordinate
+		double newY = CartesianGeometricUtilities.centerAndScale(toScale.y, height); //scaled y coordinate
+		double newZ = CartesianGeometricUtilities.centerAndScale(toScale.z, depth); //scaled z coordinate
+		assert !Double.isNaN(newX) : "newX is NaN! width="+width+", height="+height+", toScale="+toScale;
+		assert !Double.isNaN(newY) : "newY is NaN! width="+width+", height="+height+", toScale="+toScale;
+		assert !Double.isNaN(newZ) : "newZ is NaN! width="+width+", height="+height+", toScale="+toScale;
+		return new Vertex(newX, newY, newZ);
 	}
 
 	/**
