@@ -181,10 +181,11 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 	}
 
 	@Override
-	protected BufferedImage[] getAnimationImages(TWEANN cppn, int startFrame, int endFrame) {
+	protected BufferedImage[] getAnimationImages(TWEANN cppn, int startFrame, int endFrame, boolean beingSaved) {
 		// For rotating the 3D object, we ignore the endFrame from the animation breeder
 		endFrame = (int) (AnimationUtil.FRAMES_PER_SEC * 4); // 4 seconds worth of animation
 		//return Construct3DObject.rotationSequenceFromCPPN(cppn, picSize, picSize, CUBE_SIDE_LENGTH, SHAPE_WIDTH, SHAPE_HEIGHT, SHAPE_DEPTH, COLOR,  startFrame, endFrame, heading, pitch, getInputMultipliers());
+		//TODO: if beingSaved == true, set all image backgrounds to black
 		return ThreeDimensionalUtil.imagesFromTriangles(shapes.get(cppn.getId()), picSize, picSize, startFrame, endFrame, heading, pitch);
 	}
 
@@ -199,35 +200,4 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 			e.printStackTrace();
 		}
 	}
-
-	@Override
-	protected void save(int i) {
-//		// Use of imageHeight and imageWidth allows saving a higher quality image than is on the button
-//		double pitch = (Parameters.parameters.integerParameter("defaultPitch")/(double) MAX_ROTATION) * 2 * Math.PI;
-//		BufferedImage[] toSave = Construct3DObject.generate3DObjectFromCPPN((Network)scores.get(i).individual.getPhenotype(), picSize, picSize, CUBE_SIDE_LENGTH, SHAPE_WIDTH, SHAPE_HEIGHT, SHAPE_DEPTH, COLOR,  startFrame, endFrame, pitch, getInputMultipliers());
-//		JFileChooser chooser = new JFileChooser();//used to get save name 
-//		chooser.setApproveButtonText("Save");
-//		FileNameExtensionFilter filter = new FileNameExtensionFilter("GIF", "gif");
-//		chooser.setFileFilter(filter);
-//		int returnVal = chooser.showOpenDialog(frame);
-//		if(returnVal == JFileChooser.APPROVE_OPTION) {//if the user decides to save the image
-//			System.out.println("You chose to call the image: " + chooser.getSelectedFile().getName());
-//			try {
-//				//saves gif to chosen file name
-//				AnimationUtil.createGif(toSave, Parameters.parameters.integerParameter("defaultFramePause"), chooser.getSelectedFile().getName() + ".gif");
-//			} catch (IOException e) {
-//				e.printStackTrace();
-//			}
-//			System.out.println("image " + chooser.getSelectedFile().getName() + " was saved successfully");
-//		} else { //else image dumped
-//			System.out.println("image not saved");
-//		}
-
-	}
-
-	@Override
-	protected void additionalButtonClickAction(int scoreIndex, Genotype<TWEANN> individual) {
-		// Do nothing
-	}
-
 }

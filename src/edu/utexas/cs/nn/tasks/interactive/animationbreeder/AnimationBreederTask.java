@@ -43,7 +43,7 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 	protected JSlider pauseLength;
 	protected JSlider pauseLengthBetweenFrames;
 
-	protected BufferedImage[] getAnimationImages(T cppn, int startFrame, int endFrame) {
+	protected BufferedImage[] getAnimationImages(T cppn, int startFrame, int endFrame, boolean beingSaved) {
 		return AnimationUtil.imagesFromCPPN(cppn, picSize, picSize, startFrame, endFrame, getInputMultipliers());
 	}
 
@@ -59,7 +59,7 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 			//adds images to array at index of specified button (imageID)
 			if(animations[imageID].size() < Parameters.parameters.integerParameter("defaultAnimationLength")) {
 				int start = animations[imageID].size();
-				BufferedImage[] newFrames = getAnimationImages(scores.get(imageID).individual.getPhenotype(), start, end);
+				BufferedImage[] newFrames = getAnimationImages(scores.get(imageID).individual.getPhenotype(), start, end, false);
 				for(BufferedImage bi : newFrames) {
 					animations[imageID].add(bi); 	
 				}
@@ -289,7 +289,8 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 	@Override
 	protected void save(int i) {
 		// Use of imageHeight and imageWidth allows saving a higher quality image than is on the button
-		BufferedImage[] toSave = AnimationUtil.imagesFromCPPN((Network)scores.get(i).individual.getPhenotype(), Parameters.parameters.integerParameter("imageWidth"), Parameters.parameters.integerParameter("imageHeight"), 0, Parameters.parameters.integerParameter("defaultAnimationLength"), inputMultipliers);	
+		//BufferedImage[] toSave = AnimationUtil.imagesFromCPPN((Network)scores.get(i).individual.getPhenotype(), Parameters.parameters.integerParameter("imageWidth"), Parameters.parameters.integerParameter("imageHeight"), 0, Parameters.parameters.integerParameter("defaultAnimationLength"), inputMultipliers);
+		BufferedImage[] toSave = getAnimationImages(scores.get(i).individual.getPhenotype(), 0, Parameters.parameters.integerParameter("defaultAnimationLength"), true);
 		JFileChooser chooser = new JFileChooser();//used to get save name 
 		chooser.setApproveButtonText("Save");
 		FileNameExtensionFilter filter = new FileNameExtensionFilter("GIF", "gif");
