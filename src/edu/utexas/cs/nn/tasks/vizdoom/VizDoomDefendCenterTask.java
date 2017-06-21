@@ -163,9 +163,10 @@ public class VizDoomDefendCenterTask<T extends Network> extends VizDoomTask<T> {
 	@Override
 	public List<Triple<String, Integer, Integer>> getOutputInfo() {
 		List<Triple<String, Integer, Integer>> outputs = new ArrayList<Triple<String, Integer, Integer>>();
-		
-		outputs.add(new Triple<String, Integer, Integer>("D-Pad Outputs", 0, Substrate.OUTPUT_SUBSTRATE));
-		outputs.add(new Triple<String, Integer, Integer>("Button Output", 0, Substrate.OUTPUT_SUBSTRATE));
+		// This task only allows left/right movement, hence a 2 by 1 output substrate
+		outputs.add(new Triple<String, Integer, Integer>("D-Pad Outputs", 2, 1));
+		// This single output handles whether or not to shoot
+		outputs.add(new Triple<String, Integer, Integer>("Button Output", 1, 1));
 		
 		return outputs;
 	}
