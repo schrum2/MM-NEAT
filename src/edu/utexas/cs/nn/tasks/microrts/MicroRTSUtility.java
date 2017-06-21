@@ -12,6 +12,7 @@ import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.microrts.fitness.ProgressiveFitnessFunction;
 import edu.utexas.cs.nn.tasks.microrts.fitness.RTSFitnessFunction;
+import edu.utexas.cs.nn.tasks.microrts.fitness.WinLossFitnessFunction;
 import edu.utexas.cs.nn.util.MiscUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.datastructures.Triple;
@@ -33,7 +34,8 @@ import micro.rts.units.Unit;
 public class MicroRTSUtility {
 
 	public static final int WINDOW_LENGTH = 640;
-	private static boolean prog = Parameters.parameters.classParameter("microRTSFitnessFunction").equals(ProgressiveFitnessFunction.class);
+	private static boolean prog = Parameters.parameters.classParameter("microRTSFitnessFunction").equals(ProgressiveFitnessFunction.class) 
+							   || Parameters.parameters.classParameter("microRTSFitnessFunction").equals(WinLossFitnessFunction.class);
 	private static boolean coevolution;
 	
 	public final static int processingDepth = Parameters.parameters.integerParameter("HNProcessDepth"); //not used yet
@@ -115,34 +117,31 @@ public class MicroRTSUtility {
 				
 				assert previousCreatedUnitsIDSize <= createdUnitIDs2.size() : "createdUnitIDs2 decreased in size!!! "
 						+previousCreatedUnitsIDSize + " ==> " + createdUnitIDs2.size() + " T: " + currentCycle;
-				
 				assert createdUnitIDs2.size() > 0 : "units not found! createdUnitIDs2.size() did not find any units. T: " + currentCycle;
-//				System.out.print(createdUnitIDs1 + " : ");
 				
-				if((!base1Alive) && (!baseDeath1Recorded)) {
-					//					System.out.println("setting base up time 1: " + gs.getTime());
+				if((!base1Alive) && (!baseDeath1Recorded)) { //records base1 death time if the base was NOT the last unit destroyed
 					task.setBaseUpTime(gs.getTime(), 1);
 					baseDeath1Recorded = true;
 				}
-				if(!base2Alive && !baseDeath2Recorded && coevolution) {
+				if(!base2Alive && !baseDeath2Recorded && coevolution) { 
 					task.setBaseUpTime(gs.getTime(), 2);
 					baseDeath2Recorded = true;
 				}
 				currentCycle++;
 				averageUnitDifference += (unitDifferenceNow - averageUnitDifference) / (1.0*currentCycle); //incremental calculation of the avg.
-			} //end if(Parameters.. = progressive)
+			} //end if prog
 			gameover  = gs.cycle();
 			if(CommonConstants.watch) w.repaint();
-			// To Alive: remove the wait command below, but if you run the experiment,
-			// you will see that several states are evaluated on the first cycle, then
-			// several cycles pass with no eval, then another batch of evals happen.
-//			MiscUtil.waitForReadStringAndEnterKeyPress();
 		}while(!gameover && gs.getTime()< maxCycles);
-		ff.setGameEndTime(gs.getTime());
 		
+		ff.setGameEndTime(gs.getTime());
 		int terminalUnits1= 0;
 		int terminalUnits2= 0;
 		if(prog){ //count remaining units, update
+			if(!baseDeath1Recorded)
+				task.setBaseUpTime(gs.getTime(), 1);
+			if(!baseDeath2Recorded && coevolution)
+				task.setBaseUpTime(gs.getTime(), 2);
 			for(int i = 0; i < pgs.getWidth(); i++){
 				for(int j = 0; j < pgs.getHeight(); j++){
 					currentUnit = pgs.getUnitAt(i, j);
@@ -190,8 +189,6 @@ public class MicroRTSUtility {
 		//assume the unit is a worker
 		int id = (int) u.getID();
 		int player = u.getPlayer()+1; //+1 because this methods returns 0 or 1, but we want to use it as 1 or 2
-		//		System.out.println(workerWithResourceID + " , " + id + " , " + player);
-		//		System.out.println(u.getResources() + " already there?: " + !workerWithResourceID.contains(id));
 		if( (u.getPlayer() == 0 || coevolution) && u.getResources() >= 1 && !workerWithResourceID.contains(id))
 			workerWithResourceID.add(id);
 		else if(u.getResources() <= 0 && workerWithResourceID.contains(id)){

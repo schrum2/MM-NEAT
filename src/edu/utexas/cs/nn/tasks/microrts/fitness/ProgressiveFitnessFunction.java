@@ -35,7 +35,7 @@ public class ProgressiveFitnessFunction extends RTSFitnessFunction{
 			opponentFitness[2] = fitness[2] * -1; // * -1 because each players UnitDifference score will be the Reverse of the other's.
 			opponentFitness[3] = normalize(task.getPercentEnemiesDestroyed(2), 100);
 		}
-
+		
 		int winner = gs.winner(); //0:win 1:loss -1:tie
 		double[]other = new double[]{
 				(winner == 1 ? -1 : winner + 1), //changes 0:win, -1:tie, 1:loss  => 1:win 0:tie -1:loss (from ai1's perspective)
