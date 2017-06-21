@@ -42,6 +42,7 @@ public class MicroRTSUtility {
 	public final static int processingWidth = Parameters.parameters.integerParameter("HNProcessWidth"); //not used yet
 	
 	private static MicroRTSInformation task;
+	private static boolean stepByStep = Parameters.parameters.booleanParameter("stepByStep");
 
 	public static <T> ArrayList<Pair<double[], double[]>> oneEval(AI ai1, AI ai2, MicroRTSInformation mrtsInfo, RTSFitnessFunction ff, PhysicalGameStateJFrame w) {		
 		ArrayList<Integer> workerWithResourceID = new ArrayList<>(); //change to hashset		
@@ -82,6 +83,11 @@ public class MicroRTSUtility {
 				pa2 = ai2.getAction(1, gs); //throws exception
 				gs.issueSafe(pa2);
 			} catch (Exception e) { e.printStackTrace();System.exit(1); }
+			
+			if(stepByStep && currentCycle %2 == 0){
+				MiscUtil.waitForReadStringAndEnterKeyPress();
+			}
+			
 			pgs = gs.getPhysicalGameState(); //update after actions
 			if(prog){ //if our FitnessFunction needs us to record information throughout the game
 				currentUnit = null;	
