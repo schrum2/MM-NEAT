@@ -39,6 +39,12 @@ public class BoardGameUtil {
 		
 		// Each player plays as 1st, 2nd, etc.
 		for(int i = 0; i < bg.getNumPlayers(); i++){ // Cycles through the number of possible Player positions
+			if(CommonConstants.watch){
+				for(int j = 0; j < bg.getNumPlayers(); j++){
+					System.out.println("Player " + (j+1) + ": " + players[j]);
+				}
+			}
+			
 			// Reset game and fitness functions before each play
 			bg.reset();
 			for(BoardGameFitnessFunction fitFunct : fit){
