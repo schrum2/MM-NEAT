@@ -109,7 +109,7 @@ public class VizDoomTakeCoverTask<T extends Network> extends VizDoomTask<T> {
 	public List<Triple<String, Integer, Integer>> getOutputInfo() {
 		List<Triple<String, Integer, Integer>> outputs = new ArrayList<Triple<String, Integer, Integer>>();
 		
-		outputs.add(new Triple<String, Integer, Integer>("D-Pad Outputs", 0, Substrate.OUTPUT_SUBSTRATE));
+		outputs.add(new Triple<String, Integer, Integer>("D-Pad Outputs", 2, 1));
 		
 		return outputs;
 	}

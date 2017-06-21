@@ -128,8 +128,8 @@ public class VizDoomMyWayHomeTask<T extends Network> extends VizDoomTask<T> {
 	public List<Triple<String, Integer, Integer>> getOutputInfo() {
 		List<Triple<String, Integer, Integer>> outputs = new ArrayList<Triple<String, Integer, Integer>>();
 		
-		outputs.add(new Triple<String, Integer, Integer>("D-Pad Outputs", 0, Substrate.OUTPUT_SUBSTRATE));
-		outputs.add(new Triple<String, Integer, Integer>("C-Stick Outputs", 0, Substrate.OUTPUT_SUBSTRATE));
+		outputs.add(new Triple<String, Integer, Integer>("D-Pad Outputs", 3, 2));
+		outputs.add(new Triple<String, Integer, Integer>("C-Stick Outputs", 2, 1));
 		
 		return outputs;
 	}

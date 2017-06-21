@@ -133,8 +133,8 @@ public class VizDoomBasicShootTask<T extends Network> extends VizDoomTask<T> {
 	public List<Triple<String, Integer, Integer>> getOutputInfo() {
 		List<Triple<String, Integer, Integer>> outputs = new ArrayList<Triple<String, Integer, Integer>>();
 		
-		outputs.add(new Triple<String, Integer, Integer>("D-Pad Outputs", 0, Substrate.OUTPUT_SUBSTRATE));
-		outputs.add(new Triple<String, Integer, Integer>("Button Output", Substrate.OUTPUT_SUBSTRATE, 0));
+		outputs.add(new Triple<String, Integer, Integer>("D-Pad Outputs", 2, 1));
+		outputs.add(new Triple<String, Integer, Integer>("Button Output", 1, 1));
 		
 		return outputs;
 	}

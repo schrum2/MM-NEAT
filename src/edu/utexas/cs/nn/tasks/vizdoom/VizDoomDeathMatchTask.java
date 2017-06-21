@@ -137,11 +137,11 @@ public class VizDoomDeathMatchTask<T extends Network> extends VizDoomTask<T> {
 	public List<Triple<String, Integer, Integer>> getOutputInfo() {
 		List<Triple<String, Integer, Integer>> outputs = new ArrayList<Triple<String, Integer, Integer>>();
 		
-		outputs.add(new Triple<String, Integer, Integer>("D-Pad Outputs", 0, Substrate.OUTPUT_SUBSTRATE));
-		outputs.add(new Triple<String, Integer, Integer>("C-Stick Outputs", 0, Substrate.OUTPUT_SUBSTRATE));
-		outputs.add(new Triple<String, Integer, Integer>("Button Outputs", 0, Substrate.OUTPUT_SUBSTRATE));
-		outputs.add(new Triple<String, Integer, Integer>("Bumper Outputs", 0, Substrate.OUTPUT_SUBSTRATE));
-		outputs.add(new Triple<String, Integer, Integer>("Misc. Outputs", 0, Substrate.OUTPUT_SUBSTRATE));
+		outputs.add(new Triple<String, Integer, Integer>("D-Pad Outputs", 3, 3));
+		outputs.add(new Triple<String, Integer, Integer>("C-Stick Outputs", 2, 1));
+		outputs.add(new Triple<String, Integer, Integer>("Button Outputs", 3, 1));
+		outputs.add(new Triple<String, Integer, Integer>("Bumper Outputs", 2, 1));
+		outputs.add(new Triple<String, Integer, Integer>("Misc. Outputs", 3, 1));
 		
 		return outputs;
 	}
