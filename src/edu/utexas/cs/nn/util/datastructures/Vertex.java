@@ -42,9 +42,10 @@ public class Vertex extends Vector3d {
 	 * @return distance between two vertexes
 	 */
 	public double distance(Vertex vertex) {
-		Vertex oldV = new Vertex(this);
-		double newV = Math.sqrt((Math.pow(oldV.x, 2)-Math.pow(vertex.x, 2)) + ((Math.pow(oldV.y, 2)-Math.pow(vertex.y, 2)) + ((Math.pow(oldV.z, 2)-Math.pow(vertex.z, 2)))));
-		return newV;
+		Vertex copy = new Vertex(this); // copy this vertex
+		copy.sub(vertex); // subtract the other vertex from it
+		// copy is now a vector whose distance from origin is the distance between original points
+		return copy.length(); // distance of result vector
 	}
 	
 	
