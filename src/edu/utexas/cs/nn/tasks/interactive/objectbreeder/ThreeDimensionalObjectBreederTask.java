@@ -47,7 +47,7 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 
 	public static final int CPPN_NUM_INPUTS = 5;
 	public static final int CPPN_NUM_OUTPUTS = 1;
-	
+
 	//public static final int COLOR_CHOICE_INDEX = CHECKBOX_IDENTIFIER_START - CPPN_NUM_INPUTS - 5;
 	public static final Color[] COLORS = new Color[]{Color.RED, Color.GREEN, Color.BLUE, Color.GRAY, Color.YELLOW, Color.ORANGE, Color.PINK, Color.BLACK };
 
@@ -58,24 +58,22 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 	protected JSlider pauseLengthBetweenFrames;
 	protected JComboBox<String> colorChoice;
 	protected JComboBox<String> directionChoice;
-	
+
 	protected boolean vertical;
 
 	// For undo button
 	public HashMap<Long,List<Triangle>> previousShapes;
 	// Pre-load shapes for current generation
 	public HashMap<Long,List<Triangle>> shapes;
-	
+
 	double pitch = (Parameters.parameters.integerParameter("defaultPitch")/(double) MAX_ROTATION) * 2 * Math.PI; 
 	double heading = (Parameters.parameters.integerParameter("defaultHeading")/(double) MAX_ROTATION) * 2 * Math.PI;
 
 	public ThreeDimensionalObjectBreederTask() throws IllegalAccessException {
 		super(false);
 		Parameters.parameters.setInteger("defaultPause", 0);
-		Parameters.parameters.setInteger("defaultAnimationLength", (int) (AnimationUtil.FRAMES_PER_SEC * 3));
-		
+		Parameters.parameters.setInteger("defaultAnimationLength", (int) (AnimationUtil.FRAMES_PER_SEC * 3));	
 		vertical = false;
-
 		pitchValue = new JSlider(JSlider.HORIZONTAL, 0, MAX_ROTATION, Parameters.parameters.integerParameter("defaultPitch"));
 
 		Hashtable<Integer,JLabel> pitchLabels = new Hashtable<>();
@@ -113,8 +111,8 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 		pitch.add(pitchLabel);
 		pitch.add(pitchValue);
 
-		top.add(pitch);
-		
+
+
 		headingValue = new JSlider(JSlider.HORIZONTAL, 0, MAX_ROTATION, Parameters.parameters.integerParameter("defaultHeading"));
 
 		Hashtable<Integer,JLabel> headingLabels = new Hashtable<>();
@@ -137,7 +135,7 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 				JSlider source = (JSlider)e.getSource();
 				if(!source.getValueIsAdjusting()) {
 					int newLength = (int) source.getValue();
-					
+
 					heading = (newLength /(double) MAX_ROTATION) * 2 * Math.PI; 
 					// reset buttons
 					resetButtons();
@@ -153,12 +151,15 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 		heading.add(headingLabel);
 		heading.add(headingValue);
 
-		top.add(heading);
-		
+		if(!simplifiedInteractiveInterface) {
+			top.add(pitch);
+			top.add(heading);
+		}
+
 		String[] choices = { "Red", "Green", "Blue", "Grey","Yellow", "Orange", "Pink", "Black" };
-	    colorChoice = new JComboBox<String>(choices);
-	    colorChoice.setSize(40, 40);
-	    colorChoice.addItemListener(new ItemListener() {
+		colorChoice = new JComboBox<String>(choices);
+		colorChoice.setSize(40, 40);
+		colorChoice.addItemListener(new ItemListener() {
 
 			@SuppressWarnings("unchecked")
 			@Override
@@ -174,17 +175,17 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 				}
 				resetButtons();
 			}
-	    	
-	    });
-	    JPanel colorAndMovement = new JPanel();
-	    colorAndMovement.setLayout(new BoxLayout(colorAndMovement, BoxLayout.Y_AXIS));
-	    
-	    JPanel colorPanel = new JPanel();
-	    colorPanel.setLayout(new BoxLayout(colorPanel, BoxLayout.X_AXIS));
+
+		});
+		JPanel colorAndMovement = new JPanel();
+		colorAndMovement.setLayout(new BoxLayout(colorAndMovement, BoxLayout.Y_AXIS));
+
+		JPanel colorPanel = new JPanel();
+		colorPanel.setLayout(new BoxLayout(colorPanel, BoxLayout.X_AXIS));
 		JLabel colorLabel = new JLabel();
 		colorLabel.setText("Color of Objects: ");
-		
-		
+
+
 		String[] directionChoices = { "Horizontal", "Vertical" };
 		directionChoice = new JComboBox<String>(directionChoices);
 		directionChoice.setSize(40, 40);
@@ -201,9 +202,9 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 				}
 				resetButtons();
 			}
-	    	
-	    });
-		
+
+		});
+
 		JPanel directionPanel = new JPanel();
 		directionPanel.setLayout(new BoxLayout(directionPanel, BoxLayout.X_AXIS));
 		JLabel directionLabel = new JLabel();
@@ -212,12 +213,12 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 		colorPanel.add(colorChoice);
 		directionPanel.add(directionLabel);		
 		directionPanel.add(directionChoice);
-		
+
 		colorAndMovement.add(colorPanel);
 		colorAndMovement.add(directionPanel);
-		
+
 		top.add(colorAndMovement);
-		
+
 	}
 
 	public ArrayList<Score<TWEANN>> evaluateAll(ArrayList<Genotype<TWEANN>> population) {
@@ -229,13 +230,13 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 		}
 		return super.evaluateAll(population); // wait for user choices
 	}
-	
+
 	protected void setUndo() {
 		// Get the old shapes back
 		shapes = previousShapes;
 		super.setUndo();
 	}
-	
+
 	@Override
 	public String[] sensorLabels() {
 		return new String[] { "X-coordinate", "Y-coordinate", "Z-coordinate", "distance from center", "bias" };
@@ -260,7 +261,7 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 	public int numCPPNOutputs() {
 		return CPPN_NUM_OUTPUTS;
 	}
-	
+
 	@Override
 	protected BufferedImage getButtonImage(TWEANN phenotype, int width, int height, double[] inputMultipliers) {
 		//return Construct3DObject.rotationSequenceFromCPPN(phenotype, picSize, picSize, CUBE_SIDE_LENGTH, SHAPE_WIDTH, SHAPE_HEIGHT, SHAPE_DEPTH, COLOR,  0, 1, heading, pitch, getInputMultipliers())[0];
@@ -273,7 +274,7 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 		//if animation images are being saved as a gif, set background to black to avoid frame overlap
 		return ThreeDimensionalUtil.imagesFromTriangles(shapes.get(cppn.getId()), picSize, picSize, startFrame, endFrame, heading, pitch, beingSaved ? Color.BLACK : null, vertical);
 	}
-	
+
 	/**
 	 * Allows for quick and easy launching without saving any files
 	 * @param args

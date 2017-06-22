@@ -106,7 +106,7 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 	public AnimationBreederTask() throws IllegalAccessException {
 		this(true);
 	}
-	
+
 	/**
 	 * Constructor - all sliders are added here and mouse listening is enabled for hovering over the buttons
 	 * @throws IllegalAccessException
@@ -203,7 +203,7 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 		//Construction of JSlider for desired length of pause between each frame within an animation
 
 		pauseLengthBetweenFrames = new JSlider(JSlider.HORIZONTAL, Parameters.parameters.integerParameter("minPause"), Parameters.parameters.integerParameter("maxPause"), Parameters.parameters.integerParameter("defaultFramePause"));
-		
+
 		Hashtable<Integer,JLabel> framePauseLabels = new Hashtable<>();
 		pauseLengthBetweenFrames.setMinorTickSpacing(75);
 		pauseLengthBetweenFrames.setPaintTicks(true);
@@ -239,8 +239,9 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 		framePause.add(framePauseLabel);
 		framePause.add(pauseLengthBetweenFrames);
 
-
-		top.add(framePause);
+		if(!simplifiedInteractiveInterface) {
+			top.add(framePause);
+		}
 
 		//Enables MouseListener so that animation on a button will play when mouse is hovering over it
 		for(JButton button: buttons) {
@@ -328,7 +329,7 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 		clearAnimations(population.size());
 		return super.evaluateAll(population); // wait for user choices
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	private void clearAnimations(int num) {
 		// Load all Image arrays with animations
@@ -337,7 +338,7 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 			animations[i] = new ArrayList<BufferedImage>();
 		}		
 	}
-	
+
 	protected void setUndo() {
 		clearAnimations(scores.size());
 		super.setUndo();

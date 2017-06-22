@@ -52,7 +52,7 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 
 	public static final int CPPN_NUM_INPUTS	= 3;
 	public static final int CPPN_NUM_OUTPUTS = 1;
-	
+
 	private static final int MIDI_PLAY_BUTTON_INDEX = CHECKBOX_IDENTIFIER_START - CPPN_NUM_INPUTS; //index of button for MIDI playback
 	private static final int FILE_LOADER_BUTTON_INDEX = CHECKBOX_IDENTIFIER_START - CPPN_NUM_INPUTS - 1; //index for button to load new MIDI file
 	private static final int MIDI_PLAYBACK_TYPE_CHECKBOX_INDEX = CHECKBOX_IDENTIFIER_START - CPPN_NUM_INPUTS - 2; //index for type of MIDI playback
@@ -76,7 +76,7 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 	public BreedesizerTask(boolean justBreedesizer) throws IllegalAccessException {
 		super();
 		midiPlay = new AmplitudeArrayPlayer(); // no sequence to play
-		
+
 		//Construction of JSlider to determine length of generated CPPN amplitude
 		clipLength = new JSlider(JSlider.HORIZONTAL, Keyboard.NOTE_LENGTH_DEFAULT, Parameters.parameters.integerParameter("maxClipLength"), Parameters.parameters.integerParameter("clipLength"));
 		Hashtable<Integer,JLabel> labels = new Hashtable<>();
@@ -120,7 +120,7 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 			int defaultMultiplier = 100; //non-scaled default value - simply amplitude length multiplier
 			double scale = 100.0;
 			noteLengthScale = defaultMultiplier/scale; //no scaling by default
-			
+
 			//Construction of JSlider used to determine playback speed of MIDI file
 			speedOfMIDI = new JSlider(JSlider.HORIZONTAL, minMultiplier, maxMultiplier, defaultMultiplier);
 			Hashtable<Integer,JLabel> speedLabels = new Hashtable<>();
@@ -150,7 +150,7 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 
 			});
 			top.add(speedOfMIDI);
-			
+
 			//Construction of button that plays MIDI file with the selected CPPN(s)
 			JButton playWithMIDI = new JButton("PlayWithMIDI");
 			// Name is first available numeric label after the input disablers
@@ -161,14 +161,18 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 			fileLoadButton.setText("ChooseNewSound");
 			fileLoadButton.setName("" + FILE_LOADER_BUTTON_INDEX);
 			fileLoadButton.addActionListener(this);
-			top.add(fileLoadButton);
-			
+	
 			//JCheckbox to specify whether MIDI playback occurs with one CPPN or multiple CPPNs
 			MIDIPlaybackType = new JCheckBox("advancedMIDIPlayback", false);
 			MIDIPlaybackType.setName("" + MIDI_PLAYBACK_TYPE_CHECKBOX_INDEX);
 			MIDIPlaybackType.addActionListener(this);
 			MIDIPlaybackType.setForeground(new Color(0,0,0));
-			top.add(MIDIPlaybackType);		
+			
+			if(!simplifiedInteractiveInterface) {	
+				top.add(fileLoadButton);
+				top.add(MIDIPlaybackType);
+			}
+			
 		}		
 		initializationComplete = true;
 	}

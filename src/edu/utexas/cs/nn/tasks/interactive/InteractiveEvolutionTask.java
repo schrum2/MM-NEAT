@@ -126,11 +126,13 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 
 	protected Network currentCPPN;
 
-
+	
 	private JPanel topper;
 	protected JPanel top;
 
 	public LinkedList<Integer> selectedCPPNs;
+	
+	public boolean simplifiedInteractiveInterface = true;
 
 	/**
 	 * Default Constructor
@@ -361,36 +363,41 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 
 
 		//add graphics to title panel
-		top.add(lineageButton);
-		top.add(resetButton);
-		top.add(networkButton);
 		top.add(evolveButton);
-		top.add(saveButton);
-		top.add(undoButton);
+		top.add(saveButton);	
 		//top.add(closeButton);
 		top.add(mutationsPerGeneration);
-
-
+		
+		if(!simplifiedInteractiveInterface) {
+			//add additional action buttons
+			top.add(lineageButton);
+			top.add(resetButton);
+			top.add(networkButton);
+			top.add(undoButton);
+			
+			//add activation function checkboxes
+			bottom.add(halfLinear);
+			bottom.add(absVal);
+			bottom.add(sawtooth);
+			bottom.add(sine);
+			bottom.add(gaussian);
+			bottom.add(sigmoid);
+			bottom.add(tanh);
+			bottom.add(id);
+			bottom.add(fullApprox);
+			bottom.add(approx);
+			bottom.add(stretchTanh);
+			bottom.add(ReLU);
+			bottom.add(Softplus);
+			bottom.add(LeakyReLU);
+			bottom.add(fullSawtooth);
+			bottom.add(triangleWave);
+			bottom.add(squareWave);
+			
+			
+		}
+		
 		topper.add(top);
-
-		bottom.add(halfLinear);
-		bottom.add(absVal);
-		bottom.add(sawtooth);
-		bottom.add(sine);
-		bottom.add(gaussian);
-		bottom.add(sigmoid);
-		bottom.add(tanh);
-		bottom.add(id);
-		bottom.add(fullApprox);
-		bottom.add(approx);
-		bottom.add(stretchTanh);
-		bottom.add(ReLU);
-		bottom.add(Softplus);
-		bottom.add(LeakyReLU);
-		bottom.add(fullSawtooth);
-		bottom.add(triangleWave);
-		bottom.add(squareWave);
-
 		topper.add(bottom);
 		panels.add(topper);
 		//adds button panels
@@ -402,7 +409,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		//adds buttons to button panels
 		int x = 0;//used to keep track of index of button panel
 		addButtonsToPanel(x++);
-
+		//add input checkboxes
 		inputCheckBoxes();
 	}
 
@@ -420,7 +427,9 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 			inputEffect.setName("" + (CHECKBOX_IDENTIFIER_START - i));
 			inputEffect.addActionListener(this);
 			inputEffect.setForeground(new Color(0,0,0));
-			top.add(inputEffect);
+			if(!simplifiedInteractiveInterface) {
+				top.add(inputEffect);
+			}		
 		}
 	}
 
