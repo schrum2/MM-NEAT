@@ -46,12 +46,9 @@ public class BoardGameBenchmarkBestExperiment<T extends Network, S extends Board
 	@SuppressWarnings("unchecked")
 	@Override
 	public void init() {
-		
-		/*
-		 * Copied from: LoadAndWatchExperiment
-		 */
+
 		String lastSavedDir = Parameters.parameters.stringParameter("lastSavedDirectory");
-		// Currently does not work with co-evolution. Other experiments handle these cases
+		
 		this.task = (SinglePopulationTask<T>) MMNEAT.task;
 		if (lastSavedDir == null || lastSavedDir.equals("")) {
 			System.out.println("Nothing to load");
@@ -68,9 +65,7 @@ public class BoardGameBenchmarkBestExperiment<T extends Network, S extends Board
 				String dir = FileUtilities.getSaveDirectory() + "/bestObjectives";
 				population = PopulationUtil.load(dir);
 			}
-			}
-		
-		// End section from LoadAndWatchExperiment
+		}
 		
 		try {
 			bg = (BoardGame<S>) ClassCreation.createObject("boardGame");

@@ -45,10 +45,7 @@ public class BoardGameBenchmarkAllPopExperiment<T extends Network, S extends Boa
 	@SuppressWarnings("unchecked")
 	@Override
 	public void init() {
-		
-		/*
-		 * Copied from: LoadAndWatchExperiment
-		 */
+
 		String lastSavedDir = Parameters.parameters.stringParameter("lastSavedDirectory");
 
 		this.task = (SinglePopulationTask<T>) MMNEAT.task;
@@ -59,8 +56,6 @@ public class BoardGameBenchmarkAllPopExperiment<T extends Network, S extends Boa
 			System.out.println("Loading: " + lastSavedDir);
 			population = PopulationUtil.load(lastSavedDir);
 			}
-		
-		// End section from LoadAndWatchExperiment
 		
 		try {
 			bg = (BoardGame<S>) ClassCreation.createObject("boardGame");
