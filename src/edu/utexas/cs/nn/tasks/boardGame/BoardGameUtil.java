@@ -72,6 +72,11 @@ public class BoardGameUtil {
 
 			if(CommonConstants.watch){ // Prints out the list of Winners at the end of a visual evaluation
 				System.out.println("Winner(s): " + bg.getWinners());
+				if(bg instanceof TwoDimensionalBoardGame){
+					for(int j = 0; j < bg.getNumPlayers(); j++){
+						System.out.println("Player " + (j+1) + " Pieces: " + ((TwoDimensionalBoardGame) bg).pieceCount(j));
+					}
+				}
 			}
 			
 			if(CommonConstants.watch && bg instanceof TwoDimensionalBoardGame){ // Renders the last Move of the game
@@ -111,6 +116,12 @@ public class BoardGameUtil {
 					}
 					MMNEAT.evalReport.log(""); // Creates some space between Players
 				}
+				MMNEAT.evalReport.log("\n\tWinners (by Index): " + bg.getWinners()); // Logs Winners
+				if(bg instanceof TwoDimensionalBoardGame){
+					for(int j = 0; j < bg.getNumPlayers(); j++){
+						MMNEAT.evalReport.log("\tPlayer " + (j+1) + " Pieces: " + ((TwoDimensionalBoardGame) bg).pieceCount(j));
+					}
+				}
 				MMNEAT.evalReport.log("\n"); // Creates some space between Matches
 			}
 			
@@ -122,7 +133,7 @@ public class BoardGameUtil {
 		}
 		
 		if (MMNEAT.evalReport != null){
-			MMNEAT.evalReport.log("\n"); // Creates some space between Evals
+			MMNEAT.evalReport.log("\n\n"); // Creates some space between Evals
 		}
 		
 //		System.out.println(Arrays.deepToString(fitnesses));

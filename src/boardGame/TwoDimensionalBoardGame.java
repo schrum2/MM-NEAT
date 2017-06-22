@@ -86,7 +86,15 @@ public abstract class TwoDimensionalBoardGame<T extends TwoDimensionalBoardGameS
 		board = (T) startingBoard.copy();
 	}
 
-	
+	/**
+	 * Returns the number of Pieces a given Player has
+	 * 
+	 * @param index Index of the Player whose Pieces are being counted
+	 * @return Number of Pieces on the Board that correspond to that Player
+	 */
+	public int pieceCount(int index){
+		return board.numberOfPieces(index);
+	}
 
 	/**
 	 * Returns the current BoardGameState
