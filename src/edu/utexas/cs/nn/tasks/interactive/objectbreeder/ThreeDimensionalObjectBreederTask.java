@@ -2,6 +2,9 @@ package edu.utexas.cs.nn.tasks.interactive.objectbreeder;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.image.BufferedImage;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -10,6 +13,8 @@ import java.util.Hashtable;
 import java.util.List;
 
 import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
@@ -40,16 +45,20 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 	public static final int SHAPE_WIDTH = 10;
 	public static final int SHAPE_HEIGHT = 15; //20;
 	public static final int SHAPE_DEPTH = 10;
-	public static final Color COLOR = Color.RED;
+	public Color color = Color.RED;
 
 	public static final int CPPN_NUM_INPUTS = 5;
 	public static final int CPPN_NUM_OUTPUTS = 1;
+	
+	//public static final int COLOR_CHOICE_INDEX = CHECKBOX_IDENTIFIER_START - CPPN_NUM_INPUTS - 5;
+	public static final Color[] COLORS = new Color[]{Color.RED, Color.GREEN, Color.BLUE, Color.GRAY, Color.YELLOW, Color.ORANGE, Color.PINK, Color.BLACK };
 
 	public static final int MAX_ROTATION = 360;
 
 	protected JSlider pitchValue;
 	protected JSlider headingValue;
 	protected JSlider pauseLengthBetweenFrames;
+	protected JComboBox<String> colorChoice;
 
 	// For undo button
 	public HashMap<Long,List<Triangle>> previousShapes;
@@ -62,6 +71,7 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 	public ThreeDimensionalObjectBreederTask() throws IllegalAccessException {
 		super(false);
 		Parameters.parameters.setInteger("defaultPause", 0);
+		Parameters.parameters.setInteger("defaultAnimationLength", (int) (AnimationUtil.FRAMES_PER_SEC * 3));
 
 		pitchValue = new JSlider(JSlider.HORIZONTAL, 0, MAX_ROTATION, Parameters.parameters.integerParameter("defaultPitch"));
 
@@ -140,6 +150,34 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 		heading.add(headingValue);
 
 		top.add(heading);
+		
+		String[] choices = { "Red", "Green", "Blue", "Grey","Yellow", "Orange", "Pink", "Black" };
+	    colorChoice = new JComboBox<String>(choices);
+	    colorChoice.addItemListener(new ItemListener() {
+
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				JComboBox<String> source = (JComboBox<String>)e.getSource();
+				int index = source.getSelectedIndex();
+				color = COLORS[index];
+				// change colors of triangles
+				for(List<Triangle> tris: shapes.values()) {
+					for(Triangle t: tris) {
+						t.color = color;
+					}
+				}
+				resetButtons();
+			}
+	    	
+	    });
+	    JPanel color = new JPanel();
+		JLabel colorLabel = new JLabel();
+		colorLabel.setText("Color of Objects: ");
+		color.add(colorLabel);
+		color.add(colorChoice);
+		
+		top.add(color);
+		
 	}
 
 	public ArrayList<Score<TWEANN>> evaluateAll(ArrayList<Genotype<TWEANN>> population) {
@@ -147,7 +185,7 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 		previousShapes = shapes;
 		shapes = new HashMap<Long,List<Triangle>>();
 		for(Genotype<TWEANN> g : population) {
-			shapes.put(g.getId(), ThreeDimensionalUtil.trianglesFromCPPN(g.getPhenotype(), picSize, picSize, CUBE_SIDE_LENGTH, SHAPE_WIDTH, SHAPE_HEIGHT, SHAPE_DEPTH, COLOR, getInputMultipliers()));
+			shapes.put(g.getId(), ThreeDimensionalUtil.trianglesFromCPPN(g.getPhenotype(), picSize, picSize, CUBE_SIDE_LENGTH, SHAPE_WIDTH, SHAPE_HEIGHT, SHAPE_DEPTH, color, getInputMultipliers()));
 		}
 		return super.evaluateAll(population); // wait for user choices
 	}
@@ -192,12 +230,19 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 
 	@Override
 	protected BufferedImage[] getAnimationImages(TWEANN cppn, int startFrame, int endFrame, boolean beingSaved) {
-		// For rotating the 3D object, we ignore the endFrame from the animation breeder
-		endFrame = (int) (AnimationUtil.FRAMES_PER_SEC * 3); // 3 seconds worth of animation
-		//return Construct3DObject.rotationSequenceFromCPPN(cppn, picSize, picSize, CUBE_SIDE_LENGTH, SHAPE_WIDTH, SHAPE_HEIGHT, SHAPE_DEPTH, COLOR,  startFrame, endFrame, heading, pitch, getInputMultipliers());
 		//TODO: if beingSaved == true, set all image backgrounds to black
 		return ThreeDimensionalUtil.imagesFromTriangles(shapes.get(cppn.getId()), picSize, picSize, startFrame, endFrame, heading, pitch);
 	}
+	
+//	@Override
+//	protected void respondToClick(int itemID) {
+//		super.respondToClick(itemID);
+//		if(itemID == COLOR_CHOICE_INDEX) {
+//			int index = colorChoice.getSelectedIndex();
+//			color = COLORS[index];
+//			resetButtons();
+//		}
+//	}
 
 	/**
 	 * Allows for quick and easy launching without saving any files

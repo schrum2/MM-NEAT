@@ -307,11 +307,11 @@ public class ThreeDimensionalUtil {
 	 * @return Array of BufferedImages that can be played as an animation of a 3D object
 	 */
 	public static BufferedImage[] imagesFromTriangles(List<Triangle> tris, int imageWidth, int imageHeight, int startTime, int endTime, double heading, double pitch) {
-		BufferedImage[] images = new BufferedImage[(endTime-startTime)+1];
-		for(int i = startTime; i <= endTime; i++) {
-			// We're not clear why 4pi is used here instead of 2pi
+		BufferedImage[] images = new BufferedImage[(endTime-startTime)];
+		for(int i = startTime; i < endTime; i++) {
 			// Causes slight twitch at end of each rotation sequence
-			images[i-startTime] = getImage(tris, imageWidth, imageHeight, heading + (4*Math.PI*i)/images.length, pitch);
+			double newHeading = heading + (2*Math.PI*i)/images.length;
+			images[i-startTime] = getImage(tris, imageWidth, imageHeight, newHeading, pitch);
 		}
 		return images;
 	}
