@@ -129,7 +129,7 @@ public class HallOfFame<T> {
 	 * @param numChamps Number of Random Champions to return
 	 * @return List of Genotypes from the Random Champions
 	 */
-	public List<Genotype<T>> getRandomPastXGenChamps(int numGens, int numChamps){
+	public List<Genotype<T>> getXRandomPastYGenChamps(int numGens, int numChamps){
 		List<Genotype<T>> possChamp = new ArrayList<Genotype<T>>();
 		
 		// Adds the List of Genotypes from the previous X generations
