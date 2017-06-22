@@ -26,6 +26,10 @@ public class NNBoardGameHeuristic<T extends Network, S extends BoardGameState> i
 		return ID;
 	}
 	
+	public String toString() {
+		return this.getClass().getSimpleName() + ", ID = " + ID;
+	}
+	
 	@Override
 	public double heuristicEvalution(S current) {
 //		if(Parameters.parameters.booleanParameter("stepByStep")){

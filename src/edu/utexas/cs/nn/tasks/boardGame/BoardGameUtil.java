@@ -98,12 +98,31 @@ public class BoardGameUtil {
 						otherScores[k][i][j-1] = (1.0*fit.get(j).getFitness(players[k], playerIndex)); // Gets all Scores except the first one
 					}
 				}
+				
 			}
+			
+			if (MMNEAT.evalReport != null) {
+				MMNEAT.evalReport.log("   Match " + (i+1) + ": \n");
+				for(int j = 0; j < bg.getNumPlayers(); j++){ // Cycles through the Players
+					MMNEAT.evalReport.log("\tPlayer " + (j+1) + ": " + players[j]);
+					MMNEAT.evalReport.log("\t   Fitness Score: " + fit.get(0).getFitnessName() + ": " + fitnesses[j][i][0]);
+					for(int k = 1; k < fit.size(); k++){ // Cycles through the Other Scores
+						MMNEAT.evalReport.log("\t   Other Score: " + fit.get(k-1).getFitnessName() + ": " + otherScores[j][i][k-1]);
+					}
+					MMNEAT.evalReport.log(""); // Creates some space between Players
+				}
+				MMNEAT.evalReport.log("\n"); // Creates some space between Matches
+			}
+			
 			// Restore original watch value
 			CommonConstants.watch = originalWatch;
 			stepByStep = originalStepByStep;
 			// Shift the player order
 			ArrayUtil.rotateRight(players, 1);
+		}
+		
+		if (MMNEAT.evalReport != null){
+			MMNEAT.evalReport.log("\n"); // Creates some space between Evals
 		}
 		
 //		System.out.println(Arrays.deepToString(fitnesses));
