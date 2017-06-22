@@ -114,11 +114,9 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 				boardIndex =  i + j * pgs.getHeight(); 
 				current = pgs.getUnitAt(i, j);
 				assert !(isTerrain && (current != null)): "there appears to be both a unit AND a wall at: " + i + " , " + j;
-				System.out.println("now: " + i + " " + j);
 				inputs = populateSubstratesWith(current, isTerrain, inputs, boardIndex);
 			}//end i : width
 		}//end j : height
-		System.out.println("game state to array done");
 		return inputs;
 	}
 
@@ -221,17 +219,13 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 		}
 		double[] pathSub = new double[pgs.getWidth()*pgs.getHeight()];
 		if(areSubsActive[path]){
-			System.out.println("now in there 1");
 			appropriateSubstrates.add(numCurrentSubs);
 			subIDs.add(path);
 			if(u != null && u.getType().name.equals("Base")){
 				activate(location, 1, pathSub, pgs.getWidth());
-				System.out.println("now in there 2");
-			} else if(isTerrain){
-				activate(location, -1, pathSub, pgs.getWidth());
+			} else if(isTerrain){			activate(location, -1, pathSub, pgs.getWidth());
 			}
 		}
-		System.out.println("now ouuta there");
 		for(int i = 0; i < appropriateSubstrates.size(); i++){
 			int indexWithinAll = (substrateSize * appropriateSubstrates.get(i)) + location;
 			int subID = subIDs.get(i);
@@ -258,7 +252,6 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 		} else {
 			if(value <= sub[location]) //discontinue if value is < whats already there
 				return sub;
-			
 			sub[location] = value;
 			sub = activate(location+1, value*(base_gradient_discount_rate), sub, width); //right
 			sub = activate(location-1, value*(base_gradient_discount_rate), sub, width); //left
