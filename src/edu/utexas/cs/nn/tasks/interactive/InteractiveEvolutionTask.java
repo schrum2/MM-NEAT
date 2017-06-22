@@ -72,7 +72,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	private static final int EVOLVE_BUTTON_INDEX = -1;
 	private static final int SAVE_BUTTON_INDEX = -2;
 	private static final int RESET_BUTTON_INDEX = -3;
-	private static final int CLOSE_BUTTON_INDEX	= -4;
+	//private static final int CLOSE_BUTTON_INDEX	= -4;
 	private static final int LINEAGE_BUTTON_INDEX = -5;
 	private static final int NETWORK_BUTTON_INDEX = -6;
 	private static final int UNDO_BUTTON_INDEX = -7;
@@ -194,8 +194,8 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		ImageIcon evolve = new ImageIcon("data\\picbreeder\\arrow.png");
 		Image evolve2 = evolve.getImage().getScaledInstance(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT, 1);
 
-		ImageIcon close = new ImageIcon("data\\picbreeder\\quit.png");
-		Image close2 = close.getImage().getScaledInstance(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT, 1);
+		//ImageIcon close = new ImageIcon("data\\picbreeder\\quit.png");
+		//Image close2 = close.getImage().getScaledInstance(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT, 1);
 
 		ImageIcon lineage = new ImageIcon("data\\picbreeder\\lineage.png");
 		Image lineage2 = lineage.getImage().getScaledInstance(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT, 1);
@@ -209,7 +209,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		JButton resetButton = new JButton(new ImageIcon(reset2));
 		JButton saveButton = new JButton(new ImageIcon(save2));
 		JButton evolveButton = new JButton(new ImageIcon(evolve2));
-		JButton closeButton = new JButton(new ImageIcon(close2));
+		//JButton closeButton = new JButton(new ImageIcon(close2));
 		JButton lineageButton = new JButton(new ImageIcon(lineage2));
 		JButton networkButton = new JButton(new ImageIcon(network2));
 		JButton undoButton = new JButton( new ImageIcon(undo2));
@@ -221,7 +221,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		lineageButton.setPreferredSize(new Dimension(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT));
 		networkButton.setPreferredSize(new Dimension(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT));
 		undoButton.setPreferredSize(new Dimension(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT));
-		closeButton.setPreferredSize(new Dimension(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT));
+		//closeButton.setPreferredSize(new Dimension(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT));
 
 		resetButton.setText("Reset");
 		saveButton.setText("Save");
@@ -229,7 +229,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		lineageButton.setText("Lineage");
 		networkButton.setText("Network");
 		undoButton.setText("Undo");
-		closeButton.setText("Close");
+		//closeButton.setText("Close");
 
 		//instantiates activation function checkboxes
 		JCheckBox sigmoid = new JCheckBox("sigmoid", CommonConstants.includeSigmoidFunction);
@@ -278,8 +278,8 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		saveButton.setToolTipText("Save button");
 		resetButton.setName("" + RESET_BUTTON_INDEX);
 		resetButton.setToolTipText("Reset button");
-		closeButton.setName("" + CLOSE_BUTTON_INDEX);
-		closeButton.setToolTipText("Close button");
+		//closeButton.setName("" + CLOSE_BUTTON_INDEX);
+		//closeButton.setToolTipText("Close button");
 		lineageButton.setName("" + LINEAGE_BUTTON_INDEX);
 		lineageButton.setToolTipText("Lineage button");
 		networkButton.setName("" + NETWORK_BUTTON_INDEX);
@@ -316,7 +316,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		resetButton.addActionListener(this);
 		saveButton.addActionListener(this);
 		evolveButton.addActionListener(this);
-		closeButton.addActionListener(this);
+		//closeButton.addActionListener(this);
 		lineageButton.addActionListener(this);
 		networkButton.addActionListener(this);
 		undoButton.addActionListener(this);
@@ -367,7 +367,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		top.add(evolveButton);
 		top.add(saveButton);
 		top.add(undoButton);
-		top.add(closeButton);
+		//top.add(closeButton);
 		top.add(mutationsPerGeneration);
 
 
@@ -774,8 +774,8 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		} else if(itemID == SQUARE_WAVE_CHECKBOX_INDEX) {
 			setActivationFunctionCheckBox(activation[Math.abs(SQUARE_WAVE_CHECKBOX_INDEX)], SQUARE_WAVE_CHECKBOX_INDEX, "includeSquareWaveFunction");
 			System.out.println("param square wave now set to: " + Parameters.parameters.booleanParameter("includeSquareWaveFunction"));
-		} else if(itemID == CLOSE_BUTTON_INDEX) {//If close button clicked
-			System.exit(0);
+		//} else if(itemID == CLOSE_BUTTON_INDEX) {//If close button clicked
+		//	System.exit(0);
 		} else if(itemID == RESET_BUTTON_INDEX) {//If reset button clicked
 			reset();
 		} else if(itemID == SAVE_BUTTON_INDEX && BooleanUtil.any(chosen)) { //If save button clicked
