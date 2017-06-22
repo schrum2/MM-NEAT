@@ -23,6 +23,7 @@ import micro.rts.units.Unit;
 public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluationFunction<T> {
 	
 	private int numSubstrates;
+	private int substrateSize;
 	
 	private int smudgeSize = Parameters.parameters.integerParameter("microRTSInputSize"); //TODO use
 	
@@ -103,7 +104,7 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 	@Override
 	protected double[] gameStateToArray(GameState gs) {
 		pgs = gs.getPhysicalGameState();
-		int substrateSize = pgs.getHeight()*pgs.getWidth();
+		substrateSize = pgs.getHeight()*pgs.getWidth();
 		double[] inputs = new double[substrateSize * numSubstrates];
 		Unit current = null;
 		int boardIndex;
@@ -113,9 +114,11 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 				boardIndex =  i + j * pgs.getHeight(); 
 				current = pgs.getUnitAt(i, j);
 				assert !(isTerrain && (current != null)): "there appears to be both a unit AND a wall at: " + i + " , " + j;
-				inputs = populateSubstratesWith(current, isTerrain, inputs, substrateSize, boardIndex);
+				System.out.println("now: " + i + " " + j);
+				inputs = populateSubstratesWith(current, isTerrain, inputs, boardIndex);
 			}//end i : width
 		}//end j : height
+		System.out.println("game state to array done");
 		return inputs;
 	}
 
@@ -134,7 +137,7 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 	 * @return double[] input as substrates, but with the unit added at location for every appropriate substrate
 	 * 
 	 */
-	private double[] populateSubstratesWith(Unit u, boolean isTerrain, double[] substrates, int substrateSize, int location){
+	private double[] populateSubstratesWith(Unit u, boolean isTerrain, double[] substrates, int location){
 		ArrayList<Integer> appropriateSubstrates = new ArrayList<>();
 		ArrayList<Integer> subIDs = new ArrayList<>(); //ends up that indexes correspond to appropriateSubstrates, and data corresponds to globals
 		int numCurrentSubs = 0;
@@ -218,27 +221,29 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 		}
 		double[] pathSub = new double[pgs.getWidth()*pgs.getHeight()];
 		if(areSubsActive[path]){
+			System.out.println("now in there 1");
 			appropriateSubstrates.add(numCurrentSubs);
 			subIDs.add(path);
 			if(u != null && u.getType().name.equals("Base")){
 				activate(location, 1, pathSub, pgs.getWidth());
+				System.out.println("now in there 2");
 			} else if(isTerrain){
 				activate(location, -1, pathSub, pgs.getWidth());
 			}
 		}
-		
+		System.out.println("now ouuta there");
 		for(int i = 0; i < appropriateSubstrates.size(); i++){
 			int indexWithinAll = (substrateSize * appropriateSubstrates.get(i)) + location;
 			int subID = subIDs.get(i);
 			if(subID == path){//replace current substrate with pathSub
 				int subStart = indexWithinAll - location;
 				for(int j = subStart; j < subStart + substrateSize; j++){
-					substrates[subStart + j] = pathSub[j]; 
+					substrates[j] = pathSub[j - subStart]; 
 				}
 			} else {
 				substrates[indexWithinAll] = getWeightedValue(subID , u, isTerrain); //typical way inputs are activated
 			}
-		} 
+		}
 		return substrates;
 	}
 	
@@ -246,9 +251,14 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 		if(value == -1){ //terrain
 			sub[location] = -1;
 			return sub;
-		} else if(value <= .05) { //base case
+		} else if(value <= .05) { //base case: trail too dim to matter.
+			return sub;
+		} else if(location < 0 || location > substrateSize - 1) { //base case: out of bounds
 			return sub;
 		} else {
+			if(value <= sub[location]) //discontinue if value is < whats already there
+				return sub;
+			
 			sub[location] = value;
 			sub = activate(location+1, value*(base_gradient_discount_rate), sub, width); //right
 			sub = activate(location-1, value*(base_gradient_discount_rate), sub, width); //left
