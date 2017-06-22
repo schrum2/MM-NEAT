@@ -57,7 +57,9 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 		}
 
 		public void run() {
-
+			if(showNetwork) {
+				stopAnimation();
+			}
 			int end = Parameters.parameters.integerParameter("defaultAnimationLength");
 			//adds images to array at index of specified button (imageID)
 			if(animations[imageID].size() < Parameters.parameters.integerParameter("defaultAnimationLength")) {
@@ -319,7 +321,6 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 	@Override
 	protected void additionalButtonClickAction(int scoreIndex, Genotype<T> individual) {
 		// do nothing
-
 	}
 
 	public ArrayList<Score<T>> evaluateAll(ArrayList<Genotype<T>> population) {
