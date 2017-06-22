@@ -51,6 +51,9 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 	protected JSlider headingValue;
 	protected JSlider pauseLengthBetweenFrames;
 
+	// For undo button
+	public HashMap<Long,List<Triangle>> previousShapes;
+	// Pre-load shapes for current generation
 	public HashMap<Long,List<Triangle>> shapes;
 	
 	double pitch = (Parameters.parameters.integerParameter("defaultPitch")/(double) MAX_ROTATION) * 2 * Math.PI; 
@@ -141,11 +144,18 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 
 	public ArrayList<Score<TWEANN>> evaluateAll(ArrayList<Genotype<TWEANN>> population) {
 		// Load all shapes in advance
+		previousShapes = shapes;
 		shapes = new HashMap<Long,List<Triangle>>();
 		for(Genotype<TWEANN> g : population) {
 			shapes.put(g.getId(), ThreeDimensionalUtil.trianglesFromCPPN(g.getPhenotype(), picSize, picSize, CUBE_SIDE_LENGTH, SHAPE_WIDTH, SHAPE_HEIGHT, SHAPE_DEPTH, COLOR, getInputMultipliers()));
 		}
 		return super.evaluateAll(population); // wait for user choices
+	}
+	
+	protected void setUndo() {
+		// Get the old shapes back
+		shapes = previousShapes;
+		super.setUndo();
 	}
 	
 	@Override
@@ -183,7 +193,7 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 	@Override
 	protected BufferedImage[] getAnimationImages(TWEANN cppn, int startFrame, int endFrame, boolean beingSaved) {
 		// For rotating the 3D object, we ignore the endFrame from the animation breeder
-		endFrame = (int) (AnimationUtil.FRAMES_PER_SEC * 4); // 4 seconds worth of animation
+		endFrame = (int) (AnimationUtil.FRAMES_PER_SEC * 3); // 3 seconds worth of animation
 		//return Construct3DObject.rotationSequenceFromCPPN(cppn, picSize, picSize, CUBE_SIDE_LENGTH, SHAPE_WIDTH, SHAPE_HEIGHT, SHAPE_DEPTH, COLOR,  startFrame, endFrame, heading, pitch, getInputMultipliers());
 		//TODO: if beingSaved == true, set all image backgrounds to black
 		return ThreeDimensionalUtil.imagesFromTriangles(shapes.get(cppn.getId()), picSize, picSize, startFrame, endFrame, heading, pitch);
@@ -195,7 +205,7 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 	 */
 	public static void main(String[] args) {
 		try {
-			MMNEAT.main(new String[]{"runNumber:5","randomSeed:5","trials:1","mu:16","maxGens:500","io:false","netio:false","mating:true","task:edu.utexas.cs.nn.tasks.interactive.objectbreeder.ThreeDimensionalObjectBreederTask","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3","cleanFrequency:-1","recurrency:false","ea:edu.utexas.cs.nn.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:500","imageHeight:500","imageSize:200"});
+			MMNEAT.main(new String[]{"runNumber:5","randomSeed:5","trials:1","mu:16","maxGens:500","io:false","netio:false","mating:true","task:edu.utexas.cs.nn.tasks.interactive.objectbreeder.ThreeDimensionalObjectBreederTask","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3","cleanFrequency:-1","recurrency:false","ea:edu.utexas.cs.nn.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:500","imageHeight:500","imageSize:200","defaultFramePause:50"});
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}

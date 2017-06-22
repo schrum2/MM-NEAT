@@ -923,10 +923,10 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	 * undoes previous evolution call
 	 * NOT COMPLETE
 	 */
-	private void setUndo() {
+	protected void setUndo() {
 		scores = new ArrayList<Score<T>>();
 		for(int i = 0; i < previousScores.size(); i++) {
-			System.out.println("score size " + scores.size() + " previousScores size " + previousScores.size() + " buttons size " + buttons.size() + " i " + i);
+			//System.out.println("score size " + scores.size() + " previousScores size " + previousScores.size() + " buttons size " + buttons.size() + " i " + i);
 			resetButton(previousScores.get(i).individual, i);
 		}
 	}
