@@ -4,8 +4,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
+import edu.utexas.cs.nn.evolution.halloffame.HallOfFame;
 import edu.utexas.cs.nn.parameters.CommonConstants;
+import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.scores.MultiObjectiveScore;
 import edu.utexas.cs.nn.scores.Score;
 import edu.utexas.cs.nn.util.ClassCreation;
@@ -17,6 +20,7 @@ import edu.utexas.cs.nn.util.stats.Statistic;
 public abstract class SinglePopulationCoevolutionTask<T> implements SinglePopulationTask<T>{
 
 	private Statistic stat;
+	private HallOfFame<T> hall;
 
 	public SinglePopulationCoevolutionTask() {
 		try {
@@ -24,7 +28,10 @@ public abstract class SinglePopulationCoevolutionTask<T> implements SinglePopula
 		} catch (NoSuchMethodException ex) {
 			ex.printStackTrace();
 			System.exit(1);
-		}		
+		}
+		if(Parameters.parameters.booleanParameter("hallOfFame")){
+			hall = new HallOfFame<T>();
+		}
 	}
 	
 	//most tasks dont need to do anything here,
@@ -156,6 +163,14 @@ public abstract class SinglePopulationCoevolutionTask<T> implements SinglePopula
 		
 		if (CommonConstants.netio) {
 			PopulationUtil.saveBestOfCurrentGen(bestObjectives, bestGenotypes, bestScores);
+		}
+		
+		if(hall != null){
+			List<Genotype<T>> champs = new ArrayList<Genotype<T>>();
+			for(Genotype<T> gene : bestGenotypes){
+				champs.add(gene);
+			}
+			hall.addChampions(MMNEAT.ea.currentGeneration(), champs);
 		}
 		
 		return scores;

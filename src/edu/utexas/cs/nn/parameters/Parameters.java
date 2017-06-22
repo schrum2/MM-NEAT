@@ -628,6 +628,7 @@ public class Parameters {
 		booleanOptions.add("microRTSGrowingEnemySet", false, "adds multiple enemies to a trial instead of cycling through them by generation");
 		booleanOptions.add("hybrID", false, "Indicates whether HybrID is running or not");
 		booleanOptions.add("offsetHybrID", false, "Determines whether to implement preset-switch version of HybrID or offset version of HybrID");
+		booleanOptions.add("hallOfFame", false, "Creates a Hall Of Fame during Single Population Coevolution");
 		// Double parameters
 		doubleOptions.add("inheritProportion", 0.4, "Portion of a parent's fitness that contributes to child fitness (with inheritFitness, as in LEEA)");
 		doubleOptions.add("linkExpressionThreshold", 0.2, "Threshold for hyperNEAT output to result in an expressed link");
