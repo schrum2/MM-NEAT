@@ -15,6 +15,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -57,6 +58,8 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 	protected JSlider headingValue;
 	protected JSlider pauseLengthBetweenFrames;
 	protected JComboBox<String> colorChoice;
+	
+	protected boolean vertical;
 
 	// For undo button
 	public HashMap<Long,List<Triangle>> previousShapes;
@@ -70,6 +73,8 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 		super(false);
 		Parameters.parameters.setInteger("defaultPause", 0);
 		Parameters.parameters.setInteger("defaultAnimationLength", (int) (AnimationUtil.FRAMES_PER_SEC * 3));
+		
+		vertical = false;
 
 		pitchValue = new JSlider(JSlider.HORIZONTAL, 0, MAX_ROTATION, Parameters.parameters.integerParameter("defaultPitch"));
 
@@ -132,6 +137,7 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 				JSlider source = (JSlider)e.getSource();
 				if(!source.getValueIsAdjusting()) {
 					int newLength = (int) source.getValue();
+					
 					heading = (newLength /(double) MAX_ROTATION) * 2 * Math.PI; 
 					// reset buttons
 					resetButtons();
@@ -169,13 +175,39 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 			}
 	    	
 	    });
-	    JPanel color = new JPanel();
+	    JPanel objectColorAndMovement = new JPanel();
+	    objectColorAndMovement.setLayout(new BoxLayout(objectColorAndMovement, BoxLayout.Y_AXIS));
 		JLabel colorLabel = new JLabel();
 		colorLabel.setText("Color of Objects: ");
-		color.add(colorLabel);
-		color.add(colorChoice);
+		objectColorAndMovement.add(colorLabel);
+		objectColorAndMovement.add(colorChoice);
 		
-		top.add(color);
+		JRadioButton direction = new JRadioButton("Direction");
+		direction.setText("Horizontal Rotation");
+		direction.setSelected(true);
+		direction.addChangeListener(new ChangeListener() {
+
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				JRadioButton source = (JRadioButton) e.getSource();
+				if(source.isSelected()) {
+					if(vertical == false) 
+						vertical = true;
+					else
+						vertical = false;
+					resetButtons();
+				}
+			}
+			
+		});
+		
+		objectColorAndMovement.add(direction);
+		
+		top.add(objectColorAndMovement);
+		
+		
+		
+		top.add(direction);
 		
 	}
 
@@ -229,11 +261,8 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 
 	@Override
 	protected BufferedImage[] getAnimationImages(TWEANN cppn, int startFrame, int endFrame, boolean beingSaved) {
-		if(beingSaved) { //if animation images are being saved as a gif, set background to black to avoid frame overlap
-			return ThreeDimensionalUtil.imagesFromTriangles(shapes.get(cppn.getId()), picSize, picSize, startFrame, endFrame, heading, pitch, Color.BLACK);
-		} else { //otherwise, create array of images as normal
-			return ThreeDimensionalUtil.imagesFromTriangles(shapes.get(cppn.getId()), picSize, picSize, startFrame, endFrame, heading, pitch, null);
-		}
+		//if animation images are being saved as a gif, set background to black to avoid frame overlap
+		return ThreeDimensionalUtil.imagesFromTriangles(shapes.get(cppn.getId()), picSize, picSize, startFrame, endFrame, heading, pitch, beingSaved ? Color.BLACK : null, vertical);
 	}
 	
 	/**

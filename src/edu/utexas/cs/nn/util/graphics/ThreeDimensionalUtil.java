@@ -71,6 +71,14 @@ public class ThreeDimensionalUtil {
 	 */
 	private static BufferedImage imageFromTriangles(List<Triangle> tris, int width, int height, Matrix3 transform, Color color) {
 		BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		if(color != null) {
+			for(int i = 0; i < width; i++) {
+				for(int j = 0; j < height; j++) {
+					img.setRGB(i, j, color.getRGB());
+				}
+			}
+		}
+
 		double[] zBuffer = new double[img.getWidth() * img.getHeight()];
 		// initialize array with extremely far away depths
 		for (int q = 0; q < zBuffer.length; q++) {
@@ -98,27 +106,21 @@ public class ThreeDimensionalUtil {
 			int maxY = (int) Math.min(img.getHeight() - 1, Math.floor(Math.max(v1.y, Math.max(v2.y, v3.y))));
 
 			double triangleArea = (v1.y - v3.y) * (v2.x - v3.x) + (v2.y - v3.y) * (v3.x - v1.x);
-			if(color == null) {
-				for (int y = minY; y <= maxY; y++) {
-					for (int x = minX; x <= maxX; x++) {
-						double b1 = ((y - v3.y) * (v2.x - v3.x) + (v2.y - v3.y) * (v3.x - x)) / triangleArea;
-						double b2 = ((y - v1.y) * (v3.x - v1.x) + (v3.y - v1.y) * (v1.x - x)) / triangleArea;
-						double b3 = ((y - v2.y) * (v1.x - v2.x) + (v1.y - v2.y) * (v2.x - x)) / triangleArea;
-						if (b1 >= 0 && b1 <= 1 && b2 >= 0 && b2 <= 1 && b3 >= 0 && b3 <= 1) {
-							double depth = b1 * v1.z + b2 * v2.z + b3 * v3.z;
-							int zIndex = y * img.getWidth() + x;
-							if (zBuffer[zIndex] < depth) {
-								img.setRGB(x, y, getShade(t.color, angleCos).getRGB());
-								zBuffer[zIndex] = depth;
-							}
+			for (int y = minY; y <= maxY; y++) {
+				for (int x = minX; x <= maxX; x++) {
+					double b1 = ((y - v3.y) * (v2.x - v3.x) + (v2.y - v3.y) * (v3.x - x)) / triangleArea;
+					double b2 = ((y - v1.y) * (v3.x - v1.x) + (v3.y - v1.y) * (v1.x - x)) / triangleArea;
+					double b3 = ((y - v2.y) * (v1.x - v2.x) + (v1.y - v2.y) * (v2.x - x)) / triangleArea;
+					if (b1 >= 0 && b1 <= 1 && b2 >= 0 && b2 <= 1 && b3 >= 0 && b3 <= 1) {
+						double depth = b1 * v1.z + b2 * v2.z + b3 * v3.z;
+						int zIndex = y * img.getWidth() + x;
+						if (zBuffer[zIndex] < depth) {
+							img.setRGB(x, y, getShade(t.color, angleCos).getRGB());
+							zBuffer[zIndex] = depth;
 						}
 					}
 				}
-			} else {
-				Graphics graphics = img.getGraphics();
-				graphics.setColor(color);
 			}
-
 		}
 		return img;
 	}
@@ -312,12 +314,17 @@ public class ThreeDimensionalUtil {
 	 * @param endTime end of animation
 	 * @return Array of BufferedImages that can be played as an animation of a 3D object
 	 */
-	public static BufferedImage[] imagesFromTriangles(List<Triangle> tris, int imageWidth, int imageHeight, int startTime, int endTime, double heading, double pitch, Color color) {
+	public static BufferedImage[] imagesFromTriangles(List<Triangle> tris, int imageWidth, int imageHeight, int startTime, int endTime, double heading, double pitch, Color color, boolean vertical) {
 		BufferedImage[] images = new BufferedImage[(endTime-startTime)];
 		for(int i = startTime; i < endTime; i++) {
 			// Causes slight twitch at end of each rotation sequence
-			double newHeading = heading + (2*Math.PI*i)/images.length;
-			images[i-startTime] = imageFromTriangles(tris, imageWidth, imageHeight, newHeading, pitch, color);
+			if(vertical) {
+				double newPitch = pitch + (2*Math.PI*i)/images.length;
+				images[i-startTime] = imageFromTriangles(tris, imageWidth, imageHeight, heading, newPitch, color);
+			} else {
+				double newHeading = heading + (2*Math.PI*i)/images.length;
+				images[i-startTime] = imageFromTriangles(tris, imageWidth, imageHeight, newHeading, pitch, color);
+			}
 		}
 		return images;
 	}
@@ -341,9 +348,9 @@ public class ThreeDimensionalUtil {
 	 * @param inputMultipliers array determining whether to turn inputs on or off
 	 * @return
 	 */
-	public static BufferedImage[] rotationSequenceFromCPPN(Network cppn, int imageWidth, int imageHeight, int sideLength, int shapeWidth, int shapeHeight, int shapeDepth, Color color, int startTime, int endTime, double heading, double pitch, double[] inputMultipliers) {
+	public static BufferedImage[] rotationSequenceFromCPPN(Network cppn, int imageWidth, int imageHeight, int sideLength, int shapeWidth, int shapeHeight, int shapeDepth, Color color, int startTime, int endTime, double heading, double pitch, double[] inputMultipliers, boolean vertical) {
 		List<Triangle> tris = trianglesFromCPPN(cppn, imageWidth, imageHeight, sideLength, shapeWidth, shapeHeight, shapeDepth, color, inputMultipliers);
-		BufferedImage[] resultImages = imagesFromTriangles(tris, imageWidth, imageHeight, startTime, endTime, heading, pitch, color);
+		BufferedImage[] resultImages = imagesFromTriangles(tris, imageWidth, imageHeight, startTime, endTime, heading, pitch, color, vertical);
 		return resultImages;
 	}
 
