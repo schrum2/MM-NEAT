@@ -414,6 +414,13 @@ public class MMNEAT {
 				System.out.println("Set pre-eaten pills high, since we are scaling pills with generation");
 				Parameters.parameters.setDouble("preEatenPillPercentage", 0.999);
 			}
+			
+			if(CommonConstants.hyperNEAT) {
+				// For each substrate layer pairing, there can be multiple output neurons in the CPPN
+				HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair = CommonConstants.leo ? 2 : 1;
+				// Number of output neurons needed to designate bias values across all substrates
+				HyperNEATCPPNGenotype.numBiasOutputs = CommonConstants.evolveHyperNEATBias ? HyperNEATUtil.numBiasOutputsNeeded() : 0;
+			}
 
 			if (task instanceof MsPacManTask) {
 				MsPacManInitialization.setupGenotypePoolsForMsPacman();
@@ -675,20 +682,10 @@ public class MMNEAT {
 
 				// Since this approach required many large TWEANNs to be saved in memory, alternative gene representations are used with optional fields removed
 				TWEANNGenotype.smallerGenotypes = true;            
-				HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair = 1;
-				int numBias = 0;
 				substrateMapping = (SubstrateCoordinateMapping) ClassCreation.createObject("substrateMapping");
 				int numSubstratePairings = HNTSeedTask.getSubstrateConnectivity().size();
 				System.out.println("Number of substrate pairs being connected: "+ numSubstratePairings);
-				if(CommonConstants.evolveHyperNEATBias) {
-					System.out.println("HyperNEAT CPPN uses Bias outputs");
-					numBias = HyperNEATUtil.numBiasOutputsNeeded(HNTSeedTask);
-				}
-				if(CommonConstants.leo) {
-					System.out.println("HyperNEAT uses LEO: Link Expression Output");
-					HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair++;
-				}
-				HyperNEATCPPNGenotype hntGeno = new HyperNEATCPPNGenotype(HNTSeedTask.numCPPNInputs(),  numSubstratePairings * HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair + numBias, 0);
+				HyperNEATCPPNGenotype hntGeno = new HyperNEATCPPNGenotype(HNTSeedTask.numCPPNInputs(),  numSubstratePairings * HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair + HyperNEATCPPNGenotype.numBiasOutputs, 0);
 				TWEANNGenotype seedGeno = hntGeno.getSubstrateGenotypeForEvolution(HNTSeedTask);
 				genotype = seedGeno;
 				System.out.println("Genotype seeded from HyperNEAT task substrate specification");
@@ -728,11 +725,11 @@ public class MMNEAT {
 	 * @throws NoSuchMethodException 
 	 */
 	public static void hyperNEATOverrides() throws NoSuchMethodException {
+		// Already set to 1 as default value
+		//HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair = 1;
+
 		// Cannot monitor inputs with HyperNEAT because the NetworkTask
 		// interface no longer applies
-		HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair = 1;
-		int numBias = 0;
-
 		CommonConstants.monitorInputs = false;
 		// Setting the common constant should be sufficient, but keeping the parameter means
 		// that hybrID can turn it back on if it needs to
@@ -744,20 +741,7 @@ public class MMNEAT {
 		if(substrateMapping instanceof Bottom1DSubstrateMapping) {
 			// Other tasks may also use this mapping in the future.
 			HyperNEATTetrisTask.reduce2DTo1D = true;
-		}
-		
-		HyperNEATTask hnt = (HyperNEATTask) task;
-		int numSubstratePairings = hnt.getSubstrateConnectivity().size();
-		System.out.println("Number of substrate pairs being connected: "+ numSubstratePairings);
-		if(CommonConstants.evolveHyperNEATBias) {
-			numBias = HyperNEATUtil.numBiasOutputsNeeded(hnt);
-			System.out.println("HyperNEAT uses "+ numBias +" bias outputs");
-		}
-		if(CommonConstants.leo) {
-			System.out.println("HyperNEAT uses LEO: Link Expression Output");
-			HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair++;
-		}
-		setNNInputParameters(hnt.numCPPNInputs(), numSubstratePairings * HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair + numBias);
+		}		
 	}
 
 	/**

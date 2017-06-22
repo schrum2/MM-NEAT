@@ -475,6 +475,10 @@ public class HyperNEATUtil {
 		}
 	}
 
+	public static int numBiasOutputsNeeded() {
+		return numBiasOutputsNeeded(getHyperNEATTask());
+	}
+	
 	/**
 	 * If HyperNEAT neuron bias values are evolved, then this method determines
 	 * how many CPPN outputs are needed to specify them: 1 per non-input substrate layer.
@@ -733,6 +737,18 @@ public class HyperNEATUtil {
 		}
 
 		return substrateConnectivity;
+	}
+	
+	/**
+	 * Number of outputs that CPPNs are supposed to have.
+	 * May not work with coevolution in the case where different populations used different
+	 * substrate configurations.
+	 * @return
+	 */
+	public static int numCPPNOutputs() {
+		HyperNEATTask hnt = HyperNEATUtil.getHyperNEATTask();
+		int numSubstratePairings = hnt.getSubstrateConnectivity().size();
+		return numSubstratePairings * HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair + HyperNEATCPPNGenotype.numBiasOutputs;
 	}
 	
 }

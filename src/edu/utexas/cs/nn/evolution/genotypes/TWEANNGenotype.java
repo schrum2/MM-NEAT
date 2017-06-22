@@ -393,8 +393,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
      * @param copy
      */
     public TWEANNGenotype(TWEANNGenotype copy) {
-        this(copy.nodes, copy.links, copy.neuronsPerModule, copy.standardMultitask, copy.hierarchicalMultitask,
-                copy.archetypeIndex);
+        this(copy.nodes, copy.links, copy.neuronsPerModule, copy.standardMultitask, copy.hierarchicalMultitask, copy.archetypeIndex);
     }
 
     /**
@@ -526,8 +525,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
      * @param archetypeIndex = which archetype to reference for crossover
      */
     public TWEANNGenotype(int numIn, int numOut, int archetypeIndex) {
-        this(numIn, numOut, CommonConstants.fs, CommonConstants.ftype, CommonConstants.multitaskModules,
-                archetypeIndex);
+        this(numIn, numOut, CommonConstants.fs, CommonConstants.ftype, CommonConstants.multitaskModules, archetypeIndex);
     }
 
     /**
@@ -542,8 +540,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
      * multiple modules with preference neurons)
      * @param archetypeIndex = which archetype to reference for crossover
      */
-    public TWEANNGenotype(int numIn, int numOut, boolean featureSelective, int ftype, int numModules,
-            int archetypeIndex) {
+    public TWEANNGenotype(int numIn, int numOut, boolean featureSelective, int ftype, int numModules, int archetypeIndex) {
         this(new TWEANN(numIn, numOut, featureSelective, ftype, numModules, archetypeIndex));
     }
 

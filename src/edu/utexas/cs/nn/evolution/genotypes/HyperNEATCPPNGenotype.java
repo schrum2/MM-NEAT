@@ -1,6 +1,7 @@
 package edu.utexas.cs.nn.evolution.genotypes;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
@@ -25,7 +26,9 @@ import edu.utexas.cs.nn.util.util2D.Tuple2D;
 public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 
 	// For each substrate layer pairing, there can be multiple output neurons in the CPPN
-	public static int numCPPNOutputsPerLayerPair = 1;
+	public static int numCPPNOutputsPerLayerPair = -1; // Set in MMNEAT
+	// Number of output neurons needed to designate bias values across all substrates
+	public static int numBiasOutputs = -1; // Set in MMNEAT
 	// Within each group, the first (index 0) will always specify the link value
 	public static final int LINK_INDEX = 0;
 	// If a Link Expression Output is used, it will be second (index 1)
@@ -38,7 +41,8 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 	 * Default constructor
 	 */
 	public HyperNEATCPPNGenotype() {
-		super();
+		// Default archetype index of 0
+		this(HyperNEATUtil.getHyperNEATTask().numCPPNInputs(), HyperNEATUtil.numCPPNOutputs(), 0);
 	}
 
 	/**
@@ -198,7 +202,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 		for (NodeGene ng : this.nodes) {// needed for a deep copy
 			genes.add(newNodeGene(ng.ftype, ng.ntype, ng.innovation, false, ng.getBias()));
 		}
-		HyperNEATCPPNGenotype result = new HyperNEATCPPNGenotype(linksCopy, genes, MMNEAT.networkOutputs);
+		HyperNEATCPPNGenotype result = new HyperNEATCPPNGenotype(linksCopy, genes, this.numOut);
 
 		// Schrum: Not sure if keeping moduleUsage is appropriate
 		moduleUsage = temp;
@@ -231,7 +235,23 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 				// Non-input substrates can have a bias if desired
 				if(CommonConstants.evolveHyperNEATBias && sub.getStype() != Substrate.INPUT_SUBSTRATE) {
 					// Ask CPPN to generate a bias for each neuron
-					bias = cppn.process(hnt.filterCPPNInputs(new double[]{0, 0, x, y, BIAS}))[biasIndex];
+					double[] result = cppn.process(hnt.filterCPPNInputs(new double[]{0, 0, x, y, BIAS}));
+					try{
+						bias = result[biasIndex];
+					} catch(ArrayIndexOutOfBoundsException e) { 
+						// Ok to leave this error checking since it only executes when an
+						// exception is thrown.
+						System.out.println("result: " + Arrays.toString(result));
+						System.out.println("biasIndex: " + biasIndex);
+						System.out.println("CommonConstants.evolveHyperNEATBias: " + CommonConstants.evolveHyperNEATBias);
+						System.out.println("numCPPNOutputsPerLayerPair: " + numCPPNOutputsPerLayerPair);
+						System.out.println("numBiasOutputs: " + numBiasOutputs);
+						System.out.println("cppn.numInputs(): " + cppn.numInputs());
+						System.out.println("cppn.numOutputs(): " + cppn.numOutputs());
+						System.out.println("HyperNEATUtil.indexFirstBiasOutput(hnt): " + HyperNEATUtil.indexFirstBiasOutput(hnt));
+						System.out.println(cppn);
+						throw e;
+					}
 				}
 				newNodes.add(newNodeGene(sub.getFtype(), sub.getStype(), innovationID++, false, bias));
 			}
@@ -457,7 +477,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 	 */
 	@Override
 	public Genotype<TWEANN> newInstance() {
-		HyperNEATCPPNGenotype result = new HyperNEATCPPNGenotype(MMNEAT.networkInputs, MMNEAT.networkOutputs, this.archetypeIndex);
+		HyperNEATCPPNGenotype result = new HyperNEATCPPNGenotype(HyperNEATUtil.getHyperNEATTask().numCPPNInputs(), HyperNEATUtil.numCPPNOutputs(), this.archetypeIndex);
 		result.moduleUsage = new int[result.numModules];
 		return result;
 	}
