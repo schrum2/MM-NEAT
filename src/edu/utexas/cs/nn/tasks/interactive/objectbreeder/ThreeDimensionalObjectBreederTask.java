@@ -2,7 +2,6 @@ package edu.utexas.cs.nn.tasks.interactive.objectbreeder;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.image.BufferedImage;
@@ -13,7 +12,6 @@ import java.util.Hashtable;
 import java.util.List;
 
 import javax.swing.BoxLayout;
-import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -155,6 +153,7 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 	    colorChoice = new JComboBox<String>(choices);
 	    colorChoice.addItemListener(new ItemListener() {
 
+			@SuppressWarnings("unchecked")
 			@Override
 			public void itemStateChanged(ItemEvent e) {
 				JComboBox<String> source = (JComboBox<String>)e.getSource();
@@ -225,25 +224,18 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 	protected BufferedImage getButtonImage(TWEANN phenotype, int width, int height, double[] inputMultipliers) {
 		//return Construct3DObject.rotationSequenceFromCPPN(phenotype, picSize, picSize, CUBE_SIDE_LENGTH, SHAPE_WIDTH, SHAPE_HEIGHT, SHAPE_DEPTH, COLOR,  0, 1, heading, pitch, getInputMultipliers())[0];
 		//return Construct3DObject.currentImageFromCPPN(phenotype, picSize, picSize, CUBE_SIDE_LENGTH, SHAPE_WIDTH, SHAPE_HEIGHT, SHAPE_DEPTH, COLOR, heading, pitch, getInputMultipliers());
-		return ThreeDimensionalUtil.getImage(shapes.get(phenotype.getId()), picSize, picSize, heading, pitch);
+		return ThreeDimensionalUtil.imageFromTriangles(shapes.get(phenotype.getId()), picSize, picSize, heading, pitch, null);
 	}
 
 	@Override
 	protected BufferedImage[] getAnimationImages(TWEANN cppn, int startFrame, int endFrame, boolean beingSaved) {
-		//TODO: if beingSaved == true, set all image backgrounds to black
-		return ThreeDimensionalUtil.imagesFromTriangles(shapes.get(cppn.getId()), picSize, picSize, startFrame, endFrame, heading, pitch);
+		if(beingSaved) { //if animation images are being saved as a gif, set background to black to avoid frame overlap
+			return ThreeDimensionalUtil.imagesFromTriangles(shapes.get(cppn.getId()), picSize, picSize, startFrame, endFrame, heading, pitch, Color.BLACK);
+		} else { //otherwise, create array of images as normal
+			return ThreeDimensionalUtil.imagesFromTriangles(shapes.get(cppn.getId()), picSize, picSize, startFrame, endFrame, heading, pitch, null);
+		}
 	}
 	
-//	@Override
-//	protected void respondToClick(int itemID) {
-//		super.respondToClick(itemID);
-//		if(itemID == COLOR_CHOICE_INDEX) {
-//			int index = colorChoice.getSelectedIndex();
-//			color = COLORS[index];
-//			resetButtons();
-//		}
-//	}
-
 	/**
 	 * Allows for quick and easy launching without saving any files
 	 * @param args
