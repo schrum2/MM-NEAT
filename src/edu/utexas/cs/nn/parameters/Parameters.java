@@ -319,6 +319,7 @@ public class Parameters {
 		integerOptions.add("microRTSInputSize", 1, "how many by how many tiles in microRTS should be smudged together into a single input");
 		integerOptions.add("defaultPitch", 36, "Default pitch value for 3DObjectbreeder vertical rotation");
 		integerOptions.add("defaultHeading", 36, "Default heading value for 3DObjectbreeder horizaontal rotation");
+		integerOptions.add("microRTSInputSize", 1, "x by x cells in the game that are condensed into a single input");
 		// Long parameters
 		longOptions.add("lastInnovation", 0l, "Highest innovation number used so far");
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
@@ -622,6 +623,7 @@ public class Parameters {
 		booleanOptions.add("mRTSAll", true, "whether there is a substrate with everything in it");
 		booleanOptions.add("mRTSNeutral", false, "whether there is a substrate with all resources and terrain in it");
 		booleanOptions.add("mRTSTerrain", false, "whether there is a substrate with just un-crossable terrain in it");
+		booleanOptions.add("mRTSObjectivePath", false, "whether there is a substrate with enemy bases and a gradient leading to them");
 		booleanOptions.add("heuristicOverrideTerminalStates", false, "Overrides the Network's evaluation of a terminal BoardGameState");
 		booleanOptions.add("microRTSGrowingEnemySet", false, "adds multiple enemies to a trial instead of cycling through them by generation");
 		booleanOptions.add("hybrID", false, "Indicates whether HybrID is running or not");

@@ -24,6 +24,8 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 	
 	private int numSubstrates;
 	
+	private int smudgeSize = Parameters.parameters.integerParameter("microRTSInputSize"); //TODO use
+	
 	//Indexes within areSubsActive
 	private final int mobile = 0;
 	private final int buildings = 1;
@@ -36,6 +38,7 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 	private final int all = 8;
 	private final int neutral = 9;
 	private final int terrain = 10;
+	private final int path = 11;
 	
 	private boolean[] areSubsActive = new boolean[]{
 			Parameters.parameters.booleanParameter("mRTSMobileUnits"),
@@ -49,7 +52,10 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 			Parameters.parameters.booleanParameter("mRTSAll"), //the only one that is true by default
 			Parameters.parameters.booleanParameter("mRTSNeutral"), //terrain and resources
 			Parameters.parameters.booleanParameter("mRTSTerrain"),
+			Parameters.parameters.booleanParameter("mRTSObjectivePath"),
 	};
+
+	private double base_gradient_discount_rate = .95;
 	
 	//from NN2DEvaluationFunction
 	private static final double BASE_WEIGHT = 4; //hard to quantify because different amount of importance at different stages of the game
@@ -190,7 +196,7 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 				}
 				numCurrentSubs++;
 			}
-		} //end if (u != null) : following subs can be appropriate if we are considering terrain 
+		} //end if (u != null) : following subs may consider terrain 
 		if(areSubsActive[all]){ //everything
 			appropriateSubstrates.add(numCurrentSubs);
 			subIDs.add(all);
@@ -210,12 +216,46 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 			}
 			numCurrentSubs++;
 		}
+		double[] pathSub = new double[pgs.getWidth()*pgs.getHeight()];
+		if(areSubsActive[path]){
+			appropriateSubstrates.add(numCurrentSubs);
+			subIDs.add(path);
+			if(u != null && u.getType().name.equals("Base")){
+				activate(location, 1, pathSub, pgs.getWidth());
+			} else if(isTerrain){
+				activate(location, -1, pathSub, pgs.getWidth());
+			}
+		}
+		
 		for(int i = 0; i < appropriateSubstrates.size(); i++){
 			int indexWithinAll = (substrateSize * appropriateSubstrates.get(i)) + location;
 			int subID = subIDs.get(i);
-			substrates[indexWithinAll] = getWeightedValue(subID , u, isTerrain);
+			if(subID == path){//replace current substrate with pathSub
+				int subStart = indexWithinAll - location;
+				for(int j = subStart; j < subStart + substrateSize; j++){
+					substrates[subStart + j] = pathSub[j]; 
+				}
+			} else {
+				substrates[indexWithinAll] = getWeightedValue(subID , u, isTerrain); //typical way inputs are activated
+			}
 		} 
 		return substrates;
+	}
+	
+	private double[] activate(int location, double value, double[] sub, int width){
+		if(value == -1){ //terrain
+			sub[location] = -1;
+			return sub;
+		} else if(value <= .05) { //base case
+			return sub;
+		} else {
+			sub[location] = value;
+			sub = activate(location+1, value*(base_gradient_discount_rate), sub, width); //right
+			sub = activate(location-1, value*(base_gradient_discount_rate), sub, width); //left
+			sub = activate(location+width, value*(base_gradient_discount_rate), sub, width); //down
+			sub = activate(location-width, value*(base_gradient_discount_rate), sub, width); //up
+			return sub;
+		}
 	}
 	
 	/**

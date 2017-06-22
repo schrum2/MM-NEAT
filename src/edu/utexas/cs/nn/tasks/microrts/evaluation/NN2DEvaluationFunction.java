@@ -38,7 +38,7 @@ public class NN2DEvaluationFunction<T extends Network> extends NNEvaluationFunct
 	public NN2DEvaluationFunction(String NNfile){
 		// Parameter init can/should be removed when moving to stand-alone competition entry
 		Parameters.initializeParameterCollections(new String[]{"task:edu.utexas.cs.nn.tasks.microrts.MicroRTSTask","hyperNEAT:true"
-				,"microRTSEnemySequence:edu.utexas.cs.nn.tasks.microrts.iterativeevolution.HardeningEnemySequence",
+				,"microRTSEnemySequence:edu.utexas.cs.nn.tasks.microrts.iterativeevolution.CompetitiveEnemySequence",
 				"microRTSMapSequence:edu.utexas.cs.nn.tasks.microrts.iterativeevolution.GrowingMapSequence","log:microRTS-temp","saveTo:temp"});
 		MMNEAT.loadClasses();
 		Genotype<T> g = PopulationUtil.extractGenotype(NNfile);
