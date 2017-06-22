@@ -15,7 +15,6 @@ import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -58,6 +57,7 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 	protected JSlider headingValue;
 	protected JSlider pauseLengthBetweenFrames;
 	protected JComboBox<String> colorChoice;
+	protected JComboBox<String> directionChoice;
 	
 	protected boolean vertical;
 
@@ -157,6 +157,7 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 		
 		String[] choices = { "Red", "Green", "Blue", "Grey","Yellow", "Orange", "Pink", "Black" };
 	    colorChoice = new JComboBox<String>(choices);
+	    colorChoice.setSize(40, 40);
 	    colorChoice.addItemListener(new ItemListener() {
 
 			@SuppressWarnings("unchecked")
@@ -175,39 +176,47 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 			}
 	    	
 	    });
-	    JPanel objectColorAndMovement = new JPanel();
-	    objectColorAndMovement.setLayout(new BoxLayout(objectColorAndMovement, BoxLayout.Y_AXIS));
+	    JPanel colorAndMovement = new JPanel();
+	    colorAndMovement.setLayout(new BoxLayout(colorAndMovement, BoxLayout.Y_AXIS));
+	    
+	    JPanel colorPanel = new JPanel();
+	    colorPanel.setLayout(new BoxLayout(colorPanel, BoxLayout.X_AXIS));
 		JLabel colorLabel = new JLabel();
 		colorLabel.setText("Color of Objects: ");
-		objectColorAndMovement.add(colorLabel);
-		objectColorAndMovement.add(colorChoice);
 		
-		JRadioButton direction = new JRadioButton("Direction");
-		direction.setText("Horizontal Rotation");
-		direction.setSelected(true);
-		direction.addChangeListener(new ChangeListener() {
+		
+		String[] directionChoices = { "Horizontal", "Vertical" };
+		directionChoice = new JComboBox<String>(directionChoices);
+		directionChoice.setSize(40, 40);
+		directionChoice.addItemListener(new ItemListener() {
 
+			@SuppressWarnings("unchecked")
 			@Override
-			public void stateChanged(ChangeEvent e) {
-				JRadioButton source = (JRadioButton) e.getSource();
-				if(source.isSelected()) {
-					if(vertical == false) 
-						vertical = true;
-					else
-						vertical = false;
-					resetButtons();
+			public void itemStateChanged(ItemEvent e) {
+				JComboBox<String> source = (JComboBox<String>)e.getSource();
+				if(source.getSelectedItem().toString() == "Horizontal") {
+					vertical = false;
+				} else if(source.getSelectedItem().toString() == "Vertical"){
+					vertical = true;
 				}
+				resetButtons();
 			}
-			
-		});
+	    	
+	    });
 		
-		objectColorAndMovement.add(direction);
+		JPanel directionPanel = new JPanel();
+		directionPanel.setLayout(new BoxLayout(directionPanel, BoxLayout.X_AXIS));
+		JLabel directionLabel = new JLabel();
+		directionLabel.setText("Direction: ");
+		colorPanel.add(colorLabel);
+		colorPanel.add(colorChoice);
+		directionPanel.add(directionLabel);		
+		directionPanel.add(directionChoice);
 		
-		top.add(objectColorAndMovement);
+		colorAndMovement.add(colorPanel);
+		colorAndMovement.add(directionPanel);
 		
-		
-		
-		top.add(direction);
+		top.add(colorAndMovement);
 		
 	}
 
