@@ -23,7 +23,6 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.networks.TWEANN;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.scores.Score;
 import edu.utexas.cs.nn.tasks.interactive.InteractiveEvolutionTask;
@@ -49,13 +48,17 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 
 	// use private inner class to run animation in a loop
 	protected class AnimationThread extends Thread {
-		private boolean playing;
 		private int imageID;
-		private int end;
+		private boolean abort;
 
 		public AnimationThread(int imageID) {
 			this.imageID = imageID;
-			this.end = Parameters.parameters.integerParameter("defaultAnimationLength");
+			this.abort = false;
+		}
+
+		public void run() {
+
+			int end = Parameters.parameters.integerParameter("defaultAnimationLength");
 			//adds images to array at index of specified button (imageID)
 			if(animations[imageID].size() < Parameters.parameters.integerParameter("defaultAnimationLength")) {
 				int start = animations[imageID].size();
@@ -64,13 +67,10 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 					animations[imageID].add(bi); 	
 				}
 			}
-		}
 
-		public void run() {
-			playing = true;
-			while(playing) {
+			while(!abort) {
 				// One animation loop
-				for(int frame = 0; playing && frame < end; frame++) {
+				for(int frame = 0; !abort && frame < end; frame++) {
 					// set button over and over
 					setButtonImage(animations[imageID].get(frame), imageID);
 					try {
@@ -90,7 +90,7 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 		}
 
 		public void stopAnimation() {
-			playing = false; //exits playing loop to stop animation
+			abort = true;
 		}		
 	}
 
@@ -322,14 +322,23 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 
 	}
 
-	@SuppressWarnings("unchecked")
 	public ArrayList<Score<T>> evaluateAll(ArrayList<Genotype<T>> population) {
+		clearAnimations(population.size());
+		return super.evaluateAll(population); // wait for user choices
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void clearAnimations(int num) {
 		// Load all Image arrays with animations
-		animations = new ArrayList[population.size()];
+		animations = new ArrayList[num];
 		for(int i = 0; i < animations.length; i++) {
 			animations[i] = new ArrayList<BufferedImage>();
-		}
-		return super.evaluateAll(population); // wait for user choices
+		}		
+	}
+	
+	protected void setUndo() {
+		clearAnimations(scores.size());
+		super.setUndo();
 	}
 
 	@Override
