@@ -1,8 +1,5 @@
 package edu.utexas.cs.nn.tasks.microrts.iterativeevolution;
 
-import java.util.ArrayList;
-
-import edu.utexas.cs.nn.parameters.CommonConstants;
 import micro.ai.RandomBiasedAI;
 import micro.ai.abstraction.partialobservability.POLightRush;
 import micro.ai.abstraction.partialobservability.POWorkerRush;

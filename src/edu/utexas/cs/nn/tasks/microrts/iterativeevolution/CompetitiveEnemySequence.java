@@ -1,13 +1,7 @@
 package edu.utexas.cs.nn.tasks.microrts.iterativeevolution;
 
-import java.util.ArrayList;
-
-import edu.utexas.cs.nn.parameters.CommonConstants;
-import micro.ai.RandomBiasedAI;
 import micro.ai.abstraction.LightRush;
 import micro.ai.abstraction.WorkerRush;
-import micro.ai.abstraction.partialobservability.POLightRush;
-import micro.ai.abstraction.partialobservability.POWorkerRush;
 import micro.ai.core.AI;
 import micro.ai.mcts.mlps.MLPSMCTS;
 import micro.ai.mcts.naivemcts.NaiveMCTS;

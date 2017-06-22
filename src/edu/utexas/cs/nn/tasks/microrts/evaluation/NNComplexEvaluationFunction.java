@@ -1,7 +1,6 @@
 package edu.utexas.cs.nn.tasks.microrts.evaluation;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;

@@ -4,7 +4,6 @@ import java.util.Set;
 
 import boardGame.BoardGameState;
 import boardGame.heuristics.BoardGameHeuristic;
-import edu.utexas.cs.nn.util.MiscUtil;
 
 public class BoardGamePlayerMinimaxAlphaBetaPruning<T extends BoardGameState> extends BoardGamePlayerMinimax<T> {
 	

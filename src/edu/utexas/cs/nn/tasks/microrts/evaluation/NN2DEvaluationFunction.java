@@ -5,7 +5,6 @@ import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.util.PopulationUtil;
-import edu.utexas.cs.nn.util.file.FileUtilities;
 import micro.rts.GameState;
 import micro.rts.units.Unit;
 
