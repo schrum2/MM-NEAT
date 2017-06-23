@@ -319,6 +319,8 @@ public class Parameters {
 		integerOptions.add("defaultPitch", 36, "Default pitch value for 3DObjectbreeder vertical rotation");
 		integerOptions.add("defaultHeading", 36, "Default heading value for 3DObjectbreeder horizaontal rotation");
 		integerOptions.add("microRTSInputSize", 1, "x by x cells in the game that are condensed into a single input");
+		integerOptions.add("hallOfFamePastGens", 3, "Number of Generations in the past to use for the Hall Of Fame");
+		integerOptions.add("hallOfFameNumChamps", 6, "Number of Champions from the Hall Of Fame to play against");
 		// Long parameters
 		longOptions.add("lastInnovation", 0l, "Highest innovation number used so far");
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
@@ -628,6 +630,9 @@ public class Parameters {
 		booleanOptions.add("hybrID", false, "Indicates whether HybrID is running or not");
 		booleanOptions.add("offsetHybrID", false, "Determines whether to implement preset-switch version of HybrID or offset version of HybrID");
 		booleanOptions.add("hallOfFame", false, "Creates a Hall Of Fame during Single Population Coevolution");
+		booleanOptions.add("hallOfFameSingleRandomChamp", true, "Only selects a single Random Champion from the Hall Of Fame");
+		booleanOptions.add("hallOfFameXRandomChamps", false, "Selects a specified number of Random Champs from the Hall Of Fame; uses the hallOfFameNumChamps Parameter");
+		booleanOptions.add("hallOfFameYPastGens", false, "Selects Hall Of Fame Champions from a specified number of Generations in the past; uses the hallOfFamePastGens Parameter");
 		booleanOptions.add("boardGameSimpleFitness", true, "Enables the SimpleWinLoseDraw BoardGame Fitness Function to be used as a Selection Function");
 		booleanOptions.add("boardGameCheckersFitness", false, "Enables the CheckersAdvanced BoardGame Fitness Function to be used as a Selection Function");
 		booleanOptions.add("alwaysAnimate", true, "Loads and plays all animations in AnimationBreeder and 3DObjectBreeder at once");
