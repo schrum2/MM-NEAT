@@ -275,6 +275,9 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 	 * 			value to be put into the NN
 	 */
 	private double getWeightedValue(int sub, Unit u, boolean isTerrain){
+		if(u == null){
+			return 0;
+		}
 		if(sub == neutral){
 			if(isTerrain) return .25;
 		} else if(sub == all){
@@ -292,7 +295,8 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 	}
 	
 	/**
-	 * weighs units the way the NN2D used to.
+	 * weighs units the way the NN2D used to. Precondition: u != null
+	 * 
 	 * @param u unit
 	 * @return appropriate weight
 	 */
