@@ -10,7 +10,6 @@ import boardGame.agents.HeuristicBoardGamePlayer;
 import boardGame.featureExtractor.BoardGameFeatureExtractor;
 import boardGame.fitnessFunction.BoardGameFitnessFunction;
 import boardGame.fitnessFunction.CheckersAdvancedFitness;
-import boardGame.fitnessFunction.HallOfFameFitness;
 import boardGame.fitnessFunction.SimpleWinLoseDrawBoardGameFitness;
 import boardGame.heuristics.NNBoardGameHeuristic;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
@@ -58,9 +57,6 @@ public class MultiPopulationCompetativeCoevolutionBoardGameTask<S extends BoardG
 		}
 		if(Parameters.parameters.booleanParameter("boardGameCheckersFitness")){
 			fitFunctions.add(new CheckersAdvancedFitness<S>());
-		}
-		if(Parameters.parameters.booleanParameter("hallOfFame")){
-			fitFunctions.add(new HallOfFameFitness<S>());
 		}
 		
 		// Add Fitness Functions here to keep track of Other Scores

@@ -55,7 +55,7 @@ public class SinglePopulationCompetativeCoevolutionBoardGameTask<T extends Netwo
 			fitFunctions.add(new CheckersAdvancedFitness<S>());
 		}
 		if(Parameters.parameters.booleanParameter("hallOfFame")){
-			fitFunctions.add(new HallOfFameFitness<S>());
+			fitFunctions.add(new HallOfFameFitness<T,S>());
 		}
 		
 		for(BoardGameFitnessFunction<S> fit : fitFunctions){
