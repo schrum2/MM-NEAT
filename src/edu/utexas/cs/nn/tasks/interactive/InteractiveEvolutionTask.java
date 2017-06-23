@@ -132,7 +132,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 
 	public LinkedList<Integer> selectedCPPNs;
 	
-	public boolean simplifiedInteractiveInterface = true;
+	public boolean simplifiedInteractiveInterface = false;
 
 	/**
 	 * Default Constructor

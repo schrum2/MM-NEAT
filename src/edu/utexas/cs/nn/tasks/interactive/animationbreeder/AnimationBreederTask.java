@@ -42,6 +42,8 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 	protected JSlider pauseLength;
 	protected JSlider pauseLengthBetweenFrames;
 
+	protected boolean alwaysAnimate = Parameters.parameters.booleanParameter("alwaysAnimate");
+
 	protected BufferedImage[] getAnimationImages(T cppn, int startFrame, int endFrame, boolean beingSaved) {
 		return AnimationUtil.imagesFromCPPN(cppn, picSize, picSize, startFrame, endFrame, getInputMultipliers());
 	}
@@ -242,35 +244,37 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 			top.add(framePause);
 		}
 
-		//Enables MouseListener so that animation on a button will play when mouse is hovering over it
-		for(JButton button: buttons) {
-			button.addMouseListener(new MouseListener() {
+		if(!alwaysAnimate) {
+			//Enables MouseListener so that animation on a button will play when mouse is hovering over it
+			for(JButton button: buttons) {
+				button.addMouseListener(new MouseListener() {
 
-				AnimationThread animation;
+					AnimationThread animation;
 
-				@Override
-				public void mouseClicked(MouseEvent e) { } // Do not use
-				@Override
-				public void mousePressed(MouseEvent e) { } // Do not use
-				@Override
-				public void mouseReleased(MouseEvent e) { } // Do not use
+					@Override
+					public void mouseClicked(MouseEvent e) { } // Do not use
+					@Override
+					public void mousePressed(MouseEvent e) { } // Do not use
+					@Override
+					public void mouseReleased(MouseEvent e) { } // Do not use
 
-				@Override
-				public void mouseEntered(MouseEvent e) {
-					// ugly handling of button id extraction.
-					Scanner id = new Scanner(e.toString());
-					id.next(); // throiw away tokens in string name
-					id.next(); // the third will be the id number
-					animation = new AnimationThread(id.nextInt());
-					id.close();
-					animation.start();
-				}
+					@Override
+					public void mouseEntered(MouseEvent e) {
+						// ugly handling of button id extraction.
+						Scanner id = new Scanner(e.toString());
+						id.next(); // throw away tokens in string name
+						id.next(); // the third will be the id number
+						animation = new AnimationThread(id.nextInt());
+						id.close();
+						animation.start();
+					}
 
-				@Override
-				public void mouseExited(MouseEvent e) {
-					animation.stopAnimation(); //exits loop in which animation is played
-				}
-			});
+					@Override
+					public void mouseExited(MouseEvent e) {
+						animation.stopAnimation(); //exits loop in which animation is played
+					}
+				});
+			}
 		}
 	}
 
@@ -292,7 +296,6 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 	@Override
 	protected void save(int i) {
 		// Use of imageHeight and imageWidth allows saving a higher quality image than is on the button
-		//BufferedImage[] toSave = AnimationUtil.imagesFromCPPN((Network)scores.get(i).individual.getPhenotype(), Parameters.parameters.integerParameter("imageWidth"), Parameters.parameters.integerParameter("imageHeight"), 0, Parameters.parameters.integerParameter("defaultAnimationLength"), inputMultipliers);
 		BufferedImage[] toSave = getAnimationImages(scores.get(i).individual.getPhenotype(), 0, Parameters.parameters.integerParameter("defaultAnimationLength"), true);
 		JFileChooser chooser = new JFileChooser();//used to get save name 
 		chooser.setApproveButtonText("Save");
@@ -303,7 +306,7 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 			System.out.println("You chose to call the image: " + chooser.getSelectedFile().getName());
 			try {
 				//saves gif to chosen file name
-				AnimationUtil.createGif(toSave, Parameters.parameters.integerParameter("defaultFramePause"), chooser.getSelectedFile().getName() + ".gif");
+				AnimationUtil.createGif(toSave, Parameters.parameters.integerParameter("defaultFramePause"), chooser.getCurrentDirectory() + "\\" + chooser.getSelectedFile().getName() + ".gif");
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
