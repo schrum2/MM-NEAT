@@ -95,7 +95,7 @@ public class SinglePopulationCompetativeCoevolutionBoardGameTask<T extends Netwo
 		int index = 0;
 		for(Genotype<T> gene : group){
 			HeuristicBoardGamePlayer<S> evolved = (HeuristicBoardGamePlayer<S>) players[index]; // Creates the Player based on the command line
-			evolved.setHeuristic((new NNBoardGameHeuristic<T,S>(gene.getId(), gene.getPhenotype(),featExtract)));
+			evolved.setHeuristic((new NNBoardGameHeuristic<T,S>(gene.getId(), gene.getPhenotype(),featExtract, gene)));
 			teamPlayers[index++] = evolved;
 		}
 		return BoardGameUtil.playGame(MMNEAT.boardGame, teamPlayers, fitFunctions, otherScores);

@@ -20,7 +20,7 @@ import edu.utexas.cs.nn.util.stats.Statistic;
 public abstract class SinglePopulationCoevolutionTask<T> implements SinglePopulationTask<T>{
 
 	private Statistic stat;
-	private HallOfFame<T> hall;
+	protected HallOfFame<T> hall;
 
 	public SinglePopulationCoevolutionTask() {
 		try {
@@ -32,6 +32,10 @@ public abstract class SinglePopulationCoevolutionTask<T> implements SinglePopula
 		if(Parameters.parameters.booleanParameter("hallOfFame")){
 			hall = new HallOfFame<T>();
 		}
+	}
+	
+	public HallOfFame<T> getHallOfFame(){
+		return hall;
 	}
 	
 	//most tasks dont need to do anything here,

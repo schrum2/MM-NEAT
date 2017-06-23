@@ -12,14 +12,15 @@ import boardGame.featureExtractor.BoardGameFeatureExtractor;
 import boardGame.heuristics.BoardGameHeuristic;
 import boardGame.heuristics.NNBoardGameHeuristic;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.evolution.genotypes.Genotype;
+import edu.utexas.cs.nn.evolution.halloffame.HallOfFame;
 import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.tasks.NoisyLonerTask;
-import edu.utexas.cs.nn.tasks.boardGame.BoardGameUtil;
+import edu.utexas.cs.nn.tasks.SinglePopulationCoevolutionTask;
 import edu.utexas.cs.nn.util.ClassCreation;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 
 public class HallOfFameFitness<T extends Network, S extends BoardGameState> implements BoardGameFitnessFunction<S> {
+	
+	private HallOfFame hall;
 	
 	BoardGameFitnessFunction<S> selectionFunction;
 	int currentGen = -1;
@@ -40,6 +41,9 @@ public class HallOfFameFitness<T extends Network, S extends BoardGameState> impl
 			System.out.println("BoardGame instance could not be loaded");
 			System.exit(1);
 		}
+		
+		hall = ((SinglePopulationCoevolutionTask) MMNEAT.task).getHallOfFame();
+		
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -63,18 +67,7 @@ public class HallOfFameFitness<T extends Network, S extends BoardGameState> impl
 			return evaluated.get(genotypeID);
 		}else{
 			
-			List<Genotype<T>> champs = null; // TODO: Decide how to get Hall Of Fame Champs here
-			double[][] scores = new double[champs.size()][fitFunctions.size()]; // [ChampEval][FitFunction]
-			
-			for(int i = 0; i < champs.size(); i++){
-				champ.setHeuristic((new NNBoardGameHeuristic<T,S>(champs.get(i).getId(), champs.get(i).getPhenotype(), featExtract)));
-				BoardGamePlayer<S>[] players = new BoardGamePlayer[]{player, champ};
-
-				ArrayList<Pair<double[], double[]>> game = BoardGameUtil.playGame(MMNEAT.boardGame, players, fitFunctions, new ArrayList<>()); // No Other Scores
-				scores[i] = game.get(0).t1;
-			}
-			
-			Pair<double[], double[]> evalResults = NoisyLonerTask.averageResults(scores, null);
+			Pair<double[], double[]> evalResults = hall.eval(((NNBoardGameHeuristic<?,S>) bgh).getGenotype());
 			double score = evalResults.t1[0]; // Only uses 1 Selection Function
 			
 			evaluated.put(genotypeID, score);

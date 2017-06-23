@@ -4,6 +4,7 @@ import java.util.List;
 
 import boardGame.BoardGameState;
 import boardGame.featureExtractor.BoardGameFeatureExtractor;
+import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.parameters.Parameters;
 
@@ -12,11 +13,13 @@ public class NNBoardGameHeuristic<T extends Network, S extends BoardGameState> i
 	long ID;
 	T network;
 	BoardGameFeatureExtractor<S> featExtract;
+	Genotype<T> gene;
 	
-	public NNBoardGameHeuristic(long genotypeID, T net, BoardGameFeatureExtractor<S> fe){
+	public NNBoardGameHeuristic(long genotypeID, T net, BoardGameFeatureExtractor<S> fe, Genotype<T> gene){
 		ID = genotypeID;
 		network = net;
 		featExtract = fe;
+		this.gene = gene;
 	}
 	
 	public NNBoardGameHeuristic(){ // Used as a blank constructor; the Network can be set in the BoardGameTasks
@@ -28,6 +31,10 @@ public class NNBoardGameHeuristic<T extends Network, S extends BoardGameState> i
 	
 	public String toString() {
 		return this.getClass().getSimpleName() + ", ID = " + ID;
+	}
+	
+	public Genotype<T> getGenotype(){
+		return gene;
 	}
 	
 	@Override
