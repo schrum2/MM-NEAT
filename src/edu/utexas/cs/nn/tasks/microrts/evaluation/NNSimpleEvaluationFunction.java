@@ -3,7 +3,6 @@ package edu.utexas.cs.nn.tasks.microrts.evaluation;
 import java.util.Arrays;
 
 import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.util.MiscUtil;
 import micro.rts.GameState;
 import micro.rts.PhysicalGameState;
 import micro.rts.units.Unit;
@@ -81,7 +80,6 @@ public class NNSimpleEvaluationFunction<T extends Network> extends NNEvaluationF
 								currentDistance = distance(currentUnit, enemyBaseLocation);
 								//incremental calculation of the avg.
 								unitsOnBoard[mobileDelta] += (currentDistance - unitsOnBoard[mobileDelta]) / (++mobileDeltaUpdates);
-								MiscUtil.waitForReadStringAndEnterKeyPress();
 							}
 							if(friendlyBaseLocation != -1){
 								currentDistance = distance(currentUnit, enemyBaseLocation);

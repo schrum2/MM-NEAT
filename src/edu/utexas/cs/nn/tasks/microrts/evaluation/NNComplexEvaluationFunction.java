@@ -278,6 +278,9 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 		if(u == null){
 			return 0;
 		}
+		if(sub == mobile || sub == all || sub == buildings){
+			return u.getPlayer() == 0 ? 1.0 : -1.0; 
+		}
 		if(sub == neutral){
 			if(isTerrain) return .25;
 		} else if(sub == all){
