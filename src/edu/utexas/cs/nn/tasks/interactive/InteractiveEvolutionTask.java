@@ -633,7 +633,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	 * Resets to a new random population
 	 */
 	@SuppressWarnings("unchecked")
-	private void reset() { 
+	protected void reset() { 
 		ArrayList<Genotype<T>> newPop = ((SinglePopulationGenerationalEA<T>) MMNEAT.ea).initialPopulation(scores.get(0).individual);
 		scores = new ArrayList<Score<T>>();
 		ActivationFunctionRandomReplacement frr = new ActivationFunctionRandomReplacement();
