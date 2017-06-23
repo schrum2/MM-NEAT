@@ -43,7 +43,7 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 	protected JSlider pauseLengthBetweenFrames;
 
 	protected boolean alwaysAnimate = Parameters.parameters.booleanParameter("alwaysAnimate");
-	
+
 	protected BufferedImage[] getAnimationImages(T cppn, int startFrame, int endFrame, boolean beingSaved) {
 		return AnimationUtil.imagesFromCPPN(cppn, picSize, picSize, startFrame, endFrame, getInputMultipliers());
 	}
@@ -52,14 +52,14 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 	protected class AnimationThread extends Thread {
 		private int imageID;
 		private boolean abort;
-		
+
 
 		public AnimationThread(int imageID) {
 			this.imageID = imageID;
 			this.abort = false;
 		}
-		
-		
+
+
 		public void run() {
 			if(showNetwork) {
 				stopAnimation();
@@ -354,6 +354,11 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 
 	protected void setUndo() {
 		clearAnimations(scores.size());
+		if(alwaysAnimate) {
+			for(int x = 0; x < animationThreads.length; x++) {
+				if(animationThreads[x] != null) animationThreads[x].stopAnimation();
+			}
+		}
 		super.setUndo();
 	}
 
@@ -381,7 +386,7 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 			}
 		}
 	}
-	
+
 	@Override
 	protected void resetButton(Genotype<T> individual, int x) {
 		super.resetButton(individual, x);
@@ -389,6 +394,33 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 			if(animationThreads[x] != null) animationThreads[x].stopAnimation();
 			animationThreads[x] = new AnimationThread(x);
 			animationThreads[x].start();
+		}
+	}
+
+	@Override
+	protected void reset() {
+		if(alwaysAnimate) {
+			for(int x = 0; x < animationThreads.length; x++) {
+				if(animationThreads[x] != null) animationThreads[x].stopAnimation();
+			}
+		}
+		//Clears out all pre-computed animations so that checking/unchecking boxes actually creates new animations
+		for(int i = 0; i < animations.length; i++) {
+			// Cannot clear animation if being loaded
+			synchronized(animations[i]) {
+				animations[i].clear();
+			}
+		}
+		super.reset();
+	}
+
+	@Override
+	protected void evolve() {
+		super.evolve();
+		if(alwaysAnimate) {
+			for(int x = 0; x < animationThreads.length; x++) {
+				if(animationThreads[x] != null) animationThreads[x].stopAnimation();
+			}
 		}
 	}
 

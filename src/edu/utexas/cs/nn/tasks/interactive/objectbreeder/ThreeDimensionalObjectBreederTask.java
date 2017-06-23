@@ -110,8 +110,6 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 		pitch.add(pitchLabel);
 		pitch.add(pitchValue);
 
-
-
 		headingValue = new JSlider(JSlider.HORIZONTAL, 0, MAX_ROTATION, Parameters.parameters.integerParameter("defaultHeading"));
 
 		Hashtable<Integer,JLabel> headingLabels = new Hashtable<>();

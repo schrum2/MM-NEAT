@@ -633,7 +633,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	 * Resets to a new random population
 	 */
 	@SuppressWarnings("unchecked")
-	private void reset() { 
+	protected void reset() { 
 		ArrayList<Genotype<T>> newPop = ((SinglePopulationGenerationalEA<T>) MMNEAT.ea).initialPopulation(scores.get(0).individual);
 		scores = new ArrayList<Score<T>>();
 		ActivationFunctionRandomReplacement frr = new ActivationFunctionRandomReplacement();
@@ -802,9 +802,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 			// Not implemented yet
 			setUndo();
 		} else if(itemID == EVOLVE_BUTTON_INDEX && BooleanUtil.any(chosen)) {//If evolve button clicked
-			previousScores = new ArrayList<Score<T>>();
-			previousScores.addAll(scores);
-			waitingForUser = false;//tells evaluateAll method to finish
+			evolve();
 		} else if(itemID >= IMAGE_BUTTON_INDEX) {//If an image button clicked
 			assert (scores.size() == buttons.size()) : 
 				"size mismatch! score array is " + scores.size() + " in length and buttons array is " + buttons.size() + " long";
@@ -818,6 +816,13 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 			}
 		}		
 	}
+	
+	protected void evolve() {
+		previousScores = new ArrayList<Score<T>>();
+		previousScores.addAll(scores);
+		waitingForUser = false;//tells evaluateAll method to finish	
+	}
+	
 	//used for lineage and undo button
 	private static HashSet<Long> drawnOffspring = null;
 	private static HashMap<Integer, Integer> savedLineage = null;
