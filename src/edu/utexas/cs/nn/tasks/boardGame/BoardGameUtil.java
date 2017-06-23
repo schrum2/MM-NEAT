@@ -28,14 +28,14 @@ public class BoardGameUtil {
 	private static boolean stepByStep = Parameters.parameters.booleanParameter("stepByStep");
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static <T extends BoardGameState> ArrayList<Pair<double[], double[]>> playGame(BoardGame<T> bg, BoardGamePlayer<T>[] players, List<BoardGameFitnessFunction<T>> fit){
+	public static <T extends BoardGameState> ArrayList<Pair<double[], double[]>> playGame(BoardGame<T> bg, BoardGamePlayer<T>[] players, List<BoardGameFitnessFunction<T>> fitScores, List<BoardGameFitnessFunction<T>> otherFit){
 		if(CommonConstants.watch && bg instanceof TwoDimensionalBoardGame){ // Creates a new BoardGameViewer if bg is a TwoDimensionalBoardGame
 			view = MMNEAT.boardGameViewer;
 		}
 
-		double[][][] fitnesses = new double[bg.getNumPlayers()][bg.getNumPlayers()][1];
-		// First score in fit is actual fitness, and the rest are "other" scores
-		double[][][] otherScores = new double[bg.getNumPlayers()][bg.getNumPlayers()][fit.size() - 1];
+		double[][][] fitnesses = new double[bg.getNumPlayers()][bg.getNumPlayers()][fitScores.size()];
+		
+		double[][][] otherScores = new double[bg.getNumPlayers()][bg.getNumPlayers()][otherFit.size()];
 		
 		// Each player plays as 1st, 2nd, etc.
 		for(int i = 0; i < bg.getNumPlayers(); i++){ // Cycles through the number of possible Player positions
@@ -47,7 +47,10 @@ public class BoardGameUtil {
 			
 			// Reset game and fitness functions before each play
 			bg.reset();
-			for(BoardGameFitnessFunction fitFunct : fit){
+			for(BoardGameFitnessFunction fitFunct : fitScores){
+				fitFunct.reset();
+			}
+			for(BoardGameFitnessFunction fitFunct : otherFit){
 				fitFunct.reset();
 			}
 			
@@ -64,8 +67,12 @@ public class BoardGameUtil {
 				int playIndex = bg.getCurrentPlayer(); // Stores the current Player's Index to access the Player's Fitness
 				//System.out.println(players[playIndex]);
 				bg.move(players[playIndex]);
-			
-				for(BoardGameFitnessFunction fitFunct : fit){
+				
+				
+				for(BoardGameFitnessFunction fitFunct : fitScores){
+					fitFunct.reset();
+				}
+				for(BoardGameFitnessFunction fitFunct : otherFit){
 					fitFunct.updateFitness(bg.getCurrentState(), playIndex);
 				}
 			}
@@ -96,11 +103,14 @@ public class BoardGameUtil {
 			// For each player in the game, save fitness and other scores
 			for(int k = 0; k < players.length; k++){
 				int playerIndex = (k+i) % bg.getNumPlayers();
-				fitnesses[k][i][0] = (1.0*fit.get(0).getFitness(players[k], playerIndex));
-				if(fit.size() > 1){ // Has at least 1 Other Score; must track their fitness
-					// Stores all other Scores except the first, which is used as the Selection Fitness
-					for(int j = 1; j < fit.size(); j++){
-						otherScores[k][i][j-1] = (1.0*fit.get(j).getFitness(players[k], playerIndex)); // Gets all Scores except the first one
+				// Cycles through the Selection Scores
+				for(int j = 0; j < fitScores.size(); j++){
+					fitnesses[k][i][j] = (1.0*otherFit.get(j).getFitness(players[k], playerIndex));
+				}
+				if(otherFit.size() > 1){ // Has at least 1 Other Score; must track their fitness
+					// Stores all other Scores except the Selection Scores
+					for(int j = 0; j < otherFit.size(); j++){
+						otherScores[k][i][j] = (1.0*otherFit.get(j).getFitness(players[k], playerIndex)); // Gets all Scores except the first one
 					}
 				}
 				
@@ -110,9 +120,11 @@ public class BoardGameUtil {
 				MMNEAT.evalReport.log("   Match " + (i+1) + ": \n");
 				for(int j = 0; j < bg.getNumPlayers(); j++){ // Cycles through the Players
 					MMNEAT.evalReport.log("\tPlayer " + (j+1) + ": " + players[j]);
-					MMNEAT.evalReport.log("\t   Fitness Score: " + fit.get(0).getFitnessName() + ": " + fitnesses[j][i][0]);
-					for(int k = 1; k < fit.size(); k++){ // Cycles through the Other Scores
-						MMNEAT.evalReport.log("\t   Other Score: " + fit.get(k-1).getFitnessName() + ": " + otherScores[j][i][k-1]);
+					for(int k = 0; k < fitScores.size(); k++){ // Cycles through the Other Scores
+						MMNEAT.evalReport.log("\t   Fitness Score: " + fitScores.get(k).getFitnessName() + ": " + fitnesses[j][i][k]);
+					}
+					for(int k = 0; k < otherFit.size(); k++){ // Cycles through the Other Scores
+						MMNEAT.evalReport.log("\t   Other Score: " + otherFit.get(k).getFitnessName() + ": " + otherScores[j][i][k]);
 					}
 					MMNEAT.evalReport.log(""); // Creates some space between Players
 				}

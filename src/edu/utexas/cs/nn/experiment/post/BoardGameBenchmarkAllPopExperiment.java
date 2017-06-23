@@ -109,7 +109,7 @@ public class BoardGameBenchmarkAllPopExperiment<T extends Network, S extends Boa
 			BoardGamePlayer<S>[] players = new BoardGamePlayer[]{player, opponent};
 
 			for(int i = 0; i < CommonConstants.trials; i++){
-				BoardGameUtil.playGame(bg, players, fitFunctions);
+				BoardGameUtil.playGame(bg, players, fitFunctions, new ArrayList<>()); // No Other Scores
 			}
 			
 			if (panel != null) {

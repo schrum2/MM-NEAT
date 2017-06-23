@@ -37,7 +37,7 @@ public class BoardGameUtilBGAvgScoresTest<T extends BoardGameState> {
 	@Test
 	public void testPlayGame() {
 		// Results should have 2 items, one for each Player.
-		ArrayList<Pair<double[], double[]>> results = BoardGameUtil.playGame(new TestBoardGame<T>(), players, fit);
+		ArrayList<Pair<double[], double[]>> results = BoardGameUtil.playGame(new TestBoardGame<T>(), players, fit, new ArrayList<>()); // No Other Scores
 		for(Pair<double[], double[]> scores : results){
 			assertEquals((1-2)/2, scores.t1[0], 0.00001); // Average score is 1 Win, 1 Lose / 2 Matches; (1-2)/2
 		}

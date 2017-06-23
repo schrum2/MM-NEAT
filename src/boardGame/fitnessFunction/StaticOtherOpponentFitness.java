@@ -61,7 +61,7 @@ public class StaticOtherOpponentFitness<T extends BoardGameState> implements Boa
 		}else{
 			BoardGamePlayer<T>[] players = new BoardGamePlayer[]{player, opponent};
 			
-			ArrayList<Pair<double[], double[]>> game = BoardGameUtil.playGame(MMNEAT.boardGame, players, fitFunctions);
+			ArrayList<Pair<double[], double[]>> game = BoardGameUtil.playGame(MMNEAT.boardGame, players, fitFunctions, new ArrayList<>()); // No Other Scores
 			Double score = game.get(0).t1[0];
 			
 			evaluated.put(genotypeID, score);

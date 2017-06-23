@@ -40,7 +40,7 @@ public class Othello extends TwoDimensionalBoardGame<OthelloState>{
 		List<BoardGameFitnessFunction<OthelloState>> scores = new ArrayList<BoardGameFitnessFunction<OthelloState>>();
 		scores.add(new SimpleWinLoseDrawBoardGameFitness<OthelloState>());
 		
-		BoardGameUtil.playGame(bg, players, scores);
+		BoardGameUtil.playGame(bg, players, scores, new ArrayList<>()); // No Other Scores
 		System.out.println("Game Over: Press Enter");
 		
 		MiscUtil.waitForReadStringAndEnterKeyPress();
