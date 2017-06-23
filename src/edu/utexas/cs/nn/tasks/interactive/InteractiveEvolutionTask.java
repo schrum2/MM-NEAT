@@ -360,21 +360,27 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		fullSawtooth.setForeground(CombinatoricUtilities.colorFromInt(ActivationFunctions.FTYPE_FULLSAWTOOTH));
 		triangleWave.setForeground(CombinatoricUtilities.colorFromInt(ActivationFunctions.FTYPE_TRIANGLEWAVE));
 		squareWave.setForeground(CombinatoricUtilities.colorFromInt(ActivationFunctions.FTYPE_SQUAREWAVE));
-
-
-		//add graphics to title panel
-		top.add(evolveButton);
-		top.add(saveButton);	
-		//top.add(closeButton);
-		top.add(mutationsPerGeneration);
+	
 		
 		if(!simplifiedInteractiveInterface) {
 			//add additional action buttons
 			top.add(lineageButton);
 			top.add(resetButton);
+		}
+		
+		//add graphics to title panel
+		top.add(evolveButton);
+		top.add(saveButton);
+		
+		if(!simplifiedInteractiveInterface) {
 			top.add(networkButton);
 			top.add(undoButton);
-			
+		}
+
+		//top.add(closeButton);
+		top.add(mutationsPerGeneration);	
+		
+		if(!simplifiedInteractiveInterface) {
 			//add activation function checkboxes
 			bottom.add(halfLinear);
 			bottom.add(absVal);
@@ -392,9 +398,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 			bottom.add(LeakyReLU);
 			bottom.add(fullSawtooth);
 			bottom.add(triangleWave);
-			bottom.add(squareWave);
-			
-			
+			bottom.add(squareWave);	
 		}
 		
 		topper.add(top);
