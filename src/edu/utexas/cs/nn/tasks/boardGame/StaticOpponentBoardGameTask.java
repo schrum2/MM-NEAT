@@ -9,6 +9,8 @@ import boardGame.agents.BoardGamePlayer;
 import boardGame.agents.HeuristicBoardGamePlayer;
 import boardGame.featureExtractor.BoardGameFeatureExtractor;
 import boardGame.fitnessFunction.BoardGameFitnessFunction;
+import boardGame.fitnessFunction.CheckersAdvancedFitness;
+import boardGame.fitnessFunction.HallOfFameFitness;
 import boardGame.fitnessFunction.SimpleWinLoseDrawBoardGameFitness;
 import boardGame.heuristics.NNBoardGameHeuristic;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
@@ -17,6 +19,7 @@ import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.networks.NetworkTask;
 import edu.utexas.cs.nn.networks.hyperneat.HyperNEATTask;
 import edu.utexas.cs.nn.networks.hyperneat.Substrate;
+import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.NoisyLonerTask;
 import edu.utexas.cs.nn.util.ClassCreation;
 import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
@@ -28,9 +31,9 @@ public class StaticOpponentBoardGameTask<T extends Network, S extends BoardGameS
 	BoardGamePlayer<S> opponent;
 	HeuristicBoardGamePlayer<S> player;
 	BoardGameFeatureExtractor<S> featExtract;
-	BoardGameFitnessFunction<S> selectionFunction;
 	
 	List<BoardGameFitnessFunction<S>> fitFunctions = new ArrayList<BoardGameFitnessFunction<S>>();
+	List<BoardGameFitnessFunction<S>> otherScores = new ArrayList<BoardGameFitnessFunction<S>>();
 	
 	/**
 	 * Constructor for a new BoardGameTask
@@ -41,27 +44,39 @@ public class StaticOpponentBoardGameTask<T extends Network, S extends BoardGameS
 			opponent = (BoardGamePlayer<S>) ClassCreation.createObject("boardGameOpponent"); // The Opponent
 			player = (HeuristicBoardGamePlayer<S>) ClassCreation.createObject("boardGamePlayer"); // The Player
 			featExtract = (BoardGameFeatureExtractor<S>) ClassCreation.createObject("boardGameFeatureExtractor");
-			selectionFunction = (BoardGameFitnessFunction<S>) ClassCreation.createObject("boardGameFitnessFunction");
 		} catch (NoSuchMethodException e) {
 			e.printStackTrace();
 			System.out.println("BoardGame instance could not be loaded");
 			System.exit(1);
 		}
-		MMNEAT.registerFitnessFunction(selectionFunction.getFitnessName());
 		
-		// Add Other Scores here to keep track of other Fitness Functions
-		fitFunctions.add(new SimpleWinLoseDrawBoardGameFitness<S>());
-		for(BoardGameFitnessFunction<S> fit : fitFunctions){
+		// Add Fitness Functions here to add as Selection Functions
+		if(Parameters.parameters.booleanParameter("boardGameSimpleFitness")){
+			fitFunctions.add(new SimpleWinLoseDrawBoardGameFitness<S>());
+		}
+		if(Parameters.parameters.booleanParameter("boardGameCheckersFitness")){
+			fitFunctions.add(new CheckersAdvancedFitness<S>());
+		}
+		if(Parameters.parameters.booleanParameter("hallOfFame")){
+			fitFunctions.add(new HallOfFameFitness<S>());
+		}
+		
+		for(BoardGameFitnessFunction<S> fit: fitFunctions){
+			MMNEAT.registerFitnessFunction(fit.getFitnessName());
+		}
+		
+		// Add Fitness Functions here to keep track of Other Scores
+		otherScores.add(new SimpleWinLoseDrawBoardGameFitness<S>());
+		for(BoardGameFitnessFunction<S> fit : otherScores){
 			MMNEAT.registerFitnessFunction(fit.getFitnessName(), false);
 		}
 		
-		fitFunctions.add(0, selectionFunction); // Adds the Selection Function to the first Index
 	}
 
 	public int numOtherScores() {
 		// Other Scores are kept in the fitFunctions ArrayList;
 		// everything except the first Fitness Function is an Other Score
-		return fitFunctions.size()-1;
+		return otherScores.size();
 	}
 	
 	/**
@@ -129,7 +144,7 @@ public class StaticOpponentBoardGameTask<T extends Network, S extends BoardGameS
 		player.setHeuristic((new NNBoardGameHeuristic<T,S>(individual.getId(), individual.getPhenotype(), featExtract)));
 		BoardGamePlayer<S>[] players = new BoardGamePlayer[]{player, opponent};
 		// get(0) because information for both players is returned, but only the first is about the evolved player
-		return BoardGameUtil.playGame((BoardGame<S>) MMNEAT.boardGame, players, fitFunctions).get(0);
+		return BoardGameUtil.playGame((BoardGame<S>) MMNEAT.boardGame, players, fitFunctions, otherScores).get(0);
 	}
 
 	// Used for Hyper-NEAT

@@ -9,6 +9,8 @@ import boardGame.agents.BoardGamePlayer;
 import boardGame.agents.HeuristicBoardGamePlayer;
 import boardGame.featureExtractor.BoardGameFeatureExtractor;
 import boardGame.fitnessFunction.BoardGameFitnessFunction;
+import boardGame.fitnessFunction.CheckersAdvancedFitness;
+import boardGame.fitnessFunction.HallOfFameFitness;
 import boardGame.fitnessFunction.SimpleWinLoseDrawBoardGameFitness;
 import boardGame.heuristics.NNBoardGameHeuristic;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
@@ -17,6 +19,7 @@ import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.networks.NetworkTask;
 import edu.utexas.cs.nn.networks.hyperneat.HyperNEATTask;
 import edu.utexas.cs.nn.networks.hyperneat.Substrate;
+import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.scores.Score;
 import edu.utexas.cs.nn.tasks.GroupTask;
 import edu.utexas.cs.nn.util.ClassCreation;
@@ -29,9 +32,9 @@ public class MultiPopulationCompetativeCoevolutionBoardGameTask<S extends BoardG
 	BoardGame<S> bg;
 	BoardGamePlayer<S>[] players;
 	BoardGameFeatureExtractor<S> featExtract;
-	BoardGameFitnessFunction<S> selectionFunction;
 	
 	List<BoardGameFitnessFunction<S>> fitFunctions = new ArrayList<BoardGameFitnessFunction<S>>();
+	List<BoardGameFitnessFunction<S>> otherScores = new ArrayList<BoardGameFitnessFunction<S>>();
 	
 	@SuppressWarnings("unchecked")
 	public MultiPopulationCompetativeCoevolutionBoardGameTask(){
@@ -40,7 +43,6 @@ public class MultiPopulationCompetativeCoevolutionBoardGameTask<S extends BoardG
 			bg = (BoardGame<S>) ClassCreation.createObject("boardGame");
 			players = new BoardGamePlayer[numberOfPopulations()];
 			featExtract = (BoardGameFeatureExtractor<S>) ClassCreation.createObject("boardGameFeatureExtractor");
-			selectionFunction = (BoardGameFitnessFunction<S>) ClassCreation.createObject("boardGameFitnessFunction");
 			for(int i = 0; i < numberOfPopulations(); i++){
 				players[i] = (BoardGamePlayer<S>) ClassCreation.createObject("boardGamePlayer"); // The Player
 			}
@@ -50,18 +52,30 @@ public class MultiPopulationCompetativeCoevolutionBoardGameTask<S extends BoardG
 			System.exit(1);
 		}
 		
-		// Add Other Scores here to keep track of other Fitness Functions
-		fitFunctions.add(new SimpleWinLoseDrawBoardGameFitness<S>());
+		// Add Fitness Functions here to act as Selection Functions
+		if(Parameters.parameters.booleanParameter("boardGameSimpleFitness")){
+			fitFunctions.add(new SimpleWinLoseDrawBoardGameFitness<S>());
+		}
+		if(Parameters.parameters.booleanParameter("boardGameCheckersFitness")){
+			fitFunctions.add(new CheckersAdvancedFitness<S>());
+		}
+		if(Parameters.parameters.booleanParameter("hallOfFame")){
+			fitFunctions.add(new HallOfFameFitness<S>());
+		}
+		
+		// Add Fitness Functions here to keep track of Other Scores
+		otherScores.add(new SimpleWinLoseDrawBoardGameFitness<S>());
 		
 		for(int i = 0; i < bg.getNumPlayers(); i++){
-			MMNEAT.registerFitnessFunction(selectionFunction.getFitnessName(),true,i);
-			
 			for(BoardGameFitnessFunction<S> fit : fitFunctions){
+				MMNEAT.registerFitnessFunction(fit.getFitnessName(),true,i);
+			}
+			
+			for(BoardGameFitnessFunction<S> fit : otherScores){
 				MMNEAT.registerFitnessFunction(fit.getFitnessName(),false,i);
 			}
 		}
 		
-		fitFunctions.add(0, selectionFunction); // Adds the Selection Function to the first Index
 	}
 	
 	@Override
@@ -78,7 +92,7 @@ public class MultiPopulationCompetativeCoevolutionBoardGameTask<S extends BoardG
 	@Override
 	public int[] otherStatsPerPopulation() {
 		// Returns an Array to store the Other Scores for each Population
-		return ArrayUtil.intOnes(fitFunctions.size()-1);
+		return ArrayUtil.intOnes(otherScores.size());
 	}
 
 	@Override
@@ -106,7 +120,7 @@ public class MultiPopulationCompetativeCoevolutionBoardGameTask<S extends BoardG
 		}
 		// End of Copied Code
 		
-		ArrayList<Pair<double[], double[]>> scored = BoardGameUtil.playGame(bg, teamPlayers, fitFunctions);
+		ArrayList<Pair<double[], double[]>> scored = BoardGameUtil.playGame(bg, teamPlayers, fitFunctions, otherScores);
 		
 		ArrayList<Score> finalScores = new ArrayList<Score>();
 		
@@ -121,7 +135,7 @@ public class MultiPopulationCompetativeCoevolutionBoardGameTask<S extends BoardG
 	public int numOtherScores() {
 		// Other Scores are kept in the fitFunctions ArrayList;
 		// everything except the first Fitness Function is an Other Score
-		return fitFunctions.size()-1;
+		return otherScores.size()-1;
 	}
 	
 	@Override

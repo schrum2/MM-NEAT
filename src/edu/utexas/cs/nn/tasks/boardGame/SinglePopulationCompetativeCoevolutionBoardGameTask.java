@@ -8,6 +8,8 @@ import boardGame.agents.BoardGamePlayer;
 import boardGame.agents.HeuristicBoardGamePlayer;
 import boardGame.featureExtractor.BoardGameFeatureExtractor;
 import boardGame.fitnessFunction.BoardGameFitnessFunction;
+import boardGame.fitnessFunction.CheckersAdvancedFitness;
+import boardGame.fitnessFunction.HallOfFameFitness;
 import boardGame.fitnessFunction.SimpleWinLoseDrawBoardGameFitness;
 import boardGame.fitnessFunction.StaticOtherOpponentFitness;
 import boardGame.heuristics.NNBoardGameHeuristic;
@@ -17,6 +19,7 @@ import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.networks.NetworkTask;
 import edu.utexas.cs.nn.networks.hyperneat.HyperNEATTask;
 import edu.utexas.cs.nn.networks.hyperneat.Substrate;
+import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.SinglePopulationCoevolutionTask;
 import edu.utexas.cs.nn.util.ClassCreation;
 import edu.utexas.cs.nn.util.datastructures.Pair;
@@ -26,16 +29,15 @@ public class SinglePopulationCompetativeCoevolutionBoardGameTask<T extends Netwo
 
 	BoardGamePlayer<S>[] players;
 	BoardGameFeatureExtractor<S> featExtract;
-	BoardGameFitnessFunction<S> selectionFunction;
 	
 	List<BoardGameFitnessFunction<S>> fitFunctions = new ArrayList<BoardGameFitnessFunction<S>>();
+	List<BoardGameFitnessFunction<S>> otherScores = new ArrayList<BoardGameFitnessFunction<S>>();
 	
 	@SuppressWarnings("unchecked")
 	public SinglePopulationCompetativeCoevolutionBoardGameTask(){
 		try {
 			players = new BoardGamePlayer[groupSize()];
 			featExtract = (BoardGameFeatureExtractor<S>) ClassCreation.createObject("boardGameFeatureExtractor");
-			selectionFunction = (BoardGameFitnessFunction<S>) ClassCreation.createObject("boardGameFitnessFunction");
 			for(int i = 0; i < groupSize(); i++){
 				players[i] = (BoardGamePlayer<S>) ClassCreation.createObject("boardGamePlayer"); // The Player
 			}
@@ -45,17 +47,29 @@ public class SinglePopulationCompetativeCoevolutionBoardGameTask<T extends Netwo
 			System.exit(1);
 		}
 		
-		MMNEAT.registerFitnessFunction(selectionFunction.getFitnessName());
-		
-		// Add Other Scores here to keep track of other Fitness Functions
-		fitFunctions.add(new SimpleWinLoseDrawBoardGameFitness<S>());
-		fitFunctions.add(new StaticOtherOpponentFitness<S>()); // Automatically is set to boardGameOpponent
+		// Add Fitness Functions here to act as Selection Functions
+		if(Parameters.parameters.booleanParameter("boardGameSimpleFitness")){
+			fitFunctions.add(new SimpleWinLoseDrawBoardGameFitness<S>());
+		}
+		if(Parameters.parameters.booleanParameter("boardGameCheckersFitness")){
+			fitFunctions.add(new CheckersAdvancedFitness<S>());
+		}
+		if(Parameters.parameters.booleanParameter("hallOfFame")){
+			fitFunctions.add(new HallOfFameFitness<S>());
+		}
 		
 		for(BoardGameFitnessFunction<S> fit : fitFunctions){
+			MMNEAT.registerFitnessFunction(fit.getFitnessName());
+		}
+		
+		// Add Fitness Functions here to keep track of Other Scores
+		otherScores.add(new SimpleWinLoseDrawBoardGameFitness<S>());
+		otherScores.add(new StaticOtherOpponentFitness<S>()); // Automatically is set to boardGameOpponent
+		
+		for(BoardGameFitnessFunction<S> fit : otherScores){
 			MMNEAT.registerFitnessFunction(fit.getFitnessName(), false);
 		}
 		
-		fitFunctions.add(0, selectionFunction); // Adds the Selection Function to the first Index
 	}
 	
 	@Override
@@ -66,7 +80,7 @@ public class SinglePopulationCompetativeCoevolutionBoardGameTask<T extends Netwo
 	public int numOtherScores() {
 		// Other Scores are kept in the fitFunctions ArrayList;
 		// everything except the first Fitness Function is an Other Score
-		return fitFunctions.size()-1;
+		return otherScores.size();
 	}
 	
 	@Override
@@ -84,7 +98,7 @@ public class SinglePopulationCompetativeCoevolutionBoardGameTask<T extends Netwo
 			evolved.setHeuristic((new NNBoardGameHeuristic<T,S>(gene.getId(), gene.getPhenotype(),featExtract)));
 			teamPlayers[index++] = evolved;
 		}
-		return BoardGameUtil.playGame(MMNEAT.boardGame, teamPlayers, fitFunctions);
+		return BoardGameUtil.playGame(MMNEAT.boardGame, teamPlayers, fitFunctions, otherScores);
 	}
 
 	@Override

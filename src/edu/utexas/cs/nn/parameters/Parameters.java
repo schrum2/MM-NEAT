@@ -11,7 +11,6 @@ import java.util.StringTokenizer;
 import boardGame.agents.BoardGamePlayerOneStepEval;
 import boardGame.agents.BoardGamePlayerRandom;
 import boardGame.featureExtractor.TwoDimensionalRawBoardGameFeatureExtractor;
-import boardGame.fitnessFunction.SimpleWinLoseDrawBoardGameFitness;
 import boardGame.heuristics.PieceDifferentialBoardGameHeuristic;
 import edu.utexas.cs.nn.breve2D.Breve2DGame;
 import edu.utexas.cs.nn.breve2D.agent.RushingPlayer;
@@ -629,6 +628,8 @@ public class Parameters {
 		booleanOptions.add("hybrID", false, "Indicates whether HybrID is running or not");
 		booleanOptions.add("offsetHybrID", false, "Determines whether to implement preset-switch version of HybrID or offset version of HybrID");
 		booleanOptions.add("hallOfFame", false, "Creates a Hall Of Fame during Single Population Coevolution");
+		booleanOptions.add("boardGameSimpleFitness", true, "Enables the SimpleWinLoseDraw BoardGame Fitness Function to be used as a Selection Function");
+		booleanOptions.add("boardGameCheckersFitness", false, "Enables the CheckersAdvanced BoardGame Fitness Function to be used as a Selection Function");
 		// Double parameters
 		doubleOptions.add("inheritProportion", 0.4, "Portion of a parent's fitness that contributes to child fitness (with inheritFitness, as in LEEA)");
 		doubleOptions.add("linkExpressionThreshold", 0.2, "Threshold for hyperNEAT output to result in an expressed link");
@@ -746,7 +747,6 @@ public class Parameters {
 		classOptions.add("boardGameOpponentHeuristic", PieceDifferentialBoardGameHeuristic.class, "Board game heuristic used by the Opponent");
 		classOptions.add("boardGamePlayer", BoardGamePlayerOneStepEval.class, "Board game Player being evolved");
 		classOptions.add("boardGameFeatureExtractor", TwoDimensionalRawBoardGameFeatureExtractor.class, "Feature Extractor used by the NNBoardGamePlayer");
-		classOptions.add("boardGameFitnessFunction", SimpleWinLoseDrawBoardGameFitness.class, "Fitness Function used for the BoardGameTask");
 		classOptions.add("hyperNEATSeedTask", null, "HyperNEAT task that seeds a standard NEAT task");
 		classOptions.add("substrateMapping", CenteredSubstrateMapping.class, "Determines the type of subtrate coordinate mapping we want to use");
 		classOptions.add("staticPreyController", PreyFleeClosestPredatorController.class, "This parameter specifies the prey controller that predators evolve against");
