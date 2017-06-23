@@ -395,10 +395,10 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 			animationThreads[x].start();
 		}
 	}
-
+	
+	//TODO: Seems to successfully reset all buttons on the interface, but is still throwing an OutOfBoundsException
 	@Override
 	protected void reset() {
-		super.reset();
 		//Clears out all pre-computed animations so that checking/unchecking boxes actually creates new animations
 		for(int i = 0; i < animations.length; i++) {
 			// Cannot clear animation if being loaded
@@ -406,6 +406,7 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 				animations[i].clear();
 			}
 		}
+		super.reset();
 	}
 
 	@Override
