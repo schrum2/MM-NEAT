@@ -63,6 +63,17 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 		public void run() {
 			if(showNetwork) {
 				stopAnimation();
+//				if(alwaysAnimate) {
+//				for(int x = 0; x < animationThreads.length; x++) {
+//					if(animationThreads[x] != null) animationThreads[x].stopAnimation();
+//				}
+//				for(int i = 0; i < animations.length; i++) {
+//					// Cannot clear animation if being loaded
+//					synchronized(animations[i]) {
+//						animations[i].clear();
+//					}
+//				}
+//			}
 			}
 			int end = Parameters.parameters.integerParameter("defaultAnimationLength");
 			// Only one thread can add frames at a time
@@ -339,8 +350,6 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 	public ArrayList<Score<T>> evaluateAll(ArrayList<Genotype<T>> population) {
 		clearAnimations(population.size());
 		return super.evaluateAll(population); // wait for user choices
-
-
 	}
 
 	@SuppressWarnings("unchecked")
