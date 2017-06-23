@@ -114,7 +114,7 @@ public class BoardGameBenchmarkBestExperiment<T extends Network, S extends Board
 		}
 			
 			
-		player.setHeuristic((new NNBoardGameHeuristic<T,S>(gene.getId(), gene.getPhenotype(), featExtract)));
+		player.setHeuristic((new NNBoardGameHeuristic<T,S>(gene.getId(), gene.getPhenotype(), featExtract, gene)));
 		@SuppressWarnings("unchecked")
 		BoardGamePlayer<S>[] players = new BoardGamePlayer[]{player, opponent};
 			

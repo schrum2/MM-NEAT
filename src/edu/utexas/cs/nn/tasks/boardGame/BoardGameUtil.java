@@ -105,7 +105,7 @@ public class BoardGameUtil {
 				int playerIndex = (k+i) % bg.getNumPlayers();
 				// Cycles through the Selection Scores
 				for(int j = 0; j < fitScores.size(); j++){
-					fitnesses[k][i][j] = (1.0*otherFit.get(j).getFitness(players[k], playerIndex));
+					fitnesses[k][i][j] = (1.0*fitScores.get(j).getFitness(players[k], playerIndex));
 				}
 				if(otherFit.size() > 1){ // Has at least 1 Other Score; must track their fitness
 					// Stores all other Scores except the Selection Scores
