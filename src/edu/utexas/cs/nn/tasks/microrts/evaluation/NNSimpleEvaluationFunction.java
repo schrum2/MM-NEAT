@@ -3,10 +3,19 @@ package edu.utexas.cs.nn.tasks.microrts.evaluation;
 import java.util.Arrays;
 
 import edu.utexas.cs.nn.networks.Network;
+import edu.utexas.cs.nn.util.MiscUtil;
 import micro.rts.GameState;
 import micro.rts.PhysicalGameState;
 import micro.rts.units.Unit;
 
+/**
+ * original ef for evolved microRTS agents.
+ * NOT compatible with Coevolution(TODO) or HyperNEAT(impossible)
+ * 
+ * @author alicequint
+ *
+ * @param <T>
+ */
 public class NNSimpleEvaluationFunction<T extends Network> extends NNEvaluationFunction<T> {
 
 	private final int worker = 0;
@@ -20,7 +29,7 @@ public class NNSimpleEvaluationFunction<T extends Network> extends NNEvaluationF
 	private final int enemyAdjustment = 8; //inputs[8 ==> 15] are enemy versions of 0 ==> 7
 	private final int workerDelta = 16;
 	private final int mobileDelta = 17;
-	
+
 	/**
 	 * counts the number of each unit belonging to each player
 	 * 
@@ -32,9 +41,31 @@ public class NNSimpleEvaluationFunction<T extends Network> extends NNEvaluationF
 	public double[] gameStateToArray(GameState gs){
 		PhysicalGameState pgs = gs.getPhysicalGameState();
 		double[] unitsOnBoard = new double[18]; //number of different variables we are tracking
+		unitsOnBoard[workerDelta] = 0;
+		unitsOnBoard[mobileDelta] = 0;
+		int workerDeltaUpdates = 0;
+		int mobileDeltaUpdates = 0;
+		int enemyBaseLocation = -1; //not recorded yet.
+		int friendlyBaseLocation = -1;
 		Unit currentUnit;
 		int playerAdjustment;
-		int enemyBaseLocation = -1; //not recorded yet. 
+		for(int i = 0; i < pgs.getWidth(); i++){
+			for(int j = 0; j < pgs.getHeight(); j++){
+				currentUnit = pgs.getUnitAt(i, j);
+				if(currentUnit != null){
+					playerAdjustment = (currentUnit.getPlayer() == 0) ? 0 : enemyAdjustment;
+					unitsOnBoard[bases + playerAdjustment]++;
+					unitsOnBoard[resources + playerAdjustment] += currentUnit.getResources();
+					unitsOnBoard[hp + playerAdjustment] = currentUnit.getHitPoints();
+					if(currentUnit.getPlayer() == 1){
+						//record location so it can be used later
+						enemyBaseLocation = Math.max(enemyBaseLocation,(currentUnit.getY() * pgs.getWidth()) + currentUnit.getX());
+					} if(currentUnit.getPlayer() == 0){
+						friendlyBaseLocation = Math.min(friendlyBaseLocation,(currentUnit.getY() * pgs.getWidth()) + currentUnit.getX());
+					}
+				}
+			}
+		}
 		for(int i = 0; i < pgs.getWidth(); i++){
 			for(int j = 0; j < pgs.getHeight(); j++){
 				currentUnit = pgs.getUnitAt(i, j);
@@ -45,11 +76,20 @@ public class NNSimpleEvaluationFunction<T extends Network> extends NNEvaluationF
 					case "Worker":{
 						unitsOnBoard[worker + playerAdjustment] ++; //0, 8
 						unitsOnBoard[resources + playerAdjustment] += currentUnit.getResources(); //6, 14
-						if(currentUnit.getPlayer() == 0 && enemyBaseLocation != -1){
-							currentDistance = distance(currentUnit, enemyBaseLocation);
-							//incremental calculation of the avg.
-							unitsOnBoard[mobileDelta] += (currentDistance - unitsOnBoard[mobileDelta]) / (1.0 + gs.getTime()); //+1 because game state time starts at 0.
-							unitsOnBoard[workerDelta] += (currentDistance - unitsOnBoard[workerDelta]) / (1.0 + gs.getTime());
+						if(currentUnit.getPlayer() == 0){
+							if(enemyBaseLocation != -1){
+								currentDistance = distance(currentUnit, enemyBaseLocation);
+								//incremental calculation of the avg.
+								System.out.println(unitsOnBoard[mobileDelta] + " += currentDistance: " + currentDistance + " - current avg.: " + unitsOnBoard[mobileDelta] 
+								+ " / mobile delta updates: " + mobileDeltaUpdates);
+								unitsOnBoard[mobileDelta] += (currentDistance - unitsOnBoard[mobileDelta]) / (++mobileDeltaUpdates);
+								MiscUtil.waitForReadStringAndEnterKeyPress();
+							}
+							if(friendlyBaseLocation != -1){
+								currentDistance = distance(currentUnit, enemyBaseLocation);
+								//incremental calculation of the avg.
+								unitsOnBoard[workerDelta] += (currentDistance - unitsOnBoard[workerDelta]) / (++workerDeltaUpdates);
+							}
 						}
 						break;
 					}
@@ -58,7 +98,7 @@ public class NNSimpleEvaluationFunction<T extends Network> extends NNEvaluationF
 						if(currentUnit.getPlayer() == 0 && enemyBaseLocation != -1){
 							currentDistance = distance(currentUnit, enemyBaseLocation);
 							//incremental calculation of the avg.
-							unitsOnBoard[mobileDelta] += (currentDistance - unitsOnBoard[mobileDelta]) / (1.0 + gs.getTime()); //+1 because game state time starts at 0.
+							unitsOnBoard[mobileDelta] += (currentDistance - unitsOnBoard[mobileDelta]) / (++mobileDeltaUpdates); //+1 because game state time starts at 0.
 						}
 						break;
 					}
@@ -67,7 +107,7 @@ public class NNSimpleEvaluationFunction<T extends Network> extends NNEvaluationF
 						if(currentUnit.getPlayer() == 0 && enemyBaseLocation != -1){
 							currentDistance = distance(currentUnit, enemyBaseLocation);
 							//incremental calculation of the avg.
-							unitsOnBoard[mobileDelta] += (currentDistance - unitsOnBoard[mobileDelta]) / (1.0 + gs.getTime()); //+1 because game state time starts at 0.
+							unitsOnBoard[mobileDelta] += (currentDistance - unitsOnBoard[mobileDelta]) / (++mobileDeltaUpdates); //+1 because game state time starts at 0.
 						}
 						break;
 					}
@@ -76,21 +116,11 @@ public class NNSimpleEvaluationFunction<T extends Network> extends NNEvaluationF
 						if(currentUnit.getPlayer() == 0 && enemyBaseLocation != -1){
 							currentDistance = distance(currentUnit, enemyBaseLocation);
 							//incremental calculation of the avg.
-							unitsOnBoard[mobileDelta] += (currentDistance - unitsOnBoard[mobileDelta]) / (1.0 + gs.getTime()); //+1 because game state time starts at 0.
+							unitsOnBoard[mobileDelta] += (currentDistance - unitsOnBoard[mobileDelta]) / (++mobileDeltaUpdates); //+1 because game state time starts at 0.
 						}
 						break;
 					}
-					case "Base": {
-						unitsOnBoard[bases + playerAdjustment]++; 
-						unitsOnBoard[resources + playerAdjustment] += currentUnit.getResources();
-						unitsOnBoard[hp + playerAdjustment] = currentUnit.getHitPoints();
-						if(currentUnit.getPlayer() == 1){
-							//record location so it can be used in other measurments
-							enemyBaseLocation = currentUnit.getX() * pgs.getWidth() + currentUnit.getY();
-						}
-						break;
-					}
-					case "Barracks":{
+					case "Barracks": {
 						unitsOnBoard[barracks + playerAdjustment]++; 
 						unitsOnBoard[hp + playerAdjustment] = currentUnit.getHitPoints();
 						break;
@@ -100,16 +130,20 @@ public class NNSimpleEvaluationFunction<T extends Network> extends NNEvaluationF
 				}
 			}
 		}
+		System.out.println("mobile diff: " + unitsOnBoard[mobileDelta] + " worker diff: " + unitsOnBoard[workerDelta]); //TODO
+
 		//no longer normalized because the less concrete scores dont have the same max
-//		unitsOnBoard = normalize(unitsOnBoard, pgs.getHeight()*pgs.getWidth());
+		//		unitsOnBoard = normalize(unitsOnBoard, pgs.getHeight()*pgs.getWidth());
 		return unitsOnBoard;
 	}
-	
-	private double distance(Unit currentUnit, int enemyBaseLocation){
+
+	private double distance(Unit currentUnit, int enemyBaseLocation){ //TODO ???
 		int baseY = enemyBaseLocation % pgs.getWidth();
-		int baseX = (enemyBaseLocation - baseY) / pgs.getWidth();
-		//distance: sq. root of ((x2-x1)^2 + (y2-y1)^2)
-		return Math.abs(Math.sqrt((currentUnit.getX() - baseX) + (currentUnit.getY() - baseY)));
+		int baseX = enemyBaseLocation / pgs.getWidth();
+		//distance: sq. root of |((x2-x1)^2 + (y2-y1)^2)|
+		double distance = Math.sqrt(Math.abs((currentUnit.getX() - baseX) + (currentUnit.getY() - baseY)));
+		System.out.println("distance from " + currentUnit.getX() + "," + currentUnit.getY() + " to " + baseX + "," +baseY + " : " +distance);
+		return distance; 
 	}
 
 	/**
