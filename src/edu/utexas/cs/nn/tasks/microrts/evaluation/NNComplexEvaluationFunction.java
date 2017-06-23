@@ -222,9 +222,11 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 			appropriateSubstrates.add(numCurrentSubs);
 			subIDs.add(path);
 			if(u != null && u.getType().name.equals("Base")){
-				activate(location, 1, pathSub, pgs.getWidth());
-			} else if(isTerrain){			activate(location, -1, pathSub, pgs.getWidth());
+				pathSub = activate(location, 1, pathSub, pgs.getWidth());
+			} else if(isTerrain){			
+				pathSub = activate(location, -1, pathSub, pgs.getWidth());
 			}
+			numCurrentSubs++;
 		}
 		for(int i = 0; i < appropriateSubstrates.size(); i++){
 			int indexWithinAll = (substrateSize * appropriateSubstrates.get(i)) + location;
@@ -235,6 +237,7 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 					substrates[j] = pathSub[j - subStart]; 
 				}
 			} else {
+				System.out.println(substrates.length);
 				substrates[indexWithinAll] = getWeightedValue(subID , u, isTerrain); //typical way inputs are activated
 			}
 		}
