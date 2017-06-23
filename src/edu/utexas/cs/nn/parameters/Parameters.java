@@ -629,7 +629,7 @@ public class Parameters {
 		booleanOptions.add("hybrID", false, "Indicates whether HybrID is running or not");
 		booleanOptions.add("offsetHybrID", false, "Determines whether to implement preset-switch version of HybrID or offset version of HybrID");
 		booleanOptions.add("hallOfFame", false, "Creates a Hall Of Fame during Single Population Coevolution");
-		booleanOptions.add("alwaysAnimate", false, "Loads and plays all animations in AnimationBreeder and 3DObjectBreeder at once");
+		booleanOptions.add("alwaysAnimate", true, "Loads and plays all animations in AnimationBreeder and 3DObjectBreeder at once");
 		// Double parameters
 		doubleOptions.add("inheritProportion", 0.4, "Portion of a parent's fitness that contributes to child fitness (with inheritFitness, as in LEEA)");
 		doubleOptions.add("linkExpressionThreshold", 0.2, "Threshold for hyperNEAT output to result in an expressed link");

@@ -73,7 +73,7 @@ public class PictureRemixTask<T extends Network> extends PicbreederTask<T> {
 					int newLength = (int) source.getValue();
 					Parameters.parameters.setInteger("remixImageWindow", newLength);
 					// reset buttons
-					resetButtons();
+					resetButtons(true);
 				}
 			}
 		});
@@ -130,7 +130,8 @@ public class PictureRemixTask<T extends Network> extends PicbreederTask<T> {
 					System.out.println("Could not load image: " + filename);
 					System.exit(1);
 				}
-				resetButtons();
+				// reset necessary?
+				resetButtons(true);
 			}
 		}
 	}

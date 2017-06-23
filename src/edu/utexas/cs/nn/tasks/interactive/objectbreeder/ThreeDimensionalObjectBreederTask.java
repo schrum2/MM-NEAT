@@ -97,7 +97,7 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 					int newLength = (int) source.getValue();
 					pitch = (newLength /(double) MAX_ROTATION) * 2 * Math.PI; 
 					// reset buttons
-					resetButtons();
+					resetButtons(true);
 				}
 			}
 		});
@@ -137,7 +137,7 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 
 					heading = (newLength /(double) MAX_ROTATION) * 2 * Math.PI; 
 					// reset buttons
-					resetButtons();
+					resetButtons(true);
 				}
 			}
 		});
@@ -150,7 +150,7 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 		heading.add(headingLabel);
 		heading.add(headingValue);
 
-		if(!simplifiedInteractiveInterface) {
+		if(!simplifiedInteractiveInterface && !alwaysAnimate) {
 			top.add(pitch);
 			top.add(heading);
 		}
@@ -172,7 +172,7 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 						t.color = color;
 					}
 				}
-				resetButtons();
+				resetButtons(true);
 			}
 
 		});
@@ -199,7 +199,7 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 				} else if(source.getSelectedItem().toString() == "Vertical"){
 					vertical = true;
 				}
-				resetButtons();
+				resetButtons(true);
 			}
 
 		});
@@ -228,6 +228,17 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 			shapes.put(g.getId(), ThreeDimensionalUtil.trianglesFromCPPN(g.getPhenotype(), picSize, picSize, CUBE_SIDE_LENGTH, SHAPE_WIDTH, SHAPE_HEIGHT, SHAPE_DEPTH, color, getInputMultipliers()));
 		}
 		return super.evaluateAll(population); // wait for user choices
+	}
+	
+	@Override
+	public void resetButtons(boolean hardReset) {
+		if(hardReset){
+			shapes = new HashMap<Long,List<Triangle>>();
+			for(Score<TWEANN> s : scores) {
+				shapes.put(s.individual.getId(), ThreeDimensionalUtil.trianglesFromCPPN(s.individual.getPhenotype(), picSize, picSize, CUBE_SIDE_LENGTH, SHAPE_WIDTH, SHAPE_HEIGHT, SHAPE_DEPTH, color, getInputMultipliers()));
+			}		
+		}
+		super.resetButtons(hardReset);
 	}
 
 	protected void setUndo() {
@@ -263,8 +274,6 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 
 	@Override
 	protected BufferedImage getButtonImage(TWEANN phenotype, int width, int height, double[] inputMultipliers) {
-		//return Construct3DObject.rotationSequenceFromCPPN(phenotype, picSize, picSize, CUBE_SIDE_LENGTH, SHAPE_WIDTH, SHAPE_HEIGHT, SHAPE_DEPTH, COLOR,  0, 1, heading, pitch, getInputMultipliers())[0];
-		//return Construct3DObject.currentImageFromCPPN(phenotype, picSize, picSize, CUBE_SIDE_LENGTH, SHAPE_WIDTH, SHAPE_HEIGHT, SHAPE_DEPTH, COLOR, heading, pitch, getInputMultipliers());
 		return ThreeDimensionalUtil.imageFromTriangles(shapes.get(phenotype.getId()), picSize, picSize, heading, pitch, null);
 	}
 

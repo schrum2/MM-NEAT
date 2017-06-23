@@ -555,7 +555,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	 * @param individual genotype used to replace button image
 	 * @param x index of button in question
 	 */
-	private void resetButton(Genotype<T> individual, int x) { 
+	protected void resetButton(Genotype<T> individual, int x) { 
 		scores.add(new Score<T>(individual, new double[]{0}, null));
 		setButtonImage(showNetwork ? getNetwork(individual) : getButtonImage(individual.getPhenotype(),  picSize, picSize, inputMultipliers), x);
 		chosen[x] = false;
@@ -702,13 +702,13 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		}else{ // Effect is currently OFF
 			inputMultipliers[index] = 1.0;
 		}
-		resetButtons();
+		resetButtons(true);
 	}
 
 	/**
 	 * Used to reset the buttons when an Effect CheckBox is clicked
 	 */
-	public void resetButtons(){
+	public void resetButtons(boolean hardReset){
 		for(int i = 0; i < scores.size(); i++) {
 			setButtonImage(getButtonImage(scores.get(i).individual.getPhenotype(),  picSize, picSize, inputMultipliers), i);
 		}		
@@ -721,6 +721,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	 */
 	@Override
 	public void actionPerformed(ActionEvent event) {
+		System.out.println(event.toString());
 		//		System.out.println(event.toString());
 		//open scanner to read which button was pressed
 		Scanner s = new Scanner(event.toString());

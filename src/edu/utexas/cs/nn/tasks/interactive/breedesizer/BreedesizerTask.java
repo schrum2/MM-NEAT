@@ -104,7 +104,7 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 
 					Parameters.parameters.setInteger("clipLength", newLength);
 					// reset buttons
-					resetButtons();
+					resetButtons(true);
 				}
 			}
 		});
@@ -143,8 +143,8 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 						double newSpeed = source.getValue()/scale;
 
 						noteLengthScale = newSpeed;
-						// reset buttons
-						resetButtons();
+						// reset buttons: necessary?
+						resetButtons(true);
 					}
 				}
 
@@ -214,7 +214,8 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 			if(returnVal == JFileChooser.APPROVE_OPTION) {//if the user decides to save the image
 				Parameters.parameters.setString("remixMIDIFile", chooser.getCurrentDirectory() + "\\" + chooser.getSelectedFile().getName());
 			}
-			resetButtons();
+			// reset necessary?
+			resetButtons(true);
 		}
 	}
 

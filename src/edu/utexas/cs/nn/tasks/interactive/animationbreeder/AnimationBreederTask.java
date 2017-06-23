@@ -43,7 +43,7 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 	protected JSlider pauseLengthBetweenFrames;
 
 	protected boolean alwaysAnimate = Parameters.parameters.booleanParameter("alwaysAnimate");
-
+	
 	protected BufferedImage[] getAnimationImages(T cppn, int startFrame, int endFrame, boolean beingSaved) {
 		return AnimationUtil.imagesFromCPPN(cppn, picSize, picSize, startFrame, endFrame, getInputMultipliers());
 	}
@@ -52,23 +52,29 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 	protected class AnimationThread extends Thread {
 		private int imageID;
 		private boolean abort;
+		
 
 		public AnimationThread(int imageID) {
 			this.imageID = imageID;
 			this.abort = false;
 		}
-
+		
+		
 		public void run() {
 			if(showNetwork) {
 				stopAnimation();
 			}
 			int end = Parameters.parameters.integerParameter("defaultAnimationLength");
-			//adds images to array at index of specified button (imageID)
-			if(animations[imageID].size() < Parameters.parameters.integerParameter("defaultAnimationLength")) {
-				int start = animations[imageID].size();
-				BufferedImage[] newFrames = getAnimationImages(scores.get(imageID).individual.getPhenotype(), start, end, false);
-				for(BufferedImage bi : newFrames) {
-					animations[imageID].add(bi); 	
+			// Only one thread can add frames at a time
+			synchronized(animations[imageID]) {
+				//adds images to array at index of specified button (imageID)
+				if(animations[imageID].size() < Parameters.parameters.integerParameter("defaultAnimationLength")) {
+					int start = animations[imageID].size();
+					BufferedImage[] newFrames = getAnimationImages(scores.get(imageID).individual.getPhenotype(), start, end, false);
+					for(BufferedImage bi : newFrames) {
+						if(abort) break; // stop loading if animation is aborted
+						animations[imageID].add(bi);
+					}
 				}
 			}
 
@@ -103,6 +109,7 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 
 	// stores all animations in an array with a different button's animation at each index
 	public ArrayList<BufferedImage>[] animations;
+	protected AnimationThread[] animationThreads;
 
 	public AnimationBreederTask() throws IllegalAccessException {
 		this(true);
@@ -112,8 +119,10 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 	 * Constructor - all sliders are added here and mouse listening is enabled for hovering over the buttons
 	 * @throws IllegalAccessException
 	 */
+	@SuppressWarnings("unchecked")
 	public AnimationBreederTask(boolean justAnimationBreeder) throws IllegalAccessException {
 		super();
+		animationThreads = new AnimationBreederTask.AnimationThread[Parameters.parameters.integerParameter("mu")];
 		if(justAnimationBreeder) {
 			//Construction of JSlider for desired animation length
 
@@ -141,7 +150,7 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 						int newLength = (int) source.getValue();
 						Parameters.parameters.setInteger("defaultAnimationLength", newLength);
 						// reset buttons
-						resetButtons();
+						resetButtons(false); // do not clear out cached animation frames
 					}
 				}
 			});
@@ -171,8 +180,8 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 					if(!source.getValueIsAdjusting()) {
 						int newLength = (int) source.getValue();
 						Parameters.parameters.setInteger("defaultPause", newLength);
-						// reset buttons
-						resetButtons();
+						// reset buttons: necessary?
+						//resetButtons();
 					}
 				}
 			});
@@ -226,8 +235,8 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 				if(!source.getValueIsAdjusting()) {
 					int newLength = (int) source.getValue();
 					Parameters.parameters.setInteger("defaultFramePause", newLength);
-					// reset buttons
-					resetButtons();
+					// reset buttons: necessary?
+					//resetButtons();
 				}
 			}
 		});		
@@ -330,6 +339,8 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 	public ArrayList<Score<T>> evaluateAll(ArrayList<Genotype<T>> population) {
 		clearAnimations(population.size());
 		return super.evaluateAll(population); // wait for user choices
+
+
 	}
 
 	@SuppressWarnings("unchecked")
@@ -347,11 +358,37 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 	}
 
 	@Override
-	public void resetButtons() {
-		super.resetButtons();
-		//Clears out all pre-computed animations so that checking/unchecking boxes actually creates new animations
-		for(int i = 0; i < animations.length; i++) {
-			animations[i].clear();
+	public void resetButtons(boolean hardReset) {
+		super.resetButtons(hardReset);
+		if(alwaysAnimate) {
+			for(int x = 0; x < animationThreads.length; x++) {
+				if(animationThreads[x] != null) animationThreads[x].stopAnimation();
+			}
+		}
+		if(hardReset) {
+			//Clears out all pre-computed animations so that checking/unchecking boxes actually creates new animations
+			for(int i = 0; i < animations.length; i++) {
+				// Cannot clear animation if being loaded
+				synchronized(animations[i]) {
+					animations[i].clear();
+				}
+			}
+		}
+		if(alwaysAnimate) {
+			for(int x = 0; x < animationThreads.length; x++) {
+				animationThreads[x] = new AnimationThread(x);
+				animationThreads[x].start();
+			}
+		}
+	}
+	
+	@Override
+	protected void resetButton(Genotype<T> individual, int x) {
+		super.resetButton(individual, x);
+		if(alwaysAnimate) {
+			if(animationThreads[x] != null) animationThreads[x].stopAnimation();
+			animationThreads[x] = new AnimationThread(x);
+			animationThreads[x].start();
 		}
 	}
 

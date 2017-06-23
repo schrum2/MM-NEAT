@@ -134,7 +134,8 @@ public class SoundRemixTask<T extends Network> extends BreedesizerTask<T> {
 				Parameters.parameters.setInteger("clipLength", Math.min(Parameters.parameters.integerParameter("clipLength"), WAVDoubleArray.length));
 				Parameters.parameters.setInteger("maxClipLength", WAVDoubleArray.length);
 			}
-			resetButtons();
+			// reset necessary?
+			resetButtons(true);
 		}
 	}
 
