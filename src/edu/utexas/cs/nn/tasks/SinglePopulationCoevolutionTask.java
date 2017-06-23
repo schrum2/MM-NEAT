@@ -20,7 +20,6 @@ import edu.utexas.cs.nn.util.stats.Statistic;
 public abstract class SinglePopulationCoevolutionTask<T> implements SinglePopulationTask<T>{
 
 	private Statistic stat;
-	protected HallOfFame<T> hall;
 
 	public SinglePopulationCoevolutionTask() {
 		try {
@@ -29,13 +28,6 @@ public abstract class SinglePopulationCoevolutionTask<T> implements SinglePopula
 			ex.printStackTrace();
 			System.exit(1);
 		}
-		if(Parameters.parameters.booleanParameter("hallOfFame")){
-			hall = new HallOfFame<T>();
-		}
-	}
-	
-	public HallOfFame<T> getHallOfFame(){
-		return hall;
 	}
 	
 	//most tasks dont need to do anything here,
@@ -54,6 +46,7 @@ public abstract class SinglePopulationCoevolutionTask<T> implements SinglePopula
 
 	public abstract int groupSize();
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public ArrayList<Score<T>> evaluateAll(ArrayList<Genotype<T>> population) {
 		// Used to randomly group agents in the population
@@ -169,12 +162,12 @@ public abstract class SinglePopulationCoevolutionTask<T> implements SinglePopula
 			PopulationUtil.saveBestOfCurrentGen(bestObjectives, bestGenotypes, bestScores);
 		}
 		
-		if(hall != null){
+		if(MMNEAT.hall != null){
 			List<Genotype<T>> champs = new ArrayList<Genotype<T>>();
 			for(Genotype<T> gene : bestGenotypes){
 				champs.add(gene);
 			}
-			hall.addChampions(MMNEAT.ea.currentGeneration(), champs);
+			MMNEAT.hall.addChampions(MMNEAT.ea.currentGeneration(), champs);
 		}
 		
 		return scores;

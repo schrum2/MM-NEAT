@@ -20,6 +20,7 @@ import edu.utexas.cs.nn.evolution.crossover.Crossover;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.evolution.genotypes.HyperNEATCPPNGenotype;
 import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
+import edu.utexas.cs.nn.evolution.halloffame.HallOfFame;
 import edu.utexas.cs.nn.evolution.lineage.Offspring;
 import edu.utexas.cs.nn.evolution.metaheuristics.AntiMaxModuleUsageFitness;
 import edu.utexas.cs.nn.evolution.metaheuristics.FavorXModulesFitness;
@@ -149,6 +150,8 @@ public class MMNEAT {
 	public static MMNEATLog ghostLocationsOnPowerPillEaten = null;
 	public static boolean browseLineage = false;
 	public static SubstrateCoordinateMapping substrateMapping = null;
+	@SuppressWarnings("rawtypes")
+	public static HallOfFame hall;
 	@SuppressWarnings("rawtypes")
 	public static BoardGame boardGame;
 	@SuppressWarnings("rawtypes")
@@ -421,7 +424,9 @@ public class MMNEAT {
 				// Number of output neurons needed to designate bias values across all substrates
 				HyperNEATCPPNGenotype.numBiasOutputs = CommonConstants.evolveHyperNEATBias ? HyperNEATUtil.numBiasOutputsNeeded() : 0;
 			}
-
+			if(Parameters.parameters.booleanParameter("hallOfFame")){
+				hall = new HallOfFame();
+			}
 			if (task instanceof MsPacManTask) {
 				MsPacManInitialization.setupGenotypePoolsForMsPacman();
 				System.out.println("Setup Ms. Pac-Man Task");

@@ -12,15 +12,11 @@ import boardGame.featureExtractor.BoardGameFeatureExtractor;
 import boardGame.heuristics.BoardGameHeuristic;
 import boardGame.heuristics.NNBoardGameHeuristic;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.evolution.halloffame.HallOfFame;
 import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.tasks.SinglePopulationCoevolutionTask;
 import edu.utexas.cs.nn.util.ClassCreation;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 
 public class HallOfFameFitness<T extends Network, S extends BoardGameState> implements BoardGameFitnessFunction<S> {
-	
-	private HallOfFame hall;
 	
 	BoardGameFitnessFunction<S> selectionFunction;
 	int currentGen = -1;
@@ -41,9 +37,6 @@ public class HallOfFameFitness<T extends Network, S extends BoardGameState> impl
 			System.out.println("BoardGame instance could not be loaded");
 			System.exit(1);
 		}
-		
-		hall = ((SinglePopulationCoevolutionTask) MMNEAT.task).getHallOfFame();
-		
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -65,14 +58,16 @@ public class HallOfFameFitness<T extends Network, S extends BoardGameState> impl
 		
 		if(evaluated.containsKey(genotypeID)){
 			return evaluated.get(genotypeID);
-		}else{
+		}else if(MMNEAT.ea.currentGeneration() >= 1){ // Must complete at least one full Generation
 			
-			Pair<double[], double[]> evalResults = hall.eval(((NNBoardGameHeuristic<?,S>) bgh).getGenotype());
+			Pair<double[], double[]> evalResults = MMNEAT.hall.eval(((NNBoardGameHeuristic<?,S>) bgh).getGenotype());
 			double score = evalResults.t1[0]; // Only uses 1 Selection Function
 			
 			evaluated.put(genotypeID, score);
 			
 			return score;
+		}else{
+			return 0.0; // Did not complete a full Generation yet
 		}
 	}
 
