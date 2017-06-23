@@ -80,8 +80,6 @@ public class NNSimpleEvaluationFunction<T extends Network> extends NNEvaluationF
 							if(enemyBaseLocation != -1){
 								currentDistance = distance(currentUnit, enemyBaseLocation);
 								//incremental calculation of the avg.
-								System.out.println(unitsOnBoard[mobileDelta] + " += currentDistance: " + currentDistance + " - current avg.: " + unitsOnBoard[mobileDelta] 
-								+ " / mobile delta updates: " + mobileDeltaUpdates);
 								unitsOnBoard[mobileDelta] += (currentDistance - unitsOnBoard[mobileDelta]) / (++mobileDeltaUpdates);
 								MiscUtil.waitForReadStringAndEnterKeyPress();
 							}
@@ -130,20 +128,16 @@ public class NNSimpleEvaluationFunction<T extends Network> extends NNEvaluationF
 				}
 			}
 		}
-		System.out.println("mobile diff: " + unitsOnBoard[mobileDelta] + " worker diff: " + unitsOnBoard[workerDelta]); //TODO
-
 		//no longer normalized because the less concrete scores dont have the same max
 		//		unitsOnBoard = normalize(unitsOnBoard, pgs.getHeight()*pgs.getWidth());
 		return unitsOnBoard;
 	}
 
-	private double distance(Unit currentUnit, int enemyBaseLocation){ //TODO ???
+	private double distance(Unit currentUnit, int enemyBaseLocation){
 		int baseY = enemyBaseLocation % pgs.getWidth();
 		int baseX = enemyBaseLocation / pgs.getWidth();
 		//distance: sq. root of |((x2-x1)^2 + (y2-y1)^2)|
-		double distance = Math.sqrt(Math.abs((currentUnit.getX() - baseX) + (currentUnit.getY() - baseY)));
-		System.out.println("distance from " + currentUnit.getX() + "," + currentUnit.getY() + " to " + baseX + "," +baseY + " : " +distance);
-		return distance; 
+		return Math.sqrt(Math.abs((currentUnit.getX() - baseX)*(currentUnit.getX() - baseX) + (currentUnit.getY() - baseY)*(currentUnit.getY() - baseY)));
 	}
 
 	/**
