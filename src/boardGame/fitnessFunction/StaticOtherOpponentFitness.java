@@ -90,4 +90,9 @@ public class StaticOtherOpponentFitness<T extends BoardGameState> implements Boa
 		 }
 	}
 
+	@Override
+	public double getMinScore() {
+		return -2; // Uses the SimpleWinLoseDraw Fitness Function
+	}
+
 }

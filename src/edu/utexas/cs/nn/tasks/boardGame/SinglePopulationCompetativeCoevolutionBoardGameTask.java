@@ -74,7 +74,7 @@ public class SinglePopulationCompetativeCoevolutionBoardGameTask<T extends Netwo
 	
 	@Override
 	public int numObjectives() {
-		return 1;
+		return fitFunctions.size();
 	}
 
 	public int numOtherScores() {
@@ -85,7 +85,14 @@ public class SinglePopulationCompetativeCoevolutionBoardGameTask<T extends Netwo
 	
 	@Override
 	public double[] minScores() {
-		return new double[]{-1}; // -1 is for a loss
+		double[] minScore = new double[fitFunctions.size()]; // Get minimum scores from Selection Functions
+		int index = 0;
+		
+		for(BoardGameFitnessFunction<S> fit : fitFunctions){
+			minScore[index++] = fit.getMinScore();
+		}
+		
+		return minScore;
 	}
 
 	@SuppressWarnings("unchecked")

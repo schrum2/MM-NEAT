@@ -34,5 +34,10 @@ public class SimpleWinLoseDrawBoardGameFitness<T extends BoardGameState> impleme
 	public void reset() {
 		winners = new LinkedList<>(); // no winners or losers
 	}
+
+	@Override
+	public double getMinScore() {
+		return -2; // Lowest possible score
+	}
 	
 }

@@ -35,4 +35,12 @@ public interface BoardGameFitnessFunction<T extends BoardGameState> {
 	 * accumulating scores over multiple generations
 	 */
 	public void reset();
+	
+	/**
+	 * Returns the minimum possible Score for this
+	 * Fitness Function
+	 * 
+	 * @return Double representing the lowest possible Score
+	 */
+	public double getMinScore();
 }

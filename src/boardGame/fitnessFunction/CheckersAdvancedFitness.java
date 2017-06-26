@@ -61,4 +61,9 @@ public class CheckersAdvancedFitness<T extends BoardGameState> implements BoardG
 		fitness = new double[2]; // Checkers always has two players;
 	}
 
+	@Override
+	public double getMinScore() {
+		return 124; // 100 + (2*0) + (3*0) + (2*(12-0)) + (3*(12-12)) = 100 + 24 = 124
+	}
+
 }

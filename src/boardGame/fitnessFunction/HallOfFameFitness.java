@@ -91,4 +91,9 @@ public class HallOfFameFitness<T extends Network, S extends BoardGameState> impl
 		 }
 	}
 
+	@Override
+	public double getMinScore() {
+		return -2; // Presumably uses the SimpleWinLoseDraw Fitness Function
+	}
+
 }
