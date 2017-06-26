@@ -114,7 +114,7 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 				boardIndex =  i + j * pgs.getHeight(); 
 				current = pgs.getUnitAt(i, j);
 				assert !(isTerrain && (current != null)): "there appears to be both a unit AND a wall at: " + i + " , " + j;
-				inputs = populateSubstratesWith(current, isTerrain, inputs, boardIndex);
+				populateSubstratesWith(current, isTerrain, inputs, boardIndex);
 			}//end i : width
 		}//end j : height
 		return inputs;
@@ -135,7 +135,7 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 	 * @return double[] input as substrates, but with the unit added at location for every appropriate substrate
 	 * 
 	 */
-	private double[] populateSubstratesWith(Unit u, boolean isTerrain, double[] substrates, int location){
+	private void populateSubstratesWith(Unit u, boolean isTerrain, double[] substrates, int location){
 		ArrayList<Integer> appropriateSubstrates = new ArrayList<>();
 		ArrayList<Integer> subIDs = new ArrayList<>(); //ends up that indexes correspond to appropriateSubstrates, and data corresponds to globals
 		int numCurrentSubs = 0;
@@ -222,9 +222,9 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 			appropriateSubstrates.add(numCurrentSubs);
 			subIDs.add(path);
 			if(u != null && u.getType().name.equals("Base")){
-				pathSub = activate(location, 1, pathSub, pgs.getWidth());
-			} else if(isTerrain){			
-				pathSub = activate(location, -1, pathSub, pgs.getWidth());
+//				activate(location, 1, pathSub, pgs.getWidth());
+			} else if(isTerrain){	
+				pathSub[location] = -1;
 			}
 			numCurrentSubs++;
 		}
@@ -241,28 +241,9 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 				substrates[indexWithinAll] = getWeightedValue(subID , u, isTerrain); //typical way inputs are activated
 			}
 		}
-		return substrates;
 	}
 	
-	private double[] activate(int location, double value, double[] sub, int width){
-		if(value == -1){ //terrain
-			sub[location] = -1;
-			return sub;
-		} else if(value <= .05) { //base case: trail too dim to matter.
-			return sub;
-		} else if(location < 0 || location > substrateSize - 1) { //base case: out of bounds
-			return sub;
-		} else {
-			if(value <= sub[location]) //discontinue if value is < whats already there
-				return sub;
-			sub[location] = value;
-			sub = activate(location+1, value*(base_gradient_discount_rate), sub, width); //right
-			sub = activate(location-1, value*(base_gradient_discount_rate), sub, width); //left
-			sub = activate(location+width, value*(base_gradient_discount_rate), sub, width); //down
-			sub = activate(location-width, value*(base_gradient_discount_rate), sub, width); //up
-			return sub;
-		}
-	}
+	
 	
 	/**
 	 * returns a value to be used as an input that represents a specific entity in a substrate,
