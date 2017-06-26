@@ -548,13 +548,6 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		buttons.get(buttonIndex).setIcon(img);
 
 	}
-
-	/**
-	 * Saves image from button utilizing drawingPanel save functionality
-	 * @param i index of button
-	 * @param button button
-	 */
-	//protected abstract void save(int i);
 	
 	/**
 	 * If user is saving file to a specified location, this method obtains
@@ -580,6 +573,13 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		}
 	}
 	
+	/**
+	 * Generalized version of save method that accounts for user pressing 
+	 * "cancel" because this needs to be handled in all extensions of
+	 * the abstract save method.
+	 * 
+	 * @param i index of item being saved
+	 */
 	protected void save(int i) {
 		String file = getDialogFileName(getFileType(), getFileExtension());
 		if(file != null) {
@@ -588,7 +588,13 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 			System.out.println("Saving cancelled");
 		}
 	}
-
+	
+	/**
+	 * All interactive evolution interfaces must implement this
+	 * class to save generated files. 
+	 * @param file Desired file name
+	 * @param i Index of item being saved
+	 */
 	protected abstract void save(String file, int i);
 
 	/**
@@ -692,8 +698,18 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		}
 	}
 	
+	/**
+	 * Returns type of file being saved (for FileExtensionFilter for save method)
+	 * 
+	 * @return type of file being saved
+	 */
 	protected abstract String getFileType();
 	
+	/**
+	 * Returns extension of file being saved (for FileExtensionFilter for save method)
+	 * 
+	 * @return extension of file being saved	
+	 */
 	protected abstract String getFileExtension();
 
 	/**

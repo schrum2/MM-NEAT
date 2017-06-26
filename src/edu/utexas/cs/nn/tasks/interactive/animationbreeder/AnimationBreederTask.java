@@ -12,16 +12,13 @@ import java.util.Scanner;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.filechooser.FileNameExtensionFilter;
 
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.evolution.SinglePopulationGenerationalEA;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.parameters.Parameters;
@@ -326,14 +323,13 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 				e.printStackTrace();
 			}
 		} else {
-			//String saveName = getDialogFileName("GIF", "gif");
-				try {
-					//saves gif to chosen file name
-					AnimationUtil.createGif(toSave, Parameters.parameters.integerParameter("defaultFramePause"), filename);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				System.out.println("image " + filename + "was saved successfully");
+			try {
+				//saves gif to chosen file name
+				AnimationUtil.createGif(toSave, Parameters.parameters.integerParameter("defaultFramePause"), filename);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			System.out.println("image " + filename + "was saved successfully");
 		}
 	}
 
