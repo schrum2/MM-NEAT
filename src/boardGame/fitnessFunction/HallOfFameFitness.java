@@ -1,8 +1,6 @@
 package boardGame.fitnessFunction;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import boardGame.BoardGameState;
@@ -18,9 +16,8 @@ import edu.utexas.cs.nn.util.datastructures.Pair;
 
 public class HallOfFameFitness<T extends Network, S extends BoardGameState> implements BoardGameFitnessFunction<S> {
 	
-	BoardGameFitnessFunction<S> selectionFunction;
+	private boolean currentlyEvaluatingHallOfFame = false;
 	int currentGen = -1;
-	List<BoardGameFitnessFunction<S>> fitFunctions = new ArrayList<BoardGameFitnessFunction<S>>();
 	BoardGameFeatureExtractor<S> featExtract;
 	
 	HeuristicBoardGamePlayer<S> champ;
@@ -42,6 +39,9 @@ public class HallOfFameFitness<T extends Network, S extends BoardGameState> impl
 	@SuppressWarnings("unchecked")
 	@Override
 	public double getFitness(BoardGamePlayer<S> player, int index) {
+		// Do not evaluate in infinite loop
+		if(currentlyEvaluatingHallOfFame) return 0;
+		
 		long genotypeID = -1;
 		BoardGameHeuristic<S> bgh;
 		
@@ -56,11 +56,14 @@ public class HallOfFameFitness<T extends Network, S extends BoardGameState> impl
 			return 0; // Don't have static opponents play against other static opponents
 		}
 		
+		// At this point, Player must be a Heuristic Board Game Player, and bgh must be a NNBoardGameHeuristic
+		
 		if(evaluated.containsKey(genotypeID)){
 			return evaluated.get(genotypeID);
-		}else if(MMNEAT.ea.currentGeneration() >= 1){ // Must complete at least one full Generation
-			
-			Pair<double[], double[]> evalResults = MMNEAT.hall.eval(((NNBoardGameHeuristic<?,S>) bgh).getGenotype());
+		}else if(MMNEAT.ea.currentGeneration() > 0){ // Must complete at least one full Generation
+			currentlyEvaluatingHallOfFame = true; // prevent infinite recursion when evaluating hall of fame
+			Pair<double[], double[]> evalResults = MMNEAT.hallOfFame.eval(((NNBoardGameHeuristic<?,S>) bgh).getGenotype());
+			currentlyEvaluatingHallOfFame = false;
 			double score = evalResults.t1[0]; // Only uses 1 Selection Function
 			
 			evaluated.put(genotypeID, score);
