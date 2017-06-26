@@ -15,7 +15,7 @@ public class WinLossFitnessFunction extends ProgressiveFitnessFunction{
 		ArrayList<Pair<double[], double[]>> result = new ArrayList<>();
 		int winner = gs.winner(); //0:win 1:loss -1:tie
 		double[] fitness = new double[]{
-				normalize(task.getHarvestingEfficiency(1), gameEndTime),
+//				normalize(task.getHarvestingEfficiency(1), gameEndTime),
 				normalize(task.getBaseUpTime(1), gameEndTime),
 				normalize(task.getAverageUnitDifference(), pgs.getHeight()*pgs.getWidth())+1,
 				// normalize() assumes that the results range from 0 to a maximum number, whereas unit differences is 0 on average
@@ -27,7 +27,7 @@ public class WinLossFitnessFunction extends ProgressiveFitnessFunction{
 		};
 		double[] opponentFitness = new double[fitness.length];
 		if(coevolution){
-			opponentFitness[0] = normalize(task.getHarvestingEfficiency(2), gameEndTime);
+//			opponentFitness[0] = normalize(task.getHarvestingEfficiency(2), gameEndTime);
 			opponentFitness[1] = normalize(task.getBaseUpTime(2), gameEndTime);
 			opponentFitness[2] = fitness[2] * -1; // * -1 because each players UnitDifference score will be the Reverse of the other's.
 			opponentFitness[3] = normalize(task.getPercentEnemiesDestroyed(2), 100);
@@ -47,7 +47,7 @@ public class WinLossFitnessFunction extends ProgressiveFitnessFunction{
 	
 	@Override
 	public String[] getFunctions() {
-			return new String[]{"Harvesting Efficiency","Time Base was Alive","Average Unit Difference","% Enemies Destroyed","Win/Loss"};//Fitness
+			return new String[]{"Time Base was Alive","Average Unit Difference","% Enemies Destroyed","Win/Loss"};//Fitness
 	}
 	
 	@Override
