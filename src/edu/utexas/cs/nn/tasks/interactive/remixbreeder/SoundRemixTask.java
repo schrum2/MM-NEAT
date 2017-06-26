@@ -172,8 +172,8 @@ public class SoundRemixTask<T extends Network> extends BreedesizerTask<T> {
 	}
 	
 	@Override
-	protected void saveSound(int i, JFileChooser chooser) {
-		SoundFromCPPNUtil.saveRemixedFileFromCPPN(scores.get(i).individual.getPhenotype(), WAVDoubleArray, Parameters.parameters.integerParameter("clipLength"), FREQUENCY_DEFAULT, inputMultipliers, chooser.getSelectedFile().getName() + ".wav", format);
+	protected void saveSound(int i, String filename) {
+		SoundFromCPPNUtil.saveRemixedFileFromCPPN(scores.get(i).individual.getPhenotype(), WAVDoubleArray, Parameters.parameters.integerParameter("clipLength"), FREQUENCY_DEFAULT, inputMultipliers, filename, format);
 	}
 	
 	@Override

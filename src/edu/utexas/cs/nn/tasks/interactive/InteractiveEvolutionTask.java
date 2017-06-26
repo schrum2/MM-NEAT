@@ -554,7 +554,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	 * @param i index of button
 	 * @param button button
 	 */
-	protected abstract void save(int i);
+	//protected abstract void save(int i);
 	
 	/**
 	 * If user is saving file to a specified location, this method obtains
@@ -565,7 +565,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	 * @param extension file extension
 	 * @return
 	 */
-	protected String getSaveName(String type, String extension) {
+	protected String getDialogFileName(String type, String extension) {
 		JFileChooser chooser = new JFileChooser();//used to get save name 
 		chooser.setApproveButtonText("Save");
 		FileNameExtensionFilter filter = new FileNameExtensionFilter(type, extension);
@@ -579,6 +579,17 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 			return null;
 		}
 	}
+	
+	protected void save(int i) {
+		String file = getDialogFileName(getFileType(), getFileExtension());
+		if(file != null) {
+			save(file, i);
+		} else {
+			System.out.println("Saving cancelled");
+		}
+	}
+
+	protected abstract void save(String file, int i);
 
 	/**
 	 * used to reset image on button using given genotype
@@ -680,6 +691,10 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 			}
 		}
 	}
+	
+	protected abstract String getFileType();
+	
+	protected abstract String getFileExtension();
 
 	/**
 	 * Shows network on button if network button pressed
@@ -828,10 +843,11 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 			// Not implemented yet
 			setUndo();
 		} else if(itemID == EVOLVE_BUTTON_INDEX && BooleanUtil.any(chosen)) {//If evolve button clicked
-			if(Parameters.parameters.booleanParameter("simplifiedInteractiveInterface")) {
-				for(int i = 0; i < scores.size(); i++) {
-					save(i);
-				}
+			if(Parameters.parameters.booleanParameter("saveInteractiveSelections")) {
+				// for each item
+				//     if clicked
+				//            generate file name
+				//            save(file name)
 			}
 			evolve();
 		} else if(itemID >= IMAGE_BUTTON_INDEX) {//If an image button clicked

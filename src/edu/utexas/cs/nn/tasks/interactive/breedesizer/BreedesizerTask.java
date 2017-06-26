@@ -264,7 +264,7 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 	}
 
 	@Override
-	protected void save(int i) {	
+	protected void save(String file, int i) {	
 		// Use of imageHeight and imageWidth allows saving a higher quality image than is on the button
 		BufferedImage toSave = getButtonImage(scores.get(i).individual.getPhenotype(), Parameters.parameters.integerParameter("imageWidth"), Parameters.parameters.integerParameter("imageHeight"), inputMultipliers);
 		DrawingPanel p = GraphicsUtil.drawImage(toSave, "" + i, toSave.getWidth(), toSave.getHeight());
@@ -281,16 +281,16 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 		} else {
 			//SAVING IMAGE
 			
-			String imageSaveName = getSaveName("BMP Images", "bmp");
-			p.save(imageSaveName);
-			System.out.println("image " + imageSaveName + " was saved successfully");
+			//String imageSaveName = getDialogFileName("BMP Images", "bmp");
+			p.save(file + ".bmp");
+			System.out.println("image " + file + " was saved successfully");
 			p.setVisibility(false);
 			
 			//SAVING AUDIO
 
-			String audioSaveName = getSaveName("WAV audio file", "wav");
-			p.save(audioSaveName);
-			System.out.println("Audio " + audioSaveName + " was saved successfully");
+			//String audioSaveName = getDialogFileName("WAV audio file", "wav");
+			saveSound(i, file);
+			System.out.println("Audio " + file + " was saved successfully");
 			p.setVisibility(false);
 		}
 
@@ -304,9 +304,9 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 	 * @param i location of current phenotype
 	 * @param chooser user input of desired file name
 	 */
-	protected void saveSound(int i, JFileChooser chooser) {
+	protected void saveSound(int i, String filename) {
 		try {
-			SoundFromCPPNUtil.saveFileFromCPPN(scores.get(i).individual.getPhenotype(), Parameters.parameters.integerParameter("clipLength"), FREQUENCY_DEFAULT, chooser.getCurrentDirectory() + "\\" + chooser.getSelectedFile().getName() + ".wav");
+			SoundFromCPPNUtil.saveFileFromCPPN(scores.get(i).individual.getPhenotype(), Parameters.parameters.integerParameter("clipLength"), FREQUENCY_DEFAULT, filename);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -333,5 +333,15 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	protected String getFileType() {
+		return "WAV audio file";
+	}
+
+	@Override
+	protected String getFileExtension() {
+		return "wav";
 	}
 }

@@ -148,17 +148,18 @@ public class PictureRemixTask<T extends Network> extends PicbreederTask<T> {
 		return CPPN_NUM_OUTPUTS;
 	}
 
-	protected void save(int i) {
+	@Override
+	protected void save(String filename, int i) {
 		// Use of imageHeight and imageWidth allows saving a higher quality image than is on the button
 		BufferedImage toSave = GraphicsUtil.remixedImageFromCPPN((Network)scores.get(i).individual.getPhenotype(), img, inputMultipliers, Parameters.parameters.integerParameter("remixImageWindow"));
 		DrawingPanel p = GraphicsUtil.drawImage(toSave, "" + i, toSave.getWidth(), toSave.getHeight());
-		if(Parameters.parameters.booleanParameter("saveinteractiveSelections")) {	
+		if(Parameters.parameters.booleanParameter("saveInteractiveSelections")) {	
 			//TODO
 			p.save(FileUtilities.getSaveDirectory() + "/selectedFromGen" +  MMNEAT.ea.currentGeneration() + "//" +"item" + MMNEAT.ea.currentGeneration() + "_" + i + "_" + scores.get(i).individual.getId());
 		} else {
-			String saveName = getSaveName("BMP Images", "bmp");
-			p.save(saveName);
-			System.out.println("image " + saveName + " was saved successfully");
+			//String saveName = getDialogFileName("BMP Images", "bmp");
+			p.save(filename);
+			System.out.println("image " + filename + " was saved successfully");
 			p.setVisibility(false);
 		}
 	}

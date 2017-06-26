@@ -63,16 +63,16 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 	}
 
 	@Override
-	protected void save(int i) {
+	protected void save(String filename, int i) {
 		// Use of imageHeight and imageWidth allows saving a higher quality image than is on the button
 		BufferedImage toSave = GraphicsUtil.imageFromCPPN((Network)scores.get(i).individual.getPhenotype(), Parameters.parameters.integerParameter("imageWidth"), Parameters.parameters.integerParameter("imageHeight"), inputMultipliers);
 		DrawingPanel p = GraphicsUtil.drawImage(toSave, "" + i, toSave.getWidth(), toSave.getHeight());
 		if(Parameters.parameters.booleanParameter("saveInteractiveSelections")) {	
 			p.save(FileUtilities.getSaveDirectory() + "/selectedFromGen" +  MMNEAT.ea.currentGeneration() + "//" + "item" + MMNEAT.ea.currentGeneration() + "_" + i + "_" + scores.get(i).individual.getId());
 		} else {
-			String saveName = getSaveName("BMP Images", "bmp");
-			p.save(saveName);
-			System.out.println("image " + saveName + " was saved successfully");
+			//String saveName = getDialogFileName("BMP Images", "bmp");
+			p.save(filename);
+			System.out.println("image " + filename + " was saved successfully");
 			p.setVisibility(false);
 
 		}
@@ -100,5 +100,15 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	protected String getFileType() {
+		return "BMP Images";
+	}
+
+	@Override
+	protected String getFileExtension() {
+		return "bmp";
 	}
 }

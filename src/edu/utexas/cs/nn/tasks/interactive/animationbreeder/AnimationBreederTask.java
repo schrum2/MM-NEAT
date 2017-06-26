@@ -316,7 +316,7 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 	}
 
 	@Override
-	protected void save(int i) {
+	protected void save(String filename, int i) {
 		// Use of imageHeight and imageWidth allows saving a higher quality image than is on the button
 		BufferedImage[] toSave = getAnimationImages(scores.get(i).individual.getPhenotype(), 0, Parameters.parameters.integerParameter("defaultAnimationLength"), true);
 		if(Parameters.parameters.booleanParameter("saveInteractiveSelections")) {
@@ -326,14 +326,14 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 				e.printStackTrace();
 			}
 		} else {
-			String saveName = getSaveName("GIF", "gif");
+			//String saveName = getDialogFileName("GIF", "gif");
 				try {
 					//saves gif to chosen file name
-					AnimationUtil.createGif(toSave, Parameters.parameters.integerParameter("defaultFramePause"), saveName);
+					AnimationUtil.createGif(toSave, Parameters.parameters.integerParameter("defaultFramePause"), filename);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-				System.out.println("image " + saveName + "was saved successfully");
+				System.out.println("image " + filename + "was saved successfully");
 		}
 	}
 
@@ -454,5 +454,15 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	protected String getFileType() {
+		return "GIF";
+	}
+
+	@Override
+	protected String getFileExtension() {
+		return "gif";
 	}
 }
