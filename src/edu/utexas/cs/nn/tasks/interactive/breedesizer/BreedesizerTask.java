@@ -17,7 +17,6 @@ import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.evolution.SinglePopulationGenerationalEA;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.parameters.Parameters;
@@ -269,26 +268,23 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 		BufferedImage toSave = getButtonImage(scores.get(i).individual.getPhenotype(), Parameters.parameters.integerParameter("imageWidth"), Parameters.parameters.integerParameter("imageHeight"), inputMultipliers);
 		DrawingPanel p = GraphicsUtil.drawImage(toSave, "" + i, toSave.getWidth(), toSave.getHeight());
 		if(Parameters.parameters.booleanParameter("saveInteractiveSelections")) {	
-			//TODO
 			// SAVING IMAGE
 			p.save(FileUtilities.getSaveDirectory() + "/selectedFromGen" +  MMNEAT.ea.currentGeneration() + "//" + "item" +  MMNEAT.ea.currentGeneration() + "_" + i + "_" + scores.get(i).individual.getId());
 			//SAVING AUDIO
 			try {
-				SoundFromCPPNUtil.saveFileFromCPPN(scores.get(i).individual.getPhenotype(), Parameters.parameters.integerParameter("clipLength"), FREQUENCY_DEFAULT, "item" + ((SinglePopulationGenerationalEA) MMNEAT.ea).currentGeneration() + "_" + i + "_" + scores.get(i).individual.getId());
+				SoundFromCPPNUtil.saveFileFromCPPN(scores.get(i).individual.getPhenotype(), Parameters.parameters.integerParameter("clipLength"), FREQUENCY_DEFAULT, "item" + MMNEAT.ea.currentGeneration() + "_" + i + "_" + scores.get(i).individual.getId());
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		} else {
 			//SAVING IMAGE
 			
-			//String imageSaveName = getDialogFileName("BMP Images", "bmp");
 			p.save(file + ".bmp");
 			System.out.println("image " + file + " was saved successfully");
 			p.setVisibility(false);
 			
 			//SAVING AUDIO
 
-			//String audioSaveName = getDialogFileName("WAV audio file", "wav");
 			saveSound(i, file);
 			System.out.println("Audio " + file + " was saved successfully");
 			p.setVisibility(false);
@@ -334,7 +330,7 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 			e.printStackTrace();
 		}
 	}
-
+	
 	@Override
 	protected String getFileType() {
 		return "WAV audio file";
