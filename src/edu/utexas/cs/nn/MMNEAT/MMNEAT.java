@@ -151,7 +151,7 @@ public class MMNEAT {
 	public static boolean browseLineage = false;
 	public static SubstrateCoordinateMapping substrateMapping = null;
 	@SuppressWarnings("rawtypes")
-	public static HallOfFame hall;
+	public static HallOfFame hallOfFame;
 	@SuppressWarnings("rawtypes")
 	public static BoardGame boardGame;
 	@SuppressWarnings("rawtypes")
@@ -425,7 +425,7 @@ public class MMNEAT {
 				HyperNEATCPPNGenotype.numBiasOutputs = CommonConstants.evolveHyperNEATBias ? HyperNEATUtil.numBiasOutputsNeeded() : 0;
 			}
 			if(Parameters.parameters.booleanParameter("hallOfFame")){
-				hall = new HallOfFame();
+				hallOfFame = new HallOfFame();
 			}
 			if (task instanceof MsPacManTask) {
 				MsPacManInitialization.setupGenotypePoolsForMsPacman();
