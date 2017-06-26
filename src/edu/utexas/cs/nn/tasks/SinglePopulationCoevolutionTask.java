@@ -162,12 +162,12 @@ public abstract class SinglePopulationCoevolutionTask<T> implements SinglePopula
 			PopulationUtil.saveBestOfCurrentGen(bestObjectives, bestGenotypes, bestScores);
 		}
 		
-		if(MMNEAT.hall != null){
+		if(MMNEAT.hallOfFame != null){
 			List<Genotype<T>> champs = new ArrayList<Genotype<T>>();
 			for(Genotype<T> gene : bestGenotypes){
 				champs.add(gene);
 			}
-			MMNEAT.hall.addChampions(MMNEAT.ea.currentGeneration(), champs);
+			MMNEAT.hallOfFame.addChampions(MMNEAT.ea.currentGeneration(), champs);
 		}
 		
 		return scores;
