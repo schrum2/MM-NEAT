@@ -11,14 +11,12 @@ import micro.rts.units.Unit;
  */
 public class BaseGradientSubstrate extends MicroRTSSubstrateInputs{
 	
-	int substrateSize;
 	private final double base_gradient_discount_rate = .95; 
 	private final double lowest_allowed_brightness = .05;
 	
 	@Override
 	public double[][] getInputs(GameState gs) {
 		PhysicalGameState pgs = gs.getPhysicalGameState();
-		substrateSize = pgs.getHeight() * pgs.getWidth(); //assumes regular rectangle
 		double[][] inputs = new double[pgs.getHeight() * numSubstrates][pgs.getWidth()];
 		
 		for(int i = 0; i < pgs.getHeight(); i++){
