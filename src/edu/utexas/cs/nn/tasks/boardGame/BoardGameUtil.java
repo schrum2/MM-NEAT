@@ -70,7 +70,7 @@ public class BoardGameUtil {
 				
 				
 				for(BoardGameFitnessFunction fitFunct : fitScores){
-					fitFunct.reset();
+					fitFunct.updateFitness(bg.getCurrentState(), playIndex);
 				}
 				for(BoardGameFitnessFunction fitFunct : otherFit){
 					fitFunct.updateFitness(bg.getCurrentState(), playIndex);
@@ -107,13 +107,11 @@ public class BoardGameUtil {
 				for(int j = 0; j < fitScores.size(); j++){
 					fitnesses[k][i][j] = (1.0*fitScores.get(j).getFitness(players[k], playerIndex));
 				}
-				if(otherFit.size() > 1){ // Has at least 1 Other Score; must track their fitness
-					// Stores all other Scores except the Selection Scores
-					for(int j = 0; j < otherFit.size(); j++){
-						otherScores[k][i][j] = (1.0*otherFit.get(j).getFitness(players[k], playerIndex)); // Gets all Scores except the first one
-					}
+				// Stores all other Scores except the Selection Scores
+				for(int j = 0; j < otherFit.size(); j++){
+					otherScores[k][i][j] = (1.0*otherFit.get(j).getFitness(players[k], playerIndex));
 				}
-				
+
 			}
 			
 			if (MMNEAT.evalReport != null) {
