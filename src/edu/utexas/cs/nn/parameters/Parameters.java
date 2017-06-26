@@ -639,6 +639,9 @@ public class Parameters {
 		booleanOptions.add("alwaysAnimate", true, "Loads and plays all animations in AnimationBreeder and 3DObjectBreeder at once");
 		booleanOptions.add("saveInteractiveSelections", false, "Automatically saves all currently selected buttons when user moves to next generation");
 		booleanOptions.add("gvgaiSave", false, "If true, save the actions from the GVGAI game that was just played.");
+		booleanOptions.add("gvgaiVictory", true, "Use the GVGAI Victory as a Selection Function");
+		booleanOptions.add("gvgaiScore", false, "Use the GVGAI Score as a Selection Function");
+		booleanOptions.add("gvgaiTimestep", false, "Use the GVGAI Timestep as a Selection Function");
 		// Double parameters
 		doubleOptions.add("inheritProportion", 0.4, "Portion of a parent's fitness that contributes to child fitness (with inheritFitness, as in LEEA)");
 		doubleOptions.add("linkExpressionThreshold", 0.2, "Threshold for hyperNEAT output to result in an expressed link");

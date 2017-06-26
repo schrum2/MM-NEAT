@@ -1,5 +1,6 @@
 package edu.utexas.cs.nn.tasks.gvgai;
 
+import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.parameters.CommonConstants;
@@ -17,12 +18,25 @@ public class GVGAISinglePlayerTask<T extends Network> extends NoisyLonerTask<T> 
 	public GVGAISinglePlayerTask(){
 		game = Parameters.parameters.stringParameter("gvgaiGame");
 		level = Parameters.parameters.integerParameter("gvgaiLevel");
+		
+		// Registers the three possible scores;
+		// Each Score can be individually selected as a Selection Function or not
+		// Defaults to only the Victory score being used for selection
+		
+		MMNEAT.registerFitnessFunction("Victory", Parameters.parameters.booleanParameter("gvgaiVictory"));
+		MMNEAT.registerFitnessFunction("Score", Parameters.parameters.booleanParameter("gvgaiScore"));
+		MMNEAT.registerFitnessFunction("Timestep", Parameters.parameters.booleanParameter("gvgaiTimestep"));
 	}
 	
 	@Override
 	public int numObjectives() {
-		// TODO: Generalize this later
-		return 1;
+		int numObjectives = 0;
+		
+		if(Parameters.parameters.booleanParameter("gvgaiVictory")) numObjectives++;
+		if(Parameters.parameters.booleanParameter("gvgaiScore")) numObjectives++;
+		if(Parameters.parameters.booleanParameter("gvgaiTimestep")) numObjectives++;
+		
+		return numObjectives;
 	}
 
 	@Override
@@ -37,7 +51,7 @@ public class GVGAISinglePlayerTask<T extends Network> extends NoisyLonerTask<T> 
 		
 		boolean visuals = CommonConstants.watch;
 		int randomSeed = 0; // TODO: Change later?
-		int playerID = 0; // TODO: Replace with Genotype ID later
+		int playerID = (int) individual.getId();
 		
 		String game_file = gamesPath + game + ".txt";
 		String level_file = gamesPath + game + "_lvl" + level + ".txt";
