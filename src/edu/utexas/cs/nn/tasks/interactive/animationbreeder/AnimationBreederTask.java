@@ -24,7 +24,6 @@ import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.scores.Score;
 import edu.utexas.cs.nn.tasks.interactive.InteractiveEvolutionTask;
-import edu.utexas.cs.nn.util.file.FileUtilities;
 import edu.utexas.cs.nn.util.graphics.AnimationUtil;
 
 /**
@@ -316,21 +315,14 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 	protected void save(String filename, int i) {
 		// Use of imageHeight and imageWidth allows saving a higher quality image than is on the button
 		BufferedImage[] toSave = getAnimationImages(scores.get(i).individual.getPhenotype(), 0, Parameters.parameters.integerParameter("defaultAnimationLength"), true);
-		if(Parameters.parameters.booleanParameter("saveInteractiveSelections")) {
-			try {
-				AnimationUtil.createGif(toSave, Parameters.parameters.integerParameter("defaultFramePause"),FileUtilities.getSaveDirectory() + "/selectedFromGen" +  MMNEAT.ea.currentGeneration() + "/" + "item" +  MMNEAT.ea.currentGeneration() + "_" + i + "_" + scores.get(i).individual.getId());
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		} else {
-			try {
-				//saves gif to chosen file name
-				AnimationUtil.createGif(toSave, Parameters.parameters.integerParameter("defaultFramePause"), filename);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			System.out.println("image " + filename + "was saved successfully");
+		filename += ".gif";
+		try {
+			//saves gif to chosen file name
+			AnimationUtil.createGif(toSave, Parameters.parameters.integerParameter("defaultFramePause"), filename);
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
+		System.out.println("image " + filename + "was saved successfully");
 	}
 
 	@Override

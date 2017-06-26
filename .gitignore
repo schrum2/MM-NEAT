@@ -95,6 +95,8 @@ vizdoom.ini
 *.ppt
 .settings/org.eclipse.jdt.core.prefs
 *.png
+*.gif
+*.wav
 _vizdoom.ini
 
 .svn

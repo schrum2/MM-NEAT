@@ -21,7 +21,6 @@ import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.interactive.InteractiveEvolutionTask;
-import edu.utexas.cs.nn.util.file.FileUtilities;
 import edu.utexas.cs.nn.util.graphics.DrawingPanel;
 import edu.utexas.cs.nn.util.graphics.GraphicsUtil;
 import edu.utexas.cs.nn.util.sound.MIDIUtil;
@@ -267,30 +266,17 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 		// Use of imageHeight and imageWidth allows saving a higher quality image than is on the button
 		BufferedImage toSave = getButtonImage(scores.get(i).individual.getPhenotype(), Parameters.parameters.integerParameter("imageWidth"), Parameters.parameters.integerParameter("imageHeight"), inputMultipliers);
 		DrawingPanel p = GraphicsUtil.drawImage(toSave, "" + i, toSave.getWidth(), toSave.getHeight());
-		if(Parameters.parameters.booleanParameter("saveInteractiveSelections")) {	
-			// SAVING IMAGE
-			p.save(FileUtilities.getSaveDirectory() + "/selectedFromGen" +  MMNEAT.ea.currentGeneration() + "/" + "item" +  MMNEAT.ea.currentGeneration() + "_" + i + "_" + scores.get(i).individual.getId());
-			//SAVING AUDIO
-			try {
-				SoundFromCPPNUtil.saveFileFromCPPN(scores.get(i).individual.getPhenotype(), Parameters.parameters.integerParameter("clipLength"), FREQUENCY_DEFAULT, FileUtilities.getSaveDirectory() + "/selectedFromGen" +  MMNEAT.ea.currentGeneration() + "/" + "item" + MMNEAT.ea.currentGeneration() + "_" + i + "_" + scores.get(i).individual.getId());
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		} else {
-			//SAVING IMAGE
-			
-			p.save(file + ".bmp");
-			System.out.println("image " + file + " was saved successfully");
-			p.setVisibility(false);
-			
-			//SAVING AUDIO
+		//SAVING IMAGE
 
-			saveSound(i, file);
-			System.out.println("Audio " + file + " was saved successfully");
-			p.setVisibility(false);
-		}
+		p.save(file + ".bmp");
+		System.out.println("image " + file + " was saved successfully");
+		p.setVisibility(false);
 
-		
+		//SAVING AUDIO
+		file += ".wav";
+		saveSound(i, file);
+		System.out.println("Audio " + file + " was saved successfully");
+		p.setVisibility(false);
 	}
 
 	/**
