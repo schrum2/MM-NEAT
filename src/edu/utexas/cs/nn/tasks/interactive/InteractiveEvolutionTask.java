@@ -802,6 +802,11 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 			// Not implemented yet
 			setUndo();
 		} else if(itemID == EVOLVE_BUTTON_INDEX && BooleanUtil.any(chosen)) {//If evolve button clicked
+			if(Parameters.parameters.booleanParameter("simplifiedInteractiveInterface")) {
+				for(int i = 0; i < scores.size(); i++) {
+					save(i);
+				}
+			}
 			evolve();
 		} else if(itemID >= IMAGE_BUTTON_INDEX) {//If an image button clicked
 			assert (scores.size() == buttons.size()) : 
