@@ -314,7 +314,7 @@ public class Parameters {
 		//integerOptions.add("remixSamplesPerDimension", 3, "Number of remix samples to input to Picture Remixer"); //used for alternative approach of remixing pictures
 		integerOptions.add("receptiveFieldSize", 3, "Size of input windows for convolutional structures");
 		integerOptions.add("stride", 1, "Offset between receptive fields in convolutional structures");
-		integerOptions.add("hybrIDSwitchGeneration", 200, "Generation when HybrID should switch from HyperNEAT to NEAT");
+		integerOptions.add("hybrIDSwitchGeneration", 100, "Generation when HybrID should switch from HyperNEAT to NEAT");
 		integerOptions.add("microRTSInputSize", 1, "how many by how many tiles in microRTS should be smudged together into a single input");
 		integerOptions.add("defaultPitch", 36, "Default pitch value for 3DObjectbreeder vertical rotation");
 		integerOptions.add("defaultHeading", 36, "Default heading value for 3DObjectbreeder horizaontal rotation");
