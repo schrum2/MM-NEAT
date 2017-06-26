@@ -321,6 +321,7 @@ public class Parameters {
 		integerOptions.add("microRTSInputSize", 1, "x by x cells in the game that are condensed into a single input");
 		integerOptions.add("hallOfFamePastGens", 3, "Number of Generations in the past to use for the Hall Of Fame");
 		integerOptions.add("hallOfFameNumChamps", 6, "Number of Champions from the Hall Of Fame to play against");
+		integerOptions.add("gvgaiLevel", 0, "GVGAI level to be played; must be 0 - 4");
 		// Long parameters
 		longOptions.add("lastInnovation", 0l, "Highest innovation number used so far");
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
@@ -637,6 +638,7 @@ public class Parameters {
 		booleanOptions.add("boardGameCheckersFitness", false, "Enables the CheckersAdvanced BoardGame Fitness Function to be used as a Selection Function");
 		booleanOptions.add("alwaysAnimate", true, "Loads and plays all animations in AnimationBreeder and 3DObjectBreeder at once");
 		booleanOptions.add("saveInteractiveSelections", false, "Automatically saves all currently selected buttons when user moves to next generation");
+		booleanOptions.add("gvgaiSave", false, "If true, save the actions from the GVGAI game that was just played.");
 		// Double parameters
 		doubleOptions.add("inheritProportion", 0.4, "Portion of a parent's fitness that contributes to child fitness (with inheritFitness, as in LEEA)");
 		doubleOptions.add("linkExpressionThreshold", 0.2, "Threshold for hyperNEAT output to result in an expressed link");
@@ -748,6 +750,7 @@ public class Parameters {
 		stringOptions.add("map", "8x8/basesWorkers8x8.xml", "filepath from maps folder to desired map file for MicroRTSTask");
 		stringOptions.add("remixWAVFile", SoundUtilExamples.PORTAL2_WAV, "Input WAV file to be remixed in Remixbreeder");
 		stringOptions.add("remixMIDIFile", SoundUtilExamples.CHRISTMAS_MID, "Input MIDI file to be played with CPPN in Breedesizer");
+		stringOptions.add("gvgaiGame", "zelda", "GVGAI Game to be played");
 		// Class options
 		classOptions.add("boardGame", null, "Board Game being played by BoardGameTask");
 		classOptions.add("boardGameOpponent", BoardGamePlayerRandom.class, "Board game Opponent being played against");
