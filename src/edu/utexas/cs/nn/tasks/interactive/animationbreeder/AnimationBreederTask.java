@@ -21,11 +21,13 @@ import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
+import edu.utexas.cs.nn.evolution.SinglePopulationGenerationalEA;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.scores.Score;
 import edu.utexas.cs.nn.tasks.interactive.InteractiveEvolutionTask;
+import edu.utexas.cs.nn.util.file.FileUtilities;
 import edu.utexas.cs.nn.util.graphics.AnimationUtil;
 
 /**
@@ -63,17 +65,17 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 		public void run() {
 			if(showNetwork) {
 				stopAnimation();
-//				if(alwaysAnimate) {
-//				for(int x = 0; x < animationThreads.length; x++) {
-//					if(animationThreads[x] != null) animationThreads[x].stopAnimation();
-//				}
-//				for(int i = 0; i < animations.length; i++) {
-//					// Cannot clear animation if being loaded
-//					synchronized(animations[i]) {
-//						animations[i].clear();
-//					}
-//				}
-//			}
+				//				if(alwaysAnimate) {
+				//				for(int x = 0; x < animationThreads.length; x++) {
+				//					if(animationThreads[x] != null) animationThreads[x].stopAnimation();
+				//				}
+				//				for(int i = 0; i < animations.length; i++) {
+				//					// Cannot clear animation if being loaded
+				//					synchronized(animations[i]) {
+				//						animations[i].clear();
+				//					}
+				//				}
+				//			}
 			}
 			int end = Parameters.parameters.integerParameter("defaultAnimationLength");
 			// Only one thread can add frames at a time
@@ -317,22 +319,21 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 	protected void save(int i) {
 		// Use of imageHeight and imageWidth allows saving a higher quality image than is on the button
 		BufferedImage[] toSave = getAnimationImages(scores.get(i).individual.getPhenotype(), 0, Parameters.parameters.integerParameter("defaultAnimationLength"), true);
-		JFileChooser chooser = new JFileChooser();//used to get save name 
-		chooser.setApproveButtonText("Save");
-		FileNameExtensionFilter filter = new FileNameExtensionFilter("GIF", "gif");
-		chooser.setFileFilter(filter);
-		int returnVal = chooser.showOpenDialog(frame);
-		if(returnVal == JFileChooser.APPROVE_OPTION) {//if the user decides to save the image
-			System.out.println("You chose to call the image: " + chooser.getSelectedFile().getName());
+		if(Parameters.parameters.booleanParameter("saveInteractiveSelections")) {
 			try {
-				//saves gif to chosen file name
-				AnimationUtil.createGif(toSave, Parameters.parameters.integerParameter("defaultFramePause"), chooser.getCurrentDirectory() + "\\" + chooser.getSelectedFile().getName() + ".gif");
+				AnimationUtil.createGif(toSave, Parameters.parameters.integerParameter("defaultFramePause"),FileUtilities.getSaveDirectory() + "/selectedFromGen" +  MMNEAT.ea.currentGeneration() + "//" + "item" +  MMNEAT.ea.currentGeneration() + "_" + i + "_" + scores.get(i).individual.getId());
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			System.out.println("image " + chooser.getSelectedFile().getName() + " was saved successfully");
-		} else { //else image dumped
-			System.out.println("image not saved");
+		} else {
+			String saveName = getSaveName("GIF", "gif");
+				try {
+					//saves gif to chosen file name
+					AnimationUtil.createGif(toSave, Parameters.parameters.integerParameter("defaultFramePause"), saveName);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				System.out.println("image " + saveName + "was saved successfully");
 		}
 	}
 

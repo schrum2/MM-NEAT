@@ -17,9 +17,11 @@ import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
+import edu.utexas.cs.nn.evolution.SinglePopulationGenerationalEA;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.interactive.picbreeder.PicbreederTask;
+import edu.utexas.cs.nn.util.file.FileUtilities;
 import edu.utexas.cs.nn.util.graphics.DrawingPanel;
 import edu.utexas.cs.nn.util.graphics.GraphicsUtil;
 
@@ -35,9 +37,9 @@ public class PictureRemixTask<T extends Network> extends PicbreederTask<T> {
 
 	public static final int CPPN_NUM_INPUTS = 7;
 	//public static final int CPPN_NUM_INPUTS = 4 + Parameters.parameters.integerParameter("remixSamplesPerDimension") * Parameters.parameters.integerParameter("remixSamplesPerDimension") * GraphicsUtil.NUM_HSB;
-	
+
 	public static final int CPPN_NUM_OUTPUTS = 5;
-	
+
 	private static final int FILE_LOADER_CHECKBOX_INDEX = CHECKBOX_IDENTIFIER_START - CPPN_NUM_INPUTS;
 
 	public String inputImage;
@@ -77,12 +79,12 @@ public class PictureRemixTask<T extends Network> extends PicbreederTask<T> {
 				}
 			}
 		});
-		
+
 		JButton fileLoadButton = new JButton();
 		fileLoadButton.setText("ChooseNewImage");
 		fileLoadButton.setName("" + FILE_LOADER_CHECKBOX_INDEX);
 		fileLoadButton.addActionListener(this);
-		
+
 		top.add(windowSize);
 		top.add(fileLoadButton);
 	}
@@ -111,7 +113,7 @@ public class PictureRemixTask<T extends Network> extends PicbreederTask<T> {
 		// Rescale image based on width and height?
 		return GraphicsUtil.remixedImageFromCPPN(phenotype, img, inputMultipliers, Parameters.parameters.integerParameter("remixImageWindow"));
 	}
-	
+
 	@Override
 	protected void respondToClick(int itemID) {
 		super.respondToClick(itemID);
@@ -145,24 +147,19 @@ public class PictureRemixTask<T extends Network> extends PicbreederTask<T> {
 	public int numCPPNOutputs() {
 		return CPPN_NUM_OUTPUTS;
 	}
-	
+
 	protected void save(int i) {
 		// Use of imageHeight and imageWidth allows saving a higher quality image than is on the button
 		BufferedImage toSave = GraphicsUtil.remixedImageFromCPPN((Network)scores.get(i).individual.getPhenotype(), img, inputMultipliers, Parameters.parameters.integerParameter("remixImageWindow"));
 		DrawingPanel p = GraphicsUtil.drawImage(toSave, "" + i, toSave.getWidth(), toSave.getHeight());
-		JFileChooser chooser = new JFileChooser();//used to get save name 
-		chooser.setApproveButtonText("Save");
-		FileNameExtensionFilter filter = new FileNameExtensionFilter("BMP Images", "bmp");
-		chooser.setFileFilter(filter);
-		int returnVal = chooser.showOpenDialog(frame);
-		if(returnVal == JFileChooser.APPROVE_OPTION) {//if the user decides to save the image
-			System.out.println("You chose to call the image: " + chooser.getSelectedFile().getName());
-			p.save(chooser.getCurrentDirectory() + "\\" + chooser.getSelectedFile().getName() + (showNetwork ? "network" : "image") + ".bmp");
-			System.out.println("image " + chooser.getSelectedFile().getName() + " was saved successfully");
+		if(Parameters.parameters.booleanParameter("saveinteractiveSelections")) {	
+			//TODO
+			p.save(FileUtilities.getSaveDirectory() + "/selectedFromGen" +  MMNEAT.ea.currentGeneration() + "//" +"item" + MMNEAT.ea.currentGeneration() + "_" + i + "_" + scores.get(i).individual.getId());
+		} else {
+			String saveName = getSaveName("BMP Images", "bmp");
+			p.save(saveName);
+			System.out.println("image " + saveName + " was saved successfully");
 			p.setVisibility(false);
-		} else { //else image dumped
-			p.setVisibility(false);
-			System.out.println("image not saved");
 		}
 	}
 

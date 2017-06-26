@@ -2,15 +2,19 @@ package edu.utexas.cs.nn.tasks.interactive.picbreeder;
 
 import java.awt.image.BufferedImage;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
+import edu.utexas.cs.nn.evolution.SinglePopulationGenerationalEA;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.interactive.InteractiveEvolutionTask;
+import edu.utexas.cs.nn.util.file.FileUtilities;
+import edu.utexas.cs.nn.util.graphics.AnimationUtil;
 import edu.utexas.cs.nn.util.graphics.DrawingPanel;
 import edu.utexas.cs.nn.util.graphics.GraphicsUtil;
 
@@ -63,19 +67,14 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 		// Use of imageHeight and imageWidth allows saving a higher quality image than is on the button
 		BufferedImage toSave = GraphicsUtil.imageFromCPPN((Network)scores.get(i).individual.getPhenotype(), Parameters.parameters.integerParameter("imageWidth"), Parameters.parameters.integerParameter("imageHeight"), inputMultipliers);
 		DrawingPanel p = GraphicsUtil.drawImage(toSave, "" + i, toSave.getWidth(), toSave.getHeight());
-		JFileChooser chooser = new JFileChooser();//used to get save name 
-		chooser.setApproveButtonText("Save");
-		FileNameExtensionFilter filter = new FileNameExtensionFilter("BMP Images", "bmp");
-		chooser.setFileFilter(filter);
-		int returnVal = chooser.showOpenDialog(frame);
-		if(returnVal == JFileChooser.APPROVE_OPTION) {//if the user decides to save the image
-			System.out.println("You chose to call the image: " + chooser.getSelectedFile().getName());
-			p.save(chooser.getCurrentDirectory() + "\\" + chooser.getSelectedFile().getName() + (showNetwork ? "network" : "image") + ".bmp");
-			System.out.println("image " + chooser.getSelectedFile().getName() + " was saved successfully");
+		if(Parameters.parameters.booleanParameter("saveInteractiveSelections")) {	
+			p.save(FileUtilities.getSaveDirectory() + "/selectedFromGen" +  MMNEAT.ea.currentGeneration() + "//" + "item" + MMNEAT.ea.currentGeneration() + "_" + i + "_" + scores.get(i).individual.getId());
+		} else {
+			String saveName = getSaveName("BMP Images", "bmp");
+			p.save(saveName);
+			System.out.println("image " + saveName + " was saved successfully");
 			p.setVisibility(false);
-		} else { //else image dumped
-			p.setVisibility(false);
-			System.out.println("image not saved");
+
 		}
 	}
 

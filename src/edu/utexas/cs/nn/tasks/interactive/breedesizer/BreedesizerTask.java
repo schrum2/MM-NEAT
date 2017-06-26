@@ -17,10 +17,12 @@ import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
+import edu.utexas.cs.nn.evolution.SinglePopulationGenerationalEA;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.interactive.InteractiveEvolutionTask;
+import edu.utexas.cs.nn.util.file.FileUtilities;
 import edu.utexas.cs.nn.util.graphics.DrawingPanel;
 import edu.utexas.cs.nn.util.graphics.GraphicsUtil;
 import edu.utexas.cs.nn.util.sound.MIDIUtil;
@@ -161,18 +163,18 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 			fileLoadButton.setText("ChooseNewSound");
 			fileLoadButton.setName("" + FILE_LOADER_BUTTON_INDEX);
 			fileLoadButton.addActionListener(this);
-	
+
 			//JCheckbox to specify whether MIDI playback occurs with one CPPN or multiple CPPNs
 			MIDIPlaybackType = new JCheckBox("advancedMIDIPlayback", false);
 			MIDIPlaybackType.setName("" + MIDI_PLAYBACK_TYPE_CHECKBOX_INDEX);
 			MIDIPlaybackType.addActionListener(this);
 			MIDIPlaybackType.setForeground(new Color(0,0,0));
-			
+
 			if(!simplifiedInteractiveInterface) {	
 				top.add(fileLoadButton);
 				top.add(MIDIPlaybackType);
 			}
-			
+
 		}		
 		initializationComplete = true;
 	}
@@ -263,43 +265,36 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 
 	@Override
 	protected void save(int i) {	
-		//SAVING IMAGE
-
 		// Use of imageHeight and imageWidth allows saving a higher quality image than is on the button
 		BufferedImage toSave = getButtonImage(scores.get(i).individual.getPhenotype(), Parameters.parameters.integerParameter("imageWidth"), Parameters.parameters.integerParameter("imageHeight"), inputMultipliers);
 		DrawingPanel p = GraphicsUtil.drawImage(toSave, "" + i, toSave.getWidth(), toSave.getHeight());
-		JFileChooser chooser = new JFileChooser();//used to get save name 
-		chooser.setApproveButtonText("Save");
-		FileNameExtensionFilter filter = new FileNameExtensionFilter("BMP Images", "bmp");
-		chooser.setFileFilter(filter);
-		int returnVal = chooser.showOpenDialog(frame);
-		if(returnVal == JFileChooser.APPROVE_OPTION) {//if the user decides to save the image
-			System.out.println("You chose to call the image: " + chooser.getSelectedFile().getName());
-			p.save(chooser.getCurrentDirectory() + "\\" + chooser.getSelectedFile().getName() + (showNetwork ? "network" : "image") + ".bmp");
-			System.out.println("image " + chooser.getSelectedFile().getName() + " was saved successfully");
+		if(Parameters.parameters.booleanParameter("saveInteractiveSelections")) {	
+			//TODO
+			// SAVING IMAGE
+			p.save(FileUtilities.getSaveDirectory() + "/selectedFromGen" +  MMNEAT.ea.currentGeneration() + "//" + "item" +  MMNEAT.ea.currentGeneration() + "_" + i + "_" + scores.get(i).individual.getId());
+			//SAVING AUDIO
+			try {
+				SoundFromCPPNUtil.saveFileFromCPPN(scores.get(i).individual.getPhenotype(), Parameters.parameters.integerParameter("clipLength"), FREQUENCY_DEFAULT, "item" + ((SinglePopulationGenerationalEA) MMNEAT.ea).currentGeneration() + "_" + i + "_" + scores.get(i).individual.getId());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		} else {
+			//SAVING IMAGE
+			
+			String imageSaveName = getSaveName("BMP Images", "bmp");
+			p.save(imageSaveName);
+			System.out.println("image " + imageSaveName + " was saved successfully");
 			p.setVisibility(false);
-		} else { //else image dumped
+			
+			//SAVING AUDIO
+
+			String audioSaveName = getSaveName("WAV audio file", "wav");
+			p.save(audioSaveName);
+			System.out.println("Audio " + audioSaveName + " was saved successfully");
 			p.setVisibility(false);
-			System.out.println("image not saved");
 		}
 
-		//SAVING AUDIO
-
-		chooser = new JFileChooser();
-
-		chooser.setApproveButtonText("Save");
-		FileNameExtensionFilter audioFilter = new FileNameExtensionFilter("WAV audio files", "wav");
-		chooser.setFileFilter(audioFilter);
-		int audioReturnVal = chooser.showOpenDialog(frame);
-		if(audioReturnVal == JFileChooser.APPROVE_OPTION) {//if the user decides to save the image
-			System.out.println("You chose to call the file: " + chooser.getSelectedFile().getName());
-			saveSound(i, chooser);
-			System.out.println("audio file " + chooser.getSelectedFile().getName() + " was saved successfully");
-			p.setVisibility(false);
-		} else { //else image dumped
-			p.setVisibility(false);
-			System.out.println("audio file not saved");
-		}	
+		
 	}
 
 	/**
