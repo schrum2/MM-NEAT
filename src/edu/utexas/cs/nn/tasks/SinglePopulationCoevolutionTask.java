@@ -6,9 +6,7 @@ import java.util.List;
 
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.evolution.halloffame.HallOfFame;
 import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.scores.MultiObjectiveScore;
 import edu.utexas.cs.nn.scores.Score;
 import edu.utexas.cs.nn.util.ClassCreation;
@@ -63,9 +61,7 @@ public abstract class SinglePopulationCoevolutionTask<T> implements SinglePopula
 		assert population.size()%groupSize == 0 : "Population size " + population.size() + " should be divisible by group size " + groupSize;
 		
 		double[] bestObjectives = minScores();
-		@SuppressWarnings("unchecked")
 		Genotype<T>[] bestGenotypes = new Genotype[bestObjectives.length];
-		@SuppressWarnings("unchecked")
 		Score<T>[] bestScores = new Score[bestObjectives.length];
 		
 		for(int i = 0; i < CommonConstants.trials; i++){
