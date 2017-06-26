@@ -8,6 +8,7 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -47,6 +48,7 @@ import edu.utexas.cs.nn.tasks.SinglePopulationTask;
 import edu.utexas.cs.nn.util.BooleanUtil;
 import edu.utexas.cs.nn.util.CombinatoricUtilities;
 import edu.utexas.cs.nn.util.PopulationUtil;
+import edu.utexas.cs.nn.util.file.FileUtilities;
 import edu.utexas.cs.nn.util.graphics.DrawingPanel;
 import edu.utexas.cs.nn.util.graphics.GraphicsUtil;
 
@@ -566,7 +568,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		int returnVal = chooser.showOpenDialog(frame);
 		if(returnVal == JFileChooser.APPROVE_OPTION) {//if the user decides to save the file
 			System.out.println("You chose to call the file: " + chooser.getSelectedFile().getName());
-			return chooser.getCurrentDirectory() + "\\" + chooser.getSelectedFile().getName() + "." + extension;
+			return chooser.getCurrentDirectory() + "\\" + chooser.getSelectedFile().getName(); // + "." + ; //  Added later
 		} else { //else image dumped
 			System.out.println("file not saved");
 			return null;
@@ -860,10 +862,14 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 			setUndo();
 		} else if(itemID == EVOLVE_BUTTON_INDEX && BooleanUtil.any(chosen)) {//If evolve button clicked
 			if(Parameters.parameters.booleanParameter("saveInteractiveSelections")) {
-				// for each item
-				//     if clicked
-				//            generate file name
-				//            save(file name)
+				String dir = FileUtilities.getSaveDirectory() + "/selectedFromGen" +  MMNEAT.ea.currentGeneration();
+				new File(dir).mkdir(); // Make the save directory
+				for(int i = 0; i < scores.size(); i++) {
+					if(chosen[i]) {
+						String fullName = dir + "/item" + MMNEAT.ea.currentGeneration() + "_" + i + "_" + scores.get(i).individual.getId();
+						save(fullName,i);
+					}
+				}
 			}
 			evolve();
 		} else if(itemID >= IMAGE_BUTTON_INDEX) {//If an image button clicked

@@ -61,14 +61,10 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 		// Use of imageHeight and imageWidth allows saving a higher quality image than is on the button
 		BufferedImage toSave = GraphicsUtil.imageFromCPPN((Network)scores.get(i).individual.getPhenotype(), Parameters.parameters.integerParameter("imageWidth"), Parameters.parameters.integerParameter("imageHeight"), inputMultipliers);
 		DrawingPanel p = GraphicsUtil.drawImage(toSave, "" + i, toSave.getWidth(), toSave.getHeight());
-		if(Parameters.parameters.booleanParameter("saveInteractiveSelections")) {	
-			p.save(FileUtilities.getSaveDirectory() + "/selectedFromGen" +  MMNEAT.ea.currentGeneration() + "//" + "item" + MMNEAT.ea.currentGeneration() + "_" + i + "_" + scores.get(i).individual.getId());
-		} else {
-			p.save(filename);
-			System.out.println("image " + filename + " was saved successfully");
-			p.setVisibility(false);
-
-		}
+		filename += ".bmp";
+		p.save(filename);
+		System.out.println("image " + filename + " was saved successfully");
+		p.setVisibility(false);
 	}
 
 

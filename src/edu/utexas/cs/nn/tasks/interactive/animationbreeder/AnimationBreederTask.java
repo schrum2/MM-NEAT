@@ -318,7 +318,7 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 		BufferedImage[] toSave = getAnimationImages(scores.get(i).individual.getPhenotype(), 0, Parameters.parameters.integerParameter("defaultAnimationLength"), true);
 		if(Parameters.parameters.booleanParameter("saveInteractiveSelections")) {
 			try {
-				AnimationUtil.createGif(toSave, Parameters.parameters.integerParameter("defaultFramePause"),FileUtilities.getSaveDirectory() + "/selectedFromGen" +  MMNEAT.ea.currentGeneration() + "//" + "item" +  MMNEAT.ea.currentGeneration() + "_" + i + "_" + scores.get(i).individual.getId());
+				AnimationUtil.createGif(toSave, Parameters.parameters.integerParameter("defaultFramePause"),FileUtilities.getSaveDirectory() + "/selectedFromGen" +  MMNEAT.ea.currentGeneration() + "/" + "item" +  MMNEAT.ea.currentGeneration() + "_" + i + "_" + scores.get(i).individual.getId());
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
