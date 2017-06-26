@@ -67,24 +67,14 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 		// Use of imageHeight and imageWidth allows saving a higher quality image than is on the button
 		BufferedImage toSave = GraphicsUtil.imageFromCPPN((Network)scores.get(i).individual.getPhenotype(), Parameters.parameters.integerParameter("imageWidth"), Parameters.parameters.integerParameter("imageHeight"), inputMultipliers);
 		DrawingPanel p = GraphicsUtil.drawImage(toSave, "" + i, toSave.getWidth(), toSave.getHeight());
-		if(Parameters.parameters.booleanParameter("saveinteractiveSelections")) {	
-			//TODO
+		if(Parameters.parameters.booleanParameter("saveInteractiveSelections")) {	
 			p.save(FileUtilities.getSaveDirectory() + "/selectedFromGen" +  MMNEAT.ea.currentGeneration() + "//" + "item" + MMNEAT.ea.currentGeneration() + "_" + i + "_" + scores.get(i).individual.getId());
 		} else {
-			JFileChooser chooser = new JFileChooser();//used to get save name 
-			chooser.setApproveButtonText("Save");
-			FileNameExtensionFilter filter = new FileNameExtensionFilter("BMP Images", "bmp");
-			chooser.setFileFilter(filter);
-			int returnVal = chooser.showOpenDialog(frame);
-			if(returnVal == JFileChooser.APPROVE_OPTION) {//if the user decides to save the image
-				System.out.println("You chose to call the image: " + chooser.getSelectedFile().getName());
-				p.save(chooser.getCurrentDirectory() + "\\" + chooser.getSelectedFile().getName() + (showNetwork ? "network" : "image") + ".bmp");
-				System.out.println("image " + chooser.getSelectedFile().getName() + " was saved successfully");
-				p.setVisibility(false);
-			} else { //else image dumped
-				p.setVisibility(false);
-				System.out.println("image not saved");
-			}
+			String saveName = getSaveName("BMP Images", "bmp");
+			p.save(saveName);
+			System.out.println("image " + saveName + " was saved successfully");
+			p.setVisibility(false);
+
 		}
 	}
 

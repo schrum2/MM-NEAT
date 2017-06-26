@@ -268,10 +268,10 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 		// Use of imageHeight and imageWidth allows saving a higher quality image than is on the button
 		BufferedImage toSave = getButtonImage(scores.get(i).individual.getPhenotype(), Parameters.parameters.integerParameter("imageWidth"), Parameters.parameters.integerParameter("imageHeight"), inputMultipliers);
 		DrawingPanel p = GraphicsUtil.drawImage(toSave, "" + i, toSave.getWidth(), toSave.getHeight());
-		if(Parameters.parameters.booleanParameter("saveinteractiveSelections")) {	
+		if(Parameters.parameters.booleanParameter("saveInteractiveSelections")) {	
 			//TODO
 			// SAVING IMAGE
-			p.save(FileUtilities.getSaveDirectory() + "/selectedFromGen" +  MMNEAT.ea.currentGeneration() + "//" +"item" +  MMNEAT.ea.currentGeneration() + "_" + i + "_" + scores.get(i).individual.getId());
+			p.save(FileUtilities.getSaveDirectory() + "/selectedFromGen" +  MMNEAT.ea.currentGeneration() + "//" + "item" +  MMNEAT.ea.currentGeneration() + "_" + i + "_" + scores.get(i).individual.getId());
 			//SAVING AUDIO
 			try {
 				SoundFromCPPNUtil.saveFileFromCPPN(scores.get(i).individual.getPhenotype(), Parameters.parameters.integerParameter("clipLength"), FREQUENCY_DEFAULT, "item" + ((SinglePopulationGenerationalEA) MMNEAT.ea).currentGeneration() + "_" + i + "_" + scores.get(i).individual.getId());
@@ -281,37 +281,17 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 		} else {
 			//SAVING IMAGE
 			
-			JFileChooser chooser = new JFileChooser();//used to get save name 
-			chooser.setApproveButtonText("Save");
-			FileNameExtensionFilter filter = new FileNameExtensionFilter("BMP Images", "bmp");
-			chooser.setFileFilter(filter);
-			int returnVal = chooser.showOpenDialog(frame);
-			if(returnVal == JFileChooser.APPROVE_OPTION) {//if the user decides to save the image
-				System.out.println("You chose to call the image: " + chooser.getSelectedFile().getName());
-				p.save(chooser.getCurrentDirectory() + "\\" + chooser.getSelectedFile().getName() + (showNetwork ? "network" : "image") + ".bmp");
-				System.out.println("image " + chooser.getSelectedFile().getName() + " was saved successfully");
-				p.setVisibility(false);
-			} else { //else image dumped
-				p.setVisibility(false);
-				System.out.println("image not saved");
-			}
+			String imageSaveName = getSaveName("BMP Images", "bmp");
+			p.save(imageSaveName);
+			System.out.println("image " + imageSaveName + " was saved successfully");
+			p.setVisibility(false);
 			
 			//SAVING AUDIO
 
-			chooser = new JFileChooser();
-			chooser.setApproveButtonText("Save");
-			FileNameExtensionFilter audioFilter = new FileNameExtensionFilter("WAV audio files", "wav");
-			chooser.setFileFilter(audioFilter);
-			int audioReturnVal = chooser.showOpenDialog(frame);
-			if(audioReturnVal == JFileChooser.APPROVE_OPTION) {//if the user decides to save the image
-				System.out.println("You chose to call the file: " + chooser.getSelectedFile().getName());
-				saveSound(i, chooser);
-				System.out.println("audio file " + chooser.getSelectedFile().getName() + " was saved successfully");
-				p.setVisibility(false);
-			} else { //else image dumped
-				p.setVisibility(false);
-				System.out.println("audio file not saved");
-			}
+			String audioSaveName = getSaveName("WAV audio file", "wav");
+			p.save(audioSaveName);
+			System.out.println("Audio " + audioSaveName + " was saved successfully");
+			p.setVisibility(false);
 		}
 
 		

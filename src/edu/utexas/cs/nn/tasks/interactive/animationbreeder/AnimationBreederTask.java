@@ -319,31 +319,21 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 	protected void save(int i) {
 		// Use of imageHeight and imageWidth allows saving a higher quality image than is on the button
 		BufferedImage[] toSave = getAnimationImages(scores.get(i).individual.getPhenotype(), 0, Parameters.parameters.integerParameter("defaultAnimationLength"), true);
-		if(Parameters.parameters.booleanParameter("saveinteractiveSelections")) {
+		if(Parameters.parameters.booleanParameter("saveInteractiveSelections")) {
 			try {
-				//TODO
 				AnimationUtil.createGif(toSave, Parameters.parameters.integerParameter("defaultFramePause"),FileUtilities.getSaveDirectory() + "/selectedFromGen" +  MMNEAT.ea.currentGeneration() + "//" + "item" +  MMNEAT.ea.currentGeneration() + "_" + i + "_" + scores.get(i).individual.getId());
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		} else {
-			JFileChooser chooser = new JFileChooser();//used to get save name 
-			chooser.setApproveButtonText("Save");
-			FileNameExtensionFilter filter = new FileNameExtensionFilter("GIF", "gif");
-			chooser.setFileFilter(filter);
-			int returnVal = chooser.showOpenDialog(frame);
-			if(returnVal == JFileChooser.APPROVE_OPTION) {//if the user decides to save the image
-				System.out.println("You chose to call the image: " + chooser.getSelectedFile().getName());
+			String saveName = getSaveName("GIF", "gif");
 				try {
 					//saves gif to chosen file name
-					AnimationUtil.createGif(toSave, Parameters.parameters.integerParameter("defaultFramePause"), chooser.getCurrentDirectory() + "\\" + chooser.getSelectedFile().getName() + ".gif");
+					AnimationUtil.createGif(toSave, Parameters.parameters.integerParameter("defaultFramePause"), saveName);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-				System.out.println("image " + chooser.getSelectedFile().getName() + " was saved successfully");
-			} else { //else image dumped
-				System.out.println("image not saved");
-			}
+				System.out.println("image " + saveName + "was saved successfully");
 		}
 	}
 

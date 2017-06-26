@@ -21,12 +21,14 @@ import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.SinglePopulationGenerationalEA;
@@ -126,12 +128,12 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 
 	protected Network currentCPPN;
 
-	
+
 	private JPanel topper;
 	protected JPanel top;
 
 	public LinkedList<Integer> selectedCPPNs;
-	
+
 	public boolean simplifiedInteractiveInterface = false;
 
 	/**
@@ -360,18 +362,18 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		fullSawtooth.setForeground(CombinatoricUtilities.colorFromInt(ActivationFunctions.FTYPE_FULLSAWTOOTH));
 		triangleWave.setForeground(CombinatoricUtilities.colorFromInt(ActivationFunctions.FTYPE_TRIANGLEWAVE));
 		squareWave.setForeground(CombinatoricUtilities.colorFromInt(ActivationFunctions.FTYPE_SQUAREWAVE));
-	
-		
+
+
 		if(!simplifiedInteractiveInterface) {
 			//add additional action buttons
 			top.add(lineageButton);
 			top.add(resetButton);
 		}
-		
+
 		//add graphics to title panel
 		top.add(evolveButton);
 		top.add(saveButton);
-		
+
 		if(!simplifiedInteractiveInterface) {
 			top.add(networkButton);
 			top.add(undoButton);
@@ -379,7 +381,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 
 		//top.add(closeButton);
 		top.add(mutationsPerGeneration);	
-		
+
 		if(!simplifiedInteractiveInterface) {
 			//add activation function checkboxes
 			bottom.add(halfLinear);
@@ -400,7 +402,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 			bottom.add(triangleWave);
 			bottom.add(squareWave);	
 		}
-		
+
 		topper.add(top);
 		topper.add(bottom);
 		panels.add(topper);
@@ -553,6 +555,30 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	 * @param button button
 	 */
 	protected abstract void save(int i);
+	
+	/**
+	 * If user is saving file to a specified location, this method obtains
+	 * the directory in which the file is saved and the desired name of the 
+	 * file.
+	 * 
+	 * @param type Type of file being saved
+	 * @param extension file extension
+	 * @return
+	 */
+	protected String getSaveName(String type, String extension) {
+		JFileChooser chooser = new JFileChooser();//used to get save name 
+		chooser.setApproveButtonText("Save");
+		FileNameExtensionFilter filter = new FileNameExtensionFilter(type, extension);
+		chooser.setFileFilter(filter);
+		int returnVal = chooser.showOpenDialog(frame);
+		if(returnVal == JFileChooser.APPROVE_OPTION) {//if the user decides to save the file
+			System.out.println("You chose to call the file: " + chooser.getSelectedFile().getName());
+			return chooser.getCurrentDirectory() + "\\" + chooser.getSelectedFile().getName() + "." + extension;
+		} else { //else image dumped
+			System.out.println("file not saved");
+			return null;
+		}
+	}
 
 	/**
 	 * used to reset image on button using given genotype
@@ -788,8 +814,8 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		} else if(itemID == SQUARE_WAVE_CHECKBOX_INDEX) {
 			setActivationFunctionCheckBox(activation[Math.abs(SQUARE_WAVE_CHECKBOX_INDEX)], SQUARE_WAVE_CHECKBOX_INDEX, "includeSquareWaveFunction");
 			System.out.println("param square wave now set to: " + Parameters.parameters.booleanParameter("includeSquareWaveFunction"));
-		//} else if(itemID == CLOSE_BUTTON_INDEX) {//If close button clicked
-		//	System.exit(0);
+			//} else if(itemID == CLOSE_BUTTON_INDEX) {//If close button clicked
+			//	System.exit(0);
 		} else if(itemID == RESET_BUTTON_INDEX) {//If reset button clicked
 			reset();
 		} else if(itemID == SAVE_BUTTON_INDEX && BooleanUtil.any(chosen)) { //If save button clicked
@@ -821,13 +847,13 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 			}
 		}		
 	}
-	
+
 	protected void evolve() {
 		previousScores = new ArrayList<Score<T>>();
 		previousScores.addAll(scores);
 		waitingForUser = false;//tells evaluateAll method to finish	
 	}
-	
+
 	//used for lineage and undo button
 	private static HashSet<Long> drawnOffspring = null;
 	private static HashMap<Integer, Integer> savedLineage = null;
