@@ -26,7 +26,7 @@ public class baseGradientSubstrate extends MicroRTSSubstrateInputs{
 				Unit u = pgs.getUnitAt(j, i);
 				if(u != null){
 					if(u.getType().name.equals("Base") && u.getPlayer() == 0){
-						
+						activate(j,i,1,inputs);
 					}
 				}
 			}
@@ -35,18 +35,18 @@ public class baseGradientSubstrate extends MicroRTSSubstrateInputs{
 		return inputs;
 	}
 	
-	private void activate(int location, double value, double[] sub, int width){
+	private void activate(int x, int y, double value, double[][] sub){
 		if(value <= lowest_allowed_brightness) { //base case: trail too dim to matter.
-
-		} else if(location < 0 || location > substrateSize - 1) { //base case: out of bounds
-		
+			return;
+		} else if(x >= sub.length || x <= 0 || y >= sub[0].length || y <= 0) { //base case: out of bounds
+			return;
 		} else {
-			if(value > sub[location]) {//discontinue if value is < whats already there
-				sub[location] = value;
-				if ((location+1)/width != (location / width)) activate(location+1, value*(base_gradient_discount_rate), sub, width); //right
-				if ((location-1)/width != (location / width)) activate(location-1, value*(base_gradient_discount_rate), sub, width); //left
-				activate(location+width, value*(base_gradient_discount_rate), sub, width); //down
-				activate(location-width, value*(base_gradient_discount_rate), sub, width); //up
+			if(value > sub[x][y]) { //replace value only if value is > whats already there
+				sub[x][y] = value;
+				activate(x+1, y, value*(base_gradient_discount_rate), sub); //right
+				activate(x-1, y, value*(base_gradient_discount_rate), sub); //left
+				activate(x, y+1, value*(base_gradient_discount_rate), sub); //down
+				activate(x, y-1, value*(base_gradient_discount_rate), sub); //up
 			}
 		}
 	}
