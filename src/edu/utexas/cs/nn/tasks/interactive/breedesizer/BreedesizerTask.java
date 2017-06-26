@@ -33,7 +33,11 @@ import edu.utexas.cs.nn.util.sound.SoundFromCPPNUtil;
  * an input CPPN. These sound waves are represented with an image and with audio, and can be evolved,
  * saved, and mutated with various activation functions. This class extends InteractiveEvolutionTask,
  * which is also used to design the Picbreeder and Remixbreeder interfaces. 
- * Original breedesizer paper: sebastianrisi.com/wp-content/uploads/jonsson_gecco15.pdf
+ * 
+ * Original Breedesizer paper: 
+ * Björn Þór Jónsson, Amy K. Hoover, and Sebastian Risi. 2015. Interactively Evolving Compositional Sound Synthesis Networks. 
+ * Proceedings of the 2015 on Genetic and Evolutionary Computation Conference - GECCO 15 (2015). 
+ * DOI:http://dx.doi.org/10.1145/2739480.2754796
  * 
  * @author Isabel Tweraser
  *

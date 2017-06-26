@@ -33,7 +33,11 @@ import edu.utexas.cs.nn.util.graphics.ThreeDimensionalUtil;
  * Interface that interactively evolves three-dimensional
  * objects that are created originally with a CPPN. To complete this,
  * the program uses the interactive evolution interface
- * Original endless forms paper: http://yosinski.com/media/papers/Clune__2012__EndlessFormscomCollaborativelyEvolvingObjectsAnd3DPrinting.pdf
+ * 
+ * Original Endless Forms paper: 
+ * Jeff Clune*, Jason Yosinski*, Eugene Doan, and Hod Lipson. 2012. 
+ * EndlessForms.com: Collaboratively Evolving Objects and 3D Printing Them. 
+ * DOI: http://yosinski.com/media/papers/Clune__2012__EndlessFormscomCollaborativelyEvolvingObjectsAnd3DPrinting.pdf
  * 
  * @author Isabel Tweraser
  *
