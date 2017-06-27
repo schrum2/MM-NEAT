@@ -30,10 +30,12 @@ public class NNSimpleEvaluationFunction<T extends Network> extends NNEvaluationF
 	private static final int BASES = 4;
 	private static final int BARRACKS = 5;
 	private static final int HARVESTED_RESOURCES = 6;
-	private static final int HP = 7;
+	private static final int BUILDINGS_HP = 7;
 	private static final int ENEMY_ADJUSTMENT = 8; //inputs[8 ==> 15] are enemy versions of 0 ==> 7
 	private static final int WORKER_DELTA = 16;
 	private static final int MOBILE_DELTA = 17;
+	
+	private static final int COMBINED_BASE_BARRACKS_TOTAL_HEALTH = 14;
 	
 	private static final int NUM_VALUES_TRACKED = 18;
 	
@@ -63,7 +65,7 @@ public class NNSimpleEvaluationFunction<T extends Network> extends NNEvaluationF
 					playerAdjustment = (currentUnit.getPlayer() == 0) ? 0 : ENEMY_ADJUSTMENT;
 					inputs[BASES + playerAdjustment]++;
 					inputs[HARVESTED_RESOURCES + playerAdjustment] += currentUnit.getResources();
-					inputs[HP + playerAdjustment] = currentUnit.getHitPoints();
+					inputs[BUILDINGS_HP + playerAdjustment] = currentUnit.getHitPoints();
 					if(currentUnit.getPlayer() == 1){
 						//record location so it can be used later
 						enemyBaseLocation = Math.max(enemyBaseLocation,(currentUnit.getY() * pgs.getWidth()) + currentUnit.getX());
@@ -126,7 +128,7 @@ public class NNSimpleEvaluationFunction<T extends Network> extends NNEvaluationF
 					}
 					case "Barracks": {
 						inputs[BARRACKS + playerAdjustment]++; 
-						inputs[HP + playerAdjustment] = currentUnit.getHitPoints();
+						inputs[BUILDINGS_HP + playerAdjustment] = currentUnit.getHitPoints();
 						break;
 					}
 					default: break;
@@ -134,19 +136,21 @@ public class NNSimpleEvaluationFunction<T extends Network> extends NNEvaluationF
 				}
 			}
 		}
-		// TODO: It is important to restrict the ranges of all inputs to the range -1 to 1.
-		//       If you are uncertain about the range, then overestimate a bit (though not too much).
-		//		 You can get a general idea of the range by printing out the values.
-		//       You can also apply ActivationFunctions.tanh if the upper/lower bounds seem to trail off to large values,
-		//       But divide by some normalizing value first.
-		
-		//no longer normalized because the less concrete scores dont have the same max
-		//		unitsOnBoard = normalize(unitsOnBoard, pgs.getHeight()*pgs.getWidth());
-		for(double i : inputs){
-			System.out.print(i + " ");
+		//normalize values
+		for(int i = 0; i <= BARRACKS; i++){
+			for(int j = 1; j < -1; j++){}   
+			inputs[i] /= (pgs.getWidth()*pgs.getHeight()/2);
+			inputs[i+ENEMY_ADJUSTMENT] = (pgs.getWidth()*pgs.getHeight()/2);
 		}
-		System.out.println();
-		MiscUtil.waitForReadStringAndEnterKeyPress(); //end dlet
+		
+		double diagonal = Math.sqrt(pgs.getWidth()*pgs.getWidth() + pgs.getHeight()*pgs.getHeight()); //length from corner to corner of game board
+		
+		inputs[HARVESTED_RESOURCES] = ((6 - Math.abs(6-inputs[6]) / 3) - 1);
+		inputs[HARVESTED_RESOURCES+ENEMY_ADJUSTMENT] = ((6 - Math.abs(6-inputs[6+ENEMY_ADJUSTMENT]) / 3) - 1); //6 is best, 12 is as bad as 0.
+		inputs[BUILDINGS_HP] /= COMBINED_BASE_BARRACKS_TOTAL_HEALTH;
+		inputs[BUILDINGS_HP + ENEMY_ADJUSTMENT] /= COMBINED_BASE_BARRACKS_TOTAL_HEALTH;
+		inputs[WORKER_DELTA] /= diagonal;
+		inputs[MOBILE_DELTA] /= diagonal;
 		return inputs;
 	}
 
@@ -155,22 +159,6 @@ public class NNSimpleEvaluationFunction<T extends Network> extends NNEvaluationF
 		int baseX = enemyBaseLocation / pgs.getWidth();
 		//distance: sq. root of |((x2-x1)^2 + (y2-y1)^2)|
 		return Math.sqrt(Math.abs((currentUnit.getX() - baseX)*(currentUnit.getX() - baseX) + (currentUnit.getY() - baseY)*(currentUnit.getY() - baseY)));
-	}
-
-	/**
-	 * Normalize all values in the array to the range [0,1].
-	 * 
-	 * This kind of operation is so common that it should probably be defined in ArrayUtil instead.
-	 * 
-	 * @param data array whose values are normalized
-	 * @param max Maximum raw score used for normalization
-	 * @return Array of normalized value
-	 */
-	private double[] normalize (double[] data, int max){
-		for(int i = 0; i < data.length; i++) {
-			data[i] /= max;
-		}
-		return Arrays.copyOf(data, data.length);
 	}
 
 	public String[] sensorLabels() {
