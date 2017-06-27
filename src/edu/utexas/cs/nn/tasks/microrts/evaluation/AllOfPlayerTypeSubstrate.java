@@ -9,8 +9,10 @@ import micro.rts.units.Unit;
 
 public class AllOfPlayerTypeSubstrate extends MicroRTSSubstrateInputs{
 
+	private boolean terrain;
 	private ArrayList<Pair<String, Integer>> typesAndPlayers;
 	final static int ANY_PLAYER = -2;
+	
 	/**
 	 * 
 	 * @param typesAndPlayers
@@ -18,6 +20,12 @@ public class AllOfPlayerTypeSubstrate extends MicroRTSSubstrateInputs{
 	 */
 	public AllOfPlayerTypeSubstrate(ArrayList<Pair<String, Integer>> typesAndPlayers){
 		this.typesAndPlayers = typesAndPlayers;
+		terrain = false;
+	}
+	
+	public AllOfPlayerTypeSubstrate(ArrayList<Pair<String, Integer>> typesAndPlayers, boolean terrain){
+		this.typesAndPlayers = typesAndPlayers;
+		this.terrain = terrain;
 	}
 
 	@Override
@@ -30,6 +38,9 @@ public class AllOfPlayerTypeSubstrate extends MicroRTSSubstrateInputs{
 				Unit u = pgs.getUnitAt(j, i);
 				if(u != null){
 					if(isAllowedInSub(u)){
+						inputs[j][i] = 1;
+					}
+					if(terrain && pgs.getTerrain(j, i) == pgs.TERRAIN_WALL){
 						inputs[j][i] = 1;
 					}
 				}

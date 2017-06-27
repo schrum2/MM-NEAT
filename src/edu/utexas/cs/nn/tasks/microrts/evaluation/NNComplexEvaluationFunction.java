@@ -122,10 +122,11 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 			} case neutral:{
 				criteria = new ArrayList<Pair<String, Integer>>();
 				criteria.add(new Pair<String, Integer>(null, -1));
-				currentSubstrate = new AllOfPlayerTypeSubstrate(criteria); //TODO terrain
+				currentSubstrate = new AllOfPlayerTypeSubstrate(criteria, true);
 				break;
 			} case terrain:{
-				//TODO
+				criteria = new ArrayList<Pair<String, Integer>>(); //empty
+				currentSubstrate = new AllOfPlayerTypeSubstrate(criteria, true);
 			} case path: currentSubstrate = new BaseGradientSubstrate(0); break;
 			default: throw new UnsupportedOperationException("unrecognized substrate id: " + activeSubs.get(i));
 			} //end switch		
