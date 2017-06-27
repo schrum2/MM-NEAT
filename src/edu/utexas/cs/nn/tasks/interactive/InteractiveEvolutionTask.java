@@ -77,7 +77,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	private static final int SAVE_BUTTON_INDEX = -2;
 	private static final int RESET_BUTTON_INDEX = -3;
 	//private static final int CLOSE_BUTTON_INDEX	= -4;
-	private static final int LINEAGE_BUTTON_INDEX = -5;
+	//private static final int LINEAGE_BUTTON_INDEX = -5;
 	private static final int NETWORK_BUTTON_INDEX = -6;
 	private static final int UNDO_BUTTON_INDEX = -7;
 	private static final int SIGMOID_CHECKBOX_INDEX = -8;
@@ -118,7 +118,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	private ArrayList<Score<T>> previousScores;
 
 	//private helper variables
-	private boolean showLineage;
+	//private boolean showLineage;
 	protected boolean showNetwork;
 	private boolean waitingForUser;
 	protected final boolean[] chosen;
@@ -159,7 +159,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		numRows = numButtonOptions / NUM_COLUMNS;
 		picSize = Parameters.parameters.integerParameter("imageSize");
 		chosen = new boolean[numButtonOptions];
-		showLineage = false;
+		//showLineage = false;
 		showNetwork = false;
 		waitingForUser = false;
 		activation = new boolean[Math.abs(SQUARE_WAVE_CHECKBOX_INDEX) + 1];//magic number is number of activation functions
@@ -216,7 +216,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		JButton saveButton = new JButton(new ImageIcon(save2));
 		JButton evolveButton = new JButton(new ImageIcon(evolve2));
 		//JButton closeButton = new JButton(new ImageIcon(close2));
-		JButton lineageButton = new JButton(new ImageIcon(lineage2));
+		//JButton lineageButton = new JButton(new ImageIcon(lineage2));
 		JButton networkButton = new JButton(new ImageIcon(network2));
 		JButton undoButton = new JButton( new ImageIcon(undo2));
 
@@ -224,7 +224,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		resetButton.setPreferredSize(new Dimension(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT));
 		saveButton.setPreferredSize(new Dimension(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT));
 		evolveButton.setPreferredSize(new Dimension(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT));
-		lineageButton.setPreferredSize(new Dimension(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT));
+		//lineageButton.setPreferredSize(new Dimension(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT));
 		networkButton.setPreferredSize(new Dimension(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT));
 		undoButton.setPreferredSize(new Dimension(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT));
 		//closeButton.setPreferredSize(new Dimension(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT));
@@ -232,7 +232,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		resetButton.setText("Reset");
 		saveButton.setText("Save");
 		evolveButton.setText("Evolve!");
-		lineageButton.setText("Lineage");
+		//lineageButton.setText("Lineage");
 		networkButton.setText("Network");
 		undoButton.setText("Undo");
 		//closeButton.setText("Close");
@@ -286,8 +286,8 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		resetButton.setToolTipText("Reset button");
 		//closeButton.setName("" + CLOSE_BUTTON_INDEX);
 		//closeButton.setToolTipText("Close button");
-		lineageButton.setName("" + LINEAGE_BUTTON_INDEX);
-		lineageButton.setToolTipText("Lineage button");
+		//lineageButton.setName("" + LINEAGE_BUTTON_INDEX);
+		//lineageButton.setToolTipText("Lineage button");
 		networkButton.setName("" + NETWORK_BUTTON_INDEX);
 		networkButton.setToolTipText("Network button");
 		undoButton.setName("" + UNDO_BUTTON_INDEX);
@@ -323,7 +323,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		saveButton.addActionListener(this);
 		evolveButton.addActionListener(this);
 		//closeButton.addActionListener(this);
-		lineageButton.addActionListener(this);
+		//lineageButton.addActionListener(this);
 		networkButton.addActionListener(this);
 		undoButton.addActionListener(this);
 		sigmoid.addActionListener(this);
@@ -368,7 +368,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 
 		if(!simplifiedInteractiveInterface) {
 			//add additional action buttons
-			top.add(lineageButton);
+			//top.add(lineageButton);
 			top.add(resetButton);
 		}
 
@@ -851,8 +851,8 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 			reset();
 		} else if(itemID == SAVE_BUTTON_INDEX && BooleanUtil.any(chosen)) { //If save button clicked
 			saveAll();
-		} else if(itemID == LINEAGE_BUTTON_INDEX) {//If lineage button clicked
-			setLineage();
+		//} else if(itemID == LINEAGE_BUTTON_INDEX) {//If lineage button clicked
+		//	setLineage();
 		} else if(itemID == NETWORK_BUTTON_INDEX) {//If network button clicked
 			setNetwork();
 		} else if(itemID == UNDO_BUTTON_INDEX) {//If undo button clicked
@@ -895,71 +895,71 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	private static HashMap<Integer, Integer> savedLineage = null;
 	private static ArrayList<DrawingPanel> dPanels = null;
 
-	/**
-	 * resets lineage drawer if button pressed multiple
-	 * times
-	 */
-	private static void resetLineageDrawer() { 
-		if(dPanels != null) {
-			for(int i = 0; i < dPanels.size(); i++) {
-				dPanels.get(i).setVisibility(false);
-			}
-		}
-		dPanels = null;
-		drawnOffspring = null;
-	}
+//	/**
+//	 * resets lineage drawer if button pressed multiple
+//	 * times
+//	 */
+//	private static void resetLineageDrawer() { 
+//		if(dPanels != null) {
+//			for(int i = 0; i < dPanels.size(); i++) {
+//				dPanels.get(i).setVisibility(false);
+//			}
+//		}
+//		dPanels = null;
+//		drawnOffspring = null;
+//	}
 
 
-	/**
-	 * gets lineage from offspring object
-	 */
-	@SuppressWarnings("rawtypes")
-	private void setLineage() {
-		if(!showLineage) {
-			showLineage = true;
-			resetLineageDrawer();
-			String base = Parameters.parameters.stringParameter("base");
-			String log =  Parameters.parameters.stringParameter("log");
-			int runNumber = Parameters.parameters.integerParameter("runNumber");
-			String saveTo = Parameters.parameters.stringParameter("saveTo");
-			String prefix = base + "/" + saveTo + runNumber + "/" + log + runNumber + "_";
-			String originalPrefix = base + "/" + saveTo + runNumber + "/" + log + runNumber + "_";
-
-			drawnOffspring = new HashSet<Long>();
-			savedLineage = new HashMap<Integer, Integer>();
-			dPanels = new ArrayList<DrawingPanel>();
-
-			try {
-				Offspring.reset();
-				Offspring.lineage = new ArrayList<Offspring>();
-				PopulationUtil.loadLineage();
-				System.out.println("Lineage loaded from file");
-				// Also adds networks
-				Offspring.addAllScores(prefix, "parents_gen", ((SinglePopulationGenerationalEA) MMNEAT.ea).currentGeneration(), true, originalPrefix);
-				System.out.println("Scores added");
-				for(int i = 0; i < chosen.length; i++) {
-					boolean choose = chosen[i];
-					if(choose) {//loops through and any image  clicked automatically saved
-						Score<T> s = scores.get(i);
-						Genotype<T> network = s.individual;
-						long id = network.getId();
-						for(Offspring o : SelectiveBreedingEA.offspring) {
-							if(o.offspringId == id) {
-								// Magic number here: 600 is start y-coord for drawing lineage
-								drawLineage(o, id, 0, 600);						
-							}
-						}
-					}
-				}
-			} catch (FileNotFoundException e) {
-				System.out.println("Lineage browser failed");
-				e.printStackTrace();
-			}
-		} else {
-			resetLineageDrawer();
-			showLineage = false;
-		}
-	}
+//	/**
+//	 * gets lineage from offspring object
+//	 */
+//	@SuppressWarnings("rawtypes")
+//	private void setLineage() {
+//		if(!showLineage) {
+//			showLineage = true;
+//			resetLineageDrawer();
+//			String base = Parameters.parameters.stringParameter("base");
+//			String log =  Parameters.parameters.stringParameter("log");
+//			int runNumber = Parameters.parameters.integerParameter("runNumber");
+//			String saveTo = Parameters.parameters.stringParameter("saveTo");
+//			String prefix = base + "/" + saveTo + runNumber + "/" + log + runNumber + "_";
+//			String originalPrefix = base + "/" + saveTo + runNumber + "/" + log + runNumber + "_";
+//
+//			drawnOffspring = new HashSet<Long>();
+//			savedLineage = new HashMap<Integer, Integer>();
+//			dPanels = new ArrayList<DrawingPanel>();
+//
+//			try {
+//				Offspring.reset();
+//				Offspring.lineage = new ArrayList<Offspring>();
+//				PopulationUtil.loadLineage();
+//				System.out.println("Lineage loaded from file");
+//				// Also adds networks
+//				Offspring.addAllScores(prefix, "parents_gen", ((SinglePopulationGenerationalEA) MMNEAT.ea).currentGeneration(), true, originalPrefix);
+//				System.out.println("Scores added");
+//				for(int i = 0; i < chosen.length; i++) {
+//					boolean choose = chosen[i];
+//					if(choose) {//loops through and any image  clicked automatically saved
+//						Score<T> s = scores.get(i);
+//						Genotype<T> network = s.individual;
+//						long id = network.getId();
+//						for(Offspring o : SelectiveBreedingEA.offspring) {
+//							if(o.offspringId == id) {
+//								// Magic number here: 600 is start y-coord for drawing lineage
+//								drawLineage(o, id, 0, 600);						
+//							}
+//						}
+//					}
+//				}
+//			} catch (FileNotFoundException e) {
+//				System.out.println("Lineage browser failed");
+//				e.printStackTrace();
+//			}
+//		} else {
+//			resetLineageDrawer();
+//			showLineage = false;
+//		}
+//	}
 
 	/**
 	 * Draws lineage of image recursively
