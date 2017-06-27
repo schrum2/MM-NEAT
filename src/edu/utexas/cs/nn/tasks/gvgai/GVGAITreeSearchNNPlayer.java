@@ -3,10 +3,10 @@ package edu.utexas.cs.nn.tasks.gvgai;
 import java.util.List;
 import java.util.Random;
 
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.util.random.RandomNumbers;
+import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
 import gvgai.core.game.StateObservation;
 import gvgai.core.player.AbstractPlayer;
 import gvgai.ontology.Types.ACTIONS;
@@ -25,25 +25,54 @@ public class GVGAITreeSearchNNPlayer<T extends Network> extends AbstractPlayer {
 	Random random = RandomNumbers.randomGenerator;
 	
 	public GVGAITreeSearchNNPlayer(){
-		sharedInit();
+		depth = Parameters.parameters.integerParameter("minimaxSearchDepth");
+		prune = true;
 	}
 	
 	public GVGAITreeSearchNNPlayer(StateObservation stateObs, ElapsedCpuTimer elapsedTimer){
-		sharedInit();
+		depth = Parameters.parameters.integerParameter("minimaxSearchDepth");
+		prune = true;
 	}
 	
 	@Override
 	public ACTIONS act(StateObservation stateObs, ElapsedCpuTimer elapsedTimer) {
-		// TODO: Add kick-off code here
 		
+		List<ACTIONS> poss = stateObs.getAvailableActions(); // Stores all currently possible ACTIONS
 		
+		// If occasional random moves are allowed, then minimax calculation can be skipped
+		double rand = random.nextDouble();
+		if(rand < Parameters.parameters.doubleParameter("minimaxRandomRate")){
+			return RandomNumbers.randomElement(poss);
+		}
+
+		double[] utilities = new double[poss.size()]; // Stores the network's outputs
+
+		double alpha = ALPHA;
+		double beta = BETA;
+
+		int index = 0;
+		double v = Double.NEGATIVE_INFINITY;
+
+		for(ACTIONS act : poss){ // Gets the network's outputs for all possible BoardGameStates
+
+			StateObservation temp = stateObs.copy();
+			temp.advance(act);
+			
+			utilities[index] = minimax(temp, depth, alpha, beta);
+
+			// Pruning is only for the alpha-beta agent
+			if(prune) {
+				// Update alpha/beta (copied code)
+				v = Math.max(v, utilities[index]);
+				alpha = Math.max(alpha, v);
+				if(beta <= alpha){
+					break; // Beta cut-off
+				}
+			} // No minimizing pruning because this is meant to be a Single Player
+			index++;
+		}
 		
-		return null;
-	}
-	
-	private void sharedInit() {
-		prune = false; // standard minimax does not prune
-		depth = Parameters.parameters.integerParameter("minimaxSearchDepth");
+		return poss.get(StatisticsUtilities.argmax(utilities));
 	}
 	
 	/**

@@ -67,13 +67,15 @@ public class GVGAISinglePlayerTask<T extends Network> extends NoisyLonerTask<T> 
 
 	@Override
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {
+		// TODO: Find a better way to set the Network for all possible Players?
 		GVGAIOneStepNNPlayer.network = individual.getPhenotype(); // Cannot construct a Player because GVGAI constructs players with Strings
+		GVGAITreeSearchNNPlayer.network = individual.getPhenotype(); // Cannot construct a Player because GVGAI constructs players with Strings
 		
-		String agentNames = "edu.utexas.cs.nn.tasks.gvgai.GVGAIOneStepNNPlayer";
+		String agentNames = Parameters.parameters.stringParameter("gvgaiPlayer");
 		
 		boolean visuals = CommonConstants.watch;
 		int randomSeed = 0;
-		int playerID = (int) individual.getId();
+		int playerID = 0;
 		
 		String game_file = gamesPath + game + ".txt";
 		String level_file = gamesPath + game + "_lvl" + level + ".txt";
