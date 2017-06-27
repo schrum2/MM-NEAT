@@ -242,6 +242,12 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 		}
 		super.resetButtons(hardReset);
 	}
+	
+	@Override
+	protected void reset() { 
+		shapes = new HashMap<Long,List<Triangle>>();
+		super.reset();
+	}
 
 	protected void setUndo() {
 		// Get the old shapes back
@@ -276,6 +282,10 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 
 	@Override
 	protected BufferedImage getButtonImage(TWEANN phenotype, int width, int height, double[] inputMultipliers) {
+		// If reset button cleared out triangles, then load again right before displaying
+		if(!shapes.containsKey(phenotype.getId())) {
+			shapes.put(phenotype.getId(), ThreeDimensionalUtil.trianglesFromCPPN(phenotype, picSize, picSize, CUBE_SIDE_LENGTH, SHAPE_WIDTH, SHAPE_HEIGHT, SHAPE_DEPTH, color, getInputMultipliers()));
+		}		
 		return ThreeDimensionalUtil.imageFromTriangles(shapes.get(phenotype.getId()), picSize, picSize, heading, pitch, null);
 	}
 
