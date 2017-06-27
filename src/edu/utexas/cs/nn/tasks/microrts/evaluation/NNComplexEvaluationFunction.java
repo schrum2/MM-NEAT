@@ -1,17 +1,11 @@
 package edu.utexas.cs.nn.tasks.microrts.evaluation;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.util.PopulationUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import micro.rts.GameState;
-import micro.rts.PhysicalGameState;
-import micro.rts.units.Unit;
 
 /**
  * Puts different types of units onto their own substrates, 
@@ -28,7 +22,8 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 	private int substrateSize;
 	private int smudgeSize = Parameters.parameters.integerParameter("microRTSInputSize"); //TODO use
 	private ArrayList<Integer> activeSubs;
-
+	private ArrayList<MicroRTSSubstrateInputs> inputSubstrates;
+	
 	//Indexes within areSubsActive
 	private final int mobile = 0;
 	private final int buildings = 1;
@@ -74,18 +69,8 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 		}
 		assert activeSubs.size() == numSubstrates : "conflicting information gathered in NNComplex constructor";
 
-	}
-
-	/**
-	 * takes the gameState and separates into substrates that contain
-	 * different information.
-	 */
-	@Override
-	protected double[] gameStateToArray(GameState gs) {
+		inputSubstrates = new ArrayList<>();
 		ArrayList<Pair<String,Integer>> criteria = new ArrayList<Pair<String, Integer>>();
-		pgs = gs.getPhysicalGameState();
-		substrateSize = pgs.getHeight()*pgs.getWidth();
-		double[] inputs = new double[substrateSize * numSubstrates];
 		MicroRTSSubstrateInputs currentSubstrate = null;
 		for(int i = 0; i < numSubstrates; i++){ //for each active substrate:
 			switch(activeSubs.get(i)){
@@ -143,9 +128,26 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 				//TODO
 			} case path: currentSubstrate = new BaseGradientSubstrate(0); break;
 			default: throw new UnsupportedOperationException("unrecognized substrate id: " + activeSubs.get(i));
-			} //end switch
+			} //end switch		
 			
-			double[][] twoDimensionalSubArray = currentSubstrate.getInputs(gs);
+			// Add substrate to list of substrates
+			inputSubstrates.add(currentSubstrate);
+		}
+
+	}
+
+	/**
+	 * takes the gameState and separates into substrates that contain
+	 * different information.
+	 */
+	@Override
+	protected double[] gameStateToArray(GameState gs) {
+		ArrayList<Pair<String,Integer>> criteria = new ArrayList<Pair<String, Integer>>();
+		pgs = gs.getPhysicalGameState();
+		substrateSize = pgs.getHeight()*pgs.getWidth();
+		double[] inputs = new double[substrateSize*numSubstrates];
+		for(int i = 0; i < numSubstrates; i++){ //for each active substrate:
+			double[][] twoDimensionalSubArray = inputSubstrates.get(i).getInputs(gs);
 			assert twoDimensionalSubArray.length > 0 : "length < 0";
 //			System.out.println(Arrays.deepToString(twoDimensionalSubArray));
 			int width = pgs.getWidth();
