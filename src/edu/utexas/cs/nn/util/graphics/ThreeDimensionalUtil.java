@@ -173,7 +173,12 @@ public class ThreeDimensionalUtil {
 	public static List<Triangle> getShape(List<Vertex> centers, double sideLength, Color color) {
 		List<Triangle> tris = new ArrayList<>();
 		for(Vertex v: centers) { //construct individual cubes and add them to larger list
-			tris.addAll(cubeConstructor(v, sideLength, color));
+//			if(color == null) {
+//				float[] HSB = getHSBFromCPPN()
+//				color = new Color(HSB);
+//			} else {
+				tris.addAll(cubeConstructor(v, sideLength, color));
+//			}
 		}
 		return tris;
 	}
@@ -373,7 +378,24 @@ public class ThreeDimensionalUtil {
 		List<Triangle> tris = getShape(cubeVertexes, sideLength, color);
 		return tris;
 	}
-
+	
+	/**
+	 * Returns the current image to be displayed on the button based on the rotation 
+	 * and the CPPN.
+	 * 
+	 * @param cppn Network manipulating image
+	 * @param imageWidth width of image
+	 * @param imageHeight height of image
+	 * @param sideLength size of cube
+	 * @param shapeWidth width of shape (measured in cubes)
+	 * @param shapeHeight height of shape (measured in cubes)
+	 * @param shapeDepth depth of shape (measured in cubes)
+	 * @param color desired color of image
+	 * @param heading horizontal rotation of object
+	 * @param pitch vertical rotation of object
+	 * @param inputMultipliers indicates whether input checkboxes are turned on or off
+	 * @return
+	 */
 	public static BufferedImage currentImageFromCPPN(Network cppn, int imageWidth, int imageHeight, int sideLength, int shapeWidth, int shapeHeight, int shapeDepth, Color color, double heading, double pitch, double[]inputMultipliers) {
 		List<Triangle> tris = trianglesFromCPPN(cppn, imageWidth, imageHeight, sideLength, shapeWidth, shapeHeight, shapeDepth, color, inputMultipliers);
 		BufferedImage currentImage = imageFromTriangles(tris, imageWidth, imageHeight, heading, pitch, color);

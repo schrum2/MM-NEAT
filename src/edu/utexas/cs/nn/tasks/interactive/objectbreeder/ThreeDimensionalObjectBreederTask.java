@@ -49,10 +49,12 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 	public static final int SHAPE_DEPTH = 10;
 	public Color color = Color.RED;
 
-	public static final int CPPN_NUM_INPUTS = 5;
+	public static int CPPN_NUM_INPUTS = 5;
 	public static final int CPPN_NUM_OUTPUTS = 1;
 
 	public static final Color[] COLORS = new Color[]{Color.RED, Color.GREEN, Color.BLUE, Color.GRAY, Color.YELLOW, Color.ORANGE, Color.PINK, Color.BLACK };
+	
+	public static final int EVOLVED_COLOR_INDEX = 8;
 
 	public static final int MAX_ROTATION = 360;
 
@@ -157,7 +159,7 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 			top.add(heading);
 		}
 
-		String[] choices = { "Red", "Green", "Blue", "Grey","Yellow", "Orange", "Pink", "Black" };
+		String[] choices = { "Red", "Green", "Blue", "Grey","Yellow", "Orange", "Pink", "Black", "Evolved" };
 		colorChoice = new JComboBox<String>(choices);
 		colorChoice.setSize(40, 40);
 		colorChoice.addItemListener(new ItemListener() {
@@ -167,6 +169,10 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 			public void itemStateChanged(ItemEvent e) {
 				JComboBox<String> source = (JComboBox<String>)e.getSource();
 				int index = source.getSelectedIndex();
+				if(index == EVOLVED_COLOR_INDEX) {
+					CPPN_NUM_INPUTS = 4;
+					color = null;
+				}
 				color = COLORS[index];
 				// change colors of triangles
 				for(List<Triangle> tris: shapes.values()) {
