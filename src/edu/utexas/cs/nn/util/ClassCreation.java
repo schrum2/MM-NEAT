@@ -22,6 +22,7 @@ public class ClassCreation {
 	public static Object createObject(String label) throws NoSuchMethodException {
 		Class className = Parameters.parameters.classParameter(label);
 		if (className == null) {
+			System.out.println("Error: Class Name null for label: " + label);
 			return null;
 		}
 		return createObject(className);

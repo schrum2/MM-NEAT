@@ -410,6 +410,7 @@ public class MMNEAT {
 			}
 			
 			task = (Task) ClassCreation.createObject("task");
+			System.out.println("Load task: " + task);
 			boolean multiPopulationCoevolution = false;
 			// For all types of Ms Pac-Man tasks
 			if (Parameters.parameters.booleanParameter("scalePillsByGen")
