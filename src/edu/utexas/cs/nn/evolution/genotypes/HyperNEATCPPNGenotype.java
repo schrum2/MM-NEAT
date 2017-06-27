@@ -33,9 +33,10 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 	public static final int LINK_INDEX = 0;
 	// If a Link Expression Output is used, it will be second (index 1)
 	public static final int LEO_INDEX = 1;
-	public static boolean constructingNetwork = false;
 	public static final double BIAS = 1.0;// Necessary for most CPPN networks
-	public int innovationID = 0;// provides unique innovation numbers for links and genes
+	// Transient values not saved to XML files
+	public transient static boolean constructingNetwork = false;
+	public transient int innovationID = 0;// provides unique innovation numbers for links and genes
 
 	/**
 	 * Default constructor
@@ -61,6 +62,8 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 	 * Constructor for hyperNEATCPPNGenotype. Uses super constructor from
 	 * TWEANNGenotype
 	 * 
+	 * @param archetypeIndex
+	 * 			  which archetype to refer to for crossover
 	 * @param links
 	 *            list of links between genes
 	 * @param genes
@@ -68,8 +71,8 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 	 * @param outputNeurons
 	 *            number of output neurons
 	 */
-	public HyperNEATCPPNGenotype(ArrayList<LinkGene> links, ArrayList<NodeGene> genes, int outputNeurons) {
-		super(genes, links, outputNeurons, false, false, 0);
+	public HyperNEATCPPNGenotype(int archetypeIndex, ArrayList<LinkGene> links, ArrayList<NodeGene> genes, int outputNeurons) {
+		super(genes, links, outputNeurons, false, false, archetypeIndex);
 	}
 
 	/**
@@ -202,7 +205,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 		for (NodeGene ng : this.nodes) {// needed for a deep copy
 			genes.add(newNodeGene(ng.ftype, ng.ntype, ng.innovation, false, ng.getBias()));
 		}
-		HyperNEATCPPNGenotype result = new HyperNEATCPPNGenotype(linksCopy, genes, this.numOut);
+		HyperNEATCPPNGenotype result = new HyperNEATCPPNGenotype(this.archetypeIndex, linksCopy, genes, this.numOut);
 
 		// Schrum: Not sure if keeping moduleUsage is appropriate
 		moduleUsage = temp;

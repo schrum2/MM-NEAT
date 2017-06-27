@@ -24,7 +24,7 @@ public class OffsetHybrIDGenotypeTest {
 				"task:edu.utexas.cs.nn.networks.hyperneat.HyperNEATDummyTask","linkExpressionThreshold:-1"});
 		MMNEAT.loadClasses();
 		hncg = new HyperNEATCPPNGenotype();
-		ohg = new OffsetHybrIDGenotype(hncg.links, hncg.nodes, hncg.neuronsPerModule);
+		ohg = new OffsetHybrIDGenotype(hncg.archetypeIndex, hncg.links, hncg.nodes, hncg.neuronsPerModule);
 	}
 
 	@After

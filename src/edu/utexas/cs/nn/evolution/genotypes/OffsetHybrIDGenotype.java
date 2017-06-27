@@ -31,11 +31,11 @@ public class OffsetHybrIDGenotype extends HyperNEATCPPNGenotype {
 	}
 
 	public OffsetHybrIDGenotype(HyperNEATCPPNGenotype hngt) {
-		this(hngt.links, hngt.nodes, hngt.neuronsPerModule);
+		this(hngt.archetypeIndex, hngt.links, hngt.nodes, hngt.neuronsPerModule);
 	}
 
-	public OffsetHybrIDGenotype(ArrayList<LinkGene> links, ArrayList<NodeGene> genes, int outputNeurons) {
-		super(links, genes, outputNeurons);
+	public OffsetHybrIDGenotype(int archetypeIndex, ArrayList<LinkGene> links, ArrayList<NodeGene> genes, int outputNeurons) {
+		super(archetypeIndex, links, genes, outputNeurons);
 		rvg = newZeroOffsets(HyperNEATUtil.totalPossibleLinks(HyperNEATUtil.getHyperNEATTask()));
 	}
 
