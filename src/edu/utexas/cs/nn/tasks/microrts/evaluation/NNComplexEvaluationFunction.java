@@ -146,10 +146,11 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 			} //end switch
 			
 			double[][] twoDimensionalSubArray = currentSubstrate.getInputs(gs);
+			assert twoDimensionalSubArray.length > 0 : "length < 0";
 //			System.out.println(Arrays.deepToString(twoDimensionalSubArray));
 			int width = pgs.getWidth();
 			for(int j = 0; j < substrateSize; j++){
-				inputs[j] = twoDimensionalSubArray[j/width][j%width];
+				inputs[(i*substrateSize)+j] = twoDimensionalSubArray[j%width][j/width];
 			}
 		}
 		return inputs;

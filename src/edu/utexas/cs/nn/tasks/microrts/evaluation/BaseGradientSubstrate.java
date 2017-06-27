@@ -18,8 +18,7 @@ public class BaseGradientSubstrate extends MicroRTSSubstrateInputs{
 	@Override
 	public double[][] getInputs(GameState gs) {
 		PhysicalGameState pgs = gs.getPhysicalGameState();
-		// TODO: Remove  * numSubstrates
-		double[][] inputs = new double[pgs.getHeight() * numSubstrates][pgs.getWidth()];
+		double[][] inputs = new double[pgs.getHeight()][pgs.getWidth()];
 		
 		for(int i = 0; i < pgs.getHeight(); i++){
 			for(int j = 0; j < pgs.getWidth(); j++){
