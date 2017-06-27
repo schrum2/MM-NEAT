@@ -7,6 +7,7 @@ import java.util.List;
 
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.util.CartesianGeometricUtilities;
+import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.datastructures.Triangle;
 import edu.utexas.cs.nn.util.datastructures.Vertex;
 
@@ -168,17 +169,10 @@ public class ThreeDimensionalUtil {
 	 * @param color desired color of cubes
 	 * @return List of triangles that construct a series of cubes centered at the various vertexes
 	 */
-	public static List<Triangle> getShape(Network cppn, List<Vertex> centers, int imageWidth, int imageHeight, double sideLength, double[] inputMultiples, Color color) {
+	public static List<Triangle> getShape(Network cppn, List<Vertex> centers, int imageWidth, int imageHeight, double sideLength, double[] inputMultiples, List<Color> colors) {
 		List<Triangle> tris = new ArrayList<>();
-		for(Vertex v: centers) { //construct individual cubes and add them to larger list
-			if(color == null) {
-				float[] HSB = GraphicsUtil.getHSBFromCPPN(cppn, (int) v.x, (int) v.y, imageWidth, imageHeight, inputMultiples, -1);
-				int rgb = Color.HSBtoRGB(HSB[GraphicsUtil.HUE_INDEX], HSB[GraphicsUtil.SATURATION_INDEX], HSB[GraphicsUtil.BRIGHTNESS_INDEX]);
-				Color evolvedColor = new Color(rgb, true);
-				tris.addAll(cubeConstructor(v, sideLength, evolvedColor));
-			} else {
-				tris.addAll(cubeConstructor(v, sideLength, color));
-			}
+		for(int i = 0; i < centers.size(); i++) { //construct individual cubes and add them to larger list
+			tris.addAll(cubeConstructor(centers.get(i), sideLength, colors.get(i)));
 		}
 		return tris;
 	}
@@ -197,8 +191,10 @@ public class ThreeDimensionalUtil {
 	 * @param inputMultipliers determines whether inputs are turned on or off
 	 * @return List of vertexes denoting center points of all cubes being constructed
 	 */
-	public static List<Vertex> getVertexesFromCPPN(Network cppn, int imageWidth, int imageHeight, int cubeSize, int shapeWidth, int shapeHeight, int shapeDepth, double[] inputMultipliers) {
-		List<Vertex> result = new ArrayList<>();
+	public static Pair<List<Vertex>,List<Color>> getVertexesFromCPPN(Network cppn, int imageWidth, int imageHeight, int cubeSize, int shapeWidth, int shapeHeight, int shapeDepth, double[] inputMultipliers, Color color) {
+		List<Vertex> centers = new ArrayList<>();
+		List<Color> colors = new ArrayList<>();
+		
 		for(int x = 0; x < shapeWidth; x++) {
 			for(int y = 0; y < shapeHeight; y++) {
 				for(int z = 0; z < shapeDepth; z++) {
@@ -212,12 +208,21 @@ public class ThreeDimensionalUtil {
 						double actualX = -(cubeSize*shapeWidth/2.0) + (cubeSize/2.0) + x*cubeSize;
 						double actualY = -(cubeSize*shapeHeight/2.0) + (cubeSize/2.0) + y*cubeSize;
 						double actualZ = -(cubeSize*shapeDepth/2.0) + (cubeSize/2.0) + z*cubeSize;
-						result.add(new Vertex(actualX, actualY, actualZ));
+						centers.add(new Vertex(actualX, actualY, actualZ));
+						if(color == null) {
+							// TODO: Fix magic numbers
+							float[] hsb = GraphicsUtil.rangeRestrictHSB(new double[]{output[1],output[2],output[3]});
+							int rgb = Color.HSBtoRGB(hsb[0], hsb[1], hsb[2]);
+							Color evolvedColor = new Color(rgb, true);
+							colors.add(evolvedColor);
+						} else {
+							colors.add(color);
+						}
 					}
 				}
 			}
 		}
-		return result;
+		return new Pair<>(centers,colors);
 	}
 
 	/**
@@ -374,8 +379,10 @@ public class ThreeDimensionalUtil {
 	 * @return
 	 */
 	public static List<Triangle> trianglesFromCPPN(Network cppn, int imageWidth, int imageHeight, int sideLength, int shapeWidth, int shapeHeight, int shapeDepth, Color color, double[] inputMultipliers) {
-		List<Vertex> cubeVertexes = getVertexesFromCPPN(cppn, imageWidth, imageHeight, sideLength, shapeWidth, shapeHeight, shapeDepth, inputMultipliers);
-		List<Triangle> tris = getShape(cppn, cubeVertexes, imageWidth, imageHeight, sideLength, inputMultipliers, color);
+		Pair<List<Vertex>, List<Color>> result = getVertexesFromCPPN(cppn, imageWidth, imageHeight, sideLength, shapeWidth, shapeHeight, shapeDepth, inputMultipliers, color);
+		List<Vertex> cubeVertexes = result.t1;
+		List<Color> colors = result.t2;
+		List<Triangle> tris = getShape(cppn, cubeVertexes, imageWidth, imageHeight, sideLength, inputMultipliers, colors);
 		return tris;
 	}
 	

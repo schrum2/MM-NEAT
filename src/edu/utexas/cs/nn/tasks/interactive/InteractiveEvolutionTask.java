@@ -123,7 +123,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	private boolean waitingForUser;
 	protected final boolean[] chosen;
 	private final boolean[] activation;
-	protected static double[] inputMultipliers;
+	protected double[] inputMultipliers;
 
 	// This is a weird magic number that is used to track the checkboxes
 	public static final int CHECKBOX_IDENTIFIER_START = -25;
@@ -203,8 +203,8 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		//ImageIcon close = new ImageIcon("data\\picbreeder\\quit.png");
 		//Image close2 = close.getImage().getScaledInstance(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT, 1);
 
-		ImageIcon lineage = new ImageIcon("data\\picbreeder\\lineage.png");
-		Image lineage2 = lineage.getImage().getScaledInstance(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT, 1);
+		//ImageIcon lineage = new ImageIcon("data\\picbreeder\\lineage.png");
+		//Image lineage2 = lineage.getImage().getScaledInstance(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT, 1);
 
 		ImageIcon network = new ImageIcon("data\\picbreeder\\network.png");
 		Image network2 = network.getImage().getScaledInstance(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT, 1);
@@ -442,7 +442,9 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	}
 
 	public static double[] getInputMultipliers() {
-		double[] inputMultipliersCopy = Arrays.copyOf(inputMultipliers, MMNEAT.networkInputs);
+		@SuppressWarnings("rawtypes")
+		InteractiveEvolutionTask task = (InteractiveEvolutionTask) MMNEAT.task;
+		double[] inputMultipliersCopy = Arrays.copyOf(task.inputMultipliers, task.numCPPNInputs());
 		return inputMultipliersCopy;
 	}
 

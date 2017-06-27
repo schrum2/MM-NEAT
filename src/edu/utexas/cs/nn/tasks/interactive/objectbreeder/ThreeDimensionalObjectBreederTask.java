@@ -47,7 +47,7 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 	public static final int SHAPE_WIDTH = 10;
 	public static final int SHAPE_HEIGHT = 15; //20;
 	public static final int SHAPE_DEPTH = 10;
-	public Color color = Color.RED;
+	public Color color = null;
 
 	public static final int CPPN_NUM_INPUTS = 5;
 	public static final int CPPN_NUM_OUTPUTS = 4;
@@ -170,7 +170,7 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 				JComboBox<String> source = (JComboBox<String>)e.getSource();
 				int index = source.getSelectedIndex();
 				if(index == EVOLVED_COLOR_INDEX) {
-					color = null;
+					color = null; // TODO: is this all that's needed here?
 				} else {
 					color = COLORS[index];
 					// change colors of triangles
@@ -241,9 +241,29 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 	@Override
 	public void resetButtons(boolean hardReset) {
 		if(hardReset){
+			if(alwaysAnimate) {
+				for(int x = 0; x < animationThreads.length; x++) {
+					if(animationThreads[x] != null) {
+						animationThreads[x].stopAnimation();
+					}
+				}
+				// Make sure all threads actually stopped
+				for(int x = 0; x < animationThreads.length; x++) {
+					if(animationThreads[x] != null) {
+						try {
+							// Wait for thread to actually stop
+							animationThreads[x].join();
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+					}
+				}
+			}
+			
 			shapes = new HashMap<Long,List<Triangle>>();
+			assert inputMultipliers.length == numCPPNInputs() : "Number of inputs should always match CPPN inputs! " + inputMultipliers.length + " vs " + numCPPNInputs();
 			for(Score<TWEANN> s : scores) {
-				shapes.put(s.individual.getId(), ThreeDimensionalUtil.trianglesFromCPPN(s.individual.getPhenotype(), picSize, picSize, CUBE_SIDE_LENGTH, SHAPE_WIDTH, SHAPE_HEIGHT, SHAPE_DEPTH, color, getInputMultipliers()));
+				shapes.put(s.individual.getId(), ThreeDimensionalUtil.trianglesFromCPPN(s.individual.getPhenotype(), picSize, picSize, CUBE_SIDE_LENGTH, SHAPE_WIDTH, SHAPE_HEIGHT, SHAPE_DEPTH, color, inputMultipliers));
 			}		
 		}
 		super.resetButtons(hardReset);
