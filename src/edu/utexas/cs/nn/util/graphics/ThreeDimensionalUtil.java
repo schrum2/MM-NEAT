@@ -1,8 +1,6 @@
 package edu.utexas.cs.nn.util.graphics;
 
 import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
@@ -170,15 +168,17 @@ public class ThreeDimensionalUtil {
 	 * @param color desired color of cubes
 	 * @return List of triangles that construct a series of cubes centered at the various vertexes
 	 */
-	public static List<Triangle> getShape(List<Vertex> centers, double sideLength, Color color) {
+	public static List<Triangle> getShape(Network cppn, List<Vertex> centers, int imageWidth, int imageHeight, double sideLength, double[] inputMultiples, Color color) {
 		List<Triangle> tris = new ArrayList<>();
 		for(Vertex v: centers) { //construct individual cubes and add them to larger list
-//			if(color == null) {
-//				float[] HSB = getHSBFromCPPN()
-//				color = new Color(HSB);
-//			} else {
+			if(color == null) {
+				float[] HSB = GraphicsUtil.getHSBFromCPPN(cppn, (int) v.x, (int) v.y, imageWidth, imageHeight, inputMultiples, -1);
+				int rgb = Color.HSBtoRGB(HSB[GraphicsUtil.HUE_INDEX], HSB[GraphicsUtil.SATURATION_INDEX], HSB[GraphicsUtil.BRIGHTNESS_INDEX]);
+				Color evolvedColor = new Color(rgb, true);
+				tris.addAll(cubeConstructor(v, sideLength, evolvedColor));
+			} else {
 				tris.addAll(cubeConstructor(v, sideLength, color));
-//			}
+			}
 		}
 		return tris;
 	}
@@ -375,7 +375,7 @@ public class ThreeDimensionalUtil {
 	 */
 	public static List<Triangle> trianglesFromCPPN(Network cppn, int imageWidth, int imageHeight, int sideLength, int shapeWidth, int shapeHeight, int shapeDepth, Color color, double[] inputMultipliers) {
 		List<Vertex> cubeVertexes = getVertexesFromCPPN(cppn, imageWidth, imageHeight, sideLength, shapeWidth, shapeHeight, shapeDepth, inputMultipliers);
-		List<Triangle> tris = getShape(cubeVertexes, sideLength, color);
+		List<Triangle> tris = getShape(cppn, cubeVertexes, imageWidth, imageHeight, sideLength, inputMultipliers, color);
 		return tris;
 	}
 	

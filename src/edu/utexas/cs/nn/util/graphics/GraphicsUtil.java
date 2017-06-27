@@ -24,9 +24,9 @@ import edu.utexas.cs.nn.util.util2D.Tuple2D;
  */
 public class GraphicsUtil {
 
-	private static final int HUE_INDEX = 0;
-	private static final int SATURATION_INDEX = 1;
-	private static final int BRIGHTNESS_INDEX = 2;
+	public static final int HUE_INDEX = 0;
+	public static final int SATURATION_INDEX = 1;
+	public static final int BRIGHTNESS_INDEX = 2;
 	public static final int NUM_HSB = 3;
 	public static final double BIAS = 1.0;// a common input used in neural networks
 	public static final double SQRT2 = Math.sqrt(2); // Used for scaling distance from center

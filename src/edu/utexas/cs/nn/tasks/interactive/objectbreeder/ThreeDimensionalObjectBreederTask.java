@@ -49,10 +49,10 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 	public static final int SHAPE_DEPTH = 10;
 	public Color color = Color.RED;
 
-	public static int CPPN_NUM_INPUTS = 5;
-	public static final int CPPN_NUM_OUTPUTS = 1;
+	public static final int CPPN_NUM_INPUTS = 5;
+	public static final int CPPN_NUM_OUTPUTS = 4;
 
-	public static final Color[] COLORS = new Color[]{Color.RED, Color.GREEN, Color.BLUE, Color.GRAY, Color.YELLOW, Color.ORANGE, Color.PINK, Color.BLACK };
+	public static final Color[] COLORS = new Color[]{ Color.RED, Color.GREEN, Color.BLUE, Color.GRAY, Color.YELLOW, Color.ORANGE, Color.PINK, Color.BLACK };
 	
 	public static final int EVOLVED_COLOR_INDEX = 8;
 
@@ -170,14 +170,14 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 				JComboBox<String> source = (JComboBox<String>)e.getSource();
 				int index = source.getSelectedIndex();
 				if(index == EVOLVED_COLOR_INDEX) {
-					CPPN_NUM_INPUTS = 4;
 					color = null;
-				}
-				color = COLORS[index];
-				// change colors of triangles
-				for(List<Triangle> tris: shapes.values()) {
-					for(Triangle t: tris) {
-						t.color = color;
+				} else {
+					color = COLORS[index];
+					// change colors of triangles
+					for(List<Triangle> tris: shapes.values()) {
+						for(Triangle t: tris) {
+							t.color = color;
+						}
 					}
 				}
 				resetButtons(true);
@@ -268,7 +268,7 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 
 	@Override
 	public String[] outputLabels() {
-		return new String[] { "cube present" };
+		return new String[] { "cube present", "hue", "saturation", "brightness" };
 	}
 
 	@Override
