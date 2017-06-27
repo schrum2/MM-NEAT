@@ -11,9 +11,13 @@ import micro.rts.units.Unit;
  */
 public class BaseGradientSubstrate extends MicroRTSSubstrateInputs{
 	
-	// TODO: Make constants be ALL_CAPS
-	private final double base_gradient_discount_rate = .95; 
-	private final double lowest_allowed_brightness = .05;
+	private static final double BASE_GRADIENT_DISCOUNT_RATE = .7; 
+	private static final double LOWEST_ALLOWED_BRIGHTNESS = .05;
+	private int playerID;
+	
+	public BaseGradientSubstrate(int player){
+		playerID = player;
+	}
 	
 	@Override
 	public double[][] getInputs(GameState gs) {
@@ -24,10 +28,7 @@ public class BaseGradientSubstrate extends MicroRTSSubstrateInputs{
 			for(int j = 0; j < pgs.getWidth(); j++){
 				Unit u = pgs.getUnitAt(j, i);
 				if(u != null){
-					// TODO: Does this assume that this substrate will always be used for the first player?
-					//       If so, it needs to change. Make the player index be a parameter to the constructor
-					//       so that this will work with coevolution.
-					if(u.getType().name.equals("Base") && u.getPlayer() == 0){
+					if(u.getType().name.equals("Base") && u.getPlayer() != playerID){
 						activate(j,i,1,inputs);
 					}
 				}
@@ -38,17 +39,17 @@ public class BaseGradientSubstrate extends MicroRTSSubstrateInputs{
 	}
 	
 	private void activate(int x, int y, double value, double[][] sub){
-		if(value <= lowest_allowed_brightness) { //base case: trail too dim to matter.
+		if(value <= LOWEST_ALLOWED_BRIGHTNESS) { //base case: trail too dim to matter.
 			return;
-		} else if(x >= sub.length || x <= 0 || y >= sub[0].length || y <= 0) { //base case: out of bounds
+		} else if(x >= sub.length || x < 0 || y >= sub[0].length || y < 0) { //base case: out of bounds
 			return;
 		} else {
 			if(value > sub[x][y]) { //replace value only if value is > whats already there
 				sub[x][y] = value;
-				activate(x+1, y, value*(base_gradient_discount_rate), sub); //right
-				activate(x-1, y, value*(base_gradient_discount_rate), sub); //left
-				activate(x, y+1, value*(base_gradient_discount_rate), sub); //down
-				activate(x, y-1, value*(base_gradient_discount_rate), sub); //up
+				activate(x+1, y, value*(BASE_GRADIENT_DISCOUNT_RATE), sub); //right
+				activate(x-1, y, value*(BASE_GRADIENT_DISCOUNT_RATE), sub); //left
+				activate(x, y+1, value*(BASE_GRADIENT_DISCOUNT_RATE), sub); //down
+				activate(x, y-1, value*(BASE_GRADIENT_DISCOUNT_RATE), sub); //up
 			}
 		}
 	}
