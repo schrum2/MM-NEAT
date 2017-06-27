@@ -131,6 +131,32 @@ public class CheckersState extends TwoDimensionalBoardGameState {
 	}
 
 	/**
+	 * Returns an Array of Doubles that describes this BoardGameState
+	 * 
+	 * @return double[] describing this BoardGameState
+	 */
+	@Override
+	public double[] getDescriptor() {
+
+		double[] features = new double[getBoardWidth()*getBoardHeight()];
+		int index = 0;
+		
+		for(int i = 0; i < getBoardHeight(); i++){
+			for(int j = 0; j < getBoardWidth(); j ++){
+				switch(boardState[i][j]){
+				case EMPTY: features[index++] = 0; break; // Empty Space
+				case BLACK_CHECK: features[index++] = 1; break; // Player 1 = +1
+				case RED_CHECK: features[index++] = -1; break; // Player 2 = -1
+				case BLACK_CHECK_KING: features[index++] = 2; break; // Player 1 = +1
+				case RED_CHECK_KING: features[index++] = -2; break; // Player 2 = -1
+				}
+			}
+		}
+
+		return features;
+	}
+	
+	/**
 	 * Checks if a Move is valid
 	 * 
 	 * @param moveThis Point on the Board of the Check being Moved
