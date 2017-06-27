@@ -58,6 +58,7 @@ import edu.utexas.cs.nn.tasks.gridTorus.TorusPredPreyTask;
 import edu.utexas.cs.nn.tasks.gridTorus.competitive.CompetitiveHomogeneousPredatorsVsPreyTask;
 import edu.utexas.cs.nn.tasks.gridTorus.cooperative.CooperativePredatorsVsStaticPreyTask;
 import edu.utexas.cs.nn.tasks.gridTorus.cooperativeAndCompetitive.CompetitiveAndCooperativePredatorsVsPreyTask;
+import edu.utexas.cs.nn.tasks.gvgai.GVGAISinglePlayerTask;
 import edu.utexas.cs.nn.tasks.interactive.InteractiveEvolutionTask;
 import edu.utexas.cs.nn.tasks.mario.MarioTask;
 import edu.utexas.cs.nn.tasks.microrts.MicroRTSTask;
@@ -521,6 +522,9 @@ public class MMNEAT {
 				}
 				prepareCoevolutionArchetypes();
 				
+			} else if (task instanceof GVGAISinglePlayerTask) {
+				GVGAISinglePlayerTask temp = (GVGAISinglePlayerTask) task;
+				setNNInputParameters(temp.sensorLabels().length, temp.outputLabels().length);
 			} else if (task instanceof Breve2DTask) {
 				System.out.println("Setup Breve 2D Task");
 				Breve2DDynamics dynamics = (Breve2DDynamics) ClassCreation.createObject("breveDynamics");

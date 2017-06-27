@@ -82,7 +82,7 @@ public class StaticOpponentBoardGameTask<T extends Network, S extends BoardGameS
 	 */
 	@Override
 	public int numObjectives() {
-		return 1;
+		return fitFunctions.size();
 	}
 
 	/**

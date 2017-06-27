@@ -1,15 +1,24 @@
 package edu.utexas.cs.nn.tasks.gvgai;
 
+import java.util.LinkedList;
+import java.util.List;
+
+import boardGame.TwoDimensionalBoardGame;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.networks.Network;
+import edu.utexas.cs.nn.networks.NetworkTask;
+import edu.utexas.cs.nn.networks.hyperneat.HyperNEATTask;
+import edu.utexas.cs.nn.networks.hyperneat.HyperNEATUtil;
+import edu.utexas.cs.nn.networks.hyperneat.Substrate;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.NoisyLonerTask;
 import edu.utexas.cs.nn.util.datastructures.Pair;
+import edu.utexas.cs.nn.util.datastructures.Triple;
 import gvgai.tracks.ArcadeMachine;
 
-public class GVGAISinglePlayerTask<T extends Network> extends NoisyLonerTask<T> {
+public class GVGAISinglePlayerTask<T extends Network> extends NoisyLonerTask<T> implements NetworkTask, HyperNEATTask{
 	
 	static String gamesPath = "data/gvgai/examples/gridphysics/"; // Comes from gvgai.tracks.singlePlayer.Test
 	String game;
@@ -40,6 +49,17 @@ public class GVGAISinglePlayerTask<T extends Network> extends NoisyLonerTask<T> 
 	}
 
 	@Override
+	public int numOtherScores() {
+		int numObjectives = 0;
+		
+		if(!Parameters.parameters.booleanParameter("gvgaiVictory")) numObjectives++;
+		if(!Parameters.parameters.booleanParameter("gvgaiScore")) numObjectives++;
+		if(!Parameters.parameters.booleanParameter("gvgaiTimestep")) numObjectives++;
+		
+		return numObjectives;
+	}
+	
+	@Override
 	public double getTimeStamp() {
 		// Most Tasks don't use the Time Stamp
 		return 0;
@@ -47,10 +67,12 @@ public class GVGAISinglePlayerTask<T extends Network> extends NoisyLonerTask<T> 
 
 	@Override
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {
-		String agentNames = ""; // TODO: Find a way to replace with the NN Player
+		GVGAIOneStepNNPlayer.network = individual.getPhenotype(); // Cannot construct a Player because GVGAI constructs players with Strings
+		
+		String agentNames = "edu.utexas.cs.nn.tasks.gvgai.GVGAIOneStepNNPlayer";
 		
 		boolean visuals = CommonConstants.watch;
-		int randomSeed = 0; // TODO: Change later?
+		int randomSeed = 0;
 		int playerID = (int) individual.getId();
 		
 		String game_file = gamesPath + game + ".txt";
@@ -63,8 +85,52 @@ public class GVGAISinglePlayerTask<T extends Network> extends NoisyLonerTask<T> 
 		
 		// Will have 3 Indexes: {victory, score, timestep}; Stores these for every Player, in triplets: [w0,s0,t0,w1,s1,t1,...]
 		double[] gvgaiScores = ArcadeMachine.runOneGame(game_file, level_file, visuals, agentNames, actionFile, randomSeed, playerID);
+		GVGAIOneStepNNPlayer.network = null;
 		
 		return new Pair<double[], double[]>(gvgaiScores, new double[]{});
 	}
+
+	@Override
+	public int numCPPNInputs() {
+		return HyperNEATTask.DEFAULT_NUM_CPPN_INPUTS;
+	}
+
+	@Override
+	public double[] filterCPPNInputs(double[] fullInputs) {
+		// Default behavior
+		return fullInputs;
+	}
+
+	@Override
+	public List<Substrate> getSubstrateInformation() {
+		// TODO: Fix the Height and Width of the input substrates; find a way to get the height and width from the game
+		int height = 1; // Currently only uses the raw scores; doesn't use the whole board yet
+		int width = 4; // Currently only uses four inputs: gameScore, gameHealth, gameSpeed, and gameTick
+		List<Triple<String, Integer, Integer>> outputInfo = new LinkedList<Triple<String, Integer, Integer>>();
+		outputInfo.add(new Triple<String, Integer, Integer>("Utility Output", 1, 1));
+		// Otherwise, no substrates will be defined, and the code will crash from the null result
+
+		return HyperNEATUtil.getSubstrateInformation(width, height, 1, outputInfo); // Only has 1 Input Substrate with the Height and Width of the Board Game
+	}
+
+	@Override
+	public List<Triple<String, String, Boolean>> getSubstrateConnectivity() {
+		List<String> outputNames = new LinkedList<String>();
+		outputNames.add("Utility Output");	
+		
+		return HyperNEATUtil.getSubstrateConnectivity(1, outputNames); // Only has 1 Input Substrate
+	}
+
+	@Override
+	public String[] sensorLabels() {
+		return new String[]{"Game Score", "Game Health", "Game Speed", "Game Tick", "BIAS"};
+	}
+
+	@Override
+	public String[] outputLabels() {
+		return new String[]{"Utility"};
+	}
+
+
 
 }
