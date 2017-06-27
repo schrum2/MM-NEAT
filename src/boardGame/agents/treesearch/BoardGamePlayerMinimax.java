@@ -66,8 +66,8 @@ public class BoardGamePlayerMinimax<T extends BoardGameState> extends HeuristicB
 	 */
 	private void sharedInit() {
 		prune = false; // standard minimax does not prune
-		depth = Parameters.parameters.integerParameter("minimaxSearchDepth"); // One Test fails here
-		if(MMNEAT.boardGame.getNumPlayers() != 2) { // Another Test fails here...
+		depth = Parameters.parameters.integerParameter("minimaxSearchDepth");
+		if(MMNEAT.boardGame.getNumPlayers() != 2) {
 			System.out.println("The BoardGamePlayerMinimax can only be applied to two-player games");
 			System.out.println("This one has " + MMNEAT.boardGame.getNumPlayers());
 			System.exit(1);
