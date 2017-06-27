@@ -145,10 +145,10 @@ public class CheckersState extends TwoDimensionalBoardGameState {
 			for(int j = 0; j < getBoardWidth(); j ++){
 				switch(boardState[i][j]){
 				case EMPTY: features[index++] = 0; break; // Empty Space
-				case BLACK_CHECK: features[index++] = 1; break; // Player 1 = +1
-				case RED_CHECK: features[index++] = -1; break; // Player 2 = -1
-				case BLACK_CHECK_KING: features[index++] = 2; break; // Player 1 = +1
-				case RED_CHECK_KING: features[index++] = -2; break; // Player 2 = -1
+				case BLACK_CHECK: features[index++] = 0.5; break; // Player 1 = +1
+				case RED_CHECK: features[index++] = -0.5; break; // Player 2 = -1
+				case BLACK_CHECK_KING: features[index++] = 0.75; break; // Player 1 = +1
+				case RED_CHECK_KING: features[index++] = -0.75; break; // Player 2 = -1
 				}
 			}
 		}
