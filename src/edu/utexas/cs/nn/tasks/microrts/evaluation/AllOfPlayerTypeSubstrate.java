@@ -10,7 +10,7 @@ import micro.rts.units.Unit;
 public class AllOfPlayerTypeSubstrate extends MicroRTSSubstrateInputs{
 
 	private ArrayList<Pair<String, Integer>> typesAndPlayers;
-	
+	final static int ANY_PLAYER = -2;
 	/**
 	 * 
 	 * @param typesAndPlayers
@@ -23,20 +23,18 @@ public class AllOfPlayerTypeSubstrate extends MicroRTSSubstrateInputs{
 	@Override
 	public double[][] getInputs(GameState gs) {
 		PhysicalGameState pgs = gs.getPhysicalGameState();
-		// TODO: Remove the * numSubstrates from here. Each instance of this class returns a single 2D substrate
-		double[][] inputs = new double[pgs.getHeight() * numSubstrates][pgs.getWidth()];
+		double[][] inputs = new double[pgs.getHeight()][pgs.getWidth()];
 
 		for(int i = 0; i < pgs.getHeight(); i++){
 			for(int j = 0; j < pgs.getWidth(); j++){
 				Unit u = pgs.getUnitAt(j, i);
 				if(u != null){
 					if(isAllowedInSub(u)){
-						inputs[j][i] = 1; //TODO OOB exception
+						inputs[j][i] = 1;
 					}
 				}
 			}
 		}
-		
 		return inputs;
 	}
 
@@ -53,7 +51,7 @@ public class AllOfPlayerTypeSubstrate extends MicroRTSSubstrateInputs{
 				} else if (key.equals("immobile") && u.getType().canMove){
 					isAllowed = false;
 				} //else unit fits key, is allowed.
-			if(player != -2 && u.getPlayer() != player) // TODO: Create global final static constant for magic number -2
+			if(player != ANY_PLAYER && u.getPlayer() != player)
 				isAllowed = false;
 			
 			if(isAllowed) //unit meets at least 1 criteria, no need to search the rest.

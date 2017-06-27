@@ -1,6 +1,7 @@
 package edu.utexas.cs.nn.tasks.microrts.evaluation;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
@@ -86,7 +87,7 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 		substrateSize = pgs.getHeight()*pgs.getWidth();
 		double[] inputs = new double[substrateSize * numSubstrates];
 		MicroRTSSubstrateInputs currentSubstrate = null;
-		for(int i = 0; i < numSubstrates; i++){
+		for(int i = 0; i < numSubstrates; i++){ //for each active substrate:
 			switch(activeSubs.get(i)){
 			case mobile: {
 				criteria = new ArrayList<Pair<String, Integer>>();
@@ -145,6 +146,7 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 			} //end switch
 			
 			double[][] twoDimensionalSubArray = currentSubstrate.getInputs(gs);
+//			System.out.println(Arrays.deepToString(twoDimensionalSubArray));
 			int width = pgs.getWidth();
 			for(int j = 0; j < substrateSize; j++){
 				inputs[j] = twoDimensionalSubArray[j/width][j%width];
@@ -162,10 +164,9 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 		assert pgs != null : "There must be a physical game state in order to extract height and width";
 		String[] labels = new String[pgs.getWidth()*pgs.getHeight() * numSubstrates];
 		for(int h = 0; h < numSubstrates; h++ ){
-			for(int i = 0; i < pgs.getWidth(); i++){
-				for(int j = 0; j < pgs.getHeight(); j++){
-					labels[i*pgs.getWidth() + j ] = "Mobile unit:  (" + i + ", " + j + ")";
-					labels[i*pgs.getWidth() + j + (pgs.getWidth()*pgs.getHeight()*h)] = "Immobile unit: (" + i + "," + j + ")";
+			for(int i = 0; i < pgs.getHeight(); i++){
+				for(int j = 0; j < pgs.getWidth(); j++){
+					labels[substrateSize*h + pgs.getWidth()*i + j] = "substrate: " + h + " row: " + i + " column: " + j;
 				}
 			}
 		}
