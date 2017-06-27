@@ -87,7 +87,35 @@ public class GVGAISinglePlayerTask<T extends Network> extends NoisyLonerTask<T> 
 		double[] gvgaiScores = ArcadeMachine.runOneGame(game_file, level_file, visuals, agentNames, actionFile, randomSeed, playerID);
 		GVGAIOneStepNNPlayer.network = null;
 		
-		return new Pair<double[], double[]>(gvgaiScores, new double[]{});
+		
+		// Process the scores
+		double[] fitness = new double[numObjectives()];
+		double[] otherScores = new double[numOtherScores()];
+		int fitIndex = 0;
+		int otherIndex = 0;
+		
+		
+		if(Parameters.parameters.booleanParameter("gvgaiVictory")){
+			fitness[fitIndex++] = gvgaiScores[0]; // Index of the Victory score in gvgaiScores
+		}else{
+			otherScores[otherIndex++] = gvgaiScores[0];
+		}
+		
+		
+		if(Parameters.parameters.booleanParameter("gvgaiScore")){
+			fitness[fitIndex++] = gvgaiScores[1]; // Index of the Game Score in gvgaiScores
+		}else{
+			otherScores[otherIndex++] = gvgaiScores[1];
+		}
+		
+		
+		if(Parameters.parameters.booleanParameter("gvgaiTimestep")){
+			fitness[fitIndex++] = gvgaiScores[2]; // Index of the Timestep score in gvgaiScores
+		}else{
+			otherScores[otherIndex++] = gvgaiScores[2];
+		}
+		
+		return new Pair<double[], double[]>(fitness, otherScores);
 	}
 
 	@Override
