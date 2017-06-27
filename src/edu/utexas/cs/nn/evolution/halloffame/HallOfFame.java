@@ -19,10 +19,14 @@ public class HallOfFame<T> {
 	private int pastGens;
 	private int numChamps;
 	
+	private int currentGen = -1;
+	private List<Genotype<T>> champs;
+	
 	public HallOfFame(){
 		hall = new HashSet<Pair<Integer, List<Genotype<T>>>>();
 		pastGens = Parameters.parameters.integerParameter("hallOfFamePastGens");
 		numChamps = Parameters.parameters.integerParameter("hallOfFameNumChamps");
+		champs = new ArrayList<Genotype<T>>();
 	}
 	
 	/**
@@ -39,17 +43,24 @@ public class HallOfFame<T> {
 		ArrayList<Genotype<T>> genes = new ArrayList<Genotype<T>>();
 		genes.add(challenger);
 		
-		if(Parameters.parameters.booleanParameter("hallOfFameSingleRandomChamp")){
-			genes.addAll(getSingleRandomChamp());
-		}else if(Parameters.parameters.booleanParameter("hallOfFameXRandomChamps")){
-			if(Parameters.parameters.booleanParameter("hallOfFameYPastGens")){
-				genes.addAll(getXRandomPastYGenChamps());
-			}else{
-				genes.addAll(getXRandomChamps());
+		// Changes the Hall of Fame Challenger list once a Generation; champs stay the same otherwise
+		if(currentGen != MMNEAT.ea.currentGeneration()){
+			currentGen = MMNEAT.ea.currentGeneration();
+			
+			if(Parameters.parameters.booleanParameter("hallOfFameSingleRandomChamp")){
+				champs = getSingleRandomChamp();
+			}else if(Parameters.parameters.booleanParameter("hallOfFameXRandomChamps")){
+				if(Parameters.parameters.booleanParameter("hallOfFameYPastGens")){
+					genes.addAll(getXRandomPastYGenChamps());
+				}else{
+					champs = getXRandomChamps();
+				}
+			}else if(Parameters.parameters.booleanParameter("hallOfFameYPastGens")){
+				champs = getPastYGenChamps();
 			}
-		}else if(Parameters.parameters.booleanParameter("hallOfFameYPastGens")){
-			genes.addAll(getPastYGenChamps());
 		}
+		
+		genes.addAll(champs);
 		
 		double[][] fitness = new double[genes.size()][];
 		double[][] other = new double[genes.size()][];
@@ -130,8 +141,6 @@ public class HallOfFame<T> {
 	 * Returns all Champions from the past X Generations,
 	 * where X is the Parameter hallOfFamePastGens;
 	 * 
-	 * Currently allows for duplicates
-	 * 
 	 * @return List of Genotypes from the Champions from the past X Generations
 	 */
 	public List<Genotype<T>> getPastYGenChamps(){
@@ -141,8 +150,6 @@ public class HallOfFame<T> {
 	/**
 	 * Returns all Champions from the past X Generations,
 	 * where X is specified by the User;
-	 * 
-	 * Currently allows for duplicates
 	 * 
 	 * @param numGens Number of Generations in the past to get Champions from
 	 * @return List of Genotypes from the Champions from the past X Generations
