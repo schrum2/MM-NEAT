@@ -330,6 +330,16 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 		// Just get first frame for button. Slightly inefficent though, since all animation frames were pre-computed
 		return AnimationUtil.imagesFromCPPN(phenotype, picSize, picSize, 0, 1, getInputMultipliers())[0];
 	}
+	
+	@Override
+	protected void setButtonImage(BufferedImage gmi, int buttonIndex) {
+		if(animationThreads[buttonIndex] != null && showNetwork) animationThreads[buttonIndex].stopAnimation();
+		super.setButtonImage(gmi, buttonIndex);
+		if(animationThreads[buttonIndex] != null && !animationThreads[buttonIndex].isAlive() && alwaysAnimate && !showNetwork) {
+			animationThreads[buttonIndex] =  new AnimationThread(buttonIndex);
+			animationThreads[buttonIndex].start();
+		}
+	}
 
 	@Override
 	protected void additionalButtonClickAction(int scoreIndex, Genotype<T> individual) {

@@ -784,8 +784,6 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	 */
 	@Override
 	public void actionPerformed(ActionEvent event) {
-		System.out.println(event.toString());
-		//		System.out.println(event.toString());
 		//open scanner to read which button was pressed
 		Scanner s = new Scanner(event.toString());
 		s.next(); //parsing action event, no spaces allowed 
