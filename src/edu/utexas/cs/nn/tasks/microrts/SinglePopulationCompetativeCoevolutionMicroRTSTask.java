@@ -80,10 +80,12 @@ public class SinglePopulationCompetativeCoevolutionMicroRTSTask<T extends Networ
 			System.exit(1);
 		}
 		ff.setCoevolution(true);
+		ef1.setCoevolution(true);
+		ef2.setCoevolution(true);
 		for(String function : ff.getFunctions()){
 			MMNEAT.registerFitnessFunction(function);
 		}
-		//create a copy of the physical game state so that it can be edited without changing initialPgs
+		//creates a copy of the physical game state so that it can be edited without changing initialPgs
 		pgs = initialPgs.clone();
 		ef1.givePhysicalGameState(pgs);
 		ef2.givePhysicalGameState(pgs);

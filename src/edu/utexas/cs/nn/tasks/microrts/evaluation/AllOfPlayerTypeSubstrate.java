@@ -31,7 +31,7 @@ public class AllOfPlayerTypeSubstrate extends MicroRTSSubstrateInputs{
 				Unit u = pgs.getUnitAt(j, i);
 				if(u != null){
 					if(isAllowedInSub(u)){
-						inputs[j][i] = 1;
+						inputs[j][i] = 1; //TODO OOB exception
 					}
 				}
 			}

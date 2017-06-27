@@ -16,6 +16,7 @@ public abstract class NNEvaluationFunction<T extends Network> extends Evaluation
 
 	protected Network nn;
 	protected PhysicalGameState pgs;
+	protected boolean coevolution;
 	
 	private int howManyEvals = 0;
 	
@@ -74,4 +75,8 @@ public abstract class NNEvaluationFunction<T extends Network> extends Evaluation
 	}
 
 	public abstract int getNumInputSubstrates();
+
+	public void setCoevolution(boolean b) {
+		coevolution = b;
+	}
 }

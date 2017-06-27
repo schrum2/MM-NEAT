@@ -64,9 +64,12 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 	public NNComplexEvaluationFunction(){
 		super();
 		numSubstrates = 0;
+		activeSubs = new ArrayList<Integer>();
 		for(int i = 0; i < areSubsActive.length; i++){
-			if(areSubsActive[i]) numSubstrates++;
-			activeSubs.add(i);
+			if(areSubsActive[i]){
+				numSubstrates++;
+				activeSubs.add(i);
+			}
 		}
 		assert activeSubs.size() == numSubstrates : "conflicting information gathered in NNComplex constructor";
 

@@ -84,6 +84,7 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 			System.exit(1);
 		}
 		ff.setCoevolution(false);
+		ef.setCoevolution(false);
 		for(String function : ff.getFunctions()){
 			MMNEAT.registerFitnessFunction(function);
 		}
