@@ -25,6 +25,9 @@ public class BaseGradientSubstrate extends MicroRTSSubstrateInputs{
 			for(int j = 0; j < pgs.getWidth(); j++){
 				Unit u = pgs.getUnitAt(j, i);
 				if(u != null){
+					// TODO: Does this assume that this substrate will always be used for the first player?
+					//       If so, it needs to change. Make the player index be a parameter to the constructor
+					//       so that this will work with coevolution.
 					if(u.getType().name.equals("Base") && u.getPlayer() == 0){
 						activate(j,i,1,inputs);
 					}
