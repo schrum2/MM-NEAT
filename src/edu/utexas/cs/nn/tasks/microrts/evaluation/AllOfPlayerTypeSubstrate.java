@@ -23,6 +23,7 @@ public class AllOfPlayerTypeSubstrate extends MicroRTSSubstrateInputs{
 	@Override
 	public double[][] getInputs(GameState gs) {
 		PhysicalGameState pgs = gs.getPhysicalGameState();
+		// TODO: Remove the * numSubstrates from here. Each instance of this class returns a single 2D substrate
 		double[][] inputs = new double[pgs.getHeight() * numSubstrates][pgs.getWidth()];
 
 		for(int i = 0; i < pgs.getHeight(); i++){
@@ -52,7 +53,7 @@ public class AllOfPlayerTypeSubstrate extends MicroRTSSubstrateInputs{
 				} else if (key.equals("immobile") && u.getType().canMove){
 					isAllowed = false;
 				} //else unit fits key, is allowed.
-			if(player != -2 && u.getPlayer() != player)
+			if(player != -2 && u.getPlayer() != player) // TODO: Create global final static constant for magic number -2
 				isAllowed = false;
 			
 			if(isAllowed) //unit meets at least 1 criteria, no need to search the rest.
