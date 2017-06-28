@@ -35,7 +35,7 @@ import edu.utexas.cs.nn.util.graphics.ThreeDimensionalUtil;
  * the program uses the interactive evolution interface
  * 
  * Original Endless Forms paper: 
- * Jeff Clune*, Jason Yosinski*, Eugene Doan, and Hod Lipson. 2012. 
+ * Jeff Clune, Jason Yosinski, Eugene Doan, and Hod Lipson. 2012. 
  * EndlessForms.com: Collaboratively Evolving Objects and 3D Printing Them. 
  * DOI: http://yosinski.com/media/papers/Clune__2012__EndlessFormscomCollaborativelyEvolvingObjectsAnd3DPrinting.pdf
  * 
@@ -161,6 +161,7 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 
 		String[] choices = { "Red", "Green", "Blue", "Grey","Yellow", "Orange", "Pink", "Black", "Evolved" };
 		colorChoice = new JComboBox<String>(choices);
+		colorChoice.setSelectedIndex(choices.length - 1); // default to Evolved colors
 		colorChoice.setSize(40, 40);
 		colorChoice.addItemListener(new ItemListener() {
 
@@ -170,7 +171,7 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 				JComboBox<String> source = (JComboBox<String>)e.getSource();
 				int index = source.getSelectedIndex();
 				if(index == EVOLVED_COLOR_INDEX) {
-					color = null; // TODO: is this all that's needed here?
+					color = null;
 				} else {
 					color = COLORS[index];
 					// change colors of triangles
