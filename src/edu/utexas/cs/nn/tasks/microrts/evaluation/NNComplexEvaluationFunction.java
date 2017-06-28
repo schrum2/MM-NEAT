@@ -143,7 +143,6 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 	 */
 	@Override
 	protected double[] gameStateToArray(GameState gs) {
-		ArrayList<Pair<String,Integer>> criteria = new ArrayList<Pair<String, Integer>>();
 		pgs = gs.getPhysicalGameState();
 		substrateSize = pgs.getHeight()*pgs.getWidth();
 		double[] inputs = new double[substrateSize*numSubstrates];
