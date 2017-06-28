@@ -322,6 +322,7 @@ public class Parameters {
 		integerOptions.add("hallOfFamePastGens", 10, "Number of Generations in the past to use for the Hall Of Fame");
 		integerOptions.add("hallOfFameNumChamps", 10, "Number of Champions from the Hall Of Fame to play against");
 		integerOptions.add("gvgaiLevel", 0, "GVGAI level to be played; must be 0 - 4");
+		integerOptions.add("gvgaiReactField", 5, "Size of the square to be evaluated by the GVGAI Reactive Player; must be an odd number");
 		// Long parameters
 		longOptions.add("lastInnovation", 0l, "Highest innovation number used so far");
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
