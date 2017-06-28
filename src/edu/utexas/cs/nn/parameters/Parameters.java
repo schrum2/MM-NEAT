@@ -752,7 +752,7 @@ public class Parameters {
 		stringOptions.add("pinballConfig", "pinball_simple_single.cfg", "Configuration file for the PinballTask");
 		stringOptions.add("map", "8x8/basesWorkers8x8.xml", "filepath from maps folder to desired map file for MicroRTSTask");
 		stringOptions.add("remixWAVFile", SoundUtilExamples.PORTAL2_WAV, "Input WAV file to be remixed in Remixbreeder");
-		stringOptions.add("remixMIDIFile", SoundUtilExamples.CHRISTMAS_MID, "Input MIDI file to be played with CPPN in Breedesizer");
+		stringOptions.add("remixMIDIFile", SoundUtilExamples.FUR_ELISE_MID, "Input MIDI file to be played with CPPN in Breedesizer");
 		stringOptions.add("gvgaiGame", "zelda", "GVGAI Game to be played");
 		stringOptions.add("gvgaiPlayer", "edu.utexas.cs.nn.tasks.gvgai.GVGAIOneStepNNPlayer", "GVGAI Player to be used");
 		// Class options
