@@ -35,9 +35,9 @@ import edu.utexas.cs.nn.util.graphics.ThreeDimensionalUtil;
  * the program uses the interactive evolution interface
  * 
  * Original Endless Forms paper: 
- * Jeff Clune, Jason Yosinski, Eugene Doan, and Hod Lipson. 2012. 
- * EndlessForms.com: Collaboratively Evolving Objects and 3D Printing Them. 
- * DOI: http://yosinski.com/media/papers/Clune__2012__EndlessFormscomCollaborativelyEvolvingObjectsAnd3DPrinting.pdf
+ * Jeff Clune and Hod Lipson. 2011. Evolving 3D objects with a generative encoding inspired by developmental biology. 
+ * Proceedings of the European Conference on Artificial Life. 144-148. 
+ * URL: http://www.evolvingai.org/files/2011-CluneLipson-Evolving3DObjectsWithCPPNs-ECAL.pdf
  * 
  * @author Isabel Tweraser
  *

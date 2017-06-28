@@ -35,9 +35,10 @@ import edu.utexas.cs.nn.util.sound.SoundFromCPPNUtil;
  * which is also used to design the Picbreeder and Remixbreeder interfaces. 
  * 
  * Original Breedesizer paper: 
- * Björn Þór Jónsson, Amy K. Hoover, and Sebastian Risi. 2015. Interactively Evolving Compositional Sound Synthesis Networks. 
- * Proceedings of the 2015 on Genetic and Evolutionary Computation Conference - GECCO 15 (2015). 
- * DOI:http://dx.doi.org/10.1145/2739480.2754796
+ * Björn Þór Jónsson, Amy K. Hoover, and Sebastian Risi. Interactively Evolving Compositional 
+ * Sound Synthesis Networks. Proceedings of the 2015 Genetic and Evolutionary Computation 
+ * Conference (GECCO '15). Pages 321-328. 2015. 
+ * DOI: http://dx.doi.org/10.1145/2739480.2754796
  * 
  * @author Isabel Tweraser
  *

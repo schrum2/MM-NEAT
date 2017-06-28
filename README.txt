@@ -19,9 +19,12 @@ MM-NEAT stands for Multiobjective Modular Neuro-Evolution of Augmenting Topologi
 It is inspired by the original NEAT, but also incorporates multiobjective evolution
 via NSGA-II, and supports several forms of modular neural networks. Support for
 the fitness shaping technique Targeting Unachieved Goals (TUG) is also included.
-Indirect encoding via HyperNEAT is also supported. The code was developed by 
-Jacob Schrum (schrum2@southwestern.edu) while at the University of Texas at Austin. 
-Dr. Schrum is now a professor at Southwestern University in Georgetown, TX.
+Indirect encoding via HyperNEAT is also supported, as is interactive evolution of
+several types of interesting artifacts (pictures, sounds, animations). The code was 
+originally developed by Jacob Schrum (schrum2@southwestern.edu) while at the 
+University of Texas at Austin, but has since been improved upon by several
+undergraduate students at Southwestern University in Georgetown, TX, where
+Dr. Schrum is currently a professor in the department of Math and Computer Science.
 Links to publications and demos further explaining the code are available at 
 the official webpage:
 
@@ -53,6 +56,9 @@ can be downloaded at:
 http://www.pacmanvghosts.co.uk/
 
 For further instructions on how to run this code, see TUTORIAL.txt.
+
+For information on the different types of interactive evolution tasks in the code,
+see INTERACTIVE_EVOLUTION.txt
 
 FOR MORE INFORMATION CONTACT
 
