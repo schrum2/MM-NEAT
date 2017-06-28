@@ -133,7 +133,7 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 			animationLabels.put(Parameters.parameters.integerParameter("maxAnimationLength"), new JLabel("Long"));
 			animationLength.setLabelTable(animationLabels);
 			animationLength.setPaintLabels(true);
-			animationLength.setPreferredSize(new Dimension(150, 40));
+			animationLength.setPreferredSize(new Dimension(75, 40));
 
 			/**
 			 * Implements ChangeListener to adjust animation length. When animation length is specified, 
@@ -164,7 +164,7 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 			pauseLabels.put(Parameters.parameters.integerParameter("maxPause"), new JLabel("Long pause"));
 			pauseLength.setLabelTable(pauseLabels);
 			pauseLength.setPaintLabels(true);
-			pauseLength.setPreferredSize(new Dimension(100, 40));
+			pauseLength.setPreferredSize(new Dimension(75, 40));
 
 			/**
 			 * Implements ChangeListener to adjust pause length. When pause length is specified, 
