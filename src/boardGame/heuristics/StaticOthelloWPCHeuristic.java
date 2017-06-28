@@ -49,7 +49,7 @@ public class StaticOthelloWPCHeuristic<T extends TwoDimensionalBoardGameState> e
 		Parameters.initializeParameterCollections(new String[]{"io:false", "netio:false", "task:edu.utexas.cs.nn.tasks.boardGame.StaticOpponentBoardGameTask",
 				"boardGame:boardGame.othello.Othello", "boardGameOpponent:boardGame.agents.BoardGamePlayerHuman2DBoard",
 				"boardGameOpponentHeuristic:boardGame.heuristics.StaticOthelloWPCHeuristic",
-				"boardGamePlayer:boardGame.agents.treesearch.BoardGamePlayerMinimaxAlphaBetaPruning", "watch:true", "minimaxSearchDepth:6"});
+				"boardGamePlayer:boardGame.agents.treesearch.BoardGamePlayerMinimaxAlphaBetaPruning", "watch:true", "minimaxSearchDepth:8"});
 		
 		MMNEAT.loadClasses();
 		

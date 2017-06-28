@@ -3,6 +3,7 @@ package boardGame.agents;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.Arrays;
 import java.util.Set;
 
 import boardGame.BoardGame;
@@ -32,6 +33,17 @@ public class BoardGamePlayerHuman2DBoard<T extends TwoDimensionalBoardGameState>
 	public T takeAction(T current) {
 		Set<T> poss = current.possibleBoardGameStates(current);
 		T move = null;
+		
+		// Pass action required
+		if(poss.size() == 1){
+			for(T pass : poss) { // Will only loop once
+				if(pass.getCurrentPlayer() != current.getCurrentPlayer() // different player 
+				&& Arrays.equals(pass.getDescriptor(), current.getDescriptor())) { // but same state
+					// then pass
+					return pass;
+				}
+			}
+		}
 		
 		do{
 			move = getInput(current);

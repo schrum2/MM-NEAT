@@ -81,6 +81,7 @@ public class BoardGameUtil {
 				System.out.println("Winner(s): " + bg.getWinners());
 				if(bg instanceof TwoDimensionalBoardGame){
 					for(int j = 0; j < bg.getNumPlayers(); j++){
+						System.out.println(players[j]);
 						System.out.println("Player " + (j+1) + " Pieces: " + ((TwoDimensionalBoardGame) bg).pieceCount(j));
 					}
 				}
