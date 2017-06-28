@@ -22,7 +22,7 @@ public class AllOfPlayerTypeSubstrate extends MicroRTSSubstrateInputs{
 		this(typesAndPlayers, false);
 	}
 
-	// TODO: Also specify the palyer being sensed?
+	// TODO: Also specify the player being sensed?
 	public AllOfPlayerTypeSubstrate(ArrayList<Pair<String, Integer>> typesAndPlayers, boolean terrain){
 		this.typesAndPlayers = typesAndPlayers;
 		this.terrain = terrain;
