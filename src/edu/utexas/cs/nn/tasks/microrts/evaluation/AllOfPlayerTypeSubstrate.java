@@ -19,10 +19,10 @@ public class AllOfPlayerTypeSubstrate extends MicroRTSSubstrateInputs{
 	 * 				description of all the categories of units that are allowed into the substrate
 	 */
 	public AllOfPlayerTypeSubstrate(ArrayList<Pair<String, Integer>> typesAndPlayers){
-		this.typesAndPlayers = typesAndPlayers;
-		terrain = false;
+		this(typesAndPlayers, false);
 	}
-	
+
+	// TODO: Also specify the palyer being sensed?
 	public AllOfPlayerTypeSubstrate(ArrayList<Pair<String, Integer>> typesAndPlayers, boolean terrain){
 		this.typesAndPlayers = typesAndPlayers;
 		this.terrain = terrain;
