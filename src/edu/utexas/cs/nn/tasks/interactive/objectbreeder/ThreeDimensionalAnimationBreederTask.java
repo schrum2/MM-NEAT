@@ -158,7 +158,7 @@ public class ThreeDimensionalAnimationBreederTask<T extends Network> extends Ani
 	
 	@Override
 	public BufferedImage[] getAnimationImages(T cppn, int startFrame, int endFrame, boolean beingSaved) {
-		return AnimationUtil.shapesFromCPPN(cppn, picSize, picSize, startFrame, endFrame, color, heading, pitch, inputMultipliers);
+		return AnimationUtil.shapesFromCPPN(cppn, picSize, picSize, startFrame, endFrame, beingSaved ? Color.BLACK : null, heading, pitch, inputMultipliers);
 	}
 	
 	@Override

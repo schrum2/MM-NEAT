@@ -72,14 +72,15 @@ public class ThreeDimensionalUtil {
 	 * @param width width of image
 	 * @param height height of image
 	 * @param transform Matrix3 instance determining where JSlider rotation occurs for image construction
+	 * @param bgColor Color of the background in the image
 	 * @return BufferedImage representing current view of 3D image
 	 */
-	private static BufferedImage imageFromTriangles(List<Triangle> tris, int width, int height, Matrix3 transform, Color color) {
+	private static BufferedImage imageFromTriangles(List<Triangle> tris, int width, int height, Matrix3 transform, Color bgColor) {
 		BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-		if(color != null) {
+		if(bgColor != null) {
 			for(int i = 0; i < width; i++) {
 				for(int j = 0; j < height; j++) {
-					img.setRGB(i, j, color.getRGB());
+					img.setRGB(i, j, bgColor.getRGB());
 				}
 			}
 		}
@@ -415,15 +416,15 @@ public class ThreeDimensionalUtil {
 	 * @param shapeWidth width of shape (measured in cubes)
 	 * @param shapeHeight height of shape (measured in cubes)
 	 * @param shapeDepth depth of shape (measured in cubes)
-	 * @param color desired color of image
+	 * @param bgColor desired color of image
 	 * @param heading horizontal rotation of object
 	 * @param pitch vertical rotation of object
 	 * @param inputMultipliers indicates whether input checkboxes are turned on or off
 	 * @return
 	 */
-	public static BufferedImage currentImageFromCPPN(Network cppn, int imageWidth, int imageHeight, int sideLength, int shapeWidth, int shapeHeight, int shapeDepth, Color color, double heading, double pitch, double[] inputMultipliers, double time) {
-		List<Triangle> tris = trianglesFromCPPN(cppn, imageWidth, imageHeight, sideLength, shapeWidth, shapeHeight, shapeDepth, color, inputMultipliers,time);
-		BufferedImage currentImage = imageFromTriangles(tris, imageWidth, imageHeight, heading, pitch, color);
+	public static BufferedImage currentImageFromCPPN(Network cppn, int imageWidth, int imageHeight, int sideLength, int shapeWidth, int shapeHeight, int shapeDepth, Color bgColor, double heading, double pitch, double[] inputMultipliers, double time) {
+		List<Triangle> tris = trianglesFromCPPN(cppn, imageWidth, imageHeight, sideLength, shapeWidth, shapeHeight, shapeDepth, null, inputMultipliers,time); //TODO: instead of null, allow for set color options like in the objectbreeder?
+		BufferedImage currentImage = imageFromTriangles(tris, imageWidth, imageHeight, heading, pitch, bgColor);
 		return currentImage;
 	}
 }
