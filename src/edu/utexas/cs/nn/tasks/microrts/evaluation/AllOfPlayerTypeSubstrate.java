@@ -38,13 +38,22 @@ public class AllOfPlayerTypeSubstrate extends MicroRTSSubstrateInputs{
 				Unit u = pgs.getUnitAt(j, i);
 				if(u != null){
 					inputs[j][i] = valueInSub(u);
-					if(terrain && pgs.getTerrain(j, i) == pgs.TERRAIN_WALL){
-						inputs[j][i] = 1;
+					if(terrain && pgs.getTerrain(j, i) == PhysicalGameState.TERRAIN_WALL){
+						inputs[j][i] = scoreForUnit(u);
 					}
 				}
 			}
 		}
 		return inputs;
+	}
+	
+	/**
+	 * Different types of units can have different scores associated with them
+	 * @param u Unit to score
+	 * @return Score for that unit on the substrate
+	 */
+	protected double scoreForUnit(Unit u) {
+		return 1.0; // default
 	}
 
 	private double valueInSub(Unit u) {
