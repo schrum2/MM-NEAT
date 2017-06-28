@@ -1,5 +1,6 @@
 package edu.utexas.cs.nn.util.graphics;
 
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -8,6 +9,7 @@ import javax.imageio.stream.FileImageOutputStream;
 import javax.imageio.stream.ImageOutputStream;
 
 import edu.utexas.cs.nn.networks.Network;
+import edu.utexas.cs.nn.tasks.interactive.objectbreeder.ThreeDimensionalObjectBreederTask;
 
 /**
  * Series of utility methods used to create and manipulate
@@ -35,6 +37,14 @@ public class AnimationUtil {
 		BufferedImage[] images = new BufferedImage[endTime-startTime];
 		for(int i = startTime; i < endTime; i++) {
 			images[i-startTime] = GraphicsUtil.imageFromCPPN(n, imageWidth, imageHeight, inputMultiples, i/FRAMES_PER_SEC);
+		}
+		return images;
+	}		
+	
+	public static BufferedImage[] shapesFromCPPN(Network n, int imageWidth, int imageHeight, int startTime, int endTime, Color color, double heading, double pitch, double[] inputMultiples) {
+		BufferedImage[] images = new BufferedImage[endTime-startTime];
+		for(int i = startTime; i < endTime; i++) {
+			images[i-startTime] = ThreeDimensionalUtil.currentImageFromCPPN(n, imageWidth, imageHeight, ThreeDimensionalObjectBreederTask.CUBE_SIDE_LENGTH, ThreeDimensionalObjectBreederTask.SHAPE_HEIGHT,ThreeDimensionalObjectBreederTask.SHAPE_WIDTH, ThreeDimensionalObjectBreederTask.SHAPE_DEPTH, color, heading, pitch, inputMultiples, i/FRAMES_PER_SEC);
 		}
 		return images;
 	}		

@@ -19,6 +19,12 @@ import edu.utexas.cs.nn.util.datastructures.Vertex;
  *
  */
 public class ThreeDimensionalUtil {
+	
+	public static final int THREE_DIMENSIONAL_HUE_INDEX = 1;
+	public static final int THREE_DIMENSIONAL_SATURATION_INDEX = 2;
+	public static final int THREE_DIMENSIONAL_BRIGHTNESS_INDEX = 3;
+	
+	public static final double SHADE_CONSTANT = 2.4;
 
 	/**
 	 * Constructs a BufferedImage of the current 3D image rotation based on the current heading and pitch.
@@ -148,13 +154,13 @@ public class ThreeDimensionalUtil {
 	 * @return
 	 */
 	public static Color getShade(Color color, double shade) {
-		double redLinear = Math.pow(color.getRed(), 2.4) * shade;
-		double greenLinear = Math.pow(color.getGreen(), 2.4) * shade;
-		double blueLinear = Math.pow(color.getBlue(), 2.4) * shade;
+		double redLinear = Math.pow(color.getRed(), SHADE_CONSTANT) * shade;
+		double greenLinear = Math.pow(color.getGreen(), SHADE_CONSTANT) * shade;
+		double blueLinear = Math.pow(color.getBlue(), SHADE_CONSTANT) * shade;
 
-		int red = (int) Math.pow(redLinear, 1/2.4);
-		int green = (int) Math.pow(greenLinear, 1/2.4);
-		int blue = (int) Math.pow(blueLinear, 1/2.4);
+		int red = (int) Math.pow(redLinear, 1/SHADE_CONSTANT);
+		int green = (int) Math.pow(greenLinear, 1/SHADE_CONSTANT);
+		int blue = (int) Math.pow(blueLinear, 1/SHADE_CONSTANT);
 
 		return new Color(red, green, blue);
 	}
@@ -169,7 +175,7 @@ public class ThreeDimensionalUtil {
 	 * @param color desired color of cubes
 	 * @return List of triangles that construct a series of cubes centered at the various vertexes
 	 */
-	public static List<Triangle> getShape(Network cppn, List<Vertex> centers, int imageWidth, int imageHeight, double sideLength, double[] inputMultiples, List<Color> colors) {
+	public static List<Triangle> getShape(List<Vertex> centers, int imageWidth, int imageHeight, double sideLength, double[] inputMultiples, List<Color> colors) {
 		List<Triangle> tris = new ArrayList<>();
 		for(int i = 0; i < centers.size(); i++) { //construct individual cubes and add them to larger list
 			tris.addAll(cubeConstructor(centers.get(i), sideLength, colors.get(i)));
@@ -191,14 +197,14 @@ public class ThreeDimensionalUtil {
 	 * @param inputMultipliers determines whether inputs are turned on or off
 	 * @return List of vertexes denoting center points of all cubes being constructed
 	 */
-	public static Pair<List<Vertex>,List<Color>> getVertexesFromCPPN(Network cppn, int imageWidth, int imageHeight, int cubeSize, int shapeWidth, int shapeHeight, int shapeDepth, double[] inputMultipliers, Color color) {
+	public static Pair<List<Vertex>,List<Color>> getVertexesFromCPPN(Network cppn, int imageWidth, int imageHeight, int cubeSize, int shapeWidth, int shapeHeight, int shapeDepth, double[] inputMultipliers, Color color, double time) {
 		List<Vertex> centers = new ArrayList<>();
 		List<Color> colors = new ArrayList<>();
 		
 		for(int x = 0; x < shapeWidth; x++) {
 			for(int y = 0; y < shapeHeight; y++) {
 				for(int z = 0; z < shapeDepth; z++) {
-					double[] inputs = get3DObjectCPPNInputs(x, y, z, shapeWidth, shapeHeight, shapeDepth);
+					double[] inputs = get3DObjectCPPNInputs(x, y, z, shapeWidth, shapeHeight, shapeDepth, time);
 					//determine whether inputs are turned on or off
 					for(int i = 0; i < inputMultipliers.length; i++) {
 						inputs[i] = inputs[i] * inputMultipliers[i];
@@ -210,9 +216,8 @@ public class ThreeDimensionalUtil {
 						double actualZ = -(cubeSize*shapeDepth/2.0) + (cubeSize/2.0) + z*cubeSize;
 						centers.add(new Vertex(actualX, actualY, actualZ));
 						if(color == null) {
-							// TODO: Fix magic numbers
-							float[] hsb = GraphicsUtil.rangeRestrictHSB(new double[]{output[1],output[2],output[3]});
-							int rgb = Color.HSBtoRGB(hsb[0], hsb[1], hsb[2]);
+							float[] hsb = GraphicsUtil.rangeRestrictHSB(new double[]{output[THREE_DIMENSIONAL_HUE_INDEX],output[THREE_DIMENSIONAL_SATURATION_INDEX],output[THREE_DIMENSIONAL_BRIGHTNESS_INDEX]});
+							int rgb = Color.HSBtoRGB(hsb[GraphicsUtil.HUE_INDEX], hsb[GraphicsUtil.SATURATION_INDEX], hsb[GraphicsUtil.BRIGHTNESS_INDEX]);
 							Color evolvedColor = new Color(rgb, true);
 							colors.add(evolvedColor);
 						} else {
@@ -236,10 +241,14 @@ public class ThreeDimensionalUtil {
 	 * @param depth depth of shape
 	 * @return inputs to CPPN (x, y, z coordinates of a Vertex and bias)
 	 */
-	public static double[] get3DObjectCPPNInputs(int x, int y, int z, int width, int height, int depth) {
+	public static double[] get3DObjectCPPNInputs(int x, int y, int z, int width, int height, int depth, double time) {
 		Vertex v = new Vertex(x, y, z);
 		Vertex newV = CartesianGeometricUtilities.centerAndScale(v, width, height, depth);
-		return new double[]{newV.x, newV.y, newV.z, newV.distance(new Vertex(0, 0, 0)) * GraphicsUtil.SQRT2, GraphicsUtil.BIAS};
+		if(time == -1) {
+			return new double[]{newV.x, newV.y, newV.z, newV.distance(new Vertex(0, 0, 0)) * GraphicsUtil.SQRT2, GraphicsUtil.BIAS};
+		} else {
+			return new double[]{newV.x, newV.y, newV.z, newV.distance(new Vertex(0, 0, 0)) * GraphicsUtil.SQRT2, GraphicsUtil.BIAS, time};
+		}
 	}
 
 
@@ -363,7 +372,7 @@ public class ThreeDimensionalUtil {
 		BufferedImage[] resultImages = imagesFromTriangles(tris, imageWidth, imageHeight, startTime, endTime, heading, pitch, color, vertical);
 		return resultImages;
 	}
-
+	
 	/**
 	 * Produces a list of triangles used to construct a 3D object.
 	 * 
@@ -379,11 +388,20 @@ public class ThreeDimensionalUtil {
 	 * @return
 	 */
 	public static List<Triangle> trianglesFromCPPN(Network cppn, int imageWidth, int imageHeight, int sideLength, int shapeWidth, int shapeHeight, int shapeDepth, Color color, double[] inputMultipliers) {
-		Pair<List<Vertex>, List<Color>> result = getVertexesFromCPPN(cppn, imageWidth, imageHeight, sideLength, shapeWidth, shapeHeight, shapeDepth, inputMultipliers, color);
+		return trianglesFromCPPN(cppn, imageWidth, imageHeight, sideLength, shapeWidth, shapeHeight, shapeDepth, color, inputMultipliers, -1);
+	
+	}
+	
+	public static List<Triangle> trianglesFromCPPN(Network cppn, int imageWidth, int imageHeight, int sideLength, int shapeWidth, int shapeHeight, int shapeDepth, Color color, double[] inputMultipliers, double time) {
+		Pair<List<Vertex>, List<Color>> result = getVertexesFromCPPN(cppn, imageWidth, imageHeight, sideLength, shapeWidth, shapeHeight, shapeDepth, inputMultipliers, color, time);
 		List<Vertex> cubeVertexes = result.t1;
 		List<Color> colors = result.t2;
-		List<Triangle> tris = getShape(cppn, cubeVertexes, imageWidth, imageHeight, sideLength, inputMultipliers, colors);
+		List<Triangle> tris = getShape(cubeVertexes, imageWidth, imageHeight, sideLength, inputMultipliers, colors);
 		return tris;
+	}
+
+	public static BufferedImage currentImageFromCPPN(Network cppn, int imageWidth, int imageHeight, int sideLength, int shapeWidth, int shapeHeight, int shapeDepth, Color color, double heading, double pitch, double[] inputMultipliers) {
+		return currentImageFromCPPN(cppn, imageWidth, imageHeight, sideLength, shapeWidth, shapeHeight, shapeDepth, color, heading, pitch, inputMultipliers, -1); // -1 means time is not used
 	}
 	
 	/**
@@ -403,8 +421,8 @@ public class ThreeDimensionalUtil {
 	 * @param inputMultipliers indicates whether input checkboxes are turned on or off
 	 * @return
 	 */
-	public static BufferedImage currentImageFromCPPN(Network cppn, int imageWidth, int imageHeight, int sideLength, int shapeWidth, int shapeHeight, int shapeDepth, Color color, double heading, double pitch, double[]inputMultipliers) {
-		List<Triangle> tris = trianglesFromCPPN(cppn, imageWidth, imageHeight, sideLength, shapeWidth, shapeHeight, shapeDepth, color, inputMultipliers);
+	public static BufferedImage currentImageFromCPPN(Network cppn, int imageWidth, int imageHeight, int sideLength, int shapeWidth, int shapeHeight, int shapeDepth, Color color, double heading, double pitch, double[] inputMultipliers, double time) {
+		List<Triangle> tris = trianglesFromCPPN(cppn, imageWidth, imageHeight, sideLength, shapeWidth, shapeHeight, shapeDepth, color, inputMultipliers,time);
 		BufferedImage currentImage = imageFromTriangles(tris, imageWidth, imageHeight, heading, pitch, color);
 		return currentImage;
 	}
