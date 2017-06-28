@@ -2,12 +2,9 @@ package edu.utexas.cs.nn.tasks.interactive.objectbreeder;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.image.BufferedImage;
 import java.io.FileNotFoundException;
 import java.util.Hashtable;
-import java.util.List;
 
 import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
@@ -21,7 +18,6 @@ import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.interactive.animationbreeder.AnimationBreederTask;
-import edu.utexas.cs.nn.util.datastructures.Triangle;
 import edu.utexas.cs.nn.util.graphics.AnimationUtil;
 
 public class ThreeDimensionalAnimationBreederTask<T extends Network> extends AnimationBreederTask<T> {
@@ -77,7 +73,8 @@ public class ThreeDimensionalAnimationBreederTask<T extends Network> extends Ani
 				}
 			}
 		});
-
+		
+		
 		//Pitch slider
 		JPanel pitch = new JPanel();
 		pitch.setLayout(new BoxLayout(pitch, BoxLayout.Y_AXIS));
@@ -123,39 +120,15 @@ public class ThreeDimensionalAnimationBreederTask<T extends Network> extends Ani
 		headingLabel.setText("Horizontal Tilt");
 		heading.add(headingLabel);
 		heading.add(headingValue);
+		
+		JPanel pitchAndHeading = new JPanel();
+		pitchAndHeading.setLayout(new BoxLayout(pitchAndHeading, BoxLayout.Y_AXIS));
+		pitchAndHeading.add(pitch);
+		pitchAndHeading.add(heading);
 
-		if(!simplifiedInteractiveInterface && !alwaysAnimate) {
-			top.add(pitch);
-			top.add(heading);
+		if(!simplifiedInteractiveInterface) {
+			top.add(pitchAndHeading);
 		}
-
-		String[] choices = { "Red", "Green", "Blue", "Grey","Yellow", "Orange", "Pink", "Black", "Evolved" };
-		colorChoice = new JComboBox<String>(choices);
-		colorChoice.setSelectedIndex(choices.length - 1); // default to Evolved colors
-		colorChoice.setSize(40, 40);
-		colorChoice.addItemListener(new ItemListener() {
-
-			@SuppressWarnings("unchecked")
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				JComboBox<String> source = (JComboBox<String>)e.getSource();
-				int index = source.getSelectedIndex();
-				if(index == EVOLVED_COLOR_INDEX) {
-					color = null;
-				} else {
-					color = COLORS[index];
-					//TODO: change this
-//					// change colors of triangles
-//					for(List<Triangle> tris: shapes.values()) {
-//						for(Triangle t: tris) {
-//							t.color = color;
-//						}
-//					}
-				}
-				resetButtons(true);
-			}
-
-		});
 	}
 	
 	@Override
