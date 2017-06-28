@@ -37,9 +37,7 @@ public class AllOfPlayerTypeSubstrate extends MicroRTSSubstrateInputs{
 			for(int j = 0; j < pgs.getWidth(); j++){
 				Unit u = pgs.getUnitAt(j, i);
 				if(u != null){
-					if(isAllowedInSub(u)){
-						inputs[j][i] = 1;
-					}
+					inputs[j][i] = valueInSub(u);
 					if(terrain && pgs.getTerrain(j, i) == pgs.TERRAIN_WALL){
 						inputs[j][i] = 1;
 					}
@@ -49,26 +47,28 @@ public class AllOfPlayerTypeSubstrate extends MicroRTSSubstrateInputs{
 		return inputs;
 	}
 
-	private boolean isAllowedInSub(Unit u) {
-		boolean isAllowed = true;
+	private double valueInSub(Unit u) {
+		double value = 0;
 		String key;
 		int player;
 		for(Pair<String, Integer> criteria : typesAndPlayers){
 			key = criteria.t1;
 			player = criteria.t2;
-			if(key != null && !u.getType().name.equals("key"))
-				if (key.equals("mobile") && !u.getType().canMove){
-					isAllowed = false;
-				} else if (key.equals("immobile") && u.getType().canMove){
-					isAllowed = false;
-				} //else unit fits key, is allowed.
-			if(player != ANY_PLAYER && u.getPlayer() != player)
-				isAllowed = false;
-			
-			if(isAllowed) //unit meets at least 1 criteria, no need to search the rest.
-				return isAllowed;
+			if(key != null && !u.getType().name.equals("key")) //doesnt fit key directly
+				if (key.equals("mobile") && !u.getType().canMove){ //if contradicts special key: mobile
+					return value;
+				} else if (key.equals("immobile") && u.getType().canMove){ //if contradicts special key: immobile
+					return value;
+				} //else unit fits key; does it fit player?
+			if(player == ANY_PLAYER && u.getPlayer() != -1){
+				value = u.getPlayer() == player ? 1 : -1;
+				return value;
+			}
+			else if(u.getPlayer() != player){
+				return value;
+			}
 		}
-		return isAllowed;
+		return value; // 0 if it makes it here
 	}
 
 }
