@@ -68,7 +68,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 
 	//Global static final variables
 	public static final int NUM_COLUMNS	= 5;
-	public static final int MPG_DEFAULT = 1;// Starting number of mutations per generation (on slider)	
+	public static final int MPG_DEFAULT = 2;// Starting number of mutations per generation (on slider)	
 
 	//private static final Variables
 	//includes indices of buttons for action listener
@@ -118,7 +118,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	private ArrayList<Score<T>> previousScores;
 
 	//private helper variables
-	//private boolean showLineage;
+	private boolean showLineage;
 	protected boolean showNetwork;
 	private boolean waitingForUser;
 	protected final boolean[] chosen;
@@ -897,71 +897,75 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	private static HashMap<Integer, Integer> savedLineage = null;
 	private static ArrayList<DrawingPanel> dPanels = null;
 
-//	/**
-//	 * resets lineage drawer if button pressed multiple
-//	 * times
-//	 */
-//	private static void resetLineageDrawer() { 
-//		if(dPanels != null) {
-//			for(int i = 0; i < dPanels.size(); i++) {
-//				dPanels.get(i).setVisibility(false);
-//			}
-//		}
-//		dPanels = null;
-//		drawnOffspring = null;
-//	}
+	/**
+	 * resets lineage drawer if button pressed multiple
+	 * times.
+	 * 
+	 * TODO: There are many issues with the lineage drawer, so this button is disabled
+	 */
+	private static void resetLineageDrawer() { 
+		if(dPanels != null) {
+			for(int i = 0; i < dPanels.size(); i++) {
+				dPanels.get(i).setVisibility(false);
+			}
+		}
+		dPanels = null;
+		drawnOffspring = null;
+	}
 
 
-//	/**
-//	 * gets lineage from offspring object
-//	 */
-//	@SuppressWarnings("rawtypes")
-//	private void setLineage() {
-//		if(!showLineage) {
-//			showLineage = true;
-//			resetLineageDrawer();
-//			String base = Parameters.parameters.stringParameter("base");
-//			String log =  Parameters.parameters.stringParameter("log");
-//			int runNumber = Parameters.parameters.integerParameter("runNumber");
-//			String saveTo = Parameters.parameters.stringParameter("saveTo");
-//			String prefix = base + "/" + saveTo + runNumber + "/" + log + runNumber + "_";
-//			String originalPrefix = base + "/" + saveTo + runNumber + "/" + log + runNumber + "_";
-//
-//			drawnOffspring = new HashSet<Long>();
-//			savedLineage = new HashMap<Integer, Integer>();
-//			dPanels = new ArrayList<DrawingPanel>();
-//
-//			try {
-//				Offspring.reset();
-//				Offspring.lineage = new ArrayList<Offspring>();
-//				PopulationUtil.loadLineage();
-//				System.out.println("Lineage loaded from file");
-//				// Also adds networks
-//				Offspring.addAllScores(prefix, "parents_gen", ((SinglePopulationGenerationalEA) MMNEAT.ea).currentGeneration(), true, originalPrefix);
-//				System.out.println("Scores added");
-//				for(int i = 0; i < chosen.length; i++) {
-//					boolean choose = chosen[i];
-//					if(choose) {//loops through and any image  clicked automatically saved
-//						Score<T> s = scores.get(i);
-//						Genotype<T> network = s.individual;
-//						long id = network.getId();
-//						for(Offspring o : SelectiveBreedingEA.offspring) {
-//							if(o.offspringId == id) {
-//								// Magic number here: 600 is start y-coord for drawing lineage
-//								drawLineage(o, id, 0, 600);						
-//							}
-//						}
-//					}
-//				}
-//			} catch (FileNotFoundException e) {
-//				System.out.println("Lineage browser failed");
-//				e.printStackTrace();
-//			}
-//		} else {
-//			resetLineageDrawer();
-//			showLineage = false;
-//		}
-//	}
+	/**
+	 * gets lineage from offspring object
+	 * 
+	 * TODO: Currently not used because it doesn't fully work properly.
+	 */
+	@SuppressWarnings({ "rawtypes", "unused" })
+	private void setLineage() {
+		if(!showLineage) {
+			showLineage = true;
+			resetLineageDrawer();
+			String base = Parameters.parameters.stringParameter("base");
+			String log =  Parameters.parameters.stringParameter("log");
+			int runNumber = Parameters.parameters.integerParameter("runNumber");
+			String saveTo = Parameters.parameters.stringParameter("saveTo");
+			String prefix = base + "/" + saveTo + runNumber + "/" + log + runNumber + "_";
+			String originalPrefix = base + "/" + saveTo + runNumber + "/" + log + runNumber + "_";
+
+			drawnOffspring = new HashSet<Long>();
+			savedLineage = new HashMap<Integer, Integer>();
+			dPanels = new ArrayList<DrawingPanel>();
+
+			try {
+				Offspring.reset();
+				Offspring.lineage = new ArrayList<Offspring>();
+				PopulationUtil.loadLineage();
+				System.out.println("Lineage loaded from file");
+				// Also adds networks
+				Offspring.addAllScores(prefix, "parents_gen", ((SinglePopulationGenerationalEA) MMNEAT.ea).currentGeneration(), true, originalPrefix);
+				System.out.println("Scores added");
+				for(int i = 0; i < chosen.length; i++) {
+					boolean choose = chosen[i];
+					if(choose) {//loops through and any image  clicked automatically saved
+						Score<T> s = scores.get(i);
+						Genotype<T> network = s.individual;
+						long id = network.getId();
+						for(Offspring o : SelectiveBreedingEA.offspring) {
+							if(o.offspringId == id) {
+								// Magic number here: 600 is start y-coord for drawing lineage
+								drawLineage(o, id, 0, 600);						
+							}
+						}
+					}
+				}
+			} catch (FileNotFoundException e) {
+				System.out.println("Lineage browser failed");
+				e.printStackTrace();
+			}
+		} else {
+			resetLineageDrawer();
+			showLineage = false;
+		}
+	}
 
 	/**
 	 * Draws lineage of image recursively
