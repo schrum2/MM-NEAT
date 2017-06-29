@@ -2,6 +2,7 @@ package edu.utexas.cs.nn.evolution.halloffame;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -80,26 +81,30 @@ public class HallOfFame<T> {
 	 * Adds a given List of Champions into the Hall Of Fame
 	 * 
 	 * @param generation Generation of the Champions being put in the Hall Of Fame
-	 * @param newChamps List of Genotypes from the Champions being saved
+	 * @param newChampsList List of Genotypes from the Champions being saved
 	 */
-	public void addChampions(int generation, List<Pair<Genotype<T>, Score<T>>> newChamps){
+	public void addChampions(int generation, List<Pair<Genotype<T>, Score<T>>> newChampsList){
 		if(Parameters.parameters.booleanParameter("hallOfFamePareto")){
 			
 			// Cycles through every Champion currently in the Hall Of Fame
-			for(Triple<Integer, Genotype<T>, Score<T>> tr : hall){
+			Iterator<Triple<Integer, Genotype<T>, Score<T>>> itr = hall.iterator();
+			while(itr.hasNext()){
+				Triple<Integer, Genotype<T>, Score<T>> oldChamp = itr.next();
 				// Cycles through all the new Champions
-				for(Pair<Genotype<T>, Score<T>> champ : newChamps){
-					if(champ.t2.isAtLeastAsGood(tr.t3)) hall.remove(tr); // Removes the old Champion if the new Champion is better
-					if(tr.t3.isBetter(champ.t2)) newChamps.remove(champ); // Removes the new Champion if the old Champion is better
+				Iterator<Pair<Genotype<T>, Score<T>>> itr2 = newChampsList.iterator();
+				while(itr2.hasNext()){
+					Pair<Genotype<T>, Score<T>> newChamp = itr2.next();
+					if(newChamp.t2.isAtLeastAsGood(oldChamp.t3)) itr.remove(); // Removes the old Champion if the new Champion is better
+					if(oldChamp.t3.isBetter(newChamp.t2)) itr2.remove(); // Removes the new Champion if the old Champion is better
 				}
 			}
 			
 			// Adds the new surviving Champions to the Hall Of Fame
-			for(Pair<Genotype<T>, Score<T>> champion : newChamps){
+			for(Pair<Genotype<T>, Score<T>> champion : newChampsList){
 				hall.add(new Triple<Integer, Genotype<T>, Score<T>>(generation, champion.t1, champion.t2));
 			}
 		}else{
-			for(Pair<Genotype<T>, Score<T>> champion : newChamps){
+			for(Pair<Genotype<T>, Score<T>> champion : newChampsList){
 				hall.add(new Triple<Integer, Genotype<T>, Score<T>>(generation, champion.t1, champion.t2));
 			}
 		}
