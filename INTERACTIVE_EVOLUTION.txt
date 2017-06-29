@@ -72,7 +72,8 @@ PictureRemixer (prototype)
 *MM-NEATv2/src/utexas/cs/nn/tasks/interactive/remixbreeder/PictureRemixTask.java
 *PictureRemixer manipulates images by taking in an x-coordinate, a y-coordinate, the distance from the center,
 the input picture's HSB, and a bias of 1.0 as inputs to the CPPN, and outputting hue, saturation, and 
-brightness values that are used to plot the color at the input (x,y).The process of creating the image is very similar to the generation of images in Picbreeder, but it manipulates an input image.
+brightness values that are used to plot the color at the input (x,y).The process of creating the image is very
+similar to the generation of images in Picbreeder, but it manipulates an input image.
 
 To create your own original interactive evolution task, create a class that extends InteractiveEvolutionTask. 
 The abstract methods from the task that you will need to override are getWindowTitle(), save(), 
