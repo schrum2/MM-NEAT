@@ -31,7 +31,7 @@ public abstract class NNEvaluationFunction<T extends Network> extends Evaluation
 	/**
 	 *  creates the array to be given to the NN
 	 */
-	protected abstract double[] gameStateToArray(GameState gs);
+	protected abstract double[] gameStateToArray(GameState gs, int playerToEvaluate);
 	
 	/**
 	 * 
@@ -60,10 +60,17 @@ public abstract class NNEvaluationFunction<T extends Network> extends Evaluation
 	@Override
 	public float evaluate(int maxplayer, int minplayer, GameState gs) {
 		howManyEvals++;
-		double[] inputs = gameStateToArray(gs);
-		double[] outputs = nn.process(inputs);
-		float score = (float) outputs[0];
-		return score;
+		
+		// Score from max perspective
+		double[] inputs1 = gameStateToArray(gs, maxplayer);
+		double[] outputs1 = nn.process(inputs1);
+		float score1 = (float) outputs1[0];
+		// Score from min perspective
+		double[] inputs2 = gameStateToArray(gs, minplayer);
+		double[] outputs2 = nn.process(inputs2);
+		float score2 = (float) outputs2[0];
+		
+		return score1 - score2;
 	}
 	
 	/**

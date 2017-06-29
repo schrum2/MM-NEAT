@@ -74,61 +74,76 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 		MicroRTSSubstrateInputs currentSubstrate = null;
 		for(int i = 0; i < numSubstrates; i++){ //for each active substrate:
 			switch(activeSubs.get(i)){
-			case mobile: {
+			case mobile: 
 				criteria = new ArrayList<Pair<String, Integer>>();
-				criteria.add(new Pair<String, Integer>("mobile",-2));
+				criteria.add(new Pair<String, Integer>("Worker",AllOfPlayerTypeSubstrate.ANY_PLAYER));
+				criteria.add(new Pair<String, Integer>("Light",AllOfPlayerTypeSubstrate.ANY_PLAYER));
+				criteria.add(new Pair<String, Integer>("Heavy",AllOfPlayerTypeSubstrate.ANY_PLAYER));
+				criteria.add(new Pair<String, Integer>("Ranged",AllOfPlayerTypeSubstrate.ANY_PLAYER));
 				currentSubstrate = new AllOfPlayerTypeSubstrate(criteria);
 				break;
-			} case buildings: {
+			case buildings: 
 				criteria = new ArrayList<Pair<String, Integer>>();
-				criteria.add(new Pair<String, Integer>("immobile",-2));
+				criteria.add(new Pair<String, Integer>("Base", AllOfPlayerTypeSubstrate.ANY_PLAYER));
+				criteria.add(new Pair<String, Integer>("Barracks", AllOfPlayerTypeSubstrate.ANY_PLAYER));
 				currentSubstrate = new AllOfPlayerTypeSubstrate(criteria);
 				break;
-			} case myMobile:{
+			case myMobile:
 				criteria = new ArrayList<Pair<String, Integer>>();
-				criteria.add(new Pair<String, Integer>("mobile", 0));
+				criteria.add(new Pair<String, Integer>("Worker",AllOfPlayerTypeSubstrate.MY_PLAYER));
+				criteria.add(new Pair<String, Integer>("Light",AllOfPlayerTypeSubstrate.MY_PLAYER));
+				criteria.add(new Pair<String, Integer>("Heavy",AllOfPlayerTypeSubstrate.MY_PLAYER));
+				criteria.add(new Pair<String, Integer>("Ranged",AllOfPlayerTypeSubstrate.MY_PLAYER));
 				currentSubstrate = new AllOfPlayerTypeSubstrate(criteria);
 				break;
-			} case myBuildings:{
+			case myBuildings:
 				criteria = new ArrayList<Pair<String, Integer>>();
-				criteria.add(new Pair<String, Integer>("immobile", 0));
+				criteria.add(new Pair<String, Integer>("Base", AllOfPlayerTypeSubstrate.MY_PLAYER));
+				criteria.add(new Pair<String, Integer>("Barracks", AllOfPlayerTypeSubstrate.MY_PLAYER));
 				currentSubstrate = new AllOfPlayerTypeSubstrate(criteria);
 				break;
-			} case oppsMobile:{
+			case oppsMobile:
 				criteria = new ArrayList<Pair<String, Integer>>();
-				criteria.add(new Pair<String, Integer>("mobile", 1));
+				criteria.add(new Pair<String, Integer>("Worker",AllOfPlayerTypeSubstrate.ENEMY_PLAYER));
+				criteria.add(new Pair<String, Integer>("Light",AllOfPlayerTypeSubstrate.ENEMY_PLAYER));
+				criteria.add(new Pair<String, Integer>("Heavy",AllOfPlayerTypeSubstrate.ENEMY_PLAYER));
+				criteria.add(new Pair<String, Integer>("Ranged",AllOfPlayerTypeSubstrate.ENEMY_PLAYER));
 				currentSubstrate = new AllOfPlayerTypeSubstrate(criteria);
 				break;
-			} case oppsBuildings:{
+			case oppsBuildings:
 				criteria = new ArrayList<Pair<String, Integer>>();
-				criteria.add(new Pair<String, Integer>("immobile", 1));
+				criteria.add(new Pair<String, Integer>("Base", AllOfPlayerTypeSubstrate.ENEMY_PLAYER));
+				criteria.add(new Pair<String, Integer>("Barracks", AllOfPlayerTypeSubstrate.ENEMY_PLAYER));
 				currentSubstrate = new AllOfPlayerTypeSubstrate(criteria);
 				break;
-			} case myAll:{
+			case myAll:
 				criteria = new ArrayList<Pair<String, Integer>>();
-				criteria.add(new Pair<String, Integer>(null, 0));
+				criteria.add(new Pair<String, Integer>(null, AllOfPlayerTypeSubstrate.MY_PLAYER));
 				currentSubstrate = new AllOfPlayerTypeSubstrate(criteria);
 				break;
-			} case oppsAll:{
+			case oppsAll:
 				criteria = new ArrayList<Pair<String, Integer>>();
-				criteria.add(new Pair<String, Integer>(null, 1));
+				criteria.add(new Pair<String, Integer>(null, AllOfPlayerTypeSubstrate.ENEMY_PLAYER));
 				currentSubstrate = new AllOfPlayerTypeSubstrate(criteria);
 				break;
-			} case all:{
+			case all:
 				criteria = new ArrayList<Pair<String, Integer>>();
-				criteria.add(new Pair<String, Integer>(null, -2));
+				criteria.add(new Pair<String, Integer>(null, AllOfPlayerTypeSubstrate.ANY_PLAYER));
 				currentSubstrate = new AllOfPlayerTypeSubstrate(criteria);
 				break;
-			} case neutral:{
+			case neutral:
 				criteria = new ArrayList<Pair<String, Integer>>();
-				criteria.add(new Pair<String, Integer>(null, -1));
+				criteria.add(new Pair<String, Integer>(null, AllOfPlayerTypeSubstrate.RESOURCE));
 				currentSubstrate = new AllOfPlayerTypeSubstrate(criteria, true);
 				break;
-			} case terrain:{
+			case terrain:
 				criteria = new ArrayList<Pair<String, Integer>>(); //empty
 				currentSubstrate = new AllOfPlayerTypeSubstrate(criteria, true);
-			} case path: currentSubstrate = new BaseGradientSubstrate(0); break;
-			default: throw new UnsupportedOperationException("unrecognized substrate id: " + activeSubs.get(i));
+			case path: 
+				currentSubstrate = new BaseGradientSubstrate(true); // gradient to enemy base
+				break;
+			default: 
+				throw new UnsupportedOperationException("unrecognized substrate id: " + activeSubs.get(i));
 			} //end switch		
 			
 			// Add substrate to list of substrates
@@ -142,12 +157,12 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 	 * different information.
 	 */
 	@Override
-	protected double[] gameStateToArray(GameState gs) {
+	protected double[] gameStateToArray(GameState gs, int playerToEvaluate) {
 		pgs = gs.getPhysicalGameState();
 		substrateSize = pgs.getHeight()*pgs.getWidth();
 		double[] inputs = new double[substrateSize*numSubstrates];
 		for(int i = 0; i < numSubstrates; i++){ //for each active substrate:
-			double[][] twoDimensionalSubArray = inputSubstrates.get(i).getInputs(gs);
+			double[][] twoDimensionalSubArray = inputSubstrates.get(i).getInputs(gs,playerToEvaluate);
 			assert twoDimensionalSubArray.length > 0 : "length < 0";
 //			System.out.println(Arrays.deepToString(twoDimensionalSubArray));
 			int width = pgs.getWidth();

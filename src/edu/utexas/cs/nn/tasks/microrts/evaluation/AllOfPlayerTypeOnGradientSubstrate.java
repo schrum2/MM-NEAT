@@ -11,19 +11,19 @@ public class AllOfPlayerTypeOnGradientSubstrate extends AllOfPlayerTypeSubstrate
 	BaseGradientSubstrate gradientSubstrate;
 	double[][] gradient = null;
 	
-	// TODO: Also specify player?
-	public AllOfPlayerTypeOnGradientSubstrate(ArrayList<Pair<String, Integer>> typesAndPlayers) {
+	public AllOfPlayerTypeOnGradientSubstrate(ArrayList<Pair<String, Integer>> typesAndPlayers, boolean trackEnemyBuildings) {
 		super(typesAndPlayers);
-		//gradientSubstrate = new BaseGradientSubstrate(playerID);
+		// Opposite of evaluatedPlayer?
+		gradientSubstrate = new BaseGradientSubstrate(trackEnemyBuildings);
 	}
 	
 	/**
 	 * Update gradient before getting inputs for unit locations
 	 */
 	@Override
-	public double[][] getInputs(GameState gs) {
-		gradient = gradientSubstrate.getInputs(gs);
-		return super.getInputs(gs);
+	public double[][] getInputs(GameState gs, int playerToEvaluate) {
+		gradient = gradientSubstrate.getInputs(gs,playerToEvaluate);
+		return super.getInputs(gs,playerToEvaluate);
 	}
 	
 	/**

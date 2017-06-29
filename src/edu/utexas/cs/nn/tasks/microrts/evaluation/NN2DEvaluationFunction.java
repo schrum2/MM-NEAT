@@ -56,7 +56,7 @@ public class NN2DEvaluationFunction<T extends Network> extends NNEvaluationFunct
 	/**
 	 * represents all squares of the gameState in an array
 	 */
-	protected double[] gameStateToArray(GameState gs) {
+	protected double[] gameStateToArray(GameState gs, int playerToEvaluate) {
 		pgs = gs.getPhysicalGameState();
 		double[] board = new double[pgs.getHeight()*pgs.getWidth()];
 		int boardIndex;
@@ -66,7 +66,7 @@ public class NN2DEvaluationFunction<T extends Network> extends NNEvaluationFunct
 				boardIndex = i + j * pgs.getHeight();
 				currentUnit = pgs.getUnitAt(i, j);
 				if(currentUnit != null){
-					board[boardIndex] = getWeightedValue(currentUnit);
+					board[boardIndex] = getWeightedValue(currentUnit, playerToEvaluate);
 				}
 			}//end inner loop
 		}//end outer loop
@@ -78,7 +78,7 @@ public class NN2DEvaluationFunction<T extends Network> extends NNEvaluationFunct
 	 * @param currentUnit
 	 * @return weighted value
 	 */
-	public double getWeightedValue(Unit currentUnit) {
+	public double getWeightedValue(Unit currentUnit, int playerToEvaluate) {
 		double value = 0;
 		switch(currentUnit.getType().name){
 		case "Worker": value = WORKER_WEIGHT + (WORKER_RESOURCE_WEIGHT * currentUnit.getResources()); break; 
@@ -90,7 +90,7 @@ public class NN2DEvaluationFunction<T extends Network> extends NNEvaluationFunct
 		case "Resource": value = RAW_RESOURCE_WEIGHT; break;
 		default: break;
 		}
-		if(currentUnit.getPlayer() == 1) value *= -1;
+		if(currentUnit.getPlayer() != playerToEvaluate) value *= -1;
 		return value;
 	}
 

@@ -11,7 +11,10 @@ public class AllOfPlayerTypeSubstrate extends MicroRTSSubstrateInputs{
 
 	private boolean terrain;
 	private ArrayList<Pair<String, Integer>> typesAndPlayers;
-	final static int ANY_PLAYER = -2;
+	public final static int ANY_PLAYER = -2;
+	public final static int RESOURCE = -1;
+	public final static int MY_PLAYER = 0;
+	public final static int ENEMY_PLAYER = 1;
 	
 	/**
 	 * 
@@ -22,14 +25,13 @@ public class AllOfPlayerTypeSubstrate extends MicroRTSSubstrateInputs{
 		this(typesAndPlayers, false);
 	}
 
-	// TODO: Also specify the player being sensed?
 	public AllOfPlayerTypeSubstrate(ArrayList<Pair<String, Integer>> typesAndPlayers, boolean terrain){
 		this.typesAndPlayers = typesAndPlayers;
 		this.terrain = terrain;
 	}
 
 	@Override
-	public double[][] getInputs(GameState gs) {
+	public double[][] getInputs(GameState gs, int evaluatedPlayer) {
 		PhysicalGameState pgs = gs.getPhysicalGameState();
 		double[][] inputs = new double[pgs.getHeight()][pgs.getWidth()];
 
@@ -37,9 +39,9 @@ public class AllOfPlayerTypeSubstrate extends MicroRTSSubstrateInputs{
 			for(int j = 0; j < pgs.getWidth(); j++){
 				Unit u = pgs.getUnitAt(j, i);
 				if(u != null){
-					inputs[j][i] = valueInSub(u);
+					inputs[j][i] = valueInSub(u, evaluatedPlayer);
 					if(terrain && pgs.getTerrain(j, i) == PhysicalGameState.TERRAIN_WALL){
-						inputs[j][i] = scoreForUnit(u);
+						inputs[j][i] = 1;
 					}
 				}
 			}
@@ -55,29 +57,27 @@ public class AllOfPlayerTypeSubstrate extends MicroRTSSubstrateInputs{
 	protected double scoreForUnit(Unit u) {
 		return 1.0; // default
 	}
-
-	private double valueInSub(Unit u) {
-		double value = 0;
+	
+	protected double valueInSub(Unit u, int evaluatedPlayer) {
+		// Sign of result depends on whether the unit is of the evaluating player or the enemy
 		String key;
 		int player;
+		
 		for(Pair<String, Integer> criteria : typesAndPlayers){
 			key = criteria.t1;
 			player = criteria.t2;
-			if(key != null && !u.getType().name.equals("key")) //doesnt fit key directly
-				if (key.equals("mobile") && !u.getType().canMove){ //if contradicts special key: mobile
-					return value;
-				} else if (key.equals("immobile") && u.getType().canMove){ //if contradicts special key: immobile
-					return value;
-				} //else unit fits key; does it fit player?
-			if(player == ANY_PLAYER && u.getPlayer() != -1){
-				value = u.getPlayer() == player ? 1 : -1;
-				return value;
-			}
-			else if(u.getPlayer() != player){
-				return value;
-			}
+			if(key == null && player == RESOURCE && RESOURCE == u.getPlayer() // Resources
+			|| key == null && player == ANY_PLAYER // All units and players
+			|| key == null && player == MY_PLAYER && evaluatedPlayer == u.getPlayer() // Any unit of the my player		
+			|| key == null && player == ENEMY_PLAYER && evaluatedPlayer != u.getPlayer() // Any unit of the enemy player		
+		    || u.getType().name.equals(key) && player == ANY_PLAYER // Specific unit of either player
+			|| u.getType().name.equals(key) && player == MY_PLAYER && evaluatedPlayer == ANY_PLAYER // Specific unit of my player
+		    || u.getType().name.equals(key) && player == ENEMY_PLAYER && evaluatedPlayer != u.getPlayer() // Specific unit of enemy player
+		    ){ 
+				return (evaluatedPlayer == u.getPlayer() ? 1 : -1) * scoreForUnit(u);
+			} 			
 		}
-		return value; // 0 if it makes it here
+		return 0; // 0 if it makes it here
 	}
 
 }

@@ -8,7 +8,6 @@ import micro.rts.units.Unit;
 
 public class AllOfPlayerTypeSqrt3Substrate extends AllOfPlayerTypeSubstrate {
 
-	// TODO: Also specify player?
 	public AllOfPlayerTypeSqrt3Substrate(ArrayList<Pair<String, Integer>> typesAndPlayers) {
 		super(typesAndPlayers);
 	}

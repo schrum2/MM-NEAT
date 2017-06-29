@@ -19,7 +19,7 @@ public class DummyEvaluationFunction<T extends Network>  extends NNEvaluationFun
 	
 	//not used
 	@Override
-	protected double[] gameStateToArray(GameState gs) {
+	protected double[] gameStateToArray(GameState gs, int playerToEvaluate) {
 		return new double[0];
 	}
 
