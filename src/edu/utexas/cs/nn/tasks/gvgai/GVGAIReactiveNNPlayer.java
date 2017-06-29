@@ -6,6 +6,7 @@ import java.util.List;
 
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.parameters.Parameters;
+import edu.utexas.cs.nn.util.random.RandomNumbers;
 import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
 import gvgai.core.game.Observation;
 import gvgai.core.game.StateObservation;
@@ -32,11 +33,11 @@ public class GVGAIReactiveNNPlayer<T extends Network> extends AbstractPlayer {
 	public ACTIONS act(StateObservation stateObs, ElapsedCpuTimer elapsedTimer) {
 		List<Observation>[][] obsGrid = stateObs.getObservationGrid();
 		
-		int XPos = (int) stateObs.getAvatarPosition().x;
-		int YPos = (int) stateObs.getAvatarPosition().y;
+		int XPos = (int) stateObs.getAvatarPosition().x / stateObs.getBlockSize();
+		int YPos = (int) stateObs.getAvatarPosition().y / stateObs.getBlockSize();
 		
 		int XMin = Math.max(0, XPos - viewRange); // Prevents the View Range from being Out of Bounds
-		int XMax = Math.min(obsGrid.length, YPos + viewRange); // Prevents the View Range from being Out of Bounds
+		int XMax = Math.min(obsGrid.length, XPos + viewRange); // Prevents the View Range from being Out of Bounds
 		
 		int YMin = Math.max(0, YPos - viewRange); // Prevents the View Range from being Out of Bounds
 		int YMax = Math.min(obsGrid.length, YPos + viewRange); // Prevents the View Range from being Out of Bounds
@@ -69,8 +70,8 @@ public class GVGAIReactiveNNPlayer<T extends Network> extends AbstractPlayer {
 		for(int x = 0; x < viewRange; x++){
 			for(int y = 0; y < viewRange; y++){
 				// Converts the Sprite IDs into doubles for processing
-				double[] spriteValues = new double[spriteIDs[x][y].length];
-				for(int i = 0; i < spriteValues.length; i++){
+				double[] spriteValues = new double[5];
+				for(int i = 0; i < spriteIDs[x][y].length; i++){
 					spriteValues[i] = (double) spriteIDs[x][y][i];
 				}
 				double value = network.process(spriteValues)[0]; // Stores this space's evaluated value
@@ -103,26 +104,11 @@ public class GVGAIReactiveNNPlayer<T extends Network> extends AbstractPlayer {
 			}
 		}
 		
-		// If only one move is considered favorable, take it; TODO: Better OneStepEval here?
+		// If only one move is considered favorable, take it
 		if(moves.size() == 1){
 			return moves.get(0);
 		}else{
-			double[] nextSpaceEval = new double[moves.size()];
-			int index = 0;
-			// Must be Up, Down, Left, or Right; cannot be Nil
-			for(ACTIONS act : moves){
-				if(act == ACTIONS.ACTION_UP){
-					nextSpaceEval[index++] = spaceValues[playPos][playPos-1];
-				}else if(act == ACTIONS.ACTION_DOWN){
-					nextSpaceEval[index++] = spaceValues[playPos][playPos+1];
-				}else if(act == ACTIONS.ACTION_LEFT){
-					nextSpaceEval[index++] = spaceValues[playPos-1][playPos];
-				}else if(act == ACTIONS.ACTION_RIGHT){
-					nextSpaceEval[index++] = spaceValues[playPos+1][playPos];
-				}
-			}
-			
-			return moves.get(StatisticsUtilities.argmax(nextSpaceEval));
+			return RandomNumbers.randomElement(moves);
 		}
 	}
 	
