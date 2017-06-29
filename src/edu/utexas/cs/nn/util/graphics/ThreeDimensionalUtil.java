@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.utexas.cs.nn.networks.Network;
+import edu.utexas.cs.nn.tasks.interactive.objectbreeder.ThreeDimensionalObjectBreederTask;
 import edu.utexas.cs.nn.util.CartesianGeometricUtilities;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.datastructures.Triangle;
@@ -215,9 +216,14 @@ public class ThreeDimensionalUtil {
 					}	
 					double[] output = cppn.process(inputs);
 					if(output[0] > 0.1) {
-						double actualX = -(cubeSize*shapeWidth/2.0) + (cubeSize/2.0) + x*cubeSize + output[THREE_DIMENSIONAL_X_DISPLACEMENT_INDEX];
-						double actualY = -(cubeSize*shapeHeight/2.0) + (cubeSize/2.0) + y*cubeSize + output[THREE_DIMENSIONAL_Y_DISPLACEMENT_INDEX];
-						double actualZ = -(cubeSize*shapeDepth/2.0) + (cubeSize/2.0) + z*cubeSize + output[THREE_DIMENSIONAL_Z_DISPLACEMENT_INDEX];
+						double actualX = -(cubeSize*shapeWidth/2.0) + (cubeSize/2.0) + x*cubeSize;
+						double actualY = -(cubeSize*shapeHeight/2.0) + (cubeSize/2.0) + y*cubeSize;
+						double actualZ = -(cubeSize*shapeDepth/2.0) + (cubeSize/2.0) + z*cubeSize; 
+						if(output.length > ThreeDimensionalObjectBreederTask.CPPN_NUM_OUTPUTS) { //if 3DAnimationBreeder
+							actualX += output[THREE_DIMENSIONAL_X_DISPLACEMENT_INDEX];
+							actualY += output[THREE_DIMENSIONAL_Y_DISPLACEMENT_INDEX];
+							actualZ += output[THREE_DIMENSIONAL_Z_DISPLACEMENT_INDEX];
+						}
 						centers.add(new Vertex(actualX, actualY, actualZ));
 						if(color == null) {
 							float[] hsb = GraphicsUtil.rangeRestrictHSB(new double[]{output[THREE_DIMENSIONAL_HUE_INDEX],output[THREE_DIMENSIONAL_SATURATION_INDEX],output[THREE_DIMENSIONAL_BRIGHTNESS_INDEX]});
