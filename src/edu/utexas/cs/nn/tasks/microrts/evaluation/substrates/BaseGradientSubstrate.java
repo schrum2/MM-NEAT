@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.tasks.microrts.evaluation;
+package edu.utexas.cs.nn.tasks.microrts.evaluation.substrates;
 
 import micro.rts.GameState;
 import micro.rts.PhysicalGameState;

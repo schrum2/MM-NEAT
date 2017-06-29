@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.tasks.microrts.evaluation;
+package edu.utexas.cs.nn.tasks.microrts.evaluation.substrates;
 
 import edu.utexas.cs.nn.util.MiscUtil;
 import micro.rts.GameState;
@@ -10,7 +10,7 @@ import micro.rts.GameState;
  * @author alicequint
  *
  */
-abstract class MicroRTSSubstrateInputs {
+public abstract class MicroRTSSubstrateInputs {
 	
 	protected int numSubstrates;
 	
@@ -24,7 +24,7 @@ abstract class MicroRTSSubstrateInputs {
 	 * @return
 	 * 			substrate reflecting the game state
 	 */
-	abstract double[][] getInputs(GameState gs, int evaluatedPlayer);
+	public abstract double[][] getInputs(GameState gs, int evaluatedPlayer);
 	
 	/**
 	 * for debugging

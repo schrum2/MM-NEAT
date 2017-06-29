@@ -4,6 +4,11 @@ import java.util.ArrayList;
 
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.parameters.Parameters;
+import edu.utexas.cs.nn.tasks.microrts.evaluation.substrates.AllOfPlayerTypeOnGradientSubstrate;
+import edu.utexas.cs.nn.tasks.microrts.evaluation.substrates.AllOfPlayerTypeSqrt3Substrate;
+import edu.utexas.cs.nn.tasks.microrts.evaluation.substrates.AllOfPlayerTypeSubstrate;
+import edu.utexas.cs.nn.tasks.microrts.evaluation.substrates.BaseGradientSubstrate;
+import edu.utexas.cs.nn.tasks.microrts.evaluation.substrates.MicroRTSSubstrateInputs;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import micro.rts.GameState;
 
@@ -184,7 +189,6 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 		for(int i = 0; i < numSubstrates; i++){ //for each active substrate:
 			double[][] twoDimensionalSubArray = inputSubstrates.get(i).getInputs(gs,playerToEvaluate);
 			assert twoDimensionalSubArray.length > 0 : "length < 0";
-//			System.out.println(Arrays.deepToString(twoDimensionalSubArray));
 			int width = pgs.getWidth();
 			for(int j = 0; j < substrateSize; j++){
 				inputs[(i*substrateSize)+j] = twoDimensionalSubArray[j%width][j/width];
