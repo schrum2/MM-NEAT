@@ -56,8 +56,9 @@ import edu.utexas.cs.nn.util.graphics.GraphicsUtil;
  * Class that builds an interface designed for interactive evolution. 
  * Generates a series of images from CPPNs that can be evolved based on
  * each other and a variety of activation functions that can be turned on
- * and off. Classes that extend InteractiveEvolutionTask include Picbreeder,
- * Breedesizer, and Remixbreeder.
+ * and off. Used to generate several interactive programs, including 
+ * Picbreeder, Breedesizer, SoundRemixer, PictureRemixer, AnimationBreeder,
+ * 3DObjectBreeder, and 3DAnimationBreeder.
  * 
  * @author Lauren Gillespie
  * @author Isabel Tweraser
@@ -612,7 +613,17 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		chosen[x] = false;
 		buttons.get(x).setBorder(BorderFactory.createLineBorder(Color.lightGray, BORDER_THICKNESS));
 	}
-
+	
+	/**
+	 * Creates BufferedImage representation of item to be displayed on 
+	 * the buttons of the interface.
+	 * 
+	 * @param phenotype CPPN input
+	 * @param width width of image
+	 * @param height height of input
+	 * @param inputMultipliers determines whether CPPN inputs are turned on or off
+	 * @return BufferedImage representation of created item
+	 */
 	protected abstract BufferedImage getButtonImage(T phenotype, int width, int height, double[] inputMultipliers);
 
 	/**
@@ -673,7 +684,14 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		additionalButtonClickAction(scoreIndex,scores.get(scoreIndex).individual);
 		currentCPPN = scores.get(scoreIndex).individual.getPhenotype();
 	}
-
+	
+	/**
+	 * If the buttons should do something in the interface other than the initial response
+	 * to a click, the associated code should be written in this method.
+	 * 
+	 * @param scoreIndex index of button
+	 * @param individual genotype input
+	 */
 	protected abstract void additionalButtonClickAction(int scoreIndex, Genotype<T> individual);
 
 	/**
@@ -1029,8 +1047,17 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		SelectiveBreedingEA.MUTATION_RATE = source.getValue();
 
 	}
-
+	/**
+	 * Specifies the number of CPPN inputs used in the interactive evolution task.
+	 * 
+	 * @return number of CPPN inputs
+	 */
 	public abstract int numCPPNInputs();
-
+	
+	/**
+	 * Specifies the number of CPPN outputs used in the interactive evolution task.
+	 * 
+	 * @return number of CPPN outputs
+	 */
 	public abstract int numCPPNOutputs();
 }
