@@ -145,7 +145,7 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 			default: 
 				throw new UnsupportedOperationException("unrecognized substrate id: " + activeSubs.get(i));
 			} //end switch		
-			
+			System.out.println("Add " + currentSubstrate + " substrate");
 			// Add substrate to list of substrates
 			inputSubstrates.add(currentSubstrate);
 		}

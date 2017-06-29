@@ -15,28 +15,27 @@ public class BaseGradientSubstrate extends MicroRTSSubstrateInputs{
 	private static final double LOWEST_ALLOWED_BRIGHTNESS = .05;
 	// Assumes 2 players ... to restrictive?
 	private double[][][] inputs = new double[2][][]; // One gradient from perspective of each player [player][x][y]
-	private int numBuildings;
+	private int[] numBuildings = new int[2]; // Track each player
 	private boolean trackEnemyBuildings;
 
 	public BaseGradientSubstrate(boolean enemy){
 		trackEnemyBuildings = enemy;
-		numBuildings = 0;
 	}
 
 	@Override
 	public double[][] getInputs(GameState gs, int playerToEvaluate) {
 		PhysicalGameState pgs = gs.getPhysicalGameState();
 		baseGradientDiscountRate = (pgs.getWidth() / (double)(pgs.getWidth()+2)); //12: .85
-		int previousNumBuildings = numBuildings;
-		numBuildings = 0;
+		int previousNumBuildings = numBuildings[playerToEvaluate];
+		numBuildings[playerToEvaluate] = 0;
 		for(int i = 0; i < pgs.getHeight(); i++){
 			for(int j = 0; j < pgs.getWidth(); j++){
 				Unit u = pgs.getUnitAt(j, i);
 				if(trackBuilding(u,playerToEvaluate))
-					numBuildings++;
+					numBuildings[playerToEvaluate]++;
 			}
 		}
-		if(previousNumBuildings != numBuildings){ //new building created, update inputs
+		if(previousNumBuildings != numBuildings[playerToEvaluate]){ //new building created, update inputs
 			inputs[playerToEvaluate] = new double[pgs.getHeight()][pgs.getWidth()];
 			for(int i = 0; i < pgs.getHeight(); i++){
 				for(int j = 0; j < pgs.getWidth(); j++){
@@ -82,4 +81,7 @@ public class BaseGradientSubstrate extends MicroRTSSubstrateInputs{
 		}
 	}
 
+	public String toString() {
+		return this.getClass().getSimpleName() + ": trackEnemyBuildings = " + trackEnemyBuildings;
+	}
 }

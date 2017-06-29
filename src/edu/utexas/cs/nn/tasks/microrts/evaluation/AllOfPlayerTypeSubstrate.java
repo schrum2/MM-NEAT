@@ -66,13 +66,13 @@ public class AllOfPlayerTypeSubstrate extends MicroRTSSubstrateInputs{
 		for(Pair<String, Integer> criteria : typesAndPlayers){
 			key = criteria.t1;
 			player = criteria.t2;
-			if(key == null && player == RESOURCE && RESOURCE == u.getPlayer() // Resources
-			|| key == null && player == ANY_PLAYER // All units and players
-			|| key == null && player == MY_PLAYER && evaluatedPlayer == u.getPlayer() // Any unit of the my player		
-			|| key == null && player == ENEMY_PLAYER && evaluatedPlayer != u.getPlayer() // Any unit of the enemy player		
-		    || u.getType().name.equals(key) && player == ANY_PLAYER // Specific unit of either player
-			|| u.getType().name.equals(key) && player == MY_PLAYER && evaluatedPlayer == ANY_PLAYER // Specific unit of my player
-		    || u.getType().name.equals(key) && player == ENEMY_PLAYER && evaluatedPlayer != u.getPlayer() // Specific unit of enemy player
+			if( (key == null && player == RESOURCE     && RESOURCE == u.getPlayer()) // Resources
+			||  (key == null && player == ANY_PLAYER   && RESOURCE != u.getPlayer()) // All units and players
+			||  (key == null && player == MY_PLAYER    && evaluatedPlayer == u.getPlayer()) // Any unit of the my player		
+			||  (key == null && player == ENEMY_PLAYER && RESOURCE != u.getPlayer() && evaluatedPlayer == ((u.getPlayer()+1)%2)) // Any unit of the enemy player		
+		    ||  (u.getType().name.equals(key) && player == ANY_PLAYER) // Specific unit of either player
+			||  (u.getType().name.equals(key) && player == MY_PLAYER    && evaluatedPlayer == u.getPlayer()) // Specific unit of my player
+		    ||  (u.getType().name.equals(key) && player == ENEMY_PLAYER && RESOURCE != u.getPlayer() && evaluatedPlayer == ((u.getPlayer()+1)%2)) // Specific unit of enemy player
 		    ){ 
 				return (evaluatedPlayer == u.getPlayer() ? 1 : -1) * scoreForUnit(u);
 			} 			
@@ -80,4 +80,7 @@ public class AllOfPlayerTypeSubstrate extends MicroRTSSubstrateInputs{
 		return 0; // 0 if it makes it here
 	}
 
+	public String toString() {
+		return this.getClass().getSimpleName() + ":" + typesAndPlayers;
+	}
 }

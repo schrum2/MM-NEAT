@@ -13,7 +13,6 @@ public class AllOfPlayerTypeOnGradientSubstrate extends AllOfPlayerTypeSubstrate
 	
 	public AllOfPlayerTypeOnGradientSubstrate(ArrayList<Pair<String, Integer>> typesAndPlayers, boolean trackEnemyBuildings) {
 		super(typesAndPlayers);
-		// Opposite of evaluatedPlayer?
 		gradientSubstrate = new BaseGradientSubstrate(trackEnemyBuildings);
 	}
 	

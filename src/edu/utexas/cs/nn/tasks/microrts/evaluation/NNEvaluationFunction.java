@@ -2,6 +2,8 @@ package edu.utexas.cs.nn.tasks.microrts.evaluation;
 
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.networks.Network;
+import edu.utexas.cs.nn.parameters.Parameters;
+import edu.utexas.cs.nn.util.MiscUtil;
 import micro.ai.evaluation.EvaluationFunction;
 import micro.rts.GameState;
 import micro.rts.PhysicalGameState;
@@ -65,10 +67,19 @@ public abstract class NNEvaluationFunction<T extends Network> extends Evaluation
 		double[] inputs1 = gameStateToArray(gs, maxplayer);
 		double[] outputs1 = nn.process(inputs1);
 		float score1 = (float) outputs1[0];
+		
+//		if(Parameters.parameters.booleanParameter("stepByStep")){
+//			MiscUtil.waitForReadStringAndEnterKeyPress();
+//		}
+		
 		// Score from min perspective
 		double[] inputs2 = gameStateToArray(gs, minplayer);
 		double[] outputs2 = nn.process(inputs2);
 		float score2 = (float) outputs2[0];
+
+//		if(Parameters.parameters.booleanParameter("stepByStep")){
+//			MiscUtil.waitForReadStringAndEnterKeyPress();
+//		}
 		
 		return score1 - score2;
 	}
