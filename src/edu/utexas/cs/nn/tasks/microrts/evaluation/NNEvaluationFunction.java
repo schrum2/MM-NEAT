@@ -1,9 +1,8 @@
 package edu.utexas.cs.nn.tasks.microrts.evaluation;
 
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
+import edu.utexas.cs.nn.networks.ActivationFunctions;
 import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.util.MiscUtil;
 import micro.ai.evaluation.EvaluationFunction;
 import micro.rts.GameState;
 import micro.rts.PhysicalGameState;
@@ -18,7 +17,7 @@ public abstract class NNEvaluationFunction<T extends Network> extends Evaluation
 
 	protected Network nn;
 	protected PhysicalGameState pgs;
-	protected boolean coevolution;
+	protected boolean coevolution; // Is this used anywhere?
 	
 	private int howManyEvals = 0;
 	
@@ -81,7 +80,8 @@ public abstract class NNEvaluationFunction<T extends Network> extends Evaluation
 //			MiscUtil.waitForReadStringAndEnterKeyPress();
 //		}
 		
-		return score1 - score2;
+		// tanh squashes result to ]-1,1[ range
+		return (float) ActivationFunctions.tanh(score1 - score2);
 	}
 	
 	/**

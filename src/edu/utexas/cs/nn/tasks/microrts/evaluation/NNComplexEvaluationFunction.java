@@ -25,18 +25,20 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 	private ArrayList<MicroRTSSubstrateInputs> inputSubstrates;
 	
 	//Indexes within areSubsActive
-	private final int mobile = 0;
-	private final int buildings = 1;
-	private final int myMobile = 2;
-	private final int myBuildings = 3;
-	private final int oppsMobile = 4;
-	private final int oppsBuildings = 5;
-	private final int myAll = 6;
-	private final int oppsAll = 7;
-	private final int all = 8;
-	private final int neutral = 9;
-	private final int terrain = 10;
-	private final int path = 11;
+	private final int MOBILE = 0;
+	private final int BUILDINGS = 1;
+	private final int MY_MOBILE = 2;
+	private final int MY_BUILDINGS = 3;
+	private final int ENEMY_MOBILE = 4;
+	private final int ENEMY_BUILDINGS = 5;
+	private final int MY_ALL = 6;
+	private final int ENEMY_ALL = 7;
+	private final int ALL = 8;
+	private final int RESOURCES = 9;
+	private final int TERRAIN = 10;
+	private final int ENEMY_BUILDING_GRADIENT = 11;
+	private final int SQRT3_MOBILE = 12;
+	private final int MY_GRADIENT_MOBILE = 13;
 
 	private boolean[] areSubsActive = new boolean[]{
 			Parameters.parameters.booleanParameter("mRTSMobileUnits"),
@@ -48,9 +50,11 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 			Parameters.parameters.booleanParameter("mRTSMyAll"),
 			Parameters.parameters.booleanParameter("mRTSOpponentsAll"),
 			Parameters.parameters.booleanParameter("mRTSAll"), //the only one that is true by default
-			Parameters.parameters.booleanParameter("mRTSNeutral"), //terrain and resources
+			Parameters.parameters.booleanParameter("mRTSResources"), //resources
 			Parameters.parameters.booleanParameter("mRTSTerrain"),
 			Parameters.parameters.booleanParameter("mRTSObjectivePath"),
+			Parameters.parameters.booleanParameter("mRTSAllSqrt3MobileUnits"),
+			Parameters.parameters.booleanParameter("mRTSMyBuildingGradientMobileUnits"),
 	};
 
 	/**
@@ -74,7 +78,7 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 		MicroRTSSubstrateInputs currentSubstrate = null;
 		for(int i = 0; i < numSubstrates; i++){ //for each active substrate:
 			switch(activeSubs.get(i)){
-			case mobile: 
+			case MOBILE: 
 				criteria = new ArrayList<Pair<String, Integer>>();
 				criteria.add(new Pair<String, Integer>("Worker",AllOfPlayerTypeSubstrate.ANY_PLAYER));
 				criteria.add(new Pair<String, Integer>("Light",AllOfPlayerTypeSubstrate.ANY_PLAYER));
@@ -82,13 +86,13 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 				criteria.add(new Pair<String, Integer>("Ranged",AllOfPlayerTypeSubstrate.ANY_PLAYER));
 				currentSubstrate = new AllOfPlayerTypeSubstrate(criteria);
 				break;
-			case buildings: 
+			case BUILDINGS: 
 				criteria = new ArrayList<Pair<String, Integer>>();
 				criteria.add(new Pair<String, Integer>("Base", AllOfPlayerTypeSubstrate.ANY_PLAYER));
 				criteria.add(new Pair<String, Integer>("Barracks", AllOfPlayerTypeSubstrate.ANY_PLAYER));
 				currentSubstrate = new AllOfPlayerTypeSubstrate(criteria);
 				break;
-			case myMobile:
+			case MY_MOBILE:
 				criteria = new ArrayList<Pair<String, Integer>>();
 				criteria.add(new Pair<String, Integer>("Worker",AllOfPlayerTypeSubstrate.MY_PLAYER));
 				criteria.add(new Pair<String, Integer>("Light",AllOfPlayerTypeSubstrate.MY_PLAYER));
@@ -96,13 +100,13 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 				criteria.add(new Pair<String, Integer>("Ranged",AllOfPlayerTypeSubstrate.MY_PLAYER));
 				currentSubstrate = new AllOfPlayerTypeSubstrate(criteria);
 				break;
-			case myBuildings:
+			case MY_BUILDINGS:
 				criteria = new ArrayList<Pair<String, Integer>>();
 				criteria.add(new Pair<String, Integer>("Base", AllOfPlayerTypeSubstrate.MY_PLAYER));
 				criteria.add(new Pair<String, Integer>("Barracks", AllOfPlayerTypeSubstrate.MY_PLAYER));
 				currentSubstrate = new AllOfPlayerTypeSubstrate(criteria);
 				break;
-			case oppsMobile:
+			case ENEMY_MOBILE:
 				criteria = new ArrayList<Pair<String, Integer>>();
 				criteria.add(new Pair<String, Integer>("Worker",AllOfPlayerTypeSubstrate.ENEMY_PLAYER));
 				criteria.add(new Pair<String, Integer>("Light",AllOfPlayerTypeSubstrate.ENEMY_PLAYER));
@@ -110,37 +114,53 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 				criteria.add(new Pair<String, Integer>("Ranged",AllOfPlayerTypeSubstrate.ENEMY_PLAYER));
 				currentSubstrate = new AllOfPlayerTypeSubstrate(criteria);
 				break;
-			case oppsBuildings:
+			case ENEMY_BUILDINGS:
 				criteria = new ArrayList<Pair<String, Integer>>();
 				criteria.add(new Pair<String, Integer>("Base", AllOfPlayerTypeSubstrate.ENEMY_PLAYER));
 				criteria.add(new Pair<String, Integer>("Barracks", AllOfPlayerTypeSubstrate.ENEMY_PLAYER));
 				currentSubstrate = new AllOfPlayerTypeSubstrate(criteria);
 				break;
-			case myAll:
+			case MY_ALL:
 				criteria = new ArrayList<Pair<String, Integer>>();
 				criteria.add(new Pair<String, Integer>(null, AllOfPlayerTypeSubstrate.MY_PLAYER));
 				currentSubstrate = new AllOfPlayerTypeSubstrate(criteria);
 				break;
-			case oppsAll:
+			case ENEMY_ALL:
 				criteria = new ArrayList<Pair<String, Integer>>();
 				criteria.add(new Pair<String, Integer>(null, AllOfPlayerTypeSubstrate.ENEMY_PLAYER));
 				currentSubstrate = new AllOfPlayerTypeSubstrate(criteria);
 				break;
-			case all:
+			case ALL:
 				criteria = new ArrayList<Pair<String, Integer>>();
 				criteria.add(new Pair<String, Integer>(null, AllOfPlayerTypeSubstrate.ANY_PLAYER));
 				currentSubstrate = new AllOfPlayerTypeSubstrate(criteria);
 				break;
-			case neutral:
+			case RESOURCES:
 				criteria = new ArrayList<Pair<String, Integer>>();
 				criteria.add(new Pair<String, Integer>(null, AllOfPlayerTypeSubstrate.RESOURCE));
-				currentSubstrate = new AllOfPlayerTypeSubstrate(criteria, true);
+				currentSubstrate = new AllOfPlayerTypeSubstrate(criteria);
 				break;
-			case terrain:
+			case TERRAIN:
 				criteria = new ArrayList<Pair<String, Integer>>(); //empty
 				currentSubstrate = new AllOfPlayerTypeSubstrate(criteria, true);
-			case path: 
+			case ENEMY_BUILDING_GRADIENT: 
 				currentSubstrate = new BaseGradientSubstrate(true); // gradient to enemy base
+				break;
+			case SQRT3_MOBILE:
+				criteria = new ArrayList<Pair<String, Integer>>();
+				criteria.add(new Pair<String, Integer>("Worker",AllOfPlayerTypeSubstrate.ANY_PLAYER));
+				criteria.add(new Pair<String, Integer>("Light",AllOfPlayerTypeSubstrate.ANY_PLAYER));
+				criteria.add(new Pair<String, Integer>("Heavy",AllOfPlayerTypeSubstrate.ANY_PLAYER));
+				criteria.add(new Pair<String, Integer>("Ranged",AllOfPlayerTypeSubstrate.ANY_PLAYER));
+				currentSubstrate = new AllOfPlayerTypeSqrt3Substrate(criteria);
+				break;
+			case MY_GRADIENT_MOBILE:
+				criteria = new ArrayList<Pair<String, Integer>>();
+				criteria.add(new Pair<String, Integer>("Worker",AllOfPlayerTypeSubstrate.MY_PLAYER));
+				criteria.add(new Pair<String, Integer>("Light",AllOfPlayerTypeSubstrate.MY_PLAYER));
+				criteria.add(new Pair<String, Integer>("Heavy",AllOfPlayerTypeSubstrate.MY_PLAYER));
+				criteria.add(new Pair<String, Integer>("Ranged",AllOfPlayerTypeSubstrate.MY_PLAYER));
+				currentSubstrate = new AllOfPlayerTypeOnGradientSubstrate(criteria, true);
 				break;
 			default: 
 				throw new UnsupportedOperationException("unrecognized substrate id: " + activeSubs.get(i));
