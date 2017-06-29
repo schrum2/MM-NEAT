@@ -36,7 +36,7 @@ public class StaticOtherOpponentFitness<T extends BoardGameState> implements Boa
 			System.exit(1);
 		}
 		matches = Parameters.parameters.integerParameter("boardGameStaticOpponentRuns");
-		fitFunctions.add(new SimpleWinLoseDrawBoardGameFitness<T>());
+		fitFunctions.add(new WinPercentageBoardGameFitness<T>());
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -100,7 +100,7 @@ public class StaticOtherOpponentFitness<T extends BoardGameState> implements Boa
 
 	@Override
 	public double getMinScore() {
-		return -2; // Uses the SimpleWinLoseDraw Fitness Function
+		return -2; // Uses the Win Percentage Board Game Fitness Function
 	}
 
 }
