@@ -40,9 +40,8 @@ public class AllOfPlayerTypeSubstrate extends MicroRTSSubstrateInputs{
 				Unit u = pgs.getUnitAt(j, i);
 				if(u != null){
 					inputs[j][i] = valueInSub(u, evaluatedPlayer);
-					if(terrain && pgs.getTerrain(j, i) == PhysicalGameState.TERRAIN_WALL){
-						inputs[j][i] = 1;
-					}
+				} else if(terrain && pgs.getTerrain(j, i) == PhysicalGameState.TERRAIN_WALL){
+					inputs[j][i] = 1;
 				}
 			}
 		}

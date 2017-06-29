@@ -148,6 +148,7 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 			case TERRAIN:
 				criteria = new ArrayList<Pair<String, Integer>>(); //empty
 				currentSubstrate = new AllOfPlayerTypeSubstrate(criteria, true);
+				break;
 			case ENEMY_BUILDING_GRADIENT: 
 				currentSubstrate = new BaseGradientSubstrate(true); // gradient to enemy base
 				break;
@@ -170,7 +171,7 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 			default: 
 				throw new UnsupportedOperationException("unrecognized substrate id: " + activeSubs.get(i));
 			} //end switch		
-			System.out.println("Add " + currentSubstrate + " substrate");
+			System.out.println("Add " + currentSubstrate + " substrate"); //dont delete
 			// Add substrate to list of substrates
 			inputSubstrates.add(currentSubstrate);
 		}

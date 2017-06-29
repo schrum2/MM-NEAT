@@ -324,7 +324,6 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 	}
 	@Override
 	public void setHarvestingEfficiency(int hei, int player) {
-		//		System.out.println("setHarvestingEfficiency " + hei + "," + player + " current: "+harvestingEfficiencyIndex);
 		if(player == 1) harvestingEfficiencyIndex = hei;
 		else throw new IllegalArgumentException("MicroRTSTask is not equipped to record results for > 1 player");
 	}
