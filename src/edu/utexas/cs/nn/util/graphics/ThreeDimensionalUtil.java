@@ -205,7 +205,7 @@ public class ThreeDimensionalUtil {
 	public static Pair<List<Vertex>,List<Color>> getVertexesFromCPPN(Network cppn, int imageWidth, int imageHeight, int cubeSize, int shapeWidth, int shapeHeight, int shapeDepth, double[] inputMultipliers, Color color, double time) {
 		List<Vertex> centers = new ArrayList<>();
 		List<Color> colors = new ArrayList<>();
-		
+		double halfCube = (cubeSize/2.0);
 		for(int x = 0; x < shapeWidth; x++) {
 			for(int y = 0; y < shapeHeight; y++) {
 				for(int z = 0; z < shapeDepth; z++) {
@@ -216,13 +216,13 @@ public class ThreeDimensionalUtil {
 					}	
 					double[] output = cppn.process(inputs);
 					if(output[0] > 0.1) {
-						double actualX = -(cubeSize*shapeWidth/2.0) + (cubeSize/2.0) + x*cubeSize;
-						double actualY = -(cubeSize*shapeHeight/2.0) + (cubeSize/2.0) + y*cubeSize;
-						double actualZ = -(cubeSize*shapeDepth/2.0) + (cubeSize/2.0) + z*cubeSize; 
+						double actualX = -(cubeSize*shapeWidth/2.0) + halfCube + x*cubeSize;
+						double actualY = -(cubeSize*shapeHeight/2.0) + halfCube + y*cubeSize;
+						double actualZ = -(cubeSize*shapeDepth/2.0) + halfCube + z*cubeSize; 
 						if(output.length > ThreeDimensionalObjectBreederTask.CPPN_NUM_OUTPUTS) { //if 3DAnimationBreeder
-							actualX += output[THREE_DIMENSIONAL_X_DISPLACEMENT_INDEX];
-							actualY += output[THREE_DIMENSIONAL_Y_DISPLACEMENT_INDEX];
-							actualZ += output[THREE_DIMENSIONAL_Z_DISPLACEMENT_INDEX];
+							actualX += output[THREE_DIMENSIONAL_X_DISPLACEMENT_INDEX]*halfCube;
+							actualY += output[THREE_DIMENSIONAL_Y_DISPLACEMENT_INDEX]*halfCube;
+							actualZ += output[THREE_DIMENSIONAL_Z_DISPLACEMENT_INDEX]*halfCube;
 						}
 						centers.add(new Vertex(actualX, actualY, actualZ));
 						if(color == null) {
