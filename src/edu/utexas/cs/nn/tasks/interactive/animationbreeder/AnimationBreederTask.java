@@ -311,7 +311,7 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		System.out.println("image " + filename + "was saved successfully");
+		System.out.println("image " + filename + " was saved successfully");
 	}
 
 	@Override

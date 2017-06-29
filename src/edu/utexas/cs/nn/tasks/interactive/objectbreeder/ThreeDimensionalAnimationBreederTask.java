@@ -23,7 +23,7 @@ import edu.utexas.cs.nn.util.graphics.AnimationUtil;
 public class ThreeDimensionalAnimationBreederTask<T extends Network> extends AnimationBreederTask<T> {
 	
 	public static final int CPPN_NUM_INPUTS = 6;
-	public static final int CPPN_NUM_OUTPUTS = 4;
+	public static final int CPPN_NUM_OUTPUTS = 7;
 	
 	public static final Color[] COLORS = new Color[]{ Color.RED, Color.GREEN, Color.BLUE, Color.GRAY, Color.YELLOW, Color.ORANGE, Color.PINK, Color.BLACK };
 	
@@ -138,7 +138,7 @@ public class ThreeDimensionalAnimationBreederTask<T extends Network> extends Ani
 
 	@Override
 	public String[] outputLabels() {
-		return new String[] { "cube present", "hue", "saturation", "brightness" };
+		return new String[] { "cube present", "hue", "saturation", "brightness", "X-displacement", "Y-displacement", "Z-Coordinate" };
 	}
 
 	@Override

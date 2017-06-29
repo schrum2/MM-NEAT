@@ -23,6 +23,9 @@ public class ThreeDimensionalUtil {
 	public static final int THREE_DIMENSIONAL_HUE_INDEX = 1;
 	public static final int THREE_DIMENSIONAL_SATURATION_INDEX = 2;
 	public static final int THREE_DIMENSIONAL_BRIGHTNESS_INDEX = 3;
+	public static final int THREE_DIMENSIONAL_X_DISPLACEMENT_INDEX = 4;
+	public static final int THREE_DIMENSIONAL_Y_DISPLACEMENT_INDEX = 5;
+	public static final int THREE_DIMENSIONAL_Z_DISPLACEMENT_INDEX = 6;
 	
 	public static final double SHADE_CONSTANT = 2.4;
 
@@ -212,9 +215,9 @@ public class ThreeDimensionalUtil {
 					}	
 					double[] output = cppn.process(inputs);
 					if(output[0] > 0.1) {
-						double actualX = -(cubeSize*shapeWidth/2.0) + (cubeSize/2.0) + x*cubeSize;
-						double actualY = -(cubeSize*shapeHeight/2.0) + (cubeSize/2.0) + y*cubeSize;
-						double actualZ = -(cubeSize*shapeDepth/2.0) + (cubeSize/2.0) + z*cubeSize;
+						double actualX = -(cubeSize*shapeWidth/2.0) + (cubeSize/2.0) + x*cubeSize + output[THREE_DIMENSIONAL_X_DISPLACEMENT_INDEX];
+						double actualY = -(cubeSize*shapeHeight/2.0) + (cubeSize/2.0) + y*cubeSize + output[THREE_DIMENSIONAL_Y_DISPLACEMENT_INDEX];
+						double actualZ = -(cubeSize*shapeDepth/2.0) + (cubeSize/2.0) + z*cubeSize + output[THREE_DIMENSIONAL_Z_DISPLACEMENT_INDEX];
 						centers.add(new Vertex(actualX, actualY, actualZ));
 						if(color == null) {
 							float[] hsb = GraphicsUtil.rangeRestrictHSB(new double[]{output[THREE_DIMENSIONAL_HUE_INDEX],output[THREE_DIMENSIONAL_SATURATION_INDEX],output[THREE_DIMENSIONAL_BRIGHTNESS_INDEX]});
