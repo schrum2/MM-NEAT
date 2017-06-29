@@ -154,7 +154,7 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 		heading.add(headingLabel);
 		heading.add(headingValue);
 
-		if(!simplifiedInteractiveInterface && !alwaysAnimate) {
+		if(!Parameters.parameters.booleanParameter("simplifiedInteractiveInterface") && !alwaysAnimate) {
 			top.add(pitch);
 			top.add(heading);
 		}

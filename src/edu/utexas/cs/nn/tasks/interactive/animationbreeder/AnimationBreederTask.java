@@ -247,7 +247,7 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 		framePause.add(framePauseLabel);
 		framePause.add(pauseLengthBetweenFrames);
 
-		if(!simplifiedInteractiveInterface) {
+		if(!Parameters.parameters.booleanParameter("simplifiedInteractiveInterface")) {
 			top.add(framePause);
 		}
 

@@ -137,7 +137,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 
 	public LinkedList<Integer> selectedCPPNs;
 
-	public boolean simplifiedInteractiveInterface = false;
+	//public boolean simplifiedInteractiveInterface = false;
 
 	/**
 	 * Default Constructor
@@ -367,7 +367,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		squareWave.setForeground(CombinatoricUtilities.colorFromInt(ActivationFunctions.FTYPE_SQUAREWAVE));
 
 
-		if(!simplifiedInteractiveInterface) {
+		if(!Parameters.parameters.booleanParameter("simplifiedInteractiveInterface")) {
 			//add additional action buttons
 			//top.add(lineageButton);
 			top.add(resetButton);
@@ -377,7 +377,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		top.add(evolveButton);
 		top.add(saveButton);
 
-		if(!simplifiedInteractiveInterface) {
+		if(!Parameters.parameters.booleanParameter("simplifiedInteractiveInterface")) {
 			top.add(networkButton);
 			top.add(undoButton);
 		}
@@ -385,7 +385,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		//top.add(closeButton);
 		top.add(mutationsPerGeneration);	
 
-		if(!simplifiedInteractiveInterface) {
+		if(!Parameters.parameters.booleanParameter("simplifiedInteractiveInterface")) {
 			//add activation function checkboxes
 			bottom.add(halfLinear);
 			bottom.add(absVal);
@@ -436,7 +436,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 			inputEffect.setName("" + (CHECKBOX_IDENTIFIER_START - i));
 			inputEffect.addActionListener(this);
 			inputEffect.setForeground(new Color(0,0,0));
-			if(!simplifiedInteractiveInterface) {
+			if(!Parameters.parameters.booleanParameter("simplifiedInteractiveInterface")) {
 				top.add(inputEffect);
 			}		
 		}
@@ -884,7 +884,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 				new File(dir).mkdir(); // Make the save directory
 				for(int i = 0; i < scores.size(); i++) {
 					if(chosen[i]) {
-						String fullName = dir + "/item" + MMNEAT.ea.currentGeneration() + "_" + i + "_" + scores.get(i).individual.getId();
+						String fullName = dir + "/itemGen" + MMNEAT.ea.currentGeneration() + "_Index" + i + "_ID" + scores.get(i).individual.getId();
 						save(fullName,i);
 					}
 				}

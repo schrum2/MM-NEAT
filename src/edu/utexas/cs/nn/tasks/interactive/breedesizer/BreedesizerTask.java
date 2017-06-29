@@ -173,7 +173,7 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 			MIDIPlaybackType.addActionListener(this);
 			MIDIPlaybackType.setForeground(new Color(0,0,0));
 
-			if(!simplifiedInteractiveInterface) {	
+			if(!Parameters.parameters.booleanParameter("simplifiedInteractiveInterface")) {	
 				top.add(fileLoadButton);
 				top.add(MIDIPlaybackType);
 			}

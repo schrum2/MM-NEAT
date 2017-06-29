@@ -126,7 +126,7 @@ public class ThreeDimensionalAnimationBreederTask<T extends Network> extends Ani
 		pitchAndHeading.add(pitch);
 		pitchAndHeading.add(heading);
 
-		if(!simplifiedInteractiveInterface) {
+		if(!Parameters.parameters.booleanParameter("simplifiedInteractiveInterface")) {
 			top.add(pitchAndHeading);
 		}
 	}
