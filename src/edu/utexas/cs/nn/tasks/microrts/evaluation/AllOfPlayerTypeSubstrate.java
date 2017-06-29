@@ -10,7 +10,7 @@ import micro.rts.units.Unit;
 public class AllOfPlayerTypeSubstrate extends MicroRTSSubstrateInputs{
 
 	private boolean terrain;
-	private ArrayList<Pair<String, Integer>> typesAndPlayers;
+	private ArrayList<Pair<String, Integer>> typesAndPlayersAllowed;
 	final static int ANY_PLAYER = -2;
 	
 	/**
@@ -19,12 +19,12 @@ public class AllOfPlayerTypeSubstrate extends MicroRTSSubstrateInputs{
 	 * 				description of all the categories of units that are allowed into the substrate
 	 */
 	public AllOfPlayerTypeSubstrate(ArrayList<Pair<String, Integer>> typesAndPlayers){
-		this.typesAndPlayers = typesAndPlayers;
+		this.typesAndPlayersAllowed = typesAndPlayers;
 		terrain = false;
 	}
 	
 	public AllOfPlayerTypeSubstrate(ArrayList<Pair<String, Integer>> typesAndPlayers, boolean terrain){
-		this.typesAndPlayers = typesAndPlayers;
+		this.typesAndPlayersAllowed = typesAndPlayers;
 		this.terrain = terrain;
 	}
 
@@ -47,28 +47,37 @@ public class AllOfPlayerTypeSubstrate extends MicroRTSSubstrateInputs{
 		return inputs;
 	}
 
+	/**
+	 * decides whether a given unit should be in the substrate
+	 * 
+	 * @param u
+	 * 		unit to be valued (precondition: u isnt null) 
+	 * @return
+	 * 		value of unit in sub (can be 0 if it doesnt fit criteria)
+	 */
 	private double valueInSub(Unit u) {
-		double value = 0;
+		double valueIfMatch = 1.0;
+		boolean matchKey = false;
+		boolean matchPlayer = false;
 		String key;
 		int player;
-		for(Pair<String, Integer> criteria : typesAndPlayers){
+		for(Pair<String, Integer> criteria : typesAndPlayersAllowed){
 			key = criteria.t1;
 			player = criteria.t2;
-			if(key != null && !u.getType().name.equals("key")) //doesnt fit key directly
-				if (key.equals("mobile") && !u.getType().canMove){ //if contradicts special key: mobile
-					return value;
-				} else if (key.equals("immobile") && u.getType().canMove){ //if contradicts special key: immobile
-					return value;
-				} //else unit fits key; does it fit player?
-			if(player == ANY_PLAYER && u.getPlayer() != -1){
-				value = u.getPlayer() == player ? 1 : -1;
-				return value;
+			if(key == null || (((u.getType().name.equals(key) || (u.getType().canMove && key.equals("mobile")) || (!u.getType().canMove && key.equals("immobile")))))){
+				matchKey = true;
 			}
-			else if(u.getPlayer() != player){
-				return value;
+			if(matchKey && (player == u.getPlayer() || player == ANY_PLAYER)){ //only checks player if it passes the name criteria
+				matchPlayer = true;
+				if(player == ANY_PLAYER && u.getPlayer() == 1){
+					valueIfMatch = -1;
+				}
 			}
-		}
-		return value; // 0 if it makes it here
+			if(matchKey && matchPlayer)
+				return valueIfMatch;
+		} //end for
+		//didnt match any of the criteria
+		return 0;
 	}
 
 }
