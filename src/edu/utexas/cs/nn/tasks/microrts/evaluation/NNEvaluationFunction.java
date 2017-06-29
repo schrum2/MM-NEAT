@@ -1,6 +1,7 @@
 package edu.utexas.cs.nn.tasks.microrts.evaluation;
 
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
+import edu.utexas.cs.nn.networks.ActivationFunctions;
 import edu.utexas.cs.nn.networks.Network;
 import micro.ai.evaluation.EvaluationFunction;
 import micro.rts.GameState;
@@ -16,7 +17,7 @@ public abstract class NNEvaluationFunction<T extends Network> extends Evaluation
 
 	protected Network nn;
 	protected PhysicalGameState pgs;
-	protected boolean coevolution;
+	protected boolean coevolution; // Is this used anywhere?
 	
 	private int howManyEvals = 0;
 	
@@ -31,7 +32,7 @@ public abstract class NNEvaluationFunction<T extends Network> extends Evaluation
 	/**
 	 *  creates the array to be given to the NN
 	 */
-	protected abstract double[] gameStateToArray(GameState gs);
+	protected abstract double[] gameStateToArray(GameState gs, int playerToEvaluate);
 	
 	/**
 	 * 
@@ -60,10 +61,27 @@ public abstract class NNEvaluationFunction<T extends Network> extends Evaluation
 	@Override
 	public float evaluate(int maxplayer, int minplayer, GameState gs) {
 		howManyEvals++;
-		double[] inputs = gameStateToArray(gs);
-		double[] outputs = nn.process(inputs);
-		float score = (float) outputs[0];
-		return score;
+		
+		// Score from max perspective
+		double[] inputs1 = gameStateToArray(gs, maxplayer);
+		double[] outputs1 = nn.process(inputs1);
+		float score1 = (float) outputs1[0];
+		
+//		if(Parameters.parameters.booleanParameter("stepByStep")){
+//			MiscUtil.waitForReadStringAndEnterKeyPress();
+//		}
+		
+		// Score from min perspective
+		double[] inputs2 = gameStateToArray(gs, minplayer);
+		double[] outputs2 = nn.process(inputs2);
+		float score2 = (float) outputs2[0];
+
+//		if(Parameters.parameters.booleanParameter("stepByStep")){
+//			MiscUtil.waitForReadStringAndEnterKeyPress();
+//		}
+		
+		// tanh squashes result to ]-1,1[ range
+		return (float) ActivationFunctions.tanh(score1 - score2);
 	}
 	
 	/**

@@ -32,7 +32,7 @@ public class Pair<X, Y> {
 	 */
 	@Override
 	public String toString() {
-		return "(" + t1.toString() + "," + t2.toString() + ")";
+		return "(" + t1 + "," + t2 + ")";
 	}
 
 	/**

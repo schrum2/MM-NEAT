@@ -70,6 +70,7 @@ public class GVGAISinglePlayerTask<T extends Network> extends NoisyLonerTask<T> 
 		// TODO: Find a better way to set the Network for all possible Players?
 		GVGAIOneStepNNPlayer.network = individual.getPhenotype(); // Cannot construct a Player because GVGAI constructs players with Strings
 		GVGAITreeSearchNNPlayer.network = individual.getPhenotype(); // Cannot construct a Player because GVGAI constructs players with Strings
+		GVGAIReactiveNNPlayer.network = individual.getPhenotype();  // Cannot construct a Player because GVGAI constructs players with Strings
 		
 		String agentNames = Parameters.parameters.stringParameter("gvgaiPlayer");
 		

@@ -15,12 +15,12 @@ import edu.utexas.cs.nn.util.random.RandomNumbers;
 
 public class HallOfFame<T> {
 	
-	public Set<Pair<Integer, List<Genotype<T>>>> hall;
-	private int pastGens;
-	private int numChamps;
+	private Set<Pair<Integer, List<Genotype<T>>>> hall; // Stores the Champions
+	private int pastGens; // How many Generations in the past to select from
+	private int numChamps; // How many Champions to fight against
 	
-	private int currentGen = -1;
-	private List<Genotype<T>> champs;
+	private int currentGen = -1; // Current Generation being evolved
+	private List<Genotype<T>> champs; // Used for storing Champions to fight against
 	
 	public HallOfFame(){
 		hall = new HashSet<Pair<Integer, List<Genotype<T>>>>();
@@ -78,10 +78,24 @@ public class HallOfFame<T> {
 	 * Adds a given List of Champions into the Hall Of Fame
 	 * 
 	 * @param generation Generation of the Champions being put in the Hall Of Fame
-	 * @param champs List of Genotypes from the Champions being saved
+	 * @param newChamps List of Genotypes from the Champions being saved
 	 */
-	public void addChampions(int generation, List<Genotype<T>> champs){
-		hall.add(new Pair<Integer, List<Genotype<T>>>(generation, champs));
+	@SuppressWarnings("unchecked")
+	public void addChampions(int generation, List<Genotype<T>> newChamps){
+		if(Parameters.parameters.booleanParameter("hallOfFamePareto")){
+			SinglePopulationCoevolutionTask<T> match = (SinglePopulationCoevolutionTask<T>) MMNEAT.task;
+			
+			ArrayList<Genotype<T>> genes = new ArrayList<Genotype<T>>();
+			genes.addAll(newChamps);
+			genes.addAll(getAllChamps());
+			
+			// TODO: Set up a way to do multiple matches
+			Pair<double[], double[]> scores = match.evaluateGroup(genes).get(0);
+			
+			// TODO: Get Scores here and add Champs appropriately
+		}else{
+			hall.add(new Pair<Integer, List<Genotype<T>>>(generation, newChamps));
+		}
 	}
 	
 	/**

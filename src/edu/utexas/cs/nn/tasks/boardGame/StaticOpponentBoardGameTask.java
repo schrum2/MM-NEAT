@@ -11,6 +11,7 @@ import boardGame.featureExtractor.BoardGameFeatureExtractor;
 import boardGame.fitnessFunction.BoardGameFitnessFunction;
 import boardGame.fitnessFunction.CheckersAdvancedFitness;
 import boardGame.fitnessFunction.SimpleWinLoseDrawBoardGameFitness;
+import boardGame.fitnessFunction.WinPercentageBoardGameFitness;
 import boardGame.heuristics.NNBoardGameHeuristic;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
@@ -63,6 +64,7 @@ public class StaticOpponentBoardGameTask<T extends Network, S extends BoardGameS
 		
 		// Add Fitness Functions here to keep track of Other Scores
 		otherScores.add(new SimpleWinLoseDrawBoardGameFitness<S>());
+		otherScores.add(new WinPercentageBoardGameFitness<S>());
 		for(BoardGameFitnessFunction<S> fit : otherScores){
 			MMNEAT.registerFitnessFunction(fit.getFitnessName(), false);
 		}

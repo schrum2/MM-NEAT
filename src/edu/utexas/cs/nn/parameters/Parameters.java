@@ -319,9 +319,11 @@ public class Parameters {
 		integerOptions.add("defaultPitch", 36, "Default pitch value for 3DObjectbreeder vertical rotation");
 		integerOptions.add("defaultHeading", 36, "Default heading value for 3DObjectbreeder horizaontal rotation");
 		integerOptions.add("microRTSInputSize", 1, "x by x cells in the game that are condensed into a single input");
+		integerOptions.add("boardGameStaticOpponentRuns", 1, "Number of Board Game matches to play against the Static Opponent Fitness Function");
 		integerOptions.add("hallOfFamePastGens", 10, "Number of Generations in the past to use for the Hall Of Fame");
 		integerOptions.add("hallOfFameNumChamps", 10, "Number of Champions from the Hall Of Fame to play against");
 		integerOptions.add("gvgaiLevel", 0, "GVGAI level to be played; must be 0 - 4");
+		integerOptions.add("gvgaiReactField", 5, "Size of the square to be evaluated by the GVGAI Reactive Player; must be an odd number");
 		// Long parameters
 		longOptions.add("lastInnovation", 0l, "Highest innovation number used so far");
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
@@ -623,9 +625,11 @@ public class Parameters {
 		booleanOptions.add("mRTSMyAll", false, "whether there is a substrate dedicated to all of the blue agents' units");
 		booleanOptions.add("mRTSOpponentsAll", false, "whether there is a substrate dedicated to all of the red agents' units");
 		booleanOptions.add("mRTSAll", true, "whether there is a substrate with everything in it");
-		booleanOptions.add("mRTSNeutral", false, "whether there is a substrate with all resources and terrain in it");
+		booleanOptions.add("mRTSResources", false, "whether there is a substrate with all resources in it");
 		booleanOptions.add("mRTSTerrain", false, "whether there is a substrate with just un-crossable terrain in it");
 		booleanOptions.add("mRTSObjectivePath", false, "whether there is a substrate with enemy bases and a gradient leading to them");
+		booleanOptions.add("mRTSAllSqrt3MobileUnits", false, "whether there is a substrate with mobile units scored using the simple sqrt 3 evaluation function scoring");
+		booleanOptions.add("mRTSMyBuildingGradientMobileUnits", false, "whether there is a substrate with my mobile units scored using the gradient to the enemy buildings");
 		booleanOptions.add("heuristicOverrideTerminalStates", false, "Overrides the Network's evaluation of a terminal BoardGameState");
 		booleanOptions.add("microRTSGrowingEnemySet", false, "adds multiple enemies to a trial instead of cycling through them by generation");
 		booleanOptions.add("hybrID", false, "Indicates whether HybrID is running or not");
@@ -634,6 +638,7 @@ public class Parameters {
 		booleanOptions.add("hallOfFameSingleRandomChamp", true, "Only selects a single Random Champion from the Hall Of Fame");
 		booleanOptions.add("hallOfFameXRandomChamps", false, "Selects a specified number of Random Champs from the Hall Of Fame; uses the hallOfFameNumChamps Parameter");
 		booleanOptions.add("hallOfFameYPastGens", false, "Selects Hall Of Fame Champions from a specified number of Generations in the past; uses the hallOfFamePastGens Parameter");
+		booleanOptions.add("hallOfFamePareto", false, "Removes Hall Of Fame Champions that are Pareto Dominated");
 		booleanOptions.add("boardGameSimpleFitness", true, "Enables the SimpleWinLoseDraw BoardGame Fitness Function to be used as a Selection Function");
 		booleanOptions.add("boardGameCheckersFitness", false, "Enables the CheckersAdvanced BoardGame Fitness Function to be used as a Selection Function");
 		booleanOptions.add("alwaysAnimate", true, "Loads and plays all animations in AnimationBreeder and 3DObjectBreeder at once");
@@ -752,7 +757,7 @@ public class Parameters {
 		stringOptions.add("pinballConfig", "pinball_simple_single.cfg", "Configuration file for the PinballTask");
 		stringOptions.add("map", "8x8/basesWorkers8x8.xml", "filepath from maps folder to desired map file for MicroRTSTask");
 		stringOptions.add("remixWAVFile", SoundUtilExamples.PORTAL2_WAV, "Input WAV file to be remixed in Remixbreeder");
-		stringOptions.add("remixMIDIFile", SoundUtilExamples.CHRISTMAS_MID, "Input MIDI file to be played with CPPN in Breedesizer");
+		stringOptions.add("remixMIDIFile", SoundUtilExamples.FUR_ELISE_MID, "Input MIDI file to be played with CPPN in Breedesizer");
 		stringOptions.add("gvgaiGame", "zelda", "GVGAI Game to be played");
 		stringOptions.add("gvgaiPlayer", "edu.utexas.cs.nn.tasks.gvgai.GVGAIOneStepNNPlayer", "GVGAI Player to be used");
 		// Class options

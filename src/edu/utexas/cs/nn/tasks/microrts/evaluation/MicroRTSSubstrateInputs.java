@@ -19,10 +19,12 @@ abstract class MicroRTSSubstrateInputs {
 	 * 
 	 * @param gs
 	 * 			gameState containing the information to make the substrate
+	 * @param evaluatedPlayer
+	 * 			index of player currently being evaluated
 	 * @return
 	 * 			substrate reflecting the game state
 	 */
-	abstract double[][] getInputs(GameState gs);
+	abstract double[][] getInputs(GameState gs, int evaluatedPlayer);
 	
 	/**
 	 * for debugging

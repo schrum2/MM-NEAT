@@ -316,7 +316,7 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 	 */
 	public static void main(String[] args) {
 		try {
-			MMNEAT.main(new String[]{"runNumber:5","randomSeed:5","trials:1","mu:16","maxGens:500","io:false","netio:false","mating:true", "fs:true", "task:edu.utexas.cs.nn.tasks.interactive.breedesizer.BreedesizerTask","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3","cleanFrequency:-1","recurrency:false","ea:edu.utexas.cs.nn.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:2000","imageHeight:2000","imageSize:200"});
+			MMNEAT.main(new String[]{"runNumber:5","randomSeed:5","trials:1","mu:16","maxGens:500","io:false","netio:false","mating:true", "fs:false", "task:edu.utexas.cs.nn.tasks.interactive.breedesizer.BreedesizerTask","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3","cleanFrequency:-1","recurrency:false","ea:edu.utexas.cs.nn.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:2000","imageHeight:2000","imageSize:200"});
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}

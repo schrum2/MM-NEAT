@@ -11,6 +11,8 @@ import boardGame.agents.HeuristicBoardGamePlayer;
 import boardGame.heuristics.BoardGameHeuristic;
 import boardGame.heuristics.NNBoardGameHeuristic;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
+import edu.utexas.cs.nn.parameters.Parameters;
+import edu.utexas.cs.nn.tasks.NoisyLonerTask;
 import edu.utexas.cs.nn.tasks.boardGame.BoardGameUtil;
 import edu.utexas.cs.nn.util.ClassCreation;
 import edu.utexas.cs.nn.util.datastructures.Pair;
@@ -18,8 +20,8 @@ import edu.utexas.cs.nn.util.datastructures.Pair;
 public class StaticOtherOpponentFitness<T extends BoardGameState> implements BoardGameFitnessFunction<T> {
 	
 	BoardGamePlayer<T> opponent;
-	BoardGameFitnessFunction<T> selectionFunction;
 	int currentGen = -1;
+	int matches;
 	List<BoardGameFitnessFunction<T>> fitFunctions = new ArrayList<BoardGameFitnessFunction<T>>();
 	
 	Map<Long, Double> evaluated = new HashMap<Long, Double>();
@@ -28,14 +30,13 @@ public class StaticOtherOpponentFitness<T extends BoardGameState> implements Boa
 	public StaticOtherOpponentFitness(){
 		try {
 			opponent = (BoardGamePlayer<T>) ClassCreation.createObject("boardGameOpponent");
-			selectionFunction = new SimpleWinLoseDrawBoardGameFitness<T>();
 		} catch (NoSuchMethodException e) {
 			e.printStackTrace();
 			System.out.println("BoardGame instance could not be loaded");
 			System.exit(1);
 		}
-		
-		fitFunctions.add(selectionFunction);
+		matches = Parameters.parameters.integerParameter("boardGameStaticOpponentRuns");
+		fitFunctions.add(new WinPercentageBoardGameFitness<T>());
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -61,12 +62,19 @@ public class StaticOtherOpponentFitness<T extends BoardGameState> implements Boa
 		}else{
 			BoardGamePlayer<T>[] players = new BoardGamePlayer[]{player, opponent};
 			
-			ArrayList<Pair<double[], double[]>> game = BoardGameUtil.playGame(MMNEAT.boardGame, players, fitFunctions, new ArrayList<BoardGameFitnessFunction<T>>()); // No Other Scores
-			Double score = game.get(0).t1[0];
+			double[][] fitness = new double[matches][];
+			double[][] other = new double[matches][];
 			
-			evaluated.put(genotypeID, score);
+			for(int i = 0; i < matches; i++){
+				ArrayList<Pair<double[], double[]>> game = BoardGameUtil.playGame(MMNEAT.boardGame, players, fitFunctions, new ArrayList<BoardGameFitnessFunction<T>>()); // No Other Scores
+				fitness[i] = game.get(0).t1;
+				other[i] = game.get(0).t2;
+			}
 			
-			return score;
+			Pair<double[], double[]> score = NoisyLonerTask.averageResults(fitness, other);
+			evaluated.put(genotypeID, score.t1[0]); // Only uses one Fitness Function right now
+			
+			return score.t1[0];
 		}
 	}
 
@@ -92,7 +100,7 @@ public class StaticOtherOpponentFitness<T extends BoardGameState> implements Boa
 
 	@Override
 	public double getMinScore() {
-		return -2; // Uses the SimpleWinLoseDraw Fitness Function
+		return -2; // Uses the Win Percentage Board Game Fitness Function
 	}
 
 }
