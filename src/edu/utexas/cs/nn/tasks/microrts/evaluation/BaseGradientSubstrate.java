@@ -25,7 +25,7 @@ public class BaseGradientSubstrate extends MicroRTSSubstrateInputs{
 	@Override
 	public double[][] getInputs(GameState gs, int playerToEvaluate) {
 		PhysicalGameState pgs = gs.getPhysicalGameState();
-		baseGradientDiscountRate = (pgs.getWidth() / (double)(pgs.getWidth()+2)); //12: .85
+		baseGradientDiscountRate = Math.pow(10, (Math.log10(LOWEST_ALLOWED_BRIGHTNESS)/(pgs.getWidth()+pgs.getHeight())));
 		int previousNumBuildings = numBuildings[playerToEvaluate];
 		numBuildings[playerToEvaluate] = 0;
 		for(int i = 0; i < pgs.getHeight(); i++){
