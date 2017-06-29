@@ -51,9 +51,9 @@ public class HallOfFame<T> {
 			
 			if(Parameters.parameters.booleanParameter("hallOfFameSingleRandomChamp")){
 				champs = getSingleRandomChamp();
-			}else if(Parameters.parameters.booleanParameter("hallOfFameXRandomChamps")){
+			}else if(Parameters.parameters.booleanParameter("hallOfFameXrandChamps")){
 				if(Parameters.parameters.booleanParameter("hallOfFameYPastGens")){
-					genes.addAll(getXRandomPastYGenChamps());
+					genes.addAll(getXRandomomPastYGenChamps());
 				}else{
 					champs = getXRandomChamps();
 				}
@@ -111,15 +111,15 @@ public class HallOfFame<T> {
 	 * @return List containing the Genotype from a single Random Champion in the Hall of Fame
 	 */
 	public List<Genotype<T>> getSingleRandomChamp(){
-		List<Genotype<T>> possChamp = new ArrayList<Genotype<T>>();
+		List<Genotype<T>> champions = new ArrayList<Genotype<T>>();
 		
 		// Adds all Lists of Genotypes from the Hall
 		for(Triple<Integer, Genotype<T>, Score<T>> tr : hall){
-			possChamp.add(tr.t2);
+			champions.add(tr.t2);
 		}
 		
 		List<Genotype<T>> singleChamp = new ArrayList<Genotype<T>>();
-		singleChamp.add(RandomNumbers.randomElement(possChamp));
+		singleChamp.add(RandomNumbers.randomElement(champions));
 		
 		return singleChamp;
 	}
@@ -130,14 +130,14 @@ public class HallOfFame<T> {
 	 * @return List of the Genotypes from the Champions from the previous Generation
 	 */
 	public List<Genotype<T>> getPreviousChamps(){
-		List<Genotype<T>> possChamp = new ArrayList<Genotype<T>>();
+		List<Genotype<T>> champions = new ArrayList<Genotype<T>>();
 		
 		// Adds the List of Genotypes from the previous generation
 		for(Triple<Integer, Genotype<T>, Score<T>> tr : hall){
-			if(tr.t1 == MMNEAT.ea.currentGeneration()-1) possChamp.add(tr.t2);
+			if(tr.t1 == MMNEAT.ea.currentGeneration()-1) champions.add(tr.t2);
 		}
 		
-		return possChamp;
+		return champions;
 	}
 	
 	/**
@@ -146,14 +146,14 @@ public class HallOfFame<T> {
 	 * @return List of the Genotypes from all Champions in the Hall Of Fame
 	 */
 	public List<Genotype<T>> getAllChamps(){
-		List<Genotype<T>> possChamp = new ArrayList<Genotype<T>>();
+		List<Genotype<T>> champions = new ArrayList<Genotype<T>>();
 		
 		// Adds all Lists of Genotypes from the Hall
 		for(Triple<Integer, Genotype<T>, Score<T>> tr : hall){
-			possChamp.add(tr.t2);
+			champions.add(tr.t2);
 		}
 		
-		return possChamp;
+		return champions;
 	}
 	
 	/**
@@ -176,25 +176,23 @@ public class HallOfFame<T> {
 	 * @return List of Genotypes from the Champions from the past X Generations
 	 */
 	public List<Genotype<T>> getPastYGenChamps(int numGens){
-		List<Genotype<T>> possChamp = new ArrayList<Genotype<T>>();
+		List<Genotype<T>> champions = new ArrayList<Genotype<T>>();
 		
 		// Adds the List of Genotypes from the previous X generations
 		for(Triple<Integer, Genotype<T>, Score<T>> tr : hall){
-			if(tr.t1 >= (MMNEAT.ea.currentGeneration()-numGens)) possChamp.add(tr.t2);
+			if(tr.t1 >= (MMNEAT.ea.currentGeneration()-numGens)) champions.add(tr.t2);
 		}
 		
-		return possChamp;
+		return champions;
 	}
 	
 	/**
 	 * Default getXRandomChamps;
 	 * 
 	 * Returns a List of Random Champions with a size of X,
-	 * where X is the Parameter hallOfFameNumChamps;
+	 * where X is the Parameter hallOfFameNumChamps
 	 * 
-	 * Currently allows for duplicates
-	 * 
-	 * @return
+	 * @return List of Genotypes from the Random Champions
 	 */
 	public List<Genotype<T>> getXRandomChamps(){
 		return getXRandomChamps(numChamps);
@@ -202,40 +200,43 @@ public class HallOfFame<T> {
 	
 	/**
 	 * Returns a List of Random Champions with a size of X,
-	 * where X is specified by the User;
-	 * currently allows for duplicates
+	 * where X is specified by the User
 	 * 
 	 * @param numChamps Number of Random Champions to return
 	 * @return List of Genotypes from the Random Champions
 	 */
 	public List<Genotype<T>> getXRandomChamps(int numChamps){
-		List<Genotype<T>> possChamp = new ArrayList<Genotype<T>>();
+		List<Genotype<T>> champions = new ArrayList<Genotype<T>>();
 		
 		// Adds all Lists of Genotypes from the Hall
 		for(Triple<Integer, Genotype<T>, Score<T>> tr : hall){
-			possChamp.add(tr.t2);
+			champions.add(tr.t2);
 		}
 		
-		List<Genotype<T>> randomChamps = new ArrayList<Genotype<T>>();
-		
-		for(int i = 0; i < numChamps; i++){
-			randomChamps.add(RandomNumbers.randomElement(possChamp));
+		// Only runs if there are more possible Champions than are required
+		if(champions.size() > numChamps){
+			Set<Genotype<T>> randChamps = new HashSet<Genotype<T>>();
+
+			while(randChamps.size() < numChamps){
+				randChamps.add(RandomNumbers.randomElement(champions));
+			}
+
+			champions.clear();
+			champions.addAll(randChamps);
 		}
 		
-		return randomChamps;
+		return champions;
 	}
 	
 	/**
-	 * Default getXRandomPastYChamps;
+	 * Default getXRandomPastYGenChamps;
 	 * 
 	 * Returns a List of Random Champions from the past X Generations with a size of Y,
-	 * where X and Y are the Parameters hallOfFamePastGens and hallOfFameNumChamps;
-	 * 
-	 * Currently allows for duplicates
+	 * where X and Y are the Parameters hallOfFamePastGens and hallOfFameNumChamps
 	 * 
 	 * @return List of Genotypes from the Random Champions
 	 */
-	public List<Genotype<T>> getXRandomPastYGenChamps(){
+	public List<Genotype<T>> getXRandomomPastYGenChamps(){
 		return getXRandomPastYGenChamps(pastGens, numChamps);
 	}
 	
@@ -243,27 +244,31 @@ public class HallOfFame<T> {
 	 * Returns a List of Random Champions from the past X Generations with a size of Y,
 	 * where X and Y are specified by the User;
 	 * 
-	 * Currently allows for duplicates
-	 * 
 	 * @param numGens Number of Generations in the past to get Champions from
 	 * @param numChamps Number of Random Champions to return
 	 * @return List of Genotypes from the Random Champions
 	 */
 	public List<Genotype<T>> getXRandomPastYGenChamps(int numGens, int numChamps){
-		List<Genotype<T>> possChamp = new ArrayList<Genotype<T>>();
+		List<Genotype<T>> champions = new ArrayList<Genotype<T>>();
 		
 		// Adds the List of Genotypes from the previous X generations
 		for(Triple<Integer, Genotype<T>, Score<T>> tr : hall){
-			if(tr.t1 >= (MMNEAT.ea.currentGeneration() - numGens)) possChamp.add(tr.t2);
+			if(tr.t1 >= (MMNEAT.ea.currentGeneration() - numGens)) champions.add(tr.t2);
 		}
 		
-		List<Genotype<T>> randomChamps = new ArrayList<Genotype<T>>();
-		
-		for(int i = 0; i < numChamps; i++){
-			randomChamps.add(RandomNumbers.randomElement(possChamp));
+		// Only runs if there are more possible Champions than are required
+		if(champions.size() > numChamps){
+			Set<Genotype<T>> randChamps = new HashSet<Genotype<T>>();
+			
+			while(randChamps.size() < numChamps){
+				randChamps.add(RandomNumbers.randomElement(champions));
+			}
+
+			champions.clear();
+			champions.addAll(randChamps);
 		}
-		
-		return randomChamps;
+
+		return champions;
 	}
 	
 }
