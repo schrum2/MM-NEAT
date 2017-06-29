@@ -8,14 +8,16 @@ import java.util.Set;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.parameters.Parameters;
+import edu.utexas.cs.nn.scores.Score;
 import edu.utexas.cs.nn.tasks.NoisyLonerTask;
 import edu.utexas.cs.nn.tasks.SinglePopulationCoevolutionTask;
 import edu.utexas.cs.nn.util.datastructures.Pair;
+import edu.utexas.cs.nn.util.datastructures.Triple;
 import edu.utexas.cs.nn.util.random.RandomNumbers;
 
 public class HallOfFame<T> {
 	
-	private Set<Pair<Integer, List<Genotype<T>>>> hall; // Stores the Champions
+	private Set<Triple<Integer, Genotype<T>, Score<T>>> hall; // Stores the Champions
 	private int pastGens; // How many Generations in the past to select from
 	private int numChamps; // How many Champions to fight against
 	
@@ -23,7 +25,7 @@ public class HallOfFame<T> {
 	private List<Genotype<T>> champs; // Used for storing Champions to fight against
 	
 	public HallOfFame(){
-		hall = new HashSet<Pair<Integer, List<Genotype<T>>>>();
+		hall = new HashSet<Triple<Integer, Genotype<T>, Score<T>>>();
 		pastGens = Parameters.parameters.integerParameter("hallOfFamePastGens");
 		numChamps = Parameters.parameters.integerParameter("hallOfFameNumChamps");
 		champs = new ArrayList<Genotype<T>>();
@@ -43,7 +45,7 @@ public class HallOfFame<T> {
 		ArrayList<Genotype<T>> genes = new ArrayList<Genotype<T>>();
 		genes.add(challenger);
 		
-		// Changes the Hall of Fame Challenger list once a Generation; champs stay the same otherwise
+		// Changes the Hall of Fame Challenger list once a Generation; Champions stay the same otherwise
 		if(currentGen != MMNEAT.ea.currentGeneration()){
 			currentGen = MMNEAT.ea.currentGeneration();
 			
@@ -80,21 +82,26 @@ public class HallOfFame<T> {
 	 * @param generation Generation of the Champions being put in the Hall Of Fame
 	 * @param newChamps List of Genotypes from the Champions being saved
 	 */
-	@SuppressWarnings("unchecked")
-	public void addChampions(int generation, List<Genotype<T>> newChamps){
+	public void addChampions(int generation, List<Pair<Genotype<T>, Score<T>>> newChamps){
 		if(Parameters.parameters.booleanParameter("hallOfFamePareto")){
-			SinglePopulationCoevolutionTask<T> match = (SinglePopulationCoevolutionTask<T>) MMNEAT.task;
 			
-			ArrayList<Genotype<T>> genes = new ArrayList<Genotype<T>>();
-			genes.addAll(newChamps);
-			genes.addAll(getAllChamps());
+			// Cycles through every Champion currently in the Hall Of Fame
+			for(Triple<Integer, Genotype<T>, Score<T>> tr : hall){
+				// Cycles through all the new Champions
+				for(Pair<Genotype<T>, Score<T>> champ : newChamps){
+					if(champ.t2.isAtLeastAsGood(tr.t3)) hall.remove(tr); // Removes the old Champion if the new Champion is better
+					if(tr.t3.isBetter(champ.t2)) newChamps.remove(champ); // Removes the new Champion if the old Champion is better
+				}
+			}
 			
-			// TODO: Set up a way to do multiple matches
-			Pair<double[], double[]> scores = match.evaluateGroup(genes).get(0);
-			
-			// TODO: Get Scores here and add Champs appropriately
+			// Adds the new surviving Champions to the Hall Of Fame
+			for(Pair<Genotype<T>, Score<T>> champion : newChamps){
+				hall.add(new Triple<Integer, Genotype<T>, Score<T>>(generation, champion.t1, champion.t2));
+			}
 		}else{
-			hall.add(new Pair<Integer, List<Genotype<T>>>(generation, newChamps));
+			for(Pair<Genotype<T>, Score<T>> champion : newChamps){
+				hall.add(new Triple<Integer, Genotype<T>, Score<T>>(generation, champion.t1, champion.t2));
+			}
 		}
 	}
 	
@@ -107,8 +114,8 @@ public class HallOfFame<T> {
 		List<Genotype<T>> possChamp = new ArrayList<Genotype<T>>();
 		
 		// Adds all Lists of Genotypes from the Hall
-		for(Pair<Integer, List<Genotype<T>>> p : hall){
-			possChamp.addAll(p.t2);
+		for(Triple<Integer, Genotype<T>, Score<T>> tr : hall){
+			possChamp.add(tr.t2);
 		}
 		
 		List<Genotype<T>> singleChamp = new ArrayList<Genotype<T>>();
@@ -126,8 +133,8 @@ public class HallOfFame<T> {
 		List<Genotype<T>> possChamp = new ArrayList<Genotype<T>>();
 		
 		// Adds the List of Genotypes from the previous generation
-		for(Pair<Integer, List<Genotype<T>>> p : hall){
-			if(p.t1 == MMNEAT.ea.currentGeneration()-1) possChamp.addAll(p.t2);
+		for(Triple<Integer, Genotype<T>, Score<T>> tr : hall){
+			if(tr.t1 == MMNEAT.ea.currentGeneration()-1) possChamp.add(tr.t2);
 		}
 		
 		return possChamp;
@@ -142,8 +149,8 @@ public class HallOfFame<T> {
 		List<Genotype<T>> possChamp = new ArrayList<Genotype<T>>();
 		
 		// Adds all Lists of Genotypes from the Hall
-		for(Pair<Integer, List<Genotype<T>>> p : hall){
-			possChamp.addAll(p.t2);
+		for(Triple<Integer, Genotype<T>, Score<T>> tr : hall){
+			possChamp.add(tr.t2);
 		}
 		
 		return possChamp;
@@ -172,8 +179,8 @@ public class HallOfFame<T> {
 		List<Genotype<T>> possChamp = new ArrayList<Genotype<T>>();
 		
 		// Adds the List of Genotypes from the previous X generations
-		for(Pair<Integer, List<Genotype<T>>> p : hall){
-			if(p.t1 >= (MMNEAT.ea.currentGeneration()-numGens)) possChamp.addAll(p.t2);
+		for(Triple<Integer, Genotype<T>, Score<T>> tr : hall){
+			if(tr.t1 >= (MMNEAT.ea.currentGeneration()-numGens)) possChamp.add(tr.t2);
 		}
 		
 		return possChamp;
@@ -205,8 +212,8 @@ public class HallOfFame<T> {
 		List<Genotype<T>> possChamp = new ArrayList<Genotype<T>>();
 		
 		// Adds all Lists of Genotypes from the Hall
-		for(Pair<Integer, List<Genotype<T>>> p : hall){
-			possChamp.addAll(p.t2);
+		for(Triple<Integer, Genotype<T>, Score<T>> tr : hall){
+			possChamp.add(tr.t2);
 		}
 		
 		List<Genotype<T>> randomChamps = new ArrayList<Genotype<T>>();
@@ -246,8 +253,8 @@ public class HallOfFame<T> {
 		List<Genotype<T>> possChamp = new ArrayList<Genotype<T>>();
 		
 		// Adds the List of Genotypes from the previous X generations
-		for(Pair<Integer, List<Genotype<T>>> p : hall){
-			if(p.t1 >= (MMNEAT.ea.currentGeneration() - numGens)) possChamp.addAll(p.t2);
+		for(Triple<Integer, Genotype<T>, Score<T>> tr : hall){
+			if(tr.t1 >= (MMNEAT.ea.currentGeneration() - numGens)) possChamp.add(tr.t2);
 		}
 		
 		List<Genotype<T>> randomChamps = new ArrayList<Genotype<T>>();

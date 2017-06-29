@@ -159,9 +159,9 @@ public abstract class SinglePopulationCoevolutionTask<T> implements SinglePopula
 		}
 		
 		if(MMNEAT.hallOfFame != null){
-			List<Genotype<T>> champs = new ArrayList<Genotype<T>>();
-			for(Genotype<T> gene : bestGenotypes){
-				champs.add(gene);
+			List<Pair<Genotype<T>, Score<T>>> champs = new ArrayList<Pair<Genotype<T>, Score<T>>>();
+			for(int i = 0; i < bestObjectives.length; i++){
+				champs.add(new Pair<Genotype<T>, Score<T>>(bestGenotypes[i], bestScores[i]));
 			}
 			MMNEAT.hallOfFame.addChampions(MMNEAT.ea.currentGeneration(), champs);
 		}
