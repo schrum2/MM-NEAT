@@ -3,7 +3,6 @@ package edu.utexas.cs.nn.tasks.gvgai;
 import java.util.LinkedList;
 import java.util.List;
 
-import boardGame.TwoDimensionalBoardGame;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.networks.Network;
