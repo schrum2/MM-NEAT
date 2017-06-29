@@ -205,7 +205,9 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 
 			//Add all panels to interface
 			top.add(animation);
-			top.add(pause);
+			if(!Parameters.parameters.booleanParameter("simplifiedInteractiveInterface")) {
+				top.add(pause);
+			}	
 		}
 
 		//Construction of JSlider for desired length of pause between each frame within an animation
@@ -247,9 +249,7 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 		framePause.add(framePauseLabel);
 		framePause.add(pauseLengthBetweenFrames);
 
-		if(!Parameters.parameters.booleanParameter("simplifiedInteractiveInterface")) {
-			top.add(framePause);
-		}
+		top.add(framePause);
 
 		if(!alwaysAnimate) {
 			//Enables MouseListener so that animation on a button will play when mouse is hovering over it
