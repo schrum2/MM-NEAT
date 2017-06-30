@@ -13,7 +13,11 @@ public class AllOfPlayerTypeSqrt3Substrate extends AllOfPlayerTypeSubstrate {
 	}
 	
 	protected double scoreForUnit(Unit u) {
-		return (u.getResources() * SimpleSqrtEvaluationFunction3.RESOURCE_IN_WORKER) + (SimpleSqrtEvaluationFunction3.UNIT_BONUS_MULTIPLIER * u.getCost()*Math.sqrt( u.getHitPoints()/u.getMaxHitPoints() ));
+		System.out.println("# " + u.getHitPoints()+ " " + u.getMaxHitPoints() + (double)Math.sqrt((double)u.getHitPoints()/(double)u.getMaxHitPoints() ));
+		double d = (u.getResources() * SimpleSqrtEvaluationFunction3.RESOURCE_IN_WORKER) + 
+				(SimpleSqrtEvaluationFunction3.UNIT_BONUS_MULTIPLIER * u.getCost()*Math.sqrt(u.getHitPoints()/(double)u.getMaxHitPoints()));
+		System.out.println("assigning value to " + u.getType().name + " : " + d);
+		return d; 
 	}
 
 }
