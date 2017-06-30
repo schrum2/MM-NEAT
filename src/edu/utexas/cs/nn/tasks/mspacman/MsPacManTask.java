@@ -601,10 +601,7 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 	 */
 	public List<Substrate> getSubstrateInformationFromScratch() {
 		
-		int numInputSubstrates = 0;
-		numInputSubstrates += 2; // One for regular pills, and one for power pills
-		numInputSubstrates += Parameters.parameters.booleanParameter("pacmanBothThreatAndEdibleSubstrate") ? 2 : 1; // 2 or 1 substrate for ghosts
-		numInputSubstrates += 1; // A substrate for Ms. Pac-Man's location
+		int numInputSubstrates = getNumInputSubstrates();
 		
 		List<Triple<String,Integer,Integer>> output = new LinkedList<>();
 		if(Parameters.parameters.booleanParameter("pacManFullScreenOutput")) {
@@ -649,31 +646,24 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 		return substrateInformation;
 	}
 
+	private int getNumInputSubstrates() {
+		int numInputSubstrates = 0;
+		numInputSubstrates += 2; // One for regular pills, and one for power pills
+		numInputSubstrates += Parameters.parameters.booleanParameter("pacmanBothThreatAndEdibleSubstrate") ? 2 : 1; // 2 or 1 substrate for ghosts
+		numInputSubstrates += 1; // A substrate for Ms. Pac-Man's location
+		return numInputSubstrates;
+	}
+
 	@Override
 	public List<Triple<String, String, Boolean>> getSubstrateConnectivity() {
 		if(connections == null) {
-			connections = new ArrayList<Triple<String, String, Boolean>>();
-			connections.add(new Triple<String, String, Boolean>("Pills", "P_0", Boolean.FALSE));
-			connections.add(new Triple<String, String, Boolean>("PowerPills", "P_0", Boolean.FALSE));
-			if(Parameters.parameters.booleanParameter("pacmanBothThreatAndEdibleSubstrate")) {
-				connections.add(new Triple<String, String, Boolean>("Threat", "P_0", Boolean.FALSE));
-				connections.add(new Triple<String, String, Boolean>("Edible", "P_0", Boolean.FALSE));
-			} else {
-				connections.add(new Triple<String, String, Boolean>("Ghosts", "P_0", Boolean.FALSE));
+			List<String> outputNames = new LinkedList<>();
+			if(Parameters.parameters.booleanParameter("pacManFullScreenOutput")) {
+				outputNames.add("DesiredLocation");
+			}else {
+				outputNames.add("Direction");
 			}
-			connections.add(new Triple<String, String, Boolean>("MsPacMan", "P_0", Boolean.FALSE));
-			connections.add(new Triple<String, String, Boolean>("P_0", "O_0", Boolean.FALSE));
-			if(Parameters.parameters.booleanParameter("extraHNLinks")) {
-				connections.add(new Triple<String, String, Boolean>("Pills", "O_0", Boolean.FALSE));
-				connections.add(new Triple<String, String, Boolean>("PowerPills", "O_0", Boolean.FALSE));
-				if(Parameters.parameters.booleanParameter("pacmanBothThreatAndEdibleSubstrate")) {
-					connections.add(new Triple<String, String, Boolean>("Threat", "O_0", Boolean.FALSE));
-					connections.add(new Triple<String, String, Boolean>("Edible", "O_0", Boolean.FALSE));
-				} else {
-					connections.add(new Triple<String, String, Boolean>("Ghosts", "O_0", Boolean.FALSE));
-				}	
-				connections.add(new Triple<String, String, Boolean>("MsPacMan", "O_0", Boolean.FALSE));
-			}
+			connections = HyperNEATUtil.getSubstrateConnectivity(getNumInputSubstrates(), outputNames);				
 		}
 		return connections;
 	}
