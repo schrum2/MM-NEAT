@@ -31,7 +31,6 @@ import edu.utexas.cs.nn.util.graphics.AnimationUtil;
 public class ThreeDimensionalAnimationBreederTask<T extends Network> extends AnimationBreederTask<T> {
 	
 	public static final int CPPN_NUM_INPUTS = 6;
-	public static final int CPPN_NUM_OUTPUTS = 7;
 	
 	// list of color options for constructed object
 	public static final Color[] COLORS = new Color[]{ Color.RED, Color.GREEN, Color.BLUE, Color.GRAY, Color.YELLOW, Color.ORANGE, Color.PINK, Color.BLACK };
@@ -147,7 +146,9 @@ public class ThreeDimensionalAnimationBreederTask<T extends Network> extends Ani
 
 	@Override
 	public String[] outputLabels() {
-		return new String[] { "cube present", "hue", "saturation", "brightness", "X-displacement", "Y-displacement", "Z-Coordinate" };
+		return (Parameters.parameters.booleanParameter("allowCubeDisplacement") ? 
+				new String[] { "cube present", "hue", "saturation", "brightness", "X-displacement", "Y-displacement", "Z-Coordinate" } :
+				new String[] { "cube present", "hue", "saturation", "brightness"});
 	}
 
 	@Override
@@ -162,7 +163,7 @@ public class ThreeDimensionalAnimationBreederTask<T extends Network> extends Ani
 
 	@Override
 	public int numCPPNOutputs() {
-		return CPPN_NUM_OUTPUTS;
+		return (Parameters.parameters.booleanParameter("allowCubeDisplacement") ? 7 : 4);
 	}
 	
 	@Override
@@ -182,7 +183,7 @@ public class ThreeDimensionalAnimationBreederTask<T extends Network> extends Ani
 	 */
 	public static void main(String[] args) {
 		try {
-			MMNEAT.main(new String[]{"runNumber:5","randomSeed:5","trials:1","mu:16","maxGens:500","io:false","netio:false","mating:true", "fs:false", "task:edu.utexas.cs.nn.tasks.interactive.objectbreeder.ThreeDimensionalAnimationBreederTask","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3","cleanFrequency:-1","recurrency:false","ea:edu.utexas.cs.nn.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:500","imageHeight:500","imageSize:200","defaultFramePause:50"});
+			MMNEAT.main(new String[]{"runNumber:5","randomSeed:5","trials:1","mu:16","allowCubeDisplacement:false","maxGens:500","io:false","netio:false","mating:true", "fs:false", "task:edu.utexas.cs.nn.tasks.interactive.objectbreeder.ThreeDimensionalAnimationBreederTask","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3","cleanFrequency:-1","recurrency:false","ea:edu.utexas.cs.nn.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:500","imageHeight:500","imageSize:200","defaultFramePause:50"});
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}

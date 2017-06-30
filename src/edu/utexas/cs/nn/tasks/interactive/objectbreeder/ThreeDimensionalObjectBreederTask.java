@@ -50,7 +50,7 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 	public Color color = null;
 
 	public static final int CPPN_NUM_INPUTS = 5;
-	public static final int CPPN_NUM_OUTPUTS = 4;
+	public static final int CPPN_NUM_OUTPUTS = 4; //minimum number of outputs
 
 	public static final Color[] COLORS = new Color[]{ Color.RED, Color.GREEN, Color.BLUE, Color.GRAY, Color.YELLOW, Color.ORANGE, Color.PINK, Color.BLACK };
 	
@@ -308,7 +308,7 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 
 	@Override
 	public int numCPPNOutputs() {
-		return CPPN_NUM_OUTPUTS;
+		return (Parameters.parameters.booleanParameter("allowCubeDisplacement") ? 7 : 4);
 	}
 
 	@Override
@@ -332,7 +332,7 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 	 */
 	public static void main(String[] args) {
 		try {
-			MMNEAT.main(new String[]{"runNumber:5","randomSeed:5","trials:1","mu:16","maxGens:500","io:false","netio:false","mating:true", "fs:false", "task:edu.utexas.cs.nn.tasks.interactive.objectbreeder.ThreeDimensionalObjectBreederTask","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3","cleanFrequency:-1","recurrency:false","ea:edu.utexas.cs.nn.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:500","imageHeight:500","imageSize:200","defaultFramePause:50"});
+			MMNEAT.main(new String[]{"runNumber:5","randomSeed:5","trials:1","mu:16","maxGens:500","io:false","netio:false","mating:true", "allowCubeDisplacement:true", "fs:false", "task:edu.utexas.cs.nn.tasks.interactive.objectbreeder.ThreeDimensionalObjectBreederTask","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3","cleanFrequency:-1","recurrency:false","ea:edu.utexas.cs.nn.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:500","imageHeight:500","imageSize:200","defaultFramePause:50"});
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}

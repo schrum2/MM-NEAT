@@ -651,6 +651,7 @@ public class Parameters {
 		booleanOptions.add("gvgaiScore", false, "Use the GVGAI Score as a Selection Function");
 		booleanOptions.add("gvgaiTimestep", false, "Use the GVGAI Timestep as a Selection Function");
 		booleanOptions.add("simplifiedInteractiveInterface", true, "Determines how many buttons to show on the interactive evolution interfaces");
+		booleanOptions.add("allowCubeDisplacement", true, "Allows displacement of individual voxels in 3D objects and animations");
 		// Double parameters
 		doubleOptions.add("inheritProportion", 0.4, "Portion of a parent's fitness that contributes to child fitness (with inheritFitness, as in LEEA)");
 		doubleOptions.add("linkExpressionThreshold", 0.2, "Threshold for hyperNEAT output to result in an expressed link");
