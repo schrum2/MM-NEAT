@@ -20,22 +20,11 @@ import edu.utexas.cs.nn.util.MiscUtil;
 public class StaticTicTacToeWPCHeuristic<T extends TwoDimensionalBoardGameState> extends WeightedPieceCounterHeuristic<T> {
 
 
-
+	// Stupid TicTacToe Player for testing purposes
 	private static final double[][] WEIGHTS = new double[][]{{10000, 5000, 1000},
 															 {  500,  100,   50},
 															 {   10,    5,    1}};
 															 
-	/**
-	 * Weights for Othello Heuristic from:
-	 * 
-	 * Temporal Difference Learning Versus Co-Evolution for
-	 * Acquiring Othello Position Evaluation
-	 * 
-	 * (Simon M. Lucas, Thomas P. Runarsson)
-	 * 
-	 * 
-	 * http://citeseerx.ist.psu.edu/viewdoc/download;jsessionid=10AB4B0966FEE51BE133255498065C42?doi=10.1.1.580.8400&rep=rep1&type=pdf											 
-	 */
 	public StaticTicTacToeWPCHeuristic() {
 		super(WEIGHTS);
 	}

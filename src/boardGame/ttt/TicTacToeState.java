@@ -42,7 +42,7 @@ public class TicTacToeState extends TwoDimensionalBoardGameState {
 	 * @param player
 	 * @param win
 	 */
-	TicTacToeState(int[][] board, int player, List<Integer> win){
+	public TicTacToeState(int[][] board, int player, List<Integer> win){
 		super(board, NUMBER_OF_PLAYERS, player, win);
 	}
 	
