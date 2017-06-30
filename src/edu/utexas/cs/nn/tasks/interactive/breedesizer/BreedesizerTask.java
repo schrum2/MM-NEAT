@@ -113,8 +113,10 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 				}
 			}
 		});
-
-		top.add(clipLength);	
+		
+		if(!Parameters.parameters.booleanParameter("simplifiedInteractiveInterface")) {
+			top.add(clipLength);	
+		}
 
 		if(justBreedesizer) {
 			//keyboard constructor

@@ -223,11 +223,11 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 		directionPanel.add(directionChoice);
 
 		colorAndMovement.add(colorPanel);
+		colorAndMovement.add(directionPanel);
+		
 		if(!Parameters.parameters.booleanParameter("simplifiedInteractiveInterface")) {
-			colorAndMovement.add(directionPanel);
+			top.add(colorAndMovement);
 		}
-
-		top.add(colorAndMovement);
 
 	}
 

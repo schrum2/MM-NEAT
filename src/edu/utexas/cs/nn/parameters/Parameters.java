@@ -310,7 +310,7 @@ public class Parameters {
 		integerOptions.add("minPause", 10, "Minimum pause length between each iteraton of animation in AnimationBreeder");
 		integerOptions.add("defaultPause", 50, "Default pause length between each iteraton of animation in AnimationBreeder");
 		integerOptions.add("maxPause", 500, "Maximum pause length between each iteraton of animation in AnimationBreeder");
-		integerOptions.add("defaultFramePause", 10, "Default pause length between frames in AnimationBreeder");
+		integerOptions.add("defaultFramePause", 50, "Default pause length between frames in AnimationBreeder");
 		//integerOptions.add("remixSamplesPerDimension", 3, "Number of remix samples to input to Picture Remixer"); //used for alternative approach of remixing pictures
 		integerOptions.add("receptiveFieldSize", 3, "Size of input windows for convolutional structures");
 		integerOptions.add("stride", 1, "Offset between receptive fields in convolutional structures");
@@ -647,7 +647,7 @@ public class Parameters {
 		booleanOptions.add("gvgaiVictory", true, "Use the GVGAI Victory as a Selection Function");
 		booleanOptions.add("gvgaiScore", false, "Use the GVGAI Score as a Selection Function");
 		booleanOptions.add("gvgaiTimestep", false, "Use the GVGAI Timestep as a Selection Function");
-		booleanOptions.add("simplifiedInteractiveInterface", false, "Determines how many buttons to show on the interactive evolution interfaces");
+		booleanOptions.add("simplifiedInteractiveInterface", true, "Determines how many buttons to show on the interactive evolution interfaces");
 		// Double parameters
 		doubleOptions.add("inheritProportion", 0.4, "Portion of a parent's fitness that contributes to child fitness (with inheritFitness, as in LEEA)");
 		doubleOptions.add("linkExpressionThreshold", 0.2, "Threshold for hyperNEAT output to result in an expressed link");

@@ -191,8 +191,10 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 			animation.setLayout(new BoxLayout(animation, BoxLayout.Y_AXIS));
 			JLabel animationLabel = new JLabel();
 			animationLabel.setText("Animation length");
-			animation.add(animationLabel);
-			animation.add(animationLength);
+			if(!Parameters.parameters.booleanParameter("simplifiedInteractiveInterface")) {
+				animation.add(animationLabel);
+				animation.add(animationLength);
+			}
 
 			//Pause (between animations) slider
 			JPanel pause = new JPanel();
