@@ -88,6 +88,8 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 	public static final int MS_PAC_MAN_SUBSTRATE_WIDTH = MS_PAC_MAN_NODE_WIDTH/MS_PAC_MAN_NODE_DIM;
 	public static final int MS_PAC_MAN_SUBSTRATE_HEIGHT = MS_PAC_MAN_NODE_HEIGHT/MS_PAC_MAN_NODE_DIM;
 	public static final int MS_PAC_MAN_SUBSTRATE_SIZE = MS_PAC_MAN_SUBSTRATE_WIDTH * MS_PAC_MAN_SUBSTRATE_HEIGHT;
+	// Substrate index that deals with power pills
+	public static final int POWER_PILL_SUBSTRATE_INDEX = 1; 
 	public List<Substrate> subs = null; // filled below
 	public List<Triple<String, String, Boolean>> connections = null; // filled below
 	public HashMap<Integer, List<Substrate>> substratesForMaze = new HashMap<Integer, List<Substrate>>();
@@ -610,11 +612,7 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 			output.add(new Triple<>("Direction",3,3));
 		}
 		List<Substrate> substrateInformation = HyperNEATUtil.getSubstrateInformation(MS_PAC_MAN_SUBSTRATE_WIDTH, MS_PAC_MAN_SUBSTRATE_HEIGHT, numInputSubstrates, output);
-
-		//Pair<Integer, Integer> processSize = new Pair<>(10,10);
-		
 		// Will always be the second substrate: compact representation may replace full screen version
-		final int POWER_PILL_SUBSTRATE_INDEX = 1; // Move elsewhere
 		if(!Parameters.parameters.booleanParameter("pacmanFullScreenPowerInput")) {
 			Substrate originalPowerPillSubstrate = substrateInformation.get(POWER_PILL_SUBSTRATE_INDEX); // Always the second substrate
 			Substrate powerPillSubstrate = new Substrate(new Pair<Integer, Integer>(2, 2), Substrate.INPUT_SUBSTRATE, originalPowerPillSubstrate.getSubLocation(), originalPowerPillSubstrate.getName());		
@@ -663,7 +661,16 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 			}else {
 				outputNames.add("Direction");
 			}
-			connections = HyperNEATUtil.getSubstrateConnectivity(getNumInputSubstrates(), outputNames);				
+			connections = HyperNEATUtil.getSubstrateConnectivity(getNumInputSubstrates(), outputNames);			
+			// The four input power pill substrate does not contain visual information
+			if(!Parameters.parameters.booleanParameter("pacmanFullScreenPowerInput")) {
+				for(Triple<String, String, Boolean> triple : connections) { // So do not allow convolution
+					if(triple.t1.equals("Input(" + POWER_PILL_SUBSTRATE_INDEX + ")")) { // Power pill substrate
+						triple.t3 = Boolean.FALSE; // Convolution not allowed
+					}
+					
+				}
+			}
 		}
 		return connections;
 	}

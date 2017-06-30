@@ -249,7 +249,17 @@ public class MicroRTSUtility {
 	public static List<Triple<String, String, Boolean>> getSubstrateConnectivity(PhysicalGameState pgs) {
 		List<String> outputNames = new LinkedList<>();
 		outputNames.add("Utility");
-		return HyperNEATUtil.getSubstrateConnectivity(getNumInputSubstrates(), outputNames);
+		List<Triple<String, String, Boolean>> result = HyperNEATUtil.getSubstrateConnectivity(getNumInputSubstrates(), outputNames);
+		if(Parameters.parameters.booleanParameter("mRTSResourceProportion")) { // This substrate should not allow convolution
+			int index = getNumInputSubstrates() - 1;
+			for(Triple<String, String, Boolean> triple : result) {
+				if(triple.t1.equals("Input(" + index + ")")) { // This is the resource proportion substrate
+					triple.t3 = Boolean.FALSE; // Convolution not allowed
+				}
+				
+			}
+		}
+		return result;
 	}
 	
 	private static int getNumInputSubstrates() {

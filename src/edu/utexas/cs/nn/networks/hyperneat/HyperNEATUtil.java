@@ -688,8 +688,8 @@ public class HyperNEATUtil {
 				}
 				
 				if(!CommonConstants.hyperNEAT){
-					// connect bias to the bottom layer of processing substrates
-					substrateConnectivity.add(new Triple<String, String, Boolean>("bias", "process(" + k + ",0)", Boolean.TRUE));
+					// connect bias to the bottom layer of processing substrates: no convolution
+					substrateConnectivity.add(new Triple<String, String, Boolean>("bias", "process(" + k + ",0)", Boolean.FALSE));
 				}
 			}
 		}
@@ -704,7 +704,7 @@ public class HyperNEATUtil {
 
 				if(!CommonConstants.hyperNEAT){
 					// connect bias to each remaining processing substrate
-					substrateConnectivity.add(new Triple<String, String, Boolean>("bias", "process("+k+","+(i + 1)+")", Boolean.TRUE));
+					substrateConnectivity.add(new Triple<String, String, Boolean>("bias", "process("+k+","+(i + 1)+")", Boolean.FALSE));
 				}
 
 			}
