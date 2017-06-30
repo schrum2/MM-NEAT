@@ -158,7 +158,8 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 			top.add(pitch);
 			top.add(heading);
 		}
-
+		
+		// Drop down box to select color for generated object
 		String[] choices = { "Red", "Green", "Blue", "Grey","Yellow", "Orange", "Pink", "Black", "Evolved" };
 		colorChoice = new JComboBox<String>(choices);
 		colorChoice.setSelectedIndex(choices.length - 1); // default to Evolved colors
@@ -193,7 +194,8 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 		JLabel colorLabel = new JLabel();
 		colorLabel.setText("Color of Objects: ");
 
-
+		
+		// Drop down box to select direction of animated rotation
 		String[] directionChoices = { "Horizontal", "Vertical" };
 		directionChoice = new JComboBox<String>(directionChoices);
 		directionChoice.setSize(40, 40);
@@ -221,7 +223,7 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 		colorPanel.add(colorChoice);
 		directionPanel.add(directionLabel);		
 		directionPanel.add(directionChoice);
-
+		
 		colorAndMovement.add(colorPanel);
 		colorAndMovement.add(directionPanel);
 		
