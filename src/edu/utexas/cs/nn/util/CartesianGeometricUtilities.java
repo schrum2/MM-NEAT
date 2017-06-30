@@ -67,7 +67,7 @@ public class CartesianGeometricUtilities {
 	 */
 	public static double centerAndScale(double toScale, int maxDimension) {
 		if(maxDimension == 1) {
-			assert toScale == 0 : "If the dimension is 1, then you can only scale 0";
+			assert toScale == 0 : "If the dimension is 1, then you can only scale 0. maxDimension = " + maxDimension + ", toScale = " + toScale;
 			return 0;
 		}
 		return ((toScale / (maxDimension - 1)) * 2) - 1;

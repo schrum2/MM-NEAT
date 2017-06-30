@@ -12,8 +12,6 @@ import micro.rts.GameState;
  */
 public abstract class MicroRTSSubstrateInputs {
 	
-	protected int numSubstrates;
-	
 	/**
 	 * creates a 2D array to be input to a neural network.
 	 * 

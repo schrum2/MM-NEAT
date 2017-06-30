@@ -616,6 +616,7 @@ public class Parameters {
 		booleanOptions.add("hierarchicalMultitask", false, "Each multitask mode can consist of multiple preference neuron modules");
 		booleanOptions.add("trackCombiningCrossover", false, "Whether or not to track combining crossover information");
 		booleanOptions.add("moPinball", false, "Subtracts the distance to the target from the Fitness; getting closer means a higher score overall");
+		booleanOptions.add("mRTSResourceProportion", false, "whether there is a substrate with a single input for the resource count");
 		booleanOptions.add("mRTSMobileUnits", false, "whether there is a substrate dedicated to (both players') movable units");
 		booleanOptions.add("mRTSBuildings", false, "whether there is a substrate dedicated to (both players') NON-movable units");
 		booleanOptions.add("mRTSMyMobileUnits", false, "whether there is a substrate dedicated to blue agent's movable units");

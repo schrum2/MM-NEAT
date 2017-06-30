@@ -9,6 +9,7 @@ import edu.utexas.cs.nn.tasks.microrts.evaluation.substrates.AllOfPlayerTypeSqrt
 import edu.utexas.cs.nn.tasks.microrts.evaluation.substrates.AllOfPlayerTypeSubstrate;
 import edu.utexas.cs.nn.tasks.microrts.evaluation.substrates.BaseGradientSubstrate;
 import edu.utexas.cs.nn.tasks.microrts.evaluation.substrates.MicroRTSSubstrateInputs;
+import edu.utexas.cs.nn.tasks.microrts.evaluation.substrates.SimpleResourceProportionSubstrate;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import micro.rts.GameState;
 
@@ -44,6 +45,7 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 	private final int ENEMY_BUILDING_GRADIENT = 11;
 	private final int SQRT3_MOBILE = 12;
 	private final int MY_GRADIENT_MOBILE = 13;
+	private final int MY_RESOURCE_PROPORTION = 14;
 
 	private boolean[] areSubsActive = new boolean[]{
 			Parameters.parameters.booleanParameter("mRTSMobileUnits"),
@@ -60,6 +62,7 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 			Parameters.parameters.booleanParameter("mRTSObjectivePath"),
 			Parameters.parameters.booleanParameter("mRTSAllSqrt3MobileUnits"),
 			Parameters.parameters.booleanParameter("mRTSMyBuildingGradientMobileUnits"),
+			Parameters.parameters.booleanParameter("mRTSResourceProportion")
 	};
 
 	/**
@@ -168,6 +171,9 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 				criteria.add(new Pair<String, Integer>("Ranged",AllOfPlayerTypeSubstrate.MY_PLAYER));
 				currentSubstrate = new AllOfPlayerTypeOnGradientSubstrate(criteria, true);
 				break;
+			case MY_RESOURCE_PROPORTION:
+				currentSubstrate = new SimpleResourceProportionSubstrate(true);
+				break;
 			default: 
 				throw new UnsupportedOperationException("unrecognized substrate id: " + activeSubs.get(i));
 			} //end switch		
@@ -186,13 +192,22 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 	protected double[] gameStateToArray(GameState gs, int playerToEvaluate) {
 		pgs = gs.getPhysicalGameState();
 		substrateSize = pgs.getHeight()*pgs.getWidth();
-		double[] inputs = new double[substrateSize*numSubstrates];
+		int numInputs = substrateSize*numSubstrates;
+		// The SimpleResourceProportionSubstrate is unusual because its size is just 1 by 1
+		if(areSubsActive[MY_RESOURCE_PROPORTION]) {
+			numInputs = numInputs - substrateSize + 1;
+		}
+		double[] inputs = new double[numInputs];
 		for(int i = 0; i < numSubstrates; i++){ //for each active substrate:
 			double[][] twoDimensionalSubArray = inputSubstrates.get(i).getInputs(gs,playerToEvaluate);
 			assert twoDimensionalSubArray.length > 0 : "length < 0";
-			int width = pgs.getWidth();
-			for(int j = 0; j < substrateSize; j++){
-				inputs[(i*substrateSize)+j] = twoDimensionalSubArray[j%width][j/width];
+			int thisSubstrateSize = twoDimensionalSubArray.length * twoDimensionalSubArray[0].length;
+			int thisWidth = twoDimensionalSubArray.length;
+			for(int j = 0; j < thisSubstrateSize; j++){
+				// The only reason using substrateSize in the calculation below is compatible with 
+				// SimpleResourceProportionSubstrate is that SimpleResourceProportionSubstrate must be the
+				// final substrate. Otherwise, problems would emerge.
+				inputs[(i*substrateSize)+j] = twoDimensionalSubArray[j%thisWidth][j/thisWidth];
 			}
 		}
 		return inputs;
@@ -205,7 +220,12 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 	@Override
 	public String[] sensorLabels() {
 		assert pgs != null : "There must be a physical game state in order to extract height and width";
-		String[] labels = new String[pgs.getWidth()*pgs.getHeight() * numSubstrates];
+		int numInputs = pgs.getWidth()*pgs.getHeight() * numSubstrates;
+		// The SimpleResourceProportionSubstrate is unusual because its size is just 1 by 1
+		if(areSubsActive[MY_RESOURCE_PROPORTION]) {
+			numInputs = numInputs - (pgs.getWidth()*pgs.getHeight()) + 1;
+		}
+		String[] labels = new String[numInputs];
 		for(int h = 0; h < numSubstrates; h++ ){
 			for(int i = 0; i < pgs.getHeight(); i++){
 				for(int j = 0; j < pgs.getWidth(); j++){

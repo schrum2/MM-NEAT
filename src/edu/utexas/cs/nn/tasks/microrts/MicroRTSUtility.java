@@ -225,7 +225,19 @@ public class MicroRTSUtility {
 		List<Triple<String, Integer, Integer>> output = new LinkedList<>();
 		output.add(new Triple<>("Utility", 1,1));
 		int numInputSubstrates = getNumInputSubstrates();
-		return HyperNEATUtil.getSubstrateInformation(pgs.getWidth(), pgs.getHeight(), numInputSubstrates, output);
+		List<Substrate> result = HyperNEATUtil.getSubstrateInformation(pgs.getWidth(), pgs.getHeight(), numInputSubstrates, output);
+		
+		if(Parameters.parameters.booleanParameter("mRTSResourceProportion")) {
+			// SimpleResourceProportionSubstrate is at the end, and has unusual size 
+			Substrate previous = result.get(numInputSubstrates - 1);
+			result.set(numInputSubstrates - 1, new Substrate(new Pair<>(1,1), previous.getStype(), previous.getSubLocation(), previous.getName(), previous.getFtype()));
+		}
+		
+//		for(Substrate s: result) {
+//			System.out.println(s);
+//		}
+		
+		return result;
 	} 
 
 	/**
