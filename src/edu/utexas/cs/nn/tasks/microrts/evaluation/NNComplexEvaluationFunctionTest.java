@@ -36,18 +36,23 @@ public class NNComplexEvaluationFunctionTest {
 	Player blue = new Player(0, 0); //id: 0
 	Player red = new Player(1, 0); //id: 1
 	
-	Unit blueWorker = new Unit(0, utt.getUnitType("Worker"), 0, 0, 0);
+	Unit blueWorker = new Unit(0, utt.getUnitType("Worker"), 0, 0, 1);
+	Unit blueRanged = new Unit(0, utt.getUnitType("Ranged"), 2, 0, 0);
 	Unit redWorker = new Unit(1, utt.getUnitType("Worker"), 3, 0, 0);
 	Unit blueBase = new Unit(0, utt.getUnitType("Base"), 0, 1, 0);
 	Unit redBase = new Unit(1, utt.getUnitType("Base"), 2, 2, 0);
 	Unit resourceTile = new Unit(-1, utt.getUnitType("Resource"), 0, 3, 7);
+	
+	private double[] fadedValues = {0.6876560219336321, 0.6876560219336321*0.6876560219336321,
+			0.6876560219336321*0.6876560219336321*0.6876560219336321, 0.6876560219336321*0.6876560219336321*0.6876560219336321*0.6876560219336321,
+			0.6876560219336321*0.6876560219336321*0.6876560219336321*0.6876560219336321*0.6876560219336321}; //calculated for 4 x 4 grid
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		Parameters.initializeParameterCollections(new String[]{"watch:false","io:false","netio:false","task:edu.utexas.cs.nn.tasks.microrts.MicroRTSTask",
 				"mRTSMobileUnits:true","mRTSBuildings:true", "mRTSMyMobileUnits:true","mRTSMyBuildings:true","mRTSOpponentsMobileUnits:true",
 				"mRTSOpponentsBuildings:true","mRTSMyAll:true","mRTSOpponentsAll:true","mRTSAll:true","mRTSResources:true","mRTSTerrain:true",
-				"mRTSObjectivePath:false","mRTSAllSqrt3MobileUnits:false","mRTSMyBuildingGradientMobileUnits:false" //TODO
+				"mRTSObjectivePath:true","mRTSAllSqrt3MobileUnits:false","mRTSMyBuildingGradientMobileUnits:false" //TODO
 				});
 	}
 
@@ -61,7 +66,10 @@ public class NNComplexEvaluationFunctionTest {
 		pgs.addPlayer(blue);
 		pgs.addPlayer(red);
 		
+		blueRanged.setHitPoints(blueRanged.getHitPoints()/2); //half of original
+		
 		pgs.addUnit(blueWorker);
+		pgs.addUnit(blueRanged);
 		pgs.addUnit(redWorker);
 		pgs.addUnit(blueBase);
 		pgs.addUnit(redBase);
@@ -84,7 +92,7 @@ public class NNComplexEvaluationFunctionTest {
 	 	
 	 	double[] expectedBlueValues = new double[]{
 	 	//mobile
-	 			1,0,0,-1,
+	 			1,0,1,-1,
 	 			0,0,0,0,
 	 			0,0,0,0,
 	 			0,0,0,0,
@@ -94,7 +102,7 @@ public class NNComplexEvaluationFunctionTest {
 	 			0,0,-1,0,
 	 			0,0,0,0,
 	 	//my mobile
-	 			1,0,0,0,
+	 			1,0,1,0,
 	 			0,0,0,0,
 	 			0,0,0,0,
 	 			0,0,0,0,
@@ -114,7 +122,7 @@ public class NNComplexEvaluationFunctionTest {
 	 			0,0,-1,0,
 	 			0,0,0,0,
 	 	//my all
-	 			1,0,0,0,
+	 			1,0,1,0,
 	 			1,0,0,0,
 	 			0,0,0,0,
 	 			0,0,0,0,
@@ -124,7 +132,7 @@ public class NNComplexEvaluationFunctionTest {
 	 			0,0,-1,0,
 	 			0,0,0,0,
 	 	//all
-	 			1,0,0,-1,
+	 			1,0,1,-1,
 	 			1,0,0,0,
 	 			0,0,-1,0,
 	 			0,0,0,0,
@@ -138,13 +146,13 @@ public class NNComplexEvaluationFunctionTest {
 	 			0,0,0,0,
 	 			0,0,0,1,
 	 			0,0,0,1,
-	 	//path TODO
-//	 			0,0,0,0,
-//	 			0,0,0,0,
-//	 			0,0,0,0,
-//	 			0,0,0,0,
-//	 	//my sqrt3 mobile TODO
-//	 			0,0,0,0,
+	 	//path
+	 			fadedValues[3],fadedValues[2],fadedValues[1],fadedValues[2],
+	 			fadedValues[2],fadedValues[1],fadedValues[0],fadedValues[1],
+	 			fadedValues[1],fadedValues[0],			  1 ,			 0,
+	 			fadedValues[2],fadedValues[1],fadedValues[0],			 0,
+	 	//my sqrt3 mobile TODO
+//	 			50,0,-8,0,
 //	 			0,0,0,0,
 //	 			0,0,0,0,
 //	 			0,0,0,0,

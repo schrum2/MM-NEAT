@@ -17,7 +17,7 @@ public class BaseGradientSubstrate extends MicroRTSSubstrateInputs{
 	private double[][][] inputs = new double[2][][]; // One gradient from perspective of each player [player][x][y]
 	private int[] numBuildings = new int[2]; // Track each player
 	private boolean trackEnemyBuildings;
-
+	
 	public BaseGradientSubstrate(boolean enemy){
 		trackEnemyBuildings = enemy;
 	}
@@ -83,5 +83,9 @@ public class BaseGradientSubstrate extends MicroRTSSubstrateInputs{
 
 	public String toString() {
 		return this.getClass().getSimpleName() + ": trackEnemyBuildings = " + trackEnemyBuildings;
+	}
+	
+	public static void main(String[]args){
+		System.out.println(Math.pow(10, (Math.log10(LOWEST_ALLOWED_BRIGHTNESS)/(4+4))));
 	}
 }
