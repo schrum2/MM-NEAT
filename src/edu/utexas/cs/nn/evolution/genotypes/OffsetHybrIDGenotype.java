@@ -109,6 +109,22 @@ public class OffsetHybrIDGenotype extends HyperNEATCPPNGenotype {
 
 	}
 	
+	@Override
+	public void mutate() {
+		super.mutate(); // Mutate the network in standard NEAT fashion
+		rvg.mutate(); // Mutate the real-valued portion as well
+	}
+	
+	@Override
+	public Genotype<TWEANN> crossover(Genotype<TWEANN> other) {
+		// The CPPN genes are crossed in this result
+		Genotype<TWEANN> result = super.crossover(other);
+		// Cross the real-valued portions as well
+		RealValuedGenotype crossedRVG = (RealValuedGenotype) rvg.crossover(((OffsetHybrIDGenotype) other).rvg);
+		((OffsetHybrIDGenotype) result).rvg = crossedRVG;
+		return result;
+	}
+	
 	/**
 	 * Converts an ArrayList of HyperNEAT CPPN genotypes to an ArrayList of corresponding 
 	 * TWEANN genotypes based on an input HyperNEATTask.
