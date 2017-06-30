@@ -20,19 +20,28 @@ import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.interactive.animationbreeder.AnimationBreederTask;
 import edu.utexas.cs.nn.util.graphics.AnimationUtil;
 
+/**
+ * Interface that interactively evolves originally generated three-dimensional animations
+ * from a CPPN. Uses the interactive evolution interface to complete this.
+ * 
+ * @author Isabel Tweraser
+ *
+ * @param <T>
+ */
 public class ThreeDimensionalAnimationBreederTask<T extends Network> extends AnimationBreederTask<T> {
 	
 	public static final int CPPN_NUM_INPUTS = 6;
 	public static final int CPPN_NUM_OUTPUTS = 7;
 	
+	// list of color options for constructed object
 	public static final Color[] COLORS = new Color[]{ Color.RED, Color.GREEN, Color.BLUE, Color.GRAY, Color.YELLOW, Color.ORANGE, Color.PINK, Color.BLACK };
 	
 	public static final int EVOLVED_COLOR_INDEX = 8;
 	
 	public static final int MAX_ROTATION = 360;
 	
-	protected JSlider pitchValue;
-	protected JSlider headingValue;
+	protected JSlider pitchValue; // vertical tilt of animated object
+	protected JSlider headingValue; // horizontal tilt of animated object
 	protected JSlider pauseLengthBetweenFrames;
 	protected JComboBox<String> colorChoice;
 	

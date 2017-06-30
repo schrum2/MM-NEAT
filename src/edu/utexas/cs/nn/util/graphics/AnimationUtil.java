@@ -29,8 +29,9 @@ public class AnimationUtil {
 	 * @param n CPPN used to create image
 	 * @param imageWidth width of created image
 	 * @param imageHeight height of created image
-	 * @param time How long the animation should be. This input determines size of array of images
-	 * @param inputMultiples array with inputs determining whether checkboxes in interface should be turned on or off
+	 * @param startTime input time when animation begins
+	 * @param endTime input time when animation ends
+	 * @param inputMultiples array with inputs determining whether CPPN inputs are turned on or off
 	 * @return Array of images that can be animated in a JApplet
 	 */
 	public static BufferedImage[] imagesFromCPPN(Network n, int imageWidth, int imageHeight, int startTime, int endTime, double[] inputMultiples) {
@@ -41,6 +42,21 @@ public class AnimationUtil {
 		return images;
 	}		
 	
+	/**
+	 * Utility method that generates an array of shapes based on an input CPPN.
+	 * These BufferedImages are used to animate a three-dimensional object.
+	 * 
+	 * @param n CPPN used to create shape
+	 * @param imageWidth width of image
+	 * @param imageHeight height of image
+	 * @param startTime input time when animation begins
+	 * @param endTime input time when animation ends
+	 * @param color desired color of shapes (if null, colors are evolved)
+	 * @param heading horizontal tilt of object
+	 * @param pitch vertical tilt of object
+	 * @param inputMultiples array with inputs determining whether CPPN inputs are turned on or off
+	 * @return
+	 */
 	public static BufferedImage[] shapesFromCPPN(Network n, int imageWidth, int imageHeight, int startTime, int endTime, Color color, double heading, double pitch, double[] inputMultiples) {
 		BufferedImage[] images = new BufferedImage[endTime-startTime];
 		for(int i = startTime; i < endTime; i++) {
