@@ -11,6 +11,7 @@ import java.util.StringTokenizer;
 import boardGame.agents.BoardGamePlayerOneStepEval;
 import boardGame.agents.BoardGamePlayerRandom;
 import boardGame.featureExtractor.TwoDimensionalRawBoardGameFeatureExtractor;
+import boardGame.fitnessFunction.SimpleWinLoseDrawBoardGameFitness;
 import boardGame.heuristics.PieceDifferentialBoardGameHeuristic;
 import edu.utexas.cs.nn.breve2D.Breve2DGame;
 import edu.utexas.cs.nn.breve2D.agent.RushingPlayer;
@@ -642,6 +643,7 @@ public class Parameters {
 		booleanOptions.add("hallOfFamePareto", false, "Removes Hall Of Fame Champions that are Pareto Dominated");
 		booleanOptions.add("boardGameSimpleFitness", true, "Enables the SimpleWinLoseDraw BoardGame Fitness Function to be used as a Selection Function");
 		booleanOptions.add("boardGameCheckersFitness", false, "Enables the CheckersAdvanced BoardGame Fitness Function to be used as a Selection Function");
+		booleanOptions.add("boardGameOthelloFitness", false, "Enables the OthelloPiece BoardGame Fitness Function to be used as a Selection Function");
 		booleanOptions.add("alwaysAnimate", true, "Loads and plays all animations in AnimationBreeder and 3DObjectBreeder at once");
 		booleanOptions.add("saveInteractiveSelections", false, "Automatically saves all currently selected buttons when user moves to next generation");
 		booleanOptions.add("gvgaiSave", false, "If true, save the actions from the GVGAI game that was just played.");

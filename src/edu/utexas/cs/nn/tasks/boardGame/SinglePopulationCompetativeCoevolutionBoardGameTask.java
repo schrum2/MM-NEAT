@@ -10,6 +10,7 @@ import boardGame.featureExtractor.BoardGameFeatureExtractor;
 import boardGame.fitnessFunction.BoardGameFitnessFunction;
 import boardGame.fitnessFunction.CheckersAdvancedFitness;
 import boardGame.fitnessFunction.HallOfFameFitness;
+import boardGame.fitnessFunction.OthelloPieceFitness;
 import boardGame.fitnessFunction.SimpleWinLoseDrawBoardGameFitness;
 import boardGame.fitnessFunction.StaticOtherOpponentFitness;
 import boardGame.fitnessFunction.WinPercentageBoardGameFitness;
@@ -57,6 +58,9 @@ public class SinglePopulationCompetativeCoevolutionBoardGameTask<T extends Netwo
 		}
 		if(Parameters.parameters.booleanParameter("hallOfFame")){
 			fitFunctions.add(new HallOfFameFitness<T,S>());
+		}
+		if(Parameters.parameters.booleanParameter("boardGameOthelloFitness")){
+			fitFunctions.add(new OthelloPieceFitness<S>());
 		}
 		
 		for(BoardGameFitnessFunction<S> fit : fitFunctions){

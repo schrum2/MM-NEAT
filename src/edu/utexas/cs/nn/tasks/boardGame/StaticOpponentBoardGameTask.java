@@ -10,6 +10,7 @@ import boardGame.agents.HeuristicBoardGamePlayer;
 import boardGame.featureExtractor.BoardGameFeatureExtractor;
 import boardGame.fitnessFunction.BoardGameFitnessFunction;
 import boardGame.fitnessFunction.CheckersAdvancedFitness;
+import boardGame.fitnessFunction.OthelloPieceFitness;
 import boardGame.fitnessFunction.SimpleWinLoseDrawBoardGameFitness;
 import boardGame.fitnessFunction.WinPercentageBoardGameFitness;
 import boardGame.heuristics.NNBoardGameHeuristic;
@@ -56,6 +57,9 @@ public class StaticOpponentBoardGameTask<T extends Network, S extends BoardGameS
 		}
 		if(Parameters.parameters.booleanParameter("boardGameCheckersFitness")){
 			fitFunctions.add(new CheckersAdvancedFitness<S>());
+		}
+		if(Parameters.parameters.booleanParameter("boardGameOthelloFitness")){
+			fitFunctions.add(new OthelloPieceFitness<S>());
 		}
 		
 		for(BoardGameFitnessFunction<S> fit: fitFunctions){
