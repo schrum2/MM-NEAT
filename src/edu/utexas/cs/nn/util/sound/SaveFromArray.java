@@ -48,6 +48,14 @@ public class SaveFromArray {
 		saveFileFromDoubleArray(filename, samples, format);
 	}
 	
+	/**
+	 * Saves a double array as a WAV file - compatible with multiple
+	 * AudioFormats.
+	 * 
+	 * @param filename the name of the audio file
+	 * @param samples the array of samples
+	 * @param format the AudioFormat used to save the array
+	 */
 	public static void saveFileFromDoubleArray(String filename, double[] samples, AudioFormat format) {
 		if (samples == null) {
 			throw new IllegalArgumentException("samples[] is null");
