@@ -3,6 +3,7 @@ package edu.utexas.cs.nn.tasks.mspacman;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
@@ -13,6 +14,7 @@ import edu.utexas.cs.nn.evolution.nsga2.tug.TUGTask;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.networks.NetworkTask;
 import edu.utexas.cs.nn.networks.hyperneat.HyperNEATTask;
+import edu.utexas.cs.nn.networks.hyperneat.HyperNEATUtil;
 import edu.utexas.cs.nn.networks.hyperneat.Substrate;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
@@ -598,53 +600,53 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 	 * @return
 	 */
 	public List<Substrate> getSubstrateInformationFromScratch() {
-		List<Substrate> localSubs = new ArrayList<Substrate>();
-		Pair<Integer, Integer> subSize = new Pair<>(MS_PAC_MAN_SUBSTRATE_WIDTH, MS_PAC_MAN_SUBSTRATE_HEIGHT);
-		Pair<Integer, Integer> processSize = new Pair<>(10,10);
-		Substrate pillSubstrate = new Substrate(subSize, Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, 0, 0), "Pills");
-		localSubs.add(pillSubstrate);
-		Substrate powerPillSubstrate;
-		if(Parameters.parameters.booleanParameter("pacmanFullScreenPowerInput")) {
-			powerPillSubstrate = new Substrate(subSize, Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(1, 0, 0), "PowerPills");
-		} else {
-			powerPillSubstrate = new Substrate(new Pair<Integer, Integer>(2, 2), Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(1, 0, 0), "PowerPills");		
-		}
-		localSubs.add(powerPillSubstrate);
-
-		if(Parameters.parameters.booleanParameter("pacmanBothThreatAndEdibleSubstrate")) {
-			Substrate threatSubstrate = new Substrate(subSize, Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(2, 0, 0), "Threat");
-			Substrate edibleSubstrate = new Substrate(subSize, Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(4, 0, 0), "Edible");
-			localSubs.add(threatSubstrate);
-			localSubs.add(edibleSubstrate);
-		} else {
-			Substrate ghostSubstrate = new Substrate(subSize, Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(2, 0, 0), "Ghosts");
-			localSubs.add(ghostSubstrate);
-		}	
-		Substrate pacManSubstrate = new Substrate(subSize, Substrate.INPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(3, 0, 0), "MsPacMan");
-		localSubs.add(pacManSubstrate);
 		
-		Substrate processSubstrate;
-		if(Parameters.parameters.booleanParameter("pacmanFullScreenProcess")) {
-			processSubstrate = new Substrate(subSize, Substrate.PROCCESS_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, 1, 0), "P_0");
-		} else {
-			processSubstrate = new Substrate(processSize, Substrate.PROCCESS_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, 1, 0), "P_0");
-
-		}
-		Substrate outputSubstrate;
+		int numInputSubstrates = 0;
+		numInputSubstrates += 2; // One for regular pills, and one for power pills
+		numInputSubstrates += Parameters.parameters.booleanParameter("pacmanBothThreatAndEdibleSubstrate") ? 2 : 1; // 2 or 1 substrate for ghosts
+		numInputSubstrates += 1; // A substrate for Ms. Pac-Man's location
+		
+		List<Triple<String,Integer,Integer>> output = new LinkedList<>();
 		if(Parameters.parameters.booleanParameter("pacManFullScreenOutput")) {
-			outputSubstrate = new Substrate(subSize, Substrate.OUTPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, 2, 0), "O_0");
+			output.add(new Triple<>("DesiredLocation",MS_PAC_MAN_SUBSTRATE_WIDTH, MS_PAC_MAN_SUBSTRATE_HEIGHT));
 		}else {
-			outputSubstrate = new Substrate(new Pair<Integer, Integer>(3, 3), Substrate.OUTPUT_SUBSTRATE, new Triple<Integer, Integer, Integer>(0, 2, 0), "O_0");
-			//kills neurons in corner and center of output substrate
-			outputSubstrate.addDeadNeuron(0, 0);
-			outputSubstrate.addDeadNeuron(2, 0);
-			outputSubstrate.addDeadNeuron(1, 1);
-			outputSubstrate.addDeadNeuron(0, 2);
-			outputSubstrate.addDeadNeuron(2, 2);
+			output.add(new Triple<>("Direction",3,3));
 		}
-		localSubs.add(processSubstrate);
-		localSubs.add(outputSubstrate); 
-		return localSubs;
+		List<Substrate> substrateInformation = HyperNEATUtil.getSubstrateInformation(MS_PAC_MAN_SUBSTRATE_WIDTH, MS_PAC_MAN_SUBSTRATE_HEIGHT, numInputSubstrates, output);
+
+		//Pair<Integer, Integer> processSize = new Pair<>(10,10);
+		
+		// Will always be the second substrate: compact representation may replace full screen version
+		final int POWER_PILL_SUBSTRATE_INDEX = 1; // Move elsewhere
+		if(!Parameters.parameters.booleanParameter("pacmanFullScreenPowerInput")) {
+			Substrate originalPowerPillSubstrate = substrateInformation.get(POWER_PILL_SUBSTRATE_INDEX); // Always the second substrate
+			Substrate powerPillSubstrate = new Substrate(new Pair<Integer, Integer>(2, 2), Substrate.INPUT_SUBSTRATE, originalPowerPillSubstrate.getSubLocation(), originalPowerPillSubstrate.getName());		
+			substrateInformation.set(POWER_PILL_SUBSTRATE_INDEX, powerPillSubstrate);
+		}
+
+		// Provide a way to resize the processing substrates		
+		if(!Parameters.parameters.booleanParameter("pacmanFullScreenProcess")) { // Will NOT work with convolution
+			int current = numInputSubstrates;
+			while(substrateInformation.get(current).getName().startsWith("process")) {
+				Substrate originalProcessingSubstrate = substrateInformation.get(current);
+				// 10 by 10 are magic numbers ... configure? Move into HyperNEATUtil.getSubstrateInformation?
+				Substrate newProcessingSubstrate = new Substrate(new Pair<Integer, Integer>(10, 10), Substrate.PROCCESS_SUBSTRATE, originalProcessingSubstrate.getSubLocation(), originalProcessingSubstrate.getName());		
+				substrateInformation.set(current, newProcessingSubstrate);
+				current++;
+			}			
+		} 		
+
+		// Kill some neurons in the D-pad
+		if(!Parameters.parameters.booleanParameter("pacManFullScreenOutput")) {
+			//kills neurons in corner and center of output substrate
+			substrateInformation.get(substrateInformation.size() - 1).addDeadNeuron(0, 0);
+			substrateInformation.get(substrateInformation.size() - 1).addDeadNeuron(2, 0);
+			substrateInformation.get(substrateInformation.size() - 1).addDeadNeuron(1, 1);
+			substrateInformation.get(substrateInformation.size() - 1).addDeadNeuron(0, 2);
+			substrateInformation.get(substrateInformation.size() - 1).addDeadNeuron(2, 2);
+		}
+
+		return substrateInformation;
 	}
 
 	@Override
