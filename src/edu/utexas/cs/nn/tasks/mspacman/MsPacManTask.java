@@ -679,33 +679,15 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 		if(!substratesForMaze.containsKey(mazeIndex)) {
 			List<Substrate> localSubs = getSubstrateInformationFromScratch(); // Just to make sure subs is not null
 			for(Substrate s : localSubs){
-				// Only reset full screen substrates
-				if(s.getSize().t1 == MS_PAC_MAN_SUBSTRATE_WIDTH && s.getSize().t2 == MS_PAC_MAN_SUBSTRATE_HEIGHT) {
+				// Only reset full screen substrates that are not processing layers
+				if(s.getSize().t1 == MS_PAC_MAN_SUBSTRATE_WIDTH && s.getSize().t2 == MS_PAC_MAN_SUBSTRATE_HEIGHT && s.getStype() != Substrate.PROCCESS_SUBSTRATE) {
 					s.killAllNeurons();
-					if(s.getName().equals("Pills")){
-						for(int node : gf.getPillIndices()) {
-							int x = gf.getNodeXCoord(node);
-							int y = gf.getNodeYCoord(node);
-							int scaledX = x / MsPacManTask.MS_PAC_MAN_NODE_DIM;
-							int scaledY = y / MsPacManTask.MS_PAC_MAN_NODE_DIM;
-							s.resurrectNeuron(scaledX, scaledY);
-						}
-					} else if(s.getName().equals("PowerPills")) {
-						for(int node : gf.getActivePowerPillsIndices()) {
-							int x = gf.getNodeXCoord(node);
-							int y = gf.getNodeYCoord(node);
-							int scaledX = x / MsPacManTask.MS_PAC_MAN_NODE_DIM;
-							int scaledY = y / MsPacManTask.MS_PAC_MAN_NODE_DIM;
-							s.resurrectNeuron(scaledX, scaledY);
-						}
-					} else{
-						for(int i = 0; i < gf.lengthMaze(); i++) {
-							int x = gf.getNodeXCoord(i);
-							int y = gf.getNodeYCoord(i);
-							int scaledX = x / MsPacManTask.MS_PAC_MAN_NODE_DIM;
-							int scaledY = y / MsPacManTask.MS_PAC_MAN_NODE_DIM;
-							s.resurrectNeuron(scaledX, scaledY);
-						}
+					for(int i = 0; i < gf.lengthMaze(); i++) {
+						int x = gf.getNodeXCoord(i);
+						int y = gf.getNodeYCoord(i);
+						int scaledX = x / MsPacManTask.MS_PAC_MAN_NODE_DIM;
+						int scaledY = y / MsPacManTask.MS_PAC_MAN_NODE_DIM;
+						s.resurrectNeuron(scaledX, scaledY);
 					}
 				}
 			}
