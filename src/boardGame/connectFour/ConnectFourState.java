@@ -11,12 +11,12 @@ import boardGame.TwoDimensionalBoardGameState;
 
 public class ConnectFourState extends TwoDimensionalBoardGameState{
 	
-	private static final int WIDTH = 7;
-	private static final int HEIGHT = 6;
+	static final int WIDTH = 7;
+	static final int HEIGHT = 6;
 	
-	private static final int BLACK_CHECK = 0;
-	private static final int RED_CHECK = 1;
-	private static final int NUMBER_OF_PLAYERS = 2;
+	static final int BLACK_CHECK = 0;
+	static final int RED_CHECK = 1;
+	static final int NUMBER_OF_PLAYERS = 2;
 	
 	public ConnectFourState(){
 		super(2);
@@ -75,14 +75,12 @@ public class ConnectFourState extends TwoDimensionalBoardGameState{
 		// Unable to find a Four-In-A-Row; see if the Board is full
 		Set<ConnectFourState> poss = possibleBoardGameStates(this);
 		if(poss.size() == 0){
-			System.out.println("Ended due to no more Moves left");
 			winners.add(BLACK_CHECK);
 			winners.add(RED_CHECK);
 			return true;
 		}
 		
 		// Able to make at least one Move; game is not over
-		System.out.println("Checked End State: False");
 		return false;
 	}
 
@@ -90,7 +88,6 @@ public class ConnectFourState extends TwoDimensionalBoardGameState{
 	@Override
 	public <T extends BoardGameState> Set<T> possibleBoardGameStates(T currentState) {
 		Set<T> poss = new HashSet<T>();
-		System.out.println("Checking Possible States");
 		for(int i = 0; i < WIDTH; i++){
 			ConnectFourState temp = this.copy();
 			if(boardState[i][0] == EMPTY){
@@ -141,7 +138,7 @@ public class ConnectFourState extends TwoDimensionalBoardGameState{
 
 	@Override
 	public Color[] getPlayerColors() {
-		return new Color[]{Color.black, Color.red};
+		return new Color[]{Color.red, Color.black};
 	}
 
 	@Override
@@ -155,15 +152,14 @@ public class ConnectFourState extends TwoDimensionalBoardGameState{
 		int pointY = (int) goTo.getY();
 
 		// Must select an empty Space from the top of the Board
-		if(boardState[pointX][pointY] != -1 || pointY != 0){
+		if(boardState[pointX][pointY] != EMPTY || pointY != 0){
 			return false;
 		}else{
 			int height = 0;
 			for(int i = 0; i < HEIGHT; i++){
-				if(boardState[pointX][i] == -1) height = i;
+				if(boardState[pointX][i] == EMPTY) height = i;
 			}
 			boardState[pointX][height] = nextPlayer;
-			System.out.println("Player " + nextPlayer + " made a Move to: (" + pointX + ", " + height + ")\n" + toString());
 			nextPlayer = (nextPlayer + 1) % NUMBER_OF_PLAYERS;
 			return true;
 		}
