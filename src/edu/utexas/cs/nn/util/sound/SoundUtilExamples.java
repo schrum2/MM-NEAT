@@ -75,7 +75,7 @@ public class SoundUtilExamples {
 		Network cppn = test.getCPPN();
 
 		// method call
-		convertStereoWAV();
+		plotExamples(cppn);
 	}
 
 	public static void randomCPPNExamples(Network cppn) throws IOException {
@@ -252,6 +252,10 @@ public class SoundUtilExamples {
 		ArrayList<Double> fileArrayList2 = ArrayUtil.doubleVectorFromArray(testArray2); //convert array into array list
 		DrawingPanel panel2 = new DrawingPanel(500,500, "2"); //create panel where line will be plotted 
 		GraphicsUtil.linePlot(panel2, -1.0, 1.0, fileArrayList2, Color.black); //call linePlot with ArrayList to draw graph
+		double[] testArray3 = SoundFromCPPNUtil.amplitudeGenerator(cppn, 60000, 261);
+		ArrayList<Double> fileArrayList3 = ArrayUtil.doubleVectorFromArray(testArray3); //convert array into array list
+		DrawingPanel panel3 = new DrawingPanel(500,500, "3"); //create panel where line will be plotted 
+		GraphicsUtil.linePlot(panel3, -1.0, 1.0, fileArrayList3, Color.black); //call linePlot with ArrayList to draw graph
 		MiscUtil.waitForReadStringAndEnterKeyPress();
 
 	}
