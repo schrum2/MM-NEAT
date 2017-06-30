@@ -60,8 +60,6 @@ public class ConnectFourState extends TwoDimensionalBoardGameState{
 									if(((x >= 0 && x < WIDTH) && (y >= 0 && y < HEIGHT)) && boardState[x][y] == check) numInRow++;
 								}while(((x >= 0 && x < WIDTH) && (y >= 0 && y < HEIGHT)) && boardState[x][y] == check || numInRow < 4);
 								if(numInRow >= 4){
-									System.out.println("Ended because there was a Four-In-A-Row: " + check);
-									winners.add(check);
 									return true;
 								}
 							}
@@ -105,8 +103,48 @@ public class ConnectFourState extends TwoDimensionalBoardGameState{
 		return (T) new ConnectFourState(this);
 	}
 	
+	private void checkWinners(){
+		int check = EMPTY;
+		for(int i = 0; i < WIDTH; i++){
+			for(int j = 0; j < HEIGHT; j++){
+				
+				if(boardState[i][j] == EMPTY){
+					continue; // Move on to the next Point
+				}else{
+					// Cycles through the possible displacements
+					for(int dX = -1; dX <= 1; dX++){
+						for(int dY = -1; dY <=1; dY++){
+							
+							// Only runs if there is a displacement in any direction
+							// and if there is a Check at the selected Space
+							if(dX != 0 && dY != 0 && boardState[i][j] != EMPTY){
+								int numInRow = 0;
+								check = boardState[i][j];
+								
+								int x = i;
+								int y = j;
+								
+								do{
+									x = i + dX;
+									y = j + dY;
+									
+									if(((x >= 0 && x < WIDTH) && (y >= 0 && y < HEIGHT)) && boardState[x][y] == check) numInRow++;
+								}while(((x >= 0 && x < WIDTH) && (y >= 0 && y < HEIGHT)) && boardState[x][y] == check || numInRow < 4);
+								if(numInRow >= 4){
+									winners.add(check);
+								}
+							}
+							check = EMPTY; // Resets the check
+						}
+					}
+				}
+			}
+		}
+	}
+	
 	@Override
 	public List<Integer> getWinners() {
+		checkWinners();
 		return winners;
 	}
 	
