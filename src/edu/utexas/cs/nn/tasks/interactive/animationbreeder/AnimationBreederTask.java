@@ -1,5 +1,6 @@
 package edu.utexas.cs.nn.tasks.interactive.animationbreeder;
 
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -64,6 +65,7 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 			}
 			int end = Parameters.parameters.integerParameter("defaultAnimationLength");
 			// Only one thread can add frames at a time
+			buttons.get(imageID).setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR)); //turn on busy cursor while animations are loading
 			synchronized(animations[imageID]) {
 				//adds images to array at index of specified button (imageID)
 				if(animations[imageID].size() < Parameters.parameters.integerParameter("defaultAnimationLength")) {
@@ -75,6 +77,7 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 					}
 				}
 			}
+			buttons.get(imageID).setCursor(Cursor.getDefaultCursor()); //turn off busy cursor after animations have finished loading
 
 			while(!abort) {
 				// One animation loop
@@ -439,7 +442,7 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 	 */
 	public static void main(String[] args) {
 		try {
-			MMNEAT.main(new String[]{"runNumber:5","randomSeed:5","trials:1","mu:16","maxGens:500","io:false","netio:false","mating:true", "fs:true", "task:edu.utexas.cs.nn.tasks.interactive.animationbreeder.AnimationBreederTask","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3","cleanFrequency:-1","recurrency:false","ea:edu.utexas.cs.nn.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:500","imageHeight:500","imageSize:200"});
+			MMNEAT.main(new String[]{"runNumber:5","randomSeed:5","trials:1","mu:16","maxGens:500","io:false","netio:false","mating:true", "simplifiedInteractiveInterface:false", "fs:false", "task:edu.utexas.cs.nn.tasks.interactive.animationbreeder.AnimationBreederTask","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3","cleanFrequency:-1","recurrency:false","ea:edu.utexas.cs.nn.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:500","imageHeight:500","imageSize:200"});
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}
