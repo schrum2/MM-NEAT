@@ -203,17 +203,20 @@ public abstract class TwoDimensionalBoardGameState implements BoardGameState {
 	 */
 	public String toString(){
 		getWinners();
-		String result = "Next Player: " + nextPlayer + " numPlayers: " + numPlayers + " winners: " + winners;
-		result += "\n  0 1 2 3 4 5 6 7\n ";
-		for(int i = 0; i < getBoardWidth(); i++) {
+		String result = "Next Player: " + nextPlayer + " numPlayers: " + numPlayers + " winners: " + winners + "\n ";
+		for(int i = 0; i < getBoardHeight(); i++){
+			result += " " + i;
+		}
+		result += "\n ";
+		for(int i = 0; i < getBoardHeight(); i++) {
 			result += "--";
 		}
 		result += "-\n";
 		
-		for(int i = 0; i < getBoardHeight(); i++){
+		for(int i = 0; i < getBoardWidth(); i++){
 			result += i + "|";
 			
-			for(int j = 0; j < getBoardWidth(); j++){
+			for(int j = 0; j < getBoardHeight(); j++){
 				
 				char mark;
 				int space = boardState[i][j];
@@ -227,7 +230,7 @@ public abstract class TwoDimensionalBoardGameState implements BoardGameState {
 			}
 			
 			result += "\n -";
-			for(int k = 0; k < getBoardWidth(); k++) {
+			for(int k = 0; k < getBoardHeight(); k++) {
 				result += "--";
 			}
 			result += "\n";
@@ -291,8 +294,8 @@ public abstract class TwoDimensionalBoardGameState implements BoardGameState {
 		double[] pieces = new double[getBoardWidth()*getBoardHeight()];
 		int index = 0;
 		
-		for(int i = 0; i < getBoardHeight(); i++){
-			for(int j = 0; j < getBoardWidth(); j ++){
+		for(int i = 0; i < getBoardWidth(); i++){
+			for(int j = 0; j < getBoardHeight(); j ++){
 				pieces[index++] = boardState[i][j]; // Returns the literal Piece Values
 			}
 		}		
