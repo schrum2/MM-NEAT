@@ -1,14 +1,12 @@
 package boardGame.agents.treesearch;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import boardGame.agents.BoardGamePlayer;
@@ -32,6 +30,7 @@ public class BoardGamePlayerMinimaxTest {
 	public void tearDown() throws Exception {
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void test() {
 		Parameters.initializeParameterCollections(new String[]{"io:false", "netio:false", "task:edu.utexas.cs.nn.tasks.boardGame.StaticOpponentBoardGameTask",
@@ -41,6 +40,7 @@ public class BoardGamePlayerMinimaxTest {
 		MMNEAT.loadClasses();
 		
 		TicTacToe test = new TicTacToe();
+		@SuppressWarnings("rawtypes")
 		BoardGamePlayer[] players = new BoardGamePlayer[]{new BoardGamePlayerMinimax(new StaticTicTacToeWPCHeuristic()), new BoardGamePlayerMinimax(new StaticTicTacToeWPCHeuristic())};
 		int play = 0;
 		while(!test.isGameOver()){

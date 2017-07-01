@@ -78,6 +78,8 @@ public class SoundUtilExamples {
 		plotExamples(cppn);
 	}
 
+	@SuppressWarnings("unused")
+	// This method allows for quick testing of sound functionality
 	public static void randomCPPNExamples(Network cppn) throws IOException {
 		// saves CPPN with variety of AudioFormat initializations to see which one works the best
 		double[] testArray = SoundFromCPPNUtil.amplitudeGenerator(cppn, 60000, 440);
@@ -178,6 +180,7 @@ public class SoundUtilExamples {
 	// Testing to see if using a different byte conversion method (the one from WAVUtil) would work better than the 
 	// extractAmplitudeByteArrayFromAudioInputStream method in SoundToArray. this doesn't work - it sounds the same 
 	// if not worse than the original method.
+	@SuppressWarnings("unused")
 	public static void useDifferentByteConversion() throws UnsupportedAudioFileException, IOException, InterruptedException, LineUnavailableException {
 		AudioInputStream harpAIS = WAVUtil.audioStream(HARP_WAV);
 		byte[] harpNumbers = SoundToArray.extractAmplitudeByteArrayFromAudioInputStream(harpAIS);
@@ -280,6 +283,7 @@ public class SoundUtilExamples {
 		WAVUtil.playByteAIS(applauseNumbers);
 	}
 
+	@SuppressWarnings("unused")
 	public static void attemptsToManipulateWAVFiles() throws IOException, UnsupportedAudioFileException {
 		byte[] bearNumbers = WAVUtil.WAVToByte(BEARGROWL_WAV);
 		byte[] applauseNumbers =WAVUtil.WAVToByte(APPLAUSE_WAV);	
@@ -359,7 +363,7 @@ public class SoundUtilExamples {
 	// Maybe find a way to add back these examples later
 	public static void toneGeneratorExamples() {
 		// 440 Hz for 1 sec
-		double freq1 = 440.0;
+		//double freq1 = 440.0;
 		//uses sine function to generate sound wave
 		//		for (int i = 0; i <= PlayDoubleArray.SAMPLE_RATE; i++) {
 		//			PlayDoubleArray.playDouble(0.5 * Math.sin(2*Math.PI * freq1 * i / PlayDoubleArray.SAMPLE_RATE));

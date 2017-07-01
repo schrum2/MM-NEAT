@@ -1,8 +1,6 @@
 package edu.utexas.cs.nn.tasks.microrts.evaluation;
 
-import static org.junit.Assert.*;
-
-import java.util.Arrays;
+import static org.junit.Assert.assertArrayEquals;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -29,6 +27,7 @@ public class NNComplexEvaluationFunctionTest {
 	
 	private final double EPSILON = 0.000001;
 	
+	@SuppressWarnings("rawtypes")
 	NNEvaluationFunction cef = new NNComplexEvaluationFunction();
 	PhysicalGameState pgs = new PhysicalGameState(4, 4); 
 	UnitTypeTable utt = new UnitTypeTable();
@@ -252,10 +251,4 @@ public class NNComplexEvaluationFunctionTest {
 	 	assertArrayEquals(redPerspective, expectedRedValues, EPSILON);
 	 	
 	}
-
-	@Test
-	public void testGetNumInputSubstrates() {
-//		fail("Not yet implemented");
-	}
-
 }

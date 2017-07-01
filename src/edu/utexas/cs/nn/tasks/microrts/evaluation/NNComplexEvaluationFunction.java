@@ -19,14 +19,13 @@ import micro.rts.GameState;
  * evaluation function for microRTSTasks! 
  * 
  * @author alicequint
- * 
- * unfinished, eventually different substrate for each unit-type maybe.
  */
 public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluationFunction<T> {
 
 	private int numSubstrates;
 	private int substrateSize;
-	private int smudgeSize = Parameters.parameters.integerParameter("microRTSInputSize"); //TODO use
+	// TODO: This was meant to be used to resolve GitHub issue #341
+	//private int smudgeSize = Parameters.parameters.integerParameter("microRTSInputSize"); 
 	private ArrayList<Integer> activeSubs;
 	private ArrayList<MicroRTSSubstrateInputs> inputSubstrates;
 	
