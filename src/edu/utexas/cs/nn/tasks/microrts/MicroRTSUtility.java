@@ -38,20 +38,17 @@ public class MicroRTSUtility {
 							   || Parameters.parameters.classParameter("microRTSFitnessFunction").equals(WinLossFitnessFunction.class);
 	private static boolean coevolution;
 	
-	public final static int processingDepth = Parameters.parameters.integerParameter("HNProcessDepth"); //not used yet
-	public final static int processingWidth = Parameters.parameters.integerParameter("HNProcessWidth"); //not used yet
-	
 	private static MicroRTSInformation task;
 	private static boolean stepByStep = Parameters.parameters.booleanParameter("stepByStep");
 
 	public static <T> ArrayList<Pair<double[], double[]>> oneEval(AI ai1, AI ai2, MicroRTSInformation mrtsInfo, RTSFitnessFunction ff, PhysicalGameStateJFrame w) {		
+		AI[] ais = new AI[]{ai1,ai2};
 		ArrayList<Integer> workerWithResourceID = new ArrayList<>(); //change to hashset		
 		//for % destroyed ff
 		HashSet<Long> createdUnitIDs1 = new HashSet<>();
 		HashSet<Long> createdUnitIDs2 = new HashSet<>();
 		//for fitness functions
-		boolean base1Alive = false;
-		boolean base2Alive = false;
+		boolean[] baseAlive = new boolean[ais.length]; // default to false
 		int unitDifferenceNow = 0;
 		
 		task = mrtsInfo;
@@ -63,26 +60,22 @@ public class MicroRTSUtility {
 		//evaluates to correct number of cycles in accordance with competition rules: 8x8 => 3000, 16x16 => 4000, 24x24 => 5000, etc.
 		int maxCycles = 1000 * (int) Math.ceil(Math.sqrt(pgs.getHeight()));
 		ff.setMaxCycles(maxCycles);
-		PlayerAction pa1;
-		PlayerAction pa2;
 
 		Unit currentUnit; 
-		boolean baseDeath1Recorded = false;
-		boolean baseDeath2Recorded = false;
+		boolean[] baseDeathRecorded = new boolean[ais.length];
 
 		int currentCycle = 0;
 		
 		int previousCreatedUnitsIDSize = 0;
 		
 		do{ //simulate game:
-			try {
-				pa1 = ai1.getAction(0, gs); //throws exception
-				gs.issueSafe(pa1);
-			} catch (Exception e1) { e1.printStackTrace();System.exit(1); }
-			try {
-				pa2 = ai2.getAction(1, gs); //throws exception
-				gs.issueSafe(pa2);
-			} catch (Exception e) { e.printStackTrace();System.exit(1); }
+			// Each agent acts	
+			for(int i = 0; i < ais.length; i++) {
+				try {
+					PlayerAction pa = ais[i].getAction(i, gs); //throws exception
+					gs.issueSafe(pa);
+				} catch (Exception e) { e.printStackTrace(); System.exit(1); }				
+			}
 			
 			if(stepByStep && currentCycle %2 == 0){
 				MiscUtil.waitForReadStringAndEnterKeyPress();
@@ -92,9 +85,9 @@ public class MicroRTSUtility {
 			if(prog){ //if our FitnessFunction needs us to record information throughout the game
 				currentUnit = null;	
 				unitDifferenceNow = 0;
-				base1Alive = false;
-				base2Alive = false;
-				//				System.out.println("-------------------------------------------");
+				for(int i = 0; i < baseAlive.length; i++) {
+					baseAlive[i] = false;
+				}
 				for(int i = 0; i < pgs.getWidth(); i++){
 					for(int j = 0; j < pgs.getHeight(); j++){
 
@@ -114,8 +107,10 @@ public class MicroRTSUtility {
 								updateHarvestingEfficiency(workerWithResourceID, currentUnit, coevolution, task);
 							}
 							if(currentUnit.getType().name.equals("Base")){
-								base1Alive = base1Alive || updateBaseIsAlive(currentUnit, 1);
-								base2Alive = base2Alive || updateBaseIsAlive(currentUnit, 2);
+								for(int k = 0; k < baseAlive.length; k++) {
+									// updateBaseIsAlive expects player values 1 and 2 rather than 0 and 1
+									baseAlive[k] = baseAlive[k] || updateBaseIsAlive(currentUnit, k+1);
+								}
 							}
 						} //end if (there is a unit on this space)
 					}//end j
@@ -125,13 +120,12 @@ public class MicroRTSUtility {
 						+previousCreatedUnitsIDSize + " ==> " + createdUnitIDs2.size() + " T: " + currentCycle;
 				assert createdUnitIDs2.size() > 0 : "units not found! createdUnitIDs2.size() did not find any units. T: " + currentCycle;
 				
-				if((!base1Alive) && (!baseDeath1Recorded)) { //records base1 death time if the base was NOT the last unit destroyed
-					task.setBaseUpTime(gs.getTime(), 1);
-					baseDeath1Recorded = true;
-				}
-				if(!base2Alive && !baseDeath2Recorded && coevolution) { 
-					task.setBaseUpTime(gs.getTime(), 2);
-					baseDeath2Recorded = true;
+				for(int k = 0; k < baseAlive.length; k++) {
+					if((!baseAlive[k]) && (!baseDeathRecorded[k]) && (k == 0 || coevolution)) { //records base1 death time if the base was NOT the last unit destroyed
+						// setBaseUpTime expects player values 1 and 2 rather than 0 and 1
+						task.setBaseUpTime(gs.getTime(), k+1);
+						baseDeathRecorded[k] = true;
+					}				
 				}
 				currentCycle++;
 				averageUnitDifference += (unitDifferenceNow - averageUnitDifference) / (1.0*currentCycle); //incremental calculation of the avg.
@@ -144,10 +138,10 @@ public class MicroRTSUtility {
 		int terminalUnits1= 0;
 		int terminalUnits2= 0;
 		if(prog){ //count remaining units, update
-			if(!baseDeath1Recorded)
-				task.setBaseUpTime(gs.getTime(), 1);
-			if(!baseDeath2Recorded && coevolution)
-				task.setBaseUpTime(gs.getTime(), 2);
+			for(int k = 0; k < baseAlive.length; k++) {
+				if(!baseDeathRecorded[k] && (k == 0 || coevolution))
+					task.setBaseUpTime(gs.getTime(), k+1);
+			}			
 			for(int i = 0; i < pgs.getWidth(); i++){
 				for(int j = 0; j < pgs.getHeight(); j++){
 					currentUnit = pgs.getUnitAt(i, j);
@@ -161,9 +155,9 @@ public class MicroRTSUtility {
 			}
 			try{
 				//createdIds' size should never = 0 because all players start with a base
-				task.setPercentEnemiesDestroyed(((createdUnitIDs2.size() - terminalUnits2) * 100 ) / createdUnitIDs2.size(), 1); 
+				task.setPercentEnemiesDestroyed(((createdUnitIDs2.size() - terminalUnits2) * 100.0 ) / createdUnitIDs2.size(), 1); 
 				if(coevolution)
-					task.setPercentEnemiesDestroyed(((createdUnitIDs1.size() - terminalUnits1) * 100 ) / createdUnitIDs1.size(), 2);
+					task.setPercentEnemiesDestroyed(((createdUnitIDs1.size() - terminalUnits1) * 100.0 ) / createdUnitIDs1.size(), 2);
 			} catch(ArithmeticException e){
 				System.out.println("Units 2 Ever created: " + createdUnitIDs2 + " : " + createdUnitIDs2.size()); //only shows units alive at the end
 				System.out.println("Units 2 At End: " + terminalUnits2);
@@ -206,12 +200,8 @@ public class MicroRTSUtility {
 
 	//Assumes bases exist at the start of the game
 	private static boolean updateBaseIsAlive(Unit u, int player) {
-		if(u.getPlayer() == 0 && player == 1){
-			return true; //base1Alive
-		} else if(u.getPlayer() == 1 && player == 2){
-			return true; //base2Alive
-		} else
-			return false; //'player' does not match unit's player
+		// For some reason, player values are 1 and 2 while getPlayer results are 0 and 1
+		return (u.getPlayer() + 1 == player);
 	}
 
 	/**
