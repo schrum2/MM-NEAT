@@ -59,10 +59,10 @@ public class BoardGameUtil {
 				if(CommonConstants.watch && bg instanceof TwoDimensionalBoardGame){ // Renders each Move in the game
 					view.reset((TwoDimensionalBoardGameState) bg.getCurrentState());
 				}
-				if(stepByStep){
-					//System.out.print("Press enter to continue");
-					//MiscUtil.waitForReadStringAndEnterKeyPress();
-				}
+//				if(stepByStep){
+//					System.out.print("Press enter to continue");
+//					MiscUtil.waitForReadStringAndEnterKeyPress();
+//				}
 				
 				int playIndex = bg.getCurrentPlayer(); // Stores the current Player's Index to access the Player's Fitness
 				//System.out.println(players[playIndex]);
