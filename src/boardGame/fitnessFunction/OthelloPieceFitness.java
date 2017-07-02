@@ -14,20 +14,22 @@ public class OthelloPieceFitness<T extends BoardGameState> implements BoardGameF
 	
 	@Override
 	public void updateFitness(T bgs, int index) {
+		// Only calculate for end game
+		if(bgs.endState()) {			
+			int playerChips = 0;
+			int opponentChips = 0;
 
-		int playerChips = 0;
-		int opponentChips = 0;
+			double[] description = bgs.getDescriptor();
 
-		double[] description = bgs.getDescriptor();
-
-		for (double d : description) {
-			if (d == index) { // Found a Player Check
-				playerChips++;
-			}else if (d == (index + 1) % 2) { // Found an Enemy Check
-				opponentChips++;
+			for (double d : description) {
+				if (d == index) { // Found a Player Check
+					playerChips++;
+				}else if (d == (index + 1) % 2) { // Found an Enemy Check
+					opponentChips++;
+				}
 			}
+			fitness[index] = playerChips - opponentChips;
 		}
-		fitness[index] += playerChips - opponentChips;
 	}
 
 
