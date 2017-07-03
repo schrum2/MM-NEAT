@@ -59,7 +59,7 @@ public class StaticOpponentBoardGameTask<T extends Network, S extends BoardGameS
 			fitFunctions.add(new CheckersAdvancedFitness<S>());
 		}
 		if(Parameters.parameters.booleanParameter("boardGameOthelloFitness")){
-			fitFunctions.add(new OthelloPieceFitness<S>());
+			fitFunctions.add((BoardGameFitnessFunction<S>) new OthelloPieceFitness());
 		}
 		
 		for(BoardGameFitnessFunction<S> fit: fitFunctions){

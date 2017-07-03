@@ -1,6 +1,7 @@
 package edu.utexas.cs.nn.tasks.boardGame;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -11,6 +12,7 @@ import boardGame.TwoDimensionalBoardGameState;
 import boardGame.TwoDimensionalBoardGameViewer;
 import boardGame.agents.BoardGamePlayer;
 import boardGame.fitnessFunction.BoardGameFitnessFunction;
+import boardGame.fitnessFunction.OthelloPieceFitness;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.networks.hyperneat.HyperNEATUtil;
 import edu.utexas.cs.nn.networks.hyperneat.Substrate;
@@ -113,6 +115,19 @@ public class BoardGameUtil {
 					otherScores[k][i][j] = (1.0*otherFit.get(j).getFitness(players[k], playerIndex));
 				}
 
+				try{
+					// Make sure OthelloPieceFitness and win/loss/draw are consistent
+					// Relies on implication: A -> B equivalent to !A || B
+					assert !(fitScores.get(0) instanceof OthelloPieceFitness) || (!(fitnesses[k][i][0] > 0) || otherScores[k][i][0] == 1) : "Positive piece count should be a win in Othello: " + Arrays.toString(fitnesses[k][i]) + Arrays.toString(otherScores[k][i]);
+					assert !(fitScores.get(0) instanceof OthelloPieceFitness) || (!(fitnesses[k][i][0] < 0) || otherScores[k][i][0] == -2) : "Negative piece count should be a loss in Othello: " + Arrays.toString(fitnesses[k][i]) + Arrays.toString(otherScores[k][i]);
+					assert !(fitScores.get(0) instanceof OthelloPieceFitness) || (!(fitnesses[k][i][0] == 0) || otherScores[k][i][0] == 0) : "Zero piece count should be a tie in Othello: " + Arrays.toString(fitnesses[k][i]) + Arrays.toString(otherScores[k][i]);
+				}catch(AssertionError e) {
+					System.out.println(e);
+					System.out.println(bg);
+					System.out.println(Arrays.deepToString(fitnesses));
+					System.out.println(Arrays.deepToString(otherScores));
+					MiscUtil.waitForReadStringAndEnterKeyPress();
+				}
 			}
 			
 			if (MMNEAT.evalReport != null) {

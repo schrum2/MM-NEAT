@@ -61,7 +61,7 @@ public class MultiPopulationCompetativeCoevolutionBoardGameTask<S extends BoardG
 			fitFunctions.add(new CheckersAdvancedFitness<S>());
 		}
 		if(Parameters.parameters.booleanParameter("boardGameOthelloFitness")){
-			fitFunctions.add(new OthelloPieceFitness<S>());
+			fitFunctions.add((BoardGameFitnessFunction<S>) new OthelloPieceFitness());
 		}
 		
 		// Add Fitness Functions here to keep track of Other Scores

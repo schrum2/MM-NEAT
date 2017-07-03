@@ -244,7 +244,11 @@ public abstract class TwoDimensionalBoardGameState implements BoardGameState {
 		return ((source.getX() >= 0 && source.getX() < getBoardWidth()) && (source.getY() >= 0 && source.getY() < getBoardHeight()));
 	}
 	
-	
+	/**
+	 * Number of pieces on board possessed by player with the given player index
+	 * @param playerIndex Index of player to count pieces of
+	 * @return Count of such pieces
+	 */
 	public int numberOfPieces(int playerIndex){
 		int numPieces = 0;
 		

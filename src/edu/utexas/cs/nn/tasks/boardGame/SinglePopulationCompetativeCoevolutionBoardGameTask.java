@@ -60,7 +60,7 @@ public class SinglePopulationCompetativeCoevolutionBoardGameTask<T extends Netwo
 			fitFunctions.add(new HallOfFameFitness<T,S>());
 		}
 		if(Parameters.parameters.booleanParameter("boardGameOthelloFitness")){
-			fitFunctions.add(new OthelloPieceFitness<S>());
+			fitFunctions.add((BoardGameFitnessFunction<S>) new OthelloPieceFitness());
 		}
 		
 		for(BoardGameFitnessFunction<S> fit : fitFunctions){

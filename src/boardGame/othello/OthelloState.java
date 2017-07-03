@@ -69,19 +69,9 @@ public class OthelloState extends TwoDimensionalBoardGameState {
 	private void checkWinners(){
 		if(endState() && winners.isEmpty()){ // Won't run unless an EndState is reached
 			
-			int blackChipCount = 0;
-			int whiteChipCount = 0;
-			
-			for(int i = 0; i < BOARD_WIDTH; i++){
-				for(int j = 0; j < BOARD_WIDTH; j++){
-					if(boardState[i][j] == BLACK_CHIP){
-						blackChipCount++;
-					}else if(boardState[i][j] == WHITE_CHIP){
-						whiteChipCount++;
-					}
-				}
-			}
-			
+			int blackChipCount = numberOfPieces(BLACK_CHIP);
+			int whiteChipCount = numberOfPieces(WHITE_CHIP);
+						
 			if(blackChipCount > whiteChipCount){
 				winners.add(BLACK_CHIP);
 			}else if(whiteChipCount > blackChipCount){
@@ -306,4 +296,10 @@ public class OthelloState extends TwoDimensionalBoardGameState {
 		return true;
 	}
 	
+	public String toString() {
+		String result = super.toString();
+		result += "Black: " + numberOfPieces(BLACK_CHIP);
+		result += "\nWhite: " + numberOfPieces(WHITE_CHIP) + "\n";
+		return result;
+	}
 }

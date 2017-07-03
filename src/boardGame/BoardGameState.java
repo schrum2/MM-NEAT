@@ -16,8 +16,6 @@ public interface BoardGameState {
 	 */
 	public double[] getDescriptor();
 	
-	
-	
 	/**
 	 * Returns true if the game has reached an end, else returns false
 	 * 
@@ -48,8 +46,6 @@ public interface BoardGameState {
 	 * @return List<Integer> representing the winners in this current BoardGameState
 	 */
 	public List<Integer> getWinners();
-	
-	public String toString();
 	
 	/**
 	 * Returns a Duplicate of the current BoardGameState

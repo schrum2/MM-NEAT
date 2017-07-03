@@ -1,35 +1,27 @@
 package boardGame.fitnessFunction;
 
-import boardGame.BoardGameState;
-import boardGame.agents.BoardGamePlayer;
+import java.util.Arrays;
 
-public class OthelloPieceFitness<T extends BoardGameState> implements BoardGameFitnessFunction<T> {
+import boardGame.agents.BoardGamePlayer;
+import boardGame.othello.OthelloState;
+
+public class OthelloPieceFitness implements BoardGameFitnessFunction<OthelloState> {
 
 	private double[] fitness = new double[2]; // Othello always has two players
 	
 	@Override
-	public double getFitness(BoardGamePlayer<T> player, int index){
+	public double getFitness(BoardGamePlayer<OthelloState> player, int index){
 		return fitness[index];
 	}
 	
 	@Override
-	public void updateFitness(T bgs, int index) {
-		// Only calculate for end game
-		if(bgs.endState()) {			
-			int playerChips = 0;
-			int opponentChips = 0;
-
-			double[] description = bgs.getDescriptor();
-
-			for (double d : description) {
-				if (d == index) { // Found a Player Check
-					playerChips++;
-				}else if (d == (index + 1) % 2) { // Found an Enemy Check
-					opponentChips++;
-				}
-			}
-			fitness[index] = playerChips - opponentChips;
-		}
+	public void updateFitness(OthelloState bgs, int index) {
+		int playerChips = bgs.numberOfPieces(index);
+		int opponentChips = bgs.numberOfPieces((index+1)%2);
+		// Always recalculate
+		fitness[index] = playerChips - opponentChips;
+		//System.out.println("\nupdateFitness("+index+"):" + bgs + "\n" + Arrays.toString(fitness) + "\n");
+		assert fitness[index] >= -64 && fitness[index] <= 64 : "There are only 64 spaces on the board: " + Arrays.toString(fitness);
 	}
 
 
