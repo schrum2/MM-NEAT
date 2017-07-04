@@ -211,11 +211,13 @@ public abstract class MultiplePopulationGenerationalEAExperiment implements Expe
 					EvolutionaryHistory.cleanArchetype(i, tweannPopulation, gen);
 				}
 			}
+			if (writeOutput) {
+				ScoreHistory.save(); // Only saves if actually being used
+			}
 			// If tracking score history, clean it up after each generation
 			ScoreHistory.clean();
 			// Write output
 			if (writeOutput) {
-				ScoreHistory.save(); // Only saves if actually being used
 				save("gen" + gen);
 				Parameters.parameters.setInteger("lastSavedGeneration", gen);
 				Parameters.parameters.saveParameters();

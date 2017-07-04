@@ -1,14 +1,17 @@
 package edu.utexas.cs.nn.evolution;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Scanner;
+
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.util.stats.Statistic;
-import wox.serial.Easy;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 
 /**
  * Tracks scores of all individuals still in population.
@@ -28,20 +31,58 @@ public class ScoreHistory {
 			String base = Parameters.parameters.stringParameter("base");
 			int runNumber = Parameters.parameters.integerParameter("runNumber");
 			String saveTo = Parameters.parameters.stringParameter("saveTo");
-			String historyFile = base + "/" + saveTo + runNumber + "/scoreHistory.xml";
-			Easy.save(allScores, historyFile);
+			String historyFile = base + "/" + saveTo + runNumber + "/scoreHistory.txt";
+			try {
+				PrintStream ps = new PrintStream(new File(historyFile));
+				for(Long key: allScores.keySet()){
+					ps.println(key);
+					for(double[] scores: allScores.get(key)) {
+						ps.print("\t");
+						for(double score: scores) {
+							ps.print(score + " ");
+						}
+						ps.println();
+					}
+				}
+				ps.close();
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+				System.exit(1);
+			}
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
 	public static void load() {
 		if(CommonConstants.inheritFitness || CommonConstants.averageScoreHistory) {
 			String base = Parameters.parameters.stringParameter("base");
 			int runNumber = Parameters.parameters.integerParameter("runNumber");
 			String saveTo = Parameters.parameters.stringParameter("saveTo");
-			String historyFile = base + "/" + saveTo + runNumber + "/scoreHistory.xml";
+			String historyFile = base + "/" + saveTo + runNumber + "/scoreHistory.txt";
 			if(new File(historyFile).exists()) { // Will not exist in first generation
-				allScores = (HashMap<Long, ArrayList<double[]>>) Easy.load(historyFile);
+				allScores = new HashMap<Long, ArrayList<double[]>>();
+
+				try {
+					Scanner scan = new Scanner(new File(historyFile));
+					while(scan.hasNextLine()) {
+						long id = scan.nextLong();
+						scan.nextLine();
+						ArrayList<double[]> scoreHistory = new ArrayList<double[]>();
+						while(scan.hasNextDouble() && ! scan.hasNextLong()) { // doubles that are not longs (decimal point)
+							String line = scan.nextLine();
+							String[] stringScores = line.split(" ");
+							double[] scores = new double[stringScores.length];
+							for(int i = 0; i < scores.length; i++) {
+								scores[i] = Double.parseDouble(stringScores[i]);
+							}
+							scoreHistory.add(scores);
+						}
+						allScores.put(id, scoreHistory);
+					}
+					scan.close();
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+					System.exit(1);
+				}
 			}
 		}
 	}
@@ -122,7 +163,18 @@ public class ScoreHistory {
 	public static double[] getLast(long id) {
 		accessed.put(id, Boolean.TRUE);
 		ArrayList<double[]> scores = allScores.get(id);
-		return scores.get(scores.size() - 1);
+		try {
+			return scores.get(scores.size() - 1);
+		} catch(NullPointerException e) {
+			System.out.println("get id: " + id);
+			for(Long key: allScores.keySet()){
+				System.out.println(key);
+				for(double[] scores1: allScores.get(key)) {
+					System.out.println(Arrays.toString(scores1));
+				}
+			}
+			throw e;
+		}
 	}
 
 	/**
@@ -135,7 +187,7 @@ public class ScoreHistory {
 		Iterator<Long> itr = allScores.keySet().iterator();
 		while (itr.hasNext()) {
 			Long id = itr.next();
-			if (!accessed.get(id)) {
+			if (accessed.get(id) != null && !accessed.get(id)) {
 				itr.remove();
 				accessed.remove(id);
 			}

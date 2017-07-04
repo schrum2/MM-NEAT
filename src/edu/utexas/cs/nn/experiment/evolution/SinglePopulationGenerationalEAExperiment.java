@@ -222,10 +222,12 @@ public abstract class SinglePopulationGenerationalEAExperiment<T> implements Exp
 				}
 				EvolutionaryHistory.cleanArchetype(0, tweannPopulation, gen);
 			}
+			if (writeOutput) {
+				ScoreHistory.save(); // Only saves if actually being used
+			}
 			// If tracking score history, clean it up after each generation
 			ScoreHistory.clean();
 			if (writeOutput) {
-				ScoreHistory.save(); // Only saves if actually being used
 				save("gen" + gen);
 				Parameters.parameters.setInteger("lastSavedGeneration", gen);
 				Parameters.parameters.saveParameters();
