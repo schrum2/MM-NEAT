@@ -5,6 +5,7 @@ import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.util.stats.Statistic;
 import wox.serial.Easy;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -39,7 +40,9 @@ public class ScoreHistory {
 			int runNumber = Parameters.parameters.integerParameter("runNumber");
 			String saveTo = Parameters.parameters.stringParameter("saveTo");
 			String historyFile = base + "/" + saveTo + runNumber + "/scoreHistory.xml";
-			allScores = (HashMap<Long, ArrayList<double[]>>) Easy.load(historyFile);
+			if(new File(historyFile).exists()) { // Will not exist in first generation
+				allScores = (HashMap<Long, ArrayList<double[]>>) Easy.load(historyFile);
+			}
 		}
 	}
 	
