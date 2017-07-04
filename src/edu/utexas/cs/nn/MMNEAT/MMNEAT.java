@@ -16,6 +16,7 @@ import edu.utexas.cs.nn.breve2D.dynamics.Breve2DDynamics;
 import edu.utexas.cs.nn.data.ResultSummaryUtilities;
 import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
 import edu.utexas.cs.nn.evolution.GenerationalEA;
+import edu.utexas.cs.nn.evolution.ScoreHistory;
 import edu.utexas.cs.nn.evolution.crossover.Crossover;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.evolution.genotypes.HyperNEATCPPNGenotype;
@@ -647,6 +648,9 @@ public class MMNEAT {
 				System.out.println(task);
 				System.exit(1);
 			}
+			
+			// Only loads if settings indicate that this should be used
+			ScoreHistory.load();
 
 			// Changes network input setting to HyperNEAT settings
 			if (CommonConstants.hyperNEAT) {

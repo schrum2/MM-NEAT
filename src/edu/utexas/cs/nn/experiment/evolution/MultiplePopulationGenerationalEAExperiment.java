@@ -215,6 +215,7 @@ public abstract class MultiplePopulationGenerationalEAExperiment implements Expe
 			ScoreHistory.clean();
 			// Write output
 			if (writeOutput) {
+				ScoreHistory.save(); // Only saves if actually being used
 				save("gen" + gen);
 				Parameters.parameters.setInteger("lastSavedGeneration", gen);
 				Parameters.parameters.saveParameters();

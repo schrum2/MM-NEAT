@@ -1,19 +1,18 @@
-/*
- * Haven't decided how to fully apply this yet. At some point in selection,
- * the scores here need to replace the ones currently used, but keeping a
- * record of the actual rather than aggregate scores is still a good idea.
- */
 package edu.utexas.cs.nn.evolution;
 
+import edu.utexas.cs.nn.parameters.CommonConstants;
+import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.util.stats.Statistic;
+import wox.serial.Easy;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
 /**
- * TODO: Actually use these methods at an appropriate place in the code,
- *       if a given command line parameter is set.
- *
+ * Tracks scores of all individuals still in population.
+ * Used in different ways depending on certain settings.
+ * 
  * @author Jacob Schrum
  */
 public class ScoreHistory {
@@ -23,6 +22,27 @@ public class ScoreHistory {
 	// Track access to entries in allScores
 	private static HashMap<Long, Boolean> accessed = new HashMap<Long, Boolean>();
 
+	public static void save() {
+		if(!allScores.isEmpty()) {
+			String base = Parameters.parameters.stringParameter("base");
+			int runNumber = Parameters.parameters.integerParameter("runNumber");
+			String saveTo = Parameters.parameters.stringParameter("saveTo");
+			String historyFile = base + "/" + saveTo + runNumber + "/scoreHistory.xml";
+			Easy.save(allScores, historyFile);
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static void load() {
+		if(CommonConstants.inheritFitness || CommonConstants.averageScoreHistory) {
+			String base = Parameters.parameters.stringParameter("base");
+			int runNumber = Parameters.parameters.integerParameter("runNumber");
+			String saveTo = Parameters.parameters.stringParameter("saveTo");
+			String historyFile = base + "/" + saveTo + runNumber + "/scoreHistory.xml";
+			allScores = (HashMap<Long, ArrayList<double[]>>) Easy.load(historyFile);
+		}
+	}
+	
 	/**
 	 * Indicate that none of the scores have been accessed
 	 * in the current cycle of access.
