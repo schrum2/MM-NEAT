@@ -187,7 +187,7 @@ public class ScoreHistory {
 		Iterator<Long> itr = allScores.keySet().iterator();
 		while (itr.hasNext()) {
 			Long id = itr.next();
-			if (accessed.get(id) != null && !accessed.get(id)) {
+			if (accessed.get(id) == null || !accessed.get(id)) {
 				itr.remove();
 				accessed.remove(id);
 			}
