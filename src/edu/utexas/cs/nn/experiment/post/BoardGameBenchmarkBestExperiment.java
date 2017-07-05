@@ -1,6 +1,7 @@
 package edu.utexas.cs.nn.experiment.post;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import boardGame.BoardGame;
@@ -31,6 +32,15 @@ import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.file.FileUtilities;
 import edu.utexas.cs.nn.util.graphics.DrawingPanel;
 
+/**
+ * TO DELETE?
+ * 
+ * This class doesn't seem necessary because simply calling ObjectiveBestNetworksExperiment with the
+ * right parameters seems to be sufficient.
+ *
+ * @param <T>
+ * @param <S>
+ */
 public class BoardGameBenchmarkBestExperiment<T extends Network, S extends BoardGameState> implements Experiment{
 	
 	protected ArrayList<Genotype<T>> population;
@@ -123,7 +133,8 @@ public class BoardGameBenchmarkBestExperiment<T extends Network, S extends Board
 		BoardGamePlayer<S>[] players = new BoardGamePlayer[]{player, opponent};
 			
 		for(int i = 0; i < CommonConstants.trials; i++){
-			BoardGameUtil.playGame(bg, players, fitFunctions, new ArrayList<>()); // No Other Scores
+			ArrayList<Pair<double[], double[]>> scores = BoardGameUtil.playGame(bg, players, fitFunctions, new ArrayList<>()); // No Other Scores
+			System.out.println(Arrays.toString(scores.get(0).t1));
 		}
 			
 		if (panel != null) {
