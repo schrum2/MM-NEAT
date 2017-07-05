@@ -7,10 +7,15 @@ import boardGame.BoardGame;
 import boardGame.BoardGameState;
 import boardGame.agents.BoardGamePlayer;
 import boardGame.agents.HeuristicBoardGamePlayer;
+import boardGame.checkers.Checkers;
 import boardGame.featureExtractor.BoardGameFeatureExtractor;
 import boardGame.fitnessFunction.BoardGameFitnessFunction;
+import boardGame.fitnessFunction.CheckersAdvancedFitness;
+import boardGame.fitnessFunction.OthelloPieceFitness;
 import boardGame.fitnessFunction.SimpleWinLoseDrawBoardGameFitness;
+import boardGame.fitnessFunction.WinPercentageBoardGameFitness;
 import boardGame.heuristics.NNBoardGameHeuristic;
+import boardGame.othello.Othello;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.experiment.Experiment;
@@ -33,7 +38,6 @@ public class BoardGameBenchmarkBestExperiment<T extends Network, S extends Board
 
 	
 	private BoardGame<S> bg;
-	private BoardGameFitnessFunction<S> selectionFunction;
 	private BoardGameFeatureExtractor<S> featExtract;
 	private HeuristicBoardGamePlayer<S> player;
 	private BoardGamePlayer<S> opponent;
@@ -69,7 +73,6 @@ public class BoardGameBenchmarkBestExperiment<T extends Network, S extends Board
 		
 		try {
 			bg = (BoardGame<S>) ClassCreation.createObject("boardGame");
-			selectionFunction = (BoardGameFitnessFunction<S>) ClassCreation.createObject("boardGameFitnessFunction");
 			featExtract = (BoardGameFeatureExtractor<S>) ClassCreation.createObject("boardGameFeatureExtractor");
 			player = (HeuristicBoardGamePlayer<S>) ClassCreation.createObject("boardGamePlayer"); // The Player
 			opponent = (BoardGamePlayer<S>) ClassCreation.createObject("boardGameOpponent");
@@ -77,19 +80,20 @@ public class BoardGameBenchmarkBestExperiment<T extends Network, S extends Board
 			e.printStackTrace();
 			System.exit(1);
 		}
-		
 
-		MMNEAT.registerFitnessFunction(selectionFunction.getFitnessName());
-		
-		// Add Other Scores here to keep track of other Fitness Functions
+		// Add fitness measures
 		fitFunctions.add(new SimpleWinLoseDrawBoardGameFitness<S>());
-		
-		for(BoardGameFitnessFunction<S> fit : fitFunctions){
-			MMNEAT.registerFitnessFunction(fit.getFitnessName(), false);
+		fitFunctions.add(new WinPercentageBoardGameFitness<S>());
+		if(bg instanceof Checkers){
+			fitFunctions.add(new CheckersAdvancedFitness<S>());
 		}
-		
-		fitFunctions.add(0, selectionFunction);
-		
+		if(bg instanceof Othello){
+			fitFunctions.add((BoardGameFitnessFunction<S>) new OthelloPieceFitness());
+		}
+
+		for(BoardGameFitnessFunction<S> ff : fitFunctions) {
+			MMNEAT.registerFitnessFunction(ff.getFitnessName());
+		}		
 	}
 	
 	/**
