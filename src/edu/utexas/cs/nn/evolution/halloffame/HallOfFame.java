@@ -30,6 +30,7 @@ public class HallOfFame<T> {
 		pastGens = Parameters.parameters.integerParameter("hallOfFamePastGens");
 		numChamps = Parameters.parameters.integerParameter("hallOfFameNumChamps");
 		champs = new ArrayList<Genotype<T>>();
+		System.out.println("Initialize Hall of Fame");
 	}
 	
 	/**
@@ -108,6 +109,7 @@ public class HallOfFame<T> {
 				hall.add(new Triple<Integer, Genotype<T>, Score<T>>(generation, champion.t1, champion.t2));
 			}
 		}
+		System.out.println("Hall of Fame now contains " + hall.size() + " champions");
 	}
 	
 	/**

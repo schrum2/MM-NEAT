@@ -15,7 +15,9 @@ import edu.utexas.cs.nn.util.ClassCreation;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 
 public class HallOfFameFitness<T extends Network, S extends BoardGameState> implements BoardGameFitnessFunction<S> {
-	
+	// This constant is problematic. It assumes the Hall of Fame fitness will always be index 0,
+	// and that there will only be one selection function in index 1.
+	public static final int SELECTION_INDEX = 1; 
 	private boolean currentlyEvaluatingHallOfFame = false;
 	int currentGen = -1;
 	BoardGameFeatureExtractor<S> featExtract;
@@ -40,20 +42,30 @@ public class HallOfFameFitness<T extends Network, S extends BoardGameState> impl
 	@Override
 	public double getFitness(BoardGamePlayer<S> player, int index) {
 		// Do not evaluate in infinite loop
-		if(currentlyEvaluatingHallOfFame) return 0;
+		if(currentlyEvaluatingHallOfFame) {
+			//System.out.println("Evaluating Hall of Fame");
+			return 0;
+		}
 		
 		long genotypeID = -1;
-		BoardGameHeuristic<S> bgh;
+		BoardGameHeuristic<S> bgh = null;
 		
 		if(player instanceof HeuristicBoardGamePlayer){
 			bgh = ((HeuristicBoardGamePlayer<S>) player).getHeuristic();
 			if(bgh instanceof NNBoardGameHeuristic){
 				genotypeID = ((NNBoardGameHeuristic<?,S>) bgh).getID();
 			} else {
-				return 0; // Don't have static opponents play against other static opponents
+				System.out.println("Not a NNBoardGameHeuristic");
+				System.out.println("Don't have static opponents play against other static opponents");
+				System.out.println(player);
+				System.out.println(bgh);
+				System.exit(1);
 			}
 		} else {
-			return 0; // Don't have static opponents play against other static opponents
+			System.out.println("Not a HeuristicBoardGamePlayer");
+			System.out.println("Don't have static opponents play against other static opponents");
+			System.out.println(player);
+			System.exit(1);
 		}
 		
 		// At this point, Player must be a Heuristic Board Game Player, and bgh must be a NNBoardGameHeuristic
@@ -64,12 +76,13 @@ public class HallOfFameFitness<T extends Network, S extends BoardGameState> impl
 			currentlyEvaluatingHallOfFame = true; // prevent infinite recursion when evaluating hall of fame
 			Pair<double[], double[]> evalResults = MMNEAT.hallOfFame.eval(((NNBoardGameHeuristic<?,S>) bgh).getGenotype());
 			currentlyEvaluatingHallOfFame = false;
-			double score = evalResults.t1[0]; // Only uses 1 Selection Function
+			double score = evalResults.t1[SELECTION_INDEX]; // Only uses 1 Selection Function
 			
 			evaluated.put(genotypeID, score);
 			
 			return score;
 		}else{
+			//System.out.println("Generation 0: "+MMNEAT.ea.currentGeneration());
 			return 0.0; // Did not complete a full Generation yet
 		}
 	}

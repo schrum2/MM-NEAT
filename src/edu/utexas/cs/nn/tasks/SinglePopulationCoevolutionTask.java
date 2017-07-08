@@ -1,12 +1,14 @@
 package edu.utexas.cs.nn.tasks;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.parameters.CommonConstants;
+import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.scores.MultiObjectiveScore;
 import edu.utexas.cs.nn.scores.Score;
 import edu.utexas.cs.nn.util.ClassCreation;
@@ -18,8 +20,10 @@ import edu.utexas.cs.nn.util.stats.Statistic;
 public abstract class SinglePopulationCoevolutionTask<T> implements SinglePopulationTask<T>{
 
 	private Statistic stat;
+	public final boolean printFitness;
 
 	public SinglePopulationCoevolutionTask() {
+		this.printFitness = Parameters.parameters.booleanParameter("printFitness");
 		try {
 			stat = (Statistic) ClassCreation.createObject("noisyTaskStat");
 		} catch (NoSuchMethodException ex) {
@@ -95,6 +99,14 @@ public abstract class SinglePopulationCoevolutionTask<T> implements SinglePopula
 				// Get scores
 				ArrayList<Pair<double[], double[]>> result = evaluateGroup(group);
 				
+				if(printFitness) {
+					for(int q = 0; q < result.size(); q++) {
+						Pair<double[], double[]> pair = result.get(q);
+						System.out.println(group.get(q).getId()+": "+Arrays.toString(pair.t1)+Arrays.toString(pair.t2));
+					}
+					System.out.println("--------------------------");
+				}
+				
 				// Clean up all Panels here
 				for(Pair<DrawingPanel, DrawingPanel> panelSet : drawPanels){
 					if(panelSet.t1 != null)
@@ -160,7 +172,9 @@ public abstract class SinglePopulationCoevolutionTask<T> implements SinglePopula
 		
 		if(MMNEAT.hallOfFame != null){
 			List<Pair<Genotype<T>, Score<T>>> champs = new ArrayList<Pair<Genotype<T>, Score<T>>>();
-			for(int i = 0; i < bestObjectives.length; i++){
+			// NOTE: i starts at 1 because we assume the Hall of Fame fitness is at index 1, which is
+			//       not very general and should be changed eventually.
+			for(int i = 1; i < bestObjectives.length; i++){
 				champs.add(new Pair<Genotype<T>, Score<T>>(bestGenotypes[i], bestScores[i]));
 			}
 			MMNEAT.hallOfFame.addChampions(MMNEAT.ea.currentGeneration(), champs);
