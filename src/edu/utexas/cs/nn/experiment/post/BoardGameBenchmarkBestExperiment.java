@@ -24,6 +24,7 @@ import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.CommonTaskUtil;
+import edu.utexas.cs.nn.tasks.NoisyLonerTask;
 import edu.utexas.cs.nn.tasks.SinglePopulationTask;
 import edu.utexas.cs.nn.tasks.boardGame.BoardGameUtil;
 import edu.utexas.cs.nn.util.ClassCreation;
@@ -33,13 +34,11 @@ import edu.utexas.cs.nn.util.file.FileUtilities;
 import edu.utexas.cs.nn.util.graphics.DrawingPanel;
 
 /**
- * TO DELETE?
- * 
- * This class doesn't seem necessary because simply calling ObjectiveBestNetworksExperiment with the
- * right parameters seems to be sufficient.
+ * The benefit that this experiment has over ObjectiveBestNetworksExperiment is that it works with
+ * results from coevolution as well.
  *
- * @param <T>
- * @param <S>
+ * @param <T> phenotype that is a neural network
+ * @param <S> type of board game state for the board game
  */
 public class BoardGameBenchmarkBestExperiment<T extends Network, S extends BoardGameState> implements Experiment{
 	
@@ -132,10 +131,24 @@ public class BoardGameBenchmarkBestExperiment<T extends Network, S extends Board
 		@SuppressWarnings("unchecked")
 		BoardGamePlayer<S>[] players = new BoardGamePlayer[]{player, opponent};
 			
+		ArrayList<Pair<double[], double[]>> allResults = new ArrayList<Pair<double[], double[]>>();
 		for(int i = 0; i < CommonConstants.trials; i++){
 			ArrayList<Pair<double[], double[]>> scores = BoardGameUtil.playGame(bg, players, fitFunctions, new ArrayList<>()); // No Other Scores
-			System.out.println(Arrays.toString(scores.get(0).t1));
+			System.out.println(Arrays.toString(scores.get(0).t1)+Arrays.toString(scores.get(0).t2));
+			allResults.add(scores.get(0));
 		}
+		
+		double[][] fitness = new double[allResults.size()][];
+		double[][] other = new double[allResults.size()][];
+		
+		for(int i = 0; i < allResults.size(); i++){
+			fitness[i] = allResults.get(i).t1;
+			other[i] = allResults.get(i).t2;
+		}
+		
+		Pair<double[], double[]> score = NoisyLonerTask.averageResults(fitness, other);
+		System.out.println("Average");
+		System.out.println(Arrays.toString(score.t1)+Arrays.toString(score.t2));
 			
 		if (panel != null) {
 			panel.dispose();
