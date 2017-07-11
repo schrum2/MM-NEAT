@@ -83,7 +83,7 @@ public class CartesianGeometricUtilitiesTest {
 	public void testBottomScale() {
 		double toScale = 8.0;
 		assertEquals(4.0, CartesianGeometricUtilities.bottomScale(toScale, 3), DOUBLE_THRESHOLD);
-		assertEquals(0, CartesianGeometricUtilities.bottomScale(toScale, 1), DOUBLE_THRESHOLD); //special case if max dimension is 1
+		assertEquals(0, CartesianGeometricUtilities.bottomScale(0, 1), DOUBLE_THRESHOLD); //special case if max dimension is 1
 		assertEquals(2.0, CartesianGeometricUtilities.bottomScale(toScale, 5), DOUBLE_THRESHOLD);
 		assertEquals(1.0, CartesianGeometricUtilities.bottomScale(toScale, 9), DOUBLE_THRESHOLD);
 	}
