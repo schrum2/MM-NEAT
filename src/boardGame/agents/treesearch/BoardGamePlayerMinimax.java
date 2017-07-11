@@ -2,7 +2,6 @@ package boardGame.agents.treesearch;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.Set;
 
 import boardGame.BoardGameState;
@@ -33,9 +32,7 @@ public class BoardGamePlayerMinimax<T extends BoardGameState> extends HeuristicB
 	protected static final double ALPHA = Double.NEGATIVE_INFINITY; // Holds the Starting Value for Alpha
 	protected static final double BETA = Double.POSITIVE_INFINITY; // Holds the Starting Value for Beta
 	protected boolean prune;
-	
-	Random random = RandomNumbers.randomGenerator;
-	
+		
 	/**
 	 * This constructor assumes an opponent agent is being created.
 	 * But if an evolved agent needs to be created, its heuristic
@@ -96,7 +93,7 @@ public class BoardGamePlayerMinimax<T extends BoardGameState> extends HeuristicB
 		//System.out.println(poss);
 		
 		// If occasional random moves are allowed, then minimax calculation can be skipped
-		double rand = random.nextDouble();
+		double rand = RandomNumbers.randomGenerator.nextDouble();
 		if(rand < Parameters.parameters.doubleParameter("minimaxRandomRate")){
 			return RandomNumbers.randomElement(poss);
 		}
@@ -180,10 +177,5 @@ public class BoardGamePlayerMinimax<T extends BoardGameState> extends HeuristicB
 			}
 			return bestValue;
 		}
-	}
-	
-	public void setRandomSeed(long seed){
-		random.setSeed(seed);
-	}
-
+	}	
 }
