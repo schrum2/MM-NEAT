@@ -715,6 +715,7 @@ public class Parameters {
 		doubleOptions.add("crossExcessRate", 0.0, "Portion of TWEANN crossovers that include excess/disjoint genes");
 		doubleOptions.add("explorePreference", 0.5, "High for more exploration vs. low for more exploitation when using UCB1");
 		doubleOptions.add("minimaxRandomRate", 0.0, "Chance of a Minimax Player choosing a Random legal Move instead of the best Move");
+		doubleOptions.add("minimaxSecondBestRate", 0.0, "Chance of a Minimax Player choosing second best legal move instead of the best");
 		// String parameters
 		stringOptions.add("gameWad", "freedoom2.wad", "The wad file name for the current VizDoom game");
 		stringOptions.add("matchImageFile", "data/imagematch/theScream.png", "path of the image for image match task");

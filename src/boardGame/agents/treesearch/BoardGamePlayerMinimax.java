@@ -96,7 +96,7 @@ public class BoardGamePlayerMinimax<T extends BoardGameState> extends HeuristicB
 		double rand = RandomNumbers.randomGenerator.nextDouble();
 		if(rand < Parameters.parameters.doubleParameter("minimaxRandomRate")){
 			return RandomNumbers.randomElement(poss);
-		}
+		} 
 		
 		double[] utilities = new double[poss.size()]; // Stores the network's outputs
 
@@ -130,14 +130,34 @@ public class BoardGamePlayerMinimax<T extends BoardGameState> extends HeuristicB
 		}
 		
 		//System.out.println(Arrays.toString(utilities));
-
-		if(maximize) {
-			// Best move for player 1
-			return poss.get(StatisticsUtilities.argmax(utilities)); // Returns the BoardGameState which produced the highest network output
-		} else {
-			// Best move for player 2
-			return poss.get(StatisticsUtilities.argmin(utilities)); // Returns the BoardGameState which produced the lowest network output
+		// Best move (either min or max) for current player
+		int selectedIndex = bestIndex(utilities, maximize);		
+		// If there is a second option, and random number is less than the second-best chance, then switch
+		if(utilities.length > 1 && rand < Parameters.parameters.doubleParameter("minimaxSecondBestRate")) {
+			// Make the current best option seem the worst possible
+			utilities[selectedIndex] = maximize ? Double.NEGATIVE_INFINITY : Double.POSITIVE_INFINITY;
+			// Best among the remaining utilities
+			selectedIndex = bestIndex(utilities, maximize);		
 		}
+		
+		return poss.get(selectedIndex); 
+	}
+	
+	/**
+	 * Based on utility scores, get index of either the max or min value,
+	 * depending on maximize parameter.
+	 * @param utilities utilities of possible game states
+	 * @param maximize pick the max if true, and the min otherwise
+	 * @return index of best utility, depending on value of maximize
+	 */
+	private static int bestIndex(double[] utilities, boolean maximize) {
+		if(maximize) {
+			// Best move for player 1: BoardGameState which produced the highest network output
+			return StatisticsUtilities.argmax(utilities);
+		} else {
+			// Best move for player 2: BoardGameState which produced the lowest network output
+			return StatisticsUtilities.argmin(utilities);
+		}		
 	}
 	
 	/**
