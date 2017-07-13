@@ -11,6 +11,7 @@ import boardGame.TwoDimensionalBoardGame;
 import boardGame.TwoDimensionalBoardGameState;
 import boardGame.TwoDimensionalBoardGameViewer;
 import boardGame.agents.BoardGamePlayer;
+import boardGame.agents.BoardGamePlayerRandom;
 import boardGame.fitnessFunction.BoardGameFitnessFunction;
 import boardGame.fitnessFunction.OthelloPieceFitness;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
@@ -28,6 +29,7 @@ public class BoardGameUtil {
 	@SuppressWarnings("rawtypes")
 	static TwoDimensionalBoardGameViewer view = null;
 	private static boolean stepByStep = Parameters.parameters.booleanParameter("stepByStep");
+	private static final int OPENING_RANDOM_MOVES = Parameters.parameters.integerParameter("boardGameOpeningRandomMoves");
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static <T extends BoardGameState> ArrayList<Pair<double[], double[]>> playGame(BoardGame<T> bg, BoardGamePlayer<T>[] players, List<BoardGameFitnessFunction<T>> fitScores, List<BoardGameFitnessFunction<T>> otherFit){
@@ -56,6 +58,7 @@ public class BoardGameUtil {
 				fitFunct.reset();
 			}
 			
+			int moveCount = 0;
 			while(!bg.isGameOver()){
 
 				if(CommonConstants.watch && bg instanceof TwoDimensionalBoardGame){ // Renders each Move in the game
@@ -68,8 +71,13 @@ public class BoardGameUtil {
 				
 				int playIndex = bg.getCurrentPlayer(); // Stores the current Player's Index to access the Player's Fitness
 				//System.out.println(players[playIndex]);
-				bg.move(players[playIndex]);
-				
+				if(moveCount < OPENING_RANDOM_MOVES) {
+					// Opening random moves introduce useful non-determinism
+					bg.move(new BoardGamePlayerRandom<T>());
+				} else {
+					// Actual move from actual player
+					bg.move(players[playIndex]);
+				}
 				
 				for(BoardGameFitnessFunction fitFunct : fitScores){
 					fitFunct.updateFitness(bg.getCurrentState(), playIndex);
@@ -77,6 +85,7 @@ public class BoardGameUtil {
 				for(BoardGameFitnessFunction fitFunct : otherFit){
 					fitFunct.updateFitness(bg.getCurrentState(), playIndex);
 				}
+				moveCount++;
 			}
 
 			if(CommonConstants.watch){ // Prints out the list of Winners at the end of a visual evaluation
