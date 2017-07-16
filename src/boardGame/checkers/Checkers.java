@@ -41,7 +41,7 @@ public class Checkers extends TwoDimensionalBoardGame<CheckersState> {
 		List<BoardGameFitnessFunction<CheckersState>> scores = new ArrayList<BoardGameFitnessFunction<CheckersState>>();
 		scores.add(new SimpleWinLoseDrawBoardGameFitness<CheckersState>());
 		
-		BoardGameUtil.playGame(bg, players, scores, new ArrayList<>()); // No Other Scores
+		BoardGameUtil.playGame(bg, players, scores, new ArrayList<BoardGameFitnessFunction<CheckersState>>()); // No Other Scores
 		System.out.println("Game Over. Press enter");
 		MiscUtil.waitForReadStringAndEnterKeyPress();
 		

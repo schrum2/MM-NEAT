@@ -7,6 +7,7 @@ import boardGame.TwoDimensionalBoardGame;
 import boardGame.agents.BoardGamePlayer;
 import boardGame.agents.BoardGamePlayerHuman2DBoard;
 import boardGame.agents.treesearch.BoardGamePlayerMinimaxAlphaBetaPruning;
+import boardGame.checkers.CheckersState;
 import boardGame.fitnessFunction.BoardGameFitnessFunction;
 import boardGame.fitnessFunction.SimpleWinLoseDrawBoardGameFitness;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
@@ -39,7 +40,7 @@ public class ConnectFour extends TwoDimensionalBoardGame<ConnectFourState>{
 		List<BoardGameFitnessFunction<ConnectFourState>> scores = new ArrayList<BoardGameFitnessFunction<ConnectFourState>>();
 		scores.add(new SimpleWinLoseDrawBoardGameFitness<ConnectFourState>());
 		
-		BoardGameUtil.playGame(bg, players, scores, new ArrayList<>()); // No Other Scores
+		BoardGameUtil.playGame(bg, players, scores, new ArrayList<BoardGameFitnessFunction<ConnectFourState>>()); // No Other Scores
 		System.out.println("Game Over: Press Enter");
 		
 		MiscUtil.waitForReadStringAndEnterKeyPress();

@@ -12,6 +12,7 @@ import boardGame.BoardGameState;
 import boardGame.TestBoardGame;
 import boardGame.agents.BoardGamePlayer;
 import boardGame.agents.BoardGamePlayerRandom;
+import boardGame.checkers.CheckersState;
 import boardGame.fitnessFunction.BoardGameFitnessFunction;
 import boardGame.fitnessFunction.SimpleWinLoseDrawBoardGameFitness;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
@@ -37,7 +38,7 @@ public class BoardGameUtilBGAvgScoresTest<T extends BoardGameState> {
 	@Test
 	public void testPlayGame() {
 		// Results should have 2 items, one for each Player.
-		ArrayList<Pair<double[], double[]>> results = BoardGameUtil.playGame(new TestBoardGame<T>(), players, fit, new ArrayList<>()); // No Other Scores
+		ArrayList<Pair<double[], double[]>> results = BoardGameUtil.playGame(new TestBoardGame<T>(), players, fit, new ArrayList<BoardGameFitnessFunction<T>>()); // No Other Scores
 		for(Pair<double[], double[]> scores : results){
 			assertEquals((1-2)/2, scores.t1[0], 0.00001); // Average score is 1 Win, 1 Lose / 2 Matches; (1-2)/2
 		}

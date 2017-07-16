@@ -145,8 +145,8 @@ public class OthelloStateTest {
 	@Test
 	public void testPossibleBoardGameStates() {
 		
-		Set<BoardGameState> listStart = start.possibleBoardGameStates(start);
-		Set<BoardGameState> list1 = test1.possibleBoardGameStates(test1);
+		Set<OthelloState> listStart = start.possibleBoardGameStates(start);
+		Set<OthelloState> list1 = test1.possibleBoardGameStates(test1);
 		
 		
 		

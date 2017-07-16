@@ -7,6 +7,7 @@ import boardGame.TwoDimensionalBoardGameState;
 import boardGame.agents.BoardGamePlayer;
 import boardGame.agents.BoardGamePlayerHuman2DBoard;
 import boardGame.agents.treesearch.BoardGamePlayerMinimaxAlphaBetaPruning;
+import boardGame.checkers.CheckersState;
 import boardGame.fitnessFunction.BoardGameFitnessFunction;
 import boardGame.fitnessFunction.SimpleWinLoseDrawBoardGameFitness;
 import boardGame.othello.Othello;
@@ -68,7 +69,7 @@ public class StaticOthelloWPCHeuristic<T extends TwoDimensionalBoardGameState> e
 		List<BoardGameFitnessFunction<OthelloState>> scores = new ArrayList<BoardGameFitnessFunction<OthelloState>>();
 		scores.add(new SimpleWinLoseDrawBoardGameFitness<OthelloState>());
 		
-		BoardGameUtil.playGame(bg, players, scores, new ArrayList<>()); // No Other Scores
+		BoardGameUtil.playGame(bg, players, scores, new ArrayList<BoardGameFitnessFunction<OthelloState>>()); // No Other Scores
 		System.out.println("Game Over: Press Enter");
 		
 		MiscUtil.waitForReadStringAndEnterKeyPress();

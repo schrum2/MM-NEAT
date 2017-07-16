@@ -52,7 +52,7 @@ public class StaticTicTacToeWPCHeuristic<T extends TwoDimensionalBoardGameState>
 		List<BoardGameFitnessFunction<TicTacToeState>> scores = new ArrayList<BoardGameFitnessFunction<TicTacToeState>>();
 		scores.add(new SimpleWinLoseDrawBoardGameFitness<TicTacToeState>());
 		
-		BoardGameUtil.playGame(bg, players, scores, new ArrayList<>()); // No Other Scores
+		BoardGameUtil.playGame(bg, players, scores, new ArrayList<BoardGameFitnessFunction<TicTacToeState>>()); // No Other Scores
 		System.out.println("Game Over: Press Enter");
 		
 		MiscUtil.waitForReadStringAndEnterKeyPress();

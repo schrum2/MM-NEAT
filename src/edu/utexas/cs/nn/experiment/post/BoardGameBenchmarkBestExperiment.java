@@ -133,7 +133,7 @@ public class BoardGameBenchmarkBestExperiment<T extends Network, S extends Board
 			
 		ArrayList<Pair<double[], double[]>> allResults = new ArrayList<Pair<double[], double[]>>();
 		for(int i = 0; i < CommonConstants.trials; i++){
-			ArrayList<Pair<double[], double[]>> scores = BoardGameUtil.playGame(bg, players, fitFunctions, new ArrayList<>()); // No Other Scores
+			ArrayList<Pair<double[], double[]>> scores = BoardGameUtil.playGame(bg, players, fitFunctions, new ArrayList<BoardGameFitnessFunction<S>>()); // No Other Scores
 			System.out.println(Arrays.toString(scores.get(0).t1)+Arrays.toString(scores.get(0).t2));
 			allResults.add(scores.get(0));
 		}

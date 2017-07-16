@@ -125,7 +125,7 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 			int minMultiplier = 10; //non-scaled minimum value (correlates with fastest speed)
 			int maxMultiplier = 400; //non-scaled maximum value (correlates with slowest speed)
 			int defaultMultiplier = 100; //non-scaled default value - simply amplitude length multiplier
-			double scale = 100.0;
+			final double scale = 100.0;
 			noteLengthScale = defaultMultiplier/scale; //no scaling by default
 
 			//Construction of JSlider used to determine playback speed of MIDI file
