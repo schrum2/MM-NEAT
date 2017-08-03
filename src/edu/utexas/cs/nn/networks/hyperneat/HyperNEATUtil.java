@@ -503,7 +503,11 @@ public class HyperNEATUtil {
 	 * @return index where first bias output is located, if it exists
 	 */
 	public static int indexFirstBiasOutput(HyperNEATTask hnt) {
-		return hnt.getSubstrateConnectivity().size() * HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair;
+		if(CommonConstants.substrateLocationInputs) {
+			return HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair;
+		} else {
+			return hnt.getSubstrateConnectivity().size() * HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair;
+		}
 	}
 
 	/**
@@ -747,8 +751,26 @@ public class HyperNEATUtil {
 	 */
 	public static int numCPPNOutputs() {
 		HyperNEATTask hnt = HyperNEATUtil.getHyperNEATTask();
-		int numSubstratePairings = hnt.getSubstrateConnectivity().size();
-		return numSubstratePairings * HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair + HyperNEATCPPNGenotype.numBiasOutputs;
+		if(CommonConstants.substrateLocationInputs) {
+			// All substrate pairings use the same outputs
+			return HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair + HyperNEATCPPNGenotype.numBiasOutputs;
+		} else {
+			// Each substrate pairing has a separate set of outputs
+			int numSubstratePairings = hnt.getSubstrateConnectivity().size();
+			return numSubstratePairings * HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair + HyperNEATCPPNGenotype.numBiasOutputs;
+		}
+	}
+
+	/**
+	 * Number of CPPN inputs that there will actually be, which may be different from what
+	 * the task wants (extra could be added)
+	 * @return
+	 */
+	public static int numCPPNInputs() {
+		return numCPPNInputs(HyperNEATUtil.getHyperNEATTask());
 	}
 	
+	public static int numCPPNInputs(HyperNEATTask task) {
+		return task.numCPPNInputs() + (CommonConstants.substrateLocationInputs ? 4 : 0);
+	}
 }

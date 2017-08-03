@@ -329,6 +329,7 @@ public class Parameters {
 		longOptions.add("lastInnovation", 0l, "Highest innovation number used so far");
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
 		// Boolean parameters
+		booleanOptions.add("substrateLocationInputs", false, "HyperNEAT uses coordinates of substrates (not just in substrates) as CPPN inputs");
 		booleanOptions.add("heterogeneousSubstrateActivations", false, "HyperNEAT phenotypes can have a mix of activation functions");
 		booleanOptions.add("convolution", false, "HyperNEAT phenotypes allow convolutional structure");
 		booleanOptions.add("zeroPadding", false, "Whether the input border for convolutional structures is padded with zeros");

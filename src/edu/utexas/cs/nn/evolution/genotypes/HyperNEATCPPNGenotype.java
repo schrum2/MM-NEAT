@@ -13,6 +13,7 @@ import edu.utexas.cs.nn.networks.hyperneat.Substrate;
 import edu.utexas.cs.nn.parameters.CommonConstants;
 import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.util.CartesianGeometricUtilities;
+import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.datastructures.Triple;
 import edu.utexas.cs.nn.util.util2D.ILocated2D;
@@ -43,8 +44,9 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 	 * Default constructor
 	 */
 	public HyperNEATCPPNGenotype() {
-		// Default archetype index of 0
-		this(HyperNEATUtil.getHyperNEATTask().numCPPNInputs(), HyperNEATUtil.numCPPNOutputs(), 0);
+		// Default archetype index of 0.
+		// The 4 extra inputs from substrateLocationInputs are x/y coordinates of both source and target substrates (move code elsewhere?)
+		this(HyperNEATUtil.numCPPNInputs(), HyperNEATUtil.numCPPNOutputs(), 0);
 	}
 
 	/**
@@ -239,7 +241,13 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 				// Non-input substrates can have a bias if desired
 				if(CommonConstants.evolveHyperNEATBias && sub.getStype() != Substrate.INPUT_SUBSTRATE) {
 					// Ask CPPN to generate a bias for each neuron
-					double[] result = cppn.process(hnt.filterCPPNInputs(new double[]{0, 0, x, y, BIAS}));
+					double[] filteredInputs = hnt.filterCPPNInputs(new double[]{0, 0, x, y, BIAS});
+					if(CommonConstants.substrateLocationInputs) {
+						// In this case, there are 4 extra CPPN inputs, which are x/y coordinates of the actual substrate locations.
+						// To define the bias, we only need to know the location of the substrate containing the neuron to be biased (other is 0,0)
+						filteredInputs = ArrayUtil.combineArrays(filteredInputs, new double[]{0, 0, sub.getSubLocation().t1, sub.getSubLocation().t2});
+					}
+					double[] result = cppn.process(filteredInputs);
 					try{
 						bias = result[biasIndex];
 					} catch(ArrayIndexOutOfBoundsException e) { 
@@ -295,11 +303,12 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 			
 			// Whether to connect these layers used convolutional structure instead of standard fully connected structure
 			boolean convolution = connections.get(i).t3 && CommonConstants.convolution;
+			int outputIndex = CommonConstants.substrateLocationInputs ? 0 : i;
 			// both options add links from between two substrates to whole list of links
 			if(convolution) {
-				convolutionalLoopThroughLinks(hnt, result, cppn, i, sourceSubstrate, targetSubstrate, sourceSubstrateIndex, targetSubstrateIndex, subs);
+				convolutionalLoopThroughLinks(hnt, result, cppn, outputIndex, sourceSubstrate, targetSubstrate, sourceSubstrateIndex, targetSubstrateIndex, subs);
 			} else {
-				loopThroughLinks(hnt, result, cppn, i, sourceSubstrate, targetSubstrate, sourceSubstrateIndex, targetSubstrateIndex, subs);
+				loopThroughLinks(hnt, result, cppn, outputIndex, sourceSubstrate, targetSubstrate, sourceSubstrateIndex, targetSubstrateIndex, subs);
 			}
 		}
 		return result;
@@ -357,6 +366,10 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 										// inputs to CPPN 
 										// NOTE: filterCPPNInputs call was removed because it doesn't seem to make sense with convolutional inputs
 										double[] inputs = new double[]{scaledFieldCoordinates.getX(), scaledFieldCoordinates.getY(), scaledTargetCoordinates.getX(), scaledTargetCoordinates.getY(), BIAS};
+										if(CommonConstants.substrateLocationInputs) {
+											// Extra inputs are locations of the substrates (just x/y coordinates)
+											inputs = ArrayUtil.combineArrays(inputs, new double[]{s1.getSubLocation().t1, s1.getSubLocation().t2, s2.getSubLocation().t1, s2.getSubLocation().t2});
+										}
 										conditionalLinkAdd(linksSoFar, cppn, inputs, outputIndex, fromXIndex, fromYIndex, s1Index, targetXindex, targetYIndex, s2Index, subs, innovationID++);
 									}	
 								}
@@ -411,6 +424,10 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 						// inputs to CPPN 
 						// These next two lines need to be generalized for different numbers of CPPN inputs
 						double[] inputs = hnt.filterCPPNInputs(new double[]{scaledSourceCoordinates.getX(), scaledSourceCoordinates.getY(), scaledTargetCoordinates.getX(), scaledTargetCoordinates.getY(), BIAS});
+						if(CommonConstants.substrateLocationInputs) {
+							// Extra inputs are locations of the substrates (just x/y coordinates)
+							inputs = ArrayUtil.combineArrays(inputs, new double[]{s1.getSubLocation().t1, s1.getSubLocation().t2, s2.getSubLocation().t1, s2.getSubLocation().t2});
+						}
 						conditionalLinkAdd(linksSoFar, cppn, inputs, outputIndex, fromXIndex, fromYIndex, s1Index, targetXindex, targetYIndex, s2Index, subs, innovationID++); // increment innovation regardless of whether link is added
 					}
 				}
@@ -483,7 +500,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 	 */
 	@Override
 	public Genotype<TWEANN> newInstance() {
-		HyperNEATCPPNGenotype result = new HyperNEATCPPNGenotype(HyperNEATUtil.getHyperNEATTask().numCPPNInputs(), HyperNEATUtil.numCPPNOutputs(), this.archetypeIndex);
+		HyperNEATCPPNGenotype result = new HyperNEATCPPNGenotype(HyperNEATUtil.numCPPNInputs(), HyperNEATUtil.numCPPNOutputs(), this.archetypeIndex);
 		result.moduleUsage = new int[result.numModules];
 		return result;
 	}

@@ -699,7 +699,7 @@ public class MMNEAT {
 				substrateMapping = (SubstrateCoordinateMapping) ClassCreation.createObject("substrateMapping");
 				int numSubstratePairings = HNTSeedTask.getSubstrateConnectivity().size();
 				System.out.println("Number of substrate pairs being connected: "+ numSubstratePairings);
-				HyperNEATCPPNGenotype hntGeno = new HyperNEATCPPNGenotype(HNTSeedTask.numCPPNInputs(),  numSubstratePairings * HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair + HyperNEATCPPNGenotype.numBiasOutputs, 0);
+				HyperNEATCPPNGenotype hntGeno = new HyperNEATCPPNGenotype(HyperNEATUtil.numCPPNInputs(HNTSeedTask),  numSubstratePairings * HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair + HyperNEATCPPNGenotype.numBiasOutputs, 0);
 				TWEANNGenotype seedGeno = hntGeno.getSubstrateGenotypeForEvolution(HNTSeedTask);
 				genotype = seedGeno;
 				System.out.println("Genotype seeded from HyperNEAT task substrate specification");
