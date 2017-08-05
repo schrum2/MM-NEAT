@@ -108,8 +108,8 @@ public class MMNEATLog {
 							String line = oldFile.nextLine();
 							if (!unlimited) { // Expect generation number to be listed
 								Scanner temp = new Scanner(line);
-								int gen = temp.nextInt();
-								if (i != gen) {
+								int gen = temp.nextInt(); // First element of each line is the generation number
+								if (i != gen) { // Should match the loop iteration
 									System.out.println(file.getAbsolutePath());
 									System.out.println("Problem copying over log file on resume");
 									System.out.println("Reading line " + i);
@@ -119,7 +119,7 @@ public class MMNEATLog {
 								}
 								temp.close();
 							}
-							oldData.add(line);
+							oldData.add(line); // Ok to add the line from the old file
 						} catch (NoSuchElementException nse) {
 							System.out.println(file.getAbsolutePath());
 							System.out.println("Failure reading line " + i + " out of an expected " + expectedEntries);
@@ -136,11 +136,14 @@ public class MMNEATLog {
 					lastLoadedEntry = oldData.get(oldData.size() - 1);
 				}
 			}
+			// Should the file be initialized again?
 			stream = new PrintStream(new FileOutputStream(file));
-			if (oldData.size() > 1) {
+			if (oldData.size() > 1) { // Why not 0 here?
 				for (int i = 0; i < oldData.size(); i++) {
 					if (oldData.get(i) != null) {
 						stream.println(oldData.get(i));// prints old data
+					} else {
+						throw new NullPointerException("Why is line " + i + " of the old log file null?\n" + oldData + "\n" + file);
 					}
 				}
 			}
