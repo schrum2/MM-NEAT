@@ -1,7 +1,5 @@
 package edu.utexas.cs.nn.log;
 
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.util.file.FileUtilities;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -9,6 +7,9 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
+
+import edu.utexas.cs.nn.parameters.Parameters;
+import edu.utexas.cs.nn.util.file.FileUtilities;
 
 /**
  * General logging class. Needs to be generalized more.
@@ -44,8 +45,8 @@ public class MMNEATLog {
 	public MMNEATLog(String infix, boolean batches) {
 		this(infix, batches, false, false);
 	}
-        
-        public MMNEATLog(String infix, boolean batches, boolean unlimited) {
+
+	public MMNEATLog(String infix, boolean batches, boolean unlimited) {
 		this(infix, batches, unlimited, false);
 	}
 
@@ -59,12 +60,12 @@ public class MMNEATLog {
 	 *            whether or not each generation contains a batch of lines
 	 * @param unlimited
 	 *            true if there may be an excessive number of entries
-         * @param restricted
-         *            true if there may be an unusually small number of entries per generation
+	 * @param restricted
+	 *            true if there may be an unusually small number of entries per generation
 	 */
 	public MMNEATLog(String infix, boolean batches, boolean unlimited, boolean restricted) {
-                if(unlimited) System.out.println(infix + " allows unlimited logging");
-                if(restricted) System.out.println(infix + " restricted logging");
+		if(unlimited) System.out.println(infix + " allows unlimited logging");
+		if(restricted) System.out.println(infix + " restricted logging");
 		if (Parameters.parameters.booleanParameter("logLock")) {
 			// Don't do any file reading
 			return;
@@ -95,10 +96,10 @@ public class MMNEATLog {
 					int popSize = Parameters.parameters.integerParameter("mu");
 					expectedEntries *= (popSize + 1);
 					for (int i = 0; 
-                                                (!restricted || oldFile.hasNextLine()) && // may be fewer log lines than expected
-                                                (i < expectedEntries || // expectd number of entries
-                                                (unlimited && oldFile.hasNextLine())); // more than expected
-                                                 i++) {
+							(!restricted || oldFile.hasNextLine()) && // may be fewer log lines than expected
+							(i < expectedEntries || // expectd number of entries
+									(unlimited && oldFile.hasNextLine())); // more than expected
+							i++) {
 						oldData.add(oldFile.nextLine());
 					}
 				} else {
