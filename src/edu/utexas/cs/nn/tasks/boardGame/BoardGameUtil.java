@@ -29,6 +29,7 @@ public class BoardGameUtil {
 	@SuppressWarnings("rawtypes")
 	static TwoDimensionalBoardGameViewer view = null;
 	private static boolean stepByStep = Parameters.parameters.booleanParameter("stepByStep");
+	private static boolean printFitness = Parameters.parameters.booleanParameter("printFitness");
 	private static final int OPENING_RANDOM_MOVES = Parameters.parameters.integerParameter("boardGameOpeningRandomMoves");
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -88,7 +89,7 @@ public class BoardGameUtil {
 				moveCount++;
 			}
 
-			if(CommonConstants.watch){ // Prints out the list of Winners at the end of a visual evaluation
+			if(CommonConstants.watch || printFitness){ // Prints out the list of Winners at the end of a visual evaluation
 				System.out.println("Winner(s): " + bg.getWinners());
 				if(bg instanceof TwoDimensionalBoardGame){
 					for(int j = 0; j < bg.getNumPlayers(); j++){
@@ -117,11 +118,11 @@ public class BoardGameUtil {
 				int playerIndex = (k+i) % bg.getNumPlayers();
 				// Cycles through the Selection Scores
 				for(int j = 0; j < fitScores.size(); j++){
-					fitnesses[k][i][j] = (1.0*fitScores.get(j).getFitness(players[k], playerIndex));
+					fitnesses[k][i][j] = (1.0*fitScores.get(j).getFitness(players[playerIndex], playerIndex));
 				}
 				// Stores all other Scores except the Selection Scores
 				for(int j = 0; j < otherFit.size(); j++){
-					otherScores[k][i][j] = (1.0*otherFit.get(j).getFitness(players[k], playerIndex));
+					otherScores[k][i][j] = (1.0*otherFit.get(j).getFitness(players[playerIndex], playerIndex));
 				}
 
 				try{
@@ -142,7 +143,8 @@ public class BoardGameUtil {
 			if (MMNEAT.evalReport != null) {
 				MMNEAT.evalReport.log("   Match " + (i+1) + ": \n");
 				for(int j = 0; j < bg.getNumPlayers(); j++){ // Cycles through the Players
-					MMNEAT.evalReport.log("\tPlayer " + (j+1) + ": " + players[j]);
+					int playerIndex = (j+i) % bg.getNumPlayers();
+					MMNEAT.evalReport.log("\tPlayer " + (playerIndex+1) + ": " + players[playerIndex]);
 					for(int k = 0; k < fitScores.size(); k++){ // Cycles through the Other Scores
 						MMNEAT.evalReport.log("\t   Fitness Score: " + fitScores.get(k).getFitnessName() + ": " + fitnesses[j][i][k]);
 					}
@@ -176,6 +178,9 @@ public class BoardGameUtil {
 		
 		ArrayList<Pair<double[], double[]>> scoring = new ArrayList<Pair<double[], double[]>>(bg.getNumPlayers());
 		for(int k = 0; k < players.length; k++){
+			if(printFitness) {
+				System.out.println("Fitness for player " + k + ": " + Arrays.deepToString(fitnesses[k])+Arrays.deepToString(otherScores[k]));
+			}
 			// Average across the games played as 1st, 2nd player etc.
 			Pair<double[], double[]> evalResults = NoisyLonerTask.averageResults(fitnesses[k], otherScores[k]);
 			scoring.add(evalResults);
