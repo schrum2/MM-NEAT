@@ -28,6 +28,7 @@ import edu.utexas.cs.nn.tasks.NoisyLonerTask;
 import edu.utexas.cs.nn.tasks.SinglePopulationTask;
 import edu.utexas.cs.nn.tasks.boardGame.BoardGameUtil;
 import edu.utexas.cs.nn.util.ClassCreation;
+import edu.utexas.cs.nn.util.MiscUtil;
 import edu.utexas.cs.nn.util.PopulationUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.file.FileUtilities;
@@ -111,50 +112,54 @@ public class BoardGameBenchmarkBestExperiment<T extends Network, S extends Board
 	@Override
 	public void run() {
 		
-		Genotype<T> gene = population.get(0);
+		for(Genotype<T> gene: population) {
 			
-		DrawingPanel panel = null;
-		DrawingPanel cppnPanel = null;
+			DrawingPanel panel = null;
+			DrawingPanel cppnPanel = null;
+
+			if(CommonConstants.watch){
+				Pair<DrawingPanel, DrawingPanel> drawPanels = CommonTaskUtil.getDrawingPanels(gene);
+
+				panel = drawPanels.t1;
+				cppnPanel = drawPanels.t2;
+
+				panel.setVisible(true);
+				cppnPanel.setVisible(true);
+			}
+
+
+			player.setHeuristic((new NNBoardGameHeuristic<T,S>(gene.getId(), gene.getPhenotype(), featExtract, gene)));
+			@SuppressWarnings("unchecked")
+			BoardGamePlayer<S>[] players = new BoardGamePlayer[]{player, opponent};
+
+			ArrayList<Pair<double[], double[]>> allResults = new ArrayList<Pair<double[], double[]>>();
+			for(int i = 0; i < CommonConstants.trials; i++){
+				ArrayList<Pair<double[], double[]>> scores = BoardGameUtil.playGame(bg, players, fitFunctions, new ArrayList<BoardGameFitnessFunction<S>>()); // No Other Scores
+				System.out.println(Arrays.toString(scores.get(0).t1)+Arrays.toString(scores.get(0).t2));
+				allResults.add(scores.get(0));
+			}
+
+			double[][] fitness = new double[allResults.size()][];
+			double[][] other = new double[allResults.size()][];
+
+			for(int i = 0; i < allResults.size(); i++){
+				fitness[i] = allResults.get(i).t1;
+				other[i] = allResults.get(i).t2;
+			}
+
+			Pair<double[], double[]> score = NoisyLonerTask.averageResults(fitness, other);
+			System.out.println("Average");
+			System.out.println(Arrays.toString(score.t1)+Arrays.toString(score.t2));
+
+			System.out.println("Press enter");
+			MiscUtil.waitForReadStringAndEnterKeyPress();
 			
-		if(CommonConstants.watch){
-			Pair<DrawingPanel, DrawingPanel> drawPanels = CommonTaskUtil.getDrawingPanels(gene);
-				
-			panel = drawPanels.t1;
-			cppnPanel = drawPanels.t2;
-				
-			panel.setVisible(true);
-			cppnPanel.setVisible(true);
-		}
-			
-			
-		player.setHeuristic((new NNBoardGameHeuristic<T,S>(gene.getId(), gene.getPhenotype(), featExtract, gene)));
-		@SuppressWarnings("unchecked")
-		BoardGamePlayer<S>[] players = new BoardGamePlayer[]{player, opponent};
-			
-		ArrayList<Pair<double[], double[]>> allResults = new ArrayList<Pair<double[], double[]>>();
-		for(int i = 0; i < CommonConstants.trials; i++){
-			ArrayList<Pair<double[], double[]>> scores = BoardGameUtil.playGame(bg, players, fitFunctions, new ArrayList<BoardGameFitnessFunction<S>>()); // No Other Scores
-			System.out.println(Arrays.toString(scores.get(0).t1)+Arrays.toString(scores.get(0).t2));
-			allResults.add(scores.get(0));
-		}
-		
-		double[][] fitness = new double[allResults.size()][];
-		double[][] other = new double[allResults.size()][];
-		
-		for(int i = 0; i < allResults.size(); i++){
-			fitness[i] = allResults.get(i).t1;
-			other[i] = allResults.get(i).t2;
-		}
-		
-		Pair<double[], double[]> score = NoisyLonerTask.averageResults(fitness, other);
-		System.out.println("Average");
-		System.out.println(Arrays.toString(score.t1)+Arrays.toString(score.t2));
-			
-		if (panel != null) {
-			panel.dispose();
-		} 
-		if(cppnPanel != null) {
-			cppnPanel.dispose();
+			if (panel != null) {
+				panel.dispose();
+			} 
+			if(cppnPanel != null) {
+				cppnPanel.dispose();
+			}
 		}
 	}
 
