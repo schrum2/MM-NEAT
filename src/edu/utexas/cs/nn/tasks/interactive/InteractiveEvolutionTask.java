@@ -137,8 +137,6 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 
 	public LinkedList<Integer> selectedCPPNs;
 
-	//public boolean simplifiedInteractiveInterface = false;
-
 	/**
 	 * Default Constructor
 	 * @throws IllegalAccessException 
@@ -375,9 +373,9 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 
 		//add graphics to title panel
 		top.add(evolveButton);
-		top.add(saveButton);
 
 		if(!Parameters.parameters.booleanParameter("simplifiedInteractiveInterface")) {
+			top.add(saveButton);
 			top.add(networkButton);
 			top.add(undoButton);
 		}

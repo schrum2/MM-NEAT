@@ -180,7 +180,7 @@ public class SelectiveBreedingEA<T> implements SinglePopulationGenerationalEA<T>
 	 */
 	@Override
 	public void close(ArrayList<Genotype<T>> population) {
-		if(Parameters.parameters.booleanParameter("writeOutput") && keeperLog != null) {
+		if(Parameters.parameters.booleanParameter("io") && keeperLog != null) {
 			keeperLog.close();
 		}
 	}

@@ -254,8 +254,10 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 		framePause.add(framePauseLabel);
 		framePause.add(pauseLengthBetweenFrames);
 
-		top.add(framePause);
-
+		if(!Parameters.parameters.booleanParameter("simplifiedInteractiveInterface")) {
+			top.add(framePause);
+		}
+		
 		if(!alwaysAnimate) {
 			//Enables MouseListener so that animation on a button will play when mouse is hovering over it
 			for(JButton button: buttons) {
