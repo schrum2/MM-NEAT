@@ -322,8 +322,8 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 
 	@Override
 	protected BufferedImage[] getAnimationImages(TWEANN cppn, int startFrame, int endFrame, boolean beingSaved) {
-		//if animation images are being saved as a gif, set background to black to avoid frame overlap
-		return ThreeDimensionalUtil.imagesFromTriangles(shapes.get(cppn.getId()), picSize, picSize, startFrame, endFrame, heading, pitch, beingSaved ? Color.BLACK : null, vertical);
+		//if animation images are being saved as a gif, set background to grey (similar to button background) to avoid frame overlap
+		return ThreeDimensionalUtil.imagesFromTriangles(shapes.get(cppn.getId()), picSize, picSize, startFrame, endFrame, heading, pitch, beingSaved ? new Color(223,233,244) : null, vertical);
 	}
 
 	/**
