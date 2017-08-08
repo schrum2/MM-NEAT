@@ -143,7 +143,7 @@ public class StaticOpponentBoardGameTask<T extends Network, S extends BoardGameS
 	@Override
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {
 
-		player.setHeuristic((new NNBoardGameHeuristic<T,S>(individual.getId(), individual.getPhenotype(), featExtract, individual)));
+		player.setHeuristic((new NNBoardGameHeuristic<T,S>(individual.getId(), featExtract, individual)));
 		BoardGamePlayer<S>[] players = new BoardGamePlayer[]{player, opponent};
 		// get(0) because information for both players is returned, but only the first is about the evolved player
 		return BoardGameUtil.playGame((BoardGame<S>) MMNEAT.boardGame, players, fitFunctions, otherScores).get(0);

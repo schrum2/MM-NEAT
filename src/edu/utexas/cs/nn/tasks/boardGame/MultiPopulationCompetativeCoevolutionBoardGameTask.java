@@ -16,7 +16,6 @@ import boardGame.fitnessFunction.WinPercentageBoardGameFitness;
 import boardGame.heuristics.NNBoardGameHeuristic;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.networks.NetworkTask;
 import edu.utexas.cs.nn.networks.hyperneat.HyperNEATTask;
 import edu.utexas.cs.nn.networks.hyperneat.Substrate;
@@ -117,7 +116,7 @@ public class MultiPopulationCompetativeCoevolutionBoardGameTask<S extends BoardG
 		int index = 0;
 		for(Genotype gene : team){
 			HeuristicBoardGamePlayer<S> evolved = (HeuristicBoardGamePlayer<S>) players[index]; // Creates the Player based on the command line
-			evolved.setHeuristic((new NNBoardGameHeuristic(gene.getId(), (Network) gene.getPhenotype(), featExtract, gene)));
+			evolved.setHeuristic((new NNBoardGameHeuristic(gene.getId(), featExtract, gene)));
 			teamPlayers[index++] = evolved;
 		}
 		// End of Copied Code
