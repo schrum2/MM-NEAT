@@ -60,16 +60,15 @@ public class OthelloPieceDifferentialTest {
 		Set<OthelloState> test1List = test1.possibleBoardGameStates(test1);	
 		
 		Set<OthelloState> test1States = new HashSet<OthelloState>();
-		OthelloState correctChoice1 = new OthelloState(new int[][]{{E,E,E,E,E,E,E,E}, // Avoids obvious Piece grab because W could steal all the Pieces and win the Game; Depth == 2
-																   {E,E,E,W,E,E,E,E},
-																   {E,E,E,W,E,E,E,E},
-																   {E,E,W,W,W,E,E,E},
-																   {E,E,B,B,W,E,E,E},
-																   {E,E,W,W,B,E,E,E},
-																   {E,E,E,E,E,B,E,E},
-																   {E,E,E,E,E,E,E,E}}, 1, new ArrayList<Integer>());
+		test1States.add(new OthelloState(new int[][]{{E,E,E,E,E,E,E,E},
+													 {E,E,E,W,E,E,E,E},
+													 {E,E,E,W,E,E,E,E},
+													 {E,E,W,W,W,E,E,E},
+													 {E,E,B,B,W,E,E,E},
+													 {E,E,W,W,B,E,E,E},
+													 {E,E,E,E,E,B,E,E},
+													 {E,E,E,E,E,E,E,E}}, 1, new ArrayList<Integer>()));
 		
-		test1States.add(correctChoice1);
 		test1States.add(new OthelloState(new int[][]{{E,E,E,E,E,E,E,E},
 													 {E,E,E,W,E,E,E,E},
 													 {E,E,E,W,E,B,E,E},
@@ -88,7 +87,8 @@ public class OthelloPieceDifferentialTest {
 													 {E,E,E,E,E,E,E,E},
 													 {E,E,E,E,E,E,E,E}}, 1, new ArrayList<Integer>()));		
 		
-		test1States.add(new OthelloState(new int[][]{{E,E,E,B,E,E,E,E},
+		OthelloState correctChoice1;
+		test1States.add(correctChoice1 = new OthelloState(new int[][]{{E,E,E,B,E,E,E,E},
 													 {E,E,E,B,E,E,E,E},
 													 {E,E,E,B,E,E,E,E},
 													 {E,E,W,B,W,E,E,E},
@@ -163,9 +163,11 @@ public class OthelloPieceDifferentialTest {
 		
 		
 		for(OthelloState state: test1States){
-			System.out.println(state);
+			//System.out.println(state);
 			assertTrue(test1List.contains(state));
 		}
+		// Make sure no extra states were present
+		assertEquals(test1States.size(), test1List.size());
 			
 		// Checks that the Minimax PieceDifferential Player will pick the State with the most pieces gained/most enemy pieces lost
 		boardGame1.move(blackChip);
