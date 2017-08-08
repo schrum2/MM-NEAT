@@ -3,11 +3,9 @@ package boardGame.heuristics;
 import java.util.ArrayList;
 import java.util.List;
 
-import boardGame.TwoDimensionalBoardGameState;
 import boardGame.agents.BoardGamePlayer;
 import boardGame.agents.BoardGamePlayerHuman2DBoard;
 import boardGame.agents.treesearch.BoardGamePlayerMinimaxAlphaBetaPruning;
-import boardGame.checkers.CheckersState;
 import boardGame.fitnessFunction.BoardGameFitnessFunction;
 import boardGame.fitnessFunction.SimpleWinLoseDrawBoardGameFitness;
 import boardGame.othello.Othello;
@@ -18,7 +16,7 @@ import edu.utexas.cs.nn.tasks.boardGame.BoardGameUtil;
 import edu.utexas.cs.nn.util.ClassCreation;
 import edu.utexas.cs.nn.util.MiscUtil;
 
-public class StaticOthelloWPCHeuristic<T extends TwoDimensionalBoardGameState> extends WeightedPieceCounterHeuristic<T> {
+public class StaticOthelloWPCHeuristic extends WeightedPieceCounterHeuristic<OthelloState> {
 
 
 

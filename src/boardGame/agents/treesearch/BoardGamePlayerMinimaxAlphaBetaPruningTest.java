@@ -38,7 +38,7 @@ public class BoardGamePlayerMinimaxAlphaBetaPruningTest {
 		
 		bg1 = new Othello();
 		bg2 = new Othello();
-		bgh = new StaticOthelloWPCHeuristic<OthelloState>();
+		bgh = new StaticOthelloWPCHeuristic();
 		mini = new BoardGamePlayerMinimax<OthelloState>(bgh);
 		alpha = new BoardGamePlayerMinimaxAlphaBetaPruning<OthelloState>(bgh);
 	}

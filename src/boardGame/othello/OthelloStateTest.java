@@ -15,6 +15,11 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import boardGame.BoardGameState;
+import boardGame.agents.BoardGamePlayer;
+import boardGame.agents.treesearch.BoardGamePlayerMinimaxAlphaBetaPruning;
+import boardGame.heuristics.StaticOthelloWPCHeuristic;
+import boardGame.agents.*;
+import edu.utexas.cs.nn.tasks.boardGame.BoardGameUtil;
 
 public class OthelloStateTest {
 	
@@ -103,6 +108,12 @@ public class OthelloStateTest {
 	public void testGetWinners() {
 		assertEquals(new ArrayList<Integer>(), start.getWinners()); // Start is not an EndState; empty winners list
 		assertEquals(new ArrayList<Integer>(), test1.getWinners()); // test1 is not an EndState; empty winners list
+	
+		// TODO!
+		// Play a game between WPC and random. The WPC should win with extremely high probability.
+//		Othello game = new Othello();
+//		BoardGamePlayer<OthelloState>[] players = new BoardGamePlayer[]{new BoardGamePlayerMinimaxAlphaBetaPruning<OthelloState>(new StaticOthelloWPCHeuristic()), new BoardGamePlayerRandom<OthelloState>()};
+//		BoardGameUtil.playGame(game, players, fitScores, otherFit)
 	}
 
 	@Test

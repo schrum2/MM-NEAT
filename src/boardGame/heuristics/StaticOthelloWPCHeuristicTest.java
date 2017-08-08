@@ -23,7 +23,7 @@ public class StaticOthelloWPCHeuristicTest {
 	
 	
 	// Only need to create the Heuristic once
-	StaticOthelloWPCHeuristic<OthelloState> bgh = new StaticOthelloWPCHeuristic<OthelloState>();
+	StaticOthelloWPCHeuristic bgh = new StaticOthelloWPCHeuristic();
 
 	final static int E = TwoDimensionalBoardGameState.EMPTY;
 	final static int B = OthelloState.BLACK_CHIP; // Player 1

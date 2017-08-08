@@ -17,9 +17,9 @@ public class WeightedPieceCounterHeuristic<T extends TwoDimensionalBoardGameStat
 		double score = 0;
 		double[] description = bgState.getDescriptor();
 		
-		for(int i = 0; i < bgState.getBoardWidth(); i++){
-			for(int j = 0; j < bgState.getBoardHeight(); j++){
-				double piece = description[i*bgState.getBoardHeight()+j];
+		for(int i = 0; i < bgState.getBoardHeight(); i++){
+			for(int j = 0; j < bgState.getBoardWidth(); j++){
+				double piece = description[i*bgState.getBoardWidth()+j];
 				score += piece * pieceWeights[i][j];
 			}
 		}
