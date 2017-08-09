@@ -30,10 +30,12 @@ public class BoardGameUtil {
 	static TwoDimensionalBoardGameViewer view = null;
 	private static boolean stepByStep = Parameters.parameters.booleanParameter("stepByStep");
 	private static boolean printFitness = Parameters.parameters.booleanParameter("printFitness");
-	private static final int OPENING_RANDOM_MOVES = Parameters.parameters.integerParameter("boardGameOpeningRandomMoves");
+	private static int openingRandomMoves = Parameters.parameters.integerParameter("boardGameOpeningRandomMoves");
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static <T extends BoardGameState> ArrayList<Pair<double[], double[]>> playGame(BoardGame<T> bg, BoardGamePlayer<T>[] players, List<BoardGameFitnessFunction<T>> fitScores, List<BoardGameFitnessFunction<T>> otherFit){
+		// This needs to reset every time in case increasing random moves are used
+		openingRandomMoves = Parameters.parameters.integerParameter("boardGameOpeningRandomMoves");
 		if(CommonConstants.watch && bg instanceof TwoDimensionalBoardGame){ // Creates a new BoardGameViewer if bg is a TwoDimensionalBoardGame
 			view = MMNEAT.boardGameViewer;
 		}
@@ -72,7 +74,7 @@ public class BoardGameUtil {
 				
 				int playIndex = bg.getCurrentPlayer(); // Stores the current Player's Index to access the Player's Fitness
 				//System.out.println(players[playIndex]);
-				if(moveCount < OPENING_RANDOM_MOVES) {
+				if(moveCount < openingRandomMoves) {
 					// Opening random moves introduce useful non-determinism
 					bg.move(new BoardGamePlayerRandom<T>());
 				} else {
