@@ -177,10 +177,12 @@ public class StaticOpponentBoardGameTask<T extends Network, S extends BoardGameS
 	public ArrayList<Score<T>> evaluateAll(ArrayList<Genotype<T>> population) {
 		increaseRandomMoves = false;
 		ArrayList<Score<T>> result = super.evaluateAll(population);
+		// increaseRandomMoves might be true from a oneEval call
 		if(increaseRandomMoves) {
 			Parameters.parameters.setInteger("boardGameOpeningRandomMoves", Parameters.parameters.integerParameter("boardGameOpeningRandomMoves") + 1);
 			System.out.println("More opening random moves: " + Parameters.parameters.integerParameter("boardGameOpeningRandomMoves"));
 		}
+		increaseRandomMoves = false;
 		return result;
 	}
 
