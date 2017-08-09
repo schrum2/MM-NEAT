@@ -159,11 +159,20 @@ public class StaticOpponentBoardGameTask<T extends Network, S extends BoardGameS
 		player.setHeuristic((new NNBoardGameHeuristic<T,S>(individual.getId(), featExtract, individual)));
 		BoardGamePlayer<S>[] players = new BoardGamePlayer[]{player, opponent};
 		// get(0) because information for both players is returned, but only the first is about the evolved player
-		Pair<double[], double[]> result = BoardGameUtil.playGame((BoardGame<S>) MMNEAT.boardGame, players, fitFunctions, otherScores).get(0);
+		return BoardGameUtil.playGame((BoardGame<S>) MMNEAT.boardGame, players, fitFunctions, otherScores).get(0);
+	}
+	
+	/**
+	 * Increase random starting moves only if all matches across all trials were won
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public Score<T> evaluate(Genotype<T> individual) {
+		Score<T> result = super.evaluate(individual);
 		// Assume a Mu Lambda EA will be used, which may not always be true. 
 		// Only allows updating during parent evaluations.
 		if(Parameters.parameters.booleanParameter("boardGameIncreasingRandomOpens") && ((MuLambda<T>) MMNEAT.ea).evaluatingParents) {
-			if(result.t2[winRateIndex] == 1.0) {
+			if(result.otherStats[winRateIndex] == 1.0) {
 				increaseRandomMoves = true;
 			}
 		}
