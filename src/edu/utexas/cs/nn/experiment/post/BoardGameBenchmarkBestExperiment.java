@@ -7,6 +7,7 @@ import java.util.List;
 import boardGame.BoardGame;
 import boardGame.BoardGameState;
 import boardGame.agents.BoardGamePlayer;
+import boardGame.agents.BoardGamePlayerRandom;
 import boardGame.agents.HeuristicBoardGamePlayer;
 import boardGame.checkers.Checkers;
 import boardGame.featureExtractor.BoardGameFeatureExtractor;
@@ -17,6 +18,7 @@ import boardGame.fitnessFunction.SimpleWinLoseDrawBoardGameFitness;
 import boardGame.fitnessFunction.WinPercentageBoardGameFitness;
 import boardGame.heuristics.NNBoardGameHeuristic;
 import boardGame.othello.Othello;
+import boardGame.othello.OthelloState;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
 import edu.utexas.cs.nn.experiment.Experiment;
@@ -132,6 +134,16 @@ public class BoardGameBenchmarkBestExperiment<T extends Network, S extends Board
 			@SuppressWarnings("unchecked")
 			BoardGamePlayer<S>[] players = new BoardGamePlayer[]{player, opponent};
 
+			// TEMPORARY! For checking how WPC performs against random.
+			// Apparently, completely random play will beat the WPC about 16% of the time.
+			// Obviously, the random player will have a chance of selecting the best moves,
+			// but I find this somewhat shocking. I need to figure out if this result is
+			// reasonable, or indicates that there really is a bug in how alpha-beta or minimax
+			// works (since this would affect evolved heuristics as well)
+			
+			//players = new BoardGamePlayer[]{new BoardGamePlayerRandom<OthelloState>() , opponent};
+
+			
 			ArrayList<Pair<double[], double[]>> allResults = new ArrayList<Pair<double[], double[]>>();
 			for(int i = 0; i < CommonConstants.trials; i++){
 				ArrayList<Pair<double[], double[]>> scores = BoardGameUtil.playGame(bg, players, fitFunctions, new ArrayList<BoardGameFitnessFunction<S>>()); // No Other Scores

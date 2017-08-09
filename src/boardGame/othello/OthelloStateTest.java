@@ -1,6 +1,9 @@
 package boardGame.othello;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.awt.Color;
 import java.awt.Point;
@@ -16,10 +19,15 @@ import org.junit.Test;
 
 import boardGame.BoardGameState;
 import boardGame.agents.BoardGamePlayer;
+import boardGame.agents.BoardGamePlayerRandom;
 import boardGame.agents.treesearch.BoardGamePlayerMinimaxAlphaBetaPruning;
+import boardGame.fitnessFunction.BoardGameFitnessFunction;
+import boardGame.fitnessFunction.SimpleWinLoseDrawBoardGameFitness;
 import boardGame.heuristics.StaticOthelloWPCHeuristic;
-import boardGame.agents.*;
+import edu.utexas.cs.nn.MMNEAT.MMNEAT;
+import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.tasks.boardGame.BoardGameUtil;
+import edu.utexas.cs.nn.util.datastructures.Pair;
 
 public class OthelloStateTest {
 	
@@ -42,6 +50,11 @@ public class OthelloStateTest {
 
 	@Before
 	public void setUp() throws Exception {
+		Parameters.initializeParameterCollections(new String[]{"io:false", "netio:false", "task:edu.utexas.cs.nn.tasks.boardGame.StaticOpponentBoardGameTask",
+				"boardGame:boardGame.othello.Othello", "minimaxSearchDepth:3", 
+				"randomArgMaxTieBreak:false"});
+		MMNEAT.loadClasses();
+		
 		int[][] startBoard = new int[][]{{E,E,E,E,E,E,E,E}, //  0
 										 {E,E,E,E,E,E,E,E}, //  1
 										 {E,E,E,E,E,E,E,E}, //  2
@@ -109,11 +122,24 @@ public class OthelloStateTest {
 		assertEquals(new ArrayList<Integer>(), start.getWinners()); // Start is not an EndState; empty winners list
 		assertEquals(new ArrayList<Integer>(), test1.getWinners()); // test1 is not an EndState; empty winners list
 	
-		// TODO!
 		// Play a game between WPC and random. The WPC should win with extremely high probability.
-//		Othello game = new Othello();
-//		BoardGamePlayer<OthelloState>[] players = new BoardGamePlayer[]{new BoardGamePlayerMinimaxAlphaBetaPruning<OthelloState>(new StaticOthelloWPCHeuristic()), new BoardGamePlayerRandom<OthelloState>()};
-//		BoardGameUtil.playGame(game, players, fitScores, otherFit)
+		Othello game = new Othello();
+		@SuppressWarnings("unchecked")
+		BoardGamePlayer<OthelloState>[] players = new BoardGamePlayer[]{new BoardGamePlayerMinimaxAlphaBetaPruning<OthelloState>(new StaticOthelloWPCHeuristic()), new BoardGamePlayerRandom<OthelloState>()};
+
+		BoardGameFitnessFunction<OthelloState> fitness = new SimpleWinLoseDrawBoardGameFitness<OthelloState>();
+		ArrayList<BoardGameFitnessFunction<OthelloState>> fitnesses = new ArrayList<>();
+		fitnesses.add(fitness);
+		
+		// Make WPC beat random 10 times
+		// PROBLEM: Can the WPC really not beat random 20 times in a row?
+//		for(int i = 0; i < 10; i++) {
+//			game.reset();
+//			//Parameters.parameters.setBoolean("printFitness", true);
+//			ArrayList<Pair<double[], double[]>> result = BoardGameUtil.playGame(game, players, fitnesses, new ArrayList<>());
+//			assertEquals(1, result.get(0).t1[0], 0.0); // A value of 1 for this fitness means the WPC won as both the first and second player
+//			//Parameters.parameters.setBoolean("printFitness", false);		
+//		}
 	}
 
 	@Test
