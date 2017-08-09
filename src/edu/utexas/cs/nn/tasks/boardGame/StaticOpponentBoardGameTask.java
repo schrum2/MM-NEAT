@@ -10,6 +10,7 @@ import boardGame.agents.HeuristicBoardGamePlayer;
 import boardGame.featureExtractor.BoardGameFeatureExtractor;
 import boardGame.fitnessFunction.BoardGameFitnessFunction;
 import boardGame.fitnessFunction.CheckersAdvancedFitness;
+import boardGame.fitnessFunction.OpeningRandomMovesScore;
 import boardGame.fitnessFunction.OthelloPieceFitness;
 import boardGame.fitnessFunction.SimpleWinLoseDrawBoardGameFitness;
 import boardGame.fitnessFunction.WinPercentageBoardGameFitness;
@@ -21,6 +22,7 @@ import edu.utexas.cs.nn.networks.NetworkTask;
 import edu.utexas.cs.nn.networks.hyperneat.HyperNEATTask;
 import edu.utexas.cs.nn.networks.hyperneat.Substrate;
 import edu.utexas.cs.nn.parameters.Parameters;
+import edu.utexas.cs.nn.scores.Score;
 import edu.utexas.cs.nn.tasks.NoisyLonerTask;
 import edu.utexas.cs.nn.util.ClassCreation;
 import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
@@ -29,6 +31,8 @@ import edu.utexas.cs.nn.util.datastructures.Triple;
 
 public class StaticOpponentBoardGameTask<T extends Network, S extends BoardGameState> extends NoisyLonerTask<T> implements NetworkTask, HyperNEATTask {
 
+	private int winRateIndex = 0;
+	
 	BoardGamePlayer<S> opponent;
 	HeuristicBoardGamePlayer<S> player;
 	BoardGameFeatureExtractor<S> featExtract;
@@ -66,9 +70,15 @@ public class StaticOpponentBoardGameTask<T extends Network, S extends BoardGameS
 			MMNEAT.registerFitnessFunction(fit.getFitnessName());
 		}
 		
+		int index = 0; // index in other scores
 		// Add Fitness Functions here to keep track of Other Scores
-		otherScores.add(new SimpleWinLoseDrawBoardGameFitness<S>());
+		otherScores.add(new SimpleWinLoseDrawBoardGameFitness<S>()); 
+		index++;
+		winRateIndex = index; // tracked to see if number of random opens needs to increase
 		otherScores.add(new WinPercentageBoardGameFitness<S>());
+		index++;
+		otherScores.add(new OpeningRandomMovesScore<S>());
+		index++;
 		for(BoardGameFitnessFunction<S> fit : otherScores){
 			MMNEAT.registerFitnessFunction(fit.getFitnessName(), false);
 		}
@@ -147,6 +157,24 @@ public class StaticOpponentBoardGameTask<T extends Network, S extends BoardGameS
 		BoardGamePlayer<S>[] players = new BoardGamePlayer[]{player, opponent};
 		// get(0) because information for both players is returned, but only the first is about the evolved player
 		return BoardGameUtil.playGame((BoardGame<S>) MMNEAT.boardGame, players, fitFunctions, otherScores).get(0);
+	}
+	
+	/**
+	 * Check if boardGameOpeningRandomMoves needs to increase
+	 */
+	@Override
+	public ArrayList<Score<T>> evaluateAll(ArrayList<Genotype<T>> population) {
+		ArrayList<Score<T>> result = super.evaluateAll(population);
+		if(Parameters.parameters.booleanParameter("boardGameIncreasingRandomOpens")) {
+			for(Score<T> s : result) {
+				if(s.otherStats[winRateIndex] == 1.0) {
+					Parameters.parameters.setInteger("boardGameOpeningRandomMoves", Parameters.parameters.integerParameter("boardGameOpeningRandomMoves") + 1);
+					System.out.println("More opening random moves: " + Parameters.parameters.integerParameter("boardGameOpeningRandomMoves"));
+					break; // Only increase once per generation
+				}
+			}
+		}
+		return result;
 	}
 
 	// Used for Hyper-NEAT
