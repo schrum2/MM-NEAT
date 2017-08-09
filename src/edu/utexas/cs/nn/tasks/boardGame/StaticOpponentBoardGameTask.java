@@ -17,6 +17,7 @@ import boardGame.fitnessFunction.WinPercentageBoardGameFitness;
 import boardGame.heuristics.NNBoardGameHeuristic;
 import edu.utexas.cs.nn.MMNEAT.MMNEAT;
 import edu.utexas.cs.nn.evolution.genotypes.Genotype;
+import edu.utexas.cs.nn.evolution.mulambda.MuLambda;
 import edu.utexas.cs.nn.networks.Network;
 import edu.utexas.cs.nn.networks.NetworkTask;
 import edu.utexas.cs.nn.networks.hyperneat.HyperNEATTask;
@@ -25,6 +26,7 @@ import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.scores.Score;
 import edu.utexas.cs.nn.tasks.NoisyLonerTask;
 import edu.utexas.cs.nn.util.ClassCreation;
+import edu.utexas.cs.nn.util.MiscUtil;
 import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.datastructures.Triple;
@@ -32,6 +34,7 @@ import edu.utexas.cs.nn.util.datastructures.Triple;
 public class StaticOpponentBoardGameTask<T extends Network, S extends BoardGameState> extends NoisyLonerTask<T> implements NetworkTask, HyperNEATTask {
 
 	private int winRateIndex = 0;
+	private boolean increaseRandomMoves = false;
 	
 	BoardGamePlayer<S> opponent;
 	HeuristicBoardGamePlayer<S> player;
@@ -156,23 +159,27 @@ public class StaticOpponentBoardGameTask<T extends Network, S extends BoardGameS
 		player.setHeuristic((new NNBoardGameHeuristic<T,S>(individual.getId(), featExtract, individual)));
 		BoardGamePlayer<S>[] players = new BoardGamePlayer[]{player, opponent};
 		// get(0) because information for both players is returned, but only the first is about the evolved player
-		return BoardGameUtil.playGame((BoardGame<S>) MMNEAT.boardGame, players, fitFunctions, otherScores).get(0);
+		Pair<double[], double[]> result = BoardGameUtil.playGame((BoardGame<S>) MMNEAT.boardGame, players, fitFunctions, otherScores).get(0);
+		// Assume a Mu Lambda EA will be used, which may not always be true. 
+		// Only allows updating during parent evaluations.
+		if(Parameters.parameters.booleanParameter("boardGameIncreasingRandomOpens") && ((MuLambda<T>) MMNEAT.ea).evaluatingParents) {
+			if(result.t2[winRateIndex] == 1.0) {
+				increaseRandomMoves = true;
+			}
+		}
+		return result;
 	}
-	
+
 	/**
 	 * Check if boardGameOpeningRandomMoves needs to increase
 	 */
 	@Override
 	public ArrayList<Score<T>> evaluateAll(ArrayList<Genotype<T>> population) {
+		increaseRandomMoves = false;
 		ArrayList<Score<T>> result = super.evaluateAll(population);
-		if(Parameters.parameters.booleanParameter("boardGameIncreasingRandomOpens")) {
-			for(Score<T> s : result) {
-				if(s.otherStats[winRateIndex] == 1.0) {
-					Parameters.parameters.setInteger("boardGameOpeningRandomMoves", Parameters.parameters.integerParameter("boardGameOpeningRandomMoves") + 1);
-					System.out.println("More opening random moves: " + Parameters.parameters.integerParameter("boardGameOpeningRandomMoves"));
-					break; // Only increase once per generation
-				}
-			}
+		if(increaseRandomMoves) {
+			Parameters.parameters.setInteger("boardGameOpeningRandomMoves", Parameters.parameters.integerParameter("boardGameOpeningRandomMoves") + 1);
+			System.out.println("More opening random moves: " + Parameters.parameters.integerParameter("boardGameOpeningRandomMoves"));
 		}
 		return result;
 	}
