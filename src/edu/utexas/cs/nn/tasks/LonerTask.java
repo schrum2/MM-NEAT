@@ -98,7 +98,7 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
 					CopyOption[] options = new CopyOption[] { StandardCopyOption.REPLACE_EXISTING,
 							StandardCopyOption.COPY_ATTRIBUTES };
 					try {
-						Files.copy(MMNEAT.evalReport.getFile().toPath(), Paths.get(MsPacManTask.saveFilePrefix
+						Files.copy(Paths.get(MMNEAT.evalReport.getFilePath()), Paths.get(MsPacManTask.saveFilePrefix
 								+ Parameters.parameters.stringParameter("pacmanSaveFile") + ".eval"), options);
 					} catch (IOException ex) {
 						System.out.println("Could not save eval report");
