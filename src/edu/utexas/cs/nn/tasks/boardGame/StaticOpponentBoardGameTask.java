@@ -26,7 +26,6 @@ import edu.utexas.cs.nn.parameters.Parameters;
 import edu.utexas.cs.nn.scores.Score;
 import edu.utexas.cs.nn.tasks.NoisyLonerTask;
 import edu.utexas.cs.nn.util.ClassCreation;
-import edu.utexas.cs.nn.util.MiscUtil;
 import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
 import edu.utexas.cs.nn.util.datastructures.Pair;
 import edu.utexas.cs.nn.util.datastructures.Triple;
@@ -67,6 +66,9 @@ public class StaticOpponentBoardGameTask<T extends Network, S extends BoardGameS
 		}
 		if(Parameters.parameters.booleanParameter("boardGameOthelloFitness")){
 			fitFunctions.add((BoardGameFitnessFunction<S>) new OthelloPieceFitness());
+		}
+		if(Parameters.parameters.booleanParameter("boardGameWinPercentFitness")) {
+			fitFunctions.add(new WinPercentageBoardGameFitness<S>());
 		}
 		
 		for(BoardGameFitnessFunction<S> fit: fitFunctions){
