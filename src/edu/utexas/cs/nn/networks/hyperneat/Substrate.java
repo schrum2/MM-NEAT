@@ -29,7 +29,6 @@ public class Substrate {
 	// encodes type of substrate: INPUT_SUBSTRATE, PROCCESS_SUBSTRATE, or OUTPUT_SUBSTRATE
 	private final int stype;
 	// location of substrate in vector space.
-	// Not actually used anywhere, but could aid in visualization in the future
 	private final Triple<Integer, Integer, Integer> subLocation;
 	// Set of neurons in this substrate that cannot process information.
 	// Not all neurons within the rectangle may make sense to use.
@@ -114,7 +113,10 @@ public class Substrate {
 	}
 	
 	/**
-	 * Returns the location of substrate in substrate space
+	 * Returns the location of substrate in substrate space.
+	 * First coordinate is x location moving left to right inside of one layer (all at same depth).
+	 * Second coordinate is y height with input layer at height 0 and each layer above with y coordinate one higher.
+	 * Third coordinate z is not currently used, and it always 0, but this could change.
 	 * @return location of substrate
 	 */
 	public Triple<Integer, Integer, Integer> getSubLocation() {

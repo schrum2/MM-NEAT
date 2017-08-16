@@ -138,10 +138,28 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 		List<Triple<String, String, Boolean>> connections = hnt.getSubstrateConnectivity();// extract substrate connectivity from domain
 		ArrayList<NodeGene> newNodes = null;
 		ArrayList<LinkGene> newLinks = null;
-		innovationID = 0;// reset each time a phenotype is generated
+		
+		// Total outputs in substrate network
 		int phenotypeOutputs = 0;
+		// Max number of substrates at the same height/depth
+		int layersWidth = 0;
+		// Number of layers of substrates including inputs and outputs
+		int layersHeight = 0;
+		// Figure out number of output neurons
+		for (Substrate s : subs) {
+			if (s.getStype() == Substrate.OUTPUT_SUBSTRATE) {
+				phenotypeOutputs += s.getSize().t1 * s.getSize().t2;
+			}
+			layersWidth = Math.max(layersWidth, s.getSubLocation().t1); 
+			layersHeight = Math.max(layersHeight, s.getSubLocation().t2); // Should depend on output layer 
+		}		
+		// Coordinates start at 0, so actual width/height is one more than max coordinate in each dimension
+		layersWidth++;
+		layersHeight++;
+		
+		innovationID = 0;// reset each time a phenotype is generated		
+		newNodes = createSubstrateNodes(hnt, cppn, subs, layersWidth, layersHeight);
 
-		newNodes = createSubstrateNodes(hnt, cppn, subs);
 		// Will map substrate names to index in subs List
 		HashMap<String, Integer> substrateIndexMapping = new HashMap<String, Integer>();
 		for (int i = 0; i < subs.size(); i++) {
@@ -150,20 +168,13 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 		
 		try {
 			// loop through connections and add links, based on contents of subs
-			newLinks = createNodeLinks(hnt, cppn, connections, subs, substrateIndexMapping);
+			newLinks = createNodeLinks(hnt, cppn, connections, subs, substrateIndexMapping, layersWidth, layersHeight);
 		}catch(NullPointerException npe) {
 			System.out.println("Error in substrate configutation!");
 			System.out.println(subs);
 			System.out.println(connections);
 			System.exit(1);
 		}
-		
-		// Figure out number of output neurons
-		for (Substrate s : subs) {
-			if (s.getStype() == Substrate.OUTPUT_SUBSTRATE) {
-				phenotypeOutputs += s.getSize().t1 * s.getSize().t2;
-			}
-		}		
 		constructingNetwork = false;
 
 		// the instantiation of the TWEANNgenotype in question
@@ -226,7 +237,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 	 *            list of substrates extracted from domain
 	 * @return array list of NodeGenes from substrates
 	 */
-	public ArrayList<NodeGene> createSubstrateNodes(HyperNEATTask hnt, TWEANN cppn, List<Substrate> subs) {
+	public ArrayList<NodeGene> createSubstrateNodes(HyperNEATTask hnt, TWEANN cppn, List<Substrate> subs, int layersWidth, int layersHeight) {
 		int biasIndex = HyperNEATUtil.indexFirstBiasOutput(hnt); // first bias index
 		ArrayList<NodeGene> newNodes = new ArrayList<NodeGene>();
 		// loops through substrate list
@@ -241,11 +252,25 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 				// Non-input substrates can have a bias if desired
 				if(CommonConstants.evolveHyperNEATBias && sub.getStype() != Substrate.INPUT_SUBSTRATE) {
 					// Ask CPPN to generate a bias for each neuron
-					double[] filteredInputs = hnt.filterCPPNInputs(new double[]{0, 0, x, y, BIAS});
+					ILocated2D scaledTargetCoordinates = MMNEAT.substrateMapping.transformCoordinates(new Tuple2D(x, y), sub.getSize().t1, sub.getSize().t2);
+					double[] filteredInputs = hnt.filterCPPNInputs(new double[]{0, 0, scaledTargetCoordinates.getX(), scaledTargetCoordinates.getY(), BIAS});
+					
+					assert -1 <= filteredInputs[0] && filteredInputs[0] <= 1 : "CPPN input 0 out of range: " + filteredInputs[0];
+					assert -1 <= filteredInputs[1] && filteredInputs[1] <= 1 : "CPPN input 1 out of range: " + filteredInputs[1];
+					assert -1 <= filteredInputs[2] && filteredInputs[2] <= 1 : "CPPN input 2 out of range: " + filteredInputs[2];
+					assert -1 <= filteredInputs[3] && filteredInputs[3] <= 1 : "CPPN input 3 out of range: " + filteredInputs[3];
+					assert -1 <= filteredInputs[4] && filteredInputs[4] <= 1 : "CPPN input 4 out of range: " + filteredInputs[4];
+					
 					if(CommonConstants.substrateLocationInputs) {
 						// In this case, there are 4 extra CPPN inputs, which are x/y coordinates of the actual substrate locations.
 						// To define the bias, we only need to know the location of the substrate containing the neuron to be biased (other is 0,0)
-						filteredInputs = ArrayUtil.combineArrays(filteredInputs, new double[]{0, 0, sub.getSubLocation().t1, sub.getSubLocation().t2});
+						ILocated2D scaledSubstrateCoordinates = MMNEAT.substrateMapping.transformCoordinates(new Tuple2D(sub.getSubLocation().t1, sub.getSubLocation().t2), layersWidth, layersHeight);
+						filteredInputs = ArrayUtil.combineArrays(filteredInputs, new double[]{0, 0, scaledSubstrateCoordinates.getX(), scaledSubstrateCoordinates.getY()});
+
+						assert -1 <= filteredInputs[5] && filteredInputs[5] <= 1 : "CPPN input 5 out of range: " + filteredInputs[5];
+						assert -1 <= filteredInputs[6] && filteredInputs[6] <= 1 : "CPPN input 6 out of range: " + filteredInputs[6];
+						assert -1 <= filteredInputs[7] && filteredInputs[7] <= 1 : "CPPN input 7 out of range: " + filteredInputs[7];
+						assert -1 <= filteredInputs[8] && filteredInputs[8] <= 1 : "CPPN input 8 out of range: " + filteredInputs[8];
 					}
 					double[] result = cppn.process(filteredInputs);
 					try{
@@ -268,8 +293,11 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 				newNodes.add(newNodeGene(sub.getFtype(), sub.getStype(), innovationID++, false, bias));
 			}
 			
-			if(CommonConstants.evolveHyperNEATBias && sub.getStype() != Substrate.INPUT_SUBSTRATE) {
-				// Each non-input substrate has its own bias output for generating bias values.
+			if(CommonConstants.evolveHyperNEATBias && !CommonConstants.substrateBiasLocationInputs && sub.getStype() != Substrate.INPUT_SUBSTRATE) {
+				// Each non-input substrate has its own bias output for generating bias values,
+				// unless substrateBiasLocationInputs is true, in which case the CPPN inputs differentiate
+				// the output value of a single CPPN output for defining bias values.
+				
 				// Move to the next.
 				biasIndex++;
 			}
@@ -293,7 +321,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 	 *
 	 * @return array list containing all the links between substrates
 	 */
-	private ArrayList<LinkGene> createNodeLinks(HyperNEATTask hnt, TWEANN cppn, List<Triple<String, String, Boolean>> connections, List<Substrate> subs, HashMap<String, Integer> sIMap) {
+	private ArrayList<LinkGene> createNodeLinks(HyperNEATTask hnt, TWEANN cppn, List<Triple<String, String, Boolean>> connections, List<Substrate> subs, HashMap<String, Integer> sIMap, int layersWidth, int layersHeight) {
 		ArrayList<LinkGene> result = new ArrayList<LinkGene>();
 		for (int i = 0; i < connections.size(); i++) { // For each pair of substrates that are connected
 			int sourceSubstrateIndex = sIMap.get(connections.get(i).t1);
@@ -306,9 +334,9 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 			int outputIndex = CommonConstants.substrateLocationInputs ? 0 : i;
 			// both options add links from between two substrates to whole list of links
 			if(convolution) {
-				convolutionalLoopThroughLinks(hnt, result, cppn, outputIndex, sourceSubstrate, targetSubstrate, sourceSubstrateIndex, targetSubstrateIndex, subs);
+				convolutionalLoopThroughLinks(hnt, result, cppn, outputIndex, sourceSubstrate, targetSubstrate, sourceSubstrateIndex, targetSubstrateIndex, subs, layersWidth, layersHeight);
 			} else {
-				loopThroughLinks(hnt, result, cppn, outputIndex, sourceSubstrate, targetSubstrate, sourceSubstrateIndex, targetSubstrateIndex, subs);
+				loopThroughLinks(hnt, result, cppn, outputIndex, sourceSubstrate, targetSubstrate, sourceSubstrateIndex, targetSubstrateIndex, subs, layersWidth, layersHeight);
 			}
 		}
 		return result;
@@ -328,7 +356,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 	 */
 	void convolutionalLoopThroughLinks(HyperNEATTask hnt, ArrayList<LinkGene> linksSoFar, TWEANN cppn, int outputIndex,
 			Substrate s1, Substrate s2, int s1Index, int s2Index,
-			List<Substrate> subs) {
+			List<Substrate> subs, int layersWidth, int layersHeight) {
 		
 		int receptiveFieldSize = Parameters.parameters.integerParameter("receptiveFieldSize");
 		assert receptiveFieldSize % 2 == 1 : "Receptive field size needs to be odd to be centered: " + receptiveFieldSize;
@@ -362,13 +390,27 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 										//ILocated2D scaledFieldCoordinates = MMNEAT.substrateMapping.transformCoordinates(new Tuple2D(fX+edgeOffset, fY+edgeOffset), receptiveFieldSize, receptiveFieldSize);
 										// Receptive field scaling needs to be with respect to the center of the field, regardless of what the mapping for the other coordinates is
 										ILocated2D scaledFieldCoordinates = CartesianGeometricUtilities.centerAndScale(new Tuple2D(fX+edgeOffset, fY+edgeOffset), receptiveFieldSize, receptiveFieldSize);
-										ILocated2D scaledTargetCoordinates = MMNEAT.substrateMapping.transformCoordinates(new Tuple2D(targetXindex, targetYIndex), s2.getSize().t1, s2.getSize().t2);
+										ILocated2D scaledTargetCoordinates = MMNEAT.substrateMapping.transformCoordinates(new Tuple2D(targetXindex, targetYIndex), s2.getSize().t1, s2.getSize().t2);										
 										// inputs to CPPN 
 										// NOTE: filterCPPNInputs call was removed because it doesn't seem to make sense with convolutional inputs
 										double[] inputs = new double[]{scaledFieldCoordinates.getX(), scaledFieldCoordinates.getY(), scaledTargetCoordinates.getX(), scaledTargetCoordinates.getY(), BIAS};
+
+										assert -1 <= inputs[0] && inputs[0] <= 1 : "CPPN input 0 out of range: " + inputs[0];
+										assert -1 <= inputs[1] && inputs[1] <= 1 : "CPPN input 1 out of range: " + inputs[1];
+										assert -1 <= inputs[2] && inputs[2] <= 1 : "CPPN input 2 out of range: " + inputs[2];
+										assert -1 <= inputs[3] && inputs[3] <= 1 : "CPPN input 3 out of range: " + inputs[3];
+										assert -1 <= inputs[4] && inputs[4] <= 1 : "CPPN input 4 out of range: " + inputs[4];
+										
 										if(CommonConstants.substrateLocationInputs) {
 											// Extra inputs are locations of the substrates (just x/y coordinates)
-											inputs = ArrayUtil.combineArrays(inputs, new double[]{s1.getSubLocation().t1, s1.getSubLocation().t2, s2.getSubLocation().t1, s2.getSubLocation().t2});
+											ILocated2D scaledSubstrate1Coordinates = MMNEAT.substrateMapping.transformCoordinates(new Tuple2D(s1.getSubLocation().t1, s1.getSubLocation().t2), layersWidth, layersHeight);
+											ILocated2D scaledSubstrate2Coordinates = MMNEAT.substrateMapping.transformCoordinates(new Tuple2D(s2.getSubLocation().t1, s2.getSubLocation().t2), layersWidth, layersHeight);
+											inputs = ArrayUtil.combineArrays(inputs, new double[]{scaledSubstrate1Coordinates.getX(), scaledSubstrate1Coordinates.getY(), scaledSubstrate2Coordinates.getX(), scaledSubstrate2Coordinates.getY()});
+
+											assert -1 <= inputs[5] && inputs[5] <= 1 : "CPPN input 5 out of range: " + inputs[5];
+											assert -1 <= inputs[6] && inputs[6] <= 1 : "CPPN input 6 out of range: " + inputs[6];
+											assert -1 <= inputs[7] && inputs[7] <= 1 : "CPPN input 7 out of range: " + inputs[7];
+											assert -1 <= inputs[8] && inputs[8] <= 1 : "CPPN input 8 out of range: " + inputs[8];
 										}
 										conditionalLinkAdd(linksSoFar, cppn, inputs, outputIndex, fromXIndex, fromYIndex, s1Index, targetXindex, targetYIndex, s2Index, subs, innovationID++);
 									}	
@@ -404,7 +446,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 	 *            list of substrates
 	 *
 	 */
-	void loopThroughLinks(HyperNEATTask hnt, ArrayList<LinkGene> linksSoFar, TWEANN cppn, int outputIndex, Substrate s1, Substrate s2, int s1Index, int s2Index, List<Substrate> subs) {
+	void loopThroughLinks(HyperNEATTask hnt, ArrayList<LinkGene> linksSoFar, TWEANN cppn, int outputIndex, Substrate s1, Substrate s2, int s1Index, int s2Index, List<Substrate> subs, int layersWidth, int layersHeight) {
 
 		// This loop goes through every (x,y) coordinate in Substrate s1: source substrate
 		for(Pair<Integer,Integer> src : s1.coordinateList()) {
@@ -424,9 +466,23 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 						// inputs to CPPN 
 						// These next two lines need to be generalized for different numbers of CPPN inputs
 						double[] inputs = hnt.filterCPPNInputs(new double[]{scaledSourceCoordinates.getX(), scaledSourceCoordinates.getY(), scaledTargetCoordinates.getX(), scaledTargetCoordinates.getY(), BIAS});
+
+						assert -1 <= inputs[0] && inputs[0] <= 1 : "CPPN input 0 out of range: " + inputs[0];
+						assert -1 <= inputs[1] && inputs[1] <= 1 : "CPPN input 1 out of range: " + inputs[1];
+						assert -1 <= inputs[2] && inputs[2] <= 1 : "CPPN input 2 out of range: " + inputs[2];
+						assert -1 <= inputs[3] && inputs[3] <= 1 : "CPPN input 3 out of range: " + inputs[3];
+						assert -1 <= inputs[4] && inputs[4] <= 1 : "CPPN input 4 out of range: " + inputs[4];
+						
 						if(CommonConstants.substrateLocationInputs) {
 							// Extra inputs are locations of the substrates (just x/y coordinates)
-							inputs = ArrayUtil.combineArrays(inputs, new double[]{s1.getSubLocation().t1, s1.getSubLocation().t2, s2.getSubLocation().t1, s2.getSubLocation().t2});
+							ILocated2D scaledSubstrate1Coordinates = MMNEAT.substrateMapping.transformCoordinates(new Tuple2D(s1.getSubLocation().t1, s1.getSubLocation().t2), layersWidth, layersHeight);
+							ILocated2D scaledSubstrate2Coordinates = MMNEAT.substrateMapping.transformCoordinates(new Tuple2D(s2.getSubLocation().t1, s2.getSubLocation().t2), layersWidth, layersHeight);
+							inputs = ArrayUtil.combineArrays(inputs, new double[]{scaledSubstrate1Coordinates.getX(), scaledSubstrate1Coordinates.getY(), scaledSubstrate2Coordinates.getX(), scaledSubstrate2Coordinates.getY()});
+
+							assert -1 <= inputs[5] && inputs[5] <= 1 : "CPPN input 5 out of range: " + inputs[5];
+							assert -1 <= inputs[6] && inputs[6] <= 1 : "CPPN input 6 out of range: " + inputs[6];
+							assert -1 <= inputs[7] && inputs[7] <= 1 : "CPPN input 7 out of range: " + inputs[7];
+							assert -1 <= inputs[8] && inputs[8] <= 1 : "CPPN input 8 out of range: " + inputs[8];
 						}
 						conditionalLinkAdd(linksSoFar, cppn, inputs, outputIndex, fromXIndex, fromYIndex, s1Index, targetXindex, targetYIndex, s2Index, subs, innovationID++); // increment innovation regardless of whether link is added
 					}

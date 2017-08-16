@@ -485,7 +485,12 @@ public class HyperNEATUtil {
 	 * @param hnt HyperNEATTask that specifies substrate connectivity
 	 * @return number of bias outputs needed by CPPN
 	 */
-	public static int numBiasOutputsNeeded(HyperNEATTask hnt) {
+	static int numBiasOutputsNeeded(HyperNEATTask hnt) {
+		// If substrate coordinates are inputs to the CPPN, then
+		// biases on difference substrates can be different based on the
+		// inputs rather than having separate outputs for each substrate.
+		if(CommonConstants.substrateBiasLocationInputs) return 1;
+		
 		List<Substrate> subs = hnt.getSubstrateInformation();
 		int count = 0;
 		for(Substrate s : subs) {

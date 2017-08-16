@@ -12,6 +12,7 @@ public class CommonConstants {
 
 
 	// boolean
+	public static boolean substrateBiasLocationInputs;
 	public static boolean substrateLocationInputs;
 	public static boolean convolution;
 	public static boolean averageScoreHistory;
@@ -138,6 +139,7 @@ public class CommonConstants {
 		// boolean
 		averageScoreHistory = Parameters.parameters.booleanParameter("averageScoreHistory");
 		convolution = Parameters.parameters.booleanParameter("convolution");
+		substrateBiasLocationInputs = Parameters.parameters.booleanParameter("substrateBiasLocationInputs");
 		substrateLocationInputs = Parameters.parameters.booleanParameter("substrateLocationInputs");
 		monitorSubstrates = Parameters.parameters.booleanParameter("monitorSubstrates");
 		includeSigmoidFunction = Parameters.parameters.booleanParameter("includeSigmoidFunction");

@@ -331,7 +331,8 @@ public class Parameters {
 		// Boolean parameters
 		booleanOptions.add("boardGameWinPercentFitness", false, "Is percentage of games won a fitness function for board games?");
 		booleanOptions.add("boardGameIncreasingRandomOpens", false, "Number of random moves at the start of each game increases as evolved agents improve");
-		booleanOptions.add("substrateLocationInputs", false, "HyperNEAT uses coordinates of substrates (not just in substrates) as CPPN inputs");
+		booleanOptions.add("substrateBiasLocationInputs", false, "HyperNEAT uses coordinates of substrates (not just in substrates) as CPPN inputs when evolving bias values");
+		booleanOptions.add("substrateLocationInputs", false, "HyperNEAT uses coordinates of substrates (not just in substrates) as CPPN inputs for weight link values");
 		booleanOptions.add("heterogeneousSubstrateActivations", false, "HyperNEAT phenotypes can have a mix of activation functions");
 		booleanOptions.add("convolution", false, "HyperNEAT phenotypes allow convolutional structure");
 		booleanOptions.add("zeroPadding", false, "Whether the input border for convolutional structures is padded with zeros");
