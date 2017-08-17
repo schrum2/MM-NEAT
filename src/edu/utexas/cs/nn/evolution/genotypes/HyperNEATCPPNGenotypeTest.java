@@ -81,11 +81,11 @@ public class HyperNEATCPPNGenotypeTest {
 
 	/**
 	 * Tests creation of list of nodes in substrates. Order of substrates is not
-	 * imortant as long as mapping is accurate
+	 * important as long as mapping is accurate
 	 */
 	@Test
 	public void testCreateSubstrateNodesSlow() {
-		ArrayList<NodeGene> nodes = hcppn.createSubstrateNodes((HyperNEATTask) MMNEAT.task,  hcppn.getCPPN(), subs);
+		ArrayList<NodeGene> nodes = hcppn.createSubstrateNodes((HyperNEATTask) MMNEAT.task,  hcppn.getCPPN(), subs, 2, 1);
 		//Asserts that the size of the array list created is equal to the sum of the areas of the two substrates
 		// (sub1 height * sub1 width + sub2 height * sub2 width)
 		assertEquals(nodes.size(), subs.get(sub1Index).getSize().t1 * subs.get(sub1Index).getSize().t2
@@ -106,7 +106,7 @@ public class HyperNEATCPPNGenotypeTest {
 	public void testLoopThroughLinks() {
 		int indexOfTest = 0;
 		ArrayList<LinkGene> newLinks = new ArrayList<LinkGene>();
-		hcppn.loopThroughLinks((HyperNEATTask) MMNEAT.task, newLinks, cppn, indexOfTest, subs.get(sub1Index), subs.get(sub2Index), sub1Index, sub2Index, subs);
+		hcppn.loopThroughLinks((HyperNEATTask) MMNEAT.task, newLinks, cppn, indexOfTest, subs.get(sub1Index), subs.get(sub2Index), sub1Index, sub2Index, subs, 2, 1);
 		ILocated2D scaledSourceCoordinates = CartesianGeometricUtilities.centerAndScale(new Tuple2D(0, 0),
 				subs.get(sub1Index).getSize().t1, subs.get(sub1Index).getSize().t2);
 		Tuple2D size = new Tuple2D(subs.get(sub2Index).getSize().t1 - 1, subs.get(sub2Index).getSize().t2 - 1);
