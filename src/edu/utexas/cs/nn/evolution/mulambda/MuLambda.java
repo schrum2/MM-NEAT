@@ -410,6 +410,8 @@ public abstract class MuLambda<T> implements SinglePopulationGenerationalEA<T> {
 				HyperNEATUtil.clearHyperNEATVisualizations();
 				// Need small genes because there are so many of them
 				TWEANNGenotype.smallerGenotypes = true; 
+				// Switch from CPPNs to plain TWEANNs
+				Parameters.parameters.setClass("genotype", TWEANNGenotype.class);
 				// Substrate networks cannot have different activation functions
 				CommonConstants.netChangeActivationRate = 0;
 				Parameters.parameters.setDouble("netChangeActivationRate", 0);
