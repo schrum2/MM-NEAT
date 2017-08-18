@@ -53,6 +53,7 @@ public class CommonConstants {
 	public static boolean fs;
 	public static boolean hierarchicalMultitask;
 	public static boolean hyperNEAT;
+	public static boolean hybrID;
 	public static boolean imprisonedWhileEdible;
 	public static boolean infiniteEdibleTime;
 	public static boolean leo;
@@ -178,6 +179,7 @@ public class CommonConstants {
 		fs = Parameters.parameters.booleanParameter("fs");
 		hierarchicalMultitask = Parameters.parameters.booleanParameter("hierarchicalMultitask");
 		hyperNEAT = Parameters.parameters.booleanParameter("hyperNEAT");
+		hybrID = Parameters.parameters.booleanParameter("hybrID");
 		imprisonedWhileEdible = Parameters.parameters.booleanParameter("imprisonedWhileEdible");
 		infiniteEdibleTime = Parameters.parameters.booleanParameter("infiniteEdibleTime");
 		leo = Parameters.parameters.booleanParameter("leo");
