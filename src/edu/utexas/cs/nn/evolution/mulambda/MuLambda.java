@@ -415,6 +415,9 @@ public abstract class MuLambda<T> implements SinglePopulationGenerationalEA<T> {
 				// Substrate networks cannot have different activation functions
 				CommonConstants.netChangeActivationRate = 0;
 				Parameters.parameters.setDouble("netChangeActivationRate", 0);
+				// Only CPPNs have multiple activation functions, but standard NNs do not
+				CommonConstants.allowMultipleFunctions = false;
+				Parameters.parameters.setBoolean("allowMultipleFunctions", false);
 				// Get substrate genotypes
 				result = PopulationUtil.getSubstrateGenotypesFromCPPNs(HyperNEATUtil.getHyperNEATTask(), result, 0); // 0 is only population
 				// Reset archetype because the evolved CPPN genes are no longer relevant.
