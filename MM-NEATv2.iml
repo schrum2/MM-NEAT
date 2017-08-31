@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="JAVA_MODULE" version="4">
+  <component name="EclipseModuleManager">
+    <libelement value="jar://$MODULE_DIR$/lib/jdom.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/pogamut/afsm-1.0.1-SNAPSHOT.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/pogamut/amis-utils-3.3.0.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/pogamut/ant-trax-1.8.0.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/pogamut/aopalliance-1.0.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/pogamut/guice-2.0.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/pogamut/guice-assisted-inject-2.0.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/pogamut/guice-multibindings-2.0.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/pogamut/introspection-1.0.0-SNAPSHOT.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/pogamut/javageom-3.3.0.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/pogamut/jython-1.2007.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/pogamut/jython-engine-1.0.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/pogamut/pogamut-base-3.3.0.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/pogamut/pogamut-unreal-3.3.0.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/pogamut/pogamut-ut2004-3.3.0.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/pogamut/saxon-9.1.0.8.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/pogamut/vecmath-1.5.1.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/pogamut/xmllist-1.0.0-SNAPSHOT.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/pogamut/xpp3_min-1.1.4c.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/pogamut/xstream-1.3.1.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/rl-glue/ant-contrib-1.0b3.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/rl-glue/rl-glue-java/JavaRLGlueCodec.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/rl-glue/rl-viz/AgentShell.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/rl-glue/rl-viz/EnvironmentShell.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/rl-glue/rl-viz/libs/commons-codec-1.3.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/rl-glue/rl-viz/RLVizApp.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/rl-glue/rl-viz/RLVizLib-src.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/rl-glue/rl-viz/RLVizLib.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/woxser.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/jl1.0.1.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/junit-4.10.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/vizdoom/bin/java/vizdoom.jar!/" />
+    <src_description expected_position="0">
+      <src_folder value="file://$MODULE_DIR$/src" expected_position="0" />
+    </src_description>
+  </component>
+  <component name="NewModuleRootManager">
+    <output url="file://$MODULE_DIR$/bin" />
+    <exclude-output />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+    </content>
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module-library">
+      <library name="jdom.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/jdom.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="afsm-1.0.1-SNAPSHOT.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/pogamut/afsm-1.0.1-SNAPSHOT.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="amis-utils-3.3.0.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/pogamut/amis-utils-3.3.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="ant-trax-1.8.0.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/pogamut/ant-trax-1.8.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="aopalliance-1.0.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/pogamut/aopalliance-1.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="guice-2.0.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/pogamut/guice-2.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="guice-assisted-inject-2.0.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/pogamut/guice-assisted-inject-2.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="guice-multibindings-2.0.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/pogamut/guice-multibindings-2.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="introspection-1.0.0-SNAPSHOT.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/pogamut/introspection-1.0.0-SNAPSHOT.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="javageom-3.3.0.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/pogamut/javageom-3.3.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="jython-1.2007.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/pogamut/jython-1.2007.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="jython-engine-1.0.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/pogamut/jython-engine-1.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="pogamut-base-3.3.0.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/pogamut/pogamut-base-3.3.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="pogamut-unreal-3.3.0.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/pogamut/pogamut-unreal-3.3.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="pogamut-ut2004-3.3.0.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/pogamut/pogamut-ut2004-3.3.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="saxon-9.1.0.8.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/pogamut/saxon-9.1.0.8.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="vecmath-1.5.1.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/pogamut/vecmath-1.5.1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="xmllist-1.0.0-SNAPSHOT.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/pogamut/xmllist-1.0.0-SNAPSHOT.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="xpp3_min-1.1.4c.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/pogamut/xpp3_min-1.1.4c.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="xstream-1.3.1.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/pogamut/xstream-1.3.1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="ant-contrib-1.0b3.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/rl-glue/ant-contrib-1.0b3.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="JavaRLGlueCodec.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/rl-glue/rl-glue-java/JavaRLGlueCodec.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="AgentShell.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/rl-glue/rl-viz/AgentShell.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="EnvironmentShell.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/rl-glue/rl-viz/EnvironmentShell.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="commons-codec-1.3.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/rl-glue/rl-viz/libs/commons-codec-1.3.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="RLVizApp.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/rl-glue/rl-viz/RLVizApp.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="RLVizLib-src.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/rl-glue/rl-viz/RLVizLib-src.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="RLVizLib.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/rl-glue/rl-viz/RLVizLib.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="woxser.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/woxser.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="jl1.0.1.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/jl1.0.1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="module-library">
+      <library name="junit-4.10.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/junit-4.10.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="vizdoom.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/vizdoom/bin/java/vizdoom.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+  </component>
+</module>

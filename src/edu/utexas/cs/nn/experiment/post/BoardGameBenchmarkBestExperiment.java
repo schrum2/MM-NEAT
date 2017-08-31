@@ -75,7 +75,7 @@ public class BoardGameBenchmarkBestExperiment<T extends Network, S extends Board
 				for(int i = 0; i < MMNEAT.task.numObjectives(); i++) {
 					int lastGen = Parameters.parameters.integerParameter("lastSavedGeneration");
 					String file = FileUtilities.getSaveDirectory() + "/bestObjectives/gen" + lastGen + "_bestIn"+i+".xml";
-					population.add((Genotype<T>) PopulationUtil.extractGenotype(file));
+					population.add(PopulationUtil.extractGenotype(file));
 				}
 			} else {
 				String dir = FileUtilities.getSaveDirectory() + "/bestObjectives";
