@@ -31,7 +31,7 @@ public class BoardGameUtilBGAvgScoresTest<T extends BoardGameState> {
 		// Doesn't matter which players are playing; TestBoardGame is always an End State and Player 1 wins
 		players = new BoardGamePlayer[]{new BoardGamePlayerRandom<T>(), new BoardGamePlayerRandom<T>()};
 		Parameters.initializeParameterCollections(new String[]{"io:false", "netio:false", "task:edu.southwestern.tasks.boardGame.StaticOpponentBoardGameTask",
-				"boardGame:boardGame.othello.Othello", "minimaxSearchDepth:2"});
+				"boardGame:edu.southwestern.boardGame.othello.Othello", "minimaxSearchDepth:2"});
 		MMNEAT.loadClasses();
 	}
 

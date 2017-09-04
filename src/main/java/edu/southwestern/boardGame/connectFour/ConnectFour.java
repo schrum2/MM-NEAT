@@ -20,8 +20,8 @@ public class ConnectFour extends TwoDimensionalBoardGame<ConnectFourState>{
 	
 	public static void main(String[] args){
 		Parameters.initializeParameterCollections(new String[]{"io:false", "netio:false", "task:edu.southwestern.tasks.boardGame.StaticOpponentBoardGameTask",
-				"boardGame:boardGame.connectFour.ConnectFour", "boardGameOpponent:boardGame.agents.BoardGamePlayerHuman2DBoard",
-				"boardGamePlayer:boardGame.agents.treesearch.BoardGamePlayerMinimaxAlphaBetaPruning", "watch:true"});
+				"boardGame:edu.southwestern.boardGame.connectFour.ConnectFour", "boardGameOpponent:edu.southwestern.boardGame.agents.BoardGamePlayerHuman2DBoard",
+				"boardGamePlayer:edu.southwestern.boardGame.agents.treesearch.BoardGamePlayerMinimaxAlphaBetaPruning", "watch:true"});
 		
 		MMNEAT.loadClasses();
 		

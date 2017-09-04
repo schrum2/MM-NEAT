@@ -19,9 +19,9 @@ public class TicTacToe extends TwoDimensionalBoardGame<TicTacToeState> {
 
 	public static void main(String[] args){
 		Parameters.initializeParameterCollections(new String[]{"io:false", "netio:false", "task:edu.southwestern.tasks.boardGame.StaticOpponentBoardGameTask",
-				"boardGame:boardGame.ttt.TicTacToe", "boardGameOpponent:boardGame.agents.BoardGamePlayerHuman2DBoard",
-				"boardGameOpponentHeuristic:boardGame.heuristics.StaticOthelloWeightedPieceCounterHeursitic",
-				"boardGamePlayer:boardGame.agents.treesearch.BoardGamePlayerMinimaxAlphaBetaPruning", "watch:true"});
+				"boardGame:edu.southwestern.boardGame.ttt.TicTacToe", "boardGameOpponent:edu.southwestern.boardGame.agents.BoardGamePlayerHuman2DBoard",
+				"boardGameOpponentHeuristic:edu.southwestern.boardGame.heuristics.StaticOthelloWeightedPieceCounterHeursitic",
+				"boardGamePlayer:edu.southwestern.boardGame.agents.treesearch.BoardGamePlayerMinimaxAlphaBetaPruning", "watch:true"});
 		
 		MMNEAT.loadClasses();
 		

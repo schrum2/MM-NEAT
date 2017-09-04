@@ -31,9 +31,9 @@ public class StaticTicTacToeWPCHeuristic<T extends TwoDimensionalBoardGameState>
 	
 	public static void main(String[] args){
 		Parameters.initializeParameterCollections(new String[]{"io:false", "netio:false", "task:edu.southwestern.tasks.boardGame.StaticOpponentBoardGameTask",
-				"boardGame:boardGame.ttt.TicTacToe", "boardGameOpponent:boardGame.agents.BoardGamePlayerHuman2DBoard",
-				"boardGameOpponentHeuristic:boardGame.heuristics.StaticTicTacToeWPCHeuristic",
-				"boardGamePlayer:boardGame.agents.treesearch.BoardGamePlayerMinimaxAlphaBetaPruning", "watch:true", "minimaxSearchDepth:8"});
+				"boardGame:edu.southwestern.boardGame.ttt.TicTacToe", "boardGameOpponent:edu.southwestern.boardGame.agents.BoardGamePlayerHuman2DBoard",
+				"boardGameOpponentHeuristic:edu.southwestern.boardGame.heuristics.StaticTicTacToeWPCHeuristic",
+				"boardGamePlayer:edu.southwestern.boardGame.agents.treesearch.BoardGamePlayerMinimaxAlphaBetaPruning", "watch:true", "minimaxSearchDepth:8"});
 		
 		MMNEAT.loadClasses();
 		

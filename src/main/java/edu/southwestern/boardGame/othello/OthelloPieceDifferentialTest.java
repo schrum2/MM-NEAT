@@ -29,7 +29,7 @@ public class OthelloPieceDifferentialTest {
 	@Before
 	public void setUp() throws Exception {
 		Parameters.initializeParameterCollections(new String[]{"io:false", "netio:false", "task:edu.southwestern.tasks.boardGame.StaticOpponentBoardGameTask",
-				"boardGame:boardGame.othello.Othello", "minimaxSearchDepth:3"});
+				"boardGame:edu.southwestern.boardGame.othello.Othello", "minimaxSearchDepth:3"});
 		MMNEAT.loadClasses();
 		
 		blackChip = new BoardGamePlayerMinimax<OthelloState>(new PieceDifferentialBoardGameHeuristic<OthelloState>());

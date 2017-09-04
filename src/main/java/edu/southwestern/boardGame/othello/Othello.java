@@ -19,9 +19,9 @@ public class Othello extends TwoDimensionalBoardGame<OthelloState>{
 	
 	public static void main(String[] args){
 		Parameters.initializeParameterCollections(new String[]{"io:false", "netio:false", "task:edu.southwestern.tasks.boardGame.StaticOpponentBoardGameTask",
-				"boardGame:boardGame.othello.Othello", "boardGameOpponent:boardGame.agents.BoardGamePlayerHuman2DBoard",
-				"boardGameOpponentHeuristic:boardGame.heuristics.StaticOthelloWPCHeuristic",
-				"boardGamePlayer:boardGame.agents.treesearch.BoardGamePlayerMinimaxAlphaBetaPruning", "watch:true", "minimaxSearchDepth:6"});
+				"boardGame:edu.southwestern.boardGame.othello.Othello", "boardGameOpponent:edu.southwestern.boardGame.agents.BoardGamePlayerHuman2DBoard",
+				"boardGameOpponentHeuristic:edu.southwestern.boardGame.heuristics.StaticOthelloWPCHeuristic",
+				"boardGamePlayer:edu.southwestern.boardGame.agents.treesearch.BoardGamePlayerMinimaxAlphaBetaPruning", "watch:true", "minimaxSearchDepth:6"});
 		
 		MMNEAT.loadClasses();
 		

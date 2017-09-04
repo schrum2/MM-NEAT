@@ -32,7 +32,7 @@ public class BoardGamePlayerMinimaxAlphaBetaPruningTest {
 	@Before
 	public void setup(){
 		Parameters.initializeParameterCollections(new String[]{"io:false", "netio:false", "task:edu.southwestern.tasks.boardGame.StaticOpponentBoardGameTask",
-				"boardGame:boardGame.othello.Othello", "minimaxSearchDepth:2", 
+				"boardGame:edu.southwestern.boardGame.othello.Othello", "minimaxSearchDepth:2", 
 				"randomArgMaxTieBreak:false"});
 		MMNEAT.loadClasses();
 		

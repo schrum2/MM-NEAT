@@ -20,9 +20,9 @@ public class Checkers extends TwoDimensionalBoardGame<CheckersState> {
 	
 	public static void main(String[] args){
 		Parameters.initializeParameterCollections(new String[]{"io:false", "netio:false", "task:edu.southwestern.tasks.boardGame.StaticOpponentBoardGameTask",
-				"boardGame:boardGame.checkers.Checkers", "boardGameOpponent:boardGame.agents.BoardGamePlayerHuman2DBoard",
-				"boardGameOpponentHeuristic:boardGame.heuristics.PieceDifferentialBoardGameHeuristic",
-				"boardGamePlayer:boardGame.agents.treesearch.BoardGamePlayerMinimaxAlphaBetaPruning", "watch:true", "minimaxSearchDepth:2"});
+				"boardGame:edu.southwestern.boardGame.checkers.Checkers", "boardGameOpponent:edu.southwestern.boardGame.agents.BoardGamePlayerHuman2DBoard",
+				"boardGameOpponentHeuristic:edu.southwestern.boardGame.heuristics.PieceDifferentialBoardGameHeuristic",
+				"boardGamePlayer:edu.southwestern.boardGame.agents.treesearch.BoardGamePlayerMinimaxAlphaBetaPruning", "watch:true", "minimaxSearchDepth:2"});
 		
 		MMNEAT.loadClasses();
 		
