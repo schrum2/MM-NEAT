@@ -1,9 +1,9 @@
-package edu.utexas.cs.nn.tasks.mspacman.agentcontroller.ghosts;
+package edu.southwestern.tasks.mspacman.agentcontroller.ghosts;
 
-import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
-import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
+import edu.southwestern.networks.Network;
+import edu.southwestern.parameters.CommonConstants;
+import edu.southwestern.tasks.mspacman.facades.GameFacade;
+import edu.southwestern.util.stats.StatisticsUtilities;
 import pacman.game.Constants;
 
 /**

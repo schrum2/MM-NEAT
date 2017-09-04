@@ -1,20 +1,20 @@
-package edu.utexas.cs.nn.experiment.post;
+package edu.southwestern.experiment.post;
 
-import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.evolution.nsga2.NSGA2Score;
-import edu.utexas.cs.nn.experiment.Experiment;
-import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.scores.Score;
-import edu.utexas.cs.nn.tasks.mspacman.CooperativeEnsembleMsPacManTask;
-import edu.utexas.cs.nn.tasks.mspacman.agentcontroller.pacman.EnsembleMsPacManController;
-import edu.utexas.cs.nn.tasks.mspacman.init.MsPacManInitialization;
-import edu.utexas.cs.nn.tasks.mspacman.multitask.MsPacManModeSelector;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.MsPacManControllerInputOutputMediator;
-import edu.utexas.cs.nn.util.ClassCreation;
-import edu.utexas.cs.nn.util.file.FileUtilities;
-import edu.utexas.cs.nn.util.PopulationUtil;
+import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.evolution.nsga2.NSGA2Score;
+import edu.southwestern.experiment.Experiment;
+import edu.southwestern.networks.Network;
+import edu.southwestern.parameters.CommonConstants;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.scores.Score;
+import edu.southwestern.tasks.mspacman.CooperativeEnsembleMsPacManTask;
+import edu.southwestern.tasks.mspacman.agentcontroller.pacman.EnsembleMsPacManController;
+import edu.southwestern.tasks.mspacman.init.MsPacManInitialization;
+import edu.southwestern.tasks.mspacman.multitask.MsPacManModeSelector;
+import edu.southwestern.tasks.mspacman.sensors.MsPacManControllerInputOutputMediator;
+import edu.southwestern.util.ClassCreation;
+import edu.southwestern.util.file.FileUtilities;
+import edu.southwestern.util.PopulationUtil;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 

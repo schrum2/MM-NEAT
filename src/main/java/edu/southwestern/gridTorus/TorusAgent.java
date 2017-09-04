@@ -1,9 +1,9 @@
 
-package edu.utexas.cs.nn.gridTorus;
+package edu.southwestern.gridTorus;
 
-import edu.utexas.cs.nn.util.CombinatoricUtilities;
-import edu.utexas.cs.nn.util.util2D.ILocated2D;
-import edu.utexas.cs.nn.util.util2D.Tuple2D;
+import edu.southwestern.util.CombinatoricUtilities;
+import edu.southwestern.util.util2D.ILocated2D;
+import edu.southwestern.util.util2D.Tuple2D;
 import java.awt.Color;
 
 /**

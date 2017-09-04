@@ -7,11 +7,11 @@ import java.util.Set;
 import boardGame.BoardGameState;
 import boardGame.agents.HeuristicBoardGamePlayer;
 import boardGame.heuristics.BoardGameHeuristic;
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.util.ClassCreation;
-import edu.utexas.cs.nn.util.random.RandomNumbers;
-import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.util.ClassCreation;
+import edu.southwestern.util.random.RandomNumbers;
+import edu.southwestern.util.stats.StatisticsUtilities;
 
 /**
  * Random selection process based on:

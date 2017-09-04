@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.log;
+package edu.southwestern.log;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -6,8 +6,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.util.file.FileUtilities;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.util.file.FileUtilities;
 
 /**
  * General logging class. Needs to be generalized more.

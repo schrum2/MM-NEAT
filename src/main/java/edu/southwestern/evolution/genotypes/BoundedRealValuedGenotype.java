@@ -1,11 +1,11 @@
-package edu.utexas.cs.nn.evolution.genotypes;
+package edu.southwestern.evolution.genotypes;
 
-import edu.utexas.cs.nn.evolution.mutation.real.PerturbMutation;
-import edu.utexas.cs.nn.evolution.mutation.real.PolynomialMutation;
-import edu.utexas.cs.nn.util.random.RandomNumbers;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
+import edu.southwestern.evolution.mutation.real.PerturbMutation;
+import edu.southwestern.evolution.mutation.real.PolynomialMutation;
+import edu.southwestern.util.random.RandomNumbers;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.util.datastructures.ArrayUtil;
 
 import java.util.ArrayList;
 

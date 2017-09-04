@@ -1,15 +1,15 @@
-package edu.utexas.cs.nn.tasks.gridTorus;
+package edu.southwestern.tasks.gridTorus;
 
 import java.util.ArrayList;
 
-import edu.utexas.cs.nn.evolution.Organism;
-import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.gridTorus.TorusPredPreyGame;
-import edu.utexas.cs.nn.gridTorus.controllers.TorusPredPreyController;
-import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.networks.NetworkTask;
-import edu.utexas.cs.nn.scores.Score;
-import edu.utexas.cs.nn.tasks.GroupTask;
+import edu.southwestern.evolution.Organism;
+import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.gridTorus.TorusPredPreyGame;
+import edu.southwestern.gridTorus.controllers.TorusPredPreyController;
+import edu.southwestern.networks.Network;
+import edu.southwestern.networks.NetworkTask;
+import edu.southwestern.scores.Score;
+import edu.southwestern.tasks.GroupTask;
 
 /**
  * Defines a TorusPredPreyTask for groups of evolved agents. 

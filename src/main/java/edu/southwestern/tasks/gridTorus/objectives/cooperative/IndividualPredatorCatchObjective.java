@@ -1,8 +1,8 @@
-package edu.utexas.cs.nn.tasks.gridTorus.objectives.cooperative;
+package edu.southwestern.tasks.gridTorus.objectives.cooperative;
 
-import edu.utexas.cs.nn.evolution.Organism;
-import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.tasks.gridTorus.objectives.GridTorusObjective;
+import edu.southwestern.evolution.Organism;
+import edu.southwestern.networks.Network;
+import edu.southwestern.tasks.gridTorus.objectives.GridTorusObjective;
 
 /**
  * 

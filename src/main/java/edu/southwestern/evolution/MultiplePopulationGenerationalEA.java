@@ -1,6 +1,6 @@
-package edu.utexas.cs.nn.evolution;
+package edu.southwestern.evolution;
 
-import edu.utexas.cs.nn.evolution.genotypes.Genotype;
+import edu.southwestern.evolution.genotypes.Genotype;
 
 import java.util.ArrayList;
 

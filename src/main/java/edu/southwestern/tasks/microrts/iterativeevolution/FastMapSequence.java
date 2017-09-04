@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.tasks.microrts.iterativeevolution;
+package edu.southwestern.tasks.microrts.iterativeevolution;
 
 /**
  * Map seqeucne that switches very fast (every generation) for testing

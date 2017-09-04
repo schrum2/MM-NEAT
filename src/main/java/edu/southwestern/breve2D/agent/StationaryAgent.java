@@ -1,6 +1,6 @@
-package edu.utexas.cs.nn.breve2D.agent;
+package edu.southwestern.breve2D.agent;
 
-import edu.utexas.cs.nn.breve2D.Breve2DGame;
+import edu.southwestern.breve2D.Breve2DGame;
 
 public final class StationaryAgent implements AgentController {
 	/**

@@ -1,11 +1,11 @@
-package edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.combining;
+package edu.southwestern.tasks.mspacman.sensors.blocks.combining;
 
-import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.networks.TWEANN;
-import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.MsPacManControllerInputOutputMediator;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.MsPacManSensorBlock;
+import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.networks.Network;
+import edu.southwestern.networks.TWEANN;
+import edu.southwestern.tasks.mspacman.facades.GameFacade;
+import edu.southwestern.tasks.mspacman.sensors.MsPacManControllerInputOutputMediator;
+import edu.southwestern.tasks.mspacman.sensors.blocks.MsPacManSensorBlock;
 
 /**
  * Input block that makes the outputs of one network the inputs to another in a

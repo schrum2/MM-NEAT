@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.breve2D.agent;
+package edu.southwestern.breve2D.agent;
 
 /**
  * Like the regular predator-prey enemy, but knows to reset all sub-controllers

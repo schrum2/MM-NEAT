@@ -1,7 +1,7 @@
-package edu.utexas.cs.nn.tasks.mspacman.sensors.ghosts;
+package edu.southwestern.tasks.mspacman.sensors.ghosts;
 
-import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.ghosts.GhostSensorBlock;
+import edu.southwestern.tasks.mspacman.facades.GameFacade;
+import edu.southwestern.tasks.mspacman.sensors.blocks.ghosts.GhostSensorBlock;
 import java.util.ArrayList;
 import java.util.Arrays;
 

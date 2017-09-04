@@ -1,9 +1,9 @@
-package edu.utexas.cs.nn.tasks.mspacman.facades;
+package edu.southwestern.tasks.mspacman.facades;
 
-import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.tasks.mspacman.ghosts.GhostComparator;
-import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
-import edu.utexas.cs.nn.util.datastructures.Pair;
+import edu.southwestern.parameters.CommonConstants;
+import edu.southwestern.tasks.mspacman.ghosts.GhostComparator;
+import edu.southwestern.util.datastructures.ArrayUtil;
+import edu.southwestern.util.datastructures.Pair;
 import java.awt.Color;
 import java.util.*;
 import pacman.game.Constants;

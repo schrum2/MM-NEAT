@@ -1,8 +1,8 @@
-package edu.utexas.cs.nn.tasks.mspacman;
+package edu.southwestern.tasks.mspacman;
 
-import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.scores.Score;
+import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.networks.Network;
+import edu.southwestern.scores.Score;
 import java.util.ArrayList;
 
 /**

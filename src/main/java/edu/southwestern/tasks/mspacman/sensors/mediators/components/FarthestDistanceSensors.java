@@ -1,10 +1,10 @@
-package edu.utexas.cs.nn.tasks.mspacman.sensors.mediators.components;
+package edu.southwestern.tasks.mspacman.sensors.mediators.components;
 
-import edu.utexas.cs.nn.tasks.mspacman.sensors.BlockLoadedInputOutputMediator;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.distance.FarthestEdibleGhostDistanceBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.distance.FarthestPillDistanceBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.distance.FarthestPowerPillDistanceBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.distance.FarthestThreatGhostDistanceBlock;
+import edu.southwestern.tasks.mspacman.sensors.BlockLoadedInputOutputMediator;
+import edu.southwestern.tasks.mspacman.sensors.blocks.distance.FarthestEdibleGhostDistanceBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.distance.FarthestPillDistanceBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.distance.FarthestPowerPillDistanceBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.distance.FarthestThreatGhostDistanceBlock;
 
 /**
  * Nearest distance to objects of interest

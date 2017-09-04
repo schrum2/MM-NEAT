@@ -1,20 +1,20 @@
-package edu.utexas.cs.nn.tasks.gvgai;
+package edu.southwestern.tasks.gvgai;
 
 import java.util.LinkedList;
 import java.util.List;
 
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.networks.NetworkTask;
-import edu.utexas.cs.nn.networks.hyperneat.HyperNEATTask;
-import edu.utexas.cs.nn.networks.hyperneat.HyperNEATUtil;
-import edu.utexas.cs.nn.networks.hyperneat.Substrate;
-import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.tasks.NoisyLonerTask;
-import edu.utexas.cs.nn.util.datastructures.Pair;
-import edu.utexas.cs.nn.util.datastructures.Triple;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.networks.Network;
+import edu.southwestern.networks.NetworkTask;
+import edu.southwestern.networks.hyperneat.HyperNEATTask;
+import edu.southwestern.networks.hyperneat.HyperNEATUtil;
+import edu.southwestern.networks.hyperneat.Substrate;
+import edu.southwestern.parameters.CommonConstants;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.NoisyLonerTask;
+import edu.southwestern.util.datastructures.Pair;
+import edu.southwestern.util.datastructures.Triple;
 import gvgai.tracks.ArcadeMachine;
 
 public class GVGAISinglePlayerTask<T extends Network> extends NoisyLonerTask<T> implements NetworkTask, HyperNEATTask{

@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.util.datastructures;
+package edu.southwestern.util.datastructures;
 
 /**
  * Tuple of objects

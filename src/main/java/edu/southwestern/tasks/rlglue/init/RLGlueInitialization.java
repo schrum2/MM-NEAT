@@ -1,9 +1,9 @@
-package edu.utexas.cs.nn.tasks.rlglue.init;
+package edu.southwestern.tasks.rlglue.init;
 
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.tasks.rlglue.RLGlueEnvironment;
-import edu.utexas.cs.nn.tasks.rlglue.featureextractors.FeatureExtractor;
-import edu.utexas.cs.nn.util.ClassCreation;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.tasks.rlglue.RLGlueEnvironment;
+import edu.southwestern.tasks.rlglue.featureextractors.FeatureExtractor;
+import edu.southwestern.util.ClassCreation;
 
 public class RLGlueInitialization {
 

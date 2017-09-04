@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.tasks.microrts;
+package edu.southwestern.tasks.microrts;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -6,21 +6,21 @@ import java.util.List;
 
 import org.jdom.JDOMException;
 
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.networks.NetworkTask;
-import edu.utexas.cs.nn.networks.hyperneat.HyperNEATTask;
-import edu.utexas.cs.nn.networks.hyperneat.Substrate;
-import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.tasks.SinglePopulationCoevolutionTask;
-import edu.utexas.cs.nn.tasks.microrts.evaluation.NNEvaluationFunction;
-import edu.utexas.cs.nn.tasks.microrts.fitness.RTSFitnessFunction;
-import edu.utexas.cs.nn.tasks.microrts.iterativeevolution.MapSequence;
-import edu.utexas.cs.nn.util.ClassCreation;
-import edu.utexas.cs.nn.util.datastructures.Pair;
-import edu.utexas.cs.nn.util.datastructures.Triple;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.networks.Network;
+import edu.southwestern.networks.NetworkTask;
+import edu.southwestern.networks.hyperneat.HyperNEATTask;
+import edu.southwestern.networks.hyperneat.Substrate;
+import edu.southwestern.parameters.CommonConstants;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.SinglePopulationCoevolutionTask;
+import edu.southwestern.tasks.microrts.evaluation.NNEvaluationFunction;
+import edu.southwestern.tasks.microrts.fitness.RTSFitnessFunction;
+import edu.southwestern.tasks.microrts.iterativeevolution.MapSequence;
+import edu.southwestern.util.ClassCreation;
+import edu.southwestern.util.datastructures.Pair;
+import edu.southwestern.util.datastructures.Triple;
 import micro.ai.HasEvaluationFunction;
 import micro.ai.core.AI;
 import micro.gui.PhysicalGameStateJFrame;

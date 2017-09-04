@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.tasks.boardGame;
+package edu.southwestern.tasks.boardGame;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,16 +14,16 @@ import boardGame.agents.BoardGamePlayer;
 import boardGame.agents.BoardGamePlayerRandom;
 import boardGame.fitnessFunction.BoardGameFitnessFunction;
 import boardGame.fitnessFunction.OthelloPieceFitness;
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.networks.hyperneat.HyperNEATUtil;
-import edu.utexas.cs.nn.networks.hyperneat.Substrate;
-import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.tasks.NoisyLonerTask;
-import edu.utexas.cs.nn.util.MiscUtil;
-import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
-import edu.utexas.cs.nn.util.datastructures.Pair;
-import edu.utexas.cs.nn.util.datastructures.Triple;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.networks.hyperneat.HyperNEATUtil;
+import edu.southwestern.networks.hyperneat.Substrate;
+import edu.southwestern.parameters.CommonConstants;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.NoisyLonerTask;
+import edu.southwestern.util.MiscUtil;
+import edu.southwestern.util.datastructures.ArrayUtil;
+import edu.southwestern.util.datastructures.Pair;
+import edu.southwestern.util.datastructures.Triple;
 
 public class BoardGameUtil {
 	@SuppressWarnings("rawtypes")

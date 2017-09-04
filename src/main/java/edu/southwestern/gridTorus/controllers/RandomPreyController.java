@@ -1,8 +1,8 @@
-package edu.utexas.cs.nn.gridTorus.controllers;
+package edu.southwestern.gridTorus.controllers;
 
-import edu.utexas.cs.nn.gridTorus.TorusAgent;
-import edu.utexas.cs.nn.gridTorus.TorusWorld;
-import edu.utexas.cs.nn.util.random.RandomNumbers;
+import edu.southwestern.gridTorus.TorusAgent;
+import edu.southwestern.gridTorus.TorusWorld;
+import edu.southwestern.util.random.RandomNumbers;
 
 /**
  *

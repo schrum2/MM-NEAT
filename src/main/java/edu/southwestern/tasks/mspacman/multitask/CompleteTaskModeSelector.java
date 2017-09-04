@@ -1,6 +1,6 @@
-package edu.utexas.cs.nn.tasks.mspacman.multitask;
+package edu.southwestern.tasks.mspacman.multitask;
 
-import edu.utexas.cs.nn.parameters.Parameters;
+import edu.southwestern.parameters.Parameters;
 
 /**
  * Has three modes: 0) Ghosts are edible 1) No edible ghosts, and ghost is near

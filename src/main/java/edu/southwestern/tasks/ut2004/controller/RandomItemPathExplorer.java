@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.tasks.ut2004.controller;
+package edu.southwestern.tasks.ut2004.controller;
 
 import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004BotModuleController;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.NavPoint;

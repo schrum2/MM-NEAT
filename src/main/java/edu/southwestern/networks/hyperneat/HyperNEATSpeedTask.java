@@ -1,12 +1,12 @@
-package edu.utexas.cs.nn.networks.hyperneat;
+package edu.southwestern.networks.hyperneat;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import edu.utexas.cs.nn.tasks.SinglePopulationTask;
-import edu.utexas.cs.nn.tasks.Task;
-import edu.utexas.cs.nn.util.datastructures.Pair;
-import edu.utexas.cs.nn.util.datastructures.Triple;
+import edu.southwestern.tasks.SinglePopulationTask;
+import edu.southwestern.tasks.Task;
+import edu.southwestern.util.datastructures.Pair;
+import edu.southwestern.util.datastructures.Triple;
 
 /**
  * This class is used in certain JUnit tests, but it not a "real" task

@@ -1,6 +1,6 @@
-package edu.utexas.cs.nn.gridTorus;
+package edu.southwestern.gridTorus;
 
-import edu.utexas.cs.nn.util.random.RandomNumbers;
+import edu.southwestern.util.random.RandomNumbers;
 
 /**
  * 2D grid world that wraps around

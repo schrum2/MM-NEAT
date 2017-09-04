@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.networks;
+package edu.southwestern.networks;
 
 /**
  * Interface for tasks that evolve a neural network.

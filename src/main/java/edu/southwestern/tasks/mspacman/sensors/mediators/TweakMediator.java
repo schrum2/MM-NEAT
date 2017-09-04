@@ -1,12 +1,12 @@
-package edu.utexas.cs.nn.tasks.mspacman.sensors.mediators;
+package edu.southwestern.tasks.mspacman.sensors.mediators;
 
-import edu.utexas.cs.nn.tasks.mspacman.sensors.BlockLoadedInputOutputMediator;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.booleansensors.BiasBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.distancedifference.EscapeNodeDistanceDifferenceBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.lookahead.DirectionalReachSafetyBeforeThreatGhostBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.nearestfarthest.NearestFarthestEdibleGhostBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.nearestfarthest.NearestPillBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.nearestfarthest.NearestPowerPillBlock;
+import edu.southwestern.tasks.mspacman.sensors.BlockLoadedInputOutputMediator;
+import edu.southwestern.tasks.mspacman.sensors.blocks.booleansensors.BiasBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.distancedifference.EscapeNodeDistanceDifferenceBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.lookahead.DirectionalReachSafetyBeforeThreatGhostBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.nearestfarthest.NearestFarthestEdibleGhostBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.nearestfarthest.NearestPillBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.nearestfarthest.NearestPowerPillBlock;
 
 /**
  * The simple mediator I was using to get results with the old version of

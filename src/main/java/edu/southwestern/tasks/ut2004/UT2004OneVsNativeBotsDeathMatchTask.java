@@ -1,12 +1,12 @@
-package edu.utexas.cs.nn.tasks.ut2004;
+package edu.southwestern.tasks.ut2004;
 
-import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.networks.TWEANN;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.tasks.ut2004.controller.BotController;
-import edu.utexas.cs.nn.tasks.ut2004.fitness.*;
+import edu.southwestern.evolution.genotypes.TWEANNGenotype;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.networks.Network;
+import edu.southwestern.networks.TWEANN;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.ut2004.controller.BotController;
+import edu.southwestern.tasks.ut2004.fitness.*;
 
 /**
  *
@@ -46,7 +46,7 @@ public class UT2004OneVsNativeBotsDeathMatchTask<T extends Network> extends UT20
 	@SuppressWarnings("rawtypes")
 	public static void main(String[] args) {
 		Parameters.initializeParameterCollections(new String[] { "utDrive:D", "trials:2", "io:false", "netio:false", 
-				"task:edu.utexas.cs.nn.tasks.ut2004.UT2004OneVsNativeBotsDeathMatchTask" });
+				"task:edu.southwestern.tasks.ut2004.UT2004OneVsNativeBotsDeathMatchTask" });
 		MMNEAT.loadClasses();
 		UT2004Task utTask = (UT2004Task) MMNEAT.task;
 		new UT2004OneVsNativeBotsDeathMatchTask<TWEANN>("DM-TrainingDay", new int[] { 3, 4, 5 }, 5, 1).evaluate(

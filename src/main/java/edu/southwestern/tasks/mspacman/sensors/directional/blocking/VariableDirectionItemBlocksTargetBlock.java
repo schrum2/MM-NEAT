@@ -2,12 +2,12 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.utexas.cs.nn.tasks.mspacman.sensors.directional.blocking;
+package edu.southwestern.tasks.mspacman.sensors.directional.blocking;
 
-import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.VariableDirectionBlock;
-import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
-import edu.utexas.cs.nn.util.datastructures.Pair;
+import edu.southwestern.tasks.mspacman.facades.GameFacade;
+import edu.southwestern.tasks.mspacman.sensors.directional.VariableDirectionBlock;
+import edu.southwestern.util.datastructures.ArrayUtil;
+import edu.southwestern.util.datastructures.Pair;
 
 /**
  *

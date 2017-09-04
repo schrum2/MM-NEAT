@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.networks;
+package edu.southwestern.networks;
 
 import java.util.Arrays;
 
@@ -6,20 +6,20 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
-import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
-import edu.utexas.cs.nn.evolution.mutation.tweann.MMR;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.util.graphics.DrawingPanel;
-import edu.utexas.cs.nn.util.random.RandomNumbers;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.EvolutionaryHistory;
+import edu.southwestern.evolution.genotypes.TWEANNGenotype;
+import edu.southwestern.evolution.mutation.tweann.MMR;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.util.graphics.DrawingPanel;
+import edu.southwestern.util.random.RandomNumbers;
 
 public class TWEANNTest {
 	final int MUTATIONS1 = 10;
 	TWEANNGenotype tg1, tg2;
 	@Before
 	public void setUp() throws Exception {
-		Parameters.initializeParameterCollections(new String[]{"io:false", "netio:false","allowMultipleFunctions:true", "recurrency:false", "mmdRate:0.1", "task:edu.utexas.cs.nn.tasks.breve2D.Breve2DTask"});
+		Parameters.initializeParameterCollections(new String[]{"io:false", "netio:false","allowMultipleFunctions:true", "recurrency:false", "mmdRate:0.1", "task:edu.southwestern.tasks.breve2D.Breve2DTask"});
 		//CommonConstants.freezeBeforeModeMutation = true;
 		MMNEAT.loadClasses();
 		tg1 = new TWEANNGenotype(5, 2, 0);

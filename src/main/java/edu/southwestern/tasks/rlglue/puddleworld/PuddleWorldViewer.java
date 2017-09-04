@@ -2,12 +2,12 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.utexas.cs.nn.tasks.rlglue.puddleworld;
+package edu.southwestern.tasks.rlglue.puddleworld;
 
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.networks.TWEANN;
-import edu.utexas.cs.nn.util.CombinatoricUtilities;
-import edu.utexas.cs.nn.util.graphics.DrawingPanel;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.networks.TWEANN;
+import edu.southwestern.util.CombinatoricUtilities;
+import edu.southwestern.util.graphics.DrawingPanel;
 
 import java.awt.Color;
 import java.awt.Graphics2D;

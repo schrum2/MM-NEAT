@@ -1,6 +1,6 @@
-package edu.utexas.cs.nn.breve2D.dynamics;
+package edu.southwestern.breve2D.dynamics;
 
-import edu.utexas.cs.nn.parameters.Parameters;
+import edu.southwestern.parameters.Parameters;
 
 /**
  *

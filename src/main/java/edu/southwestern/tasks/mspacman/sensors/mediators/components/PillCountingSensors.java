@@ -1,9 +1,9 @@
-package edu.utexas.cs.nn.tasks.mspacman.sensors.mediators.components;
+package edu.southwestern.tasks.mspacman.sensors.mediators.components;
 
-import edu.utexas.cs.nn.tasks.mspacman.sensors.BlockLoadedInputOutputMediator;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.booleansensors.PowerPillsClearedBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.counting.PillsRemainingBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.counting.PowerPillsRemainingBlock;
+import edu.southwestern.tasks.mspacman.sensors.BlockLoadedInputOutputMediator;
+import edu.southwestern.tasks.mspacman.sensors.blocks.booleansensors.PowerPillsClearedBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.counting.PillsRemainingBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.counting.PowerPillsRemainingBlock;
 
 /**
  * Counts of pills

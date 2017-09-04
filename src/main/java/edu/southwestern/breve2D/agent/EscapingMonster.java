@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.breve2D.agent;
+package edu.southwestern.breve2D.agent;
 
 public final class EscapingMonster extends AttractRepelMonster {
 

@@ -1,12 +1,12 @@
-package edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.combining;
+package edu.southwestern.tasks.mspacman.sensors.blocks.combining;
 
-import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
-import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.evolution.genotypes.pool.GenotypePool;
-import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.MsPacManControllerInputOutputMediator;
-import edu.utexas.cs.nn.util.ClassCreation;
+import edu.southwestern.evolution.EvolutionaryHistory;
+import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.evolution.genotypes.pool.GenotypePool;
+import edu.southwestern.networks.Network;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.mspacman.sensors.MsPacManControllerInputOutputMediator;
+import edu.southwestern.util.ClassCreation;
 
 /**
  *

@@ -1,8 +1,8 @@
-package edu.utexas.cs.nn.breve2D.agent;
+package edu.southwestern.breve2D.agent;
 
-import edu.utexas.cs.nn.breve2D.Breve2DGame;
-import edu.utexas.cs.nn.util.CartesianGeometricUtilities;
-import edu.utexas.cs.nn.util.util2D.Tuple2D;
+import edu.southwestern.breve2D.Breve2DGame;
+import edu.southwestern.util.CartesianGeometricUtilities;
+import edu.southwestern.util.util2D.Tuple2D;
 
 public class AttractRepelMonster implements AgentController {
 

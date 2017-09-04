@@ -5,8 +5,8 @@ import java.util.List;
 
 import boardGame.BoardGameState;
 import boardGame.heuristics.BoardGameHeuristic;
-import edu.utexas.cs.nn.util.ClassCreation;
-import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
+import edu.southwestern.util.ClassCreation;
+import edu.southwestern.util.stats.StatisticsUtilities;
 
 public class BoardGamePlayerOneStepEval<T extends BoardGameState> extends HeuristicBoardGamePlayer<T> {
 

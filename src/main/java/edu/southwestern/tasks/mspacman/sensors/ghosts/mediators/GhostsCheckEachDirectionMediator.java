@@ -1,26 +1,26 @@
-package edu.utexas.cs.nn.tasks.mspacman.sensors.ghosts.mediators;
+package edu.southwestern.tasks.mspacman.sensors.ghosts.mediators;
 
-import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.booleansensors.AllThreatsPresentBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.booleansensors.AnyEdibleGhostBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.booleansensors.veryclose.IsCloseToPowerPill;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.counting.CountEdibleGhostsBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.counting.PillsRemainingBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.counting.PowerPillsRemainingBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.ghosts.GhostBiasBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.ghosts.GhostEdibleBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.ghosts.GhostReuseMsPacManSensorBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.ghosts.GhostVariableDirectionSortedGhostEdibleBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.ghosts.GhostVariableDirectionSortedGhostIncomingBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.ghosts.GhostVariableDirectionSortedGhostTrappedBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.ghosts.distance.GhostVariableDirectionJunctionDistanceBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.ghosts.distance.GhostVariableDirectionMsPacManDistanceBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.ghosts.distance.GhostVariableDirectionPillDistanceBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.ghosts.distance.GhostVariableDirectionPowerPillDistanceBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.ghosts.distance.GhostVariableDirectionSortedGhostDistanceBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.time.EdibleTimesBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.ghosts.VariableDirectionGhostBlockLoadedInputOutputMediator;
+import edu.southwestern.parameters.CommonConstants;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.mspacman.sensors.blocks.booleansensors.AllThreatsPresentBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.booleansensors.AnyEdibleGhostBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.booleansensors.veryclose.IsCloseToPowerPill;
+import edu.southwestern.tasks.mspacman.sensors.blocks.counting.CountEdibleGhostsBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.counting.PillsRemainingBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.counting.PowerPillsRemainingBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.ghosts.GhostBiasBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.ghosts.GhostEdibleBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.ghosts.GhostReuseMsPacManSensorBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.ghosts.GhostVariableDirectionSortedGhostEdibleBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.ghosts.GhostVariableDirectionSortedGhostIncomingBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.ghosts.GhostVariableDirectionSortedGhostTrappedBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.ghosts.distance.GhostVariableDirectionJunctionDistanceBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.ghosts.distance.GhostVariableDirectionMsPacManDistanceBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.ghosts.distance.GhostVariableDirectionPillDistanceBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.ghosts.distance.GhostVariableDirectionPowerPillDistanceBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.ghosts.distance.GhostVariableDirectionSortedGhostDistanceBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.time.EdibleTimesBlock;
+import edu.southwestern.tasks.mspacman.sensors.ghosts.VariableDirectionGhostBlockLoadedInputOutputMediator;
 
 /**
  * @author Jacob Schrum

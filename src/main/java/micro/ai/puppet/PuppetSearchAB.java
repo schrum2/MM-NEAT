@@ -9,8 +9,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Stack;
 
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.tasks.microrts.MicroRTSInformation;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.tasks.microrts.MicroRTSInformation;
 import micro.ai.core.AI;
 import micro.ai.core.ParameterSpecification;
 import micro.ai.evaluation.EvaluationFunction;

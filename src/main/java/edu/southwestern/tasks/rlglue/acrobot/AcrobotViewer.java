@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.tasks.rlglue.acrobot;
+package edu.southwestern.tasks.rlglue.acrobot;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -6,8 +6,8 @@ import java.awt.geom.Ellipse2D;
 
 import org.rlcommunity.environments.acrobot.AcrobotState;
 
-import edu.utexas.cs.nn.networks.TWEANN;
-import edu.utexas.cs.nn.util.graphics.DrawingPanel;
+import edu.southwestern.networks.TWEANN;
+import edu.southwestern.util.graphics.DrawingPanel;
 
 public class AcrobotViewer {
 

@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.tasks.gridTorus.objectives;
+package edu.southwestern.tasks.gridTorus.objectives;
 
 import static org.junit.Assert.*;
 
@@ -6,11 +6,11 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.gridTorus.TorusAgent;
-import edu.utexas.cs.nn.gridTorus.TorusPredPreyGame;
-import edu.utexas.cs.nn.gridTorus.TorusWorld;
-import edu.utexas.cs.nn.parameters.Parameters;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.gridTorus.TorusAgent;
+import edu.southwestern.gridTorus.TorusPredPreyGame;
+import edu.southwestern.gridTorus.TorusWorld;
+import edu.southwestern.parameters.Parameters;
 
 public class PreyRawalRajagopalanMiikkulainenObjectiveTest {
 
@@ -22,9 +22,9 @@ public class PreyRawalRajagopalanMiikkulainenObjectiveTest {
 	@Before
 	public void setUp() throws Exception {
 		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "torusTimeLimit:1000",
-				"task:edu.utexas.cs.nn.tasks.gridTorus.TorusEvolvedPredatorsVsStaticPreyTask",
+				"task:edu.southwestern.tasks.gridTorus.TorusEvolvedPredatorsVsStaticPreyTask",
 				"allowDoNothingActionForPredators:true", "torusPreys:2", "torusPredators:3",
-				"staticPreyController:edu.utexas.cs.nn.gridTorus.controllers.PreyFleeClosestPredatorController",
+				"staticPreyController:edu.southwestern.gridTorus.controllers.PreyFleeClosestPredatorController",
 				"torusSenseTeammates:true" });
 		MMNEAT.loadClasses();
 	}

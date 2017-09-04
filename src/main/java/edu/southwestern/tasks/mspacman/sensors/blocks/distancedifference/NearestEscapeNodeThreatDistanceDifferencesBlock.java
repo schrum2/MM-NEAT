@@ -1,10 +1,10 @@
-package edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.distancedifference;
+package edu.southwestern.tasks.mspacman.sensors.blocks.distancedifference;
 
-import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.tasks.mspacman.data.NodeCollection;
-import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.MsPacManSensorBlock;
-import edu.utexas.cs.nn.util.datastructures.Pair;
+import edu.southwestern.parameters.CommonConstants;
+import edu.southwestern.tasks.mspacman.data.NodeCollection;
+import edu.southwestern.tasks.mspacman.facades.GameFacade;
+import edu.southwestern.tasks.mspacman.sensors.blocks.MsPacManSensorBlock;
+import edu.southwestern.util.datastructures.Pair;
 import java.util.Arrays;
 import java.util.Comparator;
 import pacman.game.Constants;

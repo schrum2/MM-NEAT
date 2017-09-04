@@ -1,6 +1,6 @@
-package edu.utexas.cs.nn.breve2D.agent;
+package edu.southwestern.breve2D.agent;
 
-import edu.utexas.cs.nn.util.util2D.Tuple2D;
+import edu.southwestern.util.util2D.Tuple2D;
 
 /**
  * An action in the breve world is a turn amount and a forward/backward force

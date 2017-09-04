@@ -2,13 +2,13 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.utexas.cs.nn.evolution.mutation.real;
+package edu.southwestern.evolution.mutation.real;
 
-import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.evolution.genotypes.RealValuedGenotype;
-import edu.utexas.cs.nn.evolution.mutation.Mutation;
-import edu.utexas.cs.nn.util.random.RandomNumbers;
-import edu.utexas.cs.nn.parameters.Parameters;
+import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.evolution.genotypes.RealValuedGenotype;
+import edu.southwestern.evolution.mutation.Mutation;
+import edu.southwestern.util.random.RandomNumbers;
+import edu.southwestern.parameters.Parameters;
 import java.util.ArrayList;
 
 /**

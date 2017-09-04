@@ -1,6 +1,6 @@
-package edu.utexas.cs.nn.tasks.microrts.evaluation.substrates;
+package edu.southwestern.tasks.microrts.evaluation.substrates;
 
-import edu.utexas.cs.nn.util.MiscUtil;
+import edu.southwestern.util.MiscUtil;
 import micro.rts.GameState;
 
 /**

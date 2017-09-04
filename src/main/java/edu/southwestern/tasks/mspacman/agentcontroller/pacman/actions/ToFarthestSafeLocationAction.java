@@ -1,12 +1,12 @@
-package edu.utexas.cs.nn.tasks.mspacman.agentcontroller.pacman.actions;
+package edu.southwestern.tasks.mspacman.agentcontroller.pacman.actions;
 
-import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.tasks.mspacman.data.NodeCollection;
-import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
-import edu.utexas.cs.nn.tasks.mspacman.facades.GhostControllerFacade;
-import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
-import edu.utexas.cs.nn.util.datastructures.Pair;
-import edu.utexas.cs.nn.util.datastructures.Triple;
+import edu.southwestern.parameters.CommonConstants;
+import edu.southwestern.tasks.mspacman.data.NodeCollection;
+import edu.southwestern.tasks.mspacman.facades.GameFacade;
+import edu.southwestern.tasks.mspacman.facades.GhostControllerFacade;
+import edu.southwestern.util.datastructures.ArrayUtil;
+import edu.southwestern.util.datastructures.Pair;
+import edu.southwestern.util.datastructures.Triple;
 import java.awt.Color;
 import java.util.Arrays;
 import java.util.HashMap;

@@ -1,6 +1,6 @@
-package edu.utexas.cs.nn.tasks.vizdoom;
+package edu.southwestern.tasks.vizdoom;
 
-import edu.utexas.cs.nn.networks.Network;
+import edu.southwestern.networks.Network;
 
 public class VizDoomHealthGatherSupremeTask<T extends Network> extends VizDoomHealthGatherTask<T> {
 	

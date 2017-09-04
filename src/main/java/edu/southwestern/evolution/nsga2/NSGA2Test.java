@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.evolution.nsga2;
+package edu.southwestern.evolution.nsga2;
 
 import static org.junit.Assert.*;
 
@@ -9,14 +9,14 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.evolution.genotypes.BoundedIntegerValuedGenotype;
-import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.scores.Score;
-import edu.utexas.cs.nn.util.PopulationUtil;
-import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
-import edu.utexas.cs.nn.util.random.RandomNumbers;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.genotypes.BoundedIntegerValuedGenotype;
+import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.scores.Score;
+import edu.southwestern.util.PopulationUtil;
+import edu.southwestern.util.datastructures.ArrayUtil;
+import edu.southwestern.util.random.RandomNumbers;
 
 /**
  * Test class for NSGA2 sorting algorithm. Only core methods tested
@@ -37,8 +37,8 @@ public class NSGA2Test {
 	@Before
 	public void setUp() throws Exception {
 		args = new String[] { "runNumber:0", "trials:1", "mu:5", "io:false", "netio:false", "mating:true",
-				"task:edu.utexas.cs.nn.tasks.mspacman.MsPacManTask", "ea:edu.utexas.cs.nn.evolution.nsga2.NSGA2",
-				"pacmanInputOutputMediator:edu.utexas.cs.nn.tasks.mspacman.sensors.mediators.FullTaskMediator" };
+				"task:edu.southwestern.tasks.mspacman.MsPacManTask", "ea:edu.southwestern.evolution.nsga2.NSGA2",
+				"pacmanInputOutputMediator:edu.southwestern.tasks.mspacman.sensors.mediators.FullTaskMediator" };
 		ea = (NSGA2) MMNEAT.ea;
 		scores = new ArrayList<Score>();
 		Parameters.initializeParameterCollections(args);

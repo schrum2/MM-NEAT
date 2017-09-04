@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.tasks.interactive.remixbreeder;
+package edu.southwestern.tasks.interactive.remixbreeder;
 
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
@@ -15,17 +15,17 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.tasks.interactive.breedesizer.BreedesizerTask;
-import edu.utexas.cs.nn.tasks.interactive.breedesizer.Keyboard;
-import edu.utexas.cs.nn.util.graphics.GraphicsUtil;
-import edu.utexas.cs.nn.util.sound.PlayDoubleArray;
-import edu.utexas.cs.nn.util.sound.SoundFromCPPNUtil;
-import edu.utexas.cs.nn.util.sound.SoundToArray;
-import edu.utexas.cs.nn.util.sound.WAVUtil;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.networks.Network;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.interactive.breedesizer.BreedesizerTask;
+import edu.southwestern.tasks.interactive.breedesizer.Keyboard;
+import edu.southwestern.util.graphics.GraphicsUtil;
+import edu.southwestern.util.sound.PlayDoubleArray;
+import edu.southwestern.util.sound.SoundFromCPPNUtil;
+import edu.southwestern.util.sound.SoundToArray;
+import edu.southwestern.util.sound.WAVUtil;
 
 /**
  * Interface that can play input sounds with a variety of CPPNs, like in Breedesizer, "remixing"
@@ -187,7 +187,7 @@ public class SoundRemixTask<T extends Network> extends BreedesizerTask<T> {
 	 */
 	public static void main(String[] args) {
 		try {
-			MMNEAT.main(new String[]{"runNumber:0","randomSeed:0","trials:1","mu:16","maxGens:500","io:false","netio:false","mating:true","fs:false","task:edu.utexas.cs.nn.tasks.interactive.remixbreeder.SoundRemixTask","allowMultipleFunctions:true","ftype:0","watch:false","netChangeActivationRate:0.3","cleanFrequency:-1","recurrency:false","saveAllChampions:true","cleanOldNetworks:false","ea:edu.utexas.cs.nn.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:2000","imageHeight:2000","imageSize:200"});
+			MMNEAT.main(new String[]{"runNumber:0","randomSeed:0","trials:1","mu:16","maxGens:500","io:false","netio:false","mating:true","fs:false","task:edu.southwestern.tasks.interactive.remixbreeder.SoundRemixTask","allowMultipleFunctions:true","ftype:0","watch:false","netChangeActivationRate:0.3","cleanFrequency:-1","recurrency:false","saveAllChampions:true","cleanOldNetworks:false","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:2000","imageHeight:2000","imageSize:200"});
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}

@@ -1,18 +1,18 @@
-package edu.utexas.cs.nn.tasks.mspacman.sensors;
+package edu.southwestern.tasks.mspacman.sensors;
 
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.booleansensors.BiasBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.booleansensors.HittingWallBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.counting.PillsRemainingBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.counting.PowerPillsRemainingBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.distance.NearestEdibleGhostDistanceBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.distance.NearestPillDistanceBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.distance.NearestPowerPillDistanceBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.distance.NearestThreatGhostDistanceBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.distance.SpecificGhostDistancesBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.distance.lair.LairRelativeCoordinatesBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.distancedifference.NearestEscapeNodeThreatDistanceDifferencesBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.time.EdibleTimesBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.time.LairTimesBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.booleansensors.BiasBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.booleansensors.HittingWallBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.counting.PillsRemainingBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.counting.PowerPillsRemainingBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.distance.NearestEdibleGhostDistanceBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.distance.NearestPillDistanceBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.distance.NearestPowerPillDistanceBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.distance.NearestThreatGhostDistanceBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.distance.SpecificGhostDistancesBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.distance.lair.LairRelativeCoordinatesBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.distancedifference.NearestEscapeNodeThreatDistanceDifferencesBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.time.EdibleTimesBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.time.LairTimesBlock;
 
 /**
  *

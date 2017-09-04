@@ -2,7 +2,7 @@ package vizdoom.examples;
 
 import vizdoom.*;
 import java.util.*;
-import edu.utexas.cs.nn.util.MiscUtil;
+import edu.southwestern.util.MiscUtil;
 
 public class Basic {
 

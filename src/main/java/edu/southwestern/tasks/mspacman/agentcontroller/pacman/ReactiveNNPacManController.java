@@ -1,8 +1,8 @@
-package edu.utexas.cs.nn.tasks.mspacman.agentcontroller.pacman;
+package edu.southwestern.tasks.mspacman.agentcontroller.pacman;
 
-import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
+import edu.southwestern.networks.Network;
+import edu.southwestern.parameters.CommonConstants;
+import edu.southwestern.tasks.mspacman.facades.GameFacade;
 
 /**
  * Given the sensors, generate a utility for

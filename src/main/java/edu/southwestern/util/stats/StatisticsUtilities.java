@@ -1,8 +1,8 @@
-package edu.utexas.cs.nn.util.stats;
+package edu.southwestern.util.stats;
 
-import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.util.datastructures.Pair;
-import edu.utexas.cs.nn.util.random.RandomNumbers;
+import edu.southwestern.parameters.CommonConstants;
+import edu.southwestern.util.datastructures.Pair;
+import edu.southwestern.util.random.RandomNumbers;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;

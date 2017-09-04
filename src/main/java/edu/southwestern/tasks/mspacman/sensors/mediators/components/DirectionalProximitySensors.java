@@ -1,10 +1,10 @@
-package edu.utexas.cs.nn.tasks.mspacman.sensors.mediators.components;
+package edu.southwestern.tasks.mspacman.sensors.mediators.components;
 
-import edu.utexas.cs.nn.tasks.mspacman.sensors.BlockLoadedInputOutputMediator;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.proximity.EdibleGhostDirectionalProximityBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.proximity.PillDirectionalProximityBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.proximity.PowerPillDirectionalProximityBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.proximity.ThreatGhostDirectionalProximityBlock;
+import edu.southwestern.tasks.mspacman.sensors.BlockLoadedInputOutputMediator;
+import edu.southwestern.tasks.mspacman.sensors.blocks.proximity.EdibleGhostDirectionalProximityBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.proximity.PillDirectionalProximityBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.proximity.PowerPillDirectionalProximityBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.proximity.ThreatGhostDirectionalProximityBlock;
 
 /**
  * directional proximity to objects of interest

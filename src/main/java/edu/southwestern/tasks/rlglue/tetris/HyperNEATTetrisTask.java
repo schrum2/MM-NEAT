@@ -1,20 +1,20 @@
-package edu.utexas.cs.nn.tasks.rlglue.tetris;
+package edu.southwestern.tasks.rlglue.tetris;
 
 import java.util.LinkedList;
 import java.util.List;
 import org.rlcommunity.environments.tetris.TetrisState;
 
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.networks.hyperneat.HyperNEATTask;
-import edu.utexas.cs.nn.networks.hyperneat.HyperNEATUtil;
-import edu.utexas.cs.nn.networks.hyperneat.Substrate;
-import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.tasks.rlglue.featureextractors.tetris.ExtendedBertsekasTsitsiklisTetrisExtractor;
-import edu.utexas.cs.nn.tasks.rlglue.featureextractors.tetris.RawTetrisStateExtractor;
-import edu.utexas.cs.nn.util.datastructures.Pair;
-import edu.utexas.cs.nn.util.datastructures.Triple;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.networks.Network;
+import edu.southwestern.networks.hyperneat.HyperNEATTask;
+import edu.southwestern.networks.hyperneat.HyperNEATUtil;
+import edu.southwestern.networks.hyperneat.Substrate;
+import edu.southwestern.parameters.CommonConstants;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.rlglue.featureextractors.tetris.ExtendedBertsekasTsitsiklisTetrisExtractor;
+import edu.southwestern.tasks.rlglue.featureextractors.tetris.RawTetrisStateExtractor;
+import edu.southwestern.util.datastructures.Pair;
+import edu.southwestern.util.datastructures.Triple;
 
 public class HyperNEATTetrisTask<T extends Network> extends TetrisTask<T> implements HyperNEATTask {
 

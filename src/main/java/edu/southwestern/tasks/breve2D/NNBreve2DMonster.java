@@ -1,23 +1,23 @@
-package edu.utexas.cs.nn.tasks.breve2D;
+package edu.southwestern.tasks.breve2D;
 
-import edu.utexas.cs.nn.breve2D.Breve2DGame;
-import edu.utexas.cs.nn.breve2D.agent.Agent;
-import edu.utexas.cs.nn.breve2D.agent.AgentController;
-import edu.utexas.cs.nn.breve2D.agent.Breve2DAction;
-import edu.utexas.cs.nn.breve2D.dynamics.Breve2DDynamics;
-import edu.utexas.cs.nn.breve2D.dynamics.RammingDynamics;
-import edu.utexas.cs.nn.breve2D.sensor.RaySensor;
-import edu.utexas.cs.nn.evolution.Organism;
-import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.evolution.lineage.Offspring;
-import edu.utexas.cs.nn.networks.ModeSelector;
-import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.networks.TWEANN;
-import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.util.CartesianGeometricUtilities;
-import edu.utexas.cs.nn.util.graphics.DrawingPanel;
-import edu.utexas.cs.nn.util.graphics.Plot;
+import edu.southwestern.breve2D.Breve2DGame;
+import edu.southwestern.breve2D.agent.Agent;
+import edu.southwestern.breve2D.agent.AgentController;
+import edu.southwestern.breve2D.agent.Breve2DAction;
+import edu.southwestern.breve2D.dynamics.Breve2DDynamics;
+import edu.southwestern.breve2D.dynamics.RammingDynamics;
+import edu.southwestern.breve2D.sensor.RaySensor;
+import edu.southwestern.evolution.Organism;
+import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.evolution.lineage.Offspring;
+import edu.southwestern.networks.ModeSelector;
+import edu.southwestern.networks.Network;
+import edu.southwestern.networks.TWEANN;
+import edu.southwestern.parameters.CommonConstants;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.util.CartesianGeometricUtilities;
+import edu.southwestern.util.graphics.DrawingPanel;
+import edu.southwestern.util.graphics.Plot;
 
 import java.util.Arrays;
 

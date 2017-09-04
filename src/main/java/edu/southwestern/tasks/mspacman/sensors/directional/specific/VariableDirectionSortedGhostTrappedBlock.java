@@ -2,13 +2,13 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.utexas.cs.nn.tasks.mspacman.sensors.directional.specific;
+package edu.southwestern.tasks.mspacman.sensors.directional.specific;
 
-import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
-import edu.utexas.cs.nn.tasks.mspacman.ghosts.DirectionalGhostComparator;
-import edu.utexas.cs.nn.tasks.mspacman.ghosts.GhostComparator;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.VariableDirectionBlock;
+import edu.southwestern.parameters.CommonConstants;
+import edu.southwestern.tasks.mspacman.facades.GameFacade;
+import edu.southwestern.tasks.mspacman.ghosts.DirectionalGhostComparator;
+import edu.southwestern.tasks.mspacman.ghosts.GhostComparator;
+import edu.southwestern.tasks.mspacman.sensors.directional.VariableDirectionBlock;
 import java.util.ArrayList;
 import java.util.Collections;
 

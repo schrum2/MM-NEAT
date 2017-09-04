@@ -1,10 +1,10 @@
-package edu.utexas.cs.nn.breve2D.sensor;
+package edu.southwestern.breve2D.sensor;
 
-import edu.utexas.cs.nn.breve2D.Breve2DGame;
-import edu.utexas.cs.nn.breve2D.agent.Agent;
-import edu.utexas.cs.nn.util.CartesianGeometricUtilities;
-import edu.utexas.cs.nn.util.util2D.ILocated2D;
-import edu.utexas.cs.nn.util.util2D.Tuple2D;
+import edu.southwestern.breve2D.Breve2DGame;
+import edu.southwestern.breve2D.agent.Agent;
+import edu.southwestern.util.CartesianGeometricUtilities;
+import edu.southwestern.util.util2D.ILocated2D;
+import edu.southwestern.util.util2D.Tuple2D;
 import java.util.ArrayList;
 
 /**

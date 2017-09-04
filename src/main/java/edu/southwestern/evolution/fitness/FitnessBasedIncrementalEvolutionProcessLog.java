@@ -1,6 +1,6 @@
-package edu.utexas.cs.nn.evolution.fitness;
+package edu.southwestern.evolution.fitness;
 
-import edu.utexas.cs.nn.log.StatisticsLog;
+import edu.southwestern.log.StatisticsLog;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;

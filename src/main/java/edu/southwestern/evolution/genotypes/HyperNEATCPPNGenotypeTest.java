@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.evolution.genotypes;
+package edu.southwestern.evolution.genotypes;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -11,21 +11,21 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype.LinkGene;
-import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype.NodeGene;
-import edu.utexas.cs.nn.networks.NetworkUtil;
-import edu.utexas.cs.nn.networks.TWEANN;
-import edu.utexas.cs.nn.networks.TWEANN.Node;
-import edu.utexas.cs.nn.networks.hyperneat.HyperNEATTask;
-import edu.utexas.cs.nn.networks.hyperneat.Substrate;
-import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.util.CartesianGeometricUtilities;
-import edu.utexas.cs.nn.util.datastructures.Pair;
-import edu.utexas.cs.nn.util.datastructures.Triple;
-import edu.utexas.cs.nn.util.util2D.ILocated2D;
-import edu.utexas.cs.nn.util.util2D.Tuple2D;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.genotypes.TWEANNGenotype.LinkGene;
+import edu.southwestern.evolution.genotypes.TWEANNGenotype.NodeGene;
+import edu.southwestern.networks.NetworkUtil;
+import edu.southwestern.networks.TWEANN;
+import edu.southwestern.networks.TWEANN.Node;
+import edu.southwestern.networks.hyperneat.HyperNEATTask;
+import edu.southwestern.networks.hyperneat.Substrate;
+import edu.southwestern.parameters.CommonConstants;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.util.CartesianGeometricUtilities;
+import edu.southwestern.util.datastructures.Pair;
+import edu.southwestern.util.datastructures.Triple;
+import edu.southwestern.util.util2D.ILocated2D;
+import edu.southwestern.util.util2D.Tuple2D;
 
 /**
  * JUnit test for most basic case of a hyperNEATCPPNGenotype
@@ -51,7 +51,7 @@ public class HyperNEATCPPNGenotypeTest {
 	@Before
 	public void setUp() {
 		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "recurrency:false", "hyperNEAT:true", 
-										"task:edu.utexas.cs.nn.networks.hyperneat.HyperNEATDummyTask","linkExpressionThreshold:-1"});
+										"task:edu.southwestern.networks.hyperneat.HyperNEATDummyTask","linkExpressionThreshold:-1"});
 		MMNEAT.loadClasses();
 		hcppn = new HyperNEATCPPNGenotype();
 		cppn = hcppn.getCPPN();
@@ -177,7 +177,7 @@ public class HyperNEATCPPNGenotypeTest {
 	public void testLeo() {
 		//System.out.println("\t\tRESET!");
 		MMNEAT.clearClasses();
-		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "recurrency:false", "task:edu.utexas.cs.nn.networks.hyperneat.HyperNEATDummyTask", "hyperNEAT:true", "leo:true", "linkExpressionThreshold:-2.0", "evolveHyperNEATBias:false"});
+		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "recurrency:false", "task:edu.southwestern.networks.hyperneat.HyperNEATDummyTask", "hyperNEAT:true", "leo:true", "linkExpressionThreshold:-2.0", "evolveHyperNEATBias:false"});
 		MMNEAT.loadClasses();
 		hcppn = new HyperNEATCPPNGenotype();
 		//System.out.println("\t\t" + hcppn.numOut);
@@ -212,7 +212,7 @@ public class HyperNEATCPPNGenotypeTest {
 	public void testBias() { 
 		MMNEAT.clearClasses();
 		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "recurrency:false",
-				"hyperNEAT:true", "task:edu.utexas.cs.nn.networks.hyperneat.HyperNEATDummyTask", "evolveHyperNEATBias:true", "linkExpressionThreshold:0.0"});
+				"hyperNEAT:true", "task:edu.southwestern.networks.hyperneat.HyperNEATDummyTask", "evolveHyperNEATBias:true", "linkExpressionThreshold:0.0"});
 		MMNEAT.loadClasses();
 		assertTrue(CommonConstants.evolveHyperNEATBias);
 		hcppn = new HyperNEATCPPNGenotype();

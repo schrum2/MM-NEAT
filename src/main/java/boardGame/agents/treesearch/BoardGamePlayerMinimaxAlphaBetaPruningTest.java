@@ -11,8 +11,8 @@ import boardGame.heuristics.BoardGameHeuristic;
 import boardGame.heuristics.StaticOthelloWPCHeuristic;
 import boardGame.othello.Othello;
 import boardGame.othello.OthelloState;
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.parameters.Parameters;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.parameters.Parameters;
 
 public class BoardGamePlayerMinimaxAlphaBetaPruningTest {
 	
@@ -31,7 +31,7 @@ public class BoardGamePlayerMinimaxAlphaBetaPruningTest {
 		
 	@Before
 	public void setup(){
-		Parameters.initializeParameterCollections(new String[]{"io:false", "netio:false", "task:edu.utexas.cs.nn.tasks.boardGame.StaticOpponentBoardGameTask",
+		Parameters.initializeParameterCollections(new String[]{"io:false", "netio:false", "task:edu.southwestern.tasks.boardGame.StaticOpponentBoardGameTask",
 				"boardGame:boardGame.othello.Othello", "minimaxSearchDepth:2", 
 				"randomArgMaxTieBreak:false"});
 		MMNEAT.loadClasses();

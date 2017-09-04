@@ -1,8 +1,8 @@
-package edu.utexas.cs.nn.tasks.microrts.evaluation;
+package edu.southwestern.tasks.microrts.evaluation;
 
-import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.networks.ActivationFunctions;
-import edu.utexas.cs.nn.networks.Network;
+import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.networks.ActivationFunctions;
+import edu.southwestern.networks.Network;
 import micro.ai.evaluation.EvaluationFunction;
 import micro.rts.GameState;
 import micro.rts.PhysicalGameState;

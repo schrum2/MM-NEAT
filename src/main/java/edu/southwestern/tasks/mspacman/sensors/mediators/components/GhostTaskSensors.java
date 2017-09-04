@@ -1,15 +1,15 @@
-package edu.utexas.cs.nn.tasks.mspacman.sensors.mediators.components;
+package edu.southwestern.tasks.mspacman.sensors.mediators.components;
 
-import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.BlockLoadedInputOutputMediator;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.SpecificGhostBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.SplitSpecificGhostBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.distance.FarthestThreatGhostDistanceBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.distance.NearestPowerPillDistanceBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.distance.NearestThreatGhostDistanceBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.distancedifference.EscapeNodeDistanceDifferenceBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.nearestfarthest.NearestPowerPillBlock;
+import edu.southwestern.parameters.CommonConstants;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.mspacman.sensors.BlockLoadedInputOutputMediator;
+import edu.southwestern.tasks.mspacman.sensors.blocks.SpecificGhostBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.SplitSpecificGhostBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.distance.FarthestThreatGhostDistanceBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.distance.NearestPowerPillDistanceBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.distance.NearestThreatGhostDistanceBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.distancedifference.EscapeNodeDistanceDifferenceBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.nearestfarthest.NearestPowerPillBlock;
 
 /**
  * !!! SHOULD MOVE THIS OUT OF COMPONENTS AND JUST MAKE IT A MEDIATOR !!!!!

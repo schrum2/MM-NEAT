@@ -1,6 +1,6 @@
-package edu.utexas.cs.nn.evolution.metaheuristics;
+package edu.southwestern.evolution.metaheuristics;
 
-import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
+import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 
 /**
  * Fitness that rewards networks for equally using a specific number of modes

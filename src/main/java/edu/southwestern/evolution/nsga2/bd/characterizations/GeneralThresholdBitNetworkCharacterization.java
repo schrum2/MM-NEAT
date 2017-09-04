@@ -1,9 +1,9 @@
-package edu.utexas.cs.nn.evolution.nsga2.bd.characterizations;
+package edu.southwestern.evolution.nsga2.bd.characterizations;
 
-import edu.utexas.cs.nn.evolution.nsga2.bd.vectors.BehaviorVector;
-import edu.utexas.cs.nn.evolution.nsga2.bd.vectors.ThresholdBitBehaviorVector;
-import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.scores.Score;
+import edu.southwestern.evolution.nsga2.bd.vectors.BehaviorVector;
+import edu.southwestern.evolution.nsga2.bd.vectors.ThresholdBitBehaviorVector;
+import edu.southwestern.networks.Network;
+import edu.southwestern.scores.Score;
 
 /**
  * behavior vector for bit threshold tests

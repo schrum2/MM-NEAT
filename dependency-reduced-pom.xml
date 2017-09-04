@@ -28,7 +28,7 @@
             <configuration>
               <transformers>
                 <transformer>
-                  <mainClass>edu.utexas.cs.nn.MMNEAT.MMNEAT</mainClass>
+                  <mainClass>edu.southwestern.MMNEAT.MMNEAT</mainClass>
                 </transformer>
               </transformers>
             </configuration>

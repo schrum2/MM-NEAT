@@ -1,12 +1,12 @@
-package edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.distancedifference;
+package edu.southwestern.tasks.mspacman.sensors.blocks.distancedifference;
 
-import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
-import edu.utexas.cs.nn.tasks.mspacman.facades.GhostControllerFacade;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.MsPacManSensorBlock;
-import edu.utexas.cs.nn.util.datastructures.Pair;
-import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
+import edu.southwestern.parameters.CommonConstants;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.mspacman.facades.GameFacade;
+import edu.southwestern.tasks.mspacman.facades.GhostControllerFacade;
+import edu.southwestern.tasks.mspacman.sensors.blocks.MsPacManSensorBlock;
+import edu.southwestern.util.datastructures.Pair;
+import edu.southwestern.util.stats.StatisticsUtilities;
 import java.awt.Color;
 import java.util.Arrays;
 import pacman.controllers.examples.AggressiveGhosts;

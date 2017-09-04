@@ -2,15 +2,15 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.utexas.cs.nn.tasks.ut2004.controller.behaviors;
+package edu.southwestern.tasks.ut2004.controller.behaviors;
 
 import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004BotModuleController;
-import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.tasks.ut2004.actuators.UT2004OutputInterpretation;
-import edu.utexas.cs.nn.tasks.ut2004.controller.NetworkController;
-import edu.utexas.cs.nn.tasks.ut2004.sensors.UT2004SensorModel;
-import edu.utexas.cs.nn.tasks.ut2004.weapons.UT2004WeaponManager;
+import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.networks.Network;
+import edu.southwestern.tasks.ut2004.actuators.UT2004OutputInterpretation;
+import edu.southwestern.tasks.ut2004.controller.NetworkController;
+import edu.southwestern.tasks.ut2004.sensors.UT2004SensorModel;
+import edu.southwestern.tasks.ut2004.weapons.UT2004WeaponManager;
 
 /**
  *

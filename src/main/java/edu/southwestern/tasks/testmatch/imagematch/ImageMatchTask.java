@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.tasks.testmatch.imagematch;
+package edu.southwestern.tasks.testmatch.imagematch;
 
 import java.awt.Color;
 import java.awt.image.*;
@@ -6,20 +6,20 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Scanner;
 import javax.imageio.*;
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
-import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
-import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.networks.TWEANN;
-import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.scores.Score;
-import edu.utexas.cs.nn.tasks.testmatch.MatchDataTask;
-import edu.utexas.cs.nn.util.MiscUtil;
-import edu.utexas.cs.nn.util.datastructures.Pair;
-import edu.utexas.cs.nn.util.graphics.DrawingPanel;
-import edu.utexas.cs.nn.util.graphics.GraphicsUtil;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.EvolutionaryHistory;
+import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.evolution.genotypes.TWEANNGenotype;
+import edu.southwestern.networks.Network;
+import edu.southwestern.networks.TWEANN;
+import edu.southwestern.parameters.CommonConstants;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.scores.Score;
+import edu.southwestern.tasks.testmatch.MatchDataTask;
+import edu.southwestern.util.MiscUtil;
+import edu.southwestern.util.datastructures.Pair;
+import edu.southwestern.util.graphics.DrawingPanel;
+import edu.southwestern.util.graphics.GraphicsUtil;
 
 /**
  * Image match training task for a CPPN

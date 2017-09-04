@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.evolution.nsga2;
+package edu.southwestern.evolution.nsga2;
 
 import java.util.Comparator;
 

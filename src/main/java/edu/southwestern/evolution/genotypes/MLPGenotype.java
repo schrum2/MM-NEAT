@@ -1,13 +1,13 @@
-package edu.utexas.cs.nn.evolution.genotypes;
+package edu.southwestern.evolution.genotypes;
 
-import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
+import edu.southwestern.evolution.EvolutionaryHistory;
 
 import java.util.LinkedList;
 import java.util.List;
 
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.networks.MLP;
-import edu.utexas.cs.nn.parameters.Parameters;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.networks.MLP;
+import edu.southwestern.parameters.Parameters;
 
 /**
  * Represents a Multi-Layer Perceptron as two 2D arrays of link weights. MLP has

@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.utexas.cs.nn.tasks.mspacman.data;
+package edu.southwestern.tasks.mspacman.data;
 
 import java.util.LinkedList;
 import java.util.Queue;

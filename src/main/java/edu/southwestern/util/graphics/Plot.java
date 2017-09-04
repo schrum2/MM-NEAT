@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.util.graphics;
+package edu.southwestern.util.graphics;
 
 /**
  * This file should really be removed, but we need to find a place to move these

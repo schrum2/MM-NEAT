@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.util.graphics;
+package edu.southwestern.util.graphics;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
@@ -8,8 +8,8 @@ import java.io.IOException;
 import javax.imageio.stream.FileImageOutputStream;
 import javax.imageio.stream.ImageOutputStream;
 
-import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.tasks.interactive.objectbreeder.ThreeDimensionalObjectBreederTask;
+import edu.southwestern.networks.Network;
+import edu.southwestern.tasks.interactive.objectbreeder.ThreeDimensionalObjectBreederTask;
 
 /**
  * Series of utility methods used to create and manipulate

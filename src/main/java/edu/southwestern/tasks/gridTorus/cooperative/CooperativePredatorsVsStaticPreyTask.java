@@ -1,13 +1,13 @@
-package edu.utexas.cs.nn.tasks.gridTorus.cooperative;
+package edu.southwestern.tasks.gridTorus.cooperative;
 
-import edu.utexas.cs.nn.tasks.gridTorus.GroupTorusPredPreyTask;
+import edu.southwestern.tasks.gridTorus.GroupTorusPredPreyTask;
 
-import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.gridTorus.controllers.TorusPredPreyController;
-import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.tasks.gridTorus.TorusEvolvedPredatorsVsStaticPreyTask;
-import edu.utexas.cs.nn.tasks.gridTorus.TorusPredPreyTask;
+import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.gridTorus.controllers.TorusPredPreyController;
+import edu.southwestern.networks.Network;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.gridTorus.TorusEvolvedPredatorsVsStaticPreyTask;
+import edu.southwestern.tasks.gridTorus.TorusPredPreyTask;
 
 /**
  * Defines a cooperative evolved team of predators where each individual predator

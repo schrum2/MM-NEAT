@@ -1,8 +1,8 @@
-package edu.utexas.cs.nn.evolution.genotypes;
+package edu.southwestern.evolution.genotypes;
 
-import edu.utexas.cs.nn.evolution.mutation.real.PerturbMutation;
-import edu.utexas.cs.nn.util.random.RandomNumbers;
-import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
+import edu.southwestern.evolution.mutation.real.PerturbMutation;
+import edu.southwestern.util.random.RandomNumbers;
+import edu.southwestern.util.datastructures.ArrayUtil;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;

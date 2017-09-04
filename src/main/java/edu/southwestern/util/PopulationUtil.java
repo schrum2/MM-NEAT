@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.util;
+package edu.southwestern.util;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -13,29 +13,29 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.data.SaveThread;
-import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
-import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.evolution.genotypes.HyperNEATCPPNGenotype;
-import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
-import edu.utexas.cs.nn.evolution.lineage.Offspring;
-import edu.utexas.cs.nn.evolution.mutation.tweann.ActivationFunctionRandomReplacement;
-import edu.utexas.cs.nn.evolution.mutation.tweann.CauchyDeltaCodeMutation;
-import edu.utexas.cs.nn.evolution.mutation.tweann.WeightRandomReplacement;
-import edu.utexas.cs.nn.evolution.nsga2.NSGA2;
-import edu.utexas.cs.nn.evolution.nsga2.NSGA2Score;
-import edu.utexas.cs.nn.networks.TWEANN;
-import edu.utexas.cs.nn.networks.hyperneat.HyperNEATTask;
-import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.scores.Better;
-import edu.utexas.cs.nn.scores.Score;
-import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
-import edu.utexas.cs.nn.util.datastructures.Pair;
-import edu.utexas.cs.nn.util.file.FileUtilities;
-import edu.utexas.cs.nn.util.file.XMLFilter;
-import edu.utexas.cs.nn.util.random.RandomNumbers;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.data.SaveThread;
+import edu.southwestern.evolution.EvolutionaryHistory;
+import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.evolution.genotypes.HyperNEATCPPNGenotype;
+import edu.southwestern.evolution.genotypes.TWEANNGenotype;
+import edu.southwestern.evolution.lineage.Offspring;
+import edu.southwestern.evolution.mutation.tweann.ActivationFunctionRandomReplacement;
+import edu.southwestern.evolution.mutation.tweann.CauchyDeltaCodeMutation;
+import edu.southwestern.evolution.mutation.tweann.WeightRandomReplacement;
+import edu.southwestern.evolution.nsga2.NSGA2;
+import edu.southwestern.evolution.nsga2.NSGA2Score;
+import edu.southwestern.networks.TWEANN;
+import edu.southwestern.networks.hyperneat.HyperNEATTask;
+import edu.southwestern.parameters.CommonConstants;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.scores.Better;
+import edu.southwestern.scores.Score;
+import edu.southwestern.util.datastructures.ArrayUtil;
+import edu.southwestern.util.datastructures.Pair;
+import edu.southwestern.util.file.FileUtilities;
+import edu.southwestern.util.file.XMLFilter;
+import edu.southwestern.util.random.RandomNumbers;
 import wox.serial.Easy;
 
 /**

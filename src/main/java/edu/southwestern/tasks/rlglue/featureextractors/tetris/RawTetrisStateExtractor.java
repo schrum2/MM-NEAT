@@ -1,11 +1,11 @@
-package edu.utexas.cs.nn.tasks.rlglue.featureextractors.tetris;
+package edu.southwestern.tasks.rlglue.featureextractors.tetris;
 
 import org.rlcommunity.environments.tetris.TetrisState;
 import org.rlcommunity.rlglue.codec.types.Observation;
 
-import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.tasks.rlglue.featureextractors.FeatureExtractor;
+import edu.southwestern.parameters.CommonConstants;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.rlglue.featureextractors.FeatureExtractor;
 
 /**
  * Primarily designed to be used by HyperNEAT.

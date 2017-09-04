@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.tasks.interactive.breedesizer;
+package edu.southwestern.tasks.interactive.breedesizer;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -16,17 +16,17 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.tasks.interactive.InteractiveEvolutionTask;
-import edu.utexas.cs.nn.util.graphics.DrawingPanel;
-import edu.utexas.cs.nn.util.graphics.GraphicsUtil;
-import edu.utexas.cs.nn.util.sound.MIDIUtil;
-import edu.utexas.cs.nn.util.sound.PlayDoubleArray;
-import edu.utexas.cs.nn.util.sound.PlayDoubleArray.AmplitudeArrayPlayer;
-import edu.utexas.cs.nn.util.sound.SoundFromCPPNUtil;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.networks.Network;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.interactive.InteractiveEvolutionTask;
+import edu.southwestern.util.graphics.DrawingPanel;
+import edu.southwestern.util.graphics.GraphicsUtil;
+import edu.southwestern.util.sound.MIDIUtil;
+import edu.southwestern.util.sound.PlayDoubleArray;
+import edu.southwestern.util.sound.PlayDoubleArray.AmplitudeArrayPlayer;
+import edu.southwestern.util.sound.SoundFromCPPNUtil;
 
 /**
  * Class that builds an interface with a variety of sound waves that have been generated with
@@ -35,7 +35,7 @@ import edu.utexas.cs.nn.util.sound.SoundFromCPPNUtil;
  * which is also used to design the Picbreeder and Remixbreeder interfaces. 
  * 
  * Original Breedesizer paper: 
- * Björn Þór Jónsson, Amy K. Hoover, and Sebastian Risi. Interactively Evolving Compositional 
+ * Bjï¿½rn ï¿½ï¿½r Jï¿½nsson, Amy K. Hoover, and Sebastian Risi. Interactively Evolving Compositional 
  * Sound Synthesis Networks. Proceedings of the 2015 Genetic and Evolutionary Computation 
  * Conference (GECCO '15). Pages 321-328. 2015. 
  * DOI: http://dx.doi.org/10.1145/2739480.2754796
@@ -318,7 +318,7 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 	 */
 	public static void main(String[] args) {
 		try {
-			MMNEAT.main(new String[]{"runNumber:5","randomSeed:5","trials:1","mu:16","maxGens:500","io:false","netio:false","mating:true", "fs:false", "task:edu.utexas.cs.nn.tasks.interactive.breedesizer.BreedesizerTask","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3","cleanFrequency:-1","recurrency:false","ea:edu.utexas.cs.nn.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:2000","imageHeight:2000","imageSize:200"});
+			MMNEAT.main(new String[]{"runNumber:5","randomSeed:5","trials:1","mu:16","maxGens:500","io:false","netio:false","mating:true", "fs:false", "task:edu.southwestern.tasks.interactive.breedesizer.BreedesizerTask","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3","cleanFrequency:-1","recurrency:false","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:2000","imageHeight:2000","imageSize:200"});
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}

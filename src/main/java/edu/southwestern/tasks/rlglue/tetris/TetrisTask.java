@@ -1,15 +1,15 @@
-package edu.utexas.cs.nn.tasks.rlglue.tetris;
+package edu.southwestern.tasks.rlglue.tetris;
 
 import org.rlcommunity.environments.tetris.Tetris;
 import org.rlcommunity.environments.tetris.TetrisState;
 
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.tasks.rlglue.RLGlueTask;
-import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
-import edu.utexas.cs.nn.util.datastructures.Pair;
-import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.networks.Network;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.rlglue.RLGlueTask;
+import edu.southwestern.util.datastructures.ArrayUtil;
+import edu.southwestern.util.datastructures.Pair;
+import edu.southwestern.util.stats.StatisticsUtilities;
 
 public class TetrisTask<T extends Network> extends RLGlueTask<T> {
 

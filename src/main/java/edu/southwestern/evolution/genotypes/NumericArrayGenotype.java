@@ -1,7 +1,7 @@
-package edu.utexas.cs.nn.evolution.genotypes;
+package edu.southwestern.evolution.genotypes;
 
-import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
-import edu.utexas.cs.nn.evolution.crossover.ArrayCrossover;
+import edu.southwestern.evolution.EvolutionaryHistory;
+import edu.southwestern.evolution.crossover.ArrayCrossover;
 
 import java.util.ArrayList;
 

@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.tasks.interactive.objectbreeder;
+package edu.southwestern.tasks.interactive.objectbreeder;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -19,15 +19,15 @@ import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.networks.TWEANN;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.scores.Score;
-import edu.utexas.cs.nn.tasks.interactive.animationbreeder.AnimationBreederTask;
-import edu.utexas.cs.nn.util.datastructures.Triangle;
-import edu.utexas.cs.nn.util.graphics.AnimationUtil;
-import edu.utexas.cs.nn.util.graphics.ThreeDimensionalUtil;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.networks.TWEANN;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.scores.Score;
+import edu.southwestern.tasks.interactive.animationbreeder.AnimationBreederTask;
+import edu.southwestern.util.datastructures.Triangle;
+import edu.southwestern.util.graphics.AnimationUtil;
+import edu.southwestern.util.graphics.ThreeDimensionalUtil;
 
 /**
  * Interface that interactively evolves three-dimensional
@@ -332,7 +332,7 @@ public class ThreeDimensionalObjectBreederTask extends AnimationBreederTask<TWEA
 	 */
 	public static void main(String[] args) {
 		try {
-			MMNEAT.main(new String[]{"runNumber:5","randomSeed:5","trials:1","mu:16","maxGens:500","io:false","netio:false","mating:true", "allowCubeDisplacement:true", "simplifiedInteractiveInterface:true","fs:false", "task:edu.utexas.cs.nn.tasks.interactive.objectbreeder.ThreeDimensionalObjectBreederTask","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3","cleanFrequency:-1","recurrency:false","ea:edu.utexas.cs.nn.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:500","imageHeight:500","imageSize:200","defaultFramePause:50"});
+			MMNEAT.main(new String[]{"runNumber:5","randomSeed:5","trials:1","mu:16","maxGens:500","io:false","netio:false","mating:true", "allowCubeDisplacement:true", "simplifiedInteractiveInterface:true","fs:false", "task:edu.southwestern.tasks.interactive.objectbreeder.ThreeDimensionalObjectBreederTask","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3","cleanFrequency:-1","recurrency:false","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:500","imageHeight:500","imageSize:200","defaultFramePause:50"});
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}

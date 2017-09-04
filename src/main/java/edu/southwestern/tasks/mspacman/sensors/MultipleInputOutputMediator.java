@@ -1,6 +1,6 @@
-package edu.utexas.cs.nn.tasks.mspacman.sensors;
+package edu.southwestern.tasks.mspacman.sensors;
 
-import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
+import edu.southwestern.tasks.mspacman.facades.GameFacade;
 
 /**
  * Combine any set of mediators into one

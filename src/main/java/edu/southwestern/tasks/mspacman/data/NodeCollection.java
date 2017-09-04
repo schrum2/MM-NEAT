@@ -1,8 +1,8 @@
-package edu.utexas.cs.nn.tasks.mspacman.data;
+package edu.southwestern.tasks.mspacman.data;
 
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
-import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.mspacman.facades.GameFacade;
+import edu.southwestern.util.datastructures.ArrayUtil;
 import java.util.ArrayList;
 
 /**

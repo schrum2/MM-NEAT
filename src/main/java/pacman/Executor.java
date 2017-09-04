@@ -1,14 +1,14 @@
 package pacman;
 
-import edu.utexas.cs.nn.log.DeathLocationsLog;
-import edu.utexas.cs.nn.log.MMNEATLog;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.tasks.mspacman.agentcontroller.pacman.StaticPacManController;
-import edu.utexas.cs.nn.tasks.mspacman.data.ScentPath;
-import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
-import edu.utexas.cs.nn.util.CombinatoricUtilities;
-import edu.utexas.cs.nn.util.MiscUtil;
-import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
+import edu.southwestern.log.DeathLocationsLog;
+import edu.southwestern.log.MMNEATLog;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.mspacman.agentcontroller.pacman.StaticPacManController;
+import edu.southwestern.tasks.mspacman.data.ScentPath;
+import edu.southwestern.tasks.mspacman.facades.GameFacade;
+import edu.southwestern.util.CombinatoricUtilities;
+import edu.southwestern.util.MiscUtil;
+import edu.southwestern.util.datastructures.ArrayUtil;
 import java.awt.Color;
 import java.io.*;
 import java.util.ArrayList;

@@ -1,8 +1,8 @@
-package edu.utexas.cs.nn.evolution.ucb;
+package edu.southwestern.evolution.ucb;
 
-import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.scores.Score;
+import edu.southwestern.parameters.CommonConstants;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.scores.Score;
 import java.util.Comparator;
 
 /**

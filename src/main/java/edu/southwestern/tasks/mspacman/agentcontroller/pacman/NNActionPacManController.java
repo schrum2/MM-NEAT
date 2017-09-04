@@ -1,13 +1,13 @@
-package edu.utexas.cs.nn.tasks.mspacman.agentcontroller.pacman;
+package edu.southwestern.tasks.mspacman.agentcontroller.pacman;
 
-import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.networks.TWEANN;
-import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.tasks.mspacman.agentcontroller.pacman.actions.MsPacManAction;
-import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.ActionBlockLoadedInputOutputMediator;
-import edu.utexas.cs.nn.util.CombinatoricUtilities;
-import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
+import edu.southwestern.networks.Network;
+import edu.southwestern.networks.TWEANN;
+import edu.southwestern.parameters.CommonConstants;
+import edu.southwestern.tasks.mspacman.agentcontroller.pacman.actions.MsPacManAction;
+import edu.southwestern.tasks.mspacman.facades.GameFacade;
+import edu.southwestern.tasks.mspacman.sensors.ActionBlockLoadedInputOutputMediator;
+import edu.southwestern.util.CombinatoricUtilities;
+import edu.southwestern.util.stats.StatisticsUtilities;
 import java.util.ArrayList;
 
 /**

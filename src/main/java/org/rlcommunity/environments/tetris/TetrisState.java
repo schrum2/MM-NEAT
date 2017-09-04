@@ -24,11 +24,11 @@ import java.util.Vector;
 
 import org.rlcommunity.rlglue.codec.types.Observation;
 
-import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.tasks.rlglue.tetris.TetrisViewer;
-import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
-import edu.utexas.cs.nn.util.random.RandomNumbers;
+import edu.southwestern.parameters.CommonConstants;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.rlglue.tetris.TetrisViewer;
+import edu.southwestern.util.datastructures.ArrayUtil;
+import edu.southwestern.util.random.RandomNumbers;
 
 public class TetrisState {
 	/* Action values */

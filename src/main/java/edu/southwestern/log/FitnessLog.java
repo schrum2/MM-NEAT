@@ -1,11 +1,11 @@
-package edu.utexas.cs.nn.log;
+package edu.southwestern.log;
 
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.networks.TWEANN;
-import edu.utexas.cs.nn.scores.Score;
-import edu.utexas.cs.nn.util.graphics.DrawingPanel;
-import edu.utexas.cs.nn.util.graphics.GraphicsUtil;
-import edu.utexas.cs.nn.util.graphics.Plot;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.networks.TWEANN;
+import edu.southwestern.scores.Score;
+import edu.southwestern.util.graphics.DrawingPanel;
+import edu.southwestern.util.graphics.GraphicsUtil;
+import edu.southwestern.util.graphics.Plot;
 
 import java.awt.Color;
 import java.io.File;

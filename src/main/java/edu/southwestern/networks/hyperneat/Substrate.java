@@ -1,13 +1,13 @@
-package edu.utexas.cs.nn.networks.hyperneat;
+package edu.southwestern.networks.hyperneat;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.util.datastructures.Pair;
-import edu.utexas.cs.nn.util.datastructures.Triple;
+import edu.southwestern.parameters.CommonConstants;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.util.datastructures.Pair;
+import edu.southwestern.util.datastructures.Triple;
 
 /**
  * Class that creates a substrate for hyperNEAT

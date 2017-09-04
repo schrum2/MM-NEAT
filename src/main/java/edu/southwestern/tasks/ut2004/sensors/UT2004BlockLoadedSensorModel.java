@@ -1,7 +1,7 @@
-package edu.utexas.cs.nn.tasks.ut2004.sensors;
+package edu.southwestern.tasks.ut2004.sensors;
 
 import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004BotModuleController;
-import edu.utexas.cs.nn.tasks.ut2004.sensors.blocks.UT2004SensorBlock;
+import edu.southwestern.tasks.ut2004.sensors.blocks.UT2004SensorBlock;
 import java.util.ArrayList;
 
 /**

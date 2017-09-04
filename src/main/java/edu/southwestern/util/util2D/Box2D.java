@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.util.util2D;
+package edu.southwestern.util.util2D;
 
 /**
  *

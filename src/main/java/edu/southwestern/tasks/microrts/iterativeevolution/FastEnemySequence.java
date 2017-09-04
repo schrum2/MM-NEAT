@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.tasks.microrts.iterativeevolution;
+package edu.southwestern.tasks.microrts.iterativeevolution;
 
 import micro.ai.RandomBiasedAI;
 import micro.ai.abstraction.partialobservability.POLightRush;

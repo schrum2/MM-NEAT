@@ -1,18 +1,18 @@
-package edu.utexas.cs.nn.tasks.mspacman.agentcontroller.pacman;
+package edu.southwestern.tasks.mspacman.agentcontroller.pacman;
 
-import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.networks.TWEANN;
-import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.BlockLoadedInputOutputMediator;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.GhostsWithinDistanceBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.distancedifference.EscapeNodeDistanceDifferenceBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.nearestfarthest.NearestFarthestEdibleGhostBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.nearestfarthest.NearestPillBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.nearestfarthest.NearestPowerPillBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.proximity.ThreatGhostDirectionalProximityBlock;
-import edu.utexas.cs.nn.util.random.RandomNumbers;
+import edu.southwestern.networks.Network;
+import edu.southwestern.networks.TWEANN;
+import edu.southwestern.parameters.CommonConstants;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.mspacman.facades.GameFacade;
+import edu.southwestern.tasks.mspacman.sensors.BlockLoadedInputOutputMediator;
+import edu.southwestern.tasks.mspacman.sensors.blocks.GhostsWithinDistanceBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.distancedifference.EscapeNodeDistanceDifferenceBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.nearestfarthest.NearestFarthestEdibleGhostBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.nearestfarthest.NearestPillBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.nearestfarthest.NearestPowerPillBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.proximity.ThreatGhostDirectionalProximityBlock;
+import edu.southwestern.util.random.RandomNumbers;
 
 /**
  *

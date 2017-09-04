@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.tasks.microrts;
+package edu.southwestern.tasks.microrts;
 
 import micro.rts.GameState;
 import micro.rts.PhysicalGameState;

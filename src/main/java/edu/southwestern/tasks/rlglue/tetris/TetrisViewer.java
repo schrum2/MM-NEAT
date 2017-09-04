@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.tasks.rlglue.tetris;
+package edu.southwestern.tasks.rlglue.tetris;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -7,8 +7,8 @@ import java.util.logging.Logger;
 
 import org.rlcommunity.environments.tetris.TetrisState;
 
-import edu.utexas.cs.nn.networks.TWEANN;
-import edu.utexas.cs.nn.util.graphics.DrawingPanel;
+import edu.southwestern.networks.TWEANN;
+import edu.southwestern.util.graphics.DrawingPanel;
 
 /**
  *

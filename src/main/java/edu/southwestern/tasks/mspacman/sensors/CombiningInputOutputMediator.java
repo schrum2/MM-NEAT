@@ -1,8 +1,8 @@
-package edu.utexas.cs.nn.tasks.mspacman.sensors;
+package edu.southwestern.tasks.mspacman.sensors;
 
-import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.combining.GhostEatingNetworkBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.combining.PillEatingNetworkBlock;
+import edu.southwestern.networks.Network;
+import edu.southwestern.tasks.mspacman.sensors.blocks.combining.GhostEatingNetworkBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.combining.PillEatingNetworkBlock;
 
 /**
  *

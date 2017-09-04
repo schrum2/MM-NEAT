@@ -1,16 +1,16 @@
-package edu.utexas.cs.nn.evolution.mutation.tweann;
+package edu.southwestern.evolution.mutation.tweann;
 
-import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
-import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype.LinkGene;
-import edu.utexas.cs.nn.evolution.mutation.Mutation;
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.networks.TWEANN;
-import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.scores.MultiObjectiveScore;
-import edu.utexas.cs.nn.tasks.NoisyLonerTask;
-import edu.utexas.cs.nn.util.datastructures.Pair;
-import edu.utexas.cs.nn.util.random.RandomNumbers;
+import edu.southwestern.evolution.genotypes.TWEANNGenotype;
+import edu.southwestern.evolution.genotypes.TWEANNGenotype.LinkGene;
+import edu.southwestern.evolution.mutation.Mutation;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.networks.TWEANN;
+import edu.southwestern.parameters.CommonConstants;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.scores.MultiObjectiveScore;
+import edu.southwestern.tasks.NoisyLonerTask;
+import edu.southwestern.util.datastructures.Pair;
+import edu.southwestern.util.random.RandomNumbers;
 
 import java.util.ArrayList;
 

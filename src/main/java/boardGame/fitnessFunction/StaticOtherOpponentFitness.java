@@ -10,12 +10,12 @@ import boardGame.agents.BoardGamePlayer;
 import boardGame.agents.HeuristicBoardGamePlayer;
 import boardGame.heuristics.BoardGameHeuristic;
 import boardGame.heuristics.NNBoardGameHeuristic;
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.tasks.NoisyLonerTask;
-import edu.utexas.cs.nn.tasks.boardGame.BoardGameUtil;
-import edu.utexas.cs.nn.util.ClassCreation;
-import edu.utexas.cs.nn.util.datastructures.Pair;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.NoisyLonerTask;
+import edu.southwestern.tasks.boardGame.BoardGameUtil;
+import edu.southwestern.util.ClassCreation;
+import edu.southwestern.util.datastructures.Pair;
 
 public class StaticOtherOpponentFitness<T extends BoardGameState> implements BoardGameFitnessFunction<T> {
 	

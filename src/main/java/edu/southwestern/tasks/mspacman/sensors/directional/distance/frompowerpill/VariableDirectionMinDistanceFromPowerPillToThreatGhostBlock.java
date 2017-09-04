@@ -2,9 +2,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.utexas.cs.nn.tasks.mspacman.sensors.directional.distance.frompowerpill;
+package edu.southwestern.tasks.mspacman.sensors.directional.distance.frompowerpill;
 
-import edu.utexas.cs.nn.util.stats.Min;
+import edu.southwestern.util.stats.Min;
 
 /**
  *

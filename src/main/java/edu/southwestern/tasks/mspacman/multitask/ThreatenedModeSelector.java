@@ -1,9 +1,9 @@
-package edu.utexas.cs.nn.tasks.mspacman.multitask;
+package edu.southwestern.tasks.mspacman.multitask;
 
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.reachfirst.VariableDirectionCloserToDepthTwoJunctionThanThreatGhostBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.reachfirst.VariableDirectionCloserToTargetThanThreatGhostBlock;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.mspacman.facades.GameFacade;
+import edu.southwestern.tasks.mspacman.sensors.directional.reachfirst.VariableDirectionCloserToDepthTwoJunctionThanThreatGhostBlock;
+import edu.southwestern.tasks.mspacman.sensors.directional.reachfirst.VariableDirectionCloserToTargetThanThreatGhostBlock;
 
 /**
  * A Mode selector which selects between 2 modes based on the following: 0)

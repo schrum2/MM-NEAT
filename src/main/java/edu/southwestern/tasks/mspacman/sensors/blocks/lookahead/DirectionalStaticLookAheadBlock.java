@@ -2,13 +2,13 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.lookahead;
+package edu.southwestern.tasks.mspacman.sensors.blocks.lookahead;
 
-import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.MsPacManSensorBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.counts.VariableDirectionKStepCountBlock;
+import edu.southwestern.parameters.CommonConstants;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.mspacman.facades.GameFacade;
+import edu.southwestern.tasks.mspacman.sensors.blocks.MsPacManSensorBlock;
+import edu.southwestern.tasks.mspacman.sensors.directional.counts.VariableDirectionKStepCountBlock;
 import java.util.ArrayList;
 
 /**

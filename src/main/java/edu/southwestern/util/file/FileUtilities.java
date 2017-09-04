@@ -1,10 +1,10 @@
-package edu.utexas.cs.nn.util.file;
+package edu.southwestern.util.file;
 
-import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
-import edu.utexas.cs.nn.networks.TWEANN;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.tasks.CommonTaskUtil;
-import edu.utexas.cs.nn.util.graphics.DrawingPanel;
+import edu.southwestern.evolution.genotypes.TWEANNGenotype;
+import edu.southwestern.networks.TWEANN;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.CommonTaskUtil;
+import edu.southwestern.util.graphics.DrawingPanel;
 
 import java.io.File;
 import java.io.FileNotFoundException;

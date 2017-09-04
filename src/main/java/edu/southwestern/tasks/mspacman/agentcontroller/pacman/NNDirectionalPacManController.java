@@ -1,11 +1,11 @@
-package edu.utexas.cs.nn.tasks.mspacman.agentcontroller.pacman;
+package edu.southwestern.tasks.mspacman.agentcontroller.pacman;
 
-import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
-import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
-import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
+import edu.southwestern.networks.Network;
+import edu.southwestern.parameters.CommonConstants;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.mspacman.facades.GameFacade;
+import edu.southwestern.util.datastructures.ArrayUtil;
+import edu.southwestern.util.stats.StatisticsUtilities;
 
 /**
  * Describes a pacman controller based on direction

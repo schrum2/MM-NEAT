@@ -2,10 +2,10 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.utexas.cs.nn.tasks.mspacman.sensors.directional;
+package edu.southwestern.tasks.mspacman.sensors.directional;
 
-import edu.utexas.cs.nn.tasks.mspacman.agentcontroller.pacman.NNDirectionalPacManController;
-import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
+import edu.southwestern.tasks.mspacman.agentcontroller.pacman.NNDirectionalPacManController;
+import edu.southwestern.tasks.mspacman.facades.GameFacade;
 
 /**
  * Recalls the previous activation for a particular (relative) direction

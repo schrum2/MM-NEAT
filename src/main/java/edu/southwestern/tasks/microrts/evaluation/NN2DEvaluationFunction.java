@@ -1,10 +1,10 @@
-package edu.utexas.cs.nn.tasks.microrts.evaluation;
+package edu.southwestern.tasks.microrts.evaluation;
 
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.util.PopulationUtil;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.networks.Network;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.util.PopulationUtil;
 import micro.rts.GameState;
 import micro.rts.units.Unit;
 
@@ -37,9 +37,9 @@ public class NN2DEvaluationFunction<T extends Network> extends NNEvaluationFunct
 	 */
 	public NN2DEvaluationFunction(String NNfile){
 		// Parameter init can/should be removed when moving to stand-alone competition entry
-		Parameters.initializeParameterCollections(new String[]{"task:edu.utexas.cs.nn.tasks.microrts.MicroRTSTask","hyperNEAT:true"
-				,"microRTSEnemySequence:edu.utexas.cs.nn.tasks.microrts.iterativeevolution.CompetitiveEnemySequence",
-				"microRTSMapSequence:edu.utexas.cs.nn.tasks.microrts.iterativeevolution.GrowingMapSequence","log:microRTS-temp","saveTo:temp"});
+		Parameters.initializeParameterCollections(new String[]{"task:edu.southwestern.tasks.microrts.MicroRTSTask","hyperNEAT:true"
+				,"microRTSEnemySequence:edu.southwestern.tasks.microrts.iterativeevolution.CompetitiveEnemySequence",
+				"microRTSMapSequence:edu.southwestern.tasks.microrts.iterativeevolution.GrowingMapSequence","log:microRTS-temp","saveTo:temp"});
 		MMNEAT.loadClasses();
 		Genotype<T> g = PopulationUtil.extractGenotype(NNfile);
 		nn = g.getPhenotype();

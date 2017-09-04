@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.tasks.interactive;
+package edu.southwestern.tasks.interactive;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -31,26 +31,26 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.evolution.SinglePopulationGenerationalEA;
-import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.evolution.lineage.Offspring;
-import edu.utexas.cs.nn.evolution.mutation.tweann.ActivationFunctionRandomReplacement;
-import edu.utexas.cs.nn.evolution.selectiveBreeding.SelectiveBreedingEA;
-import edu.utexas.cs.nn.networks.ActivationFunctions;
-import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.networks.NetworkTask;
-import edu.utexas.cs.nn.networks.TWEANN;
-import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.scores.Score;
-import edu.utexas.cs.nn.tasks.SinglePopulationTask;
-import edu.utexas.cs.nn.util.BooleanUtil;
-import edu.utexas.cs.nn.util.CombinatoricUtilities;
-import edu.utexas.cs.nn.util.PopulationUtil;
-import edu.utexas.cs.nn.util.file.FileUtilities;
-import edu.utexas.cs.nn.util.graphics.DrawingPanel;
-import edu.utexas.cs.nn.util.graphics.GraphicsUtil;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.SinglePopulationGenerationalEA;
+import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.evolution.lineage.Offspring;
+import edu.southwestern.evolution.mutation.tweann.ActivationFunctionRandomReplacement;
+import edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA;
+import edu.southwestern.networks.ActivationFunctions;
+import edu.southwestern.networks.Network;
+import edu.southwestern.networks.NetworkTask;
+import edu.southwestern.networks.TWEANN;
+import edu.southwestern.parameters.CommonConstants;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.scores.Score;
+import edu.southwestern.tasks.SinglePopulationTask;
+import edu.southwestern.util.BooleanUtil;
+import edu.southwestern.util.CombinatoricUtilities;
+import edu.southwestern.util.PopulationUtil;
+import edu.southwestern.util.file.FileUtilities;
+import edu.southwestern.util.graphics.DrawingPanel;
+import edu.southwestern.util.graphics.GraphicsUtil;
 
 /**
  * Class that builds an interface designed for interactive evolution. 

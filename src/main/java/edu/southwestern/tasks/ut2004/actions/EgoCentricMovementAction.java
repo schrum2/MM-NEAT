@@ -1,9 +1,9 @@
-package edu.utexas.cs.nn.tasks.ut2004.actions;
+package edu.southwestern.tasks.ut2004.actions;
 
 import cz.cuni.amis.pogamut.base3d.worldview.object.Location;
 import cz.cuni.amis.pogamut.base3d.worldview.object.Rotation;
 import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004BotModuleController;
-import edu.utexas.cs.nn.tasks.ut2004.Util;
+import edu.southwestern.tasks.ut2004.Util;
 import javax.vecmath.Vector3d;
 
 /**

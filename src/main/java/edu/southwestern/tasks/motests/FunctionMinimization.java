@@ -1,7 +1,7 @@
-package edu.utexas.cs.nn.tasks.motests;
+package edu.southwestern.tasks.motests;
 
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.tasks.motests.testfunctions.FunctionOptimizationSet;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.tasks.motests.testfunctions.FunctionOptimizationSet;
 
 /**
  *

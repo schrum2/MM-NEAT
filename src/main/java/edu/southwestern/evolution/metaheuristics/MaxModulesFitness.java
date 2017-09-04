@@ -1,8 +1,8 @@
-package edu.utexas.cs.nn.evolution.metaheuristics;
+package edu.southwestern.evolution.metaheuristics;
 
-import edu.utexas.cs.nn.evolution.genotypes.NetworkGenotype;
-import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.scores.Score;
+import edu.southwestern.evolution.genotypes.NetworkGenotype;
+import edu.southwestern.networks.Network;
+import edu.southwestern.scores.Score;
 
 /**
  * Fitness that encourages having lots of modes. Only makes sense if some other

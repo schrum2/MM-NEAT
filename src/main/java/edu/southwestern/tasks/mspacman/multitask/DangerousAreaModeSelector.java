@@ -1,7 +1,7 @@
-package edu.utexas.cs.nn.tasks.mspacman.multitask;
+package edu.southwestern.tasks.mspacman.multitask;
 
-import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
-import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
+import edu.southwestern.util.datastructures.ArrayUtil;
+import edu.southwestern.util.stats.StatisticsUtilities;
 import java.util.*;
 import pacman.Executor;
 import pacman.game.Constants;

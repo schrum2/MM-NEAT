@@ -1,12 +1,12 @@
-package edu.utexas.cs.nn.experiment.post;
+package edu.southwestern.experiment.post;
 
-import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.experiment.Experiment;
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.scores.Score;
-import edu.utexas.cs.nn.tasks.LonerTask;
-import edu.utexas.cs.nn.util.file.FileUtilities;
-import edu.utexas.cs.nn.util.random.RandomNumbers;
+import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.experiment.Experiment;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.scores.Score;
+import edu.southwestern.tasks.LonerTask;
+import edu.southwestern.util.file.FileUtilities;
+import edu.southwestern.util.random.RandomNumbers;
 import wox.serial.Easy;
 
 /**

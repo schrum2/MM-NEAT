@@ -1,24 +1,24 @@
 
-package edu.utexas.cs.nn.tasks.gridTorus;
+package edu.southwestern.tasks.gridTorus;
 
 /**
  * Imports needed parts to initialize the Controller, as in Torus agent and world, the controller, network, and statistic utilities.
  */
-import edu.utexas.cs.nn.gridTorus.TorusAgent;
-import edu.utexas.cs.nn.gridTorus.TorusWorld;
-import edu.utexas.cs.nn.gridTorus.controllers.TorusPredPreyController;
-import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.networks.TWEANN;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.tasks.gridTorus.sensors.BiasSensorBlock;
-import edu.utexas.cs.nn.tasks.gridTorus.sensors.TorusPredPreySensorBlock;
-import edu.utexas.cs.nn.tasks.gridTorus.sensors.TorusPredatorsByIndexSensorBlock;
-import edu.utexas.cs.nn.tasks.gridTorus.sensors.TorusPredatorsByProximitySensorBlock;
-import edu.utexas.cs.nn.tasks.gridTorus.sensors.TorusPreyByIndexSensorBlock;
-import edu.utexas.cs.nn.tasks.gridTorus.sensors.TorusPreyByProximitySensorBlock;
-import edu.utexas.cs.nn.util.MiscUtil;
-import edu.utexas.cs.nn.util.graphics.DrawingPanel;
-import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
+import edu.southwestern.gridTorus.TorusAgent;
+import edu.southwestern.gridTorus.TorusWorld;
+import edu.southwestern.gridTorus.controllers.TorusPredPreyController;
+import edu.southwestern.networks.Network;
+import edu.southwestern.networks.TWEANN;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.gridTorus.sensors.BiasSensorBlock;
+import edu.southwestern.tasks.gridTorus.sensors.TorusPredPreySensorBlock;
+import edu.southwestern.tasks.gridTorus.sensors.TorusPredatorsByIndexSensorBlock;
+import edu.southwestern.tasks.gridTorus.sensors.TorusPredatorsByProximitySensorBlock;
+import edu.southwestern.tasks.gridTorus.sensors.TorusPreyByIndexSensorBlock;
+import edu.southwestern.tasks.gridTorus.sensors.TorusPreyByProximitySensorBlock;
+import edu.southwestern.util.MiscUtil;
+import edu.southwestern.util.graphics.DrawingPanel;
+import edu.southwestern.util.stats.StatisticsUtilities;
 
 /**
  * The following class

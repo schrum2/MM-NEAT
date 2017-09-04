@@ -1,13 +1,13 @@
-package edu.utexas.cs.nn.tasks.mspacman.sensors;
+package edu.southwestern.tasks.mspacman.sensors;
 
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.hyperneat.SubstrateEdibleSensorBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.hyperneat.SubstrateFullScreenPowerPillSensorBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.hyperneat.SubstrateGhostSensorBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.hyperneat.SubstratePacManSensorBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.hyperneat.SubstratePillsSensorBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.hyperneat.SubstratePowerPillSensorBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.hyperneat.SubstrateThreatSensorBlock;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.mspacman.sensors.blocks.hyperneat.SubstrateEdibleSensorBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.hyperneat.SubstrateFullScreenPowerPillSensorBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.hyperneat.SubstrateGhostSensorBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.hyperneat.SubstratePacManSensorBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.hyperneat.SubstratePillsSensorBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.hyperneat.SubstratePowerPillSensorBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.hyperneat.SubstrateThreatSensorBlock;
 /**
  * Mediator class for hyperNEAT msPacMan.
  *  Defines the sensor blocks, inputs and their components

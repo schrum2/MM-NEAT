@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.experiment.post;
+package edu.southwestern.experiment.post;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,19 +11,19 @@ import boardGame.featureExtractor.BoardGameFeatureExtractor;
 import boardGame.fitnessFunction.BoardGameFitnessFunction;
 import boardGame.fitnessFunction.SimpleWinLoseDrawBoardGameFitness;
 import boardGame.heuristics.NNBoardGameHeuristic;
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.experiment.Experiment;
-import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.tasks.CommonTaskUtil;
-import edu.utexas.cs.nn.tasks.SinglePopulationTask;
-import edu.utexas.cs.nn.tasks.boardGame.BoardGameUtil;
-import edu.utexas.cs.nn.util.ClassCreation;
-import edu.utexas.cs.nn.util.PopulationUtil;
-import edu.utexas.cs.nn.util.datastructures.Pair;
-import edu.utexas.cs.nn.util.graphics.DrawingPanel;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.experiment.Experiment;
+import edu.southwestern.networks.Network;
+import edu.southwestern.parameters.CommonConstants;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.CommonTaskUtil;
+import edu.southwestern.tasks.SinglePopulationTask;
+import edu.southwestern.tasks.boardGame.BoardGameUtil;
+import edu.southwestern.util.ClassCreation;
+import edu.southwestern.util.PopulationUtil;
+import edu.southwestern.util.datastructures.Pair;
+import edu.southwestern.util.graphics.DrawingPanel;
 
 public class BoardGameBenchmarkAllPopExperiment<T extends Network, S extends BoardGameState> implements Experiment{
 	

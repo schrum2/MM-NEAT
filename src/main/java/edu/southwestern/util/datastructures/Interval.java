@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.util.datastructures;
+package edu.southwestern.util.datastructures;
 
 /**
  * A special type of pair that delineates upper and lower boundaries of a range.

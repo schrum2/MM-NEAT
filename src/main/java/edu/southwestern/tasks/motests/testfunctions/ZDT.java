@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.tasks.motests.testfunctions;
+package edu.southwestern.tasks.motests.testfunctions;
 
 /**
  *

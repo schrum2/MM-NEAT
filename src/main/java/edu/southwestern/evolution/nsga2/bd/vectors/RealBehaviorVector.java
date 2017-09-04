@@ -1,6 +1,6 @@
-package edu.utexas.cs.nn.evolution.nsga2.bd.vectors;
+package edu.southwestern.evolution.nsga2.bd.vectors;
 
-import edu.utexas.cs.nn.util.CartesianGeometricUtilities;
+import edu.southwestern.util.CartesianGeometricUtilities;
 import java.util.ArrayList;
 
 /**

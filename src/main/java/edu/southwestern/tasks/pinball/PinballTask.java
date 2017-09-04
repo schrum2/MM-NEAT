@@ -1,17 +1,17 @@
-package edu.utexas.cs.nn.tasks.pinball;
+package edu.southwestern.tasks.pinball;
 
 import java.util.ArrayList;
 
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.networks.NetworkTask;
-import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.tasks.NoisyLonerTask;
-import edu.utexas.cs.nn.util.MiscUtil;
-import edu.utexas.cs.nn.util.datastructures.Pair;
-import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.networks.Network;
+import edu.southwestern.networks.NetworkTask;
+import edu.southwestern.parameters.CommonConstants;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.NoisyLonerTask;
+import edu.southwestern.util.MiscUtil;
+import edu.southwestern.util.datastructures.Pair;
+import edu.southwestern.util.stats.StatisticsUtilities;
 import pinball.PinBall;
 import pinball.State;
 

@@ -1,10 +1,10 @@
-package edu.utexas.cs.nn.tasks.mspacman.sensors.mediators.components;
+package edu.southwestern.tasks.mspacman.sensors.mediators.components;
 
-import edu.utexas.cs.nn.tasks.mspacman.sensors.BlockLoadedInputOutputMediator;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.nearestfarthest.NearestFarthestEdibleGhostBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.nearestfarthest.NearestFarthestThreatGhostBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.nearestfarthest.NearestPillBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.nearestfarthest.NearestPowerPillBlock;
+import edu.southwestern.tasks.mspacman.sensors.BlockLoadedInputOutputMediator;
+import edu.southwestern.tasks.mspacman.sensors.blocks.nearestfarthest.NearestFarthestEdibleGhostBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.nearestfarthest.NearestFarthestThreatGhostBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.nearestfarthest.NearestPillBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.nearestfarthest.NearestPowerPillBlock;
 
 /**
  * Nearest direction to objects of interest

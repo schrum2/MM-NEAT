@@ -1,21 +1,21 @@
-package edu.utexas.cs.nn.tasks;
+package edu.southwestern.tasks;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.scores.MultiObjectiveScore;
-import edu.utexas.cs.nn.scores.Score;
-import edu.utexas.cs.nn.util.ClassCreation;
-import edu.utexas.cs.nn.util.PopulationUtil;
-import edu.utexas.cs.nn.util.datastructures.Pair;
-import edu.utexas.cs.nn.util.graphics.DrawingPanel;
-import edu.utexas.cs.nn.util.stats.Statistic;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.parameters.CommonConstants;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.scores.MultiObjectiveScore;
+import edu.southwestern.scores.Score;
+import edu.southwestern.util.ClassCreation;
+import edu.southwestern.util.PopulationUtil;
+import edu.southwestern.util.datastructures.Pair;
+import edu.southwestern.util.graphics.DrawingPanel;
+import edu.southwestern.util.stats.Statistic;
 
 public abstract class SinglePopulationCoevolutionTask<T> implements SinglePopulationTask<T>{
 

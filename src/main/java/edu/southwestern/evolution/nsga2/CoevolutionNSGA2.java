@@ -1,11 +1,11 @@
-package edu.utexas.cs.nn.evolution.nsga2;
+package edu.southwestern.evolution.nsga2;
 
 import java.util.ArrayList;
 
-import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.evolution.mulambda.CoevolutionMuLambda;
-import edu.utexas.cs.nn.scores.Score;
-import edu.utexas.cs.nn.util.PopulationUtil;
+import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.evolution.mulambda.CoevolutionMuLambda;
+import edu.southwestern.scores.Score;
+import edu.southwestern.util.PopulationUtil;
 
 /**
  * This is an evolutionary algorithm for use with cooperative coevolution,

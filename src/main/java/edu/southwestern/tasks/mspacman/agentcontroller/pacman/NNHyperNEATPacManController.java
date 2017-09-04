@@ -1,16 +1,16 @@
-package edu.utexas.cs.nn.tasks.mspacman.agentcontroller.pacman;
+package edu.southwestern.tasks.mspacman.agentcontroller.pacman;
 
 import java.util.HashMap;
 
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.evolution.genotypes.HyperNEATCPPNGenotype;
-import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.networks.hyperneat.HyperNEATUtil;
-import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.tasks.mspacman.MsPacManTask;
-import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
-import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.genotypes.HyperNEATCPPNGenotype;
+import edu.southwestern.networks.Network;
+import edu.southwestern.networks.hyperneat.HyperNEATUtil;
+import edu.southwestern.parameters.CommonConstants;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.mspacman.MsPacManTask;
+import edu.southwestern.tasks.mspacman.facades.GameFacade;
+import edu.southwestern.util.stats.StatisticsUtilities;
 import pacman.game.Constants;
 import pacman.game.Constants.MOVE;
 import pacman.game.Game;

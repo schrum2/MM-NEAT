@@ -1,7 +1,7 @@
-package edu.utexas.cs.nn.tasks.mspacman;
+package edu.southwestern.tasks.mspacman;
 
-import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.MsPacManControllerInputOutputMediator;
+import edu.southwestern.networks.Network;
+import edu.southwestern.tasks.mspacman.sensors.MsPacManControllerInputOutputMediator;
 
 /**
  * Evolves several populations of subnetworks, and each time-step a

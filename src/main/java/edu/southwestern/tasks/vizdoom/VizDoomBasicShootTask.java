@@ -1,15 +1,15 @@
-package edu.utexas.cs.nn.tasks.vizdoom;
+package edu.southwestern.tasks.vizdoom;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
-import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.networks.TWEANN;
-import edu.utexas.cs.nn.networks.hyperneat.Substrate;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.util.datastructures.Triple;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.genotypes.TWEANNGenotype;
+import edu.southwestern.networks.Network;
+import edu.southwestern.networks.TWEANN;
+import edu.southwestern.networks.hyperneat.Substrate;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.util.datastructures.Triple;
 import vizdoom.Button;
 import vizdoom.GameState;
 import vizdoom.GameVariable;
@@ -118,9 +118,9 @@ public class VizDoomBasicShootTask<T extends Network> extends VizDoomTask<T> {
 	 */
 	public static void main(String[] args) {
 		Parameters.initializeParameterCollections(new String[] { "watch:true", "io:false", "netio:false",
-				"task:edu.utexas.cs.nn.tasks.vizdoom.VizDoomBasicShootTask", "trials:5", "printFitness:true", 
+				"task:edu.southwestern.tasks.vizdoom.VizDoomBasicShootTask", "trials:5", "printFitness:true", 
 				"doomFullScreenInput:false", "doomInputWidth:200", "doomInputHeight:5", "doomInputStartX:0", 
-				"doomInputStartY:75","doomInputColorVal:2", "doomInputPixelSmudge:5", "doomSmudgeStat:edu.utexas.cs.nn.util.stats.MostExtreme", "hyperNEAT:true", "extraHNLinks:true"});
+				"doomInputStartY:75","doomInputColorVal:2", "doomInputPixelSmudge:5", "doomSmudgeStat:edu.southwestern.util.stats.MostExtreme", "hyperNEAT:true", "extraHNLinks:true"});
 		MMNEAT.loadClasses();
 		VizDoomBasicShootTask<TWEANN> vd = new VizDoomBasicShootTask<TWEANN>();
 		TWEANNGenotype individual = new TWEANNGenotype();

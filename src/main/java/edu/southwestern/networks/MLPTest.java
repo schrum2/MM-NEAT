@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.networks;
+package edu.southwestern.networks;
 
 import static org.junit.Assert.*;
 
@@ -6,8 +6,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.parameters.Parameters;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.parameters.Parameters;
 
 public class MLPTest {
 

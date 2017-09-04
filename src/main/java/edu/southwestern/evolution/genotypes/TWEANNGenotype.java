@@ -1,20 +1,20 @@
-package edu.utexas.cs.nn.evolution.genotypes;
+package edu.southwestern.evolution.genotypes;
 
-import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
-import edu.utexas.cs.nn.evolution.MultiplePopulationGenerationalEA;
-import edu.utexas.cs.nn.evolution.mutation.tweann.*;
-import edu.utexas.cs.nn.evolution.nsga2.bd.characterizations.GeneralNetworkCharacterization;
-import edu.utexas.cs.nn.evolution.nsga2.bd.localcompetition.TWEANNModulesNicheDefinition;
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.networks.ActivationFunctions;
-import edu.utexas.cs.nn.networks.TWEANN;
-import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.util.CartesianGeometricUtilities;
-import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
-import edu.utexas.cs.nn.util.random.RandomGenerator;
-import edu.utexas.cs.nn.util.random.RandomNumbers;
-import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
+import edu.southwestern.evolution.EvolutionaryHistory;
+import edu.southwestern.evolution.MultiplePopulationGenerationalEA;
+import edu.southwestern.evolution.mutation.tweann.*;
+import edu.southwestern.evolution.nsga2.bd.characterizations.GeneralNetworkCharacterization;
+import edu.southwestern.evolution.nsga2.bd.localcompetition.TWEANNModulesNicheDefinition;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.networks.ActivationFunctions;
+import edu.southwestern.networks.TWEANN;
+import edu.southwestern.parameters.CommonConstants;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.util.CartesianGeometricUtilities;
+import edu.southwestern.util.datastructures.ArrayUtil;
+import edu.southwestern.util.random.RandomGenerator;
+import edu.southwestern.util.random.RandomNumbers;
+import edu.southwestern.util.stats.StatisticsUtilities;
 
 import java.util.*;
 

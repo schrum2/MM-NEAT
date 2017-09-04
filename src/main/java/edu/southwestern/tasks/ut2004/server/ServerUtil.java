@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.tasks.ut2004.server;
+package edu.southwestern.tasks.ut2004.server;
 
 import cz.cuni.amis.pogamut.unreal.bot.impl.NativeUnrealBotAdapter;
 import cz.cuni.amis.pogamut.ut2004.bot.IUT2004Bot;

@@ -1,10 +1,10 @@
-package edu.utexas.cs.nn.evolution.metaheuristics;
+package edu.southwestern.evolution.metaheuristics;
 
-import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
-import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
-import edu.utexas.cs.nn.networks.TWEANN;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.scores.Score;
+import edu.southwestern.evolution.EvolutionaryHistory;
+import edu.southwestern.evolution.genotypes.TWEANNGenotype;
+import edu.southwestern.networks.TWEANN;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.scores.Score;
 
 /**
  * Having excessive links per network module is penalized.

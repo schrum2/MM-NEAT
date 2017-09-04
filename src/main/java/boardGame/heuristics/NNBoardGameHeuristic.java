@@ -4,9 +4,9 @@ import java.util.List;
 
 import boardGame.BoardGameState;
 import boardGame.featureExtractor.BoardGameFeatureExtractor;
-import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.parameters.Parameters;
+import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.networks.Network;
+import edu.southwestern.parameters.Parameters;
 
 public class NNBoardGameHeuristic<T extends Network, S extends BoardGameState> implements BoardGameHeuristic<S> {
 

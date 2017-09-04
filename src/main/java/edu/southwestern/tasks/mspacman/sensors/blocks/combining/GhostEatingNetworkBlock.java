@@ -1,18 +1,18 @@
-package edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.combining;
+package edu.southwestern.tasks.mspacman.sensors.blocks.combining;
 
-import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
-import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
-import edu.utexas.cs.nn.evolution.genotypes.pool.GenotypePool;
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.networks.TWEANN;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.tasks.mspacman.MsPacManTask;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.BlockLoadedInputOutputMediator;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.MsPacManControllerInputOutputMediator;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.mediators.GhostTaskMediator;
-import edu.utexas.cs.nn.util.ClassCreation;
+import edu.southwestern.evolution.EvolutionaryHistory;
+import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.evolution.genotypes.TWEANNGenotype;
+import edu.southwestern.evolution.genotypes.pool.GenotypePool;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.networks.Network;
+import edu.southwestern.networks.TWEANN;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.mspacman.MsPacManTask;
+import edu.southwestern.tasks.mspacman.sensors.BlockLoadedInputOutputMediator;
+import edu.southwestern.tasks.mspacman.sensors.MsPacManControllerInputOutputMediator;
+import edu.southwestern.tasks.mspacman.sensors.mediators.GhostTaskMediator;
+import edu.southwestern.util.ClassCreation;
 
 /**
  *
@@ -63,7 +63,7 @@ public class GhostEatingNetworkBlock<T extends Network> extends SubNetworkBlock<
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static void main(String[] args) throws NoSuchMethodException {
-		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "showNetworks:true", "watch:true", "task:edu.utexas.cs.nn.tasks.mspacman.MsPacManTask" });
+		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "showNetworks:true", "watch:true", "task:edu.southwestern.tasks.mspacman.MsPacManTask" });
 		MMNEAT.loadClasses();
 		MsPacManTask task = new MsPacManTask(true);
 

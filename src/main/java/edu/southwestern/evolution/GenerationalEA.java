@@ -1,6 +1,6 @@
-package edu.utexas.cs.nn.evolution;
+package edu.southwestern.evolution;
 
-import edu.utexas.cs.nn.tasks.Task;
+import edu.southwestern.tasks.Task;
 
 /**
  * Interface for any EA that progresses by generations. Essentially the opposite

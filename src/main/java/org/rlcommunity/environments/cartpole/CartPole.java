@@ -1,8 +1,8 @@
 package org.rlcommunity.environments.cartpole;
 
-import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.tasks.rlglue.RLGlueEnvironment;
-import edu.utexas.cs.nn.tasks.rlglue.cartpole.CartPoleViewer;
+import edu.southwestern.parameters.CommonConstants;
+import edu.southwestern.tasks.rlglue.RLGlueEnvironment;
+import edu.southwestern.tasks.rlglue.cartpole.CartPoleViewer;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.logging.Level;

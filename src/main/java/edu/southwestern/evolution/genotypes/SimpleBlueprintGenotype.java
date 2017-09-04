@@ -1,11 +1,11 @@
-package edu.utexas.cs.nn.evolution.genotypes;
+package edu.southwestern.evolution.genotypes;
 
-import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
-import edu.utexas.cs.nn.evolution.crossover.ArrayCrossover;
-import edu.utexas.cs.nn.evolution.mutation.blueprint.BlueprintChildrenMutation;
-import edu.utexas.cs.nn.evolution.mutation.blueprint.BlueprintRandomMutation;
-import edu.utexas.cs.nn.experiment.evolution.MultiplePopulationGenerationalEAExperiment;
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.EvolutionaryHistory;
+import edu.southwestern.evolution.crossover.ArrayCrossover;
+import edu.southwestern.evolution.mutation.blueprint.BlueprintChildrenMutation;
+import edu.southwestern.evolution.mutation.blueprint.BlueprintRandomMutation;
+import edu.southwestern.experiment.evolution.MultiplePopulationGenerationalEAExperiment;
+import edu.southwestern.MMNEAT.MMNEAT;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;

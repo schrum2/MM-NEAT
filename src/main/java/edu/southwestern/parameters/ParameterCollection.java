@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.parameters;
+package edu.southwestern.parameters;
 
 import java.io.PrintStream;
 import java.util.HashMap;

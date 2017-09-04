@@ -1,10 +1,10 @@
-package edu.utexas.cs.nn.evolution.genotypes;
+package edu.southwestern.evolution.genotypes;
 
 import java.util.LinkedList;
 import java.util.List;
 
-import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
-import edu.utexas.cs.nn.util.datastructures.Pair;
+import edu.southwestern.evolution.EvolutionaryHistory;
+import edu.southwestern.util.datastructures.Pair;
 
 /**
  * Allow for arbitrary combinations of any two genotypes into one, and treat the

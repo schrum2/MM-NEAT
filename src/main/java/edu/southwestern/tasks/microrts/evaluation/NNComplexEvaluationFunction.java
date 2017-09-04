@@ -1,16 +1,16 @@
-package edu.utexas.cs.nn.tasks.microrts.evaluation;
+package edu.southwestern.tasks.microrts.evaluation;
 
 import java.util.ArrayList;
 
-import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.tasks.microrts.evaluation.substrates.AllOfPlayerTypeOnGradientSubstrate;
-import edu.utexas.cs.nn.tasks.microrts.evaluation.substrates.AllOfPlayerTypeSqrt3Substrate;
-import edu.utexas.cs.nn.tasks.microrts.evaluation.substrates.AllOfPlayerTypeSubstrate;
-import edu.utexas.cs.nn.tasks.microrts.evaluation.substrates.BaseGradientSubstrate;
-import edu.utexas.cs.nn.tasks.microrts.evaluation.substrates.MicroRTSSubstrateInputs;
-import edu.utexas.cs.nn.tasks.microrts.evaluation.substrates.SimpleResourceProportionSubstrate;
-import edu.utexas.cs.nn.util.datastructures.Pair;
+import edu.southwestern.networks.Network;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.microrts.evaluation.substrates.AllOfPlayerTypeOnGradientSubstrate;
+import edu.southwestern.tasks.microrts.evaluation.substrates.AllOfPlayerTypeSqrt3Substrate;
+import edu.southwestern.tasks.microrts.evaluation.substrates.AllOfPlayerTypeSubstrate;
+import edu.southwestern.tasks.microrts.evaluation.substrates.BaseGradientSubstrate;
+import edu.southwestern.tasks.microrts.evaluation.substrates.MicroRTSSubstrateInputs;
+import edu.southwestern.tasks.microrts.evaluation.substrates.SimpleResourceProportionSubstrate;
+import edu.southwestern.util.datastructures.Pair;
 import micro.rts.GameState;
 
 /**
@@ -247,9 +247,9 @@ public class NNComplexEvaluationFunction<T extends Network> extends NNEvaluation
 	 */
 	//	public NNComplexEvaluationFunction(String NNfile){
 	//		// Parameter init can/should be removed when moving to stand-alone competition entry
-	//		Parameters.initializeParameterCollections(new String[]{"task:edu.utexas.cs.nn.tasks.microrts.MicroRTSTask","hyperNEAT:true"
-	//				,"microRTSEnemySequence:edu.utexas.cs.nn.tasks.microrts.iterativeevolution.HardeningEnemySequence",
-	//				"microRTSMapSequence:edu.utexas.cs.nn.tasks.microrts.iterativeevolution.GrowingMapSequence","log:microRTS-temp","saveTo:temp"});
+	//		Parameters.initializeParameterCollections(new String[]{"task:edu.southwestern.tasks.microrts.MicroRTSTask","hyperNEAT:true"
+	//				,"microRTSEnemySequence:edu.southwestern.tasks.microrts.iterativeevolution.HardeningEnemySequence",
+	//				"microRTSMapSequence:edu.southwestern.tasks.microrts.iterativeevolution.GrowingMapSequence","log:microRTS-temp","saveTo:temp"});
 	//		MMNEAT.loadClasses();
 	//		Genotype<T> g = PopulationUtil.extractGenotype(NNfile);
 	//		nn = g.getPhenotype();

@@ -2,13 +2,13 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.utexas.cs.nn.tasks.testmatch.functions;
+package edu.southwestern.tasks.testmatch.functions;
 
-import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.tasks.testmatch.MatchDataTask;
-import edu.utexas.cs.nn.util.datastructures.Pair;
-import edu.utexas.cs.nn.util.random.RandomNumbers;
-import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
+import edu.southwestern.networks.Network;
+import edu.southwestern.tasks.testmatch.MatchDataTask;
+import edu.southwestern.util.datastructures.Pair;
+import edu.southwestern.util.random.RandomNumbers;
+import edu.southwestern.util.stats.StatisticsUtilities;
 import java.util.ArrayList;
 
 /**

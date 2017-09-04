@@ -1,15 +1,15 @@
-package edu.utexas.cs.nn.scores;
+package edu.southwestern.scores;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import edu.utexas.cs.nn.evolution.ScoreHistory;
-import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.util.ClassCreation;
-import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
-import edu.utexas.cs.nn.util.stats.Statistic;
+import edu.southwestern.evolution.ScoreHistory;
+import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.parameters.CommonConstants;
+import edu.southwestern.util.ClassCreation;
+import edu.southwestern.util.datastructures.ArrayUtil;
+import edu.southwestern.util.stats.Statistic;
 
 /**
  * This is a class that keeps track of an agent's score, the number of

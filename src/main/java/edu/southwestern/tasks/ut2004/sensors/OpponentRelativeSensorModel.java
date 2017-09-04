@@ -1,6 +1,6 @@
-package edu.utexas.cs.nn.tasks.ut2004.sensors;
+package edu.southwestern.tasks.ut2004.sensors;
 
-import edu.utexas.cs.nn.tasks.ut2004.sensors.blocks.*;
+import edu.southwestern.tasks.ut2004.sensors.blocks.*;
 
 /**
  *

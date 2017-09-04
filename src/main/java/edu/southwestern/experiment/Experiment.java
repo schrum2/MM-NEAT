@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.experiment;
+package edu.southwestern.experiment;
 
 /**
  * Interface for all experiments. Experiments can either be runs that conduct

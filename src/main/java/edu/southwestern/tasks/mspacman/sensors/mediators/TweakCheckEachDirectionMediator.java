@@ -2,30 +2,30 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.utexas.cs.nn.tasks.mspacman.sensors.mediators;
+package edu.southwestern.tasks.mspacman.sensors.mediators;
 
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.VariableDirectionBlockLoadedInputOutputMediator;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.booleansensors.BiasBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.counting.CountLairGhostsBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.VariableDirectionCountJunctionOptionsBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.VariableDirectionPillsBeforeJunctionBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.blocking.VariableDirectionPowerPillBlocksEdibleGhostBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.blocking.VariableDirectionPowerPillBlocksJunctionBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.blocking.VariableDirectionPowerPillBlocksThreatGhostBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.counts.*;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.distance.VariableDirectionPillDistanceBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.distance.VariableDirectionPowerPillDistanceBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.distance.frompowerpill.VariableDirectionAverageDistanceFromPowerPillToThreatGhostBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.distance.frompowerpill.VariableDirectionMaxDistanceFromPowerPillToThreatGhostBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.distance.frompowerpill.VariableDirectionMinDistanceFromPowerPillToThreatGhostBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.distance.ghosts.VariableDirectionEdibleGhostDistanceBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.distance.ghosts.VariableDirectionThreatGhostDistanceBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.distance.ghosts.incoming.VariableDirectionIncomingEdibleGhostDistanceBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.distance.ghosts.incoming.VariableDirectionIncomingThreatGhostDistanceBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.opposite.VariableDirectionOtherDirectionsStatisticBlock;
-import edu.utexas.cs.nn.util.stats.Max;
-import edu.utexas.cs.nn.util.stats.Min;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.mspacman.sensors.VariableDirectionBlockLoadedInputOutputMediator;
+import edu.southwestern.tasks.mspacman.sensors.blocks.booleansensors.BiasBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.counting.CountLairGhostsBlock;
+import edu.southwestern.tasks.mspacman.sensors.directional.VariableDirectionCountJunctionOptionsBlock;
+import edu.southwestern.tasks.mspacman.sensors.directional.VariableDirectionPillsBeforeJunctionBlock;
+import edu.southwestern.tasks.mspacman.sensors.directional.blocking.VariableDirectionPowerPillBlocksEdibleGhostBlock;
+import edu.southwestern.tasks.mspacman.sensors.directional.blocking.VariableDirectionPowerPillBlocksJunctionBlock;
+import edu.southwestern.tasks.mspacman.sensors.directional.blocking.VariableDirectionPowerPillBlocksThreatGhostBlock;
+import edu.southwestern.tasks.mspacman.sensors.directional.counts.*;
+import edu.southwestern.tasks.mspacman.sensors.directional.distance.VariableDirectionPillDistanceBlock;
+import edu.southwestern.tasks.mspacman.sensors.directional.distance.VariableDirectionPowerPillDistanceBlock;
+import edu.southwestern.tasks.mspacman.sensors.directional.distance.frompowerpill.VariableDirectionAverageDistanceFromPowerPillToThreatGhostBlock;
+import edu.southwestern.tasks.mspacman.sensors.directional.distance.frompowerpill.VariableDirectionMaxDistanceFromPowerPillToThreatGhostBlock;
+import edu.southwestern.tasks.mspacman.sensors.directional.distance.frompowerpill.VariableDirectionMinDistanceFromPowerPillToThreatGhostBlock;
+import edu.southwestern.tasks.mspacman.sensors.directional.distance.ghosts.VariableDirectionEdibleGhostDistanceBlock;
+import edu.southwestern.tasks.mspacman.sensors.directional.distance.ghosts.VariableDirectionThreatGhostDistanceBlock;
+import edu.southwestern.tasks.mspacman.sensors.directional.distance.ghosts.incoming.VariableDirectionIncomingEdibleGhostDistanceBlock;
+import edu.southwestern.tasks.mspacman.sensors.directional.distance.ghosts.incoming.VariableDirectionIncomingThreatGhostDistanceBlock;
+import edu.southwestern.tasks.mspacman.sensors.directional.opposite.VariableDirectionOtherDirectionsStatisticBlock;
+import edu.southwestern.util.stats.Max;
+import edu.southwestern.util.stats.Min;
 
 /**
  *

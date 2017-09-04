@@ -1,10 +1,10 @@
-package edu.utexas.cs.nn.tasks.mspacman.sensors.mediators.components;
+package edu.southwestern.tasks.mspacman.sensors.mediators.components;
 
-import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.BlockLoadedInputOutputMediator;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.booleansensors.BiasBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.booleansensors.GhostReversalBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.booleansensors.HittingWallBlock;
+import edu.southwestern.parameters.CommonConstants;
+import edu.southwestern.tasks.mspacman.sensors.BlockLoadedInputOutputMediator;
+import edu.southwestern.tasks.mspacman.sensors.blocks.booleansensors.BiasBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.booleansensors.GhostReversalBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.booleansensors.HittingWallBlock;
 
 /**
  * Contains only sensor blocks that are absolutely necessary to all other

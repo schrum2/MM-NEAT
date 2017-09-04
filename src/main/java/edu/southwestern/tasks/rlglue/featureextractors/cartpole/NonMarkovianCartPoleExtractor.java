@@ -1,6 +1,6 @@
-package edu.utexas.cs.nn.tasks.rlglue.featureextractors.cartpole;
+package edu.southwestern.tasks.rlglue.featureextractors.cartpole;
 
-import edu.utexas.cs.nn.tasks.rlglue.featureextractors.FeatureExtractor;
+import edu.southwestern.tasks.rlglue.featureextractors.FeatureExtractor;
 import org.rlcommunity.rlglue.codec.types.Observation;
 
 /**

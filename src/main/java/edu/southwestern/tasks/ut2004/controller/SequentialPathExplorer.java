@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.tasks.ut2004.controller;
+package edu.southwestern.tasks.ut2004.controller;
 
 import cz.cuni.amis.pogamut.base.agent.navigation.IPathExecutorState;
 import cz.cuni.amis.pogamut.base.agent.navigation.PathExecutorState;
@@ -9,9 +9,9 @@ import cz.cuni.amis.pogamut.ut2004.agent.navigation.UT2004PathExecutor;
 import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004BotModuleController;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.NavPoint;
 import cz.cuni.amis.utils.flag.FlagListener;
-import edu.utexas.cs.nn.tasks.ut2004.actions.BotAction;
-import edu.utexas.cs.nn.tasks.ut2004.actions.EmptyAction;
-import edu.utexas.cs.nn.tasks.ut2004.actions.NavigateToLocationAction;
+import edu.southwestern.tasks.ut2004.actions.BotAction;
+import edu.southwestern.tasks.ut2004.actions.EmptyAction;
+import edu.southwestern.tasks.ut2004.actions.NavigateToLocationAction;
 
 /**
  *

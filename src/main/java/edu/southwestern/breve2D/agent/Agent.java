@@ -1,9 +1,9 @@
-package edu.utexas.cs.nn.breve2D.agent;
+package edu.southwestern.breve2D.agent;
 
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.util.CartesianGeometricUtilities;
-import edu.utexas.cs.nn.util.util2D.ILocated2D;
-import edu.utexas.cs.nn.util.util2D.Tuple2D;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.util.CartesianGeometricUtilities;
+import edu.southwestern.util.util2D.ILocated2D;
+import edu.southwestern.util.util2D.Tuple2D;
 
 /**
  *

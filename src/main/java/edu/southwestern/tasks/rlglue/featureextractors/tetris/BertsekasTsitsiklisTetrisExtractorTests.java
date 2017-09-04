@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.tasks.rlglue.featureextractors.tetris;
+package edu.southwestern.tasks.rlglue.featureextractors.tetris;
 
 import static org.junit.Assert.*;
 
@@ -8,7 +8,7 @@ import org.junit.Test;
 import org.rlcommunity.environments.tetris.TetrisState;
 import org.rlcommunity.rlglue.codec.types.Observation;
 
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
+import edu.southwestern.MMNEAT.MMNEAT;
 
 public class BertsekasTsitsiklisTetrisExtractorTests {
 

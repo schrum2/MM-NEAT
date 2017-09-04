@@ -1,7 +1,7 @@
-package edu.utexas.cs.nn.gridTorus;
+package edu.southwestern.gridTorus;
 
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.util.datastructures.ArrayUtil;
 
 /**
  * Description of some key game components such as converging and prey being

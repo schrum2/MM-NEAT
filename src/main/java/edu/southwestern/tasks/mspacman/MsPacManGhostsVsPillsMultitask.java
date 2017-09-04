@@ -1,6 +1,6 @@
-package edu.utexas.cs.nn.tasks.mspacman;
+package edu.southwestern.tasks.mspacman;
 
-import edu.utexas.cs.nn.networks.Network;
+import edu.southwestern.networks.Network;
 
 /**
  * One pacman eval consists of two separate evals: One in the regular game, and

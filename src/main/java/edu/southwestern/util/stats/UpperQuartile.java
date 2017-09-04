@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.util.stats;
+package edu.southwestern.util.stats;
 
 /**
  * Computes upper quartile value, also known as 75th percentile. This is a

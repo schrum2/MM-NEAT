@@ -1,7 +1,7 @@
-package edu.utexas.cs.nn.tasks.mspacman.multitask;
+package edu.southwestern.tasks.mspacman.multitask;
 
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.PowerPillAvoidanceBlock;
-import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
+import edu.southwestern.tasks.mspacman.sensors.blocks.PowerPillAvoidanceBlock;
+import edu.southwestern.util.datastructures.ArrayUtil;
 
 /**
  * A Mode selector which selects between 5 modes respectively based on: 0) if

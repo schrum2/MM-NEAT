@@ -2,9 +2,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.counting;
+package edu.southwestern.tasks.mspacman.sensors.blocks.counting;
 
-import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
+import edu.southwestern.tasks.mspacman.facades.GameFacade;
 
 /**
  *

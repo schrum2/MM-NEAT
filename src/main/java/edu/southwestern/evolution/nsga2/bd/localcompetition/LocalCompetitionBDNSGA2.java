@@ -1,11 +1,11 @@
-package edu.utexas.cs.nn.evolution.nsga2.bd.localcompetition;
+package edu.southwestern.evolution.nsga2.bd.localcompetition;
 
-import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.evolution.nsga2.bd.BDNSGA2;
-import edu.utexas.cs.nn.log.MMNEATLog;
-import edu.utexas.cs.nn.scores.MultiObjectiveScore;
-import edu.utexas.cs.nn.scores.Score;
-import edu.utexas.cs.nn.util.ClassCreation;
+import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.evolution.nsga2.bd.BDNSGA2;
+import edu.southwestern.log.MMNEATLog;
+import edu.southwestern.scores.MultiObjectiveScore;
+import edu.southwestern.scores.Score;
+import edu.southwestern.util.ClassCreation;
 import java.util.ArrayList;
 
 /**

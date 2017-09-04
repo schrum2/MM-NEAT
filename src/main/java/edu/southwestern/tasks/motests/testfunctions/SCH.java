@@ -1,6 +1,6 @@
-package edu.utexas.cs.nn.tasks.motests.testfunctions;
+package edu.southwestern.tasks.motests.testfunctions;
 
-import edu.utexas.cs.nn.evolution.fitness.FitnessFunction;
+import edu.southwestern.evolution.fitness.FitnessFunction;
 
 /**
  *

@@ -1,7 +1,7 @@
-package edu.utexas.cs.nn.tasks.breve2D;
+package edu.southwestern.tasks.breve2D;
 
-import edu.utexas.cs.nn.breve2D.dynamics.Breve2DDynamics;
-import edu.utexas.cs.nn.networks.ModeSelector;
+import edu.southwestern.breve2D.dynamics.Breve2DDynamics;
+import edu.southwestern.networks.ModeSelector;
 
 /**
  * Works for any MultitaskDynamics, but the correct number of modes still needs

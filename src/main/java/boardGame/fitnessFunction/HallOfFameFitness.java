@@ -9,10 +9,10 @@ import boardGame.agents.HeuristicBoardGamePlayer;
 import boardGame.featureExtractor.BoardGameFeatureExtractor;
 import boardGame.heuristics.BoardGameHeuristic;
 import boardGame.heuristics.NNBoardGameHeuristic;
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.util.ClassCreation;
-import edu.utexas.cs.nn.util.datastructures.Pair;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.networks.Network;
+import edu.southwestern.util.ClassCreation;
+import edu.southwestern.util.datastructures.Pair;
 
 public class HallOfFameFitness<T extends Network, S extends BoardGameState> implements BoardGameFitnessFunction<S> {
 	// This constant is problematic. It assumes the Hall of Fame fitness will always be index 0,

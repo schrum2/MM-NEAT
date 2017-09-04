@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.tasks.microrts.evaluation;
+package edu.southwestern.tasks.microrts.evaluation;
 
 import static org.junit.Assert.assertArrayEquals;
 
@@ -8,7 +8,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import edu.utexas.cs.nn.parameters.Parameters;
+import edu.southwestern.parameters.Parameters;
 import micro.rts.GameState;
 import micro.rts.PhysicalGameState;
 import micro.rts.Player;
@@ -52,7 +52,7 @@ public class NNComplexEvaluationFunctionTest {
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		Parameters.initializeParameterCollections(new String[]{"watch:false","io:false","netio:false","task:edu.utexas.cs.nn.tasks.microrts.MicroRTSTask",
+		Parameters.initializeParameterCollections(new String[]{"watch:false","io:false","netio:false","task:edu.southwestern.tasks.microrts.MicroRTSTask",
 				"mRTSMobileUnits:true","mRTSBuildings:true", "mRTSMyMobileUnits:true","mRTSMyBuildings:true","mRTSOpponentsMobileUnits:true",
 				"mRTSOpponentsBuildings:true","mRTSMyAll:true","mRTSOpponentsAll:true","mRTSAll:true","mRTSResources:true","mRTSTerrain:true",
 				"mRTSObjectivePath:true","mRTSAllSqrt3MobileUnits:true","mRTSMyBuildingGradientMobileUnits:true",

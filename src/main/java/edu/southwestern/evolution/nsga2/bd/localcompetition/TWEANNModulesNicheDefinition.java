@@ -2,11 +2,11 @@
  * Method for determining what other members of a population are in the same niche
  * for local competition
  */
-package edu.utexas.cs.nn.evolution.nsga2.bd.localcompetition;
+package edu.southwestern.evolution.nsga2.bd.localcompetition;
 
-import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
-import edu.utexas.cs.nn.networks.TWEANN;
-import edu.utexas.cs.nn.scores.Score;
+import edu.southwestern.evolution.genotypes.TWEANNGenotype;
+import edu.southwestern.networks.TWEANN;
+import edu.southwestern.scores.Score;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.ArrayList;

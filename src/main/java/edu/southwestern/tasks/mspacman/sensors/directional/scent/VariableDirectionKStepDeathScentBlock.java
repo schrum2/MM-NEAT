@@ -1,8 +1,8 @@
-package edu.utexas.cs.nn.tasks.mspacman.sensors.directional.scent;
+package edu.southwestern.tasks.mspacman.sensors.directional.scent;
 
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.VariableDirectionBlock;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.mspacman.facades.GameFacade;
+import edu.southwestern.tasks.mspacman.sensors.directional.VariableDirectionBlock;
 import java.util.*;
 import pacman.Executor;
 import pacman.game.Constants;

@@ -1,6 +1,6 @@
 package pacman.controllers.examples;
 
-import edu.utexas.cs.nn.parameters.Parameters;
+import edu.southwestern.parameters.Parameters;
 import java.util.EnumMap;
 import pacman.controllers.NewGhostController;
 import pacman.game.Constants.DM;

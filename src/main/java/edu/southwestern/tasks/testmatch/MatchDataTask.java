@@ -3,18 +3,18 @@
  * and open the template in the editor.
  */
 
-package edu.utexas.cs.nn.tasks.testmatch;
+package edu.southwestern.tasks.testmatch;
 
-import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.networks.NetworkTask;
-import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.scores.Score;
-import edu.utexas.cs.nn.tasks.LonerTask;
-import edu.utexas.cs.nn.util.MiscUtil;
-import edu.utexas.cs.nn.util.datastructures.Pair;
-import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
+import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.networks.Network;
+import edu.southwestern.networks.NetworkTask;
+import edu.southwestern.parameters.CommonConstants;
+import edu.southwestern.scores.Score;
+import edu.southwestern.tasks.LonerTask;
+import edu.southwestern.util.MiscUtil;
+import edu.southwestern.util.datastructures.Pair;
+import edu.southwestern.util.stats.StatisticsUtilities;
 import java.util.ArrayList;
 import java.util.Arrays;
 

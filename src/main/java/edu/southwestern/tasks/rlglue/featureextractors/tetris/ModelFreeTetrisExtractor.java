@@ -1,6 +1,6 @@
-package edu.utexas.cs.nn.tasks.rlglue.featureextractors.tetris;
+package edu.southwestern.tasks.rlglue.featureextractors.tetris;
 
-import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
+import edu.southwestern.util.stats.StatisticsUtilities;
 
 import org.rlcommunity.environments.tetris.TetrisState;
 import org.rlcommunity.rlglue.codec.types.Observation;

@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.tasks.pinball;
+package edu.southwestern.tasks.pinball;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;

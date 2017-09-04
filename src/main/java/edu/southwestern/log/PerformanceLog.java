@@ -1,8 +1,8 @@
-package edu.utexas.cs.nn.log;
+package edu.southwestern.log;
 
-import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.scores.Score;
-import edu.utexas.cs.nn.tasks.mspacman.agentcontroller.pacman.NNPacManController;
+import edu.southwestern.parameters.CommonConstants;
+import edu.southwestern.scores.Score;
+import edu.southwestern.tasks.mspacman.agentcontroller.pacman.NNPacManController;
 import java.util.ArrayList;
 
 /**

@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.tasks.gvgai;
+package edu.southwestern.tasks.gvgai;
 
 import gvgai.core.game.StateObservation;
 

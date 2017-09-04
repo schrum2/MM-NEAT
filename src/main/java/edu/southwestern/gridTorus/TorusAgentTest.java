@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.gridTorus;
+package edu.southwestern.gridTorus;
 
 import static org.junit.Assert.*;
 
@@ -6,8 +6,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.util.util2D.Tuple2D;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.util.util2D.Tuple2D;
 
 public class TorusAgentTest {
 

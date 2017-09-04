@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.util.graphics;
+package edu.southwestern.util.graphics;
 
 //
 //GifSequenceWriter.java

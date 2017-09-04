@@ -4,9 +4,9 @@
  * and open the template in the editor.
  */
 
-package edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.ghosts;
+package edu.southwestern.tasks.mspacman.sensors.blocks.ghosts;
 
-import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
+import edu.southwestern.tasks.mspacman.facades.GameFacade;
 
 /**
  *

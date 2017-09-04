@@ -1,6 +1,6 @@
-package edu.utexas.cs.nn.tasks.rlglue.featureextractors;
+package edu.southwestern.tasks.rlglue.featureextractors;
 
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
+import edu.southwestern.MMNEAT.MMNEAT;
 import org.rlcommunity.rlglue.codec.taskspec.TaskSpec;
 import org.rlcommunity.rlglue.codec.types.Observation;
 

@@ -1,8 +1,8 @@
-package edu.utexas.cs.nn.evolution.crossover;
+package edu.southwestern.evolution.crossover;
 
-import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.util.datastructures.Pair;
-import edu.utexas.cs.nn.util.random.RandomNumbers;
+import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.util.datastructures.Pair;
+import edu.southwestern.util.random.RandomNumbers;
 import java.util.ArrayList;
 
 /**

@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.tasks.rlglue.mountaincar;
+package edu.southwestern.tasks.rlglue.mountaincar;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -18,8 +18,8 @@ import org.rlcommunity.environments.mountaincar.messages.MCGoalResponse;
 import org.rlcommunity.environments.mountaincar.messages.MCHeightRequest;
 import org.rlcommunity.environments.mountaincar.messages.MCHeightResponse;
 
-import edu.utexas.cs.nn.networks.TWEANN;
-import edu.utexas.cs.nn.util.graphics.DrawingPanel;
+import edu.southwestern.networks.TWEANN;
+import edu.southwestern.util.graphics.DrawingPanel;
 import rlVizLib.messaging.environment.EnvRangeRequest;
 import rlVizLib.messaging.environment.EnvRangeResponse;
 import rlVizLib.utilities.UtilityShop;

@@ -3,11 +3,11 @@
  * and open the template in the editor.
  */
 
-package edu.utexas.cs.nn.tasks.mspacman.sensors.directional.scent;
+package edu.southwestern.tasks.mspacman.sensors.directional.scent;
 
-import edu.utexas.cs.nn.tasks.mspacman.data.ScentPath;
-import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.VariableDirectionBlock;
+import edu.southwestern.tasks.mspacman.data.ScentPath;
+import edu.southwestern.tasks.mspacman.facades.GameFacade;
+import edu.southwestern.tasks.mspacman.sensors.directional.VariableDirectionBlock;
 
 /**
  *

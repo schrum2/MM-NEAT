@@ -1,6 +1,6 @@
-package edu.utexas.cs.nn.util.random;
+package edu.southwestern.util.random;
 
-import edu.utexas.cs.nn.parameters.Parameters;
+import edu.southwestern.parameters.Parameters;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;

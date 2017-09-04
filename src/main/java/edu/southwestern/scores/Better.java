@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.scores;
+package edu.southwestern.scores;
 
 /**
  * Interface that provides a constructor for a pair of better objects

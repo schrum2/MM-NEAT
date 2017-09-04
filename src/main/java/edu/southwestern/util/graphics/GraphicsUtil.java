@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.util.graphics;
+package edu.southwestern.util.graphics;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -6,14 +6,14 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
-import edu.utexas.cs.nn.networks.ActivationFunctions;
-import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.tasks.interactive.picbreeder.PicbreederTask;
-import edu.utexas.cs.nn.util.CartesianGeometricUtilities;
-import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
-import edu.utexas.cs.nn.util.sound.SoundToArray;
-import edu.utexas.cs.nn.util.util2D.ILocated2D;
-import edu.utexas.cs.nn.util.util2D.Tuple2D;
+import edu.southwestern.networks.ActivationFunctions;
+import edu.southwestern.networks.Network;
+import edu.southwestern.tasks.interactive.picbreeder.PicbreederTask;
+import edu.southwestern.util.CartesianGeometricUtilities;
+import edu.southwestern.util.datastructures.ArrayUtil;
+import edu.southwestern.util.sound.SoundToArray;
+import edu.southwestern.util.util2D.ILocated2D;
+import edu.southwestern.util.util2D.Tuple2D;
 
 /**
  * Several useful methods for creating and manipulating images.

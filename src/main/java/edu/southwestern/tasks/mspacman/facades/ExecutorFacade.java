@@ -1,6 +1,6 @@
-package edu.utexas.cs.nn.tasks.mspacman.facades;
+package edu.southwestern.tasks.mspacman.facades;
 
-import edu.utexas.cs.nn.parameters.Parameters;
+import edu.southwestern.parameters.Parameters;
 import pacman.Executor;
 
 /**

@@ -1,7 +1,7 @@
-package edu.utexas.cs.nn.networks;
+package edu.southwestern.networks;
 
-import edu.utexas.cs.nn.evolution.genotypes.MLPGenotype;
-import edu.utexas.cs.nn.parameters.Parameters;
+import edu.southwestern.evolution.genotypes.MLPGenotype;
+import edu.southwestern.parameters.Parameters;
 import java.util.Arrays;
 
 /**

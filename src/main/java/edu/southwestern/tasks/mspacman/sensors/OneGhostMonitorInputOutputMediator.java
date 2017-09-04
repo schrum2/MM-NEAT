@@ -1,9 +1,9 @@
-package edu.utexas.cs.nn.tasks.mspacman.sensors;
+package edu.southwestern.tasks.mspacman.sensors;
 
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.SpecificGhostBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.SplitSpecificGhostBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.booleansensors.BiasBlock;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.mspacman.sensors.blocks.SpecificGhostBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.SplitSpecificGhostBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.booleansensors.BiasBlock;
 
 /**
  * Monitors a single ghost

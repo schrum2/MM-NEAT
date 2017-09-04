@@ -1,12 +1,12 @@
-package edu.utexas.cs.nn.tasks.mspacman;
+package edu.southwestern.tasks.mspacman;
 
-import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.evolution.nsga2.tug.TUGTask;
-import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.networks.NetworkTask;
-import edu.utexas.cs.nn.scores.Score;
-import edu.utexas.cs.nn.tasks.GroupTask;
-import edu.utexas.cs.nn.tasks.SinglePopulationTask;
+import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.evolution.nsga2.tug.TUGTask;
+import edu.southwestern.networks.Network;
+import edu.southwestern.networks.NetworkTask;
+import edu.southwestern.scores.Score;
+import edu.southwestern.tasks.GroupTask;
+import edu.southwestern.tasks.SinglePopulationTask;
 import java.util.ArrayList;
 
 /**

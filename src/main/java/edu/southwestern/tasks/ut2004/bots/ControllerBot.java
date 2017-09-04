@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.tasks.ut2004.bots;
+package edu.southwestern.tasks.ut2004.bots;
 
 import cz.cuni.amis.pogamut.base.agent.params.IRemoteAgentParameters;
 import cz.cuni.amis.pogamut.base.utils.Pogamut;
@@ -15,11 +15,11 @@ import cz.cuni.amis.pogamut.ut2004.server.IUT2004Server;
 import cz.cuni.amis.pogamut.ut2004.utils.MultipleUT2004BotRunner;
 import cz.cuni.amis.pogamut.ut2004.utils.PogamutUT2004Property;
 import cz.cuni.amis.utils.exception.PogamutException;
-import edu.utexas.cs.nn.tasks.ut2004.actions.BotAction;
-import edu.utexas.cs.nn.tasks.ut2004.controller.BotController;
-import edu.utexas.cs.nn.tasks.ut2004.controller.DummyController;
-import edu.utexas.cs.nn.tasks.ut2004.controller.RandomNavPointPathExplorer;
-import edu.utexas.cs.nn.tasks.ut2004.server.BotKiller;
+import edu.southwestern.tasks.ut2004.actions.BotAction;
+import edu.southwestern.tasks.ut2004.controller.BotController;
+import edu.southwestern.tasks.ut2004.controller.DummyController;
+import edu.southwestern.tasks.ut2004.controller.RandomNavPointPathExplorer;
+import edu.southwestern.tasks.ut2004.server.BotKiller;
 
 @AgentScoped
 public class ControllerBot extends UT2004BotModuleController {

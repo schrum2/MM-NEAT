@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.tasks.mspacman.multitask;
+package edu.southwestern.tasks.mspacman.multitask;
 
 /**
  * @author Jacob Schrum One module if any pills are present, and another module

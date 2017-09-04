@@ -18,8 +18,8 @@
  */
 package org.rlcommunity.environments.puddleworld;
 
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.tasks.rlglue.RLGlueEnvironment;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.rlglue.RLGlueEnvironment;
 import java.awt.geom.Point2D;
 import java.net.URL;
 import java.util.ArrayList;

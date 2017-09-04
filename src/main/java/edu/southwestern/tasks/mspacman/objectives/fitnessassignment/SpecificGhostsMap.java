@@ -2,9 +2,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.utexas.cs.nn.tasks.mspacman.objectives.fitnessassignment;
+package edu.southwestern.tasks.mspacman.objectives.fitnessassignment;
 
-import edu.utexas.cs.nn.parameters.CommonConstants;
+import edu.southwestern.parameters.CommonConstants;
 
 /**
  *

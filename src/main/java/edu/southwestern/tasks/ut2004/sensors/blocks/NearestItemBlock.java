@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.utexas.cs.nn.tasks.ut2004.sensors.blocks;
+package edu.southwestern.tasks.ut2004.sensors.blocks;
 
 import cz.cuni.amis.pogamut.base.communication.worldview.event.IWorldEventListener;
 import cz.cuni.amis.pogamut.base.utils.math.DistanceUtils;
@@ -13,7 +13,7 @@ import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004BotModuleController;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.Item;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.ItemPickedUp;
 import cz.cuni.amis.utils.collections.MyCollections;
-import edu.utexas.cs.nn.tasks.ut2004.Util;
+import edu.southwestern.tasks.ut2004.Util;
 import java.util.List;
 
 /**

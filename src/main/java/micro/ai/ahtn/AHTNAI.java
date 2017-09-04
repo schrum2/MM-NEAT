@@ -28,8 +28,8 @@ import micro.ai.evaluation.EvaluationFunction;
 import micro.ai.evaluation.SimpleSqrtEvaluationFunction3;
 import java.util.ArrayList;
 import micro.rts.units.UnitTypeTable;
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.tasks.microrts.*;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.tasks.microrts.*;
 /**
  *
  * @author santi

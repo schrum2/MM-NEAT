@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.tasks;
+package edu.southwestern.tasks;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,21 +15,21 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
-import edu.utexas.cs.nn.evolution.metaheuristics.Metaheuristic;
-import edu.utexas.cs.nn.evolution.mulambda.MuLambda;
-import edu.utexas.cs.nn.evolution.ucb.UCB1Comparator;
-import edu.utexas.cs.nn.log.EvalLog;
-import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.scores.Score;
-import edu.utexas.cs.nn.tasks.mspacman.MsPacManTask;
-import edu.utexas.cs.nn.util.PopulationUtil;
-import edu.utexas.cs.nn.util.datastructures.Pair;
-import edu.utexas.cs.nn.util.file.FileUtilities;
-import edu.utexas.cs.nn.util.graphics.DrawingPanel;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.evolution.genotypes.TWEANNGenotype;
+import edu.southwestern.evolution.metaheuristics.Metaheuristic;
+import edu.southwestern.evolution.mulambda.MuLambda;
+import edu.southwestern.evolution.ucb.UCB1Comparator;
+import edu.southwestern.log.EvalLog;
+import edu.southwestern.parameters.CommonConstants;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.scores.Score;
+import edu.southwestern.tasks.mspacman.MsPacManTask;
+import edu.southwestern.util.PopulationUtil;
+import edu.southwestern.util.datastructures.Pair;
+import edu.southwestern.util.file.FileUtilities;
+import edu.southwestern.util.graphics.DrawingPanel;
 import wox.serial.Easy;
 
 /**

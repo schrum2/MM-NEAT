@@ -1,9 +1,9 @@
-package edu.utexas.cs.nn.tasks.mspacman.sensors.mediators.components;
+package edu.southwestern.tasks.mspacman.sensors.mediators.components;
 
-import edu.utexas.cs.nn.tasks.mspacman.sensors.BlockLoadedInputOutputMediator;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.raw.CurrentSectorBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.raw.MirroredXPosBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.raw.MirroredYPosBlock;
+import edu.southwestern.tasks.mspacman.sensors.BlockLoadedInputOutputMediator;
+import edu.southwestern.tasks.mspacman.sensors.blocks.raw.CurrentSectorBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.raw.MirroredXPosBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.raw.MirroredYPosBlock;
 
 /**
  *

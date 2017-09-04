@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.tasks.mario;
+package edu.southwestern.tasks.mario;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,21 +9,21 @@ import ch.idsia.tools.CmdLineOptions;
 import ch.idsia.tools.EvaluationInfo;
 import ch.idsia.tools.EvaluationOptions;
 import ch.idsia.tools.Evaluator;
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
-import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
-import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.networks.NetworkTask;
-import edu.utexas.cs.nn.networks.TWEANN;
-import edu.utexas.cs.nn.networks.hyperneat.HyperNEATTask;
-import edu.utexas.cs.nn.networks.hyperneat.Substrate;
-import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.tasks.NoisyLonerTask;
-import edu.utexas.cs.nn.util.datastructures.Pair;
-import edu.utexas.cs.nn.util.datastructures.Triple;
-import edu.utexas.cs.nn.util.random.RandomNumbers;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.EvolutionaryHistory;
+import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.evolution.genotypes.TWEANNGenotype;
+import edu.southwestern.networks.Network;
+import edu.southwestern.networks.NetworkTask;
+import edu.southwestern.networks.TWEANN;
+import edu.southwestern.networks.hyperneat.HyperNEATTask;
+import edu.southwestern.networks.hyperneat.Substrate;
+import edu.southwestern.parameters.CommonConstants;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.NoisyLonerTask;
+import edu.southwestern.util.datastructures.Pair;
+import edu.southwestern.util.datastructures.Triple;
+import edu.southwestern.util.random.RandomNumbers;
 
 public class MarioTask<T extends Network> extends NoisyLonerTask<T>implements NetworkTask, HyperNEATTask {
 
@@ -147,7 +147,7 @@ public class MarioTask<T extends Network> extends NoisyLonerTask<T>implements Ne
      */
     public static void main(String[] args){
     	Parameters.initializeParameterCollections(new String[]{"io:false", "netio:false", 
-    			"task:edu.utexas.cs.nn.tasks.mario.MarioTask", "marioInputStartX:-3", "marioInputStartY:-2", 
+    			"task:edu.southwestern.tasks.mario.MarioTask", "marioInputStartX:-3", "marioInputStartY:-2", 
     			"marioInputWidth:12", "marioInputHeight:5", "showMarioInputs:false", "moMario:true", "marioJumpTimeout:20", "marioStuckTimeout:100"});
     	MMNEAT.loadClasses();
     	EvolutionaryHistory.initArchetype(0);

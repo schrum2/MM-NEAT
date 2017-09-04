@@ -1,9 +1,9 @@
-package edu.utexas.cs.nn.tasks.gridTorus;
+package edu.southwestern.tasks.gridTorus;
 
-import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.gridTorus.controllers.TorusPredPreyController;
-import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.parameters.Parameters;
+import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.gridTorus.controllers.TorusPredPreyController;
+import edu.southwestern.networks.Network;
+import edu.southwestern.parameters.Parameters;
 
 /**
  * The following class sets up tasks for

@@ -1,6 +1,6 @@
-package edu.utexas.cs.nn.evolution.nsga2.bd;
+package edu.southwestern.evolution.nsga2.bd;
 
-import edu.utexas.cs.nn.log.StatisticsLog;
+import edu.southwestern.log.StatisticsLog;
 import java.util.ArrayList;
 
 /**

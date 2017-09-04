@@ -1,13 +1,13 @@
-package edu.utexas.cs.nn.tasks.mspacman.data;
+package edu.southwestern.tasks.mspacman.data;
 
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.tasks.mspacman.agentcontroller.pacman.NNPacManController;
-import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
-import edu.utexas.cs.nn.util.file.FileUtilities;
-import edu.utexas.cs.nn.util.file.PrefixFilter;
-import edu.utexas.cs.nn.util.random.RandomNumbers;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.parameters.CommonConstants;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.mspacman.agentcontroller.pacman.NNPacManController;
+import edu.southwestern.tasks.mspacman.facades.GameFacade;
+import edu.southwestern.util.file.FileUtilities;
+import edu.southwestern.util.file.PrefixFilter;
+import edu.southwestern.util.random.RandomNumbers;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;

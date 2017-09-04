@@ -2,10 +2,10 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.utexas.cs.nn.tasks.ut2004.fitness;
+package edu.southwestern.tasks.ut2004.fitness;
 
-import edu.utexas.cs.nn.evolution.Organism;
-import edu.utexas.cs.nn.networks.Network;
+import edu.southwestern.evolution.Organism;
+import edu.southwestern.networks.Network;
 
 /**
  *

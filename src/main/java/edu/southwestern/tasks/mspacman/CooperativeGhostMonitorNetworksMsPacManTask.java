@@ -1,11 +1,11 @@
-package edu.utexas.cs.nn.tasks.mspacman;
+package edu.southwestern.tasks.mspacman;
 
-import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.scores.Score;
-import edu.utexas.cs.nn.tasks.mspacman.init.MsPacManInitialization;
-import edu.utexas.cs.nn.tasks.mspacman.objectives.SpecificGhostScore;
+import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.networks.Network;
+import edu.southwestern.parameters.CommonConstants;
+import edu.southwestern.scores.Score;
+import edu.southwestern.tasks.mspacman.init.MsPacManInitialization;
+import edu.southwestern.tasks.mspacman.objectives.SpecificGhostScore;
 import java.util.ArrayList;
 
 /**

@@ -1,14 +1,14 @@
-package edu.utexas.cs.nn.tasks.motests;
+package edu.southwestern.tasks.motests;
 
-import edu.utexas.cs.nn.evolution.Organism;
-import edu.utexas.cs.nn.evolution.fitness.FitnessFunction;
-import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.evolution.genotypes.RealValuedGenotype;
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.scores.MultiObjectiveScore;
-import edu.utexas.cs.nn.scores.Score;
-import edu.utexas.cs.nn.tasks.LonerTask;
-import edu.utexas.cs.nn.tasks.motests.testfunctions.FunctionOptimizationSet;
+import edu.southwestern.evolution.Organism;
+import edu.southwestern.evolution.fitness.FitnessFunction;
+import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.evolution.genotypes.RealValuedGenotype;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.scores.MultiObjectiveScore;
+import edu.southwestern.scores.Score;
+import edu.southwestern.tasks.LonerTask;
+import edu.southwestern.tasks.motests.testfunctions.FunctionOptimizationSet;
 import java.util.ArrayList;
 
 /**

@@ -2,39 +2,39 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.utexas.cs.nn.tasks.mspacman.sensors.mediators;
+package edu.southwestern.tasks.mspacman.sensors.mediators;
 
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.VariableDirectionBlockLoadedInputOutputMediator;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.booleansensors.BiasBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.counting.CountEdibleGhostsBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.counting.CountThreatGhostsBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.counting.PillsRemainingBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.counting.PowerPillsRemainingBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.distance.FarthestThreatGhostDistanceBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.distance.NearestThreatGhostDistanceBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.time.EdibleTimesBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.VariableDirectionLastActivationBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.VariableDirectionLastDirectionBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.VariableDirectionPillsBeforeJunctionBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.counts.*;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.distance.VariableDirectionJunctionDistanceBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.distance.VariableDirectionPillDistanceBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.distance.VariableDirectionPowerPillDistanceBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.distance.farthest.VariableDirectionFarthestEdibleGhostDistanceBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.distance.farthest.VariableDirectionFarthestIncomingEdibleGhostDistanceBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.distance.farthest.VariableDirectionFarthestIncomingThreatGhostDistanceBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.distance.farthest.VariableDirectionFarthestThreatGhostDistanceBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.distance.fromjunction.VariableDirectionDistanceFromJunctionToGhostBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.distance.fromjunction.VariableDirectionDistanceFromJunctionToIncomingGhostBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.distance.ghosts.VariableDirectionEdibleGhostDistanceBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.distance.ghosts.VariableDirectionThreatGhostDistanceBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.distance.ghosts.incoming.VariableDirectionIncomingEdibleGhostDistanceBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.distance.ghosts.incoming.VariableDirectionIncomingThreatGhostDistanceBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.reachfirst.*;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.scent.VariableDirectionKStepDeathScentBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.scent.VariableDirectionPersonalScentBlock;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.mspacman.facades.GameFacade;
+import edu.southwestern.tasks.mspacman.sensors.VariableDirectionBlockLoadedInputOutputMediator;
+import edu.southwestern.tasks.mspacman.sensors.blocks.booleansensors.BiasBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.counting.CountEdibleGhostsBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.counting.CountThreatGhostsBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.counting.PillsRemainingBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.counting.PowerPillsRemainingBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.distance.FarthestThreatGhostDistanceBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.distance.NearestThreatGhostDistanceBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.time.EdibleTimesBlock;
+import edu.southwestern.tasks.mspacman.sensors.directional.VariableDirectionLastActivationBlock;
+import edu.southwestern.tasks.mspacman.sensors.directional.VariableDirectionLastDirectionBlock;
+import edu.southwestern.tasks.mspacman.sensors.directional.VariableDirectionPillsBeforeJunctionBlock;
+import edu.southwestern.tasks.mspacman.sensors.directional.counts.*;
+import edu.southwestern.tasks.mspacman.sensors.directional.distance.VariableDirectionJunctionDistanceBlock;
+import edu.southwestern.tasks.mspacman.sensors.directional.distance.VariableDirectionPillDistanceBlock;
+import edu.southwestern.tasks.mspacman.sensors.directional.distance.VariableDirectionPowerPillDistanceBlock;
+import edu.southwestern.tasks.mspacman.sensors.directional.distance.farthest.VariableDirectionFarthestEdibleGhostDistanceBlock;
+import edu.southwestern.tasks.mspacman.sensors.directional.distance.farthest.VariableDirectionFarthestIncomingEdibleGhostDistanceBlock;
+import edu.southwestern.tasks.mspacman.sensors.directional.distance.farthest.VariableDirectionFarthestIncomingThreatGhostDistanceBlock;
+import edu.southwestern.tasks.mspacman.sensors.directional.distance.farthest.VariableDirectionFarthestThreatGhostDistanceBlock;
+import edu.southwestern.tasks.mspacman.sensors.directional.distance.fromjunction.VariableDirectionDistanceFromJunctionToGhostBlock;
+import edu.southwestern.tasks.mspacman.sensors.directional.distance.fromjunction.VariableDirectionDistanceFromJunctionToIncomingGhostBlock;
+import edu.southwestern.tasks.mspacman.sensors.directional.distance.ghosts.VariableDirectionEdibleGhostDistanceBlock;
+import edu.southwestern.tasks.mspacman.sensors.directional.distance.ghosts.VariableDirectionThreatGhostDistanceBlock;
+import edu.southwestern.tasks.mspacman.sensors.directional.distance.ghosts.incoming.VariableDirectionIncomingEdibleGhostDistanceBlock;
+import edu.southwestern.tasks.mspacman.sensors.directional.distance.ghosts.incoming.VariableDirectionIncomingThreatGhostDistanceBlock;
+import edu.southwestern.tasks.mspacman.sensors.directional.reachfirst.*;
+import edu.southwestern.tasks.mspacman.sensors.directional.scent.VariableDirectionKStepDeathScentBlock;
+import edu.southwestern.tasks.mspacman.sensors.directional.scent.VariableDirectionPersonalScentBlock;
 
 /**
  * Based on Brandstetter's CIG 2012 paper, but replaced the "blocked" sensors

@@ -1,20 +1,20 @@
-package edu.utexas.cs.nn.tasks;
+package edu.southwestern.tasks;
 
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.evolution.genotypes.HyperNEATCPPNGenotype;
-import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
-import edu.utexas.cs.nn.evolution.lineage.Offspring;
-import edu.utexas.cs.nn.networks.TWEANN;
-import edu.utexas.cs.nn.networks.hyperneat.HyperNEATTask;
-import edu.utexas.cs.nn.networks.hyperneat.HyperNEATUtil;
-import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.tasks.breve2D.Breve2DTask;
-import edu.utexas.cs.nn.tasks.gridTorus.TorusPredPreyTask;
-import edu.utexas.cs.nn.util.graphics.DrawingPanel;
-import edu.utexas.cs.nn.util.graphics.Plot;
-import edu.utexas.cs.nn.util.datastructures.Pair;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.evolution.genotypes.HyperNEATCPPNGenotype;
+import edu.southwestern.evolution.genotypes.TWEANNGenotype;
+import edu.southwestern.evolution.lineage.Offspring;
+import edu.southwestern.networks.TWEANN;
+import edu.southwestern.networks.hyperneat.HyperNEATTask;
+import edu.southwestern.networks.hyperneat.HyperNEATUtil;
+import edu.southwestern.parameters.CommonConstants;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.breve2D.Breve2DTask;
+import edu.southwestern.tasks.gridTorus.TorusPredPreyTask;
+import edu.southwestern.util.graphics.DrawingPanel;
+import edu.southwestern.util.graphics.Plot;
+import edu.southwestern.util.datastructures.Pair;
 
 public class CommonTaskUtil {
 

@@ -2,11 +2,11 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.utexas.cs.nn.tasks.mspacman.ensemble;
+package edu.southwestern.tasks.mspacman.ensemble;
 
-import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
-import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
-import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
+import edu.southwestern.tasks.mspacman.facades.GameFacade;
+import edu.southwestern.util.datastructures.ArrayUtil;
+import edu.southwestern.util.stats.StatisticsUtilities;
 import java.util.Arrays;
 
 /**

@@ -2,9 +2,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.utexas.cs.nn.evolution.nsga2.bd.vectors;
+package edu.southwestern.evolution.nsga2.bd.vectors;
 
-import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
+import edu.southwestern.util.stats.StatisticsUtilities;
 import java.util.BitSet;
 import java.util.ArrayList;
 

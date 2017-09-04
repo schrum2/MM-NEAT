@@ -1,9 +1,9 @@
-package edu.utexas.cs.nn.evolution.mutation.tweann;
+package edu.southwestern.evolution.mutation.tweann;
 
-import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
-import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype.LinkGene;
-import edu.utexas.cs.nn.networks.TWEANN;
+import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.evolution.genotypes.TWEANNGenotype;
+import edu.southwestern.evolution.genotypes.TWEANNGenotype.LinkGene;
+import edu.southwestern.networks.TWEANN;
 
 /**
  * Delete link and then make new link with same weight pointing somewhere else,

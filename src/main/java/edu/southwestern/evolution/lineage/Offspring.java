@@ -1,24 +1,24 @@
-package edu.utexas.cs.nn.evolution.lineage;
+package edu.southwestern.evolution.lineage;
 
-import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.evolution.genotypes.MLPGenotype;
-import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
-import edu.utexas.cs.nn.evolution.mulambda.MuLambda;
-import edu.utexas.cs.nn.evolution.selectiveBreeding.SelectiveBreedingEA;
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.networks.MLP;
-import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.networks.NetworkTask;
-import edu.utexas.cs.nn.networks.TWEANN;
-import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.scores.Score;
-import edu.utexas.cs.nn.tasks.LonerTask;
-import edu.utexas.cs.nn.tasks.interactive.picbreeder.PicbreederTask;
-import edu.utexas.cs.nn.util.PopulationUtil;
-import edu.utexas.cs.nn.util.graphics.DrawingPanel;
-import edu.utexas.cs.nn.util.graphics.GraphicsUtil;
-import edu.utexas.cs.nn.util.graphics.Plot;
+import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.evolution.genotypes.MLPGenotype;
+import edu.southwestern.evolution.genotypes.TWEANNGenotype;
+import edu.southwestern.evolution.mulambda.MuLambda;
+import edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.networks.MLP;
+import edu.southwestern.networks.Network;
+import edu.southwestern.networks.NetworkTask;
+import edu.southwestern.networks.TWEANN;
+import edu.southwestern.parameters.CommonConstants;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.scores.Score;
+import edu.southwestern.tasks.LonerTask;
+import edu.southwestern.tasks.interactive.picbreeder.PicbreederTask;
+import edu.southwestern.util.PopulationUtil;
+import edu.southwestern.util.graphics.DrawingPanel;
+import edu.southwestern.util.graphics.GraphicsUtil;
+import edu.southwestern.util.graphics.Plot;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -978,7 +978,7 @@ public class Offspring {
 	 * @param endpointId
 	 * @return
 	 */
-	public static edu.utexas.cs.nn.evolution.lineage.JumpPoint findBiggestFitnessJump(int objective, long endpointId) {
+	public static edu.southwestern.evolution.lineage.JumpPoint findBiggestFitnessJump(int objective, long endpointId) {
 		HashMap<Long, MutationBranch> map = new HashMap<Long, MutationBranch>();
 		completeMutationHistory(endpointId, map);
 		double jump = 0;
@@ -1009,7 +1009,7 @@ public class Offspring {
 				}
 			}
 		}
-		return new edu.utexas.cs.nn.evolution.lineage.JumpPoint(objective, jump, individual, whenGen, firstParent);
+		return new edu.southwestern.evolution.lineage.JumpPoint(objective, jump, individual, whenGen, firstParent);
 	}
 
 	/**
@@ -1025,13 +1025,13 @@ public class Offspring {
 	 * @param objectives
 	 * @return
 	 */
-	public static ArrayList<edu.utexas.cs.nn.evolution.lineage.JumpPoint> biggestJumpsToReachFinalPopulation(int objectives) {
-		ArrayList<edu.utexas.cs.nn.evolution.lineage.JumpPoint> jumps = new ArrayList<edu.utexas.cs.nn.evolution.lineage.JumpPoint>();
+	public static ArrayList<edu.southwestern.evolution.lineage.JumpPoint> biggestJumpsToReachFinalPopulation(int objectives) {
+		ArrayList<edu.southwestern.evolution.lineage.JumpPoint> jumps = new ArrayList<edu.southwestern.evolution.lineage.JumpPoint>();
 		ArrayList<Offspring> os = offspringOfGeneration(lastGeneration());
 		for (int i = 0; i < os.size(); i++) {
 			for (int j = 0; j < objectives; j++) {
 				Offspring o = os.get(i);
-				edu.utexas.cs.nn.evolution.lineage.JumpPoint jump = findBiggestFitnessJump(j, o.offspringId);
+				edu.southwestern.evolution.lineage.JumpPoint jump = findBiggestFitnessJump(j, o.offspringId);
 				if (!jumps.contains(jump)) {
 					jumps.add(jump);
 				}
@@ -1157,8 +1157,8 @@ public class Offspring {
 	 * @param objective
 	 * @return
 	 */
-	public static ArrayList<edu.utexas.cs.nn.evolution.lineage.JumpPoint> jumpsInBest(int objective) {
-		ArrayList<edu.utexas.cs.nn.evolution.lineage.JumpPoint> jumps = new ArrayList<edu.utexas.cs.nn.evolution.lineage.JumpPoint>();
+	public static ArrayList<edu.southwestern.evolution.lineage.JumpPoint> jumpsInBest(int objective) {
+		ArrayList<edu.southwestern.evolution.lineage.JumpPoint> jumps = new ArrayList<edu.southwestern.evolution.lineage.JumpPoint>();
 		// Selective breeding does not produce interesting scores
 		if(!(MMNEAT.ea instanceof SelectiveBreedingEA)) {
 			int generations = lastGeneration() + 1;
@@ -1173,7 +1173,7 @@ public class Offspring {
 					double currentScore = currentBest.scores.get(currentBest.correspondingGenerations.indexOf(i))
 							.get(objective);
 					double diff = currentScore - previousScore;
-					edu.utexas.cs.nn.evolution.lineage.JumpPoint jump = new edu.utexas.cs.nn.evolution.lineage.JumpPoint(objective, diff, currentBest, i, previousBest.offspringId);
+					edu.southwestern.evolution.lineage.JumpPoint jump = new edu.southwestern.evolution.lineage.JumpPoint(objective, diff, currentBest, i, previousBest.offspringId);
 					jumps.add(jump);
 					previousBest = currentBest;
 					previousScore = currentScore;
@@ -1188,11 +1188,11 @@ public class Offspring {
 	 * @param objective
 	 * @return
 	 */
-	public static edu.utexas.cs.nn.evolution.lineage.JumpPoint biggestJumpInBest(int objective) {
-		ArrayList<edu.utexas.cs.nn.evolution.lineage.JumpPoint> jumps = jumpsInBest(objective);
-		edu.utexas.cs.nn.evolution.lineage.JumpPoint best = null;
+	public static edu.southwestern.evolution.lineage.JumpPoint biggestJumpInBest(int objective) {
+		ArrayList<edu.southwestern.evolution.lineage.JumpPoint> jumps = jumpsInBest(objective);
+		edu.southwestern.evolution.lineage.JumpPoint best = null;
 		double biggest = -Double.MAX_VALUE;
-		for (edu.utexas.cs.nn.evolution.lineage.JumpPoint j : jumps) {
+		for (edu.southwestern.evolution.lineage.JumpPoint j : jumps) {
 			if (j.jump > biggest) {
 				best = j;
 				biggest = j.jump;

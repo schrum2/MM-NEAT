@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.tasks.rlglue;
+package edu.southwestern.tasks.rlglue;
 
 import org.rlcommunity.rlglue.codec.taskspec.TaskSpec;
 import rlVizLib.Environments.EnvironmentBase;

@@ -1,12 +1,12 @@
-package edu.utexas.cs.nn.evolution.nsga2.bd.characterizations;
+package edu.southwestern.evolution.nsga2.bd.characterizations;
 
-import edu.utexas.cs.nn.evolution.nsga2.bd.vectors.BehaviorVector;
-import edu.utexas.cs.nn.evolution.nsga2.bd.vectors.RealBehaviorVector;
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.scores.Score;
-import edu.utexas.cs.nn.util.random.RandomNumbers;
+import edu.southwestern.evolution.nsga2.bd.vectors.BehaviorVector;
+import edu.southwestern.evolution.nsga2.bd.vectors.RealBehaviorVector;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.networks.Network;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.scores.Score;
+import edu.southwestern.util.random.RandomNumbers;
 import java.util.ArrayList;
 
 /**

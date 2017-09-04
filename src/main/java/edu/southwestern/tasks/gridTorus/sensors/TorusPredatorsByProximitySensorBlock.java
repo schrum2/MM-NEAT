@@ -1,14 +1,14 @@
-package edu.utexas.cs.nn.tasks.gridTorus.sensors;
+package edu.southwestern.tasks.gridTorus.sensors;
 
 import java.util.Arrays;
 import java.util.Comparator;
 
-import edu.utexas.cs.nn.gridTorus.TorusAgent;
-import edu.utexas.cs.nn.gridTorus.TorusPredPreyGame;
-import edu.utexas.cs.nn.gridTorus.TorusWorld;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.tasks.gridTorus.NNTorusPredPreyController;
-import edu.utexas.cs.nn.util.datastructures.Pair;
+import edu.southwestern.gridTorus.TorusAgent;
+import edu.southwestern.gridTorus.TorusPredPreyGame;
+import edu.southwestern.gridTorus.TorusWorld;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.gridTorus.NNTorusPredPreyController;
+import edu.southwestern.util.datastructures.Pair;
 
 /**
  * finds the sensor inputs for the predators by proximity. The inputs will be

@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.tasks.ut2004.weapons;
+package edu.southwestern.tasks.ut2004.weapons;
 
 import cz.cuni.amis.pogamut.ut2004.agent.module.sensor.WeaponPref;
 import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004BotModuleController;

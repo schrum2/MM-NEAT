@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.tasks.mspacman.multitask;
+package edu.southwestern.tasks.mspacman.multitask;
 
 /**
  * A Mode selector which selects modes based on if all the ghosts are edible or

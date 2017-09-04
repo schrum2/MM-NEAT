@@ -1,6 +1,6 @@
-package edu.utexas.cs.nn.tasks.mspacman.multitask;
+package edu.southwestern.tasks.mspacman.multitask;
 
-import edu.utexas.cs.nn.parameters.CommonConstants;
+import edu.southwestern.parameters.CommonConstants;
 
 /**
  * A Mode selector which selects between 3 modes based on the following: 0) Some

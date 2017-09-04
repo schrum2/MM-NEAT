@@ -1,12 +1,12 @@
-package edu.utexas.cs.nn.tasks.gvgai;
+package edu.southwestern.tasks.gvgai;
 
 import java.util.List;
 import java.util.Random;
 
-import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.util.random.RandomNumbers;
-import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
+import edu.southwestern.networks.Network;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.util.random.RandomNumbers;
+import edu.southwestern.util.stats.StatisticsUtilities;
 import gvgai.core.game.StateObservation;
 import gvgai.core.player.AbstractPlayer;
 import gvgai.ontology.Types.ACTIONS;

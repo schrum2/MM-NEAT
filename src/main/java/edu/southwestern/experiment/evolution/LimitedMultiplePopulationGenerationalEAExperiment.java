@@ -1,8 +1,8 @@
-package edu.utexas.cs.nn.experiment.evolution;
+package edu.southwestern.experiment.evolution;
 
-import edu.utexas.cs.nn.evolution.MultiplePopulationGenerationalEA;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.MultiplePopulationGenerationalEA;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.MMNEAT.MMNEAT;
 
 /**
  * A multi-population experiment that stops when a certain number of generations is exceeded.

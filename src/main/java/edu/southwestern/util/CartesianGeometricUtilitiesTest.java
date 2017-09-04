@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.util;
+package edu.southwestern.util;
 
 import static org.junit.Assert.*;
 
@@ -7,9 +7,9 @@ import java.util.ArrayList;
 import org.junit.After;
 import org.junit.Test;
 
-import edu.utexas.cs.nn.util.util2D.Tuple2D;
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.util.util2D.ILocated2D;
+import edu.southwestern.util.util2D.Tuple2D;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.util.util2D.ILocated2D;
 
 /**
  * JUnit tests for some core methods of cartesian geometric utilities class

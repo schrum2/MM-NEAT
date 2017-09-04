@@ -1,6 +1,6 @@
-package edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.distance;
+package edu.southwestern.tasks.mspacman.sensors.blocks.distance;
 
-import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
+import edu.southwestern.tasks.mspacman.facades.GameFacade;
 
 /**
  *

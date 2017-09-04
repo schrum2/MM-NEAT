@@ -2,12 +2,12 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.utexas.cs.nn.evolution.genotypes;
+package edu.southwestern.evolution.genotypes;
 
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.networks.MLP;
-import edu.utexas.cs.nn.networks.SRN;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.networks.MLP;
+import edu.southwestern.networks.SRN;
 import java.util.Arrays;
 
 /**

@@ -1,13 +1,13 @@
-package edu.utexas.cs.nn.networks.hyperneat;
+package edu.southwestern.networks.hyperneat;
 
 import static org.junit.Assert.*;
 
 import org.junit.After;
 import org.junit.Test;
 
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.util.datastructures.Pair;
-import edu.utexas.cs.nn.util.datastructures.Triple;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.util.datastructures.Pair;
+import edu.southwestern.util.datastructures.Triple;
 
 public class SubstrateTest {
 	Substrate sub = new Substrate(new Pair<Integer, Integer>(5, 5), 0, new Triple<Integer, Integer, Integer>(0, 0, 0),

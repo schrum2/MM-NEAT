@@ -1,8 +1,8 @@
-package edu.utexas.cs.nn.tasks.mspacman.sensors.blocks;
+package edu.southwestern.tasks.mspacman.sensors.blocks;
 
-import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.raw.MirroredXPosBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.raw.MirroredYPosBlock;
+import edu.southwestern.tasks.mspacman.facades.GameFacade;
+import edu.southwestern.tasks.mspacman.sensors.blocks.raw.MirroredXPosBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.raw.MirroredYPosBlock;
 
 /**
  * Just like SpecificGhostBlock, but there are separate sensors for when the

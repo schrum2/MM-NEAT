@@ -1,10 +1,10 @@
-package edu.utexas.cs.nn.gridTorus;
+package edu.southwestern.gridTorus;
 
-import edu.utexas.cs.nn.gridTorus.controllers.AggressivePredatorController;
-import edu.utexas.cs.nn.gridTorus.controllers.PreyFleeAllPredatorsController;
-import edu.utexas.cs.nn.gridTorus.controllers.TorusPredPreyController;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.util.MiscUtil;
+import edu.southwestern.gridTorus.controllers.AggressivePredatorController;
+import edu.southwestern.gridTorus.controllers.PreyFleeAllPredatorsController;
+import edu.southwestern.gridTorus.controllers.TorusPredPreyController;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.util.MiscUtil;
 
 /**
  * used to run evaluations in this domain

@@ -1,19 +1,19 @@
-package edu.utexas.cs.nn.evolution.nsga2;
+package edu.southwestern.evolution.nsga2;
 
-import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
-import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.evolution.mulambda.MuPlusLambda;
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.scores.Better;
-import edu.utexas.cs.nn.scores.MultiObjectiveScore;
-import edu.utexas.cs.nn.scores.ObjectiveComparator;
-import edu.utexas.cs.nn.scores.Score;
-import edu.utexas.cs.nn.tasks.NoisyLonerTask;
-import edu.utexas.cs.nn.tasks.SinglePopulationTask;
-import edu.utexas.cs.nn.util.datastructures.Pair;
-import edu.utexas.cs.nn.util.random.RandomNumbers;
+import edu.southwestern.evolution.EvolutionaryHistory;
+import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.evolution.mulambda.MuPlusLambda;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.parameters.CommonConstants;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.scores.Better;
+import edu.southwestern.scores.MultiObjectiveScore;
+import edu.southwestern.scores.ObjectiveComparator;
+import edu.southwestern.scores.Score;
+import edu.southwestern.tasks.NoisyLonerTask;
+import edu.southwestern.tasks.SinglePopulationTask;
+import edu.southwestern.util.datastructures.Pair;
+import edu.southwestern.util.random.RandomNumbers;
 
 import java.util.ArrayList;
 import java.util.Arrays;

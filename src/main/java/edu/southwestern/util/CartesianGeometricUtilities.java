@@ -1,8 +1,8 @@
-package edu.utexas.cs.nn.util;
+package edu.southwestern.util;
 
-import edu.utexas.cs.nn.util.datastructures.Vertex;
-import edu.utexas.cs.nn.util.util2D.ILocated2D;
-import edu.utexas.cs.nn.util.util2D.Tuple2D;
+import edu.southwestern.util.datastructures.Vertex;
+import edu.southwestern.util.util2D.ILocated2D;
+import edu.southwestern.util.util2D.Tuple2D;
 import java.util.ArrayList;
 
 /**

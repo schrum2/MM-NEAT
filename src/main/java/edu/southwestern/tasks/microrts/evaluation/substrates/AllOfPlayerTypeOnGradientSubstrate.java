@@ -1,8 +1,8 @@
-package edu.utexas.cs.nn.tasks.microrts.evaluation.substrates;
+package edu.southwestern.tasks.microrts.evaluation.substrates;
 
 import java.util.ArrayList;
 
-import edu.utexas.cs.nn.util.datastructures.Pair;
+import edu.southwestern.util.datastructures.Pair;
 import micro.rts.GameState;
 import micro.rts.units.Unit;
 

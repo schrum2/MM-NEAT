@@ -1,11 +1,11 @@
-package edu.utexas.cs.nn.tasks.mspacman.objectives;
+package edu.southwestern.tasks.mspacman.objectives;
 
-import edu.utexas.cs.nn.evolution.Organism;
-import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.tasks.mspacman.agentcontroller.pacman.MultinetworkSelectorMsPacManController;
-import edu.utexas.cs.nn.tasks.mspacman.agentcontroller.pacman.NNMsPacMan;
-import edu.utexas.cs.nn.tasks.mspacman.agentcontroller.pacman.NNPacManController;
-import edu.utexas.cs.nn.util.datastructures.Interval;
+import edu.southwestern.evolution.Organism;
+import edu.southwestern.networks.Network;
+import edu.southwestern.tasks.mspacman.agentcontroller.pacman.MultinetworkSelectorMsPacManController;
+import edu.southwestern.tasks.mspacman.agentcontroller.pacman.NNMsPacMan;
+import edu.southwestern.tasks.mspacman.agentcontroller.pacman.NNPacManController;
+import edu.southwestern.util.datastructures.Interval;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;

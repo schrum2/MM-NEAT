@@ -9,7 +9,7 @@ import java.util.Set;
 import boardGame.BoardGame;
 import boardGame.TwoDimensionalBoardGameState;
 import boardGame.TwoDimensionalBoardGameViewer;
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
+import edu.southwestern.MMNEAT.MMNEAT;
 
 public class BoardGamePlayerHuman2DBoard<T extends TwoDimensionalBoardGameState> implements BoardGamePlayer<T> {
 

@@ -1,11 +1,11 @@
-package edu.utexas.cs.nn.evolution.mutation.integer;
+package edu.southwestern.evolution.mutation.integer;
 
-import edu.utexas.cs.nn.evolution.genotypes.BoundedIntegerValuedGenotype;
-import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.evolution.mutation.Mutation;
-import edu.utexas.cs.nn.util.random.RandomNumbers;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.genotypes.BoundedIntegerValuedGenotype;
+import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.evolution.mutation.Mutation;
+import edu.southwestern.util.random.RandomNumbers;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.MMNEAT.MMNEAT;
 import java.util.ArrayList;
 
 /**

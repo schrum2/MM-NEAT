@@ -24,8 +24,8 @@ import java.util.Random;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.tasks.microrts.MicroRTSTask;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.tasks.microrts.MicroRTSTask;
 import micro.rts.GameState;
 import micro.rts.PlayerAction;
 import micro.rts.units.UnitTypeTable;

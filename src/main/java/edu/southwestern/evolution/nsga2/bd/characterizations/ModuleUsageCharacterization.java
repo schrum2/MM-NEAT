@@ -1,10 +1,10 @@
-package edu.utexas.cs.nn.evolution.nsga2.bd.characterizations;
+package edu.southwestern.evolution.nsga2.bd.characterizations;
 
-import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
-import edu.utexas.cs.nn.evolution.nsga2.bd.vectors.BehaviorVector;
-import edu.utexas.cs.nn.evolution.nsga2.bd.vectors.RealBehaviorVector;
-import edu.utexas.cs.nn.scores.Score;
-import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
+import edu.southwestern.evolution.genotypes.TWEANNGenotype;
+import edu.southwestern.evolution.nsga2.bd.vectors.BehaviorVector;
+import edu.southwestern.evolution.nsga2.bd.vectors.RealBehaviorVector;
+import edu.southwestern.scores.Score;
+import edu.southwestern.util.stats.StatisticsUtilities;
 
 /**
  * Gets a behavior vector based on module usage

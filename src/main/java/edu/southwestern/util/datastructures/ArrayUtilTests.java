@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.util.datastructures;
+package edu.southwestern.util.datastructures;
 
 import static org.junit.Assert.*;
 
@@ -10,7 +10,7 @@ import java.util.Set;
 import org.junit.After;
 import org.junit.Test;
 
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
+import edu.southwestern.MMNEAT.MMNEAT;
 
 public class ArrayUtilTests {
 

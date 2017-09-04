@@ -1,11 +1,11 @@
-package edu.utexas.cs.nn.tasks.mspacman.sensors;
+package edu.southwestern.tasks.mspacman.sensors;
 
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.tasks.mspacman.data.NodeCollection;
-import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
-import edu.utexas.cs.nn.util.ClassCreation;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.parameters.CommonConstants;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.mspacman.data.NodeCollection;
+import edu.southwestern.tasks.mspacman.facades.GameFacade;
+import edu.southwestern.util.ClassCreation;
 
 /**
  * This is the parent class of the controller sensor blocks. Defines the sensor

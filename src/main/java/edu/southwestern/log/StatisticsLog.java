@@ -1,6 +1,6 @@
-package edu.utexas.cs.nn.log;
+package edu.southwestern.log;
 
-import edu.utexas.cs.nn.parameters.Parameters;
+import edu.southwestern.parameters.Parameters;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;

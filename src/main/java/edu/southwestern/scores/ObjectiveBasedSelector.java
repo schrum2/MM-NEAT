@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.scores;
+package edu.southwestern.scores;
 
 /**
  * The ObjectiveBasedSelector class stores a specific index where scores of

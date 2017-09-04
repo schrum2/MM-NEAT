@@ -1,14 +1,14 @@
-package edu.utexas.cs.nn.tasks.mario;
+package edu.southwestern.tasks.mario;
 
 import ch.idsia.ai.agents.Agent;
 import ch.idsia.mario.engine.sprites.Mario;
 import ch.idsia.mario.environments.Environment;
-import edu.utexas.cs.nn.evolution.Organism;
-import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.util.MiscUtil;
+import edu.southwestern.evolution.Organism;
+import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.networks.Network;
+import edu.southwestern.parameters.CommonConstants;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.util.MiscUtil;
 
 public class NNMarioAgent<T extends Network> extends Organism<T> implements Agent {
 

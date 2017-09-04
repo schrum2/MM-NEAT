@@ -1,6 +1,6 @@
-package edu.utexas.cs.nn.evolution.fitness;
+package edu.southwestern.evolution.fitness;
 
-import edu.utexas.cs.nn.evolution.Organism;
+import edu.southwestern.evolution.Organism;
 
 /**
  * Basic interface for fitness functions

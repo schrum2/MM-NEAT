@@ -1,8 +1,8 @@
-package edu.utexas.cs.nn.tasks.mspacman.agentcontroller.ghosts;
+package edu.southwestern.tasks.mspacman.agentcontroller.ghosts;
 
-import edu.utexas.cs.nn.evolution.Organism;
-import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.networks.Network;
+import edu.southwestern.evolution.Organism;
+import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.networks.Network;
 
 /**
  *

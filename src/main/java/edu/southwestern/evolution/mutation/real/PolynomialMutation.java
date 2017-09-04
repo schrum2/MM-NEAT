@@ -5,11 +5,11 @@
  * that was included with jmetal: http://jmetal.sourceforge.net/
  *
  */
-package edu.utexas.cs.nn.evolution.mutation.real;
+package edu.southwestern.evolution.mutation.real;
 
-import edu.utexas.cs.nn.evolution.genotypes.BoundedRealValuedGenotype;
-import edu.utexas.cs.nn.evolution.genotypes.RealValuedGenotype;
-import edu.utexas.cs.nn.util.random.RandomNumbers;
+import edu.southwestern.evolution.genotypes.BoundedRealValuedGenotype;
+import edu.southwestern.evolution.genotypes.RealValuedGenotype;
+import edu.southwestern.util.random.RandomNumbers;
 
 /**
  *

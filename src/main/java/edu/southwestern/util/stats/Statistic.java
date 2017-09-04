@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.util.stats;
+package edu.southwestern.util.stats;
 
 /**
  * Interface for a class that calculates a specific statistic on an array of

@@ -1,32 +1,32 @@
-package edu.utexas.cs.nn.evolution.mulambda;
+package edu.southwestern.evolution.mulambda;
 
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
-import edu.utexas.cs.nn.evolution.SinglePopulationGenerationalEA;
-import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.evolution.genotypes.OffsetHybrIDGenotype;
-import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
-import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype.LinkGene;
-import edu.utexas.cs.nn.log.FitnessLog;
-import edu.utexas.cs.nn.log.PlotLog;
-import edu.utexas.cs.nn.networks.TWEANN;
-import edu.utexas.cs.nn.networks.hyperneat.HyperNEATUtil;
-import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.scores.Score;
-import edu.utexas.cs.nn.tasks.SinglePopulationTask;
-import edu.utexas.cs.nn.tasks.Task;
-import edu.utexas.cs.nn.tasks.mspacman.CooperativeMsPacManTask;
-import edu.utexas.cs.nn.tasks.mspacman.MsPacManTask;
-import edu.utexas.cs.nn.tasks.mspacman.init.MsPacManInitialization;
-import edu.utexas.cs.nn.tasks.mspacman.multitask.DangerousAreaModeSelector;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.scent.VariableDirectionKStepDeathScentBlock;
-import edu.utexas.cs.nn.util.PopulationUtil;
-import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
-import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.EvolutionaryHistory;
+import edu.southwestern.evolution.SinglePopulationGenerationalEA;
+import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.evolution.genotypes.OffsetHybrIDGenotype;
+import edu.southwestern.evolution.genotypes.TWEANNGenotype;
+import edu.southwestern.evolution.genotypes.TWEANNGenotype.LinkGene;
+import edu.southwestern.log.FitnessLog;
+import edu.southwestern.log.PlotLog;
+import edu.southwestern.networks.TWEANN;
+import edu.southwestern.networks.hyperneat.HyperNEATUtil;
+import edu.southwestern.parameters.CommonConstants;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.scores.Score;
+import edu.southwestern.tasks.SinglePopulationTask;
+import edu.southwestern.tasks.Task;
+import edu.southwestern.tasks.mspacman.CooperativeMsPacManTask;
+import edu.southwestern.tasks.mspacman.MsPacManTask;
+import edu.southwestern.tasks.mspacman.init.MsPacManInitialization;
+import edu.southwestern.tasks.mspacman.multitask.DangerousAreaModeSelector;
+import edu.southwestern.tasks.mspacman.sensors.directional.scent.VariableDirectionKStepDeathScentBlock;
+import edu.southwestern.util.PopulationUtil;
+import edu.southwestern.util.datastructures.ArrayUtil;
+import edu.southwestern.util.stats.StatisticsUtilities;
 
 /**
  *

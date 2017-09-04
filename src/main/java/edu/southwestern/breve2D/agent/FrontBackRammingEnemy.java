@@ -2,11 +2,11 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.utexas.cs.nn.breve2D.agent;
+package edu.southwestern.breve2D.agent;
 
-import edu.utexas.cs.nn.breve2D.Breve2DGame;
-import edu.utexas.cs.nn.breve2D.dynamics.RammingDynamics;
-import edu.utexas.cs.nn.util.util2D.Tuple2D;
+import edu.southwestern.breve2D.Breve2DGame;
+import edu.southwestern.breve2D.dynamics.RammingDynamics;
+import edu.southwestern.util.util2D.Tuple2D;
 
 /**
  * Controls the enemy Agents based on the Player Agent's position;

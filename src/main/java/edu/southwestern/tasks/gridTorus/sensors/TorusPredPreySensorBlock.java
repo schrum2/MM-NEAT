@@ -1,7 +1,7 @@
-package edu.utexas.cs.nn.tasks.gridTorus.sensors;
+package edu.southwestern.tasks.gridTorus.sensors;
 
-import edu.utexas.cs.nn.gridTorus.TorusAgent;
-import edu.utexas.cs.nn.gridTorus.TorusWorld;
+import edu.southwestern.gridTorus.TorusAgent;
+import edu.southwestern.gridTorus.TorusWorld;
 
 /**
  * Interface to create a sensor block, which will be a set of sensors to either

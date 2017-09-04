@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.tasks.vizdoom;
+package edu.southwestern.tasks.vizdoom;
 
 import static org.junit.Assert.assertEquals;
 
@@ -6,9 +6,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
-import edu.utexas.cs.nn.util.stats.Average;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.util.datastructures.ArrayUtil;
+import edu.southwestern.util.stats.Average;
 
 public class VizDoomTaskTests {
 

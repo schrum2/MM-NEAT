@@ -1,10 +1,10 @@
-package edu.utexas.cs.nn.evolution.crossover.network;
+package edu.southwestern.evolution.crossover.network;
 
-import edu.utexas.cs.nn.evolution.crossover.real.SBX;
-import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype.Gene;
-import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype.LinkGene;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.util.datastructures.Pair;
+import edu.southwestern.evolution.crossover.real.SBX;
+import edu.southwestern.evolution.genotypes.TWEANNGenotype.Gene;
+import edu.southwestern.evolution.genotypes.TWEANNGenotype.LinkGene;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.util.datastructures.Pair;
 
 import java.util.ArrayList;
 

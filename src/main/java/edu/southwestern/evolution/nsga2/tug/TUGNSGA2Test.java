@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.evolution.nsga2.tug;
+package edu.southwestern.evolution.nsga2.tug;
 
 import static org.junit.Assert.*;
 
@@ -7,16 +7,16 @@ import java.util.ArrayList;
 import org.junit.After;
 import org.junit.Test;
 
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.evolution.genotypes.RealValuedGenotype;
-import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.scores.MultiObjectiveScore;
-import edu.utexas.cs.nn.scores.Score;
-import edu.utexas.cs.nn.tasks.mspacman.MsPacManTask;
-import edu.utexas.cs.nn.util.PopulationUtil;
-import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.evolution.genotypes.RealValuedGenotype;
+import edu.southwestern.parameters.CommonConstants;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.scores.MultiObjectiveScore;
+import edu.southwestern.scores.Score;
+import edu.southwestern.tasks.mspacman.MsPacManTask;
+import edu.southwestern.util.PopulationUtil;
+import edu.southwestern.util.datastructures.ArrayUtil;
 
 public class TUGNSGA2Test {
 

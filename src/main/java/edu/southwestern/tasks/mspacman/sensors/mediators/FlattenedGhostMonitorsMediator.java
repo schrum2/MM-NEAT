@@ -1,12 +1,12 @@
-package edu.utexas.cs.nn.tasks.mspacman.sensors.mediators;
+package edu.southwestern.tasks.mspacman.sensors.mediators;
 
-import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.BlockLoadedInputOutputMediator;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.OneGhostAndPillsMonitorInputOutputMediator;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.OneGhostMonitorInputOutputMediator;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.UnionInputOutputMediator;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.mediators.components.NonGhostSensors;
+import edu.southwestern.parameters.CommonConstants;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.mspacman.sensors.BlockLoadedInputOutputMediator;
+import edu.southwestern.tasks.mspacman.sensors.OneGhostAndPillsMonitorInputOutputMediator;
+import edu.southwestern.tasks.mspacman.sensors.OneGhostMonitorInputOutputMediator;
+import edu.southwestern.tasks.mspacman.sensors.UnionInputOutputMediator;
+import edu.southwestern.tasks.mspacman.sensors.mediators.components.NonGhostSensors;
 import java.util.ArrayList;
 import java.util.List;
 

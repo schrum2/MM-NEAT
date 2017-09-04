@@ -1,7 +1,7 @@
-package edu.utexas.cs.nn.tasks.motests.testfunctions;
+package edu.southwestern.tasks.motests.testfunctions;
 
-import edu.utexas.cs.nn.evolution.Organism;
-import edu.utexas.cs.nn.evolution.fitness.FitnessFunction;
+import edu.southwestern.evolution.Organism;
+import edu.southwestern.evolution.fitness.FitnessFunction;
 import java.util.ArrayList;
 
 /**

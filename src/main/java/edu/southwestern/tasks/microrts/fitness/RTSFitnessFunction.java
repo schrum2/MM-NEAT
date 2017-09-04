@@ -1,9 +1,9 @@
-package edu.utexas.cs.nn.tasks.microrts.fitness;
+package edu.southwestern.tasks.microrts.fitness;
 
 import java.util.ArrayList;
 
-import edu.utexas.cs.nn.tasks.microrts.MicroRTSInformation;
-import edu.utexas.cs.nn.util.datastructures.Pair;
+import edu.southwestern.tasks.microrts.MicroRTSInformation;
+import edu.southwestern.util.datastructures.Pair;
 import micro.rts.GameState;
 import micro.rts.PhysicalGameState;
 

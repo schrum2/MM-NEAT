@@ -1,6 +1,6 @@
 package pacman.controllers.examples;
 
-import edu.utexas.cs.nn.util.random.RandomNumbers;
+import edu.southwestern.util.random.RandomNumbers;
 import java.util.EnumMap;
 import java.util.Random;
 import pacman.controllers.Controller;

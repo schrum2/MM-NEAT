@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.tasks.gridTorus;
+package edu.southwestern.tasks.gridTorus;
 
 import static org.junit.Assert.*;
 
@@ -8,29 +8,29 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
-import edu.utexas.cs.nn.gridTorus.controllers.PreyFleeClosestPredatorController;
-import edu.utexas.cs.nn.gridTorus.controllers.RandomPredatorController;
-import edu.utexas.cs.nn.gridTorus.controllers.TorusPredPreyController;
-import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.tasks.gridTorus.competitive.CompetitiveHomogeneousPredatorsVsPreyTask;
-import edu.utexas.cs.nn.tasks.gridTorus.cooperative.CooperativePredatorsVsStaticPreyTask;
-import edu.utexas.cs.nn.tasks.gridTorus.cooperative.CooperativePreyVsStaticPredatorsTask;
-import edu.utexas.cs.nn.tasks.gridTorus.cooperativeAndCompetitive.CompetitiveAndCooperativePredatorsVsPreyTask;
-import edu.utexas.cs.nn.tasks.gridTorus.objectives.GridTorusObjective;
-import edu.utexas.cs.nn.tasks.gridTorus.objectives.PredatorCatchCloseObjective;
-import edu.utexas.cs.nn.tasks.gridTorus.objectives.PredatorCatchCloseQuickObjective;
-import edu.utexas.cs.nn.tasks.gridTorus.objectives.PredatorCatchObjective;
-import edu.utexas.cs.nn.tasks.gridTorus.objectives.PredatorEatEachPreyQuicklyObjective;
-import edu.utexas.cs.nn.tasks.gridTorus.objectives.PredatorMinimizeDistanceFromPreyObjective;
-import edu.utexas.cs.nn.tasks.gridTorus.objectives.PredatorMinimizeGameTimeObjective;
-import edu.utexas.cs.nn.tasks.gridTorus.objectives.PreyLongSurvivalTimeObjective;
-import edu.utexas.cs.nn.tasks.gridTorus.objectives.PreyMaximizeDistanceFromPredatorsObjective;
-import edu.utexas.cs.nn.tasks.gridTorus.objectives.PreyMaximizeGameTimeObjective;
-import edu.utexas.cs.nn.tasks.gridTorus.objectives.PreyMinimizeCaughtObjective;
-import edu.utexas.cs.nn.tasks.gridTorus.objectives.PreyRawalRajagopalanMiikkulainenObjective;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.genotypes.TWEANNGenotype;
+import edu.southwestern.gridTorus.controllers.PreyFleeClosestPredatorController;
+import edu.southwestern.gridTorus.controllers.RandomPredatorController;
+import edu.southwestern.gridTorus.controllers.TorusPredPreyController;
+import edu.southwestern.networks.Network;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.gridTorus.competitive.CompetitiveHomogeneousPredatorsVsPreyTask;
+import edu.southwestern.tasks.gridTorus.cooperative.CooperativePredatorsVsStaticPreyTask;
+import edu.southwestern.tasks.gridTorus.cooperative.CooperativePreyVsStaticPredatorsTask;
+import edu.southwestern.tasks.gridTorus.cooperativeAndCompetitive.CompetitiveAndCooperativePredatorsVsPreyTask;
+import edu.southwestern.tasks.gridTorus.objectives.GridTorusObjective;
+import edu.southwestern.tasks.gridTorus.objectives.PredatorCatchCloseObjective;
+import edu.southwestern.tasks.gridTorus.objectives.PredatorCatchCloseQuickObjective;
+import edu.southwestern.tasks.gridTorus.objectives.PredatorCatchObjective;
+import edu.southwestern.tasks.gridTorus.objectives.PredatorEatEachPreyQuicklyObjective;
+import edu.southwestern.tasks.gridTorus.objectives.PredatorMinimizeDistanceFromPreyObjective;
+import edu.southwestern.tasks.gridTorus.objectives.PredatorMinimizeGameTimeObjective;
+import edu.southwestern.tasks.gridTorus.objectives.PreyLongSurvivalTimeObjective;
+import edu.southwestern.tasks.gridTorus.objectives.PreyMaximizeDistanceFromPredatorsObjective;
+import edu.southwestern.tasks.gridTorus.objectives.PreyMaximizeGameTimeObjective;
+import edu.southwestern.tasks.gridTorus.objectives.PreyMinimizeCaughtObjective;
+import edu.southwestern.tasks.gridTorus.objectives.PreyRawalRajagopalanMiikkulainenObjective;
 
 public class TorusPredPreyTaskTest <T extends Network> {
 	
@@ -62,7 +62,7 @@ public class TorusPredPreyTaskTest <T extends Network> {
 		//NOTE: MAKE SURE THAT THE BELOW PARAMETER INITIALIZATION SETS THE DEFAULT FITNESSES TO FALSE
 		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "torusTimeLimit:1000",
 				"torusPreys:2", "torusPredators:3", "allowDoNothingActionForPredators:false", "torusSenseTeammates:true", 
-				"staticPreyController:edu.utexas.cs.nn.gridTorus.controllers.PreyFleeClosestPredatorController",
+				"staticPreyController:edu.southwestern.gridTorus.controllers.PreyFleeClosestPredatorController",
 				"torusSenseByProximity:true", "predatorCatchClose:false", "preyRRM:false" });
 		MMNEAT.loadClasses();
 	}
@@ -544,7 +544,7 @@ public class TorusPredPreyTaskTest <T extends Network> {
 	public void testStartingGoals() {
 		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "torusTimeLimit:1000",
 				"torusPreys:2", "torusPredators:3",
-				"staticPreyController:edu.utexas.cs.nn.gridTorus.controllers.PreyFleeClosestPredatorController",
+				"staticPreyController:edu.southwestern.gridTorus.controllers.PreyFleeClosestPredatorController",
 				"predatorCatchClose:true", "preyRRM:true" });
 		MMNEAT.loadClasses();
 		MMNEAT.task = new TorusEvolvedPredatorsVsStaticPreyTask();
@@ -555,7 +555,7 @@ public class TorusPredPreyTaskTest <T extends Network> {
 		
 		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "torusTimeLimit:1000",
 				"torusPreys:2", "torusPredators:3",
-				"staticPreyController:edu.utexas.cs.nn.gridTorus.controllers.PreyFleeClosestPredatorController",
+				"staticPreyController:edu.southwestern.gridTorus.controllers.PreyFleeClosestPredatorController",
 				"predatorCatchClose:true", "predatorMinimizeDistance:true", "predatorsEatQuick:true"});
 		MMNEAT.loadClasses();
 		MMNEAT.task = new TorusEvolvedPredatorsVsStaticPreyTask();
@@ -576,7 +576,7 @@ public class TorusPredPreyTaskTest <T extends Network> {
 	public void testMinScores() {
 		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "torusTimeLimit:1000",
 				"torusPreys:2", "torusPredators:3",
-				"staticPreyController:edu.utexas.cs.nn.gridTorus.controllers.PreyFleeClosestPredatorController",
+				"staticPreyController:edu.southwestern.gridTorus.controllers.PreyFleeClosestPredatorController",
 				"predatorCatchClose:true", "preyRRM:true" });
 		MMNEAT.loadClasses();
 		MMNEAT.task = new TorusEvolvedPredatorsVsStaticPreyTask();
@@ -587,7 +587,7 @@ public class TorusPredPreyTaskTest <T extends Network> {
 		
 		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "torusTimeLimit:1000",
 				"torusPreys:2", "torusPredators:3",
-				"staticPreyController:edu.utexas.cs.nn.gridTorus.controllers.PreyFleeClosestPredatorController",
+				"staticPreyController:edu.southwestern.gridTorus.controllers.PreyFleeClosestPredatorController",
 				"predatorCatchClose:true", "predatorMinimizeDistance:true", "predatorsEatQuick:true"});
 		MMNEAT.loadClasses();
 		MMNEAT.task = new TorusEvolvedPredatorsVsStaticPreyTask();
@@ -634,7 +634,7 @@ public class TorusPredPreyTaskTest <T extends Network> {
 		//Test without proximity sensors and with sense teammates
 		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "torusTimeLimit:1000",
 				"torusPreys:2", "torusPredators:3", "allowDoNothingActionForPredators:false", "torusSenseTeammates:true", 
-				"staticPreyController:edu.utexas.cs.nn.gridTorus.controllers.PreyFleeClosestPredatorController",
+				"staticPreyController:edu.southwestern.gridTorus.controllers.PreyFleeClosestPredatorController",
 				"torusSenseByProximity:false", "predatorCatchClose:false", "preyRRM:false" });
 		MMNEAT.loadClasses();
 		MMNEAT.task = new TorusEvolvedPredatorsVsStaticPreyTask();
@@ -664,7 +664,7 @@ public class TorusPredPreyTaskTest <T extends Network> {
 		//Test with proximity sensors and without sense teammates
 		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "torusTimeLimit:1000",
 				"torusPreys:2", "torusPredators:3", "allowDoNothingActionForPredators:false", "torusSenseTeammates:false", 
-				"staticPreyController:edu.utexas.cs.nn.gridTorus.controllers.PreyFleeClosestPredatorController",
+				"staticPreyController:edu.southwestern.gridTorus.controllers.PreyFleeClosestPredatorController",
 				"torusSenseByProximity:true", "predatorCatchClose:false", "preyRRM:false" });
 		MMNEAT.loadClasses();
 		MMNEAT.task = new TorusEvolvedPredatorsVsStaticPreyTask();
@@ -688,7 +688,7 @@ public class TorusPredPreyTaskTest <T extends Network> {
 		//Test without proximity sensors and without sense teammates
 		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "torusTimeLimit:1000",
 				"torusPreys:2", "torusPredators:3", "allowDoNothingActionForPredators:false", "torusSenseTeammates:false", 
-				"staticPreyController:edu.utexas.cs.nn.gridTorus.controllers.PreyFleeClosestPredatorController",
+				"staticPreyController:edu.southwestern.gridTorus.controllers.PreyFleeClosestPredatorController",
 				"torusSenseByProximity:false", "predatorCatchClose:false", "preyRRM:false" });
 		MMNEAT.loadClasses();
 		MMNEAT.task = new TorusEvolvedPredatorsVsStaticPreyTask();
@@ -728,7 +728,7 @@ public class TorusPredPreyTaskTest <T extends Network> {
 		
 		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "torusTimeLimit:1000",
 				"torusPreys:2", "torusPredators:3", "allowDoNothingActionForPredators:true", "allowDoNothingActionForPreys:true", 
-				"staticPreyController:edu.utexas.cs.nn.gridTorus.controllers.PreyFleeClosestPredatorController",
+				"staticPreyController:edu.southwestern.gridTorus.controllers.PreyFleeClosestPredatorController",
 				"predatorCatchClose:false", "preyRRM:false" });
 		MMNEAT.loadClasses();
 		MMNEAT.task = new TorusEvolvedPredatorsVsStaticPreyTask();
@@ -742,7 +742,7 @@ public class TorusPredPreyTaskTest <T extends Network> {
 		
 		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "torusTimeLimit:1000",
 				"torusPreys:2", "torusPredators:3", "allowDoNothingActionForPredators:false", "allowDoNothingActionForPreys:true", 
-				"staticPreyController:edu.utexas.cs.nn.gridTorus.controllers.PreyFleeClosestPredatorController",
+				"staticPreyController:edu.southwestern.gridTorus.controllers.PreyFleeClosestPredatorController",
 				"predatorCatchClose:false", "preyRRM:false" });
 		MMNEAT.loadClasses();
 		MMNEAT.task = new TorusEvolvedPredatorsVsStaticPreyTask();
@@ -756,7 +756,7 @@ public class TorusPredPreyTaskTest <T extends Network> {
 		
 		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "torusTimeLimit:1000",
 				"torusPreys:2", "torusPredators:3", "allowDoNothingActionForPredators:true", "allowDoNothingActionForPreys:false", 
-				"staticPreyController:edu.utexas.cs.nn.gridTorus.controllers.PreyFleeClosestPredatorController",
+				"staticPreyController:edu.southwestern.gridTorus.controllers.PreyFleeClosestPredatorController",
 				"predatorCatchClose:false", "preyRRM:false" });
 		MMNEAT.loadClasses();
 		MMNEAT.task = new TorusEvolvedPredatorsVsStaticPreyTask();
@@ -770,7 +770,7 @@ public class TorusPredPreyTaskTest <T extends Network> {
 		
 		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "torusTimeLimit:1000",
 				"torusPreys:2", "torusPredators:3", "allowDoNothingActionForPredators:false", "allowDoNothingActionForPreys:false", 
-				"staticPreyController:edu.utexas.cs.nn.gridTorus.controllers.PreyFleeClosestPredatorController",
+				"staticPreyController:edu.southwestern.gridTorus.controllers.PreyFleeClosestPredatorController",
 				"predatorCatchClose:false", "preyRRM:false" });
 		MMNEAT.loadClasses();
 		MMNEAT.task = new CompetitiveHomogeneousPredatorsVsPreyTask();
@@ -784,7 +784,7 @@ public class TorusPredPreyTaskTest <T extends Network> {
 		
 		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "torusTimeLimit:1000",
 				"torusPreys:2", "torusPredators:3", "allowDoNothingActionForPredators:true", "allowDoNothingActionForPreys:false", 
-				"staticPreyController:edu.utexas.cs.nn.gridTorus.controllers.PreyFleeClosestPredatorController",
+				"staticPreyController:edu.southwestern.gridTorus.controllers.PreyFleeClosestPredatorController",
 				"predatorCatchClose:false", "preyRRM:false" });
 		MMNEAT.loadClasses();
 		MMNEAT.task = new CompetitiveHomogeneousPredatorsVsPreyTask();
@@ -798,7 +798,7 @@ public class TorusPredPreyTaskTest <T extends Network> {
 		
 		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "torusTimeLimit:1000",
 				"torusPreys:2", "torusPredators:3", "allowDoNothingActionForPredators:false", "allowDoNothingActionForPreys:true", 
-				"staticPreyController:edu.utexas.cs.nn.gridTorus.controllers.PreyFleeClosestPredatorController",
+				"staticPreyController:edu.southwestern.gridTorus.controllers.PreyFleeClosestPredatorController",
 				"predatorCatchClose:false", "preyRRM:false" });
 		MMNEAT.loadClasses();
 		MMNEAT.task = new CompetitiveHomogeneousPredatorsVsPreyTask();
@@ -812,7 +812,7 @@ public class TorusPredPreyTaskTest <T extends Network> {
 		
 		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "torusTimeLimit:1000",
 				"torusPreys:2", "torusPredators:3", "allowDoNothingActionForPredators:true", "allowDoNothingActionForPreys:true", 
-				"staticPreyController:edu.utexas.cs.nn.gridTorus.controllers.PreyFleeClosestPredatorController",
+				"staticPreyController:edu.southwestern.gridTorus.controllers.PreyFleeClosestPredatorController",
 				"predatorCatchClose:false", "preyRRM:false" });
 		MMNEAT.loadClasses();
 		MMNEAT.task = new CompetitiveHomogeneousPredatorsVsPreyTask();
@@ -830,8 +830,8 @@ public class TorusPredPreyTaskTest <T extends Network> {
 	public void testGetStaticControllers() {
 		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "torusTimeLimit:1000",
 				"torusPreys:2", "torusPredators:3", "allowDoNothingActionForPredators:false", "torusSenseTeammates:true", 
-				"staticPreyController:edu.utexas.cs.nn.gridTorus.controllers.PreyFleeClosestPredatorController", 
-				"staticPredatorController:edu.utexas.cs.nn.gridTorus.controllers.RandomPredatorController", 
+				"staticPreyController:edu.southwestern.gridTorus.controllers.PreyFleeClosestPredatorController", 
+				"staticPredatorController:edu.southwestern.gridTorus.controllers.RandomPredatorController", 
 				"torusSenseByProximity:true", "predatorCatchClose:false", "preyRRM:false" });
 		MMNEAT.loadClasses();
 		
@@ -854,8 +854,8 @@ public class TorusPredPreyTaskTest <T extends Network> {
 	public void testGetEvolvedControllers() {
 		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "torusTimeLimit:1000",
 				"torusPreys:2", "torusPredators:3", "allowDoNothingActionForPredators:true", "torusSenseTeammates:true", 
-				"staticPreyController:edu.utexas.cs.nn.gridTorus.controllers.PreyFleeClosestPredatorController", 
-				"task:edu.utexas.cs.nn.tasks.gridTorus.TorusEvolvedPredatorsVsStaticPreyTask", 
+				"staticPreyController:edu.southwestern.gridTorus.controllers.PreyFleeClosestPredatorController", 
+				"task:edu.southwestern.tasks.gridTorus.TorusEvolvedPredatorsVsStaticPreyTask", 
 				"torusSenseByProximity:true", "predatorCatchClose:false", "preyRRM:false" });
 		MMNEAT.loadClasses();
 		TWEANNGenotype g = new TWEANNGenotype();
@@ -874,8 +874,8 @@ public class TorusPredPreyTaskTest <T extends Network> {
 		
 		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "torusTimeLimit:1000",
 				"torusPreys:2", "torusPredators:3", "allowDoNothingActionForPredators:false", "torusSenseTeammates:false", 
-				"staticPreyController:edu.utexas.cs.nn.gridTorus.controllers.PreyFleeClosestPredatorController", 
-				"task:edu.utexas.cs.nn.tasks.gridTorus.TorusEvolvedPredatorsVsStaticPreyTask", 
+				"staticPreyController:edu.southwestern.gridTorus.controllers.PreyFleeClosestPredatorController", 
+				"task:edu.southwestern.tasks.gridTorus.TorusEvolvedPredatorsVsStaticPreyTask", 
 				"torusSenseByProximity:true", "predatorCatchClose:false", "preyRRM:false" });
 		MMNEAT.loadClasses();
 		
@@ -910,7 +910,7 @@ public class TorusPredPreyTaskTest <T extends Network> {
 		
 		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "torusTimeLimit:1000",
 				"torusPreys:2", "torusPredators:3",
-				"staticPreyController:edu.utexas.cs.nn.gridTorus.controllers.PreyFleeClosestPredatorController",
+				"staticPreyController:edu.southwestern.gridTorus.controllers.PreyFleeClosestPredatorController",
 				"predatorCatchClose:true", "preyRRM:true" });
 		MMNEAT.loadClasses();
 		MMNEAT.task = new TorusEvolvedPredatorsVsStaticPreyTask();
@@ -928,7 +928,7 @@ public class TorusPredPreyTaskTest <T extends Network> {
 		
 		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "torusTimeLimit:1000",
 				"torusPreys:2", "torusPredators:3",
-				"staticPreyController:edu.utexas.cs.nn.gridTorus.controllers.PreyFleeClosestPredatorController",
+				"staticPreyController:edu.southwestern.gridTorus.controllers.PreyFleeClosestPredatorController",
 				"predatorCatchClose:true", "preyRRM:true" });
 		MMNEAT.loadClasses();
 		MMNEAT.task = new CooperativePredatorsVsStaticPreyTask();
@@ -953,7 +953,7 @@ public class TorusPredPreyTaskTest <T extends Network> {
 		
 		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "torusTimeLimit:1000",
 				"torusPreys:2", "torusPredators:3",
-				"staticPreyController:edu.utexas.cs.nn.gridTorus.controllers.PreyFleeClosestPredatorController",
+				"staticPreyController:edu.southwestern.gridTorus.controllers.PreyFleeClosestPredatorController",
 				"predatorCatchClose:true", "preyRRM:true" });
 		MMNEAT.loadClasses();
 		MMNEAT.task = new CompetitiveHomogeneousPredatorsVsPreyTask();

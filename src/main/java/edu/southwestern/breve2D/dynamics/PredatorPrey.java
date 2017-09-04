@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.breve2D.dynamics;
+package edu.southwestern.breve2D.dynamics;
 
 /**
  *

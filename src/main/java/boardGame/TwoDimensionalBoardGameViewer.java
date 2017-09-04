@@ -3,8 +3,8 @@ package boardGame;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
-import edu.utexas.cs.nn.networks.TWEANN;
-import edu.utexas.cs.nn.util.graphics.DrawingPanel;
+import edu.southwestern.networks.TWEANN;
+import edu.southwestern.util.graphics.DrawingPanel;
 
 /**
  * Viewer for TwoDimensionalBoardGames

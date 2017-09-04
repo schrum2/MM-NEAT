@@ -10,16 +10,16 @@ import boardGame.agents.treesearch.BoardGamePlayerMinimaxAlphaBetaPruning;
 import boardGame.checkers.CheckersState;
 import boardGame.fitnessFunction.BoardGameFitnessFunction;
 import boardGame.fitnessFunction.SimpleWinLoseDrawBoardGameFitness;
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.tasks.boardGame.BoardGameUtil;
-import edu.utexas.cs.nn.util.ClassCreation;
-import edu.utexas.cs.nn.util.MiscUtil;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.boardGame.BoardGameUtil;
+import edu.southwestern.util.ClassCreation;
+import edu.southwestern.util.MiscUtil;
 
 public class ConnectFour extends TwoDimensionalBoardGame<ConnectFourState>{
 	
 	public static void main(String[] args){
-		Parameters.initializeParameterCollections(new String[]{"io:false", "netio:false", "task:edu.utexas.cs.nn.tasks.boardGame.StaticOpponentBoardGameTask",
+		Parameters.initializeParameterCollections(new String[]{"io:false", "netio:false", "task:edu.southwestern.tasks.boardGame.StaticOpponentBoardGameTask",
 				"boardGame:boardGame.connectFour.ConnectFour", "boardGameOpponent:boardGame.agents.BoardGamePlayerHuman2DBoard",
 				"boardGamePlayer:boardGame.agents.treesearch.BoardGamePlayerMinimaxAlphaBetaPruning", "watch:true"});
 		

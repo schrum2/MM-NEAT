@@ -15,9 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.tasks.microrts.MicroRTSInformation;
-import edu.utexas.cs.nn.util.random.RandomNumbers;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.tasks.microrts.MicroRTSInformation;
+import edu.southwestern.util.random.RandomNumbers;
 import micro.rts.GameState;
 import micro.rts.PlayerAction;
 import micro.rts.PlayerActionGenerator;

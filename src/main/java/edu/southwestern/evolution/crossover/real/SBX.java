@@ -2,12 +2,12 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.utexas.cs.nn.evolution.crossover.real;
+package edu.southwestern.evolution.crossover.real;
 
-import edu.utexas.cs.nn.evolution.crossover.ArrayCrossover;
-import edu.utexas.cs.nn.util.random.RandomNumbers;
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.util.datastructures.Pair;
+import edu.southwestern.evolution.crossover.ArrayCrossover;
+import edu.southwestern.util.random.RandomNumbers;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.util.datastructures.Pair;
 
 /**
  *

@@ -1,8 +1,8 @@
-package edu.utexas.cs.nn.evolution.genotypes;
+package edu.southwestern.evolution.genotypes;
 
-import edu.utexas.cs.nn.evolution.mutation.integer.ReplaceMutation;
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.util.random.RandomNumbers;
+import edu.southwestern.evolution.mutation.integer.ReplaceMutation;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.util.random.RandomNumbers;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;

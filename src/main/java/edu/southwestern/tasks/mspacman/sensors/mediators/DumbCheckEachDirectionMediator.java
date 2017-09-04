@@ -2,21 +2,21 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.utexas.cs.nn.tasks.mspacman.sensors.mediators;
+package edu.southwestern.tasks.mspacman.sensors.mediators;
 
-import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.VariableDirectionBlockLoadedInputOutputMediator;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.booleansensors.BiasBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.counting.PillsRemainingBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.counting.PowerPillsRemainingBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.distance.lair.SpecificGhostLairDistanceBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.time.SpecificGhostEdibleTimeBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.time.SpecificGhostLairTimeBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.VariableDirectionPillsBeforeJunctionBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.counts.*;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.distance.*;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.distance.ghosts.specific.VariableDirectionSpecificGhostDistanceBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.specific.VariableDirectionSpecificGhostIncomingBlock;
+import edu.southwestern.parameters.CommonConstants;
+import edu.southwestern.tasks.mspacman.sensors.VariableDirectionBlockLoadedInputOutputMediator;
+import edu.southwestern.tasks.mspacman.sensors.blocks.booleansensors.BiasBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.counting.PillsRemainingBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.counting.PowerPillsRemainingBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.distance.lair.SpecificGhostLairDistanceBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.time.SpecificGhostEdibleTimeBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.time.SpecificGhostLairTimeBlock;
+import edu.southwestern.tasks.mspacman.sensors.directional.VariableDirectionPillsBeforeJunctionBlock;
+import edu.southwestern.tasks.mspacman.sensors.directional.counts.*;
+import edu.southwestern.tasks.mspacman.sensors.directional.distance.*;
+import edu.southwestern.tasks.mspacman.sensors.directional.distance.ghosts.specific.VariableDirectionSpecificGhostDistanceBlock;
+import edu.southwestern.tasks.mspacman.sensors.directional.specific.VariableDirectionSpecificGhostIncomingBlock;
 
 /**
  *

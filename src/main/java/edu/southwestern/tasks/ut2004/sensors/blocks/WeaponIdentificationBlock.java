@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.tasks.ut2004.sensors.blocks;
+package edu.southwestern.tasks.ut2004.sensors.blocks;
 
 import cz.cuni.amis.pogamut.ut2004.agent.module.sensomotoric.Weapon;
 import cz.cuni.amis.pogamut.ut2004.agent.module.sensomotoric.Weaponry;

@@ -1,8 +1,8 @@
-package edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.coords;
+package edu.southwestern.tasks.mspacman.sensors.blocks.coords;
 
-import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.MsPacManSensorBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.raw.MirroredXPosBlock;
+import edu.southwestern.tasks.mspacman.facades.GameFacade;
+import edu.southwestern.tasks.mspacman.sensors.blocks.MsPacManSensorBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.raw.MirroredXPosBlock;
 
 /**
  *

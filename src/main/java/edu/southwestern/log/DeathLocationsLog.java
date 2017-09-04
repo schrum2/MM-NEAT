@@ -1,6 +1,6 @@
-package edu.utexas.cs.nn.log;
+package edu.southwestern.log;
 
-import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
+import edu.southwestern.tasks.mspacman.facades.GameFacade;
 import java.awt.Color;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;

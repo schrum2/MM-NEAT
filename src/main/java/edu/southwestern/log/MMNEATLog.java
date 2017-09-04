@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.log;
+package edu.southwestern.log;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.util.file.FileUtilities;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.util.file.FileUtilities;
 
 /**
  * General logging class. Needs to be generalized more.

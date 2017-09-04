@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.tasks.ut2004;
+package edu.southwestern.tasks.ut2004;
 
 import cz.cuni.amis.pogamut.base3d.worldview.object.Location;
 import cz.cuni.amis.pogamut.base3d.worldview.object.Rotation;

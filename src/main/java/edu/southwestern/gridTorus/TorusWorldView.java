@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.gridTorus;
+package edu.southwestern.gridTorus;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -9,10 +9,10 @@ import java.awt.Image;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 
-import edu.utexas.cs.nn.gridTorus.controllers.TorusPredPreyController;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.tasks.gridTorus.NNTorusPredPreyController;
-import edu.utexas.cs.nn.util.CombinatoricUtilities;
+import edu.southwestern.gridTorus.controllers.TorusPredPreyController;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.gridTorus.NNTorusPredPreyController;
+import edu.southwestern.util.CombinatoricUtilities;
 
 @SuppressWarnings("serial")
 /**

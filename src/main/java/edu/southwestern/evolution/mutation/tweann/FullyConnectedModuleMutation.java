@@ -1,7 +1,7 @@
-package edu.utexas.cs.nn.evolution.mutation.tweann;
+package edu.southwestern.evolution.mutation.tweann;
 
-import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
-import edu.utexas.cs.nn.parameters.CommonConstants;
+import edu.southwestern.evolution.genotypes.TWEANNGenotype;
+import edu.southwestern.parameters.CommonConstants;
 
 /**
  *Mutates all fully connected modules

@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.util;
+package edu.southwestern.util;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -8,7 +8,7 @@ import java.lang.reflect.Constructor;
 
 import org.junit.Test;
 
-import edu.utexas.cs.nn.parameters.Parameters;
+import edu.southwestern.parameters.Parameters;
 
 public class ClassCreationTest {
 

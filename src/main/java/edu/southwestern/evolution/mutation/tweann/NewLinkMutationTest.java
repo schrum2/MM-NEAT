@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.evolution.mutation.tweann;
+package edu.southwestern.evolution.mutation.tweann;
 
 import static org.junit.Assert.*;
 
@@ -8,12 +8,12 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
-import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
-import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype.LinkGene;
-import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype.NodeGene;
-import edu.utexas.cs.nn.parameters.Parameters;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.EvolutionaryHistory;
+import edu.southwestern.evolution.genotypes.TWEANNGenotype;
+import edu.southwestern.evolution.genotypes.TWEANNGenotype.LinkGene;
+import edu.southwestern.evolution.genotypes.TWEANNGenotype.NodeGene;
+import edu.southwestern.parameters.Parameters;
 
 /**
  * JUnit test for link mutation of TWEANNGenotype

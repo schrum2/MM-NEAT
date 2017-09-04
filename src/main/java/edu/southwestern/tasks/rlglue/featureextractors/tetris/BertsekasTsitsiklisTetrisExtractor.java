@@ -1,7 +1,7 @@
-package edu.utexas.cs.nn.tasks.rlglue.featureextractors.tetris;
+package edu.southwestern.tasks.rlglue.featureextractors.tetris;
 
-import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.tasks.rlglue.featureextractors.FeatureExtractor;
+import edu.southwestern.parameters.CommonConstants;
+import edu.southwestern.tasks.rlglue.featureextractors.FeatureExtractor;
 import java.util.ArrayList;
 import org.rlcommunity.environments.tetris.TetrisPiece;
 import org.rlcommunity.environments.tetris.TetrisState;

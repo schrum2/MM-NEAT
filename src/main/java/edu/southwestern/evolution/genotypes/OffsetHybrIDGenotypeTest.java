@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.evolution.genotypes;
+package edu.southwestern.evolution.genotypes;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -9,10 +9,10 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.networks.hyperneat.HyperNEATUtil;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.util.random.RandomNumbers;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.networks.hyperneat.HyperNEATUtil;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.util.random.RandomNumbers;
 
 public class OffsetHybrIDGenotypeTest {
 	HyperNEATCPPNGenotype hncg;
@@ -21,7 +21,7 @@ public class OffsetHybrIDGenotypeTest {
 	@Before
 	public void setUp() throws Exception {
 		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "recurrency:false", "hyperNEAT:true", 
-				"task:edu.utexas.cs.nn.networks.hyperneat.HyperNEATDummyTask","linkExpressionThreshold:-1"});
+				"task:edu.southwestern.networks.hyperneat.HyperNEATDummyTask","linkExpressionThreshold:-1"});
 		MMNEAT.loadClasses();
 		hncg = new HyperNEATCPPNGenotype();
 		ohg = new OffsetHybrIDGenotype(hncg.archetypeIndex, hncg.links, hncg.nodes, hncg.neuronsPerModule);

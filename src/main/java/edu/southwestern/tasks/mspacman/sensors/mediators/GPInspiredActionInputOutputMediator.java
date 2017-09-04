@@ -1,20 +1,20 @@
-package edu.utexas.cs.nn.tasks.mspacman.sensors.mediators;
+package edu.southwestern.tasks.mspacman.sensors.mediators;
 
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.cluster.GhostClusterBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.booleansensors.GhostReversalBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.booleansensors.AtePowerPillBlock;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.tasks.mspacman.agentcontroller.pacman.actions.*;
-import edu.utexas.cs.nn.tasks.mspacman.facades.GhostControllerFacade;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.ActionBlockLoadedInputOutputMediator;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.MsPacManControllerInputOutputMediator;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.*;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.booleansensors.*;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.counting.PillsRemainingBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.counting.PowerPillsRemainingBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.distance.*;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.time.EdibleTimesBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.time.LairTimesBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.cluster.GhostClusterBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.booleansensors.GhostReversalBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.booleansensors.AtePowerPillBlock;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.mspacman.agentcontroller.pacman.actions.*;
+import edu.southwestern.tasks.mspacman.facades.GhostControllerFacade;
+import edu.southwestern.tasks.mspacman.sensors.ActionBlockLoadedInputOutputMediator;
+import edu.southwestern.tasks.mspacman.sensors.MsPacManControllerInputOutputMediator;
+import edu.southwestern.tasks.mspacman.sensors.blocks.*;
+import edu.southwestern.tasks.mspacman.sensors.blocks.booleansensors.*;
+import edu.southwestern.tasks.mspacman.sensors.blocks.counting.PillsRemainingBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.counting.PowerPillsRemainingBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.distance.*;
+import edu.southwestern.tasks.mspacman.sensors.blocks.time.EdibleTimesBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.time.LairTimesBlock;
 import pacman.controllers.examples.AggressiveGhosts;
 
 /**

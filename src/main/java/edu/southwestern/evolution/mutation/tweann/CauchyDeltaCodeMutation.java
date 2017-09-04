@@ -3,9 +3,9 @@
  * and open the template in the editor.
  */
 
-package edu.utexas.cs.nn.evolution.mutation.tweann;
+package edu.southwestern.evolution.mutation.tweann;
 
-import edu.utexas.cs.nn.util.random.CauchyGenerator;
+import edu.southwestern.util.random.CauchyGenerator;
 
 /**
  * Perturbs ALL weights (100%) according to Cauchy distribution

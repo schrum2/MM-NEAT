@@ -1,8 +1,8 @@
-package edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.distancedifference;
+package edu.southwestern.tasks.mspacman.sensors.blocks.distancedifference;
 
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.tasks.mspacman.data.NodeCollection;
-import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.mspacman.data.NodeCollection;
+import edu.southwestern.tasks.mspacman.facades.GameFacade;
 import java.util.Arrays;
 
 /**

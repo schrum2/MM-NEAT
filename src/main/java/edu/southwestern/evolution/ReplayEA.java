@@ -1,10 +1,10 @@
-package edu.utexas.cs.nn.evolution;
+package edu.southwestern.evolution;
 
-import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.log.FitnessLog;
-import edu.utexas.cs.nn.scores.Score;
-import edu.utexas.cs.nn.tasks.SinglePopulationTask;
-import edu.utexas.cs.nn.tasks.Task;
+import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.log.FitnessLog;
+import edu.southwestern.scores.Score;
+import edu.southwestern.tasks.SinglePopulationTask;
+import edu.southwestern.tasks.Task;
 import java.util.ArrayList;
 
 /**

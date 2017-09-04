@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.evolution;
+package edu.southwestern.evolution;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -9,9 +9,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Scanner;
 
-import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.util.stats.Statistic;
+import edu.southwestern.parameters.CommonConstants;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.util.stats.Statistic;
 
 /**
  * Tracks scores of all individuals still in population.

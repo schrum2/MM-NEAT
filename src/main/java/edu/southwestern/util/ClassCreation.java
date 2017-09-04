@@ -1,6 +1,6 @@
-package edu.utexas.cs.nn.util;
+package edu.southwestern.util;
 
-import edu.utexas.cs.nn.parameters.Parameters;
+import edu.southwestern.parameters.Parameters;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 

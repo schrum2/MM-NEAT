@@ -1,8 +1,8 @@
-package edu.utexas.cs.nn.evolution.nsga2.bd.characterizations;
+package edu.southwestern.evolution.nsga2.bd.characterizations;
 
-import edu.utexas.cs.nn.evolution.nsga2.bd.vectors.BehaviorVector;
-import edu.utexas.cs.nn.evolution.nsga2.bd.vectors.RealBehaviorVector;
-import edu.utexas.cs.nn.scores.Score;
+import edu.southwestern.evolution.nsga2.bd.vectors.BehaviorVector;
+import edu.southwestern.evolution.nsga2.bd.vectors.RealBehaviorVector;
+import edu.southwestern.scores.Score;
 
 /**
  * creates domain-specific characterization behavior vectors

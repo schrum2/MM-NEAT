@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.data;
+package edu.southwestern.data;
 
 import java.util.concurrent.Callable;
 import wox.serial.Easy;

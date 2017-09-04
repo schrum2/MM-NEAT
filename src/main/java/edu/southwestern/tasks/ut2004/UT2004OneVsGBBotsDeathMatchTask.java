@@ -1,10 +1,10 @@
-package edu.utexas.cs.nn.tasks.ut2004;
+package edu.southwestern.tasks.ut2004;
 
-import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.tasks.ut2004.controller.BotController;
-import edu.utexas.cs.nn.tasks.ut2004.fitness.*;
-import edu.utexas.cs.nn.util.ClassCreation;
+import edu.southwestern.networks.Network;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.ut2004.controller.BotController;
+import edu.southwestern.tasks.ut2004.fitness.*;
+import edu.southwestern.util.ClassCreation;
 
 /**
  *

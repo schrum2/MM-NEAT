@@ -2,7 +2,7 @@ package gvgai.core.optimization.ucbOptimization;
 
 import java.util.Random;
 
-import edu.utexas.cs.nn.util.random.RandomNumbers;
+import edu.southwestern.util.random.RandomNumbers;
 import gvgai.core.optimization.OptimizationObjective;
 import gvgai.tracks.ArcadeMachine;
 

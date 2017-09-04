@@ -1,8 +1,8 @@
-package edu.utexas.cs.nn.tasks.mspacman.agentcontroller.ghosts;
+package edu.southwestern.tasks.mspacman.agentcontroller.ghosts;
 
-import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.ghosts.VariableDirectionGhostBlockLoadedInputOutputMediator;
+import edu.southwestern.networks.Network;
+import edu.southwestern.tasks.mspacman.facades.GameFacade;
+import edu.southwestern.tasks.mspacman.sensors.ghosts.VariableDirectionGhostBlockLoadedInputOutputMediator;
 import java.util.Arrays;
 
 /**

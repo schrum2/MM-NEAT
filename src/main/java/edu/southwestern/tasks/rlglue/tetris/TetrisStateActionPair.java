@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.tasks.rlglue.tetris;
+package edu.southwestern.tasks.rlglue.tetris;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.rlcommunity.environments.tetris.TetrisState;
 
-import edu.utexas.cs.nn.util.datastructures.Pair;
+import edu.southwestern.util.datastructures.Pair;
 
 public class TetrisStateActionPair extends Pair<TetrisState, List<Integer>> {
 

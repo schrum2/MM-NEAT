@@ -1,6 +1,6 @@
-package edu.utexas.cs.nn.tasks.mspacman.facades;
+package edu.southwestern.tasks.mspacman.facades;
 
-import edu.utexas.cs.nn.parameters.CommonConstants;
+import edu.southwestern.parameters.CommonConstants;
 import java.util.EnumMap;
 import java.util.Map.Entry;
 import pacman.controllers.NewGhostController;

@@ -1,7 +1,7 @@
-package edu.utexas.cs.nn.evolution.nsga2.tug;
+package edu.southwestern.evolution.nsga2.tug;
 
-import edu.utexas.cs.nn.log.StatisticsLog;
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
+import edu.southwestern.log.StatisticsLog;
+import edu.southwestern.MMNEAT.MMNEAT;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;

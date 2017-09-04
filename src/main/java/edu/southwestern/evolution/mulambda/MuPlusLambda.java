@@ -1,6 +1,6 @@
-package edu.utexas.cs.nn.evolution.mulambda;
+package edu.southwestern.evolution.mulambda;
 
-import edu.utexas.cs.nn.tasks.SinglePopulationTask;
+import edu.southwestern.tasks.SinglePopulationTask;
 
 /**
  * The (mu+lambda) selection strategy. The next parent population comes from the

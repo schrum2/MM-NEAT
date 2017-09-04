@@ -1,9 +1,9 @@
-package edu.utexas.cs.nn.breve2D.dynamics;
+package edu.southwestern.breve2D.dynamics;
 
-import edu.utexas.cs.nn.breve2D.agent.Agent;
-import edu.utexas.cs.nn.breve2D.agent.Breve2DAction;
-import edu.utexas.cs.nn.util.util2D.ILocated2D;
-import edu.utexas.cs.nn.util.util2D.Tuple2D;
+import edu.southwestern.breve2D.agent.Agent;
+import edu.southwestern.breve2D.agent.Breve2DAction;
+import edu.southwestern.util.util2D.ILocated2D;
+import edu.southwestern.util.util2D.Tuple2D;
 
 /**
  *

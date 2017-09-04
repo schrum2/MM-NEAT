@@ -1,8 +1,8 @@
-package edu.utexas.cs.nn.evolution.metaheuristics;
+package edu.southwestern.evolution.metaheuristics;
 
-import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
-import edu.utexas.cs.nn.networks.TWEANN;
-import edu.utexas.cs.nn.scores.Score;
+import edu.southwestern.evolution.genotypes.TWEANNGenotype;
+import edu.southwestern.networks.TWEANN;
+import edu.southwestern.scores.Score;
 
 /**
  * Punish overuse of a single module. Doesn't seem to work very well.

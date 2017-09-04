@@ -1,9 +1,9 @@
-package edu.utexas.cs.nn.tasks.mspacman.agentcontroller.ghosts;
+package edu.southwestern.tasks.mspacman.agentcontroller.ghosts;
 
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.ghosts.GhostControllerInputOutputMediator;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.networks.Network;
+import edu.southwestern.tasks.mspacman.facades.GameFacade;
+import edu.southwestern.tasks.mspacman.sensors.ghosts.GhostControllerInputOutputMediator;
 import java.util.EnumMap;
 import pacman.controllers.NewGhostController;
 import pacman.game.Constants.GHOST;

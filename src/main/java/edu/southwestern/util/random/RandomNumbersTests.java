@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.util.random;
+package edu.southwestern.util.random;
 
 import static org.junit.Assert.*;
 
@@ -8,9 +8,9 @@ import java.util.Random;
 import org.junit.After;
 import org.junit.Test;
 
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.util.datastructures.ArrayUtil;
 
 public class RandomNumbersTests {
 

@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.networks;
+package edu.southwestern.networks;
 
 /**
  * An interface for any class that helps determine which mode/module a multitask

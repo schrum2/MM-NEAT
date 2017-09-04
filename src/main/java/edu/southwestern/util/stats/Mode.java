@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.util.stats;
+package edu.southwestern.util.stats;
 
 /**
  * Compute statistical mode (most common element) of an array of doubles.

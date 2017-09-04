@@ -1,8 +1,8 @@
-package edu.utexas.cs.nn.tasks.mspacman.multitask;
+package edu.southwestern.tasks.mspacman.multitask;
 
-import edu.utexas.cs.nn.networks.ModeSelector;
-import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
-import edu.utexas.cs.nn.tasks.mspacman.objectives.fitnessassignment.FitnessToModeMap;
+import edu.southwestern.networks.ModeSelector;
+import edu.southwestern.tasks.mspacman.facades.GameFacade;
+import edu.southwestern.tasks.mspacman.objectives.fitnessassignment.FitnessToModeMap;
 
 /**
  * defines all of the Mode Selectors for ms PacMan

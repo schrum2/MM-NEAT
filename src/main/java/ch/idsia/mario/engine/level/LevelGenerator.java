@@ -3,7 +3,7 @@ package ch.idsia.mario.engine.level;
 import java.util.Random;
 
 import ch.idsia.mario.engine.sprites.Enemy;
-import edu.utexas.cs.nn.util.random.RandomNumbers;
+import edu.southwestern.util.random.RandomNumbers;
 
 public class LevelGenerator
 {

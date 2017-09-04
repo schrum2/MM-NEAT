@@ -3,11 +3,11 @@
  * and open the template in the editor.
  */
 
-package edu.utexas.cs.nn.tasks.testmatch.functions;
+package edu.southwestern.tasks.testmatch.functions;
 
-import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.tasks.testmatch.MatchDataTask;
-import edu.utexas.cs.nn.util.datastructures.Pair;
+import edu.southwestern.networks.Network;
+import edu.southwestern.tasks.testmatch.MatchDataTask;
+import edu.southwestern.util.datastructures.Pair;
 import java.util.ArrayList;
 
 /**

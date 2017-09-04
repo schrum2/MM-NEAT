@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.io.Writer;
 import java.util.*;
 
-import edu.utexas.cs.nn.util.random.RandomNumbers;
+import edu.southwestern.util.random.RandomNumbers;
 import micro.rts.units.Unit;
 import micro.rts.units.UnitType;
 import micro.rts.units.UnitTypeTable;

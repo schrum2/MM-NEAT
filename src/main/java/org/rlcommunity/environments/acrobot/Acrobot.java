@@ -17,8 +17,8 @@ import org.rlcommunity.rlglue.codec.types.Observation;
 import org.rlcommunity.rlglue.codec.types.Reward_observation_terminal;
 import org.rlcommunity.rlglue.codec.util.EnvironmentLoader;
 
-import edu.utexas.cs.nn.tasks.rlglue.RLGlueEnvironment;
-import edu.utexas.cs.nn.tasks.rlglue.acrobot.AcrobotViewer;
+import edu.southwestern.tasks.rlglue.RLGlueEnvironment;
+import edu.southwestern.tasks.rlglue.acrobot.AcrobotViewer;
 import rlVizLib.general.ParameterHolder;
 import rlVizLib.general.hasVersionDetails;
 import rlVizLib.messaging.environment.EnvironmentMessageParser;

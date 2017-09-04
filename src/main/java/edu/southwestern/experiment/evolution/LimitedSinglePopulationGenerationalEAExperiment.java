@@ -1,9 +1,9 @@
-package edu.utexas.cs.nn.experiment.evolution;
+package edu.southwestern.experiment.evolution;
 
-import edu.utexas.cs.nn.evolution.SinglePopulationGenerationalEA;
-import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.SinglePopulationGenerationalEA;
+import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.MMNEAT.MMNEAT;
 
 /**
  * A generational experiment that stops when a specific number of generations

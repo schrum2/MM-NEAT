@@ -1,11 +1,11 @@
-package edu.utexas.cs.nn.evolution.crossover.network;
+package edu.southwestern.evolution.crossover.network;
 
-import edu.utexas.cs.nn.evolution.crossover.ArrayCrossover;
-import edu.utexas.cs.nn.evolution.crossover.Crossover;
-import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.evolution.genotypes.MLPGenotype;
-import edu.utexas.cs.nn.evolution.genotypes.RealValuedGenotype;
-import edu.utexas.cs.nn.networks.MLP;
+import edu.southwestern.evolution.crossover.ArrayCrossover;
+import edu.southwestern.evolution.crossover.Crossover;
+import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.evolution.genotypes.MLPGenotype;
+import edu.southwestern.evolution.genotypes.RealValuedGenotype;
+import edu.southwestern.networks.MLP;
 import java.util.ArrayList;
 
 /**

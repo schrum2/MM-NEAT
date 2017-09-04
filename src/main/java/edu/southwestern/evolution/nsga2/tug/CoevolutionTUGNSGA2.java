@@ -1,8 +1,8 @@
-package edu.utexas.cs.nn.evolution.nsga2.tug;
+package edu.southwestern.evolution.nsga2.tug;
 
-import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.evolution.nsga2.CoevolutionNSGA2;
-import edu.utexas.cs.nn.scores.Score;
+import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.evolution.nsga2.CoevolutionNSGA2;
+import edu.southwestern.scores.Score;
 import java.util.ArrayList;
 
 /**

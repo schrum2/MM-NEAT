@@ -1,11 +1,11 @@
-package edu.utexas.cs.nn.evolution.mutation.tweann;
+package edu.southwestern.evolution.mutation.tweann;
 
-import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
-import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype.LinkGene;
-import edu.utexas.cs.nn.evolution.mutation.real.PolynomialMutation;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.networks.TWEANN;
+import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.evolution.genotypes.TWEANNGenotype;
+import edu.southwestern.evolution.genotypes.TWEANNGenotype.LinkGene;
+import edu.southwestern.evolution.mutation.real.PolynomialMutation;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.networks.TWEANN;
 
 /**
  *

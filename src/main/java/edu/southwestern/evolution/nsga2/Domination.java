@@ -1,6 +1,6 @@
-package edu.utexas.cs.nn.evolution.nsga2;
+package edu.southwestern.evolution.nsga2;
 
-import edu.utexas.cs.nn.scores.Better;
+import edu.southwestern.scores.Better;
 
 /**
  * Sorts based on which solution dominates another in a Pareto sense.

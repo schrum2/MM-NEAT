@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.networks.hyperneat;
+package edu.southwestern.networks.hyperneat;
 
 import static org.junit.Assert.assertEquals;
 
@@ -9,15 +9,15 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
-import edu.utexas.cs.nn.networks.ActivationFunctions;
-import edu.utexas.cs.nn.networks.TWEANN;
-import edu.utexas.cs.nn.networks.TWEANN.Node;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.util.datastructures.Pair;
-import edu.utexas.cs.nn.util.datastructures.Triple;
-import edu.utexas.cs.nn.util.random.RandomNumbers;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.genotypes.TWEANNGenotype;
+import edu.southwestern.networks.ActivationFunctions;
+import edu.southwestern.networks.TWEANN;
+import edu.southwestern.networks.TWEANN.Node;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.util.datastructures.Pair;
+import edu.southwestern.util.datastructures.Triple;
+import edu.southwestern.util.random.RandomNumbers;
 /**
  * JUnit testing class for hyperNEATutil class
  * @author Lauren Gillespie
@@ -40,8 +40,8 @@ public class HyperNEATUtilTest {
 	public void setUp() throws Exception {
 		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "recurrency:false",
 				"rlGlueEnvironment:org.rlcommunity.environments.tetris.Tetris",
-				"task:edu.utexas.cs.nn.tasks.rlglue.tetris.HyperNEATTetrisTask", "rlGlueAgent:edu.utexas.cs.nn.tasks.rlglue.tetris.TetrisAfterStateAgent",
-				"rlGlueExtractor:edu.utexas.cs.nn.tasks.rlglue.featureextractors.tetris.RawTetrisStateExtractor", "hyperNEAT:true", "showWeights:true" });
+				"task:edu.southwestern.tasks.rlglue.tetris.HyperNEATTetrisTask", "rlGlueAgent:edu.southwestern.tasks.rlglue.tetris.TetrisAfterStateAgent",
+				"rlGlueExtractor:edu.southwestern.tasks.rlglue.featureextractors.tetris.RawTetrisStateExtractor", "hyperNEAT:true", "showWeights:true" });
 		MMNEAT.loadClasses();
 		htask = (HyperNEATTask) MMNEAT.task;
 		//MMNEAT.task = (Task) htask;

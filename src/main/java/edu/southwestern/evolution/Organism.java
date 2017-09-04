@@ -1,6 +1,6 @@
-package edu.utexas.cs.nn.evolution;
+package edu.southwestern.evolution;
 
-import edu.utexas.cs.nn.evolution.genotypes.Genotype;
+import edu.southwestern.evolution.genotypes.Genotype;
 
 /**
  * Stores a genotype, which can be replaced as needed.

@@ -1,10 +1,10 @@
-package edu.utexas.cs.nn.tasks.ut2004.sensors.blocks;
+package edu.southwestern.tasks.ut2004.sensors.blocks;
 
 import cz.cuni.amis.pogamut.base3d.worldview.object.Location;
 import cz.cuni.amis.pogamut.unreal.communication.messages.UnrealId;
 import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004BotModuleController;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.Player;
-import edu.utexas.cs.nn.tasks.ut2004.Util;
+import edu.southwestern.tasks.ut2004.Util;
 import java.util.Map;
 
 /**

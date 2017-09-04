@@ -1,7 +1,7 @@
-package edu.utexas.cs.nn.tasks.mspacman.multitask;
+package edu.southwestern.tasks.mspacman.multitask;
 
-import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.tasks.mspacman.ghosts.GhostComparator;
+import edu.southwestern.parameters.CommonConstants;
+import edu.southwestern.tasks.mspacman.ghosts.GhostComparator;
 import java.util.ArrayList;
 import java.util.Collections;
 

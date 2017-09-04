@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.util.random;
+package edu.southwestern.util.random;
 
 /**
  * Random number generator to create Gaussian distributed values.

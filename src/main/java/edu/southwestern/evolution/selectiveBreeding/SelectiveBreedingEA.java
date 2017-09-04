@@ -1,22 +1,22 @@
-package edu.utexas.cs.nn.evolution.selectiveBreeding;
+package edu.southwestern.evolution.selectiveBreeding;
 
 import java.util.ArrayList;
 
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
-import edu.utexas.cs.nn.evolution.SinglePopulationGenerationalEA;
-import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
-import edu.utexas.cs.nn.evolution.lineage.Offspring;
-import edu.utexas.cs.nn.log.FitnessLog;
-import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.scores.Score;
-import edu.utexas.cs.nn.tasks.SinglePopulationTask;
-import edu.utexas.cs.nn.tasks.Task;
-import edu.utexas.cs.nn.tasks.interactive.picbreeder.PicbreederTask;
-import edu.utexas.cs.nn.util.PopulationUtil;
-import edu.utexas.cs.nn.util.random.RandomNumbers;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.EvolutionaryHistory;
+import edu.southwestern.evolution.SinglePopulationGenerationalEA;
+import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.evolution.genotypes.TWEANNGenotype;
+import edu.southwestern.evolution.lineage.Offspring;
+import edu.southwestern.log.FitnessLog;
+import edu.southwestern.parameters.CommonConstants;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.scores.Score;
+import edu.southwestern.tasks.SinglePopulationTask;
+import edu.southwestern.tasks.Task;
+import edu.southwestern.tasks.interactive.picbreeder.PicbreederTask;
+import edu.southwestern.util.PopulationUtil;
+import edu.southwestern.util.random.RandomNumbers;
 
 /**
  * Selective breeding elite algorithm for picbreeder task

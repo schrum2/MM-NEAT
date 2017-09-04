@@ -1,10 +1,10 @@
 
-package edu.utexas.cs.nn.gridTorus.controllers;
+package edu.southwestern.gridTorus.controllers;
 
-import edu.utexas.cs.nn.gridTorus.TorusAgent;
-import edu.utexas.cs.nn.gridTorus.TorusWorld;
-import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
-import edu.utexas.cs.nn.util.util2D.Tuple2D;
+import edu.southwestern.gridTorus.TorusAgent;
+import edu.southwestern.gridTorus.TorusWorld;
+import edu.southwestern.util.stats.StatisticsUtilities;
+import edu.southwestern.util.util2D.Tuple2D;
 
 /**
  *

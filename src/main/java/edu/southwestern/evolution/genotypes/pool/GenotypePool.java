@@ -1,9 +1,9 @@
-package edu.utexas.cs.nn.evolution.genotypes.pool;
+package edu.southwestern.evolution.genotypes.pool;
 
-import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
-import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.util.file.XMLFilter;
+import edu.southwestern.evolution.EvolutionaryHistory;
+import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.networks.Network;
+import edu.southwestern.util.file.XMLFilter;
 
 import java.io.File;
 import java.io.FilenameFilter;

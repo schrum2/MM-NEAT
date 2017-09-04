@@ -1,10 +1,10 @@
-package edu.utexas.cs.nn.networks;
+package edu.southwestern.networks;
 
 import java.util.ArrayList;
 
-import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.util.random.RandomNumbers;
+import edu.southwestern.parameters.CommonConstants;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.util.random.RandomNumbers;
 
 /**
  * Contains activation functions used by neural networks.

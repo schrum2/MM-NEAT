@@ -1,11 +1,11 @@
-package edu.utexas.cs.nn.util.sound;
+package edu.southwestern.util.sound;
 
 import java.io.IOException;
 
 import javax.sound.sampled.AudioFormat;
 
-import edu.utexas.cs.nn.evolution.genotypes.HyperNEATCPPNGenotype;
-import edu.utexas.cs.nn.networks.Network;
+import edu.southwestern.evolution.genotypes.HyperNEATCPPNGenotype;
+import edu.southwestern.networks.Network;
 
 /**
  * Utility methods associated with generating and saving a sound using an input

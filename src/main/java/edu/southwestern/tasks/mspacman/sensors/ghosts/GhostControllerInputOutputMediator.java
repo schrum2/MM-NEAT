@@ -1,7 +1,7 @@
-package edu.utexas.cs.nn.tasks.mspacman.sensors.ghosts;
+package edu.southwestern.tasks.mspacman.sensors.ghosts;
 
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.mspacman.facades.GameFacade;
 
 /**
  *

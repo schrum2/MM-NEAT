@@ -1,8 +1,8 @@
-package edu.utexas.cs.nn.tasks.mspacman.objectives;
+package edu.southwestern.tasks.mspacman.objectives;
 
-import edu.utexas.cs.nn.evolution.Organism;
-import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.parameters.CommonConstants;
+import edu.southwestern.evolution.Organism;
+import edu.southwestern.networks.Network;
+import edu.southwestern.parameters.CommonConstants;
 
 /**
  * Meant to be used when only evolving on a single level. Reward pacman for

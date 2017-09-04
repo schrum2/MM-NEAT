@@ -1,13 +1,13 @@
-package edu.utexas.cs.nn.evolution.nsga2.tug;
+package edu.southwestern.evolution.nsga2.tug;
 
-import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
-import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.evolution.nsga2.NSGA2Score;
-import edu.utexas.cs.nn.log.MMNEATLog;
-import edu.utexas.cs.nn.scores.Score;
-import edu.utexas.cs.nn.util.PopulationUtil;
-import edu.utexas.cs.nn.util.datastructures.Pair;
-import edu.utexas.cs.nn.util.random.RandomNumbers;
+import edu.southwestern.evolution.EvolutionaryHistory;
+import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.evolution.nsga2.NSGA2Score;
+import edu.southwestern.log.MMNEATLog;
+import edu.southwestern.scores.Score;
+import edu.southwestern.util.PopulationUtil;
+import edu.southwestern.util.datastructures.Pair;
+import edu.southwestern.util.random.RandomNumbers;
 import java.util.ArrayList;
 import java.util.Random;
 

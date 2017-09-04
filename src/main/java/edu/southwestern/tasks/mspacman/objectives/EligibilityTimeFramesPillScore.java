@@ -2,10 +2,10 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.utexas.cs.nn.tasks.mspacman.objectives;
+package edu.southwestern.tasks.mspacman.objectives;
 
-import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.util.datastructures.Interval;
+import edu.southwestern.networks.Network;
+import edu.southwestern.util.datastructures.Interval;
 import java.util.LinkedList;
 import java.util.List;
 

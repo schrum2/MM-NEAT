@@ -1,5 +1,5 @@
 
-package edu.utexas.cs.nn.util;
+package edu.southwestern.util;
 
 /**
  * Utility class used for the evaluation of boolean Arrays.

@@ -1,8 +1,8 @@
-package edu.utexas.cs.nn.evolution.mutation.real;
+package edu.southwestern.evolution.mutation.real;
 
-import edu.utexas.cs.nn.evolution.genotypes.RealValuedGenotype;
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
+import edu.southwestern.evolution.genotypes.RealValuedGenotype;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.util.datastructures.ArrayUtil;
 
 /**
  *

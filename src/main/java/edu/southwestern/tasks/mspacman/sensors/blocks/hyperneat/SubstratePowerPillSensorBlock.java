@@ -1,8 +1,8 @@
-package edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.hyperneat;
+package edu.southwestern.tasks.mspacman.sensors.blocks.hyperneat;
 
-import edu.utexas.cs.nn.tasks.mspacman.MsPacManTask;
-import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.MsPacManSensorBlock;
+import edu.southwestern.tasks.mspacman.MsPacManTask;
+import edu.southwestern.tasks.mspacman.facades.GameFacade;
+import edu.southwestern.tasks.mspacman.sensors.blocks.MsPacManSensorBlock;
 import pacman.game.Constants;
 /**
  * Gets sensor block for power pill substrate in hyperNEAT msPacMan task

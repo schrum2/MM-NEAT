@@ -3,7 +3,7 @@
  *
  * @author Jacob Schrum, Gabby Gonzalez
  */
-package edu.utexas.cs.nn.tasks.rlglue.tetris;
+package edu.southwestern.tasks.rlglue.tetris;
 
 import java.util.HashSet;
 import java.util.LinkedList;

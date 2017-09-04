@@ -5,8 +5,8 @@
  */
 package micro.ai.abstraction.partialobservability;
 
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.tasks.microrts.MicroRTSInformation;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.tasks.microrts.MicroRTSInformation;
 import micro.ai.abstraction.WorkerRush;
 import micro.ai.abstraction.pathfinding.AStarPathFinding;
 import micro.ai.abstraction.pathfinding.PathFinding;

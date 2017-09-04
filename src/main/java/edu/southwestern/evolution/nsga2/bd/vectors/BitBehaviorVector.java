@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.evolution.nsga2.bd.vectors;
+package edu.southwestern.evolution.nsga2.bd.vectors;
 
 /*
  * To change this template, choose Tools | Templates

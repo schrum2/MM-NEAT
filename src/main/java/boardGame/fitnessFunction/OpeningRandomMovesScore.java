@@ -2,7 +2,7 @@ package boardGame.fitnessFunction;
 
 import boardGame.BoardGameState;
 import boardGame.agents.BoardGamePlayer;
-import edu.utexas.cs.nn.parameters.Parameters;
+import edu.southwestern.parameters.Parameters;
 
 public class OpeningRandomMovesScore<T extends BoardGameState> implements BoardGameFitnessFunction<T> {
 

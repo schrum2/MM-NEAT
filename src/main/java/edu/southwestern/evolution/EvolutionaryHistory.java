@@ -1,18 +1,18 @@
-package edu.utexas.cs.nn.evolution;
+package edu.southwestern.evolution;
 
-import edu.utexas.cs.nn.evolution.crossover.network.CombiningTWEANNCrossover;
-import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
-import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype.NodeGene;
-import edu.utexas.cs.nn.log.MMNEATLog;
-import edu.utexas.cs.nn.log.TWEANNLog;
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.evolution.selectiveBreeding.SelectiveBreedingEA;
-import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.networks.TWEANN;
-import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.util.file.FileUtilities;
+import edu.southwestern.evolution.crossover.network.CombiningTWEANNCrossover;
+import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.evolution.genotypes.TWEANNGenotype;
+import edu.southwestern.evolution.genotypes.TWEANNGenotype.NodeGene;
+import edu.southwestern.log.MMNEATLog;
+import edu.southwestern.log.TWEANNLog;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA;
+import edu.southwestern.networks.Network;
+import edu.southwestern.networks.TWEANN;
+import edu.southwestern.parameters.CommonConstants;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.util.file.FileUtilities;
 
 import java.io.File;
 import java.util.ArrayList;

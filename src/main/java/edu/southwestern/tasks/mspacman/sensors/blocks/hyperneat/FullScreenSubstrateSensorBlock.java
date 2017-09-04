@@ -1,7 +1,7 @@
-package edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.hyperneat;
+package edu.southwestern.tasks.mspacman.sensors.blocks.hyperneat;
 
-import edu.utexas.cs.nn.tasks.mspacman.MsPacManTask;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.MsPacManSensorBlock;
+import edu.southwestern.tasks.mspacman.MsPacManTask;
+import edu.southwestern.tasks.mspacman.sensors.blocks.MsPacManSensorBlock;
 /**
  * Abstract template class for substrate sensor block
  * for HyperNEAT in ms PacMan

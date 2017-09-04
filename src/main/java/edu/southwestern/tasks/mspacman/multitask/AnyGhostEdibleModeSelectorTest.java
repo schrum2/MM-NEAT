@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.tasks.mspacman.multitask;
+package edu.southwestern.tasks.mspacman.multitask;
 
 import static org.junit.Assert.*;
 
@@ -9,9 +9,9 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
-//import edu.utexas.cs.nn.util.MiscUtil;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.mspacman.facades.GameFacade;
+//import edu.southwestern.util.MiscUtil;
 import pacman.game.Constants.GHOST;
 import pacman.game.Constants.MOVE;
 import pacman.game.Game;
@@ -24,9 +24,9 @@ public class AnyGhostEdibleModeSelectorTest {
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		Parameters.initializeParameterCollections(new String[]{"io:false", "netio:false",
-				"task:edu.utexas.cs.nn.tasks.mspacman.MsPacManTask", "multitaskModes:2", 
-				"pacmanInputOutputMediator:edu.utexas.cs.nn.tasks.mspacman.sensors.mediators.IICheckEachDirectionMediator", 
-				"pacmanMultitaskScheme:edu.utexas.cs.nn.tasks.mspacman.multitask.AnyGhostEdibleModeSelector"});
+				"task:edu.southwestern.tasks.mspacman.MsPacManTask", "multitaskModes:2", 
+				"pacmanInputOutputMediator:edu.southwestern.tasks.mspacman.sensors.mediators.IICheckEachDirectionMediator", 
+				"pacmanMultitaskScheme:edu.southwestern.tasks.mspacman.multitask.AnyGhostEdibleModeSelector"});
 		//MMNEAT.loadClasses(); // Don't actually need any of the classes
 		
 		select = new AnyGhostEdibleModeSelector();

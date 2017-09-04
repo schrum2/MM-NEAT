@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.gridTorus;
+package edu.southwestern.gridTorus;
 
 import static org.junit.Assert.*;
 
@@ -6,9 +6,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.util.util2D.Tuple2D;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.util.util2D.Tuple2D;
 
 public class TorusPredPreyGameTest {
 
@@ -22,7 +22,7 @@ public class TorusPredPreyGameTest {
 	public void setUp() throws Exception {
 		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "torusTimeLimit:1000",
 				"torusPreys:2", "torusPredators:3",
-				"staticPreyController:edu.utexas.cs.nn.gridTorus.controllers.PreyFleeClosestPredatorController",
+				"staticPreyController:edu.southwestern.gridTorus.controllers.PreyFleeClosestPredatorController",
 				"predatorCatchClose:false", "preyRRM:false" });
 		MMNEAT.loadClasses();
 	}

@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.tasks.interactive.breedesizer;
+package edu.southwestern.tasks.interactive.breedesizer;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -10,10 +10,10 @@ import java.awt.event.MouseListener;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.tasks.interactive.InteractiveEvolutionTask;
-import edu.utexas.cs.nn.util.sound.PlayDoubleArray;
-import edu.utexas.cs.nn.util.sound.SoundFromCPPNUtil;
+import edu.southwestern.networks.Network;
+import edu.southwestern.tasks.interactive.InteractiveEvolutionTask;
+import edu.southwestern.util.sound.PlayDoubleArray;
+import edu.southwestern.util.sound.SoundFromCPPNUtil;
 
 /**
  * Constructs graphical representation of two-octave keyboard (C3-C5) that is fully functional through

@@ -1,14 +1,14 @@
 /**
  * 
  */
-package edu.utexas.cs.nn.util.random;
+package edu.southwestern.util.random;
 
 import static org.junit.Assert.*;
 
 import org.junit.After;
 import org.junit.Test;
 
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
+import edu.southwestern.MMNEAT.MMNEAT;
 
 /**
  * This is a JUnit test for the core methods of the Resumable Random class,

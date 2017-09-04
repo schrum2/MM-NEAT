@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.util.stats;
+package edu.southwestern.util.stats;
 
 /**
  * Compute the maximum of an array of doubles

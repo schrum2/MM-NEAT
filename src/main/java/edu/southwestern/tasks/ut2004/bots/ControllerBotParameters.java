@@ -1,8 +1,8 @@
-package edu.utexas.cs.nn.tasks.ut2004.bots;
+package edu.southwestern.tasks.ut2004.bots;
 
 import cz.cuni.amis.pogamut.ut2004.bot.params.UT2004BotParameters;
 import cz.cuni.amis.pogamut.ut2004.server.IUT2004Server;
-import edu.utexas.cs.nn.tasks.ut2004.controller.BotController;
+import edu.southwestern.tasks.ut2004.controller.BotController;
 
 public class ControllerBotParameters extends UT2004BotParameters {
 

@@ -1,9 +1,9 @@
-package edu.utexas.cs.nn.tasks.rlglue.acrobot;
+package edu.southwestern.tasks.rlglue.acrobot;
 
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.tasks.rlglue.RLGlueTask;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.networks.Network;
+import edu.southwestern.parameters.CommonConstants;
+import edu.southwestern.tasks.rlglue.RLGlueTask;
 
 public class AcrobotTask<T extends Network> extends RLGlueTask<T> {
 	

@@ -13,8 +13,8 @@ import org.junit.Test;
 
 import boardGame.agents.treesearch.BoardGamePlayerMinimax;
 import boardGame.heuristics.PieceDifferentialBoardGameHeuristic;
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.parameters.Parameters;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.parameters.Parameters;
 
 public class OthelloPieceDifferentialTest {
 
@@ -28,7 +28,7 @@ public class OthelloPieceDifferentialTest {
 	
 	@Before
 	public void setUp() throws Exception {
-		Parameters.initializeParameterCollections(new String[]{"io:false", "netio:false", "task:edu.utexas.cs.nn.tasks.boardGame.StaticOpponentBoardGameTask",
+		Parameters.initializeParameterCollections(new String[]{"io:false", "netio:false", "task:edu.southwestern.tasks.boardGame.StaticOpponentBoardGameTask",
 				"boardGame:boardGame.othello.Othello", "minimaxSearchDepth:3"});
 		MMNEAT.loadClasses();
 		

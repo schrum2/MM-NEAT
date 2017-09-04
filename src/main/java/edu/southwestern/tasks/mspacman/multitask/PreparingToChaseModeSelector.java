@@ -1,6 +1,6 @@
-package edu.utexas.cs.nn.tasks.mspacman.multitask;
+package edu.southwestern.tasks.mspacman.multitask;
 
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.PowerPillAvoidanceBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.PowerPillAvoidanceBlock;
 
 /**
  * Has three modes: 0) Ghosts are edible 1) No edible ghosts, and near power

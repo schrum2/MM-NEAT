@@ -83,10 +83,10 @@ import javax.swing.JSeparator;
 import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 
-import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.tasks.microrts.evaluation.DummyEvaluationFunction;
-import edu.utexas.cs.nn.tasks.microrts.evaluation.NN2DEvaluationFunction;
-import edu.utexas.cs.nn.tasks.microrts.evaluation.NNSimpleEvaluationFunction;
+import edu.southwestern.networks.Network;
+import edu.southwestern.tasks.microrts.evaluation.DummyEvaluationFunction;
+import edu.southwestern.tasks.microrts.evaluation.NN2DEvaluationFunction;
+import edu.southwestern.tasks.microrts.evaluation.NNSimpleEvaluationFunction;
 import micro.rts.GameState;
 import micro.rts.PartiallyObservableGameState;
 import micro.rts.PhysicalGameState;

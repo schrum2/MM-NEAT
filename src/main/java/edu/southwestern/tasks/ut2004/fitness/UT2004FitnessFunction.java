@@ -1,9 +1,9 @@
-package edu.utexas.cs.nn.tasks.ut2004.fitness;
+package edu.southwestern.tasks.ut2004.fitness;
 
-import edu.utexas.cs.nn.evolution.Organism;
-import edu.utexas.cs.nn.evolution.fitness.FitnessFunction;
-import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.tasks.ut2004.bots.GameDataCollector;
+import edu.southwestern.evolution.Organism;
+import edu.southwestern.evolution.fitness.FitnessFunction;
+import edu.southwestern.networks.Network;
+import edu.southwestern.tasks.ut2004.bots.GameDataCollector;
 
 /**
  *

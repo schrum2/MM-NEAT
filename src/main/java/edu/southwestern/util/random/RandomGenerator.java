@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.util.random;
+package edu.southwestern.util.random;
 
 /**
  * Interface for distributing a source of random values.

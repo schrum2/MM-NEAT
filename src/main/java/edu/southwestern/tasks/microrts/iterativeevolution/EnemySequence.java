@@ -1,10 +1,10 @@
-package edu.utexas.cs.nn.tasks.microrts.iterativeevolution;
+package edu.southwestern.tasks.microrts.iterativeevolution;
 
 import java.util.ArrayList;
 
-import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.tasks.microrts.fitness.RTSFitnessFunction;
+import edu.southwestern.parameters.CommonConstants;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.microrts.fitness.RTSFitnessFunction;
 import micro.ai.core.AI;
 
 /**

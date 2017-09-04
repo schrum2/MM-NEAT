@@ -1,6 +1,6 @@
-package edu.utexas.cs.nn.evolution.genotypes;
+package edu.southwestern.evolution.genotypes;
 
-import edu.utexas.cs.nn.networks.Network;
+import edu.southwestern.networks.Network;
 
 /**
  * A genotype that encodes some kind of neural network

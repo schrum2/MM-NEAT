@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.tasks;
+package edu.southwestern.tasks;
 
 /**
  * An abstract, general definition of a task for all types of tasks These

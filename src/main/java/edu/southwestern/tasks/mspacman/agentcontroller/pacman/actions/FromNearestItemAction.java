@@ -1,6 +1,6 @@
-package edu.utexas.cs.nn.tasks.mspacman.agentcontroller.pacman.actions;
+package edu.southwestern.tasks.mspacman.agentcontroller.pacman.actions;
 
-import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
+import edu.southwestern.tasks.mspacman.facades.GameFacade;
 
 /**
  * Move directly away from the nearest item of a given type

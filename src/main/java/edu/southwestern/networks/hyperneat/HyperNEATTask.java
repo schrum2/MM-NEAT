@@ -1,8 +1,8 @@
-package edu.utexas.cs.nn.networks.hyperneat;
+package edu.southwestern.networks.hyperneat;
 
 import java.util.List;
 
-import edu.utexas.cs.nn.util.datastructures.Triple;
+import edu.southwestern.util.datastructures.Triple;
 
 /**
  * A task that HyperNEAT can be applied to. Need to get substrate defining info

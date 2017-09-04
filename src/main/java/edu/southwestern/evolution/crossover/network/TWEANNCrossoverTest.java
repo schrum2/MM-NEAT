@@ -1,7 +1,7 @@
 /**
  * 
  */
-package edu.utexas.cs.nn.evolution.crossover.network;
+package edu.southwestern.evolution.crossover.network;
 
 import static org.junit.Assert.*;
 
@@ -10,11 +10,11 @@ import java.util.ArrayList;
 import org.junit.After;
 import org.junit.Test;
 
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
-import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype.NodeGene;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.genotypes.TWEANNGenotype;
+import edu.southwestern.evolution.genotypes.TWEANNGenotype.NodeGene;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.util.datastructures.ArrayUtil;
 
 /**
  * This is a JUnit test for the TWEANN crossover. It tests both upper and lower

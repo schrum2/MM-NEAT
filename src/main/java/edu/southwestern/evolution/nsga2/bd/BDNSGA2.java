@@ -1,12 +1,12 @@
-package edu.utexas.cs.nn.evolution.nsga2.bd;
+package edu.southwestern.evolution.nsga2.bd;
 
-import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.evolution.nsga2.NSGA2;
-import edu.utexas.cs.nn.evolution.nsga2.bd.characterizations.BehaviorCharacterization;
-import edu.utexas.cs.nn.evolution.nsga2.bd.vectors.BehaviorVector;
-import edu.utexas.cs.nn.util.ClassCreation;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.scores.Score;
+import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.evolution.nsga2.NSGA2;
+import edu.southwestern.evolution.nsga2.bd.characterizations.BehaviorCharacterization;
+import edu.southwestern.evolution.nsga2.bd.vectors.BehaviorVector;
+import edu.southwestern.util.ClassCreation;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.scores.Score;
 
 import java.util.ArrayList;
 

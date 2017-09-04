@@ -16,7 +16,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
-import edu.utexas.cs.nn.util.random.RandomNumbers;
+import edu.southwestern.util.random.RandomNumbers;
 import micro.rts.GameState;
 import micro.rts.PlayerAction;
 import micro.rts.PlayerActionGenerator;

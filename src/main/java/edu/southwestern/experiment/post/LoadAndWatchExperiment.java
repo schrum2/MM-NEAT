@@ -1,12 +1,12 @@
-package edu.utexas.cs.nn.experiment.post;
+package edu.southwestern.experiment.post;
 
-import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.evolution.nsga2.NSGA2Score;
-import edu.utexas.cs.nn.experiment.Experiment;
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.tasks.SinglePopulationTask;
-import edu.utexas.cs.nn.util.PopulationUtil;
+import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.evolution.nsga2.NSGA2Score;
+import edu.southwestern.experiment.Experiment;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.SinglePopulationTask;
+import edu.southwestern.util.PopulationUtil;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;

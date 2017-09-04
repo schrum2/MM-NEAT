@@ -1,6 +1,6 @@
-package edu.utexas.cs.nn.evolution.metaheuristics;
+package edu.southwestern.evolution.metaheuristics;
 
-import edu.utexas.cs.nn.scores.Score;
+import edu.southwestern.scores.Score;
 
 /**
  * Any fitness function that is completely independent of the domain itself.

@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.tasks.rlglue.tetris;
+package edu.southwestern.tasks.rlglue.tetris;
 
 import static org.junit.Assert.*;
 
@@ -12,9 +12,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.rlcommunity.environments.tetris.TetrisState;
 
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
-import edu.utexas.cs.nn.parameters.Parameters;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.EvolutionaryHistory;
+import edu.southwestern.parameters.Parameters;
 
 public class TetrisAfterStateGeneratorTests {
 
@@ -30,8 +30,8 @@ public class TetrisAfterStateGeneratorTests {
 		EvolutionaryHistory.setHighestGenotypeId(0);
 		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "recurrency:false",
 				"rlGlueEnvironment:org.rlcommunity.environments.tetris.Tetris",
-				"task:edu.utexas.cs.nn.tasks.rlglue.tetris.TetrisTask", "rlGlueAgent:edu.utexas.cs.nn.tasks.rlglue.tetris.TetrisAfterStateAgent",
-				"rlGlueExtractor:edu.utexas.cs.nn.tasks.rlglue.featureextractors.tetris.BertsekasTsitsiklisTetrisExtractor" });
+				"task:edu.southwestern.tasks.rlglue.tetris.TetrisTask", "rlGlueAgent:edu.southwestern.tasks.rlglue.tetris.TetrisAfterStateAgent",
+				"rlGlueExtractor:edu.southwestern.tasks.rlglue.featureextractors.tetris.BertsekasTsitsiklisTetrisExtractor" });
 		MMNEAT.loadClasses();
 	}
 	

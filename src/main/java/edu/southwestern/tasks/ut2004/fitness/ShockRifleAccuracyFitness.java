@@ -2,10 +2,10 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.utexas.cs.nn.tasks.ut2004.fitness;
+package edu.southwestern.tasks.ut2004.fitness;
 
 import cz.cuni.amis.pogamut.ut2004.communication.messages.ItemType;
-import edu.utexas.cs.nn.networks.Network;
+import edu.southwestern.networks.Network;
 
 /**
  *

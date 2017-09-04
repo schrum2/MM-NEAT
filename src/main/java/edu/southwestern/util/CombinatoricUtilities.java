@@ -1,7 +1,7 @@
-package edu.utexas.cs.nn.util;
+package edu.southwestern.util;
 
-import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
-import edu.utexas.cs.nn.util.graphics.DrawingPanel;
+import edu.southwestern.util.datastructures.ArrayUtil;
+import edu.southwestern.util.graphics.DrawingPanel;
 
 import java.awt.Color;
 import java.util.ArrayList;

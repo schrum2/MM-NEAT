@@ -6,7 +6,7 @@ that a modern IDE is used as well (the code was originally developed
 in NetBeans IDE 7.4: https://netbeans.org/ but I have since then worked
 with Eclipse without any problems). 
 
-The main class of the project is edu.utexas.cs.nn.mmneat.MMNEAT.java,
+The main class of the project is edu.southwestern.mmneat.MMNEAT.java,
 and once the project is compiled in NetBeans, there will be
 a file called MM-NEAT.jar in the "dist" directory. If you are using
 Eclipse, then you will need to first export an executable jar file
@@ -32,7 +32,7 @@ saveTo:		Sub-directory within the base directory where data will be saved.
 Other parameters may need to be set as well, depending on the 
 type of the experiment, and whether you are ok with the default
 values. All default values are listed in
-edu.utexas.cs.nn.parameters.Parameters.java.
+edu.southwestern.parameters.Parameters.java.
 
 Examples of appropriate parameters to launch experiments with
 are in the many Experiment files described next.
@@ -206,13 +206,13 @@ domain either of your own design, or made by someone else. Here are some general
 on how to do this.
 
 1) Make your domain implement the Task interface. Specifically, you may want to extend one
-   of the classes in the edu.utexas.cs.nn.tasks package that already implements the Task
+   of the classes in the edu.southwestern.tasks package that already implements the Task
    interface. LonerTask is appropriate for any task where only a single genotype is evaluated
    at a time. However, if the domain has noisy evaluations, then NoisyLonerTask is more
    appropriate.
 2) You may need to set up additional parameters related to your domain in 
-   edu.utexas.cs.nn.parameters.Parameters.java.
-3) You will need to edit edu.utexas.cs.nn.mmneat.MMNEAT.java so that when the game task
+   edu.southwestern.parameters.Parameters.java.
+3) You will need to edit edu.southwestern.mmneat.MMNEAT.java so that when the game task
    matches your new task, it prepares evolution to run your domain (for example, by 
    instantiating classes or setting up parameters unique to your domain).
 

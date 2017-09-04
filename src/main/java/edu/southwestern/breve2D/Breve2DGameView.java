@@ -1,13 +1,13 @@
-package edu.utexas.cs.nn.breve2D;
+package edu.southwestern.breve2D;
 
-import edu.utexas.cs.nn.breve2D.agent.Agent;
-import edu.utexas.cs.nn.breve2D.dynamics.RammingDynamics;
-import edu.utexas.cs.nn.breve2D.sensor.RaySensor;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.networks.TWEANN;
-import edu.utexas.cs.nn.util.datastructures.Triple;
-import edu.utexas.cs.nn.util.util2D.ILocated2D;
-import edu.utexas.cs.nn.util.util2D.Tuple2D;
+import edu.southwestern.breve2D.agent.Agent;
+import edu.southwestern.breve2D.dynamics.RammingDynamics;
+import edu.southwestern.breve2D.sensor.RaySensor;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.networks.TWEANN;
+import edu.southwestern.util.datastructures.Triple;
+import edu.southwestern.util.util2D.ILocated2D;
+import edu.southwestern.util.util2D.Tuple2D;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Iterator;

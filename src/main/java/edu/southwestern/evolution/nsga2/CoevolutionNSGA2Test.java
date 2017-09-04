@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.evolution.nsga2;
+package edu.southwestern.evolution.nsga2;
 
 import static org.junit.Assert.*;
 
@@ -9,13 +9,13 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.evolution.genotypes.BoundedIntegerValuedGenotype;
-import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.scores.Score;
-import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
-import edu.utexas.cs.nn.util.random.RandomNumbers;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.genotypes.BoundedIntegerValuedGenotype;
+import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.scores.Score;
+import edu.southwestern.util.datastructures.ArrayUtil;
+import edu.southwestern.util.random.RandomNumbers;
 
 public class CoevolutionNSGA2Test {
 
@@ -24,14 +24,14 @@ public class CoevolutionNSGA2Test {
 		Parameters.parameters = null;
 		MMNEAT.clearClasses();
 		String[] args = new String[] { "runNumber:0", "trials:1", "teams:3", "mu:5", "io:false", "netio:false", "mating:true",
-				"task:edu.utexas.cs.nn.tasks.mspacman.CooperativeSubtaskSelectorMsPacManTask",
-				"experiment:edu.utexas.cs.nn.experiment.evolution.LimitedMultiplePopulationGenerationalEAExperiment",
-				"ea:edu.utexas.cs.nn.evolution.nsga2.CoevolutionNSGA2",
-				"pacmanInputOutputMediator:edu.utexas.cs.nn.tasks.mspacman.sensors.mediators.FullTaskMediator",
+				"task:edu.southwestern.tasks.mspacman.CooperativeSubtaskSelectorMsPacManTask",
+				"experiment:edu.southwestern.experiment.evolution.LimitedMultiplePopulationGenerationalEAExperiment",
+				"ea:edu.southwestern.evolution.nsga2.CoevolutionNSGA2",
+				"pacmanInputOutputMediator:edu.southwestern.tasks.mspacman.sensors.mediators.FullTaskMediator",
 				"numCoevolutionSubpops:2",
-				"pacmanFitnessModeMap:edu.utexas.cs.nn.tasks.mspacman.objectives.fitnessassignment.GhostsPillsMap",
-				"pacManMediatorClass1:edu.utexas.cs.nn.tasks.mspacman.sensors.mediators.GhostTaskMediator",
-				"pacManMediatorClass2:edu.utexas.cs.nn.tasks.mspacman.sensors.mediators.PillTaskMediator" };
+				"pacmanFitnessModeMap:edu.southwestern.tasks.mspacman.objectives.fitnessassignment.GhostsPillsMap",
+				"pacManMediatorClass1:edu.southwestern.tasks.mspacman.sensors.mediators.GhostTaskMediator",
+				"pacManMediatorClass2:edu.southwestern.tasks.mspacman.sensors.mediators.PillTaskMediator" };
 		Parameters.initializeParameterCollections(args);
 		MMNEAT.loadClasses();
 	}	

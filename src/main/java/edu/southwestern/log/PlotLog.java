@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.log;
+package edu.southwestern.log;
 
 import java.io.File;
 import java.io.FileNotFoundException;

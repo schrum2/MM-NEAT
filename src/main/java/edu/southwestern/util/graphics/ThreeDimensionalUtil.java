@@ -1,16 +1,16 @@
-package edu.utexas.cs.nn.util.graphics;
+package edu.southwestern.util.graphics;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
-import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.tasks.interactive.objectbreeder.ThreeDimensionalObjectBreederTask;
-import edu.utexas.cs.nn.util.CartesianGeometricUtilities;
-import edu.utexas.cs.nn.util.datastructures.Pair;
-import edu.utexas.cs.nn.util.datastructures.Triangle;
-import edu.utexas.cs.nn.util.datastructures.Vertex;
+import edu.southwestern.networks.Network;
+import edu.southwestern.tasks.interactive.objectbreeder.ThreeDimensionalObjectBreederTask;
+import edu.southwestern.util.CartesianGeometricUtilities;
+import edu.southwestern.util.datastructures.Pair;
+import edu.southwestern.util.datastructures.Triangle;
+import edu.southwestern.util.datastructures.Vertex;
 
 /**
  * Series of utility methods associated with rendering 

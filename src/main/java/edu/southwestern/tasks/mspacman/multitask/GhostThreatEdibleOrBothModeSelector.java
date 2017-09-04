@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.tasks.mspacman.multitask;
+package edu.southwestern.tasks.mspacman.multitask;
 
 /**
  * A Mode selector which selects between 3 modes based on the following: 0) The

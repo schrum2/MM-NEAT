@@ -1,8 +1,8 @@
-package edu.utexas.cs.nn.evolution.genotypes;
+package edu.southwestern.evolution.genotypes;
 
-import edu.utexas.cs.nn.evolution.genotypes.pool.GenotypePool;
-import edu.utexas.cs.nn.networks.HierarchicalTWEANN;
-import edu.utexas.cs.nn.networks.TWEANN;
+import edu.southwestern.evolution.genotypes.pool.GenotypePool;
+import edu.southwestern.networks.HierarchicalTWEANN;
+import edu.southwestern.networks.TWEANN;
 import java.util.ArrayList;
 
 /**

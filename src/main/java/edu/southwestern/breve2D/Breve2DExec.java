@@ -1,12 +1,12 @@
-package edu.utexas.cs.nn.breve2D;
+package edu.southwestern.breve2D;
 
-import edu.utexas.cs.nn.breve2D.agent.AgentController;
-import edu.utexas.cs.nn.breve2D.agent.Breve2DAction;
-import edu.utexas.cs.nn.breve2D.agent.HumanPlayer;
-import edu.utexas.cs.nn.breve2D.agent.MultitaskPlayer;
-import edu.utexas.cs.nn.breve2D.agent.RushingMonster;
-import edu.utexas.cs.nn.breve2D.dynamics.*;
-import edu.utexas.cs.nn.parameters.Parameters;
+import edu.southwestern.breve2D.agent.AgentController;
+import edu.southwestern.breve2D.agent.Breve2DAction;
+import edu.southwestern.breve2D.agent.HumanPlayer;
+import edu.southwestern.breve2D.agent.MultitaskPlayer;
+import edu.southwestern.breve2D.agent.RushingMonster;
+import edu.southwestern.breve2D.dynamics.*;
+import edu.southwestern.parameters.Parameters;
 
 /**
  * A class which runs an instance of the Breve2D domain

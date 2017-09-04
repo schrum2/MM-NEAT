@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.util.graphics;
+package edu.southwestern.util.graphics;
 
 /*
  Stuart Reges and Marty Stepp
@@ -20,8 +20,8 @@ import javax.imageio.*;
 import javax.swing.*;
 import javax.swing.event.*;
 
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.tasks.interactive.picbreeder.PicbreederTask;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.tasks.interactive.picbreeder.PicbreederTask;
 
 public class DrawingPanel implements ActionListener {
 

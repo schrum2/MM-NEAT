@@ -1,10 +1,10 @@
-package edu.utexas.cs.nn.tasks.rlglue;
+package edu.southwestern.tasks.rlglue;
 
-import edu.utexas.cs.nn.evolution.Organism;
-import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
+import edu.southwestern.evolution.Organism;
+import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.networks.Network;
+import edu.southwestern.util.stats.StatisticsUtilities;
 import org.rlcommunity.rlglue.codec.AgentInterface;
 import org.rlcommunity.rlglue.codec.types.Action;
 import org.rlcommunity.rlglue.codec.types.Observation;

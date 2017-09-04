@@ -1,6 +1,6 @@
-package edu.utexas.cs.nn.evolution.mutation;
+package edu.southwestern.evolution.mutation;
 
-import edu.utexas.cs.nn.evolution.genotypes.Genotype;
+import edu.southwestern.evolution.genotypes.Genotype;
 
 /**
  * Performs a single mutation operation on a genotype.

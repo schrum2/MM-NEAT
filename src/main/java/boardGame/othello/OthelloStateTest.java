@@ -24,10 +24,10 @@ import boardGame.agents.treesearch.BoardGamePlayerMinimaxAlphaBetaPruning;
 import boardGame.fitnessFunction.BoardGameFitnessFunction;
 import boardGame.fitnessFunction.SimpleWinLoseDrawBoardGameFitness;
 import boardGame.heuristics.StaticOthelloWPCHeuristic;
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.tasks.boardGame.BoardGameUtil;
-import edu.utexas.cs.nn.util.datastructures.Pair;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.boardGame.BoardGameUtil;
+import edu.southwestern.util.datastructures.Pair;
 
 public class OthelloStateTest {
 	
@@ -50,7 +50,7 @@ public class OthelloStateTest {
 
 	@Before
 	public void setUp() throws Exception {
-		Parameters.initializeParameterCollections(new String[]{"io:false", "netio:false", "task:edu.utexas.cs.nn.tasks.boardGame.StaticOpponentBoardGameTask",
+		Parameters.initializeParameterCollections(new String[]{"io:false", "netio:false", "task:edu.southwestern.tasks.boardGame.StaticOpponentBoardGameTask",
 				"boardGame:boardGame.othello.Othello", "minimaxSearchDepth:3", 
 				"randomArgMaxTieBreak:false"});
 		MMNEAT.loadClasses();

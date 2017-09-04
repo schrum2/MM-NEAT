@@ -1,11 +1,11 @@
-package edu.utexas.cs.nn.util.util2D;
+package edu.southwestern.util.util2D;
 
 import static org.junit.Assert.*;
 
 import org.junit.After;
 import org.junit.Test;
 
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
+import edu.southwestern.MMNEAT.MMNEAT;
 
 public class Tuple2DTest {
 

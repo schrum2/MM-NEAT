@@ -1,6 +1,6 @@
-package edu.utexas.cs.nn.networks;
+package edu.southwestern.networks;
 
-import edu.utexas.cs.nn.parameters.CommonConstants;
+import edu.southwestern.parameters.CommonConstants;
 
 /**
  * Contains various util functions for netwokrs

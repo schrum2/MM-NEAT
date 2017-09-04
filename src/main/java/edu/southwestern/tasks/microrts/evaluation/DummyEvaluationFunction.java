@@ -1,6 +1,6 @@
-package edu.utexas.cs.nn.tasks.microrts.evaluation;
+package edu.southwestern.tasks.microrts.evaluation;
 
-import edu.utexas.cs.nn.networks.Network;
+import edu.southwestern.networks.Network;
 import micro.rts.GameState;
 
 /**

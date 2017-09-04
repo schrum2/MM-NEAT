@@ -1,11 +1,11 @@
-package edu.utexas.cs.nn.breve2D.dynamics;
+package edu.southwestern.breve2D.dynamics;
 
-import edu.utexas.cs.nn.breve2D.Breve2DGame;
-import edu.utexas.cs.nn.breve2D.agent.Agent;
-import edu.utexas.cs.nn.breve2D.agent.Breve2DAction;
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.util.CartesianGeometricUtilities;
+import edu.southwestern.breve2D.Breve2DGame;
+import edu.southwestern.breve2D.agent.Agent;
+import edu.southwestern.breve2D.agent.Breve2DAction;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.util.CartesianGeometricUtilities;
 import java.util.Arrays;
 
 /**

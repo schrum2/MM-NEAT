@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.util.sound;
+package edu.southwestern.util.sound;
 
 import java.applet.Applet;
 import java.applet.AudioClip;
@@ -18,10 +18,10 @@ import javax.sound.midi.Sequence;
 import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Track;
 
-import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
-import edu.utexas.cs.nn.util.datastructures.Triple;
-import edu.utexas.cs.nn.util.sound.PlayDoubleArray.AmplitudeArrayPlayer;
+import edu.southwestern.networks.Network;
+import edu.southwestern.util.datastructures.ArrayUtil;
+import edu.southwestern.util.datastructures.Triple;
+import edu.southwestern.util.sound.PlayDoubleArray.AmplitudeArrayPlayer;
 
 /**
  * Series of utility methods that read data from MIDI files and convert it into frequencies

@@ -1,21 +1,21 @@
-package edu.utexas.cs.nn.tasks.microrts;
+package edu.southwestern.tasks.microrts;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.networks.hyperneat.HyperNEATUtil;
-import edu.utexas.cs.nn.networks.hyperneat.Substrate;
-import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.tasks.microrts.fitness.ProgressiveFitnessFunction;
-import edu.utexas.cs.nn.tasks.microrts.fitness.RTSFitnessFunction;
-import edu.utexas.cs.nn.tasks.microrts.fitness.WinLossFitnessFunction;
-import edu.utexas.cs.nn.util.MiscUtil;
-import edu.utexas.cs.nn.util.datastructures.Pair;
-import edu.utexas.cs.nn.util.datastructures.Triple;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.networks.hyperneat.HyperNEATUtil;
+import edu.southwestern.networks.hyperneat.Substrate;
+import edu.southwestern.parameters.CommonConstants;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.microrts.fitness.ProgressiveFitnessFunction;
+import edu.southwestern.tasks.microrts.fitness.RTSFitnessFunction;
+import edu.southwestern.tasks.microrts.fitness.WinLossFitnessFunction;
+import edu.southwestern.util.MiscUtil;
+import edu.southwestern.util.datastructures.Pair;
+import edu.southwestern.util.datastructures.Triple;
 import micro.ai.core.AI;
 import micro.gui.PhysicalGameStateJFrame;
 import micro.gui.PhysicalGameStatePanel;

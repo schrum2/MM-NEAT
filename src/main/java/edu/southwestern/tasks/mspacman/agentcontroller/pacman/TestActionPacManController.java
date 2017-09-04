@@ -1,11 +1,11 @@
-package edu.utexas.cs.nn.tasks.mspacman.agentcontroller.pacman;
+package edu.southwestern.tasks.mspacman.agentcontroller.pacman;
 
-import edu.utexas.cs.nn.tasks.mspacman.agentcontroller.pacman.actions.MsPacManAction;
-import edu.utexas.cs.nn.tasks.mspacman.agentcontroller.pacman.actions.ToFarthestSafeLocationAction;
-import edu.utexas.cs.nn.tasks.mspacman.data.JunctionNodes;
-import edu.utexas.cs.nn.tasks.mspacman.data.NodeCollection;
-import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
-import edu.utexas.cs.nn.tasks.mspacman.facades.GhostControllerFacade;
+import edu.southwestern.tasks.mspacman.agentcontroller.pacman.actions.MsPacManAction;
+import edu.southwestern.tasks.mspacman.agentcontroller.pacman.actions.ToFarthestSafeLocationAction;
+import edu.southwestern.tasks.mspacman.data.JunctionNodes;
+import edu.southwestern.tasks.mspacman.data.NodeCollection;
+import edu.southwestern.tasks.mspacman.facades.GameFacade;
+import edu.southwestern.tasks.mspacman.facades.GhostControllerFacade;
 import pacman.controllers.NewPacManController;
 import pacman.controllers.examples.AggressiveGhosts;
 import pacman.game.Game;

@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.tasks.rlglue.featureextractors.tetris;
+package edu.southwestern.tasks.rlglue.featureextractors.tetris;
 
 import static org.junit.Assert.assertEquals;
 
@@ -10,8 +10,8 @@ import org.junit.Test;
 import org.rlcommunity.environments.tetris.TetrisState;
 import org.rlcommunity.rlglue.codec.types.Observation;
 
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.parameters.Parameters;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.parameters.Parameters;
 
 public class ExtendedBertsekasTsitsiklisTetrisExtractorTests {
 	
@@ -20,8 +20,8 @@ public class ExtendedBertsekasTsitsiklisTetrisExtractorTests {
 		MMNEAT.clearClasses();
 		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "recurrency:false",
 				"rlGlueEnvironment:org.rlcommunity.environments.tetris.Tetris",
-				"task:edu.utexas.cs.nn.tasks.rlglue.tetris.TetrisTask", "rlGlueAgent:edu.utexas.cs.nn.tasks.rlglue.tetris.TetrisAfterStateAgent",
-				"rlGlueExtractor:edu.utexas.cs.nn.tasks.rlglue.featureextractors.tetris.ExtendedBertsekasTsitsiklisTetrisExtractor" });
+				"task:edu.southwestern.tasks.rlglue.tetris.TetrisTask", "rlGlueAgent:edu.southwestern.tasks.rlglue.tetris.TetrisAfterStateAgent",
+				"rlGlueExtractor:edu.southwestern.tasks.rlglue.featureextractors.tetris.ExtendedBertsekasTsitsiklisTetrisExtractor" });
 		MMNEAT.loadClasses();
 	}
 

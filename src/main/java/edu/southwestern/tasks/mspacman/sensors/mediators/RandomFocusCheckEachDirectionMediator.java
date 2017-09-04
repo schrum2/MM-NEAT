@@ -1,20 +1,20 @@
-package edu.utexas.cs.nn.tasks.mspacman.sensors.mediators;
+package edu.southwestern.tasks.mspacman.sensors.mediators;
 
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.distance.SpecificGhostDistancesBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.counts.VariableDirectionKStepEdibleGhostCountBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.counts.VariableDirectionKStepIncomingEdibleGhostCountBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.counts.VariableDirectionKStepIncomingThreatGhostCountBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.counts.VariableDirectionKStepThreatGhostCountBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.distance.ghosts.specific.VariableDirectionSpecificApproachingEdibleGhostDistanceBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.distance.ghosts.specific.VariableDirectionSpecificApproachingThreatGhostDistanceBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.distance.ghosts.specific.VariableDirectionSpecificEdibleGhostDistanceBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.distance.ghosts.specific.VariableDirectionSpecificThreatGhostDistanceBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.reachfirst.VariableDirectionCloserToDepthTwoJunctionThanThreatGhostBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.reachfirst.VariableDirectionCloserToEdibleGhostThanThreatGhostBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.reachfirst.VariableDirectionCloserToJunctionThanThreatGhostBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.reachfirst.VariableDirectionCloserToPowerPillThanThreatGhostBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.reachfirst.VariableDirectionPowerPillBeforeEdibleGhostBlock;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.mspacman.sensors.blocks.distance.SpecificGhostDistancesBlock;
+import edu.southwestern.tasks.mspacman.sensors.directional.counts.VariableDirectionKStepEdibleGhostCountBlock;
+import edu.southwestern.tasks.mspacman.sensors.directional.counts.VariableDirectionKStepIncomingEdibleGhostCountBlock;
+import edu.southwestern.tasks.mspacman.sensors.directional.counts.VariableDirectionKStepIncomingThreatGhostCountBlock;
+import edu.southwestern.tasks.mspacman.sensors.directional.counts.VariableDirectionKStepThreatGhostCountBlock;
+import edu.southwestern.tasks.mspacman.sensors.directional.distance.ghosts.specific.VariableDirectionSpecificApproachingEdibleGhostDistanceBlock;
+import edu.southwestern.tasks.mspacman.sensors.directional.distance.ghosts.specific.VariableDirectionSpecificApproachingThreatGhostDistanceBlock;
+import edu.southwestern.tasks.mspacman.sensors.directional.distance.ghosts.specific.VariableDirectionSpecificEdibleGhostDistanceBlock;
+import edu.southwestern.tasks.mspacman.sensors.directional.distance.ghosts.specific.VariableDirectionSpecificThreatGhostDistanceBlock;
+import edu.southwestern.tasks.mspacman.sensors.directional.reachfirst.VariableDirectionCloserToDepthTwoJunctionThanThreatGhostBlock;
+import edu.southwestern.tasks.mspacman.sensors.directional.reachfirst.VariableDirectionCloserToEdibleGhostThanThreatGhostBlock;
+import edu.southwestern.tasks.mspacman.sensors.directional.reachfirst.VariableDirectionCloserToJunctionThanThreatGhostBlock;
+import edu.southwestern.tasks.mspacman.sensors.directional.reachfirst.VariableDirectionCloserToPowerPillThanThreatGhostBlock;
+import edu.southwestern.tasks.mspacman.sensors.directional.reachfirst.VariableDirectionPowerPillBeforeEdibleGhostBlock;
 
 /**
  * Just like the Alternate Check Each Direction Mediator, but has additional

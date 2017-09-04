@@ -1,17 +1,17 @@
-package edu.utexas.cs.nn.data;
+package edu.southwestern.data;
 
-import edu.utexas.cs.nn.log.PerformanceLog;
-import edu.utexas.cs.nn.log.TWEANNLog;
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.tasks.GroupTask;
-import edu.utexas.cs.nn.tasks.LonerTask;
-import edu.utexas.cs.nn.tasks.MultiplePopulationTask;
-import edu.utexas.cs.nn.tasks.Task;
-import edu.utexas.cs.nn.tasks.mspacman.CooperativeMsPacManTask;
-import edu.utexas.cs.nn.util.datastructures.Pair;
-import edu.utexas.cs.nn.util.stats.Statistic;
-import edu.utexas.cs.nn.util.stats.StatisticsUtilities;
+import edu.southwestern.log.PerformanceLog;
+import edu.southwestern.log.TWEANNLog;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.GroupTask;
+import edu.southwestern.tasks.LonerTask;
+import edu.southwestern.tasks.MultiplePopulationTask;
+import edu.southwestern.tasks.Task;
+import edu.southwestern.tasks.mspacman.CooperativeMsPacManTask;
+import edu.southwestern.util.datastructures.Pair;
+import edu.southwestern.util.stats.Statistic;
+import edu.southwestern.util.stats.StatisticsUtilities;
 
 import java.io.File;
 import java.io.FileNotFoundException;

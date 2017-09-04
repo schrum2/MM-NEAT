@@ -1,13 +1,13 @@
-package edu.utexas.cs.nn.tasks.rlglue.puddleworld;
+package edu.southwestern.tasks.rlglue.puddleworld;
 
 import org.rlcommunity.environments.puddleworld.PuddleWorld;
 import org.rlcommunity.environments.puddleworld.PuddleWorldState;
 
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.tasks.rlglue.RLGlueTask;
-import edu.utexas.cs.nn.util.datastructures.Pair;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.networks.Network;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.rlglue.RLGlueTask;
+import edu.southwestern.util.datastructures.Pair;
 
 public class PuddleWorldTask<T extends Network> extends RLGlueTask<T> {
 	

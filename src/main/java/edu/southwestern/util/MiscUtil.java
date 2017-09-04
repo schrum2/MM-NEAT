@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.util;
+package edu.southwestern.util;
 
 import java.io.BufferedReader;
 import java.io.IOException;

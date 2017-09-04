@@ -1,11 +1,11 @@
-package edu.utexas.cs.nn.tasks.mspacman;
+package edu.southwestern.tasks.mspacman;
 
-import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.evolution.genotypes.SimpleBlueprintGenotype;
-import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.scores.Score;
-import edu.utexas.cs.nn.tasks.BlueprintTask;
-import edu.utexas.cs.nn.util.PopulationUtil;
+import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.evolution.genotypes.SimpleBlueprintGenotype;
+import edu.southwestern.networks.Network;
+import edu.southwestern.scores.Score;
+import edu.southwestern.tasks.BlueprintTask;
+import edu.southwestern.util.PopulationUtil;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

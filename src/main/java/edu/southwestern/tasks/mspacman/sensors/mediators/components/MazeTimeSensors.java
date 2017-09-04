@@ -1,8 +1,8 @@
-package edu.utexas.cs.nn.tasks.mspacman.sensors.mediators.components;
+package edu.southwestern.tasks.mspacman.sensors.mediators.components;
 
-import edu.utexas.cs.nn.tasks.mspacman.sensors.BlockLoadedInputOutputMediator;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.time.TimeLeftBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.time.TimeSinceLastGhostReversalBlock;
+import edu.southwestern.tasks.mspacman.sensors.BlockLoadedInputOutputMediator;
+import edu.southwestern.tasks.mspacman.sensors.blocks.time.TimeLeftBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.time.TimeSinceLastGhostReversalBlock;
 
 /**
  * Nearest distance to objects of interest

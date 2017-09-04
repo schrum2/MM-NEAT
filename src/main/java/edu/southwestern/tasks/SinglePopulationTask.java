@@ -1,7 +1,7 @@
-package edu.utexas.cs.nn.tasks;
+package edu.southwestern.tasks;
 
-import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.scores.Score;
+import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.scores.Score;
 import java.util.ArrayList;
 
 /**

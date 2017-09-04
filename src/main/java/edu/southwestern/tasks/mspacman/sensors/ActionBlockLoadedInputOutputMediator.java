@@ -1,6 +1,6 @@
-package edu.utexas.cs.nn.tasks.mspacman.sensors;
+package edu.southwestern.tasks.mspacman.sensors;
 
-import edu.utexas.cs.nn.tasks.mspacman.agentcontroller.pacman.actions.MsPacManAction;
+import edu.southwestern.tasks.mspacman.agentcontroller.pacman.actions.MsPacManAction;
 import java.util.ArrayList;
 
 /**

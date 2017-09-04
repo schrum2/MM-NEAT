@@ -1,6 +1,6 @@
-package edu.utexas.cs.nn.tasks.mspacman.sensors;
+package edu.southwestern.tasks.mspacman.sensors;
 
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.MsPacManSensorBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.MsPacManSensorBlock;
 import java.util.Comparator;
 import java.util.List;
 import java.util.TreeSet;

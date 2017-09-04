@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.tasks.ut2004.bots;
+package edu.southwestern.tasks.ut2004.bots;
 
 import cz.cuni.amis.pogamut.base.communication.worldview.event.IWorldEventListener;
 import cz.cuni.amis.pogamut.base.communication.worldview.object.IWorldObjectEventListener;
@@ -12,7 +12,7 @@ import cz.cuni.amis.pogamut.ut2004.agent.module.sensor.Game;
 import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004BotModuleController;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.ItemType;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.*;
-import edu.utexas.cs.nn.tasks.ut2004.Util;
+import edu.southwestern.tasks.ut2004.Util;
 import java.io.Serializable;
 import java.util.Map;
 import java.util.TreeMap;

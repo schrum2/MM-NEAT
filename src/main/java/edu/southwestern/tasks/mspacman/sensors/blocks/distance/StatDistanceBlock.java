@@ -1,9 +1,9 @@
-package edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.distance;
+package edu.southwestern.tasks.mspacman.sensors.blocks.distance;
 
-import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.MsPacManSensorBlock;
-import edu.utexas.cs.nn.util.datastructures.ArrayUtil;
-import edu.utexas.cs.nn.util.stats.Statistic;
+import edu.southwestern.tasks.mspacman.facades.GameFacade;
+import edu.southwestern.tasks.mspacman.sensors.blocks.MsPacManSensorBlock;
+import edu.southwestern.util.datastructures.ArrayUtil;
+import edu.southwestern.util.stats.Statistic;
 
 /**
  * Distance to nearest instance of some type of target

@@ -1,9 +1,9 @@
-package edu.utexas.cs.nn.tasks.mspacman.objectives;
+package edu.southwestern.tasks.mspacman.objectives;
 
-import edu.utexas.cs.nn.evolution.Organism;
-import edu.utexas.cs.nn.evolution.fitness.FitnessFunction;
-import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.tasks.mspacman.facades.GameFacade;
+import edu.southwestern.evolution.Organism;
+import edu.southwestern.evolution.fitness.FitnessFunction;
+import edu.southwestern.networks.Network;
+import edu.southwestern.tasks.mspacman.facades.GameFacade;
 
 /**
  * Way of extracting a single score/objective value associated with Ms. Pac-Man

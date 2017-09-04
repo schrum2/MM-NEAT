@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.util.sound;
+package edu.southwestern.util.sound;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;

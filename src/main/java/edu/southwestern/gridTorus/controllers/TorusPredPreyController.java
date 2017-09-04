@@ -1,10 +1,10 @@
 
-package edu.utexas.cs.nn.gridTorus.controllers;
+package edu.southwestern.gridTorus.controllers;
 
-import edu.utexas.cs.nn.gridTorus.TorusAgent;
-import edu.utexas.cs.nn.gridTorus.TorusPredPreyGame;
-import edu.utexas.cs.nn.gridTorus.TorusWorld;
-import edu.utexas.cs.nn.parameters.Parameters;
+import edu.southwestern.gridTorus.TorusAgent;
+import edu.southwestern.gridTorus.TorusPredPreyGame;
+import edu.southwestern.gridTorus.TorusWorld;
+import edu.southwestern.parameters.Parameters;
 
 /**
  *

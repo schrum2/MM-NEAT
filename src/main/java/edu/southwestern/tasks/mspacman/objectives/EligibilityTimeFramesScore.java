@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.tasks.mspacman.objectives;
+package edu.southwestern.tasks.mspacman.objectives;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -6,15 +6,15 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import edu.utexas.cs.nn.evolution.Organism;
-import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.tasks.mspacman.agentcontroller.pacman.MultinetworkSelectorMsPacManController;
-import edu.utexas.cs.nn.tasks.mspacman.agentcontroller.pacman.NNMsPacMan;
-import edu.utexas.cs.nn.tasks.mspacman.agentcontroller.pacman.NNPacManController;
-import edu.utexas.cs.nn.util.datastructures.Interval;
-import edu.utexas.cs.nn.util.graphics.DrawingPanel;
-import edu.utexas.cs.nn.util.graphics.GraphicsUtil;
+import edu.southwestern.evolution.Organism;
+import edu.southwestern.networks.Network;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.mspacman.agentcontroller.pacman.MultinetworkSelectorMsPacManController;
+import edu.southwestern.tasks.mspacman.agentcontroller.pacman.NNMsPacMan;
+import edu.southwestern.tasks.mspacman.agentcontroller.pacman.NNPacManController;
+import edu.southwestern.util.datastructures.Interval;
+import edu.southwestern.util.graphics.DrawingPanel;
+import edu.southwestern.util.graphics.GraphicsUtil;
 
 /**
  *

@@ -1,12 +1,12 @@
-package edu.utexas.cs.nn.evolution.mutation.blueprint;
+package edu.southwestern.evolution.mutation.blueprint;
 
-import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.evolution.genotypes.NumericArrayGenotype;
-import edu.utexas.cs.nn.evolution.mutation.Mutation;
-import edu.utexas.cs.nn.experiment.evolution.MultiplePopulationGenerationalEAExperiment;
-import edu.utexas.cs.nn.util.random.RandomNumbers;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.evolution.genotypes.NumericArrayGenotype;
+import edu.southwestern.evolution.mutation.Mutation;
+import edu.southwestern.experiment.evolution.MultiplePopulationGenerationalEAExperiment;
+import edu.southwestern.util.random.RandomNumbers;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.MMNEAT.MMNEAT;
 import java.util.ArrayList;
 
 /**

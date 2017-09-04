@@ -13,8 +13,8 @@ import boardGame.agents.BoardGamePlayer;
 import boardGame.heuristics.StaticTicTacToeWPCHeuristic;
 import boardGame.ttt.TicTacToe;
 import boardGame.ttt.TicTacToeState;
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.parameters.Parameters;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.parameters.Parameters;
 
 public class BoardGamePlayerMinimaxTest {
 
@@ -33,7 +33,7 @@ public class BoardGamePlayerMinimaxTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void test() {
-		Parameters.initializeParameterCollections(new String[]{"io:false", "netio:false", "task:edu.utexas.cs.nn.tasks.boardGame.StaticOpponentBoardGameTask",
+		Parameters.initializeParameterCollections(new String[]{"io:false", "netio:false", "task:edu.southwestern.tasks.boardGame.StaticOpponentBoardGameTask",
 				"boardGame:boardGame.connectFour.ConnectFour", "boardGameOpponent:boardGame.agents.BoardGamePlayerHuman2DBoard",
 				"boardGamePlayer:boardGame.agents.treesearch.BoardGamePlayerMinimaxAlphaBetaPruning", "watch:true"});
 		

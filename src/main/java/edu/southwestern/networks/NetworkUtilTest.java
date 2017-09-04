@@ -1,11 +1,11 @@
-package edu.utexas.cs.nn.networks;
+package edu.southwestern.networks;
 
 import static org.junit.Assert.*;
 
 import org.junit.After;
 import org.junit.Test;
 
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
+import edu.southwestern.MMNEAT.MMNEAT;
 /**
  * @author Lauren Gillespie
  * 

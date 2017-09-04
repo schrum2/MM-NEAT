@@ -1,9 +1,9 @@
-package edu.utexas.cs.nn.tasks.gridTorus.sensors;
+package edu.southwestern.tasks.gridTorus.sensors;
 
-import edu.utexas.cs.nn.gridTorus.TorusAgent;
-import edu.utexas.cs.nn.gridTorus.TorusWorld;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.tasks.gridTorus.NNTorusPredPreyController;
+import edu.southwestern.gridTorus.TorusAgent;
+import edu.southwestern.gridTorus.TorusWorld;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.gridTorus.NNTorusPredPreyController;
 
 /**
  * finds the sensor inputs for the predators by index. The inputs will be the X

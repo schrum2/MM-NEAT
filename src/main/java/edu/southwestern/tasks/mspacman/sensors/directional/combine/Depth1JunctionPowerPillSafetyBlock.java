@@ -2,11 +2,11 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.utexas.cs.nn.tasks.mspacman.sensors.directional.combine;
+package edu.southwestern.tasks.mspacman.sensors.directional.combine;
 
-import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.VariableDirectionBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.reachfirst.VariableDirectionCloserToJunctionThanThreatGhostBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.directional.reachfirst.VariableDirectionCloserToPowerPillThanThreatGhostBlock;
+import edu.southwestern.tasks.mspacman.sensors.directional.VariableDirectionBlock;
+import edu.southwestern.tasks.mspacman.sensors.directional.reachfirst.VariableDirectionCloserToJunctionThanThreatGhostBlock;
+import edu.southwestern.tasks.mspacman.sensors.directional.reachfirst.VariableDirectionCloserToPowerPillThanThreatGhostBlock;
 
 /**
  *

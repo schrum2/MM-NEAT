@@ -1,9 +1,9 @@
-package edu.utexas.cs.nn.tasks.gridTorus.objectives;
+package edu.southwestern.tasks.gridTorus.objectives;
 
-import edu.utexas.cs.nn.evolution.Organism;
-import edu.utexas.cs.nn.evolution.fitness.FitnessFunction;
-import edu.utexas.cs.nn.gridTorus.TorusPredPreyGame;
-import edu.utexas.cs.nn.networks.Network;
+import edu.southwestern.evolution.Organism;
+import edu.southwestern.evolution.fitness.FitnessFunction;
+import edu.southwestern.gridTorus.TorusPredPreyGame;
+import edu.southwestern.networks.Network;
 
 /**
  * parent class for all of the fitness score/objective classes for the gridTorus

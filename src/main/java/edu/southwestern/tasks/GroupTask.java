@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.tasks;
+package edu.southwestern.tasks;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -7,21 +7,21 @@ import java.util.Collections;
 import java.util.List;
 
 import wox.serial.Easy;
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
-import edu.utexas.cs.nn.evolution.lineage.Offspring;
-import edu.utexas.cs.nn.evolution.mulambda.CoevolutionMuLambda;
-import edu.utexas.cs.nn.log.MMNEATLog;
-import edu.utexas.cs.nn.networks.TWEANN;
-import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.scores.Score;
-import edu.utexas.cs.nn.tasks.gridTorus.GroupTorusPredPreyTask;
-import edu.utexas.cs.nn.tasks.mspacman.CooperativeMsPacManTask;
-import edu.utexas.cs.nn.util.file.FileUtilities;
-import edu.utexas.cs.nn.util.graphics.DrawingPanel;
-import edu.utexas.cs.nn.util.random.RandomNumbers;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.evolution.genotypes.TWEANNGenotype;
+import edu.southwestern.evolution.lineage.Offspring;
+import edu.southwestern.evolution.mulambda.CoevolutionMuLambda;
+import edu.southwestern.log.MMNEATLog;
+import edu.southwestern.networks.TWEANN;
+import edu.southwestern.parameters.CommonConstants;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.scores.Score;
+import edu.southwestern.tasks.gridTorus.GroupTorusPredPreyTask;
+import edu.southwestern.tasks.mspacman.CooperativeMsPacManTask;
+import edu.southwestern.util.file.FileUtilities;
+import edu.southwestern.util.graphics.DrawingPanel;
+import edu.southwestern.util.random.RandomNumbers;
 
 /**
  * Task involving multiple individuals taken from separate populations.

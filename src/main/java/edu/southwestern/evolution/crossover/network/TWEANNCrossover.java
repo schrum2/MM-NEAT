@@ -1,22 +1,22 @@
-package edu.utexas.cs.nn.evolution.crossover.network;
+package edu.southwestern.evolution.crossover.network;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import edu.utexas.cs.nn.evolution.EvolutionaryHistory;
-import edu.utexas.cs.nn.evolution.crossover.Crossover;
-import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
-import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype.Gene;
-import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype.LinkGene;
-import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype.NodeGene;
-import edu.utexas.cs.nn.evolution.mutation.tweann.MeltThenFreezePolicyMutation;
-import edu.utexas.cs.nn.evolution.mutation.tweann.MeltThenFreezePreferenceMutation;
-import edu.utexas.cs.nn.networks.TWEANN;
-import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.util.datastructures.Pair;
-import edu.utexas.cs.nn.util.random.RandomNumbers;
+import edu.southwestern.evolution.EvolutionaryHistory;
+import edu.southwestern.evolution.crossover.Crossover;
+import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.evolution.genotypes.TWEANNGenotype;
+import edu.southwestern.evolution.genotypes.TWEANNGenotype.Gene;
+import edu.southwestern.evolution.genotypes.TWEANNGenotype.LinkGene;
+import edu.southwestern.evolution.genotypes.TWEANNGenotype.NodeGene;
+import edu.southwestern.evolution.mutation.tweann.MeltThenFreezePolicyMutation;
+import edu.southwestern.evolution.mutation.tweann.MeltThenFreezePreferenceMutation;
+import edu.southwestern.networks.TWEANN;
+import edu.southwestern.parameters.CommonConstants;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.util.datastructures.Pair;
+import edu.southwestern.util.random.RandomNumbers;
 
 /**
  * This class crosses over two TWEANN networks with a command line parameter

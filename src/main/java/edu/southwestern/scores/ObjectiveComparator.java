@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.scores;
+package edu.southwestern.scores;
 
 import java.util.Comparator;
 

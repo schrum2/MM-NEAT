@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.util.datastructures;
+package edu.southwestern.util.datastructures;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -6,7 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import edu.utexas.cs.nn.util.sound.SoundToArray;
+import edu.southwestern.util.sound.SoundToArray;
 
 /**
  * Various useful methods with arrays

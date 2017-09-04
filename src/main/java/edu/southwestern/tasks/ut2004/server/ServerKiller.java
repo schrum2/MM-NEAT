@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package edu.utexas.cs.nn.tasks.ut2004.server;
+package edu.southwestern.tasks.ut2004.server;
 
 import cz.cuni.amis.pogamut.base.agent.state.level1.IAgentStateDown;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbcommands.DisconnectBot;

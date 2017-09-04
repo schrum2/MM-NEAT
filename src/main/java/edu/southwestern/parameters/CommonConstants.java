@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.parameters;
+package edu.southwestern.parameters;
 
 /**
  * Contains Parameter values loaded via Parameters that never change once they

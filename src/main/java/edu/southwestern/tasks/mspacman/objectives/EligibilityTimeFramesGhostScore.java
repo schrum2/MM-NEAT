@@ -1,6 +1,6 @@
-package edu.utexas.cs.nn.tasks.mspacman.objectives;
+package edu.southwestern.tasks.mspacman.objectives;
 
-import edu.utexas.cs.nn.networks.Network;
+import edu.southwestern.networks.Network;
 import java.util.List;
 
 /**

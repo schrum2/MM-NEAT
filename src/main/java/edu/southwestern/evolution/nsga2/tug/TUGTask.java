@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.evolution.nsga2.tug;
+package edu.southwestern.evolution.nsga2.tug;
 
 /**
  * Tasks that use TUG must implement this interface

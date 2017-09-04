@@ -1,9 +1,9 @@
-package edu.utexas.cs.nn.evolution.mutation.tweann;
-import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype;
-import edu.utexas.cs.nn.evolution.genotypes.TWEANNGenotype.LinkGene;
-import edu.utexas.cs.nn.networks.TWEANN;
-import edu.utexas.cs.nn.util.random.RandomNumbers;
+package edu.southwestern.evolution.mutation.tweann;
+import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.evolution.genotypes.TWEANNGenotype;
+import edu.southwestern.evolution.genotypes.TWEANNGenotype.LinkGene;
+import edu.southwestern.networks.TWEANN;
+import edu.southwestern.util.random.RandomNumbers;
 
 public class WeightRandomReplacement extends TWEANNMutation {
 	/**

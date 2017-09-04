@@ -1,4 +1,4 @@
-package edu.utexas.cs.nn.util.util2D;
+package edu.southwestern.util.util2D;
 
 /**
  * Interface for any object that has a location in 2D space.

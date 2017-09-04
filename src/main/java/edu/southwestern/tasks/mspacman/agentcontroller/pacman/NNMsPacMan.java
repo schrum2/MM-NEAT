@@ -1,24 +1,24 @@
-package edu.utexas.cs.nn.tasks.mspacman.agentcontroller.pacman;
+package edu.southwestern.tasks.mspacman.agentcontroller.pacman;
 
-import edu.utexas.cs.nn.evolution.genotypes.HyperNEATCPPNGenotype;
+import edu.southwestern.evolution.genotypes.HyperNEATCPPNGenotype;
 
-import edu.utexas.cs.nn.evolution.Organism;
-import edu.utexas.cs.nn.evolution.genotypes.Genotype;
-import edu.utexas.cs.nn.evolution.genotypes.HierarchicalTWEANNGenotype;
-import edu.utexas.cs.nn.MMNEAT.MMNEAT;
-import edu.utexas.cs.nn.networks.HierarchicalTWEANN;
-import edu.utexas.cs.nn.networks.Network;
-import edu.utexas.cs.nn.networks.TWEANN;
-import edu.utexas.cs.nn.parameters.CommonConstants;
-import edu.utexas.cs.nn.parameters.Parameters;
-import edu.utexas.cs.nn.tasks.mspacman.CooperativeCheckEachMultitaskSelectorMsPacManTask;
-import edu.utexas.cs.nn.tasks.mspacman.CooperativeSubtaskSelectorMsPacManTask;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.ActionBlockLoadedInputOutputMediator;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.CombiningInputOutputMediator;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.VariableDirectionBlockLoadedInputOutputMediator;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.combining.GhostEatingNetworkBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.combining.PillEatingNetworkBlock;
-import edu.utexas.cs.nn.tasks.mspacman.sensors.blocks.combining.SubNetworkBlock;
+import edu.southwestern.evolution.Organism;
+import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.evolution.genotypes.HierarchicalTWEANNGenotype;
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.networks.HierarchicalTWEANN;
+import edu.southwestern.networks.Network;
+import edu.southwestern.networks.TWEANN;
+import edu.southwestern.parameters.CommonConstants;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.mspacman.CooperativeCheckEachMultitaskSelectorMsPacManTask;
+import edu.southwestern.tasks.mspacman.CooperativeSubtaskSelectorMsPacManTask;
+import edu.southwestern.tasks.mspacman.sensors.ActionBlockLoadedInputOutputMediator;
+import edu.southwestern.tasks.mspacman.sensors.CombiningInputOutputMediator;
+import edu.southwestern.tasks.mspacman.sensors.VariableDirectionBlockLoadedInputOutputMediator;
+import edu.southwestern.tasks.mspacman.sensors.blocks.combining.GhostEatingNetworkBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.combining.PillEatingNetworkBlock;
+import edu.southwestern.tasks.mspacman.sensors.blocks.combining.SubNetworkBlock;
 
 /**
  * Defines an evolved MsPacMan agent
