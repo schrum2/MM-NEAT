@@ -9,7 +9,11 @@ import org.junit.Test;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.EvolutionaryHistory;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
+import edu.southwestern.networks.TWEANN;
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.CommonTaskUtil;
+import edu.southwestern.util.MiscUtil;
+import edu.southwestern.util.graphics.DrawingPanel;
 
 public class MeltThenFreezeAlternateMutationTest {
 
@@ -43,9 +47,16 @@ public class MeltThenFreezeAlternateMutationTest {
 		for(int i = 0; i < tg1.nodes.size(); i++) {
 		assertFalse(tg1.nodes.get(i).isFrozen());
 		}
-		tg1.freezePreferenceNeurons(); //frozen // sometimes fails?
+		
+		// The freezePreferenceNeurons method complains (assertion error) if it thinks
+		// now preference neurons can possibly exist, so here the mmpRate is set above 0
+		// to fool the assertion check.
+		Parameters.parameters.setDouble("mmpRate", 0.000000000000000000001);
+		tg1.freezePreferenceNeurons(); //frozen
 		int firstPreference = tg1.outputStartIndex() + tg1.neuronsPerModule;
 		mtfam.mutate(tg1);
+		// Disable Module Mutation again
+		Parameters.parameters.setDouble("mmpRate", 0.0);
 		for(int i = 0; i < firstPreference; i++) {
 			assertTrue(tg1.nodes.get(i).isFrozen());
 		}

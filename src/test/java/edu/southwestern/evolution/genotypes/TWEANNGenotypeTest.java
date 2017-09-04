@@ -22,6 +22,9 @@ public class TWEANNGenotypeTest {
 
 	@Before
 	public void setup() {
+		// Default test params for tests that don't need more specific settings
+		Parameters.initializeParameterCollections(
+				new String[] { "io:false", "netio:false" });
 		MMNEAT.clearClasses();
 		EvolutionaryHistory.setInnovation(0);
 		EvolutionaryHistory.setHighestGenotypeId(0);
