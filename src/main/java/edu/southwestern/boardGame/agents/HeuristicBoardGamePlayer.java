@@ -1,7 +1,7 @@
-package boardGame.agents;
+package edu.southwestern.boardGame.agents;
 
-import boardGame.BoardGameState;
-import boardGame.heuristics.BoardGameHeuristic;
+import edu.southwestern.boardGame.BoardGameState;
+import edu.southwestern.boardGame.heuristics.BoardGameHeuristic;
 
 public abstract class HeuristicBoardGamePlayer<T extends BoardGameState> implements BoardGamePlayer<T> {
 

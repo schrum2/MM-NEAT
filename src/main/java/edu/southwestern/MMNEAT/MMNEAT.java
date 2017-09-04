@@ -9,9 +9,9 @@ import java.util.logging.Logger;
 
 import org.rlcommunity.rlglue.codec.taskspec.TaskSpec;
 
-import boardGame.BoardGame;
-import boardGame.TwoDimensionalBoardGame;
-import boardGame.TwoDimensionalBoardGameViewer;
+import edu.southwestern.boardGame.BoardGame;
+import edu.southwestern.boardGame.TwoDimensionalBoardGame;
+import edu.southwestern.boardGame.TwoDimensionalBoardGameViewer;
 import edu.southwestern.breve2D.dynamics.Breve2DDynamics;
 import edu.southwestern.data.ResultSummaryUtilities;
 import edu.southwestern.evolution.EvolutionaryHistory;

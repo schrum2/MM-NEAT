@@ -1,4 +1,4 @@
-package boardGame.othello;
+package edu.southwestern.boardGame.othello;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
@@ -17,13 +17,13 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import boardGame.BoardGameState;
-import boardGame.agents.BoardGamePlayer;
-import boardGame.agents.BoardGamePlayerRandom;
-import boardGame.agents.treesearch.BoardGamePlayerMinimaxAlphaBetaPruning;
-import boardGame.fitnessFunction.BoardGameFitnessFunction;
-import boardGame.fitnessFunction.SimpleWinLoseDrawBoardGameFitness;
-import boardGame.heuristics.StaticOthelloWPCHeuristic;
+import edu.southwestern.boardGame.BoardGameState;
+import edu.southwestern.boardGame.agents.BoardGamePlayer;
+import edu.southwestern.boardGame.agents.BoardGamePlayerRandom;
+import edu.southwestern.boardGame.agents.treesearch.BoardGamePlayerMinimaxAlphaBetaPruning;
+import edu.southwestern.boardGame.fitnessFunction.BoardGameFitnessFunction;
+import edu.southwestern.boardGame.fitnessFunction.SimpleWinLoseDrawBoardGameFitness;
+import edu.southwestern.boardGame.heuristics.StaticOthelloWPCHeuristic;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.boardGame.BoardGameUtil;

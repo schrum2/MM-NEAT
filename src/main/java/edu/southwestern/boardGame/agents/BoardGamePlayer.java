@@ -1,6 +1,6 @@
-package boardGame.agents;
+package edu.southwestern.boardGame.agents;
 
-import boardGame.BoardGameState;
+import edu.southwestern.boardGame.BoardGameState;
 
 /**
  * Generic Interface for a simulated Board Game Player

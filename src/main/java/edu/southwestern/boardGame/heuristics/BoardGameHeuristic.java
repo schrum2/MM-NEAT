@@ -1,6 +1,6 @@
-package boardGame.heuristics;
+package edu.southwestern.boardGame.heuristics;
 
-import boardGame.BoardGameState;
+import edu.southwestern.boardGame.BoardGameState;
 
 public interface BoardGameHeuristic<T extends BoardGameState> {
 		

@@ -1,14 +1,14 @@
-package boardGame.ttt;
+package edu.southwestern.boardGame.ttt;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import boardGame.TwoDimensionalBoardGame;
-import boardGame.agents.BoardGamePlayer;
-import boardGame.agents.BoardGamePlayerHuman2DBoard;
-import boardGame.agents.treesearch.BoardGamePlayerMinimaxAlphaBetaPruning;
-import boardGame.fitnessFunction.BoardGameFitnessFunction;
-import boardGame.fitnessFunction.SimpleWinLoseDrawBoardGameFitness;
+import edu.southwestern.boardGame.TwoDimensionalBoardGame;
+import edu.southwestern.boardGame.agents.BoardGamePlayer;
+import edu.southwestern.boardGame.agents.BoardGamePlayerHuman2DBoard;
+import edu.southwestern.boardGame.agents.treesearch.BoardGamePlayerMinimaxAlphaBetaPruning;
+import edu.southwestern.boardGame.fitnessFunction.BoardGameFitnessFunction;
+import edu.southwestern.boardGame.fitnessFunction.SimpleWinLoseDrawBoardGameFitness;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.boardGame.BoardGameUtil;

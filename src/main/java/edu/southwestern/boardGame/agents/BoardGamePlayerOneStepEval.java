@@ -1,10 +1,10 @@
-package boardGame.agents;
+package edu.southwestern.boardGame.agents;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import boardGame.BoardGameState;
-import boardGame.heuristics.BoardGameHeuristic;
+import edu.southwestern.boardGame.BoardGameState;
+import edu.southwestern.boardGame.heuristics.BoardGameHeuristic;
 import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.stats.StatisticsUtilities;
 

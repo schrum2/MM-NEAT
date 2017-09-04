@@ -1,10 +1,10 @@
-package boardGame.fitnessFunction;
+package edu.southwestern.boardGame.fitnessFunction;
 
 import java.util.LinkedList;
 import java.util.List;
 
-import boardGame.BoardGameState;
-import boardGame.agents.BoardGamePlayer;
+import edu.southwestern.boardGame.BoardGameState;
+import edu.southwestern.boardGame.agents.BoardGamePlayer;
 
 public class SimpleWinLoseDrawBoardGameFitness<T extends BoardGameState> implements BoardGameFitnessFunction<T>{
 	

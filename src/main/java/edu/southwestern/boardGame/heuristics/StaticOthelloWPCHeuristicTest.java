@@ -1,4 +1,4 @@
-package boardGame.heuristics;
+package edu.southwestern.boardGame.heuristics;
 
 import static org.junit.Assert.assertEquals;
 
@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import org.junit.Before;
 import org.junit.Test;
 
-import boardGame.TwoDimensionalBoardGameState;
-import boardGame.othello.OthelloState;
+import edu.southwestern.boardGame.TwoDimensionalBoardGameState;
+import edu.southwestern.boardGame.othello.OthelloState;
 
 public class StaticOthelloWPCHeuristicTest {
 	

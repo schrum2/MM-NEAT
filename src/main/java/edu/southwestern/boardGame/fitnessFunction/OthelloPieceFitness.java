@@ -1,9 +1,9 @@
-package boardGame.fitnessFunction;
+package edu.southwestern.boardGame.fitnessFunction;
 
 import java.util.Arrays;
 
-import boardGame.agents.BoardGamePlayer;
-import boardGame.othello.OthelloState;
+import edu.southwestern.boardGame.agents.BoardGamePlayer;
+import edu.southwestern.boardGame.othello.OthelloState;
 
 public class OthelloPieceFitness implements BoardGameFitnessFunction<OthelloState> {
 

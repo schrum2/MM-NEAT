@@ -1,4 +1,4 @@
-package boardGame.agents;
+package edu.southwestern.boardGame.agents;
 
 import java.awt.Point;
 import java.awt.event.MouseEvent;
@@ -6,9 +6,9 @@ import java.awt.event.MouseListener;
 import java.util.Arrays;
 import java.util.Set;
 
-import boardGame.BoardGame;
-import boardGame.TwoDimensionalBoardGameState;
-import boardGame.TwoDimensionalBoardGameViewer;
+import edu.southwestern.boardGame.BoardGame;
+import edu.southwestern.boardGame.TwoDimensionalBoardGameState;
+import edu.southwestern.boardGame.TwoDimensionalBoardGameViewer;
 import edu.southwestern.MMNEAT.MMNEAT;
 
 public class BoardGamePlayerHuman2DBoard<T extends TwoDimensionalBoardGameState> implements BoardGamePlayer<T> {

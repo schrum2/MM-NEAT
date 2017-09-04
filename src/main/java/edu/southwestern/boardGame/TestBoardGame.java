@@ -1,9 +1,9 @@
-package boardGame;
+package edu.southwestern.boardGame;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import boardGame.agents.BoardGamePlayer;
+import edu.southwestern.boardGame.agents.BoardGamePlayer;
 
 public class TestBoardGame<T extends BoardGameState> implements BoardGame<T>{
 

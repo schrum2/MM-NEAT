@@ -1,4 +1,4 @@
-package boardGame.checkers;
+package edu.southwestern.boardGame.checkers;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;

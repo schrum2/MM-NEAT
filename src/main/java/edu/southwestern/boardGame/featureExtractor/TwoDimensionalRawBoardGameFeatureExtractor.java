@@ -1,6 +1,6 @@
-package boardGame.featureExtractor;
+package edu.southwestern.boardGame.featureExtractor;
 
-import boardGame.TwoDimensionalBoardGameState;
+import edu.southwestern.boardGame.TwoDimensionalBoardGameState;
 import edu.southwestern.MMNEAT.MMNEAT;
 
 public class TwoDimensionalRawBoardGameFeatureExtractor<T extends TwoDimensionalBoardGameState> implements BoardGameFeatureExtractor<T> {

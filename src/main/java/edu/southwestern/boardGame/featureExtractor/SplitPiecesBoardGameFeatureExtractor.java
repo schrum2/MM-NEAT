@@ -1,9 +1,9 @@
-package boardGame.featureExtractor;
+package edu.southwestern.boardGame.featureExtractor;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import boardGame.BoardGameState;
+import edu.southwestern.boardGame.BoardGameState;
 
 public class SplitPiecesBoardGameFeatureExtractor<T extends BoardGameState> implements BoardGameFeatureExtractor<T> {
 

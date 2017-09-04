@@ -1,9 +1,9 @@
-package boardGame.agents.treesearch;
+package edu.southwestern.boardGame.agents.treesearch;
 
 import java.util.Set;
 
-import boardGame.BoardGameState;
-import boardGame.heuristics.BoardGameHeuristic;
+import edu.southwestern.boardGame.BoardGameState;
+import edu.southwestern.boardGame.heuristics.BoardGameHeuristic;
 
 public class BoardGamePlayerMinimaxAlphaBetaPruning<T extends BoardGameState> extends BoardGamePlayerMinimax<T> {
 	

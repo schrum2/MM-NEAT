@@ -1,4 +1,4 @@
-package boardGame.othello;
+package edu.southwestern.boardGame.othello;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -11,8 +11,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import boardGame.agents.treesearch.BoardGamePlayerMinimax;
-import boardGame.heuristics.PieceDifferentialBoardGameHeuristic;
+import edu.southwestern.boardGame.agents.treesearch.BoardGamePlayerMinimax;
+import edu.southwestern.boardGame.heuristics.PieceDifferentialBoardGameHeuristic;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.parameters.Parameters;
 

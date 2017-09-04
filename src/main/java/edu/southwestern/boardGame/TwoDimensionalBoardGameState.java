@@ -1,4 +1,4 @@
-package boardGame;
+package edu.southwestern.boardGame;
 
 import java.awt.Color;
 import java.awt.Point;

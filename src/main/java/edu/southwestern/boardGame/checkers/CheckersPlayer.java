@@ -1,9 +1,9 @@
-package boardGame.checkers;
+package edu.southwestern.boardGame.checkers;
 
 import java.awt.Point;
 
-import boardGame.BoardGameState;
-import boardGame.agents.BoardGamePlayer;
+import edu.southwestern.boardGame.BoardGameState;
+import edu.southwestern.boardGame.agents.BoardGamePlayer;
 
 public abstract class CheckersPlayer implements BoardGamePlayer<CheckersState> {
 

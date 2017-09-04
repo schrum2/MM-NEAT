@@ -8,10 +8,10 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.StringTokenizer;
 
-import boardGame.agents.BoardGamePlayerOneStepEval;
-import boardGame.agents.BoardGamePlayerRandom;
-import boardGame.featureExtractor.TwoDimensionalRawBoardGameFeatureExtractor;
-import boardGame.heuristics.PieceDifferentialBoardGameHeuristic;
+import edu.southwestern.boardGame.agents.BoardGamePlayerOneStepEval;
+import edu.southwestern.boardGame.agents.BoardGamePlayerRandom;
+import edu.southwestern.boardGame.featureExtractor.TwoDimensionalRawBoardGameFeatureExtractor;
+import edu.southwestern.boardGame.heuristics.PieceDifferentialBoardGameHeuristic;
 import edu.southwestern.breve2D.Breve2DGame;
 import edu.southwestern.breve2D.agent.RushingPlayer;
 import edu.southwestern.breve2D.dynamics.PlayerPredatorMonsterPrey;

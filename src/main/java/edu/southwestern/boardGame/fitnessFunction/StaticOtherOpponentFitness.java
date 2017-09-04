@@ -1,15 +1,15 @@
-package boardGame.fitnessFunction;
+package edu.southwestern.boardGame.fitnessFunction;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import boardGame.BoardGameState;
-import boardGame.agents.BoardGamePlayer;
-import boardGame.agents.HeuristicBoardGamePlayer;
-import boardGame.heuristics.BoardGameHeuristic;
-import boardGame.heuristics.NNBoardGameHeuristic;
+import edu.southwestern.boardGame.BoardGameState;
+import edu.southwestern.boardGame.agents.BoardGamePlayer;
+import edu.southwestern.boardGame.agents.HeuristicBoardGamePlayer;
+import edu.southwestern.boardGame.heuristics.BoardGameHeuristic;
+import edu.southwestern.boardGame.heuristics.NNBoardGameHeuristic;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.NoisyLonerTask;

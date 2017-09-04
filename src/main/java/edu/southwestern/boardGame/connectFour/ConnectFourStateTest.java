@@ -1,4 +1,4 @@
-package boardGame.connectFour;
+package edu.southwestern.boardGame.connectFour;
 
 import static org.junit.Assert.*;
 

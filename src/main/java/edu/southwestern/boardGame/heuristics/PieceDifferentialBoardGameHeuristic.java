@@ -1,6 +1,6 @@
-package boardGame.heuristics;
+package edu.southwestern.boardGame.heuristics;
 
-import boardGame.TwoDimensionalBoardGameState;
+import edu.southwestern.boardGame.TwoDimensionalBoardGameState;
 
 public class PieceDifferentialBoardGameHeuristic<T extends TwoDimensionalBoardGameState> implements BoardGameHeuristic<T>{
 

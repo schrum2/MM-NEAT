@@ -1,8 +1,8 @@
-package boardGame;
+package edu.southwestern.boardGame;
 
 import java.util.List;
 
-import boardGame.agents.BoardGamePlayer;
+import edu.southwestern.boardGame.agents.BoardGamePlayer;
 
 /**
  * Generic Interface for a simulated Board Game

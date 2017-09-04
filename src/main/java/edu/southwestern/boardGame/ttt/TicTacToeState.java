@@ -1,4 +1,4 @@
-package boardGame.ttt;
+package edu.southwestern.boardGame.ttt;
 
 import java.awt.Color;
 import java.awt.Point;
@@ -6,8 +6,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import boardGame.BoardGameState;
-import boardGame.TwoDimensionalBoardGameState;
+import edu.southwestern.boardGame.BoardGameState;
+import edu.southwestern.boardGame.TwoDimensionalBoardGameState;
 
 public class TicTacToeState extends TwoDimensionalBoardGameState {
 	

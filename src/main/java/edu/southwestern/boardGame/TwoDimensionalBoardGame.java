@@ -1,8 +1,8 @@
-package boardGame;
+package edu.southwestern.boardGame;
 
 import java.util.List;
 
-import boardGame.agents.BoardGamePlayer;
+import edu.southwestern.boardGame.agents.BoardGamePlayer;
 
 public abstract class TwoDimensionalBoardGame<T extends TwoDimensionalBoardGameState> implements BoardGame<T>{
 	

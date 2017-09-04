@@ -1,4 +1,4 @@
-package boardGame.agents.treesearch;
+package edu.southwestern.boardGame.agents.treesearch;
 
 import static org.junit.Assert.assertEquals;
 
@@ -9,10 +9,10 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import boardGame.agents.BoardGamePlayer;
-import boardGame.heuristics.StaticTicTacToeWPCHeuristic;
-import boardGame.ttt.TicTacToe;
-import boardGame.ttt.TicTacToeState;
+import edu.southwestern.boardGame.agents.BoardGamePlayer;
+import edu.southwestern.boardGame.heuristics.StaticTicTacToeWPCHeuristic;
+import edu.southwestern.boardGame.ttt.TicTacToe;
+import edu.southwestern.boardGame.ttt.TicTacToeState;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.parameters.Parameters;
 

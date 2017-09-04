@@ -1,7 +1,7 @@
-package boardGame.fitnessFunction;
+package edu.southwestern.boardGame.fitnessFunction;
 
-import boardGame.BoardGameState;
-import boardGame.agents.BoardGamePlayer;
+import edu.southwestern.boardGame.BoardGameState;
+import edu.southwestern.boardGame.agents.BoardGamePlayer;
 
 /**
  * Fitness Function from:

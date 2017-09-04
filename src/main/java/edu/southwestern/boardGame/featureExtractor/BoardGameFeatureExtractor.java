@@ -1,6 +1,6 @@
-package boardGame.featureExtractor;
+package edu.southwestern.boardGame.featureExtractor;
 
-import boardGame.BoardGameState;
+import edu.southwestern.boardGame.BoardGameState;
 
 public interface BoardGameFeatureExtractor<T extends BoardGameState> {
 	

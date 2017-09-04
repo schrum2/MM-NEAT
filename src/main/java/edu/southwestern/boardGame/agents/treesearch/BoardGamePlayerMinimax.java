@@ -1,12 +1,12 @@
-package boardGame.agents.treesearch;
+package edu.southwestern.boardGame.agents.treesearch;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import boardGame.BoardGameState;
-import boardGame.agents.HeuristicBoardGamePlayer;
-import boardGame.heuristics.BoardGameHeuristic;
+import edu.southwestern.boardGame.BoardGameState;
+import edu.southwestern.boardGame.agents.HeuristicBoardGamePlayer;
+import edu.southwestern.boardGame.heuristics.BoardGameHeuristic;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.util.ClassCreation;

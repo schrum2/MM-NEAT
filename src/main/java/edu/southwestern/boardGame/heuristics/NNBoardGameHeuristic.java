@@ -1,9 +1,9 @@
-package boardGame.heuristics;
+package edu.southwestern.boardGame.heuristics;
 
 import java.util.List;
 
-import boardGame.BoardGameState;
-import boardGame.featureExtractor.BoardGameFeatureExtractor;
+import edu.southwestern.boardGame.BoardGameState;
+import edu.southwestern.boardGame.featureExtractor.BoardGameFeatureExtractor;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.networks.Network;
 import edu.southwestern.parameters.Parameters;

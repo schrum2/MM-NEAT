@@ -1,4 +1,4 @@
-package boardGame.ttt;
+package edu.southwestern.boardGame.ttt;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
@@ -19,7 +19,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import boardGame.BoardGameState;
+import edu.southwestern.boardGame.BoardGameState;
 
 public class TicTacToeStateTest {
 

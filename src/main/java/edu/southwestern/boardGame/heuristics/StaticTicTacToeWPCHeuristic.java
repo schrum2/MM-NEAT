@@ -1,16 +1,16 @@
-package boardGame.heuristics;
+package edu.southwestern.boardGame.heuristics;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import boardGame.TwoDimensionalBoardGameState;
-import boardGame.agents.BoardGamePlayer;
-import boardGame.agents.BoardGamePlayerHuman2DBoard;
-import boardGame.agents.treesearch.BoardGamePlayerMinimaxAlphaBetaPruning;
-import boardGame.fitnessFunction.BoardGameFitnessFunction;
-import boardGame.fitnessFunction.SimpleWinLoseDrawBoardGameFitness;
-import boardGame.ttt.TicTacToe;
-import boardGame.ttt.TicTacToeState;
+import edu.southwestern.boardGame.TwoDimensionalBoardGameState;
+import edu.southwestern.boardGame.agents.BoardGamePlayer;
+import edu.southwestern.boardGame.agents.BoardGamePlayerHuman2DBoard;
+import edu.southwestern.boardGame.agents.treesearch.BoardGamePlayerMinimaxAlphaBetaPruning;
+import edu.southwestern.boardGame.fitnessFunction.BoardGameFitnessFunction;
+import edu.southwestern.boardGame.fitnessFunction.SimpleWinLoseDrawBoardGameFitness;
+import edu.southwestern.boardGame.ttt.TicTacToe;
+import edu.southwestern.boardGame.ttt.TicTacToeState;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.boardGame.BoardGameUtil;

@@ -1,10 +1,10 @@
-package boardGame.agents;
+package edu.southwestern.boardGame.agents;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import boardGame.BoardGameState;
+import edu.southwestern.boardGame.BoardGameState;
 import edu.southwestern.util.random.RandomNumbers;
 
 public class BoardGamePlayerRandom<T extends BoardGameState> implements BoardGamePlayer<T> {
