@@ -104,3 +104,4 @@ _vizdoom.ini
 *.bash
 
 *.Bash
+/target/
