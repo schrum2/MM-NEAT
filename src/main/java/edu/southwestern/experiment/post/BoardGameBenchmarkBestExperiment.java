@@ -123,12 +123,13 @@ public class BoardGameBenchmarkBestExperiment<T extends Network, S extends Board
 				Pair<DrawingPanel, DrawingPanel> drawPanels = CommonTaskUtil.getDrawingPanels(gene);
 
 				panel = drawPanels.t1;
-				cppnPanel = drawPanels.t2;
-
 				panel.setVisible(true);
-				cppnPanel.setVisible(true);
+				
+				if(CommonConstants.hyperNEAT) {
+					cppnPanel = drawPanels.t2;
+					cppnPanel.setVisible(true);
+				}
 			}
-
 
 			player.setHeuristic((new NNBoardGameHeuristic<T,S>(gene.getId(), featExtract, gene)));
 			@SuppressWarnings("unchecked")
@@ -143,7 +144,6 @@ public class BoardGameBenchmarkBestExperiment<T extends Network, S extends Board
 			
 			//players = new BoardGamePlayer[]{new BoardGamePlayerRandom<OthelloState>() , opponent};
 
-			
 			ArrayList<Pair<double[], double[]>> allResults = new ArrayList<Pair<double[], double[]>>();
 			for(int i = 0; i < CommonConstants.trials; i++){
 				ArrayList<Pair<double[], double[]>> scores = BoardGameUtil.playGame(bg, players, fitFunctions, new ArrayList<BoardGameFitnessFunction<S>>()); // No Other Scores
