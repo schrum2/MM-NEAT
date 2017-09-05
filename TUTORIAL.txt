@@ -1,22 +1,41 @@
 
-=========== GETTING STARTED ===========
+=========== GETTING STARTED WITH MM-NEAT 3.0 ===========
 
-This code requires Java to run, and it is recommended 
-that a modern IDE is used as well (the code was originally developed 
-in NetBeans IDE 7.4: https://netbeans.org/ but I have since then worked
-with Eclipse without any problems). 
+GitHub: https://github.com/schrum2/MM-NEAT
+Requirements for this code to run:
+
+Java 1.8
+Maven 3.5
+
+MM-NEAT version 3.0 introduces integration with Maven, a dependency management system
+that automatically downloads libraries needed for the code to function so that you do not
+need to hunt down individual jar files yourself. The transition to Maven was a major move 
+for this code, which is why a new GitHub repository was created to store MM-NEAT moving forward.
+MM-NEAT version 2.0 does not use Maven, and will remain at https://github.com/schrum2/MM-NEATv2, 
+but has not been updated since September 2017.
+
+=========== INSTALLATION ===========
+
+1. Start by downloading and installing the latest version of Maven: https://maven.apache.org/
+2. Once Maven is installed, you can clone/fork the MM-NEAT project and download it to your machine.
+3. In the main project directory (MM-NEAT) use a console/terminal to execute: mvn install
+   Lots of text should scroll across the screen, but near the end should be a result of BUILD SUCCESS
+
+It is recommended that you use a modern IDE to work on this code. Most recent development on the
+code was accomplished using Eclipse.
+
+=========== RUNNING ===========
 
 The main class of the project is edu.southwestern.mmneat.MMNEAT.java,
-and once the project is compiled in NetBeans, there will be
-a file called MM-NEAT.jar in the "dist" directory. If you are using
-Eclipse, then you will need to first export an executable jar file
-with MMNEAT.java as the main class.
+but this class requires many command line parameters to function correctly.
+When you execute "mvn install" an executable uber jar file will be created in
+the target sub-directory: MM-NEAT-0.0.1-SNAPSHOT.jar
 
 Once the jar file is created, the code can be launched by running 
 java with the jar file and appropriate command-line arguments. 
 The general form is:
 
-java -jar dist/MM-NEAT.jar runNumber:<int> randomSeed:<int> base:<experiment directory> maxGens:<int> mu:<int> io:true netio:true task:<java class> log:<experiment string>-<evaluation method string> saveTo:<evaluation method directory>
+java -jar target/MM-NEAT-0.0.1-SNAPSHOT.jar runNumber:<int> randomSeed:<int> base:<experiment directory> maxGens:<int> mu:<int> io:true netio:true task:<java class> log:<experiment string>-<evaluation method string> saveTo:<evaluation method directory>
 
 Here is a brief description of each of these key parameters.
 
@@ -24,10 +43,10 @@ runNumber:	An identifying number for the experimental run. Used in directory nam
 randomSeed:	Should generally be the same as runNumber. Specifies seed for random number generator.
 base:		Directory that will be created to store data from all experiments to be compared.
 maxGens:	Number of generations before evolution stops (alternate stop conditions can be defined).
-mu:		Population size.
+mu:		Population size (because (mu+lambda) evolution is assumed, mu is the number of parents).
 task:		Java class that implements the Task interface.
 log:		Prefix that will be used in all filenames. Recommended format above.
-saveTo:		Sub-directory within the base directory where data will be saved.
+saveTo:		Sub-directory within the base directory where data will be saved (must match portion of log name after the hyphen).
 
 Other parameters may need to be set as well, depending on the 
 type of the experiment, and whether you are ok with the default
@@ -49,8 +68,8 @@ simultaneously. This is the easiest approach to recreating experimental
 results, but not necessarily the best. In some cases, the number of
 experiments launching may overwhelm the memory of your machine, so you
 can launch the experiments individually instead. However, for the most 
-part these experiments were run on a cluster, so distributing all execution
-would be best.
+part these experiments were run on a condor cluster, so distributing all 
+execution would be best.
 
 Below are details on research conducted with MM-NEAT, and the associated
 batch files.
@@ -187,17 +206,17 @@ clashes, likely because each monster has its own network and is trying to write 
 the same window simultaneously; the sensors don't all work the same as they do in BREVE;
 the camera does not follow the agents, so sometimes all the action happens out of sight;
 FoF features a ramming orb instead of a bat as in the original BREVE implementation;
-and for some reason the dynamics of the FoF don't allow baiting behavior to emerge. Still,
-the code is a useful starting point. Some batch files to get you started are in batch/Breve2D/.
+and for some reason the dynamics of the FoF don't allow baiting behavior to emerge (yet). 
+Still, the code is a useful starting point. Some batch files to get you started are in batch/Breve2D/.
 
 The current implementation of these domains produces some different results from those
 in the original BREVE Monsters domain. If you manage to produce any interesting results
 with this code, or fix any of the issues mentioned above, please let me know by emailing
 me at schrum2@southwestern.edu
 
-Other pre-existing domains include a toroidal Predator/Prey grid world, several board games,
-Super Mario, and VizDoom. Several ways of interactively creating interesting art and sounds
-are also available. Please explore!
+Other pre-existing domains include a toroidal Predator/Prey grid world (see publication above), 
+several board games, Super Mario, and VizDoom. Several ways of interactively creating interesting 
+art and sounds are also available (see INTERACTIVE_EVOLUTION.txt). Please explore!
 
 =========== MAKING YOUR OWN DOMAINS ===========
 
