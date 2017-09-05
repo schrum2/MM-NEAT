@@ -1,6 +1,6 @@
 package org.deeplearning4j.rl4j.mdp.vizdoom;
 
-import vizdoom.fromRL4J.Button;
+import vizdoom.Button;
 
 import java.util.Arrays;
 import java.util.List;

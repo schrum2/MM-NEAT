@@ -8,12 +8,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.bytedeco.javacpp.Pointer;
 import org.deeplearning4j.gym.StepReply;
 import org.deeplearning4j.rl4j.mdp.MDP;
-import org.deeplearning4j.rl4j.mdp.vizdoom.VizDoom.Configuration;
 import org.deeplearning4j.rl4j.space.ArrayObservationSpace;
 import org.deeplearning4j.rl4j.space.DiscreteSpace;
 import org.deeplearning4j.rl4j.space.Encodable;
 import org.deeplearning4j.rl4j.space.ObservationSpace;
-import vizdoom.fromRL4J.*;
+import vizdoom.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +46,7 @@ abstract public class VizDoom implements MDP<VizDoom.GameScreen, Integer, Discre
     final public static String DOOM_ROOT = "vizdoom";
 
     protected DoomGame game;
-    final protected List<double[]> actions;
+    final protected List<int[]> actions;
     final protected DiscreteSpace discreteSpace;
     final protected ObservationSpace<GameScreen> observationSpace;
     @Getter
@@ -61,7 +60,7 @@ abstract public class VizDoom implements MDP<VizDoom.GameScreen, Integer, Discre
 
     public VizDoom(boolean render) {
         this.render = render;
-        actions = new ArrayList<double[]>();
+        actions = new ArrayList<int[]>();
         game = new DoomGame();
         setupGame();
         discreteSpace = new DiscreteSpace(getConfiguration().getButtons().size() + 1);
@@ -80,8 +79,8 @@ abstract public class VizDoom implements MDP<VizDoom.GameScreen, Integer, Discre
 
         Configuration conf = getConfiguration();
 
-        game.setViZDoomPath(DOOM_ROOT + "/vizdoom");
-        game.setDoomGamePath(DOOM_ROOT + "/freedoom2.wad");
+        game.setViZDoomPath(DOOM_ROOT + "/bin/vizdoom");
+        game.setDoomGamePath(DOOM_ROOT + "/bin/freedoom2.wad");
         game.setDoomScenarioPath(DOOM_ROOT + "/scenarios/" + conf.getScenario() + ".wad");
 
         game.setDoomMap("map01");
@@ -126,10 +125,10 @@ abstract public class VizDoom implements MDP<VizDoom.GameScreen, Integer, Discre
         List<Button> buttons = conf.getButtons();
         int size = buttons.size();
 
-        actions.add(new double[size + 1]);
+        actions.add(new int[size + 1]);
         for (int i = 0; i < size; i++) {
             game.addAvailableButton(buttons.get(i));
-            double[] action = new double[size + 1];
+            int[] action = new int[size + 1];
             action[i] = 1;
             actions.add(action);
         }
@@ -149,7 +148,7 @@ abstract public class VizDoom implements MDP<VizDoom.GameScreen, Integer, Discre
         log.info("free Memory: " + (Pointer.availablePhysicalBytes()) + "/" + (Pointer.totalPhysicalBytes()));
 
         game.newEpisode();
-        return new GameScreen(game.getState().screenBuffer);
+        return new GameScreen(game.getState().imageBuffer);
     }
 
 
@@ -162,9 +161,9 @@ abstract public class VizDoom implements MDP<VizDoom.GameScreen, Integer, Discre
 
         double r = game.makeAction(actions.get(action)) * scaleFactor;
         log.info(game.getEpisodeTime() + " " + r + " " + action + " ");
-        return new StepReply(new GameScreen(game.isEpisodeFinished()
-                ? new byte[game.getScreenSize()]
-                : game.getState().screenBuffer), r, game.isEpisodeFinished(), null);
+        return new StepReply<>(new GameScreen(game.isEpisodeFinished()
+                ? new int[game.getScreenSize()]
+                : game.getState().imageBuffer), r, game.isEpisodeFinished(), null);
 
     }
 
@@ -238,6 +237,28 @@ abstract public class VizDoom implements MDP<VizDoom.GameScreen, Integer, Discre
 
         double[] array;
 
+        /**
+         * Added by Dr. Schrum:
+         * 
+         * Accept an int array (as in my version of VizDoom) instead of the byte array
+         * that the DL4J version accepts. (My version is older, but it works)
+         * 
+         * @param screen
+         */
+        public GameScreen(int[] screen) {
+            array = new double[screen.length];
+            for (int i = 0; i < screen.length; i++) {
+                array[i] = screen[i] / 255.0;
+            }
+        }
+        
+        /**
+         * Original RL4J method for getting screen data. Their
+         * version of VizDoom accepts a byte array rather than an
+         * int array, but I think the data is pretty much the same.
+         * 
+         * @param screen
+         */
         public GameScreen(byte[] screen) {
             array = new double[screen.length];
             for (int i = 0; i < screen.length; i++) {
