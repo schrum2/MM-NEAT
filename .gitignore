@@ -106,3 +106,4 @@ _vizdoom.ini
 
 *.Bash
 /target/
+log4j.log
