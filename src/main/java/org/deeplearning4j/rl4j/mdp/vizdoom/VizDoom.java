@@ -86,7 +86,7 @@ abstract public class VizDoom implements MDP<VizDoom.GameScreen, Integer, Discre
         game.setDoomMap("map01");
 
         game.setScreenFormat(ScreenFormat.RGB24);
-        game.setScreenResolution(ScreenResolution.RES_800X600);
+        game.setScreenResolution(ScreenResolution.RES_200X150);
         // Sets other rendering options
         game.setRenderHud(false);
         game.setRenderCrosshair(false);
@@ -104,6 +104,7 @@ abstract public class VizDoom implements MDP<VizDoom.GameScreen, Integer, Discre
                         GameVariable.AMMO9, GameVariable.AMMO0};
         // Adds game variables that will be included in state.
 
+        // Schrum: My version of the code restricts the game variables ... which approach is better?
         for (int i = 0; i < gameVar.length; i++) {
             game.addAvailableGameVariable(gameVar[i]);
         }
