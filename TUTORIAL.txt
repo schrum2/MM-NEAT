@@ -18,7 +18,7 @@ but has not been updated since September 2017.
 
 1. Start by downloading and installing the latest version of Maven: https://maven.apache.org/
 2. Once Maven is installed, you can clone/fork the MM-NEAT project and download it to your machine.
-3. In the main project directory (MM-NEAT) use a console/terminal to execute: mvn install
+3. In the main project directory (MM-NEAT) use a console/terminal to execute: mvn -U install
    Lots of text should scroll across the screen, but near the end should be a result of BUILD SUCCESS
 
 It is recommended that you use a modern IDE to work on this code. Most recent development on the
@@ -28,7 +28,7 @@ code was accomplished using Eclipse.
 
 The main class of the project is edu.southwestern.mmneat.MMNEAT.java,
 but this class requires many command line parameters to function correctly.
-When you execute "mvn install" an executable uber jar file will be created in
+When you execute "mvn -U install" an executable uber jar file will be created in
 the target sub-directory: MM-NEAT-0.0.1-SNAPSHOT.jar
 
 Once the jar file is created, the code can be launched by running 
