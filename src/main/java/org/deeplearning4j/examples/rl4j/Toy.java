@@ -66,7 +66,8 @@ public class Toy {
 
     public static void main(String[] args )
     {
-        simpleToy();
+        //simpleToy();
+    	hardToy();
         //toyAsyncNstep();
 
     }
