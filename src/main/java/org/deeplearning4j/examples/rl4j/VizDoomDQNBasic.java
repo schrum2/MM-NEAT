@@ -2,6 +2,8 @@ package org.deeplearning4j.examples.rl4j;
 
 import org.deeplearning4j.rl4j.mdp.vizdoom.Basic;
 import org.deeplearning4j.rl4j.mdp.vizdoom.DeadlyCorridor;
+import org.deeplearning4j.rl4j.mdp.vizdoom.PredictPosition;
+import org.deeplearning4j.rl4j.mdp.vizdoom.TakeCover;
 import org.deeplearning4j.rl4j.mdp.vizdoom.VizDoom;
 
 import edu.southwestern.util.random.RandomNumbers;
@@ -13,7 +15,9 @@ public class VizDoomDQNBasic {
 		SpecifyDLL.specifyDLLPath(); // Added to allow the vizdoom.dll to be in a different location
 		
 //		VizDoom vd = new Basic(true);
-		VizDoom vd = new DeadlyCorridor(true);
+//		VizDoom vd = new DeadlyCorridor(true);
+//		VizDoom vd = new TakeCover(true);
+		VizDoom vd = new PredictPosition(true);
 		int numActions = vd.getActionSpace().getSize();
 		while(!vd.isDone()) {
 			// Do random actions
