@@ -86,7 +86,8 @@ abstract public class VizDoom implements MDP<VizDoom.GameScreen, Integer, Discre
         game.setDoomMap("map01");
 
         game.setScreenFormat(ScreenFormat.RGB24);
-        game.setScreenResolution(ScreenResolution.RES_200X150);
+        //game.setScreenResolution(ScreenResolution.RES_200X150); // Smallest possible
+        game.setScreenResolution(ScreenResolution.RES_800X600);
         // Sets other rendering options
         game.setRenderHud(false);
         game.setRenderCrosshair(false);

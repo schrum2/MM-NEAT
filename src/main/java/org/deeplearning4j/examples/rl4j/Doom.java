@@ -4,8 +4,10 @@ import org.deeplearning4j.rl4j.learning.HistoryProcessor;
 import org.deeplearning4j.rl4j.learning.sync.qlearning.QLearning;
 import org.deeplearning4j.rl4j.learning.sync.qlearning.discrete.QLearningDiscreteConv;
 import org.deeplearning4j.rl4j.mdp.vizdoom.DeadlyCorridor;
+import org.deeplearning4j.rl4j.mdp.vizdoom.HealthGather;
 import org.deeplearning4j.rl4j.mdp.vizdoom.VizDoom;
 import org.deeplearning4j.rl4j.network.dqn.DQNFactoryStdConv;
+import org.deeplearning4j.rl4j.policy.DQNPolicy;
 import org.deeplearning4j.rl4j.util.DataManager;
 
 import vizdoom.SpecifyDLL;
@@ -69,20 +71,21 @@ public class Doom {
 
     public static void main(String[] args) {
 		SpecifyDLL.specifyDLLPath(); // Added to be able to find the vizdoom.dll
-        doomDeadlyCorridorQL();
+        doomLearn();
     }
 
-    public static void doomDeadlyCorridorQL() {
+    public static void doomLearn() {
 
         //record the training data in rl4j-data in a new folder
         DataManager manager = new DataManager(true);
 
         //setup the Doom environment through VizDoom
         VizDoom mdp = new DeadlyCorridor(false);
+        //VizDoom mdp = new HealthGather(false);
 
         //setup the training
         QLearningDiscreteConv<VizDoom.GameScreen> dql = new QLearningDiscreteConv<>(mdp, DOOM_NET, DOOM_HP, DOOM_QL, manager);
-
+        
         //start the training
         dql.train();
 
