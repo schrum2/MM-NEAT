@@ -1,13 +1,17 @@
 package org.deeplearning4j.examples.rl4j;
 
+import java.util.logging.Logger;
+
 import org.deeplearning4j.rl4j.learning.HistoryProcessor;
 import org.deeplearning4j.rl4j.learning.sync.qlearning.QLearning;
 import org.deeplearning4j.rl4j.learning.sync.qlearning.discrete.QLearningDiscreteConv;
+import org.deeplearning4j.rl4j.mdp.gym.GymEnv;
 import org.deeplearning4j.rl4j.mdp.vizdoom.DeadlyCorridor;
 import org.deeplearning4j.rl4j.mdp.vizdoom.HealthGather;
 import org.deeplearning4j.rl4j.mdp.vizdoom.VizDoom;
 import org.deeplearning4j.rl4j.network.dqn.DQNFactoryStdConv;
 import org.deeplearning4j.rl4j.policy.DQNPolicy;
+import org.deeplearning4j.rl4j.space.Box;
 import org.deeplearning4j.rl4j.util.DataManager;
 
 import vizdoom.SpecifyDLL;
@@ -71,17 +75,23 @@ public class Doom {
 
     public static void main(String[] args) {
 		SpecifyDLL.specifyDLLPath(); // Added to be able to find the vizdoom.dll
-        doomLearn();
+        //doomLearn();
+        loadDoom();
     }
 
+    public static VizDoom getMDP(boolean render) {
+    	VizDoom mdp = new DeadlyCorridor(render);
+        //VizDoom mdp = new HealthGather(render);
+    	return mdp;
+    }
+    
     public static void doomLearn() {
 
         //record the training data in rl4j-data in a new folder
         DataManager manager = new DataManager(true);
 
         //setup the Doom environment through VizDoom
-        VizDoom mdp = new DeadlyCorridor(false);
-        //VizDoom mdp = new HealthGather(false);
+        VizDoom mdp = getMDP(false);
 
         //setup the training
         QLearningDiscreteConv<VizDoom.GameScreen> dql = new QLearningDiscreteConv<>(mdp, DOOM_NET, DOOM_HP, DOOM_QL, manager);
@@ -95,4 +105,16 @@ public class Doom {
         //close the doom env
         mdp.close();
     }
+    
+    public static void loadDoom(){
+        //define the mdp from gym (name, render)
+        VizDoom mdp = getMDP(true);
+        //load the previous agent
+        DQNPolicy<VizDoom.GameScreen> dqn = DQNPolicy.load("C:\\Users\\schrum2\\rl4j-data\\1\\model\\210.model");
+        //evaluate the agent
+        mdp.reset();
+        double reward = dqn.play(mdp);
+        Logger.getAnonymousLogger().info("Reward: " + reward);
+    }
+
 }
