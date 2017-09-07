@@ -30,6 +30,7 @@ public class Spectator {
 
 		// Select game and map You want to use.
 		game.setDoomGamePath("vizdoom/scenarios/freedoom2.wad");
+		game.setDoomScenarioPath("vizdoom/scenarios/deathmatch.wad");
 
 		// game.setDoomGamePath("vizdoom/scenarios/doom2.wad");
 		game.setViZDoomPath("vizdoom/bin/vizdoom");
@@ -54,20 +55,18 @@ public class Spectator {
 
 			game.newEpisode();
 			while (!game.isEpisodeFinished()) {
-				GameState s = game.getState();
-				@SuppressWarnings("unused")
-				int[] img = s.imageBuffer;
-				int[] misc = s.gameVariables;
+                GameState state = game.getState();
 
-				game.advanceAction();
-				boolean[] a = game.getLastAction();
-				double r = game.getLastReward();
+                game.advanceAction();
+                int[] action = game.getLastAction();
+                double reward = game.getLastReward();
 
-				System.out.println("State #" + s.number);
-				System.out.println("Game Variables: " + Arrays.toString(misc));
-				System.out.println("Action: " + Arrays.toString(a));
-				System.out.println("Reward: " + r);
-				System.out.println("=====================");
+                System.out.println("State #" + state.number);
+                System.out.println("Game Variables: " + Arrays.toString(state.gameVariables));
+                System.out.println("Action: " + Arrays.toString(action));
+                System.out.println("Reward: " + reward);
+                System.out.println("=====================");
+
 			}
 
 			System.out.println("episode finished!");

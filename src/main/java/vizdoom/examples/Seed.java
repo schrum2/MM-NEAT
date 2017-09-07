@@ -26,6 +26,7 @@ public class Seed {
 		// game.loadConfig("vizdoom/examples/config/predict_position.cfg")
 
 		game.loadConfig("vizdoom/examples/config/basic.cfg");
+		game.setDoomScenarioPath("vizdoom/scenarios/basic.wad");
 		game.setViZDoomPath("vizdoom/bin/vizdoom");
 
 		// Sets path to doom2 iwad resource file which contains the actual doom
@@ -56,18 +57,17 @@ public class Seed {
 			game.newEpisode();
 
 			while (!game.isEpisodeFinished()) {
-				// Gets the state and possibly to something with it
-				GameState s = game.getState();
-				int[] img = s.imageBuffer;
-				int[] gameVariables = s.gameVariables;
+                // Gets the state and possibly to something with it
+                GameState state = game.getState();
 
-				// Make random action and get reward
-				double reward = game.makeAction(actions.get(ran.nextInt(3)));
+                // Make random action and get reward
+                double reward = game.makeAction(actions.get(ran.nextInt(3)));
 
-				System.out.println("State #" + s.number);
-				System.out.println("Action Reward: " + reward);
-				System.out.println("Seed: " + game.getSeed());
-				System.out.println("=====================");
+                System.out.println("State #" + state.number);
+                System.out.println("Action Reward: " + reward);
+                System.out.println("Seed: " + game.getSeed());
+                System.out.println("=====================");
+
 
 			}
 			System.out.println("Episode finished!");

@@ -150,7 +150,7 @@ abstract public class VizDoom implements MDP<VizDoom.GameScreen, Integer, Discre
         log.info("free Memory: " + (Pointer.availablePhysicalBytes()) + "/" + (Pointer.totalPhysicalBytes()));
 
         game.newEpisode();
-        return new GameScreen(game.getState().imageBuffer);
+        return new GameScreen(game.getState().screenBuffer);
     }
 
 
@@ -164,8 +164,8 @@ abstract public class VizDoom implements MDP<VizDoom.GameScreen, Integer, Discre
         double r = game.makeAction(actions.get(action)) * scaleFactor;
         log.info(game.getEpisodeTime() + " " + r + " " + action + " ");
         return new StepReply<>(new GameScreen(game.isEpisodeFinished()
-                ? new int[game.getScreenSize()]
-                : game.getState().imageBuffer), r, game.isEpisodeFinished(), null);
+                ? new byte[game.getScreenSize()]
+                : game.getState().screenBuffer), r, game.isEpisodeFinished(), null);
 
     }
 
@@ -239,28 +239,6 @@ abstract public class VizDoom implements MDP<VizDoom.GameScreen, Integer, Discre
 
         double[] array;
 
-        /**
-         * Added by Dr. Schrum:
-         * 
-         * Accept an int array (as in my version of VizDoom) instead of the byte array
-         * that the DL4J version accepts. (My version is older, but it works)
-         * 
-         * @param screen
-         */
-        public GameScreen(int[] screen) {
-            array = new double[screen.length];
-            for (int i = 0; i < screen.length; i++) {
-                array[i] = screen[i] / 255.0;
-            }
-        }
-        
-        /**
-         * Original RL4J method for getting screen data. Their
-         * version of VizDoom accepts a byte array rather than an
-         * int array, but I think the data is pretty much the same.
-         * 
-         * @param screen
-         */
         public GameScreen(byte[] screen) {
             array = new double[screen.length];
             for (int i = 0; i < screen.length; i++) {

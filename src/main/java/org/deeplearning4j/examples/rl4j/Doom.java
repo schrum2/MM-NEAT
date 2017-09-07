@@ -75,8 +75,8 @@ public class Doom {
 
     public static void main(String[] args) {
 		SpecifyDLL.specifyDLLPath(); // Added to be able to find the vizdoom.dll
-        //doomLearn();
-        loadDoom();
+        doomLearn();
+        //loadDoom();
     }
 
     public static VizDoom getMDP(boolean render) {
@@ -91,7 +91,7 @@ public class Doom {
         DataManager manager = new DataManager(true);
 
         //setup the Doom environment through VizDoom
-        VizDoom mdp = getMDP(false);
+        VizDoom mdp = getMDP(true);
 
         //setup the training
         QLearningDiscreteConv<VizDoom.GameScreen> dql = new QLearningDiscreteConv<>(mdp, DOOM_NET, DOOM_HP, DOOM_QL, manager);

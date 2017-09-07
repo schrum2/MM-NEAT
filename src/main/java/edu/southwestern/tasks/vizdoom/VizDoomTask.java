@@ -55,9 +55,13 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 	protected ScreenResolution designatedResolution;
 
 	public VizDoomTask() {
-		// These should not be here ... put in an init call?
-		doomInit();
+		// My trick for loading the vizdoom.dll library
+		SpecifyDLL.specifyDLLPath();
+		// Create DoomGame instance. 
+		// It will run the game and communicate with you.
+		game = new DoomGame();
 		taskSpecificInit();
+		doomInit(); // overrides bad info in config file
 		setRendering();
 		actionLabels = new ArrayList<String>();
 		actions = new ArrayList<int[]>();
@@ -87,17 +91,12 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 	public abstract void taskSpecificInit();
 
 	public final void doomInit() {
-		// My trick for loading the vizdoom.dll library
-		SpecifyDLL.specifyDLLPath();
-		// Create DoomGame instance. 
-		// It will run the game and communicate with you.
-		game = new DoomGame();
 		// Sets path to vizdoom engine executive which will be spawned as a
 		// separate process. Use the version without sound.
 		game.setViZDoomPath("vizdoom/bin/vizdoom");
 		// Sets path to doom2 iwad resource file which 
 		// contains the actual doom game
-		game.setDoomGamePath("vizdoom/scenarios/" + Parameters.parameters.stringParameter("gameWad"));
+		game.setDoomGamePath("vizdoom/bin/" + Parameters.parameters.stringParameter("gameWad"));
 	}
 
 	/**
@@ -306,7 +305,6 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 	 * @param height
 	 *            screen height
 	 */
-	@SuppressWarnings("unused")
 	public static void drawGameState(GameState s, int width, int height) {
 		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		int bufferPos = 0;
@@ -316,7 +314,7 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 				int g = bufferPos + GREEN_INDEX;
 				int b = bufferPos + BLUE_INDEX;
 				// Actual screen
-				int rgb = new Color(s.imageBuffer[r], s.imageBuffer[g], s.imageBuffer[b]).getRGB();
+				int rgb = new Color((int)(s.screenBuffer[r] & 0xFF), (int)(s.screenBuffer[g] & 0xFF), (int)(s.screenBuffer[b] & 0xFF)).getRGB();
 				// Just red intensity
 				// int rgb = new Color(s.imageBuffer[r], s.imageBuffer[r], s.imageBuffer[r]).getRGB();
 				image.setRGB(x, y, rgb);
@@ -428,7 +426,7 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 		for(int i = y; i < y + height; i++){
 			for(int j = x; j < x + width; j++){
 				//System.out.print("Adding Buffer[" + (color + (NUM_COLORS * ((i * screenWidth) + j))) + "](" + ((s.imageBuffer[color + (NUM_COLORS * ((i * screenWidth) + j))]) / MAX_COLOR) + ") to Inputs[" + pos + "]");
-				inputs[pos++] = ((s.imageBuffer[color + (NUM_COLORS * ((i * screenWidth) + j))]) / MAX_COLOR); 
+				inputs[pos++] = ((s.screenBuffer[color + (NUM_COLORS * ((i * screenWidth) + j))] & 0xFF) / MAX_COLOR); 
 				//System.out.println(" for coordinate [" + j + ", " + i + "] for color " + (color == RED_INDEX ? "Red" : (color == GREEN_INDEX ? "Green" : "Blue")));
 			}
 		}
