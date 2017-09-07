@@ -1,6 +1,9 @@
 package org.deeplearning4j.examples.rl4j;
 
 import org.deeplearning4j.rl4j.space.Box;
+
+import java.io.IOException;
+
 import org.deeplearning4j.rl4j.learning.async.AsyncLearning;
 import org.deeplearning4j.rl4j.learning.async.nstep.discrete.AsyncNStepQLearningDiscrete;
 import org.deeplearning4j.rl4j.learning.async.nstep.discrete.AsyncNStepQLearningDiscreteDense;
@@ -39,13 +42,13 @@ public class AsyncNStepCartpole {
         .l2(0.001).learningRate(0.0005).numHiddenNodes(16).numLayer(3).build();
 
 
-    public static void main( String[] args )
+    public static void main( String[] args ) throws IOException
     {
         cartPole();
     }
 
 
-    public static void cartPole() {
+    public static void cartPole() throws IOException {
 
         //record the training data in rl4j-data in a new folder
         DataManager manager = new DataManager(true);

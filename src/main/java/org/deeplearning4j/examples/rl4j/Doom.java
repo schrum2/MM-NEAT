@@ -1,5 +1,6 @@
 package org.deeplearning4j.examples.rl4j;
 
+import java.io.IOException;
 import java.util.logging.Logger;
 
 import org.deeplearning4j.rl4j.learning.HistoryProcessor;
@@ -58,7 +59,8 @@ public class Doom {
     public static DQNFactoryStdConv.Configuration DOOM_NET =
             new DQNFactoryStdConv.Configuration(
                     0.00025, //learning rate
-                    0.000    //l2 regularization
+                    0.000,    //l2 regularization
+                    null, null
             );
 
     public static HistoryProcessor.Configuration DOOM_HP =
@@ -73,7 +75,7 @@ public class Doom {
                     4        //skip mod (one frame is picked every x
             );
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 		SpecifyDLL.specifyDLLPath(); // Added to be able to find the vizdoom.dll
         doomLearn();
         //loadDoom();
@@ -85,13 +87,13 @@ public class Doom {
     	return mdp;
     }
     
-    public static void doomLearn() {
+    public static void doomLearn() throws IOException {
 
         //record the training data in rl4j-data in a new folder
         DataManager manager = new DataManager(true);
 
         //setup the Doom environment through VizDoom
-        VizDoom mdp = getMDP(true);
+        VizDoom mdp = getMDP(false);
 
         //setup the training
         QLearningDiscreteConv<VizDoom.GameScreen> dql = new QLearningDiscreteConv<>(mdp, DOOM_NET, DOOM_HP, DOOM_QL, manager);
@@ -106,11 +108,11 @@ public class Doom {
         mdp.close();
     }
     
-    public static void loadDoom(){
+    public static void loadDoom() throws IOException{
         //define the mdp from gym (name, render)
         VizDoom mdp = getMDP(true);
         //load the previous agent
-        DQNPolicy<VizDoom.GameScreen> dqn = DQNPolicy.load("C:\\Users\\schrum2\\rl4j-data\\1\\model\\210.model");
+        DQNPolicy<VizDoom.GameScreen> dqn = DQNPolicy.load("C:\\Users\\schrum2\\rl4j-data\\1\\model\\141.model");
         //evaluate the agent
         mdp.reset();
         double reward = dqn.play(mdp);

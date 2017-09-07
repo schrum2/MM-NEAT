@@ -1,6 +1,9 @@
 package org.deeplearning4j.examples.rl4j;
 
 import org.deeplearning4j.rl4j.space.Box;
+
+import java.io.IOException;
+
 import org.deeplearning4j.rl4j.learning.async.a3c.discrete.A3CDiscrete;
 import org.deeplearning4j.rl4j.learning.async.a3c.discrete.A3CDiscreteDense;
 import org.deeplearning4j.rl4j.mdp.gym.GymEnv;
@@ -33,12 +36,12 @@ public class A3CCartpole {
     private static final ActorCriticFactorySeparateStdDense.Configuration CARTPOLE_NET_A3C =  ActorCriticFactorySeparateStdDense.Configuration
     .builder().learningRate(1e-2).l2(0).numHiddenNodes(16).numLayer(3).build();
 
-    public static void main( String[] args )
+    public static void main( String[] args ) throws IOException
     {
         A3CcartPole();
     }
 
-    public static void A3CcartPole() {
+    public static void A3CcartPole() throws IOException {
 
         //record the training data in rl4j-data in a new folder
         DataManager manager = new DataManager(true);
