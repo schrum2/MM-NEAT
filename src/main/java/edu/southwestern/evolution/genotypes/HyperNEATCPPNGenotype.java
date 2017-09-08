@@ -358,11 +358,14 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 			Substrate s1, Substrate s2, int s1Index, int s2Index,
 			List<Substrate> subs, int layersWidth, int layersHeight) {
 		
+		boolean convolutionDeltas = Parameters.parameters.booleanParameter("convolutionDeltas");
+		
 		int receptiveFieldSize = Parameters.parameters.integerParameter("receptiveFieldSize");
 		assert receptiveFieldSize % 2 == 1 : "Receptive field size needs to be odd to be centered: " + receptiveFieldSize;
 		// Need to watch out for links that want to connect out of bounds
 		boolean zeroPadding = Parameters.parameters.booleanParameter("zeroPadding");
-		int edgeOffset = zeroPadding ? 0 : receptiveFieldSize / 2;
+		int offset = receptiveFieldSize / 2;
+		int edgeOffset = zeroPadding ? 0 : offset;
 		
 		int stride = Parameters.parameters.integerParameter("stride");
 		
@@ -376,11 +379,11 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 				// If target neuron is dead, do not continue
 				if(!s2.isNeuronDead(targetXindex, targetYIndex)) {
 					// Loop through all neurons in the receptive field
-					for(int fX = -edgeOffset; fX <= edgeOffset; fX++) {
+					for(int fX = -offset; fX <= offset; fX++) {
 						// Source neuron is offset from receptive field center
 						int fromXIndex = x + fX;
 						if(fromXIndex >= 0 && fromXIndex < s1.getSize().t1) {
-							for(int fY = -edgeOffset; fY <= edgeOffset; fY++) {
+							for(int fY = -offset; fY <= offset; fY++) {
 								// Source neuron is offset from receptive field center
 								int fromYIndex = y + fY;
 								if(fromYIndex >= 0 && fromYIndex < s1.getSize().t2) {
