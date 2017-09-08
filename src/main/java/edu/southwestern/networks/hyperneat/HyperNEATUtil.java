@@ -776,6 +776,6 @@ public class HyperNEATUtil {
 	}
 	
 	public static int numCPPNInputs(HyperNEATTask task) {
-		return task.numCPPNInputs() + (CommonConstants.substrateLocationInputs ? 4 : 0);
+		return task.numCPPNInputs() + (CommonConstants.substrateLocationInputs || Parameters.parameters.booleanParameter("convolutionWeightSharing") ? 4 : 0);
 	}
 }

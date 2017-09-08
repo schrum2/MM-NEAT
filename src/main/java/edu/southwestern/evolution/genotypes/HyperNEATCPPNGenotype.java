@@ -238,6 +238,9 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 	 * @return array list of NodeGenes from substrates
 	 */
 	public ArrayList<NodeGene> createSubstrateNodes(HyperNEATTask hnt, TWEANN cppn, List<Substrate> subs, int layersWidth, int layersHeight) {
+
+		boolean convolutionWeightSharing = Parameters.parameters.booleanParameter("convolutionWeightSharing");
+
 		int biasIndex = HyperNEATUtil.indexFirstBiasOutput(hnt); // first bias index
 		ArrayList<NodeGene> newNodes = new ArrayList<NodeGene>();
 		// loops through substrate list
@@ -260,8 +263,8 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 					assert -1 <= filteredInputs[2] && filteredInputs[2] <= 1 : "CPPN input 2 out of range: " + filteredInputs[2];
 					assert -1 <= filteredInputs[3] && filteredInputs[3] <= 1 : "CPPN input 3 out of range: " + filteredInputs[3];
 					assert -1 <= filteredInputs[4] && filteredInputs[4] <= 1 : "CPPN input 4 out of range: " + filteredInputs[4];
-					
-					if(CommonConstants.substrateLocationInputs) {
+
+					if(CommonConstants.substrateLocationInputs || convolutionWeightSharing) {
 						// In this case, there are 4 extra CPPN inputs, which are x/y coordinates of the actual substrate locations.
 						// To define the bias, we only need to know the location of the substrate containing the neuron to be biased (other is 0,0)
 						ILocated2D scaledSubstrateCoordinates = MMNEAT.substrateMapping.transformCoordinates(new Tuple2D(sub.getSubLocation().t1, sub.getSubLocation().t2), layersWidth, layersHeight);
@@ -359,6 +362,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 			List<Substrate> subs, int layersWidth, int layersHeight) {
 		
 		boolean convolutionDeltas = Parameters.parameters.booleanParameter("convolutionDeltas");
+		boolean convolutionWeightSharing = Parameters.parameters.booleanParameter("convolutionWeightSharing");
 		
 		int receptiveFieldSize = Parameters.parameters.integerParameter("receptiveFieldSize");
 		assert receptiveFieldSize % 2 == 1 : "Receptive field size needs to be odd to be centered: " + receptiveFieldSize;
@@ -404,21 +408,28 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 											ILocated2D scaledFieldCoordinates = CartesianGeometricUtilities.centerAndScale(new Tuple2D(fX+offset, fY+offset), receptiveFieldSize, receptiveFieldSize);
 											// inputs to CPPN 
 											// NOTE: filterCPPNInputs call was removed because it doesn't seem to make sense with convolutional inputs
-											inputs = new double[]{scaledFieldCoordinates.getX(), scaledFieldCoordinates.getY(), scaledTargetCoordinates.getX(), scaledTargetCoordinates.getY(), BIAS};
-											// This approach maintians all values in the scaled range
+											if(convolutionWeightSharing) {
+												// Since weights for each feature are duplicated, inputs defining the target neuron are not needed
+												inputs = new double[]{scaledFieldCoordinates.getX(), scaledFieldCoordinates.getY(), 0, 0, BIAS};
+											} else {
+												inputs = new double[]{scaledFieldCoordinates.getX(), scaledFieldCoordinates.getY(), scaledTargetCoordinates.getX(), scaledTargetCoordinates.getY(), BIAS};
+											}
+											// This approach maintains all values in the scaled range
 											assert -1 <= inputs[0] && inputs[0] <= 1 : "CPPN input 0 out of range: " + inputs[0];
 											assert -1 <= inputs[1] && inputs[1] <= 1 : "CPPN input 1 out of range: " + inputs[1];
 											assert -1 <= inputs[2] && inputs[2] <= 1 : "CPPN input 2 out of range: " + inputs[2];
 											assert -1 <= inputs[3] && inputs[3] <= 1 : "CPPN input 3 out of range: " + inputs[3];
 											assert -1 <= inputs[4] && inputs[4] <= 1 : "CPPN input 4 out of range: " + inputs[4];
 										}
-																				
-										if(CommonConstants.substrateLocationInputs) {
+
+										// Convolutional weight sharing requires substrate location inputs to prevent all receptive fields across all layers from being the same.
+										if(CommonConstants.substrateLocationInputs || convolutionWeightSharing) {
 											ILocated2D scaledSubstrate1Coordinates = MMNEAT.substrateMapping.transformCoordinates(new Tuple2D(s1.getSubLocation().t1, s1.getSubLocation().t2), layersWidth, layersHeight);
 											ILocated2D scaledSubstrate2Coordinates = MMNEAT.substrateMapping.transformCoordinates(new Tuple2D(s2.getSubLocation().t1, s2.getSubLocation().t2), layersWidth, layersHeight);
 
 											// Phillip Verbancsics approach from his paper on Generative Neuro-Evolution for Deep Learning
 											if(convolutionDeltas) {
+												assert !convolutionWeightSharing : "Combining convolution deltas with convolutional weight sharing does not make sense";
 												// Could force centering in this case, as Verbancsics did, but it didn't seem to help
 												//ILocated2D scaledSubstrate1Coordinates = CartesianGeometricUtilities.centerAndScale(new Tuple2D(s1.getSubLocation().t1, s1.getSubLocation().t2), layersWidth, layersHeight);
 												//ILocated2D scaledSubstrate2Coordinates = CartesianGeometricUtilities.centerAndScale(new Tuple2D(s2.getSubLocation().t1, s2.getSubLocation().t2), layersWidth, layersHeight);
@@ -499,7 +510,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 						assert -1 <= inputs[3] && inputs[3] <= 1 : "CPPN input 3 out of range: " + inputs[3];
 						assert -1 <= inputs[4] && inputs[4] <= 1 : "CPPN input 4 out of range: " + inputs[4];
 						
-						if(CommonConstants.substrateLocationInputs) {
+						if(CommonConstants.substrateLocationInputs || Parameters.parameters.booleanParameter("convolutionWeightSharing")) {
 							// Extra inputs are locations of the substrates (just x/y coordinates)
 							ILocated2D scaledSubstrate1Coordinates = MMNEAT.substrateMapping.transformCoordinates(new Tuple2D(s1.getSubLocation().t1, s1.getSubLocation().t2), layersWidth, layersHeight);
 							ILocated2D scaledSubstrate2Coordinates = MMNEAT.substrateMapping.transformCoordinates(new Tuple2D(s2.getSubLocation().t1, s2.getSubLocation().t2), layersWidth, layersHeight);

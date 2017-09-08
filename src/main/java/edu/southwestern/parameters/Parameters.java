@@ -336,6 +336,7 @@ public class Parameters {
 		booleanOptions.add("heterogeneousSubstrateActivations", false, "HyperNEAT phenotypes can have a mix of activation functions");
 		booleanOptions.add("convolution", false, "HyperNEAT phenotypes allow convolutional structure");
 		booleanOptions.add("convolutionDeltas", false, "HyperNEAT encoding of convolutional structure uses the delta offset approach of Verbancsics");
+		booleanOptions.add("convolutionWeightSharing", false, "HyperNEAT convolutional networks repeat the same weights across all receptive fields from one substrate to another");
 		booleanOptions.add("zeroPadding", false, "Whether the input border for convolutional structures is padded with zeros");
 		booleanOptions.add("averageScoreHistory", false, "Surviving parent fitness averaged across generations");
 		booleanOptions.add("inheritFitness", false, "Child fitness is partially inherited from parents");

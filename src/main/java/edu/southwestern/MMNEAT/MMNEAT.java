@@ -105,7 +105,8 @@ import wox.serial.Easy;
  * Modular Multiobjective Neuro-Evolution of Augmenting Topologies.
  * 
  * Main class that launches experiments.
- * Best to export to MM-NEATv2.jar file first.
+ * Running "mvn -U install" will create a SNAPSHOT jar recognized by all
+ * batch files.
  * 
  * @author Jacob Schrum
  */

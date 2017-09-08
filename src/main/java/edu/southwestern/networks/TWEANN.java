@@ -661,10 +661,15 @@ public class TWEANN implements Network {
 		assert(inputs.length == numIn) : "Input mismatch! numIn = " + numIn + "\n" + "inputs.length = " + inputs.length + "\n" + Arrays.toString(inputs);
 		assert(numIn <= nodes.size()) : "Input mismatch! numIn = " + numIn + "\n" + "nodes.size() = " + nodes.size() + "\n" + nodes;
 
-		// Load inputs
-		for (int i = 0; i < numIn; i++) {
-			assert !Double.isNaN(inputs[i]) : "Input " + i + " is NaN!" + Arrays.toString(inputs);
-			nodes.get(i).load(inputs[i]);
+		try {
+			// Load inputs
+			for (int i = 0; i < numIn; i++) {
+				assert !Double.isNaN(inputs[i]) : "Input " + i + " is NaN!" + Arrays.toString(inputs);
+				nodes.get(i).load(inputs[i]);
+			}
+		} catch(ArrayIndexOutOfBoundsException e) {
+			System.out.println("CRASH! inputs = " + Arrays.toString(inputs));
+			throw e;
 		}
 
 		// Activate nodes in forward order
