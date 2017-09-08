@@ -392,7 +392,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 										// CPPN inputs need to be centered and scaled
 										//ILocated2D scaledFieldCoordinates = MMNEAT.substrateMapping.transformCoordinates(new Tuple2D(fX+edgeOffset, fY+edgeOffset), receptiveFieldSize, receptiveFieldSize);
 										// Receptive field scaling needs to be with respect to the center of the field, regardless of what the mapping for the other coordinates is
-										ILocated2D scaledFieldCoordinates = CartesianGeometricUtilities.centerAndScale(new Tuple2D(fX+edgeOffset, fY+edgeOffset), receptiveFieldSize, receptiveFieldSize);
+										ILocated2D scaledFieldCoordinates = CartesianGeometricUtilities.centerAndScale(new Tuple2D(fX+offset, fY+offset), receptiveFieldSize, receptiveFieldSize);
 										ILocated2D scaledTargetCoordinates = MMNEAT.substrateMapping.transformCoordinates(new Tuple2D(targetXindex, targetYIndex), s2.getSize().t1, s2.getSize().t2);										
 										// inputs to CPPN 
 										// NOTE: filterCPPNInputs call was removed because it doesn't seem to make sense with convolutional inputs
