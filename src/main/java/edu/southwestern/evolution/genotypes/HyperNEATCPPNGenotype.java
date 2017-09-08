@@ -419,6 +419,10 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 
 											// Phillip Verbancsics approach from his paper on Generative Neuro-Evolution for Deep Learning
 											if(convolutionDeltas) {
+												// Could force centering in this case, as Verbancsics did, but it didn't seem to help
+												//ILocated2D scaledSubstrate1Coordinates = CartesianGeometricUtilities.centerAndScale(new Tuple2D(s1.getSubLocation().t1, s1.getSubLocation().t2), layersWidth, layersHeight);
+												//ILocated2D scaledSubstrate2Coordinates = CartesianGeometricUtilities.centerAndScale(new Tuple2D(s2.getSubLocation().t1, s2.getSubLocation().t2), layersWidth, layersHeight);
+												
 												// Extra inputs are location of target substrate, and delta between target and source substrates
 												// In Verbancsics' scheme: (f2 - f1, z2 - z1, f2, z2)
 												inputs = ArrayUtil.combineArrays(inputs, new double[]{scaledSubstrate2Coordinates.getX() - scaledSubstrate1Coordinates.getX(), scaledSubstrate2Coordinates.getY() - scaledSubstrate1Coordinates.getY(), scaledSubstrate2Coordinates.getX(), scaledSubstrate2Coordinates.getY()});											
