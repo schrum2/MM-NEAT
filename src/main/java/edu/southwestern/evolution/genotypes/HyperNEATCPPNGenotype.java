@@ -389,31 +389,50 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 								if(fromYIndex >= 0 && fromYIndex < s1.getSize().t2) {
 									// Do not continue if source neuron is dead
 									if(!s1.isNeuronDead(fromXIndex, fromYIndex)) {
-										// CPPN inputs need to be centered and scaled
-										//ILocated2D scaledFieldCoordinates = MMNEAT.substrateMapping.transformCoordinates(new Tuple2D(fX+edgeOffset, fY+edgeOffset), receptiveFieldSize, receptiveFieldSize);
-										// Receptive field scaling needs to be with respect to the center of the field, regardless of what the mapping for the other coordinates is
-										ILocated2D scaledFieldCoordinates = CartesianGeometricUtilities.centerAndScale(new Tuple2D(fX+offset, fY+offset), receptiveFieldSize, receptiveFieldSize);
+										// Target coordinates can use the standard substrate mapping, which may not be centered
 										ILocated2D scaledTargetCoordinates = MMNEAT.substrateMapping.transformCoordinates(new Tuple2D(targetXindex, targetYIndex), s2.getSize().t1, s2.getSize().t2);										
-										// inputs to CPPN 
-										// NOTE: filterCPPNInputs call was removed because it doesn't seem to make sense with convolutional inputs
-										double[] inputs = new double[]{scaledFieldCoordinates.getX(), scaledFieldCoordinates.getY(), scaledTargetCoordinates.getX(), scaledTargetCoordinates.getY(), BIAS};
-
-										assert -1 <= inputs[0] && inputs[0] <= 1 : "CPPN input 0 out of range: " + inputs[0];
-										assert -1 <= inputs[1] && inputs[1] <= 1 : "CPPN input 1 out of range: " + inputs[1];
-										assert -1 <= inputs[2] && inputs[2] <= 1 : "CPPN input 2 out of range: " + inputs[2];
-										assert -1 <= inputs[3] && inputs[3] <= 1 : "CPPN input 3 out of range: " + inputs[3];
-										assert -1 <= inputs[4] && inputs[4] <= 1 : "CPPN input 4 out of range: " + inputs[4];
-										
+										double[] inputs; // Defined below
+										// Phillip Verbancsics approach from his paper on Generative Neuro-Evolution for Deep Learning
+										if(convolutionDeltas) {
+											ILocated2D scaledSourceCoordinates = MMNEAT.substrateMapping.transformCoordinates(new Tuple2D(fromXIndex, fromYIndex), s1.getSize().t1, s1.getSize().t2);
+											// inputs to CPPN 
+											// First two inputs are deltas between target and source scaled coordinated: (x2 - x1, y2 - y1, x2, y2, 1.0)
+											inputs = new double[]{scaledTargetCoordinates.getX() - scaledSourceCoordinates.getX(), scaledTargetCoordinates.getY() - scaledSourceCoordinates.getY(), scaledTargetCoordinates.getX(), scaledTargetCoordinates.getY(), BIAS};
+											// These inputs may be outside the [-1,1] range
+										} else {
+											// Receptive field scaling needs to be with respect to the center of the field, regardless of what the mapping for the other coordinates is
+											ILocated2D scaledFieldCoordinates = CartesianGeometricUtilities.centerAndScale(new Tuple2D(fX+offset, fY+offset), receptiveFieldSize, receptiveFieldSize);
+											// inputs to CPPN 
+											// NOTE: filterCPPNInputs call was removed because it doesn't seem to make sense with convolutional inputs
+											inputs = new double[]{scaledFieldCoordinates.getX(), scaledFieldCoordinates.getY(), scaledTargetCoordinates.getX(), scaledTargetCoordinates.getY(), BIAS};
+											// This approach maintians all values in the scaled range
+											assert -1 <= inputs[0] && inputs[0] <= 1 : "CPPN input 0 out of range: " + inputs[0];
+											assert -1 <= inputs[1] && inputs[1] <= 1 : "CPPN input 1 out of range: " + inputs[1];
+											assert -1 <= inputs[2] && inputs[2] <= 1 : "CPPN input 2 out of range: " + inputs[2];
+											assert -1 <= inputs[3] && inputs[3] <= 1 : "CPPN input 3 out of range: " + inputs[3];
+											assert -1 <= inputs[4] && inputs[4] <= 1 : "CPPN input 4 out of range: " + inputs[4];
+										}
+																				
 										if(CommonConstants.substrateLocationInputs) {
-											// Extra inputs are locations of the substrates (just x/y coordinates)
 											ILocated2D scaledSubstrate1Coordinates = MMNEAT.substrateMapping.transformCoordinates(new Tuple2D(s1.getSubLocation().t1, s1.getSubLocation().t2), layersWidth, layersHeight);
 											ILocated2D scaledSubstrate2Coordinates = MMNEAT.substrateMapping.transformCoordinates(new Tuple2D(s2.getSubLocation().t1, s2.getSubLocation().t2), layersWidth, layersHeight);
-											inputs = ArrayUtil.combineArrays(inputs, new double[]{scaledSubstrate1Coordinates.getX(), scaledSubstrate1Coordinates.getY(), scaledSubstrate2Coordinates.getX(), scaledSubstrate2Coordinates.getY()});
 
-											assert -1 <= inputs[5] && inputs[5] <= 1 : "CPPN input 5 out of range: " + inputs[5];
-											assert -1 <= inputs[6] && inputs[6] <= 1 : "CPPN input 6 out of range: " + inputs[6];
-											assert -1 <= inputs[7] && inputs[7] <= 1 : "CPPN input 7 out of range: " + inputs[7];
-											assert -1 <= inputs[8] && inputs[8] <= 1 : "CPPN input 8 out of range: " + inputs[8];
+											// Phillip Verbancsics approach from his paper on Generative Neuro-Evolution for Deep Learning
+											if(convolutionDeltas) {
+												// Extra inputs are location of target substrate, and delta between target and source substrates
+												// In Verbancsics' scheme: (f2 - f1, z2 - z1, f2, z2)
+												inputs = ArrayUtil.combineArrays(inputs, new double[]{scaledSubstrate2Coordinates.getX() - scaledSubstrate1Coordinates.getX(), scaledSubstrate2Coordinates.getY() - scaledSubstrate1Coordinates.getY(), scaledSubstrate2Coordinates.getX(), scaledSubstrate2Coordinates.getY()});											
+												// These inputs may be outside the [-1,1] range
+											} else {												
+												// Extra inputs are locations of the substrates (just x/y coordinates)
+												// In Verbancsics' scheme: (f1, z1, f2, z2)
+												inputs = ArrayUtil.combineArrays(inputs, new double[]{scaledSubstrate1Coordinates.getX(), scaledSubstrate1Coordinates.getY(), scaledSubstrate2Coordinates.getX(), scaledSubstrate2Coordinates.getY()});
+	
+												assert -1 <= inputs[5] && inputs[5] <= 1 : "CPPN input 5 out of range: " + inputs[5];
+												assert -1 <= inputs[6] && inputs[6] <= 1 : "CPPN input 6 out of range: " + inputs[6];
+												assert -1 <= inputs[7] && inputs[7] <= 1 : "CPPN input 7 out of range: " + inputs[7];
+												assert -1 <= inputs[8] && inputs[8] <= 1 : "CPPN input 8 out of range: " + inputs[8];
+											}
 										}
 										conditionalLinkAdd(linksSoFar, cppn, inputs, outputIndex, fromXIndex, fromYIndex, s1Index, targetXindex, targetYIndex, s2Index, subs, innovationID++);
 									}	
