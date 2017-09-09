@@ -80,6 +80,141 @@ public class HyperNEATCPPNGenotypeTest {
 	}
 
 	/**
+	 * Weights from a given receptive field should be the same for all target
+	 * neurons in the same feature substrate.
+	 */
+	@Test
+	public void testConvolutionalWeightSharing() {
+		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "recurrency:false", "hyperNEAT:true", 
+				"task:edu.southwestern.tasks.rlglue.tetris.HyperNEATTetrisTask",
+				"rlGlueEnvironment:org.rlcommunity.environments.tetris.Tetris",
+				"rlGlueExtractor:edu.southwestern.tasks.rlglue.featureextractors.tetris.RawTetrisStateExtractor",
+				"rlGlueAgent:edu.southwestern.tasks.rlglue.tetris.TetrisAfterStateAgent",
+				"splitRawTetrisInputs:true","senseHolesDifferently:true",
+				"genotype:edu.southwestern.evolution.genotypes.HyperNEATCPPNGenotype",
+				"linkExpressionThreshold:-1", "convolution:true", "convolutionWeightSharing:true",
+				"HNProcessWidth:3", "zeroPadding:true"});
+		MMNEAT.loadClasses();
+		hcppn = new HyperNEATCPPNGenotype();
+				
+		long substrateSize = 200; // Tetris board is 10 * 20
+		
+		TWEANNGenotype g = hcppn.getSubstrateGenotype((HyperNEATTask) MMNEAT.task);
+
+		/// Connections to first feature substrate
+		
+		// Link from upper-left of first input substrate to upper-left of first processing substrate
+		// Because of zero padding, the links go up from the center of the receptive fields
+		double weight = g.getLinkBetween(0L, 2*substrateSize).weight;
+		// Link from upper-left of every receptive field to the first processing feature/substrate should be the same
+		for(long i = 0; i < substrateSize; i++) {
+			// From center of receptive field to target neuron
+			double otherWeight = g.getLinkBetween(i, 2*substrateSize + i).weight;
+			assertEquals(weight, otherWeight, 0.0);			
+		}
+
+		// Link from upper-left of input to one neuron in from the left on processing substrate
+		weight = g.getLinkBetween(0L, 2*substrateSize + 1).weight;
+		for(long y = 0; y < 20; y++) {
+			for(long x = 0; x < 10; x++) { // Width of Tetris board
+				// From left of receptive field center to target neuron
+				LinkGene lg = g.getLinkBetween(x + y*10, 2*substrateSize + x + y*10 + 1);
+				if(lg != null) {
+					double otherWeight = lg.weight;
+					assertEquals(weight, otherWeight, 0.0);			
+				}
+				
+			}
+		}
+		
+		// Link from one neuron from the left of input to upper-left on processing substrate
+		weight = g.getLinkBetween(1L, 2*substrateSize).weight;
+		for(long y = 0; y < 20; y++) {
+			for(long x = 0; x < 10; x++) { // Width of Tetris board
+				// From right of receptive field center to target neuron
+				LinkGene lg = g.getLinkBetween(x + y*10, 2*substrateSize + x + y*10 - 1);
+				if(lg != null) {
+					double otherWeight = lg.weight;
+					assertEquals(weight, otherWeight, 0.0);			
+				}
+				
+			}
+		}
+
+		// Link from upper-left of input to one to the left and down from upper-left of processing
+		weight = g.getLinkBetween(0L, 2*substrateSize + 11).weight;
+		for(long y = 0; y < 20; y++) {
+			for(long x = 0; x < 10; x++) { // Width of Tetris board
+				// From upper-left of receptive field center to target neuron
+				LinkGene lg = g.getLinkBetween(x + y*10 - 11, 2*substrateSize + x + y*10);
+				if(lg != null) {
+					double otherWeight = lg.weight;
+					assertEquals(weight, otherWeight, 0.0);			
+				}
+				
+			}
+		}
+
+		/// Connections to second feature substrate
+		
+		// Link from upper-left of first input substrate to upper-left of first processing substrate
+		// Because of zero padding, the links go up from the center of the receptive fields
+		weight = g.getLinkBetween(0L, 3*substrateSize).weight;
+		// Link from upper-left of every receptive field to the first processing feature/substrate should be the same
+		for(long i = 0; i < substrateSize; i++) {
+			// From center of receptive field to target neuron
+			double otherWeight = g.getLinkBetween(i, 3*substrateSize + i).weight;
+			assertEquals(weight, otherWeight, 0.0);			
+		}
+		
+		// Link from upper-left of input to one neuron in from the left on processing substrate
+		weight = g.getLinkBetween(0L, 3*substrateSize + 1).weight;
+		for(long y = 0; y < 20; y++) {
+			for(long x = 0; x < 10; x++) { // Width of Tetris board
+				// From left of receptive field center to target neuron
+				LinkGene lg = g.getLinkBetween(x + y*10, 3*substrateSize + x + y*10 + 1);
+				if(lg != null) {
+					double otherWeight = lg.weight;
+					assertEquals(weight, otherWeight, 0.0);			
+				}
+				
+			}
+		}
+		
+		// Link from one neuron from the left of input to upper-left on processing substrate
+		weight = g.getLinkBetween(1L, 3*substrateSize).weight;
+		for(long y = 0; y < 20; y++) {
+			for(long x = 0; x < 10; x++) { // Width of Tetris board
+				// From right of receptive field center to target neuron
+				LinkGene lg = g.getLinkBetween(x + y*10, 3*substrateSize + x + y*10 - 1);
+				if(lg != null) {
+					double otherWeight = lg.weight;
+					assertEquals(weight, otherWeight, 0.0);			
+				}
+				
+			}
+		}
+
+		// Link from upper-left of input to one to the left and down from upper-left of processing
+		weight = g.getLinkBetween(0L, 3*substrateSize + 11).weight;
+		for(long y = 0; y < 20; y++) {
+			for(long x = 0; x < 10; x++) { // Width of Tetris board
+				// From upper-left of receptive field center to target neuron
+				LinkGene lg = g.getLinkBetween(x + y*10 - 11, 3*substrateSize + x + y*10);
+				if(lg != null) {
+					double otherWeight = lg.weight;
+					assertEquals(weight, otherWeight, 0.0);			
+				}
+				
+			}
+		}
+	
+	}
+
+	
+	
+	
+	/**
 	 * Tests creation of list of nodes in substrates. Order of substrates is not
 	 * important as long as mapping is accurate
 	 */
