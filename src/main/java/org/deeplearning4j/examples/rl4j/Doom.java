@@ -6,13 +6,11 @@ import java.util.logging.Logger;
 import org.deeplearning4j.rl4j.learning.HistoryProcessor;
 import org.deeplearning4j.rl4j.learning.sync.qlearning.QLearning;
 import org.deeplearning4j.rl4j.learning.sync.qlearning.discrete.QLearningDiscreteConv;
-import org.deeplearning4j.rl4j.mdp.gym.GymEnv;
 import org.deeplearning4j.rl4j.mdp.vizdoom.DeadlyCorridor;
 import org.deeplearning4j.rl4j.mdp.vizdoom.HealthGather;
 import org.deeplearning4j.rl4j.mdp.vizdoom.VizDoom;
 import org.deeplearning4j.rl4j.network.dqn.DQNFactoryStdConv;
 import org.deeplearning4j.rl4j.policy.DQNPolicy;
-import org.deeplearning4j.rl4j.space.Box;
 import org.deeplearning4j.rl4j.util.DataManager;
 
 import vizdoom.SpecifyDLL;
@@ -112,10 +110,11 @@ public class Doom {
         //define the mdp from gym (name, render)
         VizDoom mdp = getMDP(true);
         //load the previous agent
-        DQNPolicy<VizDoom.GameScreen> dqn = DQNPolicy.load("C:\\Users\\schrum2\\rl4j-data\\1\\model\\141.model");
+        DQNPolicy<VizDoom.GameScreen> dqn = DQNPolicy.load("C:\\Users\\he_de\\rl4j-data\\1\\model\\70.model");
         //evaluate the agent
         mdp.reset();
-        double reward = dqn.play(mdp);
+        double reward = dqn.play(mdp, new HistoryProcessor(DOOM_HP));
+        mdp.close();
         Logger.getAnonymousLogger().info("Reward: " + reward);
     }
 
