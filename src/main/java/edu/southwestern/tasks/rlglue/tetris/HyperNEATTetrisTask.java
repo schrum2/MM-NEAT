@@ -24,7 +24,7 @@ public class HyperNEATTetrisTask<T extends Network> extends TetrisTask<T> implem
 	public final int numProcessLayers = Parameters.parameters.integerParameter("HNProcessDepth");
 	public final int processingWidth = Parameters.parameters.integerParameter("HNProcessWidth");
 	private static List<Substrate> substrateInformation = null;
-	private List<Triple<String, String, Boolean>> substrateConnectivity = null; // Schrum: I'm pretty sure this can/should be static
+	private static List<Triple<String, String, Boolean>> substrateConnectivity = null; 
 	// Value should be defined when class is constructed by a ClassCreation call, after the rlGlueExtractor is specified.
 	private final boolean TWO_DIMENSIONAL_SUBSTRATES = MMNEAT.rlGlueExtractor instanceof RawTetrisStateExtractor;
 	// Even if the substrates are 2D, the CPPN inputs may need to be overridden to be 1D with certain substrate mappings
@@ -33,6 +33,11 @@ public class HyperNEATTetrisTask<T extends Network> extends TetrisTask<T> implem
 	// Number of inputs to CPPN if substrates are 1D
 	public static final int NUM_CPPN_INPUTS_1D = 3;
 
+	public static void hardSubstrateReset() {
+		substrateInformation = null;
+		substrateConnectivity = null;
+	}
+	
 	/**
 	 * Default number of CPPN substrates when 2D substrates are used, but fewer
 	 * when 1D substrates are used, or a 1D substrate mapping on 2D substrates.

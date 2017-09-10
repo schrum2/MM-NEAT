@@ -21,6 +21,7 @@ import edu.southwestern.networks.hyperneat.HyperNEATTask;
 import edu.southwestern.networks.hyperneat.Substrate;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.rlglue.tetris.HyperNEATTetrisTask;
 import edu.southwestern.util.CartesianGeometricUtilities;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.datastructures.Triple;
@@ -85,6 +86,7 @@ public class HyperNEATCPPNGenotypeTest {
 	 */
 	@Test
 	public void testConvolutionalWeightSharing() {
+		HyperNEATTetrisTask.hardSubstrateReset();
 		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "recurrency:false", "hyperNEAT:true", 
 				"task:edu.southwestern.tasks.rlglue.tetris.HyperNEATTetrisTask",
 				"rlGlueEnvironment:org.rlcommunity.environments.tetris.Tetris",

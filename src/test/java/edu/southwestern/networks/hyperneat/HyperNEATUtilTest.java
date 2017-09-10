@@ -15,6 +15,7 @@ import edu.southwestern.networks.ActivationFunctions;
 import edu.southwestern.networks.TWEANN;
 import edu.southwestern.networks.TWEANN.Node;
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.rlglue.tetris.HyperNEATTetrisTask;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.datastructures.Triple;
 import edu.southwestern.util.random.RandomNumbers;
@@ -38,6 +39,7 @@ public class HyperNEATUtilTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
+		HyperNEATTetrisTask.hardSubstrateReset();
 		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "recurrency:false",
 				"rlGlueEnvironment:org.rlcommunity.environments.tetris.Tetris",
 				"task:edu.southwestern.tasks.rlglue.tetris.HyperNEATTetrisTask", "rlGlueAgent:edu.southwestern.tasks.rlglue.tetris.TetrisAfterStateAgent",
