@@ -16,14 +16,20 @@ public class VGG16Test {
 
 	public static void main(String[] args) throws IOException {
 		NativeImageLoader loader = new NativeImageLoader(224, 224, 3);
-		results(loader.asMatrix(new File("data/imagematch/car.jpg")));
+		results(loader.asMatrix(new File("data/imagematch/car.jpg")), true);
 		MiscUtil.waitForReadStringAndEnterKeyPress();
-		results(loader.asMatrix(new File("data/imagematch/cat.jpg")));
+		results(loader.asMatrix(new File("data/imagematch/cat.jpg")), true);
+		MiscUtil.waitForReadStringAndEnterKeyPress();		
+		results(loader.asMatrix(new File("data/imagematch/organimage.bmp")), false);
+		MiscUtil.waitForReadStringAndEnterKeyPress();		
+		results(loader.asMatrix(new File("data/imagematch/sadsheepimage.bmp")), false);
+		MiscUtil.waitForReadStringAndEnterKeyPress();		
+		results(loader.asMatrix(new File("data/imagematch/supercreepypersonimage.jpg")), false);
 		MiscUtil.waitForReadStringAndEnterKeyPress();		
 	}
 	
-	public static void results(INDArray image) {
-		INDArray scores = ImageNetClassification.getImageNetPredictions(image, true);
+	public static void results(INDArray image, boolean preprocess) {
+		INDArray scores = ImageNetClassification.getImageNetPredictions(image, preprocess);
 		Map<String,Float> results = ImageNetClassification.getImageNetLabelledPredictions(scores);
 		for(String label : results.keySet()) {
 			System.out.println(label + ":" + results.get(label));
