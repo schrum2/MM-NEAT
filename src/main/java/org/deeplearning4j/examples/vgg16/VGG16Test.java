@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.Map;
 
 import org.datavec.image.loader.NativeImageLoader;
+import org.deeplearning4j.zoo.util.imagenet.ImageNetLabels;
 import org.nd4j.linalg.api.ndarray.INDArray;
 
 import edu.southwestern.util.MiscUtil;
@@ -18,17 +19,17 @@ public class VGG16Test {
 		results(loader.asMatrix(new File("data/imagematch/car.jpg")));
 		MiscUtil.waitForReadStringAndEnterKeyPress();
 		results(loader.asMatrix(new File("data/imagematch/cat.jpg")));
-		MiscUtil.waitForReadStringAndEnterKeyPress();
-		
-		// check output labels of result
-//		String decodedLabels = labels.decodePredictions(output[0]);
-//		System.out.println(decodedLabels);
+		MiscUtil.waitForReadStringAndEnterKeyPress();		
 	}
 	
 	public static void results(INDArray image) {
-		Map<String,Float> results = GraphicsUtil.getImageNetPredictions(image, true);
+		INDArray scores = GraphicsUtil.getImageNetPredictions(image, true);
+		Map<String,Float> results = GraphicsUtil.getImageNetLabelledPredictions(scores);
 		for(String label : results.keySet()) {
 			System.out.println(label + ":" + results.get(label));
 		}
+		// check output labels of result
+		String decodedLabels = new ImageNetLabels().decodePredictions(scores);
+		System.out.println(decodedLabels);
 	}
 }

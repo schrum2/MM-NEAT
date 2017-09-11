@@ -44,7 +44,7 @@ public class GraphicsUtil {
 	
 	// Do not take the time to initialize this if not needed
 	private static ComputationGraph imageNet = null;
-	
+	private static ImageNetLabels imageNetLabels = null;
 	/**
 	 * Initialize the ImageNet if it hasn't been done yet. This is only done
 	 * once because the net weights should never change. Saving the result allows
@@ -60,6 +60,8 @@ public class GraphicsUtil {
 			e.printStackTrace();
 			System.exit(1);
 		}
+		// If image net is being used, then the labels will be needed as well
+		imageNetLabels = new ImageNetLabels();
 	}
 	
 	/**
@@ -71,26 +73,41 @@ public class GraphicsUtil {
 	 * @param preprocess Whether the image/matrix needs to be scaled to the appropriate size for ImageNet
 	 * @return map of label to score for each of 1000 labels
 	 */
-	public static Map<String, Float> getImageNetPredictions(INDArray image, boolean preprocess) {
+	public static Map<String, Float> getImageNetLabelledPredictions(INDArray image, boolean preprocess) {		
+		INDArray currentBatch = getImageNetPredictions(image, preprocess);
+		return getImageNetLabelledPredictions(currentBatch);
+	}
+	
+	/**
+	 * Take an INDArray already that has already been processes by ImageNet (the output scores)
+	 * and assign the ImageNet labels to them.
+	 * @param precomputerScores Output of getImageNetPredictions
+	 * @return Map of ImageNet labels to scores
+	 */
+	public static Map<String, Float> getImageNetLabelledPredictions(INDArray precomputerScores) {
+		Map<String, Float> result = new HashMap<>();		
+		for (int i = 0; i < NUM_IMAGE_NET_CLASSES; i++) {
+			//System.out.println(labels.getLabel(i) + ": "+(currentBatch.getFloat(0,i)*100) + "%");
+			result.put(imageNetLabels.getLabel(i), precomputerScores.getFloat(0,i));
+		}
+		return result;
+	}
+	
+	/**
+	 * Get raw ImageNet prediction scores from ImageNet without any labels.
+	 * @param image Image is a 2N matrix within DL4J's INDArray class
+	 * @param preprocess Whether the image/matrix needs to be scaled to the appropriate size for ImageNet
+	 * @return INDArray of prediction scores for ImageNet's categories/labels
+	 */
+	public static INDArray getImageNetPredictions(INDArray image, boolean preprocess) {
 		if(imageNet == null) initImageNet();
 		if(preprocess) {
 			DataNormalization scaler = new VGG16ImagePreProcessor();
 			scaler.transform(image);
-		}
-		
-		Map<String, Float> result = new HashMap<>();
-		
+		}		
 		INDArray[] output = imageNet.output(false, image);
 		INDArray predictions = output[0];
-		ImageNetLabels labels = new ImageNetLabels();
-
-		INDArray currentBatch = predictions.getRow(0).dup();
-		for (int i = 0; i < NUM_IMAGE_NET_CLASSES; i++) {
-			//System.out.println(labels.getLabel(i) + ": "+(currentBatch.getFloat(0,i)*100) + "%");
-			result.put(labels.getLabel(i), currentBatch.getFloat(0,i));
-		}
-
-		return result;
+		return predictions.getRow(0).dup(); // Should I duplicate with dup? Worth the load? Needed?
 	}
 	
 	/**
