@@ -12,6 +12,7 @@ import org.deeplearning4j.zoo.util.imagenet.ImageNetLabels;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.dataset.api.preprocessor.DataNormalization;
 import org.nd4j.linalg.dataset.api.preprocessor.VGG16ImagePreProcessor;
+import org.nd4j.linalg.factory.Nd4j;
 
 public class ImageNetClassification {
 	public static final int NUM_IMAGE_NET_CLASSES = 1000;
@@ -58,11 +59,11 @@ public class ImageNetClassification {
 	 * @param precomputerScores Output of getImageNetPredictions
 	 * @return Map of ImageNet labels to scores
 	 */
-	public static Map<String, Float> getImageNetLabelledPredictions(INDArray precomputerScores) {
+	public static Map<String, Float> getImageNetLabelledPredictions(INDArray precomputedScores) {
 		Map<String, Float> result = new HashMap<>();		
 		for (int i = 0; i < NUM_IMAGE_NET_CLASSES; i++) {
 			//System.out.println(labels.getLabel(i) + ": "+(currentBatch.getFloat(0,i)*100) + "%");
-			result.put(imageNetLabels.getLabel(i), precomputerScores.getFloat(0,i));
+			result.put(imageNetLabels.getLabel(i), precomputedScores.getFloat(0,i));
 		}
 		return result;
 	}
@@ -82,5 +83,15 @@ public class ImageNetClassification {
 		INDArray[] output = imageNet.output(false, image);
 		INDArray predictions = output[0];
 		return predictions.getRow(0).dup(); // Should I duplicate with dup? Worth the load? Needed?
+	}
+	
+	/**
+	 * Get ImageNet label with the highest score in the collection of prediction scores
+	 * @param precomputedScores Computed by getImageNetPredictions
+	 * @return String label with highest score
+	 */
+	public static String bestLabel(INDArray precomputedScores) {
+		int index = Nd4j.argMax(precomputedScores, 1).getInt(0, 0);
+		return imageNetLabels.getLabel(index);
 	}
 }

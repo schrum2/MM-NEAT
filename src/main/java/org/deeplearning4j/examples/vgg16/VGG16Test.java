@@ -28,6 +28,7 @@ public class VGG16Test {
 		for(String label : results.keySet()) {
 			System.out.println(label + ":" + results.get(label));
 		}
+		System.out.println("BEST: " + ImageNetClassification.bestLabel(scores));
 		// check output labels of result
 		String decodedLabels = new ImageNetLabels().decodePredictions(scores);
 		System.out.println(decodedLabels);
