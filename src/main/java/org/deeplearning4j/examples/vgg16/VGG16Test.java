@@ -9,7 +9,7 @@ import org.deeplearning4j.zoo.util.imagenet.ImageNetLabels;
 import org.nd4j.linalg.api.ndarray.INDArray;
 
 import edu.southwestern.util.MiscUtil;
-import edu.southwestern.util.graphics.GraphicsUtil;
+import edu.southwestern.util.graphics.ImageNetClassification;
 
 public class VGG16Test {
 
@@ -23,8 +23,8 @@ public class VGG16Test {
 	}
 	
 	public static void results(INDArray image) {
-		INDArray scores = GraphicsUtil.getImageNetPredictions(image, true);
-		Map<String,Float> results = GraphicsUtil.getImageNetLabelledPredictions(scores);
+		INDArray scores = ImageNetClassification.getImageNetPredictions(image, true);
+		Map<String,Float> results = ImageNetClassification.getImageNetLabelledPredictions(scores);
 		for(String label : results.keySet()) {
 			System.out.println(label + ":" + results.get(label));
 		}
