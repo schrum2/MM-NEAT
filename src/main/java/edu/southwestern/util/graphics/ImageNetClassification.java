@@ -10,6 +10,7 @@ import org.deeplearning4j.nn.graph.ComputationGraph;
 import org.deeplearning4j.zoo.PretrainedType;
 import org.deeplearning4j.zoo.ZooModel;
 import org.deeplearning4j.zoo.model.VGG16;
+import org.deeplearning4j.zoo.model.VGG19;
 import org.deeplearning4j.zoo.util.imagenet.ImageNetLabels;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.dataset.api.preprocessor.DataNormalization;
@@ -32,6 +33,8 @@ public class ImageNetClassification {
 	 */
 	public static void initImageNet() {
 		@SuppressWarnings("rawtypes")
+		// VGG16 and VGG19 seem to perform similarly
+		//ZooModel model = new VGG19();
 		ZooModel model = new VGG16();
 		try {
 			imageNet = (ComputationGraph) model.initPretrained(PretrainedType.IMAGENET);
