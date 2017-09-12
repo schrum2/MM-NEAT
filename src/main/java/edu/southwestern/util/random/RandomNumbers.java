@@ -241,6 +241,17 @@ public class RandomNumbers {
 	}
 
 	/**
+	 * Takes in an array and selects a random index. 
+	 * 
+	 * @param array of <T>
+	 * @return random T of <T>
+	 */
+	public static <T> T randomElement(T[] list) {
+		int index = randomGenerator.nextInt(list.length);
+		return list[index];
+	}
+	
+	/**
 	 * For testing
 	 * 
 	 * @param args
