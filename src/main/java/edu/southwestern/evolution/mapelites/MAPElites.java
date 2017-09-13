@@ -45,10 +45,8 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 		for(Genotype<T> g : startingPopulation) {
 			Score<T> s = task.evaluate(g);
 			boolean elite = archive.add(s); // Fill the archive with random starting individuals
-			if(elite) {
-				if(io) {
-					// TODO: Log information somehow
-				}
+			if(elite && io) {
+				// TODO: Log information somehow
 			}
 		}		
 	}
