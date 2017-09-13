@@ -2,7 +2,7 @@ package edu.southwestern.experiment.evolution;
 
 import edu.southwestern.experiment.Experiment;
 
-public class MAPElitesExperiment implements Experiment {
+public class SteadyStateExperiment implements Experiment {
 
 	@Override
 	public void init() {
