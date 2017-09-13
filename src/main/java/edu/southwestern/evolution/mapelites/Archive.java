@@ -1,9 +1,12 @@
 package edu.southwestern.evolution.mapelites;
 
+import java.io.File;
 import java.util.*;
 
 import edu.southwestern.scores.Score;
+import edu.southwestern.util.file.FileUtilities;
 import edu.southwestern.util.random.RandomNumbers;
+import wox.serial.Easy;
 
 public class Archive<T> {
 	
@@ -13,12 +16,18 @@ public class Archive<T> {
 	 */
 	private Map<String,ArrayList<Score<T>>> archive;
 	private BinMapping<T> mapping;
+	private boolean saveElites;
+	private String archiveDir;
 
-	public Archive() {
-		archive = new HashMap<String,ArrayList<Score<T>>>();
+	public Archive(boolean saveElites) {
 		// Initialize mapping
-		
-		// TODO:
+		archive = new HashMap<String,ArrayList<Score<T>>>();
+		this.saveElites = saveElites;
+		if(saveElites) {
+			String experimentDir = FileUtilities.getSaveDirectory();
+			archiveDir = experimentDir + File.separator + "archive";
+			new File(archiveDir).mkdirs();
+		}
 	}
 	
 	/**
@@ -46,6 +55,15 @@ public class Archive<T> {
 			}
 		}
 		archive.put(binLabel, bin); // put bin back
+		if(saveElites) {
+			String fileName = "individual" + candidate.individual.getId() + ".xml";
+			if(newElite) { // File name distinguishes elites from others
+				fileName = "ELITE" + fileName;
+			}
+			String binPath = archiveDir + File.separator + binLabel;
+			new File(binPath).mkdirs(); // make directory if needed
+			Easy.save(candidate.individual, binPath + File.separator + fileName);
+		}
 		return newElite;
 	}
 	
@@ -71,7 +89,22 @@ public class Archive<T> {
 	 * Save the whole archive contents to the specified file path
 	 * @param path
 	 */
-	public void saveArchive(String path) {
-		// TODO
+//	public void saveWholeArchive(String path) {
+//		String archiveDir = path + File.separator + "archive";
+//		new File(archiveDir).mkdirs(); // Create the directory
+//		for(String label : archive.keySet()) {
+//			String subdir = archiveDir + File.separator + label;
+//			new File(subdir).mkdir(); // Make the subdir for the bin
+//			Genotype<T> elite = getElite(label).individual;
+//			Easy.save(elite, subdir + File.separator + "elite.xml");
+//		}
+//	}
+		
+	/**
+	 * Return the number of elites in the archive
+	 * @return Number of occupied bins
+	 */
+	public int size() {
+		return archive.size();
 	}
 }

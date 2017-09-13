@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.EvolutionaryHistory;
+import edu.southwestern.evolution.SteadyStateEA;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
@@ -11,10 +12,9 @@ import edu.southwestern.tasks.LonerTask;
 import edu.southwestern.util.PopulationUtil;
 import edu.southwestern.util.random.RandomNumbers;
 
-public class MAPElites<T> {
+public class MAPElites<T> implements SteadyStateEA<T> {
 
 	private boolean io;
-	private boolean netio;
 	private LonerTask<T> task;
 	private Archive<T> archive;
 	private boolean mating;
@@ -26,8 +26,7 @@ public class MAPElites<T> {
 	public MAPElites() {
 		this.task = (LonerTask<T>) MMNEAT.task;
 		this.io = Parameters.parameters.booleanParameter("io"); // write logs
-		this.netio = Parameters.parameters.booleanParameter("netio"); // save xml networks	
-		this.archive = new Archive<>();
+		this.archive = new Archive<>(Parameters.parameters.booleanParameter("netio"));
 		this.mating = Parameters.parameters.booleanParameter("mating");
 		this.crossoverRate = Parameters.parameters.doubleParameter("crossoverRate");
 		this.iterations = 0;
@@ -39,6 +38,7 @@ public class MAPElites<T> {
 	 * according to where they best fit.
 	 * @param example Starting genotype used to derive new instances
 	 */
+	@Override
 	public void initialize(Genotype<T> example) {
 		int startSize = Parameters.parameters.integerParameter("mu");
 		ArrayList<Genotype<T>> startingPopulation = PopulationUtil.initialPopulation(example, startSize);
@@ -46,9 +46,6 @@ public class MAPElites<T> {
 			Score<T> s = task.evaluate(g);
 			boolean elite = archive.add(s); // Fill the archive with random starting individuals
 			if(elite) {
-				if(netio) {
-					// TODO: Output/save somehow
-				}
 				if(io) {
 					// TODO: Log information somehow
 				}
@@ -56,6 +53,14 @@ public class MAPElites<T> {
 		}		
 	}
 
+	/**
+	 * Create one (maybe two) new individuals by randomly
+	 * sampling from the elites in random bins. The reason
+	 * that two individuals may be added is if crossover occurs.
+	 * In this case, both children can potentially be added 
+	 * to the archive.
+	 */
+	@Override
 	public void newIndividual() {
 		boolean newEliteProduced = false; // Asume no new elites will be produced
 		
@@ -82,9 +87,6 @@ public class MAPElites<T> {
 			boolean child2WasElite = archive.add(s2);
 			newEliteProduced = newEliteProduced || child2WasElite; 
 			if(child2WasElite) {
-				if(netio) {
-					// TODO: Output/save somehow
-				}
 				if(io) {
 					// TODO: Log information somehow
 				}
@@ -103,9 +105,6 @@ public class MAPElites<T> {
 		boolean child1WasElite = archive.add(s1);
 		newEliteProduced = newEliteProduced || child1WasElite;
 		if(child1WasElite) {
-			if(netio) {
-				// TODO: Output/save somehow
-			}
 			if(io) {
 				// TODO: Log information somehow
 			}
@@ -119,5 +118,10 @@ public class MAPElites<T> {
 		} else {
 			iterationsWithoutElite++;
 		}
+	}
+	
+	@Override
+	public boolean shouldStop() {
+		return false; // TODO
 	}
 }
