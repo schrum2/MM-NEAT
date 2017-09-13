@@ -1,6 +1,7 @@
 package edu.southwestern.tasks.mspacman.data;
 
 import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.GenerationalEA;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.mspacman.agentcontroller.pacman.NNPacManController;
@@ -152,7 +153,7 @@ public class TrainingCampManager {
 			recentStates.empty();
 		}
 		if (recentStates != null || viewFinalCamps) {
-			gen = MMNEAT.ea.currentGeneration();
+			gen = ((GenerationalEA) MMNEAT.ea).currentGeneration();
 			genPath = campsPath + "/" + (finalEval ? "final" : gen);
 			File genDir = new File(genPath);
 			if (!genDir.exists()) { // Starting new generation
@@ -232,7 +233,7 @@ public class TrainingCampManager {
 		if (TrainingCampManager.recentStates != null && TrainingCampManager.recentStates.memoryFull()
 				&& RandomNumbers.randomGenerator.nextDouble() < CommonConstants.percentPowerPillCampsToSave) {
 			Game shortlyBeforeEatingPowerPill = TrainingCampManager.recentStates.beginningOfMemory();
-			int gen = MMNEAT.ea.currentGeneration();
+			int gen = ((GenerationalEA) MMNEAT.ea).currentGeneration();
 			String genPath = FileUtilities.getSaveDirectory() + "/camps/" + gen;
 			FileUtilities.simpleFileWrite(genPath + "/PrePowerPillState-" + gen + "-" + time + ".txt",
 					shortlyBeforeEatingPowerPill.getGameState());
@@ -252,7 +253,7 @@ public class TrainingCampManager {
 		System.out.println("Camp Success Rates:");
 		for (int i = campPerformance.size() - 1; i >= 0; i--) {
 			int performance = campPerformance.get(i);
-			int maxEvals = MMNEAT.ea.evaluationsPerGeneration();
+			int maxEvals = ((GenerationalEA) MMNEAT.ea).evaluationsPerGeneration();
 			String camp = trainingCamps.get(i);
 			System.out.println("Camp " + i + ": " + performance + "/" + maxEvals + "("
 					+ ((100.0 * performance) / maxEvals) + "%)");

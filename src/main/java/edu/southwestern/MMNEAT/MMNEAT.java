@@ -14,6 +14,7 @@ import edu.southwestern.boardGame.TwoDimensionalBoardGame;
 import edu.southwestern.boardGame.TwoDimensionalBoardGameViewer;
 import edu.southwestern.breve2D.dynamics.Breve2DDynamics;
 import edu.southwestern.data.ResultSummaryUtilities;
+import edu.southwestern.evolution.EA;
 import edu.southwestern.evolution.EvolutionaryHistory;
 import edu.southwestern.evolution.GenerationalEA;
 import edu.southwestern.evolution.ScoreHistory;
@@ -121,7 +122,7 @@ public class MMNEAT {
 	public static int[] discreteCeilings;
 	public static Experiment experiment;
 	public static Task task;
-	public static GenerationalEA ea;
+	public static EA ea;
 	@SuppressWarnings("rawtypes") // could hold any type, depending on command line
 	public static Genotype genotype;
 	@SuppressWarnings("rawtypes") // could hold any type, depending on command line
@@ -665,7 +666,7 @@ public class MMNEAT {
 			// An EA is always needed. Currently only GenerationalEA classes are supported
 			if (!loadFrom) {
 				System.out.println("Create EA");
-				ea = (GenerationalEA) ClassCreation.createObject("ea");
+				ea = (EA) ClassCreation.createObject("ea");
 			}
 			// A Genotype to evolve with is always needed
 			System.out.println("Example genotype");

@@ -7,7 +7,7 @@ import edu.southwestern.evolution.genotypes.Genotype;
  * gradually adds one new individual at a time.
  * @author Dr. Schrum
  */
-public interface SteadyStateEA<T> {
+public interface SteadyStateEA<T> extends EA {
 	/**
 	 * Initialize the EA, which will generally include creating some
 	 * starting population.

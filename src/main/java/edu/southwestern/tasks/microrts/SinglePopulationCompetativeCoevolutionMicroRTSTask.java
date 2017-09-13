@@ -7,6 +7,7 @@ import java.util.List;
 import org.jdom.JDOMException;
 
 import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.GenerationalEA;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.networks.Network;
 import edu.southwestern.networks.NetworkTask;
@@ -219,7 +220,7 @@ public class SinglePopulationCompetativeCoevolutionMicroRTSTask<T extends Networ
 	@Override
 	public void preEval() {
 		if(Parameters.parameters.classParameter("microRTSMapSequence") != null){
-			String newMapName = maps.getAppropriateMap(MMNEAT.ea.currentGeneration());
+			String newMapName = maps.getAppropriateMap(((GenerationalEA) MMNEAT.ea).currentGeneration());
 			if (!newMapName.equals(mapName)){ // Change the map
 				try {
 					// The new map is in the new initial game state

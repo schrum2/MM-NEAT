@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 
 import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.GenerationalEA;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
@@ -177,7 +178,7 @@ public abstract class SinglePopulationCoevolutionTask<T> implements SinglePopula
 			for(int i = 1; i < bestObjectives.length; i++){
 				champs.add(new Pair<Genotype<T>, Score<T>>(bestGenotypes[i], bestScores[i]));
 			}
-			MMNEAT.hallOfFame.addChampions(MMNEAT.ea.currentGeneration(), champs);
+			MMNEAT.hallOfFame.addChampions(((GenerationalEA) MMNEAT.ea).currentGeneration(), champs);
 		}
 		
 		return scores;

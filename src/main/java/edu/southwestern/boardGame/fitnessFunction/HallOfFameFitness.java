@@ -9,6 +9,7 @@ import edu.southwestern.boardGame.agents.HeuristicBoardGamePlayer;
 import edu.southwestern.boardGame.featureExtractor.BoardGameFeatureExtractor;
 import edu.southwestern.boardGame.heuristics.BoardGameHeuristic;
 import edu.southwestern.boardGame.heuristics.NNBoardGameHeuristic;
+import edu.southwestern.evolution.GenerationalEA;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.networks.Network;
 import edu.southwestern.util.ClassCreation;
@@ -72,7 +73,7 @@ public class HallOfFameFitness<T extends Network, S extends BoardGameState> impl
 		
 		if(evaluated.containsKey(genotypeID)){
 			return evaluated.get(genotypeID);
-		}else if(MMNEAT.ea.currentGeneration() > 0){ // Must complete at least one full Generation
+		}else if(((GenerationalEA) MMNEAT.ea).currentGeneration() > 0){ // Must complete at least one full Generation
 			currentlyEvaluatingHallOfFame = true; // prevent infinite recursion when evaluating hall of fame
 			Pair<double[], double[]> evalResults = MMNEAT.hallOfFame.eval(((NNBoardGameHeuristic<?,S>) bgh).getGenotype());
 			currentlyEvaluatingHallOfFame = false;
@@ -99,7 +100,7 @@ public class HallOfFameFitness<T extends Network, S extends BoardGameState> impl
 
 	@Override
 	public void reset() {
-		int testGen = MMNEAT.ea.currentGeneration();
+		int testGen = ((GenerationalEA) MMNEAT.ea).currentGeneration();
 		 
 		 if(currentGen != testGen){
 			evaluated.clear(); 

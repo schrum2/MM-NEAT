@@ -8,7 +8,7 @@ import edu.southwestern.tasks.Task;
  * 
  * @author Jacob Schrum
  */
-public interface GenerationalEA {
+public interface GenerationalEA extends EA {
 
 	/**
 	 * Current generation being evaluated

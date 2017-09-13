@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.GenerationalEA;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
@@ -48,8 +49,8 @@ public class HallOfFame<T> {
 		genes.add(challenger);
 		
 		// Changes the Hall of Fame Challenger list once a Generation; Champions stay the same otherwise
-		if(currentGen != MMNEAT.ea.currentGeneration()){
-			currentGen = MMNEAT.ea.currentGeneration();
+		if(currentGen != ((GenerationalEA) MMNEAT.ea).currentGeneration()){
+			currentGen = ((GenerationalEA) MMNEAT.ea).currentGeneration();
 			
 			if(Parameters.parameters.booleanParameter("hallOfFameSingleRandomChamp")){
 				champs = getSingleRandomChamp();
@@ -141,7 +142,7 @@ public class HallOfFame<T> {
 		
 		// Adds the List of Genotypes from the previous generation
 		for(Triple<Integer, Genotype<T>, Score<T>> tr : hall){
-			if(tr.t1 == MMNEAT.ea.currentGeneration()-1) champions.add(tr.t2);
+			if(tr.t1 == ((GenerationalEA) MMNEAT.ea).currentGeneration()-1) champions.add(tr.t2);
 		}
 		
 		return champions;
@@ -187,7 +188,7 @@ public class HallOfFame<T> {
 		
 		// Adds the List of Genotypes from the previous X generations
 		for(Triple<Integer, Genotype<T>, Score<T>> tr : hall){
-			if(tr.t1 >= (MMNEAT.ea.currentGeneration()-numGens)) champions.add(tr.t2);
+			if(tr.t1 >= (((GenerationalEA) MMNEAT.ea).currentGeneration()-numGens)) champions.add(tr.t2);
 		}
 		
 		return champions;
@@ -260,7 +261,7 @@ public class HallOfFame<T> {
 		
 		// Adds the List of Genotypes from the previous X generations
 		for(Triple<Integer, Genotype<T>, Score<T>> tr : hall){
-			if(tr.t1 >= (MMNEAT.ea.currentGeneration() - numGens)) champions.add(tr.t2);
+			if(tr.t1 >= (((GenerationalEA) MMNEAT.ea).currentGeneration() - numGens)) champions.add(tr.t2);
 		}
 		
 		// Only runs if there are more possible Champions than are required

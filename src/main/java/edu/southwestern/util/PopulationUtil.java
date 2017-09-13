@@ -16,6 +16,7 @@ import java.util.concurrent.Future;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.data.SaveThread;
 import edu.southwestern.evolution.EvolutionaryHistory;
+import edu.southwestern.evolution.GenerationalEA;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.genotypes.HyperNEATCPPNGenotype;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
@@ -163,7 +164,7 @@ public class PopulationUtil {
 	 *                   (one objective champion per ArrayList entry)
 	 */
 	public static <T> void saveCurrentGen(ArrayList<Score<T>> bestScores) {
-		int currentGen = MMNEAT.ea.currentGeneration();
+		int currentGen = ((GenerationalEA) MMNEAT.ea).currentGeneration();
 		String filePrefix = "gen" + currentGen + "_";
 		// Save best in each objective
 		String bestDir = FileUtilities.getSaveDirectory() + "/bestObjectives";
@@ -191,7 +192,7 @@ public class PopulationUtil {
 	 * @param bestScores Score entities corresponding to the genotypes (redundant?)
 	 */
 	public static <T> void saveBestOfCurrentGen(double[] bestObjectives, Genotype<T>[] bestGenotypes, Score<T>[] bestScores) {
-		int currentGen = MMNEAT.ea.currentGeneration();
+		int currentGen = ((GenerationalEA) MMNEAT.ea).currentGeneration();
 		String filePrefix = "gen" + currentGen + "_";
 		// Save best in each objective
 		String bestDir = FileUtilities.getSaveDirectory() + "/bestObjectives";

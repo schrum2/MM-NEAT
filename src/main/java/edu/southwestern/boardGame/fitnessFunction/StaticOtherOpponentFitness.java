@@ -10,6 +10,7 @@ import edu.southwestern.boardGame.agents.BoardGamePlayer;
 import edu.southwestern.boardGame.agents.HeuristicBoardGamePlayer;
 import edu.southwestern.boardGame.heuristics.BoardGameHeuristic;
 import edu.southwestern.boardGame.heuristics.NNBoardGameHeuristic;
+import edu.southwestern.evolution.GenerationalEA;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.NoisyLonerTask;
@@ -90,7 +91,7 @@ public class StaticOtherOpponentFitness<T extends BoardGameState> implements Boa
 
 	@Override
 	public void reset() {
-		 int testGen = MMNEAT.ea.currentGeneration();
+		 int testGen = ((GenerationalEA) MMNEAT.ea).currentGeneration();
 		 
 		 if(currentGen != testGen){
 			evaluated.clear(); 

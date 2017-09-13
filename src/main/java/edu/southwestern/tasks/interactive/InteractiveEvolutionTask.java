@@ -32,6 +32,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.GenerationalEA;
 import edu.southwestern.evolution.SinglePopulationGenerationalEA;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.lineage.Offspring;
@@ -878,11 +879,11 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 			setUndo();
 		} else if(itemID == EVOLVE_BUTTON_INDEX && BooleanUtil.any(chosen)) {//If evolve button clicked
 			if(Parameters.parameters.booleanParameter("saveInteractiveSelections")) {
-				String dir = FileUtilities.getSaveDirectory() + "/selectedFromGen" +  MMNEAT.ea.currentGeneration();
+				String dir = FileUtilities.getSaveDirectory() + "/selectedFromGen" +  ((GenerationalEA) MMNEAT.ea).currentGeneration();
 				new File(dir).mkdir(); // Make the save directory
 				for(int i = 0; i < scores.size(); i++) {
 					if(chosen[i]) {
-						String fullName = dir + "/itemGen" + MMNEAT.ea.currentGeneration() + "_Index" + i + "_ID" + scores.get(i).individual.getId();
+						String fullName = dir + "/itemGen" + ((GenerationalEA) MMNEAT.ea).currentGeneration() + "_Index" + i + "_ID" + scores.get(i).individual.getId();
 						save(fullName,i);
 					}
 				}

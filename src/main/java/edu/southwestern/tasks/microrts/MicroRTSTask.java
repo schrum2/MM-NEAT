@@ -7,6 +7,7 @@ import java.util.List;
 import org.jdom.JDOMException;
 
 import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.GenerationalEA;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.networks.Network;
 import edu.southwestern.networks.NetworkTask;
@@ -177,7 +178,7 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 			catch (NullPointerException e){} //enemies will not change over time, this is fine.
 		}
 		if(maps != null){
-			String newMapName = maps.getAppropriateMap(MMNEAT.ea.currentGeneration());
+			String newMapName = maps.getAppropriateMap(((GenerationalEA) MMNEAT.ea).currentGeneration());
 			if (!newMapName.equals(mapName)){ // Change the map
 				System.out.println("loading new map: " + newMapName);
 				try {
@@ -236,7 +237,7 @@ public class MicroRTSTask<T extends Network> extends NoisyLonerTask<T> implement
 				ef2.givePhysicalGameState(initialPgs);
 		}
 		if(enemySequencePlan!=null){ //growing sets of opponents
-			ArrayList<AI> potentialNewEnemySet = enemySequencePlan.getAppropriateEnemySet(MMNEAT.ea.currentGeneration(), ff);
+			ArrayList<AI> potentialNewEnemySet = enemySequencePlan.getAppropriateEnemySet(((GenerationalEA) MMNEAT.ea).currentGeneration(), ff);
 			if(enemySet == null){
 				enemySet = potentialNewEnemySet;
 			}

@@ -1,5 +1,6 @@
 package edu.southwestern.tasks;
 
+import edu.southwestern.evolution.GenerationalEA;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.MMNEAT.MMNEAT;
@@ -82,7 +83,7 @@ public abstract class NoisyLonerTask<T> extends LonerTask<T> {
 		int numTrials;
 		// Determine the number of trials to evaluate the agent for
 		if(Parameters.parameters.booleanParameter("scaleTrials")){
-			numTrials = (int) Math.ceil((((double) MMNEAT.ea.currentGeneration() + 0.01) / 
+			numTrials = (int) Math.ceil((((double) ((GenerationalEA) MMNEAT.ea).currentGeneration() + 0.01) / 
 					Parameters.parameters.integerParameter("maxGens")) * CommonConstants.trials);
 			numTrials = Math.min(numTrials, CommonConstants.trials);
 		} else {
