@@ -86,10 +86,8 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			// Indicate whether elite was added
 			boolean child2WasElite = archive.add(s2);
 			newEliteProduced = newEliteProduced || child2WasElite; 
-			if(child2WasElite) {
-				if(io) {
-					// TODO: Log information somehow
-				}
+			if(child2WasElite && io) {
+				// TODO: Log information somehow
 			}
 		}
 		
@@ -104,12 +102,9 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 		// Indicate whether elite was added
 		boolean child1WasElite = archive.add(s1);
 		newEliteProduced = newEliteProduced || child1WasElite;
-		if(child1WasElite) {
-			if(io) {
-				// TODO: Log information somehow
-			}
+		if(child1WasElite && io) {
+			// TODO: Log information somehow
 		}
-		
 		// Track total iterations
 		iterations++;
 		// Track how long we have gone without producing a new elite individual
@@ -120,8 +115,12 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 		}
 	}
 	
+	/**
+	 * Number of times new individuals have been 
+	 * generated to add to archive.
+	 */
 	@Override
-	public boolean shouldStop() {
-		return false; // TODO
+	public int currentIteration() {
+		return iterations;
 	}
 }

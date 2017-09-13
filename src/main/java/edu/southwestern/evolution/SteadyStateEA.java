@@ -19,8 +19,8 @@ public interface SteadyStateEA<T> extends EA {
 	 */
 	public void newIndividual();
 	/**
-	 * Whether the EA should stop.
-	 * @return True if evolution is done
+	 * Number of iterations of the steady state EA
+	 * @return Number of iterations
 	 */
-	public boolean shouldStop();
+	public int currentIteration();
 }
