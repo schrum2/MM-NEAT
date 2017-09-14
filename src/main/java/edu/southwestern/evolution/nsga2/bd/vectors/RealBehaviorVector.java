@@ -4,6 +4,8 @@ import edu.southwestern.util.CartesianGeometricUtilities;
 import java.util.ArrayList;
 
 /**
+ * Behavior is characterized by a sequence of real-valued numbers.
+ * 
  * @author Jacob Schrum
  */
 public class RealBehaviorVector implements BehaviorVector {
