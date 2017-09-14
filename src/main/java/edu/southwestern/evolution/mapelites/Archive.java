@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.*;
 
 import edu.southwestern.scores.Score;
+import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.file.FileUtilities;
 import edu.southwestern.util.random.RandomNumbers;
 import wox.serial.Easy;
@@ -19,6 +20,7 @@ public class Archive<T> {
 	private boolean saveElites;
 	private String archiveDir;
 
+	@SuppressWarnings("unchecked")
 	public Archive(boolean saveElites) {
 		// Initialize mapping
 		archive = new HashMap<String,ArrayList<Score<T>>>();
@@ -27,6 +29,13 @@ public class Archive<T> {
 			String experimentDir = FileUtilities.getSaveDirectory();
 			archiveDir = experimentDir + File.separator + "archive";
 			new File(archiveDir).mkdirs();
+		}
+		try {
+			mapping = (BinMapping<T>) ClassCreation.createObject("mapElitesBinMapping");
+		} catch (NoSuchMethodException e) {
+			System.out.println("Failed to get Bin Mapping for MAP Elites!");
+			e.printStackTrace();
+			System.exit(1);
 		}
 	}
 	

@@ -17,6 +17,7 @@ import edu.southwestern.util.graphics.DrawingPanel;
 import edu.southwestern.util.graphics.GraphicsUtil;
 import edu.southwestern.util.graphics.ImageNetClassification;
 
+@SuppressWarnings("unused")
 public class VGG16Test {
 
 	// Consider turning this file into a unit test instead

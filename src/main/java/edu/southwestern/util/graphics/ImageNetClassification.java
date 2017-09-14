@@ -2,6 +2,7 @@ package edu.southwestern.util.graphics;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,6 +16,9 @@ import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.dataset.api.preprocessor.DataNormalization;
 import org.nd4j.linalg.dataset.api.preprocessor.VGG16ImagePreProcessor;
 import org.nd4j.linalg.factory.Nd4j;
+
+import edu.southwestern.util.datastructures.ArrayUtil;
+import edu.southwestern.util.stats.StatisticsUtilities;
 
 public class ImageNetClassification {
 	public static final int NUM_IMAGE_NET_CLASSES = 1000;
@@ -119,4 +123,25 @@ public class ImageNetClassification {
 		int index = Nd4j.argMax(precomputedScores, 1).getInt(0, 0);
 		return imageNetLabels.getLabel(index);
 	}
+
+	/**
+	 * Same as above, but for when the scores have been converted to an ArrayList, as required
+	 * to store them as a behavior characterization in a Score instance.
+	 * @param precomputedScores from a Score, but based off of getImageNetPredictions
+	 * @return String label with highest score
+	 */
+	public static String bestLabel(ArrayList<Double> precomputedScores) {
+		int index = StatisticsUtilities.argmax(ArrayUtil.doubleArrayFromList(precomputedScores));
+		return imageNetLabels.getLabel(index);
+	}
+		
+	/**
+	 * Get best/max score, the one corresponding to the predicted label
+	 * @param precomputedScores Computed by getImageNetPredictions
+	 * @returnhighest score
+	 */
+	public static double bestScore(INDArray precomputedScores) {
+		return Nd4j.max(precomputedScores, 1).getDouble(0,0);
+	}
+
 }

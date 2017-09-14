@@ -823,6 +823,7 @@ public class Parameters {
 		classOptions.add("microRTSOpponentEvaluationFunction", null, "File containing evaluation function for opponent in MicroRTSTask");
 		classOptions.add("microRTSEnemySequence", null, "class containing sequence of opponents for iterative evolution");
 		classOptions.add("microRTSMapSequence", null, "class containing sequence of maps for iterative evolution");
+		classOptions.add("mapElitesBinMapping", null, "class containing way of putting genotypes in bins of the MAP Elites archive");
 	}
 
 	/**

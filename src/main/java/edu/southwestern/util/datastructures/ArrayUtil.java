@@ -6,6 +6,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.nd4j.linalg.api.ndarray.INDArray;
+
 import edu.southwestern.util.sound.SoundToArray;
 
 /**
@@ -921,5 +923,18 @@ public class ArrayUtil {
 			}
 		}
 		return counted.size();
+	}
+
+	/**
+	 * Converts a 1D INDArray from DL4J into an ArrayList of Doubles
+	 * @param values An INDArray that must be 1D
+	 * @return ArrayList with same values in same order
+	 */
+	public static ArrayList<Double> doubleVectorFromINDArray(INDArray values) {
+		ArrayList<Double> result = new ArrayList<Double>(values.size(0));
+		for (int i = 0; i < values.size(0); i++) {
+			result.add(values.getDouble(0,i));
+		}
+		return result;
 	}
 }
