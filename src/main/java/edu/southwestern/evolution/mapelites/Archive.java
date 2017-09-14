@@ -38,7 +38,23 @@ public class Archive<T> {
 			System.exit(1);
 		}
 	}
+
+	/**
+	 * Directory where the archive is being saved on disk
+	 * @return Path to directory
+	 */
+	public String getArchiveDirectory() {
+		return archiveDir;
+	}
 	
+	/**
+	 * Method for putting individuals in bins
+	 * @return
+	 */
+	public BinMapping<T> getBinMapping() { 
+		return mapping;
+	}
+		
 	/**
 	 * Given an ArchivedOrganism (which contains some evaluation information about the genotype),
 	 * figure out which bin it belongs in and add it at the front if it is a new elite.
@@ -64,6 +80,7 @@ public class Archive<T> {
 			}
 		}
 		archive.put(binLabel, bin); // put bin back
+		if(newElite) System.out.println("Add to " + binLabel + " with score " + candidate.scores[0]);
 		if(saveElites) {
 			String fileName = "individual" + candidate.individual.getId() + ".xml";
 			if(newElite) { // File name distinguishes elites from others

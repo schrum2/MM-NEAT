@@ -1,12 +1,16 @@
 package edu.southwestern.tasks.innovationengines;
 
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.ArrayList;
 
 import org.deeplearning4j.zoo.util.imagenet.ImageNetLabels;
 import org.nd4j.linalg.api.ndarray.INDArray;
 
+import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.evolution.mapelites.Archive;
+import edu.southwestern.evolution.mapelites.MAPElites;
 import edu.southwestern.networks.Network;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.scores.Score;
@@ -43,15 +47,29 @@ public class PictureInnovationTask<T extends Network> extends LonerTask<T> {
 		double bestScore = ImageNetClassification.bestScore(scores);
 		ArrayList<Double> behaviorVector = ArrayUtil.doubleVectorFromINDArray(scores);
 		Score<T> result = new Score<>(individual, new double[]{bestScore}, behaviorVector);
+		DrawingPanel picture = null;
+		if(CommonConstants.watch || CommonConstants.netio) {
+			picture = GraphicsUtil.drawImage(image, "Image", ImageNetClassification.IMAGE_NET_INPUT_WIDTH, ImageNetClassification.IMAGE_NET_INPUT_HEIGHT);
+		}
 		if(CommonConstants.watch) {
-			DrawingPanel p = GraphicsUtil.drawImage(image, "Image", ImageNetClassification.IMAGE_NET_INPUT_WIDTH, ImageNetClassification.IMAGE_NET_INPUT_HEIGHT);
 			// Prints top 4 labels
 			String decodedLabels = new ImageNetLabels().decodePredictions(scores);
 			System.out.println(decodedLabels);
 			// Wait for user
 			MiscUtil.waitForReadStringAndEnterKeyPress();
-			p.dispose();
 		}
+		if(CommonConstants.netio) {
+			// Lot of duplication of computation from Archive. Can that be fixed?
+			@SuppressWarnings("unchecked")
+			Archive<T> archive = ((MAPElites<T>) MMNEAT.ea).getArchive();
+			// If saving networks, then also save pictures
+			String fileName = "picture" + individual.getId() + ".bmp";
+			String binLabel = archive.getBinMapping().binForScore(result);
+			String binPath = archive.getArchiveDirectory() + File.separator + binLabel;
+			new File(binPath).mkdirs(); // make directory if needed
+			picture.save(binPath + File.separator + fileName);
+		}
+		if(picture != null) picture.dispose();
 		return result;
 	}
 

@@ -932,7 +932,7 @@ public class ArrayUtil {
 	 */
 	public static ArrayList<Double> doubleVectorFromINDArray(INDArray values) {
 		ArrayList<Double> result = new ArrayList<Double>(values.size(0));
-		for (int i = 0; i < values.size(0); i++) {
+		for (int i = 0; i < values.length(); i++) {
 			result.add(values.getDouble(0,i));
 		}
 		return result;

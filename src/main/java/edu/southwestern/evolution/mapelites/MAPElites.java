@@ -34,6 +34,14 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 	}
 	
 	/**
+	 * Get the archive
+	 * @return
+	 */
+	public Archive<T> getArchive() {
+		return archive;
+	}
+	
+	/**
 	 * Fill the archive with a set number of random initial genotypes,
 	 * according to where they best fit.
 	 * @param example Starting genotype used to derive new instances
@@ -111,6 +119,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 		} else {
 			iterationsWithoutElite++;
 		}
+		System.out.println(iterations + "\t" + iterationsWithoutElite);
 	}
 	
 	/**
