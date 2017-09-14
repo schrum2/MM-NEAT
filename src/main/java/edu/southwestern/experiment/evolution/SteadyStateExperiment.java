@@ -1,5 +1,6 @@
 package edu.southwestern.experiment.evolution;
 
+import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.SteadyStateEA;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.experiment.Experiment;
@@ -9,6 +10,11 @@ public class SteadyStateExperiment<T> implements Experiment {
 
 	private SteadyStateEA<T> ea;
 	private int maxIterations;
+
+	@SuppressWarnings("unchecked")
+	public SteadyStateExperiment() {
+		this((SteadyStateEA<T>) MMNEAT.ea, MMNEAT.genotype);
+	}
 	
 	public SteadyStateExperiment(SteadyStateEA<T> ea, Genotype<T> example) {
 		this.ea = ea;

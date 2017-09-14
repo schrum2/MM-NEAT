@@ -16,7 +16,6 @@ import edu.southwestern.breve2D.dynamics.Breve2DDynamics;
 import edu.southwestern.data.ResultSummaryUtilities;
 import edu.southwestern.evolution.EA;
 import edu.southwestern.evolution.EvolutionaryHistory;
-import edu.southwestern.evolution.GenerationalEA;
 import edu.southwestern.evolution.ScoreHistory;
 import edu.southwestern.evolution.crossover.Crossover;
 import edu.southwestern.evolution.genotypes.Genotype;
@@ -61,6 +60,7 @@ import edu.southwestern.tasks.gridTorus.competitive.CompetitiveHomogeneousPredat
 import edu.southwestern.tasks.gridTorus.cooperative.CooperativePredatorsVsStaticPreyTask;
 import edu.southwestern.tasks.gridTorus.cooperativeAndCompetitive.CompetitiveAndCooperativePredatorsVsPreyTask;
 import edu.southwestern.tasks.gvgai.GVGAISinglePlayerTask;
+import edu.southwestern.tasks.innovationengines.PictureInnovationTask;
 import edu.southwestern.tasks.interactive.InteractiveEvolutionTask;
 import edu.southwestern.tasks.mario.MarioTask;
 import edu.southwestern.tasks.microrts.MicroRTSTask;
@@ -633,13 +633,17 @@ public class MMNEAT {
 				System.out.println("set up Interactive Evolution Task");
 				InteractiveEvolutionTask temp = (InteractiveEvolutionTask) task;
 				setNNInputParameters(temp.numCPPNInputs(), temp.numCPPNOutputs());
+			} else if(task instanceof PictureInnovationTask) {
+				System.out.println("set up Innovation Engine Task");
+				PictureInnovationTask temp = (PictureInnovationTask) task;
+				setNNInputParameters(temp.numCPPNInputs(), temp.numCPPNOutputs());
+			} else if (task instanceof MarioTask) {
+				setNNInputParameters(((Parameters.parameters.integerParameter("marioInputWidth") * Parameters.parameters.integerParameter("marioInputHeight")) * 2) + 1, MarioTask.MARIO_OUTPUTS); //hard coded for now, 5 button outputs
+				System.out.println("Set up Mario Task");
 			} else if(task instanceof HyperNEATDummyTask) {
 				System.out.println("set up dummy hyperNEAT task. Used for testing purposes only");
 			} else if(task instanceof HyperNEATSpeedTask) {
 				System.out.println("set up dummy hyperNEAT task. Used for testing purposes only");
-			}else if (task instanceof MarioTask) {
-				setNNInputParameters(((Parameters.parameters.integerParameter("marioInputWidth") * Parameters.parameters.integerParameter("marioInputHeight")) * 2) + 1, MarioTask.MARIO_OUTPUTS); //hard coded for now, 5 button outputs
-				System.out.println("Set up Mario Task");
 			} else if (task == null) {
 				// this else statement should only happen for JUnit testing cases.
 				// Some default network setup is needed.

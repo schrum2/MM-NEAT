@@ -11,6 +11,7 @@ import edu.southwestern.networks.Network;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.LonerTask;
+import edu.southwestern.tasks.interactive.picbreeder.PicbreederTask;
 import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.graphics.DrawingPanel;
@@ -52,6 +53,14 @@ public class PictureInnovationTask<T extends Network> extends LonerTask<T> {
 			p.dispose();
 		}
 		return result;
+	}
+
+	public int numCPPNInputs() {
+		return PicbreederTask.CPPN_NUM_INPUTS;
+	}
+
+	public int numCPPNOutputs() {
+		return PicbreederTask.CPPN_NUM_OUTPUTS;
 	}
 
 }
