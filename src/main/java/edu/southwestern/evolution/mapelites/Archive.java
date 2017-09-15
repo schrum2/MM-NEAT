@@ -72,7 +72,7 @@ public class Archive<T> {
 		} else { // bin not empty
 			bin = archive.get(binLabel);
 			Score<T> elite = bin.get(0); // best is always at front
-			if(candidate.isAtLeastAsGood(elite)) { // candidate is as good or better than elite
+			if(candidate.isBetter(elite)) { // candidate is better than elite
 				bin.add(0, candidate); // Add at front as new elite
 			} else { // candidate is worse than elite
 				bin.add(candidate); // Add at end: not part of standard MAP-Elites
@@ -80,15 +80,14 @@ public class Archive<T> {
 			}
 		}
 		archive.put(binLabel, bin); // put bin back
-		if(newElite) System.out.println("Add to " + binLabel + " with score " + candidate.scores[0]);
-		if(saveElites) {
-			String fileName = "individual" + candidate.individual.getId() + ".xml";
-			if(newElite) { // File name distinguishes elites from others
-				fileName = "ELITE" + fileName;
+		if(newElite) {
+			System.out.println("Add to " + binLabel + " with score " + candidate.scores[0]);
+			if(saveElites) {
+				String fileName = "ELITEindividual" + candidate.individual.getId() + ".xml";
+				String binPath = archiveDir + File.separator + binLabel;
+				new File(binPath).mkdirs(); // make directory if needed
+				Easy.save(candidate.individual, binPath + File.separator + fileName);
 			}
-			String binPath = archiveDir + File.separator + binLabel;
-			new File(binPath).mkdirs(); // make directory if needed
-			Easy.save(candidate.individual, binPath + File.separator + fileName);
 		}
 		return newElite;
 	}
@@ -101,6 +100,17 @@ public class Archive<T> {
 	public Score<T> getElite(String binLabel) {
 		ArrayList<Score<T>> bin = archive.get(binLabel);
 		return bin == null ? null : bin.get(0); // elite is at front (index 0)
+	}
+	
+	/**
+	 * Get the score of the elite for a given bin, or negative infinity
+	 * if the bin is empty.
+	 * @param binLabel Label for bin
+	 * @return Best score
+	 */
+	public double getBinScore(String binLabel) {
+		Score<T> elite = getElite(binLabel);
+		return elite == null ? Double.NEGATIVE_INFINITY : elite.scores[0];
 	}
 	
 	/**

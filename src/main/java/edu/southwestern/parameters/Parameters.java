@@ -435,8 +435,7 @@ public class Parameters {
 		booleanOptions.add("includeSawtoothFunction", true, "Fuction for sawtooth. If true, add to the function set");
 		booleanOptions.add("includeAbsValFunction", true, "Fuction for absolute value. If true, add to the function set");
 		booleanOptions.add("includeHalfLinearPiecewiseFunction", true, "Function for half linear picewise. If true, add to the function set");
-		booleanOptions.add("includeStretchedTanhFunction", false, "Function for stretched tanh function. Good for preventing saturation if values in -1 - 1 range."
-				+ "If true, add to the function set.");
+		booleanOptions.add("includeStretchedTanhFunction", false, "Function for stretched tanh function. Good for preventing saturation if values in -1 - 1 range. If true, add to the function set.");
 		booleanOptions.add("includeReLUFunction", false, "Function for rectified linear unit function. If true, add to the function set");	
 		booleanOptions.add("includeSoftplusFunction", false, "Function for softplus function. If true, add to the function set");
 		booleanOptions.add("includeLeakyReLUFunction", false, "Function for leaky rectified linear unit function. If true, add to the function set");

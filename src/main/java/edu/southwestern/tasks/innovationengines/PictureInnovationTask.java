@@ -61,12 +61,15 @@ public class PictureInnovationTask<T extends Network> extends LonerTask<T> {
 			// Lot of duplication of computation from Archive. Can that be fixed?
 			@SuppressWarnings("unchecked")
 			Archive<T> archive = ((MAPElites<T>) MMNEAT.ea).getArchive();
-			// If saving networks, then also save pictures
-			String fileName = String.format("%7.5f", bestScore) + "picture" + individual.getId() + ".jpg";
 			String binLabel = archive.getBinMapping().binForScore(result);
-			String binPath = archive.getArchiveDirectory() + File.separator + binLabel;
-			new File(binPath).mkdirs(); // make directory if needed
-			GraphicsUtil.saveImage(image, binPath + File.separator + fileName);
+			// Only save if it's a new elite
+			if(bestScore > archive.getBinScore(binLabel)) {
+				// If saving networks, then also save pictures
+				String fileName = String.format("%7.5f", bestScore) + "picture" + individual.getId() + ".jpg";
+				String binPath = archive.getArchiveDirectory() + File.separator + binLabel;
+				new File(binPath).mkdirs(); // make directory if needed
+				GraphicsUtil.saveImage(image, binPath + File.separator + fileName);
+			}
 		}
 		return result;
 	}
@@ -80,6 +83,29 @@ public class PictureInnovationTask<T extends Network> extends LonerTask<T> {
 	}
 
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
-		MMNEAT.main(new String[]{"runNumber:0","randomSeed:0","base:innovation","mu:100","maxGens:10000","io:true","netio:true","mating:true","task:edu.southwestern.tasks.innovationengines.PictureInnovationTask","log:Innovation-Pictures","saveTo:Pictures","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3","cleanFrequency:-1","recurrency:false","logTWEANNData:false","logMutationAndLineage:false","ea:edu.southwestern.evolution.mapelites.MAPElites","experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment","mapElitesBinMapping:edu.southwestern.tasks.innovationengines.ImageNetBinMapping","fs:true","watch:false"});
+		MMNEAT.main(new String[]{"runNumber:0","randomSeed:0","base:innovation","mu:100","maxGens:100000",
+				"io:true","netio:true","mating:true","task:edu.southwestern.tasks.innovationengines.PictureInnovationTask",
+				"log:Innovation-Pictures","saveTo:Pictures","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3",
+				"cleanFrequency:-1","recurrency:false","logTWEANNData:false","logMutationAndLineage:false",
+				"ea:edu.southwestern.evolution.mapelites.MAPElites",
+				"experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment",
+				"mapElitesBinMapping:edu.southwestern.tasks.innovationengines.ImageNetBinMapping","fs:true","watch:false",
+				"includeSigmoidFunction:true",
+				"includeTanhFunction:false",
+				"includeIdFunction:false",
+				"includeFullApproxFunction:false",
+				"includeApproxFunction:false",
+				"includeGaussFunction:true",
+				"includeSineFunction:false", // "includeSineFunction:true",
+				"includeSawtoothFunction:false", //"includeSawtoothFunction:true",
+				"includeAbsValFunction:false", //"includeAbsValFunction:true",
+				"includeHalfLinearPiecewiseFunction:false", //"includeHalfLinearPiecewiseFunction:true",
+				"includeStretchedTanhFunction:false",
+				"includeReLUFunction:false",
+				"includeSoftplusFunction:false",
+				"includeLeakyReLUFunction:false",
+				"includeFullSawtoothFunction:false", //"includeFullSawtoothFunction:true",
+				"includeTriangleWaveFunction:false", //"includeTriangleWaveFunction:true",
+				"includeSquareWaveFunction:false"}); //"includeSquareWaveFunction:true"});
 	}
 }
