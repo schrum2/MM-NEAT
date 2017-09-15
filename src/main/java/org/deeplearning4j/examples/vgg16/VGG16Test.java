@@ -55,19 +55,26 @@ public class VGG16Test {
 		
 		// From the original Picbreeder
 		NativeImageLoader loader = new NativeImageLoader(224, 224, 3);
-		results(loader.asMatrix(new File("d:/TEMP/FromRealPicbreeder/butterfly.jpg")), true); // VGG16: hair_slide: 69%, VGG19: hair_slide: 74%, GoogLeNet: hair_slide: 9%
+		results(loader.asMatrix(new File("d:/TEMP/FromRealPicbreeder/butterfly.jpg")), true); 
+		// VGG16: hair_slide: 69%, VGG19: hair_slide: 74%, GoogLeNet: hair_slide: 9%, ResNet50: hair_slide: 51%
 		MiscUtil.waitForReadStringAndEnterKeyPress();
-		results(loader.asMatrix(new File("d:/TEMP/FromRealPicbreeder/fly-fly.jpg")), true); // VGG16: hair_slide: 12%, VGG19: hair_slide: 22%, GoogLeNet: safety_pin: 4%
+		results(loader.asMatrix(new File("d:/TEMP/FromRealPicbreeder/fly-fly.jpg")), true); 
+		// VGG16: hair_slide: 12%, VGG19: hair_slide: 22%, GoogLeNet: safety_pin: 4%, ResNet50: hair_slide: 14%
 		MiscUtil.waitForReadStringAndEnterKeyPress();
-		results(loader.asMatrix(new File("d:/TEMP/FromRealPicbreeder/latte-cup.jpg")), true); // VGG16: cup: 8%, VGG19: cup: 14%, GoogLeNet: buckle: 6%
+		results(loader.asMatrix(new File("d:/TEMP/FromRealPicbreeder/latte-cup.jpg")), true); 
+		// VGG16: cup: 8%, VGG19: cup: 14%, GoogLeNet: buckle: 6%, ResNet50: mask: 44%
 		MiscUtil.waitForReadStringAndEnterKeyPress();
-		results(loader.asMatrix(new File("d:/TEMP/FromRealPicbreeder/parrot-toucan.jpg")), true); // VGG16: mouse: 15%, VGG19: toucan: 16%, GoogLeNet: nipple: 10%
+		results(loader.asMatrix(new File("d:/TEMP/FromRealPicbreeder/parrot-toucan.jpg")), true); 
+		// VGG16: mouse: 15%, VGG19: toucan: 16%, GoogLeNet: nipple: 10%, ResNet50: maraca: 19%
 		MiscUtil.waitForReadStringAndEnterKeyPress();
-		results(loader.asMatrix(new File("d:/TEMP/FromRealPicbreeder/race_car-racer.jpg")), true); // VGG16: speedboat: 68%, VGG19: sports_car: 23%, GoogLeNet: binoculars: 12%
+		results(loader.asMatrix(new File("d:/TEMP/FromRealPicbreeder/race_car-racer.jpg")), true); 
+		// VGG16: speedboat: 68%, VGG19: sports_car: 23%, GoogLeNet: binoculars: 12%, ResNet50: slot: 60%
 		MiscUtil.waitForReadStringAndEnterKeyPress();
-		results(loader.asMatrix(new File("d:/TEMP/FromRealPicbreeder/red_crayon-lipstick.jpg")), true); // VGG16: cup: 14%, VGG19: hook: 9%, GoogLeNet: lipstick: 10%
+		results(loader.asMatrix(new File("d:/TEMP/FromRealPicbreeder/red_crayon-lipstick.jpg")), true); 
+		// VGG16: cup: 14%, VGG19: hook: 9%, GoogLeNet: lipstick: 10%, ResNet50: red_wine: 92%
 		MiscUtil.waitForReadStringAndEnterKeyPress();
-		results(loader.asMatrix(new File("d:/TEMP/FromRealPicbreeder/red_skull.jpg")), true); // VGG16: crash_helmet: 45%, VGG19: crash_helmet: 39%, GoogLeNet: ski_mask: 18%
+		results(loader.asMatrix(new File("d:/TEMP/FromRealPicbreeder/red_skull.jpg")), true); 
+		// VGG16: crash_helmet: 45%, VGG19: crash_helmet: 39%, GoogLeNet: ski_mask: 18%, ResNet50: ski_mask: 89%
 		MiscUtil.waitForReadStringAndEnterKeyPress();
 
 		

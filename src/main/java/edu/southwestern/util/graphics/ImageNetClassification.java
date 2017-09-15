@@ -12,6 +12,7 @@ import org.deeplearning4j.zoo.PretrainedType;
 import org.deeplearning4j.zoo.ZooModel;
 import org.deeplearning4j.zoo.model.AlexNet;
 import org.deeplearning4j.zoo.model.GoogLeNet;
+import org.deeplearning4j.zoo.model.ResNet50;
 import org.deeplearning4j.zoo.model.VGG16;
 import org.deeplearning4j.zoo.model.VGG19;
 import org.deeplearning4j.zoo.util.imagenet.ImageNetLabels;
@@ -40,8 +41,9 @@ public class ImageNetClassification {
 	public static void initImageNet() {
 		@SuppressWarnings("rawtypes")
 		// VGG16 and VGG19 seem to perform similarly
-		ZooModel model = new GoogLeNet();
-		//ZooModel model = new VGG19();
+		//ZooModel model = new ResNet50();
+		//ZooModel model = new GoogLeNet();
+		ZooModel model = new VGG19();
 		//ZooModel model = new VGG16();
 		//ZooModel model = new AlexNet(); // No pre-trained weights available?
 		try {
