@@ -90,16 +90,16 @@ public class PictureInnovationTask<T extends Network> extends LonerTask<T> {
 				"ea:edu.southwestern.evolution.mapelites.MAPElites",
 				"experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment",
 				"mapElitesBinMapping:edu.southwestern.tasks.innovationengines.ImageNetBinMapping","fs:true","watch:false",
-				"includeSigmoidFunction:true",
+				"includeSigmoidFunction:true", // In original Innovation Engine
 				"includeTanhFunction:false",
 				"includeIdFunction:false",
 				"includeFullApproxFunction:false",
 				"includeApproxFunction:false",
-				"includeGaussFunction:true",
-				"includeSineFunction:true",
+				"includeGaussFunction:true", // In original Innovation Engine
+				"includeSineFunction:true", // In original Innovation Engine
 				"includeSawtoothFunction:false", //"includeSawtoothFunction:true",
-				"includeAbsValFunction:true",
-				"includeHalfLinearPiecewiseFunction:false", //"includeHalfLinearPiecewiseFunction:true",
+				"includeAbsValFunction:false", //"includeAbsValFunction:true",
+				"includeHalfLinearPiecewiseFunction:true", // In original Innovation Engine
 				"includeStretchedTanhFunction:false",
 				"includeReLUFunction:false",
 				"includeSoftplusFunction:false",
