@@ -21,6 +21,7 @@ import org.nd4j.linalg.dataset.api.preprocessor.DataNormalization;
 import org.nd4j.linalg.dataset.api.preprocessor.VGG16ImagePreProcessor;
 import org.nd4j.linalg.factory.Nd4j;
 
+import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.stats.StatisticsUtilities;
 
@@ -39,16 +40,11 @@ public class ImageNetClassification {
 	 * it to be re-used without re-initialization
 	 */
 	public static void initImageNet() {
-		@SuppressWarnings("rawtypes")
-		// VGG16 and VGG19 seem to perform similarly
-		//ZooModel model = new ResNet50();
-		//ZooModel model = new GoogLeNet();
-		ZooModel model = new VGG19();
-		//ZooModel model = new VGG16();
-		//ZooModel model = new AlexNet(); // No pre-trained weights available?
 		try {
+			@SuppressWarnings("rawtypes")
+			ZooModel model = (ZooModel) ClassCreation.createObject("imageNetModel");
 			imageNet = (ComputationGraph) model.initPretrained(PretrainedType.IMAGENET);
-		} catch (IOException e) {
+		} catch (IOException | NoSuchMethodException e) {
 			System.out.println("Could not initialize ImageNet!");
 			e.printStackTrace();
 			System.exit(1);

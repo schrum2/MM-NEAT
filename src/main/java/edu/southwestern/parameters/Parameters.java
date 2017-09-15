@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.StringTokenizer;
 
+import org.deeplearning4j.zoo.model.VGG19;
+
 import edu.southwestern.boardGame.agents.BoardGamePlayerOneStepEval;
 import edu.southwestern.boardGame.agents.BoardGamePlayerRandom;
 import edu.southwestern.boardGame.featureExtractor.TwoDimensionalRawBoardGameFeatureExtractor;
@@ -824,6 +826,7 @@ public class Parameters {
 		classOptions.add("microRTSEnemySequence", null, "class containing sequence of opponents for iterative evolution");
 		classOptions.add("microRTSMapSequence", null, "class containing sequence of maps for iterative evolution");
 		classOptions.add("mapElitesBinMapping", null, "class containing way of putting genotypes in bins of the MAP Elites archive");
+		classOptions.add("imageNetModel", VGG19.class, "DL4J model that was trained on ImageNet to classify images");
 	}
 
 	/**

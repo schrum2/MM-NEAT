@@ -28,6 +28,7 @@ public class VGG16Test {
 
 	// Consider turning this file into a unit test instead
 	public static void main(String[] args) throws IOException, InterruptedException {
+		Parameters.initializeParameterCollections(new String[] {}); // default parameters		
 		// select all convolutional models
 //		Map<ZooType, ZooModel> models = ModelSelector.select(ZooType.CNN);
 //
