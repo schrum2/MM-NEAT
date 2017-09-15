@@ -48,27 +48,26 @@ public class PictureInnovationTask<T extends Network> extends LonerTask<T> {
 		double bestScore = ImageNetClassification.bestScore(scores);
 		ArrayList<Double> behaviorVector = ArrayUtil.doubleVectorFromINDArray(scores);
 		Score<T> result = new Score<>(individual, new double[]{bestScore}, behaviorVector);
-		DrawingPanel picture = null;
 		if(CommonConstants.watch) {
-			picture = GraphicsUtil.drawImage(image, "Image", ImageNetClassification.IMAGE_NET_INPUT_WIDTH, ImageNetClassification.IMAGE_NET_INPUT_HEIGHT);
+			DrawingPanel picture = GraphicsUtil.drawImage(image, "Image", ImageNetClassification.IMAGE_NET_INPUT_WIDTH, ImageNetClassification.IMAGE_NET_INPUT_HEIGHT);
 			// Prints top 4 labels
 			String decodedLabels = new ImageNetLabels().decodePredictions(scores);
 			System.out.println(decodedLabels);
 			// Wait for user
 			MiscUtil.waitForReadStringAndEnterKeyPress();
+			picture.dispose();
 		}
 		if(CommonConstants.netio) {
 			// Lot of duplication of computation from Archive. Can that be fixed?
 			@SuppressWarnings("unchecked")
 			Archive<T> archive = ((MAPElites<T>) MMNEAT.ea).getArchive();
 			// If saving networks, then also save pictures
-			String fileName = "picture" + individual.getId() + ".jpg";
+			String fileName = String.format("%7.5f", bestScore) + "picture" + individual.getId() + ".jpg";
 			String binLabel = archive.getBinMapping().binForScore(result);
 			String binPath = archive.getArchiveDirectory() + File.separator + binLabel;
 			new File(binPath).mkdirs(); // make directory if needed
 			GraphicsUtil.saveImage(image, binPath + File.separator + fileName);
 		}
-		if(picture != null) picture.dispose();
 		return result;
 	}
 

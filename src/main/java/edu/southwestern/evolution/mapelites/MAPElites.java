@@ -119,7 +119,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 		} else {
 			iterationsWithoutElite++;
 		}
-		System.out.println(iterations + "\t" + iterationsWithoutElite);
+		System.out.println(iterations + "\t" + iterationsWithoutElite + "\t" + archive.size());
 	}
 	
 	/**
