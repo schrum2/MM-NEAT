@@ -6,8 +6,14 @@ import java.io.IOException;
 import java.util.Map;
 
 import org.datavec.image.loader.NativeImageLoader;
+import org.deeplearning4j.nn.api.Model;
+import org.deeplearning4j.zoo.ModelSelector;
+import org.deeplearning4j.zoo.PretrainedType;
+import org.deeplearning4j.zoo.ZooModel;
+import org.deeplearning4j.zoo.ZooType;
 import org.deeplearning4j.zoo.util.imagenet.ImageNetLabels;
 import org.nd4j.linalg.api.ndarray.INDArray;
+import org.nd4j.linalg.factory.Nd4j;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
@@ -21,22 +27,47 @@ import edu.southwestern.util.graphics.ImageNetClassification;
 public class VGG16Test {
 
 	// Consider turning this file into a unit test instead
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws IOException, InterruptedException {
+		// select all convolutional models
+//		Map<ZooType, ZooModel> models = ModelSelector.select(ZooType.CNN);
+//
+//		for (Map.Entry<ZooType, ZooModel> entry : models.entrySet()) {
+//		    ZooModel zooModel = entry.getValue();
+//
+//		    if(zooModel.pretrainedAvailable(PretrainedType.IMAGENET)) {
+//		        Model net = zooModel.initPretrained(PretrainedType.IMAGENET);
+//
+//		        System.out.println(zooModel.getClass().getName());
+//		        // do what you want with pretrained model
+//		    }
+//
+//		    // clean up for current model (helps prevent OOMs)
+//		    Nd4j.getWorkspaceManager().destroyAllWorkspacesForCurrentThread();
+//		    System.gc();
+//		    Thread.sleep(1000);
+//		}
+//		
+//		MiscUtil.waitForReadStringAndEnterKeyPress();
+		
+		// The code above revealed that the only models with pre-trained ImageNet values are:
+		// GoogLeNet, VGG19, VGG16, ResNet50
+		
+		
 		// From the original Picbreeder
 		NativeImageLoader loader = new NativeImageLoader(224, 224, 3);
-		results(loader.asMatrix(new File("d:/TEMP/FromRealPicbreeder/butterfly.jpg")), true); // VGG16: hair_slide: 69%
+		results(loader.asMatrix(new File("d:/TEMP/FromRealPicbreeder/butterfly.jpg")), true); // VGG16: hair_slide: 69%, VGG19: hair_slide: 74%
 		MiscUtil.waitForReadStringAndEnterKeyPress();
-		results(loader.asMatrix(new File("d:/TEMP/FromRealPicbreeder/fly-fly.jpg")), true); // VGG16: hair_slide: 12%
+		results(loader.asMatrix(new File("d:/TEMP/FromRealPicbreeder/fly-fly.jpg")), true); // VGG16: hair_slide: 12%, VGG19: hair_slide: 22%
 		MiscUtil.waitForReadStringAndEnterKeyPress();
-		results(loader.asMatrix(new File("d:/TEMP/FromRealPicbreeder/latte-cup.jpg")), true); // VGG16: cup: 8%
+		results(loader.asMatrix(new File("d:/TEMP/FromRealPicbreeder/latte-cup.jpg")), true); // VGG16: cup: 8%, VGG19: cup: 14%
 		MiscUtil.waitForReadStringAndEnterKeyPress();
-		results(loader.asMatrix(new File("d:/TEMP/FromRealPicbreeder/parrot-toucan.jpg")), true); // VGG16: mouse: 15%
+		results(loader.asMatrix(new File("d:/TEMP/FromRealPicbreeder/parrot-toucan.jpg")), true); // VGG16: mouse: 15%, VGG19: toucan: 16%
 		MiscUtil.waitForReadStringAndEnterKeyPress();
-		results(loader.asMatrix(new File("d:/TEMP/FromRealPicbreeder/race_car-racer.jpg")), true); // VGG16: speedboat: 68%
+		results(loader.asMatrix(new File("d:/TEMP/FromRealPicbreeder/race_car-racer.jpg")), true); // VGG16: speedboat: 68%, VGG19: sports_car: 23%
 		MiscUtil.waitForReadStringAndEnterKeyPress();
-		results(loader.asMatrix(new File("d:/TEMP/FromRealPicbreeder/red_crayon-lipstick.jpg")), true); // VGG16: cup: 14%
+		results(loader.asMatrix(new File("d:/TEMP/FromRealPicbreeder/red_crayon-lipstick.jpg")), true); // VGG16: cup: 14%, VGG19: hook: 9%
 		MiscUtil.waitForReadStringAndEnterKeyPress();
-		results(loader.asMatrix(new File("d:/TEMP/FromRealPicbreeder/red_skull.jpg")), true); // VGG16: crash_helmet: 45%
+		results(loader.asMatrix(new File("d:/TEMP/FromRealPicbreeder/red_skull.jpg")), true); // VGG16: crash_helmet: 45%, VGG19: crash_helmet: 39%
 		MiscUtil.waitForReadStringAndEnterKeyPress();
 
 		
