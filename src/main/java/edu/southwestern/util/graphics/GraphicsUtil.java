@@ -6,6 +6,8 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
+import javax.imageio.ImageIO;
+
 import edu.southwestern.networks.ActivationFunctions;
 import edu.southwestern.networks.Network;
 import edu.southwestern.tasks.interactive.picbreeder.PicbreederTask;
@@ -30,6 +32,21 @@ public class GraphicsUtil {
 	public static final int NUM_HSB = 3;
 	public static final double BIAS = 1.0;// a common input used in neural networks
 	public static final double SQRT2 = Math.sqrt(2); // Used for scaling distance from center
+	
+	/**
+	 * Save an image to the specified filename (which includes path and file extension)
+	 * @param image Buffered image
+	 * @param filename Path and file name plus extension
+	 */
+	public static void saveImage(BufferedImage image, String filename) {
+		String extension = filename.substring(filename.lastIndexOf(".") + 1);
+		// write file
+		try {
+			ImageIO.write(image, extension, new java.io.File(filename));
+		} catch (java.io.IOException e) {
+			System.err.println("Unable to save image:\n" + e);
+		}
+	}
 	
 	/**
 	 * Used by imagematch because we assume all inputs are on and time is irrelevant.

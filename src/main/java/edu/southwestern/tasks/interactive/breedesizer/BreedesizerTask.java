@@ -21,7 +21,6 @@ import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.networks.Network;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.interactive.InteractiveEvolutionTask;
-import edu.southwestern.util.graphics.DrawingPanel;
 import edu.southwestern.util.graphics.GraphicsUtil;
 import edu.southwestern.util.sound.MIDIUtil;
 import edu.southwestern.util.sound.PlayDoubleArray;
@@ -272,18 +271,13 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 	protected void save(String file, int i) {	
 		// Use of imageHeight and imageWidth allows saving a higher quality image than is on the button
 		BufferedImage toSave = getButtonImage(scores.get(i).individual.getPhenotype(), Parameters.parameters.integerParameter("imageWidth"), Parameters.parameters.integerParameter("imageHeight"), inputMultipliers);
-		DrawingPanel p = GraphicsUtil.drawImage(toSave, "" + i, toSave.getWidth(), toSave.getHeight());
 		//SAVING IMAGE
-
-		p.save(file + ".bmp");
+		GraphicsUtil.saveImage(toSave, file + ".bmp");
 		System.out.println("image " + file + " was saved successfully");
-		p.setVisibility(false);
-
 		//SAVING AUDIO
 		file += ".wav";
 		saveSound(i, file);
 		System.out.println("Audio " + file + " was saved successfully");
-		p.setVisibility(false);
 	}
 
 	/**

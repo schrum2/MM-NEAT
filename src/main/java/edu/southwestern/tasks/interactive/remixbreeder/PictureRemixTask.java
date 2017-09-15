@@ -20,7 +20,6 @@ import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.networks.Network;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.interactive.picbreeder.PicbreederTask;
-import edu.southwestern.util.graphics.DrawingPanel;
 import edu.southwestern.util.graphics.GraphicsUtil;
 
 /**
@@ -150,11 +149,9 @@ public class PictureRemixTask<T extends Network> extends PicbreederTask<T> {
 	protected void save(String filename, int i) {
 		// Use of imageHeight and imageWidth allows saving a higher quality image than is on the button
 		BufferedImage toSave = GraphicsUtil.remixedImageFromCPPN((Network)scores.get(i).individual.getPhenotype(), img, inputMultipliers, Parameters.parameters.integerParameter("remixImageWindow"));
-		DrawingPanel p = GraphicsUtil.drawImage(toSave, "" + i, toSave.getWidth(), toSave.getHeight());
 		filename += ".bmp";
-		p.save(filename);
+		GraphicsUtil.saveImage(toSave, filename);
 		System.out.println("image " + filename + " was saved successfully");
-		p.setVisibility(false);
 	}
 
 	/**

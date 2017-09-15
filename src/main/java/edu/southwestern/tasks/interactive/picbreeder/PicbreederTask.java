@@ -8,7 +8,6 @@ import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.networks.Network;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.interactive.InteractiveEvolutionTask;
-import edu.southwestern.util.graphics.DrawingPanel;
 import edu.southwestern.util.graphics.GraphicsUtil;
 
 /**
@@ -64,11 +63,9 @@ public class PicbreederTask<T extends Network> extends InteractiveEvolutionTask<
 	protected void save(String filename, int i) {
 		// Use of imageHeight and imageWidth allows saving a higher quality image than is on the button
 		BufferedImage toSave = GraphicsUtil.imageFromCPPN((Network)scores.get(i).individual.getPhenotype(), Parameters.parameters.integerParameter("imageWidth"), Parameters.parameters.integerParameter("imageHeight"), inputMultipliers);
-		DrawingPanel p = GraphicsUtil.drawImage(toSave, "" + i, toSave.getWidth(), toSave.getHeight());
 		filename += ".bmp";
-		p.save(filename);
+		GraphicsUtil.saveImage(toSave, filename);
 		System.out.println("image " + filename + " was saved successfully");
-		p.setVisibility(false);
 	}
 
 

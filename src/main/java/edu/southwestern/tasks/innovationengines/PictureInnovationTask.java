@@ -2,6 +2,7 @@ package edu.southwestern.tasks.innovationengines;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 import org.deeplearning4j.zoo.util.imagenet.ImageNetLabels;
@@ -48,10 +49,8 @@ public class PictureInnovationTask<T extends Network> extends LonerTask<T> {
 		ArrayList<Double> behaviorVector = ArrayUtil.doubleVectorFromINDArray(scores);
 		Score<T> result = new Score<>(individual, new double[]{bestScore}, behaviorVector);
 		DrawingPanel picture = null;
-		if(CommonConstants.watch || CommonConstants.netio) {
-			picture = GraphicsUtil.drawImage(image, "Image", ImageNetClassification.IMAGE_NET_INPUT_WIDTH, ImageNetClassification.IMAGE_NET_INPUT_HEIGHT);
-		}
 		if(CommonConstants.watch) {
+			picture = GraphicsUtil.drawImage(image, "Image", ImageNetClassification.IMAGE_NET_INPUT_WIDTH, ImageNetClassification.IMAGE_NET_INPUT_HEIGHT);
 			// Prints top 4 labels
 			String decodedLabels = new ImageNetLabels().decodePredictions(scores);
 			System.out.println(decodedLabels);
@@ -63,11 +62,11 @@ public class PictureInnovationTask<T extends Network> extends LonerTask<T> {
 			@SuppressWarnings("unchecked")
 			Archive<T> archive = ((MAPElites<T>) MMNEAT.ea).getArchive();
 			// If saving networks, then also save pictures
-			String fileName = "picture" + individual.getId() + ".bmp";
+			String fileName = "picture" + individual.getId() + ".jpg";
 			String binLabel = archive.getBinMapping().binForScore(result);
 			String binPath = archive.getArchiveDirectory() + File.separator + binLabel;
 			new File(binPath).mkdirs(); // make directory if needed
-			picture.save(binPath + File.separator + fileName);
+			GraphicsUtil.saveImage(image, binPath + File.separator + fileName);
 		}
 		if(picture != null) picture.dispose();
 		return result;
@@ -81,4 +80,7 @@ public class PictureInnovationTask<T extends Network> extends LonerTask<T> {
 		return PicbreederTask.CPPN_NUM_OUTPUTS;
 	}
 
+	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
+		MMNEAT.main(new String[]{"runNumber:0","randomSeed:0","base:innovation","mu:100","maxGens:10000","io:true","netio:true","mating:true","task:edu.southwestern.tasks.innovationengines.PictureInnovationTask","log:Innovation-Pictures","saveTo:Pictures","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3","cleanFrequency:-1","recurrency:false","logTWEANNData:false","logMutationAndLineage:false","ea:edu.southwestern.evolution.mapelites.MAPElites","experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment","mapElitesBinMapping:edu.southwestern.tasks.innovationengines.ImageNetBinMapping","fs:true","watch:false"});
+	}
 }
