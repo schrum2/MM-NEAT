@@ -3,6 +3,7 @@ package edu.southwestern.evolution.mapelites;
 import java.io.File;
 import java.util.*;
 
+import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
 import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.file.FileUtilities;
@@ -19,12 +20,14 @@ public class Archive<T> {
 	private BinMapping<T> mapping;
 	private boolean saveElites;
 	private String archiveDir;
+	private int mapElitesBinSize;
 
 	@SuppressWarnings("unchecked")
 	public Archive(boolean saveElites) {
 		// Initialize mapping
 		archive = new HashMap<String,ArrayList<Score<T>>>();
 		this.saveElites = saveElites;
+		this.mapElitesBinSize = Parameters.parameters.integerParameter("mapElitesBinSize");
 		if(saveElites) {
 			String experimentDir = FileUtilities.getSaveDirectory();
 			archiveDir = experimentDir + File.separator + "archive";
@@ -67,7 +70,7 @@ public class Archive<T> {
 		boolean newElite = true; // Will the candidate be a new elite?
 		ArrayList<Score<T>> bin;
 		if(!archive.containsKey(binLabel)) { // empty bin
-			bin = new ArrayList<Score<T>>();
+			bin = new ArrayList<Score<T>>(mapElitesBinSize+1); // Just big enough to hold one excess individual 
 			bin.add(candidate); // now the elite of the bin
 		} else { // bin not empty
 			bin = archive.get(binLabel);
@@ -78,6 +81,10 @@ public class Archive<T> {
 				bin.add(candidate); // Add at end: not part of standard MAP-Elites
 				newElite = false; // Was not a new elite
 			}
+		}
+		// Clear out non-elite individuals
+		while(bin.size() > mapElitesBinSize) {
+			bin.remove(bin.size() - 1);
 		}
 		archive.put(binLabel, bin); // put bin back
 		if(newElite) {
