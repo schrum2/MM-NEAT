@@ -15,6 +15,7 @@ import edu.southwestern.evolution.mapelites.Archive;
 import edu.southwestern.evolution.mapelites.MAPElites;
 import edu.southwestern.networks.Network;
 import edu.southwestern.parameters.CommonConstants;
+import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.LonerTask;
 import edu.southwestern.tasks.interactive.picbreeder.PicbreederTask;
@@ -29,6 +30,7 @@ public class PictureInnovationTask<T extends Network> extends LonerTask<T> {
 	// Because the image is already the correct size. However, I read something about additional
 	// processing steps somewhere in a DL4J example.
 	private static final boolean PREPROCESS = true;
+	private double mapElitesSaveThreshold = Parameters.parameters.doubleParameter("mapElitesSaveThreshold");
 	
 	@Override
 	public int numObjectives() {
@@ -67,9 +69,13 @@ public class PictureInnovationTask<T extends Network> extends LonerTask<T> {
 				// If the bin is empty, or the candidate is better than the elite for that bin's score
 				double binScore = result.behaviorVector.get(i);
 				if(elite == null || binScore > elite.behaviorVector.get(i)) {
-					String fileName = String.format("%7.5f", binScore) + "picture" + individual.getId() + ".jpg";
-					String binPath = archive.getArchiveDirectory() + File.separator + binLabels.get(i);
-					GraphicsUtil.saveImage(image, binPath + File.separator + fileName);	
+					if(binScore > mapElitesSaveThreshold) {
+						String fileName = String.format("%7.5f", binScore) + "picture" + individual.getId() + ".jpg";
+						String binPath = archive.getArchiveDirectory() + File.separator + binLabels.get(i);
+						String fullName = binPath + File.separator + fileName;
+						System.out.println(fullName);
+						GraphicsUtil.saveImage(image, fullName);
+					}
 				}
 			}
 		}
