@@ -1,21 +1,23 @@
 package edu.southwestern.tasks.innovationengines;
 
-import edu.southwestern.evolution.mapelites.BinMapping;
+import java.util.List;
+
+import org.deeplearning4j.nn.modelimport.keras.trainedmodels.Utils.ImageNetLabels;
+
+import edu.southwestern.evolution.mapelites.BinLabels;
 import edu.southwestern.networks.Network;
-import edu.southwestern.scores.Score;
-import edu.southwestern.util.graphics.ImageNetClassification;
 
 /**
  * Given scores for all Image Net classes, return the bin name with the highest score
  * @author Jacob Schrum
  */
-public class ImageNetBinMapping<T extends Network> implements BinMapping<T> {
+public class ImageNetBinMapping<T extends Network> implements BinLabels<T> {
 	/**
-	 * Bin is the label with the highest score
+	 * All 1000 ImageNet labels
 	 */
 	@Override
-	public String binForScore(Score<T> s) {
-		return ImageNetClassification.bestLabel(s.behaviorVector);
+	public List<String> binLabels() {
+		return ImageNetLabels.getLabels();
 	}
 
 }

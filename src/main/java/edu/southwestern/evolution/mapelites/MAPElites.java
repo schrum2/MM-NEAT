@@ -70,16 +70,16 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 	public void newIndividual() {
 		boolean newEliteProduced = false; // Asume no new elites will be produced
 		
-		String label = archive.randomBinLabel();
-		Genotype<T> parent1 = archive.getElite(label).individual;
+		int index = archive.randomBinIndex();
+		Genotype<T> parent1 = archive.getElite(index).individual;
 		long parentId1 = parent1.getId(); // Parent Id comes from original genome
 		long parentId2 = -1;
 		Genotype<T> child1 = parent1.copy(); // Copy with different Id (will be further modified below)
 		
 		// Potentially mate with second individual
 		if (mating && RandomNumbers.randomGenerator.nextDouble() < crossoverRate) {
-			String otherLabel = archive.randomBinLabel(); // From a different bin
-			Genotype<T> parent2 = archive.getElite(otherLabel).individual;
+			int otherIndex = archive.randomBinIndex(); // From a different bin
+			Genotype<T> parent2 = archive.getElite(otherIndex).individual;
 			parentId2 = parent2.getId(); // Parent Id comes from original genome
 			Genotype<T> child2 = parent2.copy(); // Copy with different Id (further modified below)
 			
@@ -119,7 +119,8 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 		} else {
 			iterationsWithoutElite++;
 		}
-		System.out.println(iterations + "\t" + iterationsWithoutElite + "\t" + archive.size());
+		System.out.println(iterations + "\t" + iterationsWithoutElite + "\t");
+		// TODO: Also log scores across all bins
 	}
 	
 	/**

@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.deeplearning4j.zoo.util.imagenet.ImageNetLabels;
 import org.nd4j.linalg.api.ndarray.INDArray;
@@ -31,7 +32,7 @@ public class PictureInnovationTask<T extends Network> extends LonerTask<T> {
 	
 	@Override
 	public int numObjectives() {
-		return 1; // Score for the best label
+		return 0; // None: only behavior characterization
 	}
 
 	@Override
@@ -45,9 +46,8 @@ public class PictureInnovationTask<T extends Network> extends LonerTask<T> {
 		BufferedImage image = GraphicsUtil.imageFromCPPN(cppn, ImageNetClassification.IMAGE_NET_INPUT_WIDTH, ImageNetClassification.IMAGE_NET_INPUT_HEIGHT);
 		INDArray imageArray = ImageNetClassification.bufferedImageToINDArray(image);
 		INDArray scores = ImageNetClassification.getImageNetPredictions(imageArray, PREPROCESS);
-		double bestScore = ImageNetClassification.bestScore(scores);
 		ArrayList<Double> behaviorVector = ArrayUtil.doubleVectorFromINDArray(scores);
-		Score<T> result = new Score<>(individual, new double[]{bestScore}, behaviorVector);
+		Score<T> result = new Score<>(individual, new double[]{}, behaviorVector);
 		if(CommonConstants.watch) {
 			DrawingPanel picture = GraphicsUtil.drawImage(image, "Image", ImageNetClassification.IMAGE_NET_INPUT_WIDTH, ImageNetClassification.IMAGE_NET_INPUT_HEIGHT);
 			// Prints top 4 labels
@@ -61,14 +61,16 @@ public class PictureInnovationTask<T extends Network> extends LonerTask<T> {
 			// Lot of duplication of computation from Archive. Can that be fixed?
 			@SuppressWarnings("unchecked")
 			Archive<T> archive = ((MAPElites<T>) MMNEAT.ea).getArchive();
-			String binLabel = archive.getBinMapping().binForScore(result);
-			// Only save if it's a new elite
-			if(bestScore > archive.getBinScore(binLabel)) {
-				// If saving networks, then also save pictures
-				String fileName = String.format("%7.5f", bestScore) + "picture" + individual.getId() + ".jpg";
-				String binPath = archive.getArchiveDirectory() + File.separator + binLabel;
-				new File(binPath).mkdirs(); // make directory if needed
-				GraphicsUtil.saveImage(image, binPath + File.separator + fileName);
+			List<String> binLabels = archive.getBinMapping().binLabels();
+			for(int i = 0; i < binLabels.size(); i++) {
+				Score<T> elite = archive.getElite(i);
+				// If the bin is empty, or the candidate is better than the elite for that bin's score
+				double binScore = result.behaviorVector.get(i);
+				if(elite == null || binScore > elite.behaviorVector.get(i)) {
+					String fileName = String.format("%7.5f", binScore) + "picture" + individual.getId() + ".jpg";
+					String binPath = archive.getArchiveDirectory() + File.separator + binLabels.get(i);
+					GraphicsUtil.saveImage(image, binPath + File.separator + fileName);	
+				}
 			}
 		}
 		return result;
@@ -83,13 +85,13 @@ public class PictureInnovationTask<T extends Network> extends LonerTask<T> {
 	}
 
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
-		MMNEAT.main(new String[]{"runNumber:0","randomSeed:0","base:innovation","mu:100","maxGens:100000",
+		MMNEAT.main(new String[]{"runNumber:0","randomSeed:0","base:innovation","mu:400","maxGens:2000000",
 				"io:true","netio:true","mating:true","task:edu.southwestern.tasks.innovationengines.PictureInnovationTask",
 				"log:Innovation-Pictures","saveTo:Pictures","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3",
 				"cleanFrequency:-1","recurrency:false","logTWEANNData:false","logMutationAndLineage:false",
 				"ea:edu.southwestern.evolution.mapelites.MAPElites",
 				"experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment",
-				"mapElitesBinMapping:edu.southwestern.tasks.innovationengines.ImageNetBinMapping","fs:true","watch:false",
+				"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.ImageNetBinMapping","fs:true","watch:false",
 				"includeSigmoidFunction:true", // In original Innovation Engine
 				"includeTanhFunction:false",
 				"includeIdFunction:false",

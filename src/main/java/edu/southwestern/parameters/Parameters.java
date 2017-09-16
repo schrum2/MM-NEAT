@@ -327,7 +327,6 @@ public class Parameters {
 		integerOptions.add("gvgaiLevel", 0, "GVGAI level to be played; must be 0 - 4");
 		integerOptions.add("gvgaiReactField", 5, "Size of the square to be evaluated by the GVGAI Reactive Player; must be an odd number");
 		integerOptions.add("boardGameOpeningRandomMoves", 0, "In board games, making the first few moves random makes evals noisy in a useful way");
-		integerOptions.add("mapElitesBinSize", 1, "Number of genomes stored in each bin; default is just to store the one elite");
 		// Long parameters
 		longOptions.add("lastInnovation", 0l, "Highest innovation number used so far");
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
@@ -825,7 +824,7 @@ public class Parameters {
 		classOptions.add("microRTSOpponentEvaluationFunction", null, "File containing evaluation function for opponent in MicroRTSTask");
 		classOptions.add("microRTSEnemySequence", null, "class containing sequence of opponents for iterative evolution");
 		classOptions.add("microRTSMapSequence", null, "class containing sequence of maps for iterative evolution");
-		classOptions.add("mapElitesBinMapping", null, "class containing way of putting genotypes in bins of the MAP Elites archive");
+		classOptions.add("mapElitesBinLabels", null, "class containing way of putting genotypes in bins of the MAP Elites archive");
 		classOptions.add("imageNetModel", VGG19.class, "DL4J model that was trained on ImageNet to classify images");
 	}
 
