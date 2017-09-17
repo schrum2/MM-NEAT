@@ -122,7 +122,7 @@ public class PictureInnovationTask<T extends Network> extends LonerTask<T> {
 				"cleanFrequency:-1","recurrency:false","logTWEANNData:false","logMutationAndLineage:false",
 				"ea:edu.southwestern.evolution.mapelites.MAPElites",
 				"experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment",
-				"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.ImageNetBinMapping","fs:true","watch:false",
+				"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.ImageNetBinMapping","fs:false","watch:false",
 				"includeSigmoidFunction:true", // In original Innovation Engine
 				"includeTanhFunction:false",
 				"includeIdFunction:false",
@@ -130,8 +130,8 @@ public class PictureInnovationTask<T extends Network> extends LonerTask<T> {
 				"includeApproxFunction:false",
 				"includeGaussFunction:true", // In original Innovation Engine
 				"includeSineFunction:true", // In original Innovation Engine
-				"includeSawtoothFunction:true", // I added this
-				"includeAbsValFunction:true", // I added this
+				"includeSawtoothFunction:false", 
+				"includeAbsValFunction:false",
 				"includeHalfLinearPiecewiseFunction:true", // In original Innovation Engine
 				"includeStretchedTanhFunction:false",
 				"includeReLUFunction:false",
