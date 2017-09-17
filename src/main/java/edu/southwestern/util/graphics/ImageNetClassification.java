@@ -8,6 +8,11 @@ import java.util.Map;
 
 import org.datavec.image.loader.NativeImageLoader;
 import org.deeplearning4j.nn.graph.ComputationGraph;
+import org.deeplearning4j.nn.modelimport.keras.InvalidKerasConfigurationException;
+import org.deeplearning4j.nn.modelimport.keras.KerasModelImport;
+import org.deeplearning4j.nn.modelimport.keras.Model;
+import org.deeplearning4j.nn.modelimport.keras.UnsupportedKerasConfigurationException;
+import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.deeplearning4j.zoo.PretrainedType;
 import org.deeplearning4j.zoo.ZooModel;
 import org.deeplearning4j.zoo.util.imagenet.ImageNetLabels;
@@ -22,12 +27,13 @@ import edu.southwestern.util.stats.StatisticsUtilities;
 
 public class ImageNetClassification {
 	public static final int NUM_IMAGE_NET_CLASSES = 1000;
-	public static final int IMAGE_NET_INPUT_HEIGHT = 224;
-	public static final int IMAGE_NET_INPUT_WIDTH = 224;
+	public static final int IMAGE_NET_INPUT_HEIGHT = 227; //224;
+	public static final int IMAGE_NET_INPUT_WIDTH = 227; //224;
 	public static final int IMAGE_NET_INPUT_CHANNELS = 3;
 	
 	// Do not take the time to initialize this if not needed
 	private static ComputationGraph imageNet = null;
+	//private static MultiLayerNetwork imageNet = null; // For a Keras model
 	private static ImageNetLabels imageNetLabels = null;
 	/**
 	 * Initialize the ImageNet if it hasn't been done yet. This is only done
@@ -35,6 +41,16 @@ public class ImageNetClassification {
 	 * it to be re-used without re-initialization
 	 */
 	public static void initImageNet() {
+		// This was my attempt to import a pre-trained set of AlexNet weights from a Keras model for ImageNet
+//		try {
+//			String modelHdf5Filename = "../alexnet_weights.h5";
+//			imageNet = KerasModelImport.importKerasSequentialModelAndWeights(modelHdf5Filename);
+//		} catch (IOException | InvalidKerasConfigurationException | UnsupportedKerasConfigurationException e) {
+//			System.out.println("Could not initialize ImageNet!");
+//			e.printStackTrace();
+//			System.exit(1);
+//		}
+		
 		try {
 			@SuppressWarnings("rawtypes")
 			ZooModel model = (ZooModel) ClassCreation.createObject("imageNetModel");
@@ -107,8 +123,8 @@ public class ImageNetClassification {
 			DataNormalization scaler = new VGG16ImagePreProcessor();
 			scaler.transform(image);
 		}		
-		INDArray[] output = imageNet.output(false, image);
-		INDArray predictions = output[0];
+		INDArray predictions = imageNet.outputSingle(image);
+		//INDArray predictions = imageNet.output(image);
 		return predictions.getRow(0).dup(); // Should I duplicate with dup? Worth the load? Needed?
 	}
 	
