@@ -1,20 +1,27 @@
 package edu.southwestern.evolution.mapelites;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.EvolutionaryHistory;
 import edu.southwestern.evolution.SteadyStateEA;
 import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.log.MMNEATLog;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.LonerTask;
 import edu.southwestern.util.PopulationUtil;
 import edu.southwestern.util.random.RandomNumbers;
+import wox.serial.Easy;
 
 public class MAPElites<T> implements SteadyStateEA<T> {
 
 	private boolean io;
+	private MMNEATLog log = null;
 	private LonerTask<T> task;
 	private Archive<T> archive;
 	private boolean mating;
@@ -26,11 +33,14 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 	public MAPElites() {
 		this.task = (LonerTask<T>) MMNEAT.task;
 		this.io = Parameters.parameters.booleanParameter("io"); // write logs
+		if(io) {
+			log = new MMNEATLog("MAPElites");
+		}
 		this.archive = new Archive<>(Parameters.parameters.booleanParameter("netio"));
 		this.mating = Parameters.parameters.booleanParameter("mating");
 		this.crossoverRate = Parameters.parameters.doubleParameter("crossoverRate");
-		this.iterations = 0;
-		this.iterationsWithoutElite = 0;
+		this.iterations = Parameters.parameters.integerParameter("lastSavedGeneration");
+		this.iterationsWithoutElite = 0; // Not accurate on resume
 	}
 	
 	/**
@@ -48,17 +58,39 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 	 */
 	@Override
 	public void initialize(Genotype<T> example) {
-		int startSize = Parameters.parameters.integerParameter("mu");
-		ArrayList<Genotype<T>> startingPopulation = PopulationUtil.initialPopulation(example, startSize);
-		for(Genotype<T> g : startingPopulation) {
-			Score<T> s = task.evaluate(g);
-			boolean elite = archive.add(s); // Fill the archive with random starting individuals
-			if(elite && io) {
-				// TODO: Log information somehow
+		if(iterations > 0) {
+			// Loading from saved archive
+			String archiveDir = archive.getArchiveDirectory();
+			List<String> binLabels = archive.getBinMapping().binLabels();
+			// Load each elite from xml file into archive
+			for(int i = 0; i < binLabels.size(); i++) {
+				String binDir = archiveDir + "/" + binLabels.get(i) + "/";
+				@SuppressWarnings("unchecked")
+				Genotype<T> elite = (Genotype<T>) Easy.load(binDir + "elite.xml"); // Load genotype
+				// Load behavior scores
+				@SuppressWarnings("unchecked")
+				ArrayList<Double> scores = (ArrayList<Double>) Easy.load(binDir + "scores.xml"); // Load scores
+				// Package in a score
+				Score<T> score = new Score<T>(elite, new double[0], scores);
+				archive.archive.set(i, score); // Directly set the bin contents
 			}
-		}		
+		} else {
+			// Start from scratch
+			int startSize = Parameters.parameters.integerParameter("mu");
+			ArrayList<Genotype<T>> startingPopulation = PopulationUtil.initialPopulation(example, startSize);
+			for(Genotype<T> g : startingPopulation) {
+				Score<T> s = task.evaluate(g);
+				archive.add(s); // Fill the archive with random starting individuals
+			}	
+		}
 	}
 
+	private void log() {
+		if(io) {
+			log.log(iterations + "\t" + iterationsWithoutElite + "\t" + StringUtils.join(ArrayUtils.toObject(archive.getEliteScores()), "\t"));
+		}
+	}
+	
 	/**
 	 * Create one (maybe two) new individuals by randomly
 	 * sampling from the elites in random bins. The reason
@@ -92,9 +124,6 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			// Indicate whether elite was added
 			boolean child2WasElite = archive.add(s2);
 			newEliteProduced = newEliteProduced || child2WasElite; 
-			if(child2WasElite && io) {
-				// TODO: Log information somehow
-			}
 		}
 		
 		child1.mutate(); // Was potentially modified by crossover
@@ -108,9 +137,9 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 		// Indicate whether elite was added
 		boolean child1WasElite = archive.add(s1);
 		newEliteProduced = newEliteProduced || child1WasElite;
-		if(child1WasElite && io) {
-			// TODO: Log information somehow
-		}
+		// Log to file
+		log();
+		Parameters.parameters.setInteger("lastSavedGeneration", iterations);
 		// Track total iterations
 		iterations++;
 		// Track how long we have gone without producing a new elite individual
@@ -120,7 +149,6 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			iterationsWithoutElite++;
 		}
 		System.out.println(iterations + "\t" + iterationsWithoutElite + "\t");
-		// TODO: Also log scores across all bins
 	}
 	
 	/**

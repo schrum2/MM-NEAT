@@ -1,6 +1,7 @@
 package edu.southwestern.experiment.evolution;
 
 import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.EvolutionaryHistory;
 import edu.southwestern.evolution.SteadyStateEA;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.experiment.Experiment;
@@ -32,6 +33,8 @@ public class SteadyStateExperiment<T> implements Experiment {
 	public void run() {
 		while(!shouldStop()) {
 			ea.newIndividual();
+			Parameters.parameters.saveParameters();
+			EvolutionaryHistory.saveArchetype(0);
 		}
 		ea.finalCleanup();
 	}

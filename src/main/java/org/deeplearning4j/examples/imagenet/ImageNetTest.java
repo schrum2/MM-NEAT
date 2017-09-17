@@ -55,6 +55,12 @@ public class ImageNetTest {
 //		MiscUtil.waitForReadStringAndEnterKeyPress();
 
 		NativeImageLoader loader = new NativeImageLoader(224, 224, 3);
+//		resultsFromAll(loader.asMatrix(new File("innovation/Pictures0/archive/pinwheel/1.00000pinwheel98544.jpg")), true);
+//		MiscUtil.waitForReadStringAndEnterKeyPress();
+//		resultsFromAll(loader.asMatrix(new File("innovation/Pictures0/archive/peacock/0.99997peacock104176.jpg")), true);
+//		MiscUtil.waitForReadStringAndEnterKeyPress();
+
+		
 		resultsFromAll(loader.asMatrix(new File("data/imagematch/car.jpg")), true);
 		MiscUtil.waitForReadStringAndEnterKeyPress();
 		resultsFromAll(loader.asMatrix(new File("data/imagematch/cat.jpg")), true);

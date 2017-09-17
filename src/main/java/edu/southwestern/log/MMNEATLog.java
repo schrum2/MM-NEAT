@@ -40,7 +40,7 @@ public class MMNEATLog {
 	 * @param infix
 	 *            name of log file
 	 * @param batches
-	 *            whether or not there are multiple batches of files
+	 *            whether or not log entries come in batches
 	 */
 	public MMNEATLog(String infix, boolean batches) {
 		this(infix, batches, false, false);
@@ -97,7 +97,7 @@ public class MMNEATLog {
 					expectedEntries *= (popSize + 1);
 					for (int i = 0; 
 							(!restricted || oldFile.hasNextLine()) && // may be fewer log lines than expected
-							(i < expectedEntries || // expectd number of entries
+							(i < expectedEntries || // expected number of entries
 									(unlimited && oldFile.hasNextLine())); // more than expected
 							i++) {
 						oldData.add(oldFile.nextLine());

@@ -15,7 +15,7 @@ public class Archive<T> {
 	 * Stores all individuals in bins (looked up by hash keys) where each bin is
 	 * sorted so that the first individual (index 0) is the fittest (elite) individual.
 	 */
-	private ArrayList<Score<T>> archive;
+	ArrayList<Score<T>> archive;
 	private BinLabels<T> mapping;
 	private boolean saveElites;
 	private String archiveDir;
@@ -47,6 +47,19 @@ public class Archive<T> {
 		}
 	}
 
+	/**
+	 * Get the scores of all elites for each bin.
+	 * @return
+	 */
+	public double[] getEliteScores() {
+		double[] result = new double[archive.size()];
+		for(int i = 0; i < result.length; i++) {
+			Score<T> score = archive.get(i);
+			result[i] = score == null ? Double.NEGATIVE_INFINITY : score.behaviorVector.get(i);
+		}
+		return result;
+	}
+	
 	/**
 	 * Directory where the archive is being saved on disk
 	 * @return Path to directory
@@ -83,9 +96,9 @@ public class Archive<T> {
 				if(saveElites) {
 					//String fileName = "ELITEindividual" + candidate.individual.getId() + ".xml";
 					// Easier to reload on resume if file name is uniform. Will also save space by overwriting
-					String fileName = "elite.xml";
 					String binPath = archiveDir + File.separator + mapping.binLabels().get(i);
-					Easy.save(candidate.individual, binPath + File.separator + fileName);
+					Easy.save(candidate.individual, binPath + File.separator + "elite.xml");
+					Easy.save(candidate.behaviorVector, binPath + File.separator + "scores.xml");
 				}
 			}
 		}		
