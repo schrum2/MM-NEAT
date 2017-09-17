@@ -8,13 +8,10 @@ import java.util.Map;
 
 import org.datavec.image.loader.NativeImageLoader;
 import org.deeplearning4j.nn.graph.ComputationGraph;
-import org.deeplearning4j.nn.modelimport.keras.InvalidKerasConfigurationException;
-import org.deeplearning4j.nn.modelimport.keras.KerasModelImport;
-import org.deeplearning4j.nn.modelimport.keras.Model;
-import org.deeplearning4j.nn.modelimport.keras.UnsupportedKerasConfigurationException;
-import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
+import org.deeplearning4j.zoo.ModelSelector;
 import org.deeplearning4j.zoo.PretrainedType;
 import org.deeplearning4j.zoo.ZooModel;
+import org.deeplearning4j.zoo.ZooType;
 import org.deeplearning4j.zoo.util.imagenet.ImageNetLabels;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.dataset.api.preprocessor.DataNormalization;
@@ -27,20 +24,32 @@ import edu.southwestern.util.stats.StatisticsUtilities;
 
 public class ImageNetClassification {
 	public static final int NUM_IMAGE_NET_CLASSES = 1000;
-	public static final int IMAGE_NET_INPUT_HEIGHT = 227; //224;
-	public static final int IMAGE_NET_INPUT_WIDTH = 227; //224;
+	public static final int IMAGE_NET_INPUT_HEIGHT = 224;
+	public static final int IMAGE_NET_INPUT_WIDTH = 224;
 	public static final int IMAGE_NET_INPUT_CHANNELS = 3;
 	
 	// Do not take the time to initialize this if not needed
-	private static ComputationGraph imageNet = null;
+	private static ComputationGraph imageNet = null; // Default model
 	//private static MultiLayerNetwork imageNet = null; // For a Keras model
 	private static ImageNetLabels imageNetLabels = null;
+	// All models
+	private static Map<String,ComputationGraph> imageNetModels = null;
+	
+	/**
+	 * One model can be designated as a command line parameter. This retrieves it.
+	 * @return
+	 */
+	private static ComputationGraph getChosenImageNetModel() {
+		if(imageNet == null) initImageNet();
+		return imageNet;
+	}
+	
 	/**
 	 * Initialize the ImageNet if it hasn't been done yet. This is only done
 	 * once because the net weights should never change. Saving the result allows
 	 * it to be re-used without re-initialization
 	 */
-	public static void initImageNet() {
+	private static void initImageNet() {
 		// This was my attempt to import a pre-trained set of AlexNet weights from a Keras model for ImageNet
 //		try {
 //			String modelHdf5Filename = "../alexnet_weights.h5";
@@ -62,6 +71,35 @@ public class ImageNetClassification {
 		}
 		// If image net is being used, then the labels will be needed as well
 		imageNetLabels = new ImageNetLabels();
+	}
+	
+	/**
+	 * Initiates all known ImageNet models
+	 */
+	private static void initAllImageNets() {
+		if(imageNetModels == null) {
+			imageNetModels = new HashMap<String,ComputationGraph>();
+			@SuppressWarnings("rawtypes")
+			Map<ZooType, ZooModel> models = ModelSelector.select(ZooType.CNN);
+			for (@SuppressWarnings("rawtypes") Map.Entry<ZooType, ZooModel> entry : models.entrySet()) {
+				@SuppressWarnings("rawtypes")
+				ZooModel zooModel = entry.getValue();
+				if(zooModel.pretrainedAvailable(PretrainedType.IMAGENET)) {
+					try {
+						ComputationGraph model = (ComputationGraph) zooModel.initPretrained(PretrainedType.IMAGENET);
+						String name = zooModel.getClass().getName();
+						imageNetModels.put(name,model);
+						System.out.println("Initialized " + name);
+					} catch (IOException e) {
+						System.out.println("Failed to load pre-trained ImageNet models");
+						e.printStackTrace();
+						System.exit(1);
+					}
+				}
+			}
+			// If image net is being used, then the labels will be needed as well
+			imageNetLabels = new ImageNetLabels();
+		}
 	}
 	
 	/**
@@ -113,20 +151,56 @@ public class ImageNetClassification {
 	
 	/**
 	 * Get raw ImageNet prediction scores from ImageNet without any labels.
+	 * Uses the default model specified as a command line parameter.
 	 * @param image Image is a 2N matrix within DL4J's INDArray class
 	 * @param preprocess Whether the image/matrix needs to be scaled to the appropriate size for ImageNet
 	 * @return INDArray of prediction scores for ImageNet's categories/labels
-	 */
+	 */	
 	public static INDArray getImageNetPredictions(INDArray image, boolean preprocess) {
-		if(imageNet == null) initImageNet();
+		return getImageNetPredictions(getChosenImageNetModel(), image, preprocess);
+	}
+	
+	/**
+	 * Get ImageNet predictions with any specified model
+	 * @param model A ComputationGraph that takes images and outputs classifications (can this be more general)
+	 * @param image Image as 2D INDArray
+	 * @param preprocess Whether image pre-processing is required
+	 * @return Array of classification scores
+	 */
+	private static INDArray getImageNetPredictions(ComputationGraph model, INDArray image, boolean preprocess) {
 		if(preprocess) {
+			// Is VGG16ImagePreProcessor too specific?
 			DataNormalization scaler = new VGG16ImagePreProcessor();
 			scaler.transform(image);
 		}		
-		INDArray predictions = imageNet.outputSingle(image);
+		INDArray predictions = model.output(image)[0];
 		//INDArray predictions = imageNet.output(image);
 		return predictions.getRow(0).dup(); // Should I duplicate with dup? Worth the load? Needed?
 	}
+	
+	/**
+	 * Ask all available ImageNet models to provide their predictions.
+	 * @param image Image to classify
+	 * @param preprocess Whether image needs preprocessing
+	 * @return Array of INDArray of all the predictions for each model
+	 */
+	public static Map<String,INDArray> getAllImageNetModelPredictions(INDArray image, boolean preprocess) {
+		initAllImageNets(); // Get all models if not already initialized
+		Map<String,INDArray> result = new HashMap<String,INDArray>();
+		// Process image first so that it doesn't have to be done over and over
+		if(preprocess) {
+			// Is VGG16ImagePreProcessor too specific?
+			DataNormalization scaler = new VGG16ImagePreProcessor();
+			scaler.transform(image);
+		}		
+		for(String modelName: imageNetModels.keySet()) {
+			// Preprocessing definitely not needed since it would happen above if requested
+			INDArray predictions = getImageNetPredictions(imageNetModels.get(modelName), image, false);
+			result.put(modelName, predictions);
+		}
+		return result;
+	}
+	
 	
 	/**
 	 * Get ImageNet label with the highest score in the collection of prediction scores

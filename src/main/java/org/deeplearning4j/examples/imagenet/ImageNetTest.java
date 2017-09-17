@@ -1,4 +1,4 @@
-package org.deeplearning4j.examples.vgg16;
+package org.deeplearning4j.examples.imagenet;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -24,36 +24,12 @@ import edu.southwestern.util.graphics.GraphicsUtil;
 import edu.southwestern.util.graphics.ImageNetClassification;
 
 @SuppressWarnings("unused")
-public class VGG16Test {
+public class ImageNetTest {
 
 	// Consider turning this file into a unit test instead
 	public static void main(String[] args) throws IOException, InterruptedException {
 		Parameters.initializeParameterCollections(new String[] {}); // default parameters		
-		// select all convolutional models
-//		Map<ZooType, ZooModel> models = ModelSelector.select(ZooType.CNN);
-//
-//		for (Map.Entry<ZooType, ZooModel> entry : models.entrySet()) {
-//		    ZooModel zooModel = entry.getValue();
-//
-//		    if(zooModel.pretrainedAvailable(PretrainedType.IMAGENET)) {
-//		        Model net = zooModel.initPretrained(PretrainedType.IMAGENET);
-//
-//		        System.out.println(zooModel.getClass().getName());
-//		        // do what you want with pretrained model
-//		    }
-//
-//		    // clean up for current model (helps prevent OOMs)
-//		    Nd4j.getWorkspaceManager().destroyAllWorkspacesForCurrentThread();
-//		    System.gc();
-//		    Thread.sleep(1000);
-//		}
-//		
-//		MiscUtil.waitForReadStringAndEnterKeyPress();
-		
-		// The code above revealed that the only models with pre-trained ImageNet values are:
-		// GoogLeNet, VGG19, VGG16, ResNet50
-		
-		
+
 		// From the original Picbreeder
 //		NativeImageLoader loader = new NativeImageLoader(224, 224, 3);
 //		results(loader.asMatrix(new File("d:/TEMP/FromRealPicbreeder/butterfly.jpg")), true); 
@@ -78,18 +54,16 @@ public class VGG16Test {
 //		// VGG16: crash_helmet: 45%, VGG19: crash_helmet: 39%, GoogLeNet: ski_mask: 18%, ResNet50: ski_mask: 89%
 //		MiscUtil.waitForReadStringAndEnterKeyPress();
 
-		
-		
 		NativeImageLoader loader = new NativeImageLoader(224, 224, 3);
-		results(loader.asMatrix(new File("data/imagematch/car.jpg")), true);
+		resultsFromAll(loader.asMatrix(new File("data/imagematch/car.jpg")), true);
 		MiscUtil.waitForReadStringAndEnterKeyPress();
-		results(loader.asMatrix(new File("data/imagematch/cat.jpg")), true);
+		resultsFromAll(loader.asMatrix(new File("data/imagematch/cat.jpg")), true);
 		MiscUtil.waitForReadStringAndEnterKeyPress();		
-		results(loader.asMatrix(new File("data/imagematch/organimage.bmp")), false);
+		resultsFromAll(loader.asMatrix(new File("data/imagematch/organimage.bmp")), false);
 		MiscUtil.waitForReadStringAndEnterKeyPress();		
-		results(loader.asMatrix(new File("data/imagematch/sadsheepimage.bmp")), false);
+		resultsFromAll(loader.asMatrix(new File("data/imagematch/sadsheepimage.bmp")), false);
 		MiscUtil.waitForReadStringAndEnterKeyPress();		
-		results(loader.asMatrix(new File("data/imagematch/supercreepypersonimage.jpg")), false);
+		resultsFromAll(loader.asMatrix(new File("data/imagematch/supercreepypersonimage.jpg")), false);
 		MiscUtil.waitForReadStringAndEnterKeyPress();		
 		
 //		Parameters.initializeParameterCollections(new String[]{"runNumber:0","randomSeed:0","trials:1","mu:16","maxGens:500","io:false","netio:false","mating:true","fs:true","task:edu.southwestern.tasks.interactive.picbreeder.PicbreederTask","allowMultipleFunctions:true","ftype:0","watch:false","netChangeActivationRate:0.3","cleanFrequency:-1","recurrency:false","cleanOldNetworks:false","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageSize:224"});
@@ -107,7 +81,16 @@ public class VGG16Test {
 //		}
 	}
 	
-	public static void results(INDArray image, boolean preprocess) {
+	public static void resultsFromAll(INDArray image, boolean preprocess) {
+		Map<String, INDArray> allScores = ImageNetClassification.getAllImageNetModelPredictions(image, preprocess);
+		for(String key : allScores.keySet()) {
+			INDArray scores = allScores.get(key);
+			String decodedLabels = new ImageNetLabels().decodePredictions(scores);
+			System.out.println(key + ":\n" + decodedLabels);
+		}
+	}
+	
+	public static void resultsFromOne(INDArray image, boolean preprocess) {
 		INDArray scores = ImageNetClassification.getImageNetPredictions(image, preprocess);
 		Map<String,Float> results = ImageNetClassification.getImageNetLabelledPredictions(scores);
 		for(String label : results.keySet()) {
