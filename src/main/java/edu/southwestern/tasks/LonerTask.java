@@ -336,7 +336,7 @@ public abstract class LonerTask<T> implements SinglePopulationTask<T> {
 	/**
 	 * Default to empty
 	 */
-        @Override
+    @Override
 	public void finalCleanup() {
 	}
 }

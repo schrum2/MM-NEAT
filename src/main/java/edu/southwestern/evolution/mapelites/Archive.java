@@ -3,7 +3,6 @@ package edu.southwestern.evolution.mapelites;
 import java.io.File;
 import java.util.ArrayList;
 
-import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
 import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.file.FileUtilities;
@@ -20,11 +19,9 @@ public class Archive<T> {
 	private BinLabels<T> mapping;
 	private boolean saveElites;
 	private String archiveDir;
-	private double mapElitesSaveThreshold;
 
 	@SuppressWarnings("unchecked")
 	public Archive(boolean saveElites) {
-		this.mapElitesSaveThreshold = Parameters.parameters.doubleParameter("mapElitesSaveThreshold");
 		this.saveElites = saveElites;
 		// Initialize mapping
 		try {
@@ -82,8 +79,11 @@ public class Archive<T> {
 			if(elite == null || candidateScore > elite.behaviorVector.get(i)) {
 				archive.set(i, candidate); // Replace elite
 				newElite = true;
-				if(saveElites && candidateScore > mapElitesSaveThreshold) {
-					String fileName = "ELITEindividual" + candidate.individual.getId() + ".xml";
+				// Need to save all elites so that re-load on resume works
+				if(saveElites) {
+					//String fileName = "ELITEindividual" + candidate.individual.getId() + ".xml";
+					// Easier to reload on resume if file name is uniform. Will also save space by overwriting
+					String fileName = "elite.xml";
 					String binPath = archiveDir + File.separator + mapping.binLabels().get(i);
 					Easy.save(candidate.individual, binPath + File.separator + fileName);
 				}

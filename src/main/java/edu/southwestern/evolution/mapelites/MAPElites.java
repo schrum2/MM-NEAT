@@ -131,4 +131,9 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 	public int currentIteration() {
 		return iterations;
 	}
+
+	@Override
+	public void finalCleanup() {
+		task.finalCleanup();
+	}
 }

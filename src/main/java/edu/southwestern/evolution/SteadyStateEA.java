@@ -23,4 +23,8 @@ public interface SteadyStateEA<T> extends EA {
 	 * @return Number of iterations
 	 */
 	public int currentIteration();
+	/**
+	 * Anything that must happen at the end of evolution
+	 */
+	public void finalCleanup();
 }

@@ -30,7 +30,7 @@ public class PictureInnovationTask<T extends Network> extends LonerTask<T> {
 	// Because the image is already the correct size. However, I read something about additional
 	// processing steps somewhere in a DL4J example.
 	private static final boolean PREPROCESS = true;
-	private double mapElitesSaveThreshold = Parameters.parameters.doubleParameter("mapElitesSaveThreshold");
+	private double pictureInnovationSaveThreshold = Parameters.parameters.doubleParameter("pictureInnovationSaveThreshold");
 	
 	@Override
 	public int numObjectives() {
@@ -69,8 +69,8 @@ public class PictureInnovationTask<T extends Network> extends LonerTask<T> {
 				// If the bin is empty, or the candidate is better than the elite for that bin's score
 				double binScore = result.behaviorVector.get(i);
 				if(elite == null || binScore > elite.behaviorVector.get(i)) {
-					if(binScore > mapElitesSaveThreshold) {
-						String fileName = String.format("%7.5f", binScore) + "picture" + individual.getId() + ".jpg";
+					if(binScore > pictureInnovationSaveThreshold) {
+						String fileName = String.format("%7.5f", binScore) + binLabels.get(i) + individual.getId() + ".jpg";
 						String binPath = archive.getArchiveDirectory() + File.separator + binLabels.get(i);
 						String fullName = binPath + File.separator + fileName;
 						System.out.println(fullName);
@@ -81,6 +81,31 @@ public class PictureInnovationTask<T extends Network> extends LonerTask<T> {
 		}
 		return result;
 	}
+	
+	/**
+	 * Save fresh archive of only the final images
+	 */
+	public void finalCleanup() {
+		// Save a collection of only the final images from each MAP Elites bin
+		if(CommonConstants.netio) {
+			@SuppressWarnings("unchecked")
+			Archive<T> archive = ((MAPElites<T>) MMNEAT.ea).getArchive();
+			String finalArchive = archive.getArchiveDirectory() + "Final";
+			new File(finalArchive).mkdir(); // Make different directory
+			List<String> binLabels = archive.getBinMapping().binLabels();
+			for(int i = 0; i < binLabels.size(); i++) {
+				String label = binLabels.get(i);
+				Score<T> score = archive.getElite(i);
+				Network cppn = score.individual.getPhenotype();
+				BufferedImage image = GraphicsUtil.imageFromCPPN(cppn, ImageNetClassification.IMAGE_NET_INPUT_WIDTH, ImageNetClassification.IMAGE_NET_INPUT_HEIGHT);
+				double binScore = score.behaviorVector.get(i);
+				String fileName = String.format("%7.5f", binScore) + label + ".jpg";
+				String fullName = finalArchive + File.separator + fileName;
+				GraphicsUtil.saveImage(image, fullName);
+			}
+		}
+	}
+
 
 	public int numCPPNInputs() {
 		return PicbreederTask.CPPN_NUM_INPUTS;
@@ -105,8 +130,8 @@ public class PictureInnovationTask<T extends Network> extends LonerTask<T> {
 				"includeApproxFunction:false",
 				"includeGaussFunction:true", // In original Innovation Engine
 				"includeSineFunction:true", // In original Innovation Engine
-				"includeSawtoothFunction:false", //"includeSawtoothFunction:true",
-				"includeAbsValFunction:false", //"includeAbsValFunction:true",
+				"includeSawtoothFunction:true", // I added this
+				"includeAbsValFunction:true", // I added this
 				"includeHalfLinearPiecewiseFunction:true", // In original Innovation Engine
 				"includeStretchedTanhFunction:false",
 				"includeReLUFunction:false",

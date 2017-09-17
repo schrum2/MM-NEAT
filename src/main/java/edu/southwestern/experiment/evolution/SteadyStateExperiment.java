@@ -33,6 +33,7 @@ public class SteadyStateExperiment<T> implements Experiment {
 		while(!shouldStop()) {
 			ea.newIndividual();
 		}
+		ea.finalCleanup();
 	}
 
 	@Override
