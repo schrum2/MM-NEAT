@@ -118,11 +118,13 @@ public class PictureInnovationTask<T extends Network> extends LonerTask<T> {
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
 		MMNEAT.main(new String[]{"runNumber:0","randomSeed:0","base:innovation","mu:400","maxGens:2000000",
 				"io:true","netio:true","mating:true","task:edu.southwestern.tasks.innovationengines.PictureInnovationTask",
-				"log:Innovation-Pictures","saveTo:Pictures","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3",
+				"log:InnovationPictures-AllModels","saveTo:AllModels","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3",
 				"cleanFrequency:-1","recurrency:false","logTWEANNData:false","logMutationAndLineage:false",
 				"ea:edu.southwestern.evolution.mapelites.MAPElites",
 				"experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment",
-				"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.ImageNetBinMapping","fs:false","watch:false",
+				"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.ImageNetBinMapping","fs:true",
+				//"imageNetModel:edu.southwestern.networks.dl4j.VGG19Wrapper",
+				"imageNetModel:edu.southwestern.networks.dl4j.AllZooModelImageNetModels",
 				"includeSigmoidFunction:true", // In original Innovation Engine
 				"includeTanhFunction:false",
 				"includeIdFunction:false",
@@ -130,15 +132,15 @@ public class PictureInnovationTask<T extends Network> extends LonerTask<T> {
 				"includeApproxFunction:false",
 				"includeGaussFunction:true", // In original Innovation Engine
 				"includeSineFunction:true", // In original Innovation Engine
-				"includeSawtoothFunction:false", 
-				"includeAbsValFunction:false",
+				"includeSawtoothFunction:true", // Added 
+				"includeAbsValFunction:true", // Added
 				"includeHalfLinearPiecewiseFunction:true", // In original Innovation Engine
 				"includeStretchedTanhFunction:false",
 				"includeReLUFunction:false",
 				"includeSoftplusFunction:false",
 				"includeLeakyReLUFunction:false",
-				"includeFullSawtoothFunction:false", //"includeFullSawtoothFunction:true",
-				"includeTriangleWaveFunction:false", //"includeTriangleWaveFunction:true",
-				"includeSquareWaveFunction:false"}); //"includeSquareWaveFunction:true"});
+				"includeFullSawtoothFunction:false",
+				"includeTriangleWaveFunction:false", 
+				"includeSquareWaveFunction:false"}); 
 	}
 }

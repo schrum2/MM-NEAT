@@ -8,8 +8,6 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.StringTokenizer;
 
-import org.deeplearning4j.zoo.model.VGG19;
-
 import edu.southwestern.boardGame.agents.BoardGamePlayerOneStepEval;
 import edu.southwestern.boardGame.agents.BoardGamePlayerRandom;
 import edu.southwestern.boardGame.featureExtractor.TwoDimensionalRawBoardGameFeatureExtractor;
@@ -25,6 +23,7 @@ import edu.southwestern.experiment.evolution.LimitedSinglePopulationGenerational
 import edu.southwestern.gridTorus.controllers.AggressivePredatorController;
 import edu.southwestern.gridTorus.controllers.PreyFleeClosestPredatorController;
 import edu.southwestern.networks.ActivationFunctions;
+import edu.southwestern.networks.dl4j.VGG19Wrapper;
 import edu.southwestern.networks.hyperneat.CenteredSubstrateMapping;
 import edu.southwestern.tasks.interactive.breedesizer.Keyboard;
 import edu.southwestern.tasks.microrts.evaluation.NNComplexEvaluationFunction;
@@ -826,7 +825,7 @@ public class Parameters {
 		classOptions.add("microRTSEnemySequence", null, "class containing sequence of opponents for iterative evolution");
 		classOptions.add("microRTSMapSequence", null, "class containing sequence of maps for iterative evolution");
 		classOptions.add("mapElitesBinLabels", null, "class containing way of putting genotypes in bins of the MAP Elites archive");
-		classOptions.add("imageNetModel", VGG19.class, "DL4J model that was trained on ImageNet to classify images");
+		classOptions.add("imageNetModel", VGG19Wrapper.class, "DL4J model that was trained on ImageNet to classify images");
 	}
 
 	/**

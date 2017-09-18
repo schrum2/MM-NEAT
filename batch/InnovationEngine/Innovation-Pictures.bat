@@ -1,3 +1,0 @@
-cd ..
-cd ..
-java -jar target/MM-NEAT-0.0.1-SNAPSHOT.jar runNumber:%1 randomSeed:%1 base:innovation mu:100 maxGens:10000 io:true netio:true mating:true task:edu.southwestern.tasks.innovationengines.PictureInnovationTask log:Innovation-Pictures saveTo:Pictures allowMultipleFunctions:true ftype:0 netChangeActivationRate:0.3 cleanFrequency:-1 recurrency:false logTWEANNData:false logMutationAndLineage:false ea:edu.southwestern.evolution.mapelites.MAPElites experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment mapElitesBinLabels:edu.southwestern.tasks.innovationengines.ImageNetBinMapping fs:true watch:false 
