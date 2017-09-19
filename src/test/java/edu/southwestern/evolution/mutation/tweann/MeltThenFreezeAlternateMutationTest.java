@@ -1,6 +1,7 @@
 package edu.southwestern.evolution.mutation.tweann;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.After;
 import org.junit.Before;
@@ -9,11 +10,7 @@ import org.junit.Test;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.EvolutionaryHistory;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
-import edu.southwestern.networks.TWEANN;
 import edu.southwestern.parameters.Parameters;
-import edu.southwestern.tasks.CommonTaskUtil;
-import edu.southwestern.util.MiscUtil;
-import edu.southwestern.util.graphics.DrawingPanel;
 
 public class MeltThenFreezeAlternateMutationTest {
 

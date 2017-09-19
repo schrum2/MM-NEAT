@@ -8,14 +8,13 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
+import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.boardGame.BoardGameState;
 import edu.southwestern.boardGame.TestBoardGame;
 import edu.southwestern.boardGame.agents.BoardGamePlayer;
 import edu.southwestern.boardGame.agents.BoardGamePlayerRandom;
-import edu.southwestern.boardGame.checkers.CheckersState;
 import edu.southwestern.boardGame.fitnessFunction.BoardGameFitnessFunction;
 import edu.southwestern.boardGame.fitnessFunction.SimpleWinLoseDrawBoardGameFitness;
-import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.util.datastructures.Pair;
 
