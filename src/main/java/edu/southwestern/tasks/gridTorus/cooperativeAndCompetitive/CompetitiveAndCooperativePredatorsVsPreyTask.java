@@ -43,7 +43,8 @@ public class CompetitiveAndCooperativePredatorsVsPreyTask<T extends Network> ext
 	@Override
 	public TorusPredPreyController[] getPredAgents(Genotype<T>[] team) {
 		int numPreds = Parameters.parameters.integerParameter("torusPredators");
-		Genotype[] predTeam = new Genotype[numPreds];
+		@SuppressWarnings("unchecked")
+		Genotype<T>[] predTeam = new Genotype[numPreds];
 		//NOTE: Assumes that predators were stored first in the "team" list
 		System.arraycopy(team, 0, predTeam, 0, numPreds);
 		TorusPredPreyTask.getEvolvedControllers(task.evolved, predTeam, true, 0);
@@ -67,7 +68,8 @@ public class CompetitiveAndCooperativePredatorsVsPreyTask<T extends Network> ext
 	public TorusPredPreyController[] getPreyAgents(Genotype<T>[] team) {
 		int numPreys = Parameters.parameters.integerParameter("torusPreys");
 		int numPreds = Parameters.parameters.integerParameter("torusPredators");
-		Genotype[] preyTeam = new Genotype[numPreys];
+		@SuppressWarnings("unchecked")
+		Genotype<T>[] preyTeam = new Genotype[numPreys];
 		//NOTE: Assumes that predators were stored first in the "team" list, then prey
 		System.arraycopy(team, numPreds, preyTeam, 0, numPreys);
 		TorusPredPreyTask.getEvolvedControllers(task.evolved, preyTeam, false, numPreds);

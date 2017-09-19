@@ -432,7 +432,10 @@ public class MMNEAT {
 			if(Parameters.parameters.booleanParameter("hallOfFame")){
 				hallOfFame = new HallOfFame();
 			}
-			if (task instanceof MsPacManTask) {
+			if(task instanceof FunctionOptimization) {
+				System.out.println("Setup Function Optimization");
+				// Already setup in setupFunctionOptimization();
+			} else if (task instanceof MsPacManTask) {
 				MsPacManInitialization.setupGenotypePoolsForMsPacman();
 				System.out.println("Setup Ms. Pac-Man Task");
 				pacmanInputOutputMediator = (MsPacManControllerInputOutputMediator) ClassCreation.createObject("pacmanInputOutputMediator");

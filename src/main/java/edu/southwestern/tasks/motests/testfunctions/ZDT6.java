@@ -1,5 +1,7 @@
 package edu.southwestern.tasks.motests.testfunctions;
 
+import java.util.ArrayList;
+
 import edu.southwestern.evolution.fitness.FitnessFunction;
 
 /**
@@ -12,7 +14,8 @@ public class ZDT6 extends ZDT {
 		super(10);
 	}
 
-	public FitnessFunction[] getFitnessFunctions() {
+	@SuppressWarnings("unchecked")
+	public FitnessFunction<ArrayList<Double>>[] getFitnessFunctions() {
 		return new FitnessFunction[] { new ZDT6Function(false), new ZDT6Function(true) };
 	}
 }

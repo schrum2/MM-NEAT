@@ -1,5 +1,7 @@
 package edu.southwestern.tasks.motests.testfunctions;
 
+import java.util.ArrayList;
+
 import edu.southwestern.evolution.fitness.FitnessFunction;
 
 /**
@@ -16,7 +18,8 @@ public class POL implements FunctionOptimizationSet {
 		return new double[] { Math.PI, Math.PI };
 	}
 
-	public FitnessFunction[] getFitnessFunctions() {
+	@SuppressWarnings("unchecked")
+	public FitnessFunction<ArrayList<Double>>[] getFitnessFunctions() {
 		return new FitnessFunction[] { new POLFunction(false), new POLFunction(true) };
 	}
 
