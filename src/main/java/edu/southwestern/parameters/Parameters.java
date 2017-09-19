@@ -212,11 +212,10 @@ public class Parameters {
 		integerOptions.add("doomInputStartY", 0, "The starting y coordinate for a VizDoom input section");
 		integerOptions.add("doomInputHeight", 150, "The height for a VizDoom input section");
 		integerOptions.add("doomInputWidth", 200, "The width for a VizDoom input section");
-		integerOptions.add("imageSize", 250, "Size of image for Picbreeder");
+		integerOptions.add("imageSize", 256, "Size of image for Picbreeder");
 		integerOptions.add("doomEpisodeLength", 200, "The length of the current game's episodes");
-		integerOptions.add("rlGluePort", -1, "DEPRECATED: REMOVE FROM CODE AND ALL BATCH FILES");
-		integerOptions.add("imageHeight", 100, "height of CPPN image (overrides height of image being matched if overrideImageSize is true)");
-		integerOptions.add("imageWidth", 100, "width of CPPN image (overrides width of image being matched if overrideImageSize is true)");
+		integerOptions.add("imageHeight", 256, "height of CPPN image (overrides height of image being matched if overrideImageSize is true)");
+		integerOptions.add("imageWidth", 256, "width of CPPN image (overrides width of image being matched if overrideImageSize is true)");
 		integerOptions.add("junctionsToSense", 1, "Number of junctions to which distance should be sensed");
 		integerOptions.add("crowdedGhostDistance", 30, "Distance at which ghosts are considered to be crowding each other");
 		integerOptions.add("closeGhostDistance", 35, "Distance at which threat ghosts are considered too close for safety");

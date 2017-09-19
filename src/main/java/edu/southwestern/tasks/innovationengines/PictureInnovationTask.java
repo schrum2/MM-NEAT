@@ -86,6 +86,8 @@ public class PictureInnovationTask<T extends Network> extends LonerTask<T> {
 	 * Save fresh archive of only the final images
 	 */
 	public void finalCleanup() {
+		int saveWidth = Parameters.parameters.integerParameter("imageWidth"); 
+		int saveHeight = Parameters.parameters.integerParameter("imageHeight");
 		// Save a collection of only the final images from each MAP Elites bin
 		if(CommonConstants.netio) {
 			@SuppressWarnings("unchecked")
@@ -97,7 +99,7 @@ public class PictureInnovationTask<T extends Network> extends LonerTask<T> {
 				String label = binLabels.get(i);
 				Score<T> score = archive.getElite(i);
 				Network cppn = score.individual.getPhenotype();
-				BufferedImage image = GraphicsUtil.imageFromCPPN(cppn, ImageNetClassification.IMAGE_NET_INPUT_WIDTH, ImageNetClassification.IMAGE_NET_INPUT_HEIGHT);
+				BufferedImage image = GraphicsUtil.imageFromCPPN(cppn, saveWidth, saveHeight);
 				double binScore = score.behaviorVector.get(i);
 				String fileName = String.format("%7.5f", binScore) + label + ".jpg";
 				String fullName = finalArchive + File.separator + fileName;
@@ -124,7 +126,8 @@ public class PictureInnovationTask<T extends Network> extends LonerTask<T> {
 				"experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment",
 				"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.ImageNetBinMapping","fs:true",
 				//"imageNetModel:edu.southwestern.networks.dl4j.VGG19Wrapper",
-				"imageNetModel:edu.southwestern.networks.dl4j.AllZooModelImageNetModels",
+				"imageNetModel:edu.southwestern.networks.dl4j.AverageAllZooModelImageNetModels",
+				"imageWidth:500","imageHeight:500", // Final save size
 				"includeSigmoidFunction:true", // In original Innovation Engine
 				"includeTanhFunction:false",
 				"includeIdFunction:false",

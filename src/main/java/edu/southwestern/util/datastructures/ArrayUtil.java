@@ -937,4 +937,19 @@ public class ArrayUtil {
 		}
 		return result;
 	}
+	
+	/**
+	 * For each pair of elements in the two separate 1D INDArrays
+	 * at the same index, take the min and save the result in the
+	 * toModify array.
+	 * @param toModify Array that is modified to contain minimum values
+	 * @param other Other array checked for smaller values
+	 */
+	public static void pairwiseMinimum(INDArray toModify, INDArray other) {
+		assert toModify.size(0) == other.size(0) : "INDArrays not the same size";
+		int size = toModify.size(0);
+		for(int i = 0; i < size; i++) {
+			toModify.put(0, i, Math.min(toModify.getDouble(0,i), other.getDouble(0,i)));
+		}
+	}
 }
