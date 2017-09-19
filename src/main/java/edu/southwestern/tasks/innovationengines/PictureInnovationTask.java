@@ -86,6 +86,7 @@ public class PictureInnovationTask<T extends Network> extends LonerTask<T> {
 	 * Save fresh archive of only the final images
 	 */
 	public void finalCleanup() {
+		System.out.println("Save images of all final elites");
 		int saveWidth = Parameters.parameters.integerParameter("imageWidth"); 
 		int saveHeight = Parameters.parameters.integerParameter("imageHeight");
 		// Save a collection of only the final images from each MAP Elites bin
@@ -128,6 +129,7 @@ public class PictureInnovationTask<T extends Network> extends LonerTask<T> {
 				//"imageNetModel:edu.southwestern.networks.dl4j.VGG19Wrapper",
 				//"imageNetModel:edu.southwestern.networks.dl4j.VGG16Wrapper",
 				"imageNetModel:edu.southwestern.networks.dl4j.AverageAllZooModelImageNetModels",
+				"pictureInnovationSaveThreshold:0.5",
 				"imageWidth:500","imageHeight:500", // Final save size
 				"includeSigmoidFunction:true", // In original Innovation Engine
 				"includeTanhFunction:false",

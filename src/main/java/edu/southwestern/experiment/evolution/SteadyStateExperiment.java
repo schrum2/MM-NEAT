@@ -36,11 +36,11 @@ public class SteadyStateExperiment<T> implements Experiment {
 
 	@Override
 	public void run() {
-		while(!shouldStop()) {
-			ea.newIndividual();
-			Parameters.parameters.saveParameters();
+		while(!shouldStop()) { // Until done
+			ea.newIndividual(); // Make new individuals
+			Parameters.parameters.saveParameters(); // Save the parameters and the archetype
 			EvolutionaryHistory.saveArchetype(0);
-			if(cleanArchetype) {
+			if(cleanArchetype) { // Periodically clean extinct genes from the archetype
 				ArrayList<Genotype<T>> pop = ea.getPopulation();
 				ArrayList<TWEANNGenotype> tweannPop = new ArrayList<TWEANNGenotype>(pop.size());
 				for(Genotype<T> g : pop) tweannPop.add((TWEANNGenotype) g);
