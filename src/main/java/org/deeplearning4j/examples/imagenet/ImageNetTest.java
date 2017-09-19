@@ -17,6 +17,7 @@ import org.nd4j.linalg.factory.Nd4j;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
+import edu.southwestern.networks.dl4j.AllZooModelImageNetModels;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.graphics.DrawingPanel;
@@ -29,7 +30,8 @@ public class ImageNetTest {
 	// Consider turning this file into a unit test instead
 	public static void main(String[] args) throws IOException, InterruptedException {
 		Parameters.initializeParameterCollections(new String[] {}); // default parameters		
-
+		AllZooModelImageNetModels.initAllImageNets();
+		
 		// From the original Picbreeder
 //		NativeImageLoader loader = new NativeImageLoader(224, 224, 3);
 //		results(loader.asMatrix(new File("d:/TEMP/FromRealPicbreeder/butterfly.jpg")), true); 
@@ -61,15 +63,15 @@ public class ImageNetTest {
 //		MiscUtil.waitForReadStringAndEnterKeyPress();
 
 		
-		resultsFromOne(loader.asMatrix(new File("data/imagematch/car.jpg")), true);
+		resultsFromAll(loader.asMatrix(new File("data/imagematch/car.jpg")), true);
 		MiscUtil.waitForReadStringAndEnterKeyPress();
-		resultsFromOne(loader.asMatrix(new File("data/imagematch/cat.jpg")), true);
+		resultsFromAll(loader.asMatrix(new File("data/imagematch/cat.jpg")), true);
 		MiscUtil.waitForReadStringAndEnterKeyPress();		
-		resultsFromOne(loader.asMatrix(new File("data/imagematch/organimage.bmp")), false);
+		resultsFromAll(loader.asMatrix(new File("data/imagematch/organimage.bmp")), false);
 		MiscUtil.waitForReadStringAndEnterKeyPress();		
-		resultsFromOne(loader.asMatrix(new File("data/imagematch/sadsheepimage.bmp")), false);
+		resultsFromAll(loader.asMatrix(new File("data/imagematch/sadsheepimage.bmp")), false);
 		MiscUtil.waitForReadStringAndEnterKeyPress();		
-		resultsFromOne(loader.asMatrix(new File("data/imagematch/supercreepypersonimage.jpg")), false);
+		resultsFromAll(loader.asMatrix(new File("data/imagematch/supercreepypersonimage.jpg")), false);
 		MiscUtil.waitForReadStringAndEnterKeyPress();		
 		
 //		Parameters.initializeParameterCollections(new String[]{"runNumber:0","randomSeed:0","trials:1","mu:16","maxGens:500","io:false","netio:false","mating:true","fs:true","task:edu.southwestern.tasks.interactive.picbreeder.PicbreederTask","allowMultipleFunctions:true","ftype:0","watch:false","netChangeActivationRate:0.3","cleanFrequency:-1","recurrency:false","cleanOldNetworks:false","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageSize:224"});
@@ -87,14 +89,17 @@ public class ImageNetTest {
 //		}
 	}
 	
-//	public static void resultsFromAll(INDArray image, boolean preprocess) {
-//		Map<String, INDArray> allScores = ImageNetClassification.getAllImageNetModelPredictions(image, preprocess);
-//		for(String key : allScores.keySet()) {
-//			INDArray scores = allScores.get(key);
-//			String decodedLabels = new ImageNetLabels().decodePredictions(scores);
-//			System.out.println(key + ":\n" + decodedLabels);
-//		}
-//	}
+	public static void resultsFromAll(INDArray image, boolean preprocess) {
+		if(preprocess) {
+			ImageNetClassification.imagePreprocess(image);
+		}
+		Map<String, INDArray> allScores = AllZooModelImageNetModels.runAllModels(image);
+		for(String key : allScores.keySet()) {
+			INDArray scores = allScores.get(key);
+			String decodedLabels = new ImageNetLabels().decodePredictions(scores);
+			System.out.println(key + ":\n" + decodedLabels);
+		}
+	}
 	
 	public static void resultsFromOne(INDArray image, boolean preprocess) {
 		INDArray scores = ImageNetClassification.getImageNetPredictions(image, preprocess);

@@ -131,12 +131,23 @@ public class ImageNetClassification {
 	 */
 	private static INDArray getImageNetPredictions(TensorNetwork model, INDArray image, boolean preprocess) {
 		if(preprocess) {
-			// Is VGG16ImagePreProcessor too specific?
-			DataNormalization scaler = new VGG16ImagePreProcessor();
-			scaler.transform(image);
-		}		
+			imagePreprocess(image);
+		}
 		INDArray predictions = model.output(image);
 		return predictions.getRow(0).dup(); // Should I duplicate with dup? Worth the load? Needed?
+	}
+	
+	/**
+	 * Preprocess an image by scaling it to the correct size.
+	 * HOWEVER, are more preprocessing steps needed here? 
+	 * Or are model-specific steps needed?
+	 * Investigate further.
+	 * @param image Image represented as 2D INDArray
+	 */
+	public static void imagePreprocess(INDArray image) {
+		// Is VGG16ImagePreProcessor too specific?
+		DataNormalization scaler = new VGG16ImagePreProcessor();
+		scaler.transform(image);
 	}
 		
 	/**
