@@ -20,7 +20,7 @@ public class MinAllZooModelImageNetModels extends AllZooModelImageNetModels {
 		while(itr.hasNext()) {
 			INDArray nextScores = allScores.get(itr.next());
 			// Get minimum in each category
-			ArrayUtil.pairwiseMinimum(scores, nextScores); // Modifies scores variable
+			ArrayUtil.pairwiseMinimum(scores, nextScores); // Modifies scores variable			
 		}
 		// scores is now the element-wise min
 		return scores;

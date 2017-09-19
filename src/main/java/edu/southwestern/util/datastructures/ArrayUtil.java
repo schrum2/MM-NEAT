@@ -931,7 +931,7 @@ public class ArrayUtil {
 	 * @return ArrayList with same values in same order
 	 */
 	public static ArrayList<Double> doubleVectorFromINDArray(INDArray values) {
-		ArrayList<Double> result = new ArrayList<Double>(values.size(0));
+		ArrayList<Double> result = new ArrayList<Double>(values.length());
 		for (int i = 0; i < values.length(); i++) {
 			result.add(values.getDouble(0,i));
 		}
@@ -946,10 +946,10 @@ public class ArrayUtil {
 	 * @param other Other array checked for smaller values
 	 */
 	public static void pairwiseMinimum(INDArray toModify, INDArray other) {
-		assert toModify.size(0) == other.size(0) : "INDArrays not the same size";
-		int size = toModify.size(0);
+		assert toModify.length() == other.length() : "INDArrays not the same size";
+		int size = toModify.length();
 		for(int i = 0; i < size; i++) {
 			toModify.put(0, i, Math.min(toModify.getDouble(0,i), other.getDouble(0,i)));
-		}
+		}		
 	}
 }
