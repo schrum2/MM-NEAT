@@ -29,8 +29,9 @@ public class ImageNetTest {
 
 	// Consider turning this file into a unit test instead
 	public static void main(String[] args) throws IOException, InterruptedException {
-		Parameters.initializeParameterCollections(new String[] {"imageNetModel:edu.southwestern.networks.dl4j.MinAllZooModelImageNetModels"});		
-		AllZooModelImageNetModels.initAllImageNets();
+		//Parameters.initializeParameterCollections(new String[] {"imageNetModel:edu.southwestern.networks.dl4j.MinAllZooModelImageNetModels"});		
+		Parameters.initializeParameterCollections(new String[] {"imageNetModel:edu.southwestern.networks.dl4j.VGG19Wrapper"});		
+		//AllZooModelImageNetModels.initAllImageNets();
 		
 		// From the original Picbreeder
 //		NativeImageLoader loader = new NativeImageLoader(224, 224, 3);
@@ -57,26 +58,36 @@ public class ImageNetTest {
 //		MiscUtil.waitForReadStringAndEnterKeyPress();
 
 		NativeImageLoader loader = new NativeImageLoader(224, 224, 3);
+		resultsFromOne(loader.asMatrix(new File("D:\\TEMP\\VGG19Test\\cat-getty_0.jpg")), true);
+		MiscUtil.waitForReadStringAndEnterKeyPress();
+		resultsFromOne(loader.asMatrix(new File("D:\\TEMP\\VGG19Test\\thul-IMG_2100.jpg")), true);
+		MiscUtil.waitForReadStringAndEnterKeyPress();
+		resultsFromOne(loader.asMatrix(new File("D:\\TEMP\\VGG19Test\\140272627-grooming-needs-senior-cat-632x475.jpg")), true);
+		MiscUtil.waitForReadStringAndEnterKeyPress();
+		resultsFromOne(loader.asMatrix(new File("D:\\TEMP\\VGG19Test\\6becb852b27e1d80fbd03048dfb377a5_1273011771.jpg")), true);
+		MiscUtil.waitForReadStringAndEnterKeyPress();		
+		
 //		resultsFromAll(loader.asMatrix(new File("innovation\\AllMinimumModel0\\archive\\window_shade\\0.99997window_shade6023.jpg")), true);
 //		MiscUtil.waitForReadStringAndEnterKeyPress();
 //		resultsFromAll(loader.asMatrix(new File("innovation\\AllMinimumModel0\\archive\\window_shade\\0.99997window_shade6023.jpg")), false);
 //		MiscUtil.waitForReadStringAndEnterKeyPress();
 
-		resultsFromAll(loader.asMatrix(new File("data/imagematch/car.jpg")), true);
-		resultsFromOne(loader.asMatrix(new File("data/imagematch/car.jpg")), true);
-		MiscUtil.waitForReadStringAndEnterKeyPress();
-		resultsFromAll(loader.asMatrix(new File("data/imagematch/cat.jpg")), true);
-		resultsFromOne(loader.asMatrix(new File("data/imagematch/cat.jpg")), true);
-		MiscUtil.waitForReadStringAndEnterKeyPress();		
-		resultsFromAll(loader.asMatrix(new File("data/imagematch/organimage.bmp")), false);
-		resultsFromOne(loader.asMatrix(new File("data/imagematch/organimage.bmp")), false);
-		MiscUtil.waitForReadStringAndEnterKeyPress();		
-		resultsFromAll(loader.asMatrix(new File("data/imagematch/sadsheepimage.bmp")), false);
-		resultsFromOne(loader.asMatrix(new File("data/imagematch/sadsheepimage.bmp")), false);
-		MiscUtil.waitForReadStringAndEnterKeyPress();		
-		resultsFromAll(loader.asMatrix(new File("data/imagematch/supercreepypersonimage.jpg")), false);
-		resultsFromOne(loader.asMatrix(new File("data/imagematch/supercreepypersonimage.jpg")), false);
-		MiscUtil.waitForReadStringAndEnterKeyPress();		
+		
+//		resultsFromAll(loader.asMatrix(new File("data/imagematch/car.jpg")), true);
+//		resultsFromOne(loader.asMatrix(new File("data/imagematch/car.jpg")), true);
+//		MiscUtil.waitForReadStringAndEnterKeyPress();
+//		resultsFromAll(loader.asMatrix(new File("data/imagematch/cat.jpg")), true);
+//		resultsFromOne(loader.asMatrix(new File("data/imagematch/cat.jpg")), true);
+//		MiscUtil.waitForReadStringAndEnterKeyPress();		
+//		resultsFromAll(loader.asMatrix(new File("data/imagematch/organimage.bmp")), false);
+//		resultsFromOne(loader.asMatrix(new File("data/imagematch/organimage.bmp")), false);
+//		MiscUtil.waitForReadStringAndEnterKeyPress();		
+//		resultsFromAll(loader.asMatrix(new File("data/imagematch/sadsheepimage.bmp")), false);
+//		resultsFromOne(loader.asMatrix(new File("data/imagematch/sadsheepimage.bmp")), false);
+//		MiscUtil.waitForReadStringAndEnterKeyPress();		
+//		resultsFromAll(loader.asMatrix(new File("data/imagematch/supercreepypersonimage.jpg")), false);
+//		resultsFromOne(loader.asMatrix(new File("data/imagematch/supercreepypersonimage.jpg")), false);
+//		MiscUtil.waitForReadStringAndEnterKeyPress();		
 		
 //		Parameters.initializeParameterCollections(new String[]{"runNumber:0","randomSeed:0","trials:1","mu:16","maxGens:500","io:false","netio:false","mating:true","fs:true","task:edu.southwestern.tasks.interactive.picbreeder.PicbreederTask","allowMultipleFunctions:true","ftype:0","watch:false","netChangeActivationRate:0.3","cleanFrequency:-1","recurrency:false","cleanOldNetworks:false","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageSize:224"});
 //		MMNEAT.loadClasses();
