@@ -134,7 +134,7 @@ public class ImageNetClassification {
 			imagePreprocess(image);
 		}
 		INDArray predictions = model.output(image);
-		return predictions.getRow(0).dup(); // Should I duplicate with dup? Worth the load? Needed?
+		return predictions.getRow(0); //.dup(); // Should I duplicate with dup? Worth the load? Needed?
 	}
 	
 	/**

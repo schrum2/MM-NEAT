@@ -30,7 +30,7 @@ public abstract class AllZooModelImageNetModels implements TensorNetwork {
 		Map<String, INDArray> result = new HashMap<String, INDArray>();
 		for(String modelName : imageNetModels.keySet()) {
 			ComputationGraph model = imageNetModels.get(modelName);
-			INDArray nextScores = model.output(input)[0];
+			INDArray nextScores = model.output(input)[0].getRow(0);
 			result.put(modelName, nextScores);
 		}
 		return result;

@@ -30,7 +30,8 @@ public class ImageNetTest {
 	// Consider turning this file into a unit test instead
 	public static void main(String[] args) throws IOException, InterruptedException {
 		//Parameters.initializeParameterCollections(new String[] {"imageNetModel:edu.southwestern.networks.dl4j.MinAllZooModelImageNetModels"});		
-		Parameters.initializeParameterCollections(new String[] {"imageNetModel:edu.southwestern.networks.dl4j.VGG19Wrapper"});		
+		Parameters.initializeParameterCollections(new String[] {"imageNetModel:edu.southwestern.networks.dl4j.VGG16Wrapper"});		
+		//Parameters.initializeParameterCollections(new String[] {"imageNetModel:edu.southwestern.networks.dl4j.VGG19Wrapper"});		
 		//AllZooModelImageNetModels.initAllImageNets();
 		
 		// From the original Picbreeder
@@ -57,28 +58,31 @@ public class ImageNetTest {
 //		// VGG16: crash_helmet: 45%, VGG19: crash_helmet: 39%, GoogLeNet: ski_mask: 18%, ResNet50: ski_mask: 89%
 //		MiscUtil.waitForReadStringAndEnterKeyPress();
 
-		NativeImageLoader loader = new NativeImageLoader(224, 224, 3);
-		resultsFromOne(loader.asMatrix(new File("D:\\TEMP\\VGG19Test\\cat-getty_0.jpg")), true);
-		MiscUtil.waitForReadStringAndEnterKeyPress();
-		resultsFromOne(loader.asMatrix(new File("D:\\TEMP\\VGG19Test\\thul-IMG_2100.jpg")), true);
-		MiscUtil.waitForReadStringAndEnterKeyPress();
-		resultsFromOne(loader.asMatrix(new File("D:\\TEMP\\VGG19Test\\140272627-grooming-needs-senior-cat-632x475.jpg")), true);
-		MiscUtil.waitForReadStringAndEnterKeyPress();
-		resultsFromOne(loader.asMatrix(new File("D:\\TEMP\\VGG19Test\\6becb852b27e1d80fbd03048dfb377a5_1273011771.jpg")), true);
-		MiscUtil.waitForReadStringAndEnterKeyPress();		
+		NativeImageLoader loader = new NativeImageLoader(ImageNetClassification.IMAGE_NET_INPUT_HEIGHT, ImageNetClassification.IMAGE_NET_INPUT_WIDTH, ImageNetClassification.IMAGE_NET_INPUT_CHANNELS);
+//		resultsFromOne(loader.asMatrix(new File("D:\\TEMP\\VGG19Test\\cat-getty_0.jpg")), true);
+//		MiscUtil.waitForReadStringAndEnterKeyPress();
+//		resultsFromOne(loader.asMatrix(new File("D:\\TEMP\\VGG19Test\\thul-IMG_2100.jpg")), true);
+//		MiscUtil.waitForReadStringAndEnterKeyPress();
+//		resultsFromOne(loader.asMatrix(new File("D:\\TEMP\\VGG19Test\\140272627-grooming-needs-senior-cat-632x475.jpg")), true);
+//		MiscUtil.waitForReadStringAndEnterKeyPress();
+//		resultsFromOne(loader.asMatrix(new File("D:\\TEMP\\VGG19Test\\6becb852b27e1d80fbd03048dfb377a5_1273011771.jpg")), true);
+//		MiscUtil.waitForReadStringAndEnterKeyPress();		
 		
 //		resultsFromAll(loader.asMatrix(new File("innovation\\AllMinimumModel0\\archive\\window_shade\\0.99997window_shade6023.jpg")), true);
 //		MiscUtil.waitForReadStringAndEnterKeyPress();
 //		resultsFromAll(loader.asMatrix(new File("innovation\\AllMinimumModel0\\archive\\window_shade\\0.99997window_shade6023.jpg")), false);
 //		MiscUtil.waitForReadStringAndEnterKeyPress();
 
+//		resultsFromAll(loader.asMatrix(new File("innovation\\AllMinimumModel0\\archive\\jellyfish\\0.71373jellyfish967.jpg")), true);
+//		resultsFromOne(loader.asMatrix(new File("innovation\\AllMinimumModel0\\archive\\jellyfish\\0.71373jellyfish967.jpg")), true);
+//		MiscUtil.waitForReadStringAndEnterKeyPress();	
 		
 //		resultsFromAll(loader.asMatrix(new File("data/imagematch/car.jpg")), true);
 //		resultsFromOne(loader.asMatrix(new File("data/imagematch/car.jpg")), true);
 //		MiscUtil.waitForReadStringAndEnterKeyPress();
 //		resultsFromAll(loader.asMatrix(new File("data/imagematch/cat.jpg")), true);
-//		resultsFromOne(loader.asMatrix(new File("data/imagematch/cat.jpg")), true);
-//		MiscUtil.waitForReadStringAndEnterKeyPress();		
+		resultsFromOne(loader.asMatrix(new File("data/imagematch/cat.jpg")), true);
+		MiscUtil.waitForReadStringAndEnterKeyPress();		
 //		resultsFromAll(loader.asMatrix(new File("data/imagematch/organimage.bmp")), false);
 //		resultsFromOne(loader.asMatrix(new File("data/imagematch/organimage.bmp")), false);
 //		MiscUtil.waitForReadStringAndEnterKeyPress();		
