@@ -1,9 +1,12 @@
 package edu.southwestern.experiment.evolution;
 
+import java.util.ArrayList;
+
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.EvolutionaryHistory;
 import edu.southwestern.evolution.SteadyStateEA;
 import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.experiment.Experiment;
 import edu.southwestern.parameters.Parameters;
 
@@ -11,6 +14,7 @@ public class SteadyStateExperiment<T> implements Experiment {
 
 	private SteadyStateEA<T> ea;
 	private int maxIterations;
+	private boolean cleanArchetype;
 
 	@SuppressWarnings("unchecked")
 	public SteadyStateExperiment() {
@@ -22,6 +26,7 @@ public class SteadyStateExperiment<T> implements Experiment {
 		this.ea.initialize(example);
 		// Overriding the meaning of maxGens to treat it like maxIterations
 		maxIterations = Parameters.parameters.integerParameter("maxGens");
+		this.cleanArchetype = MMNEAT.genotype instanceof TWEANNGenotype;
 	}
 	
 	@Override
@@ -35,6 +40,12 @@ public class SteadyStateExperiment<T> implements Experiment {
 			ea.newIndividual();
 			Parameters.parameters.saveParameters();
 			EvolutionaryHistory.saveArchetype(0);
+			if(cleanArchetype) {
+				ArrayList<Genotype<T>> pop = ea.getPopulation();
+				ArrayList<TWEANNGenotype> tweannPop = new ArrayList<TWEANNGenotype>(pop.size());
+				for(Genotype<T> g : pop) tweannPop.add((TWEANNGenotype) g);
+				EvolutionaryHistory.cleanArchetype(0, tweannPop, ea.currentIteration());
+			}
 		}
 		ea.finalCleanup();
 	}

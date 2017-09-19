@@ -164,4 +164,16 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 	public void finalCleanup() {
 		task.finalCleanup();
 	}
+
+	/**
+	 * Take members from archive and place them in an ArrayList
+	 */
+	@Override
+	public ArrayList<Genotype<T>> getPopulation() {
+		ArrayList<Genotype<T>> result = new ArrayList<Genotype<T>>(archive.archive.size());
+		for(Score<T> s : archive.archive) {
+			result.add(s.individual);
+		}
+		return result;
+	}
 }

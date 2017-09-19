@@ -121,11 +121,12 @@ public class PictureInnovationTask<T extends Network> extends LonerTask<T> {
 		MMNEAT.main(new String[]{"runNumber:0","randomSeed:0","base:innovation","mu:400","maxGens:2000000",
 				"io:true","netio:true","mating:true","task:edu.southwestern.tasks.innovationengines.PictureInnovationTask",
 				"log:InnovationPictures-AllModels","saveTo:AllModels","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3",
-				"cleanFrequency:-1","recurrency:false","logTWEANNData:false","logMutationAndLineage:false",
+				"cleanFrequency:400","recurrency:false","logTWEANNData:false","logMutationAndLineage:true",
 				"ea:edu.southwestern.evolution.mapelites.MAPElites",
 				"experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment",
 				"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.ImageNetBinMapping","fs:true",
 				//"imageNetModel:edu.southwestern.networks.dl4j.VGG19Wrapper",
+				//"imageNetModel:edu.southwestern.networks.dl4j.VGG16Wrapper",
 				"imageNetModel:edu.southwestern.networks.dl4j.AverageAllZooModelImageNetModels",
 				"imageWidth:500","imageHeight:500", // Final save size
 				"includeSigmoidFunction:true", // In original Innovation Engine

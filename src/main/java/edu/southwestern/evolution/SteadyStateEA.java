@@ -1,5 +1,7 @@
 package edu.southwestern.evolution;
 
+import java.util.ArrayList;
+
 import edu.southwestern.evolution.genotypes.Genotype;
 
 /**
@@ -27,4 +29,9 @@ public interface SteadyStateEA<T> extends EA {
 	 * Anything that must happen at the end of evolution
 	 */
 	public void finalCleanup();
+	/**
+	 * Return population as a list of genotypes
+	 * @return Array List of Genotypes 
+	 */
+	public ArrayList<Genotype<T>> getPopulation();
 }
