@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.nd4j.linalg.api.ndarray.INDArray;
+import org.nd4j.linalg.factory.Nd4j;
 
 public class ConcatAllZooModelImageNetModels extends AllZooModelImageNetModels {
 
@@ -18,8 +19,11 @@ public class ConcatAllZooModelImageNetModels extends AllZooModelImageNetModels {
 		while(itr.hasNext()) {
 			INDArray nextScores = allScores.get(itr.next());
 			// Append the next batch of scores
-			// TODO
+			scores = Nd4j.concat(1, scores, nextScores);
 		}
-		return null; // scores;
+//		System.out.println(scores.length() + ":" + scores.size(0) + ":" + scores.size(1));
+//		System.out.println(scores);
+//		MiscUtil.waitForReadStringAndEnterKeyPress();
+		return scores;
 	}	
 }

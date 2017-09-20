@@ -3,6 +3,7 @@ package edu.southwestern.networks.dl4j;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.deeplearning4j.nn.graph.ComputationGraph;
 import org.deeplearning4j.zoo.ModelSelector;
@@ -22,6 +23,7 @@ public abstract class AllZooModelImageNetModels implements TensorNetwork {
 	
 	/**
 	 * Apply each model to the input and save all outputs in a hash map along with the model name as a key
+	 * (assumes initAllImageNets() has already been called)
 	 * @param input Array containing image of appropriate size for ImageNet
 	 * @return Map of model names to prediction scores for input image
 	 */
@@ -34,6 +36,15 @@ public abstract class AllZooModelImageNetModels implements TensorNetwork {
 			result.put(modelName, nextScores);
 		}
 		return result;
+	}
+	
+	/**
+	 * Names of all initialized ImageNet models (assumes initAllImageNets() has already been called)
+	 * @return
+	 */
+	public static Set<String> getModelNames() {
+		assert imageNetModels != null;
+		return imageNetModels.keySet();
 	}
 	
 	/**

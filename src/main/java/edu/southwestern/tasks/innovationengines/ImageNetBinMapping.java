@@ -8,7 +8,7 @@ import edu.southwestern.evolution.mapelites.BinLabels;
 import edu.southwestern.networks.Network;
 
 /**
- * Given scores for all Image Net classes, return the bin name with the highest score
+ * Return names for all ImageNet classes
  * @author Jacob Schrum
  */
 public class ImageNetBinMapping<T extends Network> implements BinLabels<T> {

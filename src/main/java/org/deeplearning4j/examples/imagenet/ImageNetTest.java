@@ -29,6 +29,8 @@ public class ImageNetTest {
 
 	// Consider turning this file into a unit test instead
 	public static void main(String[] args) throws IOException, InterruptedException {
+		// ConcatApproach is incompatible with some of the standard ImageNet helper methods
+		//Parameters.initializeParameterCollections(new String[] {"imageNetModel:edu.southwestern.networks.dl4j.ConcatAllZooModelImageNetModels"});		
 		Parameters.initializeParameterCollections(new String[] {"imageNetModel:edu.southwestern.networks.dl4j.MinAllZooModelImageNetModels"});		
 		//Parameters.initializeParameterCollections(new String[] {"imageNetModel:edu.southwestern.networks.dl4j.VGG16Wrapper"});		
 		//Parameters.initializeParameterCollections(new String[] {"imageNetModel:edu.southwestern.networks.dl4j.VGG19Wrapper"});		
