@@ -34,4 +34,9 @@ public interface SteadyStateEA<T> extends EA {
 	 * @return Array List of Genotypes 
 	 */
 	public ArrayList<Genotype<T>> getPopulation();
+	/**
+	 * Track whether population just changed (not always true in steady state EA)
+	 * @return Whether population just changed
+	 */
+	public boolean populationChanged();
 }

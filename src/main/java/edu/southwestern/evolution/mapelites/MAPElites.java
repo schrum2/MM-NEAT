@@ -176,4 +176,13 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 		}
 		return result;
 	}
+
+	/**
+	 * If iterationsWithoutElite is 0, then the last new individual
+	 * was inserted into the population.
+	 */
+	@Override
+	public boolean populationChanged() {
+		return iterationsWithoutElite == 0;
+	}
 }
