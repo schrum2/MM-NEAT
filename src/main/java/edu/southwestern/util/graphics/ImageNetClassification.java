@@ -157,7 +157,8 @@ public class ImageNetClassification {
 	 */
 	public static String bestLabel(INDArray precomputedScores) {
 		int index = Nd4j.argMax(precomputedScores, 1).getInt(0, 0);
-		return imageNetLabels.getLabel(index);
+		// Mod division is used because the concat all model has multiple copies of the image labels in the same order
+		return imageNetLabels.getLabel(index % NUM_IMAGE_NET_CLASSES);
 	}
 
 	/**
