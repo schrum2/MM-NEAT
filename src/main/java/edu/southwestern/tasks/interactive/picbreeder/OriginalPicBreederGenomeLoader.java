@@ -34,11 +34,11 @@ import edu.southwestern.util.graphics.GraphicsUtil;
 public class OriginalPicBreederGenomeLoader {
 	public static final int SIZE = 300;
 	public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException {		
-		Parameters.initializeParameterCollections(new String[] {});
+		Parameters.initializeParameterCollections(new String[] {"io:false","netio:false","allowMultipleFunctions:true"});
 		TWEANNGenotype tg = new TWEANNGenotype(PicbreederTask.CPPN_NUM_INPUTS, PicbreederTask.CPPN_NUM_OUTPUTS, 0);
 		//System.out.println(tg);
 		// Now, load TWEANN structure from file
-		File inputFile = new File("data\\picbreeder\\originalGenomes\\4041_Doplhin.xml");
+		File inputFile = new File("data\\picbreeder\\originalGenomes\\1009_ButterflyGreyscale.xml");
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
         Document doc = dBuilder.parse(inputFile);
@@ -65,7 +65,7 @@ public class OriginalPicBreederGenomeLoader {
             	// Adding the gene here may not be the right order
             	tg.nodes.add(tg.outputStartIndex(), newGene);
             } else if(type.equals("out")) {
-            	NodeGene n = tg.nodes.get(tg.outputStartIndex() + (outputs++));
+            	NodeGene n = tg.nodes.get(tg.nodes.size() - (++outputs));
             	n.innovation = innovation;
             	n.ftype = getFType(activation);
             }
@@ -85,9 +85,13 @@ public class OriginalPicBreederGenomeLoader {
             tg.links.add(lg);
         }
 
-        DrawingPanel panel = new DrawingPanel(TWEANN.NETWORK_VIEW_DIM, TWEANN.NETWORK_VIEW_DIM, "Network");
+        // Get nodes in right order according to the links
+        TWEANNGenotype.sortNodeGenesByLinkConnectivity(tg);
+        
+        
+        DrawingPanel panel = new DrawingPanel(1000, 1000, "Network");
 		TWEANN network = tg.getPhenotype();
-		network.draw(panel);
+		network.draw(panel, true, false);
 		
         // Now show the image
 		BufferedImage image = GraphicsUtil.imageFromCPPN(network, SIZE, SIZE);

@@ -348,8 +348,8 @@ public class TWEANNCrossover extends Crossover<TWEANN> {
 	 */
 	private static ArrayList<ArrayList<LinkGene>> alignLinkGenes(ArrayList<LinkGene> left, ArrayList<LinkGene> right) {
 		mergeDuplicates(left, right);
-		TWEANNGenotype.sortLinkGenes(left);
-		TWEANNGenotype.sortLinkGenes(right);
+		TWEANNGenotype.sortLinkGenesByInnovationNumber(left);
+		TWEANNGenotype.sortLinkGenesByInnovationNumber(right);
 
 		int maxSize = Math.max(left.size(), right.size());
 		ArrayList<LinkGene> alignedLeft = new ArrayList<LinkGene>(maxSize);

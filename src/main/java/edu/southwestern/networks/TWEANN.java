@@ -1329,7 +1329,7 @@ public class TWEANN implements Network {
 		double activation = display.activation;
 		if (display.frozen) {
 			drawBorder(g, Color.CYAN, display.displayX, display.displayY, activation, 2);
-		} else if(Parameters.parameters.booleanParameter("allowMultipleFunctions")) {
+		} else if(Parameters.parameters.booleanParameter("allowMultipleFunctions")) { // TODO: Just move this to where the node is drawn in the first place?
 			drawBorder(g, CombinatoricUtilities.colorFromInt(display.ftype), display.displayX, display.displayY, activation, 2);
 		} else if(Parameters.parameters.booleanParameter("allowMultipleFunctions") && display.frozen) {
 			drawBorder(g, Color.CYAN, display.displayX, display.displayY, activation, 4);

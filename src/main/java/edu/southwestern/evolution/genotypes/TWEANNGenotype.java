@@ -1392,10 +1392,9 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
     }
 
     /**
-     * Checks to see if the inputs still match after being used
+     * Checks to see if the input neurons are actually connected.
      *
-     * @return true if source innovation matches the used input, false if it
-     * doesn't
+     * @return Array for each input: true if connected, false otherwise.
      */
     public boolean[] inputUsageProfile() {
         boolean[] result = new boolean[numIn];
@@ -1751,6 +1750,8 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
     }
 
     /**
+     * NOT REALLY USED
+     * 
      * This function gives a measure of compatibility between two
      * TWEANNGenotypes by computing a linear combination of 3 characterizing
      * variables of their compatibilty. The 3 variables represent PERCENT
@@ -1835,17 +1836,65 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
     }
 
     /**
-     * Sorts links by using a comparator declared in method
+     * Sorts link genes by innovation number
      *
      * @param linkedGene ArrayList of link genes to be sorted
      */
-    public static void sortLinkGenes(ArrayList<LinkGene> linkedGene) {
+    public static void sortLinkGenesByInnovationNumber(ArrayList<LinkGene> linkedGene) {
         Collections.sort(linkedGene, new Comparator<LinkGene>() {
             @Override
             public int compare(LinkGene o1, LinkGene o2) {// anonymous class
                 return (int) Math.signum(o1.innovation - o2.innovation);
             }
         });
+    }
+    
+    /**
+     * Sort the nodes so that there are no backward facing links, meaning no recurrency. The result will
+     * be a feed-forward network, but the method will crash if there are connectivity loops. Input and
+     * output nodes will remain unchanged ... only the hidden neurons are shuffled around.
+	 * @param TWEANNGenotype
+     */
+    public static void sortNodeGenesByLinkConnectivity(TWEANNGenotype tg) {
+    	Collections.sort(tg.nodes, new Comparator<NodeGene>() {
+			@Override
+			public int compare(NodeGene o1, NodeGene o2) {
+				if(o1.ntype != o2.ntype) {
+					return o1.ntype - o2.ntype;
+				}
+				// Both are same type
+				if(o1.ntype != TWEANN.Node.NTYPE_HIDDEN) {
+					// If not hidden, just say they are equal, and stable sorting should maintain order
+					return 0;
+				}
+				// Both are hidden: order by connectivity
+				if(existsPath(o1.innovation, o2.innovation, tg.links)) {
+					return -1; // o1 leads to o2
+				}
+				if(existsPath(o2.innovation, o1.innovation, tg.links)) {
+					return 1; // o2 leads to o1
+				}
+				// Nodes to not interact, so relative placement does not matter
+				return 0;
+			}
+    	});
+    }
+
+    /**
+     * Indicates whether there is any path from one node gene to another.
+     * ASSUMES NO LOOPS IN GENOME STRUCTURE!
+     * @param from Starting node gene innovation
+     * @param to Target node gene innovation
+     * @param links Links of whole network
+     * @return Whether there is a sequence of links that eventually get to "to" from "from"
+     */
+    private static boolean existsPath(long from, long to, List<LinkGene> links) {
+    	for(LinkGene lg : links) {
+    		if(from == lg.sourceInnovation) {
+    			return to == lg.targetInnovation || existsPath(lg.targetInnovation, to, links);
+    		}
+    	}
+    	return false; // No outgoing link genes
     }
 
     /**
