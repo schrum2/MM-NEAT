@@ -1,0 +1,637 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<data version="1.0">
+    <genome age="105">
+        <identifier branch="2914" id="85"/>
+        <parents count="1">
+            <identifier branch="2914" id="64"/>
+        </parents>
+        <nodes count="33">
+            <node label="bias" type="in">
+                <marking branch="2735" id="0"/>
+                <activation>identity(x)</activation>
+            </node>
+            <node label="d" type="in">
+                <marking branch="2735" id="1"/>
+                <activation>identity(x)</activation>
+            </node>
+            <node label="x" type="in">
+                <marking branch="2735" id="2"/>
+                <activation>identity(x)</activation>
+            </node>
+            <node label="y" type="in">
+                <marking branch="2735" id="3"/>
+                <activation>identity(x)</activation>
+            </node>
+            <node label="ink" type="out">
+                <marking branch="2735" id="4"/>
+                <activation>gaussian(x)</activation>
+            </node>
+            <node type="hidden">
+                <marking branch="2735" id="5"/>
+                <activation>gaussian(x)</activation>
+            </node>
+            <node type="hidden">
+                <marking branch="2735" id="20"/>
+                <activation>gaussian(x)</activation>
+            </node>
+            <node type="hidden">
+                <marking branch="2735" id="73"/>
+                <activation>sigmoid(x)</activation>
+            </node>
+            <node type="hidden">
+                <marking branch="2735" id="122"/>
+                <activation>gaussian(x)</activation>
+            </node>
+            <node type="hidden">
+                <marking branch="2735" id="134"/>
+                <activation>sin(x)</activation>
+            </node>
+            <node type="hidden">
+                <marking branch="2735" id="239"/>
+                <activation>sigmoid(x)</activation>
+            </node>
+            <node type="hidden">
+                <marking branch="2735" id="329"/>
+                <activation>sin(x)</activation>
+            </node>
+            <node type="hidden">
+                <marking branch="2735" id="333"/>
+                <activation>gaussian(x)</activation>
+            </node>
+            <node type="hidden">
+                <marking branch="2735" id="394"/>
+                <activation>sin(x)</activation>
+            </node>
+            <node type="hidden">
+                <marking branch="2735" id="420"/>
+                <activation>sin(x)</activation>
+            </node>
+            <node type="hidden">
+                <marking branch="2735" id="434"/>
+                <activation>gaussian(x)</activation>
+            </node>
+            <node type="hidden">
+                <marking branch="2735" id="578"/>
+                <activation>sin(x)</activation>
+            </node>
+            <node type="hidden">
+                <marking branch="2735" id="594"/>
+                <activation>gaussian(x)</activation>
+            </node>
+            <node type="hidden">
+                <marking branch="2735" id="669"/>
+                <activation>gaussian(x)</activation>
+            </node>
+            <node type="hidden">
+                <marking branch="2735" id="682"/>
+                <activation>gaussian(x)</activation>
+            </node>
+            <node type="hidden">
+                <marking branch="2856" id="3"/>
+                <activation>sigmoid(x)</activation>
+            </node>
+            <node type="hidden">
+                <marking branch="2856" id="12"/>
+                <activation>sigmoid(x)</activation>
+            </node>
+            <node type="hidden">
+                <marking branch="2856" id="42"/>
+                <activation>sin(x)</activation>
+            </node>
+            <node type="hidden">
+                <marking branch="2856" id="75"/>
+                <activation>sigmoid(x)</activation>
+            </node>
+            <node type="hidden">
+                <marking branch="2856" id="85"/>
+                <activation>sin(x)</activation>
+            </node>
+            <node type="hidden">
+                <marking branch="2856" id="111"/>
+                <activation>sigmoid(x)</activation>
+            </node>
+            <node type="hidden">
+                <marking branch="2856" id="118"/>
+                <activation>sin(x)</activation>
+            </node>
+            <node type="hidden">
+                <marking branch="2856" id="128"/>
+                <activation>sigmoid(x)</activation>
+            </node>
+            <node type="hidden">
+                <marking branch="2861" id="10"/>
+                <activation>sigmoid(x)</activation>
+            </node>
+            <node type="hidden">
+                <marking branch="2861" id="27"/>
+                <activation>sin(x)</activation>
+            </node>
+            <node type="hidden">
+                <marking branch="2865" id="86"/>
+                <activation>gaussian(x)</activation>
+            </node>
+            <node type="hidden">
+                <marking branch="2865" id="102"/>
+                <activation>sin(x)</activation>
+            </node>
+            <node type="hidden">
+                <marking branch="2868" id="21"/>
+                <activation>sigmoid(x)</activation>
+            </node>
+        </nodes>
+        <links count="82">
+            <link>
+                <marking branch="2735" id="6"/>
+                <source branch="2735" id="0"/>
+                <target branch="2735" id="5"/>
+                <weight>-0.4299394943831689</weight>
+            </link>
+            <link>
+                <marking branch="2735" id="7"/>
+                <source branch="2735" id="1"/>
+                <target branch="2735" id="5"/>
+                <weight>3.0</weight>
+            </link>
+            <link>
+                <marking branch="2735" id="8"/>
+                <source branch="2735" id="2"/>
+                <target branch="2735" id="5"/>
+                <weight>-1.469059026327138</weight>
+            </link>
+            <link>
+                <marking branch="2735" id="9"/>
+                <source branch="2735" id="3"/>
+                <target branch="2735" id="5"/>
+                <weight>-0.2279368955186527</weight>
+            </link>
+            <link>
+                <marking branch="2735" id="10"/>
+                <source branch="2735" id="5"/>
+                <target branch="2735" id="4"/>
+                <weight>-0.6655722509207561</weight>
+            </link>
+            <link>
+                <marking branch="2735" id="21"/>
+                <source branch="2735" id="1"/>
+                <target branch="2735" id="20"/>
+                <weight>3.0</weight>
+            </link>
+            <link>
+                <marking branch="2735" id="22"/>
+                <source branch="2735" id="20"/>
+                <target branch="2735" id="5"/>
+                <weight>-0.3093439191699255</weight>
+            </link>
+            <link>
+                <marking branch="2735" id="74"/>
+                <source branch="2735" id="1"/>
+                <target branch="2735" id="73"/>
+                <weight>2.25022066593054</weight>
+            </link>
+            <link>
+                <marking branch="2735" id="75"/>
+                <source branch="2735" id="73"/>
+                <target branch="2735" id="5"/>
+                <weight>3.0</weight>
+            </link>
+            <link>
+                <marking branch="2735" id="81"/>
+                <source branch="2735" id="0"/>
+                <target branch="2735" id="73"/>
+                <weight>0.23755184550183378</weight>
+            </link>
+            <link>
+                <marking branch="2735" id="98"/>
+                <source branch="2735" id="2"/>
+                <target branch="2735" id="73"/>
+                <weight>-3.0</weight>
+            </link>
+            <link>
+                <marking branch="2735" id="123"/>
+                <source branch="2735" id="3"/>
+                <target branch="2735" id="122"/>
+                <weight>-2.1071600307554195</weight>
+            </link>
+            <link>
+                <marking branch="2735" id="124"/>
+                <source branch="2735" id="122"/>
+                <target branch="2735" id="5"/>
+                <weight>1.390589382061103</weight>
+            </link>
+            <link>
+                <marking branch="2735" id="135"/>
+                <source branch="2735" id="1"/>
+                <target branch="2735" id="134"/>
+                <weight>2.085170231426384</weight>
+            </link>
+            <link>
+                <marking branch="2735" id="136"/>
+                <source branch="2735" id="134"/>
+                <target branch="2735" id="20"/>
+                <weight>-0.9230677139855956</weight>
+            </link>
+            <link>
+                <marking branch="2735" id="180"/>
+                <source branch="2735" id="20"/>
+                <target branch="2735" id="73"/>
+                <weight>-0.5574410205587235</weight>
+            </link>
+            <link>
+                <marking branch="2735" id="240"/>
+                <source branch="2735" id="20"/>
+                <target branch="2735" id="239"/>
+                <weight>-0.4959145792516318</weight>
+            </link>
+            <link>
+                <marking branch="2735" id="241"/>
+                <source branch="2735" id="239"/>
+                <target branch="2735" id="5"/>
+                <weight>-2.498903026139561</weight>
+            </link>
+            <link>
+                <marking branch="2735" id="271"/>
+                <source branch="2735" id="122"/>
+                <target branch="2735" id="134"/>
+                <weight>-1.4687695037558641</weight>
+            </link>
+            <link>
+                <marking branch="2735" id="276"/>
+                <source branch="2735" id="239"/>
+                <target branch="2735" id="73"/>
+                <weight>-0.16388027265743912</weight>
+            </link>
+            <link>
+                <marking branch="2735" id="289"/>
+                <source branch="2735" id="2"/>
+                <target branch="2735" id="239"/>
+                <weight>-2.991420376686935</weight>
+            </link>
+            <link>
+                <marking branch="2735" id="330"/>
+                <source branch="2735" id="73"/>
+                <target branch="2735" id="329"/>
+                <weight>-1.0153080002879291</weight>
+            </link>
+            <link>
+                <marking branch="2735" id="331"/>
+                <source branch="2735" id="329"/>
+                <target branch="2735" id="5"/>
+                <weight>-3.0</weight>
+            </link>
+            <link>
+                <marking branch="2735" id="334"/>
+                <source branch="2735" id="20"/>
+                <target branch="2735" id="333"/>
+                <weight>0.13513678804894144</weight>
+            </link>
+            <link>
+                <marking branch="2735" id="335"/>
+                <source branch="2735" id="333"/>
+                <target branch="2735" id="73"/>
+                <weight>-2.962518846531173</weight>
+            </link>
+            <link>
+                <marking branch="2735" id="378"/>
+                <source branch="2735" id="333"/>
+                <target branch="2735" id="5"/>
+                <weight>-0.4893236762392016</weight>
+            </link>
+            <link>
+                <marking branch="2735" id="395"/>
+                <source branch="2735" id="3"/>
+                <target branch="2735" id="394"/>
+                <weight>0.900415947109465</weight>
+            </link>
+            <link>
+                <marking branch="2735" id="396"/>
+                <source branch="2735" id="394"/>
+                <target branch="2735" id="122"/>
+                <weight>-2.5553820024848695</weight>
+            </link>
+            <link>
+                <marking branch="2735" id="421"/>
+                <source branch="2735" id="20"/>
+                <target branch="2735" id="420"/>
+                <weight>-1.2175455110599083</weight>
+            </link>
+            <link>
+                <marking branch="2735" id="422"/>
+                <source branch="2735" id="420"/>
+                <target branch="2735" id="239"/>
+                <weight>0.11100272104241943</weight>
+            </link>
+            <link>
+                <marking branch="2735" id="435"/>
+                <source branch="2735" id="122"/>
+                <target branch="2735" id="434"/>
+                <weight>-1.6304564707555846</weight>
+            </link>
+            <link>
+                <marking branch="2735" id="436"/>
+                <source branch="2735" id="434"/>
+                <target branch="2735" id="5"/>
+                <weight>-2.3723344906819754</weight>
+            </link>
+            <link>
+                <marking branch="2735" id="461"/>
+                <source branch="2735" id="122"/>
+                <target branch="2735" id="333"/>
+                <weight>0.2557350639376175</weight>
+            </link>
+            <link>
+                <marking branch="2735" id="540"/>
+                <source branch="2735" id="134"/>
+                <target branch="2735" id="5"/>
+                <weight>0.4739238266625375</weight>
+            </link>
+            <link>
+                <marking branch="2735" id="551"/>
+                <source branch="2735" id="420"/>
+                <target branch="2735" id="4"/>
+                <weight>0.2788985941876223</weight>
+            </link>
+            <link>
+                <marking branch="2735" id="579"/>
+                <source branch="2735" id="329"/>
+                <target branch="2735" id="578"/>
+                <weight>-3.0</weight>
+            </link>
+            <link>
+                <marking branch="2735" id="580"/>
+                <source branch="2735" id="578"/>
+                <target branch="2735" id="5"/>
+                <weight>-2.614474309035245</weight>
+            </link>
+            <link>
+                <marking branch="2735" id="595"/>
+                <source branch="2735" id="434"/>
+                <target branch="2735" id="594"/>
+                <weight>-2.517078083302554</weight>
+            </link>
+            <link>
+                <marking branch="2735" id="596"/>
+                <source branch="2735" id="594"/>
+                <target branch="2735" id="5"/>
+                <weight>-1.8351204022651595</weight>
+            </link>
+            <link>
+                <marking branch="2735" id="636"/>
+                <source branch="2735" id="239"/>
+                <target branch="2735" id="329"/>
+                <weight>-1.4014983672239094</weight>
+            </link>
+            <link>
+                <marking branch="2735" id="654"/>
+                <source branch="2735" id="578"/>
+                <target branch="2735" id="594"/>
+                <weight>-3.0</weight>
+            </link>
+            <link>
+                <marking branch="2735" id="670"/>
+                <source branch="2735" id="239"/>
+                <target branch="2735" id="669"/>
+                <weight>1.8530488909536023</weight>
+            </link>
+            <link>
+                <marking branch="2735" id="671"/>
+                <source branch="2735" id="669"/>
+                <target branch="2735" id="73"/>
+                <weight>-0.4074319058966658</weight>
+            </link>
+            <link>
+                <marking branch="2735" id="683"/>
+                <source branch="2735" id="594"/>
+                <target branch="2735" id="682"/>
+                <weight>2.6643832297077275</weight>
+            </link>
+            <link>
+                <marking branch="2735" id="684"/>
+                <source branch="2735" id="682"/>
+                <target branch="2735" id="5"/>
+                <weight>0.0345112138580493</weight>
+            </link>
+            <link>
+                <marking branch="2735" id="717"/>
+                <source branch="2735" id="0"/>
+                <target branch="2735" id="669"/>
+                <weight>-3.0</weight>
+            </link>
+            <link>
+                <marking branch="2735" id="737"/>
+                <source branch="2735" id="333"/>
+                <target branch="2735" id="434"/>
+                <weight>0.545565031150729</weight>
+            </link>
+            <link>
+                <marking branch="2856" id="4"/>
+                <source branch="2735" id="420"/>
+                <target branch="2856" id="3"/>
+                <weight>-1.5747209379100284</weight>
+            </link>
+            <link>
+                <marking branch="2856" id="5"/>
+                <source branch="2856" id="3"/>
+                <target branch="2735" id="239"/>
+                <weight>0.6380162902054977</weight>
+            </link>
+            <link>
+                <marking branch="2856" id="13"/>
+                <source branch="2735" id="5"/>
+                <target branch="2856" id="12"/>
+                <weight>-2.399659164430619</weight>
+            </link>
+            <link>
+                <marking branch="2856" id="14"/>
+                <source branch="2856" id="12"/>
+                <target branch="2735" id="4"/>
+                <weight>-0.40634623924118485</weight>
+            </link>
+            <link>
+                <marking branch="2856" id="43"/>
+                <source branch="2735" id="434"/>
+                <target branch="2856" id="42"/>
+                <weight>0.11910222457710318</weight>
+            </link>
+            <link>
+                <marking branch="2856" id="44"/>
+                <source branch="2856" id="42"/>
+                <target branch="2735" id="594"/>
+                <weight>-0.9650494012485085</weight>
+            </link>
+            <link>
+                <marking branch="2856" id="59"/>
+                <source branch="2735" id="239"/>
+                <target branch="2735" id="682"/>
+                <weight>0.4777758888584624</weight>
+            </link>
+            <link>
+                <marking branch="2856" id="76"/>
+                <source branch="2735" id="420"/>
+                <target branch="2856" id="75"/>
+                <weight>-1.946767196701574</weight>
+            </link>
+            <link>
+                <marking branch="2856" id="77"/>
+                <source branch="2856" id="75"/>
+                <target branch="2735" id="239"/>
+                <weight>-1.7165699302159452</weight>
+            </link>
+            <link>
+                <marking branch="2856" id="86"/>
+                <source branch="2856" id="3"/>
+                <target branch="2856" id="85"/>
+                <weight>1.1387323879885038</weight>
+            </link>
+            <link>
+                <marking branch="2856" id="87"/>
+                <source branch="2856" id="85"/>
+                <target branch="2735" id="239"/>
+                <weight>3.0</weight>
+            </link>
+            <link>
+                <marking branch="2856" id="112"/>
+                <source branch="2735" id="578"/>
+                <target branch="2856" id="111"/>
+                <weight>2.3575908120538496</weight>
+            </link>
+            <link>
+                <marking branch="2856" id="113"/>
+                <source branch="2856" id="111"/>
+                <target branch="2735" id="594"/>
+                <weight>0.3661747563882329</weight>
+            </link>
+            <link>
+                <marking branch="2856" id="119"/>
+                <source branch="2735" id="1"/>
+                <target branch="2856" id="118"/>
+                <weight>-0.4642489180839747</weight>
+            </link>
+            <link>
+                <marking branch="2856" id="120"/>
+                <source branch="2856" id="118"/>
+                <target branch="2735" id="134"/>
+                <weight>1.456164353136868</weight>
+            </link>
+            <link>
+                <marking branch="2856" id="129"/>
+                <source branch="2735" id="578"/>
+                <target branch="2856" id="128"/>
+                <weight>0.14286950286166605</weight>
+            </link>
+            <link>
+                <marking branch="2856" id="130"/>
+                <source branch="2856" id="128"/>
+                <target branch="2735" id="5"/>
+                <weight>-2.994231903691051</weight>
+            </link>
+            <link>
+                <marking branch="2861" id="11"/>
+                <source branch="2856" id="75"/>
+                <target branch="2861" id="10"/>
+                <weight>2.930672429601872</weight>
+            </link>
+            <link>
+                <marking branch="2861" id="12"/>
+                <source branch="2861" id="10"/>
+                <target branch="2735" id="239"/>
+                <weight>-2.251776668697706</weight>
+            </link>
+            <link>
+                <marking branch="2861" id="28"/>
+                <source branch="2735" id="239"/>
+                <target branch="2861" id="27"/>
+                <weight>-0.34652788748926966</weight>
+            </link>
+            <link>
+                <marking branch="2861" id="29"/>
+                <source branch="2861" id="27"/>
+                <target branch="2735" id="329"/>
+                <weight>1.169715012776994</weight>
+            </link>
+            <link>
+                <marking branch="2861" id="35"/>
+                <source branch="2735" id="333"/>
+                <target branch="2735" id="329"/>
+                <weight>-1.9593675478421084</weight>
+            </link>
+            <link>
+                <marking branch="2865" id="0"/>
+                <source branch="2735" id="669"/>
+                <target branch="2735" id="329"/>
+                <weight>1.7532868369337138</weight>
+            </link>
+            <link>
+                <marking branch="2865" id="26"/>
+                <source branch="2856" id="85"/>
+                <target branch="2856" id="12"/>
+                <weight>1.081005624937614</weight>
+            </link>
+            <link>
+                <marking branch="2865" id="63"/>
+                <source branch="2735" id="420"/>
+                <target branch="2735" id="333"/>
+                <weight>0.21473349472099051</weight>
+            </link>
+            <link>
+                <marking branch="2865" id="72"/>
+                <source branch="2856" id="128"/>
+                <target branch="2856" id="12"/>
+                <weight>-2.4262342393625635</weight>
+            </link>
+            <link>
+                <marking branch="2865" id="87"/>
+                <source branch="2735" id="594"/>
+                <target branch="2865" id="86"/>
+                <weight>1.614455064974601</weight>
+            </link>
+            <link>
+                <marking branch="2865" id="88"/>
+                <source branch="2865" id="86"/>
+                <target branch="2735" id="682"/>
+                <weight>-2.8589828614001034</weight>
+            </link>
+            <link>
+                <marking branch="2865" id="103"/>
+                <source branch="2735" id="73"/>
+                <target branch="2865" id="102"/>
+                <weight>-0.5091276703280481</weight>
+            </link>
+            <link>
+                <marking branch="2865" id="104"/>
+                <source branch="2865" id="102"/>
+                <target branch="2735" id="329"/>
+                <weight>1.2067984423639466</weight>
+            </link>
+            <link>
+                <marking branch="2866" id="3"/>
+                <source branch="2735" id="329"/>
+                <target branch="2735" id="434"/>
+                <weight>1.7437819627824593</weight>
+            </link>
+            <link>
+                <marking branch="2866" id="34"/>
+                <source branch="2735" id="329"/>
+                <target branch="2856" id="42"/>
+                <weight>1.0967716113356383</weight>
+            </link>
+            <link>
+                <marking branch="2868" id="22"/>
+                <source branch="2735" id="239"/>
+                <target branch="2868" id="21"/>
+                <weight>1.2504871745667907</weight>
+            </link>
+            <link>
+                <marking branch="2868" id="23"/>
+                <source branch="2868" id="21"/>
+                <target branch="2735" id="669"/>
+                <weight>-1.4701871824304007</weight>
+            </link>
+            <link>
+                <marking branch="2868" id="186"/>
+                <source branch="2735" id="420"/>
+                <target branch="2865" id="86"/>
+                <weight>1.3454235950225981</weight>
+            </link>
+        </links>
+    </genome>
+</data>

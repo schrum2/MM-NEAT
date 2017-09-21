@@ -1,0 +1,399 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<cppn-data version="1.2"/>
+<data version="1.0">
+    <genome age="unknown" phenotype="grey">
+        <identifier branch="542" id="214"/>
+        <parents count="1">
+            <identifier branch="542" id="166"/>
+        </parents>
+        <buttons count="2">
+            <colorButton>
+                <color-label id="1"/>
+                <text>Protoface structure</text>
+                <color r="19" g="147" b="2"/>
+            </colorButton>
+            <colorButton>
+                <color-label id="2"/>
+                <text>Other structures</text>
+                <color r="0" g="0" b="188"/>
+            </colorButton>
+        </buttons>
+        <nodes count="14">
+            <node affinity="grey" bias="0.0" label="x" type="in">
+                <marking branch="534" id="2"/>
+                <activation>identity(x)</activation>
+                <color-label id="0"/>
+                <position x="156.2499999999998" y="351.2500000000001"/>
+                <text></text>
+            </node>
+            <node affinity="grey" bias="0.0" label="y" type="in">
+                <marking branch="534" id="3"/>
+                <activation>identity(x)</activation>
+                <color-label id="0"/>
+                <position x="-100" y="350"/>
+                <text></text>
+            </node>
+            <node affinity="grey" bias="0.0" label="d" type="in">
+                <marking branch="534" id="1"/>
+                <activation>identity(x)</activation>
+                <color-label id="0"/>
+                <position x="-12.49999999999999" y="352.5000000000001"/>
+                <text></text>
+            </node>
+            <node affinity="grey" bias="0.0" label="bias" type="in">
+                <marking branch="534" id="0"/>
+                <activation>identity(x)</activation>
+                <color-label id="0"/>
+                <position x="75.00000000000007" y="351.2500000000001"/>
+                <text></text>
+            </node>
+            <node affinity="grey" bias="0.0" label="" type="hidden">
+                <marking branch="542" id="136"/>
+                <activation>sin(x)</activation>
+                <color-label id="1"/>
+                <position x="-273.7500000000001" y="122.5000000000001"/>
+                <text></text>
+            </node>
+            <node affinity="grey" bias="0.0" label="" type="hidden">
+                <marking branch="542" id="103"/>
+                <activation>gaussian(x)</activation>
+                <color-label id="1"/>
+                <position x="-177.5" y="123.7500000000001"/>
+                <text></text>
+            </node>
+            <node affinity="grey" bias="0.0" label="" type="hidden">
+                <marking branch="542" id="44"/>
+                <activation>sin(x)</activation>
+                <color-label id="1"/>
+                <position x="-178.75" y="225.0000000000001"/>
+                <text></text>
+            </node>
+            <node affinity="grey" bias="0.0" label="" type="hidden">
+                <marking branch="542" id="96"/>
+                <activation>gaussian(x)</activation>
+                <color-label id="1"/>
+                <position x="-273.7500000000001" y="221.25"/>
+                <text></text>
+            </node>
+            <node affinity="grey" bias="0.0" label="ink" type="out">
+                <marking branch="534" id="4"/>
+                <activation>gaussian(x)</activation>
+                <color-label id="2"/>
+                <position x="15" y="-238.75"/>
+                <text></text>
+            </node>
+            <node affinity="grey" bias="0.0" label="" type="hidden">
+                <marking branch="534" id="5"/>
+                <activation>gaussian(x)</activation>
+                <color-label id="2"/>
+                <position x="15" y="-150"/>
+                <text></text>
+            </node>
+            <node affinity="grey" bias="0.0" label="" type="hidden">
+                <marking branch="534" id="32"/>
+                <activation>gaussian(x)</activation>
+                <color-label id="2"/>
+                <position x="144.9999999999999" y="-43.75000000000001"/>
+                <text></text>
+            </node>
+            <node affinity="grey" bias="0.0" label="" type="hidden">
+                <marking branch="540" id="106"/>
+                <activation>gaussian(x)</activation>
+                <color-label id="1"/>
+                <position x="-381.2499999999999" y="31.25000000000006"/>
+                <text></text>
+            </node>
+            <node affinity="grey" bias="0.0" label="" type="hidden">
+                <marking branch="540" id="156"/>
+                <activation>gaussian(x)</activation>
+                <color-label id="1"/>
+                <position x="-379.9999999999999" y="123.7500000000001"/>
+                <text></text>
+            </node>
+            <node affinity="grey" bias="0.0" label="" type="hidden">
+                <marking branch="541" id="67"/>
+                <activation>gaussian(x)</activation>
+                <color-label id="1"/>
+                <position x="-379.9999999999998" y="218.75"/>
+                <text></text>
+            </node>
+        </nodes>
+        <links count="27">
+            <link>
+                <marking branch="542" id="1"/>
+                <source branch="534" id="2"/>
+                <target branch="534" id="32"/>
+                <weight>0.35665479192366489</weight>
+                <original-weight>0.35665479192366489</original-weight>
+                <color-label id="2"/>
+                <text>""</text>
+                <bookends start="-3" end="3" step="0.1"/>
+            </link>
+            <link>
+                <marking branch="542" id="45"/>
+                <source branch="534" id="1"/>
+                <target branch="542" id="44"/>
+                <weight>2.9884688684613963</weight>
+                <original-weight>2.9884688684613963</original-weight>
+                <color-label id="1"/>
+                <text>""</text>
+                <bookends start="-3" end="3" step="0.1"/>
+            </link>
+            <link>
+                <marking branch="542" id="46"/>
+                <source branch="542" id="44"/>
+                <target branch="540" id="106"/>
+                <weight>1.0995285013416196</weight>
+                <original-weight>1.0995285013416196</original-weight>
+                <color-label id="1"/>
+                <text>""</text>
+                <bookends start="-3" end="3" step="0.1"/>
+            </link>
+            <link>
+                <marking branch="542" id="59"/>
+                <source branch="534" id="0"/>
+                <target branch="534" id="32"/>
+                <weight>0.51807613613545711</weight>
+                <original-weight>0.51807613613545711</original-weight>
+                <color-label id="2"/>
+                <text>""</text>
+                <bookends start="-3" end="3" step="0.1"/>
+            </link>
+            <link>
+                <marking branch="542" id="97"/>
+                <source branch="534" id="1"/>
+                <target branch="542" id="96"/>
+                <weight>1.7264186716018251</weight>
+                <original-weight>1.7264186716018251</original-weight>
+                <color-label id="1"/>
+                <text>""</text>
+                <bookends start="-3" end="3" step="0.1"/>
+            </link>
+            <link>
+                <marking branch="542" id="98"/>
+                <source branch="542" id="96"/>
+                <target branch="540" id="106"/>
+                <weight>-0.99178747951274904</weight>
+                <original-weight>-0.99178747951274904</original-weight>
+                <color-label id="1"/>
+                <text>""</text>
+                <bookends start="-3" end="3" step="0.1"/>
+            </link>
+            <link>
+                <marking branch="542" id="118"/>
+                <source branch="542" id="96"/>
+                <target branch="542" id="103"/>
+                <weight>0.72173605925205475</weight>
+                <original-weight>0.72173605925205475</original-weight>
+                <color-label id="1"/>
+                <text>""</text>
+                <bookends start="-3" end="3" step="0.1"/>
+            </link>
+            <link>
+                <marking branch="542" id="119"/>
+                <source branch="542" id="103"/>
+                <target branch="540" id="106"/>
+                <weight>1.1071927890407922</weight>
+                <original-weight>1.1071927890407922</original-weight>
+                <color-label id="1"/>
+                <text>""</text>
+                <bookends start="-3" end="3" step="0.1"/>
+            </link>
+            <link>
+                <marking branch="542" id="137"/>
+                <source branch="542" id="96"/>
+                <target branch="542" id="136"/>
+                <weight>0.030178331446069517</weight>
+                <original-weight>0.030178331446069517</original-weight>
+                <color-label id="0"/>
+                <text>""</text>
+                <bookends start="-3" end="3" step="0.1"/>
+            </link>
+            <link>
+                <marking branch="542" id="138"/>
+                <source branch="542" id="136"/>
+                <target branch="540" id="106"/>
+                <weight>-1.9577102500568442</weight>
+                <original-weight>-1.9577102500568442</original-weight>
+                <color-label id="1"/>
+                <text>""</text>
+                <bookends start="-3" end="3" step="0.1"/>
+            </link>
+            <link>
+                <marking branch="534" id="6"/>
+                <source branch="534" id="0"/>
+                <target branch="534" id="5"/>
+                <weight>-1.6413524971439237</weight>
+                <original-weight>-1.6413524971439237</original-weight>
+                <color-label id="2"/>
+                <text>""</text>
+                <bookends start="-3" end="3" step="0.1"/>
+            </link>
+            <link>
+                <marking branch="534" id="7"/>
+                <source branch="534" id="1"/>
+                <target branch="534" id="5"/>
+                <weight>-1.9593153372825693</weight>
+                <original-weight>-1.9593153372825693</original-weight>
+                <color-label id="2"/>
+                <text>""</text>
+                <bookends start="-3" end="3" step="0.1"/>
+            </link>
+            <link>
+                <marking branch="534" id="8"/>
+                <source branch="534" id="2"/>
+                <target branch="534" id="5"/>
+                <weight>0.42434903096188181</weight>
+                <original-weight>0.42434903096188181</original-weight>
+                <color-label id="2"/>
+                <text>""</text>
+                <bookends start="-3" end="3" step="0.1"/>
+            </link>
+            <link>
+                <marking branch="534" id="9"/>
+                <source branch="534" id="3"/>
+                <target branch="534" id="5"/>
+                <weight>2.0435993166967195</weight>
+                <original-weight>2.0435993166967195</original-weight>
+                <color-label id="2"/>
+                <text>""</text>
+                <bookends start="-3" end="3" step="0.1"/>
+            </link>
+            <link>
+                <marking branch="534" id="10"/>
+                <source branch="534" id="5"/>
+                <target branch="534" id="4"/>
+                <weight>-0.80848635151325454</weight>
+                <original-weight>-0.80848635151325454</original-weight>
+                <color-label id="2"/>
+                <text>""</text>
+                <bookends start="-3" end="3" step="0.1"/>
+            </link>
+            <link>
+                <marking branch="534" id="33"/>
+                <source branch="534" id="1"/>
+                <target branch="534" id="32"/>
+                <weight>-0.17528168747162653</weight>
+                <original-weight>-0.17528168747162653</original-weight>
+                <color-label id="2"/>
+                <text>""</text>
+                <bookends start="-3" end="3" step="0.1"/>
+            </link>
+            <link>
+                <marking branch="534" id="34"/>
+                <source branch="534" id="32"/>
+                <target branch="534" id="5"/>
+                <weight>-0.95074154022411528</weight>
+                <original-weight>-0.95074154022411528</original-weight>
+                <color-label id="2"/>
+                <text>""</text>
+                <bookends start="-3" end="3" step="0.1"/>
+            </link>
+            <link>
+                <marking branch="540" id="107"/>
+                <source branch="534" id="1"/>
+                <target branch="540" id="106"/>
+                <weight>-1.1808558558631952</weight>
+                <original-weight>-1.1808558558631952</original-weight>
+                <color-label id="1"/>
+                <text>""</text>
+                <bookends start="-3" end="3" step="0.1"/>
+            </link>
+            <link>
+                <marking branch="540" id="108"/>
+                <source branch="540" id="106"/>
+                <target branch="534" id="32"/>
+                <weight>2.8408400438452159</weight>
+                <original-weight>2.8408400438452159</original-weight>
+                <color-label id="0"/>
+                <text>""</text>
+                <bookends start="-3" end="3" step="0.1"/>
+            </link>
+            <link>
+                <marking branch="540" id="127"/>
+                <source branch="534" id="1"/>
+                <target branch="534" id="4"/>
+                <weight>0.047275042230013442</weight>
+                <original-weight>0.047275042230013442</original-weight>
+                <color-label id="2"/>
+                <text>""</text>
+                <bookends start="-3" end="3" step="0.1"/>
+            </link>
+            <link>
+                <marking branch="540" id="157"/>
+                <source branch="534" id="1"/>
+                <target branch="540" id="156"/>
+                <weight>-0.12768478388762555</weight>
+                <original-weight>-0.12768478388762555</original-weight>
+                <color-label id="1"/>
+                <text>""</text>
+                <bookends start="-3" end="3" step="0.1"/>
+            </link>
+            <link>
+                <marking branch="540" id="158"/>
+                <source branch="540" id="156"/>
+                <target branch="540" id="106"/>
+                <weight>-3</weight>
+                <original-weight>-3</original-weight>
+                <color-label id="1"/>
+                <text>""</text>
+                <bookends start="-3" end="3" step="0.1"/>
+            </link>
+            <link>
+                <marking branch="541" id="28"/>
+                <source branch="534" id="3"/>
+                <target branch="540" id="106"/>
+                <weight>-0.78212834922563423</weight>
+                <original-weight>-0.78212834922563423</original-weight>
+                <color-label id="1"/>
+                <text>""</text>
+                <bookends start="-3" end="3" step="0.1"/>
+            </link>
+            <link>
+                <marking branch="541" id="45"/>
+                <source branch="534" id="3"/>
+                <target branch="534" id="32"/>
+                <weight>1.2857164415869378</weight>
+                <original-weight>1.2857164415869378</original-weight>
+                <color-label id="2"/>
+                <text>""</text>
+                <bookends start="-3" end="3" step="0.1"/>
+            </link>
+            <link>
+                <marking branch="541" id="68"/>
+                <source branch="534" id="3"/>
+                <target branch="541" id="67"/>
+                <weight>2.8666739897314639</weight>
+                <original-weight>2.8666739897314639</original-weight>
+                <color-label id="1"/>
+                <text>""</text>
+                <bookends start="-3" end="3" step="0.1"/>
+            </link>
+            <link>
+                <marking branch="541" id="69"/>
+                <source branch="541" id="67"/>
+                <target branch="534" id="32"/>
+                <weight>0.33588195779378383</weight>
+                <original-weight>0.33588195779378383</original-weight>
+                <color-label id="2"/>
+                <text>""</text>
+                <bookends start="-3" end="3" step="0.1"/>
+            </link>
+            <link>
+                <marking branch="541" id="106"/>
+                <source branch="541" id="67"/>
+                <target branch="540" id="156"/>
+                <weight>0.53447232229614894</weight>
+                <original-weight>0.53447232229614894</original-weight>
+                <color-label id="1"/>
+                <text>""</text>
+                <bookends start="-3" end="3" step="0.1"/>
+            </link>
+        </links>
+        <nodeviews count="1">
+            <nodeview>
+                <identifier branch="" id="final"/>
+            </nodeview>
+        </nodeviews>
+    </genome>
+</data>
