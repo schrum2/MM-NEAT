@@ -1121,8 +1121,60 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
         links.add(toNew);
         links.add(fromNew);
     }
+    
+    /**
+     * Create a String describing the mathematical function defined by each output node.
+     * Only works for non-recurrent networks.
+     * @return
+     */
+    public List<String> getFunction() {
+    	ArrayList<String> result = new ArrayList<>(this.numOut);
+    	for(int i = this.outputStartIndex(); i < nodes.size(); i++) {
+    		result.add(getFunction(nodes.get(i)));
+    	}
+    	return result;
+    }
 
     /**
+     * Recursively compute the function associated with a particular neuron (no recurrent connections allowed!)
+     * @param n A NodeGene for a neuron
+     * @return String representation of function
+     */
+    public String getFunction(NodeGene n) {
+    	String result = ActivationFunctions.activationName(n.ftype) + "(";
+    	boolean first = true;
+    	for(LinkGene lg : links) {
+    		if(lg.targetInnovation == n.innovation && lg.isActive()) {
+    			if(!first) {
+    				result += " + ";
+    			}
+    			result += lg.weight + "*" + getFunction(getNodeWithInnovation(lg.sourceInnovation));
+    			first = false;
+    		}
+    	}
+    	if(first) {
+    		// No incoming links found: Input node
+    		result += "Input"+n.innovation;
+    	}
+    	result += ")";
+    	return result;
+    }
+
+    /**
+     * Return the NodeGene with the given innovation number
+     * @param innovation
+     * @return
+     */
+    private NodeGene getNodeWithInnovation(long innovation) {
+		for(NodeGene ng : nodes) {
+			if(ng.innovation == innovation) {
+				return ng;
+			}
+		}
+		throw new IllegalArgumentException("Node innovation not found: " + innovation);
+	}
+
+	/**
      * Modifies archetype
      *
      * Should always be called for archetype as well
