@@ -86,10 +86,4 @@ public class DL4JNetworkWrapper implements Network {
 		return null;
 	}
 
-	@Override
-	public INDArray output(INDArray input) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }
