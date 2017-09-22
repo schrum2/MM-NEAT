@@ -185,6 +185,19 @@ public class ArrayUtil {
 	}
 	
 	/**
+	 * Convert linear INDArray to a 1D double array
+	 * @param row INDArray with just one row
+	 * @return corresponding double array
+	 */
+	public static double[] doubleArrayFromINDArray(INDArray row) {
+		double[] array = new double[row.length()];
+		for(int i = 0; i < array.length; i++) {
+			array[i] = row.getDouble(i);
+		}
+		return array;
+	}
+	
+	/**
 	 * Return true if any element of members is also an element of set
 	 *
 	 * @param members

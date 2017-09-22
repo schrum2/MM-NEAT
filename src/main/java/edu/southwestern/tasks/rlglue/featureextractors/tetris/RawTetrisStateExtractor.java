@@ -22,8 +22,8 @@ public class RawTetrisStateExtractor implements FeatureExtractor {
 	@Override
 	public int numFeatures() {
 		return TetrisState.worldHeight * TetrisState.worldWidth * // Each cell in world state
-                        (CommonConstants.splitRawTetrisInputs ? 2 : 1) +  // Twice as many if split
-                        (CommonConstants.hyperNEAT ? 0 : 1); // Standard bias needed without HyperNEAT TODO added boolean check to (hopefully) solve missing bias problem
+				(CommonConstants.splitRawTetrisInputs ? 2 : 1) +  // Twice as many if split
+				(CommonConstants.hyperNEAT ? 0 : 1); // Standard bias needed without HyperNEAT TODO added boolean check to (hopefully) solve missing bias problem
 	}
 
 	/**
@@ -61,11 +61,11 @@ public class RawTetrisStateExtractor implements FeatureExtractor {
 				result[i] = Math.signum(o.intArray[i]);
 			}
 		}
-                // Add sensor bias
-                if(!CommonConstants.hyperNEAT) {//TODO added boolean check to (hopefully) solve missing bias problem
-                    // HyperNEAT adds its bias value differently
-                    result[result.length - 1] = 1.0;
-                }
+		// Add sensor bias
+		if(!CommonConstants.hyperNEAT) {
+			// HyperNEAT adds its bias value differently
+			result[result.length - 1] = 1.0;
+		}
 		return result;
 	}
 
@@ -89,10 +89,10 @@ public class RawTetrisStateExtractor implements FeatureExtractor {
 				}
 			}
 		}
-                if(!CommonConstants.hyperNEAT) {
-                    // HyperNEAT adds its bias value differently
-                    labels[labels.length - 1] = "Bias";
-                }
+		if(!CommonConstants.hyperNEAT) {
+			// HyperNEAT adds its bias value differently
+			labels[labels.length - 1] = "Bias";
+		}
 		return labels;
 	}
 

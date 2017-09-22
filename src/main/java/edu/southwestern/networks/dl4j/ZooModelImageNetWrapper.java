@@ -34,5 +34,10 @@ public class ZooModelImageNetWrapper implements TensorNetwork {
 		return graph.output(input)[0];
 	}
 
+	@Override
+	public void flush() {
+		graph.rnnClearPreviousState();
+	}
+
 	
 }

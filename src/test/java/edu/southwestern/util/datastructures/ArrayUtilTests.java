@@ -23,6 +23,13 @@ public class ArrayUtilTests {
 		MMNEAT.clearClasses();
 	}
 	
+	@Test
+	public void doubleArrayFromINDArray_test() {
+		double[] test = new double[] {1,3,4.5,456.5,234,-23,4324,-34,0.00006,-0.4324};
+		INDArray converted = Nd4j.create(test);
+		assertArrayEquals(test,ArrayUtil.doubleArrayFromINDArray(converted),0.0001);
+	}
+	
 	/**
 	 * Tests that the given number of "1"s is returned in a double[]
 	 */

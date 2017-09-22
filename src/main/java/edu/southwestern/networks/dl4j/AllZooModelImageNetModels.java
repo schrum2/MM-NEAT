@@ -74,5 +74,12 @@ public abstract class AllZooModelImageNetModels implements TensorNetwork {
 		}
 	}
 	
-
+	/**
+	 * flush all models
+	 */
+	public void flush() {
+		for(ComputationGraph model : imageNetModels.values()) {
+			model.rnnClearPreviousState();
+		}
+	}
 }
