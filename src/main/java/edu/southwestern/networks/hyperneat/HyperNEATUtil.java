@@ -296,12 +296,7 @@ public class HyperNEATUtil {
 				currentIndex--;
 			}
 //			activations.get(currentIndex).setColor(Color.MAGENTA);
-			
-			
 		}  
-
-
-
 
 		for(VisualNode vn : activations) {
 			vn.drawNode(p);
@@ -327,9 +322,7 @@ public class HyperNEATUtil {
 	public static Color regularVisualization(double activation) { 
 		activation = Math.max(-1, Math.min(activation, 1.0));// For unusual activation functions that go outside of the [-1,1] range
 		return new Color(activation > 0 ? (int)(activation*255) : 0, 0, activation < 0 ? (int)(-activation*255) : 0);
-
 	}
-
 
 	/**
 	 * Draws the weights of the links between nodes in substrate layers to a series of drawing panels, with
@@ -339,7 +332,6 @@ public class HyperNEATUtil {
 	 * @return the weight panels
 	 */
 	public static List<DrawingPanel> drawWeight(TWEANNGenotype genotype, HyperNEATTask hnt) {
-
 		//gets all relevant information needed to draw link weights
 		tg = (TWEANNGenotype)genotype.copy();
 		connections = hnt.getSubstrateConnectivity();
@@ -387,7 +379,6 @@ public class HyperNEATUtil {
 		int nodeIndex = 0;
 		for(int i = 0; i < substrates.size(); i++) {
 			if(substrates.get(i).getName().equals(sub.getName())){ break;}
-
 			nodeIndex += substrates.get(i).getSize().t1 * substrates.get(i).getSize().t2;
 		}
 		return nodeIndex;
@@ -777,5 +768,54 @@ public class HyperNEATUtil {
 	
 	public static int numCPPNInputs(HyperNEATTask task) {
 		return task.numCPPNInputs() + (CommonConstants.substrateLocationInputs || Parameters.parameters.booleanParameter("convolutionWeightSharing") ? 4 : 0);
+	}
+	
+	/**
+	 * Assumes that all input substrates have the same width and height, and returns
+	 * the shape of the input volume. Meant to be used by convolutional networks in DL4J.
+	 * @param substrates List of substrates for a task
+	 * @return array of {width, height, channels} of the input substrates
+	 */
+	public static int[] getInputShape(List<Substrate> substrates) {
+		assert substrates.get(0).getStype() == Substrate.INPUT_SUBSTRATE : "First substrate was not an input substrate: " + substrates;
+		// First substrate must be an input sustrate
+		Pair<Integer,Integer> size = substrates.get(0).getSize();
+		int depth = 1;
+		while(substrates.get(depth).getStype() == Substrate.INPUT_SUBSTRATE) {
+			assert substrates.get(depth).getSize().equals(size) : "Input substrates had different dimensions: " + size + " not equal to " + substrates.get(depth).getSize();
+			depth++;
+		}
+		return new int[] {size.t1, size.t2, depth};
+	}
+	
+	/**
+	 * Assumes that all output substrates have the same width and height, and returns
+	 * the shape of the output volume. Meant to be used by convolutional networks in DL4J.
+	 * However, most spatial information is gone from convolutional networks by the output
+	 * layer, so this method may need to changes in the long run. Generally, different output
+	 * substrates do not have the same dimensions, so this method cannt be used in many circumstances.
+	 * @param substrates List of substrates for a task
+	 * @return array of {width, height, channels} of the output substrates
+	 */
+	public static int[] getOutputShape(List<Substrate> substrates) {
+		// Find first output substrate
+		int firstOutputIndex = -1;
+		for(int i = 0; i < substrates.size(); i++) {
+			if(substrates.get(i).getStype() == Substrate.OUTPUT_SUBSTRATE) {
+				firstOutputIndex = i;
+				break;
+			}
+		}
+		assert firstOutputIndex > -1 : "No output sbstrate found: " + substrates;
+		// Now get shape information
+		Pair<Integer,Integer> size = substrates.get(firstOutputIndex).getSize();
+		int depth = 1;
+		// All remaining substrates should be output substrates
+		while(firstOutputIndex + depth < substrates.size()) {
+			assert substrates.get(firstOutputIndex + depth).getStype() == Substrate.OUTPUT_SUBSTRATE : "Non-output substrates found after output substrates: " + substrates;
+			assert substrates.get(firstOutputIndex + depth).getSize().equals(size) : "Output substrates had different dimensions: " + size + " not equal to " + substrates.get(firstOutputIndex + depth).getSize();
+			depth++;
+		}
+		return new int[] {size.t1, size.t2, depth};
 	}
 }

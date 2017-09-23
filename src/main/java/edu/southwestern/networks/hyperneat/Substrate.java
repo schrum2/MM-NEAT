@@ -25,7 +25,7 @@ public class Substrate {
 	// unique string identifier for substrate
 	private final String name;
 	// encodes size of rectangular substrate (sticking with 2D for now)
-	private final Pair<Integer, Integer> size;
+	private final Pair<Integer, Integer> size; // (width,height)
 	// encodes type of substrate: INPUT_SUBSTRATE, PROCCESS_SUBSTRATE, or OUTPUT_SUBSTRATE
 	private final int stype;
 	// location of substrate in vector space.
@@ -49,7 +49,7 @@ public class Substrate {
 	 * constructor for a substrate
 	 *
 	 * @param size
-	 *            pair representing size of substrate
+	 *            pair representing size of substrate: (width,height)
 	 * @param stype
 	 *            type of substrate
 	 * @param subLocation
