@@ -789,33 +789,18 @@ public class HyperNEATUtil {
 	}
 	
 	/**
-	 * Assumes that all output substrates have the same width and height, and returns
-	 * the shape of the output volume. Meant to be used by convolutional networks in DL4J.
-	 * However, most spatial information is gone from convolutional networks by the output
-	 * layer, so this method may need to changes in the long run. Generally, different output
-	 * substrates do not have the same dimensions, so this method cannt be used in many circumstances.
-	 * @param substrates List of substrates for a task
-	 * @return array of {width, height, channels} of the output substrates
+	 * Count the number of outputs across all output substrates
+	 * @param substrates Substrate list
+	 * @return Output count
 	 */
-	public static int[] getOutputShape(List<Substrate> substrates) {
-		// Find first output substrate
-		int firstOutputIndex = -1;
+	public static int getOutputCount(List<Substrate> substrates) {
+		int outputCount = 0;
 		for(int i = 0; i < substrates.size(); i++) {
 			if(substrates.get(i).getStype() == Substrate.OUTPUT_SUBSTRATE) {
-				firstOutputIndex = i;
-				break;
+				Pair<Integer,Integer> size = substrates.get(i).getSize();
+				outputCount += size.t1 * size.t2;
 			}
 		}
-		assert firstOutputIndex > -1 : "No output sbstrate found: " + substrates;
-		// Now get shape information
-		Pair<Integer,Integer> size = substrates.get(firstOutputIndex).getSize();
-		int depth = 1;
-		// All remaining substrates should be output substrates
-		while(firstOutputIndex + depth < substrates.size()) {
-			assert substrates.get(firstOutputIndex + depth).getStype() == Substrate.OUTPUT_SUBSTRATE : "Non-output substrates found after output substrates: " + substrates;
-			assert substrates.get(firstOutputIndex + depth).getSize().equals(size) : "Output substrates had different dimensions: " + size + " not equal to " + substrates.get(firstOutputIndex + depth).getSize();
-			depth++;
-		}
-		return new int[] {size.t1, size.t2, depth};
+		return outputCount;
 	}
 }

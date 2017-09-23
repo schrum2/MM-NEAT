@@ -22,12 +22,12 @@ public class DL4JNetworkWrapper implements Network {
 	
 	private TensorNetwork net;
 	private int[] inputShape; // width, height, channels
-	private int[] outputShape; // width, height, channels
+	private int outputCount;
 
-	public DL4JNetworkWrapper(TensorNetwork net, int[] inputShape, int[] outputShape) {
+	public DL4JNetworkWrapper(TensorNetwork net, int[] inputShape, int outputCount) {
 		this.net = net;
 		this.inputShape = inputShape;
-		this.outputShape = outputShape;
+		this.outputCount = outputCount;
 	}
 	
 	@Override
@@ -37,7 +37,7 @@ public class DL4JNetworkWrapper implements Network {
 
 	@Override
 	public int numOutputs() {
-		return org.nd4j.linalg.util.ArrayUtil.prod(outputShape);
+		return outputCount;
 	}
 
 	/**

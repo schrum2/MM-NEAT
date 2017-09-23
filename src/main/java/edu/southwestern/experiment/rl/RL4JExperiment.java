@@ -35,10 +35,10 @@ public class RL4JExperiment implements Experiment {
 		TensorNetwork tensorNetwork = new TensorNetworkFromHyperNEATSpecification(hnt);
 		// Input/output shape also comes from HyperNEATTask
 		List<Substrate> substrates = hnt.getSubstrateInformation();
-		int [] inputShape = HyperNEATUtil.getInputShape(substrates);
-		int [] outputShape = HyperNEATUtil.getOutputShape(substrates);
+		int[] inputShape = HyperNEATUtil.getInputShape(substrates);
+		int outputCount = HyperNEATUtil.getOutputCount(substrates);
 		// Wrap again: DL4JNetworkWrapper implements Network
-		DL4JNetworkWrapper wrappedNetwork = new DL4JNetworkWrapper(tensorNetwork, inputShape, outputShape);
+		DL4JNetworkWrapper wrappedNetwork = new DL4JNetworkWrapper(tensorNetwork, inputShape, outputCount);
 		// Put in a "genotype" so it can be accepted by tasks
 		individual = new ContainerGenotype<DL4JNetworkWrapper>(wrappedNetwork);
 	}
