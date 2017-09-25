@@ -297,11 +297,11 @@ public class GraphicsUtil {
 	 * @return scaled HSB information in float array
 	 */
 	public static float[] rangeRestrictHSB(double[] hsb) {
-		return new float[] { (float) hsb[HUE_INDEX],
+		return new float[] { (float) ActivationFunctions.fullLinear(hsb[HUE_INDEX]),
 				// (float) hsb[SATURATION_INDEX],
 				(float) ActivationFunctions.halfLinear(hsb[SATURATION_INDEX]),
 				// (float) hsb[BRIGHTNESS_INDEX]};
-				(float) Math.abs(hsb[BRIGHTNESS_INDEX]) };
+				(float) Math.abs(ActivationFunctions.fullLinear(hsb[BRIGHTNESS_INDEX])) };
 	}
 
 	/**
