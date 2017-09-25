@@ -1,5 +1,6 @@
 package edu.southwestern.experiment.rl;
 
+import java.io.FileNotFoundException;
 import java.util.List;
 
 import edu.southwestern.MMNEAT.MMNEAT;
@@ -56,4 +57,17 @@ public class RL4JExperiment implements Experiment {
 		return currentEpisode >= maxEpisodes;
 	}
 
+	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
+		MMNEAT.main(new String[] {"runNumber:0","io:false","netio:false","maxGens:10","watch:true",
+				"task:edu.southwestern.tasks.rlglue.tetris.HyperNEATTetrisTask",
+				"rlGlueEnvironment:org.rlcommunity.environments.tetris.Tetris",
+				"rlGlueExtractor:edu.southwestern.tasks.rlglue.featureextractors.tetris.RawTetrisStateExtractor",
+				"rlGlueAgent:edu.southwestern.tasks.rlglue.tetris.TetrisAfterStateAgent",
+				"splitRawTetrisInputs:true",
+				"senseHolesDifferently:true",
+				"hyperNEAT:true", // Prevents extra bias input
+				"steps:500000",
+				"HNProcessDepth:4","HNProcessWidth:4","convolution:true",
+				"experiment:edu.southwestern.experiment.rl.RL4JExperiment"});
+	}
 }
