@@ -1,11 +1,8 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.southwestern.tasks.mspacman.sensors.directional;
 
+import org.apache.commons.lang3.ArrayUtils;
+
 import edu.southwestern.tasks.mspacman.facades.GameFacade;
-import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
 
 /**
@@ -29,11 +26,11 @@ public class VariableDirectionPillsBeforeJunctionBlock extends VariableDirection
 		int pillCount = 0;
 		int[] activePills = gf.getActivePillsIndices();
 		for (int i = 0; i < pair.t2.length; i++) {
-			if (ArrayUtil.member(pair.t2[i], activePills)) {
+			if (ArrayUtils.contains(activePills, pair.t2[i])) {
 				pillCount++;
 			}
 		}
-		return pillCount / 27.0; // Maze 3 long corridor holds 26 pills
+		return pillCount / 27.0; // Maze 3 long corridor holds 26 pills (MAGIC NUMBER!)
 	}
 
 	@Override

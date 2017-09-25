@@ -6,6 +6,9 @@ import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
 import java.awt.Color;
 import java.util.*;
+
+import org.apache.commons.lang3.ArrayUtils;
+
 import pacman.game.Constants;
 import pacman.game.Constants.DM;
 import pacman.game.Constants.GHOST;
@@ -532,7 +535,7 @@ public class GameFacade {
 	 * @return power pill or not
 	 */
 	public boolean isPowerPillIndex(int index) {
-		return ArrayUtil.member(index, newG.getActivePowerPillsIndices());
+		return ArrayUtils.contains(newG.getActivePowerPillsIndices(), index);
 	}
 
 	/**
@@ -1176,7 +1179,7 @@ public class GameFacade {
 		int[] neighbors = this.neighbors(current);
 		assert neighbors[pacmanDir] != -1 : "Pacman dir is a wall: " + pacmanDir + "; " + Arrays.toString(neighbors);
 		int[] ghostPath = getGhostPath(ghostIndex, current);
-		return ArrayUtil.member(neighbors[pacmanDir], ghostPath);
+		return ArrayUtils.contains(ghostPath, neighbors[pacmanDir]);
 	}
 
 	/**
@@ -1830,7 +1833,7 @@ public class GameFacade {
 		}
 		for (int i = 1; i < path.length; i++) {
 			// System.out.println(path.length +":" + i);
-			if (!ArrayUtil.member(path[i], neighbors(path[i - 1]))) {
+			if (!ArrayUtils.contains(neighbors(path[i - 1]), path[i])) {
 				return false;
 			}
 		}
@@ -1940,7 +1943,7 @@ public class GameFacade {
 			} else if (getGhostLairTime(i) > 0) {
 				// Ghost may pop out when pacman passes
 				int ghostStart = getGhostInitialNodeIndex();
-				if (ArrayUtil.member(ghostStart, path)) {
+				if (ArrayUtils.contains(path, ghostStart)) {
 					pacManDistance = getShortestPathDistance(getPacmanCurrentNodeIndex(), ghostStart);
 					int lairTime = getGhostLairTime(i);
 					closestThreatDistance = Math.min(closestThreatDistance, lairTime);

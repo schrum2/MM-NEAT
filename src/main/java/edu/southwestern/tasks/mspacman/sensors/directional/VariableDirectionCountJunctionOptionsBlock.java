@@ -1,14 +1,12 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.southwestern.tasks.mspacman.sensors.directional;
+
+import java.util.ArrayList;
+
+import org.apache.commons.lang3.ArrayUtils;
 
 import edu.southwestern.tasks.mspacman.facades.GameFacade;
 import edu.southwestern.tasks.mspacman.sensors.directional.reachfirst.VariableDirectionCloserToTargetThanThreatGhostBlock;
-import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
-import java.util.ArrayList;
 
 /**
  * 
@@ -43,13 +41,8 @@ public class VariableDirectionCountJunctionOptionsBlock extends VariableDirectio
 				// Closest directional junction, from the closest junction
 				// (depth 2)
 				Pair<Integer, int[]> closestD2 = gf.getTargetInDir(closest.t1, junctions, i);
-				if (current != closestD2.t1 // Don't start from junction and
-											// then return to it
-						&& !ArrayUtil.member(current, closestD2.t2) // In fact,
-																	// don't
-																	// reverse
-																	// direction
-																	// either
+				if (current != closestD2.t1 // Don't start from junction and then return to it
+						&& !ArrayUtils.contains(closestD2.t2, current) // In fact, don't reverse direction either
 						&& VariableDirectionCloserToTargetThanThreatGhostBlock.canReachClosestTargetSafelyInDirection(
 								gf, new int[] { closestD2.t1 }, dir, ghostsToCheck)) {
 					// if (CommonConstants.watch) {

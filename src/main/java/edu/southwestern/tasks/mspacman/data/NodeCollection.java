@@ -5,6 +5,8 @@ import edu.southwestern.tasks.mspacman.facades.GameFacade;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import java.util.ArrayList;
 
+import org.apache.commons.lang3.ArrayUtils;
+
 /**
  *
  * @author Jacob Schrum
@@ -82,7 +84,7 @@ public abstract class NodeCollection {
 			int closestJunction = gs.getClosestNodeIndexFromNodeIndex(current, junctions);
 			for (int i = 0; i < savedNodes.length; i++) {
 				if (savedNodes[i] == -1 && closestJunction != lastNodeVisited
-						&& ArrayUtil.member(lastNodeVisited, junctions)) {
+						&& ArrayUtils.contains(junctions, lastNodeVisited)) {
 					savedNodes[i] = lastNodeVisited;
 					lastNodeVisited = -1;
 				} else if (savedNodes[i] == this.lastNodeVisited) {

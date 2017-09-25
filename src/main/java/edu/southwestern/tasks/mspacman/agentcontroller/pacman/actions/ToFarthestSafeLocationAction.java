@@ -11,6 +11,9 @@ import java.awt.Color;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map.Entry;
+
+import org.apache.commons.lang3.ArrayUtils;
+
 import pacman.game.Constants;
 
 /**
@@ -87,7 +90,7 @@ public class ToFarthestSafeLocationAction implements MsPacManAction {
 		double result = // directionDistanceNumPowerPillsTriple.t2 // distance traveled
 		gf.getEuclideanDistance(gf.getPacmanCurrentNodeIndex(), destination)
 				+ (directionDistanceNumPowerPillsTriple.t1 == currentDir
-						&& !ArrayUtil.member(destination, gf.getActivePowerPillsIndices()) ? 50 : 0) // paths in same direction are more favorable
+						&& !ArrayUtils.contains(gf.getActivePowerPillsIndices(), destination) ? 50 : 0) // paths in same direction are more favorable
 				+ directionDistanceNumPowerPillsTriple.t3 * 200; // paths that consume fewer power pills are more favorable
 		return result;
 	}

@@ -1,11 +1,13 @@
 package edu.southwestern.evolution.genotypes;
 
-import edu.southwestern.evolution.mutation.real.PerturbMutation;
-import edu.southwestern.util.random.RandomNumbers;
-import edu.southwestern.util.datastructures.ArrayUtil;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+
+import org.apache.commons.lang3.ArrayUtils;
+
+import edu.southwestern.evolution.mutation.real.PerturbMutation;
+import edu.southwestern.util.random.RandomNumbers;
 
 /**
  *
@@ -23,7 +25,7 @@ public class RealValuedGenotype extends NumericArrayGenotype<Double> {
 	 * @param genes representative double array of genes
 	 */
 	public RealValuedGenotype(double[] genes) {
-		super(ArrayUtil.primitiveDoubleArrayToDoubleArray(genes));
+		super(ArrayUtils.toObject(genes));
 	}
 	
 	/**

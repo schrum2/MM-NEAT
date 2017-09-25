@@ -1,12 +1,11 @@
-/**
- * 
- */
 package edu.southwestern.evolution.crossover.network;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.junit.After;
 import org.junit.Test;
 
@@ -14,7 +13,6 @@ import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype.NodeGene;
 import edu.southwestern.parameters.Parameters;
-import edu.southwestern.util.datastructures.ArrayUtil;
 
 /**
  * This is a JUnit test for the TWEANN crossover. It tests both upper and lower
@@ -118,22 +116,15 @@ public class TWEANNCrossoverTest {
 		for (int i = 0; i < originialMGenotype.size(); i++) {
 			originalMInno[i] = originialMGenotype.get(i).innovation;
 		}
-
-		for (int i = 0; i < originalFInno.length; i++) {// iterates through
-														// parent innovation
-														// numbers and asserts
-														// both offspring have
-														// them
-			assertTrue(ArrayUtil.member(originalFInno[i], mInno));
-			assertTrue(ArrayUtil.member(originalFInno[i], oInno));
+		// iterates through parent innovation numbers and asserts both offspring have them
+		for (int i = 0; i < originalFInno.length; i++) {
+			assertTrue(ArrayUtils.contains(mInno, originalFInno[i]));
+			assertTrue(ArrayUtils.contains(oInno, originalFInno[i]));
 		}
-		for (int i = 0; i < originalMInno.length; i++) {// iterates through
-														// parent innovation
-														// numbers and asserts
-														// both offspring have
-														// them
-			assertTrue(ArrayUtil.member(originalMInno[i], oInno));
-			assertTrue(ArrayUtil.member(originalMInno[i], mInno));
+		// iterates through parent innovation numbers and asserts both offspring have them
+		for (int i = 0; i < originalMInno.length; i++) {
+			assertTrue(ArrayUtils.contains(oInno, originalMInno[i]));
+			assertTrue(ArrayUtils.contains(mInno, originalMInno[i]));
 		}
 
 	}
@@ -192,44 +183,31 @@ public class TWEANNCrossoverTest {
 		for (int i = 0; i < oGenotype.size(); i++) {
 			oInno[i] = oGenotype.get(i).innovation;
 		}
-		ArrayList<NodeGene> originalFGenotype = originalF.nodes;// creates long
-																// arrays to
-																// facilitate
-																// utilization a
-																// helper method
+		// creates long arrays to facilitate utilization a helper method
+		ArrayList<NodeGene> originalFGenotype = originalF.nodes;
 		long[] originalFInno = new long[originalFGenotype.size()];
 		for (int i = 0; i < originalFGenotype.size(); i++) {
 			originalFInno[i] = originalFGenotype.get(i).innovation;
 		}
-		ArrayList<NodeGene> originialMGenotype = originalM.nodes;// creates long
-																	// arrays to
-																	// facilitate
-																	// utilization
-																	// a helper
-																	// method
+		// creates long arrays to facilitate utilization a helper method
+		ArrayList<NodeGene> originialMGenotype = originalM.nodes;
 		long[] originalMInno = new long[originialMGenotype.size()];
 		for (int i = 0; i < originialMGenotype.size(); i++) {
 			originalMInno[i] = originialMGenotype.get(i).innovation;
 		}
 
-		for (int i = 0; i < originalFInno.length; i++) {// iterates through
-														// parent innovation
-														// numbers to assert
-														// only one child
-														// inherited them
+		// iterates through parent innovation numbers to assert only one child inherited them
+		for (int i = 0; i < originalFInno.length; i++) {
 			if (originalFInno[i] > 0) {
-				assertFalse(ArrayUtil.member(originalFInno[i], mInno));
-				assertTrue(ArrayUtil.member(originalFInno[i], oInno));
+				assertFalse(ArrayUtils.contains(mInno, originalFInno[i]));
+				assertTrue(ArrayUtils.contains(oInno, originalFInno[i]));
 			}
 		}
-		for (int i = 0; i < originalMInno.length; i++) {// iterates through
-														// parent innovation
-														// numbers to assert
-														// only one child
-														// inherited them
+		// iterates through parent innovation numbers to assert only one child inherited them
+		for (int i = 0; i < originalMInno.length; i++) {
 			if (originalMInno[i] > 0) {
-				assertFalse(ArrayUtil.member(originalMInno[i], oInno));
-				assertTrue(ArrayUtil.member(originalMInno[i], mInno));
+				assertFalse(ArrayUtils.contains(oInno, originalMInno[i]));
+				assertTrue(ArrayUtils.contains(mInno, originalMInno[i]));
 			}
 		}
 	}

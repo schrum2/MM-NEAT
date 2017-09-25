@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.southwestern.tasks.mspacman.sensors.directional.reachfirst;
 
 import edu.southwestern.parameters.CommonConstants;
@@ -11,6 +7,9 @@ import edu.southwestern.tasks.mspacman.sensors.directional.VariableDirectionBloc
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
 import java.util.Arrays;
+
+import org.apache.commons.lang3.ArrayUtils;
+
 import pacman.game.Constants;
 
 /**
@@ -139,17 +138,13 @@ public abstract class VariableDirectionCloserToTargetThanThreatGhostBlock extend
 		assert target == path[path.length - 1] : "Path doesn't lead to target: " + Arrays.toString(path) + ":" + target;
 		final int currentPacmanNode = gf.getPacmanCurrentNodeIndex();
 		int[] neighbors = gf.neighbors(currentPacmanNode);
-		assert ArrayUtil.member(path[0], neighbors) : "Path does not actually start where pacman is! "
-				+ currentPacmanNode + ":" + Arrays.toString(path);
+		assert ArrayUtils.contains(neighbors, path[0]) : "Path does not actually start where pacman is! " + currentPacmanNode + ":" + Arrays.toString(path);
 		assert ghostsToCheck.length <= gf.getNumActiveGhosts() : "Looking at more ghosts than exist";
 		// Special: If last pill will be eaten, then set target sooner
 		int[] activePills = gf.getActivePillsIndices();
 		if (activePills.length > 0 && gf.getNumActivePowerPills() == 0 && ArrayUtil.subset(activePills, path)) {
 			int direction = ArrayUtil.position(neighbors, path[0]);
-			Pair<Integer, int[]> toLastPill = gf.getTargetInDir(currentPacmanNode, activePills, direction, false); // false
-																													// for
-																													// longest
-																													// path
+			Pair<Integer, int[]> toLastPill = gf.getTargetInDir(currentPacmanNode, activePills, direction, false); // false for longest path
 			target = toLastPill.t1;
 			path = toLastPill.t2; // A shorter path
 			// if(CommonConstants.watch){
@@ -179,22 +174,17 @@ public abstract class VariableDirectionCloserToTargetThanThreatGhostBlock extend
 				// then the ghost will reach it first, but it is still safe to
 				// go there.
 				if (gf.isJunction(ghostLocation)
-						|| !(ArrayUtil.subset(ghostPath, path) && ArrayUtil.member(ghostLocation, path))) {
-					// If the ghost and pacman paths collide head-on, then path
-					// is unsafe
-					if (ArrayUtil.member(ghostLocation, path) && gf.ghostApproachingPacman(ghostsToCheck[i])) {
+						|| !(ArrayUtil.subset(ghostPath, path) && ArrayUtils.contains(path, ghostLocation))) {
+					// If the ghost and pacman paths collide head-on, then path is unsafe
+					if (ArrayUtils.contains(path, ghostLocation) && gf.ghostApproachingPacman(ghostsToCheck[i])) {
 						// if (CommonConstants.watch) {
 						// gf.addLines(Color.MAGENTA, ghostLocation, target);
 						// }
 						return 0;
 					}
-					// If the ghost path to the location reaches it sooner, it
-					// is unsafe
+					// If the ghost path to the location reaches it sooner, it is unsafe
 					int obstacleToTargetDistance = ghostPath.length;
-					obstacleToTargetDistance -= (Constants.EAT_DISTANCE); // Need
-																			// a
-																			// safe
-																			// buffer
+					obstacleToTargetDistance -= (Constants.EAT_DISTANCE); // Need a safe buffer
 					if (obstacleToTargetDistance <= path.length) {
 						// if (CommonConstants.watch) {
 						// gf.addLines(Color.MAGENTA, ghostLocation, target);
@@ -207,21 +197,16 @@ public abstract class VariableDirectionCloserToTargetThanThreatGhostBlock extend
 			} else if (gf.isGhostEdible(ghostsToCheck[i])) {
 				int[] ghostPath = gf.getGhostPath(ghostsToCheck[i], target);
 				int ghostLocation = gf.getGhostCurrentNodeIndex(ghostsToCheck[i]);
-				// Special case: if ghost is moving away from pacman to the
-				// target,
-				// then the ghost may reach it first, but it is still safe to go
-				// there.
+				// Special case: if ghost is moving away from pacman to the target,
+				// then the ghost may reach it first, but it is still safe to go there.
 				if (gf.isJunction(ghostLocation)
-						|| !(ArrayUtil.subset(ghostPath, path) && ArrayUtil.member(ghostLocation, path))) {
-					// If the ghost and pacman paths collide head-on, then we
-					// need
-					// to determine whether or not the ghost will be edible or a
-					// threat
+						|| !(ArrayUtil.subset(ghostPath, path) && ArrayUtils.contains(path, ghostLocation))) {
+					// If the ghost and pacman paths collide head-on, then we need
+					// to determine whether or not the ghost will be edible or a threat
 					// at the time
 					int edibleTime = gf.getGhostEdibleTime(ghostsToCheck[i]);
-					if (ArrayUtil.member(ghostLocation, path) && gf.ghostApproachingPacman(ghostsToCheck[i])) {
-						int distanceBetweenPacManAndGhost = (int) gf.getShortestPathDistance(ghostLocation,
-								currentPacmanNode);
+					if (ArrayUtils.contains(path, ghostLocation) && gf.ghostApproachingPacman(ghostsToCheck[i])) {
+						int distanceBetweenPacManAndGhost = (int) gf.getShortestPathDistance(ghostLocation, currentPacmanNode);
 						int timeUntilCollision = Constants.GHOST_SPEED_REDUCTION
 								* ((distanceBetweenPacManAndGhost - Constants.EAT_DISTANCE)
 										/ (Constants.GHOST_SPEED_REDUCTION + 1));
@@ -236,16 +221,11 @@ public abstract class VariableDirectionCloserToTargetThanThreatGhostBlock extend
 					// Will ghost become a threat before pacman reaches the
 					// target?
 					if (path.length >= edibleTime) {
-						// Need to translate edible time into distance, and see
-						// if the ghost
-						// will become a threat and reach the destination before
-						// pacman.
+						// Need to translate edible time into distance, and see if the ghost
+						// will become a threat and reach the destination before pacman.
 						int obstacleToTargetDistance = ghostPath.length
 								+ (edibleTime * (Constants.GHOST_SPEED_REDUCTION - 1));
-						obstacleToTargetDistance -= (Constants.EAT_DISTANCE); // Need
-																				// a
-																				// safe
-																				// buffer
+						obstacleToTargetDistance -= (Constants.EAT_DISTANCE); // Need a safe buffer
 						if (obstacleToTargetDistance <= path.length) {
 							// if (CommonConstants.watch) {
 							// gf.addLines(Color.MAGENTA, ghostLocation,
@@ -264,10 +244,7 @@ public abstract class VariableDirectionCloserToTargetThanThreatGhostBlock extend
 					int lairExit = gf.getGhostInitialNodeIndex();
 					int lairToTargetDistance = (int) gf.getShortestPathDistance(lairExit, target);
 					int ghostEffectiveTravelDistance = lairToTargetDistance + lairTime;
-					ghostEffectiveTravelDistance -= (Constants.EAT_DISTANCE); // Need
-																				// a
-																				// safe
-																				// buffer
+					ghostEffectiveTravelDistance -= (Constants.EAT_DISTANCE); // Need a safe buffer
 					if (ghostEffectiveTravelDistance <= path.length) {
 						// if (CommonConstants.watch) {
 						// gf.addLines(Color.MAGENTA,

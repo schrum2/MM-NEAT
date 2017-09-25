@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.nd4j.linalg.api.ndarray.INDArray;
 
 import edu.southwestern.util.sound.SoundToArray;
@@ -103,21 +104,6 @@ public class ArrayUtil {
 	}
 
 	/**
-	 * creates a new array of primitive doubles and copies into it all the data from the input array 
-	 * 
-	 * @param array	
-	 * 			source to be copied
-	 * @return another array that has the same length and contents as the original
-	 */
-	public static Double[] primitiveDoubleArrayToDoubleArray(double[] array) {
-		Double[] result = new Double[array.length];
-		for (int i = 0; i < result.length; i++) {
-			result[i] = array[i];
-		}
-		return result;
-	}
-
-	/**
 	 * creates a new array of primitive ints with the same contents as ArrayList<Integer> input
 	 * 
 	 * @param path ArrayList of type Integer to be copied
@@ -206,62 +192,9 @@ public class ArrayUtil {
 	 */
 	public static boolean containsAny(int[] members, int[] set) {
 		for (int i = 0; i < members.length; i++) {
-			if (member(members[i], set)) {
+			if(ArrayUtils.contains(set, members[i])) {
 				return true;
 			}
-		}
-		return false;
-	}
-
-	/**
-	 * Returns true if int x is in the array set
-	 *
-	 * @param x
-	 *            element to look for
-	 * @param set
-	 *            set to look in
-	 * @return true if x in set
-	 */
-	public static boolean member(int x, int[] set) {
-		for (int j = 0; j < set.length; j++) {
-			if (x == set[j]) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/**
-	 * Returns true if long x is in the array set
-	 *
-	 * @param x
-	 *            element to look for
-	 * @param set
-	 *            set to look in
-	 * @return true if x in set
-	 */
-	public static boolean member(long x, long[] set) {
-		for (int j = 0; j < set.length; j++) {
-			if (x == set[j]) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/**
-	 * Returns true if double x is in the array set
-	 * 
-	 * @param x
-	 *            element to look for
-	 * @param set
-	 *            set to look in
-	 * @return true if x in set
-	 */
-	public static boolean member(double x, double[] set) {
-		for (int j = 0; j < set.length; j++) {
-			if (x == set[j])
-				return true;
 		}
 		return false;
 	}
@@ -485,7 +418,7 @@ public class ArrayUtil {
 	 */
 	public static boolean subset(int[] lhs, int[] rhs) {
 		for (int i = 0; i < lhs.length; i++) {
-			if (!member(lhs[i], rhs)) {
+			if (!ArrayUtils.contains(rhs, lhs[i])) {
 				return false;
 			}
 		}
@@ -504,7 +437,7 @@ public class ArrayUtil {
 	 */
 	public static boolean subset(long[] lhs, long[] rhs) {
 		for (int i = 0; i < lhs.length; i++) {
-			if (!member(lhs[i], rhs)) {
+			if (!ArrayUtils.contains(rhs, lhs[i])) {
 				return false;
 			}
 		}
