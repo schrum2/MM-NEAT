@@ -11,7 +11,7 @@ import org.rlcommunity.rlglue.codec.types.Reward_observation_terminal;
 import edu.southwestern.MMNEAT.MMNEAT;
 
 /**
- * Class to treat RL Glue environments as DL4J MDP instances.
+ * Class to treat RL Glue environments as RL4J MDP instances.
  * @author Jacob Schrum
  */
 public class RLGlueMDP implements MDP<EncodableObservation, Integer, DiscreteSpace> {
@@ -42,6 +42,8 @@ public class RLGlueMDP implements MDP<EncodableObservation, Integer, DiscreteSpa
 
 	@Override
 	public EncodableObservation reset() {
+		//System.out.println("reset()");
+		done = false;
 		environment.env_cleanup(); // end episode 
 		environment.env_init(); // set up environment
 		return new EncodableObservation(environment.env_start()); // start the next episode
@@ -49,6 +51,7 @@ public class RLGlueMDP implements MDP<EncodableObservation, Integer, DiscreteSpa
 
 	@Override
 	public void close() {
+		//System.out.println("close()");
 		environment.env_cleanup();
 	}
 
@@ -60,6 +63,7 @@ public class RLGlueMDP implements MDP<EncodableObservation, Integer, DiscreteSpa
 		// actions available in RL Glue
 		rlGlueAction.intArray[0] = action;
 		// RL Glue step
+		//System.out.println("\tenv_step("+action+")");
 		Reward_observation_terminal result = environment.env_step(rlGlueAction);
 		// Remember whether episode just finished
 		done = result.isTerminal();
@@ -69,11 +73,13 @@ public class RLGlueMDP implements MDP<EncodableObservation, Integer, DiscreteSpa
 
 	@Override
 	public boolean isDone() {
+		//System.out.println("isDone() = " + done);
 		return done;
 	}
 
 	@Override
 	public MDP<EncodableObservation, Integer, DiscreteSpace> newInstance() {
+		//System.out.println("newInstance()");
 		return new RLGlueMDP(environment);
 	}
 

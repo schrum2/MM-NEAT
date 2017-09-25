@@ -3,15 +3,10 @@ package edu.southwestern.experiment.rl;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import org.deeplearning4j.rl4j.learning.async.a3c.discrete.A3CDiscrete;
-import org.deeplearning4j.rl4j.learning.async.a3c.discrete.A3CDiscreteDense;
 import org.deeplearning4j.rl4j.learning.sync.qlearning.QLearning;
 import org.deeplearning4j.rl4j.learning.sync.qlearning.discrete.QLearningDiscreteDense;
 import org.deeplearning4j.rl4j.mdp.MDP;
-import org.deeplearning4j.rl4j.network.ac.ActorCriticFactorySeparateStdDense;
 import org.deeplearning4j.rl4j.network.dqn.DQNFactoryStdDense;
-import org.deeplearning4j.rl4j.policy.DQNPolicy;
-import org.deeplearning4j.rl4j.space.Box;
 import org.deeplearning4j.rl4j.space.DiscreteSpace;
 import org.deeplearning4j.rl4j.util.DataManager;
 
@@ -121,11 +116,17 @@ public class RL4JExperiment implements Experiment {
 	}
 
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
-		// CartPole
-		
+		// Straight-forward RL-Glue domains
 		MMNEAT.main(new String[] {"runNumber:0","io:false","netio:false","maxGens:10","watch:true",
-				"task:edu.southwestern.tasks.rlglue.cartpole.CartPoleTask",
-				"rlGlueEnvironment:org.rlcommunity.environments.cartpole.CartPole",
+				// CartPole
+//				"task:edu.southwestern.tasks.rlglue.cartpole.CartPoleTask",
+//				"rlGlueEnvironment:org.rlcommunity.environments.cartpole.CartPole",
+				// AcroBot
+//				"task:edu.southwestern.tasks.rlglue.acrobot.AcrobotTask",
+//				"rlGlueEnvironment:org.rlcommunity.environments.acrobot.Acrobot",
+				// MountainCar
+				"task:edu.southwestern.tasks.rlglue.mountaincar.MountainCarTask",
+				"rlGlueEnvironment:org.rlcommunity.environments.mountaincar.MountainCar",
 				"experiment:edu.southwestern.experiment.rl.RL4JExperiment"});
 
 		// Once Tetris works
