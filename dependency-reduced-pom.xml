@@ -101,7 +101,7 @@
     <logback.version>1.1.7</logback.version>
     <dl4j.version>0.9.2</dl4j.version>
     <arbiter.version>0.9.2</arbiter.version>
-    <nd4j.backend>nd4j-native-platform</nd4j.backend>
+    <nd4j.backend>nd4j-cuda-8.0-platform</nd4j.backend>
   </properties>
 </project>
 
