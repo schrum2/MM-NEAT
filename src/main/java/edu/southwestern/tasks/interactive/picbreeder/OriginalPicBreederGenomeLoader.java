@@ -38,8 +38,8 @@ public class OriginalPicBreederGenomeLoader {
 		TWEANNGenotype tg = new TWEANNGenotype(PicbreederTask.CPPN_NUM_INPUTS, PicbreederTask.CPPN_NUM_OUTPUTS, 0);
 		//System.out.println(tg);
 		// Now, load TWEANN structure from file
-		//File inputFile = new File("data\\picbreeder\\originalGenomes\\5736_ShinyRedApple.xml");
-		//File inputFile = new File("data\\picbreeder\\originalGenomes\\4547_Face.xml");
+		//File inputFile = new File("data\\picbreeder\\originalGenomes\\5736_ShinyRedApple.xml"); // Crash from loop?
+		//File inputFile = new File("data\\picbreeder\\originalGenomes\\4547_Face.xml"); // Crash from loop?
 		//File inputFile = new File("data\\picbreeder\\originalGenomes\\4376_ButterflyColor.xml"); // Output loops back to hidden neuron
 		//File inputFile = new File("data\\picbreeder\\originalGenomes\\3674_Mystic.xml"); // Infinite loop?
 		//File inputFile = new File("data\\picbreeder\\originalGenomes\\3257_Quadravision.xml");
@@ -53,7 +53,7 @@ public class OriginalPicBreederGenomeLoader {
 		//File inputFile = new File("data\\picbreeder\\originalGenomes\\395_SpotlightCastingShadow.xml"); // PERFECT
 		//File inputFile = new File("data\\picbreeder\\originalGenomes\\121_ShortSDCoif.xml"); // PERFECT
 		//File inputFile = new File("data\\picbreeder\\originalGenomes\\4041_Doplhin.xml");
-		File inputFile = new File("data\\picbreeder\\originalGenomes\\simple.xml"); // PERFECT
+		//File inputFile = new File("data\\picbreeder\\originalGenomes\\simple.xml"); // PERFECT
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
         Document doc = dBuilder.parse(inputFile);
