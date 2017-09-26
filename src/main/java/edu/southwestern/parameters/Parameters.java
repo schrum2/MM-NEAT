@@ -426,12 +426,15 @@ public class Parameters {
 		booleanOptions.add("removePillsNearPowerPills", false, "Pills in a c-path with power pills are absent");
 		booleanOptions.add("allowMultipleFunctions", false, "Turning this one will allow you to change TWEANN to CPPN by allowing multiple activation functions");
 		booleanOptions.add("includeSigmoidFunction", true, "Fuction for sigmoid. If true, add to the function set");
+		booleanOptions.add("includeFullSigmoidFunction", false, "Fuction for sigmoid stretched to [-1,1]. If true, add to the function set");
 		booleanOptions.add("includeTanhFunction", false, "Fuction for tanh. If true, add to the function set");
 		booleanOptions.add("includeIdFunction", false, "Just the sum. If true, add to the function set");
 		booleanOptions.add("includeFullApproxFunction", false, "Fuction for full quick sigmoid. If true, add to the function set");
 		booleanOptions.add("includeApproxFunction", false, "Fuction for quick sigmoid. If true, add to the function set");
 		booleanOptions.add("includeGaussFunction", true, "Fuction for gaussian. If true, add to the function set");
+		booleanOptions.add("includeFullGaussFunction", false, "Fuction for full gaussian. If true, add to the function set");
 		booleanOptions.add("includeSineFunction", true, "Fuction for sine. If true, add to the function set");
+		booleanOptions.add("includeCosineFunction", false, "Fuction for cosine. If true, add to the function set");
 		booleanOptions.add("includeSawtoothFunction", true, "Fuction for sawtooth. If true, add to the function set");
 		booleanOptions.add("includeAbsValFunction", true, "Fuction for absolute value. If true, add to the function set");
 		booleanOptions.add("includeHalfLinearPiecewiseFunction", true, "Function for half linear picewise. If true, add to the function set");
@@ -442,6 +445,7 @@ public class Parameters {
 		booleanOptions.add("includeFullSawtoothFunction", true, "Function for full sawtooth function. If true, add to the function set");
 		booleanOptions.add("includeTriangleWaveFunction", true, "Function for triangle wave function. If true, add to the function set");
 		booleanOptions.add("includeSquareWaveFunction", true, "Function for square wave function. If true, add to the function set");
+		booleanOptions.add("finalPassOnOutputActivation", false, "Empty all remaining activation from network output layer");
 		booleanOptions.add("logGhostLocOnPowerPill", false, "Log ghost locations corresponding to each eaten power pill");
 		booleanOptions.add("breveDamageOnly", false, "Breve domains only care about damage objectives");
 		booleanOptions.add("getRemainingPills", false, "CEC 2011 rule that Ms. Pac-Man gets the pills in the level when time runs out");

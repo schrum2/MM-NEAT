@@ -13,7 +13,7 @@ import edu.southwestern.util.random.RandomNumbers;
  */
 public class ActivationFunctions {
 
-	public static final int MAX_POSSIBLE_ACTIVATION_FUNCTIONS = 17;
+	public static final int MAX_POSSIBLE_ACTIVATION_FUNCTIONS = 27;
 
 	/**
 	 * Initialize the array list for all ftypes
@@ -43,6 +43,9 @@ public class ActivationFunctions {
 	public static final int FTYPE_FULLSAWTOOTH = 21;
 	public static final int FTYPE_TRIANGLEWAVE = 22;
 	public static final int FTYPE_SQUAREWAVE = 23;
+	public static final int FTYPE_FULLSIGMOID = 24;
+	public static final int FTYPE_FULLGAUSS = 25;
+	public static final int FTYPE_COS = 26;
 
 	/**
 	 * Initializes the set of ftypes by checking boolean parameters for included
@@ -100,6 +103,15 @@ public class ActivationFunctions {
 		}
 		if(Parameters.parameters.booleanParameter("includeSquareWaveFunction")) {
 			availableActivationFunctions.add(FTYPE_SQUAREWAVE);
+		}
+		if (Parameters.parameters.booleanParameter("includeFullSigmoidFunction")) {
+			availableActivationFunctions.add(FTYPE_FULLSIGMOID);
+		}
+		if (Parameters.parameters.booleanParameter("includeFullGaussFunction")) {
+			availableActivationFunctions.add(FTYPE_FULLGAUSS);
+		}
+		if (Parameters.parameters.booleanParameter("includeCosineFunction")) {
+			availableActivationFunctions.add(FTYPE_COS);
 		}
 	}
 
@@ -197,14 +209,32 @@ public class ActivationFunctions {
 			assert!Double.isNaN(activation) : "squareWave returns NaN on " + sum;
 			assert!Double.isInfinite(activation) : "squareWave is infinite on " + sum + " from " + activation;
 			break;
+		case ActivationFunctions.FTYPE_FULLSIGMOID:
+			activation = ActivationFunctions.fullSigmoid(sum);
+			assert!Double.isNaN(activation) : "fullSigmoid returns NaN on " + sum;
+			assert!Double.isInfinite(activation) : "fullSigmoid is infinite on " + sum + " from " + activation;
+			break;
+		case ActivationFunctions.FTYPE_FULLGAUSS:
+			activation = ActivationFunctions.fullGaussian(sum);
+			assert!Double.isNaN(activation) : "fullGaussian returns NaN on " + sum;
+			assert!Double.isInfinite(activation) : "fullGaussian is infinite on " + sum + " from " + activation;
+			break;
+		case ActivationFunctions.FTYPE_COS:
+			activation = ActivationFunctions.cosine(sum);
+			assert!Double.isNaN(activation) : "cosine returns NaN on " + sum;
+			assert!Double.isInfinite(activation) : "cosine is infinite on " + sum + " from " + activation;
+			break;
 		}
 		return activation;
 	}
 
-
-
+	/**
+	 * String name of the activation function
+	 * @param ftype Identifier for activation function
+	 * @return
+	 */
 	public static String activationName(int ftype) { 
-		assert ftype > -1 && ftype <= 17:"given activation function not valid! " + ftype;
+		assert ftype > -1 && ftype <= MAX_POSSIBLE_ACTIVATION_FUNCTIONS:"given activation function not valid! " + ftype;
 		if(ftype == FTYPE_SIGMOID) {
 			return "Sigmoid";
 		}else if(ftype == FTYPE_TANH) {
@@ -216,9 +246,9 @@ public class ActivationFunctions {
 		}else if(ftype == FTYPE_ID) {
 			return "ID";
 		} else if(ftype == FTYPE_APPROX) {
-			return "Approximate";
+			return "Approximate Sigmoid";
 		} else if(ftype == FTYPE_FULLAPPROX) {
-			return "Full Approximate";
+			return "Full Approximate Sigmoid";
 		} else if(ftype == FTYPE_GAUSS) {
 			return "Gaussian";
 		} else if(ftype == FTYPE_SINE) {
@@ -239,10 +269,16 @@ public class ActivationFunctions {
 			return "Triangle Wave";
 		}else if(ftype == FTYPE_SQUAREWAVE) {
 			return "Square Wave";
+		}else if(ftype == FTYPE_FULLSIGMOID) {
+			return "Full Sigmoid";
+		}else if(ftype == FTYPE_FULLGAUSS) {
+			return "Full Gaussian";
+		}else if(ftype == FTYPE_COS) {
+			return "Cosine";
 		}else {
 			System.out.println("given ftype is not a valid activation function! " + ftype);
-                        System.exit(1);
-                        return null;
+			System.exit(1);
+			return null;
 		}
 	}
 	/**
@@ -263,10 +299,10 @@ public class ActivationFunctions {
 	 */
 	public static int newNodeFunction() {
 		if (Parameters.parameters.booleanParameter("allowMultipleFunctions")) { 
-                        // for CPPN
+			// for CPPN
 			return randomFunction();
 		} else {
-                        // for TWEANN
+			// for TWEANN
 			return CommonConstants.ftype; 
 		}
 	}
@@ -322,12 +358,12 @@ public class ActivationFunctions {
 	 * @return value of sigmoid(x)
 	 */
 	public static double sigmoid(double x) {
-		return 1.0 / (1.0 + safeExp(-x));
+		return (1.0 / (1.0 + safeExp(-x)))*2 - 1;
 	}
-
+	
 	/**
 	 * Derivative function for sigmoid. 
-         * Used by backpropagation.
+	 * Used by backpropagation.
 	 *
 	 * @param x
 	 *            Function parameter
@@ -337,6 +373,17 @@ public class ActivationFunctions {
 		return sigmoid(x) * (1.0 - sigmoid(x));
 	}
 
+	/**
+	 * Standard sigmoid, but stretched to the range
+	 * -1 to 1. This is an alternative to tanh, and is
+	 * also used in the original Picbreeder.
+	 * @param x parameter
+	 * @return result
+	 */
+	public static double fullSigmoid(double x) {
+		return (1.0 / (1+safeExp(-x))) * 2.0 - 1.0;
+	}
+	
 	/**
 	 * Function for tanh, hyperbolic tangent. Uses Math.tanh, no approximation.
 	 *
@@ -351,12 +398,9 @@ public class ActivationFunctions {
 	/**
 	 * Quick approximation to sigmoid within the bounds of -1 < x < 1.
 	 * Inaccurate, but has needed properties. Could slightly speed up execution
-	 * given how often sigmoid is used. @param x Function parameter @return
-	 * value of sigmoid(x) within -1 and 1
-	 * 
-	 * @param x
-	 *            Function parameter
-	 * @return sigmoid approximation
+	 * given how often sigmoid is used. 
+	 * @param x Function parameter 
+	 * @return sigmoid approximation within -1 and 1
 	 */
 	public static double fullQuickSigmoid(double x) {
 		return (2 * quickSigmoid(x)) - 1;
@@ -424,8 +468,20 @@ public class ActivationFunctions {
 	 */
 	public static double gaussian(double x) {
 		return gaussian(x, 1, 0);
+		// EXPERIMENTING
+		//return Math.exp(-x*x); // Unsigned (stretched to range [0,1])
 	}
 
+	/**
+	 * Gaussian stretched to the range [-1,1].
+	 * This is the version used in the original Picbreeder.
+	 * @param x parameter
+	 * @return result
+	 */
+	public static double fullGaussian(double x) {
+		return Math.exp(-x*x)*2 - 1;
+	}
+	
 	/**
 	 * Sine function for x. Uses Math.sin();
 	 *
@@ -435,6 +491,17 @@ public class ActivationFunctions {
 	 */
 	public static double sine(double x) {
 		return Math.sin(x);
+	}
+	
+	/**
+	 * Cosine: didn't have this originally, since sine
+	 * seemed good enough, but apparently the original
+	 * Picbreeder has cosine in it.
+	 * @param x parameter
+	 * @return result
+	 */
+	public static double cosine(double x) {
+		return Math.cos(x);
 	}
 
 	/**

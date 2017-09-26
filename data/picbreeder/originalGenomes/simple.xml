@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- <cppn-data version="1.2"/> -->
+<data version="1.0">
+    <genome age="104" phenotype="color">
+        <identifier branch="4376" id="210"/>
+        <parents count="1">
+            <identifier branch="4376" id="195"/>
+        </parents>
+        <buttons count="0">
+        </buttons>
+        <nodes count="9">
+            <node affinity="grey" bias="0.0" label="x" type="in">
+                <marking branch="926" id="2"/>
+                <activation>identity(x)</activation>
+                <color-label id="0"/>
+                <position x="-77.04231034884441" y="848.0943787209302"/>
+                <text></text>
+            </node>
+            <node affinity="grey" bias="0.0" label="y" type="in">
+                <marking branch="926" id="3"/>
+                <activation>identity(x)</activation>
+                <color-label id="0"/>
+                <position x="3.856359709298985" y="848.0943787209303"/>
+                <text></text>
+            </node>
+            <node affinity="grey" bias="0.0" label="d" type="in">
+                <marking branch="926" id="1"/>
+                <activation>identity(x)</activation>
+                <color-label id="0"/>
+                <position x="100" y="850"/>
+                <text></text>
+            </node>
+            <node affinity="grey" bias="0.0" label="bias" type="in">
+                <marking branch="926" id="0"/>
+                <activation>identity(x)</activation>
+                <color-label id="0"/>
+                <position x="177.5000000000001" y="850.0000000000001"/>
+                <text></text>
+            </node>
+            <node affinity="color" bias="0.0" label="hue" type="out">
+                <marking branch="4376" id="575"/>
+                <activation>sin(x)</activation>
+                <color-label id="0"/>
+                <position x="-22.44253171431711" y="449.6242787320823"/>
+                <text></text>
+            </node>
+            <node affinity="color" bias="0.0" label="saturation" type="out">
+                <marking branch="4376" id="576"/>
+                <activation>sigmoid(x)</activation>
+                <color-label id="0"/>
+                <position x="117.5842848340432" y="447.5220578947799"/>
+                <text></text>
+            </node>
+            <node affinity="grey" bias="0.0" label="" type="hidden">
+                <marking branch="1009" id="472"/>
+                <activation>gaussian(x)</activation>
+                <color-label id="0"/>
+                <position x="144.3763515908354" y="765.5547669774186"/>
+                <text></text>
+            </node>
+            <node affinity="grey" bias="0.0" label="" type="hidden">
+                <marking branch="1009" id="703"/>
+                <activation>gaussian(x)</activation>
+                <color-label id="0"/>
+                <position x="58.19767966123834" y="669.6718447669153"/>
+                <text></text>
+            </node>
+            <node affinity="grey" bias="0.0" label="brightness" type="out">
+                <marking branch="926" id="4"/>
+                <activation>gaussian(x)</activation>
+                <color-label id="0"/>
+                <position x="41.73231589681833" y="529.2793256929148"/>
+                <text></text>
+            </node>
+        </nodes>
+        <links count="8">
+            <link>
+                <marking branch="4376" id="577"/>
+                <source branch="926" id="4"/>
+                <target branch="4376" id="575"/>
+                <weight>2.5647975126319453</weight>
+                <original-weight>2.5647975126319453</original-weight>
+                <color-label id="0"/>
+                <text>""</text>
+                <bookends start="-3" end="3" step="0.1"/>
+            </link>
+            <link>
+                <marking branch="4376" id="578"/>
+                <source branch="926" id="4"/>
+                <target branch="4376" id="576"/>
+                <weight>1.4159860133437028</weight>
+                <original-weight>1.4159860133437028</original-weight>
+                <color-label id="0"/>
+                <text>""</text>
+                <bookends start="-3" end="3" step="0.1"/>
+            </link>
+            <link>
+                <marking branch="1009" id="119"/>
+                <source branch="926" id="3"/>
+                <target branch="926" id="4"/>
+                <weight>-0.61015163272399253</weight>
+                <original-weight>-0.61015163272399253</original-weight>
+                <color-label id="0"/>
+                <text>""</text>
+                <bookends start="-3" end="3" step="0.1"/>
+            </link>
+            <link>
+                <marking branch="1009" id="473"/>
+                <source branch="926" id="1"/>
+                <target branch="1009" id="472"/>
+                <weight>-1.152973185429732</weight>
+                <original-weight>-1.152973185429732</original-weight>
+                <color-label id="0"/>
+                <text>""</text>
+                <bookends start="-3" end="3" step="0.1"/>
+            </link>
+            <link>
+                <marking branch="1009" id="474"/>
+                <source branch="1009" id="472"/>
+                <target branch="926" id="4"/>
+                <weight>-1.2774114527238019</weight>
+                <original-weight>-1.2774114527238019</original-weight>
+                <color-label id="0"/>
+                <text>""</text>
+                <bookends start="-3" end="3" step="0.1"/>
+            </link>
+            <link>
+                <marking branch="1009" id="705"/>
+                <source branch="1009" id="703"/>
+                <target branch="926" id="4"/>
+                <weight>0.29618366080333836</weight>
+                <original-weight>0.29618366080333836</original-weight>
+                <color-label id="0"/>
+                <text>""</text>
+                <bookends start="-3" end="3" step="0.1"/>
+            </link>
+            <link>
+                <marking branch="1009" id="994"/>
+                <source branch="1009" id="472"/>
+                <target branch="1009" id="703"/>
+                <weight>2.1793573871717205</weight>
+                <original-weight>2.1793573871717205</original-weight>
+                <color-label id="0"/>
+                <text>""</text>
+                <bookends start="-3" end="3" step="0.1"/>
+            </link>
+            <link>
+                <marking branch="0" id="995"/>
+                <source branch="926" id="2"/>
+                <target branch="926" id="4"/>
+                <weight>0.45000000000000018</weight>
+                <original-weight>0</original-weight>
+                <color-label id="0"/>
+                <text></text>
+                <bookends start="-3" end="3" step="0.1"/>
+            </link>
+        </links>
+        <nodeviews count="1">
+            <nodeview>
+                <identifier branch="" id="final"/>
+            </nodeview>
+        </nodeviews>
+    </genome>
+</data>

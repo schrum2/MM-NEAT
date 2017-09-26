@@ -34,18 +34,32 @@ import edu.southwestern.util.graphics.GraphicsUtil;
 public class OriginalPicBreederGenomeLoader {
 	public static final int SIZE = 256;
 	public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException {		
-		Parameters.initializeParameterCollections(new String[] {"io:false","netio:false","allowMultipleFunctions:true"});
+		Parameters.initializeParameterCollections(new String[] {"io:false","netio:false","allowMultipleFunctions:true","finalPassOnOutputActivation:true"});
 		TWEANNGenotype tg = new TWEANNGenotype(PicbreederTask.CPPN_NUM_INPUTS, PicbreederTask.CPPN_NUM_OUTPUTS, 0);
 		//System.out.println(tg);
 		// Now, load TWEANN structure from file
-		File inputFile = new File("data\\picbreeder\\originalGenomes\\1009_ButterflyGreyscale.xml");
+		File inputFile = new File("data\\picbreeder\\originalGenomes\\5736_ShinyRedApple.xml");
+		//File inputFile = new File("data\\picbreeder\\originalGenomes\\4547_Face.xml");
+		//File inputFile = new File("data\\picbreeder\\originalGenomes\\4376_ButterflyColor.xml");
+		//File inputFile = new File("data\\picbreeder\\originalGenomes\\3674_Mystic.xml");
+		//File inputFile = new File("data\\picbreeder\\originalGenomes\\3257_Quadravision.xml");
+		//File inputFile = new File("data\\picbreeder\\originalGenomes\\2914_Firefly.xml");
+		//File inputFile = new File("data\\picbreeder\\originalGenomes\\1009_ButterflyGreyscale.xml");
+		//File inputFile = new File("data\\picbreeder\\originalGenomes\\765_PlaneOnRunway.xml");
+		//File inputFile = new File("data\\picbreeder\\originalGenomes\\745_LetterG.xml");
+		//File inputFile = new File("data\\picbreeder\\originalGenomes\\576_Skull.xml");
+		//File inputFile = new File("data\\picbreeder\\originalGenomes\\542_GhostFaceSpooky.xml");
+		//File inputFile = new File("data\\picbreeder\\originalGenomes\\409_Moonlight.xml");
+		//File inputFile = new File("data\\picbreeder\\originalGenomes\\395_SpotlightCastingShadow.xml");
+		//File inputFile = new File("data\\picbreeder\\originalGenomes\\121_ShortSDCoif.xml");
+		//File inputFile = new File("data\\picbreeder\\originalGenomes\\4041_Doplhin.xml");
+		//File inputFile = new File("data\\picbreeder\\originalGenomes\\simple.xml");
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
         Document doc = dBuilder.parse(inputFile);
         doc.getDocumentElement().normalize();
 		
         int inputs = 0;
-        int outputs = 0;
         
         NodeList nList = doc.getElementsByTagName("node");
         for (int temp = 0; temp < nList.getLength(); temp++) {
@@ -65,7 +79,15 @@ public class OriginalPicBreederGenomeLoader {
             	// Adding the gene here may not be the right order
             	tg.nodes.add(tg.outputStartIndex(), newGene);
             } else if(type.equals("out")) {
-            	NodeGene n = tg.nodes.get(tg.nodes.size() - (++outputs));
+            	String label = nNode.getAttributes().getNamedItem("label").getNodeValue();
+            	NodeGene n;
+            	if(label.equals("ink") || label.equals("brightness")) {
+            		n = tg.nodes.get(tg.nodes.size() - 1);
+                } else if(label.equals("saturation")) {
+            		n = tg.nodes.get(tg.nodes.size() - 2);
+                } else { // hue
+            		n = tg.nodes.get(tg.nodes.size() - 3);
+                }
             	n.innovation = innovation;
             	n.ftype = getFType(activation);
             }
@@ -85,11 +107,13 @@ public class OriginalPicBreederGenomeLoader {
             tg.links.add(lg);
         }
 
+        // TODO: WORK ON FIXING THIS!
         // Get nodes in right order according to the links
         TWEANNGenotype.sortNodeGenesByLinkConnectivity(tg);
         
+        System.out.println(tg.toString());
         
-        DrawingPanel panel = new DrawingPanel(1000, 1000, "Network");
+        DrawingPanel panel = new DrawingPanel(800, 800, "Network");
 		TWEANN network = tg.getPhenotype();
 		network.draw(panel, true, false);
 		
@@ -106,11 +130,13 @@ public class OriginalPicBreederGenomeLoader {
 		case "identity(x)":
 			return ActivationFunctions.FTYPE_ID;
 		case "gaussian(x)":
-			return ActivationFunctions.FTYPE_GAUSS;
+			return ActivationFunctions.FTYPE_FULLGAUSS;
 		case "sin(x)":
 			return ActivationFunctions.FTYPE_SINE;
+		case "cos(x)":
+			return ActivationFunctions.FTYPE_COS;
 		case "sigmoid(x)":
-			return ActivationFunctions.FTYPE_SIGMOID;
+			return ActivationFunctions.FTYPE_FULLSIGMOID;
 		default:
 			throw new IllegalArgumentException("Invalid activation function: " + name);
 		}

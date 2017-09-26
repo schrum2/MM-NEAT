@@ -351,6 +351,7 @@ public class TWEANN implements Network {
 	public boolean canDraw = true;
 	public final int archetypeIndex;
 	public final int outputStart;
+	public static boolean finalPassOnOutputActivation = Parameters.parameters.booleanParameter("finalPassOnOutputActivation");
 
 	/**
 	 * Whether or not networks being used can/do have preference neurons
@@ -676,7 +677,18 @@ public class TWEANN implements Network {
 		for (int i = 0; i < nodes.size(); i++) {
 			nodes.get(i).activateAndTransmit();
 		}
-
+		
+		// Option: if there is remaining activation in the output neurons, 
+		// then process it. Used when importing CPPNs from original Picbreeder
+		if(finalPassOnOutputActivation) {
+			for(int i = this.outputStart; i < nodes.size(); i++) {
+				// This means input arrived after last reset
+				if(nodes.get(i).sum != nodes.get(i).bias) {
+					nodes.get(i).activateAndTransmit();
+				}
+			}
+		}
+		
 		// All outputs
 
 		double[] preferences = new double[numModes];
