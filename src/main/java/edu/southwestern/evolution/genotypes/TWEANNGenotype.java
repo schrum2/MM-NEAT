@@ -1905,31 +1905,53 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
      * Sort the nodes so that there are no backward facing links, meaning no recurrency. The result will
      * be a feed-forward network, but the method will crash if there are connectivity loops. Input and
      * output nodes will remain unchanged ... only the hidden neurons are shuffled around.
+     * This is essentially an implementation of Kahn's algorithm for topological sort.
 	 * @param TWEANNGenotype
      */
     public static void sortNodeGenesByLinkConnectivity(TWEANNGenotype tg) {
-    	Collections.sort(tg.nodes, new Comparator<NodeGene>() {
-			@Override
-			public int compare(NodeGene o1, NodeGene o2) {
-				if(o1.ntype != o2.ntype) {
-					return o1.ntype - o2.ntype;
-				}
-				// Both are same type
-				if(o1.ntype != TWEANN.Node.NTYPE_HIDDEN) {
-					// If not hidden, just say they are equal, and stable sorting should maintain order
-					return 0;
-				}
-				// Both are hidden: order by connectivity
-				if(existsPath(o1.innovation, o2.innovation, tg.links)) {
-					return -1; // o1 leads to o2
-				}
-				if(existsPath(o2.innovation, o1.innovation, tg.links)) {
-					return 1; // o2 leads to o1
-				}
-				// Nodes to not interact, so relative placement does not matter
-				return 0;
-			}
-    	});
+    	// Key = target innovation number, value = set of innovation numbers for all source nodes with a link to this target
+    	HashMap<Long, Set<Long>> incoming = new HashMap<>();
+    	for(NodeGene n : tg.nodes) {
+    		// Insert empty set for each target
+    		incoming.put(n.innovation, new HashSet<>());
+    	}
+    	for(LinkGene lg : tg.links) {
+    		// Add innovation for each source neuron with a link to the target
+    		incoming.get(lg.targetInnovation).add(lg.sourceInnovation);
+    	}
+    	
+    	ArrayList<NodeGene> newNodes = new ArrayList<>(tg.nodes.size());
+    	LinkedList<NodeGene> noIncoming = new LinkedList<>();
+    	for(int i = 0; i < tg.numIn; i++) {
+    		// Start with the input neurons
+    		noIncoming.add(tg.nodes.get(i));
+    	}
+    	// Start Kahn's algorithm
+    	while(!noIncoming.isEmpty()) {
+    		NodeGene first = noIncoming.remove(0); // First node with no incoming
+    		newNodes.add(first); // Node appears at end of new node list
+    		for(LinkGene lg : tg.links) { // Bit inefficient
+    			if(lg.sourceInnovation == first.innovation) { // A link from the node aded to the list
+    				incoming.get(lg.targetInnovation).remove(lg.sourceInnovation); // Remove that link
+    				if(incoming.get(lg.targetInnovation).isEmpty()) { // No more incoming links
+    					// Add to noIncoming list
+    					for(NodeGene ng : tg.nodes) {
+    						// Don't add output neurons. They must be added at the end
+    						if(ng.innovation == lg.targetInnovation && ng.ntype != TWEANN.Node.NTYPE_OUTPUT) {
+    							noIncoming.add(ng);
+    							break;
+    						}
+    					}
+    				}
+    			}
+    		}
+    	}
+    	// Add output nodes
+    	for(int i = 0; i < tg.numOut; i++) {
+    		newNodes.add(tg.nodes.get(tg.outputStartIndex() + i));
+    	}
+    	// Replace nodes with sorted nodes
+    	tg.nodes = newNodes;
     }
 
     /**
@@ -1940,7 +1962,8 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
      * @param links Links of whole network
      * @return Whether there is a sequence of links that eventually get to "to" from "from"
      */
-    private static boolean existsPath(long from, long to, List<LinkGene> links) {
+    @SuppressWarnings("unused")
+	private static boolean existsPath(long from, long to, List<LinkGene> links) {
     	for(LinkGene lg : links) {
     		if(from == lg.sourceInnovation) {
     			return to == lg.targetInnovation || existsPath(lg.targetInnovation, to, links);

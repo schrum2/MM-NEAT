@@ -38,22 +38,22 @@ public class OriginalPicBreederGenomeLoader {
 		TWEANNGenotype tg = new TWEANNGenotype(PicbreederTask.CPPN_NUM_INPUTS, PicbreederTask.CPPN_NUM_OUTPUTS, 0);
 		//System.out.println(tg);
 		// Now, load TWEANN structure from file
-		File inputFile = new File("data\\picbreeder\\originalGenomes\\5736_ShinyRedApple.xml");
+		//File inputFile = new File("data\\picbreeder\\originalGenomes\\5736_ShinyRedApple.xml");
 		//File inputFile = new File("data\\picbreeder\\originalGenomes\\4547_Face.xml");
-		//File inputFile = new File("data\\picbreeder\\originalGenomes\\4376_ButterflyColor.xml");
-		//File inputFile = new File("data\\picbreeder\\originalGenomes\\3674_Mystic.xml");
+		//File inputFile = new File("data\\picbreeder\\originalGenomes\\4376_ButterflyColor.xml"); // Output loops back to hidden neuron
+		//File inputFile = new File("data\\picbreeder\\originalGenomes\\3674_Mystic.xml"); // Infinite loop?
 		//File inputFile = new File("data\\picbreeder\\originalGenomes\\3257_Quadravision.xml");
-		//File inputFile = new File("data\\picbreeder\\originalGenomes\\2914_Firefly.xml");
-		//File inputFile = new File("data\\picbreeder\\originalGenomes\\1009_ButterflyGreyscale.xml");
-		//File inputFile = new File("data\\picbreeder\\originalGenomes\\765_PlaneOnRunway.xml");
-		//File inputFile = new File("data\\picbreeder\\originalGenomes\\745_LetterG.xml");
-		//File inputFile = new File("data\\picbreeder\\originalGenomes\\576_Skull.xml");
-		//File inputFile = new File("data\\picbreeder\\originalGenomes\\542_GhostFaceSpooky.xml");
+		//File inputFile = new File("data\\picbreeder\\originalGenomes\\2914_Firefly.xml"); // Infinite loop?
+		//File inputFile = new File("data\\picbreeder\\originalGenomes\\1009_ButterflyGreyscale.xml"); // PERFECT
+		//File inputFile = new File("data\\picbreeder\\originalGenomes\\765_PlaneOnRunway.xml"); // PERFECT
+		//File inputFile = new File("data\\picbreeder\\originalGenomes\\745_LetterG.xml"); // PERFECT
+		//File inputFile = new File("data\\picbreeder\\originalGenomes\\576_Skull.xml"); // PERFECT
+		//File inputFile = new File("data\\picbreeder\\originalGenomes\\542_GhostFaceSpooky.xml"); // Unsure: looks good
 		//File inputFile = new File("data\\picbreeder\\originalGenomes\\409_Moonlight.xml");
-		//File inputFile = new File("data\\picbreeder\\originalGenomes\\395_SpotlightCastingShadow.xml");
-		//File inputFile = new File("data\\picbreeder\\originalGenomes\\121_ShortSDCoif.xml");
+		//File inputFile = new File("data\\picbreeder\\originalGenomes\\395_SpotlightCastingShadow.xml"); // PERFECT
+		//File inputFile = new File("data\\picbreeder\\originalGenomes\\121_ShortSDCoif.xml"); // PERFECT
 		//File inputFile = new File("data\\picbreeder\\originalGenomes\\4041_Doplhin.xml");
-		//File inputFile = new File("data\\picbreeder\\originalGenomes\\simple.xml");
+		File inputFile = new File("data\\picbreeder\\originalGenomes\\simple.xml"); // PERFECT
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
         Document doc = dBuilder.parse(inputFile);
@@ -107,10 +107,11 @@ public class OriginalPicBreederGenomeLoader {
             tg.links.add(lg);
         }
 
-        // TODO: WORK ON FIXING THIS!
+        System.out.println("BEFORE");
+        System.out.println(tg.toString());
         // Get nodes in right order according to the links
         TWEANNGenotype.sortNodeGenesByLinkConnectivity(tg);
-        
+        System.out.println("AFTER");
         System.out.println(tg.toString());
         
         DrawingPanel panel = new DrawingPanel(800, 800, "Network");

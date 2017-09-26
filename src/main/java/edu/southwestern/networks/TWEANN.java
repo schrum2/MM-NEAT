@@ -957,7 +957,7 @@ public class TWEANN implements Network {
 	public void draw(DrawingPanel panel, boolean showInnovationNumbers, boolean showWeights) {
 		TWEANN.panel = panel;//instantiates private instance of panel inside of TWEANN object
 		if (layers == null) createLayers();
-		Graphics2D g =prepPanel(panel, Color.BLACK);//this part actually draws network
+		Graphics2D g = prepPanel(panel, Color.BLACK);//this part actually draws network
 		drawAllNodes(g, showInnovationNumbers);//puts nodes onto drawingPanel
 		drawAllLinks(g, showInnovationNumbers, showWeights);
 		addModuleAssociations(g, moduleAssociations);
@@ -969,7 +969,7 @@ public class TWEANN implements Network {
 	private void createLayers() {
 		layers = new ArrayList<ArrayList<Node>>();
 		layers.add(getNodesToDraw(0, numIn, Node.NTYPE_INPUT));//manually loads nodes from TWEANN into layers
-		ArrayList<Node> hidden = getNodesToDraw(numIn, nodes.size()- numOut, Node.NTYPE_HIDDEN);
+		ArrayList<Node> hidden = getNodesToDraw(numIn, nodes.size() - numOut, Node.NTYPE_HIDDEN);
 		ArrayList<ArrayList<Node>> hiddenLayers = sortHiddenLayers(hidden);
 		for (int i = 0; i < hiddenLayers.size(); i++) {
 			layers.add(hiddenLayers.get(i));
@@ -1242,9 +1242,9 @@ public class TWEANN implements Network {
 	protected void drawAllNodes(Graphics2D g, boolean showInnovationNumbers) {
 		int height = panel.getFrame().getHeight() - 46;//46 is padding for panel
 		int width = panel.getFrame().getWidth() - 6;//6 is padding for panel
+		double verticalSpacing = ((height - (2.0 * DISPLAY_BORDER)) / (layers.size() - 1.0));
 		for (int l = 0; l < layers.size(); l++) {
 			ArrayList<Node> layer = layers.get(l);
-			double verticalSpacing = ((height - (2.0 * DISPLAY_BORDER)) / (layers.size() - 1.0));
 			for (int n = 0; n < layer.size(); n++) {
 				drawNode(g, verticalSpacing, width, height, layer, n, l, showInnovationNumbers);
 			}
