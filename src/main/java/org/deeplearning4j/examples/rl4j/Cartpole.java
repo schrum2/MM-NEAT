@@ -89,7 +89,7 @@ public class Cartpole
         GymEnv mdp2 = new GymEnv("CartPole-v0", true, false);
 
         //load the previous agent
-        DQNPolicy<Box> pol2 = DQNPolicy.load("/tmp/pol1");
+        DQNPolicy<Box> pol2 = DQNPolicy.load("pol1");
 
         //evaluate the agent
         double rewards = 0;
