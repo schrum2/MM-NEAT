@@ -1,7 +1,10 @@
 package edu.southwestern.evolution.mapelites;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -59,6 +62,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 	@Override
 	public void initialize(Genotype<T> example) {
 		if(iterations > 0) {
+			int numLabels = archive.getBinMapping().binLabels().size();
 			// Loading from saved archive
 			String archiveDir = archive.getArchiveDirectory();
 			List<String> binLabels = archive.getBinMapping().binLabels();
@@ -68,8 +72,18 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 				@SuppressWarnings("unchecked")
 				Genotype<T> elite = (Genotype<T>) Easy.load(binDir + "elite.xml"); // Load genotype
 				// Load behavior scores
-				@SuppressWarnings("unchecked")
-				ArrayList<Double> scores = (ArrayList<Double>) Easy.load(binDir + "scores.xml"); // Load scores
+				ArrayList<Double> scores = new ArrayList<Double>(numLabels); 
+				try {
+					Scanner scoresFile = new Scanner(new File(binDir + "scores.txt"));
+					while(scoresFile.hasNextDouble()) {
+						scores.add(scoresFile.nextDouble());
+					}
+					scoresFile.close();
+				} catch (FileNotFoundException e) {
+					System.out.println("Could not read " + binDir + "scores.txt");
+					e.printStackTrace();
+					System.exit(1);
+				}
 				// Package in a score
 				Score<T> score = new Score<T>(elite, new double[0], scores);
 				archive.archive.set(i, score); // Directly set the bin contents
@@ -96,12 +110,11 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 	 * sampling from the elites in random bins. The reason
 	 * that two individuals may be added is if crossover occurs.
 	 * In this case, both children can potentially be added 
-	 * to the archive.
+	 * to the archive, and both trigger logging to file. This
+	 * actually counts as 2 iterations.
 	 */
 	@Override
 	public void newIndividual() {
-		boolean newEliteProduced = false; // Asume no new elites will be produced
-		
 		int index = archive.randomBinIndex();
 		Genotype<T> parent1 = archive.getElite(index).individual;
 		long parentId1 = parent1.getId(); // Parent Id comes from original genome
@@ -123,7 +136,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			Score<T> s2 = task.evaluate(child2);
 			// Indicate whether elite was added
 			boolean child2WasElite = archive.add(s2);
-			newEliteProduced = newEliteProduced || child2WasElite; 
+			fileUpdates(child2WasElite); // Log for each individual produced
 		}
 		
 		child1.mutate(); // Was potentially modified by crossover
@@ -136,7 +149,10 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 		Score<T> s1 = task.evaluate(child1);
 		// Indicate whether elite was added
 		boolean child1WasElite = archive.add(s1);
-		newEliteProduced = newEliteProduced || child1WasElite;
+		fileUpdates(child1WasElite); // Log for each individual produced
+	}
+	
+	public void fileUpdates(boolean newEliteProduced) {
 		// Log to file
 		log();
 		Parameters.parameters.setInteger("lastSavedGeneration", iterations);
@@ -149,6 +165,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			iterationsWithoutElite++;
 		}
 		System.out.println(iterations + "\t" + iterationsWithoutElite + "\t");
+		
 	}
 	
 	/**
