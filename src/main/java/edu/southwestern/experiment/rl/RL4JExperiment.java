@@ -15,7 +15,6 @@ import org.deeplearning4j.rl4j.util.DataManager;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.experiment.Experiment;
 import edu.southwestern.networks.dl4j.DL4JNetworkWrapper;
-import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.LonerTask;
 import edu.southwestern.tasks.rlglue.EncodableObservation;
@@ -89,43 +88,54 @@ public class RL4JExperiment implements Experiment {
 //			currentEpisode++;
 //		}
 		
-		// Will not use this in the future: writes data to rl4j-data
-		DataManager manager;
 		try {
-			manager = new DataManager(false); // false = do not save to rl4j-data
 			mdp = new RLGlueMDP(MMNEAT.rlGlueEnvironment);
-		    //define the training
-	        QLearningDiscreteDense<EncodableObservation> dql = new QLearningDiscreteDense<>(mdp, CARTPOLE_NET, CARTPOLE_QL, manager);
-	        //train
-	        dql.train();
-	        
-	        //get the final policy
-	        DQNPolicy<EncodableObservation> pol = dql.getPolicy();
-	        //serialize and save (serialization showcase, but not required)
-	        pol.save("rl-glue-cartpole");
-	        
-	        CommonConstants.watch = true;
-	        // Load
-	        DQNPolicy<EncodableObservation> pol2 = DQNPolicy.load("rl-glue-cartpole");
-
-	        //evaluate the agent
-	        double rewards = 0;
-	        for (int i = 0; i < 1000; i++) {
-	            mdp.reset();
-	            double reward = pol2.play(mdp);
-	            rewards += reward;
-	            Logger.getAnonymousLogger().info("Reward: " + reward);
-	        }
-	        System.out.println("Final rewards: " + rewards);
-	        
-	        
-	        //close the mdp 
-	        mdp.close();
+			trainAndSave();
+//			loadAndWatch();
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
+			System.out.println("Problem running MDP");
 			e1.printStackTrace();
+			System.exit(1);
 		}		
 		
+	}
+	
+	/**
+	 * Assumes global mdp has been initialized
+	 * @throws IOException
+	 */
+	public void trainAndSave() throws IOException {
+		DataManager manager = new DataManager(false); // false = do not save to rl4j-data
+		//define the training
+        QLearningDiscreteDense<EncodableObservation> dql = new QLearningDiscreteDense<>(mdp, CARTPOLE_NET, CARTPOLE_QL, manager);
+        //train
+        dql.train();
+        
+        //get the final policy
+        DQNPolicy<EncodableObservation> pol = dql.getPolicy();
+        //serialize and save (serialization showcase, but not required)
+        pol.save("rl-glue-cartpole");	        
+        //close the mdp 
+        mdp.close();
+	}
+	
+	/**
+	 * Assumes global mdp has been initialized
+	 * @throws IOException
+	 */
+	public void loadAndWatch() throws IOException {
+        // Load
+        DQNPolicy<EncodableObservation> policy = DQNPolicy.load("rl-glue-cartpole");
+        //evaluate the agent
+        double rewards = 0;
+        for (int i = 0; i < 1000; i++) {
+            mdp.reset();
+            double reward = policy.play(mdp);
+            rewards += reward;
+            Logger.getAnonymousLogger().info("Reward: " + reward);
+        }
+        System.out.println("Final rewards: " + rewards);
+        mdp.close();
 	}
 
 	@Override
@@ -135,7 +145,7 @@ public class RL4JExperiment implements Experiment {
 
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
 		// Straight-forward RL-Glue domains
-		MMNEAT.main(new String[] {"runNumber:0","io:false","netio:false","maxGens:10","watch:false",
+		MMNEAT.main(new String[] {"runNumber:0","io:false","netio:false","maxGens:10","watch:true",
 				// CartPole
 				"task:edu.southwestern.tasks.rlglue.cartpole.CartPoleTask",
 				"rlGlueEnvironment:org.rlcommunity.environments.cartpole.CartPole",
