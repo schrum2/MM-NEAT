@@ -56,12 +56,13 @@ public class RL4JExperiment implements Experiment {
 		//individual = new ContainerGenotype<DL4JNetworkWrapper>(wrappedNetwork);
 	}
 
-    public static QLearning.QLConfiguration CARTPOLE_QL =
+	// Should these all be command line parameters?
+    public static QLearning.QLConfiguration QL =
             new QLearning.QLConfiguration(
                     123,    //Random seed
                     200,    //Max step By epoch
-                    150000, //Max step
-                    150000, //Max size of experience replay
+                    200000, //150000, //Max step
+                    200000, //150000, //Max size of experience replay
                     32,     //size of batches
                     500,    //target update (hard)
                     10,     //num step noop warmup
@@ -73,7 +74,8 @@ public class RL4JExperiment implements Experiment {
                     true    //double DQN
             );
 
-    public static DQNFactoryStdDense.Configuration CARTPOLE_NET =
+	// Should these all be command line parameters?
+    public static DQNFactoryStdDense.Configuration QNET =
         DQNFactoryStdDense.Configuration.builder()
             .l2(0.001)
             .learningRate(0.0005)
@@ -107,7 +109,7 @@ public class RL4JExperiment implements Experiment {
 	public void trainAndSave() throws IOException {
 		DataManager manager = new DataManager(false); // false = do not save to rl4j-data
 		//define the training
-        QLearningDiscreteDense<EncodableObservation> dql = new QLearningDiscreteDense<>(mdp, CARTPOLE_NET, CARTPOLE_QL, manager);
+        QLearningDiscreteDense<EncodableObservation> dql = new QLearningDiscreteDense<>(mdp, QNET, QL, manager);
         //train
         dql.train();
         
@@ -145,7 +147,7 @@ public class RL4JExperiment implements Experiment {
 
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
 		// Straight-forward RL-Glue domains
-		MMNEAT.main(new String[] {"runNumber:0","io:false","netio:false","maxGens:10","watch:true",
+		MMNEAT.main(new String[] {"runNumber:0","io:false","netio:false","maxGens:10","watch:false",
 				// CartPole
 				"task:edu.southwestern.tasks.rlglue.cartpole.CartPoleTask",
 				"rlGlueEnvironment:org.rlcommunity.environments.cartpole.CartPole",
