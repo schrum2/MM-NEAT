@@ -1,6 +1,8 @@
 package edu.southwestern.evolution.genotypes;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 
@@ -8,13 +10,13 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import edu.southwestern.util.stats.StatisticsUtilities;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.EvolutionaryHistory;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype.LinkGene;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype.NodeGene;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.util.stats.StatisticsUtilities;
 
 public class TWEANNGenotypeTest {
 
@@ -89,20 +91,23 @@ public class TWEANNGenotypeTest {
 
 	@Test
 	public void test_biggestInnovation() {
+		EvolutionaryHistory.archetypes = null;
+		EvolutionaryHistory.setInnovation(0l); // reset
 		Parameters.initializeParameterCollections(
 				new String[] { "io:false", "netio:false", "allowMultipleFunctions:true", "recurrency:false" });
-
 		MMNEAT.loadClasses();
 		TWEANNGenotype tg1 = new TWEANNGenotype(5, 2, 0);
-		TWEANNGenotype tg2 = new TWEANNGenotype(5, 2, 0);
 		MMNEAT.genotype = tg1.copy();
 		EvolutionaryHistory.initArchetype(0);
 
 		for (int i = 0; i < MUTATIONS1; i++) {
 			tg1.mutate();
-			tg2.mutate();
 		}
 
+//		System.out.println(tg1);
+//		System.out.println(EvolutionaryHistory.largestUnusedInnovationNumber);
+//		MiscUtil.waitForReadStringAndEnterKeyPress();
+		
 		ArrayList<NodeGene> tg1Genes = tg1.nodes;
 		ArrayList<LinkGene> tg1Links = tg1.links;
 
