@@ -47,7 +47,7 @@ public class OriginalPicBreederGenomeLoader {
 		//File inputFile = new File("data\\picbreeder\\originalGenomes\\1009_ButterflyGreyscale.xml"); // PERFECT
 		//File inputFile = new File("data\\picbreeder\\originalGenomes\\765_PlaneOnRunway.xml"); // PERFECT
 		//File inputFile = new File("data\\picbreeder\\originalGenomes\\745_LetterG.xml"); // PERFECT
-		//File inputFile = new File("data\\picbreeder\\originalGenomes\\576_Skull.xml"); // PERFECT
+		File inputFile = new File("data\\picbreeder\\originalGenomes\\576_Skull.xml"); // PERFECT
 		//File inputFile = new File("data\\picbreeder\\originalGenomes\\542_GhostFaceSpooky.xml"); // Unsure: looks good
 		//File inputFile = new File("data\\picbreeder\\originalGenomes\\409_Moonlight.xml");
 		//File inputFile = new File("data\\picbreeder\\originalGenomes\\395_SpotlightCastingShadow.xml"); // PERFECT
