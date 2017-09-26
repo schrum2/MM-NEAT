@@ -58,7 +58,7 @@ public class Cartpole
         //define the mdp from gym (name, render)
         GymEnv<Box, Integer, DiscreteSpace> mdp = null;
         try {
-            mdp = new GymEnv("CartPole-v0", true, true);
+            mdp = new GymEnv("CartPole-v0", false, true);
         } catch (RuntimeException e){
             System.out.print("To run this example, download and start the gym-http-api repo found at https://github.com/openai/gym-http-api.");
         }
@@ -72,7 +72,7 @@ public class Cartpole
         DQNPolicy<Box> pol = dql.getPolicy();
 
         //serialize and save (serialization showcase, but not required)
-        pol.save("/tmp/pol1");
+        pol.save("pol1");
 
         //close the mdp (close http)
         mdp.close();
