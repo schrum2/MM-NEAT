@@ -3,7 +3,8 @@ package edu.southwestern.evolution.mapelites;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
-import java.util.ArrayList;
+import java.util.Vector;
+import java.util.stream.IntStream;
 
 import edu.southwestern.scores.Score;
 import edu.southwestern.util.ClassCreation;
@@ -13,11 +14,7 @@ import wox.serial.Easy;
 
 public class Archive<T> {
 	
-	/**
-	 * Stores all individuals in bins (looked up by hash keys) where each bin is
-	 * sorted so that the first individual (index 0) is the fittest (elite) individual.
-	 */
-	ArrayList<Score<T>> archive;
+	Vector<Score<T>> archive; // Vector is used because it is thread-safe
 	private BinLabels<T> mapping;
 	private boolean saveElites;
 	private String archiveDir;
@@ -34,7 +31,7 @@ public class Archive<T> {
 			System.exit(1);
 		}
 		int numBins = mapping.binLabels().size();
-		archive = new ArrayList<Score<T>>(numBins);
+		archive = new Vector<Score<T>>(numBins);
 		// Archive directory
 		String experimentDir = FileUtilities.getSaveDirectory();
 		archiveDir = experimentDir + File.separator + "archive";
@@ -86,17 +83,16 @@ public class Archive<T> {
 	 * @return Whether organism was a new elite
 	 */
 	public boolean add(Score<T> candidate) {
-		boolean newElite = false; // new elite not added yet
-		for(int i = 0; i < archive.size(); i++) {
+		// Java's new stream features allow for easy parallelism
+		IntStream stream = IntStream.range(0, archive.size());
+		long newElites = stream.parallel().filter((i) -> {
 			Score<T> elite = archive.get(i);
 			double candidateScore = candidate.behaviorVector.get(i);
 			// If the bin is empty, or the candidate is better than the elite for that bin's score
 			if(elite == null || candidateScore > elite.behaviorVector.get(i)) {
-				archive.set(i, candidate); // Replace elite
-				newElite = true;
+				archive.set(i, candidate.copy()); // Replace elite
 				// Need to save all elites so that re-load on resume works
 				if(saveElites) {
-					//String fileName = "ELITEindividual" + candidate.individual.getId() + ".xml";
 					// Easier to reload on resume if file name is uniform. Will also save space by overwriting
 					String binPath = archiveDir + File.separator + mapping.binLabels().get(i);
 					Easy.save(candidate.individual, binPath + File.separator + "elite.xml");
@@ -112,9 +108,14 @@ public class Archive<T> {
 						System.exit(1);
 					}
 				}
+				return true;
+			} else {
+				return false;
 			}
-		}		
-		return newElite;
+		}).count(); // Number of bins whose elite was replaced
+		//System.out.println(newElites + " elites were replaced");
+		// Whether any elites were replaced
+		return newElites > 0;
 	}
 
 	/**

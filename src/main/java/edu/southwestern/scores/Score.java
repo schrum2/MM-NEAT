@@ -218,8 +218,9 @@ public class Score<T> {
 	}
 
 	// Copies the score.
+	@SuppressWarnings("unchecked")
 	public Score<T> copy() {
-		return new Score<T>(individual, Arrays.copyOf(scores, scores.length), behaviorVector, Arrays.copyOf(otherStats, otherStats.length));
+		return new Score<T>(individual, Arrays.copyOf(scores, scores.length), (ArrayList<Double>) behaviorVector.clone(), Arrays.copyOf(otherStats, otherStats.length));
 	}
 
 	// Getter method for number of previous scores calculated for agent.
