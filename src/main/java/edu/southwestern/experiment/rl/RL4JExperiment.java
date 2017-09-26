@@ -2,17 +2,20 @@ package edu.southwestern.experiment.rl;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.logging.Logger;
 
 import org.deeplearning4j.rl4j.learning.sync.qlearning.QLearning;
 import org.deeplearning4j.rl4j.learning.sync.qlearning.discrete.QLearningDiscreteDense;
 import org.deeplearning4j.rl4j.mdp.MDP;
 import org.deeplearning4j.rl4j.network.dqn.DQNFactoryStdDense;
+import org.deeplearning4j.rl4j.policy.DQNPolicy;
 import org.deeplearning4j.rl4j.space.DiscreteSpace;
 import org.deeplearning4j.rl4j.util.DataManager;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.experiment.Experiment;
 import edu.southwestern.networks.dl4j.DL4JNetworkWrapper;
+import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.LonerTask;
 import edu.southwestern.tasks.rlglue.EncodableObservation;
@@ -97,9 +100,24 @@ public class RL4JExperiment implements Experiment {
 	        dql.train();
 	        
 	        //get the final policy
-	        //DQNPolicy<Box> pol = dql.getPolicy();
+	        DQNPolicy<EncodableObservation> pol = dql.getPolicy();
 	        //serialize and save (serialization showcase, but not required)
-	        //pol.save("/tmp/pol1");
+	        pol.save("rl-glue-cartpole");
+	        
+	        CommonConstants.watch = true;
+	        // Load
+	        DQNPolicy<EncodableObservation> pol2 = DQNPolicy.load("rl-glue-cartpole");
+
+	        //evaluate the agent
+	        double rewards = 0;
+	        for (int i = 0; i < 1000; i++) {
+	            mdp.reset();
+	            double reward = pol2.play(mdp);
+	            rewards += reward;
+	            Logger.getAnonymousLogger().info("Reward: " + reward);
+	        }
+	        System.out.println("Final rewards: " + rewards);
+	        
 	        
 	        //close the mdp 
 	        mdp.close();
@@ -117,16 +135,16 @@ public class RL4JExperiment implements Experiment {
 
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
 		// Straight-forward RL-Glue domains
-		MMNEAT.main(new String[] {"runNumber:0","io:false","netio:false","maxGens:10","watch:true",
+		MMNEAT.main(new String[] {"runNumber:0","io:false","netio:false","maxGens:10","watch:false",
 				// CartPole
-//				"task:edu.southwestern.tasks.rlglue.cartpole.CartPoleTask",
-//				"rlGlueEnvironment:org.rlcommunity.environments.cartpole.CartPole",
+				"task:edu.southwestern.tasks.rlglue.cartpole.CartPoleTask",
+				"rlGlueEnvironment:org.rlcommunity.environments.cartpole.CartPole",
 				// AcroBot
 //				"task:edu.southwestern.tasks.rlglue.acrobot.AcrobotTask",
 //				"rlGlueEnvironment:org.rlcommunity.environments.acrobot.Acrobot",
 				// MountainCar
-				"task:edu.southwestern.tasks.rlglue.mountaincar.MountainCarTask",
-				"rlGlueEnvironment:org.rlcommunity.environments.mountaincar.MountainCar",
+//				"task:edu.southwestern.tasks.rlglue.mountaincar.MountainCarTask",
+//				"rlGlueEnvironment:org.rlcommunity.environments.mountaincar.MountainCar",
 				"experiment:edu.southwestern.experiment.rl.RL4JExperiment"});
 
 		// Once Tetris works

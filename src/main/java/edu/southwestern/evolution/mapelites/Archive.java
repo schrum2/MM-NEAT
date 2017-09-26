@@ -100,7 +100,7 @@ public class Archive<T> {
 					// Easier to reload on resume if file name is uniform. Will also save space by overwriting
 					String binPath = archiveDir + File.separator + mapping.binLabels().get(i);
 					Easy.save(candidate.individual, binPath + File.separator + "elite.xml");
-					// Write scores as simpel text file (less to write than xml)
+					// Write scores as simple text file (less to write than xml)
 					try {
 						PrintStream ps = new PrintStream(new File(binPath + File.separator + "scores.txt"));
 						for(Double score : candidate.behaviorVector) {
