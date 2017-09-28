@@ -76,34 +76,44 @@ public class ShapeInnovationTask<T extends Network> extends LonerTask<T> {
 		Score<T> result = new Score<>(individual, new double[]{}, behaviorVector);
 
 		if(CommonConstants.watch) {
-			DrawingPanel picture = GraphicsUtil.drawImage(images[0], "Image", ImageNetClassification.IMAGE_NET_INPUT_WIDTH, ImageNetClassification.IMAGE_NET_INPUT_HEIGHT);
 			// Prints top 4 labels
 			String decodedLabels = new ImageNetLabels().decodePredictions(scores);
 			System.out.println(decodedLabels);
-			// Wait for user
-			MiscUtil.waitForReadStringAndEnterKeyPress();
-			picture.dispose();
+			for(int i = 0; i < images.length; i++) {
+				DrawingPanel picture = GraphicsUtil.drawImage(images[i], "Image", ImageNetClassification.IMAGE_NET_INPUT_WIDTH, ImageNetClassification.IMAGE_NET_INPUT_HEIGHT);
+				// Wait for user
+				MiscUtil.waitForReadStringAndEnterKeyPress();
+				picture.dispose();
+			}
 		}
-//		if(CommonConstants.netio) {
-//			// Lot of duplication of computation from Archive. Can that be fixed?
-//			@SuppressWarnings("unchecked")
-//			Archive<T> archive = ((MAPElites<T>) MMNEAT.ea).getArchive();
-//			List<String> binLabels = archive.getBinMapping().binLabels();
-//			for(int i = 0; i < binLabels.size(); i++) {
-//				Score<T> elite = archive.getElite(i);
-//				// If the bin is empty, or the candidate is better than the elite for that bin's score
-//				double binScore = result.behaviorVector.get(i);
-//				if(elite == null || binScore > elite.behaviorVector.get(i)) {
-//					if(binScore > pictureInnovationSaveThreshold) {
-//						String fileName = String.format("%7.5f", binScore) + binLabels.get(i) + individual.getId() + ".jpg";
-//						String binPath = archive.getArchiveDirectory() + File.separator + binLabels.get(i);
-//						String fullName = binPath + File.separator + fileName;
-//						System.out.println(fullName);
-//						GraphicsUtil.saveImage(image, fullName);
-//					}
-//				}
-//			}
-//		}
+		if(CommonConstants.netio) {
+			// Lot of duplication of computation from Archive. Can that be fixed?
+			@SuppressWarnings("unchecked")
+			Archive<T> archive = ((MAPElites<T>) MMNEAT.ea).getArchive();
+			List<String> binLabels = archive.getBinMapping().binLabels();
+			for(int i = 0; i < binLabels.size(); i++) {
+				Score<T> elite = archive.getElite(i);
+				// If the bin is empty, or the candidate is better than the elite for that bin's score
+				double binScore = result.behaviorVector.get(i);
+				if(elite == null || binScore > elite.behaviorVector.get(i)) {
+					if(binScore > pictureInnovationSaveThreshold) {
+						String fileName = String.format("%7.5f", binScore) + binLabels.get(i) + individual.getId() + ".gif";
+						String binPath = archive.getArchiveDirectory() + File.separator + binLabels.get(i);
+						String fullName = binPath + File.separator + fileName;
+						System.out.println(fullName);
+						// Have to get the full animation sequence, not just three selected frames
+						BufferedImage[] allImages = ThreeDimensionalUtil.imagesFromTriangles(tris, ImageNetClassification.IMAGE_NET_INPUT_WIDTH, ImageNetClassification.IMAGE_NET_INPUT_HEIGHT, 0, (int) (AnimationUtil.FRAMES_PER_SEC * 3), heading, pitch, evolvedColor, vertical);
+						try {
+							AnimationUtil.createGif(allImages, Parameters.parameters.integerParameter("defaultFramePause"), fullName);
+						} catch (IOException e) {
+							System.out.println("Failed to save gif: " + fullName);
+							e.printStackTrace();
+							System.exit(1);
+						}	
+					}
+				}
+			}
+		}
 		return result;
 	}
 	
