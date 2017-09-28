@@ -61,6 +61,7 @@ import edu.southwestern.tasks.gridTorus.cooperative.CooperativePredatorsVsStatic
 import edu.southwestern.tasks.gridTorus.cooperativeAndCompetitive.CompetitiveAndCooperativePredatorsVsPreyTask;
 import edu.southwestern.tasks.gvgai.GVGAISinglePlayerTask;
 import edu.southwestern.tasks.innovationengines.PictureInnovationTask;
+import edu.southwestern.tasks.innovationengines.ShapeInnovationTask;
 import edu.southwestern.tasks.interactive.InteractiveEvolutionTask;
 import edu.southwestern.tasks.mario.MarioTask;
 import edu.southwestern.tasks.microrts.MicroRTSTask;
@@ -639,6 +640,10 @@ public class MMNEAT {
 			} else if(task instanceof PictureInnovationTask) {
 				System.out.println("set up Innovation Engine Task");
 				PictureInnovationTask temp = (PictureInnovationTask) task;
+				setNNInputParameters(temp.numCPPNInputs(), temp.numCPPNOutputs());
+			} else if(task instanceof ShapeInnovationTask) {
+				System.out.println("set up Innovation Engine Task");
+				ShapeInnovationTask temp = (ShapeInnovationTask) task;
 				setNNInputParameters(temp.numCPPNInputs(), temp.numCPPNOutputs());
 			} else if (task instanceof MarioTask) {
 				setNNInputParameters(((Parameters.parameters.integerParameter("marioInputWidth") * Parameters.parameters.integerParameter("marioInputHeight")) * 2) + 1, MarioTask.MARIO_OUTPUTS); //hard coded for now, 5 button outputs

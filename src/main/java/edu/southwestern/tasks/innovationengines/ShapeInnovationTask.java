@@ -157,17 +157,19 @@ public class ShapeInnovationTask<T extends Network> extends LonerTask<T> {
 	}
 
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
-		MMNEAT.main(new String[]{"runNumber:0","randomSeed:0","base:innovation","mu:400","maxGens:2000000",
+		MMNEAT.main(new String[]{"runNumber:0","randomSeed:0","base:innovation","mu:400","maxGens:200", //0000",
 				"io:true","netio:true","mating:true","task:edu.southwestern.tasks.innovationengines.ShapeInnovationTask",
 				"log:InnovationShapes-AllAverage","saveTo:AllAverage","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3",
 				"cleanFrequency:400","recurrency:false","logTWEANNData:false","logMutationAndLineage:true",
 				"ea:edu.southwestern.evolution.mapelites.MAPElites",
+				"watch:false",
 				"experiment:edu.southwestern.experiment.evolution.SteadyStateExperiment",
 				"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.ImageNetBinMapping","fs:true",
 				//"imageNetModel:edu.southwestern.networks.dl4j.VGG19Wrapper",
-				"imageNetModel:edu.southwestern.networks.dl4j.VGG16Wrapper",
-				//"imageNetModel:edu.southwestern.networks.dl4j.AverageAllZooModelImageNetModels",
-				"pictureInnovationSaveThreshold:0.5",
+				//"imageNetModel:edu.southwestern.networks.dl4j.VGG16Wrapper",
+				"imageNetModel:edu.southwestern.networks.dl4j.AverageAllZooModelImageNetModels",
+				//"imageNetModel:edu.southwestern.networks.dl4j.MinAllZooModelImageNetModels",
+				"pictureInnovationSaveThreshold:0.3",
 				"imageWidth:500","imageHeight:500", // Final save size
 				"includeFullSigmoidFunction:true", // In original Innovation Engine
 				"includeTanhFunction:false",
