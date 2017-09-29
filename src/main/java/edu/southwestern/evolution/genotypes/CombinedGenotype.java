@@ -14,7 +14,7 @@ import edu.southwestern.util.datastructures.Pair;
  * 
  * @author Jacob Schrum
  */
-public class CombinedGenotype<X, Y> extends Pair<Genotype<X>, Genotype<Y>>implements Genotype<Pair<X, Y>> {
+public class CombinedGenotype<X, Y> extends Pair<Genotype<X>, Genotype<Y>> implements Genotype<Pair<X, Y>> {
 
 	// Any newly created genotype automatically takes the next free genotype ID
 	private long id = EvolutionaryHistory.nextGenotypeId();

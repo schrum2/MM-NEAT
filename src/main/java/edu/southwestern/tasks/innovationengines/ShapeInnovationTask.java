@@ -16,6 +16,7 @@ import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.mapelites.Archive;
 import edu.southwestern.evolution.mapelites.MAPElites;
 import edu.southwestern.networks.Network;
+import edu.southwestern.networks.TWEANN;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
@@ -23,6 +24,7 @@ import edu.southwestern.tasks.LonerTask;
 import edu.southwestern.tasks.interactive.objectbreeder.ThreeDimensionalObjectBreederTask;
 import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
+import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.datastructures.Triangle;
 import edu.southwestern.util.graphics.AnimationUtil;
 import edu.southwestern.util.graphics.DrawingPanel;
@@ -30,7 +32,12 @@ import edu.southwestern.util.graphics.GraphicsUtil;
 import edu.southwestern.util.graphics.ImageNetClassification;
 import edu.southwestern.util.graphics.ThreeDimensionalUtil;
 
-public class ShapeInnovationTask<T extends Network> extends LonerTask<T> {
+public class ShapeInnovationTask extends LonerTask<Pair<TWEANN, ArrayList<Double>>> {
+	
+	public static final int INDEX_RED = 0;
+	public static final int INDEX_GREEN = 1;
+	public static final int INDEX_BLUE = 2;
+	
 	// Not sure if this is necessary. Does the pre-processing do more than just resize the image?
 	// Because the image is already the correct size. However, I read something about additional
 	// processing steps somewhere in a DL4J example.
@@ -52,12 +59,13 @@ public class ShapeInnovationTask<T extends Network> extends LonerTask<T> {
 	}
 
 	@Override
-	public Score<T> evaluate(Genotype<T> individual) {
-		Network cppn = individual.getPhenotype();
+	public Score<Pair<TWEANN, ArrayList<Double>>> evaluate(Genotype<Pair<TWEANN, ArrayList<Double>>> individual) {
+		Pair<TWEANN,ArrayList<Double>> pair = individual.getPhenotype();
+		Network cppn = pair.t1;
 		// Get the shape
 		List<Triangle> tris = ThreeDimensionalUtil.trianglesFromCPPN(cppn, ImageNetClassification.IMAGE_NET_INPUT_WIDTH, ImageNetClassification.IMAGE_NET_INPUT_HEIGHT, ThreeDimensionalObjectBreederTask.CUBE_SIDE_LENGTH, ThreeDimensionalObjectBreederTask.SHAPE_WIDTH, ThreeDimensionalObjectBreederTask.SHAPE_HEIGHT, ThreeDimensionalObjectBreederTask.SHAPE_DEPTH, null, ArrayUtil.doubleOnes(numCPPNInputs()));
 		// Get image from multiple angles
-		Color evolvedColor = new Color(223,233,244); // TODO: Need to change
+		Color evolvedColor = new Color(pair.t2.get(INDEX_RED).floatValue(),pair.t2.get(INDEX_GREEN).floatValue(),pair.t2.get(INDEX_BLUE).floatValue()); // Evolved background color
 		BufferedImage[] images = ThreeDimensionalUtil.imagesFromTriangles(tris, ImageNetClassification.IMAGE_NET_INPUT_WIDTH, ImageNetClassification.IMAGE_NET_INPUT_HEIGHT, 0, 3, heading, pitch, evolvedColor, vertical);
 		ArrayList<INDArray> scoresFromAngles = new ArrayList<>(images.length);
 		for(int i = 0; i < images.length; i++) {
@@ -73,7 +81,7 @@ public class ShapeInnovationTask<T extends Network> extends LonerTask<T> {
 		scores.div(scoresFromAngles.size()); // divide to get average
 		
 		ArrayList<Double> behaviorVector = ArrayUtil.doubleVectorFromINDArray(scores);
-		Score<T> result = new Score<>(individual, new double[]{}, behaviorVector);
+		Score<Pair<TWEANN, ArrayList<Double>>> result = new Score<>(individual, new double[]{}, behaviorVector);
 
 		if(CommonConstants.watch) {
 			// Prints top 4 labels
@@ -89,10 +97,10 @@ public class ShapeInnovationTask<T extends Network> extends LonerTask<T> {
 		if(CommonConstants.netio) {
 			// Lot of duplication of computation from Archive. Can that be fixed?
 			@SuppressWarnings("unchecked")
-			Archive<T> archive = ((MAPElites<T>) MMNEAT.ea).getArchive();
+			Archive<Pair<TWEANN, ArrayList<Double>>> archive = ((MAPElites<Pair<TWEANN, ArrayList<Double>>>) MMNEAT.ea).getArchive();
 			List<String> binLabels = archive.getBinMapping().binLabels();
 			for(int i = 0; i < binLabels.size(); i++) {
-				Score<T> elite = archive.getElite(i);
+				Score<Pair<TWEANN, ArrayList<Double>>> elite = archive.getElite(i);
 				// If the bin is empty, or the candidate is better than the elite for that bin's score
 				double binScore = result.behaviorVector.get(i);
 				if(elite == null || binScore > elite.behaviorVector.get(i)) {
@@ -127,19 +135,20 @@ public class ShapeInnovationTask<T extends Network> extends LonerTask<T> {
 		// Save a collection of only the final images from each MAP Elites bin
 		if(CommonConstants.netio) {
 			@SuppressWarnings("unchecked")
-			Archive<T> archive = ((MAPElites<T>) MMNEAT.ea).getArchive();
+			Archive<Pair<TWEANN, ArrayList<Double>>> archive = ((MAPElites<Pair<TWEANN, ArrayList<Double>>>) MMNEAT.ea).getArchive();
 			String finalArchive = archive.getArchiveDirectory() + "Final";
 			new File(finalArchive).mkdir(); // Make different directory
 			List<String> binLabels = archive.getBinMapping().binLabels();
 			for(int i = 0; i < binLabels.size(); i++) {
 				String label = binLabels.get(i);
-				Score<T> score = archive.getElite(i);
-				Network cppn = score.individual.getPhenotype();
+				Score<Pair<TWEANN, ArrayList<Double>>> score = archive.getElite(i);
+				Pair<TWEANN,ArrayList<Double>> pair = score.individual.getPhenotype();
+				Network cppn = pair.t1;
 				
 				// Get the shape
 				List<Triangle> tris = ThreeDimensionalUtil.trianglesFromCPPN(cppn, saveWidth, saveHeight, ThreeDimensionalObjectBreederTask.CUBE_SIDE_LENGTH, ThreeDimensionalObjectBreederTask.SHAPE_WIDTH, ThreeDimensionalObjectBreederTask.SHAPE_HEIGHT, ThreeDimensionalObjectBreederTask.SHAPE_DEPTH, null, ArrayUtil.doubleOnes(numCPPNInputs()));
 				// Render and rotate
-				Color evolvedColor = new Color(223,233,244); // TODO: Need to change
+				Color evolvedColor = new Color(pair.t2.get(INDEX_RED).floatValue(),pair.t2.get(INDEX_GREEN).floatValue(),pair.t2.get(INDEX_BLUE).floatValue()); // Evolved background color
 				BufferedImage[] images = ThreeDimensionalUtil.imagesFromTriangles(tris, saveWidth, saveHeight, 0, (int) (AnimationUtil.FRAMES_PER_SEC * 3), heading, pitch, evolvedColor, vertical);
 				
 				double binScore = score.behaviorVector.get(i);
@@ -167,9 +176,9 @@ public class ShapeInnovationTask<T extends Network> extends LonerTask<T> {
 	}
 
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
-		MMNEAT.main(new String[]{"runNumber:0","randomSeed:0","base:innovation","mu:400","maxGens:200", //0000",
+		MMNEAT.main(new String[]{"runNumber:0","randomSeed:0","base:innovation","mu:400","maxGens:2000000",
 				"io:true","netio:true","mating:true","task:edu.southwestern.tasks.innovationengines.ShapeInnovationTask",
-				"log:InnovationShapes-AllAverage","saveTo:AllAverage","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3",
+				"log:InnovationShapes-GoogLeNetWrapper","saveTo:GoogLeNetWrapper","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3",
 				"cleanFrequency:400","recurrency:false","logTWEANNData:false","logMutationAndLineage:true",
 				"ea:edu.southwestern.evolution.mapelites.MAPElites",
 				"watch:false",
@@ -177,8 +186,10 @@ public class ShapeInnovationTask<T extends Network> extends LonerTask<T> {
 				"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.ImageNetBinMapping","fs:true",
 				//"imageNetModel:edu.southwestern.networks.dl4j.VGG19Wrapper",
 				//"imageNetModel:edu.southwestern.networks.dl4j.VGG16Wrapper",
-				"imageNetModel:edu.southwestern.networks.dl4j.AverageAllZooModelImageNetModels",
+				"imageNetModel:edu.southwestern.networks.dl4j.GoogLeNetWrapper",
+				//"imageNetModel:edu.southwestern.networks.dl4j.AverageAllZooModelImageNetModels",
 				//"imageNetModel:edu.southwestern.networks.dl4j.MinAllZooModelImageNetModels",
+				"genotype:edu.southwestern.evolution.genotypes.CPPNAndColorGenotype",
 				"pictureInnovationSaveThreshold:0.3",
 				"imageWidth:500","imageHeight:500", // Final save size
 				"includeFullSigmoidFunction:true", // In original Innovation Engine

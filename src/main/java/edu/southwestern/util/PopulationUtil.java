@@ -17,6 +17,7 @@ import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.data.SaveThread;
 import edu.southwestern.evolution.EvolutionaryHistory;
 import edu.southwestern.evolution.GenerationalEA;
+import edu.southwestern.evolution.genotypes.CombinedGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.genotypes.HyperNEATCPPNGenotype;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
@@ -220,7 +221,7 @@ public class PopulationUtil {
 	 *            Population size
 	 * @return List of genotypes for initial population
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static <T> ArrayList<Genotype<T>> initialPopulation(Genotype<T> example, int size) {//TODO add randomization code here
 		ArrayList<Genotype<T>> parents = new ArrayList<Genotype<T>>(size);
 		if (MMNEAT.seedExample) { // Seed whole population with particular starting genotype
@@ -241,9 +242,19 @@ public class PopulationUtil {
 			// should start randomized. 
 			if(CommonConstants.netChangeActivationRate > 0) {
 				ActivationFunctionRandomReplacement afrr = new ActivationFunctionRandomReplacement();
-				for (int i = 0; i < size; i++) {
-					afrr.mutate((Genotype<TWEANN>) parents.get(i));
-				}	
+				if(parents.get(0) instanceof CombinedGenotype) {
+					// If a combined genotye, assume the first of the pair is a network
+					for (int i = 0; i < size; i++) {
+						afrr.mutate((Genotype<TWEANN>) ((Pair) parents.get(i)).t1);
+					}	
+				} else if(parents.get(0) instanceof TWEANNGenotype) {
+					// TWEANNGenotype is standard network genotype
+					for (int i = 0; i < size; i++) {
+						afrr.mutate((Genotype<TWEANN>) parents.get(i));
+					}	
+				} else {
+					throw new IllegalArgumentException("CAnnot change activation function of genotype that has no network");
+				}
 			}
 		}
 		return parents;
