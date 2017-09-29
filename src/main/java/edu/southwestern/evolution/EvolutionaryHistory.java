@@ -1,6 +1,7 @@
 package edu.southwestern.evolution;
 
 import edu.southwestern.evolution.crossover.network.CombiningTWEANNCrossover;
+import edu.southwestern.evolution.genotypes.CombinedGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype.NodeGene;
@@ -182,7 +183,12 @@ public class EvolutionaryHistory {
 	 * @param loadedArchetype
 	 */
 	public static void initArchetype(int populationIndex, String loadedArchetype) {
-		TWEANNGenotype tg = (TWEANNGenotype) (MMNEAT.genotypeExamples == null ? MMNEAT.genotype.copy() : MMNEAT.genotypeExamples.get(populationIndex).copy());
+		@SuppressWarnings("rawtypes")
+		TWEANNGenotype tg = (TWEANNGenotype) (MMNEAT.genotypeExamples == null ? 
+				(MMNEAT.genotype instanceof CombinedGenotype ? 
+						((CombinedGenotype) MMNEAT.genotype).t1 : // Assume firsts of pair is TWEANNGenotype 
+						MMNEAT.genotype.copy()) : // Assume it is a TWEANNGenotype 
+				MMNEAT.genotypeExamples.get(populationIndex).copy()); // First population from coevolution
 		initArchetype(populationIndex, loadedArchetype, tg);
 	}
 	

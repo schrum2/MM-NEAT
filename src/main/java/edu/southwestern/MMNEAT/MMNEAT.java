@@ -18,6 +18,7 @@ import edu.southwestern.evolution.EA;
 import edu.southwestern.evolution.EvolutionaryHistory;
 import edu.southwestern.evolution.ScoreHistory;
 import edu.southwestern.evolution.crossover.Crossover;
+import edu.southwestern.evolution.genotypes.CombinedGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.genotypes.HyperNEATCPPNGenotype;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
@@ -235,7 +236,8 @@ public class MMNEAT {
 	}
 
 	private static void setupTWEANNGenotypeDataTracking(boolean coevolution) {
-		if (genotype instanceof TWEANNGenotype) {
+		if (genotype instanceof TWEANNGenotype || 
+			genotype instanceof CombinedGenotype) { // Assume first member of pair is TWEANNGenotype
 			if (Parameters.parameters.booleanParameter("io")
 					&& Parameters.parameters.booleanParameter("logTWEANNData")) {
 				System.out.println("Init TWEANN Log");
@@ -245,7 +247,10 @@ public class MMNEAT {
 				EvolutionaryHistory.initArchetype(0);
 			}
 
-			long biggestInnovation = ((TWEANNGenotype) genotype).biggestInnovation();
+			@SuppressWarnings("rawtypes")
+			long biggestInnovation = genotype instanceof CombinedGenotype ? 
+					((TWEANNGenotype) ((CombinedGenotype) genotype).t1).biggestInnovation() :
+					((TWEANNGenotype) genotype).biggestInnovation();
 			if (biggestInnovation > EvolutionaryHistory.largestUnusedInnovationNumber) {
 				EvolutionaryHistory.setInnovation(biggestInnovation + 1);
 			}
