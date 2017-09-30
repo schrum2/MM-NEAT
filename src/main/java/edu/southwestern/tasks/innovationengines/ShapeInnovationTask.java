@@ -176,9 +176,9 @@ public class ShapeInnovationTask extends LonerTask<Pair<TWEANN, ArrayList<Double
 	}
 
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
-		MMNEAT.main(new String[]{"runNumber:0","randomSeed:0","base:innovation","mu:400","maxGens:2000000",
+		MMNEAT.main(new String[]{"runNumber:0","randomSeed:0","base:innovationshapes","mu:400","maxGens:2000000",
 				"io:true","netio:true","mating:true","task:edu.southwestern.tasks.innovationengines.ShapeInnovationTask",
-				"log:InnovationShapes-GoogLeNetWrapper","saveTo:GoogLeNetWrapper","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3",
+				"log:InnovationShapes-ResNet","saveTo:ResNet","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3",
 				"cleanFrequency:400","recurrency:false","logTWEANNData:false","logMutationAndLineage:true",
 				"ea:edu.southwestern.evolution.mapelites.MAPElites",
 				"watch:false",
@@ -186,7 +186,8 @@ public class ShapeInnovationTask extends LonerTask<Pair<TWEANN, ArrayList<Double
 				"mapElitesBinLabels:edu.southwestern.tasks.innovationengines.ImageNetBinMapping","fs:true",
 				//"imageNetModel:edu.southwestern.networks.dl4j.VGG19Wrapper",
 				//"imageNetModel:edu.southwestern.networks.dl4j.VGG16Wrapper",
-				"imageNetModel:edu.southwestern.networks.dl4j.GoogLeNetWrapper",
+				//"imageNetModel:edu.southwestern.networks.dl4j.GoogLeNetWrapper",
+				"imageNetModel:edu.southwestern.networks.dl4j.ResNet50Wrapper",
 				//"imageNetModel:edu.southwestern.networks.dl4j.AverageAllZooModelImageNetModels",
 				//"imageNetModel:edu.southwestern.networks.dl4j.MinAllZooModelImageNetModels",
 				"genotype:edu.southwestern.evolution.genotypes.CPPNAndColorGenotype",

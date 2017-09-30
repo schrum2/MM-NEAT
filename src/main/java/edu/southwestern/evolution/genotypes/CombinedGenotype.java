@@ -19,6 +19,13 @@ public class CombinedGenotype<X, Y> extends Pair<Genotype<X>, Genotype<Y>> imple
 	// Any newly created genotype automatically takes the next free genotype ID
 	private long id = EvolutionaryHistory.nextGenotypeId();
 
+	/**
+	 * Because this class does not have a parameterless constructor,
+	 * it cannot be instantiated as an example genotype from the commandline.
+	 * This class must be overridden for default parameters to be set.
+	 * @param x First genotype
+	 * @param y Second genotype
+	 */
 	public CombinedGenotype(Genotype<X> x, Genotype<Y> y) {
 		super(x, y);
 	}

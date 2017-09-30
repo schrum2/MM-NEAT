@@ -2,6 +2,7 @@ package edu.southwestern.evolution.mapelites;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -18,7 +19,9 @@ import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.LonerTask;
 import edu.southwestern.util.PopulationUtil;
+import edu.southwestern.util.file.FileUtilities;
 import edu.southwestern.util.random.RandomNumbers;
+import edu.southwestern.util.stats.StatisticsUtilities;
 import wox.serial.Easy;
 
 public class MAPElites<T> implements SteadyStateEA<T> {
@@ -36,10 +39,40 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 	public MAPElites() {
 		this.task = (LonerTask<T>) MMNEAT.task;
 		this.io = Parameters.parameters.booleanParameter("io"); // write logs
-		if(io) {
-			log = new MMNEATLog("MAPElites");
-		}
 		this.archive = new Archive<>(Parameters.parameters.booleanParameter("netio"));
+		if(io) {
+			String infix = "MAPElites";
+			log = new MMNEATLog(infix);
+			// Create gnuplot file for log
+			String experimentPrefix = Parameters.parameters.stringParameter("log")
+					+ Parameters.parameters.integerParameter("runNumber");
+			String prefix = experimentPrefix + "_" + infix;
+			String directory = FileUtilities.getSaveDirectory();// retrieves file directory
+			directory += (directory.equals("") ? "" : "/");
+			String fullName = directory + prefix + "_log.plot";
+			File plot = new File(fullName);
+			// Write to file
+			try {
+				PrintStream ps = new PrintStream(plot);
+				ps.println("set term pdf enhanced");
+				ps.println("unset key");
+				// Make this more general?
+				double minFitness = task.numObjectives() == 0 ? 
+						0 : // The Innovation Engines have no fitness scores, but DNN predictions have min of 0
+						StatisticsUtilities.minimum(task.minScores());  // Would we look across all scores in this case?
+				ps.println("set yrange [" + minFitness + ":]");
+				ps.println("set xrange [0:"+ archive.getBinMapping().binLabels().size() + "]");
+				ps.println("set title \"" + experimentPrefix + " Archive Performance\"");
+				ps.println("set output \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".pdf\"");
+				int individualsPerGeneration = 400; // Set based on Innovation Engine paper: NOT GENERAL ENOUGH!
+				ps.println("plot \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".txt\" matrix every :" + individualsPerGeneration + ":2 with image");
+				ps.close();
+			} catch (FileNotFoundException e) {
+				System.out.println("Could not create plot file: " + plot.getName());
+				e.printStackTrace();
+				System.exit(1);
+			}
+		}
 		this.mating = Parameters.parameters.booleanParameter("mating");
 		this.crossoverRate = Parameters.parameters.doubleParameter("crossoverRate");
 		this.iterations = Parameters.parameters.integerParameter("lastSavedGeneration");
