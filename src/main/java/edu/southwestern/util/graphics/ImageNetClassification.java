@@ -1,5 +1,6 @@
 package edu.southwestern.util.graphics;
 
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ import org.nd4j.linalg.factory.Nd4j;
 
 import edu.southwestern.networks.dl4j.TensorNetwork;
 import edu.southwestern.util.ClassCreation;
+import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.stats.StatisticsUtilities;
 
@@ -132,6 +134,11 @@ public class ImageNetClassification {
 	private static INDArray getImageNetPredictions(TensorNetwork model, INDArray image, boolean preprocess) {
 		if(preprocess) {
 			imagePreprocess(image);
+			// Check pre-processing behavior/results
+//			BufferedImage processed = GraphicsUtil.imageFromINDArray(image);
+//			DrawingPanel panel = GraphicsUtil.drawImage(processed, "Transformed Image", IMAGE_NET_INPUT_WIDTH, IMAGE_NET_INPUT_HEIGHT);
+//			MiscUtil.waitForReadStringAndEnterKeyPress();
+//			panel.dispose();
 		}
 		INDArray predictions = model.output(image);
 		return predictions.getRow(0); //.dup(); // Should I duplicate with dup? Worth the load? Needed?

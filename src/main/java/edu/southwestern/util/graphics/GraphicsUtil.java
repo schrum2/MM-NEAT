@@ -8,10 +8,13 @@ import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
+import org.nd4j.linalg.api.ndarray.INDArray;
+
 import edu.southwestern.networks.ActivationFunctions;
 import edu.southwestern.networks.Network;
 import edu.southwestern.tasks.interactive.picbreeder.PicbreederTask;
 import edu.southwestern.util.CartesianGeometricUtilities;
+import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.sound.SoundToArray;
 import edu.southwestern.util.util2D.ILocated2D;
@@ -362,6 +365,32 @@ public class GraphicsUtil {
 		for (int x = 0; x < width; x++) {// scans across whole image
 			for (int y = 0; y < height; y++) {
 				image.setRGB(x, y, c.getRGB());
+			}
+		}
+		return image;
+	}
+	
+	/**
+	 * Takes an INDArray containing an image loaded using the native image loader
+	 * libraries associated with DL4J, and converts it into a BufferedImage.
+	 * The INDArray contains the color values split up across three channels (RGB)
+	 * and in the integer range 0-255.
+	 * @param array INDArray containing an image
+	 * @return BufferedImage 
+	 */
+	public static BufferedImage imageFromINDArray(INDArray array) {
+		int[] shape = array.shape();
+		// Should the order of these be switched?
+		int width = shape[2];
+		int height = shape[3];
+		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+		// Copy from INDArray to BufferedImage
+		for (int x = 0; x < width; x++) {// scans across whole image
+			for (int y = 0; y < height; y++) {
+				int red = array.getInt(0,2,y,x);
+				int green = array.getInt(0,1,y,x);
+				int blue = array.getInt(0,0,y,x);
+				image.setRGB(x, y, new Color(red,green,blue).getRGB());
 			}
 		}
 		return image;
