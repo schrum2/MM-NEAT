@@ -31,9 +31,10 @@ public class ImageNetTest {
 	public static void main(String[] args) throws IOException, InterruptedException {
 		// ConcatApproach is incompatible with some of the standard ImageNet helper methods
 		//Parameters.initializeParameterCollections(new String[] {"imageNetModel:edu.southwestern.networks.dl4j.ConcatAllZooModelImageNetModels"});		
-		Parameters.initializeParameterCollections(new String[] {"imageNetModel:edu.southwestern.networks.dl4j.MinAllZooModelImageNetModels"});		
+		//Parameters.initializeParameterCollections(new String[] {"imageNetModel:edu.southwestern.networks.dl4j.MinAllZooModelImageNetModels"});		
 		//Parameters.initializeParameterCollections(new String[] {"imageNetModel:edu.southwestern.networks.dl4j.VGG16Wrapper"});		
 		//Parameters.initializeParameterCollections(new String[] {"imageNetModel:edu.southwestern.networks.dl4j.VGG19Wrapper"});		
+		Parameters.initializeParameterCollections(new String[] {"imageNetModel:edu.southwestern.networks.dl4j.GoogLeNetWrapper"});		
 		AllZooModelImageNetModels.initAllImageNets();
 		NativeImageLoader loader = new NativeImageLoader(ImageNetClassification.IMAGE_NET_INPUT_HEIGHT, ImageNetClassification.IMAGE_NET_INPUT_WIDTH, ImageNetClassification.IMAGE_NET_INPUT_CHANNELS);
 		
@@ -78,11 +79,25 @@ public class ImageNetTest {
 //		resultsFromOne(loader.asMatrix(new File("innovation\\AllMinimumModel0\\archive\\jellyfish\\0.71373jellyfish967.jpg")), true);
 //		MiscUtil.waitForReadStringAndEnterKeyPress();	
 		
-		resultsFromAll(loader.asMatrix(new File("data/imagematch/car.jpg")), true);
-		resultsFromOne(loader.asMatrix(new File("data/imagematch/car.jpg")), true);
+		//resultsFromAll(loader.asMatrix(new File("data/imagematch/jellyfish.JPEG")), true);
+		resultsFromOne(loader.asMatrix(new File("data/imagematch/jellyfish.JPEG")), true);
+		resultsFromOne(loader.asMatrix(new File("data/imagematch/jellyfish.JPEG")), false);
 		MiscUtil.waitForReadStringAndEnterKeyPress();
-		resultsFromAll(loader.asMatrix(new File("data/imagematch/cat.jpg")), true);
+		//resultsFromAll(loader.asMatrix(new File("data/imagematch/blackwidow.JPEG")), true);
+		resultsFromOne(loader.asMatrix(new File("data/imagematch/blackwidow.JPEG")), true);
+		resultsFromOne(loader.asMatrix(new File("data/imagematch/blackwidow.JPEG")), false);
+		MiscUtil.waitForReadStringAndEnterKeyPress();
+		//resultsFromAll(loader.asMatrix(new File("data/imagematch/scorpion.JPEG")), true);
+		resultsFromOne(loader.asMatrix(new File("data/imagematch/scorpion.JPEG")), true);
+		resultsFromOne(loader.asMatrix(new File("data/imagematch/scorpion.JPEG")), false);
+		MiscUtil.waitForReadStringAndEnterKeyPress();
+		//resultsFromAll(loader.asMatrix(new File("data/imagematch/car.jpg")), true);
+		resultsFromOne(loader.asMatrix(new File("data/imagematch/car.jpg")), true);
+		resultsFromOne(loader.asMatrix(new File("data/imagematch/car.jpg")), false);
+		MiscUtil.waitForReadStringAndEnterKeyPress();
+		//resultsFromAll(loader.asMatrix(new File("data/imagematch/cat.jpg")), true);
 		resultsFromOne(loader.asMatrix(new File("data/imagematch/cat.jpg")), true);
+		resultsFromOne(loader.asMatrix(new File("data/imagematch/cat.jpg")), false);
 		MiscUtil.waitForReadStringAndEnterKeyPress();		
 		resultsFromAll(loader.asMatrix(new File("data/imagematch/organimage.bmp")), false);
 		resultsFromOne(loader.asMatrix(new File("data/imagematch/organimage.bmp")), false);
