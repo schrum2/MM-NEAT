@@ -43,15 +43,18 @@ import edu.southwestern.networks.ActivationFunctions;
 import edu.southwestern.networks.Network;
 import edu.southwestern.networks.NetworkTask;
 import edu.southwestern.networks.TWEANN;
+import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.SinglePopulationTask;
 import edu.southwestern.util.BooleanUtil;
 import edu.southwestern.util.CombinatoricUtilities;
 import edu.southwestern.util.PopulationUtil;
+import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.file.FileUtilities;
 import edu.southwestern.util.graphics.DrawingPanel;
 import edu.southwestern.util.graphics.GraphicsUtil;
+import edu.southwestern.util.random.RandomNumbers;
 
 /**
  * Class that builds an interface designed for interactive evolution. 
@@ -175,7 +178,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		topper = new JPanel();
 		top = new JPanel();
 		JPanel bottom = new JPanel();
-		bottom.setPreferredSize(new Dimension(frame.getWidth(), 200));
+		bottom.setPreferredSize(new Dimension(frame.getWidth(), 200)); // 200 magic number: height of checkbox area
 		bottom.setLayout(new FlowLayout());
 
 		// Gets the Button Images from the Picbreeder data Folder and re-scales them for use on the smaller Action Buttons
@@ -593,12 +596,17 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	 */
 	@SuppressWarnings("unchecked")
 	protected void reset() { 
+		// Select one of the available activation functions as default
+		CommonConstants.ftype = RandomNumbers.randomElement(ActivationFunctions.availableActivationFunctions);
+		Parameters.parameters.setInteger("ftype", CommonConstants.ftype);
+//		System.out.println("ftype is " + CommonConstants.ftype);
 		ArrayList<Genotype<T>> newPop = ((SinglePopulationGenerationalEA<T>) MMNEAT.ea).initialPopulation(scores.get(0).individual);
 		scores = new ArrayList<Score<T>>();
 		ActivationFunctionRandomReplacement frr = new ActivationFunctionRandomReplacement();
 		for(int i = 0; i < newPop.size(); i++) {
 			frr.mutate((Genotype<TWEANN>) newPop.get(i));
 			resetButton(newPop.get(i), i);
+//			System.out.println(newPop.get(i));
 		}	
 	}
 
@@ -714,10 +722,17 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 
 	protected void respondToClick(int itemID) {
 		// Must be checkbox for activation function
-		if(itemID < -ACTIVATION_CHECKBOX_OFFSET) {
+		if(itemID <= -ACTIVATION_CHECKBOX_OFFSET) {			
 			int ftype = Math.abs(itemID + ACTIVATION_CHECKBOX_OFFSET); // remove offset and make positive
 			setActivationFunctionCheckBox(activation[ftype], ftype);
-			System.out.println("Param " + ActivationFunctions.activationName(ftype) + " now set to: " + activation[ftype]);
+			// Don't deselect all activation functions!
+			if(ArrayUtil.countOccurrences(true, activation) == 0) {
+				// Re-select the activation function
+				setActivationFunctionCheckBox(activation[ftype], ftype);
+				System.out.println("Cannot deselect ALL activation functions. There must be at least one");
+			} else {
+				System.out.println("Param " + ActivationFunctions.activationName(ftype) + " now set to: " + activation[ftype]);
+			}
 		} else if(itemID == RESET_BUTTON_INDEX) {//If reset button clicked
 			reset();
 		} else if(itemID == SAVE_BUTTON_INDEX && BooleanUtil.any(chosen)) { //If save button clicked
