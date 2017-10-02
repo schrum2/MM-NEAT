@@ -1,20 +1,3 @@
-/**
- Copyright 2007 Brian Tanner
- brian@tannerpages.com
- http://brian.tannerpages.com
-
- Licensed under the Apache License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
-
- http://www.apache.org/licenses/LICENSE-2.0
-
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and
- limitations under the License.
- */
 package edu.southwestern.tasks.rlglue;
 
 import java.util.ArrayList;
@@ -32,11 +15,17 @@ import edu.southwestern.tasks.NoisyLonerTask;
 import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.datastructures.Pair;
 
-public class RLGlueTask<T extends Network> extends NoisyLonerTask<T>implements NetworkTask {
+/**
+ * My task class for interfacing with RL Glue Environments. Note that all
+ * RL-Glue environments need a bit of modification in order to be compatible
+ * with this code.
+ * 
+ * @author Jacob Schrum
+ *
+ * @param <T>
+ */
+public class RLGlueTask<T extends Network> extends NoisyLonerTask<T> implements NetworkTask {
 
-	/**
-	 * Initialize the elements to be used here
-	 */
 	protected static RLGlueEnvironment environment;
 	@SuppressWarnings("rawtypes") // Needs static access, and type T isn't known yet
 	public static RLGlueAgent agent;
@@ -47,19 +36,17 @@ public class RLGlueTask<T extends Network> extends NoisyLonerTask<T>implements N
 	private ArrayList<Double> behaviorVector;
 
 	/**
-	 * Initializer for the RLGlueTask, it called the
-	 * MMNEAT.rlGlueEnvironmentthat it needs as a parameter
+	 * Default constructor for the RLGlueTask, it calls the
+	 * MMNEAT.rlGlueEnvironment that it needs as a parameter
 	 */
 	public RLGlueTask() {
 		this(MMNEAT.rlGlueEnvironment);
 	}
 
 	/**
-	 * Initializes the RLGlueTask with MMNEAT.rlGlueEnvironment environment.
-	 * Puddleworld and Tetris have special-case options for using multiple
-	 * objectives that are set up here.
+	 * Set up RL Glue task and associated agent and other fields.
 	 *
-	 * @param environment
+	 * @param environment Generally from MMNEAT, set at commandline
 	 */
 	@SuppressWarnings("unchecked")
 	public RLGlueTask(RLGlueEnvironment environment) {

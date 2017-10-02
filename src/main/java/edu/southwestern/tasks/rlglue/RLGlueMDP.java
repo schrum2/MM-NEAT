@@ -5,6 +5,7 @@ import org.deeplearning4j.rl4j.mdp.MDP;
 import org.deeplearning4j.rl4j.space.ArrayObservationSpace;
 import org.deeplearning4j.rl4j.space.DiscreteSpace;
 import org.deeplearning4j.rl4j.space.ObservationSpace;
+import org.rlcommunity.rlglue.codec.RLGlue;
 import org.rlcommunity.rlglue.codec.types.Action;
 import org.rlcommunity.rlglue.codec.types.Reward_observation_terminal;
 
@@ -44,7 +45,9 @@ public class RLGlueMDP implements MDP<EncodableObservation, Integer, DiscreteSpa
 	public EncodableObservation reset() {
 		//System.out.println("reset()");
 		done = false;
+		//RLGlue.RL_cleanup();
 		environment.env_cleanup(); // end episode 
+		//RLGlue.RL_init();
 		environment.env_init(); // set up environment
 		return new EncodableObservation(environment.env_start()); // start the next episode
 	}
