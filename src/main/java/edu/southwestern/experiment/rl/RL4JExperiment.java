@@ -151,14 +151,14 @@ public class RL4JExperiment implements Experiment {
 //				"watch:true",
 				"watch:false",
 				// CartPole
-				"task:edu.southwestern.tasks.rlglue.cartpole.CartPoleTask",
-				"rlGlueEnvironment:org.rlcommunity.environments.cartpole.CartPole",
+//				"task:edu.southwestern.tasks.rlglue.cartpole.CartPoleTask",
+//				"rlGlueEnvironment:org.rlcommunity.environments.cartpole.CartPole",
 				// AcroBot
 //				"task:edu.southwestern.tasks.rlglue.acrobot.AcrobotTask",
 //				"rlGlueEnvironment:org.rlcommunity.environments.acrobot.Acrobot",
 				// MountainCar
-//				"task:edu.southwestern.tasks.rlglue.mountaincar.MountainCarTask",
-//				"rlGlueEnvironment:org.rlcommunity.environments.mountaincar.MountainCar",
+				"task:edu.southwestern.tasks.rlglue.mountaincar.MountainCarTask",
+				"rlGlueEnvironment:org.rlcommunity.environments.mountaincar.MountainCar",
 				"experiment:edu.southwestern.experiment.rl.RL4JExperiment"});
 
 		// Once Tetris works
