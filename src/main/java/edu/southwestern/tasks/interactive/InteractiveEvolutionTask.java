@@ -2,6 +2,7 @@ package edu.southwestern.tasks.interactive;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Toolkit;
@@ -42,7 +43,6 @@ import edu.southwestern.networks.ActivationFunctions;
 import edu.southwestern.networks.Network;
 import edu.southwestern.networks.NetworkTask;
 import edu.southwestern.networks.TWEANN;
-import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.SinglePopulationTask;
@@ -67,10 +67,12 @@ import edu.southwestern.util.graphics.GraphicsUtil;
  * @param <T>
  */
 public abstract class InteractiveEvolutionTask<T extends Network> implements SinglePopulationTask<T>, ActionListener, ChangeListener, NetworkTask {
-
+	
 	//Global static final variables
 	public static final int NUM_COLUMNS	= 5;
 	public static final int MPG_DEFAULT = 2;// Starting number of mutations per generation (on slider)	
+	// Offset for checkbox id numbers assigned to activation function checkboxes
+	public static final int ACTIVATION_CHECKBOX_OFFSET = 100;
 
 	//private static final Variables
 	//includes indices of buttons for action listener
@@ -82,23 +84,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	//private static final int LINEAGE_BUTTON_INDEX = -5;
 	private static final int NETWORK_BUTTON_INDEX = -6;
 	private static final int UNDO_BUTTON_INDEX = -7;
-	private static final int SIGMOID_CHECKBOX_INDEX = -8;
-	private static final int GAUSSIAN_CHECKBOX_INDEX = -9;
-	private static final int SINE_CHECKBOX_INDEX = -10;
-	private static final int SAWTOOTH_CHECKBOX_INDEX = -11;
-	private static final int ABSVAL_CHECKBOX_INDEX = -12;
-	private static final int HALF_LINEAR_CHECKBOX_INDEX = -13;
-	private static final int TANH_CHECKBOX_INDEX = -14;
-	private static final int ID_CHECKBOX_INDEX = -15;
-	private static final int FULLAPPROX_CHECKBOX_INDEX = -16;
-	private static final int APPROX_CHECKBOX_INDEX = -17;
-	private static final int STRETCHTANH_CHECKBOX_INDEX = -18;
-	private static final int RELU_CHECKBOX_INDEX = -19;//TODO
-	private static final int SOFTPLUS_CHECKBOX_INDEX = -20;
-	private static final int LEAKY_RELU_CHECKBOX_INDEX = -21;
-	private static final int FULL_SAWTOOTH_CHECKBOX_INDEX = -22;
-	private static final int TRIANGLE_WAVE_CHECKBOX_INDEX = -23;
-	private static final int SQUARE_WAVE_CHECKBOX_INDEX = -24;
+
 	private static final int BORDER_THICKNESS = 4;
 	private static final int MPG_MIN = 0;//minimum # of mutations per generation
 	private static final int MPG_MAX = 10;//maximum # of mutations per generation
@@ -162,7 +148,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		//showLineage = false;
 		showNetwork = false;
 		waitingForUser = false;
-		activation = new boolean[Math.abs(SQUARE_WAVE_CHECKBOX_INDEX) + 1];//magic number is number of activation functions
+		activation = new boolean[ActivationFunctions.MAX_POSSIBLE_ACTIVATION_FUNCTIONS]; // Leaves many gaps in array
 		Arrays.fill(activation, true);
 		if(MMNEAT.browseLineage) {
 			// Do not setup the JFrame if browsing the lineage
@@ -189,6 +175,8 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		topper = new JPanel();
 		top = new JPanel();
 		JPanel bottom = new JPanel();
+		bottom.setPreferredSize(new Dimension(frame.getWidth(), 200));
+		bottom.setLayout(new FlowLayout());
 
 		// Gets the Button Images from the Picbreeder data Folder and re-scales them for use on the smaller Action Buttons
 		ImageIcon reset = new ImageIcon("data\\picbreeder\\reset.png");
@@ -237,42 +225,6 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		undoButton.setText("Undo");
 		//closeButton.setText("Close");
 
-		//instantiates activation function checkboxes
-		JCheckBox sigmoid = new JCheckBox("sigmoid", CommonConstants.includeSigmoidFunction);
-		activation[Math.abs(SIGMOID_CHECKBOX_INDEX)] = CommonConstants.includeSigmoidFunction;
-		JCheckBox tanh = new JCheckBox("tanh", CommonConstants.includeTanhFunction);
-		activation[Math.abs(TANH_CHECKBOX_INDEX)] = CommonConstants.includeTanhFunction;
-		JCheckBox id = new JCheckBox("ID", CommonConstants.includeIdFunction);
-		activation[Math.abs(ID_CHECKBOX_INDEX)] = CommonConstants.includeIdFunction;
-		JCheckBox fullApprox = new JCheckBox("full_approximate", CommonConstants.includeFullApproxFunction);
-		activation[Math.abs(FULLAPPROX_CHECKBOX_INDEX)] = CommonConstants.includeFullApproxFunction;
-		JCheckBox approx = new JCheckBox("approximate", CommonConstants.includeApproxFunction);
-		activation[Math.abs(APPROX_CHECKBOX_INDEX)] = CommonConstants.includeApproxFunction;
-		JCheckBox gaussian = new JCheckBox("gaussian", CommonConstants.includeGaussFunction);
-		activation[Math.abs(GAUSSIAN_CHECKBOX_INDEX)] = CommonConstants.includeGaussFunction;
-		JCheckBox sine = new JCheckBox("sine", CommonConstants.includeSineFunction);
-		activation[Math.abs(SINE_CHECKBOX_INDEX)] = CommonConstants.includeSineFunction;
-		JCheckBox sawtooth = new JCheckBox("sawtooth", CommonConstants.includeSawtoothFunction);
-		activation[Math.abs(SAWTOOTH_CHECKBOX_INDEX)] = CommonConstants.includeSawtoothFunction;
-		JCheckBox absVal = new JCheckBox("absolute_value", CommonConstants.includeAbsValFunction);
-		activation[Math.abs(ABSVAL_CHECKBOX_INDEX)] = CommonConstants.includeAbsValFunction;
-		JCheckBox halfLinear = new JCheckBox("half_linear", CommonConstants.includeHalfLinearPiecewiseFunction);
-		activation[Math.abs(HALF_LINEAR_CHECKBOX_INDEX)] = CommonConstants.includeHalfLinearPiecewiseFunction;
-		JCheckBox stretchTanh = new JCheckBox("stretched_tanh", CommonConstants.includeStretchedTanhFunction);
-		activation[Math.abs(STRETCHTANH_CHECKBOX_INDEX)] = CommonConstants.includeStretchedTanhFunction;
-		JCheckBox ReLU = new JCheckBox("ReLU", CommonConstants.includeReLUFunction);
-		activation[Math.abs(RELU_CHECKBOX_INDEX)] = CommonConstants.includeReLUFunction;
-		JCheckBox Softplus = new JCheckBox("softplus", CommonConstants.includeSoftplusFunction);
-		activation[Math.abs(SOFTPLUS_CHECKBOX_INDEX)] = CommonConstants.includeSoftplusFunction;
-		JCheckBox LeakyReLU = new JCheckBox("leaky_ReLU", CommonConstants.includeLeakyReLUFunction);
-		activation[Math.abs(LEAKY_RELU_CHECKBOX_INDEX)] = CommonConstants.includeLeakyReLUFunction;
-		JCheckBox fullSawtooth = new JCheckBox("full_sawtooth", CommonConstants.includeFullSawtoothFunction);
-		activation[Math.abs(FULL_SAWTOOTH_CHECKBOX_INDEX)] = CommonConstants.includeFullSawtoothFunction;
-		JCheckBox triangleWave = new JCheckBox("triangle_wave", CommonConstants.includeTriangleWaveFunction);
-		activation[Math.abs(TRIANGLE_WAVE_CHECKBOX_INDEX)] = CommonConstants.includeTriangleWaveFunction;
-		JCheckBox squareWave = new JCheckBox("square_wave", CommonConstants.includeSquareWaveFunction);
-		activation[Math.abs(SQUARE_WAVE_CHECKBOX_INDEX)] = CommonConstants.includeSquareWaveFunction;
-
 		//adds slider for mutation rate change
 		JSlider mutationsPerGeneration = new JSlider(JSlider.HORIZONTAL, MPG_MIN, MPG_MAX, MPG_DEFAULT);
 
@@ -292,23 +244,6 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		networkButton.setToolTipText("Network button");
 		undoButton.setName("" + UNDO_BUTTON_INDEX);
 		undoButton.setToolTipText("Undo button");
-		sigmoid.setName("" + SIGMOID_CHECKBOX_INDEX);
-		tanh.setName("" + TANH_CHECKBOX_INDEX);
-		absVal.setName("" + ABSVAL_CHECKBOX_INDEX);
-		id.setName("" + ID_CHECKBOX_INDEX);
-		gaussian.setName("" + GAUSSIAN_CHECKBOX_INDEX);
-		fullApprox.setName("" + FULLAPPROX_CHECKBOX_INDEX);
-		sine.setName("" + SINE_CHECKBOX_INDEX);
-		approx.setName("" + APPROX_CHECKBOX_INDEX);
-		sawtooth.setName("" + SAWTOOTH_CHECKBOX_INDEX);
-		halfLinear.setName("" + HALF_LINEAR_CHECKBOX_INDEX);
-		stretchTanh.setName("" + STRETCHTANH_CHECKBOX_INDEX);
-		ReLU.setName("" + RELU_CHECKBOX_INDEX);//TODO
-		Softplus.setName("" + SOFTPLUS_CHECKBOX_INDEX);
-		LeakyReLU.setName("" + LEAKY_RELU_CHECKBOX_INDEX);
-		fullSawtooth.setName("" + FULL_SAWTOOTH_CHECKBOX_INDEX);
-		triangleWave.setName("" + TRIANGLE_WAVE_CHECKBOX_INDEX);
-		squareWave.setName("" + SQUARE_WAVE_CHECKBOX_INDEX);
 
 		mutationsPerGeneration.setMinorTickSpacing(1);
 		mutationsPerGeneration.setPaintTicks(true);
@@ -326,45 +261,8 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		//lineageButton.addActionListener(this);
 		networkButton.addActionListener(this);
 		undoButton.addActionListener(this);
-		sigmoid.addActionListener(this);
-		gaussian.addActionListener(this);
-		sine.addActionListener(this);
-		sawtooth.addActionListener(this);
-		absVal.addActionListener(this);
-		halfLinear.addActionListener(this);
-		tanh.addActionListener(this);
-		id.addActionListener(this);
-		fullApprox.addActionListener(this);
-		approx.addActionListener(this);
-		stretchTanh.addActionListener(this);
-		ReLU.addActionListener(this);
-		Softplus.addActionListener(this);
-		LeakyReLU.addActionListener(this);
-		fullSawtooth.addActionListener(this);
-		triangleWave.addActionListener(this);
-		squareWave.addActionListener(this);
 
 		mutationsPerGeneration.addChangeListener(this);
-
-		//set checkbox colors to match activation function color
-		sigmoid.setForeground(CombinatoricUtilities.colorFromInt(ActivationFunctions.FTYPE_SIGMOID));
-		absVal.setForeground(CombinatoricUtilities.colorFromInt(ActivationFunctions.FTYPE_ABSVAL));
-		approx.setForeground(CombinatoricUtilities.colorFromInt(ActivationFunctions.FTYPE_APPROX));
-		fullApprox.setForeground(CombinatoricUtilities.colorFromInt(ActivationFunctions.FTYPE_FULLAPPROX));
-		gaussian.setForeground(CombinatoricUtilities.colorFromInt(ActivationFunctions.FTYPE_GAUSS));
-		halfLinear.setForeground(CombinatoricUtilities.colorFromInt(ActivationFunctions.FTYPE_HLPIECEWISE));
-		id.setForeground(CombinatoricUtilities.colorFromInt(ActivationFunctions.FTYPE_ID));
-		sawtooth.setForeground(CombinatoricUtilities.colorFromInt(ActivationFunctions.FTYPE_SAWTOOTH));
-		sine.setForeground(CombinatoricUtilities.colorFromInt(ActivationFunctions.FTYPE_SINE));
-		tanh.setForeground(CombinatoricUtilities.colorFromInt(ActivationFunctions.FTYPE_TANH));
-		stretchTanh.setForeground(CombinatoricUtilities.colorFromInt(ActivationFunctions.FTYPE_STRETCHED_TANH));
-		ReLU.setForeground(CombinatoricUtilities.colorFromInt(ActivationFunctions.FTYPE_RE_LU));
-		Softplus.setForeground(CombinatoricUtilities.colorFromInt(ActivationFunctions.FTYPE_SOFTPLUS));
-		LeakyReLU.setForeground(CombinatoricUtilities.colorFromInt(ActivationFunctions.FTYPE_LEAKY_RE_LU));
-		fullSawtooth.setForeground(CombinatoricUtilities.colorFromInt(ActivationFunctions.FTYPE_FULLSAWTOOTH));
-		triangleWave.setForeground(CombinatoricUtilities.colorFromInt(ActivationFunctions.FTYPE_TRIANGLEWAVE));
-		squareWave.setForeground(CombinatoricUtilities.colorFromInt(ActivationFunctions.FTYPE_SQUAREWAVE));
-
 
 		if(!Parameters.parameters.booleanParameter("simplifiedInteractiveInterface")) {
 			//add additional action buttons
@@ -384,26 +282,23 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		//top.add(closeButton);
 		top.add(mutationsPerGeneration);	
 
-		if(!Parameters.parameters.booleanParameter("simplifiedInteractiveInterface")) {
-			//add activation function checkboxes
-			bottom.add(halfLinear);
-			bottom.add(absVal);
-			bottom.add(sawtooth);
-			bottom.add(sine);
-			bottom.add(gaussian);
-			bottom.add(sigmoid);
-			bottom.add(tanh);
-			bottom.add(id);
-			bottom.add(fullApprox);
-			bottom.add(approx);
-			bottom.add(stretchTanh);
-			bottom.add(ReLU);
-			bottom.add(Softplus);
-			bottom.add(LeakyReLU);
-			bottom.add(fullSawtooth);
-			bottom.add(triangleWave);
-			bottom.add(squareWave);	
-		}
+		//instantiates activation function checkboxes
+		for(Integer ftype : ActivationFunctions.allPossibleActivationFunctions()) {
+			boolean checked = ActivationFunctions.availableActivationFunctions.contains(ftype);
+			JCheckBox functionCheckbox = new JCheckBox(ActivationFunctions.activationName(ftype).replaceAll(" ", "_"), checked);
+			int id = Math.abs(ftype); // leaves many gaps in array 
+			activation[id] = checked;			
+			// IDs are negative to they do not conflict with item selection.
+			// They are offset by -100 so they do not conflict with other buttons like save, network, etc.
+			functionCheckbox.setName("" + (-ACTIVATION_CHECKBOX_OFFSET - id)); 
+			functionCheckbox.addActionListener(this);
+			//set checkbox colors to match activation function color
+			functionCheckbox.setForeground(CombinatoricUtilities.colorFromInt(ftype));
+			if(!Parameters.parameters.booleanParameter("simplifiedInteractiveInterface")) {
+				//add activation function checkboxes to interface
+				bottom.add(functionCheckbox);
+			}
+		}		
 
 		topper.add(top);
 		topper.add(bottom);
@@ -756,18 +651,23 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	 * Sets the activation functions as true or false based on whether or
 	 * not they were pressed
 	 * @param act whether or not function is active
-	 * @param index index of function in boolean array
-	 * @param title title of function in parameters set
+	 * @param ftype index of function in boolean array
 	 */
-	private void setActivationFunctionCheckBox(boolean act, int index, String title) { 
+	private void setActivationFunctionCheckBox(boolean act, int ftype) { 
 		if(act) { 
-			activation[Math.abs(index)] = false;
-			Parameters.parameters.setBoolean(title, false);
+			activation[ftype] = false;
+			ActivationFunctions.availableActivationFunctions.remove(new Integer(ftype));
+			// Parameter value not actually changed
+			//Parameters.parameters.setBoolean(title, false);
 		} else {
-			activation[Math.abs(index)] = true;
-			Parameters.parameters.setBoolean(title, true);
+			activation[ftype] = true;
+			ActivationFunctions.availableActivationFunctions.add(new Integer(ftype));
+			// Parameter value not actually changed
+			//Parameters.parameters.setBoolean(title, true);
 		}
-		ActivationFunctions.resetFunctionSet();
+		// No longer do this because availableActivationFunctions is changed directly,
+		// and the Parameter values are no longer set properly.
+		//ActivationFunctions.resetFunctionSet();
 	}
 
 	/**
@@ -813,59 +713,11 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	}
 
 	protected void respondToClick(int itemID) {
-		if(itemID == SIGMOID_CHECKBOX_INDEX) {
-			setActivationFunctionCheckBox(activation[Math.abs(SIGMOID_CHECKBOX_INDEX)], SIGMOID_CHECKBOX_INDEX, "includeSigmoidFunction");
-			System.out.println("param sigmoid now set to: " + Parameters.parameters.booleanParameter("includeSigmoidFunction"));
-		} else if(itemID ==GAUSSIAN_CHECKBOX_INDEX) {
-			setActivationFunctionCheckBox(activation[Math.abs(GAUSSIAN_CHECKBOX_INDEX)], GAUSSIAN_CHECKBOX_INDEX, "includeGaussFunction");
-			System.out.println("param Gauss now set to: " + Parameters.parameters.booleanParameter("includeGaussFunction"));
-		} else if(itemID == SINE_CHECKBOX_INDEX) {
-			setActivationFunctionCheckBox(activation[Math.abs(SINE_CHECKBOX_INDEX)], SINE_CHECKBOX_INDEX, "includeSineFunction");
-			System.out.println("param Sine now set to: " + Parameters.parameters.booleanParameter("includeSineFunction"));
-		} else if(itemID == SAWTOOTH_CHECKBOX_INDEX) {
-			setActivationFunctionCheckBox(activation[Math.abs(SAWTOOTH_CHECKBOX_INDEX)], SAWTOOTH_CHECKBOX_INDEX, "includeSawtoothFunction");
-			System.out.println("param sawtooth now set to: " + Parameters.parameters.booleanParameter("includeSawtoothFunction"));
-		} else if(itemID == ABSVAL_CHECKBOX_INDEX) {
-			setActivationFunctionCheckBox(activation[Math.abs(ABSVAL_CHECKBOX_INDEX)], ABSVAL_CHECKBOX_INDEX, "includeAbsValFunction");
-			System.out.println("param abs val now set to: " + Parameters.parameters.booleanParameter("includeAbsValFunction"));
-		} else if(itemID == HALF_LINEAR_CHECKBOX_INDEX) {
-			setActivationFunctionCheckBox(activation[Math.abs(HALF_LINEAR_CHECKBOX_INDEX)], HALF_LINEAR_CHECKBOX_INDEX, "includeHalfLinearPiecewiseFunction");
-			System.out.println("param half linear now set to: " + Parameters.parameters.booleanParameter("includeHalfLinearPiecewiseFunction"));
-		} else if(itemID == TANH_CHECKBOX_INDEX) {
-			setActivationFunctionCheckBox(activation[Math.abs(TANH_CHECKBOX_INDEX)], TANH_CHECKBOX_INDEX, "includeTanhFunction");
-			System.out.println("param tanh now set to: " + Parameters.parameters.booleanParameter("includeTanhFunction"));
-		} else if(itemID == ID_CHECKBOX_INDEX) { 
-			setActivationFunctionCheckBox(activation[Math.abs(ID_CHECKBOX_INDEX)], ID_CHECKBOX_INDEX, "includeIdFunction");
-			System.out.println("param ID now set to: " + Parameters.parameters.booleanParameter("includeIdFunction"));
-		} else if(itemID == FULLAPPROX_CHECKBOX_INDEX) {
-			setActivationFunctionCheckBox(activation[Math.abs(FULLAPPROX_CHECKBOX_INDEX)], FULLAPPROX_CHECKBOX_INDEX, "includeFullApproxFunction");
-			System.out.println("param activation now set to: " + Parameters.parameters.booleanParameter("includeFullApproxFunction"));
-		} else if(itemID == APPROX_CHECKBOX_INDEX) {
-			setActivationFunctionCheckBox(activation[Math.abs(APPROX_CHECKBOX_INDEX)], APPROX_CHECKBOX_INDEX, "includeApproxFunction");
-			System.out.println("param approximate now set to: " + Parameters.parameters.booleanParameter("includeApproxFunction"));
-		} else if(itemID == STRETCHTANH_CHECKBOX_INDEX) {
-			setActivationFunctionCheckBox(activation[Math.abs(STRETCHTANH_CHECKBOX_INDEX)], STRETCHTANH_CHECKBOX_INDEX, "includeStretchedTanhFunction");
-			System.out.println("param stretchTanh now set to: " + Parameters.parameters.booleanParameter("includeStretchedTanhFunction"));
-		} else if(itemID == RELU_CHECKBOX_INDEX) {
-			setActivationFunctionCheckBox(activation[Math.abs(RELU_CHECKBOX_INDEX)], RELU_CHECKBOX_INDEX, "includeReLUFunction");
-			System.out.println("param ReLU now set to: " + Parameters.parameters.booleanParameter("includeReLUFunction"));
-		} else if(itemID == SOFTPLUS_CHECKBOX_INDEX) {
-			setActivationFunctionCheckBox(activation[Math.abs(SOFTPLUS_CHECKBOX_INDEX)], SOFTPLUS_CHECKBOX_INDEX, "includeSoftplusTanhFunction");
-			System.out.println("param softplus now set to: " + Parameters.parameters.booleanParameter("includeSoftplusTanhFunction"));
-		} else if(itemID == LEAKY_RELU_CHECKBOX_INDEX) {
-			setActivationFunctionCheckBox(activation[Math.abs(LEAKY_RELU_CHECKBOX_INDEX)], LEAKY_RELU_CHECKBOX_INDEX, "includeLeakyReLUFunction");
-			System.out.println("param LeakyReLU now set to: " + Parameters.parameters.booleanParameter("includeLeakyReLUFunction"));
-		} else if(itemID == FULL_SAWTOOTH_CHECKBOX_INDEX) {
-			setActivationFunctionCheckBox(activation[Math.abs(FULL_SAWTOOTH_CHECKBOX_INDEX)], FULL_SAWTOOTH_CHECKBOX_INDEX, "includeFullSawtoothFunction");
-			System.out.println("param full sawtooth now set to: " + Parameters.parameters.booleanParameter("includeFullSawtoothFunction"));
-		} else if(itemID == TRIANGLE_WAVE_CHECKBOX_INDEX) {
-			setActivationFunctionCheckBox(activation[Math.abs(TRIANGLE_WAVE_CHECKBOX_INDEX)], TRIANGLE_WAVE_CHECKBOX_INDEX, "includeTriangleWaveFunction");
-			System.out.println("param triangle wave now set to: " + Parameters.parameters.booleanParameter("includeTriangleWaveFunction"));
-		} else if(itemID == SQUARE_WAVE_CHECKBOX_INDEX) {
-			setActivationFunctionCheckBox(activation[Math.abs(SQUARE_WAVE_CHECKBOX_INDEX)], SQUARE_WAVE_CHECKBOX_INDEX, "includeSquareWaveFunction");
-			System.out.println("param square wave now set to: " + Parameters.parameters.booleanParameter("includeSquareWaveFunction"));
-			//} else if(itemID == CLOSE_BUTTON_INDEX) {//If close button clicked
-			//	System.exit(0);
+		// Must be checkbox for activation function
+		if(itemID < -ACTIVATION_CHECKBOX_OFFSET) {
+			int ftype = Math.abs(itemID + ACTIVATION_CHECKBOX_OFFSET); // remove offset and make positive
+			setActivationFunctionCheckBox(activation[ftype], ftype);
+			System.out.println("Param " + ActivationFunctions.activationName(ftype) + " now set to: " + activation[ftype]);
 		} else if(itemID == RESET_BUTTON_INDEX) {//If reset button clicked
 			reset();
 		} else if(itemID == SAVE_BUTTON_INDEX && BooleanUtil.any(chosen)) { //If save button clicked

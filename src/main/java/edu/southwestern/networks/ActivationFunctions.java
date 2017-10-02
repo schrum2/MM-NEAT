@@ -1,6 +1,8 @@
 package edu.southwestern.networks;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
@@ -47,6 +49,36 @@ public class ActivationFunctions {
 	public static final int FTYPE_FULLGAUSS = 25;
 	public static final int FTYPE_COS = 26;
 
+	/**
+	 * List of all possible activation functions, including those that are
+	 * currently disabled.
+	 * @return List of integers corresponding to the ftypes of the functions
+	 */
+	public static List<Integer> allPossibleActivationFunctions() {
+		List<Integer> list = new LinkedList<>();
+		list.add(FTYPE_SIGMOID);
+		list.add(FTYPE_TANH);
+		list.add(FTYPE_ID);
+		list.add(FTYPE_FULLAPPROX);
+		list.add(FTYPE_APPROX);
+		list.add(FTYPE_GAUSS);
+		list.add(FTYPE_SINE);
+		list.add(FTYPE_ABSVAL);
+		list.add(FTYPE_HLPIECEWISE);
+		list.add(FTYPE_SAWTOOTH);
+		list.add(FTYPE_STRETCHED_TANH);
+		list.add(FTYPE_RE_LU);
+		list.add(FTYPE_SOFTPLUS);
+		list.add(FTYPE_LEAKY_RE_LU);
+		list.add(FTYPE_FULLSAWTOOTH);
+		list.add(FTYPE_TRIANGLEWAVE);
+		list.add(FTYPE_SQUAREWAVE);
+		list.add(FTYPE_FULLSIGMOID);
+		list.add(FTYPE_FULLGAUSS);
+		list.add(FTYPE_COS);
+		return list;
+	}
+	
 	/**
 	 * Initializes the set of ftypes by checking boolean parameters for included
 	 * functions
@@ -236,49 +268,47 @@ public class ActivationFunctions {
 	public static String activationName(int ftype) { 
 		assert ftype > -1 && ftype <= MAX_POSSIBLE_ACTIVATION_FUNCTIONS:"given activation function not valid! " + ftype;
 		if(ftype == FTYPE_SIGMOID) {
-			return "Sigmoid";
+			return "sigmoid";
 		}else if(ftype == FTYPE_TANH) {
-			return "Tanh";
+			return "tanh";
 		} else if(ftype == FTYPE_SAWTOOTH) {
-			return "Sawtooth";
+			return "sawtooth";
 		} else if(ftype == FTYPE_HLPIECEWISE) {
-			return "Half Piecewise";
+			return "piecewise"; //"Half Piecewise";
 		}else if(ftype == FTYPE_ID) {
-			return "ID";
+			return "id";
 		} else if(ftype == FTYPE_APPROX) {
-			return "Approximate Sigmoid";
+			return "sigmoid(approx)";
 		} else if(ftype == FTYPE_FULLAPPROX) {
-			return "Full Approximate Sigmoid";
+			return "sigmoid(approx)-full"; //"Full Approximate Sigmoid";
 		} else if(ftype == FTYPE_GAUSS) {
-			return "Gaussian";
+			return "gauss";
 		} else if(ftype == FTYPE_SINE) {
-			return "Sine";
+			return "sin";
 		} else if(ftype == FTYPE_ABSVAL){
-			return "Absolute Value";
+			return "abs"; //"Absolute Value";
 		} else if(ftype == FTYPE_STRETCHED_TANH) {
-			return "Stretched Tanh";
+			return "tanh(stretched)"; //"Stretched Tanh";
 		} else if(ftype == FTYPE_RE_LU) {
-			return "Rectified Linear Units";
+			return "ReLU"; // "Rectified Linear Unit";
 		}else if(ftype == FTYPE_SOFTPLUS) {
-			return "Softplus";
+			return "softplus";
 		}else if(ftype == FTYPE_LEAKY_RE_LU) {
-			return "Leaky Rectified Linear Units";
+			return "ReLU(leaky)"; //"Leaky Rectified Linear Unit";
 		}else if(ftype == FTYPE_FULLSAWTOOTH) {
-			return "Full Sawtooth";
+			return "sawtooth-full";
 		}else if(ftype == FTYPE_TRIANGLEWAVE) {
-			return "Triangle Wave";
+			return "triangle"; //"Triangle Wave";
 		}else if(ftype == FTYPE_SQUAREWAVE) {
-			return "Square Wave";
+			return "square"; //"Square Wave";
 		}else if(ftype == FTYPE_FULLSIGMOID) {
-			return "Full Sigmoid";
+			return "sigmoid-full"; //"Full Sigmoid";
 		}else if(ftype == FTYPE_FULLGAUSS) {
-			return "Full Gaussian";
+			return "gauss-full"; //"Full Gaussian";
 		}else if(ftype == FTYPE_COS) {
-			return "Cosine";
+			return "cos"; //"Cosine";
 		}else {
-			System.out.println("given ftype is not a valid activation function! " + ftype);
-			System.exit(1);
-			return null;
+			throw new IllegalArgumentException("given ftype is not a valid activation function! " + ftype);
 		}
 	}
 	/**
