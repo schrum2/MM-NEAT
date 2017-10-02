@@ -1340,7 +1340,9 @@ public class TWEANN implements Network {
 	 */
 	private void drawOutputNode(Graphics2D g, int n, int x, int y, double activation) {
 		if (n / (neuronsPerModule + (standardMultitask ? 0.0 : 1.0)) == chosenModule) {
-			eraseModeIndicator(g, x, 0, CombinatoricUtilities.colorFromInt(chosenModule));
+			// The white mode indicator is invisible, and erases the current indicator.
+			// In other words, don't actually show a mode indicator if there is only one mode.
+			eraseModeIndicator(g, x, 0, numModes == 1 ? Color.white : CombinatoricUtilities.colorFromInt(chosenModule));
 		}
 		if (standardMultitask || CommonConstants.ensembleModeMutation
 				|| n % (neuronsPerModule + 1) == neuronsPerModule) {
