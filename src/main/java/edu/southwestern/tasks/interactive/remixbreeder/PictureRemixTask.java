@@ -112,8 +112,10 @@ public class PictureRemixTask<T extends Network> extends PicbreederTask<T> {
 	}
 
 	@Override
-	protected void respondToClick(int itemID) {
-		super.respondToClick(itemID);
+	protected boolean respondToClick(int itemID) {
+		boolean undo = super.respondToClick(itemID);
+		if(undo) return true; // Click must have been a bad activation checkbox choice. Skip rest
+		
 		if(itemID == FILE_LOADER_CHECKBOX_INDEX) {
 			JFileChooser chooser = new JFileChooser();//used to get new file
 			chooser.setApproveButtonText("Open");
@@ -133,6 +135,7 @@ public class PictureRemixTask<T extends Network> extends PicbreederTask<T> {
 				resetButtons(true);
 			}
 		}
+		return false; //default: all is fine
 	}
 
 	@Override

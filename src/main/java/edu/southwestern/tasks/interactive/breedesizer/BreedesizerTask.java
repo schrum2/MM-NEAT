@@ -188,13 +188,14 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 	 * file with the most recently clicked CPPN as the "instrument", or uses a series of most recently
 	 * clicked CPPNs as instruments for each track of the file
 	 */
-	protected void respondToClick(int itemID) {
+	protected boolean respondToClick(int itemID) {
 		boolean justStopped = false;
 		if(midiPlay.isPlaying()) {
 			midiPlay.stopPlayback();
 			justStopped = true;
 		}
-		super.respondToClick(itemID);
+		boolean undo = super.respondToClick(itemID);
+		if(undo) return true; // Click must have been a bad activation checkbox choice. Skip rest
 		// Play original sound if they click the button
 		if(itemID == (MIDI_PLAY_BUTTON_INDEX)) {
 			Network[] cppns = new Network[selectedCPPNs.size()];
@@ -223,6 +224,7 @@ public class BreedesizerTask<T extends Network> extends InteractiveEvolutionTask
 			// reset necessary?
 			resetButtons(true);
 		}
+		return false; // no undo: every thing is fine
 	}
 
 	@Override

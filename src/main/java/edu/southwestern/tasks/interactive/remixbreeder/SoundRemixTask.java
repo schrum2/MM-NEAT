@@ -97,9 +97,10 @@ public class SoundRemixTask<T extends Network> extends BreedesizerTask<T> {
 		initializationComplete = true;
 	}
 
-	protected void respondToClick(int itemID) {
-		super.respondToClick(itemID);
-		
+	protected boolean respondToClick(int itemID) {
+		boolean undo = super.respondToClick(itemID);
+		if(undo) return true; // Click must have been a bad activation checkbox choice. Skip rest
+
 		if(arrayPlayer != null && arrayPlayer.isPlaying()) { // Always stop any currently playing sound
 			arrayPlayer.stopPlayback();
 		} else if(itemID == (PLAY_ORIGINAL_BUTTON_INDEX)) { // only play if wasn't playing
@@ -137,6 +138,7 @@ public class SoundRemixTask<T extends Network> extends BreedesizerTask<T> {
 			// reset necessary?
 			resetButtons(true);
 		}
+		return false; // no problems
 	}
 
 	@Override

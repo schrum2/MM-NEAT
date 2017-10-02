@@ -50,7 +50,6 @@ import edu.southwestern.tasks.SinglePopulationTask;
 import edu.southwestern.util.BooleanUtil;
 import edu.southwestern.util.CombinatoricUtilities;
 import edu.southwestern.util.PopulationUtil;
-import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.file.FileUtilities;
 import edu.southwestern.util.graphics.DrawingPanel;
 import edu.southwestern.util.graphics.GraphicsUtil;
@@ -714,22 +713,37 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		//open scanner to read which button was pressed
 		Scanner s = new Scanner(event.toString());
 		s.next(); //parsing action event, no spaces allowed 
-		s.next(); //parsing the word on
+		s.next(); //parsing the word "on"
 		int itemID = s.nextInt();
 		s.close();
-		respondToClick(itemID);
+		boolean undo = respondToClick(itemID);
+		// Special case: do not allow unchecking of last activation function checkbox
+		if(undo) {
+			Object source = event.getSource();
+			if(source instanceof JCheckBox) {
+				((JCheckBox) source).setSelected(true);
+			}
+		}
 	}
 
-	protected void respondToClick(int itemID) {
+	/**
+	 * Takes unique identifier for clicked element and performs appropriate action.
+	 * Returns whether or not the action should be undone, which is only true if the
+	 * user attempts to disable the last activation function. 
+	 * @param itemID Unique identifier stored in the name of each clickable object in a convoluted way
+	 * @return Whether to undo the click
+	 */
+	protected boolean respondToClick(int itemID) {
 		// Must be checkbox for activation function
 		if(itemID <= -ACTIVATION_CHECKBOX_OFFSET) {			
 			int ftype = Math.abs(itemID + ACTIVATION_CHECKBOX_OFFSET); // remove offset and make positive
-			setActivationFunctionCheckBox(activation[ftype], ftype);
+			setActivationFunctionCheckBox(activation[ftype], ftype);			
 			// Don't deselect all activation functions!
-			if(ArrayUtil.countOccurrences(true, activation) == 0) {
+			if(ActivationFunctions.availableActivationFunctions.isEmpty()) {
 				// Re-select the activation function
 				setActivationFunctionCheckBox(activation[ftype], ftype);
 				System.out.println("Cannot deselect ALL activation functions. There must be at least one");
+				return true; // Undo the click
 			} else {
 				System.out.println("Param " + ActivationFunctions.activationName(ftype) + " now set to: " + activation[ftype]);
 			}
@@ -768,6 +782,8 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 				setEffectCheckBox(i);
 			}
 		}		
+		// Do not undo the action: default
+		return false; 
 	}
 
 	protected void evolve() {
