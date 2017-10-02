@@ -38,9 +38,9 @@ public class ShapeInnovationTask extends LonerTask<Pair<TWEANN, ArrayList<Double
 	public static final int INDEX_GREEN = 1;
 	public static final int INDEX_BLUE = 2;
 	
-	// Not sure if this is necessary. Does the pre-processing do more than just resize the image?
-	// Because the image is already the correct size. However, I read something about additional
-	// processing steps somewhere in a DL4J example.
+	// Setting determines whether the mean of the ImageNet training set is subtracted from the image
+	// before classification, since this is how VGG16 was trained for ImageNet. However, it is not clear
+	// if such pre-processing is appropriate for the other ImageNet models.
 	private static final boolean PREPROCESS = true;
 	private double pictureInnovationSaveThreshold = Parameters.parameters.doubleParameter("pictureInnovationSaveThreshold");
 	
