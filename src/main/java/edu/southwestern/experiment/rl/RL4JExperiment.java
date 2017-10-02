@@ -61,8 +61,8 @@ public class RL4JExperiment implements Experiment {
             new QLearning.QLConfiguration(
                     123,    //Random seed
                     200,    //Max step By epoch
-                    200000, //150000, //Max step
-                    200000, //150000, //Max size of experience replay
+                    300000, //150000, //Max step
+                    300000, //150000, //Max size of experience replay
                     32,     //size of batches
                     500,    //target update (hard)
                     10,     //num step noop warmup
@@ -147,7 +147,9 @@ public class RL4JExperiment implements Experiment {
 
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
 		// Straight-forward RL-Glue domains
-		MMNEAT.main(new String[] {"runNumber:0","io:false","netio:false","maxGens:10","watch:false",
+		MMNEAT.main(new String[] {"runNumber:0","io:false","netio:false","maxGens:10",
+//				"watch:true",
+				"watch:false",
 				// CartPole
 				"task:edu.southwestern.tasks.rlglue.cartpole.CartPoleTask",
 				"rlGlueEnvironment:org.rlcommunity.environments.cartpole.CartPole",
