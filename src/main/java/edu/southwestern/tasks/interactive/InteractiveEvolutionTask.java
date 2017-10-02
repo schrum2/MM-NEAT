@@ -529,11 +529,11 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	 */
 	private BufferedImage getNetwork(Genotype<T> tg) {
 		T pheno = tg.getPhenotype();
-		DrawingPanel network = new DrawingPanel(picSize,( frame.getHeight() - topper.getHeight())/numRows, "network");
-		((TWEANN) pheno).draw(network);
-		network.setVisibility(false);
-		return network.image;
-
+//		DrawingPanel network = new DrawingPanel(picSize,( frame.getHeight() - topper.getHeight())/numRows, "network");
+//		((TWEANN) pheno).draw(network);
+//		network.setVisibility(false);
+//		return network.image;
+		return ((TWEANN) pheno).getNetworkImage(picSize, (frame.getHeight() - topper.getHeight())/numRows, false, false);
 	}
 
 	/**

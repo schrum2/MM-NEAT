@@ -19,6 +19,7 @@ import edu.southwestern.util.stats.StatisticsUtilities;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -958,9 +959,47 @@ public class TWEANN implements Network {
 		TWEANN.panel = panel;//instantiates private instance of panel inside of TWEANN object
 		if (layers == null) createLayers();
 		Graphics2D g = prepPanel(panel, Color.BLACK);//this part actually draws network
-		drawAllNodes(g, showInnovationNumbers);//puts nodes onto drawingPanel
+		drawNetwork(g, panel.getFrame().getHeight(), panel.getFrame().getWidth(), showInnovationNumbers, showWeights);
+	}
+	
+	/**
+	 * Draw network on the given Graphics instance
+	 * @param g
+	 * @param showInnovationNumbers
+	 * @param showWeights
+	 */
+	public void drawNetwork(Graphics2D g, int frameHeight, int frameWidth, boolean showInnovationNumbers, boolean showWeights) {
+		drawAllNodes(g, frameHeight, frameWidth, showInnovationNumbers);//puts nodes onto drawingPanel
 		drawAllLinks(g, showInnovationNumbers, showWeights);
-		addModuleAssociations(g, moduleAssociations);
+		// Only draw module assications if there are multiple modules
+		if(moduleAssociations.length > 1) {
+			addModuleAssociations(g, moduleAssociations);
+		}
+	}
+
+	/**
+	 * Get image of network without drawing anything to a DrawingPanel
+	 * @param width Width of image
+	 * @param height Height of image
+	 * @param showInnovationNumbers Whether to show innovation numbers
+	 * @param showWeights Whether to show weight values
+	 * @return The image
+	 */
+	public BufferedImage getNetworkImage(int width, int height, boolean showInnovationNumbers, boolean showWeights) {
+		if (layers == null) createLayers();
+		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+		// Set a white background to draw on
+		for(int i = 0; i < width; i++) {
+			for(int j = 0; j < height; j++) {
+				// For some reason, setting every individual pixel seems necessary
+				image.setRGB(i, j, Color.WHITE.getRGB());
+			}
+		}
+		Graphics2D g = (Graphics2D) image.getGraphics();
+		g.setColor(Color.BLACK); // For lines, etc
+		// Use of +46 here is bad magic number that undoes another magic number associated with bottom border of DrawingPanel
+		drawNetwork(g, height+46, width, showInnovationNumbers, showWeights);
+		return image;
 	}
 
 	/**
@@ -1021,6 +1060,13 @@ public class TWEANN implements Network {
 			g.setColor(Color.GREEN);
 		}
 	}
+	
+	/**
+	 * Draw the network links on the graphics instance
+	 * @param g Graphics
+	 * @param showInnovationNumbers
+	 * @param showWeights
+	 */
 	public void drawAllLinks(Graphics2D g, boolean showInnovationNumbers, boolean showWeights) {
 		for(ArrayList<Node> layer : layers) {
 			for(Node display : layer) {
@@ -1239,9 +1285,9 @@ public class TWEANN implements Network {
 	 * @param g graphics object
 	 * @param showInnovationNumbers whether or not to show innovation numbers
 	 */
-	protected void drawAllNodes(Graphics2D g, boolean showInnovationNumbers) {
-		int height = panel.getFrame().getHeight() - 46;//46 is padding for panel
-		int width = panel.getFrame().getWidth() - 6;//6 is padding for panel
+	protected void drawAllNodes(Graphics2D g, int frameHeight, int frameWidth, boolean showInnovationNumbers) {
+		int height = frameHeight - 46;//46 is padding for panel
+		int width = frameWidth - 6;//6 is padding for panel
 		double verticalSpacing = ((height - (2.0 * DISPLAY_BORDER)) / (layers.size() - 1.0));
 		for (int l = 0; l < layers.size(); l++) {
 			ArrayList<Node> layer = layers.get(l);
