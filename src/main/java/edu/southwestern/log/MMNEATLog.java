@@ -64,6 +64,19 @@ public class MMNEATLog {
 	 *            true if there may be an unusually small number of entries per generation
 	 */
 	public MMNEATLog(String infix, boolean batches, boolean unlimited, boolean restricted) {
+		this(infix, batches, unlimited, restricted, false); // Default value of "false" for raw logging
+	}
+	
+	/**
+	 * Most general log constructor.
+	 * @param infix Part of file name
+	 * @param batches Whether logging is in batches
+	 * @param unlimited Whether there is no limit on how much is expected to be logged
+	 * @param restricted true if there may be an unusually small number of entries per generation
+	 * @param raw Overrides other settings: Do not reload old log, just append to it
+	 */
+	public MMNEATLog(String infix, boolean batches, boolean unlimited, boolean restricted, boolean raw) {
+		if(raw) System.out.println(infix + " allows raw logging"); // Just resumes where it left off: no re-load ()
 		if(unlimited) System.out.println(infix + " allows unlimited logging");
 		if(restricted) System.out.println(infix + " restricted logging");
 		if (Parameters.parameters.booleanParameter("logLock")) {
@@ -89,12 +102,13 @@ public class MMNEATLog {
 		File file = getFile();
 		try {
 			int expectedEntries = Parameters.parameters.integerParameter("lastSavedGeneration");
-			ArrayList<String> oldData = new ArrayList<String>();
-			if (file.exists()) {
+			ArrayList<String> oldData = new ArrayList<String>(raw ? 0 : expectedEntries + 1);
+			if (file.exists() && !raw) { // Don't read the old file if using raw logging
 				Scanner oldFile = new Scanner(file);
-				if (batches) {// only occurs if batches of runs want to be kept
+				if (batches) {// only occurs if batches of output are in log
 					int popSize = Parameters.parameters.integerParameter("mu");
 					expectedEntries *= (popSize + 1);
+					oldData = new ArrayList<String>(expectedEntries + 1); // Resize accordingly in anticipation
 					for (int i = 0; 
 							(!restricted || oldFile.hasNextLine()) && // may be fewer log lines than expected
 							(i < expectedEntries || // expected number of entries
@@ -136,8 +150,8 @@ public class MMNEATLog {
 					lastLoadedEntry = oldData.get(oldData.size() - 1);
 				}
 			}
-			// Should the file be initialized again?
-			stream = new PrintStream(new FileOutputStream(file));
+			// If raw is true, then the stream will append instead of overwriting
+			stream = new PrintStream(new FileOutputStream(file, raw));
 			if (oldData.size() > 1) { // Why not 0 here?
 				for (int i = 0; i < oldData.size(); i++) {
 					if (oldData.get(i) != null) {

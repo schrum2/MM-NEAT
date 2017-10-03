@@ -43,7 +43,8 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 		this.archive = new Archive<>(Parameters.parameters.booleanParameter("netio"));
 		if(io) {
 			String infix = "MAPElites";
-			log = new MMNEATLog(infix);
+			// Logging in RAW mode so that can append to log file on experiment resume
+			log = new MMNEATLog(infix, false, false, true); 
 			// Create gnuplot file for log
 			String experimentPrefix = Parameters.parameters.stringParameter("log")
 					+ Parameters.parameters.integerParameter("runNumber");
