@@ -21,7 +21,6 @@ import edu.southwestern.tasks.LonerTask;
 import edu.southwestern.util.PopulationUtil;
 import edu.southwestern.util.file.FileUtilities;
 import edu.southwestern.util.random.RandomNumbers;
-import edu.southwestern.util.stats.StatisticsUtilities;
 import wox.serial.Easy;
 
 public class MAPElites<T> implements SteadyStateEA<T> {
@@ -55,18 +54,15 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 			File plot = new File(fullName);
 			// Write to file
 			try {
+				this.individualsPerGeneration = Parameters.parameters.integerParameter("steadyStateIndividualsPerGeneration");
 				PrintStream ps = new PrintStream(plot);
 				ps.println("set term pdf enhanced");
 				ps.println("unset key");
-				// Make this more general?
-				double minFitness = task.numObjectives() == 0 ? 
-						0 : // The Innovation Engines have no fitness scores, but DNN predictions have min of 0
-						StatisticsUtilities.minimum(task.minScores());  // Would we look across all scores in this case?
-				ps.println("set yrange [" + minFitness + ":]");
+				// Here, maxGens is actually the number of iterations, but dividing by individualsPerGeneration scales it to represent "generations"
+				ps.println("set yrange [0:"+ (Parameters.parameters.integerParameter("maxGens")/individualsPerGeneration) +"]");
 				ps.println("set xrange [0:"+ archive.getBinMapping().binLabels().size() + "]");
 				ps.println("set title \"" + experimentPrefix + " Archive Performance\"");
 				ps.println("set output \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".pdf\"");
-				this.individualsPerGeneration = Parameters.parameters.integerParameter("steadyStateIndividualsPerGeneration");
 				// The :1 is for skipping the "generation" number logged in the file
 				ps.println("plot \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".txt\" matrix every ::1 with image");
 				ps.close();

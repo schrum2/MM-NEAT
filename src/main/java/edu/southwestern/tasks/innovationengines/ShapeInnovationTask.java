@@ -37,6 +37,8 @@ public class ShapeInnovationTask extends LonerTask<Pair<TWEANN, ArrayList<Double
 	public static final int INDEX_RED = 0;
 	public static final int INDEX_GREEN = 1;
 	public static final int INDEX_BLUE = 2;
+	private static final int INDEX_PITCH = 3;
+	private static final int INDEX_HEADING = 4;
 	
 	// Setting determines whether the mean of the ImageNet training set is subtracted from the image
 	// before classification, since this is how VGG16 was trained for ImageNet. However, it is not clear
@@ -44,8 +46,7 @@ public class ShapeInnovationTask extends LonerTask<Pair<TWEANN, ArrayList<Double
 	private static final boolean PREPROCESS = true;
 	private double pictureInnovationSaveThreshold = Parameters.parameters.doubleParameter("pictureInnovationSaveThreshold");
 	
-	private double pitch = (Parameters.parameters.integerParameter("defaultPitch")/(double) ThreeDimensionalObjectBreederTask.MAX_ROTATION) * 2 * Math.PI; 
-	private double heading = (Parameters.parameters.integerParameter("defaultHeading")/(double) ThreeDimensionalObjectBreederTask.MAX_ROTATION) * 2 * Math.PI;
+	private int numImageSamples = Parameters.parameters.integerParameter("numShapeInnovationSamples");
 	private boolean vertical = false;
 	
 	@Override
@@ -66,7 +67,9 @@ public class ShapeInnovationTask extends LonerTask<Pair<TWEANN, ArrayList<Double
 		List<Triangle> tris = ThreeDimensionalUtil.trianglesFromCPPN(cppn, ImageNetClassification.IMAGE_NET_INPUT_WIDTH, ImageNetClassification.IMAGE_NET_INPUT_HEIGHT, ThreeDimensionalObjectBreederTask.CUBE_SIDE_LENGTH, ThreeDimensionalObjectBreederTask.SHAPE_WIDTH, ThreeDimensionalObjectBreederTask.SHAPE_HEIGHT, ThreeDimensionalObjectBreederTask.SHAPE_DEPTH, null, ArrayUtil.doubleOnes(numCPPNInputs()));
 		// Get image from multiple angles
 		Color evolvedColor = new Color(pair.t2.get(INDEX_RED).floatValue(),pair.t2.get(INDEX_GREEN).floatValue(),pair.t2.get(INDEX_BLUE).floatValue()); // Evolved background color
-		BufferedImage[] images = ThreeDimensionalUtil.imagesFromTriangles(tris, ImageNetClassification.IMAGE_NET_INPUT_WIDTH, ImageNetClassification.IMAGE_NET_INPUT_HEIGHT, 0, 3, heading, pitch, evolvedColor, vertical);
+		double pitch = pair.t2.get(INDEX_PITCH) * 2 * Math.PI; 
+		double heading = pair.t2.get(INDEX_HEADING) * 2 * Math.PI;
+		BufferedImage[] images = ThreeDimensionalUtil.imagesFromTriangles(tris, ImageNetClassification.IMAGE_NET_INPUT_WIDTH, ImageNetClassification.IMAGE_NET_INPUT_HEIGHT, 0, numImageSamples, heading, pitch, evolvedColor, vertical);
 		ArrayList<INDArray> scoresFromAngles = new ArrayList<>(images.length);
 		for(int i = 0; i < images.length; i++) {
 			INDArray imageArray = ImageNetClassification.bufferedImageToINDArray(images[i]);
@@ -149,6 +152,8 @@ public class ShapeInnovationTask extends LonerTask<Pair<TWEANN, ArrayList<Double
 				List<Triangle> tris = ThreeDimensionalUtil.trianglesFromCPPN(cppn, saveWidth, saveHeight, ThreeDimensionalObjectBreederTask.CUBE_SIDE_LENGTH, ThreeDimensionalObjectBreederTask.SHAPE_WIDTH, ThreeDimensionalObjectBreederTask.SHAPE_HEIGHT, ThreeDimensionalObjectBreederTask.SHAPE_DEPTH, null, ArrayUtil.doubleOnes(numCPPNInputs()));
 				// Render and rotate
 				Color evolvedColor = new Color(pair.t2.get(INDEX_RED).floatValue(),pair.t2.get(INDEX_GREEN).floatValue(),pair.t2.get(INDEX_BLUE).floatValue()); // Evolved background color
+				double pitch = pair.t2.get(INDEX_PITCH) * 2 * Math.PI; 
+				double heading = pair.t2.get(INDEX_HEADING) * 2 * Math.PI;
 				BufferedImage[] images = ThreeDimensionalUtil.imagesFromTriangles(tris, saveWidth, saveHeight, 0, (int) (AnimationUtil.FRAMES_PER_SEC * 3), heading, pitch, evolvedColor, vertical);
 				
 				double binScore = score.behaviorVector.get(i);
@@ -190,7 +195,7 @@ public class ShapeInnovationTask extends LonerTask<Pair<TWEANN, ArrayList<Double
 				"imageNetModel:edu.southwestern.networks.dl4j.ResNet50Wrapper",
 				//"imageNetModel:edu.southwestern.networks.dl4j.AverageAllZooModelImageNetModels",
 				//"imageNetModel:edu.southwestern.networks.dl4j.MinAllZooModelImageNetModels",
-				"genotype:edu.southwestern.evolution.genotypes.CPPNAndColorGenotype",
+				"genotype:edu.southwestern.evolution.genotypes.ShapeInnovationGenotype",
 				"pictureInnovationSaveThreshold:0.3",
 				"imageWidth:500","imageHeight:500", // Final save size
 				"includeFullSigmoidFunction:true", // In original Innovation Engine
