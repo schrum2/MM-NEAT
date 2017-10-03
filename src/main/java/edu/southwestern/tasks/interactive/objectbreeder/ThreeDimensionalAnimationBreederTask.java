@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.io.FileNotFoundException;
-import java.util.Hashtable;
 
 import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
@@ -67,7 +66,7 @@ public class ThreeDimensionalAnimationBreederTask<T extends Network> extends Ani
 //		pitchLabels.put(MAX_ROTATION, threeSixtyDegreeLabel);
 //		pitchValue.setLabelTable(pitchLabels);
 		pitchValue.setPaintLabels(true);
-		pitchValue.setPreferredSize(new Dimension(75, 40));
+		pitchValue.setPreferredSize(new Dimension(75, 30));
 
 		/**
 		 * Implements ChangeListener to adjust animation length. When animation length is specified, 
@@ -101,7 +100,7 @@ public class ThreeDimensionalAnimationBreederTask<T extends Network> extends Ani
 //		headingLabels.put(MAX_ROTATION, threeSixtyDegreeLabel);
 //		headingValue.setLabelTable(headingLabels);
 		headingValue.setPaintLabels(true);
-		headingValue.setPreferredSize(new Dimension(75, 40));
+		headingValue.setPreferredSize(new Dimension(75, 30));
 
 		/**
 		 * Implements ChangeListener to adjust animation length. When animation length is specified, 
