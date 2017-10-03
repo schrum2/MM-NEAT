@@ -64,7 +64,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 				ps.println("set xrange [0:"+ archive.getBinMapping().binLabels().size() + "]");
 				ps.println("set title \"" + experimentPrefix + " Archive Performance\"");
 				ps.println("set output \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".pdf\"");
-				int individualsPerGeneration = 400; // Set based on Innovation Engine paper: NOT GENERAL ENOUGH!
+				int individualsPerGeneration = Parameters.parameters.integerParameter("steadyStateIndividualsPerGeneration");
 				ps.println("plot \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".txt\" matrix every :" + individualsPerGeneration + ":2 with image");
 				ps.close();
 			} catch (FileNotFoundException e) {

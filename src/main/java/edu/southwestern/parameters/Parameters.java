@@ -311,6 +311,7 @@ public class Parameters {
 		integerOptions.add("defaultPause", 50, "Default pause length between each iteraton of animation in AnimationBreeder");
 		integerOptions.add("maxPause", 500, "Maximum pause length between each iteraton of animation in AnimationBreeder");
 		integerOptions.add("defaultFramePause", 50, "Default pause length between frames in AnimationBreeder");
+		integerOptions.add("steadyStateIndividualsPerGeneration", 400, "How many individuals count as a log generation for SteadyStateEAs");
 		//integerOptions.add("remixSamplesPerDimension", 3, "Number of remix samples to input to Picture Remixer"); //used for alternative approach of remixing pictures
 		integerOptions.add("receptiveFieldSize", 3, "Size of input windows for convolutional structures");
 		integerOptions.add("stride", 1, "Offset between receptive fields in convolutional structures");
