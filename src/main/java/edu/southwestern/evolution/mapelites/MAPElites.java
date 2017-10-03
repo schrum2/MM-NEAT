@@ -44,7 +44,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 		if(io) {
 			String infix = "MAPElites";
 			// Logging in RAW mode so that can append to log file on experiment resume
-			log = new MMNEATLog(infix, false, false, true); 
+			log = new MMNEATLog(infix, false, false, false, true); 
 			// Create gnuplot file for log
 			String experimentPrefix = Parameters.parameters.stringParameter("log")
 					+ Parameters.parameters.integerParameter("runNumber");
