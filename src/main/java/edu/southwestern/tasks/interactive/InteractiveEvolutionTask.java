@@ -176,6 +176,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		//instantiates helper buttons
 		topper = new JPanel();
 		top = new JPanel();
+		
 		JPanel bottom = new JPanel();
 		bottom.setPreferredSize(new Dimension(frame.getWidth(), 200)); // 200 magic number: height of checkbox area
 		bottom.setLayout(new FlowLayout());
@@ -312,8 +313,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		for(JPanel panel: panels) frame.add(panel);
 
 		//adds buttons to button panels
-		int x = 0;//used to keep track of index of button panel
-		addButtonsToPanel(x++);
+		addButtonsToPanel(0);
 		//add input checkboxes
 		inputCheckBoxes();
 	}
@@ -322,6 +322,9 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	 * Adds checkboxes for disabling certain input values
 	 */
 	public void inputCheckBoxes() {		
+		JPanel effectsCheckboxes = new JPanel();
+		effectsCheckboxes.setPreferredSize(new Dimension(300, 90));
+		effectsCheckboxes.setLayout(new FlowLayout());
 		String[] inputLabels = this.sensorLabels();
 		inputMultipliers = new double[inputLabels.length];
 		for(int i = 0; i < inputLabels.length; i++) {
@@ -333,9 +336,10 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 			inputEffect.addActionListener(this);
 			inputEffect.setForeground(new Color(0,0,0));
 			if(!Parameters.parameters.booleanParameter("simplifiedInteractiveInterface")) {
-				top.add(inputEffect);
+				effectsCheckboxes.add(inputEffect);
 			}		
 		}
+		top.add(effectsCheckboxes);
 	}
 
 	public static double[] getInputMultipliers() {

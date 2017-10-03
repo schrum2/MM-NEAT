@@ -53,14 +53,19 @@ public class ThreeDimensionalAnimationBreederTask<T extends Network> extends Ani
 		super();
 		Parameters.parameters.setInteger("defaultPause", 0);
 		Parameters.parameters.setInteger("defaultAnimationLength", (int) (AnimationUtil.FRAMES_PER_SEC * 3));	
+		
+//		JLabel zeroDegreeLabel = new JLabel("0");
+//		zeroDegreeLabel.setFont(zeroDegreeLabel.getFont().deriveFont(10.0f));
+//		JLabel threeSixtyDegreeLabel = new JLabel("360");
+//		threeSixtyDegreeLabel.setFont(threeSixtyDegreeLabel.getFont().deriveFont(10.0f));
+		
 		pitchValue = new JSlider(JSlider.HORIZONTAL, 0, MAX_ROTATION, Parameters.parameters.integerParameter("defaultPitch"));
-
-		Hashtable<Integer,JLabel> pitchLabels = new Hashtable<>();
+//		Hashtable<Integer,JLabel> pitchLabels = new Hashtable<>();
 		pitchValue.setMinorTickSpacing(72);
 		pitchValue.setPaintTicks(true);
-		pitchLabels.put(0, new JLabel("0"));
-		pitchLabels.put(MAX_ROTATION, new JLabel("360"));
-		pitchValue.setLabelTable(pitchLabels);
+//		pitchLabels.put(0, zeroDegreeLabel);
+//		pitchLabels.put(MAX_ROTATION, threeSixtyDegreeLabel);
+//		pitchValue.setLabelTable(pitchLabels);
 		pitchValue.setPaintLabels(true);
 		pitchValue.setPreferredSize(new Dimension(75, 40));
 
@@ -82,23 +87,19 @@ public class ThreeDimensionalAnimationBreederTask<T extends Network> extends Ani
 			}
 		});
 		
-		
 		//Pitch slider
-		JPanel pitch = new JPanel();
-		pitch.setLayout(new BoxLayout(pitch, BoxLayout.Y_AXIS));
 		JLabel pitchLabel = new JLabel();
+		pitchLabel.setFont(pitchLabel.getFont().deriveFont(10.0f));
 		pitchLabel.setText("Vertical Tilt");
-		pitch.add(pitchLabel);
-		pitch.add(pitchValue);
 
 		headingValue = new JSlider(JSlider.HORIZONTAL, 0, MAX_ROTATION, Parameters.parameters.integerParameter("defaultHeading"));
 
-		Hashtable<Integer,JLabel> headingLabels = new Hashtable<>();
+//		Hashtable<Integer,JLabel> headingLabels = new Hashtable<>();
 		headingValue.setMinorTickSpacing(72);
 		headingValue.setPaintTicks(true);
-		headingLabels.put(0, new JLabel("0"));
-		headingLabels.put(MAX_ROTATION, new JLabel("360"));
-		headingValue.setLabelTable(headingLabels);
+//		headingLabels.put(0, zeroDegreeLabel);
+//		headingLabels.put(MAX_ROTATION, threeSixtyDegreeLabel);
+//		headingValue.setLabelTable(headingLabels);
 		headingValue.setPaintLabels(true);
 		headingValue.setPreferredSize(new Dimension(75, 40));
 
@@ -122,18 +123,17 @@ public class ThreeDimensionalAnimationBreederTask<T extends Network> extends Ani
 		});
 
 		//Heading slider
-		JPanel heading = new JPanel();
-		heading.setLayout(new BoxLayout(heading, BoxLayout.Y_AXIS));
 		JLabel headingLabel = new JLabel();
 		headingLabel.setText("Horizontal Tilt");
-		heading.add(headingLabel);
-		heading.add(headingValue);
+		headingLabel.setFont(headingLabel.getFont().deriveFont(10.0f));
 		
 		JPanel pitchAndHeading = new JPanel();
 		pitchAndHeading.setLayout(new BoxLayout(pitchAndHeading, BoxLayout.Y_AXIS));
-		pitchAndHeading.add(pitch);
-		pitchAndHeading.add(heading);
-
+		pitchAndHeading.add(pitchLabel);
+		pitchAndHeading.add(pitchValue);
+		pitchAndHeading.add(headingLabel);
+		pitchAndHeading.add(headingValue);
+		
 		if(!Parameters.parameters.booleanParameter("simplifiedInteractiveInterface")) {
 			top.add(pitchAndHeading);
 		}
@@ -184,7 +184,7 @@ public class ThreeDimensionalAnimationBreederTask<T extends Network> extends Ani
 	 */
 	public static void main(String[] args) {
 		try {
-			MMNEAT.main(new String[]{"runNumber:5","randomSeed:5","trials:1","fs:true","mu:16","allowCubeDisplacement:true","maxGens:500","io:false","netio:false","mating:true", "fs:false", "task:edu.southwestern.tasks.interactive.objectbreeder.ThreeDimensionalAnimationBreederTask","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3","cleanFrequency:-1","recurrency:false","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:500","imageHeight:500","imageSize:200","simplifiedInteractiveInterface:false","defaultFramePause:50","includeFullSigmoidFunction:true","includeFullGaussFunction:true","includeCosineFunction:true"});
+			MMNEAT.main(new String[]{"runNumber:5","randomSeed:5","trials:1","fs:false","mu:16","allowCubeDisplacement:true","maxGens:500","io:false","netio:false","mating:true", "fs:false", "task:edu.southwestern.tasks.interactive.objectbreeder.ThreeDimensionalAnimationBreederTask","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3","cleanFrequency:-1","recurrency:false","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:500","imageHeight:500","imageSize:200","simplifiedInteractiveInterface:false","defaultFramePause:50","includeFullSigmoidFunction:true","includeFullGaussFunction:true","includeCosineFunction:true","includeGaussFunction:false","includeIdFunction:true","includeTriangleWaveFunction:false","includeSquareWaveFunction:false","includeFullSawtoothFunction:false","includeSigmoidFunction:false","includeAbsValFunction:false","includeSawtoothFunction:false"});
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}
