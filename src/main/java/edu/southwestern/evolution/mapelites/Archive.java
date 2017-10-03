@@ -48,13 +48,14 @@ public class Archive<T> {
 
 	/**
 	 * Get the scores of all elites for each bin.
+	 * Also casts down to float
 	 * @return
 	 */
-	public double[] getEliteScores() {
-		double[] result = new double[archive.size()];
+	public float[] getEliteScores() {
+		float[] result = new float[archive.size()];
 		for(int i = 0; i < result.length; i++) {
 			Score<T> score = archive.get(i);
-			result[i] = score == null ? Double.NEGATIVE_INFINITY : score.behaviorVector.get(i);
+			result[i] = score == null ? Float.NEGATIVE_INFINITY : score.behaviorVector.get(i).floatValue();
 		}
 		return result;
 	}
