@@ -34,6 +34,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 	private double crossoverRate;
 	private int iterations;
 	private int iterationsWithoutElite;
+	private int individualsPerGeneration;
 	
 	@SuppressWarnings("unchecked")
 	public MAPElites() {
@@ -64,8 +65,9 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 				ps.println("set xrange [0:"+ archive.getBinMapping().binLabels().size() + "]");
 				ps.println("set title \"" + experimentPrefix + " Archive Performance\"");
 				ps.println("set output \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".pdf\"");
-				int individualsPerGeneration = Parameters.parameters.integerParameter("steadyStateIndividualsPerGeneration");
-				ps.println("plot \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".txt\" matrix every :" + individualsPerGeneration + ":2 with image");
+				this.individualsPerGeneration = Parameters.parameters.integerParameter("steadyStateIndividualsPerGeneration");
+				// The :1 is for skipping the "generation" number logged in the file
+				ps.println("plot \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".txt\" matrix every :" + individualsPerGeneration + ":1 with image");
 				ps.close();
 			} catch (FileNotFoundException e) {
 				System.out.println("Could not create plot file: " + plot.getName());
@@ -133,8 +135,11 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 	}
 
 	private void log() {
-		if(io) {
-			log.log(iterations + "\t" + iterationsWithoutElite + "\t" + StringUtils.join(ArrayUtils.toObject(archive.getEliteScores()), "\t"));
+		if(io && iterations % individualsPerGeneration == 0) {
+			// When all iterations were logged, the file got too large
+			//log.log(iterations + "\t" + iterationsWithoutElite + "\t" + StringUtils.join(ArrayUtils.toObject(archive.getEliteScores()), "\t"));
+			// Just log every "generation" instead
+			log.log((iterations/individualsPerGeneration) + "\t" + StringUtils.join(ArrayUtils.toObject(archive.getEliteScores()), "\t"));
 		}
 	}
 	
