@@ -68,7 +68,7 @@ public class MAPElites<T> implements SteadyStateEA<T> {
 				ps.println("set output \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".pdf\"");
 				this.individualsPerGeneration = Parameters.parameters.integerParameter("steadyStateIndividualsPerGeneration");
 				// The :1 is for skipping the "generation" number logged in the file
-				ps.println("plot \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".txt\" matrix every :" + individualsPerGeneration + ":1 with image");
+				ps.println("plot \"" + fullName.substring(fullName.lastIndexOf('/')+1, fullName.lastIndexOf('.')) + ".txt\" matrix every ::1 with image");
 				ps.close();
 			} catch (FileNotFoundException e) {
 				System.out.println("Could not create plot file: " + plot.getName());
