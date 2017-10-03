@@ -119,6 +119,13 @@ public class PictureInnovationTask<T extends Network> extends LonerTask<T> {
 	}
 
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
+		// For getting pictures from a crashed/finished run
+//		MMNEAT.main(new String[]{"runNumber:1","randomSeed:0","base:innovation","mu:400","maxGens:1", // Terminate after writing final archive 
+//				"io:false","netio:true",
+//				"log:InnovationPictures-VGG19Model","saveTo:VGG19Model"}); 
+		
+		
+		// For test runs
 		MMNEAT.main(new String[]{"runNumber:0","randomSeed:0","base:innovation","mu:400","maxGens:2000000",
 				"io:true","netio:true","mating:true","task:edu.southwestern.tasks.innovationengines.PictureInnovationTask",
 				"log:InnovationPictures-AllModels","saveTo:AllModels","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3",
