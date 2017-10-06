@@ -19,9 +19,9 @@
         <nd4j.backend>nd4j-native-platform</nd4j.backend>
         <!-- <nd4j.backend>nd4j-cuda-8.0-platform</nd4j.backend> -->
         <nd4j.version>0.9.1</nd4j.version>
-        <dl4j.version>0.9.2</dl4j.version>
-        <datavec.version>0.9.2</datavec.version>
-        <arbiter.version>0.9.2</arbiter.version>
+        <dl4j.version>0.9.1</dl4j.version>
+        <datavec.version>0.9.1</datavec.version>
+        <arbiter.version>0.9.1</arbiter.version>
         <rl4j.version>0.9.1</rl4j.version>
 
         <logback.version>1.1.7</logback.version>    
