@@ -22,7 +22,7 @@ public class RLGlueMDP implements MDP<EncodableObservation, Integer, DiscreteSpa
 	private ArrayObservationSpace<EncodableObservation> observationSpace;
 	private boolean done;
 	private int steps;
-	private static int maxStepsPerEpisode;
+	private int maxStepsPerEpisode;
 
 	public RLGlueMDP(RLGlueEnvironment environment) {
 		this.environment = environment;

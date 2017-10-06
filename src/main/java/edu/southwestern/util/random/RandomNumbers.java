@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Random;
 
 /**
+ * A central point for all random number generation to go through. 
+ * Makes sure all randomness is linked to a single random seed.
  *
  * @author Jacob Schrum
  */

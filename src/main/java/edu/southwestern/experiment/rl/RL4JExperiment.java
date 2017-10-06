@@ -92,8 +92,8 @@ public class RL4JExperiment implements Experiment {
 		
 		try {
 			mdp = new RLGlueMDP(MMNEAT.rlGlueEnvironment);
-			trainAndSave();
-//			loadAndWatch();
+//			trainAndSave();
+			loadAndWatch();
 		} catch (IOException e1) {
 			System.out.println("Problem running MDP");
 			e1.printStackTrace();
@@ -148,18 +148,18 @@ public class RL4JExperiment implements Experiment {
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
 		// Straight-forward RL-Glue domains
 		MMNEAT.main(new String[] {"runNumber:0","io:false","netio:false","maxGens:10",
-//				"watch:true",
-				"watch:false",
-				"steps:100000000",
+				"watch:true",
+//				"watch:false",
+				//"steps:100000000",
 				// CartPole
-//				"task:edu.southwestern.tasks.rlglue.cartpole.CartPoleTask",
-//				"rlGlueEnvironment:org.rlcommunity.environments.cartpole.CartPole",
+				"task:edu.southwestern.tasks.rlglue.cartpole.CartPoleTask",
+				"rlGlueEnvironment:org.rlcommunity.environments.cartpole.CartPole",
 				// AcroBot
 //				"task:edu.southwestern.tasks.rlglue.acrobot.AcrobotTask",
 //				"rlGlueEnvironment:org.rlcommunity.environments.acrobot.Acrobot",
 				// MountainCar
-				"task:edu.southwestern.tasks.rlglue.mountaincar.MountainCarTask",
-				"rlGlueEnvironment:org.rlcommunity.environments.mountaincar.MountainCar",
+//				"task:edu.southwestern.tasks.rlglue.mountaincar.MountainCarTask",
+//				"rlGlueEnvironment:org.rlcommunity.environments.mountaincar.MountainCar",
 				"experiment:edu.southwestern.experiment.rl.RL4JExperiment"});
 
 		// Once Tetris works
