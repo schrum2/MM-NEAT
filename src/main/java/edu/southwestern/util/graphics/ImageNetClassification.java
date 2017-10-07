@@ -1,6 +1,5 @@
 package edu.southwestern.util.graphics;
 
-import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -8,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.datavec.image.loader.NativeImageLoader;
+import org.deeplearning4j.examples.imagenet.GoogLeNetImagePreprocessor;
 import org.deeplearning4j.zoo.util.imagenet.ImageNetLabels;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.dataset.api.preprocessor.DataNormalization;
@@ -16,7 +16,6 @@ import org.nd4j.linalg.factory.Nd4j;
 
 import edu.southwestern.networks.dl4j.TensorNetwork;
 import edu.southwestern.util.ClassCreation;
-import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.stats.StatisticsUtilities;
 
@@ -152,8 +151,10 @@ public class ImageNetClassification {
 	 * @param image Image represented as 2D INDArray
 	 */
 	public static void imagePreprocess(INDArray image) {
-		// Is VGG16ImagePreProcessor too specific?
+		// VGG16 is appropriate for VGG19 as well
 		DataNormalization scaler = new VGG16ImagePreProcessor();
+		// Not sure that GoogLeNetImagePreprocessor works yet. Note that it also requires different image loading.
+		//DataNormalization scaler = new GoogLeNetImagePreprocessor();
 		scaler.transform(image);
 	}
 		

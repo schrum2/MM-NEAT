@@ -15,6 +15,9 @@ import org.deeplearning4j.zoo.util.imagenet.ImageNetLabels;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
 
+import org.datavec.image.transform.ColorConversionTransform;
+import org.bytedeco.javacpp.opencv_imgproc.*;
+
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.networks.dl4j.AllZooModelImageNetModels;
@@ -37,6 +40,9 @@ public class ImageNetTest {
 		Parameters.initializeParameterCollections(new String[] {"imageNetModel:edu.southwestern.networks.dl4j.GoogLeNetWrapper"});		
 		AllZooModelImageNetModels.initAllImageNets();
 		NativeImageLoader loader = new NativeImageLoader(ImageNetClassification.IMAGE_NET_INPUT_HEIGHT, ImageNetClassification.IMAGE_NET_INPUT_WIDTH, ImageNetClassification.IMAGE_NET_INPUT_CHANNELS);
+		
+		// GoogLeNet supposedly uses RGB vs BGR format, making this form of image loading appropriate
+		//NativeImageLoader loader = new NativeImageLoader(ImageNetClassification.IMAGE_NET_INPUT_HEIGHT, ImageNetClassification.IMAGE_NET_INPUT_WIDTH, ImageNetClassification.IMAGE_NET_INPUT_CHANNELS, new ColorConversionTransform(org.bytedeco.javacpp.opencv_imgproc.COLOR_BGR2RGB));
 		
 		// From the original Picbreeder: Note: All VGG-16 predictions consistent with https://deeplearning4j.org/demo-classifier-vgg16
 //		resultsFromOne(loader.asMatrix(new File("d:/TEMP/FromRealPicbreeder/butterfly.jpg")), true); 
