@@ -31,8 +31,8 @@ import vizdoom.SpecifyDLL;
  */
 public class Doom {
 
-
-
+	// Change into a Parameter after further development
+	private static String modelSaveLocation = "doom-end.model";
 
     public static QLearning.QLConfiguration DOOM_QL =
             new QLearning.QLConfiguration(
@@ -73,6 +73,7 @@ public class Doom {
                     4        //skip mod (one frame is picked every x
             );
 
+
     public static void main(String[] args) throws IOException {
 		SpecifyDLL.specifyDLLPath(); // Added to be able to find the vizdoom.dll
         doomLearn();
@@ -100,7 +101,7 @@ public class Doom {
         dql.train();
 
         //save the model at the end
-        dql.getPolicy().save("doom-end.model");
+        dql.getPolicy().save(modelSaveLocation );
 
         //close the doom env
         mdp.close();
@@ -110,7 +111,7 @@ public class Doom {
         //define the mdp from gym (name, render)
         VizDoom mdp = getMDP(true);
         //load the previous agent
-        DQNPolicy<VizDoom.GameScreen> dqn = DQNPolicy.load("C:\\Users\\he_de\\rl4j-data\\1\\model\\70.model");
+        DQNPolicy<VizDoom.GameScreen> dqn = DQNPolicy.load(modelSaveLocation);
         //evaluate the agent
         mdp.reset();
         double reward = dqn.play(mdp, new HistoryProcessor(DOOM_HP));

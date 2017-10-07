@@ -1,5 +1,6 @@
 package edu.southwestern.experiment.rl;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.logging.Logger;
@@ -22,6 +23,9 @@ import edu.southwestern.tasks.rlglue.RLGlueMDP;
 
 public class RL4JExperiment implements Experiment {
 
+	// This should be a command line parameter
+	private String modelSaveName = "rl-glue-cartpole";
+	
 	int maxEpisodes;
 	int currentEpisode;
 	// Must be both a LonerTask and a HyperNEATTask (might lessen this restriction in the future)
@@ -109,14 +113,23 @@ public class RL4JExperiment implements Experiment {
 	public void trainAndSave() throws IOException {
 		DataManager manager = new DataManager(false); // false = do not save to rl4j-data
 		//define the training
-        QLearningDiscreteDense<EncodableObservation> dql = new QLearningDiscreteDense<>(mdp, QNET, QL, manager);
+        QLearningDiscreteDense<EncodableObservation> dql; 
+//        if(new File(modelSaveName).exists()) { // Load previously saved model
+//            DQNPolicy<EncodableObservation> policy = DQNPolicy.load(modelSaveName);
+        
+        // HOW TO LOAD POLICY? getNeuralNet() has protected access
+        
+//        	dql = new QLearningDiscreteDense<>(mdp, policy.getNeuralNet(), QL, manager);
+//        } else { // Start fresh
+        	dql = new QLearningDiscreteDense<>(mdp, QNET, QL, manager);
+//        }
         //train
         dql.train();
         
         //get the final policy
         DQNPolicy<EncodableObservation> pol = dql.getPolicy();
         //serialize and save (serialization showcase, but not required)
-        pol.save("rl-glue-cartpole");	        
+        pol.save(modelSaveName);	        
         //close the mdp 
         mdp.close();
 	}
@@ -127,7 +140,7 @@ public class RL4JExperiment implements Experiment {
 	 */
 	public void loadAndWatch() throws IOException {
         // Load
-        DQNPolicy<EncodableObservation> policy = DQNPolicy.load("rl-glue-cartpole");
+        DQNPolicy<EncodableObservation> policy = DQNPolicy.load(modelSaveName);
         //evaluate the agent
         double rewards = 0;
         for (int i = 0; i < 1000; i++) {
