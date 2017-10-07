@@ -109,3 +109,5 @@ _vizdoom.ini
 *.Bash
 /target/
 log4j.log
+doom-end.model
+rl-glue-cartpole
