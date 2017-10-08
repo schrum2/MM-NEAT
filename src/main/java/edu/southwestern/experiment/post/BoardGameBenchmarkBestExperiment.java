@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.boardGame.BoardGame;
 import edu.southwestern.boardGame.BoardGameState;
 import edu.southwestern.boardGame.agents.BoardGamePlayer;
-import edu.southwestern.boardGame.agents.BoardGamePlayerRandom;
 import edu.southwestern.boardGame.agents.HeuristicBoardGamePlayer;
 import edu.southwestern.boardGame.checkers.Checkers;
 import edu.southwestern.boardGame.featureExtractor.BoardGameFeatureExtractor;
@@ -18,8 +18,6 @@ import edu.southwestern.boardGame.fitnessFunction.SimpleWinLoseDrawBoardGameFitn
 import edu.southwestern.boardGame.fitnessFunction.WinPercentageBoardGameFitness;
 import edu.southwestern.boardGame.heuristics.NNBoardGameHeuristic;
 import edu.southwestern.boardGame.othello.Othello;
-import edu.southwestern.boardGame.othello.OthelloState;
-import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.experiment.Experiment;
 import edu.southwestern.networks.Network;

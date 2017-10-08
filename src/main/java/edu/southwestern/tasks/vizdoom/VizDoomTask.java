@@ -323,6 +323,7 @@ public abstract class VizDoomTask<T extends Network> extends NoisyLonerTask<T>im
 		}
 		DrawingPanel panel = GraphicsUtil.drawImage(image, "Doom", width, height);
 		MiscUtil.waitForReadStringAndEnterKeyPress();
+		panel.dispose();
 	}
 	
 	public static void showInputs(GameState s, double[] inputs) {
