@@ -85,6 +85,18 @@ public class ImageNetTest {
 //		resultsFromOne(loader.asMatrix(new File("innovation\\AllMinimumModel0\\archive\\jellyfish\\0.71373jellyfish967.jpg")), true);
 //		MiscUtil.waitForReadStringAndEnterKeyPress();	
 		
+		resultsFromOne(loader.asMatrix(new File("data/imagematch/quail.JPEG")), true);
+		resultsFromOne(loader.asMatrix(new File("data/imagematch/quail.JPEG")), false);
+		MiscUtil.waitForReadStringAndEnterKeyPress();
+		//resultsFromAll(loader.asMatrix(new File("data/imagematch/jellyfish.JPEG")), true);
+		resultsFromOne(loader.asMatrix(new File("data/imagematch/hay.JPEG")), true);
+		resultsFromOne(loader.asMatrix(new File("data/imagematch/hay.JPEG")), false);
+		MiscUtil.waitForReadStringAndEnterKeyPress();
+		//resultsFromAll(loader.asMatrix(new File("data/imagematch/jellyfish.JPEG")), true);
+		resultsFromOne(loader.asMatrix(new File("data/imagematch/cropped_panda.jpg")), true);
+		resultsFromOne(loader.asMatrix(new File("data/imagematch/cropped_panda.jpg")), false);
+		MiscUtil.waitForReadStringAndEnterKeyPress();
+		//resultsFromAll(loader.asMatrix(new File("data/imagematch/jellyfish.JPEG")), true);
 		resultsFromOne(loader.asMatrix(new File("data/imagematch/rabbitAndKitten.jpg")), true);
 		resultsFromOne(loader.asMatrix(new File("data/imagematch/rabbitAndKitten.jpg")), false);
 		MiscUtil.waitForReadStringAndEnterKeyPress();
