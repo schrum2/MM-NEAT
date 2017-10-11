@@ -25,17 +25,32 @@ public class DL4JNetworkWrapper implements Network {
 	private int[] inputShape; // batch size, channels, width, height
 	private int outputCount;
 
+	/**
+	 * Initialize a given network wrapped as a TensorNetwork (my class for
+	 * wrapping DL4J networks) with the specified input shape and output count.
+	 * The input shape and output counts must match the TensorNetwork. 
+	 * 
+	 * @param net A DL4J network.
+	 * @param inputShape Batch size, Channel number, Width, and Height of inputs.
+	 * @param outputCount Number of output neurons.
+	 */
 	public DL4JNetworkWrapper(TensorNetwork net, int[] inputShape, int outputCount) {
 		this.net = net;
 		this.inputShape = inputShape;
 		this.outputCount = outputCount;
 	}
 	
+	/**
+	 * Total number of inputs
+	 */
 	@Override
 	public int numInputs() {
 		return org.nd4j.linalg.util.ArrayUtil.prod(inputShape);
 	}
 
+	/**
+	 * Total number of outputs
+	 */
 	@Override
 	public int numOutputs() {
 		return outputCount;
@@ -50,6 +65,12 @@ public class DL4JNetworkWrapper implements Network {
 		return numOutputs();
 	}
 
+	/**
+	 * Take a flat array of input values and put them into a shape that
+	 * the DL4J network can handle within an INDArray. Pass that to the
+	 * network to get an output result inside of an INDArray, and then
+	 * unwrap that into a flat array of output values that is returned.
+	 */
 	@Override
 	public double[] process(double[] inputs) {
 		// Put linear inputs into tensor INDArray
@@ -62,6 +83,9 @@ public class DL4JNetworkWrapper implements Network {
 		return ArrayUtil.doubleArrayFromINDArray(flat);
 	}
 
+	/**
+	 * Eliminate recurrent state
+	 */
 	@Override
 	public void flush() {
 		net.flush();

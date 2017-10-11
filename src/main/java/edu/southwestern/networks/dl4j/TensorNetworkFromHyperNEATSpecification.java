@@ -29,6 +29,20 @@ public class TensorNetworkFromHyperNEATSpecification implements TensorNetwork {
 
 	MultiLayerNetwork model;
 	
+	/**
+	 * Default constructor gets the HyperNEATTask from the HyperNEATUtil, which
+	 * comes from MMNEAT.
+	 */
+	public TensorNetworkFromHyperNEATSpecification() {
+		this(HyperNEATUtil.getHyperNEATTask());
+	}
+	
+	/**
+	 * Construct randomized convolutional network based on the network specification
+	 * for a given HyperNEAT task. Needs more generalization, but works for the
+	 * restricted case of a network with only convolutional layers.
+	 * @param hnt HyperNEATTask
+	 */
 	public TensorNetworkFromHyperNEATSpecification(HyperNEATTask hnt) {
         List<Substrate> substrates = hnt.getSubstrateInformation();
 
