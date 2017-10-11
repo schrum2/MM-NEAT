@@ -16,9 +16,10 @@ import edu.southwestern.util.datastructures.ArrayUtil;
  */
 public class DL4JNetworkWrapper implements Network {
 
-	public static final int INDEX_INPUT_WIDTH = 0;
-	public static final int INDEX_INPUT_HEIGHT = 1;
-	public static final int INDEX_INPUT_CHANNELS = 2;
+	public static final int INDEX_INPUT_BATCH = 0;
+	public static final int INDEX_INPUT_CHANNELS = 1;
+	public static final int INDEX_INPUT_WIDTH = 2;
+	public static final int INDEX_INPUT_HEIGHT = 3;
 	
 	private TensorNetwork net;
 	private int[] inputShape; // width, height, channels
