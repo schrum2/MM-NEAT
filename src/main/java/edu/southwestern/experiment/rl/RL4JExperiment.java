@@ -1,6 +1,5 @@
 package edu.southwestern.experiment.rl;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.logging.Logger;
@@ -15,49 +14,25 @@ import org.deeplearning4j.rl4j.util.DataManager;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.experiment.Experiment;
-import edu.southwestern.networks.dl4j.DL4JNetworkWrapper;
 import edu.southwestern.parameters.Parameters;
-import edu.southwestern.tasks.LonerTask;
 import edu.southwestern.tasks.rlglue.EncodableObservation;
 import edu.southwestern.tasks.rlglue.RLGlueMDP;
 
 public class RL4JExperiment implements Experiment {
 
 	// This should be a command line parameter
-	private String modelSaveName = "rl-glue-cartpole";
+	private String modelSaveName = "rl-glue.model";
 	
 	int maxEpisodes;
 	int currentEpisode;
-	// Must be both a LonerTask and a HyperNEATTask (might lessen this restriction in the future)
-	LonerTask<DL4JNetworkWrapper> task;
-	//ContainerGenotype<DL4JNetworkWrapper> individual;
-
 	// Generalize the type parameters to this later
 	MDP<EncodableObservation, Integer, DiscreteSpace> mdp;
 	
-	@SuppressWarnings("unchecked")
 	@Override
 	public void init() {
 		// Overriding the meaning of maxGens to treat it like maxIterations
 		maxEpisodes = Parameters.parameters.integerParameter("maxGens");
 		currentEpisode = 0;
-		task = (LonerTask<DL4JNetworkWrapper>) MMNEAT.task;
-		// Create neural network
-//		DL4JNetworkWrapper wrappedNetwork;
-//		if(task instanceof HyperNEATTask) { // Assume this is always true for now
-//			HyperNEATTask hnt = (HyperNEATTask) task;
-//			TensorNetwork tensorNetwork = new TensorNetworkFromHyperNEATSpecification(hnt);
-//			// Input/output shape also comes from HyperNEATTask
-//			List<Substrate> substrates = hnt.getSubstrateInformation();
-//			int[] inputShape = HyperNEATUtil.getInputShape(substrates);
-//			int outputCount = HyperNEATUtil.getOutputCount(substrates);
-//			// Wrap again: DL4JNetworkWrapper implements Network
-//			wrappedNetwork = new DL4JNetworkWrapper(tensorNetwork, inputShape, outputCount);
-//		} else {
-//			// IS THIS NEEDED?
-//		}
-		// Put in a "genotype" so it can be accepted by tasks
-		//individual = new ContainerGenotype<DL4JNetworkWrapper>(wrappedNetwork);
 	}
 
 	// Should these all be command line parameters?
@@ -89,21 +64,15 @@ public class RL4JExperiment implements Experiment {
 	
 	@Override
 	public void run() {
-//		while(!shouldStop()) {
-//			task.evaluate(individual);
-//			currentEpisode++;
-//		}
-		
 		try {
 			mdp = new RLGlueMDP(MMNEAT.rlGlueEnvironment);
-//			trainAndSave();
-			loadAndWatch();
+			trainAndSave();
+//			loadAndWatch();
 		} catch (IOException e1) {
 			System.out.println("Problem running MDP");
 			e1.printStackTrace();
 			System.exit(1);
-		}		
-		
+		}				
 	}
 	
 	/**
@@ -174,19 +143,5 @@ public class RL4JExperiment implements Experiment {
 //				"task:edu.southwestern.tasks.rlglue.mountaincar.MountainCarTask",
 //				"rlGlueEnvironment:org.rlcommunity.environments.mountaincar.MountainCar",
 				"experiment:edu.southwestern.experiment.rl.RL4JExperiment"});
-
-		// Once Tetris works
-		
-//		MMNEAT.main(new String[] {"runNumber:0","io:false","netio:false","maxGens:10","watch:true",
-//				"task:edu.southwestern.tasks.rlglue.tetris.HyperNEATTetrisTask",
-//				"rlGlueEnvironment:org.rlcommunity.environments.tetris.Tetris",
-//				"rlGlueExtractor:edu.southwestern.tasks.rlglue.featureextractors.tetris.RawTetrisStateExtractor",
-//				"rlGlueAgent:edu.southwestern.tasks.rlglue.tetris.TetrisAfterStateAgent",
-//				"splitRawTetrisInputs:true",
-//				"senseHolesDifferently:true",
-//				"hyperNEAT:true", // Prevents extra bias input
-//				"steps:500000",
-//				"HNProcessDepth:4","HNProcessWidth:4","convolution:true",
-//				"experiment:edu.southwestern.experiment.rl.RL4JExperiment"});
 	}
 }
