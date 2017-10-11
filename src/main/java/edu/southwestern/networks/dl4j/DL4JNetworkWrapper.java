@@ -22,7 +22,7 @@ public class DL4JNetworkWrapper implements Network {
 	public static final int INDEX_INPUT_HEIGHT = 3;
 	
 	private TensorNetwork net;
-	private int[] inputShape; // width, height, channels
+	private int[] inputShape; // batch size, channels, width, height
 	private int outputCount;
 
 	public DL4JNetworkWrapper(TensorNetwork net, int[] inputShape, int outputCount) {
