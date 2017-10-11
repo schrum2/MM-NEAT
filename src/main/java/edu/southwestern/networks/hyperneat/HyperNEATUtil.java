@@ -785,7 +785,8 @@ public class HyperNEATUtil {
 			assert substrates.get(depth).getSize().equals(size) : "Input substrates had different dimensions: " + size + " not equal to " + substrates.get(depth).getSize();
 			depth++;
 		}
-		return new int[] {size.t1, size.t2, depth};
+		// The 1 at the front is the mini-batch size, which is a single frame for RL domains (change? generalize?)
+		return new int[] {1, depth, size.t1, size.t2};
 	}
 	
 	/**

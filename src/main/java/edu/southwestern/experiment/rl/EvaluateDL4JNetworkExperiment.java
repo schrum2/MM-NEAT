@@ -73,6 +73,6 @@ public class EvaluateDL4JNetworkExperiment implements Experiment {
 				"hyperNEAT:true", // Prevents extra bias input
 				"steps:500000",
 				"HNProcessDepth:4","HNProcessWidth:4","convolution:true",
-				"experiment:edu.southwestern.experiment.rl.RL4JExperiment"});
+				"experiment:edu.southwestern.experiment.rl.EvaluateDL4JNetworkExperiment"});
 	}
 }
