@@ -2,6 +2,7 @@ package edu.southwestern.networks.dl4j;
 
 import java.util.List;
 
+import org.deeplearning4j.nn.api.Layer;
 import org.deeplearning4j.nn.api.OptimizationAlgorithm;
 import org.deeplearning4j.nn.conf.CacheMode;
 import org.deeplearning4j.nn.conf.ConvolutionMode;
@@ -19,11 +20,14 @@ import org.nd4j.linalg.activations.Activation;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
 
+import edu.southwestern.evolution.genotypes.HyperNEATCPPNGenotype;
+import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.networks.hyperneat.HyperNEATTask;
 import edu.southwestern.networks.hyperneat.HyperNEATUtil;
 import edu.southwestern.networks.hyperneat.Substrate;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.util.MiscUtil;
 
 public class TensorNetworkFromHyperNEATSpecification implements TensorNetwork {
 
@@ -65,7 +69,7 @@ public class TensorNetworkFromHyperNEATSpecification implements TensorNetwork {
         int stride = Parameters.parameters.integerParameter("stride");
         int[] strideArray = new int[]{stride, stride};
         boolean zeroPadding = Parameters.parameters.booleanParameter("zeroPadding");
-        int[] zeroPaddingArray = zeroPadding ? new int[]{stride/2, stride/2} : new int[]{0,0};
+        int[] zeroPaddingArray = new int[]{0,0}; // Is actually ignored if zeroPadding is used
         // Hidden layer construction will be based on these parameters instead of the actual substrate list
 		int processWidth = Parameters.parameters.integerParameter("HNProcessWidth");
 		int processDepth = Parameters.parameters.integerParameter("HNProcessDepth");
@@ -77,7 +81,9 @@ public class TensorNetworkFromHyperNEATSpecification implements TensorNetwork {
 			if(CommonConstants.convolution) {				
 				ConvolutionLayer.Builder layer = new ConvolutionLayer.Builder(kernelArray, strideArray, zeroPaddingArray)
 						.name("cnn"+(hiddenLayer+1))
-						.convolutionMode(ConvolutionMode.Same); // What is this?
+						.convolutionMode(zeroPadding ? 
+								ConvolutionMode.Same : // Each layer is same size, but padded with zeros
+								ConvolutionMode.Strict); // Higher layers shrink based on padding and stride
 
 				// Only first layer needs to specify input channels, because for the rest, the
 				// outputs from the previous layer determine the inputs to the next
@@ -129,7 +135,39 @@ public class TensorNetworkFromHyperNEATSpecification implements TensorNetwork {
 
         model = new MultiLayerNetwork(conf);
         model.init();
+        
+        // BELOW IS EXPERIMENTAL
+//        HyperNEATCPPNGenotype cppn = new HyperNEATCPPNGenotype();
+//        fillWeightsFromHyperNEATNetwork(cppn.getSubstrateGenotype(hnt));
+//        
+//        MiscUtil.waitForReadStringAndEnterKeyPress();
+        
 	}
+	
+	/**
+	 * The HyperNEATCPPNGenotype can be used to create a large substrate network TWEANNGenotype
+	 * that specifies all of the weights in the network directly. If both the TWEANNGenotype and
+	 * this TensorNetworkFromHyperNEATSpecification instance were created from the same HyperNEATTask
+	 * specification, then the model weights in this instance can be filled in by the provided
+	 * TWEANNGenotype.
+	 * 
+	 * @param tg genotype that directly encodes the substrate network created by a CPPN.
+	 */
+	public void fillWeightsFromHyperNEATNetwork(TWEANNGenotype tg) {
+		// This method heavily relies on the fact that node innovation numbers
+		// in a substrate network's genotype start at 0 and are sequentially numbered
+		// while going through the different substrates at each layer.
+		
+		System.out.println("model.numParams(): " + model.numParams());
+		System.out.println("model.getnLayers(): " + model.getnLayers());
+		System.out.println("model.getLayerNames(): " + model.getLayerNames());
+		System.out.println(model.summary());
+		Layer[] layers = model.getLayers();
+		for(Layer layer : layers) { // Go through each layer
+			System.out.println(layer.params().shapeInfoToString());
+		}
+	}
+	
 	
 	@Override
 	public INDArray output(INDArray input) {

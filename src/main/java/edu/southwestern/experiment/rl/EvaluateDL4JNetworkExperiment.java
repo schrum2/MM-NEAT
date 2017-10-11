@@ -72,6 +72,7 @@ public class EvaluateDL4JNetworkExperiment implements Experiment {
 				"senseHolesDifferently:true",
 				"hyperNEAT:true", // Prevents extra bias input
 				"steps:500000",
+				"stride:1","receptiveFieldSize:3","zeroPadding:false",
 				"HNProcessDepth:4","HNProcessWidth:4","convolution:true",
 				"experiment:edu.southwestern.experiment.rl.EvaluateDL4JNetworkExperiment"});
 	}
