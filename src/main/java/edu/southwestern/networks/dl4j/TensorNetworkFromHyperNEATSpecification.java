@@ -164,7 +164,9 @@ public class TensorNetworkFromHyperNEATSpecification implements TensorNetwork {
 		System.out.println(model.summary());
 		Layer[] layers = model.getLayers();
 		for(Layer layer : layers) { // Go through each layer
-			System.out.println(layer.params().shapeInfoToString());
+			INDArray newParams = layer.params();
+			// TODO: Change the newParams in whatever way is appropriate for the model, based on the input NN
+			layer.setParams(newParams);
 		}
 	}
 	
