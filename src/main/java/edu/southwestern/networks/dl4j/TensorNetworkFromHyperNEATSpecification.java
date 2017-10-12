@@ -137,10 +137,8 @@ public class TensorNetworkFromHyperNEATSpecification implements TensorNetwork {
         model.init();
         
         // BELOW IS EXPERIMENTAL
-//        HyperNEATCPPNGenotype cppn = new HyperNEATCPPNGenotype();
-//        fillWeightsFromHyperNEATNetwork(cppn.getSubstrateGenotype(hnt));
-//        
-//        MiscUtil.waitForReadStringAndEnterKeyPress();
+        HyperNEATCPPNGenotype cppn = new HyperNEATCPPNGenotype();
+        fillWeightsFromHyperNEATNetwork(cppn.getSubstrateGenotype(hnt));        
         
 	}
 	
@@ -154,6 +152,9 @@ public class TensorNetworkFromHyperNEATSpecification implements TensorNetwork {
 	 * @param tg genotype that directly encodes the substrate network created by a CPPN.
 	 */
 	public void fillWeightsFromHyperNEATNetwork(TWEANNGenotype tg) {
+		
+//		MiscUtil.waitForReadStringAndEnterKeyPress();
+		
 		// This method heavily relies on the fact that node innovation numbers
 		// in a substrate network's genotype start at 0 and are sequentially numbered
 		// while going through the different substrates at each layer.
@@ -164,10 +165,20 @@ public class TensorNetworkFromHyperNEATSpecification implements TensorNetwork {
 		System.out.println(model.summary());
 		Layer[] layers = model.getLayers();
 		for(Layer layer : layers) { // Go through each layer
-			INDArray newParams = layer.params();
-			// TODO: Change the newParams in whatever way is appropriate for the model, based on the input NN
-			layer.setParams(newParams);
+			
+			System.out.println(layer.paramTable());
+			
+//			INDArray newParams = layer.params();
+//			// TODO: Change the newParams in whatever way is appropriate for the model, based on the input NN
+//			layer.setParams(newParams);
 		}
+
+//        MiscUtil.waitForReadStringAndEnterKeyPress();
+
+        System.out.println(tg.nodes);
+        
+        MiscUtil.waitForReadStringAndEnterKeyPress();
+
 	}
 	
 	

@@ -137,8 +137,11 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
          */
         @Override
         public String toString() {
-            return "(inno=" + this.innovation + ",ftype=" + ActivationFunctions.activationName(ftype) + ",ntype=" + this.ntype + ",frozen="
-                    + this.isFrozen() + ")";
+            return "(inno=" + innovation + 
+            	   ",ftype=" + ActivationFunctions.activationName(ftype) + 
+            	   ",ntype=" + ntype + 
+            	   ",frozen=" + isFrozen() + 
+            	   ",bias=" + getBias() +  ")";
         }
     }
 
