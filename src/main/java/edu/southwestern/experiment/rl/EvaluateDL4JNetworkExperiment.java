@@ -63,7 +63,7 @@ public class EvaluateDL4JNetworkExperiment implements Experiment {
 	}
 
 	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {		
-		MMNEAT.main(new String[] {"runNumber:0","io:false","netio:false","maxGens:10","watch:true",
+		MMNEAT.main(new String[] {"runNumber:0","randomSeed:0","io:false","netio:false","maxGens:10","watch:true",
 				"task:edu.southwestern.tasks.rlglue.tetris.HyperNEATTetrisTask",
 				"rlGlueEnvironment:org.rlcommunity.environments.tetris.Tetris",
 				"rlGlueExtractor:edu.southwestern.tasks.rlglue.featureextractors.tetris.RawTetrisStateExtractor",
@@ -72,6 +72,7 @@ public class EvaluateDL4JNetworkExperiment implements Experiment {
 				"senseHolesDifferently:true",
 				"hyperNEAT:true", // Prevents extra bias input
 				"steps:500000",
+				"linkExpressionThreshold:-0.1", // Express all links
 				"stride:1","receptiveFieldSize:3","zeroPadding:false","convolutionWeightSharing:true",
 				"HNProcessDepth:4","HNProcessWidth:4","convolution:true",
 				"experiment:edu.southwestern.experiment.rl.EvaluateDL4JNetworkExperiment"});
