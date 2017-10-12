@@ -275,6 +275,12 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 						assert -1 <= filteredInputs[7] && filteredInputs[7] <= 1 : "CPPN input 7 out of range: " + filteredInputs[7];
 						assert -1 <= filteredInputs[8] && filteredInputs[8] <= 1 : "CPPN input 8 out of range: " + filteredInputs[8];
 					}
+					// Weight sharing also shares biases. This eliminates unique neuron contents
+					if(convolutionWeightSharing) {
+						filteredInputs[2] = 0; // No unique neuron x-coordinate
+						filteredInputs[3] = 0; // No unique neuron y-coordinate
+					}
+					
 					double[] result = cppn.process(filteredInputs);
 					try{
 						bias = result[biasIndex];

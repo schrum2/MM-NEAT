@@ -210,9 +210,8 @@ public class TensorNetworkFromHyperNEATSpecification implements TensorNetwork {
 			
 			// If substrate connections are convolutional, then assume all layer connections are
 			if(areConnectionsConvolutional.get(firstSourceSubstrate.getName() + "_" + firstTargetSubstrate.getName())) {
-				
-				System.out.println("substratesInTargetLayer: " + substratesInTargetLayer);
-				System.out.println("substratesInSourceLayer: " + substratesInSourceLayer);
+//				System.out.println("substratesInTargetLayer: " + substratesInTargetLayer);
+//				System.out.println("substratesInSourceLayer: " + substratesInSourceLayer);
 				
 				INDArray weights = layer.getParam("W"); // Convolutional weights
 				INDArray biases = layer.getParam("b"); // Biases: one per target substrate
@@ -226,12 +225,10 @@ public class TensorNetworkFromHyperNEATSpecification implements TensorNetwork {
 					double newBias = tg.nodes.get((int) targetInnovation).getBias();
 					// Set bias value in DL4J layer
 					biases.putScalar(targetChannel, newBias);
-					
-					System.out.println("targetInnovation: " + targetInnovation);
-					
+//					System.out.println("targetInnovation: " + targetInnovation);
 					int sourceNeuronsToSkip = 0; // Reset for each target substrate
 					for(int sourceChannel = 0; sourceChannel < substratesInSourceLayer; sourceChannel++) {
-						System.out.println("\tsourceNeuronsToSkip: " + sourceNeuronsToSkip);
+//						System.out.println("\tsourceNeuronsToSkip: " + sourceNeuronsToSkip);
 						
 						for(int height = 0; height < kernel; height++) {
 							for(int width = 0; width < kernel; width++) {
@@ -258,7 +255,7 @@ public class TensorNetworkFromHyperNEATSpecification implements TensorNetwork {
 				
 			} else { // Assume fully connected
 				
-				// Do nothing for now
+				// TODO
 			}
 			
 			// Update source values with target values for next iteration up the network

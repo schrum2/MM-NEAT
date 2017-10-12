@@ -895,14 +895,7 @@ public class ArrayUtil {
 		assert toModify.length() == other.length() : "INDArrays not the same size";
 		int size = toModify.length();
 		for(int i = 0; i < size; i++) {
-//			double before1 = toModify.getDouble(0,i);
-//			double before2 = other.getDouble(0,i);
 			toModify.put(0, i, Math.min(toModify.getDouble(0,i), other.getDouble(0,i)));
-//			double after = toModify.getDouble(0,i);
-//			if(after != before1) {
-//				System.out.println(before1 + " became " + after + ", same as " + before2);
-//				MiscUtil.waitForReadStringAndEnterKeyPress();
-//			}
 		}		
 	}
 }
