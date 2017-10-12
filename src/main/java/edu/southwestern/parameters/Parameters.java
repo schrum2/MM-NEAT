@@ -331,6 +331,7 @@ public class Parameters {
 		longOptions.add("lastInnovation", 0l, "Highest innovation number used so far");
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
 		// Boolean parameters
+		booleanOptions.add("inputsUseID", false, "Input neurons start with the ID activation function");
 		booleanOptions.add("boardGameWinPercentFitness", false, "Is percentage of games won a fitness function for board games?");
 		booleanOptions.add("boardGameIncreasingRandomOpens", false, "Number of random moves at the start of each game increases as evolved agents improve");
 		booleanOptions.add("substrateBiasLocationInputs", false, "HyperNEAT uses coordinates of substrates (not just in substrates) as CPPN inputs when evolving bias values");

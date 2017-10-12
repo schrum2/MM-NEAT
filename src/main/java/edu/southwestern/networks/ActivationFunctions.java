@@ -39,7 +39,7 @@ public class ActivationFunctions {
 	public static final int FTYPE_HLPIECEWISE = 15;
 	public static final int FTYPE_SAWTOOTH = 16;
 	public static final int FTYPE_STRETCHED_TANH = 17;
-	public static final int FTYPE_RE_LU  = 18;
+	public static final int FTYPE_RE_LU = 18;
 	public static final int FTYPE_SOFTPLUS  = 19;
 	public static final int FTYPE_LEAKY_RE_LU = 20;
 	public static final int FTYPE_FULLSAWTOOTH = 21;

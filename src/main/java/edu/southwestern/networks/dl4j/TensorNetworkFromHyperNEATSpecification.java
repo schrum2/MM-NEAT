@@ -122,7 +122,8 @@ public class TensorNetworkFromHyperNEATSpecification implements TensorNetwork {
 				.layer(hiddenLayer, new OutputLayer.Builder(LossFunctions.LossFunction.NEGATIVELOGLIKELIHOOD) // Use this Loss function?
 						.name("output")
 						.nOut(outputCount)
-						.activation(Activation.TANH) // Link DL4J activation functions to mine?
+						//.activation(Activation.TANH) // Link DL4J activation functions to mine?
+						.activation(Activation.RELU) // For testing : TODO : CHANGE BACK!
 						.build());
 
 		MultiLayerConfiguration conf = listBuilder
@@ -135,12 +136,7 @@ public class TensorNetworkFromHyperNEATSpecification implements TensorNetwork {
 				.build();
 
         model = new MultiLayerNetwork(conf);
-        model.init();
-        
-        // BELOW IS EXPERIMENTAL
-//        HyperNEATCPPNGenotype cppn = new HyperNEATCPPNGenotype();
-//        fillWeightsFromHyperNEATNetwork(hnt, cppn.getSubstrateGenotype(hnt));        
-        
+        model.init();        
 	}
 	
 	/**

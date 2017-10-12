@@ -349,6 +349,9 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
     }
     
     public static final NodeGene newNodeGene(int ftype, int ntype, long innovation, boolean frozen, double bias) {
+    	if(CommonConstants.inputsUseID && ntype == TWEANN.Node.NTYPE_INPUT) {
+    		ftype = ActivationFunctions.FTYPE_ID; // Force input nodes to use ID activation function
+    	}
         return smallerGenotypes
                 ? new NodeGene(ftype, ntype, innovation)
                 : new FullNodeGene(ftype, ntype, innovation, frozen, bias);

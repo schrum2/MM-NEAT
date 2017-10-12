@@ -786,7 +786,7 @@ public class HyperNEATUtil {
 			depth++;
 		}
 		// The 1 at the front is the mini-batch size, which is a single frame for RL domains (change? generalize?)
-		return new int[] {1, depth, size.t1, size.t2};
+		return new int[] {1, depth, size.t2, size.t1};
 	}
 	
 	/**

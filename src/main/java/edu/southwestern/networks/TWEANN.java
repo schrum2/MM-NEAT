@@ -139,10 +139,10 @@ public class TWEANN implements Network {
 			String result = "";
 			result += innovation + ":";
 			result += ntypeName(ntype) + ":";
-			result += ftypeName(ftype) + ":";
+			result += ActivationFunctions.activationName(ftype) + ":";
 			result += "bias = " + bias + ":";
 			result += "Sum = " + sum + ":";
-			result += outputs;
+			//result += outputs;
 			return result;
 		}
 
@@ -164,37 +164,6 @@ public class TWEANN implements Network {
 			}
 			// Should never reach
 			System.out.println(ntype + " is not a valid type of neuron");
-			System.exit(1);
-			return "ERROR";
-		}
-
-		private String ftypeName(int ftype) {
-			switch (ftype) {
-			case ActivationFunctions.FTYPE_SAWTOOTH:
-				return "sawtooth";
-			case ActivationFunctions.FTYPE_HLPIECEWISE:
-				return "halfLinear";
-			case ActivationFunctions.FTYPE_SIGMOID:
-				return "Sigmoid";
-			case ActivationFunctions.FTYPE_TANH:
-				return "TanH";
-			case ActivationFunctions.FTYPE_ID:
-				return "ID";
-			case ActivationFunctions.FTYPE_FULLAPPROX:
-				return "FullApprox";
-			case ActivationFunctions.FTYPE_APPROX:
-				return "SigmoidApprox";
-			case ActivationFunctions.FTYPE_GAUSS:
-				return "Gaussian";
-			case ActivationFunctions.FTYPE_SINE:
-				return "Sine";
-			case ActivationFunctions.FTYPE_ABSVAL:
-				return "AbsoluteValue";
-			case ActivationFunctions.FTYPE_STRETCHED_TANH :
-				return "Stretched Tanh";
-			}
-			// Should never reach
-			System.out.println(ftype + " is not a valid type of activation function");
 			System.exit(1);
 			return "ERROR";
 		}
@@ -291,6 +260,22 @@ public class TWEANN implements Network {
 			for (Link l : outputs) {
 				l.transmit(activation);
 			}
+		}
+		
+		/**
+		 * Current value of internal sum variable
+		 * @return
+		 */
+		public double getSum() {
+			return sum;
+		}
+		
+		/**
+		 * Current value of internal activation variable
+		 * @return
+		 */
+		public double getActivation() {
+			return activation;
 		}
 
 		/**
@@ -448,7 +433,7 @@ public class TWEANN implements Network {
 
 		long innovation = -1;
 		for (int i = 0; i < numIn; i++) {
-			Node n = new Node(ftype, Node.NTYPE_INPUT, innovation--);
+			Node n = new Node(CommonConstants.inputsUseID ? ActivationFunctions.FTYPE_ID : ftype, Node.NTYPE_INPUT, innovation--);
 			nodes.add(n);
 		}
 
