@@ -21,7 +21,6 @@ import org.nd4j.linalg.activations.Activation;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
 
-import edu.southwestern.evolution.genotypes.HyperNEATCPPNGenotype;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype.LinkGene;
 import edu.southwestern.networks.hyperneat.HyperNEATTask;
@@ -29,9 +28,7 @@ import edu.southwestern.networks.hyperneat.HyperNEATUtil;
 import edu.southwestern.networks.hyperneat.Substrate;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
-import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.Triple;
-import wox.serial.Easy;
 
 public class TensorNetworkFromHyperNEATSpecification implements TensorNetwork {
 
@@ -141,8 +138,8 @@ public class TensorNetworkFromHyperNEATSpecification implements TensorNetwork {
         model.init();
         
         // BELOW IS EXPERIMENTAL
-        HyperNEATCPPNGenotype cppn = new HyperNEATCPPNGenotype();
-        fillWeightsFromHyperNEATNetwork(hnt, cppn.getSubstrateGenotype(hnt));        
+//        HyperNEATCPPNGenotype cppn = new HyperNEATCPPNGenotype();
+//        fillWeightsFromHyperNEATNetwork(hnt, cppn.getSubstrateGenotype(hnt));        
         
 	}
 	
@@ -156,9 +153,8 @@ public class TensorNetworkFromHyperNEATSpecification implements TensorNetwork {
 	 * @param tg genotype that directly encodes the substrate network created by a CPPN.
 	 */
 	public void fillWeightsFromHyperNEATNetwork(HyperNEATTask hnt, TWEANNGenotype tg) {
-		
-		Easy.save(tg, "TEMP.xml");
-		
+		// Output network for testing
+		//Easy.save(tg, "TEMP.xml");
         List<Substrate> substrates = hnt.getSubstrateInformation();
         
         List<Triple<String, String, Boolean>> substrateConnectivity = hnt.getSubstrateConnectivity();
@@ -191,8 +187,7 @@ public class TensorNetworkFromHyperNEATSpecification implements TensorNetwork {
 		}
 		
 		for(Layer layer : layers) { // Go through each layer
-			
-//			System.out.println("BEFORE\n" + layer.paramTable());
+			//System.out.println("BEFORE\n" + layer.paramTable());
 			
 			Substrate firstSourceSubstrate = substrates.get(firstSourceSubstrateIndex);
 			// Assumes all substrates as same level have same size
@@ -206,13 +201,10 @@ public class TensorNetworkFromHyperNEATSpecification implements TensorNetwork {
 			for(int i = firstTargetSubstrateIndex; i < substrates.size() && substrates.get(i).getSubLocation().t2 == targetLayerDepth; i++) {
 				substratesInTargetLayer++;
 			}
-			Substrate firstTargetSubstrate = substrates.get(firstTargetSubstrateIndex); // Last substrate visited by previous loop
+			Substrate firstTargetSubstrate = substrates.get(firstTargetSubstrateIndex); 
 			
 			// If substrate connections are convolutional, then assume all layer connections are
-			if(areConnectionsConvolutional.get(firstSourceSubstrate.getName() + "_" + firstTargetSubstrate.getName())) {
-//				System.out.println("substratesInTargetLayer: " + substratesInTargetLayer);
-//				System.out.println("substratesInSourceLayer: " + substratesInSourceLayer);
-				
+			if(areConnectionsConvolutional.get(firstSourceSubstrate.getName() + "_" + firstTargetSubstrate.getName())) {				
 				INDArray weights = layer.getParam("W"); // Convolutional weights
 				INDArray biases = layer.getParam("b"); // Biases: one per target substrate
 				
@@ -225,11 +217,8 @@ public class TensorNetworkFromHyperNEATSpecification implements TensorNetwork {
 					double newBias = tg.nodes.get((int) targetInnovation).getBias();
 					// Set bias value in DL4J layer
 					biases.putScalar(targetChannel, newBias);
-//					System.out.println("targetInnovation: " + targetInnovation);
 					int sourceNeuronsToSkip = 0; // Reset for each target substrate
-					for(int sourceChannel = 0; sourceChannel < substratesInSourceLayer; sourceChannel++) {
-//						System.out.println("\tsourceNeuronsToSkip: " + sourceNeuronsToSkip);
-						
+					for(int sourceChannel = 0; sourceChannel < substratesInSourceLayer; sourceChannel++) {						
 						for(int height = 0; height < kernel; height++) {
 							for(int width = 0; width < kernel; width++) {
 								// Figure out source neuron in TWEANNGenotype, and rely on weight sharing
@@ -254,8 +243,50 @@ public class TensorNetworkFromHyperNEATSpecification implements TensorNetwork {
 				layer.setParam("b", biases);
 				
 			} else { // Assume fully connected
+				//System.out.println("BEFORE:\n"+layer.paramTable());
 				
-				// TODO
+				INDArray weights = layer.getParam("W"); // Weights
+				int paramPosition = 0; // Position in linear weights array
+				INDArray biases = layer.getParam("b"); // Biases
+				
+				int targetNeuronsToSkip = 0;
+				// Change weights: Loop through every section of parameter INDArray
+				for(int targetSubstrate = 0; targetSubstrate < substratesInTargetLayer; targetSubstrate++) {
+					Substrate target = substrates.get(firstTargetSubstrateIndex + targetSubstrate);
+					int targetNeuronsInSubstrate = target.numberOfNeurons();
+					int sourceNeuronsToSkip = 0; // Reset for each target substrate
+					for(int sourceSubstrate = 0; sourceSubstrate < substratesInSourceLayer; sourceSubstrate++) {
+						Substrate source = substrates.get(firstSourceSubstrateIndex + sourceSubstrate);
+						int sourceNeuronsInSubstrate = source.numberOfNeurons();
+						for(int targetNeuron = 0; targetNeuron < targetNeuronsInSubstrate; targetNeuron++) {
+							// Get bias of neuron in substrate
+							long targetInnovation = nextLayerStartInnovation + targetNeuronsToSkip + targetNeuron;
+							// In substrate networks, innovation number matches node list index
+							double newBias = tg.nodes.get((int) targetInnovation).getBias();
+							// Set bias value in DL4J layer
+							biases.putScalar(targetNeuronsToSkip + targetNeuron, newBias);
+
+							for(int sourceNeuron = 0; sourceNeuron < sourceNeuronsInSubstrate; sourceNeuron++) {
+								// Figure out source neuron in TWEANNGenotype, and rely on weight sharing
+								long sourceInnovation = layerStartInnovation + sourceNeuronsToSkip + sourceNeuron;
+								// Get weight from TWEANNGenotype
+								LinkGene lg = tg.getLinkBetween(sourceInnovation, targetInnovation);
+								assert CommonConstants.linkExpressionThreshold > 0 || lg != null : "No link between " + sourceInnovation + " and " + targetInnovation;
+								double newWeight = lg == null ? 0 : lg.weight; // Null link indicates a weight of 0.0
+								// Replace value in INDArray
+								weights.putScalar(paramPosition++, newWeight);
+							}
+						}						
+						// Go past all neurons in given substrate within layer
+						sourceNeuronsToSkip += sourceNeuronsInSubstrate;
+					}
+					// Go past all neurons in given substrate within layer
+					targetNeuronsToSkip += targetNeuronsInSubstrate;
+				}
+				// Set new weights
+				layer.setParam("W", weights);
+				// Set new biases
+				layer.setParam("b", biases);
 			}
 			
 			// Update source values with target values for next iteration up the network
@@ -264,10 +295,8 @@ public class TensorNetworkFromHyperNEATSpecification implements TensorNetwork {
 			sourceLayerDepth = targetLayerDepth;
 			layerStartInnovation = nextLayerStartInnovation;
 			
-			System.out.println("AFTER\n" + layer.paramTable());
+			//System.out.println("AFTER\n" + layer.paramTable());
 		}
-        MiscUtil.waitForReadStringAndEnterKeyPress();
-
 	}
 	
 	
