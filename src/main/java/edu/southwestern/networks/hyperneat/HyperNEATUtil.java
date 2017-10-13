@@ -507,12 +507,17 @@ public class HyperNEATUtil {
 	}
 
 	/**
+	 * TODO: Generalize to handle convolutional connections as well!
+	 * 
 	 * Number of links that a fully connected substrate network would possess for the
 	 * given HyperNEAT task (which defines potential substrate connectivity)
 	 * @param hnt HyperNEATTask
 	 * @return Total possible links
 	 */
 	public static int totalPossibleLinks(HyperNEATTask hnt) {
+		
+		assert !CommonConstants.convolution : "The totalPossibleLinks method should not be used in conjunction with convolutional networks yet";
+		
 		// extract substrate information from domain
 		List<Substrate> subs = hnt.getSubstrateInformation();
 		List<Triple<String, String, Boolean>> connections = hnt.getSubstrateConnectivity();
