@@ -155,8 +155,8 @@ public class Substrate {
 	 * @return String summary of substrate contents
 	 */
 	public String toString() {
-		return "Substrate name: " + this.name + " size: " + this.size.toString() + " stype: " + this.getStype()
-				+ " getSubLocation: " + this.getSubLocation().toString();
+		return "Substrate name: " + this.name + ", size: " + this.size.toString() + ", stype: " + this.getStype()
+				+ ", getSubLocation: " + this.getSubLocation().toString() + ", ftype: " + this.getFtype();
 	}
 
 	/**
