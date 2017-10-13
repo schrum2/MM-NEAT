@@ -209,8 +209,10 @@ public class ActivationFunctions {
 			return "tanh";
 		} else if(ftype == FTYPE_SAWTOOTH) {
 			return "sawtooth";
+		} else if(ftype == FTYPE_PIECEWISE) {
+			return "piecewise-full"; //"Full Piecewise";
 		} else if(ftype == FTYPE_HLPIECEWISE) {
-			return "piecewise"; //"Half Piecewise";
+			return "piecewise-half"; //"Half Piecewise";
 		}else if(ftype == FTYPE_ID) {
 			return "id";
 		} else if(ftype == FTYPE_APPROX) {
