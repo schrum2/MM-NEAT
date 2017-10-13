@@ -26,7 +26,7 @@ public class SubstrateLinkPenalty implements Metaheuristic<TWEANN> {
 	}
 
 	public double minScore() {
-		return HyperNEATUtil.totalPossibleLinks(hnt);
+		return -HyperNEATUtil.totalPossibleLinks(hnt);
 	}
 
 	public double startingTUGGoal() {
