@@ -1,7 +1,6 @@
 package edu.southwestern.tasks.microrts.evaluation;
 
 import edu.southwestern.evolution.genotypes.Genotype;
-import edu.southwestern.networks.ActivationFunctions;
 import edu.southwestern.networks.Network;
 import micro.ai.evaluation.EvaluationFunction;
 import micro.rts.GameState;
@@ -81,7 +80,7 @@ public abstract class NNEvaluationFunction<T extends Network> extends Evaluation
 //		}
 		
 		// tanh squashes result to ]-1,1[ range
-		return (float) ActivationFunctions.tanh(score1 - score2);
+		return (float) Math.tanh(score1 - score2);
 	}
 	
 	/**

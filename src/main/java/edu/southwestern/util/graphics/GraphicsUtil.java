@@ -10,8 +10,9 @@ import javax.imageio.ImageIO;
 
 import org.nd4j.linalg.api.ndarray.INDArray;
 
-import edu.southwestern.networks.ActivationFunctions;
 import edu.southwestern.networks.Network;
+import edu.southwestern.networks.activationfunctions.FullLinearPiecewiseFunction;
+import edu.southwestern.networks.activationfunctions.HalfLinearPiecewiseFunction;
 import edu.southwestern.tasks.interactive.picbreeder.PicbreederTask;
 import edu.southwestern.util.CartesianGeometricUtilities;
 import edu.southwestern.util.datastructures.ArrayUtil;
@@ -299,11 +300,9 @@ public class GraphicsUtil {
 	 * @return scaled HSB information in float array
 	 */
 	public static float[] rangeRestrictHSB(double[] hsb) {
-		return new float[] { (float) ActivationFunctions.fullLinear(hsb[HUE_INDEX]),
-				// (float) hsb[SATURATION_INDEX],
-				(float) ActivationFunctions.halfLinear(hsb[SATURATION_INDEX]),
-				// (float) hsb[BRIGHTNESS_INDEX]};
-				(float) Math.abs(ActivationFunctions.fullLinear(hsb[BRIGHTNESS_INDEX])) };
+		return new float[] { (float) FullLinearPiecewiseFunction.fullLinear(hsb[HUE_INDEX]),
+				(float) HalfLinearPiecewiseFunction.halfLinear(hsb[SATURATION_INDEX]),
+				(float) Math.abs(FullLinearPiecewiseFunction.fullLinear(hsb[BRIGHTNESS_INDEX])) };
 	}
 
 	/**

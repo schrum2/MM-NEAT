@@ -1,9 +1,12 @@
 package edu.southwestern.networks;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
+import edu.southwestern.networks.activationfunctions.ActivationFunction;
+import edu.southwestern.networks.activationfunctions.*;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.util.random.RandomNumbers;
@@ -36,6 +39,7 @@ public class ActivationFunctions {
 	public static final int FTYPE_GAUSS = 5;
 	public static final int FTYPE_SINE = 12;
 	public static final int FTYPE_ABSVAL = 13;
+	public static final int FTYPE_PIECEWISE = 14;
 	public static final int FTYPE_HLPIECEWISE = 15;
 	public static final int FTYPE_SAWTOOTH = 16;
 	public static final int FTYPE_STRETCHED_TANH = 17;
@@ -49,6 +53,34 @@ public class ActivationFunctions {
 	public static final int FTYPE_FULLGAUSS = 25;
 	public static final int FTYPE_COS = 26;
 
+	private static HashMap<Integer,ActivationFunction> functionMap;
+	
+	// When loaded, fill HashMap with instances of each function
+	static {
+		functionMap = new HashMap<>();
+		functionMap.put(FTYPE_SIGMOID, new SigmoidFunction());
+		functionMap.put(FTYPE_TANH, new TanHFunction());
+		functionMap.put(FTYPE_ID, new IDFunction());
+		functionMap.put(FTYPE_FULLAPPROX, new FullQuickSigmoidFunction());
+		functionMap.put(FTYPE_APPROX, new QuickSigmoidFunction());
+		functionMap.put(FTYPE_GAUSS, new GaussianFunction());
+		functionMap.put(FTYPE_SINE, new SineFunction());
+		functionMap.put(FTYPE_ABSVAL, new ClippedAbsValFunction());
+		functionMap.put(FTYPE_PIECEWISE, new FullLinearPiecewiseFunction());
+		functionMap.put(FTYPE_HLPIECEWISE, new HalfLinearPiecewiseFunction());
+		functionMap.put(FTYPE_SAWTOOTH, new SawtoothFunction());
+		functionMap.put(FTYPE_STRETCHED_TANH, new StretchedTanHFunction());
+		functionMap.put(FTYPE_RE_LU, new ReLUFunction());
+		functionMap.put(FTYPE_SOFTPLUS, new SoftplusFunction());
+		functionMap.put(FTYPE_LEAKY_RE_LU, new LeakyReLUFunction());
+		functionMap.put(FTYPE_FULLSAWTOOTH, new FullSawtoothFunction());
+		functionMap.put(FTYPE_TRIANGLEWAVE, new TriangleWaveFunction());
+		functionMap.put(FTYPE_SQUAREWAVE, new SquareWaveFunction());
+		functionMap.put(FTYPE_FULLSIGMOID, new FullSigmoidFunction());
+		functionMap.put(FTYPE_FULLGAUSS, new FullGaussianFunction());
+		functionMap.put(FTYPE_COS, new CosineFunction());
+	}
+	
 	/**
 	 * List of all possible activation functions, including those that are
 	 * currently disabled.
@@ -64,6 +96,7 @@ public class ActivationFunctions {
 		list.add(FTYPE_GAUSS);
 		list.add(FTYPE_SINE);
 		list.add(FTYPE_ABSVAL);
+		list.add(FTYPE_PIECEWISE);
 		list.add(FTYPE_HLPIECEWISE);
 		list.add(FTYPE_SAWTOOTH);
 		list.add(FTYPE_STRETCHED_TANH);
@@ -108,6 +141,9 @@ public class ActivationFunctions {
 		}
 		if (Parameters.parameters.booleanParameter("includeAbsValFunction")) {
 			availableActivationFunctions.add(FTYPE_ABSVAL);
+		}
+		if (Parameters.parameters.booleanParameter("includeFullLinearPiecewiseFunction")) {
+			availableActivationFunctions.add(FTYPE_PIECEWISE);
 		}
 		if (Parameters.parameters.booleanParameter("includeHalfLinearPiecewiseFunction")) {
 			availableActivationFunctions.add(FTYPE_HLPIECEWISE);
@@ -154,109 +190,9 @@ public class ActivationFunctions {
 	 * @return activation of node
 	 */
 	public static double activation(int ftype, double sum) {
-		double activation = 0.0;
-		switch (ftype) {
-		case ActivationFunctions.FTYPE_SAWTOOTH:
-			activation = ActivationFunctions.sawtooth(sum);
-			assert!Double.isNaN(activation) : "sawtooth returns NaN on " + sum;
-			assert!Double.isInfinite(activation) : "sawtooth is infinite on " + sum + " from " + activation;
-			break;
-		case ActivationFunctions.FTYPE_HLPIECEWISE:
-			activation = ActivationFunctions.halfLinear(sum);
-			assert!Double.isNaN(activation) : "halfLinear returns NaN on " + sum;
-			assert!Double.isInfinite(activation) : "halfLinear is infinite on " + sum + " from " + activation;
-			break;
-		case ActivationFunctions.FTYPE_SIGMOID:
-			activation = ActivationFunctions.sigmoid(sum);
-			assert!Double.isNaN(activation) : "sigmoid returns NaN on " + sum;
-			assert!Double.isInfinite(activation) : "sigmoid is infinite on " + sum + " from " + activation;
-			break;
-		case ActivationFunctions.FTYPE_TANH:
-			activation = ActivationFunctions.tanh(sum);
-			assert!Double.isNaN(activation) : "tanh returns NaN on " + sum;
-			assert!Double.isInfinite(activation) : "tanh is infinite on " + sum + " from " + activation;
-			break;
-		case ActivationFunctions.FTYPE_ID:
-			activation = sum;
-			assert!Double.isNaN(activation) : "ID returns NaN on " + sum;
-			assert!Double.isInfinite(activation) : "ID is infinite on " + sum + " from " + activation;
-			break;
-		case ActivationFunctions.FTYPE_APPROX:
-			activation = ActivationFunctions.quickSigmoid(sum);
-			assert!Double.isNaN(activation) : "quickSigmoid returns NaN on " + sum;
-			assert!Double.isInfinite(activation) : "quickSigmoid is infinite on " + sum + " from " + activation;
-			break;
-		case ActivationFunctions.FTYPE_FULLAPPROX:
-			activation = ActivationFunctions.fullQuickSigmoid(sum);
-			assert!Double.isNaN(activation) : "fullQuickSigmoid returns NaN on " + sum;
-			assert!Double.isInfinite(activation) : "fullQuickSigmoid is infinite on " + sum + " from " + activation;
-			break;
-		case ActivationFunctions.FTYPE_GAUSS:
-			activation = ActivationFunctions.gaussian(sum);
-			assert!Double.isNaN(activation) : "gaussian returns NaN on " + sum;
-			assert!Double.isInfinite(activation) : "gaussian is infinite on " + sum + " from " + activation;
-			break;
-		case ActivationFunctions.FTYPE_SINE:
-			activation = ActivationFunctions.sine(sum);
-			assert!Double.isNaN(activation) : "sine returns NaN on " + sum;
-			assert!Double.isInfinite(activation) : "sine is infinite on " + sum + " from " + activation;
-			break;
-		case ActivationFunctions.FTYPE_ABSVAL:
-			activation = ActivationFunctions.absVal(sum);
-			assert!Double.isNaN(activation) : "absVal returns NaN on " + sum;
-			assert!Double.isInfinite(activation) : "absVal is infinite on " + sum + " from " + activation;
-			break;
-		case ActivationFunctions.FTYPE_STRETCHED_TANH:
-			activation = ActivationFunctions.stretchedTanh(sum);
-			assert!Double.isNaN(activation) : "stretchedTanh returns NaN on " + sum;
-			assert!Double.isInfinite(activation) : "stretchedTanh is infinite on " + sum + " from " + activation;
-			break;
-		case ActivationFunctions.FTYPE_RE_LU:
-			activation = ActivationFunctions.ReLU(sum);
-			assert!Double.isNaN(activation) : "rectified linear units returns NaN on " + sum;
-			assert!Double.isInfinite(activation) : "rectified linear units is infinite on " + sum + " from " + activation;
-			break;
-		case ActivationFunctions.FTYPE_SOFTPLUS:
-			activation = ActivationFunctions.Softplus(sum);
-			assert!Double.isNaN(activation) : "softplus returns NaN on " + sum;
-			assert!Double.isInfinite(activation) : "softplus is infinite on " + sum + " from " + activation;
-			break;
-		case ActivationFunctions.FTYPE_LEAKY_RE_LU:
-			activation = ActivationFunctions.LeakyReLU(sum);
-			assert!Double.isNaN(activation) : "leaky ReLU returns NaN on " + sum;
-			assert!Double.isInfinite(activation) : "leaky ReLU is infinite on " + sum + " from " + activation;
-			break;
-		case ActivationFunctions.FTYPE_FULLSAWTOOTH:
-			activation = ActivationFunctions.fullSawtooth(sum);
-			assert!Double.isNaN(activation) : "fullSawtooth returns NaN on " + sum;
-			assert!Double.isInfinite(activation) : "fullSawtooth is infinite on " + sum + " from " + activation;
-			break;
-		case ActivationFunctions.FTYPE_TRIANGLEWAVE:
-			activation = ActivationFunctions.triangleWave(sum);
-			assert!Double.isNaN(activation) : "triangleWave returns NaN on " + sum;
-			assert!Double.isInfinite(activation) : "triangleWave is infinite on " + sum + " from " + activation;
-			break;
-		case ActivationFunctions.FTYPE_SQUAREWAVE:
-			activation = ActivationFunctions.squareWave(sum);
-			assert!Double.isNaN(activation) : "squareWave returns NaN on " + sum;
-			assert!Double.isInfinite(activation) : "squareWave is infinite on " + sum + " from " + activation;
-			break;
-		case ActivationFunctions.FTYPE_FULLSIGMOID:
-			activation = ActivationFunctions.fullSigmoid(sum);
-			assert!Double.isNaN(activation) : "fullSigmoid returns NaN on " + sum;
-			assert!Double.isInfinite(activation) : "fullSigmoid is infinite on " + sum + " from " + activation;
-			break;
-		case ActivationFunctions.FTYPE_FULLGAUSS:
-			activation = ActivationFunctions.fullGaussian(sum);
-			assert!Double.isNaN(activation) : "fullGaussian returns NaN on " + sum;
-			assert!Double.isInfinite(activation) : "fullGaussian is infinite on " + sum + " from " + activation;
-			break;
-		case ActivationFunctions.FTYPE_COS:
-			activation = ActivationFunctions.cosine(sum);
-			assert!Double.isNaN(activation) : "cosine returns NaN on " + sum;
-			assert!Double.isInfinite(activation) : "cosine is infinite on " + sum + " from " + activation;
-			break;
-		}
+		double activation = functionMap.get(ftype).f(sum);
+		assert!Double.isNaN(activation) : activationName(ftype) + " returns NaN on " + sum + " from " + activation;
+		assert!Double.isInfinite(activation) : activationName(ftype) + " is infinite on " + sum + " from " + activation;
 		return activation;
 	}
 
@@ -266,7 +202,7 @@ public class ActivationFunctions {
 	 * @return
 	 */
 	public static String activationName(int ftype) { 
-		assert ftype > -1 && ftype <= MAX_POSSIBLE_ACTIVATION_FUNCTIONS:"given activation function not valid! " + ftype;
+		assert ftype > -1 && ftype <= MAX_POSSIBLE_ACTIVATION_FUNCTIONS : "given activation function not valid! " + ftype;
 		if(ftype == FTYPE_SIGMOID) {
 			return "sigmoid";
 		}else if(ftype == FTYPE_TANH) {
@@ -312,8 +248,7 @@ public class ActivationFunctions {
 		}
 	}
 	/**
-	 * Takes in the list of all ftypes and randomly selects a function. (For
-	 * CPPN)
+	 * Takes in the list of all ftypes and randomly selects a function. (For CPPN)
 	 *
 	 * @return random listed integer for ftype
 	 */
@@ -340,9 +275,8 @@ public class ActivationFunctions {
 	/**
 	 * Will behave the same as Math.exp within specified bound
 	 *
-	 * @param x
-	 *            Function parameter
-	 * @return
+	 * @param x Function parameter
+	 * @return Same as Math.exp within bounds
 	 */
 	public static double safeExp(double x) {
 		if (Math.abs(x) < SAFE_EXP_BOUND) { // Don't change values in bounds
@@ -358,8 +292,7 @@ public class ActivationFunctions {
 	 * Quick approximation to exp. Inaccurate, but has needed properties. Could
 	 * slightly speed up execution given how often exp is used in a sigmoid.
 	 *
-	 * @param val
-	 *            Function parameter
+	 * @param val Function parameter
 	 * @return approximate result of exp(val)
 	 */
 	public static double quickExp(double val) {
@@ -368,118 +301,12 @@ public class ActivationFunctions {
 	}
 
 	/**
-	 * Quick approximation to sigmoid. Inaccurate, but has needed properties.
-	 * Could slightly speed up execution given how often sigmoid is used.
-	 *
-	 * @param x
-	 *            Function parameter
-	 * @return approximate value of sigmoid(x)
-	 */
-	public static double quickSigmoid(double x) {
-		return 1.0 / (1.0 + quickExp(-x)); 
-	}
-
-	/**
-	 * Safe function for sigmoid. Will behave the same as Math.exp within
-	 * specified bound.
-	 *
-	 * @param x
-	 *            Function parameter
-	 * @return value of sigmoid(x)
-	 */
-	public static double sigmoid(double x) {
-		return (1.0 / (1.0 + safeExp(-x)))*2 - 1;
-	}
-	
-	/**
-	 * Derivative function for sigmoid. 
-	 * Used by backpropagation.
-	 *
-	 * @param x
-	 *            Function parameter
-	 * @return value of derivative(x)
-	 */
-	public static double sigmoidprime(double x) {
-		return sigmoid(x) * (1.0 - sigmoid(x));
-	}
-
-	/**
-	 * Standard sigmoid, but stretched to the range
-	 * -1 to 1. This is an alternative to tanh, and is
-	 * also used in the original Picbreeder.
-	 * @param x parameter
-	 * @return result
-	 */
-	public static double fullSigmoid(double x) {
-		return (1.0 / (1+safeExp(-x))) * 2.0 - 1.0;
-	}
-	
-	/**
-	 * Function for tanh, hyperbolic tangent. Uses Math.tanh, no approximation.
-	 *
-	 * @param x
-	 *            Function parameter
-	 * @return value of tanh(x)
-	 */
-	public static double tanh(double x) {
-		return Math.tanh(x);
-	}
-
-	/**
-	 * Quick approximation to sigmoid within the bounds of -1 < x < 1.
-	 * Inaccurate, but has needed properties. Could slightly speed up execution
-	 * given how often sigmoid is used. 
-	 * @param x Function parameter 
-	 * @return sigmoid approximation within -1 and 1
-	 */
-	public static double fullQuickSigmoid(double x) {
-		return (2 * quickSigmoid(x)) - 1;
-	}
-
-	/**
-	 * Derivative function for tanh, hyperbolic tangent. 
-         * Used for backpropogation.
-	 *
-	 * @param x
-	 *            Function parameter
-	 * @return value of derivative(x)
-	 */
-	public static double tanhprime(double x) {
-		return 1.0 - tanh(x) * tanh(x);
-	}
-
-	/**
-	 * Linear function that returns x within the bounds of -1 < x < 1
-	 *
-	 * @param x
-	 *            Function parameter
-	 * @return linear x within -1 and 1
-	 */
-	public static double fullLinear(double x) {
-		return Math.max(-1, Math.min(1, x));
-	}
-
-	/**
-	 * Linear function that returns x within the bounds of 0 < x < 1
-	 *
-	 * @param x
-	 *            Function parameter
-	 * @return linear x within 0 and 1
-	 */
-	public static double halfLinear(double x) {
-		return Math.max(0, Math.min(1, x));
-	}
-
-	/**
 	 * Gaussian function for x, sigma, and mu. Does not utilize safe exp at the
 	 * moment, can be changed.
 	 *
-	 * @param x,
-	 *            function input
-         * @param sig
-         *            standard deviation
-         * @param mu
-         *            mean/center
+	 * @param x function input
+	 * @param sig standard deviation
+	 * @param mu mean/center
 	 * @return value of gaussian(x)
 	 */
 	public static double gaussian(double x, double sig, double mu) {
@@ -487,128 +314,6 @@ public class ActivationFunctions {
 		double first = (1 / (sig * Math.sqrt(2 * Math.PI)));
 		return first * second;
 	}
-
-	/**
-	 * Overloaded gaussian function for x. Sigma is set to 1 and mu is set to 0.
-	 * Does not utilize safe exp at the moment, can be changed.
-	 *
-	 * @param x
-	 *            Function parameter
-	 * @return value of gaussian(x)
-	 */
-	public static double gaussian(double x) {
-		return gaussian(x, 1, 0);
-		// EXPERIMENTING
-		//return Math.exp(-x*x); // Unsigned (stretched to range [0,1])
-	}
-
-	/**
-	 * Gaussian stretched to the range [-1,1].
-	 * This is the version used in the original Picbreeder.
-	 * @param x parameter
-	 * @return result
-	 */
-	public static double fullGaussian(double x) {
-		return Math.exp(-x*x)*2 - 1;
-	}
-	
-	/**
-	 * Sine function for x. Uses Math.sin();
-	 *
-	 * @param x
-	 *            Function parameter
-	 * @return value of sin(x)
-	 */
-	public static double sine(double x) {
-		return Math.sin(x);
-	}
-	
-	/**
-	 * Cosine: didn't have this originally, since sine
-	 * seemed good enough, but apparently the original
-	 * Picbreeder has cosine in it.
-	 * @param x parameter
-	 * @return result
-	 */
-	public static double cosine(double x) {
-		return Math.cos(x);
-	}
-
-	/**
-	 * Sawtooth function for x. mimics sine but in piecewise way. Uses
-	 * Math.floor().
-	 *
-	 * @param x
-	 *            Function parameter
-	 * @return value of sawtooth(x)
-	 */
-	public static double sawtooth(double x) {
-		return x - Math.floor(x);
-	}
-
-	/**
-	 * Absolute value function for x. Uses Math.abs();
-	 * 
-	 * Also clamps result to range [0,1] after use of absolute value because of
-	 * problems with values rising to infinity.
-	 *
-	 * @param x
-	 *            Function parameter
-	 * @return value of abs(x) clamped to [0,1]
-	 */
-	public static double absVal(double x) {
-		return halfLinear(Math.abs(x));
-	}
-	/**
-	 * returns the leaky rectified function, which allows for a small, non-zero gradient when the unit is not active
-	 * @param sum input
-	 * @return result
-	 */
-        public static double LeakyReLU(double sum) {
-		return (sum > 0) ? sum : 0.01 * sum;
-	}
-
-        /**
-         * The smooth approximation of the reLU function
-         * @param sum
-         * @return
-         */
-		public static double Softplus(double sum) {
-		return Math.log(1 + Math.pow(Math.E, sum));
-	}
-
-		/**
-		 * ramp function, analogous to half-wave rectification in electrical engineering
-		 * @param sum input
-		 * @return result
-		 */
-		public static double ReLU(double sum) {
-		return Math.max(0, sum);
-	}
-
-		/**
-         * Function proposed in the following paper as being better than standard 
-         * tanh for neural networks.
-         * Y. LeCun, L. Bottou, G. Orr and K. Muller: Efficient BackProp, in 
-         * Orr, G. and Muller K. (Eds), Neural Networks: Tricks of the trade, Springer, 1998
-         * 
-         * The recommendation is for BackProp, but could be useful for us too.
-         * @param sum input
-         * @return function result
-         */
-	public static double stretchedTanh(double sum) {
-		return 1.7159 * tanh( (2.0/3) * sum);  
-	}
-	
-	/**
-	 * Generalization of fullSawtooth with only one parameter.
-	 * @param x Input parameter
-	 * @return value of fullSawtooth(x, 1)
-	 */
-	public static double fullSawtooth(double x) {
-		return fullSawtooth(x,1);
-	}
-	
 	
 	/**
 	 * Similar to sawtooth function, but with a range of -1 to 1. 
@@ -620,29 +325,7 @@ public class ActivationFunctions {
 	public static double fullSawtooth(double x, double a) {
 		return 2 * ((x/a) - Math.floor(1/2 + x/a));
 	}
-	
-	/**
-	 * Triangle wave can be represented as the absolute value of the sawtooth function.
-	 * Piecewise linear, continuous real function - useful for sound generation in Java
-	 * 
-	 * @param x function parameter
-	 * @param a period 
-	 * @return value of triangleWave(x, a)
-	 */
-	public static double triangleWave(double x) {
-		return Math.abs(fullSawtooth(x));
-	}
-	
-	/**
-	 * Generalization of square wave function with only one parameter.
-	 * 
-	 * @param x function parameter
-	 * @return value of squareWave(x, 1, 1)
-	 */
-	public static double squareWave(double x) {
-		return squareWave(x, 1, 1);
-	}
-	
+
 	/**
 	 * Square wave is a sinusoidal periodic waveform. Alternating between 
 	 * minimum and maximum amplitudes at a steady rate - useful for sound generation

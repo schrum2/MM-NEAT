@@ -24,7 +24,7 @@ public class ActivationFunctionsTests {
 		double[] keyActivationAnswers = { 0, 0.5, 1 };
 
 		for (int i = 0; i < keyActivationPoints.length; i++) {
-			assertEquals(ActivationFunctions.sigmoid(keyActivationPoints[i]), keyActivationAnswers[i], 0.001);
+			assertEquals(ActivationFunctions.activation(ActivationFunctions.FTYPE_SIGMOID, keyActivationPoints[i]), keyActivationAnswers[i], 0.001);
 		}
 	}
 
@@ -34,7 +34,7 @@ public class ActivationFunctionsTests {
 		double[] keyActivationAnswers = { 0, .5, 0, .7, 0, .666 };
 		assertEquals(keyActivationInputs.length, keyActivationAnswers.length);
 		for (int i = 0; i < keyActivationAnswers.length; i++) {
-			assertEquals(keyActivationAnswers[i], ActivationFunctions.sawtooth(keyActivationInputs[i]), .00001);
+			assertEquals(keyActivationAnswers[i], ActivationFunctions.activation(ActivationFunctions.FTYPE_SAWTOOTH, keyActivationInputs[i]), .00001);
 		}
 	}
 
@@ -44,7 +44,7 @@ public class ActivationFunctionsTests {
 		double[] keyActivationAnswers = { -1, 0, 1 };
 
 		for (int i = 0; i < keyActivationPoints.length; i++) {
-			assertEquals(ActivationFunctions.tanh(keyActivationPoints[i]), keyActivationAnswers[i], 0.001);
+			assertEquals(ActivationFunctions.activation(ActivationFunctions.FTYPE_TANH, keyActivationPoints[i]), keyActivationAnswers[i], 0.001);
 		}
 	}
 
@@ -54,7 +54,7 @@ public class ActivationFunctionsTests {
 		double[] keyActivationAnswers = { -1, 0, 1 };
 
 		for (int i = 0; i < keyActivationPoints.length; i++) {
-			assertEquals(ActivationFunctions.fullLinear(keyActivationPoints[i]), keyActivationAnswers[i], 0.001);
+			assertEquals(ActivationFunctions.activation(ActivationFunctions.FTYPE_PIECEWISE, keyActivationPoints[i]), keyActivationAnswers[i], 0.001);
 		}
 	}
 
@@ -64,7 +64,7 @@ public class ActivationFunctionsTests {
 		double[] keyActivationInputs = { -100, 0, .5, 1, 100 };
 		assertEquals(keyActivationAnswers.length, keyActivationInputs.length);
 		for (int i = 0; i < keyActivationAnswers.length; i++) {
-			assertEquals(keyActivationAnswers[i], ActivationFunctions.halfLinear(keyActivationInputs[i]), 0.001);
+			assertEquals(keyActivationAnswers[i], ActivationFunctions.activation(ActivationFunctions.FTYPE_HLPIECEWISE, keyActivationInputs[i]), 0.001);
 		}
 	}
 
@@ -76,7 +76,7 @@ public class ActivationFunctionsTests {
 		for (int i = 0; i < keyActivationPoints.length; i++) {
 			// epsilon bound larger because this activation function uses
 			// approximations
-			assertEquals(ActivationFunctions.quickSigmoid(keyActivationPoints[i]), keyActivationAnswers[i], 0.015);
+			assertEquals(ActivationFunctions.activation(ActivationFunctions.FTYPE_APPROX, keyActivationPoints[i]), keyActivationAnswers[i], 0.015);
 		}
 	}
 
@@ -88,7 +88,7 @@ public class ActivationFunctionsTests {
 		for (int i = 0; i < keyActivationPoints.length; i++) {
 			// epsilon bound larger because this activation function uses
 			// approximations
-			assertEquals(ActivationFunctions.fullQuickSigmoid(keyActivationPoints[i]), keyActivationAnswers[i], 0.015);
+			assertEquals(ActivationFunctions.activation(ActivationFunctions.FTYPE_FULLAPPROX, keyActivationPoints[i]), keyActivationAnswers[i], 0.015);
 		}
 	}
 
@@ -98,7 +98,7 @@ public class ActivationFunctionsTests {
 	@Test
 	public void test_quickSigmoid_vs_sigmoid() {
 		for (double i = -ActivationFunctions.SAFE_EXP_BOUND; i <= ActivationFunctions.SAFE_EXP_BOUND; i++) {
-			assertEquals(ActivationFunctions.quickSigmoid(i), ActivationFunctions.sigmoid(i), 0.01);
+			assertEquals(ActivationFunctions.activation(ActivationFunctions.FTYPE_APPROX, i), ActivationFunctions.activation(ActivationFunctions.FTYPE_SIGMOID, i), 0.01);
 		}
 	}
 
@@ -113,13 +113,13 @@ public class ActivationFunctionsTests {
 		double test4 = -0.0001;
 		double test5 = -56.009;
 		double test6 = 56.009;
-		assertEquals(ActivationFunctions.ReLU(test1), Math.max(0, test1), .000001);
-		assertEquals(ActivationFunctions.ReLU(test2), Math.max(0, test2), .000001);
-		assertEquals(ActivationFunctions.ReLU(test3), Math.max(0, test3), .000001);
-		assertEquals(ActivationFunctions.ReLU(test4), Math.max(0, test4), .000001);
-		assertEquals(ActivationFunctions.ReLU(test5), Math.max(0, test5), .000001);
-		assertEquals(ActivationFunctions.ReLU(test5), 0, .000001);
-		assertEquals(ActivationFunctions.ReLU(test6), Math.max(0, test6), .000001);
+		assertEquals(ActivationFunctions.activation(ActivationFunctions.FTYPE_RE_LU, test1), Math.max(0, test1), .000001);
+		assertEquals(ActivationFunctions.activation(ActivationFunctions.FTYPE_RE_LU, test2), Math.max(0, test2), .000001);
+		assertEquals(ActivationFunctions.activation(ActivationFunctions.FTYPE_RE_LU, test3), Math.max(0, test3), .000001);
+		assertEquals(ActivationFunctions.activation(ActivationFunctions.FTYPE_RE_LU, test4), Math.max(0, test4), .000001);
+		assertEquals(ActivationFunctions.activation(ActivationFunctions.FTYPE_RE_LU, test5), Math.max(0, test5), .000001);
+		assertEquals(ActivationFunctions.activation(ActivationFunctions.FTYPE_RE_LU, test5), 0, .000001);
+		assertEquals(ActivationFunctions.activation(ActivationFunctions.FTYPE_RE_LU, test6), Math.max(0, test6), .000001);
 		
 	}
 	
@@ -134,13 +134,12 @@ public class ActivationFunctionsTests {
 		double test4 = -0.0001;
 		double test5 = -56.009;
 		double test6 = 56.009;
-		assertEquals(ActivationFunctions.LeakyReLU(test1), test1, .00001);
-		assertEquals(ActivationFunctions.LeakyReLU(test2), test2*.01, .00001);
-		assertEquals(ActivationFunctions.LeakyReLU(test3), test3, .00001);
-		assertEquals(ActivationFunctions.LeakyReLU(test4), test4 * .01, .00001);
-		assertEquals(ActivationFunctions.LeakyReLU(test5), test5*.01, .00001);
-		assertEquals(ActivationFunctions.LeakyReLU(test6), test6, .00001);
-		
+		assertEquals(ActivationFunctions.activation(ActivationFunctions.FTYPE_LEAKY_RE_LU, test1), test1, .00001);
+		assertEquals(ActivationFunctions.activation(ActivationFunctions.FTYPE_LEAKY_RE_LU, test2), test2*.01, .00001);
+		assertEquals(ActivationFunctions.activation(ActivationFunctions.FTYPE_LEAKY_RE_LU, test3), test3, .00001);
+		assertEquals(ActivationFunctions.activation(ActivationFunctions.FTYPE_LEAKY_RE_LU, test4), test4 * .01, .00001);
+		assertEquals(ActivationFunctions.activation(ActivationFunctions.FTYPE_LEAKY_RE_LU, test5), test5*.01, .00001);
+		assertEquals(ActivationFunctions.activation(ActivationFunctions.FTYPE_LEAKY_RE_LU, test6), test6, .00001);
 	}
 	
 	/**
@@ -154,12 +153,12 @@ public class ActivationFunctionsTests {
 		double test4 = -0.0001;
 		double test5 = -56.009;
 		double test6 = 56.009;
-		assertEquals(ActivationFunctions.Softplus(test1), Math.log(1 + Math.pow(Math.E, test1)), .000001);
-		assertEquals(ActivationFunctions.Softplus(test2), Math.log(1 + Math.pow(Math.E, test2)), .000001);
-		assertEquals(ActivationFunctions.Softplus(test3), Math.log(1 + Math.pow(Math.E, test3)), .000001);
-		assertEquals(ActivationFunctions.Softplus(test4), Math.log(1 + Math.pow(Math.E, test4)), .000001);
-		assertEquals(ActivationFunctions.Softplus(test5), Math.log(1 + Math.pow(Math.E, test5)), .000001);
-		assertEquals(ActivationFunctions.Softplus(test6), Math.log(1 + Math.pow(Math.E, test6)), .000001);
+		assertEquals(ActivationFunctions.activation(ActivationFunctions.FTYPE_SOFTPLUS, test1), Math.log(1 + Math.pow(Math.E, test1)), .000001);
+		assertEquals(ActivationFunctions.activation(ActivationFunctions.FTYPE_SOFTPLUS, test2), Math.log(1 + Math.pow(Math.E, test2)), .000001);
+		assertEquals(ActivationFunctions.activation(ActivationFunctions.FTYPE_SOFTPLUS, test3), Math.log(1 + Math.pow(Math.E, test3)), .000001);
+		assertEquals(ActivationFunctions.activation(ActivationFunctions.FTYPE_SOFTPLUS, test4), Math.log(1 + Math.pow(Math.E, test4)), .000001);
+		assertEquals(ActivationFunctions.activation(ActivationFunctions.FTYPE_SOFTPLUS, test5), Math.log(1 + Math.pow(Math.E, test5)), .000001);
+		assertEquals(ActivationFunctions.activation(ActivationFunctions.FTYPE_SOFTPLUS, test6), Math.log(1 + Math.pow(Math.E, test6)), .000001);
 	}
 	
 	/**
@@ -171,7 +170,7 @@ public class ActivationFunctionsTests {
 		double[] keyActivationAnswers = { 0, 1.0, 0, 1.4, 0, 1.332 };
 		assertEquals(keyActivationInputs.length, keyActivationAnswers.length);
 		for (int i = 0; i < keyActivationAnswers.length; i++) {
-			assertEquals(keyActivationAnswers[i], ActivationFunctions.fullSawtooth(keyActivationInputs[i]), .00001);
+			assertEquals(keyActivationAnswers[i], ActivationFunctions.activation(ActivationFunctions.FTYPE_FULLSAWTOOTH, keyActivationInputs[i]), .00001);
 		}
 	}
 	
@@ -185,7 +184,7 @@ public class ActivationFunctionsTests {
 		double[] keyActivationAnswers = { 0, 1.0, 0, 1.4, 0, 1.332 };
 		assertEquals(keyActivationInputs.length, keyActivationAnswers.length);
 		for (int i = 0; i < keyActivationAnswers.length; i++) {
-			assertEquals(keyActivationAnswers[i], ActivationFunctions.triangleWave(keyActivationInputs[i]), .00001);
+			assertEquals(keyActivationAnswers[i], ActivationFunctions.activation(ActivationFunctions.FTYPE_TRIANGLEWAVE, keyActivationInputs[i]), .00001);
 		}
 	}
 	
@@ -199,7 +198,7 @@ public class ActivationFunctionsTests {
 		double[] keyActivationAnswers = { -1.0, -1.0, 1.0, -1.0, -1.0,  -1.0};
 		assertEquals(keyActivationInputs.length, keyActivationAnswers.length);
 		for (int i = 0; i < keyActivationAnswers.length; i++) {
-			assertEquals(keyActivationAnswers[i], ActivationFunctions.squareWave(keyActivationInputs[i]), .00001);
+			assertEquals(keyActivationAnswers[i], ActivationFunctions.activation(ActivationFunctions.FTYPE_SQUAREWAVE, keyActivationInputs[i]), .00001);
 		}
 	}
 	

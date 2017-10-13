@@ -4,15 +4,16 @@
  */
 package edu.southwestern.tasks.mspacman.sensors.directional.distance.ghosts;
 
-import edu.southwestern.networks.ActivationFunctions;
+import java.util.ArrayList;
+import java.util.Collections;
+
+import edu.southwestern.networks.activationfunctions.FullLinearPiecewiseFunction;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.tasks.mspacman.facades.GameFacade;
 import edu.southwestern.tasks.mspacman.ghosts.DirectionalGhostComparator;
 import edu.southwestern.tasks.mspacman.ghosts.GhostComparator;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
-import java.util.ArrayList;
-import java.util.Collections;
 import pacman.game.Constants;
 
 /**
@@ -78,7 +79,7 @@ public class VariableDirectionSortedGhostEdibleTimeVsDistanceBlock extends Varia
 			int edibleTime = gf.getGhostEdibleTime(ghostIndex);
 			double distance = path.length;
 			double result = ((edibleTime - distance) / Constants.EDIBLE_TIME);
-			result = ActivationFunctions.fullLinear(result);
+			result = FullLinearPiecewiseFunction.fullLinear(result);
 			// System.out.println("Distance:"+distance+":result:"+result);
 			return result;
 		}

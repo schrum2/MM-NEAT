@@ -1101,7 +1101,7 @@ public class TWEANN implements Network {
 	 */
 	private void drawLink(Graphics2D g, double weight, int x1, int y1, int x2, int y2) {
 		final int MAX_LINES = NODE_DIM;
-		int lines = Math.max(1, (int) (Math.abs(ActivationFunctions.tanh(weight)) * MAX_LINES));
+		int lines = Math.max(1, (int) (Math.abs(Math.tanh(weight)) * MAX_LINES));
 		int xOffset = lines / 2;
 		if (weight > 0) {
 			for (int i = 0; i < lines; i++) {
