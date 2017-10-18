@@ -1,5 +1,7 @@
 package edu.southwestern.networks.activationfunctions;
 
+import org.nd4j.linalg.activations.Activation;
+
 public class CosineFunction implements ActivationFunction {
 
 	/**
@@ -12,6 +14,16 @@ public class CosineFunction implements ActivationFunction {
 	@Override
 	public double f(double x) {
 		return Math.cos(x);
+	}
+
+	@Override
+	public Activation equivalentDL4JFunction() {
+		throw new UnsupportedOperationException("No corresponding DL4J function for " + name());
+	}
+
+	@Override
+	public String name() {
+		return "cos"; //"Cosine";
 	}
 
 }

@@ -1,5 +1,7 @@
 package edu.southwestern.networks.activationfunctions;
 
+import org.nd4j.linalg.activations.Activation;
+
 public class TanHFunction implements ActivationFunction {
 
 	/**
@@ -11,5 +13,15 @@ public class TanHFunction implements ActivationFunction {
 	@Override
 	public double f(double x) {
 		return Math.tanh(x);
+	}
+
+	@Override
+	public Activation equivalentDL4JFunction() {
+		return Activation.TANH;
+	}
+
+	@Override
+	public String name() {
+		return "tanh";
 	}
 }

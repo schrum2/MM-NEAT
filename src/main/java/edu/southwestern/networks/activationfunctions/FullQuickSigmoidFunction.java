@@ -13,4 +13,9 @@ public class FullQuickSigmoidFunction extends QuickSigmoidFunction {
 	public double f(double x) {
 		return (2 * super.f(x)) - 1;
 	}
+	
+	@Override
+	public String name() {
+		return "sigmoid(approx)-full"; //"Full Approximate Sigmoid";
+	}
 }

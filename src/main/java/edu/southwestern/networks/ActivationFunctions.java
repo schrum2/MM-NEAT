@@ -202,52 +202,7 @@ public class ActivationFunctions {
 	 * @return
 	 */
 	public static String activationName(int ftype) { 
-		assert ftype > -1 && ftype <= MAX_POSSIBLE_ACTIVATION_FUNCTIONS : "given activation function not valid! " + ftype;
-		if(ftype == FTYPE_SIGMOID) {
-			return "sigmoid";
-		}else if(ftype == FTYPE_TANH) {
-			return "tanh";
-		} else if(ftype == FTYPE_SAWTOOTH) {
-			return "sawtooth";
-		} else if(ftype == FTYPE_PIECEWISE) {
-			return "piecewise-full"; //"Full Piecewise";
-		} else if(ftype == FTYPE_HLPIECEWISE) {
-			return "piecewise-half"; //"Half Piecewise";
-		}else if(ftype == FTYPE_ID) {
-			return "id";
-		} else if(ftype == FTYPE_APPROX) {
-			return "sigmoid(approx)";
-		} else if(ftype == FTYPE_FULLAPPROX) {
-			return "sigmoid(approx)-full"; //"Full Approximate Sigmoid";
-		} else if(ftype == FTYPE_GAUSS) {
-			return "gauss";
-		} else if(ftype == FTYPE_SINE) {
-			return "sin";
-		} else if(ftype == FTYPE_ABSVAL){
-			return "abs"; //"Absolute Value";
-		} else if(ftype == FTYPE_STRETCHED_TANH) {
-			return "tanh(stretched)"; //"Stretched Tanh";
-		} else if(ftype == FTYPE_RE_LU) {
-			return "ReLU"; // "Rectified Linear Unit";
-		}else if(ftype == FTYPE_SOFTPLUS) {
-			return "softplus";
-		}else if(ftype == FTYPE_LEAKY_RE_LU) {
-			return "ReLU(leaky)"; //"Leaky Rectified Linear Unit";
-		}else if(ftype == FTYPE_FULLSAWTOOTH) {
-			return "sawtooth-full";
-		}else if(ftype == FTYPE_TRIANGLEWAVE) {
-			return "triangle"; //"Triangle Wave";
-		}else if(ftype == FTYPE_SQUAREWAVE) {
-			return "square"; //"Square Wave";
-		}else if(ftype == FTYPE_FULLSIGMOID) {
-			return "sigmoid-full"; //"Full Sigmoid";
-		}else if(ftype == FTYPE_FULLGAUSS) {
-			return "gauss-full"; //"Full Gaussian";
-		}else if(ftype == FTYPE_COS) {
-			return "cos"; //"Cosine";
-		}else {
-			throw new IllegalArgumentException("given ftype is not a valid activation function! " + ftype);
-		}
+		return functionMap.get(ftype).name();
 	}
 	/**
 	 * Takes in the list of all ftypes and randomly selects a function. (For CPPN)

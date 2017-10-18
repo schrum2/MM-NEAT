@@ -1,5 +1,7 @@
 package edu.southwestern.networks.activationfunctions;
 
+import org.nd4j.linalg.activations.Activation;
+
 public class StretchedTanHFunction implements ActivationFunction {
 	/**
 	 * Function proposed in the following paper as being better than standard 
@@ -14,5 +16,15 @@ public class StretchedTanHFunction implements ActivationFunction {
 	@Override
 	public double f(double sum) {
 		return 1.7159 * Math.tanh( (2.0/3) * sum);  
+	}
+	
+	@Override
+	public Activation equivalentDL4JFunction() {
+		throw new UnsupportedOperationException("No corresponding DL4J function for " + name());
+	}
+
+	@Override
+	public String name() {
+		return "tanh(stretched)"; //"Stretched Tanh";
 	}
 }
