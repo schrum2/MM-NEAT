@@ -167,6 +167,12 @@ public class TensorNetworkFromHyperNEATSpecification implements TensorNetwork {
 	 * @param tg genotype that directly encodes the substrate network created by a CPPN.
 	 */
 	public void fillWeightsFromHyperNEATNetwork(HyperNEATTask hnt, TWEANNGenotype tg) {
+
+		// Might add support for this later
+		if(!Parameters.parameters.booleanParameter("convolutionWeightSharing")) {
+			throw new UnsupportedOperationException("Currently, convolutionWeightSharing must be used with DL4J networks");
+		}
+		
 		// Output network for testing
 		//Easy.save(tg, "TEMP.xml");
         List<Substrate> substrates = hnt.getSubstrateInformation();
