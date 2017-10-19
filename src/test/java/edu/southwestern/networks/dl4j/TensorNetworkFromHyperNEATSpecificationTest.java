@@ -1,6 +1,7 @@
 package edu.southwestern.networks.dl4j;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
@@ -17,6 +18,7 @@ import edu.southwestern.networks.hyperneat.HyperNEATUtil;
 import edu.southwestern.networks.hyperneat.Substrate;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.rlglue.tetris.HyperNEATTetrisTask;
+import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.random.RandomNumbers;
 
 public class TensorNetworkFromHyperNEATSpecificationTest {
@@ -87,6 +89,47 @@ public class TensorNetworkFromHyperNEATSpecificationTest {
 	        // ND4J (I believe) favors float instead of double.
         	assertArrayEquals(hyperNEATOutput, dl4jOutput, 0.2);
 		}
+		
+		
+		// UNFORTUNATE RESULT:
+		// The commented test below fails, because apparently DL4J networks are NOT faster than
+		// my TWEANN class, which kind of surprises me. It's possible that using a GPU backend
+		// or a different machine would be faster, but currently the result below indicates that
+		// using DL4J networks instead of TWEANNs does not make sense in general. However, DL4J
+		// networks are still useful for situations where backprop is needed, which is part of
+		// any RL with NNs. Further exploration is needed.
+		
+		
+		// Now do timing benchmark
+//		final int CYCLES = 500;
+//	    double[] randomInput = RandomNumbers.randomArray(substrateGenotype.numIn);
+//	    
+//	    long startDL4J = System.currentTimeMillis();
+//	    for(int i = 0; i < CYCLES; i++) {
+//			// Should not be recurrent, but flush just in case
+//			dl4jNetwork.flush();	
+//	        dl4jNetwork.process(randomInput);
+//		}
+//	    long endDL4J = System.currentTimeMillis();
+//	    
+//	    long timeDL4J = endDL4J - startDL4J;
+//	    
+//	    long startHyperNEAT = System.currentTimeMillis();
+//	    for(int i = 0; i < CYCLES; i++) {
+//			// Should not be recurrent, but flush just in case
+//			substrateNetwork.flush();
+//		    substrateNetwork.process(randomInput);
+//	    }
+//	    long endHyperNEAT = System.currentTimeMillis();
+//	    
+//	    long timeHyperNEAT = endHyperNEAT - startHyperNEAT;
+//	    
+//	    System.out.println("timeDL4J:"+timeDL4J);
+//	    System.out.println("timeHyperNEAT:"+timeHyperNEAT);
+//	    
+//	    MiscUtil.waitForReadStringAndEnterKeyPress();
+//	    
+//	    assertTrue(timeHyperNEAT > timeDL4J);
 	}
 
 	@Test
