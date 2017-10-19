@@ -172,6 +172,10 @@ public class TensorNetworkFromHyperNEATSpecification implements TensorNetwork {
 		if(!Parameters.parameters.booleanParameter("convolutionWeightSharing")) {
 			throw new UnsupportedOperationException("Currently, convolutionWeightSharing must be used with DL4J networks");
 		}
+		// Can this be supported?
+		if(Parameters.parameters.booleanParameter("extraHNLinks")) {
+			throw new UnsupportedOperationException("Links from input layer directly to the output layer are not allowed in DL4J networks");
+		}
 		
 		// Output network for testing
 		//Easy.save(tg, "TEMP.xml");
