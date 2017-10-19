@@ -17,12 +17,12 @@ import org.deeplearning4j.nn.conf.layers.ConvolutionLayer;
 import org.deeplearning4j.nn.conf.layers.OutputLayer;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.deeplearning4j.nn.weights.WeightInit;
-import org.nd4j.linalg.activations.Activation;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
 
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype.LinkGene;
+import edu.southwestern.networks.ActivationFunctions;
 import edu.southwestern.networks.hyperneat.HyperNEATTask;
 import edu.southwestern.networks.hyperneat.HyperNEATUtil;
 import edu.southwestern.networks.hyperneat.Substrate;
@@ -78,7 +78,22 @@ public class TensorNetworkFromHyperNEATSpecification implements TensorNetwork {
         ListBuilder listBuilder = builder.list(); // Building the DL4J network
         
         int hiddenLayer;
+        int substrateIndex = 0;
+        // Get first hidden processing substrate
+        while(substrates.get(substrateIndex).getSubLocation().t2 == 0) {
+        	substrateIndex++;
+        }
+        
 		for(hiddenLayer = 0; hiddenLayer < processDepth; hiddenLayer++) { // Add 2D hidden/processing layer(s)
+			// Assumes all substrates in same layer use same activation function ftype
+			int ftype = substrates.get(substrateIndex).getFtype();
+//			System.out.println(hiddenLayer + ":" + substrateIndex + ":" + ftype);
+			int currentLayer = substrates.get(substrateIndex).getSubLocation().t2;
+			// Move substrateIndex to next layer
+	        while(substrates.get(substrateIndex).getSubLocation().t2 == currentLayer) {
+	        	substrateIndex++;
+	        }
+			
 			if(CommonConstants.convolution) {				
 				ConvolutionLayer.Builder layer = new ConvolutionLayer.Builder(kernelArray, strideArray, zeroPaddingArray)
 						.name("cnn"+(hiddenLayer+1))
@@ -95,7 +110,7 @@ public class TensorNetworkFromHyperNEATSpecification implements TensorNetwork {
 				layer = layer
 						.nOut(processWidth)
 						.weightInit(WeightInit.XAVIER_UNIFORM) // Keep this?
-						.activation(Activation.RELU)//.learningRateDecayPolicy(LearningRatePolicy.Step)
+						.activation(ActivationFunctions.getDL4JEquivalent(ftype))//.learningRateDecayPolicy(LearningRatePolicy.Step)
 						.learningRate(1e-2) // Change?
 						.biasInit(1e-2) // Change?
 						.biasLearningRate(1e-2*2); // Change?
@@ -118,12 +133,15 @@ public class TensorNetworkFromHyperNEATSpecification implements TensorNetwork {
 			//		.layer(11,new DropoutLayer.Builder().name("dropout1").dropOut(0.2).build());
 		}
 
+		// substrateIndex should be first output substrate
+		int outputFtype = substrates.get(substrateIndex).getFtype();
+//		System.out.println("output:" + substrateIndex + ":" + outputFtype);
+
 		listBuilder = listBuilder
 				.layer(hiddenLayer, new OutputLayer.Builder(LossFunctions.LossFunction.NEGATIVELOGLIKELIHOOD) // Use this Loss function?
 						.name("output")
 						.nOut(outputCount)
-						//.activation(Activation.TANH) // Link DL4J activation functions to mine?
-						.activation(Activation.RELU) // For testing : TODO : CHANGE BACK!
+						.activation(ActivationFunctions.getDL4JEquivalent(outputFtype))
 						.build());
 
 		MultiLayerConfiguration conf = listBuilder
