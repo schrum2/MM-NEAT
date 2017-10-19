@@ -3,6 +3,7 @@ package edu.southwestern.evolution;
 import edu.southwestern.evolution.crossover.network.CombiningTWEANNCrossover;
 import edu.southwestern.evolution.genotypes.CombinedGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.evolution.genotypes.HyperNEATCPPNforDL4JGenotype;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype.NodeGene;
 import edu.southwestern.log.MMNEATLog;
@@ -187,6 +188,8 @@ public class EvolutionaryHistory {
 		TWEANNGenotype tg = (TWEANNGenotype) (MMNEAT.genotypeExamples == null ? 
 				(MMNEAT.genotype instanceof CombinedGenotype ? 
 						((CombinedGenotype) MMNEAT.genotype).t1 : // Assume firsts of pair is TWEANNGenotype 
+							MMNEAT.genotype instanceof HyperNEATCPPNforDL4JGenotype ?
+							((HyperNEATCPPNforDL4JGenotype) MMNEAT.genotype).getCPPN() :
 						MMNEAT.genotype.copy()) : // Assume it is a TWEANNGenotype 
 				MMNEAT.genotypeExamples.get(populationIndex).copy()); // First population from coevolution
 		initArchetype(populationIndex, loadedArchetype, tg);

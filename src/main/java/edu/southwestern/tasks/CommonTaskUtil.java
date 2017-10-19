@@ -3,6 +3,7 @@ package edu.southwestern.tasks;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.genotypes.HyperNEATCPPNGenotype;
+import edu.southwestern.evolution.genotypes.HyperNEATCPPNforDL4JGenotype;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.evolution.lineage.Offspring;
 import edu.southwestern.networks.TWEANN;
@@ -22,6 +23,12 @@ public class CommonTaskUtil {
 
 	public static Pair<DrawingPanel, DrawingPanel> getDrawingPanels(Genotype<?> genotype){
 
+		// This is not a TWEANNGenotype because it generates a DL4J network,
+		// but it contains a TWEANNGenotype that can be used to display the appropriate network.
+		if(genotype instanceof HyperNEATCPPNforDL4JGenotype) {
+			genotype = ((HyperNEATCPPNforDL4JGenotype) genotype).getCPPN();
+		}
+		
 		DrawingPanel panel = null;
 		DrawingPanel cppnPanel = null;
 

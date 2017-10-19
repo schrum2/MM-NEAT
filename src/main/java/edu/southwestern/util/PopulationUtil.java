@@ -20,6 +20,7 @@ import edu.southwestern.evolution.GenerationalEA;
 import edu.southwestern.evolution.genotypes.CombinedGenotype;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.genotypes.HyperNEATCPPNGenotype;
+import edu.southwestern.evolution.genotypes.HyperNEATCPPNforDL4JGenotype;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.evolution.lineage.Offspring;
 import edu.southwestern.evolution.mutation.tweann.ActivationFunctionRandomReplacement;
@@ -252,8 +253,13 @@ public class PopulationUtil {
 					for (int i = 0; i < size; i++) {
 						afrr.mutate((Genotype<TWEANN>) parents.get(i));
 					}	
+				} else if(parents.get(0) instanceof HyperNEATCPPNforDL4JGenotype) {
+					// Mutate the CPPN within the HyperNEATCPPNforDL4JGenotype
+					for (int i = 0; i < size; i++) {
+						afrr.mutate(((HyperNEATCPPNforDL4JGenotype) parents.get(i)).getCPPN());
+					}	
 				} else {
-					throw new IllegalArgumentException("CAnnot change activation function of genotype that has no network");
+					throw new IllegalArgumentException("Cannot change activation function of genotype that has no network");
 				}
 			}
 		}

@@ -30,6 +30,10 @@ public class HyperNEATCPPNforDL4JGenotype implements NetworkGenotype<DL4JNetwork
 		this.cppn = cppn;
 	}
 	
+	public HyperNEATCPPNGenotype getCPPN() {
+		return cppn;
+	}
+	
 	@Override
 	public void addParent(long id) {
 		cppn.addParent(id);
