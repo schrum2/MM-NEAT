@@ -27,6 +27,7 @@ import micro.util.Pair;
  *
  * @author santi
  */
+@SuppressWarnings("serial")
 public class PhysicalGameStatePanel extends JPanel {
     public static int COLORSCHEME_BLACK = 1;
     public static int COLORSCHEME_WHITE = 2;

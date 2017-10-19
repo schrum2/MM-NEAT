@@ -15,6 +15,7 @@ import javax.swing.JPanel;
  *
  * @author santi
  */
+@SuppressWarnings("serial")
 public class MouseControllerPanel extends JPanel {
     public int offset_x = 16;
     public int offset_y = 16;

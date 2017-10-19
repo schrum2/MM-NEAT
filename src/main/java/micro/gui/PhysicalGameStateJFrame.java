@@ -11,6 +11,7 @@ import micro.rts.GameState;
  *
  * @author santi
  */
+@SuppressWarnings("serial")
 public class PhysicalGameStateJFrame extends JFrame {
     PhysicalGameStatePanel panel = null;
     

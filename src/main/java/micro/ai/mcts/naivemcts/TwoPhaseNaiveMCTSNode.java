@@ -4,13 +4,15 @@
  */
 package micro.ai.mcts.naivemcts;
 
-import static micro.ai.mcts.MCTSNode.r;
-import static micro.ai.mcts.naivemcts.NaiveMCTSNode.DEBUG;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import micro.rts.*;
+
+import micro.rts.GameState;
+import micro.rts.PlayerAction;
+import micro.rts.ResourceUsage;
+import micro.rts.UnitAction;
 import micro.rts.units.Unit;
 import micro.util.Sampler;
 

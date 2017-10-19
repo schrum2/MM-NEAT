@@ -426,12 +426,14 @@ public class BasicConfigurableScript extends ConfigurableScript<BasicChoicePoint
 
 	@Override
 	public Collection<Options> getApplicableChoicePoints(int player, GameState gs) {
+		@SuppressWarnings("unused")
 		int nworkers=0;
 		int nbarracks=0;
 		int nbases=0;
 		int abandonedbases=0;
         int ownresources = 0;
-        int nresources = 0;
+        @SuppressWarnings("unused")
+		int nresources = 0;
         int freeresources = 0;
 		for (Unit u2 : gs.getPhysicalGameState().getUnits()) {
 			if(u2.getPlayer() == player){

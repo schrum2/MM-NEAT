@@ -4,13 +4,13 @@
  */
 package micro.gui;
 
-import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Graphics;
 import java.awt.Insets;
 import java.awt.Rectangle;
+
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
+
 import micro.rts.GameState;
 import micro.util.Pair;
 
@@ -18,6 +18,7 @@ import micro.util.Pair;
  *
  * @author santi
  */
+@SuppressWarnings("serial")
 public class PhysicalGameStateMouseJFrame extends JFrame {
     PhysicalGameStatePanel panel = null;
     MouseControllerPanel mousePanel = null;

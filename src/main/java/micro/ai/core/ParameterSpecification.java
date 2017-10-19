@@ -14,13 +14,14 @@ import java.util.List;
  */
 public class ParameterSpecification {
     public String name = null;
-    public Class type = null;
+    @SuppressWarnings("rawtypes")
+	public Class type = null;
     public Object defaultValue = null;
     public List<Object> possibleValues = null;     // used only if not-null
     public Double minValue = null, maxValue = null; // for parameters with a range
     
     
-    public ParameterSpecification(String n, Class t, Object dv) {
+    public ParameterSpecification(String n, @SuppressWarnings("rawtypes") Class t, Object dv) {
         name = n;
         type = t;
         defaultValue = dv;

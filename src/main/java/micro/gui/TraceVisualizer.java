@@ -4,20 +4,25 @@
  */
 package micro.gui;
 
-import micro.tests.*;
-import micro.gui.PhysicalGameStatePanel;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.geom.Point2D;
-import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
-import javax.swing.*;
+
+import javax.swing.BoxLayout;
+import javax.swing.JFrame;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.ListSelectionModel;
+import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import org.jdom.JDOMException;
-import org.jdom.input.SAXBuilder;
-import micro.rts.*;
+
+import micro.rts.GameState;
+import micro.rts.Trace;
+import micro.rts.TraceEntry;
+import micro.rts.UnitAction;
 import micro.rts.units.Unit;
 import micro.util.Pair;
 
@@ -25,6 +30,7 @@ import micro.util.Pair;
  *
  * @author santi
  */
+@SuppressWarnings("serial")
 public class TraceVisualizer extends JPanel implements ListSelectionListener {
     int current_step = 0;
     Trace trace = null;

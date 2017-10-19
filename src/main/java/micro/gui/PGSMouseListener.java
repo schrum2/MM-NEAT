@@ -8,16 +8,18 @@ package micro.gui;
 
 import java.awt.Insets;
 import java.awt.Rectangle;
-import java.awt.event.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import micro.rts.GameState;
-import micro.rts.UnitAction;
 import micro.rts.units.Unit;
 import micro.rts.units.UnitType;
-import micro.rts.units.UnitTypeTable;
 import micro.util.Pair;
 
 /**
@@ -74,7 +76,8 @@ public class PGSMouseListener implements MouseListener, MouseMotionListener, Key
     }
 
     
-    public void mouseClicked(MouseEvent e) {
+    @SuppressWarnings("unchecked")
+	public void mouseClicked(MouseEvent e) {
         int x = e.getX();
         int y = e.getY();
         Pair<Integer,Integer> coordinates = null;
@@ -277,7 +280,8 @@ public class PGSMouseListener implements MouseListener, MouseMotionListener, Key
         Object tmp = frame.getContentAtCoordinates(x,y);
         if (tmp!=null) {
             if (tmp instanceof Pair) {
-                Pair<Integer,Integer> coordinates = (Pair<Integer,Integer>)tmp;
+                @SuppressWarnings("unchecked")
+				Pair<Integer,Integer> coordinates = (Pair<Integer,Integer>)tmp;
                 Unit u = gs.getPhysicalGameState().getUnitAt(coordinates.m_a, coordinates.m_b);
                 if (u!=null) {
                     if (u.getPlayer()==playerID) panel.highlight(u);

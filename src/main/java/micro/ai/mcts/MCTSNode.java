@@ -4,12 +4,11 @@
  */
 package micro.ai.mcts;
 
-import micro.ai.evaluation.EvaluationFunction;
 import java.util.List;
 import java.util.Random;
 
-import edu.southwestern.util.random.RandomGenerator;
 import edu.southwestern.util.random.RandomNumbers;
+import micro.ai.evaluation.EvaluationFunction;
 import micro.rts.GameState;
 import micro.rts.PlayerAction;
 
