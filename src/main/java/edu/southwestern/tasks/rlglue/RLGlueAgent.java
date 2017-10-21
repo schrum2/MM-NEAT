@@ -87,7 +87,7 @@ public class RLGlueAgent<T extends Network> extends Organism<T> implements Agent
 	 */
 	@Override
 	public Action agent_step(double reward, Observation o) {
-		return getAction(o);
+		return getAction(reward, o);
 	}
 
 	/**
@@ -99,13 +99,17 @@ public class RLGlueAgent<T extends Network> extends Organism<T> implements Agent
 	public void agent_end(double reward) {
 	}
 
+	public Action getAction(Observation o) {
+		return getAction(0.0, o); // Reward of 0.0 if not specified
+	}
+	
 	/**
 	 * Give an observation, get the action the agent should take
-	 * 
-	 * @param o
+	 * @param reward Immediate reward from action
+	 * @param o Observation from new state
 	 * @return
 	 */
-	public Action getAction(Observation o) {
+	public Action getAction(double reward, Observation o) {
 		Action action = new Action(MMNEAT.tso.getNumDiscreteActionDims(), MMNEAT.tso.getNumContinuousActionDims());
 
 		double[] inputs = MMNEAT.rlGlueExtractor.extract(o);

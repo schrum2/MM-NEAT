@@ -22,6 +22,9 @@ import edu.southwestern.util.stats.StatisticsUtilities;
 
 public class TetrisAfterStateAgent<T extends Network> extends RLGlueAgent<T> {
 
+	private boolean backprop;
+	private double gamma;
+	
 	// Saved in order to replay actions to a desired afterstate. Gets refilled
 	// once the list of actions run out.
 	public List<Integer> currentActionList;
@@ -31,6 +34,8 @@ public class TetrisAfterStateAgent<T extends Network> extends RLGlueAgent<T> {
 	public TetrisAfterStateAgent() {
 		super();
 		currentActionList = new LinkedList<Integer>();
+		backprop = false; // TODO: Set by parameter?
+		gamma = 0.9; // TODO: Set by parameter?
 	}
 
 	/**
@@ -66,7 +71,7 @@ public class TetrisAfterStateAgent<T extends Network> extends RLGlueAgent<T> {
 	 * @return action Action
 	 */
 	@Override
-	public Action getAction(Observation o) {
+	public Action getAction(double r, Observation o) {
 
 		lastObs = o; // saves the current observation for later
 
@@ -76,8 +81,8 @@ public class TetrisAfterStateAgent<T extends Network> extends RLGlueAgent<T> {
 			// call obs to ts
 			TetrisState tempState = observationToTetrisState(o);
 
-//			// TODO: For TD learning
-//			double valueOfS = valueOfState(tempState);
+			// For TD learning
+			double valueOfS = valueOfState(tempState);
 			
 			// System.out.println("Start state");
 			// System.out.println(tempState);
@@ -117,8 +122,14 @@ public class TetrisAfterStateAgent<T extends Network> extends RLGlueAgent<T> {
 
 			int index = StatisticsUtilities.argmax(outputForArgmax); // action = argmax(list)
  
-//			// TODO: For TD learning
-//			double valueOfSPrime = outputPairs.get(index).t1;
+			// TODO: For TD learning
+			double valueOfSPrime = outputPairs.get(index).t1;
+			
+			if(backprop) {
+				// TD learning target
+				double backpropTarget = r + gamma*valueOfSPrime - valueOfS;
+				// TODO: Save update targets somehow
+			}
 			
 			List<Integer> moveSequence = outputPairs.get(index).t2;
 			currentActionList.addAll(moveSequence);
