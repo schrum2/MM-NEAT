@@ -222,4 +222,18 @@ public class TetrisAfterStateAgent<T extends Network> extends RLGlueAgent<T> {
 		}
 		return blockCount;
 	}
+	
+	
+	// TODO: I'm pretty sure that I need to override the methods below to implement
+	//       TD(0) or TD(lambda) within the Tetris player. This algorithm applies
+	//       very specifically to Tetris.
+	
+//	@Override
+//	public Action agent_step(double reward, Observation o) {
+//		return getAction(o);
+//	}
+//
+//	@Override
+//	public void agent_end(double reward) {
+//	}
 }

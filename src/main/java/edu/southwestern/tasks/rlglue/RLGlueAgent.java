@@ -21,7 +21,7 @@ import rlVizLib.messaging.agent.AgentMessages;
  * @param <T>
  *            Type of phenotype
  */
-public class RLGlueAgent<T extends Network> extends Organism<T>implements AgentInterface {
+public class RLGlueAgent<T extends Network> extends Organism<T> implements AgentInterface {
 
 	public T policy;
 
@@ -81,25 +81,22 @@ public class RLGlueAgent<T extends Network> extends Organism<T>implements AgentI
 	/**
 	 * Getter for the "next" action of the observation
 	 * 
-	 * @param d
-	 *            Immediate reward?
-	 * @param o
-	 *            Observation of state
+	 * @param reward Immediate reward?
+	 * @param o Observation of state
 	 * @return action to take in the state
 	 */
 	@Override
-	public Action agent_step(double d, Observation o) {
+	public Action agent_step(double reward, Observation o) {
 		return getAction(o);
 	}
 
 	/**
 	 * Does nothing currently
 	 * 
-	 * @param d
-	 *            Final reward?
+	 * @param reward Final reward
 	 */
 	@Override
-	public void agent_end(double d) {
+	public void agent_end(double reward) {
 	}
 
 	/**
