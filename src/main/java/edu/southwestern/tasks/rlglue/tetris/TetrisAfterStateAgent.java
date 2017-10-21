@@ -72,10 +72,13 @@ public class TetrisAfterStateAgent<T extends Network> extends RLGlueAgent<T> {
 
 		if (currentActionList.isEmpty()) { // if we don't already have a list of
 											// actions to follow
-
+			
 			// call obs to ts
 			TetrisState tempState = observationToTetrisState(o);
 
+//			// TODO: For TD learning
+//			double valueOfS = valueOfState(tempState);
+			
 			// System.out.println("Start state");
 			// System.out.println(tempState);
 			// ArrayList<TetrisStateActionPair> forDebugging = new
@@ -90,27 +93,19 @@ public class TetrisAfterStateAgent<T extends Network> extends RLGlueAgent<T> {
 			// arraylist to hold the actions and outputs for later
 			ArrayList<Pair<Double, List<Integer>>> outputPairs = new ArrayList<Pair<Double, List<Integer>>>(); 
 
-			double[] outputs;
+			double value;
 			// for(pairs in the set){
 			for (TetrisStateActionPair i : tetrisStateHolder) {
-				// Basic features
-				double[] inputs = MMNEAT.rlGlueExtractor.extract(i.t1.get_observation(false));
-				// Scaled to range [0,1] for the neural network
-				double[] inputsScaled = MMNEAT.rlGlueExtractor.scaleInputs(inputs);
-
-				policy.flush(); // remove recurrent activation
-				// outputs = constultPolicy(features) REMEMBER outputs is an
-				// array of 1
-				outputs = this.consultPolicy(inputsScaled);
+				value = valueOfState(i.t1);
 				
 				if(Parameters.parameters.booleanParameter("stepByStep")){
-					System.out.println("Utility:" + outputs[0]);
+					System.out.println("Utility:" + value);
 					System.out.print("Press enter to continue");
 					MiscUtil.waitForReadStringAndEnterKeyPress();
 				}
 				// Associate the policy's score for the after state with the
 				// list of actions leading to it
-				Pair<Double, List<Integer>> tempPair = new Pair<Double, List<Integer>>(outputs[0], i.t2);
+				Pair<Double, List<Integer>> tempPair = new Pair<Double, List<Integer>>(value, i.t2);
 				outputPairs.add(tempPair);
 				// forDebugging.add(i);
 			}
@@ -122,10 +117,11 @@ public class TetrisAfterStateAgent<T extends Network> extends RLGlueAgent<T> {
 
 			int index = StatisticsUtilities.argmax(outputForArgmax); // action = argmax(list)
  
-			for (int k = 0; k < outputPairs.get(index).t2.size(); k++) {
-				currentActionList.add(outputPairs.get(index).t2.get(k)); 
-				// this should add the next action to the linked list in the proper order
-			}
+//			// TODO: For TD learning
+//			double valueOfSPrime = outputPairs.get(index).t1;
+			
+			List<Integer> moveSequence = outputPairs.get(index).t2;
+			currentActionList.addAll(moveSequence);
 			// Let the block settle and a new one spawns
 			currentActionList.add(TetrisState.NONE); 
 		}
@@ -138,6 +134,25 @@ public class TetrisAfterStateAgent<T extends Network> extends RLGlueAgent<T> {
 		return action;
 	}
 
+	/**
+	 * Bundles up the steps for getting a state value for a particular TetrisState.
+	 * Also useful for TD learning
+	 * @param s A TetrisState
+	 * @return Estimated long-term value of state
+	 */
+	private double valueOfState(TetrisState s) {
+		// Basic features
+		double[] inputs = MMNEAT.rlGlueExtractor.extract(s.get_observation(false));
+		// Scaled to range [0,1] for the neural network
+		double[] inputsScaled = MMNEAT.rlGlueExtractor.scaleInputs(inputs);
+
+		policy.flush(); // remove recurrent activation
+		// outputs is an array of length 1
+		double[] outputs = this.consultPolicy(inputsScaled);
+		return outputs[0];
+	}
+	
+	
 	/**
 	 * This method takes over the job of converting an observation to a
 	 * TetrisState
@@ -222,18 +237,4 @@ public class TetrisAfterStateAgent<T extends Network> extends RLGlueAgent<T> {
 		}
 		return blockCount;
 	}
-	
-	
-	// TODO: I'm pretty sure that I need to override the methods below to implement
-	//       TD(0) or TD(lambda) within the Tetris player. This algorithm applies
-	//       very specifically to Tetris.
-	
-//	@Override
-//	public Action agent_step(double reward, Observation o) {
-//		return getAction(o);
-//	}
-//
-//	@Override
-//	public void agent_end(double reward) {
-//	}
 }
