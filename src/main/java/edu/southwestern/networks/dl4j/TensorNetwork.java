@@ -18,4 +18,12 @@ public interface TensorNetwork {
 	 * eliminate recurrent state
 	 */
 	public void flush();
+	/**
+	 * Train using backprop. Each row of the input has as its
+	 * expected output each corresponding row of targets.
+	 * 
+	 * @param input Input examples
+	 * @param labels Corresponding known output targets
+	 */
+	public void fit(INDArray input, INDArray targets);
 }

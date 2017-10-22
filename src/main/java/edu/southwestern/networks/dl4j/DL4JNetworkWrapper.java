@@ -41,6 +41,20 @@ public class DL4JNetworkWrapper implements Network {
 	}
 	
 	/**
+	 * Call the Tensor network's fit method to train using backprop,
+	 * after converting types from 2D arrays to INDArrays.
+	 *  
+	 * @param inputs
+	 * @param outputTargets
+	 */
+	public void fit(double[][] inputs, double[][] outputTargets) {
+		// DL4J requires INDArrays
+		INDArray inputBatchVectors = Nd4j.create(inputs);
+		INDArray outputBatchVectors = Nd4j.create(outputTargets);
+		net.fit(inputBatchVectors, outputBatchVectors);
+	}
+	
+	/**
 	 * Total number of inputs
 	 */
 	@Override

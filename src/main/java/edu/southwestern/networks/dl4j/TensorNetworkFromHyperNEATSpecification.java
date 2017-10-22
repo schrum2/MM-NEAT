@@ -177,8 +177,6 @@ public class TensorNetworkFromHyperNEATSpecification implements TensorNetwork {
 			throw new UnsupportedOperationException("Links from input layer directly to the output layer are not allowed in DL4J networks");
 		}
 		
-		// Output network for testing
-		//Easy.save(tg, "TEMP.xml");
         List<Substrate> substrates = hnt.getSubstrateInformation();
         
         List<Triple<String, String, Boolean>> substrateConnectivity = hnt.getSubstrateConnectivity();
@@ -193,11 +191,6 @@ public class TensorNetworkFromHyperNEATSpecification implements TensorNetwork {
 		// This method heavily relies on the fact that node innovation numbers
 		// in a substrate network's genotype start at 0 and are sequentially numbered
 		// while going through the different substrates at each layer.
-		
-//		System.out.println("model.numParams(): " + model.numParams());
-//		System.out.println("model.getnLayers(): " + model.getnLayers());
-//		System.out.println("model.getLayerNames(): " + model.getLayerNames());
-//		System.out.println(model.summary());
 		
 		Layer[] layers = model.getLayers();
 		
@@ -267,8 +260,6 @@ public class TensorNetworkFromHyperNEATSpecification implements TensorNetwork {
 				layer.setParam("b", biases);
 				
 			} else { // Assume fully connected
-				//System.out.println("BEFORE:\n"+layer.paramTable());
-				
 				INDArray weights = layer.getParam("W"); // Weights
 				int paramPosition = 0; // Position in linear weights array
 				INDArray biases = layer.getParam("b"); // Biases
@@ -318,7 +309,6 @@ public class TensorNetworkFromHyperNEATSpecification implements TensorNetwork {
 			firstSourceSubstrateIndex = firstTargetSubstrateIndex; 
 			sourceLayerDepth = targetLayerDepth;
 			layerStartInnovation = nextLayerStartInnovation;
-			
 			//System.out.println("AFTER\n" + layer.paramTable());
 		}
 	}
@@ -332,6 +322,11 @@ public class TensorNetworkFromHyperNEATSpecification implements TensorNetwork {
 	@Override
 	public void flush() {
 		model.rnnClearPreviousState();
+	}
+
+	@Override
+	public void fit(INDArray input, INDArray targets) {
+		model.fit(input, targets);
 	}
 
 }

@@ -21,4 +21,8 @@ public class TensorNetworkFromMultiLayerNetwork implements TensorNetwork {
 		mln.rnnClearPreviousState();
 	}
 
+	@Override
+	public void fit(INDArray input, INDArray targets) {
+		this.mln.fit(input, targets);
+	}
 }

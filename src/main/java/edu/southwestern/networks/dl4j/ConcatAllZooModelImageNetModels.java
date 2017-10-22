@@ -21,9 +21,6 @@ public class ConcatAllZooModelImageNetModels extends AllZooModelImageNetModels {
 			// Append the next batch of scores
 			scores = Nd4j.concat(1, scores, nextScores);
 		}
-//		System.out.println(scores.length() + ":" + scores.size(0) + ":" + scores.size(1));
-//		System.out.println(scores);
-//		MiscUtil.waitForReadStringAndEnterKeyPress();
 		return scores;
 	}	
 }

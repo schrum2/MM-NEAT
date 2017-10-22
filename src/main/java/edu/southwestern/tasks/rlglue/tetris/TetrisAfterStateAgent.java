@@ -13,6 +13,7 @@ import org.rlcommunity.rlglue.codec.types.Observation;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.networks.Network;
+import edu.southwestern.networks.dl4j.DL4JNetworkWrapper;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.rlglue.RLGlueAgent;
@@ -20,10 +21,17 @@ import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.stats.StatisticsUtilities;
 
+
 public class TetrisAfterStateAgent<T extends Network> extends RLGlueAgent<T> {
 
+	// Used for TD learning
 	private boolean backprop;
 	private double gamma;
+	private int minibatchSize;
+	// Used for TD learning to collect history into learning batches
+	private double[][] batchInputs;
+	private double[][] batchOutputs;
+	private int currentBatchPointer;
 	
 	// Saved in order to replay actions to a desired afterstate. Gets refilled
 	// once the list of actions run out.
@@ -36,6 +44,10 @@ public class TetrisAfterStateAgent<T extends Network> extends RLGlueAgent<T> {
 		currentActionList = new LinkedList<Integer>();
 		backprop = false; // TODO: Set by parameter?
 		gamma = 0.9; // TODO: Set by parameter?
+		minibatchSize = 20; // TODO: Set by parameter?
+		batchInputs = new double[minibatchSize][];
+		batchOutputs = new double[minibatchSize][];
+		currentBatchPointer = 0;
 	}
 
 	/**
@@ -80,9 +92,9 @@ public class TetrisAfterStateAgent<T extends Network> extends RLGlueAgent<T> {
 			
 			// call obs to ts
 			TetrisState tempState = observationToTetrisState(o);
-
-			// For TD learning
-			double valueOfS = valueOfState(tempState);
+			// For TD: network inputs in the current state.
+			// Not used for decision making ... only for learning updates with backprop.
+			double[] inputsInS = MMNEAT.rlGlueExtractor.extract(tempState.get_observation(false));
 			
 			// System.out.println("Start state");
 			// System.out.println(tempState);
@@ -126,9 +138,23 @@ public class TetrisAfterStateAgent<T extends Network> extends RLGlueAgent<T> {
 			double valueOfSPrime = outputPairs.get(index).t1;
 			
 			if(backprop) {
-				// TD learning target
-				double backpropTarget = r + gamma*valueOfSPrime - valueOfS;
-				// TODO: Save update targets somehow
+				// TD learning target:
+				// V(s) should equal (r + gamma*V(s'))
+				double backpropTarget = r + gamma*valueOfSPrime;
+				// Input features
+				batchInputs[currentBatchPointer] = inputsInS;
+				// and associated target
+				batchOutputs[currentBatchPointer] = new double[]{backpropTarget};
+				currentBatchPointer++;
+				
+				// Full batch of experience accumulated
+				if(currentBatchPointer == minibatchSize) {
+					// Unwrap the network from the policy and call fit method to do backprop
+					DL4JNetworkWrapper dl4jNet = (DL4JNetworkWrapper) policy; // Policy must be DL4JNetworkWrapper if backprop is used
+					dl4jNet.fit(batchInputs, batchOutputs);
+					// Reset pointer afterward
+					currentBatchPointer = 0;
+				}
 			}
 			
 			List<Integer> moveSequence = outputPairs.get(index).t2;

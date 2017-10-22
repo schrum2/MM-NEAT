@@ -82,4 +82,9 @@ public abstract class AllZooModelImageNetModels implements TensorNetwork {
 			model.rnnClearPreviousState();
 		}
 	}
+	
+	@Override
+	public void fit(INDArray input, INDArray targets) {
+		throw new UnsupportedOperationException("Don't change pre-trained ImageNet models");
+	}
 }
