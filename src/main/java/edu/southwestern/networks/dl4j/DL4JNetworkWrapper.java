@@ -48,19 +48,20 @@ public class DL4JNetworkWrapper implements Network {
 	 * @param outputTargets
 	 */
 	public void fit(double[][] inputs, double[][] outputTargets) {
-		// DL4J requires INDArrays
-		INDArray inputBatchVectors = Nd4j.create(inputs);
-		// The input arrays sent in are 1D, but may need to be reshaped
-		// to correspond to the actual network input shape.
-		inputBatchVectors = inputBatchVectors.reshape(inputShape);
-		// TODO: There is a problem here with the input shape, and I think it is the batch size changing from 1 to more
-		
-//				inputs.length, // Batch size increased
-//				inputShape[INDEX_INPUT_CHANNELS],
-//				inputShape[INDEX_INPUT_WIDTH],
-//				inputShape[INDEX_INPUT_HEIGHT]);
-		
-		INDArray outputBatchVectors = Nd4j.create(outputTargets);
+		// DL4J requires INDArrays. Create input for hstack.
+		INDArray[] hstackInput = new INDArray[inputs.length];
+		for(int i = 0; i < hstackInput.length; i++) {
+			hstackInput[i] = reshapeInput(inputs[i]);
+		}
+		INDArray inputBatchVectors = Nd4j.hstack(hstackInput);
+		System.out.println("Inputs: " + inputBatchVectors.shapeInfoToString());
+		// Similar procedure for outputs
+		INDArray[] hstackOutput = new INDArray[outputTargets.length];
+		for(int i = 0; i < hstackOutput.length; i++) {
+			hstackOutput[i] = Nd4j.create(outputTargets[i]);
+		}
+		INDArray outputBatchVectors = Nd4j.hstack(hstackOutput);
+		System.out.println("Outputs: " + outputBatchVectors.shapeInfoToString());
 		net.fit(inputBatchVectors, outputBatchVectors);
 	}
 	
@@ -98,13 +99,23 @@ public class DL4JNetworkWrapper implements Network {
 	@Override
 	public double[] process(double[] inputs) {
 		// Put linear inputs into tensor INDArray
-		INDArray tensorInput = Nd4j.create(inputs, inputShape, 'c');
+		INDArray tensorInput = reshapeInput(inputs);
 		// Process using DL4J network
 		INDArray tensorOutput = net.output(tensorInput);
 		// Flatten to 1D array
 		INDArray flat = Nd4j.toFlattened('c', tensorOutput);
 		// Convert to primitive Java array
 		return ArrayUtil.doubleArrayFromINDArray(flat);
+	}
+	
+	/**
+	 * Take linear array of network inputs and reshape into
+	 * an INDArray according to the inputShape.
+	 * @param inputs Linear double array
+	 * @return INDArray with appropriate shape for the network
+	 */
+	public INDArray reshapeInput(double[] inputs) {
+		return Nd4j.create(inputs, inputShape, 'c');
 	}
 
 	/**

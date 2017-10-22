@@ -44,7 +44,7 @@ public class TetrisAfterStateAgent<T extends Network> extends RLGlueAgent<T> {
 		currentActionList = new LinkedList<Integer>();
 		backprop = false; // TODO: Set by parameter?
 		gamma = 0.9; // TODO: Set by parameter?
-		minibatchSize = 20; // TODO: Set by parameter?
+		minibatchSize = 20; //1; // TODO: Set by parameter?
 		batchInputs = new double[minibatchSize][];
 		batchOutputs = new double[minibatchSize][];
 		currentBatchPointer = 0;
@@ -54,8 +54,7 @@ public class TetrisAfterStateAgent<T extends Network> extends RLGlueAgent<T> {
 	 * Troubleshooting method used to look at a Tetris observation before
 	 * converting it to a Tetris state.
 	 *
-	 * @param o
-	 *            RL Glue Observation containing Tetris information
+	 * @param o RL Glue Observation containing Tetris information
 	 * @return String output describing Tetris world
 	 */
 	public static String tetrisObservationToString(Observation o) {
@@ -78,8 +77,7 @@ public class TetrisAfterStateAgent<T extends Network> extends RLGlueAgent<T> {
 	 * the next action from a saved list. Once the list runs out, the search
 	 * process is repeated.
 	 *
-	 * @param o
-	 *            Observation
+	 * @param o Observation
 	 * @return action Action
 	 */
 	@Override
