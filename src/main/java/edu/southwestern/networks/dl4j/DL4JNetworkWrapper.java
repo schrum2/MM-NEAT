@@ -50,6 +50,16 @@ public class DL4JNetworkWrapper implements Network {
 	public void fit(double[][] inputs, double[][] outputTargets) {
 		// DL4J requires INDArrays
 		INDArray inputBatchVectors = Nd4j.create(inputs);
+		// The input arrays sent in are 1D, but may need to be reshaped
+		// to correspond to the actual network input shape.
+		inputBatchVectors = inputBatchVectors.reshape(inputShape);
+		// TODO: There is a problem here with the input shape, and I think it is the batch size changing from 1 to more
+		
+//				inputs.length, // Batch size increased
+//				inputShape[INDEX_INPUT_CHANNELS],
+//				inputShape[INDEX_INPUT_WIDTH],
+//				inputShape[INDEX_INPUT_HEIGHT]);
+		
 		INDArray outputBatchVectors = Nd4j.create(outputTargets);
 		net.fit(inputBatchVectors, outputBatchVectors);
 	}

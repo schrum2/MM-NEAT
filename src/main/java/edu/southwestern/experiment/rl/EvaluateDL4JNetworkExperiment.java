@@ -72,6 +72,7 @@ public class EvaluateDL4JNetworkExperiment implements Experiment {
 				"senseHolesDifferently:true",
 				"hyperNEAT:true", // Prevents extra bias input
 				"steps:500000",
+				"trials:1000", // Lots of trials so same network keeps learning
 				"linkExpressionThreshold:-0.1", // Express all links
 				"stride:1","receptiveFieldSize:3","zeroPadding:false","convolutionWeightSharing:true",
 				"HNProcessDepth:4","HNProcessWidth:4","convolution:true",

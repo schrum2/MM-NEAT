@@ -134,7 +134,6 @@ public class TetrisAfterStateAgent<T extends Network> extends RLGlueAgent<T> {
 
 			int index = StatisticsUtilities.argmax(outputForArgmax); // action = argmax(list)
  
-			// TODO: For TD learning
 			double valueOfSPrime = outputPairs.get(index).t1;
 			
 			if(backprop) {
@@ -149,6 +148,7 @@ public class TetrisAfterStateAgent<T extends Network> extends RLGlueAgent<T> {
 				
 				// Full batch of experience accumulated
 				if(currentBatchPointer == minibatchSize) {
+					System.out.print(" Learn ");
 					// Unwrap the network from the policy and call fit method to do backprop
 					DL4JNetworkWrapper dl4jNet = (DL4JNetworkWrapper) policy; // Policy must be DL4JNetworkWrapper if backprop is used
 					dl4jNet.fit(batchInputs, batchOutputs);
