@@ -2,6 +2,7 @@ package edu.southwestern.networks.dl4j;
 
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.nd4j.linalg.api.ndarray.INDArray;
+import org.nd4j.linalg.dataset.DataSet;
 
 public class TensorNetworkFromMultiLayerNetwork implements TensorNetwork {
 
@@ -24,5 +25,10 @@ public class TensorNetworkFromMultiLayerNetwork implements TensorNetwork {
 	@Override
 	public void fit(INDArray input, INDArray targets) {
 		this.mln.fit(input, targets);
+	}
+
+	@Override
+	public void fit(DataSet minibatch) {
+		this.mln.fit(minibatch);
 	}
 }

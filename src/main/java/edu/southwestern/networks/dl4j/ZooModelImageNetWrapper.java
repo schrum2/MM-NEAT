@@ -6,6 +6,7 @@ import org.deeplearning4j.nn.graph.ComputationGraph;
 import org.deeplearning4j.zoo.PretrainedType;
 import org.deeplearning4j.zoo.ZooModel;
 import org.nd4j.linalg.api.ndarray.INDArray;
+import org.nd4j.linalg.dataset.DataSet;
 
 /**
  * This is a simple facade for sending input to a model from 
@@ -41,6 +42,11 @@ public class ZooModelImageNetWrapper implements TensorNetwork {
 
 	@Override
 	public void fit(INDArray input, INDArray targets) {
+		throw new UnsupportedOperationException("Don't change pre-trained ImageNet models");
+	}
+
+	@Override
+	public void fit(DataSet batch) {
 		throw new UnsupportedOperationException("Don't change pre-trained ImageNet models");
 	}
 }

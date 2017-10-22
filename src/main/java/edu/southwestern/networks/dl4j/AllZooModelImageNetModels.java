@@ -11,6 +11,7 @@ import org.deeplearning4j.zoo.PretrainedType;
 import org.deeplearning4j.zoo.ZooModel;
 import org.deeplearning4j.zoo.ZooType;
 import org.nd4j.linalg.api.ndarray.INDArray;
+import org.nd4j.linalg.dataset.DataSet;
 
 public abstract class AllZooModelImageNetModels implements TensorNetwork {
 
@@ -85,6 +86,11 @@ public abstract class AllZooModelImageNetModels implements TensorNetwork {
 	
 	@Override
 	public void fit(INDArray input, INDArray targets) {
+		throw new UnsupportedOperationException("Don't change pre-trained ImageNet models");
+	}
+
+	@Override
+	public void fit(DataSet batch) {
 		throw new UnsupportedOperationException("Don't change pre-trained ImageNet models");
 	}
 }

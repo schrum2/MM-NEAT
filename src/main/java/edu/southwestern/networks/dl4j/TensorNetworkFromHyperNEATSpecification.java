@@ -18,6 +18,7 @@ import org.deeplearning4j.nn.conf.layers.OutputLayer;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.deeplearning4j.nn.weights.WeightInit;
 import org.nd4j.linalg.api.ndarray.INDArray;
+import org.nd4j.linalg.dataset.DataSet;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
 
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
@@ -329,4 +330,8 @@ public class TensorNetworkFromHyperNEATSpecification implements TensorNetwork {
 		model.fit(input, targets);
 	}
 
+	@Override
+	public void fit(DataSet minibatch) {
+		model.fit(minibatch);
+	}
 }

@@ -1,6 +1,7 @@
 package edu.southwestern.networks.dl4j;
 
 import org.nd4j.linalg.api.ndarray.INDArray;
+import org.nd4j.linalg.dataset.DataSet;
 
 /**
  * Basically a neural network, but has tensors as input and output,
@@ -26,4 +27,9 @@ public interface TensorNetwork {
 	 * @param labels Corresponding known output targets
 	 */
 	public void fit(INDArray input, INDArray targets);
+	/**
+	 * Alternative method to train using backprop.
+	 * @param minibatch Data set that maps inputs to expected outputs
+	 */
+	public void fit(DataSet minibatch);
 }

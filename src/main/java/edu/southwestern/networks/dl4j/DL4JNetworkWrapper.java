@@ -1,6 +1,7 @@
 package edu.southwestern.networks.dl4j;
 
 import org.nd4j.linalg.api.ndarray.INDArray;
+import org.nd4j.linalg.dataset.DataSet;
 import org.nd4j.linalg.factory.Nd4j;
 
 import edu.southwestern.networks.Network;
@@ -62,7 +63,10 @@ public class DL4JNetworkWrapper implements Network {
 		}
 		INDArray outputBatchVectors = Nd4j.hstack(hstackOutput);
 		System.out.println("Outputs: " + outputBatchVectors.shapeInfoToString());
-		net.fit(inputBatchVectors, outputBatchVectors);
+		
+		DataSet minibatch = new DataSet(inputBatchVectors,outputBatchVectors);
+		
+		net.fit(minibatch);
 	}
 	
 	/**
