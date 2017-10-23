@@ -11,7 +11,6 @@ import org.deeplearning4j.nn.conf.GradientNormalization;
 import org.deeplearning4j.nn.conf.MultiLayerConfiguration;
 import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
 import org.deeplearning4j.nn.conf.NeuralNetConfiguration.ListBuilder;
-import org.deeplearning4j.nn.conf.Updater;
 import org.deeplearning4j.nn.conf.inputs.InputType;
 import org.deeplearning4j.nn.conf.layers.ConvolutionLayer;
 import org.deeplearning4j.nn.conf.layers.OutputLayer;
@@ -19,6 +18,7 @@ import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.deeplearning4j.nn.weights.WeightInit;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.dataset.DataSet;
+import org.nd4j.linalg.learning.config.Nesterovs;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
 
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
@@ -58,13 +58,15 @@ public class TensorNetworkFromHyperNEATSpecification implements TensorNetwork {
         NeuralNetConfiguration.Builder builder = new NeuralNetConfiguration.Builder()
                 .seed(Parameters.parameters.integerParameter("randomSeed"))
                 .cacheMode(CacheMode.DEVICE) // KEEP THIS?
-                .updater(Updater.ADAM) // CHANGE THIS?
-                //.iterations(iterations) // WHAT GOES HERE?
+                .learningRate(.01) // WHY LEARNING RATE HERE AND ON THE LAYER?
+                //.biasLearningRate(0.02) // KEEP?
+                .updater(new Nesterovs(0.9))  //.updater(Updater.ADAM) // Use Nesterovs or ADAM or something else?
+                .iterations(1) // CHANGE THIS?
                 .gradientNormalization(GradientNormalization.RenormalizeL2PerLayer) // normalize to prevent vanishing or exploding gradients
                 .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
-                .l1(1e-4) // KEEP?
-                .regularization(true) // KEEP?
-                .l2(5 * 1e-4); // KEEP?
+                //.l1(1e-4) // KEEP?
+                //.l2(5 * 1e-4) // KEEP?
+                .regularization(true); // KEEP?
                 
         int kernel = Parameters.parameters.integerParameter("receptiveFieldSize");
         int[] kernelArray = new int[]{kernel, kernel};
@@ -111,7 +113,8 @@ public class TensorNetworkFromHyperNEATSpecification implements TensorNetwork {
 				layer = layer
 						.nOut(processWidth)
 						.weightInit(WeightInit.XAVIER_UNIFORM) // Keep this?
-						.activation(ActivationFunctions.getDL4JEquivalent(ftype))//.learningRateDecayPolicy(LearningRatePolicy.Step)
+						.activation(ActivationFunctions.getDL4JEquivalent(ftype))
+						//.learningRateDecayPolicy(LearningRatePolicy.Step) // KEEP?
 						.learningRate(1e-2) // Change?
 						.biasInit(1e-2) // Change?
 						.biasLearningRate(1e-2*2); // Change?
