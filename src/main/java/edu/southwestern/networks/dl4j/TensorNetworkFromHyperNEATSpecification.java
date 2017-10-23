@@ -144,7 +144,7 @@ public class TensorNetworkFromHyperNEATSpecification implements TensorNetwork {
 //		System.out.println("output:" + substrateIndex + ":" + outputFtype);
 
 		listBuilder = listBuilder
-				.layer(hiddenLayer, new OutputLayer.Builder(LossFunctions.LossFunction.NEGATIVELOGLIKELIHOOD) // Use this Loss function?
+				.layer(hiddenLayer, new OutputLayer.Builder(LossFunctions.LossFunction.MSE)
 						.name("output")
 						.nOut(outputCount)
 						.activation(ActivationFunctions.getDL4JEquivalent(outputFtype))
@@ -403,7 +403,7 @@ public class TensorNetworkFromHyperNEATSpecification implements TensorNetwork {
         		.biasLearningRate(1e-2*2).build());
 				
 		listBuilder = listBuilder
-				.layer(4, new OutputLayer.Builder(LossFunctions.LossFunction.NEGATIVELOGLIKELIHOOD) 
+				.layer(4, new OutputLayer.Builder(LossFunctions.LossFunction.MSE) 
 						.name("output")
 						.nOut(1)
 						.activation(Activation.TANH)
