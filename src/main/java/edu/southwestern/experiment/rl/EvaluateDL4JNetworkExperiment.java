@@ -74,6 +74,8 @@ public class EvaluateDL4JNetworkExperiment implements Experiment {
 				"steps:500000",
 				"trials:1000", // Lots of trials so same network keeps learning
 				"linkExpressionThreshold:-0.1", // Express all links
+				"heterogeneousSubstrateActivations:true", // Allow mix of activation functions
+				"inputsUseID:true", // Inputs are Identity (mandatory in DL4J?)
 				"stride:1","receptiveFieldSize:3","zeroPadding:false","convolutionWeightSharing:true",
 				"HNProcessDepth:4","HNProcessWidth:4","convolution:true",
 				"experiment:edu.southwestern.experiment.rl.EvaluateDL4JNetworkExperiment"});

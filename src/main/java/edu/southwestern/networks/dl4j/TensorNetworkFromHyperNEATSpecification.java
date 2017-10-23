@@ -341,6 +341,10 @@ public class TensorNetworkFromHyperNEATSpecification implements TensorNetwork {
 		model.fit(minibatch);
 	}
 	
+	/**
+	 * This whole method was just used for troubleshooting.
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		// Minimal example to test input shape issues
 		Parameters.initializeParameterCollections(new String[] {"runNumber:0","randomSeed:0","io:false","netio:false","maxGens:10","watch:false",

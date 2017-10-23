@@ -55,14 +55,14 @@ public class DL4JNetworkWrapper implements Network {
 			hstackInput[i] = reshapeInput(inputs[i]);
 		}
 		INDArray inputBatchVectors = Nd4j.concat(0,hstackInput);
-		System.out.println("Inputs: " + inputBatchVectors.shapeInfoToString());
+		//System.out.println("Inputs: " + inputBatchVectors.shapeInfoToString());
 		// Similar procedure for outputs
 		INDArray[] hstackOutput = new INDArray[outputTargets.length];
 		for(int i = 0; i < hstackOutput.length; i++) {
 			hstackOutput[i] = Nd4j.create(outputTargets[i]);
 		}
 		INDArray outputBatchVectors = Nd4j.concat(0,hstackOutput);
-		System.out.println("Outputs: " + outputBatchVectors.shapeInfoToString());
+		//System.out.println("Outputs: " + outputBatchVectors.shapeInfoToString());
 		
 		DataSet minibatch = new DataSet(inputBatchVectors,outputBatchVectors);
 		
