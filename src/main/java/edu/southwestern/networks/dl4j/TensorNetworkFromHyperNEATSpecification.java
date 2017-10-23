@@ -16,8 +16,10 @@ import org.deeplearning4j.nn.conf.layers.ConvolutionLayer;
 import org.deeplearning4j.nn.conf.layers.OutputLayer;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.deeplearning4j.nn.weights.WeightInit;
+import org.nd4j.linalg.activations.Activation;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.dataset.DataSet;
+import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.learning.config.Nesterovs;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
 
@@ -336,5 +338,95 @@ public class TensorNetworkFromHyperNEATSpecification implements TensorNetwork {
 	@Override
 	public void fit(DataSet minibatch) {
 		model.fit(minibatch);
+	}
+	
+	public static void main(String[] args) {
+		// Minimal example to test input shape issues
+		
+        NeuralNetConfiguration.Builder builder = new NeuralNetConfiguration.Builder()
+                .seed(123)
+                .miniBatch(true) 
+                .cacheMode(CacheMode.DEVICE) 
+                .learningRate(.01) 
+                .updater(new Nesterovs(0.9)) 
+                .iterations(1) 
+                .gradientNormalization(GradientNormalization.RenormalizeL2PerLayer) 
+                .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
+                .regularization(true); // KEEP?
+                
+        int[] kernelArray = new int[]{3,3};
+        int[] strideArray = new int[]{1,1};
+        int[] zeroPaddingArray = new int[]{0,0}; 
+		int processWidth = 4;
+        
+        ListBuilder listBuilder = builder.list(); // Building the DL4J network
+
+        listBuilder = listBuilder.layer(0, new ConvolutionLayer.Builder(kernelArray, strideArray, zeroPaddingArray)
+        		.name("cnn1")
+        		.convolutionMode(ConvolutionMode.Strict)
+        		.nIn(2) // 2 input channels
+        		.nOut(processWidth)
+        		.weightInit(WeightInit.XAVIER_UNIFORM)
+        		.activation(Activation.RELU)
+        		.learningRate(1e-2) 
+        		.biasInit(1e-2) 
+        		.biasLearningRate(1e-2*2).build());
+
+        listBuilder = listBuilder.layer(1, new ConvolutionLayer.Builder(kernelArray, strideArray, zeroPaddingArray)
+        		.name("cnn2")
+        		.convolutionMode(ConvolutionMode.Strict)
+        		.nOut(processWidth)
+        		.weightInit(WeightInit.XAVIER_UNIFORM)
+        		.activation(Activation.RELU)
+        		.learningRate(1e-2) 
+        		.biasInit(1e-2) 
+        		.biasLearningRate(1e-2*2).build());
+				
+        listBuilder = listBuilder.layer(2, new ConvolutionLayer.Builder(kernelArray, strideArray, zeroPaddingArray)
+        		.name("cnn3")
+        		.convolutionMode(ConvolutionMode.Strict)
+        		.nOut(processWidth)
+        		.weightInit(WeightInit.XAVIER_UNIFORM)
+        		.activation(Activation.RELU)
+        		.learningRate(1e-2) 
+        		.biasInit(1e-2) 
+        		.biasLearningRate(1e-2*2).build());
+				
+        listBuilder = listBuilder.layer(3, new ConvolutionLayer.Builder(kernelArray, strideArray, zeroPaddingArray)
+        		.name("cnn4")
+        		.convolutionMode(ConvolutionMode.Strict)
+        		.nOut(processWidth)
+        		.weightInit(WeightInit.XAVIER_UNIFORM)
+        		.activation(Activation.RELU)
+        		.learningRate(1e-2) 
+        		.biasInit(1e-2) 
+        		.biasLearningRate(1e-2*2).build());
+				
+		listBuilder = listBuilder
+				.layer(4, new OutputLayer.Builder(LossFunctions.LossFunction.NEGATIVELOGLIKELIHOOD) 
+						.name("output")
+						.nOut(1)
+						.activation(Activation.TANH)
+						.build());
+
+		MultiLayerConfiguration conf = listBuilder
+				.backprop(true)
+				.pretrain(false)
+				.setInputType(InputType.convolutional(20, 10, 2))
+				.build();
+
+		MultiLayerNetwork model = new MultiLayerNetwork(conf);
+        model.init();      
+
+        double[] linearInputs = new double[400];
+        int[] inputShape = new int[] {1, 2, 20, 10}; // 2 separate 20 by 10 inputs
+        
+        INDArray input = Nd4j.create(linearInputs, inputShape, 'c');
+        System.out.println(input.shapeInfoToString());
+        INDArray output = model.output(input, false); 
+        System.out.println(output.shapeInfoToString());
+        
+        // Try to fit it to its own output
+        model.fit(input, output);
 	}
 }
