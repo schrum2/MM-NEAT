@@ -19,8 +19,8 @@ public class DL4JNetworkWrapper implements Network {
 
 	public static final int INDEX_INPUT_BATCH = 0;
 	public static final int INDEX_INPUT_CHANNELS = 1;
-	public static final int INDEX_INPUT_WIDTH = 2;
-	public static final int INDEX_INPUT_HEIGHT = 3;
+	public static final int INDEX_INPUT_HEIGHT = 2;
+	public static final int INDEX_INPUT_WIDTH = 3;
 	
 	private TensorNetwork net;
 	private int[] inputShape; // batch size, channels, width, height

@@ -23,6 +23,7 @@ import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.learning.config.Nesterovs;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
 
+import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype.LinkGene;
 import edu.southwestern.networks.ActivationFunctions;
@@ -159,10 +160,10 @@ public class TensorNetworkFromHyperNEATSpecification implements TensorNetwork {
 						inputShape[DL4JNetworkWrapper.INDEX_INPUT_CHANNELS]))
 				.build();
 
-        model = new MultiLayerNetwork(conf);
-        model.init();        
+		model = new MultiLayerNetwork(conf);
+		model.init();        
 	}
-	
+
 	/**
 	 * The HyperNEATCPPNGenotype can be used to create a large substrate network TWEANNGenotype
 	 * that specifies all of the weights in the network directly. If both the TWEANNGenotype and
@@ -342,7 +343,26 @@ public class TensorNetworkFromHyperNEATSpecification implements TensorNetwork {
 	
 	public static void main(String[] args) {
 		// Minimal example to test input shape issues
+		Parameters.initializeParameterCollections(new String[] {"runNumber:0","randomSeed:0","io:false","netio:false","maxGens:10","watch:false",
+				"task:edu.southwestern.tasks.rlglue.tetris.HyperNEATTetrisTask",
+				"rlGlueEnvironment:org.rlcommunity.environments.tetris.Tetris",
+				"rlGlueExtractor:edu.southwestern.tasks.rlglue.featureextractors.tetris.RawTetrisStateExtractor",
+				"rlGlueAgent:edu.southwestern.tasks.rlglue.tetris.TetrisAfterStateAgent",
+				"splitRawTetrisInputs:true",
+				"senseHolesDifferently:true",
+				"hyperNEAT:true", // Prevents extra bias input
+				"steps:500000",
+				"trials:1000", // Lots of trials so same network keeps learning
+				"linkExpressionThreshold:-0.1", // Express all links
+				"heterogeneousSubstrateActivations:true", // Allow mix of activation functions
+				"inputsUseID:true", // Inputs are Identity (mandatory in DL4J?)
+				"stride:1","receptiveFieldSize:3","zeroPadding:false","convolutionWeightSharing:true",
+				"HNProcessDepth:4","HNProcessWidth:4","convolution:true",
+				"experiment:edu.southwestern.experiment.rl.EvaluateDL4JNetworkExperiment"});
+		MMNEAT.loadClasses();
 		
+
+		// This network is too idealized. Need to get the real deal to cause the error/crash
         NeuralNetConfiguration.Builder builder = new NeuralNetConfiguration.Builder()
                 .seed(123)
                 .miniBatch(true) 
@@ -415,14 +435,34 @@ public class TensorNetworkFromHyperNEATSpecification implements TensorNetwork {
 				.setInputType(InputType.convolutional(20, 10, 2))
 				.build();
 
-		MultiLayerNetwork model = new MultiLayerNetwork(conf);
+		// For some reason, this model works
+		MultiLayerNetwork niceModel = new MultiLayerNetwork(conf);
+		niceModel.init();
+		
+		
+		MultiLayerNetwork model = new TensorNetworkFromHyperNEATSpecification().model;
         model.init();      
 
+        System.out.println("NICE MODEL");
+        System.out.println(niceModel.summary());
+        System.out.println(niceModel.getLayerWiseConfigurations());
+
+        
+        System.out.println("BAD MODEL");
+        System.out.println(model.summary());
+        System.out.println(model.getLayerWiseConfigurations());
+        
         double[] linearInputs = new double[400];
         int[] inputShape = new int[] {1, 2, 20, 10}; // 2 separate 20 by 10 inputs
         
         INDArray input = Nd4j.create(linearInputs, inputShape, 'c');
         System.out.println(input.shapeInfoToString());
+        
+        INDArray niceOutput = niceModel.output(input, false); 
+        // Try to fit it to its own output
+        niceModel.fit(input, niceOutput);
+        
+        
         INDArray output = model.output(input, false); 
         System.out.println(output.shapeInfoToString());
         
