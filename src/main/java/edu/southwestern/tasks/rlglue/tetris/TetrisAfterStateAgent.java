@@ -183,6 +183,7 @@ public class TetrisAfterStateAgent<T extends Network> extends RLGlueAgent<T> {
 		policy.flush(); // remove recurrent activation
 		// outputs is an array of length 1
 		double[] outputs = this.consultPolicy(inputsScaled);
+		assert !Double.isNaN(outputs[0]) : "Tetris eval result is NaN";
 		return outputs[0];
 	}
 	
