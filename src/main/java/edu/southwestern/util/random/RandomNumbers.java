@@ -273,4 +273,13 @@ public class RandomNumbers {
 			System.out.println(cauchies[i] + "\t" + gaussians[i]);
 		}
 	}
+
+	/**
+	 * Return true if random double in [0,1] is less than input, and false otherwise
+	 * @param chance Chance of true result
+	 * @return true with chance probability, false otherwise
+	 */
+	public static boolean randomCoin(double chance) {
+		return randomGenerator.nextDouble() < chance;
+	}
 }

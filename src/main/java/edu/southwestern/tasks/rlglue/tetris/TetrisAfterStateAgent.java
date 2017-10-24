@@ -19,6 +19,7 @@ import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.rlglue.RLGlueAgent;
 import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.Pair;
+import edu.southwestern.util.random.RandomNumbers;
 import edu.southwestern.util.stats.StatisticsUtilities;
 
 
@@ -32,6 +33,8 @@ public class TetrisAfterStateAgent<T extends Network> extends RLGlueAgent<T> {
 	private double[][] batchInputs;
 	private double[][] batchOutputs;
 	private int currentBatchPointer;
+	private boolean rlEpsilonGreedy;
+	private double rlEpsilon;
 	
 	// Saved in order to replay actions to a desired afterstate. Gets refilled
 	// once the list of actions run out.
@@ -45,6 +48,8 @@ public class TetrisAfterStateAgent<T extends Network> extends RLGlueAgent<T> {
 		backprop = Parameters.parameters.booleanParameter("rlBackprop");
 		gamma = Parameters.parameters.doubleParameter("rlGamma");
 		minibatchSize = Parameters.parameters.integerParameter("rlBatchSize");
+		rlEpsilonGreedy = Parameters.parameters.booleanParameter("rlEpsilonGreedy");
+		rlEpsilon = Parameters.parameters.doubleParameter("rlEpsilon");
 		batchInputs = new double[minibatchSize][];
 		batchOutputs = new double[minibatchSize][];
 		currentBatchPointer = 0;
@@ -130,8 +135,14 @@ public class TetrisAfterStateAgent<T extends Network> extends RLGlueAgent<T> {
 				outputForArgmax[i] = outputPairs.get(i).t1;
 			}
 
-			int index = StatisticsUtilities.argmax(outputForArgmax); // action = argmax(list)
- 
+			// Stores index of move to take
+			int index;
+			if(rlEpsilonGreedy && RandomNumbers.randomCoin(rlEpsilon)) { // Explore random action
+				index = RandomNumbers.randomGenerator.nextInt(outputForArgmax.length);
+			} else { // Exploit best known action
+				index = StatisticsUtilities.argmax(outputForArgmax); // action = argmax(list)
+			}
+			
 			double valueOfSPrime = outputPairs.get(index).t1;
 			
 			if(backprop) {

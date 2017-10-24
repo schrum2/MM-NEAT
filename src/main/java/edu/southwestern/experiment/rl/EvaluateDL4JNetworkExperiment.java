@@ -77,7 +77,7 @@ public class EvaluateDL4JNetworkExperiment implements Experiment {
 				"linkExpressionThreshold:-0.1", // Express all links
 				"heterogeneousSubstrateActivations:true", // Allow mix of activation functions
 				"inputsUseID:true", // Inputs are Identity (mandatory in DL4J?)
-				"rlGamma:0.99", "rlBackprop:true", "backpropLearningRate:0.1", "rlBatchSize:20",
+				"rlGamma:0.99", "rlBackprop:true", "backpropLearningRate:0.1", "rlBatchSize:20", "rlEpsilonGreedy:true", "rlEpsilon:0.1",
 				"ftype:"+ActivationFunctions.FTYPE_RE_LU, // Because Tetris scores are unbounded positive values
 				"stride:1","receptiveFieldSize:3","zeroPadding:false","convolutionWeightSharing:true",
 				"HNProcessDepth:4","HNProcessWidth:4","convolution:true",

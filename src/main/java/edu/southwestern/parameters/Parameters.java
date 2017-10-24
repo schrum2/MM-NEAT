@@ -663,8 +663,10 @@ public class Parameters {
 		booleanOptions.add("gvgaiTimestep", false, "Use the GVGAI Timestep as a Selection Function");
 		booleanOptions.add("simplifiedInteractiveInterface", true, "Determines how many buttons to show on the interactive evolution interfaces");
 		booleanOptions.add("allowCubeDisplacement", true, "Allows displacement of individual voxels in 3D objects and animations");
-		booleanOptions.add("rlBackprop", true, "Whether to do backprop learning updates during reinforcement learning");
+		booleanOptions.add("rlBackprop", false, "Whether to do backprop learning updates during reinforcement learning");
+		booleanOptions.add("rlEpsilonGreedy", false, "Whether to use an epsilon greedy policy when using reinforcement learning");
 		// Double parameters
+		doubleOptions.add("rlEpsilon", 0.1, "Frequency of completely random actions during Reinforcement Learning");
 		doubleOptions.add("rlGamma", 0.99, "Discount factor used for Reinforcement Learning");
 		doubleOptions.add("inheritProportion", 0.4, "Portion of a parent's fitness that contributes to child fitness (with inheritFitness, as in LEEA)");
 		doubleOptions.add("linkExpressionThreshold", 0.2, "Threshold for hyperNEAT output to result in an expressed link");
