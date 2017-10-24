@@ -63,6 +63,7 @@ public class DL4JNetworkWrapper implements Network {
 		}
 		INDArray outputBatchVectors = Nd4j.concat(0,hstackOutput);
 		//System.out.println("Outputs: " + outputBatchVectors.shapeInfoToString());
+		System.out.println(outputBatchVectors);
 		
 		DataSet minibatch = new DataSet(inputBatchVectors,outputBatchVectors);
 		

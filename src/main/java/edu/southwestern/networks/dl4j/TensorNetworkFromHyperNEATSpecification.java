@@ -61,7 +61,7 @@ public class TensorNetworkFromHyperNEATSpecification implements TensorNetwork {
         NeuralNetConfiguration.Builder builder = new NeuralNetConfiguration.Builder()
                 .seed(Parameters.parameters.integerParameter("randomSeed"))
                 .cacheMode(CacheMode.DEVICE) // KEEP THIS?
-                .learningRate(.01) // WHY LEARNING RATE HERE AND ON THE LAYER?
+                .learningRate(Parameters.parameters.doubleParameter("backpropLearningRate"))
                 //.biasLearningRate(0.02) // KEEP?
                 .updater(new Nesterovs(0.9))  //.updater(Updater.ADAM) // Use Nesterovs or ADAM or something else?
                 .iterations(1) // CHANGE THIS?
@@ -118,7 +118,7 @@ public class TensorNetworkFromHyperNEATSpecification implements TensorNetwork {
 						.weightInit(WeightInit.XAVIER_UNIFORM) // Keep this?
 						.activation(ActivationFunctions.getDL4JEquivalent(ftype))
 						//.learningRateDecayPolicy(LearningRatePolicy.Step) // KEEP?
-						.learningRate(1e-2) // Change?
+						//.learningRate(1e-2) // KEEP? 
 						.biasInit(1e-2) // Change?
 						.biasLearningRate(1e-2*2); // Change?
 

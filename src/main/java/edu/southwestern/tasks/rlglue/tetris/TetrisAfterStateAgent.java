@@ -42,9 +42,9 @@ public class TetrisAfterStateAgent<T extends Network> extends RLGlueAgent<T> {
 	public TetrisAfterStateAgent() {
 		super();
 		currentActionList = new LinkedList<Integer>();
-		backprop = false; // TODO: Set by parameter?
-		gamma = 0.9; // TODO: Set by parameter?
-		minibatchSize = 20; //1; // TODO: Set by parameter?
+		backprop = Parameters.parameters.booleanParameter("rlBackprop");
+		gamma = Parameters.parameters.doubleParameter("rlGamma");
+		minibatchSize = Parameters.parameters.integerParameter("rlBatchSize");
 		batchInputs = new double[minibatchSize][];
 		batchOutputs = new double[minibatchSize][];
 		currentBatchPointer = 0;
@@ -146,7 +146,6 @@ public class TetrisAfterStateAgent<T extends Network> extends RLGlueAgent<T> {
 				
 				// Full batch of experience accumulated
 				if(currentBatchPointer == minibatchSize) {
-					System.out.print(" Learn ");
 					// Unwrap the network from the policy and call fit method to do backprop
 					DL4JNetworkWrapper dl4jNet = (DL4JNetworkWrapper) policy; // Policy must be DL4JNetworkWrapper if backprop is used
 					dl4jNet.fit(batchInputs, batchOutputs);

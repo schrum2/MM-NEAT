@@ -6,6 +6,7 @@ import java.util.List;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.ContainerGenotype;
 import edu.southwestern.experiment.Experiment;
+import edu.southwestern.networks.ActivationFunctions;
 import edu.southwestern.networks.dl4j.DL4JNetworkWrapper;
 import edu.southwestern.networks.dl4j.TensorNetwork;
 import edu.southwestern.networks.dl4j.TensorNetworkFromHyperNEATSpecification;
@@ -76,6 +77,8 @@ public class EvaluateDL4JNetworkExperiment implements Experiment {
 				"linkExpressionThreshold:-0.1", // Express all links
 				"heterogeneousSubstrateActivations:true", // Allow mix of activation functions
 				"inputsUseID:true", // Inputs are Identity (mandatory in DL4J?)
+				"rlGamma:0.99", "rlBackprop:true", "backpropLearningRate:0.1", "rlBatchSize:20",
+				"ftype:"+ActivationFunctions.FTYPE_RE_LU, // Because Tetris scores are unbounded positive values
 				"stride:1","receptiveFieldSize:3","zeroPadding:false","convolutionWeightSharing:true",
 				"HNProcessDepth:4","HNProcessWidth:4","convolution:true",
 				"experiment:edu.southwestern.experiment.rl.EvaluateDL4JNetworkExperiment"});

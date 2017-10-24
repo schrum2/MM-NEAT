@@ -313,7 +313,6 @@ public class Parameters {
 		integerOptions.add("defaultFramePause", 50, "Default pause length between frames in AnimationBreeder");
 		integerOptions.add("steadyStateIndividualsPerGeneration", 400, "How many individuals count as a log generation for SteadyStateEAs");
 		integerOptions.add("numShapeInnovationSamples", 3, "Number of angles to take 2D image of 3D shape from for shape innovation task");
-		//integerOptions.add("remixSamplesPerDimension", 3, "Number of remix samples to input to Picture Remixer"); //used for alternative approach of remixing pictures
 		integerOptions.add("receptiveFieldSize", 3, "Size of input windows for convolutional structures");
 		integerOptions.add("stride", 1, "Offset between receptive fields in convolutional structures");
 		integerOptions.add("hybrIDSwitchGeneration", 100, "Generation when HybrID should switch from HyperNEAT to NEAT");
@@ -327,6 +326,7 @@ public class Parameters {
 		integerOptions.add("gvgaiLevel", 0, "GVGAI level to be played; must be 0 - 4");
 		integerOptions.add("gvgaiReactField", 5, "Size of the square to be evaluated by the GVGAI Reactive Player; must be an odd number");
 		integerOptions.add("boardGameOpeningRandomMoves", 0, "In board games, making the first few moves random makes evals noisy in a useful way");
+		integerOptions.add("rlBatchSize", 20, "Number of state transitions to log before doing an RL experience replay batch update");
 		// Long parameters
 		longOptions.add("lastInnovation", 0l, "Highest innovation number used so far");
 		longOptions.add("lastGenotypeId", 0l, "Highest genotype id used so far");
@@ -403,14 +403,12 @@ public class Parameters {
 		//cooperativeIndividualAndTeamSelection is irrelevant because cooperative team selection already includes the cooperativeIndividualSelection functions
 		//So it will just have two copies of the same fitnesses 
 		booleanOptions.add("cooperativeIndividualAndTeamSelection", false, "Cooperative Predators with encouraged distance minimization and maximizing prey caught for all populations at once");
-		booleanOptions.add("cooperativeTeamAndAggregateTeamSelection", false, "Cooperative Predators with encouraged distance minimization and maximizing prey caught as a team"
-				+ " and for all populations at once");
+		booleanOptions.add("cooperativeTeamAndAggregateTeamSelection", false, "Cooperative Predators with encouraged distance minimization and maximizing prey caught as a team and for all populations at once");
 		booleanOptions.add("preyLongSurvivalTime", false, "Turn on to encourage each prey to maximize their survival time");
 		booleanOptions.add("preyMaximizeDistance", false, "Turn on to encourage prey to maximize their distance from the predators at the end of the game");
 		booleanOptions.add("preyMinimizeCaught", false, "Turn on to encourage prey to minimize how many of them are caught");
 		booleanOptions.add("preyCoOpCCQ", false, "Turn on to encourage each independent prey be caught less, survive longer and maximize distance to each individual predator");
-		booleanOptions.add("predatorOneHerdCoOpCCQ", false, "Turn on to encourage each independent predator to catch more prey, catch quickly and minimize distance to each individual prey"
-				+ " other than one predator, who minimizes the distance between the prey");
+		booleanOptions.add("predatorOneHerdCoOpCCQ", false, "Turn on to encourage each independent predator to catch more prey, catch quickly and minimize distance to each individual prey other than one predator, who minimizes the distance between the prey");
 		booleanOptions.add("predatorCoOpCCQ", false, "Turn on to encourage each independent predator to catch more prey, catch quickly and minimize distance to each individual prey");
 		booleanOptions.add("predatorHerdPrey", false, "Turn on to encourage minimizing the distance between the prey");
 		booleanOptions.add("predatorCatchCloseQuick", false, "Turn on to encourage catching a higher number of the prey quickly and getting close to the prey");
@@ -665,7 +663,9 @@ public class Parameters {
 		booleanOptions.add("gvgaiTimestep", false, "Use the GVGAI Timestep as a Selection Function");
 		booleanOptions.add("simplifiedInteractiveInterface", true, "Determines how many buttons to show on the interactive evolution interfaces");
 		booleanOptions.add("allowCubeDisplacement", true, "Allows displacement of individual voxels in 3D objects and animations");
+		booleanOptions.add("rlBackprop", true, "Whether to do backprop learning updates during reinforcement learning");
 		// Double parameters
+		doubleOptions.add("rlGamma", 0.99, "Discount factor used for Reinforcement Learning");
 		doubleOptions.add("inheritProportion", 0.4, "Portion of a parent's fitness that contributes to child fitness (with inheritFitness, as in LEEA)");
 		doubleOptions.add("linkExpressionThreshold", 0.2, "Threshold for hyperNEAT output to result in an expressed link");
 		doubleOptions.add("tugGoalIncrement0", 0.0, "Set amount to increase goal 0 by when using TUG");
@@ -723,7 +723,7 @@ public class Parameters {
 		doubleOptions.add("realMutateRate", 0.3, "Mutation rate for modifying indexes in real-valued string");
 		doubleOptions.add("crossoverRate", 0.5, "Rate of crossover if mating is used");
 		doubleOptions.add("mlpMutationRate", 0.1, "Rate of mutation for MLPs");
-		doubleOptions.add("backpropLearningRate", 0.1, "Rate backprop learning for MLPs");
+		doubleOptions.add("backpropLearningRate", 0.1, "Rate backprop learning for neural networks");
 		doubleOptions.add("monsterRaySpacing", Math.PI / 8.0, "Angle, in radians, between monster ray traces");
 		doubleOptions.add("monsterRayLength", 5.0 * Breve2DGame.AGENT_MAGNITUDE, "Length of monster ray traces");
 		doubleOptions.add("crossExcessRate", 0.0, "Portion of TWEANN crossovers that include excess/disjoint genes");
