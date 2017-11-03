@@ -20,7 +20,7 @@ import edu.southwestern.util.random.RandomNumbers;
  */
 public class ActivationFunctions {
 
-	public static final int MAX_POSSIBLE_ACTIVATION_FUNCTIONS = 27;
+	public static final int MAX_POSSIBLE_ACTIVATION_FUNCTIONS = 28;
 
 	/**
 	 * Initialize the array list for all ftypes
@@ -54,6 +54,7 @@ public class ActivationFunctions {
 	public static final int FTYPE_FULLSIGMOID = 24;
 	public static final int FTYPE_FULLGAUSS = 25;
 	public static final int FTYPE_COS = 26;
+	public static final int FTYPE_SIL = 27;
 
 	private static HashMap<Integer,ActivationFunction> functionMap;
 	
@@ -81,6 +82,7 @@ public class ActivationFunctions {
 		functionMap.put(FTYPE_FULLSIGMOID, new FullSigmoidFunction());
 		functionMap.put(FTYPE_FULLGAUSS, new FullGaussianFunction());
 		functionMap.put(FTYPE_COS, new CosineFunction());
+		functionMap.put(FTYPE_SIL, new SiLFunction());
 	}
 	
 	/**
@@ -111,6 +113,7 @@ public class ActivationFunctions {
 		list.add(FTYPE_FULLSIGMOID);
 		list.add(FTYPE_FULLGAUSS);
 		list.add(FTYPE_COS);
+		list.add(FTYPE_SIL);
 		return list;
 	}
 	
@@ -182,6 +185,9 @@ public class ActivationFunctions {
 		}
 		if (Parameters.parameters.booleanParameter("includeCosineFunction")) {
 			availableActivationFunctions.add(FTYPE_COS);
+		}
+		if (Parameters.parameters.booleanParameter("includeSiLFunction")) {
+			availableActivationFunctions.add(FTYPE_SIL);
 		}
 	}
 

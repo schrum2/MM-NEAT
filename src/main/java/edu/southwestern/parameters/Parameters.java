@@ -447,6 +447,7 @@ public class Parameters {
 		booleanOptions.add("includeFullSawtoothFunction", true, "Function for full sawtooth function. If true, add to the function set");
 		booleanOptions.add("includeTriangleWaveFunction", true, "Function for triangle wave function. If true, add to the function set");
 		booleanOptions.add("includeSquareWaveFunction", true, "Function for square wave function. If true, add to the function set");
+		booleanOptions.add("includeSiLFunction", false, "Function for sigmoid weighted linear unit function. If true, add to the function set");
 		booleanOptions.add("finalPassOnOutputActivation", false, "Empty all remaining activation from network output layer");
 		booleanOptions.add("logGhostLocOnPowerPill", false, "Log ghost locations corresponding to each eaten power pill");
 		booleanOptions.add("breveDamageOnly", false, "Breve domains only care about damage objectives");
