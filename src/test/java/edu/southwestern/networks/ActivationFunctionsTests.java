@@ -201,5 +201,22 @@ public class ActivationFunctionsTests {
 			assertEquals(keyActivationAnswers[i], ActivationFunctions.activation(ActivationFunctions.FTYPE_SQUAREWAVE, keyActivationInputs[i]), .00001);
 		}
 	}
+		
+
+		/**
+		 * tests  the sigmoid weighted linear unit of the input
+		 */
+		@Test
+		public void test_SiL() {
+			double[] keyActivationInputs = { -7,      -2,       -1, 0,      1,      2,      3, 7};
+			double[] keyActivationAnswers = {  -0.006, -0.2384, -0.26894, 0, 0.7310, 1.7616, 2.8577, 6.9936};
+			assertEquals(keyActivationInputs.length, keyActivationAnswers.length);
+			for (int i = 0; i < keyActivationAnswers.length; i++) {
+				assertEquals(keyActivationAnswers[i], ActivationFunctions.activation(ActivationFunctions.FTYPE_SIL, keyActivationInputs[i]), .001);
+			}
+		
+	}
+	
+	
 	
 }

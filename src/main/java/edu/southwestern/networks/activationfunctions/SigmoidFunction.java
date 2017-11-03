@@ -2,8 +2,6 @@ package edu.southwestern.networks.activationfunctions;
 
 import org.nd4j.linalg.activations.Activation;
 
-import edu.southwestern.networks.ActivationFunctions;
-
 public class SigmoidFunction implements ActivationFunction {
 
 	/**
@@ -15,7 +13,7 @@ public class SigmoidFunction implements ActivationFunction {
 	 */
 	@Override
 	public double f(double x) {
-		return (1.0 / (1.0 + ActivationFunctions.safeExp(-x)));
+		return ActivationFunction.sigmoid(x);
 	}
 
 	@Override
