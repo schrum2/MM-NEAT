@@ -89,28 +89,7 @@ public class ActivationFunctions {
 	 */
 	public static List<Integer> allPossibleActivationFunctions() {
 		List<Integer> list = new LinkedList<>();
-		list.add(FTYPE_SIGMOID);
-		list.add(FTYPE_TANH);
-		list.add(FTYPE_ID);
-		list.add(FTYPE_FULLAPPROX);
-		list.add(FTYPE_APPROX);
-		list.add(FTYPE_GAUSS);
-		list.add(FTYPE_SINE);
-		list.add(FTYPE_ABSVAL);
-		list.add(FTYPE_PIECEWISE);
-		list.add(FTYPE_HLPIECEWISE);
-		list.add(FTYPE_SAWTOOTH);
-		list.add(FTYPE_STRETCHED_TANH);
-		list.add(FTYPE_RE_LU);
-		list.add(FTYPE_SOFTPLUS);
-		list.add(FTYPE_LEAKY_RE_LU);
-		list.add(FTYPE_FULLSAWTOOTH);
-		list.add(FTYPE_TRIANGLEWAVE);
-		list.add(FTYPE_SQUAREWAVE);
-		list.add(FTYPE_FULLSIGMOID);
-		list.add(FTYPE_FULLGAUSS);
-		list.add(FTYPE_COS);
-		list.add(FTYPE_SIL);
+		list.addAll(functionMap.keySet());
 		return list;
 	}
 	
