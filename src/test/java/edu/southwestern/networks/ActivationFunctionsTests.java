@@ -24,7 +24,7 @@ public class ActivationFunctionsTests {
 		double[] keyActivationAnswers = { 0, 0.5, 1 };
 
 		for (int i = 0; i < keyActivationPoints.length; i++) {
-			assertEquals(ActivationFunctions.activation(ActivationFunctions.FTYPE_SIGMOID, keyActivationPoints[i]), keyActivationAnswers[i], 0.001);
+			assertEquals(ActivationFunctions.activation(ActivationFunctions.FTYPE_SIGMOID, keyActivationPoints[i]), keyActivationAnswers[i], 0.000001);
 		}
 	}
 
