@@ -44,6 +44,11 @@
       <url>file:${project.basedir}/libs</url>
     </repository>
     <repository>
+      <id>amis-artifactory</id>
+      <name>AMIS Artifactory</name>
+      <url>http://diana.ms.mff.cuni.cz:8081/artifactory/repo</url>
+    </repository>
+    <repository>
       <releases>
         <enabled>false</enabled>
       </releases>
