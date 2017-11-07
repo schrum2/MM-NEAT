@@ -70,6 +70,13 @@
         <name>project</name>
         <url>file:${project.basedir}/libs</url>
     </repository>
+
+	<!-- For Pogamut -->
+    <repository>
+    	<id>amis-artifactory</id>
+		<name>AMIS Artifactory</name>
+		<url>http://diana.ms.mff.cuni.cz:8081/artifactory/repo</url>
+    </repository>
     
     <!-- For DL4J and RL4J -->
     <repository>
@@ -208,25 +215,25 @@
 	
     <!--  pogamut libraries -->
 	<dependency>
-		<groupId>pogamut</groupId>
+		<groupId>cz.cuni.amis.pogamut</groupId>
 		<artifactId>pogamut-ut2004</artifactId>
 		<version>3.3.0</version>
 	</dependency>
     
 	<dependency>
-		<groupId>pogamut</groupId>
+		<groupId>cz.cuni.amis.pogamut</groupId>
 		<artifactId>pogamut-unreal</artifactId>
 		<version>3.3.0</version>
 	</dependency>
     
 	<dependency>
-		<groupId>pogamut</groupId>
+		<groupId>cz.cuni.amis.pogamut</groupId>
 		<artifactId>pogamut-base</artifactId>
 		<version>3.3.0</version>
 	</dependency>
     
 	<dependency>
-		<groupId>pogamut</groupId>
+		<groupId>cz.cuni.amis</groupId>
 		<artifactId>amis-utils</artifactId>
 		<version>3.3.0</version>
 	</dependency>
