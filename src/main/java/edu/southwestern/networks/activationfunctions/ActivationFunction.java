@@ -2,8 +2,6 @@ package edu.southwestern.networks.activationfunctions;
 
 import org.nd4j.linalg.activations.Activation;
 
-import edu.southwestern.networks.ActivationFunctions;
-
 public interface ActivationFunction {
 	/**
 	 * Function from real number to real number
@@ -24,10 +22,4 @@ public interface ActivationFunction {
 	 * @return
 	 */
 	public String name();
-
-
-	public static double sigmoid(double x) {
-		return (1.0 / (1.0 + ActivationFunctions.safeExp(-x)));
-	}
-	
 }

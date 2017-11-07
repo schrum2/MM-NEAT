@@ -267,6 +267,15 @@ public class ActivationFunctions {
 	}
 
 	/**
+	 * Standard sigmoid function used in various places.
+	 * @param x
+	 * @return
+	 */
+	public static double sigmoid(double x) {
+		return (1.0 / (1.0 + ActivationFunctions.safeExp(-x)));
+	}	
+
+	/**
 	 * Quick approximation to exp. Inaccurate, but has needed properties. Could
 	 * slightly speed up execution given how often exp is used in a sigmoid.
 	 *
@@ -320,5 +329,13 @@ public class ActivationFunctions {
 			return 0; 
 		else
 			return a * 1/sineCalculation * Math.abs(sineCalculation);
+	}
+	
+	public static void main(String[] args) {
+		for(double i = 0; i < 100; i++) {
+			double e = Math.exp(-i);
+			double q = quickExp(-i);
+			System.out.printf("%f\t%f\t%f\n", e,q,(e-q));
+		}
 	}
 }
