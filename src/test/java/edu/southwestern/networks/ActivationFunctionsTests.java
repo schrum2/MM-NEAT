@@ -14,12 +14,10 @@ public class ActivationFunctionsTests {
 		MMNEAT.clearClasses();
 	}
 	
-	// Checks extreme edges of range, and the center
-	public static double[] keyActivationPoints = { -ActivationFunctions.SAFE_EXP_BOUND, 0,
-			ActivationFunctions.SAFE_EXP_BOUND };
-
 	@Test
 	public void test_keypoints_sigmoid() {
+		// Checks extreme edges of range, and the center: sigmoid is already saturated by -15 and 15
+		double[] keyActivationPoints = { -15, 0, 15 };
 		// outputs of sigmoid for inputs from keyActivationPoints
 		double[] keyActivationAnswers = { 0, 0.5, 1 };
 
@@ -40,6 +38,8 @@ public class ActivationFunctionsTests {
 
 	@Test
 	public void test_keypoints_tanh() {
+		// Checks extreme edges of range, and the center: tanh is already saturated by -15 and 15
+		double[] keyActivationPoints = { -15, 0, 15 };
 		// outputs of tanh for inputs from keyActivationPoints
 		double[] keyActivationAnswers = { -1, 0, 1 };
 
@@ -50,6 +50,7 @@ public class ActivationFunctionsTests {
 
 	@Test
 	public void test_keypoints_fullLinear() {
+		double[] keyActivationPoints = { -15, 0, 15 };
 		// outputs of fullLinear for inputs from keyActivationPoints
 		double[] keyActivationAnswers = { -1, 0, 1 };
 
@@ -70,6 +71,7 @@ public class ActivationFunctionsTests {
 
 	@Test
 	public void test_keypoints_quickSigmoid() {
+		double[] keyActivationPoints = { -15, 0, 15 };
 		// outputs of quickSigmoid for inputs from keyActivationPoints
 		double[] keyActivationAnswers = { 0, 0.5, 1 };
 
@@ -82,6 +84,7 @@ public class ActivationFunctionsTests {
 
 	@Test
 	public void test_keypoints_fullQuickSigmoid() {
+		double[] keyActivationPoints = { -15, 0, 15 };
 		// outputs of fullQuickSigmoid for inputs from keyActivationPoints
 		double[] keyActivationAnswers = { -1, 0, 1 };
 
@@ -97,7 +100,7 @@ public class ActivationFunctionsTests {
 	 */
 	@Test
 	public void test_quickSigmoid_vs_sigmoid() {
-		for (double i = -ActivationFunctions.SAFE_EXP_BOUND; i <= ActivationFunctions.SAFE_EXP_BOUND; i++) {
+		for (double i = -15; i <= 15; i++) {
 			assertEquals(ActivationFunctions.activation(ActivationFunctions.FTYPE_APPROX, i), ActivationFunctions.activation(ActivationFunctions.FTYPE_SIGMOID, i), 0.01);
 		}
 	}

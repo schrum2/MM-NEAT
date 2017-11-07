@@ -27,10 +27,6 @@ public class ActivationFunctions {
 	 */
 	public static ArrayList<Integer> availableActivationFunctions = new ArrayList<>(MAX_POSSIBLE_ACTIVATION_FUNCTIONS);
 
-	// For use in sigmoid, it is convenient to bound the inputs to the exp function since it is quicker, and
-	// sigmoid is saturated anyway.
-	public static final double SAFE_EXP_BOUND = 15;
-
 	/**
 	 * Initialize the ftypes to be available for the CPPN/TWEANN
 	 */
@@ -252,23 +248,6 @@ public class ActivationFunctions {
 	}
 
 	/**
-	 * Will behave the same as Math.exp within specified bound.
-	 * Saves time when calculating sigmoid, since tails are saturated.
-	 *
-	 * @param x Function parameter
-	 * @return Same as Math.exp within bounds
-	 */
-	public static double safeExp(double x) {
-		if (Math.abs(x) < SAFE_EXP_BOUND) { // Don't change values in bounds
-			return Math.exp(x);
-		} else if (x > 0.0) { // Maximum allowed
-			return Math.exp(SAFE_EXP_BOUND);
-		} else { // Minimum allowed
-			return Math.exp(-SAFE_EXP_BOUND);
-		}
-	}
-
-	/**
 	 * Standard sigmoid function used in various places.
 	 * Uses safeExp to save time, since the sigmoid function saturates
 	 * in a way that makes calculating the tails with exp expensive.
@@ -276,7 +255,7 @@ public class ActivationFunctions {
 	 * @return
 	 */
 	public static double sigmoid(double x) {
-		return (1.0 / (1.0 + ActivationFunctions.safeExp(-x)));
+		return (1.0 / (1.0 + Math.exp(-x)));
 	}	
 
 	/**
