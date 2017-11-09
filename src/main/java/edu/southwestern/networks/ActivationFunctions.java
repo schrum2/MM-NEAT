@@ -27,9 +27,6 @@ public class ActivationFunctions {
 	 */
 	public static ArrayList<Integer> availableActivationFunctions = new ArrayList<>(MAX_POSSIBLE_ACTIVATION_FUNCTIONS);
 
-	// For use in sigmoid, it is convenient to bound the inputs to the exp function
-	public static final double SAFE_EXP_BOUND = 7;
-
 	/**
 	 * Initialize the ftypes to be available for the CPPN/TWEANN
 	 */
@@ -92,28 +89,7 @@ public class ActivationFunctions {
 	 */
 	public static List<Integer> allPossibleActivationFunctions() {
 		List<Integer> list = new LinkedList<>();
-		list.add(FTYPE_SIGMOID);
-		list.add(FTYPE_TANH);
-		list.add(FTYPE_ID);
-		list.add(FTYPE_FULLAPPROX);
-		list.add(FTYPE_APPROX);
-		list.add(FTYPE_GAUSS);
-		list.add(FTYPE_SINE);
-		list.add(FTYPE_ABSVAL);
-		list.add(FTYPE_PIECEWISE);
-		list.add(FTYPE_HLPIECEWISE);
-		list.add(FTYPE_SAWTOOTH);
-		list.add(FTYPE_STRETCHED_TANH);
-		list.add(FTYPE_RE_LU);
-		list.add(FTYPE_SOFTPLUS);
-		list.add(FTYPE_LEAKY_RE_LU);
-		list.add(FTYPE_FULLSAWTOOTH);
-		list.add(FTYPE_TRIANGLEWAVE);
-		list.add(FTYPE_SQUAREWAVE);
-		list.add(FTYPE_FULLSIGMOID);
-		list.add(FTYPE_FULLGAUSS);
-		list.add(FTYPE_COS);
-		list.add(FTYPE_SIL);
+		list.addAll(functionMap.keySet());
 		return list;
 	}
 	
@@ -251,20 +227,15 @@ public class ActivationFunctions {
 	}
 
 	/**
-	 * Will behave the same as Math.exp within specified bound
-	 *
-	 * @param x Function parameter
-	 * @return Same as Math.exp within bounds
+	 * Standard sigmoid function used in various places.
+	 * Uses safeExp to save time, since the sigmoid function saturates
+	 * in a way that makes calculating the tails with exp expensive.
+	 * @param x
+	 * @return
 	 */
-	public static double safeExp(double x) {
-		if (Math.abs(x) < SAFE_EXP_BOUND) { // Don't change values in bounds
-			return Math.exp(x);
-		} else if (x > 0.0) { // Maximum allowed
-			return Math.exp(SAFE_EXP_BOUND);
-		} else { // Minimum allowed
-			return Math.exp(-SAFE_EXP_BOUND);
-		}
-	}
+	public static double sigmoid(double x) {
+		return (1.0 / (1.0 + Math.exp(-x)));
+	}	
 
 	/**
 	 * Quick approximation to exp. Inaccurate, but has needed properties. Could
@@ -320,5 +291,13 @@ public class ActivationFunctions {
 			return 0; 
 		else
 			return a * 1/sineCalculation * Math.abs(sineCalculation);
+	}
+	
+	public static void main(String[] args) {
+		for(double i = 0; i < 100; i++) {
+			double e = sigmoid(i);
+			double q = 1 / (1 + Math.exp(-i));
+			System.out.printf("%f\t%f\t%f\n", e,q,(e-q));
+		}
 	}
 }

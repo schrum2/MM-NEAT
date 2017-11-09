@@ -1,6 +1,8 @@
 package edu.southwestern.networks.activationfunctions;
 import org.nd4j.linalg.activations.Activation;
 
+import edu.southwestern.networks.ActivationFunctions;
+
 public class SiLFunction implements ActivationFunction {
 
 	/**
@@ -9,7 +11,7 @@ public class SiLFunction implements ActivationFunction {
 	 */
 	@Override
 	public double f(double x) {
-		return x * ActivationFunction.sigmoid(x);
+		return x * ActivationFunctions.sigmoid(x);
 	}
 
 	@Override
