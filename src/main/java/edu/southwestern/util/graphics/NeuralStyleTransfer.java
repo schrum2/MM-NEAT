@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.datavec.image.loader.NativeImageLoader;
+import org.deeplearning4j.nn.api.Layer;
 import org.deeplearning4j.nn.graph.ComputationGraph;
 import org.deeplearning4j.zoo.PretrainedType;
 import org.deeplearning4j.zoo.ZooModel;
@@ -65,19 +66,23 @@ public class NeuralStyleTransfer {
 		INDArray content = loader.asMatrix(new File(contentFile));
 		scaler.transform(content);
 		
-		String styleFile = "data/imagematch/supercreepypersonimage.jpg";
-		INDArray style = loader.asMatrix(new File(styleFile));
-		scaler.transform(style);
+//		String styleFile = "data/imagematch/supercreepypersonimage.jpg";
+//		INDArray style = loader.asMatrix(new File(styleFile));
+//		scaler.transform(style);
+//		
+//		System.out.println(vgg16.summary());
 		
-		System.out.println(vgg16.summary());
+		INDArray[] result = vgg16.output(content);
 		
 		// Is calling activate again necessary? Can't the values just be retrieved?
 		// Does this mean an input presentation has to occur first?
-		INDArray block1_conv2_features = vgg16.getLayer("block1_conv2").activate();
-		INDArray block2_conv2_features = vgg16.getLayer("block2_conv2").activate();
-		INDArray block3_conv3_features = vgg16.getLayer("block3_conv3").activate();
-		INDArray block4_conv3_features = vgg16.getLayer("block4_conv3").activate();
-		INDArray block5_conv3_features = vgg16.getLayer("block5_conv3").activate();
+		Layer block1_conv2 = vgg16.getLayer("block1_conv2");
+		INDArray block1_conv2_features = block1_conv2.activate();
+		
+//		INDArray block2_conv2_features = vgg16.getLayer("block2_conv2").activate();
+//		INDArray block3_conv3_features = vgg16.getLayer("block3_conv3").activate();
+//		INDArray block4_conv3_features = vgg16.getLayer("block4_conv3").activate();
+//		INDArray block5_conv3_features = vgg16.getLayer("block5_conv3").activate();
 				
 	}
 }
