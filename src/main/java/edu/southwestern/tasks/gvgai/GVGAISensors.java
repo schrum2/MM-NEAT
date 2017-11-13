@@ -2,6 +2,13 @@ package edu.southwestern.tasks.gvgai;
 
 import gvgai.core.game.StateObservation;
 
+/**
+ * 
+ * TODO?
+ * 
+ * @author Darwin Johnson
+ *
+ */
 public class GVGAISensors {
 	
 	public double[] getInputs(StateObservation stateObs){
