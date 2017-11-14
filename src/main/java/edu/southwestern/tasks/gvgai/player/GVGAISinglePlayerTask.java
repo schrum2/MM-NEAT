@@ -1,4 +1,4 @@
-package edu.southwestern.tasks.gvgai;
+package edu.southwestern.tasks.gvgai.player;
 
 import java.io.FileNotFoundException;
 import java.util.LinkedList;

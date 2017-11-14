@@ -25,7 +25,7 @@ import edu.southwestern.gridTorus.controllers.PreyFleeClosestPredatorController;
 import edu.southwestern.networks.ActivationFunctions;
 import edu.southwestern.networks.dl4j.VGG19Wrapper;
 import edu.southwestern.networks.hyperneat.CenteredSubstrateMapping;
-import edu.southwestern.tasks.gvgai.GVGAIOneStepNNPlayer;
+import edu.southwestern.tasks.gvgai.player.GVGAIOneStepNNPlayer;
 import edu.southwestern.tasks.interactive.breedesizer.Keyboard;
 import edu.southwestern.tasks.microrts.evaluation.NNComplexEvaluationFunction;
 import edu.southwestern.tasks.microrts.fitness.WinLossFitnessFunction;

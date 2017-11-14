@@ -1,4 +1,4 @@
-package edu.southwestern.tasks.gvgai;
+package edu.southwestern.tasks.gvgai.player;
 
 import edu.southwestern.networks.Network;
 import gvgai.core.player.AbstractPlayer;
