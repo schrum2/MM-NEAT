@@ -8,13 +8,17 @@ import edu.southwestern.parameters.Parameters;
 import edu.southwestern.util.random.RandomNumbers;
 import edu.southwestern.util.stats.StatisticsUtilities;
 import gvgai.core.game.StateObservation;
-import gvgai.core.player.AbstractPlayer;
 import gvgai.ontology.Types.ACTIONS;
 import gvgai.tools.ElapsedCpuTimer;
 
-public class GVGAITreeSearchNNPlayer<T extends Network> extends AbstractPlayer {
+/**
+ * 
+ * @author Darwin Johnson
+ *
+ * @param <T>
+ */
+public class GVGAITreeSearchNNPlayer<T extends Network> extends GVGAINNPlayer<T> {
 	
-	public static Network network;
 	public static final double BIAS = 1.0;
 	
 	private static int depth; // Used to keep track of how far down the Tree to check
@@ -28,12 +32,7 @@ public class GVGAITreeSearchNNPlayer<T extends Network> extends AbstractPlayer {
 		depth = Parameters.parameters.integerParameter("minimaxSearchDepth");
 		prune = true;
 	}
-	
-	public GVGAITreeSearchNNPlayer(StateObservation stateObs, ElapsedCpuTimer elapsedTimer){
-		depth = Parameters.parameters.integerParameter("minimaxSearchDepth");
-		prune = true;
-	}
-	
+		
 	@Override
 	public ACTIONS act(StateObservation stateObs, ElapsedCpuTimer elapsedTimer) {
 		

@@ -5,20 +5,18 @@ import java.util.List;
 import edu.southwestern.networks.Network;
 import edu.southwestern.util.stats.StatisticsUtilities;
 import gvgai.core.game.StateObservation;
-import gvgai.core.player.AbstractPlayer;
 import gvgai.ontology.Types.ACTIONS;
 import gvgai.tools.ElapsedCpuTimer;
 
-public class GVGAIOneStepNNPlayer<T extends Network> extends AbstractPlayer {
+/**
+ * 
+ * @author Darwin Johnson
+ *
+ * @param <T>
+ */
+public class GVGAIOneStepNNPlayer<T extends Network> extends GVGAINNPlayer<T> {
 	
-	public static Network network;
 	public static final double BIAS = 1.0;
-	
-	public GVGAIOneStepNNPlayer(){
-	}
-	
-	public GVGAIOneStepNNPlayer(StateObservation stateObs, ElapsedCpuTimer elapsedTimer){
-	}
 	
 	@Override
 	public ACTIONS act(StateObservation stateObs, ElapsedCpuTimer elapsedTimer) {
