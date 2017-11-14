@@ -1,4 +1,4 @@
-package edu.southwestern.tasks.gvgai.player;
+package edu.southwestern.tasks.gvgai;
 
 import java.io.FileNotFoundException;
 import java.util.LinkedList;
@@ -14,6 +14,7 @@ import edu.southwestern.networks.hyperneat.Substrate;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.NoisyLonerTask;
+import edu.southwestern.tasks.gvgai.player.GVGAINNPlayer;
 import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.datastructures.Triple;
