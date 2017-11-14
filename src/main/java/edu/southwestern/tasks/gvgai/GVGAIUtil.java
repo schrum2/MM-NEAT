@@ -81,8 +81,9 @@ public class GVGAIUtil {
 		VGDLFactory.GetInstance().init();
 		VGDLRegistry.GetInstance().init();
 
+		// Allows for playing of any of the existing Zelda levels
 		String game = "zelda";
-		String levelNum = "0";
+		int levelNum = 4;
 		String gamesPath = "data/gvgai/examples/gridphysics/";
 		String game_file = gamesPath + game + ".txt";
 		String level_file = gamesPath + game + "_lvl" + levelNum + ".txt";
@@ -96,5 +97,11 @@ public class GVGAIUtil {
 		agent.setup(null, seed, true); // null = no log, true = human 
 
 		runOneGame(toPlay, level, true, agent, seed, playerID);
+		//////////////////////////////////////////////////////
+		
+		// Allows for playing a Zelda level defined as a String array
+		
+		// TODO:
+		
 	}
 }
