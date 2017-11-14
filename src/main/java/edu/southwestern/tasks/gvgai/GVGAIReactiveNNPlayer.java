@@ -7,16 +7,19 @@ import java.util.List;
 import edu.southwestern.networks.Network;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.util.random.RandomNumbers;
-import edu.southwestern.util.stats.StatisticsUtilities;
 import gvgai.core.game.Observation;
 import gvgai.core.game.StateObservation;
-import gvgai.core.player.AbstractPlayer;
 import gvgai.ontology.Types.ACTIONS;
 import gvgai.tools.ElapsedCpuTimer;
 
-public class GVGAIReactiveNNPlayer<T extends Network> extends AbstractPlayer {
+/**
+ * 
+ * @author Darwin Johnson
+ *
+ * @param <T>
+ */
+public class GVGAIReactiveNNPlayer<T extends Network> extends GVGAINNPlayer<T> {
 	
-	public static Network network;
 	public static final double BIAS = 1.0;
 	
 	private int viewRange;
@@ -25,10 +28,7 @@ public class GVGAIReactiveNNPlayer<T extends Network> extends AbstractPlayer {
 		viewRange = Parameters.parameters.integerParameter("gvgaiReactField");
 	}
 	
-	public GVGAIReactiveNNPlayer(StateObservation stateObs, ElapsedCpuTimer elapsedTimer){
-		viewRange = Parameters.parameters.integerParameter("gvgaiReactField");
-	}
-	
+	// TODO: FIX MAJOR ERRORS IN THIS METHOD IN HOW THE VIEW WINDOW IS HANDLED
 	@Override
 	public ACTIONS act(StateObservation stateObs, ElapsedCpuTimer elapsedTimer) {
 		List<Observation>[][] obsGrid = stateObs.getObservationGrid();

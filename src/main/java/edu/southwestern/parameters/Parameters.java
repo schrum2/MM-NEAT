@@ -25,6 +25,7 @@ import edu.southwestern.gridTorus.controllers.PreyFleeClosestPredatorController;
 import edu.southwestern.networks.ActivationFunctions;
 import edu.southwestern.networks.dl4j.VGG19Wrapper;
 import edu.southwestern.networks.hyperneat.CenteredSubstrateMapping;
+import edu.southwestern.tasks.gvgai.GVGAIOneStepNNPlayer;
 import edu.southwestern.tasks.interactive.breedesizer.Keyboard;
 import edu.southwestern.tasks.microrts.evaluation.NNComplexEvaluationFunction;
 import edu.southwestern.tasks.microrts.fitness.WinLossFitnessFunction;
@@ -658,7 +659,7 @@ public class Parameters {
 		booleanOptions.add("boardGameOthelloFitness", false, "Enables the OthelloPiece BoardGame Fitness Function to be used as a Selection Function");
 		booleanOptions.add("alwaysAnimate", true, "Loads and plays all animations in AnimationBreeder and 3DObjectBreeder at once");
 		booleanOptions.add("saveInteractiveSelections", false, "Automatically saves all currently selected buttons when user moves to next generation");
-		booleanOptions.add("gvgaiSave", false, "If true, save the actions from the GVGAI game that was just played.");
+		//booleanOptions.add("gvgaiSave", false, "If true, save the actions from the GVGAI game that was just played.");
 		booleanOptions.add("gvgaiVictory", true, "Use the GVGAI Victory as a Selection Function");
 		booleanOptions.add("gvgaiScore", false, "Use the GVGAI Score as a Selection Function");
 		booleanOptions.add("gvgaiTimestep", false, "Use the GVGAI Timestep as a Selection Function");
@@ -782,8 +783,8 @@ public class Parameters {
 		stringOptions.add("remixWAVFile", SoundUtilExamples.PORTAL2_WAV, "Input WAV file to be remixed in Remixbreeder");
 		stringOptions.add("remixMIDIFile", SoundUtilExamples.FUR_ELISE_MID, "Input MIDI file to be played with CPPN in Breedesizer");
 		stringOptions.add("gvgaiGame", "zelda", "GVGAI Game to be played");
-		stringOptions.add("gvgaiPlayer", "edu.southwestern.tasks.gvgai.GVGAIOneStepNNPlayer", "GVGAI Player to be used");
 		// Class options
+		classOptions.add("gvgaiPlayer", GVGAIOneStepNNPlayer.class, "GVGAI Player to be used");
 		classOptions.add("boardGame", null, "Board Game being played by BoardGameTask");
 		classOptions.add("boardGameOpponent", BoardGamePlayerRandom.class, "Board game Opponent being played against");
 		classOptions.add("boardGameOpponentHeuristic", PieceDifferentialBoardGameHeuristic.class, "Board game heuristic used by the Opponent");
