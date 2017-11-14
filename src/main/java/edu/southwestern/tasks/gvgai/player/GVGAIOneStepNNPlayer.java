@@ -16,8 +16,6 @@ import gvgai.tools.ElapsedCpuTimer;
  */
 public class GVGAIOneStepNNPlayer<T extends Network> extends GVGAINNPlayer<T> {
 	
-	public static final double BIAS = 1.0;
-	
 	@Override
 	public ACTIONS act(StateObservation stateObs, ElapsedCpuTimer elapsedTimer) {
 		

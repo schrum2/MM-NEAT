@@ -19,15 +19,11 @@ import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.datastructures.Triple;
 import edu.southwestern.util.random.RandomNumbers;
-import gvgai.core.competition.CompetitionParameters;
 import gvgai.core.game.Game;
-import gvgai.core.player.AbstractPlayer;
-import gvgai.core.player.Player;
 import gvgai.core.vgdl.VGDLFactory;
 import gvgai.core.vgdl.VGDLParser;
 import gvgai.core.vgdl.VGDLRegistry;
 import gvgai.tools.IO;
-import gvgai.tracks.ArcadeMachine;
 
 public class GVGAISinglePlayerTask<T extends Network> extends NoisyLonerTask<T> implements NetworkTask, HyperNEATTask{
 
@@ -113,7 +109,7 @@ public class GVGAISinglePlayerTask<T extends Network> extends NoisyLonerTask<T> 
 		int randomSeed = RandomNumbers.randomGenerator.nextInt(); // TODO: Allow to be deterministic
 
 		// Will have 3 Indexes: {victory, score, timestep}; Stores these for every Player, in triplets: [w0,s0,t0,w1,s1,t1,...]
-		double[] gvgaiScores = runOneGame(toPlay, level, visuals, agent, randomSeed, playerID);
+		double[] gvgaiScores = GVGAIUtil.runOneGame(toPlay, level, visuals, agent, randomSeed, playerID);
 		toPlay.reset();
 		
 		// Process the scores
@@ -144,48 +140,6 @@ public class GVGAISinglePlayerTask<T extends Network> extends NoisyLonerTask<T> 
 		}
 
 		return new Pair<double[], double[]>(fitness, otherScores);
-	}
-
-	/**
-	 * Based on a more complicated method in Arcade Machine with the same name.
-	 * The problem with that method is that is instantiates all information from
-	 * file paths and class names. This method assumes those components have already
-	 * been constructed, and uses the instantiated classes to play one game.
-	 * 
-	 * Note: Limited to playing single player games
-	 * 
-	 * @param toPlay Game instance that already has game rules loaded
-	 * @param level String array of line by line contents of a level file
-	 * @param visuals Whether to watch the game
-	 * @param agent Agent that has already been initialized
-	 * @param randomSeed Used in level construction, for example for enemy placement
-	 * @param playerID Used when watching the game played
-	 * @return Scores from evaluation: {victory, score, timestep} for every player
-	 */
-	public static double[] runOneGame(Game toPlay, String[] level, boolean visuals, AbstractPlayer agent, int randomSeed, int playerID) {
-		// First, we create the game to be played..
-		// TODO: Move this up so the level isn't recreated each time? But what if multiple levels are to be played?
-		toPlay.buildStringLevel(level, randomSeed); // TODO: Is path finding still required?
-
-		// Warm the game up.
-		ArcadeMachine.warmUp(toPlay, CompetitionParameters.WARMUP_TIME);
-
-		// single player game
-		Player[] players = new AbstractPlayer[] {agent};
-
-		// Then, play the game.
-		double[] score; // TODO: Why is this here? Remove?
-		if (visuals)
-			// false = no humans
-			score = toPlay.playGame(players, randomSeed, false, playerID);
-		else
-			score = toPlay.runGame(players, randomSeed);
-
-		// This, the last thing to do in this method, always:
-		toPlay.handleResult();
-		toPlay.printResult();
-
-		return toPlay.getFullResult();
 	}
 
 	@Override

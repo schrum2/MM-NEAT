@@ -13,7 +13,6 @@ public abstract class GVGAINNPlayer<T extends Network> extends AbstractPlayer {
 
 	protected Network network;
 	
-	// TODO: Remove this?
 	public static final double BIAS = 1.0;
 	
 	/**

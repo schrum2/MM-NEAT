@@ -20,8 +20,6 @@ import gvgai.tools.ElapsedCpuTimer;
  */
 public class GVGAIReactiveNNPlayer<T extends Network> extends GVGAINNPlayer<T> {
 	
-	public static final double BIAS = 1.0;
-	
 	private int viewRange;
 	
 	public GVGAIReactiveNNPlayer(){

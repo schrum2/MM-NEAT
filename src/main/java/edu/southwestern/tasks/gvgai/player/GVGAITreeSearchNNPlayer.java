@@ -19,8 +19,6 @@ import gvgai.tools.ElapsedCpuTimer;
  */
 public class GVGAITreeSearchNNPlayer<T extends Network> extends GVGAINNPlayer<T> {
 	
-	public static final double BIAS = 1.0;
-	
 	private static int depth; // Used to keep track of how far down the Tree to check
 	protected static final double ALPHA = Double.NEGATIVE_INFINITY; // Holds the Starting Value for Alpha
 	protected static final double BETA = Double.POSITIVE_INFINITY; // Holds the Starting Value for Beta
