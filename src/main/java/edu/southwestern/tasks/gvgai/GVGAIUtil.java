@@ -81,27 +81,49 @@ public class GVGAIUtil {
 		VGDLFactory.GetInstance().init();
 		VGDLRegistry.GetInstance().init();
 
-		// Allows for playing of any of the existing Zelda levels
 		String game = "zelda";
-		int levelNum = 4;
 		String gamesPath = "data/gvgai/examples/gridphysics/";
 		String game_file = gamesPath + game + ".txt";
-		String level_file = gamesPath + game + "_lvl" + levelNum + ".txt";
-		
-		Game toPlay = new VGDLParser().parseGame(game_file); // Initialize the game
-		String[] level = new IO().readFile(level_file);
-
 		int playerID = 0;
 		int seed = 0;
+	
+		////////////////////////////////////////////////////////
+		// Allows for playing of any of the existing Zelda levels
+//		int levelNum = 4;
+//		String level_file = gamesPath + game + "_lvl" + levelNum + ".txt";
+//		
+//		Game toPlay = new VGDLParser().parseGame(game_file); // Initialize the game
+//		String[] level = new IO().readFile(level_file);
+//
+//		Agent agent = new Agent();
+//		agent.setup(null, seed, true); // null = no log, true = human 
+//
+//		runOneGame(toPlay, level, true, agent, seed, playerID);
+		//////////////////////////////////////////////////////
+		
+		////////////////////////////////////////////////////////
+		// Allows for playing a Zelda level defined as a String array
+		
+		Game toPlay = new VGDLParser().parseGame(game_file); // Initialize the game
+		String[] level = new String[] {
+			"wwwwwwwwwwwwwwwwwwwww", 
+			"w..3.ww............Aw", 
+			"w....w......wwwwwwwww", 
+			"w.w.....wwwwwwwwwwwww", 
+			"w.w........1.......1w", 
+			"w.wwwwwwwwwwwwwwwww.w", 
+			"w.......w...wwwwwww.w", 
+			"w...2w....wgww+....3w", 
+			"wwwwwwwwwwwwwwwwwwwww"	
+		};
+
 		Agent agent = new Agent();
 		agent.setup(null, seed, true); // null = no log, true = human 
 
 		runOneGame(toPlay, level, true, agent, seed, playerID);
 		//////////////////////////////////////////////////////
 		
-		// Allows for playing a Zelda level defined as a String array
 		
-		// TODO:
 		
 	}
 }
