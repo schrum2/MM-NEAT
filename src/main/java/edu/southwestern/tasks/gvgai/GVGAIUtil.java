@@ -15,6 +15,7 @@ import gvgai.core.player.Player;
 import gvgai.core.vgdl.VGDLFactory;
 import gvgai.core.vgdl.VGDLParser;
 import gvgai.core.vgdl.VGDLRegistry;
+import gvgai.tools.IO;
 import gvgai.tracks.ArcadeMachine;
 import gvgai.tracks.singlePlayer.tools.human.Agent;
 
@@ -178,7 +179,7 @@ public class GVGAIUtil {
 		VGDLFactory.GetInstance().init();
 		VGDLRegistry.GetInstance().init();
 
-		String game = "zelda";
+		String game = "bait"; // "zelda";
 		String gamesPath = "data/gvgai/examples/gridphysics/";
 		String game_file = gamesPath + game + ".txt";
 		int playerID = 0;
@@ -186,7 +187,7 @@ public class GVGAIUtil {
 	
 		////////////////////////////////////////////////////////
 		// Allows for playing of any of the existing Zelda levels
-//		int levelNum = 4;
+//		int levelNum = 1;
 //		String level_file = gamesPath + game + "_lvl" + levelNum + ".txt";
 //		
 //		Game toPlay = new VGDLParser().parseGame(game_file); // Initialize the game
@@ -220,19 +221,31 @@ public class GVGAIUtil {
 		//////////////////////////////////////////////////////
 		
 		////////////////////////////////////////////////////////
-		// Allows for playing a Zelda level defined as a String array
+		// Allows for playing a Zelda level defined by a random CPPN
+//		Game toPlay = new VGDLParser().parseGame(game_file); // Initialize the game
+//		TWEANNGenotype cppn = new TWEANNGenotype(4, 5, 0);
+//		TWEANN net = cppn.getPhenotype();
+//		String[] level = generateLevelFromCPPN(net, 20, 20, '.', 'w', 
+//				new char[]{'w'}, new char[]{'g','+','A'}, new char[]{'1','2','3'}, 4);
+//
+//		Agent agent = new Agent();
+//		agent.setup(null, seed, true); // null = no log, true = human 
+//
+//		runOneGame(toPlay, level, true, agent, seed, playerID);
+		//////////////////////////////////////////////////////
+		
+		////////////////////////////////////////////////////////
+		// Allows for playing a bait level defined by a random CPPN
 		Game toPlay = new VGDLParser().parseGame(game_file); // Initialize the game
 		TWEANNGenotype cppn = new TWEANNGenotype(4, 5, 0);
 		TWEANN net = cppn.getPhenotype();
-		String[] level = generateLevelFromCPPN(net, 20, 20, '.', 'w', 
-				new char[]{'w'}, new char[]{'g','+','A'}, new char[]{'1','2','3'}, 4);
+		String[] level = generateLevelFromCPPN(net, 10, 10, '.', 'w', 
+				new char[]{'w'}, new char[]{'k','g','A'}, new char[]{'0','1'}, 15);
 
 		Agent agent = new Agent();
 		agent.setup(null, seed, true); // null = no log, true = human 
 
 		runOneGame(toPlay, level, true, agent, seed, playerID);
-		//////////////////////////////////////////////////////
-		
-		
+		//////////////////////////////////////////////////////		
 	}
 }
