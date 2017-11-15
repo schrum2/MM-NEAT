@@ -7,6 +7,7 @@ import edu.southwestern.networks.Network;
 import edu.southwestern.networks.TWEANN;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.util.graphics.GraphicsUtil;
+import edu.southwestern.util.random.RandomNumbers;
 import gvgai.core.competition.CompetitionParameters;
 import gvgai.core.game.Game;
 import gvgai.core.player.AbstractPlayer;
@@ -26,7 +27,8 @@ import gvgai.tracks.singlePlayer.tools.human.Agent;
  */
 public class GVGAIUtil {
 
-	public static final double FIXED_ITEM_THRESHOLD = 0.5;
+	public static final double FIXED_ITEM_THRESHOLD = 0.3;
+	public static final double RANDOM_ITEM_THRESHOLD = 0.3;
 
 	/**
 	 * Based on a more complicated method in Arcade Machine with the same name.
@@ -81,7 +83,7 @@ public class GVGAIUtil {
 	}	
 	
 	public static String[] generateLevelFromCPPN(Network n, int levelWidth, int levelHeight, 
-			char defaultBackground, char border, char[] fixed, char[] unique, int maxScale) {
+			char defaultBackground, char border, char[] fixed, char[] unique, char[] random, int randomItems) {
 		// Start with 2D char array to fill out level: The +2 is for the border wall.
 		char[][] level = new char[levelHeight+2][levelWidth+2];
 		// Background
@@ -114,10 +116,8 @@ public class GVGAIUtil {
 						level[y][x] = fixed[i]; // Place item in level
 					}
 				}
-				// Only place unique and scaled items on empty spaces
+				// Only place unique items on empty spaces
 				if(level[y][x] == defaultBackground) {
-					
-					
 					// Find maximal output for each unique item
 					for(int i = 0; i < unique.length; i++) {
 						// Store maximal location queried for each unique item
@@ -125,7 +125,17 @@ public class GVGAIUtil {
 							uniqueScores[i] = outputs[i+fixed.length];
 							uniqueLocations[i] = new int[]{x,y};
 						}
-					}				
+					}		
+					// Now place random items: unique items have priority, random items are limited
+					if(randomItems > 0) {
+						//System.out.println("random check " + outputs[fixed.length+unique.length]);
+						// Last CPPN output
+						if(outputs[fixed.length+unique.length] > RANDOM_ITEM_THRESHOLD) {
+							// Select one of the random item options
+							level[y][x] = random[RandomNumbers.randomGenerator.nextInt(random.length)];
+							randomItems--; // allow one fewer random item
+						}
+					}
 				}
 			}
 		}
@@ -212,9 +222,10 @@ public class GVGAIUtil {
 		////////////////////////////////////////////////////////
 		// Allows for playing a Zelda level defined as a String array
 		Game toPlay = new VGDLParser().parseGame(game_file); // Initialize the game
-		TWEANNGenotype cppn = new TWEANNGenotype(4, 4, 0);
+		TWEANNGenotype cppn = new TWEANNGenotype(4, 5, 0);
 		TWEANN net = cppn.getPhenotype();
-		String[] level = generateLevelFromCPPN(net, 20, 20, '.', 'w', new char[]{'w'}, new char[]{'g','+','A'}, 3);
+		String[] level = generateLevelFromCPPN(net, 20, 20, '.', 'w', 
+				new char[]{'w'}, new char[]{'g','+','A'}, new char[]{'1','2','3'}, 4);
 
 		Agent agent = new Agent();
 		agent.setup(null, seed, true); // null = no log, true = human 
