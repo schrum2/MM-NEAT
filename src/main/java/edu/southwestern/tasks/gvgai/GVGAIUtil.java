@@ -113,7 +113,8 @@ public class GVGAIUtil {
 				double[] outputs = n.process(inputs);
 				// Check for presence of each fixed item
 				for(int i = 0; i < fixed.length; i++) {
-					if(outputs[i] > FIXED_ITEM_THRESHOLD) {
+					// Default background check imposes priority order on fixed items
+					if(level[y][x] == defaultBackground && outputs[i] > FIXED_ITEM_THRESHOLD) {
 						level[y][x] = fixed[i]; // Place item in level
 					}
 				}
@@ -179,7 +180,7 @@ public class GVGAIUtil {
 		VGDLFactory.GetInstance().init();
 		VGDLRegistry.GetInstance().init();
 
-		String game = "bait"; // "zelda";
+		String game = "blacksmoke"; // "zelda";
 		String gamesPath = "data/gvgai/examples/gridphysics/";
 		String game_file = gamesPath + game + ".txt";
 		int playerID = 0;
@@ -187,7 +188,7 @@ public class GVGAIUtil {
 	
 		////////////////////////////////////////////////////////
 		// Allows for playing of any of the existing Zelda levels
-//		int levelNum = 1;
+//		int levelNum = 2;
 //		String level_file = gamesPath + game + "_lvl" + levelNum + ".txt";
 //		
 //		Game toPlay = new VGDLParser().parseGame(game_file); // Initialize the game
@@ -236,16 +237,30 @@ public class GVGAIUtil {
 		
 		////////////////////////////////////////////////////////
 		// Allows for playing a bait level defined by a random CPPN
+//		Game toPlay = new VGDLParser().parseGame(game_file); // Initialize the game
+//		TWEANNGenotype cppn = new TWEANNGenotype(4, 5, 0);
+//		TWEANN net = cppn.getPhenotype();
+//		String[] level = generateLevelFromCPPN(net, 10, 10, '.', 'w', 
+//				new char[]{'w'}, new char[]{'k','g','A'}, new char[]{'0','1'}, 15);
+//
+//		Agent agent = new Agent();
+//		agent.setup(null, seed, true); // null = no log, true = human 
+//
+//		runOneGame(toPlay, level, true, agent, seed, playerID);
+		//////////////////////////////////////////////////////		
+		
+		////////////////////////////////////////////////////////
+		// Allows for playing a bait level defined by a random CPPN
 		Game toPlay = new VGDLParser().parseGame(game_file); // Initialize the game
-		TWEANNGenotype cppn = new TWEANNGenotype(4, 5, 0);
+		TWEANNGenotype cppn = new TWEANNGenotype(4, 8, 0);
 		TWEANN net = cppn.getPhenotype();
-		String[] level = generateLevelFromCPPN(net, 10, 10, '.', 'w', 
-				new char[]{'w'}, new char[]{'k','g','A'}, new char[]{'0','1'}, 15);
+		String[] level = generateLevelFromCPPN(net, 20, 20, '.', 'w', 
+				new char[]{'w','b','c'}, new char[]{'l','k','e','A'}, new char[]{'d'}, 15);
 
 		Agent agent = new Agent();
 		agent.setup(null, seed, true); // null = no log, true = human 
 
 		runOneGame(toPlay, level, true, agent, seed, playerID);
-		//////////////////////////////////////////////////////		
+		//////////////////////////////////////////////////////	
 	}
 }
