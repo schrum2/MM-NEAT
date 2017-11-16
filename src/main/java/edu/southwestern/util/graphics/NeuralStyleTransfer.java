@@ -16,7 +16,10 @@ import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.dataset.api.preprocessor.DataNormalization;
 import org.nd4j.linalg.dataset.api.preprocessor.VGG16ImagePreProcessor;
 import org.nd4j.linalg.factory.Nd4j;
+import org.nd4j.linalg.indexing.BooleanIndexing;
 import org.nd4j.linalg.indexing.NDArrayIndex;
+import org.nd4j.linalg.indexing.conditions.Conditions;
+import org.nd4j.linalg.indexing.functions.Value;
 import org.nd4j.linalg.ops.transforms.Transforms;
 
 import edu.southwestern.util.MiscUtil;
@@ -49,7 +52,8 @@ public class NeuralStyleTransfer {
 	public static final int HEIGHT = 224;
 	public static final int WIDTH = 224;
 	public static final int CHANNELS = 3;
-		
+	public static final int IMAGE_SIZE = HEIGHT*WIDTH;
+	
 	/**
 	 * Element-wise differences are squared, and then summed.
 	 * This is modelled after the content_loss method defined in
@@ -76,12 +80,28 @@ public class NeuralStyleTransfer {
 	public static double content_loss(Map<String, INDArray> activations) {
 		INDArray block2_conv2_features = activations.get("block2_conv2");
 		INDArray content_features = block2_conv2_features.get(NDArrayIndex.point(0), NDArrayIndex.all(), NDArrayIndex.all(), NDArrayIndex.all());
-		INDArray combination_features = block2_conv2_features.get(NDArrayIndex.point(2), NDArrayIndex.all(), NDArrayIndex.all(), NDArrayIndex.all());
-		
-//		System.out.println(content_features.shapeInfoToString());
-//		System.out.println(combination_features.shapeInfoToString());
-		
+		INDArray combination_features = block2_conv2_features.get(NDArrayIndex.point(2), NDArrayIndex.all(), NDArrayIndex.all(), NDArrayIndex.all());		
 		return content_weight * sumOfSquaredErrors(content_features, combination_features);
+	}
+
+	/**
+	 * Equation (2) from the Gatys et all paper: https://arxiv.org/pdf/1508.06576.pdf
+	 * This is the derivative of the content loss w.r.t. the combo image features
+	 * within a specific layer of the CNN.
+	 * 
+	 * @param originalFeatures Features at particular layer from the original content image
+	 * @param comboFeatures Features at same layer from current combo image
+	 * @return Derivatives of content loss w.r.t. combo features
+	 */
+	public static INDArray derivativeLossContentInLayer(INDArray originalFeatures, INDArray comboFeatures) {
+		// Create tensor of 0 and 1 indicating whether values in comboFeatures are positive or negative
+		INDArray mult = comboFeatures.dup();
+		BooleanIndexing.applyWhere(mult, Conditions.lessThan(0.0f), new Value(0.0f));
+		BooleanIndexing.applyWhere(mult, Conditions.greaterThan(0.0f), new Value(1.0f));
+		// Compute the F^l - P^l portion of equation (2), where F^l = comboFeatures and P^l = originalFeatures
+		INDArray diff = comboFeatures.sub(originalFeatures);
+		// This multiplication assures that the result is 0 when the value from F^l < 0, but is still F^l - P^l otherwise
+		return diff.mul(mult);
 	}
 	
 	/**
@@ -116,8 +136,7 @@ public class NeuralStyleTransfer {
 	public static double style_loss_for_one_layer(INDArray style, INDArray combination) {
 		INDArray s = gram_matrix(style);
 		INDArray c = gram_matrix(combination);
-		double size = HEIGHT*WIDTH;
-		return sumOfSquaredErrors(s,c) / (4.0 * (CHANNELS * CHANNELS) * (size * size));
+		return sumOfSquaredErrors(s,c) / (4.0 * (CHANNELS * CHANNELS) * (IMAGE_SIZE * IMAGE_SIZE));
 	}
 	
 	/**
@@ -142,6 +161,37 @@ public class NeuralStyleTransfer {
 			loss += (style_weight / feature_layers.length) * sl;
 		}
 		return loss;
+	}
+	
+	/**
+	 * Equation (6) from the Gatys et all paper: https://arxiv.org/pdf/1508.06576.pdf
+	 * This is the derivative of the style error for a single layer w.r.t. the 
+	 * combo image features at that layer.
+	 * 
+	 * @param styleFeatures Intermediate activations of one layer for style input
+	 * @param comboFeatures Intermediate activations of one layer for combo image input
+	 * @return Derivative of style error matrix for the layer w.r.t. combo image 
+	 */
+	public static INDArray derivativeLossStyleInLayer(INDArray styleFeatures, INDArray comboFeatures) {
+		// Create tensor of 0 and 1 indicating whether values in comboFeatures are positive or negative
+		INDArray mult = comboFeatures.dup();
+		BooleanIndexing.applyWhere(mult, Conditions.lessThan(0.0f), new Value(0.0f));
+		BooleanIndexing.applyWhere(mult, Conditions.greaterThan(0.0f), new Value(1.0f));
+		
+		double styleWeight = 1.0 / ((CHANNELS * CHANNELS) * (IMAGE_SIZE * IMAGE_SIZE));
+		// Corresponds to A^l in equation (6)
+		INDArray a = gram_matrix(styleFeatures); // Should this actually be the content image?
+		// Corresponds to G^l in equation (6)
+		INDArray g = gram_matrix(comboFeatures);
+		// G^l - A^l
+		INDArray diff = g.sub(a);
+		// (F^l)^T * (G^l - A^l)
+		// ERROR HERE! PROBLEM WITH TRANSPOSE? IS THIS THE RIGHT TYPE OF MULTIPLICATION?
+		INDArray product = comboFeatures.transpose().mmul(diff);
+		// (1/(N^2 * M^2)) * ((F^l)^T * (G^l - A^l))
+		INDArray posResult = product.mul(styleWeight);
+		// This multiplication assures that the result is 0 when the value from F^l < 0, but is still (1/(N^2 * M^2)) * ((F^l)^T * (G^l - A^l)) otherwise
+		return posResult.mul(mult);
 	}
 	
 	/**
@@ -206,11 +256,23 @@ public class NeuralStyleTransfer {
 		Arrays.fill(upper, 256);
 		INDArray combination = Nd4j.create(ArrayUtil.doubleArrayFromIntegerArray(RandomNumbers.randomIntArray(upper)), new int[] {1, CHANNELS, HEIGHT, WIDTH});
 		scaler.transform(combination);
-
-		int iterations = 50; // TODO: Change to a parameter
+		
+		int iterations = 10; // TODO: Change to a parameter
 		double learningRate = 0.01; // TODO: Change to parameter
 		
+		// TODO: Generalize: should not need to get this list manually
+		String[] lowerLayers = new String[] {
+				"input_1", // Need this?
+				"block1_conv1",
+				"block1_conv2",
+				"block1_pool", // Need this?
+				"block2_conv1",
+				"block2_conv2"
+		};
+		
 		for(int itr = 0; itr < iterations; itr++) {
+			System.out.println("Iteration: " + itr);
+			
 			// Stacking the inputs works for now, but is inefficient in the long run.
 			// TODO: Don't recalculate activations that won't change.
 			INDArray input = Nd4j.concat(0, content, style, combination);
@@ -219,6 +281,7 @@ public class NeuralStyleTransfer {
 			// Get the intermediate activations
 			Map<String, INDArray> activations = vgg16.feedForward();
 			// Calculate overall loss
+			// TODO: This isn't being used ... why not?
 			double loss = neuralStyleLoss(activations, combination);
 			// One iteration of passing the gradient back
 			Layer block2_conv2 = vgg16.getLayer("block2_conv2");
@@ -227,12 +290,20 @@ public class NeuralStyleTransfer {
 			INDArray dLdANext = Nd4j.zeros(shape);	//Shape: size of activations of block2_conv2 for one image
 			int startLayer = block2_conv2.getIndex();
 			for(int i = startLayer; i >= 0; i++) {
-				// TODO: How to calculate these? Clearly, the loss needs to be used ...
-				INDArray dLstyle_currLayer = null;
-				INDArray dLcontent_currLayer = null;
+				System.out.println("Layer: " + lowerLayers[i]);
+				// This code below doesn't actually use the result of the loss function, just the derivatives. Is this ok?
+				INDArray layerFeatures = activations.get(lowerLayers[i]);
+				// Some duplicated code here ... fix later
+				INDArray content_features = layerFeatures.get(NDArrayIndex.point(0), NDArrayIndex.all(), NDArrayIndex.all(), NDArrayIndex.all());
+				INDArray style_features = layerFeatures.get(NDArrayIndex.point(1), NDArrayIndex.all(), NDArrayIndex.all(), NDArrayIndex.all());
+				INDArray combination_features = layerFeatures.get(NDArrayIndex.point(2), NDArrayIndex.all(), NDArrayIndex.all(), NDArrayIndex.all());		
+
+				// Equation (6) from the Gatys et all paper: https://arxiv.org/pdf/1508.06576.pdf
+				INDArray dLstyle_currLayer = derivativeLossStyleInLayer(style_features, combination_features);
+				// Equation (2) from the Gatys et all paper: https://arxiv.org/pdf/1508.06576.pdf
+				INDArray dLcontent_currLayer = derivativeLossContentInLayer(content_features, combination_features);
 				
 				INDArray dLdAOut = dLdANext.add(dLcontent_currLayer).add(dLstyle_currLayer);
-				//dLcontent and dLstyle might be 0 for some layers (not sure if subsampling would be included?)
 
 				Layer l = vgg16.getLayer(i);
 				dLdANext = l.backpropGradient(dLdAOut).getSecond();
