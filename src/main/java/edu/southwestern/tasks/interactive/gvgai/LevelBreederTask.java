@@ -1,0 +1,144 @@
+package edu.southwestern.tasks.interactive.gvgai;
+
+import java.awt.image.BufferedImage;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.networks.Network;
+import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.gvgai.GVGAIUtil;
+import edu.southwestern.tasks.interactive.InteractiveEvolutionTask;
+import gvgai.core.game.BasicGame;
+import gvgai.core.game.Game;
+import gvgai.core.vgdl.VGDLFactory;
+import gvgai.core.vgdl.VGDLParser;
+import gvgai.core.vgdl.VGDLRegistry;
+import gvgai.tracks.singlePlayer.tools.human.Agent;
+
+public class LevelBreederTask<T extends Network> extends InteractiveEvolutionTask<T> {
+	// TODO: Make these two settings into command line parameters
+	public static final int GAME_GRID_WIDTH = 20;
+	public static final int GAME_GRID_HEIGHT = 20;
+	// TODO: This next setting should be evolved
+	public static final int NUMBER_RANDOM_ITEMS = 10; 
+	
+	// TODO: Need to generalize this to use the game description instead of having specific rules for each game
+	public static final HashMap<String, char[][]> SPECIFIC_GAME_LEVEL_CHARS = new HashMap<String, char[][]>();
+	public static final char DEFAULT_FLOOR = '.'; // Probably not true in all games
+	public static final char DEFAULT_WALL = 'w'; // Probably not true in all games
+	
+	// TODO: Specific generalization for each game should not be necessary, but that is what is currently done
+	public static final int FIXED_ITEMS_INDEX = 0;
+	public static final int UNIQUE_ITEMS_INDEX = 1;
+	public static final int RANDOM_ITEMS_INDEX = 1;
+	static {
+		SPECIFIC_GAME_LEVEL_CHARS.put("zelda", new char[][] {
+			new char[]{'w'}, // Walls are fixed
+			new char[]{'g','+','A'}, // There is one gate, one key, and one avatar
+			new char[]{'1','2','3'}}); // There are random monsters dignified by 1, 2, 3
+		SPECIFIC_GAME_LEVEL_CHARS.put("blacksmoke", new char[][] {
+			new char[]{'w','b','c'}, // There are fixed walls, destructible blocks, and black death squares
+			new char[]{'l','k','e','A'}, // There is one locked door, one key, one escape gate, and one avatar
+			new char[]{'d'}}); // There are a random number of death smoke blobs
+	}
+	
+	public static final String GAMES_PATH = "data/gvgai/examples/gridphysics/";
+	private String fullGameFile;
+	private String gameFile;
+	private char[][] gameCharData;
+	
+	public LevelBreederTask() throws IllegalAccessException {
+		super();
+
+		VGDLFactory.GetInstance().init();
+		VGDLRegistry.GetInstance().init();
+		
+		gameFile = Parameters.parameters.stringParameter("gvgaiGame");
+		fullGameFile = GAMES_PATH + gameFile + ".txt";
+		gameCharData = SPECIFIC_GAME_LEVEL_CHARS.get(gameFile);
+	}
+
+	@Override
+	public String[] sensorLabels() {
+		return new String[] { "X-coordinate", "Y-coordinate", "distance from center", "bias" };
+	}
+
+	@Override
+	public String[] outputLabels() {
+		ArrayList<String> outputs = new ArrayList<String>(10);
+		
+		for(Character c : gameCharData[FIXED_ITEMS_INDEX]) {
+			outputs.add("Fixed-"+c);
+		}
+		for(Character c : gameCharData[UNIQUE_ITEMS_INDEX]) {
+			outputs.add("Unique-"+c);
+		}		
+		outputs.add("Random");
+		
+		// Convert the ArrayList<String> to a String[] and return
+		String str = outputs.toString();
+		String[] result = str.substring(1,str.length() - 1).split(", ");
+		return result;
+	}
+
+	@Override
+	protected String getWindowTitle() {
+		return "Level Breeder";
+	}
+
+	@Override
+	protected void save(String file, int i) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected BufferedImage getButtonImage(T phenotype, int width, int height, double[] inputMultipliers) {
+		String[] level = GVGAIUtil.generateLevelFromCPPN(phenotype, GAME_GRID_WIDTH, GAME_GRID_HEIGHT, DEFAULT_FLOOR, DEFAULT_WALL, 
+				gameCharData[FIXED_ITEMS_INDEX], gameCharData[UNIQUE_ITEMS_INDEX], gameCharData[RANDOM_ITEMS_INDEX], NUMBER_RANDOM_ITEMS);
+		int seed = 0;
+		Agent agent = new Agent();
+		agent.setup(null, seed, true); // null = no log, true = human 
+		Game game = new VGDLParser().parseGame(fullGameFile); // Initialize the game	
+		BufferedImage levelImage = GVGAIUtil.getLevelImage(((BasicGame) game), level, agent, width, height, seed);
+		return levelImage;
+	}
+
+	@Override
+	protected void additionalButtonClickAction(int scoreIndex, Genotype<T> individual) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected String getFileType() {
+		return "Text File";
+	}
+
+	@Override
+	protected String getFileExtension() {
+		return "txt";
+	}
+
+	@Override
+	public int numCPPNInputs() {
+		return sensorLabels().length;
+	}
+
+	@Override
+	public int numCPPNOutputs() {
+		return outputLabels().length;
+	}
+
+	public static void main(String[] args) {
+		try {
+			MMNEAT.main(new String[]{"runNumber:0","randomSeed:1","trials:1","mu:16","maxGens:500","gvgaiGame:zelda","io:false","netio:false","mating:true","fs:false","task:edu.southwestern.tasks.interactive.gvgai.LevelBreederTask","allowMultipleFunctions:true","ftype:0","watch:false","netChangeActivationRate:0.3","cleanFrequency:-1","simplifiedInteractiveInterface:false","recurrency:false","saveAllChampions:true","cleanOldNetworks:false","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:2000","imageHeight:2000","imageSize:200","includeFullSigmoidFunction:true","includeFullGaussFunction:true","includeCosineFunction:true","includeGaussFunction:false","includeIdFunction:true","includeTriangleWaveFunction:false","includeSquareWaveFunction:false","includeFullSawtoothFunction:false","includeSigmoidFunction:false","includeAbsValFunction:false","includeSawtoothFunction:false"});
+		} catch (FileNotFoundException | NoSuchMethodException e) {
+			e.printStackTrace();
+		}
+	}
+
+}

@@ -27,7 +27,7 @@ import gvgai.tools.IO;
 
 public class GVGAISinglePlayerTask<T extends Network> extends NoisyLonerTask<T> implements NetworkTask, HyperNEATTask{
 
-	static String gamesPath = "data/gvgai/examples/gridphysics/"; // Comes from gvgai.tracks.singlePlayer.Test
+	public static final String GAMES_PATH = "data/gvgai/examples/gridphysics/"; // Comes from gvgai.tracks.singlePlayer.Test
 	String game;
 	int level;
 	private Game toPlay;
@@ -43,7 +43,7 @@ public class GVGAISinglePlayerTask<T extends Network> extends NoisyLonerTask<T> 
 		level = Parameters.parameters.integerParameter("gvgaiLevel");
 		System.out.println("GVG-AI level is " + level);
 
-		String game_file = gamesPath + game + ".txt";
+		String game_file = GAMES_PATH + game + ".txt";
 		toPlay = new VGDLParser().parseGame(game_file); // Initialize the game
 
 		try {
@@ -104,7 +104,7 @@ public class GVGAISinglePlayerTask<T extends Network> extends NoisyLonerTask<T> 
 		boolean visuals = CommonConstants.watch;
 		int playerID = 0;
 
-		String level_file = gamesPath + game + "_lvl" + level + ".txt";
+		String level_file = GAMES_PATH + game + "_lvl" + level + ".txt";
 		String[] level = new IO().readFile(level_file);
 		int randomSeed = RandomNumbers.randomGenerator.nextInt(); // TODO: Allow to be deterministic
 

@@ -1,6 +1,5 @@
 package edu.southwestern.tasks.gvgai;
 
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
@@ -9,7 +8,6 @@ import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.networks.Network;
 import edu.southwestern.networks.TWEANN;
 import edu.southwestern.parameters.Parameters;
-import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.graphics.DrawingPanel;
 import edu.southwestern.util.graphics.GraphicsUtil;
 import edu.southwestern.util.random.RandomNumbers;
@@ -311,5 +309,7 @@ public class GVGAIUtil {
 		toPlay = new VGDLParser().parseGame(game_file);
 		runOneGame(toPlay, level, true, agent, seed, playerID);
 		//////////////////////////////////////////////////////	
+		
+		panel.dispose();
 	}
 }
