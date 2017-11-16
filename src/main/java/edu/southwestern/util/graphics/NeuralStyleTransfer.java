@@ -2,6 +2,7 @@ package edu.southwestern.util.graphics;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Map;
 
 import org.datavec.image.loader.NativeImageLoader;
@@ -17,6 +18,9 @@ import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.indexing.NDArrayIndex;
 import org.nd4j.linalg.ops.transforms.Transforms;
 import org.nd4j.linalg.ops.transforms.Transforms.*;
+
+import edu.southwestern.util.datastructures.ArrayUtil;
+import edu.southwestern.util.random.RandomNumbers;
 
 /**
  * My attempt to implement the neural style transfer algorithm in DL4J:
@@ -164,6 +168,22 @@ public class NeuralStyleTransfer {
 		return total_variation_weight * pow.sumNumber().doubleValue();
 	}
 	
+	/**
+	 * Computes complete loss function for the neural style transfer
+	 * optimization problem by adding up all of the components.
+	 * 
+	 * @param activations Activations from the content, style, and combination images (TODO: cache those that don't change)
+	 * @param combination Combined image (so far)
+	 * @return Loss value
+	 */
+	public static double neuralStyleLoss(Map<String, INDArray> activations, INDArray combination) {
+		double loss = 0;
+		loss += content_loss(activations);
+		loss += style_loss(activations);
+		loss += total_variation_loss(combination);
+		return loss;
+	}
+	
 	public static void main(String[] args) throws IOException {		
 		ZooModel zooModel = new VGG16();
 		
@@ -181,7 +201,12 @@ public class NeuralStyleTransfer {
 		INDArray style = loader.asMatrix(new File(styleFile));
 		scaler.transform(style);
 
-		INDArray combination = Nd4j.create(1, CHANNELS, HEIGHT, WIDTH);
+		int totalEntries = CHANNELS*HEIGHT*WIDTH;
+		int[] upper = new int[totalEntries];
+		Arrays.fill(upper, 256);
+		INDArray combination = Nd4j.create(ArrayUtil.doubleArrayFromIntegerArray(RandomNumbers.randomIntArray(upper)), new int[] {1, CHANNELS, HEIGHT, WIDTH});
+		scaler.transform(combination);
+
 		
 		INDArray input = Nd4j.concat(0, content, style, combination);
 		
@@ -191,15 +216,9 @@ public class NeuralStyleTransfer {
 		INDArray[] result = vgg16.output(input);
 		Map<String, INDArray> activations = vgg16.feedForward();
 		
-		System.out.println("content_loss: "+content_loss(activations));
-		System.out.println("style_loss: "+style_loss(activations));
-		System.out.println("total_variation_loss: "+total_variation_loss(combination));
+		double loss = neuralStyleLoss(activations, combination);
 		
-//		INDArray block1_conv2_features = activations.get("block1_conv2");		
-//		INDArray block2_conv2_features = activations.get("block2_conv2");
-//		INDArray block3_conv3_features = activations.get("block3_conv3");
-//		INDArray block4_conv3_features = activations.get("block4_conv3");
-//		INDArray block5_conv3_features = activations.get("block5_conv3");
+		
 				
 	}
 }

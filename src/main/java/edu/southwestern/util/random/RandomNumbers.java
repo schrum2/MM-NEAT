@@ -100,14 +100,12 @@ public class RandomNumbers {
 	 * Array with random integers, with each slot restricted in range by the
 	 * corresponding slot in ceilings.
 	 *
-	 * @param size
-	 *            number of random integers
 	 * @param ceilings
 	 *            max (exclusive) value for each slot (min is 0 inclusive).
 	 * @return random array of integers
 	 */
-	public static Integer[] randomIntArray(int size, int[] ceilings) {
-		Integer[] result = new Integer[size];
+	public static Integer[] randomIntArray(int[] ceilings) {
+		Integer[] result = new Integer[ceilings.length];
 		for (int i = 0; i < result.length; i++) {
 			result[i] = randomGenerator.nextInt(ceilings[i]);
 		}

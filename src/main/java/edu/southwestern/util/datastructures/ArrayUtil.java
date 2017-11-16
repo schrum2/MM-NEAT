@@ -170,6 +170,14 @@ public class ArrayUtil {
 		return array;
 	}
 	
+	public static double[] doubleArrayFromIntegerArray(Integer[] values) {
+		double[] array = new double[values.length];
+		for (int i = 0; i < values.length; i++) {
+			array[i] = values[i];
+		}
+		return array;
+	}
+	
 	/**
 	 * Convert linear INDArray to a 1D double array
 	 * @param row INDArray with just one row
