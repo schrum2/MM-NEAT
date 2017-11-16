@@ -1,21 +1,27 @@
 package edu.southwestern.tasks.gvgai;
 
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
 import java.util.Arrays;
 
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.networks.Network;
 import edu.southwestern.networks.TWEANN;
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.util.MiscUtil;
+import edu.southwestern.util.graphics.DrawingPanel;
 import edu.southwestern.util.graphics.GraphicsUtil;
 import edu.southwestern.util.random.RandomNumbers;
 import gvgai.core.competition.CompetitionParameters;
+import gvgai.core.game.BasicGame;
 import gvgai.core.game.Game;
 import gvgai.core.player.AbstractPlayer;
 import gvgai.core.player.Player;
 import gvgai.core.vgdl.VGDLFactory;
 import gvgai.core.vgdl.VGDLParser;
 import gvgai.core.vgdl.VGDLRegistry;
-import gvgai.tools.IO;
+import gvgai.core.vgdl.VGDLViewer;
 import gvgai.tracks.ArcadeMachine;
 import gvgai.tracks.singlePlayer.tools.human.Agent;
 
@@ -83,6 +89,43 @@ public class GVGAIUtil {
 		return toPlay.getFullResult();
 	}	
 	
+	/**
+	 * Get a still preview image of what the game level looks like
+	 * 
+	 * @param game Game with level already loaded
+	 * @param humanPlayer Agent representing human player (why is this needed?)
+	 * @param width Width of image in pixels
+	 * @param height Height of image in pixels
+	 * @return buffered image of level
+	 */
+	public static BufferedImage getLevelImage(BasicGame game, String[] level, Agent humanPlayer, int width, int height, int seed) {
+		int square_size = game.square_size;
+		game.square_size = Math.min(height / level.length, width / level[0].length());
+		game.buildStringLevel(level, seed); // Must change square size before building level to affect size
+		VGDLViewer view = new VGDLViewer(game, humanPlayer);
+		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		Graphics g = image.getGraphics(); // Changed to graphics will affect the image
+		view.paint(game.spriteGroups);
+		view.paintComponent(g); // Put the sprites into the graphics object
+		game.square_size = square_size; // restore before returning
+		return image;
+	}
+	
+	/**
+	 * Take a CPPN and some sprite information to create a level
+	 * for a grid-based game.
+	 * 
+	 * @param n The Neural network CPPN
+	 * @param levelWidth Width in grid units
+	 * @param levelHeight Height in grid units
+	 * @param defaultBackground char that corresponds to nothing/floor/background
+	 * @param border char that surrounds level as a well (TODO: not all games have this)
+	 * @param fixed array of chars for fixed items, like walls, etc.
+	 * @param unique array of chars for items/sprites of which there must be exactly one
+	 * @param random array of chars for items/sprites of which there can be a variable/random number
+	 * @param randomItems Number of items from the random array to place
+	 * @return String array with level layout
+	 */
 	public static String[] generateLevelFromCPPN(Network n, int levelWidth, int levelHeight, 
 			char defaultBackground, char border, char[] fixed, char[] unique, char[] random, int randomItems) {
 		// Start with 2D char array to fill out level: The +2 is for the border wall.
@@ -251,7 +294,6 @@ public class GVGAIUtil {
 		
 		////////////////////////////////////////////////////////
 		// Allows for playing a bait level defined by a random CPPN
-		Game toPlay = new VGDLParser().parseGame(game_file); // Initialize the game
 		TWEANNGenotype cppn = new TWEANNGenotype(4, 8, 0);
 		TWEANN net = cppn.getPhenotype();
 		String[] level = generateLevelFromCPPN(net, 20, 20, '.', 'w', 
@@ -260,6 +302,13 @@ public class GVGAIUtil {
 		Agent agent = new Agent();
 		agent.setup(null, seed, true); // null = no log, true = human 
 
+		// Image preview
+		Game toPlay = new VGDLParser().parseGame(game_file); // Initialize the game
+		BufferedImage levelImage = getLevelImage(((BasicGame) toPlay), level, agent, 200, 200, seed);
+		DrawingPanel panel = GraphicsUtil.drawImage(levelImage, "Level Preview", 200, 200); 
+		
+		// Reinitialize to clean up mess from image preview
+		toPlay = new VGDLParser().parseGame(game_file);
 		runOneGame(toPlay, level, true, agent, seed, playerID);
 		//////////////////////////////////////////////////////	
 	}
