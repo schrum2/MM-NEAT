@@ -5,11 +5,14 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import javax.swing.JButton;
+
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.networks.Network;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.gvgai.GVGAIUtil;
+import edu.southwestern.tasks.gvgai.GVGAIUtil.GameBundle;
 import edu.southwestern.tasks.interactive.InteractiveEvolutionTask;
 import gvgai.core.game.BasicGame;
 import gvgai.core.game.Game;
@@ -19,6 +22,9 @@ import gvgai.core.vgdl.VGDLRegistry;
 import gvgai.tracks.singlePlayer.tools.human.Agent;
 
 public class LevelBreederTask<T extends Network> extends InteractiveEvolutionTask<T> {
+	// Should exceed any of the CPPN inputs or other interface buttons
+	public static final int PLAY_BUTTON_INDEX = -20; 
+	
 	// TODO: Make these two settings into command line parameters
 	public static final int GAME_GRID_WIDTH = 20;
 	public static final int GAME_GRID_HEIGHT = 20;
@@ -33,7 +39,7 @@ public class LevelBreederTask<T extends Network> extends InteractiveEvolutionTas
 	// TODO: Specific generalization for each game should not be necessary, but that is what is currently done
 	public static final int FIXED_ITEMS_INDEX = 0;
 	public static final int UNIQUE_ITEMS_INDEX = 1;
-	public static final int RANDOM_ITEMS_INDEX = 1;
+	public static final int RANDOM_ITEMS_INDEX = 2;
 	static {
 		SPECIFIC_GAME_LEVEL_CHARS.put("zelda", new char[][] {
 			new char[]{'w'}, // Walls are fixed
@@ -59,6 +65,14 @@ public class LevelBreederTask<T extends Network> extends InteractiveEvolutionTas
 		gameFile = Parameters.parameters.stringParameter("gvgaiGame");
 		fullGameFile = GAMES_PATH + gameFile + ".txt";
 		gameCharData = SPECIFIC_GAME_LEVEL_CHARS.get(gameFile);
+		
+		//Construction of button that lets user plays the level
+		JButton play = new JButton("Play");
+		// Name is first available numeric label after the input disablers
+		play.setName("" + PLAY_BUTTON_INDEX);
+		play.addActionListener(this);
+		top.add(play);
+
 	}
 
 	@Override
@@ -91,20 +105,46 @@ public class LevelBreederTask<T extends Network> extends InteractiveEvolutionTas
 
 	@Override
 	protected void save(String file, int i) {
-		// TODO Auto-generated method stub
-		
+		// TODO Auto-generated method stub		
 	}
 
-	@Override
-	protected BufferedImage getButtonImage(T phenotype, int width, int height, double[] inputMultipliers) {
+	/**
+	 * Use a CPPN to create a level and wrap in a game bundle with a new game.
+	 * @param phenotype CPPN
+	 * @return Bundle of information for running a game
+	 */
+	public GameBundle setUpGameWithLevelFromCPPN(Network phenotype) {
 		String[] level = GVGAIUtil.generateLevelFromCPPN(phenotype, GAME_GRID_WIDTH, GAME_GRID_HEIGHT, DEFAULT_FLOOR, DEFAULT_WALL, 
 				gameCharData[FIXED_ITEMS_INDEX], gameCharData[UNIQUE_ITEMS_INDEX], gameCharData[RANDOM_ITEMS_INDEX], NUMBER_RANDOM_ITEMS);
 		int seed = 0;
 		Agent agent = new Agent();
 		agent.setup(null, seed, true); // null = no log, true = human 
 		Game game = new VGDLParser().parseGame(fullGameFile); // Initialize the game	
-		BufferedImage levelImage = GVGAIUtil.getLevelImage(((BasicGame) game), level, agent, width, height, seed);
+
+		return new GameBundle(game, level, agent, seed, 0);
+	}
+	
+	@Override
+	protected BufferedImage getButtonImage(T phenotype, int width, int height, double[] inputMultipliers) {
+		GameBundle bundle = setUpGameWithLevelFromCPPN(phenotype);
+		BufferedImage levelImage = GVGAIUtil.getLevelImage(((BasicGame) bundle.game), bundle.level, (Agent) bundle.agent, width, height, bundle.randomSeed);
 		return levelImage;
+	}
+		
+	/**
+	 * Responds to a button to actually play a selected level
+	 */
+	protected boolean respondToClick(int itemID) {
+		boolean undo = super.respondToClick(itemID);
+		if(undo) return true; // Click must have been a bad activation checkbox choice. Skip rest
+		// Human plays level
+		if(itemID == PLAY_BUTTON_INDEX && selectedCPPNs.size() > 0) {
+			Network cppn = scores.get(selectedCPPNs.get(selectedCPPNs.size() - 1)).individual.getPhenotype();
+			GameBundle bundle = setUpGameWithLevelFromCPPN(cppn);
+			// True is to watch the game being played
+			GVGAIUtil.runOneGame(bundle, true);		
+		}
+		return false; // no undo: every thing is fine
 	}
 
 	@Override

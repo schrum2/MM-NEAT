@@ -36,6 +36,38 @@ public class GVGAIUtil {
 	public static final double RANDOM_ITEM_THRESHOLD = 0.3;
 
 	/**
+	 * Contains all of the data/classes needed to launch a game
+	 * @author schrum2
+	 */
+	public static class GameBundle {
+		public Game game;
+		public String[] level; 
+		public AbstractPlayer agent; 
+		public int randomSeed; 
+		public int playerID;
+		
+		public GameBundle(Game game, String[] level, AbstractPlayer agent, int randomSeed, int playerID) {
+			this.game = game;
+			this.level = level;
+			this.agent = agent;
+			this.randomSeed = randomSeed;
+			this.playerID = playerID;
+		}
+	}
+	
+	/**
+	 * Run one game with a single class as input. The GameBundle class is
+	 * a collection of information needed to play the game.
+	 * 
+	 * @param bundle Contains the Game, level as a String array, agent, random seed, and player id
+	 * @param visuals Whether to watch the game
+	 * @return scores
+	 */
+	public static double[] runOneGame(GameBundle bundle, boolean visuals) {
+		return runOneGame(bundle.game, bundle.level, visuals, bundle.agent, bundle.randomSeed, bundle.playerID);
+	}
+	
+	/**
 	 * Based on a more complicated method in Arcade Machine with the same name.
 	 * The problem with that method is that is instantiates all information from
 	 * file paths and class names. This method assumes those components have already
