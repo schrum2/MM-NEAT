@@ -18,7 +18,6 @@ import org.nd4j.linalg.dataset.api.preprocessor.VGG16ImagePreProcessor;
 import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.indexing.NDArrayIndex;
 import org.nd4j.linalg.ops.transforms.Transforms;
-import org.nd4j.linalg.ops.transforms.Transforms.*;
 
 import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
@@ -188,8 +187,6 @@ public class NeuralStyleTransfer {
 	
 	public static void main(String[] args) throws IOException {		
 		ZooModel zooModel = new VGG16();
-		
-		// Do I need separate copies for each image input?
 		ComputationGraph vgg16 = (ComputationGraph) zooModel.initPretrained(PretrainedType.IMAGENET);
 	
 		NativeImageLoader loader = new NativeImageLoader(HEIGHT, WIDTH, CHANNELS);
@@ -203,26 +200,54 @@ public class NeuralStyleTransfer {
 		INDArray style = loader.asMatrix(new File(styleFile));
 		scaler.transform(style);
 
+		// Starting combination image is pure white noise
 		int totalEntries = CHANNELS*HEIGHT*WIDTH;
 		int[] upper = new int[totalEntries];
 		Arrays.fill(upper, 256);
 		INDArray combination = Nd4j.create(ArrayUtil.doubleArrayFromIntegerArray(RandomNumbers.randomIntArray(upper)), new int[] {1, CHANNELS, HEIGHT, WIDTH});
-//		BufferedImage noise = GraphicsUtil.imageFromINDArray(combination);
-//		DrawingPanel panel = GraphicsUtil.drawImage(noise, "Noise", WIDTH, HEIGHT); 
-//		MiscUtil.waitForReadStringAndEnterKeyPress();
 		scaler.transform(combination);
+
+		int iterations = 50; // TODO: Change to a parameter
+		double learningRate = 0.01; // TODO: Change to parameter
 		
-		INDArray input = Nd4j.concat(0, content, style, combination);
-		
-		//System.out.println(input.shapeInfoToString());
-		//System.out.println(vgg16.summary());
-		
-		INDArray[] result = vgg16.output(input);
-		Map<String, INDArray> activations = vgg16.feedForward();
-		
-		double loss = neuralStyleLoss(activations, combination);
-		
-		
+		for(int itr = 0; itr < iterations; itr++) {
+			// Stacking the inputs works for now, but is inefficient in the long run.
+			// TODO: Don't recalculate activations that won't change.
+			INDArray input = Nd4j.concat(0, content, style, combination);
+			// Activate the network
+			INDArray[] result = vgg16.output(input);
+			// Get the intermediate activations
+			Map<String, INDArray> activations = vgg16.feedForward();
+			// Calculate overall loss
+			double loss = neuralStyleLoss(activations, combination);
+			// One iteration of passing the gradient back
+			Layer block2_conv2 = vgg16.getLayer("block2_conv2");
+			int[] shape = activations.get("block2_conv2").shape(); // Shape of whole stack for three inputs
+			shape[0] = 1; // Get the shape for a single image input
+			INDArray dLdANext = Nd4j.zeros(shape);	//Shape: size of activations of block2_conv2 for one image
+			int startLayer = block2_conv2.getIndex();
+			for(int i = startLayer; i >= 0; i++) {
+				// TODO: How to calculate these? Clearly, the loss needs to be used ...
+				INDArray dLstyle_currLayer = null;
+				INDArray dLcontent_currLayer = null;
 				
+				INDArray dLdAOut = dLdANext.add(dLcontent_currLayer).add(dLstyle_currLayer);
+				//dLcontent and dLstyle might be 0 for some layers (not sure if subsampling would be included?)
+
+				Layer l = vgg16.getLayer(i);
+				dLdANext = l.backpropGradient(dLdAOut).getSecond();
+			}
+			//Once loop ends: dLdANext == dL/dCombination
+
+			// Update combination image
+			combination.subi(dLdANext.mul(learningRate)); // Maybe replace with an Updater later?
+		}
+				
+		// Undo color mean subtraction
+		scaler.revertFeatures(combination);
+		// Show final image afterward
+		BufferedImage output = GraphicsUtil.imageFromINDArray(combination);
+		DrawingPanel panel = GraphicsUtil.drawImage(output, "Combined Image", WIDTH, HEIGHT); 
+		MiscUtil.waitForReadStringAndEnterKeyPress();
 	}
 }
