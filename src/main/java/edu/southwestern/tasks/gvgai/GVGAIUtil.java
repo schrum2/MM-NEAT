@@ -287,6 +287,31 @@ public class GVGAIUtil {
 //			"w...2w....wgww+....3w", 
 //			"wwwwwwwwwwwwwwwwwwwww"	
 //		};
+		
+//		String[] level = new String[] {
+//				"wwwwwwwwwwwwwwwwwwwwww", 
+//				"w...............3wwwww", 
+//				"wA.......g......3wwwww", 
+//				"w................1wwww", 
+//				"w................12www", 
+//				"w................33www", 
+//				"w................212ww", 
+//				"w...................ww", 
+//				"w...................ww", 
+//				"w...........+.......ww", 
+//				"w...................ww", 
+//				"w..................www", 
+//				"w..................www", 
+//				"w.................wwww", 
+//				"w................wwwww", 
+//				"w...............wwwwww", 
+//				"w..............wwwwwww", 
+//				"ww...........wwwwwwwww", 
+//				"wwww.......wwwwwwwwwww", 
+//				"wwwwwwwwwwwwwwwwwwwwww", 
+//				"wwwwwwwwwwwwwwwwwwwwww", 
+//				"wwwwwwwwwwwwwwwwwwwwww"	
+//			};
 //
 //		Agent agent = new Agent();
 //		agent.setup(null, seed, true); // null = no log, true = human 
@@ -339,7 +364,8 @@ public class GVGAIUtil {
 		
 		// Reinitialize to clean up mess from image preview
 		toPlay = new VGDLParser().parseGame(game_file);
-		runOneGame(toPlay, level, true, agent, seed, playerID);
+		GameBundle bundle = new GameBundle(toPlay, level, agent, seed, playerID);
+		runOneGame(bundle, true);
 		//////////////////////////////////////////////////////	
 		
 		panel.dispose();
