@@ -1,5 +1,6 @@
 package edu.southwestern.util.graphics;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -19,6 +20,7 @@ import org.nd4j.linalg.indexing.NDArrayIndex;
 import org.nd4j.linalg.ops.transforms.Transforms;
 import org.nd4j.linalg.ops.transforms.Transforms.*;
 
+import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.random.RandomNumbers;
 
@@ -205,8 +207,10 @@ public class NeuralStyleTransfer {
 		int[] upper = new int[totalEntries];
 		Arrays.fill(upper, 256);
 		INDArray combination = Nd4j.create(ArrayUtil.doubleArrayFromIntegerArray(RandomNumbers.randomIntArray(upper)), new int[] {1, CHANNELS, HEIGHT, WIDTH});
+//		BufferedImage noise = GraphicsUtil.imageFromINDArray(combination);
+//		DrawingPanel panel = GraphicsUtil.drawImage(noise, "Noise", WIDTH, HEIGHT); 
+//		MiscUtil.waitForReadStringAndEnterKeyPress();
 		scaler.transform(combination);
-
 		
 		INDArray input = Nd4j.concat(0, content, style, combination);
 		
