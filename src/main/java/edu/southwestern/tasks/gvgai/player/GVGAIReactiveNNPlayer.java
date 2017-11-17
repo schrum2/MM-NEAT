@@ -1,4 +1,4 @@
-package edu.southwestern.tasks.gvgai;
+package edu.southwestern.tasks.gvgai.player;
 
 import java.awt.Point;
 import java.util.ArrayList;
@@ -19,8 +19,6 @@ import gvgai.tools.ElapsedCpuTimer;
  * @param <T>
  */
 public class GVGAIReactiveNNPlayer<T extends Network> extends GVGAINNPlayer<T> {
-	
-	public static final double BIAS = 1.0;
 	
 	private int viewRange;
 	

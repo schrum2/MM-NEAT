@@ -19,12 +19,7 @@ import edu.southwestern.util.graphics.DrawingPanel;
 import edu.southwestern.util.graphics.GraphicsUtil;
 
 /**
- * I got some genomes from:
- * https://github.com/Evolving-AI-Lab/cppnx/tree/master/CanalizationPicbreederGenomes
- * which I believe were transferred from the original Picbreeder.
- * In any case, they represent some of the most prominent images
- * from that site. This class loads those genomes into my CPPN format
- * and then displays the pictures.
+ * Manually puts together some CPPNs to display associated images and networks.
  * 
  * @author Jacob Schrum
  */
