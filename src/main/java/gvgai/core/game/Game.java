@@ -76,7 +76,8 @@ public abstract class Game {
 	 * Groups of sprites in the level. Each element of the array is a collection
 	 * of sprites of a given type, which is also the index of the array.
 	 */
-	protected SpriteGroup[] spriteGroups;
+	// schrum2 changed this from protected to public
+	public SpriteGroup[] spriteGroups;
 
 	/**
 	 * Relationships for collisions: double array of (list of) effects.

@@ -1,4 +1,4 @@
-package edu.southwestern.tasks.gvgai;
+package edu.southwestern.tasks.gvgai.player;
 
 import java.util.List;
 
@@ -15,8 +15,6 @@ import gvgai.tools.ElapsedCpuTimer;
  * @param <T>
  */
 public class GVGAIOneStepNNPlayer<T extends Network> extends GVGAINNPlayer<T> {
-	
-	public static final double BIAS = 1.0;
 	
 	@Override
 	public ACTIONS act(StateObservation stateObs, ElapsedCpuTimer elapsedTimer) {
