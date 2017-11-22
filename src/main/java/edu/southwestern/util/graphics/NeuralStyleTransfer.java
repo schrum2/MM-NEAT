@@ -116,7 +116,8 @@ public class NeuralStyleTransfer {
 	 * @return Resulting Gram matrix
 	 */
 	public static INDArray gram_matrix(INDArray x) {
-		INDArray flattened = Nd4j.toFlattened(x);
+		int[] shape = x.shape();
+		INDArray flattened = x.reshape(shape[0],shape[1]*shape[2]);
 		// mmul is dot product/outer product
 		INDArray gram = flattened.mmul(flattened.dup().transpose()); // Is the dup necessary?
 		return gram;
@@ -185,9 +186,12 @@ public class NeuralStyleTransfer {
 		INDArray g = gram_matrix(comboFeatures);
 		// G^l - A^l
 		INDArray diff = g.sub(a);
-		// (F^l)^T * (G^l - A^l)
-		// ERROR HERE! PROBLEM WITH TRANSPOSE? IS THIS THE RIGHT TYPE OF MULTIPLICATION?
-		INDArray product = comboFeatures.transpose().mmul(diff);
+		// (F^l)^T * (G^l - A^l)		
+		System.out.println(comboFeatures.shapeInfoToString());
+		System.out.println(diff.shapeInfoToString());
+		INDArray trans = comboFeatures.transpose();
+		System.out.println(trans.shapeInfoToString());
+		INDArray product = trans.mmul(diff);
 		// (1/(N^2 * M^2)) * ((F^l)^T * (G^l - A^l))
 		INDArray posResult = product.mul(styleWeight);
 		// This multiplication assures that the result is 0 when the value from F^l < 0, but is still (1/(N^2 * M^2)) * ((F^l)^T * (G^l - A^l)) otherwise
