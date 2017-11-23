@@ -14,6 +14,11 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyAdapter;
 import java.awt.image.VolatileImage;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -276,6 +281,15 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
         scene = new LevelScene(graphicsConfiguration, this, seed, difficulty, type, levelLength, timeLimit);
         levelScene = ((LevelScene) scene);
         scene.init();
+        
+        // Comment out to write level text
+//        try {
+//			levelScene.level.saveText(new PrintStream(new FileOutputStream("TestLevel.txt")));
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+        
     }
 
     public void levelFailed() {
