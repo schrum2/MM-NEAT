@@ -303,7 +303,7 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
 	public void startLevel(Level level, long levelRandSeed, int levelType, int timeLimit) {
         scene = new LevelScene(level, graphicsConfiguration, this, levelRandSeed, levelType, timeLimit);
         levelScene = ((LevelScene) scene);
-        scene.init();
+        ((LevelScene) scene).init(false); // Not a random level
 	}
 
     public void levelFailed() {

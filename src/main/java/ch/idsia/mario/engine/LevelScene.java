@@ -609,7 +609,12 @@ public class LevelScene extends Scene implements SpriteContext
         return ret;
     }
 
-    public void init()
+	@Override
+	public void init() {
+		init(true); // Random levels by default
+	}
+    
+    public void init(boolean randomLevel)
     {
         try
         {
@@ -627,7 +632,9 @@ public class LevelScene extends Scene implements SpriteContext
          else
          {*/
 //        level = LevelGenerator.createLevel(320, 15, levelSeed);
-        level = LevelGenerator.createLevel(levelLength, 15, levelSeed, levelDifficulty, levelType);
+        if(randomLevel) {
+        	level = LevelGenerator.createLevel(levelLength, 15, levelSeed, levelDifficulty, levelType);
+        } // Otherwise, assume it was already created
         //        }
 
         /*        if (recorder != null)
