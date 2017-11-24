@@ -2,6 +2,7 @@ package ch.idsia.mario.engine;
 
 import ch.idsia.ai.agents.Agent;
 import ch.idsia.ai.agents.human.CheaterKeyboardAgent;
+import ch.idsia.mario.engine.level.Level;
 import ch.idsia.mario.engine.sprites.Mario;
 import ch.idsia.mario.environments.Environment;
 import ch.idsia.tools.EvaluationInfo;
@@ -291,6 +292,19 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
 //		}
         
     }
+    
+    /**
+     * Added so that the level could be directly specified instead of randomly generated
+     * @param level
+     * @param levelRandSeed
+     * @param levelType
+     * @param timeLimit
+     */
+	public void startLevel(Level level, long levelRandSeed, int levelType, int timeLimit) {
+        scene = new LevelScene(level, graphicsConfiguration, this, levelRandSeed, levelType, timeLimit);
+        levelScene = ((LevelScene) scene);
+        scene.init();
+	}
 
     public void levelFailed() {
 //        scene = mapScene;

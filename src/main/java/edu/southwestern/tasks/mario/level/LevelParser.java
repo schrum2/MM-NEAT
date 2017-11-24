@@ -99,6 +99,9 @@ public class LevelParser {
 		int extraStones = 15;
 		Level level = new Level(width+2*extraStones,height);
 
+		level.width = width;
+		level.height = height;
+		
 		//Set Level Exit
 		//Extend level by that
 		level.xExit = width+extraStones;

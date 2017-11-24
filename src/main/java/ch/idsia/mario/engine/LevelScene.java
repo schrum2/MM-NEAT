@@ -75,7 +75,24 @@ public class LevelScene extends Scene implements SpriteContext
         killedCreaturesByShell = 0;
     }
 
-    private String mapElToStr(int el)
+    public LevelScene(Level level, GraphicsConfiguration graphicsConfiguration, MarioComponent marioComponent,
+			long levelRandSeed, int levelType, int timeLimit) {
+        this.graphicsConfiguration = graphicsConfiguration;
+        this.levelSeed = levelRandSeed; // TODO: Use to randomize enemies?
+        this.renderer = marioComponent;
+        //this.levelDifficulty = levelDifficulty;
+        this.levelType = levelType;
+        //this.levelLength = levelLength;
+        this.setTotalTime(timeLimit);
+        killedCreaturesTotal = 0;
+        killedCreaturesByFireBall = 0;
+        killedCreaturesByStomp = 0;
+        killedCreaturesByShell = 0;
+        
+        this.level = level;
+	}
+
+	private String mapElToStr(int el)
     {
         String s = "";
         if  (el == 0 || el == 1)

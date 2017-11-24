@@ -1,6 +1,7 @@
 package ch.idsia.mario.simulation;
 
 import ch.idsia.ai.agents.Agent;
+import ch.idsia.mario.engine.level.Level;
 import ch.idsia.utils.ParameterContainer;
 
 /**
@@ -17,6 +18,9 @@ public class SimulationOptions extends ParameterContainer
     protected Agent agent;
 //    protected MarioComponent marioComponent = null;
 
+    // Schrum: Generally unused
+	public Level level = null;
+
     public static int currentTrial = 1;
 
     protected SimulationOptions()
@@ -30,6 +34,7 @@ public class SimulationOptions extends ParameterContainer
     {
         SimulationOptions ret = new SimulationOptions();
         ret.setAgent(getAgent());
+        ret.setLevel(this.level);
         ret.setLevelDifficulty(getLevelDifficulty());
         ret.setLevelLength(getLevelLength());
         ret.setLevelRandSeed(getLevelRandSeed());
@@ -182,4 +187,14 @@ public class SimulationOptions extends ParameterContainer
 //    {
 //        return i(getParameterValue("-not"));
 //    }
+    
+    /**
+     * Added by Jacob Schrum to directly set level
+     * @param level
+     */
+	public void setLevel(Level level) {
+		this.level = level;	
+	}
+
+
 }

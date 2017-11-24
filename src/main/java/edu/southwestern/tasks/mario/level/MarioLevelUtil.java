@@ -2,7 +2,14 @@ package edu.southwestern.tasks.mario.level;
 
 import java.util.ArrayList;
 
+import ch.idsia.ai.agents.Agent;
+import ch.idsia.ai.agents.human.HumanKeyboardAgent;
+import ch.idsia.ai.tasks.ProgressTask;
+import ch.idsia.ai.tasks.Task;
 import ch.idsia.mario.engine.level.Level;
+import ch.idsia.tools.CmdLineOptions;
+import ch.idsia.tools.EvaluationOptions;
+import competition.cig.sergeykarakovskiy.SergeyKarakovskiy_JumpingAgent;
 import edu.southwestern.parameters.Parameters;
 
 public class MarioLevelUtil {
@@ -38,7 +45,17 @@ public class MarioLevelUtil {
 		LevelParser parse = new LevelParser();
 		Level level = parse.createLevelASCII(lines);
 		
-		
+		Agent controller = new HumanKeyboardAgent(); //new SergeyKarakovskiy_JumpingAgent();
+		EvaluationOptions options = new CmdLineOptions(new String[]{});
+		options.setAgent(controller);
+		ProgressTask task = new ProgressTask(options);
+
+		// Added to change level
+        options.setLevel(level);
+
+		task.setOptions(options);
+
+		System.out.println ("Score: " + task.evaluate (options.getAgent())[0]);
 		
 		//////////////////////////////////////////////////////
 		
