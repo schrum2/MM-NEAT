@@ -3,6 +3,8 @@ package edu.southwestern.util.graphics;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsEnvironment;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
@@ -36,6 +38,16 @@ public class GraphicsUtil {
 	public static final double BIAS = 1.0;// a common input used in neural networks
 	public static final double SQRT2 = Math.sqrt(2); // Used for scaling distance from center
 	
+	/**
+	 * Determine the default graphics configuration for the current system.
+	 * Used to preview Mario levels.
+	 * @return
+	 */
+	public static GraphicsConfiguration getConfiguration() { 
+		return GraphicsEnvironment.getLocalGraphicsEnvironment(). 
+				getDefaultScreenDevice().getDefaultConfiguration(); 
+	} 
+
 	/**
 	 * Save an image to the specified filename (which includes path and file extension)
 	 * @param image Buffered image

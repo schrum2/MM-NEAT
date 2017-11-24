@@ -1,11 +1,13 @@
 package edu.southwestern.tasks.mario.level;
 
+import java.awt.GraphicsConfiguration;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import ch.idsia.ai.agents.Agent;
 import ch.idsia.ai.agents.human.HumanKeyboardAgent;
 import ch.idsia.ai.tasks.ProgressTask;
+import ch.idsia.mario.engine.LevelRenderer;
 import ch.idsia.mario.engine.level.Level;
 import ch.idsia.tools.CmdLineOptions;
 import ch.idsia.tools.EvaluationOptions;
@@ -19,6 +21,7 @@ import edu.southwestern.util.stats.StatisticsUtilities;
 
 public class MarioLevelUtil {
 	
+	public static final int BLOCK_SIZE = 16;
 	public static final int LEVEL_HEIGHT = 12;
 	public static final double MAX_HEIGHT_INDEX = LEVEL_HEIGHT - 1;
 
@@ -164,7 +167,14 @@ public class MarioLevelUtil {
 
 		task.setOptions(options);
 
-		System.out.println ("Score: " + task.evaluate (options.getAgent())[0]);
+		int relevantWidth = (level.width - (2*LevelParser.BUFFER_WIDTH)) * BLOCK_SIZE;
+		System.out.println("level.width:"+level.width);
+		System.out.println("relevantWidth:"+relevantWidth);
+		DrawingPanel levelPanel = new DrawingPanel(relevantWidth,LEVEL_HEIGHT*BLOCK_SIZE, "Level");
+		LevelRenderer.renderArea(levelPanel.getGraphics(), level, 0, 0, LevelParser.BUFFER_WIDTH*BLOCK_SIZE, 0, relevantWidth, LEVEL_HEIGHT*BLOCK_SIZE);
+		
+		System.out.println ("Score: " + task.evaluate(options.getAgent())[0]);
+		
 				
 	}
 }
