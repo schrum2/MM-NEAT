@@ -6,11 +6,9 @@ import java.util.Arrays;
 import ch.idsia.ai.agents.Agent;
 import ch.idsia.ai.agents.human.HumanKeyboardAgent;
 import ch.idsia.ai.tasks.ProgressTask;
-import ch.idsia.ai.tasks.Task;
 import ch.idsia.mario.engine.level.Level;
 import ch.idsia.tools.CmdLineOptions;
 import ch.idsia.tools.EvaluationOptions;
-import competition.cig.sergeykarakovskiy.SergeyKarakovskiy_JumpingAgent;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.evolution.mutation.tweann.ActivationFunctionRandomReplacement;
@@ -47,7 +45,13 @@ public class MarioLevelUtil {
 	
 	public static final char EMPTY_CHAR = '-';
 	
-	public static String[] generateLevelFromCPPN(TWEANN net, int width) {
+	/**
+	 * Generate Mario level layout in form of String array using CPPN.
+	 * @param net CPPN
+	 * @param width Width in Mario blocks
+	 * @return String array where each String is a row of the level
+	 */
+	public static String[] generateLevelLayoutFromCPPN(TWEANN net, int width) {
 		String[] level = new String[LEVEL_HEIGHT];
 		double halfWidth = width/2.0;
 		// Top row has problems if it contains objects
@@ -63,7 +67,7 @@ public class MarioLevelUtil {
 				double[] inputs = new double[] {x,y,1.0};
 				double[] outputs = net.process(inputs);
 
-				System.out.println("["+i+"]["+j+"]"+Arrays.toString(inputs)+Arrays.toString(outputs));
+				//System.out.println("["+i+"]["+j+"]"+Arrays.toString(inputs)+Arrays.toString(outputs));
 				
 				if(outputs[PRESENT_INDEX] > PRESENT_THRESHOLD) {
 					outputs[PRESENT_INDEX] = Double.NEGATIVE_INFINITY; // Assure this index is not the biggest
@@ -80,23 +84,7 @@ public class MarioLevelUtil {
 						level[i] += ENEMY_CHAR;
 					} else { // In case enemy condition checks failed
 						level[i] += EMPTY_CHAR;
-					}
-					
-//					if(outputs[SOLID_INDEX] > SOLID_THRESHOLD) {
-//						level[i] += SOLID_CHAR;
-//					} else if(outputs[BLOCK_OR_QUESTION_INDEX] > QUESTION_THRESHOLD) {
-//						level[i] += QUESTION_CHAR;					
-//					} else if(outputs[BLOCK_OR_QUESTION_INDEX] > BLOCK_THRESHOLD) {
-//						level[i] += BLOCK_CHAR;
-//					} else if(outputs[COIN_INDEX] > COIN_THRESHOLD) {
-//						level[i] += COIN_CHAR;
-//					} else if(outputs[ENEMY_INDEX] > ENEMY_THRESHOLD
-//							&& i+1 < level.length // Not the bottom row
-//							&& level[i+1].charAt(j) != EMPTY_CHAR // Not above air: works because bottom up
-//							&& level[i+1].charAt(j) != ENEMY_CHAR // Not stacking enemies
-//							&& level[i+1].charAt(j) != COIN_CHAR) { // Not above a coin
-//						level[i] += ENEMY_CHAR;
-//					}
+					}					
 				} else {
 					level[i] += EMPTY_CHAR;
 				}
@@ -106,10 +94,29 @@ public class MarioLevelUtil {
 		return level;
 	}
 
+	/**
+	 * Take a cppn and a width and completely generate the level
+	 * @param net CPPN
+	 * @param width In Mario blocks
+	 * @return Level instance
+	 */
+	public static Level generateLevelFromCPPN(TWEANN net, int width) {
+		String[] stringBlock = generateLevelLayoutFromCPPN(net, width);
+						
+		ArrayList<String> lines = new ArrayList<String>();
+		for(int i = 0; i < stringBlock.length; i++) {
+			//System.out.println(stringBlock[i]);
+			lines.add(stringBlock[i]);
+		}
+
+		LevelParser parse = new LevelParser();
+		Level level = parse.createLevelASCII(lines);
+		return level;
+	}
 	
 	public static void main(String[] args) {
 		Parameters.initializeParameterCollections(new String[] 
-				{"runNumber:0","randomSeed:4","trials:1","mu:16","maxGens:500","io:false","netio:false","mating:true","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3","includeFullSigmoidFunction:true","includeFullGaussFunction:true","includeCosineFunction:true","includeGaussFunction:false","includeIdFunction:true","includeTriangleWaveFunction:true","includeSquareWaveFunction:true","includeFullSawtoothFunction:true","includeSigmoidFunction:false","includeAbsValFunction:true","includeSawtoothFunction:true"});
+				{"runNumber:0","randomSeed:"+((int)(Math.random()*100)),"trials:1","mu:16","maxGens:500","io:false","netio:false","mating:true","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3","includeFullSigmoidFunction:true","includeFullGaussFunction:true","includeCosineFunction:true","includeGaussFunction:false","includeIdFunction:true","includeTriangleWaveFunction:true","includeSquareWaveFunction:true","includeFullSawtoothFunction:true","includeSigmoidFunction:false","includeAbsValFunction:true","includeSawtoothFunction:true"});
 		MMNEAT.loadClasses();
 				
 		////////////////////////////////////////////////////////
@@ -145,18 +152,7 @@ public class MarioLevelUtil {
 		DrawingPanel panel = new DrawingPanel(200,200, "Network");
 		net.draw(panel, true, false);
 
-		String[] stringBlock = generateLevelFromCPPN(
-				net, // The CPPN 
-				60);  // Width of 60 blocks (ignoring buffer zone)
-						
-		ArrayList<String> lines = new ArrayList<String>();
-		for(int i = 0; i < stringBlock.length; i++) {
-			System.out.println(stringBlock[i]);
-			lines.add(stringBlock[i]);
-		}
-
-		LevelParser parse = new LevelParser();
-		Level level = parse.createLevelASCII(lines);
+		Level level = generateLevelFromCPPN(net, 60);
 		
 		Agent controller = new HumanKeyboardAgent(); //new SergeyKarakovskiy_JumpingAgent();
 		EvaluationOptions options = new CmdLineOptions(new String[]{});
