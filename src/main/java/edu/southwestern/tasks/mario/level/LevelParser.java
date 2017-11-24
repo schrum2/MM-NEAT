@@ -77,9 +77,6 @@ public class LevelParser {
 		int actualWidth = width+2*BUFFER_WIDTH;
 		Level level = new Level(actualWidth,height);
 
-		level.width = actualWidth;
-		level.height = height;
-		
 		//Set Level Exit
 		//Extend level by that
 		level.xExit = width+BUFFER_WIDTH;
