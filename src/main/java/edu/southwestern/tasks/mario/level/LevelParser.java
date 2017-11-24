@@ -21,16 +21,10 @@ import java.util.List;
  */
 public class LevelParser {
 
-	/**
-	 *
-	 * @param args
-	 */
-	public LevelParser(){
+	public static final int BUFFER_WIDTH = 15;
 
-	}
-
-
-	/*"tiles" : {
+	/*
+	 "tiles" : {
     0    "X" : ["solid","ground"],
     1    "S" : ["solid","breakable"],
     2    "-" : ["passable","empty"],
@@ -44,20 +38,6 @@ public class LevelParser {
     10   "o" : ["coin","collectable","passable"]
 	 */
 
-	public Level test(){
-		// TODO: Fix hard coding
-		Level level = new Level(202,14);
-		level.setBlock(1, 13, (byte) 9);
-		level.setBlock(2, 13, (byte) 9);
-		level.setBlock(3, 13, (byte) 9);
-		level.setBlock(4, 13, (byte) 9);
-		level.setBlock(5, 13, (byte) 9);
-		level.setBlock(6, 13, (byte) 9);
-		level.setBlock(7, 13, (byte) 9);
-
-		return level;
-	}
-
 	/**
 	 * Create level from text file with 2D arrangement of
 	 * level content.
@@ -65,8 +45,7 @@ public class LevelParser {
 	 * @param filename
 	 * @return
 	 */
-	public Level createLevelASCII(String filename)
-	{
+	public Level createLevelASCII(String filename) {
 		//Read in level representation
 		ArrayList<String> lines = new ArrayList<String>();
 		try {
@@ -92,31 +71,27 @@ public class LevelParser {
 	 * @param lines
 	 * @return
 	 */
-	public Level createLevelASCII(ArrayList<String> lines)
-	{
+	public Level createLevelASCII(ArrayList<String> lines) {
 		int width = lines.get(0).length();
 		int height = lines.size();
-		int extraStones = 15;
-		Level level = new Level(width+2*extraStones,height);
+		int actualWidth = width+2*BUFFER_WIDTH;
+		Level level = new Level(actualWidth,height);
 
-		level.width = width;
+		level.width = actualWidth;
 		level.height = height;
 		
 		//Set Level Exit
 		//Extend level by that
-		level.xExit = width+extraStones;
+		level.xExit = width+BUFFER_WIDTH;
 		level.yExit = height-1;
 
-		for(int i=0; i<extraStones; i++){
+		for(int i=0; i<BUFFER_WIDTH; i++){
 			level.setBlock(i, height-1, (byte) 9);
 		}
 
-
-		for(int i=0; i<extraStones; i++){
-			level.setBlock(width+i+extraStones, height-1, (byte) 9);
+		for(int i=0; i<BUFFER_WIDTH; i++){
+			level.setBlock(width+i+BUFFER_WIDTH, height-1, (byte) 9);
 		}
-
-
 
 		//set Level map
 		for(int i=0; i<height; i++){
@@ -125,13 +100,13 @@ public class LevelParser {
 				if("E".equals(code)){
 					//set Enemy
 					//new SpriteTemplate(type, boolean winged)
-					level.setSpriteTemplate(j+extraStones, i+1, new SpriteTemplate(Enemy.ENEMY_GOOMBA, false));
+					level.setSpriteTemplate(j+BUFFER_WIDTH, i, new SpriteTemplate(Enemy.ENEMY_GOOMBA, false));
 					//System.out.println("j: "+j+" i:"+i);
 					//set passable tile: everything not set is passable
 				}else{
 					int encoded = codeParserASCII(code);
 					if(encoded !=0){
-						level.setBlock(j+extraStones, i+1, (byte) encoded);
+						level.setBlock(j+BUFFER_WIDTH, i, (byte) encoded);
 						//System.out.println("j: "+j+" i:"+i+" encoded: "+encoded);
 					}
 				}
