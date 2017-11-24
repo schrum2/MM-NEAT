@@ -50,7 +50,11 @@ public class MarioLevelUtil {
 	public static String[] generateLevelFromCPPN(TWEANN net, int width) {
 		String[] level = new String[LEVEL_HEIGHT];
 		double halfWidth = width/2.0;
-		for(int i = LEVEL_HEIGHT - 1; i >= 0; i--) { // From bottom up: for enemy ground check
+		// Top row has problems if it contains objects
+		char[] top = new char[width];
+		Arrays.fill(top, EMPTY_CHAR);
+		level[0] = new String(top);
+		for(int i = LEVEL_HEIGHT - 1; i > 0; i--) { // From bottom up: for enemy ground check
 			level[i] = "";
 			for(int j = 0; j < width; j++) {
 				double x = (j - halfWidth) / halfWidth; // Horizontal symmetry
@@ -72,10 +76,7 @@ public class MarioLevelUtil {
 					} else if(highest == COIN_INDEX) {
 						level[i] += COIN_CHAR;
 					} else if(highest == ENEMY_INDEX // Must be true
-							&& i+1 < level.length // Not the bottom row
-							&& level[i+1].charAt(j) != EMPTY_CHAR // Not above air: works because bottom up
-							&& level[i+1].charAt(j) != ENEMY_CHAR // Not stacking enemies
-							&& level[i+1].charAt(j) != COIN_CHAR) { // Not above a coin
+							&& i+1 < level.length) { // Not the bottom row
 						level[i] += ENEMY_CHAR;
 					} else { // In case enemy condition checks failed
 						level[i] += EMPTY_CHAR;
@@ -108,7 +109,7 @@ public class MarioLevelUtil {
 	
 	public static void main(String[] args) {
 		Parameters.initializeParameterCollections(new String[] 
-				{"runNumber:0","randomSeed:0","trials:1","mu:16","maxGens:500","io:false","netio:false","mating:true","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3","includeFullSigmoidFunction:true","includeFullGaussFunction:true","includeCosineFunction:true","includeGaussFunction:false","includeIdFunction:true","includeTriangleWaveFunction:true","includeSquareWaveFunction:true","includeFullSawtoothFunction:true","includeSigmoidFunction:false","includeAbsValFunction:true","includeSawtoothFunction:true"});
+				{"runNumber:0","randomSeed:4","trials:1","mu:16","maxGens:500","io:false","netio:false","mating:true","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3","includeFullSigmoidFunction:true","includeFullGaussFunction:true","includeCosineFunction:true","includeGaussFunction:false","includeIdFunction:true","includeTriangleWaveFunction:true","includeSquareWaveFunction:true","includeFullSawtoothFunction:true","includeSigmoidFunction:false","includeAbsValFunction:true","includeSawtoothFunction:true"});
 		MMNEAT.loadClasses();
 				
 		////////////////////////////////////////////////////////
