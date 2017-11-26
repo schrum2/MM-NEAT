@@ -11,6 +11,7 @@ import edu.southwestern.parameters.Parameters;
 import edu.southwestern.util.graphics.DrawingPanel;
 import edu.southwestern.util.graphics.GraphicsUtil;
 import edu.southwestern.util.random.RandomNumbers;
+import edu.southwestern.util.stats.StatisticsUtilities;
 import gvgai.core.competition.CompetitionParameters;
 import gvgai.core.game.BasicGame;
 import gvgai.core.game.Game;
@@ -32,7 +33,9 @@ import gvgai.tracks.singlePlayer.tools.human.Agent;
  */
 public class GVGAIUtil {
 
-	public static final double FIXED_ITEM_THRESHOLD = 0.3;
+	public static final double PRESENCE_THRESHOLD = 0.0;
+	public static final int PRESENCE_INDEX = 0;
+	public static final int FIRST_FIXED_INDEX = 1;
 	public static final double RANDOM_ITEM_THRESHOLD = 0.3;
 
 	/**
@@ -184,12 +187,13 @@ public class GVGAIUtil {
 				// Able to use a method from GraphicsUtil here. The -1 is time, which is ignored.
 				double[] inputs = GraphicsUtil.get2DObjectCPPNInputs(x, y, levelWidth, levelHeight, -1);
 				double[] outputs = n.process(inputs);
-				// Check for presence of each fixed item
-				for(int i = 0; i < fixed.length; i++) {
-					// Default background check imposes priority order on fixed items
-					if(level[y][x] == defaultBackground && outputs[i] > FIXED_ITEM_THRESHOLD) {
-						level[y][x] = fixed[i]; // Place item in level
-					}
+				// Check if a fixed item is present
+				if(outputs[PRESENCE_INDEX] > PRESENCE_THRESHOLD) {
+					// Figure out which one it is
+					double[] fixedActivations = new double[fixed.length];
+					System.arraycopy(outputs, FIRST_FIXED_INDEX, fixedActivations, 0, fixed.length);
+					int whichFixed = StatisticsUtilities.argmax(fixedActivations);
+					level[y][x] = fixed[whichFixed]; // Place item in level
 				}
 				// Only place unique items on empty spaces
 				if(level[y][x] == defaultBackground) {
@@ -349,7 +353,7 @@ public class GVGAIUtil {
 		
 		////////////////////////////////////////////////////////
 		// Allows for playing a bait level defined by a random CPPN
-		TWEANNGenotype cppn = new TWEANNGenotype(4, 8, 0);
+		TWEANNGenotype cppn = new TWEANNGenotype(4, 9, 0);
 		TWEANN net = cppn.getPhenotype();
 		String[] level = generateLevelFromCPPN(net, 20, 20, '.', 'w', 
 				new char[]{'w','b','c'}, new char[]{'l','k','e','A'}, new char[]{'d'}, 15);

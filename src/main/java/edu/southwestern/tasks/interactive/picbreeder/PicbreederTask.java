@@ -17,7 +17,7 @@ import edu.southwestern.util.graphics.GraphicsUtil;
  * Original Picbreeder paper: 
  * Jimmy Secretan, Nicholas Beato, David B. D'Ambrosio, Adelein Rodriguez, Adam Campbell, 
  * Jeremiah T. Folsom-Kovarik and Kenneth O. Stanley. Picbreeder: A Case Study in Collaborative 
- * Evolutionary Exploration of Design Space. Evolutionary Computation 19, 3 (2011), 373�403. 
+ * Evolutionary Exploration of Design Space. Evolutionary Computation 19, 3 (2011), 373-403. 
  * DOI: http://dx.doi.org/10.1162/evco_a_00030
  * 
  * @author Lauren Gillespie

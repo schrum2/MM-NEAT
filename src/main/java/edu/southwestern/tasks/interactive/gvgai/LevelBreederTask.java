@@ -1,7 +1,9 @@
 package edu.southwestern.tasks.interactive.gvgai;
 
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -83,6 +85,7 @@ public class LevelBreederTask<T extends Network> extends InteractiveEvolutionTas
 	@Override
 	public String[] outputLabels() {
 		ArrayList<String> outputs = new ArrayList<String>(10);
+		outputs.add("FixedPresence");
 		
 		for(Character c : gameCharData[FIXED_ITEMS_INDEX]) {
 			outputs.add("Fixed-"+c);
@@ -105,7 +108,21 @@ public class LevelBreederTask<T extends Network> extends InteractiveEvolutionTas
 
 	@Override
 	protected void save(String file, int i) {
-		// TODO Auto-generated method stub		
+		String[] level = GVGAIUtil.generateLevelFromCPPN((Network)scores.get(i).individual.getPhenotype(), GAME_GRID_WIDTH, GAME_GRID_HEIGHT, DEFAULT_FLOOR, DEFAULT_WALL, 
+				gameCharData[FIXED_ITEMS_INDEX], gameCharData[UNIQUE_ITEMS_INDEX], gameCharData[RANDOM_ITEMS_INDEX], NUMBER_RANDOM_ITEMS);
+		// Prepare text file
+		try {
+			PrintStream ps = new PrintStream(new File(file));
+			// Write String array to text file 
+			for(String line : level) {
+				ps.println(line);
+			}
+			ps.close();
+		} catch (FileNotFoundException e) {
+			System.out.println("Could not save file: " + file);
+			e.printStackTrace();
+			return;
+		}
 	}
 
 	/**
@@ -116,7 +133,7 @@ public class LevelBreederTask<T extends Network> extends InteractiveEvolutionTas
 	public GameBundle setUpGameWithLevelFromCPPN(Network phenotype) {
 		String[] level = GVGAIUtil.generateLevelFromCPPN(phenotype, GAME_GRID_WIDTH, GAME_GRID_HEIGHT, DEFAULT_FLOOR, DEFAULT_WALL, 
 				gameCharData[FIXED_ITEMS_INDEX], gameCharData[UNIQUE_ITEMS_INDEX], gameCharData[RANDOM_ITEMS_INDEX], NUMBER_RANDOM_ITEMS);
-		int seed = 0;
+		int seed = 0; // TODO: Use parameter?
 		Agent agent = new Agent();
 		agent.setup(null, seed, true); // null = no log, true = human 
 		Game game = new VGDLParser().parseGame(fullGameFile); // Initialize the game	
@@ -181,7 +198,7 @@ public class LevelBreederTask<T extends Network> extends InteractiveEvolutionTas
 
 	public static void main(String[] args) {
 		try {
-			MMNEAT.main(new String[]{"runNumber:0","randomSeed:1","trials:1","mu:16","maxGens:500","gvgaiGame:blacksmoke","io:false","netio:false","mating:true","fs:false","task:edu.southwestern.tasks.interactive.gvgai.LevelBreederTask","allowMultipleFunctions:true","ftype:0","watch:false","netChangeActivationRate:0.3","cleanFrequency:-1","simplifiedInteractiveInterface:false","recurrency:false","saveAllChampions:true","cleanOldNetworks:false","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:2000","imageHeight:2000","imageSize:200","includeFullSigmoidFunction:true","includeFullGaussFunction:true","includeCosineFunction:true","includeGaussFunction:false","includeIdFunction:true","includeTriangleWaveFunction:false","includeSquareWaveFunction:false","includeFullSawtoothFunction:false","includeSigmoidFunction:false","includeAbsValFunction:false","includeSawtoothFunction:false"});
+			MMNEAT.main(new String[]{"runNumber:0","randomSeed:1","trials:1","mu:16","maxGens:500","gvgaiGame:zelda","io:false","netio:false","mating:true","fs:false","task:edu.southwestern.tasks.interactive.gvgai.LevelBreederTask","allowMultipleFunctions:true","ftype:0","watch:false","netChangeActivationRate:0.3","cleanFrequency:-1","simplifiedInteractiveInterface:false","recurrency:false","saveAllChampions:true","cleanOldNetworks:false","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:2000","imageHeight:2000","imageSize:200","includeFullSigmoidFunction:true","includeFullGaussFunction:true","includeCosineFunction:true","includeGaussFunction:false","includeIdFunction:true","includeTriangleWaveFunction:true","includeSquareWaveFunction:true","includeFullSawtoothFunction:true","includeSigmoidFunction:false","includeAbsValFunction:false","includeSawtoothFunction:false"});
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}
