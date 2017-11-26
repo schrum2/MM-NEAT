@@ -1,6 +1,5 @@
 package edu.southwestern.tasks.mario.level;
 
-import java.awt.GraphicsConfiguration;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -30,21 +29,16 @@ public class MarioLevelUtil {
 
 	public static final char SOLID_CHAR = 'X';
 	public static final int SOLID_INDEX = 1;
-	public static final double SOLID_THRESHOLD = 0.5;
 	
 	public static final int BLOCK_OR_QUESTION_INDEX = 2;
 	public static final char QUESTION_CHAR = '?';
-	public static final double QUESTION_THRESHOLD = 0.8;
 	public static final char BLOCK_CHAR = 'S';
-	public static final double BLOCK_THRESHOLD = 0.5;
 
 	public static final char COIN_CHAR = 'o';
 	public static final int COIN_INDEX = 3;
-	public static final double COIN_THRESHOLD = 0.8;
 
 	public static final char ENEMY_CHAR = 'E';
 	public static final int ENEMY_INDEX = 4;
-	public static final double ENEMY_THRESHOLD = 0.8;	
 	
 	public static final char EMPTY_CHAR = '-';
 	
