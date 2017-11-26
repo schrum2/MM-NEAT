@@ -27,20 +27,28 @@ public class MarioLevelUtil {
 	public static final int PRESENT_INDEX = 0;
 	public static final double PRESENT_THRESHOLD = 0.0;
 
-	public static final char SOLID_CHAR = 'X';
 	public static final int SOLID_INDEX = 1;
-	
-	public static final int BLOCK_OR_QUESTION_INDEX = 2;
-	public static final char QUESTION_CHAR = '?';
+	public static final char SOLID_CHAR = 'X';
+	public static final int BLOCK_INDEX = 2;
 	public static final char BLOCK_CHAR = 'S';
-
+	public static final int QUESTION_INDEX = 3;
+	public static final char QUESTION_CHAR = '?';
+	public static final int COIN_INDEX = 4;
 	public static final char COIN_CHAR = 'o';
-	public static final int COIN_INDEX = 3;
-
+	public static final int ENEMY_INDEX = 5;
 	public static final char ENEMY_CHAR = 'E';
-	public static final int ENEMY_INDEX = 4;
+	public static final int PIPE_INDEX = 6;
 	
 	public static final char EMPTY_CHAR = '-';
+	
+	/**
+	 * Whether the character is any of the pipe characters
+	 * @param p A character
+	 * @return Whether it represents part of a pipe
+	 */
+	public static boolean isPipe(char p) {
+		return p == '<' || p == '>' || p == '[' || p == ']';
+	}
 	
 	/**
 	 * Generate Mario level layout in form of String array using CPPN.
@@ -64,6 +72,9 @@ public class MarioLevelUtil {
 				double[] inputs = new double[] {x,y,1.0};
 				double[] outputs = net.process(inputs);
 
+//				for(int k = 0; k < level.length; k++) {
+//					System.out.println(level[k]);
+//				}
 				//System.out.println("["+i+"]["+j+"]"+Arrays.toString(inputs)+Arrays.toString(outputs));
 				
 				if(outputs[PRESENT_INDEX] > PRESENT_THRESHOLD) {
@@ -71,17 +82,42 @@ public class MarioLevelUtil {
 					int highest = StatisticsUtilities.argmax(outputs);
 					if(highest == SOLID_INDEX) {
 						level[i] += SOLID_CHAR;
-					} else if(highest == BLOCK_OR_QUESTION_INDEX) {
+					} else if(highest == BLOCK_INDEX) {
 						level[i] += BLOCK_CHAR;
-						// TODO: Question blocks
+					} else if(highest == QUESTION_INDEX) {
+						level[i] += QUESTION_CHAR;
 					} else if(highest == COIN_INDEX) {
 						level[i] += COIN_CHAR;
-					} else if(highest == ENEMY_INDEX // Must be true
-							&& i+1 < level.length) { // Not the bottom row
+					} else if (highest == PIPE_INDEX) {
+						int leftEdge = level[i].length() - 1;
+						if(level[i].length() % 2 == 1 && // Only every other spot can have pipes
+						   !isPipe(level[i].charAt(leftEdge))) { 							
+							// Have to construct the pipe all the way down
+							level[i] = level[i].substring(0, leftEdge) + "<>"; // Top
+							int current = i+1;
+							//System.out.println("before " + current + " leftEdge " + leftEdge);
+							// Replace empty spaces with pipes
+							while(current < LEVEL_HEIGHT &&
+								  (isPipe(level[current].charAt(leftEdge)) ||
+								   isPipe(level[current].charAt(leftEdge+1)) ||
+								   level[current].charAt(leftEdge) == EMPTY_CHAR ||
+								   level[current].charAt(leftEdge+1) == EMPTY_CHAR ||
+								   level[current].charAt(leftEdge) == COIN_CHAR ||
+								   level[current].charAt(leftEdge+1) == COIN_CHAR ||
+								   level[current].charAt(leftEdge) == ENEMY_CHAR ||
+								   level[current].charAt(leftEdge+1) == ENEMY_CHAR)) {
+								level[current] = level[current].substring(0, leftEdge) + "[]" + level[current].substring(leftEdge+2); // body
+								//System.out.println(level[current]);
+								current++;
+								//System.out.println("loop " + current + " leftEdge " + leftEdge);
+							}
+						} else { // No room for pipe
+							level[i] += EMPTY_CHAR;
+						}
+					} else {
+						assert highest == ENEMY_INDEX : "Only enemy character is left";
 						level[i] += ENEMY_CHAR;
-					} else { // In case enemy condition checks failed
-						level[i] += EMPTY_CHAR;
-					}					
+					}
 				} else {
 					level[i] += EMPTY_CHAR;
 				}
@@ -135,7 +171,7 @@ public class MarioLevelUtil {
 		// Instead of specifying the level, create it with a TWEANN	
 		TWEANNGenotype cppn = new TWEANNGenotype(
 				3, // Inputs: x, y, bias 
-				5, // Outputs: Present?, solid, breakable, coin, enemy (TODO: pipes)
+				7, // Outputs: Present?, solid, breakable, question, coin, enemy, pipes
 				0); // Archetype
 		// Randomize activation functions
 		new ActivationFunctionRandomReplacement().mutate(cppn);
@@ -162,8 +198,8 @@ public class MarioLevelUtil {
 		task.setOptions(options);
 
 		int relevantWidth = (level.width - (2*LevelParser.BUFFER_WIDTH)) * BLOCK_SIZE;
-		System.out.println("level.width:"+level.width);
-		System.out.println("relevantWidth:"+relevantWidth);
+		//System.out.println("level.width:"+level.width);
+		//System.out.println("relevantWidth:"+relevantWidth);
 		DrawingPanel levelPanel = new DrawingPanel(relevantWidth,LEVEL_HEIGHT*BLOCK_SIZE, "Level");
 		LevelRenderer.renderArea(levelPanel.getGraphics(), level, 0, 0, LevelParser.BUFFER_WIDTH*BLOCK_SIZE, 0, relevantWidth, LEVEL_HEIGHT*BLOCK_SIZE);
 		
