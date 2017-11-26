@@ -85,6 +85,7 @@ public class LevelBreederTask<T extends Network> extends InteractiveEvolutionTas
 	@Override
 	public String[] outputLabels() {
 		ArrayList<String> outputs = new ArrayList<String>(10);
+		outputs.add("FixedPresence");
 		
 		for(Character c : gameCharData[FIXED_ITEMS_INDEX]) {
 			outputs.add("Fixed-"+c);
