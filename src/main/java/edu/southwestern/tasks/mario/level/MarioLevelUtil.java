@@ -39,9 +39,23 @@ public class MarioLevelUtil {
 	public static final char QUESTION_CHAR = '?';
 	public static final int COIN_INDEX = 4;
 	public static final char COIN_CHAR = 'o';
-	public static final int ENEMY_INDEX = 5;
-	public static final char ENEMY_CHAR = 'E';
-	public static final int PIPE_INDEX = 6;
+	public static final int PIPE_INDEX = 5;
+
+	public static final int GOOMBA_INDEX = 6;
+	public static final char GOOMBA_CHAR = 'E';
+	public static final char WINGED_GOOMBA_CHAR = 'W';
+	public static final int GREEN_KOOPA_INDEX = 7;
+	public static final char GREEN_KOOPA_CHAR = 'g';
+	public static final char WINGED_GREEN_KOOPA_CHAR = 'G';
+	public static final int RED_KOOPA_INDEX = 8;
+	public static final char RED_KOOPA_CHAR = 'r';
+	public static final char WINGED_RED_KOOPA_CHAR = 'R';
+	public static final int SPIKY_INDEX = 9;
+	public static final char SPIKY_CHAR = '^';
+	public static final char WINGED_SPIKY_CHAR = '&';
+
+	public static final int WINGED_INDEX = 10; // If enemy, is it winged?
+	public static final double WINGED_THRESHOLD = 0.75;
 	
 	public static final char EMPTY_CHAR = '-';
 	
@@ -83,6 +97,8 @@ public class MarioLevelUtil {
 				
 				if(outputs[PRESENT_INDEX] > PRESENT_THRESHOLD) {
 					outputs[PRESENT_INDEX] = Double.NEGATIVE_INFINITY; // Assure this index is not the biggest
+					double wingedValue = outputs[WINGED_INDEX]; // Save winged value before making it negative infinity
+					outputs[WINGED_INDEX] = Double.NEGATIVE_INFINITY; // Assure this index is not the biggest
 					int highest = StatisticsUtilities.argmax(outputs);
 					if(highest == SOLID_INDEX) {
 						level[i] += SOLID_CHAR;
@@ -108,8 +124,8 @@ public class MarioLevelUtil {
 								   level[current].charAt(leftEdge+1) == EMPTY_CHAR ||
 								   level[current].charAt(leftEdge) == COIN_CHAR ||
 								   level[current].charAt(leftEdge+1) == COIN_CHAR ||
-								   level[current].charAt(leftEdge) == ENEMY_CHAR ||
-								   level[current].charAt(leftEdge+1) == ENEMY_CHAR)) {
+								   LevelParser.isEnemy(level[current].charAt(leftEdge)) ||
+								   LevelParser.isEnemy(level[current].charAt(leftEdge+1)))) {
 								level[current] = level[current].substring(0, leftEdge) + "[]" + level[current].substring(leftEdge+2); // body
 								//System.out.println(level[current]);
 								current++;
@@ -118,9 +134,15 @@ public class MarioLevelUtil {
 						} else { // No room for pipe
 							level[i] += EMPTY_CHAR;
 						}
+					} else if(highest == GOOMBA_INDEX) {
+						level[i] += wingedValue > WINGED_THRESHOLD ? WINGED_GOOMBA_CHAR : GOOMBA_CHAR;
+					} else if(highest == GREEN_KOOPA_INDEX) {
+						level[i] += wingedValue > WINGED_THRESHOLD ? WINGED_GREEN_KOOPA_CHAR : GREEN_KOOPA_CHAR;
+					} else if(highest == RED_KOOPA_INDEX) {
+						level[i] += wingedValue > WINGED_THRESHOLD ? WINGED_RED_KOOPA_CHAR : RED_KOOPA_CHAR;
 					} else {
-						assert highest == ENEMY_INDEX : "Only enemy character is left";
-						level[i] += ENEMY_CHAR;
+						assert highest == SPIKY_INDEX : "Only option left is spiky: " + highest;
+						level[i] += wingedValue > WINGED_THRESHOLD ? WINGED_SPIKY_CHAR : SPIKY_CHAR;
 					}
 				} else {
 					level[i] += EMPTY_CHAR;

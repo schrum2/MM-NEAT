@@ -39,7 +39,7 @@ public class MarioLevelBreederTask<T extends Network> extends InteractiveEvoluti
 
 	@Override
 	public String[] outputLabels() {
-		return new String[] {"Present?", "Rock", "Breakable", "Question", "Coin", "Enemy", "Pipes"};
+		return new String[] {"Present?", "Rock", "Breakable", "Question", "Coin", "Pipes", "Goomba", "GreenKoopa", "RedKoopa", "Spiky","Winged?"};
 	}
 
 	@Override
@@ -75,7 +75,6 @@ public class MarioLevelBreederTask<T extends Network> extends InteractiveEvoluti
 			new Thread() {
 				public void run() {
 					MarioLevelUtil.agentPlaysLevel(level, agent);
-					// TODO: Close window after playing
 				}
 			}.start();
 		}
