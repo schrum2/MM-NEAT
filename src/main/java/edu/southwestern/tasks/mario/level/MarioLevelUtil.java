@@ -1,5 +1,7 @@
 package edu.southwestern.tasks.mario.level;
 
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -13,6 +15,7 @@ import ch.idsia.tools.EvaluationOptions;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.evolution.mutation.tweann.ActivationFunctionRandomReplacement;
+import edu.southwestern.networks.Network;
 import edu.southwestern.networks.TWEANN;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.util.graphics.DrawingPanel;
@@ -56,7 +59,7 @@ public class MarioLevelUtil {
 	 * @param width Width in Mario blocks
 	 * @return String array where each String is a row of the level
 	 */
-	public static String[] generateLevelLayoutFromCPPN(TWEANN net, int width) {
+	public static String[] generateLevelLayoutFromCPPN(Network net, int width) {
 		String[] level = new String[LEVEL_HEIGHT];
 		double halfWidth = width/2.0;
 		// Top row has problems if it contains objects
@@ -133,7 +136,7 @@ public class MarioLevelUtil {
 	 * @param width In Mario blocks
 	 * @return Level instance
 	 */
-	public static Level generateLevelFromCPPN(TWEANN net, int width) {
+	public static Level generateLevelFromCPPN(Network net, int width) {
 		String[] stringBlock = generateLevelLayoutFromCPPN(net, width);
 						
 		ArrayList<String> lines = new ArrayList<String>();
@@ -147,6 +150,46 @@ public class MarioLevelUtil {
 		return level;
 	}
 	
+	/**
+	 * Return an image of the level, excluding the buffer zones at the
+	 * beginning and end of every CPPN generated level. Also excludes
+	 * the background, Mario, and enemy sprites.
+	 * @param level
+	 * @return
+	 */
+	public static BufferedImage getLevelImage(Level level) {
+		EvaluationOptions options = new CmdLineOptions(new String[0]);
+		ProgressTask task = new ProgressTask(options);
+		// Added to change level
+        options.setLevel(level);
+		task.setOptions(options);
+
+		int relevantWidth = (level.width - (2*LevelParser.BUFFER_WIDTH)) * MarioLevelUtil.BLOCK_SIZE;
+		BufferedImage image = new BufferedImage(relevantWidth, MarioLevelUtil.LEVEL_HEIGHT*MarioLevelUtil.BLOCK_SIZE, BufferedImage.TYPE_INT_ARGB);
+		// Skips buffer zones at start and end of level
+		LevelRenderer.renderArea((Graphics2D) image.getGraphics(), level, 0, 0, LevelParser.BUFFER_WIDTH*BLOCK_SIZE, 0, relevantWidth, LEVEL_HEIGHT*BLOCK_SIZE);
+		return image;
+	}
+	
+	/**
+	 * Specified agent plays the specified level with visual display
+	 * @param level
+	 * @param agent
+	 * @return
+	 */
+	public static double[] agentPlaysLevel(Level level, Agent agent) {
+		EvaluationOptions options = new CmdLineOptions(new String[]{});
+		options.setAgent(agent);
+		ProgressTask task = new ProgressTask(options);
+        options.setLevel(level);
+		task.setOptions(options);
+		return task.evaluate(options.getAgent());
+	}
+	
+	/**
+	 * For testing and debugging
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		Parameters.initializeParameterCollections(new String[] 
 				{"runNumber:0","randomSeed:"+((int)(Math.random()*100)),"trials:1","mu:16","maxGens:500","io:false","netio:false","mating:true","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3","includeFullSigmoidFunction:true","includeFullGaussFunction:true","includeCosineFunction:true","includeGaussFunction:false","includeIdFunction:true","includeTriangleWaveFunction:true","includeSquareWaveFunction:true","includeFullSawtoothFunction:true","includeSigmoidFunction:false","includeAbsValFunction:true","includeSawtoothFunction:true"});
