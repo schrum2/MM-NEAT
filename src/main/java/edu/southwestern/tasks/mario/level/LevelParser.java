@@ -79,7 +79,7 @@ public class LevelParser {
 
 		//Set Level Exit
 		//Extend level by that
-		level.xExit = width+BUFFER_WIDTH;
+		level.xExit = width+BUFFER_WIDTH+1;
 		level.yExit = height-1;
 
 		for(int i=0; i<BUFFER_WIDTH; i++){
