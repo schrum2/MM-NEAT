@@ -49,7 +49,7 @@ public class MarioLevelBreederTask<T extends Network> extends InteractiveEvoluti
 
 	@Override
 	protected void save(String file, int i) {
-		// TODO Auto-generated method stub
+		// TODO Make the representation richer before providing a way to save
 		
 	}
 

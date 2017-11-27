@@ -80,8 +80,8 @@ public class LevelRenderer
     public static void renderArea(Graphics2D g, Level level, int x0, int y0, int xCam, int yCam, int w, int h)
     {
     	Art.init(GraphicsUtil.getConfiguration());
-    	
-        g.setBackground(transparent);
+
+    	g.setBackground(transparent);
         g.clearRect(x0, y0, w, h);
         int xTileStart = (x0 + xCam) / 16;
         int yTileStart = (y0 + yCam) / 16;
@@ -92,10 +92,7 @@ public class LevelRenderer
             for (int y = yTileStart; y <= yTileEnd; y++)
             {
                 int b = level.getBlock(x, y) & 0xff;
-                if (((Level.TILE_BEHAVIORS[b]) & Level.BIT_ANIMATED) == 0)
-                {
-                    g.drawImage(Art.level[b % 16][b / 16], (x << 4) - xCam, (y << 4) - yCam, null);
-                }
+                g.drawImage(Art.level[b % 16][b / 16], (x << 4) - xCam, (y << 4) - yCam, null);
             }
         }
     }

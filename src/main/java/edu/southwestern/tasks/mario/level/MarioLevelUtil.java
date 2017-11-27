@@ -12,6 +12,7 @@ import ch.idsia.mario.engine.LevelRenderer;
 import ch.idsia.mario.engine.level.Level;
 import ch.idsia.tools.CmdLineOptions;
 import ch.idsia.tools.EvaluationOptions;
+import ch.idsia.tools.ToolsConfigurator;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.evolution.mutation.tweann.ActivationFunctionRandomReplacement;
@@ -183,7 +184,9 @@ public class MarioLevelUtil {
 		ProgressTask task = new ProgressTask(options);
         options.setLevel(level);
 		task.setOptions(options);
-		return task.evaluate(options.getAgent());
+		double[] result = task.evaluate(options.getAgent());
+		ToolsConfigurator.DestroyMarioComponentFrame();
+		return result;
 	}
 	
 	/**
