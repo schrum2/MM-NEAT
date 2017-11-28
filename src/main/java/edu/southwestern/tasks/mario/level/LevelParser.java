@@ -65,7 +65,7 @@ public class LevelParser {
 	 * @return
 	 */
 	public static boolean isEnemy(String code) {
-		return code.equals("E") || code.equals("W") || code.equals("G") || code.equals("g") || code.equals("r") || code.equals("R") || code.equals("^");
+		return code.equals("E") || code.equals("W") || code.equals("G") || code.equals("g") || code.equals("r") || code.equals("R") || code.equals("^") || code.equals("&");
 	}
 	
 	/**

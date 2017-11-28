@@ -67,6 +67,16 @@ public class MarioLevelUtil {
 	public static boolean isPipe(char p) {
 		return p == '<' || p == '>' || p == '[' || p == ']';
 	}
+
+	/**
+	 * Whether the char is any of the koopas. Significant, since they take up two block cells
+	 * in height.
+	 * @param c
+	 * @return
+	 */
+	public static boolean isKoopa(char c) {
+		return c == GREEN_KOOPA_CHAR || c == RED_KOOPA_CHAR || c == WINGED_GREEN_KOOPA_CHAR || c == WINGED_RED_KOOPA_CHAR;
+	}
 	
 	/**
 	 * Generate Mario level layout in form of String array using CPPN.
@@ -76,6 +86,10 @@ public class MarioLevelUtil {
 	 */
 	public static String[] generateLevelLayoutFromCPPN(Network net, int width) {
 		String[] level = new String[LEVEL_HEIGHT];
+		
+		// Initially there are no enemies. Only allow one per column
+		boolean[] enemyInColumn = new boolean[width];
+		
 		double halfWidth = width/2.0;
 		// Top row has problems if it contains objects
 		char[] top = new char[width];
@@ -101,13 +115,13 @@ public class MarioLevelUtil {
 					outputs[WINGED_INDEX] = Double.NEGATIVE_INFINITY; // Assure this index is not the biggest
 					int highest = StatisticsUtilities.argmax(outputs);
 					if(highest == SOLID_INDEX) {
-						level[i] += SOLID_CHAR;
+						level[i] += i < LEVEL_HEIGHT - 1 && isKoopa(level[i+1].charAt(j)) ? EMPTY_CHAR : SOLID_CHAR;
 					} else if(highest == BLOCK_INDEX) {
-						level[i] += BLOCK_CHAR;
+						level[i] += i < LEVEL_HEIGHT - 1 && isKoopa(level[i+1].charAt(j)) ? EMPTY_CHAR : BLOCK_CHAR;
 					} else if(highest == QUESTION_INDEX) {
-						level[i] += QUESTION_CHAR;
+						level[i] += i < LEVEL_HEIGHT - 1 && isKoopa(level[i+1].charAt(j)) ? EMPTY_CHAR : QUESTION_CHAR;
 					} else if(highest == COIN_INDEX) {
-						level[i] += COIN_CHAR;
+						level[i] += i < LEVEL_HEIGHT - 1 && isKoopa(level[i+1].charAt(j)) ? EMPTY_CHAR : COIN_CHAR;
 					} else if (highest == PIPE_INDEX) {
 						int leftEdge = level[i].length() - 1;
 						if(level[i].length() % 2 == 1 && // Only every other spot can have pipes
@@ -134,15 +148,24 @@ public class MarioLevelUtil {
 						} else { // No room for pipe
 							level[i] += EMPTY_CHAR;
 						}
-					} else if(highest == GOOMBA_INDEX) {
-						level[i] += wingedValue > WINGED_THRESHOLD ? WINGED_GOOMBA_CHAR : GOOMBA_CHAR;
-					} else if(highest == GREEN_KOOPA_INDEX) {
-						level[i] += wingedValue > WINGED_THRESHOLD ? WINGED_GREEN_KOOPA_CHAR : GREEN_KOOPA_CHAR;
-					} else if(highest == RED_KOOPA_INDEX) {
-						level[i] += wingedValue > WINGED_THRESHOLD ? WINGED_RED_KOOPA_CHAR : RED_KOOPA_CHAR;
-					} else {
-						assert highest == SPIKY_INDEX : "Only option left is spiky: " + highest;
-						level[i] += wingedValue > WINGED_THRESHOLD ? WINGED_SPIKY_CHAR : SPIKY_CHAR;
+					} else { // Must be an enemy
+						if(enemyInColumn[j]) {
+							// Only allow one enemy per column: Too restrictive?
+							level[i] += EMPTY_CHAR;
+						} else {
+							if(highest == GOOMBA_INDEX) {
+								level[i] += wingedValue > WINGED_THRESHOLD ? WINGED_GOOMBA_CHAR : GOOMBA_CHAR;
+							} else if(highest == GREEN_KOOPA_INDEX) {
+								level[i] += wingedValue > WINGED_THRESHOLD ? WINGED_GREEN_KOOPA_CHAR : GREEN_KOOPA_CHAR;
+							} else if(highest == RED_KOOPA_INDEX) {
+								level[i] += wingedValue > WINGED_THRESHOLD ? WINGED_RED_KOOPA_CHAR : RED_KOOPA_CHAR;
+							} else {
+								assert highest == SPIKY_INDEX : "Only option left is spiky: " + highest;
+								level[i] += wingedValue > WINGED_THRESHOLD ? WINGED_SPIKY_CHAR : SPIKY_CHAR;
+							}
+							// Indicate that there is now an enemy in the column
+							enemyInColumn[j] = true;
+						}
 					}
 				} else {
 					level[i] += EMPTY_CHAR;
