@@ -16,6 +16,7 @@ public class TetrisTask<T extends Network> extends RLGlueTask<T> {
 	private final boolean tetrisTimeSteps;
 	private final boolean tetrisBlocksOnScreen;
 	private final boolean tetrisAvgEmptySpaces;
+	private final boolean tetrisAvgHoles;
 	private final boolean tetrisLinesNotScore;
 	
 	/**
@@ -26,6 +27,7 @@ public class TetrisTask<T extends Network> extends RLGlueTask<T> {
 		tetrisTimeSteps = Parameters.parameters.booleanParameter("tetrisTimeSteps");
 		tetrisBlocksOnScreen = Parameters.parameters.booleanParameter("tetrisBlocksOnScreen");
 		tetrisAvgEmptySpaces = Parameters.parameters.booleanParameter("tetrisAvgEmptySpaces");
+		tetrisAvgHoles = Parameters.parameters.booleanParameter("tetrisAvgNumHoles");
 		tetrisLinesNotScore = Parameters.parameters.booleanParameter("tetrisLinesNotScore");
 		
 		if (tetrisTimeSteps) { // Staying alive is good
@@ -37,12 +39,15 @@ public class TetrisTask<T extends Network> extends RLGlueTask<T> {
 		if(tetrisAvgEmptySpaces) {
 			MMNEAT.registerFitnessFunction("Average Number of Empty Spaces");
 		}
-		
+		if(tetrisAvgHoles) {//sometimes a fitness, 2nd to last fitness
+			MMNEAT.registerFitnessFunction("average holes on screen");
+		}
 		if(tetrisLinesNotScore) {
 			MMNEAT.registerFitnessFunction("Lines cleared");
 		} else {
 			MMNEAT.registerFitnessFunction("RL Return");
 		}
+
 
 		
 		// Now register the other scores for Tetris
@@ -50,9 +55,9 @@ public class TetrisTask<T extends Network> extends RLGlueTask<T> {
 		MMNEAT.registerFitnessFunction("Rows of 2", null, false);
 		MMNEAT.registerFitnessFunction("Rows of 3", null, false);
 		MMNEAT.registerFitnessFunction("Rows of 4", null, false);
-
 		MMNEAT.registerFitnessFunction("Lines cleared",null,false);
 		MMNEAT.registerFitnessFunction("Game Score",null,false); // same as RL Return
+		MMNEAT.registerFitnessFunction("average num holes", null, false);//always an other score, sometimes a fitness
 	}
 
 	/**
@@ -60,7 +65,7 @@ public class TetrisTask<T extends Network> extends RLGlueTask<T> {
 	 */
 	@Override
 	public int numOtherScores() {
-		return 6; // Each type of row, plus lines and score
+		return 7; // Each type of row, plus lines and score
 	}
 
 	/**
@@ -90,16 +95,18 @@ public class TetrisTask<T extends Network> extends RLGlueTask<T> {
 		}
 		Tetris game = (Tetris) environment;
 		// Average empty spaces across all piece placements
+		double avgNumHoles = -game.getAverageNumHoles();
 		if(tetrisAvgEmptySpaces) fitness[index++] = game.getAverageNumEmptySpaces();		
-		//System.out.println(Arrays.toString(fitness));
+		if(tetrisAvgHoles)	fitness[index++] = avgNumHoles ;
 		if(tetrisLinesNotScore) {
 			fitness[index++] = game.getLinesCleared();
 		} else {
 			fitness[index++] = rlReturn[num]; // default
 		}
 
-		double[] rowCounts = game.getNumberOfRowsCleared();
 		
+		double[] rowCounts = game.getNumberOfRowsCleared();
+
 		assert StatisticsUtilities.sum(ArrayUtil.zipMultiply(rowCounts, new double[]{1,2,3,4})) == game.getLinesCleared() : "Total of lines cleared of each type should equal total lines cleared";
 		
 		double[] otherScores = new double[numOtherScores()];
@@ -110,6 +117,7 @@ public class TetrisTask<T extends Network> extends RLGlueTask<T> {
 		otherScores[3] = rowCounts[3];
 		otherScores[4] = game.getLinesCleared();
 		otherScores[5] = rlReturn[num]; // Game score
+		otherScores[6] = avgNumHoles;
 		
 		Pair<double[], double[]> p = new Pair<double[], double[]>(fitness, otherScores);
 		return p;
@@ -126,6 +134,7 @@ public class TetrisTask<T extends Network> extends RLGlueTask<T> {
 		if(tetrisAvgEmptySpaces) total++;
 		if(tetrisTimeSteps) total++;
 		if(tetrisBlocksOnScreen) total++;
+		if(tetrisAvgHoles) total++;
 		return total;
 	}
 
