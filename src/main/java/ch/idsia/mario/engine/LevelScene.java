@@ -75,7 +75,24 @@ public class LevelScene extends Scene implements SpriteContext
         killedCreaturesByShell = 0;
     }
 
-    private String mapElToStr(int el)
+    public LevelScene(Level level, GraphicsConfiguration graphicsConfiguration, MarioComponent marioComponent,
+			long levelRandSeed, int levelType, int timeLimit) {
+        this.graphicsConfiguration = graphicsConfiguration;
+        this.levelSeed = levelRandSeed; // TODO: Use to randomize enemies?
+        this.renderer = marioComponent;
+        //this.levelDifficulty = levelDifficulty;
+        this.levelType = levelType;
+        //this.levelLength = levelLength;
+        this.setTotalTime(timeLimit);
+        killedCreaturesTotal = 0;
+        killedCreaturesByFireBall = 0;
+        killedCreaturesByStomp = 0;
+        killedCreaturesByShell = 0;
+        
+        this.level = level;
+	}
+
+	private String mapElToStr(int el)
     {
         String s = "";
         if  (el == 0 || el == 1)
@@ -592,7 +609,12 @@ public class LevelScene extends Scene implements SpriteContext
         return ret;
     }
 
-    public void init()
+	@Override
+	public void init() {
+		init(true); // Random levels by default
+	}
+    
+    public void init(boolean randomLevel)
     {
         try
         {
@@ -610,7 +632,9 @@ public class LevelScene extends Scene implements SpriteContext
          else
          {*/
 //        level = LevelGenerator.createLevel(320, 15, levelSeed);
-        level = LevelGenerator.createLevel(levelLength, 15, levelSeed, levelDifficulty, levelType);
+        if(randomLevel) {
+        	level = LevelGenerator.createLevel(levelLength, 15, levelSeed, levelDifficulty, levelType);
+        } // Otherwise, assume it was already created
         //        }
 
         /*        if (recorder != null)

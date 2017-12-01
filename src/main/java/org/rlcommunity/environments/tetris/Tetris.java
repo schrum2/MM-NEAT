@@ -33,6 +33,7 @@ import org.rlcommunity.rlglue.codec.types.Reward_observation_terminal;
 import org.rlcommunity.rlglue.codec.util.EnvironmentLoader;
 
 import edu.southwestern.tasks.rlglue.RLGlueEnvironment;
+import edu.southwestern.tasks.rlglue.featureextractors.tetris.BertsekasTsitsiklisTetrisExtractor;
 import rlVizLib.general.ParameterHolder;
 import rlVizLib.general.hasVersionDetails;
 import rlVizLib.messaging.environment.EnvironmentMessageParser;
@@ -55,6 +56,7 @@ public class Tetris extends RLGlueEnvironment implements HasAVisualizerInterface
 	private int rowsOf3 = 0;
 	private int rowsOf4 = 0;	
 	private double averageNumEmptyBlocks = 0;
+	private double averageNumHoles = 0;
 	private int numBlockPlacements = 0;
 
 	/**
@@ -124,6 +126,7 @@ public class Tetris extends RLGlueEnvironment implements HasAVisualizerInterface
 		rowsOf3 = 0;
 		rowsOf4 = 0;	
 		averageNumEmptyBlocks = 0;
+		//averageNumHoles = 0;
 		numBlockPlacements = 0;
 
 		Observation o = gameState.get_observation();
@@ -158,15 +161,18 @@ public class Tetris extends RLGlueEnvironment implements HasAVisualizerInterface
 
 		// If the block is still mobile, then take the next action and update,
 		// otherwise spawn in a new block
-		if (gameState.blockMobile) {
+		if (gameState.blockMobile) { 
 			gameState.take_action(theAction);
 			gameState.update();
 		} else {
 			// Track average number of empty blocks after each block placement
 			double numEmpty = gameState.numEmptySpaces();
+			double numHoles = BertsekasTsitsiklisTetrisExtractor.totalHoles(TetrisState.worldWidth, TetrisState.worldHeight, gameState.worldState);
 			// Incremental average calculation
-			averageNumEmptyBlocks += (numEmpty - averageNumEmptyBlocks) / (++numBlockPlacements);
-			//System.out.println(numBlockPlacements + ":" + numEmpty + ":" + averageNumEmptyBlocks);
+			numBlockPlacements++;
+			averageNumHoles += (numHoles - averageNumHoles)/(numBlockPlacements);
+			///System.out.println("average num holes:" + averageNumHoles);
+			averageNumEmptyBlocks += (numEmpty - averageNumEmptyBlocks) / (numBlockPlacements);
 			gameState.spawn_block();
 		}
 
@@ -221,8 +227,11 @@ public class Tetris extends RLGlueEnvironment implements HasAVisualizerInterface
 	 * @return The average across afterstates
 	 */
 	public double getAverageNumEmptySpaces() {
-		System.out.println(averageNumEmptyBlocks);
 		return averageNumEmptyBlocks;
+	}
+	
+	public double getAverageNumHoles() {
+		return averageNumHoles;
 	}
 
 	/**
