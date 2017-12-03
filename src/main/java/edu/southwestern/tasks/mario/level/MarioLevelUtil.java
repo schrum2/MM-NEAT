@@ -84,7 +84,7 @@ public class MarioLevelUtil {
 	 * @param width Width in Mario blocks
 	 * @return String array where each String is a row of the level
 	 */
-	public static String[] generateLevelLayoutFromCPPN(Network net, int width) {
+	public static String[] generateLevelLayoutFromCPPN(Network net, double[] inputMultiples, int width) {
 		String[] level = new String[LEVEL_HEIGHT];
 		
 		// Initially there are no enemies. Only allow one per column
@@ -102,6 +102,10 @@ public class MarioLevelUtil {
 				double y = (MAX_HEIGHT_INDEX - i) / MAX_HEIGHT_INDEX; // Increasing from ground up
 				
 				double[] inputs = new double[] {x,y,1.0};
+				// Turn certain inputs off
+				for(int k = 0; k < inputMultiples.length; k++) {
+					inputs[k] = inputs[k] * inputMultiples[k];
+				}
 				double[] outputs = net.process(inputs);
 
 //				for(int k = 0; k < level.length; k++) {
@@ -182,8 +186,8 @@ public class MarioLevelUtil {
 	 * @param width In Mario blocks
 	 * @return Level instance
 	 */
-	public static Level generateLevelFromCPPN(Network net, int width) {
-		String[] stringBlock = generateLevelLayoutFromCPPN(net, width);
+	public static Level generateLevelFromCPPN(Network net, double[] inputMultiples, int width) {
+		String[] stringBlock = generateLevelLayoutFromCPPN(net, inputMultiples, width);
 						
 		ArrayList<String> lines = new ArrayList<String>();
 		for(int i = 0; i < stringBlock.length; i++) {
@@ -276,7 +280,7 @@ public class MarioLevelUtil {
 		DrawingPanel panel = new DrawingPanel(200,200, "Network");
 		net.draw(panel, true, false);
 
-		Level level = generateLevelFromCPPN(net, 60);
+		Level level = generateLevelFromCPPN(net, new double[] {1,1,1}, 60);
 		
 		Agent controller = new HumanKeyboardAgent(); //new SergeyKarakovskiy_JumpingAgent();
 		EvaluationOptions options = new CmdLineOptions(new String[]{});

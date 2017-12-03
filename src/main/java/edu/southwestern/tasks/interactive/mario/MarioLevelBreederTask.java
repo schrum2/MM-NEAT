@@ -55,7 +55,7 @@ public class MarioLevelBreederTask<T extends Network> extends InteractiveEvoluti
 
 	@Override
 	protected BufferedImage getButtonImage(T phenotype, int width, int height, double[] inputMultipliers) {
-		Level level = MarioLevelUtil.generateLevelFromCPPN(phenotype, LEVEL_WIDTH);
+		Level level = MarioLevelUtil.generateLevelFromCPPN(phenotype, inputMultipliers, LEVEL_WIDTH);
 		BufferedImage image = MarioLevelUtil.getLevelImage(level);
 		return image;
 	}
@@ -69,7 +69,7 @@ public class MarioLevelBreederTask<T extends Network> extends InteractiveEvoluti
 		// Human plays level
 		if(itemID == PLAY_BUTTON_INDEX && selectedCPPNs.size() > 0) {
 			Network cppn = scores.get(selectedCPPNs.get(selectedCPPNs.size() - 1)).individual.getPhenotype();
-			Level level = MarioLevelUtil.generateLevelFromCPPN(cppn, LEVEL_WIDTH);
+			Level level = MarioLevelUtil.generateLevelFromCPPN(cppn, inputMultipliers, LEVEL_WIDTH);
 			Agent agent = new HumanKeyboardAgent();
 			// Must launch game in own thread, or won't animate or listen for events
 			new Thread() {
