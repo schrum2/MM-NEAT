@@ -159,7 +159,7 @@ public class GVGAIUtil {
 	 * @param randomItems Number of items from the random array to place
 	 * @return String array with level layout
 	 */
-	public static String[] generateLevelFromCPPN(Network n, int levelWidth, int levelHeight, 
+	public static String[] generateLevelFromCPPN(Network n, double[] inputMultiples, int levelWidth, int levelHeight, 
 			char defaultBackground, char border, char[] fixed, char[] unique, char[] random, int randomItems) {
 		// Start with 2D char array to fill out level: The +2 is for the border wall.
 		char[][] level = new char[levelHeight+2][levelWidth+2];
@@ -167,7 +167,7 @@ public class GVGAIUtil {
 		for(int i = 0; i < level.length; i++) {
 			Arrays.fill(level[i], defaultBackground);
 		}
-		// Border wall
+		// Border wall: TODO: Does not apply to all games ... remove?
 		for(int y = 0; y < levelHeight+2; y++) { // Vertical walls
 			level[y][0] = border;
 			level[y][levelWidth+1] = border;
@@ -186,6 +186,10 @@ public class GVGAIUtil {
 			for(int x = 1; x < levelWidth+1; x++) {
 				// Able to use a method from GraphicsUtil here. The -1 is time, which is ignored.
 				double[] inputs = GraphicsUtil.get2DObjectCPPNInputs(x, y, levelWidth, levelHeight, -1);
+				// Multiplies the inputs by the inputMultiples; used to turn on or off the effects in each input
+				for(int i = 0; i < inputMultiples.length; i++) {
+					inputs[i] = inputs[i] * inputMultiples[i];
+				}
 				double[] outputs = n.process(inputs);
 				// Check if a fixed item is present
 				if(outputs[PRESENCE_INDEX] > PRESENCE_THRESHOLD) {
@@ -355,7 +359,7 @@ public class GVGAIUtil {
 		// Allows for playing a bait level defined by a random CPPN
 		TWEANNGenotype cppn = new TWEANNGenotype(4, 9, 0);
 		TWEANN net = cppn.getPhenotype();
-		String[] level = generateLevelFromCPPN(net, 20, 20, '.', 'w', 
+		String[] level = generateLevelFromCPPN(net, new double[] {1,1,1,1}, 20, 20, '.', 'w', 
 				new char[]{'w','b','c'}, new char[]{'l','k','e','A'}, new char[]{'d'}, 15);
 
 		Agent agent = new Agent();

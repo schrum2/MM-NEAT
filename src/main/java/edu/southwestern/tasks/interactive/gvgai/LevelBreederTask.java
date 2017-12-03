@@ -108,7 +108,7 @@ public class LevelBreederTask<T extends Network> extends InteractiveEvolutionTas
 
 	@Override
 	protected void save(String file, int i) {
-		String[] level = GVGAIUtil.generateLevelFromCPPN((Network)scores.get(i).individual.getPhenotype(), GAME_GRID_WIDTH, GAME_GRID_HEIGHT, DEFAULT_FLOOR, DEFAULT_WALL, 
+		String[] level = GVGAIUtil.generateLevelFromCPPN((Network)scores.get(i).individual.getPhenotype(), inputMultipliers, GAME_GRID_WIDTH, GAME_GRID_HEIGHT, DEFAULT_FLOOR, DEFAULT_WALL, 
 				gameCharData[FIXED_ITEMS_INDEX], gameCharData[UNIQUE_ITEMS_INDEX], gameCharData[RANDOM_ITEMS_INDEX], NUMBER_RANDOM_ITEMS);
 		// Prepare text file
 		try {
@@ -131,7 +131,7 @@ public class LevelBreederTask<T extends Network> extends InteractiveEvolutionTas
 	 * @return Bundle of information for running a game
 	 */
 	public GameBundle setUpGameWithLevelFromCPPN(Network phenotype) {
-		String[] level = GVGAIUtil.generateLevelFromCPPN(phenotype, GAME_GRID_WIDTH, GAME_GRID_HEIGHT, DEFAULT_FLOOR, DEFAULT_WALL, 
+		String[] level = GVGAIUtil.generateLevelFromCPPN(phenotype, inputMultipliers, GAME_GRID_WIDTH, GAME_GRID_HEIGHT, DEFAULT_FLOOR, DEFAULT_WALL, 
 				gameCharData[FIXED_ITEMS_INDEX], gameCharData[UNIQUE_ITEMS_INDEX], gameCharData[RANDOM_ITEMS_INDEX], NUMBER_RANDOM_ITEMS);
 		int seed = 0; // TODO: Use parameter?
 		Agent agent = new Agent();
