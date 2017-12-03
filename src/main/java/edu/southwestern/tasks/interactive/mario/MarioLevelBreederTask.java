@@ -23,6 +23,15 @@ import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.interactive.InteractiveEvolutionTask;
 import edu.southwestern.tasks.mario.level.MarioLevelUtil;
 
+/**
+ * Interactively evolve Mario levels. Users selectively
+ * breed levels based on appearance, but can also choose
+ * to play any of the evolved levels.
+ * 
+ * @author Jacob
+ *
+ * @param <T>
+ */
 public class MarioLevelBreederTask<T extends Network> extends InteractiveEvolutionTask<T> {
 	// Should exceed any of the CPPN inputs or other interface buttons
 	public static final int PLAY_BUTTON_INDEX = -20; 
@@ -144,8 +153,7 @@ public class MarioLevelBreederTask<T extends Network> extends InteractiveEvoluti
 	
 	@Override
 	protected void additionalButtonClickAction(int scoreIndex, Genotype<T> individual) {
-		// TODO Auto-generated method stub
-		
+		// do nothing
 	}
 
 	@Override
