@@ -30,13 +30,74 @@ public class LevelParser {
     2    "-" : ["passable","empty"],
     3    "?" : ["solid","question block", "full question block"],
     4    "Q" : ["solid","question block", "empty question block"],
-    5    "E" : ["enemy","damaging","hazard","moving"],
+    5    "E" : ["enemy","damaging","hazard","moving"], // Results in a generic ground goomba
     6    "<" : ["solid","top-left pipe","pipe"],
     7    ">" : ["solid","top-right pipe","pipe"],
     8    "[" : ["solid","left pipe","pipe"],
     9    "]" : ["solid","right pipe","pipe"],
     10   "o" : ["coin","collectable","passable"]
 	 */
+
+	/**
+	 * Types added by schrum2:
+	 * 
+	 * W = winged goomba
+	 * g = green shelled koopa
+	 * r = red shelled koopa
+	 * G = winged green koopa
+	 * R = winged red koopa
+	 * ^ = spiky shelled enemy
+	 * & = winged spiky shelled enemy
+	 */
+
+	/**
+	 * char based version of method below
+	 * @param code
+	 * @return
+	 */
+	public static boolean isEnemy(char code) {
+		return isEnemy(code+"");
+	}
+	
+	/**
+	 * Based on the list of enemy types above
+	 * @param code
+	 * @return
+	 */
+	public static boolean isEnemy(String code) {
+		return code.equals("E") || code.equals("W") || code.equals("G") || code.equals("g") || code.equals("r") || code.equals("R") || code.equals("^") || code.equals("&");
+	}
+	
+	/**
+	 * Generate sprites based on the enemy codes above
+	 * @param code
+	 * @return
+	 */
+	private SpriteTemplate spriteForCode(String code) {
+		switch(code) {
+		case "E":
+			return new SpriteTemplate(Enemy.ENEMY_GOOMBA, false);
+		case "W":
+			return new SpriteTemplate(Enemy.ENEMY_GOOMBA, true);
+		case "g":
+			return new SpriteTemplate(Enemy.ENEMY_GREEN_KOOPA, false);
+		case "G":
+			return new SpriteTemplate(Enemy.ENEMY_GREEN_KOOPA, true);
+		case "r":
+			return new SpriteTemplate(Enemy.ENEMY_RED_KOOPA, false);
+		case "R":
+			return new SpriteTemplate(Enemy.ENEMY_RED_KOOPA, true);
+		case "^":
+			return new SpriteTemplate(Enemy.ENEMY_SPIKY, false);
+		case "&":
+			return new SpriteTemplate(Enemy.ENEMY_SPIKY, true);
+		default:
+			throw new IllegalArgumentException("Invalid enemy sprite code: " + code);
+		}
+	}
+
+
+
 
 	/**
 	 * Create level from text file with 2D arrangement of
@@ -79,7 +140,7 @@ public class LevelParser {
 
 		//Set Level Exit
 		//Extend level by that
-		level.xExit = width+BUFFER_WIDTH;
+		level.xExit = width+BUFFER_WIDTH+1;
 		level.yExit = height-1;
 
 		for(int i=0; i<BUFFER_WIDTH; i++){
@@ -94,10 +155,10 @@ public class LevelParser {
 		for(int i=0; i<height; i++){
 			for(int j=0; j<lines.get(i).length(); j++){
 				String code = String.valueOf(lines.get(i).charAt(j));
-				if("E".equals(code)){
+				if(isEnemy(code)){
 					//set Enemy
 					//new SpriteTemplate(type, boolean winged)
-					level.setSpriteTemplate(j+BUFFER_WIDTH, i, new SpriteTemplate(Enemy.ENEMY_GOOMBA, false));
+					level.setSpriteTemplate(j+BUFFER_WIDTH, i, spriteForCode(code));
 					//System.out.println("j: "+j+" i:"+i);
 					//set passable tile: everything not set is passable
 				}else{
@@ -112,7 +173,6 @@ public class LevelParser {
 
 		return level;
 	}
-
 
 	public Level createLevelJson(List<List<Integer>> input)
 	{

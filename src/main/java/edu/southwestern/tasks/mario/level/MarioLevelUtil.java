@@ -1,6 +1,7 @@
 package edu.southwestern.tasks.mario.level;
 
-import java.awt.GraphicsConfiguration;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -11,9 +12,11 @@ import ch.idsia.mario.engine.LevelRenderer;
 import ch.idsia.mario.engine.level.Level;
 import ch.idsia.tools.CmdLineOptions;
 import ch.idsia.tools.EvaluationOptions;
+import ch.idsia.tools.ToolsConfigurator;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.evolution.mutation.tweann.ActivationFunctionRandomReplacement;
+import edu.southwestern.networks.Network;
 import edu.southwestern.networks.TWEANN;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.util.graphics.DrawingPanel;
@@ -28,25 +31,52 @@ public class MarioLevelUtil {
 	public static final int PRESENT_INDEX = 0;
 	public static final double PRESENT_THRESHOLD = 0.0;
 
-	public static final char SOLID_CHAR = 'X';
 	public static final int SOLID_INDEX = 1;
-	public static final double SOLID_THRESHOLD = 0.5;
-	
-	public static final int BLOCK_OR_QUESTION_INDEX = 2;
-	public static final char QUESTION_CHAR = '?';
-	public static final double QUESTION_THRESHOLD = 0.8;
+	public static final char SOLID_CHAR = 'X';
+	public static final int BLOCK_INDEX = 2;
 	public static final char BLOCK_CHAR = 'S';
-	public static final double BLOCK_THRESHOLD = 0.5;
-
+	public static final int QUESTION_INDEX = 3;
+	public static final char QUESTION_CHAR = '?';
+	public static final int COIN_INDEX = 4;
 	public static final char COIN_CHAR = 'o';
-	public static final int COIN_INDEX = 3;
-	public static final double COIN_THRESHOLD = 0.8;
+	public static final int PIPE_INDEX = 5;
 
-	public static final char ENEMY_CHAR = 'E';
-	public static final int ENEMY_INDEX = 4;
-	public static final double ENEMY_THRESHOLD = 0.8;	
+	public static final int GOOMBA_INDEX = 6;
+	public static final char GOOMBA_CHAR = 'E';
+	public static final char WINGED_GOOMBA_CHAR = 'W';
+	public static final int GREEN_KOOPA_INDEX = 7;
+	public static final char GREEN_KOOPA_CHAR = 'g';
+	public static final char WINGED_GREEN_KOOPA_CHAR = 'G';
+	public static final int RED_KOOPA_INDEX = 8;
+	public static final char RED_KOOPA_CHAR = 'r';
+	public static final char WINGED_RED_KOOPA_CHAR = 'R';
+	public static final int SPIKY_INDEX = 9;
+	public static final char SPIKY_CHAR = '^';
+	public static final char WINGED_SPIKY_CHAR = '&';
+
+	public static final int WINGED_INDEX = 10; // If enemy, is it winged?
+	public static final double WINGED_THRESHOLD = 0.75;
 	
 	public static final char EMPTY_CHAR = '-';
+	
+	/**
+	 * Whether the character is any of the pipe characters
+	 * @param p A character
+	 * @return Whether it represents part of a pipe
+	 */
+	public static boolean isPipe(char p) {
+		return p == '<' || p == '>' || p == '[' || p == ']';
+	}
+
+	/**
+	 * Whether the char is any of the koopas. Significant, since they take up two block cells
+	 * in height.
+	 * @param c
+	 * @return
+	 */
+	public static boolean isKoopa(char c) {
+		return c == GREEN_KOOPA_CHAR || c == RED_KOOPA_CHAR || c == WINGED_GREEN_KOOPA_CHAR || c == WINGED_RED_KOOPA_CHAR;
+	}
 	
 	/**
 	 * Generate Mario level layout in form of String array using CPPN.
@@ -54,8 +84,12 @@ public class MarioLevelUtil {
 	 * @param width Width in Mario blocks
 	 * @return String array where each String is a row of the level
 	 */
-	public static String[] generateLevelLayoutFromCPPN(TWEANN net, int width) {
+	public static String[] generateLevelLayoutFromCPPN(Network net, double[] inputMultiples, int width) {
 		String[] level = new String[LEVEL_HEIGHT];
+		
+		// Initially there are no enemies. Only allow one per column
+		boolean[] enemyInColumn = new boolean[width];
+		
 		double halfWidth = width/2.0;
 		// Top row has problems if it contains objects
 		char[] top = new char[width];
@@ -68,26 +102,75 @@ public class MarioLevelUtil {
 				double y = (MAX_HEIGHT_INDEX - i) / MAX_HEIGHT_INDEX; // Increasing from ground up
 				
 				double[] inputs = new double[] {x,y,1.0};
+				// Turn certain inputs off
+				for(int k = 0; k < inputMultiples.length; k++) {
+					inputs[k] = inputs[k] * inputMultiples[k];
+				}
 				double[] outputs = net.process(inputs);
 
+//				for(int k = 0; k < level.length; k++) {
+//					System.out.println(level[k]);
+//				}
 				//System.out.println("["+i+"]["+j+"]"+Arrays.toString(inputs)+Arrays.toString(outputs));
 				
 				if(outputs[PRESENT_INDEX] > PRESENT_THRESHOLD) {
 					outputs[PRESENT_INDEX] = Double.NEGATIVE_INFINITY; // Assure this index is not the biggest
+					double wingedValue = outputs[WINGED_INDEX]; // Save winged value before making it negative infinity
+					outputs[WINGED_INDEX] = Double.NEGATIVE_INFINITY; // Assure this index is not the biggest
 					int highest = StatisticsUtilities.argmax(outputs);
 					if(highest == SOLID_INDEX) {
-						level[i] += SOLID_CHAR;
-					} else if(highest == BLOCK_OR_QUESTION_INDEX) {
-						level[i] += BLOCK_CHAR;
-						// TODO: Question blocks
+						level[i] += i < LEVEL_HEIGHT - 1 && isKoopa(level[i+1].charAt(j)) ? EMPTY_CHAR : SOLID_CHAR;
+					} else if(highest == BLOCK_INDEX) {
+						level[i] += i < LEVEL_HEIGHT - 1 && isKoopa(level[i+1].charAt(j)) ? EMPTY_CHAR : BLOCK_CHAR;
+					} else if(highest == QUESTION_INDEX) {
+						level[i] += i < LEVEL_HEIGHT - 1 && isKoopa(level[i+1].charAt(j)) ? EMPTY_CHAR : QUESTION_CHAR;
 					} else if(highest == COIN_INDEX) {
-						level[i] += COIN_CHAR;
-					} else if(highest == ENEMY_INDEX // Must be true
-							&& i+1 < level.length) { // Not the bottom row
-						level[i] += ENEMY_CHAR;
-					} else { // In case enemy condition checks failed
-						level[i] += EMPTY_CHAR;
-					}					
+						level[i] += i < LEVEL_HEIGHT - 1 && isKoopa(level[i+1].charAt(j)) ? EMPTY_CHAR : COIN_CHAR;
+					} else if (highest == PIPE_INDEX) {
+						int leftEdge = level[i].length() - 1;
+						if(level[i].length() % 2 == 1 && // Only every other spot can have pipes
+						   !isPipe(level[i].charAt(leftEdge))) { 							
+							// Have to construct the pipe all the way down
+							level[i] = level[i].substring(0, leftEdge) + "<>"; // Top
+							int current = i+1;
+							//System.out.println("before " + current + " leftEdge " + leftEdge);
+							// Replace empty spaces with pipes
+							while(current < LEVEL_HEIGHT &&
+								  (isPipe(level[current].charAt(leftEdge)) ||
+								   isPipe(level[current].charAt(leftEdge+1)) ||
+								   level[current].charAt(leftEdge) == EMPTY_CHAR ||
+								   level[current].charAt(leftEdge+1) == EMPTY_CHAR ||
+								   level[current].charAt(leftEdge) == COIN_CHAR ||
+								   level[current].charAt(leftEdge+1) == COIN_CHAR ||
+								   LevelParser.isEnemy(level[current].charAt(leftEdge)) ||
+								   LevelParser.isEnemy(level[current].charAt(leftEdge+1)))) {
+								level[current] = level[current].substring(0, leftEdge) + "[]" + level[current].substring(leftEdge+2); // body
+								//System.out.println(level[current]);
+								current++;
+								//System.out.println("loop " + current + " leftEdge " + leftEdge);
+							}
+						} else { // No room for pipe
+							level[i] += EMPTY_CHAR;
+						}
+					} else { // Must be an enemy
+						if(enemyInColumn[j]) {
+							// Only allow one enemy per column: Too restrictive?
+							level[i] += EMPTY_CHAR;
+						} else {
+							if(highest == GOOMBA_INDEX) {
+								level[i] += wingedValue > WINGED_THRESHOLD ? WINGED_GOOMBA_CHAR : GOOMBA_CHAR;
+							} else if(highest == GREEN_KOOPA_INDEX) {
+								level[i] += wingedValue > WINGED_THRESHOLD ? WINGED_GREEN_KOOPA_CHAR : GREEN_KOOPA_CHAR;
+							} else if(highest == RED_KOOPA_INDEX) {
+								level[i] += wingedValue > WINGED_THRESHOLD ? WINGED_RED_KOOPA_CHAR : RED_KOOPA_CHAR;
+							} else {
+								assert highest == SPIKY_INDEX : "Only option left is spiky: " + highest;
+								level[i] += wingedValue > WINGED_THRESHOLD ? WINGED_SPIKY_CHAR : SPIKY_CHAR;
+							}
+							// Indicate that there is now an enemy in the column
+							enemyInColumn[j] = true;
+						}
+					}
 				} else {
 					level[i] += EMPTY_CHAR;
 				}
@@ -103,8 +186,8 @@ public class MarioLevelUtil {
 	 * @param width In Mario blocks
 	 * @return Level instance
 	 */
-	public static Level generateLevelFromCPPN(TWEANN net, int width) {
-		String[] stringBlock = generateLevelLayoutFromCPPN(net, width);
+	public static Level generateLevelFromCPPN(Network net, double[] inputMultiples, int width) {
+		String[] stringBlock = generateLevelLayoutFromCPPN(net, inputMultiples, width);
 						
 		ArrayList<String> lines = new ArrayList<String>();
 		for(int i = 0; i < stringBlock.length; i++) {
@@ -117,6 +200,48 @@ public class MarioLevelUtil {
 		return level;
 	}
 	
+	/**
+	 * Return an image of the level, excluding the buffer zones at the
+	 * beginning and end of every CPPN generated level. Also excludes
+	 * the background, Mario, and enemy sprites.
+	 * @param level
+	 * @return
+	 */
+	public static BufferedImage getLevelImage(Level level) {
+		EvaluationOptions options = new CmdLineOptions(new String[0]);
+		ProgressTask task = new ProgressTask(options);
+		// Added to change level
+        options.setLevel(level);
+		task.setOptions(options);
+
+		int relevantWidth = (level.width - (2*LevelParser.BUFFER_WIDTH)) * MarioLevelUtil.BLOCK_SIZE;
+		BufferedImage image = new BufferedImage(relevantWidth, MarioLevelUtil.LEVEL_HEIGHT*MarioLevelUtil.BLOCK_SIZE, BufferedImage.TYPE_INT_ARGB);
+		// Skips buffer zones at start and end of level
+		LevelRenderer.renderArea((Graphics2D) image.getGraphics(), level, 0, 0, LevelParser.BUFFER_WIDTH*BLOCK_SIZE, 0, relevantWidth, LEVEL_HEIGHT*BLOCK_SIZE);
+		return image;
+	}
+	
+	/**
+	 * Specified agent plays the specified level with visual display
+	 * @param level
+	 * @param agent
+	 * @return
+	 */
+	public static double[] agentPlaysLevel(Level level, Agent agent) {
+		EvaluationOptions options = new CmdLineOptions(new String[]{});
+		options.setAgent(agent);
+		ProgressTask task = new ProgressTask(options);
+        options.setLevel(level);
+		task.setOptions(options);
+		double[] result = task.evaluate(options.getAgent());
+		ToolsConfigurator.DestroyMarioComponentFrame();
+		return result;
+	}
+	
+	/**
+	 * For testing and debugging
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		Parameters.initializeParameterCollections(new String[] 
 				{"runNumber:0","randomSeed:"+((int)(Math.random()*100)),"trials:1","mu:16","maxGens:500","io:false","netio:false","mating:true","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3","includeFullSigmoidFunction:true","includeFullGaussFunction:true","includeCosineFunction:true","includeGaussFunction:false","includeIdFunction:true","includeTriangleWaveFunction:true","includeSquareWaveFunction:true","includeFullSawtoothFunction:true","includeSigmoidFunction:false","includeAbsValFunction:true","includeSawtoothFunction:true"});
@@ -141,7 +266,7 @@ public class MarioLevelUtil {
 		// Instead of specifying the level, create it with a TWEANN	
 		TWEANNGenotype cppn = new TWEANNGenotype(
 				3, // Inputs: x, y, bias 
-				5, // Outputs: Present?, solid, breakable, coin, enemy (TODO: pipes)
+				7, // Outputs: Present?, solid, breakable, question, coin, enemy, pipes
 				0); // Archetype
 		// Randomize activation functions
 		new ActivationFunctionRandomReplacement().mutate(cppn);
@@ -155,7 +280,7 @@ public class MarioLevelUtil {
 		DrawingPanel panel = new DrawingPanel(200,200, "Network");
 		net.draw(panel, true, false);
 
-		Level level = generateLevelFromCPPN(net, 60);
+		Level level = generateLevelFromCPPN(net, new double[] {1,1,1}, 60);
 		
 		Agent controller = new HumanKeyboardAgent(); //new SergeyKarakovskiy_JumpingAgent();
 		EvaluationOptions options = new CmdLineOptions(new String[]{});
@@ -168,8 +293,8 @@ public class MarioLevelUtil {
 		task.setOptions(options);
 
 		int relevantWidth = (level.width - (2*LevelParser.BUFFER_WIDTH)) * BLOCK_SIZE;
-		System.out.println("level.width:"+level.width);
-		System.out.println("relevantWidth:"+relevantWidth);
+		//System.out.println("level.width:"+level.width);
+		//System.out.println("relevantWidth:"+relevantWidth);
 		DrawingPanel levelPanel = new DrawingPanel(relevantWidth,LEVEL_HEIGHT*BLOCK_SIZE, "Level");
 		LevelRenderer.renderArea(levelPanel.getGraphics(), level, 0, 0, LevelParser.BUFFER_WIDTH*BLOCK_SIZE, 0, relevantWidth, LEVEL_HEIGHT*BLOCK_SIZE);
 		
