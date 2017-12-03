@@ -1,9 +1,13 @@
 package edu.southwestern.tasks.interactive.mario;
 
+import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.io.FileNotFoundException;
 
 import javax.swing.JButton;
+import javax.swing.JSlider;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import ch.idsia.ai.agents.Agent;
 import ch.idsia.ai.agents.human.HumanKeyboardAgent;
@@ -19,17 +23,54 @@ public class MarioLevelBreederTask<T extends Network> extends InteractiveEvoluti
 	// Should exceed any of the CPPN inputs or other interface buttons
 	public static final int PLAY_BUTTON_INDEX = -20; 
 	
-	public static int levelWidth;
-
+	private boolean initializationComplete = false;
+	protected JSlider levelWidthSlider; // Allows for changing levelWidth
+	
 	public MarioLevelBreederTask() throws IllegalAccessException {
 		super();
-		levelWidth = Parameters.parameters.integerParameter("marioLevelLength");
+		//Construction of JSlider to determine length of generated CPPN amplitude
+		// Width ranged from 20 to 200 blocks
+		levelWidthSlider = new JSlider(JSlider.HORIZONTAL, 20, 200, Parameters.parameters.integerParameter("marioLevelLength"));
+		levelWidthSlider.setMinorTickSpacing(10000);
+		levelWidthSlider.setPaintTicks(true);
+//		Hashtable<Integer,JLabel> labels = new Hashtable<>();
+//		labels.put(20, new JLabel("Shorter clip"));
+//		labels.put(200, new JLabel("Longer clip"));
+//		levelWidthSlider.setLabelTable(labels);
+		levelWidthSlider.setPaintLabels(true);
+		levelWidthSlider.setPreferredSize(new Dimension(200, 40));
+
+		/**
+		 * Changed level width picture previews
+		 */
+		levelWidthSlider.addChangeListener(new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				if(!initializationComplete) return;
+				// get value
+				JSlider source = (JSlider)e.getSource();
+				if(!source.getValueIsAdjusting()) {
+
+					int newLength = (int) source.getValue();
+
+					Parameters.parameters.setInteger("marioLevelLength", newLength);
+					// reset buttons
+					resetButtons(true);
+				}
+			}
+		});
+		
+		if(!Parameters.parameters.booleanParameter("simplifiedInteractiveInterface")) {
+			top.add(levelWidthSlider);	
+		}
+		
 		//Construction of button that lets user plays the level
 		JButton play = new JButton("Play");
 		// Name is first available numeric label after the input disablers
 		play.setName("" + PLAY_BUTTON_INDEX);
 		play.addActionListener(this);
 		top.add(play);
+		initializationComplete = true;
 	}
 
 	@Override
@@ -56,7 +97,7 @@ public class MarioLevelBreederTask<T extends Network> extends InteractiveEvoluti
 
 	@Override
 	protected BufferedImage getButtonImage(T phenotype, int width, int height, double[] inputMultipliers) {
-		Level level = MarioLevelUtil.generateLevelFromCPPN(phenotype, inputMultipliers, levelWidth);
+		Level level = MarioLevelUtil.generateLevelFromCPPN(phenotype, inputMultipliers, Parameters.parameters.integerParameter("marioLevelLength"));
 		BufferedImage image = MarioLevelUtil.getLevelImage(level);
 		return image;
 	}
@@ -70,7 +111,7 @@ public class MarioLevelBreederTask<T extends Network> extends InteractiveEvoluti
 		// Human plays level
 		if(itemID == PLAY_BUTTON_INDEX && selectedCPPNs.size() > 0) {
 			Network cppn = scores.get(selectedCPPNs.get(selectedCPPNs.size() - 1)).individual.getPhenotype();
-			Level level = MarioLevelUtil.generateLevelFromCPPN(cppn, inputMultipliers, levelWidth);
+			Level level = MarioLevelUtil.generateLevelFromCPPN(cppn, inputMultipliers, Parameters.parameters.integerParameter("marioLevelLength"));
 			Agent agent = new HumanKeyboardAgent();
 			// Must launch game in own thread, or won't animate or listen for events
 			new Thread() {

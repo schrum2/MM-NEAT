@@ -521,7 +521,7 @@ public class ToolsConfigurator extends JFrame
      * Close the Mario window
      */
     public static void DestroyMarioComponentFrame() {
-    	marioComponentFrame.dispose();
+    	if(marioComponentFrame != null) marioComponentFrame.dispose();
     	marioComponentFrame = null;
     }
 }
