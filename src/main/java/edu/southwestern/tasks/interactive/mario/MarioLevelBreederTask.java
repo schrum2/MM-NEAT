@@ -11,6 +11,7 @@ import ch.idsia.mario.engine.level.Level;
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.networks.Network;
+import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.interactive.InteractiveEvolutionTask;
 import edu.southwestern.tasks.mario.level.MarioLevelUtil;
 
@@ -18,11 +19,11 @@ public class MarioLevelBreederTask<T extends Network> extends InteractiveEvoluti
 	// Should exceed any of the CPPN inputs or other interface buttons
 	public static final int PLAY_BUTTON_INDEX = -20; 
 	
-	// TODO: Make parameter
-	public static final int LEVEL_WIDTH = 60;
+	public static int levelWidth;
 
 	public MarioLevelBreederTask() throws IllegalAccessException {
 		super();
+		levelWidth = Parameters.parameters.integerParameter("marioLevelLength");
 		//Construction of button that lets user plays the level
 		JButton play = new JButton("Play");
 		// Name is first available numeric label after the input disablers
@@ -55,7 +56,7 @@ public class MarioLevelBreederTask<T extends Network> extends InteractiveEvoluti
 
 	@Override
 	protected BufferedImage getButtonImage(T phenotype, int width, int height, double[] inputMultipliers) {
-		Level level = MarioLevelUtil.generateLevelFromCPPN(phenotype, inputMultipliers, LEVEL_WIDTH);
+		Level level = MarioLevelUtil.generateLevelFromCPPN(phenotype, inputMultipliers, levelWidth);
 		BufferedImage image = MarioLevelUtil.getLevelImage(level);
 		return image;
 	}
@@ -69,7 +70,7 @@ public class MarioLevelBreederTask<T extends Network> extends InteractiveEvoluti
 		// Human plays level
 		if(itemID == PLAY_BUTTON_INDEX && selectedCPPNs.size() > 0) {
 			Network cppn = scores.get(selectedCPPNs.get(selectedCPPNs.size() - 1)).individual.getPhenotype();
-			Level level = MarioLevelUtil.generateLevelFromCPPN(cppn, inputMultipliers, LEVEL_WIDTH);
+			Level level = MarioLevelUtil.generateLevelFromCPPN(cppn, inputMultipliers, levelWidth);
 			Agent agent = new HumanKeyboardAgent();
 			// Must launch game in own thread, or won't animate or listen for events
 			new Thread() {
