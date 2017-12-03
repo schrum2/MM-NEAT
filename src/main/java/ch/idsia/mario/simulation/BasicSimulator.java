@@ -45,9 +45,17 @@ public class BasicSimulator implements Simulation
         prepareMarioComponent();
         marioComponent.setZLevelScene(simulationOptions.getZLevelMap());
         marioComponent.setZLevelEnemies(simulationOptions.getZLevelEnemies());
-        marioComponent.startLevel(simulationOptions.getLevelRandSeed(), simulationOptions.getLevelDifficulty()
-                                 , simulationOptions.getLevelType(), simulationOptions.getLevelLength(),
-                                  simulationOptions.getTimeLimit());
+        // This first option is the default
+        if(simulationOptions.level == null) {
+	        marioComponent.startLevel(simulationOptions.getLevelRandSeed(), simulationOptions.getLevelDifficulty()
+	                                 , simulationOptions.getLevelType(), simulationOptions.getLevelLength(),
+	                                  simulationOptions.getTimeLimit());
+        } else { // Provided alternate way to specify level in advance
+	        marioComponent.startLevel(simulationOptions.level, 
+	        		simulationOptions.getLevelRandSeed(), // Might still need for picking enemies
+	        		simulationOptions.getLevelType(),
+                    simulationOptions.getTimeLimit());
+        }
         marioComponent.setPaused(simulationOptions.isPauseWorld());
         marioComponent.setZLevelEnemies(simulationOptions.getZLevelEnemies());
         marioComponent.setZLevelScene(simulationOptions.getZLevelMap());
