@@ -40,21 +40,22 @@ public class MarioLevelUtil {
 	public static final int COIN_INDEX = 4;
 	public static final char COIN_CHAR = 'o';
 	public static final int PIPE_INDEX = 5;
+	public static final int CANNON_INDEX = 6;
 
-	public static final int GOOMBA_INDEX = 6;
+	public static final int GOOMBA_INDEX = 7;
 	public static final char GOOMBA_CHAR = 'E';
 	public static final char WINGED_GOOMBA_CHAR = 'W';
-	public static final int GREEN_KOOPA_INDEX = 7;
+	public static final int GREEN_KOOPA_INDEX = 8;
 	public static final char GREEN_KOOPA_CHAR = 'g';
 	public static final char WINGED_GREEN_KOOPA_CHAR = 'G';
-	public static final int RED_KOOPA_INDEX = 8;
+	public static final int RED_KOOPA_INDEX = 9;
 	public static final char RED_KOOPA_CHAR = 'r';
 	public static final char WINGED_RED_KOOPA_CHAR = 'R';
-	public static final int SPIKY_INDEX = 9;
+	public static final int SPIKY_INDEX = 10;
 	public static final char SPIKY_CHAR = '^';
 	public static final char WINGED_SPIKY_CHAR = '&';
 
-	public static final int WINGED_INDEX = 10; // If enemy, is it winged?
+	public static final int WINGED_INDEX = 11; // If enemy, is it winged?
 	public static final double WINGED_THRESHOLD = 0.75;
 	
 	public static final char EMPTY_CHAR = '-';
@@ -68,6 +69,15 @@ public class MarioLevelUtil {
 		return p == '<' || p == '>' || p == '[' || p == ']';
 	}
 
+	/**
+	 * Whether the character is part of a Bullet Bill cannon
+	 * @param c
+	 * @return
+	 */
+	public static boolean isCannon(char c) {
+		return c == 'B' || c == 'b';
+	}
+	
 	/**
 	 * Whether the char is any of the koopas. Significant, since they take up two block cells
 	 * in height.
@@ -138,6 +148,8 @@ public class MarioLevelUtil {
 							while(current < LEVEL_HEIGHT &&
 								  (isPipe(level[current].charAt(leftEdge)) ||
 								   isPipe(level[current].charAt(leftEdge+1)) ||
+								   isCannon(level[current].charAt(leftEdge)) ||
+								   isCannon(level[current].charAt(leftEdge+1)) ||
 								   level[current].charAt(leftEdge) == EMPTY_CHAR ||
 								   level[current].charAt(leftEdge+1) == EMPTY_CHAR ||
 								   level[current].charAt(leftEdge) == COIN_CHAR ||
@@ -152,6 +164,20 @@ public class MarioLevelUtil {
 						} else { // No room for pipe
 							level[i] += EMPTY_CHAR;
 						}
+					} else if (highest == CANNON_INDEX) {
+						int edge = level[i].length();
+						// Have to construct the cannon all the way down
+						level[i] += "B"; // Top
+						int current = i+1;
+						// Replace empty spaces with cannon support
+						while(current < LEVEL_HEIGHT &&
+								(isCannon(level[current].charAt(edge)) ||
+										level[current].charAt(edge) == EMPTY_CHAR ||
+										level[current].charAt(edge) == COIN_CHAR ||
+										LevelParser.isEnemy(level[current].charAt(edge)))) {
+							level[current] = level[current].substring(0, edge) + "b" + level[current].substring(edge+1); // support
+							current++;
+						}						
 					} else { // Must be an enemy
 						if(enemyInColumn[j]) {
 							// Only allow one enemy per column: Too restrictive?
@@ -264,10 +290,7 @@ public class MarioLevelUtil {
 //			};
 				
 		// Instead of specifying the level, create it with a TWEANN	
-		TWEANNGenotype cppn = new TWEANNGenotype(
-				3, // Inputs: x, y, bias 
-				7, // Outputs: Present?, solid, breakable, question, coin, enemy, pipes
-				0); // Archetype
+		TWEANNGenotype cppn = new TWEANNGenotype(3, 12, 0); // Archetype
 		// Randomize activation functions
 		new ActivationFunctionRandomReplacement().mutate(cppn);
 		

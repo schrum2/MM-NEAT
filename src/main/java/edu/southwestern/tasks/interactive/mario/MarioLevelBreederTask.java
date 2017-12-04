@@ -97,7 +97,7 @@ public class MarioLevelBreederTask<T extends Network> extends InteractiveEvoluti
 
 	@Override
 	public String[] outputLabels() {
-		return new String[] {"Present?", "Rock", "Breakable", "Question", "Coin", "Pipes", "Goomba", "GreenKoopa", "RedKoopa", "Spiky","Winged?"};
+		return new String[] {"Present?", "Rock", "Breakable", "Question", "Coin", "Pipes", "Cannon", "Goomba", "GreenKoopa", "RedKoopa", "Spiky", "Winged?"};
 	}
 
 	@Override
