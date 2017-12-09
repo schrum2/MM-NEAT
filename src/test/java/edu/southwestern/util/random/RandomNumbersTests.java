@@ -105,18 +105,17 @@ public class RandomNumbersTests {
 	@Test
 	public void randomIntArray_test() {
 		int[] ceilings = {1, 3, 6, 9, 12};
-		int size = 5;
-		Integer[] result = RandomNumbers.randomIntArray(size, ceilings);
+		Integer[] result = RandomNumbers.randomIntArray(ceilings);
 		assertEquals(result[0], (Integer)0);
 		assertTrue(result[1] < 3);
 		assertTrue(result[2] < 6);
 		assertTrue(result[3] < 9);
 		assertTrue(result[4] < 12);
-		assertEquals(result.length, size);
-		size = 1;
-		Integer[] result2 = RandomNumbers.randomIntArray(size, ceilings);
+		assertEquals(result.length, ceilings.length);
+
+		Integer[] result2 = RandomNumbers.randomIntArray(ceilings);
 		assertEquals(result2[0], (Integer)0);
-		assertEquals(result2.length, size);
+		assertEquals(result2.length, 1);
 	}
 	
 	@Test
