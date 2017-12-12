@@ -10,6 +10,8 @@ import ch.idsia.tools.CmdLineOptions;
 import ch.idsia.tools.EvaluationOptions;
 import ch.idsia.tools.ToolsConfigurator;
 import competition.cig.robinbaumgarten.AStarAgent;
+import competition.cig.sergeykarakovskiy.SergeyKarakovskiy_JumpingAgent;
+import edu.southwestern.tasks.mario.agents.StillAgent;
 
 /**
  * Created by IntelliJ IDEA.
@@ -31,7 +33,7 @@ public class Play {
         if(LevelScene.twoPlayers) {
             // Swap: A* must be player 1, and human is player 2.
         	// Variable juggling required because variable controller sent to evaluate call below.
-        	Agent astar = new AStarAgent();
+        	Agent astar = new StillAgent();
         	Agent human = controller;
         	controller = astar;
         	options.setAgent(controller);
