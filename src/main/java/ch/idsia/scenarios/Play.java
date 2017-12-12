@@ -9,7 +9,7 @@ import ch.idsia.mario.engine.LevelScene;
 import ch.idsia.tools.CmdLineOptions;
 import ch.idsia.tools.EvaluationOptions;
 import ch.idsia.tools.ToolsConfigurator;
-import competition.cig.sergeykarakovskiy.SergeyKarakovskiy_JumpingAgent;
+import competition.cig.robinbaumgarten.AStarAgent;
 
 /**
  * Created by IntelliJ IDEA.
@@ -26,11 +26,18 @@ public class Play {
             AgentsPool.addAgent(controller);
         }
         EvaluationOptions options = new CmdLineOptions(new String[0]);
-        options.setAgent(controller);
         
         LevelScene.twoPlayers = true; // TODO: find better way to set this
         if(LevelScene.twoPlayers) {
-            options.setAgent2(new SergeyKarakovskiy_JumpingAgent());
+            // Swap: A* must be player 1, and human is player 2.
+        	// Variable juggling required because variable controller sent to evaluate call below.
+        	Agent astar = new AStarAgent();
+        	Agent human = controller;
+        	controller = astar;
+        	options.setAgent(controller);
+            options.setAgent2(human);
+        } else {
+            options.setAgent(controller);
         }
         
         Task task = new ProgressTask(options);
@@ -42,7 +49,7 @@ public class Play {
         options.setLevelDifficulty(3);
         task.setOptions(options);
 
-        System.out.println ("Score: " + task.evaluate (controller)[0]);
+        System.out.println ("Score: " + task.evaluate(controller)[0]);
         
         ToolsConfigurator.DestroyMarioComponentFrame();
     }

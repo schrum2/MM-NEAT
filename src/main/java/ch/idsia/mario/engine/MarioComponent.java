@@ -439,13 +439,17 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
     }
 
     /**
-     * Schrum: I added this to allow for setting the second "Luigi" agent
+     * Schrum: I added this to allow for setting the second "Luigi" agent.
      * @param agent Controller for Luigi
      */
     public void setAgent2(Agent agent) {
         this.agent2 = agent;
-        // TODO: Maybe in the future allow for second human player using different keys
-        assert !(agent instanceof KeyAdapter) : "Only let Mario be Keyboard controlled";
+        if (agent2 instanceof KeyAdapter) {
+            if (prevHumanKeyBoardAgent != null)
+                this.removeKeyListener(prevHumanKeyBoardAgent);
+            this.prevHumanKeyBoardAgent = (KeyAdapter) agent;
+            this.addKeyListener(prevHumanKeyBoardAgent);
+        }
     }    
     
     public void setMarioInvulnerable(boolean invulnerable)
