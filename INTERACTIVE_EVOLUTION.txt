@@ -1,7 +1,7 @@
 INTERACTIVE EVOLUTION WITH MM-NEAT
 
 Within the MM-NEAT code repository, there are several programs that are based on interactive evolution. All of
-these classes extend the same general Interactive Evolution Task, which launches an applet displaying 16 items
+these classes extend the same general Interactive Evolution Task, which launches an applet displaying 20 items
 that can be evolved, saved, and manipulated by the user over unlimited generations. InteractiveEvolutionTask
 uses CPPNs (Compositional Pattern Producing Networks) to mimic the process of natural evolution, utilizing 
 various activation functions to create repetition, variation, and symmetry throughout the generated items. 
