@@ -32,7 +32,7 @@ public class BasicSimulator implements Simulation
         Agent agent = simulationOptions.getAgent();
         agent.reset();
         marioComponent.setAgent(agent);
-        if(LevelScene.TWO_PLAYERS) {
+        if(LevelScene.twoPlayers) {
         	Agent agent2 = simulationOptions.getAgent2();
         	agent2.reset();
         	marioComponent.setAgent2(agent2);        	

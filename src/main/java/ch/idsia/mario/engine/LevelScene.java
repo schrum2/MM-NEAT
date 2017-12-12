@@ -19,7 +19,7 @@ import java.util.List;
 public class LevelScene extends Scene implements SpriteContext
 {
 	// Two Mario sprites present
-	public static final boolean TWO_PLAYERS = true;
+	public static boolean twoPlayers = false;
 	
     private List<Sprite> sprites = new ArrayList<Sprite>();
     private List<Sprite> spritesToAdd = new ArrayList<Sprite>();
@@ -661,7 +661,7 @@ public class LevelScene extends Scene implements SpriteContext
         }
         mario = new Mario(this);
         sprites.add(mario);
-        if(TWO_PLAYERS) {
+        if(twoPlayers) {
         	luigi = new Mario(this);
         	sprites.add(luigi);
         }

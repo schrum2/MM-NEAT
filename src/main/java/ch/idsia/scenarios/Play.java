@@ -28,7 +28,8 @@ public class Play {
         EvaluationOptions options = new CmdLineOptions(new String[0]);
         options.setAgent(controller);
         
-        if(LevelScene.TWO_PLAYERS) {
+        LevelScene.twoPlayers = true; // TODO: find better way to set this
+        if(LevelScene.twoPlayers) {
             options.setAgent2(new SergeyKarakovskiy_JumpingAgent());
         }
         
