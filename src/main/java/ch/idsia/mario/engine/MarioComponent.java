@@ -1,5 +1,18 @@
 package ch.idsia.mario.engine;
 
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.GraphicsConfiguration;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.KeyAdapter;
+import java.awt.image.VolatileImage;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.JComponent;
+
 import ch.idsia.ai.agents.Agent;
 import ch.idsia.ai.agents.human.CheaterKeyboardAgent;
 import ch.idsia.mario.engine.level.Level;
@@ -8,20 +21,6 @@ import ch.idsia.mario.environments.Environment;
 import ch.idsia.tools.EvaluationInfo;
 import ch.idsia.tools.GameViewer;
 import ch.idsia.tools.tcp.ServerAgent;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.KeyAdapter;
-import java.awt.image.VolatileImage;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.List;
 
 
 public class MarioComponent extends JComponent implements Runnable, /*KeyListener,*/ FocusListener, Environment {
@@ -49,10 +48,12 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
     private GameViewer gameViewer = null;
 
     private Agent agent = null;
+    private Agent agent2 = null; // Player 2
     private CheaterKeyboardAgent cheatAgent = null;
 
     private KeyAdapter prevHumanKeyBoardAgent;
     private Mario mario = null;
+    private Mario luigi = null; // Player 2
     private LevelScene levelScene = null;
 
     public MarioComponent(int width, int height) {
@@ -142,6 +143,9 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
         int marioStatus = Mario.STATUS_RUNNING;
 
         mario = ((LevelScene) scene).mario;
+        if(agent2 != null) {
+        	luigi = ((LevelScene) scene).luigi;
+        }
         int totalActionsPerfomed = 0;
 // TODO: Manage better place for this:
         Mario.resetCoins();
@@ -168,6 +172,7 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
             }
 
             boolean[] action = agent.getAction(this/*DummyEnvironment*/);
+            boolean[] action2 = agent2 == null ? null : agent2.getAction(this/*DummyEnvironment*/);
             if (action != null)
             {
                 for (int i = 0; i < Environment.numberOfButtons; ++i)
@@ -186,10 +191,12 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
 
 
             //Apply action;
-//            scene.keys = action;
-            ((LevelScene) scene).mario.keys = action;
-            ((LevelScene) scene).mario.cheatKeys = cheatAgent.getAction(null);
-
+            mario.keys = action;
+            mario.cheatKeys = cheatAgent.getAction(null);
+            if(agent2 != null) {
+            	luigi.keys = action2;
+            }
+            
             if (GlobalOptions.VisualizationOn) {
 
                 String msg = "Agent: " + agent.getName();
@@ -431,6 +438,16 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
         }
     }
 
+    /**
+     * Schrum: I added this to allow for setting the second "Luigi" agent
+     * @param agent Controller for Luigi
+     */
+    public void setAgent2(Agent agent) {
+        this.agent2 = agent;
+        // TODO: Maybe in the future allow for second human player using different keys
+        assert !(agent instanceof KeyAdapter) : "Only let Mario be Keyboard controlled";
+    }    
+    
     public void setMarioInvulnerable(boolean invulnerable)
     {
         Mario.isMarioInvulnerable = invulnerable;

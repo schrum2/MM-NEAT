@@ -5,9 +5,11 @@ import ch.idsia.ai.agents.AgentsPool;
 import ch.idsia.ai.agents.human.HumanKeyboardAgent;
 import ch.idsia.ai.tasks.ProgressTask;
 import ch.idsia.ai.tasks.Task;
+import ch.idsia.mario.engine.LevelScene;
 import ch.idsia.tools.CmdLineOptions;
 import ch.idsia.tools.EvaluationOptions;
 import ch.idsia.tools.ToolsConfigurator;
+import competition.cig.sergeykarakovskiy.SergeyKarakovskiy_JumpingAgent;
 
 /**
  * Created by IntelliJ IDEA.
@@ -25,6 +27,11 @@ public class Play {
         }
         EvaluationOptions options = new CmdLineOptions(new String[0]);
         options.setAgent(controller);
+        
+        if(LevelScene.TWO_PLAYERS) {
+            options.setAgent2(new SergeyKarakovskiy_JumpingAgent());
+        }
+        
         Task task = new ProgressTask(options);
         options.setMaxFPS(false);
         options.setVisualization(true);

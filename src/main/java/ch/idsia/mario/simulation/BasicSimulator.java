@@ -2,6 +2,7 @@ package ch.idsia.mario.simulation;
 
 import ch.idsia.ai.agents.Agent;
 import ch.idsia.mario.engine.GlobalOptions;
+import ch.idsia.mario.engine.LevelScene;
 import ch.idsia.mario.engine.MarioComponent;
 import ch.idsia.mario.engine.sprites.Mario;
 import ch.idsia.tools.EvaluationInfo;
@@ -31,6 +32,11 @@ public class BasicSimulator implements Simulation
         Agent agent = simulationOptions.getAgent();
         agent.reset();
         marioComponent.setAgent(agent);
+        if(LevelScene.TWO_PLAYERS) {
+        	Agent agent2 = simulationOptions.getAgent2();
+        	agent2.reset();
+        	marioComponent.setAgent2(agent2);        	
+        }
         return marioComponent;
     }
 
