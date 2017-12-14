@@ -47,7 +47,7 @@ public class BasicSimulator implements Simulation
 
     public EvaluationInfo simulateOneLevel()
     {
-        Mario.resetStatic(simulationOptions.getMarioMode());        
+        Mario.setDefaultStart(simulationOptions.getMarioMode());        
         prepareMarioComponent();
         marioComponent.setZLevelScene(simulationOptions.getZLevelMap());
         marioComponent.setZLevelEnemies(simulationOptions.getZLevelEnemies());

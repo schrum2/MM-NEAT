@@ -52,8 +52,8 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
     private CheaterKeyboardAgent cheatAgent = null;
 
     private KeyAdapter prevHumanKeyBoardAgent;
-    private Mario mario = null;
-    private Mario luigi = null; // Player 2
+    public Mario mario = null;
+    public Mario luigi = null; // Player 2
     private LevelScene levelScene = null;
 
     public MarioComponent(int width, int height) {
@@ -143,12 +143,12 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
         int marioStatus = Mario.STATUS_RUNNING;
 
         mario = ((LevelScene) scene).mario;
+        mario.resetCoins();
         if(agent2 != null) {
         	luigi = ((LevelScene) scene).luigi;
+        	luigi.resetCoins();
         }
         int totalActionsPerfomed = 0;
-// TODO: Manage better place for this:
-        Mario.resetCoins();
 
         while (/*Thread.currentThread() == animator*/ running) {
             // Display the next frame of animation.
@@ -258,7 +258,7 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
         evaluationInfo.agentType = agent.getClass().getSimpleName();
         evaluationInfo.agentName = agent.getName();
         evaluationInfo.marioStatus = mario.getStatus();
-        evaluationInfo.livesLeft = Mario.lives;
+        evaluationInfo.livesLeft = mario.lives; // TODO: Also track Luigi's lives?
         evaluationInfo.lengthOfLevelPassedPhys = mario.x;
         evaluationInfo.lengthOfLevelPassedCells = mario.mapX;
         evaluationInfo.totalLengthOfLevelCells = levelScene.level.getWidthCells();
@@ -266,8 +266,7 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
         evaluationInfo.timeSpentOnLevel = levelScene.getStartTime();
         evaluationInfo.timeLeft = levelScene.getTimeLeft();
         evaluationInfo.totalTimeGiven = levelScene.getTotalTime();
-        evaluationInfo.numberOfGainedCoins = Mario.coins;
-//        evaluationInfo.totalNumberOfCoins   = -1 ; // TODO: total Number of coins.
+        evaluationInfo.numberOfGainedCoins = mario.coins; // TODO: Also track Luigi's coins?
         evaluationInfo.totalActionsPerfomed = totalActionsPerfomed; // Counted during the play/simulation process
         evaluationInfo.totalFramesPerfomed = frame;
         evaluationInfo.marioMode = mario.getMode();
@@ -314,8 +313,8 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
 	}
 
     public void levelFailed() {
-//        scene = mapScene;
-        Mario.lives--;
+        mario.lives--;
+        // TODO: Also subtract Luigi's lives?
         stop();
     }
 
@@ -329,14 +328,9 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
 
     public void levelWon() {
         stop();
-//        scene = mapScene;
-//        mapScene.levelWon();
     }
 
     public void toTitle() {
-//        Mario.resetStatic();
-//        scene = new TitleScene(this, graphicsConfiguration);
-//        scene.init();
     }
 
     public List<String> getTextObservation(boolean Enemies, boolean LevelMap, boolean Complete, int ZLevelMap, int ZLevelEnemies) {
@@ -452,8 +446,13 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
         }
     }    
     
-    public void setMarioInvulnerable(boolean invulnerable)
-    {
+    /**
+     * This seems to be used exclusively for debugging purposes.
+     * Can make Mario invincible to test out the level. It
+     * also makes Luigi invulnerable.
+     * @param invulnerable
+     */
+    public void setMarioInvulnerable(boolean invulnerable) {
         Mario.isMarioInvulnerable = invulnerable;
     }
 

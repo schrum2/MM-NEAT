@@ -10,48 +10,60 @@ import ch.idsia.mario.engine.level.Level;
 
 public class Mario extends Sprite
 {
-    public static boolean large = false;
-    public static boolean fire = false;
-    public static int coins = 0;
-    public static int lives = 1024;
-//    public static int numberOfAttempts = 0;
-//    public static String levelString = "none";
+    public boolean large = false;
+    public boolean fire = false;
+    public int coins = 0;
+    public int lives = 1024;
     private int status = STATUS_RUNNING;
     private final int FractionalPowerUpTime = 0;
-    public static int gainedMushrooms;
-    public static int gainedFlowers;
+    public int gainedMushrooms;
+    public int gainedFlowers;
     public static boolean isMarioInvulnerable;
 
-    public static void resetStatic(int marioMode)
-    {
-        large = marioMode > 0;
-        fire = marioMode == 2;
+    // These define the level of power up Mario/Luigi starts a level with
+    public static boolean defaultLarge;
+    public static boolean defaultFire;
+    
+    public static void setDefaultStart(int marioMode) {
+        defaultLarge = marioMode > 0;
+        defaultFire = marioMode == 2;
+    }
+    
+    /**
+     * Resets the properties of this Mario agent.
+     * I changed this from static to non-static
+     * to allow multiple Mario agents.
+     * @param marioMode
+     */
+    public void reset() {
+        large = defaultLarge;
+        fire = defaultFire;
         coins = 0;
         gainedMushrooms = 0;
         gainedFlowers = 0;
-
-//        lives = 65536;
-//        levelString = "none";
-//        numberOfAttempts = 0;
     }
 
-    public static void setMode(MODE mode)
-    {
+    /**
+     * Set small, large, or fire.
+     * Changed from static to allow multiple Marios
+     * @param mode
+     */
+    public void setMode(MODE mode) {
         large = (mode == MODE.MODE_LARGE);
         fire = (mode == MODE.MODE_FIRE);
     }
 
-    public int getMode()
-    {
+    public int getMode() {
         return ((large) ? 1 : 0) + ((fire) ? 1 : 0);
     }
 
     public static enum MODE {MODE_SMALL, MODE_LARGE, MODE_FIRE}
 
-    public static void resetCoins()
-    {
+    /**
+     * Made non-static to allow multiple Marios
+     */
+    public void resetCoins() {
         coins = 0;
-//        ++numberOfAttempts;
     }
 
     public static final int KEY_LEFT = 0;
@@ -69,9 +81,8 @@ public class Mario extends Sprite
     public static final int STATUS_WIN = 1;
     public static final int STATUS_DEAD = 0;
 
-
-    private static float GROUND_INERTIA = 0.89f;
-    private static float AIR_INERTIA = 0.89f;
+    private static final float GROUND_INERTIA = 0.89f;
+    private static final float AIR_INERTIA = 0.89f;
 
     public boolean[] keys;
     public boolean[] cheatKeys;
@@ -100,13 +111,11 @@ public class Mario extends Sprite
     private int invulnerableTime = 0;
 
     public Sprite carried = null;
-    @SuppressWarnings("unused")
-	private static Mario instance;
 
-    public Mario(LevelScene world)
-    {
-        kind = KIND_MARIO;
-        Mario.instance = this;
+    public Mario(LevelScene world) {
+    	// TODO: Potential problem: does this prevent tracking of coin collection, etc. across levels?
+    	reset(); // Added to reset Mario state at the beginning of each instantiation
+    	kind = KIND_MARIO;
         this.world = world;
         keys = Scene.keys;      // SK: in fact, this is already redundant due to using Agent
         cheatKeys = Scene.keys; // SK: in fact, this is already redundant due to using Agent
@@ -114,7 +123,7 @@ public class Mario extends Sprite
         y = 0;
 
         facing = 1;
-        setLarge(Mario.large, Mario.fire);
+        setLarge(large, fire);
     }
     
     private boolean lastLarge;
@@ -122,10 +131,9 @@ public class Mario extends Sprite
     private boolean newLarge;
     private boolean newFire;
     
-    private void blink(boolean on)
-    {
-        Mario.large = on?newLarge:lastLarge;
-        Mario.fire = on?newFire:lastFire;
+    private void blink(boolean on) {
+        large = on?newLarge:lastLarge;
+        fire = on?newFire:lastFire;
         
         if (large)
         {
@@ -149,19 +157,18 @@ public class Mario extends Sprite
         calcPic();
     }
 
-    void setLarge(boolean large, boolean fire)
-    {
+    void setLarge(boolean large, boolean fire) {
         if (fire) large = true;
         if (!large) fire = false;
         
-        lastLarge = Mario.large;
-        lastFire = Mario.fire;
+        lastLarge = large;
+        lastFire = fire;
         
-        Mario.large = large;
-        Mario.fire = fire;
+        this.large = large;
+        this.fire = fire;
 
-        newLarge = Mario.large;
-        newFire = Mario.fire;
+        newLarge = this.large;
+        newFire = this.fire;
         
         blink(true);
     }
@@ -304,15 +311,15 @@ public class Mario extends Sprite
             sliding = false;
         }
         
-        if (keys[KEY_SPEED] && canShoot && Mario.fire && world.fireballsOnScreen<2)
+        if (keys[KEY_SPEED] && canShoot && this.fire && world.fireballsOnScreen<2)
         {
             world.addSprite(new Fireball(world, x+facing*6, y-20, facing));
         }
         // Cheats:
-        if (GlobalOptions.PowerRestoration && keys[KEY_SPEED] && (!Mario.large || !Mario.fire))
+        if (GlobalOptions.PowerRestoration && keys[KEY_SPEED] && (!this.large || !this.fire))
             setLarge(true, true);
         if (cheatKeys[KEY_LIFE_UP])
-            Mario.lives++;
+        	this.lives++;
         world.paused = GlobalOptions.pauseWorld;
         if (cheatKeys[KEY_WIN])
             win();
@@ -562,7 +569,7 @@ public class Mario extends Sprite
 
         if (((Level.TILE_BEHAVIORS[block & 0xff]) & Level.BIT_PICKUPABLE) > 0)
         {
-            Mario.getCoin();
+            this.getCoin();
             world.level.setBlock(x, y, (byte) 0);
             for (int xx = 0; xx < 2; xx++)
                 for (int yy = 0; yy < 2; yy++)
@@ -627,13 +634,10 @@ public class Mario extends Sprite
         {
             world.paused = true;
             powerUpTime = -3 * FractionalPowerUpTime;
-            if (fire)
-            {
-                world.mario.setLarge(true, false);
-            }
-            else
-            {
-                world.mario.setLarge(false, false);
+            if (fire) {
+                this.setLarge(true, false);
+            } else {
+                this.setLarge(false, false);
             }
             invulnerableTime = 32;
         }
@@ -670,11 +674,11 @@ public class Mario extends Sprite
         {
             world.paused = true;
             powerUpTime = 3 * FractionalPowerUpTime;
-            world.mario.setLarge(true, true);
+            this.setLarge(true, true);
         }
         else
         {
-            Mario.getCoin();
+        	this.getCoin();
         }
         ++gainedFlowers;
     }
@@ -687,11 +691,11 @@ public class Mario extends Sprite
         {
             world.paused = true;
             powerUpTime = 3 * FractionalPowerUpTime;
-            world.mario.setLarge(true, false);
+            this.setLarge(true, false);
         }
         else
         {
-            Mario.getCoin();
+        	this.getCoin();
         }
         ++gainedMushrooms;        
     }
@@ -745,12 +749,18 @@ public class Mario extends Sprite
         }
     }
 
-    public static void get1Up()
+    /**
+     * Made non-static to allow multiple Marios
+     */
+    public void get1Up()
     {
         lives++;
     }
     
-    public static void getCoin()
+    /*
+     * Made non-static to allow multiple Marios
+     */
+    public void getCoin()
     {
         coins++;
         if (coins % 100 == 0)
