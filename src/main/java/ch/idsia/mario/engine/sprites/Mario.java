@@ -8,8 +8,13 @@ import ch.idsia.mario.engine.Scene;
 import ch.idsia.mario.engine.level.Level;
 
 
-public class Mario extends Sprite
-{
+public class Mario extends Sprite {
+	// Schrum: Added for clarity
+	private static final float SLIDING_JUMP_SPEED = -2.0f;
+	private static final float STILL_JUMP_SPEED = -1.9f;
+	private static final int INITIAL_STILL_JUMP_TIME = 7;
+	private static final int INITIAL_SLIDING_JUMP_TIME = -6;	
+
     public boolean large = false;
     public boolean fire = false;
     public int coins = 0;
@@ -263,8 +268,8 @@ public class Mario extends Sprite
             else if (onGround && mayJump)
             {
                 xJumpSpeed = 0;
-                yJumpSpeed = -1.9f;
-                jumpTime = 7;
+                yJumpSpeed = STILL_JUMP_SPEED;
+                jumpTime = INITIAL_STILL_JUMP_TIME;
                 ya = jumpTime * yJumpSpeed;
                 onGround = false;
                 sliding = false;
@@ -272,8 +277,8 @@ public class Mario extends Sprite
             else if (sliding && mayJump)
             {
                 xJumpSpeed = -facing * 6.0f;
-                yJumpSpeed = -2.0f;
-                jumpTime = -6;
+                yJumpSpeed = SLIDING_JUMP_SPEED;
+                jumpTime = INITIAL_SLIDING_JUMP_TIME;
                 xa = xJumpSpeed;
                 ya = -jumpTime * yJumpSpeed;
                 onGround = false;
@@ -471,43 +476,61 @@ public class Mario extends Sprite
      */
     public void collideCheck()
     {
-    	// Allow for extra playful Mario
-    	Mario[] marios = new Mario[LevelScene.twoPlayers ? 2 : 1];
-    	marios[0] = world.mario;
-    	if(LevelScene.twoPlayers) {
-    		marios[1] = world.luigi;
-    	}
+        // Allow for extra playful Mario
+        Mario[] marios = new Mario[LevelScene.twoPlayers ? 2 : 1];
+        marios[0] = world.mario;
+        if(LevelScene.twoPlayers) {
+        	marios[1] = world.luigi;
+        }
 
-    	for(Mario mario : marios) {
-    		if(mario == this) continue; // Do not collide with self
+        for(Mario mario : marios) {
+        	if(mario == this) continue; // Do not collide with self
+        	
+        	float xMarioD = mario.x - x;
+        	float yMarioD = mario.y - y;
+        	float w = 16;
+        	if (xMarioD > -w && xMarioD < w)
+        	{
+        		if (yMarioD > -height && yMarioD < mario.height)
+        		{
+        			// If mario on top of other
+        			if(Math.abs(yMarioD) > height - 5) { // Right on top
+        				if(y < mario.y) {
+//        					this.move(0,-30);
+        	                yJumpSpeed = STILL_JUMP_SPEED;
+        	                jumpTime = INITIAL_STILL_JUMP_TIME;
+        	                ya = jumpTime * yJumpSpeed;
+        				} else {
+//        					mario.move(0,-30);        					
+        					mario.yJumpSpeed = STILL_JUMP_SPEED;
+        					mario.jumpTime = INITIAL_STILL_JUMP_TIME;
+        					mario.ya = jumpTime * yJumpSpeed;
+        				}
+        				continue; // No sideways pushes
+        			} 
 
-    		float xMarioD = mario.x - x;
-    		float yMarioD = mario.y - y;
-    		float w = 16;
-    		if (xMarioD > -w && xMarioD < w)
-    		{
-    			if (yMarioD > -height && yMarioD < mario.height) {
-    				if(0 < xMarioD) {
-    					float push = (w - xMarioD)/2.0f;
-    					if(!isBlocking(x, y, -push, 0)) {
-    						this.move(-push, 0);
-    					}
-    					if(!mario.isBlocking(mario.x, mario.y, push, 0)) {
-    						mario.move(push, 0);
-    					}
-    				} else {
-    					float push = (w + xMarioD)/2.0f;
-    					if(!isBlocking(x, y, push, 0)) {
-    						this.move(push,0);
-    					}
-    					if(!mario.isBlocking(mario.x, mario.y, -push, 0)) {
-    						mario.move(-push,0);
-    					}        				
-    				}
-    			}
-    		}
-    	}
-    }    
+        			// Both marios colliding
+        			if(0 < xMarioD) {
+        				float push = (w - xMarioD)/2.0f;
+        				if(!isBlocking(x, y, -push, 0)) {
+            				this.move(-push, 0);
+        				}
+        				if(!mario.isBlocking(mario.x, mario.y, push, 0)) {
+            				mario.move(push, 0);
+        				}
+        			} else {
+        				float push = (w + xMarioD)/2.0f;
+        				if(!isBlocking(x, y, push, 0)) {
+        					this.move(push,0);
+        				}
+        				if(!mario.isBlocking(mario.x, mario.y, -push, 0)) {
+        					mario.move(-push,0);
+        				}        				
+        			}        			        			        			
+        		}
+        	}
+        }
+    } 
     
     /**
      * Move this Mario sprite xa units horizontally and
@@ -636,7 +659,7 @@ public class Mario extends Sprite
 
         return blocking;
     }
-
+    
     public void stomp(Enemy enemy)
     {
         if (deathTime > 0 || world.paused) return;
@@ -645,7 +668,7 @@ public class Mario extends Sprite
         move(0, targetY - y);
 
         xJumpSpeed = 0;
-        yJumpSpeed = -1.9f;
+        yJumpSpeed = STILL_JUMP_SPEED;
         jumpTime = 8;
         ya = jumpTime * yJumpSpeed;
         onGround = false;
@@ -668,7 +691,7 @@ public class Mario extends Sprite
             move(0, targetY - y);
 
             xJumpSpeed = 0;
-            yJumpSpeed = -1.9f;
+            yJumpSpeed = STILL_JUMP_SPEED;
             jumpTime = 8;
             ya = jumpTime * yJumpSpeed;
             onGround = false;
@@ -776,7 +799,7 @@ public class Mario extends Sprite
         move(0, targetY - y);
 
         xJumpSpeed = 0;
-        yJumpSpeed = -1.9f;
+        yJumpSpeed = STILL_JUMP_SPEED;
         jumpTime = 8;
         ya = jumpTime * yJumpSpeed;
         onGround = false;
