@@ -2,6 +2,7 @@ package ch.idsia.mario.engine;
 
 import java.awt.*;
 import ch.idsia.mario.engine.level.*;
+import edu.southwestern.util.graphics.GraphicsUtil;
 
 
 public class LevelRenderer
@@ -65,6 +66,44 @@ public class LevelRenderer
         }
     }
 
+    /**
+     * A Graphics2D object and a Level are sent in, along with some information
+     * about the area to view. The level is then drawn to the Graphics2D, which
+     * is modified by side effects.
+     * @param g
+     * @param level
+     * @param x0
+     * @param y0
+     * @param w
+     * @param h
+     */
+    public static void renderArea(Graphics2D g, Level level, int x0, int y0, int xCam, int yCam, int w, int h)
+    {
+    	Art.init(GraphicsUtil.getConfiguration());
+
+    	g.setBackground(transparent);
+        g.clearRect(x0, y0, w, h);
+        int xTileStart = (x0 + xCam) / 16;
+        int yTileStart = (y0 + yCam) / 16;
+        int xTileEnd = (x0 + xCam + w) / 16;
+        int yTileEnd = (y0 + yCam + h) / 16;
+        for (int x = xTileStart; x <= xTileEnd; x++)
+        {
+            for (int y = yTileStart; y <= yTileEnd; y++)
+            {
+                int b = level.getBlock(x, y) & 0xff;
+                g.drawImage(Art.level[b % 16][b / 16], (x << 4) - xCam, (y << 4) - yCam, null);
+            }
+        }
+    }
+    
+    /**
+     * Original method for updating an area of the level graphics
+     * @param x0
+     * @param y0
+     * @param w
+     * @param h
+     */
     private void updateArea(int x0, int y0, int w, int h)
     {
         g.setBackground(transparent);

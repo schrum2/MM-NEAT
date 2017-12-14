@@ -14,6 +14,10 @@ import gvgai.tools.Utils;
 public class Agent extends AbstractPlayer
 {
 
+	// Added by Jacob Schrum, though I'm not clear why this wasn't already here.
+	public Agent() {
+	}
+	
     /**
      * Public constructor with state observation and time due.
      * @param so state observation of the current game.

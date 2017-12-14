@@ -2,6 +2,7 @@ package ch.idsia.mario.engine;
 
 import ch.idsia.ai.agents.Agent;
 import ch.idsia.ai.agents.human.CheaterKeyboardAgent;
+import ch.idsia.mario.engine.level.Level;
 import ch.idsia.mario.engine.sprites.Mario;
 import ch.idsia.mario.environments.Environment;
 import ch.idsia.tools.EvaluationInfo;
@@ -14,6 +15,11 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyAdapter;
 import java.awt.image.VolatileImage;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -276,7 +282,29 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
         scene = new LevelScene(graphicsConfiguration, this, seed, difficulty, type, levelLength, timeLimit);
         levelScene = ((LevelScene) scene);
         scene.init();
+        
+        // Comment out to write level text
+//        try {
+//			levelScene.level.saveText(new PrintStream(new FileOutputStream("TestLevel.txt")));
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+        
     }
+    
+    /**
+     * Added so that the level could be directly specified instead of randomly generated
+     * @param level
+     * @param levelRandSeed
+     * @param levelType
+     * @param timeLimit
+     */
+	public void startLevel(Level level, long levelRandSeed, int levelType, int timeLimit) {
+        scene = new LevelScene(level, graphicsConfiguration, this, levelRandSeed, levelType, timeLimit);
+        levelScene = ((LevelScene) scene);
+        ((LevelScene) scene).init(false); // Not a random level
+	}
 
     public void levelFailed() {
 //        scene = mapScene;

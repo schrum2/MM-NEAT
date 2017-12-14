@@ -50,7 +50,6 @@ public class ThreeDimensionalAnimationBreederTask<T extends Network> extends Ani
 
 	public ThreeDimensionalAnimationBreederTask() throws IllegalAccessException {
 		super();
-		Parameters.parameters.setInteger("defaultPause", 0);
 		Parameters.parameters.setInteger("defaultAnimationLength", (int) (AnimationUtil.FRAMES_PER_SEC * 3));	
 		
 //		JLabel zeroDegreeLabel = new JLabel("0");
