@@ -66,7 +66,8 @@ public class LevelGenerator
 
         lastSeed = seed;
         level = new Level(width, height);
-        random = RandomNumbers.randomGenerator;
+        // Fix 2017-12-14: In order for deterministifc levels to work, the seed needs to create a new random generator
+        random = new Random(seed);
 
         int length = 0;
         length += buildStraight(0, level.width, true);
