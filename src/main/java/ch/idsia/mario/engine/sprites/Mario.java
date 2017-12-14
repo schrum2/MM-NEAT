@@ -482,27 +482,43 @@ public class Mario extends Sprite
     		if(mario == this) continue; // Do not collide with self
 
     		float xMarioD = mario.x - x;
-        	float yMarioD = mario.y - y;
-        	float w = 16;
-        	if (xMarioD > -w && xMarioD < w)
-        	{
-        		if (yMarioD > -height && yMarioD < mario.height)
-        		{
-        			// Both marios colliding
-        			if(0 < xMarioD) {
-        				float push = w - xMarioD;
-        				x -= push/2;
-        				mario.x += push/2;
-        			} else {
-        				float push = w + xMarioD;
-        				x += push/2;
-        				mario.x -= push/2;
-        			}
-        		}
-        	}
+    		float yMarioD = mario.y - y;
+    		float w = 16;
+    		if (xMarioD > -w && xMarioD < w)
+    		{
+    			if (yMarioD > -height && yMarioD < mario.height) {
+    				if(0 < xMarioD) {
+    					float push = (w - xMarioD)/2.0f;
+    					if(!isBlocking(x, y, -push, 0)) {
+    						this.move(-push, 0);
+    					}
+    					if(!mario.isBlocking(mario.x, mario.y, push, 0)) {
+    						mario.move(push, 0);
+    					}
+    				} else {
+    					float push = (w + xMarioD)/2.0f;
+    					if(!isBlocking(x, y, push, 0)) {
+    						this.move(push,0);
+    					}
+    					if(!mario.isBlocking(mario.x, mario.y, -push, 0)) {
+    						mario.move(-push,0);
+    					}        				
+    				}
+    			}
+    		}
     	}
     }    
     
+    /**
+     * Move this Mario sprite xa units horizontally and
+     * ya units vertically, if the surrounding landscape allows.
+     * Obstacles will prevent movement. Meathod indicates whether
+     * movement was carried out unhindered.
+     * 
+     * @param xa Horozontal movement (negative for left, pos for right)
+     * @param ya Vertical movement (pos for up, neg for down)
+     * @return true if movement occurred, false if blocked by obstacle.
+     */
     private boolean move(float xa, float ya)
     {
         while (xa > 8)
