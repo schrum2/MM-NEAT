@@ -466,6 +466,43 @@ public class Mario extends Sprite
         xPic = runFrame;
     }
 
+    /**
+     * Check if different Marios are colliding with each other
+     */
+    public void collideCheck()
+    {
+    	// Allow for extra playful Mario
+    	Mario[] marios = new Mario[LevelScene.twoPlayers ? 2 : 1];
+    	marios[0] = world.mario;
+    	if(LevelScene.twoPlayers) {
+    		marios[1] = world.luigi;
+    	}
+
+    	for(Mario mario : marios) {
+    		if(mario == this) continue; // Do not collide with self
+
+    		float xMarioD = mario.x - x;
+        	float yMarioD = mario.y - y;
+        	float w = 16;
+        	if (xMarioD > -w && xMarioD < w)
+        	{
+        		if (yMarioD > -height && yMarioD < mario.height)
+        		{
+        			// Both marios colliding
+        			if(0 < xMarioD) {
+        				float push = w - xMarioD;
+        				x -= push/2;
+        				mario.x += push/2;
+        			} else {
+        				float push = w + xMarioD;
+        				x += push/2;
+        				mario.x -= push/2;
+        			}
+        		}
+        	}
+    	}
+    }    
+    
     private boolean move(float xa, float ya)
     {
         while (xa > 8)
