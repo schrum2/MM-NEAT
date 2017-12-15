@@ -11,6 +11,7 @@ import ch.idsia.tools.CmdLineOptions;
 import ch.idsia.tools.EvaluationOptions;
 import ch.idsia.tools.ToolsConfigurator;
 import competition.cig.robinbaumgarten.AStarAgent;
+import competition.cig.robinbaumgarten.PlayfulAStarAgent;
 import competition.cig.sergeykarakovskiy.SergeyKarakovskiy_JumpingAgent;
 import edu.southwestern.tasks.mario.agents.StillAgent;
 
@@ -36,7 +37,7 @@ public class Play {
         	MarioComponent.startDelay = 5000;
             // Swap: A* must be player 1, and human is player 2.
         	// Variable juggling required because variable controller sent to evaluate call below.
-        	Agent agent = new AStarAgent(); //SergeyKarakovskiy_JumpingAgent(); //StillAgent();
+        	Agent agent = new PlayfulAStarAgent(); //SergeyKarakovskiy_JumpingAgent(); //StillAgent();
         	Agent human = controller;
         	controller = agent;
         	options.setAgent(controller);

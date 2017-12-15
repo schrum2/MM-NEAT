@@ -10,7 +10,7 @@ public class AStarAgent implements Agent
 {
     protected boolean action[] = new boolean[Environment.numberOfButtons];
     protected String name = "RobinBaumgarten_AStarAgent";
-    private AStarSimulator sim;
+    protected AStarSimulator sim;
     private int tickCounter = 0;
     private float lastX = 0;
     private float lastY = 0;

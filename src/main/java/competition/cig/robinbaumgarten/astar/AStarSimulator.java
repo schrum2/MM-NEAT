@@ -36,7 +36,7 @@ public class AStarSimulator
     int ticksBeforeReplanning = 0;
     
 	
-	private class SearchNode
+	class SearchNode
 	{
 		private int timeElapsed = 0;
 		public float remainingTimeEstimated = 0;
@@ -234,6 +234,7 @@ public class AStarSimulator
     private int getMarioDamage()
     {
     	// early damage at gaps: Don't even fall 1 px into them.
+    	// TODO: A weird java.lang.ArrayIndexOutOfBoundsException: -1 sometimes occurs here with playful Mario
     	if (levelScene.level.isGap[(int) (levelScene.mario.x/16)] &&
     			levelScene.mario.y > levelScene.level.gapHeight[(int) (levelScene.mario.x/16)]*16)
     	{
@@ -440,7 +441,7 @@ public class AStarSimulator
     	return s;
     }
     
-    private SearchNode pickBestPos(ArrayList<SearchNode> posPool)
+    protected SearchNode pickBestPos(ArrayList<SearchNode> posPool)
     {
     	SearchNode bestPos = null;
     	float bestPosCost = 10000000;
