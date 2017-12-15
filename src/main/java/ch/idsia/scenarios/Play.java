@@ -6,6 +6,7 @@ import ch.idsia.ai.agents.human.HumanKeyboardAgent;
 import ch.idsia.ai.tasks.ProgressTask;
 import ch.idsia.ai.tasks.Task;
 import ch.idsia.mario.engine.LevelScene;
+import ch.idsia.mario.engine.MarioComponent;
 import ch.idsia.tools.CmdLineOptions;
 import ch.idsia.tools.EvaluationOptions;
 import ch.idsia.tools.ToolsConfigurator;
@@ -31,9 +32,11 @@ public class Play {
         
         LevelScene.twoPlayers = true; // TODO: find better way to set this
         if(LevelScene.twoPlayers) {
+        	// Give human a chance to get bearings before other agent starts moving
+        	MarioComponent.startDelay = 5000;
             // Swap: A* must be player 1, and human is player 2.
         	// Variable juggling required because variable controller sent to evaluate call below.
-        	Agent agent = new SergeyKarakovskiy_JumpingAgent(); //StillAgent();
+        	Agent agent = new AStarAgent(); //SergeyKarakovskiy_JumpingAgent(); //StillAgent();
         	Agent human = controller;
         	controller = agent;
         	options.setAgent(controller);

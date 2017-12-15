@@ -57,7 +57,7 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
     private LevelScene levelScene = null;
 
     // Added to make agent pause before starting
-    private int startDelay = 0; //5000;
+    public static int startDelay = 0; //5000;
     
     public MarioComponent(int width, int height) {
         adjustFPS();
