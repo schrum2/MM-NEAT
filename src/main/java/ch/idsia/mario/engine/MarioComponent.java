@@ -56,6 +56,9 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
     public Mario luigi = null; // Player 2
     private LevelScene levelScene = null;
 
+    // Added to make agent pause before starting
+    private int startDelay = 0; //5000;
+    
     public MarioComponent(int width, int height) {
         adjustFPS();
 
@@ -138,6 +141,7 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
         addFocusListener(this);
 
         // Remember the starting time
+        long start = System.currentTimeMillis();
         long tm = System.currentTimeMillis();
         long tick = tm;
         int marioStatus = Mario.STATUS_RUNNING;
@@ -191,7 +195,11 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
 
 
             //Apply action;
-            mario.keys = action;
+            long diff = System.currentTimeMillis() - start;
+            //System.out.println(diff + " " + tm + " " + System.currentTimeMillis() + " " + startDelay);
+            if(diff >= startDelay) { // Agent pauses a bit before starting
+            	mario.keys = action;
+            }
             mario.cheatKeys = cheatAgent.getAction(null);
             if(agent2 != null) {
             	luigi.keys = action2;

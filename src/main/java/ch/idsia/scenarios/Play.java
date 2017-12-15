@@ -33,9 +33,9 @@ public class Play {
         if(LevelScene.twoPlayers) {
             // Swap: A* must be player 1, and human is player 2.
         	// Variable juggling required because variable controller sent to evaluate call below.
-        	Agent astar = new StillAgent();
+        	Agent agent = new SergeyKarakovskiy_JumpingAgent(); //StillAgent();
         	Agent human = controller;
-        	controller = astar;
+        	controller = agent;
         	options.setAgent(controller);
             options.setAgent2(human);
         } else {
