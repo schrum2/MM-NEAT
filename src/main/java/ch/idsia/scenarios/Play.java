@@ -37,7 +37,7 @@ public class Play {
         	MarioComponent.startDelay = 5000;
             // Swap: A* must be player 1, and human is player 2.
         	// Variable juggling required because variable controller sent to evaluate call below.
-        	Agent agent = new PlayfulAStarAgent(); //SergeyKarakovskiy_JumpingAgent(); //StillAgent();
+        	Agent agent = new StillAgent(); //PlayfulAStarAgent(); //SergeyKarakovskiy_JumpingAgent();
         	Agent human = controller;
         	controller = agent;
         	options.setAgent(controller);

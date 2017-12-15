@@ -696,6 +696,9 @@ public class LevelScene extends Scene implements SpriteContext
         if (timeLeft==0)
         {
             mario.die();
+            if(luigi != null) {
+                luigi.die();
+            }
         }
         xCamO = xCam;
         yCamO = yCam;
@@ -705,6 +708,7 @@ public class LevelScene extends Scene implements SpriteContext
             startTime++;
         }
 
+        // TODO: Make keep both Marios in frame?
         float targetXCam = mario.x - 160;
 
         xCam = targetXCam;
@@ -726,7 +730,8 @@ public class LevelScene extends Scene implements SpriteContext
 
         for (Sprite sprite : sprites)
         {
-            if (sprite != mario)
+        	// Don't remove Mario or Luigi for leaving screen
+            if (sprite != mario && sprite != luigi)
             {
                 float xd = sprite.x - xCam;
                 float yd = sprite.y - yCam;
@@ -748,7 +753,7 @@ public class LevelScene extends Scene implements SpriteContext
         {
             for (Sprite sprite : sprites)
             {
-                if (sprite == mario)
+                if (sprite == mario || sprite == luigi)
                 {
                     sprite.tick();
                 }
@@ -771,6 +776,7 @@ public class LevelScene extends Scene implements SpriteContext
                 {
                     int dir = 0;
 
+                    // Cannon fire direction only depends on Mario, not Luigi
                     if (x * 16 + 8 > mario.x + 16) dir = -1;
                     if (x * 16 + 8 < mario.x - 16) dir = 1;
 
@@ -832,6 +838,14 @@ public class LevelScene extends Scene implements SpriteContext
                             if (mario.carried == shell && !shell.dead)
                             {
                                 mario.carried = null;
+                                shell.die();
+                                ++LevelScene.killedCreaturesTotal;
+                            }
+                            
+                            // Make Luigi's carried shells be lost too
+                            if (luigi != null && luigi.carried == shell && !shell.dead)
+                            {
+                            	luigi.carried = null;
                                 shell.die();
                                 ++LevelScene.killedCreaturesTotal;
                             }
