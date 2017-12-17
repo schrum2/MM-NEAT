@@ -1,11 +1,14 @@
 
 =========== GETTING STARTED WITH MM-NEAT 3.0 ===========
 
-GitHub: https://github.com/schrum2/MM-NEAT
+* MAIN WEBPAGE: https://people.southwestern.edu/~schrum2/re/mm-neat.php
+* SECONDARY WEBPAGE: http://nn.cs.utexas.edu/?mm-neat
+* GitHub: https://github.com/schrum2/MM-NEAT
+
 Requirements for this code to run:
 
-Java 1.8
-Maven 3.5
+*Java 1.8
+*Maven 3.5
 
 MM-NEAT version 3.0 introduces integration with Maven, a dependency management system
 that automatically downloads libraries needed for the code to function so that you do not
@@ -18,7 +21,7 @@ but has not been updated since September 2017.
 
 1. Start by downloading and installing the latest version of Maven: https://maven.apache.org/
 2. Once Maven is installed, you can clone/fork the MM-NEAT project and download it to your machine.
-3. In the main project directory (MM-NEAT) use a console/terminal to execute: mvn -U install
+3. In the main project directory (MM-NEAT) use a console/terminal to execute: mvn -U install  
    Lots of text should scroll across the screen, but near the end should be a result of BUILD SUCCESS
 
 It is recommended that you use a modern IDE to work on this code. Most recent development on the
@@ -71,50 +74,8 @@ can launch the experiments individually instead. However, for the most
 part these experiments were run on a condor cluster, so distributing all 
 execution would be best.
 
-Below are details on research conducted with MM-NEAT, and the associated
-batch files.
-
-* Jacob Schrum (2014). Evolving Multimodal Behavior Through Modular Multiobjective 
-  Neuroevolution, PhD Thesis, The University of Texas at Austin, May 2014. Tech Report TR-14-07.
-  http://nn.cs.utexas.edu/?schrum:phd2014
-  Batch files for Ms. Pac-Man experiments in: batch/Experiments-2014-Dissertation-MsPacMan 
-
-* Jacob Schrum, and Risto Miikkulainen (2014). Evolving Multimodal Behavior With Modular Neural 
-  Networks in Ms. Pac-Man, Proceedings of the Genetic and Evolutionary Computation Conference (GECCO 2014).
-  Best Paper Award in Digital Entertainment and Arts
-  https://suscholar.southwestern.edu/handle/11214/152
-  Batch files for experiments in: batch/Experiments-2014-GECCO-MsPacMan
-
-* Jacob Schrum, and Risto Miikkulainen (2015). Solving Interleaved and Blended Sequential Decision-Making 
-  Problems through Modular Neuroevolution, Proceedings of the Genetic and Evolutionary Computation Conference 
-  (GECCO 2015). 
-  Best Paper Award in Digital Entertainment and Arts
-  https://suscholar.southwestern.edu/handle/11214/155
-  Batch files for experiments in: batch/Experiments-2015-GECCO-MsPacMan
-
-* Jacob Schrum, and Risto Miikkulainen (2016). Discovering Multimodal Behavior in Ms. Pac-Man through 
-  Evolution of Modular Neural Networks, IEEE Transactions on Computational Intelligence and AI in Games 
-  (TCIAIG 2016). March. Volume 8, Issue 1, pages 67 - 81. IEEE.
-  https://suscholar.southwestern.edu/handle/11214/149
-  Batch files for experiments in: batch/Experiments-2016-TCIAIG-MsPacMan
-
-* Jacob Schrum, and Risto Miikkulainen (2016). Solving Multiple Isolated, Interleaved, and Blended Tasks 
-  through Modular Neuroevolution, Evolutionary Computation Journal (ECJ 2016). September. Volume 24, No. 3, 
-  pages 459 - 490. MIT Press. 
-  https://suscholar.southwestern.edu/handle/11214/156
-  Batch files for experiments in: batch/Experiments-2016-ECJ-MsPacMan
-
-* Alex Rollins, and Jacob Schrum (2017). Balancing Selection Pressures, Multiple Objectives, and Neural 
-  Modularity to Coevolve Cooperative Agent Behavior, Companion to the Proceedings of the Conference on Genetic 
-  and Evolutionary Computation (GECCO Companion 2017).
-  http://people.southwestern.edu/~schrum2/SCOPE/rollins.gecco17.pdf
-  Batch files for experiments in: batch/Experiments-2017-GECCO-PredPrey
-
-* Lauren E. Gillespie, Gabriela R. Gonzalez, and Jacob Schrum (2017). Comparing Direct and Indirect Encodings 
-  Using Both Raw and Hand-Designed Features in Tetris, Proceedings of the Genetic and Evolutionary Computation 
-  Conference (GECCO 2017).
-  http://people.southwestern.edu/~schrum2/SCOPE/gillespie.gecco17.pdf
-  Batch files for experiments in: batch/Experiments-2017-GECCO-Tetris
+For more details on research conducted with MM-NEAT, see the associated list of
+[publications](https://github.com/schrum2/MM-NEAT/blob/master/PUBLICATIONS.md).
 
 After running any of these experiments, you will likely want to look at the 
 results. Each experiment outputs several files with the suffix "plot" that
@@ -134,18 +95,18 @@ shown in comments at the top of each file. Post-evaluation files that only
 apply to Ms. Pac-Man are in the MsPacMan sub-directory, but others are in 
 the root MM-NEAT directory. Here is a list of what each file is used for:
 
-postBestEval.bat		Evaluate champion Ms. Pac-Man net (non-visual) with original settings and save results to eval report in run directory.
-postBestFourMazeEval.bat	Evaluate champion Ms. Pac-Man net (non-visual) with FourMaze settings and save results to eval report in run directory.
-postBestFourMazeRecord.bat	Watch and record single eval of champion Ms. Pac-Man net with FourMaze settings.
-postBestFourMazeWatch.bat	Watch champion Ms. Pac-Man net behavior with FourMaze settings.
-postBestMPMvsGEval.bat		Evaluate champion Ms. Pac-Man net (non-visual) with MPMvsG settings and save results to eval report in run directory.
-postBestMPMvsGRecord.bat	Watch and record single eval of champion Ms. Pac-Man net with MPMvsG settings.
-postBestMPMvsGWatch.bat		Watch champion Ms. Pac-Man net behavior with MPMvsG settings.
-postBestObjectiveEval.bat	Evaluate (non-visual) behavior of best nets in each objective with original settings.
-postBestObjectiveWatch.bat	Watch behavior of best nets in each objective with original settings.
-postBestWatch.bat		Watch champion Ms. Pac-Man net behavior with original settings.
-postParetoFrontWatch.bat	Watch behavior of all members of Pareto front using original evaluation settings. Works for domains besides Ms. Pac-Man.
-postReplay.bat			Replay any Ms. Pac-Man recording saved by one of the record batch files.
+* postBestEval.bat		Evaluate champion Ms. Pac-Man net (non-visual) with original settings and save results to eval report in run directory.
+* postBestFourMazeEval.bat	Evaluate champion Ms. Pac-Man net (non-visual) with FourMaze settings and save results to eval report in run directory.
+* postBestFourMazeRecord.bat	Watch and record single eval of champion Ms. Pac-Man net with FourMaze settings.
+* postBestFourMazeWatch.bat	Watch champion Ms. Pac-Man net behavior with FourMaze settings.
+* postBestMPMvsGEval.bat		Evaluate champion Ms. Pac-Man net (non-visual) with MPMvsG settings and save results to eval report in run directory.
+* postBestMPMvsGRecord.bat	Watch and record single eval of champion Ms. Pac-Man net with MPMvsG settings.
+* postBestMPMvsGWatch.bat		Watch champion Ms. Pac-Man net behavior with MPMvsG settings.
+* postBestObjectiveEval.bat	Evaluate (non-visual) behavior of best nets in each objective with original settings.
+* postBestObjectiveWatch.bat	Watch behavior of best nets in each objective with original settings.
+* postBestWatch.bat		Watch champion Ms. Pac-Man net behavior with original settings.
+* postParetoFrontWatch.bat	Watch behavior of all members of Pareto front using original evaluation settings. Works for domains besides Ms. Pac-Man.
+* postReplay.bat			Replay any Ms. Pac-Man recording saved by one of the record batch files.
 
 Eval reports are stored in the directory with all other data from the original 
 experiment. For example, the MsPacMan-OneLifeConflict-MMD.bat file stores
@@ -224,14 +185,14 @@ All of the pre-existing domains should provide useful examples of how to integra
 domain either of your own design, or made by someone else. Here are some general hints
 on how to do this.
 
-1) Make your domain implement the Task interface. Specifically, you may want to extend one
+1. Make your domain implement the Task interface. Specifically, you may want to extend one
    of the classes in the edu.southwestern.tasks package that already implements the Task
    interface. LonerTask is appropriate for any task where only a single genotype is evaluated
    at a time. However, if the domain has noisy evaluations, then NoisyLonerTask is more
    appropriate.
-2) You may need to set up additional parameters related to your domain in 
+2. You may need to set up additional parameters related to your domain in 
    edu.southwestern.parameters.Parameters.java.
-3) You will need to edit edu.southwestern.mmneat.MMNEAT.java so that when the game task
+3. You will need to edit edu.southwestern.mmneat.MMNEAT.java so that when the game task
    matches your new task, it prepares evolution to run your domain (for example, by 
    instantiating classes or setting up parameters unique to your domain).
 
