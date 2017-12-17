@@ -68,12 +68,12 @@ Each sub-directory with the prefix Experiments-* contains batch
 files associated with experiments from either my dissertation or
 from peer-reviewed publications that have used MM-NEAT since then.
 In each such sub-directory there is a batch file called LAUNCHALL.bat
-that you can simply double-click to launch each group of experiments  
+that you can simply double-click to launch each group of experiments
 simultaneously. This is the easiest approach to recreating experimental
 results, but not necessarily the best. In some cases, the number of
 experiments launching may overwhelm the memory of your machine, so you
-can launch the experiments individually instead. However, for the most 
-part these experiments were run on a condor cluster, so distributing all 
+can launch the experiments individually instead. However, for the most
+part these experiments were run on a condor cluster, so distributing all
 execution would be best.
 
 For more details on research conducted with MM-NEAT, see the associated list of
@@ -190,13 +190,19 @@ domain either of your own design, or made by someone else. Here are some general
 on how to do this.
 
 1. Make your domain implement the Task interface. Specifically, you may want to extend one
-   of the classes in the edu.southwestern.tasks package that already implements the Task
-   interface. LonerTask is appropriate for any task where only a single genotype is evaluated
-   at a time. However, if the domain has noisy evaluations, then NoisyLonerTask is more
-   appropriate.
-2. You may need to set up additional parameters related to your domain in 
-   edu.southwestern.parameters.Parameters.java.
-3. You will need to edit edu.southwestern.mmneat.MMNEAT.java so that when the game task
+   of the classes in the [edu.southwestern.tasks](https://github.com/schrum2/MM-NEAT/tree/master/src/main/java/edu/southwestern/tasks) 
+   package that already implements the 
+   [Task interface](https://github.com/schrum2/MM-NEAT/blob/master/src/main/java/edu/southwestern/tasks/Task.java). 
+   [LonerTask](https://github.com/schrum2/MM-NEAT/blob/master/src/main/java/edu/southwestern/tasks/LonerTask.java) 
+   is appropriate for any task where only a single genotype is evaluated
+   at a time. However, if the domain has noisy evaluations, then 
+   [NoisyLonerTask](https://github.com/schrum2/MM-NEAT/blob/master/src/main/java/edu/southwestern/tasks/NoisyLonerTask.java) 
+   is more appropriate.
+2. You may need to set up additional parameters related to your domain in
+   [edu.southwestern.parameters.Parameters.java](https://github.com/schrum2/MM-NEAT/blob/master/src/main/java/edu/southwestern/parameters/Parameters.java)
+3. You will need to edit 
+   [edu.southwestern.mmneat.MMNEAT.java](https://github.com/schrum2/MM-NEAT/blob/master/src/main/java/edu/southwestern/MMNEAT/MMNEAT.java)
+   so that when the game task
    matches your new task, it prepares evolution to run your domain (for example, by 
    instantiating classes or setting up parameters unique to your domain).
 
