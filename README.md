@@ -1,4 +1,6 @@
-MM-NEAT 3.0
+# MM-NEAT 3.0
+
+To learn how to compile/use, skip straight to [TUTORIAL.txt](https://github.com/schrum2/MM-NEAT/blob/master/TUTORIAL.txt)
 
 Copyright (c) 2014 The University of Texas at Austin 
 and 2016 Southwestern University.
@@ -7,9 +9,10 @@ Refer to LICENSE.txt for detailed license information.
 Also see copyright.txt for copyright information about the
 included Ms. Pac-Man code.
 
-WEBPAGE: https://github.com/schrum2/MM-NEAT
+MAIN WEBPAGE: https://people.southwestern.edu/~schrum2/re/mm-neat.php
+SECONDARY WEBPAGE: http://nn.cs.utexas.edu/?mm-neat
 
-ABOUT
+## ABOUT
 
 MM-NEAT stands for Multiobjective Modular Neuro-Evolution of Augmenting Topologies.
 It is inspired by the original NEAT, but also incorporates multiobjective evolution
@@ -58,10 +61,10 @@ can be downloaded at:
 
 http://www.pacmanvghosts.co.uk/
 
-For further instructions on how to run this code, see TUTORIAL.txt.
+For further instructions on how to run this code, see [TUTORIAL.txt](https://github.com/schrum2/MM-NEAT/blob/master/TUTORIAL.txt).
 
 For information on the different types of interactive evolution tasks in the code,
-see INTERACTIVE_EVOLUTION.txt
+see [INTERACTIVE_EVOLUTION.txt](https://github.com/schrum2/MM-NEAT/blob/master/INTERACTIVE_EVOLUTION.md).
 
 FOR MORE INFORMATION CONTACT
 

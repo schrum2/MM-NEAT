@@ -1,5 +1,8 @@
 INTERACTIVE EVOLUTION WITH MM-NEAT
 
+For a simplified version of MM-NEAT that only includes the code for interactive evolution using
+CPPNs, go to the [CPPNArtEvolution Project](https://github.com/schrum2/CPPNArtEvolution).
+
 Within the MM-NEAT code repository, there are several programs that are based on interactive evolution. All of
 these classes extend the same general Interactive Evolution Task, which launches an applet displaying 20 items
 that can be evolved, saved, and manipulated by the user over unlimited generations. InteractiveEvolutionTask
