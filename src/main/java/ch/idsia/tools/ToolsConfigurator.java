@@ -516,4 +516,12 @@ public class ToolsConfigurator extends JFrame
         LOGGER.println("\nConsole got message:\n" + text, LOGGER.VERBOSE_MODE.INFO);
 //        TextFieldConsole.setText(text);
     }
+    
+    /**
+     * Close the Mario window
+     */
+    public static void DestroyMarioComponentFrame() {
+    	if(marioComponentFrame != null) marioComponentFrame.dispose();
+    	marioComponentFrame = null;
+    }
 }

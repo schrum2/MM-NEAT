@@ -16,6 +16,8 @@ import javax.imageio.stream.ImageInputStream;
 
 public class Art
 {
+	public static boolean loaded = false;
+	
     public static Image[][] mario;
     public static Image[][] smallMario;
     public static Image[][] fireMario;
@@ -35,6 +37,8 @@ public class Art
 
     public static void init(GraphicsConfiguration gc)
     {
+    	if(loaded) return; // Don't need to load again
+    	
         try
         {
 //            System.out.println("Image Directory: " + img);
@@ -53,12 +57,14 @@ public class Art
             font = cutImage(gc, "font.gif", 8, 8);
             endScene = cutImage(gc, "endscene.gif", 96, 96);
             gameOver = cutImage(gc, "gameovergost.gif", 96, 64);
+
+            // Loading was successful
+            loaded = true;
         }
         catch (Exception e)
         {
             e.printStackTrace();
         }
-
     }
 
     private static Image getImage(GraphicsConfiguration gc, String imageName) throws IOException

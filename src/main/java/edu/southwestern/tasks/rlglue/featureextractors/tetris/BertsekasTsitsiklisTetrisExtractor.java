@@ -23,19 +23,8 @@ public class BertsekasTsitsiklisTetrisExtractor implements FeatureExtractor {
 	 * Calls for the width and height to initialize
 	 */
 	public BertsekasTsitsiklisTetrisExtractor() {
-		this(TetrisState.worldWidth, TetrisState.worldHeight);
-	}
-
-	/**
-	 * Initializes the extractor with the given world height and width Also adds
-	 * all possible block shapes to the array list PossibleBlocks
-	 * 
-	 * @param width
-	 * @param height
-	 */
-	public BertsekasTsitsiklisTetrisExtractor(int width, int height) {
-		this.worldWidth = width;
-		this.worldHeight = height;
+		worldWidth = TetrisState.worldWidth;
+		worldHeight = TetrisState.worldHeight;
 
 		possibleBlocks.add(TetrisPiece.makeLine());
 		possibleBlocks.add(TetrisPiece.makeSquare());
@@ -54,7 +43,7 @@ public class BertsekasTsitsiklisTetrisExtractor implements FeatureExtractor {
 	 * @param y
 	 * @return
 	 */
-	protected int calculateLinearArrayPosition(int x, int y) {
+	protected static int calculateLinearArrayPosition(int x, int y, int worldWidth) {
 		int returnValue = y * worldWidth + x;
 		return returnValue;
 	}
@@ -91,8 +80,8 @@ public class BertsekasTsitsiklisTetrisExtractor implements FeatureExtractor {
 		int firstHeightIndex = in;
 		double maxHeight = 0;
 		for (int i = 0; i < worldWidth; i++) {
-			double h = columnHeight(i, worldState);
-			holes += columnHoles(i, worldState, (int) h);
+			double h = columnHeight(i, worldState, TetrisState.worldHeight);
+			holes += columnHoles(i, worldState, (int) h, TetrisState.worldHeight);
 			maxHeight = Math.max(h, maxHeight);
 			inputs[in++] = h;
 		}
@@ -136,9 +125,9 @@ public class BertsekasTsitsiklisTetrisExtractor implements FeatureExtractor {
 	 * @param intArray
 	 * @return world height
 	 */
-	protected int columnHeight(int x, int[] intArray) {
+	protected static int columnHeight(int x, int[] intArray, int worldHeight) {
 		int y = 0;
-		while (y < worldHeight && intArray[calculateLinearArrayPosition(x, y)] == 0) {
+		while (y < worldHeight && intArray[calculateLinearArrayPosition(x, y, TetrisState.worldWidth)] == 0) {
 			y++;
 		}
 		return worldHeight - y;
@@ -151,13 +140,23 @@ public class BertsekasTsitsiklisTetrisExtractor implements FeatureExtractor {
 	 * @param height
 	 * @return holes in a given column
 	 */
-	protected int columnHoles(int x, int[] intArray, int height) {
+	protected static int columnHoles(int x, int[] intArray, int height, int worldHeight) {
 		int holes = 0;
 		for (int y = worldHeight - height; y < worldHeight; y++) {
-			if (intArray[calculateLinearArrayPosition(x, y)] == 0) {
+			if (intArray[calculateLinearArrayPosition(x, y, TetrisState.worldWidth)] == 0) {
 				holes++;
 			}
 		}
+		return holes;
+	}
+	
+	public static int totalHoles(int worldWidth, int worldHeight, int[] worldState) {
+		int holes = 0;
+		for (int i = 0; i < worldWidth; i++) {
+			double h = columnHeight(i, worldState, worldHeight);
+			holes += columnHoles(i, worldState, (int) h, worldHeight);
+		}
+
 		return holes;
 	}
 
@@ -177,7 +176,7 @@ public class BertsekasTsitsiklisTetrisExtractor implements FeatureExtractor {
 		for (int x = 0; x < mobilePiece.length; x++) {
 			for (int y = 0; y < mobilePiece[x].length; y++) {
 				if (mobilePiece[x][y] != 0) {
-					int linearIndex = calculateLinearArrayPosition(blockX + x, blockY + y);
+					int linearIndex = calculateLinearArrayPosition(blockX + x, blockY + y, TetrisState.worldWidth);
 					if (linearIndex < 0) {
 						System.err.printf("Bogus linear index %d for %d + %d, %d + %d\n", linearIndex, blockX, x, blockY, y);
 						Thread.dumpStack();

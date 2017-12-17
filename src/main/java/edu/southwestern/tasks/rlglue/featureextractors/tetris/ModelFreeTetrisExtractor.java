@@ -101,7 +101,7 @@ public class ModelFreeTetrisExtractor extends BertsekasTsitsiklisTetrisExtractor
 		}
 
 		int absoluteBottom = blockY + bottom;
-		int h = columnHeight(blockX + pieceColumn, worldState);
+		int h = columnHeight(blockX + pieceColumn, worldState, TetrisState.worldHeight);
 
 		return (worldHeight - h) - absoluteBottom;
 	}
