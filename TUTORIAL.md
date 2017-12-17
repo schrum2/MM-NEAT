@@ -29,7 +29,8 @@ code was accomplished using Eclipse.
 
 ## RUNNING
 
-The main class of the project is edu.southwestern.mmneat.MMNEAT.java,
+The main class of the project is 
+[edu.southwestern.mmneat.MMNEAT.java](https://github.com/schrum2/MM-NEAT/blob/master/src/main/java/edu/southwestern/MMNEAT/MMNEAT.java),
 but this class requires many command line parameters to function correctly.
 When you execute "mvn -U install" an executable uber jar file will be created in
 the target sub-directory: MM-NEAT-0.0.1-SNAPSHOT.jar
@@ -38,7 +39,8 @@ Once the jar file is created, the code can be launched by running
 java with the jar file and appropriate command-line arguments. 
 The general form is:
 
-```java -jar target/MM-NEAT-0.0.1-SNAPSHOT.jar runNumber:<int> randomSeed:<int> base:<experiment directory> maxGens:<int> mu:<int> io:true netio:true task:<java class> log:<experiment string>-<evaluation method string> saveTo:<evaluation method directory>
+```
+java -jar target/MM-NEAT-0.0.1-SNAPSHOT.jar runNumber:<int> randomSeed:<int> base:<experiment directory> maxGens:<int> mu:<int> io:true netio:true task:<java class> log:<experiment string>-<evaluation method string> saveTo:<evaluation method directory>
 ```
 Here is a brief description of each of these key parameters.
 
