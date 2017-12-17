@@ -32,6 +32,8 @@ Dr. Schrum's personal webpage:
 
 http://www.southwestern.edu/~schrum2/
 
+A list of publications is also in [PUBLICATIONS.md](https://github.com/schrum2/MM-NEAT/blob/master/PUBLICATIONS.md).
+
 More information on NEAT is available in:
 
 K. O. Stanley and R. Miikkulainen, "Evolving Neural Networks Through 
