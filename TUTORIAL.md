@@ -1,5 +1,5 @@
 
-=========== GETTING STARTED WITH MM-NEAT 3.0 ===========
+# GETTING STARTED WITH MM-NEAT 3.0
 
 * MAIN WEBPAGE: https://people.southwestern.edu/~schrum2/re/mm-neat.php
 * SECONDARY WEBPAGE: http://nn.cs.utexas.edu/?mm-neat
@@ -7,8 +7,8 @@
 
 Requirements for this code to run:
 
-*Java 1.8
-*Maven 3.5
+* Java 1.8
+* Maven 3.5
 
 MM-NEAT version 3.0 introduces integration with Maven, a dependency management system
 that automatically downloads libraries needed for the code to function so that you do not
@@ -17,7 +17,7 @@ for this code, which is why a new GitHub repository was created to store MM-NEAT
 MM-NEAT version 2.0 does not use Maven, and will remain at https://github.com/schrum2/MM-NEATv2, 
 but has not been updated since September 2017.
 
-=========== INSTALLATION ===========
+## INSTALLATION
 
 1. Start by downloading and installing the latest version of Maven: https://maven.apache.org/
 2. Once Maven is installed, you can clone/fork the MM-NEAT project and download it to your machine.
@@ -27,7 +27,7 @@ but has not been updated since September 2017.
 It is recommended that you use a modern IDE to work on this code. Most recent development on the
 code was accomplished using Eclipse.
 
-=========== RUNNING ===========
+## RUNNING
 
 The main class of the project is edu.southwestern.mmneat.MMNEAT.java,
 but this class requires many command line parameters to function correctly.
@@ -38,28 +38,28 @@ Once the jar file is created, the code can be launched by running
 java with the jar file and appropriate command-line arguments. 
 The general form is:
 
-java -jar target/MM-NEAT-0.0.1-SNAPSHOT.jar runNumber:<int> randomSeed:<int> base:<experiment directory> maxGens:<int> mu:<int> io:true netio:true task:<java class> log:<experiment string>-<evaluation method string> saveTo:<evaluation method directory>
-
+```java -jar target/MM-NEAT-0.0.1-SNAPSHOT.jar runNumber:<int> randomSeed:<int> base:<experiment directory> maxGens:<int> mu:<int> io:true netio:true task:<java class> log:<experiment string>-<evaluation method string> saveTo:<evaluation method directory>
+```
 Here is a brief description of each of these key parameters.
 
-runNumber:	An identifying number for the experimental run. Used in directory names and filenames.
-randomSeed:	Should generally be the same as runNumber. Specifies seed for random number generator.
-base:		Directory that will be created to store data from all experiments to be compared.
-maxGens:	Number of generations before evolution stops (alternate stop conditions can be defined).
-mu:		Population size (because (mu+lambda) evolution is assumed, mu is the number of parents).
-task:		Java class that implements the Task interface.
-log:		Prefix that will be used in all filenames. Recommended format above.
-saveTo:		Sub-directory within the base directory where data will be saved (must match portion of log name after the hyphen).
+* runNumber:	An identifying number for the experimental run. Used in directory names and filenames.
+* randomSeed:	Should generally be the same as runNumber. Specifies seed for random number generator.
+* base:		Directory that will be created to store data from all experiments to be compared.
+* maxGens:	Number of generations before evolution stops (alternate stop conditions can be defined).
+* mu:		Population size (because (mu+lambda) evolution is assumed, mu is the number of parents).
+* task:		Java class that implements the Task interface.
+* log:		Prefix that will be used in all filenames. Recommended format above.
+* saveTo:		Sub-directory within the base directory where data will be saved (must match portion of log name after the hyphen).
 
 Other parameters may need to be set as well, depending on the 
 type of the experiment, and whether you are ok with the default
 values. All default values are listed in
-edu.southwestern.parameters.Parameters.java.
+[edu.southwestern.parameters.Parameters.java](https://github.com/schrum2/MM-NEAT/blob/master/src/main/java/edu/southwestern/parameters/Parameters.java).
 
 Examples of appropriate parameters to launch experiments with
 are in the many Experiment files described next.
 
-=========== EXPERIMENT FILES ===========
+## EXPERIMENT FILES
 
 There are several batch files in the sub-directory "batch".
 Each sub-directory with the prefix Experiments-* contains batch
@@ -86,7 +86,7 @@ Gnuplot only lets you analyze the numeric data. In order to see the evolved
 behavior, and to see how modular networks use their multiple modules, there
 are several batch files to analyze the results of completed experiments.
 
-=========== POST EVALUATION FILES ===========
+## POST EVALUATION FILES
 
 Each batch file that starts with "post" can be used to analyze the results
 of a completed experiment. Each of these batch files requires command-line
@@ -95,18 +95,18 @@ shown in comments at the top of each file. Post-evaluation files that only
 apply to Ms. Pac-Man are in the MsPacMan sub-directory, but others are in 
 the root MM-NEAT directory. Here is a list of what each file is used for:
 
-* postBestEval.bat		Evaluate champion Ms. Pac-Man net (non-visual) with original settings and save results to eval report in run directory.
-* postBestFourMazeEval.bat	Evaluate champion Ms. Pac-Man net (non-visual) with FourMaze settings and save results to eval report in run directory.
-* postBestFourMazeRecord.bat	Watch and record single eval of champion Ms. Pac-Man net with FourMaze settings.
-* postBestFourMazeWatch.bat	Watch champion Ms. Pac-Man net behavior with FourMaze settings.
-* postBestMPMvsGEval.bat		Evaluate champion Ms. Pac-Man net (non-visual) with MPMvsG settings and save results to eval report in run directory.
-* postBestMPMvsGRecord.bat	Watch and record single eval of champion Ms. Pac-Man net with MPMvsG settings.
-* postBestMPMvsGWatch.bat		Watch champion Ms. Pac-Man net behavior with MPMvsG settings.
-* postBestObjectiveEval.bat	Evaluate (non-visual) behavior of best nets in each objective with original settings.
-* postBestObjectiveWatch.bat	Watch behavior of best nets in each objective with original settings.
-* postBestWatch.bat		Watch champion Ms. Pac-Man net behavior with original settings.
-* postParetoFrontWatch.bat	Watch behavior of all members of Pareto front using original evaluation settings. Works for domains besides Ms. Pac-Man.
-* postReplay.bat			Replay any Ms. Pac-Man recording saved by one of the record batch files.
+* postBestEval.bat:		Evaluate champion Ms. Pac-Man net (non-visual) with original settings and save results to eval report in run directory.
+* postBestFourMazeEval.bat:	Evaluate champion Ms. Pac-Man net (non-visual) with FourMaze settings and save results to eval report in run directory.
+* postBestFourMazeRecord.bat:	Watch and record single eval of champion Ms. Pac-Man net with FourMaze settings.
+* postBestFourMazeWatch.bat:	Watch champion Ms. Pac-Man net behavior with FourMaze settings.
+* postBestMPMvsGEval.bat:		Evaluate champion Ms. Pac-Man net (non-visual) with MPMvsG settings and save results to eval report in run directory.
+* postBestMPMvsGRecord.bat:	Watch and record single eval of champion Ms. Pac-Man net with MPMvsG settings.
+* postBestMPMvsGWatch.bat:		Watch champion Ms. Pac-Man net behavior with MPMvsG settings.
+* postBestObjectiveEval.bat:	Evaluate (non-visual) behavior of best nets in each objective with original settings.
+* postBestObjectiveWatch.bat:	Watch behavior of best nets in each objective with original settings.
+* postBestWatch.bat:		Watch champion Ms. Pac-Man net behavior with original settings.
+* postParetoFrontWatch.bat:	Watch behavior of all members of Pareto front using original evaluation settings. Works for domains besides Ms. Pac-Man.
+* postReplay.bat:			Replay any Ms. Pac-Man recording saved by one of the record batch files.
 
 Eval reports are stored in the directory with all other data from the original 
 experiment. For example, the MsPacMan-OneLifeConflict-MMD.bat file stores
@@ -119,7 +119,7 @@ Watching, evaluating, or recording champion performance with original settings
 means that the setting will be the same as in the original experiment that created
 the champion. FourMaze and MPMvsG rules are specific rule sets that have been used
 in the literature before. These rule sets are explained in both the dissertation
-and GECCO 2014 paper referenced above.
+and GECCO 2014 paper referenced in [PUBLICATIONS.md](https://github.com/schrum2/MM-NEAT/blob/master/PUBLICATIONS.md).
 
 As you watch a network's behavior, you will also see several other windows. One 
 contains the evolved neural network used by the agent. Four narrow windows contain 
@@ -130,7 +130,7 @@ simply have no readings). If the network has preference neurons, then the compar
 output of each preference neuron will also be displayed. Additionally, Ms. Pac-Man 
 will leave trails of a difference color for each module she uses.
 
-=========== OTHER DOMAINS ===========
+## OTHER DOMAINS
 
 This code was primarily developed to evolve Ms. Pac-Man agents, but other domains
 are also integrated with the code. Not all domains are fully developed, but much work
@@ -147,7 +147,8 @@ need to be tweaked slightly to work with MM-NEAT, but a few are already function
 PuddleWorld, CartPole, MountainCar, and Tetris. Visualization can be viewed if "watch:true" 
 is included in the command line. Post visualizations with some of the batch files above
 also work (postParetoFrontWatch.bat and postBestObjective*). Most of these domains
-have not received much attention, but Tetris is an exception (see publication above). 
+have not received much attention, but Tetris is an exception 
+(see [PUBLICATIONS.md](https://github.com/schrum2/MM-NEAT/blob/master/PUBLICATIONS.md)). 
 
 If you achieve any interesting results, I would be happy to hear from 
 you at schrum2@southwestern.edu.
@@ -177,9 +178,10 @@ me at schrum2@southwestern.edu
 
 Other pre-existing domains include a toroidal Predator/Prey grid world (see publication above), 
 several board games, Super Mario, and VizDoom. Several ways of interactively creating interesting 
-art and sounds are also available (see INTERACTIVE_EVOLUTION.txt). Please explore!
+art and sounds are also available (see [INTERACTIVE_EVOLUTION.md](https://github.com/schrum2/MM-NEAT/blob/master/INTERACTIVE_EVOLUTION.md)). 
+Please explore!
 
-=========== MAKING YOUR OWN DOMAINS ===========
+## MAKING YOUR OWN DOMAINS
 
 All of the pre-existing domains should provide useful examples of how to integrate a new
 domain either of your own design, or made by someone else. Here are some general hints

@@ -11,9 +11,8 @@ Also see [copyright.txt](https://github.com/schrum2/MM-NEAT/blob/master/copyrigh
 for copyright information about the
 included Ms. Pac-Man code.
 
-MAIN WEBPAGE: https://people.southwestern.edu/~schrum2/re/mm-neat.php
-
-SECONDARY WEBPAGE: http://nn.cs.utexas.edu/?mm-neat
+* MAIN WEBPAGE: https://people.southwestern.edu/~schrum2/re/mm-neat.php
+* SECONDARY WEBPAGE: http://nn.cs.utexas.edu/?mm-neat
 
 ## ABOUT
 
