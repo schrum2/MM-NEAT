@@ -61,6 +61,8 @@ public class NNMarioAgent<T extends Network> extends Organism<T> implements Agen
         	stuckCount++;
         	if(stuckCount > Parameters.parameters.integerParameter("marioStuckTimeout")){
         		stuckCount = 0;
+        		// Returning null here makes Mario fall through the bottom of the level, which looks bad, but has the intended effect of
+        		// ending the evaluation, so this isn't really a problem.
         		return null; // kill mario
         	}
         	xPrev = Math.max(xPrev, xPos);
