@@ -21,7 +21,7 @@ that are used to plot the color at the input (x,y). This process is repeated for
 image, so that the images have incredibly diverse and colorful patterns.
 
 * Based on previous work: 
-..* Jimmy Secretan, Nicholas Beato, David B. D'Ambrosio, Adelein Rodriguez, Adam Campbell, Jeremiah T. Folsom-Kovarik and Kenneth O. Stanley. Picbreeder: A Case Study in Collaborative Evolutionary Exploration of Design Space. Evolutionary Computation 19, 3 (2011), 373–403. DOI: http://dx.doi.org/10.1162/evco_a_00030
+..Jimmy Secretan, Nicholas Beato, David B. D'Ambrosio, Adelein Rodriguez, Adam Campbell, Jeremiah T. Folsom-Kovarik and Kenneth O. Stanley. Picbreeder: A Case Study in Collaborative Evolutionary Exploration of Design Space. Evolutionary Computation 19, 3 (2011), 373–403. DOI: http://dx.doi.org/10.1162/evco_a_00030
 
 ## [Breedesizer](https://github.com/schrum2/MM-NEAT/blob/master/src/main/java/edu/southwestern/tasks/interactive/breedesizer/BreedesizerTask.java)
 
@@ -31,7 +31,7 @@ sounds with a selected MIDI file, using the created sound as the "instrument". T
 keyboard applet that can be used to play the generated sound at different frequencies (or pitches).
 
 * Based on previous work: 
-..* Björn Þór Jónsson, Amy K. Hoover, and Sebastian Risi. Interactively Evolving Compositional Sound Synthesis Networks. Proceedings of the 2015 Genetic and Evolutionary Computation Conference (GECCO '15). Pages 321-328. 2015. DOI: http://dx.doi.org/10.1145/2739480.2754796
+..Björn Þór Jónsson, Amy K. Hoover, and Sebastian Risi. Interactively Evolving Compositional Sound Synthesis Networks. Proceedings of the 2015 Genetic and Evolutionary Computation Conference (GECCO '15). Pages 321-328. 2015. DOI: http://dx.doi.org/10.1145/2739480.2754796
 
 ## [ThreeDimensionalObjectBreeder](https://github.com/schrum2/MM-NEAT/blob/master/src/main/java/edu/southwestern/tasks/interactive/objectbreeder/ThreeDimensionalObjectBreederTask.java)
 
@@ -42,7 +42,7 @@ brightness values that are used to construct a cube of a specific color if the t
 be present. 
 
 * Based on previous work: 
-..* Jeff Clune and Hod Lipson. 2011. Evolving 3D objects with a generative encoding inspired by developmental biology. Proceedings of the European Conference on Artificial Life. 144-148. URL: http://www.evolvingai.org/files/2011-CluneLipson-Evolving3DObjectsWithCPPNs-ECAL.pdf
+..Jeff Clune and Hod Lipson. 2011. Evolving 3D objects with a generative encoding inspired by developmental biology. Proceedings of the European Conference on Artificial Life. 144-148. URL: http://www.evolvingai.org/files/2011-CluneLipson-Evolving3DObjectsWithCPPNs-ECAL.pdf
 
 ## [AnimationBreeder](https://github.com/schrum2/MM-NEAT/blob/master/src/main/java/edu/southwestern/tasks/interactive/animationbreeder/AnimationBreederTask.java)
 
