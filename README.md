@@ -1,6 +1,6 @@
 # MM-NEAT 3.0
 
-To learn how to compile/use, skip straight to [TUTORIAL.txt](https://github.com/schrum2/MM-NEAT/blob/master/TUTORIAL.txt)
+To learn how to compile/use, skip straight to [TUTORIAL.md](https://github.com/schrum2/MM-NEAT/blob/master/TUTORIAL.md)
 
 Copyright (c) 2014 The University of Texas at Austin 
 and 2016 Southwestern University.
