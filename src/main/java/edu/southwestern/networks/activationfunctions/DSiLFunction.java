@@ -24,7 +24,7 @@ public class DSiLFunction implements ActivationFunction {
 
 	@Override
 	public String name() {
-		return "DSiL";
+		return "dSiL";
 	}
 
 }
