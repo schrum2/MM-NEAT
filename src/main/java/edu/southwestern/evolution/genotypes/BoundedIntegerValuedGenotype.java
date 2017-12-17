@@ -13,8 +13,8 @@ import java.util.List;
  */
 public class BoundedIntegerValuedGenotype extends NumericArrayGenotype<Integer> {
 
-	public BoundedIntegerValuedGenotype(int size) {
-		super(RandomNumbers.randomIntArray(size, MMNEAT.discreteCeilings));
+	public BoundedIntegerValuedGenotype() {
+		super(RandomNumbers.randomIntArray(MMNEAT.discreteCeilings));
 	}
 
 	public BoundedIntegerValuedGenotype(ArrayList<Integer> genes) {
@@ -30,7 +30,7 @@ public class BoundedIntegerValuedGenotype extends NumericArrayGenotype<Integer> 
 	}
 
 	public Genotype<ArrayList<Integer>> newInstance() {
-		return new BoundedIntegerValuedGenotype(genes.size());
+		return new BoundedIntegerValuedGenotype();
 	}
 
 	public void mutate() {
