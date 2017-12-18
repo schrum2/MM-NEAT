@@ -115,3 +115,5 @@ log4j.log
 doom-end.model
 rl-glue-cartpole
 *.model
+src/main/python/imagenet-vgg-verydeep-19.mat
+*.pyc
