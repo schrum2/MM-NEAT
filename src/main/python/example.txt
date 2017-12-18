@@ -1,0 +1,2 @@
+The following command uses saved files to create a neural style transfer image from a CPPN image:
+python .\neural_style.py --content ..\..\..\data\imagematch\cat.jpg --styles ..\..\..\data\imagematch\supercreepypersonimage.jpg --output TEMP.jpg --iterations 100 --style-layer-weight-exp 0.2
