@@ -179,7 +179,11 @@ public class NeuralStyleTransfer {
 		BooleanIndexing.applyWhere(mult, Conditions.lessThan(0.0f), new Value(0.0f));
 		BooleanIndexing.applyWhere(mult, Conditions.greaterThan(0.0f), new Value(1.0f));
 		
-		double styleWeight = 1.0 / ((CHANNELS * CHANNELS) * (IMAGE_SIZE * IMAGE_SIZE));
+		double channels = comboFeatures.shape()[0];
+		assert comboFeatures.shape()[1] == comboFeatures.shape()[2] : "Images and features must have square shapes";
+		double size = comboFeatures.shape()[1];
+		
+		double styleWeight = 1.0 / ((channels * channels) * (size * size));
 		// Corresponds to A^l in equation (6)
 		INDArray a = gram_matrix(styleFeatures); // Should this actually be the content image?
 		// Corresponds to G^l in equation (6)
