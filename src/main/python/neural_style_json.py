@@ -12,6 +12,9 @@ from argparse import ArgumentParser
 
 from PIL import Image
 
+import json # Added for json I/O
+import sys # For stdin
+
 # default arguments
 CONTENT_WEIGHT = 5e0
 CONTENT_WEIGHT_BLEND = 1
@@ -35,7 +38,7 @@ def build_parser():
     parser.add_argument('--styles',
             dest='styles',
             nargs='+', help='one or more style images',
-            metavar='STYLE', required=True)
+            metavar='STYLE', required=False) # Not required because style images come as json through stdin instead
     parser.add_argument('--output',
             dest='output', help='output path',
             metavar='OUTPUT', required=False) # Made this not required since I don't want to generate output files
@@ -106,6 +109,9 @@ def build_parser():
 
 
 def main():
+    # This will print all array values in full
+    np.set_printoptions(threshold=np.nan)
+
     parser = build_parser()
     options = parser.parse_args()
 
@@ -113,12 +119,26 @@ def main():
         parser.error("Network %s does not exist. (Did you forget to download it?)" % options.network)
 
     content_image = imread(options.content)
-	# TODO: Get style image from json to stdin instead
-    style_images = [imread(style) for style in options.styles]
+    # TODO: Get style image from json to stdin instead
+    #style_images = [imread(style) for style in options.styles]
     
     count = 0
     
-    for style in style_images: # loop through separate style inputs individually
+    #for style in style_images: # loop through separate style inputs individually
+    for line in sys.stdin:
+        #print(line)
+        # Assumes a single line of input will be a json for one image
+        style = jsonimread(line)
+        #style = np.array(json.loads(json.dumps(style.tolist())))
+        
+        #with open('temp.json', 'w') as f:
+        #    json.dump(style.tolist(), f)
+
+        #with open('temp.json', 'r') as f:
+        #    style = np.array(json.load(f))
+    
+        #print(json.dumps(style.tolist()))
+        #input("Press Enter to continue...")
     
         width = options.width
         if width is not None:
@@ -187,7 +207,11 @@ def main():
             if output_file:
                 imsave(output_file, combined_rgb)
 
+def jsonimread(jsonImage):
+    img = np.array(json.loads(jsonImage))
+    return img
 
+# This original version reads from files on disk, but json is preferable
 def imread(path):
     img = scipy.misc.imread(path).astype(np.float)
     if len(img.shape) == 2:
@@ -197,7 +221,6 @@ def imread(path):
         # PNG with alpha channel
         img = img[:,:,:3]
     return img
-
 
 def imsave(path, img):
     img = np.clip(img, 0, 255).astype(np.uint8)
