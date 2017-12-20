@@ -122,8 +122,10 @@ def main():
     # TODO: Get style image from json to stdin instead
     #style_images = [imread(style) for style in options.styles]
     
-    count = 0
     
+    print("READY")
+    sys.stdout.flush() # Make sure Java can sense this output before Python blocks waiting for input
+    count = 0
     #for style in style_images: # loop through separate style inputs individually
     for line in sys.stdin:
         #print(line)
@@ -206,6 +208,9 @@ def main():
                 count = count + 1
             if output_file:
                 imsave(output_file, combined_rgb)
+                print("DONE")
+                sys.stdout.flush() # Make sure Java can sense this output before Python blocks waiting for input
+
 
 def jsonimread(jsonImage):
     img = np.array(json.loads(jsonImage))

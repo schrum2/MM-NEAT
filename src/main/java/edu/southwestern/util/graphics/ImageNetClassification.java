@@ -1,15 +1,12 @@
 package edu.southwestern.util.graphics;
 
-import java.awt.Color;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.datavec.image.loader.NativeImageLoader;
-import org.deeplearning4j.examples.imagenet.GoogLeNetImagePreprocessor;
 import org.deeplearning4j.zoo.util.imagenet.ImageNetLabels;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.dataset.api.preprocessor.DataNormalization;
@@ -83,37 +80,6 @@ public class ImageNetClassification {
 			System.exit(1);
 		}
 		return null;
-	}
-	
-	/**
-	 * Return a json array representation of the image on a single line.
-	 * This representation can be accepted by Python/Tensorflow/numpy.
-	 * For each pixel of the image, the R,G,B values are printed as ints
-	 * @param image An image to convert to json
-	 * @return String with single line that is json representation of image
-	 */
-	public static String imageToJson(BufferedImage image) {
-		StringBuilder sb = new StringBuilder();
-		sb.append("["); // Opening brackets
-		for(int j = 0; j < image.getHeight(); j++) {
-			sb.append("[");
-			for(int i = 0; i < image.getWidth(); i++) {
-				int color = image.getRGB(i, j);
-				Color c = new Color(color);
-				sb.append("["+c.getRed()+".0, ");
-				sb.append(c.getGreen()+".0, ");
-				sb.append(c.getBlue()+".0]");
-				if(i < image.getWidth() - 1) {
-					sb.append(", "); // separate by comma, except for final bracket
-				}
-			}
-			sb.append("]");
-			if(j < image.getHeight() - 1) {
-				sb.append(", "); // separate by comma, except for final bracket
-			}
-		}
-		sb.append("]"); // Closing brackets
-		return sb.toString();
 	}
 	
 	/**
@@ -220,14 +186,5 @@ public class ImageNetClassification {
 	 */
 	public static double bestScore(INDArray precomputedScores) {
 		return Nd4j.max(precomputedScores, 1).getDouble(0,0);
-	}
-
-	// For testing and troubleshooting
-	public static void main(String[] args) throws IOException {
-		NativeImageLoader loader = new NativeImageLoader(IMAGE_NET_INPUT_HEIGHT, IMAGE_NET_INPUT_WIDTH, IMAGE_NET_INPUT_CHANNELS);
-		String styleFile = "data/imagematch/supercreepypersonimage.jpg";
-		INDArray style = loader.asMatrix(new File(styleFile));
-		BufferedImage image = GraphicsUtil.imageFromINDArray(style);
-		System.out.println(imageToJson(image));
 	}
 }
