@@ -159,7 +159,9 @@ public class PythonNeuralStyleTransfer {
 		assert process != null : "Python process for Neural Style Transfer not initialized!";
 		String json = imageToJson(image);
 		process.send(json);
-		
+		String output = process.receive();
+		System.out.println("Output");
+		System.out.println(output);
 		// TODO: return transformed image
 	}
 	

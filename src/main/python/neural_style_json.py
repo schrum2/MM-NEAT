@@ -207,10 +207,12 @@ def main():
                 output_file = "%d.JPG" % count
                 count = count + 1
             if output_file:
-                imsave(output_file, combined_rgb)
-                print("DONE")
+                # No longer save image to file
+                #imsave(output_file, combined_rgb)
+                # Output json String
+                print(json.dumps(combined_rgb.tolist()))
                 sys.stdout.flush() # Make sure Java can sense this output before Python blocks waiting for input
-
+    print("DONE")
 
 def jsonimread(jsonImage):
     img = np.array(json.loads(jsonImage))
