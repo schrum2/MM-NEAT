@@ -7,8 +7,17 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.UnaryOperator;
 
 import javax.imageio.ImageIO;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+
+import edu.southwestern.util.MiscUtil;
 
 /**
  * This class interfaces with a Python program that uses
@@ -154,16 +163,81 @@ public class PythonNeuralStyleTransfer {
 		return sb.toString();
 	}
 	
-	// TODO
-	public static void sendStyleImage(BufferedImage image) {
+	/**
+	 * This method specifically assumes that the json String represents an
+	 * image as a list of lists of lists of doubles, but those doubles are
+	 * rounded down to ints to be returned by this method.
+	 * @param json json string of list of lists of lists
+	 * @return Java List of Lists of Lists of Integers
+	 */
+    public static List<List<List<Integer>>> jsonToIntLists(String json) {
+        JsonArray jarray1 = new Gson().fromJson(json, JsonArray.class);
+    
+    	List<List<List<Integer>>> myReturnList = new ArrayList<List<List<Integer>>>(jarray1.size());
+    	
+    	for(int i = 0; i < jarray1.size();i++) {
+    		JsonArray jarrayi = ((JsonArray)jarray1.get(i));
+    		List<List<Integer>> myFirstSubList = new ArrayList<List<Integer>>(jarrayi.size());
+    		for(int j = 0; j < jarrayi.size();j++) {
+    			JsonArray jarrayj = ((JsonArray)jarrayi.get(j));
+    			List<Integer> mySecondSubList = new ArrayList<Integer>(jarrayj.size());
+    			for(JsonElement je: jarrayj) {
+    				// The json numbers will be doubles, but need to be cast to int
+    				mySecondSubList.add((int) je.getAsDouble());
+    			}
+    			myFirstSubList.add(mySecondSubList);
+    		}
+    		myReturnList.add(myFirstSubList);
+    	}	
+    	return myReturnList;
+    }
+	
+    /**
+     * Intermediate representation of image as list of lists of lists is converted to image.
+     * @param list Output of jsonToIntLists
+     * @return Corresponding image
+     */
+	public static BufferedImage imageFromListRepresentation(List<List<List<Integer>>> list) {
+		int imageHeight = list.size();
+		int imageWidth = list.get(0).size();
+		BufferedImage image = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_RGB);
+		for (int y = 0; y < imageHeight; y++) {
+			for (int x = 0; x < imageWidth; x++) {// scans across whole image
+				List<Integer> rgb = list.get(y).get(x);				
+				//System.out.println(rgb);
+				rgb.replaceAll(new UnaryOperator<Integer>() {
+					// Clip values out of the appropriate color range
+					@Override
+					public Integer apply(Integer t) {
+						// Allowable interger range for colors is [0,255]
+						return new Integer(Math.max(0, Math.min(t, 255)));
+					}
+				});
+				Color color = new Color(rgb.get(0),rgb.get(1),rgb.get(2));
+				image.setRGB(x, y, color.getRGB());
+			}
+		}
+		return image;
+	}
+    
+	/**
+	 * Send a style image to the neural style transfer Python process,
+	 * and retrieve the combo image it produces by applying the given
+	 * style to the previously provided content image.
+	 * @param image Style image for neural style transfer
+	 * @return content image with style of the provided image
+	 */
+	public static BufferedImage sendStyleImage(BufferedImage image) {
 		assert process != null : "Python process for Neural Style Transfer not initialized!";
 		String json = imageToJson(image);
 		process.send(json);
 		String output = process.receive();
-		System.out.println("Output");
-		System.out.println(output);
-		// TODO: return transformed image
+		List<List<List<Integer>>> listRepresentation = jsonToIntLists(output);
+		BufferedImage combo = imageFromListRepresentation(listRepresentation);
+		return combo;
 	}
+	
+	
 	
 	// For testing and troubleshooting
 	public static void main(String[] args) throws IOException {
@@ -171,8 +245,8 @@ public class PythonNeuralStyleTransfer {
 		BufferedImage styleImage = ImageIO.read(new File(styleFile));
 		
 		initiateNeuralStyleTransferProcess("."+File.separator+"data"+File.separator+"imagematch"+File.separator+"car.jpg");
-		sendStyleImage(styleImage);
-		process.waitForOutput("DONE");
-		System.out.println("Transmission complete");
+		BufferedImage result = sendStyleImage(styleImage);
+		DrawingPanel dp = GraphicsUtil.drawImage(result, "Combo", result.getWidth(), result.getHeight());
+		MiscUtil.waitForReadStringAndEnterKeyPress();
 	}
 }
