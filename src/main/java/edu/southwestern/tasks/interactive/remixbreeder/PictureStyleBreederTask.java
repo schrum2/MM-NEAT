@@ -31,7 +31,7 @@ public class PictureStyleBreederTask<T extends Network> extends PicbreederTask<T
 	public PictureStyleBreederTask() throws IllegalAccessException {
 		String contentImagePath = Parameters.parameters.stringParameter("matchImageFile");	
 		// Boot up the Python program for Neural Style transfer
-		PythonNeuralStyleTransfer.initiateNeuralStyleTransferProcess("."+File.separator+contentImagePath);
+		PythonNeuralStyleTransfer.initiateNeuralStyleTransferProcess(contentImagePath);
 		
 		JButton fileLoadButton = new JButton();
 		fileLoadButton.setText("ChooseNewImage");
@@ -63,8 +63,9 @@ public class PictureStyleBreederTask<T extends Network> extends PicbreederTask<T
 		if(itemID == FILE_LOADER_CHECKBOX_INDEX) {
 			JFileChooser chooser = new JFileChooser();//used to get new file
 			chooser.setApproveButtonText("Open");
-			FileNameExtensionFilter filter = new FileNameExtensionFilter("BMP Images", "bmp");
-			chooser.setFileFilter(filter);
+			// Should restrict to images, but want all images
+			//FileNameExtensionFilter filter = new FileNameExtensionFilter("BMP Images", "bmp");
+			//chooser.setFileFilter(filter);
 			int returnVal = chooser.showOpenDialog(frame);
 			if(returnVal == JFileChooser.APPROVE_OPTION) {//if the user decides to save the image
 				// End the process using the old content image
@@ -72,7 +73,7 @@ public class PictureStyleBreederTask<T extends Network> extends PicbreederTask<T
 				// Re-launch process using new content image
 				Parameters.parameters.setString("matchImageFile", chooser.getCurrentDirectory() + File.separator + chooser.getSelectedFile().getName());
 				String contentImagePath = Parameters.parameters.stringParameter("matchImageFile");
-				PythonNeuralStyleTransfer.initiateNeuralStyleTransferProcess("."+File.separator+contentImagePath);
+				PythonNeuralStyleTransfer.initiateNeuralStyleTransferProcess(contentImagePath);
 				
 				// reset necessary?
 				resetButtons(true);
