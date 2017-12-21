@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.lang.ProcessBuilder.Redirect;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.UnaryOperator;
@@ -33,6 +34,9 @@ public class PythonNeuralStyleTransfer {
 	    protected PrintStream writer;
 	    protected Process process;
 
+	    // For tracking messages to/from Python process
+	    public static final int SUBSTRING_LENGTH = 20;
+	    
 	    public static final String PYTHON_PATH = "." + File.separator + "src" + File.separator + "main" + File.separator + "python" + File.separator;
 	    public static final String PYTHON_PROGRAM = "neural_style_json.py";
 	    // You need to download this file yourself and store in the PYTHON_PATH: http://www.vlfeat.org/matconvnet/models/beta16/imagenet-vgg-verydeep-19.mat
@@ -57,6 +61,7 @@ public class PythonNeuralStyleTransfer {
 	    	ProcessBuilder builder = new ProcessBuilder("python", PYTHON_PATH+PYTHON_PROGRAM, "--network", PYTHON_PATH+VGG_NET_FILE, "--content", contentImage);
 	    	try {
 	    		System.out.println("Run:" + builder.command());
+	    		builder.redirectError(Redirect.INHERIT); // Standard error will print to console
 	    		this.process = builder.start();
 	    	} catch (IOException e) {
 	    		e.printStackTrace();
@@ -82,7 +87,8 @@ public class PythonNeuralStyleTransfer {
 	     */
 	    public void send(String text) {
 	    	assert process.isAlive() : "Cannot send data to dead process that exited with " + process.exitValue();
-	    	//System.out.println("Sending:" + text);
+	    	// Arbitrary substring to track progress of process
+	    	System.out.println("Sending:" + text.substring(0, Math.min(SUBSTRING_LENGTH, text.length())));
 	        writer.println(text); // Send to stdin of process
 	        writer.flush(); // flush to make sure text is received
 	    }
@@ -102,6 +108,7 @@ public class PythonNeuralStyleTransfer {
 	    		System.out.println("Error reading from Python process");
 	    		System.exit(1);
 	    	}
+	    	System.out.println("Receiving:" + msg.substring(0, Math.min(SUBSTRING_LENGTH, msg.length())));
 	    	return msg;
 	    }
 
@@ -120,6 +127,7 @@ public class PythonNeuralStyleTransfer {
 		 * terminate the process
 		 */
 		public void terminate() {
+			System.out.println("Terminate Python Process");
 			if(process != null) process.destroyForcibly();
 		}
 	}
