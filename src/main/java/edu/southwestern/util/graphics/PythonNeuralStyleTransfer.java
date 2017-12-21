@@ -115,6 +115,13 @@ public class PythonNeuralStyleTransfer {
 				response = receive();
 			}
 		}
+		
+		/**
+		 * terminate the process
+		 */
+		public void terminate() {
+			if(process != null) process.destroyForcibly();
+		}
 	}
 	
 	// Assume there is only one
@@ -209,7 +216,7 @@ public class PythonNeuralStyleTransfer {
 					// Clip values out of the appropriate color range
 					@Override
 					public Integer apply(Integer t) {
-						// Allowable interger range for colors is [0,255]
+						// Allowable integer range for colors is [0,255]
 						return new Integer(Math.max(0, Math.min(t, 255)));
 					}
 				});
@@ -237,16 +244,25 @@ public class PythonNeuralStyleTransfer {
 		return combo;
 	}
 	
-	
+	/**
+	 * Terminate the Python process
+	 */
+	public static void terminatePythonProcess() {
+		if(process != null) {
+			process.terminate();
+			process = null;
+		}
+	}
 	
 	// For testing and troubleshooting
 	public static void main(String[] args) throws IOException {
 		String styleFile = "data/imagematch/supercreepypersonimage.jpg";
 		BufferedImage styleImage = ImageIO.read(new File(styleFile));
 		
-		initiateNeuralStyleTransferProcess("."+File.separator+"data"+File.separator+"imagematch"+File.separator+"car.jpg");
+		initiateNeuralStyleTransferProcess("."+File.separator+"data"+File.separator+"imagematch"+File.separator+"theScream.png");
 		BufferedImage result = sendStyleImage(styleImage);
 		DrawingPanel dp = GraphicsUtil.drawImage(result, "Combo", result.getWidth(), result.getHeight());
 		MiscUtil.waitForReadStringAndEnterKeyPress();
+		dp.dispose();
 	}
 }
