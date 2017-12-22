@@ -965,7 +965,8 @@ public class Parameters {
 			} else {
 				System.out.println("Did not recognize \"" + entity + "\" with value \"" + value + "\"");
 				if (terminateOnUnrecognized) {
-					usage(1);
+					throw new IllegalArgumentException(entity + " is not a valid parameter");
+					//usage(1);
 				}
 			}
 		}

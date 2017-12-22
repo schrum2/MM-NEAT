@@ -168,7 +168,7 @@ public class ActivationFunctions {
 			availableActivationFunctions.add(FTYPE_SIL);
 		}
 		if (Parameters.parameters.booleanParameter("includeDSiLFunction")) {
-			availableActivationFunctions.add(FTYPE_SIL);
+			availableActivationFunctions.add(FTYPE_DSIL);
 		}
 		
 	}
