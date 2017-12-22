@@ -18,6 +18,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 
+import edu.southwestern.parameters.Parameters;
 import edu.southwestern.util.MiscUtil;
 
 /**
@@ -58,7 +59,11 @@ public class PythonNeuralStyleTransfer {
 	     * Launches the actual Python process that waits for input
 	     */
 	    protected void launchPythonProcess() {
-	    	ProcessBuilder builder = new ProcessBuilder("python", PYTHON_PATH+PYTHON_PROGRAM, "--network", PYTHON_PATH+VGG_NET_FILE, "--content", contentImage);
+	    	ProcessBuilder builder = new ProcessBuilder("python", PYTHON_PATH+PYTHON_PROGRAM, 
+	    												"--network", PYTHON_PATH+VGG_NET_FILE, 
+	    												"--content", contentImage,
+	    												"--iterations", ""+Parameters.parameters.integerParameter("neuralStyleIterations"),
+	    												"--style-layer-weight-exp", ""+Parameters.parameters.doubleParameter("neuralStyleStyleWeight"));
 	    	try {
 	    		System.out.println("Run:" + builder.command());
 	    		builder.redirectError(Redirect.INHERIT); // Standard error will print to console

@@ -194,6 +194,7 @@ public class Parameters {
 	 */
 	public final void fillDefaults() {
 		// Integer parameters
+		integerOptions.add("neuralStyleIterations", 20, "Number of iterations to run the Neural Style Transfer algorithm using CPPN style images");
 		integerOptions.add("hyperNEATNetworkDisplaySize", 600, "dimension of window for HyperNEAT's substrate network");
 		integerOptions.add("substrateWeightSize", 1, "dimension of individual weights in substrate visualization");
 		integerOptions.add("substrateGridSize", 20, "sets the size for the grids for the substrate visualization");
@@ -670,6 +671,7 @@ public class Parameters {
 		booleanOptions.add("rlBackprop", false, "Whether to do backprop learning updates during reinforcement learning");
 		booleanOptions.add("rlEpsilonGreedy", false, "Whether to use an epsilon greedy policy when using reinforcement learning");
 		// Double parameters
+		doubleOptions.add("neuralStyleStyleWeight", 0.2, "How much style image influences neural style transfer");
 		doubleOptions.add("rlEpsilon", 0.1, "Frequency of completely random actions during Reinforcement Learning");
 		doubleOptions.add("rlGamma", 0.99, "Discount factor used for Reinforcement Learning");
 		doubleOptions.add("inheritProportion", 0.4, "Portion of a parent's fitness that contributes to child fitness (with inheritFitness, as in LEEA)");
