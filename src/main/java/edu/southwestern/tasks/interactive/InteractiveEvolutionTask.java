@@ -182,25 +182,25 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		bottom.setLayout(new FlowLayout());
 
 		// Gets the Button Images from the Picbreeder data Folder and re-scales them for use on the smaller Action Buttons
-		ImageIcon reset = new ImageIcon("data\\picbreeder\\reset.png");
+		ImageIcon reset = new ImageIcon("data"+File.separator+"picbreeder"+File.separator+"reset.png");
 		Image reset2 = reset.getImage().getScaledInstance(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT, 1);
 
-		ImageIcon save = new ImageIcon("data\\picbreeder\\save.png");
+		ImageIcon save = new ImageIcon("data"+File.separator+"picbreeder"+File.separator+"save.png");
 		Image save2 = save.getImage().getScaledInstance(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT, 1);
 
-		ImageIcon evolve = new ImageIcon("data\\picbreeder\\arrow.png");
+		ImageIcon evolve = new ImageIcon("data"+File.separator+"picbreeder"+File.separator+"arrow.png");
 		Image evolve2 = evolve.getImage().getScaledInstance(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT, 1);
 
-		//ImageIcon close = new ImageIcon("data\\picbreeder\\quit.png");
+		//ImageIcon close = new ImageIcon("data"+File.separator+"picbreeder"+File.separator+"quit.png");
 		//Image close2 = close.getImage().getScaledInstance(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT, 1);
 
-		//ImageIcon lineage = new ImageIcon("data\\picbreeder\\lineage.png");
+		//ImageIcon lineage = new ImageIcon("data"+File.separator+"picbreeder"+File.separator+"lineage.png");
 		//Image lineage2 = lineage.getImage().getScaledInstance(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT, 1);
 
-		ImageIcon network = new ImageIcon("data\\picbreeder\\network.png");
+		ImageIcon network = new ImageIcon("data"+File.separator+"picbreeder"+File.separator+"network.png");
 		Image network2 = network.getImage().getScaledInstance(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT, 1);
 
-		ImageIcon undo = new ImageIcon("data\\picbreeder\\undo.png");
+		ImageIcon undo = new ImageIcon("data"+File.separator+"picbreeder"+File.separator+"undo.png");
 		Image undo2 = undo.getImage().getScaledInstance(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT, 1);
 
 		JButton resetButton = new JButton(new ImageIcon(reset2));
