@@ -30,7 +30,7 @@ import edu.southwestern.util.graphics.GraphicsUtil;
  */
 public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 
-	public static final String IMAGE_MATCH_PATH = "data\\imagematch";
+	public static final String IMAGE_MATCH_PATH = "data" + File.separator + "imagematch";
 	private static final int IMAGE_PLACEMENT = 200;
 	private static final int HUE_INDEX = 0;
 	private static final int SATURATION_INDEX = 1;
@@ -54,7 +54,7 @@ public class ImageMatchTask<T extends Network> extends MatchDataTask<T> {
 	 */
 	public ImageMatchTask(String filename) {
 		try {// throws and exception if filename is not valid
-			img = ImageIO.read(new File(IMAGE_MATCH_PATH + "\\" + filename));
+			img = ImageIO.read(new File(IMAGE_MATCH_PATH + File.separator + filename));
 		} catch (IOException e) {
 			System.out.println("Could not load image: " + filename);
 			System.exit(1);
