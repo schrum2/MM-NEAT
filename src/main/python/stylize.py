@@ -21,7 +21,8 @@ except NameError:
 def stylize(network, initial, initial_noiseblend, content, styles, preserve_colors, iterations,
         content_weight, content_weight_blend, style_weight, style_layer_weight_exp, style_blend_weights, tv_weight,
         learning_rate, beta1, beta2, epsilon, pooling,
-        print_iterations=None, checkpoint_iterations=None):
+        print_iterations=None, checkpoint_iterations=None,
+        vgg_weights=None, vgg_mean_pixel=None):
     """
     Stylize images.
 
@@ -36,7 +37,9 @@ def stylize(network, initial, initial_noiseblend, content, styles, preserve_colo
     content_features = {}
     style_features = [{} for _ in styles]
 
-    vgg_weights, vgg_mean_pixel = vgg.load_net(network)
+    # Added option to have the net pre-loaded before calling the method
+    if vgg_weights is None or vgg_mean_pixel is None:
+        vgg_weights, vgg_mean_pixel = vgg.load_net(network)
 
     layer_weight = 1.0
     style_layers_weights = {}

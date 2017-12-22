@@ -14,6 +14,7 @@ from PIL import Image
 
 import json # Added for json I/O
 import sys # For stdin
+import vgg # Added to import vgg weights in advance
 
 # default arguments
 CONTENT_WEIGHT = 5e0
@@ -118,29 +119,17 @@ def main():
     if not os.path.isfile(options.network):
         parser.error("Network %s does not exist. (Did you forget to download it?)" % options.network)
 
-    content_image = imread(options.content)
-    # TODO: Get style image from json to stdin instead
-    #style_images = [imread(style) for style in options.styles]
-    
+    # Load the vgg weights in advance
+    vgg_weights, vgg_mean_pixel = vgg.load_net(options.network)
+    content_image = imread(options.content)    
     
     print("READY")
     sys.stdout.flush() # Make sure Java can sense this output before Python blocks waiting for input
     count = 0
     #for style in style_images: # loop through separate style inputs individually
     for line in sys.stdin:
-        #print(line)
         # Assumes a single line of input will be a json for one image
         style = jsonimread(line)
-        #style = np.array(json.loads(json.dumps(style.tolist())))
-        
-        #with open('temp.json', 'w') as f:
-        #    json.dump(style.tolist(), f)
-
-        #with open('temp.json', 'r') as f:
-        #    style = np.array(json.load(f))
-    
-        #print(json.dumps(style.tolist()))
-        #input("Press Enter to continue...")
     
         width = options.width
         if width is not None:
@@ -195,7 +184,10 @@ def main():
             epsilon=options.epsilon,
             pooling=options.pooling,
             print_iterations=options.print_iterations,
-            checkpoint_iterations=options.checkpoint_iterations
+            checkpoint_iterations=options.checkpoint_iterations,
+            # These vgg settings are now loaded only once
+            vgg_weights=vgg_weights, 
+            vgg_mean_pixel=vgg_mean_pixel
         ):
             output_file = None
             combined_rgb = image
