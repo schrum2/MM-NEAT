@@ -342,6 +342,10 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		top.add(effectsCheckboxes);
 	}
 
+	/**
+	 * Allows for static access to the input multipliers
+	 * @return
+	 */
 	public static double[] getInputMultipliers() {
 		@SuppressWarnings("rawtypes")
 		InteractiveEvolutionTask task = (InteractiveEvolutionTask) MMNEAT.task;
@@ -471,7 +475,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		int returnVal = chooser.showOpenDialog(frame);
 		if(returnVal == JFileChooser.APPROVE_OPTION) {//if the user decides to save the file
 			System.out.println("You chose to call the file: " + chooser.getSelectedFile().getName());
-			return chooser.getCurrentDirectory() + "\\" + chooser.getSelectedFile().getName(); // + "." + ; //  Added later
+			return chooser.getCurrentDirectory() + File.separator + chooser.getSelectedFile().getName(); 
 		} else { //else image dumped
 			System.out.println("file not saved");
 			return null;
@@ -533,10 +537,6 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	 */
 	private BufferedImage getNetwork(Genotype<T> tg) {
 		T pheno = tg.getPhenotype();
-//		DrawingPanel network = new DrawingPanel(picSize,( frame.getHeight() - topper.getHeight())/numRows, "network");
-//		((TWEANN) pheno).draw(network);
-//		network.setVisibility(false);
-//		return network.image;
 		return ((TWEANN) pheno).getNetworkImage(picSize, (frame.getHeight() - topper.getHeight())/numRows, false, false);
 	}
 
@@ -552,6 +552,13 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		if(population.size() != numButtonOptions) {
 			throw new IllegalArgumentException("number of genotypes doesn't match size of population! Size of genotypes: " + population.size() + " Num buttons: " + numButtonOptions);
 		}	
+		// Because image loading may take a while, blank all images first so that it is clear
+		// when the images have loaded.
+		BufferedImage blank = new BufferedImage(picSize, picSize, BufferedImage.TYPE_INT_RGB);
+		for(int i = 0; i < buttons.size(); i++) {
+			setButtonImage(blank, i);
+		}	
+		// Put appropriate content on buttons
 		for(int x = 0; x < buttons.size(); x++) {
 			resetButton(population.get(x), x);
 		}
@@ -602,14 +609,12 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		// Select one of the available activation functions as default
 		CommonConstants.ftype = RandomNumbers.randomElement(ActivationFunctions.availableActivationFunctions);
 		Parameters.parameters.setInteger("ftype", CommonConstants.ftype);
-//		System.out.println("ftype is " + CommonConstants.ftype);
 		ArrayList<Genotype<T>> newPop = ((SinglePopulationGenerationalEA<T>) MMNEAT.ea).initialPopulation(scores.get(0).individual);
 		scores = new ArrayList<Score<T>>();
 		ActivationFunctionRandomReplacement frr = new ActivationFunctionRandomReplacement();
 		for(int i = 0; i < newPop.size(); i++) {
 			frr.mutate((Genotype<TWEANN>) newPop.get(i));
 			resetButton(newPop.get(i), i);
-//			System.out.println(newPop.get(i));
 		}	
 	}
 
@@ -669,16 +674,11 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 			activation[ftype] = false;
 			ActivationFunctions.availableActivationFunctions.remove(new Integer(ftype));
 			// Parameter value not actually changed
-			//Parameters.parameters.setBoolean(title, false);
 		} else {
 			activation[ftype] = true;
 			ActivationFunctions.availableActivationFunctions.add(new Integer(ftype));
 			// Parameter value not actually changed
-			//Parameters.parameters.setBoolean(title, true);
 		}
-		// No longer do this because availableActivationFunctions is changed directly,
-		// and the Parameter values are no longer set properly.
-		//ActivationFunctions.resetFunctionSet();
 	}
 
 	/**
