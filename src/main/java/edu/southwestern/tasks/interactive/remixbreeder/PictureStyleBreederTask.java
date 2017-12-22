@@ -4,15 +4,18 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.networks.Network;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.interactive.picbreeder.PicbreederTask;
+import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.graphics.GraphicsUtil;
 import edu.southwestern.util.graphics.PythonNeuralStyleTransfer;
 
@@ -64,8 +67,9 @@ public class PictureStyleBreederTask<T extends Network> extends PicbreederTask<T
 			JFileChooser chooser = new JFileChooser();//used to get new file
 			chooser.setApproveButtonText("Open");
 			// Should restrict to images, but want all images
-			//FileNameExtensionFilter filter = new FileNameExtensionFilter("BMP Images", "bmp");
-			//chooser.setFileFilter(filter);
+			String[] pictureSuffixes = ArrayUtil.filterString(ImageIO.getReaderFileSuffixes(), "");
+			FileFilter imageFilter = new FileNameExtensionFilter("Image files", pictureSuffixes);
+			chooser.setFileFilter(imageFilter);
 			int returnVal = chooser.showOpenDialog(frame);
 			if(returnVal == JFileChooser.APPROVE_OPTION) {//if the user decides to save the image
 				// End the process using the old content image
