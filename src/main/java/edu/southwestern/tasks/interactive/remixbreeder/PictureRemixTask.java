@@ -61,10 +61,6 @@ public class PictureRemixTask<T extends Network> extends PicbreederTask<T> {
 		windowSize.setPaintLabels(true);
 		windowSize.setPreferredSize(new Dimension(200, 40));
 
-		/**
-		 * Implements ChangeListener to adjust clip length of generated sounds. When clip length is specified, 
-		 * input length is used to reset and redraw buttons. 
-		 */
 		windowSize.addChangeListener(new ChangeListener() {
 			@Override
 			public void stateChanged(ChangeEvent e) {

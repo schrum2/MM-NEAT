@@ -1,13 +1,19 @@
 package edu.southwestern.tasks.interactive.remixbreeder;
 
+import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Hashtable;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JSlider;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -31,10 +37,71 @@ public class PictureStyleBreederTask<T extends Network> extends PicbreederTask<T
 
 	private static final int FILE_LOADER_CHECKBOX_INDEX = CHECKBOX_IDENTIFIER_START - CPPN_NUM_INPUTS;
 
+	private static final int MIN_STYLE_ITERATIONS = 1;
+	private static final int MAX_STYLE_ITERATIONS = 100;
+	private static final int MIN_STYLE_WEIGHT = 1;
+	private static final int MAX_STYLE_WEIGHT = 99;
+	
+	protected JSlider styleIterations;	
+	protected JSlider styleWeight;	
+	
 	public PictureStyleBreederTask() throws IllegalAccessException {
 		String contentImagePath = Parameters.parameters.stringParameter("matchImageFile");	
 		// Boot up the Python program for Neural Style transfer
 		PythonNeuralStyleTransfer.initiateNeuralStyleTransferProcess(contentImagePath);
+
+		styleIterations = new JSlider(JSlider.HORIZONTAL, MIN_STYLE_ITERATIONS, MAX_STYLE_ITERATIONS, Parameters.parameters.integerParameter("neuralStyleIterations"));
+		Hashtable<Integer,JLabel> labels = new Hashtable<>();
+		styleIterations.setMinorTickSpacing(10);
+		styleIterations.setPaintTicks(true);
+		labels.put((MIN_STYLE_ITERATIONS+MAX_STYLE_ITERATIONS)/2, new JLabel("Iterations"));
+		styleIterations.setLabelTable(labels);
+		styleIterations.setPaintLabels(true);
+		styleIterations.setPreferredSize(new Dimension(200, 40));
+
+		styleIterations.addChangeListener(new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				// get value
+				JSlider source = (JSlider)e.getSource();
+				if(!source.getValueIsAdjusting()) {
+					int newValue = (int) source.getValue();
+					Parameters.parameters.setInteger("neuralStyleIterations", newValue);
+					// reset buttons
+					resetButtons(true);
+				}
+			}
+		});
+
+		top.add(styleIterations);		
+
+		// Style weight is from [0.0,1,0] but slider requires an integer, so multiply by 100
+		styleWeight = new JSlider(JSlider.HORIZONTAL, MIN_STYLE_WEIGHT, MAX_STYLE_WEIGHT, (int)(Parameters.parameters.doubleParameter("neuralStyleStyleWeight")*100));
+		Hashtable<Integer,JLabel> styleLabels = new Hashtable<>();
+		styleWeight.setMinorTickSpacing(10);
+		styleWeight.setPaintTicks(true);
+		styleLabels.put((MIN_STYLE_WEIGHT+MAX_STYLE_WEIGHT)/2, new JLabel("Style Weight"));
+		styleWeight.setLabelTable(styleLabels);
+		styleWeight.setPaintLabels(true);
+		styleWeight.setPreferredSize(new Dimension(200, 40));
+
+		styleWeight.addChangeListener(new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				// get value
+				JSlider source = (JSlider)e.getSource();
+				if(!source.getValueIsAdjusting()) {
+					int newValue = (int) source.getValue();
+					// JSlider value is integer, so divide by 100.0 to get actual weight
+					double weight = newValue/100.0;
+					Parameters.parameters.setDouble("neuralStyleStyleWeight", weight);
+					// reset buttons
+					resetButtons(true);
+				}
+			}
+		});
+
+		top.add(styleWeight);		
 		
 		JButton fileLoadButton = new JButton();
 		fileLoadButton.setText("ChooseNewImage");
@@ -44,6 +111,20 @@ public class PictureStyleBreederTask<T extends Network> extends PicbreederTask<T
 		top.add(fileLoadButton);
 	}
 
+	/**
+	 * A hard reset kills the Python process and initializes it again with potentially new command line parameters
+	 */
+	public void resetButtons(boolean hardReset) {
+		if(hardReset) {
+			// End the process
+			PythonNeuralStyleTransfer.terminatePythonProcess();
+			// Re-launch process using content image (some parameters probably changed if hard reset is being called)
+			String contentImagePath = Parameters.parameters.stringParameter("matchImageFile");
+			PythonNeuralStyleTransfer.initiateNeuralStyleTransferProcess(contentImagePath);
+		}
+		super.resetButtons(hardReset);
+	}
+	
 	@Override
 	protected String getWindowTitle() {
 		return "PictureStyleBreeder";
@@ -71,15 +152,9 @@ public class PictureStyleBreederTask<T extends Network> extends PicbreederTask<T
 			FileFilter imageFilter = new FileNameExtensionFilter("Image files", pictureSuffixes);
 			chooser.setFileFilter(imageFilter);
 			int returnVal = chooser.showOpenDialog(frame);
-			if(returnVal == JFileChooser.APPROVE_OPTION) {//if the user decides to save the image
-				// End the process using the old content image
-				PythonNeuralStyleTransfer.terminatePythonProcess();
-				// Re-launch process using new content image
-				Parameters.parameters.setString("matchImageFile", chooser.getCurrentDirectory() + File.separator + chooser.getSelectedFile().getName());
-				String contentImagePath = Parameters.parameters.stringParameter("matchImageFile");
-				PythonNeuralStyleTransfer.initiateNeuralStyleTransferProcess(contentImagePath);
-				
-				// reset necessary?
+			if(returnVal == JFileChooser.APPROVE_OPTION) {
+				Parameters.parameters.setString("matchImageFile", chooser.getCurrentDirectory() + File.separator + chooser.getSelectedFile().getName());				
+				// reset necessary to kill and restart process with new image
 				resetButtons(true);
 			}
 		}
