@@ -120,6 +120,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 
 	protected Network currentCPPN;
 
+	private HashMap<Long,BufferedImage> cachedButtonImages = new HashMap<Long,BufferedImage>();
 
 	private JPanel topper;
 	protected JPanel top;
@@ -513,7 +514,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	 */
 	protected void resetButton(Genotype<T> individual, int x) { 
 		scores.add(new Score<T>(individual, new double[]{0}, null));
-		setButtonImage(showNetwork ? getNetwork(individual) : getButtonImage(individual.getPhenotype(),  picSize, picSize, inputMultipliers), x);
+		setButtonImage(showNetwork ? getNetwork(individual) : getButtonImage(true, individual.getPhenotype(),  picSize, picSize, inputMultipliers), x);
 		chosen[x] = false;
 		buttons.get(x).setBorder(BorderFactory.createLineBorder(Color.lightGray, BORDER_THICKNESS));
 	}
@@ -530,6 +531,33 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	 */
 	protected abstract BufferedImage getButtonImage(T phenotype, int width, int height, double[] inputMultipliers);
 
+	/**
+	 * Get button images by checking cache first if checkCache is true. 
+	 * Otherwise, generate as normal.
+	 * 
+	 * @param checkCache
+	 * @param phenotype Must be a TWEANN
+	 * @param width
+	 * @param height
+	 * @param inputMultipliers
+	 * @return Image for button
+	 */
+	protected BufferedImage getButtonImage(boolean checkCache, T phenotype, int width, int height, double[] inputMultipliers) {
+		// Will this interface ever be used with items that are not TWEANNs?
+		long id = ((TWEANN) phenotype).getId();
+		// See if image is already in hash map to be retrieved
+		if(checkCache) {
+			if(cachedButtonImages.containsKey(id)) {
+				// Return pre-computed image instead of watsing time
+				return cachedButtonImages.get(id);
+			} 
+		}
+		// If fails, or if not allowing cache checks, do the default call to getButtonImage
+		BufferedImage image = getButtonImage(phenotype, width, height, inputMultipliers);
+		cachedButtonImages.put(id, image);
+		return image;
+	}
+	
 	/**
 	 * Used to get the image of a network using a drawing panel
 	 * @param tg genotype of network
@@ -569,6 +597,16 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 				e.printStackTrace();
 			}
 		}
+		// Clear unselected items from cache
+		for(Score<T> s : scores) {
+			if(s.scores[0] == 0) { // This item was not selected by the user
+				// Remove from image cache
+				long id = s.individual.getId();
+				cachedButtonImages.remove(id);
+				System.out.println("Removed image " + id);
+			}
+		}
+		System.out.println("Size of cache: " + cachedButtonImages.size());
 		return scores;
 	}
 
@@ -703,7 +741,8 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	 */
 	public void resetButtons(boolean hardReset){
 		for(int i = 0; i < scores.size(); i++) {
-			setButtonImage(getButtonImage(scores.get(i).individual.getPhenotype(),  picSize, picSize, inputMultipliers), i);
+			// If not doing hard reset, there is a chance to load from cache
+			setButtonImage(getButtonImage(!hardReset, scores.get(i).individual.getPhenotype(),  picSize, picSize, inputMultipliers), i);
 		}		
 	}
 
