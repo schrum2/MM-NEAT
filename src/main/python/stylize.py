@@ -22,7 +22,8 @@ def stylize(network, initial, initial_noiseblend, content, styles, preserve_colo
         content_weight, content_weight_blend, style_weight, style_layer_weight_exp, style_blend_weights, tv_weight,
         learning_rate, beta1, beta2, epsilon, pooling,
         print_iterations=None, checkpoint_iterations=None,
-        vgg_weights=None, vgg_mean_pixel=None):
+        vgg_weights=None, vgg_mean_pixel=None, # Added so that they are no reloaded every time
+        content_features=None): # Added so that they are not recomputed every time
     """
     Stylize images.
 
@@ -34,7 +35,6 @@ def stylize(network, initial, initial_noiseblend, content, styles, preserve_colo
     """
     shape = (1,) + content.shape
     style_shapes = [(1,) + style.shape for style in styles]
-    content_features = {}
     style_features = [{} for _ in styles]
 
     # Added option to have the net pre-loaded before calling the method
@@ -54,14 +54,18 @@ def stylize(network, initial, initial_noiseblend, content, styles, preserve_colo
     for style_layer in STYLE_LAYERS:
         style_layers_weights[style_layer] /= layer_weights_sum
 
+    # Jacob: These content features only need to be computed once, and can be reused for
+    #        each new style image.
     # compute content features in feedforward mode
-    g = tf.Graph()
-    with g.as_default(), g.device('/cpu:0'), tf.Session() as sess:
-        image = tf.placeholder('float', shape=shape)
-        net = vgg.net_preloaded(vgg_weights, image, pooling)
-        content_pre = np.array([vgg.preprocess(content, vgg_mean_pixel)])
-        for layer in CONTENT_LAYERS:
-            content_features[layer] = net[layer].eval(feed_dict={image: content_pre})
+    if content_features is None:
+        content_features = {}
+        g = tf.Graph()
+        with g.as_default(), g.device('/cpu:0'), tf.Session() as sess:
+            image = tf.placeholder('float', shape=shape)
+            net = vgg.net_preloaded(vgg_weights, image, pooling)
+            content_pre = np.array([vgg.preprocess(content, vgg_mean_pixel)])
+            for layer in CONTENT_LAYERS:
+                content_features[layer] = net[layer].eval(feed_dict={image: content_pre})
 
     # compute style features in feedforward mode
     for i in range(len(styles)):

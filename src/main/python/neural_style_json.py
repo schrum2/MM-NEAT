@@ -4,6 +4,7 @@ import os
 
 import numpy as np
 import scipy.misc
+import tensorflow as tf
 
 from stylize import stylize
 
@@ -30,6 +31,9 @@ STYLE_SCALE = 1.0
 ITERATIONS = 100 # This few iterations is sufficient for CPPN styles
 VGG_PATH = 'imagenet-vgg-verydeep-19.mat'
 POOLING = 'max'
+
+# Jacob: Added this here so content processing could be done once up front
+CONTENT_LAYERS = ('relu4_2', 'relu5_2')
 
 def build_parser():
     parser = ArgumentParser()
@@ -123,6 +127,17 @@ def main():
     vgg_weights, vgg_mean_pixel = vgg.load_net(options.network)
     content_image = imread(options.content)    
     
+    # Jacob: moved this here since the same image features will be used for each style image
+    content_features = {}
+    g = tf.Graph()
+    shape = (1,) + content_image.shape
+    with g.as_default(), g.device('/cpu:0'), tf.Session() as sess:
+        image = tf.placeholder('float', shape=shape)
+        net = vgg.net_preloaded(vgg_weights, image, options.pooling)
+        content_pre = np.array([vgg.preprocess(content_image, vgg_mean_pixel)])
+        for layer in CONTENT_LAYERS:
+            content_features[layer] = net[layer].eval(feed_dict={image: content_pre})
+    
     print("READY")
     sys.stdout.flush() # Make sure Java can sense this output before Python blocks waiting for input
     count = 0
@@ -187,7 +202,8 @@ def main():
             checkpoint_iterations=options.checkpoint_iterations,
             # These vgg settings are now loaded only once
             vgg_weights=vgg_weights, 
-            vgg_mean_pixel=vgg_mean_pixel
+            vgg_mean_pixel=vgg_mean_pixel,
+            content_features=content_features
         ):
             output_file = None
             combined_rgb = image
