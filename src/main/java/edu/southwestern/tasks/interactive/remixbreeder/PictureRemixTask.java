@@ -14,12 +14,14 @@ import javax.swing.JLabel;
 import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.networks.Network;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.interactive.picbreeder.PicbreederTask;
+import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.graphics.GraphicsUtil;
 
 /**
@@ -59,10 +61,6 @@ public class PictureRemixTask<T extends Network> extends PicbreederTask<T> {
 		windowSize.setPaintLabels(true);
 		windowSize.setPreferredSize(new Dimension(200, 40));
 
-		/**
-		 * Implements ChangeListener to adjust clip length of generated sounds. When clip length is specified, 
-		 * input length is used to reset and redraw buttons. 
-		 */
 		windowSize.addChangeListener(new ChangeListener() {
 			@Override
 			public void stateChanged(ChangeEvent e) {
@@ -119,11 +117,12 @@ public class PictureRemixTask<T extends Network> extends PicbreederTask<T> {
 		if(itemID == FILE_LOADER_CHECKBOX_INDEX) {
 			JFileChooser chooser = new JFileChooser();//used to get new file
 			chooser.setApproveButtonText("Open");
-			FileNameExtensionFilter filter = new FileNameExtensionFilter("BMP Images", "bmp");
-			chooser.setFileFilter(filter);
+			String[] pictureSuffixes = ArrayUtil.filterString(ImageIO.getReaderFileSuffixes(), "");
+			FileFilter imageFilter = new FileNameExtensionFilter("Image files", pictureSuffixes);
+			chooser.setFileFilter(imageFilter);
 			int returnVal = chooser.showOpenDialog(frame);
 			if(returnVal == JFileChooser.APPROVE_OPTION) {//if the user decides to save the image
-				Parameters.parameters.setString("matchImageFile", chooser.getCurrentDirectory() + "\\" + chooser.getSelectedFile().getName());
+				Parameters.parameters.setString("matchImageFile", chooser.getCurrentDirectory() + File.separator + chooser.getSelectedFile().getName());
 				String filename = Parameters.parameters.stringParameter("matchImageFile");
 				try {// throws and exception if filename is not valid
 					img = ImageIO.read(new File(filename));
