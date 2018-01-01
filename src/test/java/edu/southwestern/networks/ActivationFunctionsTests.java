@@ -220,6 +220,18 @@ public class ActivationFunctionsTests {
 		
 	}
 	
-	
+
+		/**
+		 * tests  the derivative of the sigmoid weighted linear unit of the input
+		 */
+		@Test
+		public void test_DSiL() {
+			double[] keyActivationInputs = { -7,      -2,       -1, 0,      1,      2,      3, 7};
+			double[] keyActivationAnswers = { -0.00546, -0.09078, 0.07233, .5, 0.92767, 1.09078, 1.08810, 1.00546};
+			assertEquals(keyActivationInputs.length, keyActivationAnswers.length);
+			for (int i = 0; i < keyActivationAnswers.length; i++) {
+				assertEquals(keyActivationAnswers[i], ActivationFunctions.activation(ActivationFunctions.FTYPE_DSIL, keyActivationInputs[i]), .00001);
+			}
+		}
 	
 }

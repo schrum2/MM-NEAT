@@ -451,6 +451,7 @@ public class Parameters {
 		booleanOptions.add("includeTriangleWaveFunction", true, "Function for triangle wave function. If true, add to the function set");
 		booleanOptions.add("includeSquareWaveFunction", true, "Function for square wave function. If true, add to the function set");
 		booleanOptions.add("includeSiLFunction", false, "Function for sigmoid weighted linear unit function. If true, add to the function set");
+		booleanOptions.add("includeDSiLFunction", false, "Function for derivative of sigmoid weighted linear unit function. If true, add to the function set");
 		booleanOptions.add("tetrisAvgNumHoles", false, "include number of holes as a fitness function");
 		booleanOptions.add("finalPassOnOutputActivation", false, "Empty all remaining activation from network output layer");
 		booleanOptions.add("logGhostLocOnPowerPill", false, "Log ghost locations corresponding to each eaten power pill");
@@ -966,7 +967,8 @@ public class Parameters {
 			} else {
 				System.out.println("Did not recognize \"" + entity + "\" with value \"" + value + "\"");
 				if (terminateOnUnrecognized) {
-					usage(1);
+					throw new IllegalArgumentException(entity + " is not a valid parameter");
+					//usage(1);
 				}
 			}
 		}
