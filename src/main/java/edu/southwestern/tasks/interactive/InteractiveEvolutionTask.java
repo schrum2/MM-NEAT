@@ -120,6 +120,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 
 	protected Network currentCPPN;
 
+	private HashMap<Long,BufferedImage> cachedButtonImages = new HashMap<Long,BufferedImage>();
 
 	private JPanel topper;
 	protected JPanel top;
@@ -182,25 +183,25 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		bottom.setLayout(new FlowLayout());
 
 		// Gets the Button Images from the Picbreeder data Folder and re-scales them for use on the smaller Action Buttons
-		ImageIcon reset = new ImageIcon("data\\picbreeder\\reset.png");
+		ImageIcon reset = new ImageIcon("data"+File.separator+"picbreeder"+File.separator+"reset.png");
 		Image reset2 = reset.getImage().getScaledInstance(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT, 1);
 
-		ImageIcon save = new ImageIcon("data\\picbreeder\\save.png");
+		ImageIcon save = new ImageIcon("data"+File.separator+"picbreeder"+File.separator+"save.png");
 		Image save2 = save.getImage().getScaledInstance(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT, 1);
 
-		ImageIcon evolve = new ImageIcon("data\\picbreeder\\arrow.png");
+		ImageIcon evolve = new ImageIcon("data"+File.separator+"picbreeder"+File.separator+"arrow.png");
 		Image evolve2 = evolve.getImage().getScaledInstance(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT, 1);
 
-		//ImageIcon close = new ImageIcon("data\\picbreeder\\quit.png");
+		//ImageIcon close = new ImageIcon("data"+File.separator+"picbreeder"+File.separator+"quit.png");
 		//Image close2 = close.getImage().getScaledInstance(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT, 1);
 
-		//ImageIcon lineage = new ImageIcon("data\\picbreeder\\lineage.png");
+		//ImageIcon lineage = new ImageIcon("data"+File.separator+"picbreeder"+File.separator+"lineage.png");
 		//Image lineage2 = lineage.getImage().getScaledInstance(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT, 1);
 
-		ImageIcon network = new ImageIcon("data\\picbreeder\\network.png");
+		ImageIcon network = new ImageIcon("data"+File.separator+"picbreeder"+File.separator+"network.png");
 		Image network2 = network.getImage().getScaledInstance(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT, 1);
 
-		ImageIcon undo = new ImageIcon("data\\picbreeder\\undo.png");
+		ImageIcon undo = new ImageIcon("data"+File.separator+"picbreeder"+File.separator+"undo.png");
 		Image undo2 = undo.getImage().getScaledInstance(ACTION_BUTTON_WIDTH, ACTION_BUTTON_HEIGHT, 1);
 
 		JButton resetButton = new JButton(new ImageIcon(reset2));
@@ -342,6 +343,10 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		top.add(effectsCheckboxes);
 	}
 
+	/**
+	 * Allows for static access to the input multipliers
+	 * @return
+	 */
 	public static double[] getInputMultipliers() {
 		@SuppressWarnings("rawtypes")
 		InteractiveEvolutionTask task = (InteractiveEvolutionTask) MMNEAT.task;
@@ -471,7 +476,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		int returnVal = chooser.showOpenDialog(frame);
 		if(returnVal == JFileChooser.APPROVE_OPTION) {//if the user decides to save the file
 			System.out.println("You chose to call the file: " + chooser.getSelectedFile().getName());
-			return chooser.getCurrentDirectory() + "\\" + chooser.getSelectedFile().getName(); // + "." + ; //  Added later
+			return chooser.getCurrentDirectory() + File.separator + chooser.getSelectedFile().getName(); 
 		} else { //else image dumped
 			System.out.println("file not saved");
 			return null;
@@ -509,7 +514,7 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	 */
 	protected void resetButton(Genotype<T> individual, int x) { 
 		scores.add(new Score<T>(individual, new double[]{0}, null));
-		setButtonImage(showNetwork ? getNetwork(individual) : getButtonImage(individual.getPhenotype(),  picSize, picSize, inputMultipliers), x);
+		setButtonImage(showNetwork ? getNetwork(individual) : getButtonImage(true, individual.getPhenotype(),  picSize, picSize, inputMultipliers), x);
 		chosen[x] = false;
 		buttons.get(x).setBorder(BorderFactory.createLineBorder(Color.lightGray, BORDER_THICKNESS));
 	}
@@ -527,16 +532,39 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	protected abstract BufferedImage getButtonImage(T phenotype, int width, int height, double[] inputMultipliers);
 
 	/**
+	 * Get button images by checking cache first if checkCache is true. 
+	 * Otherwise, generate as normal.
+	 * 
+	 * @param checkCache
+	 * @param phenotype Must be a TWEANN
+	 * @param width
+	 * @param height
+	 * @param inputMultipliers
+	 * @return Image for button
+	 */
+	protected BufferedImage getButtonImage(boolean checkCache, T phenotype, int width, int height, double[] inputMultipliers) {
+		// Will this interface ever be used with items that are not TWEANNs?
+		long id = ((TWEANN) phenotype).getId();
+		// See if image is already in hash map to be retrieved
+		if(checkCache) {
+			if(cachedButtonImages.containsKey(id)) {
+				// Return pre-computed image instead of watsing time
+				return cachedButtonImages.get(id);
+			} 
+		}
+		// If fails, or if not allowing cache checks, do the default call to getButtonImage
+		BufferedImage image = getButtonImage(phenotype, width, height, inputMultipliers);
+		cachedButtonImages.put(id, image);
+		return image;
+	}
+	
+	/**
 	 * Used to get the image of a network using a drawing panel
 	 * @param tg genotype of network
 	 * @return
 	 */
 	private BufferedImage getNetwork(Genotype<T> tg) {
 		T pheno = tg.getPhenotype();
-//		DrawingPanel network = new DrawingPanel(picSize,( frame.getHeight() - topper.getHeight())/numRows, "network");
-//		((TWEANN) pheno).draw(network);
-//		network.setVisibility(false);
-//		return network.image;
 		return ((TWEANN) pheno).getNetworkImage(picSize, (frame.getHeight() - topper.getHeight())/numRows, false, false);
 	}
 
@@ -552,6 +580,13 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		if(population.size() != numButtonOptions) {
 			throw new IllegalArgumentException("number of genotypes doesn't match size of population! Size of genotypes: " + population.size() + " Num buttons: " + numButtonOptions);
 		}	
+		// Because image loading may take a while, blank all images first so that it is clear
+		// when the images have loaded.
+		BufferedImage blank = new BufferedImage(picSize, picSize, BufferedImage.TYPE_INT_RGB);
+		for(int i = 0; i < buttons.size(); i++) {
+			setButtonImage(blank, i);
+		}	
+		// Put appropriate content on buttons
 		for(int x = 0; x < buttons.size(); x++) {
 			resetButton(population.get(x), x);
 		}
@@ -562,6 +597,16 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 				e.printStackTrace();
 			}
 		}
+		// Clear unselected items from cache
+		for(Score<T> s : scores) {
+			if(s.scores[0] == 0) { // This item was not selected by the user
+				// Remove from image cache
+				long id = s.individual.getId();
+				cachedButtonImages.remove(id);
+				System.out.println("Removed image " + id);
+			}
+		}
+		System.out.println("Size of cache: " + cachedButtonImages.size());
 		return scores;
 	}
 
@@ -602,14 +647,12 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 		// Select one of the available activation functions as default
 		CommonConstants.ftype = RandomNumbers.randomElement(ActivationFunctions.availableActivationFunctions);
 		Parameters.parameters.setInteger("ftype", CommonConstants.ftype);
-//		System.out.println("ftype is " + CommonConstants.ftype);
 		ArrayList<Genotype<T>> newPop = ((SinglePopulationGenerationalEA<T>) MMNEAT.ea).initialPopulation(scores.get(0).individual);
 		scores = new ArrayList<Score<T>>();
 		ActivationFunctionRandomReplacement frr = new ActivationFunctionRandomReplacement();
 		for(int i = 0; i < newPop.size(); i++) {
 			frr.mutate((Genotype<TWEANN>) newPop.get(i));
 			resetButton(newPop.get(i), i);
-//			System.out.println(newPop.get(i));
 		}	
 	}
 
@@ -669,16 +712,11 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 			activation[ftype] = false;
 			ActivationFunctions.availableActivationFunctions.remove(new Integer(ftype));
 			// Parameter value not actually changed
-			//Parameters.parameters.setBoolean(title, false);
 		} else {
 			activation[ftype] = true;
 			ActivationFunctions.availableActivationFunctions.add(new Integer(ftype));
 			// Parameter value not actually changed
-			//Parameters.parameters.setBoolean(title, true);
 		}
-		// No longer do this because availableActivationFunctions is changed directly,
-		// and the Parameter values are no longer set properly.
-		//ActivationFunctions.resetFunctionSet();
 	}
 
 	/**
@@ -703,7 +741,8 @@ public abstract class InteractiveEvolutionTask<T extends Network> implements Sin
 	 */
 	public void resetButtons(boolean hardReset){
 		for(int i = 0; i < scores.size(); i++) {
-			setButtonImage(getButtonImage(scores.get(i).individual.getPhenotype(),  picSize, picSize, inputMultipliers), i);
+			// If not doing hard reset, there is a chance to load from cache
+			setButtonImage(getButtonImage(!hardReset, scores.get(i).individual.getPhenotype(),  picSize, picSize, inputMultipliers), i);
 		}		
 	}
 

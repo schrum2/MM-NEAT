@@ -21,6 +21,7 @@ import edu.southwestern.util.datastructures.Vertex;
  */
 public class ThreeDimensionalUtil {
 	
+	public static final int THREE_DIMENSIONAL_VOXEL_INDEX = 0;
 	public static final int THREE_DIMENSIONAL_HUE_INDEX = 1;
 	public static final int THREE_DIMENSIONAL_SATURATION_INDEX = 2;
 	public static final int THREE_DIMENSIONAL_BRIGHTNESS_INDEX = 3;
@@ -29,6 +30,7 @@ public class ThreeDimensionalUtil {
 	public static final int THREE_DIMENSIONAL_Z_DISPLACEMENT_INDEX = 6;
 	
 	public static final double SHADE_CONSTANT = 2.4;
+	public static final double VOXEL_EXPRESSION_THRESHOLD = 0.1;
 
 	/**
 	 * Constructs a BufferedImage of the current 3D image rotation based on the current heading and pitch.
@@ -215,7 +217,7 @@ public class ThreeDimensionalUtil {
 						inputs[i] = inputs[i] * inputMultipliers[i];
 					}	
 					double[] output = cppn.process(inputs);
-					if(output[0] > 0.1) {
+					if(output[THREE_DIMENSIONAL_VOXEL_INDEX] > VOXEL_EXPRESSION_THRESHOLD) { 
 						double actualX = -(cubeSize*shapeWidth/2.0) + halfCube + x*cubeSize;
 						double actualY = -(cubeSize*shapeHeight/2.0) + halfCube + y*cubeSize;
 						double actualZ = -(cubeSize*shapeDepth/2.0) + halfCube + z*cubeSize; 

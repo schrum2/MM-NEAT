@@ -15,7 +15,7 @@ public class HierarchicalTWEANNGenotype extends TWEANNGenotype {
 
 	public HierarchicalTWEANNGenotype() {
 		super();
-		this.subNetIds = new BoundedIntegerValuedGenotype(GenotypePool.numPools());
+		this.subNetIds = new BoundedIntegerValuedGenotype();
 	}
 
 	public HierarchicalTWEANNGenotype(TWEANNGenotype tg, BoundedIntegerValuedGenotype subNetIds) {

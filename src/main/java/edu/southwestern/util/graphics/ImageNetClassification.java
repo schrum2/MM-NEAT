@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.datavec.image.loader.NativeImageLoader;
-import org.deeplearning4j.examples.imagenet.GoogLeNetImagePreprocessor;
 import org.deeplearning4j.zoo.util.imagenet.ImageNetLabels;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.dataset.api.preprocessor.DataNormalization;
@@ -188,5 +187,4 @@ public class ImageNetClassification {
 	public static double bestScore(INDArray precomputedScores) {
 		return Nd4j.max(precomputedScores, 1).getDouble(0,0);
 	}
-
 }
