@@ -2,9 +2,7 @@ package competition.cig.robinbaumgarten.astar;
 
 import java.util.ArrayList;
 
-import ch.idsia.mario.engine.GlobalOptions;
 import ch.idsia.mario.engine.sprites.Mario;
-
 import competition.cig.robinbaumgarten.astar.level.Level;
 
 
@@ -234,9 +232,11 @@ public class AStarSimulator
     private int getMarioDamage()
     {
     	// early damage at gaps: Don't even fall 1 px into them.
-    	// TODO: A weird java.lang.ArrayIndexOutOfBoundsException: -1 sometimes occurs here with playful Mario
-    	if (levelScene.level.isGap[(int) (levelScene.mario.x/16)] &&
-    			levelScene.mario.y > levelScene.level.gapHeight[(int) (levelScene.mario.x/16)]*16)
+    	// A weird java.lang.ArrayIndexOutOfBoundsException: -1 sometimes occurs here. 
+    	// The check avoids it, but I'm not sure why it happens in the first place.
+    	int index = (int) (levelScene.mario.x/16);
+    	if (index != -1 && levelScene.level.isGap[index] &&
+    			levelScene.mario.y > levelScene.level.gapHeight[index]*16)
     	{
     		//System.out.println("Gap height: "+levelScene.level.gapHeight[(int) (levelScene.mario.x/16)]);
     		levelScene.mario.damage+=5;
@@ -251,7 +251,8 @@ public class AStarSimulator
     	SearchNode current = bestPosition;
     	//SearchNode furthest = bestPosition;
     	boolean currentGood = false;
-    	int ticks = 0;
+    	@SuppressWarnings("unused")
+		int ticks = 0;
     	int maxRight = 176;
     	while(posPool.size() != 0 
     			//&& ((levelScene.mario.x - currentSearchStartingMarioXPos < maxRight) || !currentGood) 
