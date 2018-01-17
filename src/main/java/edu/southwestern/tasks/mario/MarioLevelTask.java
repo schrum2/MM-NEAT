@@ -1,5 +1,6 @@
 package edu.southwestern.tasks.mario;
 
+import java.io.FileNotFoundException;
 import java.util.List;
 
 import ch.idsia.ai.agents.Agent;
@@ -27,7 +28,10 @@ import edu.southwestern.util.datastructures.Pair;
  * @param <T>
  */
 public class MarioLevelTask<T extends Network> extends NoisyLonerTask<T> {
-
+	// There is space in each level that Mario cannot traverse because it is after the goal post.
+	// This constant allows that space to be subtracted out.
+	public static final int SPACE_AT_LEVEL_END = 225;
+	
 	private Agent agent;
 	
 	public MarioLevelTask() {
@@ -77,13 +81,24 @@ public class MarioLevelTask<T extends Network> extends NoisyLonerTask<T> {
 		double time = info.timeSpentOnLevel;
 
 		double[] otherScores = new double[] {distancePassed, time};
-		if(distancePassed < totalDistanceInLevel) {
+		System.out.println(distancePassed +":"+ totalDistanceInLevel);
+		if(distancePassed < totalDistanceInLevel - SPACE_AT_LEVEL_END) {
 			// If level is not completed, score the amount of distance covered
 			return new Pair<double[],double[]>(new double[]{distancePassed}, otherScores);
 		} else {
 			// Add in the time so that more complicated, challenging levels will be favored
 			return new Pair<double[],double[]>(new double[]{distancePassed+time}, otherScores);
 		}
+	}
+	
+	/**
+	 * For quick testing
+	 * @param args
+	 * @throws FileNotFoundException
+	 * @throws NoSuchMethodException
+	 */
+	public static void main(String[] args) throws FileNotFoundException, NoSuchMethodException {
+		MMNEAT.main("runNumber:0 randomSeed:0 trials:1 mu:50 maxGens:500 io:false netio:false mating:true fs:false task:edu.southwestern.tasks.mario.MarioLevelTask allowMultipleFunctions:true ftype:0 netChangeActivationRate:0.3 cleanFrequency:50 recurrency:false saveInteractiveSelections:false simplifiedInteractiveInterface:false saveAllChampions:false cleanOldNetworks:true logTWEANNData:false logMutationAndLineage:false marioLevelLength:120 marioStuckTimeout:20 watch:true".split(" "));
 	}
 
 }
