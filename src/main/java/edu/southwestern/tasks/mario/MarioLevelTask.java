@@ -81,7 +81,7 @@ public class MarioLevelTask<T extends Network> extends NoisyLonerTask<T> {
 		double time = info.timeSpentOnLevel;
 
 		double[] otherScores = new double[] {distancePassed, time};
-		System.out.println(distancePassed +":"+ totalDistanceInLevel);
+		//System.out.println(distancePassed +":"+ totalDistanceInLevel);
 		if(distancePassed < totalDistanceInLevel - SPACE_AT_LEVEL_END) {
 			// If level is not completed, score the amount of distance covered
 			return new Pair<double[],double[]>(new double[]{distancePassed}, otherScores);
