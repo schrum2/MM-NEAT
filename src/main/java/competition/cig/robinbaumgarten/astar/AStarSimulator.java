@@ -232,10 +232,10 @@ public class AStarSimulator
     private int getMarioDamage()
     {
     	// early damage at gaps: Don't even fall 1 px into them.
-    	// A weird java.lang.ArrayIndexOutOfBoundsException: -1 sometimes occurs here. 
+    	// A weird java.lang.ArrayIndexOutOfBoundsException: -1 or -2 sometimes occurs here. 
     	// The check avoids it, but I'm not sure why it happens in the first place.
     	int index = (int) (levelScene.mario.x/16);
-    	if (index != -1 && levelScene.level.isGap[index] &&
+    	if (index >= 0 && levelScene.level.isGap[index] &&
     			levelScene.mario.y > levelScene.level.gapHeight[index]*16)
     	{
     		//System.out.println("Gap height: "+levelScene.level.gapHeight[(int) (levelScene.mario.x/16)]);
