@@ -451,19 +451,22 @@ public class AStarSimulator
     	{
     		float jumpModifier = 0;    		
     		//if (current.action[Mario.KEY_JUMP]) jumpModifier = -0.0001f;
-    		if (current.sceneSnapshot != null)
-    		{
-    			int marioX = (int) current.sceneSnapshot.mario.x / 16;
-    			if (current.sceneSnapshot.level.isGap.length > marioX && current.sceneSnapshot.level.isGap[marioX])
-    			{
-    				//if (current.action[Mario.KEY_JUMP])
-    				//	jumpModifier -= 5f;
-    				//if (current.action[Mario.KEY_RIGHT])
-        			//	jumpModifier -= 0.5f;
-    				//if (current.action[Mario.KEY_SPEED])
-        			//	jumpModifier -= 5f;
-    			}
-    		}
+    		// Jacob: I commented all of this code out both because there was an exception,
+    		//        and because it is dead code anyway.
+//    		if (current.sceneSnapshot != null)
+//    		{
+//    			int marioX = (int) current.sceneSnapshot.mario.x / 16;
+//    			// Rare java.lang.ArrayIndexOutOfBoundsException: -1 here
+//    			if (current.sceneSnapshot.level.isGap.length > marioX && current.sceneSnapshot.level.isGap[marioX])
+//    			{
+//    				//if (current.action[Mario.KEY_JUMP])
+//    				//	jumpModifier -= 5f;
+//    				//if (current.action[Mario.KEY_RIGHT])
+//        			//	jumpModifier -= 0.5f;
+//    				//if (current.action[Mario.KEY_SPEED])
+//        			//	jumpModifier -= 5f;
+//    			}
+//    		}
     		
     		//if (current.sceneSnapshot != null && current.sceneSnapshot.mario.y > 200) jumpModifier += 0.001f * (300-current.sceneSnapshot.mario.y);
     		float currentCost = current.getRemainingTime()
