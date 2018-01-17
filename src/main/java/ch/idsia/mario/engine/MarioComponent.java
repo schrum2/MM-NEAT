@@ -21,6 +21,7 @@ import ch.idsia.mario.environments.Environment;
 import ch.idsia.tools.EvaluationInfo;
 import ch.idsia.tools.GameViewer;
 import ch.idsia.tools.tcp.ServerAgent;
+import edu.southwestern.parameters.Parameters;
 
 
 public class MarioComponent extends JComponent implements Runnable, /*KeyListener,*/ FocusListener, Environment {
@@ -154,6 +155,10 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
         }
         int totalActionsPerfomed = 0;
 
+        // Added to track if Mario can't or is not progressing
+        float marioProgress = mario.x;
+        int stepsWithoutProgress = 0;
+        
         while (/*Thread.currentThread() == animator*/ running) {
             // Display the next frame of animation.
 //                repaint();
@@ -261,6 +266,18 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
                 }
             // Advance the frame
             frame++;
+            
+            // Jacob: Added to abort evaluations that are not progressing
+            if(mario.x <= marioProgress) {
+            	stepsWithoutProgress++;
+            	if(stepsWithoutProgress > Parameters.parameters.integerParameter("marioStuckTimeout")) {
+            		//System.out.println("Mario dies from timeout");
+            		mario.die(); // Killing mario ends the evaluation
+            	}
+            } else {
+            	stepsWithoutProgress = 0;
+            }
+            marioProgress = mario.x;
         }
 //=========
         evaluationInfo.agentType = agent.getClass().getSimpleName();
