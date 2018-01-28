@@ -330,27 +330,30 @@ public class NeuralStyleTransfer {
             dLdANext = dLdANext.add(dLcontent_currLayer).add(dLstyle_currLayer);
             dLdANext = dLdANext.reshape(new int[]{1, 512, 28, 28});
 
-            for (int i = LOWER_LAYERS.length - 1; i >= 0; i--) {
-
-                System.out.println("lowerLayers = " + LOWER_LAYERS[i]);
-
-                Pair<Gradient, INDArray> gradientINDArrayPair = vgg16FineTune.getLayer(LOWER_LAYERS[i])
-                        .backpropGradient(dLdANext);
-                dLdANext = gradientINDArrayPair.getSecond();
-
-                System.out.println("dLdANext.shapeInfoToString()  - " + LOWER_LAYERS[i] + " >>  " + dLdANext.shapeInfoToString());
-            }
+            dLdANext = backPropagate(vgg16FineTune, dLdANext);
             combination.subi(dLdANext.mul(learningRate)); // Maybe replace with an Updater later?
 
             if (itr % 50 == 0 && itr != 0) {
                 saveImage(scaler, combination, itr);
             }
         }
-
-        // Undo color mean subtraction
         BufferedImage output = saveImage(scaler, combination, iterations);
         DrawingPanel panel = GraphicsUtil.drawImage(output, "Combined Image", WIDTH, HEIGHT);
         MiscUtil.waitForReadStringAndEnterKeyPress();
+    }
+
+    private static INDArray backPropagate(ComputationGraph vgg16FineTune, INDArray dLdANext) {
+        for (int i = LOWER_LAYERS.length - 1; i >= 0; i--) {
+
+            System.out.println("lowerLayers = " + LOWER_LAYERS[i]);
+
+            Pair<Gradient, INDArray> gradientINDArrayPair = vgg16FineTune.getLayer(LOWER_LAYERS[i])
+                    .backpropGradient(dLdANext);
+            dLdANext = gradientINDArrayPair.getSecond();
+
+            System.out.println("dLdANext.shapeInfoToString()  - " + LOWER_LAYERS[i] + " >>  " + dLdANext.shapeInfoToString());
+        }
+        return dLdANext;
     }
 
     private static ComputationGraph loadModel() throws IOException {
