@@ -30,7 +30,6 @@ import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.random.RandomNumbers;
 import org.nd4j.linalg.primitives.Pair;
-import sun.nio.ch.IOUtil;
 
 import javax.imageio.ImageIO;
 
@@ -43,16 +42,6 @@ import javax.imageio.ImageIO;
  * @author Jacob Schrum
  */
 public class NeuralStyleTransfer {
-
-    /**
-     * Values suggested by
-     * https://harishnarayanan.org/writing/artistic-style-transfer/
-     * <p>
-     * Will likely change this, or make them parameters.
-     */
-    public static double content_weight = 0.025;
-    public static double style_weight = 5.0;
-    public static double total_variation_weight = 1.0;
 
     /**
      * Image conversion/size properties
@@ -76,6 +65,83 @@ public class NeuralStyleTransfer {
             "block4_conv1",
             "block4_conv2"
     };
+    /**
+     * Values suggested by
+     * https://harishnarayanan.org/writing/artistic-style-transfer/
+     * <p>
+     * Will likely change this, or make them parameters.
+     */
+    public static double content_weight = 0.025;
+    public static double style_weight = 5.0;
+    public static double total_variation_weight = 1.0;
+
+    public static void main(String[] args) throws IOException {
+        ComputationGraph vgg16FineTune = loadModel();
+        NativeImageLoader loader = new NativeImageLoader(HEIGHT, WIDTH, CHANNELS);
+        DataNormalization scaler = new VGG16ImagePreProcessor();
+
+        String contentFile = "data/imagematch/cat.jpg";
+        INDArray content = loader.asMatrix(new File(contentFile));
+        scaler.transform(content);
+
+        String styleFile = "data/imagematch/supercreepypersonimage.jpg";
+        INDArray style = loader.asMatrix(new File(styleFile));
+        scaler.transform(style);
+
+        // Starting combination image is pure white noise
+        int totalEntries = CHANNELS * HEIGHT * WIDTH;
+        int[] upper = new int[totalEntries];
+        Arrays.fill(upper, 256);
+        INDArray combination = Nd4j.create(ArrayUtil.doubleArrayFromIntegerArray(RandomNumbers.randomIntArray(upper)), new int[]{1, CHANNELS, HEIGHT, WIDTH});
+        scaler.transform(combination);
+
+        int iterations = 500;
+        double learningRate = 0.000001;
+
+        vgg16FineTune.output(content);
+        Map<String, INDArray> activationsContent = vgg16FineTune.feedForward();
+
+        vgg16FineTune.output(style);
+        Map<String, INDArray> activationsStyle = vgg16FineTune.feedForward();
+
+        String layer = LOWER_LAYERS[LOWER_LAYERS.length - 1];
+        for (int itr = 0; itr < iterations; itr++) {
+            System.out.println("Iteration: " + itr);
+            vgg16FineTune.output(combination);
+
+            Map<String, INDArray> activations = vgg16FineTune.feedForward();
+
+            System.out.println("Arrays.asList(shape) = " + activations.get(layer).shapeInfoToString());
+            INDArray dLdANext = Nd4j.zeros(new int[]{512, 784});    //Shape: size of activations of block2_conv2 for one image
+            // This code below doesn't actually use the result of the loss function, just the derivatives. Is this ok?
+            INDArray layerFeatures = activations.get(layer);
+            INDArray layerFeaturesContent = activationsContent.get(layer);
+            INDArray layerFeaturesStyle = activationsStyle.get(layer);
+
+            INDArray content_features = layerFeaturesContent.get(NDArrayIndex.all(), NDArrayIndex.all(), NDArrayIndex.all(), NDArrayIndex.all());
+            INDArray style_features = layerFeaturesStyle.get(NDArrayIndex.all(), NDArrayIndex.all(), NDArrayIndex.all(), NDArrayIndex.all());
+            INDArray combination_features = layerFeatures.get(NDArrayIndex.all(), NDArrayIndex.all(), NDArrayIndex.all(), NDArrayIndex.all());
+
+
+            INDArray dLcontent_currLayer = flatten(derivativeLossContentInLayer(content_features, combination_features));
+            INDArray dLstyle_currLayer = derivativeLossStyleInLayer(style_features, combination_features).transpose();
+
+            log(dLdANext, layerFeatures, content_features, style_features, combination_features, dLcontent_currLayer, dLstyle_currLayer);
+
+            dLdANext = dLdANext.add(dLcontent_currLayer).add(dLstyle_currLayer);
+            dLdANext = dLdANext.reshape(new int[]{1, 512, 28, 28});
+
+            dLdANext = backPropagate(vgg16FineTune, dLdANext);
+            combination.subi(dLdANext.mul(learningRate)); // Maybe replace with an Updater later?
+
+            if (itr % 50 == 0 && itr != 0) {
+                saveImage(scaler, combination, itr);
+            }
+        }
+        BufferedImage output = saveImage(scaler, combination, iterations);
+        DrawingPanel panel = GraphicsUtil.drawImage(output, "Combined Image", WIDTH, HEIGHT);
+        MiscUtil.waitForReadStringAndEnterKeyPress();
+    }
 
     /**
      * Element-wise differences are squared, and then summed.
@@ -272,74 +338,6 @@ public class NeuralStyleTransfer {
         loss += style_loss(activations);
         loss += total_variation_loss(combination);
         return loss;
-    }
-
-    public static void main(String[] args) throws IOException {
-        ComputationGraph vgg16FineTune = loadModel();
-        NativeImageLoader loader = new NativeImageLoader(HEIGHT, WIDTH, CHANNELS);
-        DataNormalization scaler = new VGG16ImagePreProcessor();
-
-        String contentFile = "data/imagematch/cat.jpg";
-        INDArray content = loader.asMatrix(new File(contentFile));
-        scaler.transform(content);
-
-        String styleFile = "data/imagematch/supercreepypersonimage.jpg";
-        INDArray style = loader.asMatrix(new File(styleFile));
-        scaler.transform(style);
-
-        // Starting combination image is pure white noise
-        int totalEntries = CHANNELS * HEIGHT * WIDTH;
-        int[] upper = new int[totalEntries];
-        Arrays.fill(upper, 256);
-        INDArray combination = Nd4j.create(ArrayUtil.doubleArrayFromIntegerArray(RandomNumbers.randomIntArray(upper)), new int[]{1, CHANNELS, HEIGHT, WIDTH});
-        scaler.transform(combination);
-
-        int iterations = 500;
-        double learningRate = 0.000001;
-
-        vgg16FineTune.output(content);
-        Map<String, INDArray> activationsContent = vgg16FineTune.feedForward();
-
-        vgg16FineTune.output(style);
-        Map<String, INDArray> activationsStyle = vgg16FineTune.feedForward();
-
-        String layer = LOWER_LAYERS[LOWER_LAYERS.length - 1];
-        for (int itr = 0; itr < iterations; itr++) {
-            System.out.println("Iteration: " + itr);
-            vgg16FineTune.output(combination);
-
-            Map<String, INDArray> activations = vgg16FineTune.feedForward();
-
-            System.out.println("Arrays.asList(shape) = " + activations.get(layer).shapeInfoToString());
-            INDArray dLdANext = Nd4j.zeros(new int[]{512, 784});    //Shape: size of activations of block2_conv2 for one image
-            // This code below doesn't actually use the result of the loss function, just the derivatives. Is this ok?
-            INDArray layerFeatures = activations.get(layer);
-            INDArray layerFeaturesContent = activationsContent.get(layer);
-            INDArray layerFeaturesStyle = activationsStyle.get(layer);
-
-            INDArray content_features = layerFeaturesContent.get(NDArrayIndex.all(), NDArrayIndex.all(), NDArrayIndex.all(), NDArrayIndex.all());
-            INDArray style_features = layerFeaturesStyle.get(NDArrayIndex.all(), NDArrayIndex.all(), NDArrayIndex.all(), NDArrayIndex.all());
-            INDArray combination_features = layerFeatures.get(NDArrayIndex.all(), NDArrayIndex.all(), NDArrayIndex.all(), NDArrayIndex.all());
-
-
-            INDArray dLcontent_currLayer = flatten(derivativeLossContentInLayer(content_features, combination_features));
-            INDArray dLstyle_currLayer = derivativeLossStyleInLayer(style_features, combination_features).transpose();
-
-            log(dLdANext, layerFeatures, content_features, style_features, combination_features, dLcontent_currLayer, dLstyle_currLayer);
-
-            dLdANext = dLdANext.add(dLcontent_currLayer).add(dLstyle_currLayer);
-            dLdANext = dLdANext.reshape(new int[]{1, 512, 28, 28});
-
-            dLdANext = backPropagate(vgg16FineTune, dLdANext);
-            combination.subi(dLdANext.mul(learningRate)); // Maybe replace with an Updater later?
-
-            if (itr % 50 == 0 && itr != 0) {
-                saveImage(scaler, combination, itr);
-            }
-        }
-        BufferedImage output = saveImage(scaler, combination, iterations);
-        DrawingPanel panel = GraphicsUtil.drawImage(output, "Combined Image", WIDTH, HEIGHT);
-        MiscUtil.waitForReadStringAndEnterKeyPress();
     }
 
     private static INDArray backPropagate(ComputationGraph vgg16FineTune, INDArray dLdANext) {
