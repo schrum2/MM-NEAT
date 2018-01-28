@@ -143,6 +143,20 @@ public class NeuralStyleTransfer {
         MiscUtil.waitForReadStringAndEnterKeyPress();
     }
 
+    private static INDArray backPropagate(ComputationGraph vgg16FineTune, INDArray dLdANext) {
+        for (int i = LOWER_LAYERS.length - 1; i >= 0; i--) {
+
+            System.out.println("lowerLayers = " + LOWER_LAYERS[i]);
+
+            Pair<Gradient, INDArray> gradientINDArrayPair = vgg16FineTune.getLayer(LOWER_LAYERS[i])
+                    .backpropGradient(dLdANext);
+            dLdANext = gradientINDArrayPair.getSecond();
+
+            System.out.println("dLdANext.shapeInfoToString()  - " + LOWER_LAYERS[i] + " >>  " + dLdANext.shapeInfoToString());
+        }
+        return dLdANext;
+    }
+
     /**
      * Element-wise differences are squared, and then summed.
      * This is modelled after the content_loss method defined in
@@ -338,20 +352,6 @@ public class NeuralStyleTransfer {
         loss += style_loss(activations);
         loss += total_variation_loss(combination);
         return loss;
-    }
-
-    private static INDArray backPropagate(ComputationGraph vgg16FineTune, INDArray dLdANext) {
-        for (int i = LOWER_LAYERS.length - 1; i >= 0; i--) {
-
-            System.out.println("lowerLayers = " + LOWER_LAYERS[i]);
-
-            Pair<Gradient, INDArray> gradientINDArrayPair = vgg16FineTune.getLayer(LOWER_LAYERS[i])
-                    .backpropGradient(dLdANext);
-            dLdANext = gradientINDArrayPair.getSecond();
-
-            System.out.println("dLdANext.shapeInfoToString()  - " + LOWER_LAYERS[i] + " >>  " + dLdANext.shapeInfoToString());
-        }
-        return dLdANext;
     }
 
     private static ComputationGraph loadModel() throws IOException {
