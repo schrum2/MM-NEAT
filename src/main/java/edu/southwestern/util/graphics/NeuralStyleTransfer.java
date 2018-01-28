@@ -60,7 +60,22 @@ public class NeuralStyleTransfer {
     public static final int HEIGHT = 224;
     public static final int WIDTH = 224;
     public static final int CHANNELS = 3;
-    public static final int IMAGE_SIZE = HEIGHT * WIDTH;
+    public static final int IMAGE_SIZE = HEIGHT * WIDTH;//                "input_1",
+    private static final String[] LOWER_LAYERS = new String[]{
+//                "input_1",
+            "block1_conv1",
+            "block1_conv2",
+            "block1_pool",
+            "block2_conv1",
+            "block2_conv2",
+            "block2_pool",
+            "block3_conv1",
+            "block3_conv2",
+            "block3_conv3",
+            "block3_pool",
+            "block4_conv1",
+            "block4_conv2"
+    };
 
     /**
      * Element-wise differences are squared, and then summed.
@@ -260,22 +275,7 @@ public class NeuralStyleTransfer {
     }
 
     public static void main(String[] args) throws IOException {
-        ZooModel zooModel = new VGG16();
-        ComputationGraph vgg16 = (ComputationGraph) zooModel.initPretrained(PretrainedType.IMAGENET);
-
-        FineTuneConfiguration fineTuneConf = new FineTuneConfiguration.Builder()
-                .learningRate(5e-7)
-                .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
-                .updater(Updater.ADAM)
-                .seed(1234)
-                .build();
-
-        ComputationGraph vgg16FineTune = new TransferLearning.GraphBuilder(vgg16)
-                .fineTuneConfiguration(fineTuneConf)
-                .build();
-
-        vgg16FineTune.initGradientsView();
-        System.out.println(vgg16FineTune.summary());
+        ComputationGraph vgg16FineTune = loadModel();
         NativeImageLoader loader = new NativeImageLoader(HEIGHT, WIDTH, CHANNELS);
         DataNormalization scaler = new VGG16ImagePreProcessor();
 
@@ -294,85 +294,52 @@ public class NeuralStyleTransfer {
         INDArray combination = Nd4j.create(ArrayUtil.doubleArrayFromIntegerArray(RandomNumbers.randomIntArray(upper)), new int[]{1, CHANNELS, HEIGHT, WIDTH});
         scaler.transform(combination);
 
-        int iterations = 500; // TODO: Change to a parameter
-        double learningRate = 0.000001; // TODO: Change to parameter
+        int iterations = 500;
+        double learningRate = 0.000001;
 
-        // TODO: Generalize: should not need to get this list manually
-        String[] lowerLayers = new String[]{
-//                "input_1",
-                "block1_conv1",
-                "block1_conv2",
-                "block1_pool",
-                "block2_conv1",
-                "block2_conv2",
-                "block2_pool",
-                "block3_conv1",
-                "block3_conv2",
-                "block3_conv3",
-                "block3_pool",
-                "block4_conv1",
-                "block4_conv2"
-        };
-
-        // Get the intermediate activations
         vgg16FineTune.output(content);
         Map<String, INDArray> activationsContent = vgg16FineTune.feedForward();
 
-        // Get the intermediate activations
         vgg16FineTune.output(style);
         Map<String, INDArray> activationsStyle = vgg16FineTune.feedForward();
 
-        String layer = lowerLayers[lowerLayers.length - 1];
+        String layer = LOWER_LAYERS[LOWER_LAYERS.length - 1];
         for (int itr = 0; itr < iterations; itr++) {
             System.out.println("Iteration: " + itr);
-
-            // Stacking the inputs works for now, but is inefficient in the long run.
-            // TODO: Don't recalculate activations that won't change.
-//            INDArray input = Nd4j.concat(0, content, style, combination);
-            // Activate the network
-            // Get the intermediate activations
             vgg16FineTune.output(combination);
 
             Map<String, INDArray> activations = vgg16FineTune.feedForward();
-            // Calculate overall loss
-            // TODO: This isn't being used ... why not?
-//            double loss = neuralStyleLoss(activations, combination);
-            // One iteration of passing the gradient back
+
             System.out.println("Arrays.asList(shape) = " + activations.get(layer).shapeInfoToString());
             INDArray dLdANext = Nd4j.zeros(new int[]{512, 784});    //Shape: size of activations of block2_conv2 for one image
             // This code below doesn't actually use the result of the loss function, just the derivatives. Is this ok?
             INDArray layerFeatures = activations.get(layer);
             INDArray layerFeaturesContent = activationsContent.get(layer);
             INDArray layerFeaturesStyle = activationsStyle.get(layer);
-            System.out.println("layerFeatures.shapeInfoToString() = " + layerFeatures.shapeInfoToString());
-            // Some duplicated code here ... fix later
+
             INDArray content_features = layerFeaturesContent.get(NDArrayIndex.all(), NDArrayIndex.all(), NDArrayIndex.all(), NDArrayIndex.all());
             INDArray style_features = layerFeaturesStyle.get(NDArrayIndex.all(), NDArrayIndex.all(), NDArrayIndex.all(), NDArrayIndex.all());
             INDArray combination_features = layerFeatures.get(NDArrayIndex.all(), NDArrayIndex.all(), NDArrayIndex.all(), NDArrayIndex.all());
-            System.out.println("content_features " + content_features.shapeInfoToString());
-            System.out.println("style_features " + style_features.shapeInfoToString());
-            System.out.println("combination_features " + combination_features.shapeInfoToString());
-            // Equation (2) from the Gatys et all paper: https://arxiv.org/pdf/1508.06576.pdf
-            INDArray dLcontent_currLayer = flatten(derivativeLossContentInLayer(content_features, combination_features));
 
-            // Equation (6) from the Gatys et all paper: https://arxiv.org/pdf/1508.06576.pdf
+
+            INDArray dLcontent_currLayer = flatten(derivativeLossContentInLayer(content_features, combination_features));
             INDArray dLstyle_currLayer = derivativeLossStyleInLayer(style_features, combination_features).transpose();
 
-            System.out.println("dlContent " + dLcontent_currLayer.shapeInfoToString());
-            System.out.println("dlStyle " + dLstyle_currLayer.shapeInfoToString());
-            System.out.println("dLdANext " + dLdANext.shapeInfoToString());
+            log(dLdANext, layerFeatures, content_features, style_features, combination_features, dLcontent_currLayer, dLstyle_currLayer);
 
             dLdANext = dLdANext.add(dLcontent_currLayer).add(dLstyle_currLayer);
             dLdANext = dLdANext.reshape(new int[]{1, 512, 28, 28});
-            for (int i = lowerLayers.length - 1; i >= 0; i--) {
-                System.out.println("lowerLayers = " + lowerLayers[i]);
-                Pair<Gradient, INDArray> gradientINDArrayPair = vgg16FineTune.getLayer(lowerLayers[i])
+
+            for (int i = LOWER_LAYERS.length - 1; i >= 0; i--) {
+
+                System.out.println("lowerLayers = " + LOWER_LAYERS[i]);
+
+                Pair<Gradient, INDArray> gradientINDArrayPair = vgg16FineTune.getLayer(LOWER_LAYERS[i])
                         .backpropGradient(dLdANext);
                 dLdANext = gradientINDArrayPair.getSecond();
-                //Once loop ends: dLdANext == dL/dCombination
-                System.out.println("dLdANext.shapeInfoToString()  - " + lowerLayers[i] + " >>  " + dLdANext.shapeInfoToString());
+
+                System.out.println("dLdANext.shapeInfoToString()  - " + LOWER_LAYERS[i] + " >>  " + dLdANext.shapeInfoToString());
             }
-            // Update combination image
             combination.subi(dLdANext.mul(learningRate)); // Maybe replace with an Updater later?
 
             if (itr % 50 == 0 && itr != 0) {
@@ -384,6 +351,37 @@ public class NeuralStyleTransfer {
         BufferedImage output = saveImage(scaler, combination, iterations);
         DrawingPanel panel = GraphicsUtil.drawImage(output, "Combined Image", WIDTH, HEIGHT);
         MiscUtil.waitForReadStringAndEnterKeyPress();
+    }
+
+    private static ComputationGraph loadModel() throws IOException {
+        ZooModel zooModel = new VGG16();
+        ComputationGraph vgg16 = (ComputationGraph) zooModel.initPretrained(PretrainedType.IMAGENET);
+
+        FineTuneConfiguration fineTuneConf = new FineTuneConfiguration.Builder()
+                .learningRate(5e-7)
+                .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
+                .updater(Updater.ADAM)
+                .seed(1234)
+                .build();
+
+        ComputationGraph vgg16FineTune = new TransferLearning.GraphBuilder(vgg16)
+                .fineTuneConfiguration(fineTuneConf)
+                .build();
+
+        vgg16FineTune.initGradientsView();
+        System.out.println(vgg16FineTune.summary());
+        return vgg16FineTune;
+    }
+
+    private static void log(INDArray dLdANext, INDArray layerFeatures, INDArray content_features, INDArray style_features, INDArray combination_features, INDArray dLcontent_currLayer, INDArray dLstyle_currLayer) {
+        System.out.println("layerFeatures.shapeInfoToString() = " + layerFeatures.shapeInfoToString());
+        System.out.println("content_features " + content_features.shapeInfoToString());
+        System.out.println("style_features " + style_features.shapeInfoToString());
+        System.out.println("combination_features " + combination_features.shapeInfoToString());
+
+        System.out.println("dlContent " + dLcontent_currLayer.shapeInfoToString());
+        System.out.println("dlStyle " + dLstyle_currLayer.shapeInfoToString());
+        System.out.println("dLdANext " + dLdANext.shapeInfoToString());
     }
 
     private static BufferedImage saveImage(DataNormalization scaler, INDArray combination, int iterations) throws IOException {
