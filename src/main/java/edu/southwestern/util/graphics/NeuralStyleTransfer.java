@@ -199,6 +199,7 @@ public class NeuralStyleTransfer {
     public static INDArray derivativeLossContentInLayer(INDArray originalFeatures, INDArray comboFeatures) {
 
         comboFeatures = comboFeatures.dup();
+        originalFeatures = originalFeatures.dup();
         // Compute the F^l - P^l portion of equation (2), where F^l = comboFeatures and P^l = originalFeatures
         INDArray diff = comboFeatures.sub(originalFeatures);
         // This multiplication assures that the result is 0 when the value from F^l < 0, but is still F^l - P^l otherwise
@@ -219,7 +220,7 @@ public class NeuralStyleTransfer {
     public static INDArray gram_matrix(INDArray x) {
         INDArray flattened = flatten(x);
         // mmul is dot product/outer product
-        INDArray gram = flattened.mmul(flattened.dup().transpose()); // Is the dup necessary?
+        INDArray gram = flattened.mmul(flattened.transpose()); // Is the dup necessary?
         return gram;
     }
 
@@ -282,12 +283,13 @@ public class NeuralStyleTransfer {
         // Create tensor of 0 and 1 indicating whether values in comboFeatures are positive or negative
 
         comboFeatures = comboFeatures.dup();
+        styleFeatures = styleFeatures.dup();
         double channels = comboFeatures.shape()[0];
         assert comboFeatures.shape()[1] == comboFeatures.shape()[2] : "Images and features must have square shapes";
         double size = comboFeatures.shape()[1];
         double size2 = comboFeatures.shape()[2];
 
-        double styleWeight = 1.0 / ((channels * channels) * (size * size)* (size2 * size2));
+        double styleWeight = 1.0 / ((channels * channels) * (size * size) * (size2 * size2));
         // Corresponds to A^l in equation (6)
         INDArray a = gram_matrix(styleFeatures); // Should this actually be the content image?
         // Corresponds to G^l in equation (6)
@@ -307,10 +309,9 @@ public class NeuralStyleTransfer {
     }
 
     private static INDArray ensurePositive(INDArray comboFeatures) {
-        INDArray mult = comboFeatures.dup();
-        BooleanIndexing.applyWhere(mult, Conditions.lessThan(0.0f), new Value(0.0f));
-        BooleanIndexing.applyWhere(mult, Conditions.greaterThan(0.0f), new Value(1.0f));
-        return mult;
+        BooleanIndexing.applyWhere(comboFeatures, Conditions.lessThan(0.0f), new Value(0.0f));
+        BooleanIndexing.applyWhere(comboFeatures, Conditions.greaterThan(0.0f), new Value(1.0f));
+        return comboFeatures;
     }
 
     /**
