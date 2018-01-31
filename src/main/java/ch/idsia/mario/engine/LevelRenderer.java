@@ -2,6 +2,7 @@ package ch.idsia.mario.engine;
 
 import java.awt.*;
 import ch.idsia.mario.engine.level.*;
+import edu.southwestern.tasks.mario.level.MarioLevelUtil;
 import edu.southwestern.util.graphics.GraphicsUtil;
 
 
@@ -98,7 +99,7 @@ public class LevelRenderer
 			{
 				int b = level.getBlock(x, y) & 0xff;
 				g.drawImage(Art.level[b % 16][b / 16], (x << 4) - xCam, (y << 4) - yCam, null);
-				SpriteTemplate sprite = level.getSpriteTemplate(x,y);
+				SpriteTemplate sprite = level.getSpriteTemplate((xCam/MarioLevelUtil.BLOCK_SIZE) + x,y);
 				if(sprite != null) {
 					sprite.spawn(world, x, y, -1); // dir = -1 means face left
 					sprite.sprite.render(g, 0); // alpha = 0 means fully visible
