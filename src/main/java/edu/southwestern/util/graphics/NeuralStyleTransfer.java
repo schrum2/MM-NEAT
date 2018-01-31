@@ -134,7 +134,7 @@ public class NeuralStyleTransfer {
             dLdANext = backPropagate(vgg16FineTune, dLdANext);
             combination.subi(dLdANext.mul(learningRate)); // Maybe replace with an Updater later?
 
-            if (itr % 50 == 0 && itr != 0) {
+            if (itr % 3 == 0 && itr != 0) {
                 saveImage(scaler, combination, itr);
             }
         }
@@ -197,14 +197,12 @@ public class NeuralStyleTransfer {
      * @return Derivatives of content loss w.r.t. combo features
      */
     public static INDArray derivativeLossContentInLayer(INDArray originalFeatures, INDArray comboFeatures) {
-        // Create tensor of 0 and 1 indicating whether values in comboFeatures are positive or negative
-        INDArray mult = comboFeatures.dup();
-        BooleanIndexing.applyWhere(mult, Conditions.lessThan(0.0f), new Value(0.0f));
-        BooleanIndexing.applyWhere(mult, Conditions.greaterThan(0.0f), new Value(1.0f));
+
+        comboFeatures = comboFeatures.dup();
         // Compute the F^l - P^l portion of equation (2), where F^l = comboFeatures and P^l = originalFeatures
         INDArray diff = comboFeatures.sub(originalFeatures);
         // This multiplication assures that the result is 0 when the value from F^l < 0, but is still F^l - P^l otherwise
-        return diff.mul(mult);
+        return diff.mul(ensurePositive(comboFeatures));
     }
 
     /**
@@ -283,11 +281,13 @@ public class NeuralStyleTransfer {
     public static INDArray derivativeLossStyleInLayer(INDArray styleFeatures, INDArray comboFeatures) {
         // Create tensor of 0 and 1 indicating whether values in comboFeatures are positive or negative
 
+        comboFeatures = comboFeatures.dup();
         double channels = comboFeatures.shape()[0];
         assert comboFeatures.shape()[1] == comboFeatures.shape()[2] : "Images and features must have square shapes";
         double size = comboFeatures.shape()[1];
+        double size2 = comboFeatures.shape()[2];
 
-        double styleWeight = 1.0 / ((channels * channels) * (size * size));
+        double styleWeight = 1.0 / ((channels * channels) * (size * size)* (size2 * size2));
         // Corresponds to A^l in equation (6)
         INDArray a = gram_matrix(styleFeatures); // Should this actually be the content image?
         // Corresponds to G^l in equation (6)
