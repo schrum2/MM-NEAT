@@ -67,11 +67,11 @@ public class NeuralStyleTransferMultipleStyles {
     };
 
     private static final String[] STYLE_LAYERS = new String[]{
-            "block1_conv1,0.2",
-            "block2_conv1,0.2",
-            "block3_conv1,0.2",
-            "block4_conv1,0.2",
-            "block5_conv1,0.2"
+            "block1_conv1,0.5",
+            "block2_conv1,1",
+            "block3_conv1,1.5",
+            "block4_conv1,3",
+            "block5_conv1,4"
     };
 
 //        private static final String[] STYLE_LAYERS = new String[]{
@@ -112,17 +112,19 @@ public class NeuralStyleTransferMultipleStyles {
     public static double content_weight = 0.025;
     public static double style_weight = 5.0;
     public static double total_variation_weight = 1.0;
+    private static final double NOISE_RATION = 0.4;
 
     public static void main(String[] args) throws IOException {
         ComputationGraph vgg16FineTune = loadModel();
         NativeImageLoader loader = new NativeImageLoader(HEIGHT, WIDTH, CHANNELS);
         DataNormalization scaler = new VGG16ImagePreProcessor();
 
-        String contentFile = "data/imagematch/cat.jpg";
+        String contentFile = "data/imagematch/content2.jpg";
         INDArray content = loader.asMatrix(new File(contentFile));
+        INDArray dupContent = content.dup();
         scaler.transform(content);
 
-        String styleFile = "data/imagematch/supercreepypersonimage.jpg";
+        String styleFile = "data/imagematch/style2.jpg";
         INDArray style = loader.asMatrix(new File(styleFile));
         scaler.transform(style);
 
@@ -131,8 +133,8 @@ public class NeuralStyleTransferMultipleStyles {
         int[] upper = new int[totalEntries];
         Arrays.fill(upper, 256);
         INDArray combination = Nd4j.create(ArrayUtil.doubleArrayFromIntegerArray(RandomNumbers.randomIntArray(upper)), new int[]{1, CHANNELS, HEIGHT, WIDTH});
+        combination = combination.mul(NOISE_RATION).add(dupContent.mul(1 - NOISE_RATION));
         scaler.transform(combination);
-
         int iterations = 500;
         double learningRate = 0.000001;
 
@@ -155,8 +157,8 @@ public class NeuralStyleTransferMultipleStyles {
             INDArray layerFeaturesContent = activationsContent.get(layer);
             INDArray layerFeaturesStyle = activationsStyle.get(layer);
             HashMap<String, INDArray> comboMap = createWeightMap(activations);
-            INDArray dStyle = derivativeLossStyle(styleMap, comboMap, vgg16FineTune);
             INDArray dContent = derivativeLossContentInLayer(layerFeaturesContent, layerFeatures, vgg16FineTune);
+            INDArray dStyle = derivativeLossStyle(styleMap, comboMap, vgg16FineTune);
 
 
             INDArray dLdANext = Nd4j.zeros(new int[]{1, CHANNELS, WIDTH, HEIGHT});
@@ -166,7 +168,7 @@ public class NeuralStyleTransferMultipleStyles {
             log(dLdANext, layerFeaturesContent, layerFeaturesStyle, layerFeatures, dContent, dStyle);
             System.out.println("Result pixels.... = " + combination.sumNumber());
 
-            if (itr % 5 == 0 && itr != 0) {
+            if (itr % 5 == 0) {
                 saveImage(scaler, combination.dup(), itr);
             }
         }
@@ -370,8 +372,6 @@ public class NeuralStyleTransferMultipleStyles {
 
         INDArray dlNext = Nd4j.zeros(new int[]{1, CHANNELS, WIDTH, HEIGHT});
         // Create tensor of 0 and 1 indicating whether values in comboFeatures are positive or negative
-        INDArray dup = vgg16.getGradientsViewArray().dup();
-
         for (String styleLayer : STYLE_LAYERS) {
             String[] split = styleLayer.split(",");
             double styleWight = Double.parseDouble(split[1]);
@@ -380,11 +380,8 @@ public class NeuralStyleTransferMultipleStyles {
             INDArray style = styleMap.get(styleLayerName);
             INDArray dStyle = derivativeLossStyleInLayer(style, combo).mul(styleWight);
             dStyle = dStyle.reshape(combo.shape());
-            vgg16.setBackpropGradientsViewArray(dup);
             dlNext = dlNext.add(backPropagate(vgg16, styleLayerName, dStyle));
-
         }
-        vgg16.setBackpropGradientsViewArray(dup);
         return dlNext;
     }
 
@@ -442,7 +439,7 @@ public class NeuralStyleTransferMultipleStyles {
 
         FineTuneConfiguration fineTuneConf = new FineTuneConfiguration.Builder()
                 .learningRate(5e-7)
-                .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
+                .optimizationAlgo(OptimizationAlgorithm.LBFGS)
                 .updater(Updater.ADAM)
                 .seed(1234)
                 .build();

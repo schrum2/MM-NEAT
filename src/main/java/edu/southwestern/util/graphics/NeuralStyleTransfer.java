@@ -75,6 +75,7 @@ public class NeuralStyleTransfer {
     public static double content_weight = 0.025;
     public static double style_weight = 5.0;
     public static double total_variation_weight = 1.0;
+    private static final double NOISE_RATION = 0.4;
 
     public static void main(String[] args) throws IOException {
         ComputationGraph vgg16FineTune = loadModel();
@@ -83,6 +84,7 @@ public class NeuralStyleTransfer {
 
         String contentFile = "data/imagematch/content.jpg";
         INDArray content = loader.asMatrix(new File(contentFile));
+        INDArray dupContent = content.dup();
         scaler.transform(content);
 
         String styleFile = "data/imagematch/style.jpg";
@@ -92,8 +94,8 @@ public class NeuralStyleTransfer {
         // Starting combination image is pure white noise
         int totalEntries = CHANNELS * HEIGHT * WIDTH;
         int[] upper = new int[totalEntries];
-        Arrays.fill(upper, 256);
         INDArray combination = Nd4j.create(ArrayUtil.doubleArrayFromIntegerArray(RandomNumbers.randomIntArray(upper)), new int[]{1, CHANNELS, HEIGHT, WIDTH});
+        combination = combination.mul(NOISE_RATION).add(dupContent.mul(1 - NOISE_RATION));
         scaler.transform(combination);
 
         int iterations = 1000;
