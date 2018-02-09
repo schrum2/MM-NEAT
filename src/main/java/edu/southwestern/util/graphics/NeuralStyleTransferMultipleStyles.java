@@ -11,7 +11,6 @@ import org.datavec.image.loader.NativeImageLoader;
 import org.deeplearning4j.nn.api.Layer;
 import org.deeplearning4j.nn.api.OptimizationAlgorithm;
 import org.deeplearning4j.nn.conf.Updater;
-import org.deeplearning4j.nn.gradient.Gradient;
 import org.deeplearning4j.nn.graph.ComputationGraph;
 import org.deeplearning4j.nn.transferlearning.FineTuneConfiguration;
 import org.deeplearning4j.nn.transferlearning.TransferLearning;
@@ -50,7 +49,6 @@ public class NeuralStyleTransferMultipleStyles {
     public static final int HEIGHT = 224;
     public static final int WIDTH = 224;
     public static final int CHANNELS = 3;
-    public static final int IMAGE_SIZE = HEIGHT * WIDTH;//                "input_1",
     private static final String[] CONTENT_LAYERS = new String[]{
             "block1_conv1",
             "block1_conv2",
@@ -67,11 +65,11 @@ public class NeuralStyleTransferMultipleStyles {
     };
 
     private static final String[] STYLE_LAYERS = new String[]{
-            "block1_conv1,0.5",
-            "block2_conv1,1",
-            "block3_conv1,1.5",
-            "block4_conv1,3",
-            "block5_conv1,4"
+            "block1_conv1,0.1",
+            "block2_conv1,0.1",
+            "block3_conv1,0.2",
+            "block4_conv1,0.2",
+            "block5_conv1,0.4"
     };
 
 //        private static final String[] STYLE_LAYERS = new String[]{
@@ -109,10 +107,9 @@ public class NeuralStyleTransferMultipleStyles {
      * <p>
      * Will likely change this, or make them parameters.
      */
-    public static double content_weight = 0.025;
-    public static double style_weight = 5.0;
-    public static double total_variation_weight = 1.0;
-    private static final double NOISE_RATION = 0.4;
+    public static double alpha = 0.5;
+    public static double beta = 3;
+    private static final double NOISE_RATION = 0.1;
 
     public static void main(String[] args) throws IOException {
         ComputationGraph vgg16FineTune = loadModel();
@@ -141,7 +138,6 @@ public class NeuralStyleTransferMultipleStyles {
         vgg16FineTune.output(content);
         Map<String, INDArray> activationsContent = vgg16FineTune.feedForward();
 
-
         vgg16FineTune.output(style);
         Map<String, INDArray> activationsStyle = vgg16FineTune.feedForward();
         HashMap<String, INDArray> styleMap = createWeightMap(activationsStyle);
@@ -150,22 +146,23 @@ public class NeuralStyleTransferMultipleStyles {
         String layer = CONTENT_LAYERS[CONTENT_LAYERS.length - 1];
         for (int itr = 0; itr < iterations; itr++) {
             System.out.println("Iteration: " + itr);
+
             vgg16FineTune.output(combination);
-            Map<String, INDArray> activations = vgg16FineTune.feedForward();
+            Map<String, INDArray> combActivation = vgg16FineTune.feedForward();
+            INDArray comboFeatures = combActivation.get(layer);
+            HashMap<String, INDArray> combMap = createWeightMap(combActivation);
 
-            INDArray layerFeatures = activations.get(layer);
-            INDArray layerFeaturesContent = activationsContent.get(layer);
-            INDArray layerFeaturesStyle = activationsStyle.get(layer);
-            HashMap<String, INDArray> comboMap = createWeightMap(activations);
-            INDArray dContent = derivativeLossContentInLayer(layerFeaturesContent, layerFeatures, vgg16FineTune);
-            INDArray dStyle = derivativeLossStyle(styleMap, comboMap, vgg16FineTune);
+            INDArray contentFeatures = activationsContent.get(layer);
 
+            System.out.println("totalLos() = " + totalLost(styleMap, combMap, comboFeatures, contentFeatures));
+            INDArray dContent = derivativeLossContentInLayer(contentFeatures, comboFeatures, vgg16FineTune, combination);
+            INDArray dStyle = derivativeLossStyle(styleMap, combMap, vgg16FineTune, combination);
 
             INDArray dLdANext = Nd4j.zeros(new int[]{1, CHANNELS, WIDTH, HEIGHT});
-            dLdANext = dLdANext.add(dContent).add(dStyle);
+            dLdANext = dLdANext.add(dContent.mul(alpha)).add(dStyle.mul(beta));
             combination = combination.sub(dLdANext.mul(learningRate));
 
-            log(dLdANext, layerFeaturesContent, layerFeaturesStyle, layerFeatures, dContent, dStyle);
+            log(dLdANext, contentFeatures, comboFeatures, dContent, dStyle);
             System.out.println("Result pixels.... = " + combination.sumNumber());
 
             if (itr % 5 == 0) {
@@ -182,7 +179,7 @@ public class NeuralStyleTransferMultipleStyles {
         for (String styleLayer : STYLE_LAYERS) {
             String[] split = styleLayer.split(",");
             String styleLayerName = split[0];
-            styleMap.put(styleLayerName, activationsStyle.get(styleLayerName));
+            styleMap.put(styleLayerName, activationsStyle.get(styleLayerName).dup());
         }
         return styleMap;
     }
@@ -231,14 +228,56 @@ public class NeuralStyleTransferMultipleStyles {
      * compute the loss with respect to the content. Based off of:
      * https://harishnarayanan.org/writing/artistic-style-transfer/
      *
-     * @param activations Intermediate layer activations from the three inputs
+     * @param combFeatures    Intermediate layer activations from the three inputs
+     * @param contentFeatures
      * @return Weighted content loss component
      */
-    public static double content_loss(Map<String, INDArray> activations) {
-        INDArray block2_conv2_features = activations.get("block2_conv2");
-        INDArray content_features = block2_conv2_features.get(NDArrayIndex.point(0), NDArrayIndex.all(), NDArrayIndex.all(), NDArrayIndex.all());
-        INDArray combination_features = block2_conv2_features.get(NDArrayIndex.point(2), NDArrayIndex.all(), NDArrayIndex.all(), NDArrayIndex.all());
-        return content_weight * sumOfSquaredErrors(content_features, combination_features);
+    public static double content_loss(INDArray combFeatures, INDArray contentFeatures) {
+        return sumOfSquaredErrors(contentFeatures, combFeatures) / (4.0 * (CHANNELS) * (WIDTH) * (HEIGHT));
+    }
+
+    /**
+     * The overall style loss calculation shown in
+     * https://harishnarayanan.org/writing/artistic-style-transfer/
+     * for every relevant intermediate layer of the CNN.
+     *
+     * @param styleMap Intermediate activations of all CNN layers
+     * @return weighted style loss component
+     */
+    public static double style_loss(Map<String, INDArray> styleMap, Map<String, INDArray> comboMap) {
+
+        double loss = 0.0;
+        for (String layer : STYLE_LAYERS) {
+            String[] split = layer.split(",");
+            String layerName = split[0];
+            double styleWight = Double.parseDouble(split[1]);
+            INDArray comboFeatures = comboMap.get(layerName);
+            INDArray styleFeatures = styleMap.get(layerName);
+            double sl = style_loss_for_one_layer(styleFeatures, comboFeatures);
+            loss += styleWight * sl;
+        }
+        return loss;
+    }
+
+    public static double totalLost(Map<String, INDArray> styleMap, Map<String, INDArray> comboMap, INDArray combFeatures, INDArray contentFeatures) {
+        return alpha * content_loss(combFeatures, contentFeatures) + beta * style_loss(styleMap, comboMap);
+    }
+
+    /**
+     * This method is simply called style_loss in
+     * https://harishnarayanan.org/writing/artistic-style-transfer/
+     * but it takes inputs for intermediate activations from a particular
+     * layer, hence my re-name. These values contribute to the total
+     * style loss.
+     *
+     * @param style       Activations from intermediate layer of CNN for style image input
+     * @param combination Activations from intermediate layer of CNN for combination image input
+     * @return Loss contribution from this comparison
+     */
+    public static double style_loss_for_one_layer(INDArray style, INDArray combination) {
+        INDArray s = gram_matrix(style);
+        INDArray c = gram_matrix(combination);
+        return sumOfSquaredErrors(s, c) / (4.0 * (CHANNELS * CHANNELS) * (WIDTH * WIDTH) * (HEIGHT * HEIGHT));
     }
 
     /**
@@ -249,9 +288,10 @@ public class NeuralStyleTransferMultipleStyles {
      * @param originalFeatures Features at particular layer from the original content image
      * @param comboFeatures    Features at same layer from current combo image
      * @param vgg16
+     * @param combination
      * @return Derivatives of content loss w.r.t. combo features
      */
-    public static INDArray derivativeLossContentInLayer(INDArray originalFeatures, INDArray comboFeatures, ComputationGraph vgg16) {
+    public static INDArray derivativeLossContentInLayer(INDArray originalFeatures, INDArray comboFeatures, ComputationGraph vgg16, INDArray combination) {
         comboFeatures = comboFeatures.dup();
         originalFeatures = originalFeatures.dup();
 
@@ -263,7 +303,10 @@ public class NeuralStyleTransferMultipleStyles {
         // Compute the F^l - P^l portion of equation (2), where F^l = comboFeatures and P^l = originalFeatures
         INDArray diff = comboFeatures.sub(originalFeatures).mul(contentWeight);
         // This multiplication assures that the result is 0 when the value from F^l < 0, but is still F^l - P^l otherwise
-        return backPropagate(vgg16, diff.mul(ensurePositive(comboFeatures)));
+        ComputationGraph clone = vgg16.clone();
+        clone.output(combination);
+        INDArray indArray = backPropagate(clone, diff);
+        return indArray;
     }
 
     /**
@@ -289,46 +332,6 @@ public class NeuralStyleTransferMultipleStyles {
         return x.reshape(shape[0] * shape[1], shape[2] * shape[3]);
     }
 
-    /**
-     * This method is simply called style_loss in
-     * https://harishnarayanan.org/writing/artistic-style-transfer/
-     * but it takes inputs for intermediate activations from a particular
-     * layer, hence my re-name. These values contribute to the total
-     * style loss.
-     *
-     * @param style       Activations from intermediate layer of CNN for style image input
-     * @param combination Activations from intermediate layer of CNN for combination image input
-     * @return Loss contribution from this comparison
-     */
-    public static double style_loss_for_one_layer(INDArray style, INDArray combination) {
-        INDArray s = gram_matrix(style);
-        INDArray c = gram_matrix(combination);
-        return sumOfSquaredErrors(s, c) / (4.0 * (CHANNELS * CHANNELS) * (IMAGE_SIZE * IMAGE_SIZE));
-    }
-
-    /**
-     * The overall style loss calculation shown in
-     * https://harishnarayanan.org/writing/artistic-style-transfer/
-     * for every relevant intermediate layer of the CNN.
-     *
-     * @param activations Intermediate activations of all CNN layers
-     * @return weighted style loss component
-     */
-    public static double style_loss(Map<String, INDArray> activations) {
-        String[] feature_layers = new String[]{
-                "block1_conv2", "block2_conv2",
-                "block3_conv3", "block4_conv3",
-                "block5_conv3"};
-        double loss = 0.0;
-        for (String layer_name : feature_layers) {
-            INDArray layer_features = activations.get(layer_name);
-            INDArray style_features = layer_features.get(NDArrayIndex.point(1), NDArrayIndex.all(), NDArrayIndex.all(), NDArrayIndex.all());
-            INDArray combination_features = layer_features.get(NDArrayIndex.point(2), NDArrayIndex.all(), NDArrayIndex.all(), NDArrayIndex.all());
-            double sl = style_loss_for_one_layer(style_features, combination_features);
-            loss += (style_weight / feature_layers.length) * sl;
-        }
-        return loss;
-    }
 
     /**
      * Equation (6) from the Gatys et all paper: https://arxiv.org/pdf/1508.06576.pdf
@@ -362,25 +365,26 @@ public class NeuralStyleTransferMultipleStyles {
         // (1/(N^2 * M^2)) * ((F^l)^T * (G^l - A^l))
         INDArray posResult = product.mul(styleWeight);
         // This multiplication assures that the result is 0 when the value from F^l < 0, but is still (1/(N^2 * M^2)) * ((F^l)^T * (G^l - A^l)) otherwise
-        return posResult.mul(ensurePositive(trans));
+        return posResult;
     }
 
 
     public static INDArray derivativeLossStyle(HashMap<String, INDArray> styleMap,
-                                               HashMap<String, INDArray> comboMap,
-                                               ComputationGraph vgg16) {
-
+                                               HashMap<String, INDArray> combMap,
+                                               ComputationGraph vgg16, INDArray combination) {
         INDArray dlNext = Nd4j.zeros(new int[]{1, CHANNELS, WIDTH, HEIGHT});
         // Create tensor of 0 and 1 indicating whether values in comboFeatures are positive or negative
         for (String styleLayer : STYLE_LAYERS) {
+            ComputationGraph clone = vgg16.clone();
+            clone.output(combination);
             String[] split = styleLayer.split(",");
             double styleWight = Double.parseDouble(split[1]);
             String styleLayerName = split[0];
-            INDArray combo = comboMap.get(styleLayerName);
+            INDArray combo = combMap.get(styleLayerName);
             INDArray style = styleMap.get(styleLayerName);
             INDArray dStyle = derivativeLossStyleInLayer(style, combo).mul(styleWight);
             dStyle = dStyle.reshape(combo.shape());
-            dlNext = dlNext.add(backPropagate(vgg16, styleLayerName, dStyle));
+            dlNext = dlNext.add(backPropagate(clone, styleLayerName, dStyle));
         }
         return dlNext;
     }
@@ -390,47 +394,6 @@ public class NeuralStyleTransferMultipleStyles {
         BooleanIndexing.applyWhere(comboFeatures, Conditions.lessThan(0.0f), new Value(0.0f));
         BooleanIndexing.applyWhere(comboFeatures, Conditions.greaterThan(0.0f), new Value(1.0f));
         return comboFeatures;
-    }
-
-    /**
-     * Returns weighted total variation loss that smooths the error across the image.
-     * Based on https://harishnarayanan.org/writing/artistic-style-transfer/ again.
-     * I'm not sure what the point of leaving out certain edges is in the tensor bounds,
-     * but I expect the point is to reduce the variance between directly adjacent pixels.
-     *
-     * @param combination Combination image
-     * @return Weighted total variation loss across combo image
-     */
-    public static double total_variation_loss(INDArray combination) {
-        INDArray sliceA1 = combination.get(NDArrayIndex.all(), NDArrayIndex.all(), NDArrayIndex.interval(0, HEIGHT - 1), NDArrayIndex.interval(0, WIDTH - 1));
-        INDArray sliceA2 = combination.get(NDArrayIndex.all(), NDArrayIndex.all(), NDArrayIndex.interval(1, HEIGHT), NDArrayIndex.interval(0, WIDTH - 1));
-        INDArray diffA = sliceA1.sub(sliceA2);
-        INDArray a = Transforms.pow(diffA, 2); // element-wise squaring
-
-        INDArray sliceB1 = combination.get(NDArrayIndex.all(), NDArrayIndex.all(), NDArrayIndex.interval(0, HEIGHT - 1), NDArrayIndex.interval(0, WIDTH - 1));
-        INDArray sliceB2 = combination.get(NDArrayIndex.all(), NDArrayIndex.all(), NDArrayIndex.interval(0, HEIGHT - 1), NDArrayIndex.interval(1, WIDTH));
-        INDArray diffB = sliceB1.sub(sliceB2);
-        INDArray b = Transforms.pow(diffB, 2); // element-wise squaring
-
-        INDArray add = a.add(b);
-        INDArray pow = Transforms.pow(add, 1.25);
-        return total_variation_weight * pow.sumNumber().doubleValue();
-    }
-
-    /**
-     * Computes complete loss function for the neural style transfer
-     * optimization problem by adding up all of the components.
-     *
-     * @param activations Activations from the content, style, and combination images (TODO: cache those that don't change)
-     * @param combination Combined image (so far)
-     * @return Loss value
-     */
-    public static double neuralStyleLoss(Map<String, INDArray> activations, INDArray combination) {
-        double loss = 0;
-        loss += content_loss(activations);
-        loss += style_loss(activations);
-        loss += total_variation_loss(combination);
-        return loss;
     }
 
     private static ComputationGraph loadModel() throws IOException {
@@ -453,9 +416,8 @@ public class NeuralStyleTransferMultipleStyles {
         return vgg16FineTune;
     }
 
-    private static void log(INDArray dLdANext, INDArray content_features, INDArray style_features, INDArray combination_features, INDArray dLcontent_currLayer, INDArray dLstyle_currLayer) {
+    private static void log(INDArray dLdANext, INDArray content_features, INDArray combination_features, INDArray dLcontent_currLayer, INDArray dLstyle_currLayer) {
         System.out.println("content " + content_features.shapeInfoToString());
-        System.out.println("style " + style_features.shapeInfoToString());
         System.out.println("combination " + combination_features.shapeInfoToString());
 
         System.out.println("dlContent " + dLcontent_currLayer.shapeInfoToString());

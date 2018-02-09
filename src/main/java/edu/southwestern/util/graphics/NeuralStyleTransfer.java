@@ -82,12 +82,12 @@ public class NeuralStyleTransfer {
         NativeImageLoader loader = new NativeImageLoader(HEIGHT, WIDTH, CHANNELS);
         DataNormalization scaler = new VGG16ImagePreProcessor();
 
-        String contentFile = "data/imagematch/content.jpg";
+        String contentFile = "data/imagematch/content2.jpg";
         INDArray content = loader.asMatrix(new File(contentFile));
         INDArray dupContent = content.dup();
         scaler.transform(content);
 
-        String styleFile = "data/imagematch/style.jpg";
+        String styleFile = "data/imagematch/style2.jpg";
         INDArray style = loader.asMatrix(new File(styleFile));
         scaler.transform(style);
 
@@ -132,8 +132,6 @@ public class NeuralStyleTransfer {
             combination = combination.sub(dLdANext.mul(learningRate));
 
             log(dLdANext, layerFeaturesContent, layerFeaturesStyle, layerFeatures, dLcontent_currLayer, dLstyle_currLayer);
-
-            System.out.println("Result pixels.... = " + combination.sumNumber());
 
             if (itr % 10 == 0 && itr != 0) {
                 saveImage(scaler, combination.dup(), itr);
@@ -305,10 +303,7 @@ public class NeuralStyleTransfer {
         // G^l - A^l
         INDArray diff = g.sub(a);
         // (F^l)^T * (G^l - A^l)
-        System.out.println("Combo " + comboFeatures.shapeInfoToString());
-        System.out.println("Diff " + diff.shapeInfoToString());
         INDArray trans = flatten(comboFeatures).transpose();
-        System.out.println("Trans " + trans.shapeInfoToString());
         INDArray product = trans.mmul(diff);
         // (1/(N^2 * M^2)) * ((F^l)^T * (G^l - A^l))
         INDArray posResult = product.mul(styleWeight);
