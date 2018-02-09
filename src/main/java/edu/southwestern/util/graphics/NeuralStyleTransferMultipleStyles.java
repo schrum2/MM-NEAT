@@ -107,8 +107,8 @@ public class NeuralStyleTransferMultipleStyles {
      * <p>
      * Will likely change this, or make them parameters.
      */
-    public static double alpha = 0.5;
-    public static double beta = 3;
+    public static double alpha = 5;
+    public static double beta = 100;
     private static final double NOISE_RATION = 0.1;
 
     public static void main(String[] args) throws IOException {
@@ -132,8 +132,8 @@ public class NeuralStyleTransferMultipleStyles {
         INDArray combination = Nd4j.create(ArrayUtil.doubleArrayFromIntegerArray(RandomNumbers.randomIntArray(upper)), new int[]{1, CHANNELS, HEIGHT, WIDTH});
         combination = combination.mul(NOISE_RATION).add(dupContent.mul(1 - NOISE_RATION));
         scaler.transform(combination);
-        int iterations = 500;
-        double learningRate = 0.000001;
+        int iterations = 1000;
+        double learningRate = 0.00000005;
 
         vgg16FineTune.output(content);
         Map<String, INDArray> activationsContent = vgg16FineTune.feedForward();
@@ -162,7 +162,7 @@ public class NeuralStyleTransferMultipleStyles {
             dLdANext = dLdANext.add(dContent.mul(alpha)).add(dStyle.mul(beta));
             combination = combination.sub(dLdANext.mul(learningRate));
 
-            log(dLdANext, contentFeatures, comboFeatures, dContent, dStyle);
+//            log(dLdANext, contentFeatures, comboFeatures, dContent, dStyle);
             System.out.println("Result pixels.... = " + combination.sumNumber());
 
             if (itr % 5 == 0) {
@@ -186,12 +186,8 @@ public class NeuralStyleTransferMultipleStyles {
 
     private static INDArray backPropagate(ComputationGraph vgg16FineTune, INDArray dLdANext) {
         for (int i = CONTENT_LAYERS.length - 1; i >= 0; i--) {
-
-            System.out.println("lowerLayers = " + CONTENT_LAYERS[i]);
-
             Layer layer = vgg16FineTune.getLayer(CONTENT_LAYERS[i]);
             dLdANext = layer.backpropGradient(dLdANext).getSecond();
-            System.out.println("dLdANext.shapeInfoToString()  - " + CONTENT_LAYERS[i] + " >>  " + dLdANext.shapeInfoToString());
         }
 
         return dLdANext;
@@ -199,9 +195,7 @@ public class NeuralStyleTransferMultipleStyles {
 
     private static INDArray backPropagate(ComputationGraph vgg16FineTune, String layerName, INDArray dLdANext) {
         int startFrom = vgg16FineTune.getLayer(layerName).getIndex();
-        System.out.println("Style Back prop from layer name " + layerName);
         for (int i = startFrom; i > 0; i--) {
-            System.out.println("Style layer back " + i);
             Layer layer = vgg16FineTune.getLayer(ALL_LAYERS[i]);
             dLdANext = layer.backpropGradient(dLdANext).getSecond();
         }
@@ -303,9 +297,9 @@ public class NeuralStyleTransferMultipleStyles {
         // Compute the F^l - P^l portion of equation (2), where F^l = comboFeatures and P^l = originalFeatures
         INDArray diff = comboFeatures.sub(originalFeatures).mul(contentWeight);
         // This multiplication assures that the result is 0 when the value from F^l < 0, but is still F^l - P^l otherwise
-        ComputationGraph clone = vgg16.clone();
-        clone.output(combination);
-        INDArray indArray = backPropagate(clone, diff);
+//        ComputationGraph clone = vgg16.clone();
+//        clone.output(combination);
+        INDArray indArray = backPropagate(vgg16, diff);
         return indArray;
     }
 
@@ -375,8 +369,8 @@ public class NeuralStyleTransferMultipleStyles {
         INDArray dlNext = Nd4j.zeros(new int[]{1, CHANNELS, WIDTH, HEIGHT});
         // Create tensor of 0 and 1 indicating whether values in comboFeatures are positive or negative
         for (String styleLayer : STYLE_LAYERS) {
-            ComputationGraph clone = vgg16.clone();
-            clone.output(combination);
+//            ComputationGraph clone = vgg16.clone();
+//            clone.output(combination);
             String[] split = styleLayer.split(",");
             double styleWight = Double.parseDouble(split[1]);
             String styleLayerName = split[0];
@@ -384,7 +378,7 @@ public class NeuralStyleTransferMultipleStyles {
             INDArray style = styleMap.get(styleLayerName);
             INDArray dStyle = derivativeLossStyleInLayer(style, combo).mul(styleWight);
             dStyle = dStyle.reshape(combo.shape());
-            dlNext = dlNext.add(backPropagate(clone, styleLayerName, dStyle));
+            dlNext = dlNext.add(backPropagate(vgg16, styleLayerName, dStyle));
         }
         return dlNext;
     }
