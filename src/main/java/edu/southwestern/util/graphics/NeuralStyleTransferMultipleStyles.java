@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.datavec.image.loader.NativeImageLoader;
@@ -30,7 +31,6 @@ import org.nd4j.linalg.ops.transforms.Transforms;
 import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.random.RandomNumbers;
-import org.nd4j.linalg.primitives.Pair;
 
 import javax.imageio.ImageIO;
 
@@ -42,7 +42,7 @@ import javax.imageio.ImageIO;
  *
  * @author Jacob Schrum
  */
-public class NeuralStyleTransfer {
+public class NeuralStyleTransferMultipleStyles {
 
     /**
      * Image conversion/size properties
@@ -51,8 +51,7 @@ public class NeuralStyleTransfer {
     public static final int WIDTH = 224;
     public static final int CHANNELS = 3;
     public static final int IMAGE_SIZE = HEIGHT * WIDTH;//                "input_1",
-    private static final String[] LOWER_LAYERS = new String[]{
-//                "input_1",
+    private static final String[] CONTENT_LAYERS = new String[]{
             "block1_conv1",
             "block1_conv2",
             "block1_pool",
@@ -66,6 +65,44 @@ public class NeuralStyleTransfer {
             "block4_conv1",
             "block4_conv2"
     };
+
+    private static final String[] STYLE_LAYERS = new String[]{
+            "block1_conv1,0.2",
+            "block2_conv1,0.2",
+            "block3_conv1,0.2",
+            "block4_conv1,0.2",
+            "block5_conv1,0.2"
+    };
+
+//        private static final String[] STYLE_LAYERS = new String[]{
+//            "block4_conv2,1"
+//    };
+
+    private static final String[] ALL_LAYERS = new String[]{
+            "input_1",
+            "block1_conv1",
+            "block1_conv2",
+            "block1_pool",
+            "block2_conv1",
+            "block2_conv2",
+            "block2_pool",
+            "block3_conv1",
+            "block3_conv2",
+            "block3_conv3",
+            "block3_pool",
+            "block4_conv1",
+            "block4_conv2",
+            "block4_conv3",
+            "block4_pool",
+            "block5_conv1",
+            "block5_conv2",
+            "block5_conv3",
+            "block5_pool",
+            "flatten",
+            "fc1",
+            "fc2"
+    };
+
     /**
      * Values suggested by
      * https://harishnarayanan.org/writing/artistic-style-transfer/
@@ -81,11 +118,11 @@ public class NeuralStyleTransfer {
         NativeImageLoader loader = new NativeImageLoader(HEIGHT, WIDTH, CHANNELS);
         DataNormalization scaler = new VGG16ImagePreProcessor();
 
-        String contentFile = "data/imagematch/content.jpg";
+        String contentFile = "data/imagematch/cat.jpg";
         INDArray content = loader.asMatrix(new File(contentFile));
         scaler.transform(content);
 
-        String styleFile = "data/imagematch/style.jpg";
+        String styleFile = "data/imagematch/supercreepypersonimage.jpg";
         INDArray style = loader.asMatrix(new File(styleFile));
         scaler.transform(style);
 
@@ -96,44 +133,40 @@ public class NeuralStyleTransfer {
         INDArray combination = Nd4j.create(ArrayUtil.doubleArrayFromIntegerArray(RandomNumbers.randomIntArray(upper)), new int[]{1, CHANNELS, HEIGHT, WIDTH});
         scaler.transform(combination);
 
-        int iterations = 1000;
-        double learningRate = 0.00001;
+        int iterations = 500;
+        double learningRate = 0.000001;
 
         vgg16FineTune.output(content);
         Map<String, INDArray> activationsContent = vgg16FineTune.feedForward();
 
+
         vgg16FineTune.output(style);
         Map<String, INDArray> activationsStyle = vgg16FineTune.feedForward();
+        HashMap<String, INDArray> styleMap = createWeightMap(activationsStyle);
 
-        String layer = LOWER_LAYERS[LOWER_LAYERS.length - 1];
+
+        String layer = CONTENT_LAYERS[CONTENT_LAYERS.length - 1];
         for (int itr = 0; itr < iterations; itr++) {
             System.out.println("Iteration: " + itr);
-
             vgg16FineTune.output(combination);
             Map<String, INDArray> activations = vgg16FineTune.feedForward();
 
-            System.out.println("Arrays.asList(shape) = " + activations.get(layer).shapeInfoToString());
-
-            INDArray dLdANext = Nd4j.zeros(new int[]{512, 784});    //Shape: size of activations of block2_conv2 for one image
-            // This code below doesn't actually use the result of the loss function, just the derivatives. Is this ok?
             INDArray layerFeatures = activations.get(layer);
             INDArray layerFeaturesContent = activationsContent.get(layer);
             INDArray layerFeaturesStyle = activationsStyle.get(layer);
-            INDArray dLcontent_currLayer = flatten(derivativeLossContentInLayer(layerFeaturesContent, layerFeatures));
-            INDArray dLstyle_currLayer = derivativeLossStyleInLayer(layerFeaturesStyle, layerFeatures).transpose();
+            HashMap<String, INDArray> comboMap = createWeightMap(activations);
+            INDArray dStyle = derivativeLossStyle(styleMap, comboMap, vgg16FineTune);
+            INDArray dContent = derivativeLossContentInLayer(layerFeaturesContent, layerFeatures, vgg16FineTune);
 
 
-            dLdANext = dLdANext.add(dLcontent_currLayer.mul(content_weight)).add(dLstyle_currLayer.mul(style_weight));
-            dLdANext = dLdANext.reshape(new int[]{1, 512, 28, 28});
-
-            dLdANext = backPropagate(vgg16FineTune, dLdANext, layerFeatures);
+            INDArray dLdANext = Nd4j.zeros(new int[]{1, CHANNELS, WIDTH, HEIGHT});
+            dLdANext = dLdANext.add(dContent).add(dStyle);
             combination = combination.sub(dLdANext.mul(learningRate));
 
-            log(dLdANext, layerFeaturesContent, layerFeaturesStyle, layerFeatures, dLcontent_currLayer, dLstyle_currLayer);
-
+            log(dLdANext, layerFeaturesContent, layerFeaturesStyle, layerFeatures, dContent, dStyle);
             System.out.println("Result pixels.... = " + combination.sumNumber());
 
-            if (itr % 10 == 0 && itr != 0) {
+            if (itr % 5 == 0 && itr != 0) {
                 saveImage(scaler, combination.dup(), itr);
             }
         }
@@ -142,17 +175,37 @@ public class NeuralStyleTransfer {
         MiscUtil.waitForReadStringAndEnterKeyPress();
     }
 
-    private static INDArray backPropagate(ComputationGraph vgg16FineTune, INDArray dLdANext, INDArray input) {
-        ;
-        for (int i = LOWER_LAYERS.length - 1; i >= 0; i--) {
+    private static HashMap<String, INDArray> createWeightMap(Map<String, INDArray> activationsStyle) {
+        HashMap<String, INDArray> styleMap = new HashMap<>();
+        for (String styleLayer : STYLE_LAYERS) {
+            String[] split = styleLayer.split(",");
+            String styleLayerName = split[0];
+            styleMap.put(styleLayerName, activationsStyle.get(styleLayerName));
+        }
+        return styleMap;
+    }
 
-            System.out.println("lowerLayers = " + LOWER_LAYERS[i]);
+    private static INDArray backPropagate(ComputationGraph vgg16FineTune, INDArray dLdANext) {
+        for (int i = CONTENT_LAYERS.length - 1; i >= 0; i--) {
 
-            Layer layer = vgg16FineTune.getLayer(LOWER_LAYERS[i]);
+            System.out.println("lowerLayers = " + CONTENT_LAYERS[i]);
+
+            Layer layer = vgg16FineTune.getLayer(CONTENT_LAYERS[i]);
             dLdANext = layer.backpropGradient(dLdANext).getSecond();
-            System.out.println("dLdANext.shapeInfoToString()  - " + LOWER_LAYERS[i] + " >>  " + dLdANext.shapeInfoToString());
+            System.out.println("dLdANext.shapeInfoToString()  - " + CONTENT_LAYERS[i] + " >>  " + dLdANext.shapeInfoToString());
         }
 
+        return dLdANext;
+    }
+
+    private static INDArray backPropagate(ComputationGraph vgg16FineTune, String layerName, INDArray dLdANext) {
+        int startFrom = vgg16FineTune.getLayer(layerName).getIndex();
+        System.out.println("Style Back prop from layer name " + layerName);
+        for (int i = startFrom; i > 0; i--) {
+            System.out.println("Style layer back " + i);
+            Layer layer = vgg16FineTune.getLayer(ALL_LAYERS[i]);
+            dLdANext = layer.backpropGradient(dLdANext).getSecond();
+        }
         return dLdANext;
     }
 
@@ -193,23 +246,22 @@ public class NeuralStyleTransfer {
      *
      * @param originalFeatures Features at particular layer from the original content image
      * @param comboFeatures    Features at same layer from current combo image
+     * @param vgg16
      * @return Derivatives of content loss w.r.t. combo features
      */
-    public static INDArray derivativeLossContentInLayer(INDArray originalFeatures, INDArray comboFeatures) {
-
+    public static INDArray derivativeLossContentInLayer(INDArray originalFeatures, INDArray comboFeatures, ComputationGraph vgg16) {
         comboFeatures = comboFeatures.dup();
         originalFeatures = originalFeatures.dup();
 
-        double channels = comboFeatures.shape()[0];
-        assert comboFeatures.shape()[1] == comboFeatures.shape()[2] : "Images and features must have square shapes";
-        double w = comboFeatures.shape()[1];
-        double h = comboFeatures.shape()[2];
+        double N = comboFeatures.shape()[0];
+        double M = comboFeatures.shape()[1] * comboFeatures.shape()[2];
 
-        double contentWeight = 1.0 / (2 * (channels) * (w) * (h));
+        double contentWeight = 1.0 / (2 * (N * M));
+
         // Compute the F^l - P^l portion of equation (2), where F^l = comboFeatures and P^l = originalFeatures
-        INDArray diff = comboFeatures.sub(originalFeatures);
+        INDArray diff = comboFeatures.sub(originalFeatures).mul(contentWeight);
         // This multiplication assures that the result is 0 when the value from F^l < 0, but is still F^l - P^l otherwise
-        return diff.mul(contentWeight).mul(ensurePositive(comboFeatures));
+        return backPropagate(vgg16, diff.mul(ensurePositive(comboFeatures)));
     }
 
     /**
@@ -287,15 +339,15 @@ public class NeuralStyleTransfer {
      */
     public static INDArray derivativeLossStyleInLayer(INDArray styleFeatures, INDArray comboFeatures) {
         // Create tensor of 0 and 1 indicating whether values in comboFeatures are positive or negative
-
         comboFeatures = comboFeatures.dup();
         styleFeatures = styleFeatures.dup();
-        double channels = comboFeatures.shape()[0];
-        assert comboFeatures.shape()[1] == comboFeatures.shape()[2] : "Images and features must have square shapes";
-        double size = comboFeatures.shape()[1];
-        double size2 = comboFeatures.shape()[2];
 
-        double styleWeight = 1.0 / ((channels * channels) * (size * size) * (size2 * size2));
+
+        double N = comboFeatures.shape()[0];
+        double M = comboFeatures.shape()[1] * comboFeatures.shape()[2];
+
+
+        double styleWeight = 1.0 / ((N * N) * (M * M));
         // Corresponds to A^l in equation (6)
         INDArray a = gram_matrix(styleFeatures); // Should this actually be the content image?
         // Corresponds to G^l in equation (6)
@@ -303,16 +355,39 @@ public class NeuralStyleTransfer {
         // G^l - A^l
         INDArray diff = g.sub(a);
         // (F^l)^T * (G^l - A^l)
-        System.out.println("Combo " + comboFeatures.shapeInfoToString());
-        System.out.println("Diff " + diff.shapeInfoToString());
         INDArray trans = flatten(comboFeatures).transpose();
-        System.out.println("Trans " + trans.shapeInfoToString());
         INDArray product = trans.mmul(diff);
         // (1/(N^2 * M^2)) * ((F^l)^T * (G^l - A^l))
         INDArray posResult = product.mul(styleWeight);
         // This multiplication assures that the result is 0 when the value from F^l < 0, but is still (1/(N^2 * M^2)) * ((F^l)^T * (G^l - A^l)) otherwise
         return posResult.mul(ensurePositive(trans));
     }
+
+
+    public static INDArray derivativeLossStyle(HashMap<String, INDArray> styleMap,
+                                               HashMap<String, INDArray> comboMap,
+                                               ComputationGraph vgg16) {
+
+        INDArray dlNext = Nd4j.zeros(new int[]{1, CHANNELS, WIDTH, HEIGHT});
+        // Create tensor of 0 and 1 indicating whether values in comboFeatures are positive or negative
+        INDArray dup = vgg16.getGradientsViewArray().dup();
+
+        for (String styleLayer : STYLE_LAYERS) {
+            String[] split = styleLayer.split(",");
+            double styleWight = Double.parseDouble(split[1]);
+            String styleLayerName = split[0];
+            INDArray combo = comboMap.get(styleLayerName);
+            INDArray style = styleMap.get(styleLayerName);
+            INDArray dStyle = derivativeLossStyleInLayer(style, combo).mul(styleWight);
+            dStyle = dStyle.reshape(combo.shape());
+            vgg16.setBackpropGradientsViewArray(dup);
+            dlNext = dlNext.add(backPropagate(vgg16, styleLayerName, dStyle));
+
+        }
+        vgg16.setBackpropGradientsViewArray(dup);
+        return dlNext;
+    }
+
 
     private static INDArray ensurePositive(INDArray comboFeatures) {
         BooleanIndexing.applyWhere(comboFeatures, Conditions.lessThan(0.0f), new Value(0.0f));
