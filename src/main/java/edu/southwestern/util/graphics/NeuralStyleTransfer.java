@@ -46,29 +46,15 @@ public class NeuralStyleTransfer {
     public static final int HEIGHT = 224;
     public static final int WIDTH = 224;
     public static final int CHANNELS = 3;
-    public static final int IMAGE_SIZE = HEIGHT * WIDTH;//                "input_1",
-    private static final String[] LOWER_LAYERS = new String[]{
-//                "input_1",
-            "block1_conv1",
-            "block1_conv2",
-            "block1_pool",
-            "block2_conv1",
-            "block2_conv2",
-            "block2_pool",
-            "block3_conv1",
-            "block3_conv2",
-            "block3_conv3",
-            "block3_pool",
-            "block4_conv1",
-            "block4_conv2"
-    };
+    public static final int IMAGE_SIZE = HEIGHT * WIDTH;
+
 
     private static final String[] STYLE_LAYERS = new String[]{
-//            "block1_conv1,0.1",
-//            "block2_conv1,0.3",
-//            "block3_conv1,0.2",
-            "block4_conv2,1.0",
-//            "block5_conv1,1"
+            "block1_conv1,0.2",
+            "block2_conv1,0.2",
+            "block3_conv1,0.2",
+            "block4_conv2,0.2",
+            "block5_conv1,0.2"
     };
 
 
@@ -107,6 +93,7 @@ public class NeuralStyleTransfer {
     public static double beta = 5.0;
     public static double total_variation_weight = 1.0;
     private static final double NOISE_RATION = 0.1;
+    private static final String CONTENT_LAYER_NAME = "block4_conv2";
 
     public static void main(String[] args) throws IOException {
         ComputationGraph vgg16FineTune = loadModel();
@@ -131,7 +118,7 @@ public class NeuralStyleTransfer {
         scaler.transform(combination);
 
         int iterations = 1000;
-        double learningRate = 0.00001;
+        double learningRate = 0.000001;
 
         vgg16FineTune.output(content);
         Map<String, INDArray> activationsContent = vgg16FineTune.feedForward();
@@ -139,15 +126,14 @@ public class NeuralStyleTransfer {
         vgg16FineTune.output(style);
         Map<String, INDArray> activationsStyle = vgg16FineTune.feedForward();
 
-        String contentLayerName = LOWER_LAYERS[LOWER_LAYERS.length - 1];
         for (int itr = 0; itr < iterations; itr++) {
             System.out.println("itr = " + itr);
             vgg16FineTune.output(combination);
             Map<String, INDArray> activations = vgg16FineTune.feedForward();
 
 
-            INDArray layerFeatures = activations.get(contentLayerName);
-            INDArray layerFeaturesContent = activationsContent.get(contentLayerName);
+            INDArray layerFeatures = activations.get(CONTENT_LAYER_NAME);
+            INDArray layerFeaturesContent = activationsContent.get(CONTENT_LAYER_NAME);
             INDArray styleBackProb = Nd4j.zeros(combination.shape());
             Map<String, INDArray> styleMap = new HashMap<>();
             Map<String, INDArray> combMap = new HashMap<>();
@@ -159,16 +145,16 @@ public class NeuralStyleTransfer {
                 double weight = Double.parseDouble(split[1]);
                 int index = findLayerIndex(styleLayerName);
                 INDArray dStyleValues = derivativeLossStyleInLayer(styleValues, combValues).transpose();
-                styleBackProb = styleBackProb.add(backPropagate(vgg16FineTune, dStyleValues.mul(beta).mul(weight).reshape(styleValues.shape()), index));
+                styleBackProb = styleBackProb.add(backPropagate(vgg16FineTune, dStyleValues.reshape(styleValues.shape()), index).mul(weight));
                 styleMap.put(styleLayerName, styleValues.dup());
                 combMap.put(styleLayerName, combValues.dup());
             }
 
             int[] newShape = layerFeatures.shape();
             INDArray dLcontent_currLayer = flatten(derivativeLossContentInLayer(layerFeaturesContent, layerFeatures));
-            INDArray backPropContent = backPropagate(vgg16FineTune, dLcontent_currLayer.reshape(newShape).mul(alpha), findLayerIndex(contentLayerName));
+            INDArray backPropContent = backPropagate(vgg16FineTune, dLcontent_currLayer.reshape(newShape), findLayerIndex(CONTENT_LAYER_NAME));
 
-            combination = combination.sub(backPropContent.add(styleBackProb).mul(learningRate));
+            combination = combination.sub(backPropContent.mul(alpha).add(styleBackProb.mul(beta)).mul(learningRate));
             System.out.println("Total Loss >> " + totalLoss(styleMap, combMap, layerFeatures.dup(), layerFeaturesContent.dup()));
 
             if (itr % 5 == 0 && itr != 0) {
@@ -207,7 +193,7 @@ public class NeuralStyleTransfer {
             String[] split = styleLayers.split(",");
             String styleLayerName = split[0];
             double weight = Double.parseDouble(split[1]);
-            styles += styleLoss(styleMap.get(styleLayerName).mul(weight), comboMap.get(styleLayerName));
+            styles += styleLoss(styleMap.get(styleLayerName), comboMap.get(styleLayerName)) * weight;
         }
         return alpha * contentLoss(comboFeatures, contentFeatures) + beta * styles;
     }
