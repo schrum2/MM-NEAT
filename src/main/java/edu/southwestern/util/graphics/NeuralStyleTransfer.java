@@ -1,11 +1,8 @@
 package edu.southwestern.util.graphics;
 
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Map;
-
+import edu.southwestern.util.MiscUtil;
+import edu.southwestern.util.datastructures.ArrayUtil;
+import edu.southwestern.util.random.RandomNumbers;
 import org.datavec.image.loader.NativeImageLoader;
 import org.deeplearning4j.nn.api.Layer;
 import org.deeplearning4j.nn.api.OptimizationAlgorithm;
@@ -21,16 +18,17 @@ import org.nd4j.linalg.dataset.api.preprocessor.DataNormalization;
 import org.nd4j.linalg.dataset.api.preprocessor.VGG16ImagePreProcessor;
 import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.indexing.BooleanIndexing;
-import org.nd4j.linalg.indexing.NDArrayIndex;
 import org.nd4j.linalg.indexing.conditions.Conditions;
 import org.nd4j.linalg.indexing.functions.Value;
 import org.nd4j.linalg.ops.transforms.Transforms;
 
-import edu.southwestern.util.MiscUtil;
-import edu.southwestern.util.datastructures.ArrayUtil;
-import edu.southwestern.util.random.RandomNumbers;
-
 import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * My attempt to implement the neural style transfer algorithm in DL4J:
@@ -64,6 +62,41 @@ public class NeuralStyleTransfer {
             "block4_conv1",
             "block4_conv2"
     };
+
+    private static final String[] STYLE_LAYERS = new String[]{
+//            "block1_conv1,0.1",
+//            "block2_conv1,0.3",
+//            "block3_conv1,0.2",
+            "block4_conv2,1.0",
+//            "block5_conv1,1"
+    };
+
+
+    private static final String[] ALL_LAYERS = new String[]{
+            "input_1",
+            "block1_conv1",
+            "block1_conv2",
+            "block1_pool",
+            "block2_conv1",
+            "block2_conv2",
+            "block2_pool",
+            "block3_conv1",
+            "block3_conv2",
+            "block3_conv3",
+            "block3_pool",
+            "block4_conv1",
+            "block4_conv2",
+            "block4_conv3",
+            "block4_pool",
+            "block5_conv1",
+            "block5_conv2",
+            "block5_conv3",
+            "block5_pool",
+            "flatten",
+            "fc1",
+            "fc2"
+    };
+
     /**
      * Values suggested by
      * https://harishnarayanan.org/writing/artistic-style-transfer/
@@ -106,36 +139,56 @@ public class NeuralStyleTransfer {
         vgg16FineTune.output(style);
         Map<String, INDArray> activationsStyle = vgg16FineTune.feedForward();
 
-        String layer = LOWER_LAYERS[LOWER_LAYERS.length - 1];
+        String contentLayerName = LOWER_LAYERS[LOWER_LAYERS.length - 1];
         for (int itr = 0; itr < iterations; itr++) {
             System.out.println("itr = " + itr);
             vgg16FineTune.output(combination);
             Map<String, INDArray> activations = vgg16FineTune.feedForward();
 
 
-            INDArray dLdANext = Nd4j.zeros(new int[]{512, 784});    //Shape: size of activations of block2_conv2 for one image
-            // This code below doesn't actually use the result of the loss function, just the derivatives. Is this ok?
-            INDArray layerFeatures = activations.get(layer);
-            INDArray layerFeaturesContent = activationsContent.get(layer);
-            INDArray layerFeaturesStyle = activationsStyle.get(layer);
+            INDArray layerFeatures = activations.get(contentLayerName);
+            INDArray layerFeaturesContent = activationsContent.get(contentLayerName);
+            INDArray styleBackProb = Nd4j.zeros(combination.shape());
+            Map<String, INDArray> styleMap = new HashMap<>();
+            Map<String, INDArray> combMap = new HashMap<>();
+            for (String styleLayer : STYLE_LAYERS) {
+                String[] split = styleLayer.split(",");
+                String styleLayerName = split[0];
+                INDArray styleValues = activationsStyle.get(styleLayerName);
+                INDArray combValues = activations.get(styleLayerName);
+                double weight = Double.parseDouble(split[1]);
+                int index = findLayerIndex(styleLayerName);
+                INDArray dStyleValues = derivativeLossStyleInLayer(styleValues, combValues).transpose();
+                styleBackProb = styleBackProb.add(backPropagate(vgg16FineTune, dStyleValues.mul(beta).mul(weight).reshape(styleValues.shape()), index));
+                styleMap.put(styleLayerName, styleValues.dup());
+                combMap.put(styleLayerName, combValues.dup());
+            }
+
+            int[] newShape = layerFeatures.shape();
             INDArray dLcontent_currLayer = flatten(derivativeLossContentInLayer(layerFeaturesContent, layerFeatures));
-            INDArray dLstyle_currLayer = derivativeLossStyleInLayer(layerFeaturesStyle, layerFeatures).transpose();
+            INDArray backPropContent = backPropagate(vgg16FineTune, dLcontent_currLayer.reshape(newShape).mul(alpha), findLayerIndex(contentLayerName));
 
+            combination = combination.sub(backPropContent.add(styleBackProb).mul(learningRate));
+            System.out.println("Total Loss >> " + totalLoss(styleMap, combMap, layerFeatures.dup(), layerFeaturesContent.dup()));
 
-            dLdANext = dLdANext.add(dLcontent_currLayer.mul(alpha)).add(dLstyle_currLayer.mul(beta));
-            dLdANext = dLdANext.reshape(new int[]{1, 512, 28, 28});
-
-            dLdANext = backPropagate(vgg16FineTune, dLdANext, layerFeatures);
-            combination = combination.sub(dLdANext.mul(learningRate));
-            System.out.println("Total Loss >> " + totalLoss(layerFeaturesStyle.dup(), layerFeatures.dup(), layerFeaturesContent.dup()));
-
-            if (itr % 10 == 0 && itr != 0) {
+            if (itr % 5 == 0 && itr != 0) {
                 saveImage(scaler, combination.dup(), itr);
             }
         }
         BufferedImage output = saveImage(scaler, combination, iterations);
         DrawingPanel panel = GraphicsUtil.drawImage(output, "Combined Image", WIDTH, HEIGHT);
         MiscUtil.waitForReadStringAndEnterKeyPress();
+    }
+
+    private static int findLayerIndex(String styleLayerName) {
+        int index = 0;
+        for (int i = 0; i < ALL_LAYERS.length; i++) {
+            if (styleLayerName.equalsIgnoreCase(ALL_LAYERS[i])) {
+                index = i;
+                break;
+            }
+        }
+        return index;
     }
 
 
@@ -148,14 +201,21 @@ public class NeuralStyleTransfer {
         return style_loss_for_one_layer(styleFeatures, comboFeatures);
     }
 
-    public static double totalLoss(INDArray styleFeatures, INDArray comboFeatures, INDArray contentFeatures) {
-        return alpha * contentLoss(comboFeatures, contentFeatures) + beta * styleLoss(styleFeatures, comboFeatures);
+    public static double totalLoss(Map<String, INDArray> styleMap, Map<String, INDArray> comboMap, INDArray comboFeatures, INDArray contentFeatures) {
+        Double styles = 0.0;
+        for (String styleLayers : STYLE_LAYERS) {
+            String[] split = styleLayers.split(",");
+            String styleLayerName = split[0];
+            double weight = Double.parseDouble(split[1]);
+            styles += styleLoss(styleMap.get(styleLayerName).mul(weight), comboMap.get(styleLayerName));
+        }
+        return alpha * contentLoss(comboFeatures, contentFeatures) + beta * styles;
     }
 
-    private static INDArray backPropagate(ComputationGraph vgg16FineTune, INDArray dLdANext, INDArray input) {
+    private static INDArray backPropagate(ComputationGraph vgg16FineTune, INDArray dLdANext, int startFrom) {
         ;
-        for (int i = LOWER_LAYERS.length - 1; i >= 0; i--) {
-            Layer layer = vgg16FineTune.getLayer(LOWER_LAYERS[i]);
+        for (int i = startFrom; i > 0; i--) {
+            Layer layer = vgg16FineTune.getLayer(ALL_LAYERS[i]);
             dLdANext = layer.backpropGradient(dLdANext).getSecond();
         }
 
@@ -292,7 +352,7 @@ public class NeuralStyleTransfer {
 
         FineTuneConfiguration fineTuneConf = new FineTuneConfiguration.Builder()
                 .learningRate(5e-7)
-                .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
+                .optimizationAlgo(OptimizationAlgorithm.LBFGS)
                 .updater(Updater.ADAM)
                 .seed(1234)
                 .build();
