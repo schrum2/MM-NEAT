@@ -32,12 +32,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * My attempt to implement the neural style transfer algorithm in DL4J:
+ * Neural Style Transfer Algorithm in DL4J:
  * https://arxiv.org/pdf/1508.06576.pdf
  * https://arxiv.org/pdf/1603.08155.pdf
  * https://harishnarayanan.org/writing/artistic-style-transfer/
  *
- * @author Jacob Schrum
+ * @author Jacob Schrum & Klevis Ramo
  */
 public class NeuralStyleTransfer {
 
@@ -103,7 +103,6 @@ public class NeuralStyleTransfer {
 
     public static void main(String[] args) throws IOException {
         ComputationGraph vgg16FineTune = loadModel();
-
         NativeImageLoader loader = new NativeImageLoader(HEIGHT, WIDTH, CHANNELS);
         DataNormalization imagePreProcessor = new VGG16ImagePreProcessor();
 
@@ -123,14 +122,14 @@ public class NeuralStyleTransfer {
             System.out.println("itr = " + itr);
             Map<String, INDArray> activationsCombMap = vgg16FineTune.feedForward(combination, true);
 
-            INDArray styleBackProb = backPropagateStyle(vgg16FineTune, activationsStyleGramMap, activationsCombMap);
+            INDArray styleBackProb = backPropagateStyles(vgg16FineTune, activationsStyleGramMap, activationsCombMap);
 
             INDArray backPropContent = backPropagateContent(vgg16FineTune, activationsContentMap, activationsCombMap);
 
-            INDArray backPropAll = backPropContent.muli(ALPHA).addi(styleBackProb.muli(BETA));
+            INDArray backPropAllValues = backPropContent.muli(ALPHA).addi(styleBackProb.muli(BETA));
 
-            adamUpdater.applyUpdater(backPropAll, itr);
-            combination.subi(backPropAll);
+            adamUpdater.applyUpdater(backPropAllValues, itr);
+            combination.subi(backPropAllValues);
 
             System.out.println("Total Loss >> " + totalLoss(activationsStyleMap, activationsCombMap, activationsContentMap));
             if (itr % 5 == 0 && itr != 0) {
@@ -140,7 +139,7 @@ public class NeuralStyleTransfer {
 
     }
 
-    private static INDArray backPropagateStyle(ComputationGraph vgg16FineTune, HashMap<String, INDArray> activationsStyleGramMap, Map<String, INDArray> activationsCombMap) {
+    private static INDArray backPropagateStyles(ComputationGraph vgg16FineTune, HashMap<String, INDArray> activationsStyleGramMap, Map<String, INDArray> activationsCombMap) {
         INDArray styleBackProb = Nd4j.zeros(new int[]{1, CHANNELS, WIDTH, HEIGHT});
         for (String styleLayer : STYLE_LAYERS) {
             String[] split = styleLayer.split(",");
@@ -265,25 +264,24 @@ public class NeuralStyleTransfer {
      * This is the derivative of the content loss w.r.t. the combo image features
      * within a specific layer of the CNN.
      *
-     * @param originalFeatures Features at particular layer from the original content image
-     * @param comboFeatures    Features at same layer from current combo image
+     * @param contentActivations Features at particular layer from the original content image
+     * @param combActivations    Features at same layer from current combo image
      * @return Derivatives of content loss w.r.t. combo features
      */
-    public static INDArray derivativeLossContentInLayer(INDArray originalFeatures, INDArray comboFeatures) {
+    public static INDArray derivativeLossContentInLayer(INDArray contentActivations, INDArray combActivations) {
 
-        comboFeatures = comboFeatures.dup();
-        originalFeatures = originalFeatures.dup();
+        combActivations = combActivations.dup();
+        contentActivations = contentActivations.dup();
 
-        double channels = comboFeatures.shape()[0];
-        assert comboFeatures.shape()[1] == comboFeatures.shape()[2] : "Images and features must have square shapes";
-        double w = comboFeatures.shape()[1];
-        double h = comboFeatures.shape()[2];
+        double channels = combActivations.shape()[0];
+        double w = combActivations.shape()[1];
+        double h = combActivations.shape()[2];
 
         double contentWeight = 1.0 / (2 * (channels) * (w) * (h));
         // Compute the F^l - P^l portion of equation (2), where F^l = comboFeatures and P^l = originalFeatures
-        INDArray diff = comboFeatures.sub(originalFeatures);
+        INDArray diff = combActivations.sub(contentActivations);
         // This multiplication assures that the result is 0 when the value from F^l < 0, but is still F^l - P^l otherwise
-        return flatten(diff.muli(contentWeight).muli(ensurePositive(comboFeatures)));
+        return flatten(diff.muli(contentWeight).muli(ensurePositive(combActivations)));
     }
 
     /**
@@ -299,7 +297,6 @@ public class NeuralStyleTransfer {
      */
     public static INDArray gram_matrix(INDArray x) {
         INDArray flattened = flatten(x);
-        // mmul is dot product/outer product
         INDArray gram = flattened.mmul(flattened.transpose()); // Is the dup necessary?
         return gram;
     }
@@ -337,10 +334,8 @@ public class NeuralStyleTransfer {
      * @return Derivative of style error matrix for the layer w.r.t. combo image
      */
     public static INDArray derivativeLossStyleInLayer(INDArray styleGramFeatures, INDArray comboFeatures) {
-        // Create tensor of 0 and 1 indicating whether values in comboFeatures are positive or negative
 
         comboFeatures = comboFeatures.dup();
-//        styleFeatures = styleFeatures.dup();
         double channels = comboFeatures.shape()[0];
         assert comboFeatures.shape()[1] == comboFeatures.shape()[2] : "Images and features must have square shapes";
         double size = comboFeatures.shape()[1];
