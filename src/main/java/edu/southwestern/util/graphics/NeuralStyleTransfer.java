@@ -85,7 +85,7 @@ public class NeuralStyleTransfer {
     private static final double EPSILON = 0.00000008;
     private static final double LEARNING_RATE = 2;
 
-    private static final double NOISE_RATION = 0.8;
+    private static final double NOISE_RATION = 0.1;
     private static final int ITERATIONS = 1000;
     private static final String CONTENT_FILE = "data/imagematch/content2.jpg";
     private static final String STYLE_FILE = "data/imagematch/style2.jpg";
@@ -99,7 +99,7 @@ public class NeuralStyleTransfer {
 
         INDArray style = loadImage(loader, imagePreProcessor, STYLE_FILE);
 
-        INDArray combination = createCombinationImage(imagePreProcessor, content);
+        INDArray combination = createCombinationImage(imagePreProcessor, loader);
 
         Map<String, INDArray> activationsContentMap = vgg16FineTune.feedForward(content, true);
 
@@ -121,7 +121,7 @@ public class NeuralStyleTransfer {
             combination.subi(backPropAllValues);
 
             System.out.println("Total Loss >> " + totalLoss(activationsStyleMap, activationsCombMap, activationsContentMap));
-            if (itr % 5 == 0 && itr != 0) {
+            if (itr % 5 == 0) {
                 saveImage(imagePreProcessor, combination.dup(), itr);
             }
         }
@@ -158,12 +158,13 @@ public class NeuralStyleTransfer {
         return adamUpdater;
     }
 
-    private static INDArray createCombinationImage(DataNormalization scaler, INDArray content) {
+    private static INDArray createCombinationImage(DataNormalization scaler, NativeImageLoader loader) throws IOException {
+        INDArray content = loader.asMatrix(new File(CONTENT_FILE));
         int totalEntries = CHANNELS * HEIGHT * WIDTH;
         int[] upper = new int[totalEntries];
         Arrays.fill(upper, 256);
         INDArray combination = Nd4j.create(ArrayUtil.doubleArrayFromIntegerArray(RandomNumbers.randomIntArray(upper)), new int[]{1, CHANNELS, HEIGHT, WIDTH});
-        combination.muli(NOISE_RATION).addi(content.mul(1 - NOISE_RATION));
+        combination.muli(NOISE_RATION).addi(content.muli(1 - NOISE_RATION));
         scaler.transform(combination);
         return combination;
     }
