@@ -46,8 +46,12 @@ public class NeuralStyleTransfer {
     public static final int WIDTH = 224;
     public static final int CHANNELS = 3;
     public static final int IMAGE_SIZE = HEIGHT * WIDTH;
-
-
+    /**
+     * Values suggested by
+     * https://harishnarayanan.org/writing/artistic-style-transfer/
+     */
+    public static final double ALPHA = 0.025;
+    public static final double BETA = 5.0;
     private static final String[] STYLE_LAYERS = new String[]{
             "block1_conv1,0.2",
             "block2_conv1,0.2",
@@ -55,8 +59,6 @@ public class NeuralStyleTransfer {
             "block4_conv2,0.2",
             "block5_conv1,0.2"
     };
-
-
     private static final String[] ALL_LAYERS = new String[]{
             "input_1",
             "block1_conv1",
@@ -81,16 +83,7 @@ public class NeuralStyleTransfer {
             "fc1",
             "fc2"
     };
-
     private static final String CONTENT_LAYER_NAME = "block4_conv2";
-
-    /**
-     * Values suggested by
-     * https://harishnarayanan.org/writing/artistic-style-transfer/
-     */
-    public static final double ALPHA = 0.025;
-    public static final double BETA = 5.0;
-
     private static final double BETA_MOMENTUM = 0.8;
     private static final double BETA2_MOMENTUM = 0.999;
     private static final double EPSILON = 0.00000008;
@@ -197,7 +190,7 @@ public class NeuralStyleTransfer {
             String[] split = styleLayer.split(",");
             String styleLayerName = split[0];
             INDArray styleValues = activationsStyle.get(styleLayerName);
-            styleGramValuesMap.put(styleLayerName, gram_matrix(styleValues));
+            styleGramValuesMap.put(styleLayerName, gramMatrix(styleValues));
         }
         return styleGramValuesMap;
     }
@@ -213,17 +206,12 @@ public class NeuralStyleTransfer {
         return index;
     }
 
-
-    public static double contentLoss(INDArray combFeatures, INDArray contentFeatures) {
-        return sumOfSquaredErrors(contentFeatures, combFeatures) / (4.0 * (CHANNELS) * (WIDTH) * (HEIGHT));
-    }
-
-    public static double styleLoss(INDArray styleFeatures, INDArray comboFeatures) {
-
-        return style_loss_for_one_layer(styleFeatures, comboFeatures);
-    }
-
     public static double totalLoss(Map<String, INDArray> activationsStyleMap, Map<String, INDArray> activationsCombMap, Map<String, INDArray> activationsContentMap) {
+        Double stylesLoss = allStyleLayersLoss(activationsStyleMap, activationsCombMap);
+        return ALPHA * contentLoss(activationsCombMap.get(CONTENT_LAYER_NAME).dup(), activationsContentMap.get(CONTENT_LAYER_NAME).dup()) + BETA * stylesLoss;
+    }
+
+    private static Double allStyleLayersLoss(Map<String, INDArray> activationsStyleMap, Map<String, INDArray> activationsCombMap) {
         Double styles = 0.0;
         for (String styleLayers : STYLE_LAYERS) {
             String[] split = styleLayers.split(",");
@@ -231,7 +219,38 @@ public class NeuralStyleTransfer {
             double weight = Double.parseDouble(split[1]);
             styles += styleLoss(activationsStyleMap.get(styleLayerName).dup(), activationsCombMap.get(styleLayerName).dup()) * weight;
         }
-        return ALPHA * contentLoss(activationsCombMap.get(CONTENT_LAYER_NAME).dup(), activationsContentMap.get(CONTENT_LAYER_NAME).dup()) + BETA * styles;
+        return styles;
+    }
+
+    /**
+     * After passing in the content, style, and combination images,
+     * compute the loss with respect to the content. Based off of:
+     * https://harishnarayanan.org/writing/artistic-style-transfer/
+     *
+     * @param combActivations Intermediate layer activations from the three inputs
+     * @param contentActivations Intermediate layer activations from the three inputs
+     * @return Weighted content loss component
+     */
+
+    public static double contentLoss(INDArray combActivations, INDArray contentActivations) {
+        return sumOfSquaredErrors(contentActivations, combActivations) / (4.0 * (CHANNELS) * (WIDTH) * (HEIGHT));
+    }
+
+    /**
+     * This method is simply called style_loss in
+     * https://harishnarayanan.org/writing/artistic-style-transfer/
+     * but it takes inputs for intermediate activations from a particular
+     * layer, hence my re-name. These values contribute to the total
+     * style loss.
+     *
+     * @param style       Activations from intermediate layer of CNN for style image input
+     * @param combination Activations from intermediate layer of CNN for combination image input
+     * @return Loss contribution from this comparison
+     */
+    public static double styleLoss(INDArray style, INDArray combination) {
+        INDArray s = gramMatrix(style);
+        INDArray c = gramMatrix(combination);
+        return sumOfSquaredErrors(s, c) / (4.0 * (CHANNELS * CHANNELS) * (IMAGE_SIZE * IMAGE_SIZE));
     }
 
     private static INDArray backPropagate(ComputationGraph vgg16FineTune, INDArray dLdANext, int startFrom) {
@@ -242,6 +261,7 @@ public class NeuralStyleTransfer {
         }
         return dLdANext;
     }
+
 
     /**
      * Element-wise differences are squared, and then summed.
@@ -257,7 +277,6 @@ public class NeuralStyleTransfer {
         INDArray squares = Transforms.pow(diff, 2); // element-wise squaring
         return squares.sumNumber().doubleValue();
     }
-
 
     /**
      * Equation (2) from the Gatys et all paper: https://arxiv.org/pdf/1508.06576.pdf
@@ -295,7 +314,7 @@ public class NeuralStyleTransfer {
      * @param x Tensor to get Gram matrix of
      * @return Resulting Gram matrix
      */
-    public static INDArray gram_matrix(INDArray x) {
+    public static INDArray gramMatrix(INDArray x) {
         INDArray flattened = flatten(x);
         INDArray gram = flattened.mmul(flattened.transpose()); // Is the dup necessary?
         return gram;
@@ -304,23 +323,6 @@ public class NeuralStyleTransfer {
     private static INDArray flatten(INDArray x) {
         int[] shape = x.shape();
         return x.reshape(shape[0] * shape[1], shape[2] * shape[3]);
-    }
-
-    /**
-     * This method is simply called style_loss in
-     * https://harishnarayanan.org/writing/artistic-style-transfer/
-     * but it takes inputs for intermediate activations from a particular
-     * layer, hence my re-name. These values contribute to the total
-     * style loss.
-     *
-     * @param style       Activations from intermediate layer of CNN for style image input
-     * @param combination Activations from intermediate layer of CNN for combination image input
-     * @return Loss contribution from this comparison
-     */
-    public static double style_loss_for_one_layer(INDArray style, INDArray combination) {
-        INDArray s = gram_matrix(style);
-        INDArray c = gram_matrix(combination);
-        return sumOfSquaredErrors(s, c) / (4.0 * (CHANNELS * CHANNELS) * (IMAGE_SIZE * IMAGE_SIZE));
     }
 
 
@@ -336,14 +338,12 @@ public class NeuralStyleTransfer {
     public static INDArray derivativeLossStyleInLayer(INDArray styleGramFeatures, INDArray comboFeatures) {
 
         comboFeatures = comboFeatures.dup();
-        double channels = comboFeatures.shape()[0];
-        assert comboFeatures.shape()[1] == comboFeatures.shape()[2] : "Images and features must have square shapes";
-        double size = comboFeatures.shape()[1];
-        double size2 = comboFeatures.shape()[2];
+        double N = comboFeatures.shape()[0];
+        double M = comboFeatures.shape()[1] * comboFeatures.shape()[2];
 
-        double styleWeight = 1.0 / ((channels * channels) * (size * size) * (size2 * size2));
+        double styleWeight = 1.0 / ((N * N) * (M * M));
         // Corresponds to G^l in equation (6)
-        INDArray contentGram = gram_matrix(comboFeatures);
+        INDArray contentGram = gramMatrix(comboFeatures);
         // G^l - A^l
         INDArray diff = contentGram.sub(styleGramFeatures);
         // (F^l)^T * (G^l - A^l)
