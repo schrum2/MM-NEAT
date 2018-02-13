@@ -85,7 +85,7 @@ public class NeuralStyleTransfer {
     private static final double EPSILON = 0.00000008;
     private static final double LEARNING_RATE = 2;
 
-    private static final double NOISE_RATION = 0.1;
+    private static final double NOISE_RATION = 0.8;
     private static final int ITERATIONS = 1000;
     private static final String CONTENT_FILE = "data/imagematch/content2.jpg";
     private static final String STYLE_FILE = "data/imagematch/style2.jpg";
