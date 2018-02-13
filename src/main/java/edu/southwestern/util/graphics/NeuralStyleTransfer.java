@@ -4,11 +4,7 @@ import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.random.RandomNumbers;
 import org.datavec.image.loader.NativeImageLoader;
 import org.deeplearning4j.nn.api.Layer;
-import org.deeplearning4j.nn.api.OptimizationAlgorithm;
-import org.deeplearning4j.nn.conf.Updater;
 import org.deeplearning4j.nn.graph.ComputationGraph;
-import org.deeplearning4j.nn.transferlearning.FineTuneConfiguration;
-import org.deeplearning4j.nn.transferlearning.TransferLearning;
 import org.deeplearning4j.zoo.PretrainedType;
 import org.deeplearning4j.zoo.ZooModel;
 import org.deeplearning4j.zoo.model.VGG16;
@@ -364,21 +360,9 @@ public class NeuralStyleTransfer {
     private static ComputationGraph loadModel() throws IOException {
         ZooModel zooModel = new VGG16();
         ComputationGraph vgg16 = (ComputationGraph) zooModel.initPretrained(PretrainedType.IMAGENET);
-
-        FineTuneConfiguration fineTuneConf = new FineTuneConfiguration.Builder()
-                .learningRate(5e-7)
-                .optimizationAlgo(OptimizationAlgorithm.LBFGS)
-                .updater(Updater.ADAM)
-                .seed(1234)
-                .build();
-
-        ComputationGraph vgg16FineTune = new TransferLearning.GraphBuilder(vgg16)
-                .fineTuneConfiguration(fineTuneConf)
-                .build();
-
-        vgg16FineTune.initGradientsView();
-        System.out.println(vgg16FineTune.summary());
-        return vgg16FineTune;
+        vgg16.initGradientsView();
+        System.out.println(vgg16.summary());
+        return vgg16;
     }
 
     private static BufferedImage saveImage(DataNormalization scaler, INDArray combination, int iterations) throws IOException {
