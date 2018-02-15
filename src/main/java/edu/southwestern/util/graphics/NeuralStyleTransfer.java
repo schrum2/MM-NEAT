@@ -90,13 +90,36 @@ public class NeuralStyleTransfer {
     private static final String CONTENT_FILE = "data/imagematch/content2.jpg";
     private static final String STYLE_FILE = "data/imagematch/style2.jpg";
 
+    private static ComputationGraph vgg16FineTune;
+    private static NativeImageLoader loader;
+    private static DataNormalization imagePreProcessor;
+    
+    /**
+     * Initialize important classes shared throughout the neural style transfer process
+     */
+    public static void init() {
+    	try {
+			vgg16FineTune = loadModel();
+		} catch (IOException e) {
+			System.out.println("Could not load VGG16 model");
+			e.printStackTrace();
+			System.exit(1);
+		}
+        loader = new NativeImageLoader(HEIGHT, WIDTH, CHANNELS);
+        imagePreProcessor = new VGG16ImagePreProcessor();
+    }
+    
+    /**
+     * Runs the neural style transfer.
+     * TODO: Move this code bit by bit into separate methods so that it is easy to launch
+     * 		 the transfer process with specific image parameters.
+     * @param args
+     * @throws IOException
+     */
     public static void main(String[] args) throws IOException {
-        ComputationGraph vgg16FineTune = loadModel();
-        NativeImageLoader loader = new NativeImageLoader(HEIGHT, WIDTH, CHANNELS);
-        DataNormalization imagePreProcessor = new VGG16ImagePreProcessor();
-
+        init();
+    	
         INDArray content = loadImage(loader, imagePreProcessor, CONTENT_FILE);
-
         INDArray style = loadImage(loader, imagePreProcessor, STYLE_FILE);
 
         INDArray combination = createCombinationImage(imagePreProcessor, loader);
