@@ -94,6 +94,10 @@ public class NeuralStyleTransfer {
     private static NativeImageLoader loader;
     private static DataNormalization imagePreProcessor;
     
+    private static Map<String, INDArray> activationsContentMap;
+    private static HashMap<String, INDArray> activationsStyleGramMap;
+    private static Map<String, INDArray> activationsStyleMap;
+    
     /**
      * Initialize important classes shared throughout the neural style transfer process
      */
@@ -109,6 +113,34 @@ public class NeuralStyleTransfer {
         imagePreProcessor = new VGG16ImagePreProcessor();
     }
     
+    // TODO: Add BufferedImage as parameter instead of loading with file path
+    public static void provideContentImage() {
+    	INDArray content = null;
+		try {
+			content = loadImage(loader, imagePreProcessor, CONTENT_FILE);
+		} catch (IOException e) {
+			System.out.println("Could not load image: " + CONTENT_FILE);
+			e.printStackTrace();
+			System.exit(1);
+		}
+    	activationsContentMap = vgg16FineTune.feedForward(content, true);
+    }
+    
+    // TODO: Add BufferedImage as parameter instead of loading with file path
+    public static void provideStyleImage() {
+        INDArray style = null;
+		try {
+			style = loadImage(loader, imagePreProcessor, STYLE_FILE);
+		} catch (IOException e) {
+			System.out.println("Could not load image: " + STYLE_FILE);
+			e.printStackTrace();
+			System.exit(1);
+		}
+
+		activationsStyleMap = vgg16FineTune.feedForward(style, true);
+        activationsStyleGramMap = buildStyleGramValues(activationsStyleMap);
+    }
+    
     /**
      * Runs the neural style transfer.
      * TODO: Move this code bit by bit into separate methods so that it is easy to launch
@@ -119,15 +151,9 @@ public class NeuralStyleTransfer {
     public static void main(String[] args) throws IOException {
         init();
     	
-        INDArray content = loadImage(loader, imagePreProcessor, CONTENT_FILE);
-        INDArray style = loadImage(loader, imagePreProcessor, STYLE_FILE);
-
+        provideContentImage(); // TODO: Add parameter
+        provideStyleImage(); // TODO: Add parameter
         INDArray combination = createCombinationImage(imagePreProcessor, loader);
-
-        Map<String, INDArray> activationsContentMap = vgg16FineTune.feedForward(content, true);
-
-        Map<String, INDArray> activationsStyleMap = vgg16FineTune.feedForward(style, true);
-        HashMap<String, INDArray> activationsStyleGramMap = buildStyleGramValues(activationsStyleMap);
 
         AdamUpdater adamUpdater = createADAMUpdater();
         for (int itr = 0; itr < ITERATIONS; itr++) {
