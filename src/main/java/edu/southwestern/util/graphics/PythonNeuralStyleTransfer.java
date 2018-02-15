@@ -269,8 +269,6 @@ public class PythonNeuralStyleTransfer {
 	
 	// For testing and troubleshooting
 	public static void main(String[] args) throws IOException {
-		Parameters.initializeParameterCollections(new String[0]);
-		
 		String styleFile = "data/imagematch/supercreepypersonimage.jpg";
 		BufferedImage styleImage = ImageIO.read(new File(styleFile));
 		

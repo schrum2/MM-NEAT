@@ -400,13 +400,6 @@ public class GraphicsUtil {
 				int red = array.getInt(0,2,y,x);
 				int green = array.getInt(0,1,y,x);
 				int blue = array.getInt(0,0,y,x);
-				red = Math.min(red, 255);
-				green = Math.min(green, 255);
-				blue = Math.min(blue, 255);
-
-				red = Math.max(red, 0);
-				green = Math.max(green, 0);
-				blue = Math.max(blue, 0);
 				image.setRGB(x, y, new Color(red,green,blue).getRGB());
 			}
 		}
