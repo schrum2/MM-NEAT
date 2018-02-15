@@ -98,6 +98,8 @@ public class NeuralStyleTransfer {
     private static HashMap<String, INDArray> activationsStyleGramMap;
     private static Map<String, INDArray> activationsStyleMap;
     
+    private static AdamUpdater adamUpdater;
+    
     /**
      * Initialize important classes shared throughout the neural style transfer process
      */
@@ -111,6 +113,7 @@ public class NeuralStyleTransfer {
 		}
         loader = new NativeImageLoader(HEIGHT, WIDTH, CHANNELS);
         imagePreProcessor = new VGG16ImagePreProcessor();
+        adamUpdater = createADAMUpdater();
     }
     
     // TODO: Add BufferedImage as parameter instead of loading with file path
@@ -141,6 +144,41 @@ public class NeuralStyleTransfer {
         activationsStyleGramMap = buildStyleGramValues(activationsStyleMap);
     }
     
+    // TODO: Return the final image as a BufferedImage
+    public static void runNeuralStyleTransfer(int iterations) {
+    	INDArray combination = null;
+		try {
+			combination = createCombinationImage(imagePreProcessor, loader);
+		} catch (IOException e) {
+			System.out.println("Could not create combo image for neural style transfer");
+			e.printStackTrace();
+			System.exit(1);
+		}
+
+        for (int itr = 0; itr < iterations; itr++) {
+            System.out.println("itr = " + itr);
+            Map<String, INDArray> activationsCombMap = vgg16FineTune.feedForward(combination, true);
+
+            INDArray styleBackProb = backPropagateStyles(vgg16FineTune, activationsStyleGramMap, activationsCombMap);
+            INDArray backPropContent = backPropagateContent(vgg16FineTune, activationsContentMap, activationsCombMap);
+            INDArray backPropAllValues = backPropContent.muli(ALPHA).addi(styleBackProb.muli(BETA));
+
+            adamUpdater.applyUpdater(backPropAllValues, itr);
+            combination.subi(backPropAllValues);
+
+            System.out.println("Total Loss >> " + totalLoss(activationsStyleMap, activationsCombMap, activationsContentMap));
+            if (itr % 5 == 0) { // TODO: Remove
+                try {
+					saveImage(imagePreProcessor, combination.dup(), itr);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+            }
+        }
+
+    }
+    
     /**
      * Runs the neural style transfer.
      * TODO: Move this code bit by bit into separate methods so that it is easy to launch
@@ -148,33 +186,12 @@ public class NeuralStyleTransfer {
      * @param args
      * @throws IOException
      */
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         init();
     	
         provideContentImage(); // TODO: Add parameter
         provideStyleImage(); // TODO: Add parameter
-        INDArray combination = createCombinationImage(imagePreProcessor, loader);
-
-        AdamUpdater adamUpdater = createADAMUpdater();
-        for (int itr = 0; itr < ITERATIONS; itr++) {
-            System.out.println("itr = " + itr);
-            Map<String, INDArray> activationsCombMap = vgg16FineTune.feedForward(combination, true);
-
-            INDArray styleBackProb = backPropagateStyles(vgg16FineTune, activationsStyleGramMap, activationsCombMap);
-
-            INDArray backPropContent = backPropagateContent(vgg16FineTune, activationsContentMap, activationsCombMap);
-
-            INDArray backPropAllValues = backPropContent.muli(ALPHA).addi(styleBackProb.muli(BETA));
-
-            adamUpdater.applyUpdater(backPropAllValues, itr);
-            combination.subi(backPropAllValues);
-
-            System.out.println("Total Loss >> " + totalLoss(activationsStyleMap, activationsCombMap, activationsContentMap));
-            if (itr % 5 == 0) {
-                saveImage(imagePreProcessor, combination.dup(), itr);
-            }
-        }
-
+        runNeuralStyleTransfer(ITERATIONS); // TODO: return final image
     }
 
     private static INDArray backPropagateStyles(ComputationGraph vgg16FineTune, HashMap<String, INDArray> activationsStyleGramMap, Map<String, INDArray> activationsCombMap) {
