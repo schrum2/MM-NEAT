@@ -115,27 +115,36 @@ public class NeuralStyleTransfer {
         imagePreProcessor = new VGG16ImagePreProcessor();
         adamUpdater = createADAMUpdater();
     }
-    
-    // TODO: Add BufferedImage as parameter instead of loading with file path
-    public static void provideContentImage() {
+
+    /**
+     * Convert image to INDArray and activate network
+     * to access intermediate activations.
+     * @param image content image for transfer
+     */
+    public static void provideContentImage(BufferedImage image) {
     	INDArray content = null;
 		try {
-			content = loadImage(loader, imagePreProcessor, CONTENT_FILE);
+			content = loadImage(loader, imagePreProcessor, image);
 		} catch (IOException e) {
-			System.out.println("Could not load image: " + CONTENT_FILE);
+			System.out.println("Could not load image");
 			e.printStackTrace();
 			System.exit(1);
 		}
     	activationsContentMap = vgg16FineTune.feedForward(content, true);
     }
     
-    // TODO: Add BufferedImage as parameter instead of loading with file path
-    public static void provideStyleImage() {
+    /**
+     * Convert image to INDArray and activate network
+     * to access intermediate activations and calculate
+     * Gram matrix
+     * @param image style image for transfer
+     */
+    public static void provideStyleImage(BufferedImage image) {
         INDArray style = null;
 		try {
-			style = loadImage(loader, imagePreProcessor, STYLE_FILE);
+			style = loadImage(loader, imagePreProcessor, image);
 		} catch (IOException e) {
-			System.out.println("Could not load image: " + STYLE_FILE);
+			System.out.println("Could not load image");
 			e.printStackTrace();
 			System.exit(1);
 		}
@@ -186,11 +195,11 @@ public class NeuralStyleTransfer {
      * @param args
      * @throws IOException
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         init();
     	
-        provideContentImage(); // TODO: Add parameter
-        provideStyleImage(); // TODO: Add parameter
+        provideContentImage(ImageIO.read(new File(CONTENT_FILE))); 
+        provideStyleImage(ImageIO.read(new File(STYLE_FILE)));
         runNeuralStyleTransfer(ITERATIONS); // TODO: return final image
     }
 
@@ -235,12 +244,35 @@ public class NeuralStyleTransfer {
         return combination;
     }
 
-    private static INDArray loadImage(NativeImageLoader loader, DataNormalization scaler, String contentFile) throws IOException {
-        INDArray content = loader.asMatrix(new File(contentFile));
-        scaler.transform(content);
-        return content;
+    /**
+     * Load image from disk
+     * @param loader Image loader
+     * @param scaler Subtracts mean of ImageNet data
+     * @param filePath File path
+     * @return Image within INDArray
+     * @throws IOException
+     */
+    @SuppressWarnings("unused")
+	private static INDArray loadImage(NativeImageLoader loader, DataNormalization scaler, String filePath) throws IOException {
+        INDArray image = loader.asMatrix(new File(filePath));
+        scaler.transform(image);
+        return image;
     }
 
+    /**
+     * Take BufferedImage and convert to INDArray
+     * @param loader Image loader
+     * @param scaler Subtracts mean of ImageNet data
+     * @param bufferedImage Image as buffered image
+     * @return Image in INDArray
+     * @throws IOException
+     */
+    private static INDArray loadImage(NativeImageLoader loader, DataNormalization scaler, BufferedImage bufferedImage) throws IOException {
+        INDArray image = loader.asMatrix(bufferedImage);
+        scaler.transform(image);
+        return image;
+    }
+        
     /**
      * Since style activation are not changing we are saving some computation by calculating style grams only once
      *
