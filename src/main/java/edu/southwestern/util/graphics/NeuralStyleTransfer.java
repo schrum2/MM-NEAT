@@ -203,7 +203,8 @@ public class NeuralStyleTransfer {
             adamUpdater.applyUpdater(backPropAllValues, itr);
             combination.subi(backPropAllValues);
         }
-        BufferedImage bi = getBufferedImageVersion(imagePreProcessor, combination.dup());
+        System.out.println("done");
+        BufferedImage bi = getBufferedImageVersion(imagePreProcessor, combination);
         return bi;
     }
     
@@ -256,7 +257,7 @@ public class NeuralStyleTransfer {
         int[] upper = new int[totalEntries];
         Arrays.fill(upper, 256);
         INDArray combination = Nd4j.create(ArrayUtil.doubleArrayFromIntegerArray(RandomNumbers.randomIntArray(upper)), new int[]{1, CHANNELS, HEIGHT, WIDTH});
-        combination.muli(NOISE_RATION).addi(currentContentImage.dup().muli(1 - NOISE_RATION)); // Should dup be used here?
+        combination.muli(NOISE_RATION).addi(currentContentImage.dup().muli(1 - NOISE_RATION)); // Should dup be used here? Might be faster to remove, if that is ok
         scaler.transform(combination);
         return combination;
     }
@@ -428,7 +429,7 @@ public class NeuralStyleTransfer {
      */
     public static INDArray gramMatrix(INDArray x) {
         INDArray flattened = flatten(x);
-        INDArray gram = flattened.mmul(flattened.transpose()); // Is the dup necessary?
+        INDArray gram = flattened.mmul(flattened.transpose());
         return gram;
     }
 
