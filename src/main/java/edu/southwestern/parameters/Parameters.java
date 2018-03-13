@@ -788,6 +788,8 @@ public class Parameters {
 		stringOptions.add("remixWAVFile", SoundUtilExamples.PORTAL2_WAV, "Input WAV file to be remixed in Remixbreeder");
 		stringOptions.add("remixMIDIFile", SoundUtilExamples.FUR_ELISE_MID, "Input MIDI file to be played with CPPN in Breedesizer");
 		stringOptions.add("gvgaiGame", "zelda", "GVGAI Game to be played");
+		stringOptions.add("csvInputFile", "data/csv/poly.csv", "CSV file used for supervised model learning");
+		stringOptions.add("regressionTargetColumn", "poly", "Name of column in CSV file to match for regression problems");
 		// Class options
 		classOptions.add("gvgaiPlayer", GVGAIOneStepNNPlayer.class, "GVGAI Player to be used");
 		classOptions.add("boardGame", null, "Board Game being played by BoardGameTask");

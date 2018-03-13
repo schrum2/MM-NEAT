@@ -1,8 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package edu.southwestern.tasks.testmatch;
 
 import edu.southwestern.evolution.genotypes.Genotype;
@@ -27,7 +22,7 @@ import java.util.Arrays;
  * @param <T>
  *            Phenotype being evolved, which must be a network
  */
-public abstract class MatchDataTask<T extends Network> extends LonerTask<T>implements NetworkTask {
+public abstract class MatchDataTask<T extends Network> extends LonerTask<T> implements NetworkTask {
 
 	public static boolean pauseForEachCase = true;
 
