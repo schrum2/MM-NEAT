@@ -69,8 +69,11 @@ public class CSVFileUtilities {
 			throw new IllegalStateException("Target column \"" + targetColumn + "\" was not one of the headers of \"" + csvFile.getName() + "\"");
 		}
 		
-		double[] maxMagnitudes = new double[inputCount];
-		double maxOutputMagnitude = 0;
+		// Used to compute variance
+		double[] sums = new double[inputCount];
+		double targetSum = 0;
+		double[] sumInputsSquared = new double[inputCount];
+		double sumTargetsSquared = 0;
 		
 		// the rest of the CSV file contains the data
 		ArrayList<Pair<double[], double[]>> data = new ArrayList<>();
@@ -84,10 +87,16 @@ public class CSVFileUtilities {
 				// Assuming all data is pre-processed numeric data
 				double datum = row.nextDouble();
 				if(column == targetPosition) { // NN output target
-					maxOutputMagnitude = Math.max(maxOutputMagnitude, Math.abs(datum)); // Used for scaling later
+					// Used for scaling later
+					targetSum += datum; 
+					sumTargetsSquared += datum*datum;
+					
 					target[0] = datum;
 				} else { // NN input value
-					maxMagnitudes[index] = Math.max(maxMagnitudes[index], Math.abs(datum)); // Used for scaling later
+					// Used for scaling later
+					sums[index] += datum; 
+					sumInputsSquared[index] += datum*datum;
+					
 					inputs[index++] = datum;
 				}
 			}
@@ -96,30 +105,24 @@ public class CSVFileUtilities {
 		}
 		csv.close(); // Close file scanner
 		
-		// Make sure all maximum magnitudes have non-zero values
-		for(int i = 0; i < maxMagnitudes.length; i++) {
-			if(maxMagnitudes[i] == 0) {
-				maxMagnitudes[i] = 1; // Because dividing by 1 will not change the input values
-			}
-		}
-		if(maxOutputMagnitude == 0) {
-			throw new IllegalArgumentException("All input examples map to an output of 0. This seems suspicious");
-		}
+		// Calculate variances to divide the inputs and targets. This will scale
+		// those values, assuring that they are all in the range [-1,1]
+		double[] inputVariances = new double[inputCount];
+		for(int i = 0; i < inputVariances.length; i++) {
+			// Computational formula for sum of squares and variance
+			double inputSS = sumInputsSquared[i] - (sums[i]*sums[i] / data.size());
+			inputVariances[i] = inputSS / data.size();
+		}		
+		// Computational formula for sum of squares and variance
+		double targetSS = sumTargetsSquared - (targetSum*targetSum / data.size());
+		double targetVariance = targetSS / data.size(); // Population variance: should it be sample variance instead?
 		
 		// Now scale all inputs and outputs
 		for(Pair<double[],double[]> example : data) { // Each training example
 			for(int i = 0; i < example.t1.length; i++) { // scale each input
-//				double before = example.t1[i];
-//				System.out.print(example.t1[i] + "/" + maxMagnitudes[i] + " = ");
-				example.t1[i] /= maxMagnitudes[i];
-//				System.out.println(example.t1[i]);
-//				double after = example.t1[i];
-//				if(Math.signum(before) != Math.signum(after)) {
-//					System.out.println("ERROR!");
-//					System.exit(1);
-//				}
+				example.t1[i] /= inputVariances[i];
 			}
-			example.t2[0] /= maxOutputMagnitude; // There is only one output to scale
+			example.t2[0] /= targetVariance; // There is only one output to scale
 		}
 		
 		return data;
