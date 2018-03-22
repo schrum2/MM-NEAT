@@ -69,6 +69,9 @@ public class CSVFileUtilities {
 			throw new IllegalStateException("Target column \"" + targetColumn + "\" was not one of the headers of \"" + csvFile.getName() + "\"");
 		}
 		
+		double[] maxMagnitudes = new double[inputCount];
+		double maxOutputMagnitude = 0;
+		
 		// the rest of the CSV file contains the data
 		ArrayList<Pair<double[], double[]>> data = new ArrayList<>();
 		while(csv.hasNextLine()) { // Each line is a single training example
@@ -81,8 +84,10 @@ public class CSVFileUtilities {
 				// Assuming all data is pre-processed numeric data
 				double datum = row.nextDouble();
 				if(column == targetPosition) { // NN output target
+					maxOutputMagnitude = Math.max(maxOutputMagnitude, Math.abs(datum)); // Used for scaling later
 					target[0] = datum;
 				} else { // NN input value
+					maxMagnitudes[index] = Math.max(maxMagnitudes[index], Math.abs(datum)); // Used for scaling later
 					inputs[index++] = datum;
 				}
 			}
@@ -90,6 +95,25 @@ public class CSVFileUtilities {
 			data.add(new Pair<>(inputs,target));
 		}
 		csv.close(); // Close file scanner
+		
+		// Make sure all maximum magnitudes have non-zero values
+		for(int i = 0; i < maxMagnitudes.length; i++) {
+			if(maxMagnitudes[i] == 0) {
+				maxMagnitudes[i] = 1; // Because dividing by 1 will not change the input values
+			}
+		}
+		if(maxOutputMagnitude == 0) {
+			throw new IllegalArgumentException("All input examples map to an output of 0. This seems suspicious");
+		}
+		
+		// Now scale all inputs and outputs
+		for(Pair<double[],double[]> example : data) { // Each training example
+			for(int i = 0; i < example.t1.length; i++) { // scale each input
+				example.t1[i] /= maxMagnitudes[i];
+			}
+			example.t2[0] /= maxOutputMagnitude; // There is only one output to scale
+		}
+		
 		return data;
 	}
 
