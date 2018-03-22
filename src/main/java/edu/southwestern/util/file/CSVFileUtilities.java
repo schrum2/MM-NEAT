@@ -109,7 +109,15 @@ public class CSVFileUtilities {
 		// Now scale all inputs and outputs
 		for(Pair<double[],double[]> example : data) { // Each training example
 			for(int i = 0; i < example.t1.length; i++) { // scale each input
+//				double before = example.t1[i];
+//				System.out.print(example.t1[i] + "/" + maxMagnitudes[i] + " = ");
 				example.t1[i] /= maxMagnitudes[i];
+//				System.out.println(example.t1[i]);
+//				double after = example.t1[i];
+//				if(Math.signum(before) != Math.signum(after)) {
+//					System.out.println("ERROR!");
+//					System.exit(1);
+//				}
 			}
 			example.t2[0] /= maxOutputMagnitude; // There is only one output to scale
 		}
