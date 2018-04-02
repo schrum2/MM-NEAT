@@ -1,8 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package edu.southwestern.tasks.testmatch;
 
 import edu.southwestern.evolution.genotypes.Genotype;
@@ -12,6 +7,7 @@ import edu.southwestern.networks.NetworkTask;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.scores.Score;
 import edu.southwestern.tasks.LonerTask;
+import edu.southwestern.tasks.motests.OptimizationDisplay;
 import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.stats.StatisticsUtilities;
@@ -27,7 +23,7 @@ import java.util.Arrays;
  * @param <T>
  *            Phenotype being evolved, which must be a network
  */
-public abstract class MatchDataTask<T extends Network> extends LonerTask<T>implements NetworkTask {
+public abstract class MatchDataTask<T extends Network> extends LonerTask<T> implements NetworkTask {
 
 	public static boolean pauseForEachCase = true;
 
@@ -50,9 +46,15 @@ public abstract class MatchDataTask<T extends Network> extends LonerTask<T>imple
 	public Score<T> evaluate(Genotype<T> individual) {
 		// RandomNumbers.randomGenerator = new Random(0);
 		ArrayList<Pair<double[], double[]>> trainingSet = getTrainingPairs();
-		ArrayList<ArrayList<Pair<Double, Double>>> samples = new ArrayList<ArrayList<Pair<Double, Double>>>(
-				trainingSet.size());
+		pauseForEachCase = trainingSet.size() <= 10; // Pausing for more than this would be tedious
+		ArrayList<ArrayList<Pair<Double, Double>>> samples = new ArrayList<ArrayList<Pair<Double, Double>>>(trainingSet.size());
 		Network n = individual.getPhenotype();
+		
+		OptimizationDisplay display = null;
+		if(CommonConstants.watch) {
+			display = new OptimizationDisplay();
+		}
+		
 		// loop that runs for each "pattern" in the trainingSet, which is a pair
 		// of double arrays of inputs/outputs
 		for (Pair<double[], double[]> pattern : trainingSet) {
@@ -61,8 +63,12 @@ public abstract class MatchDataTask<T extends Network> extends LonerTask<T>imple
 			// find the actual outputs based on the given inputs
 			double[] actualOutputs = n.process(inputs);
 			if (CommonConstants.watch) {
-				System.out.println(
-						"Desired: " + Arrays.toString(desiredOutputs) + ", Actual: " + Arrays.toString(actualOutputs));
+				System.out.println("Desired: " + Arrays.toString(desiredOutputs) + ", Actual: " + Arrays.toString(actualOutputs));
+				if(display != null) { // Will only show differences in first output ... not all if there are multiple
+					// The final parameter is addToFront, meaning Pareto front. That is because
+					// I am somewhat abusing the class OptimizationDisplay, which isn't meant for general plotting
+					display.addPoint(desiredOutputs[0], actualOutputs[0], false);
+				}
 			}
 			ArrayList<Pair<Double, Double>> neuronResults = new ArrayList<Pair<Double, Double>>(n.numOutputs());
 			for (int i = 0; i < desiredOutputs.length; i++) {
@@ -77,17 +83,19 @@ public abstract class MatchDataTask<T extends Network> extends LonerTask<T>imple
 				MiscUtil.waitForReadStringAndEnterKeyPress();
 			}
 		}
+		
+		if(display != null) {
+			display.clear();
+			System.out.println("Press enter");
+			MiscUtil.waitForReadStringAndEnterKeyPress();
+		}
+		
 		// find the average amount/occurrence of error between each desired and
 		// actual output pairs put into the samples
 		double averageError = StatisticsUtilities.averageSquaredErrorEnergy(samples);
 		assert!Double.isNaN(averageError) : "averageError is NaN!";
-		return new Score<T>(individual, new double[] { -averageError }, null); // minimize
-																				// error,
-																				// so
-																				// score
-																				// is
-																				// negative
-																				// error
+		// Fitness is 1 - the loss, which should be positive and bounded by 1.
+		return new Score<T>(individual, new double[] { 1 - averageError }, null); 
 	}
 
 	/**

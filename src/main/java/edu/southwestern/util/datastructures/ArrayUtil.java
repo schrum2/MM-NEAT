@@ -3,6 +3,7 @@ package edu.southwestern.util.datastructures;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -18,6 +19,23 @@ import edu.southwestern.util.sound.SoundToArray;
  */
 public class ArrayUtil {
 
+	/**
+	 * Remove all instances of toRemove from the String array.
+	 * There is probably a better way to do this with streams in the latest version of Java.
+	 * @param source String array
+	 * @param toRemove String to remove from the array
+	 * @return new array that has all elements of the original, except occurrences of toRemove
+	 */
+	public static String[] filterString(String[] source, String toRemove) {
+		LinkedList<String> result = new LinkedList<>();
+		for(String s : source) {
+			if(!s.equals(toRemove)) {
+				result.add(s);
+			}
+		}
+		return result.toArray(new String[result.size()]);
+	}
+	
 	/**
 	 * Move all contents to the right a certain number of spaces
 	 * @param array Array to rotate
@@ -166,6 +184,14 @@ public class ArrayUtil {
 		int i = 0;
 		for (Number n : values) {
 			array[i++] = n.doubleValue();
+		}
+		return array;
+	}
+	
+	public static double[] doubleArrayFromIntegerArray(Integer[] values) {
+		double[] array = new double[values.length];
+		for (int i = 0; i < values.length; i++) {
+			array[i] = values[i];
 		}
 		return array;
 	}

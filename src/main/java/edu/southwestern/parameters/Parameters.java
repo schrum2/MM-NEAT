@@ -194,6 +194,7 @@ public class Parameters {
 	 */
 	public final void fillDefaults() {
 		// Integer parameters
+		integerOptions.add("neuralStyleIterations", 50, "Number of iterations to run the Neural Style Transfer algorithm using CPPN style images");
 		integerOptions.add("hyperNEATNetworkDisplaySize", 600, "dimension of window for HyperNEAT's substrate network");
 		integerOptions.add("substrateWeightSize", 1, "dimension of individual weights in substrate visualization");
 		integerOptions.add("substrateGridSize", 20, "sets the size for the grids for the substrate visualization");
@@ -450,6 +451,7 @@ public class Parameters {
 		booleanOptions.add("includeTriangleWaveFunction", true, "Function for triangle wave function. If true, add to the function set");
 		booleanOptions.add("includeSquareWaveFunction", true, "Function for square wave function. If true, add to the function set");
 		booleanOptions.add("includeSiLFunction", false, "Function for sigmoid weighted linear unit function. If true, add to the function set");
+		booleanOptions.add("includeDSiLFunction", false, "Function for derivative of sigmoid weighted linear unit function. If true, add to the function set");
 		booleanOptions.add("tetrisAvgNumHoles", false, "include number of holes as a fitness function");
 		booleanOptions.add("finalPassOnOutputActivation", false, "Empty all remaining activation from network output layer");
 		booleanOptions.add("logGhostLocOnPowerPill", false, "Log ghost locations corresponding to each eaten power pill");
@@ -670,6 +672,7 @@ public class Parameters {
 		booleanOptions.add("rlBackprop", false, "Whether to do backprop learning updates during reinforcement learning");
 		booleanOptions.add("rlEpsilonGreedy", false, "Whether to use an epsilon greedy policy when using reinforcement learning");
 		// Double parameters
+		doubleOptions.add("neuralStyleStyleWeight", 0.2, "How much style image influences neural style transfer");
 		doubleOptions.add("rlEpsilon", 0.1, "Frequency of completely random actions during Reinforcement Learning");
 		doubleOptions.add("rlGamma", 0.99, "Discount factor used for Reinforcement Learning");
 		doubleOptions.add("inheritProportion", 0.4, "Portion of a parent's fitness that contributes to child fitness (with inheritFitness, as in LEEA)");
@@ -739,7 +742,7 @@ public class Parameters {
 		doubleOptions.add("pictureInnovationSaveThreshold", 0.2, "Only saves pictures whose bin score surpasses this threshold");
 		// String parameters
 		stringOptions.add("gameWad", "freedoom2.wad", "The wad file name for the current VizDoom game");
-		stringOptions.add("matchImageFile", "data/imagematch/theScream.png", "path of the image for image match task");
+		stringOptions.add("matchImageFile", "data" + File.separator + "imagematch" + File.separator + "cat.jpg", "path of the image for image match task");
 		stringOptions.add("mazePowerPillGhostMapping", "", "File with saved locations of ghosts when particular power pills are eaten");
 		stringOptions.add("pacmanSaveFile", "", "Filename to save a pacman game recording to");
 		stringOptions.add("utMap", "DM-TrainingDay", "Map to play in Unreal Tournament 2004");
@@ -785,6 +788,8 @@ public class Parameters {
 		stringOptions.add("remixWAVFile", SoundUtilExamples.PORTAL2_WAV, "Input WAV file to be remixed in Remixbreeder");
 		stringOptions.add("remixMIDIFile", SoundUtilExamples.FUR_ELISE_MID, "Input MIDI file to be played with CPPN in Breedesizer");
 		stringOptions.add("gvgaiGame", "zelda", "GVGAI Game to be played");
+		stringOptions.add("csvInputFile", "data/csv/poly.csv", "CSV file used for supervised model learning");
+		stringOptions.add("regressionTargetColumn", "poly", "Name of column in CSV file to match for regression problems");
 		// Class options
 		classOptions.add("gvgaiPlayer", GVGAIOneStepNNPlayer.class, "GVGAI Player to be used");
 		classOptions.add("boardGame", null, "Board Game being played by BoardGameTask");
@@ -964,7 +969,8 @@ public class Parameters {
 			} else {
 				System.out.println("Did not recognize \"" + entity + "\" with value \"" + value + "\"");
 				if (terminateOnUnrecognized) {
-					usage(1);
+					throw new IllegalArgumentException(entity + " is not a valid parameter");
+					//usage(1);
 				}
 			}
 		}

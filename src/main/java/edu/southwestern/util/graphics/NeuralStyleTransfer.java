@@ -1,9 +1,7 @@
 package edu.southwestern.util.graphics;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Map;
-
+import edu.southwestern.util.datastructures.ArrayUtil;
+import edu.southwestern.util.random.RandomNumbers;
 import org.datavec.image.loader.NativeImageLoader;
 import org.deeplearning4j.nn.api.Layer;
 import org.deeplearning4j.nn.graph.ComputationGraph;
@@ -14,192 +12,482 @@ import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.dataset.api.preprocessor.DataNormalization;
 import org.nd4j.linalg.dataset.api.preprocessor.VGG16ImagePreProcessor;
 import org.nd4j.linalg.factory.Nd4j;
-import org.nd4j.linalg.indexing.NDArrayIndex;
+import org.nd4j.linalg.indexing.BooleanIndexing;
+import org.nd4j.linalg.indexing.conditions.Conditions;
+import org.nd4j.linalg.indexing.functions.Value;
+import org.nd4j.linalg.learning.AdamUpdater;
+import org.nd4j.linalg.learning.config.Adam;
 import org.nd4j.linalg.ops.transforms.Transforms;
-import org.nd4j.linalg.ops.transforms.Transforms.*;
+
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * My attempt to implement the neural style transfer algorithm in DL4J:
+ * Neural Style Transfer Algorithm in DL4J:
  * https://arxiv.org/pdf/1508.06576.pdf
  * https://arxiv.org/pdf/1603.08155.pdf
  * https://harishnarayanan.org/writing/artistic-style-transfer/
- * 
- * @author Jacob Schrum
+ *
+ * @author Jacob Schrum & Klevis Ramo
  */
 public class NeuralStyleTransfer {
 
-	/**
-	 * Values suggested by
-	 * https://harishnarayanan.org/writing/artistic-style-transfer/
-	 * 
-	 * Will likely change this, or make them parameters.
-	 */
-	public static double content_weight = 0.025;
-	public static double style_weight = 5.0;
-	public static double total_variation_weight = 1.0;
-	
-	/**
-	 * Image conversion/size properties
-	 */
-	public static final int HEIGHT = 224;
-	public static final int WIDTH = 224;
-	public static final int CHANNELS = 3;
-		
-	/**
-	 * Element-wise differences are squared, and then summed.
-	 * This is modelled after the content_loss method defined in
-	 * https://harishnarayanan.org/writing/artistic-style-transfer/
-	 * 
-	 * @param a One tensor
-	 * @param b Another tensor
-	 * @return Sum of squared errors: scalar
-	 */
-	public static double sumOfSquaredErrors(INDArray a, INDArray b) {
-		INDArray diff = a.sub(b); // difference
-		INDArray squares = Transforms.pow(diff, 2); // element-wise squaring
-		return squares.sumNumber().doubleValue();
-	}
-	
-	/**
-	 * After passing in the content, style, and combination images,
-	 * compute the loss with respect to the content. Based off of:
-	 * https://harishnarayanan.org/writing/artistic-style-transfer/
-	 * 
-	 * @param activations Intermediate layer activations from the three inputs
-	 * @return Weighted content loss component
-	 */
-	public static double content_loss(Map<String, INDArray> activations) {
-		INDArray block2_conv2_features = activations.get("block2_conv2");
-		INDArray content_features = block2_conv2_features.get(NDArrayIndex.point(0), NDArrayIndex.all(), NDArrayIndex.all(), NDArrayIndex.all());
-		INDArray combination_features = block2_conv2_features.get(NDArrayIndex.point(2), NDArrayIndex.all(), NDArrayIndex.all(), NDArrayIndex.all());
-		
-//		System.out.println(content_features.shapeInfoToString());
-//		System.out.println(combination_features.shapeInfoToString());
-		
-		return content_weight * sumOfSquaredErrors(content_features, combination_features);
-	}
-	
-	/**
-	 * Computing the Gram matrix as described here:
-	 * https://harishnarayanan.org/writing/artistic-style-transfer/
-	 * Permuting dimensions is not needed because DL4J stores
-	 * the channel at the front rather than the end of the tensor.
-	 * Basically, each tensor is flattened into a vector so that
-	 * the dot product can be calculated.
-	 * 
-	 * @param x Tensor to get Gram matrix of
-	 * @return Resulting Gram matrix
-	 */
-	public static INDArray gram_matrix(INDArray x) {
-		INDArray flattened = Nd4j.toFlattened(x);
-		// mmul is dot product/outer product
-		INDArray gram = flattened.mmul(flattened.dup().transpose()); // Is the dup necessary?
-		return gram;
-	}
-	
-	/**
-	 * This method is simply called style_loss in
-	 * https://harishnarayanan.org/writing/artistic-style-transfer/
-	 * but it takes inputs for intermediate activations from a particular
-	 * layer, hence my re-name. These values contribute to the total
-	 * style loss.
-	 * 
-	 * @param style Activations from intermediate layer of CNN for style image input
-	 * @param combination Activations from intermediate layer of CNN for combination image input
-	 * @return Loss contribution from this comparison
-	 */
-	public static double style_loss_for_one_layer(INDArray style, INDArray combination) {
-		INDArray s = gram_matrix(style);
-		INDArray c = gram_matrix(combination);
-		double size = HEIGHT*WIDTH;
-		return sumOfSquaredErrors(s,c) / (4.0 * (CHANNELS * CHANNELS) * (size * size));
-	}
-	
-	/**
-	 * The overall style loss calculation shown in 
-	 * https://harishnarayanan.org/writing/artistic-style-transfer/
-	 * for every relevant intermediate layer of the CNN.
-	 * 
-	 * @param activations Intermediate activations of all CNN layers
-	 * @return weighted style loss component
-	 */
-	public static double style_loss(Map<String, INDArray> activations) {
-		String[] feature_layers = new String[] {
-				"block1_conv2", "block2_conv2",
-                "block3_conv3", "block4_conv3",
-                "block5_conv3"};
-		double loss = 0.0;
-		for(String layer_name : feature_layers) {
-			INDArray layer_features = activations.get(layer_name);
-			INDArray style_features = layer_features.get(NDArrayIndex.point(1), NDArrayIndex.all(), NDArrayIndex.all(), NDArrayIndex.all());
-			INDArray combination_features = layer_features.get(NDArrayIndex.point(2), NDArrayIndex.all(), NDArrayIndex.all(), NDArrayIndex.all());
-			double sl = style_loss_for_one_layer(style_features, combination_features);
-			loss += (style_weight / feature_layers.length) * sl;
-		}
-		return loss;
-	}
-	
-	/**
-	 * Returns weighted total variation loss that smooths the error across the image.
-	 * Based on https://harishnarayanan.org/writing/artistic-style-transfer/ again.
-	 * I'm not sure what the point of leaving out certain edges is in the tensor bounds,
-	 * but I expect the point is to reduce the variance between directly adjacent pixels.
-	 * 
-	 * @param combination Combination image
-	 * @return Weighted total variation loss across combo image
-	 */
-	public static double total_variation_loss(INDArray combination) {
-		INDArray sliceA1 = combination.get(NDArrayIndex.all(), NDArrayIndex.all(), NDArrayIndex.interval(0, HEIGHT-1), NDArrayIndex.interval(0, WIDTH-1));
-		INDArray sliceA2 = combination.get(NDArrayIndex.all(), NDArrayIndex.all(), NDArrayIndex.interval(1, HEIGHT), NDArrayIndex.interval(0, WIDTH-1));
-		INDArray diffA = sliceA1.sub(sliceA2);
-		INDArray a = Transforms.pow(diffA, 2); // element-wise squaring
-		
-		INDArray sliceB1 = combination.get(NDArrayIndex.all(), NDArrayIndex.all(), NDArrayIndex.interval(0, HEIGHT-1), NDArrayIndex.interval(0, WIDTH-1));
-		INDArray sliceB2 = combination.get(NDArrayIndex.all(), NDArrayIndex.all(), NDArrayIndex.interval(0, HEIGHT-1), NDArrayIndex.interval(1, WIDTH));
-		INDArray diffB = sliceB1.sub(sliceB2);
-		INDArray b = Transforms.pow(diffB, 2); // element-wise squaring
-		
-		INDArray add = a.add(b);
-		INDArray pow = Transforms.pow(add, 1.25);
-		return total_variation_weight * pow.sumNumber().doubleValue();
-	}
-	
-	public static void main(String[] args) throws IOException {		
-		ZooModel zooModel = new VGG16();
-		
-		// Do I need separate copies for each image input?
-		ComputationGraph vgg16 = (ComputationGraph) zooModel.initPretrained(PretrainedType.IMAGENET);
-	
-		NativeImageLoader loader = new NativeImageLoader(HEIGHT, WIDTH, CHANNELS);
-		DataNormalization scaler = new VGG16ImagePreProcessor();
-		
-		String contentFile = "data/imagematch/cat.jpg";
-		INDArray content = loader.asMatrix(new File(contentFile));
-		scaler.transform(content);
-		
-		String styleFile = "data/imagematch/supercreepypersonimage.jpg";
-		INDArray style = loader.asMatrix(new File(styleFile));
-		scaler.transform(style);
 
-		INDArray combination = Nd4j.create(1, CHANNELS, HEIGHT, WIDTH);
-		
-		INDArray input = Nd4j.concat(0, content, style, combination);
-		
-		//System.out.println(input.shapeInfoToString());
-		//System.out.println(vgg16.summary());
-		
-		INDArray[] result = vgg16.output(input);
-		Map<String, INDArray> activations = vgg16.feedForward();
-		
-		System.out.println("content_loss: "+content_loss(activations));
-		System.out.println("style_loss: "+style_loss(activations));
-		System.out.println("total_variation_loss: "+total_variation_loss(combination));
-		
-//		INDArray block1_conv2_features = activations.get("block1_conv2");		
-//		INDArray block2_conv2_features = activations.get("block2_conv2");
-//		INDArray block3_conv3_features = activations.get("block3_conv3");
-//		INDArray block4_conv3_features = activations.get("block4_conv3");
-//		INDArray block5_conv3_features = activations.get("block5_conv3");
-				
-	}
+    public static final int HEIGHT = 224;
+    public static final int WIDTH = 224;
+    public static final int CHANNELS = 3;
+    public static final int IMAGE_SIZE = HEIGHT * WIDTH;
+    /**
+     * Values suggested by
+     * https://harishnarayanan.org/writing/artistic-style-transfer/
+     */
+    public static final double ALPHA = 0.025;
+    public static final double BETA = 5.0;
+    private static final String[] STYLE_LAYERS = new String[]{
+            "block1_conv1,0.2",
+            "block2_conv1,0.2",
+            "block3_conv1,0.2",
+            "block4_conv2,0.2",
+            "block5_conv1,0.2"
+    };
+    private static final String[] ALL_LAYERS = new String[]{
+            "input_1",
+            "block1_conv1",
+            "block1_conv2",
+            "block1_pool",
+            "block2_conv1",
+            "block2_conv2",
+            "block2_pool",
+            "block3_conv1",
+            "block3_conv2",
+            "block3_conv3",
+            "block3_pool",
+            "block4_conv1",
+            "block4_conv2",
+            "block4_conv3",
+            "block4_pool",
+            "block5_conv1",
+            "block5_conv2",
+            "block5_conv3",
+            "block5_pool",
+            "flatten",
+            "fc1",
+            "fc2"
+    };
+    private static final String CONTENT_LAYER_NAME = "block4_conv2";
+    private static final double BETA_MOMENTUM = 0.8;
+    private static final double BETA2_MOMENTUM = 0.999;
+    private static final double EPSILON = 0.00000008;
+    private static final double LEARNING_RATE = 2;
+
+    private static final double NOISE_RATION = 0.1;
+    private static final int ITERATIONS = 1000;
+    private static final String CONTENT_FILE = "data/imagematch/content2.jpg";
+    private static final String STYLE_FILE = "data/imagematch/style2.jpg";
+
+    private static ComputationGraph vgg16FineTune;
+    private static NativeImageLoader loader;
+    private static DataNormalization imagePreProcessor;
+    
+    private static INDArray currentContentImage;
+    
+    private static Map<String, INDArray> activationsContentMap;
+    private static HashMap<String, INDArray> activationsStyleGramMap;
+    private static Map<String, INDArray> activationsStyleMap;
+    
+    private static AdamUpdater adamUpdater;
+    
+    /**
+     * Initialize important classes shared throughout the neural style transfer process
+     */
+    public static void init() {
+    	try {
+			vgg16FineTune = loadModel();
+		} catch (IOException e) {
+			System.out.println("Could not load VGG16 model");
+			e.printStackTrace();
+			System.exit(1);
+		}
+        loader = new NativeImageLoader(HEIGHT, WIDTH, CHANNELS);
+        imagePreProcessor = new VGG16ImagePreProcessor();
+        adamUpdater = createADAMUpdater();
+    }
+
+    public static void provideContentImage(String path) {
+        try {
+			provideContentImage(ImageIO.read(new File(path)));
+		} catch (IOException e) {
+			System.out.println("Count not load content image: " + path);
+			e.printStackTrace();
+			System.exit(1);
+		} 
+    }
+    
+    /**
+     * Convert image to INDArray and activate network
+     * to access intermediate activations.
+     * @param image content image for transfer
+     */
+    public static void provideContentImage(BufferedImage image) {
+		try {
+			currentContentImage = loadImage(loader, imagePreProcessor, image);
+		} catch (IOException e) {
+			System.out.println("Could not load image");
+			e.printStackTrace();
+			System.exit(1);
+		}
+    	activationsContentMap = vgg16FineTune.feedForward(currentContentImage, true);
+    }
+    
+    /**
+     * Convert image to INDArray and activate network
+     * to access intermediate activations and calculate
+     * Gram matrix
+     * @param image style image for transfer
+     */
+    public static void provideStyleImage(BufferedImage image) {
+        INDArray style = null;
+		try {
+			style = loadImage(loader, imagePreProcessor, image);
+		} catch (IOException e) {
+			System.out.println("Could not load image");
+			e.printStackTrace();
+			System.exit(1);
+		}
+
+		activationsStyleMap = vgg16FineTune.feedForward(style, true);
+        activationsStyleGramMap = buildStyleGramValues(activationsStyleMap);
+    }
+    
+    /**
+     * Assuing the content image is already loaded, send in a new style image and process it
+     * for a given number of iterations.
+     * @param style
+     * @param iterations
+     * @return
+     */
+    public static BufferedImage getTransferredResultForStyleImage(BufferedImage style, int iterations) {
+    	provideStyleImage(style);
+    	return runNeuralStyleTransfer(iterations);
+    }
+    
+    /**
+     * Run neural style transfer for given number of iterations and return result.
+     * Assumes content and style images have been previously loaded into static variables.
+     * @param iterations
+     * @return Final combined image
+     */
+    public static BufferedImage runNeuralStyleTransfer(int iterations) {
+    	INDArray combination = null;
+		try {
+			combination = createCombinationImage(imagePreProcessor, loader);
+		} catch (IOException e) {
+			System.out.println("Could not create combo image for neural style transfer");
+			e.printStackTrace();
+			System.exit(1);
+		}
+
+        for (int itr = 0; itr < iterations; itr++) {
+            System.out.println("itr = " + itr);
+            Map<String, INDArray> activationsCombMap = vgg16FineTune.feedForward(combination, true);
+
+            INDArray styleBackProb = backPropagateStyles(vgg16FineTune, activationsStyleGramMap, activationsCombMap);
+            INDArray backPropContent = backPropagateContent(vgg16FineTune, activationsContentMap, activationsCombMap);
+            INDArray backPropAllValues = backPropContent.muli(ALPHA).addi(styleBackProb.muli(BETA));
+
+            adamUpdater.applyUpdater(backPropAllValues, itr);
+            combination.subi(backPropAllValues);
+        }
+        System.out.println("done");
+        BufferedImage bi = getBufferedImageVersion(imagePreProcessor, combination);
+        return bi;
+    }
+    
+    /**
+     * Runs the neural style transfer.
+     * TODO: Move this code bit by bit into separate methods so that it is easy to launch
+     * 		 the transfer process with specific image parameters.
+     * @param args
+     * @throws IOException
+     */
+    public static void main(String[] args) throws IOException {
+        init();
+        provideContentImage(ImageIO.read(new File(CONTENT_FILE))); 
+        provideStyleImage(ImageIO.read(new File(STYLE_FILE)));
+        runNeuralStyleTransfer(ITERATIONS);
+    }
+
+    private static INDArray backPropagateStyles(ComputationGraph vgg16FineTune, HashMap<String, INDArray> activationsStyleGramMap, Map<String, INDArray> activationsCombMap) {
+        INDArray styleBackProb = Nd4j.zeros(new int[]{1, CHANNELS, WIDTH, HEIGHT});
+        for (String styleLayer : STYLE_LAYERS) {
+            String[] split = styleLayer.split(",");
+            String styleLayerName = split[0];
+            INDArray styleGramValues = activationsStyleGramMap.get(styleLayerName);
+            INDArray combValues = activationsCombMap.get(styleLayerName);
+            double weight = Double.parseDouble(split[1]);
+            int index = findLayerIndex(styleLayerName);
+            INDArray dStyleValues = derivativeLossStyleInLayer(styleGramValues, combValues).transpose();
+            styleBackProb.addi(backPropagate(vgg16FineTune, dStyleValues.reshape(combValues.shape()), index).muli(weight));
+        }
+        return styleBackProb;
+    }
+
+    private static INDArray backPropagateContent(ComputationGraph vgg16FineTune, Map<String, INDArray> activationsContentMap, Map<String, INDArray> activationsCombMap) {
+        INDArray activationsContent = activationsContentMap.get(CONTENT_LAYER_NAME);
+        INDArray activationsComb = activationsCombMap.get(CONTENT_LAYER_NAME);
+        INDArray dContentLayer = derivativeLossContentInLayer(activationsContent, activationsComb);
+        return backPropagate(vgg16FineTune, dContentLayer.reshape(activationsComb.shape()), findLayerIndex(CONTENT_LAYER_NAME));
+    }
+
+    private static AdamUpdater createADAMUpdater() {
+        AdamUpdater adamUpdater = new AdamUpdater(new Adam(LEARNING_RATE, BETA_MOMENTUM, BETA2_MOMENTUM, EPSILON));
+        adamUpdater.setStateViewArray(Nd4j.zeros(1, 2 * CHANNELS * WIDTH * HEIGHT),
+                new int[]{1, CHANNELS, WIDTH, HEIGHT}, 'c',
+                true);
+        return adamUpdater;
+    }
+
+    private static INDArray createCombinationImage(DataNormalization scaler, NativeImageLoader loader) throws IOException {
+        int totalEntries = CHANNELS * HEIGHT * WIDTH;
+        int[] upper = new int[totalEntries];
+        Arrays.fill(upper, 256);
+        INDArray combination = Nd4j.create(ArrayUtil.doubleArrayFromIntegerArray(RandomNumbers.randomIntArray(upper)), new int[]{1, CHANNELS, HEIGHT, WIDTH});
+        combination.muli(NOISE_RATION).addi(currentContentImage.dup().muli(1 - NOISE_RATION)); // Should dup be used here? Might be faster to remove, if that is ok
+        scaler.transform(combination);
+        return combination;
+    }
+
+    /**
+     * Load image from disk
+     * @param loader Image loader
+     * @param scaler Subtracts mean of ImageNet data
+     * @param filePath File path
+     * @return Image within INDArray
+     * @throws IOException
+     */
+    @SuppressWarnings("unused")
+	private static INDArray loadImage(NativeImageLoader loader, DataNormalization scaler, String filePath) throws IOException {
+        INDArray image = loader.asMatrix(new File(filePath));
+        scaler.transform(image);
+        return image;
+    }
+
+    /**
+     * Take BufferedImage and convert to INDArray
+     * @param loader Image loader
+     * @param scaler Subtracts mean of ImageNet data
+     * @param bufferedImage Image as buffered image
+     * @return Image in INDArray
+     * @throws IOException
+     */
+    private static INDArray loadImage(NativeImageLoader loader, DataNormalization scaler, BufferedImage bufferedImage) throws IOException {
+        INDArray image = loader.asMatrix(bufferedImage);
+        scaler.transform(image);
+        return image;
+    }
+        
+    /**
+     * Since style activation are not changing we are saving some computation by calculating style grams only once
+     *
+     * @param activationsStyle
+     * @return
+     */
+    private static HashMap<String, INDArray> buildStyleGramValues(Map<String, INDArray> activationsStyle) {
+        HashMap<String, INDArray> styleGramValuesMap = new HashMap<>();
+        for (String styleLayer : STYLE_LAYERS) {
+            String[] split = styleLayer.split(",");
+            String styleLayerName = split[0];
+            INDArray styleValues = activationsStyle.get(styleLayerName);
+            styleGramValuesMap.put(styleLayerName, gramMatrix(styleValues));
+        }
+        return styleGramValuesMap;
+    }
+
+    private static int findLayerIndex(String styleLayerName) {
+        int index = 0;
+        for (int i = 0; i < ALL_LAYERS.length; i++) {
+            if (styleLayerName.equalsIgnoreCase(ALL_LAYERS[i])) {
+                index = i;
+                break;
+            }
+        }
+        return index;
+    }
+
+    public static double totalLoss(Map<String, INDArray> activationsStyleMap, Map<String, INDArray> activationsCombMap, Map<String, INDArray> activationsContentMap) {
+        Double stylesLoss = allStyleLayersLoss(activationsStyleMap, activationsCombMap);
+        return ALPHA * contentLoss(activationsCombMap.get(CONTENT_LAYER_NAME).dup(), activationsContentMap.get(CONTENT_LAYER_NAME).dup()) + BETA * stylesLoss;
+    }
+
+    private static Double allStyleLayersLoss(Map<String, INDArray> activationsStyleMap, Map<String, INDArray> activationsCombMap) {
+        Double styles = 0.0;
+        for (String styleLayers : STYLE_LAYERS) {
+            String[] split = styleLayers.split(",");
+            String styleLayerName = split[0];
+            double weight = Double.parseDouble(split[1]);
+            styles += styleLoss(activationsStyleMap.get(styleLayerName).dup(), activationsCombMap.get(styleLayerName).dup()) * weight;
+        }
+        return styles;
+    }
+
+    /**
+     * After passing in the content, style, and combination images,
+     * compute the loss with respect to the content. Based off of:
+     * https://harishnarayanan.org/writing/artistic-style-transfer/
+     *
+     * @param combActivations Intermediate layer activations from the three inputs
+     * @param contentActivations Intermediate layer activations from the three inputs
+     * @return Weighted content loss component
+     */
+
+    public static double contentLoss(INDArray combActivations, INDArray contentActivations) {
+        return sumOfSquaredErrors(contentActivations, combActivations) / (4.0 * (CHANNELS) * (WIDTH) * (HEIGHT));
+    }
+
+    /**
+     * This method is simply called style_loss in
+     * https://harishnarayanan.org/writing/artistic-style-transfer/
+     * but it takes inputs for intermediate activations from a particular
+     * layer, hence my re-name. These values contribute to the total
+     * style loss.
+     *
+     * @param style       Activations from intermediate layer of CNN for style image input
+     * @param combination Activations from intermediate layer of CNN for combination image input
+     * @return Loss contribution from this comparison
+     */
+    public static double styleLoss(INDArray style, INDArray combination) {
+        INDArray s = gramMatrix(style);
+        INDArray c = gramMatrix(combination);
+        return sumOfSquaredErrors(s, c) / (4.0 * (CHANNELS * CHANNELS) * (IMAGE_SIZE * IMAGE_SIZE));
+    }
+
+    private static INDArray backPropagate(ComputationGraph vgg16FineTune, INDArray dLdANext, int startFrom) {
+
+        for (int i = startFrom; i > 0; i--) {
+            Layer layer = vgg16FineTune.getLayer(ALL_LAYERS[i]);
+            dLdANext = layer.backpropGradient(dLdANext).getSecond();
+        }
+        return dLdANext;
+    }
+
+
+    /**
+     * Element-wise differences are squared, and then summed.
+     * This is modelled after the content_loss method defined in
+     * https://harishnarayanan.org/writing/artistic-style-transfer/
+     *
+     * @param a One tensor
+     * @param b Another tensor
+     * @return Sum of squared errors: scalar
+     */
+    public static double sumOfSquaredErrors(INDArray a, INDArray b) {
+        INDArray diff = a.sub(b); // difference
+        INDArray squares = Transforms.pow(diff, 2); // element-wise squaring
+        return squares.sumNumber().doubleValue();
+    }
+
+    /**
+     * Equation (2) from the Gatys et all paper: https://arxiv.org/pdf/1508.06576.pdf
+     * This is the derivative of the content loss w.r.t. the combo image features
+     * within a specific layer of the CNN.
+     *
+     * @param contentActivations Features at particular layer from the original content image
+     * @param combActivations    Features at same layer from current combo image
+     * @return Derivatives of content loss w.r.t. combo features
+     */
+    public static INDArray derivativeLossContentInLayer(INDArray contentActivations, INDArray combActivations) {
+
+        combActivations = combActivations.dup();
+        contentActivations = contentActivations.dup();
+
+        double channels = combActivations.shape()[0];
+        double w = combActivations.shape()[1];
+        double h = combActivations.shape()[2];
+
+        double contentWeight = 1.0 / (2 * (channels) * (w) * (h));
+        // Compute the F^l - P^l portion of equation (2), where F^l = comboFeatures and P^l = originalFeatures
+        INDArray diff = combActivations.sub(contentActivations);
+        // This multiplication assures that the result is 0 when the value from F^l < 0, but is still F^l - P^l otherwise
+        return flatten(diff.muli(contentWeight).muli(ensurePositive(combActivations)));
+    }
+
+    /**
+     * Computing the Gram matrix as described here:
+     * https://harishnarayanan.org/writing/artistic-style-transfer/
+     * Permuting dimensions is not needed because DL4J stores
+     * the channel at the front rather than the end of the tensor.
+     * Basically, each tensor is flattened into a vector so that
+     * the dot product can be calculated.
+     *
+     * @param x Tensor to get Gram matrix of
+     * @return Resulting Gram matrix
+     */
+    public static INDArray gramMatrix(INDArray x) {
+        INDArray flattened = flatten(x);
+        INDArray gram = flattened.mmul(flattened.transpose());
+        return gram;
+    }
+
+    private static INDArray flatten(INDArray x) {
+        int[] shape = x.shape();
+        return x.reshape(shape[0] * shape[1], shape[2] * shape[3]);
+    }
+
+
+    /**
+     * Equation (6) from the Gatys et all paper: https://arxiv.org/pdf/1508.06576.pdf
+     * This is the derivative of the style error for a single layer w.r.t. the
+     * combo image features at that layer.
+     *
+     * @param styleGramFeatures Intermediate activations of one layer for style input
+     * @param comboFeatures     Intermediate activations of one layer for combo image input
+     * @return Derivative of style error matrix for the layer w.r.t. combo image
+     */
+    public static INDArray derivativeLossStyleInLayer(INDArray styleGramFeatures, INDArray comboFeatures) {
+
+        comboFeatures = comboFeatures.dup();
+        double N = comboFeatures.shape()[0];
+        double M = comboFeatures.shape()[1] * comboFeatures.shape()[2];
+
+        double styleWeight = 1.0 / ((N * N) * (M * M));
+        // Corresponds to G^l in equation (6)
+        INDArray contentGram = gramMatrix(comboFeatures);
+        // G^l - A^l
+        INDArray diff = contentGram.sub(styleGramFeatures);
+        // (F^l)^T * (G^l - A^l)
+        INDArray trans = flatten(comboFeatures).transpose();
+        INDArray product = trans.mmul(diff);
+        // (1/(N^2 * M^2)) * ((F^l)^T * (G^l - A^l))
+        INDArray posResult = product.muli(styleWeight);
+        // This multiplication assures that the result is 0 when the value from F^l < 0, but is still (1/(N^2 * M^2)) * ((F^l)^T * (G^l - A^l)) otherwise
+        return posResult.muli(ensurePositive(trans));
+    }
+
+    private static INDArray ensurePositive(INDArray comboFeatures) {
+        BooleanIndexing.applyWhere(comboFeatures, Conditions.lessThan(0.0f), new Value(0.0f));
+        BooleanIndexing.applyWhere(comboFeatures, Conditions.greaterThan(0.0f), new Value(1.0f));
+        return comboFeatures;
+    }
+
+    private static ComputationGraph loadModel() throws IOException {
+        @SuppressWarnings("rawtypes")
+		ZooModel zooModel = new VGG16();
+        ComputationGraph vgg16 = (ComputationGraph) zooModel.initPretrained(PretrainedType.IMAGENET);
+        vgg16.initGradientsView();
+        System.out.println(vgg16.summary());
+        return vgg16;
+    }
+
+    private static BufferedImage getBufferedImageVersion(DataNormalization scaler, INDArray combination) {
+        scaler.revertFeatures(combination);
+        // Show final image afterward
+        BufferedImage output = GraphicsUtil.imageFromINDArray(combination);
+        //ImageIO.write(output, "jpg", new File("data/iteration" + iterations + ".jpg"));
+        return output;
+    }
 }
