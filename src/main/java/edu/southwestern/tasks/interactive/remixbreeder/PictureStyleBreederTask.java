@@ -23,6 +23,7 @@ import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.interactive.picbreeder.PicbreederTask;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.graphics.GraphicsUtil;
+import edu.southwestern.util.graphics.NeuralStyleTransfer;
 import edu.southwestern.util.graphics.PythonNeuralStyleTransfer;
 
 /**
@@ -35,6 +36,9 @@ import edu.southwestern.util.graphics.PythonNeuralStyleTransfer;
  */
 public class PictureStyleBreederTask<T extends Network> extends PicbreederTask<T> {
 
+	// Whether to run the Python version of Neural Style Transfer (instead of the Java version)
+	private static final boolean USE_PYTHON = true;
+	
 	private static final int FILE_LOADER_CHECKBOX_INDEX = CHECKBOX_IDENTIFIER_START - CPPN_NUM_INPUTS;
 
 	private static final int MIN_STYLE_ITERATIONS = 1;
@@ -47,9 +51,16 @@ public class PictureStyleBreederTask<T extends Network> extends PicbreederTask<T
 	
 	public PictureStyleBreederTask() throws IllegalAccessException {
 		String contentImagePath = Parameters.parameters.stringParameter("matchImageFile");	
-		// Boot up the Python program for Neural Style transfer
-		PythonNeuralStyleTransfer.initiateNeuralStyleTransferProcess(contentImagePath);
-
+		
+		if(USE_PYTHON) {
+			// Boot up the Python program for Neural Style transfer
+			PythonNeuralStyleTransfer.initiateNeuralStyleTransferProcess(contentImagePath);
+		} else {
+			// Java/DL4J version of Neural Style Transfer
+			NeuralStyleTransfer.init();
+			NeuralStyleTransfer.provideContentImage(contentImagePath);
+		}
+		
 		styleIterations = new JSlider(JSlider.HORIZONTAL, MIN_STYLE_ITERATIONS, MAX_STYLE_ITERATIONS, Parameters.parameters.integerParameter("neuralStyleIterations"));
 		Hashtable<Integer,JLabel> labels = new Hashtable<>();
 		styleIterations.setMinorTickSpacing(10);
@@ -116,11 +127,16 @@ public class PictureStyleBreederTask<T extends Network> extends PicbreederTask<T
 	 */
 	public void resetButtons(boolean hardReset) {
 		if(hardReset) {
-			// End the process
-			PythonNeuralStyleTransfer.terminatePythonProcess();
-			// Re-launch process using content image (some parameters probably changed if hard reset is being called)
 			String contentImagePath = Parameters.parameters.stringParameter("matchImageFile");
-			PythonNeuralStyleTransfer.initiateNeuralStyleTransferProcess(contentImagePath);
+			if(USE_PYTHON) {
+				// End the process
+				PythonNeuralStyleTransfer.terminatePythonProcess();
+				// Re-launch process using content image (some parameters probably changed if hard reset is being called)
+				PythonNeuralStyleTransfer.initiateNeuralStyleTransferProcess(contentImagePath);
+			} else {
+				// Change Java/DL4J neural style content image
+				NeuralStyleTransfer.provideContentImage(contentImagePath);
+			}
 		}
 		super.resetButtons(hardReset);
 	}
@@ -135,7 +151,9 @@ public class PictureStyleBreederTask<T extends Network> extends PicbreederTask<T
 		// Standard CPPN image will be the style for the Neural Style Transfer Algorithm
 		BufferedImage styleImage = super.getButtonImage(phenotype, width, height, inputMultipliers);
 		// Content image with new style from CPPN image
-		BufferedImage comboImage = PythonNeuralStyleTransfer.sendStyleImage(styleImage);
+		BufferedImage comboImage = USE_PYTHON ? 
+				PythonNeuralStyleTransfer.sendStyleImage(styleImage) : // Python version
+				NeuralStyleTransfer.getTransferredResultForStyleImage(styleImage, Parameters.parameters.integerParameter("neuralStyleIterations")); // DL4J
 		return comboImage;
 	}
 
@@ -176,7 +194,7 @@ public class PictureStyleBreederTask<T extends Network> extends PicbreederTask<T
 	 */
 	public static void main(String[] args) {
 		try {
-			MMNEAT.main(new String[]{"runNumber:0","randomSeed:0","trials:1","mu:20","maxGens:500","io:false","netio:false","mating:true", "fs:false", "task:edu.southwestern.tasks.interactive.remixbreeder.PictureStyleBreederTask","allowMultipleFunctions:true","ftype:0","watch:false","netChangeActivationRate:0.3","cleanFrequency:-1","recurrency:false","saveAllChampions:true","cleanOldNetworks:false","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:2000","imageHeight:2000","imageSize:200"});
+			MMNEAT.main(new String[]{"runNumber:0","randomSeed:0","trials:1","mu:20","maxGens:500","neuralStyleIterations:20","io:false","netio:false","mating:true", "fs:false", "task:edu.southwestern.tasks.interactive.remixbreeder.PictureStyleBreederTask","allowMultipleFunctions:true","ftype:0","watch:false","netChangeActivationRate:0.3","cleanFrequency:-1","recurrency:false","saveAllChampions:true","cleanOldNetworks:false","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:2000","imageHeight:2000","imageSize:200"});
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}
