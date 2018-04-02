@@ -1600,6 +1600,7 @@ public class Offspring {
 	}
 
 	/**
+	 * Should this be in GraphicsUtil or Plot.java?
 	 * 
 	 * @param panel
 	 * @param gen

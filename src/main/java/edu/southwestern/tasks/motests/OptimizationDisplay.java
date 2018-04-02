@@ -8,6 +8,10 @@ import java.util.ArrayList;
 import edu.southwestern.util.graphics.DrawingPanel;
 
 /**
+ * This class is supposedly only used for multiobjective function optimization,
+ * but it could be used for so much more. I need to make a more general version of
+ * this class that is the parent of this one, so that I can use this functionality
+ * in other places easily.
  *
  * @author Jacob Schrum
  */
