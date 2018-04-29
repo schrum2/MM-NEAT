@@ -41,3 +41,15 @@ This file contains full citations for all known publications that make use of MM
   Conference (GECCO 2017).
   http://people.southwestern.edu/~schrum2/SCOPE/gillespie.gecco17.pdf  
   Batch files for experiments in: [batch/Experiments-2017-GECCO-Tetris](https://github.com/schrum2/MM-NEAT/tree/master/batch/Experiments-2017-GECCO-Tetris)
+
+* Jacob Schrum (2018). Evolving Indirectly Encoded Convolutional Neural Networks to Play Tetris With Low-Level Features, 
+  Proceedings of the Genetic and Evolutionary Computation 
+  Conference (GECCO 2018).
+  https://people.southwestern.edu/~schrum2/re/papers/schrum.gecco2018.pdf 
+  Batch files for experiments in: [batch/Experiments-2018-GECCO-Tetris](https://github.com/schrum2/MM-NEAT/tree/master/batch/Experiments-2018-GECCO-Tetris)
+
+* Isabel Tweraser, Lauren E. Gillespie, and Jacob Schrum (2018). Querying Across Time to Interactively Evolve Animations, 
+  Proceedings of the Genetic and Evolutionary Computation Conference (GECCO 2018). 
+  https://people.southwestern.edu/~schrum2/SCOPE/tweraser.gecco18.pdf
+  Simplified version of interactive evolution code at: https://github.com/schrum2/CPPNArtEvolution
+
