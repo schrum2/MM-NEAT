@@ -105,25 +105,31 @@ public class CSVFileUtilities {
 		}
 		csv.close(); // Close file scanner
 		
+		
+		// TODO: Fix: This code doesn't scale values in the way I thought it would. 
+		//       Simply removing for now -Schrum
+		
 		// Calculate variances to divide the inputs and targets. This will scale
 		// those values, assuring that they are all in the range [-1,1]
-		double[] inputVariances = new double[inputCount];
-		for(int i = 0; i < inputVariances.length; i++) {
-			// Computational formula for sum of squares and variance
-			double inputSS = sumInputsSquared[i] - (sums[i]*sums[i] / data.size());
-			inputVariances[i] = inputSS / data.size();
-		}		
-		// Computational formula for sum of squares and variance
-		double targetSS = sumTargetsSquared - (targetSum*targetSum / data.size());
-		double targetVariance = targetSS / data.size(); // Population variance: should it be sample variance instead?
+//		double[] inputVariances = new double[inputCount];
+//		for(int i = 0; i < inputVariances.length; i++) {
+//			// Computational formula for sum of squares and variance
+//			double inputSS = sumInputsSquared[i] - (sums[i]*sums[i] / data.size());
+//			inputVariances[i] = inputSS / data.size();
+//		}		
+//		// Computational formula for sum of squares and variance
+//		double targetSS = sumTargetsSquared - (targetSum*targetSum / data.size());
+//		double targetVariance = targetSS / data.size(); // Population variance: should it be sample variance instead?
+		
+		// TODO: Fix: Also does not scale as expected. However, some kind of scaling is likely needed
 		
 		// Now scale all inputs and outputs
-		for(Pair<double[],double[]> example : data) { // Each training example
-			for(int i = 0; i < example.t1.length; i++) { // scale each input
-				example.t1[i] /= inputVariances[i];
-			}
-			example.t2[0] /= targetVariance; // There is only one output to scale
-		}
+//		for(Pair<double[],double[]> example : data) { // Each training example
+//			for(int i = 0; i < example.t1.length; i++) { // scale each input
+//				example.t1[i] /= inputVariances[i];
+//			}
+//			example.t2[0] /= targetVariance; // There is only one output to scale
+//		}
 		
 		return data;
 	}
