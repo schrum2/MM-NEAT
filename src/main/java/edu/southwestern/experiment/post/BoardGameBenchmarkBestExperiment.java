@@ -9,10 +9,8 @@ import edu.southwestern.boardGame.BoardGame;
 import edu.southwestern.boardGame.BoardGameState;
 import edu.southwestern.boardGame.agents.BoardGamePlayer;
 import edu.southwestern.boardGame.agents.HeuristicBoardGamePlayer;
-import edu.southwestern.boardGame.checkers.Checkers;
 import edu.southwestern.boardGame.featureExtractor.BoardGameFeatureExtractor;
 import edu.southwestern.boardGame.fitnessFunction.BoardGameFitnessFunction;
-import edu.southwestern.boardGame.fitnessFunction.CheckersAdvancedFitness;
 import edu.southwestern.boardGame.fitnessFunction.OthelloPieceFitness;
 import edu.southwestern.boardGame.fitnessFunction.SimpleWinLoseDrawBoardGameFitness;
 import edu.southwestern.boardGame.fitnessFunction.WinPercentageBoardGameFitness;
@@ -94,9 +92,6 @@ public class BoardGameBenchmarkBestExperiment<T extends Network, S extends Board
 		// Add fitness measures
 		fitFunctions.add(new SimpleWinLoseDrawBoardGameFitness<S>());
 		fitFunctions.add(new WinPercentageBoardGameFitness<S>());
-		if(bg instanceof Checkers){
-			fitFunctions.add(new CheckersAdvancedFitness<S>());
-		}
 		if(bg instanceof Othello){
 			fitFunctions.add((BoardGameFitnessFunction<S>) new OthelloPieceFitness());
 		}
