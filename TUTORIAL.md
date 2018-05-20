@@ -7,8 +7,8 @@
 
 Requirements for this code to run:
 
-* Java 1.8
-* Maven 3.5
+* Java 1.8+
+* Maven 3.5+
 
 MM-NEAT version 3.0 introduces integration with Maven, a dependency management system
 that automatically downloads libraries needed for the code to function so that you do not
@@ -22,10 +22,12 @@ but has not been updated since September 2017.
 1. Start by downloading and installing the latest version of Maven: https://maven.apache.org/
 2. Once Maven is installed, you can clone/fork the MM-NEAT project and download it to your machine.
 3. In the main project directory (MM-NEAT) use a console/terminal to execute: mvn -U install  
-   Lots of text should scroll across the screen, but near the end should be a result of BUILD SUCCESS
+   Lots of text should scroll across the screen, and some graphics windows will pop up, 
+   but near the end should be a result of BUILD SUCCESS
 
 It is recommended that you use a modern IDE to work on this code. Most recent development on the
-code was accomplished using Eclipse.
+code was accomplished using Eclipse. Eclipse is integrated with Maven via the m2 plugin, so that the
+project can also be built with Maven directly in Eclipse. Many other IDEs also have Maven integration.
 
 ## RUNNING
 
@@ -33,7 +35,7 @@ The main class of the project is
 [edu.southwestern.mmneat.MMNEAT.java](https://github.com/schrum2/MM-NEAT/blob/master/src/main/java/edu/southwestern/MMNEAT/MMNEAT.java),
 but this class requires many command line parameters to function correctly.
 When you execute "mvn -U install" an executable uber jar file will be created in
-the target sub-directory: MM-NEAT-0.0.1-SNAPSHOT.jar
+the "target" sub-directory: MM-NEAT-0.0.1-SNAPSHOT.jar
 
 Once the jar file is created, the code can be launched by running 
 java with the jar file and appropriate command-line arguments. 
@@ -134,9 +136,11 @@ will leave trails of a difference color for each module she uses.
 
 ## OTHER DOMAINS
 
-This code was primarily developed to evolve Ms. Pac-Man agents, but other domains
+This code was initially developed to evolve Ms. Pac-Man agents, but other domains
 are also integrated with the code. Not all domains are fully developed, but much work
 has been done since the original work in Ms. Pac-Man.
+
+### RL Glue
 
 First, the code is integrated with RL-Glue, which is a system for evaluating
 Reinforcement Learning algorithms available here:
@@ -152,8 +156,32 @@ also work (postParetoFrontWatch.bat and postBestObjective*). Most of these domai
 have not received much attention, but Tetris is an exception 
 (see [PUBLICATIONS.md](https://github.com/schrum2/MM-NEAT/blob/master/PUBLICATIONS.md)). 
 
-If you achieve any interesting results, I would be happy to hear from 
-you at schrum2@southwestern.edu.
+Here is a quick test of MM-NEAT using a simple RL Glue domain: the cartpole domain,
+also known as pole balancing or the inverted pendulum problem. First, navigate to the "batch\RLGlue-Other"
+sub-directory in a terminal/console and run the following command:
+
+```
+RLGlue-CartPole-Markovian.bat 0
+```
+
+The commandline parameter 0 is an experiment id number that can be swapped with another number.
+Note that these are batch files intended for use in Windows. However, they can be esily converted into
+bash files by replacing each occurrence of a % in RLGlue-CartPole-Markovian.bat with a $. The resulting file
+could then be executed as a bash file on Mac/Linux/Unix.
+
+Once this brief experiment finishes, you can view the final behavior by running the following command 
+from the root MM-NEAT directory:
+
+```
+postAllBestObjectiveWatch.bat cartpole RL Markovian 0 5
+```
+
+The command line parameter "cartpole" refers to the base sub-directory where results are stored.
+The "RL" parameter is a prefix in the file name of the log file for the experiment that is within a
+sub-directory "Markovian0". Note that the two parts of this name are specified by separate parameters:
+"Markovian" and "0". Finally, the parameter "5" indicates how many trials of the evolved champion to watch.
+
+### Breve Monsters
 
 Another domain included with this code is a 2D reimplementation of the BREVE Monsters
 domain, in which many of the methods used in MM-NEAT (Module Mutation, TUG) were first
@@ -178,7 +206,9 @@ in the original BREVE Monsters domain. If you manage to produce any interesting 
 with this code, or fix any of the issues mentioned above, please let me know by emailing
 me at schrum2@southwestern.edu
 
-Other pre-existing domains include a toroidal Predator/Prey grid world (see publication above), 
+### More Domains
+
+Other pre-existing domains include a toroidal Predator/Prey grid world (see [PUBLICATIONS.md](https://github.com/schrum2/MM-NEAT/blob/master/PUBLICATIONS.md)), 
 several board games, Super Mario, and VizDoom. Several ways of interactively creating interesting 
 art and sounds are also available (see [INTERACTIVE_EVOLUTION.md](https://github.com/schrum2/MM-NEAT/blob/master/INTERACTIVE_EVOLUTION.md)). 
 Please explore!
@@ -207,7 +237,7 @@ on how to do this.
    instantiating classes or setting up parameters unique to your domain).
 
 If you integrate any interesting domains into MM-NEAT, I would love to hear about it
-by email at schrum2@southwestern.edu. Feel free to contact me for help with integrating
-your domains as well. 
+by email at schrum2@southwestern.edu. You can also create an Issue or pull request directly in GitHub.
+Feel free to contact me for help with integrating your domains as well. 
 
 

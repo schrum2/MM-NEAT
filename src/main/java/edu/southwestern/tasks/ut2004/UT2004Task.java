@@ -25,8 +25,11 @@ import edu.southwestern.tasks.ut2004.sensors.UT2004SensorModel;
 import edu.southwestern.tasks.ut2004.server.ServerUtil;
 import edu.southwestern.tasks.ut2004.weapons.UT2004WeaponManager;
 import edu.southwestern.util.ClassCreation;
+import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.stats.Statistic;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -108,8 +111,11 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 		config.setOptions(botprizeMod
 				+ "?fraglimit=0?GoalScore=0?DoUplink=False?UplinkToGamespy=False?SendStats=False?bAllowPrivateChat=False?bAllowTaunts=False?bEnableVoiceChat=False?bAllowLocalBroadcast=False?BotServerPort="
 				+ botPort + "?ControlServerPort=" + controlPort + "?ObservingServerPort=" + observePort);
-		config.setUnrealHome(Parameters.parameters.stringParameter("utDrive") + ":\\" + Parameters.parameters.stringParameter("utPath"));
+		config.setUnrealHome(Parameters.parameters.stringParameter("utDrive") + ":" + File.separator + Parameters.parameters.stringParameter("utPath"));
 
+//		System.out.println(config);
+//		MiscUtil.waitForReadStringAndEnterKeyPress();
+		
 		MyUCCWrapper ucc = null;
 		Pair<double[], double[]> result = null;
 		int attempts = 1;
