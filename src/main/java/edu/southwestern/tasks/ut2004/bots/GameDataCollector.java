@@ -14,6 +14,7 @@ import cz.cuni.amis.pogamut.ut2004.communication.messages.ItemType;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.*;
 import edu.southwestern.tasks.ut2004.Util;
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -55,8 +56,9 @@ public class GameDataCollector implements Serializable {
 	protected int previousHealth = 100;
 	protected Map<String, Integer> damageDone = new TreeMap<String, Integer>();
 	protected Map<String, Integer> weaponDamage = new TreeMap<String, Integer>();
-	protected Map<ItemType, Integer> ammoUsed = new TreeMap<ItemType, Integer>();
-	protected Map<ItemType, Integer> previousAmmo = new TreeMap<ItemType, Integer>();
+	// Schrum: Had to change these to HashMaps because ItemType is not Comparable
+	protected Map<ItemType, Integer> ammoUsed = new HashMap<ItemType, Integer>();
+	protected Map<ItemType, Integer> previousAmmo = new HashMap<ItemType, Integer>();
 	protected int bumps = 0;
 	protected int opponentSightings = 0;
 	protected double focusAccumulation = 0.0;
