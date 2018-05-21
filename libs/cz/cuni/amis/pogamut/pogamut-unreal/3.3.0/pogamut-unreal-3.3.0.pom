@@ -1,40 +1,8 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-
-	<parent>
-		<groupId>cz.cuni.amis.pogamut</groupId>
-		<artifactId>pogamut-pom</artifactId>
-		<version>3.3.0</version>
-		<relativePath>../../Poms/PogamutPom/pom.xml</relativePath>
-	</parent>
-
-	<groupId>cz.cuni.amis.pogamut</groupId>
-	<artifactId>pogamut-unreal</artifactId>
-	<version>3.3.0</version>
-	<packaging>jar</packaging>
-
-	<name>pogamut-unreal</name>
-	<url>http://diana.ms.mff.cuni.cz</url>
-
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	</properties>
-
-	<dependencies>
-		<dependency>
-			<groupId>cz.cuni.amis.pogamut</groupId>
-			<artifactId>pogamut-base</artifactId>
-			<version>3.3.0</version>
-		</dependency>
-	</dependencies>
-
-	<repositories>
-		<repository>
-			<id>amis-artifactory</id>
-			<name>AMIS Artifactory</name>
-			<url>http://diana.ms.mff.cuni.cz:8081/artifactory/repo</url>
-		</repository>
-	</repositories>
-
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>cz.cuni.amis.pogamut</groupId>
+  <artifactId>pogamut-unreal</artifactId>
+  <version>3.3.0</version>
 </project>
