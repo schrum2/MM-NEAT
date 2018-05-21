@@ -23,6 +23,14 @@ public class OpponentRelativeMovementAction implements BotAction {
 	private final boolean shoot;
 	private final boolean jump;
 
+	/**
+	 * 
+	 * @param player (player identified as opponent)
+	 * @param towards
+	 * @param side
+	 * @param shoot
+	 * @param jump
+	 */
 	public OpponentRelativeMovementAction(Player player, double towards, double side, boolean shoot, boolean jump) {
 		this.player = player;
 		this.towards = towards;

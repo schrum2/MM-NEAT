@@ -15,7 +15,7 @@ public class NavigateToLocationAction implements BotAction {
 	/**
 	 * This method sets the target location for the bot
 	 * 
-	 * @param target location that needs to be reached
+	 * @param target (location that needs to be reached)
 	 */
 	public NavigateToLocationAction(ILocated target) {
 		this.target = target;
@@ -24,7 +24,7 @@ public class NavigateToLocationAction implements BotAction {
 	/**
 	 * Tells the bot to execute the command and travel to location
 	 * 
-	 * @param bot bot to execute command
+	 * @param bot (bot to execute command)
 	 */
 	public String execute(UT2004BotModuleController bot) {
 		bot.getNavigation().navigate(target);
