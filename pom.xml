@@ -260,7 +260,14 @@
 		<artifactId>introspection</artifactId>
 		<version>1.0.0</version>
 	</dependency>
-	    
+	
+	<!-- libraries for Pogamut that are pulled down from internet repositories -->    
+	<!-- https://mvnrepository.com/artifact/com.google.inject/guice -->
+	<dependency>
+    	<groupId>com.google.inject</groupId>
+    	<artifactId>guice</artifactId>
+    	<version>4.0</version>
+	</dependency>	    
 	    
 	<!--  RL-Viz libraries -->
 	<dependency>
