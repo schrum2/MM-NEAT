@@ -19,7 +19,7 @@ public class OpponentRelativeMovementAction implements BotAction {
 	 */
 	public static final double MOVEMENT_MAGNITUDE = 100;
 	private final Player opponent;
-	private final double distanceFromOpponent;
+	private final double moveForwardBackward;
 	private final double strafeLeftRight;
 	private final boolean shoot;
 	private final boolean jump;
@@ -28,14 +28,14 @@ public class OpponentRelativeMovementAction implements BotAction {
 	 * gathers movement data about the opponent
 	 * 
 	 * @param opponent (player identified as opponent)
-	 * @param distanceFromOpponent (distance between player and opponent)
+	 * @param moveForwardBackward (distance between player and opponent)
 	 * @param strafeLeftRight	(strafing around opponent, negative = left, positive = right, magnitude = speed)
 	 * @param shoot (should the bot shoot)
 	 * @param jump (should the bot jump)
 	 */
-	public OpponentRelativeMovementAction(Player opponent, double distanceFromOpponent, double strafeLeftRight, boolean shoot, boolean jump) {
+	public OpponentRelativeMovementAction(Player opponent, double moveForwardBackward, double strafeLeftRight, boolean shoot, boolean jump) {
 		this.opponent = opponent;
-		this.distanceFromOpponent = distanceFromOpponent;
+		this.moveForwardBackward = moveForwardBackward;
 		this.strafeLeftRight = strafeLeftRight;
 		this.shoot = shoot;
 		this.jump = jump;
@@ -59,7 +59,7 @@ public class OpponentRelativeMovementAction implements BotAction {
 																					// differences
 				// Counter-clockwise angle from vector-to-opponent to
 				// vector-to-destination
-				double polarAngle = Math.atan2(strafeLeftRight, distanceFromOpponent);
+				double polarAngle = Math.atan2(strafeLeftRight, moveForwardBackward);
 				// vector-to-destination
 				Vector3d botToDestination = Util.rotateVectorInPlane(botToOpponent.asVector3d(), polarAngle);
 				// Destination
