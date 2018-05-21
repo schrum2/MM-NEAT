@@ -224,6 +224,7 @@
 	</dependency>
 	
     <!--  pogamut libraries -->
+    <!--  These are all local now: should fix this eventually -->
 	<dependency>
 		<groupId>cz.cuni.amis.pogamut</groupId>
 		<artifactId>pogamut-ut2004</artifactId>
@@ -246,6 +247,12 @@
 		<groupId>cz.cuni.amis</groupId>
 		<artifactId>amis-utils</artifactId>
 		<version>3.3.0</version>
+	</dependency>
+	
+	<dependency>
+		<groupId>cz.cuni.amis</groupId>
+		<artifactId>afsm</artifactId>
+		<version>1.0.1</version>
 	</dependency>
 	    
 	<!--  RL-Viz libraries -->
