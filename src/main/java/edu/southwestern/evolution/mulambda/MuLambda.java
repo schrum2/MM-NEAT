@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.HybrIDUtil.*;
 import edu.southwestern.evolution.EvolutionaryHistory;
 import edu.southwestern.evolution.SinglePopulationGenerationalEA;
 import edu.southwestern.evolution.genotypes.Genotype;
@@ -401,7 +402,10 @@ public abstract class MuLambda<T> implements SinglePopulationGenerationalEA<T> {
 			if(Parameters.parameters.booleanParameter("offsetHybrID")) { //offsetHybrid is being used
 				result = OffsetHybrIDGenotype.getSubstrateGenotypesFromCPPNs(HyperNEATUtil.getHyperNEATTask(), result);
 			} else { //if preset-switch HybrID is being used
-				// Turn HyperNEAT off
+				//result = HybrIDUtil.switchSubstrateToNEAT(result);
+				
+				//BELOW IS ANTIQUATED
+				//Turn HyperNEAT off
 				CommonConstants.hyperNEAT = false;
 				Parameters.parameters.setBoolean("hyperNEAT", false);
 				// HyperNEAT disables monitorInputs, but if the parameter was true, then hybrID can turn it back on
@@ -418,8 +422,10 @@ public abstract class MuLambda<T> implements SinglePopulationGenerationalEA<T> {
 				// Only CPPNs have multiple activation functions, but standard NNs do not
 				CommonConstants.allowMultipleFunctions = false;
 				Parameters.parameters.setBoolean("allowMultipleFunctions", false);
+				
 				// Get substrate genotypes
 				result = PopulationUtil.getSubstrateGenotypesFromCPPNs(HyperNEATUtil.getHyperNEATTask(), result, 0); // 0 is only population
+				
 				// Reset archetype because the evolved CPPN genes are no longer relevant.
 				// 0 indicates that there is only one population, null will cause the archetype to reset, 
 				// and the nodes from the nodes from the first member of the new population will define the genotype	
