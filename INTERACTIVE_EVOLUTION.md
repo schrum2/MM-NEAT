@@ -84,7 +84,7 @@ Currently, the results seem to merely be color shifts on the original image.
 
 * Still under development.
 
-## [Mario Levels (prototype)](https://github.com/schrum2/MM-NEAT/src/main/java/edu/southwestern/tasks/interactive/mario/MarioLevelBreederTask.java)
+## [Mario Levels (prototype)](https://github.com/schrum2/MM-NEAT/blob/master/src/main/java/edu/southwestern/tasks/interactive/mario/MarioLevelBreederTask.java)
 
 Interactively evolves Mario levels. Users selectively breed levels based on appearance, but can also choose to play any of the evolved levels. 
 
