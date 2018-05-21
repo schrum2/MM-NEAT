@@ -19,7 +19,7 @@ public class EmptyAction implements BotAction {
 	/**
 	 * (This method provides the string extra that is included as part of the class)
 	 *
-	 * @param (extra) (string given as a parameter)
+	 * @param (extra) (string describing action)
 	 * @return (does not return a value)
 	 */
 	public EmptyAction(String extra) {
@@ -29,7 +29,7 @@ public class EmptyAction implements BotAction {
 	/**
 	 * (This method defines what boolean the action will be looking at, along with the string extra)
 	 *
-	 * @param (extra) (the string given to the method)
+	 * @param (extra) (the string given to the method to describe what the bot did)
 	 * @param (stopShooting) (the boolean value given to the class)
 	 * @return (does not return a value)
 	 */
@@ -41,7 +41,7 @@ public class EmptyAction implements BotAction {
 	 * (This function tells the bot to execute the command given)
 	 *
 	 * @param (bot) (the bot that will execute the command)
-	 * @return (what the bot is doing + the extra string)
+	 * @return (what the bot is doing + the descriptive string)
 	 */
 	public String execute(UT2004BotModuleController bot) {
 		// Doing "Nothing" means not shooting anymore
