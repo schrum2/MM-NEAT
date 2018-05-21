@@ -1,0 +1,40 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>cz.cuni.amis.pogamut</groupId>
+    <artifactId>pogamut-pom</artifactId>
+    <version>3.3.0</version>
+		<relativePath>../../Poms/PogamutPom/pom.xml</relativePath>
+	</parent>
+
+	<groupId>cz.cuni.amis</groupId>
+	<artifactId>amis-utils</artifactId>
+	<version>3.3.0</version>
+	<packaging>jar</packaging>
+
+	<name>amis-utils</name>
+	
+	<url>http://maven.apache.org</url>
+	
+	<repositories>
+		<repository>
+			<id>amis-artifactory</id>
+			<name>AMIS Artifactory</name>
+			<url>http://diana.ms.mff.cuni.cz:8081/artifactory/repo</url>
+		</repository>
+	</repositories>
+
+	<dependencies>
+		<!--
+    		Scope: TEST
+    	 -->    	
+    	<dependency>
+    		<groupId>cz.cuni.amis</groupId>
+    		<artifactId>amis-tests</artifactId>
+    		<version>3.3.0</version>
+    		<scope>test</scope>
+    	</dependency>
+	</dependencies>
+</project>
