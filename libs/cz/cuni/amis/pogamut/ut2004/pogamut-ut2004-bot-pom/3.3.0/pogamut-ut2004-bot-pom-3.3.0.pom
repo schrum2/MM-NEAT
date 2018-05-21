@@ -1,0 +1,83 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>cz.cuni.amis.pogamut.ut2004</groupId>
+		<artifactId>pogamut-ut2004-pom</artifactId>
+		<version>3.3.0</version>
+		<relativePath>../PogamutUT2004Pom/pom.xml</relativePath>
+	</parent>
+
+	<groupId>cz.cuni.amis.pogamut.ut2004</groupId>
+	<artifactId>pogamut-ut2004-bot-pom</artifactId>
+	<version>3.3.0</version>
+	<packaging>pom</packaging>
+
+	<name>pogamut-ut2004-bot-pom</name>
+	<url>http://diana.ms.mff.cuni.cz/pogamut</url>
+
+	<repositories>
+		<repository>
+			<id>amis-artifactory</id>
+			<name>AMIS Artifactory</name>
+			<url>http://diana.ms.mff.cuni.cz:8081/artifactory/repo</url>
+		</repository>
+	</repositories>
+
+	<profiles>
+		<profile>
+			<id>one-jar-package</id>
+			<activation>
+				<file>
+					<missing>skip.one-jar.package</missing>
+				</file>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>buildnumber-maven-plugin</artifactId>
+						<version>1.0-beta-4</version>
+						<executions>
+							<execution>
+								<id>execute-buildnumber-maven-plugin</id>
+								<phase>none</phase>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.dstovall</groupId>
+						<artifactId>onejar-maven-plugin</artifactId>
+						<version>1.4.4</version>
+						<executions>
+							<execution>
+								<phase>package</phase>
+								<configuration>
+									<!-- Optional -->
+									<onejarVersion>0.97</onejarVersion>
+									<!--
+										Optional, use only if you need to include native libraries
+										(dll's) <binlibs> <fileSet>
+										<directory>${project.build.directory}/dllextract</directory>
+										<includes> <include>test.dll</include> </includes> </fileSet>
+										</binlibs>
+									-->
+									<!-- Optional, default is false -->
+									<attachToBuild>true</attachToBuild>
+									<!-- Optional, default is "onejar" -->
+									<classifier>onejar</classifier>
+								</configuration>
+								<goals>
+									<goal>one-jar</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+
+
+		</profile>
+	</profiles>
+</project>

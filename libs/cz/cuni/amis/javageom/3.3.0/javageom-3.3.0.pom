@@ -1,0 +1,40 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>cz.cuni.amis.pogamut</groupId>
+    <artifactId>pogamut-pom</artifactId>
+    <version>3.3.0</version>
+		<relativePath>../../Poms/PogamutPom/pom.xml</relativePath>
+	</parent>
+
+	<groupId>cz.cuni.amis</groupId>
+	<artifactId>javageom</artifactId>
+	<version>3.3.0</version>
+	<packaging>jar</packaging>
+
+	<name>java-geom</name>
+	
+	<url>http://maven.apache.org</url>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+	<repositories>
+		<repository>
+			<id>amis-artifactory</id>
+			<name>AMIS Artifactory</name>
+			<url>http://diana.ms.mff.cuni.cz:8081/artifactory/repo</url>
+		</repository>
+	</repositories>
+
+	<dependencies>
+		<dependency>
+			<groupId>javax.vecmath</groupId>
+			<artifactId>vecmath</artifactId>
+			<version>1.5.1</version>
+		</dependency>
+	</dependencies>
+</project>
