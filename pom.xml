@@ -254,6 +254,13 @@
 		<artifactId>afsm</artifactId>
 		<version>1.0.1</version>
 	</dependency>
+
+	<dependency>
+		<groupId>cz.cuni.amis</groupId>
+		<artifactId>introspection</artifactId>
+		<version>1.0.0</version>
+	</dependency>
+	    
 	    
 	<!--  RL-Viz libraries -->
 	<dependency>
