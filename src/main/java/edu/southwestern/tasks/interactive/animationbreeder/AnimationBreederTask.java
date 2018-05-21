@@ -292,21 +292,34 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 		}
 	}
 
+	/**
+	 * X and Y input labels, distance from center is useful for radial distance,
+	 * time, bias is required for all neural networks.
+	 */
 	@Override
 	public String[] sensorLabels() {
 		return new String[] { "X-coordinate", "Y-coordinate", "distance from center", "time", "bias" };
 	}
-
+	
+	/**
+	 * Hue, saturation, and brightness values being output by CPPN
+	 */
 	@Override
 	public String[] outputLabels() {
 		return new String[] { "hue-value", "saturation-value", "brightness-value" };
 	}
 
+	/** 
+	 * Window Title
+	 */
 	@Override
 	protected String getWindowTitle() {
 		return "AnimationBreeder";
 	}
 
+	/**
+	 * Save generated animated images from CPPN
+	 */
 	@Override
 	protected void save(String filename, int i) {
 		// Use of imageHeight and imageWidth allows saving a higher quality image than is on the button
@@ -321,12 +334,18 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 		System.out.println("image " + filename + " was saved successfully");
 	}
 
+	/**
+	 * Create BufferedImage from CPPN
+	 */
 	@Override
 	protected BufferedImage getButtonImage(T phenotype, int width, int height, double[] inputMultipliers) {
 		// Just get first frame for button. Slightly inefficent though, since all animation frames were pre-computed
 		return AnimationUtil.imagesFromCPPN(phenotype, picSize, picSize, 0, 1, getInputMultipliers())[0];
 	}
 	
+	/**
+	 * Change image on button
+	 */
 	@Override
 	protected void setButtonImage(BufferedImage gmi, int buttonIndex) {
 		if(animationThreads[buttonIndex] != null && showNetwork) animationThreads[buttonIndex].stopAnimation();
@@ -337,10 +356,14 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 		}
 	}
 
+	/**
+	 * No additional behavior of click other than initial response is used
+	 */
 	@Override
 	protected void additionalButtonClickAction(int scoreIndex, Genotype<T> individual) {
 		// do nothing
 	}
+
 
 	public ArrayList<Score<T>> evaluateAll(ArrayList<Genotype<T>> population) {
 		clearAnimations(population.size());
@@ -366,6 +389,9 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 		super.setUndo();
 	}
 
+	/**
+	 * Resets all buttons. If hardReset is true, cache is cleared
+	 */
 	@Override
 	public void resetButtons(boolean hardReset) {
 		super.resetButtons(hardReset);
@@ -391,6 +417,9 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 		}
 	}
 
+	/**
+	 * Resets image on a button using specified gentype
+	 */
 	@Override
 	protected void resetButton(Genotype<T> individual, int x) {
 		super.resetButton(individual, x);
@@ -401,6 +430,9 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 		}
 	}
 
+	/**
+	 * Resets to a new random population
+	 */
 	@Override
 	protected void reset() {
 		if(alwaysAnimate) {
