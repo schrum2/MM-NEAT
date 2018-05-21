@@ -21,7 +21,7 @@ that are used to plot the color at the input (x,y). This process is repeated for
 image, so that the images have incredibly diverse and colorful patterns.
 
 * Based on previous work: 
-  Jimmy Secretan, Nicholas Beato, David B. D'Ambrosio, Adelein Rodriguez, Adam Campbell, Jeremiah T. Folsom-Kovarik and Kenneth O. Stanley. Picbreeder: A Case Study in Collaborative Evolutionary Exploration of Design Space. Evolutionary Computation 19, 3 (2011), 373–403. DOI: http://dx.doi.org/10.1162/evco_a_00030
+  Jimmy Secretan, Nicholas Beato, David B. D'Ambrosio, Adelein Rodriguez, Adam Campbell, Jeremiah T. Folsom-Kovarik and Kenneth O. Stanley. Picbreeder: A Case Study in Collaborative Evolutionary Exploration of Design Space. Evolutionary Computation 19, 3 (2011), 373â€“403. DOI: http://dx.doi.org/10.1162/evco_a_00030
 
 ## [Breedesizer](https://github.com/schrum2/MM-NEAT/blob/master/src/main/java/edu/southwestern/tasks/interactive/breedesizer/BreedesizerTask.java)
 
@@ -31,7 +31,7 @@ sounds with a selected MIDI file, using the created sound as the "instrument". T
 keyboard applet that can be used to play the generated sound at different frequencies (or pitches).
 
 * Based on previous work: 
-  Björn Þór Jónsson, Amy K. Hoover, and Sebastian Risi. Interactively Evolving Compositional Sound Synthesis Networks. Proceedings of the 2015 Genetic and Evolutionary Computation Conference (GECCO '15). Pages 321-328. 2015. DOI: http://dx.doi.org/10.1145/2739480.2754796
+  BjÃ¶rn ÃžÃ³r JÃ³nsson, Amy K. Hoover, and Sebastian Risi. Interactively Evolving Compositional Sound Synthesis Networks. Proceedings of the 2015 Genetic and Evolutionary Computation Conference (GECCO '15). Pages 321-328. 2015. DOI: http://dx.doi.org/10.1145/2739480.2754796
 
 ## [ThreeDimensionalObjectBreeder](https://github.com/schrum2/MM-NEAT/blob/master/src/main/java/edu/southwestern/tasks/interactive/objectbreeder/ThreeDimensionalObjectBreederTask.java)
 
@@ -81,6 +81,12 @@ brightness, and a bias of 1.0 as inputs to the CPPN, and outputting hue, saturat
 brightness values that are used to plot the color at the input (x,y). The process of creating the image is very
 similar to the generation of images in Picbreeder, but it manipulates an input image.
 Currently, the results seem to merely be color shifts on the original image.
+
+* Still under development.
+
+## [Mario Levels (prototype)](https://github.com/schrum2/MM-NEAT/src/main/java/edu/southwestern/tasks/interactive/mario/MarioLevelBreederTask.java)
+
+Interactively evolves Mario levels. Users selectively breed levels based on appearance, but can also choose to play any of the evolved levels. 
 
 * Still under development.
 
