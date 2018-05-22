@@ -15,8 +15,10 @@ public class HybrIDUtilTest {
 
 	@Test
 	public void dummyTest() {
+		MMNEAT.clearClasses();
+		Parameters.parameters = null;
 		final int PARENT_POPULATION = 10;
-		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "recurrency:false", "hyperNEAT:true", 
+		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "recurrency:false", "hyperNEAT:true", "mu:"+PARENT_POPULATION,
 				"task:edu.southwestern.networks.hyperneat.HyperNEATDummyTask","linkExpressionThreshold:-1","hybrID:true","genotype:edu.southwestern.evolution.genotypes.HyperNEATCPPNGenotype"});
 		MMNEAT.loadClasses();
 		HyperNEATCPPNGenotype example = new HyperNEATCPPNGenotype();
@@ -45,8 +47,10 @@ public class HybrIDUtilTest {
 	
 	@Test
 	public void shortTest() {
+		MMNEAT.clearClasses();
+		Parameters.parameters = null;
 		final int PARENT_POPULATION = 10;
-		Parameters.initializeParameterCollections(new String[] {"task:edu.southwestern.tasks.rlglue.tetris.HyperNEATTetrisTask", "rlGlueEnvironment:org.rlcommunity.environments.tetris.Tetris", 
+		Parameters.initializeParameterCollections(new String[] {"io:false", "netio:false","task:edu.southwestern.tasks.rlglue.tetris.HyperNEATTetrisTask", "rlGlueEnvironment:org.rlcommunity.environments.tetris.Tetris", "mu:"+PARENT_POPULATION,
 				"rlGlueExtractor:edu.southwestern.tasks.rlglue.featureextractors.tetris.RawTetrisStateExtractor", "tetrisTimeSteps:true", "tetrisBlocksOnScreen:false",  
 				"rlGlueAgent:edu.southwestern.tasks.rlglue.tetris.TetrisAfterStateAgent", "splitRawTetrisInputs:true", "senseHolesDifferently:true", "hyperNEAT:true", "genotype:edu.southwestern.evolution.genotypes.HyperNEATCPPNGenotype", 
 				"allowMultipleFunctions:true", "ftype:1", "netChangeActivationRate:0.3", "substrateMapping:edu.southwestern.networks.hyperneat.BottomSubstrateMapping", "steps:500000", "perLinkMutateRate:0.05", "netLinkRate:0.4", 
@@ -74,8 +78,10 @@ public class HybrIDUtilTest {
 	//test maven compile
 	@Test
 	public void cnnTest() {
+		MMNEAT.clearClasses();
+		Parameters.parameters = null;
 		final int PARENT_POPULATION = 10;
-		Parameters.initializeParameterCollections(new String[] {"task:edu.southwestern.tasks.rlglue.tetris.HyperNEATTetrisTask", "rlGlueEnvironment:org.rlcommunity.environments.tetris.Tetris", 
+		Parameters.initializeParameterCollections(new String[] {"io:false", "netio:false", "task:edu.southwestern.tasks.rlglue.tetris.HyperNEATTetrisTask", "rlGlueEnvironment:org.rlcommunity.environments.tetris.Tetris", "mu:"+PARENT_POPULATION,
 				"rlGlueExtractor:edu.southwestern.tasks.rlglue.featureextractors.tetris.RawTetrisStateExtractor", "tetrisTimeSteps:true", "tetrisBlocksOnScreen:false",  
 				"rlGlueAgent:edu.southwestern.tasks.rlglue.tetris.TetrisAfterStateAgent", "splitRawTetrisInputs:true", "senseHolesDifferently:true", "hyperNEAT:true", "genotype:edu.southwestern.evolution.genotypes.HyperNEATCPPNGenotype", 
 				"allowMultipleFunctions:true", "ftype:1", "netChangeActivationRate:0.3", "substrateMapping:edu.southwestern.networks.hyperneat.BottomSubstrateMapping", "steps:500000", "perLinkMutateRate:0.05", "netLinkRate:0.4", 
