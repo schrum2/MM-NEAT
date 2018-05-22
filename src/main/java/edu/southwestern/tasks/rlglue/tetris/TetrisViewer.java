@@ -47,7 +47,7 @@ public final class TetrisViewer {
 	 *            Tetris State
 	 */
 	public void update(TetrisState ts) {
-		Graphics2D g = panel.getGraphics();
+		Graphics2D gameBoard = panel.getGraphics();
 		// System.out.println("Update Tetris");
 
 		//Rectangle2D agentRect;
@@ -66,10 +66,10 @@ public final class TetrisViewer {
 		int h = DABS;
 		int x = 0;
 		int y = 0;
-		g.setColor(Color.GRAY);
+		gameBoard.setColor(Color.GRAY);
 
 		// System.out.println(numRows + "," + numCols);
-
+		int currentScore = -1;
 		for (int i = 0; i < numRows; i++) {
 			for (int j = 0; j < numCols; j++) {
 				x = j * DABS;
@@ -80,44 +80,53 @@ public final class TetrisViewer {
 					// +","+ h);
 					switch (thisBlockColor) {
 					case 1:
-						g.setColor(Color.PINK);
+						gameBoard.setColor(Color.PINK);
 						break;
 					case 2:
-						g.setColor(Color.RED);
+						gameBoard.setColor(Color.RED);
 						break;
 					case 3:
-						g.setColor(Color.GREEN);
+						gameBoard.setColor(Color.GREEN);
 						break;
 					case 4:
-						g.setColor(Color.YELLOW);
+						gameBoard.setColor(Color.YELLOW);
 						break;
 					case 5:
-						g.setColor(Color.LIGHT_GRAY);
+						gameBoard.setColor(Color.LIGHT_GRAY);
 						break;
 					case 6:
-						g.setColor(Color.ORANGE);
+						gameBoard.setColor(Color.ORANGE);
 						break;
 					case 7:
-						g.setColor(Color.MAGENTA);
+						gameBoard.setColor(Color.MAGENTA);
 						break;
 
 					}
-					g.fill3DRect(x, y, w, h, true);
+					gameBoard.fill3DRect(x, y, w, h, true);
 				} else {
 					// System.out.println("Empty block: " + x +","+ y +","+ w
 					// +","+ h);
-					g.setColor(Color.WHITE);
+					gameBoard.setColor(Color.WHITE);
 					//agentRect = new Rectangle2D.Double(x, y, w, h);
 					//if (true) { // tetVis.printGrid()) {
-					g.fill3DRect(x, y, w, h, true);
+					gameBoard.fill3DRect(x, y, w, h, true);
 					//} else { // for troubleshooting
 					//	g.fill(agentRect);
 					//}
 				}
 			}
 		}
-		g.setColor(Color.GRAY);
-		g.drawRect(0, 0, DABS * numCols, DABS * numRows);
+		gameBoard.setColor(Color.GRAY);
+		gameBoard.drawRect(0, 0, DABS * numCols, DABS * numRows);
+
+		gameBoard.setColor(Color.BLACK);
+//		if (ts.get_score() != currentScore) {
+//			gameBoard.drawRect(-5,-5,5,5);
+//			gameBoard.drawString("Current Score: " + ts.get_score(), 0, -20);
+//			currentScore = ts.get_score();
+//		}
+		
+		//gameBoard.drawString("Lines Cleared: " + , 0, -5);
 
 		try {
 			Thread.sleep(WATCH_DELAY);
