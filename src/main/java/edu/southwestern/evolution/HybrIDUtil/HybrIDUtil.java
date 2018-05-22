@@ -12,7 +12,24 @@ import edu.southwestern.parameters.Parameters;
 import edu.southwestern.util.PopulationUtil;
 
 public class HybrIDUtil {
-	public static <T> ArrayList<Genotype<T>> switchSubstrateToNEAT(ArrayList<Genotype<T>> population) {
+	/**
+	 * Resets the archetype because the evolved CPPN genes are no longer relevant.
+	 * @param exemplarNN member of new population that will define the genotype
+	 */
+	private static void resetArchetype(TWEANNGenotype exemplarNN) {
+		// Reset next innovation based on the maximum in the exemplar genotype
+		long maxInnovation = 0;
+		for(LinkGene lg : exemplarNN.links) {
+			maxInnovation = Math.max(maxInnovation, lg.innovation);
+		}
+		EvolutionaryHistory.setInnovation(maxInnovation+1);
+		EvolutionaryHistory.initArchetype(0, null, exemplarNN);
+	}
+
+	/**
+	 * Turns off all HyperNEAT parameters that do not apply to NEAT. Mainly turns off CPPN.
+	 */
+	private static void deactivateHyperNEAT() {
 		// Turn HyperNEAT off
 		CommonConstants.hyperNEAT = false;
 		Parameters.parameters.setBoolean("hyperNEAT", false);
@@ -21,7 +38,7 @@ public class HybrIDUtil {
 		// Turn off HyperNEAT visualizations
 		HyperNEATUtil.clearHyperNEATVisualizations();
 		// Need small genes because there are so many of them
-		//TWEANNGenotype.smallerGenotypes = true; // <--- Commented out for now, but we may consider adding back later
+		// TWEANNGenotype.smallerGenotypes = true; // <--- Commented out for now, but we may consider adding back later
 		// Switch from CPPNs to plain TWEANNs
 		Parameters.parameters.setClass("genotype", TWEANNGenotype.class);
 		// Substrate networks cannot have different activation functions
@@ -30,21 +47,23 @@ public class HybrIDUtil {
 		// Only CPPNs have multiple activation functions, but standard NNs do not
 		CommonConstants.allowMultipleFunctions = false;
 		Parameters.parameters.setBoolean("allowMultipleFunctions", false);
-		
+	}
+
+	/**
+	 * Switches the given population from HyperNEAT to NEAT for use in HybridID
+	 * @param population the hyperNEAT population
+	 * @return the NEAT population
+	 */
+	public static <T> ArrayList<Genotype<T>> switchSubstrateToNEAT(ArrayList<Genotype<T>> population) {
+		deactivateHyperNEAT();
+
 		// Get substrate genotypes
 		population = PopulationUtil.getSubstrateGenotypesFromCPPNs(HyperNEATUtil.getHyperNEATTask(), population, 0); // 0 is only population
-		
+
 		// Reset archetype because the evolved CPPN genes are no longer relevant.
 		// 0 indicates that there is only one population, null will cause the archetype to reset, 
 		// and the nodes from the nodes from the first member of the new population will define the genotype	
-		TWEANNGenotype exemplar = (TWEANNGenotype) population.get(0).copy();
-		// Reset next innovation based on the maximum in the exemplar genotype
-		long maxInnovation = 0;
-		for(LinkGene lg : exemplar.links) {
-			maxInnovation = Math.max(maxInnovation, lg.innovation);
-		}
-		EvolutionaryHistory.setInnovation(maxInnovation+1);
-		EvolutionaryHistory.initArchetype(0, null, exemplar);
+		resetArchetype((TWEANNGenotype) population.get(0).copy());
 		return population;
 	}
 }
