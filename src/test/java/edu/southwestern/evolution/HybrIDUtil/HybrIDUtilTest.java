@@ -14,7 +14,7 @@ import edu.southwestern.util.random.RandomNumbers;
 public class HybrIDUtilTest {
 
 	@Test
-	public void test() {
+	public void dummyTest() {
 		final int PARENT_POPULATION = 10;
 		Parameters.initializeParameterCollections(new String[] { "io:false", "netio:false", "recurrency:false", "hyperNEAT:true", 
 				"task:edu.southwestern.networks.hyperneat.HyperNEATDummyTask","linkExpressionThreshold:-1","hybrID:true","genotype:edu.southwestern.evolution.genotypes.HyperNEATCPPNGenotype"});
@@ -42,5 +42,62 @@ public class HybrIDUtilTest {
 			}
 		}
 	}
-
+	
+	@Test
+	public void shortTest() {
+		final int PARENT_POPULATION = 10;
+		Parameters.initializeParameterCollections(new String[] {"task:edu.southwestern.tasks.rlglue.tetris.HyperNEATTetrisTask", "rlGlueEnvironment:org.rlcommunity.environments.tetris.Tetris", 
+				"rlGlueExtractor:edu.southwestern.tasks.rlglue.featureextractors.tetris.RawTetrisStateExtractor", "tetrisTimeSteps:true", "tetrisBlocksOnScreen:false",  
+				"rlGlueAgent:edu.southwestern.tasks.rlglue.tetris.TetrisAfterStateAgent", "splitRawTetrisInputs:true", "senseHolesDifferently:true", "hyperNEAT:true", "genotype:edu.southwestern.evolution.genotypes.HyperNEATCPPNGenotype", 
+				"allowMultipleFunctions:true", "ftype:1", "netChangeActivationRate:0.3", "substrateMapping:edu.southwestern.networks.hyperneat.BottomSubstrateMapping", "steps:500000", "perLinkMutateRate:0.05", "netLinkRate:0.4", 
+				"netSpliceRate:0.2", "crossoverRate:0.5", "log:Tetris-ShortTest", "saveTo:ShortTest", "extraHNLinks:true", "HNProcessDepth:1", "HNProcessWidth:1", "convolution:false",  "hybrIDSwitchGeneration:5", "hybrID:tru", 
+				"tetrisAllowLine:false", "tetrisAllowSquare:false", "tetrisAllowTri:false", "tetrisAllowLShape:false", "tetrisAllowJShape:false"});
+		MMNEAT.loadClasses();
+		HyperNEATCPPNGenotype example = new HyperNEATCPPNGenotype();
+		ArrayList<Genotype<TWEANN>> preSwitchPopulation = PopulationUtil.initialPopulation(example, PARENT_POPULATION);
+		ArrayList<Genotype<TWEANN>> postSwitchPopulation = HybrIDUtil.switchSubstrateToNEAT(preSwitchPopulation);
+		assertEquals(preSwitchPopulation.size(), postSwitchPopulation.size());
+		for (int i = 0; i < preSwitchPopulation.size(); i++) {
+			TWEANN preSwitchNN = preSwitchPopulation.get(i).getPhenotype();
+			TWEANN postSwitchNN = postSwitchPopulation.get(i).getPhenotype();
+			for (int j = 0; j < PARENT_POPULATION; j++) {
+				double[] inputs = RandomNumbers.randomArray(preSwitchNN.numInputs());
+				double[] output1 = preSwitchNN.process(inputs);
+				double[] output2 = postSwitchNN.process(inputs);		
+				assertEquals(output1.length, output2.length);
+				for (int k = 0; k < output1.length; k++) {
+					assertEquals(output1[k], output2[k], 0);
+				}
+			}
+		}
+	}
+	//test maven compile
+	@Test
+	public void cnnTest() {
+		final int PARENT_POPULATION = 10;
+		Parameters.initializeParameterCollections(new String[] {"task:edu.southwestern.tasks.rlglue.tetris.HyperNEATTetrisTask", "rlGlueEnvironment:org.rlcommunity.environments.tetris.Tetris", 
+				"rlGlueExtractor:edu.southwestern.tasks.rlglue.featureextractors.tetris.RawTetrisStateExtractor", "tetrisTimeSteps:true", "tetrisBlocksOnScreen:false",  
+				"rlGlueAgent:edu.southwestern.tasks.rlglue.tetris.TetrisAfterStateAgent", "splitRawTetrisInputs:true", "senseHolesDifferently:true", "hyperNEAT:true", "genotype:edu.southwestern.evolution.genotypes.HyperNEATCPPNGenotype", 
+				"allowMultipleFunctions:true", "ftype:1", "netChangeActivationRate:0.3", "substrateMapping:edu.southwestern.networks.hyperneat.BottomSubstrateMapping", "steps:500000", "perLinkMutateRate:0.05", "netLinkRate:0.4", 
+				"netSpliceRate:0.2", "crossoverRate:0.5", "log:Tetris-ShortTest", "saveTo:ShortTest", "extraHNLinks:true", "HNProcessDepth:1", "HNProcessWidth:1", "convolution:true",  "hybrIDSwitchGeneration:5", "hybrID:tru", 
+				"tetrisAllowLine:false", "tetrisAllowSquare:false", "tetrisAllowTri:false", "tetrisAllowLShape:false", "tetrisAllowJShape:false"});
+		MMNEAT.loadClasses();
+		HyperNEATCPPNGenotype example = new HyperNEATCPPNGenotype();
+		ArrayList<Genotype<TWEANN>> preSwitchPopulation = PopulationUtil.initialPopulation(example, PARENT_POPULATION);
+		ArrayList<Genotype<TWEANN>> postSwitchPopulation = HybrIDUtil.switchSubstrateToNEAT(preSwitchPopulation);
+		assertEquals(preSwitchPopulation.size(), postSwitchPopulation.size());
+		for (int i = 0; i < preSwitchPopulation.size(); i++) {
+			TWEANN preSwitchNN = preSwitchPopulation.get(i).getPhenotype();
+			TWEANN postSwitchNN = postSwitchPopulation.get(i).getPhenotype();
+			for (int j = 0; j < PARENT_POPULATION; j++) {
+				double[] inputs = RandomNumbers.randomArray(preSwitchNN.numInputs());
+				double[] output1 = preSwitchNN.process(inputs);
+				double[] output2 = postSwitchNN.process(inputs);		
+				assertEquals(output1.length, output2.length);
+				for (int k = 0; k < output1.length; k++) {
+					assertEquals(output1[k], output2[k], 0);
+				}
+			}
+		}
+	}
 }
