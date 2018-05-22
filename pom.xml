@@ -273,5 +273,17 @@
 		<version>1.0</version>
 	</dependency>
 		
+	<!-- for Ms. Pac-Man vs Ghosts PO competition -->
+	  <dependency>
+            <groupId>uk.co.pacmanvghosts</groupId>
+            <artifactId>pacman-main</artifactId>
+            <version>[2,]</version>
+      </dependency>
+      <dependency>
+            <groupId>io.jenetics</groupId>
+            <artifactId>jenetics</artifactId>
+            <version>3.7.0</version>
+      </dependency>
+		
   </dependencies>
 </project>
