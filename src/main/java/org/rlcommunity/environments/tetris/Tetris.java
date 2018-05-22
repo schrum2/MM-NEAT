@@ -60,8 +60,7 @@ public class Tetris extends RLGlueEnvironment implements HasAVisualizerInterface
 	private int numBlockPlacements = 0;
 
 	/**
-	 * This Tetris method calls getDefaultParameters so it can initialize with
-	 * them
+	 * This Tetris method calls getDefaultParameters so it can initialize with them
 	 */
 	public Tetris() {
 		this(getDefaultParameters());
@@ -81,7 +80,7 @@ public class Tetris extends RLGlueEnvironment implements HasAVisualizerInterface
 	/**
 	 * Tetris doesn't really have any parameters
 	 *
-	 * @return
+	 * @return empty parameter holder
 	 */
 	public static ParameterHolder getDefaultParameters() {
 		ParameterHolder p = new ParameterHolder();
@@ -94,8 +93,8 @@ public class Tetris extends RLGlueEnvironment implements HasAVisualizerInterface
 	 * Using the parameters, this method get the task spec payload for the
 	 * current game world.
 	 * 
-	 * @param p
-	 * @return
+	 * @param parameter holder
+	 * @return task spec payload
 	 */
 	public static TaskSpecPayload getTaskSpecPayload(ParameterHolder p) {
 		Tetris theWorld = new Tetris(p);
@@ -104,13 +103,16 @@ public class Tetris extends RLGlueEnvironment implements HasAVisualizerInterface
 	}
 
 	/* Base RL-Glue Functions */
+	/**
+	 *  creates initial environment
+	 */
 	@Override
 	public String env_init() {
 		return makeTaskSpec().getStringRepresentation();
 	}
 
 	/**
-	 * Starts the game environment (or just game state?)
+	 * Starts the game environment and returns the initial game environment
 	 * 
 	 * @return Observation of game state
 	 */
@@ -224,12 +226,16 @@ public class Tetris extends RLGlueEnvironment implements HasAVisualizerInterface
 	/**
 	 * Average number of game spaces that do not contain any blocks
 	 * across all states in which a block was just placed (afterstates)
-	 * @return The average across afterstates
+	 * @return The average number of empty spaces across all afterstates
 	 */
 	public double getAverageNumEmptySpaces() {
 		return averageNumEmptyBlocks;
 	}
 	
+	/**
+	 * Average number of holes across all states in which a block was just placed (afterstates)
+	 * @return The average number of holes across all afterstates
+	 */
 	public double getAverageNumHoles() {
 		return averageNumHoles;
 	}
@@ -239,6 +245,7 @@ public class Tetris extends RLGlueEnvironment implements HasAVisualizerInterface
 	 */
 	@Override
 	public void env_cleanup() {
+		//nothing here
 	}
 
 	/**
@@ -246,7 +253,7 @@ public class Tetris extends RLGlueEnvironment implements HasAVisualizerInterface
 	 * parameter
 	 * 
 	 * @param theMessage
-	 * @return 
+	 * @return string of the message
 	 */
 	@Override
 	public String env_message(String theMessage) {
@@ -308,7 +315,7 @@ public class Tetris extends RLGlueEnvironment implements HasAVisualizerInterface
 
 	/**
 	 * Doesn't seem to be used ... file does not exist.
-	 * @return 
+	 * @return dead link
 	 */
 	@Override
 	public URL getImageURL() {
@@ -317,7 +324,7 @@ public class Tetris extends RLGlueEnvironment implements HasAVisualizerInterface
 	}
 
 	/**
-	 * Method returns a taskspec that reflects the current game state
+	 * Method returns a task spec that reflects the current game state
 	 * 
 	 * @return provides task details
 	 */
@@ -352,8 +359,10 @@ public class Tetris extends RLGlueEnvironment implements HasAVisualizerInterface
 
 		TaskSpec.checkTaskSpec(taskSpecString);
 		// return taskSpecString;
+		
+		//Can this be deleted?
 		TaskSpec.checkTaskSpec(taskSpecString);
-
+		 
 		return new TaskSpec(theTaskSpecObject);
 	}
 
@@ -412,6 +421,7 @@ class DetailsProvider implements hasVersionDetails {
 
 	@Override
 	public String getInfoUrl() {
+		//dead link
 		return "http://library.rl-community.org/tetris";
 	}
 
