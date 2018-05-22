@@ -1,14 +1,18 @@
 package edu.southwestern.tasks.rlglue.tetris;
 
+import java.util.Random;
+
 import org.rlcommunity.environments.tetris.Tetris;
 import org.rlcommunity.environments.tetris.TetrisState;
 
 import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.networks.Network;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.rlglue.RLGlueTask;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
+import edu.southwestern.util.random.RandomNumbers;
 import edu.southwestern.util.stats.StatisticsUtilities;
 
 public class TetrisTask<T extends Network> extends RLGlueTask<T> {
@@ -66,6 +70,16 @@ public class TetrisTask<T extends Network> extends RLGlueTask<T> {
 	@Override
 	public int numOtherScores() {
 		return 7; // Each type of row, plus lines and score
+	}
+	
+	/**
+	 * This method is overridden here exclusively to enable deterministic play
+	 */
+	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {
+		TetrisState.randomGenerator = Parameters.parameters.booleanParameter("deterministic") ?
+				new Random(Parameters.parameters.integerParameter("randomSeed")): // Same "random" blocks for each agent
+				RandomNumbers.randomGenerator; // Randomness
+		return super.oneEval(individual, num);
 	}
 
 	/**

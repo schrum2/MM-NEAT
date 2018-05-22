@@ -53,7 +53,7 @@ public class TetrisState {
 			+ TETRIS_STATE_NUMBER_POSSIBLE_BLOCKS + 5;
 	public static final int[] BLOCK_ROTATIONS = { 2, 1, 4, 2, 2, 4, 4 };
 
-	private Random randomGenerator = RandomNumbers.randomGenerator;
+	public static Random randomGenerator;
 	public boolean blockMobile = true;
 	public int currentBlockId;/* which block we're using in the block table */
 
