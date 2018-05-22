@@ -54,7 +54,7 @@ public class HybrIDUtil {
 	 * @param population the hyperNEAT population
 	 * @return the NEAT population
 	 */
-	public static <T> ArrayList<Genotype<T>> switchSubstrateToNEAT(ArrayList<Genotype<T>> population) {
+	public static <T> ArrayList<Genotype<T>> switchPhenotypeToNEAT(ArrayList<Genotype<T>> population) {
 		deactivateHyperNEAT();
 
 		// Get substrate genotypes
