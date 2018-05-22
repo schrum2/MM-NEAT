@@ -10,7 +10,7 @@ import edu.southwestern.networks.Network;
  */
 public class WeaponAccuracyFitness<T extends Network> extends UT2004FitnessFunction<T> {
 
-	private final ItemType weapon;
+	private final ItemType weapon; 
 
 	/**
 	 * sets the weapon type
