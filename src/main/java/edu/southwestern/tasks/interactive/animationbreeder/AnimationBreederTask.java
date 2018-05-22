@@ -47,18 +47,26 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 		return AnimationUtil.imagesFromCPPN(cppn, picSize, picSize, startFrame, endFrame, getInputMultipliers());
 	}
 
-	// use private inner class to run animation in a loop
+	/**
+	 * Private inner class to run animations in a loop
+	 */
 	protected class AnimationThread extends Thread {
 		private int imageID;
 		private boolean abort;
 
-
+		/**
+		 * Default constructor
+		 * 
+		 * @param imageID ID of image to use in animation
+		 */
 		public AnimationThread(int imageID) {
 			this.imageID = imageID;
 			this.abort = false;
 		}
 
-
+		/**
+		 * Begin animation loop
+		 */
 		public void run() {
 			if(showNetwork) {
 				stopAnimation();
@@ -100,6 +108,9 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 			}
 		}
 
+		/**
+		 * Halts animation loop
+		 */
 		public void stopAnimation() {
 			abort = true;
 		}		
@@ -112,6 +123,11 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 	public ArrayList<BufferedImage>[] animations;
 	protected AnimationThread[] animationThreads;
 
+	/**
+	 * Default constructor
+	 * 
+	 * @throws IllegalAccessException
+	 */
 	public AnimationBreederTask() throws IllegalAccessException {
 		this(true);
 	}
@@ -319,6 +335,9 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 
 	/**
 	 * Save generated animated images from CPPN
+	 * 
+	 * @param file Desired file name
+	 * @param i Index of item being saved
 	 */
 	@Override
 	protected void save(String filename, int i) {
@@ -344,7 +363,10 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 	}
 	
 	/**
-	 * Change image on button
+	 * Change image on button to given image
+	 * 
+	 * @param gmi replacing image
+	 * @param buttonIndex index of button 
 	 */
 	@Override
 	protected void setButtonImage(BufferedImage gmi, int buttonIndex) {
@@ -357,7 +379,8 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 	}
 
 	/**
-	 * No additional behavior of click other than initial response is used
+	 * This method does nothing since no additional behavior of 
+	 * click other than initial response is used
 	 */
 	@Override
 	protected void additionalButtonClickAction(int scoreIndex, Genotype<T> individual) {
@@ -365,20 +388,37 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 	}
 
 
+	/**
+	 * Evaluates all genotypes in a population. 
+	 * 
+	 * @param population ArrayList<Genotype<T>> list of genotypes
+	 * @return ArrayList<Score<T>> list of scores
+	 */
+	@Override
 	public ArrayList<Score<T>> evaluateAll(ArrayList<Genotype<T>> population) {
 		clearAnimations(population.size());
 		return super.evaluateAll(population); // wait for user choices
 	}
 
+	/**
+	 * Clears all animations in each image array by replacing each with a
+	 * new ArrayList  
+	 * 
+	 * @param num int value of number image arrays
+	 */
 	@SuppressWarnings("unchecked")
 	private void clearAnimations(int num) {
 		// Load all Image arrays with animations
-		animations = new ArrayList[num];
+		animations = new ArrayList[num]; // Suppression for warning on type for ArrayLists
 		for(int i = 0; i < animations.length; i++) {
 			animations[i] = new ArrayList<BufferedImage>();
 		}		
 	}
 
+	/**
+	 * Undoes previous evolution call
+	 */
+	@Override
 	protected void setUndo() {
 		clearAnimations(scores.size());
 		if(alwaysAnimate) {
@@ -418,7 +458,10 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 	}
 
 	/**
-	 * Resets image on a button using specified gentype
+	 * Resets image on a button using specified genotype
+	 * 
+	 * @param individual Genotype used  to replace the button image
+	 * @param x index of the button to be modified
 	 */
 	@Override
 	protected void resetButton(Genotype<T> individual, int x) {
@@ -450,6 +493,9 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 		super.reset();
 	}
 
+	/**
+	 * Stops all animations and saves current score evaluations 
+	 */
 	@Override
 	protected void evolve() {
 		super.evolve();
@@ -460,11 +506,17 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 		}
 	}
 
+    /**
+     * Returns the number of inputs used in the interactive evolution task
+     */
 	@Override
 	public int numCPPNInputs() {
 		return CPPN_NUM_INPUTS;
 	}
 
+    /**
+     * Returns the number of outputs used in the interactive evolution task
+     */
 	@Override
 	public int numCPPNOutputs() {
 		return CPPN_NUM_OUTPUTS;
@@ -482,11 +534,17 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 		}
 	}
 
+	/**
+	 * Returns type of file being saved (GIF)
+	 */
 	@Override
 	protected String getFileType() {
 		return "GIF";
 	}
 
+	/**
+	 * Returns extension of saved images (.gif)
+	 */
 	@Override
 	protected String getFileExtension() {
 		return "gif";
