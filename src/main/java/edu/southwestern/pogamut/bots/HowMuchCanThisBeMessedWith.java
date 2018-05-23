@@ -1,4 +1,4 @@
-package pogamut.hunter;
+package edu.southwestern.pogamut.bots;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
