@@ -54,17 +54,17 @@ public class CowardBot extends UT2004BotModuleController<UT2004Bot> {
      * boolean switch to activate engage behavior
      */
     @JProp
-    public boolean shouldEngage = true;
+    public boolean shouldEngage = false;
     /**
      * boolean switch to activate pursue behavior
      */
     @JProp
-    public boolean shouldPursue = true;
+    public boolean shouldPursue = false;
     /**
      * boolean switch to activate rearm behavior
      */
     @JProp
-    public boolean shouldRearm = true;
+    public boolean shouldRearm = false;
     /**
      * boolean switch to activate collect health behavior
      */
@@ -174,7 +174,7 @@ public class CowardBot extends UT2004BotModuleController<UT2004Bot> {
     public Initialize getInitializeCommand() {
         // just set the name of the bot and his skill level, 1 is the lowest, 7 is the highest
     	// skill level affects how well will the bot aim
-        return new Initialize().setName("Hunter-" + (++instanceCount)).setDesiredSkill(5);
+        return new Initialize().setName("Coward-" + (++instanceCount)).setDesiredSkill(5);
     }
 
     /**
@@ -208,9 +208,9 @@ public class CowardBot extends UT2004BotModuleController<UT2004Bot> {
      */
     @Override
     public void logic() {    	    	
-        // 1) do you see enemy? 	-> go to PURSUE (start shooting / hunt the enemy)
-        if (shouldEngage && players.canSeeEnemies() && weaponry.hasLoadedWeapon()) {
-            stateEngage();
+        // 1) do you see enemy? 	->  run away
+        if (players.canSeeEnemies()) {
+        	 stateRunAroundItems();
             return;
         }
 
@@ -225,9 +225,9 @@ public class CowardBot extends UT2004BotModuleController<UT2004Bot> {
             return;
         }
 
-        // 4) have you got enemy to pursue? -> go to the last position of enemy
-        if (enemy != null && shouldPursue && weaponry.hasLoadedWeapon()) {  // !enemy.isVisible() because of 2)
-            this.statePursue();
+        // 4)  no enemies around -> stay in place
+        if (enemy == null && !players.canSeeEnemies()) {  // !enemy.isVisible() because of 2)
+            bot.stop();
             return;
         }
 
