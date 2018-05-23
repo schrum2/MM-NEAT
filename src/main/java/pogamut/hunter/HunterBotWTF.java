@@ -54,7 +54,7 @@ public class HunterBotWTF extends UT2004BotModuleController<UT2004Bot> {
      * boolean switch to activate engage behavior
      */
     @JProp
-    public boolean shouldEngage = true;
+    public boolean shouldEngage = false;
     /**
      * boolean switch to activate pursue behavior
      */
@@ -217,7 +217,7 @@ public class HunterBotWTF extends UT2004BotModuleController<UT2004Bot> {
         }
 
         // 2) are you shooting? 	-> stop shooting, you've lost your target
-        if (info.isShooting() || info.isSecondaryShooting()) {
+        if (info.isShooting() || info.isSecondaryShooting() || shouldEngage == false) {
             getAct().act(new StopShooting());
         }
 
@@ -227,9 +227,10 @@ public class HunterBotWTF extends UT2004BotModuleController<UT2004Bot> {
             return;
         }
 
-        // 4) have you got enemy to pursue? -> go to the last position of enemy
+        // 4) enemy lost -> run around 
         if (enemy != null && weaponry.hasLoadedWeapon()) {  // !enemy.isVisible() because of 2)
             shouldPursue = false;
+            shouldEngage = false;
         	this.stateRunAroundItems();
             return;
         }
