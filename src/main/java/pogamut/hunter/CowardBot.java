@@ -227,7 +227,7 @@ public class CowardBot extends UT2004BotModuleController<UT2004Bot> {
 
         // 4)  no enemies around -> stay in place
         if (enemy == null && !players.canSeeEnemies()) {  // !enemy.isVisible() because of 2)
-            bot.stop();
+            //bot.stop();
             return;
         }
 
