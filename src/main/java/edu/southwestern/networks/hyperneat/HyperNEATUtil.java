@@ -552,6 +552,9 @@ public class HyperNEATUtil {
 	public static List<Substrate> getSubstrateInformation(int inputWidth, int inputHeight, int numInputSubstrates, List<Triple<String, Integer, Integer>> output){
 		int processWidth = Parameters.parameters.integerParameter("HNProcessWidth");
 		int processDepth = Parameters.parameters.integerParameter("HNProcessDepth");
+		
+		// TODO: If a special substrate architecture is being used, then it can be returned here instead of the result below
+		
 		return getSubstrateInformation(inputWidth, inputHeight, numInputSubstrates, processWidth, processDepth, output);
 	}
 	

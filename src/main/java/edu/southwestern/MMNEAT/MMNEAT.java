@@ -438,6 +438,9 @@ public class MMNEAT {
 				HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair = CommonConstants.leo ? 2 : 1;
 				// Number of output neurons needed to designate bias values across all substrates
 				HyperNEATCPPNGenotype.numBiasOutputs = CommonConstants.evolveHyperNEATBias ? HyperNEATUtil.numBiasOutputsNeeded() : 0;
+				
+				// TODO: If special architecture is specified, then load it here
+				
 			}
 			if(Parameters.parameters.booleanParameter("hallOfFame")){
 				hallOfFame = new HallOfFame();
