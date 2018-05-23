@@ -174,7 +174,7 @@ public class HunterBotWTF extends UT2004BotModuleController<UT2004Bot> {
     public Initialize getInitializeCommand() {
         // just set the name of the bot and his skill level, 1 is the lowest, 7 is the highest
     	// skill level affects how well will the bot aim
-        return new Initialize().setName("Hunter-" + (++instanceCount)).setDesiredSkill(5);
+        return new Initialize().setName("HunterWTF-" + (++instanceCount)).setDesiredSkill(5);
     }
 
     /**
