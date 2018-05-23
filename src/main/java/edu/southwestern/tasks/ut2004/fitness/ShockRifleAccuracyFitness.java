@@ -1,6 +1,6 @@
 package edu.southwestern.tasks.ut2004.fitness;
 
-import cz.cuni.amis.pogamut.ut2004.communication.messages.ItemType;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.UT2004ItemType;
 import edu.southwestern.networks.Network;
 
 /**
@@ -13,6 +13,6 @@ public class ShockRifleAccuracyFitness<T extends Network> extends WeaponAccuracy
 	 * @return returns weapon accuracy with the schock rifle
 	 */
 	public ShockRifleAccuracyFitness() {
-		super(ItemType.SHOCK_RIFLE);
+		super(UT2004ItemType.SHOCK_RIFLE);
 	}
 }

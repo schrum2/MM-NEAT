@@ -65,20 +65,20 @@ public abstract class SequentialPathExplorer implements BotController {
 		return new NavigateToLocationAction(targetNavPoint);
 	}
 
-        @SuppressWarnings({ "rawtypes", "unchecked" })
+        @SuppressWarnings({ "rawtypes" })
 		@Override
 	public void initialize(UT2004BotModuleController bot) {
 		// initialize taboo set where we store temporarily unavailable navpoints
 		tabooNavPoints = new TabooSet<NavPoint>(bot.getBot());
 
 		// auto-removes wrong navigation links between navpoints
-		autoFixer = new UT2004PathAutoFixer(bot.getBot(), (UT2004PathExecutor<ILocated>) bot.getPathExecutor(),
-				bot.getFwMap(), bot.getNavBuilder());
+		autoFixer = new UT2004PathAutoFixer(bot.getBot(), (UT2004PathExecutor<ILocated>) bot.getNavigation().getPathExecutor(),
+				bot.getFwMap(), bot.getAStar(), bot.getNavBuilder());
 
 		// IMPORTANT
 		// adds a listener to the path executor for its state changes, it will
 		// allow you to react on stuff like "PATH TARGET REACHED" or "BOT STUCK"
-		bot.getPathExecutor().getState().addStrongListener(new FlagListener<IPathExecutorState>() {
+		bot.getNavigation().getPathExecutor().getState().addStrongListener(new FlagListener<IPathExecutorState>() {
 			@Override
 			public void flagChanged(IPathExecutorState changedValue) {
 				pathExecutorStateChange(changedValue.getState());

@@ -41,7 +41,7 @@ public class MyUCCWrapper extends UCCWrapper {
 				}
 			}
 
-			MyUCCWrapperConf conf = (MyUCCWrapperConf) this.configuration;
+			MyUCCWrapperConf conf = (MyUCCWrapperConf) this.conf;
 
 			String execStr = systemDirPath + uccFile;
 			String portsSetting = conf.startOnUnusedPort ? "?PortsLog=" + fileWithPorts + "?bRandomPorts=true" : "";

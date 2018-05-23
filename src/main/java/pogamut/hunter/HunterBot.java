@@ -1,10 +1,20 @@
 package pogamut.hunter;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+import java.util.logging.Level;
+
+import cz.cuni.amis.introspection.java.JProp;
 import cz.cuni.amis.pogamut.base.agent.navigation.IPathExecutorState;
 import cz.cuni.amis.pogamut.base.communication.worldview.listener.annotation.EventListener;
+import cz.cuni.amis.pogamut.base.utils.Pogamut;
 import cz.cuni.amis.pogamut.base.utils.guice.AgentScoped;
 import cz.cuni.amis.pogamut.base.utils.math.DistanceUtils;
+import cz.cuni.amis.pogamut.base3d.worldview.object.ILocated;
 import cz.cuni.amis.pogamut.ut2004.agent.module.utils.TabooSet;
+import cz.cuni.amis.pogamut.ut2004.agent.navigation.NavigationState;
 import cz.cuni.amis.pogamut.ut2004.agent.navigation.UT2004PathAutoFixer;
 import cz.cuni.amis.pogamut.ut2004.agent.navigation.stuckdetector.UT2004DistanceStuckDetector;
 import cz.cuni.amis.pogamut.ut2004.agent.navigation.stuckdetector.UT2004PositionStuckDetector;
@@ -12,18 +22,23 @@ import cz.cuni.amis.pogamut.ut2004.agent.navigation.stuckdetector.UT2004TimeStuc
 import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004Bot;
 import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004BotModuleController;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.ItemType;
-import cz.cuni.amis.pogamut.ut2004.communication.messages.gbcommands.*;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.UT2004ItemType;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.gbcommands.Initialize;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.gbcommands.Move;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.gbcommands.Rotate;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.gbcommands.Stop;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.gbcommands.StopShooting;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.BotDamaged;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.BotKilled;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.Item;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.NavPoint;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.Player;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.PlayerDamaged;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.PlayerKilled;
 import cz.cuni.amis.pogamut.ut2004.utils.UT2004BotRunner;
+import cz.cuni.amis.utils.collections.MyCollections;
 import cz.cuni.amis.utils.exception.PogamutException;
 import cz.cuni.amis.utils.flag.FlagListener;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-import java.util.logging.Level;
 
 /**
  * Example of Simple Pogamut bot, that randomly walks around the map searching
@@ -32,441 +47,367 @@ import java.util.logging.Level;
  * @author Rudolf Kadlec aka ik
  * @author Jimmy
  */
-@SuppressWarnings("rawtypes")
 @AgentScoped
 public class HunterBot extends UT2004BotModuleController<UT2004Bot> {
 
-	/**
-	 * boolean switch to activate engage behavior
-	 */
-	public boolean shouldEngage = true;
-	/**
-	 * boolean switch to activate pursue behavior
-	 */
-	public boolean shouldPursue = true;
-	/**
-	 * boolean switch to activate rearm behavior
-	 */
-	public boolean shouldRearm = true;
-	/**
-	 * boolean switch to activate collect items behavior
-	 */
-	public boolean shouldCollectItems = true;
-	/**
-	 * boolean switch to activate collect health behavior
-	 */
-	public boolean shouldCollectHealth = true;
-	/**
-	 * how low the health level should be to start collecting health items
-	 */
-	public int healthLevel = 90;
-	/**
-	 * how many bot the hunter killed other bots (i.e., bot has fragged them /
-	 * got point for killing somebody)
-	 */
-	public int frags = 0;
-	/**
-	 * how many times the hunter died
-	 */
-	public int deaths = 0;
+    /**
+     * boolean switch to activate engage behavior
+     */
+    @JProp
+    public boolean shouldEngage = true;
+    /**
+     * boolean switch to activate pursue behavior
+     */
+    @JProp
+    public boolean shouldPursue = true;
+    /**
+     * boolean switch to activate rearm behavior
+     */
+    @JProp
+    public boolean shouldRearm = true;
+    /**
+     * boolean switch to activate collect health behavior
+     */
+    @JProp
+    public boolean shouldCollectHealth = true;
+    /**
+     * how low the health level should be to start collecting health items
+     */
+    @JProp
+    public int healthLevel = 75;
+    /**
+     * how many bot the hunter killed other bots (i.e., bot has fragged them /
+     * got point for killing somebody)
+     */
+    @JProp
+    public int frags = 0;
+    /**
+     * how many times the hunter died
+     */
+    @JProp
+    public int deaths = 0;
 
-	/**
-	 * {@link PlayerKilled} listener that provides "frag" counting + is switches
-	 * the state of the hunter.
-	 *
-	 * @param event
-	 */
-	@EventListener(eventClass = PlayerKilled.class)
-	public void playerKilled(PlayerKilled event) {
-		if (event.getKiller().equals(info.getId())) {
-			++frags;
-		}
-		if (enemy == null) {
-			return;
-		}
-		if (enemy.getId().equals(event.getId())) {
-			previousState = State.OTHER;
-			enemy = null;
-		}
-	}
+    /**
+     * {@link PlayerKilled} listener that provides "frag" counting + is switches
+     * the state of the hunter.
+     *
+     * @param event
+     */
+    @EventListener(eventClass = PlayerKilled.class)
+    public void playerKilled(PlayerKilled event) {
+        if (event.getKiller().equals(info.getId())) {
+            ++frags;
+        }
+        if (enemy == null) {
+            return;
+        }
+        if (enemy.getId().equals(event.getId())) {
+            enemy = null;
+        }
+    }
+    /**
+     * Used internally to maintain the information about the bot we're currently
+     * hunting, i.e., should be firing at.
+     */
+    protected Player enemy = null;
+    /**
+     * Item we're running for. 
+     */
+    protected Item item = null;
+    /**
+     * Taboo list of items that are forbidden for some time.
+     */
+    protected TabooSet<Item> tabooItems = null;
+    
+    private UT2004PathAutoFixer autoFixer;
+    
+	private static int instanceCount = 0;
 
-	/**
-	 * Used internally to maintain the information about the bot we're currently
-	 * hunting, i.e., should be firing at.
-	 */
-	protected Player enemy = null;
-	/**
-	 * Taboo list of items that are forbidden for some time.
-	 */
-	protected TabooSet<Item> tabooItems = null;
-	@SuppressWarnings("unused")
-	private UT2004PathAutoFixer autoFixer;
+    /**
+     * Bot's preparation - called before the bot is connected to GB2004 and
+     * launched into UT2004.
+     */
+    @Override
+    public void prepareBot(UT2004Bot bot) {
+        tabooItems = new TabooSet<Item>(bot);
 
-	/**
-	 * Bot's preparation - called before the bot is connected to GB2004 and
-	 * launched into UT2004.
-	 */
-	@Override
-	public void prepareBot(UT2004Bot bot) {
-		tabooItems = new TabooSet<Item>(bot);
+        autoFixer = new UT2004PathAutoFixer(bot, navigation.getPathExecutor(), fwMap, aStar, navBuilder); // auto-removes wrong navigation links between navpoints
 
-		// add stuck detector that watch over the path-following, if it
-		// (heuristicly) finds out that the bot has stuck somewhere,
-		// it reports an appropriate path event and the path executor will stop
-		// following the path which in turn allows
-		// us to issue another follow-path command in the right time
-		// if the bot does not move for 3 seconds, considered that it is stuck
+        // listeners        
+        navigation.getState().addListener(new FlagListener<NavigationState>() {
 
-		pathExecutor.addStuckDetector(new UT2004TimeStuckDetector(bot, 3000, 10000)); 
-		// watch over the position history of the bot, if the bot does not move sufficiently enough, consider that it is stuck
-		pathExecutor.addStuckDetector(new UT2004PositionStuckDetector(bot)); 
-		// watch over distances to target
-		pathExecutor.addStuckDetector(new UT2004DistanceStuckDetector(bot)); 
-		 // auto-removes wrong navigation links between navpoints
-		autoFixer = new UT2004PathAutoFixer(bot, pathExecutor, fwMap, navBuilder);
+            @Override
+            public void flagChanged(NavigationState changedValue) {
+                switch (changedValue) {
+                    case PATH_COMPUTATION_FAILED:
+                    case STUCK:
+                        if (item != null) {
+                            tabooItems.add(item, 10);
+                        }
+                        reset();
+                        break;
 
-		// listeners
-		pathExecutor.getState().addListener(new FlagListener<IPathExecutorState>() {
-			@SuppressWarnings("incomplete-switch")
-			@Override
-			public void flagChanged(IPathExecutorState changedValue) {
-				switch (changedValue.getState()) {
-				case PATH_COMPUTATION_FAILED:
-				case STUCK:
-					if (item != null) {
-						tabooItems.add(item, 10);
-					}
-					reset();
-					break;
+                    case TARGET_REACHED:
+                        reset();
+                        break;
+                }
+            }
+        });
 
-				case TARGET_REACHED:
-					reset();
-					break;
-				}
-			}
-		});
+        // DEFINE WEAPON PREFERENCES
+        weaponPrefs.addGeneralPref(UT2004ItemType.LIGHTNING_GUN, true);                
+        weaponPrefs.addGeneralPref(UT2004ItemType.SHOCK_RIFLE, true);
+        weaponPrefs.addGeneralPref(UT2004ItemType.MINIGUN, false);
+        weaponPrefs.addGeneralPref(UT2004ItemType.FLAK_CANNON, true);        
+        weaponPrefs.addGeneralPref(UT2004ItemType.ROCKET_LAUNCHER, true);
+        weaponPrefs.addGeneralPref(UT2004ItemType.LINK_GUN, true);
+        weaponPrefs.addGeneralPref(UT2004ItemType.ASSAULT_RIFLE, true);        
+        weaponPrefs.addGeneralPref(UT2004ItemType.BIO_RIFLE, true);
+    }
 
-		// DEFINE WEAPON PREFERENCES
-		weaponPrefs.addGeneralPref(ItemType.MINIGUN, false);
-		weaponPrefs.addGeneralPref(ItemType.MINIGUN, true);
-		weaponPrefs.addGeneralPref(ItemType.LINK_GUN, false);
-		weaponPrefs.addGeneralPref(ItemType.LIGHTNING_GUN, true);
-		weaponPrefs.addGeneralPref(ItemType.SHOCK_RIFLE, true);
-		weaponPrefs.addGeneralPref(ItemType.ROCKET_LAUNCHER, true);
-		weaponPrefs.addGeneralPref(ItemType.LINK_GUN, true);
-		weaponPrefs.addGeneralPref(ItemType.ASSAULT_RIFLE, true);
-		weaponPrefs.addGeneralPref(ItemType.FLAK_CANNON, false);
-		weaponPrefs.addGeneralPref(ItemType.FLAK_CANNON, true);
-		weaponPrefs.addGeneralPref(ItemType.BIO_RIFLE, true);
-	}
+    /**
+     * Here we can modify initializing command for our bot.
+     *
+     * @return
+     */
+    @Override
+    public Initialize getInitializeCommand() {
+        // just set the name of the bot and his skill level, 1 is the lowest, 7 is the highest
+    	// skill level affects how well will the bot aim
+        return new Initialize().setName("Hunter-" + (++instanceCount)).setDesiredSkill(5);
+    }
 
-	/**
-	 * Here we can modify initializing command for our bot.
-	 *
-	 * @return
-	 */
-	@Override
-	public Initialize getInitializeCommand() {
-		// just set the name of the bot, nothing else
-		return new Initialize().setName("Hunter").setDesiredSkill(5);
-	}
+    /**
+     * Resets the state of the Hunter.
+     */
+    protected void reset() {
+    	item = null;
+        enemy = null;
+        navigation.stopNavigation();
+        itemsToRunAround = null;
+    }
+    
+    @EventListener(eventClass=PlayerDamaged.class)
+    public void playerDamaged(PlayerDamaged event) {
+    	log.info("I have just hurt other bot for: " + event.getDamageType() + "[" + event.getDamage() + "]");
+    }
+    
+    @EventListener(eventClass=BotDamaged.class)
+    public void botDamaged(BotDamaged event) {
+    	log.info("I have just been hurt by other bot for: " + event.getDamageType() + "[" + event.getDamage() + "]");
+    }
 
-	/**
-	 * The hunter maintains the information of the state it was in the previous
-	 * logic-cycle.
-	 *
-	 * @author Jimmy
-	 */
-	protected static enum State {
+    /**
+     * Main method that controls the bot - makes decisions what to do next. It
+     * is called iteratively by Pogamut engine every time a synchronous batch
+     * from the environment is received. This is usually 4 times per second - it
+     * is affected by visionTime variable, that can be adjusted in GameBots ini
+     * file in UT2004/System folder.
+     *
+     * @throws cz.cuni.amis.pogamut.base.exceptions.PogamutException
+     */
+    @Override
+    public void logic() {    	    	
+        // 1) do you see enemy? 	-> go to PURSUE (start shooting / hunt the enemy)
+        if (shouldEngage && players.canSeeEnemies() && weaponry.hasLoadedWeapon()) {
+            stateEngage();
+            return;
+        }
 
-		OTHER, ENGAGE, PURSUE, MEDKIT, GRAB, ITEMS
-	}
+        // 2) are you shooting? 	-> stop shooting, you've lost your target
+        if (info.isShooting() || info.isSecondaryShooting()) {
+            getAct().act(new StopShooting());
+        }
 
-	/**
-	 * Resets the state of the Hunter.
-	 */
-	protected void reset() {
-		previousState = State.OTHER;
-		notMoving = 0;
-		enemy = null;
-		navigation.stopNavigation();
-		itemsToRunAround = null;
-		item = null;
-	}
+        // 3) are you being shot? 	-> go to HIT (turn around - try to find your enemy)
+        if (senses.isBeingDamaged()) {
+            this.stateHit();
+            return;
+        }
 
-	/**
-	 * The previous state the hunter was inside during the previous logic
-	 * iteration.
-	 */
-	protected State previousState = State.OTHER;
-	/**
-	 * Global anti-stuck mechanism. When this counter reaches a certain
-	 * constant, the bot's mind gets a {@link HunterBot#reset()}.
-	 */
-	protected int notMoving = 0;
+        // 4) have you got enemy to pursue? -> go to the last position of enemy
+        if (enemy != null && shouldPursue && weaponry.hasLoadedWeapon()) {  // !enemy.isVisible() because of 2)
+            this.statePursue();
+            return;
+        }
 
-	/**
-	 * Main method that controls the bot - makes decisions what to do next. It
-	 * is called iteratively by Pogamut engine every time a synchronous batch
-	 * from the environment is received. This is usually 4 times per second - it
-	 * is affected by visionTime variable, that can be adjusted in GameBots ini
-	 * file in UT2004/System folder.
-	 *
-	 * @throws cz.cuni.amis.pogamut.base.exceptions.PogamutException
-	 */
-	@Override
-	public void logic() {
-		// global anti-stuck?
-		if (!info.isMoving()) {
-			++notMoving;
-			if (notMoving > 4) {
-				// we're stuck - reset the bot's mind
-				reset();
-				return;
-			}
-		}
+        // 5) are you hurt?			-> get yourself some medKit
+        if (shouldCollectHealth && info.getHealth() < healthLevel) {
+            this.stateMedKit();
+            return;
+        }
 
-		// 1) do you see enemy? -> go to PURSUE (start shooting / hunt the
-		// enemy)
-		if (shouldEngage && players.canSeeEnemies() && weaponry.hasLoadedWeapon()) {
-			stateEngage();
-			return;
-		}
+        // 6) if nothing ... run around items
+        stateRunAroundItems();
+    }
 
-		// 2) are you shooting? -> stop shooting, you've lost your target
-		if (info.isShooting() || info.isSecondaryShooting()) {
-			getAct().act(new StopShooting());
-		}
+    //////////////////
+    // STATE ENGAGE //
+    //////////////////
+    protected boolean runningToPlayer = false;
 
-		// 3) are you being shot? -> go to HIT (turn around - try to find your
-		// enemy)
-		if (senses.isBeingDamaged()) {
-			this.stateHit();
-			return;
-		}
+    /**
+     * Fired when bot see any enemy. <ol> <li> if enemy that was attacked last
+     * time is not visible than choose new enemy <li> if enemy is reachable and the bot is far - run to him
+     * <li> otherwise - stand still (kind a silly, right? :-)
+     * </ol>
+     */
+    protected void stateEngage() {
+        //log.info("Decision is: ENGAGE");
+        //config.setName("Hunter [ENGAGE]");
 
-		// 4) have you got enemy to pursue? -> go to the last position of enemy
-		if (enemy != null && shouldPursue && weaponry.hasLoadedWeapon()) { // !enemy.isVisible()
-																			// because
-																			// of
-																			// 2)
-			this.statePursue();
-			return;
-		}
+        boolean shooting = false;
+        double distance = Double.MAX_VALUE;
+        pursueCount = 0;
 
-		// 5) are you hurt? -> get yourself some medKit
-		if (info.getHealth() < healthLevel && canRunAlongMedKit()) {
-			this.stateMedKit();
-			return;
-		}
+        // 1) pick new enemy if the old one has been lost
+        if (enemy == null || !enemy.isVisible()) {
+            // pick new enemy
+            enemy = players.getNearestVisiblePlayer(players.getVisibleEnemies().values());
+            if (enemy == null) {
+                log.info("Can't see any enemies... ???");
+                return;
+            }
+        }
 
-		// 6) do you see item? -> go to GRAB_ITEM (pick the most suitable item
-		// and run for)
-		if (shouldCollectItems && !items.getVisibleItems().isEmpty()) {
-			stateSeeItem();
-			previousState = State.GRAB;
-			return;
-		}
+        // 2) stop shooting if enemy is not visible
+        if (!enemy.isVisible()) {
+	        if (info.isShooting() || info.isSecondaryShooting()) {
+                // stop shooting
+                getAct().act(new StopShooting());
+            }
+            runningToPlayer = false;
+        } else {
+        	// 2) or shoot on enemy if it is visible
+	        distance = info.getLocation().getDistance(enemy.getLocation());
+	        if (shoot.shoot(weaponPrefs, enemy) != null) {
+	            log.info("Shooting at enemy!!!");
+	            shooting = true;
+	        }
+        }
 
-		// 7) if nothing ... run around items
-		stateRunAroundItems();
-	}
+        // 3) if enemy is far or not visible - run to him
+        int decentDistance = Math.round(random.nextFloat() * 800) + 200;
+        if (!enemy.isVisible() || !shooting || decentDistance < distance) {
+            if (!runningToPlayer) {
+                navigation.navigate(enemy);
+                runningToPlayer = true;
+            }
+        } else {
+            runningToPlayer = false;
+            navigation.stopNavigation();
+        }
+        
+        item = null;
+    }
 
-	//////////////////
-	// STATE ENGAGE //
-	//////////////////
-	protected boolean runningToPlayer = false;
+    ///////////////
+    // STATE HIT //
+    ///////////////
+    protected void stateHit() {
+        //log.info("Decision is: HIT");
+        bot.getBotName().setInfo("HIT");
+        if (navigation.isNavigating()) {
+        	navigation.stopNavigation();
+        	item = null;
+        }
+        getAct().act(new Rotate().setAmount(32000));
+    }
 
-	/**
-	 * Fired when bot see any enemy.
-	 * <ol>
-	 * <li>if enemy that was attacked last time is not visible than choose new
-	 * enemy
-	 * <li>if out of ammo - switch to another weapon
-	 * <li>if enemy is reachable and the bot is far - run to him
-	 * <li>if enemy is not reachable - stand still (kind a silly, right? :-)
-	 * </ol>
-	 */
-	protected void stateEngage() {
-		log.info("Decision is: ENGAGE");
-		// config.setName("Hunter [ENGAGE]");
+    //////////////////
+    // STATE PURSUE //
+    //////////////////
+    /**
+     * State pursue is for pursuing enemy who was for example lost behind a
+     * corner. How it works?: <ol> <li> initialize properties <li> obtain path
+     * to the enemy <li> follow the path - if it reaches the end - set lastEnemy
+     * to null - bot would have seen him before or lost him once for all </ol>
+     */
+    protected void statePursue() {
+        //log.info("Decision is: PURSUE");
+        ++pursueCount;
+        if (pursueCount > 30) {
+            reset();
+        }
+        if (enemy != null) {
+        	bot.getBotName().setInfo("PURSUE");
+        	navigation.navigate(enemy);
+        	item = null;
+        } else {
+        	reset();
+        }
+    }
+    protected int pursueCount = 0;
 
-		boolean shooting = false;
-		double distance = Double.MAX_VALUE;
+    //////////////////
+    // STATE MEDKIT //
+    //////////////////
+    protected void stateMedKit() {
+        //log.info("Decision is: MEDKIT");
+        Item item = items.getPathNearestSpawnedItem(ItemType.Category.HEALTH);
+        if (item == null) {
+        	log.warning("NO HEALTH ITEM TO RUN TO => ITEMS");
+        	stateRunAroundItems();
+        } else {
+        	bot.getBotName().setInfo("MEDKIT");
+        	navigation.navigate(item);
+        	this.item = item;
+        }
+    }
 
-		// 1) pick new enemy if the old one has been lost
-		if (previousState != State.ENGAGE || enemy == null || !enemy.isVisible()) {
-			// pick new enemy
-			enemy = players.getNearestVisiblePlayer(players.getVisibleEnemies().values());
-			if (enemy == null) {
-				log.info("Can't see any enemies... ???");
-				return;
-			}
-			if (info.isShooting()) {
-				// stop shooting
-				getAct().act(new StopShooting());
-			}
-			runningToPlayer = false;
-		}
+    ////////////////////////////
+    // STATE RUN AROUND ITEMS //
+    ////////////////////////////
+    protected List<Item> itemsToRunAround = null;
 
-		if (enemy != null) {
-			// 2) if not shooting at enemyID - start shooting
-			distance = info.getLocation().getDistance(enemy.getLocation());
+    protected void stateRunAroundItems() {
+        //log.info("Decision is: ITEMS");
+        //config.setName("Hunter [ITEMS]");
+        if (navigation.isNavigatingToItem()) return;
+        
+        List<Item> interesting = new ArrayList<Item>();
+        
+        // ADD WEAPONS
+        for (ItemType itemType : ItemType.Category.WEAPON.getTypes()) {
+        	if (!weaponry.hasLoadedWeapon(itemType)) interesting.addAll(items.getSpawnedItems(itemType).values());
+        }
+        // ADD ARMORS
+        for (ItemType itemType : ItemType.Category.ARMOR.getTypes()) {
+        	interesting.addAll(items.getSpawnedItems(itemType).values());
+        }
+        // ADD QUADS
+        interesting.addAll(items.getSpawnedItems(UT2004ItemType.U_DAMAGE_PACK).values());
+        // ADD HEALTHS
+        if (info.getHealth() < 100) {
+        	interesting.addAll(items.getSpawnedItems(UT2004ItemType.HEALTH_PACK).values());
+        }
+        
+        Item item = MyCollections.getRandom(tabooItems.filter(interesting));
+        if (item == null) {
+        	log.warning("NO ITEM TO RUN FOR!");
+        	if (navigation.isNavigating()) return;
+        	bot.getBotName().setInfo("RANDOM NAV");
+        	navigation.navigate(navPoints.getRandomNavPoint());
+        } else {
+        	this.item = item;
+        	log.info("RUNNING FOR: " + item.getType().getName());
+        	bot.getBotName().setInfo("ITEM: " + item.getType().getName() + "");
+        	navigation.navigate(item);        	
+        }        
+    }
 
-			// 3) should shoot?
-			if (shoot.shoot(weaponPrefs, enemy) != null) {
-				log.info("Shooting at enemy!!!");
-				shooting = true;
-			}
-		}
+    ////////////////
+    // BOT KILLED //
+    ////////////////
+    @Override
+    public void botKilled(BotKilled event) {
+    	reset();
+    }
 
-		// 4) if enemy is far - run to him
-		int decentDistance = Math.round(random.nextFloat() * 800) + 200;
-		if (!enemy.isVisible() || !shooting || decentDistance < distance) {
-			if (!runningToPlayer) {
-				navigation.navigate(enemy);
-				runningToPlayer = true;
-			}
-		} else {
-			runningToPlayer = false;
-			navigation.stopNavigation();
-			getAct().act(new Stop());
-		}
-
-		previousState = State.ENGAGE;
-	}
-
-	///////////////
-	// STATE HIT //
-	///////////////
-	protected void stateHit() {
-		log.info("Decision is: HIT");
-		getAct().act(new Rotate().setAmount(32000));
-		previousState = State.OTHER;
-	}
-
-	//////////////////
-	// STATE PURSUE //
-	//////////////////
-	/**
-	 * State pursue is for pursuing enemy who was for example lost behind a
-	 * corner. How it works?:
-	 * <ol>
-	 * <li>initialize properties
-	 * <li>obtain path to the enemy
-	 * <li>follow the path - if it reaches the end - set lastEnemy to null - bot
-	 * would have seen him before or lost him once for all
-	 * </ol>
-	 */
-	protected void statePursue() {
-		log.info("Decision is: PURSUE");
-		// config.setName("Hunter [PURSUE]");
-		if (previousState != State.PURSUE) {
-			pursueCount = 0;
-			navigation.navigate(enemy);
-		}
-		++pursueCount;
-		if (pursueCount > 30) {
-			reset();
-		} else {
-			previousState = State.PURSUE;
-		}
-	}
-
-	protected int pursueCount = 0;
-
-	//////////////////
-	// STATE MEDKIT //
-	//////////////////
-	@SuppressWarnings("unchecked")
-	protected void stateMedKit() {
-		log.info("Decision is: MEDKIT");
-		// config.setName("Hunter [MEDKIT]");
-		if (previousState != State.MEDKIT) {
-			List<Item> healths = new LinkedList();
-			healths.addAll(items.getSpawnedItems(ItemType.HEALTH_PACK).values());
-			if (healths.size() == 0) {
-				healths.addAll(items.getSpawnedItems(ItemType.MINI_HEALTH_PACK).values());
-			}
-			Set<Item> okHealths = tabooItems.filter(healths);
-			if (okHealths.size() == 0) {
-				log.log(Level.WARNING, "No suitable health to run for.");
-				stateRunAroundItems();
-				return;
-			}
-			item = fwMap.getNearestItem(okHealths, info.getNearestNavPoint());
-			navigation.navigate(item);
-		}
-		previousState = State.MEDKIT;
-	}
-
-	////////////////////
-	// STATE SEE ITEM //
-	////////////////////
-	protected Item item = null;
-
-	protected void stateSeeItem() {
-		log.info("Decision is: SEE ITEM");
-		// config.setName("Hunter [SEE ITEM]");
-
-		if (item != null && item.getLocation().getDistance(info.getLocation()) < 100) {
-			reset();
-		}
-
-		if (previousState != State.GRAB) {
-			item = DistanceUtils.getNearest(items.getVisibleItems().values(), info.getLocation());
-			if (item.getLocation().getDistance(info.getLocation()) < 300) {
-				getAct().act(new Move().setFirstLocation(item.getLocation()));
-			} else {
-				navigation.navigate(item);
-			}
-		}
-
-	}
-
-	protected boolean canRunAlongMedKit() {
-		boolean result = !items.getSpawnedItems(ItemType.HEALTH_PACK).isEmpty()
-				|| !items.getSpawnedItems(ItemType.MINI_HEALTH_PACK).isEmpty();
-		return result;
-	}
-
-	////////////////////////////
-	// STATE RUN AROUND ITEMS //
-	////////////////////////////
-	protected List<Item> itemsToRunAround = null;
-
-	protected void stateRunAroundItems() {
-		log.info("Decision is: ITEMS");
-		// config.setName("Hunter [ITEMS]");
-		if (previousState != State.ITEMS) {
-			itemsToRunAround = new LinkedList<Item>(items.getSpawnedItems().values());
-			Set<Item> items = tabooItems.filter(itemsToRunAround);
-			if (items.size() == 0) {
-				log.log(Level.WARNING, "No item to run for...");
-				reset();
-				return;
-			}
-			item = items.iterator().next();
-			navigation.navigate(item);
-		}
-		previousState = State.ITEMS;
-	}
-
-	////////////////
-	// BOT KILLED //
-	////////////////
-	@Override
-	public void botKilled(BotKilled event) {
-		itemsToRunAround = null;
-		enemy = null;
-	}
-
-	///////////////////////////////////
-	@SuppressWarnings("unchecked")
-	public static void main(String args[]) throws PogamutException {
-		// starts 4 Hunters at once
-		// note that this is the most easy way to get a bunch of bots running at
-		// the same time
-		new UT2004BotRunner(HunterBot.class, "Hunter").setMain(true).setLogLevel(Level.INFO).startAgents(4);
-	}
+    ///////////////////////////////////
+    public static void main(String args[]) throws PogamutException {
+        // starts 3 Hunters at once
+        // note that this is the most easy way to get a bunch of (the same) bots running at the same time        
+    	new UT2004BotRunner(HunterBot.class, "Hunter").setMain(true).setLogLevel(Level.INFO).startAgents(2);
+    }
 }
