@@ -4,10 +4,6 @@ import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.tasks.mspacman.ghosts.GhostComparator;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
-import oldpacman.game.Constants;
-import oldpacman.game.Constants.DM;
-import oldpacman.game.Constants.GHOST;
-import oldpacman.game.Constants.MOVE;
 import pacman.game.Game;
 
 import java.awt.Color;
@@ -36,16 +32,16 @@ public class GameFacade {
 	 * @param index
 	 * @return enum corresponding to move made
 	 */
-	public static MOVE indexToMove(int index) {
+	public static oldpacman.game.Constants.MOVE indexToMove(int index) {
 		switch (index) {
 		case 0:
-			return MOVE.UP;
+			return oldpacman.game.Constants.MOVE.UP;
 		case 1:
-			return MOVE.RIGHT;
+			return oldpacman.game.Constants.MOVE.RIGHT;
 		case 2:
-			return MOVE.DOWN;
+			return oldpacman.game.Constants.MOVE.DOWN;
 		case 3:
-			return MOVE.LEFT;
+			return oldpacman.game.Constants.MOVE.LEFT;
 		default:
 			return null;
 		}
@@ -57,7 +53,7 @@ public class GameFacade {
 	 * @param m enum move made
 	 * @return index of move
 	 */
-	public static int moveToIndex(MOVE m) {
+	public static int moveToIndex(oldpacman.game.Constants.MOVE m) {
 		switch (m) {
 		case UP:
 			return 0;
@@ -77,17 +73,17 @@ public class GameFacade {
 	 * @param index index of given ghost
 	 * @return ghost that corresponds to given index
 	 */
-	public static GHOST indexToGhost(int index) {
+	public static oldpacman.game.Constants.GHOST indexToGhost(int index) {
 		assert index >= 0 && index <= 3 : "Must be a valid ghost index: " + index;
 		switch (index) {
 		case 0:
-			return GHOST.BLINKY;
+			return oldpacman.game.Constants.GHOST.BLINKY;
 		case 1:
-			return GHOST.PINKY;
+			return oldpacman.game.Constants.GHOST.PINKY;
 		case 2:
-			return GHOST.INKY;
+			return oldpacman.game.Constants.GHOST.INKY;
 		case 3:
-			return GHOST.SUE;
+			return oldpacman.game.Constants.GHOST.SUE;
 		default:
 			System.out.println("Index " + index + " is a NULL ghost!");
 			return null;
@@ -99,7 +95,7 @@ public class GameFacade {
 	 * @param ghost ghost enum
 	 * @return index of ghost
 	 */
-	public static int ghostToIndex(GHOST ghost) {
+	public static int ghostToIndex(oldpacman.game.Constants.GHOST ghost) {
 		switch (ghost) {
 		case BLINKY:
 			return 0;
@@ -146,7 +142,7 @@ public class GameFacade {
 	 *            direction to move from current
 	 * @return neighboring node index
 	 */
-	public static int getNeighbourInDirection(oldpacman.game.Game g, int current, MOVE move) {
+	public static int getNeighbourInDirection(oldpacman.game.Game g, int current, oldpacman.game.Constants.MOVE move) {
 		return neighbors(g, current)[moveToIndex(move)];
 	}
 
@@ -164,7 +160,7 @@ public class GameFacade {
 	 */
 	public static int[] neighbors(oldpacman.game.Game gs, int currentNodeIndex) {
 		assert currentNodeIndex != -1 : "-1 is not a valid node index";
-		MOVE[] possible = gs.getPossibleMoves(currentNodeIndex);
+		oldpacman.game.Constants.MOVE[] possible = gs.getPossibleMoves(currentNodeIndex);
 		int[] neighbors = gs.getNeighbouringNodes(currentNodeIndex);
 		int[] result = new int[NUM_DIRS];
 		Arrays.fill(result, -1);
@@ -173,10 +169,10 @@ public class GameFacade {
 		for (int i = 0; i < possible.length; i++) {
 			int nx = gs.getNodeXCoord(neighbors[i]);
 			int ny = gs.getNodeYCoord(neighbors[i]);
-			assert!((possible[i].equals(MOVE.UP) && (cx != nx || ny >= cy))
-					|| (possible[i].equals(MOVE.DOWN) && (cx != nx || ny <= cy))
-					|| (possible[i].equals(MOVE.LEFT) && (cy != ny || (nx >= cx && nx != 108 & cx != 0)))
-					|| (possible[i].equals(MOVE.RIGHT) && (cy != ny
+			assert!((possible[i].equals(oldpacman.game.Constants.MOVE.UP) && (cx != nx || ny >= cy))
+					|| (possible[i].equals(oldpacman.game.Constants.MOVE.DOWN) && (cx != nx || ny <= cy))
+					|| (possible[i].equals(oldpacman.game.Constants.MOVE.LEFT) && (cy != ny || (nx >= cx && nx != 108 & cx != 0)))
+					|| (possible[i].equals(oldpacman.game.Constants.MOVE.RIGHT) && (cy != ny
 							|| (nx <= cx && nx != 0 & cx != 108)))) : "Error in neighbor calculation: move:"
 									+ possible[i] + ":current:" + cx + "," + cy + ":neighbor:" + nx + "," + ny;
 			result[moveToIndex(possible[i])] = neighbors[i];
@@ -687,7 +683,7 @@ public class GameFacade {
 	 * @return the closest node index from node index
 	 */
 	public int getClosestNodeIndexFromNodeIndex(int current, int[] targets) {
-		return newG.getClosestNodeIndexFromNodeIndex(current, targets, DM.PATH);
+		return newG.getClosestNodeIndexFromNodeIndex(current, targets, oldpacman.game.Constants.DM.PATH);
 	}
 
 	/**
@@ -717,7 +713,7 @@ public class GameFacade {
 	 * @return distance
 	 */
 	public double getPathDistance(int from, int to) {
-		return newG.getDistance(from, to, DM.PATH);
+		return newG.getDistance(from, to, oldpacman.game.Constants.DM.PATH);
 	}
 
 	/**
@@ -725,7 +721,7 @@ public class GameFacade {
 	 * @return hitting wall
 	 */
 	public boolean pacmanHittingWall() {
-		return newG.getPacmanLastMoveMade().equals(MOVE.NEUTRAL);
+		return newG.getPacmanLastMoveMade().equals(oldpacman.game.Constants.MOVE.NEUTRAL);
 	}
 
 	/**
@@ -769,7 +765,7 @@ public class GameFacade {
 	 */
 	public int getNextGhostDirTowards(int whichGhost, int to) {
 		return moveToIndex(newG.getApproximateNextMoveTowardsTarget(getGhostCurrentNodeIndex(whichGhost), to,
-				newG.getGhostLastMoveMade(indexToGhost(whichGhost)), DM.PATH));
+				newG.getGhostLastMoveMade(indexToGhost(whichGhost)), oldpacman.game.Constants.DM.PATH));
 	}
 
 	/**
@@ -780,7 +776,7 @@ public class GameFacade {
 	 */
 	public int getNextGhostDirAway(int whichGhost, int to) {
 		return moveToIndex(newG.getApproximateNextMoveAwayFromTarget(getGhostCurrentNodeIndex(whichGhost), to,
-				newG.getGhostLastMoveMade(indexToGhost(whichGhost)), DM.PATH));
+				newG.getGhostLastMoveMade(indexToGhost(whichGhost)), oldpacman.game.Constants.DM.PATH));
 	}
 
 	/**
@@ -796,7 +792,7 @@ public class GameFacade {
 	 * @return move
 	 */
 	public int getRestrictedNextDir(int from, int to, int lastDir) {
-		return moveToIndex(newG.getApproximateNextMoveTowardsTarget(from, to, indexToMove(lastDir), DM.PATH));
+		return moveToIndex(newG.getApproximateNextMoveTowardsTarget(from, to, indexToMove(lastDir), oldpacman.game.Constants.DM.PATH));
 	}
 
 	/**
@@ -805,7 +801,7 @@ public class GameFacade {
 	 * @return direction
 	 */
 	public int getNextPacManDirTowardsTarget(int to) {
-		return moveToIndex(newG.getNextMoveTowardsTarget(newG.getPacmanCurrentNodeIndex(), to, DM.PATH));
+		return moveToIndex(newG.getNextMoveTowardsTarget(newG.getPacmanCurrentNodeIndex(), to, oldpacman.game.Constants.DM.PATH));
 	}
 
 	/**
@@ -814,7 +810,7 @@ public class GameFacade {
 	 * @return direction
 	 */
 	public int getNextPacManDirAwayFromTarget(int to) {
-		return moveToIndex(newG.getNextMoveAwayFromTarget(newG.getPacmanCurrentNodeIndex(), to, DM.PATH));
+		return moveToIndex(newG.getNextMoveAwayFromTarget(newG.getPacmanCurrentNodeIndex(), to, oldpacman.game.Constants.DM.PATH));
 	}
 
 	/**
@@ -1004,7 +1000,7 @@ public class GameFacade {
 	 */
 	public double getGhostPathDistance(int ghostIndex, int toNodeIndex) {
 		return newG.getDistance(getGhostCurrentNodeIndex(ghostIndex), toNodeIndex,
-				newG.getGhostLastMoveMade(indexToGhost(ghostIndex)), DM.PATH);
+				newG.getGhostLastMoveMade(indexToGhost(ghostIndex)), oldpacman.game.Constants.DM.PATH);
 	}
 
 	/**
@@ -1018,9 +1014,9 @@ public class GameFacade {
 	public int getGhostTravelTime(int ghostIndex, int toNodeIndex) {
 		int distance = (int) getGhostPathDistance(ghostIndex, toNodeIndex);
 		int edibleTime = this.getGhostEdibleTime(ghostIndex);
-		int effectiveEdibleTime = Math.min(edibleTime, distance * Constants.GHOST_SPEED_REDUCTION);
+		int effectiveEdibleTime = Math.min(edibleTime, distance * oldpacman.game.Constants.GHOST_SPEED_REDUCTION);
 		return effectiveEdibleTime + distance
-				- ((int) Math.ceil(effectiveEdibleTime / Constants.GHOST_SPEED_REDUCTION));
+				- ((int) Math.ceil(effectiveEdibleTime / oldpacman.game.Constants.GHOST_SPEED_REDUCTION));
 	}
 
 	public boolean isGhostEdibleAfterTravel(int ghostIndex, int toNodeIndex) {
@@ -1103,7 +1099,7 @@ public class GameFacade {
 	 * @return farthest node from targets array
 	 */
 	public int getFarthestNodeIndexFromNodeIndex(int current, int[] targets) {
-		return newG.getFarthestNodeIndexFromNodeIndex(current, targets, DM.PATH);
+		return newG.getFarthestNodeIndexFromNodeIndex(current, targets, oldpacman.game.Constants.DM.PATH);
 	}
 
 	/**
@@ -1453,7 +1449,7 @@ public class GameFacade {
 	 * @return next move
 	 */
 	public int getNextMoveTowardsTarget(int from, int to) {
-		return moveToIndex(newG.getNextMoveTowardsTarget(from, to, DM.PATH));
+		return moveToIndex(newG.getNextMoveTowardsTarget(from, to, oldpacman.game.Constants.DM.PATH));
 	}
 
 	/**
@@ -1470,7 +1466,7 @@ public class GameFacade {
 	 * @param ghostDirs direction ghosts are to take
 	 */
 	public void advanceGame(int pacManDir, int[] ghostDirs) {
-		EnumMap<GHOST, MOVE> myMoves = new EnumMap<GHOST, MOVE>(GHOST.class);
+		EnumMap<oldpacman.game.Constants.GHOST, oldpacman.game.Constants.MOVE> myMoves = new EnumMap<oldpacman.game.Constants.GHOST, oldpacman.game.Constants.MOVE>(oldpacman.game.Constants.GHOST.class);
 		for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
 			myMoves.put(indexToGhost(i), indexToMove(ghostDirs[i]));
 		}
@@ -2274,7 +2270,7 @@ public class GameFacade {
 
 	public int getNumberOfLairGhosts() {
 		int count = 0;
-		for (int i = 0; i < Constants.NUM_GHOSTS; i++) {
+		for (int i = 0; i < oldpacman.game.Constants.NUM_GHOSTS; i++) {
 			if (this.getGhostLairTime(i) > 0) {
 				count++;
 			}
