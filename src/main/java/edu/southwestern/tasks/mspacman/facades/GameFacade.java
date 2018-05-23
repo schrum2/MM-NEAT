@@ -5,10 +5,10 @@ import edu.southwestern.tasks.mspacman.ghosts.GhostComparator;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
 import oldpacman.game.Constants;
-import oldpacman.game.Game;
 import oldpacman.game.Constants.DM;
 import oldpacman.game.Constants.GHOST;
 import oldpacman.game.Constants.MOVE;
+import pacman.game.Game;
 
 import java.awt.Color;
 import java.util.*;
@@ -28,7 +28,8 @@ public class GameFacade {
 	public static final int MAX_DISTANCE = 200;
 	public static final int NUM_DIRS = 4;
 	public static final int DANGEROUS_TIME = 5;
-	public Game newG = null;
+	public oldpacman.game.Game newG = null;
+	public pacman.game.Game poG = null; // New pacman from Maven
 
 	/**
 	 * returns what move to make based on the 
@@ -145,7 +146,7 @@ public class GameFacade {
 	 *            direction to move from current
 	 * @return neighboring node index
 	 */
-	public static int getNeighbourInDirection(Game g, int current, MOVE move) {
+	public static int getNeighbourInDirection(oldpacman.game.Game g, int current, MOVE move) {
 		return neighbors(g, current)[moveToIndex(move)];
 	}
 
@@ -161,7 +162,7 @@ public class GameFacade {
 	 *            node to get neighbors of
 	 * @return contents of four neighboring positions
 	 */
-	public static int[] neighbors(Game gs, int currentNodeIndex) {
+	public static int[] neighbors(oldpacman.game.Game gs, int currentNodeIndex) {
 		assert currentNodeIndex != -1 : "-1 is not a valid node index";
 		MOVE[] possible = gs.getPossibleMoves(currentNodeIndex);
 		int[] neighbors = gs.getNeighbouringNodes(currentNodeIndex);
@@ -187,7 +188,7 @@ public class GameFacade {
 	 * Sets game facade based on given game
 	 * @param g game
 	 */
-	public GameFacade(Game g) {
+	public GameFacade(oldpacman.game.Game g) {
 		newG = g;
 	}
 
@@ -316,7 +317,9 @@ public class GameFacade {
 	 * @return ghosts edible
 	 */
 	public boolean anyIsEdible() {
-		return anyIsEdible(newG);
+		return newG == null ? 
+				anyIsEdible(poG) :
+				anyIsEdible(newG);
 	}
 
 	/**
@@ -1847,7 +1850,7 @@ public class GameFacade {
 	 *            instance of new pacman Game
 	 * @return true if ghost requires action
 	 */
-	private static boolean anyRequiresAction(Game newG) {
+	private static boolean anyRequiresAction(oldpacman.game.Game newG) {
 		for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
 			if (newG.doesGhostRequireAction(indexToGhost(i))) {
 				return true;
@@ -1872,7 +1875,7 @@ public class GameFacade {
 	 *            new pacman Game instance
 	 * @return max edible time
 	 */
-	private static int maxEdibleTime(Game newG) {
+	private static int maxEdibleTime(oldpacman.game.Game newG) {
 		int max = -1;
 		for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
 			max = Math.max(max, newG.getGhostEdibleTime(indexToGhost(i)));
@@ -1887,11 +1890,23 @@ public class GameFacade {
 	 *            new pacman Game instance
 	 * @return any ghost edible?
 	 */
-	private boolean anyIsEdible(Game newG) {
+	private boolean anyIsEdible(oldpacman.game.Game newG) {
 		for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
 			if (newG.isGhostEdible(indexToGhost(i))) {
 				return true;
 			}
+		}
+		return false;
+	}
+	
+	/**
+	 * TODO, potentiall throw an unsupported operation if this function would not be useable in PO conditions
+	 * @param poG
+	 * @return
+	 */
+	private boolean anyIsEdible(pacman.game.Game poG) {
+		for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
+			// How to do this in PO pacman?
 		}
 		return false;
 	}
