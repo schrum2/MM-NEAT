@@ -70,8 +70,12 @@ public final class TetrisViewer {
 		gameBoard.setColor(Color.GRAY);
 
 		// System.out.println(numRows + "," + numCols);
+		
+		// these will be updated the first iteration and every subsequent iteration that there value changes
 		int currentScore = -1;
-		int linesCleared = -1;
+		int currentNumlinesCleared = -1;
+		int currentNumEmptySpaces = -1;
+		
 		for (int i = 0; i < numRows; i++) {
 			for (int j = 0; j < numCols; j++) {
 				x = j * DABS;
@@ -126,24 +130,30 @@ public final class TetrisViewer {
 		//updates score board with with current score
 		if (ts.get_score() != currentScore) {
 			gameBoard.setColor(Color.WHITE);
-			gameBoard.fillRect(0,-30,100,10);
+			gameBoard.fillRect(0,-45,100,10);
 			gameBoard.setColor(Color.BLACK);
 			currentScore = ts.get_score();
-			gameBoard.drawString("Current Score: " + currentScore, 0, -20);
+			gameBoard.drawString("Current Score: " + currentScore, 0, -35);
 		}
 		
 		//updates score board with number of line cleared
-//		if (ts.get_linesCleared() != linesCleared) {
-//			gameBoard.setColor(Color.WHITE);
-//			//gameBoard.fillRect(0,-30,100,10);
-//			gameBoard.setColor(Color.BLACK);
-//			linesCleared = ts.get_linesCleared();
-//			gameBoard.drawString("Lines Cleared: " + linesCleared, 0, -5);
-//		}
+		if (ts.get_linesCleared() != currentNumlinesCleared) {
+			gameBoard.setColor(Color.WHITE);
+			gameBoard.fillRect(0,-30,100,10);
+			gameBoard.setColor(Color.BLACK);
+			currentNumlinesCleared = ts.get_linesCleared();
+			gameBoard.drawString("Lines Cleared: " + currentNumlinesCleared, 0, -20);
+		}
 		
+		//update score board with number of empty spaces
+		if (ts.numEmptySpaces() != currentNumEmptySpaces) {
+			gameBoard.setColor(Color.WHITE);
+			gameBoard.fillRect(0,-15,120,10);
+			gameBoard.setColor(Color.BLACK);
+			currentNumEmptySpaces = ts.numEmptySpaces();
+			gameBoard.drawString("Empty Spaces: " + currentNumEmptySpaces, 0, -5);
+		}
 		
-		
-
 		try {
 			Thread.sleep(WATCH_DELAY);
 		} catch (InterruptedException ex) {
