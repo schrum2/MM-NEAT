@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.southwestern.tasks.ut2004.sensors.blocks;
 
 import cz.cuni.amis.pogamut.base3d.worldview.object.Location;
@@ -15,7 +11,7 @@ import java.util.ArrayList;
 import javax.vecmath.Vector3d;
 
 /**
- *
+ *Allows the bot to figure out where it is being shot from
  * @author Jacob Schrum
  */
 public class AutoRayTraceSensorBlock implements UT2004SensorBlock {
@@ -25,6 +21,9 @@ public class AutoRayTraceSensorBlock implements UT2004SensorBlock {
 	private ArrayList<String> autoRayIds;
 	private ArrayList<AutoTraceRay> rays;
 
+	/**
+	 * creates the sensor block
+	 */
 	public AutoRayTraceSensorBlock() {
 		autoRayIds = new ArrayList<String>(NUMBER_LEVEL_RAY_SENSORS + 2);
 		autoRayIds.add("Crosshair");
@@ -33,6 +32,9 @@ public class AutoRayTraceSensorBlock implements UT2004SensorBlock {
 		}
 	}
 
+	/**
+	 * sets up the 
+	 */
 	public void prepareBlock(final UT2004BotModuleController bot) {
 		bot.getAct().act(new RemoveRay("All"));
 		this.rays = new ArrayList<AutoTraceRay>(NUMBER_LEVEL_RAY_SENSORS + 2);
