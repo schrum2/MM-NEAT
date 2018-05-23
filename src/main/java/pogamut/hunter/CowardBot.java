@@ -48,13 +48,13 @@ import cz.cuni.amis.utils.flag.FlagListener;
  * @author Jimmy
  */
 @AgentScoped
-public class HunterBotWTF extends UT2004BotModuleController<UT2004Bot> {
+public class CowardBot extends UT2004BotModuleController<UT2004Bot> {
 
     /**
      * boolean switch to activate engage behavior
      */
     @JProp
-    public boolean shouldEngage = false;
+    public boolean shouldEngage = true;
     /**
      * boolean switch to activate pursue behavior
      */
@@ -174,7 +174,7 @@ public class HunterBotWTF extends UT2004BotModuleController<UT2004Bot> {
     public Initialize getInitializeCommand() {
         // just set the name of the bot and his skill level, 1 is the lowest, 7 is the highest
     	// skill level affects how well will the bot aim
-        return new Initialize().setName("WTFHunter-" + (++instanceCount)).setDesiredSkill(5);
+        return new Initialize().setName("Hunter-" + (++instanceCount)).setDesiredSkill(5);
     }
 
     /**
@@ -209,15 +209,13 @@ public class HunterBotWTF extends UT2004BotModuleController<UT2004Bot> {
     @Override
     public void logic() {    	    	
         // 1) do you see enemy? 	-> go to PURSUE (start shooting / hunt the enemy)
-        if (players.canSeeEnemies() && weaponry.hasLoadedWeapon()) {
-        	shouldEngage = true;
-        	shouldPursue = true;
+        if (shouldEngage && players.canSeeEnemies() && weaponry.hasLoadedWeapon()) {
             stateEngage();
             return;
         }
 
         // 2) are you shooting? 	-> stop shooting, you've lost your target
-        if (info.isShooting() || info.isSecondaryShooting() || shouldEngage == false) {
+        if (info.isShooting() || info.isSecondaryShooting()) {
             getAct().act(new StopShooting());
         }
 
@@ -227,11 +225,9 @@ public class HunterBotWTF extends UT2004BotModuleController<UT2004Bot> {
             return;
         }
 
-        // 4) enemy lost -> run around 
-        if (enemy != null && weaponry.hasLoadedWeapon()) {  // !enemy.isVisible() because of 2)
-            shouldPursue = false;
-            shouldEngage = false;
-        	this.stateRunAroundItems();
+        // 4) have you got enemy to pursue? -> go to the last position of enemy
+        if (enemy != null && shouldPursue && weaponry.hasLoadedWeapon()) {  // !enemy.isVisible() because of 2)
+            this.statePursue();
             return;
         }
 
@@ -412,6 +408,6 @@ public class HunterBotWTF extends UT2004BotModuleController<UT2004Bot> {
     public static void main(String args[]) throws PogamutException {
         // starts 3 Hunters at once
         // note that this is the most easy way to get a bunch of (the same) bots running at the same time        
-    	new UT2004BotRunner(HunterBotWTF.class, "Hunter").setMain(true).setLogLevel(Level.INFO).startAgents(2);
+    	new UT2004BotRunner(CowardBot.class, "Hunter").setMain(true).setLogLevel(Level.INFO).startAgents(2);
     }
 }
