@@ -14,7 +14,7 @@ import edu.southwestern.tasks.mspacman.ghosts.DirectionalGhostComparator;
 import edu.southwestern.tasks.mspacman.ghosts.GhostComparator;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
-import pacman.game.Constants;
+import oldpacman.game.Constants;
 
 /**
  *

@@ -65,11 +65,11 @@ import edu.southwestern.util.stats.Average;
 import edu.southwestern.util.stats.Max;
 import edu.southwestern.util.stats.Mode;
 import edu.southwestern.util.stats.Statistic;
-import pacman.Executor;
-import pacman.controllers.NewGhostController;
-import pacman.controllers.NewPacManController;
-import pacman.game.Constants;
-import pacman.game.Game;
+import oldpacman.Executor;
+import oldpacman.controllers.NewGhostController;
+import oldpacman.controllers.NewPacManController;
+import oldpacman.game.Constants;
+import oldpacman.game.Game;
 
 /**
  * Ms. Pac-Man vs. four ghosts across four mazes.

@@ -1,6 +1,6 @@
 package edu.southwestern.tasks.mspacman.facades;
 
-import pacman.controllers.NewPacManController;
+import oldpacman.controllers.NewPacManController;
 
 /**
  * Facade for pacman controller

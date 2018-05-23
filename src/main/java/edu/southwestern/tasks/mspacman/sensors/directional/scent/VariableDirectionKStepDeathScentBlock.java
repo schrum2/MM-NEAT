@@ -3,9 +3,10 @@ package edu.southwestern.tasks.mspacman.sensors.directional.scent;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.mspacman.facades.GameFacade;
 import edu.southwestern.tasks.mspacman.sensors.directional.VariableDirectionBlock;
+import oldpacman.Executor;
+import oldpacman.game.Constants;
+
 import java.util.*;
-import pacman.Executor;
-import pacman.game.Constants;
 
 /**
  *

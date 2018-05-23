@@ -4,11 +4,12 @@ import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.networks.Network;
 import edu.southwestern.tasks.mspacman.facades.GameFacade;
 import edu.southwestern.tasks.mspacman.sensors.ghosts.GhostControllerInputOutputMediator;
+import oldpacman.controllers.NewGhostController;
+import oldpacman.game.Game;
+import oldpacman.game.Constants.GHOST;
+import oldpacman.game.Constants.MOVE;
+
 import java.util.EnumMap;
-import pacman.controllers.NewGhostController;
-import pacman.game.Constants.GHOST;
-import pacman.game.Constants.MOVE;
-import pacman.game.Game;
 
 /**
  *

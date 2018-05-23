@@ -6,11 +6,11 @@ import edu.southwestern.tasks.mspacman.facades.GameFacade;
 import edu.southwestern.tasks.mspacman.sensors.directional.VariableDirectionBlock;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
+import oldpacman.game.Constants;
+
 import java.util.Arrays;
 
 import org.apache.commons.lang3.ArrayUtils;
-
-import pacman.game.Constants;
 
 /**
  *

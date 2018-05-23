@@ -4,16 +4,16 @@ import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.tasks.mspacman.ghosts.GhostComparator;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
+import oldpacman.game.Constants;
+import oldpacman.game.Game;
+import oldpacman.game.Constants.DM;
+import oldpacman.game.Constants.GHOST;
+import oldpacman.game.Constants.MOVE;
+
 import java.awt.Color;
 import java.util.*;
 
 import org.apache.commons.lang3.ArrayUtils;
-
-import pacman.game.Constants;
-import pacman.game.Constants.DM;
-import pacman.game.Constants.GHOST;
-import pacman.game.Constants.MOVE;
-import pacman.game.Game;
 
 /**
  *Contains pac man game. Includes harnesses for both
@@ -703,7 +703,7 @@ public class GameFacade {
 	 */
 	public void addPoints(Color c, int[] nodes) {
 		if (nodes.length > 0) {
-			pacman.game.GameView.addPoints(newG, c, ArrayUtil.filter(nodes, -1));
+			oldpacman.game.GameView.addPoints(newG, c, ArrayUtil.filter(nodes, -1));
 		}
 	}
 
@@ -745,7 +745,7 @@ public class GameFacade {
 	 *            the to node index
 	 */
 	public void addLines(Color c, int from, int to) {
-		pacman.game.GameView.addLines(newG, c, from, to);
+		oldpacman.game.GameView.addLines(newG, c, from, to);
 
 	}
 

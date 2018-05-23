@@ -44,9 +44,9 @@ import edu.southwestern.util.stats.Average;
 import edu.southwestern.util.stats.Max;
 import micro.ai.RandomBiasedAI;
 import micro.ai.mcts.uct.UCT;
-import pacman.controllers.examples.Legacy;
-import pacman.controllers.examples.StarterPacMan;
-import pacman.game.Constants;
+import oldpacman.controllers.examples.Legacy;
+import oldpacman.controllers.examples.StarterPacMan;
+import oldpacman.game.Constants;
 
 /**
  * Used for processing and containing command line parameters.

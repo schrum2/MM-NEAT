@@ -11,11 +11,9 @@ import org.junit.Test;
 
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.mspacman.facades.GameFacade;
-//import edu.southwestern.util.MiscUtil;
-import pacman.game.Constants.GHOST;
-import pacman.game.Constants.MOVE;
-import pacman.game.Game;
-//import pacman.game.GameView; 
+import oldpacman.game.Game;
+import oldpacman.game.Constants.GHOST;
+import oldpacman.game.Constants.MOVE;
 
 public class AnyGhostEdibleModeSelectorTest {
 
