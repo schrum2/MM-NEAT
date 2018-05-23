@@ -19,7 +19,7 @@ import org.apache.commons.lang3.ArrayUtils;
  * @author Jacob Schrum
  */
 public class GameFacade {
-
+	
 	//public static variables
 	public static final int MAX_DISTANCE = 200;
 	public static final int NUM_DIRS = 4;
@@ -189,30 +189,52 @@ public class GameFacade {
 	}
 
 	/**
+	 * For Partially Observable Pac-Man
+	 * 
+	 * Sets game facade based on given game
+	 * @param g game
+	 */
+	public GameFacade(pacman.game.Game g) {
+		poG = g;
+	}
+
+	/**
+	 * TODO: figure out how to throw exceptions or figure out how to write a getPillEatTimes method for poG
+	 * 
 	 * gets times taken to eat each pill
 	 * @return list of times
 	 */
 	public List<Integer> getPillEatTimes() {
-		return newG.getPillEatTimes();
+		return newG == null ?
+				null:
+				newG.getPillEatTimes();
 	}
 
 	/**
+	 * TODO: figure out how to throw exceptions or figure out how to write a getNextEdibleTime method for poG
+	 * 
 	 * How long the ghosts will be edible for the next time a power pill is
 	 * eaten.
 	 *
 	 * @return time
 	 */
 	public int getNextEdibleTime() {
-		return newG.newEdibleTime();
+		return newG == null ?
+				-1:
+				newG.newEdibleTime();
 	}
 
 	/**
+	 * TODO: figure out how to throw exceptions or figure out how to write a getSpecificGhostEatenCount method for poG
+	 * 
 	 * Gets how many times given ghost was eaten
 	 * @param ghostIndex index of ghost
 	 * @return how many times ghost was eaten
 	 */
 	public int getSpecificGhostEatenCount(int ghostIndex) {
-		return newG.getEatenGhosts(ghostIndex);
+		return newG == null ?
+				-1:
+				newG.getEatenGhosts(ghostIndex);
 	}
 
 	/**
@@ -221,7 +243,9 @@ public class GameFacade {
 	 * @return
 	 */
 	public int getNumEatenGhosts() {
-		return newG.getEatenGhosts();
+		return newG == null ?
+				poG.getNumGhostsEaten():
+				newG.getEatenGhosts();
 	}
 
 	/**
@@ -230,17 +254,23 @@ public class GameFacade {
 	 * @return
 	 */
 	public double getScore() {
-		return newG.getScore();
+		return newG == null ?
+				poG.getScore():
+				newG.getScore();
 	}
 
 	/**
+	 * TODO: figure out how to throw exceptions or figure out how to write a getGhostReward method for poG
+	 * 
 	 * Return reward for ghosts eaten across all levels, with those eaten in a
 	 * single power pill run worth more.
 	 *
 	 * @return
 	 */
 	public double getGhostReward() {
-		return newG.getGhostReward();
+		return newG == null ?
+				-1:
+				newG.getGhostReward();
 	}
 
 	/**
@@ -248,15 +278,21 @@ public class GameFacade {
 	 * @return current level
 	 */
 	public int getCurrentLevel() {
-		return newG.getCurrentLevel();
+		return newG == null ?
+				poG.getCurrentLevel():
+				newG.getCurrentLevel();
 	}
 
 	/**
+	 * TODO: figure out how to throw exceptions or figure out how to write a getEaternPills method for poG
+	 * 
 	 * gets number of pills that have been eaten
 	 * @return number of eaten pills
 	 */
 	public int getEatenPills() {
-		return newG.getEatenPills();
+		return newG == null ?
+				-1:
+				newG.getEatenPills();
 	}
 
 	/**
@@ -264,7 +300,9 @@ public class GameFacade {
 	 * @return total game play time
 	 */
 	public int getTotalTime() {
-		return newG.getTotalTime();
+		return newG == null ?
+				poG.getTotalTime():
+				newG.getTotalTime();
 	}
 
 	/**
@@ -272,7 +310,9 @@ public class GameFacade {
 	 * @return num lives remaining
 	 */
 	public int getPacmanNumberOfLivesRemaining() {
-		return newG.getPacmanNumberOfLivesRemaining();
+		return newG == null ?
+				poG.getPacmanNumberOfLivesRemaining():
+				newG.getPacmanNumberOfLivesRemaining();
 	}
 
 	/**
@@ -280,7 +320,9 @@ public class GameFacade {
 	 * @return time spent on level
 	 */
 	public int getCurrentLevelTime() {
-		return newG.getCurrentLevelTime();
+		return newG == null ? 
+			poG.getCurrentLevelTime():
+			newG.getCurrentLevelTime();
 	}
 
 	/**
@@ -289,15 +331,21 @@ public class GameFacade {
 	 * @return current node
 	 */
 	public int getPacmanCurrentNodeIndex() {
-		return newG.getPacmanCurrentNodeIndex();
+		return newG == null ? 
+			poG.getPacmanCurrentNodeIndex(): // assumes must be poG 
+			newG.getPacmanCurrentNodeIndex();
 	}
 
 	/**
+	 * TODO: adjust the static method moveToIndex
+	 * 
 	 * Gets the last move made by pacman
 	 * @return index corresponding to pacmans last move
 	 */
 	public int getPacmanLastMoveMade() {
-		return moveToIndex(newG.getPacmanLastMoveMade());
+		return //newG == null ?
+				//moveToIndex(poG.getPacmanLastMoveMade()):
+				moveToIndex(newG.getPacmanLastMoveMade());
 	}
 
 	/**
@@ -668,7 +716,10 @@ public class GameFacade {
 	 * @return indices of active pills
 	 */
 	public int[] getActivePillsIndices() {
-		return newG.getActivePillsIndices();
+		return newG == null ?
+				//TODO: test poG.getActivePillsIndices
+				poG.getActivePillsIndices():
+				newG.getActivePillsIndices();
 	}
 
 	/**
@@ -683,7 +734,12 @@ public class GameFacade {
 	 * @return the closest node index from node index
 	 */
 	public int getClosestNodeIndexFromNodeIndex(int current, int[] targets) {
-		return newG.getClosestNodeIndexFromNodeIndex(current, targets, oldpacman.game.Constants.DM.PATH);
+		if(newG == null) {
+			System.out.println("TODO: Implement getClosestNodeIndexFromNodeIndex for poG, GameFacade.java");
+			return -1;
+		} else {
+			return newG.getClosestNodeIndexFromNodeIndex(current, targets, oldpacman.game.Constants.DM.PATH);
+		}
 	}
 
 	/**
@@ -692,7 +748,11 @@ public class GameFacade {
 	 * @param nodes nodes to set color
 	 */
 	public void addPoints(Color c, Set<Integer> nodes) {
-		addPoints(c, ArrayUtil.integerSetToArray(nodes));
+		if(newG == null) {
+			System.out.println("TODO: Implement addPoints for poG, GameFacade.java");
+		} else {
+			addPoints(c, ArrayUtil.integerSetToArray(nodes));
+		}
 	}
 
 	/**
@@ -701,8 +761,12 @@ public class GameFacade {
 	 * @param nodes nodes to set color
 	 */
 	public void addPoints(Color c, int[] nodes) {
-		if (nodes.length > 0) {
-			oldpacman.game.GameView.addPoints(newG, c, ArrayUtil.filter(nodes, -1));
+		if(newG == null) {
+			System.out.println("TODO: Implement addPoints for poG, GameFacade.java");
+		} else {
+			if (nodes.length > 0) {
+				oldpacman.game.GameView.addPoints(newG, c, ArrayUtil.filter(nodes, -1));
+			}
 		}
 	}
 
@@ -713,7 +777,12 @@ public class GameFacade {
 	 * @return distance
 	 */
 	public double getPathDistance(int from, int to) {
-		return newG.getDistance(from, to, oldpacman.game.Constants.DM.PATH);
+		if(newG == null) {
+			System.out.println("TODO: Implement getPathDistance for poG, GameFacade.java");
+			return -1;
+		} else {
+			return newG.getDistance(from, to, oldpacman.game.Constants.DM.PATH);
+		}
 	}
 
 	/**
@@ -721,7 +790,12 @@ public class GameFacade {
 	 * @return hitting wall
 	 */
 	public boolean pacmanHittingWall() {
-		return newG.getPacmanLastMoveMade().equals(oldpacman.game.Constants.MOVE.NEUTRAL);
+		if(newG == null) {
+			System.out.println("TODO: Implement pacmanHittingWall for poG, GameFacade.java");
+			return false;
+		} else {
+			return newG.getPacmanLastMoveMade().equals(oldpacman.game.Constants.MOVE.NEUTRAL);
+		}
 	}
 
 	/**
@@ -730,7 +804,12 @@ public class GameFacade {
 	 * @return node of the lair exit
 	 */
 	public int getGhostInitialNodeIndex() {
-		return newG.getGhostInitialNodeIndex();
+		if(newG == null) {
+			System.out.println("TODO: Implement addLines for poG, GameFacade.java");
+			return -1;
+		} else {
+			return newG.getGhostInitialNodeIndex();
+		}
 	}
 
 	/**
@@ -744,7 +823,11 @@ public class GameFacade {
 	 *            the to node index
 	 */
 	public void addLines(Color c, int from, int to) {
-		oldpacman.game.GameView.addLines(newG, c, from, to);
+		if(newG == null) {
+			System.out.println("TODO: Implement addLines for poG, GameFacade.java");
+		} else {
+			oldpacman.game.GameView.addLines(newG, c, from, to);
+		}
 
 	}
 
@@ -754,7 +837,12 @@ public class GameFacade {
 	 * @return time ghost is edible
 	 */
 	public int getGhostEdibleTime(int ghostIndex) {
-		return newG.getGhostEdibleTime(indexToGhost(ghostIndex));
+		if(newG == null) {
+			System.out.println("TODO: Implement getGhostEdibleTime for poG, GameFacade.java");
+			return -1;
+		} else {
+			return newG.getGhostEdibleTime(indexToGhost(ghostIndex));
+		}
 	}
 
 	/**
@@ -764,9 +852,14 @@ public class GameFacade {
 	 * @return index of move
 	 */
 	public int getNextGhostDirTowards(int whichGhost, int to) {
-		return moveToIndex(newG.getApproximateNextMoveTowardsTarget(getGhostCurrentNodeIndex(whichGhost), to,
-				newG.getGhostLastMoveMade(indexToGhost(whichGhost)), oldpacman.game.Constants.DM.PATH));
-	}
+		if(newG == null) {
+			System.out.println("TODO: Implement getNextGhostDirTowards for poG, GameFacade.java");
+			return -1;
+		} else {
+			return moveToIndex(newG.getApproximateNextMoveTowardsTarget(getGhostCurrentNodeIndex(whichGhost), to,
+					newG.getGhostLastMoveMade(indexToGhost(whichGhost)), oldpacman.game.Constants.DM.PATH));
+		}
+	}	
 
 	/**
 	 * 
@@ -775,8 +868,13 @@ public class GameFacade {
 	 * @return index of move
 	 */
 	public int getNextGhostDirAway(int whichGhost, int to) {
-		return moveToIndex(newG.getApproximateNextMoveAwayFromTarget(getGhostCurrentNodeIndex(whichGhost), to,
-				newG.getGhostLastMoveMade(indexToGhost(whichGhost)), oldpacman.game.Constants.DM.PATH));
+		if(newG == null) {
+			System.out.println("TODO: Implement getNextGhostDirAway for poG, GameFacade.java");
+			return -1;
+		} else {
+			return moveToIndex(newG.getApproximateNextMoveAwayFromTarget(getGhostCurrentNodeIndex(whichGhost), to,
+					newG.getGhostLastMoveMade(indexToGhost(whichGhost)), oldpacman.game.Constants.DM.PATH));
+		}
 	}
 
 	/**
@@ -792,7 +890,12 @@ public class GameFacade {
 	 * @return move
 	 */
 	public int getRestrictedNextDir(int from, int to, int lastDir) {
-		return moveToIndex(newG.getApproximateNextMoveTowardsTarget(from, to, indexToMove(lastDir), oldpacman.game.Constants.DM.PATH));
+		if(newG == null) {
+			System.out.println("TODO: Implement getRestrictedNextDir for poG, GameFacade.java");
+			return -1;
+		} else {
+			return moveToIndex(newG.getApproximateNextMoveTowardsTarget(from, to, indexToMove(lastDir), oldpacman.game.Constants.DM.PATH));
+		}
 	}
 
 	/**
@@ -801,7 +904,12 @@ public class GameFacade {
 	 * @return direction
 	 */
 	public int getNextPacManDirTowardsTarget(int to) {
-		return moveToIndex(newG.getNextMoveTowardsTarget(newG.getPacmanCurrentNodeIndex(), to, oldpacman.game.Constants.DM.PATH));
+		if(newG == null) {
+			System.out.println("TODO: Implement getNextPacManDirTowardsTarget for poG, GameFacade.java");
+			return -1;
+		} else {
+			return moveToIndex(newG.getNextMoveTowardsTarget(newG.getPacmanCurrentNodeIndex(), to, oldpacman.game.Constants.DM.PATH));
+		}
 	}
 
 	/**
@@ -810,7 +918,12 @@ public class GameFacade {
 	 * @return direction
 	 */
 	public int getNextPacManDirAwayFromTarget(int to) {
-		return moveToIndex(newG.getNextMoveAwayFromTarget(newG.getPacmanCurrentNodeIndex(), to, oldpacman.game.Constants.DM.PATH));
+		if(newG == null) {
+			System.out.println("TODO: Implement getNextPacManDirAwayFromTarget for poG, GameFacade.java");
+			return -1;
+		} else {
+			return moveToIndex(newG.getNextMoveAwayFromTarget(newG.getPacmanCurrentNodeIndex(), to, oldpacman.game.Constants.DM.PATH));
+		}
 	}
 
 	/**
@@ -818,7 +931,10 @@ public class GameFacade {
 	 * @return num pills
 	 */
 	public int getNumberOfPills() {
-		return newG.getNumberOfPills();
+		return newG == null ?
+				//TODO: test getNumberOfPills()
+				poG.getNumberOfPills():
+				newG.getNumberOfPills();
 	}
 
 	/**
@@ -826,7 +942,12 @@ public class GameFacade {
 	 * @return num power pills
 	 */
 	public int getNumberOfPowerPills() {
-		return newG.getNumberOfPowerPills();
+		if(newG == null) {
+			System.out.println("TODO: Implement getNumberOfPowerPills for poG, GameFacade.java");
+			return -1;
+		} else {
+			return newG.getNumberOfPowerPills();
+		}
 	}
 
 	/**
@@ -834,7 +955,12 @@ public class GameFacade {
 	 * @return the current value awarded for eating a ghost.
 	 */
 	public int getGhostCurrentEdibleScore() {
-		return newG.getGhostCurrentEdibleScore();
+		if(newG == null) {
+			System.out.println("TODO: Implement getGhostCurrentEdibleScore for poG, GameFacade.java");
+			return -1;
+		} else {
+			return newG.getGhostCurrentEdibleScore();
+		}
 	}
 
 	/**
@@ -843,7 +969,10 @@ public class GameFacade {
 	 * @return x coordinate
 	 */
 	public int getNodeXCoord(int current) {
-		return newG.getNodeXCoord(current);
+		return newG == null ?
+				//TODO: test getNodeYCood(), found a type lol!
+				poG.getNodeXCood(current):
+				newG.getNodeXCoord(current);
 	}
 
 	/**
@@ -852,7 +981,10 @@ public class GameFacade {
 	 * @return y coordinate
 	 */
 	public int getNodeYCoord(int current) {
-		return newG.getNodeYCoord(current);
+		return newG == null ?
+				//TODO: test getNodeYCood(), found a type lol!
+				poG.getNodeYCood(current):
+				newG.getNodeYCoord(current);
 	}
 
 	/**
@@ -860,7 +992,10 @@ public class GameFacade {
 	 * @return indices of pills
 	 */
 	public int[] getPillIndices() {
-		return newG.getPillIndices();
+		return newG == null ?
+				//TODO: test poG.getPillIndices()
+				newG.getPillIndices():
+				newG.getPillIndices();
 	}
 
 	/**
@@ -868,7 +1003,10 @@ public class GameFacade {
 	 * @return indices of power pills
 	 */
 	public int[] getPowerPillIndices() {
-		return newG.getPowerPillIndices();
+		return newG == null ?
+				//TODO: test poG.getPowerPillIndices()
+				poG.getPowerPillIndices():
+				newG.getPowerPillIndices();
 	}
 
 	/**
@@ -878,7 +1016,12 @@ public class GameFacade {
 	 * @return whether or not in maze
 	 */
 	public boolean nodeInMaze(int index) {
-		return index < newG.getCurrentMaze().graph.length;
+		if(newG == null) {
+			System.out.println("TODO: Implement nodeInMaze for poG, GameFacade.java");
+			return false;
+		} else {
+			return index < newG.getCurrentMaze().graph.length;
+		}
 	}
 
 	/**
@@ -886,7 +1029,12 @@ public class GameFacade {
 	 * @return length of maze
 	 */
 	public int lengthMaze() {
-		return newG.getCurrentMaze().graph.length;
+		if(newG == null) {
+			System.out.println("TODO: Implement allNodesInMaze for poG, GameFacade.java");
+			return -1;
+		} else {
+			return newG.getCurrentMaze().graph.length;
+		}
 	}
 	
 	/**
@@ -896,12 +1044,17 @@ public class GameFacade {
 	 * @return iff nodes are in maze 
 	 */
 	public boolean allNodesInMaze(int[] indices) {
-		for (int i = 0; i < indices.length; i++) {
-			if (indices[i] != -1 && !nodeInMaze(indices[i])) {
-				return false;
+		if(newG == null) {
+			System.out.println("TODO: Implement allNodesInMaze for poG, GameFacade.java");
+			return false;
+		} else {
+			for (int i = 0; i < indices.length; i++) {
+				if (indices[i] != -1 && !nodeInMaze(indices[i])) {
+					return false;
+				}
 			}
+			return true;
 		}
-		return true;
 	}
 
 	/**
@@ -917,7 +1070,12 @@ public class GameFacade {
 	 * @return
 	 */
 	public Pair<Integer, int[]> getTargetInDir(int fromNodeIndex, int[] targetNodeIndices, int direction) {
-		return getTargetInDir(fromNodeIndex, targetNodeIndices, direction, true); // default to shortest
+		if(newG == null) {
+			System.out.println("TODO: Implement getTargetInDir for poG, GameFacade.java");
+			return null;
+		} else {
+			return getTargetInDir(fromNodeIndex, targetNodeIndices, direction, true); // default to shortest
+		}
 	}
 
 	/**
@@ -936,13 +1094,18 @@ public class GameFacade {
 	 * @return path and target pair
 	 */
 	public Pair<Integer, int[]> getTargetInDir(int fromNodeIndex, int[] targetNodeIndices, int direction, boolean shortest) {
-		assert fromNodeIndex != -1 : "Invalid from node: " + fromNodeIndex;
-		assert direction >= 0 && direction <= 3 : "Not a valid direction: " + direction;
-		Pair<Integer, int[]> result = getTargetInDirFromNew(fromNodeIndex, targetNodeIndices, direction, shortest);
-		assert(result != null && result.t2 != null) : ("Why is pair null? " + result);
-		assert(validPath(result.t2)) : ("Invalid path! " + Arrays.toString(result.t2));
-		assert(result.t2.length == 0 || result.t2[0] != fromNodeIndex) : ("Path should NOT start at  location!");
-		return result;
+		if(newG == null) {
+			System.out.println("TODO: Implement getTargetInDir for poG, GameFacade.java");
+			return null;
+		} else {
+			assert fromNodeIndex != -1 : "Invalid from node: " + fromNodeIndex;
+			assert direction >= 0 && direction <= 3 : "Not a valid direction: " + direction;
+			Pair<Integer, int[]> result = getTargetInDirFromNew(fromNodeIndex, targetNodeIndices, direction, shortest);
+			assert(result != null && result.t2 != null) : ("Why is pair null? " + result);
+			assert(validPath(result.t2)) : ("Invalid path! " + Arrays.toString(result.t2));
+			assert(result.t2.length == 0 || result.t2[0] != fromNodeIndex) : ("Path should NOT start at  location!");
+			return result;
+		}
 	}
 
 	/**
@@ -962,34 +1125,39 @@ public class GameFacade {
 	 */
 	private Pair<Integer, int[]> getTargetInDirFromNew(int fromNodeIndex, int[] targetNodeIndices, int direction,
 			boolean shortest) {
-		assert targetNodeIndices.length > 0 : "targetNodeIndices empty:" + Arrays.toString(targetNodeIndices);
-		int[] neighbors = neighbors(newG, fromNodeIndex);
-		assert(neighbors[direction] != -1) : ("Picked invalid direction " + direction + " given neighbors "
-				+ Arrays.toString(neighbors) + " in level " + newG.getCurrentLevel());
-		double extremeDistance = shortest ? Integer.MAX_VALUE : -Integer.MAX_VALUE;
-		int target = -1;
-		int[] extremePath = null;
-		for (int i = 0; i < targetNodeIndices.length; i++) {
-			if (targetNodeIndices[i] == -1) {
-				continue;
+		if(newG == null) {
+			System.out.println("TODO: Implement getTargetInDirFromNew for poG, GameFacade.java");
+			return null;
+		} else {
+			assert targetNodeIndices.length > 0 : "targetNodeIndices empty:" + Arrays.toString(targetNodeIndices);
+			int[] neighbors = neighbors(newG, fromNodeIndex);
+			assert(neighbors[direction] != -1) : ("Picked invalid direction " + direction + " given neighbors "
+					+ Arrays.toString(neighbors) + " in level " + newG.getCurrentLevel());
+			double extremeDistance = shortest ? Integer.MAX_VALUE : -Integer.MAX_VALUE;
+			int target = -1;
+			int[] extremePath = null;
+			for (int i = 0; i < targetNodeIndices.length; i++) {
+				if (targetNodeIndices[i] == -1) {
+					continue;
+				}
+				assert targetNodeIndices[i] < newG.getCurrentMaze().graph.length : targetNodeIndices[i]
+						+ " is not an index in the maze " + newG.getCurrentLevel() + "/" + newG.getCurrentMaze().name
+						+ " : " + Arrays.toString(targetNodeIndices) + ":" + targetNodeIndices.length;
+				int[] path = getPathInDirFromNew(fromNodeIndex, targetNodeIndices[i], direction);
+				assert(path.length == 0 || path[path.length
+						- 1] == targetNodeIndices[i]) : ("Last element of path should be the to location! " + ("new"));
+				assert(path.length == 0 || path[0] != fromNodeIndex) : ("Path should NOT start at  location! " + ("new"));
+				// Shortest distance lower bound on direction distance
+				if (shortest ? path.length < extremeDistance : path.length > extremeDistance) {
+					extremeDistance = path.length;
+					target = targetNodeIndices[i];
+					extremePath = path;
+				}
 			}
-			assert targetNodeIndices[i] < newG.getCurrentMaze().graph.length : targetNodeIndices[i]
-					+ " is not an index in the maze " + newG.getCurrentLevel() + "/" + newG.getCurrentMaze().name
-					+ " : " + Arrays.toString(targetNodeIndices) + ":" + targetNodeIndices.length;
-			int[] path = getPathInDirFromNew(fromNodeIndex, targetNodeIndices[i], direction);
-			assert(path.length == 0 || path[path.length
-					- 1] == targetNodeIndices[i]) : ("Last element of path should be the to location! " + ("new"));
-			assert(path.length == 0 || path[0] != fromNodeIndex) : ("Path should NOT start at  location! " + ("new"));
-			// Shortest distance lower bound on direction distance
-			if (shortest ? path.length < extremeDistance : path.length > extremeDistance) {
-				extremeDistance = path.length;
-				target = targetNodeIndices[i];
-				extremePath = path;
-			}
+			assert extremePath != null : "Extreme path is null: targetNodeIndices:" + Arrays.toString(targetNodeIndices)
+					+ ":extremeDistance:" + extremeDistance;
+			return new Pair<Integer, int[]>(target, extremePath);
 		}
-		assert extremePath != null : "Extreme path is null: targetNodeIndices:" + Arrays.toString(targetNodeIndices)
-				+ ":extremeDistance:" + extremeDistance;
-		return new Pair<Integer, int[]>(target, extremePath);
 	}
 
 	/**
@@ -999,8 +1167,13 @@ public class GameFacade {
 	 * @return euclidian distance
 	 */
 	public double getGhostPathDistance(int ghostIndex, int toNodeIndex) {
-		return newG.getDistance(getGhostCurrentNodeIndex(ghostIndex), toNodeIndex,
-				newG.getGhostLastMoveMade(indexToGhost(ghostIndex)), oldpacman.game.Constants.DM.PATH);
+		if(newG == null) {
+			System.out.println("TODO: Implement getGhostPathDistance for poG, GameFacade.java");
+			return -1;
+		} else {
+			return newG.getDistance(getGhostCurrentNodeIndex(ghostIndex), toNodeIndex,
+					newG.getGhostLastMoveMade(indexToGhost(ghostIndex)), oldpacman.game.Constants.DM.PATH);
+		}
 	}
 
 	/**
@@ -1012,15 +1185,25 @@ public class GameFacade {
 	 * @return
 	 */
 	public int getGhostTravelTime(int ghostIndex, int toNodeIndex) {
-		int distance = (int) getGhostPathDistance(ghostIndex, toNodeIndex);
-		int edibleTime = this.getGhostEdibleTime(ghostIndex);
-		int effectiveEdibleTime = Math.min(edibleTime, distance * oldpacman.game.Constants.GHOST_SPEED_REDUCTION);
-		return effectiveEdibleTime + distance
-				- ((int) Math.ceil(effectiveEdibleTime / oldpacman.game.Constants.GHOST_SPEED_REDUCTION));
+		if(newG == null) {
+			System.out.println("TODO: Implement getGhostTravelTime for poG, GameFacade.java");
+			return -1;
+		} else {
+			int distance = (int) getGhostPathDistance(ghostIndex, toNodeIndex);
+			int edibleTime = this.getGhostEdibleTime(ghostIndex);
+			int effectiveEdibleTime = Math.min(edibleTime, distance * oldpacman.game.Constants.GHOST_SPEED_REDUCTION);
+			return effectiveEdibleTime + distance
+					- ((int) Math.ceil(effectiveEdibleTime / oldpacman.game.Constants.GHOST_SPEED_REDUCTION));
+		}
 	}
 
 	public boolean isGhostEdibleAfterTravel(int ghostIndex, int toNodeIndex) {
-		return this.getGhostEdibleTime(ghostIndex) > getGhostTravelTime(ghostIndex, toNodeIndex);
+		if(newG == null) {
+			System.out.println("TODO: Implement isGhostEdibleAfterTravel for poG, GameFacade.java");
+			return false;
+		} else {
+			return this.getGhostEdibleTime(ghostIndex) > getGhostTravelTime(ghostIndex, toNodeIndex);
+		}
 	}
 
 	/**
@@ -1037,10 +1220,15 @@ public class GameFacade {
 	 * @return shortest path ghost can take as array of int
 	 */
 	public int[] getGhostPath(int ghostIndex, int target) {
-		int[] result = newG.getShortestPath(getGhostCurrentNodeIndex(ghostIndex), target, newG.getGhostLastMoveMade(indexToGhost(ghostIndex)));
-		assert(result.length == 0 || result[result.length - 1] == target) : ("Last element of path should be the to location!");
-		assert(result.length == 0 || result[0] != this.getGhostCurrentNodeIndex(ghostIndex)) : ("Path should NOT start at  location!");
-		return result;
+		if(newG == null) {
+			System.out.println("TODO: Implement getGhostPath for poG, GameFacade.java");
+			return null;
+		} else {
+			int[] result = newG.getShortestPath(getGhostCurrentNodeIndex(ghostIndex), target, newG.getGhostLastMoveMade(indexToGhost(ghostIndex)));
+			assert(result.length == 0 || result[result.length - 1] == target) : ("Last element of path should be the to location!");
+			assert(result.length == 0 || result[0] != this.getGhostCurrentNodeIndex(ghostIndex)) : ("Path should NOT start at  location!");
+			return result;
+		}
 	}
 
 	/**
@@ -1048,14 +1236,19 @@ public class GameFacade {
 	 * @return num edible ghosts
 	 */
 	public int getNumberOfEdibleGhosts() {
-		int total = 0;
-		for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
-			if (newG.isGhostEdible(indexToGhost(i))) {
-				total++;
+		if(newG == null) {
+			System.out.println("TODO: Implement getNumberOfEdibleGhosts for poG, GameFacade.java");
+			return -1;
+		} else {
+			int total = 0;
+			for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
+				if (newG.isGhostEdible(indexToGhost(i))) {
+					total++;
+				}
+	
 			}
-
+			return total;
 		}
-		return total;
 	}
 
 	/**
@@ -1064,7 +1257,12 @@ public class GameFacade {
 	 * @return whether threat
 	 */
 	public boolean isGhostThreat(int ghostIndex) {
-		return !isGhostEdible(ghostIndex) && getNumNeighbours(getGhostCurrentNodeIndex(ghostIndex)) > 0;
+		if(newG == null) {
+			System.out.println("TODO: Implement isGhostThreat for poG, GameFacade.java");
+			return false;
+		} else {
+			return !isGhostEdible(ghostIndex) && getNumNeighbours(getGhostCurrentNodeIndex(ghostIndex)) > 0;
+		}
 	}
 
 	/**
@@ -1073,11 +1271,16 @@ public class GameFacade {
 	 * @return
 	 */
 	public int[] getGhostLairTimes() {
-		int[] times = new int[CommonConstants.numActiveGhosts];
-		for (int i = 0; i < times.length; i++) {
-			times[i] = this.getGhostLairTime(i);
+		if(newG == null) {
+			System.out.println("TODO: Implement getGhostEdibleTimes for poG, GameFacade.java");
+			return null;
+		} else {
+			int[] times = new int[CommonConstants.numActiveGhosts];
+			for (int i = 0; i < times.length; i++) {
+				times[i] = this.getGhostLairTime(i);
+			}
+			return times;
 		}
-		return times;
 	}
 
 	/**
@@ -1085,11 +1288,16 @@ public class GameFacade {
 	 * @return array of edible times
 	 */
 	public int[] getGhostEdibleTimes() {
-		int[] times = new int[CommonConstants.numActiveGhosts];
-		for (int i = 0; i < times.length; i++) {
-			times[i] = this.getGhostEdibleTime(i);
+		if(newG == null) {
+			System.out.println("TODO: Implement getGhostEdibleTimes for poG, GameFacade.java");
+			return null;
+		} else {
+			int[] times = new int[CommonConstants.numActiveGhosts];
+			for (int i = 0; i < times.length; i++) {
+				times[i] = this.getGhostEdibleTime(i);
+			}
+			return times;
 		}
-		return times;
 	}
 
 	/**
@@ -1099,15 +1307,25 @@ public class GameFacade {
 	 * @return farthest node from targets array
 	 */
 	public int getFarthestNodeIndexFromNodeIndex(int current, int[] targets) {
-		return newG.getFarthestNodeIndexFromNodeIndex(current, targets, oldpacman.game.Constants.DM.PATH);
-	}
+		if(newG == null) {
+			System.out.println("TODO: Implement getFarthestNodeIndexFromNodeIndex for poG, GameFacade.java");
+			return -1;
+		} else {
+			return newG.getFarthestNodeIndexFromNodeIndex(current, targets, oldpacman.game.Constants.DM.PATH);
+		}
+	}	
 
 	/**
 	 * gets indices of edible ghosts
 	 * @return indices of edible ghosts
 	 */
 	public int[] getEdibleGhostLocations() {
-		return getEdibleGhostLocations(new boolean[] { true, true, true, true });
+		if(newG == null) {
+			System.out.println("TODO: Implement getEdibleGhostLocations for poG, GameFacade.java");
+			return null;
+		} else {
+			return getEdibleGhostLocations(new boolean[] { true, true, true, true });
+		}
 	}
 
 	/**
@@ -1117,13 +1335,18 @@ public class GameFacade {
 	 * @return indices of chosen edible ghosts
 	 */
 	public int[] getEdibleGhostLocations(boolean[] include) {
-		ArrayList<Integer> ghostPositions = new ArrayList<Integer>(CommonConstants.numActiveGhosts);
-		for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
-			if (include[i] && isGhostEdible(i)) {
-				ghostPositions.add(getGhostCurrentNodeIndex(i));
+		if(newG == null) {
+			System.out.println("TODO: Implement getEdibleGhostLocations for poG, GameFacade.java");
+			return null;
+		} else {
+			ArrayList<Integer> ghostPositions = new ArrayList<Integer>(CommonConstants.numActiveGhosts);
+			for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
+				if (include[i] && isGhostEdible(i)) {
+					ghostPositions.add(getGhostCurrentNodeIndex(i));
+				}
 			}
+			return ArrayUtil.intArrayFromArrayList(ghostPositions);
 		}
-		return ArrayUtil.intArrayFromArrayList(ghostPositions);
 	}
 
 	/**
@@ -1134,7 +1357,12 @@ public class GameFacade {
 	 * @return true if threat imminent
 	 */
 	public boolean isThreatIncoming(int pacmanDir) {
-		return isAnyGhostIncoming(pacmanDir, true);
+		if(newG == null) {
+			System.out.println("TODO: Implement isThreatIncoming for poG, GameFacade.java");
+			return false;
+		} else {
+			return isAnyGhostIncoming(pacmanDir, true);
+		}
 	}
 
 	/**
@@ -1143,7 +1371,12 @@ public class GameFacade {
 	 * @return true if edible ghost is imminent
 	 */
 	public boolean isEdibleIncoming(int pacmanDir) {
-		return isAnyGhostIncoming(pacmanDir, false);
+		if(newG == null) {
+			System.out.println("TODO: Implement isEdibleIncoming for poG, GameFacade.java");
+			return false;
+		} else {
+			return isAnyGhostIncoming(pacmanDir, false);
+		}
 	}
 
 	/**
@@ -1153,14 +1386,19 @@ public class GameFacade {
 	 * @return whether ghost incoming
 	 */
 	public boolean isAnyGhostIncoming(int pacmanDir, boolean threatNotEdible) {
-		for (int i = 0; i < this.getNumActiveGhosts(); i++) {
-			if ((threatNotEdible && isGhostThreat(i)) || (!threatNotEdible && isGhostEdible(i))) {
-				if (isGhostIncoming(pacmanDir, i)) {
-					return true;
+		if(newG == null) {
+			System.out.println("TODO: Implement isAnyGhostIncoming for poG, GameFacade.java");
+			return false;
+		} else {
+			for (int i = 0; i < this.getNumActiveGhosts(); i++) {
+				if ((threatNotEdible && isGhostThreat(i)) || (!threatNotEdible && isGhostEdible(i))) {
+					if (isGhostIncoming(pacmanDir, i)) {
+						return true;
+					}
 				}
 			}
+			return false;
 		}
-		return false;
 	}
 
 	/**
@@ -1174,11 +1412,16 @@ public class GameFacade {
 	 * @return true if ghost is approaching through that neighbor
 	 */
 	public boolean isGhostIncoming(int pacmanDir, int ghostIndex) {
-		int current = this.getPacmanCurrentNodeIndex();
-		int[] neighbors = this.neighbors(current);
-		assert neighbors[pacmanDir] != -1 : "Pacman dir is a wall: " + pacmanDir + "; " + Arrays.toString(neighbors);
-		int[] ghostPath = getGhostPath(ghostIndex, current);
-		return ArrayUtils.contains(ghostPath, neighbors[pacmanDir]);
+		if(newG == null) {
+			System.out.println("TODO: Implement isGhostIncoming for poG, GameFacade.java");
+			return false;
+		} else {
+			int current = this.getPacmanCurrentNodeIndex();
+			int[] neighbors = this.neighbors(current);
+			assert neighbors[pacmanDir] != -1 : "Pacman dir is a wall: " + pacmanDir + "; " + Arrays.toString(neighbors);
+			int[] ghostPath = getGhostPath(ghostIndex, current);
+			return ArrayUtils.contains(ghostPath, neighbors[pacmanDir]);
+		}
 	}
 
 	/**
@@ -1192,12 +1435,17 @@ public class GameFacade {
 	 * @return True if there are no junctions from pacman to ghost in direction
 	 */
 	public boolean isGhostTrapped(int pacmanDir, int ghostIndex) {
-		int current = this.getPacmanCurrentNodeIndex();
-		int[] neighbors = this.neighbors(current);
-		assert neighbors[pacmanDir] != -1 : "Pacman dir is a wall: " + pacmanDir + "; " + Arrays.toString(neighbors);
-		int[] pacmanPath = this.getDirectionalPath(current, this.getGhostCurrentNodeIndex(ghostIndex), pacmanDir);
-		int[] junctions = this.getJunctionIndices();
-		return ArrayUtil.intersection(pacmanPath, junctions).length == 0;
+		if(newG == null) {
+			System.out.println("TODO: Implement isGhostTrapped for poG, GameFacade.java");
+			return false;
+		} else {
+			int current = this.getPacmanCurrentNodeIndex();
+			int[] neighbors = this.neighbors(current);
+			assert neighbors[pacmanDir] != -1 : "Pacman dir is a wall: " + pacmanDir + "; " + Arrays.toString(neighbors);
+			int[] pacmanPath = this.getDirectionalPath(current, this.getGhostCurrentNodeIndex(ghostIndex), pacmanDir);
+			int[] junctions = this.getJunctionIndices();
+			return ArrayUtil.intersection(pacmanPath, junctions).length == 0;
+		}
 	}
 
 	/**
@@ -1207,7 +1455,12 @@ public class GameFacade {
 	 * @return
 	 */
 	public int[] getThreatGhostLocations() {
-		return getThreatGhostLocations(new boolean[] { true, true, true, true });
+		if(newG == null) {
+			System.out.println("TODO: Implement getThreatGhostLocations for poG, GameFacade.java");
+			return null;
+		} else {
+			return getThreatGhostLocations(new boolean[] { true, true, true, true });
+		}
 	}
 
 	/**
@@ -1216,13 +1469,18 @@ public class GameFacade {
 	 * @return indices of threat ghosts
 	 */
 	public int[] getThreatGhostLocations(boolean[] include) {
-		ArrayList<Integer> ghostPositions = new ArrayList<Integer>(CommonConstants.numActiveGhosts);
-		for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
-			if (include[i] && isGhostThreat(i)) {
-				ghostPositions.add(getGhostCurrentNodeIndex(i));
+		if(newG == null) {
+			System.out.println("TODO: Implement getThreatGhostLocations for poG, GameFacade.java");
+			return null;
+		} else {
+			ArrayList<Integer> ghostPositions = new ArrayList<Integer>(CommonConstants.numActiveGhosts);
+			for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
+				if (include[i] && isGhostThreat(i)) {
+					ghostPositions.add(getGhostCurrentNodeIndex(i));
+				}
 			}
+			return ArrayUtil.intArrayFromArrayList(ghostPositions);
 		}
-		return ArrayUtil.intArrayFromArrayList(ghostPositions);
 	}
 
 	/**
@@ -1232,7 +1490,12 @@ public class GameFacade {
 	 * @return
 	 */
 	public int[] getApproachingThreatGhostLocations() {
-		return getApproachingThreatGhostLocations(new boolean[] { true, true, true, true });
+		if(newG == null) {
+			System.out.println("TODO: Implement getApproachingThreatGhostLocations for poG, GameFacade.java");
+			return null;
+		} else {
+			return getApproachingThreatGhostLocations(new boolean[] { true, true, true, true });
+		}
 	}
 
 	/**
@@ -1242,13 +1505,18 @@ public class GameFacade {
 	 * @return indices of ghost locations
 	 */
 	public int[] getApproachingThreatGhostLocations(boolean[] include) {
-		ArrayList<Integer> ghostPositions = new ArrayList<Integer>(CommonConstants.numActiveGhosts);
-		for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
-			if (include[i] && isGhostThreat(i) && ghostApproachingPacman(i)) {
-				ghostPositions.add(getGhostCurrentNodeIndex(i));
+		if(newG == null) {
+			System.out.println("TODO: Implement getApproachingThreatGhostLocations for poG, GameFacade.java");
+			return null;
+		} else {
+			ArrayList<Integer> ghostPositions = new ArrayList<Integer>(CommonConstants.numActiveGhosts);
+			for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
+				if (include[i] && isGhostThreat(i) && ghostApproachingPacman(i)) {
+					ghostPositions.add(getGhostCurrentNodeIndex(i));
+				}
 			}
+			return ArrayUtil.intArrayFromArrayList(ghostPositions);
 		}
-		return ArrayUtil.intArrayFromArrayList(ghostPositions);
 	}
 
 	/**
@@ -1262,7 +1530,12 @@ public class GameFacade {
 	 * @return indices of ghosts incoming
 	 */
 	public int[] getIncomingThreatGhostLocations(int pacmanDir) {
-		return getIncomingThreatGhostLocations(pacmanDir, new boolean[] { true, true, true, true });
+		if(newG == null) {
+			System.out.println("TODO: Implement getIncomingThreatGhostLocations for poG, GameFacade.java");
+			return null;
+		} else {
+			return getIncomingThreatGhostLocations(pacmanDir, new boolean[] { true, true, true, true });
+		}
 	}
 
 	/**
@@ -1277,13 +1550,18 @@ public class GameFacade {
 	 * @return indices of ghosts incoming
 	 */
 	public int[] getIncomingThreatGhostLocations(int pacmanDir, boolean[] include) {
-		ArrayList<Integer> ghostPositions = new ArrayList<Integer>(CommonConstants.numActiveGhosts);
-		for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
-			if (include[i] && isGhostThreat(i) && isGhostIncoming(pacmanDir, i)) {
-				ghostPositions.add(getGhostCurrentNodeIndex(i));
+		if(newG == null) {
+			System.out.println("TODO: Implement getIncomingThreatGhostLocations for poG, GameFacade.java");
+			return null;
+		} else {
+			ArrayList<Integer> ghostPositions = new ArrayList<Integer>(CommonConstants.numActiveGhosts);
+			for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
+				if (include[i] && isGhostThreat(i) && isGhostIncoming(pacmanDir, i)) {
+					ghostPositions.add(getGhostCurrentNodeIndex(i));
+				}
 			}
+			return ArrayUtil.intArrayFromArrayList(ghostPositions);
 		}
-		return ArrayUtil.intArrayFromArrayList(ghostPositions);
 	}
 
 	/**
@@ -1292,7 +1570,12 @@ public class GameFacade {
 	 * @return indices of ghosts 
 	 */
 	public int[] getApproachingOrIncomingThreatGhostLocations(int pacmanDir) {
-		return getApproachingOrIncomingThreatGhostLocations(pacmanDir, new boolean[] { true, true, true, true });
+		if(newG == null) {
+			System.out.println("TODO: Implement getApproachingOrIncomingThreatGhostLocations for poG, GameFacade.java");
+			return null;
+		} else {
+			return getApproachingOrIncomingThreatGhostLocations(pacmanDir, new boolean[] { true, true, true, true });
+		}
 	}
 
 	/**
@@ -1302,13 +1585,18 @@ public class GameFacade {
 	 * @return indices of ghosts
 	 */
 	public int[] getApproachingOrIncomingThreatGhostLocations(int pacmanDir, boolean[] include) {
-		ArrayList<Integer> ghostPositions = new ArrayList<Integer>(CommonConstants.numActiveGhosts);
-		for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
-			if (include[i] && isGhostThreat(i) && (isGhostIncoming(pacmanDir, i) || ghostApproachingPacman(i))) {
-				ghostPositions.add(getGhostCurrentNodeIndex(i));
+		if(newG == null) {
+			System.out.println("TODO: Implement getApproachingOrIncomingThreatGhostLocations for poG, GameFacade.java");
+			return null;
+		} else {
+			ArrayList<Integer> ghostPositions = new ArrayList<Integer>(CommonConstants.numActiveGhosts);
+			for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
+				if (include[i] && isGhostThreat(i) && (isGhostIncoming(pacmanDir, i) || ghostApproachingPacman(i))) {
+					ghostPositions.add(getGhostCurrentNodeIndex(i));
+				}
 			}
+			return ArrayUtil.intArrayFromArrayList(ghostPositions);
 		}
-		return ArrayUtil.intArrayFromArrayList(ghostPositions);
 	}
 
 	/**
@@ -1317,7 +1605,12 @@ public class GameFacade {
 	 * @return indices of ghosts
 	 */
 	public int[] getApproachingOrIncomingEdibleGhostLocations(int pacmanDir) {
-		return getApproachingOrIncomingEdibleGhostLocations(pacmanDir, new boolean[] { true, true, true, true });
+		if(newG == null) {
+			System.out.println("TODO: Implement getApproachingOrIncomingEdibleGhostLocations for poG, GameFacade.java");
+			return null;
+		} else {
+			return getApproachingOrIncomingEdibleGhostLocations(pacmanDir, new boolean[] { true, true, true, true });
+		}
 	}
 
 	/**
@@ -1327,13 +1620,18 @@ public class GameFacade {
 	 * @return indices of ghosts
 	 */
 	public int[] getApproachingOrIncomingEdibleGhostLocations(int pacmanDir, boolean[] include) {
-		ArrayList<Integer> ghostPositions = new ArrayList<Integer>(CommonConstants.numActiveGhosts);
-		for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
-			if (include[i] && isGhostEdible(i) && (isGhostIncoming(pacmanDir, i) || ghostApproachingPacman(i))) {
-				ghostPositions.add(getGhostCurrentNodeIndex(i));
+		if(newG == null) {
+			System.out.println("TODO: Implement getApproachingOrIncomingEdibleGhostLocations for poG, GameFacade.java");
+			return null;
+		} else {
+			ArrayList<Integer> ghostPositions = new ArrayList<Integer>(CommonConstants.numActiveGhosts);
+			for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
+				if (include[i] && isGhostEdible(i) && (isGhostIncoming(pacmanDir, i) || ghostApproachingPacman(i))) {
+					ghostPositions.add(getGhostCurrentNodeIndex(i));
+				}
 			}
+			return ArrayUtil.intArrayFromArrayList(ghostPositions);
 		}
-		return ArrayUtil.intArrayFromArrayList(ghostPositions);
 	}
 
 	/**
@@ -1343,7 +1641,12 @@ public class GameFacade {
 	 * @return indices of ghosts
 	 */
 	public int[] getApproachingEdibleGhostLocations() {
-		return getApproachingEdibleGhostLocations(new boolean[] { true, true, true, true });
+		if(newG == null) {
+			System.out.println("TODO: Implement getApproachingEdibleGhostLocations for poG, GameFacade.java");
+			return null;
+		} else {
+			return getApproachingEdibleGhostLocations(new boolean[] { true, true, true, true });
+		}
 	}
 
 	/**
@@ -1352,13 +1655,18 @@ public class GameFacade {
 	 * @return indices of ghosts
 	 */
 	public int[] getApproachingEdibleGhostLocations(boolean[] include) {
-		ArrayList<Integer> ghostPositions = new ArrayList<Integer>(CommonConstants.numActiveGhosts);
-		for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
-			if (include[i] && isGhostEdible(i) && ghostApproachingPacman(i)) {
-				ghostPositions.add(getGhostCurrentNodeIndex(i));
+		if(newG == null) {
+			System.out.println("TODO: Implement getApproachingEdibleGhostLocations for poG, GameFacade.java");
+			return null;
+		} else {
+			ArrayList<Integer> ghostPositions = new ArrayList<Integer>(CommonConstants.numActiveGhosts);
+			for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
+				if (include[i] && isGhostEdible(i) && ghostApproachingPacman(i)) {
+					ghostPositions.add(getGhostCurrentNodeIndex(i));
+				}
 			}
+			return ArrayUtil.intArrayFromArrayList(ghostPositions);
 		}
-		return ArrayUtil.intArrayFromArrayList(ghostPositions);
 	}
 
 	/**
@@ -1369,7 +1677,12 @@ public class GameFacade {
 	 * @return indices of ghosts
 	 */
 	public int[] getIncomingEdibleGhostLocations(int pacmanDir) {
-		return getIncomingEdibleGhostLocations(pacmanDir, new boolean[] { true, true, true, true });
+		if(newG == null) {
+			System.out.println("TODO: Implement getIncomingEdibleGhostLocations for poG, GameFacade.java");
+			return null;
+		} else {
+			return getIncomingEdibleGhostLocations(pacmanDir, new boolean[] { true, true, true, true });
+		}
 	}
 
 	/**
@@ -1380,13 +1693,18 @@ public class GameFacade {
 	 * @return indices of ghosts
 	 */
 	public int[] getIncomingEdibleGhostLocations(int pacmanDir, boolean[] include) {
-		ArrayList<Integer> ghostPositions = new ArrayList<Integer>(CommonConstants.numActiveGhosts);
-		for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
-			if (include[i] && isGhostEdible(i) && isGhostIncoming(pacmanDir, i)) {
-				ghostPositions.add(getGhostCurrentNodeIndex(i));
+		if(newG == null) {
+			System.out.println("TODO: Implement getIncomingEdibleGhostLocations for poG, GameFacade.java");
+			return null;
+		} else {
+			ArrayList<Integer> ghostPositions = new ArrayList<Integer>(CommonConstants.numActiveGhosts);
+			for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
+				if (include[i] && isGhostEdible(i) && isGhostIncoming(pacmanDir, i)) {
+					ghostPositions.add(getGhostCurrentNodeIndex(i));
+				}
 			}
+			return ArrayUtil.intArrayFromArrayList(ghostPositions);
 		}
-		return ArrayUtil.intArrayFromArrayList(ghostPositions);
 	}
 
 	/**
@@ -1399,11 +1717,16 @@ public class GameFacade {
 	 * @return true if directly approaching pacman
 	 */
 	public boolean ghostApproachingPacman(int ghostIndex) {
-		final int current = this.getPacmanCurrentNodeIndex();
-		int[] ghostPath = getGhostPath(ghostIndex, current);
-		int[] shortestPath = getShortestPath(getGhostCurrentNodeIndex(ghostIndex), current);
-		// Paths could be different if two equal-length paths exist
-		return (ghostPath.length == shortestPath.length);
+		if(newG == null) {
+			System.out.println("TODO: Implement ghostApproachingPacman for poG, GameFacade.java");
+			return false;
+		} else {
+			final int current = this.getPacmanCurrentNodeIndex();
+			int[] ghostPath = getGhostPath(ghostIndex, current);
+			int[] shortestPath = getShortestPath(getGhostCurrentNodeIndex(ghostIndex), current);
+			// Paths could be different if two equal-length paths exist
+			return (ghostPath.length == shortestPath.length);
+		}
 	}
 
 	/**
@@ -1413,13 +1736,18 @@ public class GameFacade {
 	 * @return array with node indices of active ghosts
 	 */
 	public int[] getActiveGhostLocations() {
-		ArrayList<Integer> ghostPositions = new ArrayList<Integer>(CommonConstants.numActiveGhosts);
-		for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
-			if (this.getNumNeighbours(getGhostCurrentNodeIndex(i)) > 0) {
-				ghostPositions.add(getGhostCurrentNodeIndex(i));
+		if(newG == null) {
+			System.out.println("TODO: Implement getActiveGhostLocations for poG, GameFacade.java");
+			return null;
+		} else {
+			ArrayList<Integer> ghostPositions = new ArrayList<Integer>(CommonConstants.numActiveGhosts);
+			for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
+				if (this.getNumNeighbours(getGhostCurrentNodeIndex(i)) > 0) {
+					ghostPositions.add(getGhostCurrentNodeIndex(i));
+				}
 			}
+			return ArrayUtil.intArrayFromArrayList(ghostPositions);
 		}
-		return ArrayUtil.intArrayFromArrayList(ghostPositions);
 	}
 
 	/**
@@ -1433,13 +1761,18 @@ public class GameFacade {
 	 * @return array of ghost indices (0 through 3) at location
 	 */
 	public int[] getGhostIndexOfGhostAt(int ghostLocation) {
-		ArrayList<Integer> locs = new ArrayList<Integer>();
-		for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
-			if (getGhostCurrentNodeIndex(i) == ghostLocation) {
-				locs.add(i);
+		if(newG == null) {
+			System.out.println("TODO: Implement getGhostIndexOfGhostAt for poG, GameFacade.java");
+			return null;
+		} else {
+			ArrayList<Integer> locs = new ArrayList<Integer>();
+			for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
+				if (getGhostCurrentNodeIndex(i) == ghostLocation) {
+					locs.add(i);
+				}
 			}
+			return ArrayUtil.intArrayFromArrayList(locs);
 		}
-		return ArrayUtil.intArrayFromArrayList(locs);
 	}
 
 	/**
@@ -1449,7 +1782,12 @@ public class GameFacade {
 	 * @return next move
 	 */
 	public int getNextMoveTowardsTarget(int from, int to) {
-		return moveToIndex(newG.getNextMoveTowardsTarget(from, to, oldpacman.game.Constants.DM.PATH));
+		if(newG == null) {
+			System.out.println("TODO: Implement getNextMoveTowardsTarget for poG, GameFacade.java");
+			return -1;
+		} else {
+			return moveToIndex(newG.getNextMoveTowardsTarget(from, to, oldpacman.game.Constants.DM.PATH));
+		}
 	}
 
 	/**
@@ -1457,7 +1795,12 @@ public class GameFacade {
 	 * @return num active ghosts
 	 */
 	public int getNumActiveGhosts() {
-		return CommonConstants.numActiveGhosts;
+		if(newG == null) {
+			System.out.println("TODO: Implement advanceGame for poG, GameFacade.java");
+			return -1;
+		} else {
+			return CommonConstants.numActiveGhosts;
+		}
 	}
 
 	/**
@@ -1466,11 +1809,15 @@ public class GameFacade {
 	 * @param ghostDirs direction ghosts are to take
 	 */
 	public void advanceGame(int pacManDir, int[] ghostDirs) {
-		EnumMap<oldpacman.game.Constants.GHOST, oldpacman.game.Constants.MOVE> myMoves = new EnumMap<oldpacman.game.Constants.GHOST, oldpacman.game.Constants.MOVE>(oldpacman.game.Constants.GHOST.class);
-		for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
-			myMoves.put(indexToGhost(i), indexToMove(ghostDirs[i]));
+		if(newG == null) {
+			System.out.println("TODO: Implement advanceGame for poG, GameFacade.java");
+		} else {
+			EnumMap<oldpacman.game.Constants.GHOST, oldpacman.game.Constants.MOVE> myMoves = new EnumMap<oldpacman.game.Constants.GHOST, oldpacman.game.Constants.MOVE>(oldpacman.game.Constants.GHOST.class);
+			for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
+				myMoves.put(indexToGhost(i), indexToMove(ghostDirs[i]));
+			}
+			newG.advanceGame(indexToMove(pacManDir), myMoves);
 		}
-		newG.advanceGame(indexToMove(pacManDir), myMoves);
 	}
 
 	/**
@@ -1484,21 +1831,26 @@ public class GameFacade {
 	 * @return copy of game facade that moved towards location
 	 */
 	public GameFacade simulateTowardsLocation(int destination, GhostControllerFacade ghostModel) {
-		int startLevel = this.getCurrentLevel();
-		int previousLives = getPacmanNumberOfLivesRemaining();
-		GameFacade copy = this;
-		while (copy.getPacmanCurrentNodeIndex() != destination && copy.getCurrentLevel() == startLevel
-				&& !copy.gameOver()) {
-			int simCurrent = copy.getPacmanCurrentNodeIndex();
-			int dir = copy.getNextMoveTowardsTarget(simCurrent, destination);
-			copy = copy.simulateInDir(dir, ghostModel);
-			if (previousLives > copy.getPacmanNumberOfLivesRemaining()) {
-				return null;
+		if(newG == null) {
+			System.out.println("TODO: Implement simulateTowardsLocation for poG, GameFacade.java");
+			return null;
+		} else {
+			int startLevel = this.getCurrentLevel();
+			int previousLives = getPacmanNumberOfLivesRemaining();
+			GameFacade copy = this;
+			while (copy.getPacmanCurrentNodeIndex() != destination && copy.getCurrentLevel() == startLevel
+					&& !copy.gameOver()) {
+				int simCurrent = copy.getPacmanCurrentNodeIndex();
+				int dir = copy.getNextMoveTowardsTarget(simCurrent, destination);
+				copy = copy.simulateInDir(dir, ghostModel);
+				if (previousLives > copy.getPacmanNumberOfLivesRemaining()) {
+					return null;
+				}
+				// must be updated in case of a life gain
+				previousLives = copy.getPacmanNumberOfLivesRemaining();
 			}
-			// must be updated in case of a life gain
-			previousLives = copy.getPacmanNumberOfLivesRemaining();
+			return copy;
 		}
-		return copy;
 	}
 
 	/**
@@ -1523,22 +1875,27 @@ public class GameFacade {
 	 * @return resulting game state, or null in case of death
 	 */
 	public GameFacade simulateToNextTarget(int dir, GhostControllerFacade ghostModel, int target) {
-		int startLevel = this.getCurrentLevel();
-		int previousLives = getPacmanNumberOfLivesRemaining();
-		GameFacade copy = this;
-		int steps = 0;
-		while (copy.getPacmanCurrentNodeIndex() != target && copy.getCurrentLevel() == startLevel && !copy.gameOver()) {
-			int simCurrent = copy.getPacmanCurrentNodeIndex();
-			dir = steps == 0 ? dir : copy.getRestrictedNextDir(simCurrent, target, dir);
-			copy = copy.simulateInDir(dir, ghostModel);
-			steps++;
-			if (previousLives > copy.getPacmanNumberOfLivesRemaining()) {
-				return null;
+		if(newG == null) {
+			System.out.println("TODO: Implement simulateToNextTarget for poG, GameFacade.java");
+			return null;
+		} else {
+			int startLevel = this.getCurrentLevel();
+			int previousLives = getPacmanNumberOfLivesRemaining();
+			GameFacade copy = this;
+			int steps = 0;
+			while (copy.getPacmanCurrentNodeIndex() != target && copy.getCurrentLevel() == startLevel && !copy.gameOver()) {
+				int simCurrent = copy.getPacmanCurrentNodeIndex();
+				dir = steps == 0 ? dir : copy.getRestrictedNextDir(simCurrent, target, dir);
+				copy = copy.simulateInDir(dir, ghostModel);
+				steps++;
+				if (previousLives > copy.getPacmanNumberOfLivesRemaining()) {
+					return null;
+				}
+				// must be updated in case of a life gain
+				previousLives = copy.getPacmanNumberOfLivesRemaining();
 			}
-			// must be updated in case of a life gain
-			previousLives = copy.getPacmanNumberOfLivesRemaining();
+			return copy;
 		}
-		return copy;
 	}
 
 	/**
@@ -1552,16 +1909,21 @@ public class GameFacade {
 	 * @return new game state
 	 */
 	public GameFacade simulateInDir(int dir, GhostControllerFacade ghostModel) {
-		GameFacade copy = this.copy();
-		int[] ghostDirs = ghostModel.getActions(copy, 0);
-
-		GameFacade backup = copy.copy();
-		// Loop prevents reversals
-		do {
-			copy = backup.copy();
-			copy.advanceGame(dir, ghostDirs);
-		} while (copy.ghostReversal() && copy.getNumActivePowerPills() == backup.getNumActivePowerPills());
-		return copy;
+		if(newG == null) {
+			System.out.println("TODO: Implement simulateInDir for poG, GameFacade.java");
+			return null;
+		} else {
+			GameFacade copy = this.copy();
+			int[] ghostDirs = ghostModel.getActions(copy, 0);
+	
+			GameFacade backup = copy.copy();
+			// Loop prevents reversals
+			do {
+				copy = backup.copy();
+				copy.advanceGame(dir, ghostDirs);
+			} while (copy.ghostReversal() && copy.getNumActivePowerPills() == backup.getNumActivePowerPills());
+			return copy;
+		}
 	}
 
 	/**
@@ -1573,15 +1935,20 @@ public class GameFacade {
 	 * @return is threat on path?
 	 */
 	public boolean pathGoesThroughThreateningGhost(int[] path) {
-		int[] ghostLocs = this.getThreatGhostLocations();
-		for (int i = 0; i < path.length; i++) {
-			for (int g = 0; g < ghostLocs.length; g++) {
-				if (path[i] == ghostLocs[g]) {
-					return true;
+		if(newG == null) {
+			System.out.println("TODO: Implement pathGoesThroughThreateningGhost for poG, GameFacade.java");
+			return false;
+		} else {
+			int[] ghostLocs = this.getThreatGhostLocations();
+			for (int i = 0; i < path.length; i++) {
+				for (int g = 0; g < ghostLocs.length; g++) {
+					if (path[i] == ghostLocs[g]) {
+						return true;
+					}
 				}
 			}
+			return false;
 		}
-		return false;
 	}
 
 	/**
@@ -1590,7 +1957,10 @@ public class GameFacade {
 	 * @return score
 	 */
 	public double getScore(int level) {
-		return newG.getScore(level);
+		return newG == null ?
+				//TODO: test poG.getScore()
+				poG.getScore():
+				newG.getScore(level);
 	}
 
 	/**
@@ -1598,7 +1968,10 @@ public class GameFacade {
 	 * @return copy
 	 */
 	public GameFacade copy() {
-		return new GameFacade(newG.copy());
+		return newG == null ?
+				//TODO: test new GameFacade(poG.copy())
+				new GameFacade(poG.copy()):
+				new GameFacade(newG.copy());
 	}
 
 	/**
@@ -1607,7 +1980,9 @@ public class GameFacade {
 	 * @return index of move
 	 */
 	public static int getReverse(int move) {
-		return moveToIndex(indexToMove(move).opposite());
+			//TODO: deal with the fact that this method is static
+			return moveToIndex(indexToMove(move).opposite());
+		
 	}
 
 	/**
@@ -1616,6 +1991,7 @@ public class GameFacade {
 	 * @return index of left node
 	 */
 	public static int getLeftOf(int move) {
+		//TODO: make sure that poG indexes moves in the same way as oldpacman
 		return (move + 3) % 4;
 	}
 
@@ -1625,6 +2001,7 @@ public class GameFacade {
 	 * @return index of right node
 	 */
 	public static int getRightOf(int move) {
+		//TODO: make sure that poG indexes moves in the same way as oldpacman
 		return (move + 1) % 4;
 	}
 
@@ -1633,7 +2010,10 @@ public class GameFacade {
 	 * @return num active pills
 	 */
 	public int getNumActivePills() {
-		return newG.getNumberOfActivePills();
+		return newG == null ?
+				//TODO: test poG.getNumberOfActivePills()
+				poG.getNumberOfActivePills():
+				newG.getNumberOfActivePills();
 	}
 
 	/**
@@ -1641,7 +2021,10 @@ public class GameFacade {
 	 * @return game over
 	 */
 	public boolean gameOver() {
-		return newG.gameOver();
+		return newG == null ?
+				//TODO: test poG.gameOver()
+				poG.gameOver():
+				newG.gameOver();
 	}
 
 	/**
@@ -1649,7 +2032,10 @@ public class GameFacade {
 	 * @return num active power pills
 	 */
 	public int getNumActivePowerPills() {
-		return newG.getNumberOfActivePowerPills();
+		return newG == null ?
+				//TODO: test poG.getNumberOfActivePowerPills
+				poG.getNumberOfActivePowerPills():
+				newG.getNumberOfActivePowerPills();
 	}
 
 	/**
@@ -1663,15 +2049,20 @@ public class GameFacade {
 	 * @return indices of nodes that will get pacman to target node
 	 */
 	public int[] getAllGhostPathNodes(int ghostIndex, int to) {
-		assert this.nodeInMaze(to) : "Node (to) " + to + " not in maze " + this.getMazeIndex();
-		int from = this.getGhostCurrentNodeIndex(ghostIndex);
-		assert this.nodeInMaze(from) : "Node (from) " + from + " not in maze " + this.getMazeIndex();
-		int[] tempPath = this.getGhostPath(ghostIndex, to);
-		int[] model = new int[tempPath.length + 1];
-		System.arraycopy(tempPath, 0, model, 1, tempPath.length);
-		model[0] = from;
-		int[] options = this.restrictedNeighbors(from, this.getGhostLastMoveMade(ghostIndex));
-		return sameDistancePathNodes(to, model, options);
+		if(newG == null) {
+			System.out.println("TODO: Implement getAllGhostPathNodes for poG, GameFacade.java");
+			return null;
+		} else {
+			assert this.nodeInMaze(to) : "Node (to) " + to + " not in maze " + this.getMazeIndex();
+			int from = this.getGhostCurrentNodeIndex(ghostIndex);
+			assert this.nodeInMaze(from) : "Node (from) " + from + " not in maze " + this.getMazeIndex();
+			int[] tempPath = this.getGhostPath(ghostIndex, to);
+			int[] model = new int[tempPath.length + 1];
+			System.arraycopy(tempPath, 0, model, 1, tempPath.length);
+			model[0] = from;
+			int[] options = this.restrictedNeighbors(from, this.getGhostLastMoveMade(ghostIndex));
+			return sameDistancePathNodes(to, model, options);
+		}
 	}
 
 	/**
@@ -1682,68 +2073,44 @@ public class GameFacade {
 	 * @return different path same length
 	 */
 	private int[] sameDistancePathNodes(int to, int[] model, int[] options) {
-		HashSet<Integer> set = new HashSet<Integer>();
-		Queue<Pair<Integer, Integer>> junctionDistancePairs = new LinkedList<Pair<Integer, Integer>>();
-		for (int i = 0; i < model.length; i++) {
-			int node = model[i];
-			if (isJunction(node)) {
-				junctionDistancePairs.add(new Pair<Integer, Integer>(node, i));
-			}
-			set.add(node);
-		}
-		// Neighbors of start point
-		for (int i = 0; i < options.length; i++) {
-			if (options[i] != -1) {
-				assert this.nodeInMaze(options[i]) : "Option " + options[i] + " not in maze " + this.getMazeIndex();
-				assert this.nodeInMaze(model[0]) : "Model start " + model[0] + " not in maze " + this.getMazeIndex();
-				assert this.nodeInMaze(to) : "To " + to + " not in maze " + this.getMazeIndex();
-				assert options[i] == this.neighbors(model[0])[i] : "(using neighbors) The option " + options[i]
-						+ " in dir " + i + " does not correspond to the neighbor " + this.neighbors(model[0])[i]
-						+ " of " + model[0] + ":\nmodel = " + Arrays.toString(model) + ":\nmodel[0] neighbors = "
-						+ Arrays.toString(this.neighbors(model[0]));
-				assert options[i] == this.neighborInDir(model[0], i) : "(using neighborInDir) The option " + options[i]
-						+ " in dir " + i + " does not correspond to the neighbor " + this.neighborInDir(model[0], i)
-						+ " of " + model[0] + ":\nmodel = " + Arrays.toString(model) + ":\nmodel[0] neighbors = "
-						+ Arrays.toString(this.neighbors(model[0]));
-
-				int[] branch = this.getDirectionalPath(model[0], to, i);
-				if (branch.length == model.length) {
-					// Alternate path is same length
-					for (int p = 1; p < branch.length; p++) {
-						Pair<Integer, Integer> pair = new Pair<Integer, Integer>(branch[p], p + 1);
-						if (isJunction(branch[p]) && !junctionDistancePairs.contains(pair)) {
-							junctionDistancePairs.add(pair);
-						}
-						if (set.contains(branch[p])) {
-							// One repeated node means rest of path can be ignored
-							break;
-						} else {
-							set.add(branch[p]);
-						}
-					}
+		if(newG == null) {
+			System.out.println("TODO: Implement sameDistancePathNodes for poG, GameFacade.java");
+			return null;
+		} else {
+			HashSet<Integer> set = new HashSet<Integer>();
+			Queue<Pair<Integer, Integer>> junctionDistancePairs = new LinkedList<Pair<Integer, Integer>>();
+			for (int i = 0; i < model.length; i++) {
+				int node = model[i];
+				if (isJunction(node)) {
+					junctionDistancePairs.add(new Pair<Integer, Integer>(node, i));
 				}
+				set.add(node);
 			}
-		}
-		// Branches at junctions
-		while (!junctionDistancePairs.isEmpty()) {
-			Pair<Integer, Integer> pair = junctionDistancePairs.poll();
-			int junction = pair.t1;
-			int soFar = pair.t2;
-			int[] neighbors = neighbors(junction);
-			for (int i = 0; i < neighbors.length; i++) {
-				if (neighbors[i] != -1 && !set.contains(neighbors[i])) {
-					// Now check to see if path is right distance
-					int[] branch = this.getDirectionalPath(junction, to, i);
-					if (branch.length + soFar == model.length) {
-						// this.addPoints(Color.GRAY, branch);
+			// Neighbors of start point
+			for (int i = 0; i < options.length; i++) {
+				if (options[i] != -1) {
+					assert this.nodeInMaze(options[i]) : "Option " + options[i] + " not in maze " + this.getMazeIndex();
+					assert this.nodeInMaze(model[0]) : "Model start " + model[0] + " not in maze " + this.getMazeIndex();
+					assert this.nodeInMaze(to) : "To " + to + " not in maze " + this.getMazeIndex();
+					assert options[i] == this.neighbors(model[0])[i] : "(using neighbors) The option " + options[i]
+							+ " in dir " + i + " does not correspond to the neighbor " + this.neighbors(model[0])[i]
+							+ " of " + model[0] + ":\nmodel = " + Arrays.toString(model) + ":\nmodel[0] neighbors = "
+							+ Arrays.toString(this.neighbors(model[0]));
+					assert options[i] == this.neighborInDir(model[0], i) : "(using neighborInDir) The option " + options[i]
+							+ " in dir " + i + " does not correspond to the neighbor " + this.neighborInDir(model[0], i)
+							+ " of " + model[0] + ":\nmodel = " + Arrays.toString(model) + ":\nmodel[0] neighbors = "
+							+ Arrays.toString(this.neighbors(model[0]));
+	
+					int[] branch = this.getDirectionalPath(model[0], to, i);
+					if (branch.length == model.length) {
 						// Alternate path is same length
 						for (int p = 1; p < branch.length; p++) {
-							Pair<Integer, Integer> pair2 = new Pair<Integer, Integer>(branch[p], p + soFar + 1);
-							if (isJunction(branch[p]) && !junctionDistancePairs.contains(pair2)) {
-								junctionDistancePairs.add(pair2);
+							Pair<Integer, Integer> pair = new Pair<Integer, Integer>(branch[p], p + 1);
+							if (isJunction(branch[p]) && !junctionDistancePairs.contains(pair)) {
+								junctionDistancePairs.add(pair);
 							}
 							if (set.contains(branch[p])) {
-							// One repeated node means rest of path can be ignored
+								// One repeated node means rest of path can be ignored
 								break;
 							} else {
 								set.add(branch[p]);
@@ -1752,14 +2119,43 @@ public class GameFacade {
 					}
 				}
 			}
+			// Branches at junctions
+			while (!junctionDistancePairs.isEmpty()) {
+				Pair<Integer, Integer> pair = junctionDistancePairs.poll();
+				int junction = pair.t1;
+				int soFar = pair.t2;
+				int[] neighbors = neighbors(junction);
+				for (int i = 0; i < neighbors.length; i++) {
+					if (neighbors[i] != -1 && !set.contains(neighbors[i])) {
+						// Now check to see if path is right distance
+						int[] branch = this.getDirectionalPath(junction, to, i);
+						if (branch.length + soFar == model.length) {
+							// this.addPoints(Color.GRAY, branch);
+							// Alternate path is same length
+							for (int p = 1; p < branch.length; p++) {
+								Pair<Integer, Integer> pair2 = new Pair<Integer, Integer>(branch[p], p + soFar + 1);
+								if (isJunction(branch[p]) && !junctionDistancePairs.contains(pair2)) {
+									junctionDistancePairs.add(pair2);
+								}
+								if (set.contains(branch[p])) {
+								// One repeated node means rest of path can be ignored
+									break;
+								} else {
+									set.add(branch[p]);
+								}
+							}
+						}
+					}
+				}
+			}
+			// Prepare results
+			int[] result = new int[set.size()];
+			int in = 0;
+			for (Integer node : set) {
+				result[in++] = node;
+			}
+			return result;
 		}
-		// Prepare results
-		int[] result = new int[set.size()];
-		int in = 0;
-		for (Integer node : set) {
-			result[in++] = node;
-		}
-		return result;
 	}
 
 	/**
@@ -1784,40 +2180,45 @@ public class GameFacade {
 	 * @return path from -> to in direction
 	 */
 	public int[] getPathInDirFromNew(int from, int to, int direction) {
-		/**
-		 * This method depends on the newG method getShortestPath, which
-		 * excludes the opposite of "direction". The other neighbors need to be
-		 * checked.
-		 */
-		int[] neighbors = neighbors(newG, from);
-		assert(neighbors[direction] != -1) : ("Picked invalid direction " + direction + " given neighbors "
-				+ Arrays.toString(neighbors));
-		int[] finalPath;
-		if (neighbors[getLeftOf(direction)] == -1 && neighbors[getRightOf(direction)] == -1) {
-			// Can't go left or right, and getShortestPath prevents reverse, so
-			// getShortestPath
-			// will return the desired directional path
-			assert neighbors[direction] != -1 : from + "'s neighbor in dir " + direction + " not available towards "
-					+ to;
-			finalPath = newG.getShortestPath(from, to, indexToMove(direction));
+		if(newG == null) {
+			System.out.println("TODO: Implement getPathInDirFromNew for poG, GameFacade.java");
+			return null;
 		} else {
-			// Left and right are neighbors, so getShortestPath won't
-			// necessarily go in
-			// "direction" first, so let's take one step
-			int oneStepNode = neighbors[direction];
-			// Path after first step
-			int[] pathAfterStep = newG.getShortestPath(oneStepNode, to, indexToMove(direction));
-			// put back the first step
-			int[] resultPath = new int[pathAfterStep.length + 1];
-			resultPath[0] = oneStepNode;
-			System.arraycopy(pathAfterStep, 0, resultPath, 1, pathAfterStep.length);
-			finalPath = resultPath;
+			/**
+			 * This method depends on the newG method getShortestPath, which
+			 * excludes the opposite of "direction". The other neighbors need to be
+			 * checked.
+			 */
+			int[] neighbors = neighbors(newG, from);
+			assert(neighbors[direction] != -1) : ("Picked invalid direction " + direction + " given neighbors "
+					+ Arrays.toString(neighbors));
+			int[] finalPath;
+			if (neighbors[getLeftOf(direction)] == -1 && neighbors[getRightOf(direction)] == -1) {
+				// Can't go left or right, and getShortestPath prevents reverse, so
+				// getShortestPath
+				// will return the desired directional path
+				assert neighbors[direction] != -1 : from + "'s neighbor in dir " + direction + " not available towards "
+						+ to;
+				finalPath = newG.getShortestPath(from, to, indexToMove(direction));
+			} else {
+				// Left and right are neighbors, so getShortestPath won't
+				// necessarily go in
+				// "direction" first, so let's take one step
+				int oneStepNode = neighbors[direction];
+				// Path after first step
+				int[] pathAfterStep = newG.getShortestPath(oneStepNode, to, indexToMove(direction));
+				// put back the first step
+				int[] resultPath = new int[pathAfterStep.length + 1];
+				resultPath[0] = oneStepNode;
+				System.arraycopy(pathAfterStep, 0, resultPath, 1, pathAfterStep.length);
+				finalPath = resultPath;
+			}
+			assert(finalPath.length == 0
+					|| finalPath[finalPath.length - 1] == to) : ("Last element of path should be the to location!");
+			assert(finalPath.length == 0 || finalPath[0] != from) : ("Path should NOT start at  location!");
+			assert(validPath(finalPath)) : "Invalid path! " + Arrays.toString(finalPath);
+			return finalPath;
 		}
-		assert(finalPath.length == 0
-				|| finalPath[finalPath.length - 1] == to) : ("Last element of path should be the to location!");
-		assert(finalPath.length == 0 || finalPath[0] != from) : ("Path should NOT start at  location!");
-		assert(validPath(finalPath)) : "Invalid path! " + Arrays.toString(finalPath);
-		return finalPath;
 	}
 
 	/**
@@ -1827,16 +2228,21 @@ public class GameFacade {
 	 * @return if valid
 	 */
 	private boolean validPath(int[] path) {
-		if (path == null) {
+		if(newG == null) {
+			System.out.println("TODO: Implement validPath for poG, GameFacade.java");
 			return false;
-		}
-		for (int i = 1; i < path.length; i++) {
-			// System.out.println(path.length +":" + i);
-			if (!ArrayUtils.contains(neighbors(path[i - 1]), path[i])) {
+		} else {
+			if (path == null) {
 				return false;
 			}
+			for (int i = 1; i < path.length; i++) {
+				// System.out.println(path.length +":" + i);
+				if (!ArrayUtils.contains(neighbors(path[i - 1]), path[i])) {
+					return false;
+				}
+			}
+			return true;
 		}
-		return true;
 	}
 
 	/**
@@ -1854,6 +2260,24 @@ public class GameFacade {
 		}
 		return false;
 	}
+	
+	/**
+	 * Return true if any ghost currently requires an action
+	 *
+	 * @param newG
+	 *            instance of new pacman Game
+	 * @return true if ghost requires action
+	 */
+	private static boolean anyRequiresActionPO(pacman.game.Game poG) {
+		for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
+			//TODO: implement doesGhostRequireAction for poG
+			return false;
+//			if (poG.doesGhostRequireAction(indexToGhost(i))) {
+//				return true;
+//			}
+		}
+		return false;
+	}
 
 	/**
 	 * Returns if any of the ghosts require action
@@ -1861,7 +2285,12 @@ public class GameFacade {
 	 * @return whether ghost requires action
 	 */
 	public boolean doesGhostRequireAction(int ghostIndex) {
-		return newG.doesGhostRequireAction(indexToGhost(ghostIndex));
+		if(newG == null) {
+			System.out.println("TODO: Implement doesGhostRequireAction for poG, GameFacade.java");
+			return false;
+		} else {
+			return newG.doesGhostRequireAction(indexToGhost(ghostIndex));
+		}
 	}
 
 	/**
@@ -1872,11 +2301,16 @@ public class GameFacade {
 	 * @return max edible time
 	 */
 	private static int maxEdibleTime(oldpacman.game.Game newG) {
-		int max = -1;
-		for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
-			max = Math.max(max, newG.getGhostEdibleTime(indexToGhost(i)));
+		if(newG == null) {
+			System.out.println("TODO: Implement maxEdibleTime for poG, GameFacade.java");
+			return -1;
+		} else {
+			int max = -1;
+			for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
+				max = Math.max(max, newG.getGhostEdibleTime(indexToGhost(i)));
+			}
+			return max;
 		}
-		return max;
 	}
 
 	/**
@@ -1887,24 +2321,34 @@ public class GameFacade {
 	 * @return any ghost edible?
 	 */
 	private boolean anyIsEdible(oldpacman.game.Game newG) {
-		for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
-			if (newG.isGhostEdible(indexToGhost(i))) {
-				return true;
+		if(newG == null) {
+			System.out.println("TODO: Implement anyIsEdible for poG, GameFacade.java");
+			return false;
+		} else {
+			for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
+				if (newG.isGhostEdible(indexToGhost(i))) {
+					return true;
+				}
 			}
+			return false;
 		}
-		return false;
 	}
 	
 	/**
-	 * TODO, potentiall throw an unsupported operation if this function would not be useable in PO conditions
+	 * TODO, potentially throw an unsupported operation if this function would not be useable in PO conditions
 	 * @param poG
 	 * @return
 	 */
 	private boolean anyIsEdible(pacman.game.Game poG) {
-		for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
-			// How to do this in PO pacman?
+		if(newG == null) {
+			System.out.println("TODO: Implement anyIsEdible for poG, GameFacade.java");
+			return false;
+		} else {
+			for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
+				// How to do this in PO pacman?
+			}
+			return false;
 		}
-		return false;
 	}
 
 	/**
@@ -1912,7 +2356,10 @@ public class GameFacade {
 	 * @return if power pill just previously eaten
 	 */
 	public boolean justAtePowerPill() {
-		return newG.wasPowerPillEaten();
+		return newG == null ?
+				//TODO: test poG.wasPowerPillEaten
+				poG.wasPowerPillEaten():
+				newG.wasPowerPillEaten();
 	}
 
 	/**
@@ -1928,40 +2375,45 @@ public class GameFacade {
 	 * @return coordinates of closest threat
 	 */
 	public Pair<Double, Double> closestThreatToPacmanPath(int[] path, int target) {
-		double closestThreatDistance = Double.MAX_VALUE;
-		double pacManDistance = path.length;
-		for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
-			if (isGhostThreat(i)) { // Ghost is a threat
-				double distanceToNode;
-
-				int[] gPath = getGhostPath(i, target);
-				/*
-				 * If ghost path is subset of pacman path on way to same
-				 * location, then ghost must be moving away from pacman
-				 */
-				if (pathGoesThroughThreateningGhost(path)) {
-					if (ArrayUtil.subset(gPath, path)) {
-						 // Ghost will go through node, making it safe to follow
-						distanceToNode = pacManDistance + GameFacade.MAX_DISTANCE;
+		if(newG == null) {
+			System.out.println("TODO: Implement closestThreatToPacmanPath for poG, GameFacade.java");
+			return null;
+		} else {
+			double closestThreatDistance = Double.MAX_VALUE;
+			double pacManDistance = path.length;
+			for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
+				if (isGhostThreat(i)) { // Ghost is a threat
+					double distanceToNode;
+	
+					int[] gPath = getGhostPath(i, target);
+					/*
+					 * If ghost path is subset of pacman path on way to same
+					 * location, then ghost must be moving away from pacman
+					 */
+					if (pathGoesThroughThreateningGhost(path)) {
+						if (ArrayUtil.subset(gPath, path)) {
+							 // Ghost will go through node, making it safe to follow
+							distanceToNode = pacManDistance + GameFacade.MAX_DISTANCE;
+						} else {
+							distanceToNode = 0; // Really bad
+						}
 					} else {
-						distanceToNode = 0; // Really bad
+						distanceToNode = gPath.length;
 					}
-				} else {
-					distanceToNode = gPath.length;
-				}
-
-				closestThreatDistance = Math.min(closestThreatDistance, distanceToNode);
-			} else if (getGhostLairTime(i) > 0) {
-				// Ghost may pop out when pacman passes
-				int ghostStart = getGhostInitialNodeIndex();
-				if (ArrayUtils.contains(path, ghostStart)) {
-					pacManDistance = getShortestPathDistance(getPacmanCurrentNodeIndex(), ghostStart);
-					int lairTime = getGhostLairTime(i);
-					closestThreatDistance = Math.min(closestThreatDistance, lairTime);
+	
+					closestThreatDistance = Math.min(closestThreatDistance, distanceToNode);
+				} else if (getGhostLairTime(i) > 0) {
+					// Ghost may pop out when pacman passes
+					int ghostStart = getGhostInitialNodeIndex();
+					if (ArrayUtils.contains(path, ghostStart)) {
+						pacManDistance = getShortestPathDistance(getPacmanCurrentNodeIndex(), ghostStart);
+						int lairTime = getGhostLairTime(i);
+						closestThreatDistance = Math.min(closestThreatDistance, lairTime);
+					}
 				}
 			}
+			return new Pair<Double, Double>(pacManDistance, closestThreatDistance);
 		}
-		return new Pair<Double, Double>(pacManDistance, closestThreatDistance);
 	}
 
 	/**
@@ -1969,7 +2421,12 @@ public class GameFacade {
 	 * @return time
 	 */
 	public int getTimeGhostReward() {
-		return newG.getTimeGhostReward();
+		if(newG == null) {
+			System.out.println("TODO: Implement getTimeGhostReward for poG, GameFacade.java");
+			return -1;
+		} else {
+			return newG.getTimeGhostReward();
+		}
 	}
 
 	/**
@@ -1977,7 +2434,12 @@ public class GameFacade {
 	 * @return time
 	 */
 	public double getTimePillReward() {
-		return newG.getTimePillReward();
+		if(newG == null) {
+			System.out.println("TODO: Implement getTimePillReward for poG, GameFacade.java");
+			return -1;
+		} else {
+			return newG.getTimePillReward();
+		}
 	}
 
 	/**
@@ -1985,7 +2447,12 @@ public class GameFacade {
 	 * @return
 	 */
 	public List<Integer> getGhostEatTimes() {
-		return newG.getGhostEatTimes();
+		if(newG == null) {
+			System.out.println("TODO: Implement getGhostEatTimes for poG, GameFacade.java");
+			return null;
+		} else {
+			return newG.getGhostEatTimes();
+		}
 	}
 
 	/**
@@ -1993,7 +2460,11 @@ public class GameFacade {
 	 * @param endAfterGhostEatingChances to set
 	 */
 	public void setEndAfterGhostEatingChances(boolean endAfterGhostEatingChances) {
-		newG.setEndAfterGhostEatingChances(endAfterGhostEatingChances);
+		if(newG == null) {
+			System.out.println("TODO: Implement setEndAfterGhostEatingChances for poG, GameFacade.java");
+		} else {
+			newG.setEndAfterGhostEatingChances(endAfterGhostEatingChances);
+		}
 	}
 
 	/**
@@ -2001,10 +2472,14 @@ public class GameFacade {
 	 * @param noPills whether to play with pills or not
 	 */
 	public void playWithoutPills(boolean noPills) {
-		if (noPills) {
-			newG.playWithoutPills();
+		if(newG == null) {
+			System.out.println("TODO: Implement playWithoutPills for poG, GameFacade.java");
 		} else {
-			newG.playWithPills();
+			if (noPills) {
+				newG.playWithoutPills();
+			} else {
+				newG.playWithPills();
+			}
 		}
 	}
 
@@ -2013,10 +2488,14 @@ public class GameFacade {
 	 * @param noPowerPills play with power pills or not
 	 */
 	public void playWithoutPowerPills(boolean noPowerPills) {
-		if (noPowerPills) {
-			newG.playWithoutPowerPills();
+		if(newG == null) {
+			System.out.println("TODO: Implement playWithoutPowerPills for poG, GameFacade.java");
 		} else {
-			newG.playWithPowerPills();
+			if (noPowerPills) {
+				newG.playWithoutPowerPills();
+			} else {
+				newG.playWithPowerPills();
+			}
 		}
 	}
 
@@ -2025,7 +2504,12 @@ public class GameFacade {
 	 * @return sum
 	 */
 	public double getLureDistanceSum() {
-		return newG.getLureDistanceSum();
+		if(newG == null) {
+			System.out.println("TODO: Implement getLureDistanceSum for poG, GameFacade.java");
+			return -1;
+		} else {
+			return newG.getLureDistanceSum();
+		}
 	}
 
 	/**
@@ -2033,7 +2517,11 @@ public class GameFacade {
 	 * @param luringTask whether to have luring task
 	 */
 	public void setEndAfterPowerPillsEaten(boolean luringTask) {
-		newG.setEndAfterPowerPillsEaten(luringTask);
+		if(newG == null) {
+			System.out.println("TODO: Implement setEndAfterPowerPillsEaten for poG, GameFacade.java");
+		} else {
+			newG.setEndAfterPowerPillsEaten(luringTask);
+		}
 	}
 
 	/**
@@ -2041,7 +2529,12 @@ public class GameFacade {
 	 * @return time
 	 */
 	public double getTimeInDeadSpace() {
-		return newG.getTimeInDeadSpace();
+		if(newG == null) {
+			System.out.println("TODO: Implement getTimeInDeadSpace for poG, GameFacade.java");
+			return -1;
+		} else {
+			return newG.getTimeInDeadSpace();
+		}
 	}
 
 	/**
@@ -2053,18 +2546,23 @@ public class GameFacade {
 	 * @return
 	 */
 	public Set<Integer> clusterTreeNodes(int[] targets) {
-		HashSet<Integer> result = new HashSet<Integer>();
-		for (int i = 0; i < targets.length; i++) {
-			for (int j = 0; j < targets.length; j++) {
-				if (i != j && hasNeighbors(targets[i]) && hasNeighbors(targets[j])) {
-					int[] path = this.getShortestPath(targets[i], targets[j]);
-					for (Integer x : path) {
-						result.add(x);
+		if(newG == null) {
+			System.out.println("TODO: Implement threatGhostClusterTreeSize for poG, GameFacade.java");
+			return null;
+		} else {
+			HashSet<Integer> result = new HashSet<Integer>();
+			for (int i = 0; i < targets.length; i++) {
+				for (int j = 0; j < targets.length; j++) {
+					if (i != j && hasNeighbors(targets[i]) && hasNeighbors(targets[j])) {
+						int[] path = this.getShortestPath(targets[i], targets[j]);
+						for (Integer x : path) {
+							result.add(x);
+						}
 					}
 				}
 			}
+			return result;
 		}
-		return result;
 	}
 
 	/**
@@ -2072,7 +2570,12 @@ public class GameFacade {
 	 * @return size of tree
 	 */
 	public int threatGhostClusterTreeSize() {
-		return clusterTreeNodes(this.getThreatGhostLocations()).size();
+		if(newG == null) {
+			System.out.println("TODO: Implement threatGhostClusterTreeSize for poG, GameFacade.java");
+			return -1;
+		} else {
+			return clusterTreeNodes(this.getThreatGhostLocations()).size();
+		}
 	}
 
 	/**
@@ -2080,7 +2583,12 @@ public class GameFacade {
 	 * @return size of tree
 	 */
 	public int edibleGhostClusterTreeSize() {
-		return clusterTreeNodes(this.getEdibleGhostLocations()).size();
+		if(newG == null) {
+			System.out.println("TODO: Implement edibleGhostClusterTreeSize for poG, GameFacade.java");
+			return -1;
+		} else {
+			return clusterTreeNodes(this.getEdibleGhostLocations()).size();
+		}
 	}
 
 	/**
@@ -2088,7 +2596,12 @@ public class GameFacade {
 	 * @return num modes in maze
 	 */
 	public int getNumMazeNodes() {
-		return newG.getCurrentMaze().graph.length;
+		if(newG == null) {
+			//TODO: test
+			return poG.getCurrentMaze().graph.length;
+		} else {
+			return newG.getCurrentMaze().graph.length;
+		}
 	}
 
 	/**
@@ -2097,12 +2610,17 @@ public class GameFacade {
 	 * @return node of ghost
 	 */
 	public int ghostLocationByProximity(int order) {
-		ArrayList<Integer> ghosts = new ArrayList<Integer>(CommonConstants.numActiveGhosts);
-		for (int i = 0; i < getNumActiveGhosts(); i++) {
-			ghosts.add(i); // Put indices of ghosts in array
+		if(newG == null) {
+			System.out.println("TODO: Implement ghostLocationByProximity for poG, GameFacade.java");
+			return -1;
+		} else {
+			ArrayList<Integer> ghosts = new ArrayList<Integer>(CommonConstants.numActiveGhosts);
+			for (int i = 0; i < getNumActiveGhosts(); i++) {
+				ghosts.add(i); // Put indices of ghosts in array
+			}
+			Collections.sort(ghosts, new GhostComparator(this, true, true));
+			return getGhostCurrentNodeIndex(ghosts.get(order));
 		}
-		Collections.sort(ghosts, new GhostComparator(this, true, true));
-		return getGhostCurrentNodeIndex(ghosts.get(order));
 	}
 
 	/**
@@ -2110,7 +2628,12 @@ public class GameFacade {
 	 * @return num properly eaten power pills
 	 */
 	public double getProperlyEatenPowerPills() {
-		return newG.getProperlyEatenPowerPills();
+		if(newG == null) {
+			System.out.println("TODO: Implement getProperlyEatenPowerPills for poG, GameFacade.java");
+			return -1;
+		} else {
+			return newG.getProperlyEatenPowerPills();
+		}
 	}
 
 	/**
@@ -2118,7 +2641,12 @@ public class GameFacade {
 	 * @return num improperly eaten power pills
 	 */
 	public double getImproperlyEatenPowerPills() {
-		return newG.getImproperlyEatenPowerPills();
+		if(newG == null) {
+			System.out.println("TODO: Implement getImproperlyEatenPowerPills for poG, GameFacade.java");
+			return -1;
+		} else {
+			return newG.getImproperlyEatenPowerPills();
+		}
 	}
 
 	/**
@@ -2126,7 +2654,12 @@ public class GameFacade {
 	 * @return num power pills eaten when ghosts far
 	 */
 	public double getPowerPillsEatenWhenGhostFar() {
-		return newG.getPowerPillsEatenWhenGhostFar();
+		if(newG == null) {
+			System.out.println("TODO: Implement getPowerPillsEatenWhenGhostFar for poG, GameFacade.java");
+			return -1;
+		} else {
+			return newG.getPowerPillsEatenWhenGhostFar();
+		}
 	}
 
 	/**
@@ -2135,7 +2668,12 @@ public class GameFacade {
 	 * @return
 	 */
 	public boolean anyIsThreat() {
-		return this.getThreatGhostLocations().length > 0;
+		if(newG == null) {
+			System.out.println("TODO: Implement anyIsThreat for poG, GameFacade.java");
+			return false;
+		} else {
+			return this.getThreatGhostLocations().length > 0;
+		}
 	}
 
 	/**
@@ -2151,7 +2689,12 @@ public class GameFacade {
 	 * @return amount of ghost regret (positive)
 	 */
 	public int getGhostRegret() {
-		return newG.getGhostRegret();
+		if(newG == null) {
+			System.out.println("TODO: Implement getGhostRegret for poG, GameFacade.java");
+			return -1;
+		} else {
+			return newG.getGhostRegret();
+		}
 	}
 
 	/**
@@ -2173,17 +2716,21 @@ public class GameFacade {
 	 *            whether or not to junction at power pills
 	 * @return collection of leaves in search tree
 	 */
-	public ArrayList<Set<Integer>> junctionsAtDepth(int startIndex, int depth, boolean includePowerPills,
-			int lastNodeVisited) {
-		Set<Integer> start = new HashSet<Integer>();
-		// eliminate most recently visited node as option
-		if (lastNodeVisited != -1 && !isJunction(startIndex)) {
-			startIndex = lastNodeVisited;
+	public ArrayList<Set<Integer>> junctionsAtDepth(int startIndex, int depth, boolean includePowerPills, int lastNodeVisited) {
+		if(newG == null) {
+			System.out.println("TODO: Implement junctionsAtDepth for poG, GameFacade.java");
+			return null;
+		} else {
+			Set<Integer> start = new HashSet<Integer>();
+			// eliminate most recently visited node as option
+			if (lastNodeVisited != -1 && !isJunction(startIndex)) {
+				startIndex = lastNodeVisited;
+			}
+			start.add(startIndex);
+			ArrayList<Set<Integer>> result = new ArrayList<Set<Integer>>();
+			junctionsAtDepth(start, depth, includePowerPills, result);
+			return result;
 		}
-		start.add(startIndex);
-		ArrayList<Set<Integer>> result = new ArrayList<Set<Integer>>();
-		junctionsAtDepth(start, depth, includePowerPills, result);
-		return result;
 	}
 
 	/**
@@ -2194,24 +2741,27 @@ public class GameFacade {
 	 * @param includePowerPills
 	 * @return
 	 */
-	public void junctionsAtDepth(Set<Integer> startPoints, int depth, boolean includePowerPills,
-			ArrayList<Set<Integer>> result) {
-		result.add(startPoints);
-		if (depth > 0) {
-			Set<Integer> nextJunctions = new HashSet<Integer>();
-			for (Integer start : startPoints) {
-				assert start != -1 : "Cannot start at -1";
-				int[] neighbors = neighbors(start);
-				for (int i = 0; i < neighbors.length; i++) {
-					if (neighbors[i] != -1) {
-						int nextJunction = nextJunctionInDirection(start, i, includePowerPills);
-						assert nextJunction != -1 : "Why can't a junction be reached from " + start + " in direction "
-								+ i + "? neighbors = " + Arrays.toString(neighbors);
-						nextJunctions.add(nextJunction);
+	public void junctionsAtDepth(Set<Integer> startPoints, int depth, boolean includePowerPills, ArrayList<Set<Integer>> result) {
+		if(newG == null) {
+			System.out.println("TODO: Implement junctionsAtDepth for poG, GameFacade.java");
+		} else {
+			result.add(startPoints);
+			if (depth > 0) {
+				Set<Integer> nextJunctions = new HashSet<Integer>();
+				for (Integer start : startPoints) {
+					assert start != -1 : "Cannot start at -1";
+					int[] neighbors = neighbors(start);
+					for (int i = 0; i < neighbors.length; i++) {
+						if (neighbors[i] != -1) {
+							int nextJunction = nextJunctionInDirection(start, i, includePowerPills);
+							assert nextJunction != -1 : "Why can't a junction be reached from " + start + " in direction "
+									+ i + "? neighbors = " + Arrays.toString(neighbors);
+							nextJunctions.add(nextJunction);
+						}
 					}
 				}
-			}
-			junctionsAtDepth(nextJunctions, depth - 1, includePowerPills, result);
+				junctionsAtDepth(nextJunctions, depth - 1, includePowerPills, result);
+			}			
 		}
 	}
 
@@ -2222,7 +2772,12 @@ public class GameFacade {
 	 * @return
 	 */
 	public boolean ghostInLair(int ghostIndex) {
-		return getGhostLairTime(ghostIndex) > 0;
+		if(newG == null) {
+			System.out.println("TODO: Implement ghostInLair for poG, GameFacade.java");
+			return false;
+		} else {
+			return getGhostLairTime(ghostIndex) > 0;
+		}
 	}
 
 	/**
@@ -2232,16 +2787,21 @@ public class GameFacade {
 	 * @return time of next lair exit, -1 if none are in lair
 	 */
 	public int timeUntilNextLairExit() {
-		int[] lairTimes = this.getGhostLairTimes();
-		Arrays.sort(lairTimes);
-		int nextExitIndex = 0;
-		while (nextExitIndex < lairTimes.length && lairTimes[nextExitIndex] == 0) {
-			nextExitIndex++;
-		}
-		if (nextExitIndex == lairTimes.length) {
+		if(newG == null) {
+			System.out.println("TODO: Implement anyActiveGhostInLair for poG, GameFacade.java");
 			return -1;
+		} else {
+			int[] lairTimes = this.getGhostLairTimes();
+			Arrays.sort(lairTimes);
+			int nextExitIndex = 0;
+			while (nextExitIndex < lairTimes.length && lairTimes[nextExitIndex] == 0) {
+				nextExitIndex++;
+			}
+			if (nextExitIndex == lairTimes.length) {
+				return -1;
+			}
+			return lairTimes[nextExitIndex];
 		}
-		return lairTimes[nextExitIndex];
 	}
 
 	/**
@@ -2249,13 +2809,18 @@ public class GameFacade {
 	 * @return if active ghosts in lair
 	 */
 	public boolean anyActiveGhostInLair() {
-		int num = this.getNumActiveGhosts();
-		for (int i = 0; i < num; i++) {
-			if (ghostInLair(i)) {
-				return true;
+		if(newG == null) {
+			System.out.println("TODO: Implement anyActiveGhostInLair for poG, GameFacade.java");
+			return false;
+		} else {
+			int num = this.getNumActiveGhosts();
+			for (int i = 0; i < num; i++) {
+				if (ghostInLair(i)) {
+					return true;
+				}
 			}
+			return false;
 		}
-		return false;
 	}
 
 	/**
@@ -2268,17 +2833,24 @@ public class GameFacade {
 		return this.getCurrentLevelTime() == 0;
 	}
 
+	//TODO: Implement getNumberOfLairGhosts for poG, GameFacade.java
 	public int getNumberOfLairGhosts() {
-		int count = 0;
-		for (int i = 0; i < oldpacman.game.Constants.NUM_GHOSTS; i++) {
-			if (this.getGhostLairTime(i) > 0) {
-				count++;
+		if(newG == null) {
+			return -1;
+		} else {
+			int count = 0;
+			for (int i = 0; i < oldpacman.game.Constants.NUM_GHOSTS; i++) {
+				if (this.getGhostLairTime(i) > 0) {
+					count++;
+				}
 			}
+			return count;
 		}
-		return count;
 	}
 
 	/**
+	 * TODO: Implement averageGhostsEatenPerPowerPill for poG, GameFacade.java
+	 * 
 	 * AVG number of ghosts eaten per each power pill
 	 * 
 	 * @param punishUneatenPowerPills
@@ -2287,16 +2859,22 @@ public class GameFacade {
 	 * @return
 	 */
 	public double averageGhostsEatenPerPowerPill(boolean punishUneatenPowerPills) {
-		return newG.averageGhostsEatenPerPowerPill(punishUneatenPowerPills);
+		return newG == null ?
+				-1:
+				newG.averageGhostsEatenPerPowerPill(punishUneatenPowerPills);
 	}
 
 	/**
+	 * TODO: Implement averageTimeToEatAllGhostsAfterPowerPill for poG, GameFacade.java
+	 * 
 	 * average time it took pacman to eat all ghosts after eating
 	 * a power pill
 	 * @return average time
 	 */
 	public double averageTimeToEatAllGhostsAfterPowerPill() {
-		return newG.averageTimeToEatAllGhostsAfterPowerPill();
+		return newG == null ?
+				-1:
+				newG.averageTimeToEatAllGhostsAfterPowerPill();
 	}
 
 	/**
@@ -2305,7 +2883,11 @@ public class GameFacade {
 	 * @param exitLairEdible if pacman edible
 	 */
 	public void setExitLairEdible(boolean exitLairEdible) {
-		newG.setExitLairEdible(exitLairEdible);
+		if (newG == null){
+			System.out.println("TODO: Implement setExitLairEdible for poG, GameFacade.java");
+		} else {
+			newG.setExitLairEdible(exitLairEdible);
+		}
 	}
 
 	/**
@@ -2313,7 +2895,11 @@ public class GameFacade {
 	 * @param endOnlyOnTimeLimit iff games ends on time limit
 	 */
 	public void setEndOnlyOnTimeLimit(boolean endOnlyOnTimeLimit) {
-		newG.setEndOnlyOnTimeLimit(endOnlyOnTimeLimit);
+		if (newG == null){
+			System.out.println("TODO: Implement setEndOnlyOnTimeLimit for poG, GameFacade.java");
+		} else {
+			newG.setEndOnlyOnTimeLimit(endOnlyOnTimeLimit);
+		}
 	}
 
 	/**
@@ -2321,7 +2907,11 @@ public class GameFacade {
 	 * @param randomLairExit if lair exit random
 	 */
 	public void setRandomLairExit(boolean randomLairExit) {
-		newG.setRandomLairExit(randomLairExit);
+		if (newG == null){
+			System.out.println("TODO: Implement setRandomLairExit for poG, GameFacade.java");
+		} else {
+			newG.setRandomLairExit(randomLairExit);
+		}
 	}
 
 	/**
@@ -2329,7 +2919,11 @@ public class GameFacade {
 	 * @param simultaneousLairExit if simultaneous ghost exits
 	 */
 	public void setSimultaneousLairExit(boolean simultaneousLairExit) {
-		newG.setSimultaneousLairExit(simultaneousLairExit);
+		if (newG == null){
+			System.out.println("TODO: Implement setSimultaneousLairExit for poG, GameFacade.java");
+		} else {
+			newG.setSimultaneousLairExit(simultaneousLairExit);
+		}
 	}
 
 	/**
@@ -2337,7 +2931,11 @@ public class GameFacade {
 	 * @param ghostsStartOutsideLair if ghosts start outside lair
 	 */
 	public void setGhostsStartOutsideLair(boolean ghostsStartOutsideLair) {
-		newG.setGhostsStartOutsideLair(ghostsStartOutsideLair);
+		if (newG == null){
+			System.out.println("TODO: Implement setGhostsStartOutsideLair for poG, GameFacade.java");
+		} else {
+			newG.setGhostsStartOutsideLair(ghostsStartOutsideLair);
+		}
 	}
 
 	/**
@@ -2346,7 +2944,11 @@ public class GameFacade {
 	 * than one exit
 	 */
 	public void setOnlyOneLairExitAllowed(boolean onlyOneLairExitAllowed) {
-		newG.setOnlyOneLairExitAllowed(onlyOneLairExitAllowed);
+		if (newG == null){
+			System.out.println("TODO: Implement setOnlyOneLairExitAllowed for poG, GameFacade.java");
+		} else {
+			newG.setOnlyOneLairExitAllowed(onlyOneLairExitAllowed);
+		}
 	}
 
 	/**
@@ -2354,7 +2956,11 @@ public class GameFacade {
 	 * @param lairExitDatabase database lair exists
 	 */
 	public void setLairExitDatabase(boolean lairExitDatabase) {
-		newG.setLairExitDatabase(lairExitDatabase);
+		if (newG == null){
+			System.out.println("TODO: Implement setLairExitDatabase for poG, GameFacade.java");
+		} else {
+			newG.setLairExitDatabase(lairExitDatabase);
+		}
 	}
 
 	/**
@@ -2362,6 +2968,11 @@ public class GameFacade {
 	 * @param removePillsNearPowerPills if remove pills near power pills
 	 */
 	public void setRemovePillsNearPowerPills(boolean removePillsNearPowerPills) {
-		newG.setRemovePillsNearPowerPills(removePillsNearPowerPills);
+		if (newG == null){
+			System.out.println("TODO: Implement setRemocePillsNearPowerPills for poG, GameFacade.java");
+		} else {
+			newG.setRemovePillsNearPowerPills(removePillsNearPowerPills);
+		}
 	}
+
 }
