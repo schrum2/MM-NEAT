@@ -2,10 +2,8 @@ package edu.southwestern.tasks.ut2004.controller;
 
 import cz.cuni.amis.pogamut.base.agent.navigation.IPathExecutorState;
 import cz.cuni.amis.pogamut.base.agent.navigation.PathExecutorState;
-import cz.cuni.amis.pogamut.base3d.worldview.object.ILocated;
 import cz.cuni.amis.pogamut.ut2004.agent.module.utils.TabooSet;
 import cz.cuni.amis.pogamut.ut2004.agent.navigation.UT2004PathAutoFixer;
-import cz.cuni.amis.pogamut.ut2004.agent.navigation.UT2004PathExecutor;
 import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004BotModuleController;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.NavPoint;
 import cz.cuni.amis.utils.flag.FlagListener;
@@ -14,6 +12,7 @@ import edu.southwestern.tasks.ut2004.actions.EmptyAction;
 import edu.southwestern.tasks.ut2004.actions.NavigateToLocationAction;
 
 /**
+ * TODO
  *
  * @author Jacob Schrum
  */
@@ -72,7 +71,7 @@ public abstract class SequentialPathExplorer implements BotController {
 		tabooNavPoints = new TabooSet<NavPoint>(bot.getBot());
 
 		// auto-removes wrong navigation links between navpoints
-		autoFixer = new UT2004PathAutoFixer(bot.getBot(), (UT2004PathExecutor<ILocated>) bot.getNavigation().getPathExecutor(),
+		autoFixer = new UT2004PathAutoFixer(bot.getBot(), bot.getNavigation().getPathExecutor(),
 				bot.getFwMap(), bot.getAStar(), bot.getNavBuilder());
 
 		// IMPORTANT
