@@ -246,9 +246,29 @@
 	<dependency>
 		<groupId>cz.cuni.amis</groupId>
 		<artifactId>amis-utils</artifactId>
-		<version>3.3.0</version>
+		<version>3.7.0</version>
+		<!-- <version>3.3.0</version> -->
 	</dependency>
 	
+	<dependency>
+   		<groupId>com.massisframework</groupId>
+   		<artifactId>sposh-core</artifactId>
+   		<version>1.2.20</version>
+	</dependency>
+
+      <dependency>
+		<groupId>cz.cuni.amis.pogamut.ut2004</groupId>
+		<artifactId>ut2004-team-comm</artifactId>
+		<version>3.7.0</version>
+	  </dependency>
+	  	
+    <dependency>
+      <groupId>cz.cuni.amis.pogamut.ut2004</groupId>
+      <artifactId>yaposh-ut2004</artifactId>
+      <version>3.7.1-SNAPSHOT</version>
+    </dependency>
+    	  	
+    <!--  
 	<dependency>
 		<groupId>cz.cuni.amis</groupId>
 		<artifactId>afsm</artifactId>
@@ -260,6 +280,7 @@
 		<artifactId>introspection</artifactId>
 		<version>1.0.0</version>
 	</dependency>
+	-->
 	
 	<!-- libraries for Pogamut that are pulled down from internet repositories -->    
 	<!-- https://mvnrepository.com/artifact/com.google.inject/guice -->
