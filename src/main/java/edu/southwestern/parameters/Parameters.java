@@ -654,6 +654,7 @@ public class Parameters {
 		booleanOptions.add("tugObjectiveUsageLinkage", false, "In TUG, when modes and objectives are linked, linkage depends on mode usage");
 		booleanOptions.add("tugResetsToPreviousGoals", false, "On TUG goal increase, reset RWAs to previous goals");
 		booleanOptions.add("ucb1Evaluation", false, "Use UCB1 to decide which individuals get extra evaluations");
+		booleanOptions.add("useHyperNEATCustomArchitecture", false, "allows for hyperNEAT custom architectures");
 		booleanOptions.add("utJumps", true, "UT2004 agent can jump");
 		booleanOptions.add("veryClose", true, "Use Pacman very close sensors");
 		booleanOptions.add("viewFinalCamps", false, "Look at final training camps from 'final'");

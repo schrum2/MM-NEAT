@@ -7,11 +7,11 @@ import edu.southwestern.util.datastructures.Triple;
 public interface SubstrateArchitectureDefinition {
 		
 		/**
-		 * A list of triples where length is depth of network, 
-		 	first param of triple is the number of substrates in that layer, 
-			the second is the width, and the third is the height
-		
+		 * A list of triples where length of the list is equal to the depth of network.
+		 * Each index of the list is a new layer. Index 0 is the first/input layer.
+		 	The first param of each triple is the number of substrates in that corresponding layer, 
+			The second param is the width of the substrate. The third is the height of the substrate
 		 */
 		public List<Triple<Integer, Integer, Integer>> getNetworkArchitecture();
-		
+				
 }
