@@ -3,6 +3,8 @@ package edu.utexas.cs.nn.weapons;
 import cz.cuni.amis.pogamut.ut2004.agent.module.sensomotoric.Weapon;
 import cz.cuni.amis.pogamut.ut2004.agent.module.sensor.Players;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.ItemType;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.UT2004ItemType;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Hashtable;
@@ -64,39 +66,39 @@ public class WeaponPreferenceTable {
             weaponPriorities = new Hashtable<Integer, WeaponTableEntry>();
 
             ArrayList<ItemType> closeWeapons = new ArrayList<ItemType>();
-            closeWeapons.add(ItemType.FLAK_CANNON);
-            closeWeapons.add(ItemType.MINIGUN);
-            closeWeapons.add(ItemType.SHOCK_RIFLE);
-            closeWeapons.add(ItemType.BIO_RIFLE);
-            closeWeapons.add(ItemType.ROCKET_LAUNCHER);
-            closeWeapons.add(ItemType.ASSAULT_RIFLE);
-            closeWeapons.add(ItemType.SHIELD_GUN);
-            closeWeapons.add(ItemType.SNIPER_RIFLE);
-            closeWeapons.add(ItemType.LIGHTNING_GUN);
+            closeWeapons.add(UT2004ItemType.FLAK_CANNON);
+            closeWeapons.add(UT2004ItemType.MINIGUN);
+            closeWeapons.add(UT2004ItemType.SHOCK_RIFLE);
+            closeWeapons.add(UT2004ItemType.BIO_RIFLE);
+            closeWeapons.add(UT2004ItemType.ROCKET_LAUNCHER);
+            closeWeapons.add(UT2004ItemType.ASSAULT_RIFLE);
+            closeWeapons.add(UT2004ItemType.SHIELD_GUN);
+            closeWeapons.add(UT2004ItemType.SNIPER_RIFLE);
+            closeWeapons.add(UT2004ItemType.LIGHTNING_GUN);
             weaponPriorities.put(WeaponTableEntry.RANGE_CLOSE, new WeaponTableEntry(WeaponTableEntry.RANGE_CLOSE, closeWeapons));
             
             ArrayList<ItemType> mediumWeapons = new ArrayList<ItemType>();
-            mediumWeapons.add(ItemType.ROCKET_LAUNCHER);
-            mediumWeapons.add(ItemType.FLAK_CANNON);
-            mediumWeapons.add(ItemType.SHOCK_RIFLE);
-            mediumWeapons.add(ItemType.MINIGUN);
-            mediumWeapons.add(ItemType.SNIPER_RIFLE);
-            mediumWeapons.add(ItemType.LIGHTNING_GUN);
-            mediumWeapons.add(ItemType.BIO_RIFLE);
-            mediumWeapons.add(ItemType.ASSAULT_RIFLE);
-            mediumWeapons.add(ItemType.SHIELD_GUN);
+            mediumWeapons.add(UT2004ItemType.ROCKET_LAUNCHER);
+            mediumWeapons.add(UT2004ItemType.FLAK_CANNON);
+            mediumWeapons.add(UT2004ItemType.SHOCK_RIFLE);
+            mediumWeapons.add(UT2004ItemType.MINIGUN);
+            mediumWeapons.add(UT2004ItemType.SNIPER_RIFLE);
+            mediumWeapons.add(UT2004ItemType.LIGHTNING_GUN);
+            mediumWeapons.add(UT2004ItemType.BIO_RIFLE);
+            mediumWeapons.add(UT2004ItemType.ASSAULT_RIFLE);
+            mediumWeapons.add(UT2004ItemType.SHIELD_GUN);
             weaponPriorities.put(WeaponTableEntry.RANGE_MEDIUM, new WeaponTableEntry(WeaponTableEntry.RANGE_MEDIUM, mediumWeapons));
 
             ArrayList<ItemType> farWeapons = new ArrayList<ItemType>();
-            farWeapons.add(ItemType.SNIPER_RIFLE);
-            farWeapons.add(ItemType.LIGHTNING_GUN);
-            farWeapons.add(ItemType.ROCKET_LAUNCHER);
-            farWeapons.add(ItemType.SHOCK_RIFLE);
-            farWeapons.add(ItemType.FLAK_CANNON);
-            farWeapons.add(ItemType.MINIGUN);
-            farWeapons.add(ItemType.ASSAULT_RIFLE);
-            farWeapons.add(ItemType.BIO_RIFLE);
-            farWeapons.add(ItemType.SHIELD_GUN);
+            farWeapons.add(UT2004ItemType.SNIPER_RIFLE);
+            farWeapons.add(UT2004ItemType.LIGHTNING_GUN);
+            farWeapons.add(UT2004ItemType.ROCKET_LAUNCHER);
+            farWeapons.add(UT2004ItemType.SHOCK_RIFLE);
+            farWeapons.add(UT2004ItemType.FLAK_CANNON);
+            farWeapons.add(UT2004ItemType.MINIGUN);
+            farWeapons.add(UT2004ItemType.ASSAULT_RIFLE);
+            farWeapons.add(UT2004ItemType.BIO_RIFLE);
+            farWeapons.add(UT2004ItemType.SHIELD_GUN);
             weaponPriorities.put(WeaponTableEntry.RANGE_FAR, new WeaponTableEntry(WeaponTableEntry.RANGE_FAR, farWeapons));
         }
     }
@@ -136,9 +138,9 @@ public class WeaponPreferenceTable {
         savedRec = recommend(availableWeapons, distance);
         for (Weapon w : availableWeapons.values()) {
             if (//!w.getType().equals(ItemType.ASSAULT_RIFLE) && 
-                    !w.getType().equals(ItemType.BIO_RIFLE)
-                    && !w.getType().equals(ItemType.LINK_GUN)
-                    && !w.getType().equals(ItemType.SHIELD_GUN)) {
+                    !w.getType().equals(UT2004ItemType.BIO_RIFLE)
+                    && !w.getType().equals(UT2004ItemType.LINK_GUN)
+                    && !w.getType().equals(UT2004ItemType.SHIELD_GUN)) {
                 return true;
             }
         }
