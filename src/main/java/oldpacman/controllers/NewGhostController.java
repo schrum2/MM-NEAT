@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package oldpacman.controllers;
 
 import java.util.EnumMap;
@@ -9,11 +5,15 @@ import java.util.EnumMap;
 import oldpacman.game.Constants;
 
 /**
+ * TODO
  *
  * @author Jacob
  */
 public abstract class NewGhostController extends Controller<EnumMap<Constants.GHOST, Constants.MOVE>> {
 
+	/**
+	 * TODO
+	 */
 	public void reset() {
 		super.threadRevive();
 	}
