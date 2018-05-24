@@ -33,7 +33,8 @@ public class AutoRayTraceSensorBlock implements UT2004SensorBlock {
 	}
 
 	/**
-	 * sets up the 
+	 * populates the sensor array
+	 * @param bot (bot that will use the data)
 	 */
 	public void prepareBlock(final UT2004BotModuleController bot) {
 		bot.getAct().act(new RemoveRay("All"));
@@ -74,6 +75,16 @@ public class AutoRayTraceSensorBlock implements UT2004SensorBlock {
 		bot.getAct().act(new Configuration().setDrawTraceLines(true).setAutoTrace(true));
 	}
 
+
+	/**
+	 * creates rays to be traced
+	 * @param bot (not that will use the data)
+	 * @param id 
+	 * @param v
+	 * @param rayLength (length of the ray)
+	 * @param bFastTrace
+	 * @param bTraceActors
+	 */
 	public void addRayToAutoTrace(UT2004BotModuleController bot, int id, Vector3d v, int rayLength, boolean bFastTrace,
 			boolean bTraceActors) {
 		// Floor correction is always false

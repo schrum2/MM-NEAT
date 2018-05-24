@@ -8,7 +8,7 @@ import edu.southwestern.tasks.ut2004.Util;
 import java.util.Map;
 
 /**
- * identifies which parts of the bot's field of vision the opponent is in
+ * Tells the bot how close enemies are to it based on pie slices of the areas around it
  * @author Jacob Schrum
  */
 public class PieSliceOpponentSensorBlock implements UT2004SensorBlock {
@@ -24,6 +24,7 @@ public class PieSliceOpponentSensorBlock implements UT2004SensorBlock {
 	}
 
 	/**
+	 * Builds the sensor value array
 	 * @param bot (bot which will use the sensor data)
 	 * @param in (address to start at in array)
 	 * @param inputs (an array that collects the values from the statuses)
@@ -106,7 +107,7 @@ public class PieSliceOpponentSensorBlock implements UT2004SensorBlock {
 	/**
 	 * Pie slices plus left and right distances
 	 *
-	 * @return
+	 * @return returns the number of pie slices
 	 */
 	public int numberOfSensors() {
 		return numberOfSlices() + 2;
