@@ -2,7 +2,7 @@
 	(documentation "Bc." "Honza Havlicek and Ondra Burkert" "Prey for the Hunter.")
 	(RDC PoshBot (goal ((fail)))
 		(drives
-			(   (stay        		(trigger ((health 90 > )))  jump))
+			(   (stay        		(trigger ((health 90 > )))  doNothing))
 			(   (hit-wall 			(trigger ((hitWall))) 	    jump))
 			(   (run-healths 		(trigger ((succeed))) 	    runMedkits))
 		)
