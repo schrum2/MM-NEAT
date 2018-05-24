@@ -438,14 +438,13 @@ public class MMNEAT {
 			}
 			
 			if(CommonConstants.hyperNEAT) {
-				// For each substrate layer pairing, there can be multiple output neurons in the CPPN
-				HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair = CommonConstants.leo ? 2 : 1;
-				// Number of output neurons needed to designate bias values across all substrates
-				HyperNEATCPPNGenotype.numBiasOutputs = CommonConstants.evolveHyperNEATBias ? HyperNEATUtil.numBiasOutputsNeeded() : 0;
-				
 				if(Parameters.parameters.booleanParameter("useHyperNEATCustomArchitecture")) {
 					substrateArchitectureDefinition = (SubstrateArchitectureDefinition) ClassCreation.createObject("hyperNEATCustomArchitecture");
 				}
+				// For each substrate layer pairing, there can be multiple output neurons in the CPPN
+				HyperNEATCPPNGenotype.numCPPNOutputsPerLayerPair = CommonConstants.leo ? 2 : 1;
+				// Number of output neurons needed to designate bias values across all substrates
+				HyperNEATCPPNGenotype.numBiasOutputs = CommonConstants.evolveHyperNEATBias ? HyperNEATUtil.numBiasOutputsNeeded() : 0;				
 			}
 			if(Parameters.parameters.booleanParameter("hallOfFame")){
 				hallOfFame = new HallOfFame();

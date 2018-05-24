@@ -13,6 +13,7 @@ import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.rlglue.featureextractors.tetris.ExtendedBertsekasTsitsiklisTetrisExtractor;
 import edu.southwestern.tasks.rlglue.featureextractors.tetris.RawTetrisStateExtractor;
+import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.datastructures.Triple;
 
@@ -62,6 +63,9 @@ public class HyperNEATTetrisTask<T extends Network> extends TetrisTask<T> implem
 								new double[]{fullInputs[HyperNEATTask.INDEX_X1], fullInputs[HyperNEATTask.INDEX_X2], fullInputs[HyperNEATTask.INDEX_BIAS]}; // else 1D
 	}	
 
+	/**
+	 * TODO
+	 */
 	@Override
 	public List<Substrate> getSubstrateInformation() {
 		int outputDepth = SUBSTRATE_COORDINATES;
@@ -74,7 +78,7 @@ public class HyperNEATTetrisTask<T extends Network> extends TetrisTask<T> implem
 			if(MMNEAT.rlGlueExtractor instanceof RawTetrisStateExtractor) { // 2D grid of blocks			
 				List<Triple<String,Integer,Integer>> output = new LinkedList<>();
 				output.add(new Triple<>("output:utility", 1, 1));
-				substrateInformation = HyperNEATUtil.getSubstrateInformation(worldWidth, worldHeight, split ? 2 : 1, output);
+				substrateInformation = HyperNEATUtil.getSubstrateInformation(worldWidth, worldHeight, split ? 2 : 1, output);				
 			} else if(MMNEAT.rlGlueExtractor instanceof ExtendedBertsekasTsitsiklisTetrisExtractor) { // Several 1D input substrates
 				substrateInformation = new LinkedList<Substrate>();
 				
