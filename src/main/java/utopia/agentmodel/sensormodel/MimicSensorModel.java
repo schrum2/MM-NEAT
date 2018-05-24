@@ -1,9 +1,6 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package utopia.agentmodel.sensormodel;
 
+import cz.cuni.amis.pogamut.ut2004.communication.messages.ItemType;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.UT2004ItemType;
 import cz.cuni.amis.pogamut.unreal.communication.messages.UnrealId;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.Item;
@@ -13,9 +10,12 @@ import mockcz.cuni.pogamut.Client.AgentMemory;
 import java.util.Map;
 
 /**
+ * Sensor model that adds support for interpreting whether the opponent is performing
+ * a basic movement action that the bot can perform.
  *
  * @author Jacob Schrum
  */
+@SuppressWarnings("serial")
 public class MimicSensorModel extends BestSensorModel {
 
     public MimicSensorModel(int levelTraces, int airTraces, int groundTraces, double[] sliceLimits, int secondsHistory) {
@@ -50,7 +50,7 @@ public class MimicSensorModel extends BestSensorModel {
 
             // Opponent Weapon Info
             String weapon = p.getWeapon() + "Pickup";
-            UT2004ItemType weaponType = UT2004ItemType.getItemType(weapon);
+            ItemType weaponType = UT2004ItemType.getItemType(weapon);
             //System.out.println("           WeaponType: " +weaponType);
             if (weaponType != null) {
                 Map<UnrealId, Item> examples = memory.items.getAllItems(weaponType);

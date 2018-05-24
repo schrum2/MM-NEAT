@@ -14,6 +14,7 @@ import cz.cuni.amis.pogamut.ut2004.agent.module.sensor.Game;
 import cz.cuni.amis.pogamut.ut2004.agent.module.sensor.Items;
 import cz.cuni.amis.pogamut.ut2004.agent.module.sensor.Senses;
 import cz.cuni.amis.pogamut.ut2004.bot.command.CompleteBotCommandsWrapper;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.ItemType;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.UT2004ItemType;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbcommands.Configuration;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbcommands.RemoveRay;
@@ -30,7 +31,7 @@ import utopia.Utils;
 
 /**
  *
- * @author HeDeceives
+ * @author Jacob Schrum
  */
 public class AgentBody {
 
@@ -90,7 +91,7 @@ public class AgentBody {
         return w != null && isSnipingWeapon(w.getType());
     }
 
-    boolean isSnipingWeapon(UT2004ItemType type) {
+    boolean isSnipingWeapon(ItemType type) {
         return type != null && (type.equals(UT2004ItemType.SNIPER_RIFLE) || type.equals(UT2004ItemType.LIGHTNING_GUN));
     }
 

@@ -2,6 +2,7 @@ package utopia.controllers.TWEANN;
 
 import cz.cuni.amis.pogamut.base3d.worldview.object.Location;
 import cz.cuni.amis.pogamut.ut2004.agent.module.sensomotoric.Weapon;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.ItemType;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.UT2004ItemType;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.BotDamaged;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.Item;
@@ -18,6 +19,13 @@ import utopia.agentmodel.ActionLog;
 import utopia.agentmodel.actions.*;
 import utopia.agentmodel.sensormodel.SensorModel;
 
+/**
+ * A TWEAN controller that shoots when enemies are available
+ * rather than leave the decision up to the neural network.
+ * 
+ * @author schrum2
+ */
+@SuppressWarnings("serial")
 public class AlwaysShootTWEANNController extends TWEANNController {
 
     transient public HashMap<String, Double> actionStartTimes = new HashMap<String, Double>();
@@ -195,7 +203,7 @@ public class AlwaysShootTWEANNController extends TWEANNController {
         boolean snipingWeapon = memory.body.isSnipingWeapon(w);
         Player enemy = memory.getCombatTarget();
         Location loc = memory.info.getLocation();
-        UT2004ItemType enemyWeaponType = memory.enemyWeaponType(enemy);
+        ItemType enemyWeaponType = memory.enemyWeaponType(enemy);
 
         if (enemy != null) {
             double distance = loc.getDistance(enemy.getLocation());
@@ -262,24 +270,20 @@ public class AlwaysShootTWEANNController extends TWEANNController {
             return ADVANCE_OUTPUT;
         }
 
-        boolean disallowLeft = false;
         if (!actionAllowed("Strafe Left", memory)) {
             actionchoices[LEFT_OUTPUT] = -Double.MAX_VALUE;
             if (choice == LEFT_OUTPUT) {
                 choice = argmax(actionchoices);
                 //System.out.println("6. Swap LEFT with " + choice);
             }
-            disallowLeft = true;
         }
 
-        boolean disallowRight = false;
         if (!actionAllowed("Strafe Right", memory)) {
             actionchoices[RIGHT_OUTPUT] = -Double.MAX_VALUE;
             if (choice == RIGHT_OUTPUT) {
                 choice = argmax(actionchoices);
                 //System.out.println("7. Swap RIGHT with " + choice);
             }
-            disallowRight = true;
         }
 
         boolean disallowStrafe = false;

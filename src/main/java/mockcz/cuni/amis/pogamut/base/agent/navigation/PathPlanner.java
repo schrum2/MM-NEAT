@@ -1,9 +1,6 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package mockcz.cuni.amis.pogamut.base.agent.navigation;
+
+import java.util.List;
 
 import cz.cuni.amis.pogamut.base.agent.navigation.IPathFuture;
 import cz.cuni.amis.pogamut.base.agent.navigation.IPathPlanner;
@@ -63,8 +60,4 @@ public class PathPlanner implements IPathPlanner<ILocated> {
         return planner.computePath(from, to);
     }
 
-    // schrum2: 5/17/12: Apparently this wasn't even used in the bot?
-//    public IPathFuture<ILocated> computePath(ILocated from, ILocated to, int timeout) {
-//        return ((UT2004AStarPathPlanner) planner).computePath(from, to, timeout);
-//    }
 }

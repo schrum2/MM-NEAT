@@ -3,6 +3,7 @@ package utopia.agentmodel.actions;
 import cz.cuni.amis.pogamut.base3d.worldview.object.Location;
 import cz.cuni.amis.pogamut.base3d.worldview.object.Velocity;
 import cz.cuni.amis.pogamut.ut2004.agent.module.sensomotoric.Weapon;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.ItemType;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.UT2004ItemType;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbcommands.Rotate;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.Player;
@@ -12,6 +13,7 @@ import mockcz.cuni.pogamut.Client.AgentMemory;
 import mockcz.cuni.pogamut.MessageObjects.Triple;
 import utopia.controllers.scripted.ShieldGunController;
 
+@SuppressWarnings("serial")
 public abstract class OpponentRelativeAction extends Action {
 
     public static final double AIM_VELOCITY_DIFFERENCE_DISTORTION = 40.0; // Higher values make aim better
@@ -78,7 +80,7 @@ public abstract class OpponentRelativeAction extends Action {
         double aimRandomDistortion = AIM_RANDOM_DISTORTION;
         Triple adjust = null;
         if (w != null) {
-            UT2004ItemType type = w.getType();
+            ItemType type = w.getType();
             // Potentially revise primary/secondary choice based on weapon
             // and deal with charging issues. Some weapons may even choose
             // not to fire if too far away.

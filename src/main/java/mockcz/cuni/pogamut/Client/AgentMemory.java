@@ -16,7 +16,8 @@ import cz.cuni.amis.pogamut.ut2004.agent.module.sensomotoric.Weapon;
 import cz.cuni.amis.pogamut.ut2004.agent.module.sensomotoric.Weaponry;
 import cz.cuni.amis.pogamut.ut2004.agent.module.sensor.*;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.UT2004ItemType;
-import cz.cuni.amis.pogamut.ut2004.communication.messages.UT2004ItemType.Category;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.ItemType;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.ItemType.Category;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.*;
 import edu.utexas.cs.nn.Constants;
 import edu.utexas.cs.nn.bots.UT2;
@@ -550,9 +551,9 @@ public class AgentMemory {
         if (ammos != null) {
             for (Item ammo : ammos.values()) {
                 if (!ammo.getType().equals(UT2004ItemType.LINK_GUN_AMMO)) {
-                    Map<UT2004ItemType, Weapon> weapons = weaponry.getWeapons();
+                    Map<ItemType, Weapon> weapons = weaponry.getWeapons();
                     for (Weapon w : weapons.values()) {
-                        UT2004ItemType type = w.getDescriptor().getPriAmmoUT2004ItemType();
+                        ItemType type = w.getDescriptor().getPriAmmoItemType();
                         if (type.equals(ammo.getType())) {
                             if (ammo.getLocation() == null || info.getLocation() == null) {
                                 continue;
@@ -971,12 +972,12 @@ public class AgentMemory {
         }
     }
 
-    public UT2004ItemType enemyWeaponType(Player target) {
+    public ItemType enemyWeaponType(Player target) {
         if (target == null) {
             return null;
         }
         String weapon = target.getWeapon() + "Pickup";
-        UT2004ItemType enemyWeaponType = UT2004ItemType.getItemType(weapon);
+        ItemType enemyWeaponType = UT2004ItemType.getItemType(weapon);
         return enemyWeaponType;
     }
 
