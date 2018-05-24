@@ -27,4 +27,17 @@ public class TetrisConvolutionalArchitecture implements SubstrateArchitectureDef
 		return tetrisConvolutionalArchitecture;
 	}
 
+	@Override
+	public List<Triple<String, String, Boolean>> getNetworkConnectivity(List<String> inputSubstrateNames, List<String> outputSubstrateNames) {
+		List<Triple<String, String, Boolean>> networkConnectivity;
+		for(int i = 0; i < inputSubstrateNames.size(); i++) {
+			for(int j = 0; j < outputSubstrateNames.size(); j++) {
+				boolean isFullyConnected;
+				
+				//networkConnectivity = new Triple()
+			}
+		}
+		return networkConnectivity;
+	}
+	
 }
