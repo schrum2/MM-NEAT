@@ -1,7 +1,5 @@
 package edu.southwestern.tasks.mspacman.facades;
 
-import oldpacman.controllers.NewPacManController;
-
 /**
  * Facade for pacman controller
  * @author Jacob Schrum
@@ -9,14 +7,25 @@ import oldpacman.controllers.NewPacManController;
 public class PacManControllerFacade {
 
 	//actual pacman controller
-	public NewPacManController newP = null;
+	public oldpacman.controllers.NewPacManController newP = null;
+	//TODO: test
+	public pacman.controllers.PacmanController poP = null;
 
 	/**
 	 * Constructor
 	 * @param p pacman controller
 	 */
-	public PacManControllerFacade(NewPacManController p) {
+	public PacManControllerFacade(oldpacman.controllers.NewPacManController p) {
 		newP = p;
+	}
+	
+	/**
+	 * Used for popacman
+	 * Constructor
+	 * @param p pacman controller
+	 */
+	public PacManControllerFacade(pacman.controllers.PacmanController p) {
+		poP = p;
 	}
 
 	/**
@@ -24,7 +33,12 @@ public class PacManControllerFacade {
 	 * resetting thread
 	 */
 	public void reset() {
-		newP.reset();
+		if(newP == null) {
+			//TODO
+			System.out.println("TODO: implement reset() in PacManControllerFacade.java, ln 38");
+		} else {
+			newP.reset();	
+		}
 	}
 
 	@Override
@@ -32,7 +46,9 @@ public class PacManControllerFacade {
 	 * To string method for pacman controller
 	 */
 	public String toString() {
-		return newP.toString();
+		return newP == null ?
+				poP.toString():
+				newP.toString();
 	}
 
 	/**
@@ -40,6 +56,11 @@ public class PacManControllerFacade {
 	 *  during evaluation
 	 */
 	public void logEvaluationDetails() {
-		newP.logEvaluationDetails();
+		if(newP == null) {
+			//TODO
+			System.out.println("TODO: implement logEvaluationDetails() in PacManControllerFacade.java, ln 61");
+		} else {
+			newP.logEvaluationDetails();
+		}
 	}
 }
