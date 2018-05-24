@@ -7,7 +7,7 @@ import cz.cuni.amis.utils.collections.MyCollections;
 import java.util.List;
 
 /**
- *
+ *	Locates the nearest armor pickup
  * @author Jacob Schrum
  */
 public class NearestArmorBlock extends NearestItemBlock {
@@ -17,6 +17,10 @@ public class NearestArmorBlock extends NearestItemBlock {
 		return "Armor";
 	}
 
+	/**
+	 * @param bot (bot that will use the data)
+	 * @return returns the location of the nearest armor pack 
+	 */
 	@Override
 	protected List<Item> possibleItems(UT2004BotModuleController bot) {
 		return MyCollections.getFiltered(bot.getItems().getSpawnedItems(ItemType.Category.ARMOR).values(),

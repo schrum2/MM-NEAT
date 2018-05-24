@@ -4,7 +4,7 @@ import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004BotModuleController;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.Player;
 
 /**
- *Monitors the behaviour of an enemy
+ * Monitors the behaviour of an enemy
  * @author Jacob Schrum
  */
 public class EnemyBehaviorBlock implements UT2004SensorBlock {

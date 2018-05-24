@@ -79,8 +79,8 @@ public class AutoRayTraceSensorBlock implements UT2004SensorBlock {
 	/**
 	 * creates rays to be traced
 	 * @param bot (not that will use the data)
-	 * @param id 
-	 * @param v
+	 * @param id (name for array)
+	 * @param v (
 	 * @param rayLength (length of the ray)
 	 * @param bFastTrace
 	 * @param bTraceActors
@@ -94,6 +94,14 @@ public class AutoRayTraceSensorBlock implements UT2004SensorBlock {
 		bot.getRaycasting().createRay(autoRayIds.get(id), v, rayLength, bFastTrace, bFloorCorrection, bTraceActors);
 	}
 
+	/**
+	 * Collects data on the bot's status and puts it into an array
+	 * 
+	 * @param bot (bot which will use the sensor data)
+	 * @param in (address to start at in array)
+	 * @param inputs (an array that collects the values from the statuses)
+	 * @return returns next address for sensor allocation
+	 */
 	public int incorporateSensors(UT2004BotModuleController bot, int in, double[] inputs) {
 		for (int i = 0; i < numberOfSensors(); i++) {
 			AutoTraceRay trace = rays.get(i);
@@ -106,6 +114,13 @@ public class AutoRayTraceSensorBlock implements UT2004SensorBlock {
 		return in;
 	}
 
+	/**
+	 * populates the labels array so statuses can be identified
+	 * 
+	 * @param in (address in the array to be labeled)
+	 * @param labels (an empty array that will be populated)
+	 * @return returns the next address to be labeled
+	 */
 	public int incorporateLabels(int in, String[] labels) {
 		for (int i = 0; i < numberOfSensors(); i++) {
 			labels[in++] = "Ray Trace: " + autoRayIds.get(i);
@@ -116,7 +131,7 @@ public class AutoRayTraceSensorBlock implements UT2004SensorBlock {
 	/**
 	 * Wall traces and the crosshair trace
 	 *
-	 * @return
+	 * @return returns the number of rays targeting the bot
 	 */
 	public int numberOfSensors() {
 		return NUMBER_LEVEL_RAY_SENSORS + 1;

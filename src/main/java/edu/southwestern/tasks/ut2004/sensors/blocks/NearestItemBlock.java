@@ -17,7 +17,7 @@ import edu.southwestern.tasks.ut2004.Util;
 import java.util.List;
 
 /**
- *
+ *locates the closest item
  * @author Jacob Schrum
  */
 public class NearestItemBlock implements UT2004SensorBlock {
@@ -26,6 +26,10 @@ public class NearestItemBlock implements UT2004SensorBlock {
 	public static final int TABOO_TIME = 60;
 	protected TabooSet<ILocated> recentlyVisitedItems;
 
+	/**
+	 * creates the sensor block array for the items
+	 * @param bot (bot that is looking for the items)
+	 */
 	public void prepareBlock(UT2004BotModuleController bot) {
 		this.recentlyVisitedItems = new TabooSet<ILocated>(bot.getBot());
 		bot.getWorld().addEventListener(ItemPickedUp.class, new IWorldEventListener<ItemPickedUp>() {
@@ -38,6 +42,9 @@ public class NearestItemBlock implements UT2004SensorBlock {
 
 	}
 
+	/**
+	 * 
+	 */
 	public int incorporateSensors(UT2004BotModuleController bot, int in, double[] inputs) {
 		Item item = getItemOfInterest(bot);
 
@@ -56,6 +63,13 @@ public class NearestItemBlock implements UT2004SensorBlock {
 		return in;
 	}
 
+	/**
+	 * populates the labels array so statuses can be identified
+	 * 
+	 * @param in (address in the array to be labeled)
+	 * @param labels (an empty array that will be populated)
+	 * @return returns the next address to be labeled
+	 */
 	public int incorporateLabels(int in, String[] labels) {
 		labels[in++] = "Nearest " + itemLabel() + " Item Proximity 3D";
 		labels[in++] = "Nearest " + itemLabel() + " Item Proximity 2D";
