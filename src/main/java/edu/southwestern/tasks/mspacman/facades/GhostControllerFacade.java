@@ -1,9 +1,9 @@
 package edu.southwestern.tasks.mspacman.facades;
 
 import edu.southwestern.parameters.CommonConstants;
-import oldpacman.controllers.NewGhostController;
-import oldpacman.game.Constants.GHOST;
-import oldpacman.game.Constants.MOVE;
+
+
+
 
 import java.util.EnumMap;
 import java.util.Map.Entry;
@@ -16,14 +16,25 @@ import java.util.Map.Entry;
 public class GhostControllerFacade {
 
 	//actual ghost controller
-	NewGhostController newG = null;
-
+	oldpacman.controllers.NewGhostController newG = null;
+	//TODO: make sure that individual ghost controller does serves the same purpose as newGhostController
+	pacman.controllers.IndividualGhostController poG = null;
+	
 	/**
 	 * Constructor
 	 * @param g ghostController
 	 */
-	public GhostControllerFacade(NewGhostController g) {
+	public GhostControllerFacade(oldpacman.controllers.NewGhostController g) {
 		newG = g;
+	}
+	
+	/**
+	 * Used for Partially Observable Pacman
+	 * Constructor
+	 * @param g ghostController
+	 */
+	public GhostControllerFacade(pacman.controllers.IndividualGhostController g) {
+		poG = g;
 	}
 
 	/**
@@ -33,7 +44,9 @@ public class GhostControllerFacade {
 	 * @return available actions
 	 */
 	public int[] getActions(GameFacade game, long timeDue) {
-		return moveEnumToArray(newG.getMove(game.newG, timeDue));
+		return newG == null ?
+				null: //TODO, implement this method for popacman
+				moveEnumToArray(newG.getMove(game.newG, timeDue));
 	}
 
 	/**
@@ -41,12 +54,18 @@ public class GhostControllerFacade {
 	 * @param moves possible moves
 	 * @return integer representations of moves
 	 */
-	private int[] moveEnumToArray(EnumMap<GHOST, MOVE> moves) {
-		int[] result = new int[CommonConstants.numActiveGhosts];
-		for (Entry<GHOST, MOVE> e : moves.entrySet()) {
-			result[GameFacade.ghostToIndex(e.getKey())] = GameFacade.moveToIndex(e.getValue());
+	private int[] moveEnumToArray(EnumMap<oldpacman.game.Constants.GHOST, oldpacman.game.Constants.MOVE> moves) {
+		if(newG == null) {
+			//TODO: implement this
+			System.out.println("TODO: implement moveEnumToArray for popacman, GhostControllerFacade.java ln 60");
+			return null;
+		} else {
+			int[] result = new int[CommonConstants.numActiveGhosts];
+			for (Entry<oldpacman.game.Constants.GHOST, oldpacman.game.Constants.MOVE> e : moves.entrySet()) {
+				result[GameFacade.ghostToIndex(e.getKey())] = GameFacade.moveToIndex(e.getValue());
+			}
+			return result;
 		}
-		return result;
 	}
 
 	/**
@@ -55,6 +74,11 @@ public class GhostControllerFacade {
 	 * @throws NoSuchMethodException
 	 */
 	public void reset() {
-		newG.reset();
+		if(newG == null) {
+			//TODO:
+			System.out.println("TODO: implement reset() in GhostControllerFacade.java, ln 78");
+		} else {
+			newG.reset();
+		}
 	}
 }

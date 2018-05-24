@@ -21,6 +21,12 @@ public class ExecutorFacade {
 		newE = e;
 	}
 	
+	/**
+	 * Used for Partially Observable Pacman
+	 * Constructor that contains excecutor
+	 * (thus why called facade)
+	 * @param e
+	 */
 	public ExecutorFacade(pacman.Executor e) {
 		poE = e;
 	}
@@ -31,7 +37,7 @@ public class ExecutorFacade {
 	 */
 	public void log(String string) {
 		if(newE == null) {
-			System.out.println("no log method in poE, ExecutorFacade ln 33");
+			System.out.println("TODO: no log method in poE, ExecutorFacade ln 33");
 		} else {
 			newE.log(string);
 		}
