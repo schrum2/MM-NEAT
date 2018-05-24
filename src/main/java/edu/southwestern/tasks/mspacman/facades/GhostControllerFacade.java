@@ -2,9 +2,6 @@ package edu.southwestern.tasks.mspacman.facades;
 
 import edu.southwestern.parameters.CommonConstants;
 
-
-
-
 import java.util.EnumMap;
 import java.util.Map.Entry;
 
@@ -45,27 +42,35 @@ public class GhostControllerFacade {
 	 */
 	public int[] getActions(GameFacade game, long timeDue) {
 		return newG == null ?
-				null: //TODO, implement this method for popacman
+				moveEnumToArrayPO(newG.getMove(game.poG, timeDue)): //TODO, implement this method for popacman
 				moveEnumToArray(newG.getMove(game.newG, timeDue));
 	}
 
 	/**
-	 * changes move enumerations into numerical array
+	 * changes move enumerations into numerical array.
+	 * Has a popacman version.
 	 * @param moves possible moves
 	 * @return integer representations of moves
 	 */
 	private int[] moveEnumToArray(EnumMap<oldpacman.game.Constants.GHOST, oldpacman.game.Constants.MOVE> moves) {
-		if(newG == null) {
-			//TODO: implement this
-			System.out.println("TODO: implement moveEnumToArray for popacman, GhostControllerFacade.java ln 60");
-			return null;
-		} else {
 			int[] result = new int[CommonConstants.numActiveGhosts];
 			for (Entry<oldpacman.game.Constants.GHOST, oldpacman.game.Constants.MOVE> e : moves.entrySet()) {
 				result[GameFacade.ghostToIndex(e.getKey())] = GameFacade.moveToIndex(e.getValue());
 			}
 			return result;
-		}
+	}
+	
+	/**
+	 * changes move enumerations into numerical array
+	 * @param moves possible moves
+	 * @return integer representations of moves
+	 */
+	private int[] moveEnumToArrayPO(EnumMap<pacman.game.Constants.GHOST, pacman.game.Constants.MOVE> moves) {
+			int[] result = new int[CommonConstants.numActiveGhosts];
+			for (Entry<pacman.game.Constants.GHOST, pacman.game.Constants.MOVE> e : moves.entrySet()) {
+				result[GameFacade.ghostToIndexPO(e.getKey())] = GameFacade.moveToIndex(e.getValue());
+			}
+			return result;
 	}
 
 	/**
