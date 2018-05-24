@@ -3,6 +3,7 @@ package edu.southwestern.MMNEAT;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -43,6 +44,7 @@ import edu.southwestern.networks.hyperneat.HyperNEATDummyTask;
 import edu.southwestern.networks.hyperneat.HyperNEATSpeedTask;
 import edu.southwestern.networks.hyperneat.HyperNEATTask;
 import edu.southwestern.networks.hyperneat.HyperNEATUtil;
+import edu.southwestern.networks.hyperneat.SubstrateArchitectureDefinition;
 import edu.southwestern.networks.hyperneat.SubstrateCoordinateMapping;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
@@ -97,6 +99,7 @@ import edu.southwestern.tasks.testmatch.MatchDataTask;
 import edu.southwestern.tasks.ut2004.UT2004Task;
 import edu.southwestern.tasks.vizdoom.VizDoomTask;
 import edu.southwestern.util.ClassCreation;
+import edu.southwestern.util.datastructures.Triple;
 import edu.southwestern.util.file.FileUtilities;
 import edu.southwestern.util.graphics.DrawingPanel;
 import edu.southwestern.util.random.RandomGenerator;
@@ -163,6 +166,7 @@ public class MMNEAT {
 	public static BoardGame boardGame;
 	@SuppressWarnings("rawtypes")
 	public static TwoDimensionalBoardGameViewer boardGameViewer;
+	public static SubstrateArchitectureDefinition substrateArchitectureDefinition;
 	
 	public static MMNEAT mmneat;
 
@@ -439,8 +443,9 @@ public class MMNEAT {
 				// Number of output neurons needed to designate bias values across all substrates
 				HyperNEATCPPNGenotype.numBiasOutputs = CommonConstants.evolveHyperNEATBias ? HyperNEATUtil.numBiasOutputsNeeded() : 0;
 				
-				// TODO: If special architecture is specified, then load it here
-				
+				if(Parameters.parameters.booleanParameter("useHyperNEATCustomArchitecture")) {
+					substrateArchitectureDefinition = (SubstrateArchitectureDefinition) ClassCreation.createObject("hyperNEATCustomArchitecture");
+				}
 			}
 			if(Parameters.parameters.booleanParameter("hallOfFame")){
 				hallOfFame = new HallOfFame();

@@ -550,35 +550,11 @@ public class HyperNEATUtil {
 	 * @return Substrate Information
 	 */	
 	public static List<Substrate> getSubstrateInformation(int inputWidth, int inputHeight, int numInputSubstrates, List<Triple<String, Integer, Integer>> output){
-		int processWidth = Parameters.parameters.integerParameter("HNProcessWidth");
-		int processDepth = Parameters.parameters.integerParameter("HNProcessDepth");
+
 		
-		// TODO: If a special substrate architecture is being used, then it can be returned here instead of the result below
-		
-		return getSubstrateInformation(inputWidth, inputHeight, numInputSubstrates, processWidth, processDepth, output);
-	}
-	
-	/**
-	 * Generalizes the retrieval of Substrate Information
-	 * 
-	 * @param inputWidth Width of each Input and Processing Board
-	 * @param inputHeight Height of each Input and Processing Board
-	 * @param numInputSubstrates Number of Input Boards
-	 * @param processWidth Number of Processing Boards per Processing Layer
-	 * @param processDepth Number of Processing Layers
-	 * @param output List<Triple<String, Integer, Integer>> that defines the name of the substrates, followed by their sizes
-	 * 
-	 * @return Substrate Information
-	 */
-	public static List<Substrate> getSubstrateInformation(int inputWidth, int inputHeight, int numInputSubstrates, int processWidth, int processDepth, List<Triple<String, Integer, Integer>> output) {		
 		List<Substrate> substrateInformation = new LinkedList<Substrate>();
 
-		// Convolutional network layer sizes depend on the size of the preceding layer,
-		// along with the receptive field size, unless zero-padding is used
-		boolean zeroPadding = Parameters.parameters.booleanParameter("zeroPadding");
-		int receptiveFieldSize = Parameters.parameters.integerParameter("receptiveFieldSize");
-		assert receptiveFieldSize % 2 == 1 : "Receptive field size needs to be odd to be centered: " + receptiveFieldSize;
-		int edgeOffset = zeroPadding ? 0 : receptiveFieldSize / 2;
+		// Figure out input substrates
 		
 		// Different extractors correspond to different substrate configurations
 		Pair<Integer, Integer> substrateDimension = new Pair<Integer, Integer>(inputWidth, inputHeight);
@@ -595,6 +571,55 @@ public class HyperNEATUtil {
 					"bias");
 			substrateInformation.add(biasSub);
 		}				
+		
+		// End input substrates
+		
+		
+		int processWidth = Parameters.parameters.integerParameter("HNProcessWidth");
+		int processDepth = Parameters.parameters.integerParameter("HNProcessDepth");
+		
+		// TODO: If a special substrate architecture is being used, then it can be returned here instead of the result below
+		
+		List<Substrate> hiddenSubstrateInformation = getHiddenSubstrateInformation(inputWidth, inputHeight, processWidth, processDepth);
+		substrateInformation.addAll(hiddenSubstrateInformation);
+		
+		// Figure out output substrates
+		
+		for(int i = 0; i < output.size(); i++){
+			Substrate outputSub = new Substrate(new Pair<Integer, Integer>(output.get(i).t2, output.get(i).t3), Substrate.OUTPUT_SUBSTRATE,
+					new Triple<Integer, Integer, Integer>(i, (processDepth+1), 0), // i is the x-coordinate, y = one above the top processing layer, z = 0 
+					output.get(i).t1);
+			substrateInformation.add(outputSub);
+		}
+		
+		// End output substrates
+
+		return substrateInformation;
+	}
+	
+	/**
+	 * Generalizes the retrieval of Substrate Information for the Hidden layers only
+	 * 
+	 * @param inputWidth Width of each Input and Processing Board
+	 * @param inputHeight Height of each Input and Processing Board
+	 * @param processWidth Number of Processing Boards per Processing Layer
+	 * @param processDepth Number of Processing Layers
+	 * 
+	 * @return Substrate Information
+	 */
+	public static List<Substrate> getHiddenSubstrateInformation(int inputWidth, int inputHeight, int processWidth, int processDepth) {		
+		List<Substrate> substrateInformation = new LinkedList<Substrate>();
+
+		// Convolutional network layer sizes depend on the size of the preceding layer,
+		// along with the receptive field size, unless zero-padding is used
+		boolean zeroPadding = Parameters.parameters.booleanParameter("zeroPadding");
+		int receptiveFieldSize = Parameters.parameters.integerParameter("receptiveFieldSize");
+		assert receptiveFieldSize % 2 == 1 : "Receptive field size needs to be odd to be centered: " + receptiveFieldSize;
+		int edgeOffset = zeroPadding ? 0 : receptiveFieldSize / 2;
+		
+		// Different extractors correspond to different substrate configurations
+		Pair<Integer, Integer> substrateDimension = new Pair<Integer, Integer>(inputWidth, inputHeight);
+				
 		for(int i = 0; i < processDepth; i++) { // Add 2D hidden/processing layer(s)
 			if(CommonConstants.convolution) {
 				// Subsequent convolutional layers sometimes need to be smaller than preceding ones
@@ -608,13 +633,6 @@ public class HyperNEATUtil {
 													CommonConstants.convolution ? ActivationFunctions.FTYPE_RE_LU : Substrate.DEFAULT_ACTIVATION_FUNCTION);
 				substrateInformation.add(processSub);
 			}
-		}
-		
-		for(int i = 0; i < output.size(); i++){
-			Substrate outputSub = new Substrate(new Pair<Integer, Integer>(output.get(i).t2, output.get(i).t3), Substrate.OUTPUT_SUBSTRATE,
-					new Triple<Integer, Integer, Integer>(i, (processDepth+1), 0), // i is the x-coordinate, y = one above the top processing layer, z = 0 
-					output.get(i).t1);
-			substrateInformation.add(outputSub);
 		}
 		
 		return substrateInformation;

@@ -11,7 +11,9 @@ public interface SubstrateArchitectureDefinition {
 		 * Each index of the list is a new layer. Index 0 is the first/input layer.
 		 	The first param of each triple is the number of substrates in that corresponding layer, 
 			The second param is the width of the substrate. The third is the height of the substrate
+			
+			Explain why Output substrates excluded and why inputs are excluded
 		 */
-		public List<Triple<Integer, Integer, Integer>> getNetworkArchitecture();
+		public List<Triple<Integer, Integer, Integer>> getNetworkHiddenArchitecture();
 				
 }
