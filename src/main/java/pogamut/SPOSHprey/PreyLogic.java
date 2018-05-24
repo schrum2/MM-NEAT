@@ -1,4 +1,4 @@
-package pogamut.mavenproject2;
+package pogamut.SPOSHprey;
 
 import java.io.IOException;
 import java.util.List;

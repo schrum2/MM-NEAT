@@ -1,4 +1,4 @@
-package pogamut.mavenproject2;
+package pogamut.SPOSHprey;
 
 import java.util.logging.Level;
 
