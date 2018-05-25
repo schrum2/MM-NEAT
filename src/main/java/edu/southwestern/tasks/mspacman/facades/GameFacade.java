@@ -1915,27 +1915,20 @@ public class GameFacade {
 	 * @return copy of game facade that moved towards location
 	 */
 	public GameFacade simulateTowardsLocation(int destination, GhostControllerFacade ghostModel) {
-		asf;
-		if(newG == null) {
-			System.out.println("TODO: Implement simulateTowardsLocation for poG, GameFacade.java");
-			return null;
-		} else {
-			int startLevel = this.getCurrentLevel();
-			int previousLives = getPacmanNumberOfLivesRemaining();
-			GameFacade copy = this;
-			while (copy.getPacmanCurrentNodeIndex() != destination && copy.getCurrentLevel() == startLevel
-					&& !copy.gameOver()) {
-				int simCurrent = copy.getPacmanCurrentNodeIndex();
-				int dir = copy.getNextMoveTowardsTarget(simCurrent, destination);
-				copy = copy.simulateInDir(dir, ghostModel);
-				if (previousLives > copy.getPacmanNumberOfLivesRemaining()) {
-					return null;
-				}
-				// must be updated in case of a life gain
-				previousLives = copy.getPacmanNumberOfLivesRemaining();
+		int startLevel = this.getCurrentLevel();
+		int previousLives = getPacmanNumberOfLivesRemaining();
+		GameFacade copy = this;
+		while (copy.getPacmanCurrentNodeIndex() != destination && copy.getCurrentLevel() == startLevel && !copy.gameOver()) {
+			int simCurrent = copy.getPacmanCurrentNodeIndex();
+			int dir = copy.getNextMoveTowardsTarget(simCurrent, destination);
+			copy = copy.simulateInDir(dir, ghostModel);
+			if (previousLives > copy.getPacmanNumberOfLivesRemaining()) {
+				return null;
 			}
-			return copy;
+			// must be updated in case of a life gain
+			previousLives = copy.getPacmanNumberOfLivesRemaining();
 		}
+		return copy;
 	}
 
 	/**
@@ -1947,7 +1940,8 @@ public class GameFacade {
 	 * GameFacade.
 	 *
 	 * Returns null if pacman died. If pacman reached the target, then the
-	 * current location of pacman in the returned facade will equal the target
+	 * current location of pacman in the returned facade will equal the target.
+	 * Supports popacman (TODO: test)
 	 *
 	 * pre: number of current pacman lives is greater than 0
 	 *
@@ -1960,33 +1954,27 @@ public class GameFacade {
 	 * @return resulting game state, or null in case of death
 	 */
 	public GameFacade simulateToNextTarget(int dir, GhostControllerFacade ghostModel, int target) {
-		if(newG == null) {
-			System.out.println("TODO: Implement simulateToNextTarget for poG, GameFacade.java");
-			return null;
-		} else {
-			dir;
-			int startLevel = this.getCurrentLevel();
-			int previousLives = getPacmanNumberOfLivesRemaining();
-			GameFacade copy = this;
-			int steps = 0;
-			while (copy.getPacmanCurrentNodeIndex() != target && copy.getCurrentLevel() == startLevel && !copy.gameOver()) {
-				int simCurrent = copy.getPacmanCurrentNodeIndex();
-				dir = steps == 0 ? dir : copy.getRestrictedNextDir(simCurrent, target, dir);
-				copy = copy.simulateInDir(dir, ghostModel);
-				steps++;
-				if (previousLives > copy.getPacmanNumberOfLivesRemaining()) {
-					return null;
-				}
-				// must be updated in case of a life gain
-				previousLives = copy.getPacmanNumberOfLivesRemaining();
+		int startLevel = this.getCurrentLevel();
+		int previousLives = getPacmanNumberOfLivesRemaining();
+		GameFacade copy = this;
+		int steps = 0;
+		while (copy.getPacmanCurrentNodeIndex() != target && copy.getCurrentLevel() == startLevel && !copy.gameOver()) {
+			int simCurrent = copy.getPacmanCurrentNodeIndex();
+			dir = steps == 0 ? dir : copy.getRestrictedNextDir(simCurrent, target, dir);
+			copy = copy.simulateInDir(dir, ghostModel);
+			steps++;
+			if (previousLives > copy.getPacmanNumberOfLivesRemaining()) {
+				return null;
 			}
-			return copy;
+			// must be updated in case of a life gain
+			previousLives = copy.getPacmanNumberOfLivesRemaining();
 		}
+		return copy;
 	}
 
 	/**
 	 * Simulate one step in direction, given model of how to move ghosts. Don't
-	 * allow reversals.
+	 * allow reversals. Supports popacman (TODO: test)
 	 *
 	 * @param dir
 	 *            direction to move
@@ -1995,22 +1983,16 @@ public class GameFacade {
 	 * @return new game state
 	 */
 	public GameFacade simulateInDir(int dir, GhostControllerFacade ghostModel) {
-		dir;
-		if(newG == null) {
-			System.out.println("TODO: Implement simulateInDir for poG, GameFacade.java");
-			return null;
-		} else {
-			GameFacade copy = this.copy();
-			int[] ghostDirs = ghostModel.getActions(copy, 0);
-	
-			GameFacade backup = copy.copy();
-			// Loop prevents reversals
-			do {
-				copy = backup.copy();
-				copy.advanceGame(dir, ghostDirs);
-			} while (copy.ghostReversal() && copy.getNumActivePowerPills() == backup.getNumActivePowerPills());
-			return copy;
-		}
+		GameFacade copy = this.copy();
+		int[] ghostDirs = ghostModel.getActions(copy, 0);
+
+		GameFacade backup = copy.copy();
+		// Loop prevents reversals
+		do {
+			copy = backup.copy();
+			copy.advanceGame(dir, ghostDirs);
+		} while (copy.ghostReversal() && copy.getNumActivePowerPills() == backup.getNumActivePowerPills());
+		return copy;
 	}
 
 	/**
@@ -2485,14 +2467,13 @@ public class GameFacade {
 	 * distance to destination, and then nearest threat's effective distance to
 	 * destination. "Effective" because movement restrictions on ghosts are
 	 * considered, as well as lair times. The "distance" may be 0 if a ghost can
-	 * reach it first.
+	 * reach it first. Supports popacman (TODO: test)
 	 *
 	 * @param path
 	 * @param target
 	 * @return coordinates of closest threat
 	 */
 	public Pair<Double, Double> closestThreatToPacmanPath(int[] path, int target) {
-		dir;
 		double closestThreatDistance = Double.MAX_VALUE;
 		double pacManDistance = path.length;
 		for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
@@ -3067,7 +3048,7 @@ public class GameFacade {
 	 * @throws NoSuchFieldException
 	 * @author pricew 
 	 */
-	public static oldpacman.game.Constants.MOVE moveConverterPOOld(pacman.game.Constants.MOVE move) throws NoSuchFieldException {
+	public static oldpacman.game.Constants.MOVE moveConverterPOOld(pacman.game.Constants.MOVE move){
 		switch(move) {
 			case NEUTRAL:
 				return oldpacman.game.Constants.MOVE.NEUTRAL;
@@ -3080,7 +3061,8 @@ public class GameFacade {
 			case RIGHT:
 				return oldpacman.game.Constants.MOVE.RIGHT;
 			default:
-				throw new NoSuchFieldException("The requested move does not exist");
+				System.out.println("ERROR in moveConverterPOOld, GAmeFacade.java");
+				return null;
 		}
 	}
 	
@@ -3091,7 +3073,7 @@ public class GameFacade {
 	 * @throws NoSuchFieldException
 	 * @author pricew
 	 */
-	public static pacman.game.Constants.MOVE moveConverterOldPO(oldpacman.game.Constants.MOVE move) throws NoSuchFieldException {
+	public static pacman.game.Constants.MOVE moveConverterOldPO(oldpacman.game.Constants.MOVE move){
 		switch(move) {
 			case NEUTRAL:
 				return pacman.game.Constants.MOVE.NEUTRAL;
@@ -3104,7 +3086,8 @@ public class GameFacade {
 			case RIGHT:
 				return pacman.game.Constants.MOVE.RIGHT;
 			default:
-				throw new NoSuchFieldException("The requested move does not exist");
+				System.out.println("ERROR in moveConverterOldPO, GAmeFacade.java");
+				return null;
 		}
 	}
 
