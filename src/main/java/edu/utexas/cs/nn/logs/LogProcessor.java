@@ -9,6 +9,8 @@ import cz.cuni.amis.pogamut.base.component.bus.ComponentBus;
 import cz.cuni.amis.pogamut.base.component.bus.IComponentBus;
 import cz.cuni.amis.pogamut.base.utils.logging.AgentLogger;
 import cz.cuni.amis.pogamut.base.utils.logging.IAgentLogger;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.ItemTypeTranslator;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.UT2004ItemTypeTranslator;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.UnrealIdTranslator;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.Yylex;
 import cz.cuni.amis.pogamut.ut2004.communication.parser.UT2004Parser;
@@ -48,11 +50,12 @@ public class LogProcessor {
         LogReaderProvider readerProvider = new LogReaderProvider(logger, bus, reader);
         IYylexObserver yylexObserver = new YylexObserver();
         Yylex yylex = new Yylex();
-        ItemTranslator itemTranslator = new ItemTranslator();
+        // Added ItemTypeTranslator to support Pogamut 3.7.0
+        ItemTypeTranslator itemTypeTranslator = new UT2004ItemTypeTranslator();
+        ItemTranslator itemTranslator = new ItemTranslator(itemTypeTranslator);
         UnrealIdTranslator uidTranslator = new UnrealIdTranslator();
 
-        UT2004Parser parser = new UT2004Parser(uidTranslator, itemTranslator,
-                readerProvider, yylex, yylexObserver, bus, logger);
+        UT2004Parser parser = new UT2004Parser(uidTranslator, itemTranslator, itemTypeTranslator, readerProvider, yylex, yylexObserver, bus, logger);
         readerProvider.getController().manualStart("Manual start...");
         try {
             InfoMessage message = parser.parse();
