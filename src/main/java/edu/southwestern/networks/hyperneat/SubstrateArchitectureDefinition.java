@@ -15,6 +15,12 @@ public interface SubstrateArchitectureDefinition {
 		 */
 		public List<Triple<Integer, Integer, Integer>> getNetworkHiddenArchitecture();
 		
-		
+		/**
+		 * @param inputSubstrateNames Unique identifier for a given substrate that is an input for another substrate
+		 * @param outputSubstrateNames Unique identifier for a given substrate that is the output for another substrate
+		 * @return List of all substrate connections as given by a Triple where the first String is the unique identifier
+		 * 	for a particular input/process substrate, the second String is the unique identifier for a particular ouput/process
+		 *  substrate, and the boolean is true if the connectivity is capable of being convolutional and false otherwise. 
+		 */
 		public List<Triple<String, String,Boolean>> getNetworkConnectivity(List<String> inputSubstrateNames, List<String> outputSubstrateNames);
 }
