@@ -18,7 +18,8 @@ import cz.cuni.amis.pogamut.ut2004.bot.IUT2004BotController;
 import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004Bot;
 import cz.cuni.amis.pogamut.ut2004.bot.params.UT2004BotParameters;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.UT2004ItemType;
-import cz.cuni.amis.pogamut.ut2004.communication.messages.UT2004ItemType.Category;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.ItemType;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.ItemType.Category;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbcommands.Initialize;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.*;
 import cz.cuni.amis.pogamut.ut2004.server.IUT2004Server;
@@ -1338,9 +1339,9 @@ public class UT2 extends BaseBot {
             }
             current = this.weaponry.getCurrentWeapon();
             if (current == null || weaponry.getCurrentAmmo() == 0) {
-                Map<UT2004ItemType, Weapon> loadedWeapons = weaponry.getLoadedWeapons();
+                Map<ItemType, Weapon> loadedWeapons = weaponry.getLoadedWeapons();
                 for (Weapon x : loadedWeapons.values()) {
-                    UT2004ItemType t = x.getType();
+                    ItemType t = x.getType();
                     if (!t.equals(UT2004ItemType.LINK_GUN)
                             && !t.equals(UT2004ItemType.SHIELD_GUN)
                             && !t.equals(UT2004ItemType.ONS_GRENADE_LAUNCHER)
@@ -1556,9 +1557,9 @@ public class UT2 extends BaseBot {
 
         if (target != null && target.getLocation() != null && info.getLocation() != null) {
             double distance = target.getLocation().getDistance(info.getLocation());
-            UT2004ItemType enemyWeaponType = getAgentMemory().enemyWeaponType(target);
+            ItemType enemyWeaponType = getAgentMemory().enemyWeaponType(target);
             Weapon myWeapon = getAgentMemory().weaponry.getCurrentWeapon();
-            UT2004ItemType myWeaponType = myWeapon == null ? null : myWeapon.getType();
+            ItemType myWeaponType = myWeapon == null ? null : myWeapon.getType();
 
             if (myWeaponType == null) {
                 return false;

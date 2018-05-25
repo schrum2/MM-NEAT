@@ -394,7 +394,7 @@ public class AgentMemory {
         return body.frontWallClose();
     }
 
-    public boolean hasWeaponOfType(UT2004ItemType weaponType) {
+    public boolean hasWeaponOfType(ItemType weaponType) {
         return this.weaponry.hasWeapon(weaponType);
     }
 
