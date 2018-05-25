@@ -5,22 +5,20 @@ import cz.cuni.amis.pogamut.base.utils.math.DistanceUtils;
 import cz.cuni.amis.pogamut.base3d.worldview.object.ILocated;
 import cz.cuni.amis.pogamut.unreal.agent.navigation.IUnrealPathExecutor;
 import cz.cuni.amis.pogamut.unreal.communication.messages.UnrealId;
-import cz.cuni.amis.pogamut.ut2004.agent.module.sensor.AgentInfo;
 import cz.cuni.amis.pogamut.ut2004.agent.navigation.IUT2004PathNavigator;
 import cz.cuni.amis.pogamut.ut2004.agent.navigation.IUT2004PathRunner;
 import cz.cuni.amis.pogamut.ut2004.agent.navigation.UT2004PathExecutor;
 import cz.cuni.amis.pogamut.ut2004.agent.navigation.floydwarshall.FloydWarshallMap;
 import cz.cuni.amis.pogamut.ut2004.agent.navigation.loquenavigator.KefikRunner;
 import cz.cuni.amis.pogamut.ut2004.agent.navigation.loquenavigator.LoqueNavigator;
-import cz.cuni.amis.pogamut.ut2004.bot.command.AdvancedLocomotion;
 import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004Bot;
 import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004BotModuleController;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.NavPoint;
 import cz.cuni.amis.pogamut.ut2004.server.IUT2004Server;
 import cz.cuni.amis.utils.exception.PogamutException;
 import edu.utexas.cs.nn.Constants;
-//import mockcz.cuni.amis.pogamut.base.agent.navigation.PathPlanner;
-//import mockcz.cuni.amis.pogamut.ut2004.agent.navigation.MyUTPathExecutor;
+import mockcz.cuni.amis.pogamut.base.agent.navigation.PathPlanner;
+import mockcz.cuni.amis.pogamut.ut2004.agent.navigation.MyUTPathExecutor;
 import mockcz.cuni.pogamut.Client.AgentBody;
 import mockcz.cuni.pogamut.Client.AgentMemory;
 
@@ -148,7 +146,7 @@ public class BaseBot extends UT2004BotModuleController<UT2004Bot> {
             IUT2004PathNavigator<ILocated> playerLoque = new LoqueNavigator<ILocated>(bot, this.info, this.move, playerKefik, this.getLog());
             IUnrealPathExecutor<ILocated> playerPathExecutor = new UT2004PathExecutor<ILocated>(bot, this.info, this.move, playerLoque);
 
-            agentmemory = new AgentMemory(getAgentBody(), this.info, this.senses, this.players, new PathPlanner(this.pathPlanner, fwMap, getAgentBody()), new MyUTPathExecutor(itemPathExecutor, getAgentBody()), new MyUTPathExecutor(playerPathExecutor, getAgentBody()), this.items, this.weaponry, this.getWorldView(), this.game);
+            agentmemory = new AgentMemory(getAgentBody(), this.info, this.senses, this.players, new PathPlanner(this.ut2004PathPlanner, fwMap, getAgentBody()), new MyUTPathExecutor(itemPathExecutor, getAgentBody()), new MyUTPathExecutor(playerPathExecutor, getAgentBody()), this.items, this.weaponry, this.getWorldView(), this.game);
         }
         return agentmemory;
     }

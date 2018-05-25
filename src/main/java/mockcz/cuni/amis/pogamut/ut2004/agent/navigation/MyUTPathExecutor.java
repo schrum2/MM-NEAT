@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package mockcz.cuni.amis.pogamut.ut2004.agent.navigation;
 
 import cz.cuni.amis.pogamut.base.agent.navigation.IPathExecutorState;
@@ -16,6 +12,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 /**
+ * A facade class for an IUnrealPathExecutor instance.
  *
  * @author Jacob Schrum
  */
@@ -25,7 +22,7 @@ public class MyUTPathExecutor implements IUnrealPathExecutor<ILocated> {
     private final AgentBody body;
     private ILocated lastDestination = null;
 
-    public MyUTPathExecutor(IUnrealPathExecutor executor, AgentBody body) {
+    public MyUTPathExecutor(IUnrealPathExecutor<ILocated> executor, AgentBody body) {
         this.executor = executor;
         this.body = body;
     }
