@@ -2,6 +2,7 @@ package edu.southwestern.tasks.mspacman;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -57,7 +58,6 @@ import edu.southwestern.tasks.mspacman.objectives.SurvivalAndSpeedTimeScore;
 import edu.southwestern.tasks.mspacman.objectives.TimeFramesGhostScore;
 import edu.southwestern.tasks.mspacman.objectives.TimeFramesPillScore;
 import edu.southwestern.tasks.mspacman.objectives.TimeToEatAllGhostsScore;
-import edu.southwestern.tasks.popacman.controllers.GhostTeamController;
 import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.datastructures.Triple;
@@ -71,6 +71,8 @@ import oldpacman.controllers.NewGhostController;
 import oldpacman.controllers.NewPacManController;
 import oldpacman.game.Constants;
 import oldpacman.game.Game;
+import pacman.controllers.IndividualGhostController;
+import pacman.controllers.MASController;
 
 
 /**
@@ -426,12 +428,24 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 				
 				//TODO: generalize this
 				if(Parameters.parameters.booleanParameter("partiallyObservablePacman")) {
-					//create a popacman ghost team, assign to a new GhostTeamController
+
+					//create individual ghost controllers
 					popacman.examples.StarterGhost.POGhost blinky = new popacman.examples.StarterGhost.POGhost(pacman.game.Constants.GHOST.BLINKY);
 					popacman.examples.StarterGhost.POGhost pinky = new popacman.examples.StarterGhost.POGhost(pacman.game.Constants.GHOST.PINKY);
 					popacman.examples.StarterGhost.POGhost inky = new popacman.examples.StarterGhost.POGhost(pacman.game.Constants.GHOST.INKY);
 					popacman.examples.StarterGhost.POGhost sue = new popacman.examples.StarterGhost.POGhost(pacman.game.Constants.GHOST.SUE);	
-					this.ghosts = new GhostControllerFacade(new GhostTeamController(blinky, pinky, inky, sue));
+					
+					//create an EnumMap of ghosts to controllers
+					EnumMap<pacman.game.Constants.GHOST, IndividualGhostController> map = new EnumMap<pacman.game.Constants.GHOST, IndividualGhostController>(pacman.game.Constants.GHOST.class);
+					
+					//put controllers in map
+					map.put(pacman.game.Constants.GHOST.BLINKY, blinky);
+					map.put(pacman.game.Constants.GHOST.PINKY, pinky);
+					map.put(pacman.game.Constants.GHOST.INKY, inky);
+					map.put(pacman.game.Constants.GHOST.SUE, sue);
+					
+					//create GhostControllerFacade
+					this.ghosts = new GhostControllerFacade(new MASController(map));
 				} else {
 					this.ghosts = new GhostControllerFacade((NewGhostController) ClassCreation.createObject("ghostTeam"));
 				}
