@@ -165,7 +165,7 @@ public class Brain
 		}
 		else
 		{
-			if (useSTOPPEDtrigger && (ctrl.getPathExecutor().inState(PathExecutorState.STOPPED))) STOPPEDcounter++;
+			if (useSTOPPEDtrigger && (ctrl.getNavigation().getPathExecutor().inState(PathExecutorState.STOPPED))) STOPPEDcounter++;
 			//System.out.println(ctrl.getInfo().getName()+": Normal behavior");
 			
 			//System.out.println("STOPPEDcounter : "+STOPPEDcounter);
@@ -208,7 +208,7 @@ public class Brain
 		else
 		{
 			List<ILocated> currentPath = ctrl.getNavigation().getCurrentPathCopy();
-			int pathIndex = ctrl.getPathExecutor().getPathElementIndex();
+			int pathIndex = ctrl.getNavigation().getPathExecutor().getPathElementIndex();
 			if ((currentPath != null) && (pathIndex >= 0) && (pathIndex < currentPath.size()))
 			{
 				//System.out.println("setting current target as focus: "+currentPath.get(pathIndex).getLocation());
@@ -291,7 +291,10 @@ public class Brain
 					if (p == null)
 					{
 						Location normalRayDir = rayData.getNormalDirection(dt);
-						normalRayDir.setTo(normalRayDir.getX(), normalRayDir.getY(), 0.0);
+						//normalRayDir.setTo(normalRayDir.getX(), normalRayDir.getY(), 0.0);
+						normalRayDir.setX(normalRayDir.getX());
+						normalRayDir.setY(normalRayDir.getY());
+						normalRayDir.setZ(normalRayDir.getZ());
 						aim.setFocus(normalRayDir);
 					}
 					

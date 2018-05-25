@@ -65,7 +65,10 @@ public class MirrorFrame
 		{
 			Location locDiff = ctrl.getInfo().getLocation().sub(subjectLocation).getNormalized();
 			Location sRot = subjectRotation.toLocation().getNormalized();
-			sRot.setTo(sRot.getX(), sRot.getY(), -sRot.getZ());
+			//sRot.setTo(sRot.getX(), sRot.getY(), -sRot.getZ());
+			sRot.setX(sRot.getX());
+			sRot.setY(sRot.getY());
+			sRot.setZ(-sRot.getZ());
 			double dotprod = sRot.dot(locDiff);
 			if (dotprod > 0.95)
 			{
@@ -99,7 +102,10 @@ public class MirrorFrame
 		//calc rotation
 		Location locVector = subjectLocation.sub(ctrl.getInfo().getLocation()).getNormalized();
 		Location sRot = subjectRotation.toLocation().getNormalized();
-		sRot.setTo(sRot.getX(), sRot.getY(), -sRot.getZ());
+		//sRot.setTo(sRot.getX(), sRot.getY(), -sRot.getZ());
+		sRot.setX(sRot.getX());
+		sRot.setY(sRot.getY());
+		sRot.setZ(sRot.getZ());
 		double dotprod = sRot.dot(locVector); //rotation vector projected on diff vector
 		Location turnTo = ctrl.getInfo().getLocation().add(sRot.add(locVector.scale(-2.0*dotprod)).scale(ctrl.getInfo().getBaseSpeed()));
 		

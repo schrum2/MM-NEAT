@@ -80,7 +80,7 @@ public class MirrorBot4 extends UT2004BotModuleController
 		}
 		brain = new Brain(this, rayData);
 		
-		pathExecutor.getState().addStrongListener(new FlagListener<IPathExecutorState>()
+		getNavigation().getPathExecutor().getState().addStrongListener(new FlagListener<IPathExecutorState>()
 		{
 			@Override
 			public void flagChanged(IPathExecutorState changedValue)
@@ -228,6 +228,7 @@ public class MirrorBot4 extends UT2004BotModuleController
 		pathPlanner  = new UT2004AStarPathPlanner(bot);
 		fwMap        = new FloydWarshallMap(bot);
 		myNav        = new MyNavigator(bot, myLog);
+		//I feel like the goal here is to declare a variable, but it's not happening
 		pathExecutor = new MyPathExecutor<ILocated>(bot, myNav);
 		
 		pathExecutor.addStuckDetector(new UT2004TimeStuckDetector(bot, 3000, 100000)); // if the bot does not move for 3 seconds, considered that it is stuck
@@ -236,6 +237,6 @@ public class MirrorBot4 extends UT2004BotModuleController
 
 		getBackToNavGraph = new UT2004GetBackToNavGraph(bot, info, move);
 		runStraight = new UT2004RunStraight(bot, info, move);
-		navigation = new UT2004Navigation(bot, pathExecutor, fwMap, getBackToNavGraph, runStraight);                
+		navigation = new UT2004Navigation(bot, getNavigation().getPathExecutor(), fwMap, getBackToNavGraph, runStraight);                
     }
 }

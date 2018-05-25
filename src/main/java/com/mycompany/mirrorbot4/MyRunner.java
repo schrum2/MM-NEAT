@@ -126,7 +126,10 @@ public class MyRunner implements IUT2004PathRunner {
 		if ((bot.getLocation() == null) || (bot.getRotation() == null)) return loc;
 		Location myPos = bot.getLocation();
 		Location myRot = bot.getRotation().toLocation();
-		myRot.setTo(myRot.getX(), myRot.getY(), 0.0);
+		//myRot.setTo(myRot.getX(), myRot.getY(), 0.0);
+		myRot.setX(myRot.getX());
+		myRot.setY(myRot.getY());
+		myRot.setZ(0.0);
 		myRot = myRot.getNormalized();
 		Location movDir = loc.sub(myPos);
 		
@@ -136,10 +139,20 @@ public class MyRunner implements IUT2004PathRunner {
 			Location forwardBack = myRot.scale(myRot.dot(movDir));
 			Location leftRight = movDir.sub(forwardBack);
 			
-			if (forwardBack.getLength() < 40.0) forwardBack.setTo(0.0, 0.0, 0.0);
+			if (forwardBack.getLength() < 40.0) {
+				//forwardBack.setTo(0.0, 0.0, 0.0);
+				forwardBack.setX(0.0);
+				forwardBack.setY(0.0);
+				forwardBack.setZ(0.0);
+			}
 			else forwardBack = forwardBack.getNormalized();
 			
-			if (leftRight.getLength() < 40.0) leftRight.setTo(0.0, 0.0, 0.0);
+			if (leftRight.getLength() < 40.0) {
+				//leftRight.setTo(0.0, 0.0, 0.0);
+				leftRight.setX(0.0);
+				leftRight.setY(0.0);
+				leftRight.setZ(0.0);
+			}
 			else leftRight = leftRight.getNormalized();
 			
 			Location result = forwardBack.add(leftRight);
@@ -168,7 +181,10 @@ public class MyRunner implements IUT2004PathRunner {
 			Location pLoc = player.getLocation();
 			Location pRot = player.getRotation().toLocation();
 			Location aimVec = pRot.getNormalized();
-			aimVec.setTo(aimVec.getX(), aimVec.getY(), -aimVec.getZ());
+			//aimVec.setTo(aimVec.getX(), aimVec.getY(), -aimVec.getZ());
+			aimVec.setX(aimVec.getX());
+			aimVec.setY(aimVec.getY());
+			aimVec.setZ(aimVec.getZ());
 			Location posVec = rayData.getCtrl().getInfo().getLocation().sub(pLoc).getNormalized();
 			double dotprod = posVec.dot(aimVec);
 			
@@ -180,7 +196,10 @@ public class MyRunner implements IUT2004PathRunner {
 				}
 				else
 				{
-					aimVec.setTo(Math.random(), Math.random(), 0.0);
+					//aimVec.setTo(Math.random(), Math.random(), 0.0);
+					aimVec.setX(Math.random());
+					aimVec.setY(Math.random());
+					aimVec.setZ(Math.random());
 					dotprod = posVec.dot(aimVec);
 					avoidanceNoShoot = avoidanceNoShoot.add(posVec.sub(aimVec.scale(dotprod)).getNormalized());
 				}
