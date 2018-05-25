@@ -58,6 +58,7 @@ import edu.southwestern.tasks.mspacman.objectives.SurvivalAndSpeedTimeScore;
 import edu.southwestern.tasks.mspacman.objectives.TimeFramesGhostScore;
 import edu.southwestern.tasks.mspacman.objectives.TimeFramesPillScore;
 import edu.southwestern.tasks.mspacman.objectives.TimeToEatAllGhostsScore;
+import edu.southwestern.tasks.popacman.controllers.OldToNewPacManIntermediaryController;
 import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.datastructures.Triple;
@@ -468,7 +469,16 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 	public void loadPacMan() {
 		if (mspacman == null) {
 			try {
-				this.mspacman = new PacManControllerFacade((NewPacManController) ClassCreation.createObject("staticPacMan"));
+				//an oldpacman controller
+				NewPacManController controller = (NewPacManController) ClassCreation.createObject("staticPacMan");
+				
+				//if partially observable
+				this.mspacman = Parameters.parameters.booleanParameter("partiallyObservablePacman") ?
+						//convert controller from oldpacman to popacman via OldToNewPacManInterMediaryController
+						new PacManControllerFacade(new OldToNewPacManIntermediaryController(controller)) :
+						//else use the oldpacman controller
+						new PacManControllerFacade(controller);
+			
 			} catch (NoSuchMethodException ex) {
 				ex.printStackTrace();
 				System.exit(1);
@@ -503,7 +513,11 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 			loadPacMan();
 			ghosts = new GhostControllerFacade((NewGhostController) ((SharedNNGhosts<T>) organism).controller);
 		} else {
-			mspacman = new PacManControllerFacade((NewPacManController) ((NNMsPacMan<T>) organism).controller);
+			mspacman = Parameters.parameters.booleanParameter("partiallyObservablePacman") ?
+					//convert the controls from oldpacman controls to popacman controls
+					new PacManControllerFacade(new OldToNewPacManIntermediaryController((NewPacManController) ((NNMsPacMan<T>) organism).controller)):
+					//use oldpacman controller, don't convert to popacman
+					new PacManControllerFacade((NewPacManController) ((NNMsPacMan<T>) organism).controller);
 		}
 
 		// Side-effects to "game"
