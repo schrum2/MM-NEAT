@@ -9,7 +9,7 @@ package cz.cuni.amis.pogamut.ut2004.utils;
  * 
  * @author Jacob Schrum
  */
-public class MyUCCWrapperConf extends UCCWrapper.UCCWrapperConf {
+public class MyUCCWrapperConf extends UCCWrapperConf {
 
 	/**
 	 * Auto-generated serial ID
