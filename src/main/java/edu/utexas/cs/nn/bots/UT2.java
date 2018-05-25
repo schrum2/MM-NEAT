@@ -77,7 +77,7 @@ public class UT2 extends BaseBot {
     private String cachedName = null;
     private String cachedMap = null;
     private PrintWriter actionLog = null;
-    private static final String DEFAULT_FILE = "candidates/FRONT-DM-1on1-Albatross-vs-1Native_98_7.xml";
+    private static final String DEFAULT_FILE = Constants.UT2_ROOT.get() + "candidates/FRONT-DM-1on1-Albatross-vs-1Native_98_7.xml";
     private String actionLogFilename = null;
     private boolean logAtEnd = false;
     private PathController pathController;

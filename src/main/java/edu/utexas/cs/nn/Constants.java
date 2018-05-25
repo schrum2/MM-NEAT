@@ -67,6 +67,11 @@ public enum Constants {
     HUMAN_DB("botprize2010.db"),
 
     /**
+     * Directory root for UT^2 data in MM-NEAT: Added for MM-NEAT: 5/24/18
+     */
+    UT2_ROOT("data/unreal/UT2/"),
+    
+    /**
      * Human data directory when using plain files
      */
     HUMAN_DATA_PATH("DATA/human/Levels"),

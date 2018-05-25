@@ -49,7 +49,7 @@ public class HumanRetraceBot extends BaseBot {
         else
             initialized = true;
         // reading pose sequences
-        File traceHome = new File(Constants.HUMAN_DATA_PATH.get());
+        File traceHome = new File(Constants.UT2_ROOT.get() + Constants.HUMAN_DATA_PATH.get());
         if (this.game == null || this.game.getMapName() == null) {
             this.getLog().severe("Could not find level-specific pose data");
             return;

@@ -80,7 +80,7 @@ public class SimpleNavPointIndex extends DbLogger {
 
     private void loadPose(final String level) {
         // reading pose sequences
-        File traceHome = new File(Constants.HUMAN_DATA_PATH.get());
+        File traceHome = new File(Constants.UT2_ROOT.get() + Constants.HUMAN_DATA_PATH.get());
         File[] levelDirs = traceHome.listFiles(new FileFilter() {
             @Override
             public boolean accept(File pathname) {
