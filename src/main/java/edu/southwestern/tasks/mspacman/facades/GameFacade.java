@@ -254,8 +254,6 @@ public class GameFacade {
 	}
 
 	/**
-	 * TODO: rewrite static methods for poG pacman
-	 * 
 	 * Given pacman game and node index, an array of size 4 is returned
 	 * containing the neighboring node indices. Each slot in the array
 	 * corresponds to a specific direction, and if there is no neighbor in the
@@ -343,13 +341,14 @@ public class GameFacade {
 	}
 
 	/**
-	 * gets times taken to eat each pill
+	 * gets times taken to eat each pill.
+	 * TODO
 	 * @return list of times
 	 */
 	public List<Integer> getPillEatTimes() {
-		return newG == null ?
-				null: //TODO: write getPillEatTimes for poG
-				newG.getPillEatTimes();
+		if(newG == null) throw new UnsupportedOperationException("TODO: implement Get getPillEatTimes");
+		
+		return newG.getPillEatTimes();
 	}
 
 	/**
@@ -359,9 +358,9 @@ public class GameFacade {
 	 * @return time
 	 */
 	public int getNextEdibleTime() {
-		return newG == null ?
-				-1: //TODO: write get NextEdibleTime() for poG
-				newG.newEdibleTime();
+		if(newG == null) throw new UnsupportedOperationException("TODO: implement Get getNextEdibleTime");
+		
+		return newG.newEdibleTime();
 	}
 
 	/**
@@ -370,9 +369,9 @@ public class GameFacade {
 	 * @return how many times ghost was eaten
 	 */
 	public int getSpecificGhostEatenCount(int ghostIndex) {
-		return newG == null ?
-				-1: //TODO: write getSpecificGhostEAtenCount() for poG
-				newG.getEatenGhosts(ghostIndex);
+		if(newG == null) throw new UnsupportedOperationException("TODO: implement Get SpecificGhostEatenCount");
+		
+		return newG.getEatenGhosts(ghostIndex);
 	}
 
 	/**
@@ -952,7 +951,7 @@ public class GameFacade {
 
 	/**
 	 * Gets the closest node index from node index.
-	 *
+	 * Supports popacman (TODO: test)
 	 * @param fromNodeIndex
 	 *            the from node index
 	 * @param targetNodeIndices
@@ -962,12 +961,9 @@ public class GameFacade {
 	 * @return the closest node index from node index
 	 */
 	public int getClosestNodeIndexFromNodeIndex(int current, int[] targets) {
-		if(newG == null) {
-			System.out.println("TODO: Implement getClosestNodeIndexFromNodeIndex for poG, GameFacade.java");
-			return -1;
-		} else {
-			return newG.getClosestNodeIndexFromNodeIndex(current, targets, oldpacman.game.Constants.DM.PATH);
-		}
+		return newG == null ?
+				poG.getClosestNodeIndexFromNodeIndex(current, targets, pacman.game.Constants.DM.PATH):
+				newG.getClosestNodeIndexFromNodeIndex(current, targets, oldpacman.game.Constants.DM.PATH);
 	}
 
 	/**
@@ -2772,16 +2768,11 @@ public class GameFacade {
 
 	/**
 	 * Return true if any ghost is outside of the lair and not edible.
-	 *
+	 * Supports popacman (TODO: test)
 	 * @return
 	 */
 	public boolean anyIsThreat() {
-		if(newG == null) {
-			System.out.println("TODO: Implement anyIsThreat for poG, GameFacade.java");
-			return false;
-		} else {
-			return this.getThreatGhostLocations().length > 0;
-		}
+		return this.getThreatGhostLocations().length > 0;
 	}
 
 	/**
@@ -2798,8 +2789,7 @@ public class GameFacade {
 	 */
 	public int getGhostRegret() {
 		if(newG == null) {
-			System.out.println("TODO: Implement getGhostRegret for poG, GameFacade.java");
-			return -1;
+			throw new UnsupportedOperationException("TODO: Implement getGhostRegret for poG, GameFacade.java");
 		} else {
 			return newG.getGhostRegret();
 		}
@@ -2813,7 +2803,7 @@ public class GameFacade {
 	 * points, then the nodes found are at depth 2 and so on. All such nodes are
 	 * returned in an array list organized to contain a set corresponding to
 	 * each depth, up to the original depth parameter. A depth of 0 contains
-	 * just the start point.
+	 * just the start point. Supports popcamn (TODO: test)
 	 *
 	 * @param startIndex
 	 *            starting point of search
@@ -2825,24 +2815,20 @@ public class GameFacade {
 	 * @return collection of leaves in search tree
 	 */
 	public ArrayList<Set<Integer>> junctionsAtDepth(int startIndex, int depth, boolean includePowerPills, int lastNodeVisited) {
-		if(newG == null) {
-			System.out.println("TODO: Implement junctionsAtDepth for poG, GameFacade.java");
-			return null;
-		} else {
-			Set<Integer> start = new HashSet<Integer>();
-			// eliminate most recently visited node as option
-			if (lastNodeVisited != -1 && !isJunction(startIndex)) {
-				startIndex = lastNodeVisited;
-			}
-			start.add(startIndex);
-			ArrayList<Set<Integer>> result = new ArrayList<Set<Integer>>();
-			junctionsAtDepth(start, depth, includePowerPills, result);
-			return result;
+		Set<Integer> start = new HashSet<Integer>();
+		// eliminate most recently visited node as option
+		if (lastNodeVisited != -1 && !isJunction(startIndex)) {
+			startIndex = lastNodeVisited;
 		}
+		start.add(startIndex);
+		ArrayList<Set<Integer>> result = new ArrayList<Set<Integer>>();
+		junctionsAtDepth(start, depth, includePowerPills, result);
+		return result;
 	}
 
 	/**
-	 * Recursive helper to above, that can have multiple candidate start points
+	 * Recursive helper to above, that can have multiple candidate start points.
+	 * Supports popacman (TODO: test)
 	 *
 	 * @param startPoints
 	 * @param depth
@@ -2850,27 +2836,23 @@ public class GameFacade {
 	 * @return
 	 */
 	public void junctionsAtDepth(Set<Integer> startPoints, int depth, boolean includePowerPills, ArrayList<Set<Integer>> result) {
-		if(newG == null) {
-			System.out.println("TODO: Implement junctionsAtDepth for poG, GameFacade.java");
-		} else {
-			result.add(startPoints);
-			if (depth > 0) {
-				Set<Integer> nextJunctions = new HashSet<Integer>();
-				for (Integer start : startPoints) {
-					assert start != -1 : "Cannot start at -1";
-					int[] neighbors = neighbors(start);
-					for (int i = 0; i < neighbors.length; i++) {
-						if (neighbors[i] != -1) {
-							int nextJunction = nextJunctionInDirection(start, i, includePowerPills);
-							assert nextJunction != -1 : "Why can't a junction be reached from " + start + " in direction "
-									+ i + "? neighbors = " + Arrays.toString(neighbors);
-							nextJunctions.add(nextJunction);
-						}
+		result.add(startPoints);
+		if (depth > 0) {
+			Set<Integer> nextJunctions = new HashSet<Integer>();
+			for (Integer start : startPoints) {
+				assert start != -1 : "Cannot start at -1";
+				int[] neighbors = neighbors(start);
+				for (int i = 0; i < neighbors.length; i++) {
+					if (neighbors[i] != -1) {
+						int nextJunction = nextJunctionInDirection(start, i, includePowerPills);
+						assert nextJunction != -1 : "Why can't a junction be reached from " + start + " in direction "
+								+ i + "? neighbors = " + Arrays.toString(neighbors);
+						nextJunctions.add(nextJunction);
 					}
 				}
-				junctionsAtDepth(nextJunctions, depth - 1, includePowerPills, result);
-			}			
-		}
+			}
+			junctionsAtDepth(nextJunctions, depth - 1, includePowerPills, result);
+		}			
 	}
 
 	/**
@@ -2885,50 +2867,41 @@ public class GameFacade {
 
 	/**
 	 * If active ghosts are in lair, return the time remaining until one exits.
-	 * Else return -1.
+	 * Else return -1. Supports popacman (TODO: test)
 	 * 
 	 * @return time of next lair exit, -1 if none are in lair
 	 */
 	public int timeUntilNextLairExit() {
-		if(newG == null) {
-			System.out.println("TODO: Implement anyActiveGhostInLair for poG, GameFacade.java");
-			return -1;
-		} else {
-			int[] lairTimes = this.getGhostLairTimes();
-			Arrays.sort(lairTimes);
-			int nextExitIndex = 0;
-			while (nextExitIndex < lairTimes.length && lairTimes[nextExitIndex] == 0) {
-				nextExitIndex++;
-			}
-			if (nextExitIndex == lairTimes.length) {
-				return -1;
-			}
-			return lairTimes[nextExitIndex];
+		int[] lairTimes = this.getGhostLairTimes();
+		Arrays.sort(lairTimes);
+		int nextExitIndex = 0;
+		while (nextExitIndex < lairTimes.length && lairTimes[nextExitIndex] == 0) {
+			nextExitIndex++;
 		}
+		if (nextExitIndex == lairTimes.length) {
+			return -1;
+		}
+		return lairTimes[nextExitIndex];
 	}
 
 	/**
-	 * returns if there are any active ghosts in lair
+	 * returns if there are any active ghosts in lair.
+	 * Supports popacman (TODO: test)
 	 * @return if active ghosts in lair
 	 */
 	public boolean anyActiveGhostInLair() {
-		if(newG == null) {
-			System.out.println("TODO: Implement anyActiveGhostInLair for poG, GameFacade.java");
-			return false;
-		} else {
-			int num = this.getNumActiveGhosts();
-			for (int i = 0; i < num; i++) {
-				if (ghostInLair(i)) {
-					return true;
-				}
+		int num = this.getNumActiveGhosts();
+		for (int i = 0; i < num; i++) {
+			if (ghostInLair(i)) {
+				return true;
 			}
-			return false;
 		}
+		return false;
 	}
 
 	/**
 	 * Return true if starting a new level, which is the case if the level time
-	 * is zero
+	 * is zero. Supports popacman (TODO: test)
 	 *
 	 * @return
 	 */
@@ -2936,12 +2909,21 @@ public class GameFacade {
 		return this.getCurrentLevelTime() == 0;
 	}
 
-	//TODO: Implement getNumberOfLairGhosts for poG, GameFacade.java
+	/**
+	 * Supports popacman (TODO: test)
+	 * @return
+	 */
 	public int getNumberOfLairGhosts() {
+		int count = 0;
+		//branching to differentiate between popacman and oldpacman
 		if(newG == null) {
-			return -1;
+			for (int i = 0; i < pacman.game.Constants.NUM_GHOSTS; i++) {
+				if (this.getGhostLairTime(i) > 0) {
+					count++;
+				}
+			}
+			return count;
 		} else {
-			int count = 0;
 			for (int i = 0; i < oldpacman.game.Constants.NUM_GHOSTS; i++) {
 				if (this.getGhostLairTime(i) > 0) {
 					count++;
@@ -2962,9 +2944,9 @@ public class GameFacade {
 	 * @return
 	 */
 	public double averageGhostsEatenPerPowerPill(boolean punishUneatenPowerPills) {
-		return newG == null ?
-				-1:
-				newG.averageGhostsEatenPerPowerPill(punishUneatenPowerPills);
+		if(newG == null) throw new UnsupportedOperationException("TODO: implement averageGhostsEatenPerPowerPill");
+		
+		return newG.averageGhostsEatenPerPowerPill(punishUneatenPowerPills);
 	}
 
 	/**
@@ -2975,9 +2957,9 @@ public class GameFacade {
 	 * @return average time
 	 */
 	public double averageTimeToEatAllGhostsAfterPowerPill() {
-		return newG == null ?
-				-1:
-				newG.averageTimeToEatAllGhostsAfterPowerPill();
+		if(newG == null) throw new UnsupportedOperationException("TODO: implement averageTimeToEatAllGhostsAfterPowerPill");
+		
+		return newG.averageTimeToEatAllGhostsAfterPowerPill();
 	}
 
 	/**
@@ -2987,7 +2969,7 @@ public class GameFacade {
 	 */
 	public void setExitLairEdible(boolean exitLairEdible) {
 		if (newG == null){
-			System.out.println("TODO: Implement setExitLairEdible for poG, GameFacade.java");
+			throw new UnsupportedOperationException("TODO: Implement setExitLairEdible for poG, GameFacade.java");
 		} else {
 			newG.setExitLairEdible(exitLairEdible);
 		}
@@ -2999,7 +2981,7 @@ public class GameFacade {
 	 */
 	public void setEndOnlyOnTimeLimit(boolean endOnlyOnTimeLimit) {
 		if (newG == null){
-			System.out.println("TODO: Implement setEndOnlyOnTimeLimit for poG, GameFacade.java");
+			throw new UnsupportedOperationException("TODO: Implement setEndOnlyOnTimeLimit for poG, GameFacade.java");
 		} else {
 			newG.setEndOnlyOnTimeLimit(endOnlyOnTimeLimit);
 		}
@@ -3011,7 +2993,7 @@ public class GameFacade {
 	 */
 	public void setRandomLairExit(boolean randomLairExit) {
 		if (newG == null){
-			System.out.println("TODO: Implement setRandomLairExit for poG, GameFacade.java");
+			throw new UnsupportedOperationException("TODO: Implement setRandomLairExit for poG, GameFacade.java");
 		} else {
 			newG.setRandomLairExit(randomLairExit);
 		}
@@ -3023,7 +3005,7 @@ public class GameFacade {
 	 */
 	public void setSimultaneousLairExit(boolean simultaneousLairExit) {
 		if (newG == null){
-			System.out.println("TODO: Implement setSimultaneousLairExit for poG, GameFacade.java");
+			throw new UnsupportedOperationException("TODO: Implement setSimultaneousLairExit for poG, GameFacade.java");
 		} else {
 			newG.setSimultaneousLairExit(simultaneousLairExit);
 		}
@@ -3035,7 +3017,7 @@ public class GameFacade {
 	 */
 	public void setGhostsStartOutsideLair(boolean ghostsStartOutsideLair) {
 		if (newG == null){
-			System.out.println("TODO: Implement setGhostsStartOutsideLair for poG, GameFacade.java");
+			throw new UnsupportedOperationException("TODO: Implement setGhostsStartOutsideLair for poG, GameFacade.java");
 		} else {
 			newG.setGhostsStartOutsideLair(ghostsStartOutsideLair);
 		}
@@ -3048,7 +3030,7 @@ public class GameFacade {
 	 */
 	public void setOnlyOneLairExitAllowed(boolean onlyOneLairExitAllowed) {
 		if (newG == null){
-			System.out.println("TODO: Implement setOnlyOneLairExitAllowed for poG, GameFacade.java");
+			throw new UnsupportedOperationException("TODO: Implement setOnlyOneLairExitAllowed for poG, GameFacade.java");
 		} else {
 			newG.setOnlyOneLairExitAllowed(onlyOneLairExitAllowed);
 		}
@@ -3060,7 +3042,7 @@ public class GameFacade {
 	 */
 	public void setLairExitDatabase(boolean lairExitDatabase) {
 		if (newG == null){
-			System.out.println("TODO: Implement setLairExitDatabase for poG, GameFacade.java");
+			throw new UnsupportedOperationException("TODO: Implement setLairExitDatabase for poG, GameFacade.java");
 		} else {
 			newG.setLairExitDatabase(lairExitDatabase);
 		}
@@ -3072,7 +3054,7 @@ public class GameFacade {
 	 */
 	public void setRemovePillsNearPowerPills(boolean removePillsNearPowerPills) {
 		if (newG == null){
-			System.out.println("TODO: Implement setRemocePillsNearPowerPills for poG, GameFacade.java");
+			throw new UnsupportedOperationException("TODO: Implement setRemovePillsNearPowerPills for poG, GameFacade.java");
 		} else {
 			newG.setRemovePillsNearPowerPills(removePillsNearPowerPills);
 		}
