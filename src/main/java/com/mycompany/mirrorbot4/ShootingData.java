@@ -5,6 +5,7 @@ import cz.cuni.amis.pogamut.unreal.communication.messages.UnrealId;
 import cz.cuni.amis.pogamut.ut2004.agent.module.sensomotoric.Weapon;
 import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004BotModuleController;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.ItemType;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.UT2004ItemType;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.Player;
 import java.util.Map;
 
@@ -55,7 +56,7 @@ public class ShootingData
 			{
 				if ((Math.cos(timePassed*Math.PI/30) > 0.0) && (distanceToTarget < 600) && (judgingData.needsToBeVotedByMe(p.getId())) && (judgingData.getRatingFor(p.getId()) > 0))
 				{
-					Weapon linkGun = ctrl.getWeaponry().getWeapon(ItemType.LINK_GUN);
+					Weapon linkGun = ctrl.getWeaponry().getWeapon(UT2004ItemType.LINK_GUN);
 					ctrl.getShoot().shoot(linkGun, ((judgingData.getRatingFor(p.getId()) == 1)?true:false), p.getId());
 					judgingData.setVotedByMe(p.getId(), ctrl.getSenses().getLastCausedDamage());
 					//System.out.println(ctrl.getInfo().getName()+": Voting that "+p.getId()+" is a "+((judgingData.getRatingFor(p.getId()) == 1)?"bot":"human"));
@@ -114,10 +115,10 @@ public class ShootingData
 	
 	private boolean weaponHasSplash(Weapon w)
 	{
-		if (w.getType().equals(ItemType.BIO_RIFLE)) return true;
-		if (w.getType().equals(ItemType.FLAK_CANNON)) return true;
-		if (w.getType().equals(ItemType.ROCKET_LAUNCHER)) return true;
-		if (w.getType().equals(ItemType.ONS_AVRIL)) return true;
+		if (w.getType().equals(UT2004ItemType.BIO_RIFLE)) return true;
+		if (w.getType().equals(UT2004ItemType.FLAK_CANNON)) return true;
+		if (w.getType().equals(UT2004ItemType.ROCKET_LAUNCHER)) return true;
+		if (w.getType().equals(UT2004ItemType.ONS_AVRIL)) return true;
 		
 		return false;
 	}

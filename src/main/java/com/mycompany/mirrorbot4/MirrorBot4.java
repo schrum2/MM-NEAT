@@ -14,6 +14,7 @@ import cz.cuni.amis.pogamut.ut2004.agent.navigation.stuckdetector.UT2004TimeStuc
 import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004Bot;
 import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004BotModuleController;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.ItemType;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.UT2004ItemType;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbcommands.Initialize;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.*;
 import cz.cuni.amis.pogamut.ut2004.utils.UT2004BotRunner;
@@ -34,18 +35,18 @@ public class MirrorBot4 extends UT2004BotModuleController
     public void prepareBot(UT2004Bot bot)
     {
 		// DEFINE WEAPON PREFERENCES
-        weaponPrefs.addGeneralPref(ItemType.MINIGUN, false);
-        weaponPrefs.addGeneralPref(ItemType.MINIGUN, true);
+        weaponPrefs.addGeneralPref(UT2004ItemType.MINIGUN, false);
+        weaponPrefs.addGeneralPref(UT2004ItemType.MINIGUN, true);
         //weaponPrefs.addGeneralPref(ItemType.LINK_GUN, false);
-        weaponPrefs.addGeneralPref(ItemType.LIGHTNING_GUN, true);
-        weaponPrefs.addGeneralPref(ItemType.SHOCK_RIFLE, true);
-        weaponPrefs.addGeneralPref(ItemType.ROCKET_LAUNCHER, true);
+        weaponPrefs.addGeneralPref(UT2004ItemType.LIGHTNING_GUN, true);
+        weaponPrefs.addGeneralPref(UT2004ItemType.SHOCK_RIFLE, true);
+        weaponPrefs.addGeneralPref(UT2004ItemType.ROCKET_LAUNCHER, true);
         //weaponPrefs.addGeneralPref(ItemType.LINK_GUN, true);
-        weaponPrefs.addGeneralPref(ItemType.ASSAULT_RIFLE, true);
-        weaponPrefs.addGeneralPref(ItemType.FLAK_CANNON, true);
-		weaponPrefs.addGeneralPref(ItemType.FLAK_CANNON, false);
-        weaponPrefs.addGeneralPref(ItemType.BIO_RIFLE, true);
-		weaponPrefs.addGeneralPref(ItemType.SHIELD_GUN, true);
+        weaponPrefs.addGeneralPref(UT2004ItemType.ASSAULT_RIFLE, true);
+        weaponPrefs.addGeneralPref(UT2004ItemType.FLAK_CANNON, true);
+		weaponPrefs.addGeneralPref(UT2004ItemType.FLAK_CANNON, false);
+        weaponPrefs.addGeneralPref(UT2004ItemType.BIO_RIFLE, true);
+		weaponPrefs.addGeneralPref(UT2004ItemType.SHIELD_GUN, true);
     }
 
     @Override

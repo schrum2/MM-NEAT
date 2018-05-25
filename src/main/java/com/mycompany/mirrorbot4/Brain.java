@@ -7,6 +7,7 @@ import cz.cuni.amis.pogamut.base3d.worldview.object.Rotation;
 import cz.cuni.amis.pogamut.unreal.communication.messages.UnrealId;
 import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004BotModuleController;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.ItemType;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.UT2004ItemType;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbcommands.Move;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbcommands.SetCrouch;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.*;
@@ -551,8 +552,8 @@ public class Brain
 				double dist = crtIt.getLocation().sub(loc).getLength();
 				if (dist > radius) continue;
 				
-				if ((crtIt.getType().equals(ItemType.SUPER_HEALTH_PACK)) ||
-						(crtIt.getType().equals(ItemType.SUPER_SHIELD_PACK)))
+				if ((crtIt.getType().equals(UT2004ItemType.SUPER_HEALTH_PACK)) ||
+						(crtIt.getType().equals(UT2004ItemType.SUPER_SHIELD_PACK)))
 				{
 					dist = 0.0; //make most desirable !
 				}
@@ -586,23 +587,23 @@ public class Brain
 			}
 			
 			if (
-					(crtIt.getType().equals(ItemType.SUPER_HEALTH_PACK)) ||
-					(crtIt.getType().equals(ItemType.SUPER_SHIELD_PACK)) ||
-					(crtIt.getType().equals(ItemType.HEALTH_PACK) && (ctrl.getInfo().getHealth() < ctrl.getGame().getMaxHealth())) ||
-					(crtIt.getType().equals(ItemType.SHIELD_PACK)) ||
-					(crtIt.getType().equals(ItemType.U_DAMAGE_PACK)) ||
-					(crtIt.getType().equals(ItemType.MINI_HEALTH_PACK)) ||
+					(crtIt.getType().equals(UT2004ItemType.SUPER_HEALTH_PACK)) ||
+					(crtIt.getType().equals(UT2004ItemType.SUPER_SHIELD_PACK)) ||
+					(crtIt.getType().equals(UT2004ItemType.HEALTH_PACK) && (ctrl.getInfo().getHealth() < ctrl.getGame().getMaxHealth())) ||
+					(crtIt.getType().equals(UT2004ItemType.SHIELD_PACK)) ||
+					(crtIt.getType().equals(UT2004ItemType.U_DAMAGE_PACK)) ||
+					(crtIt.getType().equals(UT2004ItemType.MINI_HEALTH_PACK)) ||
 					(
 						(ctrl.getWeaponry().getLoadedRangedWeapons().size() < 2) &&
 						(
-							crtIt.getType().equals(ItemType.ASSAULT_RIFLE) ||
-							crtIt.getType().equals(ItemType.BIO_RIFLE) ||
-							crtIt.getType().equals(ItemType.FLAK_CANNON) ||
-							crtIt.getType().equals(ItemType.LIGHTNING_GUN) ||
-							crtIt.getType().equals(ItemType.MINIGUN) ||
-							crtIt.getType().equals(ItemType.ROCKET_LAUNCHER) ||
-							crtIt.getType().equals(ItemType.SHOCK_RIFLE) ||
-							crtIt.getType().equals(ItemType.SNIPER_RIFLE)
+							crtIt.getType().equals(UT2004ItemType.ASSAULT_RIFLE) ||
+							crtIt.getType().equals(UT2004ItemType.BIO_RIFLE) ||
+							crtIt.getType().equals(UT2004ItemType.FLAK_CANNON) ||
+							crtIt.getType().equals(UT2004ItemType.LIGHTNING_GUN) ||
+							crtIt.getType().equals(UT2004ItemType.MINIGUN) ||
+							crtIt.getType().equals(UT2004ItemType.ROCKET_LAUNCHER) ||
+							crtIt.getType().equals(UT2004ItemType.SHOCK_RIFLE) ||
+							crtIt.getType().equals(UT2004ItemType.SNIPER_RIFLE)
 						)
 					)
 				)
@@ -612,8 +613,8 @@ public class Brain
 					double dist = crtIt.getLocation().sub(loc).getLength();
 					if (dist > radius) continue;
 					
-					if ((crtIt.getType().equals(ItemType.SUPER_HEALTH_PACK)) ||
-						(crtIt.getType().equals(ItemType.SUPER_SHIELD_PACK)))
+					if ((crtIt.getType().equals(UT2004ItemType.SUPER_HEALTH_PACK)) ||
+						(crtIt.getType().equals(UT2004ItemType.SUPER_SHIELD_PACK)))
 					{
 						dist = 0.0; //make most desirable !
 					}
@@ -648,8 +649,8 @@ public class Brain
 			}
 			
 			if (
-					(crtIt.getType().equals(ItemType.SUPER_HEALTH_PACK)) ||
-					(crtIt.getType().equals(ItemType.SUPER_SHIELD_PACK))
+					(crtIt.getType().equals(UT2004ItemType.SUPER_HEALTH_PACK)) ||
+					(crtIt.getType().equals(UT2004ItemType.SUPER_SHIELD_PACK))
 				)
 			{
 				double dist = crtIt.getLocation().sub(loc).getLength();

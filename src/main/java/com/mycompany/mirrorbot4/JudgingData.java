@@ -5,6 +5,7 @@ import cz.cuni.amis.pogamut.unreal.communication.messages.UnrealId;
 import cz.cuni.amis.pogamut.ut2004.agent.module.sensomotoric.Weapon;
 import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004BotModuleController;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.ItemType;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.UT2004ItemType;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.Player;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.PlayerDamaged;
 import java.util.ArrayList;
@@ -43,7 +44,7 @@ public class JudgingData
 		boolean votingWeapon = false;
 		if (usedWeapon != null)
 		{
-			if (usedWeapon.getType().equals(ItemType.LINK_GUN))
+			if (usedWeapon.getType().equals(UT2004ItemType.LINK_GUN))
 			{
 				votingWeapon = true;
 			}

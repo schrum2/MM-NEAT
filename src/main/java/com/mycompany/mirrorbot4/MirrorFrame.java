@@ -6,6 +6,7 @@ import cz.cuni.amis.pogamut.base3d.worldview.object.Velocity;
 import cz.cuni.amis.pogamut.ut2004.agent.module.sensomotoric.Weapon;
 import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004BotModuleController;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.ItemType;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.UT2004ItemType;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbcommands.Move;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbcommands.SetCrouch;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.Player;
@@ -50,12 +51,12 @@ public class MirrorFrame
 		boolean dangerousWeapon = true;
 		if (usedWeapon != null)
 		{
-			if (usedWeapon.getType().equals(ItemType.LINK_GUN))
+			if (usedWeapon.getType().equals(UT2004ItemType.LINK_GUN))
 			{
 				dangerousWeapon = false;
 			}
 			
-			if ((usedWeapon.getType().equals(ItemType.SHIELD_GUN)) && (subjectLocation.sub(ctrl.getInfo().getLocation()).getLength() > 300))
+			if ((usedWeapon.getType().equals(UT2004ItemType.SHIELD_GUN)) && (subjectLocation.sub(ctrl.getInfo().getLocation()).getLength() > 300))
 			{
 				dangerousWeapon = false;
 			}

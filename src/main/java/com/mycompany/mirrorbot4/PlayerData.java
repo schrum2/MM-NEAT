@@ -5,6 +5,7 @@ import cz.cuni.amis.pogamut.unreal.communication.messages.UnrealId;
 import cz.cuni.amis.pogamut.ut2004.agent.module.sensomotoric.Weapon;
 import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004BotModuleController;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.ItemType;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.UT2004ItemType;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.Player;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -53,12 +54,12 @@ public class PlayerData
 		boolean dangerousWeapon = true;
 		if (usedWeapon != null)
 		{
-			if (usedWeapon.getType().equals(ItemType.LINK_GUN))
+			if (usedWeapon.getType().equals(UT2004ItemType.LINK_GUN))
 			{
 				dangerousWeapon = false;
 			}
 			
-			if ((usedWeapon.getType().equals(ItemType.SHIELD_GUN)) && (ploc.sub(ctrl.getInfo().getLocation()).getLength() > 300))
+			if ((usedWeapon.getType().equals(UT2004ItemType.SHIELD_GUN)) && (ploc.sub(ctrl.getInfo().getLocation()).getLength() > 300))
 			{
 				dangerousWeapon = false;
 			}
