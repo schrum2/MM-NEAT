@@ -14,6 +14,7 @@ import cz.cuni.amis.pogamut.base.utils.math.DistanceUtils;
 import cz.cuni.amis.pogamut.base3d.worldview.object.ILocated;
 import cz.cuni.amis.pogamut.base3d.worldview.object.Location;
 import cz.cuni.amis.pogamut.ut2004.agent.module.sensor.AgentInfo;
+import cz.cuni.amis.pogamut.ut2004.agent.module.sensor.UT2004AgentInfo;
 import cz.cuni.amis.pogamut.ut2004.agent.navigation.AbstractUT2004PathNavigator;
 import cz.cuni.amis.pogamut.ut2004.agent.navigation.IUT2004PathRunner;
 import cz.cuni.amis.pogamut.ut2004.agent.navigation.loquenavigator.LoqueNavigator;
@@ -1397,7 +1398,7 @@ public class MyNavigator<PATH_ELEMENT extends ILocated> extends AbstractUT2004Pa
     {
         // setup reference to agent
         this.main = bot;
-        this.memory = new AgentInfo(bot);
+        this.memory = new UT2004AgentInfo(bot);
         this.body = new AdvancedLocomotion(bot, log);
         this.log = log;
 
