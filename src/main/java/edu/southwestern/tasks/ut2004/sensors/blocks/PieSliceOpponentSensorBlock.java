@@ -8,7 +8,7 @@ import edu.southwestern.tasks.ut2004.Util;
 import java.util.Map;
 
 /**
- *
+ * Tells the bot how close enemies are to it based on pie slices of the areas around it
  * @author Jacob Schrum
  */
 public class PieSliceOpponentSensorBlock implements UT2004SensorBlock {
@@ -16,9 +16,20 @@ public class PieSliceOpponentSensorBlock implements UT2004SensorBlock {
 	public static int MAX_DISTANCE = 1000;
 	public double[] sliceLimits = new double[] { 0, Math.PI / 128, Math.PI / 32, Math.PI / 4, Math.PI / 2, Math.PI };
 
+	/**
+	 * creates the sensor block
+	 * @param bot (bot which will use the sensor data)
+	 */
 	public void prepareBlock(UT2004BotModuleController bot) {
 	}
 
+	/**
+	 * Builds the sensor value array
+	 * @param bot (bot which will use the sensor data)
+	 * @param in (address to start at in array)
+	 * @param inputs (an array that collects the values from the statuses)
+	 * @return returns next address for sensor allocation
+	 */
 	public int incorporateSensors(UT2004BotModuleController bot, int in, double[] inputs) {
 		// Gather data in slices
 		double[] slices = new double[numberOfSlices()];
@@ -70,6 +81,13 @@ public class PieSliceOpponentSensorBlock implements UT2004SensorBlock {
 		return in;
 	}
 
+	/**
+	 * populates the labels array so statuses can be identified
+	 * 
+	 * @param in (address in the array to be labeled)
+	 * @param labels (an empty array that will be populated)
+	 * @return returns the next address to be labeled
+	 */
 	public int incorporateLabels(int in, String[] labels) {
 		for (int i = 1; i < sliceLimits.length; i++) {
 			labels[in++] = "Left Slice " + i;
@@ -89,7 +107,7 @@ public class PieSliceOpponentSensorBlock implements UT2004SensorBlock {
 	/**
 	 * Pie slices plus left and right distances
 	 *
-	 * @return
+	 * @return returns the number of pie slices
 	 */
 	public int numberOfSensors() {
 		return numberOfSlices() + 2;

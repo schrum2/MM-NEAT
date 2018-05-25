@@ -12,10 +12,17 @@ public abstract class UT2004BlockLoadedSensorModel implements UT2004SensorModel 
 
 	ArrayList<UT2004SensorBlock> blocks;
 
+
+	/**
+	 * creates a new array of sensors called 'blocks'
+	 */
 	public UT2004BlockLoadedSensorModel() {
 		blocks = new ArrayList<UT2004SensorBlock>();
 	}
 
+	/**
+	 * 
+	 */
 	public void prepareSensorModel(UT2004BotModuleController bot) {
 		for (int i = 0; i < blocks.size(); i++) {
 			blocks.get(i).prepareBlock(bot);
