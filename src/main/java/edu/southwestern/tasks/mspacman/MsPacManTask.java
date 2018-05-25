@@ -424,7 +424,8 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 		if (ghosts == null) {
 			try {
 				
-				if(Parameters.parameters.booleanParameter("partiallyObservablePacman") == true) {
+				//TODO: generalize this
+				if(Parameters.parameters.booleanParameter("partiallyObservablePacman")) {
 					//create a popacman ghost team, assign to a new GhostTeamController
 					popacman.examples.StarterGhost.POGhost blinky = new popacman.examples.StarterGhost.POGhost(pacman.game.Constants.GHOST.BLINKY);
 					popacman.examples.StarterGhost.POGhost pinky = new popacman.examples.StarterGhost.POGhost(pacman.game.Constants.GHOST.PINKY);
@@ -432,10 +433,9 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 					popacman.examples.StarterGhost.POGhost sue = new popacman.examples.StarterGhost.POGhost(pacman.game.Constants.GHOST.SUE);	
 					this.ghosts = new GhostControllerFacade(new GhostTeamController(blinky, pinky, inky, sue));
 				} else {
-					new GhostControllerFacade((NewGhostController) ClassCreation.createObject("ghostTeam"));
+					this.ghosts = new GhostControllerFacade((NewGhostController) ClassCreation.createObject("ghostTeam"));
 				}
 				
-				//TODO: 
 			} catch (NoSuchMethodException ex) {
 				ex.printStackTrace();
 				System.exit(1);
