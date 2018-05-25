@@ -20,6 +20,12 @@ public class GhostComparator implements Comparator<Integer> {
 	private final int sign;
 	private final boolean proximityOnly;
 
+	/**
+	 * Supports popacman (TODO: test)
+	 * @param gs
+	 * @param edibleClose
+	 * @param proximityOnly
+	 */
 	public GhostComparator(GameFacade gs, boolean edibleClose, boolean proximityOnly) {
 		this.gs = gs;
 		this.current = gs.getPacmanCurrentNodeIndex();
