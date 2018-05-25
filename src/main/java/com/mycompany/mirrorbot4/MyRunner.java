@@ -253,6 +253,23 @@ public class MyRunner implements IUT2004PathRunner {
     }
     
     /**
+     * Added by J. Schrum: 5/25/18
+     * For Pogamut 3.7.0 compatibility.
+     * 
+     * The only difference between this and the existing method with the same name below seems to be the
+     * forceNoJump boolean parameter, which I think means that jumping is NOT allowed if the value is TRUE.
+     * If that's the case, then the other version of runToLocation can exhibit the same behavior but with 
+     * an int parameter, where 1 means jumping is forbidden and 0 means the bot can choose. 
+     * 
+     * TODO: Follow up to make sure this is correct (change if bot jumps too much in weird ways).
+     */
+	@Override
+	public boolean runToLocation(Location runningFrom, Location firstLocation, Location secondLocation, ILocated focus,
+			NavPointNeighbourLink navPointsLink, boolean reachable, boolean forceNoJump) {
+		return runToLocation(runningFrom, firstLocation, secondLocation, focus, navPointsLink, reachable, forceNoJump ? 1 : 0);
+	}
+        
+    /**
      * Handles running directly to the specified location.
      *
      * <h4>Pogamut troubles</h4>
@@ -853,5 +870,5 @@ public class MyRunner implements IUT2004PathRunner {
         this.senses = new Senses(bot, memory, new Players(bot), log);
         this.log = log;
     }
-    
+
 }

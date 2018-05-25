@@ -1,7 +1,5 @@
 package com.mycompany.mirrorbot4;
 
-import cz.cuni.amis.pogamut.ut2004.agent.navigation.loquenavigator.LoqueRunner;
-
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
@@ -16,8 +14,8 @@ import cz.cuni.amis.pogamut.base3d.worldview.object.Location;
 import cz.cuni.amis.pogamut.ut2004.agent.module.sensor.AgentInfo;
 import cz.cuni.amis.pogamut.ut2004.agent.module.sensor.UT2004AgentInfo;
 import cz.cuni.amis.pogamut.ut2004.agent.navigation.AbstractUT2004PathNavigator;
-import cz.cuni.amis.pogamut.ut2004.agent.navigation.IUT2004PathRunner;
 import cz.cuni.amis.pogamut.ut2004.agent.navigation.loquenavigator.LoqueNavigator;
+import cz.cuni.amis.pogamut.ut2004.agent.navigation.loquenavigator.LoqueRunner;
 import cz.cuni.amis.pogamut.ut2004.bot.command.AdvancedLocomotion;
 import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004Bot;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.Mover;
@@ -26,7 +24,6 @@ import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.NavPoin
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.Self;
 import cz.cuni.amis.pogamut.ut2004.utils.LinkFlag;
 import cz.cuni.amis.pogamut.ut2004.utils.UnrealUtils;
-import cz.cuni.amis.utils.NullCheck;
 
 /**
  * Responsible for navigation to location.
@@ -178,7 +175,8 @@ public class MyNavigator<PATH_ELEMENT extends ILocated> extends AbstractUT2004Pa
 		resetNavigMoverVariables();
 	}
 
-	@Override
+	// J. Schrum removed this override to make compatible with Pogamut 3.7.0
+	//@Override
 	public void newPath(List<PATH_ELEMENT> path) {
 		// prepare for running along new path
 		reset();
@@ -1411,5 +1409,26 @@ public class MyNavigator<PATH_ELEMENT extends ILocated> extends AbstractUT2004Pa
 	public MyRunner getRunner()
 	{
 		return this.runner;
+	}
+
+	////////////////////////////////////////////////////////////////////////////////
+	// Methods below added by J. Schrum 5/25/18 for Pogamut 3.7.0 compatibility
+	////////////////////////////////////////////////////////////////////////////////
+	
+	@Override
+	public void newPath(List<PATH_ELEMENT> path, ILocated focus) {
+		// The version of newPath already in the code did not use a focus, so this parameter is being ignored
+		newPath(path);
+	}
+
+	@Override
+	public void pathExtended(List<PATH_ELEMENT> path, int currentPathIndex) {
+		// J. Schrum: I am unclear on what this method should do, but the bot lacked such a method,
+		// so I'm hoping it does not need it.
+	}
+
+	@Override
+	public Logger getLog() {
+		return log;
 	}
 }

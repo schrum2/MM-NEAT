@@ -1,27 +1,33 @@
 package com.mycompany.mirrorbot4;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import cz.cuni.amis.pogamut.base.agent.navigation.IPathExecutorState;
-import cz.cuni.amis.pogamut.base.agent.navigation.PathExecutorState;
 import cz.cuni.amis.pogamut.base.communication.connection.exception.ConnectionException;
 import cz.cuni.amis.pogamut.base.component.bus.event.BusAwareCountDownLatch.BusStoppedInterruptedException;
 import cz.cuni.amis.pogamut.base.component.exception.ComponentCantStartException;
 import cz.cuni.amis.pogamut.base3d.worldview.object.ILocated;
-import cz.cuni.amis.pogamut.ut2004.agent.navigation.*;
+import cz.cuni.amis.pogamut.ut2004.agent.navigation.UT2004AStarPathPlanner;
+import cz.cuni.amis.pogamut.ut2004.agent.navigation.UT2004GetBackToNavGraph;
+import cz.cuni.amis.pogamut.ut2004.agent.navigation.UT2004Navigation;
+import cz.cuni.amis.pogamut.ut2004.agent.navigation.UT2004RunStraight;
 import cz.cuni.amis.pogamut.ut2004.agent.navigation.floydwarshall.FloydWarshallMap;
 import cz.cuni.amis.pogamut.ut2004.agent.navigation.stuckdetector.UT2004DistanceStuckDetector;
 import cz.cuni.amis.pogamut.ut2004.agent.navigation.stuckdetector.UT2004PositionStuckDetector;
 import cz.cuni.amis.pogamut.ut2004.agent.navigation.stuckdetector.UT2004TimeStuckDetector;
 import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004Bot;
 import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004BotModuleController;
-import cz.cuni.amis.pogamut.ut2004.communication.messages.ItemType;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.UT2004ItemType;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbcommands.Initialize;
-import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.*;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.BotKilled;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.ConfigChange;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.GameInfo;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.InitedMessage;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.Self;
 import cz.cuni.amis.pogamut.ut2004.utils.UT2004BotRunner;
 import cz.cuni.amis.utils.exception.PogamutException;
 import cz.cuni.amis.utils.flag.FlagListener;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class MirrorBot4 extends UT2004BotModuleController
 {
@@ -225,18 +231,18 @@ public class MirrorBot4 extends UT2004BotModuleController
 			myLog.setLevel(Level.OFF);
 		}
 		
-		pathPlanner  = new UT2004AStarPathPlanner(bot);
+		ut2004PathPlanner = new UT2004AStarPathPlanner(bot);
 		fwMap        = new FloydWarshallMap(bot);
 		myNav        = new MyNavigator(bot, myLog);
-		//I feel like the goal here is to declare a variable, but it's not happening
-		pathExecutor = new MyPathExecutor<ILocated>(bot, myNav);
+		// J. Schrum: 5/25/18: Added parameters for new constructor for Pogamut 3.7.0
+		MyPathExecutor<ILocated> pathExecutor = new MyPathExecutor<ILocated>(bot, info, move, myNav, myLog);
 		
 		pathExecutor.addStuckDetector(new UT2004TimeStuckDetector(bot, 3000, 100000)); // if the bot does not move for 3 seconds, considered that it is stuck
 		pathExecutor.addStuckDetector(new UT2004PositionStuckDetector(bot));           // watch over the position history of the bot, if the bot does not move sufficiently enough, consider that it is stuck
 		pathExecutor.addStuckDetector(new UT2004DistanceStuckDetector(bot));           // watch over distances to target
 
-		getBackToNavGraph = new UT2004GetBackToNavGraph(bot, info, move);
-		runStraight = new UT2004RunStraight(bot, info, move);
-		navigation = new UT2004Navigation(bot, getNavigation().getPathExecutor(), fwMap, getBackToNavGraph, runStraight);                
+		UT2004GetBackToNavGraph getBackToNavGraph = new UT2004GetBackToNavGraph(bot, info, move);
+		UT2004RunStraight runStraight = new UT2004RunStraight(bot, info, move);
+		navigation = new UT2004Navigation(bot, pathExecutor, fwMap, getBackToNavGraph, runStraight);    
     }
 }
