@@ -267,20 +267,14 @@
       <artifactId>yaposh-ut2004</artifactId>
       <version>3.7.1-SNAPSHOT</version>
     </dependency>
-    	  	
-    <!--  
+    
+	<!--  Added to support the retrace elements of the UT^2 bot -->	  	
+	<!-- https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc -->
 	<dependency>
-		<groupId>cz.cuni.amis</groupId>
-		<artifactId>afsm</artifactId>
-		<version>1.0.1</version>
+    	<groupId>org.xerial</groupId>
+    	<artifactId>sqlite-jdbc</artifactId>
+    	<version>3.21.0</version>
 	</dependency>
-
-	<dependency>
-		<groupId>cz.cuni.amis</groupId>
-		<artifactId>introspection</artifactId>
-		<version>1.0.0</version>
-	</dependency>
-	-->
 	
 	<!-- libraries for Pogamut that are pulled down from internet repositories -->    
 	<!-- https://mvnrepository.com/artifact/com.google.inject/guice -->

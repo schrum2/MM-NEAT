@@ -12,6 +12,8 @@ import java.sql.*;
 import java.util.*;
 import java.util.logging.Level;
 
+import org.sqlite.*;
+
 /**
  * This index is a collection of PoseSequence and VoronoiRegion objects that
  * supports finding paths that pass through the closest region and also the
@@ -57,7 +59,7 @@ public class SimpleNavPointIndex extends DbLogger {
             //Register the JDBC driver for sqlite.
             Class.forName("org.sqlite.JDBC");
 
-            Connection navpointsConnection = DriverManager.getConnection("jdbc:sqlite:DATA/navpoints.db");
+            Connection navpointsConnection = DriverManager.getConnection("jdbc:sqlite:"+Constants.UT2_ROOT.get()+"DATA/navpoints.db");
 
             Statement selectNavpoint = navpointsConnection.createStatement();
             selectNavpoint.execute("SELECT id, unreal_id, level, x, y, z FROM navpoint WHERE lower(level) = '" + level + "'");
