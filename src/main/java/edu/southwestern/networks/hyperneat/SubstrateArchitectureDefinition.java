@@ -21,5 +21,6 @@ public interface SubstrateArchitectureDefinition {
 		 * @param outputNames
 		 * @return
 		 */
-		public List<Triple<String, String, Boolean>> getSubstrateConnectivity(List<String> inputNames, List<String> outputNames);		
+		public List<Triple<String, String, Boolean>> getSubstrateConnectivity(List<String> inputNames, List<String> outputNames);
+		
 }

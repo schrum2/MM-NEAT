@@ -32,4 +32,5 @@ public class TetrisConvolutionalArchitecture implements SubstrateArchitectureDef
 		List<Triple<String, String, Boolean>> substrateConnectivity = new LinkedList<Triple<String, String, Boolean>>();
 		return substrateConnectivity;
 	}
+	
 }
