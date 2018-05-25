@@ -27,4 +27,9 @@ public class TetrisConvolutionalArchitecture implements SubstrateArchitectureDef
 		return tetrisConvolutionalArchitecture;
 	}
 
+	@Override
+	public List<Triple<String, String, Boolean>> getSubstrateConnectivity(List<String> inputNames ,List<String> outputNames) {
+		List<Triple<String, String, Boolean>> substrateConnectivity = new LinkedList<Triple<String, String, Boolean>>();
+		return substrateConnectivity;
+	}
 }
