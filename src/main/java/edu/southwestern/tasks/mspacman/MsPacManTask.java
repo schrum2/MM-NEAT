@@ -57,6 +57,7 @@ import edu.southwestern.tasks.mspacman.objectives.SurvivalAndSpeedTimeScore;
 import edu.southwestern.tasks.mspacman.objectives.TimeFramesGhostScore;
 import edu.southwestern.tasks.mspacman.objectives.TimeFramesPillScore;
 import edu.southwestern.tasks.mspacman.objectives.TimeToEatAllGhostsScore;
+import edu.southwestern.tasks.popacman.controllers.GhostTeamController;
 import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.datastructures.Triple;
@@ -70,6 +71,7 @@ import oldpacman.controllers.NewGhostController;
 import oldpacman.controllers.NewPacManController;
 import oldpacman.game.Constants;
 import oldpacman.game.Game;
+
 
 /**
  * Ms. Pac-Man vs. four ghosts across four mazes.
@@ -421,7 +423,19 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 	public void loadGhosts() {
 		if (ghosts == null) {
 			try {
-				this.ghosts = new GhostControllerFacade((NewGhostController) ClassCreation.createObject("ghostTeam"));
+				
+				if(Parameters.parameters.booleanParameter("partiallyObservablePacman") == true) {
+					//create a popacman ghost team, assign to a new GhostTeamController
+					popacman.examples.StarterGhost.POGhost blinky = new popacman.examples.StarterGhost.POGhost(pacman.game.Constants.GHOST.BLINKY);
+					popacman.examples.StarterGhost.POGhost pinky = new popacman.examples.StarterGhost.POGhost(pacman.game.Constants.GHOST.PINKY);
+					popacman.examples.StarterGhost.POGhost inky = new popacman.examples.StarterGhost.POGhost(pacman.game.Constants.GHOST.INKY);
+					popacman.examples.StarterGhost.POGhost sue = new popacman.examples.StarterGhost.POGhost(pacman.game.Constants.GHOST.SUE);	
+					this.ghosts = new GhostControllerFacade(new GhostTeamController(blinky, pinky, inky, sue));
+				} else {
+					new GhostControllerFacade((NewGhostController) ClassCreation.createObject("ghostTeam"));
+				}
+				
+				//TODO: 
 			} catch (NoSuchMethodException ex) {
 				ex.printStackTrace();
 				System.exit(1);
@@ -504,7 +518,9 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 			loadGhosts();
 		}
 		tcManager.preEval();
-		game = new GameFacade(new Game(deterministic ? num : RandomNumbers.randomGenerator.nextLong()));
+		game = Parameters.parameters.booleanParameter("partiallyObservablePacman") ? 
+				new GameFacade(new pacman.game.Game(0)) : // TODO: Add support for determinism, remove hardcode
+				new GameFacade(new Game(deterministic ? num : RandomNumbers.randomGenerator.nextLong()));
 		game.setExitLairEdible(exitLairEdible);
 		game.setEndOnlyOnTimeLimit(endOnlyOnTimeLimit);
 		game.setRandomLairExit(randomLairExit);

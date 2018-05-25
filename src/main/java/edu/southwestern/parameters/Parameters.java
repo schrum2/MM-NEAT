@@ -371,6 +371,7 @@ public class Parameters {
 		booleanOptions.add("pacmanBothThreatAndEdibleSubstrate", false, "whether or not to have 2 substrates for threat and edible ghosts");
 		booleanOptions.add("pacmanFullScreenPowerInput", false, "full screen input for power pill substrate");
 		booleanOptions.add("pacmanFullScreenProcess", false, "full screen process layer");
+		booleanOptions.add("partiallyObservablePacman", false, "Whether to use the new PO Pac-Man code vs the old version");
 		booleanOptions.add("penalizeSubstrateLinks", false, "Whether to use additional fitness punishing substrate links");
 		booleanOptions.add("predsSenseAllPreds", true, "When using proximity sensors, causes predators to sense all other predators (always true for non-proximity sensors)");
 		booleanOptions.add("predsSenseAllPrey", true, "When using proximity sensors, causes predators to sense all other prey (always true for non-proximity sensors)");

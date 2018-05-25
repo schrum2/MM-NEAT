@@ -10,6 +10,14 @@ public class GhostTeamController {
 	protected final IndividualGhostController INKY;
 	protected final IndividualGhostController SUE;
 	
+	/**
+	 * 
+	 * @param BLINKY
+	 * @param PINKY
+	 * @param INKY
+	 * @param SUE
+	 * @author pricew
+	 */
 	public GhostTeamController(IndividualGhostController BLINKY, IndividualGhostController PINKY, IndividualGhostController INKY, IndividualGhostController SUE) {
 		this.BLINKY = BLINKY;
 		this.PINKY = PINKY;
