@@ -51,8 +51,7 @@ public class ExecutorFacade {
 	 */
 	public void runGameTimed(PacManControllerFacade mspacman, GhostControllerFacade ghosts, GameFacade game) {
 		if(oldE == null) {
-			//TODO: test
-			poE.runGameTimed(mspacman.poP, ghosts.poG, game.poG);
+			poE.runGameTimed(mspacman.poP, ghosts.poG, true, game.poG);
 		} else {
 			oldE.runGameTimed(mspacman.oldP, ghosts.oldG, true, game.oldG);
 		}
@@ -66,7 +65,7 @@ public class ExecutorFacade {
 	 */
 	public void runExperiment(PacManControllerFacade mspacman, GhostControllerFacade ghosts, GameFacade game) {
 		if(oldE == null) {
-			//TODO: remove magic numbers, test
+			// 1 means only run 1 trial
 			poE.runExperiment(mspacman.poP, ghosts.poG, 1, "desc", game.poG);
 		} else {
 			oldE.runExperiment(mspacman.oldP, ghosts.oldG, game.oldG);
@@ -85,7 +84,7 @@ public class ExecutorFacade {
 			boolean visual, String fileName) {
 		if(oldE == null) {
 			System.out.println("TODO: need to implement runGameTimedRecorded, ExecutorFacade ln 79");
-			poE.runGameTimedRecorded(mspacman.poP, ghosts.poG, fileName, game.poG);
+			poE.runGameTimedRecorded(mspacman.poP, ghosts.poG, fileName, game.poG, visual);
 		} else {
 			oldE.runGameTimedRecorded(game.oldG, mspacman.oldP, ghosts.oldG, visual, fileName);
 		}
@@ -101,6 +100,7 @@ public class ExecutorFacade {
 			System.out.println("TODO: need to implement replayGame, ExecutorFacade ln 92");
 			//TODO: poE.replayGame needs a game as aparameter
 			//poE.replayGame(fileName, visual, game);
+			throw new UnsupportedOperationException("TODO: implement replayGame in ExecutorFacade.java");
 		} else {
 			oldE.replayGame(fileName, visual, Parameters.parameters.integerParameter("pacmanReplayDelay"));
 		}
@@ -117,7 +117,7 @@ public class ExecutorFacade {
 			//TODO
 			System.out.println("TODO: need to implement runGameTimedNonVisual, ExecutorFacade ln 106");
 			//TODO: rectify the fact that poE has no speed optomised method
-			poE.runGameTimed(mspacman.poP, ghosts.poG, game.poG);
+			poE.runGameTimedSpeedOptimised(mspacman.poP, ghosts.poG, false, false, game.poG);
 		} else {
 			oldE.runGameTimedSpeedOptimised(mspacman.oldP, ghosts.oldG, false, false, game.oldG);
 		}
