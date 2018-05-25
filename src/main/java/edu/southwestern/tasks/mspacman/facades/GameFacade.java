@@ -3060,12 +3060,52 @@ public class GameFacade {
 		}
 	}
 	
-	public void POMoveToOldMove() {
-		//TODO
+	/**
+	 * Takes an popacman move and returns the equivalent oldpacman move
+	 * @param move
+	 * @return
+	 * @throws NoSuchFieldException
+	 * @author pricew 
+	 */
+	public static oldpacman.game.Constants.MOVE moveConverterPOOld(pacman.game.Constants.MOVE move) throws NoSuchFieldException {
+		switch(move) {
+			case NEUTRAL:
+				return oldpacman.game.Constants.MOVE.NEUTRAL;
+			case UP:
+				return oldpacman.game.Constants.MOVE.UP;
+			case LEFT:
+				return oldpacman.game.Constants.MOVE.LEFT;
+			case DOWN:
+				return oldpacman.game.Constants.MOVE.DOWN;
+			case RIGHT:
+				return oldpacman.game.Constants.MOVE.RIGHT;
+			default:
+				throw new NoSuchFieldException("The requested move does not exist");
+		}
 	}
 	
-	public void oldMoveToPOMove() {
-		//TODO
+	/**
+	 * Takes an oldpacman move and returns the equivalent popacman move
+	 * @param move
+	 * @return
+	 * @throws NoSuchFieldException
+	 * @author pricew
+	 */
+	public static pacman.game.Constants.MOVE moveConverterOldPO(oldpacman.game.Constants.MOVE move) throws NoSuchFieldException {
+		switch(move) {
+			case NEUTRAL:
+				return pacman.game.Constants.MOVE.NEUTRAL;
+			case UP:
+				return pacman.game.Constants.MOVE.UP;
+			case LEFT:
+				return pacman.game.Constants.MOVE.LEFT;
+			case DOWN:
+				return pacman.game.Constants.MOVE.DOWN;
+			case RIGHT:
+				return pacman.game.Constants.MOVE.RIGHT;
+			default:
+				throw new NoSuchFieldException("The requested move does not exist");
+		}
 	}
 
 }
