@@ -14,8 +14,8 @@ public class GhostControllerFacade {
 
 	//actual ghost controller
 	oldpacman.controllers.NewGhostController newG = null;
-	//TODO: make sure that individual ghost controller does serves the same purpose as newGhostController
-	edu.southwestern.tasks.popacman.controllers.GhostTeamController poG = null;
+	//actual ghost controller for PO conditions
+	pacman.controllers.MASController poG = null;
 	
 	/**
 	 * Constructor
@@ -30,7 +30,7 @@ public class GhostControllerFacade {
 	 * Constructor
 	 * @param g ghostController
 	 */
-	public GhostControllerFacade(edu.southwestern.tasks.popacman.controllers.GhostTeamController g) {
+	public GhostControllerFacade(pacman.controllers.MASController g) {
 		poG = g;
 	}
 
@@ -44,7 +44,7 @@ public class GhostControllerFacade {
 	 */
 	public int[] getActions(GameFacade game, long timeDue){
 		return newG == null ?
-				moveEnumToArray(poG.getMove(game.poG, timeDue)):
+				moveEnumToArrayPO(poG.getMove(game.poG, timeDue)):
 				moveEnumToArray(newG.getMove(game.newG, timeDue));
 	}
 
@@ -61,6 +61,20 @@ public class GhostControllerFacade {
 			}
 			return result;
 	}
+	
+	/**
+	 * changes move enumerations into numerical array.
+	 * Used fo popacman
+	 * @param moves
+	 * @return
+	 */
+	private int[] moveEnumToArrayPO(EnumMap<pacman.game.Constants.GHOST, pacman.game.Constants.MOVE> moves) {
+		int[] result = new int[CommonConstants.numActiveGhosts];
+		for (Entry<pacman.game.Constants.GHOST, pacman.game.Constants.MOVE> e : moves.entrySet()) {
+			result[GameFacade.ghostToIndexPO(e.getKey())] = GameFacade.moveToIndex(e.getValue());
+		}
+		return result;
+}
 
 	/**
 	 * Resets ghost controller by resetting thread 
