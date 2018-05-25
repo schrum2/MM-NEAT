@@ -1,7 +1,5 @@
 package mockcz.cuni.amis.pogamut.base.agent.navigation;
 
-import java.util.List;
-
 import cz.cuni.amis.pogamut.base.agent.navigation.IPathFuture;
 import cz.cuni.amis.pogamut.base.agent.navigation.IPathPlanner;
 import cz.cuni.amis.pogamut.base3d.worldview.object.ILocated;
@@ -13,7 +11,10 @@ import mockcz.cuni.pogamut.Client.AgentBody;
 /**
  * There was a class in Pogamut 3.011 with this name.
  * In version 3.1, this class is a facade for accessing the
- * functionality previously claimed by PathPlanner
+ * functionality previously claimed by PathPlanner.
+ * 
+ * Now, with the move to Pogamut 3.7.0, I added the getDistance
+ * method. This class remains a facade for a IPathPlanner instance.
  *
  * @author Jacob Schrum
  */
@@ -59,5 +60,10 @@ public class PathPlanner implements IPathPlanner<ILocated> {
     public IPathFuture<ILocated> computePath(ILocated from, ILocated to) {
         return planner.computePath(from, to);
     }
+
+	@Override
+	public double getDistance(ILocated from, ILocated to) {
+		return planner.getDistance(from, to);
+	}
 
 }
