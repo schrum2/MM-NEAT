@@ -17,7 +17,12 @@ public class SimpleWeaponManager implements UT2004WeaponManager {
 	public SimpleWeaponManager() {
 	}
 
+	/**
+	 * sets up the weapons preferences for the bot
+	 * @param bot (bot being given the preferences) 
+	 */
 	public void prepareWeaponPreferences(UT2004BotModuleController bot) {
+		//true = primary mode  false = secondary mode
 		bot.getWeaponPrefs().addGeneralPref(UT2004ItemType.MINIGUN, false);
 		bot.getWeaponPrefs().addGeneralPref(UT2004ItemType.MINIGUN, true);
 		bot.getWeaponPrefs().addGeneralPref(UT2004ItemType.LINK_GUN, false);
@@ -31,6 +36,11 @@ public class SimpleWeaponManager implements UT2004WeaponManager {
 		bot.getWeaponPrefs().addGeneralPref(UT2004ItemType.BIO_RIFLE, true);
 	}
 
+	/**
+	 * chooses which weapon the bot will use
+	 * @param bot (bot that will use the weapon)
+	 * @return returns the weapon choice 
+	 */
 	public ItemType chooseWeapon(UT2004BotModuleController bot) {
 		Player opponent = bot.getPlayers().getNearestEnemy(MEMORY_TIME);
 		WeaponPref wp = opponent == null ? bot.getWeaponPrefs().getWeaponPreference()
@@ -38,6 +48,9 @@ public class SimpleWeaponManager implements UT2004WeaponManager {
 		return wp.getWeapon();
 	}
 
+	/**
+	 * @return returns a copy of the weapon manager
+	 */
 	public UT2004WeaponManager copy() {
 		return new SimpleWeaponManager();
 	}
