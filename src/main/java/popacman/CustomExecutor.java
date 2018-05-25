@@ -34,7 +34,7 @@ public class CustomExecutor {
     private final Messenger messenger;
     private final double scaleFactor;
     private final boolean setDaemon;
-    private final boolean visuals;
+    //private final boolean visuals;
     private final int tickLimit;
     private final int timeLimit;
     private final POType poType;
@@ -44,13 +44,16 @@ public class CustomExecutor {
     private final Logger logger = LoggerFactory.getLogger(CustomExecutor.class);
 
     public static class Builder {
+    	
+    	// TODO: Eventually need to set these from various command line parameters,
+    	// some of which already exist in Parameters.java
         private boolean pacmanPO = true;
         private boolean ghostPO = true;
         private boolean ghostsMessage = true;
         private Messenger messenger = new BasicMessenger();
         private double scaleFactor = 1.0d;
         private boolean setDaemon = false;
-        private boolean visuals = false;
+        //private boolean visuals = false;
         private int tickLimit = 4000;
         private int timeLimit = 40;
         private POType poType = POType.LOS;
@@ -93,10 +96,11 @@ public class CustomExecutor {
             return this;
         }
 
-        public Builder setVisual(boolean visual) {
-            this.visuals = visual;
-            return this;
-        }
+        // Not used by us: J. Schrum 5/25/18
+//        public Builder setVisual(boolean visual) {
+//            this.visuals = visual;
+//            return this;
+//        }
 
         public Builder setTickLimit(int tickLimit) {
             this.tickLimit = tickLimit;
@@ -124,7 +128,7 @@ public class CustomExecutor {
         }
 
         public CustomExecutor build() {
-            return new CustomExecutor(pacmanPO, ghostPO, ghostsMessage, messenger, scaleFactor, setDaemon, visuals, tickLimit, timeLimit, poType, sightLimit, peek);
+            return new CustomExecutor(pacmanPO, ghostPO, ghostsMessage, messenger, scaleFactor, setDaemon, tickLimit, timeLimit, poType, sightLimit, peek);
         }
     }
 
@@ -135,7 +139,7 @@ public class CustomExecutor {
             Messenger messenger,
             double scaleFactor,
             boolean setDaemon,
-            boolean visuals,
+            //boolean visuals,
             int tickLimit,
             int timeLimit,
             POType poType,
@@ -148,7 +152,7 @@ public class CustomExecutor {
         this.messenger = messenger;
         this.scaleFactor = scaleFactor;
         this.setDaemon = setDaemon;
-        this.visuals = visuals;
+        //this.visuals = visuals;
         this.tickLimit = tickLimit;
         this.timeLimit = timeLimit;
         this.poType = poType;
@@ -299,6 +303,8 @@ public class CustomExecutor {
     public int runGame(Controller<MOVE> pacManController, MASController ghostController, int delay, Game game) {
         //Game game = setupGame();
 
+    	// TODO: Clean up: remove entirely or remove ? options
+    	boolean visuals = true;
         GameView gv = (visuals) ? setupGameView(pacManController, game) : null;
 
         MASController ghostControllerCopy = ghostController.copy(ghostPO);

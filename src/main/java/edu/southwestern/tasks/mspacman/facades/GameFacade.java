@@ -519,7 +519,9 @@ public class GameFacade {
 	 */
 	public int[] neighbors(int current) {
 			assert current != -1 : "-1 is not a valid node index";
-			return neighbors(oldG, current);
+			return oldG == null ?
+					neighbors(poG, current):
+					neighbors(oldG, current);
 	}
 
 	/**

@@ -171,8 +171,7 @@ public class Executor {
 	}
 
 	// public static ArrayList<Double> actionTimes = new ArrayList<Double>();
-	public void runExperiment(Controller<MOVE> pacManController, Controller<EnumMap<GHOST, MOVE>> ghostController,
-			Game game) {
+	public void runExperiment(Controller<MOVE> pacManController, Controller<EnumMap<GHOST, MOVE>> ghostController, Game game) {
 		// game._init();
 		while (!game.gameOver()) {
 			// long start = System.currentTimeMillis();

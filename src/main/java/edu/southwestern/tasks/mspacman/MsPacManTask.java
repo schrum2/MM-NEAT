@@ -74,6 +74,7 @@ import oldpacman.game.Constants;
 import oldpacman.game.Game;
 import pacman.controllers.IndividualGhostController;
 import pacman.controllers.MASController;
+import popacman.CustomExecutor;
 
 
 /**
@@ -164,7 +165,9 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 	 */
 	public MsPacManTask(boolean det) {
 		super();//constructor for noisy loner task
-		exec = new ExecutorFacade(new Executor());
+		exec = Parameters.parameters.booleanParameter("partiallyObservablePacman") ?
+				new ExecutorFacade(new CustomExecutor.Builder().build()) :
+				new ExecutorFacade(new Executor());
 		this.deterministic = det;//if game is deterministic
 		tcManager = new TrainingCampManager();
 
@@ -549,18 +552,22 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 		game = Parameters.parameters.booleanParameter("partiallyObservablePacman") ? 
 				new GameFacade(new pacman.game.Game(0)) : // TODO: Add support for determinism, remove hardcode
 				new GameFacade(new Game(deterministic ? num : RandomNumbers.randomGenerator.nextLong()));
-		game.setExitLairEdible(exitLairEdible);
-		game.setEndOnlyOnTimeLimit(endOnlyOnTimeLimit);
-		game.setRandomLairExit(randomLairExit);
-		game.setLairExitDatabase(lairExitDatabase);
-		game.setSimultaneousLairExit(simultaneousLairExit);
-		game.setGhostsStartOutsideLair(ghostsStartOutsideLair);
-		game.setOnlyOneLairExitAllowed(onlyOneLairExitAllowed);
-		game.setEndAfterGhostEatingChances(endAfterGhostEatingChances);
-		game.setRemovePillsNearPowerPills(removePillsNearPowerPills);
-		game.playWithoutPills(noPills);
-		game.playWithoutPowerPills(noPowerPills);
-		game.setEndAfterPowerPillsEaten(luringTask);
+
+		// Collection of options that are not currently possible to set in PO PacMan
+		if(!Parameters.parameters.booleanParameter("partiallyObservablePacman")) {
+			game.setExitLairEdible(exitLairEdible);
+			game.setEndOnlyOnTimeLimit(endOnlyOnTimeLimit);
+			game.setRandomLairExit(randomLairExit);
+			game.setLairExitDatabase(lairExitDatabase);
+			game.setSimultaneousLairExit(simultaneousLairExit);
+			game.setGhostsStartOutsideLair(ghostsStartOutsideLair);
+			game.setOnlyOneLairExitAllowed(onlyOneLairExitAllowed);
+			game.setEndAfterGhostEatingChances(endAfterGhostEatingChances);
+			game.setRemovePillsNearPowerPills(removePillsNearPowerPills);
+			game.playWithoutPills(noPills);
+			game.playWithoutPowerPills(noPowerPills);
+			game.setEndAfterPowerPillsEaten(luringTask);
+		}
 		int campNum = tcManager.campSetup(game, num);
 		int startingLevel = game.getCurrentLevel();
 		mspacman.reset();
