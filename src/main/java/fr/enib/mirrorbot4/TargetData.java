@@ -1,4 +1,4 @@
-package com.mycompany.mirrorbot4;
+package fr.enib.mirrorbot4;
 
 import cz.cuni.amis.pogamut.unreal.communication.messages.UnrealId;
 import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004BotModuleController;

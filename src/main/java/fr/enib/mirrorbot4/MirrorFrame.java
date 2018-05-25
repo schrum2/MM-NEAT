@@ -1,4 +1,4 @@
-package com.mycompany.mirrorbot4;
+package fr.enib.mirrorbot4;
 
 import cz.cuni.amis.pogamut.base3d.worldview.object.Location;
 import cz.cuni.amis.pogamut.base3d.worldview.object.Rotation;

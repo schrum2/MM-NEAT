@@ -1,4 +1,4 @@
-package com.mycompany.mirrorbot4;
+package fr.enib.mirrorbot4;
 
 import java.util.Iterator;
 import java.util.List;

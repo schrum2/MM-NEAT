@@ -1,4 +1,4 @@
-package com.mycompany.mirrorbot4;
+package fr.enib.mirrorbot4;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
