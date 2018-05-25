@@ -2373,21 +2373,6 @@ public class GameFacade {
 	
 	/**
 	 * Return max edible time across all ghosts.
-	 * Used for popacman
-	 * @param newG
-	 *            new pacman Game instance
-	 * @return max edible time
-	 */
-	private static int maxEdibleTimePO(pacman.game.Game newG) {
-		int max = -1;
-		for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
-			max = Math.max(max, newG.getGhostEdibleTime(indexToGhostPO(i)));
-		}
-		return max;
-	}
-	
-	/**
-	 * Return max edible time across all ghosts.
 	 * has popacman version
 	 * @param newG
 	 *            new pacman Game instance
@@ -3073,7 +3058,7 @@ public class GameFacade {
 	 * @throws NoSuchFieldException
 	 * @author pricew
 	 */
-	public static pacman.game.Constants.MOVE moveConverterOldPO(oldpacman.game.Constants.MOVE move){
+	public static pacman.game.Constants.MOVE moveConverterOldToPO(oldpacman.game.Constants.MOVE move){
 		switch(move) {
 			case NEUTRAL:
 				return pacman.game.Constants.MOVE.NEUTRAL;

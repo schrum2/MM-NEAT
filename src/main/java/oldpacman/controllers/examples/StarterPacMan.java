@@ -4,6 +4,7 @@ import static oldpacman.game.Constants.*;
 
 import java.util.ArrayList;
 
+import edu.southwestern.tasks.mspacman.facades.GameFacade;
 import oldpacman.controllers.NewPacManController;
 import oldpacman.game.Game;
 
@@ -93,21 +94,13 @@ public class StarterPacMan extends NewPacManController {
 	}
 
 	@Override
-	public int getAction(Game game, long timeDue) {
-		throw new UnsupportedOperationException("Not supported yet."); // To
-																		// change
-																		// body
-																		// of
-																		// generated
-																		// methods,
-																		// choose
-																		// Tools
-																		// |
-																		// Templates.
+	public int getAction(GameFacade gs, long timeDue) {
+		throw new UnsupportedOperationException("Not supported yet."); 
 	}
 
 	@Override
 	public void logEvaluationDetails() {
 		// No details: simple static controller
 	}
+
 }
