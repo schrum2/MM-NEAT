@@ -427,7 +427,7 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 		if (ghosts == null) {
 			try {
 				
-				//TODO: generalize this
+				//TODO: generalize this by allowing the GhostTeam to be specified as a class parameter
 				if(Parameters.parameters.booleanParameter("partiallyObservablePacman")) {
 
 					//create individual ghost controllers

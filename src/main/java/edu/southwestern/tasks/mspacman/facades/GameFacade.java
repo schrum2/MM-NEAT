@@ -654,7 +654,7 @@ public class GameFacade {
 		int result[];
 		
 		//flow control to differentiate between oldpacman and popacman
-		if(oldG == null) {
+		if(oldG != null) {
 			result = oldG.getShortestPath(from, to);
 		} else {
 			result = poG.getShortestPath(from, to);
