@@ -15,7 +15,7 @@ public class GhostControllerFacade {
 	//actual ghost controller
 	oldpacman.controllers.NewGhostController newG = null;
 	//TODO: make sure that individual ghost controller does serves the same purpose as newGhostController
-	pacman.controllers.IndividualGhostController poG = null;
+	edu.southwestern.tasks.popacman.controllers.GhostTeamController poG = null;
 	
 	/**
 	 * Constructor
@@ -30,19 +30,21 @@ public class GhostControllerFacade {
 	 * Constructor
 	 * @param g ghostController
 	 */
-	public GhostControllerFacade(pacman.controllers.IndividualGhostController g) {
+	public GhostControllerFacade(edu.southwestern.tasks.popacman.controllers.GhostTeamController g) {
 		poG = g;
 	}
 
 	/**
 	 * Gets actions available to ghost
+	 * Supports popacman (TODO: test test test test)
 	 * @param game game ghost is in
 	 * @param timeDue time ghost has to make decision//TODO
 	 * @return available actions
+	 * @throws NoSuchFieldException 
 	 */
-	public int[] getActions(GameFacade game, long timeDue) {
+	public int[] getActions(GameFacade game, long timeDue){
 		return newG == null ?
-				moveEnumToArrayPO(newG.getMove(game.poG, timeDue)): //TODO, implement this method for popacman
+				moveEnumToArray(poG.getMove(game.poG, timeDue)):
 				moveEnumToArray(newG.getMove(game.newG, timeDue));
 	}
 
@@ -56,19 +58,6 @@ public class GhostControllerFacade {
 			int[] result = new int[CommonConstants.numActiveGhosts];
 			for (Entry<oldpacman.game.Constants.GHOST, oldpacman.game.Constants.MOVE> e : moves.entrySet()) {
 				result[GameFacade.ghostToIndex(e.getKey())] = GameFacade.moveToIndex(e.getValue());
-			}
-			return result;
-	}
-	
-	/**
-	 * changes move enumerations into numerical array
-	 * @param moves possible moves
-	 * @return integer representations of moves
-	 */
-	private int[] moveEnumToArrayPO(EnumMap<pacman.game.Constants.GHOST, pacman.game.Constants.MOVE> moves) {
-			int[] result = new int[CommonConstants.numActiveGhosts];
-			for (Entry<pacman.game.Constants.GHOST, pacman.game.Constants.MOVE> e : moves.entrySet()) {
-				result[GameFacade.ghostToIndexPO(e.getKey())] = GameFacade.moveToIndex(e.getValue());
 			}
 			return result;
 	}
