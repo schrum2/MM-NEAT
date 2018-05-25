@@ -1,5 +1,6 @@
 package oldpacman.controllers;
 
+import edu.southwestern.tasks.mspacman.facades.GameFacade;
 import oldpacman.game.Game;
 import oldpacman.game.Constants.MOVE;
 
@@ -14,7 +15,33 @@ public abstract class NewPacManController extends Controller<MOVE> {
 	// Just some unique value
 	public static final int END_GAME_CODE = 27;
 
-	public abstract int getAction(Game game, long timeDue);
+	/**
+	 * Finds the action to do based off of the game and the game's various
+	 * current factors, such as the number of ghosts eaten, pacman's lives,
+	 * direction, and location
+	 * 
+	 * Used by oldpacman
+	 * 
+	 * @param gs
+	 *            the gameFacade
+	 * @param timeDue
+	 * @return the action to take or a number indicating the end of the game
+	 */
+	public int getAction(final Game gs, long timeDue) {
+		return getAction(new GameFacade(gs), timeDue);
+	}
+
+	/**
+	 * Finds the action to do based off of the game and the game's various
+	 * current factors, such as the number of ghosts eaten, pacman's lives,
+	 * direction, and location
+	 * 
+	 * @param gs
+	 *            the gameFacade
+	 * @param timeDue
+	 * @return the action to take or a number indicating the end of the game
+	 */
+	public abstract int getAction(GameFacade gs, long timeDue);
 
 	@Override
 	public MOVE getMove(Game game, long timeDue) {
