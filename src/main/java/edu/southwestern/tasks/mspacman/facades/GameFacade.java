@@ -24,7 +24,7 @@ public class GameFacade {
 	public static final int MAX_DISTANCE = 200;
 	public static final int NUM_DIRS = 4;
 	public static final int DANGEROUS_TIME = 5;
-	public oldpacman.game.Game newG = null;
+	public oldpacman.game.Game oldG = null;
 	public pacman.game.Game poG = null; // New pacman from Maven
 
 	/**
@@ -327,7 +327,7 @@ public class GameFacade {
 	 * @param g game
 	 */
 	public GameFacade(oldpacman.game.Game g) {
-		newG = g;
+		oldG = g;
 	}
 
 	/**
@@ -346,9 +346,9 @@ public class GameFacade {
 	 * @return list of times
 	 */
 	public List<Integer> getPillEatTimes() {
-		if(newG == null) throw new UnsupportedOperationException("TODO: implement Get getPillEatTimes");
+		if(oldG == null) throw new UnsupportedOperationException("TODO: implement Get getPillEatTimes");
 		
-		return newG.getPillEatTimes();
+		return oldG.getPillEatTimes();
 	}
 
 	/**
@@ -358,9 +358,9 @@ public class GameFacade {
 	 * @return time
 	 */
 	public int getNextEdibleTime() {
-		if(newG == null) throw new UnsupportedOperationException("TODO: implement Get getNextEdibleTime");
+		if(oldG == null) throw new UnsupportedOperationException("TODO: implement Get getNextEdibleTime");
 		
-		return newG.newEdibleTime();
+		return oldG.newEdibleTime();
 	}
 
 	/**
@@ -369,9 +369,9 @@ public class GameFacade {
 	 * @return how many times ghost was eaten
 	 */
 	public int getSpecificGhostEatenCount(int ghostIndex) {
-		if(newG == null) throw new UnsupportedOperationException("TODO: implement Get SpecificGhostEatenCount");
+		if(oldG == null) throw new UnsupportedOperationException("TODO: implement Get SpecificGhostEatenCount");
 		
-		return newG.getEatenGhosts(ghostIndex);
+		return oldG.getEatenGhosts(ghostIndex);
 	}
 
 	/**
@@ -380,9 +380,9 @@ public class GameFacade {
 	 * @return
 	 */
 	public int getNumEatenGhosts() {
-		return newG == null ?
+		return oldG == null ?
 				poG.getNumGhostsEaten():
-				newG.getEatenGhosts();
+				oldG.getEatenGhosts();
 	}
 
 	/**
@@ -391,9 +391,9 @@ public class GameFacade {
 	 * @return
 	 */
 	public double getScore() {
-		return newG == null ?
+		return oldG == null ?
 				poG.getScore():
-				newG.getScore();
+				oldG.getScore();
 	}
 
 	/**
@@ -403,9 +403,9 @@ public class GameFacade {
 	 * @return
 	 */
 	public double getGhostReward() {
-		return newG == null ?
+		return oldG == null ?
 				-1: //TODO: write a getGhostReward for poG
-				newG.getGhostReward();
+				oldG.getGhostReward();
 	}
 
 	/**
@@ -414,9 +414,9 @@ public class GameFacade {
 	 * @return current level
 	 */
 	public int getCurrentLevel() {
-		return newG == null ?
+		return oldG == null ?
 				poG.getCurrentLevel():
-				newG.getCurrentLevel();
+				oldG.getCurrentLevel();
 	}
 
 	/**
@@ -424,9 +424,9 @@ public class GameFacade {
 	 * @return number of eaten pills
 	 */
 	public int getEatenPills() {
-		return newG == null ?
+		return oldG == null ?
 				-1: //TODO: write a getEatenPills method for poG
-				newG.getEatenPills();
+				oldG.getEatenPills();
 	}
 
 	/**
@@ -435,9 +435,9 @@ public class GameFacade {
 	 * @return total game play time
 	 */
 	public int getTotalTime() {
-		return newG == null ?
+		return oldG == null ?
 				poG.getTotalTime():
-				newG.getTotalTime();
+				oldG.getTotalTime();
 	}
 
 	/**
@@ -447,9 +447,9 @@ public class GameFacade {
 	 * @return num lives remaining
 	 */
 	public int getPacmanNumberOfLivesRemaining() {
-		return newG == null ?
+		return oldG == null ?
 				poG.getPacmanNumberOfLivesRemaining():
-				newG.getPacmanNumberOfLivesRemaining();
+				oldG.getPacmanNumberOfLivesRemaining();
 	}
 
 	/**
@@ -458,9 +458,9 @@ public class GameFacade {
 	 * @return time spent on level
 	 */
 	public int getCurrentLevelTime() {
-		return newG == null ? 
+		return oldG == null ? 
 			poG.getCurrentLevelTime():
-			newG.getCurrentLevelTime();
+			oldG.getCurrentLevelTime();
 	}
 
 	/**
@@ -469,9 +469,9 @@ public class GameFacade {
 	 * @return current node
 	 */
 	public int getPacmanCurrentNodeIndex() {
-		return newG == null ? 
+		return oldG == null ? 
 			poG.getPacmanCurrentNodeIndex(): // assumes must be poG 
-			newG.getPacmanCurrentNodeIndex();
+			oldG.getPacmanCurrentNodeIndex();
 	}
 
 	/**
@@ -480,9 +480,9 @@ public class GameFacade {
 	 * @return index corresponding to pacmans last move
 	 */
 	public int getPacmanLastMoveMade() {
-		return newG == null ?
+		return oldG == null ?
 				moveToIndex(poG.getPacmanLastMoveMade()):
-				moveToIndex(newG.getPacmanLastMoveMade());
+				moveToIndex(oldG.getPacmanLastMoveMade());
 	}
 
 	/**
@@ -491,9 +491,9 @@ public class GameFacade {
 	 * @return whether or not game requires action
 	 */
 	public boolean anyRequiresAction() {
-		return newG == null ?
+		return oldG == null ?
 				anyRequiresActionPO(poG):
-				anyRequiresAction(newG);
+				anyRequiresAction(oldG);
 	}
 
 	/**
@@ -502,9 +502,9 @@ public class GameFacade {
 	 * @return ghosts edible
 	 */
 	public boolean anyIsEdible() {
-		return newG == null ? 
+		return oldG == null ? 
 				anyIsEdible(poG) :
-				anyIsEdible(newG);
+				anyIsEdible(oldG);
 	}
 
 	/**
@@ -519,7 +519,7 @@ public class GameFacade {
 	 */
 	public int[] neighbors(int current) {
 			assert current != -1 : "-1 is not a valid node index";
-			return neighbors(newG, current);
+			return neighbors(oldG, current);
 	}
 
 	/**
@@ -559,7 +559,7 @@ public class GameFacade {
 		}
 		
 		//flow control to differentiate between newG and poG
-		if(newG == null) {
+		if(oldG == null) {
 			neighbors[getReversePO(lastMove)] = -1;
 			return neighbors;
 		} else {
@@ -575,9 +575,9 @@ public class GameFacade {
 	 * @return true or false
 	 */
 	public boolean ghostReversal() {
-		return newG == null ?
+		return oldG == null ?
 				poG.getTimeOfLastGlobalReversal() == poG.getTotalTime():
-				newG.getTimeOfLastGlobalReversal() == newG.getTotalTime();
+				oldG.getTimeOfLastGlobalReversal() == oldG.getTotalTime();
 	}
 
 	/**
@@ -586,9 +586,9 @@ public class GameFacade {
 	 * @return time of last ghost reversal
 	 */
 	public int getTimeOfLastGlobalReversal() {
-		return newG == null ?
+		return oldG == null ?
 				poG.getTimeOfLastGlobalReversal():
-				newG.getTimeOfLastGlobalReversal();
+				oldG.getTimeOfLastGlobalReversal();
 	}
 
 	/**
@@ -599,12 +599,12 @@ public class GameFacade {
 	 */
 	public int timeSinceLastGlobalReversal() {
 		//flow control to differentiate between newG and poG
-		if(newG == null) {
+		if(oldG == null) {
 			int timeOfReversal = poG.getTimeOfLastGlobalReversal();
 			return timeOfReversal == -1 ? -1 : poG.getTotalTime() - timeOfReversal;
 		} else {
-			int timeOfReversal = newG.getTimeOfLastGlobalReversal();
-			return timeOfReversal == -1 ? -1 : newG.getTotalTime() - timeOfReversal;
+			int timeOfReversal = oldG.getTimeOfLastGlobalReversal();
+			return timeOfReversal == -1 ? -1 : oldG.getTotalTime() - timeOfReversal;
 		}
 	}
 
@@ -614,9 +614,9 @@ public class GameFacade {
 	 * @return max time edible ghost
 	 */
 	public int maxEdibleTime() {
-		return newG == null ?
+		return oldG == null ?
 				maxEdibleTime(poG):
-				maxEdibleTime(newG);
+				maxEdibleTime(oldG);
 	}
 	
 	/**
@@ -626,9 +626,9 @@ public class GameFacade {
 	 * @return index of occupied node
 	 */
 	public int getGhostCurrentNodeIndex(int ghostIndex) {
-		return newG == null ?
+		return oldG == null ?
 				poG.getGhostCurrentNodeIndex(indexToGhostPO(ghostIndex)):
-				newG.getGhostCurrentNodeIndex(indexToGhost(ghostIndex));
+				oldG.getGhostCurrentNodeIndex(indexToGhost(ghostIndex));
 	}
 
 	/**
@@ -638,9 +638,9 @@ public class GameFacade {
 	 * @return move ghost made
 	 */
 	public int getGhostLastMoveMade(int ghostIndex) {
-		return newG == null ?
+		return oldG == null ?
 				moveToIndex(poG.getGhostLastMoveMade(indexToGhostPO(ghostIndex))):
-				moveToIndex(newG.getGhostLastMoveMade(indexToGhost(ghostIndex)));
+				moveToIndex(oldG.getGhostLastMoveMade(indexToGhost(ghostIndex)));
 	}
 
 	/**
@@ -654,8 +654,8 @@ public class GameFacade {
 		int result[];
 		
 		//flow control to differentiate between oldpacman and popacman
-		if(newG == null) {
-			result = newG.getShortestPath(from, to);
+		if(oldG == null) {
+			result = oldG.getShortestPath(from, to);
 		} else {
 			result = poG.getShortestPath(from, to);
 		}
@@ -674,9 +674,9 @@ public class GameFacade {
 	 * @return ghost edible
 	 */
 	public boolean isGhostEdible(int ghostIndex) {
-		return newG == null ?
+		return oldG == null ?
 				poG.isGhostEdible(indexToGhostPO(ghostIndex)): 
-				newG.isGhostEdible(indexToGhost(ghostIndex));
+				oldG.isGhostEdible(indexToGhost(ghostIndex));
 	}
 
 	/**
@@ -771,9 +771,9 @@ public class GameFacade {
 	 * @return power pill or not
 	 */
 	public boolean isPowerPillIndex(int index) {
-		return newG == null ?
+		return oldG == null ?
 				ArrayUtils.contains(poG.getActivePowerPillsIndices(), index):
-				ArrayUtils.contains(newG.getActivePowerPillsIndices(), index);
+				ArrayUtils.contains(oldG.getActivePowerPillsIndices(), index);
 	}
 
 	/**
@@ -783,9 +783,9 @@ public class GameFacade {
 	 * @return whether node is a junction
 	 */
 	public boolean isJunction(int current) {
-		return newG == null ?
+		return oldG == null ?
 				poG.isJunction(current):
-				newG.isJunction(current);
+				oldG.isJunction(current);
 	}
 
 	/**
@@ -808,7 +808,7 @@ public class GameFacade {
 			int move = ArrayUtil.position(neighbors, open);
 			
 			//flow control to differentiate between oldpacman and popacman
-			if(newG == null) {
+			if(oldG == null) {
 				if (-1 == neighbors[getReversePO(move)]) {
 					return true;
 				}
@@ -831,9 +831,9 @@ public class GameFacade {
 	 * @return euclidian distance
 	 */
 	public double getEuclideanDistance(int from, int to) {
-			return newG == null ?
+			return oldG == null ?
 					poG.getEuclideanDistance(from, to):
-					newG.getEuclideanDistance(from, to);
+					oldG.getEuclideanDistance(from, to);
 		
 	}
 
@@ -845,9 +845,9 @@ public class GameFacade {
 	 * @return distance
 	 */
 	public double getShortestPathDistance(int from, int to) {
-		return newG == null ?
+		return oldG == null ?
 				poG.getShortestPathDistance(from, to):
-				newG.getShortestPathDistance(from, to);
+				oldG.getShortestPathDistance(from, to);
 	}
 
 	/**
@@ -856,9 +856,9 @@ public class GameFacade {
 	 * @return array of node junction indices
 	 */
 	public int[] getJunctionIndices() {
-			return newG == null ?
+			return oldG == null ?
 					poG.getJunctionIndices():
-					newG.getJunctionIndices();
+					oldG.getJunctionIndices();
 	}
 
 	/**
@@ -869,9 +869,9 @@ public class GameFacade {
 	 * @return number open neighbors
 	 */
 	public int getNumNeighbours(int node) {
-		return newG == null ?
+		return oldG == null ?
 				poG.getNeighbouringNodes(node).length:
-				newG.getNeighbouringNodes(node).length;
+				oldG.getNeighbouringNodes(node).length;
 	}
 
 	/**
@@ -891,9 +891,9 @@ public class GameFacade {
 	 * @return The maze index
 	 */
 	public int getMazeIndex() {
-		return newG == null ?
+		return oldG == null ?
 				poG.getMazeIndex():
-				newG.getMazeIndex();
+				oldG.getMazeIndex();
 	}
 
 	/**
@@ -921,9 +921,9 @@ public class GameFacade {
 	 * @return indices of power pills
 	 */
 	public int[] getActivePowerPillsIndices() {
-		return newG == null ?
+		return oldG == null ?
 				poG.getActivePowerPillsIndices():
-				newG.getActivePowerPillsIndices();
+				oldG.getActivePowerPillsIndices();
 	}
 
 	/**
@@ -933,9 +933,9 @@ public class GameFacade {
 	 * @return time ghost in lair
 	 */
 	public int getGhostLairTime(int ghostIndex) {
-		return newG == null ?
+		return oldG == null ?
 				poG.getGhostLairTime(indexToGhostPO(ghostIndex)) :
-				newG.getGhostLairTime(indexToGhost(ghostIndex));
+				oldG.getGhostLairTime(indexToGhost(ghostIndex));
 	}
 
 	/**
@@ -944,9 +944,9 @@ public class GameFacade {
 	 * @return indices of active pills
 	 */
 	public int[] getActivePillsIndices() {
-		return newG == null ?
+		return oldG == null ?
 				poG.getActivePillsIndices():
-				newG.getActivePillsIndices();
+				oldG.getActivePillsIndices();
 	}
 
 	/**
@@ -961,9 +961,9 @@ public class GameFacade {
 	 * @return the closest node index from node index
 	 */
 	public int getClosestNodeIndexFromNodeIndex(int current, int[] targets) {
-		return newG == null ?
+		return oldG == null ?
 				poG.getClosestNodeIndexFromNodeIndex(current, targets, pacman.game.Constants.DM.PATH):
-				newG.getClosestNodeIndexFromNodeIndex(current, targets, oldpacman.game.Constants.DM.PATH);
+				oldG.getClosestNodeIndexFromNodeIndex(current, targets, oldpacman.game.Constants.DM.PATH);
 	}
 
 	/**
@@ -983,13 +983,13 @@ public class GameFacade {
 	 * @param nodes nodes to set color
 	 */
 	public void addPoints(Color c, int[] nodes) {
-		if(newG == null) {
+		if(oldG == null) {
 			if(nodes.length > 0) {
 				pacman.game.GameView.addPoints(poG, c, ArrayUtil.filter(nodes, -1));
 			}
 		} else {
 			if (nodes.length > 0) {
-				oldpacman.game.GameView.addPoints(newG, c, ArrayUtil.filter(nodes, -1));
+				oldpacman.game.GameView.addPoints(oldG, c, ArrayUtil.filter(nodes, -1));
 			}
 		}
 	}
@@ -1002,9 +1002,9 @@ public class GameFacade {
 	 * @return distance
 	 */
 	public double getPathDistance(int from, int to) {
-		return newG == null ?
+		return oldG == null ?
 				poG.getDistance(from, to, pacman.game.Constants.DM.PATH):
-				newG.getDistance(from, to, oldpacman.game.Constants.DM.PATH);
+				oldG.getDistance(from, to, oldpacman.game.Constants.DM.PATH);
 	}
 
 	/**
@@ -1013,9 +1013,9 @@ public class GameFacade {
 	 * @return hitting wall
 	 */
 	public boolean pacmanHittingWall() {
-		return newG == null ?
+		return oldG == null ?
 				poG.getPacmanLastMoveMade().equals(pacman.game.Constants.MOVE.NEUTRAL):
-				newG.getPacmanLastMoveMade().equals(oldpacman.game.Constants.MOVE.NEUTRAL);
+				oldG.getPacmanLastMoveMade().equals(oldpacman.game.Constants.MOVE.NEUTRAL);
 	}
 
 	/**
@@ -1024,9 +1024,9 @@ public class GameFacade {
 	 * @return node of the lair exit
 	 */
 	public int getGhostInitialNodeIndex() {
-		return newG == null ?
+		return oldG == null ?
 				poG.getGhostInitialNodeIndex():
-				newG.getGhostInitialNodeIndex();
+				oldG.getGhostInitialNodeIndex();
 	}
 
 	/**
@@ -1041,10 +1041,10 @@ public class GameFacade {
 	 */
 	public void addLines(Color c, int from, int to) {
 		//flow control to differentiate between oldpacman and popacman
-		if(newG == null) {
+		if(oldG == null) {
 			pacman.game.GameView.addLines(poG, c, from, to);
 		} else {
-			oldpacman.game.GameView.addLines(newG, c, from, to);
+			oldpacman.game.GameView.addLines(oldG, c, from, to);
 		}
 
 	}
@@ -1056,9 +1056,9 @@ public class GameFacade {
 	 * @return time ghost is edible
 	 */
 	public int getGhostEdibleTime(int ghostIndex) {
-		return newG == null ?
+		return oldG == null ?
 				poG.getGhostEdibleTime(indexToGhostPO(ghostIndex)):
-				newG.getGhostEdibleTime(indexToGhost(ghostIndex));
+				oldG.getGhostEdibleTime(indexToGhost(ghostIndex));
 	}
 
 	/**
@@ -1068,11 +1068,11 @@ public class GameFacade {
 	 * @return index of move
 	 */
 	public int getNextGhostDirTowards(int whichGhost, int to) {
-		return newG == null ?
+		return oldG == null ?
 				moveToIndex(poG.getApproximateNextMoveTowardsTarget(getGhostCurrentNodeIndex(whichGhost), to,
 						poG.getGhostLastMoveMade(indexToGhostPO(whichGhost)), pacman.game.Constants.DM.PATH)):
-				moveToIndex(newG.getApproximateNextMoveTowardsTarget(getGhostCurrentNodeIndex(whichGhost), to,
-						newG.getGhostLastMoveMade(indexToGhost(whichGhost)), oldpacman.game.Constants.DM.PATH));
+				moveToIndex(oldG.getApproximateNextMoveTowardsTarget(getGhostCurrentNodeIndex(whichGhost), to,
+						oldG.getGhostLastMoveMade(indexToGhost(whichGhost)), oldpacman.game.Constants.DM.PATH));
 	}	
 
 	/**
@@ -1082,11 +1082,11 @@ public class GameFacade {
 	 * @return index of move
 	 */
 	public int getNextGhostDirAway(int whichGhost, int to) {
-		return newG == null ?
+		return oldG == null ?
 				moveToIndex(poG.getApproximateNextMoveAwayFromTarget(getGhostCurrentNodeIndex(whichGhost), to,
 						poG.getGhostLastMoveMade(indexToGhostPO(whichGhost)), pacman.game.Constants.DM.PATH)):
-				moveToIndex(newG.getApproximateNextMoveAwayFromTarget(getGhostCurrentNodeIndex(whichGhost), to,
-						newG.getGhostLastMoveMade(indexToGhost(whichGhost)), oldpacman.game.Constants.DM.PATH));
+				moveToIndex(oldG.getApproximateNextMoveAwayFromTarget(getGhostCurrentNodeIndex(whichGhost), to,
+						oldG.getGhostLastMoveMade(indexToGhost(whichGhost)), oldpacman.game.Constants.DM.PATH));
 	}
 
 	/**
@@ -1102,9 +1102,9 @@ public class GameFacade {
 	 * @return move
 	 */
 	public int getRestrictedNextDir(int from, int to, int lastDir) {
-		return newG == null ?
+		return oldG == null ?
 				moveToIndex(poG.getApproximateNextMoveTowardsTarget(from, to, indexToMovePO(lastDir), pacman.game.Constants.DM.PATH)):
-				moveToIndex(newG.getApproximateNextMoveTowardsTarget(from, to, indexToMove(lastDir), oldpacman.game.Constants.DM.PATH));
+				moveToIndex(oldG.getApproximateNextMoveTowardsTarget(from, to, indexToMove(lastDir), oldpacman.game.Constants.DM.PATH));
 	}
 
 	/**
@@ -1114,9 +1114,9 @@ public class GameFacade {
 	 * @return direction
 	 */
 	public int getNextPacManDirTowardsTarget(int to) {
-		return newG == null ?
+		return oldG == null ?
 				moveToIndex(poG.getNextMoveTowardsTarget(poG.getPacmanCurrentNodeIndex(), to, pacman.game.Constants.DM.PATH)):
-				moveToIndex(newG.getNextMoveTowardsTarget(newG.getPacmanCurrentNodeIndex(), to, oldpacman.game.Constants.DM.PATH));
+				moveToIndex(oldG.getNextMoveTowardsTarget(oldG.getPacmanCurrentNodeIndex(), to, oldpacman.game.Constants.DM.PATH));
 	}
 
 	/**
@@ -1126,9 +1126,9 @@ public class GameFacade {
 	 * @return direction
 	 */
 	public int getNextPacManDirAwayFromTarget(int to) {
-		return newG == null ?
+		return oldG == null ?
 				moveToIndex(poG.getNextMoveAwayFromTarget(poG.getPacmanCurrentNodeIndex(), to, pacman.game.Constants.DM.PATH)):
-				moveToIndex(newG.getNextMoveAwayFromTarget(newG.getPacmanCurrentNodeIndex(), to, oldpacman.game.Constants.DM.PATH));
+				moveToIndex(oldG.getNextMoveAwayFromTarget(oldG.getPacmanCurrentNodeIndex(), to, oldpacman.game.Constants.DM.PATH));
 	}
 
 	/**
@@ -1137,9 +1137,9 @@ public class GameFacade {
 	 * @return num pills
 	 */
 	public int getNumberOfPills() {
-		return newG == null ?
+		return oldG == null ?
 				poG.getNumberOfPills():
-				newG.getNumberOfPills();
+				oldG.getNumberOfPills();
 	}
 
 	/**
@@ -1148,9 +1148,9 @@ public class GameFacade {
 	 * @return num power pills
 	 */
 	public int getNumberOfPowerPills() {
-		return newG == null ?
+		return oldG == null ?
 				poG.getNumberOfPowerPills():
-				newG.getNumberOfPowerPills();
+				oldG.getNumberOfPowerPills();
 	}
 
 	/**
@@ -1159,9 +1159,9 @@ public class GameFacade {
 	 * @return the current value awarded for eating a ghost.
 	 */
 	public int getGhostCurrentEdibleScore() {
-			return newG == null ?
+			return oldG == null ?
 				poG.getGhostCurrentEdibleScore():
-				newG.getGhostCurrentEdibleScore();
+				oldG.getGhostCurrentEdibleScore();
 	}
 
 	/**
@@ -1171,9 +1171,9 @@ public class GameFacade {
 	 * @return x coordinate
 	 */
 	public int getNodeXCoord(int current) {
-		return newG == null ?
+		return oldG == null ?
 				poG.getNodeXCood(current):
-				newG.getNodeXCoord(current);
+				oldG.getNodeXCoord(current);
 	}
 
 	/**
@@ -1183,9 +1183,9 @@ public class GameFacade {
 	 * @return y coordinate
 	 */
 	public int getNodeYCoord(int current) {
-		return newG == null ?
+		return oldG == null ?
 				poG.getNodeYCood(current):
-				newG.getNodeYCoord(current);
+				oldG.getNodeYCoord(current);
 	}
 
 	/**
@@ -1194,9 +1194,9 @@ public class GameFacade {
 	 * @return indices of pills
 	 */
 	public int[] getPillIndices() {
-		return newG == null ?
-				newG.getPillIndices():
-				newG.getPillIndices();
+		return oldG == null ?
+				oldG.getPillIndices():
+				oldG.getPillIndices();
 	}
 
 	/**
@@ -1205,9 +1205,9 @@ public class GameFacade {
 	 * @return indices of power pills
 	 */
 	public int[] getPowerPillIndices() {
-		return newG == null ?
+		return oldG == null ?
 				poG.getPowerPillIndices():
-				newG.getPowerPillIndices();
+				oldG.getPowerPillIndices();
 	}
 
 	/**
@@ -1217,9 +1217,9 @@ public class GameFacade {
 	 * @return whether or not in maze
 	 */
 	public boolean nodeInMaze(int index) {
-		return newG == null ?
+		return oldG == null ?
 				index < poG.getCurrentMaze().graph.length:
-				index < newG.getCurrentMaze().graph.length;
+				index < oldG.getCurrentMaze().graph.length;
 	}
 	
 
@@ -1229,9 +1229,9 @@ public class GameFacade {
 	 * @return length of maze
 	 */
 	public int lengthMaze() {
-		return newG == null ?
+		return oldG == null ?
 				poG.getCurrentMaze().graph.length:
-				newG.getCurrentMaze().graph.length;
+				oldG.getCurrentMaze().graph.length;
 	}
 	
 	/**
@@ -1319,13 +1319,13 @@ public class GameFacade {
 			}
 			
 			//flow control to differentiate between oldpacman and popacman
-			if(newG == null) {
+			if(oldG == null) {
 				assert targetNodeIndices[i] < poG.getCurrentMaze().graph.length : targetNodeIndices[i]
 						+ " is not an index in the maze " + poG.getCurrentLevel() + "/" + poG.getCurrentMaze().name
 						+ " : " + Arrays.toString(targetNodeIndices) + ":" + targetNodeIndices.length;
 			} else {
-				assert targetNodeIndices[i] < newG.getCurrentMaze().graph.length : targetNodeIndices[i]
-						+ " is not an index in the maze " + newG.getCurrentLevel() + "/" + newG.getCurrentMaze().name
+				assert targetNodeIndices[i] < oldG.getCurrentMaze().graph.length : targetNodeIndices[i]
+						+ " is not an index in the maze " + oldG.getCurrentLevel() + "/" + oldG.getCurrentMaze().name
 						+ " : " + Arrays.toString(targetNodeIndices) + ":" + targetNodeIndices.length;
 			}
 			
@@ -1357,11 +1357,11 @@ public class GameFacade {
 	 * @return euclidian distance
 	 */
 	public double getGhostPathDistance(int ghostIndex, int toNodeIndex) {
-		return newG == null ?
+		return oldG == null ?
 			poG.getDistance(getGhostCurrentNodeIndex(ghostIndex), toNodeIndex,
 				poG.getGhostLastMoveMade(indexToGhostPO(ghostIndex)), pacman.game.Constants.DM.PATH):
-			newG.getDistance(getGhostCurrentNodeIndex(ghostIndex), toNodeIndex,
-					newG.getGhostLastMoveMade(indexToGhost(ghostIndex)), oldpacman.game.Constants.DM.PATH);
+			oldG.getDistance(getGhostCurrentNodeIndex(ghostIndex), toNodeIndex,
+					oldG.getGhostLastMoveMade(indexToGhost(ghostIndex)), oldpacman.game.Constants.DM.PATH);
 	}
 
 	/**
@@ -1381,7 +1381,7 @@ public class GameFacade {
 		edibleTime = this.getGhostEdibleTime(ghostIndex);
 		
 		//flow control to differentiate between oldpacman and popacman
-		if(newG == null) {
+		if(oldG == null) {
 			effectiveEdibleTime = Math.min(edibleTime, distance * pacman.game.Constants.GHOST_SPEED_REDUCTION);
 			return effectiveEdibleTime + distance
 					- ((int) Math.ceil(effectiveEdibleTime / pacman.game.Constants.GHOST_SPEED_REDUCTION));
@@ -1420,10 +1420,10 @@ public class GameFacade {
 		int[] result;
 		
 		//flow control to differentiate between oldpacman and popacman
-		if(newG == null) {
+		if(oldG == null) {
 			result = poG.getShortestPath(getGhostCurrentNodeIndex(ghostIndex), target, poG.getGhostLastMoveMade(indexToGhostPO(ghostIndex)));
 		} else {
-			result = newG.getShortestPath(getGhostCurrentNodeIndex(ghostIndex), target, newG.getGhostLastMoveMade(indexToGhost(ghostIndex)));
+			result = oldG.getShortestPath(getGhostCurrentNodeIndex(ghostIndex), target, oldG.getGhostLastMoveMade(indexToGhost(ghostIndex)));
 		}
 		
 		assert(result.length == 0 || result[result.length - 1] == target) : ("Last element of path should be the to location!");
@@ -1441,12 +1441,12 @@ public class GameFacade {
 		for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
 			
 			//flow control to differentiate between popacman and oldpacman
-			if(newG == null) {
+			if(oldG == null) {
 				if (poG.isGhostEdible(indexToGhostPO(i))) {
 					total++;
 				}
 			} else {
-				if (newG.isGhostEdible(indexToGhost(i))) {
+				if (oldG.isGhostEdible(indexToGhost(i))) {
 					total++;
 				}
 			}
@@ -1498,9 +1498,9 @@ public class GameFacade {
 	 * @return farthest node from targets array
 	 */
 	public int getFarthestNodeIndexFromNodeIndex(int current, int[] targets) {
-		return newG == null ?
+		return oldG == null ?
 				poG.getFarthestNodeIndexFromNodeIndex(current, targets, pacman.game.Constants.DM.PATH):
-				newG.getFarthestNodeIndexFromNodeIndex(current, targets, oldpacman.game.Constants.DM.PATH);
+				oldG.getFarthestNodeIndexFromNodeIndex(current, targets, oldpacman.game.Constants.DM.PATH);
 	}	
 
 	/**
@@ -1861,9 +1861,9 @@ public class GameFacade {
 	 * @return next move
 	 */
 	public int getNextMoveTowardsTarget(int from, int to) {
-		return newG == null ?
+		return oldG == null ?
 				moveToIndex(poG.getNextMoveTowardsTarget(from, to, pacman.game.Constants.DM.PATH)):
-				moveToIndex(newG.getNextMoveTowardsTarget(from, to, oldpacman.game.Constants.DM.PATH));
+				moveToIndex(oldG.getNextMoveTowardsTarget(from, to, oldpacman.game.Constants.DM.PATH));
 	}
 
 	/**
@@ -1883,7 +1883,7 @@ public class GameFacade {
 	 */
 	public void advanceGame(int pacManDir, int[] ghostDirs) {
 		//flow control to differentiate between popacman and oldpacman 
-		if(newG == null) {
+		if(oldG == null) {
 			EnumMap<pacman.game.Constants.GHOST, pacman.game.Constants.MOVE> myMoves = 
 					new EnumMap<pacman.game.Constants.GHOST, pacman.game.Constants.MOVE>(pacman.game.Constants.GHOST.class);
 			
@@ -1900,7 +1900,7 @@ public class GameFacade {
 				myMoves.put(indexToGhost(i), indexToMove(ghostDirs[i]));
 			}
 			
-			newG.advanceGame(indexToMove(pacManDir), myMoves);
+			oldG.advanceGame(indexToMove(pacManDir), myMoves);
 		}
 	}
 
@@ -2022,9 +2022,9 @@ public class GameFacade {
 	 * @return score
 	 */
 	public double getScore(int level) {
-		return newG == null ?
+		return oldG == null ?
 				poG.getScore():
-				newG.getScore(level);
+				oldG.getScore(level);
 	}
 
 	/**
@@ -2033,9 +2033,9 @@ public class GameFacade {
 	 * @return copy
 	 */
 	public GameFacade copy() {
-		return newG == null ?
+		return oldG == null ?
 				new GameFacade(poG.copy()):
-				new GameFacade(newG.copy());
+				new GameFacade(oldG.copy());
 	}
 
 	/**
@@ -2086,9 +2086,9 @@ public class GameFacade {
 	 * @return num active pills
 	 */
 	public int getNumActivePills() {
-		return newG == null ?
+		return oldG == null ?
 				poG.getNumberOfActivePills():
-				newG.getNumberOfActivePills();
+				oldG.getNumberOfActivePills();
 	}
 
 	/**
@@ -2097,9 +2097,9 @@ public class GameFacade {
 	 * @return game over
 	 */
 	public boolean gameOver() {
-		return newG == null ?
+		return oldG == null ?
 				poG.gameOver():
-				newG.gameOver();
+				oldG.gameOver();
 	}
 
 	/**
@@ -2108,9 +2108,9 @@ public class GameFacade {
 	 * @return num active power pills
 	 */
 	public int getNumActivePowerPills() {
-		return newG == null ?
+		return oldG == null ?
 				poG.getNumberOfActivePowerPills():
-				newG.getNumberOfActivePowerPills();
+				oldG.getNumberOfActivePowerPills();
 	}
 
 	/**
@@ -2272,10 +2272,10 @@ public class GameFacade {
 			assert neighbors[direction] != -1 : from + "'s neighbor in dir " + direction + " not available towards " + to;
 			
 			//flow control to differentiate between oldpacman and popacman
-			if(newG == null) {
+			if(oldG == null) {
 				finalPath = poG.getShortestPath(from, to, indexToMovePO(direction));
 			} else {
-				finalPath = newG.getShortestPath(from, to, indexToMove(direction));
+				finalPath = oldG.getShortestPath(from, to, indexToMove(direction));
 			}
 		
 		} else {
@@ -2285,12 +2285,12 @@ public class GameFacade {
 			int oneStepNode = neighbors[direction];
 					
 			//flow control to differentiate between oldpacman and popacman
-			if(newG == null) {
+			if(oldG == null) {
 				// Path after first step
 				pathAfterStep = poG.getShortestPath(oneStepNode, to, indexToMovePO(direction));
 			} else {
 				// Path after first step
-				pathAfterStep = newG.getShortestPath(oneStepNode, to, indexToMove(direction));
+				pathAfterStep = oldG.getShortestPath(oneStepNode, to, indexToMove(direction));
 			}
 			
 			// put back the first step
@@ -2366,9 +2366,9 @@ public class GameFacade {
 	 * @return whether ghost requires action
 	 */
 	public boolean doesGhostRequireAction(int ghostIndex) {
-			return newG == null ?
+			return oldG == null ?
 					poG.doesGhostRequireAction(indexToGhostPO(ghostIndex)):
-					newG.doesGhostRequireAction(indexToGhost(ghostIndex));
+					oldG.doesGhostRequireAction(indexToGhost(ghostIndex));
 	}
 	
 	/**
@@ -2456,9 +2456,9 @@ public class GameFacade {
 	 * @return if power pill just previously eaten
 	 */
 	public boolean justAtePowerPill() {
-		return newG == null ?
+		return oldG == null ?
 				poG.wasPowerPillEaten():
-				newG.wasPowerPillEaten();
+				oldG.wasPowerPillEaten();
 	}
 
 	/**
@@ -2517,11 +2517,11 @@ public class GameFacade {
 	 * @return time
 	 */
 	public int getTimeGhostReward() {
-		if(newG == null) {
+		if(oldG == null) {
 			System.out.println("TODO: Implement getTimeGhostReward for poG, GameFacade.java");
 			return -1;
 		} else {
-				return newG.getTimeGhostReward();
+				return oldG.getTimeGhostReward();
 		}
 	}
 
@@ -2531,11 +2531,11 @@ public class GameFacade {
 	 * @return time
 	 */
 	public double getTimePillReward() {
-		if(newG == null) {
+		if(oldG == null) {
 			System.out.println("TODO: Implement getTimePillReward for poG, GameFacade.java");
 			return -1;
 		} else {
-			return newG.getTimePillReward();
+			return oldG.getTimePillReward();
 		}
 	}
 
@@ -2548,10 +2548,10 @@ public class GameFacade {
 	 * @return
 	 */
 	public List<Integer> getGhostEatTimes() {
-		if(newG == null) {
+		if(oldG == null) {
 			throw new UnsupportedOperationException("TODO: Implement getGhostEatTimes for poG, GameFacade.java");
 		} else {
-			return	newG.getGhostEatTimes();
+			return	oldG.getGhostEatTimes();
 		}
 	}
 
@@ -2564,10 +2564,10 @@ public class GameFacade {
 	 * @param endAfterGhostEatingChances to set
 	 */
 	public void setEndAfterGhostEatingChances(boolean endAfterGhostEatingChances) {
-		if(newG == null) {
+		if(oldG == null) {
 			throw new UnsupportedOperationException("TODO: Implement getGhostEatTimes for poG, GameFacade.java");
 		} else {
-			newG.setEndAfterGhostEatingChances(endAfterGhostEatingChances);
+			oldG.setEndAfterGhostEatingChances(endAfterGhostEatingChances);
 		}
 	}
 
@@ -2577,13 +2577,13 @@ public class GameFacade {
 	 * @param noPills whether to play with pills or not
 	 */
 	public void playWithoutPills(boolean noPills) {
-		if(newG == null) {
+		if(oldG == null) {
 			System.out.println("TODO: Implement playWithoutPills for poG, GameFacade.java");
 		} else {
 			if (noPills) {
-				newG.playWithoutPills();
+				oldG.playWithoutPills();
 			} else {
-				newG.playWithPills();
+				oldG.playWithPills();
 			}
 		}
 	}
@@ -2594,13 +2594,13 @@ public class GameFacade {
 	 * @param noPowerPills play with power pills or not
 	 */
 	public void playWithoutPowerPills(boolean noPowerPills) {
-		if(newG == null) {
+		if(oldG == null) {
 			throw new UnsupportedOperationException("TODO: Implement playWithoutPowerPills for poG, GameFacade.java");
 		} else {
 			if (noPowerPills) {
-				newG.playWithoutPowerPills();
+				oldG.playWithoutPowerPills();
 			} else {
-				newG.playWithPowerPills();
+				oldG.playWithPowerPills();
 			}
 		}
 	}
@@ -2611,10 +2611,10 @@ public class GameFacade {
 	 * @return sum
 	 */
 	public double getLureDistanceSum() {
-		if(newG == null) {
+		if(oldG == null) {
 			throw new UnsupportedOperationException("TODO: Implement getLureDistanceSum for poG, GameFacade.java");
 		} else {
-			return newG.getLureDistanceSum();
+			return oldG.getLureDistanceSum();
 		}
 	}
 
@@ -2623,10 +2623,10 @@ public class GameFacade {
 	 * @param luringTask whether to have luring task
 	 */
 	public void setEndAfterPowerPillsEaten(boolean luringTask) {
-		if(newG == null) {
+		if(oldG == null) {
 			throw new UnsupportedOperationException("TODO: Implement setEndAfterPowerPillsEaten for poG, GameFacade.java");
 		} else {
-			newG.setEndAfterPowerPillsEaten(luringTask);
+			oldG.setEndAfterPowerPillsEaten(luringTask);
 		}
 	}
 
@@ -2635,10 +2635,10 @@ public class GameFacade {
 	 * @return time
 	 */
 	public double getTimeInDeadSpace() {
-		if(newG == null) {
+		if(oldG == null) {
 			throw new UnsupportedOperationException("TODO: Implement getTimeInDeadSpace for poG, GameFacade.java");
 		} else {
-			return newG.getTimeInDeadSpace();
+			return oldG.getTimeInDeadSpace();
 		}
 	}
 
@@ -2689,10 +2689,10 @@ public class GameFacade {
 	 * @return num modes in maze
 	 */
 	public int getNumMazeNodes() {
-		if(newG == null) {
+		if(oldG == null) {
 			return poG.getCurrentMaze().graph.length;
 		} else {
-			return newG.getCurrentMaze().graph.length;
+			return oldG.getCurrentMaze().graph.length;
 		}
 	}
 
@@ -2716,10 +2716,10 @@ public class GameFacade {
 	 * @return num properly eaten power pills
 	 */
 	public double getProperlyEatenPowerPills() {
-		if(newG == null) {
+		if(oldG == null) {
 			throw new UnsupportedOperationException("TODO: Implement getProperlyEatenPowerPills for poG, GameFacade.java");
 		} else {
-			return newG.getProperlyEatenPowerPills();
+			return oldG.getProperlyEatenPowerPills();
 		}
 	}
 
@@ -2728,10 +2728,10 @@ public class GameFacade {
 	 * @return num improperly eaten power pills
 	 */
 	public double getImproperlyEatenPowerPills() {
-		if(newG == null) {
+		if(oldG == null) {
 			throw new UnsupportedOperationException("TODO: Implement getImproperlyEatenPowerPills for poG, GameFacade.java");
 		} else {
-			return newG.getImproperlyEatenPowerPills();
+			return oldG.getImproperlyEatenPowerPills();
 		}
 	}
 
@@ -2740,10 +2740,10 @@ public class GameFacade {
 	 * @return num power pills eaten when ghosts far
 	 */
 	public double getPowerPillsEatenWhenGhostFar() {
-		if(newG == null) {
+		if(oldG == null) {
 			throw new UnsupportedOperationException("TODO: Implement getPowerPillsEatenWhenGhostFar for poG, GameFacade.java");
 		} else {
-			return newG.getPowerPillsEatenWhenGhostFar();
+			return oldG.getPowerPillsEatenWhenGhostFar();
 		}
 	}
 
@@ -2769,10 +2769,10 @@ public class GameFacade {
 	 * @return amount of ghost regret (positive)
 	 */
 	public int getGhostRegret() {
-		if(newG == null) {
+		if(oldG == null) {
 			throw new UnsupportedOperationException("TODO: Implement getGhostRegret for poG, GameFacade.java");
 		} else {
-			return newG.getGhostRegret();
+			return oldG.getGhostRegret();
 		}
 	}
 
@@ -2897,7 +2897,7 @@ public class GameFacade {
 	public int getNumberOfLairGhosts() {
 		int count = 0;
 		//branching to differentiate between popacman and oldpacman
-		if(newG == null) {
+		if(oldG == null) {
 			for (int i = 0; i < pacman.game.Constants.NUM_GHOSTS; i++) {
 				if (this.getGhostLairTime(i) > 0) {
 					count++;
@@ -2925,9 +2925,9 @@ public class GameFacade {
 	 * @return
 	 */
 	public double averageGhostsEatenPerPowerPill(boolean punishUneatenPowerPills) {
-		if(newG == null) throw new UnsupportedOperationException("TODO: implement averageGhostsEatenPerPowerPill");
+		if(oldG == null) throw new UnsupportedOperationException("TODO: implement averageGhostsEatenPerPowerPill");
 		
-		return newG.averageGhostsEatenPerPowerPill(punishUneatenPowerPills);
+		return oldG.averageGhostsEatenPerPowerPill(punishUneatenPowerPills);
 	}
 
 	/**
@@ -2938,9 +2938,9 @@ public class GameFacade {
 	 * @return average time
 	 */
 	public double averageTimeToEatAllGhostsAfterPowerPill() {
-		if(newG == null) throw new UnsupportedOperationException("TODO: implement averageTimeToEatAllGhostsAfterPowerPill");
+		if(oldG == null) throw new UnsupportedOperationException("TODO: implement averageTimeToEatAllGhostsAfterPowerPill");
 		
-		return newG.averageTimeToEatAllGhostsAfterPowerPill();
+		return oldG.averageTimeToEatAllGhostsAfterPowerPill();
 	}
 
 	/**
@@ -2949,10 +2949,10 @@ public class GameFacade {
 	 * @param exitLairEdible if pacman edible
 	 */
 	public void setExitLairEdible(boolean exitLairEdible) {
-		if (newG == null){
+		if (oldG == null){
 			throw new UnsupportedOperationException("TODO: Implement setExitLairEdible for poG, GameFacade.java");
 		} else {
-			newG.setExitLairEdible(exitLairEdible);
+			oldG.setExitLairEdible(exitLairEdible);
 		}
 	}
 
@@ -2961,10 +2961,10 @@ public class GameFacade {
 	 * @param endOnlyOnTimeLimit iff games ends on time limit
 	 */
 	public void setEndOnlyOnTimeLimit(boolean endOnlyOnTimeLimit) {
-		if (newG == null){
+		if (oldG == null){
 			throw new UnsupportedOperationException("TODO: Implement setEndOnlyOnTimeLimit for poG, GameFacade.java");
 		} else {
-			newG.setEndOnlyOnTimeLimit(endOnlyOnTimeLimit);
+			oldG.setEndOnlyOnTimeLimit(endOnlyOnTimeLimit);
 		}
 	}
 
@@ -2973,10 +2973,10 @@ public class GameFacade {
 	 * @param randomLairExit if lair exit random
 	 */
 	public void setRandomLairExit(boolean randomLairExit) {
-		if (newG == null){
+		if (oldG == null){
 			throw new UnsupportedOperationException("TODO: Implement setRandomLairExit for poG, GameFacade.java");
 		} else {
-			newG.setRandomLairExit(randomLairExit);
+			oldG.setRandomLairExit(randomLairExit);
 		}
 	}
 
@@ -2985,10 +2985,10 @@ public class GameFacade {
 	 * @param simultaneousLairExit if simultaneous ghost exits
 	 */
 	public void setSimultaneousLairExit(boolean simultaneousLairExit) {
-		if (newG == null){
+		if (oldG == null){
 			throw new UnsupportedOperationException("TODO: Implement setSimultaneousLairExit for poG, GameFacade.java");
 		} else {
-			newG.setSimultaneousLairExit(simultaneousLairExit);
+			oldG.setSimultaneousLairExit(simultaneousLairExit);
 		}
 	}
 
@@ -2997,10 +2997,10 @@ public class GameFacade {
 	 * @param ghostsStartOutsideLair if ghosts start outside lair
 	 */
 	public void setGhostsStartOutsideLair(boolean ghostsStartOutsideLair) {
-		if (newG == null){
+		if (oldG == null){
 			throw new UnsupportedOperationException("TODO: Implement setGhostsStartOutsideLair for poG, GameFacade.java");
 		} else {
-			newG.setGhostsStartOutsideLair(ghostsStartOutsideLair);
+			oldG.setGhostsStartOutsideLair(ghostsStartOutsideLair);
 		}
 	}
 
@@ -3010,10 +3010,10 @@ public class GameFacade {
 	 * than one exit
 	 */
 	public void setOnlyOneLairExitAllowed(boolean onlyOneLairExitAllowed) {
-		if (newG == null){
+		if (oldG == null){
 			throw new UnsupportedOperationException("TODO: Implement setOnlyOneLairExitAllowed for poG, GameFacade.java");
 		} else {
-			newG.setOnlyOneLairExitAllowed(onlyOneLairExitAllowed);
+			oldG.setOnlyOneLairExitAllowed(onlyOneLairExitAllowed);
 		}
 	}
 
@@ -3022,10 +3022,10 @@ public class GameFacade {
 	 * @param lairExitDatabase database lair exists
 	 */
 	public void setLairExitDatabase(boolean lairExitDatabase) {
-		if (newG == null){
+		if (oldG == null){
 			throw new UnsupportedOperationException("TODO: Implement setLairExitDatabase for poG, GameFacade.java");
 		} else {
-			newG.setLairExitDatabase(lairExitDatabase);
+			oldG.setLairExitDatabase(lairExitDatabase);
 		}
 	}
 
@@ -3034,10 +3034,10 @@ public class GameFacade {
 	 * @param removePillsNearPowerPills if remove pills near power pills
 	 */
 	public void setRemovePillsNearPowerPills(boolean removePillsNearPowerPills) {
-		if (newG == null){
+		if (oldG == null){
 			throw new UnsupportedOperationException("TODO: Implement setRemovePillsNearPowerPills for poG, GameFacade.java");
 		} else {
-			newG.setRemovePillsNearPowerPills(removePillsNearPowerPills);
+			oldG.setRemovePillsNearPowerPills(removePillsNearPowerPills);
 		}
 	}
 	

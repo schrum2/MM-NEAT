@@ -508,9 +508,9 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 
 		// Side-effects to "game"
 		agentEval(mspacman, num);
-		if (mspacman.newP instanceof MultinetworkMsPacManController && individual instanceof NetworkGenotype) {
+		if (mspacman.oldP instanceof MultinetworkMsPacManController && individual instanceof NetworkGenotype) {
 			// Track subnet selections as if they were modes
-			((NetworkGenotype<T>) individual).setModuleUsage(((MultinetworkMsPacManController) mspacman.newP).fullUsage);
+			((NetworkGenotype<T>) individual).setModuleUsage(((MultinetworkMsPacManController) mspacman.oldP).fullUsage);
 		}
 
 		double[] fitnesses = new double[this.numObjectives()];

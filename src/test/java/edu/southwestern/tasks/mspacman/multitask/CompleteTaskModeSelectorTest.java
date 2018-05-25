@@ -36,23 +36,23 @@ public class CompleteTaskModeSelectorTest {
 	@Test
 	public void testMode() {
 		GameFacade g = new GameFacade(new Game(0));
-//		GameView gv = new GameView(g.newG).showGame();
+//		GameView gv = new GameView(g.oldG).showGame();
 		// Assign moves to the ghosts: NEUTRAL is default
 		EnumMap<GHOST,MOVE> gm = new EnumMap<GHOST,MOVE>(GHOST.class);
 		gm.put(GHOST.SUE, MOVE.NEUTRAL);
-		g.newG.advanceGame(MOVE.LEFT, gm);
+		g.oldG.advanceGame(MOVE.LEFT, gm);
 //		gv.repaint();
 //		MiscUtil.waitForReadStringAndEnterKeyPress();
 		select.giveGame(g);
 		assertEquals(CompleteTaskModeSelector.EAT_PILLS, select.mode());
 		
-		for(int i = 0; i < 350; i++) g.newG.advanceGame(MOVE.LEFT, gm);
+		for(int i = 0; i < 350; i++) g.oldG.advanceGame(MOVE.LEFT, gm);
 //		gv.repaint();
 //		MiscUtil.waitForReadStringAndEnterKeyPress();
 		select.giveGame(g);
 		assertEquals(CompleteTaskModeSelector.LURE, select.mode());
 		
-		while(!g.anyIsEdible()) g.newG.advanceGame(MOVE.DOWN, gm);
+		while(!g.anyIsEdible()) g.oldG.advanceGame(MOVE.DOWN, gm);
 //		gv.repaint();
 //		MiscUtil.waitForReadStringAndEnterKeyPress();
 		select.giveGame(g);

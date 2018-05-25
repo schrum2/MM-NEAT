@@ -37,20 +37,20 @@ public class AnyGhostThreatModeSelectorTest {
 	@Test
 	public void testMode() {
 		GameFacade g = new GameFacade(new Game(0));
-//		GameView gv = new GameView(g.newG).showGame(); //
+//		GameView gv = new GameView(g.oldG).showGame(); //
 		EnumMap<GHOST,MOVE> gm = new EnumMap<GHOST,MOVE>(GHOST.class);
 		gm.put(GHOST.BLINKY, MOVE.NEUTRAL);
 		gm.put(GHOST.INKY, MOVE.NEUTRAL);
 		gm.put(GHOST.PINKY, MOVE.NEUTRAL);
 		gm.put(GHOST.SUE, MOVE.NEUTRAL);
-		g.newG.advanceGame(MOVE.LEFT, gm);
+		g.oldG.advanceGame(MOVE.LEFT, gm);
 //		gv.repaint();
 //		MiscUtil.waitForReadStringAndEnterKeyPress();
 		select.giveGame(g);
 		assertEquals(AnyGhostThreatModeSelector.ALL_GHOSTS_EDIBLE, select.mode()); //not literally edible but in the lair 
 		// Loop until ghosts all leave lair
 		while(g.anyActiveGhostInLair()) {
-			g.newG.advanceGame(MOVE.LEFT, gm);
+			g.oldG.advanceGame(MOVE.LEFT, gm);
 		}
 //		gv.repaint();
 //		MiscUtil.waitForReadStringAndEnterKeyPress();
@@ -58,7 +58,7 @@ public class AnyGhostThreatModeSelectorTest {
 		assertEquals(AnyGhostThreatModeSelector.SOME_GHOST_THREATENING, select.mode());
 		//go down until eat the power pill
 		while(!g.anyIsEdible()){
-			g.newG.advanceGame(MOVE.DOWN, gm);
+			g.oldG.advanceGame(MOVE.DOWN, gm);
 		}
 //		gv.repaint();
 //		MiscUtil.waitForReadStringAndEnterKeyPress();

@@ -41,7 +41,7 @@ public abstract class SharedNNGhostsController extends NewGhostController {
 		myMoves.clear();
 
 		for (GHOST ghost : GHOST.values()) {
-			if (gf.newG.doesGhostRequireAction(ghost)) {
+			if (gf.oldG.doesGhostRequireAction(ghost)) {
 				int d = getDirection(gf, ghost);
 				MOVE m = GameFacade.indexToMove(d);
 				myMoves.put(ghost, m);

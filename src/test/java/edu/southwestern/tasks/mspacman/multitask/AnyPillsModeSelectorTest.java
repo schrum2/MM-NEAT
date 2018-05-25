@@ -36,31 +36,31 @@ public class AnyPillsModeSelectorTest {
 	@Test
 	public void testMode() {
 		GameFacade g = new GameFacade(new Game(0));
-//		GameView gv = new GameView(g.newG).showGame();
+//		GameView gv = new GameView(g.oldG).showGame();
 		// Assign moves to the ghosts: NEUTRAL is default
 		EnumMap<GHOST,MOVE> gm = new EnumMap<GHOST,MOVE>(GHOST.class);
 		gm.put(GHOST.SUE, MOVE.NEUTRAL);
-		g.newG.advanceGame(MOVE.LEFT, gm); // Everyone moves
+		g.oldG.advanceGame(MOVE.LEFT, gm); // Everyone moves
 		
 //		gv.repaint();
 //		MiscUtil.waitForReadStringAndEnterKeyPress();
 		select.giveGame(g);
 		assertEquals(AnyPillsModeSelector.PILLS_PRESENT, select.mode());
 		
-		for(int i = 0; i < 100; i++) g.newG.advanceGame(MOVE.LEFT, gm);
-		while(!g.anyIsEdible()) g.newG.advanceGame(MOVE.DOWN, gm);
+		for(int i = 0; i < 100; i++) g.oldG.advanceGame(MOVE.LEFT, gm);
+		while(!g.anyIsEdible()) g.oldG.advanceGame(MOVE.DOWN, gm);
 //		gv.repaint();
 //		MiscUtil.waitForReadStringAndEnterKeyPress();
 		select.giveGame(g);
 		assertEquals(AnyPillsModeSelector.PILLS_PRESENT, select.mode());
 		
-		g.newG.playWithoutPills(); //removes normal pills, not power pills
+		g.oldG.playWithoutPills(); //removes normal pills, not power pills
 //		gv.repaint();
 //		MiscUtil.waitForReadStringAndEnterKeyPress();
 		select.giveGame(g);
 		assertEquals(AnyPillsModeSelector.PILLS_PRESENT, select.mode()); //power pills still there
 		
-		g.newG.playWithoutPowerPills();
+		g.oldG.playWithoutPowerPills();
 //		gv.repaint();
 //		MiscUtil.waitForReadStringAndEnterKeyPress();
 		select.giveGame(g);

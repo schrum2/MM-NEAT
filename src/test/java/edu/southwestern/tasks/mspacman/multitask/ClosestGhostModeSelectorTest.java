@@ -36,40 +36,40 @@ public class ClosestGhostModeSelectorTest {
 	@Test
 	public void testMode() {
 		GameFacade g = new GameFacade(new Game(0));
-//		GameView gv = new GameView(g.newG).showGame();
+//		GameView gv = new GameView(g.oldG).showGame();
 		// Assign moves to the ghosts: NEUTRAL is default
 		EnumMap<GHOST,MOVE> gm = new EnumMap<GHOST,MOVE>(GHOST.class);
 		gm.put(GHOST.SUE, MOVE.NEUTRAL);
-		g.newG.advanceGame(MOVE.LEFT, gm); // Everyone moves
+		g.oldG.advanceGame(MOVE.LEFT, gm); // Everyone moves
 
 //		gv.repaint();
 //		MiscUtil.waitForReadStringAndEnterKeyPress();
 		select.giveGame(g);
 		assertEquals(ClosestGhostModeSelector.CLOSEST_THREAT, select.mode());
 
-		for(int i = 0; i < 100; i++) g.newG.advanceGame(MOVE.LEFT, gm);
+		for(int i = 0; i < 100; i++) g.oldG.advanceGame(MOVE.LEFT, gm);
 //		gv.repaint();
 //		MiscUtil.waitForReadStringAndEnterKeyPress();
 		select.giveGame(g);
 		assertEquals(ClosestGhostModeSelector.CLOSEST_THREAT, select.mode());
 		
-		while(!g.anyIsEdible()) g.newG.advanceGame(MOVE.DOWN, gm);
+		while(!g.anyIsEdible()) g.oldG.advanceGame(MOVE.DOWN, gm);
 //		gv.repaint();
 //		MiscUtil.waitForReadStringAndEnterKeyPress();
 		select.giveGame(g);
 		assertEquals(ClosestGhostModeSelector.CLOSEST_EDIBLE, select.mode());
 		
-		for(int i = 0; i < 15; i++) g.newG.advanceGame(MOVE.UP, gm);
-		for(int i = 0; i < 5; i++) g.newG.advanceGame(MOVE.RIGHT, gm);
-		for(int i = 0; i < 70; i++) g.newG.advanceGame(MOVE.UP, gm); //eat nearest ghost
+		for(int i = 0; i < 15; i++) g.oldG.advanceGame(MOVE.UP, gm);
+		for(int i = 0; i < 5; i++) g.oldG.advanceGame(MOVE.RIGHT, gm);
+		for(int i = 0; i < 70; i++) g.oldG.advanceGame(MOVE.UP, gm); //eat nearest ghost
 //		gv.repaint();
 //		MiscUtil.waitForReadStringAndEnterKeyPress();
 		select.giveGame(g);
 		assertEquals(ClosestGhostModeSelector.CLOSEST_EDIBLE, select.mode());
 		
-		for(int i = 0; i < 15; i++) g.newG.advanceGame(MOVE.DOWN, gm); 
-		for(int i = 0; i < 20; i++) g.newG.advanceGame(MOVE.RIGHT, gm);
-		for(int i = 0; i < 15; i++) g.newG.advanceGame(MOVE.LEFT, gm); //waste time formerly eaten ghost becomes closest 
+		for(int i = 0; i < 15; i++) g.oldG.advanceGame(MOVE.DOWN, gm); 
+		for(int i = 0; i < 20; i++) g.oldG.advanceGame(MOVE.RIGHT, gm);
+		for(int i = 0; i < 15; i++) g.oldG.advanceGame(MOVE.LEFT, gm); //waste time formerly eaten ghost becomes closest 
 //		gv.repaint();
 //		MiscUtil.waitForReadStringAndEnterKeyPress();
 		select.giveGame(g);

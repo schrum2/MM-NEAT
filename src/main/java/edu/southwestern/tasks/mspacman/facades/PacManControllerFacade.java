@@ -7,7 +7,7 @@ package edu.southwestern.tasks.mspacman.facades;
 public class PacManControllerFacade {
 
 	//actual pacman controller
-	public oldpacman.controllers.NewPacManController newP = null;
+	public oldpacman.controllers.NewPacManController oldP = null;
 	//TODO: test
 	public pacman.controllers.PacmanController poP = null;
 
@@ -16,7 +16,7 @@ public class PacManControllerFacade {
 	 * @param p pacman controller
 	 */
 	public PacManControllerFacade(oldpacman.controllers.NewPacManController p) {
-		newP = p;
+		oldP = p;
 	}
 	
 	/**
@@ -33,11 +33,11 @@ public class PacManControllerFacade {
 	 * resetting thread
 	 */
 	public void reset() {
-		if(newP == null) {
+		if(oldP == null) {
 			//TODO
 			System.out.println("TODO: implement reset() in PacManControllerFacade.java, ln 38");
 		} else {
-			newP.reset();	
+			oldP.reset();	
 		}
 	}
 
@@ -46,9 +46,9 @@ public class PacManControllerFacade {
 	 * To string method for pacman controller
 	 */
 	public String toString() {
-		return newP == null ?
+		return oldP == null ?
 				poP.toString():
-				newP.toString();
+				oldP.toString();
 	}
 
 	/**
@@ -56,11 +56,11 @@ public class PacManControllerFacade {
 	 *  during evaluation
 	 */
 	public void logEvaluationDetails() {
-		if(newP == null) {
+		if(oldP == null) {
 			//TODO
 			System.out.println("TODO: implement logEvaluationDetails() in PacManControllerFacade.java, ln 61");
 		} else {
-			newP.logEvaluationDetails();
+			oldP.logEvaluationDetails();
 		}
 	}
 }

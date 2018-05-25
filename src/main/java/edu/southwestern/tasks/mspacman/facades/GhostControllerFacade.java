@@ -13,7 +13,7 @@ import java.util.Map.Entry;
 public class GhostControllerFacade {
 
 	//actual ghost controller
-	oldpacman.controllers.NewGhostController newG = null;
+	oldpacman.controllers.NewGhostController oldG = null;
 	//actual ghost controller for PO conditions
 	pacman.controllers.MASController poG = null;
 	
@@ -22,7 +22,7 @@ public class GhostControllerFacade {
 	 * @param g ghostController
 	 */
 	public GhostControllerFacade(oldpacman.controllers.NewGhostController g) {
-		newG = g;
+		oldG = g;
 	}
 	
 	/**
@@ -43,9 +43,9 @@ public class GhostControllerFacade {
 	 * @throws NoSuchFieldException 
 	 */
 	public int[] getActions(GameFacade game, long timeDue){
-		return newG == null ?
+		return oldG == null ?
 				moveEnumToArrayPO(poG.getMove(game.poG, timeDue)):
-				moveEnumToArray(newG.getMove(game.newG, timeDue));
+				moveEnumToArray(oldG.getMove(game.oldG, timeDue));
 	}
 
 	/**
@@ -82,11 +82,11 @@ public class GhostControllerFacade {
 	 * @throws NoSuchMethodException
 	 */
 	public void reset() {
-		if(newG == null) {
+		if(oldG == null) {
 			//TODO:
 			System.out.println("TODO: implement reset() in GhostControllerFacade.java, ln 78");
 		} else {
-			newG.reset();
+			oldG.reset();
 		}
 	}
 }

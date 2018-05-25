@@ -200,7 +200,7 @@ public class TrainingCampManager {
 			if (CommonConstants.watch) {
 				System.out.println("Eval in Training Camp: " + num);
 			}
-			game.newG.setGameState(trainingCamps.get(num));
+			game.oldG.setGameState(trainingCamps.get(num));
 			return num;
 		}
 		return -1;

@@ -9,8 +9,8 @@ import edu.southwestern.parameters.Parameters;
  */
 public class ExecutorFacade {
 
-	oldpacman.Executor newE = null;
-	pacman.Executor poE = null;
+	oldpacman.Executor oldE = null;
+	popacman.CustomExecutor poE = null;
 
 	/**
 	 * Constructor that contains excecutor
@@ -18,7 +18,7 @@ public class ExecutorFacade {
 	 * @param e
 	 */
 	public ExecutorFacade(oldpacman.Executor e) {
-		newE = e;
+		oldE = e;
 	}
 	
 	/**
@@ -27,7 +27,7 @@ public class ExecutorFacade {
 	 * (thus why called facade)
 	 * @param e
 	 */
-	public ExecutorFacade(pacman.Executor e) {
+	public ExecutorFacade(popacman.CustomExecutor e) {
 		poE = e;
 	}
 
@@ -36,10 +36,10 @@ public class ExecutorFacade {
 	 * @param string name of log
 	 */
 	public void log(String string) {
-		if(newE == null) {
+		if(oldE == null) {
 			System.out.println("TODO: no log method in poE, ExecutorFacade ln 33");
 		} else {
-			newE.log(string);
+			oldE.log(string);
 		}
 	}
 
@@ -50,10 +50,11 @@ public class ExecutorFacade {
 	 * @param game facade containing game
 	 */
 	public void runGameTimed(PacManControllerFacade mspacman, GhostControllerFacade ghosts, GameFacade game) {
-		if(newE == null) {
-			System.out.println("TODO: need to implement runGameTimed, ExecutorFacade ln 48");
+		if(oldE == null) {
+			//TODO: test
+			poE.runGameTimed(mspacman.poP, ghosts.poG, game.poG);
 		} else {
-			newE.runGameTimed(mspacman.newP, ghosts.newG, true, game.newG);
+			oldE.runGameTimed(mspacman.oldP, ghosts.oldG, true, game.oldG);
 		}
 	}
 
@@ -64,10 +65,11 @@ public class ExecutorFacade {
 	 * @param game facade containing game
 	 */
 	public void runExperiment(PacManControllerFacade mspacman, GhostControllerFacade ghosts, GameFacade game) {
-		if(newE == null) {
-			System.out.println("TODO: need to implement runExperiment, ExecutorFacade ln 62");
+		if(oldE == null) {
+			//TODO: remove magic numbers, test
+			poE.runExperiment(mspacman.poP, ghosts.poG, 1, "desc", game.poG);
 		} else {
-			newE.runExperiment(mspacman.newP, ghosts.newG, game.newG);
+			oldE.runExperiment(mspacman.oldP, ghosts.oldG, game.oldG);
 		}
 	}
 
@@ -81,10 +83,11 @@ public class ExecutorFacade {
 	 */
 	public void runGameTimedRecorded(GameFacade game, PacManControllerFacade mspacman, GhostControllerFacade ghosts,
 			boolean visual, String fileName) {
-		if(newE == null) {
+		if(oldE == null) {
 			System.out.println("TODO: need to implement runGameTimedRecorded, ExecutorFacade ln 79");
+			poE.runGameTimedRecorded(mspacman.poP, ghosts.poG, fileName, game.poG);
 		} else {
-			newE.runGameTimedRecorded(game.newG, mspacman.newP, ghosts.newG, visual, fileName);
+			oldE.runGameTimedRecorded(game.oldG, mspacman.oldP, ghosts.oldG, visual, fileName);
 		}
 	}
 
@@ -94,10 +97,12 @@ public class ExecutorFacade {
 	 * @param visual whether or not to visualize game
 	 */
 	public void replayGame(String fileName, boolean visual) {
-		if(newE == null) {
+		if(oldE == null) {
 			System.out.println("TODO: need to implement replayGame, ExecutorFacade ln 92");
+			//TODO: poE.replayGame needs a game as aparameter
+			//poE.replayGame(fileName, visual, game);
 		} else {
-			newE.replayGame(fileName, visual, Parameters.parameters.integerParameter("pacmanReplayDelay"));
+			oldE.replayGame(fileName, visual, Parameters.parameters.integerParameter("pacmanReplayDelay"));
 		}
 	}
 
@@ -108,10 +113,13 @@ public class ExecutorFacade {
 	 * @param ghosts facade of ghosts
 	 */
 	public void runGameTimedNonVisual(GameFacade game, PacManControllerFacade mspacman, GhostControllerFacade ghosts) {
-		if(newE == null) {
+		if(oldE == null) {
+			//TODO
 			System.out.println("TODO: need to implement runGameTimedNonVisual, ExecutorFacade ln 106");
+			//TODO: rectify the fact that poE has no speed optomised method
+			poE.runGameTimed(mspacman.poP, ghosts.poG, game.poG);
 		} else {
-			newE.runGameTimedSpeedOptimised(mspacman.newP, ghosts.newG, false, false, game.newG);
+			oldE.runGameTimedSpeedOptimised(mspacman.oldP, ghosts.oldG, false, false, game.oldG);
 		}
 	}
 }
