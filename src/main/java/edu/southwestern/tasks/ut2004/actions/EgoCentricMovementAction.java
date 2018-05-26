@@ -7,6 +7,7 @@ import edu.southwestern.tasks.ut2004.Util;
 import javax.vecmath.Vector3d;
 
 /**
+ *Moves the bot in relation to itself, using turns instead of strafing
  *
  * @author Jacob Schrum
  */
@@ -24,14 +25,28 @@ public class EgoCentricMovementAction implements BotAction {
 	private final boolean jump;
 	private final boolean moveBackwards;
 
-	public EgoCentricMovementAction(double towards, double turn, boolean shoot, boolean jump) {
-		this.moveBackwards = towards < 0;
-		this.move = Math.abs(towards * 2);
+	/**
+	 * assigns variables based on the bot status
+	 * 
+	 * @param moveForwardBackward (negative = backward, positive = forward, magnitude = speed)
+	 * @param turn (negative = left, positive = right, magnitude = speed)
+	 * @param shoot (should the bot shoot)
+	 * @param jump (should the bot jump_
+	 */
+	public EgoCentricMovementAction(double moveForwardBackward, double turn, boolean shoot, boolean jump) {
+		this.moveBackwards = moveForwardBackward < 0;
+		this.move = Math.abs(moveForwardBackward * 2);
 		this.turn = turn * Math.PI;
 		this.shoot = shoot;
 		this.jump = jump;
 	}
 
+	/**
+	 * Tells the bot how it should move without taking any other players into account
+	 * 
+	 * @param bot (the bot to execute the commands)
+	 * @return returns a list of commands executed by the bot in the form of a string
+	 */
 	public String execute(UT2004BotModuleController bot) {
 		Rotation botRotation = bot.getInfo().getRotation();
 		Location botLocation = bot.getInfo().getLocation();
