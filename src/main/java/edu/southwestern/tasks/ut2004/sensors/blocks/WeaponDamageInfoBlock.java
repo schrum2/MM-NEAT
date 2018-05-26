@@ -18,9 +18,20 @@ import cz.cuni.amis.pogamut.ut2004.communication.translator.itemdescriptor.Weapo
  */
 public class WeaponDamageInfoBlock implements UT2004SensorBlock {
 
+	/**
+	 * creates the block of sensors
+	 */
 	public void prepareBlock(UT2004BotModuleController bot) {
 	}
 
+	/**
+	 * Collects data on the bot's weapon status and puts it into an array
+	 * 
+	 * @param bot (bot which will use the sensor data)
+	 * @param in (address to start at in array)
+	 * @param inputs (an array that collects the values from the statuses)
+	 * @return returns next address for sensor allocation
+	 */
 	public int incorporateSensors(UT2004BotModuleController bot, int in, double[] inputs) {
 		Weaponry weaponry = bot.getWeaponry();
 		Weapon w = weaponry.getCurrentWeapon();
@@ -75,6 +86,13 @@ public class WeaponDamageInfoBlock implements UT2004SensorBlock {
 		return in;
 	}
 
+	/**
+	 * populates the labels array so statuses can be identified
+	 * 
+	 * @param in (address in the array to be labeled)
+	 * @param labels (an empty array that will be populated)
+	 * @return returns the next address to be labeled
+	 */
 	public int incorporateLabels(int in, String[] labels) {
 		// General properties
 		labels[in++] = "Melee Weapon?";
@@ -125,6 +143,9 @@ public class WeaponDamageInfoBlock implements UT2004SensorBlock {
 		return in;
 	}
 
+	/**
+	 * returns number of sensors
+	 */
 	public int numberOfSensors() {
 		return 2 + (2 * 7);
 	}

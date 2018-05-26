@@ -261,8 +261,9 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 					assert -1 <= filteredInputs[0] && filteredInputs[0] <= 1 : "CPPN input 0 out of range: " + filteredInputs[0];
 					assert -1 <= filteredInputs[1] && filteredInputs[1] <= 1 : "CPPN input 1 out of range: " + filteredInputs[1];
 					assert -1 <= filteredInputs[2] && filteredInputs[2] <= 1 : "CPPN input 2 out of range: " + filteredInputs[2];
-					assert -1 <= filteredInputs[3] && filteredInputs[3] <= 1 : "CPPN input 3 out of range: " + filteredInputs[3];
-					assert -1 <= filteredInputs[4] && filteredInputs[4] <= 1 : "CPPN input 4 out of range: " + filteredInputs[4];
+					// 1D substrates don't have these extra inputs
+					assert 3 >= filteredInputs.length || (-1 <= filteredInputs[3] && filteredInputs[3] <= 1) : "CPPN input 3 out of range: " + filteredInputs[3];
+					assert 4 >= filteredInputs.length || (-1 <= filteredInputs[4] && filteredInputs[4] <= 1) : "CPPN input 4 out of range: " + filteredInputs[4];
 
 					if(CommonConstants.substrateLocationInputs || convolutionWeightSharing) {
 						// In this case, there are 4 extra CPPN inputs, which are x/y coordinates of the actual substrate locations.
@@ -513,8 +514,9 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 						assert -1 <= inputs[0] && inputs[0] <= 1 : "CPPN input 0 out of range: " + inputs[0];
 						assert -1 <= inputs[1] && inputs[1] <= 1 : "CPPN input 1 out of range: " + inputs[1];
 						assert -1 <= inputs[2] && inputs[2] <= 1 : "CPPN input 2 out of range: " + inputs[2];
-						assert -1 <= inputs[3] && inputs[3] <= 1 : "CPPN input 3 out of range: " + inputs[3];
-						assert -1 <= inputs[4] && inputs[4] <= 1 : "CPPN input 4 out of range: " + inputs[4];
+						// 1D substrates don't have these extra inputs
+						assert 3 >= inputs.length || (-1 <= inputs[3] && inputs[3] <= 1) : "CPPN input 3 out of range: " + inputs[3];
+						assert 4 >= inputs.length || (-1 <= inputs[4] && inputs[4] <= 1) : "CPPN input 4 out of range: " + inputs[4];
 						
 						if(CommonConstants.substrateLocationInputs || Parameters.parameters.booleanParameter("convolutionWeightSharing")) {
 							// Extra inputs are locations of the substrates (just x/y coordinates)
