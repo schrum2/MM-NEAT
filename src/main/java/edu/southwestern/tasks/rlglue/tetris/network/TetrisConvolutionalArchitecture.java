@@ -20,6 +20,8 @@ public class TetrisConvolutionalArchitecture implements SubstrateArchitectureDef
 
 	/**
 	 * specifies a convolutional architecture: Number of feature maps increases as size decreases
+	 * @return List of triples that specifies each substrate with the index of each triple being its layer.
+	 * 		Each triple looks like (width of layer, width of substrate, height of substrate)
 	 */
 	@Override
 	public List<Triple<Integer, Integer, Integer>> getNetworkHiddenArchitecture() {
@@ -141,7 +143,7 @@ public class TetrisConvolutionalArchitecture implements SubstrateArchitectureDef
 
 
 	/**
-	 * TODO: getPoolingHiddenConnectivity
+	 * TODO: addPoolingHiddenLayerConnectivity
 	 */
 
 
