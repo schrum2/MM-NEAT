@@ -166,7 +166,13 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 	public MsPacManTask(boolean det) {
 		super();//constructor for noisy loner task
 		exec = Parameters.parameters.booleanParameter("partiallyObservablePacman") ?
-				new ExecutorFacade(new CustomExecutor.Builder().build()) :
+				new ExecutorFacade(new CustomExecutor.Builder()
+						// Schrum: 5/27/18: Need to disable these once we get the code working
+						// These settings make the domain NOT partially observable
+						.setPacmanPO(false) 
+						.setGhostPO(false)
+						// End of code to disable
+						.build()) :
 				new ExecutorFacade(new Executor());
 		this.deterministic = det;//if game is deterministic
 		tcManager = new TrainingCampManager();
