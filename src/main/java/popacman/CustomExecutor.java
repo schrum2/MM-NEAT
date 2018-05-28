@@ -47,7 +47,7 @@ public class CustomExecutor {
     	
     	// TODO: Eventually need to set these from various command line parameters,
     	// some of which already exist in Parameters.java
-        private boolean pacmanPO = true;
+        private boolean pacmanPO = false;
         private boolean ghostPO = true;
         private boolean ghostsMessage = true;
         private Messenger messenger = new BasicMessenger();
