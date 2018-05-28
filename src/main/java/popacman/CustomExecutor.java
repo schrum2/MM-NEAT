@@ -12,6 +12,7 @@ import pacman.game.comms.BasicMessenger;
 import pacman.game.comms.Messenger;
 import pacman.game.internal.POType;
 import pacman.game.util.Stats;
+import edu.southwestern.parameters.Parameters;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -50,14 +51,17 @@ public class CustomExecutor {
         private boolean pacmanPO = false;
         private boolean ghostPO = true;
         private boolean ghostsMessage = true;
+        //add to parameters
         private Messenger messenger = new BasicMessenger();
         private double scaleFactor = 1.0d;
         private boolean setDaemon = false;
         //private boolean visuals = false;
         private int tickLimit = 4000;
         private int timeLimit = 40;
+        //add to parameters
         private POType poType = POType.LOS;
         private int sightLimit = 50;
+        //add to parameters
         private Function<Game, String> peek = null;
 
         public Builder setPacmanPO(boolean po) {
@@ -128,7 +132,19 @@ public class CustomExecutor {
         }
 
         public CustomExecutor build() {
-            return new CustomExecutor(pacmanPO, ghostPO, ghostsMessage, messenger, scaleFactor, setDaemon, tickLimit, timeLimit, poType, sightLimit, peek);
+        	//TODO: should parameters from parameters.java be placed here?
+            //return new CustomExecutor(pacmanPO, ghostPO, ghostsMessage, messenger, scaleFactor, setDaemon, tickLimit, timeLimit, poType, sightLimit, peek);
+        	return new CustomExecutor(Parameters.parameters.booleanParameter("pacmanPO"),
+        							  Parameters.parameters.booleanParameter("ghostPO"),
+        							  Parameters.parameters.booleanParameter("ghostMessage"),
+        							  messenger,
+        							  Parameters.parameters.doubleParameter("scaleFactor"),
+        							  Parameters.parameters.booleanParameter("setDaemon"),
+        							  Parameters.parameters.integerParameter("tickLimit"),
+        							  Parameters.parameters.integerParameter("timeLimit"),
+        							  poType,
+        							  Parameters.parameters.integerParameter("sightLimit"),
+        							  peek);
         }
     }
 

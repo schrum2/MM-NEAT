@@ -306,6 +306,7 @@ public class Parameters {
 		integerOptions.add("rlBatchSize", 20, "Number of state transitions to log before doing an RL experience replay batch update");
 		integerOptions.add("runNumber", 0, "Number to designate this run of an experiment");
 		integerOptions.add("scentMode", -1, "Whenever this mode gets used, drop pheremone on scent path");
+		integerOptions.add("sightLimit", 50, "How far an agent can see in popacman");
 		integerOptions.add("smallStepSimDepth", 30, "Forward simulation depth for variable direction sensors");
 		integerOptions.add("startTUGGeneration", -1, "Generation at which TUG will start being used");
 		integerOptions.add("startingModes", 1, "Modes that a network starts with");
@@ -318,6 +319,10 @@ public class Parameters {
 		integerOptions.add("syllabusSize", 10, "Number of examples in BD syllabus");
 		integerOptions.add("teams", 1, "Number of teams each individual is evaluated in for coevolution");
 		integerOptions.add("threads", 4, "Number of threads if evaluating in parallel");
+		//TODO
+		integerOptions.add("tickLimit", 4000, "used in customExecutor. Number of ticks permitted?");
+		//TODO
+		integerOptions.add("timeLimit", 40, "used in customExecutor. Length of time permitted per round?");
 		integerOptions.add("torusPredators", 3, "Number of torus predators");
 		integerOptions.add("torusPreys", 2, "Number of torus preys");
 		integerOptions.add("torusTimeLimit", 1000, "Time limit in torus worlds");
@@ -348,6 +353,8 @@ public class Parameters {
 		booleanOptions.add("doomFullScreenInput", false, "Detemines if we should use all of the screen inputs or just the given row");
 		booleanOptions.add("evolveHyperNEATBias", true, "adds an output to evolved cppn that outputs bias of node");
 		booleanOptions.add("extraHNLinks", false, "adds connections between the input and output substrate layers of hyperNEAT substrates");
+		booleanOptions.add("ghostPO", false, "Used for popacman. Decides whether or not ghosts have partial observability");
+		booleanOptions.add("ghostMessage", false, "Whether or not popacman ghosts can communicate with one another");
 		booleanOptions.add("heterogeneousSubstrateActivations", false, "HyperNEAT phenotypes can have a mix of activation functions");
 		booleanOptions.add("homogeneousAggregateTeamSelection", false, "Homogeneous Predators with encouraged distance minimization and maximizing prey caught as a team");
 		booleanOptions.add("homogeneousTeamAndAggregateTeamSelection", false, "Homogeneous Predators with encouraged distance minimization and maximizing prey caught as a team and for all populations at once");
@@ -372,6 +379,7 @@ public class Parameters {
 		booleanOptions.add("pacmanFullScreenPowerInput", false, "full screen input for power pill substrate");
 		booleanOptions.add("pacmanFullScreenProcess", false, "full screen process layer");
 		booleanOptions.add("partiallyObservablePacman", false, "Whether to use the new PO Pac-Man code vs the old version");
+		booleanOptions.add("pacmanPO", false, "Whether or not popacman is subject to partially observable conditions or not");
 		booleanOptions.add("penalizeSubstrateLinks", false, "Whether to use additional fitness punishing substrate links");
 		booleanOptions.add("predsSenseAllPreds", true, "When using proximity sensors, causes predators to sense all other predators (always true for non-proximity sensors)");
 		booleanOptions.add("predsSenseAllPrey", true, "When using proximity sensors, causes predators to sense all other prey (always true for non-proximity sensors)");
@@ -383,6 +391,7 @@ public class Parameters {
 		booleanOptions.add("scaleTrials", false, "Whether or not to scale the number of trials as the number of generations increases");
 		booleanOptions.add("senseHolesDifferently", false, "Makes inputs for a hole different than input of a blank space");
 		booleanOptions.add("senseHyperNEATGhostPath", false, "shows nearest path to ghost with stronger activation as pacman gets closer to the ghost");
+		booleanOptions.add("setDaemon", false, "Used in popacman CustomExecutor");
 		booleanOptions.add("showCPPN", false, "shows evolved CPPN during post evals");
 		booleanOptions.add("showHighestActivatedOutput", false, "highlights most activated output neuron as green in visualizations");
 		booleanOptions.add("showMarioInputs", false, "Shows the Mario input frame to the user as the agent would see them");
@@ -728,6 +737,8 @@ public class Parameters {
 		doubleOptions.add("rlEpsilon", 0.1, "Frequency of completely random actions during Reinforcement Learning");
 		doubleOptions.add("rlGamma", 0.99, "Discount factor used for Reinforcement Learning");
 		doubleOptions.add("scentDecay", 0.99, "Portion of scent remaining after each time step");
+		//TODO
+		doubleOptions.add("scaleFactor", 1.0, "Used in customExecutor. Scales the size of the image?");
 		doubleOptions.add("softmaxTemperature", 0.25, "Temperature parameter for softmax selection");
 		doubleOptions.add("tugAlpha", 0.3,"Step size for moving recency-weighted averages towards averages when using TUG");
 		doubleOptions.add("tugEta", 0.3, "Step size for increasing goals when using TUG");
