@@ -1,0 +1,133 @@
+Log for Rodolfo
+Using: data/unreal/UT2/candidates/FRONT-DM-1on1-Albatross-vs-1Native_98_7.xml
+Map: DM-1on1-Albatross
+Score: 2
+Suicides: 0
+Deaths: 0
+Kills: 2
+
+PLAYER SCORES
+PLAYER:DM-1on1-Albatross.ObservedPlayer4 has 0
+PLAYER:DM-1on1-Albatross.ObservedRemoteBot3 has 0
+PLAYER:DM-1on1-Albatross.ObservedRemoteBot2 has 2
+
+UT^2 Counts
+Total UT^2 Actions: 497
+Shield Gun          : 0/497: 0.0%
+Path                : 279/497: 56.13682092555332%
+Die                 : 0/497: 0.0%
+Retrace             : 0/497: 0.0%
+Get Weapon          : 0/497: 0.0%
+Important Item      : 85/497: 17.10261569416499%
+Get Dropped Weapon  : 3/497: 0.6036217303822937%
+Chase               : 58/497: 11.670020120724345%
+Unstuck             : 14/497: 2.816901408450704%
+Trace To Weapon     : 0/497: 0.0%
+Empty               : 0/497: 0.0%
+Battle              : 55/497: 11.066398390342052%
+Observe             : 0/497: 0.0%
+Quick Turn          : 3/497: 0.6036217303822937%
+Judge               : 0/497: 0.0%
+
+Stuck Trigger Counts
+Total Stuck Trigger Actions: 14
+Water Trap          : 0/14: 0.0%
+Same Navpoint       : 4/14: 28.571428571428573%
+Unknown             : 0/14: 0.0%
+Agent Bump          : 0/14: 0.0%
+Collision Frequency : 0/14: 0.0%
+Collision           : 9/14: 64.28571428571429%
+Off Grid            : 0/14: 0.0%
+Under Elevator      : 1/14: 7.142857142857143%
+Still               : 0/14: 0.0%
+
+UnstuckController Counts
+Total UnstuckController Actions: 14
+Dodge               : 0/14: 0.0%
+Human Trace         : 0/14: 0.0%
+Forward             : 3/14: 21.428571428571427%
+Move To             : 0/14: 0.0%
+Goto Item           : 2/14: 14.285714285714286%
+Move Away           : 9/14: 64.28571428571429%
+
+AlwaysShootTWEANNController Counts
+Total AlwaysShootTWEANNController Actions: 55
+Strafe Right        : 10/55: 18.181818181818183%
+Empty               : 0/55: 0.0%
+Advance             : 4/55: 7.2727272727272725%
+Retreat             : 5/55: 9.090909090909092%
+Strafe Left         : 9/55: 16.363636363636363%
+Still               : 14/55: 25.454545454545453%
+Goto Item           : 13/55: 23.636363636363637%
+
+STILL FORCED CHOICES
+Total Still Actions: 14
+Forced Still : 10/14: 71.42857142857143%
+Natural Still: 4/14: 28.571428571428573%
+
+FORCED ACTIONS
+Total Forced Actions: 12
+Forced Advance    : 0/12: 0.0%
+Forced Retreat    : 0/12: 0.0%
+Forced StrafeLeft : 0/12: 0.0%
+Forced StrafeRight: 2/12: 16.666666666666668%
+Forced GotoItem   : 0/12: 0.0%
+Forced Still      : 10/12: 83.33333333333333%
+
+SHOOT CHOICES
+Total Shoot Choices: 55
+Primary  : 28/55: 50.90909090909091%
+Secondary: 27/55: 49.09090909090909%
+None     : 0/55: 0.0%
+
+JUMP CHOICES
+Total Jump Choices: 55
+Jump   : 41/55: 74.54545454545455%
+No Jump: 14/55: 25.454545454545453%
+
+ShieldGunController Counts
+Total ShieldGunController Actions: 0
+Shield Attack       : 0/0: NaN%
+Retreat             : 0/0: NaN%
+Item Path           : 0/0: NaN%
+Fall Through        : 0/0: NaN%
+
+DistantPathController Counts
+Total DistantPathController Actions: 280
+Random Far Item     : 24/280: 8.571428571428571%
+Path After State Change: 1/280: 0.35714285714285715%
+Just Follow         : 255/280: 91.07142857142857%
+Follow and Shoot    : 0/280: 0.0%
+Needed Weapon       : 0/280: 0.0%
+Failed Path Replan  : 0/280: 0.0%
+
+PLANNED PATHS
+Total Paths Planned: 40
+UT A Star     : 18/40: 45.0%
+Floyd Warshall: 22/40: 55.0%
+
+ChasingController Counts
+Total ChasingController Actions: 61
+Abort/What Direction: 0/61: 0.0%
+Turn To Find        : 0/61: 0.0%
+Follow              : 33/61: 54.09836065573771%
+Parallel to Wall    : 3/61: 4.918032786885246%
+Abort/Too Many Turns: 0/61: 0.0%
+Timeout             : 0/61: 0.0%
+Backtrack           : 18/61: 29.508196721311474%
+Resume Following    : 3/61: 4.918032786885246%
+Start Following     : 4/61: 6.557377049180328%
+
+HumanRetraceController Counts
+Total HumanRetraceController Actions: 4
+Time Progress       : 0/4: 0.0%
+Discontinuity       : 0/4: 0.0%
+Null Sequence       : 4/4: 100.0%
+Index Not Ready     : 0/4: 0.0%
+First Step          : 0/4: 0.0%
+Null Points         : 0/4: 0.0%
+Path Depleted       : 0/4: 0.0%
+Restart Failed      : 0/4: 0.0%
+Distance Progress   : 0/4: 0.0%
+Trace Failure       : 0/4: 0.0%
+
