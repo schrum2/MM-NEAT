@@ -404,7 +404,7 @@ public class GameFacade {
 	 */
 	public double getGhostReward() {
 		return oldG == null ?
-				-1: //TODO: write a getGhostReward for poG
+				-1: //TODO: PO Pacman will not be able to evolve until this works
 				oldG.getGhostReward();
 	}
 
@@ -425,7 +425,7 @@ public class GameFacade {
 	 */
 	public int getEatenPills() {
 		return oldG == null ?
-				-1: //TODO: write a getEatenPills method for poG
+				-1: //TODO: PO Pacman will not be able to evolve until this works
 				oldG.getEatenPills();
 	}
 
@@ -1192,12 +1192,12 @@ public class GameFacade {
 
 	/**
 	 * gets indices where pills still are.
-	 * Supportes popacman (TODO: test)
+	 * Supports popacman (TODO: test)
 	 * @return indices of pills
 	 */
 	public int[] getPillIndices() {
 		return oldG == null ?
-				oldG.getPillIndices():
+				poG.getPillIndices():
 				oldG.getPillIndices();
 	}
 
