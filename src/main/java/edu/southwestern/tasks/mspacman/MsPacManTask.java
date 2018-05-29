@@ -568,7 +568,7 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 		}
 		tcManager.preEval();
 		game = Parameters.parameters.booleanParameter("partiallyObservablePacman") ? 
-				new GameFacade(new pacman.game.Game(0)) : // TODO: Add support for determinism, remove hardcode
+				new GameFacade(new pacman.game.Game(deterministic ? num : RandomNumbers.randomGenerator.nextLong())) : 
 				new GameFacade(new Game(deterministic ? num : RandomNumbers.randomGenerator.nextLong()));
 
 		// Collection of options that are not currently possible to set in PO PacMan

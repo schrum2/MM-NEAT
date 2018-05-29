@@ -272,7 +272,7 @@ public class CustomExecutor {
         Long startTime = System.currentTimeMillis();
         for (int i = 0; i < trials; ) {
             try {
-                game = setupGame();
+                //game = setupGame();
 
                 while (!game.gameOver()) {
                     if (tickLimit != -1 && tickLimit < game.getTotalTime()) {
@@ -298,9 +298,10 @@ public class CustomExecutor {
         return new Stats[]{stats, ticks};
     }
 
-    private Game setupGame() {
-        return (this.ghostsMessage) ? new Game(rnd.nextLong(), 0, messenger.copy(), poType, sightLimit) : new Game(rnd.nextLong(), 0, null, poType, sightLimit);
-    }
+    // We send in the Game externally instead of setting it up inside of this class.
+//    private Game setupGame() {
+//        return (this.ghostsMessage) ? new Game(rnd.nextLong(), 0, messenger.copy(), poType, sightLimit) : new Game(rnd.nextLong(), 0, null, poType, sightLimit);
+//    }
 
     private void handlePeek(Game game){
         if(peek != null) logger.info(peek.apply(game));
@@ -315,7 +316,7 @@ public class CustomExecutor {
 
         Long startTime = System.currentTimeMillis();
         for (int i = 0; i < trials; i++) {
-            game = setupGame();
+            //game = setupGame();
 
             while (!game.gameOver()) {
                 handlePeek(game);
