@@ -15,7 +15,6 @@ import edu.southwestern.networks.TWEANN;
 import edu.southwestern.networks.TWEANN.Node;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
-import edu.southwestern.util.CombinatoricUtilities;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.datastructures.Triple;
 import edu.southwestern.util.graphics.DrawingPanel;
@@ -135,7 +134,7 @@ public class HyperNEATUtil {
 		public String toString() {
 			String s = "Visual Node: (";
 			s += "activation: " + activation;
-			s += ", X-coord: " + xCoord;
+			s+= ", X-coord: " + xCoord;
 			s += " Y-coord: " + yCoord;
 			s += ", Color: " + c;
 			s += ") + \n";
@@ -152,6 +151,7 @@ public class HyperNEATUtil {
 	private static HyperNEATTask hyperNEATTask;
 	private static TWEANNGenotype tg;
 	private static List<Substrate> substrates;
+	private static List<Triple<String, String, Boolean>> connections;
 	private static List<TWEANNGenotype.NodeGene> nodes;
 
 	/**
@@ -334,7 +334,7 @@ public class HyperNEATUtil {
 	public static List<DrawingPanel> drawWeight(TWEANNGenotype genotype, HyperNEATTask hnt) {
 		//gets all relevant information needed to draw link weights
 		tg = (TWEANNGenotype)genotype.copy();
-		List<Triple<String, String, Boolean>> connections = hnt.getSubstrateConnectivity();
+		connections = hnt.getSubstrateConnectivity();
 		nodes = tg.nodes;
 		//disposes of weight panels if already instantiated to clean up old panels
 		if(weightPanels != null) {
@@ -453,8 +453,8 @@ public class HyperNEATUtil {
 			TWEANNGenotype.NodeGene node = nodes.get(j);
 			TWEANNGenotype.LinkGene link = tg.getLinkBetween(node.innovation, targetNode.innovation);
 			if(link != null) {
-				c = regularVisualization(ActivationFunctions.activation(ActivationFunctions.FTYPE_TANH, link.weight));
-				c = CombinatoricUtilities.colorFromInt(link.getModuleSource());
+				double weight = link.weight;
+				c = regularVisualization(ActivationFunctions.activation(ActivationFunctions.FTYPE_TANH, weight));
 			}
 			dPanel.getGraphics().setColor(c);
 			dPanel.getGraphics().fillRect(xCoord, yCoord, WEIGHT_GRID_SIZE, WEIGHT_GRID_SIZE);

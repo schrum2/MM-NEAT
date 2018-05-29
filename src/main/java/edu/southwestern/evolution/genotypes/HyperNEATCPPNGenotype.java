@@ -554,8 +554,6 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 	 */
 	void conditionalLinkAdd(ArrayList<LinkGene> linksSoFar, TWEANN cppn, double[] inputs, int outputIndex, int fromXIndex, int fromYIndex, int s1Index, int targetXindex, int targetYIndex, int s2Index, List<Substrate> subs, long linkInnovationID) {
 		double[] outputs = cppn.process(inputs);
-		int lastModule = cppn.lastModule();
-		
 		boolean expressLink = CommonConstants.leo
 				// Specific network output determines link expression
 				? outputs[(numCPPNOutputsPerLayerPair * outputIndex) + LEO_INDEX] > CommonConstants.linkExpressionThreshold
@@ -569,7 +567,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 									? outputs[(numCPPNOutputsPerLayerPair * outputIndex) + LINK_INDEX]
 											// Standard HyperNEAT must scale the weight
 											: NetworkUtil.calculateWeight(outputs[(numCPPNOutputsPerLayerPair * outputIndex) + LINK_INDEX]);
-									linksSoFar.add(newLinkGene(sourceID, targetID, weight, linkInnovationID, false, lastModule));
+									linksSoFar.add(newLinkGene(sourceID, targetID, weight, linkInnovationID, false));
 						}
 	}
 
