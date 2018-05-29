@@ -30,18 +30,24 @@ public abstract class VariableDirectionDistanceBlock extends VariableDirectionBl
 	}
 
 	public double getValue(GameFacade gf) {
+		
 		if (numberToExclude == 0) {
 			excludedNodes.clear();
 		}
+		
 		assert numberToExclude == excludedNodes.size() : "Not excluding the right number of node results: "
 				+ numberToExclude + ":" + excludedNodes;
+		
 		final int current = gf.getPacmanCurrentNodeIndex();
+		
 		final int[] targets = ArrayUtil.setDifference(getTargets(gf), excludedNodes);
+		
 		if (targets.length == 0) {
 			// excludedNodes.add(-1); // non-existant node
 			return 1.0; // Distance is "infinity"
 		} else {
 			Pair<Integer, int[]> pair = gf.getTargetInDir(current, targets, dir);
+			assert pair != null : "stack trace";
 			excludedNodes.add(pair.t1); // Exclude this result from the next
 										// call
 			int[] path = pair.t2;

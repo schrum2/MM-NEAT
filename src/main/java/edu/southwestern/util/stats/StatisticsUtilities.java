@@ -347,6 +347,21 @@ public class StatisticsUtilities {
 		}
 		return max; // Returns the maximum value in the given Array
 	}
+	
+	/**
+	 * Returns the maximum value in a given Array of Ints
+	 * 
+	 * @param xs Array of Doubles
+	 * @return Maximum value in xs
+	 */
+	public static int maximum(int[] xs) {
+		int max = xs[0]; // Stores the maximum value to be returned later; is assumed to be the value at the first Index
+		for (int i = 1; i < xs.length; i++) { // Cycles through the Array to search for the maximum value
+			max = Math.max(max, xs[i]); // If the value at the current Index is greater than the previously greatest encountered value, update max
+		}
+		return max; // Returns the maximum value in the given Array
+	}
+
 
 	/**
 	 * Returns the maximum number in a given Collection of Integers

@@ -4,6 +4,7 @@ import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.tasks.mspacman.ghosts.GhostComparator;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
+import edu.southwestern.util.stats.StatisticsUtilities;
 import pacman.game.Game;
 
 import java.awt.Color;
@@ -427,7 +428,8 @@ public class GameFacade {
 	 */
 	public int getEatenPills() {
 		if(oldG == null) {
-			throw new UnsupportedOperationException("getEatenPills unimplemented for popacman");
+			//throw new UnsupportedOperationException("getEatenPills unimplemented for popacman");
+			return -1;
 		} else {
 			return oldG.getEatenPills();	
 		}
@@ -1288,9 +1290,15 @@ public class GameFacade {
 	 * @return path and target pair
 	 */
 	public Pair<Integer, int[]> getTargetInDir(int fromNodeIndex, int[] targetNodeIndices, int direction, boolean shortest) {
+		// For PO Pacman: What if all options are -1?
+		if(StatisticsUtilities.maximum(targetNodeIndices) == -1) { // Must only contain -1
+			return new Pair<>(-1,null);
+		}
+		
 		assert fromNodeIndex != -1 : "Invalid from node: " + fromNodeIndex;
 		assert direction >= 0 && direction <= 3 : "Not a valid direction: " + direction;
 		Pair<Integer, int[]> result = getTargetInDirFromNew(fromNodeIndex, targetNodeIndices, direction, shortest);
+		//popacman would cause the pair to be null if none of the targets are visible
 		assert(result != null && result.t2 != null) : ("Why is pair null? " + result);
 		assert(validPath(result.t2)) : ("Invalid path! " + Arrays.toString(result.t2));
 		assert(result.t2.length == 0 || result.t2[0] != fromNodeIndex) : ("Path should NOT start at  location!");
@@ -1313,14 +1321,19 @@ public class GameFacade {
 	 * @return path and target pair
 	 */
 	private Pair<Integer, int[]> getTargetInDirFromNew(int fromNodeIndex, int[] targetNodeIndices, int direction, boolean shortest) {
-		
 		assert targetNodeIndices.length > 0 : "targetNodeIndices empty:" + Arrays.toString(targetNodeIndices);
 		int[] neighbors = neighbors(fromNodeIndex);
 		assert(neighbors[direction] != -1) : ("Picked invalid direction " + direction + " given neighbors "	+ Arrays.toString(neighbors));
 		
 		double extremeDistance = shortest ? Integer.MAX_VALUE : -Integer.MAX_VALUE;
 		int target = -1;
-		int[] extremePath = null;
+		int[] extremePath = null;		
+		
+		// For PO Pacman: What if all options are -1?
+		if(StatisticsUtilities.maximum(targetNodeIndices) == -1) { // Must only contain -1
+			return new Pair<>(-1,null);
+		}
+		
 		for (int i = 0; i < targetNodeIndices.length; i++) {
 			if (targetNodeIndices[i] == -1) {
 				continue;
@@ -1338,7 +1351,7 @@ public class GameFacade {
 			}
 			
 			int[] path = getPathInDirFromNew(fromNodeIndex, targetNodeIndices[i], direction);
-
+			assert path != null : "path is null";
 			assert(path.length == 0 || path[path.length- 1] == targetNodeIndices[i]) 
 			: ("Last element of path should be the to location! " + ("new"));
 		        				
@@ -1349,11 +1362,11 @@ public class GameFacade {
 				extremeDistance = path.length;
 				target = targetNodeIndices[i];
 				extremePath = path;
+				assert extremePath != null : "Extreme path is null";
 			}
 		}
 		
-		assert extremePath != null : "Extreme path is null: targetNodeIndices:" + Arrays.toString(targetNodeIndices)
-				+ ":extremeDistance:" + extremeDistance;
+		assert extremePath != null : "Extreme path is null: targetNodeIndices:" + Arrays.toString(targetNodeIndices) + ":extremeDistance:" + extremeDistance;
 		return new Pair<Integer, int[]>(target, extremePath);
 }
 
@@ -2285,7 +2298,6 @@ public class GameFacade {
 			} else {
 				finalPath = oldG.getShortestPath(from, to, indexToMove(direction));
 			}
-		
 		} else {
 			// Left and right are neighbors, so getShortestPath won't
 			// necessarily go in
