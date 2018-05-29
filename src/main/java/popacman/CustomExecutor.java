@@ -12,7 +12,10 @@ import pacman.game.comms.BasicMessenger;
 import pacman.game.comms.Messenger;
 import pacman.game.internal.POType;
 import pacman.game.util.Stats;
+import edu.southwestern.log.DeathLocationsLog;
+import edu.southwestern.log.MMNEATLog;
 import edu.southwestern.parameters.Parameters;
+import oldpacman.Executor;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -43,6 +46,15 @@ public class CustomExecutor {
     private final Random rnd = new Random();
     private final Function<Game, String> peek;
     private final Logger logger = LoggerFactory.getLogger(CustomExecutor.class);
+    
+    
+    ///////////////////Added from oldpacman.Executor////////////////////
+	public static boolean logOutput;
+	public static MMNEATLog watch;
+	public static MMNEATLog noWatch;
+	public static boolean hold = false;
+	public static DeathLocationsLog deaths = null;
+    ////////////////////////////////////////////////////////////////////
 
     public static class Builder {
     	
@@ -174,6 +186,19 @@ public class CustomExecutor {
         this.poType = poType;
         this.sightLimit = sightLimit;
         this.peek = peek;
+        
+        ///////////////////////added from oldpacman.Executor//////////////////////////
+		hold = Parameters.parameters.booleanParameter("stepByStep");
+		logOutput = Parameters.parameters.booleanParameter("logPacManEvals");
+		String saveTo = Parameters.parameters.stringParameter("saveTo");
+		if (!saveTo.isEmpty() && Parameters.parameters.booleanParameter("logDeathLocations")) {
+			deaths = new DeathLocationsLog();
+		}
+		if (!saveTo.isEmpty() && logOutput && watch == null && noWatch == null) {
+			watch = new MMNEATLog("EvalPacMan-WatchScores");
+			noWatch = new MMNEATLog("EvalPacMan-NoWatchScores");
+		}
+		///////////////////////////////////////////////////////////////////////////////
     }
 
     private static void writeStat(FileWriter writer, Stats stat, int i) throws IOException {
@@ -566,4 +591,23 @@ public class CustomExecutor {
             }
         }
     }
+    
+    //////////////////////ADDED FROM pacman.Executor/////////////////////
+    public void log(String name) {
+		if (logOutput) {
+			watch.log(name);
+			noWatch.log(name);
+		}
+	}
+
+	public static void close() {
+		if (logOutput) {
+			watch.close();
+			noWatch.close();
+		}
+		if (deaths != null) {
+			deaths.close();
+		}
+	}
+	///////////////////////////////////////////////////////////////////////
 }

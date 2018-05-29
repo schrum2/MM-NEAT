@@ -37,7 +37,8 @@ public class ExecutorFacade {
 	 */
 	public void log(String string) {
 		if(oldE == null) {
-			System.out.println("TODO: no log method in poE, ExecutorFacade ln 33");
+			//TODO: test
+			poE.log(string);
 		} else {
 			oldE.log(string);
 		}
@@ -83,7 +84,7 @@ public class ExecutorFacade {
 	public void runGameTimedRecorded(GameFacade game, PacManControllerFacade mspacman, GhostControllerFacade ghosts,
 			boolean visual, String fileName) {
 		if(oldE == null) {
-			System.out.println("TODO: need to implement runGameTimedRecorded, ExecutorFacade ln 79");
+			//System.out.println("TODO: need to implement runGameTimedRecorded, ExecutorFacade ln 79");
 			poE.runGameTimedRecorded(mspacman.poP, ghosts.poG, fileName, game.poG, visual);
 		} else {
 			oldE.runGameTimedRecorded(game.oldG, mspacman.oldP, ghosts.oldG, visual, fileName);
@@ -115,7 +116,7 @@ public class ExecutorFacade {
 	public void runGameTimedNonVisual(GameFacade game, PacManControllerFacade mspacman, GhostControllerFacade ghosts) {
 		if(oldE == null) {
 			//TODO
-			System.out.println("TODO: need to implement runGameTimedNonVisual, ExecutorFacade ln 106");
+			//System.out.println("TODO: need to implement runGameTimedNonVisual, ExecutorFacade ln 106");
 			//TODO: rectify the fact that poE has no speed optomised method
 			poE.runGameTimedSpeedOptimised(mspacman.poP, ghosts.poG, false, false, game.poG);
 		} else {
