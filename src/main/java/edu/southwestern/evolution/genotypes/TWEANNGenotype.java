@@ -1,11 +1,35 @@
 package edu.southwestern.evolution.genotypes;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+
+import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.EvolutionaryHistory;
 import edu.southwestern.evolution.MultiplePopulationGenerationalEA;
-import edu.southwestern.evolution.mutation.tweann.*;
+import edu.southwestern.evolution.mutation.tweann.ActivationFunctionMutation;
+import edu.southwestern.evolution.mutation.tweann.AllWeightMutation;
+import edu.southwestern.evolution.mutation.tweann.DeleteLinkMutation;
+import edu.southwestern.evolution.mutation.tweann.FullyConnectedModuleMutation;
+import edu.southwestern.evolution.mutation.tweann.MMD;
+import edu.southwestern.evolution.mutation.tweann.MMP;
+import edu.southwestern.evolution.mutation.tweann.MMR;
+import edu.southwestern.evolution.mutation.tweann.MeltThenFreezeAlternateMutation;
+import edu.southwestern.evolution.mutation.tweann.MeltThenFreezePolicyMutation;
+import edu.southwestern.evolution.mutation.tweann.MeltThenFreezePreferenceMutation;
+import edu.southwestern.evolution.mutation.tweann.NewLinkMutation;
+import edu.southwestern.evolution.mutation.tweann.PolynomialWeightMutation;
+import edu.southwestern.evolution.mutation.tweann.SpliceNeuronMutation;
+import edu.southwestern.evolution.mutation.tweann.WeightPurturbationMutation;
 import edu.southwestern.evolution.nsga2.bd.characterizations.GeneralNetworkCharacterization;
 import edu.southwestern.evolution.nsga2.bd.localcompetition.TWEANNModulesNicheDefinition;
-import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.networks.ActivationFunctions;
 import edu.southwestern.networks.TWEANN;
 import edu.southwestern.parameters.CommonConstants;
@@ -15,8 +39,6 @@ import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.random.RandomGenerator;
 import edu.southwestern.util.random.RandomNumbers;
 import edu.southwestern.util.stats.StatisticsUtilities;
-
-import java.util.*;
 
 /**
  * Genotype for a Topology and Weight Evolving Neural Network. Standard genotype
@@ -257,6 +279,10 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
             return newLinkGene(sourceInnovation, targetInnovation, weight, innovation, isActive(), isRecurrent(), isFrozen());
         }
 
+		public int getModuleSource() {
+			return -1;
+		}
+
         /**
          * Returns String of link gene data
          *
@@ -278,6 +304,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
         protected boolean active;
         protected boolean recurrent;
         protected boolean frozen;
+		protected int moduleSource;
 
         /**
          * New link gene in which it needs to be specified whether or not it is
@@ -291,11 +318,12 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
          * @param recurrent Whether the link is considered recurrent
          * @param frozen Whether the link is immune to modifications by mutation
          */
-        private FullLinkGene(long sourceInnovation, long targetInnovation, double weight, long innovation, boolean active, boolean recurrent, boolean frozen) {
+        private FullLinkGene(long sourceInnovation, long targetInnovation, double weight, long innovation, boolean active, boolean recurrent, boolean frozen, int moduleSource) {
             super(sourceInnovation, targetInnovation, weight, innovation);
             this.active = active;
             this.recurrent = recurrent;
             this.frozen = frozen;
+            this.moduleSource = moduleSource;
         }
 
         @Override
@@ -313,7 +341,10 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
             return frozen;
         }
         
-        
+		public int getModuleSource() {
+			return moduleSource;
+		}
+
         @Override
         public boolean isActive() {
             return active;
@@ -328,7 +359,10 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
     // Genes are created through these method access points so that an easy
     // distinction between different types of genes (with different memory
     // footprints) can be made.
-    
+
+    public static final LinkGene newLinkGene(long sourceID, long targetID, double weight, long linkInnovationID, boolean recurrent, int moduleSource) {
+		return newLinkGene(sourceID, targetID, weight, linkInnovationID, false, recurrent, false, moduleSource);
+	}
     
     public static final LinkGene newLinkGene(long sourceInnovation, long targetInnovation, double weight, long innovation, boolean recurrent) {
         return newLinkGene(sourceInnovation, targetInnovation, weight, innovation, true, recurrent, false);
@@ -338,10 +372,18 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
         return newLinkGene(sourceInnovation, targetInnovation, weight, innovation, true, recurrent, frozen);
     }
     
+    public static final LinkGene newLinkGene(long sourceInnovation, long targetInnovation, double weight, long innovation, boolean recurrent, boolean frozen, int moduleSource) {
+        return newLinkGene(sourceInnovation, targetInnovation, weight, innovation, true, recurrent, frozen, moduleSource);
+    }
+    
     public static final LinkGene newLinkGene(long sourceInnovation, long targetInnovation, double weight, long innovation, boolean active, boolean recurrent, boolean frozen) {
+        return newLinkGene(sourceInnovation, targetInnovation, weight, innovation, active, recurrent, frozen, -1);
+    }
+    
+    public static final LinkGene newLinkGene(long sourceInnovation, long targetInnovation, double weight, long innovation, boolean active, boolean recurrent, boolean frozen, int moduleSource) {
         return smallerGenotypes
                 ? new LinkGene(sourceInnovation, targetInnovation, weight, innovation)
-                : new FullLinkGene(sourceInnovation, targetInnovation, weight, innovation, active, recurrent, frozen);
+                : new FullLinkGene(sourceInnovation, targetInnovation, weight, innovation, active, recurrent, frozen, moduleSource);
     }
     
     public static final NodeGene newNodeGene(int ftype, int ntype, long innovation) {
