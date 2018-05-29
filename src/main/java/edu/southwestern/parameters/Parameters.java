@@ -640,6 +640,7 @@ public class Parameters {
 		booleanOptions.add("tetrisAvgNumHoles", false, "include number of holes as a fitness function");
 		booleanOptions.add("tetrisBlocksOnScreen", false, "For Tetris multiobjective, seperates number of blocks on screen from lines cleared");
 		booleanOptions.add("tetrisLinesNotScore", false, "For Tetris track lines cleared instead of game score");
+		booleanOptions.add("tetrisNumLinesCleared", false, "Turns on fitness for different number of lines cleared");
 		booleanOptions.add("tetrisTimeSteps", false, "For Tetris multiobjective, separates time steps from lines cleared");
 		booleanOptions.add("timeToEatAllFitness", false, "Fitness based on time to eat all ghosts after power pill");
 		booleanOptions.add("timedPacman", false, "Pacman moves have time limit, even in non-visual mode");
@@ -655,6 +656,7 @@ public class Parameters {
 		booleanOptions.add("tugResetsToPreviousGoals", false, "On TUG goal increase, reset RWAs to previous goals");
 		booleanOptions.add("ucb1Evaluation", false, "Use UCB1 to decide which individuals get extra evaluations");
 		booleanOptions.add("useHyperNEATCustomArchitecture", false, "allows for hyperNEAT custom architectures");
+		booleanOptions.add("useTetrisLinesBDCharacterization", false, "turns on tetris characterization vector for 1, 2, 3, or 4 lines cleared");
 		booleanOptions.add("utJumps", true, "UT2004 agent can jump");
 		booleanOptions.add("veryClose", true, "Use Pacman very close sensors");
 		booleanOptions.add("viewFinalCamps", false, "Look at final training camps from 'final'");

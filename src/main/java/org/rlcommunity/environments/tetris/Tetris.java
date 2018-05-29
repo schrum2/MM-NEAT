@@ -32,6 +32,7 @@ import org.rlcommunity.rlglue.codec.types.Observation;
 import org.rlcommunity.rlglue.codec.types.Reward_observation_terminal;
 import org.rlcommunity.rlglue.codec.util.EnvironmentLoader;
 
+import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.rlglue.RLGlueEnvironment;
 import edu.southwestern.tasks.rlglue.featureextractors.tetris.BertsekasTsitsiklisTetrisExtractor;
 import rlVizLib.general.ParameterHolder;
@@ -377,15 +378,17 @@ public class Tetris extends RLGlueEnvironment implements HasAVisualizerInterface
 	 */
 	@Override
 	public ArrayList<Double> getBehaviorVector() {
-		ArrayList<Double> result = new ArrayList<Double>(gameState.worldState.length);
+		ArrayList<Double> result = new ArrayList<Double>();
+		
+		if (Parameters.parameters.booleanParameter("useTetrisLinesBDCharacterization")) {
+			for(double rows: this.getNumberOfRowsCleared())
+				result.add(rows);
+			return result; 
+		}
 		TetrisState state = gameState;
-		//if (Parameters.parameters.booleanParameter("tetrisLinesBDCharecterization")) {
-			
-		//} else {
-			for (Integer b : state.worldState) {
-				result.add(b * 1.0);
-			}
-		//}
+		for (Integer b : state.worldState) {
+			result.add(b * 1.0);
+		}
 		return result;
 	}
 
