@@ -231,7 +231,7 @@ public class Tetris extends RLGlueEnvironment implements HasAVisualizerInterface
 	public double getAverageNumEmptySpaces() {
 		return averageNumEmptyBlocks;
 	}
-	
+
 	/**
 	 * Average number of holes across all states in which a block was just placed (afterstates)
 	 * @return The average number of holes across all afterstates
@@ -359,10 +359,10 @@ public class Tetris extends RLGlueEnvironment implements HasAVisualizerInterface
 
 		TaskSpec.checkTaskSpec(taskSpecString);
 		// return taskSpecString;
-		
+
 		//Can this be deleted?
 		TaskSpec.checkTaskSpec(taskSpecString);
-		 
+
 		return new TaskSpec(theTaskSpecObject);
 	}
 
@@ -379,12 +379,16 @@ public class Tetris extends RLGlueEnvironment implements HasAVisualizerInterface
 	public ArrayList<Double> getBehaviorVector() {
 		ArrayList<Double> result = new ArrayList<Double>(gameState.worldState.length);
 		TetrisState state = gameState;
-		for (Integer b : state.worldState) {
-			result.add(b * 1.0);
-		}
+		//if (Parameters.parameters.booleanParameter("tetrisLinesBDCharecterization")) {
+			
+		//} else {
+			for (Integer b : state.worldState) {
+				result.add(b * 1.0);
+			}
+		//}
 		return result;
 	}
-	
+
 	/**
 	 * Schrum: added.
 	 * 
