@@ -1,10 +1,29 @@
 package popacman;
 
+import static pacman.game.Constants.DELAY;
+import static pacman.game.Constants.INTERVAL_WAIT;
+
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Random;
+import java.util.function.Function;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import edu.southwestern.log.DeathLocationsLog;
+import edu.southwestern.log.MMNEATLog;
+import edu.southwestern.parameters.Parameters;
 import pacman.controllers.Controller;
 import pacman.controllers.HumanController;
 import pacman.controllers.MASController;
+import pacman.game.Constants.MOVE;
 import pacman.game.Drawable;
 import pacman.game.Game;
 import pacman.game.GameView;
@@ -12,17 +31,6 @@ import pacman.game.comms.BasicMessenger;
 import pacman.game.comms.Messenger;
 import pacman.game.internal.POType;
 import pacman.game.util.Stats;
-import edu.southwestern.log.DeathLocationsLog;
-import edu.southwestern.log.MMNEATLog;
-import edu.southwestern.parameters.Parameters;
-import oldpacman.Executor;
-
-import java.io.*;
-import java.util.ArrayList;
-import java.util.Random;
-import java.util.function.Function;
-
-import static pacman.game.Constants.*;
 
 /**
  * This class may be used to execute the game in timed or un-timed modes, with or without
@@ -76,41 +84,41 @@ public class CustomExecutor {
         //add to parameters
         private Function<Game, String> peek = null;
 
-        public Builder setPacmanPO(boolean po) {
-            this.pacmanPO = po;
-            return this;
-        }
-
-        public Builder setGhostPO(boolean po) {
-            this.ghostPO = po;
-            return this;
-        }
-
-        public Builder setGhostsMessage(boolean canMessage) {
-            this.ghostsMessage = canMessage;
-            if (canMessage) {
-                messenger = new BasicMessenger();
-            } else {
-                messenger = null;
-            }
-            return this;
-        }
-
-        public Builder setMessenger(Messenger messenger) {
-            this.ghostsMessage = true;
-            this.messenger = messenger;
-            return this;
-        }
-
-        public Builder setScaleFactor(double scaleFactor) {
-            this.scaleFactor = scaleFactor;
-            return this;
-        }
-
-        public Builder setGraphicsDaemon(boolean daemon) {
-            this.setDaemon = daemon;
-            return this;
-        }
+//        public Builder setPacmanPO(boolean po) {
+//            this.pacmanPO = po;
+//            return this;
+//        }
+//
+//        public Builder setGhostPO(boolean po) {
+//            this.ghostPO = po;
+//            return this;
+//        }
+//
+//        public Builder setGhostsMessage(boolean canMessage) {
+//            this.ghostsMessage = canMessage;
+//            if (canMessage) {
+//                messenger = new BasicMessenger();
+//            } else {
+//                messenger = null;
+//            }
+//            return this;
+//        }
+//
+//        public Builder setMessenger(Messenger messenger) {
+//            this.ghostsMessage = true;
+//            this.messenger = messenger;
+//            return this;
+//        }
+//
+//        public Builder setScaleFactor(double scaleFactor) {
+//            this.scaleFactor = scaleFactor;
+//            return this;
+//        }
+//
+//        public Builder setGraphicsDaemon(boolean daemon) {
+//            this.setDaemon = daemon;
+//            return this;
+//        }
 
         // Not used by us: J. Schrum 5/25/18
 //        public Builder setVisual(boolean visual) {
@@ -118,30 +126,30 @@ public class CustomExecutor {
 //            return this;
 //        }
 
-        public Builder setTickLimit(int tickLimit) {
-            this.tickLimit = tickLimit;
-            return this;
-        }
-
-        public Builder setTimeLimit(int timeLimit) {
-            this.timeLimit = timeLimit;
-            return this;
-        }
-
-        public Builder setPOType(POType poType) {
-            this.poType = poType;
-            return this;
-        }
-
-        public Builder setSightLimit(int sightLimit) {
-            this.sightLimit = sightLimit;
-            return this;
-        }
-
-        public Builder setPeek(Function<Game, String> peek){
-            this.peek = peek;
-            return this;
-        }
+//        public Builder setTickLimit(int tickLimit) {
+//            this.tickLimit = tickLimit;
+//            return this;
+//        }
+//
+//        public Builder setTimeLimit(int timeLimit) {
+//            this.timeLimit = timeLimit;
+//            return this;
+//        }
+//
+//        public Builder setPOType(POType poType) {
+//            this.poType = poType;
+//            return this;
+//        }
+//
+//        public Builder setSightLimit(int sightLimit) {
+//            this.sightLimit = sightLimit;
+//            return this;
+//        }
+//
+//        public Builder setPeek(Function<Game, String> peek){
+//            this.peek = peek;
+//            return this;
+//        }
 
         public CustomExecutor build() {
         	//TODO: should parameters from parameters.java be placed here?
