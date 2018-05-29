@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.southwestern.tasks.mspacman.ghosts;
 
 import edu.southwestern.tasks.mspacman.facades.GameFacade;
@@ -35,6 +31,8 @@ public class DirectionalGhostComparator implements Comparator<Integer> {
 		} else if (!proximityOnly && !gs.isGhostEdible(o1) && gs.isGhostEdible(o2)) {
 			return 1 * sign;
 		} else {
+			// If getGhostCurrentNodeIndex is -1 then the ghost is not visible and the effective distance is infinity
+			// NOTE: Maybe improve this in the future with some kind of memory that makes a better guess, but for now saw infinity
 			int o1Dist = gs.getDirectionalPath(current, gs.getGhostCurrentNodeIndex(o1), dir).length;
 			int o2Dist = gs.getDirectionalPath(current, gs.getGhostCurrentNodeIndex(o2), dir).length;
 			if (o2Dist == 0 && o1Dist > 0) {

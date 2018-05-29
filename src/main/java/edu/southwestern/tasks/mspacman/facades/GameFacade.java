@@ -914,6 +914,8 @@ public class GameFacade {
 	 * @return shortest directional path
 	 */
 	public int[] getDirectionalPath(int from, int to, int direction) {
+		assert from != -1 : "From node cannot be -1!";
+		assert to != -1 : "To node cannot be -1!";
 		int[] result = getPathInDirFromNew(from, to, direction);
 		assert(validPath(result)) : ("Invalid path! " + Arrays.toString(result));
 		assert(result[result.length - 1] == to) : ("Last element of path should be the to location!");
