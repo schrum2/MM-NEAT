@@ -403,9 +403,11 @@ public class GameFacade {
 	 * @return
 	 */
 	public double getGhostReward() {
-		return oldG == null ?
-				-1: //TODO: PO Pacman will not be able to evolve until this works
-				oldG.getGhostReward();
+		if(oldG == null) {
+			throw new UnsupportedOperationException("getGhostReward unimplemented for popacman");
+		} else {
+			return oldG.getGhostReward();	
+		}
 	}
 
 	/**
@@ -424,9 +426,11 @@ public class GameFacade {
 	 * @return number of eaten pills
 	 */
 	public int getEatenPills() {
-		return oldG == null ?
-				-1: //TODO: PO Pacman will not be able to evolve until this works
-				oldG.getEatenPills();
+		if(oldG == null) {
+			throw new UnsupportedOperationException("getEatenPills unimplemented for popacman");
+		} else {
+			return oldG.getEatenPills();	
+		}
 	}
 
 	/**
@@ -2505,8 +2509,7 @@ public class GameFacade {
 	 */
 	public int getTimeGhostReward() {
 		if(oldG == null) {
-			System.out.println("TODO: Implement getTimeGhostReward for poG, GameFacade.java");
-			return -1;
+			throw new UnsupportedOperationException("TODO: Implement getTimeGhostReward for poG, GameFacade.java");
 		} else {
 				return oldG.getTimeGhostReward();
 		}
@@ -2519,8 +2522,7 @@ public class GameFacade {
 	 */
 	public double getTimePillReward() {
 		if(oldG == null) {
-			System.out.println("TODO: Implement getTimePillReward for poG, GameFacade.java");
-			return -1;
+			throw new UnsupportedOperationException("TODO: Implement getTimePillReward for poG, GameFacade.java");
 		} else {
 			return oldG.getTimePillReward();
 		}
