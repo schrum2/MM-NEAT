@@ -162,6 +162,7 @@ public class TetrisTask<T extends Network> extends RLGlueTask<T> {
 		if(tetrisTimeSteps) total++;
 		if(tetrisBlocksOnScreen) total++;
 		if(tetrisAvgHoles) total++;
+		if(tetrisNumLinesCleared) total += 4;
 		return total;
 	}
 
