@@ -20,7 +20,7 @@ public class WeaponIdentificationBlock implements UT2004SensorBlock {
 	}
 
 	/**
-	 * Collects data on the weapon statuses and puts it into an array
+	 * populates the sensor array with the weapon data
 	 * 
 	 * @param bot (bot which will use the sensor data)
 	 * @param in (address to start at in array)
