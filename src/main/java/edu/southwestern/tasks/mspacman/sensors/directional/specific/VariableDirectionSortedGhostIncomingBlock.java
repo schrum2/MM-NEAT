@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 /**
- *
+ * supports popacman (TODO: test)
  * @author Jacob
  */
 public class VariableDirectionSortedGhostIncomingBlock extends VariableDirectionBlock {
@@ -22,10 +22,14 @@ public class VariableDirectionSortedGhostIncomingBlock extends VariableDirection
 	private final boolean edibleClose;
 	private final boolean proximityOnly;
 
+	/**
+	 * supports popacman. (TODO: test)
+	 * @param order
+	 */
 	public VariableDirectionSortedGhostIncomingBlock(int order) {
 		this(order, true, true);
 	}
-
+	
 	public VariableDirectionSortedGhostIncomingBlock(int order, boolean edibleClose, boolean proximityOnly) {
 		super(-1);
 		this.order = order;
@@ -39,6 +43,9 @@ public class VariableDirectionSortedGhostIncomingBlock extends VariableDirection
 	}
 
 	@Override
+	/**
+	 * TODO: test popacman support
+	 */
 	public double getValue(GameFacade gf) {
 		ArrayList<Integer> ghosts = gf.getGhostIndices(edibleClose, proximityOnly);
 		if (order >= ghosts.size()) {
