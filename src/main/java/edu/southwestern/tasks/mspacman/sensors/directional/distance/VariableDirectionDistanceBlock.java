@@ -29,6 +29,9 @@ public abstract class VariableDirectionDistanceBlock extends VariableDirectionBl
 		this.numberToExclude = exclude;
 	}
 
+	/**
+	 * TODO: how to handle PO conditions
+	 */
 	public double getValue(GameFacade gf) {
 		
 		if (numberToExclude == 0) {
@@ -47,10 +50,16 @@ public abstract class VariableDirectionDistanceBlock extends VariableDirectionBl
 			return 1.0; // Distance is "infinity"
 		} else {
 			Pair<Integer, int[]> pair = gf.getTargetInDir(current, targets, dir);
+			
+			//Used for PO conditions
+			if(pair.t2 == null) {
+				return 1.0; //distance is "infinity"
+			}
 			assert pair != null : "stack trace";
 			excludedNodes.add(pair.t1); // Exclude this result from the next
 										// call
 			int[] path = pair.t2;
+			assert path != null : "The above if should have caught the null path case";
 			double distance = path.length;
 			double result = (Math.min(distance, GameFacade.MAX_DISTANCE) / GameFacade.MAX_DISTANCE);
 			// System.out.println("Distance:"+distance+":result:"+result);

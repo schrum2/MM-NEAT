@@ -800,14 +800,21 @@ public class GameFacade {
 
 	/**
 	 * returns whether or not current index is a junction.
-	 * Supports popacman (TODO: test)
+	 * Supports popacman. If we cannot see the index, assume it 
+	 * isn't a junction.
 	 * @param current current index
 	 * @return whether node is a junction
 	 */
 	public boolean isJunction(int current) {
-		return oldG == null ?
-				poG.isJunction(current):
-				oldG.isJunction(current);
+		
+		//we cannot see the index, implies PO conditions
+		if(current == -1) {
+			return false;
+		} else {
+			return oldG == null ?
+					poG.isJunction(current):
+					oldG.isJunction(current);
+		}
 	}
 
 	/**
@@ -930,8 +937,13 @@ public class GameFacade {
 	 * @return shortest directional path
 	 */
 	public int[] getDirectionalPath(int from, int to, int direction) {
-		assert from != -1 : "From node cannot be -1!";
-		assert to != -1 : "To node cannot be -1!";
+		//assert from != -1 : "From node cannot be -1!";
+		//assert to != -1 : "To node cannot be -1!";
+		
+		//Can't path to an unknown location
+		if(from == -1 || to == -1) {
+			return null;
+		}
 		int[] result = getPathInDirFromNew(from, to, direction);
 		assert(validPath(result)) : ("Invalid path! " + Arrays.toString(result));
 		assert(result[result.length - 1] == to) : ("Last element of path should be the to location!");
@@ -1462,6 +1474,11 @@ public class GameFacade {
 		
 		//flow control to differentiate between oldpacman and popacman
 		if(oldG == null) {
+			//If the ghost is unobservable
+			if(getGhostCurrentNodeIndex(ghostIndex) == -1) {
+				//TODO: is this how we should handle this case?
+				return null;
+			}
 			result = poG.getShortestPath(getGhostCurrentNodeIndex(ghostIndex), target, poG.getGhostLastMoveMade(indexToGhostPO(ghostIndex)));
 		} else {
 			result = oldG.getShortestPath(getGhostCurrentNodeIndex(ghostIndex), target, oldG.getGhostLastMoveMade(indexToGhost(ghostIndex)));
@@ -1648,8 +1665,19 @@ public class GameFacade {
 		int current = this.getPacmanCurrentNodeIndex();
 		int[] neighbors = this.neighbors(current);
 		assert neighbors[pacmanDir] != -1 : "Pacman dir is a wall: " + pacmanDir + "; " + Arrays.toString(neighbors);
+		
 		int[] pacmanPath = this.getDirectionalPath(current, this.getGhostCurrentNodeIndex(ghostIndex), pacmanDir);
 		int[] junctions = this.getJunctionIndices();
+		
+		//We can't see the ghost
+		if(pacmanPath == null) {
+			//Assume it isnt trapped. 
+			return false;
+		}
+		
+		assert pacmanPath != null : "pacmanPath broke";
+		assert junctions != null : "junctions broke";
+		
 		return ArrayUtil.intersection(pacmanPath, junctions).length == 0;
 	}
 

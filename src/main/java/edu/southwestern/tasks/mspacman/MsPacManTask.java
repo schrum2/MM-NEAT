@@ -284,9 +284,13 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 			addObjective(new GhostsPerPowerPillScore<T>(false), otherScores, new Average(), false);
 		}
 		ghostRewardIndexInOtherScores = otherScores.size();
-		addObjective(new GhostRewardScore<T>(), otherScores, new Average(), false);
+		if(!partiallyObservablePacman) {
+			addObjective(new GhostRewardScore<T>(), otherScores, new Average(), false);	
+		}
 		maxGhostRewardIndexInOtherScores = otherScores.size();
-		addObjective(new GhostRewardScore<T>(), otherScores, new Max(), false);
+		if(!partiallyObservablePacman) {
+			addObjective(new GhostRewardScore<T>(), otherScores, new Max(), false);
+		}
 		// Level Scores
 		avgLevelIndexInOtherScores = otherScores.size();
 		addObjective(new LevelScore<T>(), otherScores, new Average(), false);

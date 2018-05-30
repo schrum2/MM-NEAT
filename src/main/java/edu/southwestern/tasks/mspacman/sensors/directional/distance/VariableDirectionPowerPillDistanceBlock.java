@@ -8,7 +8,7 @@ import edu.southwestern.tasks.mspacman.facades.GameFacade;
 import edu.southwestern.util.MiscUtil;
 
 /**
- * tODO: what to do in PO conditions
+ * TODO: what to do in PO conditions
  * @author Jacob Schrum
  */
 public class VariableDirectionPowerPillDistanceBlock extends VariableDirectionDistanceBlock {
@@ -25,11 +25,11 @@ public class VariableDirectionPowerPillDistanceBlock extends VariableDirectionDi
 	@Override
 	public int[] getTargets(GameFacade gf) {
 		//TODO: what should be returned if no targets are visible?
-		int[] intermediate = gf.getActivePowerPillsIndices();;
-		for(int i = 0; i < intermediate.length; i++) {
-			System.out.println(intermediate[i]);
-		}
-		MiscUtil.waitForReadStringAndEnterKeyPress();
+//		int[] intermediate = gf.getActivePowerPillsIndices();;
+//		for(int i = 0; i < intermediate.length; i++) {
+//			System.out.println(intermediate[i]);
+//		}
+//		MiscUtil.waitForReadStringAndEnterKeyPress();
 		return gf.getActivePowerPillsIndices();
 	}
 }

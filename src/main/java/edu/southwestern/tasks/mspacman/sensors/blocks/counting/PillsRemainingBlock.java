@@ -21,11 +21,11 @@ public class PillsRemainingBlock extends TargetPortionRemainingBlock {
 	@Override
 	public int getTargetCurrent(GameFacade gf) {
 		//What should happen if an empty array is returned? TODO
-		int[] intermediate = gf.getActivePillsIndices();;
-		for(int i = 0; i < intermediate.length; i++) {
-			System.out.println(intermediate[i]);
-		}
-		MiscUtil.waitForReadStringAndEnterKeyPress();
+//		int[] intermediate = gf.getActivePillsIndices();;
+//		for(int i = 0; i < intermediate.length; i++) {
+//			System.out.println(intermediate[i]);
+//		}
+//		MiscUtil.waitForReadStringAndEnterKeyPress();
 		return gf.getActivePillsIndices().length;
 	}
 
