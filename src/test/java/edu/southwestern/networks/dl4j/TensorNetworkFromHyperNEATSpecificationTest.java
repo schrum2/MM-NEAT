@@ -21,7 +21,7 @@ import edu.southwestern.util.random.RandomNumbers;
 
 public class TensorNetworkFromHyperNEATSpecificationTest {
 
-	@Test
+	//@Test
 	public void testFillWeightsFromHyperNEATNetworkAllReLU() {
 		HyperNEATTetrisTask.hardSubstrateReset();
 		EvolutionaryHistory.archetypes = null; // Force reset
@@ -130,7 +130,7 @@ public class TensorNetworkFromHyperNEATSpecificationTest {
 //	    assertTrue(timeHyperNEAT > timeDL4J);
 	}
 
-	@Test
+	//@Test
 	public void testFillWeightsFromHyperNEATNetworkAllTanH() {
 		HyperNEATTetrisTask.hardSubstrateReset();
 		EvolutionaryHistory.archetypes = null; // Force reset
@@ -190,7 +190,7 @@ public class TensorNetworkFromHyperNEATSpecificationTest {
 	}
 	
 
-	@Test
+	//@Test
 	public void testFillWeightsFromHyperNEATNetworkReLUWithTanHOnTop() {
 		HyperNEATTetrisTask.hardSubstrateReset();
 		EvolutionaryHistory.archetypes = null; // Force reset
