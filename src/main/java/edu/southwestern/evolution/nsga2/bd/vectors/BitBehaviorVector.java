@@ -1,13 +1,9 @@
 package edu.southwestern.evolution.nsga2.bd.vectors;
 
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 import java.util.BitSet;
 
 /**
- *
+ * Compare two binary behavior characterizations in terms of Hamming Distance
  * @author Jacob Schrum
  */
 public class BitBehaviorVector implements BehaviorVector {
@@ -18,8 +14,8 @@ public class BitBehaviorVector implements BehaviorVector {
 		this.bs = bs;
 	}
 
-	/*
-	 * Hamming distance
+	/**
+	 * Compute Hamming distance by computing XOR between the vectors and counting the 1's in the result
 	 */
 	public double distance(BehaviorVector rhs) {
 		// Clone so the xor operation doesn't change the original set
