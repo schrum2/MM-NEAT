@@ -137,8 +137,8 @@ public class GameFacade {
 	}
 	
 	/**
-	 * Used for popacman
-	 * Returns enum corresponding to index given
+	 * Used for popacman.
+	 * Returns enum corresponding to index given.
 	 * @param index index of given ghost
 	 * @return ghost that corresponds to given index
 	 */
@@ -202,7 +202,7 @@ public class GameFacade {
 
 	/**
 	 * Return indices for certain types of ghosts.
-	 * Supports popacman (TODO: test)
+	 * Supports popacman. (TODO: test handling of PO conditions)
 	 * 
 	 * @param edibleVsThreatOnly
 	 *            true for edible only, false for threat only, unless "all" is
@@ -471,12 +471,15 @@ public class GameFacade {
 
 	/**
 	 * Gets index of node pacman is currently
-	 * occupying. Supports popacman (TODO: test)
+	 * occupying. Supports popacman. Returns -1
+	 * if the calling agent cannot see pacman.
 	 * @return current node
 	 */
 	public int getPacmanCurrentNodeIndex() {
 		return oldG == null ? 
-			poG.getPacmanCurrentNodeIndex(): // assumes must be poG 
+			//Assuming you are a pacman agent, you will have access to this.
+			//If you are a ghost agent and can't see pacman, returns -1;
+			poG.getPacmanCurrentNodeIndex():
 			oldG.getPacmanCurrentNodeIndex();
 	}
 
@@ -504,7 +507,7 @@ public class GameFacade {
 
 	/**
 	 * returns whether or not any of the ghosts are edible.
-	 * Supports popacman (TODO: test)
+	 * Supports popacman (handles PO conditions).
 	 * @return ghosts edible
 	 */
 	public boolean anyIsEdible() {
@@ -629,7 +632,8 @@ public class GameFacade {
 	
 	/**
 	 * gets index of node ghost is currently occupying.
-	 * Supports popacman (TODO: test)
+	 * Returns -1 if ghost is not visible to pacman (PO conditions).
+	 * Supports popacman.
 	 * @param ghostIndex index of ghost in question
 	 * @return index of occupied node
 	 */
@@ -677,14 +681,24 @@ public class GameFacade {
 
 	/**
 	 * returns whether given ghost is edible or not.
-	 * Supports popacman (TODO: test).
+	 * Supports popacman. Returns false is a ghost is not visible.
+	 * TODO: should we return false?
 	 * @param ghostIndex ghost in question
 	 * @return ghost edible
 	 */
 	public boolean isGhostEdible(int ghostIndex) {
-		return oldG == null ?
-				poG.isGhostEdible(indexToGhostPO(ghostIndex)): 
-				oldG.isGhostEdible(indexToGhost(ghostIndex));
+		//flow control between popacman and oldpacman
+		if(oldG == null) {
+			//Must use Boolean because isGhostEdilbe can return null if host is not visible
+			Boolean intermediate = poG.isGhostEdible(indexToGhostPO(ghostIndex));
+			//if ghost is visible and edible
+			if(intermediate != null && intermediate.booleanValue()) {
+				return true;
+			}
+			return false;
+		} else {
+			return oldG.isGhostEdible(indexToGhost(ghostIndex));
+		}
 	}
 
 	/**
@@ -860,7 +874,7 @@ public class GameFacade {
 
 	/**
 	 * returns array containing indices of nodes that are 
-	 * junctions. Supports popacman (TODO: test)
+	 * junctions. Supports popacman.
 	 * @return array of node junction indices
 	 */
 	public int[] getJunctionIndices() {
@@ -927,18 +941,20 @@ public class GameFacade {
 
 	/**
 	 * gets indices of active power pills on map.
-	 * Supports popacman (TODO: test)
+	 * Returns an empty array if no power pills are visible.
+	 * Supports popacman.
 	 * @return indices of power pills
 	 */
 	public int[] getActivePowerPillsIndices() {
 		return oldG == null ?
+				//(TODO: understand output)
 				poG.getActivePowerPillsIndices():
 				oldG.getActivePowerPillsIndices();
 	}
 
 	/**
 	 * gets time ghosts are in the lair.
-	 * Supports popacman (TODO: test).
+	 * Supports popacman. Will return -1 if the ghost is not visible.
 	 * @param ghostIndex ghost
 	 * @return time ghost in lair
 	 */
@@ -950,7 +966,8 @@ public class GameFacade {
 
 	/**
 	 * gets indices of active pills.
-	 * Supports popacman (TODO: test)
+	 * Supports popacman. Could return an empty array if
+	 * no pills are visible.
 	 * @return indices of active pills
 	 */
 	public int[] getActivePillsIndices() {
@@ -1143,7 +1160,7 @@ public class GameFacade {
 
 	/**
 	 * gets number of pills left in game.
-	 * Supportes popacman (TODO: test)
+	 * Supportes popacman.
 	 * @return num pills
 	 */
 	public int getNumberOfPills() {
@@ -1154,7 +1171,7 @@ public class GameFacade {
 
 	/**
 	 * number of power pills left.,
-	 * Supportes popacman (TODO: test)
+	 * Supportes popacman.
 	 * @return num power pills
 	 */
 	public int getNumberOfPowerPills() {
@@ -1263,7 +1280,8 @@ public class GameFacade {
 	/**
 	 * From fromNodeIndex heading in direction, find the closest node within
 	 * targetNodeIndices and return a pair of both the target and the path to
-	 * it. No "from" at start, but "to" is at the end. Supports popacman (TODO: test)
+	 * it. No "from" at start, but "to" is at the end. Supports popacman.
+	 * Returns new Pair<>(-1,null) if none of the targets are visible.
 	 *
 	 * @param fromNodeIndex
 	 * @param targetNodeIndices
@@ -1277,7 +1295,8 @@ public class GameFacade {
 	/**
 	 *Can return either the shortest or longest path in a given direction to
 	 * any one of several available targets. The chosen target is returned as
-	 * well, in a pair. Supports popacman (TODO: test)
+	 * well, in a pair. Supports popacman. Returns new Pair<Integer, int[]>(-1,null) if none
+	 * of the targets are visible.
 	 * 
 	 * @param fromNodeIndex
 	 *            start point
@@ -1292,7 +1311,7 @@ public class GameFacade {
 	public Pair<Integer, int[]> getTargetInDir(int fromNodeIndex, int[] targetNodeIndices, int direction, boolean shortest) {
 		// For PO Pacman: What if all options are -1?
 		if(StatisticsUtilities.maximum(targetNodeIndices) == -1) { // Must only contain -1
-			return new Pair<>(-1,null);
+			return new Pair<Integer, int[]>(-1,null);
 		}
 		
 		assert fromNodeIndex != -1 : "Invalid from node: " + fromNodeIndex;
@@ -1308,7 +1327,8 @@ public class GameFacade {
 	/**
 	 * Can return either the shortest or longest path in a given direction to
 	 * any one of several available targets. The chosen target is returned as
-	 * well, in a pair. Supports popacman (TODO: test)
+	 * well, in a pair. Supports popacman. Returns return new Pair<Integer, int[]>(-1,null) if none
+	 * of the targets are visible.
 	 * 
 	 * @param fromNodeIndex
 	 *            start point
@@ -1331,7 +1351,7 @@ public class GameFacade {
 		
 		// For PO Pacman: What if all options are -1?
 		if(StatisticsUtilities.maximum(targetNodeIndices) == -1) { // Must only contain -1
-			return new Pair<>(-1,null);
+			return new Pair<Integer, int[]>(-1,null);
 		}
 		
 		for (int i = 0; i < targetNodeIndices.length; i++) {
@@ -1454,7 +1474,7 @@ public class GameFacade {
 
 	/**
 	 * Gets number of ghosts that are edible.
-	 * Supports popacman (TODO : test)
+	 * Supports popacman.
 	 * @return num edible ghosts
 	 */
 	public int getNumberOfEdibleGhosts() {
@@ -1463,7 +1483,9 @@ public class GameFacade {
 			
 			//flow control to differentiate between popacman and oldpacman
 			if(oldG == null) {
-				if (poG.isGhostEdible(indexToGhostPO(i))) {
+				//Must use boolean because non-visible ghosts return a null value
+				Boolean intermediate = poG.isGhostEdible(indexToGhostPO(i));
+				if (intermediate != null && intermediate.booleanValue()) {
 					total++;
 				}
 			} else {
@@ -1476,13 +1498,17 @@ public class GameFacade {
 	}
 
 	/**
-	 * says whether given ghost is a threat.
-	 * Supports popacman (TODO: test)
+	 * Says whether given ghost is a threat. If ghost is not visible, it
+	 * is considered a threat. TODO: should it be considered a threat? 
+	 * Supports popacman
 	 * @param ghostIndex index of ghost
 	 * @return whether threat
 	 */
-	public boolean isGhostThreat(int ghostIndex) {
-			return !isGhostEdible(ghostIndex) && getNumNeighbours(getGhostCurrentNodeIndex(ghostIndex)) > 0;
+	public boolean isGhostThreat(int ghostIndex) {	
+		return getGhostCurrentNodeIndex(ghostIndex) == -1 ?
+				//if ghost isn't visible, it isnt a threat
+				true:
+				!isGhostEdible(ghostIndex) && getNumNeighbours(getGhostCurrentNodeIndex(ghostIndex)) > 0;
 	}
 
 	/**
@@ -1500,7 +1526,8 @@ public class GameFacade {
 
 	/**
 	 * Gets the time each ghost is edible.
-	 * Supports popacman (TODO: test)
+	 * Supports popacman. A ghost edible time is returned as -1
+	 * if that ghost is not visible.
 	 * @return array of edible times
 	 */
 	public int[] getGhostEdibleTimes() {
@@ -1628,7 +1655,8 @@ public class GameFacade {
 
 	/**
 	 * Array containing locations of as many ghosts that are threats. Edible
-	 * ghosts and ghosts in the lair are not present at all. Supports popacman (TODO: test)
+	 * ghosts and ghosts in the lair are not present at all. Ghosts have a location
+	 * of -1 if the are not visible at all. Supports popacman.
 	 *
 	 * @return
 	 */
@@ -1638,7 +1666,8 @@ public class GameFacade {
 
 	/**
 	 * gets indices of threat ghosts.
-	 * Supports popacman (TODO: test)
+	 * Ghosts have a position of -1 if they are not visible.
+	 * Supports popacman.
 	 * @param include which ghosts to include
 	 * @return indices of threat ghosts
 	 */
@@ -1889,7 +1918,7 @@ public class GameFacade {
 
 	/**
 	 * returns number of active ghosts.
-	 * Supports popacman (TODO: test)
+	 * Supports popacman.
 	 * @return num active ghosts
 	 */
 	public int getNumActiveGhosts() {
@@ -2447,13 +2476,19 @@ public class GameFacade {
 	 * @return any ghost edible?
 	 */
 	private boolean anyIsEdible(pacman.game.Game newG) {
+		//for each ghost
 		for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
-			if (newG.isGhostEdible(indexToGhostPO(i))) {
+			//has to be Boolean because isGhostEdible returns a null value if ghost isn't visible
+			Boolean test = newG.isGhostEdible(indexToGhostPO(i));
+			//if the ghost is visible and edible
+			if (test != null && test.booleanValue() == true) {
 				return true;
 			}
 		}
 		return false;
 	}
+	
+	
 
 	/**
 	 * returns if pacman just ate a power pill. 
@@ -2841,7 +2876,7 @@ public class GameFacade {
 
 	/**
 	 * Return true if ghost with given index is in the lair.
-	 * Supports popacman (TODO: test)
+	 * Supports popacman. Returns false if the ghost isn't visible.
 	 * @param ghostIndex
 	 * @return
 	 */
