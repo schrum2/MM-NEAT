@@ -130,7 +130,7 @@ public final class TetrisViewer {
 		//updates score board with with current score
 		if (ts.get_score() != currentScore) {
 			gameBoard.setColor(Color.WHITE);
-			gameBoard.fillRect(0,-45,100,10);
+			gameBoard.fillRect(0,-45,200,10);
 			gameBoard.setColor(Color.BLACK);
 			currentScore = ts.get_score();
 			gameBoard.drawString("Current Score: " + currentScore, 0, -35);
@@ -139,7 +139,7 @@ public final class TetrisViewer {
 		//updates score board with number of line cleared
 		if (ts.get_linesCleared() != currentNumlinesCleared) {
 			gameBoard.setColor(Color.WHITE);
-			gameBoard.fillRect(0,-30,100,10);
+			gameBoard.fillRect(0,-30,200,10);
 			gameBoard.setColor(Color.BLACK);
 			currentNumlinesCleared = ts.get_linesCleared();
 			gameBoard.drawString("Lines Cleared: " + currentNumlinesCleared, 0, -20);
