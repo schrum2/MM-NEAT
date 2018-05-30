@@ -25,9 +25,6 @@ public class CosineSimilarity extends RealBehaviorVector{
 
 	/**
 	 * Is finding longer and shorter necessary?
-	 * refactor this code into real behavior vector class?
-	 * similarityAndDistanceMetric in Parameters?
-	 * constructor?
 	 */
 	@Override
 	public double distance(BehaviorVector rhs) {

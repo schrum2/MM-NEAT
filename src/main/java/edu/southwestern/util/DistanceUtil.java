@@ -18,6 +18,13 @@ public class DistanceUtil {
 		return dividend / Math.sqrt(shorterMagnitude) * Math.sqrt(longerMagnitude);
 	}
 
+	/**
+	 * 
+	 * @param shorter the shorter o
+	 * @param longer
+	 * @param minkowskiVar
+	 * @return
+	 */
 	public static double getMinkowskiDistance(ArrayList<Double> shorter, ArrayList<Double> longer, double minkowskiVar) {
 		double distance = 0;
 		for (int i = 0; i < longer.size(); i++) {
@@ -27,19 +34,17 @@ public class DistanceUtil {
 	}
 
 	/**
-	 * 
-	 * @param shorter
-	 * @param longer
-	 * @return first index is shorter second index is longer
+	 * figure out which vector is long and which is shorter
+	 * @param shorter Any vector. Will ultimately hold the shorter vector
+	 * @param longer Any vector. Will ultimately hold the longer vector
+	 * @return array such that the first index is the shorter vector and the second index is the longer vector
 	 */
 	public static ArrayList<Double>[] getShorterAndLonger (ArrayList<Double> shorter, ArrayList<Double> longer) {
-		//figure out which vector is long and which is shorter
-		//ArrayList<Double> shorter = v;
-		//	ArrayList<Double> longer = ((RealBehaviorVector) rhs).v;
-		//ArrayList<Double> longer = new ArrayList<Double>();
-		ArrayList<Double> v = new ArrayList<Double>();
+		
 		if (shorter.size() != longer.size()) {
 			if (shorter.size() > longer.size()) {
+				ArrayList<Double> v = new ArrayList<Double>();
+				v = shorter;
 				shorter = longer;
 				longer = v;
 			}
@@ -50,6 +55,8 @@ public class DistanceUtil {
 		}
 		@SuppressWarnings("unchecked")
 		ArrayList<Double>[] list = (ArrayList<Double>[]) new ArrayList[2];
+		list[0] = shorter;
+		list[1] = longer;
 		return list;
 	}
 }

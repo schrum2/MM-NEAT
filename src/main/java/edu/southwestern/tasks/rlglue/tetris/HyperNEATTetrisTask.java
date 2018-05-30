@@ -115,7 +115,9 @@ public class HyperNEATTetrisTask<T extends Network> extends TetrisTask<T> implem
 				System.out.println("No substrate configuration defined for this extractor!");
 				System.exit(1);
 			}
-		}
+		}		
+//		System.out.println(substrateInformation);
+//		MiscUtil.waitForReadStringAndEnterKeyPress();
 		return substrateInformation;
 	}
 
@@ -179,6 +181,8 @@ public class HyperNEATTetrisTask<T extends Network> extends TetrisTask<T> implem
 				System.exit(1);
 			}
 		}
+		System.out.println(substrateConnectivity);
+		MiscUtil.waitForReadStringAndEnterKeyPress();
 		return substrateConnectivity;
 	}
 }

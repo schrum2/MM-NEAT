@@ -588,29 +588,29 @@ public class HyperNEATUtil {
 		int processDepth = Parameters.parameters.integerParameter("HNProcessDepth");
 
 		List<Substrate> hiddenSubstrateInformation = Parameters.parameters.booleanParameter("useHyperNEATCustomArchitecture") ?
-					getHiddenSubstrateInformation(MMNEAT.substrateArchitectureDefinition.getNetworkHiddenArchitecture()) :
+				getHiddenSubstrateInformation(MMNEAT.substrateArchitectureDefinition.getNetworkHiddenArchitecture()) :
 					getHiddenSubstrateInformation(inputWidth, inputHeight, processWidth, processDepth);
 
-		if(Parameters.parameters.booleanParameter("useHyperNEATCustomArchitecture")) {
-			// Depth depends on custom architecture
-			processDepth = MMNEAT.substrateArchitectureDefinition.getNetworkHiddenArchitecture().size();
-		}
-					
-					
-		substrateInformation.addAll(hiddenSubstrateInformation);
+				if(Parameters.parameters.booleanParameter("useHyperNEATCustomArchitecture")) {
+					// Depth depends on custom architecture
+					processDepth = MMNEAT.substrateArchitectureDefinition.getNetworkHiddenArchitecture().size();
+				}
 
-		// Figure out output substrates
 
-		for(int i = 0; i < output.size(); i++){
-			Substrate outputSub = new Substrate(new Pair<Integer, Integer>(output.get(i).t2, output.get(i).t3), Substrate.OUTPUT_SUBSTRATE,
-					new Triple<Integer, Integer, Integer>(i, (processDepth+1), 0), // i is the x-coordinate, y = one above the top processing layer, z = 0 
-						output.get(i).t1);
-			substrateInformation.add(outputSub);
-		}
+				substrateInformation.addAll(hiddenSubstrateInformation);
 
-		// End output substrates
+				// Figure out output substrates
 
-		return substrateInformation;
+				for(int i = 0; i < output.size(); i++){
+					Substrate outputSub = new Substrate(new Pair<Integer, Integer>(output.get(i).t2, output.get(i).t3), Substrate.OUTPUT_SUBSTRATE,
+							new Triple<Integer, Integer, Integer>(i, (processDepth+1), 0), // i is the x-coordinate, y = one above the top processing layer, z = 0 
+							output.get(i).t1);
+					substrateInformation.add(outputSub);
+				}
+
+				// End output substrates
+
+				return substrateInformation;
 	}
 
 	/**
@@ -711,10 +711,18 @@ public class HyperNEATUtil {
 	 * 
 	 * @return Substrate connectivity
 	 */
-	public static List<Triple<String, String,Boolean>> getSubstrateConnectivity(int numInputSubstrates, List<String> outputNames){
-		int processWidth = Parameters.parameters.integerParameter("HNProcessWidth");
-		int processDepth = Parameters.parameters.integerParameter("HNProcessDepth");
-		return getSubstrateConnectivity(numInputSubstrates, processWidth, processDepth, outputNames, Parameters.parameters.booleanParameter("extraHNLinks"));
+	public static List<Triple<String, String,Boolean>> getSubstrateConnectivity(int numInputSubstrates, List<String> outputNames) {
+		if(Parameters.parameters.booleanParameter("useHyperNEATCustomArchitecture")) {
+			List<String> inputSubstrateNames = new LinkedList<String>();
+			for(int i = 0; i < numInputSubstrates; i++) {
+				inputSubstrateNames.add("Input(" + i + ")");
+			}
+			return MMNEAT.substrateArchitectureDefinition.getSubstrateConnectivity(inputSubstrateNames, outputNames);
+		} else {
+			int processWidth = Parameters.parameters.integerParameter("HNProcessWidth");
+			int processDepth = Parameters.parameters.integerParameter("HNProcessDepth");
+			return getSubstrateConnectivity(numInputSubstrates, processWidth, processDepth, outputNames, Parameters.parameters.booleanParameter("extraHNLinks"));
+		}
 	}
 
 	/**

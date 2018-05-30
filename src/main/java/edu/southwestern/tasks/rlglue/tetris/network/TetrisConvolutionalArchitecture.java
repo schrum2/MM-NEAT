@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import edu.southwestern.networks.hyperneat.SubstrateArchitectureDefinition;
+import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.Triple;
 
 /**
@@ -160,14 +161,17 @@ public class TetrisConvolutionalArchitecture implements SubstrateArchitectureDef
 			Triple<Integer, Integer, Integer> lastHiddenLayerHyperParameters, 
 			List<String> outputSubstrateNames, boolean capableOfConvolution) {
 		
-		Iterator<String> It_outputSubstrateNames = outputSubstrateNames.iterator();
+		
+//		System.out.println(lastHiddenLayerHyperParameters.t1);
+//		MiscUtil.waitForReadStringAndEnterKeyPress();
 
 		//lastHiddenLayerHyperParameters.t1 = the width of the last hidden layer
 		for(int i = 0; i < lastHiddenLayerHyperParameters.t1; i++) {
-			String currentOutputSubstrateName = It_outputSubstrateNames.next();
-			for(int j = 0; j < outputSubstrateNames.size(); j++) {
+			int j = 0;
+			for(String outputSubstrateName: outputSubstrateNames) {
 				networkConnectivity.add(new Triple<String, String, Boolean>
-				("process(" + j + "," + i + ")", currentOutputSubstrateName, false));
+				("process(" + j + "," + i + ")", outputSubstrateName, false));
+				j++;
 			}
 		}
 	}

@@ -13,6 +13,7 @@ import edu.southwestern.networks.hyperneat.Substrate;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.util.CartesianGeometricUtilities;
+import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.datastructures.Triple;
@@ -170,9 +171,10 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 			// loop through connections and add links, based on contents of subs
 			newLinks = createNodeLinks(hnt, cppn, connections, subs, substrateIndexMapping, layersWidth, layersHeight);
 		}catch(NullPointerException npe) {
-			System.out.println("Error in substrate configutation!");
+			System.out.println("Error in substrate configuration!");
 			System.out.println(subs);
 			System.out.println(connections);
+			npe.printStackTrace();
 			System.exit(1);
 		}
 		constructingNetwork = false;
@@ -334,6 +336,11 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 	private ArrayList<LinkGene> createNodeLinks(HyperNEATTask hnt, TWEANN cppn, List<Triple<String, String, Boolean>> connections, List<Substrate> subs, HashMap<String, Integer> sIMap, int layersWidth, int layersHeight) {
 		ArrayList<LinkGene> result = new ArrayList<LinkGene>();
 		for (int i = 0; i < connections.size(); i++) { // For each pair of substrates that are connected
+			assert sIMap != null : "SIMap is null";
+			assert connections != null : "connections is null ";
+			assert connections.get(i) != null : "Null: " + i + " in connections: " + connections;
+			assert connections.get(i).t1 != null : "Null: " + connections.get(i) + " in connections: " + connections;
+			assert sIMap.get(connections.get(i).t1) != null : "Null: " + connections.get(i).t1 + " in connections: " + connections + "\n" + sIMap;
 			int sourceSubstrateIndex = sIMap.get(connections.get(i).t1);
 			int targetSubstrateIndex = sIMap.get(connections.get(i).t2);
 			Substrate sourceSubstrate = subs.get(sourceSubstrateIndex);
@@ -422,11 +429,13 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 												inputs = new double[]{scaledFieldCoordinates.getX(), scaledFieldCoordinates.getY(), scaledTargetCoordinates.getX(), scaledTargetCoordinates.getY(), BIAS};
 											}
 											// This approach maintains all values in the scaled range
-											assert -1 <= inputs[0] && inputs[0] <= 1 : "CPPN input 0 out of range: " + inputs[0];
-											assert -1 <= inputs[1] && inputs[1] <= 1 : "CPPN input 1 out of range: " + inputs[1];
-											assert -1 <= inputs[2] && inputs[2] <= 1 : "CPPN input 2 out of range: " + inputs[2];
-											assert -1 <= inputs[3] && inputs[3] <= 1 : "CPPN input 3 out of range: " + inputs[3];
-											assert -1 <= inputs[4] && inputs[4] <= 1 : "CPPN input 4 out of range: " + inputs[4];
+											
+											// PUT THESE BACK LATER!
+//											assert -1 <= inputs[0] && inputs[0] <= 1 : "CPPN input 0 out of range: " + inputs[0];
+//											assert -1 <= inputs[1] && inputs[1] <= 1 : "CPPN input 1 out of range: " + inputs[1];
+//											assert -1 <= inputs[2] && inputs[2] <= 1 : "CPPN input 2 out of range: " + inputs[2];
+//											assert -1 <= inputs[3] && inputs[3] <= 1 : "CPPN input 3 out of range: " + inputs[3];
+//											assert -1 <= inputs[4] && inputs[4] <= 1 : "CPPN input 4 out of range: " + inputs[4];
 										}
 
 										// Convolutional weight sharing requires substrate location inputs to prevent all receptive fields across all layers from being the same.
