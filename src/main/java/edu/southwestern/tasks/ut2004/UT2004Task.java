@@ -1,12 +1,16 @@
 package edu.southwestern.tasks.ut2004;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import cz.cuni.amis.pogamut.base.component.exception.ComponentCantStartException;
 import cz.cuni.amis.pogamut.ut2004.server.IUT2004Server;
 import cz.cuni.amis.pogamut.ut2004.utils.MyUCCWrapper;
 import cz.cuni.amis.pogamut.ut2004.utils.MyUCCWrapperConf;
+import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.Organism;
 import edu.southwestern.evolution.genotypes.Genotype;
-import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.networks.Network;
 import edu.southwestern.networks.NetworkTask;
 import edu.southwestern.parameters.Parameters;
@@ -25,13 +29,8 @@ import edu.southwestern.tasks.ut2004.sensors.UT2004SensorModel;
 import edu.southwestern.tasks.ut2004.server.ServerUtil;
 import edu.southwestern.tasks.ut2004.weapons.UT2004WeaponManager;
 import edu.southwestern.util.ClassCreation;
-import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.stats.Statistic;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * launches UT2004
@@ -40,7 +39,6 @@ import java.util.Arrays;
  */
 public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>implements NetworkTask {
 
-	public static final boolean BOTPRIZE = false; // Whether the botprize mod should be used
 	public UT2004SensorModel sensorModel;
 	public UT2004OutputInterpretation outputModel;
 	public UT2004WeaponManager weaponManager;
@@ -135,7 +133,7 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 		config.setMapName(map);
 		config.setGameBotsPack("GameBots2004");
 		config.setGameType("BotDeathMatch");
-		String botprizeMod = BOTPRIZE ? "?mutator=GameBots2004.BotPrizeMutator" : "";
+		String botprizeMod = Parameters.parameters.booleanParameter("botprizeMod") ? "?mutator=GameBots2004.BotPrizeMutator" : "";
 		// config.setOptions(botprizeMod + "?timelimit=" + evalMinutes +
 		// "?fraglimit=0?GoalScore=0?DoUplink=False?UplinkToGamespy=False?SendStats=False?bAllowPrivateChat=False?bAllowTaunts=False?bEnableVoiceChat=False?bAllowLocalBroadcast=False?BotServerPort="
 		// + botPort + "?ControlServerPort=" + controlPort +
