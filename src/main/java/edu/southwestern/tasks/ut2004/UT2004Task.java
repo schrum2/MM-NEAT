@@ -34,7 +34,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
- *
+ * launches UT2004
  * @author Jacob Schrum
  * @param <T> evolved phenotype
  */
@@ -52,6 +52,14 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 	public ArrayList<UT2004FitnessFunction<T>> fitness = new ArrayList<UT2004FitnessFunction<T>>();
 	public ArrayList<UT2004FitnessFunction<T>> others = new ArrayList<UT2004FitnessFunction<T>>();
 
+	/**
+	 * 
+	 * @param map (map that the match will be played on)
+	 * @param nativeBotSkills (the abilities of the bots provided by the game)
+	 * @param evalMinutes
+	 * @param desiredSkill
+	 * @param opponents
+	 */
 	public UT2004Task(String map, int[] nativeBotSkills, int evalMinutes, int desiredSkill, BotController[] opponents) {
 		this.map = map;
 		this.evalMinutes = evalMinutes;
@@ -69,21 +77,41 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 			System.exit(1);
 		}
 	}
-
+//objectives are things to be logged, used by evolutionary alg, to determine fitness0
+	
         @Override
-	public String[] sensorLabels() {
+	/**
+	 * @return returns an array containing the labels for the sensor model
+	 */
+    public String[] sensorLabels() {
 		return sensorModel.sensorLabels();
 	}
 
         @Override
-	public String[] outputLabels() {
+	/**
+	 * @return returns an array containing the labels for the output model
+	 */
+    public String[] outputLabels() {
 		return outputModel.outputLabels();
 	}
 
-	public final void addObjective(UT2004FitnessFunction<T> o, ArrayList<UT2004FitnessFunction<T>> list,boolean affectsSelection) {
+    /**
+     * adds an objective to be logged
+     * @param o (a fitness function)
+     * @param list (an accumulating list of objectives)
+     * @param affectsSelection (shows whether or not it changes the fitness function)
+     */
+    public final void addObjective(UT2004FitnessFunction<T> o, ArrayList<UT2004FitnessFunction<T>> list,boolean affectsSelection) {
 		addObjective(o, list, null, affectsSelection);
 	}
 
+	/**
+	 * 
+	 * @param o (fitness function to be used)
+	 * @param list
+	 * @param override
+	 * @param affectsSelection
+	 */
 	public final void addObjective(UT2004FitnessFunction<T> o, ArrayList<UT2004FitnessFunction<T>> list, Statistic override, boolean affectsSelection) {
 		list.add(o);
 		MMNEAT.registerFitnessFunction(o.getClass().getSimpleName(), override, affectsSelection);
@@ -91,6 +119,10 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
+	/**
+	 * @param individual
+	 * @param num
+	 */
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {            
 		int botPort = ServerUtil.getAvailablePort();
 		int controlPort = ServerUtil.getAvailablePort();
@@ -181,21 +213,36 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 	}
 
         @Override
+    /**
+     * @return returns the time of the game
+     */
 	public double getTimeStamp() {
 		// Can the game time be retrieved?
 		return 0; // Not correct
 	}
 
         @Override
-	public int numObjectives() {
+    /**
+     * 
+     */
+    public int numObjectives() {
 		return fitness.size();
 	}
 
 	@Override
+	/**
+	 * 
+	 */
 	public int numOtherScores() {
 		return others.size();
 	}
 
+	/**
+	 * 
+	 * @param stats
+	 * @param o
+	 * @return
+	 */
 	public Pair<double[], double[]> relevantScores(GameDataCollector stats, Organism<T> o) {
 		double[] fitnessScores = new double[fitness.size()];
 		for (int i = 0; i < fitnessScores.length; i++) {
