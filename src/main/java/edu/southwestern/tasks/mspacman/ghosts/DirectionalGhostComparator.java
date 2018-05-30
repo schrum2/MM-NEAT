@@ -5,7 +5,7 @@ import java.util.Comparator;
 
 /**
  * Sort ghosts based on proximity to pacman, with the option to focus only on
- * edible or non-edible ghosts
+ * edible or non-edible ghosts. handles popacman. TODO: test
  *
  * @author Jacob Schrum
  */
@@ -17,6 +17,13 @@ public class DirectionalGhostComparator implements Comparator<Integer> {
 	private final boolean proximityOnly;
 	private final int dir;
 
+	/**
+	 * supports popacman. TODO: test
+	 * @param gs
+	 * @param edibleClose
+	 * @param proximityOnly
+	 * @param dir
+	 */
 	public DirectionalGhostComparator(GameFacade gs, boolean edibleClose, boolean proximityOnly, int dir) {
 		this.gs = gs;
 		this.current = gs.getPacmanCurrentNodeIndex();
@@ -26,7 +33,7 @@ public class DirectionalGhostComparator implements Comparator<Integer> {
 	}
 	
 	/**
-	 * Supports popacman
+	 * Supports popacman. TODO: is this how we want to handle PO conditions?
 	 */
 	public int compare(Integer o1, Integer o2) {
 		if (!proximityOnly && gs.isGhostEdible(o1) && !gs.isGhostEdible(o2)) {
