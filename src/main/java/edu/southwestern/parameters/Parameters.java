@@ -639,6 +639,7 @@ public class Parameters {
 		booleanOptions.add("tetrisAvgEmptySpaces", false, "For Tetris multiobjective, average number of empty spaces after piece placements");
 		booleanOptions.add("tetrisAvgNumHoles", false, "include number of holes as a fitness function");
 		booleanOptions.add("tetrisBlocksOnScreen", false, "For Tetris multiobjective, seperates number of blocks on screen from lines cleared");
+		booleanOptions.add("tetrisGameScore", true, "the score of Tetris game");
 		booleanOptions.add("tetrisLinesNotScore", false, "For Tetris track lines cleared instead of game score");
 		booleanOptions.add("tetrisNumLinesCleared", false, "Turns on fitness for different number of lines cleared");
 		booleanOptions.add("tetrisTimeSteps", false, "For Tetris multiobjective, separates time steps from lines cleared");

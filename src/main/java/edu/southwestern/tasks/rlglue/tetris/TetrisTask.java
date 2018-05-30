@@ -23,6 +23,7 @@ public class TetrisTask<T extends Network> extends RLGlueTask<T> {
 	private final boolean tetrisAvgHoles;
 	private final boolean tetrisLinesNotScore;
 	private final boolean tetrisNumLinesCleared;
+	private final boolean tetrisGameScore;
 
 	/**
 	 * Default constructor
@@ -35,6 +36,9 @@ public class TetrisTask<T extends Network> extends RLGlueTask<T> {
 		tetrisAvgHoles = Parameters.parameters.booleanParameter("tetrisAvgNumHoles");
 		tetrisLinesNotScore = Parameters.parameters.booleanParameter("tetrisLinesNotScore");
 		tetrisNumLinesCleared = Parameters.parameters.booleanParameter("tetrisNumLinesCleared");
+		
+		//by default this objective is turned on. In contrast to the others.
+		tetrisGameScore = Parameters.parameters.booleanParameter("tetrisGameScore");
 		
 		if (tetrisTimeSteps) { // Staying alive is good
 			MMNEAT.registerFitnessFunction("Time Steps");
@@ -50,7 +54,8 @@ public class TetrisTask<T extends Network> extends RLGlueTask<T> {
 		}
 		if(tetrisLinesNotScore) {
 			MMNEAT.registerFitnessFunction("Lines cleared");
-		} else {
+		}
+		if(tetrisGameScore) {
 			MMNEAT.registerFitnessFunction("RL Return");
 		}
 		if(tetrisNumLinesCleared) {
