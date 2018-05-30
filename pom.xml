@@ -18,11 +18,11 @@
         <!-- Change the nd4j.backend property to nd4j-cuda-7.5-platform or nd4j-cuda-8.0-platform to use CUDA GPUs -->
         <nd4j.backend>nd4j-native-platform</nd4j.backend>
         <!-- <nd4j.backend>nd4j-cuda-8.0-platform</nd4j.backend> -->
-        <nd4j.version>0.9.1</nd4j.version>
-        <dl4j.version>0.9.1</dl4j.version>
-        <datavec.version>0.9.1</datavec.version>
-        <arbiter.version>0.9.1</arbiter.version>
-        <rl4j.version>0.9.1</rl4j.version>
+        <nd4j.version>1.0.0-beta</nd4j.version>
+        <dl4j.version>1.0.0-beta</dl4j.version>
+        <datavec.version>1.0.0-beta</datavec.version>
+        <arbiter.version>1.0.0-beta</arbiter.version>
+        <rl4j.version>1.0.0-beta</rl4j.version>
 
         <logback.version>1.1.7</logback.version>    
   </properties>
@@ -139,14 +139,14 @@
 		<dependency>
     		<groupId>org.deeplearning4j</groupId>
     		<artifactId>deeplearning4j-zoo</artifactId>
-    	<!--  	<version>${deeplearning4j.version}</version> -->
-			<version>0.9.1</version>
+    		<!-- <version>${deeplearning4j.version}</version> -->
+    		<version>0.9.1</version>
 		</dependency>
 		<dependency>
     		<groupId>org.deeplearning4j</groupId>
     		<artifactId>deeplearning4j-modelimport</artifactId>
-    	<!--  	<version>${deeplearning4j.version}</version> -->
-			<version>0.9.1</version>
+    		<!-- <version>${deeplearning4j.version}</version> -->
+    		<version>0.9.1</version>
 		</dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
