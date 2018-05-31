@@ -200,9 +200,7 @@ public class NeuralStyleTransfer {
             INDArray backPropContent = backPropagateContent(vgg16FineTune, activationsContentMap, activationsCombMap);
             INDArray backPropAllValues = backPropContent.muli(ALPHA).addi(styleBackProb.muli(BETA));
 
-            // Schrum: The update to the new version of DL4J required an additional parameter for the epoch here.
-            //         I just set it to 0. Don't know if this will cause problems.
-            adamUpdater.applyUpdater(backPropAllValues, itr, 0);
+            adamUpdater.applyUpdater(backPropAllValues, itr);
             combination.subi(backPropAllValues);
         }
         System.out.println("done");
