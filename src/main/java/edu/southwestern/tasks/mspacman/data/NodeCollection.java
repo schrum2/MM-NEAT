@@ -64,7 +64,7 @@ public abstract class NodeCollection {
 		pillPath[tempPath.length] = farthestPill;
 		if (ArrayUtil.subset(activePills, pillPath)) {
 			// Path will consume all pills
-			assert gs.nodeInMaze(farthestPill) : "Farthest pill " + farthestPill + " not in maze";
+			//assert gs.nodeInMaze(farthestPill) : "Farthest pill " + farthestPill + " not in maze";
 			addedNodes.add(farthestPill);
 		}
 

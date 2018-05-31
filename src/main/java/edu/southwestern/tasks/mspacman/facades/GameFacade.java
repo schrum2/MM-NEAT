@@ -2036,12 +2036,16 @@ public class GameFacade {
 
 	/**
 	 * Gets next move to take in order to reach given target.
-	 * Supports popacman (TODO: test)
+	 * Supports popacman (handles PO conditions)
 	 * @param from index of source 
 	 * @param to index of target
 	 * @return next move
 	 */
 	public int getNextMoveTowardsTarget(int from, int to) {
+		//PO conditions
+		if(from == -1 || to == -1) {
+				return -1;
+		}
 		return oldG == null ?
 				moveToIndex(poG.getNextMoveTowardsTarget(from, to, pacman.game.Constants.DM.PATH)):
 				moveToIndex(oldG.getNextMoveTowardsTarget(from, to, oldpacman.game.Constants.DM.PATH));
