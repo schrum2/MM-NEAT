@@ -181,8 +181,8 @@ public class HyperNEATTetrisTask<T extends Network> extends TetrisTask<T> implem
 				System.exit(1);
 			}
 		}
-		System.out.println(substrateConnectivity);
-		MiscUtil.waitForReadStringAndEnterKeyPress();
+//		System.out.println(substrateConnectivity);
+//		MiscUtil.waitForReadStringAndEnterKeyPress();
 		return substrateConnectivity;
 	}
 }

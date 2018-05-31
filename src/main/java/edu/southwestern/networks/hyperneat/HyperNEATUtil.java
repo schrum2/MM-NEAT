@@ -322,6 +322,8 @@ public class HyperNEATUtil {
 	 * @return color of value
 	 */
 	public static Color regularVisualization(double activation) { 
+		// Temporary debugging: Fiddle with activation range to allow visualization outside range [-1,1]
+		// activation /= 10;
 		activation = Math.max(-1, Math.min(activation, 1.0));// For unusual activation functions that go outside of the [-1,1] range
 		return new Color(activation > 0 ? (int)(activation*255) : 0, 0, activation < 0 ? (int)(-activation*255) : 0);
 	}
