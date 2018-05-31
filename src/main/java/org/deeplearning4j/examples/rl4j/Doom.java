@@ -1,5 +1,6 @@
 package org.deeplearning4j.examples.rl4j;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.logging.Logger;
 
@@ -94,8 +95,17 @@ public class Doom {
         //setup the Doom environment through VizDoom
         VizDoom mdp = getMDP(false);
 
-        //setup the training
-        QLearningDiscreteConv<VizDoom.GameScreen> dql = new QLearningDiscreteConv<>(mdp, DOOM_NET, DOOM_HP, DOOM_QL, manager);
+        //load the previous agent
+        DQNPolicy<VizDoom.GameScreen> dqn = null;
+        if(new File(modelSaveLocation).exists()) {
+        	dqn = DQNPolicy.load(modelSaveLocation);
+        }
+        
+        QLearningDiscreteConv<VizDoom.GameScreen> dql = dqn != null ? 
+        		// Load previous DQN
+        		new QLearningDiscreteConv<VizDoom.GameScreen>(mdp, dqn.getNeuralNet(), DOOM_HP, DOOM_QL, manager) :
+        		// Create new DQN from configuration
+        		new QLearningDiscreteConv<>(mdp, DOOM_NET, DOOM_HP, DOOM_QL, manager);
         
         //start the training
         dql.train();
