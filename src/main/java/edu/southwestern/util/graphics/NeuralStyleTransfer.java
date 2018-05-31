@@ -5,6 +5,7 @@ import edu.southwestern.util.random.RandomNumbers;
 import org.datavec.image.loader.NativeImageLoader;
 import org.deeplearning4j.nn.api.Layer;
 import org.deeplearning4j.nn.graph.ComputationGraph;
+import org.deeplearning4j.nn.workspace.LayerWorkspaceMgr;
 import org.deeplearning4j.zoo.PretrainedType;
 import org.deeplearning4j.zoo.ZooModel;
 import org.deeplearning4j.zoo.model.VGG16;
@@ -249,7 +250,7 @@ public class NeuralStyleTransfer {
     private static AdamUpdater createADAMUpdater() {
         AdamUpdater adamUpdater = new AdamUpdater(new Adam(LEARNING_RATE, BETA_MOMENTUM, BETA2_MOMENTUM, EPSILON));
         adamUpdater.setStateViewArray(Nd4j.zeros(1, 2 * CHANNELS * WIDTH * HEIGHT),
-                new long[]{1, CHANNELS, WIDTH, HEIGHT}, 'c',
+                new int[]{1, CHANNELS, WIDTH, HEIGHT}, 'c',
                 true);
         return adamUpdater;
     }
@@ -372,7 +373,8 @@ public class NeuralStyleTransfer {
 
         for (int i = startFrom; i > 0; i--) {
             Layer layer = vgg16FineTune.getLayer(ALL_LAYERS[i]);
-            dLdANext = layer.backpropGradient(dLdANext).getSecond();
+            // Added LayerWorkspaceMgr.noWorkspaces() in the upgrade to DL4J 1.0.0-beta 
+            dLdANext = layer.backpropGradient(dLdANext, LayerWorkspaceMgr.noWorkspaces()).getSecond();
         }
         return dLdANext;
     }
@@ -436,7 +438,7 @@ public class NeuralStyleTransfer {
     }
 
     private static INDArray flatten(INDArray x) {
-        long[] shape = x.shape();
+        int[] shape = x.shape();
         return x.reshape(shape[0] * shape[1], shape[2] * shape[3]);
     }
 
@@ -478,7 +480,7 @@ public class NeuralStyleTransfer {
 
     private static ComputationGraph loadModel() throws IOException {
         @SuppressWarnings("rawtypes")
-		ZooModel zooModel = new VGG16();
+		ZooModel zooModel = VGG16.builder().numClasses(ImageNetClassification.NUM_IMAGE_NET_CLASSES).build();
         ComputationGraph vgg16 = (ComputationGraph) zooModel.initPretrained(PretrainedType.IMAGENET);
         vgg16.initGradientsView();
         System.out.println(vgg16.summary());
