@@ -367,6 +367,7 @@ public class Parameters {
 		booleanOptions.add("logTWEANNData", false, "Whether or not to log TWEANN data");
 		booleanOptions.add("moMario", false, "Mario is multiobjective");
 		booleanOptions.add("monitorSubstrates", false, "Allows us to visualizen the features (raw inputs) of a HyperNEAT agent");
+		//booleanOptions.add("navGrid", false, "Choses whether or not the navigation grid is displayed"); //DOES NOT WORK
 		booleanOptions.add("overrideImageSize", false, "For image match task, draw CPPNs with different size than actual image size");
 		booleanOptions.add("pacManFullScreenOutput", false, "Output substrate has a cell for every 5x5 block on pacman screen");
 		booleanOptions.add("pacmanBothThreatAndEdibleSubstrate", false, "whether or not to have 2 substrates for threat and edible ghosts");
@@ -404,8 +405,6 @@ public class Parameters {
 		booleanOptions.add("watchLastBest", false, "shows best result from last generation");
 		booleanOptions.add("watchLastBestOfTeams", false, "shows best result from each population from last generation (coevolution)");
 		booleanOptions.add("zeroPadding", false, "Whether the input border for convolutional structures is padded with zeros");
-		//cooperativeIndividualAndTeamSelection is irrelevant because cooperative team selection already includes the cooperativeIndividualSelection functions
-		//So it will just have two copies of the same fitnesses 
 		booleanOptions.add("absenceNegative", false, "Sense absence of input as -1 instead of 0");
 		booleanOptions.add("absolute", false, "Use Pacman absolute location sensors");
 		booleanOptions.add("afterStates", false, "Pacman picks action by looking at after states");

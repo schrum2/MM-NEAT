@@ -134,15 +134,15 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 		config.setGameBotsPack("GameBots2004");
 		config.setGameType("BotDeathMatch");
 		String botprizeMod = Parameters.parameters.booleanParameter("botprizeMod") ? "?mutator=GameBots2004.BotPrizeMutator" : "";
+		//String navGrid = Parameters.parameters.booleanParameter("navGrid") ? "?bDrawNavPointsGrid=True" : "?bDrawNavPointsGrid=False";//DOES NOT WORK
 		// config.setOptions(botprizeMod + "?timelimit=" + evalMinutes +
 		// "?fraglimit=0?GoalScore=0?DoUplink=False?UplinkToGamespy=False?SendStats=False?bAllowPrivateChat=False?bAllowTaunts=False?bEnableVoiceChat=False?bAllowLocalBroadcast=False?BotServerPort="
 		// + botPort + "?ControlServerPort=" + controlPort +
 		// "?ObservingServerPort=" + observePort);
-		config.setOptions(botprizeMod
+		config.setOptions(botprizeMod 
 				+ "?fraglimit=0?GoalScore=0?DoUplink=False?UplinkToGamespy=False?SendStats=False?bAllowPrivateChat=False?bAllowTaunts=False?bEnableVoiceChat=False?bAllowLocalBroadcast=False?BotServerPort="
 				+ botPort + "?ControlServerPort=" + controlPort + "?ObservingServerPort=" + observePort);
 		config.setUnrealHome(Parameters.parameters.stringParameter("utDrive") + ":" + File.separator + Parameters.parameters.stringParameter("utPath"));
-
 //		System.out.println(config);
 //		MiscUtil.waitForReadStringAndEnterKeyPress();
 		
