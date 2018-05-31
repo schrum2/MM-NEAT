@@ -436,7 +436,7 @@ public class NeuralStyleTransfer {
     }
 
     private static INDArray flatten(INDArray x) {
-        int[] shape = x.shape();
+        long[] shape = x.shape();
         return x.reshape(shape[0] * shape[1], shape[2] * shape[3]);
     }
 
