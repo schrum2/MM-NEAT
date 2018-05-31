@@ -142,6 +142,9 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 		if(Parameters.parameters.booleanParameter("navCubes")) {
 			mutators.add("GameBots2004.PathMarkerMutator");
 		}
+		if(Parameters.parameters.booleanParameter("GBHUDMutator")) {
+			mutators.add("Gamebots2004.GBHUD");
+		}
 		
 		
 		String mutatorString = mutators.isEmpty() ? "":"?mutator=" + String.join(",", mutators);
@@ -253,8 +256,8 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 
 	/**
 	 * 
-	 * @param stats
-	 * @param o
+	 * @param stats (the stats from the game)
+	 * @param o (the organism to be monitored)
 	 * @return
 	 */
 	public Pair<double[], double[]> relevantScores(GameDataCollector stats, Organism<T> o) {
