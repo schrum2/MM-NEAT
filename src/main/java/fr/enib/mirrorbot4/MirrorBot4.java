@@ -29,8 +29,11 @@ import cz.cuni.amis.pogamut.ut2004.utils.UT2004BotRunner;
 import cz.cuni.amis.utils.exception.PogamutException;
 import cz.cuni.amis.utils.flag.FlagListener;
 
-public class MirrorBot4 extends UT2004BotModuleController
-{
+/**
+ * Runs the mirrorBot as a Java Application
+ * @author Mihai Polceanu
+ */
+public class MirrorBot4 extends UT2004BotModuleController{
 	private MyNavigator myNav = null;
     private Brain brain = null;
 	private RayData rayData = null;
@@ -38,8 +41,10 @@ public class MirrorBot4 extends UT2004BotModuleController
     private boolean initTime = false;
 
     @Override
-    public void prepareBot(UT2004Bot bot)
-    {
+    /**
+     * @param bot	
+     */
+    public void prepareBot(UT2004Bot bot){
 		// DEFINE WEAPON PREFERENCES
         weaponPrefs.addGeneralPref(UT2004ItemType.MINIGUN, false);
         weaponPrefs.addGeneralPref(UT2004ItemType.MINIGUN, true);
@@ -55,19 +60,19 @@ public class MirrorBot4 extends UT2004BotModuleController
 		weaponPrefs.addGeneralPref(UT2004ItemType.SHIELD_GUN, true);
     }
 
+    /**
+     * 
+     */
     @Override
-    public Initialize getInitializeCommand()
-    {
+    public Initialize getInitializeCommand(){
 		Initialize init = null;
 
-		try
-		{
+		try{
 			init = new Initialize();
 		}
 		catch (Exception e) {}
 
-		if (init != null)
-		{
+		if (init != null){
 			init.setName("MirrorBot");
 			init.setAutoPickupOff(false);
 			init.setDesiredSkill(2+(int)(Math.random()*5));
@@ -76,45 +81,45 @@ public class MirrorBot4 extends UT2004BotModuleController
 		return init;
     }
 
+    /**
+     * @param gameInfo
+     * @param currentConfig
+     * @param init
+     */
     @Override
-    public void botInitialized(GameInfo gameInfo, ConfigChange currentConfig, InitedMessage init)
-    {
+    public void botInitialized(GameInfo gameInfo, ConfigChange currentConfig, InitedMessage init){
 		rayData = new RayData(this);
-		if (myNav != null)
-		{
+		if (myNav != null){
 			myNav.getRunner().setRayData(rayData);
 		}
 		brain = new Brain(this, rayData);
 		
-		getNavigation().getPathExecutor().getState().addStrongListener(new FlagListener<IPathExecutorState>()
-		{
+		getNavigation().getPathExecutor().getState().addStrongListener(new FlagListener<IPathExecutorState>(){
 			@Override
-			public void flagChanged(IPathExecutorState changedValue)
-			{
+			public void flagChanged(IPathExecutorState changedValue){
 				brain.pathExecutorStateChange(changedValue.getState());
 			}			
 		});
     }
 
     @Override
-    public void botFirstSpawn(GameInfo gameInfo, ConfigChange config, InitedMessage init, Self self)
-    {
-		
+    /**
+     * @param gameInfo
+     * @param config
+     * @param init
+     * @param self
+     */
+    public void botFirstSpawn(GameInfo gameInfo, ConfigChange config, InitedMessage init, Self self){
     }
 
     @Override
-    public void beforeFirstLogic()
-    {
-		
+    public void beforeFirstLogic(){
     }
 
     @Override
-    public void logic() throws PogamutException
-    {
-		try
-		{
-			if (!initTime)
-			{
+    public void logic() throws PogamutException{
+		try{
+			if (!initTime){
 				lastTime = System.currentTimeMillis();
 				initTime = true;
 			}
@@ -124,94 +129,76 @@ public class MirrorBot4 extends UT2004BotModuleController
 			System.out.println(info.getName() + ":");
 			brain.execute(dt);
 		}
-		catch (Exception e)
-		{
+		catch (Exception e){
 			System.out.println("BUG found");
 			e.printStackTrace();
 		}
     }
 
     @Override
-    public void botKilled(BotKilled event)
-    {
-		if (brain != null)
-		{
+    public void botKilled(BotKilled event){
+		if (brain != null){
 			brain.deathClean();
 		}
     }
 	
-	public Brain getBrain()
-	{
+	public Brain getBrain(){
 		return brain;
 	}
 
-    public static void main(String args[]) throws PogamutException
-    {
+    public static void main(String args[]) throws PogamutException{
 		String host = "localhost";
 		int port = 3000;
 		
-		if (args.length > 0)
-		{
+		if (args.length > 0){
 			String customHost = args[0];
 			host = customHost;
 			System.out.println("Using custom host: "+host);
 		}
-		else
-		{
+		else{
 			System.out.println("Custom host not specified. Resuming with default host: "+host);
 		}
 		
-		if (args.length > 1)
-		{
+		if (args.length > 1){
 			String customPort = args[1];
-			try
-			{
+			try{
 				int custPort = Integer.parseInt(customPort);
 				port = custPort;
 				System.out.println("Using custom port: "+port);
 			}
-			catch (Exception e)
-			{
+			catch (Exception e){
 				System.out.println("Invalid port. Expecting numeric. Resuming with default port: "+port);
 			}
 		}
-		else
-		{
+		else{
 			System.out.println("Custom port not specified. Resuming with default port: "+port);
 		}
 		
-		while (true)
-		{
-			try
-			{
+		while (true){
+			try{
 				UT2004BotRunner runner = new UT2004BotRunner(MirrorBot4.class, "MirrorBot", host, port);
 				runner.setMain(true);
 				runner.setLogLevel(Level.OFF);
 				runner.startAgent();
 				Thread.sleep(1234);
 			}
-			catch (ComponentCantStartException e)
-			{
+			catch (ComponentCantStartException e){
 				Throwable cause = e.getCause();
-				if (cause instanceof ConnectionException)
-				{
+				if (cause instanceof ConnectionException){
 					System.out.println("Connection to server failed... retrying");
 					e.printStackTrace();
 				}
-				else if (cause instanceof BusStoppedInterruptedException)
-				{
+				else if (cause instanceof BusStoppedInterruptedException){
 					e.printStackTrace();
 					System.out.println("Aborting...");
 					break;
 				}
-				else
-				{
+				else{
 					e.printStackTrace();
 					System.out.println("Some other cause for ComponentCantStartException... retrying");
 				}
 			}
-			catch (Exception e)
-			{
+			catch (Exception e){
 				e.printStackTrace();
 				System.out.println("Some other exception... retrying");
 			}
@@ -219,16 +206,13 @@ public class MirrorBot4 extends UT2004BotModuleController
     }
 
     @Override
-    protected void initializePathFinding(UT2004Bot bot)
-    {
+    protected void initializePathFinding(UT2004Bot bot){
 		//System.out.println("SUCCESS HACK");
 		Logger myLog = Logger.getAnonymousLogger();
-		if (myLog == null)
-		{
+		if (myLog == null){
 			myLog = log;
 		}
-		else
-		{
+		else{
 			myLog.setLevel(Level.OFF);
 		}
 		
