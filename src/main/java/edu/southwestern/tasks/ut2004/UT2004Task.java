@@ -144,7 +144,7 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 		}
 		
 		
-		String mutatorString = mutators.isEmpty() ? "": String.join(",", mutators);
+		String mutatorString = mutators.isEmpty() ? "":"?mutator=" + String.join(",", mutators);
 		
 //		String botprizeMod = Parameters.parameters.booleanParameter("botprizeMod") ? "?mutator=GameBots2004.BotPrizeMutator," : "";
 //		String navGrid = Parameters.parameters.booleanParameter("navGrid") ? "?bDrawNavPointsGrid=True" : "?bDrawNavPointsGrid=False";//DOES NOT WORK
