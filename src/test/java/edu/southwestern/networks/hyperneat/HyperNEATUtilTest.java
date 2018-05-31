@@ -134,38 +134,38 @@ public class HyperNEATUtilTest {
 	@Test
 	public void testGetSubstrateInformationHyperNEAT(){
 		
-		List<Triple<String, Integer, Integer>> output = new ArrayList<Triple<String, Integer, Integer>>();
-		output.add(new Triple<String, Integer, Integer>("o1", 5, 5));
-		output.add(new Triple<String, Integer, Integer>("o2", 10, 10));
-		output.add(new Triple<String, Integer, Integer>("o3", 1, 1));
+//		List<Triple<String, Integer, Integer>> output = new ArrayList<Triple<String, Integer, Integer>>();
+//		output.add(new Triple<String, Integer, Integer>("o1", 5, 5));
+//		output.add(new Triple<String, Integer, Integer>("o2", 10, 10));
+//		output.add(new Triple<String, Integer, Integer>("o3", 1, 1));
 		
-		List<Substrate> test = HyperNEATUtil.getSubstrateInformation(10, 20, 3, 2, 3, output); // Should have 12 Substrates
+		List<Substrate> test = HyperNEATUtil.getHiddenSubstrateInformation(10, 20, 2, 3); // Should have 6 Substrates
 		
-		for(int i = 0; i < 9; i++){ // Tests the size of the non-output substrates
+		for(int i = 0; i < 6; i++){ // Tests the size of the non-output substrates
 			assertEquals(test.get(i).getSize(), new Pair<Integer, Integer>(10, 20));
 		}
 		
-		// Tests the Size of the three Output Substrates
-		assertEquals(test.get(9).getSize(), new Pair<Integer, Integer>(5, 5));
-		assertEquals(test.get(10).getSize(), new Pair<Integer, Integer>(10, 10));
-		assertEquals(test.get(11).getSize(), new Pair<Integer, Integer>(1, 1));
+		// Tests the Size of the three Output Substrates: Not included any more, Schrum 5/24/18
+//		assertEquals(test.get(9).getSize(), new Pair<Integer, Integer>(5, 5));
+//		assertEquals(test.get(10).getSize(), new Pair<Integer, Integer>(10, 10));
+//		assertEquals(test.get(11).getSize(), new Pair<Integer, Integer>(1, 1));
 		
 		// Tests the Names of each Substrate
+		// Not included any more, Schrum 5/24/18
+//		for(int i = 0; i < 3; i++){
+//			assertEquals(test.get(i).getName(), "Input(" + i + ")");			
+//		}
 		
-		for(int i = 0; i < 3; i++){
-			assertEquals(test.get(i).getName(), "Input(" + i + ")");			
-		}
-		
-		int index = 3;
+		int index = 0;
 		for(int i = 0; i < 3; i++){ // Process Depth
 			for(int j = 0; j < 2; j++){ // Process Width
 				assertEquals(test.get(index++).getName(), "process(" + j + "," + i + ")");
 			}
 		}
 		
-		assertEquals(test.get(9).getName(), "o1");
-		assertEquals(test.get(10).getName(), "o2");
-		assertEquals(test.get(11).getName(), "o3");
+//		assertEquals(test.get(9).getName(), "o1");
+//		assertEquals(test.get(10).getName(), "o2");
+//		assertEquals(test.get(11).getName(), "o3");
 	}
 	
 	@Test

@@ -5,6 +5,7 @@ import java.awt.Graphics2D;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.rlcommunity.environments.tetris.Tetris;
 import org.rlcommunity.environments.tetris.TetrisState;
 
 import edu.southwestern.networks.TWEANN;
@@ -47,7 +48,7 @@ public final class TetrisViewer {
 	 *            Tetris State
 	 */
 	public void update(TetrisState ts) {
-		Graphics2D g = panel.getGraphics();
+		Graphics2D gameBoard = panel.getGraphics();
 		// System.out.println("Update Tetris");
 
 		//Rectangle2D agentRect;
@@ -66,10 +67,15 @@ public final class TetrisViewer {
 		int h = DABS;
 		int x = 0;
 		int y = 0;
-		g.setColor(Color.GRAY);
+		gameBoard.setColor(Color.GRAY);
 
 		// System.out.println(numRows + "," + numCols);
-
+		
+		// these will be updated the first iteration and every subsequent iteration that there value changes
+		int currentScore = -1;
+		int currentNumlinesCleared = -1;
+		int currentNumEmptySpaces = -1;
+		
 		for (int i = 0; i < numRows; i++) {
 			for (int j = 0; j < numCols; j++) {
 				x = j * DABS;
@@ -80,45 +86,74 @@ public final class TetrisViewer {
 					// +","+ h);
 					switch (thisBlockColor) {
 					case 1:
-						g.setColor(Color.PINK);
+						gameBoard.setColor(Color.PINK);
 						break;
 					case 2:
-						g.setColor(Color.RED);
+						gameBoard.setColor(Color.RED);
 						break;
 					case 3:
-						g.setColor(Color.GREEN);
+						gameBoard.setColor(Color.GREEN);
 						break;
 					case 4:
-						g.setColor(Color.YELLOW);
+						gameBoard.setColor(Color.YELLOW);
 						break;
 					case 5:
-						g.setColor(Color.LIGHT_GRAY);
+						gameBoard.setColor(Color.LIGHT_GRAY);
 						break;
 					case 6:
-						g.setColor(Color.ORANGE);
+						gameBoard.setColor(Color.ORANGE);
 						break;
 					case 7:
-						g.setColor(Color.MAGENTA);
+						gameBoard.setColor(Color.MAGENTA);
 						break;
 
 					}
-					g.fill3DRect(x, y, w, h, true);
+					gameBoard.fill3DRect(x, y, w, h, true);
 				} else {
 					// System.out.println("Empty block: " + x +","+ y +","+ w
 					// +","+ h);
-					g.setColor(Color.WHITE);
+					gameBoard.setColor(Color.WHITE);
 					//agentRect = new Rectangle2D.Double(x, y, w, h);
 					//if (true) { // tetVis.printGrid()) {
-					g.fill3DRect(x, y, w, h, true);
+					gameBoard.fill3DRect(x, y, w, h, true);
 					//} else { // for troubleshooting
 					//	g.fill(agentRect);
 					//}
 				}
 			}
 		}
-		g.setColor(Color.GRAY);
-		g.drawRect(0, 0, DABS * numCols, DABS * numRows);
-
+		gameBoard.setColor(Color.GRAY);
+		gameBoard.drawRect(0, 0, DABS * numCols, DABS * numRows);
+		
+		
+		
+		//updates score board with with current score
+		if (ts.get_score() != currentScore) {
+			gameBoard.setColor(Color.WHITE);
+			gameBoard.fillRect(0,-45,200,10);
+			gameBoard.setColor(Color.BLACK);
+			currentScore = ts.get_score();
+			gameBoard.drawString("Current Score: " + currentScore, 0, -35);
+		}
+		
+		//updates score board with number of line cleared
+		if (ts.get_linesCleared() != currentNumlinesCleared) {
+			gameBoard.setColor(Color.WHITE);
+			gameBoard.fillRect(0,-30,200,10);
+			gameBoard.setColor(Color.BLACK);
+			currentNumlinesCleared = ts.get_linesCleared();
+			gameBoard.drawString("Lines Cleared: " + currentNumlinesCleared, 0, -20);
+		}
+		
+		//update score board with number of empty spaces
+		if (ts.numEmptySpaces() != currentNumEmptySpaces) {
+			gameBoard.setColor(Color.WHITE);
+			gameBoard.fillRect(0,-15,120,10);
+			gameBoard.setColor(Color.BLACK);
+			currentNumEmptySpaces = ts.numEmptySpaces();
+			gameBoard.drawString("Empty Spaces: " + currentNumEmptySpaces, 0, -5);
+		}
+		
 		try {
 			Thread.sleep(WATCH_DELAY);
 		} catch (InterruptedException ex) {

@@ -61,6 +61,7 @@ public class TWEANN implements Network {
 		public final long innovation;
 		public final boolean recurrent;
 		public final boolean frozen;
+		public final int moduleSource;
 
 		@Override
 		public String toString() {
@@ -84,12 +85,13 @@ public class TWEANN implements Network {
 		 * @param frozen
 		 *            whether link can be changed by mutation
 		 */
-		public Link(Node target, double weight, long innovation, boolean recurrent, boolean frozen) {
+		public Link(Node target, double weight, long innovation, boolean recurrent, boolean frozen, int moduleSource) {
 			this.target = target;
 			this.weight = weight;
 			this.innovation = innovation;
 			this.recurrent = recurrent;
 			this.frozen = frozen;
+			this.moduleSource = moduleSource;
 		}
 
 		protected void transmit(double signal) {
@@ -280,6 +282,8 @@ public class TWEANN implements Network {
 
 		/**
 		 * Creates connection from this Node to target Node via a new Link.
+		 * The module source for the link is -1 because this feature only makes
+		 * sense for HyperNEAT networks.
 		 *
 		 * @param target
 		 *            Node to link to
@@ -293,7 +297,22 @@ public class TWEANN implements Network {
 		 *            whether or not link can be changed
 		 */
 		protected void connect(Node target, double weight, long innovation, boolean recurrent, boolean frozen) {
-			Link l = new Link(target, weight, innovation, recurrent, frozen);
+			connect(target, weight, innovation, recurrent, frozen, -1);
+		}
+		
+		/**
+		 * Same as above, but specifies the module that defined the link
+		 * (meaning that a CPPN module defined this substrate network link)
+		 * 
+		 * @param target
+		 * @param weight
+		 * @param innovation
+		 * @param recurrent
+		 * @param frozen
+		 * @param linkModuleSource
+		 */
+		protected void connect(Node target, double weight, long innovation, boolean recurrent, boolean frozen, int linkModuleSource) {
+			Link l = new Link(target, weight, innovation, recurrent, frozen, linkModuleSource);
 			outputs.add(l);
 		}
 
@@ -561,7 +580,7 @@ public class TWEANN implements Network {
 				Node target = getNode(lg.targetInnovation);
 				assert(target != null) : "No target: " + lg + "\nNet:" + g.getId();
 				assert(source != null) : "How could the source be null?";
-				source.connect(target, lg.weight, lg.innovation, lg.isRecurrent(), lg.isFrozen());
+				source.connect(target, lg.weight, lg.innovation, lg.isRecurrent(), lg.isFrozen(), lg.getModuleSource());
 			}
 		}
 		outputStart = nodes.size() - numOut;
