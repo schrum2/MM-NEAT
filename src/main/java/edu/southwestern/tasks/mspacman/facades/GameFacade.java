@@ -1234,11 +1234,15 @@ public class GameFacade {
 
 	/**
 	 * gets direction to go away from target.
-	 * Supportes popacman (TODO: test)
+	 * Supports popacman. Returns -1 if passed a -1.
+	 * (handles PO conditions)
 	 * @param to index of target 
 	 * @return direction
 	 */
 	public int getNextPacManDirAwayFromTarget(int to) {
+		if(to == -1) {
+			return -1;
+		}
 		return oldG == null ?
 				moveToIndex(poG.getNextMoveAwayFromTarget(poG.getPacmanCurrentNodeIndex(), to, pacman.game.Constants.DM.PATH)):
 				moveToIndex(oldG.getNextMoveAwayFromTarget(oldG.getPacmanCurrentNodeIndex(), to, oldpacman.game.Constants.DM.PATH));
@@ -1246,7 +1250,7 @@ public class GameFacade {
 
 	/**
 	 * gets number of pills left in game.
-	 * Supportes popacman.
+	 * Supportes popacman. (handles PO conditions, this information is always available)
 	 * @return num pills
 	 */
 	public int getNumberOfPills() {
@@ -1257,7 +1261,7 @@ public class GameFacade {
 
 	/**
 	 * number of power pills left.,
-	 * Supportes popacman.
+	 * Supports popacman. (handles PO conditions, this information is always available)
 	 * @return num power pills
 	 */
 	public int getNumberOfPowerPills() {
@@ -1268,7 +1272,7 @@ public class GameFacade {
 
 	/**
 	 * Returns the current value awarded for eating a ghost.
-	 * Supportes popacman (TODO: test)
+	 * Supports popacman (handles PO conditions, this information is always available).
 	 * @return the current value awarded for eating a ghost.
 	 */
 	public int getGhostCurrentEdibleScore() {
@@ -1279,11 +1283,15 @@ public class GameFacade {
 
 	/**
 	 * gets x coordinate of given node in maze input space.
-	 * Supportes popacman (TODO: test)
+	 * Supportes popacman (handles PO conditions)
 	 * @param current index of node
 	 * @return x coordinate
 	 */
 	public int getNodeXCoord(int current) {
+		//PO conditions
+		if(current == -1) {
+			return -1;
+		}
 		return oldG == null ?
 				poG.getNodeXCood(current):
 				oldG.getNodeXCoord(current);
