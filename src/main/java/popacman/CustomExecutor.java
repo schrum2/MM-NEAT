@@ -378,7 +378,7 @@ public class CustomExecutor {
                 }
 
                 if (visuals) {
-                    gv.repaint();
+                	gv.repaint();
                 }	
             } else {
                 game.advanceGame(
@@ -408,10 +408,11 @@ public class CustomExecutor {
         gv = new GameView(game, setDaemon);
         gv.setScaleFactor(scaleFactor);
         gv.showGame();
+        gv.setPO(Parameters.parameters.booleanParameter("observePacManPO"));
         if (pacManController instanceof HumanController) {
             gv.setFocusable(true);
             gv.requestFocus();
-            gv.setPO(true);
+            //gv.setPO(true);
             gv.addKeyListener(((HumanController) pacManController).getKeyboardInput());
         }
 

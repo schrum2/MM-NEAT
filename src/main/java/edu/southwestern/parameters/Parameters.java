@@ -373,6 +373,7 @@ public class Parameters {
 		booleanOptions.add("logTWEANNData", false, "Whether or not to log TWEANN data");
 		booleanOptions.add("moMario", false, "Mario is multiobjective");
 		booleanOptions.add("monitorSubstrates", false, "Allows us to visualizen the features (raw inputs) of a HyperNEAT agent");
+		booleanOptions.add("observePacManPO", true, "whether or not we observe the depiction of pacman agents with PO");
 		booleanOptions.add("overrideImageSize", false, "For image match task, draw CPPNs with different size than actual image size");
 		booleanOptions.add("pacManFullScreenOutput", false, "Output substrate has a cell for every 5x5 block on pacman screen");
 		booleanOptions.add("pacmanBothThreatAndEdibleSubstrate", false, "whether or not to have 2 substrates for threat and edible ghosts");
