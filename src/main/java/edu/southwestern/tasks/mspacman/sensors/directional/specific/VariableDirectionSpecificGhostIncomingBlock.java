@@ -8,7 +8,7 @@ import edu.southwestern.tasks.mspacman.facades.GameFacade;
 import edu.southwestern.tasks.mspacman.sensors.directional.VariableDirectionBlock;
 
 /**
- *
+ * TODO: Doesn't yet support popacman
  * @author Jacob
  */
 public class VariableDirectionSpecificGhostIncomingBlock extends VariableDirectionBlock {
@@ -25,6 +25,9 @@ public class VariableDirectionSpecificGhostIncomingBlock extends VariableDirecti
 	}
 
 	@Override
+	/**
+	 * TODO: needs major retooling to support popacman
+	 */
 	public double getValue(GameFacade gf) {
 		return gf.isGhostIncoming(dir, ghostIndex) ? 1 : 0;
 	}

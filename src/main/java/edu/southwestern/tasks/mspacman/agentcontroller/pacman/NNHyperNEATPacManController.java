@@ -11,9 +11,9 @@ import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.mspacman.MsPacManTask;
 import edu.southwestern.tasks.mspacman.facades.GameFacade;
 import edu.southwestern.util.stats.StatisticsUtilities;
-import pacman.game.Constants;
-import pacman.game.Constants.MOVE;
-import pacman.game.Game;
+import oldpacman.game.Constants;
+import oldpacman.game.Game;
+import oldpacman.game.Constants.MOVE;
 
 public class NNHyperNEATPacManController extends NNPacManController {
 

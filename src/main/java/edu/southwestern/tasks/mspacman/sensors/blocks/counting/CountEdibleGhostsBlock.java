@@ -3,7 +3,7 @@ package edu.southwestern.tasks.mspacman.sensors.blocks.counting;
 import edu.southwestern.tasks.mspacman.facades.GameFacade;
 
 /**
- *
+ * Supports popacman (TODO: test)
  * @author Jacob Schrum
  */
 public class CountEdibleGhostsBlock extends TargetPortionRemainingBlock {
@@ -13,11 +13,17 @@ public class CountEdibleGhostsBlock extends TargetPortionRemainingBlock {
 	}
 
 	@Override
+	/**
+	 * Supports popacman (TODO: test)
+	 */
 	public int getTargetMax(GameFacade gf) {
 		return gf.getNumActiveGhosts();
 	}
 
 	@Override
+	/**
+	 * Supports popacman (TODO: test)
+	 */
 	public int getTargetCurrent(GameFacade gf) {
 		return gf.getNumberOfEdibleGhosts();
 	}

@@ -4,7 +4,7 @@ import edu.southwestern.networks.Network;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.tasks.mspacman.facades.GameFacade;
 import edu.southwestern.util.stats.StatisticsUtilities;
-import pacman.game.Constants;
+import oldpacman.game.Constants;
 
 /**
  *

@@ -2,9 +2,10 @@ package edu.southwestern.tasks.mspacman.multitask;
 
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.stats.StatisticsUtilities;
+import oldpacman.Executor;
+import oldpacman.game.Constants;
+
 import java.util.*;
-import pacman.Executor;
-import pacman.game.Constants;
 
 /**
  * A Mode selector which selects modes based on if the area based on the

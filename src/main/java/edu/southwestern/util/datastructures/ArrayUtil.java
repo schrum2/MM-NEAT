@@ -202,7 +202,7 @@ public class ArrayUtil {
 	 * @return corresponding double array
 	 */
 	public static double[] doubleArrayFromINDArray(INDArray row) {
-		double[] array = new double[row.length()];
+		double[] array = new double[(int) row.length()];
 		for(int i = 0; i < array.length; i++) {
 			array[i] = row.getDouble(i);
 		}
@@ -903,7 +903,7 @@ public class ArrayUtil {
 	 * @return ArrayList with same values in same order
 	 */
 	public static ArrayList<Double> doubleVectorFromINDArray(INDArray values) {
-		ArrayList<Double> result = new ArrayList<Double>(values.length());
+		ArrayList<Double> result = new ArrayList<Double>((int) values.length());
 		for (int i = 0; i < values.length(); i++) {
 			result.add(values.getDouble(0,i));
 		}
@@ -919,7 +919,7 @@ public class ArrayUtil {
 	 */
 	public static void pairwiseMinimum(INDArray toModify, INDArray other) {
 		assert toModify.length() == other.length() : "INDArrays not the same size";
-		int size = toModify.length();
+		int size = (int) toModify.length();
 		for(int i = 0; i < size; i++) {
 			toModify.put(0, i, Math.min(toModify.getDouble(0,i), other.getDouble(0,i)));
 		}		

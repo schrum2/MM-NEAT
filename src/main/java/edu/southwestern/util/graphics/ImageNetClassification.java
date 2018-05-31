@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.datavec.image.loader.NativeImageLoader;
@@ -23,11 +24,59 @@ public class ImageNetClassification {
 	public static final int IMAGE_NET_INPUT_HEIGHT = 224;
 	public static final int IMAGE_NET_INPUT_WIDTH = 224;
 	public static final int IMAGE_NET_INPUT_CHANNELS = 3;
-	
+
 	// Do not take the time to initialize this if not needed
 	private static TensorNetwork imageNet = null; // Default model
-	private static ImageNetLabels imageNetLabels = null;
+	private static AccessibleImageNetLabels imageNetLabels = null;
+
+	/**
+	 * This class is necessary because the new DL4J 1.0.0-beta makes the getLabels
+	 * method protected. This is a work-around.
+	 * 
+	 * @author Jacob Schrum
+	 */
+	public static class AccessibleImageNetLabels extends ImageNetLabels {
+		public AccessibleImageNetLabels() throws IOException {
+			super();
+		}
+
+		public List<String> labels() throws IOException {
+			return getLabels();
+		}
+	}
 	
+	/**
+	 * Only load this information once
+	 * @return
+	 */
+	public static AccessibleImageNetLabels getImageNetLabelsInstance() {
+		if(imageNetLabels == null) {
+			try {
+				imageNetLabels = new AccessibleImageNetLabels();
+			} catch (IOException e) {
+				System.out.println("Could not load ImageNet labels");
+				e.printStackTrace();
+				System.exit(1);
+			}
+		}
+		return imageNetLabels;
+	}
+	
+	/**
+	 * Retrieve list of the class labels for ImageNet
+	 * @return list of 1000 labels
+	 */
+	public static List<String> getImageNetLabels() {
+		try {
+			return getImageNetLabelsInstance().labels();
+		} catch (IOException e) {
+			System.out.println("Could not load ImageNet labels");
+			e.printStackTrace();
+			System.exit(1);
+		}
+		return null;
+	}
+
 	/**
 	 * One model can be designated as a command line parameter. This retrieves it.
 	 * @return
@@ -36,7 +85,7 @@ public class ImageNetClassification {
 		if(imageNet == null) initImageNet();
 		return imageNet;
 	}
-	
+
 	/**
 	 * Initialize the ImageNet if it hasn't been done yet. This is only done
 	 * once because the net weights should never change. Saving the result allows
@@ -44,15 +93,15 @@ public class ImageNetClassification {
 	 */
 	private static void initImageNet() {
 		// This was my attempt to import a pre-trained set of AlexNet weights from a Keras model for ImageNet
-//		try {
-//			String modelHdf5Filename = "../alexnet_weights.h5";
-//			imageNet = KerasModelImport.importKerasSequentialModelAndWeights(modelHdf5Filename);
-//		} catch (IOException | InvalidKerasConfigurationException | UnsupportedKerasConfigurationException e) {
-//			System.out.println("Could not initialize ImageNet!");
-//			e.printStackTrace();
-//			System.exit(1);
-//		}
-		
+		//		try {
+		//			String modelHdf5Filename = "../alexnet_weights.h5";
+		//			imageNet = KerasModelImport.importKerasSequentialModelAndWeights(modelHdf5Filename);
+		//		} catch (IOException | InvalidKerasConfigurationException | UnsupportedKerasConfigurationException e) {
+		//			System.out.println("Could not initialize ImageNet!");
+		//			e.printStackTrace();
+		//			System.exit(1);
+		//		}
+
 		try {
 			imageNet = (TensorNetwork) ClassCreation.createObject("imageNetModel");
 		} catch (NoSuchMethodException e) {
@@ -60,10 +109,8 @@ public class ImageNetClassification {
 			e.printStackTrace();
 			System.exit(1);
 		}
-		// If image net is being used, then the labels will be needed as well
-		imageNetLabels = new ImageNetLabels();
 	}
-	
+
 	/**
 	 * Creates an INDArray from a BufferedImage, assuming that the image needs to be loaded
 	 * into a size appropriate for ImageNet.
@@ -81,7 +128,7 @@ public class ImageNetClassification {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Takes an image represented within an INDArray and returns all of the scores
 	 * that ImageNet assigns for each of its 1000 labels. Image Net may need to be
@@ -95,7 +142,7 @@ public class ImageNetClassification {
 		INDArray currentBatch = getImageNetPredictions(image, preprocess);
 		return getImageNetLabelledPredictions(currentBatch);
 	}
-	
+
 	/**
 	 * Take an INDArray already that has already been processes by ImageNet (the output scores)
 	 * and assign the ImageNet labels to them.
@@ -106,11 +153,11 @@ public class ImageNetClassification {
 		Map<String, Float> result = new HashMap<>();		
 		for (int i = 0; i < NUM_IMAGE_NET_CLASSES; i++) {
 			//System.out.println(labels.getLabel(i) + ": "+(currentBatch.getFloat(0,i)*100) + "%");
-			result.put(imageNetLabels.getLabel(i), precomputedScores.getFloat(0,i));
+			result.put(getImageNetLabelsInstance().getLabel(i), precomputedScores.getFloat(0,i));
 		}
 		return result;
 	}
-	
+
 	/**
 	 * Get raw ImageNet prediction scores from ImageNet without any labels.
 	 * Uses the default model specified as a command line parameter.
@@ -121,7 +168,7 @@ public class ImageNetClassification {
 	public static INDArray getImageNetPredictions(INDArray image, boolean preprocess) {
 		return getImageNetPredictions(getChosenImageNetModel(), image, preprocess);
 	}
-	
+
 	/**
 	 * Get ImageNet predictions with any specified model
 	 * @param model A ComputationGraph that takes images and outputs classifications (can this be more general)
@@ -133,15 +180,15 @@ public class ImageNetClassification {
 		if(preprocess) {
 			imagePreprocess(image);
 			// Check pre-processing behavior/results
-//			BufferedImage processed = GraphicsUtil.imageFromINDArray(image);
-//			DrawingPanel panel = GraphicsUtil.drawImage(processed, "Transformed Image", IMAGE_NET_INPUT_WIDTH, IMAGE_NET_INPUT_HEIGHT);
-//			MiscUtil.waitForReadStringAndEnterKeyPress();
-//			panel.dispose();
+			//			BufferedImage processed = GraphicsUtil.imageFromINDArray(image);
+			//			DrawingPanel panel = GraphicsUtil.drawImage(processed, "Transformed Image", IMAGE_NET_INPUT_WIDTH, IMAGE_NET_INPUT_HEIGHT);
+			//			MiscUtil.waitForReadStringAndEnterKeyPress();
+			//			panel.dispose();
 		}
 		INDArray predictions = model.output(image);
 		return predictions.getRow(0); //.dup(); // Should I duplicate with dup? Worth the load? Needed?
 	}
-	
+
 	/**
 	 * Preprocess an image by scaling it to the correct size.
 	 * HOWEVER, are more preprocessing steps needed here? 
@@ -156,7 +203,7 @@ public class ImageNetClassification {
 		//DataNormalization scaler = new GoogLeNetImagePreprocessor();
 		scaler.transform(image);
 	}
-		
+
 	/**
 	 * Get ImageNet label with the highest score in the collection of prediction scores
 	 * @param precomputedScores Computed by getImageNetPredictions
@@ -165,7 +212,7 @@ public class ImageNetClassification {
 	public static String bestLabel(INDArray precomputedScores) {
 		int index = Nd4j.argMax(precomputedScores, 1).getInt(0, 0);
 		// Mod division is used because the concat all model has multiple copies of the image labels in the same order
-		return imageNetLabels.getLabel(index % NUM_IMAGE_NET_CLASSES);
+		return getImageNetLabelsInstance().getLabel(index % NUM_IMAGE_NET_CLASSES);
 	}
 
 	/**
@@ -176,9 +223,9 @@ public class ImageNetClassification {
 	 */
 	public static String bestLabel(ArrayList<Double> precomputedScores) {
 		int index = StatisticsUtilities.argmax(ArrayUtil.doubleArrayFromList(precomputedScores));
-		return imageNetLabels.getLabel(index);
+		return getImageNetLabelsInstance().getLabel(index);
 	}
-		
+
 	/**
 	 * Get best/max score, the one corresponding to the predicted label
 	 * @param precomputedScores Computed by getImageNetPredictions

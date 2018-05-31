@@ -7,7 +7,7 @@ package edu.southwestern.tasks.mspacman.sensors.directional.counts;
 import edu.southwestern.tasks.mspacman.facades.GameFacade;
 
 /**
- *
+ * supports popacman (TODO: test)
  * @author Jacob Schrum
  */
 public class VariableDirectionKStepJunctionCountBlock extends VariableDirectionKStepCountBlock {
@@ -17,6 +17,9 @@ public class VariableDirectionKStepJunctionCountBlock extends VariableDirectionK
 	}
 
 	@Override
+	/**
+	 * supports popacman (TODO: test)
+	 */
 	public int[] getCountTargets(GameFacade gf) {
 		return gf.getJunctionIndices();
 	}

@@ -8,7 +8,7 @@ import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.tasks.mspacman.facades.GameFacade;
 
 /**
- *
+ * supports popacman (TODO: test)
  * @author Jacob
  */
 public class AllThreatsPresentBlock extends BooleanSensorBlock {
@@ -19,6 +19,9 @@ public class AllThreatsPresentBlock extends BooleanSensorBlock {
 	}
 
 	@Override
+	/**
+	 * supports popacman (TODO: test)
+	 */
 	public boolean predicate(GameFacade gf, int lastDirection) {
 		return gf.getThreatGhostLocations().length == CommonConstants.numActiveGhosts;
 	}
