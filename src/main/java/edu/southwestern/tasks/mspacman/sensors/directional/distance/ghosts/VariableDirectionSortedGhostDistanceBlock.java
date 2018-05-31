@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.southwestern.tasks.mspacman.sensors.directional.distance.ghosts;
 
 import edu.southwestern.parameters.CommonConstants;
@@ -13,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 /**
- *
+ * handles popacman (TODO: test the handling of PO conditions)
  * @author Jacob Schrum
  */
 public class VariableDirectionSortedGhostDistanceBlock extends VariableDirectionDistanceBlock {
@@ -25,7 +21,14 @@ public class VariableDirectionSortedGhostDistanceBlock extends VariableDirection
 	public VariableDirectionSortedGhostDistanceBlock(int order) {
 		this(-1, order, true, true);
 	}
-
+	
+	/**
+	 * handles popacman (TODO: test the handling of poconditions)
+	 * @param dir
+	 * @param order
+	 * @param edibleClose
+	 * @param proximityOnly
+	 */
 	public VariableDirectionSortedGhostDistanceBlock(int dir, int order, boolean edibleClose, boolean proximityOnly) {
 		super(dir);
 		this.order = order;
@@ -39,7 +42,11 @@ public class VariableDirectionSortedGhostDistanceBlock extends VariableDirection
 	}
 
 	@Override
+	/**
+	 * TODO: what to do in PO conditions
+	 */
 	public int[] getTargets(GameFacade gf) {
+		
 		ArrayList<Integer> ghosts = gf.getGhostIndices(edibleClose, proximityOnly);
 		if (order >= ghosts.size()) {
 			return new int[0]; // Target in lair will result in distance of

@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 /**
- *
+ * Supports popacman (TODO: test handling of PO conditions)
  * @author Jacob
  */
 public class VariableDirectionSortedGhostEdibleBlock extends VariableDirectionBlock {
@@ -31,6 +31,9 @@ public class VariableDirectionSortedGhostEdibleBlock extends VariableDirectionBl
 	}
 
 	@Override
+	/**
+	 * Supports popacman (TODO: test)
+	 */
 	public double getValue(GameFacade gf) {
 		ArrayList<Integer> ghosts = new ArrayList<Integer>(CommonConstants.numActiveGhosts);
 		for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {

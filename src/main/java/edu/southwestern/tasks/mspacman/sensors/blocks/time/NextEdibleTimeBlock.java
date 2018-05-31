@@ -2,7 +2,7 @@ package edu.southwestern.tasks.mspacman.sensors.blocks.time;
 
 import edu.southwestern.tasks.mspacman.facades.GameFacade;
 import edu.southwestern.tasks.mspacman.sensors.blocks.MsPacManSensorBlock;
-import pacman.game.Constants;
+import oldpacman.game.Constants;
 
 /**
  * How long ghosts will be edible for the next time a power pill is eaten. Helps
