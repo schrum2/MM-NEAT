@@ -1058,7 +1058,7 @@ public class GameFacade {
 
 	/**
 	 * colors given set of nodes.
-	 * Supportes popacman.
+	 * supports popacman.
 	 * @param c color to set
 	 * @param nodes nodes to set color
 	 */
@@ -1068,7 +1068,7 @@ public class GameFacade {
 
 	/**
 	 * colors given array of nodes.
-	 * Supportes popacman.
+	 * supports popacman.
 	 * @param c color
 	 * @param nodes nodes to set color
 	 */
@@ -1086,7 +1086,7 @@ public class GameFacade {
 
 	/**
 	 * Gets distance of path from one node to another.
-	 * Supportes popacman (handles PO conditions)
+	 * supports popacman (handles PO conditions)
 	 * @param from index of sourceNode
 	 * @param to index of TargetNode
 	 * @return distance
@@ -1103,7 +1103,7 @@ public class GameFacade {
 
 	/**
 	 * returns whether or not pacman is hitting a wall.
-	 * Supportes popacman (handles PO conditions)
+	 * supports popacman (handles PO conditions)
 	 * @return hitting wall
 	 */
 	public boolean pacmanHittingWall() {
@@ -1126,7 +1126,7 @@ public class GameFacade {
 
 	/**
 	 * Adds a line to be drawn using the color specified.
-	 * Supportes popacman.
+	 * supports popacman.
 	 * @param color
 	 *            the color
 	 * @param fromNnodeIndex
@@ -1146,7 +1146,7 @@ public class GameFacade {
 
 	/**
 	 * Gets time ghost is edible.
-	 * Supportes popacman. Returns -1 if we cannot see ghostIndex.
+	 * supports popacman. Returns -1 if we cannot see ghostIndex.
 	 * (handles PO conditions)
 	 * @param ghostIndex index of ghost
 	 * @return time ghost is edible
@@ -1158,7 +1158,7 @@ public class GameFacade {
 	}
 
 	/**
-	 * Supportes popacman (handles PO conditions)
+	 * supports popacman (handles PO conditions)
 	 * @param whichGhost ghost
 	 * @param to index of node to move to
 	 * @return index of move
@@ -1177,7 +1177,7 @@ public class GameFacade {
 	}	
 
 	/**
-	 * Supportes popacman (handles PO conditions)
+	 * supports popacman (handles PO conditions)
 	 * @param whichGhost ghost
 	 * @param to index of node to move to
 	 * @return index of move
@@ -1197,7 +1197,7 @@ public class GameFacade {
 	/**
 	 * Returns direction pacman should move in to reach "to" given that pacman
 	 * cannot go in reverse from the lastDir direction it came from.
-	 * Supportes popacman (handles PO conditions)
+	 * supports popacman (handles PO conditions)
 	 * @param from
 	 *            starting point
 	 * @param to
@@ -1219,7 +1219,7 @@ public class GameFacade {
 
 	/**
 	 * gets direction to go towards target.
-	 * Supportes popacman (handles PO conditions)
+	 * supports popacman (handles PO conditions)
 	 * @param to node index of target
 	 * @return direction
 	 */
@@ -1250,7 +1250,7 @@ public class GameFacade {
 
 	/**
 	 * gets number of pills left in game.
-	 * Supportes popacman. (handles PO conditions, this information is always available)
+	 * supports popacman. (handles PO conditions, this information is always available)
 	 * @return num pills
 	 */
 	public int getNumberOfPills() {
@@ -1283,7 +1283,7 @@ public class GameFacade {
 
 	/**
 	 * gets x coordinate of given node in maze input space.
-	 * Supportes popacman (handles PO conditions)
+	 * supports popacman (handles PO conditions)
 	 * @param current index of node
 	 * @return x coordinate
 	 */
@@ -1299,11 +1299,15 @@ public class GameFacade {
 
 	/**
 	 * gets y coordinate of given node in maze input space .
-	 * Supportes popacman (TODO: test)
+	 * Supports popacman (handles PO conditions)
 	 * @param current index of node 
 	 * @return y coordinate
 	 */
 	public int getNodeYCoord(int current) {
+		//PO conditions
+		if(current == -1) {
+			return -1;
+		}
 		return oldG == null ?
 				poG.getNodeYCood(current):
 				oldG.getNodeYCoord(current);
@@ -1311,7 +1315,7 @@ public class GameFacade {
 
 	/**
 	 * gets indices where pills still are.
-	 * Supports popacman (TODO: test)
+	 * Supports popacman (handles PO conditions, this information is always available)
 	 * @return indices of pills
 	 */
 	public int[] getPillIndices() {
@@ -1322,7 +1326,7 @@ public class GameFacade {
 
 	/**
 	 * gets indices where power pills still are.
-	 * Supportes popacman (TODO: test)
+	 * Supports popacman. (handles PO conditions, this information is always available)
 	 * @return indices of power pills
 	 */
 	public int[] getPowerPillIndices() {
@@ -1333,11 +1337,16 @@ public class GameFacade {
 
 	/**
 	 * returns whether or not given index from input space
-	 * is a node in the maze. Supportes popacman (TODO: test)
+	 * is a node in the maze. supports popacman (Handles PO conditions)
 	 * @param index index in maze
 	 * @return whether or not in maze
 	 */
 	public boolean nodeInMaze(int index) {
+		//PO conditions
+		if(index == -1) {
+			//TODO: is this how we should handle PO
+			return false;
+		}
 		return oldG == null ?
 				index < poG.getCurrentMaze().graph.length:
 				index < oldG.getCurrentMaze().graph.length;
@@ -1346,7 +1355,7 @@ public class GameFacade {
 
 	/**
 	 * Gets the length of the node array.
-	 * Supportes popacman (TODO: test)
+	 * supports popacman (Handles PO conditions, this information is always available)
 	 * @return length of maze
 	 */
 	public int lengthMaze() {
@@ -1358,11 +1367,16 @@ public class GameFacade {
 	/**
 	 * Returns whether or not given indices are in maze or not.
 	 * True iff all nodes are in maze.
-	 * Supportes popacman (TODO: test)
+	 * supports popacman (handles PO conditions)
 	 * @param indices indices to check
 	 * @return iff nodes are in maze 
 	 */
 	public boolean allNodesInMaze(int[] indices) {
+		//PO conditions
+		if(indices == null) {
+			//TODO: is this how we should handle PO
+			return false;
+		}
 		for (int i = 0; i < indices.length; i++) {
 			if (indices[i] != -1 && !nodeInMaze(indices[i])) {
 				return false;
@@ -1375,7 +1389,7 @@ public class GameFacade {
 	 * From fromNodeIndex heading in direction, find the closest node within
 	 * targetNodeIndices and return a pair of both the target and the path to
 	 * it. No "from" at start, but "to" is at the end. Supports popacman.
-	 * Returns new Pair<>(-1,null) if none of the targets are visible.
+	 * Returns new Pair<>(-1,null) if none of the targets are visible. (Handles PO conditions)
 	 *
 	 * @param fromNodeIndex
 	 * @param targetNodeIndices
