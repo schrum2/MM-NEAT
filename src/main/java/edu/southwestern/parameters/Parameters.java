@@ -649,7 +649,9 @@ public class Parameters {
 		booleanOptions.add("tetrisAvgEmptySpaces", false, "For Tetris multiobjective, average number of empty spaces after piece placements");
 		booleanOptions.add("tetrisAvgNumHoles", false, "include number of holes as a fitness function");
 		booleanOptions.add("tetrisBlocksOnScreen", false, "For Tetris multiobjective, seperates number of blocks on screen from lines cleared");
+		booleanOptions.add("tetrisGameScore", true, "the score of Tetris game");
 		booleanOptions.add("tetrisLinesNotScore", false, "For Tetris track lines cleared instead of game score");
+		booleanOptions.add("tetrisNumLinesCleared", false, "Turns on fitness for different number of lines cleared");
 		booleanOptions.add("tetrisTimeSteps", false, "For Tetris multiobjective, separates time steps from lines cleared");
 		booleanOptions.add("timeToEatAllFitness", false, "Fitness based on time to eat all ghosts after power pill");
 		booleanOptions.add("timedPacman", false, "Pacman moves have time limit, even in non-visual mode");
@@ -664,6 +666,8 @@ public class Parameters {
 		booleanOptions.add("tugObjectiveUsageLinkage", false, "In TUG, when modes and objectives are linked, linkage depends on mode usage");
 		booleanOptions.add("tugResetsToPreviousGoals", false, "On TUG goal increase, reset RWAs to previous goals");
 		booleanOptions.add("ucb1Evaluation", false, "Use UCB1 to decide which individuals get extra evaluations");
+		booleanOptions.add("useHyperNEATCustomArchitecture", false, "allows for hyperNEAT custom architectures");
+		booleanOptions.add("useTetrisLinesBDCharacterization", false, "turns on tetris characterization vector for 1, 2, 3, or 4 lines cleared");
 		booleanOptions.add("utJumps", true, "UT2004 agent can jump");
 		booleanOptions.add("veryClose", true, "Use Pacman very close sensors");
 		booleanOptions.add("viewFinalCamps", false, "Look at final training camps from 'final'");
@@ -821,6 +825,7 @@ public class Parameters {
 		classOptions.add("ghostTeam", Legacy.class, "Ghost team in new version of Ms. Pac-Man code");
 		classOptions.add("gvgaiPlayer", GVGAIOneStepNNPlayer.class, "GVGAI Player to be used");
 		classOptions.add("hyperNEATSeedTask", null, "HyperNEAT task that seeds a standard NEAT task");
+		classOptions.add("hyperNEATCustomArchitecture", null, "Custom substrate architecture for a HyperNEAT task (overrides HNProcessDepth and HNProcessWidth)");
 		classOptions.add("imageNetModel", VGG19Wrapper.class, "DL4J model that was trained on ImageNet to classify images");
 		classOptions.add("mapElitesBinLabels", null, "class containing way of putting genotypes in bins of the MAP Elites archive");
 		classOptions.add("microRTSAgent", UCT.class, "File containing AI to evolve in MicroRTSTask");
