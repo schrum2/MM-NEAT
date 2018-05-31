@@ -51,12 +51,12 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 	public ArrayList<UT2004FitnessFunction<T>> others = new ArrayList<UT2004FitnessFunction<T>>();
 
 	/**
-	 * 
+	 * Sets out the parameters for the server to be launched
 	 * @param map (map that the match will be played on)
 	 * @param nativeBotSkills (the abilities of the bots provided by the game)
-	 * @param evalMinutes
-	 * @param desiredSkill
-	 * @param opponents
+	 * @param evalMinutes (the total time for the evaluation)
+	 * @param desiredSkill (the skill to be evaluated)
+	 * @param opponents (the other players the bot is playing against)
 	 */
 	public UT2004Task(String map, int[] nativeBotSkills, int evalMinutes, int desiredSkill, BotController[] opponents) {
 		this.map = map;
@@ -75,51 +75,52 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 			System.exit(1);
 		}
 	}
-//objectives are things to be logged, used by evolutionary alg, to determine fitness0
-	
-        @Override
+	//objectives are things to be logged, used by evolutionary alg, to determine fitness0
+
+	@Override
 	/**
 	 * @return returns an array containing the labels for the sensor model
 	 */
-    public String[] sensorLabels() {
+	public String[] sensorLabels() {
 		return sensorModel.sensorLabels();
 	}
 
-        @Override
+	@Override
 	/**
 	 * @return returns an array containing the labels for the output model
 	 */
-    public String[] outputLabels() {
+	public String[] outputLabels() {
 		return outputModel.outputLabels();
 	}
 
-    /**
-     * adds an objective to be logged
-     * @param o (a fitness function)
-     * @param list (an accumulating list of objectives)
-     * @param affectsSelection (shows whether or not it changes the fitness function)
-     */
-    public final void addObjective(UT2004FitnessFunction<T> o, ArrayList<UT2004FitnessFunction<T>> list,boolean affectsSelection) {
+	/**
+	 * adds an objective to be tracked
+	 * @param o (a fitness function)
+	 * @param list (an accumulating list of objectives)
+	 * @param affectsSelection (shows whether or not it changes the fitness function)
+	 */
+	public final void addObjective(UT2004FitnessFunction<T> o, ArrayList<UT2004FitnessFunction<T>> list,boolean affectsSelection) {
 		addObjective(o, list, null, affectsSelection);
 	}
 
 	/**
-	 * 
+	 * add an objective to be tracked that will affect the fitness function
 	 * @param o (fitness function to be used)
-	 * @param list
+	 * @param list (place to store fitness function results)
 	 * @param override
-	 * @param affectsSelection
+	 * @param affectsSelection (shows whether or not it changes the fitness function)
 	 */
 	public final void addObjective(UT2004FitnessFunction<T> o, ArrayList<UT2004FitnessFunction<T>> list, Statistic override, boolean affectsSelection) {
 		list.add(o);
 		MMNEAT.registerFitnessFunction(o.getClass().getSimpleName(), override, affectsSelection);
 	}
-	
+
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	/**
-	 * @param individual
-	 * @param num
+	 * 
+	 * @param individual (the genetic representation of the bot being evaluated)
+	 * @param num (the number evaluation you're on
 	 */
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {            
 		int botPort = ServerUtil.getAvailablePort();
@@ -133,8 +134,8 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 		config.setMapName(map);
 		config.setGameBotsPack("GameBots2004");
 		config.setGameType("BotDeathMatch");
-		
-		
+
+
 		ArrayList<String> mutators = new ArrayList<>();
 		if(Parameters.parameters.booleanParameter("botprizeMod")) {
 			mutators.add("GameBots2004.BotprizeMutator");		
@@ -145,16 +146,16 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 		if(Parameters.parameters.booleanParameter("GBHUDMutator")) {
 			mutators.add("Gamebots2004.GBHUD");
 		}
-		
-		
-		String mutatorString = mutators.isEmpty() ? "":"?mutator=" + String.join(",", mutators);
-		
-//		String botprizeMod = Parameters.parameters.booleanParameter("botprizeMod") ? "?mutator=GameBots2004.BotPrizeMutator," : "";
-//		String navGrid = Parameters.parameters.booleanParameter("navGrid") ? "?bDrawNavPointsGrid=True" : "?bDrawNavPointsGrid=False";//DOES NOT WORK
-//		// config.setOptions(botprizeMod + "?timelimit=" + evalMinutes +
-//		String navCubes = Parameters.parameters.booleanParameter("navCubes") ? "?bDrawNavCubes=True" : "?bDrawNavCubes=False";//DOES NOT WORK
 
-		
+
+		String mutatorString = mutators.isEmpty() ? "":"?mutator=" + String.join(",", mutators);
+
+		//		String botprizeMod = Parameters.parameters.booleanParameter("botprizeMod") ? "?mutator=GameBots2004.BotPrizeMutator," : "";
+		//		String navGrid = Parameters.parameters.booleanParameter("navGrid") ? "?bDrawNavPointsGrid=True" : "?bDrawNavPointsGrid=False";//DOES NOT WORK
+		//		// config.setOptions(botprizeMod + "?timelimit=" + evalMinutes +
+		//		String navCubes = Parameters.parameters.booleanParameter("navCubes") ? "?bDrawNavCubes=True" : "?bDrawNavCubes=False";//DOES NOT WORK
+
+
 		// "?fraglimit=0?GoalScore=0?DoUplink=False?UplinkToGamespy=False?SendStats=False?bAllowPrivateChat=False?bAllowTaunts=False?bEnableVoiceChat=False?bAllowLocalBroadcast=False?BotServerPort="
 		// + botPort + "?ControlServerPort=" + controlPort +
 		// "?ObservingServerPort=" + observePort);
@@ -162,9 +163,9 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 				+ "?fraglimit=0?GoalScore=0?DoUplink=False?UplinkToGamespy=False?SendStats=False?bAllowPrivateChat=False?bAllowTaunts=False?bEnableVoiceChat=False?bAllowLocalBroadcast=False?BotServerPort="
 				+ botPort + "?ControlServerPort=" + controlPort + "?ObservingServerPort=" + observePort);
 		config.setUnrealHome(Parameters.parameters.stringParameter("utDrive") + ":" + File.separator + Parameters.parameters.stringParameter("utPath"));
-//		System.out.println(config);
-//		MiscUtil.waitForReadStringAndEnterKeyPress();
-		
+		//		System.out.println(config);
+		//		MiscUtil.waitForReadStringAndEnterKeyPress();
+
 		MyUCCWrapper ucc = null;
 		Pair<double[], double[]> result = null;
 		int attempts = 1;
@@ -175,8 +176,8 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 				IUT2004Server server = ucc.getUTServer();
 				System.out.println(botPort + ": Confirming empty server");
 				while (server.getAgents().size() > 0 
-                                        || server.getNativeAgents().size() > 0
-					|| server.getPlayers().size() > 0) {
+						|| server.getNativeAgents().size() > 0
+						|| server.getPlayers().size() > 0) {
 					System.out.println(botPort + ": NOT EMPTY! RESET!");
 					ServerUtil.destroyServer(ucc, true);
 
@@ -201,9 +202,9 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 					allBots[0] = controller;
 					System.arraycopy(opponents, 0, allBots, 1, opponents.length);
 					GameDataCollector[] collectors = ControllerBot.launchBot(
-                                                        server, "EvolvingBot" + gamePort, allBots,
+							server, "EvolvingBot" + gamePort, allBots,
 							evalMinutes * 60, desiredSkill, "localhost", botPort);
-                                        // For now, assume we always want just the first collector
+					// For now, assume we always want just the first collector
 					GameDataCollector stats = collectors[0]; 
 
 					// System.out.println("Eval over");
@@ -229,26 +230,27 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 		return result;
 	}
 
-        @Override
-    /**
-     * @return returns the time of the game
-     */
+	@Override
+	/**
+	 * @return returns the time of the game
+	 */
 	public double getTimeStamp() {
 		// Can the game time be retrieved?
 		return 0; // Not correct
 	}
 
-        @Override
-    /**
-     * 
-     */
-    public int numObjectives() {
+	@Override
+	/**
+	 * returns how many objectives have been tracked that affect the fitness function
+	 * @return returns the number of objectives that have been tracked
+	 */
+	public int numObjectives() {
 		return fitness.size();
 	}
 
 	@Override
 	/**
-	 * 
+	 * @return returns the number of objectives that have not affected the fitness function 
 	 */
 	public int numOtherScores() {
 		return others.size();
@@ -258,7 +260,7 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 	 * 
 	 * @param stats (the stats from the game)
 	 * @param o (the organism to be monitored)
-	 * @return
+	 * @return returns the organism's scores in the fitness function
 	 */
 	public Pair<double[], double[]> relevantScores(GameDataCollector stats, Organism<T> o) {
 		double[] fitnessScores = new double[fitness.size()];
