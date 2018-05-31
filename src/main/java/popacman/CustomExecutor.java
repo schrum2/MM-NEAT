@@ -272,7 +272,7 @@ public class CustomExecutor {
      * @param description      Description for the stats
      * @return Stats[] containing the scores in index 0 and the ticks in position 1
      */
-    public Stats[] runExperiment(Controller<MOVE> pacManController, MASController ghostController, int trials, String description, Game game) {
+    public void runExperiment(Controller<MOVE> pacManController, MASController ghostController, int trials, String description, Game game) {
         Stats stats = new Stats(description);
         Stats ticks = new Stats(description + " Ticks");
         MASController ghostControllerCopy = ghostController.copy(ghostPO);
@@ -304,7 +304,7 @@ public class CustomExecutor {
         stats.setMsTaken(timeTaken);
         ticks.setMsTaken(timeTaken);
 
-        return new Stats[]{stats, ticks};
+        //return new Stats[]{stats, ticks};
     }
 
     // We send in the Game externally instead of setting it up inside of this class.
