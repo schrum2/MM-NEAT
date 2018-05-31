@@ -7,7 +7,6 @@ import java.util.Map;
 
 import org.datavec.image.loader.NativeImageLoader;
 import org.deeplearning4j.nn.api.Model;
-import org.deeplearning4j.zoo.ModelSelector;
 import org.deeplearning4j.zoo.PretrainedType;
 import org.deeplearning4j.zoo.ZooModel;
 import org.deeplearning4j.zoo.ZooType;
@@ -152,7 +151,7 @@ public class ImageNetTest {
 		Map<String, INDArray> allScores = AllZooModelImageNetModels.runAllModels(image);
 		for(String key : allScores.keySet()) {
 			INDArray scores = allScores.get(key);
-			String decodedLabels = new ImageNetLabels().decodePredictions(scores);
+			String decodedLabels = ImageNetClassification.getImageNetLabelsInstance().decodePredictions(scores);
 			System.out.println(key + ":\n" + decodedLabels);
 		}
 	}
@@ -165,7 +164,7 @@ public class ImageNetTest {
 //		}
 		System.out.println("BEST: " + ImageNetClassification.bestLabel(scores));
 		// check output labels of result
-		String decodedLabels = new ImageNetLabels().decodePredictions(scores);
+		String decodedLabels = ImageNetClassification.getImageNetLabelsInstance().decodePredictions(scores);
 		System.out.println(decodedLabels);
 	}
 }

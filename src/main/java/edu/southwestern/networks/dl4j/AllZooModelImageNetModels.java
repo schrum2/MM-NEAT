@@ -6,12 +6,16 @@ import java.util.Map;
 import java.util.Set;
 
 import org.deeplearning4j.nn.graph.ComputationGraph;
-import org.deeplearning4j.zoo.ModelSelector;
 import org.deeplearning4j.zoo.PretrainedType;
 import org.deeplearning4j.zoo.ZooModel;
 import org.deeplearning4j.zoo.ZooType;
+import org.deeplearning4j.zoo.model.ResNet50;
+import org.deeplearning4j.zoo.model.VGG16;
+import org.deeplearning4j.zoo.model.VGG19;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.dataset.DataSet;
+
+import edu.southwestern.util.graphics.ImageNetClassification;
 
 public abstract class AllZooModelImageNetModels implements TensorNetwork {
 
@@ -54,8 +58,17 @@ public abstract class AllZooModelImageNetModels implements TensorNetwork {
 	public static void initAllImageNets() {
 		if(imageNetModels == null) {
 			imageNetModels = new HashMap<String,ComputationGraph>();
+			// This used to be possible in the previous DL4J
+			//@SuppressWarnings("rawtypes")
+			//Map<ZooType, ZooModel> models = ModelSelector.select(ZooType.CNN);
+			
+			// Have to select them manually now
 			@SuppressWarnings("rawtypes")
-			Map<ZooType, ZooModel> models = ModelSelector.select(ZooType.CNN);
+			Map<ZooType, ZooModel> models = new HashMap<ZooType, ZooModel>();
+			models.put(ZooType.CNN, VGG16.builder().numClasses(ImageNetClassification.NUM_IMAGE_NET_CLASSES).build());
+			models.put(ZooType.CNN, VGG19.builder().numClasses(ImageNetClassification.NUM_IMAGE_NET_CLASSES).build());
+			models.put(ZooType.CNN, ResNet50.builder().numClasses(ImageNetClassification.NUM_IMAGE_NET_CLASSES).build());
+			
 			for (@SuppressWarnings("rawtypes") Map.Entry<ZooType, ZooModel> entry : models.entrySet()) {
 				@SuppressWarnings("rawtypes")
 				ZooModel zooModel = entry.getValue();
