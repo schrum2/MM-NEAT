@@ -10,7 +10,7 @@ import edu.southwestern.tasks.mspacman.sensors.directional.VariableDirectionBloc
 import edu.southwestern.tasks.mspacman.sensors.directional.reachfirst.VariableDirectionCloserToTargetThanThreatGhostBlock;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
-import pacman.game.Constants;
+import oldpacman.game.Constants;
 
 /**
  * Although continuing in a given direction until a junction or power pill is

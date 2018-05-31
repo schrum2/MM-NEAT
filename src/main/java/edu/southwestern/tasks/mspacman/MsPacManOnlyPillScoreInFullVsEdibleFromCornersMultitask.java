@@ -8,11 +8,12 @@ import edu.southwestern.tasks.mspacman.facades.GameFacade;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.random.RandomNumbers;
+import oldpacman.game.Constants;
+import oldpacman.game.internal.Ghost;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
-import pacman.game.Constants;
-import pacman.game.internal.Ghost;
 
 /**
  * One pacman eval consists of two separate evals: First in the full interleaved

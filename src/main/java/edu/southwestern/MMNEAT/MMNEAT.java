@@ -105,7 +105,7 @@ import edu.southwestern.util.graphics.DrawingPanel;
 import edu.southwestern.util.random.RandomGenerator;
 import edu.southwestern.util.random.RandomNumbers;
 import edu.southwestern.util.stats.Statistic;
-import pacman.Executor;
+import oldpacman.Executor;
 import wox.serial.Easy;
 
 /**
