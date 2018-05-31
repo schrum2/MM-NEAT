@@ -114,7 +114,7 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 		list.add(o);
 		MMNEAT.registerFitnessFunction(o.getClass().getSimpleName(), override, affectsSelection);
 	}
-
+	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	/**
@@ -133,13 +133,29 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 		config.setMapName(map);
 		config.setGameBotsPack("GameBots2004");
 		config.setGameType("BotDeathMatch");
-		String botprizeMod = Parameters.parameters.booleanParameter("botprizeMod") ? "?mutator=GameBots2004.BotPrizeMutator" : "";
-		//String navGrid = Parameters.parameters.booleanParameter("navGrid") ? "?bDrawNavPointsGrid=True" : "?bDrawNavPointsGrid=False";//DOES NOT WORK
-		// config.setOptions(botprizeMod + "?timelimit=" + evalMinutes +
+		
+		
+		ArrayList<String> mutators = new ArrayList<>();
+		if(Parameters.parameters.booleanParameter("botprizeMod")) {
+			mutators.add("GameBots2004.BotprizeMutator");		
+		}
+		if(Parameters.parameters.booleanParameter("navCubes")) {
+			mutators.add("GameBots2004.PathMarkerMutator");
+		}
+		
+		
+		String mutatorString = mutators.isEmpty() ? "": String.join(",", mutators);
+		
+//		String botprizeMod = Parameters.parameters.booleanParameter("botprizeMod") ? "?mutator=GameBots2004.BotPrizeMutator," : "";
+//		String navGrid = Parameters.parameters.booleanParameter("navGrid") ? "?bDrawNavPointsGrid=True" : "?bDrawNavPointsGrid=False";//DOES NOT WORK
+//		// config.setOptions(botprizeMod + "?timelimit=" + evalMinutes +
+//		String navCubes = Parameters.parameters.booleanParameter("navCubes") ? "?bDrawNavCubes=True" : "?bDrawNavCubes=False";//DOES NOT WORK
+
+		
 		// "?fraglimit=0?GoalScore=0?DoUplink=False?UplinkToGamespy=False?SendStats=False?bAllowPrivateChat=False?bAllowTaunts=False?bEnableVoiceChat=False?bAllowLocalBroadcast=False?BotServerPort="
 		// + botPort + "?ControlServerPort=" + controlPort +
 		// "?ObservingServerPort=" + observePort);
-		config.setOptions(botprizeMod 
+		config.setOptions(mutatorString
 				+ "?fraglimit=0?GoalScore=0?DoUplink=False?UplinkToGamespy=False?SendStats=False?bAllowPrivateChat=False?bAllowTaunts=False?bEnableVoiceChat=False?bAllowLocalBroadcast=False?BotServerPort="
 				+ botPort + "?ControlServerPort=" + controlPort + "?ObservingServerPort=" + observePort);
 		config.setUnrealHome(Parameters.parameters.stringParameter("utDrive") + ":" + File.separator + Parameters.parameters.stringParameter("utPath"));
