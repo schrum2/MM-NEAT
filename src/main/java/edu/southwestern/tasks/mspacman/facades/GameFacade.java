@@ -925,7 +925,7 @@ public class GameFacade {
 
 	/**
 	 * returns array containing indices of nodes that are 
-	 * junctions. Supports popacman.
+	 * junctions. Supports popacman. (handles PO conditions, this information is always available)
 	 * @return array of node junction indices
 	 */
 	public int[] getJunctionIndices() {
@@ -1755,7 +1755,7 @@ public class GameFacade {
 
 	/**
 	 * True if ghost is coming at pacman along a path that goes through the
-	 * neighbor of pacman in direction "pacmanDir". Supports popacman (TODO: test)
+	 * neighbor of pacman in direction "pacmanDir". Supports popacman (handles PO conditions)
 	 *
 	 * @param pacmanDir
 	 *            direction from pacman of neighbor
@@ -1764,8 +1764,11 @@ public class GameFacade {
 	 * @return true if ghost is approaching through that neighbor
 	 */
 	public boolean isGhostIncoming(int pacmanDir, int ghostIndex) {
-		//TODO
+		if(ghostIndex == -1) {
+			return false;
+		}
 		int current = this.getPacmanCurrentNodeIndex();
+		assert current != -1 : "we can see pacman";
 		int[] neighbors = this.neighbors(current);
 		assert neighbors[pacmanDir] != -1 : "Pacman dir is a wall: " + pacmanDir + "; " + Arrays.toString(neighbors);
 		int[] ghostPath = getGhostPath(ghostIndex, current);
@@ -1821,7 +1824,7 @@ public class GameFacade {
 	/**
 	 * gets indices of threat ghosts.
 	 * Ghosts have a position of -1 if they are not visible.
-	 * Supports popacman.
+	 * Supports popacman. (handles PO conditions)
 	 * @param include which ghosts to include
 	 * @return indices of threat ghosts
 	 */
@@ -2007,13 +2010,17 @@ public class GameFacade {
 	/**
 	 * Return true if the current shortest path to pacman that the ghost can
 	 * possibly take (keeping in mind no reversal restrictions) is the same as
-	 * the direction for the absolute shortest path. Supports popacman (TODO: test)
+	 * the direction for the absolute shortest path. (handles PO conditions)
 	 *
 	 * @param ghostIndex
 	 *            which ghost to check
 	 * @return true if directly approaching pacman
 	 */
 	public boolean ghostApproachingPacman(int ghostIndex) {
+		//PO conditions
+		if(ghostIndex == -1) {
+			return false;
+		}
 		final int current = this.getPacmanCurrentNodeIndex();
 		int[] ghostPath = getGhostPath(ghostIndex, current);
 		int[] shortestPath = getShortestPath(getGhostCurrentNodeIndex(ghostIndex), current);
