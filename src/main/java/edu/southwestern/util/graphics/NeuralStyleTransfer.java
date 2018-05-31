@@ -249,7 +249,7 @@ public class NeuralStyleTransfer {
     private static AdamUpdater createADAMUpdater() {
         AdamUpdater adamUpdater = new AdamUpdater(new Adam(LEARNING_RATE, BETA_MOMENTUM, BETA2_MOMENTUM, EPSILON));
         adamUpdater.setStateViewArray(Nd4j.zeros(1, 2 * CHANNELS * WIDTH * HEIGHT),
-                new int[]{1, CHANNELS, WIDTH, HEIGHT}, 'c',
+                new long[]{1, CHANNELS, WIDTH, HEIGHT}, 'c',
                 true);
         return adamUpdater;
     }
