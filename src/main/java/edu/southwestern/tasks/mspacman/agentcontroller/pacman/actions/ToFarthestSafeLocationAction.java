@@ -7,14 +7,14 @@ import edu.southwestern.tasks.mspacman.facades.GhostControllerFacade;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.datastructures.Triple;
+import oldpacman.game.Constants;
+
 import java.awt.Color;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang3.ArrayUtils;
-
-import pacman.game.Constants;
 
 /**
  *

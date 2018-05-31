@@ -25,7 +25,7 @@ public class Substrate {
 	// encodes size of rectangular substrate (sticking with 2D for now)
 	private final Pair<Integer, Integer> size; // (width,height)
 	// encodes type of substrate: INPUT_SUBSTRATE, PROCCESS_SUBSTRATE, or OUTPUT_SUBSTRATE
-	private final int stype;
+	private final int substrateType;
 	// location of substrate in vector space.
 	private final Triple<Integer, Integer, Integer> subLocation;
 	// Set of neurons in this substrate that cannot process information.
@@ -48,7 +48,7 @@ public class Substrate {
 	 *
 	 * @param size
 	 *            pair representing size of substrate: (width,height)
-	 * @param stype
+	 * @param sType
 	 *            type of substrate
 	 * @param subLocation
 	 *            location in vector space of substrate
@@ -57,13 +57,13 @@ public class Substrate {
 	 * @param ftype
 	 * 			  type of activation functions used by neurons in this layer
 	 */
-	public Substrate(Pair<Integer, Integer> size, int stype, Triple<Integer, Integer, Integer> subLocation,
+	public Substrate(Pair<Integer, Integer> size, int sType, Triple<Integer, Integer, Integer> subLocation,
 			String name, int ftype) {
 		this.size = new Pair<Integer, Integer>(size.t1,size.t2); // copy
-		this.stype = stype;
+		this.substrateType = sType;
 		this.name = name;
 		// this.connectToSameLayer = connectToSameLayer;
-		this.subLocation = subLocation;
+		this.subLocation = new Triple<Integer, Integer, Integer>(subLocation.t1, subLocation.t2, subLocation.t3); //copy
 		this.deadNeurons = new HashSet<Pair<Integer, Integer>>();
 		this.ftype = ftype;
 		
@@ -98,7 +98,7 @@ public class Substrate {
 	 * @return type of substrate
 	 */
 	public int getStype() {
-		return this.stype;
+		return this.substrateType;
 	}
 
 	/**

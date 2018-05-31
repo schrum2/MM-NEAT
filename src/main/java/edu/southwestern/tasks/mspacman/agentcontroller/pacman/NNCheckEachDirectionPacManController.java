@@ -16,12 +16,13 @@ import edu.southwestern.tasks.mspacman.sensors.directional.VariableDirectionBloc
 import edu.southwestern.util.graphics.DrawingPanel;
 import edu.southwestern.util.graphics.Plot;
 import edu.southwestern.util.stats.StatisticsUtilities;
+import oldpacman.Executor;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.util.Arrays;
-import pacman.Executor;
 
 /**
  * An extension of a directionalPacManController which checks each direction and

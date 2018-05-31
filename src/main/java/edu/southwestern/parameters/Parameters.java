@@ -44,9 +44,9 @@ import edu.southwestern.util.stats.Average;
 import edu.southwestern.util.stats.Max;
 import micro.ai.RandomBiasedAI;
 import micro.ai.mcts.uct.UCT;
-import pacman.controllers.examples.Legacy;
-import pacman.controllers.examples.StarterPacMan;
-import pacman.game.Constants;
+import oldpacman.controllers.examples.Legacy;
+import oldpacman.controllers.examples.StarterPacMan;
+import oldpacman.game.Constants;
 
 /**
  * Used for processing and containing command line parameters.
@@ -306,6 +306,7 @@ public class Parameters {
 		integerOptions.add("rlBatchSize", 20, "Number of state transitions to log before doing an RL experience replay batch update");
 		integerOptions.add("runNumber", 0, "Number to designate this run of an experiment");
 		integerOptions.add("scentMode", -1, "Whenever this mode gets used, drop pheremone on scent path");
+		integerOptions.add("sightLimit", 50, "How far an agent can see in popacman");
 		integerOptions.add("smallStepSimDepth", 30, "Forward simulation depth for variable direction sensors");
 		integerOptions.add("startTUGGeneration", -1, "Generation at which TUG will start being used");
 		integerOptions.add("startingModes", 1, "Modes that a network starts with");
@@ -318,6 +319,10 @@ public class Parameters {
 		integerOptions.add("syllabusSize", 10, "Number of examples in BD syllabus");
 		integerOptions.add("teams", 1, "Number of teams each individual is evaluated in for coevolution");
 		integerOptions.add("threads", 4, "Number of threads if evaluating in parallel");
+		//TODO
+		integerOptions.add("tickLimit", 4000, "used in customExecutor. Number of ticks permitted?");
+		//TODO
+		integerOptions.add("timeLimit", 40, "used in customExecutor. Length of time permitted per round?");
 		integerOptions.add("torusPredators", 3, "Number of torus predators");
 		integerOptions.add("torusPreys", 2, "Number of torus preys");
 		integerOptions.add("torusTimeLimit", 1000, "Time limit in torus worlds");
@@ -350,6 +355,8 @@ public class Parameters {
 		booleanOptions.add("evolveHyperNEATBias", true, "adds an output to evolved cppn that outputs bias of node");
 		booleanOptions.add("extraHNLinks", false, "adds connections between the input and output substrate layers of hyperNEAT substrates");
 		booleanOptions.add("GBHUDMutator", false, "Determines whether the HUD options are displayed");
+		booleanOptions.add("ghostPO", false, "Used for popacman. Decides whether or not ghosts have partial observability");
+		booleanOptions.add("ghostMessage", false, "Whether or not popacman ghosts can communicate with one another");
 		booleanOptions.add("heterogeneousSubstrateActivations", false, "HyperNEAT phenotypes can have a mix of activation functions");
 		booleanOptions.add("homogeneousAggregateTeamSelection", false, "Homogeneous Predators with encouraged distance minimization and maximizing prey caught as a team");
 		booleanOptions.add("homogeneousTeamAndAggregateTeamSelection", false, "Homogeneous Predators with encouraged distance minimization and maximizing prey caught as a team and for all populations at once");
@@ -375,6 +382,8 @@ public class Parameters {
 		booleanOptions.add("pacmanBothThreatAndEdibleSubstrate", false, "whether or not to have 2 substrates for threat and edible ghosts");
 		booleanOptions.add("pacmanFullScreenPowerInput", false, "full screen input for power pill substrate");
 		booleanOptions.add("pacmanFullScreenProcess", false, "full screen process layer");
+		booleanOptions.add("partiallyObservablePacman", false, "Whether to use the new PO Pac-Man code vs the old version");
+		booleanOptions.add("pacmanPO", false, "Whether or not popacman is subject to partially observable conditions or not");
 		booleanOptions.add("penalizeSubstrateLinks", false, "Whether to use additional fitness punishing substrate links");
 		booleanOptions.add("predsSenseAllPreds", true, "When using proximity sensors, causes predators to sense all other predators (always true for non-proximity sensors)");
 		booleanOptions.add("predsSenseAllPrey", true, "When using proximity sensors, causes predators to sense all other prey (always true for non-proximity sensors)");
@@ -386,6 +395,7 @@ public class Parameters {
 		booleanOptions.add("scaleTrials", false, "Whether or not to scale the number of trials as the number of generations increases");
 		booleanOptions.add("senseHolesDifferently", false, "Makes inputs for a hole different than input of a blank space");
 		booleanOptions.add("senseHyperNEATGhostPath", false, "shows nearest path to ghost with stronger activation as pacman gets closer to the ghost");
+		booleanOptions.add("setDaemon", false, "Used in popacman CustomExecutor");
 		booleanOptions.add("showCPPN", false, "shows evolved CPPN during post evals");
 		booleanOptions.add("showHighestActivatedOutput", false, "highlights most activated output neuron as green in visualizations");
 		booleanOptions.add("showMarioInputs", false, "Shows the Mario input frame to the user as the agent would see them");
@@ -641,7 +651,9 @@ public class Parameters {
 		booleanOptions.add("tetrisAvgEmptySpaces", false, "For Tetris multiobjective, average number of empty spaces after piece placements");
 		booleanOptions.add("tetrisAvgNumHoles", false, "include number of holes as a fitness function");
 		booleanOptions.add("tetrisBlocksOnScreen", false, "For Tetris multiobjective, seperates number of blocks on screen from lines cleared");
+		booleanOptions.add("tetrisGameScore", true, "the score of Tetris game");
 		booleanOptions.add("tetrisLinesNotScore", false, "For Tetris track lines cleared instead of game score");
+		booleanOptions.add("tetrisNumLinesCleared", false, "Turns on fitness for different number of lines cleared");
 		booleanOptions.add("tetrisTimeSteps", false, "For Tetris multiobjective, separates time steps from lines cleared");
 		booleanOptions.add("timeToEatAllFitness", false, "Fitness based on time to eat all ghosts after power pill");
 		booleanOptions.add("timedPacman", false, "Pacman moves have time limit, even in non-visual mode");
@@ -656,6 +668,8 @@ public class Parameters {
 		booleanOptions.add("tugObjectiveUsageLinkage", false, "In TUG, when modes and objectives are linked, linkage depends on mode usage");
 		booleanOptions.add("tugResetsToPreviousGoals", false, "On TUG goal increase, reset RWAs to previous goals");
 		booleanOptions.add("ucb1Evaluation", false, "Use UCB1 to decide which individuals get extra evaluations");
+		booleanOptions.add("useHyperNEATCustomArchitecture", false, "allows for hyperNEAT custom architectures");
+		booleanOptions.add("useTetrisLinesBDCharacterization", false, "turns on tetris characterization vector for 1, 2, 3, or 4 lines cleared");
 		booleanOptions.add("utJumps", true, "UT2004 agent can jump");
 		booleanOptions.add("veryClose", true, "Use Pacman very close sensors");
 		booleanOptions.add("viewFinalCamps", false, "Look at final training camps from 'final'");
@@ -729,6 +743,8 @@ public class Parameters {
 		doubleOptions.add("rlEpsilon", 0.1, "Frequency of completely random actions during Reinforcement Learning");
 		doubleOptions.add("rlGamma", 0.99, "Discount factor used for Reinforcement Learning");
 		doubleOptions.add("scentDecay", 0.99, "Portion of scent remaining after each time step");
+		//TODO
+		doubleOptions.add("scaleFactor", 1.0, "Used in customExecutor. Scales the size of the image?");
 		doubleOptions.add("softmaxTemperature", 0.25, "Temperature parameter for softmax selection");
 		doubleOptions.add("tugAlpha", 0.3,"Step size for moving recency-weighted averages towards averages when using TUG");
 		doubleOptions.add("tugEta", 0.3, "Step size for increasing goals when using TUG");
@@ -811,6 +827,7 @@ public class Parameters {
 		classOptions.add("ghostTeam", Legacy.class, "Ghost team in new version of Ms. Pac-Man code");
 		classOptions.add("gvgaiPlayer", GVGAIOneStepNNPlayer.class, "GVGAI Player to be used");
 		classOptions.add("hyperNEATSeedTask", null, "HyperNEAT task that seeds a standard NEAT task");
+		classOptions.add("hyperNEATCustomArchitecture", null, "Custom substrate architecture for a HyperNEAT task (overrides HNProcessDepth and HNProcessWidth)");
 		classOptions.add("imageNetModel", VGG19Wrapper.class, "DL4J model that was trained on ImageNet to classify images");
 		classOptions.add("mapElitesBinLabels", null, "class containing way of putting genotypes in bins of the MAP Elites archive");
 		classOptions.add("microRTSAgent", UCT.class, "File containing AI to evolve in MicroRTSTask");

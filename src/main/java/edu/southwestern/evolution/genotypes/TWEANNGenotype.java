@@ -231,7 +231,15 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
             this.weight = weight;
         }
 
-        // These methods are overridden and filled out
+        /**
+         * Small LinkGenes do not track their module source
+         * @return Always -1
+         */
+        public int getModuleSource() {
+			return -1; 
+		}
+
+		// These methods are overridden and filled out
         // in the link gene class that is
         // fully featured. They are left blank here
         // to allow for reduced memory versions of the genes.
@@ -278,6 +286,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
         protected boolean active;
         protected boolean recurrent;
         protected boolean frozen;
+        protected int moduleSource;
 
         /**
          * New link gene in which it needs to be specified whether or not it is
@@ -291,11 +300,14 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
          * @param recurrent Whether the link is considered recurrent
          * @param frozen Whether the link is immune to modifications by mutation
          */
-        private FullLinkGene(long sourceInnovation, long targetInnovation, double weight, long innovation, boolean active, boolean recurrent, boolean frozen) {
+        private FullLinkGene(long sourceInnovation, long targetInnovation, double weight, long innovation, boolean active, boolean recurrent, boolean frozen, int moduleSource) {
             super(sourceInnovation, targetInnovation, weight, innovation);
             this.active = active;
             this.recurrent = recurrent;
             this.frozen = frozen;
+            this.moduleSource = moduleSource;
+            // When constructing substrate network, each link must have a particular module as its source.
+            assert !(HyperNEATCPPNGenotype.constructingNetwork && moduleSource == -1) : sourceInnovation + " -> " + targetInnovation + " with weight " + weight + " innovation " + innovation + " active "+ active;
         }
 
         @Override
@@ -313,6 +325,10 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
             return frozen;
         }
         
+        @Override
+        public int getModuleSource() {
+        	return moduleSource;
+        }
         
         @Override
         public boolean isActive() {
@@ -337,11 +353,15 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
     public static final LinkGene newLinkGene(long sourceInnovation, long targetInnovation, double weight, long innovation, boolean recurrent, boolean frozen) {
         return newLinkGene(sourceInnovation, targetInnovation, weight, innovation, true, recurrent, frozen);
     }
-    
+
     public static final LinkGene newLinkGene(long sourceInnovation, long targetInnovation, double weight, long innovation, boolean active, boolean recurrent, boolean frozen) {
+    	return newLinkGene(sourceInnovation, targetInnovation, weight, innovation, active, recurrent, frozen, -1);
+    }
+    
+    public static final LinkGene newLinkGene(long sourceInnovation, long targetInnovation, double weight, long innovation, boolean active, boolean recurrent, boolean frozen, int moduleSource) {
         return smallerGenotypes
                 ? new LinkGene(sourceInnovation, targetInnovation, weight, innovation)
-                : new FullLinkGene(sourceInnovation, targetInnovation, weight, innovation, active, recurrent, frozen);
+                : new FullLinkGene(sourceInnovation, targetInnovation, weight, innovation, active, recurrent, frozen, moduleSource);
     }
     
     public static final NodeGene newNodeGene(int ftype, int ntype, long innovation) {
@@ -505,7 +525,7 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
             nodes.add(ng);
             LinkedList<LinkGene> temp = new LinkedList<LinkGene>();
             for (TWEANN.Link l : n.outputs) {
-                LinkGene lg = newLinkGene(n.innovation, l.target.innovation, l.weight, l.innovation, n.isLinkRecurrent(l.target.innovation), l.frozen);
+                LinkGene lg = newLinkGene(n.innovation, l.target.innovation, l.weight, l.innovation, true, n.isLinkRecurrent(l.target.innovation), l.frozen, l.moduleSource);
                 temp.add(lg);
             }
             for (int k = 0; k < temp.size(); k++) {

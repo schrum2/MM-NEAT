@@ -23,7 +23,7 @@ public class HybrIDUtilTest {
 		MMNEAT.loadClasses();
 		HyperNEATCPPNGenotype example = new HyperNEATCPPNGenotype();
 		ArrayList<Genotype<TWEANN>> preSwitchPopulation = PopulationUtil.initialPopulation(example, PARENT_POPULATION);
-		ArrayList<Genotype<TWEANN>> postSwitchPopulation = HybrIDUtil.switchSubstrateToNEAT(preSwitchPopulation);
+		ArrayList<Genotype<TWEANN>> postSwitchPopulation = HybrIDUtil.switchPhenotypeToNEAT(preSwitchPopulation);
 		assertEquals(preSwitchPopulation.size(), postSwitchPopulation.size());
 		for (int i = 0; i < preSwitchPopulation.size(); i++) {
 
@@ -59,7 +59,7 @@ public class HybrIDUtilTest {
 		MMNEAT.loadClasses();
 		HyperNEATCPPNGenotype example = new HyperNEATCPPNGenotype();
 		ArrayList<Genotype<TWEANN>> preSwitchPopulation = PopulationUtil.initialPopulation(example, PARENT_POPULATION);
-		ArrayList<Genotype<TWEANN>> postSwitchPopulation = HybrIDUtil.switchSubstrateToNEAT(preSwitchPopulation);
+		ArrayList<Genotype<TWEANN>> postSwitchPopulation = HybrIDUtil.switchPhenotypeToNEAT(preSwitchPopulation);
 		assertEquals(preSwitchPopulation.size(), postSwitchPopulation.size());
 		for (int i = 0; i < preSwitchPopulation.size(); i++) {
 			TWEANN preSwitchNN = preSwitchPopulation.get(i).getPhenotype();
@@ -90,7 +90,7 @@ public class HybrIDUtilTest {
 		MMNEAT.loadClasses();
 		HyperNEATCPPNGenotype example = new HyperNEATCPPNGenotype();
 		ArrayList<Genotype<TWEANN>> preSwitchPopulation = PopulationUtil.initialPopulation(example, PARENT_POPULATION);
-		ArrayList<Genotype<TWEANN>> postSwitchPopulation = HybrIDUtil.switchSubstrateToNEAT(preSwitchPopulation);
+		ArrayList<Genotype<TWEANN>> postSwitchPopulation = HybrIDUtil.switchPhenotypeToNEAT(preSwitchPopulation);
 		assertEquals(preSwitchPopulation.size(), postSwitchPopulation.size());
 		for (int i = 0; i < preSwitchPopulation.size(); i++) {
 			TWEANN preSwitchNN = preSwitchPopulation.get(i).getPhenotype();
