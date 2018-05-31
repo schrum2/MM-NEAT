@@ -389,10 +389,10 @@ public class GraphicsUtil {
 	 * @return BufferedImage 
 	 */
 	public static BufferedImage imageFromINDArray(INDArray array) {
-		long[] shape = array.shape();
+		int[] shape = array.shape();
 		// Should the order of these be switched?
-		int width = (int) shape[2];
-		int height = (int) shape[3];
+		int width = shape[2];
+		int height = shape[3];
 		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		// Copy from INDArray to BufferedImage
 		for (int x = 0; x < width; x++) {// scans across whole image
