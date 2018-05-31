@@ -1404,7 +1404,7 @@ public class GameFacade {
 	 *Can return either the shortest or longest path in a given direction to
 	 * any one of several available targets. The chosen target is returned as
 	 * well, in a pair. Supports popacman. Returns new Pair<Integer, int[]>(-1,null) if none
-	 * of the targets are visible.
+	 * of the targets are visible. (handles PO conditions)
 	 * 
 	 * @param fromNodeIndex
 	 *            start point
@@ -1417,8 +1417,8 @@ public class GameFacade {
 	 * @return path and target pair
 	 */
 	public Pair<Integer, int[]> getTargetInDir(int fromNodeIndex, int[] targetNodeIndices, int direction, boolean shortest) {
-		// For PO Pacman: What if all options are -1?
-		if(StatisticsUtilities.maximum(targetNodeIndices) == -1) { // Must only contain -1
+		// For PO Pacman: What if all options are -1 or From == -1?
+		if(StatisticsUtilities.maximum(targetNodeIndices) == -1 || fromNodeIndex == -1) { // Must only contain -1
 			return new Pair<Integer, int[]>(-1,null);
 		}
 		
@@ -1436,7 +1436,7 @@ public class GameFacade {
 	 * Can return either the shortest or longest path in a given direction to
 	 * any one of several available targets. The chosen target is returned as
 	 * well, in a pair. Supports popacman. Returns return new Pair<Integer, int[]>(-1,null) if none
-	 * of the targets are visible.
+	 * of the targets are visible. (handles PO conditions)
 	 * 
 	 * @param fromNodeIndex
 	 *            start point
@@ -1449,18 +1449,20 @@ public class GameFacade {
 	 * @return path and target pair
 	 */
 	private Pair<Integer, int[]> getTargetInDirFromNew(int fromNodeIndex, int[] targetNodeIndices, int direction, boolean shortest) {
+		
+		// For PO Pacman: What if all options are -1 or From == -1?
+		if(StatisticsUtilities.maximum(targetNodeIndices) == -1 || fromNodeIndex == -1) { // Must only contain -1
+			return new Pair<Integer, int[]>(-1,null);
+		}
 		assert targetNodeIndices.length > 0 : "targetNodeIndices empty:" + Arrays.toString(targetNodeIndices);
 		int[] neighbors = neighbors(fromNodeIndex);
+		assert neighbors != null : "debug in getTargetInDirFromNew";
 		assert(neighbors[direction] != -1) : ("Picked invalid direction " + direction + " given neighbors "	+ Arrays.toString(neighbors));
 		
 		double extremeDistance = shortest ? Integer.MAX_VALUE : -Integer.MAX_VALUE;
 		int target = -1;
 		int[] extremePath = null;		
 		
-		// For PO Pacman: What if all options are -1?
-		if(StatisticsUtilities.maximum(targetNodeIndices) == -1) { // Must only contain -1
-			return new Pair<Integer, int[]>(-1,null);
-		}
 		
 		for (int i = 0; i < targetNodeIndices.length; i++) {
 			if (targetNodeIndices[i] == -1) {
@@ -1500,12 +1502,18 @@ public class GameFacade {
 
 	/**
 	 * gets distance ghost must travel to get from current index to given index.
-	 * Supports popacman (TODO: test)
+	 * Supports popacman (Handles PO conditions)
 	 * @param ghostIndex index of ghost
 	 * @param toNodeIndex index to travel to
 	 * @return euclidian distance
 	 */
 	public double getGhostPathDistance(int ghostIndex, int toNodeIndex) {
+		//PO conditions
+		if(toNodeIndex == -1) {
+			//TODO: is this how we should do this? assuming that the ghost is already there
+			return Double.MIN_VALUE;
+		}
+		assert ghostIndex != -1 : "debug in getGhostPathDistance";
 		return oldG == null ?
 			poG.getDistance(getGhostCurrentNodeIndex(ghostIndex), toNodeIndex,
 				poG.getGhostLastMoveMade(indexToGhostPO(ghostIndex)), pacman.game.Constants.DM.PATH):
@@ -1515,13 +1523,18 @@ public class GameFacade {
 
 	/**
 	 * Determines how long it will take a ghost to reach a given destination,
-	 * factoring int speed reduction from being edible. Supports popacman (TODO: test)
+	 * factoring int speed reduction from being edible. Supports popacman (handles PO conditions)
 	 * 
 	 * @param ghostIndex
 	 * @param toNodeIndex
 	 * @return
 	 */
 	public int getGhostTravelTime(int ghostIndex, int toNodeIndex) {
+		//PO conditions
+		if(toNodeIndex == -1) {
+			return -1;
+		}
+		assert ghostIndex != -1 : "debug in getGhostTraveTime";
 		int distance;
 		int edibleTime;
 		int effectiveEdibleTime;
@@ -1543,7 +1556,7 @@ public class GameFacade {
 	}
 
 	/**
-	 * Supports popacman (TODO: test)
+	 * Supports popacman (handles PO conditions)
 	 * @param ghostIndex
 	 * @param toNodeIndex
 	 * @return
@@ -1558,7 +1571,7 @@ public class GameFacade {
 	 * the last move it made. If non-empty, the last index of the array will be
 	 * the same as the target. The ghost's position is not included in the
 	 * array. If we cannot see the ghost or we send a -1 parameter, returns null.
-	 * Supports popacman (Handles PO).
+	 * Supports popacman (Handles PO conditions).
 	 *
 	 * @param ghostIndex
 	 *            ghost id
@@ -1588,7 +1601,7 @@ public class GameFacade {
 
 	/**
 	 * Gets number of ghosts that are edible.
-	 * Supports popacman.
+	 * Supports popacman. (handles PO conditions)
 	 * @return num edible ghosts
 	 */
 	public int getNumberOfEdibleGhosts() {
@@ -1613,27 +1626,34 @@ public class GameFacade {
 
 	/**
 	 * Says whether given ghost is a threat. If ghost is not visible, it
-	 * is considered a threat. TODO: should it be considered a threat? 
-	 * Supports popacman
+	 * is considered a threat. 
+	 * Supports popacman (handles PO conditions)
 	 * @param ghostIndex index of ghost
 	 * @return whether threat
 	 */
 	public boolean isGhostThreat(int ghostIndex) {	
 		return getGhostCurrentNodeIndex(ghostIndex) == -1 ?
 				//if ghost isn't visible, it isnt a threat
+				//TODO: is this how we should handle PO
 				true:
 				!isGhostEdible(ghostIndex) && getNumNeighbours(getGhostCurrentNodeIndex(ghostIndex)) > 0;
 	}
 
 	/**
 	 * Lair time of each active ghost, including those not in lair (value of 0).
-	 * Supports popacman (TODO: test)
+	 * Supports popacman. (handles PO conditions)
 	 * @return
 	 */
 	public int[] getGhostLairTimes() {
 		int[] times = new int[CommonConstants.numActiveGhosts];
 		for (int i = 0; i < times.length; i++) {
-			times[i] = this.getGhostLairTime(i);
+			int temp = this.getGhostLairTime(i);
+			if(temp == -1) {
+				//TODO: is this how we should handle PO
+				times[i] = 0;
+			} else {
+				times[i] = temp;
+			}
 		}
 		return times;
 	}
@@ -1654,12 +1674,15 @@ public class GameFacade {
 
 	/**
 	 * Gets the farthest node index from current index.
-	 * Supports popacman (TODO: test)
+	 * Supports popacman (handles PO conditions)
 	 * @param current current index
 	 * @param targets indices of target nodes
 	 * @return farthest node from targets array
 	 */
 	public int getFarthestNodeIndexFromNodeIndex(int current, int[] targets) {
+		if(current == -1 || targets == null) {
+			return -1;
+		}
 		return oldG == null ?
 				poG.getFarthestNodeIndexFromNodeIndex(current, targets, pacman.game.Constants.DM.PATH):
 				oldG.getFarthestNodeIndexFromNodeIndex(current, targets, oldpacman.game.Constants.DM.PATH);

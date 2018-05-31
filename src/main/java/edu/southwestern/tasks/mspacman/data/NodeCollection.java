@@ -53,6 +53,9 @@ public abstract class NodeCollection {
 		int[] activePills = gs.getActivePillsIndices();
 		int nearestPill = gs.getClosestNodeIndexFromNodeIndex(current, activePills);
 		int farthestPill = gs.getFarthestNodeIndexFromNodeIndex(current, activePills);
+		if(farthestPill == -1) {
+			System.out.println("How should we handle this situation? NodeCollection.addExtraNodes()");
+		}
 		int[] tempPath = gs.getShortestPath(nearestPill, farthestPill);
 		if(tempPath == null) {
 			System.out.println("How should we handle this situation? NodeCollection.addExtraNodes()");
@@ -64,7 +67,7 @@ public abstract class NodeCollection {
 		pillPath[tempPath.length] = farthestPill;
 		if (ArrayUtil.subset(activePills, pillPath)) {
 			// Path will consume all pills
-			assert gs.nodeInMaze(farthestPill) : "Farthest pill " + farthestPill + " not in maze";
+			//assert gs.nodeInMaze(farthestPill) : "Farthest pill " + farthestPill + " not in maze";
 			addedNodes.add(farthestPill);
 		}
 
