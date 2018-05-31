@@ -35,7 +35,8 @@ public class ImageNetTest {
 		//Parameters.initializeParameterCollections(new String[] {"imageNetModel:edu.southwestern.networks.dl4j.ConcatAllZooModelImageNetModels"});		
 		//Parameters.initializeParameterCollections(new String[] {"imageNetModel:edu.southwestern.networks.dl4j.MinAllZooModelImageNetModels"});		
 		//Parameters.initializeParameterCollections(new String[] {"imageNetModel:edu.southwestern.networks.dl4j.VGG16Wrapper"});		
-		Parameters.initializeParameterCollections(new String[] {"imageNetModel:edu.southwestern.networks.dl4j.VGG19Wrapper"});		
+		//Parameters.initializeParameterCollections(new String[] {"imageNetModel:edu.southwestern.networks.dl4j.VGG19Wrapper"});		
+		Parameters.initializeParameterCollections(new String[] {"imageNetModel:edu.southwestern.networks.dl4j.GoogLeNetWrapper"});		
 		AllZooModelImageNetModels.initAllImageNets();
 		NativeImageLoader loader = new NativeImageLoader(ImageNetClassification.IMAGE_NET_INPUT_HEIGHT, ImageNetClassification.IMAGE_NET_INPUT_WIDTH, ImageNetClassification.IMAGE_NET_INPUT_CHANNELS);
 		
