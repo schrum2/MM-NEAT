@@ -118,9 +118,9 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	/**
-	 * 
+	 * Connects the server to the correct port, the bot to the correct server, and applies any mutators to the server
 	 * @param individual (the genetic representation of the bot being evaluated)
-	 * @param num (the number evaluation you're on
+	 * @param num (the number evaluation you're on)
 	 */
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {            
 		int botPort = ServerUtil.getAvailablePort();
