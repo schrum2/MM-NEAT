@@ -2,9 +2,10 @@ package edu.southwestern.tasks.innovationengines;
 
 import java.util.List;
 
+import org.deeplearning4j.nn.modelimport.keras.trainedmodels.Utils.ImageNetLabels;
+
 import edu.southwestern.evolution.mapelites.BinLabels;
 import edu.southwestern.networks.Network;
-import edu.southwestern.util.graphics.ImageNetClassification;
 
 /**
  * Return names for all ImageNet classes
@@ -16,7 +17,7 @@ public class ImageNetBinMapping<T extends Network> implements BinLabels<T> {
 	 */
 	@Override
 	public List<String> binLabels() {
-		return ImageNetClassification.getImageNetLabels();
+		return ImageNetLabels.getLabels();
 	}
 
 }

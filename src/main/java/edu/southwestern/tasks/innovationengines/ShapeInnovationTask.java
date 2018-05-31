@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.deeplearning4j.zoo.util.imagenet.ImageNetLabels;
 import org.nd4j.linalg.api.ndarray.INDArray;
 
 import edu.southwestern.MMNEAT.MMNEAT;
@@ -87,7 +88,7 @@ public class ShapeInnovationTask extends LonerTask<Pair<TWEANN, ArrayList<Double
 
 		if(CommonConstants.watch) {
 			// Prints top 4 labels
-			String decodedLabels = ImageNetClassification.getImageNetLabelsInstance().decodePredictions(scores);
+			String decodedLabels = new ImageNetLabels().decodePredictions(scores);
 			System.out.println(decodedLabels);
 			for(int i = 0; i < images.length; i++) {
 				DrawingPanel picture = GraphicsUtil.drawImage(images[i], "Image", ImageNetClassification.IMAGE_NET_INPUT_WIDTH, ImageNetClassification.IMAGE_NET_INPUT_HEIGHT);

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.deeplearning4j.nn.modelimport.keras.trainedmodels.Utils.ImageNetLabels;
+
 import edu.southwestern.evolution.mapelites.BinLabels;
 import edu.southwestern.networks.Network;
 import edu.southwestern.networks.dl4j.AllZooModelImageNetModels;
@@ -21,7 +23,7 @@ public class AllModelsImageNetBinMapping<T extends Network> implements BinLabels
 	public AllModelsImageNetBinMapping() {
 		AllZooModelImageNetModels.initAllImageNets(); // Initialize if not already done
 		Set<String> modelNames = AllZooModelImageNetModels.getModelNames();
-		List<String> classLabels = ImageNetClassification.getImageNetLabels();
+		List<String> classLabels = ImageNetLabels.getLabels();
 		cachedLabels = new ArrayList<>(ImageNetClassification.NUM_IMAGE_NET_CLASSES * modelNames.size());
 		// For each model, create a bin for all ImageNet class labels
 		for(String model: modelNames) {
