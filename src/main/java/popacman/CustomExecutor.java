@@ -13,6 +13,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.function.Function;
+import edu.southwestern.util.MiscUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,7 +61,7 @@ public class CustomExecutor {
 	public static boolean logOutput;
 	public static MMNEATLog watch;
 	public static MMNEATLog noWatch;
-	public static boolean hold = false;
+	public static boolean hold = Parameters.parameters.booleanParameter("stepByStep");
 	public static DeathLocationsLog deaths = null;
     ////////////////////////////////////////////////////////////////////
 
@@ -364,17 +365,34 @@ public class CustomExecutor {
                 break;
             }
             handlePeek(game);
-            game.advanceGame(
-                    pacManController.getMove(getPacmanCopy(game), System.currentTimeMillis() + timeLimit),
-                    ghostControllerCopy.getMove(game.copy(), System.currentTimeMillis() + timeLimit));
+            if(hold) {
+            	System.out.println("There is a MiscUtil.wait in ln 369 of CustomExectuor");
+                MiscUtil.waitForReadStringAndEnterKeyPress();
+            	game.advanceGame(
+                        pacManController.getMove(getPacmanCopy(game), System.currentTimeMillis() + timeLimit),
+                        ghostControllerCopy.getMove(game.copy(), System.currentTimeMillis() + timeLimit));
 
-            try {
-                Thread.sleep(delay);
-            } catch (Exception e) {
-            }
+                try {
+                    Thread.sleep(delay);
+                } catch (Exception e) {
+                }
 
-            if (visuals) {
-                gv.repaint();
+                if (visuals) {
+                    gv.repaint();
+                }	
+            } else {
+                game.advanceGame(
+                        pacManController.getMove(getPacmanCopy(game), System.currentTimeMillis() + timeLimit),
+                        ghostControllerCopy.getMove(game.copy(), System.currentTimeMillis() + timeLimit));
+
+                try {
+                    Thread.sleep(delay);
+                } catch (Exception e) {
+                }
+
+                if (visuals) {
+                    gv.repaint();
+                }	
             }
         }
         System.out.println(game.getScore());
@@ -424,19 +442,38 @@ public class CustomExecutor {
                 break;
             }
             handlePeek(game);
-            pacManController.update(getPacmanCopy(game), System.currentTimeMillis() + DELAY);
-            ghostControllerCopy.update(game.copy(), System.currentTimeMillis() + DELAY);
+            if(hold) {
+            	System.out.println("There is a miscutil.wait... in CustomExecutor.java");
+                MiscUtil.waitForReadStringAndEnterKeyPress();
+            	pacManController.update(getPacmanCopy(game), System.currentTimeMillis() + DELAY);
+                ghostControllerCopy.update(game.copy(), System.currentTimeMillis() + DELAY);
 
-            try {
-                Thread.sleep(DELAY);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+                try {
+                    Thread.sleep(DELAY);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
 
-            game.advanceGame(pacManController.getMove(), ghostControllerCopy.getMove());
+                game.advanceGame(pacManController.getMove(), ghostControllerCopy.getMove());
 
-            if (showVisuals) {
-                gv.repaint();
+                if (showVisuals) {
+                    gv.repaint();
+                }	
+            } else {
+                pacManController.update(getPacmanCopy(game), System.currentTimeMillis() + DELAY);
+                ghostControllerCopy.update(game.copy(), System.currentTimeMillis() + DELAY);
+
+                try {
+                    Thread.sleep(DELAY);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                game.advanceGame(pacManController.getMove(), ghostControllerCopy.getMove());
+
+                if (showVisuals) {
+                    gv.repaint();
+                }
             }
         }
 
@@ -468,9 +505,15 @@ public class CustomExecutor {
                 break;
             }
             handlePeek(game);
-            pacManController.update(getPacmanCopy(game), System.currentTimeMillis() + DELAY);
-            ghostControllerCopy.update(game.copy(), System.currentTimeMillis() + DELAY);
-
+            if(hold) {
+            	System.out.println("There is a miscutil.wait... in CustomExecutor.java");
+            	MiscUtil.waitForReadStringAndEnterKeyPress();
+                pacManController.update(getPacmanCopy(game), System.currentTimeMillis() + DELAY);
+                ghostControllerCopy.update(game.copy(), System.currentTimeMillis() + DELAY);
+            } else {
+                pacManController.update(getPacmanCopy(game), System.currentTimeMillis() + DELAY);
+                ghostControllerCopy.update(game.copy(), System.currentTimeMillis() + DELAY);
+            }
             try {
                 long waited = DELAY / INTERVAL_WAIT;
 
@@ -542,9 +585,18 @@ public class CustomExecutor {
                 break;
             }
             handlePeek(game);
-            pacManController.update(getPacmanCopy(game), System.currentTimeMillis() + DELAY);
-            ghostControllerCopy.update(game.copy(), System.currentTimeMillis() + DELAY);
+            if (hold) {
+            	System.out.println("there is a miscUtil.wait in CustomExecutor.java");
+            	MiscUtil.waitForReadStringAndEnterKeyPress();
+            	pacManController.update(getPacmanCopy(game), System.currentTimeMillis() + DELAY);
+                ghostControllerCopy.update(game.copy(), System.currentTimeMillis() + DELAY);
 
+            } else {
+            	pacManController.update(getPacmanCopy(game), System.currentTimeMillis() + DELAY);
+                ghostControllerCopy.update(game.copy(), System.currentTimeMillis() + DELAY);
+
+            }
+            
             try {
                 Thread.sleep(DELAY);
             } catch (InterruptedException e) {
