@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.datavec.image.loader.NativeImageLoader;
-import org.deeplearning4j.zoo.util.imagenet.ImageNetLabels;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.dataset.api.preprocessor.DataNormalization;
 import org.nd4j.linalg.dataset.api.preprocessor.VGG16ImagePreProcessor;
@@ -28,22 +27,6 @@ public class ImageNetClassification {
 	// Do not take the time to initialize this if not needed
 	private static TensorNetwork imageNet = null; // Default model
 	private static AccessibleImageNetLabels imageNetLabels = null;
-
-	/**
-	 * This class is necessary because the new DL4J 1.0.0-beta makes the getLabels
-	 * method protected. This is a work-around.
-	 * 
-	 * @author Jacob Schrum
-	 */
-	public static class AccessibleImageNetLabels extends ImageNetLabels {
-		public AccessibleImageNetLabels() throws IOException {
-			super();
-		}
-
-		public List<String> labels() throws IOException {
-			return getLabels();
-		}
-	}
 	
 	/**
 	 * Only load this information once
