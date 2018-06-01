@@ -1,5 +1,6 @@
 package edu.southwestern.tasks.rlglue.tetris;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
@@ -12,6 +13,7 @@ import edu.southwestern.evolution.genotypes.Genotype;
 import edu.southwestern.evolution.nsga2.bd.characterizations.RemembersObservations;
 import edu.southwestern.evolution.nsga2.tug.TUGTask;
 import edu.southwestern.networks.Network;
+import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.rlglue.RLGlueTask;
 import edu.southwestern.util.datastructures.ArrayUtil;
@@ -28,7 +30,7 @@ public class TetrisTask<T extends Network> extends RLGlueTask<T> implements TUGT
 	private final boolean tetrisLinesNotScore;
 	private final boolean tetrisNumLinesCleared;
 	private final boolean tetrisGameScore;
-	List<double[]> observations;
+	List<double[]> observations = new ArrayList<double[]>();
 
 	/**
 	 * Default constructor
@@ -240,7 +242,13 @@ public class TetrisTask<T extends Network> extends RLGlueTask<T> implements TUGT
 	 */
 	@Override
 	public void addObservation(double[] inputs) {
-		observations.add(inputs);
+		if (observations.size() < CommonConstants.syllabusSize) {
+			observations.add(inputs);
+		} else {
+			if (RandomNumbers.boundedRandom(0,1) <= Parameters.parameters.doubleParameter("syllabusChangeProbability")) {
+				observations.set(RandomNumbers.randomGenerator.nextInt(observations.size()), inputs);
+			}
+		}
 	}
 
 	/**
