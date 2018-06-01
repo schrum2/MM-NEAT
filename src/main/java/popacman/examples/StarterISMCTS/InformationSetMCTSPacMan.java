@@ -71,6 +71,7 @@ public class InformationSetMCTSPacMan extends PacmanController implements Drawab
             predictions = new GhostPredictionsFast(game.getCurrentMaze());
             predictions.preallocate();
         }
+        
         if (pillModel == null) {
             pillModel = new PillModel(game.getNumberOfPills());
 

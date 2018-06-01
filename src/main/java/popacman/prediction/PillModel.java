@@ -20,7 +20,6 @@ public class PillModel {
         if (pills.get(index)) {
             pillsEaten++;
             pills.set(index, false);
-//            pills.flip(index);
         }
     }
 
