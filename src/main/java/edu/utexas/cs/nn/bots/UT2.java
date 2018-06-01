@@ -60,6 +60,10 @@ public class UT2 extends BaseBot {
 
         private TWEANNController battleController;
         private IUT2004Server server;
+        
+        public UT2Parameters() {
+        	this((TWEANNController) Easy.load(UT2.DEFAULT_FILE), null);
+        }
 
         public UT2Parameters(TWEANNController cont, IUT2004Server server) {
             this.battleController = cont;

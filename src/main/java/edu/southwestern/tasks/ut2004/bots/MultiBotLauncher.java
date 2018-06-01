@@ -64,7 +64,7 @@ public class MultiBotLauncher {
 	public static void main(String[] args) {
 		Class[] botClasses = new Class[] {HunterBot.class, NavigationBot.class, UT2.class};
 		
-		UT2Parameters ut2params = new UT2Parameters((TWEANNController) Easy.load(Constants.UT2_ROOT.get() + "candidates/FRONT-DM-1on1-Albatross-vs-1Native_98_7.xml"), null);
+		UT2Parameters ut2params = new UT2Parameters();
 		
 		IRemoteAgentParameters[] params = new IRemoteAgentParameters[] {new UT2004BotParameters(), new UT2004BotParameters(), ut2params};
 		launchMultipleBots(botClasses, params, "localhost", 3000);
