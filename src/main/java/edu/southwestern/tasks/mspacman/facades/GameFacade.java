@@ -1,6 +1,7 @@
 package edu.southwestern.tasks.mspacman.facades;
 
 import edu.southwestern.parameters.CommonConstants;
+import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.mspacman.ghosts.GhostComparator;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
@@ -436,9 +437,14 @@ public class GameFacade {
 	 */
 	public int getEatenPills() {
 		if(oldG == null) {
-			//TODO: test
-			assert pillModel != null : "the information handling in OldToNewPacManIntermediaryController should handle this";
-			return pillModel.getPillsEaten();
+			if(Parameters.parameters.booleanParameter("usePillModel")) {
+				//TODO: test
+				assert pillModel != null : "the information handling in OldToNewPacManIntermediaryController should handle this";
+				return pillModel.getPillsEaten();
+			} else {
+				//Without pillModel, we cannot track this
+				return -1;
+			}
 		} else {
 			return oldG.getEatenPills();	
 		}
@@ -1038,20 +1044,26 @@ public class GameFacade {
 	 */
 	public int[] getActivePillsIndices() {
 		if(oldG == null) {
-			//TODO: test
-			ArrayList<Integer> tempList = new ArrayList<Integer>();
-			assert pillModel != null : "this should be handled";
-			BitSet temp = pillModel.getPills();
-			for(int pill : poG.getPillIndices()) {
-				if(temp.get(pill) == true) {
-					tempList.add(pill);
+			//if we are using the pill model
+			if(Parameters.parameters.booleanParameter("usePillModel")) {
+				//TODO: test
+				ArrayList<Integer> tempList = new ArrayList<Integer>();
+				assert pillModel != null : "this should be handled";
+				BitSet temp = pillModel.getPills();
+				for(int pill : poG.getPillIndices()) {
+					if(temp.get(pill) == true) {
+						tempList.add(pill);
+					}
 				}
+				int[] result = new int[tempList.size()];
+				for(int i = 0; i < tempList.size(); i++) {
+					result[i] = tempList.get(i);
+				}
+				return result;
+			} else {
+				//Without pill model, we may get an empty array
+				return poG.getActivePillsIndices();
 			}
-			int[] result = new int[tempList.size()];
-			for(int i = 0; i < tempList.size(); i++) {
-				result[i] = tempList.get(i);
-			}
-			return result;
 			
 		} else {
 			return oldG.getActivePillsIndices();	

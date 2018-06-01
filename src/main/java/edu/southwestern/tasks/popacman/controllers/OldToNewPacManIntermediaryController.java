@@ -1,5 +1,6 @@
 package edu.southwestern.tasks.popacman.controllers;
 
+import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.mspacman.facades.GameFacade;
 import pacman.game.Constants.MOVE;
 import pacman.game.Game;
@@ -14,7 +15,7 @@ public class OldToNewPacManIntermediaryController extends pacman.controllers.Pac
 
 	protected final oldpacman.controllers.NewPacManController oldpacman;
 	public PillModel pillModel = null;
-	
+	public boolean usePillModel = Parameters.parameters.booleanParameter("usePillModel");
 	
 	public OldToNewPacManIntermediaryController(oldpacman.controllers.NewPacManController oldpacman) {
 		this.oldpacman = oldpacman;
@@ -29,14 +30,17 @@ public class OldToNewPacManIntermediaryController extends pacman.controllers.Pac
 		//We need to pass the model of the game to the new gameFacade
 		GameFacade informedGameFacade = new GameFacade(game);
 		
-		if(pillModel == null) {
-			System.out.println("PillModel is null in OTNPMIC");
-			this.pillModel = informedGameFacade.initPillModel();
-			updateInformation(informedGameFacade);
-		} else {
-			System.out.println("PillModel is NOT null in OTNPMIC");
-			informedGameFacade.setPillModel(this.pillModel);
-			updateInformation(informedGameFacade);
+		//If we are using certain infromation tracking models 
+		if(usePillModel) {
+			if(pillModel == null) {
+				//init the pill module with the game
+				this.pillModel = informedGameFacade.initPillModel();
+				updateInformation(informedGameFacade);
+			} else {
+				//tell the game what the pill model looks like
+				informedGameFacade.setPillModel(this.pillModel);
+				updateInformation(informedGameFacade);
+			}
 		}
 		
 		//get the action to be made

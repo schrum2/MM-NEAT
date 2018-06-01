@@ -60,7 +60,6 @@ import edu.southwestern.tasks.mspacman.objectives.TimeFramesPillScore;
 import edu.southwestern.tasks.mspacman.objectives.TimeToEatAllGhostsScore;
 import edu.southwestern.tasks.popacman.controllers.OldToNewPacManIntermediaryController;
 import edu.southwestern.util.ClassCreation;
-import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.datastructures.Triple;
 import edu.southwestern.util.random.RandomNumbers;
@@ -560,7 +559,6 @@ public class MsPacManTask<T extends Network> extends NoisyLonerTask<T>implements
 		for (int j = 0; j < otherScores.size(); j++) {
 			scores[j] = otherScores.get(j).score(game, organism);
 		}
-		MiscUtil.waitForReadStringAndEnterKeyPress();
 		return new Pair<double[], double[]>(fitnesses, scores);
 	}
 
