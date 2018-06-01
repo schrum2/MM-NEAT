@@ -42,6 +42,7 @@ public class MirrorBot4 extends UT2004BotModuleController{
 
     @Override
     /**
+     * sets up the bot's weapon preferences (true = primary fire, false = secondary fire)
      * @param bot	
      */
     public void prepareBot(UT2004Bot bot){
@@ -61,7 +62,8 @@ public class MirrorBot4 extends UT2004BotModuleController{
     }
 
     /**
-     * 
+     * loads the bot into the game with it's name and the skill level
+     * @return returns the initialization parameters
      */
     @Override
     public Initialize getInitializeCommand(){
@@ -113,10 +115,16 @@ public class MirrorBot4 extends UT2004BotModuleController{
     }
 
     @Override
+    /**
+     * 
+     */
     public void beforeFirstLogic(){
     }
 
     @Override
+    /**
+     * 
+     */
     public void logic() throws PogamutException{
 		try{
 			if (!initTime){
@@ -136,16 +144,28 @@ public class MirrorBot4 extends UT2004BotModuleController{
     }
 
     @Override
+    /**
+     * detects bot death and cleans up the data for respawn
+     * @param event (the bot dies)
+     */
     public void botKilled(BotKilled event){
 		if (brain != null){
 			brain.deathClean();
 		}
     }
 	
-	public Brain getBrain(){
+	/**
+	 * @return returns the bot's brain (central controller)
+	 */
+    public Brain getBrain(){
 		return brain;
 	}
 
+    /**
+     *  
+     * @param args
+     * @throws PogamutException
+     */
     public static void main(String args[]) throws PogamutException{
 		String host = "localhost";
 		int port = 3000;
@@ -206,6 +226,9 @@ public class MirrorBot4 extends UT2004BotModuleController{
     }
 
     @Override
+    /**
+     * @param bot
+     */
     protected void initializePathFinding(UT2004Bot bot){
 		//System.out.println("SUCCESS HACK");
 		Logger myLog = Logger.getAnonymousLogger();
