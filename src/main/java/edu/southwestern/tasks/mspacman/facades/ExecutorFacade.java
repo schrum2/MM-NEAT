@@ -67,7 +67,9 @@ public class ExecutorFacade {
 	public void runExperiment(PacManControllerFacade mspacman, GhostControllerFacade ghosts, GameFacade game) {
 		if(oldE == null) {
 			// 1 means only run 1 trial
-			poE.runExperiment(mspacman.poP, ghosts.poG, 1, "desc", game.poG);
+			poE.runExperiment(mspacman.poP, ghosts.poG, 1, "ranExperiment, see ExecutorFacade.runExperiment()", game.poG);
+			//TODO: alert OTNPMIC that it should clear its information
+			
 		} else {
 			oldE.runExperiment(mspacman.oldP, ghosts.oldG, game.oldG);
 		}

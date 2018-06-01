@@ -7,11 +7,13 @@ import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.stats.StatisticsUtilities;
 import pacman.game.Constants.GHOST;
 import pacman.game.Game;
+import popacman.prediction.PillModel;
 
 import java.awt.Color;
 import java.util.*;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.encog.ml.prg.extension.ParamTemplate;
 
 /**
  *Contains pac man game. Includes harnesses for both
@@ -26,6 +28,7 @@ public class GameFacade {
 	public static final int MAX_DISTANCE = 200;
 	public static final int NUM_DIRS = 4;
 	public static final int DANGEROUS_TIME = 5;
+	public PillModel pillModel = null;
 	public oldpacman.game.Game oldG = null;
 	public pacman.game.Game poG = null; // New pacman from Maven
 
@@ -203,7 +206,7 @@ public class GameFacade {
 
 	/**
 	 * Return indices for certain types of ghosts.
-	 * Supports popacman. (TODO: test handling of PO conditions)
+	 * Supports popacman. (handles PO conditions)
 	 * 
 	 * @param edibleVsThreatOnly
 	 *            true for edible only, false for threat only, unless "all" is
@@ -349,11 +352,10 @@ public class GameFacade {
 
 	/**
 	 * gets times taken to eat each pill.
-	 * TODO
 	 * @return list of times
 	 */
 	public List<Integer> getPillEatTimes() {
-		if(oldG == null) throw new UnsupportedOperationException("TODO: implement Get getPillEatTimes");
+		if(oldG == null) throw new UnsupportedOperationException("We don't need to implement getPillEatTimes");
 		
 		return oldG.getPillEatTimes();
 	}
@@ -383,7 +385,7 @@ public class GameFacade {
 
 	/**
 	 * Return number of eaten ghosts across all levels.
-	 * Supports popacman (TODO: test)
+	 * Supports popacman
 	 * @return
 	 */
 	public int getNumEatenGhosts() {
@@ -394,7 +396,7 @@ public class GameFacade {
 
 	/**
 	 * Return current score.
-	 * Supports popacman (TODO: test)
+	 * Supports popacman
 	 * @return
 	 */
 	public double getScore() {
@@ -434,9 +436,9 @@ public class GameFacade {
 	 */
 	public int getEatenPills() {
 		if(oldG == null) {
-			//TODO
-			//throw new UnsupportedOperationException("getEatenPills unimplemented for popacman");
-			return -1;
+			//TODO: test
+			assert pillModel != null : "the information handling in OldToNewPacManIntermediaryController should handle this";
+			return pillModel.getPillsEaten();
 		} else {
 			return oldG.getEatenPills();	
 		}
@@ -467,7 +469,7 @@ public class GameFacade {
 
 	/**
 	 * Gets current time spent on level.
-	 * Supports popacman.
+	 * Supports popacman. (handles PO conditions, this information is always available)
 	 * @return time spent on level
 	 */
 	public int getCurrentLevelTime() {
@@ -559,7 +561,8 @@ public class GameFacade {
 
 	/**
 	 * The index for the direction pacman came from is -1.
-	 * Supports popacman (TODO: test)
+	 * Supports popacman. Returns -1 if passed -1 as current.
+	 * (handles PO conditions)
 	 *
 	 * @param current
 	 *            = position to get neighbors of
@@ -568,6 +571,9 @@ public class GameFacade {
 	 * @return neighbors without source node
 	 */
 	public int[] restrictedNeighbors(int current, int lastMove) {
+		if(current == -1) {
+			return null;
+		}
 		int[] neighbors = neighbors(current);
 		assert neighbors[0] != current : "The upward neighbor of " + current + " is " + neighbors[0] + ":"
 				+ Arrays.toString(neighbors);
@@ -633,7 +639,7 @@ public class GameFacade {
 
 	/**
 	 * Returns the max time a ghost is edible.
-	 * Supports popacman (TODO: test)
+	 * Supports popacman (handles PO conditions)
 	 * @return max time edible ghost
 	 */
 	public int maxEdibleTime() {
@@ -704,7 +710,7 @@ public class GameFacade {
 	/**
 	 * returns whether given ghost is edible or not.
 	 * Supports popacman. Returns false is a ghost is not visible.
-	 * TODO: should we return false?
+	 * (handles PO conditions)
 	 * @param ghostIndex ghost in question
 	 * @return ghost edible
 	 */
@@ -818,7 +824,8 @@ public class GameFacade {
 	 * @return power pill or not
 	 */
 	public boolean isPowerPillIndex(int index) {
-		assert index != -1 : "debug in GameFacade.isPwerPillIndex";
+		//TODO
+		assert index != -1 : "debug in GameFacade.isPowerPillIndex";
 		return oldG == null ?
 				ArrayUtils.contains(poG.getActivePowerPillsIndices(), index):
 				ArrayUtils.contains(oldG.getActivePowerPillsIndices(), index);
@@ -1005,7 +1012,7 @@ public class GameFacade {
 	 */
 	public int[] getActivePowerPillsIndices() {
 		return oldG == null ?
-				//(TODO: understand output)
+				//(TODO: understand output), add support for tracking power pills vs regular pills in PillModel
 				poG.getActivePowerPillsIndices():
 				oldG.getActivePowerPillsIndices();
 	}
@@ -1030,9 +1037,25 @@ public class GameFacade {
 	 * @return indices of active pills
 	 */
 	public int[] getActivePillsIndices() {
-		return oldG == null ?
-				poG.getActivePillsIndices():
-				oldG.getActivePillsIndices();
+		if(oldG == null) {
+			//TODO: test
+			ArrayList<Integer> tempList = new ArrayList<Integer>();
+			assert pillModel != null : "this should be handled";
+			BitSet temp = pillModel.getPills();
+			for(int pill : poG.getPillIndices()) {
+				if(temp.get(pill) == true) {
+					tempList.add(pill);
+				}
+			}
+			int[] result = new int[tempList.size()];
+			for(int i = 0; i < tempList.size(); i++) {
+				result[i] = tempList.get(i);
+			}
+			return result;
+			
+		} else {
+			return oldG.getActivePillsIndices();	
+		}
 	}
 
 	/**
@@ -1690,7 +1713,7 @@ public class GameFacade {
 
 	/**
 	 * gets indices of edible ghosts.
-	 * Supports popacman (TODO: test)
+	 * Supports popacman (handles PO conditions)
 	 * @return indices of edible ghosts
 	 */
 	public int[] getEdibleGhostLocations() {
@@ -1700,7 +1723,7 @@ public class GameFacade {
 	/**
 	 * Gets edible ghosts location with decision
 	 * on whether or not to include certain ghosts.
-	 * Supports popacman (TODO: test)
+	 * Supports popacman (handles PO conditions)
 	 * @param include which ghosts are included
 	 * @return indices of chosen edible ghosts
 	 */
@@ -1716,18 +1739,18 @@ public class GameFacade {
 
 	/**
 	 * True if threat is coming at pacman along direction.
-	 * Supports popacman (TODO: test)
+	 * Supports popacman (handles PO conditions)
 	 * @param pacmanDir
 	 *            direction relative to pacman
 	 * @return true if threat imminent
 	 */
 	public boolean isThreatIncoming(int pacmanDir) {
-			return isAnyGhostIncoming(pacmanDir, true);
+		return isAnyGhostIncoming(pacmanDir, true);
 	}
 
 	/**
 	 * true if edible ghost coming at pacman along direction.
-	 * Supports popacman (TODO: test)
+	 * Supports popacman (handles PO conditions)
 	 * @param pacmanDir pacman's direction
 	 * @return true if edible ghost is imminent
 	 */
@@ -1737,7 +1760,7 @@ public class GameFacade {
 
 	/**
 	 * True if any ghost is coming at pacman along direction.
-	 * Supports popacman (TODO: test)
+	 * Supports popacman (handles PO conditions)
 	 * @param pacmanDir direction of pacman
 	 * @param threatNotEdible boolean allowing for reuse of method
 	 * @return whether ghost incoming
@@ -2280,7 +2303,6 @@ public class GameFacade {
 	 * @return index of left node
 	 */
 	public static int getLeftOf(int move) {
-		//TODO: make sure that poG indexes moves in the same way as oldpacman
 		return (move + 3) % 4;
 	}
 
@@ -2291,13 +2313,12 @@ public class GameFacade {
 	 * @return index of right node
 	 */
 	public static int getRightOf(int move) {
-		//TODO: make sure that poG indexes moves in the same way as oldpacman
 		return (move + 1) % 4;
 	}
 
 	/**
 	 * Gets number of active pills.
-	 * Supports popacman (TODO: test)
+	 * Supports popacman (handles PO conditions, this information is always available)
 	 * @return num active pills
 	 */
 	public int getNumActivePills() {
@@ -2308,7 +2329,7 @@ public class GameFacade {
 
 	/**
 	 * gets whether game is over or not.
-	 * Supports popacman (TODO: test)
+	 * Supports popacman.
 	 * @return game over
 	 */
 	public boolean gameOver() {
@@ -2319,7 +2340,7 @@ public class GameFacade {
 
 	/**
 	 * Gets number of active power pills.
-	 * Supports popacman (TODO: test)
+	 * Supports popacman (handles PO conditions, this information is always available)
 	 * @return num active power pills
 	 */
 	public int getNumActivePowerPills() {
@@ -2621,6 +2642,7 @@ public class GameFacade {
 	/**
 	 * Return max edible time across all ghosts.
 	 * Used for popacman. Returns -1 if no ghosts are visible.
+	 * (handles PO conditions)
 	 *
 	 * @param newG
 	 *            new pacman Game instance
@@ -2916,7 +2938,7 @@ public class GameFacade {
 
 	/**
 	 * Gets number of nodes in maze.
-	 * Supports popacman (TODO: test)
+	 * Supports popacman (supports PO conditions, this information is always available)
 	 * @return num modes in maze
 	 */
 	public int getNumMazeNodes() {
@@ -2980,7 +3002,7 @@ public class GameFacade {
 
 	/**
 	 * Return true if any ghost is outside of the lair and not edible.
-	 * Supports popacman (TODO: test)
+	 * Supports popacman (handles PO conditions)
 	 * @return
 	 */
 	public boolean anyIsThreat() {
@@ -3098,7 +3120,7 @@ public class GameFacade {
 
 	/**
 	 * returns if there are any active ghosts in lair.
-	 * Supports popacman (TODO: test)
+	 * Supports popacman (handles PO conditions)
 	 * @return if active ghosts in lair
 	 */
 	public boolean anyActiveGhostInLair() {
@@ -3113,7 +3135,7 @@ public class GameFacade {
 
 	/**
 	 * Return true if starting a new level, which is the case if the level time
-	 * is zero. Supports popacman (TODO: test)
+	 * is zero. Supports popacman (handles PO conditions)
 	 *
 	 * @return
 	 */
@@ -3272,54 +3294,49 @@ public class GameFacade {
 		}
 	}
 	
-	/**
-	 * Takes an popacman move and returns the equivalent oldpacman move
-	 * @param move
-	 * @return
-	 * @throws NoSuchFieldException
-	 * @author pricew 
-	 */
-	public static oldpacman.game.Constants.MOVE moveConverterPOOld(pacman.game.Constants.MOVE move){
-		switch(move) {
-			case NEUTRAL:
-				return oldpacman.game.Constants.MOVE.NEUTRAL;
-			case UP:
-				return oldpacman.game.Constants.MOVE.UP;
-			case LEFT:
-				return oldpacman.game.Constants.MOVE.LEFT;
-			case DOWN:
-				return oldpacman.game.Constants.MOVE.DOWN;
-			case RIGHT:
-				return oldpacman.game.Constants.MOVE.RIGHT;
-			default:
-				System.out.println("ERROR in moveConverterPOOld, GAmeFacade.java");
-				return null;
-		}
+	/////////////////////////////////////////////////////Experimental Stuff//////////////////////////////////////////////////////////////////////
+	
+	public PillModel getPillModel() {
+		return this.pillModel;
 	}
 	
-	/**
-	 * Takes an oldpacman move and returns the equivalent popacman move
-	 * @param move
-	 * @return
-	 * @throws NoSuchFieldException
-	 * @author pricew
-	 */
-	public static pacman.game.Constants.MOVE moveConverterOldToPO(oldpacman.game.Constants.MOVE move){
-		switch(move) {
-			case NEUTRAL:
-				return pacman.game.Constants.MOVE.NEUTRAL;
-			case UP:
-				return pacman.game.Constants.MOVE.UP;
-			case LEFT:
-				return pacman.game.Constants.MOVE.LEFT;
-			case DOWN:
-				return pacman.game.Constants.MOVE.DOWN;
-			case RIGHT:
-				return pacman.game.Constants.MOVE.RIGHT;
-			default:
-				System.out.println("ERROR in moveConverterOldPO, GAmeFacade.java");
-				return null;
-		}
+	public void setPillModel(PillModel pm) {
+		this.pillModel = pm;
 	}
-
+	
+	
+//	public void updateHiddenState() {
+//		if(pillModel == null) {
+//			initPillModel();
+//		}
+//		updatePillModel();
+//	}
+//	
+	//credit to piers on 6/01/18.
+	//See InfromationSetMCTSPacMan
+	public PillModel initPillModel() {
+		pillModel = new PillModel(poG.getNumberOfPills());
+		
+        int[] indices = poG.getCurrentMaze().pillIndices;
+        for (int index : indices) {
+            pillModel.observe(index, true);
+        }
+        
+        return this.pillModel;
+	}
+	
+	//credit to piers on 6/01/18.
+	//See InfromationSetMCTSPacMan
+	public PillModel updatePillModel() {
+        int pillIndex = poG.getPillIndex(poG.getPacmanCurrentNodeIndex());
+        if (pillIndex != -1) {
+            Boolean pillState = poG.isPillStillAvailable(pillIndex);
+            if (pillState != null && !pillState) {
+                pillModel.observe(pillIndex, false);
+            }
+        }
+        return this.pillModel;
+	}
+	
+	
 }
