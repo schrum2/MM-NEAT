@@ -153,7 +153,7 @@ public class BDNSGA2<T> extends NSGA2<T> {
 	public ArrayList<Score<T>> prepareSourcePopulation(ArrayList<Score<T>> parentScores,
 			ArrayList<Score<T>> childrenScores) {
 		ArrayList<Score<T>> population = super.prepareSourcePopulation(parentScores, childrenScores);
-		characterization.prepare();// gets a random syllabus
+		characterization.prepare();// gets a syllabus
 		ArrayList<BehaviorVector> behaviorVectors = getBehaviorVectors(population);
 		ArrayList<Double> diversityScores = allDiversityScores(behaviorVectors, maxArchiveSize > 0);
 

@@ -1,6 +1,7 @@
 package edu.southwestern.tasks.rlglue.tetris;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 import org.rlcommunity.environments.tetris.Tetris;
@@ -8,6 +9,7 @@ import org.rlcommunity.environments.tetris.TetrisState;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.evolution.nsga2.bd.characterizations.RemembersObservations;
 import edu.southwestern.evolution.nsga2.tug.TUGTask;
 import edu.southwestern.networks.Network;
 import edu.southwestern.parameters.Parameters;
@@ -17,7 +19,7 @@ import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.random.RandomNumbers;
 import edu.southwestern.util.stats.StatisticsUtilities;
 
-public class TetrisTask<T extends Network> extends RLGlueTask<T> implements TUGTask {
+public class TetrisTask<T extends Network> extends RLGlueTask<T> implements TUGTask, RemembersObservations {
 
 	private final boolean tetrisTimeSteps;
 	private final boolean tetrisBlocksOnScreen;
@@ -26,6 +28,7 @@ public class TetrisTask<T extends Network> extends RLGlueTask<T> implements TUGT
 	private final boolean tetrisLinesNotScore;
 	private final boolean tetrisNumLinesCleared;
 	private final boolean tetrisGameScore;
+	List<double[]> observations;
 
 	/**
 	 * Default constructor
@@ -222,8 +225,38 @@ public class TetrisTask<T extends Network> extends RLGlueTask<T> implements TUGT
 		return result;
 	}
 
+	/**
+	 * Starting achievements that targeting unachieved goals will target
+	 * @return the set of minimum scores in order
+	 */
 	@Override
 	public double[] startingGoals() {
 		return minScores();
+	}
+
+	/**
+	 * Adds observation/input to the set for Behavioral Diversity with intelligent vectors from past experiences 
+	 * @param an observation/set of inputs
+	 */
+	@Override
+	public void addObservation(double[] inputs) {
+		observations.add(inputs);
+	}
+
+	/**
+	 * @return set of observations/inputs for Behavioral Diversity with intelligent vectors from past experiences
+	 */
+	@Override
+	public List<double[]> recallObservations() {
+		return observations;
+	}
+
+	/**
+	 * Clears set of observations/inputs. For use at the end of a generation. 
+	 * For Behavioral Diversity with intelligent vectors from past experiences
+	 */
+	@Override
+	public void clearObservations() {
+		observations.clear();
 	}
 }
