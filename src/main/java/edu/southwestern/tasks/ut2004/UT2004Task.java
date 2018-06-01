@@ -123,11 +123,12 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 	 * @param num (the number evaluation you're on)
 	 */
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {            
+		// up the port connection for the bot
 		int botPort = ServerUtil.getAvailablePort();
 		int controlPort = ServerUtil.getAvailablePort();
 		int observePort = ServerUtil.getAvailablePort();
 		int gamePort = ServerUtil.getAvailablePort();
-
+		//
 		MyUCCWrapperConf config = new MyUCCWrapperConf();
 		config.setPlayerPort(gamePort);
 		config.setStartOnUnusedPort(false);
