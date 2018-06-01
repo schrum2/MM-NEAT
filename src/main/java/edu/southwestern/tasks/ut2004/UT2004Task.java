@@ -123,12 +123,12 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 	 * @param num (the number evaluation you're on)
 	 */
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {            
-		// up the port connection for the bot
+		// finds the port connection for the bot
 		int botPort = ServerUtil.getAvailablePort();
 		int controlPort = ServerUtil.getAvailablePort();
 		int observePort = ServerUtil.getAvailablePort();
 		int gamePort = ServerUtil.getAvailablePort();
-		//
+		// sets the map, gametype, and Gamebots that will be used
 		MyUCCWrapperConf config = new MyUCCWrapperConf();
 		config.setPlayerPort(gamePort);
 		config.setStartOnUnusedPort(false);
@@ -137,6 +137,7 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 		config.setGameType("BotDeathMatch");
 
 
+		//Creates an arraylist of mutators that will be applied to the server
 		ArrayList<String> mutators = new ArrayList<>();
 		if(Parameters.parameters.booleanParameter("botprizeMod")) {
 			mutators.add("GameBots2004.BotprizeMutator");		
@@ -148,34 +149,36 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 			mutators.add("Gamebots2004.GBHUD");
 		}
 
-
+		//converts the srraylist into a string that will be given to the server as a command
 		String mutatorString = mutators.isEmpty() ? "":"?mutator=" + String.join(",", mutators);
 
-		//		String botprizeMod = Parameters.parameters.booleanParameter("botprizeMod") ? "?mutator=GameBots2004.BotPrizeMutator," : "";
-		//		String navGrid = Parameters.parameters.booleanParameter("navGrid") ? "?bDrawNavPointsGrid=True" : "?bDrawNavPointsGrid=False";//DOES NOT WORK
-		//		// config.setOptions(botprizeMod + "?timelimit=" + evalMinutes +
-		//		String navCubes = Parameters.parameters.booleanParameter("navCubes") ? "?bDrawNavCubes=True" : "?bDrawNavCubes=False";//DOES NOT WORK
+		//String botprizeMod = Parameters.parameters.booleanParameter("botprizeMod") ? "?mutator=GameBots2004.BotPrizeMutator," : "";
+		//String navGrid = Parameters.parameters.booleanParameter("navGrid") ? "?bDrawNavPointsGrid=True" : "?bDrawNavPointsGrid=False";//DOES NOT WORK
+		//config.setOptions(botprizeMod + "?timelimit=" + evalMinutes +
+		//String navCubes = Parameters.parameters.booleanParameter("navCubes") ? "?bDrawNavCubes=True" : "?bDrawNavCubes=False";//DOES NOT WORK
 
 
 		// "?fraglimit=0?GoalScore=0?DoUplink=False?UplinkToGamespy=False?SendStats=False?bAllowPrivateChat=False?bAllowTaunts=False?bEnableVoiceChat=False?bAllowLocalBroadcast=False?BotServerPort="
 		// + botPort + "?ControlServerPort=" + controlPort +
 		// "?ObservingServerPort=" + observePort);
-		config.setOptions(mutatorString
+		config.setOptions(mutatorString//sets the preferences for the game, and players
 				+ "?fraglimit=0?GoalScore=0?DoUplink=False?UplinkToGamespy=False?SendStats=False?bAllowPrivateChat=False?bAllowTaunts=False?bEnableVoiceChat=False?bAllowLocalBroadcast=False?BotServerPort="
 				+ botPort + "?ControlServerPort=" + controlPort + "?ObservingServerPort=" + observePort);
 		config.setUnrealHome(Parameters.parameters.stringParameter("utDrive") + ":" + File.separator + Parameters.parameters.stringParameter("utPath"));
-		//		System.out.println(config);
-		//		MiscUtil.waitForReadStringAndEnterKeyPress();
+		//System.out.println(config);
+		//MiscUtil.waitForReadStringAndEnterKeyPress();
 
+		//Launches the server, and ensures that it is empty at the outset
 		MyUCCWrapper ucc = null;
 		Pair<double[], double[]> result = null;
-		int attempts = 1;
+		int attempts = 1; //tracks the number of sttempts to launch the server
 		while (result == null) {
 			System.out.println("Eval attempt " + (attempts++));
 			try {
 				ucc = new MyUCCWrapper(config);
 				IUT2004Server server = ucc.getUTServer();
 				System.out.println(botPort + ": Confirming empty server");
+				//responsible for launching native bots into the server, resets if the port is not empty
 				while (server.getAgents().size() > 0 
 						|| server.getNativeAgents().size() > 0
 						|| server.getPlayers().size() > 0) {
@@ -217,12 +220,12 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 					System.out.println(botPort + ": Past evaluate block: " + System.currentTimeMillis());
 					ServerUtil.removeServer(claimTicket);
 				}
-			} catch (ComponentCantStartException ccse) {
+			} catch (ComponentCantStartException ccse) {//gets rid of the server if it can't be started
 				System.out.println("EXCEPTION: Can't start the server. Failed eval. Destroy server");
 				ServerUtil.destroyServer(ucc, true);
 				result = null;
 			} finally {
-				if (result == null) {
+				if (result == null) {//repeats the evaluation if it is unsucessful the first time
 					System.out.println("Evaluation failed: repeat: " + botPort);
 				}
 			}
