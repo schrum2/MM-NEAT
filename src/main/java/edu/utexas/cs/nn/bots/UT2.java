@@ -56,7 +56,7 @@ import wox.serial.Easy;
 @AgentScoped
 public class UT2 extends BaseBot {
 
-    private static class UT2Parameters extends UT2004BotParameters {
+    public static class UT2Parameters extends UT2004BotParameters {
 
         private TWEANNController battleController;
         private IUT2004Server server;

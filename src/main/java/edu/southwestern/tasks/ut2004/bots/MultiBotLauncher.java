@@ -4,8 +4,13 @@ import cz.cuni.amis.pogamut.base.agent.params.IRemoteAgentParameters;
 import cz.cuni.amis.pogamut.ut2004.agent.utils.UT2004BotDescriptor;
 import cz.cuni.amis.pogamut.ut2004.bot.params.UT2004BotParameters;
 import cz.cuni.amis.pogamut.ut2004.utils.MultipleUT2004BotRunner;
+import edu.utexas.cs.nn.Constants;
+import edu.utexas.cs.nn.bots.UT2;
+import edu.utexas.cs.nn.bots.UT2.UT2Parameters;
 import pogamut.hunter.HunterBot;
 import pogamut.navigationbot.NavigationBot;
+import utopia.controllers.TWEANN.TWEANNController;
+import wox.serial.Easy;
 
 /**
  * launches different bots into the same soldier
@@ -57,8 +62,11 @@ public class MultiBotLauncher {
 	 * launches a test server with the HunterBot and NavigationBot
 	 */
 	public static void main(String[] args) {
-		Class[] botClasses = new Class[] {HunterBot.class, NavigationBot.class};
-		IRemoteAgentParameters[] params = new IRemoteAgentParameters[] {new UT2004BotParameters(), new UT2004BotParameters()};
+		Class[] botClasses = new Class[] {HunterBot.class, NavigationBot.class, UT2.class};
+		
+		UT2Parameters ut2params = new UT2Parameters((TWEANNController) Easy.load(Constants.UT2_ROOT.get() + "candidates/FRONT-DM-1on1-Albatross-vs-1Native_98_7.xml"), null);
+		
+		IRemoteAgentParameters[] params = new IRemoteAgentParameters[] {new UT2004BotParameters(), new UT2004BotParameters(), ut2params};
 		launchMultipleBots(botClasses, params, "localhost", 3000);
 	}
 	
