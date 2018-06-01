@@ -401,7 +401,7 @@ public abstract class MuLambda<T> implements SinglePopulationGenerationalEA<T> {
 			if(Parameters.parameters.booleanParameter("offsetHybrID")) { //offsetHybrid is being used
 				result = OffsetHybrIDGenotype.getSubstrateGenotypesFromCPPNs(HyperNEATUtil.getHyperNEATTask(), result);
 			} else { //if preset-switch HybrID is being used
-				result = HybrIDUtil.switchSubstrateToNEAT(result);
+				result = HybrIDUtil.switchPhenotypeToNEAT(result);
 			}
 		}
 		return result;
