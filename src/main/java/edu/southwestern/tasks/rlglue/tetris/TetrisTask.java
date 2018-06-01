@@ -218,7 +218,7 @@ public class TetrisTask<T extends Network> extends RLGlueTask<T> implements TUGT
 			result[i] = 0;
 			i++;
 		}
-		return null;
+		return result;
 	}
 
 	@Override
