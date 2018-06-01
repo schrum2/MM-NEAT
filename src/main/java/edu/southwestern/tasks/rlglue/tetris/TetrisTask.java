@@ -1,5 +1,6 @@
 package edu.southwestern.tasks.rlglue.tetris;
 
+import java.util.Arrays;
 import java.util.Random;
 
 import org.rlcommunity.environments.tetris.Tetris;
@@ -38,7 +39,6 @@ public class TetrisTask<T extends Network> extends RLGlueTask<T> implements TUGT
 		tetrisLinesNotScore = Parameters.parameters.booleanParameter("tetrisLinesNotScore");
 		tetrisNumLinesCleared = Parameters.parameters.booleanParameter("tetrisNumLinesCleared");
 
-		//by default this objective is turned on. In contrast to the others.
 		tetrisGameScore = Parameters.parameters.booleanParameter("tetrisGameScore");
 
 		if (tetrisTimeSteps) { // Staying alive is good
@@ -129,7 +129,8 @@ public class TetrisTask<T extends Network> extends RLGlueTask<T> implements TUGT
 		if(tetrisAvgHoles)	fitness[index++] = avgNumHoles ;
 		if(tetrisLinesNotScore) {
 			fitness[index++] = game.getLinesCleared();
-		} else {
+		}
+		if (tetrisGameScore) {
 			fitness[index++] = rlReturn[num]; // default
 		}
 		double[] rowCounts = game.getNumberOfRowsCleared();

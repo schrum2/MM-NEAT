@@ -92,6 +92,8 @@ public class GeneralNetworkCharacterization<T extends Network> implements Behavi
 		}
 		return syllabus;
 	}
+	
+	public static ArrayList<double[]> newPastExperiencesSyllabus(int num) {
 
 	/**
 	 * gives current syllabus object a new set of values
