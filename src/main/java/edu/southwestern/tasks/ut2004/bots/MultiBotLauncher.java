@@ -7,6 +7,7 @@ import cz.cuni.amis.pogamut.ut2004.utils.MultipleUT2004BotRunner;
 import edu.utexas.cs.nn.Constants;
 import edu.utexas.cs.nn.bots.UT2;
 import edu.utexas.cs.nn.bots.UT2.UT2Parameters;
+import fr.enib.mirrorbot4.MirrorBot4;
 import pogamut.hunter.HunterBot;
 import pogamut.navigationbot.NavigationBot;
 import utopia.controllers.TWEANN.TWEANNController;
@@ -62,11 +63,11 @@ public class MultiBotLauncher {
 	 * launches a test server with the HunterBot and NavigationBot
 	 */
 	public static void main(String[] args) {
-		Class[] botClasses = new Class[] {HunterBot.class, NavigationBot.class, UT2.class};
+		Class[] botClasses = new Class[] {HunterBot.class, NavigationBot.class, UT2.class, MirrorBot4.class};
 		
 		UT2Parameters ut2params = new UT2Parameters();
 		
-		IRemoteAgentParameters[] params = new IRemoteAgentParameters[] {new UT2004BotParameters(), new UT2004BotParameters(), ut2params};
+		IRemoteAgentParameters[] params = new IRemoteAgentParameters[] {new UT2004BotParameters(), new UT2004BotParameters(), ut2params, new UT2004BotParameters()};
 		launchMultipleBots(botClasses, params, "localhost", 3000);
 	}
 	
