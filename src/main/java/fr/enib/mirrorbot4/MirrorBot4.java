@@ -84,6 +84,8 @@ public class MirrorBot4 extends UT2004BotModuleController{
     }
 
     /**
+     * initializes the bot's navigation functions
+     * (the parameters are not used, because this method was inherited from the interface)
      * @param gameInfo
      * @param currentConfig
      * @param init
@@ -106,6 +108,7 @@ public class MirrorBot4 extends UT2004BotModuleController{
 
     @Override
     /**
+     * this method was inherited from the interface
      * @param gameInfo
      * @param config
      * @param init
@@ -116,7 +119,7 @@ public class MirrorBot4 extends UT2004BotModuleController{
 
     @Override
     /**
-     * 
+     * this method was inherited from the interface
      */
     public void beforeFirstLogic(){
     }
@@ -162,7 +165,7 @@ public class MirrorBot4 extends UT2004BotModuleController{
 	}
 
     /**
-     *  
+     * connects the bot to the server and sets up the host and port number
      * @param args
      * @throws PogamutException
      */
@@ -227,7 +230,8 @@ public class MirrorBot4 extends UT2004BotModuleController{
 
     @Override
     /**
-     * @param bot
+     * initializes the bot's pathfinding modules
+     * @param bot (bot to be used)
      */
     protected void initializePathFinding(UT2004Bot bot){
 		//System.out.println("SUCCESS HACK");
