@@ -433,12 +433,12 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 											}
 											// This approach maintains all values in the scaled range
 											
-											// PUT THESE BACK LATER!
-//											assert -1 <= inputs[0] && inputs[0] <= 1 : "CPPN input 0 out of range: " + inputs[0];
-//											assert -1 <= inputs[1] && inputs[1] <= 1 : "CPPN input 1 out of range: " + inputs[1];
-//											assert -1 <= inputs[2] && inputs[2] <= 1 : "CPPN input 2 out of range: " + inputs[2];
-//											assert -1 <= inputs[3] && inputs[3] <= 1 : "CPPN input 3 out of range: " + inputs[3];
-//											assert -1 <= inputs[4] && inputs[4] <= 1 : "CPPN input 4 out of range: " + inputs[4];
+											
+											assert -1 <= inputs[0] && inputs[0] <= 1 : "CPPN input 0 out of range: " + inputs[0];
+											assert -1 <= inputs[1] && inputs[1] <= 1 : "CPPN input 1 out of range: " + inputs[1];
+											assert -1 <= inputs[2] && inputs[2] <= 1 : "CPPN input 2 out of range: " + inputs[2];
+											assert -1 <= inputs[3] && inputs[3] <= 1 : "CPPN input 3 out of range: " + inputs[3];
+											assert -1 <= inputs[4] && inputs[4] <= 1 : "CPPN input 4 out of range: " + inputs[4];
 										}
 
 										// Convolutional weight sharing requires substrate location inputs to prevent all receptive fields across all layers from being the same.
