@@ -4,11 +4,12 @@ import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.networks.Network;
 import edu.southwestern.tasks.mspacman.facades.GameFacade;
 import edu.southwestern.tasks.mspacman.sensors.ghosts.GhostControllerInputOutputMediator;
+import oldpacman.controllers.NewGhostController;
+import oldpacman.game.Game;
+import oldpacman.game.Constants.GHOST;
+import oldpacman.game.Constants.MOVE;
+
 import java.util.EnumMap;
-import pacman.controllers.NewGhostController;
-import pacman.game.Constants.GHOST;
-import pacman.game.Constants.MOVE;
-import pacman.game.Game;
 
 /**
  *
@@ -40,7 +41,7 @@ public abstract class SharedNNGhostsController extends NewGhostController {
 		myMoves.clear();
 
 		for (GHOST ghost : GHOST.values()) {
-			if (gf.newG.doesGhostRequireAction(ghost)) {
+			if (gf.oldG.doesGhostRequireAction(ghost)) {
 				int d = getDirection(gf, ghost);
 				MOVE m = GameFacade.indexToMove(d);
 				myMoves.put(ghost, m);

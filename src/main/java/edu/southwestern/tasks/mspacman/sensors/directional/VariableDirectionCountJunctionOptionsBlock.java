@@ -9,7 +9,7 @@ import edu.southwestern.tasks.mspacman.sensors.directional.reachfirst.VariableDi
 import edu.southwestern.util.datastructures.Pair;
 
 /**
- * 
+ * TODO: how to support PO condtions
  * @author Jacob Schrum
  */
 public class VariableDirectionCountJunctionOptionsBlock extends VariableDirectionBlock {
@@ -23,10 +23,18 @@ public class VariableDirectionCountJunctionOptionsBlock extends VariableDirectio
 	}
 
 	@Override
+	/**
+	 * TODO: how to handle PO conditions
+	 */
 	public double getValue(GameFacade gf) {
 		int[] junctions = gf.getJunctionIndices();
 		// Closest junction
 		Pair<Integer, int[]> closest = gf.getTargetInDir(gf.getPacmanCurrentNodeIndex(), junctions, dir);
+		if(closest == new Pair<Integer, int[]>(new Integer(-1),null)) {
+			throw new UnsupportedOperationException("Need to implement PO conditions");
+		}
+		
+		
 		int[] ghostsToCheck = new int[] { 0, 1, 2, 3 };
 		if (!VariableDirectionCloserToTargetThanThreatGhostBlock.canReachClosestTargetSafelyInDirection(gf,
 				new int[] { closest.t1 }, dir, ghostsToCheck)) {

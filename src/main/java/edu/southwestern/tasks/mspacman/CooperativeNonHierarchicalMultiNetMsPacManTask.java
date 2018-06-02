@@ -21,9 +21,10 @@ import edu.southwestern.tasks.mspacman.sensors.VariableDirectionBlockLoadedInput
 import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
+import oldpacman.controllers.NewPacManController;
+
 import java.util.ArrayList;
 import java.util.Arrays;
-import pacman.controllers.NewPacManController;
 
 /**
  * @author Jacob Schrum

@@ -603,8 +603,12 @@ public class TWEANNGenotype implements NetworkGenotype<TWEANN> {
         if (numModules == 1) {
             return Double.MAX_VALUE;
         } else {
-            ArrayList<double[]> syllabus = GeneralNetworkCharacterization
-                    .newRandomSyllabus(CommonConstants.syllabusSize);
+        	ArrayList<double[]> syllabus;
+        	if (Parameters.parameters.booleanParameter("rememberObservations")) {
+        		syllabus = GeneralNetworkCharacterization.newPastExperiencesSyllabus(CommonConstants.syllabusSize);
+        	} else {
+        		syllabus = GeneralNetworkCharacterization.newRandomSyllabus(CommonConstants.syllabusSize);
+        	}
             ArrayList<Double> last = new ArrayList<Double>();
             ArrayList<Double> prev = new ArrayList<Double>();
             TWEANN t = this.getPhenotype();

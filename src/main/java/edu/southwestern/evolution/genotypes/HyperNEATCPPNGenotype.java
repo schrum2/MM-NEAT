@@ -342,6 +342,9 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 			assert connections.get(i).t1 != null : "Null: " + connections.get(i) + " in connections: " + connections;
 			assert sIMap.get(connections.get(i).t1) != null : "Null: " + connections.get(i).t1 + " in connections: " + connections + "\n" + sIMap;
 			int sourceSubstrateIndex = sIMap.get(connections.get(i).t1);
+			assert connections.get(i).t2 != null :"this is null";
+			
+			assert sIMap.get(connections.get(i).t2) != null :"null in " + sIMap + "\nat " + connections.get(i).t2 + "\nat " + i;
 			int targetSubstrateIndex = sIMap.get(connections.get(i).t2);
 			Substrate sourceSubstrate = subs.get(sourceSubstrateIndex);
 			Substrate targetSubstrate = subs.get(targetSubstrateIndex);
