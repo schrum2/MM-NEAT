@@ -24,8 +24,8 @@ public class AngularCosineDistance extends RealBehaviorVector{
 	 */
 	@Override
 	public double distance(BehaviorVector rhs) {
-		ArrayList<Double>[] shorterAndLonger = DistanceUtil.resizeVector(v, ((RealBehaviorVector) rhs).v);
-		return 1 / DistanceUtil.getCosineSimilarity(shorterAndLonger[0], shorterAndLonger[1]) * Math.PI;
+		ArrayList<Double>[] twoVectors = DistanceUtil.resizeVector(v, ((RealBehaviorVector) rhs).v);
+		return 1 / DistanceUtil.getCosineSimilarity(twoVectors[0], twoVectors[1]) * Math.PI;
 	}
 
 }

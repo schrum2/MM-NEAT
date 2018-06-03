@@ -28,8 +28,8 @@ public class MinkowskiDistance  extends RealBehaviorVector{
 	 */
 	@Override
 	public double distance(BehaviorVector rhs) {
-		ArrayList<Double>[] shorterAndLonger = DistanceUtil.resizeVector(v, ((RealBehaviorVector) rhs).v);
-		return DistanceUtil.getMinkowskiDistance(shorterAndLonger[0], shorterAndLonger[1], MINKOWSKI_VAR);
+		ArrayList<Double>[] twoVectors = DistanceUtil.resizeVector(v, ((RealBehaviorVector) rhs).v);
+		return DistanceUtil.getMinkowskiDistance(twoVectors[0], twoVectors[1], MINKOWSKI_VAR);
 	}
 
 }

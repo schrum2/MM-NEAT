@@ -30,7 +30,7 @@ public class CosineSimilarity extends RealBehaviorVector{
 	 */
 	@Override
 	public double distance(BehaviorVector rhs) {
-		ArrayList<Double>[] shorterAndLonger = DistanceUtil.resizeVector(v, ((RealBehaviorVector) rhs).v);
-		return DistanceUtil.getCosineSimilarity(shorterAndLonger[0], shorterAndLonger[1]);
+		ArrayList<Double>[] twoVectors = DistanceUtil.resizeVector(v, ((RealBehaviorVector) rhs).v);
+		return DistanceUtil.getCosineSimilarity(twoVectors[0], twoVectors[1]);
 	}
 }
