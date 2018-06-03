@@ -17,7 +17,6 @@ public class RelativeNormalizationCharacterization<T extends Network> extends Ge
 	 * @param population the population of neural networks to be characterized
 	 * @return characterization of each network 
 	 */
-	//public ArrayList<BehaviorVector> getRelativeBehaviorVectors(T[] nets, ArrayList<Score<T>> population) {
 	@SuppressWarnings("rawtypes")
 	@Override
 	public ArrayList<BehaviorVector> getAllBehaviorVectors(ArrayList<Score<T>> population, BehaviorCharacterization characterization) {

@@ -132,6 +132,7 @@ public class GeneralNetworkCharacterization<T extends Network> implements Behavi
 		} else {
 			newRandomSyllabus();
 		}
+<<<<<<< HEAD
 	}
 	
 	public ArrayList<double[]> getSyllabus() {
@@ -144,5 +145,7 @@ public class GeneralNetworkCharacterization<T extends Network> implements Behavi
 			BehaviorCharacterization characterization) {
 		// TODO Auto-generated method stub
 		return null;
+=======
+>>>>>>> 6339d0917af041ac8a768a774a5197bb93a98140
 	}
 }

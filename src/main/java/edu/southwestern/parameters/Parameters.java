@@ -619,7 +619,11 @@ public class Parameters {
 		booleanOptions.add("recordPacman", false, "Record pacman game to save file");
 		booleanOptions.add("recurrency", true, "Allow recurrent links");
 		booleanOptions.add("relativePacmanDirections", true, "Ms. Pac-Man senses and actions for directions are relative to current direction");
+<<<<<<< HEAD
 		booleanOptions.add("rememberObservations", false, "remember the inputs/observations of an evaluation to be used for the syllabus of Behavioral Diversity");
+=======
+		booleanOptions.add("rememberObservations", false, "remember the inputs/observations of an evaluation to be used for Behavioral Diversity");
+>>>>>>> 6339d0917af041ac8a768a774a5197bb93a98140
 		booleanOptions.add("removePillsNearPowerPills", false, "Pills in a c-path with power pills are absent");
 		booleanOptions.add("replayPacman", false, "Replay pacman game from save file");
 		booleanOptions.add("requireFitnessDifferenceForChange", false, "If the tournament selection between two individuals reveals no fitness difference, then don't mutate or crossover the victor");
