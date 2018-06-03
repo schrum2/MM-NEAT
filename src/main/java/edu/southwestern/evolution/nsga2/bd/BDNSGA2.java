@@ -55,13 +55,17 @@ public class BDNSGA2<T> extends NSGA2<T> {
 	 *            Population of scores: Genotypes have already been evaluated.
 	 * @return List of one behavior vector per population member
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked"})
 	public ArrayList<BehaviorVector> getBehaviorVectors(ArrayList<Score<T>> population) {
 		ArrayList<BehaviorVector> behaviorVectors = new ArrayList<BehaviorVector>(population.size());
-		for (int i = 0; i < population.size(); i++) {// one behavior vector per
-														// member of the
-														// population
-			behaviorVectors.add(characterization.getBehaviorVector(population.get(i)));
+		if (Parameters.parameters.booleanParameter("useRelativeNormalization")) {
+			behaviorVectors = characterization.getAllBehaviorVectors(population, characterization);
+		} else {
+			for (int i = 0; i < population.size(); i++) {// one behavior vector per
+				// member of the
+				// population
+				behaviorVectors.add(characterization.getBehaviorVector(population.get(i)));
+			}
 		}
 		if (maxArchiveSize > 0) { // Use an archive
 			archiveBehaviors = new ArrayList<BehaviorVector>(archive.size());
@@ -94,8 +98,8 @@ public class BDNSGA2<T> extends NSGA2<T> {
 		BehaviorVector individualBehavior = behaviorVectors.get(individualIndex);
 		for (int i = 0; i < behaviorVectors.size(); i++) {
 			if (i != individualIndex) {// finds the lowest diversity between all
-										// other population members for
-										// comparison
+				// other population members for
+				// comparison
 				diversityScore = Math.min(diversityScore, behaviorVectors.get(i).distance(individualBehavior));
 			}
 		}
@@ -103,7 +107,7 @@ public class BDNSGA2<T> extends NSGA2<T> {
 			for (int i = 0; i < archiveBehaviors.size(); i++) {
 				double distance = archiveBehaviors.get(i).distance(individualBehavior);
 				if (distance > 0) { // Assume that only identical agent would
-									// have zero distance (fix later?)
+					// have zero distance (fix later?)
 					diversityScore = Math.min(diversityScore, distance);
 				}
 			}
@@ -135,7 +139,7 @@ public class BDNSGA2<T> extends NSGA2<T> {
 			}
 		}
 		if (compareArchive) { // Use an archive: add most diverse individual
-								// from new population
+			// from new population
 			indexToAdd = mostDiverseIndex;
 		}
 		if (writeOutput) {

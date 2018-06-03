@@ -619,7 +619,7 @@ public class Parameters {
 		booleanOptions.add("recordPacman", false, "Record pacman game to save file");
 		booleanOptions.add("recurrency", true, "Allow recurrent links");
 		booleanOptions.add("relativePacmanDirections", true, "Ms. Pac-Man senses and actions for directions are relative to current direction");
-		booleanOptions.add("rememberObservations", false, "remember the inputs/observations of an evaluation to be used for Behavioral Diversity");
+		booleanOptions.add("rememberObservations", false, "remember the inputs/observations of an evaluation to be used for the syllabus of Behavioral Diversity");
 		booleanOptions.add("removePillsNearPowerPills", false, "Pills in a c-path with power pills are absent");
 		booleanOptions.add("replayPacman", false, "Replay pacman game from save file");
 		booleanOptions.add("requireFitnessDifferenceForChange", false, "If the tournament selection between two individuals reveals no fitness difference, then don't mutate or crossover the victor");
@@ -668,6 +668,7 @@ public class Parameters {
 		booleanOptions.add("tugResetsToPreviousGoals", false, "On TUG goal increase, reset RWAs to previous goals");
 		booleanOptions.add("ucb1Evaluation", false, "Use UCB1 to decide which individuals get extra evaluations");
 		booleanOptions.add("useHyperNEATCustomArchitecture", false, "allows for hyperNEAT custom architectures");
+		booleanOptions.add("useRelativeNormalization", false, "enable relative normalization behavior characteristic for behavioral diversity");
 		booleanOptions.add("useTetrisLinesBDCharacterization", false, "turns on tetris characterization vector for 1, 2, 3, or 4 lines cleared");
 		booleanOptions.add("utJumps", true, "UT2004 agent can jump");
 		booleanOptions.add("veryClose", true, "Use Pacman very close sensors");

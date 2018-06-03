@@ -1,5 +1,7 @@
 package edu.southwestern.evolution.nsga2.bd.characterizations;
 
+import java.util.ArrayList;
+
 import edu.southwestern.evolution.nsga2.bd.vectors.BehaviorVector;
 import edu.southwestern.scores.Score;
 
@@ -25,4 +27,9 @@ public interface BehaviorCharacterization<T> {
 	 * @return behavior vector
 	 */
 	public BehaviorVector getBehaviorVector(Score<T> score);
+	
+	public ArrayList<double[]> getSyllabus();
+	
+	@SuppressWarnings("rawtypes")
+	public ArrayList<BehaviorVector> getAllBehaviorVectors(ArrayList<Score<T>> population, BehaviorCharacterization characterization);
 }

@@ -1,5 +1,7 @@
 package edu.southwestern.evolution.nsga2.bd.characterizations;
 
+import java.util.ArrayList;
+
 import edu.southwestern.evolution.nsga2.bd.vectors.BehaviorVector;
 import edu.southwestern.evolution.nsga2.bd.vectors.RealBehaviorVector;
 import edu.southwestern.scores.Score;
@@ -28,5 +30,18 @@ public class DomainSpecificCharacterization<T> implements BehaviorCharacterizati
 	 * gets new random syllabus for testing
 	 */
 	public void prepare() {
+	}
+
+	@Override
+	public ArrayList<double[]> getSyllabus() {
+		return null;
+	}
+
+	@SuppressWarnings("rawtypes")
+	@Override
+	public ArrayList<BehaviorVector> getAllBehaviorVectors(ArrayList<Score<T>> population,
+			BehaviorCharacterization characterization) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

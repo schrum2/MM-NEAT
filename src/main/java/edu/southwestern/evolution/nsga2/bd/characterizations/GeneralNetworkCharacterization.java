@@ -133,4 +133,16 @@ public class GeneralNetworkCharacterization<T extends Network> implements Behavi
 			newRandomSyllabus();
 		}
 	}
+	
+	public ArrayList<double[]> getSyllabus() {
+		return syllabus;
+	}
+	
+	@SuppressWarnings("rawtypes")
+	@Override
+	public ArrayList<BehaviorVector> getAllBehaviorVectors(ArrayList<Score<T>> population,
+			BehaviorCharacterization characterization) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
