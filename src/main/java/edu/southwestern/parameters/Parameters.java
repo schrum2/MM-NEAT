@@ -391,6 +391,7 @@ public class Parameters {
 		booleanOptions.add("scaleTrials", false, "Whether or not to scale the number of trials as the number of generations increases");
 		booleanOptions.add("senseHolesDifferently", false, "Makes inputs for a hole different than input of a blank space");
 		booleanOptions.add("senseHyperNEATGhostPath", false, "shows nearest path to ghost with stronger activation as pacman gets closer to the ghost");
+		booleanOptions.add("senseTetrisHolesAsPositive", false, "sense Tetris holes as positive instead of negative so that ReLU does not nullify them");
 		booleanOptions.add("setDaemon", false, "Used in popacman CustomExecutor");
 		booleanOptions.add("showCPPN", false, "shows evolved CPPN during post evals");
 		booleanOptions.add("showHighestActivatedOutput", false, "highlights most activated output neuron as green in visualizations");
@@ -620,7 +621,6 @@ public class Parameters {
 		booleanOptions.add("recurrency", true, "Allow recurrent links");
 		booleanOptions.add("relativePacmanDirections", true, "Ms. Pac-Man senses and actions for directions are relative to current direction");
 		booleanOptions.add("rememberObservations", false, "remember the inputs/observations of an evaluation to be used for the syllabus of Behavioral Diversity");
-		booleanOptions.add("rememberObservations", false, "remember the inputs/observations of an evaluation to be used for Behavioral Diversity");
 		booleanOptions.add("removePillsNearPowerPills", false, "Pills in a c-path with power pills are absent");
 		booleanOptions.add("replayPacman", false, "Replay pacman game from save file");
 		booleanOptions.add("requireFitnessDifferenceForChange", false, "If the tournament selection between two individuals reveals no fitness difference, then don't mutate or crossover the victor");
@@ -743,6 +743,7 @@ public class Parameters {
 		doubleOptions.add("rlEpsilon", 0.1, "Frequency of completely random actions during Reinforcement Learning");
 		doubleOptions.add("rlGamma", 0.99, "Discount factor used for Reinforcement Learning");
 		doubleOptions.add("scentDecay", 0.99, "Portion of scent remaining after each time step");
+		doubleOptions.add("syllabusChangeProbability", .01, "The probability that a vector will be swapped out for another in the syllabus for intelligent vectors with Behavioral Diversity");
 		//TODO
 		doubleOptions.add("scaleFactor", 1.0, "Used in customExecutor. Scales the size of the image?");
 		doubleOptions.add("softmaxTemperature", 0.25, "Temperature parameter for softmax selection");
