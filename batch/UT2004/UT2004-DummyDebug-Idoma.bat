@@ -1,3 +1,0 @@
-cd ..
-cd ..
-java -jar target/MM-NEAT-0.0.1-SNAPSHOT.jar runNumber:%1 randomSeed:%1 base:ut2004 trials:1 maxGens:100 mu:10 io:true netio:true mating:true task:edu.southwestern.tasks.ut2004.UT2004ShockRifleVsGBBotsDeathMatchTask cleanOldNetworks:true fs:false log:UT2004-DummyDebug-Idoma saveTo:DummyDebug-Idoma utMap:DM-1on1-Idoma utNumOpponents:1 utEvalMinutes:2 utGameBotsOpponent:edu.southwestern.tasks.ut2004.controller.DummyController utDrive:C utPath:SCOPE2018\UT2004 navCubes:true parallelEvaluations:true threads:10
