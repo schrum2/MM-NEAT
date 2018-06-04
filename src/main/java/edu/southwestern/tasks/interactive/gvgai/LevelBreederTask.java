@@ -88,7 +88,7 @@ public class LevelBreederTask<T extends Network> extends InteractiveEvolutionTas
 		SPECIFIC_GAME_LEVEL_CHARS.put("boloadventures", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'g','A'}, // Spawns a goal and an Avatar
-			new char[]{'b','c','l','r','u','d','0'}}); // Spawns a random number of boxes, boulders, lcleft, lcright,lcup, lcdown, and holes
+			new char[]{'b','c','l','r','u','d','o'}}); // Spawns a random number of boxes, boulders, lcleft, lcright,lcup, lcdown, and holes
 		SPECIFIC_GAME_LEVEL_CHARS.put("bomber", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'g','A'}, // Spawns a goal and an Avatar
@@ -106,10 +106,10 @@ public class LevelBreederTask<T extends Network> extends InteractiveEvolutionTas
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'e','A'}, // Spawns and exit and an Avatar
 			new char[]{'o','x','c','b'}}); //Spawns a random number of boulders, diamonds, crabs, butterflies
-//		SPECIFIC_GAME_LEVEL_CHARS.put("", new char[][] {
-	//		new char[]{'w'}, // Walls are fixed
-	//		new char[]{'a','a','d','d','i','o','A'}, // 
-	//		new char[]{'t','x'}}); //
+		SPECIFIC_GAME_LEVEL_CHARS.put("brainman", new char[][] {
+			new char[]{'w'}, // Walls are fixed
+			new char[]{'k','d','e','A'}, // Spawns a key, door, exit and an Avatar
+			new char[]{'r','g','b','o'}}); //Spawns a random number of red, green, and blue gems, and blouders
 //		SPECIFIC_GAME_LEVEL_CHARS.put("", new char[][] {
 	//		new char[]{'w'}, // Walls are fixed
 	//		new char[]{'a','a','d','d','i','o','A'}, // 
@@ -382,7 +382,7 @@ public class LevelBreederTask<T extends Network> extends InteractiveEvolutionTas
 
 	public static void main(String[] args) {
 		try {
-			MMNEAT.main(new String[]{"runNumber:0","randomSeed:1","trials:1","mu:16","maxGens:500","gvgaiGame:boulderdash","io:false","netio:false","mating:true","fs:false","task:edu.southwestern.tasks.interactive.gvgai.LevelBreederTask","allowMultipleFunctions:true","ftype:0","watch:false","netChangeActivationRate:0.3","cleanFrequency:-1","simplifiedInteractiveInterface:false","recurrency:false","saveAllChampions:true","cleanOldNetworks:false","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:2000","imageHeight:2000","imageSize:200","includeFullSigmoidFunction:true","includeFullGaussFunction:true","includeCosineFunction:true","includeGaussFunction:false","includeIdFunction:true","includeTriangleWaveFunction:true","includeSquareWaveFunction:true","includeFullSawtoothFunction:true","includeSigmoidFunction:false","includeAbsValFunction:false","includeSawtoothFunction:false"});
+			MMNEAT.main(new String[]{"runNumber:0","randomSeed:1","trials:1","mu:16","maxGens:500","gvgaiGame:brainman","io:false","netio:false","mating:true","fs:false","task:edu.southwestern.tasks.interactive.gvgai.LevelBreederTask","allowMultipleFunctions:true","ftype:0","watch:false","netChangeActivationRate:0.3","cleanFrequency:-1","simplifiedInteractiveInterface:false","recurrency:false","saveAllChampions:true","cleanOldNetworks:false","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:2000","imageHeight:2000","imageSize:200","includeFullSigmoidFunction:true","includeFullGaussFunction:true","includeCosineFunction:true","includeGaussFunction:false","includeIdFunction:true","includeTriangleWaveFunction:true","includeSquareWaveFunction:true","includeFullSawtoothFunction:true","includeSigmoidFunction:false","includeAbsValFunction:false","includeSawtoothFunction:false"});
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}
