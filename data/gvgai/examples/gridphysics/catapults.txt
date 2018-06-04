@@ -17,14 +17,14 @@ BasicGame square_size=30
         goal  > Immovable color=GREEN img=oryx/dooropen1 portal=True
         wall > Immovable img=oryx/bush5
     LevelMapping
-        . > water floor
+        _ > water floor
         0 > eastfacing floor
         1 > southfacing floor
         2 > northfacing floor
         3 > westfacing floor
         g > goal floor
         A > moving floor
-        _ > floor
+        . > floor
         w > wall floor
     InteractionSet
 
