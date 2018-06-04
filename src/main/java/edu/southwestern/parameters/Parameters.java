@@ -297,6 +297,7 @@ public class Parameters {
 		integerOptions.add("pacmanLives", 1, "Lives that a pacman agent starts with");
 		integerOptions.add("pacmanMaxLevel", 4, "Pacman level after which simulation ends");
 		integerOptions.add("pacmanReplayDelay", Constants.DELAY, "Milliseconds of pause between pacman time steps in replay mode");
+		integerOptions.add("numHunterBots", 0, "dictates how many hunter bots will be loaded into the server");
 		integerOptions.add("proxGhostsToSense", 4, "Number of ghosts sorted by proximity to sense in pacman");
 		integerOptions.add("randomSeed", -1, "Random seed used to control algorithmic randomness (not domain randomness)");
 		integerOptions.add("rawInputWindowSize", 5, "Raw input window size");

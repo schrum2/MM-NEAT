@@ -6,6 +6,7 @@ import cz.cuni.amis.pogamut.base.utils.guice.AgentScoped;
 import cz.cuni.amis.pogamut.ut2004.agent.utils.UT2004BotDescriptor;
 import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004Bot;
 import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004BotModuleController;
+import cz.cuni.amis.pogamut.ut2004.bot.params.UT2004BotParameters;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbcommands.Initialize;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.BotKilled;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.ConfigChange;
@@ -15,11 +16,13 @@ import cz.cuni.amis.pogamut.ut2004.server.IUT2004Server;
 import cz.cuni.amis.pogamut.ut2004.utils.MultipleUT2004BotRunner;
 import cz.cuni.amis.pogamut.ut2004.utils.PogamutUT2004Property;
 import cz.cuni.amis.utils.exception.PogamutException;
+import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.ut2004.actions.BotAction;
 import edu.southwestern.tasks.ut2004.controller.BotController;
 import edu.southwestern.tasks.ut2004.controller.DummyController;
 import edu.southwestern.tasks.ut2004.controller.RandomNavPointPathExplorer;
 import edu.southwestern.tasks.ut2004.server.BotKiller;
+import pogamut.hunter.HunterBot;
 import edu.southwestern.tasks.ut2004.bots.MultiBotLauncher;
 
 @AgentScoped
@@ -108,28 +111,29 @@ public class ControllerBot extends UT2004BotModuleController {
          * @return Array of game data about each controller in game
 	 * @throws PogamutException
 	 */
-	public static GameDataCollector[] launchBot(IUT2004Server server, String name, BotController[] controllers,
+	public static GameDataCollector[] launchBot(IUT2004Server server, String[] names, BotController[] controllers,
 			int evalSeconds, int desiredSkill, String host, int botPort) {
 		GameDataCollector[] collectors = new GameDataCollector[controllers.length];
 		IRemoteAgentParameters[] params = new IRemoteAgentParameters[controllers.length];
-		Class[] classes = new Class[controllers.length];//7 is a random placeholder
-		for (int i = 0; i < controllers.length; i++) {
+		int numHunterBots = Parameters.parameters.integerParameter("numHunterBots");
+		Class[] classes = new Class[controllers.length + numHunterBots];
+
+		
+		for (int i = 0; i < controllers.length; i++) {//adds all controller bots
 			classes[i] = ControllerBot.class;
 			collectors[i] = new GameDataCollector();
-			params[i] = new ControllerBotParameters(server, controllers[i], name, collectors[i], evalSeconds,
+			params[i] = new ControllerBotParameters(server, controllers[i], names[i], collectors[i], evalSeconds,
 					desiredSkill, botPort);
 		}
+		
+		//create another loop that adds hunter bots
+		for(int i = 0; i < numHunterBots; i++) {
+			classes[i + controllers.length] = HunterBot.class;
+			params[i + controllers.length] = new UT2004BotParameters();
+		}
+		
 		MultiBotLauncher.launchMultipleBots(classes, params, host, botPort);
-//		try {//call MultiBotLauncher here
-//			MultipleUT2004BotRunner multi = new MultipleUT2004BotRunner("MultipleBots").setHost(host).setPort(botPort);
-//			UT2004BotDescriptor bots = new UT2004BotDescriptor().setController(ControllerBot.class)
-//					.setAgentParameters(params);
-//			multi.setMain(true).startAgents(bots);
-//		} catch (PogamutException e) {
-//			// Obligatory exception that happens from stopping the bot
-//			// System.out.println("Exception after evaluation");
-//			// e.printStackTrace();
-//		}
+
 		System.out.println("Match over: ");
 		for (int i = 0; i < collectors.length; i++) {
 			System.out.println("\t" + collectors[i]);
