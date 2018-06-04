@@ -126,7 +126,7 @@ public class GeneralNetworkCharacterization<T extends Network> implements Behavi
 	 * creates a new syllabus which must be prepped to test the networks
 	 */
 	public void prepare() {
-		if(Parameters.parameters.booleanParameter("rememberParameters")) {
+		if(Parameters.parameters.booleanParameter("rememberObservations")) {
 			//using intelligent syllabus of past experiences
 			newPastExperiencesSyllabus();
 		} else {
