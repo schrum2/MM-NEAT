@@ -3,12 +3,14 @@ package edu.southwestern.tasks.mspacman.facades;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.mspacman.ghosts.GhostComparator;
+import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.stats.StatisticsUtilities;
 import pacman.game.Constants.GHOST;
 import pacman.game.Game;
 import popacman.prediction.PillModel;
+import popacman.prediction.fast.GhostPredictionsFast;
 
 import java.awt.Color;
 import java.util.*;
@@ -30,6 +32,7 @@ public class GameFacade {
 	public static final int NUM_DIRS = 4;
 	public static final int DANGEROUS_TIME = 5;
 	public PillModel pillModel = null;
+	public GhostPredictionsFast ghostPredictions = null;
 	public oldpacman.game.Game oldG = null;
 	public pacman.game.Game poG = null; // New pacman from Maven
 
@@ -1049,12 +1052,13 @@ public class GameFacade {
 				//TODO: test
 				ArrayList<Integer> tempList = new ArrayList<Integer>();
 				assert pillModel != null : "this should be handled";
-				BitSet temp = pillModel.getPills();
+				
 				for(int pill : poG.getPillIndices()) {
-					if(temp.get(pill) == true) {
+					if(pillModel.getPills().get(pill)) {
 						tempList.add(pill);
 					}
 				}
+				
 				int[] result = new int[tempList.size()];
 				for(int i = 0; i < tempList.size(); i++) {
 					result[i] = tempList.get(i);
@@ -3316,38 +3320,49 @@ public class GameFacade {
 		this.pillModel = pm;
 	}
 	
+	public GhostPredictionsFast getGhostPredictions() {
+		return this.ghostPredictions;
+	}
 	
-//	public void updateHiddenState() {
-//		if(pillModel == null) {
-//			initPillModel();
-//		}
-//		updatePillModel();
-//	}
-//	
+	public void setGhostPredictions(GhostPredictionsFast gp) {
+		this.ghostPredictions = gp;
+	}
+	
+	
 	//credit to piers on 6/01/18.
 	//See InfromationSetMCTSPacMan
 	public PillModel initPillModel() {
 		pillModel = new PillModel(poG.getNumberOfPills());
-		
         int[] indices = poG.getCurrentMaze().pillIndices;
         for (int index : indices) {
             pillModel.observe(index, true);
         }
         
-        return this.pillModel;
+//        Arrays.sort(indices);
+//        System.out.println(Arrays.toString(indices));
+//        System.out.println(indices.length);
+//        MiscUtil.waitForReadStringAndEnterKeyPress();
+        
+        return pillModel;
 	}
 	
 	//credit to piers on 6/01/18.
 	//See InfromationSetMCTSPacMan
 	public PillModel updatePillModel() {
+		System.out.println("Update pill model: " + pillModel);
         int pillIndex = poG.getPillIndex(poG.getPacmanCurrentNodeIndex());
+        System.out.println(Arrays.toString(poG.getCurrentMaze().pillIndices));
         if (pillIndex != -1) {
             Boolean pillState = poG.isPillStillAvailable(pillIndex);
+        	System.out.println("Pill at: " + pillIndex + " " + pillState);
             if (pillState != null && !pillState) {
+            	System.out.println("\tUPDATE for " + pillIndex + " BEFORE " + pillModel.getPills().cardinality());
                 pillModel.observe(pillIndex, false);
+                //pillModel.update(pillIndex);
+            	System.out.println("\tUPDATED: " + pillModel.getPills().cardinality());
             }
         }
-        return this.pillModel;
+        return pillModel;
 	}
 	
 	

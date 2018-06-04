@@ -24,10 +24,10 @@ public class GhostPredictionsFast {
     private Maze maze;
     private int mazeSize;
     //ORIGINAL
-    //private static final double THRESHOLD = 1 / 256.0d;
+    private static final double THRESHOLD = 1 / 256.0d;
     
     //MODIFIED
-    private static final double THRESHOLD = Parameters.parameters.doubleParameter("probabilityThreshold");
+    //private static final double THRESHOLD = Parameters.parameters.doubleParameter("probabilityThreshold");
     
     private EnumMap<GHOST, Boolean> beenSpotted;
     private Random random;

@@ -25,7 +25,9 @@ public class PillModel {
 
     // There is a pill here!
     public void observe(int index, boolean pillThere) {
+    	System.out.println("BEFORE:" + pills);
         pills.set(index, pillThere);
+    	System.out.println("AFTER:" + pills);
     }
 
     public int getPillsEaten() {

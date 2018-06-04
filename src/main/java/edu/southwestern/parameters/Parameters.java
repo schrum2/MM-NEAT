@@ -455,6 +455,8 @@ public class Parameters {
 		booleanOptions.add("deterministic", false, "Make evaluations deterministic, if supported");
 		booleanOptions.add("dieOnImproperPowerPillEating", false, "Pacman dies if power pill is eaten when less than 4 threat ghosts are present");
 		booleanOptions.add("diff", true, "Use Pacman distance difference sensors");
+		booleanOptions.add("drawGhostPredictions", true, "Determines whether or not to visualize the predictions of ghost locations for PO pacman");
+		booleanOptions.add("drawPillModel", true, "Determines whether or not to visualize the model of pill locations for PO pacman");
 		booleanOptions.add("eTimeVsGDis", false, "Sense edible time minus ghost distance");
 		booleanOptions.add("eachComponentTracksScoreToo", false, "Each subcomponent uses game score as reward in addition to preferred fitness");
 		booleanOptions.add("eligibilityOnEarnedFitness", false, "For earned fitness, track eligibility scores");
