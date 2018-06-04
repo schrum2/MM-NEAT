@@ -155,11 +155,11 @@ public class LevelBreederTask<T extends Network> extends InteractiveEvolutionTas
 		SPECIFIC_GAME_LEVEL_CHARS.put("cookmepasta", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'b','p','o','t','k','l','A'}, // Spawns all the ingredients and an Avatar
-			new char[]{'.'}}); //
-//		SPECIFIC_GAME_LEVEL_CHARS.put("", new char[][] {
-	//		new char[]{'w'}, // Walls are fixed
-	//		new char[]{'a','a','d','d','i','o','A'}, // 
-	//		new char[]{'t','x'}}); //
+			new char[]{'.'}}); //null
+		SPECIFIC_GAME_LEVEL_CHARS.put("cops", new char[][] {
+			new char[]{'w'}, // Walls are fixed
+			new char[]{'0','1','d','b','A'}, // Spawns a jail, depot, key, and an Avatar
+			new char[]{'g','y','r','d'}}); // spawns different levels of criminals
 //		SPECIFIC_GAME_LEVEL_CHARS.put("", new char[][] {
 	//		new char[]{'w'}, // Walls are fixed
 	//		new char[]{'a','a','d','d','i','o','A'}, // 
@@ -384,7 +384,7 @@ public class LevelBreederTask<T extends Network> extends InteractiveEvolutionTas
 
 	public static void main(String[] args) {
 		try {
-			MMNEAT.main(new String[]{"runNumber:0","randomSeed:1","trials:1","mu:16","maxGens:500","gvgaiGame:cookmepasta","io:false","netio:false","mating:true","fs:false","task:edu.southwestern.tasks.interactive.gvgai.LevelBreederTask","allowMultipleFunctions:true","ftype:0","watch:false","netChangeActivationRate:0.3","cleanFrequency:-1","simplifiedInteractiveInterface:false","recurrency:false","saveAllChampions:true","cleanOldNetworks:false","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:2000","imageHeight:2000","imageSize:200","includeFullSigmoidFunction:true","includeFullGaussFunction:true","includeCosineFunction:true","includeGaussFunction:false","includeIdFunction:true","includeTriangleWaveFunction:true","includeSquareWaveFunction:true","includeFullSawtoothFunction:true","includeSigmoidFunction:false","includeAbsValFunction:false","includeSawtoothFunction:false"});
+			MMNEAT.main(new String[]{"runNumber:0","randomSeed:1","trials:1","mu:16","maxGens:500","gvgaiGame:cops","io:false","netio:false","mating:true","fs:false","task:edu.southwestern.tasks.interactive.gvgai.LevelBreederTask","allowMultipleFunctions:true","ftype:0","watch:false","netChangeActivationRate:0.3","cleanFrequency:-1","simplifiedInteractiveInterface:false","recurrency:false","saveAllChampions:true","cleanOldNetworks:false","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:2000","imageHeight:2000","imageSize:200","includeFullSigmoidFunction:true","includeFullGaussFunction:true","includeCosineFunction:true","includeGaussFunction:false","includeIdFunction:true","includeTriangleWaveFunction:true","includeSquareWaveFunction:true","includeFullSawtoothFunction:true","includeSigmoidFunction:false","includeAbsValFunction:false","includeSawtoothFunction:false"});
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}
