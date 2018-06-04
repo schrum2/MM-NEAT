@@ -6,6 +6,8 @@ import popacman.prediction.GhostLocation;
 
 import java.util.*;
 
+import edu.southwestern.parameters.Parameters;
+
 import static pacman.game.Constants.GHOST;
 import static pacman.game.Constants.MOVE;
 
@@ -21,7 +23,12 @@ public class GhostPredictionsFast {
     private MOVE[] backMoves;
     private Maze maze;
     private int mazeSize;
-    private static final double THRESHOLD = 1 / 256.0d;
+    //ORIGINAL
+    //private static final double THRESHOLD = 1 / 256.0d;
+    
+    //MODIFIED
+    private static final double THRESHOLD = Parameters.parameters.doubleParameter("probabilityThreshhold");
+    
     private EnumMap<GHOST, Boolean> beenSpotted;
     private Random random;
 
