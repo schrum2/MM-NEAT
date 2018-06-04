@@ -1,5 +1,7 @@
 package edu.southwestern.tasks.ut2004.bots;
 
+import java.util.Arrays;
+
 import cz.cuni.amis.pogamut.base.agent.params.IRemoteAgentParameters;
 import cz.cuni.amis.pogamut.ut2004.agent.utils.UT2004BotDescriptor;
 import cz.cuni.amis.pogamut.ut2004.bot.params.UT2004BotParameters;
@@ -29,7 +31,7 @@ public class MultiBotLauncher {
 	public static void launchMultipleBots(Class[] botClasses, IRemoteAgentParameters[] params,String host, int port) {
 		assert botClasses.length == params.length : "List of bots and bot parameters must be same length";
 		Thread[] threads = new Thread[botClasses.length];
-
+		System.out.println("Launch bots: " + Arrays.toString(botClasses));
 		//creates threads for each class of bot
 		for(int i = 0; i < botClasses.length; i++) {
 			final int index = i;

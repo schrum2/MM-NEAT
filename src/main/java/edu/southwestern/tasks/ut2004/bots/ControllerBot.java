@@ -20,6 +20,7 @@ import edu.southwestern.tasks.ut2004.controller.BotController;
 import edu.southwestern.tasks.ut2004.controller.DummyController;
 import edu.southwestern.tasks.ut2004.controller.RandomNavPointPathExplorer;
 import edu.southwestern.tasks.ut2004.server.BotKiller;
+import edu.southwestern.tasks.ut2004.bots.MultiBotLauncher;
 
 @AgentScoped
 public class ControllerBot extends UT2004BotModuleController {
@@ -111,21 +112,24 @@ public class ControllerBot extends UT2004BotModuleController {
 			int evalSeconds, int desiredSkill, String host, int botPort) {
 		GameDataCollector[] collectors = new GameDataCollector[controllers.length];
 		IRemoteAgentParameters[] params = new IRemoteAgentParameters[controllers.length];
+		Class[] classes = new Class[controllers.length];//7 is a random placeholder
 		for (int i = 0; i < controllers.length; i++) {
+			classes[i] = ControllerBot.class;
 			collectors[i] = new GameDataCollector();
 			params[i] = new ControllerBotParameters(server, controllers[i], name, collectors[i], evalSeconds,
 					desiredSkill, botPort);
 		}
-		try {
-			MultipleUT2004BotRunner multi = new MultipleUT2004BotRunner("MultipleBots").setHost(host).setPort(botPort);
-			UT2004BotDescriptor bots = new UT2004BotDescriptor().setController(ControllerBot.class)
-					.setAgentParameters(params);
-			multi.setMain(true).startAgents(bots);
-		} catch (PogamutException e) {
-			// Obligatory exception that happens from stopping the bot
-			// System.out.println("Exception after evaluation");
-			// e.printStackTrace();
-		}
+		MultiBotLauncher.launchMultipleBots(classes, params, host, botPort);
+//		try {//call MultiBotLauncher here
+//			MultipleUT2004BotRunner multi = new MultipleUT2004BotRunner("MultipleBots").setHost(host).setPort(botPort);
+//			UT2004BotDescriptor bots = new UT2004BotDescriptor().setController(ControllerBot.class)
+//					.setAgentParameters(params);
+//			multi.setMain(true).startAgents(bots);
+//		} catch (PogamutException e) {
+//			// Obligatory exception that happens from stopping the bot
+//			// System.out.println("Exception after evaluation");
+//			// e.printStackTrace();
+//		}
 		System.out.println("Match over: ");
 		for (int i = 0; i < collectors.length; i++) {
 			System.out.println("\t" + collectors[i]);
