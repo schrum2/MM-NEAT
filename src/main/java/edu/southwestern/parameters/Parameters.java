@@ -411,7 +411,8 @@ public class Parameters {
 		booleanOptions.add("tetrisAllowZShape", true, "Determines whether or not ZShape pieces will shown up in Tetris");
 		booleanOptions.add("torusInvertSensorInputs", false, "Causes agents' sensor inputs to be inverted in torusPredPreyTask");
 		booleanOptions.add("torusSenseByProximity", true, "Causes agents' sensor inputs to be by proximity of the agent instead of simply each agent by indices");
-		booleanOptions.add("usePillModel", true, "decide whether or not to model the stae of pills in pacman PO");
+		booleanOptions.add("usePillModel", true, "decide whether or not to model the state of pills in pacman PO");
+		booleanOptions.add("useGhostModel", true, "decide whether or not to model a predicted state of the ghosts in pacman PO");
 		booleanOptions.add("watchLastBest", false, "shows best result from last generation");
 		booleanOptions.add("watchLastBestOfTeams", false, "shows best result from each population from last generation (coevolution)");
 		booleanOptions.add("zeroPadding", false, "Whether the input border for convolutional structures is padded with zeros");
