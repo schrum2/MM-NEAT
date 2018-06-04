@@ -27,9 +27,5 @@ public interface BehaviorCharacterization<T> {
 	 * @return behavior vector
 	 */
 	public BehaviorVector getBehaviorVector(Score<T> score);
-	
-	public ArrayList<double[]> getSyllabus();
-	
-	@SuppressWarnings("rawtypes")
-	public ArrayList<BehaviorVector> getAllBehaviorVectors(ArrayList<Score<T>> population, BehaviorCharacterization characterization);
+
 }

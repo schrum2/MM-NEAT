@@ -31,17 +31,4 @@ public class DomainSpecificCharacterization<T> implements BehaviorCharacterizati
 	 */
 	public void prepare() {
 	}
-
-	@Override
-	public ArrayList<double[]> getSyllabus() {
-		return null;
-	}
-
-	@SuppressWarnings("rawtypes")
-	@Override
-	public ArrayList<BehaviorVector> getAllBehaviorVectors(ArrayList<Score<T>> population,
-			BehaviorCharacterization characterization) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }

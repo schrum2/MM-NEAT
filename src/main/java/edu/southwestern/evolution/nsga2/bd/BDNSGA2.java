@@ -58,14 +58,10 @@ public class BDNSGA2<T> extends NSGA2<T> {
 	@SuppressWarnings({ "unchecked"})
 	public ArrayList<BehaviorVector> getBehaviorVectors(ArrayList<Score<T>> population) {
 		ArrayList<BehaviorVector> behaviorVectors = new ArrayList<BehaviorVector>(population.size());
-		if (Parameters.parameters.booleanParameter("useRelativeNormalization")) {
-			behaviorVectors = characterization.getAllBehaviorVectors(population, characterization);
-		} else {
-			for (int i = 0; i < population.size(); i++) {// one behavior vector per
-				// member of the
-				// population
-				behaviorVectors.add(characterization.getBehaviorVector(population.get(i)));
-			}
+		for (int i = 0; i < population.size(); i++) {// one behavior vector per
+			// member of the
+			// population
+			behaviorVectors.add(characterization.getBehaviorVector(population.get(i)));
 		}
 		if (maxArchiveSize > 0) { // Use an archive
 			archiveBehaviors = new ArrayList<BehaviorVector>(archive.size());
