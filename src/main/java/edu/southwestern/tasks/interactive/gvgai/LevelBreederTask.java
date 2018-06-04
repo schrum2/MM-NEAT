@@ -51,6 +51,11 @@ public class LevelBreederTask<T extends Network> extends InteractiveEvolutionTas
 			new char[]{'w','b','c'}, // There are fixed walls, destructible blocks, and black death squares
 			new char[]{'l','k','e','A'}, // There is one locked door, one key, one escape gate, and one avatar
 			new char[]{'d'}}); // There are a random number of death smoke blobs
+		SPECIFIC_GAME_LEVEL_CHARS.put("chipschallenge", new char[][] {
+			new char[]{'w'}, // Walls are fixed
+			new char[]{'-','r','g','b','y','1','2','3','4','e','A'}, // There is one locked gate, four keys, four doors, one escape floor and one avatar
+			new char[]{'~','m','x','f','i','d'}}); // There are random hazards dignified by ~(water), m(mud), x(fire) and random perks dignified by f (flippers), i(fireboots), d(crate)
+
 	}
 	
 	public static final String GAMES_PATH = "data/gvgai/examples/gridphysics/";
@@ -198,7 +203,7 @@ public class LevelBreederTask<T extends Network> extends InteractiveEvolutionTas
 
 	public static void main(String[] args) {
 		try {
-			MMNEAT.main(new String[]{"runNumber:0","randomSeed:1","trials:1","mu:16","maxGens:500","gvgaiGame:zelda","io:false","netio:false","mating:true","fs:false","task:edu.southwestern.tasks.interactive.gvgai.LevelBreederTask","allowMultipleFunctions:true","ftype:0","watch:false","netChangeActivationRate:0.3","cleanFrequency:-1","simplifiedInteractiveInterface:false","recurrency:false","saveAllChampions:true","cleanOldNetworks:false","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:2000","imageHeight:2000","imageSize:200","includeFullSigmoidFunction:true","includeFullGaussFunction:true","includeCosineFunction:true","includeGaussFunction:false","includeIdFunction:true","includeTriangleWaveFunction:true","includeSquareWaveFunction:true","includeFullSawtoothFunction:true","includeSigmoidFunction:false","includeAbsValFunction:false","includeSawtoothFunction:false"});
+			MMNEAT.main(new String[]{"runNumber:0","randomSeed:1","trials:1","mu:16","maxGens:500","gvgaiGame:chipschallenge","io:false","netio:false","mating:true","fs:false","task:edu.southwestern.tasks.interactive.gvgai.LevelBreederTask","allowMultipleFunctions:true","ftype:0","watch:false","netChangeActivationRate:0.3","cleanFrequency:-1","simplifiedInteractiveInterface:false","recurrency:false","saveAllChampions:true","cleanOldNetworks:false","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:2000","imageHeight:2000","imageSize:200","includeFullSigmoidFunction:true","includeFullGaussFunction:true","includeCosineFunction:true","includeGaussFunction:false","includeIdFunction:true","includeTriangleWaveFunction:true","includeSquareWaveFunction:true","includeFullSawtoothFunction:true","includeSigmoidFunction:false","includeAbsValFunction:false","includeSawtoothFunction:false"});
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}
