@@ -1,6 +1,7 @@
 package edu.southwestern.networks.dl4j;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
@@ -17,11 +18,12 @@ import edu.southwestern.networks.hyperneat.HyperNEATUtil;
 import edu.southwestern.networks.hyperneat.Substrate;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.rlglue.tetris.HyperNEATTetrisTask;
+import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.random.RandomNumbers;
 
 public class TensorNetworkFromHyperNEATSpecificationTest {
 
-	//@Test
+	@Test
 	public void testFillWeightsFromHyperNEATNetworkAllReLU() {
 		HyperNEATTetrisTask.hardSubstrateReset();
 		EvolutionaryHistory.archetypes = null; // Force reset
@@ -99,7 +101,7 @@ public class TensorNetworkFromHyperNEATSpecificationTest {
 		
 		
 		// Now do timing benchmark
-//		final int CYCLES = 500;
+//		final int CYCLES = 100;
 //	    double[] randomInput = RandomNumbers.randomArray(substrateGenotype.numIn);
 //	    
 //	    long startDL4J = System.currentTimeMillis();
@@ -130,7 +132,7 @@ public class TensorNetworkFromHyperNEATSpecificationTest {
 //	    assertTrue(timeHyperNEAT > timeDL4J);
 	}
 
-	//@Test
+	@Test
 	public void testFillWeightsFromHyperNEATNetworkAllTanH() {
 		HyperNEATTetrisTask.hardSubstrateReset();
 		EvolutionaryHistory.archetypes = null; // Force reset
@@ -190,7 +192,7 @@ public class TensorNetworkFromHyperNEATSpecificationTest {
 	}
 	
 
-	//@Test
+	@Test
 	public void testFillWeightsFromHyperNEATNetworkReLUWithTanHOnTop() {
 		HyperNEATTetrisTask.hardSubstrateReset();
 		EvolutionaryHistory.archetypes = null; // Force reset
