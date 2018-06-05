@@ -88,9 +88,9 @@ public class InformationSetMCTSPacMan extends PacmanController implements Drawab
         if (pillIndex != -1) {
             Boolean pillState = game.isPillStillAvailable(pillIndex);
             if (pillState != null && !pillState) {
-            	System.out.println("\tUPDATE for " + pillIndex + " BEFORE " + pillModel.getPills().cardinality());
+            	//System.out.println("\tUPDATE for " + pillIndex + " BEFORE " + pillModel.getPills().cardinality());
                 pillModel.observe(pillIndex, false);
-                System.out.println("\tUPDATED: " + pillModel.getPills().cardinality() + "\n");
+                //System.out.println("\tUPDATED: " + pillModel.getPills().cardinality() + "\n");
             }
         }
 
