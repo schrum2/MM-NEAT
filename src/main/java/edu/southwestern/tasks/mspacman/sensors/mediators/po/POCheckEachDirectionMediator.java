@@ -26,13 +26,9 @@ import edu.southwestern.tasks.mspacman.sensors.directional.specific.VariableDire
 import edu.southwestern.tasks.mspacman.sensors.directional.specific.VariableDirectionSpecificGhostIncomingBlock;
 
 /**
- * Mediator for the infinite imprison task (though has been extended beyond
- * that). Of interest: One sensor for whether ghosts are edible or not, which
- * simplifies things; incoming ghost sensors can be turned on or off; Can sense
- * if all threats are present (which should inform decision to eat power pill);
- * can sense if very close to power pill.
+ * TODO: Describe
  * 
- * @author Jacob Schrum
+ * @author Will Price
  */
 public class POCheckEachDirectionMediator extends VariableDirectionBlockLoadedInputOutputMediator {
 
@@ -45,24 +41,16 @@ public class POCheckEachDirectionMediator extends VariableDirectionBlockLoadedIn
 
 		blocks.add(new BiasBlock());
 		// Distances
-		blocks.add(new VariableDirectionPillDistanceBlock(direction));
+		blocks.add(new VariableDirectionPillDistanceBlock(direction)); // ASSUME PILL MODEL INFLUENCES THESE IN GAMEFACADE
 		blocks.add(new VariableDirectionPowerPillDistanceBlock(direction));
 		for (int i = 0; i < numJunctionsToSense; i++) {
 			blocks.add(new VariableDirectionJunctionDistanceBlock(direction, i));
 		}
-		// Specific Ghosts: Probably never use again
-		if (Parameters.parameters.booleanParameter("specific")) {
-			for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
-				blocks.add(new VariableDirectionSpecificGhostDistanceBlock(direction, i));
-				if (incoming) {
-					blocks.add(new VariableDirectionSpecificGhostIncomingBlock(i));
-				}
-				// blocks.add(new SpecificGhostIsEdibleBlock(i));
-			}
-		}
+
 		// Ghosts By Distance
 		if (Parameters.parameters.booleanParameter("specificGhostProximityOrder")) {
 			for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
+				// CHANGE TO USE GHOST MODEL INSTEAD
 				blocks.add(new VariableDirectionSortedGhostDistanceBlock(i));
 				if (incoming) {
 					blocks.add(new VariableDirectionSortedGhostIncomingBlock(i));
@@ -100,12 +88,15 @@ public class POCheckEachDirectionMediator extends VariableDirectionBlockLoadedIn
 				}
 			}
 		}
+		
 		// Look ahead
 		blocks.add(new VariableDirectionKStepPillCountBlock(direction));
 		blocks.add(new VariableDirectionKStepJunctionCountBlock(direction));
+		
 		// Counts
 		blocks.add(new PowerPillsRemainingBlock(true, false));
 		blocks.add(new PillsRemainingBlock(true, false));
+		
 		// For limited edible time
 		if (!infiniteEdibleTime) {
 			blocks.add(new CountEdibleGhostsBlock(true, false));
