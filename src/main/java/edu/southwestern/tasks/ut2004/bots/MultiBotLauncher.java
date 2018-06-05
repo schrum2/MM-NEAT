@@ -15,7 +15,7 @@ import pogamut.hunter.HunterBot;
 import pogamut.navigationbot.NavigationBot;
 
 /**
- * launches different bots into the same soldier
+ * launches different bots into the same server
  * @author Jacob Schrum
  */
 public class MultiBotLauncher {

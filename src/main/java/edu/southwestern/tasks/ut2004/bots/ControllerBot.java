@@ -69,6 +69,9 @@ public class ControllerBot extends UT2004BotModuleController {
 		return new Initialize().setName(params.getName()).setDesiredSkill(params.getDesiredSkill());
 	}
 
+	/**
+	 * ends the evaluation period for the bot and retrieves its fitnesses
+	 */
 	public void endEval() {
 		// System.out.println("End eval");
 		getParams().getStats().endEval(this);
@@ -77,11 +80,20 @@ public class ControllerBot extends UT2004BotModuleController {
 	}
 
 	@Override
+	/**
+	 * initializes the brain with the game data
+	 * @param info (data feedback from the game)
+	 * @param currentConfig (the current configuration of the bot being sent to the server)
+	 * @param init (initial message sent to the server)
+	 */
 	public void botInitialized(GameInfo info, ConfigChange currentConfig, InitedMessage init) {
 		brain.initialize(this);
 	}
 
 	@Override
+	/**
+	 * assigns actions for the bot to execute
+	 */
 	public void logic() throws PogamutException {
 		if (game.getTime() > getParams().getEvalSeconds()) {
 			endEval();
@@ -93,6 +105,9 @@ public class ControllerBot extends UT2004BotModuleController {
 	}
 
 	@Override
+	/**
+	 * resets the brain and the bot when it is killed
+	 */
 	public void botKilled(BotKilled event) {
 		brain.reset(this);
 	}
@@ -132,15 +147,15 @@ public class ControllerBot extends UT2004BotModuleController {
 		IRemoteAgentParameters[] params = new IRemoteAgentParameters[totalBots];
 		Class[] classes = new Class[totalBots];
 
-
-		for (int i = 0; i < controllers.length; i++) {//adds all ControllerBots
+		//adds all ControllerBots
+		for (int i = 0; i < controllers.length; i++) {
 			classes[i] = ControllerBot.class;
 			collectors[i] = new GameDataCollector();
 			params[i] = new ControllerBotParameters(server, controllers[i], names[i], collectors[i], evalSeconds,
 					desiredSkill, botPort);
 		}
 
-		//create another loop that adds hunter bots
+		//adds hunter bots to the spaces in the array after ControllerBots
 		// TODO: Fix issue with HunterBots
 		//		for(int i = 0; i < numHunterBots; i++) {
 		//			classes[i + controllers.length] = HunterBot.class;

@@ -28,13 +28,10 @@ import java.util.TreeMap;
  * <li>TODO add more</li>
  * </ul>
  *
- * @author Ik
+ * @author Igor Karpov
  */
 public class GameDataCollector implements Serializable {
 
-	/**
-	 *
-	 */
 	private static final long serialVersionUID = 1L;
 	public double evalTime = 0;
 	private boolean successfulEval = false;
@@ -339,7 +336,7 @@ public class GameDataCollector implements Serializable {
 	}
 
 	/**
-	 * @return Number of bots killed by this bot.
+	 * @return Number of other players killed by this bot.
 	 */
 	public int getFrags() {
 		return frags;
@@ -447,6 +444,7 @@ public class GameDataCollector implements Serializable {
 		return damageEvents;
 	}
 
+	//inherited method
 	public void endExperiment() {
 	}
 
