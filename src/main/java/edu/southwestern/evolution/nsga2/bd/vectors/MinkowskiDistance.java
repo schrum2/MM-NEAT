@@ -22,7 +22,7 @@ public class MinkowskiDistance  extends RealBehaviorVector{
 	}
 	
 	/**
-	 * Minkwosi sitance is an optional way to measure similarity for behavioral diversity
+	 * Minkwosi distance is an optional way to measure similarity for behavioral diversity
 	 * @param vector that calling vector will be compared with
 	 * @return distance between calling vector and param vector 
 	 */
