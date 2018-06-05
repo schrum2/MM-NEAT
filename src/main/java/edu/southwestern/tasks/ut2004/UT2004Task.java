@@ -201,15 +201,17 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 					behaviors.add(new BattleNetworkBehaviorModule<T>(organism));
 					behaviors.add(new ItemExplorationBehaviorModule());
 					BotController controller = new BehaviorListController(behaviors);
-					// Store evolving bot and opponents
+					// Store evolving bot and opponents that are ControllerBots
 					BotController[] allBots = new BotController[this.opponents.length + 1];
+					allBots[0] = controller;
+					System.arraycopy(opponents, 0, allBots, 1, opponents.length);
+					// Create names for all bots
 					String[] names = new String[allBots.length];
 					names[0] = "EvolvingBot" + gamePort;
 					for(int i = 1; i < names.length; i++) {
 						names[i] = allBots[i].getClass().getName();
 					}
-					allBots[0] = controller;
-					System.arraycopy(opponents, 0, allBots, 1, opponents.length);
+					// Launch bots on server and retrieve collected fitness info
 					GameDataCollector[] collectors = ControllerBot.launchBot(
 							server, names, allBots,
 							evalMinutes * 60, desiredSkill, "localhost", botPort);
