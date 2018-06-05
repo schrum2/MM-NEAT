@@ -39,6 +39,9 @@ import cz.cuni.amis.pogamut.ut2004.utils.UT2004BotRunner;
 import cz.cuni.amis.utils.collections.MyCollections;
 import cz.cuni.amis.utils.exception.PogamutException;
 import cz.cuni.amis.utils.flag.FlagListener;
+import edu.southwestern.tasks.ut2004.bots.ControllerBotParameters;
+import edu.southwestern.tasks.ut2004.server.BotKiller;
+import pogamut.hunter.HunterBotParameters;
 
 /**
  * Example of Simple Pogamut bot, that randomly walks around the map searching
@@ -207,7 +210,13 @@ public class HunterBot extends UT2004BotModuleController<UT2004Bot> {
      * @throws cz.cuni.amis.pogamut.base.exceptions.PogamutException
      */
     @Override
-    public void logic() {    	    	
+    public void logic() {    
+    	//ends the test if it has reached its time limit
+		if (game.getTime() > getParams().getEvalSeconds()) {
+			endEval();
+		}
+    	
+    	
         // 1) do you see enemy? 	-> go to PURSUE (start shooting / hunt the enemy)
         if (shouldEngage && players.canSeeEnemies() && weaponry.hasLoadedWeapon()) {
             stateEngage();
@@ -241,7 +250,17 @@ public class HunterBot extends UT2004BotModuleController<UT2004Bot> {
         stateRunAroundItems();
     }
 
-    //////////////////
+    public void endEval() {
+    		// System.out.println("End eval");
+    		getParams().getStats().endEval(this);
+    		BotKiller.killBot(bot);
+    		// ServerKiller.killServer(getParams().getServer());
+	}
+
+	public HunterBotParameters getParams() {
+    	return (HunterBotParameters) bot.getParams();
+	}
+	//////////////////
     // STATE ENGAGE //
     //////////////////
     protected boolean runningToPlayer = false;

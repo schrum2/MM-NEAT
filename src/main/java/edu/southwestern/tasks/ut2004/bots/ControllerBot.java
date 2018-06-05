@@ -137,12 +137,12 @@ public class ControllerBot extends UT2004BotModuleController {
 			int evalSeconds, int desiredSkill, String host, int botPort) {
 		GameDataCollector[] collectors = new GameDataCollector[controllers.length];
 		int numHunterBots = Parameters.parameters.integerParameter("numHunterBots");
-		if(numHunterBots > 0) {
-			System.out.println("Launching HunterBots with evolution does not currently work");
-			System.out.println("See edu.southwestern.tasks.ut2004.bots.ControllerBot");
-			System.exit(1);
-		}
-		
+//		if(numHunterBots > 0) {
+//			System.out.println("Launching HunterBots with evolution does not currently work");
+//			System.out.println("See edu.southwestern.tasks.ut2004.bots.ControllerBot");
+//			System.exit(1);
+//		}
+
 		int totalBots = controllers.length + numHunterBots;
 		IRemoteAgentParameters[] params = new IRemoteAgentParameters[totalBots];
 		Class[] classes = new Class[totalBots];
@@ -157,25 +157,25 @@ public class ControllerBot extends UT2004BotModuleController {
 
 		//adds hunter bots to the spaces in the array after ControllerBots
 		// TODO: Fix issue with HunterBots
-		//		for(int i = 0; i < numHunterBots; i++) {
-		//			classes[i + controllers.length] = HunterBot.class;
-		//			params[i + controllers.length] = new UT2004BotParameters();
-		//		}
+		for(int i = 0; i < numHunterBots; i++) {
+			classes[i + controllers.length] = HunterBot.class;
+			params[i + controllers.length] = new UT2004BotParameters();
+		}
 
 		// This method still has some problems and causes weird exceptions sometimes
 		MultiBotLauncher.launchMultipleBots(classes, params, host, botPort);
 
 		// Old version of this code
-//		try {
-//			MultipleUT2004BotRunner multi = new MultipleUT2004BotRunner("MultipleBots").setHost(host).setPort(botPort);
-//			@SuppressWarnings("unchecked")
-//			UT2004BotDescriptor bots = new UT2004BotDescriptor().setController(ControllerBot.class).setAgentParameters(params);
-//			multi.setMain(true).startAgents(bots);
-//		} catch (PogamutException e) {
-//			// Obligatory exception that happens from stopping the bot
-//			// System.out.println("Exception after evaluation");
-//			// e.printStackTrace();
-//		}		
+		//		try {
+		//			MultipleUT2004BotRunner multi = new MultipleUT2004BotRunner("MultipleBots").setHost(host).setPort(botPort);
+		//			@SuppressWarnings("unchecked")
+		//			UT2004BotDescriptor bots = new UT2004BotDescriptor().setController(ControllerBot.class).setAgentParameters(params);
+		//			multi.setMain(true).startAgents(bots);
+		//		} catch (PogamutException e) {
+		//			// Obligatory exception that happens from stopping the bot
+		//			// System.out.println("Exception after evaluation");
+		//			// e.printStackTrace();
+		//		}		
 
 		//		System.out.println("Match over: ");
 		//		for (int i = 0; i < collectors.length; i++) {
