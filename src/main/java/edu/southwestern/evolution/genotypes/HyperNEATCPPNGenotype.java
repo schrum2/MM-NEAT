@@ -13,7 +13,6 @@ import edu.southwestern.networks.hyperneat.Substrate;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.util.CartesianGeometricUtilities;
-import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.datastructures.Triple;
@@ -135,8 +134,8 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 		constructingNetwork = true; // prevent displaying of substrates
 		//long time = System.currentTimeMillis(); // for timing
 		TWEANN cppn = getCPPN();// CPPN used to create TWEANN network
-		List<Substrate> subs = hnt.getSubstrateInformation();// extract substrate information from domain
-		List<Triple<String, String, Boolean>> connections = hnt.getSubstrateConnectivity();// extract substrate connectivity from domain
+		List<Substrate> subs = getSubstrateInformation(hnt);// extract substrate information from domain
+		List<Triple<String, String, Boolean>> connections = getSubstrateConnectivity(hnt);// extract substrate connectivity from domain
 		ArrayList<NodeGene> newNodes = null;
 		ArrayList<LinkGene> newLinks = null;
 
@@ -187,6 +186,27 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 		// problems, since the archetype is only needed for mutations and crossover.
 		TWEANNGenotype tg = new TWEANNGenotype(newNodes,newLinks, phenotypeOutputs, false, false, -1);
 		return tg;
+	}
+	
+	/**
+ 	 * Method that returns a list of information about the substrate layers
+	 * contained in the network.
+	 * @param the HyperNEAT task
+	 * @return List of Substrates in order from inputs to hidden to output
+	 *         layers
+	 */
+	List<Substrate> getSubstrateInformation(HyperNEATTask HNTask) {
+		return HNTask.getSubstrateInformation();
+		
+	}
+
+	/**
+	 * @param hntask the HyperNEAT task
+	 * @return List of triples that specifies each substrate with the index of each triple being its layer.
+	 * 		Each triple looks like (width of layer, width of substrate, height of substrate)
+	 */
+	List<Triple<String, String, Boolean>> getSubstrateConnectivity(HyperNEATTask HNTask) {
+		return HNTask.getSubstrateConnectivity();
 	}
 
 	/**
