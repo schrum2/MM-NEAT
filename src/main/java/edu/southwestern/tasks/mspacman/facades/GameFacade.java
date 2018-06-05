@@ -9,6 +9,7 @@ import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.stats.StatisticsUtilities;
 import pacman.game.Constants.GHOST;
 import pacman.game.Game;
+import popacman.prediction.GhostLocation;
 import popacman.prediction.PillModel;
 import popacman.prediction.fast.GhostPredictionsFast;
 
@@ -230,6 +231,20 @@ public class GameFacade {
 		}
 		return ghosts;
 	}
+	
+	/**
+	 * TODO: test
+	 * Should return all of the indices for any visible ghost or any ghost we have a probability location for.
+	 * @return
+	 */
+	public ArrayList<Integer> getPossibleGhostIndices() {
+		ArrayList<Integer> ghosts = new ArrayList<Integer>(ghostPredictions.getGhostLocations().size());
+		for (GhostLocation location : ghostPredictions.getGhostLocations()) {
+			ghosts.add(location.getIndex());
+		}
+		return ghosts;
+	}
+
 
 	/**
 	 * return the node index of the node that is the neighbor of current in the

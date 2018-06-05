@@ -25,6 +25,9 @@ import edu.southwestern.tasks.mspacman.sensors.directional.specific.VariableDire
 import edu.southwestern.tasks.mspacman.sensors.directional.specific.VariableDirectionSortedGhostTrappedBlock;
 import edu.southwestern.tasks.mspacman.sensors.directional.specific.VariableDirectionSpecificGhostIncomingBlock;
 
+//NEW PO STUFF
+import edu.southwestern.tasks.mspacman.sensors.directional.distance.ghosts.po.VariableDirectionSortedPossibleGhostDistanceBlock;;
+
 /**
  * TODO: Describe
  * 
@@ -56,8 +59,10 @@ public class POCheckEachDirectionMediator extends VariableDirectionBlockLoadedIn
 		if (Parameters.parameters.booleanParameter("specificGhostProximityOrder")) {
 			for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
 				
-				// CHANGE TO USE GHOST MODEL INSTEAD
-				blocks.add(new VariableDirectionSortedGhostDistanceBlock(i));
+				//ORIGINAL
+				//blocks.add(new VariableDirectionSortedGhostDistanceBlock(i));
+				//NEW
+				blocks.add(new VariableDirectionSortedPossibleGhostDistanceBlock(i));
 				
 				if (incoming) {
 					blocks.add(new VariableDirectionSortedGhostIncomingBlock(i));
