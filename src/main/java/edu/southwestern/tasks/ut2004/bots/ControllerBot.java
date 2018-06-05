@@ -25,6 +25,13 @@ import edu.southwestern.tasks.ut2004.server.BotKiller;
 import pogamut.hunter.HunterBot;
 import edu.southwestern.tasks.ut2004.bots.MultiBotLauncher;
 
+/**
+ * A specific type of UT2004 that is controlled by a BotController "brain"
+ * that returns a BotAction given the current bot state.
+ * 
+ * @author Jacob Schrum
+ */
+@SuppressWarnings("rawtypes")
 @AgentScoped
 public class ControllerBot extends UT2004BotModuleController {
 
@@ -94,50 +101,71 @@ public class ControllerBot extends UT2004BotModuleController {
 	 * Launches a bot onto the provided host:port using the given network brain
 	 * to control it
 	 *
-         * @param server
-         *            Server instance
+	 * @param server
+	 *            Server instance
 	 * @param name
 	 *            In-game name of bot
-         * @param controllers
-         *            Bot controllers to run in game
-         * @param evalSeconds 
-         *            Number of seconds to spend in evaluation
-         * @param desiredSkill
-         *            Skill parameter for bots (affects accuracy)
+	 * @param controllers
+	 *            Bot controllers to run in game
+	 * @param evalSeconds 
+	 *            Number of seconds to spend in evaluation
+	 * @param desiredSkill
+	 *            Skill parameter for bots (affects accuracy)
 	 * @param host
 	 *            host of pre-loaded server
 	 * @param botPort
 	 *            port on server to connect bot
-         * @return Array of game data about each controller in game
+	 * @return Array of game data about each controller in game
 	 * @throws PogamutException
 	 */
 	public static GameDataCollector[] launchBot(IUT2004Server server, String[] names, BotController[] controllers,
 			int evalSeconds, int desiredSkill, String host, int botPort) {
 		GameDataCollector[] collectors = new GameDataCollector[controllers.length];
-		IRemoteAgentParameters[] params = new IRemoteAgentParameters[controllers.length];
 		int numHunterBots = Parameters.parameters.integerParameter("numHunterBots");
-		Class[] classes = new Class[controllers.length + numHunterBots];
-
+		if(numHunterBots > 0) {
+			System.out.println("Launching HunterBots with evolution does not currently work");
+			System.out.println("See edu.southwestern.tasks.ut2004.bots.ControllerBot");
+			System.exit(1);
+		}
 		
-		for (int i = 0; i < controllers.length; i++) {//adds all controller bots
+		int totalBots = controllers.length + numHunterBots;
+		IRemoteAgentParameters[] params = new IRemoteAgentParameters[totalBots];
+		Class[] classes = new Class[totalBots];
+
+
+		for (int i = 0; i < controllers.length; i++) {//adds all ControllerBots
 			classes[i] = ControllerBot.class;
 			collectors[i] = new GameDataCollector();
 			params[i] = new ControllerBotParameters(server, controllers[i], names[i], collectors[i], evalSeconds,
 					desiredSkill, botPort);
 		}
-		
+
 		//create another loop that adds hunter bots
-		for(int i = 0; i < numHunterBots; i++) {
-			classes[i + controllers.length] = HunterBot.class;
-			params[i + controllers.length] = new UT2004BotParameters();
-		}
-		
+		// TODO: Fix issue with HunterBots
+		//		for(int i = 0; i < numHunterBots; i++) {
+		//			classes[i + controllers.length] = HunterBot.class;
+		//			params[i + controllers.length] = new UT2004BotParameters();
+		//		}
+
+		// This method still has some problems and causes weird exceptions sometimes
 		MultiBotLauncher.launchMultipleBots(classes, params, host, botPort);
 
-		System.out.println("Match over: ");
-		for (int i = 0; i < collectors.length; i++) {
-			System.out.println("\t" + collectors[i]);
-		}
+		// Old version of this code
+//		try {
+//			MultipleUT2004BotRunner multi = new MultipleUT2004BotRunner("MultipleBots").setHost(host).setPort(botPort);
+//			@SuppressWarnings("unchecked")
+//			UT2004BotDescriptor bots = new UT2004BotDescriptor().setController(ControllerBot.class).setAgentParameters(params);
+//			multi.setMain(true).startAgents(bots);
+//		} catch (PogamutException e) {
+//			// Obligatory exception that happens from stopping the bot
+//			// System.out.println("Exception after evaluation");
+//			// e.printStackTrace();
+//		}		
+
+		//		System.out.println("Match over: ");
+		//		for (int i = 0; i < collectors.length; i++) {
+		//			System.out.println("\t" + collectors[i]);
+		//		}
 		return collectors;
 	}
 

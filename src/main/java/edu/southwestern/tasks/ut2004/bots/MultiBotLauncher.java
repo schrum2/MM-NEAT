@@ -1,19 +1,18 @@
 package edu.southwestern.tasks.ut2004.bots;
 
 import java.util.Arrays;
+import java.util.logging.Level;
 
 import cz.cuni.amis.pogamut.base.agent.params.IRemoteAgentParameters;
 import cz.cuni.amis.pogamut.ut2004.agent.utils.UT2004BotDescriptor;
 import cz.cuni.amis.pogamut.ut2004.bot.params.UT2004BotParameters;
 import cz.cuni.amis.pogamut.ut2004.utils.MultipleUT2004BotRunner;
-import edu.utexas.cs.nn.Constants;
+import edu.southwestern.tasks.ut2004.controller.DummyController;
 import edu.utexas.cs.nn.bots.UT2;
 import edu.utexas.cs.nn.bots.UT2.UT2Parameters;
 import fr.enib.mirrorbot4.MirrorBot4;
 import pogamut.hunter.HunterBot;
 import pogamut.navigationbot.NavigationBot;
-import utopia.controllers.TWEANN.TWEANNController;
-import wox.serial.Easy;
 
 /**
  * launches different bots into the same soldier
@@ -28,18 +27,22 @@ public class MultiBotLauncher {
 	 * @param host (the host of the server)
 	 * @param port (the port that the server will connect to)
 	 */
-	public static void launchMultipleBots(Class[] botClasses, IRemoteAgentParameters[] params,String host, int port) {
+	public static void launchMultipleBots(@SuppressWarnings("rawtypes") Class[] botClasses, IRemoteAgentParameters[] params,String host, int port) {
 		assert botClasses.length == params.length : "List of bots and bot parameters must be same length";
 		Thread[] threads = new Thread[botClasses.length];
-		System.out.println("Launch bots: " + Arrays.toString(botClasses));
+		System.out.println("===== Launch bots: " + Arrays.toString(botClasses));
 		//creates threads for each class of bot
 		for(int i = 0; i < botClasses.length; i++) {
 			final int index = i;
 			threads[i] = new Thread() {
+				@SuppressWarnings("unchecked")
 				public void run() {
+					@SuppressWarnings("rawtypes")
 					MultipleUT2004BotRunner multi = new MultipleUT2004BotRunner(botClasses.getClass().getName()).setHost(host).setPort(port);
+					@SuppressWarnings("rawtypes")
 					UT2004BotDescriptor bots = new UT2004BotDescriptor().setController(botClasses[index]).setAgentParameters(new IRemoteAgentParameters[] {params[index]});
-					multi.setMain(true).startAgents(bots);
+					// I believe the setMain causes certain exceptions to be caught and suppressed
+					multi.setMain(true).setLogLevel(Level.OFF).startAgents(bots);
 				}
 			};
 		}
@@ -55,6 +58,9 @@ public class MultiBotLauncher {
 				threads[i].join();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
+				
+				System.out.println("Thread " + i + " interrupted");
+				System.exit(1);
 			}
 		}
 
@@ -62,14 +68,21 @@ public class MultiBotLauncher {
 	}
 	
 	/**
-	 * launches a test server with the HunterBot and NavigationBot
+	 * Launches a test server with the HunterBot, NavigationBot, UT^2, MirrorBot, and a ControllerBot with a DummyController.
+	 * 
+	 * I launched these bots on servers several times, and it definitely works. However, I did notice unusual behavior when
+	 * launching it multiple times in a row. For some reason, launching this code twice in quick successful causes problems.
+	 * I wonder if ports are not shutting down properly when this code is terminated, so some time is needed for the ports
+	 * to be cleared up.
 	 */
 	public static void main(String[] args) {
-		Class[] botClasses = new Class[] {HunterBot.class, NavigationBot.class, UT2.class, MirrorBot4.class};
+		@SuppressWarnings("rawtypes")
+		Class[] botClasses = new Class[] {HunterBot.class, NavigationBot.class, UT2.class, MirrorBot4.class, ControllerBot.class};
 		
 		UT2Parameters ut2params = new UT2Parameters();
+		ControllerBotParameters dummyParameters = new ControllerBotParameters(null, new DummyController(), "Dummy", new GameDataCollector(), 300, 4, 3000);
 		
-		IRemoteAgentParameters[] params = new IRemoteAgentParameters[] {new UT2004BotParameters(), new UT2004BotParameters(), ut2params, new UT2004BotParameters()};
+		IRemoteAgentParameters[] params = new IRemoteAgentParameters[] {new UT2004BotParameters(), new UT2004BotParameters(), ut2params, new UT2004BotParameters(), dummyParameters};
 		launchMultipleBots(botClasses, params, "localhost", 3000);
 	}
 	
