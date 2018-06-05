@@ -45,7 +45,10 @@ public class POCheckEachDirectionMediator extends VariableDirectionBlockLoadedIn
 		blocks.add(new VariableDirectionPillDistanceBlock(direction)); // ASSUME PILL MODEL INFLUENCES THESE IN GAMEFACADE
 		//TODO: implement pill model and add support for tracking power pills for this to work
 		blocks.add(new VariableDirectionPowerPillDistanceBlock(direction));
+		
+		
 		for (int i = 0; i < numJunctionsToSense; i++) {
+			//Works with PO, this info is always available
 			blocks.add(new VariableDirectionJunctionDistanceBlock(direction, i));
 		}
 
