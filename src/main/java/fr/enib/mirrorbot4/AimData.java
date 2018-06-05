@@ -9,25 +9,36 @@ public class AimData
 	
 	private Location aim;
 	
-	public AimData(UT2004BotModuleController c)
-	{
+	/**
+	 * gives the bot the default location that it will aim
+	 * @param c (bot controller)
+	 */
+	public AimData(UT2004BotModuleController c){
 		ctrl = c;
 		aim = new Location(200, 0.0, 0.0);
 	}
 	
-	public void setFocus(Location l)
-	{
+	/**
+	 * sets what the bot will focus on
+	 * @param l (the opponent/location that the bot will go after)
+	 */
+	//TODO: check e-mail asking for clarification
+	public void setFocus(Location l){
 		Location newAim = l.getNormalized();
 		if (newAim.getLength() > 0.0) aim = newAim;
 	}
 	
-	public Location getFocus() //relative
-	{
+	/**
+	 * @return returns data on the focus relative to the bot
+	 */
+	public Location getFocus(){ //relative
 		return (aim.scale(ctrl.getInfo().getBaseSpeed()*10));
 	}
 	
-	public Location getFocusLocation() //absolute
-	{
+	/**
+	 * @return returns the data on the focus location
+	 */
+	public Location getFocusLocation(){ //absolute
 		return (ctrl.getInfo().getLocation().add(aim.scale(ctrl.getInfo().getBaseSpeed()*10)));
 	}
 }
