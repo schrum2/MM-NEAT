@@ -35,6 +35,8 @@ public class GameFacade {
 	public GhostPredictionsFast ghostPredictions = null;
 	public oldpacman.game.Game oldG = null;
 	public pacman.game.Game poG = null; // New pacman from Maven
+	public boolean usePillModel = Parameters.parameters.booleanParameter("usePillModel");
+	public boolean useGhostModel = Parameters.parameters.booleanParameter("useGhostModel");
 
 	/**
 	 * Has a popacman version.
@@ -440,7 +442,7 @@ public class GameFacade {
 	 */
 	public int getEatenPills() {
 		if(oldG == null) {
-			if(Parameters.parameters.booleanParameter("usePillModel")) {
+			if(usePillModel) {
 				//TODO: test
 				assert pillModel != null : "the information handling in OldToNewPacManIntermediaryController should handle this";
 				return pillModel.getPillsEaten();
@@ -1048,7 +1050,7 @@ public class GameFacade {
 	public int[] getActivePillsIndices() {
 		if(oldG == null) {
 			//if we are using the pill model
-			if(Parameters.parameters.booleanParameter("usePillModel")) {
+			if(usePillModel) {
 				//TODO: test
 				ArrayList<Integer> tempList = new ArrayList<Integer>();
 				assert pillModel != null : "this should be handled";
