@@ -55,8 +55,10 @@ public class POCheckEachDirectionMediator extends VariableDirectionBlockLoadedIn
 		// Ghosts By Distance
 		if (Parameters.parameters.booleanParameter("specificGhostProximityOrder")) {
 			for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
+				
 				// CHANGE TO USE GHOST MODEL INSTEAD
 				blocks.add(new VariableDirectionSortedGhostDistanceBlock(i));
+				
 				if (incoming) {
 					blocks.add(new VariableDirectionSortedGhostIncomingBlock(i));
 				}
@@ -95,7 +97,9 @@ public class POCheckEachDirectionMediator extends VariableDirectionBlockLoadedIn
 		}
 		
 		// Look ahead
+		//TODO: implement pill model
 		blocks.add(new VariableDirectionKStepPillCountBlock(direction));
+		//Works with PO, this information is always available
 		blocks.add(new VariableDirectionKStepJunctionCountBlock(direction));
 		
 		// Counts
