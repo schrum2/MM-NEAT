@@ -12,7 +12,7 @@ import edu.southwestern.tasks.mspacman.facades.GameFacade;
 import pacman.game.Constants.GHOST;
 import pacman.game.Constants.MOVE;
 //TODO: this could be useful
-//import pacman.game.info.GameInfo;
+import pacman.game.info.GameInfo;
 import pacman.game.internal.Maze;
 import pacman.game.Drawable;
 import pacman.game.Game;
@@ -111,16 +111,11 @@ public class OldToNewPacManIntermediaryController extends pacman.controllers.Pac
 		if(useGhostModel) {
 			//if pacman was eaten, ghosts are in the lair
 			if (informedGameFacade.poG.wasPacManEaten()) {
-				//DEBUG:
-				//System.out.println("PacMan was eaten! Nullify ghostPredictions!");
 	            ghostPredictions = null;
 	        }
 			
 			//init the ghost predictions
-			if(ghostPredictions == null){
-				//DEBUG
-				//System.out.println("ghostPredictions is null! Create a new one!");
-				
+			if(ghostPredictions == null){				
 				//create a new ghostPredictionFast object, initialize it, and pass it to informedGameFacade
 				ghostPredictions = new GhostPredictionsFast(informedGameFacade.poG.getCurrentMaze());
 	            ghostPredictions.preallocate();
