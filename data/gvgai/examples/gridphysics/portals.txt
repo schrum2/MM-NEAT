@@ -42,4 +42,4 @@ BasicGame
         3 > floor exit2
         w > floor wall
         A > floor avatar
-        . > floor
+        + > floor
