@@ -11,16 +11,16 @@ import edu.southwestern.tasks.ut2004.actions.EmptyAction;
  */
 public class DummyController implements BotController {
 
-        @Override
-	public BotAction control(UT2004BotModuleController bot) {
+	@Override
+	public BotAction control(@SuppressWarnings("rawtypes") UT2004BotModuleController bot) {
 		return new EmptyAction();
 	}
 
-        @Override
-	public void initialize(UT2004BotModuleController bot) {
+	@Override
+	public void initialize(@SuppressWarnings("rawtypes") UT2004BotModuleController bot) {
 	}
 
-        @Override
-	public void reset(UT2004BotModuleController bot) {
+	@Override
+	public void reset(@SuppressWarnings("rawtypes") UT2004BotModuleController bot) {
 	}
 }
