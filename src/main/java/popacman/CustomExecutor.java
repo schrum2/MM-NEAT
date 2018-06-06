@@ -681,10 +681,24 @@ public class CustomExecutor {
 	 * @param ghostController
 	 * @param game
 	 */
-	public void forceGame(Controller<MOVE> pacManController, MASController ghostController, Game game, MOVE move) {
+	public GameView forceGame(Controller<MOVE> pacManController, MASController ghostController, Game game, MOVE move, boolean visuals, GameView gv) {
 		
+        if (visuals && gv == null) {
+            gv = new GameView(game, setDaemon);
+            gv.setScaleFactor(scaleFactor);
+            gv.setPO(Parameters.parameters.booleanParameter("observePacManPO"));
+            gv.showGame();
+        }
+        
+        if(visuals && gv != null) {
+        	gv.repaint();
+        }
+        
 		game.advanceGame(
                 move,
                 ghostController.getMove(game.copy(), System.currentTimeMillis() + timeLimit));
+		
+		return gv;
+		
 	}
 }

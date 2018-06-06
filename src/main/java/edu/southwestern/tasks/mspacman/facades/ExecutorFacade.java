@@ -2,6 +2,7 @@ package edu.southwestern.tasks.mspacman.facades;
 
 import edu.southwestern.parameters.Parameters;
 import pacman.game.Constants.MOVE;
+import pacman.game.GameView;
 
 
 /**
@@ -12,6 +13,7 @@ public class ExecutorFacade {
 
 	oldpacman.Executor oldE = null;
 	popacman.CustomExecutor poE = null;
+	public GameView forceGameView = null;
 
 	/**
 	 * Constructor that contains excecutor
@@ -130,9 +132,13 @@ public class ExecutorFacade {
 	public void forceGame(GameFacade game, PacManControllerFacade mspacman, GhostControllerFacade ghosts, MOVE move) {
 		assert poE != null : "This method is only for the CustomExecutor class";
 		if(poE != null) {
-			poE.forceGame(mspacman.poP, ghosts.poG, game.poG, move);
+			forceGame(mspacman, ghosts, game, move, Parameters.parameters.booleanParameter("watch"));
 		} else {
 			throw new UnsupportedOperationException("This method is only for the CustomExecutor class");
 		}
+	}
+	
+	private void forceGame(PacManControllerFacade mspacman, GhostControllerFacade ghosts, GameFacade game,  MOVE move, boolean visuals) {
+		forceGameView = poE.forceGame(mspacman.poP, ghosts.poG, game.poG, move, visuals, forceGameView);
 	}
 }
