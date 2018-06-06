@@ -193,14 +193,14 @@ public class HunterBot extends UT2004BotModuleController<UT2004Bot> {
 
 	@EventListener(eventClass=PlayerDamaged.class)
 	public void playerDamaged(PlayerDamaged event) {
-		if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput") == false) {
+		if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
 			log.info("I have just hurt other bot for: " + event.getDamageType() + "[" + event.getDamage() + "]");
 		}
 	}
 
 	@EventListener(eventClass=BotDamaged.class)
 	public void botDamaged(BotDamaged event) {
-		if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput") == false) {
+		if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
 			log.info("I have just been hurt by other bot for: " + event.getDamageType() + "[" + event.getDamage() + "]");
 		}
 	}
@@ -295,7 +295,7 @@ public class HunterBot extends UT2004BotModuleController<UT2004Bot> {
 			// pick new enemy
 			enemy = players.getNearestVisiblePlayer(players.getVisibleEnemies().values());
 			if (enemy == null) {
-				if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput") == false) {
+				if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
 					log.info("Can't see any enemies... ???");
 				}
 				return;
@@ -313,7 +313,7 @@ public class HunterBot extends UT2004BotModuleController<UT2004Bot> {
 			// 2) or shoot on enemy if it is visible
 			distance = info.getLocation().getDistance(enemy.getLocation());
 			if (shoot.shoot(weaponPrefs, enemy) != null) {
-				if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput") == false) {
+				if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
 					log.info("Shooting at enemy!!!");
 				}
 				shooting = true;
@@ -380,7 +380,7 @@ public class HunterBot extends UT2004BotModuleController<UT2004Bot> {
 		//log.info("Decision is: MEDKIT");
 		Item item = items.getPathNearestSpawnedItem(ItemType.Category.HEALTH);
 		if (item == null) {
-			if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput") == false) {
+			if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
 				log.warning("NO HEALTH ITEM TO RUN TO => ITEMS");
 			}
 			stateRunAroundItems();
@@ -420,7 +420,7 @@ public class HunterBot extends UT2004BotModuleController<UT2004Bot> {
 
 		Item item = MyCollections.getRandom(tabooItems.filter(interesting));
 		if (item == null) {
-			if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput") == false) {
+			if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
 				log.warning("NO ITEM TO RUN FOR!");
 			}
 			if (navigation.isNavigating()) return;
@@ -428,7 +428,7 @@ public class HunterBot extends UT2004BotModuleController<UT2004Bot> {
 			navigation.navigate(navPoints.getRandomNavPoint());
 		} else {
 			this.item = item;
-			if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput") == false) {
+			if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
 				log.info("RUNNING FOR: " + item.getType().getName());
 			}
 			bot.getBotName().setInfo("ITEM: " + item.getType().getName() + "");
