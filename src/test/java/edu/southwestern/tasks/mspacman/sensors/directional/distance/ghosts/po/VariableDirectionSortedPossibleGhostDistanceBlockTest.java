@@ -2,9 +2,6 @@ package edu.southwestern.tasks.mspacman.sensors.directional.distance.ghosts.po;
 
 import static org.junit.Assert.*;
 
-//import java.util.Arrays;
-import java.util.EnumMap;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -15,16 +12,12 @@ import edu.southwestern.tasks.mspacman.facades.GameFacade;
 import edu.southwestern.tasks.mspacman.facades.GhostControllerFacade;
 import edu.southwestern.tasks.mspacman.facades.PacManControllerFacade;
 import edu.southwestern.tasks.popacman.controllers.OldToNewPacManIntermediaryController;
-import edu.southwestern.util.ClassCreation;
 import edu.southwestern.util.MiscUtil;
 import oldpacman.controllers.NewPacManController;
 import pacman.game.Game;
-import pacman.game.GameView;
-import popacman.CustomExecutor;
 import popacman.CustomExecutor.Builder;
 import popacman.DummyBlinkyForTesting;
 import popacman.DummyInkyForTesting;
-import popacman.DummyPacMan;
 import popacman.DummyPinkyForTesting;
 import popacman.DummySueForTesting;
 import pacman.controllers.MASController;
@@ -52,7 +45,7 @@ public class VariableDirectionSortedPossibleGhostDistanceBlockTest {
 				"task:edu.southwestern.tasks.mspacman.MsPacManTask", "multitaskModes:2", 
 				"pacmanInputOutputMediator:edu.southwestern.tasks.mspacman.sensors.mediators.po.POCheckEachDirectionMediator", 
 				"useGhostModel:true", "drawGhostPredictions:true", "partiallyObservablePacman:true",  "pacmanPO:true",
-				"rawScorePacMan:true", "ghostPO:false", "observePacManPO:false", 
+				"rawScorePacMan:true", "ghostPO:false", "observePacManPO:true", "usePillModel:false",
 				//remove when done
 				"watch:true" });
 		
@@ -61,7 +54,6 @@ public class VariableDirectionSortedPossibleGhostDistanceBlockTest {
 		thirdClosest = new VariableDirectionSortedPossibleGhostDistanceBlock(2);
 		fourthClosest = new VariableDirectionSortedPossibleGhostDistanceBlock(3);
 		fifthClosest = new VariableDirectionSortedPossibleGhostDistanceBlock(4);
-		infoManager = new OldToNewPacManIntermediaryController(new DummyPacMan());
 	}
 	
 	@AfterClass
@@ -84,19 +76,25 @@ public class VariableDirectionSortedPossibleGhostDistanceBlockTest {
 		
 		//CREATE A PacManControllerFacade THAT IS MADE FROM AN OldToNewPacManIntermediaryController:
 		//THIS HAS ALL OF THE MODEL TRACKING WITHIN IT
-		NewPacManController controller = null;
-		try {
-			controller = (NewPacManController) ClassCreation.createObject("staticPacMan");
-		} catch (NoSuchMethodException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		PacManControllerFacade pmcf = new PacManControllerFacade(new OldToNewPacManIntermediaryController(controller));
+		NewPacManController controller = new NewPacManController() { // These methods are never actually used
+
+			@Override
+			public int getAction(GameFacade gs, long timeDue) {
+				return 0; // Not actually used
+			}
+
+			@Override
+			public void logEvaluationDetails() {
+				// Not actually used
+			}
+			
+		};
+		OldToNewPacManIntermediaryController infoManager = new OldToNewPacManIntermediaryController(controller);
+		PacManControllerFacade pmcf = new PacManControllerFacade(infoManager);
 		
 		//CREATE a GameFacade
 		GameFacade gf = new GameFacade(new Game(0));	
 		// View the game to create tests, but disable afterward		
-		GameView gv = new GameView(gf.poG).showGame();
 		
 		//CREATE TESTING GHOSTS
 		DummyBlinkyForTesting blinky = new DummyBlinkyForTesting(GHOST.BLINKY);
@@ -108,29 +106,58 @@ public class VariableDirectionSortedPossibleGhostDistanceBlockTest {
 		//PUT MASController IS A GhostControllerFacade
 		GhostControllerFacade gcf = new GhostControllerFacade(boo);
 		
+		GameFacade igf = null;
+		
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	
 		
-
+		//TO DRAW A FRAME (AND CLOSE IT)//
+		//ex.forceGameView.showGame();
+		//ex.forceGameView.closeGame();		
+		//////////////////////////////////
 		
+		//TO ADVANCE THE GAME/////////////////////
+		//ex.forceGame(gf, pmcf, gcf, MOVE.LEFT);
+		//THE MOVE DECIDES WHAT PACMAN DOES
+		//////////////////////////////////////////
 		
+		blinky.setMove(MOVE.LEFT);
+		pinky.setMove(MOVE.LEFT);
+		inky.setMove(MOVE.LEFT);
+		sue.setMove(MOVE.LEFT);
+			
 		for(int i = 0; i < 17; i++) {
 			ex.forceGame(gf, pmcf, gcf, MOVE.LEFT);
-			//gf.poG.advanceGame(MOVE.LEFT, gm);
+			igf = infoManager.updateModels(gf.poG, 40);
+			gf.pillModel = igf.pillModel;
+			gf.ghostPredictions = igf.ghostPredictions;
+			//ex.forceGameView.showGame();
+			//ex.forceGameView.closeGame();
 		}
-		gv.showGame();
+		
+		assert infoManager.ghostPredictions != null : "They are set when infoManager gets a move";
+		ex.forceGameView.showGame();
 		
 		for(int i = 0; i < 7; i++) {
 			ex.forceGame(gf, pmcf, gcf, MOVE.UP);
-			//gf.poG.advanceGame(MOVE.UP, gm);
+			igf = infoManager.updateModels(gf.poG, 40);
+			gf.pillModel = igf.pillModel;
+			gf.ghostPredictions = igf.ghostPredictions;
+			//ex.forceGameView.showGame();
+			//ex.forceGameView.closeGame();
 		}
-		gv.showGame();
+		
 		
 		for(int i = 0; i < 15; i++) {
 			ex.forceGame(gf, pmcf, gcf, MOVE.RIGHT);
-			//gf.poG.advanceGame(MOVE.RIGHT, gm);
+			igf = infoManager.updateModels(gf.poG, 40);
+			gf.pillModel = igf.pillModel;
+			gf.ghostPredictions = igf.ghostPredictions;
+			//ex.forceGameView.showGame();
+			//ex.forceGameView.closeGame();
 		}
-		gv.showGame();
+		ex.forceGameView.showGame();
+		
+		System.out.println(firstClosest.getTargets(gf).toString());
 		
 		assert firstClosest.getTargets(gf) == new int[0] : "We cannot see any ghosts yet";
 		assert secondClosest.getTargets(gf) == new int[0] : "We cannot see any ghosts yet";
@@ -140,14 +167,52 @@ public class VariableDirectionSortedPossibleGhostDistanceBlockTest {
 		
 		for(int i = 0; i < 15; i++) {
 			ex.forceGame(gf, pmcf, gcf,MOVE.UP);
+			igf = infoManager.updateModels(gf.poG, 40);
+			gf.pillModel = igf.pillModel;
+			gf.ghostPredictions = igf.ghostPredictions;
+			//ex.forceGameView.showGame();
+			//ex.forceGameView.closeGame();
 		}
-		gv.showGame();
+		ex.forceGameView.showGame();
+		
+		blinky.setMove(MOVE.DOWN);
 		
 		for(int i = 0; i < 14; i++) {
 			ex.forceGame(gf, pmcf, gcf, MOVE.LEFT);
+			igf = infoManager.updateModels(gf.poG, 40);
+			gf.pillModel = igf.pillModel;
+			gf.ghostPredictions = igf.ghostPredictions;
+			//ex.forceGameView.showGame();
+			//ex.forceGameView.closeGame();
 		}
-		gv.showGame();
+		ex.forceGameView.showGame();
 		
+		blinky.setMove(MOVE.LEFT);
+		
+		for(int i = 0; i < 9; i++) {
+			ex.forceGame(gf, pmcf, gcf, MOVE.NEUTRAL);
+			igf = infoManager.updateModels(gf.poG, 40);
+			gf.pillModel = igf.pillModel;
+			gf.ghostPredictions = igf.ghostPredictions;
+			//ex.forceGameView.showGame();
+			//ex.forceGameView.closeGame();
+		}
+		ex.forceGameView.showGame();
+		
+		pinky.setMove(MOVE.DOWN);
+		
+		for(int i = 0; i < 11; i++) {
+			ex.forceGame(gf, pmcf, gcf, MOVE.NEUTRAL);
+			igf = infoManager.updateModels(gf.poG, 40);
+			gf.pillModel = igf.pillModel;
+			gf.ghostPredictions = igf.ghostPredictions;
+			//ex.forceGameView.showGame();
+			//ex.forceGameView.closeGame();
+		}
+		ex.forceGameView.showGame();	
+		
+		
+		System.out.println("WAITING FOR MISCUTIL IN VariableDirectionSortedPossibleGhostDistanceBlockTest");
 		MiscUtil.waitForReadStringAndEnterKeyPress();
 	
 	
