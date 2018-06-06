@@ -4,10 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.tasks.mspacman.facades.GameFacade;
-import edu.southwestern.tasks.mspacman.ghosts.DirectionalGhostComparator;
-import edu.southwestern.tasks.mspacman.ghosts.GhostComparator;
 import edu.southwestern.tasks.mspacman.sensors.directional.distance.VariableDirectionDistanceBlock;
 
 /**

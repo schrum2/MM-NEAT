@@ -672,4 +672,19 @@ public class CustomExecutor {
 		}
 	}
 	///////////////////////////////////////////////////////////////////////
+	
+	
+	/**
+	 * Used for testing purposes. If, in some JUnit test class, you have a pacManController and a ghostController that you have set to do 
+	 * something specific, just pass those controllers here and the game will advance. The MOVE you send decides what move pacman makes.
+	 * @param pacManController
+	 * @param ghostController
+	 * @param game
+	 */
+	public void forceGame(Controller<MOVE> pacManController, MASController ghostController, Game game, MOVE move) {
+		
+		game.advanceGame(
+                move,
+                ghostController.getMove(game.copy(), System.currentTimeMillis() + timeLimit));
+	}
 }

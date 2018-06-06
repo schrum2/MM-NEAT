@@ -1,6 +1,7 @@
 package edu.southwestern.tasks.mspacman.facades;
 
 import edu.southwestern.parameters.Parameters;
+import pacman.game.Constants.MOVE;
 
 
 /**
@@ -123,6 +124,15 @@ public class ExecutorFacade {
 			poE.runGameTimedSpeedOptimised(mspacman.poP, ghosts.poG, false, false, game.poG);
 		} else {
 			oldE.runGameTimedSpeedOptimised(mspacman.oldP, ghosts.oldG, false, false, game.oldG);
+		}
+	}
+	
+	public void forceGame(GameFacade game, PacManControllerFacade mspacman, GhostControllerFacade ghosts, MOVE move) {
+		assert poE != null : "This method is only for the CustomExecutor class";
+		if(poE != null) {
+			poE.forceGame(mspacman.poP, ghosts.poG, game.poG, move);
+		} else {
+			throw new UnsupportedOperationException("This method is only for the CustomExecutor class");
 		}
 	}
 }
