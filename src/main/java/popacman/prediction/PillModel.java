@@ -17,20 +17,20 @@ public class PillModel {
 
     // Pacman visited this index
     public void update(int index) {
-    	System.out.println("BEFORE: INDEX " + index + " HAS PILL: " + pills.get(index));
+    	//System.out.println("BEFORE: INDEX " + index + " HAS PILL: " + pills.get(index));
         if (pills.get(index)) {
             pillsEaten++;
             pills.set(index, false);
-            System.out.println("WE ATE A PILL");
+           // System.out.println("WE ATE A PILL");
         }
-        System.out.println("AFTER: INDEX " + index + " HAS PILL: " + pills.get(index));
+        //System.out.println("AFTER: INDEX " + index + " HAS PILL: " + pills.get(index));
     }
 
     // There is a pill here!
     public void observe(int index, boolean pillThere) {
-    	System.out.println("BEFORE:" + pills);
+    	//System.out.println("BEFORE:" + pills);
         pills.set(index, pillThere);
-    	System.out.println("AFTER:" + pills);
+    	//System.out.println("AFTER:" + pills);
     }
 
     public int getPillsEaten() {
