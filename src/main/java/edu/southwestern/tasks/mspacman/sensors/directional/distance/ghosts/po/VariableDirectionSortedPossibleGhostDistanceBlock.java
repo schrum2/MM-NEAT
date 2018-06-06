@@ -6,6 +6,8 @@ import java.util.Comparator;
 
 import edu.southwestern.tasks.mspacman.facades.GameFacade;
 import edu.southwestern.tasks.mspacman.sensors.directional.distance.VariableDirectionDistanceBlock;
+import edu.southwestern.util.datastructures.Triple;
+import pacman.game.Constants.MOVE;
 
 /**
  * Possible ghosts are those that we can see and those that we have a probability for.
@@ -56,24 +58,27 @@ public class VariableDirectionSortedPossibleGhostDistanceBlock extends VariableD
 
 	@Override
 	public int[] getTargets(GameFacade gf) {
-		//TODO: get an array of all ghost indicies
-		ArrayList<Integer> ghosts = gf.getPossibleGhostIndices();
+		ArrayList<Triple<Integer, MOVE, Double>> ghosts = gf.getPossibleGhostInfo();
+		
+		System.out.println(ghosts.toString());
 		
 		if (order >= ghosts.size()) {
 			return new int[0]; // Target in lair will result in distance of
 								// infinity
 		}
 		
-		Collections.sort(ghosts, new Comparator<Integer>(){
-			public int compare(Integer o1, Integer o2) {
-				return o1.compareTo(o2);
+		Collections.sort(ghosts, new Comparator<Triple<Integer, MOVE, Double>>(){
+
+			@Override
+			public int compare(Triple<Integer, MOVE, Double> arg0, Triple<Integer, MOVE, Double> arg1) {
+				return arg0.t1.compareTo(arg1.t1);
 			}
 		});
 		
 		//returns the shortest path to the order (1st, 2nd, 3rd, etc) possible ghost away
 		//OLD
 		//return new int[] { gf.getGhostCurrentNodeIndex(ghosts.get(order)) };
-		return new int[] { ghosts.get(order) };
+		return new int[] { ghosts.get(order).t1 };
 	}
 
 }
