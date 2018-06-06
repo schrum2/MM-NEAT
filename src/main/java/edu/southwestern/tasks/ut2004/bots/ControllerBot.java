@@ -21,6 +21,8 @@ import edu.southwestern.tasks.ut2004.controller.BotController;
 import edu.southwestern.tasks.ut2004.controller.DummyController;
 import edu.southwestern.tasks.ut2004.controller.RandomNavPointPathExplorer;
 import edu.southwestern.tasks.ut2004.server.BotKiller;
+import fr.enib.mirrorbot4.MirrorBot4;
+import fr.enib.mirrorbot4.MirrorBotParameters;
 import pogamut.hunter.HunterBot;
 import pogamut.hunter.HunterBotParameters;
 import edu.southwestern.tasks.ut2004.bots.MultiBotLauncher;
@@ -137,7 +139,8 @@ public class ControllerBot extends UT2004BotModuleController {
 			int evalSeconds, int desiredSkill, String host, int botPort) {
 		GameDataCollector[] collectors = new GameDataCollector[controllers.length];
 		int numHunterBots = Parameters.parameters.integerParameter("numHunterBots");
-		int totalBots = controllers.length + numHunterBots;
+		int numMirrorBots = Parameters.parameters.integerParameter("numMirrorBots");
+		int totalBots = controllers.length + numHunterBots + numMirrorBots;
 		IRemoteAgentParameters[] params = new IRemoteAgentParameters[totalBots];
 		Class[] classes = new Class[totalBots];
 
@@ -153,6 +156,12 @@ public class ControllerBot extends UT2004BotModuleController {
 		for(int i = 0; i < numHunterBots; i++) {
 			classes[i + controllers.length] = HunterBot.class;
 			params[i + controllers.length] = new HunterBotParameters(evalSeconds); // HunterBot also needs to know when to stop
+		}
+		
+		//adds mirror bots to the spaces in the array after ControllerBots
+		for(int i = 0; i < numMirrorBots; i++) {
+			classes[i + controllers.length] = MirrorBot4.class;
+			params[i + controllers.length] = new MirrorBotParameters(evalSeconds); // MirrorBot also needs to know when to stop
 		}
 
 		// This method still has some problems and causes weird exceptions sometimes

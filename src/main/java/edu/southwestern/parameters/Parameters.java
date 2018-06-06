@@ -289,6 +289,8 @@ public class Parameters {
 		integerOptions.add("numModesToPrefer", -1, "If non-negative, then a fitness function rewards even usage of this many modes");
 		integerOptions.add("numMonsterRays", 5, "Number of ray trace sensors on each monster");
 		integerOptions.add("numShapeInnovationSamples", 3, "Number of angles to take 2D image of 3D shape from for shape innovation task");
+		integerOptions.add("numHunterBots", 0, "dictates how many hunter bots will be loaded into the server");
+		integerOptions.add("numMirrorBots", 0, "dictates how many mirror bots will be loaded into the server");
 		integerOptions.add("numberPredsSensedByPreds", -1, "the number of closest predators that will be sensed by other predators (all by default, see boolean)");
 		integerOptions.add("numberPredsSensedByPrey", -1, "the number of closest predators that will be sensed by prey (all by default, see boolean)");
 		integerOptions.add("numberPreySensedByPreds", -1, "the number of closest prey that will be sensed by predators (all by default, see boolean)");
@@ -297,7 +299,6 @@ public class Parameters {
 		integerOptions.add("pacmanLives", 1, "Lives that a pacman agent starts with");
 		integerOptions.add("pacmanMaxLevel", 4, "Pacman level after which simulation ends");
 		integerOptions.add("pacmanReplayDelay", Constants.DELAY, "Milliseconds of pause between pacman time steps in replay mode");
-		integerOptions.add("numHunterBots", 0, "dictates how many hunter bots will be loaded into the server");
 		integerOptions.add("proxGhostsToSense", 4, "Number of ghosts sorted by proximity to sense in pacman");
 		integerOptions.add("randomSeed", -1, "Random seed used to control algorithmic randomness (not domain randomness)");
 		integerOptions.add("rawInputWindowSize", 5, "Raw input window size");
