@@ -5,38 +5,44 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import edu.southwestern.MMNEAT.MMNEAT;
-import edu.southwestern.networks.hyperneat.FlexibleSubstrateArchitecture;
 import edu.southwestern.networks.hyperneat.HyperNEATTask;
-import edu.southwestern.networks.hyperneat.HyperNEATUtil;
 import edu.southwestern.networks.hyperneat.Substrate;
-import edu.southwestern.parameters.Parameters;
+import edu.southwestern.networks.hyperneat.SubstrateArchitectureDefinition;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.datastructures.Triple;
 
 public class HyperNEATCPPNAndSubstrateArchitectureGenotype extends HyperNEATCPPNGenotype {
-	List<Triple<Integer, Integer, Integer>> networkHiddenArchitecture;
-	List<Triple<String, String, Boolean>> networkHiddenConnections;
-	
-	//designates which connections are convolutional.
-	//must be greater than or equal to elements in this array as there are connections
-	final boolean[] CONVOLUTIONAL_CONNECTIONS = {false};
+	// Describes the sequence of hidden layers. The input and output layers are still provided by the HyperNEATTask.
+	// List of triples that specifies each substrate with the index of each triple being its layer.
+	// Each triple looks like (width of layer, width of substrate, height of substrate)
+	List<Triple<Integer, Integer, Integer>> hiddenArchitecture;
+	// Describes connectivity between ALL substrates, including the input and output substrates
+	// list of triples that specifies connectivity of network.
+	// Looks like (source substrate, target substrate, capable of convolution)
+	List<Triple<String, String, Boolean>> allSubstrateConnectivity;
 
 	/**
-	 * 
-	 * @param hiddenArchitecture
+	 * @param hiddenArchitecture List of triples that specifies each substrate with the index of each triple being its layer.
+	 * 		Each triple looks like (width of layer, width of substrate, height of substrate)
+	 * @param networkHiddenConnections list of triples that specifies connectivity of network.
+	 * 		Looks like (source substrate, target substrate, capable of convolution)
 	 */
-	public HyperNEATCPPNAndSubstrateArchitectureGenotype(List<Triple<Integer, Integer, Integer>> hiddenArchitecture) {
+	public HyperNEATCPPNAndSubstrateArchitectureGenotype(List<Triple<Integer, Integer, Integer>> hiddenArchitecture, List<Triple<String, String, Boolean>> allSubstrateConnectivity) {
 		super();
-		this.networkHiddenArchitecture = hiddenArchitecture;
+		this.hiddenArchitecture = hiddenArchitecture;
+		this.allSubstrateConnectivity = allSubstrateConnectivity;
+	}
+
+	public HyperNEATCPPNAndSubstrateArchitectureGenotype(SubstrateArchitectureDefinition SubstrateArchitectureDefinition) {
+
 	}
 
 	/**
-	 * inputs and outputs
+	 * @param HNTask the HyperNEATTask
+	 * @return list of substrates with predefined hidden architecture
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	List<Substrate> getSubstrateInformation(HyperNEATTask HNTask) {
+	public List<Substrate> getSubstrateInformation(HyperNEATTask HNTask) {
 		List<Substrate> newSubstrateInformation = new LinkedList<Substrate>();
 		List<Substrate> oldSubstrateInformation = HNTask.getSubstrateInformation();
 		Iterator<Substrate> subItr = oldSubstrateInformation.iterator();
@@ -52,12 +58,12 @@ public class HyperNEATCPPNAndSubstrateArchitectureGenotype extends HyperNEATCPPN
 		}
 		//substrate input layer information end
 		//substrate hidden layer information
-		int numLayers = networkHiddenArchitecture.size();
+		int numLayers = hiddenArchitecture.size();
 		for (int i = 0; i < numLayers; i++) {
-			Triple<Integer, Integer, Integer> currentLayer = networkHiddenArchitecture.get(i);
-			for (int j = 0; j < networkHiddenArchitecture.get(i).t1; j++) {
+			Triple<Integer, Integer, Integer> currentLayer = hiddenArchitecture.get(i);
+			for (int j = 0; j < hiddenArchitecture.get(i).t1; j++) {
 				newSubstrateInformation.add(new Substrate(
-						new Pair(currentLayer.t2, currentLayer.t3), Substrate.PROCCESS_SUBSTRATE, 
+						new Pair<>(currentLayer.t2, currentLayer.t3), Substrate.PROCCESS_SUBSTRATE, 
 						new Triple<Integer, Integer, Integer> (j , i + 1, 0),
 						"process(" + j + "," + i + ")"));
 			}
@@ -75,15 +81,24 @@ public class HyperNEATCPPNAndSubstrateArchitectureGenotype extends HyperNEATCPPN
 	}
 
 	/**
-	 * inputs and outputs
+	 * @return all the connectivity between links. list of triples that specifies connectivity of network.
+	 * Looks like (source substrate, target substrate, capable of convolution)
 	 */
 	@Override
-	List<Triple<String, String, Boolean>> getSubstrateConnectivity(HyperNEATTask HNTask) {
+	public List<Triple<String, String, Boolean>> getSubstrateConnectivity(HyperNEATTask HNTask) {
+		return allSubstrateConnectivity;
+	}
+
+	/**
+	 * sets allSubstrateConnectivity to be a network that is fully connected between each layer and
+	 * is defined by the hiddenArchitecture
+	 * @param HNTask the HyperNEATTask
+	 */
+	public void setAdjacentSubstrateConnectivity(HyperNEATTask HNTask) {
 		List<Triple<String, String, Boolean>> substrateConnectivity = new ArrayList<Triple<String, String, Boolean>>();
 		List<Substrate> oldSubstrateInformation = HNTask.getSubstrateInformation();
-		
 		Iterator<Substrate> subItr = oldSubstrateInformation.iterator();
-
+		//connects input layer to first hidden layer
 		int numInputs = 0;
 		while(subItr.hasNext()) {
 			Substrate currentSubstrate = subItr.next();
@@ -94,24 +109,26 @@ public class HyperNEATCPPNAndSubstrateArchitectureGenotype extends HyperNEATCPPN
 			}
 			// Nothing occurs when hidden substrate is found. We just skip them.
 		}
-		int numSubsInFirstHiddenLayer = networkHiddenArchitecture.get(0).t1;
+		int numSubsInFirstHiddenLayer = hiddenArchitecture.get(0).t1;
 		for (int i = 0; i < numInputs; i++) {
 			for (int j = 0; j < numSubsInFirstHiddenLayer; i++) {
 				substrateConnectivity.add(new Triple <String, String, Boolean>
-				("Input(" + i + ")", "process(" + i + ",0)", CONVOLUTIONAL_CONNECTIONS[0]));
+				("Input(" + i + ")", "process(" + i + ",0)", false));
 			}
 		}
-		
-		int numLayers = networkHiddenArchitecture.size();
+		//connects input layer to first hidden layer end
+		//connects adjacent hidden layers
+		int numLayers = hiddenArchitecture.size();
 		for (int i = 0; i < numLayers - 1; i++) {
-			for (int src = 0; src < networkHiddenArchitecture.get(i).t1; src++) {
-				for (int target = 0; target < networkHiddenArchitecture.get(i + 1).t1; target++) {
-					substrateConnectivity.add(new Triple<String, String, Boolean>("process(" + src + "," + i + ")", "process(" + target + "," + (i + 1) + ")", CONVOLUTIONAL_CONNECTIONS[i]));
+			for (int src = 0; src < hiddenArchitecture.get(i).t1; src++) {
+				for (int target = 0; target < hiddenArchitecture.get(i + 1).t1; target++) {
+					substrateConnectivity.add(new Triple<String, String, Boolean>(
+							"process(" + src + "," + i + ")", "process(" + target + "," + (i + 1) + ")", false));
 				}
 			}
 		}
-		
-		
+		//connects adjacent hidden layers end
+		//connects last hidden layer to output layer
 		int numOutputs = 0;
 		while(subItr.hasNext()) {
 			Substrate currentSubstrate = subItr.next();
@@ -119,15 +136,13 @@ public class HyperNEATCPPNAndSubstrateArchitectureGenotype extends HyperNEATCPPN
 				numOutputs++;
 			} 
 		}
-		//networkHiddenArchitecture.get(networkHiddenArchitecture.size() - 1).t1 = width of the last hidden layer
-		// FIX IN A MOMENT
-//		for (int i = 0; i < networkHiddenArchitecture.get(networkHiddenArchitecture.size() - 1).t1; i++) {
-//			for (int j = 0; j < numOutputs; j++) {
-//				substrateConnectivity.add(new Triple<String, String, Boolean>
-//				("process(" + i + "," + (networkHiddenArchitecture.size() - 1) + ")", out, CONVOLUTIONAL_CONNECTIONS));
-//			}
-//		}
-//		
-		return substrateConnectivity;
+		//hiddenArchitecture.get(hiddenArchitecture.size() - 1).t1 = width of the last hidden layer
+		for (int i = 0; i < hiddenArchitecture.get(hiddenArchitecture.size() - 1).t1; i++) {
+			for (int j = 0; j < numOutputs; j++) {
+				substrateConnectivity.add(new Triple<String, String, Boolean>
+				("process(" + i + "," + (hiddenArchitecture.size() - 1) + ")", "", false));
+			}
+		}
+		//connects last hidden layer to output layer end
 	}
 }
