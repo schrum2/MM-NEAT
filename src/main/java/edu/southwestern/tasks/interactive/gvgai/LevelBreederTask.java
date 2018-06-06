@@ -500,30 +500,30 @@ public class LevelBreederTask<T extends Network> extends InteractiveEvolutionTas
 			new char[]{'h','n','r'}, // house, water, rock
 			new char[]{'.'},
 			new char[]{'w'}});
-//		SPECIFIC_GAME_LEVEL_CHARS.put("", new char[][] {
-	//		new char[]{'w'}, // Walls are fixed
-	//		new char[]{'a','a','d','d','i','o','A'}, // 
-	//		new char[]{'t','x'}, //
-//			new char[]{'.'},
-//			new char[]{'w'}});
-//		SPECIFIC_GAME_LEVEL_CHARS.put("", new char[][] {
-	//		new char[]{'w'}, // Walls are fixed
-	//		new char[]{'a','a','d','d','i','o','A'}, // 
-	//		new char[]{'t','x'}, //
-//			new char[]{'.'},
-//			new char[]{'w'}});
-//		SPECIFIC_GAME_LEVEL_CHARS.put("", new char[][] {
-	//		new char[]{'w'}, // Walls are fixed
-	//		new char[]{'a','a','d','d','i','o','A'}, // 
-	//		new char[]{'t','x'}, //
-//			new char[]{'.'},
-//			new char[]{'w'}});
-//		SPECIFIC_GAME_LEVEL_CHARS.put("", new char[][] {
-	//		new char[]{'w'}, // Walls are fixed
-	//		new char[]{'a','a','d','d','i','o','A'}, // 
-	//		new char[]{'t','x'}, //
-//			new char[]{'.'},
-//			new char[]{'w'}});
+		SPECIFIC_GAME_LEVEL_CHARS.put("roadfighter", new char[][] {
+			new char[]{'w'}, // Walls are fixed
+			new char[]{'x','A'}, // exit, avatar
+			new char[]{'f','t','s','c'}, // trees, fast and slow car
+			new char[]{'.'},
+			new char[]{'w'}});
+		SPECIFIC_GAME_LEVEL_CHARS.put("roguelike", new char[][] {
+			new char[]{'w'}, // Walls are fixed
+			new char[]{'x','k','l','m','A'}, // exit, key, lock, market, avatar
+			new char[]{'s','g','r','p','h'}, // weapon, gold, spider, phantom, health
+			new char[]{'.'},
+			new char[]{'w'}});
+		SPECIFIC_GAME_LEVEL_CHARS.put("run", new char[][] {
+			new char[]{'w'}, // Walls are fixed
+			new char[]{'e','k','l','A'}, // exit, key, lock, avatar
+			new char[]{'c','d'}, //cliff, damaged cliff
+			new char[]{'.'},
+			new char[]{'w'}});
+		SPECIFIC_GAME_LEVEL_CHARS.put("seaquest", new char[][] {
+			new char[]{'w'}, // Walls are fixed
+			new char[]{'a','A'}, // sky and avatar
+			new char[]{'1','2','3','4'}, // shark, whale, normal, oft
+			new char[]{'.'},
+			new char[]{'w'}});
 //		SPECIFIC_GAME_LEVEL_CHARS.put("", new char[][] {
 	//		new char[]{'w'}, // Walls are fixed
 	//		new char[]{'a','a','d','d','i','o','A'}, // 
@@ -763,7 +763,7 @@ public class LevelBreederTask<T extends Network> extends InteractiveEvolutionTas
 
 	public static void main(String[] args) {
 		try {
-			MMNEAT.main(new String[]{"runNumber:0","randomSeed:1","trials:1","mu:16","maxGens:500","gvgaiGame:rivers","io:false","netio:false","mating:true","fs:false","task:edu.southwestern.tasks.interactive.gvgai.LevelBreederTask","allowMultipleFunctions:true","ftype:0","watch:false","netChangeActivationRate:0.3","cleanFrequency:-1","simplifiedInteractiveInterface:false","recurrency:false","saveAllChampions:true","cleanOldNetworks:false","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:2000","imageHeight:2000","imageSize:200","includeFullSigmoidFunction:true","includeFullGaussFunction:true","includeCosineFunction:true","includeGaussFunction:false","includeIdFunction:true","includeTriangleWaveFunction:true","includeSquareWaveFunction:true","includeFullSawtoothFunction:true","includeSigmoidFunction:false","includeAbsValFunction:false","includeSawtoothFunction:false"});
+			MMNEAT.main(new String[]{"runNumber:0","randomSeed:1","trials:1","mu:16","maxGens:500","gvgaiGame:seaquest","io:false","netio:false","mating:true","fs:false","task:edu.southwestern.tasks.interactive.gvgai.LevelBreederTask","allowMultipleFunctions:true","ftype:0","watch:false","netChangeActivationRate:0.3","cleanFrequency:-1","simplifiedInteractiveInterface:false","recurrency:false","saveAllChampions:true","cleanOldNetworks:false","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:2000","imageHeight:2000","imageSize:200","includeFullSigmoidFunction:true","includeFullGaussFunction:true","includeCosineFunction:true","includeGaussFunction:false","includeIdFunction:true","includeTriangleWaveFunction:true","includeSquareWaveFunction:true","includeFullSawtoothFunction:true","includeSigmoidFunction:false","includeAbsValFunction:false","includeSawtoothFunction:false"});
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}
