@@ -78,7 +78,7 @@ public abstract class SinglePopulationCoevolutionTask<T> implements SinglePopula
 		
 		assert population.size()%groupSize == 0 : "Population size " + population.size() + " should be divisible by group size " + groupSize;
 		
-		double[] bestObjectives = minScores();
+		double[] bestObjectives = minScores();//this will be returned later in the method getMinScores
 		Genotype<T>[] bestGenotypes = new Genotype[bestObjectives.length];
 		Score<T>[] bestScores = new Score[bestObjectives.length];
 		
@@ -219,8 +219,7 @@ public abstract class SinglePopulationCoevolutionTask<T> implements SinglePopula
 	}
 
 	/**
-	 * 
-	 * @return
+	 * @return returns opponent scores
 	 */
 	public int numOtherScores() {
 		return 0;
@@ -229,7 +228,7 @@ public abstract class SinglePopulationCoevolutionTask<T> implements SinglePopula
 	/**
 	 * @return returns the lowest scores
 	 */
-	public double[] minScores() {
+	public double[] getMinScores() {
 		return new double[this.numObjectives()];
 	}
 	
