@@ -73,10 +73,8 @@ public class ControllerBot extends UT2004BotModuleController {
 	 * ends the evaluation period for the bot and retrieves its fitnesses
 	 */
 	public void endEval() {
-		// System.out.println("End eval");
 		getParams().getStats().endEval(this);
 		BotKiller.killBot(bot);
-		// ServerKiller.killServer(getParams().getServer());
 	}
 
 	@Override
@@ -137,12 +135,6 @@ public class ControllerBot extends UT2004BotModuleController {
 			int evalSeconds, int desiredSkill, String host, int botPort) {
 		GameDataCollector[] collectors = new GameDataCollector[controllers.length];
 		int numHunterBots = Parameters.parameters.integerParameter("numHunterBots");
-//		if(numHunterBots > 0) {
-//			System.out.println("Launching HunterBots with evolution does not currently work");
-//			System.out.println("See edu.southwestern.tasks.ut2004.bots.ControllerBot");
-//			System.exit(1);
-//		}
-
 		int totalBots = controllers.length + numHunterBots;
 		IRemoteAgentParameters[] params = new IRemoteAgentParameters[totalBots];
 		Class[] classes = new Class[totalBots];
@@ -156,7 +148,6 @@ public class ControllerBot extends UT2004BotModuleController {
 		}
 
 		//adds hunter bots to the spaces in the array after ControllerBots
-		// TODO: Fix issue with HunterBots
 		for(int i = 0; i < numHunterBots; i++) {
 			classes[i + controllers.length] = HunterBot.class;
 			params[i + controllers.length] = new UT2004BotParameters();

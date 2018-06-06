@@ -7,6 +7,7 @@ import cz.cuni.amis.pogamut.base.agent.params.IRemoteAgentParameters;
 import cz.cuni.amis.pogamut.ut2004.agent.utils.UT2004BotDescriptor;
 import cz.cuni.amis.pogamut.ut2004.bot.params.UT2004BotParameters;
 import cz.cuni.amis.pogamut.ut2004.utils.MultipleUT2004BotRunner;
+import cz.cuni.amis.utils.exception.PogamutException;
 import edu.southwestern.tasks.ut2004.controller.DummyController;
 import edu.utexas.cs.nn.bots.UT2;
 import edu.utexas.cs.nn.bots.UT2.UT2Parameters;
@@ -19,7 +20,7 @@ import pogamut.navigationbot.NavigationBot;
  * @author Jacob Schrum
  */
 public class MultiBotLauncher {
-	
+
 	/**
 	 * creates threads for all the given bot classes in the server
 	 * @param botClasses (the classes of bot to be spawned into the server)
@@ -37,16 +38,20 @@ public class MultiBotLauncher {
 			threads[i] = new Thread() {
 				@SuppressWarnings("unchecked")
 				public void run() {
-					@SuppressWarnings("rawtypes")
-					MultipleUT2004BotRunner multi = new MultipleUT2004BotRunner(botClasses.getClass().getName()).setHost(host).setPort(port);
-					@SuppressWarnings("rawtypes")
-					UT2004BotDescriptor bots = new UT2004BotDescriptor().setController(botClasses[index]).setAgentParameters(new IRemoteAgentParameters[] {params[index]});
-					// I believe the setMain causes certain exceptions to be caught and suppressed
-					multi.setMain(true).setLogLevel(Level.OFF).startAgents(bots);
+					try {
+						@SuppressWarnings("rawtypes")
+						MultipleUT2004BotRunner multi = new MultipleUT2004BotRunner(botClasses.getClass().getName()).setHost(host).setPort(port);
+						@SuppressWarnings("rawtypes")
+						UT2004BotDescriptor bots = new UT2004BotDescriptor().setController(botClasses[index]).setAgentParameters(new IRemoteAgentParameters[] {params[index]});
+						// I believe the setMain causes certain exceptions to be caught and suppressed
+						multi.setMain(true).setLogLevel(Level.OFF).startAgents(bots);
+					} catch (PogamutException e) {
+						// Obligatory exception that happens from stopping the bot. Just suppress.
+					}
 				}
 			};
 		}
-		
+
 		//starts each thread
 		for(int i = 0; i < botClasses.length; i++) {
 			threads[i].start();
@@ -58,7 +63,7 @@ public class MultiBotLauncher {
 				threads[i].join();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
-				
+
 				System.out.println("Thread " + i + " interrupted");
 				System.exit(1);
 			}
@@ -66,7 +71,7 @@ public class MultiBotLauncher {
 
 
 	}
-	
+
 	/**
 	 * Launches a test server with the HunterBot, NavigationBot, UT^2, MirrorBot, and a ControllerBot with a DummyController.
 	 * 
@@ -78,12 +83,12 @@ public class MultiBotLauncher {
 	public static void main(String[] args) {
 		@SuppressWarnings("rawtypes")
 		Class[] botClasses = new Class[] {HunterBot.class, NavigationBot.class, UT2.class, MirrorBot4.class, ControllerBot.class};
-		
+
 		UT2Parameters ut2params = new UT2Parameters();
 		ControllerBotParameters dummyParameters = new ControllerBotParameters(null, new DummyController(), "Dummy", new GameDataCollector(), 300, 4, 3000);
-		
+
 		IRemoteAgentParameters[] params = new IRemoteAgentParameters[] {new UT2004BotParameters(), new UT2004BotParameters(), ut2params, new UT2004BotParameters(), dummyParameters};
 		launchMultipleBots(botClasses, params, "localhost", 3000);
 	}
-	
+
 }
