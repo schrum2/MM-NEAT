@@ -60,8 +60,6 @@ public class VariableDirectionSortedPossibleGhostDistanceBlock extends VariableD
 	public int[] getTargets(GameFacade gf) {
 		ArrayList<Triple<Integer, MOVE, Double>> ghosts = gf.getPossibleGhostInfo();
 		
-		System.out.println(ghosts.toString());
-		
 		if (order >= ghosts.size()) {
 			return new int[0]; // Target in lair will result in distance of
 								// infinity
