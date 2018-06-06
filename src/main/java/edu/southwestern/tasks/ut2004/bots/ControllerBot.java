@@ -99,7 +99,9 @@ public class ControllerBot extends UT2004BotModuleController {
 		// Consult brain and act
 		BotAction action = brain.control(this);
 		String description = action.execute(this);
-		System.out.println(getParams().getBotPort() + ":" + getInfo().getName() + ":" + description);
+		if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+			System.out.println(getParams().getBotPort() + ":" + getInfo().getName() + ":" + description);
+		}
 	}
 
 	@Override

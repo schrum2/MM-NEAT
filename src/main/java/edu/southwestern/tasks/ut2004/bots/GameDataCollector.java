@@ -12,6 +12,7 @@ import cz.cuni.amis.pogamut.ut2004.agent.module.sensor.Game;
 import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004BotModuleController;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.ItemType;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.*;
+import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.ut2004.Util;
 import java.io.Serializable;
 import java.util.HashMap;
@@ -297,7 +298,9 @@ public class GameDataCollector implements Serializable {
 
 						Map<ItemType, Integer> ammos = weaponry.getAmmos();
 						for (ItemType weapon : ammos.keySet()) {
-							System.out.println(weapon.getName());
+							if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+								System.out.println(weapon.getName());
+							}
 							int currentAmmo = ammos.get(weapon);
 							if (!previousAmmo.containsKey(weapon)) {
 								previousAmmo.put(weapon, 0);
@@ -315,7 +318,9 @@ public class GameDataCollector implements Serializable {
 								previousAmmo.put(weapon, currentAmmo);
 							}
 						}
-						System.out.println("=======================");
+						if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+							System.out.println("=======================");
+						}
 					}
 				});
 	}
