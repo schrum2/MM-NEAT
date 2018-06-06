@@ -99,6 +99,7 @@ public class FlexibleSubstrateArchitecture {
 			List<String> outputSubstrateNames,
 			List<Triple<Integer, Integer, Integer>> networkHiddenArchitecture,
 			boolean capableOfConvolution) {
+		//networkHiddenArchitecture.get(networkHiddenArchitecture.size() - 1).t1 = width of the last hidden layer
 		for (int i = 0; i < networkHiddenArchitecture.get(networkHiddenArchitecture.size() - 1).t1; i++) {
 			for (String out: outputSubstrateNames) {
 				networkConnectivity.add(new Triple<String, String, Boolean>
