@@ -44,24 +44,28 @@ public class LevelBreederTask<T extends Network> extends InteractiveEvolutionTas
 	public static final int FLOOR_INDEX = 3; // Will always only have one character
 	public static final int WALL_INDEX = 3; // Will always only have one character
 	static {
+		//SEMI-PLAYABLE
 		SPECIFIC_GAME_LEVEL_CHARS.put("zelda", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'g','+','A'}, // There is one gate, one key, and one avatar
 			new char[]{'1','2','3'}, // There are random monsters dignified by 1, 2, 3
 			new char[]{'.'},
 			new char[]{'w'}});
+		//SEMI-PLAYABLE
 		SPECIFIC_GAME_LEVEL_CHARS.put("blacksmoke", new char[][] {
 			new char[]{'w','b','c'}, // There are fixed walls, destructible blocks, and black death squares
 			new char[]{'l','k','e','A'}, // There is one locked door, one key, one escape gate, and one avatar
 			new char[]{'d'}, // There are a random number of death smoke blobs
 			new char[]{'.'},
 			new char[]{'w'}});
+		//SEMI-PLAYABLE
 		SPECIFIC_GAME_LEVEL_CHARS.put("chipschallenge", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'-','r','g','b','y','1','2','3','4','e','A'}, // There is one locked gate, four keys, four doors, one escape floor and one avatar
 			new char[]{'~','m','x','f','i','d'}, // There are random hazards dignified by ~(water), m(mud), x(fire) and random perks dignified by f (flippers), i(fireboots), d(crate)
 			new char[]{'.'},
 			new char[]{'w'}});
+		//BROKEN
 		//TODO: fix aliens: everything spawns yet some levels are broken, force the spawn of the avatar and the aliens
 		SPECIFIC_GAME_LEVEL_CHARS.put("aliens", new char[][] {
 			new char[]{'.'}, // floor
@@ -69,54 +73,63 @@ public class LevelBreederTask<T extends Network> extends InteractiveEvolutionTas
 			new char[]{'0'}, // There are base blocks dignified by 0 
 			new char[]{'.'},
 			new char[]{'w'}});
+		//SEMI-PLAYABLE
 		SPECIFIC_GAME_LEVEL_CHARS.put("pacman", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'1','2','3','4','A'}, // There are four ghosts and one avatar
 			new char[]{'.','f','0','+'}, // There are random pellets, fruits. and power pellets
 			new char[]{'.'},
 			new char[]{'w'}});
+		//BROKEN
 		SPECIFIC_GAME_LEVEL_CHARS.put("angelsdemons", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'a','a','d','d','i','o','A'}, // There are two angels, two demons, an input and output, and an Avatar
 			new char[]{'t','x'}, // There are random sky boxes and a sky trunk
 			new char[]{'.'},
 			new char[]{'w'}});
+		//BROKEN
 		SPECIFIC_GAME_LEVEL_CHARS.put("assemblyline", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'l','r','u','d','g','p','v','A'}, // Spawns a lcleft, lcright,lcup, lcdown, goal, portal, vortex, and an Avatar
 			new char[]{'1','2','3','4','5','6','7','8','9'}, // Spawns random assemblies
 			new char[]{'.'},
 			new char[]{'w'}});
+		//SEMI-PLAYABLE
 		SPECIFIC_GAME_LEVEL_CHARS.put("avoidgeorge", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'g','A'}, // Spawns George and an Avatar
 			new char[]{'c'}, // Spawns random number of quiet
 			new char[]{'.'},
 			new char[]{'w'}});
+		//SEMI-PLAYABLE
 		SPECIFIC_GAME_LEVEL_CHARS.put("bait", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'g','k','A'}, // Spawns a key, goal, and an Avatar
 			new char[]{'m','0'}, //Spawns a random number of mushrooms and holes
 			new char[]{'.'},
 			new char[]{'w'}});
+		//BROKEN
 		SPECIFIC_GAME_LEVEL_CHARS.put("beltmanager", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'1','2','3','4','p','s','A'}, // 
 			new char[]{'b','d','j'}, //
 			new char[]{'.'},
 			new char[]{'w'}});
+		//SEMI-PLAYABLE
 		SPECIFIC_GAME_LEVEL_CHARS.put("boloadventures", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'g','A'}, // Spawns a goal and an Avatar
 			new char[]{'b','c','l','r','u','d','o'}, // Spawns a random number of boxes, boulders, lcleft, lcright,lcup, lcdown, and holes
 			new char[]{'.'},
 			new char[]{'w'}});
+		//SEMI-PLAYABLE
 		SPECIFIC_GAME_LEVEL_CHARS.put("bomber", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'g','A'}, // Spawns a goal and an Avatar
-			new char[]{'1','2','3','4','e','b','~'}, // Spawns a random number of lcleft, lcright,lcup, lcdown, boxes, bombs, and water
-			new char[]{'.'},
+			new char[]{'1','2','3','4','e','b','.'}, // Spawns a random number of lcleft, lcright,lcup, lcdown, boxes, bombs, and water
+			new char[]{','},
 			new char[]{'w'}});
+		//SEMI-PLAYABLE
 		//TODO: fix this
 		SPECIFIC_GAME_LEVEL_CHARS.put("bomberman", new char[][] {
 			new char[]{'w'}, // Walls are fixed
@@ -124,42 +137,49 @@ public class LevelBreederTask<T extends Network> extends InteractiveEvolutionTas
 			new char[]{'b','s','c','q'}, // Spawns a random number of bats, spiders, scorpions, and breakable walls
 			new char[]{'.'},
 			new char[]{'w'}});
+		//SEMI-PLAYABLE
 		SPECIFIC_GAME_LEVEL_CHARS.put("boulderchase", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'e','A'}, // Spawns and exit and an Avatar
 			new char[]{'o','x','c','b'}, // Spawns a random number of boulders, diamonds, crabs, butterflies
 			new char[]{'.'},
 			new char[]{'w'}});
+		//SEMI-PLAYABLE
 		SPECIFIC_GAME_LEVEL_CHARS.put("boulderdash", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'e','A'}, // Spawns and exit and an Avatar
 			new char[]{'o','x','c','b'}, //Spawns a random number of boulders, diamonds, crabs, butterflies
 			new char[]{'.'},
 			new char[]{'w'}});
+		//SEMI-PLAYABLE
 		SPECIFIC_GAME_LEVEL_CHARS.put("brainman", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'k','d','e','A'}, // Spawns a key, door, exit and an Avatar
 			new char[]{'r','g','b','o'}, //Spawns a random number of red, green, and blue gems, and blouders
 			new char[]{'.'},
 			new char[]{'w'}});
+		//SEMI-PLAYABLE
 		SPECIFIC_GAME_LEVEL_CHARS.put("butterflies", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'A'}, // Spawns an Avatar
 			new char[]{'1','0'}, // Spawns a random number of butterflies and cocoons
 			new char[]{'.'},
 			new char[]{'w'}});
+		//SEMI-PLAYABLE
 		SPECIFIC_GAME_LEVEL_CHARS.put("cakybaky", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'1','2','3','4','5','6','A'}, // Spawns all the objectives and an Avatar
 			new char[]{'t','c'}, // Spawns a random number of tables and the chefs
 			new char[]{'.'},
 			new char[]{'w'}});
+		//DOES NOT WORK
 		SPECIFIC_GAME_LEVEL_CHARS.put("camelRace", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'r','h','n','t','f','m','s','g','g','g','g','g','g','g'}, // Spawns different camels and a goal for each camel
 			new char[]{'A','B'}, // Spawns a right and left
 			new char[]{'.'},
 			new char[]{'w'}});
+		//BROKEN
 		//TODO: fix water spawns
 		SPECIFIC_GAME_LEVEL_CHARS.put("catapults", new char[][] {
 			new char[]{'w'}, // Walls are fixed
@@ -167,18 +187,21 @@ public class LevelBreederTask<T extends Network> extends InteractiveEvolutionTas
 			new char[]{'0','1','2','3','_'}, // Spawns random launch pads, and water
 			new char[]{'.'},
 			new char[]{'w'}});
+		//DOES NOT WORK
 		SPECIFIC_GAME_LEVEL_CHARS.put("chainreaction", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'m','c','A'}, // Spawns the master boulder and an Avatar
 			new char[]{'g','0','c','b'}, // Spawns a random number of goals, holes, boulders and boxes
 			new char[]{'.'},
 			new char[]{'w'}});
+		//SEMI-PLAYABLE
 		SPECIFIC_GAME_LEVEL_CHARS.put("chase", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'A'}, // Spawns an Avatar
 			new char[]{'0'}, // Spawns a Crow?
 			new char[]{'.'},
 			new char[]{'w'}});
+		//DOES NOT WORK
 		//TODO: fix this, game type, to0 sophisticated
 		SPECIFIC_GAME_LEVEL_CHARS.put("chopper", new char[][] {
 			new char[]{'w'}, // Walls are fixed
@@ -186,120 +209,140 @@ public class LevelBreederTask<T extends Network> extends InteractiveEvolutionTas
 			new char[]{' '}, //
 			new char[]{'.'},
 			new char[]{'w'}});
+		//Broken
 		SPECIFIC_GAME_LEVEL_CHARS.put("portals", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'i','o','2','3','g','A'}, // Spawns portals and an Avatar
 			new char[]{'i','o','2','3'}, // Randomly spawns portals
 			new char[]{'.'},
 			new char[]{'w'}});
+		//SEMI-PLAYABLE
 		SPECIFIC_GAME_LEVEL_CHARS.put("clusters", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'a','b','c','A'}, // Spawns a solid red, green, and blue block and also an Avatar
 			new char[]{'1','2','3','h'}, //Spawns a random number of holes and red, green, blue movable blocks
 			new char[]{'.'},
 			new char[]{'w'}});
+		//BROKEN
 		SPECIFIC_GAME_LEVEL_CHARS.put("colourescape", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'a','b','c','d','x','A'}, // Spawns a normal, red, green, and blue switch and also an Avatar
 			new char[]{'1','2','3','4','h'}, //Spawns a random number of and normal, red, green, blue blocks, and holes
 			new char[]{'.'},
 			new char[]{'w'}});
+		//SEMI-PLAYABLE
 		SPECIFIC_GAME_LEVEL_CHARS.put("cookmepasta", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'b','p','o','t','k','l','A'}, // Spawns all the ingredients and an Avatar
 			new char[]{'.'}, //null
 			new char[]{'.'},
 			new char[]{'w'}});
+		//BROKEN
 		SPECIFIC_GAME_LEVEL_CHARS.put("cops", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'0','1','d','b','A'}, // Spawns a jail, depot, key, and an Avatar
 			new char[]{'g','y','r','d'}, // spawns different levels of criminals
 			new char[]{'.'},
 			new char[]{'w'}});
+		//SEMI-PLAYABLE
 		SPECIFIC_GAME_LEVEL_CHARS.put("crossfire", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'g','A'}, // Spawns a goal and an Avatar
 			new char[]{'t'}, // Spawns a random number of turrets
 			new char[]{'.'},
 			new char[]{'w'}});
+		//SEMI-PLAYABLE
 		SPECIFIC_GAME_LEVEL_CHARS.put("defem", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'a'}, // Spawns an Avatar
 			new char[]{'r','c','z','x','f','v'}, // Spawns random number of enemies
 			new char[]{'.'},
 			new char[]{'w'}});
+		//BROKEN
 		SPECIFIC_GAME_LEVEL_CHARS.put("defender", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'A'}, // Spawns avatar
 			new char[]{'0','1','3',}, // spawn portals for aliens
 			new char[]{'.'},
 			new char[]{'w'}});
+		//SEMI-PLAYABLE
 		SPECIFIC_GAME_LEVEL_CHARS.put("digdug", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'A'}, // spawn Avatar
 			new char[]{'0','1','m','e'}, //spawns gems gold monsters and an entrance
 			new char[]{'.'},
 			new char[]{'w'}});
+		//BROKEN
 		SPECIFIC_GAME_LEVEL_CHARS.put("dungeon", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'x','k','m','A'}, // Spawns exit, key, lock, avatar
 			new char[]{'g','f','1','2','t','l','r','u','d'}, // Spwans gold, firehole, boulders, lasers
 			new char[]{'.'},
 			new char[]{'w'}});
+		//SEMI-PLAYABLE
 		SPECIFIC_GAME_LEVEL_CHARS.put("eggomania", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'s','c','A'}, // Avatar and chickens
 			new char[]{' '}, // N/A
 			new char[]{'.'},
 			new char[]{'w'}});
+		//BROKEN
 		SPECIFIC_GAME_LEVEL_CHARS.put("eighthpassenger", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'a','e','A'}, // alien, avatar and exit
 			new char[]{'t','x','n','m','d','s'}, //tunnels and door
 			new char[]{'.'},
 			new char[]{'w'}});
+		//BROKEN
 		SPECIFIC_GAME_LEVEL_CHARS.put("enemycitadel", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'e','e','0','1','g','A'}, // enemy, holes, goal, avatar
 			new char[]{'b','c'}, //boulder, crate
 			new char[]{'.'},
 			new char[]{'w'}});
+		//SEMI-PLAYABLE
 		SPECIFIC_GAME_LEVEL_CHARS.put("escape", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'x','A'}, // exit and avatar
 			new char[]{'h','b'}, // holes and boxes
 			new char[]{'.'},
 			new char[]{'w'}});
+		//BROKEN
 		SPECIFIC_GAME_LEVEL_CHARS.put("factorymanager", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'A'}, // avatar
 			new char[]{'l','r','u','d','p','b','h','s','t'}, //lasers, portal, boc, hgighway, street, and a trap
 			new char[]{'.'},
 			new char[]{'w'}});
+		//BROKEN
 		SPECIFIC_GAME_LEVEL_CHARS.put("firecaster", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'g','A'}, // goal, avatar
 			new char[]{'b','.'}, //box, mana
 			new char[]{'.'},
 			new char[]{'w'}});
+		//SEMI-PLAYABLE
 		SPECIFIC_GAME_LEVEL_CHARS.put("fireman", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'e','A'}, // extinguisher, avatar
 			new char[]{'b','f'}, // box, fire
 			new char[]{'.'},
 			new char[]{'w'}});
+		//BROKEN
 		SPECIFIC_GAME_LEVEL_CHARS.put("firestorms", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'1','0','A'}, // exit, seed, avatar
 			new char[]{'h'}, // water
 			new char[]{'.'},
 			new char[]{'w'}});
+		//BROKEN
 		SPECIFIC_GAME_LEVEL_CHARS.put("freeway", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'S','i'}, // 
 			new char[]{'+','x','t','-','_','l'}, //
 			new char[]{'.'},
 			new char[]{'w'}});
+		//BROKEN
 		//TODO: fix this, complicated game play
 		SPECIFIC_GAME_LEVEL_CHARS.put("frogs", new char[][] {
 			new char[]{'w'}, // Walls are fixed
@@ -307,12 +350,14 @@ public class LevelBreederTask<T extends Network> extends InteractiveEvolutionTas
 			new char[]{'-','x','_','l','='}, // obstacles?
 			new char[]{'.'},
 			new char[]{'w'}});
+		//SEMI-PLAYABLE
 		SPECIFIC_GAME_LEVEL_CHARS.put("garbagecollector", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'A'}, // avatar
 			new char[]{'g'}, // garbage
 			new char[]{'.'},
 			new char[]{'w'}});
+		//BROKEN
 		//TODO: fix this, complicated game play
 		SPECIFIC_GAME_LEVEL_CHARS.put("gymkhana", new char[][] {
 			new char[]{'w'}, // Walls are fixed
@@ -320,18 +365,21 @@ public class LevelBreederTask<T extends Network> extends InteractiveEvolutionTas
 			new char[]{'.','-',',','0','1','2','3','r','l','g'}, //trees
 			new char[]{'.'},
 			new char[]{'w'}});
+		//SEMI-PLAYABLE
 		SPECIFIC_GAME_LEVEL_CHARS.put("hungrybirds", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'g','A'}, // 
 			new char[]{'f'}, //
 			new char[]{'.'},
 			new char[]{'w'}});
+		//SEMI-PLAYABLE
 		SPECIFIC_GAME_LEVEL_CHARS.put("iceandfire", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'e','A'}, // 
 			new char[]{'t','c','i','f','_','x'}, //
 			new char[]{'.'},
 			new char[]{'w'}});
+		//BROKEN
 		//TODO:same issue with aliens
 		SPECIFIC_GAME_LEVEL_CHARS.put("ikaruga", new char[][] {
 			new char[]{'w'}, // Walls are fixed
@@ -339,18 +387,21 @@ public class LevelBreederTask<T extends Network> extends InteractiveEvolutionTas
 			new char[]{' '}, //
 			new char[]{'.'},
 			new char[]{'w'}});
+		//SEMI-PLAYABLE
 		SPECIFIC_GAME_LEVEL_CHARS.put("infection", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'1','0','e','A'}, // 
 			new char[]{'1','0','x'}, //
 			new char[]{'.'},
 			new char[]{'w'}});
+		//BROKEN
 		SPECIFIC_GAME_LEVEL_CHARS.put("intersection", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'s','i'}, // avatar and input
 			new char[]{'t','x','-','_','l'}, //tree and cars
 			new char[]{'='},
 			new char[]{'w'}});
+		//BROKEN
 		//TODO: game play a little wonky
 		SPECIFIC_GAME_LEVEL_CHARS.put("islands", new char[][] {
 			new char[]{'w'}, // Walls are fixed
@@ -358,12 +409,14 @@ public class LevelBreederTask<T extends Network> extends InteractiveEvolutionTas
 			new char[]{'b','x','p','t'}, //
 			new char[]{'.'},
 			new char[]{'w'}});
+		//SEMI-PLAYABLE
 		SPECIFIC_GAME_LEVEL_CHARS.put("jaws", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'3','A'}, // shark, avatar
 			new char[]{'1','2'}, // pitanhahole, whalehole
 			new char[]{'.'},
 			new char[]{'w'}});
+		//BROKEN
 		//TODO: fix bat collision
 		SPECIFIC_GAME_LEVEL_CHARS.put("killBillVol1", new char[][] {
 			new char[]{'w'}, // Walls are fixed
@@ -371,48 +424,56 @@ public class LevelBreederTask<T extends Network> extends InteractiveEvolutionTas
 			new char[]{'u','d','h','x','y','z'}, // "doors" and enemies
 			new char[]{'.'},
 			new char[]{'w'}});
+		//BROKEN
 		SPECIFIC_GAME_LEVEL_CHARS.put("labyrinth", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'x','A'}, // exit, avatar
 			new char[]{'t'}, // random traps
 			new char[]{'.'},
 			new char[]{'w'}});
+		//BROKEN
 		SPECIFIC_GAME_LEVEL_CHARS.put("labyrinthdual", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'x','A'}, // exit, avatar
 			new char[]{'t','r','b','1','2'}, // random traps, walls, and cloaks
 			new char[]{'.'},
 			new char[]{'w'}});
+		//SEMI-PLAYABLE
 		SPECIFIC_GAME_LEVEL_CHARS.put("lasers", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'l','r','u','d','g','b','A'}, // lasers and avatar
 			new char[]{'l','r','u','d','b'}, //lasers
 			new char[]{'.'},
 			new char[]{'w'}});
+		//SEMI-PLAYABLE
 		SPECIFIC_GAME_LEVEL_CHARS.put("lasers2", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'m','s','t','e','u','d','r','l','g','b','A'}, // lasers and avatar with other obstacles
 			new char[]{'l','r','u','d','b','m','s','t','e'}, // lasers and other obstacles
 			new char[]{'.'},
 			new char[]{'w'}});
+		//SEMI-PLAYABLE
 		SPECIFIC_GAME_LEVEL_CHARS.put("lemmings", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'x','e','A'}, // exit. entry, and avatar
 			new char[]{'h'}, // holes
 			new char[]{'.'},
 			new char[]{'w'}});
+		//SEMI-PLAYABLE
 		SPECIFIC_GAME_LEVEL_CHARS.put("missilecommand", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'A','c'}, // avatar and city
 			new char[]{'m','f','c'}, //different speeds of missiles andrandom number of cities
 			new char[]{'.'},
 			new char[]{'w'}});
+		//BROKEN
 		SPECIFIC_GAME_LEVEL_CHARS.put("modality", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'.','+','g','b','*','@','t','u','A'}, // 
 			new char[]{' '}, //
 			new char[]{'.'},
 			new char[]{'w'}});
+		//DOES NOT WORK
 		//TODO: GAME FILE DOESNT EXSIST
 		SPECIFIC_GAME_LEVEL_CHARS.put("myAliens", new char[][] {
 			new char[]{'w'}, // Walls are fixed
@@ -420,18 +481,21 @@ public class LevelBreederTask<T extends Network> extends InteractiveEvolutionTas
 			new char[]{' '}, //
 			new char[]{'.'},
 			new char[]{'w'}});
+		//SEMI-PLAYABLE
 		SPECIFIC_GAME_LEVEL_CHARS.put("overload", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'g','A'}, // goal and avatar
 			new char[]{'0','s','1'}, //gold, random, weapon
 			new char[]{'.'},
 			new char[]{'w'}});
+		//SEMI-PLAYABLE
 		SPECIFIC_GAME_LEVEL_CHARS.put("painter", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'A'}, // avatar
 			new char[]{'x'}, // paint
 			new char[]{'.'},
 			new char[]{'w'}});
+		//BROKEN
 		//TODO: lacks foramt like aliens
 		SPECIFIC_GAME_LEVEL_CHARS.put("plants", new char[][] {
 			new char[]{'w'}, // Walls are fixed
@@ -439,105 +503,119 @@ public class LevelBreederTask<T extends Network> extends InteractiveEvolutionTas
 			new char[]{'g','h','f','z','x','t'}, // goals and zombies
 			new char[]{'.'},
 			new char[]{'w'}});
+		//BROKEN
 		SPECIFIC_GAME_LEVEL_CHARS.put("plaqueattack", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'h','d','b','v','n','m','A'}, //food and avatar 
 			new char[]{'h','d','b','v','n','m'}, //random food
 			new char[]{'.'},
 			new char[]{'w'}});
+		//SEMI-PLAYABLE
 		SPECIFIC_GAME_LEVEL_CHARS.put("pokemon", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'0','1','2','A'}, // pokemon and avatar
 			new char[]{'d','a','t'}, // trainers pokemon
 			new char[]{'.'},
 			new char[]{'w'}});
-		//TODO: Fix this game; broken
+		//BROKEN
 		SPECIFIC_GAME_LEVEL_CHARS.put("witnessprotection", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'e','l','r','.',',','1','2','3','4','n','A'}, // all directions of ally and enemies also spawns avatar
 			new char[]{' '}, //
 			new char[]{'_'},
 			new char[]{'w'}});
+		//SEMI-PLAYABLE
 		SPECIFIC_GAME_LEVEL_CHARS.put("wrapsokoban", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'A'}, // Avatar
 			new char[]{'o','*'}, // hole and box
 			new char[]{'.'},
 			new char[]{'w'}});
+		//SEMI-PLAYABLE
 		SPECIFIC_GAME_LEVEL_CHARS.put("zenpuzzle", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'A'}, // avatar
 			new char[]{'r','g'}, //rock, ground
 			new char[]{'.'},
 			new char[]{'w'}});
+		//DOES NOT WORK
 		SPECIFIC_GAME_LEVEL_CHARS.put("racebet", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'.','1','2','3','4','a','b','c','d','g','g','g','g','A'}, // arena, camels pit, camels, goals, normal arena
 			new char[]{' '}, //
 			new char[]{'+'},
 			new char[]{'w'}});
+		//DOES NOT WORK
 		SPECIFIC_GAME_LEVEL_CHARS.put("racebet2", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'.','1','2','3','4','a','b','c','d','g','g','g','g','A'}, // arena, camels pit, camels, goals, normal arena
 			new char[]{'t','_'}, // traps and barriers
 			new char[]{'+'},
 			new char[]{'w'}});
+		//BROKEN
 		SPECIFIC_GAME_LEVEL_CHARS.put("realportals", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'g','t','p','k','o','A'}, // goal, items, key, boulder, avatar
 			new char[]{'.','x'}, //water
 			new char[]{'+'},
 			new char[]{'w'}});
+		//SEMI-PLAYABLE
 		SPECIFIC_GAME_LEVEL_CHARS.put("realsokoban", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'A'}, // Avatar
 			new char[]{'o','*'}, // hole and box
 			new char[]{'.'},
 			new char[]{'w'}});
+		//SEMI-PLAYABLE
 		SPECIFIC_GAME_LEVEL_CHARS.put("rivers", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'A'}, // avatar
 			new char[]{'h','n','r'}, // house, water, rock
 			new char[]{'.'},
 			new char[]{'w'}});
+		//BROKEN
 		SPECIFIC_GAME_LEVEL_CHARS.put("roadfighter", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'x','A'}, // exit, avatar
 			new char[]{'f','t','s','c'}, // trees, fast and slow car
 			new char[]{'.'},
 			new char[]{'w'}});
+		//BROKEN
 		SPECIFIC_GAME_LEVEL_CHARS.put("roguelike", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'x','k','l','m','A'}, // exit, key, lock, market, avatar
 			new char[]{'s','g','r','p','h'}, // weapon, gold, spider, phantom, health
 			new char[]{'.'},
 			new char[]{'w'}});
+		//SEMI-PLAYABLE
 		SPECIFIC_GAME_LEVEL_CHARS.put("run", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'e','k','l','A'}, // exit, key, lock, avatar
 			new char[]{'c','d'}, //cliff, damaged cliff
 			new char[]{'.'},
 			new char[]{'w'}});
+		//SEMI-PLAYABLE
 		SPECIFIC_GAME_LEVEL_CHARS.put("seaquest", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'a','A','3','4'}, // sky and avatar, normal, oft
 			new char[]{'1','2'}, // shark, whale
 			new char[]{'.'},
 			new char[]{'w'}});
-		//TODO: Fix this game; broken same as witnessprotection
+		//BROKEN
 		SPECIFIC_GAME_LEVEL_CHARS.put("sheriff", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'0','u','d','r','1','2','3','4','A'}, // 
 			new char[]{' '}, //
 			new char[]{'.'},
 			new char[]{'w'}});
+		//BROKEN
 		SPECIFIC_GAME_LEVEL_CHARS.put("shipwreck", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'A'}, // avatar
 			new char[]{'1','2','3','w','s','w'}, // gold, gems, diamonds, whirlpool, shipwreck, land
 			new char[]{'.'},
 			new char[]{'x'}});
-		//TODO: fix graphics glitch?
+		//SEMI-PLAYABLE
 		SPECIFIC_GAME_LEVEL_CHARS.put("sokoban", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'A'}, // Avatar
@@ -551,66 +629,77 @@ public class LevelBreederTask<T extends Network> extends InteractiveEvolutionTas
 			new char[]{'1','2','.','b','p'}, // enemy spawn, blips
 			new char[]{'+'},
 			new char[]{'w'}});
+		//SEMI-PLAYABLE
 		SPECIFIC_GAME_LEVEL_CHARS.put("superman", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'j','A'}, // jail, avatar
 			new char[]{'b','s','l','r','c','p','q'}, // building, civilian, portals, sky
 			new char[]{'.'},
 			new char[]{'w'}});
+		//SEMI-PLAYABLE
 		SPECIFIC_GAME_LEVEL_CHARS.put("surround", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'A'}, // avatar
 			new char[]{'1'}, //mud
 			new char[]{'.'},
 			new char[]{'w'}});
+		//SEMI-PLAYABLE
 		SPECIFIC_GAME_LEVEL_CHARS.put("survivezombies", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'A'}, // avatar
 			new char[]{'0','1','2','.','_'}, // flower, zombie portals, honey, zombie
 			new char[]{'+'},
 			new char[]{'w'}});
+		//BROKEN
 		SPECIFIC_GAME_LEVEL_CHARS.put("tercio", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{' '}, // 
 			new char[]{'.','+','-','g','B','A','L','*','@','$','t','u','r'}, // not quite sure what is spawning
 			new char[]{'.'},
 			new char[]{'w'}});
+		//SEMI-PLAYABLE
 		SPECIFIC_GAME_LEVEL_CHARS.put("thecitadel", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'g','A'}, // goal and avatar
 			new char[]{'0','1','b','c'}, // roundhole, squarehole, boulder, crate
 			new char[]{'.'},
 			new char[]{'w'}});
+		//SEMI-PLAYABLE
 		SPECIFIC_GAME_LEVEL_CHARS.put("thesnowman", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'s','b','c','h','k','l','A'}, // base, body, chest, head, key, lock
 			new char[]{' '}, //
 			new char[]{'.'},
 			new char[]{'w'}});
+		//DOES NOT WORK
 		SPECIFIC_GAME_LEVEL_CHARS.put("waitforbreakfast", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'e','A'}, // exit, avatar
 			new char[]{'t','b','f','l','r','0','1','2','3'}, // different floors
 			new char[]{'k'},
 			new char[]{'w'}});
+		//SEMI-PLAYABLE
 		SPECIFIC_GAME_LEVEL_CHARS.put("watergame", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'A'}, // avatar
 			new char[]{'c','x','o'}, // box, water, door
 			new char[]{'.'},
 			new char[]{'w'}});
+		//BROKEN
 		SPECIFIC_GAME_LEVEL_CHARS.put("waves", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'A'}, // avatar
 			new char[]{'1','2','s'}, // portalsSlow, rockPortal, asteroid
 			new char[]{'.'},
 			new char[]{'w'}});
+		//SEMI-PLAYABLE
 		SPECIFIC_GAME_LEVEL_CHARS.put("whackamole", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'A'}, // avatar
 			new char[]{'0','1','2'}, // wide wall, tight wall, cat wall
 			new char[]{'.'},
 			new char[]{'w'}});
+		
 		SPECIFIC_GAME_LEVEL_CHARS.put("wildgunman", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'A'}, // avatar
