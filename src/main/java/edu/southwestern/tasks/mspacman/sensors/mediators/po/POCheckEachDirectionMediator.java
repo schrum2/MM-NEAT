@@ -59,10 +59,14 @@ public class POCheckEachDirectionMediator extends VariableDirectionBlockLoadedIn
 		if (Parameters.parameters.booleanParameter("specificGhostProximityOrder")) {
 			for (int i = 0; i < CommonConstants.numActiveGhosts; i++) {
 				
-				//ORIGINAL
-				//blocks.add(new VariableDirectionSortedGhostDistanceBlock(i));
-				//NEW
-				blocks.add(new VariableDirectionSortedPossibleGhostDistanceBlock(i));
+				
+				//if we are using the ghostModel
+				if(Parameters.parameters.booleanParameter("useGhostModel")) {
+					blocks.add(new VariableDirectionSortedPossibleGhostDistanceBlock(i));
+				} else {
+					blocks.add(new VariableDirectionSortedGhostDistanceBlock(i));
+				}
+				
 				
 				if (incoming) {
 					blocks.add(new VariableDirectionSortedGhostIncomingBlock(i));
