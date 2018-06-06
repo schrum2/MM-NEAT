@@ -587,36 +587,36 @@ public class LevelBreederTask<T extends Network> extends InteractiveEvolutionTas
 			new char[]{' '}, //
 			new char[]{'.'},
 			new char[]{'w'}});
-//		SPECIFIC_GAME_LEVEL_CHARS.put("", new char[][] {
-	//		new char[]{'w'}, // Walls are fixed
-	//		new char[]{'a','a','d','d','i','o','A'}, // 
-	//		new char[]{'t','x'}, //
-//			new char[]{'.'},
-//			new char[]{'w'}});
-//		SPECIFIC_GAME_LEVEL_CHARS.put("", new char[][] {
-	//		new char[]{'w'}, // Walls are fixed
-	//		new char[]{'a','a','d','d','i','o','A'}, // 
-	//		new char[]{'t','x'}, //
-//			new char[]{'.'},
-//			new char[]{'w'}});
-//		SPECIFIC_GAME_LEVEL_CHARS.put("", new char[][] {
-	//		new char[]{'w'}, // Walls are fixed
-	//		new char[]{'a','a','d','d','i','o','A'}, // 
-	//		new char[]{'t','x'}, //
-//			new char[]{'.'},
-//			new char[]{'w'}});
-//		SPECIFIC_GAME_LEVEL_CHARS.put("", new char[][] {
-	//		new char[]{'w'}, // Walls are fixed
-	//		new char[]{'a','a','d','d','i','o','A'}, // 
-	//		new char[]{'t','x'}, //
-//			new char[]{'.'},
-//			new char[]{'w'}});
-//		SPECIFIC_GAME_LEVEL_CHARS.put("", new char[][] {
-	//		new char[]{'w'}, // Walls are fixed
-	//		new char[]{'a','a','d','d','i','o','A'}, // 
-	//		new char[]{'t','x'}, //
-//			new char[]{'.'},
-//			new char[]{'w'}});
+		SPECIFIC_GAME_LEVEL_CHARS.put("waitforbreakfast", new char[][] {
+			new char[]{'w'}, // Walls are fixed
+			new char[]{'e','A'}, // exit, avatar
+			new char[]{'t','b','f','l','r','0','1','2','3'}, // different floors
+			new char[]{'k'},
+			new char[]{'w'}});
+		SPECIFIC_GAME_LEVEL_CHARS.put("watergame", new char[][] {
+			new char[]{'w'}, // Walls are fixed
+			new char[]{'A'}, // avatar
+			new char[]{'c','x','o'}, // box, water, door
+			new char[]{'.'},
+			new char[]{'w'}});
+		SPECIFIC_GAME_LEVEL_CHARS.put("waves", new char[][] {
+			new char[]{'w'}, // Walls are fixed
+			new char[]{'A'}, // avatar
+			new char[]{'1','2','s'}, // portalsSlow, rockPortal, asteroid
+			new char[]{'.'},
+			new char[]{'w'}});
+		SPECIFIC_GAME_LEVEL_CHARS.put("whackamole", new char[][] {
+			new char[]{'w'}, // Walls are fixed
+			new char[]{'A'}, // avatar
+			new char[]{'0','1','2'}, // wide wall, tight wall, cat wall
+			new char[]{'.'},
+			new char[]{'w'}});
+		SPECIFIC_GAME_LEVEL_CHARS.put("wildgunman", new char[][] {
+			new char[]{'w'}, // Walls are fixed
+			new char[]{'A'}, // avatar
+			new char[]{'c','m','f','n'}, // city floor, slow portal, fast portal, nice guy portal
+			new char[]{'.'},
+			new char[]{'w'}});
 		
 
 	}
@@ -766,7 +766,7 @@ public class LevelBreederTask<T extends Network> extends InteractiveEvolutionTas
 
 	public static void main(String[] args) {
 		try {
-			MMNEAT.main(new String[]{"runNumber:0","randomSeed:1","trials:1","mu:16","maxGens:500","gvgaiGame:thesnowman","io:false","netio:false","mating:true","fs:false","task:edu.southwestern.tasks.interactive.gvgai.LevelBreederTask","allowMultipleFunctions:true","ftype:0","watch:false","netChangeActivationRate:0.3","cleanFrequency:-1","simplifiedInteractiveInterface:false","recurrency:false","saveAllChampions:true","cleanOldNetworks:false","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:2000","imageHeight:2000","imageSize:200","includeFullSigmoidFunction:true","includeFullGaussFunction:true","includeCosineFunction:true","includeGaussFunction:false","includeIdFunction:true","includeTriangleWaveFunction:true","includeSquareWaveFunction:true","includeFullSawtoothFunction:true","includeSigmoidFunction:false","includeAbsValFunction:false","includeSawtoothFunction:false"});
+			MMNEAT.main(new String[]{"runNumber:0","randomSeed:1","trials:1","mu:16","maxGens:500","gvgaiGame:wildgunman","io:false","netio:false","mating:true","fs:false","task:edu.southwestern.tasks.interactive.gvgai.LevelBreederTask","allowMultipleFunctions:true","ftype:0","watch:false","netChangeActivationRate:0.3","cleanFrequency:-1","simplifiedInteractiveInterface:false","recurrency:false","saveAllChampions:true","cleanOldNetworks:false","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:2000","imageHeight:2000","imageSize:200","includeFullSigmoidFunction:true","includeFullGaussFunction:true","includeCosineFunction:true","includeGaussFunction:false","includeIdFunction:true","includeTriangleWaveFunction:true","includeSquareWaveFunction:true","includeFullSawtoothFunction:true","includeSigmoidFunction:false","includeAbsValFunction:false","includeSawtoothFunction:false"});
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}
