@@ -39,8 +39,11 @@ public class MultiBotLauncher {
 				@SuppressWarnings("unchecked")
 				public void run() {
 					try {
+						String className = botClasses.getClass().getName();
+						// Just get the class name, not the package portion
+						className = className.substring(className.lastIndexOf('.')+1);
 						@SuppressWarnings("rawtypes")
-						MultipleUT2004BotRunner multi = new MultipleUT2004BotRunner(botClasses.getClass().getName()).setHost(host).setPort(port);
+						MultipleUT2004BotRunner multi = new MultipleUT2004BotRunner(className).setHost(host).setPort(port);
 						@SuppressWarnings("rawtypes")
 						UT2004BotDescriptor bots = new UT2004BotDescriptor().setController(botClasses[index]).setAgentParameters(new IRemoteAgentParameters[] {params[index]});
 						// I believe the setMain causes certain exceptions to be caught and suppressed

@@ -209,7 +209,10 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 					String[] names = new String[allBots.length];
 					names[0] = "EvolvingBot" + gamePort;
 					for(int i = 1; i < names.length; i++) {
-						names[i] = allBots[i].getClass().getName();
+						String className = allBots[i].getClass().getName();
+						// Just get the class name, not the package portion
+						className = className.substring(className.lastIndexOf('.')+1);
+						names[i] = className;
 					}
 					// Launch bots on server and retrieve collected fitness info
 					GameDataCollector[] collectors = ControllerBot.launchBot(
