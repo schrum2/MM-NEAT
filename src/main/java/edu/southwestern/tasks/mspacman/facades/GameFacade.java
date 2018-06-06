@@ -6,8 +6,10 @@ import edu.southwestern.tasks.mspacman.ghosts.GhostComparator;
 import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
+import edu.southwestern.util.datastructures.Triple;
 import edu.southwestern.util.stats.StatisticsUtilities;
 import pacman.game.Constants.GHOST;
+import pacman.game.Constants.MOVE;
 import pacman.game.Game;
 import popacman.prediction.GhostLocation;
 import popacman.prediction.PillModel;
@@ -233,14 +235,21 @@ public class GameFacade {
 	}
 	
 	/**
-	 * TODO: test
-	 * Should return all of the indices for any visible ghost or any ghost we have a probability location for.
-	 * @return
+	 * Returns an ArrayList of triples containing the index, the last move of, and the probability of a ghost that 
+	 * we have a prediction about (this includes ghosts we can see, those have predictions of 100%).
+	 * @return ArrayList of triples cotaining int, MOVE, double each
 	 */
-	public ArrayList<Integer> getPossibleGhostIndices() {
-		ArrayList<Integer> ghosts = new ArrayList<Integer>(ghostPredictions.getGhostLocations().size());
+	public ArrayList<Triple<Integer, MOVE, Double>> getPossibleGhostInfo() {
+		
+		assert ghostPredictions != null : "If this method is called, ghostPredictions should be set";
+		ArrayList<Triple<Integer, MOVE, Double>> ghosts = new ArrayList<Triple<Integer, MOVE, Double>>(ghostPredictions.getGhostLocations().size());
+		
 		for (GhostLocation location : ghostPredictions.getGhostLocations()) {
-			ghosts.add(location.getIndex());
+			Triple<Integer, MOVE, Double> t = new Triple<Integer, MOVE, Double>(null, null, null);
+			t.t1 = location.getIndex();
+			t.t2 = location.getLastMoveMade();
+			t.t3 = location.getProbability();
+			
 		}
 		return ghosts;
 	}
