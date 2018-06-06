@@ -39,6 +39,7 @@ import cz.cuni.amis.pogamut.ut2004.utils.UT2004BotRunner;
 import cz.cuni.amis.utils.collections.MyCollections;
 import cz.cuni.amis.utils.exception.PogamutException;
 import cz.cuni.amis.utils.flag.FlagListener;
+import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.ut2004.bots.ControllerBotParameters;
 import edu.southwestern.tasks.ut2004.server.BotKiller;
 import pogamut.hunter.HunterBotParameters;
@@ -192,12 +193,16 @@ public class HunterBot extends UT2004BotModuleController<UT2004Bot> {
 
 	@EventListener(eventClass=PlayerDamaged.class)
 	public void playerDamaged(PlayerDamaged event) {
-		log.info("I have just hurt other bot for: " + event.getDamageType() + "[" + event.getDamage() + "]");
+		if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput") == false) {
+			log.info("I have just hurt other bot for: " + event.getDamageType() + "[" + event.getDamage() + "]");
+		}
 	}
 
 	@EventListener(eventClass=BotDamaged.class)
 	public void botDamaged(BotDamaged event) {
-		log.info("I have just been hurt by other bot for: " + event.getDamageType() + "[" + event.getDamage() + "]");
+		if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput") == false) {
+			log.info("I have just been hurt by other bot for: " + event.getDamageType() + "[" + event.getDamage() + "]");
+		}
 	}
 
 	/**
@@ -290,7 +295,9 @@ public class HunterBot extends UT2004BotModuleController<UT2004Bot> {
 			// pick new enemy
 			enemy = players.getNearestVisiblePlayer(players.getVisibleEnemies().values());
 			if (enemy == null) {
-				log.info("Can't see any enemies... ???");
+				if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput") == false) {
+					log.info("Can't see any enemies... ???");
+				}
 				return;
 			}
 		}
@@ -306,7 +313,9 @@ public class HunterBot extends UT2004BotModuleController<UT2004Bot> {
 			// 2) or shoot on enemy if it is visible
 			distance = info.getLocation().getDistance(enemy.getLocation());
 			if (shoot.shoot(weaponPrefs, enemy) != null) {
-				log.info("Shooting at enemy!!!");
+				if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput") == false) {
+					log.info("Shooting at enemy!!!");
+				}
 				shooting = true;
 			}
 		}
@@ -371,7 +380,9 @@ public class HunterBot extends UT2004BotModuleController<UT2004Bot> {
 		//log.info("Decision is: MEDKIT");
 		Item item = items.getPathNearestSpawnedItem(ItemType.Category.HEALTH);
 		if (item == null) {
-			log.warning("NO HEALTH ITEM TO RUN TO => ITEMS");
+			if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput") == false) {
+				log.warning("NO HEALTH ITEM TO RUN TO => ITEMS");
+			}
 			stateRunAroundItems();
 		} else {
 			bot.getBotName().setInfo("MEDKIT");
@@ -409,13 +420,17 @@ public class HunterBot extends UT2004BotModuleController<UT2004Bot> {
 
 		Item item = MyCollections.getRandom(tabooItems.filter(interesting));
 		if (item == null) {
-			log.warning("NO ITEM TO RUN FOR!");
+			if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput") == false) {
+				log.warning("NO ITEM TO RUN FOR!");
+			}
 			if (navigation.isNavigating()) return;
 			bot.getBotName().setInfo("RANDOM NAV");
 			navigation.navigate(navPoints.getRandomNavPoint());
 		} else {
 			this.item = item;
-			log.info("RUNNING FOR: " + item.getType().getName());
+			if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput") == false) {
+				log.info("RUNNING FOR: " + item.getType().getName());
+			}
 			bot.getBotName().setInfo("ITEM: " + item.getType().getName() + "");
 			navigation.navigate(item);        	
 		}        

@@ -672,6 +672,7 @@ public class Parameters {
 		booleanOptions.add("useHyperNEATCustomArchitecture", false, "allows for hyperNEAT custom architectures");
 		booleanOptions.add("useTetrisLinesBDCharacterization", false, "turns on tetris characterization vector for 1, 2, 3, or 4 lines cleared");
 		booleanOptions.add("utJumps", true, "UT2004 agent can jump");
+		booleanOptions.add("utBotLogOutput", false, "determines what output will be displayed");
 		booleanOptions.add("veryClose", true, "Use Pacman very close sensors");
 		booleanOptions.add("viewFinalCamps", false, "Look at final training camps from 'final'");
 		booleanOptions.add("viewModePreference", false, "Watch the behavior of preference neurons");
