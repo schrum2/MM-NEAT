@@ -56,96 +56,9 @@ public class OldToNewPacManIntermediaryController extends pacman.controllers.Pac
 	 * Used for popacman
 	 */
 	public MOVE getMove(Game game, long timeDue) {
-        //If we switched mazes, we need new models
-		if(currentMaze != game.getCurrentMaze()){
-            currentMaze = game.getCurrentMaze();
-            ghostPredictions = null;
-            pillModel = null;
-            Arrays.fill(ghostEdibleTime, -1);
-            System.out.println("New Maze");
-        }
-		      
-        //We need to pass the model of the game to the new gameFacade
-		GameFacade informedGameFacade = new GameFacade(game);
-		//we need to keep track of the mostRecenGame to pass to the draw method
-		mostRecentGame = game;
+        
 		
-		
-		
-		//PILL MODEL CODE
-		if(usePillModel) {
-			if(pillModel == null) {
-				//init the pill module with the game
-				//pillModel = informedGameFacade.initPillModel();
-				//pillModel = informedGameFacade.updatePillModel();
-	           
-				//Piers' Code
-				pillModel = new PillModel(game.getNumberOfPills());
-	
-	            int[] indices = game.getCurrentMaze().pillIndices;
-	            for (int index : indices) {
-	                pillModel.observe(index, true);
-	            }
-	            
-	            informedGameFacade.setPillModel(pillModel);
-	        
-			} 
-
-			assert pillModel != null : "there is an if that checks it above. A null pillModel would break this code";
-			
-			//tell the game what the pill model looks like
-	        int pillIndex = game.getCurrentMaze().graph[game.getPacmanCurrentNodeIndex()].pillIndex;//game.getPillIndex(game.getPacmanCurrentNodeIndex());
-	        if (pillIndex != -1) {
-	            Boolean pillState = game.isPillStillAvailable(pillIndex);
-	            if (pillState != null && !pillState) {
-	            	pillModel.update(pillIndex);
-	            }
-	        }
-	        
-	        informedGameFacade.setPillModel(pillModel);
-	        System.out.println("PILLS EATEN: " + pillModel.getPillsEaten());
-		}
-		
-		
-		//GHOST MODEL CODE
-		if(useGhostModel) {
-			//if pacman was eaten, ghosts are in the lair
-			if (informedGameFacade.poG.wasPacManEaten()) {
-	            ghostPredictions = null;
-	        }
-			
-			//init the ghost predictions
-			if(ghostPredictions == null){				
-				//create a new ghostPredictionFast object, initialize it, and pass it to informedGameFacade
-				ghostPredictions = new GhostPredictionsFast(informedGameFacade.poG.getCurrentMaze());
-	            ghostPredictions.preallocate();
-	            informedGameFacade.setGhostPredictions(this.ghostPredictions);
-			} 
-	        
-			assert ghostPredictions != null : "it should be set by now";
-			
-			// Get observations of ghosts and pass them in to the predictor
-			//Credit to piers InformationSetMCTSPacmMan.java, cited 6/4/18
-	        for (GHOST ghost : GHOST.values()) {
-	            if (ghostEdibleTime[ghost.ordinal()] != -1) {
-	                ghostEdibleTime[ghost.ordinal()]--;
-	            }
-
-	            int ghostIndex = game.getGhostCurrentNodeIndex(ghost);
-	            if (ghostIndex != -1) {
-	                ghostPredictions.observe(ghost, ghostIndex, informedGameFacade.poG.getGhostLastMoveMade(ghost));
-	                ghostEdibleTime[ghost.ordinal()] = game.getGhostEdibleTime(ghost);
-	            } else {
-	                List<GhostLocation> locations = ghostPredictions.getGhostLocations(ghost);
-	                locations.stream().filter(location -> informedGameFacade.poG.isNodeObservable(location.getIndex())).forEach(location -> {
-	                	ghostPredictions.observeNotPresent(ghost, location.getIndex());
-	                });
-	            }
-	        }
-			
-	        ghostPredictions.update();
-	        informedGameFacade.setGhostPredictions(ghostPredictions);
-		}
+		GameFacade informedGameFacade = updateModels(game, timeDue);
 
 		//get the action to be made
 		int action = oldpacman.getAction(informedGameFacade, timeDue);
@@ -225,7 +138,7 @@ public class OldToNewPacManIntermediaryController extends pacman.controllers.Pac
 	        	for (int i = 0; i < mostRecentGame.getNumberOfNodes(); i++) {      	
 	                double probability = ghostPredictions.calculate(i);
 	                //System.out.println(probability);
-	                if (probability > GHOST_THRESHOLD) {
+	                if (probability >= GHOST_THRESHOLD) {
 	                    //System.out.println("A noteable probability");
 	                	graphics.setColor(redAlphas[(int) Math.min(255 * probability, 255)]);
 	                    graphics.fillRect(
@@ -245,6 +158,107 @@ public class OldToNewPacManIntermediaryController extends pacman.controllers.Pac
 			return true;
 		}
 		return false;
+	}
+	
+	
+	public GameFacade updateModels(Game game, long timeDue) {
+        //If we switched mazes, we need new models
+		if(currentMaze != game.getCurrentMaze()){
+            currentMaze = game.getCurrentMaze();
+            ghostPredictions = null;
+            pillModel = null;
+            Arrays.fill(ghostEdibleTime, -1);
+            System.out.println("New Maze");
+        }
+		      
+        //We need to pass the model of the game to the new gameFacade
+		GameFacade informedGameFacade = new GameFacade(game);
+		//we need to keep track of the mostRecenGame to pass to the draw method
+		mostRecentGame = game;
+		
+		
+		
+		//PILL MODEL CODE
+		if(usePillModel) {
+			if(pillModel == null) {
+				//init the pill module with the game
+				//pillModel = informedGameFacade.initPillModel();
+				//pillModel = informedGameFacade.updatePillModel();
+	           
+				//Piers' Code
+				pillModel = new PillModel(game.getNumberOfPills());
+	
+	            int[] indices = game.getCurrentMaze().pillIndices;
+	            for (int index : indices) {
+	                pillModel.observe(index, true);
+	            }
+	            
+	            informedGameFacade.setPillModel(pillModel);
+	        
+			} 
+
+			assert pillModel != null : "there is an if that checks it above. A null pillModel would break this code";
+			
+			//tell the game what the pill model looks like
+	        int pillIndex = game.getCurrentMaze().graph[game.getPacmanCurrentNodeIndex()].pillIndex;//game.getPillIndex(game.getPacmanCurrentNodeIndex());
+	        if (pillIndex != -1) {
+	            Boolean pillState = game.isPillStillAvailable(pillIndex);
+	            if (pillState != null && !pillState) {
+	            	pillModel.update(pillIndex);
+	            }
+	        }
+	        
+	        informedGameFacade.setPillModel(pillModel);
+	        //System.out.println("PILLS EATEN: " + pillModel.getPillsEaten());
+		}
+		
+		
+		//GHOST MODEL CODE
+		if(useGhostModel) {
+			//if pacman was eaten, ghosts are in the lair
+			if (informedGameFacade.poG.wasPacManEaten()) {
+	            ghostPredictions = null;
+	        }
+			
+			//init the ghost predictions
+			if(ghostPredictions == null){				
+				//create a new ghostPredictionFast object, initialize it, and pass it to informedGameFacade
+				ghostPredictions = new GhostPredictionsFast(informedGameFacade.poG.getCurrentMaze());
+	            ghostPredictions.preallocate();
+	            informedGameFacade.setGhostPredictions(this.ghostPredictions);
+			} 
+	        
+			assert ghostPredictions != null : "it should be set by now";
+			
+			// Get observations of ghosts and pass them in to the predictor
+			//Credit to piers InformationSetMCTSPacmMan.java, cited 6/4/18
+	        for (GHOST ghost : GHOST.values()) {
+	            if (ghostEdibleTime[ghost.ordinal()] != -1) {
+	                ghostEdibleTime[ghost.ordinal()]--;
+	            }
+
+	            int ghostIndex = game.getGhostCurrentNodeIndex(ghost);
+	            if (ghostIndex != -1) {
+	            	try {
+	            		ghostPredictions.observe(ghost, ghostIndex, informedGameFacade.poG.getGhostLastMoveMade(ghost));
+	            	} catch (java.lang.ArrayIndexOutOfBoundsException e) {
+	            		System.out.println(e.toString() + " in OldToNewPacManIntermediaryController.updateModels()");
+	            		break;
+	            	}
+	                ghostEdibleTime[ghost.ordinal()] = game.getGhostEdibleTime(ghost);
+	            } else {
+	                List<GhostLocation> locations = ghostPredictions.getGhostLocations(ghost);
+	                locations.stream().filter(location -> informedGameFacade.poG.isNodeObservable(location.getIndex())).forEach(location -> {
+	                	ghostPredictions.observeNotPresent(ghost, location.getIndex());
+	                });
+	            }
+	        }
+			
+	        ghostPredictions.update();
+	        informedGameFacade.setGhostPredictions(ghostPredictions);
+		}
+		
+		return informedGameFacade;
 	}
 
 
