@@ -23,6 +23,7 @@ import edu.southwestern.tasks.ut2004.controller.DummyController;
 import edu.southwestern.tasks.ut2004.controller.RandomNavPointPathExplorer;
 import edu.southwestern.tasks.ut2004.server.BotKiller;
 import pogamut.hunter.HunterBot;
+import pogamut.hunter.HunterBotParameters;
 import edu.southwestern.tasks.ut2004.bots.MultiBotLauncher;
 
 /**
@@ -150,7 +151,7 @@ public class ControllerBot extends UT2004BotModuleController {
 		//adds hunter bots to the spaces in the array after ControllerBots
 		for(int i = 0; i < numHunterBots; i++) {
 			classes[i + controllers.length] = HunterBot.class;
-			params[i + controllers.length] = new UT2004BotParameters();
+			params[i + controllers.length] = new HunterBotParameters(evalSeconds); // HunterBot also needs to know when to stop
 		}
 
 		// This method still has some problems and causes weird exceptions sometimes
