@@ -2,6 +2,7 @@ package edu.utexas.cs.nn.bots;
 
 import cz.cuni.amis.pogamut.base.agent.impl.AgentId;
 import cz.cuni.amis.pogamut.base.agent.navigation.PathExecutorState;
+import cz.cuni.amis.pogamut.base.agent.params.IRemoteAgentParameters;
 import cz.cuni.amis.pogamut.base.communication.worldview.event.IWorldEventListener;
 import cz.cuni.amis.pogamut.base.communication.worldview.object.IWorldObjectEventListener;
 import cz.cuni.amis.pogamut.base.utils.Pogamut;
@@ -28,11 +29,15 @@ import cz.cuni.amis.pogamut.ut2004.utils.PogamutUT2004Property;
 import cz.cuni.amis.pogamut.ut2004.utils.UT2004BotRunner;
 import cz.cuni.amis.utils.exception.PogamutException;
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.ut2004.bots.MultiBotLauncher;
 import edu.southwestern.tasks.ut2004.server.BotKiller;
 import edu.utexas.cs.nn.Constants;
 import edu.utexas.cs.nn.retrace.HumanRetraceController;
 import edu.utexas.cs.nn.weapons.WeaponPreferenceTable;
 import edu.utexas.cs.nn.weapons.WeaponPreferenceTable.WeaponTableEntry;
+import fr.enib.mirrorbot4.MirrorBot4;
+import fr.enib.mirrorbot4.MirrorBotParameters;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -1762,54 +1767,57 @@ public class UT2 extends BaseBot {
     }
 
     public static void main(String args[]) throws PogamutException {
+    	Class[] botClasses = new Class[] {UT2.class};
 
-        if (args.length > 0 && args[0].equals("retrace")) {
-            new UT2004BotRunner(HumanRetraceBot.class, "HumanRetraceBot").startAgent();
-        } else {
-            // java -jar 00-EmptyBot.jar <network.xml> <host> <port>
-            switch (args.length) {
-                case 0:
-                    while (true) {
-                        try {
-                        	if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
-                        		System.out.println("Launch bot");
-                        	}
-                            launchBot();
-                        } catch (Exception e) {
-                            System.out.println("Connection broken, try resetting bot");
-                        }
-                    }
-                //break;
-                case 1:
-                    //launchBot(args[0]);
-                    //break;
-                    //case 2:
-                    //launchBot(args[0], Integer.parseInt(args[1]));
-                    //break;
-                    //case 3:
-                    while (true) {
-                        try {
-                        	if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
-                        		System.out.println("Launch bot");
-                        	}
-                            launchBot(DEFAULT_FILE, 0, args[0]);
-                        } catch (Exception e) {
-                            System.out.println("Connection broken, try resetting bot");
-                        }
-                    }
-                //launchBot(args[0], Integer.parseInt(args[1]), args[2]);
-                //break;
-                case 4:
-                    launchBot(args[0], Integer.parseInt(args[1]), args[2], Integer.parseInt(args[3]));
-                    break;
-                default:
-                    System.out.println("Improper number of arguments");
-                    System.out.println("Test one bot:");
-                    System.out.println("       java -jar 04-Hunter.jar [battleController.xml [numOpponents [host [port]]]]");
-                    System.out.println("Evolve bots:");
-                    System.out.println("       java -jar 04-Hunter.jar evolve generations:int population:int repetitions:int controller:EvolvableController descriptor:<BaseExperimentDescriptor> [descriptor args]");
-            }
-        }
+		IRemoteAgentParameters[] params = new IRemoteAgentParameters[] {new UT2Parameters()};
+		MultiBotLauncher.launchMultipleBots(botClasses, params, "localhost", 3000);//launchMultipleBots(botClasses, params, "localhost", 3000);
+//        if (args.length > 0 && args[0].equals("retrace")) {
+//            new UT2004BotRunner(HumanRetraceBot.class, "HumanRetraceBot").startAgent();
+//        } else {
+//            // java -jar 00-EmptyBot.jar <network.xml> <host> <port>
+//            switch (args.length) {
+//                case 0:
+//                    while (true) {
+//                        try {
+//                        	if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+//                        		System.out.println("Launch bot");
+//                        	}
+//                            launchBot();
+//                        } catch (Exception e) {
+//                            System.out.println("Connection broken, try resetting bot");
+//                        }
+//                    }
+//                //break;
+//                case 1:
+//                    //launchBot(args[0]);
+//                    //break;
+//                    //case 2:
+//                    //launchBot(args[0], Integer.parseInt(args[1]));
+//                    //break;
+//                    //case 3:
+//                    while (true) {
+//                        try {
+//                        	if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+//                        		System.out.println("Launch bot");
+//                        	}
+//                            launchBot(DEFAULT_FILE, 0, args[0]);
+//                        } catch (Exception e) {
+//                            System.out.println("Connection broken, try resetting bot");
+//                        }
+//                    }
+//                //launchBot(args[0], Integer.parseInt(args[1]), args[2]);
+//                //break;
+//                case 4:
+//                    launchBot(args[0], Integer.parseInt(args[1]), args[2], Integer.parseInt(args[3]));
+//                    break;
+//                default:
+//                    System.out.println("Improper number of arguments");
+//                    System.out.println("Test one bot:");
+//                    System.out.println("       java -jar 04-Hunter.jar [battleController.xml [numOpponents [host [port]]]]");
+//                    System.out.println("Evolve bots:");
+//                    System.out.println("       java -jar 04-Hunter.jar evolve generations:int population:int repetitions:int controller:EvolvableController descriptor:<BaseExperimentDescriptor> [descriptor args]");
+//            }
+//        }
     }
 
     public static void launchBot() {

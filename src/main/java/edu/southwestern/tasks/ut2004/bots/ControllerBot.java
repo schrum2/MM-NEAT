@@ -142,34 +142,39 @@ public class ControllerBot extends UT2004BotModuleController {
 		int numHunterBots = Parameters.parameters.integerParameter("numHunterBots");
 		int numMirrorBots = Parameters.parameters.integerParameter("numMirrorBots");
 		int numUT2Bots = Parameters.parameters.integerParameter("numUT2Bots");
-		int totalBots = controllers.length + numHunterBots + numMirrorBots;
+		int totalBots = controllers.length + numHunterBots + numMirrorBots + numUT2Bots;
 		IRemoteAgentParameters[] params = new IRemoteAgentParameters[totalBots];
 		Class[] classes = new Class[totalBots];
 
+		int classIndex = 0;
 		//adds all ControllerBots
 		for (int i = 0; i < controllers.length; i++) {
-			classes[i] = ControllerBot.class;
-			collectors[i] = new GameDataCollector();
-			params[i] = new ControllerBotParameters(server, controllers[i], names[i], collectors[i], evalSeconds,
+			classes[classIndex] = ControllerBot.class;
+			collectors[classIndex] = new GameDataCollector();
+			params[classIndex] = new ControllerBotParameters(server, controllers[i], names[i], collectors[i], evalSeconds,
 					desiredSkill, botPort);
+			classIndex++;
 		}
 
 		//adds hunter bots to the spaces in the array after ControllerBots
 		for(int i = 0; i < numHunterBots; i++) {
-			classes[i + controllers.length] = HunterBot.class;
-			params[i + controllers.length] = new HunterBotParameters(evalSeconds); // HunterBot also needs to know when to stop
+			classes[classIndex] = HunterBot.class;
+			params[classIndex] = new HunterBotParameters(evalSeconds); // HunterBot also needs to know when to stop
+			classIndex++;
 		}
 		
 		//adds mirror bots to the spaces in the array after ControllerBots
 		for(int i = 0; i < numMirrorBots; i++) {
-			classes[i + controllers.length] = MirrorBot4.class;
-			params[i + controllers.length] = new MirrorBotParameters(evalSeconds); // MirrorBot also needs to know when to stop
+			classes[classIndex] = MirrorBot4.class;
+			params[classIndex] = new MirrorBotParameters(evalSeconds); // MirrorBot also needs to know when to stop
+			classIndex++;
 		}
 		
 		//adds UT^2 bots to the spaces in the array after ControllerBots
 		for(int i = 0; i < numUT2Bots; i++) {
-			classes[i + controllers.length] = UT2.class;
-			params[i + controllers.length] = new UT2.UT2Parameters(evalSeconds); // UT2 also needs to know when to stop
+			classes[classIndex] = UT2.class;
+			params[classIndex] = new UT2.UT2Parameters(evalSeconds); // UT2 also needs to know when to stop
+			classIndex++;
 		}
 
 		// This method still has some problems and causes weird exceptions sometimes
