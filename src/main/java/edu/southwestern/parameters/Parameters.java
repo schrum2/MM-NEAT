@@ -1035,7 +1035,17 @@ public class Parameters {
 				base = value;
 			}
 		}
-
+		String saveToAfterHypen = "";
+		for(int i = 0; i < saveTo.length(); i++) {
+			if (saveTo.charAt(i) == '-') {
+				saveToAfterHypen = saveTo.substring(i + 1);
+				break;
+			}
+		}
+		if (!saveToAfterHypen.equals(log))  {
+			throw new IllegalArgumentException("string of log must equal string after hypen in saveTo");
+		}
+		
 		if (base.equals("") && saveTo.equals("")) {
 			return null;
 		}
