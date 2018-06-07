@@ -2,6 +2,9 @@ package popacman.prediction;
 
 import static org.junit.Assert.*;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -137,6 +140,7 @@ public class MyPillModelTest {
 			
 			//It is set above 
 			Assert.assertNotNull(testGameFacade.pillModel);
+			System.out.println("Pill Model reference at time step " + i + ": " + informedGameFacade.pillModel.toString());
 			//We have not gotten to a pill yet
 			Assert.assertFalse(testGameFacade.pillModel.getPills().get(testGameFacade.getPacmanCurrentNodeIndex()));
 			
@@ -144,15 +148,42 @@ public class MyPillModelTest {
 			////testExecutorFacade.forceGameView.showGame();
 			//testExecutorFacade.forceGameView.closeGame();
 		}
+		testExecutorFacade.forceGameView.showGame();
 		
-		//MOVE PACMAN LEFT< WE EAT A PILL ON THIS STEP
+		//WE HAVEN'T YET EATEN A PILL
+		int pillsEatenAtTime5 = testGameFacade.pillModel.getPillsEaten();
+		int pacManLocAtTime5 = testGameFacade.getPacmanCurrentNodeIndex();
+		Assert.assertTrue(pillsEatenAtTime5 == 0);
+		Assert.assertTrue(testGameFacade.getScore() == 0.0);
+		
+		ArrayList<Integer> activePills = new ArrayList<Integer>();
+		for(int i : testGameFacade.getActivePillsIndices()) {
+			activePills.add(i);
+		}
+
+		System.out.println("Active Pills before any consumption: " + activePills.toString());
+
+		testExecutorFacade.forceGameView.showGame();
+				
+		//MOVE PACMAN LEFT, WE EAT A PILL ON THIS STEP
 		testExecutorFacade.forceGame(testGameFacade, testPacManControllerFacade, testGhostControllerFacade, MOVE.LEFT);
+		
+		//PACMAN DID MOVE INTO THE PILL
+		Assert.assertFalse(testGameFacade.getPacmanCurrentNodeIndex() == pacManLocAtTime5);
+		Assert.assertTrue(testGameFacade.getScore() == 10.0);
+		
+		
+		System.out.println("pacmans location at time 6: " + testGameFacade.getPacmanCurrentNodeIndex());
+		System.out.println("Active Pills after any consumption: " + activePills.toString());
+		System.out.println("Is there a pill at index " + testGameFacade.getPacmanCurrentNodeIndex() + "? " + testGameFacade.pillModel.getPills().get(testGameFacade.getPacmanCurrentNodeIndex()));
+		
+		
+		//THERE IS NO LONGER A PILL IN THIS LOCATION
+		//Assert.assertFalse(testGameFacade.pillModel.getPills().get(testGameFacade.getPacmanCurrentNodeIndex()));
+		//Assert.assertTrue(testGameFacade.pillModel.getPillsEaten() > pillsEatenAtTime5);
 		
 		//DRAW THE GAME
 		testExecutorFacade.forceGameView.showGame();
-		System.out.println("THERE IS A MISCUTIL WAIT IN MyPillModelTest.java");
-		MiscUtil.waitForReadStringAndEnterKeyPress();
-	
 	
 	}
 	

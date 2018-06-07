@@ -7,7 +7,7 @@ import java.util.BitSet;
  */
 public class MyPillModel {
     private BitSet pills;
-    private int pillsEaten;
+    public int pillsEaten;
     private double totalPills;
 
     public MyPillModel(int indices) {
@@ -17,13 +17,13 @@ public class MyPillModel {
 
     // Pacman visited this index
     public void update(int index) {
-    	//System.out.println("BEFORE: INDEX " + index + " HAS PILL: " + pills.get(index));
+    	System.out.println("BEFORE: INDEX " + index + " HAS PILL: " + pills.get(index));
         if (pills.get(index)) {
             pillsEaten++;
             pills.set(index, false);
            // System.out.println("WE ATE A PILL");
         }
-        //System.out.println("AFTER: INDEX " + index + " HAS PILL: " + pills.get(index));
+        System.out.println("AFTER: INDEX " + index + " HAS PILL: " + pills.get(index));
     }
 
     // There is a pill here!

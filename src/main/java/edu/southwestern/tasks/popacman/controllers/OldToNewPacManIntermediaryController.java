@@ -187,9 +187,10 @@ public class OldToNewPacManIntermediaryController extends pacman.controllers.Pac
 	           
 				//Piers' Code
 				//ORIGINAL
-				//pillModel = new MyPillModel(game.getNumberOfPills());
-	
-				pillModel = new MyPillModel(informedGameFacade.poG.getNumberOfNodes());
+				pillModel = new MyPillModel(game.getNumberOfPills());
+				
+				//EXPERIMENTAL
+				//pillModel = new MyPillModel(informedGameFacade.poG.getNumberOfNodes());
 				
 	            int[] indices = game.getCurrentMaze().pillIndices;
 	            for (int index : indices) {
@@ -203,9 +204,13 @@ public class OldToNewPacManIntermediaryController extends pacman.controllers.Pac
 			assert pillModel != null : "there is an if that checks it above. A null pillModel would break this code";
 			
 			//tell the game what the pill model looks like
-	        int pillIndex = game.getCurrentMaze().graph[game.getPacmanCurrentNodeIndex()].pillIndex;//game.getPillIndex(game.getPacmanCurrentNodeIndex());
-	        if (pillIndex != -1) {
-	            Boolean pillState = game.isPillStillAvailable(pillIndex);
+	        int pillIndex = informedGameFacade.poG.getPillIndex(informedGameFacade.poG.getPacmanCurrentNodeIndex());
+			//int pillIndex = informedGameFacade.poG.getPacmanCurrentNodeIndex();
+	        
+			if (pillIndex != -1) {
+	        	pillModel.getPills().set(pillIndex);
+	        	pillModel.pillsEaten += 1;
+	            Boolean pillState = informedGameFacade.poG.isPillStillAvailable(pillIndex);
 	            if (pillState != null && !pillState) {
 	            	pillModel.update(pillIndex);
 	            }

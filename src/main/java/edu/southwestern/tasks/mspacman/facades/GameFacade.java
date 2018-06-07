@@ -1074,21 +1074,39 @@ public class GameFacade {
 		if(oldG == null) {
 			//if we are using the pill model
 			if(usePillModel) {
-				//TODO: test
-				ArrayList<Integer> tempList = new ArrayList<Integer>();
-				assert pillModel != null : "this should be handled";
+//				//TODO: test
+//				ArrayList<Integer> tempList = new ArrayList<Integer>();
+//				assert pillModel != null : "this should be handled";
+//				
+//				for(int pill : poG.getPillIndices()) {
+//					if(pillModel.getPills().get(pill)) {
+//						tempList.add(pill);
+//					}
+//				}
+//				
+//				int[] result = new int[tempList.size()];
+//				for(int i = 0; i < tempList.size(); i++) {
+//					result[i] = tempList.get(i);
+//				}
+//				return result;
 				
+				ArrayList<Integer> temp = new ArrayList<Integer>();
+				//for every pill indexs there is
 				for(int pill : poG.getPillIndices()) {
+					//if our pill model says it is there
 					if(pillModel.getPills().get(pill)) {
-						tempList.add(pill);
+						//add it to our list
+						temp.add(pill);
 					}
 				}
 				
-				int[] result = new int[tempList.size()];
-				for(int i = 0; i < tempList.size(); i++) {
-					result[i] = tempList.get(i);
+				int[] result = new int[temp.size()];
+				for(int i = 0; i < temp.size(); i++) {
+					result[i] = temp.get(i);
 				}
 				return result;
+
+				
 			} else {
 				//Without pill model, we may get an empty array
 				return poG.getActivePillsIndices();
