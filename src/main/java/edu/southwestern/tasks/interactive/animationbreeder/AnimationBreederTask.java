@@ -37,6 +37,8 @@ import edu.southwestern.util.graphics.AnimationUtil;
  */
 public class AnimationBreederTask<T extends Network> extends InteractiveEvolutionTask<T>{
 
+	private boolean reverse = Parameters.parameters.booleanParameter("loopAnimationInReverse");
+	
 	protected JSlider animationLength;
 	protected JSlider pauseLength;
 	protected JSlider pauseLengthBetweenFrames;
@@ -83,13 +85,20 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 						if(abort) break; // stop loading if animation is aborted
 						animations[imageID].add(bi);
 					}
+					if(!abort && reverse) {
+						for (int i = newFrames.length-1; i >= 0; i--) {
+							if(abort) break; // stop loading if animation is aborted
+							animations[imageID].add(newFrames[i]);
+						}
+					}
 				}
 			}
 			buttons.get(imageID).setCursor(Cursor.getDefaultCursor()); //turn off busy cursor after animations have finished loading
 
 			while(!abort) {
 				// One animation loop
-				for(int frame = 0; !abort && frame < end; frame++) {
+				int actualAnimationLength = reverse ? end*2 : end;
+				for(int frame = 0; !abort && frame < actualAnimationLength; frame++) {
 					// set button over and over
 					setButtonImage(animations[imageID].get(frame), imageID);
 					try {
@@ -273,7 +282,7 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 		if(!Parameters.parameters.booleanParameter("simplifiedInteractiveInterface")) {
 			top.add(framePause);
 		}
-		
+
 		if(!alwaysAnimate) {
 			//Enables MouseListener so that animation on a button will play when mouse is hovering over it
 			for(JButton button: buttons) {
@@ -316,7 +325,7 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 	public String[] sensorLabels() {
 		return new String[] { "X-coordinate", "Y-coordinate", "distance from center", "time", "bias" };
 	}
-	
+
 	/**
 	 * Hue, saturation, and brightness values being output by CPPN
 	 */
@@ -361,7 +370,7 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 		// Just get first frame for button. Slightly inefficent though, since all animation frames were pre-computed
 		return AnimationUtil.imagesFromCPPN(phenotype, picSize, picSize, 0, 1, getInputMultipliers())[0];
 	}
-	
+
 	/**
 	 * Change image on button to given image
 	 * 
@@ -506,17 +515,17 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 		}
 	}
 
-    /**
-     * Returns the number of inputs used in the interactive evolution task
-     */
+	/**
+	 * Returns the number of inputs used in the interactive evolution task
+	 */
 	@Override
 	public int numCPPNInputs() {
 		return CPPN_NUM_INPUTS;
 	}
 
-    /**
-     * Returns the number of outputs used in the interactive evolution task
-     */
+	/**
+	 * Returns the number of outputs used in the interactive evolution task
+	 */
 	@Override
 	public int numCPPNOutputs() {
 		return CPPN_NUM_OUTPUTS;
@@ -528,7 +537,7 @@ public class AnimationBreederTask<T extends Network> extends InteractiveEvolutio
 	 */
 	public static void main(String[] args) {
 		try {
-			MMNEAT.main(new String[]{"runNumber:5","randomSeed:5","trials:1","mu:16","maxGens:500","io:false","netio:false","mating:true", "simplifiedInteractiveInterface:false", "fs:false", "task:edu.southwestern.tasks.interactive.animationbreeder.AnimationBreederTask","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3","cleanFrequency:-1","recurrency:false","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:500","imageHeight:500","imageSize:200","includeFullSigmoidFunction:true","includeFullGaussFunction:true","includeCosineFunction:true","includeGaussFunction:false","includeIdFunction:true","includeTriangleWaveFunction:false","includeSquareWaveFunction:false","includeFullSawtoothFunction:false","includeSigmoidFunction:false","includeAbsValFunction:false","includeSawtoothFunction:false"});
+			MMNEAT.main(new String[]{"runNumber:5","randomSeed:5","trials:1","mu:16","maxGens:500","io:false","netio:false","mating:true", "simplifiedInteractiveInterface:false", "fs:false", "task:edu.southwestern.tasks.interactive.animationbreeder.AnimationBreederTask","allowMultipleFunctions:true","ftype:0","netChangeActivationRate:0.3","cleanFrequency:-1","recurrency:false","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:500","imageHeight:500","imageSize:200","includeFullSigmoidFunction:true","includeFullGaussFunction:true","includeCosineFunction:true","includeGaussFunction:false","includeIdFunction:true","includeTriangleWaveFunction:false","includeSquareWaveFunction:false","includeFullSawtoothFunction:false","includeSigmoidFunction:false","includeAbsValFunction:false","includeSawtoothFunction:false","loopAnimationInReverse:true"});
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}

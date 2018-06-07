@@ -9,7 +9,6 @@ import javax.imageio.stream.FileImageOutputStream;
 import javax.imageio.stream.ImageOutputStream;
 
 import edu.southwestern.networks.Network;
-import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.interactive.objectbreeder.ThreeDimensionalObjectBreederTask;
 
 /**
@@ -42,7 +41,7 @@ public class AnimationUtil {
 		}
 		return images;
 	}		
-
+	
 	/**
 	 * Utility method that generates an array of shapes based on an input CPPN.
 	 * These BufferedImages are used to animate a three-dimensional object.
@@ -65,7 +64,7 @@ public class AnimationUtil {
 		}
 		return images;
 	}		
-
+	
 	/**
 	 * Method used to save an array of buffered images to a file. Uses external class GifSequenceWriter
 	 * to write an output stream to a file. Used by save() method for AnimationBreederTask
@@ -80,11 +79,6 @@ public class AnimationUtil {
 		GifSequenceWriter writer = new GifSequenceWriter(output, slides[0].getType(), pauseBetweenFrames, true);
 		for (BufferedImage slide : slides) {
 			writer.writeToSequence(slide);
-		}
-		if (Parameters.parameters.booleanParameter("loopAnimationInReverse")) {
-			for (int i = slides.length; i > 0; i--) {
-				writer.writeToSequence(slides[i]);
-			}
 		}
 		writer.close();
 		output.close();

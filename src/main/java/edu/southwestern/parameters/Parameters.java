@@ -371,7 +371,7 @@ public class Parameters {
 		booleanOptions.add("logMutationAndLineage", false, "Whether or not to log information about the mutations and lineage");
 		booleanOptions.add("logPerformance", false, "Whether or not to log performance information in a performance log");
 		booleanOptions.add("logTWEANNData", false, "Whether or not to log TWEANN data");
-		booleanOptions.add("loopAnimationInReverse", true, "loops animations in reverse for 2dAnimationBreeder and 3dAnimationBreeder");
+		booleanOptions.add("loopAnimationInReverse", false, "loops animations in reverse for 2dAnimationBreeder and 3dAnimationBreeder");
 		booleanOptions.add("moMario", false, "Mario is multiobjective");
 		booleanOptions.add("monitorSubstrates", false, "Allows us to visualizen the features (raw inputs) of a HyperNEAT agent");
 		booleanOptions.add("overrideImageSize", false, "For image match task, draw CPPNs with different size than actual image size");
