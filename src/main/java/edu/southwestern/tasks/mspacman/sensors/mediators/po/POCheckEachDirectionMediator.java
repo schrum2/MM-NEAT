@@ -26,7 +26,8 @@ import edu.southwestern.tasks.mspacman.sensors.directional.specific.VariableDire
 import edu.southwestern.tasks.mspacman.sensors.directional.specific.VariableDirectionSpecificGhostIncomingBlock;
 
 //NEW PO STUFF
-import edu.southwestern.tasks.mspacman.sensors.directional.distance.ghosts.po.VariableDirectionSortedPossibleGhostDistanceBlock;;
+import edu.southwestern.tasks.mspacman.sensors.directional.distance.ghosts.po.VariableDirectionSortedPossibleGhostDistanceBlock;
+import edu.southwestern.tasks.mspacman.sensors.directional.distance.ghosts.po.VariableDirectionSortedPossibleGhostProbabilityBlock;;
 
 /**
  * TODO: Describe
@@ -62,7 +63,10 @@ public class POCheckEachDirectionMediator extends VariableDirectionBlockLoadedIn
 				
 				//if we are using the ghostModel
 				if(Parameters.parameters.booleanParameter("useGhostModel")) {
+					//this will keep track of the nearest four ghosts, but with probabilities, there can be many more than
+					//just four probable ghosts
 					blocks.add(new VariableDirectionSortedPossibleGhostDistanceBlock(i));
+					blocks.add(new VariableDirectionSortedPossibleGhostProbabilityBlock(i));
 				} else {
 					blocks.add(new VariableDirectionSortedGhostDistanceBlock(i));
 				}
