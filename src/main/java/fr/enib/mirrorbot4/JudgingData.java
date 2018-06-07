@@ -12,8 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class JudgingData
-{
+public class JudgingData{
 	private UT2004BotModuleController ctrl;
 	
 	private HashMap<UnrealId, ArrayList<UnrealId> > robotVoteChart;
@@ -23,8 +22,7 @@ public class JudgingData
 	
 	private long lastSimTime;
 	
-	public JudgingData(UT2004BotModuleController c)
-	{
+	public JudgingData(UT2004BotModuleController c){
 		ctrl = c;
 		
 		robotVoteChart = new HashMap<UnrealId, ArrayList<UnrealId> >();
@@ -35,23 +33,19 @@ public class JudgingData
 		lastSimTime = 0l;
 	}
 	
-	public void addData(Player p)
-	{
+	public void addData(Player p){
 		Location prot = p.getRotation().toLocation();
 		Location ploc = p.getLocation();
 		
 		Weapon usedWeapon = getWeaponFromString(p.getWeapon());
 		boolean votingWeapon = false;
-		if (usedWeapon != null)
-		{
-			if (usedWeapon.getType().equals(UT2004ItemType.LINK_GUN))
-			{
+		if (usedWeapon != null){
+			if (usedWeapon.getType().equals(UT2004ItemType.LINK_GUN)){
 				votingWeapon = true;
 			}
 		}
 		
-		if ((p.getFiring() > 0) && votingWeapon)
-		{
+		if ((p.getFiring() > 0) && votingWeapon){
 			//check who is shooting and what
 			
 			//check myself for fire
@@ -60,18 +54,13 @@ public class JudgingData
 			double dotShot = me.dot(prot) / (me.getLength()*prot.getLength()); //how much focus on me
 			//System.out.println("dot: "+dotShot);
 			
-			if (dotShot > 0.98) //shooting at me ! omg omg
-			{
+			if (dotShot > 0.98){ //shooting at me ! omg omg
 				addVote(p.getId(), ctrl.getInfo().getId(), p.getFiring());
-			}
-			else
-			{
+			}else{
 				//phew... let's see who's he shooting at
 				
 				Map<UnrealId, Player> players = ctrl.getPlayers().getVisiblePlayers();
-
-				for (Map.Entry<UnrealId,Player> entry : players.entrySet())
-				{
+				for (Map.Entry<UnrealId,Player> entry : players.entrySet()){
 					UnrealId key=entry.getKey();
 					Player player=entry.getValue();
 					
@@ -80,8 +69,7 @@ public class JudgingData
 					Location target = player.getLocation().sub(p.getLocation());
 					target = new Location(target.getX(), target.getY(), -target.getZ());
 
-					if (target.dot(prot.getNormalized()) > 0.98*target.getLength()) //98% towards target
-					{
+					if (target.dot(prot.getNormalized()) > 0.98*target.getLength()) { //98% towards target{
 						addVote(p.getId(), player.getId(), p.getFiring());
 					}
 				}
@@ -89,75 +77,57 @@ public class JudgingData
 		}
 	}
 	
-	public void setVotedByMe(UnrealId player, PlayerDamaged pd)
-	{
+	public void setVotedByMe(UnrealId player, PlayerDamaged pd){
 		if (pd == null) return;
 		if (pd.getSimTime() == lastSimTime) return;
 		
-		if ((pd.getDamage() == 0) && (pd.getId().equals(player)))
-		{
+		if ((pd.getDamage() == 0) && (pd.getId().equals(player))){
 			wasVotedByMe.put(player, true);
 		}
-		
 		lastSimTime = pd.getSimTime();
 	}
 	
-	public boolean needsToBeVotedByMe(UnrealId player)
-	{
-		if (wasVotedByMe.containsKey(player))
-		{
+	public boolean needsToBeVotedByMe(UnrealId player){
+		if (wasVotedByMe.containsKey(player)){
 			if (!wasVotedByMe.get(player)) return true;
 		}
-		
 		return false;
 	}
 	
-	public int getRatingFor(UnrealId player) //0=tie , 1=robot , 2=human
-	{
+	public int getRatingFor(UnrealId player){ //0=tie , 1=robot , 2=human
 		int robotScore = 0;
 		int humanScore = 0;
 		
-		if (robotVoteChart.containsKey(player))
-		{
+		if (robotVoteChart.containsKey(player)){
 			robotScore = robotVoteChart.get(player).size();
 		}
-		
-		if (humanVoteChart.containsKey(player))
-		{
+		if (humanVoteChart.containsKey(player)){
 			humanScore = humanVoteChart.get(player).size();
 		}
-		
 		if (robotScore == humanScore) return 0; //tie
-		
 		if (robotScore > humanScore) return 1; //robot
 		
 		return 2; //human
 	}
 	
-	private void addVote(UnrealId judge, UnrealId victim, int vote)
-	{
+	private void addVote(UnrealId judge, UnrealId victim, int vote){
 		//default vote for robot
 		HashMap<UnrealId, ArrayList<UnrealId> > yesChart = robotVoteChart;
 		HashMap<UnrealId, ArrayList<UnrealId> > nooChart = humanVoteChart;
 		
-		if (vote > 1) //vote for human
-		{
+		if (vote > 1){ //vote for human
 			yesChart = humanVoteChart;
 			nooChart = robotVoteChart;
 		}
 		
-		if (yesChart.containsKey(victim))
-		{
-			if (!yesChart.get(victim).contains(judge))
-			{
+		if (yesChart.containsKey(victim)){
+			if (!yesChart.get(victim).contains(judge)){
 				yesChart.get(victim).add(judge);
 				
 				//set voted by me False
 				wasVotedByMe.put(victim, false);
 			}
-		}
-		else
-		{
+		}else{
 			ArrayList<UnrealId> newList = new ArrayList<UnrealId>();
 			newList.add(judge);
 			yesChart.put(victim, newList);
@@ -166,29 +136,22 @@ public class JudgingData
 			wasVotedByMe.put(victim, false);
 		}
 		
-		if (nooChart.containsKey(victim))
-		{
-			if (nooChart.get(victim).contains(judge))
-			{
+		if (nooChart.containsKey(victim)){
+			if (nooChart.get(victim).contains(judge)){
 				nooChart.get(victim).remove(judge);
 			}
 		}
 	}
 	
-	private Weapon getWeaponFromString(String wString)
-	{
+	private Weapon getWeaponFromString(String wString){
 		Map<ItemType, Weapon> weapons = ctrl.getWeaponry().getLoadedWeapons();
-		for (Map.Entry<ItemType,Weapon> entry : weapons.entrySet())
-		{
+		for (Map.Entry<ItemType,Weapon> entry : weapons.entrySet()){
 			ItemType key=entry.getKey();
 			Weapon weapon=entry.getValue();
-			
-			if (weapon.toString().contains(wString))
-			{
+			if (weapon.toString().contains(wString)){
 				return weapon;
 			}
 		}
-		
 		return null;
 	}
 }

@@ -11,8 +11,7 @@ import cz.cuni.amis.utils.flag.FlagListener;
 import java.util.ArrayList;
 import javax.vecmath.Vector3d;
 
-public class RayData
-{
+public class RayData{
 	private UT2004BotModuleController ctrl;
 	
 	private ArrayList<AutoTraceRay> rayList;
@@ -23,8 +22,7 @@ public class RayData
 	private int nrUpRays = 0;
 	private double timeInZone = 0.0;
 	
-	public RayData(UT2004BotModuleController c)
-	{
+	public RayData(UT2004BotModuleController c){
 		ctrl = c;
 		
 		//------------- initialize rayCasting data -----------------------------
@@ -43,8 +41,7 @@ public class RayData
 		// rays, for educational purposes we will set them manually
 		ctrl.getAct().act(new RemoveRay("All"));
 
-		for (int i=0; i<nrRays; ++i)
-		{
+		for (int i=0; i<nrRays; ++i){
 			double vx = Math.cos((Math.PI*2.0*((double)i))/((double)nrRays));
 			double vy = Math.sin((Math.PI*2.0*((double)i))/((double)nrRays));
 			double vz = -0.1; //((i%2==0)?(-0.05):(0.05));
@@ -56,8 +53,7 @@ public class RayData
 			ctrl.getRaycasting().createRay("ray"+Integer.toString(i), vec, (int)(UnrealUtils.CHARACTER_COLLISION_RADIUS * 10), fastTrace, ((i%2==0)?floorCorrection:!floorCorrection), traceActor);
 		}
 		
-		for (int i=0; i<nrDownRays; ++i)
-		{
+		for (int i=0; i<nrDownRays; ++i){
 			double vx = Math.cos((Math.PI*2.0*((double)i))/((double)nrDownRays));
 			double vy = Math.sin((Math.PI*2.0*((double)i))/((double)nrDownRays));
 			double vz = -1.0;
@@ -69,8 +65,7 @@ public class RayData
 			ctrl.getRaycasting().createRay("downray"+Integer.toString(i), vec, (int)(UnrealUtils.CHARACTER_COLLISION_RADIUS * 10), fastTrace, floorCorrection, traceActor);
 		}
 
-		for (int i=0; i<nrUpRays; ++i)
-		{
+		for (int i=0; i<nrUpRays; ++i){
 			double vx = Math.cos((Math.PI*2.0*((double)i))/((double)nrUpRays));
 			double vy = Math.sin((Math.PI*2.0*((double)i))/((double)nrUpRays));
 			double vz = 0.5;
@@ -83,23 +78,16 @@ public class RayData
 		}
 		
 		// register listener called when all rays are set up in the UT engine
-		ctrl.getRaycasting().getAllRaysInitialized().addListener(new FlagListener<Boolean>()
-		{
+		ctrl.getRaycasting().getAllRaysInitialized().addListener(new FlagListener<Boolean>(){
 			@Override
-			public void flagChanged(Boolean changedValue)
-			{
-				for (int i=0; i<nrRays; ++i)
-				{
+			public void flagChanged(Boolean changedValue){
+				for (int i=0; i<nrRays; ++i){
 					rayList.add(ctrl.getRaycasting().getRay("ray"+Integer.toString(i)));
-				}
-				
-				for (int i=0; i<nrDownRays; ++i)
-				{
+				}				
+				for (int i=0; i<nrDownRays; ++i){
 					downRayList.add(ctrl.getRaycasting().getRay("downray"+Integer.toString(i)));
-				}
-				
-				for (int i=0; i<nrUpRays; ++i)
-				{
+				}				
+				for (int i=0; i<nrUpRays; ++i){
 					upRayList.add(ctrl.getRaycasting().getRay("upray"+Integer.toString(i)));
 				}
 			}
@@ -111,73 +99,56 @@ public class RayData
 		ctrl.getConfig().setAutoTrace(true);
 	}
 	
-	public UT2004BotModuleController getCtrl()
-	{
+	public UT2004BotModuleController getCtrl(){
 		return ctrl;
 	}
 	
-	public Location getNormalDirection(double dt)
-	{
-		if (!ctrl.getRaycasting().getAllRaysInitialized().getFlag())
-		{
+	public Location getNormalDirection(double dt){
+		if (!ctrl.getRaycasting().getAllRaysInitialized().getFlag()){
 			System.out.println("RAYCASTING ERROR: rays not initialized properly");
             return ctrl.getInfo().getLocation();
         }
 		
 		Location moveDir = ctrl.getInfo().getVelocity().asLocation();
 		Velocity zoneVel = ctrl.getInfo().getCurrentZoneVelocity();
-		if ((zoneVel != null) && (zoneVel.asLocation().getLength() > 0.0))
-		{
+		if ((zoneVel != null) && (zoneVel.asLocation().getLength() > 0.0)){
 			if (Math.sin(timeInZone*Math.PI/20.0) >= 0.0) timeInZone += dt;
 			else timeInZone += dt/2.0;
-			if (Math.sin(timeInZone*Math.PI/20.0) >= 0.0) //start by opposing direction for ~20secs, then let loose for another 40
-			{
-				if (moveDir.getLength() > 0.0)
-				{
+			if (Math.sin(timeInZone*Math.PI/20.0) >= 0.0) { //start by opposing direction for ~20secs, then let loose for another 40
+				if (moveDir.getLength() > 0.0){
 					Location vel = zoneVel.asLocation().getNormalized();
 					double dotprod = moveDir.dot(vel);
-					if (dotprod > 0.0) //if going in the direction of the waves, try to turn around
-					{
+					if (dotprod > 0.0){ //if going in the direction of the waves, try to turn around
 						moveDir = moveDir.add(vel.scale(-2*dotprod));
 					}
 				}
-				else
-				{
+				else{
 					moveDir = ctrl.getInfo().getCurrentZoneVelocity().asLocation().scale(-1.0);
 				}
 				//System.out.println("Water velocity = "+ctrl.getInfo().getCurrentZoneVelocity());
 			}
-		}
-		else
-		{
+		}else{
 			timeInZone = 0.0;
 		}
 		
-		if (ctrl instanceof MirrorBot4)
-		{
+		if (ctrl instanceof MirrorBot4)	{
 			Item item = ((MirrorBot4)(ctrl)).getBrain().getClosestSuperImportantItemTo(ctrl.getInfo().getLocation(), 1000);
-			if ((item != null) && (item.getLocation() != null))
-			{
+			if ((item != null) && (item.getLocation() != null)){
 				Location impLoc = item.getLocation().sub(ctrl.getInfo().getLocation());
 				if (impLoc.getZ() < 200) moveDir = impLoc;
 			}
 		}
 		
 		if (moveDir.getLength() > 0.0)
-		{
 			moveDir = moveDir.getNormalized();
-		}
-		else
-		{
+		}else{
 			moveDir = new Location(Math.random()-0.5, Math.random()-0.5, 0.0);
 			moveDir = moveDir.getNormalized();
 		}
 		
 		Location result = new Location(0,0,0);
-		for (int i=0; i<rayList.size(); ++i)
-		{
-			if (!rayList.get(i).isResult())
-			{
+		for (int i=0; i<rayList.size(); ++i){
+			if (!rayList.get(i).isResult()){
 				Location myRot = ctrl.getInfo().getRotation().toLocation().getNormalized();
 
 				double dxy=Math.sqrt(myRot.getX()*myRot.getX() + myRot.getY()*myRot.getY());
@@ -197,41 +168,31 @@ public class RayData
 				dot = (1.0+dot)/2.0;
 
 				if (dot < 0.1) dot = 0.1;
-
 				rayDir = rayDir.scale(dot);
-				
 				result = result.add(rayDir);
 			}
 		}
 		if (result.getLength() > 0.0) return (result.getNormalized());
-		
 		return moveDir;
 	}
 	
-	public Location getDownDirection()
-	{
-		if (!ctrl.getRaycasting().getAllRaysInitialized().getFlag())
-		{
+	public Location getDownDirection(){
+		if (!ctrl.getRaycasting().getAllRaysInitialized().getFlag()){
 			System.out.println("RAYCASTING ERROR: rays not initialized properly");
             return ctrl.getInfo().getLocation();
         }
 		
 		Location moveDir = ctrl.getInfo().getVelocity().asLocation();
-		if (moveDir.getLength() > 0.0)
-		{
+		if (moveDir.getLength() > 0.0){
 			moveDir = moveDir.getNormalized();
-		}
-		else
-		{
+		}else{
 			moveDir = new Location(Math.random()-0.5, Math.random()-0.5, 0.0);
 			moveDir = moveDir.getNormalized();
 		}
 		
 		Location result = new Location(0,0,0);
-		for (int i=0; i<downRayList.size(); ++i)
-		{
-			if (!downRayList.get(i).isResult())
-			{
+		for (int i=0; i<downRayList.size(); ++i){
+			if (!downRayList.get(i).isResult()){
 				Location myRot = ctrl.getInfo().getRotation().toLocation().getNormalized();
 
 				double dxy=Math.sqrt(myRot.getX()*myRot.getX() + myRot.getY()*myRot.getY());
@@ -251,42 +212,33 @@ public class RayData
 				dot = (1.0+dot)/2.0;
 
 				if (dot < 0.1) dot = 0.1;
-
 				rayDir = rayDir.scale(-dot);
-				
 				result = result.add(rayDir);
 			}
 		}
 		
 		if (result.getLength() > 0.0) return (result.getNormalized());
-		
 		return result;
 	}
 	/*
-	public Location getUpDirection()
-	{
-		if (!ctrl.getRaycasting().getAllRaysInitialized().getFlag())
-		{
+	public Location getUpDirection(){
+		if (!ctrl.getRaycasting().getAllRaysInitialized().getFlag()){
 			System.out.println("RAYCASTING ERROR: rays not initialized properly");
             return ctrl.getInfo().getLocation();
         }
 		
 		Location moveDir = ctrl.getInfo().getVelocity().asLocation();
-		if (moveDir.getLength() > 0.0)
-		{
+		if (moveDir.getLength() > 0.0){
 			moveDir = moveDir.getNormalized();
 		}
-		else
-		{
+		else{
 			moveDir = new Location(Math.random()-0.5, Math.random()-0.5, 0.0);
 			moveDir = moveDir.getNormalized();
 		}
 		
 		Location result = new Location(0,0,0);
-		for (int i=0; i<upRayList.size(); ++i)
-		{
-			if (upRayList.get(i).isResult())
-			{
+		for (int i=0; i<upRayList.size(); ++i){
+			if (upRayList.get(i).isResult()){
 				Location myRot = ctrl.getInfo().getRotation().toLocation().getNormalized();
 
 				double dxy=Math.sqrt(myRot.getX()*myRot.getX() + myRot.getY()*myRot.getY());
@@ -302,13 +254,9 @@ public class RayData
 				double dot = moveDir.dot(rayDir);
 				if (dot < -1.0) dot = -1.0;
 				else if (dot > 1.0) dot = 1.0;
-
 				dot = (1.0+dot)/2.0;
-
 				if (dot < 0.1) dot = 0.1;
-
 				rayDir = rayDir.scale(-dot); /////// probably not suitable for up
-				
 				result = result.add(rayDir);
 			}
 		}
