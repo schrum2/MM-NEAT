@@ -28,6 +28,7 @@ import cz.cuni.amis.pogamut.ut2004.utils.PogamutUT2004Property;
 import cz.cuni.amis.pogamut.ut2004.utils.UT2004BotRunner;
 import cz.cuni.amis.utils.exception.PogamutException;
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.ut2004.server.BotKiller;
 import edu.utexas.cs.nn.Constants;
 import edu.utexas.cs.nn.retrace.HumanRetraceController;
 import edu.utexas.cs.nn.weapons.WeaponPreferenceTable;
@@ -61,15 +62,26 @@ public class UT2 extends BaseBot {
 
         private TWEANNController battleController;
         private IUT2004Server server;
+        private int evalTime;
         
         public UT2Parameters() {
         	this((TWEANNController) Easy.load(UT2.DEFAULT_FILE), null);
         }
 
         public UT2Parameters(TWEANNController cont, IUT2004Server server) {
+        	this(cont ,server, Integer.MAX_VALUE);
+        } 
+        
+        public UT2Parameters(TWEANNController cont, IUT2004Server server, int evalTime) {
+        	this.evalTime = evalTime;
             this.battleController = cont;
             this.server = server;
         }
+        
+        public int getEvalTime() {
+        	return evalTime;
+        }
+        
 
         public TWEANNController getBattleController() {
             return this.battleController;
@@ -385,6 +397,9 @@ public class UT2 extends BaseBot {
     private long[] timing = new long[10];
 //    boolean first = true;
 
+    public UT2Parameters getParams() {
+    	return (UT2Parameters) bot.getParams();
+    }
     /**
      * Main method that controls the bot - makes decisions what to do next. It
      * is called iteratively by Pogamut engine every time a synchronous batch
@@ -396,6 +411,10 @@ public class UT2 extends BaseBot {
      */
     @Override
     public void logic() throws PogamutException {
+		if (game.getTime() > getParams().getEvalTime()) {
+			endEval();
+		}
+		
 // This code tests if the STOPSHOOT command works. Keep until Phil fixes mod.
 //        if (first) {
 //            this.getBody().getShooting().shoot();
@@ -472,6 +491,10 @@ public class UT2 extends BaseBot {
 
         getAgentMemory().updatePosition();
     }
+    
+	public void endEval() {
+		BotKiller.killBot(bot);
+	}
 
     /**
      * Name of map bot is currently on. Caches the result for later use during
