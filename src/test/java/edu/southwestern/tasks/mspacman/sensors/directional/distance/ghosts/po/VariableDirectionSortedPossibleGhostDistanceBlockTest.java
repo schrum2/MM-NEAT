@@ -32,12 +32,11 @@ import pacman.game.Constants.MOVE;
  */
 public class VariableDirectionSortedPossibleGhostDistanceBlockTest {
 	
-	static VariableDirectionSortedPossibleGhostDistanceBlock firstClosest;
-	static VariableDirectionSortedPossibleGhostDistanceBlock secondClosest;
-	static VariableDirectionSortedPossibleGhostDistanceBlock thirdClosest;
-	static VariableDirectionSortedPossibleGhostDistanceBlock fourthClosest;
-	//should always return new int[0], there aren't five ghosts
-	static VariableDirectionSortedPossibleGhostDistanceBlock fifthClosest;
+	static VariableDirectionSortedPossibleGhostDistanceBlock firstClosestUp;
+	static VariableDirectionSortedPossibleGhostDistanceBlock secondClosestUp;
+	static VariableDirectionSortedPossibleGhostDistanceBlock thirdClosestUp;
+	static VariableDirectionSortedPossibleGhostDistanceBlock fourthClosestUp;
+	static VariableDirectionSortedPossibleGhostDistanceBlock fifthClosestUp;
 	static OldToNewPacManIntermediaryController infoManager;
 
 	@BeforeClass
@@ -48,20 +47,20 @@ public class VariableDirectionSortedPossibleGhostDistanceBlockTest {
 				"useGhostModel:true", "drawGhostPredictions:true", "partiallyObservablePacman:true",  "pacmanPO:true",
 				"rawScorePacMan:true", "ghostPO:false", "observePacManPO:true", "usePillModel:false" });
 		
-		firstClosest = new VariableDirectionSortedPossibleGhostDistanceBlock(0);
-		secondClosest = new VariableDirectionSortedPossibleGhostDistanceBlock(1);
-		thirdClosest = new VariableDirectionSortedPossibleGhostDistanceBlock(2);
-		fourthClosest = new VariableDirectionSortedPossibleGhostDistanceBlock(3);
-		fifthClosest = new VariableDirectionSortedPossibleGhostDistanceBlock(4);
+		firstClosestUp = new VariableDirectionSortedPossibleGhostDistanceBlock(0,0);
+		secondClosestUp = new VariableDirectionSortedPossibleGhostDistanceBlock(0,1);
+		thirdClosestUp = new VariableDirectionSortedPossibleGhostDistanceBlock(0,2);
+		fourthClosestUp = new VariableDirectionSortedPossibleGhostDistanceBlock(0,3);
+		fifthClosestUp = new VariableDirectionSortedPossibleGhostDistanceBlock(0,4);
 	}
 	
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		firstClosest = null;
-		secondClosest = null;
-		thirdClosest = null;
-		fourthClosest = null;
-		fifthClosest = null;
+		firstClosestUp = null;
+		secondClosestUp = null;
+		thirdClosestUp = null;
+		fourthClosestUp = null;
+		fifthClosestUp = null;
 	}
 	
 	@Test
@@ -110,7 +109,7 @@ public class VariableDirectionSortedPossibleGhostDistanceBlockTest {
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		
 		//TO DRAW A FRAME (AND CLOSE IT)//
-		//testExecutorFacade.forceGameView.showGame();
+		////testExecutorFacade.forceGameView.showGame();
 		//testExecutorFacade.forceGameView.closeGame();		
 		//////////////////////////////////
 		
@@ -140,12 +139,12 @@ public class VariableDirectionSortedPossibleGhostDistanceBlockTest {
 			Assert.assertNotNull(testGameFacade.ghostPredictions);
 			
 			//DRAW THE GAME STATE
-			//testExecutorFacade.forceGameView.showGame();
+			////testExecutorFacade.forceGameView.showGame();
 			//testExecutorFacade.forceGameView.closeGame();
 		}
 		
 		//DRAW THE GAME
-		testExecutorFacade.forceGameView.showGame();
+		////testExecutorFacade.forceGameView.showGame();
 		
 		//FOR 7 TIME STEPS
 		for(int i = 0; i < 7; i++) {
@@ -161,7 +160,7 @@ public class VariableDirectionSortedPossibleGhostDistanceBlockTest {
 			Assert.assertNotNull(testGameFacade.ghostPredictions);
 			
 			//DRAW THE GAME STATE
-			//testExecutorFacade.forceGameView.showGame();
+			////testExecutorFacade.forceGameView.showGame();
 			//testExecutorFacade.forceGameView.closeGame();
 		}
 		
@@ -179,17 +178,17 @@ public class VariableDirectionSortedPossibleGhostDistanceBlockTest {
 			Assert.assertNotNull(testGameFacade.ghostPredictions);
 			
 			//DRAW THE GAME STATE
-			//testExecutorFacade.forceGameView.showGame();
+			////testExecutorFacade.forceGameView.showGame();
 			//testExecutorFacade.forceGameView.closeGame();
 		}
 		//DRAW THE GAME STATE
-		testExecutorFacade.forceGameView.showGame();
+		//testExecutorFacade.forceGameView.showGame();
 		
-		assertArrayEquals(firstClosest.getTargets(testGameFacade), new int[0]);
-		assertArrayEquals(secondClosest.getTargets(testGameFacade), new int[0]);
-		assertArrayEquals(thirdClosest.getTargets(testGameFacade), new int[0]);
-		assertArrayEquals(fourthClosest.getTargets(testGameFacade), new int[0]);
-		assertArrayEquals(fifthClosest.getTargets(testGameFacade), new int[0]);
+		assertArrayEquals(firstClosestUp.getTargets(testGameFacade), new int[0]);
+		assertArrayEquals(secondClosestUp.getTargets(testGameFacade), new int[0]);
+		assertArrayEquals(thirdClosestUp.getTargets(testGameFacade), new int[0]);
+		assertArrayEquals(fourthClosestUp.getTargets(testGameFacade), new int[0]);
+		assertArrayEquals(fifthClosestUp.getTargets(testGameFacade), new int[0]);
 	
 		
 		//assert firstClosest.getTargets(testGameFacade) == new int[0] : "We cannot see any ghosts yet";
@@ -212,11 +211,11 @@ public class VariableDirectionSortedPossibleGhostDistanceBlockTest {
 			Assert.assertNotNull(testGameFacade.ghostPredictions);
 			
 			//DRAW THE GAME STATE
-			//testExecutorFacade.forceGameView.showGame();
+			////testExecutorFacade.forceGameView.showGame();
 			//testExecutorFacade.forceGameView.closeGame();
 		}
 		//DRAW THE GAME STATE
-		testExecutorFacade.forceGameView.showGame();
+		//testExecutorFacade.forceGameView.showGame();
 		
 		//TELL BLINKY TO MOVE DOWN
 		blinky.setMove(MOVE.DOWN);
@@ -235,17 +234,17 @@ public class VariableDirectionSortedPossibleGhostDistanceBlockTest {
 			Assert.assertNotNull(testGameFacade.ghostPredictions);
 			
 			//DRAW THE GAME STATE
-			//testExecutorFacade.forceGameView.showGame();
+			////testExecutorFacade.forceGameView.showGame();
 			//testExecutorFacade.forceGameView.closeGame();
 		}
 		
 		//DRAW THE GAME STATE
-		testExecutorFacade.forceGameView.showGame();
+		//testExecutorFacade.forceGameView.showGame();
 		
 		//tell blinky to stand still
 		blinky.setMove(MOVE.LEFT);
 		
-		Assert.assertFalse(firstClosest.getTargets(testGameFacade).length == 0);
+		Assert.assertFalse(firstClosestUp.getTargets(testGameFacade).length == 0);
 		
 		//FOR 9 TIME STEPS
 		for(int i = 0; i < 9; i++) {
@@ -261,12 +260,12 @@ public class VariableDirectionSortedPossibleGhostDistanceBlockTest {
 			Assert.assertNotNull(testGameFacade.ghostPredictions);
 			
 			//DRAW THE GAME STATE
-			//testExecutorFacade.forceGameView.showGame();
+			////testExecutorFacade.forceGameView.showGame();
 			//testExecutorFacade.forceGameView.closeGame();
 		}
 		
 		//DRAW THE GAME STATE
-		testExecutorFacade.forceGameView.showGame();
+		//testExecutorFacade.forceGameView.showGame();
 		
 		pinky.setMove(MOVE.DOWN);
 		
@@ -284,18 +283,18 @@ public class VariableDirectionSortedPossibleGhostDistanceBlockTest {
 			Assert.assertNotNull(testGameFacade.ghostPredictions);
 			
 			//DRAW THE GAME STATE
-			//testExecutorFacade.forceGameView.showGame();
+			////testExecutorFacade.forceGameView.showGame();
 			//testExecutorFacade.forceGameView.closeGame();
 		}
 		
-		Assert.assertFalse(firstClosest.getTargets(testGameFacade).length == 0);
-		Assert.assertFalse(secondClosest.getTargets(testGameFacade).length == 0);
-		Assert.assertFalse(thirdClosest.getTargets(testGameFacade).length == 0);
-		Assert.assertTrue(fourthClosest.getTargets(testGameFacade).length == 0);
-		Assert.assertTrue(fifthClosest.getTargets(testGameFacade).length == 0);
+		Assert.assertFalse(firstClosestUp.getTargets(testGameFacade).length == 0);
+		Assert.assertFalse(secondClosestUp.getTargets(testGameFacade).length == 0);
+		Assert.assertFalse(thirdClosestUp.getTargets(testGameFacade).length == 0);
+		Assert.assertTrue(fourthClosestUp.getTargets(testGameFacade).length == 0);
+		Assert.assertTrue(fifthClosestUp.getTargets(testGameFacade).length == 0);
 		
 		//DRAW THE GAME STATE
-		testExecutorFacade.forceGameView.showGame();
+		//testExecutorFacade.forceGameView.showGame();
 		
 //		System.out.println("WAITING FOR MISCUTIL IN VariableDirectionSortedPossibleGhostDistanceBlockTest");
 //		MiscUtil.waitForReadStringAndEnterKeyPress();

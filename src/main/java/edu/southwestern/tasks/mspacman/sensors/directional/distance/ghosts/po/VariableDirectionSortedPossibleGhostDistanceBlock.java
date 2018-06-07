@@ -29,23 +29,9 @@ public class VariableDirectionSortedPossibleGhostDistanceBlock extends VariableD
 	private final int order;
 	
 	/**
-	 * Creates a new VariableDirectionSortedPossibleGhostDistanceBlock from the other constructor:
-	 * VariableDirectionSortedGhostDistanceBlock(int dir, int order, boolean edibleClose, boolean proximityOnly)
-	 * Sets dir to -1.	
-	 * Sets edibleClose to true.	
-	 * Sets proximityOnly to true.	
-	 * @param order sets order in the other constructor.
-	 */
-	public VariableDirectionSortedPossibleGhostDistanceBlock(int order) {
-		this(-1, order);
-	}
-	
-	/**
 	 * Handles PO pacman. Considers possible ghost locations on top of ghost locations that are visible.
 	 * @param dir the direction this block is observing
 	 * @param order the orderith (nth) ghost away
-	 * @param edibleClose true means looking at edible ghosts, false means looking at threat ghosts
-	 * @param proximityOnly whether or not proximity matters more than type of ghost: edible or threat. Overrides edibleClose if true.
 	 */
 	public VariableDirectionSortedPossibleGhostDistanceBlock(int dir, int order) {
 		super(dir);

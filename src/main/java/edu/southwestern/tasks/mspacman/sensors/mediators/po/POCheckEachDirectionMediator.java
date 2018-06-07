@@ -65,8 +65,10 @@ public class POCheckEachDirectionMediator extends VariableDirectionBlockLoadedIn
 				if(Parameters.parameters.booleanParameter("useGhostModel")) {
 					//this will keep track of the nearest four ghosts, but with probabilities, there can be many more than
 					//just four probable ghosts
-					blocks.add(new VariableDirectionSortedPossibleGhostDistanceBlock(i));
-					blocks.add(new VariableDirectionSortedPossibleGhostProbabilityBlock(i));
+					for(int j = 0; j < 4; j++) {
+						blocks.add(new VariableDirectionSortedPossibleGhostDistanceBlock(j, i));
+						blocks.add(new VariableDirectionSortedPossibleGhostProbabilityBlock(j, i));
+					}
 				} else {
 					blocks.add(new VariableDirectionSortedGhostDistanceBlock(i));
 				}
