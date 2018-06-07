@@ -4,6 +4,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import cz.cuni.amis.pogamut.base.agent.navigation.IPathExecutorState;
+import cz.cuni.amis.pogamut.base.agent.params.IRemoteAgentParameters;
 import cz.cuni.amis.pogamut.base.communication.connection.exception.ConnectionException;
 import cz.cuni.amis.pogamut.base.component.bus.event.BusAwareCountDownLatch.BusStoppedInterruptedException;
 import cz.cuni.amis.pogamut.base.component.exception.ComponentCantStartException;
@@ -28,7 +29,10 @@ import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.Self;
 import cz.cuni.amis.pogamut.ut2004.utils.UT2004BotRunner;
 import cz.cuni.amis.utils.exception.PogamutException;
 import cz.cuni.amis.utils.flag.FlagListener;
+import edu.southwestern.tasks.ut2004.bots.MultiBotLauncher;
 import edu.southwestern.tasks.ut2004.server.BotKiller;
+import pogamut.hunter.HunterBot;
+import pogamut.hunter.HunterBotParameters;
 
 /**
  * Runs the mirrorBot as a Java Application
@@ -184,62 +188,66 @@ public class MirrorBot4 extends UT2004BotModuleController{
 	 * @throws PogamutException
 	 */
 	public static void main(String args[]) throws PogamutException{
-		String host = "localhost";
-		int port = 3000;
+		Class[] botClasses = new Class[] {MirrorBot4.class};
 
-		if (args.length > 0){
-			String customHost = args[0];
-			host = customHost;
-			System.out.println("Using custom host: "+host);
-		}
-		else{
-			System.out.println("Custom host not specified. Resuming with default host: "+host);
-		}
-
-		if (args.length > 1){
-			String customPort = args[1];
-			try{
-				int custPort = Integer.parseInt(customPort);
-				port = custPort;
-				System.out.println("Using custom port: "+port);
-			}
-			catch (Exception e){
-				System.out.println("Invalid port. Expecting numeric. Resuming with default port: "+port);
-			}
-		}
-		else{
-			System.out.println("Custom port not specified. Resuming with default port: "+port);
-		}
-
-		while (true){
-			try{
-				UT2004BotRunner runner = new UT2004BotRunner(MirrorBot4.class, "MirrorBot", host, port);
-				runner.setMain(true);
-				runner.setLogLevel(Level.OFF);
-				runner.startAgent();
-				Thread.sleep(1234);
-			}
-			catch (ComponentCantStartException e){
-				Throwable cause = e.getCause();
-				if (cause instanceof ConnectionException){
-					System.out.println("Connection to server failed... retrying");
-					e.printStackTrace();
-				}
-				else if (cause instanceof BusStoppedInterruptedException){
-					e.printStackTrace();
-					System.out.println("Aborting...");
-					break;
-				}
-				else{
-					e.printStackTrace();
-					System.out.println("Some other cause for ComponentCantStartException... retrying");
-				}
-			}
-			catch (Exception e){
-				e.printStackTrace();
-				System.out.println("Some other exception... retrying");
-			}
-		}
+		IRemoteAgentParameters[] params = new IRemoteAgentParameters[] {new MirrorBotParameters()};
+		MultiBotLauncher.launchMultipleBots(botClasses, params, "localhost", 3000);//launchMultipleBots(botClasses, params, "localhost", 3000);
+//		String host = "localhost";
+//		int port = 3000;
+//
+//		if (args.length > 0){
+//			String customHost = args[0];
+//			host = customHost;
+//			System.out.println("Using custom host: "+host);
+//		}
+//		else{
+//			System.out.println("Custom host not specified. Resuming with default host: "+host);
+//		}
+//
+//		if (args.length > 1){
+//			String customPort = args[1];
+//			try{
+//				int custPort = Integer.parseInt(customPort);
+//				port = custPort;
+//				System.out.println("Using custom port: "+port);
+//			}
+//			catch (Exception e){
+//				System.out.println("Invalid port. Expecting numeric. Resuming with default port: "+port);
+//			}
+//		}
+//		else{
+//			System.out.println("Custom port not specified. Resuming with default port: "+port);
+//		}
+//
+//		while (true){
+//			try{
+//				UT2004BotRunner runner = new UT2004BotRunner(MirrorBot4.class, "MirrorBot", host, port);
+//				runner.setMain(true);
+//				runner.setLogLevel(Level.OFF);
+//				runner.startAgent();
+//				Thread.sleep(1234);
+//			}
+//			catch (ComponentCantStartException e){
+//				Throwable cause = e.getCause();
+//				if (cause instanceof ConnectionException){
+//					System.out.println("Connection to server failed... retrying");
+//					e.printStackTrace();
+//				}
+//				else if (cause instanceof BusStoppedInterruptedException){
+//					e.printStackTrace();
+//					System.out.println("Aborting...");
+//					break;
+//				}
+//				else{
+//					e.printStackTrace();
+//					System.out.println("Some other cause for ComponentCantStartException... retrying");
+//				}
+//			}
+//			catch (Exception e){
+//				e.printStackTrace();
+//				System.out.println("Some other exception... retrying");
+//			}
+//		}
 	}
 
 	@Override
