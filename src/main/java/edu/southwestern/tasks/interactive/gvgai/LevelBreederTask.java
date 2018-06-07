@@ -1,13 +1,19 @@
 package edu.southwestern.tasks.interactive.gvgai;
 
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.genotypes.Genotype;
@@ -16,6 +22,7 @@ import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.gvgai.GVGAIUtil;
 import edu.southwestern.tasks.gvgai.GVGAIUtil.GameBundle;
 import edu.southwestern.tasks.interactive.InteractiveEvolutionTask;
+import edu.southwestern.util.datastructures.Triangle;
 import gvgai.core.game.BasicGame;
 import gvgai.core.game.Game;
 import gvgai.core.vgdl.VGDLFactory;
@@ -43,6 +50,7 @@ public class LevelBreederTask<T extends Network> extends InteractiveEvolutionTas
 	public static final int RANDOM_ITEMS_INDEX = 2;
 	public static final int FLOOR_INDEX = 3; // Will always only have one character
 	public static final int WALL_INDEX = 3; // Will always only have one character
+	public static final int BOTTOM_ITEMS_INDEX = 4; // Items that prefer to be at the bottom of the screen
 	static {
 		//SEMI-PLAYABLE
 		SPECIFIC_GAME_LEVEL_CHARS.put("zelda", new char[][] {
@@ -50,7 +58,8 @@ public class LevelBreederTask<T extends Network> extends InteractiveEvolutionTas
 			new char[]{'g','+','A'}, // There is one gate, one key, and one avatar
 			new char[]{'1','2','3'}, // There are random monsters dignified by 1, 2, 3
 			new char[]{'.'},
-			new char[]{'w'}});
+			new char[]{'w'},
+			new char[0]});
 		//SEMI-PLAYABLE
 		SPECIFIC_GAME_LEVEL_CHARS.put("blacksmoke", new char[][] {
 			new char[]{'w','b','c'}, // There are fixed walls, destructible blocks, and black death squares
@@ -69,10 +78,11 @@ public class LevelBreederTask<T extends Network> extends InteractiveEvolutionTas
 		//TODO: fix aliens: everything spawns yet some levels are broken, force the spawn of the avatar and the aliens
 		SPECIFIC_GAME_LEVEL_CHARS.put("aliens", new char[][] {
 			new char[]{'.'}, // floor
-			new char[]{'1','2','A'}, // There is one slow portal, one fast portal, and one avatar
+			new char[]{'1','2'}, // There is one slow portal, one fast portal, and one avatar
 			new char[]{'0'}, // There are base blocks dignified by 0 
 			new char[]{'.'},
-			new char[]{'w'}});
+			new char[]{'w'},
+			new char[]{'A'}});
 		//SEMI-PLAYABLE
 		SPECIFIC_GAME_LEVEL_CHARS.put("pacman", new char[][] {
 			new char[]{'w'}, // Walls are fixed
@@ -699,7 +709,7 @@ public class LevelBreederTask<T extends Network> extends InteractiveEvolutionTas
 			new char[]{'0','1','2'}, // wide wall, tight wall, cat wall
 			new char[]{'.'},
 			new char[]{'w'}});
-		
+		//BROKEN
 		SPECIFIC_GAME_LEVEL_CHARS.put("wildgunman", new char[][] {
 			new char[]{'w'}, // Walls are fixed
 			new char[]{'A'}, // avatar
@@ -714,6 +724,8 @@ public class LevelBreederTask<T extends Network> extends InteractiveEvolutionTas
 	private String fullGameFile;
 	private String gameFile;
 	private char[][] gameCharData;
+	
+	protected JComboBox<String> gameChoice;
 	
 	public LevelBreederTask() throws IllegalAccessException {
 		super();
@@ -731,6 +743,36 @@ public class LevelBreederTask<T extends Network> extends InteractiveEvolutionTas
 		play.setName("" + PLAY_BUTTON_INDEX);
 		play.addActionListener(this);
 		top.add(play);
+		
+		
+		//creates a string of all game names
+		Set<String> gameNames = SPECIFIC_GAME_LEVEL_CHARS.keySet();
+		//converts the string to an array
+		String[] choices = gameNames.toArray(new String[gameNames.size()]);
+		//sorts list alphabetically
+		Arrays.sort(choices);
+		
+		gameChoice = new JComboBox<String>(choices);
+		gameChoice.setSelectedIndex(choices.length - 1); 
+		gameChoice.setSize(80, 40);
+		gameChoice.addItemListener(new ItemListener() {
+			@SuppressWarnings({ "unchecked"})
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				JComboBox<String> source = (JComboBox<String>)e.getSource();
+				
+				gameFile = (String) source.getSelectedItem();
+				Parameters.parameters.setString("gvgaiGame", gameFile);
+				fullGameFile = GAMES_PATH + gameFile + ".txt";
+				gameCharData = SPECIFIC_GAME_LEVEL_CHARS.get(gameFile);
+				
+				resetButtons(true);
+				
+			}
+
+		});
+		
+		top.add(gameChoice);
 
 	}
 
@@ -766,7 +808,7 @@ public class LevelBreederTask<T extends Network> extends InteractiveEvolutionTas
 	@Override
 	protected void save(String file, int i) {
 		String[] level = GVGAIUtil.generateLevelFromCPPN((Network)scores.get(i).individual.getPhenotype(), inputMultipliers, GAME_GRID_WIDTH, GAME_GRID_HEIGHT, gameCharData[FLOOR_INDEX][0], gameCharData[WALL_INDEX][0], 
-				gameCharData[FIXED_ITEMS_INDEX], gameCharData[UNIQUE_ITEMS_INDEX], gameCharData[RANDOM_ITEMS_INDEX], NUMBER_RANDOM_ITEMS);
+				gameCharData[FIXED_ITEMS_INDEX], gameCharData[UNIQUE_ITEMS_INDEX], gameCharData[RANDOM_ITEMS_INDEX], NUMBER_RANDOM_ITEMS, gameCharData[BOTTOM_ITEMS_INDEX]);
 		// Prepare text file
 		try {
 			PrintStream ps = new PrintStream(new File(file));
@@ -789,7 +831,7 @@ public class LevelBreederTask<T extends Network> extends InteractiveEvolutionTas
 	 */
 	public GameBundle setUpGameWithLevelFromCPPN(Network phenotype) {
 		String[] level = GVGAIUtil.generateLevelFromCPPN(phenotype, inputMultipliers, GAME_GRID_WIDTH, GAME_GRID_HEIGHT, gameCharData[FLOOR_INDEX][0], gameCharData[WALL_INDEX][0], 
-				gameCharData[FIXED_ITEMS_INDEX], gameCharData[UNIQUE_ITEMS_INDEX], gameCharData[RANDOM_ITEMS_INDEX], NUMBER_RANDOM_ITEMS);
+				gameCharData[FIXED_ITEMS_INDEX], gameCharData[UNIQUE_ITEMS_INDEX], gameCharData[RANDOM_ITEMS_INDEX], NUMBER_RANDOM_ITEMS, gameCharData[BOTTOM_ITEMS_INDEX]);
 		int seed = 0; // TODO: Use parameter?
 		Agent agent = new Agent();
 		agent.setup(null, seed, true); // null = no log, true = human 

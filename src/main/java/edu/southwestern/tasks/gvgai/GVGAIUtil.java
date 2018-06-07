@@ -160,7 +160,7 @@ public class GVGAIUtil {
 	 * @return String array with level layout
 	 */
 	public static String[] generateLevelFromCPPN(Network n, double[] inputMultiples, int levelWidth, int levelHeight, 
-			char defaultBackground, char border, char[] fixed, char[] unique, char[] random, int randomItems) {
+			char defaultBackground, char border, char[] fixed, char[] unique, char[] random, int randomItems, char[] bottomItems) {
 		// Start with 2D char array to fill out level: The +2 is for the border wall.
 		char[][] level = new char[levelHeight+2][levelWidth+2];
 		// Background
@@ -226,6 +226,11 @@ public class GVGAIUtil {
 		for(int i = 0; i < unique.length; i++) {
 			level[uniqueLocations[i][1]][uniqueLocations[i][0]] = unique[i];
 		}		
+		
+		// TODO: Add game-specific hacks here
+		// TODO: For example, for aliens, put the ship near the bottom
+		
+		
 		// Convert to String array
 		String[] stringLevel = new String[levelHeight+2];
 		for(int i = 0; i < level.length; i++) {
@@ -360,7 +365,7 @@ public class GVGAIUtil {
 		TWEANNGenotype cppn = new TWEANNGenotype(4, 9, 0);
 		TWEANN net = cppn.getPhenotype();
 		String[] level = generateLevelFromCPPN(net, new double[] {1,1,1,1}, 20, 20, '.', 'w', 
-				new char[]{'w','b','c'}, new char[]{'l','k','e','A'}, new char[]{'d'}, 15);
+				new char[]{'w','b','c'}, new char[]{'l','k','e','A'}, new char[]{'d'}, 15, new char[0]);
 
 		Agent agent = new Agent();
 		agent.setup(null, seed, true); // null = no log, true = human 
