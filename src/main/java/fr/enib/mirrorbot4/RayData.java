@@ -8,6 +8,8 @@ import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.AutoTra
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.Item;
 import cz.cuni.amis.pogamut.ut2004.utils.UnrealUtils;
 import cz.cuni.amis.utils.flag.FlagListener;
+import edu.southwestern.parameters.Parameters;
+
 import java.util.ArrayList;
 import javax.vecmath.Vector3d;
 
@@ -120,7 +122,9 @@ public class RayData{
 	 */
 	public Location getNormalDirection(double dt){
 		if (!ctrl.getRaycasting().getAllRaysInitialized().getFlag()){
-			System.out.println("RAYCASTING ERROR: rays not initialized properly");
+			if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+				System.out.println("RAYCASTING ERROR: rays not initialized properly");
+			}
             return ctrl.getInfo().getLocation();
         }
 		
@@ -193,7 +197,9 @@ public class RayData{
 	
 	public Location getDownDirection(){
 		if (!ctrl.getRaycasting().getAllRaysInitialized().getFlag()){
-			System.out.println("RAYCASTING ERROR: rays not initialized properly");
+			if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
+				System.out.println("RAYCASTING ERROR: rays not initialized properly");
+			}
             return ctrl.getInfo().getLocation();
         }
 		
