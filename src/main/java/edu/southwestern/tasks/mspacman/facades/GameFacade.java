@@ -12,7 +12,7 @@ import pacman.game.Constants.GHOST;
 import pacman.game.Constants.MOVE;
 import pacman.game.Game;
 import popacman.prediction.GhostLocation;
-import popacman.prediction.PillModel;
+import popacman.prediction.MyPillModel;
 import popacman.prediction.fast.GhostPredictionsFast;
 
 import java.awt.Color;
@@ -34,7 +34,7 @@ public class GameFacade {
 	public static final int MAX_DISTANCE = 200;
 	public static final int NUM_DIRS = 4;
 	public static final int DANGEROUS_TIME = 5;
-	public PillModel pillModel = null;
+	public MyPillModel pillModel = null;
 	public GhostPredictionsFast ghostPredictions = null;
 	public oldpacman.game.Game oldG = null;
 	public pacman.game.Game poG = null; // New pacman from Maven
@@ -1046,7 +1046,7 @@ public class GameFacade {
 	 */
 	public int[] getActivePowerPillsIndices() {
 		return oldG == null ?
-				//(TODO: understand output), add support for tracking power pills vs regular pills in PillModel
+				//(TODO: understand output), add support for tracking power pills vs regular pills in MyPillModel
 				poG.getActivePowerPillsIndices():
 				oldG.getActivePowerPillsIndices();
 	}
@@ -3337,11 +3337,11 @@ public class GameFacade {
 	
 	/////////////////////////////////////////////////////Experimental Stuff//////////////////////////////////////////////////////////////////////
 	
-	public PillModel getPillModel() {
+	public MyPillModel getPillModel() {
 		return this.pillModel;
 	}
 	
-	public void setPillModel(PillModel pm) {
+	public void setPillModel(MyPillModel pm) {
 		this.pillModel = pm;
 	}
 	
@@ -3356,8 +3356,8 @@ public class GameFacade {
 	
 	//credit to piers on 6/01/18.
 	//See InfromationSetMCTSPacMan
-	public PillModel initPillModel() {
-		pillModel = new PillModel(poG.getNumberOfPills());
+	public MyPillModel initPillModel() {
+		pillModel = new MyPillModel(poG.getNumberOfPills());
         int[] indices = poG.getCurrentMaze().pillIndices;
         for (int index : indices) {
             pillModel.observe(index, true);
@@ -3373,7 +3373,7 @@ public class GameFacade {
 	
 	//credit to piers on 6/01/18.
 	//See InfromationSetMCTSPacMan
-	public PillModel updatePillModel() {
+	public MyPillModel updatePillModel() {
 		System.out.println("Update pill model: " + pillModel);
         int pillIndex = poG.getPillIndex(poG.getPacmanCurrentNodeIndex());
         System.out.println(Arrays.toString(poG.getCurrentMaze().pillIndices));

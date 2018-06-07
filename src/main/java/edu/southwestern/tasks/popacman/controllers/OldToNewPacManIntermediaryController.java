@@ -17,7 +17,7 @@ import pacman.game.internal.Maze;
 import pacman.game.Drawable;
 import pacman.game.Game;
 import popacman.prediction.GhostLocation;
-import popacman.prediction.PillModel;
+import popacman.prediction.MyPillModel;
 import popacman.prediction.fast.GhostPredictionsFast;
 
 /**
@@ -28,7 +28,7 @@ import popacman.prediction.fast.GhostPredictionsFast;
 public class OldToNewPacManIntermediaryController extends pacman.controllers.PacmanController implements Drawable {
 
 	protected final oldpacman.controllers.NewPacManController oldpacman;
-	public PillModel pillModel = null;
+	public MyPillModel pillModel = null;
 	public Maze currentMaze;
 	public GhostPredictionsFast ghostPredictions = null;
 	public int[] ghostEdibleTime;
@@ -104,7 +104,7 @@ public class OldToNewPacManIntermediaryController extends pacman.controllers.Pac
     	//Draw Pill Model based on parameter
     	if(Parameters.parameters.booleanParameter("drawPillModel")) {
     		for (int i = 0; i < mostRecentGame.getNumberOfNodes(); i++) {
-	    		boolean isPillAvailable = pillModel.getPills().get(i);
+	    		boolean isPillAvailable = pillModel.getPills().get(mostRecentGame.getCurrentMaze().graph[i].nodeIndex);
 		    		if(isPillAvailable) {
 		    			graphics.setColor(new Color(255, 0, 0, 255));
 		    			graphics.fillRect(
@@ -115,7 +115,7 @@ public class OldToNewPacManIntermediaryController extends pacman.controllers.Pac
 		    		}
     		}
 
-    	
+    		//DRAWS PILLS WE CAN SEE
 	        for(int pill : mostRecentGame.getActivePillsIndices()) {
 	        	assert pillModel != null : "why is this null";
 	        	assert pillModel.getPills() != null : "why is this null";
@@ -186,8 +186,11 @@ public class OldToNewPacManIntermediaryController extends pacman.controllers.Pac
 				//pillModel = informedGameFacade.updatePillModel();
 	           
 				//Piers' Code
-				pillModel = new PillModel(game.getNumberOfPills());
+				//ORIGINAL
+				//pillModel = new MyPillModel(game.getNumberOfPills());
 	
+				pillModel = new MyPillModel(informedGameFacade.poG.getNumberOfNodes());
+				
 	            int[] indices = game.getCurrentMaze().pillIndices;
 	            for (int index : indices) {
 	                pillModel.observe(index, true);
