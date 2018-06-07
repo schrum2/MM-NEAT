@@ -149,7 +149,7 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 			mutators.add("Gamebots2004.GBHUD");
 		}
 
-		//converts the srraylist into a string that will be given to the server as a command
+		//converts the arraylist into a string that will be given to the server as a command
 		String mutatorString = mutators.isEmpty() ? "":"?mutator=" + String.join(",", mutators);
 
 		//String botprizeMod = Parameters.parameters.booleanParameter("botprizeMod") ? "?mutator=GameBots2004.BotPrizeMutator," : "";
@@ -171,7 +171,7 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 		//Launches the server, and ensures that it is empty at the outset
 		MyUCCWrapper ucc = null;
 		Pair<double[], double[]> result = null;
-		int attempts = 1; //tracks the number of sttempts to launch the server
+		int attempts = 1; //tracks the number of attempts to launch the server
 		while (result == null) {
 			System.out.println("Eval attempt " + (attempts++));
 			try {
@@ -242,6 +242,119 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 		}
 
 		return result;
+	}
+
+	public GameDataCollector[] runServerWithBots() {//Parameters: info about native bots, info about controllerBot instances
+		//take all code from oneEval
+		// finds the port connection for the bot
+		int botPort = ServerUtil.getAvailablePort();
+		int controlPort = ServerUtil.getAvailablePort();
+		int observePort = ServerUtil.getAvailablePort();
+		int gamePort = ServerUtil.getAvailablePort();
+		// sets the map, gametype, and Gamebots that will be used
+		MyUCCWrapperConf config = new MyUCCWrapperConf();
+		config.setPlayerPort(gamePort);
+		config.setStartOnUnusedPort(false);
+		config.setMapName(map);
+		config.setGameBotsPack("GameBots2004");
+		config.setGameType("BotDeathMatch");
+
+
+		//Creates an arraylist of mutators that will be applied to the server
+		ArrayList<String> mutators = new ArrayList<>();
+		if(Parameters.parameters.booleanParameter("botprizeMod")) {
+			mutators.add("GameBots2004.BotprizeMutator");		
+		}
+		if(Parameters.parameters.booleanParameter("navCubes")) {
+			mutators.add("GameBots2004.PathMarkerMutator");
+		}
+		if(Parameters.parameters.booleanParameter("GBHUDMutator")) {
+			mutators.add("Gamebots2004.GBHUD");
+		}
+
+		//converts the arraylist into a string that will be given to the server as a command
+		String mutatorString = mutators.isEmpty() ? "":"?mutator=" + String.join(",", mutators);
+
+
+
+		GameDataCollector[] collectorsToReturn = new GameDataCollector[4];//4 is a placeholder number
+
+
+
+		//Launches the server, and ensures that it is empty at the outset
+		MyUCCWrapper ucc = null;
+		Pair<double[], double[]> result = null;
+		int attempts = 1; //tracks the number of attempts to launch the server
+		while (result == null) {
+			System.out.println("Eval attempt " + (attempts++));
+			try {
+				ucc = new MyUCCWrapper(config);
+				IUT2004Server server = ucc.getUTServer();
+				System.out.println(botPort + ": Confirming empty server");
+				//responsible for launching native bots into the server, resets if the port is not empty
+				while (server.getAgents().size() > 0 
+						|| server.getNativeAgents().size() > 0
+						|| server.getPlayers().size() > 0) {
+					System.out.println(botPort + ": NOT EMPTY! RESET!");
+					ServerUtil.destroyServer(ucc, true);
+
+					ucc = new MyUCCWrapper(config);
+					server = ucc.getUTServer();
+				}
+				// Server was launched?
+				int claimTicket = ServerUtil.addServer(ucc);
+				System.out.println(botPort + ": Empty server gets ticekt: " + claimTicket);
+				try {
+					for (int i = 0; i < nativeBotSkills.length; i++) {
+						server.connectNativeBot("Bot" + i, "Type" + i, nativeBotSkills[i]);
+					}
+					// Evaluate genotype
+					NetworkController organism = new NetworkController<T>(individual, sensorModel.copy(), outputModel.copy(), weaponManager.copy());
+					ArrayList<BehaviorModule> behaviors = new ArrayList<BehaviorModule>(2);
+					behaviors.add(new BattleNetworkBehaviorModule<T>(organism));
+					behaviors.add(new ItemExplorationBehaviorModule());
+					BotController controller = new BehaviorListController(behaviors);
+					// Store evolving bot and opponents that are ControllerBots
+					BotController[] allBots = new BotController[this.opponents.length + 1];
+					allBots[0] = controller;
+					System.arraycopy(opponents, 0, allBots, 1, opponents.length);
+					// Create names for all bots
+					String[] names = new String[allBots.length];
+					names[0] = "EvolvingBot" + gamePort;
+					for(int i = 1; i < names.length; i++) {
+						String className = allBots[i].getClass().getName();
+						// Just get the class name, not the package portion
+						className = className.substring(className.lastIndexOf('.')+1);
+						names[i] = className;
+					}
+					// Launch bots on server and retrieve collected fitness info
+					GameDataCollector[] collectors = ControllerBot.launchBot(
+							server, names, allBots,
+							evalMinutes * 60, desiredSkill, "localhost", botPort);
+					// For now, assume we always want just the first collector
+					GameDataCollector stats = collectors[0]; 
+
+					// System.out.println("Eval over");
+					// Transfer stats data to result
+					if (stats.evalWasSuccessful()) {
+						result = relevantScores(stats, organism);
+					}
+				} finally {
+					System.out.println(botPort + ": Past evaluate block: " + System.currentTimeMillis());
+					ServerUtil.removeServer(claimTicket);
+				}
+			} catch (ComponentCantStartException ccse) {//gets rid of the server if it can't be started
+				System.out.println("EXCEPTION: Can't start the server. Failed eval. Destroy server");
+				ServerUtil.destroyServer(ucc, true);
+				result = null;
+			} finally {
+				if (result == null) {//repeats the evaluation if it is unsucessful the first time
+					System.out.println("Evaluation failed: repeat: " + botPort);
+				}
+			}
+		}
+
+		return collectorsToReturn;
 	}
 
 	@Override
