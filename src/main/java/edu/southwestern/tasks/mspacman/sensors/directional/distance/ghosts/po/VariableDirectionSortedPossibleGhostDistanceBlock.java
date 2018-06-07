@@ -11,6 +11,7 @@ import pacman.game.Constants.MOVE;
 
 /**
  * Possible ghosts are those that we can see and those that we have a probability for.
+ * This block sorts possible ghosts by distance and returns the orderth ghost away's location.
  * 
  * @author Will Price
  *
@@ -53,7 +54,7 @@ public class VariableDirectionSortedPossibleGhostDistanceBlock extends VariableD
 
 	@Override
 	public String getType() {
-		return order + " Closest Possible Ghost";
+		return order + " Closest Possible Ghost in " + dir + "direction";
 	}
 
 	@Override
@@ -69,13 +70,24 @@ public class VariableDirectionSortedPossibleGhostDistanceBlock extends VariableD
 
 			@Override
 			public int compare(Triple<Integer, MOVE, Double> arg0, Triple<Integer, MOVE, Double> arg1) {
-				return arg0.t1.compareTo(arg1.t1);
+				
+				//the length of the path from pacman to arg0 (ghost) in dir
+				int disToArg0 = gf.getDirectionalPath(gf.getPacmanCurrentNodeIndex(), arg0.t1, dir).length;
+				//the length of the path from pacman to arg1 (ghost) in dir
+				int disToArg1 = gf.getDirectionalPath(gf.getPacmanCurrentNodeIndex(), arg1.t1, dir).length;
+				
+				if(disToArg0 > disToArg1) {
+					return 1;
+				} else if (disToArg0 == disToArg1) {
+					return 0;
+				} else {
+					return -1;
+				}
+				
 			}
 		});
 		
 		//returns the shortest path to the order (1st, 2nd, 3rd, etc) possible ghost away
-		//OLD
-		//return new int[] { gf.getGhostCurrentNodeIndex(ghosts.get(order)) };
 		return new int[] { ghosts.get(order).t1 };
 	}
 

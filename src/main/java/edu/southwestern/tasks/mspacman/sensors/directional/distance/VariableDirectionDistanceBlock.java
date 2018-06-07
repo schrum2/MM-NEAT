@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.southwestern.tasks.mspacman.sensors.directional.distance;
 
 import edu.southwestern.tasks.mspacman.facades.GameFacade;
@@ -11,7 +7,7 @@ import edu.southwestern.util.datastructures.Pair;
 import java.util.ArrayList;
 
 /**
- *
+ * TODO
  * @author Jacob Schrum
  */
 public abstract class VariableDirectionDistanceBlock extends VariableDirectionBlock {

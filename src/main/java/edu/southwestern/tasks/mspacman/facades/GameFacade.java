@@ -243,13 +243,12 @@ public class GameFacade {
 		
 		assert ghostPredictions != null : "If this method is called, ghostPredictions should be set";
 		ArrayList<Triple<Integer, MOVE, Double>> ghosts = new ArrayList<Triple<Integer, MOVE, Double>>(ghostPredictions.getGhostLocations().size());
-		
 		for (GhostLocation location : ghostPredictions.getGhostLocations()) {
 			Triple<Integer, MOVE, Double> t = new Triple<Integer, MOVE, Double>(null, null, null);
 			t.t1 = location.getIndex();
 			t.t2 = location.getLastMoveMade();
 			t.t3 = location.getProbability();
-			
+			ghosts.add(t);			
 		}
 		return ghosts;
 	}

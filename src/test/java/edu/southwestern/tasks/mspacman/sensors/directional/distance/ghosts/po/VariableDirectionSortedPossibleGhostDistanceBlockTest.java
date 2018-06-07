@@ -3,6 +3,7 @@ package edu.southwestern.tasks.mspacman.sensors.directional.distance.ghosts.po;
 import static org.junit.Assert.*;
 
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -45,9 +46,7 @@ public class VariableDirectionSortedPossibleGhostDistanceBlockTest {
 				"task:edu.southwestern.tasks.mspacman.MsPacManTask", "multitaskModes:2", 
 				"pacmanInputOutputMediator:edu.southwestern.tasks.mspacman.sensors.mediators.po.POCheckEachDirectionMediator", 
 				"useGhostModel:true", "drawGhostPredictions:true", "partiallyObservablePacman:true",  "pacmanPO:true",
-				"rawScorePacMan:true", "ghostPO:false", "observePacManPO:true", "usePillModel:false",
-				//remove when done
-				"watch:true" });
+				"rawScorePacMan:true", "ghostPO:false", "observePacManPO:true", "usePillModel:false" });
 		
 		firstClosest = new VariableDirectionSortedPossibleGhostDistanceBlock(0);
 		secondClosest = new VariableDirectionSortedPossibleGhostDistanceBlock(1);
@@ -125,7 +124,8 @@ public class VariableDirectionSortedPossibleGhostDistanceBlockTest {
 		pinky.setMove(MOVE.LEFT);
 		inky.setMove(MOVE.LEFT);
 		sue.setMove(MOVE.LEFT);
-			
+		
+		
 		//FOR 17 TIMESTEPS
 		for(int i = 0; i < 17; i++) {
 			//UPDATE THE GAME FOR i STEPS, SENDING PACMAN LEFT
@@ -137,13 +137,13 @@ public class VariableDirectionSortedPossibleGhostDistanceBlockTest {
 			//UPDATE THE MODELS IN THE GAME FACADE
 			testGameFacade.pillModel = informedGameFacade.pillModel;
 			testGameFacade.ghostPredictions = informedGameFacade.ghostPredictions;
+			Assert.assertNotNull(testGameFacade.ghostPredictions);
 			
 			//DRAW THE GAME STATE
 			//testExecutorFacade.forceGameView.showGame();
 			//testExecutorFacade.forceGameView.closeGame();
 		}
 		
-		assert infoManager.ghostPredictions != null : "They are set when infoManager gets a move";
 		//DRAW THE GAME
 		testExecutorFacade.forceGameView.showGame();
 		
@@ -158,6 +158,7 @@ public class VariableDirectionSortedPossibleGhostDistanceBlockTest {
 			//UPDATE THE MODELS IN THE GAME FACADE
 			testGameFacade.pillModel = informedGameFacade.pillModel;
 			testGameFacade.ghostPredictions = informedGameFacade.ghostPredictions;
+			Assert.assertNotNull(testGameFacade.ghostPredictions);
 			
 			//DRAW THE GAME STATE
 			//testExecutorFacade.forceGameView.showGame();
@@ -175,6 +176,7 @@ public class VariableDirectionSortedPossibleGhostDistanceBlockTest {
 			//UPDATE THE MODELS IN THE GAME FACADE
 			testGameFacade.pillModel = informedGameFacade.pillModel;
 			testGameFacade.ghostPredictions = informedGameFacade.ghostPredictions;
+			Assert.assertNotNull(testGameFacade.ghostPredictions);
 			
 			//DRAW THE GAME STATE
 			//testExecutorFacade.forceGameView.showGame();
@@ -182,6 +184,12 @@ public class VariableDirectionSortedPossibleGhostDistanceBlockTest {
 		}
 		//DRAW THE GAME STATE
 		testExecutorFacade.forceGameView.showGame();
+		
+		assertArrayEquals(firstClosest.getTargets(testGameFacade), new int[0]);
+		assertArrayEquals(secondClosest.getTargets(testGameFacade), new int[0]);
+		assertArrayEquals(thirdClosest.getTargets(testGameFacade), new int[0]);
+		assertArrayEquals(fourthClosest.getTargets(testGameFacade), new int[0]);
+		assertArrayEquals(fifthClosest.getTargets(testGameFacade), new int[0]);
 	
 		
 		//assert firstClosest.getTargets(testGameFacade) == new int[0] : "We cannot see any ghosts yet";
@@ -201,6 +209,7 @@ public class VariableDirectionSortedPossibleGhostDistanceBlockTest {
 			//UPDATE THE MODELS IN THE GAME FACADE
 			testGameFacade.pillModel = informedGameFacade.pillModel;
 			testGameFacade.ghostPredictions = informedGameFacade.ghostPredictions;
+			Assert.assertNotNull(testGameFacade.ghostPredictions);
 			
 			//DRAW THE GAME STATE
 			//testExecutorFacade.forceGameView.showGame();
@@ -211,10 +220,9 @@ public class VariableDirectionSortedPossibleGhostDistanceBlockTest {
 		
 		//TELL BLINKY TO MOVE DOWN
 		blinky.setMove(MOVE.DOWN);
-		
-		
+				
 		//FOR 14 TIME STEPS
-		for(int i = 0; i < 15; i++) {
+		for(int i = 0; i < 14; i++) {
 			//UPDATE THE GAME, MOVE PACMAN LEFT
 			testExecutorFacade.forceGame(testGameFacade, testPacManControllerFacade, testGhostControllerFacade, MOVE.LEFT);
 			
@@ -224,45 +232,73 @@ public class VariableDirectionSortedPossibleGhostDistanceBlockTest {
 			//UPDATE THE MODELS IN THE GAME FACADE
 			testGameFacade.pillModel = informedGameFacade.pillModel;
 			testGameFacade.ghostPredictions = informedGameFacade.ghostPredictions;
+			Assert.assertNotNull(testGameFacade.ghostPredictions);
 			
 			//DRAW THE GAME STATE
 			//testExecutorFacade.forceGameView.showGame();
 			//testExecutorFacade.forceGameView.closeGame();
 		}
+		
 		//DRAW THE GAME STATE
 		testExecutorFacade.forceGameView.showGame();
 		
 		//tell blinky to stand still
-		blinky.setMove(MOVE.NEUTRAL);
-
-//TODO: extend the test
-//		//9
-//		for(int i = 0; i < 9; i++) {
-//			testExecutorFacade.forceGame(testGameFacade, testPacManControllerFacade, testGhostControllerFacade, MOVE.NEUTRAL);
-//			informedGameFacade = infoManager.updateModels(testGameFacade.poG, 40);
-//			testGameFacade.pillModel = informedGameFacade.pillModel;
-//			testGameFacade.ghostPredictions = informedGameFacade.ghostPredictions;
-//			//testExecutorFacade.forceGameView.showGame();
-//			//testExecutorFacade.forceGameView.closeGame();
-//		}
-//		testExecutorFacade.forceGameView.showGame();
-//		
-//		pinky.setMove(MOVE.DOWN);
-//		
-//		//11
-//		for(int i = 0; i < 11; i++) {
-//			testExecutorFacade.forceGame(testGameFacade, testPacManControllerFacade, testGhostControllerFacade, MOVE.NEUTRAL);
-//			informedGameFacade = infoManager.updateModels(testGameFacade.poG, 40);
-//			testGameFacade.pillModel = informedGameFacade.pillModel;
-//			testGameFacade.ghostPredictions = informedGameFacade.ghostPredictions;
-//			//testExecutorFacade.forceGameView.showGame();
-//			//testExecutorFacade.forceGameView.closeGame();
-//		}
-//		testExecutorFacade.forceGameView.showGame();	
-//		
+		blinky.setMove(MOVE.LEFT);
 		
-		System.out.println("WAITING FOR MISCUTIL IN VariableDirectionSortedPossibleGhostDistanceBlockTest");
-		MiscUtil.waitForReadStringAndEnterKeyPress();
+		Assert.assertFalse(firstClosest.getTargets(testGameFacade).length == 0);
+		
+		//FOR 9 TIME STEPS
+		for(int i = 0; i < 9; i++) {
+			//UPDATE THE GAME, MOVE PACMAN LEFT
+			testExecutorFacade.forceGame(testGameFacade, testPacManControllerFacade, testGhostControllerFacade, MOVE.NEUTRAL);
+			
+			//GET THE MODELS OF THE GAME STATE (ghostPredictions, PillModel) from infomanager (an OldToNewPacManIntermediaryController)
+			informedGameFacade = infoManager.updateModels(testGameFacade.poG, 40);
+			
+			//UPDATE THE MODELS IN THE GAME FACADE
+			testGameFacade.pillModel = informedGameFacade.pillModel;
+			testGameFacade.ghostPredictions = informedGameFacade.ghostPredictions;
+			Assert.assertNotNull(testGameFacade.ghostPredictions);
+			
+			//DRAW THE GAME STATE
+			//testExecutorFacade.forceGameView.showGame();
+			//testExecutorFacade.forceGameView.closeGame();
+		}
+		
+		//DRAW THE GAME STATE
+		testExecutorFacade.forceGameView.showGame();
+		
+		pinky.setMove(MOVE.DOWN);
+		
+		//FOR 11 TIME STEPS
+		for(int i = 0; i < 11; i++) {
+			//UPDATE THE GAME, MOVE PACMAN LEFT
+			testExecutorFacade.forceGame(testGameFacade, testPacManControllerFacade, testGhostControllerFacade, MOVE.NEUTRAL);
+			
+			//GET THE MODELS OF THE GAME STATE (ghostPredictions, PillModel) from infomanager (an OldToNewPacManIntermediaryController)
+			informedGameFacade = infoManager.updateModels(testGameFacade.poG, 40);
+			
+			//UPDATE THE MODELS IN THE GAME FACADE
+			testGameFacade.pillModel = informedGameFacade.pillModel;
+			testGameFacade.ghostPredictions = informedGameFacade.ghostPredictions;
+			Assert.assertNotNull(testGameFacade.ghostPredictions);
+			
+			//DRAW THE GAME STATE
+			//testExecutorFacade.forceGameView.showGame();
+			//testExecutorFacade.forceGameView.closeGame();
+		}
+		
+		Assert.assertFalse(firstClosest.getTargets(testGameFacade).length == 0);
+		Assert.assertFalse(secondClosest.getTargets(testGameFacade).length == 0);
+		Assert.assertFalse(thirdClosest.getTargets(testGameFacade).length == 0);
+		Assert.assertTrue(fourthClosest.getTargets(testGameFacade).length == 0);
+		Assert.assertTrue(fifthClosest.getTargets(testGameFacade).length == 0);
+		
+		//DRAW THE GAME STATE
+		testExecutorFacade.forceGameView.showGame();
+		
+//		System.out.println("WAITING FOR MISCUTIL IN VariableDirectionSortedPossibleGhostDistanceBlockTest");
+//		MiscUtil.waitForReadStringAndEnterKeyPress();
 	
 	
 	}

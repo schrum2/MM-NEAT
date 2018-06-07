@@ -242,7 +242,7 @@ public class OldToNewPacManIntermediaryController extends pacman.controllers.Pac
 	            	try {
 	            		ghostPredictions.observe(ghost, ghostIndex, informedGameFacade.poG.getGhostLastMoveMade(ghost));
 	            	} catch (java.lang.ArrayIndexOutOfBoundsException e) {
-	            		System.out.println(e.toString() + " in OldToNewPacManIntermediaryController.updateModels()");
+	            		//System.out.println(e.toString() + " in OldToNewPacManIntermediaryController.updateModels()");
 	            		break;
 	            	}
 	                ghostEdibleTime[ghost.ordinal()] = game.getGhostEdibleTime(ghost);

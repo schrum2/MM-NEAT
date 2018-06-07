@@ -1,14 +1,10 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.southwestern.tasks.mspacman.sensors.directional;
 
 import edu.southwestern.tasks.mspacman.facades.GameFacade;
 import edu.southwestern.tasks.mspacman.sensors.blocks.MsPacManSensorBlock;
 
 /**
- *
+ * TODO
  * @author Jacob Schrum
  */
 public abstract class VariableDirectionBlock extends MsPacManSensorBlock {
