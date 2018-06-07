@@ -11,6 +11,10 @@ import cz.cuni.amis.utils.flag.FlagListener;
 import java.util.ArrayList;
 import javax.vecmath.Vector3d;
 
+/**
+ * interprets data from the ray traces
+ * @author Mihai Polceanu
+ */
 public class RayData{
 	private UT2004BotModuleController ctrl;
 	
@@ -22,6 +26,10 @@ public class RayData{
 	private int nrUpRays = 0;
 	private double timeInZone = 0.0;
 	
+	/**
+	 * sets up the class and controller
+	 * @param c (controller for the bot)
+	 */
 	public RayData(UT2004BotModuleController c){
 		ctrl = c;
 		
@@ -99,10 +107,17 @@ public class RayData{
 		ctrl.getConfig().setAutoTrace(true);
 	}
 	
+	/**
+	 * @return returns the bot controller
+	 */
 	public UT2004BotModuleController getCtrl(){
 		return ctrl;
 	}
 	
+	/**
+	 * @param dt (not sure what this does)
+	 * @return returns the normal direction
+	 */
 	public Location getNormalDirection(double dt){
 		if (!ctrl.getRaycasting().getAllRaysInitialized().getFlag()){
 			System.out.println("RAYCASTING ERROR: rays not initialized properly");
