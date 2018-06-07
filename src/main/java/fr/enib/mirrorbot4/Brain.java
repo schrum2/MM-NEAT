@@ -24,129 +24,129 @@ import java.util.Map.Entry;
  */
 public class Brain{
 	private UT2004BotModuleController ctrl;
-	
+
 	private MirrorModule mirrorModule;
 	private RayData rayData;
 	private PlayerData playerData;
 	private AimData aim;
 	private ShootingData shooting;
-	
+
 	private Rotation lastNoiseRotation;
 	private long noiseExpiry;
-	
+
 	private long lastRandomAim;
-	
+
 	private long lastHitSimTime;
-	
+
 	private Location lastArchLocation;
 	private long lastSeenArch;
 	private UnrealId archId;
 	private UnrealId usingLastArchLocationFor;
-	
+
 	private long rayCastingTimeTrigger;
 	private long rayCastingTimeExpiry;
-	
+
 	private ArrayList<Item> lastPickedItems;
-	
+
 	//private boolean waitingForPathComputation;
 	private long waitForPathComputationStart;
 	private long maxWaitForPathComputation;
-	
+
 	private int mirrorDamageMeter;
-	
+
 	private int lastBehavior;
-	
+
 	private int STOPPEDcounter;
 	private int maxSTOPPED;
 	private boolean useSTOPPEDtrigger;
-	
+
 	/**
-	 * 
-	 * @param c
-	 * @param rd
+	 * Initializes the bot into the server
+	 * @param c (controller for the bot)
+	 * @param rd (data from the ray traces)
 	 */
 	public Brain(UT2004BotModuleController c, RayData rd){
 		ctrl = c;
 		rayData = rd;
-		
+
 		mirrorModule = new MirrorModule(ctrl);
 		playerData = new PlayerData(ctrl);
 		aim = new AimData(ctrl);
 		shooting = new ShootingData(ctrl, playerData.getJudgingData());
-		
+
 		lastNoiseRotation = new Rotation(0.0, 0.0, 0.0);
 		noiseExpiry = 0l;
-		
+
 		lastRandomAim = 0l;
-		
+
 		lastHitSimTime = 0l;
-		
+
 		lastArchLocation = null;
 		lastSeenArch = 0l;
 		archId = null;
 		usingLastArchLocationFor = null;
-		
+
 		rayCastingTimeTrigger = 0l;
 		rayCastingTimeExpiry = 4213l;
-		
+
 		lastPickedItems = new ArrayList<Item>();
-		
+
 		//waitingForPathComputation = false;
 		waitForPathComputationStart = 0l;
 		maxWaitForPathComputation = 1024l;
-		
+
 		mirrorDamageMeter = 0;
-		
+
 		lastBehavior = 0;
-		
+
 		STOPPEDcounter = 0;
 		maxSTOPPED = 40;
 		useSTOPPEDtrigger = false;
 	}
-	
+
 	public void deathClean(){
 		noiseExpiry = 0l;
 		lastRandomAim = 0l;
 		lastHitSimTime = 0l;
-		
+
 		lastArchLocation = null;
 		lastSeenArch = 0l;
 		archId = null;
 		usingLastArchLocationFor = null;
-		
+
 		rayCastingTimeTrigger = 0l;
-		
+
 		lastPickedItems.clear();
-		
+
 		waitForPathComputationStart = 0l;
-		
+
 		mirrorDamageMeter = 0;
-		
+
 		lastBehavior = 0;
-		
+
 		STOPPEDcounter = 0;
 		useSTOPPEDtrigger = false;
 	}
-	
+
 	public void execute(double dt){
 		//gather player and map info
 		observePlayers();
-		
+
 		if (mirrorModule.isActive()){
 			STOPPEDcounter = 0;
 			//System.out.println(ctrl.getInfo().getName()+": Mirror behavior");
-			
+
 			if (lastBehavior != 1){
 				//clear stuff
 				ctrl.getAct().act(new SetCrouch().setCrouch(false));
 				ctrl.getShoot().stopShooting();
 			}
 			lastBehavior = 1;
-			
+
 			mirrorModule.observe();
 			mirrorModule.act(dt);
 			playerData.clearMirrorCandidates();
-			
+
 			BotDamaged bdsm = ctrl.getSenses().getLastDamage();
 			if (bdsm != null){
 				if ((bdsm.getDamage()>0) && (!bdsm.isCausedByWorld())){
@@ -156,7 +156,7 @@ public class Brain{
 					}
 				}
 			}
-			
+
 			if (mirrorDamageMeter > 7){
 				mirrorModule.setActive(false);
 				mirrorModule.setTarget(null);
@@ -165,19 +165,19 @@ public class Brain{
 		else{
 			if (useSTOPPEDtrigger && (ctrl.getNavigation().getPathExecutor().inState(PathExecutorState.STOPPED))) STOPPEDcounter++;
 			//System.out.println(ctrl.getInfo().getName()+": Normal behavior");
-			
+
 			//System.out.println("STOPPEDcounter : "+STOPPEDcounter);
-			
+
 			if (lastBehavior != 2){
 				//clear stuff
 				ctrl.getAct().act(new SetCrouch().setCrouch(false));
 				ctrl.getShoot().stopShooting();
 			}
 			lastBehavior = 2;
-			
+
 			mirrorDamageMeter = 0;
 			doBehavior(dt);
-			
+
 			if (STOPPEDcounter > maxSTOPPED){
 				STOPPEDcounter = 0;
 				rayCastingTimeTrigger = System.currentTimeMillis()+2*rayCastingTimeExpiry;
@@ -185,17 +185,17 @@ public class Brain{
 			}
 		}
 	}
-	
+
 	private void doBehavior(double dt){
 		// --------------------------- NORMAL MOVEMENT + AIM -----//
-		
+
 		Player p = ctrl.getPlayers().getVisiblePlayer(playerData.getTargetData().getTarget());
-		
+
 		if (p != null){
 			archId = p.getId();
 			lastArchLocation = p.getLocation();
 			lastSeenArch = System.currentTimeMillis();
-			
+
 			Location futurePlayerLocation = p.getLocation().add(p.getVelocity().asLocation().scale(dt));
 			aim.setFocus(futurePlayerLocation.sub(ctrl.getInfo().getLocation()));
 		}
@@ -233,7 +233,7 @@ public class Brain{
 			// -- noise detection -- //
 
 			Rotation noise = ctrl.getSenses().getNoiseRotation();
-			
+
 			if (noise != null){
 				if (!noise.equals(lastNoiseRotation)){
 					lastNoiseRotation = noise;
@@ -248,7 +248,7 @@ public class Brain{
 			// -- hit detection -- //
 
 			BotDamaged bdsm = ctrl.getSenses().getLastDamage();
-			
+
 			if (bdsm != null){
 				if (!bdsm.isCausedByWorld())
 				{
@@ -260,7 +260,7 @@ public class Brain{
 				}
 			}
 		}
-		
+
 		if (System.currentTimeMillis() > (waitForPathComputationStart+maxWaitForPathComputation)){
 			if (!ctrl.getNavigation().isNavigating()){
 				usingLastArchLocationFor = null;				
@@ -274,7 +274,7 @@ public class Brain{
 						normalRayDir.setZ(normalRayDir.getZ());
 						aim.setFocus(normalRayDir);
 					}
-					
+
 					Location rayLoc = ctrl.getInfo().getLocation().add(rayData.getNormalDirection(dt).scale(ctrl.getInfo().getBaseSpeed()));
 					if (rayLoc.getLength() == 0.0){
 						if (ctrl.getInfo().getVelocity().asLocation().getLength() > 0.0){
@@ -289,12 +289,12 @@ public class Brain{
 					m.setFirstLocation(rayLoc);
 					m.setFocusLocation(aim.getFocusLocation());
 					ctrl.getAct().act(m);
-					
+
 					//System.out.println(ctrl.getInfo().getName()+": using ray navigation");
 				}
 				else{
 					waitForPathComputationStart = System.currentTimeMillis();
-					
+
 					if ((lastArchLocation != null) && (lastArchLocation.sub(ctrl.getInfo().getLocation()).getLength() < 200)){
 						archId = null;
 						lastArchLocation = null;
@@ -328,7 +328,7 @@ public class Brain{
 							targetMoveLocation = item.getLocation();
 						}
 					}
-					
+
 					if (targetMoveLocation == null){
 						if ((System.currentTimeMillis() < lastSeenArch+20000) && (lastArchLocation != null)){
 							targetMoveLocation = lastArchLocation;
@@ -337,7 +337,7 @@ public class Brain{
 							}
 						}
 					}
-					
+
 					if (targetMoveLocation == null){
 						item = getClosestItemTo(ctrl.getInfo().getLocation());
 						if (item != null){
@@ -347,7 +347,7 @@ public class Brain{
 							}
 						}
 					}
-					
+
 					if (targetMoveLocation == null){
 						rayCastingTimeTrigger = System.currentTimeMillis();
 						//System.out.println(ctrl.getInfo().getName()+": navpoint not found");
@@ -367,7 +367,7 @@ public class Brain{
 							ctrl.getNavigation().stopNavigation();
 							//System.out.println("Cancelling navigation, due to sight of old arch enemy");
 							usingLastArchLocationFor = null;
-							
+
 							Move m = new Move();
 							m.setFirstLocation(ctrl.getInfo().getLocation().add(rayData.getNormalDirection(dt).scale(ctrl.getInfo().getBaseSpeed())));
 							m.setFocusLocation(aim.getFocusLocation());
@@ -375,18 +375,18 @@ public class Brain{
 						}
 					}
 				}
-				
+
 				ctrl.getNavigation().setFocus(aim.getFocusLocation());
-				
+
 				//System.out.println(ctrl.getInfo().getName()+": executing path navigation");
 			}
 		}
-		
+
 		// --------------------------- SHOOTING -----------//
-		
+
 		//aim+shoot
 		shooting.step(ctrl.getPlayers().getVisiblePlayer(playerData.getTargetData().getTarget()), dt);
-		
+
 		//change behavior if needed
 		UnrealId mirrorTarget = playerData.getGoodMirrorCandidate(mirrorModule.getUsed());
 		if (mirrorTarget != null){
@@ -397,23 +397,23 @@ public class Brain{
 			}
 		}
 	}
-	
+
 	private void observePlayers(){
 		Map<UnrealId, Player> players = ctrl.getPlayers().getVisiblePlayers();
-		
+
 		playerData.getTargetData().clearTargets(); //get a clear image before doing any shooting
-		
+
 		for (Entry<UnrealId,Player> entry : players.entrySet()){
-            UnrealId key=entry.getKey();
-            Player player=entry.getValue();
-			
+			UnrealId key=entry.getKey();
+			Player player=entry.getValue();
+
 			playerData.addData(player);
 		}
 	}
-	
+
 	public void pathExecutorStateChange(PathExecutorState flag){
 		useSTOPPEDtrigger = false; //it will stay true if it's really stopped
-		
+
 		if (flag.equals(PathExecutorState.PATH_COMPUTATION_FAILED)){
 			rayCastingTimeTrigger = System.currentTimeMillis()+2*rayCastingTimeExpiry;
 			//System.out.println("PATH_COMPUTATION_FAILED");
@@ -434,7 +434,7 @@ public class Brain{
 		else{
 			STOPPEDcounter = 0;
 		}
-		
+
 		if (flag.equals(PathExecutorState.PATH_COMPUTED)){
 			if (ctrl.getNavigation().getCurrentPathDirect().size() > 2){
 				Location loc = ctrl.getNavigation().getCurrentPathDirect().get(0).getLocation();				
@@ -450,11 +450,11 @@ public class Brain{
 		}
 		//waitingForPathComputation = false;
 	}
-	
+
 	public Item getClosestItemTo(Location loc){
 		return getClosestItemTo(loc, Double.MAX_VALUE);
 	}
-	
+
 	public Item getClosestItemTo(Location loc, double radius){
 		Item item = null;
 		double minDist = -1.0;
@@ -462,16 +462,15 @@ public class Brain{
 		for (Entry<UnrealId,Item> entry : allItems.entrySet()){
 			UnrealId key=entry.getKey();
 			Item crtIt=entry.getValue();
-			
+
 			if (crtIt == null) continue;
-			
 			if (crtIt.getNavPoint() != null){
 				if (!crtIt.getNavPoint().isItemSpawned()) continue;
 			}
 			if (!lastPickedItems.contains(crtIt)){
 				double dist = crtIt.getLocation().sub(loc).getLength();
 				if (dist > radius) continue;
-				
+
 				if ((crtIt.getType().equals(UT2004ItemType.SUPER_HEALTH_PACK)) ||
 						(crtIt.getType().equals(UT2004ItemType.SUPER_SHIELD_PACK))){
 					dist = 0.0; //make most desirable !
@@ -482,10 +481,9 @@ public class Brain{
 				}
 			}
 		}
-		
 		return item;
 	}
-	
+
 	public Item getClosestImportantItemTo(Location loc, double radius){
 		Item item = null;
 		double minDist = -1.0;
@@ -493,12 +491,12 @@ public class Brain{
 		for (Entry<UnrealId,Item> entry : allItems.entrySet()){
 			UnrealId key=entry.getKey();
 			Item crtIt=entry.getValue();
-			
+
 			if (crtIt == null) continue;
 			if (crtIt.getNavPoint() != null){
 				if (!crtIt.getNavPoint().isItemSpawned()) continue;
 			}
-			
+
 			if (
 					(crtIt.getType().equals(UT2004ItemType.SUPER_HEALTH_PACK)) ||
 					(crtIt.getType().equals(UT2004ItemType.SUPER_SHIELD_PACK)) ||
@@ -507,39 +505,36 @@ public class Brain{
 					(crtIt.getType().equals(UT2004ItemType.U_DAMAGE_PACK)) ||
 					(crtIt.getType().equals(UT2004ItemType.MINI_HEALTH_PACK)) ||
 					(
-						(ctrl.getWeaponry().getLoadedRangedWeapons().size() < 2) &&
-						(
-							crtIt.getType().equals(UT2004ItemType.ASSAULT_RIFLE) ||
-							crtIt.getType().equals(UT2004ItemType.BIO_RIFLE) ||
-							crtIt.getType().equals(UT2004ItemType.FLAK_CANNON) ||
-							crtIt.getType().equals(UT2004ItemType.LIGHTNING_GUN) ||
-							crtIt.getType().equals(UT2004ItemType.MINIGUN) ||
-							crtIt.getType().equals(UT2004ItemType.ROCKET_LAUNCHER) ||
-							crtIt.getType().equals(UT2004ItemType.SHOCK_RIFLE) ||
-							crtIt.getType().equals(UT2004ItemType.SNIPER_RIFLE)
-						)
-					)
-				){
+							(ctrl.getWeaponry().getLoadedRangedWeapons().size() < 2) &&
+							(
+									crtIt.getType().equals(UT2004ItemType.ASSAULT_RIFLE) ||
+									crtIt.getType().equals(UT2004ItemType.BIO_RIFLE) ||
+									crtIt.getType().equals(UT2004ItemType.FLAK_CANNON) ||
+									crtIt.getType().equals(UT2004ItemType.LIGHTNING_GUN) ||
+									crtIt.getType().equals(UT2004ItemType.MINIGUN) ||
+									crtIt.getType().equals(UT2004ItemType.ROCKET_LAUNCHER) ||
+									crtIt.getType().equals(UT2004ItemType.SHOCK_RIFLE) ||
+									crtIt.getType().equals(UT2004ItemType.SNIPER_RIFLE)
+									)
+							)
+					){
 				if (!lastPickedItems.contains(crtIt)){
 					double dist = crtIt.getLocation().sub(loc).getLength();
 					if (dist > radius) continue;
-					
 					if ((crtIt.getType().equals(UT2004ItemType.SUPER_HEALTH_PACK)) ||
-						(crtIt.getType().equals(UT2004ItemType.SUPER_SHIELD_PACK))){
+							(crtIt.getType().equals(UT2004ItemType.SUPER_SHIELD_PACK))){
 						dist = 0.0; //make most desirable !
 					}
-
 					if ((item == null) || (dist < minDist)){
 						item = crtIt;
 						minDist = dist;
 					}
 				}
 			}
-		}
-		
+		}	
 		return item;
 	}
-	
+
 	public Item getClosestSuperImportantItemTo(Location loc, double radius){
 		Item item = null;
 		double minDist = -1.0;
@@ -551,35 +546,27 @@ public class Brain{
 			if (crtIt.getNavPoint() != null){
 				if (!crtIt.getNavPoint().isItemSpawned()) continue;
 			}
-			
-			if (
-					(crtIt.getType().equals(UT2004ItemType.SUPER_HEALTH_PACK)) ||
-					(crtIt.getType().equals(UT2004ItemType.SUPER_SHIELD_PACK))
-				)
-			{
+
+			if ((crtIt.getType().equals(UT2004ItemType.SUPER_HEALTH_PACK)) ||(crtIt.getType().equals(UT2004ItemType.SUPER_SHIELD_PACK))){
 				double dist = crtIt.getLocation().sub(loc).getLength();
 				if (dist > radius) continue;
 
-				if ((item == null) || (dist < minDist))
-				{
+				if ((item == null) || (dist < minDist)){
 					item = crtIt;
 					minDist = dist;
 				}
 			}
 		}
-		
+
 		return item;
 	}
-	
-	public void addLastPickedItem(Item item)
-	{
+
+	public void addLastPickedItem(Item item){
 		lastPickedItems.add(item);
 
 		int maxSize = ctrl.getItems().getAllItems().values().size();
 		if (maxSize > 20) maxSize = 20;
-
-		if (lastPickedItems.size() > maxSize)
-		{
+		if (lastPickedItems.size() > maxSize){
 			lastPickedItems.remove(0);
 		}
 	}
