@@ -14,9 +14,12 @@ import java.util.Map;
 
 public class JudgingData{
 	private UT2004BotModuleController ctrl;
+	
 	private HashMap<UnrealId, ArrayList<UnrealId> > robotVoteChart;
 	private HashMap<UnrealId, ArrayList<UnrealId> > humanVoteChart;
+	
 	private HashMap<UnrealId, Boolean> wasVotedByMe;
+	
 	private long lastSimTime;
 	
 	public JudgingData(UT2004BotModuleController c){

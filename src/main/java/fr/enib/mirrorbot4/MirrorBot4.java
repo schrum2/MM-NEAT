@@ -146,9 +146,7 @@ public class MirrorBot4 extends UT2004BotModuleController{
 			double dt = (System.currentTimeMillis() - lastTime)/1000.0;
 			lastTime = System.currentTimeMillis();
 
-			if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
-				System.out.println(info.getName() + ":");
-			}
+			System.out.println(info.getName() + ":");
 			brain.execute(dt);
 		}
 		catch (Exception e){

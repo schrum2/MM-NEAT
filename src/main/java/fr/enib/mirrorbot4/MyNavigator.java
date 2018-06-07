@@ -901,20 +901,14 @@ public class MyNavigator<PATH_ELEMENT extends ILocated> extends AbstractUT2004Pa
 		// whether mover is standing still
 		boolean moverStandingStill = Math.abs(mover.getVelocity().z) < Location.DISTANCE_ZERO;
 
-		if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
-			System.out.println(">>>>>>>>>> navigThroughMover <<<<<<<<<<");
-		}
+		System.out.println(">>>>>>>>>> navigThroughMover <<<<<<<<<<");
 
 		if (navigStage == MyNavigator.Stage.AWAITING_MOVER){
-			if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
-				System.out.println(">>>>> AWAITING");
-			}
+			System.out.println(">>>>> AWAITING");
 			// Aren't we under the mover?
 			//if (zDistance > 50 || !moverStandingStill)
 			//if (moverRidingDown)
-			if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
-				System.out.println(">> zDistance: "+zDistance+" (zboost is "+memory.getJumpZBoost()+")");
-			}
+			System.out.println(">> zDistance: "+zDistance+" (zboost is "+memory.getJumpZBoost()+")");
 			if (zDistance > memory.getJumpZBoost())	{
 				// we're under the mover and the mover is riding up...
 				if (log != null && log.isLoggable(Level.FINER)) {
@@ -926,9 +920,7 @@ public class MyNavigator<PATH_ELEMENT extends ILocated> extends AbstractUT2004Pa
 				}
 				// run to the last node, the one we need to be waiting on for the mover to come
 				// WE MUST NOT USE FOCUS! Because we need to see the mover TODO: provide turning behavior, i.e., if focus is set, once in a time turn to then direction
-				if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
-					System.out.println("dbg1");
-				}
+				System.out.println("dbg1");
 				if (!runner.runToLocation(memory.getLocation(), navigLastLocation, null, /*navigCurrentLocation*/focus, null, (navigLastNode == null ? true : isReachable(navigLastNode)), 2)){ //force jump
 					if (log != null && log.isLoggable(Level.FINE)) {
 						log.fine ("LoqueNavigator.navigThroughMover("+stage+"): navigation to wait-for-mover node failed");
@@ -985,9 +977,7 @@ public class MyNavigator<PATH_ELEMENT extends ILocated> extends AbstractUT2004Pa
 			return navigToCurrentNode(true);
 		}
 		else if (navigStage == MyNavigator.Stage.RIDING_MOVER){
-			if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
-				System.out.println(">>>>> RIDING");
-			}
+			System.out.println(">>>>> RIDING");
 			checkMoverMovement(mover);
 			if (navigMoverRideDownCount > 3 || navigMoverRideUpCount > 3) {
 				// we're riding up & down without any effect ... failure :(
@@ -1005,9 +995,7 @@ public class MyNavigator<PATH_ELEMENT extends ILocated> extends AbstractUT2004Pa
 			}
 
 			zDistance = (int)(navigNextLocation.getZ()-memory.getLocation().getZ());
-			if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
-				System.out.println(">>>> zDistance: "+zDistance);
-			}
+			System.out.println(">>>> zDistance: "+zDistance);
 
 			// wait for the mover to ride us up/down
 			if ( zDistance > 30 ){
