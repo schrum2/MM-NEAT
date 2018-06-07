@@ -21,6 +21,7 @@ import edu.southwestern.tasks.ut2004.controller.BotController;
 import edu.southwestern.tasks.ut2004.controller.DummyController;
 import edu.southwestern.tasks.ut2004.controller.RandomNavPointPathExplorer;
 import edu.southwestern.tasks.ut2004.server.BotKiller;
+import edu.utexas.cs.nn.bots.UT2;
 import fr.enib.mirrorbot4.MirrorBot4;
 import fr.enib.mirrorbot4.MirrorBotParameters;
 import pogamut.hunter.HunterBot;
@@ -140,6 +141,7 @@ public class ControllerBot extends UT2004BotModuleController {
 		GameDataCollector[] collectors = new GameDataCollector[controllers.length];
 		int numHunterBots = Parameters.parameters.integerParameter("numHunterBots");
 		int numMirrorBots = Parameters.parameters.integerParameter("numMirrorBots");
+		int numUT2Bots = Parameters.parameters.integerParameter("numUT2Bots");
 		int totalBots = controllers.length + numHunterBots + numMirrorBots;
 		IRemoteAgentParameters[] params = new IRemoteAgentParameters[totalBots];
 		Class[] classes = new Class[totalBots];
@@ -162,6 +164,12 @@ public class ControllerBot extends UT2004BotModuleController {
 		for(int i = 0; i < numMirrorBots; i++) {
 			classes[i + controllers.length] = MirrorBot4.class;
 			params[i + controllers.length] = new MirrorBotParameters(evalSeconds); // MirrorBot also needs to know when to stop
+		}
+		
+		//adds UT^2 bots to the spaces in the array after ControllerBots
+		for(int i = 0; i < numUT2Bots; i++) {
+			classes[i + controllers.length] = UT2.class;
+			params[i + controllers.length] = new UT2.UT2Parameters(evalSeconds); // UT2 also needs to know when to stop
 		}
 
 		// This method still has some problems and causes weird exceptions sometimes

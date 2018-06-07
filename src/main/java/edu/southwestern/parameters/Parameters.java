@@ -291,6 +291,7 @@ public class Parameters {
 		integerOptions.add("numShapeInnovationSamples", 3, "Number of angles to take 2D image of 3D shape from for shape innovation task");
 		integerOptions.add("numHunterBots", 0, "dictates how many hunter bots will be loaded into the server");
 		integerOptions.add("numMirrorBots", 0, "dictates how many mirror bots will be loaded into the server");
+		integerOptions.add("numUT2Bots", 0, "determines how many UT^2 bots will be loaded into the server");
 		integerOptions.add("numberPredsSensedByPreds", -1, "the number of closest predators that will be sensed by other predators (all by default, see boolean)");
 		integerOptions.add("numberPredsSensedByPrey", -1, "the number of closest predators that will be sensed by prey (all by default, see boolean)");
 		integerOptions.add("numberPreySensedByPreds", -1, "the number of closest prey that will be sensed by predators (all by default, see boolean)");

@@ -68,6 +68,10 @@ public class UT2 extends BaseBot {
         	this((TWEANNController) Easy.load(UT2.DEFAULT_FILE), null);
         }
 
+        public UT2Parameters(int evalTime) {
+        	this.evalTime = evalTime;
+        }
+
         public UT2Parameters(TWEANNController cont, IUT2004Server server) {
         	this(cont ,server, Integer.MAX_VALUE);
         } 
