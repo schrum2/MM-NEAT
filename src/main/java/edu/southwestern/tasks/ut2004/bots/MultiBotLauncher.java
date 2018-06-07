@@ -12,7 +12,9 @@ import edu.southwestern.tasks.ut2004.controller.DummyController;
 import edu.utexas.cs.nn.bots.UT2;
 import edu.utexas.cs.nn.bots.UT2.UT2Parameters;
 import fr.enib.mirrorbot4.MirrorBot4;
+import fr.enib.mirrorbot4.MirrorBotParameters;
 import pogamut.hunter.HunterBot;
+import pogamut.hunter.HunterBotParameters;
 import pogamut.navigationbot.NavigationBot;
 
 /**
@@ -90,7 +92,7 @@ public class MultiBotLauncher {
 		UT2Parameters ut2params = new UT2Parameters();
 		ControllerBotParameters dummyParameters = new ControllerBotParameters(null, new DummyController(), "Dummy", new GameDataCollector(), 300, 4, 3000);
 
-		IRemoteAgentParameters[] params = new IRemoteAgentParameters[] {new UT2004BotParameters(), new UT2004BotParameters(), ut2params, new UT2004BotParameters(), dummyParameters};
+		IRemoteAgentParameters[] params = new IRemoteAgentParameters[] {new HunterBotParameters(), new UT2004BotParameters(), ut2params, new MirrorBotParameters(), dummyParameters};
 		launchMultipleBots(botClasses, params, "localhost", 3000);
 	}
 

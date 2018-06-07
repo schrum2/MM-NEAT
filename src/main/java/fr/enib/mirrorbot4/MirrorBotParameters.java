@@ -9,6 +9,10 @@ import cz.cuni.amis.pogamut.ut2004.bot.params.UT2004BotParameters;
 public class MirrorBotParameters extends UT2004BotParameters {
 	
 	private final int evalSeconds;
+
+	public MirrorBotParameters() {
+		this(Integer.MAX_VALUE);
+	}
 	
 	public MirrorBotParameters(int evalSeconds) {
 		this.evalSeconds = evalSeconds;

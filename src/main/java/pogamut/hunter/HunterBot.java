@@ -8,6 +8,7 @@ import java.util.logging.Level;
 
 import cz.cuni.amis.introspection.java.JProp;
 import cz.cuni.amis.pogamut.base.agent.navigation.IPathExecutorState;
+import cz.cuni.amis.pogamut.base.agent.params.IRemoteAgentParameters;
 import cz.cuni.amis.pogamut.base.communication.worldview.listener.annotation.EventListener;
 import cz.cuni.amis.pogamut.base.utils.Pogamut;
 import cz.cuni.amis.pogamut.base.utils.guice.AgentScoped;
@@ -21,6 +22,7 @@ import cz.cuni.amis.pogamut.ut2004.agent.navigation.stuckdetector.UT2004Position
 import cz.cuni.amis.pogamut.ut2004.agent.navigation.stuckdetector.UT2004TimeStuckDetector;
 import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004Bot;
 import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004BotModuleController;
+import cz.cuni.amis.pogamut.ut2004.bot.params.UT2004BotParameters;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.ItemType;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.UT2004ItemType;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbcommands.Initialize;
@@ -40,9 +42,17 @@ import cz.cuni.amis.utils.collections.MyCollections;
 import cz.cuni.amis.utils.exception.PogamutException;
 import cz.cuni.amis.utils.flag.FlagListener;
 import edu.southwestern.parameters.Parameters;
+import edu.southwestern.tasks.ut2004.bots.ControllerBot;
 import edu.southwestern.tasks.ut2004.bots.ControllerBotParameters;
+import edu.southwestern.tasks.ut2004.bots.GameDataCollector;
+import edu.southwestern.tasks.ut2004.bots.MultiBotLauncher;
+import edu.southwestern.tasks.ut2004.controller.DummyController;
 import edu.southwestern.tasks.ut2004.server.BotKiller;
+import edu.utexas.cs.nn.bots.UT2;
+import edu.utexas.cs.nn.bots.UT2.UT2Parameters;
+import fr.enib.mirrorbot4.MirrorBot4;
 import pogamut.hunter.HunterBotParameters;
+import pogamut.navigationbot.NavigationBot;
 
 /**
  * Example of Simple Pogamut bot, that randomly walks around the map searching
@@ -448,6 +458,12 @@ public class HunterBot extends UT2004BotModuleController<UT2004Bot> {
 	public static void main(String args[]) throws PogamutException {
 		// starts 3 Hunters at once
 		// note that this is the most easy way to get a bunch of (the same) bots running at the same time        
-		new UT2004BotRunner(HunterBot.class, "Hunter").setMain(true).setLogLevel(Level.INFO).startAgents(2);
+	//	new UT2004BotRunner(HunterBot.class, "Hunter").setMain(true).setLogLevel(Level.INFO).startAgents(2);
+		Class[] botClasses = new Class[] {HunterBot.class};
+
+		IRemoteAgentParameters[] params = new IRemoteAgentParameters[] {new HunterBotParameters()};
+		MultiBotLauncher.launchMultipleBots(botClasses, params, "localhost", 3000);//launchMultipleBots(botClasses, params, "localhost", 3000);
+
+		
 	}
 }

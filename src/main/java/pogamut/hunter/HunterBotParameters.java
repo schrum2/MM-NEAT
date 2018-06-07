@@ -9,6 +9,10 @@ import cz.cuni.amis.pogamut.ut2004.bot.params.UT2004BotParameters;
 public class HunterBotParameters extends UT2004BotParameters {
 	
 	private final int evalSeconds;
+
+	public HunterBotParameters() {
+		this(Integer.MAX_VALUE);
+	}
 	
 	public HunterBotParameters(int evalSeconds) {
 		this.evalSeconds = evalSeconds;
