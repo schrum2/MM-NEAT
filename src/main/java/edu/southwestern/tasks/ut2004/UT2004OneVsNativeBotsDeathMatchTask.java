@@ -9,12 +9,15 @@ import edu.southwestern.tasks.ut2004.controller.BotController;
 import edu.southwestern.tasks.ut2004.fitness.*;
 
 /**
- *
+ * launches a deathmatch server with the evolving bot and native bots
  * @author Jacob Schrum
  * @param <T> evolved phenotype
  */
 public class UT2004OneVsNativeBotsDeathMatchTask<T extends Network> extends UT2004Task<T> {
 
+	/**
+	 * sets the parameters for the server and evaluation
+	 */
 	public UT2004OneVsNativeBotsDeathMatchTask() {
 		this(Parameters.parameters.stringParameter("utMap"),
 				new int[] { Parameters.parameters.integerParameter("utNativeBotSkill") },
@@ -22,6 +25,13 @@ public class UT2004OneVsNativeBotsDeathMatchTask<T extends Network> extends UT20
 				Parameters.parameters.integerParameter("utEvolvingBotSkill"));
 	}
 
+	/**
+	 * sets up the server and the match
+	 * @param map (map the match will be played on)
+	 * @param nativeBotSkills (skill level of the native bots)
+	 * @param evalMinutes (how long the eval will last)
+	 * @param desiredSkill (skill level of the evolving bot)
+	 */
 	public UT2004OneVsNativeBotsDeathMatchTask(String map, int[] nativeBotSkills, int evalMinutes, int desiredSkill) {
 		super(map, nativeBotSkills, evalMinutes, desiredSkill, new BotController[0]);
 		// Fitness objectives
@@ -40,7 +50,6 @@ public class UT2004OneVsNativeBotsDeathMatchTask<T extends Network> extends UT20
 
 	/**
 	 * Testing
-	 *
 	 * @param args
 	 */
 	@SuppressWarnings("rawtypes")

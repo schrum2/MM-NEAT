@@ -7,7 +7,7 @@ import cz.cuni.amis.pogamut.ut2004.communication.messages.UT2004ItemType;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.Player;
 
 /**
- *
+ * choses the bot's weapons and directs it to change to chose gun
  * @author Jacob Schrum
  */
 public class SimpleWeaponManager implements UT2004WeaponManager {
