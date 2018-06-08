@@ -300,6 +300,9 @@ public class GVGAIUtil {
 		//Recreated the LevelBreederTask.Java in its simplest form to narrow down the errors that we receive
 		
 		//////////////////////////////////////////////////////
+		
+		VGDLFactory.GetInstance().init();
+		VGDLRegistry.GetInstance().init();
 
 		game = "zelda";
 		gamesPath = "data/gvgai/examples/gridphysics/";

@@ -755,12 +755,13 @@ public class LevelBreederTask<T extends Network> extends InteractiveEvolutionTas
 		gameChoice = new JComboBox<String>(choices);
 		gameChoice.setSelectedIndex(choices.length - 1); 
 		gameChoice.setSize(90, 40);
+		gameChoice.setSelectedItem(gameFile);
 		gameChoice.addItemListener(new ItemListener() {
 			@SuppressWarnings({ "unchecked"})
 			@Override
 			public void itemStateChanged(ItemEvent e) {
-				JComboBox<String> source = (JComboBox<String>)e.getSource();
 				
+				JComboBox<String> source = (JComboBox<String>)e.getSource();
 				gameFile = (String) source.getSelectedItem();
 				Parameters.parameters.setString("gvgaiGame", gameFile);
 				fullGameFile = GAMES_PATH + gameFile + ".txt";
@@ -768,11 +769,13 @@ public class LevelBreederTask<T extends Network> extends InteractiveEvolutionTas
 				gameCharData = SPECIFIC_GAME_LEVEL_CHARS.get(gameFile);
 				System.out.println("gameCharData");
 				
+				VGDLFactory.GetInstance().init();
+				VGDLRegistry.GetInstance().init();
 				
 				// Do we want this?
-//				MMNEAT.setNNInputParameters(numCPPNInputs(), numCPPNOutputs());
-//				reset();
-//				System.out.println("Game Reset");
+				MMNEAT.setNNInputParameters(numCPPNInputs(), numCPPNOutputs());
+				reset();
+				System.out.println("Game Reset");
 				
 				// error occurs here
 				// Problem: CPPN population is created based on the game configuration in SPECIFIC_GAME_LEVEL_CHARS.
@@ -910,7 +913,7 @@ public class LevelBreederTask<T extends Network> extends InteractiveEvolutionTas
 
 	public static void main(String[] args) {
 		try {
-			MMNEAT.main(new String[]{"runNumber:0","randomSeed:1","trials:1","mu:16","maxGens:500","gvgaiGame:waves","io:false","netio:false","mating:true","fs:false","task:edu.southwestern.tasks.interactive.gvgai.LevelBreederTask","allowMultipleFunctions:true","ftype:0","watch:false","netChangeActivationRate:0.3","cleanFrequency:-1","simplifiedInteractiveInterface:false","recurrency:false","saveAllChampions:true","cleanOldNetworks:false","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:2000","imageHeight:2000","imageSize:200","includeFullSigmoidFunction:true","includeFullGaussFunction:true","includeCosineFunction:true","includeGaussFunction:false","includeIdFunction:true","includeTriangleWaveFunction:true","includeSquareWaveFunction:true","includeFullSawtoothFunction:true","includeSigmoidFunction:false","includeAbsValFunction:false","includeSawtoothFunction:false"});
+			MMNEAT.main(new String[]{"runNumber:0","randomSeed:1","trials:1","mu:16","maxGens:500","gvgaiGame:zelda","io:false","netio:false","mating:true","fs:false","task:edu.southwestern.tasks.interactive.gvgai.LevelBreederTask","allowMultipleFunctions:true","ftype:0","watch:false","netChangeActivationRate:0.3","cleanFrequency:-1","simplifiedInteractiveInterface:false","recurrency:false","saveAllChampions:true","cleanOldNetworks:false","ea:edu.southwestern.evolution.selectiveBreeding.SelectiveBreedingEA","imageWidth:2000","imageHeight:2000","imageSize:200","includeFullSigmoidFunction:true","includeFullGaussFunction:true","includeCosineFunction:true","includeGaussFunction:false","includeIdFunction:true","includeTriangleWaveFunction:true","includeSquareWaveFunction:true","includeFullSawtoothFunction:true","includeSigmoidFunction:false","includeAbsValFunction:false","includeSawtoothFunction:false"});
 		} catch (FileNotFoundException | NoSuchMethodException e) {
 			e.printStackTrace();
 		}
