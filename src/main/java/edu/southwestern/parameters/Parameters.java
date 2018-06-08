@@ -304,7 +304,8 @@ public class Parameters {
 		integerOptions.add("randomSeed", -1, "Random seed used to control algorithmic randomness (not domain randomness)");
 		integerOptions.add("rawInputWindowSize", 5, "Raw input window size");
 		integerOptions.add("recentPastMemLength", -1, "Length of queue of past pacman states");
-		integerOptions.add("receptiveFieldSize", 3, "Size of input windows for convolutional structures");
+		integerOptions.add("receptiveFieldHeight", 3, "height of input windows for convolutional structures");
+		integerOptions.add("receptiveFieldWidth", 3, "width of input windows for convolutional structures");
 		integerOptions.add("remixImageWindow", 10, "Size of window being remixed by CPPN in Picture Remixer");
 		integerOptions.add("rlBatchSize", 20, "Number of state transitions to log before doing an RL experience replay batch update");
 		integerOptions.add("runNumber", 0, "Number to designate this run of an experiment");
@@ -1041,11 +1042,19 @@ public class Parameters {
 				base = value;
 			}
 		}
-
+		String logAfterHypen = "";
+		for(int i = 0; i < log.length(); i++) {
+			if (log.charAt(i) == '-') {
+				logAfterHypen = log.substring(i + 1);
+				break;
+			}
+		}
+		if (!logAfterHypen.equals(saveTo))  {
+			throw new IllegalArgumentException("string of log must equal string after hypen in saveTo");
+		}
 		if (base.equals("") && saveTo.equals("")) {
 			return null;
 		}
-
 		return base + "/" + saveTo + run + "/" + log + run + "_parameters.txt";
 	}
 
