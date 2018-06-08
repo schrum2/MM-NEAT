@@ -115,7 +115,6 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 		MMNEAT.registerFitnessFunction(o.getClass().getSimpleName(), override, affectsSelection);
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	/**
 	 * Connects the server to the correct port, the bot to the correct server, and applies any mutators to the server
@@ -152,21 +151,12 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 		//converts the srraylist into a string that will be given to the server as a command
 		String mutatorString = mutators.isEmpty() ? "":"?mutator=" + String.join(",", mutators);
 
-		//String botprizeMod = Parameters.parameters.booleanParameter("botprizeMod") ? "?mutator=GameBots2004.BotPrizeMutator," : "";
-		//String navGrid = Parameters.parameters.booleanParameter("navGrid") ? "?bDrawNavPointsGrid=True" : "?bDrawNavPointsGrid=False";//DOES NOT WORK
-		//config.setOptions(botprizeMod + "?timelimit=" + evalMinutes +
-		//String navCubes = Parameters.parameters.booleanParameter("navCubes") ? "?bDrawNavCubes=True" : "?bDrawNavCubes=False";//DOES NOT WORK
-
-
-		// "?fraglimit=0?GoalScore=0?DoUplink=False?UplinkToGamespy=False?SendStats=False?bAllowPrivateChat=False?bAllowTaunts=False?bEnableVoiceChat=False?bAllowLocalBroadcast=False?BotServerPort="
-		// + botPort + "?ControlServerPort=" + controlPort +
-		// "?ObservingServerPort=" + observePort);
+		// Setup the server configuration
 		config.setOptions(mutatorString//sets the preferences for the game, and players
 				+ "?fraglimit=0?GoalScore=0?DoUplink=False?UplinkToGamespy=False?SendStats=False?bAllowPrivateChat=False?bAllowTaunts=False?bEnableVoiceChat=False?bAllowLocalBroadcast=False?BotServerPort="
 				+ botPort + "?ControlServerPort=" + controlPort + "?ObservingServerPort=" + observePort);
 		config.setUnrealHome(Parameters.parameters.stringParameter("utDrive") + ":" + File.separator + Parameters.parameters.stringParameter("utPath"));
 		//System.out.println(config);
-		//MiscUtil.waitForReadStringAndEnterKeyPress();
 
 		//Launches the server, and ensures that it is empty at the outset
 		MyUCCWrapper ucc = null;
@@ -240,7 +230,6 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 				}
 			}
 		}
-
 		return result;
 	}
 
