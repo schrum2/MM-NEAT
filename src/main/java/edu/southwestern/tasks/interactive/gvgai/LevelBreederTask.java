@@ -1,5 +1,6 @@
 package edu.southwestern.tasks.interactive.gvgai;
 
+import java.awt.FlowLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.image.BufferedImage;
@@ -11,9 +12,11 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JLabel;
 
 import edu.southwestern.MMNEAT.MMNEAT;
 import edu.southwestern.evolution.EvolutionaryHistory;
@@ -755,6 +758,9 @@ public class LevelBreederTask extends InteractiveEvolutionTask<TWEANN> {
 		//sorts list alphabetically
 		Arrays.sort(choices);
 		
+		JLabel Loading = new JLabel ("Loading...", JLabel.RIGHT);
+		top.setLayout(new FlowLayout());
+		
 		gameChoice = new JComboBox<String>(choices);
 		gameChoice.setSelectedIndex(choices.length - 1); 
 		gameChoice.setSize(90, 40);
@@ -764,6 +770,7 @@ public class LevelBreederTask extends InteractiveEvolutionTask<TWEANN> {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
 				
+				top.add(Loading);
 				JComboBox<String> source = (JComboBox<String>)e.getSource();
 				gameFile = (String) source.getSelectedItem();
 				Parameters.parameters.setString("gvgaiGame", gameFile);
@@ -785,6 +792,7 @@ public class LevelBreederTask extends InteractiveEvolutionTask<TWEANN> {
 				reset();
 				// Replace images on buttons
 				resetButtons(true);
+				top.remove(Loading);
 			}
 
 		});
