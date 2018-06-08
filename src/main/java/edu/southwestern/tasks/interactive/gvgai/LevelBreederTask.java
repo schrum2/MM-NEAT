@@ -768,6 +768,12 @@ public class LevelBreederTask<T extends Network> extends InteractiveEvolutionTas
 				gameCharData = SPECIFIC_GAME_LEVEL_CHARS.get(gameFile);
 				System.out.println("gameCharData");
 				
+				
+				// Do we want this?
+//				MMNEAT.setNNInputParameters(numCPPNInputs(), numCPPNOutputs());
+//				reset();
+//				System.out.println("Game Reset");
+				
 				// error occurs here
 				// Problem: CPPN population is created based on the game configuration in SPECIFIC_GAME_LEVEL_CHARS.
 				// When SPECIFIC_GAME_LEVEL_CHARS changed, the population needs to be reinitialized as well
@@ -790,7 +796,7 @@ public class LevelBreederTask<T extends Network> extends InteractiveEvolutionTas
 	@Override
 	public String[] outputLabels() {
 		ArrayList<String> outputs = new ArrayList<String>(10);
-		outputs.add("FixedPresence");
+		outputs.add("");
 		
 		for(Character c : gameCharData[FIXED_ITEMS_INDEX]) {
 			outputs.add("Fixed-"+c);
