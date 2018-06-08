@@ -12,12 +12,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PlayerData{
+	@SuppressWarnings("rawtypes")
 	private UT2004BotModuleController ctrl;
 	private TargetData targetData;
 	private JudgingData judgingData;
 	private HashMap<UnrealId, Integer> mirrorCandidates;
 	
-	public PlayerData(UT2004BotModuleController c){
+	public PlayerData(@SuppressWarnings("rawtypes") UT2004BotModuleController c){
 		ctrl = c;
 		targetData = new TargetData(ctrl);
 		judgingData = new JudgingData(ctrl);
@@ -72,7 +73,8 @@ public class PlayerData{
 				Map<UnrealId, Player> players = ctrl.getPlayers().getVisiblePlayers();
 
 				for (Map.Entry<UnrealId,Player> entry : players.entrySet()){
-					UnrealId key=entry.getKey();
+					// Unused: schrum: 6/7/18
+					//UnrealId key=entry.getKey();
 					Player player=entry.getValue();
 
 					Location target = player.getLocation().sub(p.getLocation());
@@ -108,7 +110,8 @@ public class PlayerData{
 	private Weapon getWeaponFromString(String wString){
 		Map<ItemType, Weapon> weapons = ctrl.getWeaponry().getLoadedWeapons();
 		for (Map.Entry<ItemType,Weapon> entry : weapons.entrySet()){
-			ItemType key=entry.getKey();
+			// Unused: schrum: 6/7/18
+			//ItemType key=entry.getKey();
 			Weapon weapon=entry.getValue();			
 			if (weapon.toString().contains(wString)){
 				return weapon;

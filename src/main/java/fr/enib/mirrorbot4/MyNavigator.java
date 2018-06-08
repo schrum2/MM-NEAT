@@ -70,6 +70,7 @@ import cz.cuni.amis.pogamut.ut2004.utils.UnrealUtils;
  * @author Juraj Simlovic [jsimlo@matfyz.cz]
  * @author Jimmy
  */
+@SuppressWarnings("deprecation")
 public class MyNavigator<PATH_ELEMENT extends ILocated> extends AbstractUT2004PathNavigator<PATH_ELEMENT>{
 	/**
 	 * Current navigation destination.
@@ -92,6 +93,7 @@ public class MyNavigator<PATH_ELEMENT extends ILocated> extends AbstractUT2004Pa
 	 * {@link Self} listener.
 	 */
 	private class SelfListener implements IWorldObjectEventListener<Self, WorldObjectUpdatedEvent<Self>>{
+		@SuppressWarnings("unused")
 		private IWorldView worldView;
 
 		/**
@@ -110,6 +112,7 @@ public class MyNavigator<PATH_ELEMENT extends ILocated> extends AbstractUT2004Pa
 	}
 
 	/** {@link Self} listener */
+	@SuppressWarnings({ "rawtypes", "unused" })
 	private MyNavigator.SelfListener selfListener;
 
 	/*========================================================================*/
@@ -1335,6 +1338,7 @@ public class MyNavigator<PATH_ELEMENT extends ILocated> extends AbstractUT2004Pa
 	/*========================================================================*/
 
 	/** Agent's main. */
+	@SuppressWarnings("rawtypes")
 	protected UT2004Bot main;
 	/** Loque memory. */
 	protected AgentInfo memory;
@@ -1350,6 +1354,7 @@ public class MyNavigator<PATH_ELEMENT extends ILocated> extends AbstractUT2004Pa
 	 * @param main Agent's main.
 	 * @param memory Loque memory.
 	 */
+	@SuppressWarnings("rawtypes")
 	public MyNavigator (UT2004Bot bot, Logger log){
 		// setup reference to agent
 		this.main = bot;

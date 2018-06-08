@@ -1,20 +1,21 @@
 package fr.enib.mirrorbot4;
 
+import java.util.Map;
+
 import cz.cuni.amis.pogamut.base3d.worldview.object.Location;
 import cz.cuni.amis.pogamut.unreal.communication.messages.UnrealId;
 import cz.cuni.amis.pogamut.ut2004.agent.module.sensomotoric.Weapon;
 import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004BotModuleController;
-import cz.cuni.amis.pogamut.ut2004.communication.messages.ItemType;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.UT2004ItemType;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.Player;
-import java.util.Map;
 
 public class ShootingData{
+	@SuppressWarnings("rawtypes")
 	private UT2004BotModuleController ctrl;
 	private JudgingData judgingData;
 	private double timePassed;
 	
-	public ShootingData(UT2004BotModuleController c, JudgingData jd){
+	public ShootingData(@SuppressWarnings("rawtypes") UT2004BotModuleController c, JudgingData jd){
 		ctrl = c;
 		judgingData = jd;
 		timePassed = 0.0;
@@ -58,7 +59,8 @@ public class ShootingData{
 			
 			Map<UnrealId, Player> players = ctrl.getPlayers().getVisiblePlayers();
 			for (Map.Entry<UnrealId,Player> entry : players.entrySet()){
-				UnrealId key=entry.getKey();
+				// Unused: schrum: 6/7/18
+				//UnrealId key=entry.getKey();
 				Player player=entry.getValue();
 				
 				Location target = player.getLocation().sub(myLoc.getLocation()); //vector from shooter to me

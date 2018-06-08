@@ -1,21 +1,22 @@
 package fr.enib.mirrorbot4;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import cz.cuni.amis.pogamut.base.agent.navigation.PathExecutorState;
 import cz.cuni.amis.pogamut.base3d.worldview.object.ILocated;
 import cz.cuni.amis.pogamut.base3d.worldview.object.Location;
 import cz.cuni.amis.pogamut.base3d.worldview.object.Rotation;
 import cz.cuni.amis.pogamut.unreal.communication.messages.UnrealId;
 import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004BotModuleController;
-import cz.cuni.amis.pogamut.ut2004.communication.messages.ItemType;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.UT2004ItemType;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbcommands.Move;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbcommands.SetCrouch;
-import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.*;
-import java.lang.annotation.Annotation;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.BotDamaged;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.Item;
+import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.Player;
 
 
 /**
@@ -23,6 +24,7 @@ import java.util.Map.Entry;
  * @author Mihai Polceanu
  */
 public class Brain{
+	@SuppressWarnings("rawtypes")
 	private UT2004BotModuleController ctrl;
 
 	private MirrorModule mirrorModule;
@@ -65,7 +67,7 @@ public class Brain{
 	 * @param c (controller for the bot)
 	 * @param rd (data from the ray traces)
 	 */
-	public Brain(UT2004BotModuleController c, RayData rd){
+	public Brain(@SuppressWarnings("rawtypes") UT2004BotModuleController c, RayData rd){
 		ctrl = c;
 		rayData = rd;
 
@@ -404,7 +406,8 @@ public class Brain{
 		playerData.getTargetData().clearTargets(); //get a clear image before doing any shooting
 
 		for (Entry<UnrealId,Player> entry : players.entrySet()){
-			UnrealId key=entry.getKey();
+			// Wasn't used: schrum: 6/7/18
+			//UnrealId key=entry.getKey();
 			Player player=entry.getValue();
 
 			playerData.addData(player);
@@ -460,7 +463,8 @@ public class Brain{
 		double minDist = -1.0;
 		Map<UnrealId, Item> allItems = ctrl.getItems().getAllItems();
 		for (Entry<UnrealId,Item> entry : allItems.entrySet()){
-			UnrealId key=entry.getKey();
+			// Unused: schrum: 6/7/18
+			//UnrealId key=entry.getKey();
 			Item crtIt=entry.getValue();
 
 			if (crtIt == null) continue;
@@ -489,7 +493,8 @@ public class Brain{
 		double minDist = -1.0;
 		Map<UnrealId, Item> allItems = ctrl.getItems().getAllItems();
 		for (Entry<UnrealId,Item> entry : allItems.entrySet()){
-			UnrealId key=entry.getKey();
+			// Unused: schrum: 6/7/18
+			//UnrealId key=entry.getKey();
 			Item crtIt=entry.getValue();
 
 			if (crtIt == null) continue;
@@ -540,7 +545,8 @@ public class Brain{
 		double minDist = -1.0;
 		Map<UnrealId, Item> allItems = ctrl.getItems().getAllItems();
 		for (Entry<UnrealId,Item> entry : allItems.entrySet()){
-			UnrealId key=entry.getKey();
+			// Unused: schrum 6/7/18
+			//UnrealId key=entry.getKey();
 			Item crtIt=entry.getValue();
 			if (crtIt == null) continue;
 			if (crtIt.getNavPoint() != null){

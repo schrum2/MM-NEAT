@@ -13,6 +13,7 @@ import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.Player;
 import java.util.Map;
 
 public class MirrorFrame{
+	@SuppressWarnings("rawtypes")
 	private UT2004BotModuleController ctrl;
 	private Location subjectLocation;
 	private Velocity subjectVelocity;
@@ -24,7 +25,7 @@ public class MirrorFrame{
 	private long timeStamp;
 	private boolean subjectViolent;
 	
-	public MirrorFrame(UT2004BotModuleController c, Player p, long time){
+	public MirrorFrame(@SuppressWarnings("rawtypes") UT2004BotModuleController c, Player p, long time){
 		ctrl = c;
 		
 		subjectLocation = p.getLocation();
@@ -128,7 +129,8 @@ public class MirrorFrame{
 	private Weapon getWeaponFromString(String wString){
 		Map<ItemType, Weapon> weapons = ctrl.getWeaponry().getLoadedWeapons();
 		for (Map.Entry<ItemType,Weapon> entry : weapons.entrySet()){
-			ItemType key=entry.getKey();
+			// Unused: schrum: 6/7/18
+			//ItemType key=entry.getKey();
 			Weapon weapon=entry.getValue();
 			if (weapon.toString().contains(wString)){
 				return weapon;

@@ -1,5 +1,6 @@
 package fr.enib.mirrorbot4;
 
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -17,8 +18,6 @@ import cz.cuni.amis.pogamut.ut2004.communication.messages.gbcommands.Move;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.NavPointNeighbourLink;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.Player;
 import cz.cuni.amis.utils.NullCheck;
-import java.util.Map;
-import net.sf.saxon.om.Navigator;
 
 /**
  * Responsible for direct running to location.
@@ -106,6 +105,7 @@ public class MyRunner implements IUT2004PathRunner {
 		bot.getAct().act(addFocus(new Move().setFirstLocation(firstLocation).setSecondLocation(secondLocation), focus));
 	}
 	
+	@SuppressWarnings("unused")
 	private void keyboardMove(Location firstLocation, Location secondLocation, ILocated focus){
 		//if (firstLocation != null) firstLocation = convertToKeyboardLocation(firstLocation);
 		//if (secondLocation != null) secondLocation = convertToKeyboardLocation(secondLocation);
@@ -113,6 +113,7 @@ public class MyRunner implements IUT2004PathRunner {
 		bot.getAct().act(addFocus(new Move().setFirstLocation(firstLocation).setSecondLocation(secondLocation), focus));
 	}
 	
+	@SuppressWarnings("unused")
 	private Location convertToKeyboardLocation(Location loc){
 		if ((bot.getLocation() == null) || (bot.getRotation() == null)) return loc;
 		Location myPos = bot.getLocation();
@@ -160,7 +161,8 @@ public class MyRunner implements IUT2004PathRunner {
 		Location avoidanceNoShoot = new Location(0.0, 0.0, 0.0);
 		Map<UnrealId, Player> players = rayData.getCtrl().getPlayers().getVisiblePlayers();
 		for (Map.Entry<UnrealId,Player> entry : players.entrySet()){
-			UnrealId key=entry.getKey();
+			// Unused: schrum: 6/7/19
+			//UnrealId key=entry.getKey();
 			Player player=entry.getValue();
 
 			Location pLoc = player.getLocation();
@@ -800,7 +802,8 @@ public class MyRunner implements IUT2004PathRunner {
     /*========================================================================*/
 
     /** Agent's bot. */
-    protected UT2004Bot bot;
+    @SuppressWarnings("rawtypes")
+	protected UT2004Bot bot;
     /** Loque memory. */
     protected AgentInfo memory;
     /** Agent's body. */
@@ -817,7 +820,7 @@ public class MyRunner implements IUT2004PathRunner {
      * @param bot Agent's bot.
      * @param memory Loque memory.
      */
-    public MyRunner (UT2004Bot bot, AgentInfo agentInfo, AdvancedLocomotion locomotion, Logger log) {
+    public MyRunner (@SuppressWarnings("rawtypes") UT2004Bot bot, AgentInfo agentInfo, AdvancedLocomotion locomotion, Logger log) {
         // setup reference to agent
     	NullCheck.check(bot, "bot");
     	this.bot = bot;

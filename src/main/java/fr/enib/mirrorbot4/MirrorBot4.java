@@ -5,9 +5,6 @@ import java.util.logging.Logger;
 
 import cz.cuni.amis.pogamut.base.agent.navigation.IPathExecutorState;
 import cz.cuni.amis.pogamut.base.agent.params.IRemoteAgentParameters;
-import cz.cuni.amis.pogamut.base.communication.connection.exception.ConnectionException;
-import cz.cuni.amis.pogamut.base.component.bus.event.BusAwareCountDownLatch.BusStoppedInterruptedException;
-import cz.cuni.amis.pogamut.base.component.exception.ComponentCantStartException;
 import cz.cuni.amis.pogamut.base3d.worldview.object.ILocated;
 import cz.cuni.amis.pogamut.ut2004.agent.navigation.UT2004AStarPathPlanner;
 import cz.cuni.amis.pogamut.ut2004.agent.navigation.UT2004GetBackToNavGraph;
@@ -26,18 +23,16 @@ import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.ConfigC
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.GameInfo;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.InitedMessage;
 import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.Self;
-import cz.cuni.amis.pogamut.ut2004.utils.UT2004BotRunner;
 import cz.cuni.amis.utils.exception.PogamutException;
 import cz.cuni.amis.utils.flag.FlagListener;
 import edu.southwestern.tasks.ut2004.bots.MultiBotLauncher;
 import edu.southwestern.tasks.ut2004.server.BotKiller;
-import pogamut.hunter.HunterBot;
-import pogamut.hunter.HunterBotParameters;
 
 /**
  * Runs the mirrorBot as a Java Application
  * @author Mihai Polceanu
  */
+@SuppressWarnings("rawtypes")
 public class MirrorBot4 extends UT2004BotModuleController{
 	private MyNavigator myNav = null;
 	private Brain brain = null;
@@ -192,6 +187,8 @@ public class MirrorBot4 extends UT2004BotModuleController{
 
 		IRemoteAgentParameters[] params = new IRemoteAgentParameters[] {new MirrorBotParameters()};
 		MultiBotLauncher.launchMultipleBots(botClasses, params, "localhost", 3000);//launchMultipleBots(botClasses, params, "localhost", 3000);
+
+		// This original main method did more complicated command line parsing
 //		String host = "localhost";
 //		int port = 3000;
 //
@@ -250,11 +247,12 @@ public class MirrorBot4 extends UT2004BotModuleController{
 //		}
 	}
 
-	@Override
 	/**
 	 * initializes the bot's pathfinding modules
 	 * @param bot (bot to be used)
 	 */
+	@SuppressWarnings("unchecked")
+	@Override
 	protected void initializePathFinding(UT2004Bot bot){
 		//System.out.println("SUCCESS HACK");
 		Logger myLog = Logger.getAnonymousLogger();

@@ -6,6 +6,7 @@ import cz.cuni.amis.pogamut.ut2004.communication.messages.gbinfomessages.Player;
 import java.util.HashMap;
 
 public class TargetData{
+	@SuppressWarnings("rawtypes")
 	UT2004BotModuleController ctrl;
 	
 	private HashMap<UnrealId, Integer> blackList;
@@ -16,7 +17,7 @@ public class TargetData{
 	private long archThresh;
 	private long clearThresh;
 	
-	public TargetData(UT2004BotModuleController c){
+	public TargetData(@SuppressWarnings("rawtypes") UT2004BotModuleController c){
 		ctrl = c;
 		
 		blackList = new HashMap<UnrealId, Integer>();

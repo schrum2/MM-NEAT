@@ -16,6 +16,7 @@ import javax.vecmath.Vector3d;
  * @author Mihai Polceanu
  */
 public class RayData{
+	@SuppressWarnings("rawtypes")
 	private UT2004BotModuleController ctrl;
 	
 	private ArrayList<AutoTraceRay> rayList;
@@ -30,7 +31,7 @@ public class RayData{
 	 * sets up the class and controller
 	 * @param c (controller for the bot)
 	 */
-	public RayData(UT2004BotModuleController c){
+	public RayData(@SuppressWarnings("rawtypes") UT2004BotModuleController c){
 		ctrl = c;
 		
 		//------------- initialize rayCasting data -----------------------------
@@ -110,6 +111,7 @@ public class RayData{
 	/**
 	 * @return returns the bot controller
 	 */
+	@SuppressWarnings("rawtypes")
 	public UT2004BotModuleController getCtrl(){
 		return ctrl;
 	}

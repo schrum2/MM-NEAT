@@ -3,8 +3,9 @@ package fr.enib.mirrorbot4;
 import cz.cuni.amis.pogamut.base3d.worldview.object.Location;
 import cz.cuni.amis.pogamut.ut2004.bot.impl.UT2004BotModuleController;
 
-public class AimData
-{
+public class AimData {
+	
+	@SuppressWarnings("rawtypes")
 	private UT2004BotModuleController ctrl;
 	
 	private Location aim;
@@ -13,7 +14,7 @@ public class AimData
 	 * gives the bot the default location that it will aim
 	 * @param c (bot controller)
 	 */
-	public AimData(UT2004BotModuleController c){
+	public AimData(@SuppressWarnings("rawtypes") UT2004BotModuleController c){
 		ctrl = c;
 		aim = new Location(200, 0.0, 0.0);
 	}

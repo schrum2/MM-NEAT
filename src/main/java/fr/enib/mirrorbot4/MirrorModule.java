@@ -10,6 +10,7 @@ import java.util.ArrayList;
 
 public class MirrorModule
 {
+	@SuppressWarnings("rawtypes")
 	private UT2004BotModuleController ctrl;
 	private boolean active;
 	private UnrealId mirrorSubject;
@@ -23,7 +24,7 @@ public class MirrorModule
 	private ArrayList<UnrealId> usedList;
 	private long lastMovement;
 	
-	public MirrorModule(UT2004BotModuleController c){
+	public MirrorModule(@SuppressWarnings("rawtypes") UT2004BotModuleController c){
 		ctrl = c;
 		active = false;
 		mirrorSubject = null;
@@ -95,6 +96,7 @@ public class MirrorModule
 	public void act(double dt){
 		if (!active) return;
 		if (mirrorSubject == null) return;
+		@SuppressWarnings("unused")
 		Player subject = ctrl.getPlayers().getVisiblePlayer(mirrorSubject);
 		if (mirrorFrames.size() > 0){
 			Location currentFrameLocation = mirrorFrames.get(0).getLocation();
