@@ -109,6 +109,7 @@ _vizdoom.ini
 
 .svn
 *.docx
+*.xml.log
 
 *.bash
 
@@ -121,4 +122,5 @@ rl-glue-cartpole
 src/main/python/imagenet-vgg-verydeep-19.mat
 *.pyc
 *.json
+*UT^2-null
 dependency-reduced-pom.xml

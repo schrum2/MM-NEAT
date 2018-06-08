@@ -18,11 +18,18 @@ import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.graphics.DrawingPanel;
 import edu.southwestern.util.stats.Statistic;
 
+/**
+ * Spawns two organisms that will evolve against each other in a process known as coevolution
+ * @param <T>
+ */
 public abstract class SinglePopulationCoevolutionTask<T> implements SinglePopulationTask<T>{
 
 	private Statistic stat;
 	public final boolean printFitness;
 
+	/**
+	 * sets up the initial parameters and prints the fitness
+	 */
 	public SinglePopulationCoevolutionTask() {
 		this.printFitness = Parameters.parameters.booleanParameter("printFitness");
 		try {
@@ -37,6 +44,9 @@ public abstract class SinglePopulationCoevolutionTask<T> implements SinglePopula
 	public void preEval(){};
 	
 	@Override
+	/**
+	 * @return returns the time stamp of the game when applicable
+	 */
 	public double getTimeStamp() {
 		// Many Domains don't use TimeStamp
 		return 0;
@@ -51,6 +61,9 @@ public abstract class SinglePopulationCoevolutionTask<T> implements SinglePopula
 	
 	@SuppressWarnings("unchecked")
 	@Override
+	/**
+	 * Calculates and collects the scores in the game
+	 */
 	public ArrayList<Score<T>> evaluateAll(ArrayList<Genotype<T>> population) {
 		// Used to randomly group agents in the population
 		ArrayList<Integer> groupOrder = new ArrayList<Integer>(population.size());
@@ -65,7 +78,7 @@ public abstract class SinglePopulationCoevolutionTask<T> implements SinglePopula
 		
 		assert population.size()%groupSize == 0 : "Population size " + population.size() + " should be divisible by group size " + groupSize;
 		
-		double[] bestObjectives = minScores();
+		double[] bestObjectives = minScores();//this will be returned later in the method getMinScores
 		Genotype<T>[] bestGenotypes = new Genotype[bestObjectives.length];
 		Score<T>[] bestScores = new Score[bestObjectives.length];
 		
@@ -205,11 +218,17 @@ public abstract class SinglePopulationCoevolutionTask<T> implements SinglePopula
 		return info;
 	}
 
+	/**
+	 * @return returns opponent scores
+	 */
 	public int numOtherScores() {
 		return 0;
 	}
 	
-	public double[] minScores() {
+	/**
+	 * @return returns the lowest scores
+	 */
+	public double[] getMinScores() {
 		return new double[this.numObjectives()];
 	}
 	
