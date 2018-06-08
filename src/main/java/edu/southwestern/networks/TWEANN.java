@@ -95,6 +95,7 @@ public class TWEANN implements Network {
 		}
 
 		protected void transmit(double signal) {
+			assert target != null : "Link target is null? " + innovation + " with weight " + weight;
 			assert!Double.isNaN(target.sum) : "target.sum is NaN before transmit";
 			assert!Double.isNaN(signal) : "signal is NaN before transmit";
 			assert!Double.isNaN(weight) : "weight is NaN before transmit";

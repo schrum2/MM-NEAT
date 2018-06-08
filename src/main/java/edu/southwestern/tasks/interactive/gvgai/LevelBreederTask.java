@@ -16,8 +16,11 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 
 import edu.southwestern.MMNEAT.MMNEAT;
+import edu.southwestern.evolution.EvolutionaryHistory;
 import edu.southwestern.evolution.genotypes.Genotype;
+import edu.southwestern.evolution.genotypes.TWEANNGenotype;
 import edu.southwestern.networks.Network;
+import edu.southwestern.networks.TWEANN;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.tasks.gvgai.GVGAIUtil;
 import edu.southwestern.tasks.gvgai.GVGAIUtil.GameBundle;
@@ -30,7 +33,7 @@ import gvgai.core.vgdl.VGDLParser;
 import gvgai.core.vgdl.VGDLRegistry;
 import gvgai.tracks.singlePlayer.tools.human.Agent;
 
-public class LevelBreederTask<T extends Network> extends InteractiveEvolutionTask<T> {
+public class LevelBreederTask extends InteractiveEvolutionTask<TWEANN> {
 	// Should exceed any of the CPPN inputs or other interface buttons
 	public static final int PLAY_BUTTON_INDEX = -20; 
 	
@@ -772,17 +775,16 @@ public class LevelBreederTask<T extends Network> extends InteractiveEvolutionTas
 				VGDLFactory.GetInstance().init();
 				VGDLRegistry.GetInstance().init();
 				
-				// Do we want this?
+				// New to reset all network population configurations because different games require different numbers of outputs
 				MMNEAT.setNNInputParameters(numCPPNInputs(), numCPPNOutputs());
+				// Make new TWEANNGenotype for archetype index 0
+				TWEANNGenotype newStart = new TWEANNGenotype(numCPPNInputs(), numCPPNOutputs(), 0);				
+				EvolutionaryHistory.initArchetype(0, null, newStart);
+				scores.get(0).individual = newStart; // Is used in the call to reset() in a moment
+				// Resets the population using the first agent as a prototype
 				reset();
-				System.out.println("Game Reset");
-				
-				// error occurs here
-				// Problem: CPPN population is created based on the game configuration in SPECIFIC_GAME_LEVEL_CHARS.
-				// When SPECIFIC_GAME_LEVEL_CHARS changed, the population needs to be reinitialized as well
+				// Replace images on buttons
 				resetButtons(true);
-				System.out.println("buttons reset");
-
 			}
 
 		});
@@ -856,7 +858,7 @@ public class LevelBreederTask<T extends Network> extends InteractiveEvolutionTas
 	}
 	
 	@Override
-	protected BufferedImage getButtonImage(T phenotype, int width, int height, double[] inputMultipliers) {
+	protected BufferedImage getButtonImage(TWEANN phenotype, int width, int height, double[] inputMultipliers) {
 		GameBundle bundle = setUpGameWithLevelFromCPPN(phenotype);
 		BufferedImage levelImage = GVGAIUtil.getLevelImage(((BasicGame) bundle.game), bundle.level, (Agent) bundle.agent, width, height, bundle.randomSeed);
 		return levelImage;
@@ -886,9 +888,8 @@ public class LevelBreederTask<T extends Network> extends InteractiveEvolutionTas
 	}
 
 	@Override
-	protected void additionalButtonClickAction(int scoreIndex, Genotype<T> individual) {
+	protected void additionalButtonClickAction(int scoreIndex, Genotype<TWEANN> individual) {
 		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
