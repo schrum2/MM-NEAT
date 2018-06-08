@@ -1,6 +1,8 @@
 package popacman.examples.StarterISMCTS;
 
 import com.fossgalaxy.object.annotations.ObjectDef;
+
+import edu.southwestern.util.MiscUtil;
 import pacman.controllers.PacmanController;
 import pacman.game.Drawable;
 import pacman.game.Game;
@@ -71,6 +73,7 @@ public class InformationSetMCTSPacMan extends PacmanController implements Drawab
             predictions = new GhostPredictionsFast(game.getCurrentMaze());
             predictions.preallocate();
         }
+        
         if (pillModel == null) {
             pillModel = new PillModel(game.getNumberOfPills());
 
@@ -85,7 +88,9 @@ public class InformationSetMCTSPacMan extends PacmanController implements Drawab
         if (pillIndex != -1) {
             Boolean pillState = game.isPillStillAvailable(pillIndex);
             if (pillState != null && !pillState) {
+            	//System.out.println("\tUPDATE for " + pillIndex + " BEFORE " + pillModel.getPills().cardinality());
                 pillModel.observe(pillIndex, false);
+                //System.out.println("\tUPDATED: " + pillModel.getPills().cardinality() + "\n");
             }
         }
 
@@ -147,7 +152,21 @@ public class InformationSetMCTSPacMan extends PacmanController implements Drawab
     public void draw(Graphics2D graphics) {
 //        System.out.println("Drawing!");
         // Draw it
-        for (int i = 0; i < mostRecentGame.getNumberOfNodes(); i++) {
+//        for(int pill : mostRecentGame.getActivePillsIndices()) {
+//        	assert pillModel != null : "why is this null";
+//        	assert pillModel.getPills() != null : "why is this null";
+//    		boolean isPillAvailable = pillModel.getPills().get(pill);
+//    		if(isPillAvailable) {
+//    			graphics.setColor(new Color(255, 0, 0, 255));
+//    			graphics.fillRect(
+//    					mostRecentGame.getNodeXCood(pill) * MAG + 5,
+//    					mostRecentGame.getNodeYCood(pill) * MAG + 6,
+//    					2, 2
+//    					);
+//    		}
+//        }
+    	
+    	for (int i = 0; i < mostRecentGame.getNumberOfNodes(); i++) {      	
             double probability = predictions.calculate(i);
             if (probability > 1E-4) {
                 graphics.setColor(redAlphas[(int) Math.min(255 * probability, 255)]);
