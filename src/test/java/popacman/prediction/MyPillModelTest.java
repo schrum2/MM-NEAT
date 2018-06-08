@@ -149,6 +149,7 @@ public class MyPillModelTest {
 			//testExecutorFacade.forceGameView.closeGame();
 		}
 		testExecutorFacade.forceGameView.showGame();
+		System.out.println("");
 		
 		//WE HAVEN'T YET EATEN A PILL
 		int pillsEatenAtTime5 = testGameFacade.pillModel.getPillsEaten();
@@ -156,27 +157,48 @@ public class MyPillModelTest {
 		Assert.assertTrue(pillsEatenAtTime5 == 0);
 		Assert.assertTrue(testGameFacade.getScore() == 0.0);
 		
-		ArrayList<Integer> activePills = new ArrayList<Integer>();
+		ArrayList<Integer> activePillsAtTime5 = new ArrayList<Integer>();
 		for(int i : testGameFacade.getActivePillsIndices()) {
-			activePills.add(i);
+			activePillsAtTime5.add(i);
 		}
 
-		System.out.println("Active Pills before any consumption: " + activePills.toString());
-
+		System.out.println("TIMESTEP 5:\t");
+		System.out.println("Active Pills before any consumption: " + activePillsAtTime5.toString());
+		System.out.println("pacmans location at time 5: " + testGameFacade.getPacmanCurrentNodeIndex());
+		System.out.println("Is there a pill at index " + testGameFacade.getPacmanCurrentNodeIndex() + "? " + testGameFacade.pillModel.getPills().get(testGameFacade.getPacmanCurrentNodeIndex()));
+		System.out.println("");
+		
 		testExecutorFacade.forceGameView.showGame();
-				
+		Assert.assertTrue(testGameFacade.pillModel.getPills().get(972));
+		
 		//MOVE PACMAN LEFT, WE EAT A PILL ON THIS STEP
 		testExecutorFacade.forceGame(testGameFacade, testPacManControllerFacade, testGhostControllerFacade, MOVE.LEFT);
+		//UPDATE THE MODELS
+		testGameFacade.pillModel = informedGameFacade.pillModel;
+		testGameFacade.ghostPredictions = informedGameFacade.ghostPredictions;
 		
+		ArrayList<Integer> activePillsAtTime6 = new ArrayList<Integer>();
+		for(int i : testGameFacade.getActivePillsIndices()) {
+			activePillsAtTime6.add(i);
+		}
+				
 		//PACMAN DID MOVE INTO THE PILL
 		Assert.assertFalse(testGameFacade.getPacmanCurrentNodeIndex() == pacManLocAtTime5);
 		Assert.assertTrue(testGameFacade.getScore() == 10.0);
 		
-		
+		System.out.println("TIMESTEP 6:\t");
 		System.out.println("pacmans location at time 6: " + testGameFacade.getPacmanCurrentNodeIndex());
-		System.out.println("Active Pills after any consumption: " + activePills.toString());
+		System.out.println("Active Pills after any consumption: " + activePillsAtTime6.toString());
 		System.out.println("Is there a pill at index " + testGameFacade.getPacmanCurrentNodeIndex() + "? " + testGameFacade.pillModel.getPills().get(testGameFacade.getPacmanCurrentNodeIndex()));
+		System.out.println("");
 		
+		//there is no active pill at 972
+		Assert.assertFalse(activePillsAtTime6.contains(972));
+		//there surely was a pill eaten
+		Assert.assertTrue(activePillsAtTime6.size() < activePillsAtTime5.size());
+		//there should be no pill at 972 in the pill model
+		//TODO
+		//Assert.assertFalse(testGameFacade.pillModel.getPills().get(972));
 		
 		//THERE IS NO LONGER A PILL IN THIS LOCATION
 		//Assert.assertFalse(testGameFacade.pillModel.getPills().get(testGameFacade.getPacmanCurrentNodeIndex()));

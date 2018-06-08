@@ -98,7 +98,7 @@ public class OldToNewPacManIntermediaryController extends pacman.controllers.Pac
 	}
 	
 	//credit to piers InformationSetMCTSPacMan.java
-	//draws the rd blocks representing a predicted ghost location
+	//draws the red blocks representing a predicted ghost location
     public void draw(Graphics2D graphics) {
     	   	
     	//Draw Pill Model based on parameter
@@ -192,7 +192,7 @@ public class OldToNewPacManIntermediaryController extends pacman.controllers.Pac
 				//EXPERIMENTAL
 				//pillModel = new MyPillModel(informedGameFacade.poG.getNumberOfNodes());
 				
-	            int[] indices = game.getCurrentMaze().pillIndices;
+	            int[] indices = informedGameFacade.poG.getCurrentMaze().pillIndices;
 	            for (int index : indices) {
 	                pillModel.observe(index, true);
 	            }
@@ -205,8 +205,7 @@ public class OldToNewPacManIntermediaryController extends pacman.controllers.Pac
 			
 			//tell the game what the pill model looks like
 	        int pillIndex = informedGameFacade.poG.getPillIndex(informedGameFacade.poG.getPacmanCurrentNodeIndex());
-			//int pillIndex = informedGameFacade.poG.getPacmanCurrentNodeIndex();
-	        
+	        System.out.println("pillIndex: " + pillIndex + " pacman index: " + informedGameFacade.poG.getPacmanCurrentNodeIndex());				        
 			if (pillIndex != -1) {
 	        	pillModel.getPills().set(pillIndex);
 	        	pillModel.pillsEaten += 1;
