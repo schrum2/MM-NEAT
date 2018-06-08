@@ -71,8 +71,9 @@ public class TensorNetworkFromHyperNEATSpecification implements TensorNetwork {
                 //.regularization(true) // Causes error in new DL4J: 1.0.0-beta
         		.optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT);
                 
-        int kernel = Parameters.parameters.integerParameter("receptiveFieldSize");
-        int[] kernelArray = new int[]{kernel, kernel};
+        int xKernel = Parameters.parameters.integerParameter("receptiveFieldWidth");
+        int yKernel = Parameters.parameters.integerParameter("receptiveFieldHeight");
+        int[] kernelArray = new int[]{xKernel, yKernel};
         int stride = Parameters.parameters.integerParameter("stride");
         int[] strideArray = new int[]{stride, stride};
         boolean zeroPadding = Parameters.parameters.booleanParameter("zeroPadding");
@@ -194,7 +195,8 @@ public class TensorNetworkFromHyperNEATSpecification implements TensorNetwork {
         	areConnectionsConvolutional.put(trip.t1 + "_" + trip.t2, trip.t3);
         }
         
-        int kernel = Parameters.parameters.integerParameter("receptiveFieldSize");
+        int xKernel = Parameters.parameters.integerParameter("receptiveFieldWidth");
+        int yKernel = Parameters.parameters.integerParameter("receptiveFieldHeight");
 		
 		// This method heavily relies on the fact that node innovation numbers
 		// in a substrate network's genotype start at 0 and are sequentially numbered
@@ -244,8 +246,8 @@ public class TensorNetworkFromHyperNEATSpecification implements TensorNetwork {
 					biases.putScalar(targetChannel, newBias);
 					int sourceNeuronsToSkip = 0; // Reset for each target substrate
 					for(int sourceChannel = 0; sourceChannel < substratesInSourceLayer; sourceChannel++) {						
-						for(int height = 0; height < kernel; height++) {
-							for(int width = 0; width < kernel; width++) {
+						for(int height = 0; height < yKernel; height++) {
+							for(int width = 0; width < xKernel; width++) {
 								// Figure out source neuron in TWEANNGenotype, and rely on weight sharing
 								long sourceInnovation = layerStartInnovation + sourceNeuronsToSkip + (height*sourceSubstrateWidth) + width;
 								// Get weight from TWEANNGenotype
@@ -361,7 +363,7 @@ public class TensorNetworkFromHyperNEATSpecification implements TensorNetwork {
 				"linkExpressionThreshold:-0.1", // Express all links
 				"heterogeneousSubstrateActivations:true", // Allow mix of activation functions
 				"inputsUseID:true", // Inputs are Identity (mandatory in DL4J?)
-				"stride:1","receptiveFieldSize:3","zeroPadding:false","convolutionWeightSharing:true",
+				"stride:1","receptiveFieldHeight:3","receptiveFieldWidth:3","zeroPadding:false","convolutionWeightSharing:true",
 				"HNProcessDepth:4","HNProcessWidth:4","convolution:true",
 				"experiment:edu.southwestern.experiment.rl.EvaluateDL4JNetworkExperiment"});
 		MMNEAT.loadClasses();
