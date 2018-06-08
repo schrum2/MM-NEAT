@@ -1045,11 +1045,9 @@ public class Parameters {
 		if (!saveToAfterHypen.equals(log))  {
 			throw new IllegalArgumentException("string of log must equal string after hypen in saveTo");
 		}
-		
 		if (base.equals("") && saveTo.equals("")) {
 			return null;
 		}
-
 		return base + "/" + saveTo + run + "/" + log + run + "_parameters.txt";
 	}
 
