@@ -197,12 +197,13 @@ public class MyPillModelTest {
 		//there surely was a pill eaten
 		Assert.assertTrue(activePillsAtTime6.size() < activePillsAtTime5.size());
 		//there should be no pill at 972 in the pill model
-		//TODO
-		//Assert.assertFalse(testGameFacade.pillModel.getPills().get(972));
+		
+		
+		//testExecutorFacade.forceGame(testGameFacade, testPacManControllerFacade, testGhostControllerFacade, MOVE.LEFT);	
+		Assert.assertFalse(testGameFacade.pillModel.getPills().get(testGameFacade.poG.getCurrentMaze().graph[972].pillIndex));
 		
 		//THERE IS NO LONGER A PILL IN THIS LOCATION
-		//Assert.assertFalse(testGameFacade.pillModel.getPills().get(testGameFacade.getPacmanCurrentNodeIndex()));
-		//Assert.assertTrue(testGameFacade.pillModel.getPillsEaten() > pillsEatenAtTime5);
+		Assert.assertFalse(testGameFacade.pillModel.getPills().get(testGameFacade.poG.getCurrentMaze().graph[testGameFacade.getPacmanCurrentNodeIndex()].pillIndex));
 		
 		//DRAW THE GAME
 		testExecutorFacade.forceGameView.showGame();
