@@ -89,6 +89,7 @@ public class ControllerBot extends UT2004BotModuleController {
 	 */
 	public void botInitialized(GameInfo info, ConfigChange currentConfig, InitedMessage init) {
 		brain.initialize(this);
+		this.getParams().giveStats(this.getStats());
 	}
 
 	@Override

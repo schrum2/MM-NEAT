@@ -1,5 +1,6 @@
 package edu.southwestern.tasks.ut2004.bots;
 
+import cz.cuni.amis.pogamut.ut2004.agent.module.sensor.AgentStats;
 import cz.cuni.amis.pogamut.ut2004.bot.params.UT2004BotParameters;
 import cz.cuni.amis.pogamut.ut2004.server.IUT2004Server;
 import edu.southwestern.tasks.ut2004.controller.BotController;
@@ -91,4 +92,13 @@ public class ControllerBotParameters extends UT2004BotParameters {
 	public BotController getController() {
 		return controller;
 	}
+
+	/**
+	 * Give the AgentStats instance from the bot
+	 * @param stats2
+	 */
+	public void giveStats(AgentStats stats) {
+		this.stats.giveAgentStats(stats);
+	}
+	
 }

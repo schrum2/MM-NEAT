@@ -22,9 +22,19 @@ public class UT2004ManyVsNativeBotsTeamDeathMatchTask<T extends Network> extends
 	 */
 	public UT2004ManyVsNativeBotsTeamDeathMatchTask() {
 		this(Parameters.parameters.stringParameter("utMap"),
-				new int[] { Parameters.parameters.integerParameter("utNativeBotSkill") },
+				//new int[] { Parameters.parameters.integerParameter("utNativeBotSkill") },
+				getNativeBotSkillArray(),
 				Parameters.parameters.integerParameter("utEvalMinutes"),
 				Parameters.parameters.integerParameter("utEvolvingBotSkill"));
+	}
+	
+	public static int[] getNativeBotSkillArray() {
+		//array of native bots with all Parameters.parameters.integerParameter("utNativeBotSkill")
+		int[] nativeBotArray = new int[Parameters.parameters.integerParameter("utNumNativeBots")];
+		for(int i = 0; i < nativeBotArray.length; i++) {
+			nativeBotArray[i] = Parameters.parameters.integerParameter("utNativeBotSkill");
+		}
+		return nativeBotArray;
 	}
 
 	/**
@@ -38,6 +48,7 @@ public class UT2004ManyVsNativeBotsTeamDeathMatchTask<T extends Network> extends
 		super(map, nativeBotSkills, evalMinutes, desiredSkill, new BotController[0]);
 		// Fitness objectives
 		//add one for team score
+		addObjective(new TeamScoreFitness<T>(), fitness, true);
 		addObjective(new DamageDealtFitness<T>(), fitness, true);
 		addObjective(new DamageReceivedFitness<T>(), fitness, true);
 		// Other stats to track
@@ -64,7 +75,7 @@ public class UT2004ManyVsNativeBotsTeamDeathMatchTask<T extends Network> extends
 		//loop through and each one is copy of individual
 		
 		
-				Pair<double[], double[]>[] result = evaluateMultipleGenotypes(new Genotype[] {individual}, map,
+				Pair<double[], double[]>[] result = evaluateMultipleGenotypes(teamArray, map,
 				sensorModel, outputModel, weaponManager, opponents,
 				nativeBotSkills, evalMinutes, desiredSkill,
 				fitness, others);
