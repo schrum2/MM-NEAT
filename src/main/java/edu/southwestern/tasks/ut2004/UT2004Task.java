@@ -186,7 +186,7 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 						server.connectNativeBot("Bot" + i, "Type" + i, nativeBotSkills[i]);
 					}
 					// Evaluate genotype
-					NetworkController organism = new NetworkController<T>(individual, sensorModel.copy(), outputModel.copy(), weaponManager.copy());
+					NetworkController<T> organism = new NetworkController<T>(individual, sensorModel.copy(), outputModel.copy(), weaponManager.copy());
 					ArrayList<BehaviorModule> behaviors = new ArrayList<BehaviorModule>(2);
 					behaviors.add(new BattleNetworkBehaviorModule<T>(organism));
 					behaviors.add(new ItemExplorationBehaviorModule());
