@@ -125,7 +125,10 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 	@Override
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {
 		// If there is only one individual then it will be the first in the result array
-		return evaluateMultipleGenotypes(new Genotype[] {individual}, num)[0];
+		return evaluateMultipleGenotypes(new Genotype[] {individual}, num, map,
+				sensorModel, outputModel, weaponManager, opponents,
+				nativeBotSkills, evalMinutes, desiredSkill,
+				fitness, others)[0];
 	}
 	
 	/**
@@ -133,21 +136,34 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 	 * 
 	 * @param individuals Genotypes that can fill NetworkControllers
 	 * @param num Evaluation number
+	 * @param map UT2004 map
+	 * @param sensorModel Sensor model used by evolved bots
+	 * @param outputModel Output model used by evolved bots
+	 * @param weaponManager How evolved bot selects its weapons
+	 * @param opponents Hard-coded opponent bot controllers
+	 * @param nativeBotSkills Skill levels of each native bot in match
+	 * @param evalMinutes Number of minutes to evaluate for
+	 * @param desiredSkill Skill setting for evolved bots
+	 * @param fitness List of fitness scores used to evaluate agents
+	 * @param others List of other scores tracked from evaluation
 	 * @return Array of paired fitness and other scores for the evolved agents
 	 */
 	@SuppressWarnings("unchecked")
-	public Pair<double[], double[]>[] evaluateMultipleGenotypes(Genotype<T>[] individuals, int num) {    
+	public static <T extends Network> Pair<double[], double[]>[] evaluateMultipleGenotypes(Genotype<T>[] individuals, int num, String map,
+			UT2004SensorModel sensorModel, UT2004OutputInterpretation outputModel, UT2004WeaponManager weaponManager, BotController[] opponents,
+			int[] nativeBotSkills, int evalMinutes, int desiredSkill,
+			ArrayList<UT2004FitnessFunction<T>> fitness, ArrayList<UT2004FitnessFunction<T>> others) {    
 		// finds the port connection for the bot
 		int botPort = ServerUtil.getAvailablePort();
 		int controlPort = ServerUtil.getAvailablePort();
 		int observePort = ServerUtil.getAvailablePort();
 		int gamePort = ServerUtil.getAvailablePort();
 		// sets the map, gametype, and Gamebots that will be used
-		MyUCCWrapperConf config = getUCCWrapperConfig(botPort, controlPort, observePort, gamePort);
+		MyUCCWrapperConf config = getUCCWrapperConfig(botPort, controlPort, observePort, gamePort, map);
 
 		//Launches the server, and ensures that it is empty at the outset
 		MyUCCWrapper ucc = null;
-		Pair<double[], double[]>[] result = new Pair[individuals.length + this.opponents.length];
+		Pair<double[], double[]>[] result = new Pair[individuals.length + opponents.length];
 		int attempts = 1; //tracks the number of attempts to launch the server
 		while (ArrayUtil.anyNull(result)) { // Loop as long as there are problems with the results
 			System.out.println("Eval attempt " + (attempts++));
@@ -172,7 +188,7 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 					// Make controller for each genotype
 					NetworkController<T>[] organisms = new NetworkController[individuals.length];
 					// Will contain evolved network controllers and hard coded opponents, if any
-					BotController[] controllers = new BotController[individuals.length + this.opponents.length];
+					BotController[] controllers = new BotController[individuals.length + opponents.length];
 					for(int i = 0; i < organisms.length; i++) {		
 						// Each controller gets its own copy of the sensor model, output model, and weapon manager
 						organisms[i] = new NetworkController<T>(individuals[i], sensorModel.copy(), outputModel.copy(), weaponManager.copy());
@@ -186,12 +202,12 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 					// Copy the fixed opponent controllers into the controllers array after the evolved network controllers
 					System.arraycopy(opponents, 0, controllers, individuals.length, opponents.length);
 					// Evaluate network controllers and fixed controllers
-					GameDataCollector[] collectors = evaluateAgentsOnServer(server, controllers, botPort, gamePort);
+					GameDataCollector[] collectors = evaluateAgentsOnServer(server, controllers, botPort, gamePort, nativeBotSkills, evalMinutes, desiredSkill);
 					
 					// Transfer stats data to result
 					for(int j = 0; j < collectors.length; j++) {
 						if (collectors[j].evalWasSuccessful()) {
-							result[j] = relevantScores(collectors[j], organisms[j]);
+							result[j] = relevantScores(collectors[j], organisms[j], fitness, others);
 						}
 						
 					}
@@ -203,7 +219,7 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 				System.out.println("EXCEPTION: Can't start the server. Failed eval. Destroy server");
 				ServerUtil.destroyServer(ucc, true);
 				// Reset all eval results
-				result = new Pair[individuals.length + this.opponents.length];
+				result = new Pair[individuals.length + opponents.length];
 			} finally {
 				if (ArrayUtil.anyNull(result)) {//repeats the evaluation if it is unsucessful the first time
 					System.out.println("Evaluation failed: repeat: " + botPort);
@@ -220,9 +236,10 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 	 * @param controlPort
 	 * @param observePort
 	 * @param gamePort
+	 * @param map UT2004 map name
 	 * @return Configuration for server
 	 */
-	private MyUCCWrapperConf getUCCWrapperConfig(int botPort, int controlPort, int observePort, int gamePort) {
+	public static MyUCCWrapperConf getUCCWrapperConfig(int botPort, int controlPort, int observePort, int gamePort, String map) {
 		MyUCCWrapperConf config = new MyUCCWrapperConf();
 		config.setPlayerPort(gamePort);
 		config.setStartOnUnusedPort(false);
@@ -264,9 +281,13 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 	 * @param controllers Controllers for the ControllerBots
 	 * @param botPort 
 	 * @param gamePort 
+	 * @param nativeBotSkills Each entriy corresponds to the skill of a native bot that will be spawned in the server
+	 * @param evalMinutes How many minutes the server evaluation lasts for
+	 * @param desiredSkill skill level of the evolving bots 
 	 * @return Collections of performance information about each ControllerBot
 	 */
-	public GameDataCollector[] evaluateAgentsOnServer(IUT2004Server server, BotController[] controllers, int botPort, int gamePort) {
+	public static GameDataCollector[] evaluateAgentsOnServer(IUT2004Server server, BotController[] controllers, int botPort, int gamePort,
+			int[] nativeBotSkills, int evalMinutes, int desiredSkill) {
 		// Launch Native Bots
 		for (int i = 0; i < nativeBotSkills.length; i++) {
 			server.connectNativeBot("Bot" + i, "Type" + i, nativeBotSkills[i]);
@@ -315,9 +336,12 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 	 * 
 	 * @param stats (the stats from the game)
 	 * @param o (the organism to be monitored)
+	 * @param fitness List of fitness scores used to evaluate agents
+	 * @param others List of other scores tracked from evaluation
 	 * @return returns the organism's scores in the fitness function
 	 */
-	public Pair<double[], double[]> relevantScores(GameDataCollector stats, Organism<T> o) {
+	public static <T extends Network> Pair<double[], double[]> relevantScores(GameDataCollector stats, Organism<T> o, 
+			ArrayList<UT2004FitnessFunction<T>> fitness, ArrayList<UT2004FitnessFunction<T>> others) {
 		double[] fitnessScores = new double[fitness.size()];
 		for (int i = 0; i < fitnessScores.length; i++) {
 			fitnessScores[i] = fitness.get(i).score(stats, o);
