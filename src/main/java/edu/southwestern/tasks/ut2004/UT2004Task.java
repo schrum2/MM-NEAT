@@ -290,7 +290,9 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 			int[] nativeBotSkills, int evalMinutes, int desiredSkill) {
 		// Launch Native Bots
 		for (int i = 0; i < nativeBotSkills.length; i++) {
-			server.connectNativeBot("Bot" + i, "Type" + i, nativeBotSkills[i]);
+			// What? Why was the bot skill being sent where the team ID is expected?
+			//server.connectNativeBot("Bot" + i, "Type" + i, nativeBotSkills[i]);
+			server.connectNativeBot("Bot" + i, "Type" + i, 1); // TEAM 1: All on opposing team
 		}
 		// Create names for all bot controllers
 		String[] names = new String[controllers.length];
