@@ -245,7 +245,7 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 		config.setStartOnUnusedPort(false);
 		config.setMapName(map);
 		config.setGameBotsPack("GameBots2004");
-		config.setGameType("BotDeathMatch");
+		config.setGameType(Parameters.parameters.stringParameter("utGameType"));
 
 
 		//Creates an arraylist of mutators that will be applied to the server

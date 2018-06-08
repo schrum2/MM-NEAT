@@ -811,6 +811,7 @@ public class Parameters {
 		stringOptions.add("utDrive", "D", "Drive where UT2004 resides");
 		stringOptions.add("utMap", "DM-TrainingDay", "Map to play in Unreal Tournament 2004");
 		stringOptions.add("utPath", "ut\\game", "Path (excluding drive) to root dir of Unreal Tournament 2004 installation");
+		stringOptions.add("utGameType", "BotDeathMatch", "sets the game type for the server");
 		// Class options
 		classOptions.add("behaviorCharacterization", DomainSpecificCharacterization.class, "Type of behavior characterization used for Behavioral Diversity calculation");
 		classOptions.add("boardGame", null, "Board Game being played by BoardGameTask");
