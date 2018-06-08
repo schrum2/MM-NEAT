@@ -29,6 +29,7 @@ import edu.southwestern.tasks.ut2004.sensors.UT2004SensorModel;
 import edu.southwestern.tasks.ut2004.server.ServerUtil;
 import edu.southwestern.tasks.ut2004.weapons.UT2004WeaponManager;
 import edu.southwestern.util.ClassCreation;
+import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.stats.Statistic;
 
@@ -120,14 +121,108 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 	 * @param individual (the genetic representation of the bot being evaluated)
 	 * @param num (the number evaluation you're on)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
-	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {            
+	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {
+		// If there is only one individual then it will be the first in the result array
+		return evaluateMultipleGenotypes(new Genotype[] {individual}, num)[0];
+	}
+	
+	/**
+	 * Evaluate multiple genotypes and return evaluation information on each of them.
+	 * 
+	 * @param individuals Genotypes that can fill NetworkControllers
+	 * @param num Evaluation number
+	 * @return Array of paired fitness and other scores for the evolved agents
+	 */
+	@SuppressWarnings("unchecked")
+	public Pair<double[], double[]>[] evaluateMultipleGenotypes(Genotype<T>[] individuals, int num) {    
 		// finds the port connection for the bot
 		int botPort = ServerUtil.getAvailablePort();
 		int controlPort = ServerUtil.getAvailablePort();
 		int observePort = ServerUtil.getAvailablePort();
 		int gamePort = ServerUtil.getAvailablePort();
 		// sets the map, gametype, and Gamebots that will be used
+		MyUCCWrapperConf config = getUCCWrapperConfig(botPort, controlPort, observePort, gamePort);
+
+		//Launches the server, and ensures that it is empty at the outset
+		MyUCCWrapper ucc = null;
+		Pair<double[], double[]>[] result = new Pair[individuals.length + this.opponents.length];
+		int attempts = 1; //tracks the number of attempts to launch the server
+		while (ArrayUtil.anyNull(result)) { // Loop as long as there are problems with the results
+			System.out.println("Eval attempt " + (attempts++));
+			try {
+				ucc = new MyUCCWrapper(config);
+				IUT2004Server server = ucc.getUTServer();
+				System.out.println(botPort + ": Confirming empty server");
+				//responsible for launching native bots into the server, resets if the port is not empty
+				while (server.getAgents().size() > 0 
+						|| server.getNativeAgents().size() > 0
+						|| server.getPlayers().size() > 0) {
+					System.out.println(botPort + ": NOT EMPTY! RESET!");
+					ServerUtil.destroyServer(ucc, true);
+
+					ucc = new MyUCCWrapper(config);
+					server = ucc.getUTServer();
+				}
+				// Server was launched?
+				int claimTicket = ServerUtil.addServer(ucc);
+				System.out.println(botPort + ": Empty server gets ticekt: " + claimTicket);
+				try {
+					// Make controller for each genotype
+					NetworkController<T>[] organisms = new NetworkController[individuals.length];
+					// Will contain evolved network controllers and hard coded opponents, if any
+					BotController[] controllers = new BotController[individuals.length + this.opponents.length];
+					for(int i = 0; i < organisms.length; i++) {		
+						// Each controller gets its own copy of the sensor model, output model, and weapon manager
+						organisms[i] = new NetworkController<T>(individuals[i], sensorModel.copy(), outputModel.copy(), weaponManager.copy());
+						// The evolved network controllers use the network for battle, and have a basic item exploration module
+						ArrayList<BehaviorModule> behaviors = new ArrayList<BehaviorModule>(2);
+						behaviors.add(new BattleNetworkBehaviorModule<T>(organisms[i]));
+						behaviors.add(new ItemExplorationBehaviorModule());
+						BotController controller = new BehaviorListController(behaviors);
+						controllers[i] = controller;
+					}
+					// Copy the fixed opponent controllers into the controllers array after the evolved network controllers
+					System.arraycopy(opponents, 0, controllers, individuals.length, opponents.length);
+					// Evaluate network controllers and fixed controllers
+					GameDataCollector[] collectors = evaluateAgentsOnServer(server, controllers, botPort, gamePort);
+					
+					// Transfer stats data to result
+					for(int j = 0; j < collectors.length; j++) {
+						if (collectors[j].evalWasSuccessful()) {
+							result[j] = relevantScores(collectors[j], organisms[j]);
+						}
+						
+					}
+				} finally {
+					System.out.println(botPort + ": Past evaluate block: " + System.currentTimeMillis());
+					ServerUtil.removeServer(claimTicket);
+				}
+			} catch (ComponentCantStartException ccse) {//gets rid of the server if it can't be started
+				System.out.println("EXCEPTION: Can't start the server. Failed eval. Destroy server");
+				ServerUtil.destroyServer(ucc, true);
+				// Reset all eval results
+				result = new Pair[individuals.length + this.opponents.length];
+			} finally {
+				if (ArrayUtil.anyNull(result)) {//repeats the evaluation if it is unsucessful the first time
+					System.out.println("Evaluation failed: repeat: " + botPort);
+				}
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * Configure the server with several ports as well as command line parameter information
+	 * 
+	 * @param botPort
+	 * @param controlPort
+	 * @param observePort
+	 * @param gamePort
+	 * @return Configuration for server
+	 */
+	private MyUCCWrapperConf getUCCWrapperConfig(int botPort, int controlPort, int observePort, int gamePort) {
 		MyUCCWrapperConf config = new MyUCCWrapperConf();
 		config.setPlayerPort(gamePort);
 		config.setStartOnUnusedPort(false);
@@ -157,68 +252,7 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 				+ botPort + "?ControlServerPort=" + controlPort + "?ObservingServerPort=" + observePort);
 		config.setUnrealHome(Parameters.parameters.stringParameter("utDrive") + ":" + File.separator + Parameters.parameters.stringParameter("utPath"));
 		//System.out.println(config);
-
-		//Launches the server, and ensures that it is empty at the outset
-		MyUCCWrapper ucc = null;
-		Pair<double[], double[]> result = null;
-		int attempts = 1; //tracks the number of sttempts to launch the server
-		while (result == null) {
-			System.out.println("Eval attempt " + (attempts++));
-			try {
-				ucc = new MyUCCWrapper(config);
-				IUT2004Server server = ucc.getUTServer();
-				System.out.println(botPort + ": Confirming empty server");
-				//responsible for launching native bots into the server, resets if the port is not empty
-				while (server.getAgents().size() > 0 
-						|| server.getNativeAgents().size() > 0
-						|| server.getPlayers().size() > 0) {
-					System.out.println(botPort + ": NOT EMPTY! RESET!");
-					ServerUtil.destroyServer(ucc, true);
-
-					ucc = new MyUCCWrapper(config);
-					server = ucc.getUTServer();
-				}
-				// Server was launched?
-				int claimTicket = ServerUtil.addServer(ucc);
-				System.out.println(botPort + ": Empty server gets ticekt: " + claimTicket);
-				try {
-					
-					// Evaluate genotype
-					NetworkController<T> organism = new NetworkController<T>(individual, sensorModel.copy(), outputModel.copy(), weaponManager.copy());
-					ArrayList<BehaviorModule> behaviors = new ArrayList<BehaviorModule>(2);
-					behaviors.add(new BattleNetworkBehaviorModule<T>(organism));
-					behaviors.add(new ItemExplorationBehaviorModule());
-					BotController controller = new BehaviorListController(behaviors);
-					// Store evolving bot and opponents that are ControllerBots
-					BotController[] controllers = new BotController[this.opponents.length + 1];
-					controllers[0] = controller;
-					System.arraycopy(opponents, 0, controllers, 1, opponents.length);
-
-					
-					GameDataCollector[] collectors = evaluateAgentsOnServer(server, controllers, botPort, gamePort);
-					// For now, assume we always want just the first collector
-					GameDataCollector stats = collectors[0]; 
-
-					// System.out.println("Eval over");
-					// Transfer stats data to result
-					if (stats.evalWasSuccessful()) {
-						result = relevantScores(stats, organism);
-					}
-				} finally {
-					System.out.println(botPort + ": Past evaluate block: " + System.currentTimeMillis());
-					ServerUtil.removeServer(claimTicket);
-				}
-			} catch (ComponentCantStartException ccse) {//gets rid of the server if it can't be started
-				System.out.println("EXCEPTION: Can't start the server. Failed eval. Destroy server");
-				ServerUtil.destroyServer(ucc, true);
-				result = null;
-			} finally {
-				if (result == null) {//repeats the evaluation if it is unsucessful the first time
-					System.out.println("Evaluation failed: repeat: " + botPort);
-				}
-			}
-		}
-		return result;
+		return config;
 	}
 
 	/**
