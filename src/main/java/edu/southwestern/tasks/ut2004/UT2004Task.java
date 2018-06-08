@@ -115,12 +115,12 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 		MMNEAT.registerFitnessFunction(o.getClass().getSimpleName(), override, affectsSelection);
 	}
 
-	@Override
 	/**
 	 * Connects the server to the correct port, the bot to the correct server, and applies any mutators to the server
 	 * @param individual (the genetic representation of the bot being evaluated)
 	 * @param num (the number evaluation you're on)
 	 */
+	@Override
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {            
 		// finds the port connection for the bot
 		int botPort = ServerUtil.getAvailablePort();
@@ -182,9 +182,7 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 				int claimTicket = ServerUtil.addServer(ucc);
 				System.out.println(botPort + ": Empty server gets ticekt: " + claimTicket);
 				try {
-					for (int i = 0; i < nativeBotSkills.length; i++) {
-						server.connectNativeBot("Bot" + i, "Type" + i, nativeBotSkills[i]);
-					}
+					
 					// Evaluate genotype
 					NetworkController<T> organism = new NetworkController<T>(individual, sensorModel.copy(), outputModel.copy(), weaponManager.copy());
 					ArrayList<BehaviorModule> behaviors = new ArrayList<BehaviorModule>(2);
@@ -192,22 +190,12 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 					behaviors.add(new ItemExplorationBehaviorModule());
 					BotController controller = new BehaviorListController(behaviors);
 					// Store evolving bot and opponents that are ControllerBots
-					BotController[] allBots = new BotController[this.opponents.length + 1];
-					allBots[0] = controller;
-					System.arraycopy(opponents, 0, allBots, 1, opponents.length);
-					// Create names for all bots
-					String[] names = new String[allBots.length];
-					names[0] = "EvolvingBot" + gamePort;
-					for(int i = 1; i < names.length; i++) {
-						String className = allBots[i].getClass().getName();
-						// Just get the class name, not the package portion
-						className = className.substring(className.lastIndexOf('.')+1);
-						names[i] = className;
-					}
-					// Launch bots on server and retrieve collected fitness info
-					GameDataCollector[] collectors = ControllerBot.launchBot(
-							server, names, allBots,
-							evalMinutes * 60, desiredSkill, "localhost", botPort);
+					BotController[] controllers = new BotController[this.opponents.length + 1];
+					controllers[0] = controller;
+					System.arraycopy(opponents, 0, controllers, 1, opponents.length);
+
+					
+					GameDataCollector[] collectors = evaluateAgentsOnServer(server, controllers, botPort, gamePort);
 					// For now, assume we always want just the first collector
 					GameDataCollector stats = collectors[0]; 
 
@@ -233,20 +221,50 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 		return result;
 	}
 
-	@Override
+	/**
+	 * Evaluate several BotControllers on a server. Each BotController is launched inside of a ControllerBot
+	 * instance. Native bots can also be added, as well as other types of bots, though these are added in 
+	 * the ControllerBot's launchBot method.
+	 * 
+	 * @param server Server bots will run on
+	 * @param controllers Controllers for the ControllerBots
+	 * @param botPort 
+	 * @param gamePort 
+	 * @return Collections of performance information about each ControllerBot
+	 */
+	public GameDataCollector[] evaluateAgentsOnServer(IUT2004Server server, BotController[] controllers, int botPort, int gamePort) {
+		// Launch Native Bots
+		for (int i = 0; i < nativeBotSkills.length; i++) {
+			server.connectNativeBot("Bot" + i, "Type" + i, nativeBotSkills[i]);
+		}
+		// Create names for all bot controllers
+		String[] names = new String[controllers.length];
+		for(int i = 0; i < names.length; i++) {
+			String className = controllers[i].getClass().getName();
+			// Just get the class name, not the package portion
+			className = className.substring(className.lastIndexOf('.')+1)+i;
+			names[i] = className;
+		}
+		// Launch bots on server and retrieve collected fitness info
+		GameDataCollector[] collectors = ControllerBot.launchBot(
+				server, names, controllers,
+				evalMinutes * 60, desiredSkill, "localhost", botPort);
+		return collectors; // Info about all ControllerBots
+	}
+	
 	/**
 	 * @return returns the time of the game
 	 */
+	@Override
 	public double getTimeStamp() {
-		// Can the game time be retrieved?
-		return 0; // Not correct
+		return 0; // Not correct, but also not needed
 	}
 
-	@Override
 	/**
 	 * returns how many objectives have been tracked that affect the fitness function
 	 * @return returns the number of objectives that have been tracked
 	 */
+	@Override
 	public int numObjectives() {
 		return fitness.size();
 	}
