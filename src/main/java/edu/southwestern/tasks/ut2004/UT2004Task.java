@@ -125,7 +125,7 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 	@Override
 	public Pair<double[], double[]> oneEval(Genotype<T> individual, int num) {
 		// If there is only one individual then it will be the first in the result array
-		return evaluateMultipleGenotypes(new Genotype[] {individual}, num, map,
+		return evaluateMultipleGenotypes(new Genotype[] {individual}, map,
 				sensorModel, outputModel, weaponManager, opponents,
 				nativeBotSkills, evalMinutes, desiredSkill,
 				fitness, others)[0];
@@ -149,7 +149,7 @@ public abstract class UT2004Task<T extends Network> extends NoisyLonerTask<T>imp
 	 * @return Array of paired fitness and other scores for the evolved agents
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T extends Network> Pair<double[], double[]>[] evaluateMultipleGenotypes(Genotype<T>[] individuals, int num, String map,
+	public static <T extends Network> Pair<double[], double[]>[] evaluateMultipleGenotypes(Genotype<T>[] individuals, String map,
 			UT2004SensorModel sensorModel, UT2004OutputInterpretation outputModel, UT2004WeaponManager weaponManager, BotController[] opponents,
 			int[] nativeBotSkills, int evalMinutes, int desiredSkill,
 			ArrayList<UT2004FitnessFunction<T>> fitness, ArrayList<UT2004FitnessFunction<T>> others) {    
