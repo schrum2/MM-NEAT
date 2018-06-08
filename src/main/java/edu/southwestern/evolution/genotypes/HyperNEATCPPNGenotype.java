@@ -13,7 +13,6 @@ import edu.southwestern.networks.hyperneat.Substrate;
 import edu.southwestern.parameters.CommonConstants;
 import edu.southwestern.parameters.Parameters;
 import edu.southwestern.util.CartesianGeometricUtilities;
-import edu.southwestern.util.MiscUtil;
 import edu.southwestern.util.datastructures.ArrayUtil;
 import edu.southwestern.util.datastructures.Pair;
 import edu.southwestern.util.datastructures.Triple;
@@ -381,30 +380,34 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 		boolean convolutionDeltas = Parameters.parameters.booleanParameter("convolutionDeltas");
 		boolean convolutionWeightSharing = Parameters.parameters.booleanParameter("convolutionWeightSharing");
 
-		int receptiveFieldSize = Parameters.parameters.integerParameter("receptiveFieldSize");
-		assert receptiveFieldSize % 2 == 1 : "Receptive field size needs to be odd to be centered: " + receptiveFieldSize;
+		int receptiveFieldHeight = Parameters.parameters.integerParameter("receptiveFieldHeight");
+		assert receptiveFieldHeight % 2 == 1 : "Receptive field height needs to be odd to be centered: " + receptiveFieldHeight;
+		int receptiveFieldWidth = Parameters.parameters.integerParameter("receptiveFieldWidth");
+		assert receptiveFieldWidth % 2 == 1 : "Receptive field width needs to be odd to be centered: " + receptiveFieldWidth;
 		// Need to watch out for links that want to connect out of bounds
 		boolean zeroPadding = Parameters.parameters.booleanParameter("zeroPadding");
-		int offset = receptiveFieldSize / 2;
-		int edgeOffset = zeroPadding ? 0 : offset;
-
+		int xOffset = receptiveFieldWidth / 2;
+		int yOffset = receptiveFieldHeight / 2;
+		int xEdgeOffset = zeroPadding ? 0 : xOffset;
+		int yEdgeOffset = zeroPadding ? 0 : yOffset;
+		
 		int stride = Parameters.parameters.integerParameter("stride");
 
 		// Traverse center points of receptive fields
-		for(int x = edgeOffset; x < s1.getSize().t1 - edgeOffset; x += stride) {
-			for(int y = edgeOffset; y < s1.getSize().t2 - edgeOffset; y += stride) {
+		for(int x = xEdgeOffset; x < s1.getSize().t1 - xEdgeOffset; x += stride) {
+			for(int y = yEdgeOffset; y < s1.getSize().t2 - yEdgeOffset; y += stride) {
 				// There is a direct correspondence between each receptive field and
 				// its target neuron in the next layer
-				int targetXindex = (x - edgeOffset) / stride; 
-				int targetYIndex = (y - edgeOffset) / stride;
+				int targetXindex = (x - xEdgeOffset) / stride; 
+				int targetYIndex = (y - yEdgeOffset) / stride;
 				// If target neuron is dead, do not continue
 				if(!s2.isNeuronDead(targetXindex, targetYIndex)) {
 					// Loop through all neurons in the receptive field
-					for(int fX = -offset; fX <= offset; fX++) {
+					for(int fX = -xOffset; fX <= xOffset; fX++) {
 						// Source neuron is offset from receptive field center
 						int fromXIndex = x + fX;
 						if(fromXIndex >= 0 && fromXIndex < s1.getSize().t1) {
-							for(int fY = -offset; fY <= offset; fY++) {
+							for(int fY = -yOffset; fY <= yOffset; fY++) {
 								// Source neuron is offset from receptive field center
 								int fromYIndex = y + fY;
 								if(fromYIndex >= 0 && fromYIndex < s1.getSize().t2) {
@@ -422,7 +425,7 @@ public class HyperNEATCPPNGenotype extends TWEANNGenotype {
 											// These inputs may be outside the [-1,1] range
 										} else {
 											// Receptive field scaling needs to be with respect to the center of the field, regardless of what the mapping for the other coordinates is
-											ILocated2D scaledFieldCoordinates = CartesianGeometricUtilities.centerAndScale(new Tuple2D(fX+offset, fY+offset), receptiveFieldSize, receptiveFieldSize);
+											ILocated2D scaledFieldCoordinates = CartesianGeometricUtilities.centerAndScale(new Tuple2D(fX+xOffset, fY+yOffset), receptiveFieldWidth, receptiveFieldHeight);
 											// inputs to CPPN 
 											// NOTE: filterCPPNInputs call was removed because it doesn't seem to make sense with convolutional inputs
 											if(convolutionWeightSharing) {

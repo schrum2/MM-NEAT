@@ -678,9 +678,12 @@ public class HyperNEATUtil {
 		// Convolutional network layer sizes depend on the size of the preceding layer,
 		// along with the receptive field size, unless zero-padding is used
 		boolean zeroPadding = Parameters.parameters.booleanParameter("zeroPadding");
-		int receptiveFieldSize = Parameters.parameters.integerParameter("receptiveFieldSize");
-		assert receptiveFieldSize % 2 == 1 : "Receptive field size needs to be odd to be centered: " + receptiveFieldSize;
-		int edgeOffset = zeroPadding ? 0 : receptiveFieldSize / 2;
+		int receptiveFieldHeight = Parameters.parameters.integerParameter("receptiveFieldHeight");
+		assert receptiveFieldHeight % 2 == 1 : "Receptive field size needs to be odd to be centered: " + receptiveFieldHeight;
+		int yEdgeOffset = zeroPadding ? 0 : receptiveFieldHeight / 2;
+		int receptiveFieldWidth = Parameters.parameters.integerParameter("receptiveFieldWidth");
+		assert receptiveFieldWidth % 2 == 1 : "Receptive field size needs to be odd to be centered: " + receptiveFieldWidth;
+		int xEdgeOffset = zeroPadding ? 0 : receptiveFieldWidth / 2;
 
 		// Different extractors correspond to different substrate configurations
 		Pair<Integer, Integer> substrateDimension = new Pair<Integer, Integer>(inputWidth, inputHeight);
@@ -688,7 +691,7 @@ public class HyperNEATUtil {
 		for(int i = 0; i < processDepth; i++) { // Add 2D hidden/processing layer(s)
 			if(CommonConstants.convolution) {
 				// Subsequent convolutional layers sometimes need to be smaller than preceding ones
-				substrateDimension = new Pair<Integer, Integer>(substrateDimension.t1 - 2*edgeOffset, substrateDimension.t2 - 2*edgeOffset);
+				substrateDimension = new Pair<Integer, Integer>(substrateDimension.t1 - 2*xEdgeOffset, substrateDimension.t2 - 2*yEdgeOffset);
 			}
 			for(int k = 0; k < processWidth; k++) {
 				// x coord = k, y = 1 + i because the height is the depth plus 1 (for the input layer)

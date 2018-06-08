@@ -54,7 +54,7 @@ public class HybrIDUtilTest {
 				"rlGlueExtractor:edu.southwestern.tasks.rlglue.featureextractors.tetris.RawTetrisStateExtractor", "tetrisTimeSteps:true", "tetrisBlocksOnScreen:false",  
 				"rlGlueAgent:edu.southwestern.tasks.rlglue.tetris.TetrisAfterStateAgent", "splitRawTetrisInputs:true", "senseHolesDifferently:true", "hyperNEAT:true", "genotype:edu.southwestern.evolution.genotypes.HyperNEATCPPNGenotype", 
 				"allowMultipleFunctions:true", "ftype:1", "netChangeActivationRate:0.3", "substrateMapping:edu.southwestern.networks.hyperneat.BottomSubstrateMapping", "steps:500000", "perLinkMutateRate:0.05", "netLinkRate:0.4", 
-				"netSpliceRate:0.2", "crossoverRate:0.5", "log:Tetris-ShortTest", "saveTo:ShortTest", "extraHNLinks:true", "HNProcessDepth:1", "HNProcessWidth:1", "convolution:false",  "hybrIDSwitchGeneration:5", "hybrID:tru", 
+				"netSpliceRate:0.2", "crossoverRate:0.5", "extraHNLinks:true", "HNProcessDepth:1", "HNProcessWidth:1", "convolution:false",  "hybrIDSwitchGeneration:5", "hybrID:tru", 
 				"tetrisAllowLine:false", "tetrisAllowSquare:false", "tetrisAllowTri:false", "tetrisAllowLShape:false", "tetrisAllowJShape:false"});
 		MMNEAT.loadClasses();
 		HyperNEATCPPNGenotype example = new HyperNEATCPPNGenotype();
@@ -85,7 +85,7 @@ public class HybrIDUtilTest {
 				"rlGlueExtractor:edu.southwestern.tasks.rlglue.featureextractors.tetris.RawTetrisStateExtractor", "tetrisTimeSteps:true", "tetrisBlocksOnScreen:false",  
 				"rlGlueAgent:edu.southwestern.tasks.rlglue.tetris.TetrisAfterStateAgent", "splitRawTetrisInputs:true", "senseHolesDifferently:true", "hyperNEAT:true", "genotype:edu.southwestern.evolution.genotypes.HyperNEATCPPNGenotype", 
 				"allowMultipleFunctions:true", "ftype:1", "netChangeActivationRate:0.3", "substrateMapping:edu.southwestern.networks.hyperneat.BottomSubstrateMapping", "steps:500000", "perLinkMutateRate:0.05", "netLinkRate:0.4", 
-				"netSpliceRate:0.2", "crossoverRate:0.5", "log:Tetris-ShortTest", "saveTo:ShortTest", "extraHNLinks:true", "HNProcessDepth:1", "HNProcessWidth:1", "convolution:true",  "hybrIDSwitchGeneration:5", "hybrID:tru", 
+				"netSpliceRate:0.2", "crossoverRate:0.5", "extraHNLinks:true", "HNProcessDepth:1", "HNProcessWidth:1", "convolution:true",  "hybrIDSwitchGeneration:5", "hybrID:tru", 
 				"tetrisAllowLine:false", "tetrisAllowSquare:false", "tetrisAllowTri:false", "tetrisAllowLShape:false", "tetrisAllowJShape:false"});
 		MMNEAT.loadClasses();
 		HyperNEATCPPNGenotype example = new HyperNEATCPPNGenotype();
