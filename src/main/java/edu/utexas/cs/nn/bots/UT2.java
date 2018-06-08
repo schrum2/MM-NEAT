@@ -159,7 +159,8 @@ public class UT2 extends BaseBot {
     public static WeaponPreferenceTable weaponPreferences;
     private int notMoving;
     private static final int MAX_STILL_TIME = 8;
-    private static final int INTERESTING_HEALTH_ITEM = 5;
+    @SuppressWarnings("unused") // Is referenced in a commented section of code
+	private static final int INTERESTING_HEALTH_ITEM = 5;
     private static final int OFF_GRID_DISTANCE = 600;
     private static final double TIME_BETWEEN_QUICK_TURNS = 2.5;
     private static boolean printActions = Constants.PRINT_ACTIONS.getBoolean();
@@ -225,7 +226,7 @@ public class UT2 extends BaseBot {
      * anything from the environment.
      */
     @Override
-    public void prepareBot(UT2004Bot bot) {
+    public void prepareBot(@SuppressWarnings("rawtypes") UT2004Bot bot) {
         UT2Parameters params = (UT2Parameters) bot.getParams();
         this.battleController = params.getBattleController();
         super.server = params.getServer();
@@ -443,7 +444,8 @@ public class UT2 extends BaseBot {
     /**
      * timing for the logic
      */
-    private long[] timing = new long[10];
+// Unsure where this was used: schrum: 6/7/18
+//    private long[] timing = new long[10];
 //    boolean first = true;
 
     public UT2Parameters getParams() {
@@ -610,9 +612,10 @@ public class UT2 extends BaseBot {
      * Goes through all control modules in priority order and returns an action
      * from the controller/module with highest priority and a firing trigger.
      *
-     * @return
+     * @return Bot action for current logic cycle
      */
-    private Action getAction() {
+    @SuppressWarnings("unused") // Some sections depend on constants that can be turned on/off
+	private Action getAction() {
         Action result;
         StringBuilder label = new StringBuilder();
         label.append(getIdentifier());
@@ -807,7 +810,8 @@ public class UT2 extends BaseBot {
             }
         }
 
-        Weapon current = weaponry.getCurrentWeapon();
+        @SuppressWarnings("unused")
+		Weapon current = weaponry.getCurrentWeapon();
         double distance = Double.MAX_VALUE;
         if (target != null && target.getLocation() != null) {
             distance = target.getLocation().getDistance(info.getLocation());
@@ -1807,10 +1811,13 @@ public class UT2 extends BaseBot {
     }
 
     public static void main(String args[]) throws PogamutException {
-    	Class[] botClasses = new Class[] {UT2.class};
+    	@SuppressWarnings("rawtypes")
+		Class[] botClasses = new Class[] {UT2.class};
 
 		IRemoteAgentParameters[] params = new IRemoteAgentParameters[] {new UT2Parameters()};
 		MultiBotLauncher.launchMultipleBots(botClasses, params, "localhost", 3000);//launchMultipleBots(botClasses, params, "localhost", 3000);
+		
+		// Original version was a bit more flexible because it processed command line params
 //        if (args.length > 0 && args[0].equals("retrace")) {
 //            new UT2004BotRunner(HumanRetraceBot.class, "HumanRetraceBot").startAgent();
 //        } else {
@@ -1914,28 +1921,32 @@ public class UT2 extends BaseBot {
         launchBot(battleController, null, opponents, host, port);
     }
 
-    public static void launchBot(TWEANNController battleController, Class<? extends IUT2004BotController> opponentClass, int opponents) {
+    @SuppressWarnings("rawtypes")
+	public static void launchBot(TWEANNController battleController, Class<? extends IUT2004BotController> opponentClass, int opponents) {
         launchBot(battleController, opponentClass, opponents, 0, null);
     }
 
-    public static void launchBot(TWEANNController battleController, Class<? extends IUT2004BotController> opponentClass, int opponents, int nativeBots, IUT2004Server server) {
+    @SuppressWarnings("rawtypes")
+	public static void launchBot(TWEANNController battleController, Class<? extends IUT2004BotController> opponentClass, int opponents, int nativeBots, IUT2004Server server) {
         PogamutPlatform pl = Pogamut.getPlatform();
         launchBot(battleController, opponentClass, opponents, nativeBots, server,
                 pl.getProperty(PogamutUT2004Property.POGAMUT_UT2004_BOT_HOST.getKey()),
                 pl.getIntProperty(PogamutUT2004Property.POGAMUT_UT2004_BOT_PORT.getKey()));
     }
 
-    public static void launchBot(TWEANNController battleController, Class<? extends IUT2004BotController> opponentClass, int opponents, String host, int port) {
+    @SuppressWarnings("rawtypes")
+	public static void launchBot(TWEANNController battleController, Class<? extends IUT2004BotController> opponentClass, int opponents, String host, int port) {
         launchBot(battleController, opponentClass, opponents, 0, null, host, port);
     }
 
-    public static void launchBot(TWEANNController battleController, Class<? extends IUT2004BotController> opponentClass, int opponents, int nativeBots, IUT2004Server server, String host, int port) {
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+	public static void launchBot(TWEANNController battleController, Class<? extends IUT2004BotController> opponentClass, int opponents, int nativeBots, IUT2004Server server, String host, int port) {
         long start = System.currentTimeMillis();
         if(Parameters.parameters == null || Parameters.parameters.booleanParameter("utBotLogOutput")) {
         	System.out.println(port + ":launchBot at: " + start);
         }
 
-        UT2004BotDescriptor ut2 = new UT2004BotDescriptor().setController(UT2.class).addParams(new UT2Parameters(battleController, server).setAgentId(new AgentId(Constants.BOT_NAME.get())));
+		UT2004BotDescriptor ut2 = new UT2004BotDescriptor().setController(UT2.class).addParams(new UT2Parameters(battleController, server).setAgentId(new AgentId(Constants.BOT_NAME.get())));
 
         // Add native bots
         //if (server != null) {
@@ -1944,7 +1955,7 @@ public class UT2 extends BaseBot {
         //    }
         //}
 
-        UT2004BotDescriptor opps = new UT2004BotDescriptor().setController(opponentClass);
+		UT2004BotDescriptor opps = new UT2004BotDescriptor().setController(opponentClass);
         for (int i = 0; i < opponents; i++) {
             opps.addParams(new UT2004AgentParameters().setAgentId(new AgentId(opponentClass.getSimpleName() + "(" + i + ")")));
         }
